@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8"/>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<title><@block name="title"></@block><#if Session["_server_ip"]?? >[${Session["_server_ip"]}]</#if></title>
+		<META HTTP-EQUIV="Pragma" CONTENT="no-cache"> 
+		<META HTTP-EQUIV="Cache-Control" CONTENT="no-store,no-cache,must-revalidate"> 
+		<META HTTP-EQUIV="Expires" CONTENT="0">
+		<META name="keywords" content="电信集团">
+		<META name="description" content="电信集团">
+		<#include "/common-css-tpl.html"/>
+		<#include "/common-js-tpl.html"/>
+		<script src="${contextPath}/js/busi-js/common/const.js?${jsversion}" type="text/javascript"></script>
+		<script src="${contextPath}/js/busi-js/header/menu.js?${jsversion}" type="text/javascript"></script>
+		
+		<@block name="header"></@block>
+	</head>
+	<body>
+
+		<!-- 头部 -->
+		<div class="navsort">
+		<#if Session["_session_pad_flag"]??&&Session["_session_pad_flag"]=="1">
+			<#include "/pad-header.html"/> 
+		<#else>
+			<#include "/main-header.html"/> 
+		</#if>
+		</div>
+		<!--头部 end-->
+		<div class="navsortbg"></div>
+		<!--内容 start-->
+		<!--  <div class="main_div">-->
+			<!-- 内容菜单-->
+			<@block name="content">
+			<#include "/main-content.html"/>
+			</@block>
+		<!-- </div>-->
+		<!--内容 end-->
+		<!--底部 start-->
+		<div class="footer">
+			<!-- 底部菜单-->
+			<#include "/main-footer.html"/>
+		</div>
+		<!--底部 end-->
+		<!--登录弹出框-->
+			<div>
+				<#include "/login-window.html"/>
+			</div>
+			<!--登录弹出框结束-->
+	</body>
+</html>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ContractRoot>
+	<TcpCont>
+		<TransactionID>${TcpCont.TransactionID}</TransactionID>
+		<ActionCode>${TcpCont.ActionCode}</ActionCode>
+        <BusCode>${TcpCont.BusCode}</BusCode>
+        <ServiceCode>${TcpCont.ServiceCode}</ServiceCode>
+        <ServiceContractVer>${TcpCont.ServiceContractVer}</ServiceContractVer>
+		<ServiceLevel>${TcpCont.ServiceLevel}</ServiceLevel>
+		<SrcOrgID>${TcpCont.SrcOrgID}</SrcOrgID>
+		<SrcSysID>${TcpCont.SrcSysID}</SrcSysID>
+		<SrcSysSign>${TcpCont.SrcSysSign}</SrcSysSign>
+		<DstOrgID>${TcpCont.DstOrgID}</DstOrgID>
+		<DstSysID>${TcpCont.DstSysID}</DstSysID>
+		<ReqTime>${TcpCont.ReqTime}</ReqTime>
+	</TcpCont>
+	<SvcCont>
+		<BillQueryByAcctIDReq>
+			<BillQuery>
+				<BillQueryType>2</BillQueryType>
+				<DestinationAccount>${phoneNumber}</DestinationAccount>
+				<DestinationAttr>${destinationAttr}</DestinationAttr>
+				<QueryFlag>0</QueryFlag>
+				<FeeQueryFlag>0</FeeQueryFlag>						
+			</BillQuery>
+			<MvnoId>${ownerId}</MvnoId>
+		</BillQueryByAcctIDReq>
+	</SvcCont>
+</ContractRoot>

@@ -1,0 +1,49 @@
+<#if code?? && (code>=0) >
+	<div class="container-fluid">
+		<div class="row">
+			<div class="panel panel-default paneltop">
+				<!-- Default panel contents -->
+				<div class="panel-heading">
+					<span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+					预受理单查询
+				</div>
+	           <@portal.scrollPagination "order-ysl-list" "both" pageModel.totalPages 60 0 "order.ysl.scroll">
+				<table class="table table-striped tablecenter" id="cart-list-table">
+					<thead>
+						<tr>
+						    <th>预受理流水号</th>
+							<th>客户姓名</th>
+							<th>产品号码</th>
+							<th>地区</th>
+							<th>渠道</th>
+							<th></th>
+						</tr>
+					</thead>
+					<tbody class="panel-group" id="accordion">
+					  <#if (pageModel.list)?? &&((pageModel.list)?size>0)>
+		               <#list pageModel.list as order >
+						<tr onclick="order.ysl.queryYslDetail('${order.CUST_SO_NUMBER}','${order.STATUS_CD}')">
+							<td>${order.CUST_SO_NUMBER}</td>
+							<td>${order.NAME}</td>
+                            <td>${order.ACCESS_NBR}</td>
+                            <td>${order.COMMON_REGION_NAME}</td>
+                            <td>${order.CHANNEL_NAME}</td>
+							<td><span class="glyphicon glyphicon-chevron-right"
+								aria-hidden="true"></span>
+							</td>
+						</tr>
+					 </#list>
+		              <#else>
+		              <tr>
+		                <td colspan="5">没有查询到结果</td> 
+		              </tr>
+		              </#if>
+					</tbody>
+				</table>
+				</@portal.scrollPagination>
+			</div>
+		</div>
+	</div>
+<#else>
+	${mess}
+</#if>

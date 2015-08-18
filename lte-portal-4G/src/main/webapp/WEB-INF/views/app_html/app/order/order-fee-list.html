@@ -1,0 +1,64 @@
+<#if code?? && (code>=0) >
+	<div class="container-fluid">
+		<div class="row">
+			<div class="panel panel-default paneltop">
+				<!-- Default panel contents -->
+				<div class="panel-heading">
+					<span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+					费用详情查询
+				</div>
+				<#if (pageModel.list)?? &&((pageModel.list)?size>0)>
+				<@portal.scrollPagination "cart_list" "both" pageModel.totalPages 60 0 "order.calcharge.feeScroll">
+				<table class="table table-striped tablecenter" id="cart-list-table">
+					<thead>
+						<tr>
+							<th>购物车流水</th>
+							<th>产品名称</th>
+							<th>费用名称</th>
+							<th>应收金额</th>
+							<th>实收金额</th>
+							<th>付费类型</th>
+						</tr>
+					</thead>
+					<tbody class="panel-group" id="accordion">
+		               <#list pageModel.list as fee >
+						<tr>
+							<td>${fee.soNbr}</td>
+							<td>${fee.prodName}</td>
+							<td>${fee.feeName}</td>
+							<td>${fee.receivableAmount}</td>
+							<td>${fee.realAmount}</td>  
+							<td>${fee.paymentType}</td>
+							<!-- <td><span class="glyphicon glyphicon-chevron-right"
+								aria-hidden="true"></span>
+							</td> -->
+						</tr>
+					  </#list>
+		           </tbody>
+				</table>
+				</@portal.scrollPagination>
+				<#else>
+				<table class="table table-striped tablecenter" id="cart-list-table">
+					<thead>
+						<tr>
+							<th>购物车流水</th>
+							<th>产品名称</th>
+							<th>费用名称</th>
+							<th>应收金额</th>
+							<th>实收金额</th>
+							<th>付费类型</th>
+						</tr>
+					</thead>
+	              	<tbody class="panel-group" id="accordion">
+	              		<tr>
+	                		<td colspan="4">没有查询到结果</td> 
+	              		</tr>
+				  </tbody>
+			  </table>
+			  </#if>
+			</div>
+		</div>
+	</div>
+<#else>
+	${mess}
+</#if>

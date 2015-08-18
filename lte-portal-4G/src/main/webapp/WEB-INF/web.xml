@@ -1,0 +1,391 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+	<display-name>集团LTE门户web工程</display-name>
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>classpath*:/spring/portal-context.xml</param-value>
+	</context-param>
+	<context-param>
+		<param-name>logbackConfigLocation</param-name>
+		<param-value>classpath:/portal/logback.xml</param-value>
+	</context-param>
+
+
+	<!-- 异步回调接收http服务  -->
+	<servlet>		
+		<display-name>HttpService for Asyn Recv</display-name>
+		<servlet-name>HttpService4AsynRecv</servlet-name>
+		<servlet-class>com.linkage.crm.csb.web.CSBHttpTransportServlet</servlet-class>
+		<init-param>
+			<param-name>httpReqResolverClass</param-name>
+			<param-value>com.al.crm.asynframe.integration.resolver.AsynResponseHttpReqResolver</param-value>
+		</init-param>
+		<init-param>
+			<param-name>httpRespResolverClass</param-name>
+			<param-value>com.al.crm.asynframe.integration.resolver.CRMHttpRespResolver</param-value>
+		</init-param>
+	</servlet>
+	<servlet-mapping>
+    	<servlet-name>HttpService4AsynRecv</servlet-name>
+    	<url-pattern>/asynRecv/*</url-pattern>
+  	</servlet-mapping>
+	
+
+	<!-- 集中会话
+	<filter>
+		<filter-name>DSessionProxyFilter</filter-name>
+		<filter-class>com.al.dsession.filter.DSessionProxyFilter</filter-class>
+		<init-param>
+			<param-name>configFileName</param-name>
+			<param-value>/portal/al-dsession.properties</param-value>
+		</init-param>
+		<init-param>
+			<param-name>plugins</param-name>
+			<param-value>com.al.ec.plugin.CheckLoginPlugin,com.al.dsession.filter.SessionServicePlugin</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>DSessionProxyFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping> -->
+	<!-- 集中会话 end-->
+	
+	<!-- 编码设置过虑器 -->
+	<filter>
+		<filter-name>character_encoding_filter</filter-name>
+		<filter-class>com.al.ecs.filter.CharacterAndFileEncodingFilter</filter-class>
+		<init-param>
+			<param-name>encoding</param-name>
+			<param-value>UTF-8</param-value>
+		</init-param>
+		<init-param>
+			<param-name>forceEncoding</param-name>
+			<param-value>true</param-value><!-- 强制进行转码 -->
+		</init-param>
+		<!-- 只能在本网站页面显示/DENY 表示都不能被iframe嵌入 
+		<init-param>
+			<param-name>xframeOptions</param-name>
+			<param-value>SAMEORIGIN</param-value>
+		</init-param>-->
+
+		<!-- 是否资源请求路径 -->
+		<init-param>
+			<param-name>resourceTypes</param-name>
+			<param-value>js,css,jpeg,gif,jpg,png,bmp,flv,swf,rar</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>character_encoding_filter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	
+	<!-- 数据路由过滤器（将路由参数放入session中）,需放在除集中会话过滤器的其他业务相关过滤器之前 -->
+    <filter>
+       <filter-name>PortalDataSourceFilter</filter-name>
+       <filter-class>com.al.lte.portal.filter.PortalDataSourceFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>PortalDataSourceFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+    
+    <!-- 获取压缩文件过滤器(js,css) -->
+    <filter>
+       <filter-name>GetCompressFileFilter</filter-name>
+       <filter-class>com.al.lte.portal.filter.GetCompressFileFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>GetCompressFileFilter</filter-name>
+        <url-pattern>/js/*</url-pattern>
+    </filter-mapping>
+	
+	<filter>
+       <filter-name>LogAttrFilter</filter-name>
+       <filter-class>com.al.crm.log.web.LogAttrFilter</filter-class>
+    </filter>
+    <filter-mapping>
+       <filter-name>LogAttrFilter</filter-name>
+       <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <!-- URL过滤 -->
+    <filter>
+       <filter-name>UrlFilter</filter-name>
+       <filter-class>com.al.lte.portal.filter.UrlFilter</filter-class>
+    </filter>
+    <filter-mapping>
+       <filter-name>UrlFilter</filter-name>
+       <url-pattern>/*</url-pattern>
+    </filter-mapping>
+    
+    <!-- 敏感信息过滤 -->
+    <filter>
+       <filter-name>SensitiveInfoFilter</filter-name>
+       <filter-class>com.al.lte.portal.filter.SensitiveInfoFilter</filter-class>
+    </filter>
+    <filter-mapping>
+       <filter-name>SensitiveInfoFilter</filter-name>
+       <url-pattern>/*</url-pattern>
+    </filter-mapping>
+    
+    <!-- 屏蔽关键字过滤 -->
+    <filter>
+       <filter-name>ForbiddenKeywordFilter</filter-name>
+       <filter-class>com.al.lte.portal.filter.ForbiddenKeywordFilter</filter-class>
+    </filter>
+    <filter-mapping>
+       <filter-name>ForbiddenKeywordFilter</filter-name>
+       <url-pattern>/*</url-pattern>
+    </filter-mapping>
+    
+	<!-- Csrf过虑器 
+	<filter>
+		<filter-name>csrf_filter</filter-name>
+		<filter-class>com.al.ecs.filter.CsrfPreventionFilter</filter-class>-->
+		<!-- token key
+		<init-param>
+			<param-name>token</param-name>
+			<param-value>_al_ec_token</param-value>
+		</init-param>
+		<init-param>
+			<param-name>cookieCheck</param-name>
+			<param-value>false</param-value>
+		</init-param> -->
+		<!-- 需要验证的路径,支持正则表达式,忽略大小写 ,/order/[^(prepare|terminal)].*$ 
+		<init-param>
+			<param-name>entryPoints</param-name>
+			<param-value>/staff/login/logindo$</param-value>
+		</init-param>
+	</filter>-->
+    <!-- SpringSide's JCaptcha filter -->
+	<filter>
+		<filter-name>jcaptchaFilter2</filter-name>
+		<filter-class>com.al.ecs.filter.JCaptchaFilter</filter-class>
+		<!-- 验证失败跳转页面
+		<init-param>
+			<param-name>failureUrl</param-name>
+			<param-value>/staff/login/page?error=1</param-value>
+		</init-param> -->
+		<!-- true:表示全都验证,false代表需要判断 valid_val 为何值开始验证 -->
+		<init-param>
+			<param-name>isValid</param-name>
+			<param-value>true</param-value>
+		</init-param>
+		<!-- 依赖isValid 值,false才有效 -->
+		<init-param>
+			<param-name>valid_val</param-name>
+			<param-value>1</param-value>
+		</init-param>
+		<!-- 表单提交路径 -->
+		<init-param>
+			<param-name>filterProcessesUrl</param-name>
+			<param-value>/passwordMgr/getStaff</param-value>
+		</init-param>
+	</filter>
+	
+	<!-- SpringSide's JCaptcha filter -->
+	<filter>
+		<filter-name>jcaptchaFilter</filter-name>
+		<filter-class>com.al.ecs.filter.JCaptchaFilter</filter-class>
+		<!-- 验证失败跳转页面 -->
+		<init-param>
+			<param-name>failureUrl</param-name>
+			<param-value>/staff/login/page?error=1</param-value>
+		</init-param>
+		<!-- true:表示全都验证,false代表需要判断 valid_val 为何值开始验证 -->
+		<init-param>
+			<param-name>isValid</param-name>
+			<param-value>false</param-value>
+		</init-param>
+		<!-- 依赖isValid 值,false才有效 -->
+		<init-param>
+			<param-name>valid_val</param-name>
+			<param-value>1</param-value>
+		</init-param>
+		<!-- 表单提交路径 -->
+		<init-param>
+			<param-name>filterProcessesUrl</param-name>
+			<param-value>/staff/login/logindo</param-value>
+		</init-param>
+	</filter>
+	<!-- 设置哪些文件可以缓存到客户端,过期日期 -->
+	<!-- 
+	<filter>
+		<filter-name>expiresFilter</filter-name>
+		<filter-class>com.al.ecs.filter.ExpiresFilter</filter-class>
+		<init-param>
+			<param-name>ExpiresByType image</param-name>
+			<param-value>access plus 30000 minutes</param-value>
+		</init-param>
+		<init-param>
+			<param-name>ExpiresByType text/css</param-name>
+			<param-value>access plus 1200 minutes</param-value>
+		</init-param> -->
+		<!-- 注释该type判断,使其从cacheUrl.xml中获取text/javascript的缓存设定 -->
+		<!--<init-param>
+			<param-name>ExpiresByType text/javascript</param-name>
+			<param-value>access plus 0 minutes</param-value>
+		</init-param>
+		
+		<init-param>
+			<param-name>ExpiresByType text/html</param-name>
+			<param-value>access plus 0 minutes</param-value>
+		</init-param>
+		<init-param>
+			<param-name>ExpiresByType application/json</param-name>
+			<param-value>access plus 0 minutes</param-value>
+		</init-param>
+		<init-param>
+			<param-name>ExpiresByType text/plain</param-name>
+			<param-value>access plus 0 minutes</param-value>
+		</init-param>
+		<init-param>
+			<param-name>cacheFileConfig</param-name>
+			<param-value>classpath:/cache/cacheUrl.xml</param-value>
+		</init-param>
+	</filter>-->
+	<!--  
+	<filter>
+		<description>访问某些URL需要校验通过</description>
+		<filter-name>urlFilter</filter-name>
+		<filter-class>com.al.lte.portal.filter.UrlFilter</filter-class>
+	</filter>
+		<filter-mapping>
+		<filter-name>urlFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>-->
+	
+	<!-- jcaptcha图片生成URL. -->
+	<filter-mapping>
+		<filter-name>jcaptchaFilter</filter-name>
+		<url-pattern>/validatecode/*</url-pattern>
+	</filter-mapping>
+	<!-- 表单提交路径 -->
+	<filter-mapping>
+		<filter-name>jcaptchaFilter</filter-name>
+		<url-pattern>/staff/login/logindo</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>jcaptchaFilter2</filter-name>
+		<url-pattern>/passwordMgr/getStaff</url-pattern>
+	</filter-mapping>
+	<!-- CSRF 
+	<filter-mapping>
+		<filter-name>csrf_filter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>expiresFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+		<dispatcher>REQUEST</dispatcher>
+	</filter-mapping>-->
+
+	<listener>
+		<listener-class>com.al.ecs.log.LogbackConfigListener</listener-class>
+	</listener>
+	<!-- 第一个Listener用于获取WAS的server名称，并Hold住 
+		注意：这个Listener必须放在所有Listener、Servlet的前面，确保最先启动。
+	-->
+	<listener>
+		<listener-class>com.linkage.crm.csb.web.SetWasServerNameListener</listener-class>	
+	</listener>
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+	<listener>
+		<listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
+	</listener>
+	<listener>
+		<listener-class>org.springframework.web.util.IntrospectorCleanupListener</listener-class>
+	</listener>
+	<!-- 单点登录-->
+	<listener>
+		<listener-class>com.al.lte.portal.filter.SingleSignListener</listener-class>
+	</listener>
+	
+	<servlet>
+		<servlet-name>ltePortalServlet</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<init-param>
+			<param-name>contextConfigLocation</param-name>
+			<param-value>classpath*:/spring/servlet-context.xml</param-value>
+		</init-param>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>ltePortalServlet</servlet-name>
+		<!-- 这里可以用 / 但不能用 /* ，拦截了所有请求会导致静态资源无法访问，所以要在spring3-servlet.xml中配置mvc:resources -->
+		<url-pattern>/</url-pattern>
+	</servlet-mapping>
+	<!-- session超时定义,单位为分钟 -->
+	<session-config>
+		<session-timeout>120</session-timeout>
+	</session-config>
+	<!-- 使访问首页失效 -->
+	<welcome-file-list>
+		<welcome-file></welcome-file>
+	</welcome-file-list>
+	<error-page>
+		<error-code>400</error-code>
+		<location>/error/400.jsp</location>
+	</error-page>
+	<error-page>
+		<error-code>404</error-code>
+		<location>/error/404.jsp</location>
+	</error-page>
+	<error-page>
+		<error-code>405</error-code>
+		<location>/error/405.jsp</location>
+	</error-page>
+	<error-page>
+		<error-code>403</error-code>
+		<location>/error/403.jsp</location>
+	</error-page>
+	<error-page>
+		<error-code>500</error-code>
+		<location>/error/500.jsp</location>
+	</error-page>
+	<jsp-config>
+		<taglib>
+			<taglib-uri>oscache</taglib-uri>
+			<taglib-location>/WEB-INF/classes/tlds/oscache.tld</taglib-location>
+		</taglib>
+		<taglib>
+			<taglib-uri>http://java.sun.com/jsp/jstl/core</taglib-uri>
+			<taglib-location>/WEB-INF/classes/tlds/c.tld</taglib-location>
+		</taglib>
+		<taglib>
+			<taglib-uri>http://java.sun.com/jsp/jstl/functions</taglib-uri>
+			<taglib-location>/WEB-INF/classes/tlds/fn.tld</taglib-location>
+		</taglib>
+	</jsp-config>
+	<security-constraint>
+		<display-name>资源安全访问控制</display-name>
+		<web-resource-collection>
+			<web-resource-name>保护以下哪些资源请求的方法</web-resource-name>
+			<!-- 哪些资源受保护 -->
+			<url-pattern>/*</url-pattern>
+			<!-- 以下请求方法属于非法访问,被禁止 -->
+			<http-method>DELETE</http-method>
+			<http-method>PUT</http-method>
+			<http-method>TRACE</http-method>
+			<http-method>OPTIONS</http-method>
+		</web-resource-collection>
+		<auth-constraint></auth-constraint>
+	</security-constraint>
+	<!-- <servlet> <servlet-name>CXFServlet</servlet-name> <servlet-class>org.apache.cxf.transport.servlet.CXFServlet</servlet-class> 
+		<load-on-startup>2</load-on-startup> </servlet> <servlet-mapping> <servlet-name>CXFServlet</servlet-name> 
+		<url-pattern>/services/*</url-pattern> </servlet-mapping> -->
+	
+	<!--<filter>
+       <filter-name>LoginPageFilter</filter-name>
+       <filter-class>com.al.lte.portal.filter.LoginPageFilter</filter-class>
+    </filter>
+    <filter-mapping>
+       <filter-name>LoginPageFilter</filter-name>
+       <url-pattern>/staff/login/page</url-pattern>
+    </filter-mapping>-->
+</web-app>

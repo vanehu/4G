@@ -1,0 +1,23 @@
+<@override name="title">业务受理</@override>
+<script src="${contextPath}/js/busi-js/main/main.js" type="text/javascript"></script>
+<script src="${contextPath}/js/busi-js/main/main-business.js?${jsversion}" type="text/javascript"></script>
+</@override>
+<@override name="content">
+<!--内容-->
+<div class="main_div">
+        <div class="tc_content">
+            <div class="tc_nav">
+            	<span class="tc_nav_span">业务受理</span>
+               <ul id="business_ul">
+                   <#list bussinList as item>
+                	<li  <#if item_index==0>class="current"</#if> id=${item.RESOURCE_ID} value=${item.RESOURCE_ID}><span>${item.RESOURCE_NAME}</span></li>       
+                	</#list>
+                </ul>
+            </div>
+             <div class="tc_tab_content"  id="tc_tab_content"> </div>
+         </div>
+        
+</div>
+<!--内容 end-->
+</@override>
+<@extends name="/main-template.html"/>

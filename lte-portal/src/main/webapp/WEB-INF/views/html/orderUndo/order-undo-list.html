@@ -1,0 +1,148 @@
+<#if code?? && (code>=0) >
+
+           <table class="numberList" id="tab_orderList" >
+              <thead>
+                <tr>
+                  <td width="20"></td>
+                  <td width="80">受理地区</td>
+                  <td width="200">受理渠道</td>
+                  <td width="70">受理员工</td>
+                  <td width="120">受理时间</td>
+                  <td width="120">完成时间</td>
+                  <td width="100">购物车流水</td>
+                  <td width="100">退单原因</td>
+                  <td width="60" align="center">订单操作</td>
+                </tr>
+              </thead>
+              <tbody>
+              <#if (pageModel.list)?? &&((pageModel.list)?size>0)>
+              <#list pageModel.list as order >
+                <tr >
+                  <td>&nbsp;<!-- <img src="" width="16" height="16" class="showsuborder" /> --></td>
+                  <td>${order.areaName}</td>
+                  <td>${order.channelName}</td>
+                  <td>${order.staffName}</td>
+                  <td>${order.soDate}</td>
+                  <td>${order.soStatusDt}</td>
+                  <td>${order.olNbr}</td>
+                  <td></td>
+                  <td>
+                  <#assign undo_num=0 >
+                  <#assign new_prod_num=0 >
+                  <#if order.list??&&(order.list?size>0) >
+                  	<#list order.list as sub >
+                  		<#if sub.relatesBoId?? && (sub.relatesBoId=="") || (sub.relatesBoId?? && (sub.relatesBoId!=null&&(sub.statusCd!='401700')))>
+                  		<#if sub.statusCd!='301200' >
+                  		<#if sub.boActionTypeCd?? && sub.boActionTypeCd=="1" && sub.actionClassCd==1300 ><!-- 是新装 -->
+                  			<#assign new_prod_num =new_prod_num+1 >
+                  		</#if>
+                  		<#if sub.actionClassCd?? && (sub.actionClassCd==1300||sub.actionClassCd==1200)>
+                  			<#assign undo_num=1 >
+                  		</#if>
+                  		</#if>
+                  		</#if>
+                  	</#list>
+                  	<#if (new_prod_num>=1) ><!-- 主副卡 多个新装 -->
+                  		<#assign undo_num=new_prod_num >
+                  	</#if>
+                  	
+                  	<#if undo_num?? && (undo_num>0)>
+                  		<a class="purchase" href="javascript:order.undo.undoCheck('all','Y','${order.olNbr}')" id="${order.olNbr}" olId="${order.olId}" olNbr="${order.olNbr}" partyid="${order.partyId}" >撤单</a>
+                  	<#else>
+                  		<a class="purchase2" href="javascript:void(0)" olId="${order.olId}" olNbr="${order.olNbr}" partyid="${order.partyId}" >撤单</a>
+                  	</#if>
+                  <#else>
+                  		<a class="purchase2" href="javascript:void(0)" olId="${order.olId}" olNbr="${order.olNbr}" partyid="${order.partyId}" >无撤单项</a>
+                  </#if>
+                  </td>
+                </tr>
+                <#if order.list??&&(order.list?size>0)>
+                
+               	<#list order.list as sub >
+               		<tr >
+               			<td></td>
+               			<td>
+               			<#if order.list?size==(sub_index+1) >
+               			<i class="tree_bottom"></i>
+               			<#else>
+               			<i class="tree_center"><span></span></i>
+               			</#if>
+               			</td>
+               			<td>受理单类型：${sub.boActionTypeName}
+               				<#if sub.boActionTypeCd?? && sub.boActionTypeCd=="1" && sub.offerRoleId=='24100' >
+               					(主卡)
+               				<#elseif sub.boActionTypeCd?? && sub.boActionTypeCd=="1" && sub.offerRoleId=='24098' >
+               					（副卡）
+               				</#if>
+               			</td>
+               			<td>受理单ID：${sub.boId}</td>
+               			<td><#if sub.name?? && sub.name!="" >规格：${sub.name}<#else>规格：无</#if></td>
+               			<td><#if sub.num?? && sub.num!="" >接入号码：${sub.num}<#else>接入号码：无</#if></td>
+               			<td>状态：${sub.statusName}</td>
+               			<td>${sub.replyContent}</td>
+               			<td>
+		                  	<!-- 
+		                  	new_prod_num>1 主副卡：主卡 整个单，副卡 自己
+		                  	new_prod_num=1 整个单
+		                  	undo_num=1 撤自己
+		                  	undo_num=0 不能撤
+		                  	 -->
+		                  	 	
+				                <#if sub.relatesBoId?? && (sub.relatesBoId=="") || (sub.relatesBoId?? && (sub.relatesBoId!=null&&(sub.statusCd!='401700')))>
+				                <#if sub.statusCd!='301200' >
+		                  		<#if sub.actionClassCd?? && (sub.boActionTypeCd=="1"||sub.actionClassCd==1300||sub.actionClassCd==1200)>
+		                  			<#if (new_prod_num>1) > <!-- 模拟主卡 -->
+		                  				<#if sub.boActionTypeCd?? && sub.boActionTypeCd=="1" && sub.offerRoleId=='24100' ><!-- 模拟主卡,主卡标识应该为 400  -->
+		                  					<!-- 主卡，撤整个订单 -->
+               							    <a class="purchase" href="javascript:order.undo.undoCheck('main','Y','${order.olNbr}_${sub.objInstId}_${sub.boId}')" name="${order.olNbr}" id="${order.olNbr}_${sub.objInstId}_${sub.boId}" olId="${order.olId}" olNbr="${order.olNbr}" partyid="${order.partyId}" 
+                  								objId="${sub.objSpecId}" instId="${sub.objInstId}" acctNbr="${sub.num}" custId="${order.partyId}" relaBoId="${sub.boId}" relatesBoId="${sub.relatesBoId}" areaId="${order.areaId}" actionClassCd="${sub.actionClassCd}" is_new="${new_prod_num}" statusCd="${sub.statusCd}" >撤单</a>
+		                  				<#elseif sub.boActionTypeCd?? && sub.boActionTypeCd=="1" >
+		                  					<!-- 只撤单个，不考虑其他情况及副卡其他关联，撤主卡才考虑-->
+											<a class="purchase" href="javascript:order.undo.undoCheck('only','N','${order.olNbr}_${sub.objInstId}_${sub.boId}')" name="${order.olNbr}" id="${order.olNbr}_${sub.objInstId}_${sub.boId}" olId="${order.olId}" olNbr="${order.olNbr}" partyid="${order.partyId}" 
+                  								objId="${sub.objSpecId}" instId="${sub.objInstId}" acctNbr="${sub.num}" custId="${order.partyId}" relaBoId="${sub.boId}" relatesBoId="${sub.relatesBoId}" areaId="${order.areaId}" actionClassCd="${sub.actionClassCd}" is_new="${new_prod_num}" statusCd="${sub.statusCd}" >撤单</a>
+		                  				<#elseif sub.actionClassCd==1300||sub.actionClassCd==1200 >
+		                  					<a class="purchase2" style="display: none" name="${order.olNbr}" id="${order.olNbr}_${sub.objInstId}_${sub.boId}" olId="${order.olId}" olNbr="${order.olNbr}" partyid="${order.partyId}" 
+                  								objId="${sub.objSpecId}" instId="${sub.objInstId}" acctNbr="${sub.num}" custId="${order.partyId}" relaBoId="${sub.boId}" relatesBoId="${sub.relatesBoId}" areaId="${order.areaId}" actionClassCd="${sub.actionClassCd}" is_new="${new_prod_num}" statusCd="${sub.statusCd}" >撤单</a>
+		                  				</#if>
+		                  			<#elseif new_prod_num==1 > <!-- 单产品新装 -->
+		                  				<!-- 撤整个订单-->
+		                  				<#if sub.boActionTypeCd?? && sub.boActionTypeCd=="1" >
+               							    <a class="purchase" href="javascript:order.undo.undoCheck('main','Y','${order.olNbr}_${sub.objInstId}_${sub.boId}')" name="${order.olNbr}" id="${order.olNbr}_${sub.objInstId}_${sub.boId}" olId="${order.olId}" olNbr="${order.olNbr}" partyid="${order.partyId}" 
+                  								objId="${sub.objSpecId}" instId="${sub.objInstId}" acctNbr="${sub.num}" custId="${order.partyId}" relaBoId="${sub.boId}" relatesBoId="${sub.relatesBoId}" areaId="${order.areaId}" actionClassCd="${sub.actionClassCd}" is_new="${new_prod_num}" statusCd="${sub.statusCd}" >撤单</a>
+		                  				<#else>
+        									<!-- 不能做撤单操作，但是需要带出的数据 -->
+               							    <a class="purchase2" style="display: none" name="${order.olNbr}" id="${order.olNbr}_${sub.objInstId}_${sub.boId}" olId="${order.olId}" olNbr="${order.olNbr}" partyid="${order.partyId}" 
+                  								objId="${sub.objSpecId}" instId="${sub.objInstId}" acctNbr="${sub.num}" custId="${order.partyId}" relaBoId="${sub.boId}" relatesBoId="${sub.relatesBoId}" areaId="${order.areaId}" actionClassCd="${sub.actionClassCd}" is_new="${new_prod_num}" statusCd="${sub.statusCd}" >撤单</a>
+		                  				</#if>
+		                  			<#elseif undo_num==1 >
+		                  				<!-- 非新装 二次业务等撤单 -->
+               							    <a class="purchase2" style="display: none" name="${order.olNbr}" id="${order.olNbr}_${sub.objInstId}_${sub.boId}" olId="${order.olId}" olNbr="${order.olNbr}" partyid="${order.partyId}" 
+                  								objId="${sub.objSpecId}" instId="${sub.objInstId}" acctNbr="${sub.num}" custId="${order.partyId}" relaBoId="${sub.boId}" relatesBoId="${sub.relatesBoId}" areaId="${order.areaId}" actionClassCd="${sub.actionClassCd}" is_new="${new_prod_num}" statusCd="${sub.statusCd}" >撤单</a>
+		                  			<#else>
+		                  				<!-- 不能做撤单操作，但是需要带出的数据 -->
+               							    <a class="purchase2" style="display: none" name="${order.olNbr}" id="${order.olNbr}_${sub.objInstId}_${sub.boId}" olId="${order.olId}" olNbr="${order.olNbr}" partyid="${order.partyId}" 
+                  								objId="${sub.objSpecId}" instId="${sub.objInstId}" acctNbr="${sub.num}" custId="${order.partyId}" relaBoId="${sub.boId}" relatesBoId="${sub.relatesBoId}" areaId="${order.areaId}" actionClassCd="${sub.actionClassCd}" is_new="${new_prod_num}" statusCd="${sub.statusCd}" >撤单</a>
+		                  			</#if>
+		                  		</#if>
+		                  		</#if>
+		                  		<#elseif order.relatesOlId?? && (sub.relatesBoId?? && (sub.relatesBoId!=null&&(sub.statusCd=='401700'))) >
+		                  			<a class="purchase" href="javascript:cart.main.queryCartInfo('${order.relatesOlId}')" type="main">已撤单详情</a>
+		                  		</#if>
+                  		</td>
+               		</tr>
+               	</#list>
+                </#if>
+              </#list>
+              <#else>
+              	<tr><td colspan="7">没有查询到结果</td></tr>
+              </#if>	 
+              </tbody>
+            </table>
+            
+            <!--页码-->
+			<@portal.modelPagination pageModel 5 "order.undo.queryOrderList"/>
+			<!--页码 end-->
+
+<script src="${contextPath}/js/our-js/ec.pagination.js?${jsversion}" type="text/javascript"></script>
+
+<#else>-1</#if>

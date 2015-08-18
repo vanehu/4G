@@ -1,0 +1,107 @@
+<#if items??&&((items?size)>0)>
+	<#assign trid="${param.boId}_${param.itemNum}_new" />
+	<#assign isShow="0" />
+	<#if param.actionFlag==15>
+		<#list items as item>
+			<#if item.limitRedo=='N'>
+				<#assign isShow="1" />
+			</#if>
+		</#list>
+	<#else>
+		<#list items as item>
+			<#if item.limitChange=='N'>
+				<#assign isShow="1" />
+			</#if>
+		</#list>
+	</#if>
+	<#if isShow=="1">
+		<#assign defaultItemId=0 />
+		<tr class="moneyaddform" id="item_${trid}">
+		   <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>${param.actionName}</strong>&nbsp;&nbsp;[${param.objName}]</td>
+		   <td>
+		   <input type="hidden" id="acctItemId_${trid}" value="-1" />
+		   <input type="hidden" id="objType_${trid}" value="${param.objType}" />
+		   <input type="hidden" id="boId_${trid}" value="${param.boId}" />
+		   <input type="hidden" id="objId_${trid}" value="${param.objId}" />
+		   <input type="hidden" id="objInstId_${trid}" value="${param.objInstId}" />
+		   <input type="hidden" id="prodId_${trid}" value="${param.prodId}" />
+		   <input type="hidden" id="boActionType_${trid}" value="" />
+		   <input type="hidden" id="feeAmount_${trid}" value="0" />
+		   <input type="hidden" id="realhidden_${trid}" value="0" />
+		   <select id="acctItemTypeId_${trid}" class="txt_cal_edit" onchange="order.calcharge.selePaymethod('${trid}',this)">
+		   	   <#assign showIndex=0 />
+			   <#list items as item>
+			   	   <#if param.actionFlag==15>
+			   	   		<#if item.limitRedo=='N'>
+			   	   			<#if showIndex==0>
+			   	   			      <#if acctItemTypeId?? && (item.acctItemTypeId == acctItemTypeId)  &&  isEditAdjustOperation?? && isEditAdjustOperation!="0">
+				   	   		        <#break>
+				   	   		      </#if>
+			   	   				<#assign defaultItemId="${item.acctItemTypeId}" />
+			   	   			</#if>
+			   	   			<#if acctItemTypeId?? && (item.acctItemTypeId == acctItemTypeId)  &&  isEditAdjustOperation?? && isEditAdjustOperation!="0">
+			   	   		  	   <#break>
+			   	   		  	</#if>
+			   	   		  	<option value="${item.acctItemTypeId}">${item.name}</option>
+			   	   		  	<#assign showIndex=showIndex+1 />
+			   	   		</#if>
+			   	   	<#else>
+			   	   		<#if item.limitChange=='N'>
+				   	   		<#if showIndex==0>
+				   	   		     <#if acctItemTypeId?? && (item.acctItemTypeId == acctItemTypeId)  &&  isEditAdjustOperation?? && isEditAdjustOperation!="0">
+				   	   		        <#break>
+				   	   		     </#if>
+			   	   				<#assign defaultItemId="${item.acctItemTypeId}" />
+			   	   			</#if>
+			   	   			<#if acctItemTypeId?? && (item.acctItemTypeId == acctItemTypeId)  &&  isEditAdjustOperation?? && isEditAdjustOperation!="0">
+			   	   		  	   <#break>
+			   	   		  	</#if>
+				   	   		<option value="${item.acctItemTypeId}">${item.name}</option>
+				   	   		<#assign showIndex=showIndex+1 />
+				   	   	</#if>
+			   	   </#if>
+			   </#list>
+		   </select>
+		   </td>
+		   <td>0.00</td>
+		   <td class="money"><input  id="realAmount_${trid}" type="text" class="txt_cal_edit" value="0" onfocus="order.calcharge.setGlobeMoney(this);" onblur="order.calcharge.editMoney(this,'${trid}','new');"/></td>
+		   <#if param.actionFlag==15>
+		   		<td  style="text-align: right;">
+		   		<input disabled="disabled" id="backAmount_${trid}" type="text" value="0.00" />
+		   		</td>
+		   </#if>
+		   <td>
+		   <select id="payMethodCd_${trid}"  class="txt_cal_edit" >
+		    	<#list items as item>
+		    		<#if defaultItemId==item.acctItemTypeId>
+		    			<#if item.payMethods??&&((item.payMethods)?size)>0>
+		    				<#list item.payMethods as method>
+		    					<option value="${method.payMethodCd}">${method.payMethodName}</option>
+		    				</#list>
+		    			</#if>
+		    		</#if>
+		    	</#list>
+		   </select>
+		   <select id="backpayMethodCd_${trid}" style="display:none">
+		   		<#list items as item>
+		   			<#if item.payMethods??&&((item.payMethods)?size)>0>
+		   				<#list item.payMethods as method>
+		   					<option value="${method.payMethodCd}_${item.acctItemTypeId}">${method.payMethodName}</option>
+		   				</#list>
+		    		</#if>
+		   		</#list>
+		   </select>
+		   </td>
+		   <td>
+		   <select id="chargeModifyReasonCd_${trid}" class="txt_cal_edit" onchange="order.calcharge.bindChargeModifyReason('${trid}')" >
+				<option value="3">补退费</option>
+				<option value="2">算费不正确</option>
+				<option value="4">营销业务</option>
+				<option value="1">其他</option>
+		   </select>
+		   <input id="remark_${trid}" type="text" class="txt_cal_edit" style="display:none ;border: 1px solid #DCDCDC;line-height: 23px;padding: 1px; width: 100px;">
+		   </td>
+		   <td><a class="charge_add money_cut"  href="javascript:void(0);"  onclick="order.calcharge.delItems(this,'${trid}','new');">删除费用</a></td>
+		</tr>
+	</#if>
+</#if>

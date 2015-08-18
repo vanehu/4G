@@ -1,0 +1,346 @@
+<#if code?? && (code>=0) ><div class="main_div"> 
+  <div class=" main_warp">
+  <div class="ordercon">
+  <!--订单确认-->
+	
+    <div class="order_confirmation ordertabcon" style="display:block">
+  <h2 class="h2_title">购物车详情<span class="showhide"></span>
+  </h2>
+  <div class="main_body">
+  <#if cart.orderListInfo?? >
+  <#assign orderListInfo = cart.orderListInfo >
+  <h5 class="s_title">基本信息</h5>
+  <ul class="fillin">
+    <li>
+      <font>流水号：</font><span>${orderListInfo.olNbr}</span>
+    </li>
+    <li>
+      <font>购物车ID：</font><span>${olId}</span>
+    </li>
+    <li>
+      <font>受理人：</font><span>${orderListInfo.staffName}</span>
+    </li>
+    <li>
+      <font>受理地区：</font><span>${orderListInfo.areaName}</span>
+    </li>
+    <li>
+      <font>受理渠道：</font><span>${orderListInfo.channelName}</span>
+    </li>
+    <li>
+      <font>状态：</font><span>${orderListInfo.olStatus}</span>
+    </li>
+	<li>
+      <font>客户名称：</font><span>${orderListInfo.custName}</span>
+    </li>
+    <li>
+      <font>协销人：</font><span>${orderListInfo.pName}</span>
+    </li>
+  </ul>
+  <div class="height18"></div>
+  </#if>
+  				
+  				<#if (cart.orderLists)?? &&((cart.orderLists)?size>0)>
+    		    <#list cart.orderLists as orderLists >
+				<h2 class="s_title">受理单信息</h2>
+				<table class="com_table cashier_table">
+                    <tbody>
+                      <tr>
+                        <th width="40%">业务类型</th>
+                        <th width="12%">受理时间</th>
+                        <th width="10%">订单状态</th>
+                        <th width="26%">受理详情</th>
+                        <th width="12%">退单原因</th>
+                      </tr>
+                      
+                      <#if (orderLists.list)?? &&((orderLists.list)?size>0)>
+    				  <#list orderLists.list as orderRow >
+                      <tr class="cashier_tr">
+                        <td class="cashier_td">
+                            <#if orderRow.actionClass =="1000" >
+                        	${orderRow.boActionTypeName}-${orderRow.partyName}
+                        	<#elseif orderRow.actionClass =="1100" >
+                        	${orderRow.boActionTypeName}-${orderRow.prodSpecName}
+                        	<#elseif orderRow.actionClass =="1200" >
+                        	${orderRow.boActionTypeName}-${orderRow.offerSpecName}
+                        	<#elseif orderRow.actionClass =="1300" >
+                        	    <#if orderRow.boActionTypeCd =="7" >
+                        			${orderRow.boActionTypeName}-
+                        			<#if orderRow.state =="ADD" >
+                        				开通&nbsp;
+                        			<#elseif orderRow.state =="DEL" >
+                        				关闭&nbsp;
+                        			<#elseif orderRow.state =="KIP" >
+                        				变更&nbsp;
+                        			<#else>
+                        			</#if>
+                        			${orderRow.offerSpecName}
+                        		<#else>
+                        			${orderRow.boActionTypeName}-${orderRow.prodSpecName}
+                        		</#if>
+                        	<#elseif orderRow.actionClass =="1400" >
+                        	${orderRow.boActionTypeName}-${orderRow.prodSpecName}
+                        	<#elseif orderRow.actionClass =="1500" >
+                        	${orderRow.boActionTypeName}-${orderRow.prodSpecName}
+                        	<#elseif orderRow.actionClass =="1600" >
+                        	${orderRow.boActionTypeName}-${orderRow.couponName}
+                        	<#else>
+                        	${orderRow.boActionTypeName}-${orderRow.prodSpecName}
+                        	</#if>
+                        	<#if orderRow.offerTypeCd?? && (orderRow.offerTypeCd =="10" || orderRow.offerTypeCd =="11") >
+                        	<#else>
+                        		<#if orderRow.accessNumber?? && orderRow.accessNumber!="" >
+                        		&nbsp;&nbsp;[${orderRow.accessNumber}]
+                        		</#if>
+                        	</#if>
+                        </td>
+                        <td>${orderRow.soDate}</td>
+                        <td>${orderRow.statusName}</td>
+                        <td class="moracon"><a boId="${orderRow.boId}" olId="${orderRow.olId}" offerId="${orderRow.offerId}" prodId="${orderRow.prodId}" 
+                        	href="javascript:void(0)" onclick="cart.main.showOffer(this)" >
+                            <#if orderRow.actionClass =="1000" >
+                        	${orderRow.partyName}-${orderRow.boActionTypeName}
+                        	<#elseif orderRow.actionClass =="1100" >
+                        	${orderRow.prodSpecName}-${orderRow.boActionTypeName}
+                        	<#elseif orderRow.actionClass =="1200" >
+                        	${orderRow.offerSpecName}-${orderRow.boActionTypeName}
+                        	<#elseif orderRow.actionClass =="1300" >
+                        	    <#if orderRow.boActionTypeCd =="7" >
+                        			${orderRow.offerSpecName}-${orderRow.boActionTypeName}
+                        		<#else>
+                        			${orderRow.prodSpecName}-${orderRow.boActionTypeName}
+                        		</#if>
+                        	<#elseif orderRow.actionClass =="1400" >
+                        	${orderRow.prodSpecName}-${orderRow.boActionTypeName}
+                        	<#elseif orderRow.actionClass =="1500" >
+                        	${orderRow.prodSpecName}-${orderRow.boActionTypeName}
+                        	<#elseif orderRow.actionClass =="1600" >
+                        	${orderRow.couponName}-${orderRow.boActionTypeName}
+                        	<#else>
+                        	${orderRow.prodSpecName}-${orderRow.boActionTypeName}
+                        	</#if>
+                        </a></td>
+                        <td>${orderRow.remark}</td>
+                      </tr>
+                      
+                      <#if (orderRow.subBusiOrders)?? &&((orderRow.subBusiOrders)?size>0)>
+                      <#list orderRow.subBusiOrders as subOrder >
+                      <tr class="moneyaddform">
+                        <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <strong>
+                        	<#if subOrder.actionClass =="1000" >
+                        	${subOrder.boActionTypeName}-${subOrder.partyName}
+                        	<#elseif subOrder.actionClass =="1100" >
+                        	${subOrder.boActionTypeName}-${subOrder.prodSpecName}
+                        	<#elseif subOrder.actionClass =="1200" >
+                        	${subOrder.boActionTypeName}-${subOrder.offerSpecName}
+                        	<#elseif subOrder.actionClass =="1300" >
+                        		<#if subOrder.boActionTypeCd =="7" >
+                        		    ${subOrder.boActionTypeName}-
+                        			<#if subOrder.state =="ADD" >
+                        				开通&nbsp;
+                        			<#elseif subOrder.state =="DEL" >
+                        				关闭&nbsp;
+                        			<#elseif subOrder.state =="KIP" >
+                        				变更&nbsp;
+                        			<#else>
+                        			</#if>
+                        			${subOrder.offerSpecName}
+                        		<#else>
+                        			${subOrder.boActionTypeName}-${subOrder.prodSpecName}
+                        		</#if>
+                        	<#elseif subOrder.actionClass =="1400" >
+                        	${subOrder.boActionTypeName}-${subOrder.prodSpecName}
+                        	<#elseif subOrder.actionClass =="1500" >
+                        	${subOrder.boActionTypeName}-${subOrder.prodSpecName}
+                        	<#elseif subOrder.actionClass =="1600" >
+                        	${subOrder.boActionTypeName}-${subOrder.couponName}
+                        	<#else>
+                        	${subOrder.boActionTypeName}-${subOrder.prodSpecName}
+                        	</#if>
+                        </strong>&nbsp;&nbsp;[${subOrder.accessNumber}]<#if subOrder.offerRoleName?? &&  subOrder.offerRoleName!="" >&nbsp;&nbsp;（${subOrder.offerRoleName}）</#if>
+                        </td>
+                        <td>${subOrder.soDate}</td>
+                        <td>${subOrder.statusName}</td>
+                        <td class="moracon"><a boId="${subOrder.boId}" olId="${subOrder.olId}" offerId="${subOrder.offerId}" prodId="${subOrder.prodId}" 
+                        	href="javascript:void(0)" onclick="cart.main.showOffer(this)" >
+                            <#if subOrder.actionClass =="1000" >
+                        	${subOrder.partyName}-${subOrder.boActionTypeName}
+                        	<#elseif subOrder.actionClass =="1100" >
+                        	${subOrder.prodSpecName}-${subOrder.boActionTypeName}
+                        	<#elseif subOrder.actionClass =="1200" >
+                        	${subOrder.offerSpecName}-${subOrder.boActionTypeName}
+                        	<#elseif subOrder.actionClass =="1300" >
+                        	    <#if subOrder.boActionTypeCd =="7" >
+                        			${subOrder.offerSpecName}-${subOrder.boActionTypeName}
+                        		<#else>
+                        			${subOrder.prodSpecName}-${subOrder.boActionTypeName}
+                        		</#if>
+                        	<#elseif subOrder.actionClass =="1400" >
+                        	${subOrder.prodSpecName}-${subOrder.boActionTypeName}
+                        	<#elseif subOrder.actionClass =="1500" >
+                        	${subOrder.prodSpecName}-${subOrder.boActionTypeName}
+                        	<#elseif subOrder.actionClass =="1600" >
+                        	${subOrder.couponName}-${subOrder.boActionTypeName}
+                        	<#else>
+                        	${subOrder.prodSpecName}-${subOrder.boActionTypeName}
+                        	</#if>
+                        </a></td>
+                        <td>${subOrder.remark}</td>
+                      </tr>
+                      </#list>
+                      </#if>
+                      
+    				  </#list>
+    				  </#if>
+
+                      
+                      <!-- 
+                      <tr class="cashier_tr">
+                        <td class="cashier_td">天翼 18901000100</td>
+                        <td>2013-10-10 12:12:12</td>
+                        <td class="money">正在调度中</td>
+                        <td class="moracon"><a href="#">订购</a> / <a href="#">无工单环节</a></td>
+                        <td></td>
+                      </tr>
+                      <tr class="moneyaddform">
+                        <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>新增可选包</strong>&nbsp;&nbsp;[天翼1x]</td>
+                        <td>2013-10-10 12:12:12</td>
+                        <td class="money">正在调度中</td>
+                        <td class="moracon"><a href="#">订购</a> / <a href="#">无工单环节</a></td>
+                        <td></td>
+                      </tr>
+                      <tr>
+                        <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>新增可选包</strong>&nbsp;&nbsp;[天翼1x]</td>
+                        <td>2013-10-10 12:12:12</td>
+                        <td class="money">正在调度中</td>
+                        <td class="moracon"><a href="#">订购</a> / <a href="#">无工单环节</a></td>
+                        <td></td>
+                      </tr> 
+                      <tr>
+                        <td class="moneyaddform">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>新增可选包</strong>&nbsp;&nbsp;[天翼1x]</td>
+                        <td>2013-10-10 12:12:12</td>
+                        <td class="money">正在调度中</td>
+                        <td class="moracon"><a href="#">订购</a> / <a href="#">无工单环节</a></td>
+                        <td></td>
+                      </tr>
+                      <tr class="cashier_tr">
+                        <td class="cashier_td">CDMA 18901000102</td>
+                        <td>2013-10-10 12:12:12</td>
+                        <td class="money">已竣工</td>
+                        <td class="moracon"><a href="#">订购</a> / <a href="#">无工单环节</a></td>
+                        <td></td>
+                      </tr>
+                      <tr>
+                        <td class="moneyaddform">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>新增可选包</strong>&nbsp;&nbsp;[天翼1x]</td>
+                        <td>2013-10-10 12:12:12</td>
+                        <td class="money">已竣工</td>
+                        <td class="moracon"><a href="#">订购</a> / <a href="#">无工单环节</a></td>
+                        <td></td>
+                      </tr>
+                      <tr>
+                        <td class="moneyaddform">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>新增可选包</strong>&nbsp;&nbsp;[天翼1x]</td>
+                        <td>2013-10-10 12:12:12</td>
+                        <td class="money">已竣工</td>
+                        <td class="moracon"><a href="#">订购</a> / <a href="#">无工单环节</a></td>
+                        <td></td>
+                      </tr>
+                      <tr class="cashier_tr">
+                        <td class="cashier_td">天翼 18901000103</td>
+                        <td>2013-10-10 12:12:12</td>
+                        <td class="money">正在调度中</td>
+                        <td class="moracon"><a href="#">订购</a> / <a href="#">无工单环节</a></td>
+                        <td></td>
+                      </tr>
+                      <tr class="cashier_tr">
+                        <td class="cashier_td">天翼 18901000104</td>
+                        <td>2013-10-10 12:12:12</td>
+                        <td class="money">正在调度中</td>
+                        <td class="moracon"><a href="#">订购</a> / <a href="#">无工单环节</a></td>
+                        <td></td>
+                      </tr>
+                      <tr>
+                        <td class="moneyaddform">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>新增可选包</strong>&nbsp;&nbsp;[天翼1x]</td>
+                        <td>2013-10-10 12:12:12</td>
+                        <td class="money">正在调度中</td>
+                        <td class="moracon"><a href="#">订购</a> / <a href="#">无工单环节</a></td>
+                        <td></td>
+                      </tr>
+                      <tr>
+                        <td class="moneyaddform">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>新增可选包</strong>&nbsp;&nbsp;[天翼1x]</td>
+                        <td>2013-10-10 12:12:12</td>
+                        <td class="money">正在调度中</td>
+                        <td class="moracon"><a href="#">订购</a> / <a href="#">无工单环节</a></td>
+                        <td></td>
+                      </tr>
+                       -->
+                    </tbody>
+                 </table>
+                 </#list>
+    			 </#if>
+                  
+                  <div class="height18"></div>
+  <h5 class="s_title">费用信息</h5>
+
+	<table width="100%" border="0" cellspacing="0" cellpadding="0" class="orderdetail_fs">
+    <thead>
+      <tr>
+        <td>消费项目</td>
+        <td>费用类型</td>
+        <td>应收金额（元）</td>
+        <td>实收金额（元）</td>
+        <td>支付类型</td>
+        <td>付费备注</td>
+        <td>状态</td>
+        </tr>
+    </thead>
+    <tbody>
+    <#if (cart.chargeInfo)?? &&((cart.chargeInfo)?size>0)>
+    <#assign chargeInfo = cart.chargeInfo >
+    <#list chargeInfo.chargeItems as chargeInfo >
+    
+      <tr>
+        <td>${chargeInfo.boActionTypeName}</td>
+        <td>${chargeInfo.acctItemTypeName}</td>
+        <td><span style="color:#feb161">${chargeInfo.amount?number/100}</span></td>
+        <td><span style="color:#feb161">${chargeInfo.realAmount?number/100}</span></td>
+        <td>${chargeInfo.payMethodName}</td>
+        <td>${chargeInfo.perferReason}</td>
+        <td>${chargeInfo.statusCd}</td>
+      </tr>
+    </#list>
+    </#if>
+      <!-- 
+      <tr>
+        <td rowspan="2">天翼4G128元套餐</td>
+        <td>预存款</td>
+        <td><span style="color:#feb161">128.00</span></td>
+        <td>网银</td>
+        </tr>
+      <tr>
+        <td>工料费</td>
+        <td><span style="color:#feb161">128.00</span></td>
+        <td>网银</td>
+        </tr>
+      <tr>
+        <td>天翼4G128元套餐</td>
+        <td>工料费</td>
+        <td><span style="color:#feb161">128.00</span></td>
+        <td>网银</td>
+        </tr>
+         -->
+    </tbody>
+</table>
+
+</div>
+
+</div>
+</div>
+<!--订单填写 end-->
+
+<div align="right" style="margin: 20px auto; padding:0 20px;"> <a style=" margin-left:20px;" class="btna_o" href="javascript:cart.main.showMain()"><span>返回</span></a> </div>
+
+</div>
+</div>
+<!--内容 end--> 
+
+<#else>${mess}</#if>

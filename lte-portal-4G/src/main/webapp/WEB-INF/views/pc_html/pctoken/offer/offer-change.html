@@ -1,0 +1,136 @@
+<#assign offerSpec = main.offerSpec />
+<div id="main_conetent" class="main_warp">
+	<div class="ordercon" id="ordercon">
+		<h2 class="h2_title">
+			<span>
+				${main.boActionTypeName}
+			</span>
+			<span class="showhide"></span>
+			<#if offerSpec.ifShowTime=="Y">
+				<a class="numberSearch setssxiao" onclick="javascript:AttachOffer.showOfferTime();">生失效设置</a>
+			</#if>
+		</h2>
+		<div id="changePlaninfo">
+			<span class="old">原套餐:${main.oldOfferSpecName}</span>
+			<span>新套餐:${offerSpec.offerSpecName}</span>	
+		</div>
+		<div class="height18"></div>
+		<#if main.offerMembers?? &&(main.offerMembers?size>1)>
+		<div class="cardtab">
+			<ul class="pdcard" >
+				<#assign i = 0 />
+				<#list main.offerMembers as item>
+				<#if item.objType==2>
+					<#assign i = i+1 />
+					<#if i==1>
+						<li class="setcon" id="tab_${item.objInstId}" prodId="${item.objInstId}" onclick="offerChange.changeTab(${item.objInstId})">${item.roleName}${item.accessNumber}</li>
+					<#else>
+						<li class="" id="tab_${item.objInstId}" prodId="${item.objInstId}" onclick="offerChange.changeTab(${item.objInstId})">${item.roleName}${item.accessNumber}</li>
+					</#if>
+				</#if>
+				</#list>
+			
+			<div class="clear"></div>
+			</ul>
+			<div class="clear"></div>
+		</div>
+		</#if>
+		<div class="main_body">
+			<!-- 产品信息展示 -->
+			<div class="cardtabcon">
+				<div id="productDiv">
+				<#if main.offerMembers?? &&(main.offerMembers?size>0)>	
+					<#assign i = 0 />		
+					<#list main.offerMembers as item>		
+						<#if item.objType==2>
+							<#assign prodId = item.objInstId/>
+							<#assign i = i+1 />
+							<#if i==1>
+								<div id="attach_tab_${prodId}" >	
+									<h5 class="s_title" >${item.roleName} 可选包/功能</h5>
+									<div type="attach" id="attach_${prodId}" class="infoBox"></div>
+								</div>
+								<div id="uimDiv_${prodId}" style="display: none;">
+									<h5 class="s_title">补换卡： </h5>
+									<div class="pdcardcon show" >
+										<ul class="fillin show">
+											<#include "/pctoken/offer/order-offer-uim.html" />
+										</ul>
+									</div>
+								</div>
+							<#else>
+								<div id="attach_tab_${prodId}" style="display:none">
+									<h5 class="s_title" >${item.roleName} 可选包/功能</h5>
+									<div type="attach" id="attach_${prodId}" class="infoBox"></div>
+								</div>
+								<div id="uimDiv_${prodId}" style="display: none;">
+									<h5 class="s_title">补换卡： </h5>
+									<div class="pdcardcon show" >
+										<ul class="fillin show">
+											<#include "/pctoken/offer/order-offer-uim.html" />
+										</ul>
+									</div>
+								</div>
+							</#if>
+						</#if>
+					</#list>
+				</#if>	
+				</div>
+			</div>
+			<!-- 发展人 -->
+			<div class="height18"></div>
+			<div id="dealerAidDiv" >
+				<@block name="dealer">
+					<#include "/order/order-dealer.html" />
+				</@block>
+			</div>
+			<!-- 备注 -->
+			<div class="height18"></div>
+			<div id="orderRemarkDiv" >
+				<@block name="remark">
+					<#include "/order/order-remark.html" />
+				</@block>
+			</div>
+			<!--省内订单属性展示-->
+			<div id="orderProvAttrDiv" style="display: none;">
+				<@block name="orderProvAttr">
+					<#include "/order/order-prov-attr.html" />
+				</@block>
+			</div>
+			
+		</div>
+	</div>
+	<div  id="div1" align="right" style="margin: 20px auto; padding:0 20px;display: none;">
+	    
+
+		<a id="fillNextStep"
+			href="javascript:void(0)" class="btna_o" style=" margin-left:20px;"><span>下一步</span></a>
+	</div>
+	<div id="div2" align="right" style="margin: 20px auto; padding:0 20px;display: none ">
+	    
+		<a id="fillLastStep" href="javascript:void(0)" class="btna_o"><span>上一步</span></a> 
+		<a id="fillNextStep1"
+			href="javascript:void(0)" class="btna_o" style=" margin-left:20px;"><span>下一步</span></a>
+	</div>
+</div>
+<script type="text/javascript">
+$(document).ready(function(){ 
+	   //如果是二次加载
+	   if(OrderInfo.reloadFlag=="N"){
+		    $("#div1").show();
+		    $("#div2").hide();
+	   }	
+	   else{
+		   if(OrderInfo.offid==null || OrderInfo.offid==""){
+			    $("#div2").show();
+			    $("#div1").hide();
+		   }
+		   else{
+			   $("#div1").show();
+			    $("#div2").hide();
+		   }
+		   
+	   }
+	
+	}); 
+</script>

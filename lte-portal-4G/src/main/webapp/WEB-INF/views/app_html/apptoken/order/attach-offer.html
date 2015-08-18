@@ -1,0 +1,62 @@
+<ul id="myTab" class="nav nav-tabs nav-justified tabsa">
+	<li class="dropdown active">
+		<a href="#" id="li_ordered_${prodId}" class="dropdown-toggle" data-toggle="dropdown">已订购 
+			<b class="caret"></b>
+		</a>
+		<ul class="dropdown-menu" role="menu" aria-labelledby="li_ordered_${prodId}">
+			<li><a href="#ordered_offer_${prodId}" tabindex="-1" data-toggle="tab">可选包</a></li>
+			<li><a href="#ordered_prod_${prodId}" tabindex="-1" data-toggle="tab">功能产品</a></li>
+		</ul>
+	</li>
+	<li class="dropdown">
+		<a href="#" id="li_ordering_${prodId}" class="dropdown-toggle" data-toggle="dropdown">已选择 
+			<b class="caret"></b>
+		</a>
+		<ul class="dropdown-menu" role="menu" aria-labelledby="li_ordering_${prodId}">
+			<li><a href="#ordering_offer_${prodId}" tabindex="-1" data-toggle="tab">可选包</a></li>
+			<li><a href="#ordering_prod_${prodId}" tabindex="-1" data-toggle="tab">功能产品</a></li>
+		</ul>
+	</li>
+	<li class="dropdown">
+		<a href="#" id="li_orderready_${prodId}" class="dropdown-toggle" data-toggle="dropdown">可订购
+		 	<b class="caret"></b>
+		</a>
+		<ul class="dropdown-menu" role="menu" aria-labelledby="li_orderready_${prodId}">
+		<#if labelMap.result?? &&(labelMap.result?size>1)>
+			<#list labelMap.result as item>
+			<li id="tab_${prodId}_${item.label}"><a href="#orderno_${prodId}" onclick="AttachOffer.changeLabel(${param.prodId},${param.prodSpecId},${item.label})" tabindex="-1" data-toggle="tab">${item.value}</a></li>
+			</#list>
+		</#if>
+			<li id="tab_${prodId}_10000"><a href="#orderno_${prodId}" onclick="AttachOffer.changeLabel(${param.prodId},${param.prodSpecId},10000)" tabindex="-1" data-toggle="tab">功能产品</a></li>
+		</ul>
+	</li>
+</ul>
+<div class="tab-content">
+	<#include "/apptoken/order/attach-offer-opened.html" />
+	<div class="tab-pane fade" id="ordering_offer_${prodId}">
+		<div class="list-group order-list" id="open_ul_${prodId}">
+		</div>
+	</div>
+	<div class="tab-pane fade" id="ordering_prod_${prodId}">
+		<div class="list-group order-list" id="open_serv_ul_${prodId}">
+		</div>
+	</div>
+	<div class="tab-pane fade" id="orderno_${prodId}">
+      	<div class="panel-body">
+	        <form>
+	            <div class="form-group has-feedback">
+	            <div class="input-group">
+	              <input type="text" class="form-control"id="search_text_${prodId}" name="search_text_${prodId}" onkeydown='if(event.keyCode==13){AttachOffer.searchAttachOfferSpec(${prodId},${param.offerSpecId},${param.prodSpecId})}' aria-describedby="inputSuccess2Status" placeholder="请输入您想要办理的附属业务的名称">
+	              <span class="input-group-btn">
+                      <button class="btn btn-default" type="button" id="btn_show_${prodId}" onclick="AttachOffer.searchAttachOfferSpec(${prodId},${param.offerSpecId},${param.prodSpecId})"> 搜索 </button>
+                      <button class="btn btn-default" type="button" id="btn_hide_${prodId}" onclick="AttachOffer.closeSearchAttach(${prodId})" style="display: none;"> 隐藏 </button>
+                  </span>
+                  </div>
+	            </div>
+	        </form>
+        </div>
+        <div id="attach_div_${prodId}" class="list-group" value=""></div>
+        <div class="list-group" id="attachSearch_div_${prodId}"> 
+          </div>
+      </div>
+</div>

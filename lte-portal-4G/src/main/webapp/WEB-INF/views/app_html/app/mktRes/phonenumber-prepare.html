@@ -1,0 +1,135 @@
+<script>
+$(function() {
+	$(".noUiSlidere").noUiSlider({
+		range: [0, 500],
+		start: [0, 500],
+		step: 10,
+		slide: function() {
+			var values = $(this).val();
+			$("#Greater").val(values[0]);
+			$("#Less").val(values[1]);
+		}
+	});
+});
+</script>
+<input type="hidden" id="subnum" value="" />
+<input type="hidden" id="subPage" value="" />
+<div class="container-fluid">
+  <div class="row" id="number">
+        <div class="row divtab">
+          <div id="nbrPoolDiv2" class="col-xs-10">
+          </div>
+          <div class="col-xs-2">
+            <button type="button" class="btn btn-default navbar-btn nav-justified no-mp" data-toggle="modal" data-target="#numberModal"> <span class="glyphicon glyphicon-search" aria-hidden="true"></span><br>
+            高级查询 </button>
+          </div>
+        </div>
+        <div id="number-list">
+		</div>
+      </div>
+</div>
+<nav class="navbar navbar-default navbar-fixed-bottom">
+  <div class="container-fluid">
+    <div class="btn-group btn-group-justified navbar-btn" role="group" aria-label="...">
+      <div class="btn-group" role="group">
+        <button type="button" class="btn btn-primary btn-lg" onclick="order.phoneNumber.btnBack(${prodId})"> <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>返回 </button>
+      </div>
+     </div>
+  </div>
+</nav>
+<!-- 密码弹出框-->  
+<div class="modal fade modal_search" id="app_password_dialog"  tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal_top">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="panel panel-default">
+          <div class="panel-body">
+            <form>
+            <div class="form-group">
+              <label>预占密码</label>
+              <div class="row">
+              	<div class="col-xs-4">
+                	<input type="password" id="pree_password_text" class="form-control" placeholder=""/>
+                </div>
+               </div>
+               </div>
+          </form>
+          </div>
+          <div class="divfoot modal-footer">
+          	<div class="col-xs-10">
+          <button type="button" onclick="order.phoneNumber.preePassword()" class="btn btn-default"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> 确定</button>
+          </div>
+          <div class="col-xs-2">
+          		<button type="button"  data-dismiss="modal" class="btn btn-default navbar-btn nav-justified no-mp" data-toggle="modal" data-target="numberModal"> <span class="glyphicon glyphicon-trash" aria-hidden="true"></span><br>
+            		关闭
+            	</button> 
+           </div>
+          </div>
+        </div>
+    </div>
+  </div>
+</div>
+</div>
+<!-- 号码查询 -->
+<div class="modal fade modal_search" id="numberModal" tabindex="-2" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal_top">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="panel panel-default">
+          <div class="panel-body">
+            <form>
+            <div class="form-group">
+              <label>自定义号码</label>
+              <div class="row">
+              	<div id="pnHeadDiv" class="col-xs-4">
+                </div>
+                <div class="col-xs-4">
+                	<input type="text" id="pnEnd" class="form-control" maxlength="4" onblur="javascript:if($(this).val()==''){$(this).val('最后四位');}" onfocus="javascript:if($(this).val()=='最后四位'){$(this).val('')}" aria-describedby="inputSuccess2Status" placeholder="最后四位">
+                </div>
+                <div id="pnCharacterId_basicDiv" class="col-xs-4">
+                	
+                </div>
+              </div>
+            </div>
+  <div class="form-group">
+    <label for="exampleInputEmail1">预存话费<small>（元）</small></label>
+    <div  class="row">
+    	<div class="col-xs-3"><input  class="form-control" id="Greater" placeholder=""></div>
+        <div class="col-xs-6"><div class="noUiSlider noUiSlidere"></div></div>
+        <div class="col-xs-3"><input  class="form-control" id="Less" placeholder=""></div>
+    </div>
+  </div>
+  <div class="form-group">
+  	<label>查预约号码</label>
+    <div class="row">
+    	<div class="col-xs-7">
+        	<div class="form-group has-feedback">
+              <input type="text"id="idCode" class="form-control" aria-describedby="inputSuccess2Status" placeholder="请输入预约号码">
+              <span class="glyphicon glyphicon-search form-control-feedback" aria-hidden="true"></span>
+            </div>
+        </div>
+        <div class="col-xs-5">
+	        <input type="checkbox" id="query_flag_01" name="query_flag_01" data-toggle="toggle" data-on="密码预占" data-off="密码预占" data-width="100%">
+	        <script> 
+	           $(function() { $('#query_flag_01').bootstrapToggle(); }) 
+	        </script>
+        </div>
+    </div>
+  </div>
+  
+  
+</form>
+          </div>
+          <div class=" divfoot modal-footer">
+          	<div class="col-xs-10">
+          <button type="button" id="btnNumSearch1" class="btn btn-default"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> 确定</button>
+          </div>
+          <div class="col-xs-2">
+          		<button type="button"  style="height: 42px;font-size: 14px;" data-dismiss="modal" class="btn btn-default" data-toggle="modal" data-target="numberModal"> <span class="glyphicon" aria-hidden="true"></span>关闭</button> 
+           </div>
+          </div>
+        </div>
+    </div>
+  </div>
+</div>
+</div>

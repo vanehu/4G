@@ -1,0 +1,28 @@
+<#if error??>
+${error}
+<#elseif custAuth.isValidate=="true" >
+<div class="main_div location main_warp">
+<ul class="usercon">
+    <li class="uicon">姓名</li><li id="partyName" class="ucon">${custAuth.custInfo.partyName}</li>
+    <li class="uicon">证件</li><li id="identityName" class="ucon">${custAuth.custInfo.identityName}/${custAuth.custInfo.idCardNumber}</li>
+    <li id="area" areaId="${custAuth.custInfo.areaId}" class="uicon">地区</li><li id="area" class="ucon">${custAuth.custInfo.areaName}</li>
+    <#if custQueryType!="queryOnly">
+    <li class="uicon">客户等级</li><li id="vipLevelName" class="ucon">${custAuth.custInfo.vipLevelName}</li>
+    <li class="uicon">客户分群</li><li id="segmentName" class="ucon">${custAuth.custInfo.segmentName}</li>
+  	</#if>
+    <li class="uedit">
+    <a id="custModifyId" onclick="javasrcrpt:order.prodModify.showCustInfoModify()" class="numberSearch loc_edit" <#if custQueryType="queryOnly">style="display: none;"</#if> ><span>修改</span></a>
+    <a onclick="javasrcrpt:order.cust.custReset()" class="numberSearch loc_refresh"><span>重新定位</span></a></li>   
+    </li>
+    <a id="orderbutton"  onclick="javasrcrpt:order.cust.btnQueryCustProdMore()" <#if custQueryType="queryOnly">style="display: none;"</#if> ><span>已订购业务</span><i class="arrow" id="arroworder"></i></a>
+</ul>
+</div>
+<div class="contract_tab_content " id="orderedprod" style="display: none">
+</div>
+<div id="prodInfo" class="main_body" style="display:none;">
+  <h2 class="h2_title">产品详情</h2>
+  <div id="prodDetail" style="margin:10px;"></div>
+</div>
+<#else>
+false
+</#if>

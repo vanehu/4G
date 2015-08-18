@@ -1,0 +1,304 @@
+<style type="text/css">
+<!--
+.btn-group-active{
+	background:#fff;
+	color:#ff8202;
+	box-shadow:none;
+	border:1px solid #ff8202;
+}
+-->
+</style>
+<div id="order_prepare" style="display:none;">
+<input type="hidden" id="subPage" value="${subPage}" />
+<div class="container-fluid">
+	<div class="row">
+		<ul id="myTab" class="nav nav-tabs nav-justified tabsa">
+            <li id="tentrance" class="active"><a href="#pakeage" onclick="order.service.init()" data-toggle="tab"><span>选套餐</span></a></li>
+			<li id="pentrance"><a href="#phone" onclick="mktRes.terminal.initPhone()" data-toggle="tab"><span>购手机</span></a></li>
+			<li id="nentrance"><a href="#number" onclick="order.phoneNumber.initPhonenumber('number')" data-toggle="tab"><span>选号码</span></a></li>
+			<div class="line"></div>
+		</ul>
+		<div id="myTabContent" class="tab-content no-body">
+			<!-- 套餐入口 -->
+			<div class="tab-pane fade in active" id="pakeage">
+				<div class="row divtab">
+					<div class="col-xs-10">
+						<input type="hidden" id="qryStr" value="乐享"/>
+						<div class="btn-group btn-group-justified btn-group-noborder"
+							data-toggle="buttons-radio" role="group" aria-label="...">
+							<div class="btn-group" role="group">
+								<button type="button" class="btn btn-default active" value="乐享" onclick="order.service.tabChange(this)">乐享套餐</button>
+							</div>
+							<div class="btn-group" role="group">
+								<button type="button" class="btn btn-default" value="积木" onclick="order.service.tabChange(this)">积木套餐</button>
+							</div>
+							<div class="btn-group" role="group">
+								<button type="button" class="btn btn-default" value="飞" onclick="order.service.tabChange(this)">飞Young套餐</button>
+							</div>
+						</div>
+					</div>
+					<div class="col-xs-2">
+			            <button type="button" class="btn btn-default navbar-btn nav-justified no-mp" data-toggle="modal" data-target="#search-modal"> <span class="glyphicon glyphicon-search" aria-hidden="true"></span><br>
+			          		  高级查询 </button>
+			          </div>
+				</div>
+				<div id="offer-list">
+				</div>
+			</div>
+			<!-- 手机入口 -->
+			<div class="tab-pane fade medialist" id="phone">
+				
+			</div>
+			<!-- 号码入口 -->
+			<div class="tab-pane fade" id="number">
+			    <div class="row divtab">
+					<div id="nbrPoolDiv" class="col-xs-10">
+						
+					</div>
+					<div class="col-xs-2">
+						            <button type="button" class="btn btn-default navbar-btn nav-justified no-mp" data-toggle="modal" data-target="#numberModal"> <span class="glyphicon glyphicon-search" aria-hidden="true"></span><br>
+                                                                                                                             高级查询 </button>
+					</div>
+				</div>
+				<div id="phonenumber-list">
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- Modal -->
+<div class="modal fade modal_search" id="search-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal_top">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="panel panel-default">
+          <div class="panel-body">
+            <form>
+            <!-- <div class="form-group has-feedback">
+              <input type="text" class="form-control" aria-describedby="inputSuccess2Status" placeholder="请输入套餐名称">
+              <span class="glyphicon glyphicon-search form-control-feedback" aria-hidden="true"></span>
+            </div> -->
+            	<div class="form-group">
+                  	<label for="exampleInputEmail1">价格区间（元）</label>
+                  	<div class="input-group">
+                   	<select id="select_price" class="selectpicker show-tick form-control" >
+                   		<option value="">不限</option>
+                	</select>
+		            <span class="input-group-addon select-span"></span>
+	         		</div>
+               </div>
+               <div class="form-group">
+                  	<label for="exampleInputEmail1">语音时长（分钟）</label>
+                  	<div class="input-group">
+                   	<select id="select_invoice" class="selectpicker show-tick form-control" >
+                   		<option value="">不限</option>
+                	</select>
+		            <span class="input-group-addon select-span"></span>
+	         		</div>
+               </div>
+               <div class="form-group">
+                  	<label for="exampleInputEmail1">流量（G）</label>
+                  	<div class="input-group">
+                   	<select id="select_influx" class="selectpicker show-tick form-control" >
+                   		<option value="">不限</option>
+                	</select>
+		            <span class="input-group-addon select-span"></span>
+	         		</div>
+               </div>
+			  <!-- <div class="form-group">
+			    <label for="exampleInputEmail1">价格区间<small>（元）</small></label>
+			    <div class="row">
+			    	<div class="col-xs-3"><input type="text" class="form-control" id="price_numa01" placeholder=""></div>
+			        <div class="col-xs-6"><div class="noUiSlider noUiSlidera"></div></div>
+			        <div class="col-xs-3"><input type="text" class="form-control" id="price_numa02" placeholder=""></div>
+			    </div>
+			  </div>
+			  <div class="form-group">
+			    <label for="exampleInputPassword1">语音时长<small>（分钟）</small></label>
+			    <div class="row">
+			    	<div class="col-xs-3"><input type="text" class="form-control" id="invoice_numb01" placeholder=""></div>
+			        <div class="col-xs-6"><div class="noUiSlider noUiSliderb"></div></div>
+			        <div class="col-xs-3"><input type="text" class="form-control" id="invoice_numb02" placeholder=""></div>
+			    </div>
+			  </div>
+			  <div class="form-group">
+			    <label for="exampleInputFile">流量<small>（M）</small></label>
+			    <div class="row">
+			    	<div class="col-xs-3"><input type="text" class="form-control" id="influx_numc01" placeholder=""></div>
+			        <div class="col-xs-6"><div class="noUiSlider noUiSliderc"></div></div>
+			        <div class="col-xs-3"><input type="text" class="form-control" id="influx_numc02" placeholder=""></div>
+			    </div>
+			  </div> -->
+  
+			</form>
+          </div>
+          <div class=" divfoot modal-footer">
+          	<div class="col-xs-10">
+          		<button type="button" class="btn btn-default" onclick="order.service.searchPack(1);"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> 确定</button>
+          	</div>
+          	<div class="col-xs-2">
+          		<button type="button" style="height: 42px;font-size: 14px;" class="btn btn-default navbar-btn nav-justified no-mp" data-toggle="modal" data-target="#search-modal"> <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+            		关闭
+            	</button>
+            </div>
+          </div>
+        </div>
+    </div>
+  </div>
+</div>
+</div>
+</div>
+<!-- 副卡弹出框 -->
+<div class="modal fade" id="vice_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal_wrapper">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="panel panel-default">
+          <div class="panel-body">
+            <form>
+            	<div id="div_content">
+                    <!-- <label for="vice" id="vice"></label>
+                    <div class="input-group">
+                      <span class="input-group-btn">
+                      <button class="btn btn-default" type="button"> - </button>
+                      </span>
+                      <input type="text" class="form-control" id="vice_num" value="0">
+                      <span class="input-group-btn">
+                      <button class="btn btn-default" type="button"> + </button>
+                      </span> </div> -->
+                  </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+          <button type="button" class="btn btn-default" id="btn_modal"><span class="glyphicon" aria-hidden="true"></span> 确定</button>
+<!--           <button type="button" class="btn btn-default" data-toggle="modal" data-target="#vice_modal"><span class="glyphicon" aria-hidden="true"></span> 取消</button>
+ -->          </div>
+        </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- 号码查询 -->
+<div class="modal fade modal_search" id="numberModal" tabindex="-2" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal_top">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="panel panel-default">
+          <div class="panel-body">
+            <form>
+            <div class="form-group">
+              <label>自定义号码</label>
+              <div class="row">
+              	<div id="pnHeadDiv" class="col-xs-4">
+                </div>
+                <div class="col-xs-4">
+                	<input type="text" id="pnEnd" class="form-control" maxlength="4" onblur="javascript:if($(this).val()==''){$(this).val('最后四位');}" onfocus="javascript:if($(this).val()=='最后四位'){$(this).val('')}" aria-describedby="inputSuccess2Status" placeholder="最后四位">
+                </div>
+                <div id="pnCharacterId_basicDiv" class="col-xs-4">
+                	
+                </div>
+              </div>
+            </div>
+  <div class="form-group">
+    <label for="exampleInputEmail1">预存话费<small>（元）</small></label>
+    <div  class="row">
+    	<div class="col-xs-3"><input  class="form-control" id="Greater" placeholder=""></div>
+        <div class="col-xs-6"><div class="noUiSlider noUiSlidere"></div></div>
+        <div class="col-xs-3"><input  class="form-control" id="Less" placeholder=""></div>
+    </div>
+  </div>
+  <div class="form-group">
+  	<label>预占号码查询</label>
+    <div class="row">
+    	<div class="col-xs-7">
+        	<div class="form-group has-feedback">
+              <input type="text"id="idCode" class="form-control" aria-describedby="inputSuccess2Status" placeholder="请输入预占号码">
+              <span class="glyphicon glyphicon-search form-control-feedback" aria-hidden="true"></span>
+            </div>
+        </div>
+        <div class="col-xs-5">
+	        <input type="checkbox" id="query_flag_01" name="query_flag_01" data-toggle="toggle" data-on="密码预占" data-off="密码预占" data-width="100%">
+	        <script> 
+	           $(function() { $('#query_flag_01').bootstrapToggle(); }) 
+	        </script>
+        </div>
+    </div>
+  </div>
+  
+  
+</form>
+          </div>
+          <div class=" divfoot modal-footer">
+          	<div class="col-xs-10">
+          <button type="button" id="btnNumSearch1" class="btn btn-default"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> 确定</button>
+          </div>
+          <div class="col-xs-2">
+          		<button type="button"  data-dismiss="modal" class="btn btn-default navbar-btn nav-justified no-mp" data-toggle="modal" data-target="numberModal"> <span class="glyphicon glyphicon-trash" aria-hidden="true"></span><br>
+            		关闭
+            	</button> 
+           </div>
+          </div>
+        </div>
+    </div>
+  </div>
+</div>
+</div>
+<div id="order" style="display: none;">
+</div>
+<!-- 选号页面用 -->
+<div class="item" id="phonenumberContent" style="display:none">
+ 
+</div>
+<script>
+//初始化
+$(function(){
+	//order.service.init();
+ 	var prodOfferId = "";
+	//获取二次加载结果集
+	var result = OrderInfo.reloadOrderInfo;
+	
+	//进行数据信息验证，是否是新装数据
+	var custOrderAttrs =result.orderList.orderListInfo.custOrderAttrs;
+	
+	if(custOrderAttrs==null || custOrderAttrs==""){
+		$.alert("提示","二次加载数据不完整，无法操作!")
+		return;
+	}
+	
+	var isRight="0";
+	
+	$.each(custOrderAttrs,function(){
+		if(this.itemSpecId=="30010024"){
+			if(this.value!="1"){
+				isRight="1";
+			}
+		}
+	});
+	
+	if(isRight=="1"){
+		$.alert("提示","不是新装受理流水号，请重试!");
+		return;
+	}
+	
+	OrderInfo.reloadOrderInfo = result;
+	//解析数据,订购几张副卡
+	var busiOrders = result.orderList.custOrderList[0].busiOrder;
+	//解析数据,订购几张副卡
+	var cardNum = 0;
+	$.each(busiOrders,function(index,busiOrder){
+		if(busiOrder.boActionType.actionClassCd==1300&&busiOrder.boActionType.boActionTypeCd=="1"&&busiOrder.busiObj.instId!="-1"){
+			cardNum = cardNum+1;
+		}
+		if(busiOrder.boActionType.actionClassCd==1200&&busiOrder.boActionType.boActionTypeCd=="S1"&&busiOrder.busiObj.instId=="-1"){
+			prodOfferId = busiOrder.busiObj.objId;
+			OrderInfo.provinceInfo.prodOfferId=prodOfferId;
+		}
+	});
+	OrderInfo.reloadProdInfo.cardNum = cardNum;
+	if(OrderInfo.provinceInfo.prodOfferId!=undefined&&OrderInfo.provinceInfo.prodOfferId!=""){
+		$.ecOverlay("<strong>套餐初始化中,请稍后....</strong>");  
+		order.service.buyService(OrderInfo.provinceInfo.prodOfferId,"");
+	}
+});
+</script>

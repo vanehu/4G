@@ -1,0 +1,56 @@
+<#if flag==0>
+<#if MID??>
+<span id="MID" style="float:right;margin:3px 25px 3px 0px;">本次查询MID：${MID}</span>
+</#if>
+<table width="100%" cellpadding="0" cellspacing="0" class="top_background tittle">
+  <tbody>
+    <tr>
+      <#if totalBalance=="none">
+      <td align="center" class="green" width="300px">无可用余额信息</td>
+      <#else>
+      <td align="center" class="green" width="300px">实时可用余额总计：<font id="totalBalance">${totalBalance?number/100} 元</font></td>
+      <input type="hidden" id="feeAmount" value="${feeAmount}"/>
+      </#if>
+      <td align="left">
+        <#if pageType=="pay">
+        <a id="payBalance" class="purchase" onclick="bill.balance.payBalance('${queryType}')">提取</a>
+        <#else>
+        <a id="payBalance" class="purchase" onclick="bill.balance.goToCashPerpare()">充值</a>
+        </#if>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<#if balanceDetail??>
+<table id="balanceList" width="100%" cellpadding="0" cellspacing="0">
+  <thead>
+    <tr>
+      <td align="center">余额账本描述</td>
+      <td align="center">余额账本还剩余额（元）</td>
+      <td align="center">余额账本当月可以使用额（元）</td>
+      <td align="center">当月已抵扣值（元）</td>
+      <td align="center">预授权余额（元）</td>
+      <td align="center">生效时间</td>
+      <td align="center">失效时间</td>
+    </tr>
+  </thead>
+  <tbody>
+    <#list balanceDetail as balanceItem>
+    <tr>
+      <td align="center">${balanceItem.balanceItemTypeDetail}</td>
+      <td align="center">${balanceItem.balanceAmount?number/100}</td>
+      <td align="center">${balanceItem.balanceAvailable?number/100}</td>
+      <td align="center">${balanceItem.balanceUsed?number/100}</td>
+      <td align="center">${balanceItem.balanceReserved?number/100}</td>
+      <td align="center">${balanceItem.effDate}</td>
+      <td align="center">${balanceItem.expDate}</td>
+    </tr>
+    </#list>
+  </tbody>
+</table>
+</#if>
+<#elseif flag==1>
+<#if errorMsg??><i><img width="25" height="25" style="margin:5px;" src="${contextPath}/image/icon/tip.png"></i><p style="position:relative;left:40px;bottom:30px;margin-bottom:-20px;width:97%;word-break:break-all;color:red;">查询失败：${errorMsg}</p><#else>fail</#if>
+<#else>
+error
+</#if>

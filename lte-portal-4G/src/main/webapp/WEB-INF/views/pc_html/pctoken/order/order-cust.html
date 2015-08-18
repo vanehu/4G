@@ -1,0 +1,85 @@
+<@override name="title">中国电信4G营业受理</@override>
+<@override name="header">
+<#include "/pcpublic/busi-js-tpl.html"/>
+<#include "/pcpublic/common-js-tpl.html" />
+<script src="${contextPath}/js/pc-js/busi-js/cust/uiAttachOffer.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/pc-js/busi-js/cust/uiOfferQuery.js?${jsversion}" type="text/javascript"></script>
+
+</@override>
+<@override name="content">
+
+<!--内容-->
+<div class="main_div" style="width:100%;display: none;" id="main_div_1" >
+    <div class="main_content" style="background:#71ab5a;">
+        <#if Session["_session_pad_flag"]??&&Session["_session_pad_flag"]=="1">
+            <div>
+                <#else>
+                    <div class="homecon">
+        </#if>
+
+        <div id="div_main_index" class="main_index">
+            <div id="framecenter" style="min-height: 300px;height: auto !important; repeat-x fixed center;" >
+                <div title="可选包">
+                 	<input type="hidden" id="provIsale_" value="${provIsale_}"/>
+                 	<input type="hidden" id="phoneNum_" value="${phoneNum_}"/>
+                    <div>
+                        <#include "/pctoken/order/order-template-sub.html"/>
+                    </div>
+
+                    <div class="main_bottom"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--弹出框的内容-->
+<div class="easyDialogdiv" style="width:500px;height:400px;" id="moneyAdd">
+   	<div class="easyDialogclose" id="moneyclose"></div>
+   	<div id="addContent"></div>
+</div>
+<div class="easyDialogdiv" style="width:400px;height:200px;vertical-align: middle;" id="packageTip_dialog" >
+  <div id="infoTipContent" style="height: 200px;"></div>
+</div>
+
+<#include "/validate-window.html"/>
+
+<script type="text/javascript">
+	$(document).ready(function() {
+		//初始化参数数据
+		var provIsale_="${provIsale_}";
+		var redirectUri_="${redirectUri_}";
+		var isFee_="${isFee_}";
+		var mktResInstCode_="${mktResInstCode_}";
+		var orderJson;
+		
+		OrderInfo.provinceInfo.provIsale=provIsale_;
+		OrderInfo.provinceInfo.redirectUri=redirectUri_;
+		OrderInfo.provinceInfo.isFee=isFee_;
+		OrderInfo.provinceInfo.mktResInstCode=mktResInstCode_;
+		
+		//是否重载
+		var reload_="${reloadFlag_}";
+		
+		order.uiCust.packageInfo.reloadFlag="${reloadFlag_}";
+		
+		//重载数据
+		if(reload_=="N"){
+			order.uiCust.orderInfo=${orderJson_};
+		}
+		
+		//可选包和变更服务
+		order.uiCust.custQuery();
+	});
+</script>
+
+</@override>
+
+<#if Session["_session_portal_type"]?? && Session["_session_portal_type"]=="MVNO" >
+    <@extends name="/mvno-template.html"/>
+    <#else>
+        <@extends name="/pcpublic/main-template.html"/>
+</#if>
+<#if Session._loginUrl ?? && (Session._loginUrl!="") >
+<iframe style="display:none;"  src='${Session._loginUrl}'></iframe>
+</#if>

@@ -1,0 +1,346 @@
+<@override name="title">终端预约</@override> 
+<@override name="header">
+<#include "/busi-js-tpl.html"/>
+<script src="${contextPath}/js/busi-js/order/order-zdyy.js?${jsversion}" type="text/javascript"></script>
+<script  type="text/javascript">
+function createDialog(){
+	ec.form.dialog.createDialog({"initCallBack":function(){},
+	"submitCallBack":function(dialogForm,dialog){},
+	width:980,height:450,
+});
+}
+</script>
+</@override> 
+<@override name="content">
+<!--内容-->
+<div class="main_div"> 
+  <div class=" main_warp">
+  <div class="ordercon">
+  <!--订单确认-->
+   <div class="order_confirmation ordertabcon">
+
+    <!--客户定位开始-->
+    <!--客户定位未定位-->
+	<div id="custQryDiv" class="main_div location main_warp">
+		<form id="custQueryFirstForm">
+		<input type="hidden" value="${fromProvFlag}" id="fromProvFlag"/>
+		<input type="hidden" value="${provIsale}" id="provIsale"/>
+		<input type="hidden" value="${provIdentityCd}" id="provIdentityCd"/>
+		<input type="hidden" value="${provIdentityNum}" id="provIdentityNum"/>
+		<input type="hidden" value="${provAreaId}" id="provAreaId"/>
+	    <ul class="usercon">
+	    <li class="ulocation" >
+		<h2 style="margin: 4px 8px 0 5px;">受理地区</h2>
+		</li>
+		<li class="usersearch">
+		   <input id="diffPlaceFlag" type="hidden" value="${DiffPlaceFlag}"> 
+			<#if Session["_ecs_login_session_key"].currentChannelId ?? && (Session["_ecs_login_session_key"].currentChannelId!="") >
+			  <input type="text" class="numberTextBox" style="margin-left:5px; width:100px" readonly id="p_cust_areaId_val" onclick="order.cust.chooseArea()" value="${Session["_ecs_login_session_key"].currentAreaAllName}" placeholder="请选择地区" readonly />
+	          <input type="hidden" id="p_cust_areaId" value="${Session["_ecs_login_session_key"].currentAreaId}">
+	          <input type="hidden" DiffPlaceFlag="${DiffPlaceFlag}">
+	        <#else>
+	          <input type="text" class="numberTextBox" style="margin-left:5px; width:100px" readonly id="p_cust_areaId_val" onclick="order.cust.chooseArea()"   value="" placeholder="请选择地区" />
+	          <input type="hidden" id="p_cust_areaId" >
+	          <input type="hidden" DiffPlaceFlag="${DiffPlaceFlag}">
+	         </#if>
+        </li>
+		<li class="ulocation">
+			<h2 style="margin: 4px 8px 0 5px;">客户定位</h2>
+		</li>
+		<li class="usersearch">
+		<select onchange="order.cust.custidentidiesTypeCdChoose(this,'p_cust_identityNum')" id="p_cust_identityCd" class="selectNumbertype" style="width:118px;">
+                                  	  	<option value="-1" >接入号码</option>
+                                  	  	<option value="acctCd" >合同号</option>
+                                  	  	<option value="custNumber" >客户编码</option>
+        </select>
+        <div id="custList" class="usersearchcon" ></div>
+        </li>
+		<li class="usersearch">
+			<input name="" type="text" class="numberTextBox" id="p_cust_identityNum" onkeyup="value=value.replace(/[^\w\.\/]/ig,'')" 
+				placeHolder="请输入接入号码" data-validate="validate(isTelecomOridCardCheck:请输入合法接入号码) on(blur)" style="width:158px;"/>
+		</li>
+		
+        <li>
+        <input id="isAppointNum" type="checkbox" checked="true" style="margin: 15px 5px 0px 5px;float:left" onclick="order.cust.isAppointNum()">
+        <label style="float:left; margin:10px 5px 0px 0px">指定号码</label>
+        </li>
+        <li class="ubtn">
+		    <a class="btn_h30" id="usersearchbtn"  href="javascript:void(0)"  class="btn" style="margin-left:30px;"><span>查 询</span></a>
+		    <a class="btn_h30" id="readCertBtn" onclick="javascript:order.cust.readCert()"><span>读 卡</span></a>
+		    <a class="btn_h30" id="createUserbtn" onclick="javascript:order.cust.showCustCreate(this)"><span>新建客户</span></a>
+		</li>
+		
+		</ul>
+		</form>
+	</div>
+	<object id="CertCtl" type="application/cert-reader" width="0" height="0"></object>
+    <!--客户定位未定位 end-->
+	<!--客户定位已定位-->
+	<div id="custInfo"  style="display:none"></div>
+	<!--客户定位已定位 end-->
+	<!--用户鉴权弹窗-->
+	<div class="easyDialogdiv" style="height:300px;display:none" id="auth">
+	<div class="easyDialogclose" id="authClose"></div>
+	<form id="custAuthForm">
+	<h1 class="easyDialogTitle">客户身份鉴权</h1>
+	<div class="infoBox">
+		<table class="network">
+                          <tbody>
+                          <tr>
+                                <td width="100"><label class="f_red">*</label><label id="custAuthTypeName">产品密码：</label></td>
+                                <td width="300"><input id="authPassword" type="password" placeHolder="请输入密码" data-validate="validate(required:密码不能为空, maxlength:密码长度最多为{arg1}(12)) on(blur)" class="inputWidth150px"><a  class="purchase" id="custAuthbtn" href="javascript:void(0)">校验</a><a class="purchase" id="jumpAuth" style="display:none" onclick="order.cust.jumpAuth()">跳过校验</a>
+                                </td>
+                          </tr>   
+
+                        </tbody>
+         </table>
+    </div>
+    </form>
+	</div>
+    <!--用户鉴权弹窗 end-->
+    <!--用户鉴权弹窗-身份证号-->
+	<div class="easyDialogdiv" style="height:300px;display:none" id="authID">
+	<div class="easyDialogclose" id="authIDClose"></div>
+	<form id="custAuthFormID">
+	<h1 class="easyDialogTitle">客户身份鉴权</h1>
+	<div class="infoBox">
+		<table class="network">
+                          <tbody>
+                          <tr>
+                                <td width="100">
+                                    <label class="f_red">*</label>
+                                    <label id="custAuthTypeNameID">身份证号：</label>
+                                </td>
+                                <td width="300">
+                                    <input id="authIDTD" type="password" placeHolder="请输入身份证号" data-validate="validate(required:身份证不能为空,idCardCheck:请准确填写身份证号码) on(blur)" class="inputWidth150px">
+                                    <a class="purchase" id="readCertBtnID" onclick="order.cust.readCertWhenAuth()">读卡</a>
+                                    <a  class="purchase" id="custAuthbtnID" href="javascript:void(0)">校验</a>
+                                    <a class="purchase" id="jumpAuthID" style="display:none" onclick="order.cust.jumpAuth()">跳过校验</a>
+                                </td>
+                          </tr>
+                        </tbody>
+         </table>
+    </div>
+    </form>
+	</div>
+    <!--用户鉴权弹窗-身份证号 end-->
+    <!--客户新增弹出窗-->
+    <div class="easyDialogdiv" style="width:650px;height:450px;display:none" id="user_add">
+    	<div class="easyDialogclose" id="useraddclose"></div>
+    	<form id="custCreateForm">
+    	<table class="contract_list">
+            <thead>
+                <tr>
+                    <td>客户新增</td>
+                </tr>                                                    
+            </thead>
+        </table>
+                <div class="infoBox">
+                    <table class="network" style="margin: 0px 15px;">
+                          <tbody>
+                          <tr>
+                                <td width="60"> 客户姓名：</td>
+                                <td width="430">
+                                  <input type="text" placeHolder="请准确填写客户姓名" data-validate="validate(required:请准确填写客户姓名) on(blur)" class="inputWidth228px" maxlength="64" id="cCustName"/><label class="f_red">*</label>
+                                </td>
+                          </tr>
+                          <tr>
+                                <td> 客户类型：</td>
+                                <td>
+                                      <select id="partyTypeCd" onchange="order.cust.partyTypeCdChoose(this,'identidiesTypeCd')">
+                                        <option value=1 >个人</option>
+                                        <option value=2>政企客户</option>
+                                      </select>
+                                      <label class="f_red">*</label>
+                                </td>
+                          </tr>
+                          <tr>
+                                <td> 证件类型：</td>
+                                <td> 
+                                	<div id="div_identidiesType">
+                                	<select id="identidiesTypeCd" onchange="order.cust.identidiesTypeCdChoose(this,'cCustIdCard')"></select>
+                                    <label class="f_red">*</label>
+                                    </div>
+                                    
+                                </td>
+                          </tr>
+                          <tr>
+                                <td> 证件号码：</td>
+                                <td>
+                                  <input type="text" onkeyup="value=value.replace(/[^\w\.\/]/ig,'')" placeHolder="请输入合法身份证号码" data-validate="validate(idCardCheck:请输入合法身份证号码) on(blur)" maxLength="100" class="inputWidth228px" id="cCustIdCard"/><label class="f_red">*</label>
+                                  <a class="btn_h30" id="readCertBtnCreate" onclick="javascript:order.cust.readCertWhenCreate()"><span>读 卡</span></a>
+                                </td>
+                          </tr>
+
+                          <tr>
+                                <td width="60"> 客户地址：</td>
+                                <td width="430">
+                                  <input type="text" placeHolder="请填写客户地址"  class="inputWidth228px" data-validate="validate(required:请准确填写客户地址) on(blur)" maxlength="64" id="cAddressStr"/><label class="f_red">*</label>
+                                </td>
+                          </tr>
+                          <tr>
+                                <td width="60"> 通信地址：</td>
+                                <td width="430">
+                                  <input type="text" placeHolder="请填写通信地址"  class="inputWidth228px" data-validate="validate(required:请准确填写通信地址) on(blur)" maxlength="64" id="cMailAddressStr"/><label class="f_red">*</label>
+                                </td>
+                          </tr>
+                          <tr>
+                          <tr>
+                                <td> 联系人名称：</td>
+                                <td>
+                                  <input type="text" placeHolder="请填写联系人名称"  class="inputWidth228px" maxlength="32" id="discontactName" onchange="javascript:$('#contactName').val($(this).val())"/>
+                                </td>
+                          </tr><tr>
+                                <td> 家庭电话：</td>
+                                <td>
+                                  <input type="text" placeHolder="请填写家庭电话"  class="inputWidth228px" maxlength="30" id="dishomePhone" data-validate="validate(contactTel2) on(blur)" onchange="javascript:$('#homePhone').val($(this).val())"/>
+                                </td>
+                          </tr><tr>
+                                <td> 办公室电话：</td>
+                                <td>
+                                  <input type="text" placeHolder="请填写办公室电话"  class="inputWidth228px" maxlength="32" id="disofficePhone" data-validate="validate(contactTel2) on(blur)" onchange="javascript:$('#officePhone').val($(this).val())"/>
+                                </td>
+                          </tr><tr>
+                                <td> 移动电话：</td>
+                                <td>
+                                  <input type="text" placeHolder="请填写移动电话"  class="inputWidth228px" maxlength="32" id="dismobilePhone" data-validate="validate(isTelPhone:请输入11位手机号码.) on(blur)" onchange="javascript:$('#mobilePhone').val($(this).val())"/>
+                                </td>
+                          </tr>
+                                <td ><a onclick="order.cust.btnMoreProfile()" href="javascript:void(0)">更多属性>></a></td><td></td>
+                          </tr>
+                        </tbody>
+                    </table>
+                    <div id="partyProfile" style="display:none"></div>               
+                </div>
+                <!--上下步按钮-->
+                <div align="center" style="margin: 20px auto;">
+                    <a class="btna_o" id="createcustsussbtn"  href="javascript:void(0)"><span >确认</span></a>
+                    <button type="reset" id="btncustreset"style="display:none">ssss</button>
+                    <a style=" margin-left:20px;" class="btna_o" href="javascript:void(0)" id="custresetBtn"><span>重置</span></a>
+                </div> 
+               </form>    
+    </div>
+    <!--客户新增弹出窗结束 -->
+    <!--客户定位结束-->
+    <!--订单准备-->
+    <div id="zdyypage" class="main_body">
+    <input id="pageType" type="hidden" value="zdyy"/> 
+    <h5 class="s_title">终端选择</h5>
+    <table class="contract_list">
+	  <thead>
+    	<tr>
+    		<td>终端名称</td>
+    		<td>终端颜色</td>
+    		<td>预约类型</td>
+    		<td>预约政策</td>
+            <td>预约数量
+            <a id="adddealer" class="purchase" href="javascript:order.zdyy.showTerminalList();" style="margin: 0px -53px 0 70px;">选择终端</a></td>
+        </tr>                                                    
+      </thead>
+      <tbody id="zdyyterminalTbody">
+      </tbody>
+    </table>
+    <!--终端选择弹窗-->
+    <div class="easyDialogdiv" style="width:1080px;height:460px;" id="div_terminalList_dialog">
+    </div>
+    <div id="deliveryInfo">
+      <div class="height18"></div>
+      <h5 class="s_title">提货信息</h5>
+      <ul class="fillin show">
+  	    <li>
+          <label>提货方式：</label>
+          <select id="deliveryMethod"></select>
+          <label class="f_red">*</label>
+        </li>
+        <li>
+          <label>提货地址：</label>
+          <input type="text" class="inputWidth183px"  id="deliveryAddress"/>
+          <label class="f_red">*</label>
+        </li>
+        <li>
+          <label>提货时间：</label>
+          <input type="text" class="numberTextBox" style="width:160px" id="p_startDt" readonly="readonly" value="${p_startDt}"  />
+          <label class="f_red">*</label>
+        </li>
+      </ul>
+      <div class="height18"></div>
+    </div>
+    <!-- 协销人展示 -->
+    <div id="dealerAidDiv" style="display:none;">
+	  <@block name="dealer">
+		  <#include "/order/order-dealer.html" />
+	  </@block>
+    </div>
+    <div id="beizhu" style="display:none;">
+      <div class="height18"></div>
+      <h5 class="s_title">订单备注</h5>
+      <ul class="fillin">
+        <li class="full">
+          <label>订单备注：</label>
+          <textarea id="order_remark" class="order-remark" name="beizhu" rows="4"></textarea>
+        </li>
+      </ul>
+    </div>
+  </div>
+    <!-- 订单确认页面-->
+    <div class="main_warp" id="order_confirm" style="display:none"></div>
+   </div>
+   </div>
+  <!--订单填写 end-->
+  <div id="tijiao" align="right" style="margin: 20px auto; padding:0 20px;"> <a class="btna_o" onclick="order.zdyy.suborderzdyy()"><span >提交订单</span></a></div>
+  <input type="hidden" id="qysl" value="sysl">
+  <input type="hidden" id="terflag" value="${terflag}">
+ </div>
+</div> 
+  <!--内容 end--> 
+
+<!-- 发展人管理弹窗 -->  
+<div id="div_attach_dialog" class="easyDialogdiv" style="width:980px;height:460px;">
+	<div class="easyDialogclose" id="staff_dialog_close" onclick="easyDialog.close()"></div>
+	<table class="contract_list">
+		<thead>
+			<tr><td>操作</td><td>号码</td><td>发展业务</td></tr>
+		</thead>
+		<tbody id="attach_tbody">
+		</tbody>
+	</table>
+	<div align="center" style="margin: 20px auto;">
+		<a class="btna_o" href="javascript:void(0)" onclick="order.dealer.addAttachDealer()"><span>确认</span></a>
+		<a class="btna_o" href="javascript:void(0)" onclick="easyDialog.close()" style=" margin-left:20px;"><span>取消</span></a>
+	</div>
+</div>
+<!--发票弹出框的内容-->
+<#include "/print/invoice-prepare.html"/>
+<!--弹出层-->
+
+<script>
+$(document).ready(function(e) {
+	var $ = function(){
+		return document.getElementById(arguments[0]);
+	};
+		
+	var btnFn = function( e ){
+		alert( e.target );
+		return false;
+	};
+	
+	$('addpro').onclick = function(){
+		easyDialog.open({
+			container : 'addproducts'
+		});
+	};
+	$('addproductsclose').onclick = function(){
+		easyDialog.close();
+	};
+});
+</script>
+<script type="text/javascript"> 
+$(".allsort").hoverForIE6({current:"allsorthover",delay:0});
+$(".allsort .item").hoverForIE6({delay:0});
+</script>
+</@override>
+<#if Session["_session_portal_type"]?? && Session["_session_portal_type"]=="LTE" >
+<@extends name="/content-template.html"/>
+<#else>
+<@extends name="/mvno-template.html"/>
+</#if>

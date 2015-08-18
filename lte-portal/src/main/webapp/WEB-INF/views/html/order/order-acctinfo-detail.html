@@ -1,0 +1,102 @@
+<#if flag==0>
+<div class="height18"></div>
+<h5 class="s_title">修改信息</h5>
+<ul class="fillin" id="defineNewAcct">
+  	<li class="full">
+    	<label>帐户名称：</label>
+    	<input type="text" class="inputWidth250px" value="${acctName}" id="acctName" style="width:280px;"/>
+    	<label class="f_red">*</label>
+    	<input type="hidden" id="partyId" value="${partyId}"/>
+  	</li>
+  	<li class="full" id="credit" style="display:none;">
+  		<label style="width:90px;">信用额度 (元)：</label>
+  		<input type="text" class="inputWidth250px" value="${creditLimit}" id="creditLimit" style="width:150px;"/>
+  		<label class="f_red">*</label>
+  	</li>  
+	<li>
+		<label>支付方式：</label>
+		<select id="paymentType" name="${paymentAccountId}" class="inputWidth250px" style="width:95px;" onchange="acct.acctModify.paymentType()" <#if paymentType=="x">disabled="disabled"</#if>>
+	      <#if Session["_session_portal_type"]?? && Session["_session_portal_type"]=="MVNO">
+			<#if paymentType=="100000">
+			<option value="100000" style="color:blue;">现金</option>
+<!-- 			<option value="110000">银行</option> -->
+		    <#elseif paymentType=="110000">
+<!-- 			<option value="110000" style="color:blue;">银行</option> -->
+			<option value="100000">现金</option>
+			<#else>
+			<option value="100000">信息获取失败</option>
+		    </#if>
+		  <#else>
+			<option value="100000" style="color:blue;">现金</option>
+		  </#if>
+		</select> 
+		<input type="text" class="inputWidth183px bank" value="${bankName}" readonly="readonly" onclick="acct.acctModify.queryBank(0)" id="bankName" placeHolder="请查询并选择银行"/>
+		<label class="f_red bank">*</label>
+		<input type="hidden" id="bankId" value="${bankId}"/>										
+	</li>
+	<li class="bank">
+		<label>银行帐号：</label>
+		<input type="text" class="inputWidth183px" value="${bankAcct}" style="width:140px;" id="bankAcct"/>	
+		<label class="f_red">*</label>
+		<label style="width:60px;">支付人：</label>
+		<input type="text" class="inputWidth183px" value="${paymentMan}" style="width:80px;" id="paymentMan"/>
+	</li>
+	<li>
+	 	<label>账单投递方式：</label>
+	 	<select id="postType" class="inputWidth250px" style="width:95px;" onchange="acct.acctModify.billPostType()">
+	 		<#if postType??>
+	 		<option value="${postType}" style="color:blue;"><#if postType=="11">邮寄<#elseif postType=="12">传真<#elseif postType=="13">Email<#elseif postType=="14">短信<#elseif postType=="15">快递<#else>不投递账单</#if></option>
+	 		</#if>
+	 		<option value="-1">不投递账单</option>	
+	   <!-- <option value="11">邮寄</option>
+	   		<option value="12">传真</option>
+	 		<option value="13">Email</option>
+	 		<option value="14">短信</option>
+	 		<option value="15">快递</option> --> 
+	 	</select>	 	
+		<input type="text" class="inputWidth183px billPost" value="${postAddress}" id="postAddress"/>
+		<label class="f_red billPost">*</label>		
+	 </li>
+	 <li class="billPost">
+	 	<label>邮编：</label>
+		<input type="text" class="inputWidth183px" value="${zipCode}" style="width:140px;" id="zipCode"/>	
+		<label style="margin-left:15px;width:60px;">收件人：</label>
+		<input type="text" class="inputWidth183px" value="${consignee}" style="width:80px;" id="consignee"/>		 	 	
+	 </li>
+	 <li class="billPost">
+	 	<label>账单内容：</label>
+		<select id="billContent" class="inputWidth250px" style="width:95px;" onchange="acct.acctModify.billContent()" <#if billContent=="x">disabled="disabled"</#if>>
+			<#if billContent??>
+			<option value="${billContent}" style="color:blue;"><#if billContent=="11">账单<#elseif billContent=="12">账单和详单<#elseif billContent=="13">详单<#elseif billContent=="14">发票<#else>信息获取失败</#if></option>
+			</#if>
+	   <!-- <option value="11">账单</option>
+			<option value="12">账单和详单</option>
+			<option value="13">详单</option>
+			<option value="14">发票</option> -->  
+		</select>
+		<label class="f_red">*</label>
+		<label id="receipt" style="width:115px;text-align:center;color:red;display:none;">不支持电子寄送方式</label>				
+	 </li>
+	 <li class="billPost">
+	 	<label>投递周期：</label>
+		<select id="postCycle" class="inputWidth250px" style="width:65px;margin-left:3px;" <#if postCycle=="x">disabled="disabled"</#if>>
+			<#if postCycle??>
+			<option value="${postCycle}" style="color:blue;"><#if postCycle=="3">月<#elseif postCycle=="4">季度<#elseif postCycle=="5">半年<#elseif postCycle=="6">年<#else>信息获取失败</#if></option>
+			</#if>
+	   <!-- <option value="3">月</option>
+			<option value="4">季度</option>
+			<option value="5">半年</option>
+			<option value="6">年</option> -->
+		</select>
+		<label class="f_red">*</label>		 		
+	 </li>
+</ul>
+<div class="easyDialogdiv" style="width:980px;height:400px;" id="div_bank_dialog">
+
+</div>
+<div class="height18"></div> 
+<#elseif flag==1>
+<#if failInfo??><i><img width="25" height="25" style="margin:5px;" src="${contextPath}/image/icon/tip.png"></i><p style="position:relative;left:40px;bottom:30px;margin-bottom:-20px;width:97%;word-break:break-all;color:red;">查询失败：${failInfo}</p><#else>fail</#if>
+<#else>
+error
+</#if>

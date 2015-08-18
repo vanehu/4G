@@ -1,0 +1,68 @@
+<div class="order_confirmation">
+	<h2 class="h2_title">
+		<span>订购/退订功能可选包</span>
+		<span class="showhide"></span>
+	</h2>
+	<div class="main_body">
+		<div class="cardtabcon">
+			<div class="pdcardcon show">
+				<h5 class="s_title">可选包/功能</h5>
+				<div class="infoBox">
+					<#include "/offer/attach-offer.html" />
+				</div>
+			</div>
+		</div>
+		<div class="height18"></div>
+		
+		<div id="uimDiv_${prodId}" style="display: none;">
+			<h5 class="s_title">补换卡： </h5>
+			<div class="pdcardcon show" >
+				<ul class="fillin show">
+					<#include "/order/order-uim.html" />
+				</ul>
+			</div>
+		</div>
+		<!-- 发展人 -->
+		<div class="height18"></div>
+		<div id="dealerAidDiv" >
+			<@block name="dealer">
+				<#include "/order/order-dealer.html" />
+			</@block>
+		</div>
+
+		<!-- 备注 -->
+		<div class="height18"></div>
+		<div id="orderRemarkDiv" >
+			<@block name="remark">
+				<#include "/order/order-remark.html" />
+			</@block>
+		</div>
+	</div>
+</div>
+
+<div align="right" style="margin: 20px auto; padding:0 20px;">
+	<a id="fillLastStep" href="javascript:order.prodModify.cancel();" class="btna_o"><span>取消</span></a> <a
+		href="javascript:SoOrder.submitOrder()" class="btna_o" style=" margin-left:20px;"><span>下一步</span></a>
+</div>
+<!-- 密码弹出框-->  
+<div class="easyDialogdiv" style="width:725px;height:400px;display: none;" id="offer_dialog" >
+	<div class="easyDialogclose" onclick="easyDialog.close()"></div>
+  	<table class="contract_list rule">
+        <thead>
+            <tr>
+                <td colspan="2">信息确认</td>
+            </tr>                                                    
+        </thead>
+  	</table>
+  	<br/>
+  	<div class="form-content">
+	    <div style="margin:0px 10px;">
+	    	<div id="offer_serv"></div>
+	      	<div align="center" style="margin: 20px auto;">
+	      		<a href="javascript:void(0)" onclick="SoOrder.orderPrepare()" class="btna_o"><span>确认</span></a>
+	      			<button style="display:none" id="btncustreset" type="reset">ssss</button>
+	        	<a href="javascript:easyDialog.close();" class="btna_o" style=" margin-left:20px;"><span>取消</span></a>
+	      	</div>
+	    </div>
+  	</div>
+</div>

@@ -1,0 +1,74 @@
+<#if (pageModel.list)?? &&((pageModel.list)?size>0)>
+    <table class="numberList" >
+       <thead>
+	     <tr>
+	       <td width="15%">批次号</td>
+	       <td width="10%">主接入号</td>
+	       <td width="14%">uim卡号</td>
+	       <!--<td width="10%">区号</td> -->
+	       <!--<td width="15%">创建时间</td>  -->
+	       <td width="10%">受理时间</td>
+	       <td width="10%">受理状态</td>
+	       <td width="16%">反馈信息</td>
+	       <td width="5%">操作</td>
+	       <td width="10%">订单状态</td>
+	     </tr>
+	     </thead>
+	     <tbody>
+	     <#list pageModel.list as childList>
+	     	 <tr>
+	     	 	<td>${childList.groupId}</td>
+	     	 	<td>
+	     	 	<#if childList.boProdAn=="">
+	     	 	${childList.accessNumber}
+	     	 	<#else>
+	     	 	${childList.boProdAn}
+	     	 	</#if>
+	     	 	</td>
+	     	 	<td>${childList.boProd2Td}</td>
+	     	 	<!-- <td>${childList.zoneNumber}</td> -->
+	     	 	<!--  <td>${childList.createDt}</td>-->
+	     	 	<td>${childList.genOlDt}</td>
+	     	 	<td>
+	     	 	<#if childList.statusCd=="PC">派发成功
+	     	 	<#elseif childList.statusCd=="PD">派发失败
+	     	 	<#elseif childList.statusCd=="Q">导入成功
+	     	 	<#elseif childList.statusCd=="S">购物车生成成功
+	     	 	<#elseif childList.statusCd=="X">购物车生成失败
+	     	 	<#elseif childList.statusCd=="PW">正在派发中
+	     	 	<#elseif childList.statusCd=="C">发送后端成功
+	     	 	<#elseif childList.statusCd=="PE">等待重新派发
+	     	 	<#elseif childList.statusCd=="F">发送后端失败
+	     	 	<#elseif childList.statusCd=="DL">受理处理中
+	     	 	<#elseif childList.statusCd=="RC">返销成功
+	     	 	</#if>
+	     	 	</td>
+	     	 	<!-- <td>${childList.msgInfo}</td> -->
+	     	 	<td>
+	     	 		<#if childList.statusCd !="C" && (childList.msgInfo?length > 20)>
+	   					<a class="cartLink_fail" style="color:red;" onclick="order.batch.slideFailInfo(this)">【处理失败】</a>
+	   					<p style="display:none;line-height:20px;">${childList.msgInfo}</p>
+					<#else>
+	   					${childList.msgInfo}
+					</#if>
+				</td>
+	     	 	<td>
+	     	 		
+	     	 	</td>
+	     	 	<td>
+	     	 		${childList.orderStatusName}
+	     	 	</td>
+	     	 </tr>
+	     </#list>
+	   </tbody>
+	</table>
+	
+<@portal.modelPagination pageModel 5 "order.batch.batchImportList"/>
+<script src="${contextPath}/js/our-js/ec.pagination.js?${jsversion}" type="text/javascript"></script>
+<#else>
+    <div class="no_search"> 
+		<div class="h1">
+			<img style="vertical-align:middle" src="${contextPath}/image/common/query_search.gif" />&nbsp;&nbsp;抱歉，没有找到相关的记录，请尝试其他筛选条件。
+		</div>
+	</div>
+</#if>

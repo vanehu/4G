@@ -1,0 +1,84 @@
+<@override name="title">${batchTypeName}</@override>
+<@override name="header">
+<script src="${contextPath}/js/4g-js/order/orderInfo.js" type="text/javascript"></script>
+<script src="${contextPath}/js/busi-js/batchOrder/batchOrder.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/busi-js/batchOrder/batOrderCart.js?${jsversion}" type="text/javascript"></script>
+</@override>
+<@override name="content">
+<div class="main_div" id="d_query">
+ <div class="main_warp">
+    <h2 class="h2_title">${batchTypeName}</h2>
+	<div class="order">
+        <div class="order_content" style="border:none; padding:10px">
+        	<input type="hidden" id="queryType" value="templateQuery" />
+			<div class="order_tab_panel" style="display:block;">
+				<div class="selectList">
+										       
+						<dl>
+								  <dd style="padding-top:2px;">
+								    <input type="checkbox" id="cartId" />
+								  </dd>								  
+								  <dt><label for="cartId" style="cursor:pointer;">购物车id：</label></dt>
+                                  <dd>
+                                  	<input type="text" class="numberTextBox" style="width:160px" id="custOrderId" value=""/>
+                                  </dd>
+                                  <dt>创建时间：</dt>
+                                  <dd>
+                                    <input type="text" class="numberTextBox mohu" style="width:160px" id="startDt" readonly="readonly" value="${startDt}"/>
+                                  </dd>
+                                  <dd>到&nbsp;</dd>
+                                  <dd>
+                                    <input type="text" class="numberTextBox mohu" style="width:160px" id="endDt" readonly="readonly" value="${endDt}"/>
+                                  </dd>
+						</dl>
+						<dl  class="noBorder">
+								 <dd style="padding-top:2px;">
+								    <input type="checkbox" id="cartNbr"/>
+								  </dd>
+								<dt><label for="cartNbr" style="cursor:pointer;">购物车流水：</label></dt>
+                                  <dd>
+                                    <input type="text" class="numberTextBox" style="width:160px" id="custSoNumber" value=""/>
+                                  </dd>
+                                <dt>模板名称：</dt>
+                                  <dd>
+                                  	<input type="text" class="numberTextBox mohu" style="width:160px" id="templateOrderName" value=""/>
+                                  </dd>
+                                  <dd>
+                                  	<input type="button" value="搜 索" class="numberSearch" id="bt_orderQry" onclick="order.batch.batchOrderList('1');" />
+                                  	<input type="hidden" id="templateType" value="${templateType}" >
+                                  </dd>
+						</dl> 
+		        </div>  
+		        <div id="batchOrderlist"  class="phone_warp">
+		            
+		        </div>     
+	        </div>
+    	</div>     
+	</div>
+</div>
+</div>
+<div id="d_cartInfo" style="display: none" ></div>
+<!--弹出款-选择号码的内容-->
+<div style="display:none" id="ec-dialog-form-container-import" class="ec-dialog-form-container">
+  <div class="ec-dialog-form-top">
+    <h1 class="ec-dialog-form-title">导入Excel模板</h1>
+  </div>
+  <div class="ec-dialog-form-content">
+    <div class="ec-dialog-form-loading" style="display:none"></div>
+    <div class="ec-dialog-form-message" style="display:none"></div>
+    <div class="ec-dialog-form-form" >
+      <form action="#" style="" id="dialogForm">
+        <div class="form-content" id="importContent" style="min-height:200px">      
+        </div>
+      </form>
+    </div>
+  </div>
+  <div class="ec-dialog-form-bottom"></div>
+</div>
+<!--弹出款的内容-->
+</@override>
+<#if Session["_session_portal_type"]?? && Session["_session_portal_type"]=="MVNO" >
+<@extends name="/mvno-template.html"/>
+<#else>
+<@extends name="/main-template.html"/>
+</#if>

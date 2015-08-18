@@ -1,0 +1,303 @@
+<div data-role="content">
+<div class="ordertitle">购购物车流水：${olNbr}</div>
+   	<dl class="paytitle">
+     	<#if refundType??&&(refundType>0)>
+     		<dt>产品</dt><dt>费用名称</dt><dt>应收费用</dt><dt>实收费用</dt><dt>退费</dt><dt>付费方式</dt><dt>修改原因</dt><dt>操作</dt>
+     	<#else>
+       	<dt>产品</dt><dt>费用名称</dt><dt>应收费用</dt><dt>实收费用</dt><dt>付费方式</dt><dt>修改原因</dt><dt>操作</dt>
+     	</#if>
+   	</dl>
+   	<#assign amount=0 />
+       <#assign amount2=0 />
+       <#if prodInfo??&&(prodInfo?size>0)>
+   	<ul data-role="listview" class="paylist"  id="calTab" style="margin: 0;margin-top: 38px;">
+   		<#assign count=0 />
+           <#assign boIds=""/>
+           <#list prodInfo as prodInfoList>
+      		<li class="paydd" style="padding: 0;">
+	        <dl>
+	           <dd>
+	           		<span class="cashier_dd"  id="${prodInfoList.prodId}">
+	           			<#if prodInfoList.prodSpecName??&&prodInfoList.prodSpecName!="">
+              				${prodInfoList.prodSpecName}
+              			</#if>
+              			<#if prodInfoList.accessNumber??&&prodInfoList.accessNumber!="">
+              				&nbsp;-&nbsp;${prodInfoList.accessNumber}
+              			</#if>
+              		</span>
+             		<#if refundType??&&(refundType==0)>
+              			<#if isAddOperation?? && isAddOperation=="0">
+             				<button data-icon="plus" data-iconpos="notext" data-inline="true" onclick="order.calcharge.addbusiOrder('${prodInfoList.prodId}',this);"></button>
+             			</#if>
+					</#if>
+	           </dd>
+	           <dd></dd>
+	           <dd></dd>
+	           <dd></dd>
+	           <#if refundType??&&(refundType>0)>
+               <dd></dd>
+               </#if>
+	           <dd></dd>
+	           <dd></dd>
+	           <dd></dd>
+	        </dl>
+      		</li>
+      	<#if (prodInfoList.busiOrders)??&&((prodInfoList.busiOrders)?size>0)>
+      	<#assign i=0 />
+    		<#list prodInfoList.busiOrders as busiList>
+    			<#assign boId="${busiList.boId}"/>
+    		 	<#if busiList.objType!="7"||(busiList.objType=="7"&&boIds?index_of(boId)==-1)><!-- 过滤重复项 -->
+     		 	 	<#if chargeItems??&&(chargeItems?size>0)><!-- 费用项开始 -->
+        		 		<#list chargeItems as itemList>
+         		 		<#assign trid="${itemList.boId}_${itemList.acctItemId}_${prodInfoList.prodId}_old" />
+         				<#if busiList.boId==itemList.boId>
+          				<#if busiList.objType=="7">
+          				 	<#assign boIds=boIds+"${busiList.boId}_"/>
+          				</#if>
+		      		<li style="padding: 0;" id="item_${trid}" <#if itemList.paymentAmount?? && (itemList.paymentAmount==0) >style="display:none"</#if>>
+		        		<dl>
+		        		<!-- 产品信息 --><dd>${busiList.boActionTypeName}&nbsp;&nbsp;[${busiList.objName}]</dd>
+		           		<!-- 费用名称 --><dd>${itemList.acctItemTypeName}</dd>
+		           		<!-- 应收费用 --><dd><span>${((itemList.feeAmount)?number / 100)?string('0.00')}</span></dd>
+		           		<!-- 撤单返销 不能修改实收费用 -->
+		           		<dd>
+		            	<#if refundType??&&(refundType>0)>
+		           		<input type="text" disabled="disabled"  value="${((itemList.realAmount)?number / 100)?string('0.00')}" id="realAmount_${trid}">
+		           		<#else>
+		           		<input type="text" disabled="disabled"  onfocus="order.calcharge.setGlobeMoney(this);" onblur="order.calcharge.editMoney(this,'${trid}','old');"  value="${((itemList.realAmount)?number / 100)?string('0.00')}" id="realAmount_${trid}">
+		           		</#if>
+		           		</dd>
+		           		<!-- 退费修改 -->
+		                <#if refundType??&&(refundType>0)>
+		                <dd>
+		                	<input disabled="disabled"  onfocus="order.calcharge.setGlobeMoney(this);" onblur="order.calcharge.editMoney(this,'${trid}','old');" id="backAmount_${trid}" type="text" value="${((itemList.realAmount)?number / 100*-1)?string('0.00')}"/>
+		                </dd>
+		                </#if>
+		                <!-- 付费方式 -->
+		           		<dd id="payMethodText_${trid}">
+		           			${itemList.payMethodName}
+		           		 </dd>
+		           		 <!-- 费用项修改原因 -->
+		           		<dd>
+		           			<span id="chargeModifySpan_${trid}" style="display:none">
+			           		<select id="chargeModifyReasonCd_${trid}" data-native-menu="false"  onchange="order.calcharge.bindChargeModifyReason('${trid}')">
+						   		<option value="3">补退费</option>
+						   		<option value="2">算费不正确</option>
+						   		<option value="4">营销业务</option>
+						   		<option value="1">其他</option>
+						    </select>
+						    </span>
+						    <div class="ui-grid-a edit">
+						        <div class="ui-block-a">
+						        <input type="text" id="remark_${trid}">
+						        </div>
+						        <div class="ui-block-b">
+						        <button data-icon="delete" data-iconpos="notext" data-mini="true" data-inline="true" id="chargeModifyButton_${trid}"></button>
+						        </div>
+						    </div>
+		           		</dd>
+		           		<dd>
+			           		<input type="hidden" id="feeAmount_${trid}" value="${itemList.feeAmount}" />
+			                <input type="hidden" id="paymentAmount_${trid}" value="${itemList.paymentAmount}" />
+			          		<input type="hidden" id="objId_${trid}" value="${itemList.objId}" />
+			          		<input type="hidden" id="objType_${trid}" value="${itemList.objType}" />
+			          		<input type="hidden" id="realhidden_${trid}" value="${((itemList.realAmount)?number / 100)?string('0.00')}" />
+			          		<input type="hidden" id="acctItemId_${trid}" value="${itemList.acctItemId}" />
+			          		<input type="hidden" id="acctItemTypeId_${trid}" value="${itemList.acctItemTypeId}" />
+			          		<input type="hidden" id="boId_${trid}" value="${itemList.boId}" />
+			          		<input type="hidden" id="payMethodCd_${trid}" value="${itemList.payMethodCd}"/>
+			          		<input type="hidden" id="acctItemTypeName_${trid}" value="${itemList.acctItemTypeName}" />
+			          		<input type="hidden" id="objInstId_${trid}" value="${busiList.objInstId}" />
+			          		<input type="hidden" id="prodId_${trid}" value="${prodInfoList.prodId}" />
+		          			<input type="hidden" id="boActionType_${trid}" value="${itemList.boActionType}" />
+		          			<#if iseditOperation?? && iseditOperation=="0" && refundType??&&(refundType==0) >
+		          				<#if acctItemTypeId?? && (itemList.acctItemTypeId == acctItemTypeId)  &&  isEditAdjustOperation?? && isEditAdjustOperation!="0">
+							 	<#else>
+			          				<button data-icon="gear" data-iconpos="notext" data-inline="true"  onclick="order.calcharge.changePayMethod('${itemList.acctItemTypeId}','${trid}','${itemList.payMethodCd}',this);"></button>
+			    				</#if>
+							</#if>
+						</dd>
+		        		</dl>
+		      		</li>
+			      	<#if itemList.paymentAmount?? && (itemList.paymentAmount==0) >
+					<#else>
+						<#assign amount=amount+((itemList.realAmount)?number / 100) />
+					    <#assign amount2=amount2+((itemList.realAmount)?number / 100*-1) />
+					    <#assign i=i+1 />
+					</#if>
+					</#if>
+					<#assign count=count+1 />
+					</#list>
+				</#if>
+			</#if>
+		</#list>
+      	</#if>
+		</#list>
+	<#elseif chargeItems??&&(chargeItems?size>0)>
+		<#list chargeItems as itemList>
+		<#assign trid="${itemList.boId}_${itemList.acctItemId}" />
+		<li style="padding: 0;" id="item_${trid}" <#if itemList.paymentAmount?? && (itemList.paymentAmount==0) >style="display:none"</#if>>
+       		<dl>
+
+       		<!-- 产品信息 --><dd>
+       		<#if busiList??>
+       			<strong>${busiList.boActionTypeName}</strong>&nbsp;&nbsp;[${busiList.objName}]
+       		</#if>
+       		</dd>
+          		<!-- 费用名称 --><dd>${itemList.acctItemTypeName}</dd>
+          		<!-- 应收费用 --><dd><span>${((itemList.feeAmount)?number / 100)?string('0.00')}</span></dd>
+          		<!-- 撤单返销 不能修改实收费用 -->
+          		<dd>
+           	<#if refundType??&&(refundType>0)>
+          		<input type="text" disabled="disabled"  value="${((itemList.realAmount)?number / 100)?string('0.00')}" id="realAmount_${trid}">
+          		<#else>
+          		<input type="text" disabled="disabled"  onfocus="order.calcharge.setGlobeMoney(this);" onblur="order.calcharge.editMoney(this,'${trid}','old');"  value="${((itemList.realAmount)?number / 100)?string('0.00')}" id="realAmount_${trid}">
+          		</#if>
+          		</dd>
+          		<!-- 退费修改 -->
+               <#if refundType??&&(refundType>0)>
+               <dd>
+               	<input disabled="disabled"  onfocus="order.calcharge.setGlobeMoney(this);" onblur="order.calcharge.editMoney(this,'${trid}','old');" id="backAmount_${trid}" type="text" value="${((itemList.realAmount)?number / 100*-1)?string('0.00')}"/>
+               </dd>
+               </#if>
+               <!-- 付费方式 -->
+          		<dd id="payMethodText_${trid}">
+          			${itemList.payMethodName}
+          		 </dd>
+          		 <!-- 费用项修改原因 -->
+          		<dd>
+          			<span id="chargeModifySpan_${trid}"  style="display:none;">
+           		<select id="chargeModifyReasonCd_${trid}" data-native-menu="false">
+			   		<option value="3">补退费</option>
+			   		<option value="2">算费不正确</option>
+			   		<option value="4">营销业务</option>
+			   		<option value="1">其他</option>
+			    </select>
+			    </span>
+			    <div class="ui-grid-a edit">
+			        <div class="ui-block-a">
+			        <input type="text" id="remark_${trid}">
+			        </div>
+			        <div class="ui-block-b">
+			        <button data-icon="delete" data-iconpos="notext" data-mini="true" data-inline="true" id="chargeModifyButton_${trid}"></button>
+			        </div>
+			    </div>
+          		</dd>
+          		<dd>
+           		<input type="hidden" id="feeAmount_${trid}" value="${itemList.feeAmount}" />
+                <input type="hidden" id="paymentAmount_${trid}" value="${itemList.paymentAmount}" />
+          		<input type="hidden" id="objId_${trid}" value="${itemList.objId}" />
+          		<input type="hidden" id="objType_${trid}" value="${itemList.objType}" />
+          		<input type="hidden" id="realhidden_${trid}" value="${((itemList.realAmount)?number / 100)?string('0.00')}" />
+          		<input type="hidden" id="acctItemId_${trid}" value="${itemList.acctItemId}" />
+          		<input type="hidden" id="acctItemTypeId_${trid}" value="${itemList.acctItemTypeId}" />
+          		<input type="hidden" id="boId_${trid}" value="${itemList.boId}" />
+          		<input type="hidden" id="payMethodCd_${trid}" value="${itemList.payMethodCd}"/>
+          		<input type="hidden" id="acctItemTypeName_${trid}" value="${itemList.acctItemTypeName}" />
+          		<#if busiList??>
+          			<input type="hidden" id="objInstId_${trid}" value="${busiList.objInstId}" />
+          		</#if>          		
+          		<#if prodInfoList??>
+          			<input type="hidden" id="prodId_${trid}" value="${prodInfoList.prodId}" />
+          		</#if>
+         			<input type="hidden" id="boActionType_${trid}" value="${itemList.boActionType}" />
+         			<#if iseditOperation?? && iseditOperation=="0" && refundType??&&(refundType==0) >
+         				<#if acctItemTypeId?? && (itemList.acctItemTypeId == acctItemTypeId)  &&  isEditAdjustOperation?? && isEditAdjustOperation!="0">
+				 	<#else>
+          				<button data-icon="gear" data-iconpos="notext" data-inline="true"  onclick="order.calcharge.changePayMethod('${itemList.acctItemTypeId}','${trid}','${itemList.payMethodCd}',this);"></button>
+    				</#if>
+				</#if>
+			</dd>
+       		</dl>
+     		</li>
+      	<#if itemList.paymentAmount?? && (itemList.paymentAmount==0) >			                     
+		<#else>
+			<#assign amount=amount+((itemList.feeAmount)?number / 100) />
+			<#assign amount2=amount2+((itemList.realAmount)?number / 100*-1) />
+			<#assign i=i+1 />                     
+		</#if>
+		<#assign count=count+1 />
+		</#list>
+	</#if>
+</ul>
+<div data-role="footer" data-position="fixed" data-tap-toggle="false" data-theme="n">
+	<div class="footform">
+	<div class="orderform ui-grid-c" id = "posDiv" style = "display:none">
+     <div class="ui-block-a">
+     <label>POS终端号：</label>
+     </div>
+     <div class="ui-block-b">
+  	 <input type="text" value="" data-mini="ture" id="terminalNumber">
+     </div>
+     <div class="ui-block-c">
+     <label>POS流水号：</label>
+     </div>
+     <div class="ui-block-d">
+  	 <input type="text" value="" data-mini="ture"  id="serialNumber">
+     </div>
+     </div>
+  	<#if refundType??&&(refundType>0)>
+  		<span>应收金额：<font id="feeAmount">${amount?string('0.00')}</font>元</span>
+  		<span>退费总额：<font id="realmoney">${amount2?string('0.00')}</font>元</span>
+  	<#else>
+  		<span>应收金额：<font id="feeAmount">${amount?string('0.00')}</font>元</span>
+     	<span>实收金额：<font id="realmoney">${amount?string('0.00')}</font>元</span>
+	</#if>
+  </div>
+  <span id="ordermessage" style="display:none; padding-right: 50px; font-size: 18px; color: #71ab5a;"></span>
+  <button data-icon="next" data-inline="true"  id="toComplate" disabled="disabled">受理完成</button>
+  <button data-icon="prev" data-inline="true" id="toCharge" disabled="disabled">收费</button> 
+  <button data-icon="prev" data-inline="true" id="printVoucherA">打印回执</button>
+  <button data-icon="prev" data-inline="true" id="orderCancel">订单取消</button>
+</div>
+</div>
+<div id="paydialog">
+<#if prodInfo??&&(prodInfo?size>0)>
+   	<#list prodInfo as prodInfoList>
+   		<#if (prodInfoList.busiOrders)??&&((prodInfoList.busiOrders)?size>0)>
+   		<div id="div_payitem_${prodInfoList.prodId}" style="display:none">
+   			<div  id="div_payitem_choose_${prodInfoList.prodId}" data-role="popup" data-transition="slideup" data-corners="false" data-overlay-theme="b" class="popwindow" data-dismissible="false">	
+				<div data-role="header" data-position="inline" data-tap-toggle="false" data-theme="t">
+					<a href="#" data-role="button" data-icon="back" data-rel="back" data-iconpos="notext" class="ui-btn-right">返回</a>
+					<h1>费用增加</h1>
+				</div>
+				<div data-role="content">
+	    		 <table class="searchtable" style="width:98%">
+		    		 <tr>
+		          		<th>销售品</th><th>动作</th><th>产品名称</th>
+		          	</tr>
+	                <#list prodInfoList.busiOrders as busiList>
+		              	<tr <#if isAddOperation?? && isAddOperation=="0" && (refundType?? && refundType==0) >onclick="order.calcharge.addSubmit('${busiList.boId}','${busiList.boActionTypeCd}','${busiList.objType}','${busiList.objId}','${busiList.objName}','${busiList.boActionTypeName}','${busiList.objInstId}','${prodInfoList.prodId}');"</#if> >
+			                  <td>${busiList.objName}</td>
+			                  <td>${busiList.boActionTypeName}</td>
+			                  <td>${prodInfoList.prodSpecName}</td>
+			              </tr>
+	                </#list>
+	                </table>
+				</div>
+			</div>
+		</div>
+		</#if>
+	</#list>
+</#if>
+<div id="div_payresult" style="display:none">
+ 	<div  id="div_payresult_choose" data-role="popup" data-transition="slideup" data-corners="false" data-overlay-theme="b" class="popwindow" data-dismissible="false">	
+		<div data-role="header" data-position="inline" data-tap-toggle="false" data-theme="t">
+			<a href="#" data-role="button" data-icon="back" data-rel="back" data-iconpos="notext" class="ui-btn-right">返回</a>
+			<h1 id="payresultitle"></h1>
+		</div>
+		<div data-role="content">
+			<div style="margin-top:20px;width:98%;" align="center">
+				<button data-icon="check" data-iconpos="notext" data-inline="true"></button>
+				<span id="payresultMsg"></span>
+			</div>
+		</div>
+		<div data-role="footer" data-position="inline" data-tap-toggle="false" data-theme="n">
+	   		<!-- <button data-inline="true" data-icon="next" id="successTip_dialog_inv" style="display:none">作废发票</button>
+	   		<button data-inline="true" data-icon="next" id="successTip_dialog_cnt">继续受理</button> -->
+	   		<button data-inline="true" data-icon="next" id="successTip_dialog_comfirm" style="display:none">确定</button>	   	
+		</div>
+	</div>
+</div>
+<#include "/pad/print/invoice-prepare.html"/>
+</div>

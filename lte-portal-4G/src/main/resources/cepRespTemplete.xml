@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ContractRoot>
+	<TcpCont>
+		<ActionCode>1</ActionCode>
+		<TransactionID>CEP_TRANS_ID</TransactionID>
+		<RspTime>CEP_RESP_TIME</RspTime>
+		<Response>
+			<RspType>CEP_RESP_TYPE</RspType>
+			<RspCode>CEP_RESP_CODE</RspCode>
+			<RspDesc>CEP_RESP_DESC</RspDesc>
+		</Response>
+	</TcpCont>
+	<SvcCont>CEP_SVC_CONT</SvcCont>
+</ContractRoot>

@@ -1,0 +1,26 @@
+<@override name="title">${batchTypeName}</@override>
+<@override name="header">
+<script src="${contextPath}/js/4g-js/order/orderInfo.js" type="text/javascript"></script>
+<script src="${contextPath}/js/busi-js/batchOrder/batchOrder.js?${jsversion}" type="text/javascript"></script>
+</@override>
+<@override name="content">
+<div class="main_div" id="d_query">
+ <div class="main_warp">
+    <h2 class="h2_title">${batchTypeName}</h2>
+	<div class="order">
+        <div class="order_content" style="border:none; padding:10px">
+        	<input type="hidden" id="templateType" value="9"/>
+			<div class="order_tab_panel" style="display:block;" id="batchOrderlist">
+				
+			</div>
+		</div>
+	</div>
+</div>
+</div>
+<!--弹出款的内容-->
+</@override>
+<#if Session["_session_portal_type"]?? && Session["_session_portal_type"]=="MVNO" >
+<@extends name="/mvno-template.html"/>
+<#else>
+<@extends name="/main-template.html"/>
+</#if>

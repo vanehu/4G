@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration>
+	<substitutionProperty name="log.base" value="logs/LtePortal" />
+	<jmxConfigurator />
+	<!--
+	<appender name="portalLogFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+	<filter class="ch.qos.logback.core.filter.EvaluatorFilter">
+	<evaluator name="myEval_exception">
+	<expression>message.contains("com.al.ecs.exception.AuthorityException")
+	|message.contains("com.al.ecs.exception.SessionException")</expression>
+	</evaluator>
+	<onMatch>DENY</onMatch>
+	<onMismatch>ACCEPT</onMismatch>
+	</filter>
+	<file>${log.base}.log</file>
+	<encoding>UTF-8</encoding>
+	<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+	<fileNamePattern>${log.base}.%d{yyyy-MM-dd}.log.zip</fileNamePattern>
+	<maxHistory>30</maxHistory>
+	</rollingPolicy>
+	<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+	<fileNamePattern>${log.base}.%i.log.zip</fileNamePattern>
+	<minIndex>1</minIndex>
+	<maxIndex>30</maxIndex>
+	</rollingPolicy>
+	<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+	<maxFileSize>2MB</maxFileSize>
+	</triggeringPolicy>
+	<layout class="ch.qos.logback.classic.PatternLayout">
+	<pattern>%X{user_ip} %-20(%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread]) %-5level %logger{80} - %msg%n</pattern>
+	</layout>
+	</appender>
+	-->
+	<appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
+		<encoding>UTF-8</encoding>
+		<layout class="ch.qos.logback.classic.PatternLayout">
+			<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS}  %-5level thread:%t %logger{80} %n-%msg%n</pattern>
+		</layout>
+	</appender>
+	<appender name="unilog" class="com.al.crm.log.appender.UniLogLogbackAppender" >
+		<!-- sysCode需要根据实际使用的应用系统修改相应的系统代码 -->
+		<sysCode>portal</sysCode>
+	</appender>
+	<appender name="lsbLogFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>lsb.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+			<fileNamePattern>lsb.log.%i</fileNamePattern>
+			<minIndex>1</minIndex>
+			<maxIndex>10</maxIndex>
+		</rollingPolicy>
+		<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+			<maxFileSize>10MB</maxFileSize>
+		</triggeringPolicy>
+		<layout class="ch.qos.logback.classic.PatternLayout">
+			<pattern>%-20(%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread]) %-5level %logger{80} [%L] - %msg%n</pattern>
+		</layout>
+	</appender>
+	<root level="INFO">
+		<appender-ref ref="stdout" />
+	</root>
+	<logger name="com.al" level="DEBUG" additivity="false">
+		<appender-ref ref="stdout" />
+	</logger>
+	<logger name="com.al.lte" level="DEBUG" additivity="false">
+		<appender-ref ref="stdout" />
+	</logger>
+	<logger name="com.al.ecs" level="DEBUG" additivity="false">
+		<appender-ref ref="stdout" />
+	</logger>
+	<logger name="com.ailk.ecsp" level="DEBUG" additivity="false">
+		<appender-ref ref="stdout" />
+	</logger>
+    <logger name="com.linkage.portal" level="DEBUG" additivity="false">
+         <appender-ref ref="stdout" />
+    </logger>
+	<logger name="com.linkage.portal.spring.annotation.log" level="ERROR" additivity="false">
+		<appender-ref ref="stdout" />
+	</logger>
+	<logger name="com.opensymphony.oscache" level="OFF" additivity="false">
+		<appender-ref ref="stdout" />
+	</logger>
+	<logger name="org.springframework" level="ERROR" additivity="false">
+		<appender-ref ref="stdout" />
+	</logger>
+	<logger name="org.springframework.web" level="ERROR" additivity="false">
+		<appender-ref ref="stdout" />
+	</logger>
+	<logger name="org.apache" level="ERROR" additivity="false">
+		<appender-ref ref="stdout" />
+	</logger>
+	<logger name="freemarker.core" level="INFO" additivity="false">
+		<appender-ref ref="stdout" />
+	</logger>
+	<logger name="com.linkage.crm.csb" level="ERROR" additivity="false">
+		<!-- 如果使用日志平台，这里不能配置成unilog或stdout，可以为lsbLogFile -->
+		<appender-ref ref="lsbLogFile"/>
+	</logger>
+	<logger name="com.linkage.crm.csb.core.task.MQComsumer" level="ERROR" additivity="false">
+		<!-- 如果使用日志平台，这里不能配置成unilog或stdout，可以为lsbLogFile -->
+		<appender-ref ref="lsbLogFile"/>
+	</logger>
+	<logger name="com.al.crm.log" level="ERROR" additivity="false">
+		<!-- 使用lsbLogFile -->
+		<appender-ref ref="lsbLogFile"/>
+	</logger>
+	<logger name="com.al.crm.asynframe" level="DEBUG" additivity="false">
+		<!-- 如果使用日志平台，则应使用unilog -->
+		<appender-ref ref="stdout"/>
+	</logger>
+	<!-- 本机调试转售环境时可以开启以下配置防止控制台刷屏 -->
+	<logger name="com.al.dsession" level="ERROR" additivity="false">
+		<appender-ref ref="stdout" />
+	</logger>
+	<logger name="com.al.crm.nosql.cache.impl.AbstractCache" level="ERROR" additivity="false">
+		<appender-ref ref="stdout" />
+	</logger>
+
+</configuration>

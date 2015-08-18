@@ -1,0 +1,110 @@
+<@override name="title">批量充值</@override>
+
+<@override name="header">
+	<#include "/busi-js-tpl.html"/>
+	<script src="${contextPath}/js/busi-js/bill/cashCharge.js" type="text/javascript"></script>
+</@override>
+
+<@override name="content">
+
+<div class="main_div">
+	<div class="main_warp">
+    	<h2 class="h2_title">批量充值</h2>
+		<div class="order">
+        	<div class="order_content" style="border:none; padding:10px">
+				<div class="order_tab_panel" style="display:block;">
+					<form method="post" id="batchChargeInfo" enctype="multipart/form-data" action="${contextPath}/bill/charge/batchInfoCheck">
+					<ul style="height:40px" class="fillin show billSearch">
+          				<li class="full noBorder">
+							<label>批量充值Excel :</label>
+							<input type="file" value="" name="fileUpload" id="fileUpload" style="height:26px;">
+							<a onclick="bill.charge.batchInfoImport();" href="javascript:void(0)" class="purchase">导 入</a>
+							<a onclick="bill.charge.modelDownload();" href="javascript:void(0)" class="purchase">模板下载</a>
+							<a onclick="bill.charge.batchInfoReset();" href="javascript:void(0)" class="purchase">重 置</a>
+						</li> 
+          			</ul>
+          			</form>
+          			<div class="height18"></div>
+		        	<ul class="fillin show billSearch" id="uploadNotice" style="height:140px;">
+		        		<li class="full noBorder" style=" border-bottom: 0px;">
+				 			<table width="100%" cellspacing="0" cellpadding="0" border="0">
+		            			<tbody>
+		            				<tr>
+			            				<td align="center"><i class="rule_icon_notice"></i></td>
+						 				<td>
+						 					<span style="line-height:25px;">
+						 						(1) 仅支持上传 xls、xlsx 类型的文件。<br>
+						 						(2) 每批充值最多导入100条用户信息。<br>
+						 						(3) 每行对应一个待充值的用户信息，第一列是用户号码，第二列是充值金额。<br>
+						 						(4) 充值金额以“元”为单位，填写的金额可精确到“分”（小数点后两位），单笔充值金额不能超过10000元。<br>
+						 						(5) 批量信息校验的时间可能会长达数分钟，请耐心等待。
+											</span>
+						 				</td>
+					 				</tr>
+								</tbody>
+							</table> 
+						</li>
+					</ul>
+					<div id="batchDoCashReturnInfo">
+					<#if flag??>
+						<p id="tip" style="margin:15px;width:97%;word-break:break-all;font-size:15px;<#if flag==0>color:green;<#else>color:red;</#if>">${message}</p>
+						<#if flag==0>
+						<a onclick="bill.charge.batchDoCash();" href="javascript:void(0)" class="purchase" style="float:left;margin:-36px 0px 0px 275px;">批量充值</a>
+						</#if>
+						<#if chargeAuthList??>
+						<div  class="phone_warp">
+							<table class="numberList">
+								<thead>
+									<tr>
+										<td width="26%">Excel行数</td>
+										<td width="37%">用户号码</td>
+										<td width="37%">充值金额</td>
+									</tr>
+								</thead>
+								<tbody id="chargeAuthList">
+									<#list chargeAuthList as authItem>
+									<tr>
+										<td>${authItem.rowNum}</td>
+										<td>${authItem.phoneNum}</td>
+										<td>${authItem.chargeAmount}</td>
+									</tr>
+									</#list>
+								</tbody>
+							</table>
+						</div>
+						</#if>
+						<#if errorList??>
+						<div id="errorList"  class="phone_warp">
+							<table class="numberList">
+								<thead>
+									<tr>
+										<td width="10%">Excel行数</td>
+										<td width="15%">用户号码</td>
+										<td width="15%">充值金额</td>
+										<td width="60%">错误信息</td>
+									</tr>
+								</thead>
+								<tbody>
+									<#list errorList as errorItem>
+									<tr>
+										<td>${errorItem.rowNum}</td>
+										<td>${errorItem.phoneNum}</td>
+										<td>${errorItem.chargeAmount}</td>
+										<td>${errorItem.errorMsg}</td>
+									</tr>
+									</#list>
+								</tbody>
+							</table>
+						</div>
+						</#if>
+					</#if>
+					</div>
+	        	</div>
+    		</div>     
+		</div>
+	</div>
+</div>
+
+</@override>
+
+<@extends name="/mvno-template.html"/>

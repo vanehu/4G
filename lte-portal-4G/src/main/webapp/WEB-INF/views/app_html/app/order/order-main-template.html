@@ -1,0 +1,179 @@
+<div id="order-content">
+<div class="container-fluid">
+	<div class="row">
+		<div class="panel panel-default paneltop">
+			<!-- 套餐名称 -->
+			<div class="panel-heading">${main.boActionTypeName}
+				<#if main.actionFlag == 1>
+				  ${main.offerSpec.offerSpecName}
+				<#else>
+				  ${main.accessNumber}
+			</#if>
+			</div>
+			<div id="carousel-example-generic" class="carousel slide">
+				<!-- 图标 -->
+				<ol style="display: none;">
+				 <#if main.addflag?? && main.addflag=="ADD">
+				    <#assign k = 0 />
+					<#list main.prodInstInfos as prodinfos>
+							<#list main.offer as offerinst>
+								<#if prodinfos.accNbr==offerinst.accNbr>
+									<#list offerinst.offerMemberInfos as Member>
+										<#if Member.objType==2>
+											<#if k==0>
+												<li data-target="#carousel-example-generictmp"></li>
+											<#else>
+												<li data-target="#carousel-example-generictmp"></li>
+											</#if>
+											<#assign k = k+1 />
+									</#if>
+								</#list>
+						      </#if>
+						   </#list>
+					</#list>
+				<#else>
+				    <#assign offerSpec = main.offerSpec /> 
+					<#if offerSpec?? && offerSpec.offerRoles?? && (offerSpec.offerRoles?size>0)>
+					<#assign j = 0 />
+					<#list offerSpec.offerRoles as offerRole>
+						<#if (offerRole.prodInsts?? && offerRole.prodInsts?size>0)>
+							<#list offerRole.prodInsts as prod>
+								<#if j==0>
+								<li data-target="#carousel-example-generictmp"></li>
+								<#else>
+								<li data-target="#carousel-example-generictmp"></li>
+								</#if>
+								<#assign j = j+1 />	
+							</#list>
+						</#if>
+					</#list>
+					</#if>
+				   </#if>	
+				</ol>
+
+               <!-- 产品信息-->
+				<div class="carousel-inner">
+				<#if main.addflag?? && main.addflag=="ADD">
+				   <#assign z = 0 />
+				   <#list main.prodInstInfos as prodinfos>
+							<#list main.offer as offerinst>
+								<#if prodinfos.accNbr==offerinst.accNbr>
+									<#list offerinst.offerMemberInfos as item>
+										<#if item.objType==2>
+											<#assign prodId = item.objInstId/>
+											<#assign z = z+1 />
+											<#if z==1>
+												<div class="item active" id="attach_tab_${prodId}">
+													<div class="panel-heading" style="color: #ff8202;">${item.roleName}:${item.accessNumber}</div>
+													<div class="panel panel-default">
+														<div id="item_order_${prodId}">
+														<div id="attach_${prodId}">
+														</div>
+														<#include "/app/order/order-uim.html" />
+														</div>
+													</div>
+												</div>
+												<#else>
+												<div class="item" id="attach_tab_${prodId}">
+													<div class="panel-heading" style="color: #ff8202;">${item.roleName}:${item.accessNumber}</div>
+													<div class="panel panel-default">
+														<div id="item_order_${prodId}">
+														<div id="attach_${prodId}">
+														</div>
+														<#include "/app/order/order-uim.html" />
+														</div>
+													</div>
+												</div>
+											</#if>
+										</#if>
+									</#list>
+								</#if>
+							</#list>
+					    </#list>	
+					<#else>
+						<@block name="product">
+							<#include "/app/order/order-product.html" />
+						</@block>
+					</#if>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<nav class="navbar navbar-default navbar-fixed-bottom" id="nextNav">
+	<!-- 图标 -->
+	<ol class="carousel-indicators" id="c-indicators">
+	<#if main.addflag?? && main.addflag=="ADD">
+	    <#assign i = 0 />
+		<#list main.prodInstInfos as prodinfos>
+				<#list main.offer as offerinst>
+					<#if prodinfos.accNbr==offerinst.accNbr>
+						<#list offerinst.offerMemberInfos as Member>
+							<#if Member.objType==2>
+								<#if i==0>
+									<li data-target="#carousel-example-generic" id="target-slide-${i}" data-slide-to="0"
+										class="active"></li>
+								<#else>
+									<li data-target="#carousel-example-generic" id="target-slide-${i}" data-slide-to="${i}"></li>
+								</#if>
+								<#assign i = i+1 />
+							</#if>
+					   </#list>
+			      </#if>
+			   </#list>
+		</#list>
+	<#else>
+		<#assign offerSpec = main.offerSpec /> 
+		<#if offerSpec?? && offerSpec.offerRoles?? && (offerSpec.offerRoles?size>0)>
+		<#assign j = 0 />
+		<#list offerSpec.offerRoles as offerRole>
+			<#if (offerRole.prodInsts?? && offerRole.prodInsts?size>0)>
+				<#list offerRole.prodInsts as prod>
+					<#if j==0>
+					<li data-target="#carousel-example-generic" id="target-slide-${j}" data-slide-to="0"
+						class="active"></li>
+					<#else>
+					<li data-target="#carousel-example-generic" id="target-slide-${j}" data-slide-to="${j}"></li>
+					</#if>
+					<#assign j = j+1 />	
+				</#list>
+			</#if>
+		</#list>
+		</#if>
+	</#if>	
+	</ol>
+
+	<div class="container-fluid">
+		<div class="btn-group btn-group-justified navbar-btn" role="group"
+			aria-label="...">
+			<!-- <div class="btn-group" role="group">	
+				<button type="button" class="btn btn-primary btn-lg" onclick="order.service.btnBack()">
+					<span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
+					返回
+				</button>
+			</div> -->
+			<div class="btn-group" role="group">
+				<button type="button" class="btn btn-info btn-lg" id="fillNextStep">
+					<span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span>
+					下一步
+				</button>
+			</div>
+		</div>
+	</div>
+</nav>
+</div>
+<!-- 订单确认页面、收银台页面 -->
+<div id="order-confirm" style="display: none;">
+</div>
+<!-- 回执内容显示页面 -->
+<div id="order-print" style="display: none;">
+</div>
+
+<!-- 协销人展示 -->
+<div id="order-dealer" style="display: none;">
+	<@block name="dealer">
+		<#include "/app/order/order-dealer.html" />
+	</@block>
+</div>
+

@@ -1,0 +1,30 @@
+<@override name="title">综合查询</@override>
+<script src="${contextPath}/js/busi-js/main/main.js" type="text/javascript"></script>
+<script src="${contextPath}/js/busi-js/main/main-business-query.js?${jsversion}" type="text/javascript"></script>
+</@override>
+<@override name="content">
+<div class="main_content">
+	<div>
+		<div class="main_warp"/>
+		<div class="main_list" id="main_list" >
+			<#list businessqueryList as item>
+			<ul class="main_list_ul" url="${contextPath}${item.MENU_PATH}">
+				<div class="list_ul_padding">
+					<img src="${contextPath}${item.RESOURCE_PATH}" width="92" height="92" />
+					<ul>
+						<h2>${item.RESOURCE_NAME}</h2>
+						<p>
+							${item.DESCRIPTION}
+						</p>
+					</ul>
+				</div>
+			</ul>
+			</#list>
+				</div>
+			</ul>
+		</div>
+	</div>
+</div>
+</div>
+</@override>
+<@extends name="/main-template.html"/>

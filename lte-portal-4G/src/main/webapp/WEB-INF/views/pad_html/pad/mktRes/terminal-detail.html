@@ -1,0 +1,148 @@
+<div data-role="content" id ="terminalMain">
+   	<div class="ui-grid-a phonedetails">
+       	<div class="ui-block-a">
+			<#assign p_pic = contextPath+'/image/pad-image/phone/phonePic.jpg'>
+			<#if (mktRes.mktPicA)??>
+				<#assign p_pic = mktRes.mktPicA>
+			</#if>
+          	<span><img width="170" height="170" id="term_pic_id" src="${p_pic}"></span> 
+           	<ul>
+           		<#list mktResList as mkt>
+           			<#if (mkt.attrList)??>
+           				<#list mkt.attrList as attrList>
+							<#if (attrList.attrId)?? && (attrList.attrId) =='60019457'>
+								<#list (attrList.attrValue)?split(",") as pic60>
+              	<li><img src="${pic60}"></li>
+              					</#list>
+              				</#if>
+              			</#list>
+              		</#if>
+              	</#list>	
+             </ul>
+        </div>
+        <div class="ui-block-b">
+        	<div id="mkt_resname_id" class="phonename">${(mktRes.mktResName)?default("--")}</div>
+           	<h2 id="mkt_saleprice_id" class="phonemoney">￥<#if (mktRes.salePrice)?default(0) != 0>${mktRes.salePrice / 100}<#else>&nbsp;--</#if> 元</h2>
+           	<#if mktResList?? &&(mktResList?size>0)>
+			<fieldset id="fls_terminal_color" data-role="controlgroup" data-type="horizontal">
+				<legend>颜色：</legend>
+				<#list mktResList as mkt>
+					<#assign contractFlag = mkt.contractFlag>
+					<#assign mktResId = mkt.mktResId>
+					<#assign mktResName = (mkt.mktResName)?default("--")>
+					<#assign mktResTypeCd = mkt.mktResTypeCd>
+					<#if (mkt.salePrice)?default(0) != 0>
+						<#assign mktSalePrice = (mkt.salePrice / 100)>
+					<#else>
+						<#assign mktSalePrice = '--'>
+					</#if>
+					<#assign flag = true>
+					<#assign p_pic_color = contextPath+'/image/common/phone/20120409123004-1319113024_170_170.jpg'>
+					<#if (mkt.attrList)??>
+						<#list mkt.attrList as mktSpecCodes>
+							<#if (mktSpecCodes.attrId)?? && (mktSpecCodes.attrId) =='60010005'>
+								<#assign mktSpecCode = mktSpecCodes.attrValue>
+							</#if>
+						</#list>
+						<#list mkt.attrList as attrList>
+							<#if (attrList.attrId)?? && (attrList.attrId) =='60019454'>
+								<#assign flag = false>
+								<#assign p_pic_color = mktResPicUrl+attrList.attrValue>
+								<#list mkt.attrList as attrListTmp>
+									<#if (attrListTmp.attrId)?? && (attrListTmp.attrId) =='60010004'>
+										<#if (mkt_index+1)%4=0>
+											<br><br>
+										</#if>
+										<#if mkt.mktResId == (mktRes.mktResId)>
+						<label class="ui-btn-active ui-radio-on" for="color${mkt_index}" mktResId="${mktResId}" mktResName="${mktResName}" mktSalePrice="${mktSalePrice}" mktNormalSalePrice="${(mkt.salePrice)?default(0)}" p_pic="${p_pic_color}" mktResTypeCd="${mktResTypeCd}" mktSpecCode="${mktSpecCode}">${attrListTmp.attrValue}</label>
+	           			<input type="radio" name="gender" id="color${mkt_index}" value="${attrListTmp.attrValue}"  mktResId="${mktResId}" mktResName="${mktResName}" mktSalePrice="${mktSalePrice}" mktNormalSalePrice="${(mkt.salePrice)?default(0)}" p_pic="${p_pic_color}" mktResTypeCd="${mktResTypeCd}" mktSpecCode="${mktSpecCode}" onclick = "javascript:mktRes.terminal.selectColor($(this))"  checked>
+										<#else>
+						<label for="color${mkt_index}" mktResId="${mktResId}" mktResName="${mktResName}" mktSalePrice="${mktSalePrice}" mktNormalSalePrice="${(mkt.salePrice)?default(0)}" p_pic="${p_pic_color}" mktResTypeCd="${mktResTypeCd}" mktSpecCode="${mktSpecCode}">${attrListTmp.attrValue}</label>
+	           			<input type="radio" name="gender" mktResId="${mktResId}" mktResName="${mktResName}" mktSalePrice="${mktSalePrice}" mktNormalSalePrice="${(mkt.salePrice)?default(0)}" p_pic="${p_pic_color}" mktResTypeCd="${mktResTypeCd}" mktSpecCode="${mktSpecCode}" id="color${mkt_index}" value="${attrListTmp.attrValue}" onclick = "javascript:mktRes.terminal.selectColor($(this))">
+										</#if>
+									</#if>
+								</#list>
+							</#if>
+						</#list>
+						<#if flag=='true'>
+							<#list mkt.attrList as attrListTmp>
+								<#if (attrListTmp.attrId)?? && (attrListTmp.attrId) =='60010004'>
+									<#if (mkt_index+1)%4=0>
+									<br><br>
+									</#if>
+									<#if mkt.mktResId == (mktRes.mktResId)>
+						<label class="ui-btn-active ui-radio-on" for="color${mkt_index}" mktResId="${mktResId}" mktResName="${mktResName}" mktSalePrice="${mktSalePrice}" mktNormalSalePrice="${(mkt.salePrice)?default(0)}" p_pic="${p_pic_color}" mktResTypeCd="${mktResTypeCd}" mktSpecCode="${mktSpecCode}">${attrListTmp.attrValue}</label>
+	           			<input type="radio" name="gender" id="color${mkt_index}" value="${attrListTmp.attrValue}"  mktResId="${mktResId}" mktResName="${mktResName}" mktSalePrice="${mktSalePrice}" mktNormalSalePrice="${(mkt.salePrice)?default(0)}" p_pic="${p_pic_color}" mktResTypeCd="${mktResTypeCd}" mktSpecCode="${mktSpecCode}" onclick = "javascript:mktRes.terminal.selectColor($(this))">
+									<#else>
+						<label for="color${mkt_index}" mktResId="${mktResId}" mktResName="${mktResName}" mktSalePrice="${mktSalePrice}" mktNormalSalePrice="${(mkt.salePrice)?default(0)}" p_pic="${p_pic_color}" mktResTypeCd="${mktResTypeCd}" mktSpecCode="${mktSpecCode}">${attrListTmp.attrValue}</label>
+	           			<input type="radio" name="gender" id="color${mkt_index}" value="${attrListTmp.attrValue}"  mktResId="${mktResId}" mktResName="${mktResName}" mktSalePrice="${mktSalePrice}" mktNormalSalePrice="${(mkt.salePrice)?default(0)}" p_pic="${p_pic_color}" mktResTypeCd="${mktResTypeCd}" mktSpecCode="${mktSpecCode}" onclick = "javascript:mktRes.terminal.selectColor($(this))">
+									</#if>
+								</#if>
+							</#list>
+						</#if>
+					</#if>
+				</#list>
+			</fieldset>
+			</#if>	
+         	<fieldset data-role="controlgroup" data-type="horizontal">
+	         	<legend>购机方式：</legend>
+	         	<#if contractFlag == '1' >
+	           	<label for="hyl" id="hy" >合约套餐</label>
+	           	<input type="radio" name="input_buy_type" id="hyl" onclick = "javascript:mktRes.terminal.hyClick()">
+	           	</#if>
+	           	<label for="ljl" id="lj">购买裸机</label>
+	           	<input type="radio" name="input_buy_type" id="ljl" onclick = "javascript:mktRes.terminal.ljClick()" checked>	
+	        </fieldset>
+         	<fieldset id="treaty" data-role="controlgroup" data-type="horizontal" style="display:none">
+         		<legend>合约套餐：</legend>
+	           	<label for="cfsjAl" id="cfsjA">存费送机</label>
+	           	<input type="radio" name="phonepackage" id="cfsjAl" onclick = "javascript:mktRes.terminal.selectHy(1)">
+	           	<label for="gjsfAl" id="gjsfA">购机送费</label>
+	           	<input type="radio" name="phonepackage" id="gjsfAl" onclick = "javascript:mktRes.terminal.selectHy(2)">	
+         	</fieldset>
+         	<fieldset id = "agreementFie" data-role="controlgroup" data-type="horizontal" style="display:none">
+	           	<legend>已选合约：</legend>
+	           	<legend id="choosedOfferPlan"></legend>
+	        </fieldset>		         	
+         	<fieldset id ="phonenumberFie" data-role="controlgroup" data-type="horizontal" style="display:none">         	
+	           	<button data-mini="ture" id="cNumA">选号</button>
+	           	<legend>已选号码：</legend>
+	           	<legend id="choosedNumSpan"></legend>
+	        </fieldset>		         	
+         	<label for="phonecode">终端串号：</label>
+         	<div class="ui-grid-a phonecode">
+         		<div class="ui-block-a">
+       				<input type="text" name="phonecode" id="tsn" class="orderinput" placeholder="请先输入终端串号" maxlength="50"  data-validate="validate(terminalCodeCheck) on(keyup blur)"> 
+           		</div>
+           		<div class="ui-block-b">
+           			<button data-mini="ture" id="chkTsnA">校验</button>
+           		</div>
+          	</div>
+          	<div id="dealerMktDiv">
+          	<#include "/pad/order/order-dealer-mkt.html">
+          	</div>
+       	</div>
+	</div>
+	<div data-role="footer" data-position="fixed" data-tap-toggle="false" data-theme="n">
+	  <button id="purchaseTermA" data-inline="true" data-icon="next">下一步</button>
+	  <button id="btn_terminal_back" data-inline="true" data-icon="prev">重选</button>
+	</div>
+</div>
+<div id="div_offer" style="display:none">
+	<div data-role="header" data-position="inline" data-tap-toggle="false" data-theme="t">
+		<h1>合约计划	</h1>			
+		<button id="hy_nav_confirm_a" class="ui-btn-right ui-btn ui-icon-next ui-btn-icon-right ui-btn-inline ui-shadow ui-corner-all" data-icon="next" data-inline="true">确定</button>
+		</div>
+	<div id='gjhyContent'></div>
+</div>
+<!-- term info -->
+<input type="hidden" id="mktResType" value="${(mktRes.mktResTypeCd)?default('')}" />
+<input type="hidden" id="mktResId" value="${(mktRes.mktResId)?default('')}" />
+<input type="hidden" id="mktResCd" value="${(mktRes.mktResCd)?default('')}" />
+<input type="hidden" id="mktResName" value="${(mktRes.mktResName)?default('')}" />
+<input type="hidden" id="price" value="${(mktRes.salePrice)?default('0')}" />
+<input type="hidden" id="brand" value="${(mktRes.brand)?default('')}" />
+<input type="hidden" id="type" value="${(mktRes.phoneType)?default('')}" />
+<input type="hidden" id="color" value="${(mktRes.phoneColor)?default('')}" />
+<input type="hidden" id="tsn_hid" value="" />
+<input type="hidden" id="mktSpecCode" value="${(mktRes.mktSpecCode)?default('')}" />

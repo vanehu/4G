@@ -1,0 +1,33 @@
+<table class="contract_list numberList">
+	<thead>
+    	<tr>
+	    	<td width="80">缴费金额</td>
+	        <td width="100">付款方式</td>
+	        <td width="100">缴费时间</td>
+	    </tr>
+    </thead>
+   <#if resultlst?? && (resultlst?size>0)>
+    <tbody id="foregiftList">
+    	<#list resultlst as items >
+       	<tr >
+       		<td>${((items.paymentAmount)?number / 100)?string('0.00')}</td>
+       		<td>
+       		<#if items.paymentMethod=="11">现金
+       		<#elseif items.paymentMethod=="12">支票
+			<#elseif items.paymentMethod=="13">信用卡缴费
+			<#elseif items.paymentMethod=="14">代缴
+			<#elseif items.paymentMethod=="15">充值
+       		</#if>
+       		</td>
+       		<td>${items.paidTime}</td>
+        </tr>
+        </#list>
+	</tbody>
+	<#else>
+	<tbody>
+ 		<tr>
+ 			<td colspan="3">对不起，该用户没有充值缴费记录！</td>
+ 		</tr>
+	</tbody>
+	</#if>
+</table>

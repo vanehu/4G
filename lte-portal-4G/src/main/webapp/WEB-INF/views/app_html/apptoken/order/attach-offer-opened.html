@@ -1,0 +1,74 @@
+<#if (openMap.resultCode==0)>	
+<#if openMap.result?? >
+<#assign offerList=openMap.result.offerLists />
+<#assign servList=openMap.result.servLists />
+<div class="tab-pane fade in active" id="ordered_offer_${prodId}">
+	<div class="list-group order-list">
+		<#if openMap.result.offerLists?? &&(offerList?size>0)>	
+		<#list offerList as item>
+		<#if item.ifDault==0>
+		<a href="javascript:void(0);" id="li_${prodId}_${item.offerId}" offerSpecId="${item.offerSpecId}" offerId="${item.offerId}" isdel='N' class="list-group-item">
+			<span id="span_${prodId}_${item.offerId}">${item.offerSpecName}</span>
+		</a>
+		<#else>
+		<a href="javascript:void(0);" onclick="AttachOffer.delOffer(${prodId},${item.offerId})" id="li_${prodId}_${item.offerId}" offerSpecId="${item.offerSpecId}" offerId="${item.offerId}" isdel='N' class="list-group-item">
+			<span id="span_${prodId}_${item.offerId}">${item.offerSpecName}</span>
+			<span id="span_remove_${prodId}_${item.offerId}"
+				class="glyphicon glyphicon-remove pull-right" aria-hidden="true"></span>
+		</a>
+		</#if>
+		</#list>
+		<#else>
+		<a href="javascript:void(0);" class="list-group-item">
+			<span>没有已订购的可选包</span>
+		</a>
+		</#if>
+	</div>
+</div>
+<div class="tab-pane fade" id="ordered_prod_${prodId}">
+	<div class="list-group order-list">
+	<#if openMap.result.servLists?? &&(servList?size>0)>
+	<#list servList as item>
+		<#if item.ifDault==0 >
+		<a href="javascript:void(0);" id="li_${prodId}_${item.servId}" class="list-group-item">
+			<span id="span_${prodId}_${item.servId}">${item.servSpecName}</span>
+		</a>
+		<#else>
+		<a href="javascript:void(0);" id="li_${prodId}_${item.servId}" onclick="AttachOffer.closeServ(${prodId},${item.servId})" class="list-group-item">
+			<span id="span_${prodId}_${item.servId}">${item.servSpecName}</span>
+			<span id="span_remove_${prodId}_${item.servId}"
+				class="glyphicon glyphicon-remove pull-right" aria-hidden="true"></span>
+		</a>
+		</#if>
+	</#list>
+	<#else>
+		<a href="javascript:void(0);" class="list-group-item">
+			<span>没有已订购的功能产品</span>
+		</a>
+	</#if>
+	</div>
+</div>
+</#if>
+</#if>
+<script>
+	var prodId= ${prodId};
+	var openMap=${openMapJson};
+	var open = {
+		prodId : prodId,
+		offerList : []
+	};
+	var servOpen = {
+		prodId : prodId,
+		servList : []
+	};
+	if(openMap!=undefined && openMap.result!=undefined){
+		if(openMap.result.offerLists!=undefined && openMap.result.offerLists!=""){
+			open.offerList = openMap.result.offerLists; 
+			AttachOffer.openedList.push(open);
+		}
+		if(openMap.result.servLists!=undefined && openMap.result.servLists!=""){
+			servOpen.servList = openMap.result.servLists; 
+			AttachOffer.openedServList.push(servOpen);
+		}
+	}
+</script>	

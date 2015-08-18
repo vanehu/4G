@@ -1,0 +1,162 @@
+<@override name="title">中国电信4G营业受理</@override>
+<@override name="header">
+<#include "/pcpublic/busi-js-tpl.html"/>
+<#include "/pcpublic/common-js-tpl.html" />
+<script src="${contextPath}/js/pc-js/busi-js/order/offerChange.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/pc-js/busi-js/order/offer-dealer.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/pc-js/busi-js/cust/uiCust2.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/pc-js/busi-js/cust/uiCust3.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/4g-js/easydialog.min.js?${jsversion}" type="text/javascript"></script>
+
+</@override>
+
+<@override name="content">
+<!--内容-->
+
+<div class="main_div" style="width:100%;" >
+
+    <div class="main_content" style="">
+        <#if Session["_session_pad_flag"]??&&Session["_session_pad_flag"]=="1">
+            <div>
+                <#else>
+                    <div class="homecon">
+        </#if>
+
+        <div id="div_main_index" class="main_index">
+            <div id="framecenter" style="min-height: 300px;height: auto !important; repeat-x fixed center;" >
+                <div title="可选包">
+                 	<input type="hidden" id="provIsale_" value="${provIsale_}"/>
+                 	<input type="hidden" id="phoneNum_" value="${phoneNum_}"/>
+                    <div>
+                        <#include "/pctoken/order/order-offer-template.html"/>
+                    </div>
+
+                    <div class="main_bottom"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--弹出框的内容-->
+<div class="easyDialogdiv" style="width:500px;height:400px;" id="moneyAdd">
+   	<div class="easyDialogclose" id="moneyclose"></div>
+   	<div id="addContent"></div>
+</div>
+<div class="easyDialogdiv" style="width:400px;height:200px;vertical-align: middle;" id="packageTip_dialog" >
+  <div id="infoTipContent" style="height: 200px;"></div>
+</div>
+
+
+<#include "/validate-window.html"/>
+
+<script type="text/javascript">
+	$(document).ready(function() {
+
+	  	//var data={"orderList":{"orderListInfo":{"isTemplateOrder":"Y","templateType":5,"staffId":"30033961426","channelId":"89461","areaId":"8330100","partyId":"140000885921","olTypeCd":11,"custOrderAttrs":[{"itemSpecId":"111111199","value":"N"},{"itemSpecId":"111111113","value":"2015-05-30 18:17:16"},{"itemSpecId":"30010024","value":2},{"itemSpecId":"30010050","value":"2015-05-30 18:17:13"},{"itemSpecId":"111111196","value":"14329810331781068"},{"itemSpecId":"111111118","value":"xxxxxxxxxxx"}],"templateOrderName":"dfsfsfsf","soNbr":"14329810331781068"},"custOrderList":[{"busiOrder":[{"areaId":"8330100","busiOrderInfo":{"seq":-1},"busiObj":{"instId":"140009502780","objId":"81007","offerTypeCd":1,"objName":"乐享4G201407 199元-主套餐","accessNumber":"17757124558"},"boActionType":{"actionClassCd":1200,"boActionTypeCd":"S2"},"data":{"ooOwners":[{"partyId":"140000885921","state":"DEL"}],"ooRoles":[{"objId":"235010000","objInstId":140029723203,"objType":"2","offerRoleId":"30049","state":"DEL","offerMemberId":140029724336}]}},{"areaId":"8330100","busiOrderInfo":{"seq":-2},"busiObj":{"instId":-1,"objId":81008,"offerTypeCd":"1","accessNumber":"17757124558"},"boActionType":{"actionClassCd":1200,"boActionTypeCd":"S1"},"data":{"ooRoles":[{"objId":235010000,"objInstId":140029723203,"objType":2,"offerRoleId":30048,"state":"ADD"}],"ooOwners":[{"partyId":"140000885921","state":"ADD"}],"busiOrderAttrs":[{"itemSpecId":"111111116","role":"40020005","value":"30033961426"},{"itemSpecId":"111111120","role":"40020005","value":"黄一"},{"itemSpecId":"111111116","role":"40020006","value":"80310"},{"itemSpecId":"111111120","role":"40020006","value":"胡小良"}]}},{"areaId":"8330100","busiOrderInfo":{"seq":-3},"busiObj":{"objId":"235010000","instId":140029723203,"accessNumber":"17757124558"},"boActionType":{"actionClassCd":1300,"boActionTypeCd":"7"},"data":{"boServOrders":[{"servId":"140029723205","servSpecId":235010006,"servSpecName":"点对点短信(手机)"}],"boServs":[{"servId":"140029723205","state":"DEL"}]}},{"areaId":"8330100","busiOrderInfo":{"seq":-4},"busiObj":{"instId":-2,"objId":82642,"offerTypeCd":2,"objName":"爱玩4G 201412 10 元-可选包","accessNumber":"17757124558"},"boActionType":{"actionClassCd":1200,"boActionTypeCd":"S1"},"data":{"ooOwners":[{"partyId":"140000885921","state":"ADD"}],"ooRoles":[{"prodId":140029723203,"offerRoleId":33270,"objId":235010000,"objType":2,"relaType":"1000","state":"ADD","objInstId":140029723203}]}},{"areaId":"8330100","busiOrderInfo":{"seq":-5},"busiObj":{"instId":"140009502781","objId":81036,"offerTypeCd":2,"objName":"201407-4G易信定向流量包_0元-可选包_ZJ","accessNumber":"17757124558"},"boActionType":{"actionClassCd":1200,"boActionTypeCd":"S2"},"data":{"ooOwners":[{"partyId":"140000885921","state":"DEL"}],"ooRoles":[{"objId":"235010000","objInstId":140029723203,"objType":"2","offerRoleId":"","state":"DEL","offerMemberId":140029724339}]}}]}]}};
+	    var mainPhoneNum='${mainPhoneNum}';   //手机号码
+		var isFee='${isFee}';   //是否收费
+        var provIsale='${provIsale}';   //省内订单流水
+        var redirectUri='${redirectUri}';  //回调url地址
+        var reloadFlag='${reloadFlag}'; //是否二次加载
+        var mainProdOfferId="${offid}";//"81008";//'${offid}';  //主套餐id
+        var offerNbr='${offerNbr}';//集团销售品编码
+        var prodOfferName='${prodOfferName}'; //集团销售品名称
+		var data='${orderJson}';   //二次加载数据
+		var mktResInstCode='${mktResInstCode}';//传入uim卡号码
+		if(mktResInstCode!=null && mktResInstCode!=""){
+			OrderInfo.mktResInstCode=mktResInstCode;
+		}
+		
+	   // data={"orderList":{"orderListInfo":{"isTemplateOrder":"N","templateType":1,"staffId":"1762126","channelId":"1388783","areaId":"8320100","partyId":"700000479138","olTypeCd":8,"custOrderAttrs":[{"itemSpecId":"111111199","value":"Y"},{"itemSpecId":"111111113","value":"2015-08-06 16:09:44"},{"itemSpecId":"30010024","value":2},{"itemSpecId":"30010050","value":"2015-08-06 16:09:41"},{"itemSpecId":"111111196","value":"1438848588069982"},{"itemSpecId":"40010029","value":"8333345644000000055471972"}],"extCustOrderId":"8333345644000000055471972","soNbr":"1438848588069982"},"custOrderList":[{"busiOrder":[{"areaId":"8320100","busiOrderInfo":{"seq":-1},"busiObj":{"instId":"700003900358","objId":"","offerTypeCd":1,"objName":"天翼乐享3G-201108上网版189元","accessNumber":"13382031899"},"boActionType":{"actionClassCd":1200,"boActionTypeCd":"S2"},"data":{"ooOwners":[{"partyId":"700000479138","state":"DEL"}],"ooRoles":[{"objId":"235010000","objInstId":700019386335,"objType":"2","offerRoleId":"","state":"DEL","offerMemberId":700019558357}]}},{"areaId":"8320100","busiOrderInfo":{"seq":-2},"busiObj":{"instId":-1,"objId":81005,"offerTypeCd":"1","accessNumber":"13382031899"},"boActionType":{"actionClassCd":1200,"boActionTypeCd":"S1"},"data":{"ooRoles":[{"objId":235010000,"objInstId":700019386335,"objType":2,"offerRoleId":30054,"state":"ADD"}],"ooOwners":[{"partyId":"700000479138","state":"ADD"}],"busiOrderAttrs":[{"itemSpecId":"111111116","role":"40020005","value":"1762126"},{"itemSpecId":"111111120","role":"40020005","value":"王文峰"}]}},{"areaId":"8320100","busiOrderInfo":{"seq":-3},"busiObj":{"objId":"235010000","instId":700019386335,"accessNumber":"13382031899"},"boActionType":{"actionClassCd":1300,"boActionTypeCd":"7"},"data":{"boServOrders":[{"servId":-1,"servSpecId":280000020,"servSpecName":"4G（LTE）上网"}],"boServs":[{"servId":-1,"state":"ADD"}],"boServItems":[{"itemSpecId":10020003,"servId":-1,"value":"1300","state":"ADD"},{"itemSpecId":10010003,"servId":-1,"value":"1500","state":"ADD"},{"itemSpecId":10010004,"servId":-1,"value":"1700","state":"ADD"}]}},{"areaId":"8320100","busiOrderInfo":{"seq":-4},"busiObj":{"objId":"235010000","instId":700019386335,"accessNumber":"13382031899"},"boActionType":{"actionClassCd":1300,"boActionTypeCd":"7"},"data":{"boServOrders":[{"servId":"700019558365","servSpecId":235010001,"servSpecName":"来电显示"}],"boServs":[{"servId":"700019558365","state":"DEL"}]}},{"areaId":"8320100","busiOrderInfo":{"seq":-5},"busiObj":{"instId":-2,"objId":81045,"offerTypeCd":2,"objName":"(YWDJ)爱听4G定向流量包201407 0元-可选包","accessNumber":"13382031899"},"boActionType":{"actionClassCd":1200,"boActionTypeCd":"S1"},"data":{"ooOwners":[{"partyId":"700000479138","state":"ADD"}],"ooRoles":[{"prodId":700019386335,"offerRoleId":30068,"objId":235010000,"objType":2,"relaType":"1000","state":"ADD","objInstId":700019386335},{"prodId":700019386335,"offerRoleId":30068,"objId":235010008,"objType":4,"relaType":"1001","state":"ADD","objInstId":"700019558361"},{"prodId":700019386335,"offerRoleId":30068,"objId":235010003,"objType":4,"relaType":"1001","state":"ADD","objInstId":"700019558359"},{"prodId":700019386335,"offerRoleId":30068,"objId":280000020,"objType":4,"relaType":"1001","state":"ADD","objInstId":-1}]}},{"areaId":"8320100","busiOrderInfo":{"seq":-6},"busiObj":{"instId":-3,"objId":81043,"offerTypeCd":2,"objName":"(YWDJ)爱看4G定向流量包201407 0元-可选包 ","accessNumber":"13382031899"},"boActionType":{"actionClassCd":1200,"boActionTypeCd":"S1"},"data":{"ooOwners":[{"partyId":"700000479138","state":"ADD"}],"ooRoles":[{"prodId":700019386335,"offerRoleId":30070,"objId":235010000,"objType":2,"relaType":"1000","state":"ADD","objInstId":700019386335},{"prodId":700019386335,"offerRoleId":30070,"objId":235010008,"objType":4,"relaType":"1001","state":"ADD","objInstId":"700019558361"},{"prodId":700019386335,"offerRoleId":30070,"objId":235010003,"objType":4,"relaType":"1001","state":"ADD","objInstId":"700019558359"},{"prodId":700019386335,"offerRoleId":30070,"objId":280000020,"objType":4,"relaType":"1001","state":"ADD","objInstId":-1}]}},{"areaId":"8320100","busiOrderInfo":{"seq":-7},"busiObj":{"instId":-4,"objId":81046,"offerTypeCd":2,"objName":"(YWDJ)爱玩4G定向流量包201407 0元-可选包","accessNumber":"13382031899"},"boActionType":{"actionClassCd":1200,"boActionTypeCd":"S1"},"data":{"ooOwners":[{"partyId":"700000479138","state":"ADD"}],"ooRoles":[{"prodId":700019386335,"offerRoleId":30067,"objId":235010000,"objType":2,"relaType":"1000","state":"ADD","objInstId":700019386335},{"prodId":700019386335,"offerRoleId":30067,"objId":235010008,"objType":4,"relaType":"1001","state":"ADD","objInstId":"700019558361"},{"prodId":700019386335,"offerRoleId":30067,"objId":235010003,"objType":4,"relaType":"1001","state":"ADD","objInstId":"700019558359"},{"prodId":700019386335,"offerRoleId":30067,"objId":280000020,"objType":4,"relaType":"1001","state":"ADD","objInstId":-1}]}},{"areaId":"8320100","busiOrderInfo":{"seq":-8},"busiObj":{"instId":-5,"objId":82381,"offerTypeCd":2,"objName":"（小区）赠送4GB省内流量","accessNumber":"13382031899"},"boActionType":{"actionClassCd":1200,"boActionTypeCd":"S1"},"data":{"ooOwners":[{"partyId":"700000479138","state":"ADD"}],"ooParams":[{"itemSpecId":20030070,"offerParamId":-1,"offerSpecParamId":113,"value":"0","state":"ADD"},{"itemSpecId":20030071,"offerParamId":-2,"offerSpecParamId":114,"value":"0","state":"ADD"}],"ooRoles":[{"prodId":700019386335,"offerRoleId":32745,"objId":235010000,"objType":2,"relaType":"1000","state":"ADD","objInstId":700019386335},{"prodId":700019386335,"offerRoleId":32745,"objId":235010008,"objType":4,"relaType":"1001","state":"ADD","objInstId":"700019558361"},{"prodId":700019386335,"offerRoleId":32745,"objId":235010003,"objType":4,"relaType":"1001","state":"ADD","objInstId":"700019558359"},{"prodId":700019386335,"offerRoleId":32745,"objId":280000020,"objType":4,"relaType":"1001","state":"ADD","objInstId":-1}]}},{"areaId":"8320100","busiOrderInfo":{"seq":-9},"busiObj":{"instId":"700003900360","objId":"","offerTypeCd":2,"objName":"e家自主版/高速宽带/乐享3G","accessNumber":"13382031899"},"boActionType":{"actionClassCd":1200,"boActionTypeCd":"S2"},"data":{"ooOwners":[{"partyId":"700000479138","state":"DEL"}]}},{"areaId":"8320100","busiOrderInfo":{"seq":-10},"busiObj":{"objId":"235010000","instId":700019386335,"isComp":"N","accessNumber":"13382031899"},"boActionType":{"actionClassCd":1300,"boActionTypeCd":"14"},"data":{"bo2Coupons":[{"couponUsageTypeCd":"5","inOutTypeId":"1","inOutReasonId":0,"saleId":1,"couponId":500033,"couponinfoStatusCd":"A","chargeItemCd":"2007000","couponNum":1,"storeId":8320100,"storeName":"1","agentId":1,"apCharge":0,"couponInstanceNumber":"8986111421025091753","ruleId":"","partyId":"700000479138","prodId":700019386335,"offerId":-1,"state":"ADD","relaSeq":""},{"couponUsageTypeCd":"3","inOutTypeId":"2","inOutReasonId":0,"saleId":1,"couponId":500007,"couponinfoStatusCd":"A","chargeItemCd":"2014000","couponNum":1,"storeId":1,"storeName":"11","agentId":1,"apCharge":0,"couponInstanceNumber":"10120010025060054442","terminalCode":"10120010025060054442","ruleId":"","partyId":"700000479138","prodId":700019386335,"offerId":700003900358,"state":"DEL","relaSeq":"","id":0,"isOld":"T","is4GCard":"N"}]}}]}]},"transactionId":"15080616122940263006010","areaId":"8320102"};
+       // data={"orderList":{"orderListInfo":{"isTemplateOrder":"N","templateType":1,"staffId":"30033961426","channelId":"89461","areaId":"8330100","partyId":"140000886833","olTypeCd":11,"custOrderAttrs":[{"itemSpecId":"111111199","value":"N"},{"itemSpecId":"111111113","value":"2015-06-05 15:19:27"},{"itemSpecId":"30010024","value":2},{"itemSpecId":"30010050","value":"2015-06-05 15:19:21"},{"itemSpecId":"111111196","value":"1433488759675548"}],"soNbr":"1433488759675548"},"custOrderList":[{"busiOrder":[{"areaId":"8330100","busiOrderInfo":{"seq":-1},"busiObj":{"instId":"140009503346","objId":"81011","offerTypeCd":1,"objName":"乐享4G201407 79元-主套餐","accessNumber":"15345827188"},"boActionType":{"actionClassCd":1200,"boActionTypeCd":"S2"},"data":{"ooOwners":[{"partyId":"140000886833","state":"DEL"}],"ooRoles":[{"objId":"235010000","objInstId":140029724038,"objType":"2","offerRoleId":"30057","state":"DEL","offerMemberId":140029724089}]}},{"areaId":"8330100","busiOrderInfo":{"seq":-2},"busiObj":{"instId":-1,"objId":81008,"offerTypeCd":"1","accessNumber":"15345827188"},"boActionType":{"actionClassCd":1200,"boActionTypeCd":"S1"},"data":{"ooRoles":[{"objId":235010000,"objInstId":140029724038,"objType":2,"offerRoleId":30048,"state":"ADD"}],"ooOwners":[{"partyId":"140000886833","state":"ADD"}],"busiOrderAttrs":[{"itemSpecId":"111111116","role":"40020005","value":"30033961426"}]}},{"areaId":"8330100","busiOrderInfo":{"seq":-3},"busiObj":{"objId":"235010000","instId":140029724038,"accessNumber":"15345827188"},"boActionType":{"actionClassCd":1300,"boActionTypeCd":"7"},"data":{"boServOrders":[{"servId":-1,"servSpecId":280000020,"servSpecName":"4G（LTE）上网"}],"boServs":[{"servId":-1,"state":"ADD"}],"boServItems":[{"itemSpecId":10010003,"servId":-1,"value":"1500","state":"ADD"},{"itemSpecId":10020003,"servId":-1,"value":"1300","state":"ADD"},{"itemSpecId":10010004,"servId":-1,"value":"1700","state":"ADD"}]}},{"areaId":"8330100","busiOrderInfo":{"seq":-4},"busiObj":{"objId":"235010000","instId":140029724038,"isComp":"N","accessNumber":"15345827188"},"boActionType":{"actionClassCd":1300,"boActionTypeCd":"14"},"data":{"bo2Coupons":[{"couponUsageTypeCd":"3","inOutTypeId":"1","inOutReasonId":0,"saleId":1,"couponId":"500033","couponinfoStatusCd":"A","chargeItemCd":"3000","couponNum":"1","storeId":"8330100","storeName":"1","agentId":1,"apCharge":0,"couponInstanceNumber":"8986111420571482816","terminalCode":"8986111420571482816","ruleId":"","partyId":"140000886833","prodId":140029724038,"offerId":"-1","state":"ADD","relaSeq":"","cardTypeFlag":"1"},{"couponUsageTypeCd":"3","inOutTypeId":"2","inOutReasonId":0,"saleId":1,"couponId":500006,"couponinfoStatusCd":"A","chargeItemCd":"2014000","couponNum":1,"storeId":1,"storeName":"11","agentId":1,"apCharge":0,"couponInstanceNumber":"8986111420571460748","terminalCode":"8986111420571460748","ruleId":"","partyId":"140000886833","prodId":140029724038,"offerId":140009503346,"state":"DEL","relaSeq":"","id":0,"isOld":"T","is4GCard":"N"}]}}]}]}};
+       $("#p_cust_identityNum").val(mainPhoneNum);
+		OrderInfo.provinceInfo.isFee=isFee;
+
+		OrderInfo.acctNbr=mainPhoneNum;
+		OrderInfo.provinceInfo={
+				provIsale:provIsale,
+				redirectUri:redirectUri,
+				isFee:isFee,
+				extCustOrderID:""
+		}
+		//mainProdOfferId=null;
+	   // order.uiCusts.custQuery();
+		//reloadFlag="N";
+		//data="";
+		
+        if(reloadFlag=="N"){
+        	 var d=eval("("+data+")");
+        	if(d==null){
+        		$.alertM("提示","没有取到暂存单数据。");
+        		return ;
+        	}
+        	else{
+            var offerid="";  
+            var phoneNumber="";
+            for(var i=0;i<d.orderList.custOrderList[0].busiOrder.length;i++){
+            	var busiOrder=d.orderList.custOrderList[0].busiOrder[i];
+            	
+            	if(busiOrder.boActionType.actionClassCd=="1200" && busiOrder.boActionType.boActionTypeCd=="S1" && busiOrder.busiObj.offerTypeCd=="1"){
+            		offerid=busiOrder.busiObj.objId;
+            		phoneNumber=busiOrder.busiObj.accessNumber;
+
+            		break;
+            	}
+            }
+
+        	OrderInfo.offid=offerid;
+
+	    	OrderInfo.reloadFlag=reloadFlag;
+	    	OrderInfo.data=d;
+	    	
+	    	var custOrderAttrs=OrderInfo.data.orderList.orderListInfo.custOrderAttrs;
+	    	var is=false;
+			$.each(custOrderAttrs,function(){
+			  if(this.itemSpecId=="30010024"){
+			   if(this.value=="2"){
+			        is=true;
+			        return false;
+			    }
+			  }
+
+			});
+			if(is){
+				order.uiCustes.custQuery();
+			}
+			else{
+				 $.alert("提示","不是套餐变更受理流水号，请重试！");
+			}
+	    	
+        	}
+        }
+		
+        else{
+        	  //带主套餐id1
+        	if(mainProdOfferId!=null && mainProdOfferId!=""){
+        	   
+    	    	OrderInfo.offid=mainProdOfferId;//"81009";//mainProdOfferId;
+    	    	//alert(OrderInfo.offid);
+    	    	OrderInfo.reloadFlag=reloadFlag;
+    	    	//OrderInfo.data=data;
+    	    	order.uiCustes.custQuery();
+    		}
+    		else{
+    		   
+    			order.uiCusts.custQuery();
+    		}
+        } 
+
+		
+	});
+</script>
+
+</@override>
+
+<#if Session["_session_portal_type"]?? && Session["_session_portal_type"]=="MVNO" >
+    <@extends name="/mvno-template.html"/>
+    <#else>
+        <@extends name="/pcpublic/main-template.html"/>
+</#if>
+<#if Session._loginUrl ?? && (Session._loginUrl!="") >
+<iframe style="display:none;"  src='${Session._loginUrl}'></iframe>
+</#if>

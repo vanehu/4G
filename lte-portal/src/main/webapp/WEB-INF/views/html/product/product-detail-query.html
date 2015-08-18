@@ -1,0 +1,100 @@
+<@override name="title">产品实例详情查询</@override>
+
+<@override name="header">
+<script src="${contextPath}/js/4g-js/order/orderInfo.js" type="text/javascript"></script>
+<script src="${contextPath}/js/4g-js/order/soOrder.js" type="text/javascript"></script>
+<script src="${contextPath}/js/busi-js/prod/productQuery.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/busi-js/cust/cust.js" type="text/javascript"></script>
+<script src="${contextPath}/js/busi-js/order/areaTree.js" type="text/javascript"></script>
+
+<style>
+.main_body{
+	padding-bottom:52px;
+}
+.prod li{
+	width:33%;
+}
+.cartLink_fail:hover {
+	text-decoration : underline;
+	cursor : pointer;
+}
+</style>
+
+</@override>
+
+<@override name="content">
+<div class="main_div"> 
+  <div class=" main_warp">
+  	<div class="ordercon">	
+  	  <div class="order_confirmation ordertabcon">
+        <h2 class="h2_title">产品通用查询</h2>
+        <div class="main_body">
+          <h5 class="s_title">产品定位</h5>
+          <br/>
+          <ul class="fillin show billSearch" style="height:82px">
+          	<li>
+          	  <label>所属地区：</label>
+          	  <input type="text" class="inputWidth315px" readonly="readonly" id="p_areaId_val" onclick="product.query.chooseArea()" value="${defaultAreaName}"/>
+          	  <input type="hidden" id="p_areaId" value="${defaultAreaId}"/>
+          	  <label class="f_red">*</label> 
+          	</li>
+            <li>
+              <label>所属客户：</label>
+              <input type="text" class="inputWidth315px" readonly="readonly" id="custName" onclick="product.query.showQueryCust()" placeHolder="请查询并选择客户"/>
+            </li>
+            <li class="noBorder">
+              <input type="checkbox" style="height:22px;margin-left:9px;" id="accurate"/>
+              <label style="width:65px;">精确查询：</label>
+              <input type="text" class="inputWidth315px" id="num" placeHolder="请输入有效的中国电信手机号"/>
+            </li>
+            <li class="noBorder">
+              <input type="checkbox" style="height:22px;margin-left:9px;" id="p_ifCancel"/>
+              <label style="width:75px;">查询拆机用户</label>
+              <a class="btn_h30" style="margin:0px 0px 0px 20px;" onclick="product.query.queryProduct(1)"><span>查询</span></a> 
+            </li>    
+          </ul>
+          <div class="height18"></div>
+          <div id="prodList" style="display:none"></div>
+          <div id="prodDetail" style="display:none"></div>         
+         
+          <!-- 客户查询弹出框 -->     
+          <div class="easyDialogdiv" style="width:650px;height:400px;" id="d_cust" >
+            <div class="easyDialogclose" id="clientclose"></div>
+            <table class="contract_list rule">
+              <thead>
+                <tr>
+                  <td colspan="2">客户查询</td>
+                </tr>                                                    
+              </thead>
+            </table>
+            <div class="form-content">
+  	          <div class="selectList" style="margin:10px 10px">
+  	            <form id="custQueryForm">
+                <ul class="fillin">
+                  <li class="full noBorder">
+                    <select id="cust_id_type" class="selectNumbertype" style="width:220px;margin-top:1px;" onchange="product.query.changeCustIdType(this)">
+                      <option value="0">接入号</option>
+                    </select>
+                    <input type="text" class="inputWidth228px" id="cust" placeHolder="请输入有效的中国电信手机号码" data-validate="validate(isTelecomSection:请输入有效的中国电信号码) on(blur)"/>
+                    <input name="custQueryType" id="custQueryType" type="hidden" value="queryOnly" >
+                    <a id="bt_cust_query" class="purchase">查 询</a>
+                  </li>
+                </ul>
+                <div class="clear"></div>
+                </form>
+              </div>
+              <div class="phone_warp" style="margin:0px 10px;" id="custlist"></div>
+            </div>
+          </div> 
+          <!-- 客户查询弹出框end -->
+        </div>
+      </div>    
+    </div>
+  </div>
+</div>
+</@override>
+<#if Session["_session_portal_type"]?? && Session["_session_portal_type"]=="MVNO" >
+<@extends name="/mvno-template.html"/>
+<#else>
+<@extends name="/main-template.html"/>
+</#if>

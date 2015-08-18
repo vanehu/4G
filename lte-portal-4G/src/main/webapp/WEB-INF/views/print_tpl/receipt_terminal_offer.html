@@ -1,0 +1,464 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <style type="text/css" > 
+	     body{
+		          font-family: 'SimSun';
+		          padding:0;
+	        }
+           td {
+                font-size: 12pt;
+                 font-family: 'SimSun';
+                 padding: 0;
+            }
+            
+            .seqno {
+                font-family: 'SimHei';
+                font-size: 10.5pt;
+                font-style: normal;
+                font-variant: normal;
+                color: #000;
+            }
+            
+            .style_title1 {
+                font-size: 16pt;
+                height: 26pt;
+             	font-family: 'SimHei';
+                text-align: center;
+                vertical-align: top;
+                font-weight: bold;
+            }
+             .style_title1_1 {
+                font-size: 12pt;
+             	font-family: 'SimHei';
+                text-align: center;
+                vertical-align: top;
+                line-height: 12.5pt;
+                font-weight: bold;
+            }
+            .style_title2_1 {
+                font-size: 10.5pt;
+                line-height: 13pt;
+               font-family: 'SimHei';
+               font-weight: bold;
+            }
+            
+            .style_title2_2 {
+                font-size: 10pt;
+                line-height: 12.5pt;
+               font-family: 'SimHei';
+               font-weight: bold;
+            }
+            
+            .style_title3 {
+                font-size: 10pt;
+                line-height: 12pt;
+                font-family: 'SimHei';
+                margin-left: 30pt;
+                font-weight: bold;
+            }
+            
+            .style_text {
+                font-size: 9pt;
+                font-weight: normal;
+                line-height: 12pt;
+                font-family: 'SimSun';
+            }
+            
+            .style_verify {
+                font-size: 12pt;
+                line-height: 12pt;
+                text-align: center;
+            }
+            .solid{
+            	border-top-width:0;border-left-width:0;border-right-width:0;
+            	border-bottom-width: 1pt;
+				border-bottom-style: solid;
+				border-bottom-color: #000;
+				display: block;
+				width: 100%;
+				height: 0.75pt;
+				font-family: 'SimSun';
+				font-size: 10pt;
+				padding: 0;
+				margin: 3.5pt 0 3.5pt 0;
+            }
+             .dashed {
+             	border-top-width:0;border-left-width:0;
+             	border-right-width:0;
+             	border-bottom:1pt dashed #000; font-size: 10pt;
+             	font-family: 'SimSun';
+             	padding: 0;
+				margin: 0 auto;
+            }
+            .td_dashed{
+             	border-top:1px dashed #000;
+             	padding-top:6px;
+             }
+            .left_1{
+            	padding-left: 20pt;
+            }
+             .p_left_1{
+            	padding-left: 20pt;
+            }
+             .left_2{
+            	padding-left: 40pt;
+            }
+            .footer_left_2{
+            	padding-left: 60pt;
+            	padding-top: 6pt;
+            }
+            .w3cbbs {
+                page-break-after: always;
+            }
+            table{
+            	border:0;
+            	word-wrap: break-word; word-break: break-all;
+            }
+            td table{	
+            	table-layout:fixed;
+            }
+        </style>
+    </head>
+    <body>
+         	<div id="header" width="100%">
+                <table width="100%" path="orderListInfo">
+                	<tr><td  colspan="3"><img src="${contextPath}/image/logo.gif" width="150px" height="49px" style="position: absolute; top:30px;left:10px;"/></td></tr>
+                	<tr>
+                        <td  colspan="3" class="style_title1">中国电信股份有限公司${areaName}分公司业务登记单</td>
+                    </tr>
+                    <tr>
+                        <td width="40%" class="style_title2_1" style="text-align:left">
+                            订单编号：<label path='extCustOrderId'>${order.orderNo}</label>
+                        </td>
+                        <td width="20%" class="style_title2_1" style="text-align:center">
+                            第<label id="pagenumber">1</label>页（共<label id="pagecount">1</label>页）</td>
+                        <td width="40%" class="style_title2_1" style="text-align:right">
+                            受理日期：<label>${datetime("yyyy")}</label>年<label>${datetime("MM")}</label>月<label>${datetime("dd")}</label>日
+                        </td>
+                    </tr>
+                </table>
+               <span class="solid"></span>
+            </div>
+           <div id="container" width="100%"  >
+                <table width="100%">
+                    <tr>
+                        <td width="50%" class="style_title2_1">客户名称：
+                        	<label>${order.item.cust.name}</label>
+                        </td>
+                        <td width="50%" class="style_title2_1">联系电话：
+                        	<label>${subStr('${order.item.cust.tel}',4,7,'X')}
+                            </label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="style_title2_1">
+                        	证件类型：
+                            <label>
+                                ${order.item.cust.idTypeName}
+                            </label>
+                        </td>
+                        <td class="style_title2_1">
+                            	证件号码：
+                            <label>
+                                ${subStr('${order.item.cust.idNo}',9,14,'X')}
+                            </label>
+                        </td>
+                    </tr>
+                </table>
+                <span class="solid"></span>
+  
+	           <table id="registInfoTab" width="100%" class="left_1">
+	                <tr>
+	                    <td  class="style_title2_1">
+	                        登记信息：
+	                    </td>
+	                </tr>
+	            </table>
+	            <table  width="100%">
+	                <tr>
+	                    <td width="100%">
+	                        <table  width="100%" class="left_1">
+	                            <tr>
+	                                <td id="contractSeq" width="30px" align="left" valign="top" class="style_title2_1">
+	                                    一、
+	                                </td>
+	                                <td width="100%">
+	                                    <table width="100%">
+	                                        <tr>
+	                                            <td  class="style_title2_1">【订购】${agreementOffer.prodOfferName}（次月生效）</td>
+	                                        </tr>
+	                                        <tr>
+	                                            <td width="100%" class="style_text">
+	                                                合约价：${(agreementOffer.agreementPrice)?number/100}元，其中：<#if agreementOffer.prodOfferType==11>优惠购机价${(agreementOffer.terminalSubsidyPrice)?number/100}元，预存话费${(agreementOffer.storedCalls)?number/100}<#else>手机零售价${(order.item.mhk.price)?number/100}元，赠送话费总额${(agreementOffer.subsidyAmount)?number/100}</#if>元；
+	                                            </td>
+	                                        </tr>
+	                                        <tr>
+	                                            <td width="100%" class="style_text" path='contractLine2'>
+	                                                合约期:${agreementOffer.agreementPeriod}个月；从订购次月起开始，
+	                                                <#if agreementOffer.prodOfferType==12>
+	                                                前${(agreementOffer.agreementPeriod)?number-1}月返还话费${(agreementOffer.firstmonthReturn)?number/100}元，第${agreementOffer.agreementPeriod}月返还话费${(agreementOffer.lastmonthReturn)?number/100}元
+	                                                <#else>
+	                                               每月返还话费${(agreementOffer.permonthReturn)?number/100}元
+	                                                </#if>
+	                                            </td>
+	                                        </tr>
+	                                        <tr>
+	                                            <td width="100%" class="style_text" path='contractLine3'>
+	                                               合约套餐：${mainOffer.prodOfferName}，见如下登记记录。
+	                                            </td>
+	                                        </tr>
+	                                    </table>
+	                                </td>
+	                            </tr>
+	                        </table>
+	                    </td>
+	                </tr>
+	                <tr>
+	                	<td colspan="2">
+	                		<hr class="dashed"></hr>
+	                	</td>
+	                </tr>
+	            </table>
+             <#if mainOffer??>
+            <div  width="100%">
+            	    <table  width="100%"  class="left_1">
+                            <tr>
+                                <td width="30px" align="left" valign="top" class="style_title2_1">
+                                    二、
+                                </td>
+                                <td>
+                                    <table width="100%">
+                                        <tr>
+                                            <td class="style_title2_1" width="100%">【订购】${mainOffer.prodOfferName}（当月生效）（加入${order.item.mhk.mktResName} <#if agreementOffer.prodOfferType==11>存费送机<#else>购机送费</#if>合约计划）</td>
+                                        </tr>
+                                    </table>
+                                    <table width="100%"  pathtype="relative" pagekey='order'>
+                                        <tr>
+                                            <td width="100%">
+                                                <table width="100%">
+                                                    <tr>
+                                                        <td class="style_title2_2">1、手机号码:${order.item.phonenumber.number}（新开户）</td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td width="100%">
+                                                <table width="100%">
+                                                    <tr>
+                                                        <td class="style_title2_2">2、套餐月基本费：${(agreementOffer.offerGrade)?number/100}元，包含：</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="style_text" style="padding-left:20pt">
+                                                            <table>
+                                                            	<tr>
+                                                            		<td class="style_text">国内拨打国内：${mainOffer.inVoice}分钟；</td>
+                                                            		<td class="style_text">国内接听免费；</td>
+                                                            		<td class="style_text">国内短信：${mainOffer.inSMS}条；</td>
+                                                            	</tr>
+                                                            	<tr>
+                                                            		<td class="style_text">国内彩信：${mainOffer.inMMS}条；</td>
+                                                            		<td class="style_text">WiFi上网(国内)：${mainOffer.inWIFI} 小时；</td>
+                                                            		<td class="style_text">手机上网流量（国内）：${mainOffer.inFlux}；</td>
+                                                            	</tr>
+                                                            </table>
+                                                        </td>
+                                                    </tr>
+                                                    <#if (sendAttachOffer?? && sendAttachOffer?size>0)>
+                                                    <tr>
+                                                        <td class="style_text"  style="padding-left:20pt">赠送：
+                                                        	<#list sendAttachOffer as saoffer>${saoffer.name}<#if saoffer_has_next>、<#else>。</#if></#list>
+                                                        	</td>
+                                                    </tr>
+                                                    </#if>
+                                                </table>
+                                            </td>
+                                        </tr>
+                       
+                                        <tr>
+                                            <td width="100%">
+                                                <table width="100%"  id="pricingPackageOverRangePriceTab" >
+                                                    <tr>
+                                                        <td class="style_title2_2">3、套餐超出资费：</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="style_text" style="padding-left:20pt">
+                                                           <#if orderItemMapList??><#list orderItemMapList as orderItemMap><#if orderItemMap.orderItemType=1004>${orderItemMap.orderItemDesc}</#if></#list></#if>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                     
+                                        <tr>
+                                            <td width="100%">
+                                                <table width="100%">
+                                                    <tr>
+                                                        <td class="style_title2_2">4、订购当月资费：</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="style_text"  style="padding-left:20pt">
+                                                           <#if orderItemMapList??><#list orderItemMapList as orderItemMap><#if orderItemMap.orderItemType=1005>${orderItemMap.orderItemDesc}</#if></#list></#if>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                         <tr>
+                                            <td width="100%">
+                                                <table width="100%">
+                                                    <tr>
+                                                        <td class="style_title2_2">5、其它说明：</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="style_text"  style="padding-left:20pt">
+                                                        	1)　套餐中的“国内”指中国内地，不含港澳台地区。<br/>
+                                                        	2)　套餐内包含的通话时长不含拨打港澳台地区电话的通话时长。<br/>
+                                                        	3)　赠送的国内通话费不含信息费、港澳台长途费及漫游费。<br/>
+                                                        	4)　返还的话费可抵扣除国际及港澳台业务和代收费外的通信费。如返还话费当月未消费完，可累计使用，如合约协议期内未消费完，可延期消费，不退还。<br/>
+                                                        	5)　套餐有效期n年/套餐有效期与合约计划相同，到期后若您未办理变更或退订,则套餐自动续延。
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </table>
+                               	    </td>
+                            </tr>
+                        </table>
+            </div>
+            </#if>
+           </div>
+           
+           <span class="solid" width="100%"></span>
+            <div  width="100%">
+            <table width="100%">
+                <tr>
+                    <td class="style_title2_1">付费信息：</td>
+                </tr>
+                <tr>
+                    <td>
+                        <table class="left_2" width="100%">
+                            <tr>
+                            	<#assign paymethod=0 />
+                            	<#assign posSerialNbr=0 />
+                            	<#assign feeAmount=0 />
+                            	<#if (order.item.paymentItems?? && order.item.paymentItems?size>0)>
+                            	<#list order.item.paymentItems as item>
+                            	<#if item.paymentMethodCd==100000>
+                            		<#if paymethod==0><#assign paymethod=1 /><#else><#assign paymethod=3 /></#if>
+                            	<#elseif item.paymentMethodCd==110100>
+                            	<#if paymethod==0><#assign paymethod=2 /><#else><#assign paymethod=3 /></#if>
+                            		<#assign posSerialNbr=item.posSerialNbr />
+	                            	<#assign feeAmount=item.feeAmount />
+                            	</#if></#list>
+                            	</#if>
+                            	<td width="30px"></td>
+                                <td class="style_text">
+                                	<label class="style_title2_2">1、本次订单费用：</label> 应收${(order.sumCharge)?number/100}元，实收${(order.realCharge)?number/100}元（<#if paymethod==1>现金支付<#elseif paymethod==2>POS刷卡,流水号:${posSerialNbr}<#else>混合支付,【POS流水号:${posSerialNbr},金额:${(feeAmount?number/100)}元;现金支付:${(order.realCharge)?number/100-(feeAmount?number/100)}元】</#if>）
+                                </td>
+                            </tr>
+                            <tr>
+                            	<td width="30px"></td>
+                                <td class="style_text">
+                                	<label class="style_title2_2">2、月使用费付费方式：</label>  现金支付。
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+            </div>
+            <div  width="100%">
+           	<table width="100%">
+                <tr>
+                    <td class="style_title2_1 td_dashed">物品清单：</td>
+                </tr>
+                <tr >
+                    <td  width="100%">
+                    	<table class="left_2">
+                        	<tr>
+                        		<td width="30px"></td>
+                        		<td class="style_text">1、${order.item.mhk.mktResName} (型号:${order.item.mhk.type},串号:${order.item.mhk.sn}) 1部 ；</td>
+                        	</tr>
+                        	<tr>
+                        		<td width="30px"></td>
+                        		<td class="style_text">2、天翼UIM卡 <#if order.item.uim??>(类型:,ICCID:${order.item.uim.ICCID}) 1张</#if>。</td>
+                        	</tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+            </div>
+               <div width="100%">
+            <table width="100%">
+                <tr>
+                    <td class="style_title2_1 td_dashed" width="100%"> 温馨提示：</td>
+                </tr>
+                <tr>
+                    <td>
+                        <table class="left_2" width="100%">
+                            <tr>
+                            	<td width="30px"></td>
+                                <td class="style_text">
+                                	1、一号通行：您的天翼手机号就是天翼宽带（WiFi、3G、有线）帐号、也是189邮箱号，可上网、登录网掌厅、使用翼支付等功能。（189邮箱帐号：手机号@189.cn,如18918910000@189.cn,邮箱门户  http://mail.189.cn,初次登陆或忘记密码可按提示设置或找回密码；中国电信WiFi网络标识：ChinaNet；网上营业厅网址http://www.189.cn,翼支付网址http://www.bestpay.com.cn）。<br/>
+                                	2、充值交费：您可登录网上营业厅、翼支付网站使用充值卡和银行卡进行充值交费，天翼手机用户编辑短信“CZ*充值付费卡密码#”发送到“10001”可给本机充值交费。<br/>
+                                	3、电子帐单：您可以登录网上营业厅自助查询帐单及相关业务资费，电子帐单将按月发送到您的189邮箱。<br/>
+                                	4、流量提示：当月手机上网流量累计达到20G，将暂停当月手机上网服务，下月起自动恢复开通，您也可申请提前开通。
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+                </div>
+            <div  width="100%" id="footer">
+             <table id="userConfirm" width="100%">
+             	  <tr>
+                    <td colspan="2">
+                        <span class="solid"></span>
+                    </td>
+                </tr>
+                <tr>
+                	<td width="30px"></td>
+                    <td class="style_title1_1">
+                        客户确认：（以上资料属实，已阅读并同意本登记单内容及背面记载的条款及附加协议）
+                    </td>
+                </tr>
+                <tr>
+                	<td width="30px"></td>
+                    <td >
+                        <table width="100%"  class="footer_left_2">
+                            <tr>
+                                <td class="style_title2_1" >
+                                    申请人/经办人（签字）：
+                                </td>
+                                <td class="style_title2_1">
+                                    业务受理人（签章）：
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="style_title2_1">
+                                    经办人证件类型：
+                                </td>
+                                <td class="style_title2_1">
+                                    业务受理工号：${staffCode}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="style_title2_1">
+                                    经办人证件号码：
+                                </td>
+                                <td class="style_title2_1">
+                                    受理网点：${channelName}
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+          </div>
+    </body>
+</html>

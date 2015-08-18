@@ -1,0 +1,167 @@
+<div class="height18"></div>
+					<div class="cardtab" style="padding:0px">
+						<ul class="pdcard">
+							<li id="cardtab_pro_0" class="setcon" onclick="javasrcrpt:order.cust.changeLabel(0)">客户联系人</li>
+						<#if (code)?? && (code==0)&&(profileSpec)?? &&((profileSpec)?size>0)>
+							<#if (profileTabList)?? &&((profileTabList)?size>0)>
+	                        <#list profileTabList as profileTabLists>
+	                        <li id="cardtab_pro_${profileTabLists.partyProfileCatgTypeCd}"  onclick="javasrcrpt:order.cust.changeLabel(${profileTabLists.partyProfileCatgTypeCd})">${profileTabLists.partyProfileCatgTypeName}</li>
+							</#list>
+							</#if>
+							<script>
+							order.cust.partyProfiles = [];
+							var partyProfiles=${profileSpecJson};
+							order.cust.partyProfiles=partyProfiles;
+							
+							order.cust.profileTabLists = [];
+							var profileTabLists=${profileTabListJson};
+							order.cust.profileTabLists=profileTabLists;
+						</script>
+						</#if>
+							<div class="clear"></div>
+						</ul>
+					<div class="clear"></div>
+</div> 
+					
+					
+<table class="network" style="display:none; margin:0px 15px" id="tabProfile0" click="1">
+		  <tbody>
+				<tr>
+			    <td width="90" align="right" style="text-align:right"> 联系人名称：</td>
+			    <td width="150">
+						   <input type="text" id="contactName"  class="inputWidth183px" maxlength="32">
+						   <label class="f_red">*</label>
+				</td>
+				
+			    <td width="90" align="right" style="text-align:right">联系类型：</td>
+			    <td width="150">
+						   <select id="contactType" class="inputWidth183px" check_type="check" >
+							<option value="10">主要联系人</option>
+							<option value="11">非主要联系人</option>
+							</select>
+				</td>
+			    </tr>
+				<tr>
+			    <td align="right" style="text-align:right"> 是否首要联系人：</td>
+			    <td>
+						   <select id="headFlag" class="inputWidth183px" check_type="check" >
+							<option value="1">是</option>
+							<option value="2">否</option>
+							</select>
+				</td>
+				
+			    <td align="right" style="text-align:right"> 性别：</td>
+			    <td>
+						   <select id="contactGender" class="inputWidth183px" check_type="check" >
+							<option value="1">男</option>
+							<option value="2">女</option>
+							<option value="3">未知</option>
+							<option value="4">未说明</option>
+							</select>
+				</td>
+			    </tr>
+				<tr>
+			    <td align="right" style="text-align:right"> 联系地址：</td>
+			    <td>
+						   <input type="text" id="contactAddress" class="inputWidth183px" maxlength="250">
+				</td>
+			    
+				
+			    <td align="right" style="text-align:right"> 雇佣单位：</td>
+			    <td>
+						   <input type="text" id="contactEmployer" class="inputWidth183px" maxlength="250">
+				</td>
+			    </tr>
+				<tr>
+			    <td align="right" style="text-align:right"> 家庭电话：</td>
+			    <td>
+						   <input type="text" id="homePhone" class="inputWidth183px" maxlength="30">
+				</td>
+			    
+				
+			    <td align="right" style="text-align:right"> 办公室电话：</td>
+			    <td>
+						   <input type="text" id="officePhone" class="inputWidth183px" maxlength="32">
+				</td>
+			    </tr>
+				<tr>
+			    <td align="right" style="text-align:right"> 移动电话：</td>
+			    <td>
+						   <input type="text" id="mobilePhone" class="inputWidth183px" maxlength="32">
+				</td>
+			    
+				
+			    <td align="right" style="text-align:right"> 联系信息：</td>
+			    <td>
+						   <input type="text" id="contactDesc" class="inputWidth183px" maxlength="250">
+				</td>
+			    </tr>
+				<tr>
+			    <td align="right" style="text-align:right"> 邮箱地址：</td>
+			    <td>
+						   <input type="text" id="eMail" class="inputWidth183px" maxlength="30">
+				</td>
+			    
+				
+			    <td align="right" style="text-align:right"> 邮政编码：</td>
+			    <td>
+						   <input type="text" id="postcode" class="inputWidth183px" maxlength="6">
+				</td>
+			    </tr>
+				<tr>
+			    <td align="right" style="text-align:right"> 邮寄地址：</td>
+			    <td>
+						   <input type="text" id="postAddress" class="inputWidth183px" maxlength="250"> 
+				</td>
+			    
+				
+			    <td align="right" style="text-align:right"> 传真号：</td>
+			    <td>
+						   <input type="text" id="fax" class="inputWidth183px" maxlength="30">
+				</td>
+			    </tr>
+		</tbody>
+</table>
+<#if (code)?? && (code==0) >
+	<#if (profileTabList)?? &&((profileTabList)?size>0)>
+    <#list profileTabList as profileTabLists>
+		<#if (profileTabLists.tabProfile)?? &&((profileTabLists.tabProfile)?size>0)>
+		<table id="${profileTabLists.tabProfileNum}" class="network" style="display:none; margin:0px 15px">
+		  <tbody>
+		    <#assign parm_row = 0 />
+			<#list profileTabLists.tabProfile as tabProfile1>
+			<#if tabProfile1.attrSpecTypeCd?? && tabProfile1.attrSpecTypeCd!="" >
+			<#assign rule=tabProfile1.rule />
+			<#assign parm_row = parm_row + 1 />
+				<#if parm_row%2==1><tr></#if>
+			    <td width="90" align="right" style="text-align:right"> ${tabProfile1.attrName}：</td>
+			    <td width="150">
+						<#if tabProfile1.dsTypeCd==4 >
+						  <select class="inputWidth183px" id="${tabProfile1.attrId}"
+							attrId="${tabProfile1.attrId}"
+							check_type="check">
+							<#list tabProfile1.valueRange as valueRange>
+								<option value="${valueRange.value}" <#if tabProfile1.value==valueRange.value >selected="selected"</#if> >${valueRange.text}</option>	
+							</#list>
+						  </select>
+						    
+						<#else>
+						   <input type="<#if tabProfile1.dataTypeCd==8 >password<#else>text</#if>" class="inputWidth183px" id="${tabProfile1.attrId}"
+							<#if tabProfile1.dataTypeCd?? && tabProfile1.dataTypeCd="4" >
+							readonly="readonly" onclick="$.calendar({ format:'yyyy年MM月dd日 ',real:'#${tabProfile1.itemSpecId}_${prodId}' });" 
+							<#elseif tabProfile1.dataTypeCd?? && tabProfile1.dataTypeCd="16" >
+							readonly="readonly" onclick="$.calendar({ format:'yyyy年MM月dd日  HH:mm:ss',real:'#${tabProfile1.itemSpecId}_${prodId}' });"
+							<#else>
+							</#if>
+							/>
+						</#if>
+				</td>
+			    <#if parm_row%2==0||((profileTabLists.tabProfile)?size==parm_row)></tr></#if>
+		    </#if>
+			</#list>
+		</tbody>
+        </table>
+		</#if>
+	</#list>
+    </#if>
+</#if>

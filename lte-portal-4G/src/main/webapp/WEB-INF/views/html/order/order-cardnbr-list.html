@@ -1,0 +1,75 @@
+<input type="hidden" id="mainAccNbr" value="${param.mainAccNbr}">
+<input type="hidden" id="areaId" value="${param.areaId}">
+<input type="hidden" id="virtualAreaId" value="${param.virtualAreaId}">
+<input type="hidden" id="extCustOrderId" value="${param.extCustOrderId}">
+<div class="order_confirmation">
+	<h2 class="h2_title">
+		<span> 一卡双号订购 </span>
+		${param.mainAccNbr}
+		<span class="showhide"></span>
+	</h2>
+    <div class="main_body">
+    	<h2 class="s_title">订单确认</h2>
+<#if resMap.resultCode==0>
+<table class="numberList" id="tab_accNbrList" >
+<tr>
+<td colspan="5" algin="center">可选择虚号</td>
+</tr>
+<tr>
+<#list accNbrList as accNbrList >
+<td><input type="radio" name="virtualAccNbr" value="${accNbrList.phoneNumber}"/> ${accNbrList.phoneNumber}</td>
+</#list>
+</tr>
+
+</table>
+<!-- 发展人 -->
+<table class="contract_list">
+	<thead>
+    	<tr>
+    		<td>主号号码</td>
+    		<td>发展业务</td>
+    		<td>发展人类型</td>
+            <td>发展人</td>
+        </tr>                                                    
+    </thead>
+    <tbody id="dTbody">
+    </tbody>
+</table>
+<!-- 备注-->
+<div id="beizhu">
+<div class="height18"></div>
+<h5 class="s_title">订单备注</h5>
+<ul class="fillin">
+  <li class="full">
+    <label>订单备注：</label>
+    <textarea id="order_remark" class="order-remark" name="beizhu" rows="4"></textarea>
+  </li>
+</ul>
+</div>
+<table id="chooseTable" class="com_table"></table>
+					<div align="right" style="margin: 20px auto;">
+					    <a class="btna_o" href="javascript:SoOrder.orderBack()"><span >返回修改</span></a>
+					    <a style=" margin-left:20px;" class="btna_o" id="orderConfirmBtn" href="javascript:order.prodModify.orderAccNbr()"><span>订单确认</span></a>
+					</div> 
+<#else>
+<div class="height18"></div>
+	    		<table id="ruleTable" class="com_table">
+	    			<thead>
+		    			<tr>
+			                <th>校验失败</th>
+		              	</tr>
+		    		</thead>
+		    		<tbody id="ruleTbody">		            	
+		            	<tr>				            
+				        	<td>失败原因：${resMap.resultMsg}</td>
+			          	</tr>
+		            </tbody>
+	    		</table>
+	    		<div align="right" style="margin: 20px auto;">
+					<a class="btna_o" href="javascript:SoOrder.orderBack()"><span >返回修改</span></a>
+				</div>
+</#if>
+</div>
+</div>
+	
+

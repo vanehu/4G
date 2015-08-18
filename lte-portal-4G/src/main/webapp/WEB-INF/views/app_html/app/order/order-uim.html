@@ -1,0 +1,27 @@
+<div class="form-group" id="uimDiv_${prodId}" style="display: none;padding: 10px;">
+	<label for="exampleInputFile">UIM卡号<span class="text-warning">*</span></label>
+	<div class="input-group">
+      <input type="tel" class="form-control" id="uim_txt_${prodId}">
+      <div class="input-group-btn">
+        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">操作 <span class="caret"></span></button>
+        <ul class="dropdown-menu dropdown-menu-right" role="menu">
+          <li><button class="btn btn-uim" type="button" onclick="common.callScanning('order.service.scaningCallBack',${prodId})"> <span style="float:left;">扫描 </span></button></li>
+          <li class="divider"></li>
+          <li><button class="btn btn-uim" type="button" id= "uim_check_btn_${prodId}" onclick="prod.uim.checkUim(${prodId});"><span style="float:left;">校验</span></button></li>
+          <li class="divider"></li>
+          <li>
+          	  <button class="btn btn-uim disabled" id="uim_release_btn_${prodId}" onclick="prod.uim.releaseUim(${prodId});"  type="button">
+				<span style="float:left;">释放</span>
+			  </button>
+		  </li>
+        </ul>
+      </div><!-- /btn-group -->
+    </div><!-- /input-group -->
+</div>
+<div id="terminalDiv_${prodId}" style="display: none;padding: 10px;">
+</div>
+<br>
+<br>
+<br>
+<br>
+<br>

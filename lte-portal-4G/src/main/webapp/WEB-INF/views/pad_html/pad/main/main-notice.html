@@ -1,0 +1,15 @@
+<span class="iconindex icon-news"></span>
+<span id="span_scroll_notice" style="height:40px;overflow:hidden;">
+<span id="span_notice_body">
+<#if (infoList)?? &&((infoList)?size>0)>
+	<#list infoList as info>
+	<span class="time">${info.createDate?date("yyyy-MM-dd")}</span>
+	<a href="javascript:void(0);" class="news" nid="${info.bulletinId}">[ ${info.bulletinName} ]</a><br/>
+	</#list>
+<#else>
+	<span class="time"> </span><a class="news" href="#">[ 暂无公告 ]</a><br>
+</#if>
+</span><br>
+<span id="span_notice_hide"></span>
+</span>
+<input type="hidden" id="input_interval_time" value="${intervalTime}">

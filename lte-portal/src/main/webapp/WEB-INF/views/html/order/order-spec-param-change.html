@@ -1,0 +1,267 @@
+<#assign params_num = 0 >
+<#if (orderSpec.code)?? && (orderSpec.code==0) >
+<#if (orderSpec.prodSpecParams)?? &&((orderSpec.prodSpecParams)?size>0)>
+<#list orderSpec.prodSpecParams as prodSpec>
+		<#assign params_num = params_num+1 >
+		<#if (limitParams)?? &&((limitParams)?size>0)>
+			<#list limitParams as limitParam>
+				<#if prodSpec.itemSpecId==limitParam >
+					<#assign params_num = params_num-1 >
+					<#break>
+				</#if>
+			</#list>
+		</#if>
+</#list>
+</#if>
+</#if><#if (orderSpec.code)?? && (orderSpec.code==0) ><#if (orderSpec.prodSpecParams)?? &&((orderSpec.prodSpecParams)?size>0) && (params_num>0) >
+
+
+  <div class="main_warp">
+  <div class="ordercon">
+  <!--订单确认-->
+	
+    <div class="">
+  <h2 class="h2_title"><span>改产品属性</span>
+  </h2>
+  <div class="main_body">
+
+  <div class="cardtabcon">
+  <div class="pdcardcon show">
+  <h5 class="s_title">产品信息</h5>
+
+  <ul class="fillin show" id="order_spc_update"  partyId="${partyId}" >
+	
+	<#list orderSpec.prodSpecParams as prodSpec>
+		<#assign params_show = 1 >
+		<#if (limitParams)?? &&((limitParams)?size>0)>
+			<#list limitParams as limitParam>
+				<#if prodSpec.itemSpecId==limitParam >
+					<#assign params_show = 0 >
+					<#break>
+				</#if>
+			</#list>
+		</#if>
+		
+		
+		<#if params_show==1 ><!-- 判断数据是否展示 -->
+	
+	
+	<#assign rule=prodSpec.rule />
+	<li>
+	
+	<label>${prodSpec.name}：</label>
+	<#if prodSpec.dataSourceTypeCd==4 >
+	   <#if prodSpec.itemSpecId=="30010041">
+	       <#if isAvoidStop!="0">
+	           <select class="inputWidth183px" 
+		       id="${prodSpec.itemSpecId}_${prodId}" name="prodSpec_${prodId}" value="${prodSpec.value}" 
+		       itemSpecId="${prodSpec.itemSpecId}" prodSpecItemId="${prodSpec.prodInstParamId}" 
+		       check_name="${prodSpec.name}" check_mask="${rule.mask}" check_mess="${rule.maskMsg}" 
+		       check_len="${rule.attrLen}" check_option="${rule.isOptional}"  disabled="disabled"
+		       dataType="${prodSpec.dataTypeCd}" oldValue="${prodSpec.value}" addtype="${prodSpec.addtype}" 
+		       <#if (prodSpec.itemSpecId?? && prodSpec.itemSpecId!="" && prodSpec.itemSpecId!="null") >
+		       <#else>
+		           disabled="disabled"
+		       </#if>
+		       <#if rule.isEnabled=="Y" >check_type="check"<#else>check_type="uncheck" disabled="disabled"</#if>  >
+		       <#list prodSpec.valueRange as valueRange>
+		           <option value="${valueRange.value}" <#if prodSpec.value!=valueRange.value > disabled="disabled"</#if> >${valueRange.text}</option>
+		       </#list>
+		       </select>
+		   <#else>
+		       <select class="inputWidth183px" 
+		       id="${prodSpec.itemSpecId}_${prodId}" name="prodSpec_${prodId}" value="${prodSpec.value}" 
+		       itemSpecId="${prodSpec.itemSpecId}" prodSpecItemId="${prodSpec.prodInstParamId}" 
+		       check_name="${prodSpec.name}" check_mask="${rule.mask}" check_mess="${rule.maskMsg}" 
+		       check_len="${rule.attrLen}" check_option="${rule.isOptional}" 
+		       dataType="${prodSpec.dataTypeCd}" oldValue="${prodSpec.value}" addtype="${prodSpec.addtype}" 
+		       <#if (prodSpec.itemSpecId?? && prodSpec.itemSpecId!="" && prodSpec.itemSpecId!="null") >
+		       <#else>
+		           disabled="disabled"
+		       </#if>
+		       <#if rule.isEnabled=="Y" >check_type="check"<#else>check_type="uncheck" disabled="disabled"</#if>  >
+		       <#list prodSpec.valueRange as valueRange>
+		           <option value="${valueRange.value}" <#if prodSpec.value==valueRange.value >selected="selected"</#if> >${valueRange.text}</option>
+		       </#list>
+		       </select>
+	       </#if>
+	   <#elseif prodSpec.itemSpecId=="30010042">
+	       <#if isAvoidCall!="0">
+	           <select class="inputWidth183px" 
+		       id="${prodSpec.itemSpecId}_${prodId}" name="prodSpec_${prodId}" value="${prodSpec.value}" 
+		       itemSpecId="${prodSpec.itemSpecId}" prodSpecItemId="${prodSpec.prodInstParamId}" 
+		       check_name="${prodSpec.name}" check_mask="${rule.mask}" check_mess="${rule.maskMsg}" 
+		       check_len="${rule.attrLen}" check_option="${rule.isOptional}"  disabled="disabled"
+		       dataType="${prodSpec.dataTypeCd}" oldValue="${prodSpec.value}" addtype="${prodSpec.addtype}" 
+		       <#if (prodSpec.itemSpecId?? && prodSpec.itemSpecId!="" && prodSpec.itemSpecId!="null") >
+		       <#else>
+		           disabled="disabled"
+		       </#if>
+		       <#if rule.isEnabled=="Y" >check_type="check"<#else>check_type="uncheck" disabled="disabled"</#if>  >
+		       <#list prodSpec.valueRange as valueRange>
+		           <option value="${valueRange.value}" <#if prodSpec.value!=valueRange.value > disabled="disabled"</#if> >${valueRange.text}</option>
+		       </#list>
+		       </select>
+		   <#else>
+		       <select class="inputWidth183px" 
+		       id="${prodSpec.itemSpecId}_${prodId}" name="prodSpec_${prodId}" value="${prodSpec.value}" 
+		       itemSpecId="${prodSpec.itemSpecId}" prodSpecItemId="${prodSpec.prodInstParamId}" 
+		       check_name="${prodSpec.name}" check_mask="${rule.mask}" check_mess="${rule.maskMsg}" 
+		       check_len="${rule.attrLen}" check_option="${rule.isOptional}" 
+		       dataType="${prodSpec.dataTypeCd}" oldValue="${prodSpec.value}" addtype="${prodSpec.addtype}" 
+		       <#if (prodSpec.itemSpecId?? && prodSpec.itemSpecId!="" && prodSpec.itemSpecId!="null") >
+		       <#else>
+		           disabled="disabled"
+		       </#if>
+		       <#if rule.isEnabled=="Y" >check_type="check"<#else>check_type="uncheck" disabled="disabled"</#if>  >
+		       <#list prodSpec.valueRange as valueRange>
+		           <option value="${valueRange.value}" <#if prodSpec.value==valueRange.value >selected="selected"</#if> >${valueRange.text}</option>
+		       </#list>
+		       </select>
+	       </#if>	   
+	   <#elseif prodSpec.itemSpecId=="30010043">
+	       <#if isAvoidRemind!="0">
+	           <select class="inputWidth183px" 
+		       id="${prodSpec.itemSpecId}_${prodId}" name="prodSpec_${prodId}" value="${prodSpec.value}" 
+		       itemSpecId="${prodSpec.itemSpecId}" prodSpecItemId="${prodSpec.prodInstParamId}" 
+		       check_name="${prodSpec.name}" check_mask="${rule.mask}" check_mess="${rule.maskMsg}" 
+		       check_len="${rule.attrLen}" check_option="${rule.isOptional}"  disabled="disabled"
+		       dataType="${prodSpec.dataTypeCd}" oldValue="${prodSpec.value}" addtype="${prodSpec.addtype}" 
+		       <#if (prodSpec.itemSpecId?? && prodSpec.itemSpecId!="" && prodSpec.itemSpecId!="null") >
+		       <#else>
+		           disabled="disabled"
+		       </#if>
+		       <#if rule.isEnabled=="Y" >check_type="check"<#else>check_type="uncheck" disabled="disabled"</#if>  >
+		       <#list prodSpec.valueRange as valueRange>
+		           <option value="${valueRange.value}" <#if prodSpec.value!=valueRange.value > disabled="disabled"</#if> >${valueRange.text}</option>
+		       </#list>
+		       </select>
+		   <#else>
+		       <select class="inputWidth183px" 
+		       id="${prodSpec.itemSpecId}_${prodId}" name="prodSpec_${prodId}" value="${prodSpec.value}" 
+		       itemSpecId="${prodSpec.itemSpecId}" prodSpecItemId="${prodSpec.prodInstParamId}" 
+		       check_name="${prodSpec.name}" check_mask="${rule.mask}" check_mess="${rule.maskMsg}" 
+		       check_len="${rule.attrLen}" check_option="${rule.isOptional}" 
+		       dataType="${prodSpec.dataTypeCd}" oldValue="${prodSpec.value}" addtype="${prodSpec.addtype}" 
+		       <#if (prodSpec.itemSpecId?? && prodSpec.itemSpecId!="" && prodSpec.itemSpecId!="null") >
+		       <#else>
+		           disabled="disabled"
+		       </#if>
+		       <#if rule.isEnabled=="Y" >check_type="check"<#else>check_type="uncheck" disabled="disabled"</#if>  >
+		       <#list prodSpec.valueRange as valueRange>
+		           <option value="${valueRange.value}" <#if prodSpec.value==valueRange.value >selected="selected"</#if> >${valueRange.text}</option>
+		       </#list>
+		       </select>
+	       </#if>
+	   <#else>
+	       <select class="inputWidth183px" 
+		   id="${prodSpec.itemSpecId}_${prodId}" name="prodSpec_${prodId}" value="${prodSpec.value}" 
+		   itemSpecId="${prodSpec.itemSpecId}" prodSpecItemId="${prodSpec.prodInstParamId}" 
+		   check_name="${prodSpec.name}" check_mask="${rule.mask}" check_mess="${rule.maskMsg}" 
+		   check_len="${rule.attrLen}" check_option="${rule.isOptional}" 
+		   dataType="${prodSpec.dataTypeCd}" oldValue="${prodSpec.value}" addtype="${prodSpec.addtype}" 
+		   <#if (prodSpec.itemSpecId?? && prodSpec.itemSpecId!="" && prodSpec.itemSpecId!="null") >
+		   <#else>
+		       disabled="disabled"
+		   </#if>
+		   <#if rule.isEnabled=="Y" >check_type="check"<#else>check_type="uncheck" disabled="disabled"</#if>  >
+		   <option value="">--请选择--</option>
+		   <#list prodSpec.valueRange as valueRange>
+		       <option value="${valueRange.value}" <#if prodSpec.value==valueRange.value >selected="selected"</#if> >${valueRange.text}</option>
+		   </#list>
+		   </select>
+	   </#if>
+		
+		<#if (prodSpec.itemSpecId?? && prodSpec.itemSpecId!="" && prodSpec.itemSpecId!="null") >
+			<#if rule.isOptional=="N" >
+			<label class="f_red">*</label>
+	    	</#if>
+		<#else>
+			<label class="f_red">规格缺失 不可修改</label>
+		</#if>
+	<#else>
+	
+		<input type="<#if prodSpec.dataTypeCd==8 >password<#else>text</#if>" class="inputWidth183px" 
+		id="${prodSpec.itemSpecId}_${prodId}" name="prodSpec_${prodId}" value="${prodSpec.value}" 
+		itemSpecId="${prodSpec.itemSpecId}" prodSpecItemId="${prodSpec.prodInstParamId}" 
+		check_name="${prodSpec.name}" check_mask="${rule.mask}" check_mess="${rule.maskMsg}" 
+		check_len="${rule.attrLen}" check_option="${rule.isOptional}" 
+		dataType="${prodSpec.dataTypeCd}" oldValue="${prodSpec.value}" addtype="${prodSpec.addtype}" 
+		check_type="check"
+		<#if (prodSpec.itemSpecId?? && prodSpec.itemSpecId!="" && prodSpec.itemSpecId!="null") >
+		<#else>
+			disabled="disabled"
+		</#if>
+		
+		<#if prodSpec.dataTypeCd?? && prodSpec.dataTypeCd="4" >
+			readonly="readonly"
+			onclick="$.calendar({ format:'yyyy年MM月dd日 ',real:'#${prodSpec.itemSpecId}_${prodId}' });" 
+		<#elseif prodSpec.dataTypeCd?? && prodSpec.dataTypeCd="16" >
+			readonly="readonly"
+			onclick="$.calendar({ format:'yyyy年MM月dd日  HH:mm:ss',real:'#${prodSpec.itemSpecId}_${prodId}' });"
+		<#elseif rule.isConstant=="N" && rule.isEnabled=="Y" >
+			onblur="order.main.check_parm_self(this)" 
+		<#elseif rule.isConstant=="Y" >
+			disabled="disabled"
+		<#elseif rule.isEnabled=="N" >
+			disabled="disabled"
+		<#else>
+			
+		</#if>
+		 />
+		<#if (prodSpec.itemSpecId?? && prodSpec.itemSpecId!="" && prodSpec.itemSpecId!="null") >
+			<#if rule.isOptional=="N" >
+			<label class="f_red">*</label>
+	      	<div class="order_check" style="display: none"></div>
+	      	<div class="order_check_error" style="display: none"></div>
+	    	</#if>
+		<#else>
+			<label class="f_red">规格缺失 不可修改</label>
+		</#if>
+		
+	</#if>
+	
+	</#if>
+	</li>
+	
+	</#list>
+	
+	<#if ((orderSpec.prodSpecParams)?size) % 2 == 1>
+		<li><label> </label></li>
+  	</#if>
+  	
+	<li class="full" id="li_order_remark">
+		<label>订单备注：</label> 
+		<textarea rows="4" id="order_remark" cols="" class="order-remark" name="beizhu"></textarea>
+	</li>
+	<li class="full" id="templateOrderDiv" style="display:none;">
+		<label>批量模板：</label>
+		<input type="checkbox" onclick="SoOrder.showTemplateOrderName()" id="isTemplateOrder" style="margin-left: 0px; margin-top:7px">
+		<label class="template_info_name" id="templateOrderTitle" style="display: none" >模板名称：</label>
+		<input class="template_info_name inputWidth183px" type="text" id="templateOrderName" style="display: none" ></input>
+		<label class="template_info_type" style="display: none" >模板类型：</label>
+		<select class="inputWidth183px template_info_type" style="display: none" id="templateOrderType" >
+		<option value="1">批量新装</option>
+		<!-- <option value="0">批量开活卡</option> -->
+		</select>
+	</li>
+   </ul>
+
+</div>
+
+</div>
+<div class="height18"></div>
+</div>
+
+</div>
+   
+</div>
+<!--订单填写 end-->
+
+<div align="right" style="margin: 20px auto; padding:0 20px;"> 
+<a class="btna_o" href="javascript:order.prodModify.cancel();"><span >取消</span></a> 
+<a style=" margin-left:20px;" class="btna_o" href="javascript:order.main.spec_parm_change_save()" ><span>下一步</span></a>
+</div>
+
+</div>
+<#else>${orderSpec.code}</#if><#else>${orderSpec.code}</#if>

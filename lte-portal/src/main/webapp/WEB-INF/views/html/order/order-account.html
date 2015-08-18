@@ -1,0 +1,81 @@
+<h5 class="s_title">帐户信息</h5>
+<ul class="fillin">
+  	<li id="account" class="full">
+ 		<label style="line-height:22px;">可选帐户：</label>
+		<select id="acctSelect" class="inputWidth250px" style="width:300px;">
+		</select>
+		<a name="${n}" class="purchase" onclick="order.main.chooseAcct()">帐户查询</a>
+		<a name="${n}" class="purchase" onclick="order.main.acctDetail()">帐户信息</a>
+		<label class="f_red">*</label>
+	</li>
+</ul>
+<ul class="fillin" id="defineNewAcct" style="display:none;">
+	<li class="full">
+    	<label>帐户名称：</label>
+    	<input type="text" class="inputWidth250px" id="acctName" style="width:280px;"/>
+    	<label class="f_red">*</label>
+  	</li>
+	<li>
+		<label>支付方式：</label>
+		<select id="paymentType" class="inputWidth250px" style="width:95px;" onchange="acct.acctModify.paymentType()">
+			<option value="100000">现金</option>
+<!-- 			
+			<option value="110000">银行</option>
+ -->
+		</select> 
+		<input type="text" class="inputWidth183px bank" readonly="readonly" onclick="acct.acctModify.queryBank(0)" id="bankName" placeHolder="请查询并选择银行"/>
+		<label class="f_red bank">*</label>
+		<input type="hidden" id="bankId"/>										
+	</li>
+	<li class="bank">
+		<label>银行帐号：</label>
+		<input type="text" class="inputWidth183px" style="width:140px;" id="bankAcct"/>	
+		<label class="f_red">*</label>
+		<label style="width:60px;">支付人：</label>
+		<input type="text" class="inputWidth183px" style="width:80px;" id="paymentMan"/>
+	</li>
+	<li>
+	 	<label>账单投递方式：</label>
+	 	<select id="postType" class="inputWidth250px" style="width:95px;" onchange="acct.acctModify.billPostType()">
+	 		<option value="-1">不投递账单</option>	
+	   <!-- <option value="11">邮寄</option>
+	   		<option value="12">传真</option>
+	 		<option value="13">Email</option>
+	 		<option value="14">短信</option>
+	 		<option value="15">快递</option> --> 
+	 	</select>	 	
+		<input type="text" class="inputWidth183px billPost" id="postAddress"/>
+		<label class="f_red billPost">*</label>		
+	 </li>
+	 <li class="billPost">
+	 	<label>邮编：</label>
+		<input type="text" class="inputWidth183px" style="width:140px;" id="zipCode"/>	
+		<label style="margin-left:15px;width:60px;">收件人：</label>
+		<input type="text" class="inputWidth183px" style="width:80px;" id="consignee"/>		 	 	
+	 </li>
+	 <li class="billPost">
+	 	<label>账单内容：</label>
+		<select id="billContent" class="inputWidth250px" style="width:95px;" onchange="acct.acctModify.billContent()">
+	   <!-- <option value="11">账单</option>
+			<option value="12">账单和详单</option>
+			<option value="13">详单</option>
+			<option value="14">发票</option> -->  
+		</select>
+		<label class="f_red">*</label>
+		<label id="receipt" style="width:115px;text-align:center;color:red;display:none;">不支持电子寄送方式</label>				
+	 </li>
+	 <li class="billPost">
+	 	<label>投递周期：</label>
+		<select id="postCycle" class="inputWidth250px" style="width:65px;margin-left:3px;">
+	   <!-- <option value="3">月</option>
+			<option value="4">季度</option>
+			<option value="5">半年</option>
+			<option value="6">年</option> -->
+		</select>
+		<label class="f_red">*</label>		 		
+	 </li>
+</ul>
+<div class="easyDialogdiv" style="width:980px;height:400px;" id="div_bank_dialog">
+
+</div>
+<div class="height18"></div>

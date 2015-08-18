@@ -1,0 +1,56 @@
+<@override name="title">滞纳金</@override> <@override name="header">
+<#include "/busi-js-tpl.html"/>
+
+<script src="${contextPath}/js/busi-js/mktRes/owing_charge.js?${jsversion}" type="text/javascript"></script>
+</@override> <@override name="content">
+<div class="main_div"> 
+  <div class=" main_warp">
+  <div class="ordercon">
+  <!--订单确认-->
+	
+  <div class="order_confirmation ordertabcon">
+  <h2 class="h2_title">滞纳金减免录入查询<span class="showhide"></span>
+  </h2>
+  <div class="main_body">
+  <h5 class="s_title">滞纳金减免录入查询</h5>
+  <br/>
+  <ul class="fillin show billSearch" style="height:165px">
+    <li style="display:none;">
+      <label>查询依据：</label>
+      <input type="radio"  id="destinationAttr" name="destinationAttr" value="2" checked="checked">
+      <label class="radioinput">手机号码</label>
+    </li>
+    <li class="full">
+      <label>接入号码：</label>
+      <input type="text"  id="phoneNumber" value="请输入接入号" class="inputWidth315px">
+      <label class="f_red">*</label>
+    </li>
+    <!-- 
+    <li class="full">
+      <label>欠费查询方式：</label>
+      <input type="radio" name="yuhou1" value="" checked="checked">
+      <label class="radioinput">账户全部费用</label>
+    </li> -->
+	<a href="javascript:void(0)" id="oc_deratat_qry_bt" class="btn_h30"  style="margin:20px 0px 0px 20px;"><span>查询</span></a>
+  </ul>
+  <div class="height18"></div>
+  <div id="owing_details">
+
+  </div>
+</div>
+
+</div>
+    
+</div>
+<!--订单填写 end-->
+
+
+</div>
+</div>
+
+</@override> 
+<#if Session["_session_portal_type"]?? &&Session["_session_portal_type"]=="MVNO" > 
+<@extends name="/mvno-template.html"/> 
+<#else>
+<@extends name="/main-template.html"/>
+</#if>

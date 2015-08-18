@@ -1,0 +1,126 @@
+<#if flag==0> 
+<#if owingCharge??> 
+  <h5 class="s_title">欠费详情</h5>
+  <input type="hidden" id="selflag" value="${selflag}" />
+  <ul class="billSearch" style="margin-top:10px;">
+  	<#if MID??>
+		<span id="MID" style="float:right;margin:3px 25px 3px 0px;">本次查询MID：${MID}</span>
+	</#if>
+  	<table width="100%" cellpadding="0" cellspacing="0" class="top_background">
+        <tbody>
+        <tr>
+            <td align="right" id="accId" class="green" width="120px">账户ID：</td>
+            <td align="left"><font id = "acctId">${owingCharge.acctId}</font></td>
+            <td align="right" class="green" width="120px">账户名称：</td>
+            <td align="left"><font>
+            <#if (owingCharge.acctName?length > 0)>
+             ${(owingCharge.acctName?substring(0,1))?right_pad(owingCharge.acctName?length, "*")}
+            </#if></font></td>
+            <td align="right" class="green" colspan="8"></td>
+        </tr>
+       </tbody>
+      </table>
+       
+   	<table width="100%" cellpadding="0" cellspacing="0">
+        <thead>
+        	<tr>
+                <td align="center" width="60px"></td>
+                <td align="center">账务周期</td>
+                <!-- <td align="center">费用类型</td> -->
+                <td align="center">帐目类型名称</td>
+                <td align="center">费用（元）</td>
+                <td align="center">帐目来源  </td>
+                <td align="center">状态  </td>
+                <td align="center">调整后的状态</td>
+                <td align="center">操作原因</td>
+            </tr>
+        </thead>
+        <tbody>
+        <#assign totalOwingCharge =0>
+        <#assign idx =0>
+<#list owingCharge.feeBillingCycle as item >
+		 <#assign idx =0>
+        <#list item.acctItemGroup as acctItem >
+            <#list acctItem.acctItemType as typeItem >
+        	<input id="servId_${item.billingCycleId}_${typeItem.acctItemTypeId}_${idx}" value="${item.servId}" type ="text" style="border: 1px solid #DCDCDC;display:none;"/>
+        	<#if idx == 0>
+        	
+        	<tr class="tittle">
+                <td align="center"><input type="radio"  name="acctItemCharge" id="acctItemCharge" value="${item.billingCycleId}" onClick = "mktRes.owingCharge.checkItem1(this,${item.billingCycleId},${typeItem.acctItemTypeId});" acctItemCharge="${typeItem.acctItemCharge}" class="owing_box" /></td>
+                <td align="center">${item.billingCycleId}</td>
+                <td align="center" class="orange"></td>
+                <td align="center" class="orange"></td>
+                <td align="center"></td>
+                <td align="center"></td>
+                <td align="center"></td>
+                <td align="center"></td>
+                <td align="center"></td>
+           </tr>
+        	
+			 <tr class="tittle">
+                <td align="center"></td>
+                <td align="center"><input type="checkbox" name="acctItemCharge" id="acctItemCharge" value="${item.billingCycleId}_${typeItem.acctItemTypeId}_${idx}" onClick = "mktRes.owingCharge.checkItem(this,${item.billingCycleId},${typeItem.acctItemTypeId});" acctItemCharge="${typeItem.acctItemCharge}" class="owing_box_item" /></td>
+                <td align="center" class="orange">${typeItem.acctItemTypeName}</td>
+                <td align="center" class="orange">${(typeItem.acctItemCharge?number/100)?string("0.00")}</td>
+                <td align="center" id="itemSourceId_${item.billingCycleId}_${typeItem.acctItemTypeId}_${idx}">${typeItem.itemSourceId}</td>
+                <td align="center"> <#if typeItem.paymentState  == "5JG"> 呆帐  </#if> <#if typeItem.paymentState  == "5JH"> 坏帐  </#if></td>
+                <td align="center" class="orange"> 
+                         <select id="status_${item.billingCycleId}_${typeItem.acctItemTypeId}_${idx}" class="txt_cal_edit" style="border: 1px solid #DCDCDC;height: 23px;line-height: 23px;padding: 1px; width: 120px;">
+                            <option value="5JG">呆帐</option>
+                            <option value="5JH">坏帐</option>
+                        </select>
+				     </td>
+				<input id="acctItemTypeId_${item.billingCycleId}_${typeItem.acctItemTypeId}_${idx}" value = "${typeItem.acctItemTypeId}" type ="text" style="border: 1px solid #DCDCDC;display:none"/>
+			   <td align="center" class="orange"><input id="reason_${item.billingCycleId}_${typeItem.acctItemTypeId}_${idx}" type = "text" style="border: 1px solid #DCDCDC;"/></td>
+			    
+            </tr>
+			<#else>
+			 <tr>
+                <td align="center">
+                <td align="center"><input type="checkbox" name="acctItemCharge" id="acctItemCharge" value="${item.billingCycleId}_${typeItem.acctItemTypeId}_${idx}" onClick = "mktRes.owingCharge.checkItem(this,${item.billingCycleId},${typeItem.acctItemTypeId});" acctItemCharge="${typeItem.acctItemCharge}" class="owing_box_item" /></td>
+                <td align="center" class="orange">${typeItem.acctItemTypeName}</td>
+                <td align="center" class="orange">${(typeItem.acctItemCharge?number/100)?string("0.00")}</td>
+                <td align="center" id="itemSourceId_${item.billingCycleId}_${typeItem.acctItemTypeId}_${idx}">${typeItem.itemSourceId}</td>
+                <td align="center"><#if typeItem.paymentState  == "5JG"> 呆帐  </#if> <#if typeItem.paymentState  == "5JH"> 坏帐  </#if></td>
+                
+                    <td align="center" class="orange"> 
+                   <select id="status_${item.billingCycleId}_${typeItem.acctItemTypeId}_${idx}" class="txt_cal_edit" style="border: 1px solid #DCDCDC;height: 23px;line-height: 23px;padding: 1px; width: 120px;">
+					   		<option value="5JG">呆帐</option>
+					   		<option value="5JH">坏帐</option>
+				   </select>
+			    </td>
+			   <input id="acctItemTypeId_${item.billingCycleId}_${typeItem.acctItemTypeId}_${idx}" value = "${typeItem.acctItemTypeId}"  type ="text" style="border: 1px solid #DCDCDC;display:none"/>
+              
+			    <td align="center" class="orange"><input id="reason_${item.billingCycleId}_${typeItem.acctItemTypeId}_${idx}" type = "text" style="border: 1px solid #DCDCDC;"/></td>
+            </tr>
+			</#if>
+			 <#assign idx =idx+1>
+			</#list>
+        </#list>
+</#list>
+           
+            <tr>
+            	<td style="font-size:14px; height:30px" colspan="4">
+            	<a onclick="mktRes.owingCharge.updateStatus();" class="btn_h30"  style="margin:10px 0px 10px 45px;"><span style="padding-right:27px;">状态调整</span></a></td>
+              
+            </tr>
+        </tbody>
+        </table>    
+  </ul>
+  <#else>
+<#if MID??>
+	<span id="MID" style="float:right;margin:3px 25px 3px 0px;">本次查询MID：${MID}</span>
+</#if>
+<i><img width="25" height="25" style="margin:5px;" src="${contextPath}/image/icon/tip.png"></i><p style="position:relative;left:40px;bottom:30px;margin-bottom:-20px;width:97%;word-break:break-all;color:red;">没有查到欠费信息</p>
+</#if>
+<#elseif flag==1>
+<#if errorMsg??>
+<ul class="billSearch" style="margin-top:10px;">
+	<i><img width="25" height="25" style="margin:5px;" src="${contextPath}/image/icon/tip.png"></i><p style="position:relative;left:40px;bottom:30px;margin-bottom:-20px;width:97%;word-break:break-all;color:red;">查询失败：${errorMsg}</p>
+</ul>
+<#else>
+fail
+</#if>
+<#else>
+error
+</#if>

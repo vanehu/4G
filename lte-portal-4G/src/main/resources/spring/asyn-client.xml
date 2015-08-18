@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans  http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+	
+	<bean id="servicebusPropFile" class="java.lang.String">
+	 	<constructor-arg>	
+	 		<value>classpath:/portal/servicebus.properties</value>
+	 	</constructor-arg>
+	 </bean>
+	 
+	<bean id="asynClientConfig" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="order" value="102" />  
+		<property name="ignoreUnresolvablePlaceholders" value="true" /> 
+		<property name="location" ref="servicebusPropFile"/>
+	</bean>	
+	
+	<!-- 增加servicebusPropLoader以兼容统一配置平台属性加载器 -->
+	<bean id="servicebusPropLoader" class="com.al.common.spring.config.FilePropertyLoader">		
+		<property name="location" ref="servicebusPropFile"/>				
+	</bean>		
+		
+	<bean id="csbContext" class="com.linkage.crm.csb.core.context.CSBContext" init-method="start" destroy-method="stop">	
+		<property name="serviceCacheKey">
+			 <value>serviceEnName</value>			  
+		</property>		
+		
+		<property name="contextName">
+			<value>serviceBusForAsynFrameClient</value>
+		</property>	
+		
+		<property name="router">
+			<ref bean="routeController" />
+		</property> 
+					 
+		<property name="configBuilder">
+			<ref bean="xmlConfigBuilder" />
+		</property> 
+		
+		<property name="processorFactory">
+			<ref bean="processorFactory" />
+		</property>	
+		
+		<property name="channelFactory">
+			<ref bean="channelFactory" />
+		</property>
+		<property name="acceptorFactory">
+			<ref bean="acceptorFactory" />
+		</property>
+		<!-- 
+		<property name="subscriberFactory">
+			<ref bean="subscriberFactory" />
+		</property>
+		 -->
+		
+		<!-- 设置使用异步客户端的的系统编码     -->
+		<property name="defaultAccSysId">
+			<value>${servicebus.syscode}</value>			
+		</property> 
+		
+		<property name="accessControlEnable" value="false"/>
+			
+		<property name="logHelper">
+			<ref bean="logHelper" />
+		</property> 
+		
+		<!-- -->
+		<property name="springContextHolderClassMethod">
+			<value>org.springframework.context.SpringContextHolder.getBean</value>			
+		</property> 
+		
+		<property name="servicebusEnabled">
+			<value>${servicebus.enabled}</value>
+		</property>
+		 
+	</bean>
+	
+	<bean id="routeController" class="com.linkage.crm.csb.core.route.RouteController">
+		<property name="csbContext">
+			<ref bean="csbContext" />
+		</property>  
+		<property name="outExchange">
+			<ref local="outExchange" />
+		</property> 
+		<property name="evaluatorFactory">
+			<ref local="evaluatorFactory" />
+		</property>   
+	</bean>
+	
+	<bean id="exchange" class="com.linkage.crm.csb.core.exchange.DefaultExchange" init-method="init">
+		<property name="router">
+			<ref bean="routeController" />
+		</property>  
+	
+		<property name="logHelper">
+			<ref bean="logHelper" />
+		</property> 
+		
+		<property name="csbContext">
+			<ref bean="csbContext" />
+		</property> 	
+		
+	</bean>
+	
+	<bean id="outExchange" class="com.linkage.crm.csb.core.exchange.OutExchange">
+		<property name="csbContext">
+			<ref bean="csbContext" />
+		</property> 
+		<property name="processorFactory">
+			<ref local="processorFactory" />
+		</property>	 
+		
+		<property name="logHelper">
+			<ref bean="logHelper" />
+		</property> 
+		 	
+	</bean>
+		
+	<bean id="evaluatorFactory" class="com.linkage.crm.csb.core.route.evaluator.EvaluatorFactory"/>
+	<bean id="processorFactory" class="com.linkage.crm.csb.core.processor.ProcessorFactory"/>
+	<bean id="channelFactory" class="com.linkage.crm.csb.core.channel.ChannelFactory"/>
+	<bean id="acceptorFactory" class="com.linkage.crm.csb.core.acceptor.EndpointAcceptorFactory"/>
+		
+	<bean id="xmlConfigBuilder" class="com.linkage.crm.csb.core.config.XMLConfigBuilder" init-method="init">
+		<property name="serviceConfig">				
+			<value>serviceConfig4AsynClient.xml,serviceConfig4LogSender.xml</value>
+		</property> 
+		<!-- 
+		<property name="serviceConfig">				
+			<value>serviceConfig4AsynClient.xml</value>
+		</property> 
+		<property name="serviceConfig">				
+			<value>serviceConfig4LogSender.xml</value>
+		</property> 
+		 -->
+		<!-- 
+		<property name="propsConfig">				
+			<value>servicebus.properties</value>
+		</property> 
+		 -->
+		<property name="propsConfig" ref="servicebusPropFile"/> 	
+	</bean>	
+	 
+	<!-- 无日志记录 	 
+	<bean id="logHelper" class="com.linkage.crm.csb.log.impl.NoLogHelper">		
+	</bean>
+	-->
+	
+	<!--   excludeServices 用来配置所要排除的服务。避免发送自己的异常，造成死循环   -->
+	<bean id="logHelper" class="com.al.crm.asynframe.log.LogSBError">		
+		<property name="excludeServices">
+			<list>
+				<value>logSendService</value>
+			</list>
+		</property> 
+		<property name="logSenderBeanName">
+			<value>defaultLogSender</value>	
+		</property>	
+		<!-- 
+		 配置总线日志采集点，目前用于采集异步关键步骤，有助于异步超时的日志记录 
+		  -->
+		<property name="logPointList">
+			<list>				
+				<value>103</value>
+				<value>104</value>
+				<value>301</value>
+				<value>202</value>
+			</list>
+		</property>
+	</bean>	
+	
+	<!-- for 测试 -->
+	<bean id="testBean" class="com.linkage.crm.csb.core.test.TestBean" init-method="init"/>
+	
+	<bean id="defaultJsonHelper" class="com.linkage.crm.csb.util.json.JacksonJsonHelper" init-method="init"/>	
+	
+	<!-- ***************************************************************************************************************** -->	
+	<!-- Hold住Spring上下文，需要Spring3.0以上版本 -->
+	<bean class="org.springframework.context.SpringContextHolder" />
+	
+	<!-- 异步客户端 -->
+	<bean id="asynClient" class="com.al.crm.asynframe.integration.AsynFrameClient">		
+		<property name="msgHandlers">
+			<!-- list中需要保持一定的顺序 -->
+			<list>
+				<ref bean="client2CsbReqMsgHeadResolver"/>
+			</list>
+		</property>
+		 
+		<property name="asynClientService" value="asynInvokeByHttp"/>
+	
+	</bean>
+	
+	<!-- 根据所配置的表达式从CEP报文提取出数据，并放入消息头中 -->
+	<bean id="client2CsbReqMsgHeadResolver" class="com.al.crm.asynframe.integration.resolver.MsgHeadFromCEPResolver">
+		<property name="exprs">
+			<map>
+				<entry key="CEP_PKG_GROUP">
+					<value>
+						<![CDATA[
+							regex:<PackageGroup>(.*?)</PackageGroup>
+						]]>
+					</value>
+				</entry>
+				<!-- 
+				<entry key="CurrentPackage">
+					<value>
+						<![CDATA[
+							regex:<CurrentPackage>(.*?)</CurrentPackage>
+						]]>
+					</value>
+				</entry>
+				 -->
+				<entry key="SRC_TRANSACTION_ID">
+					<value>
+						<![CDATA[
+							regex:<TransactionID>(.*?)</TransactionID>
+						]]>
+					</value>
+				</entry>
+				<entry key="ASYN_TRANS_ID">
+					<value>${CEP_PKG_GROUP}</value>
+				</entry>				
+			</map>
+		</property>
+	</bean>
+	
+	<!-- 根据所配置的表达式从CEP报文提取出数据，并放入消息头中 -->
+	<bean id="csb2ClientRespMsgHeadResolver" class="com.al.crm.asynframe.integration.resolver.MsgHeadFromCEPResolver">
+		<property name="exprs">
+			<map>
+				<entry key="CEP_OLD_PKG_GROUP">
+					<value>
+						<![CDATA[
+							regex:<OldPackageGroup>(.*?)</OldPackageGroup>
+						]]>
+					</value>
+				</entry>
+				<entry key="SRC_TRANSACTION_ID">
+					<value>
+						<![CDATA[
+							regex:<TransactionID>(.*?)</TransactionID>
+						]]>
+					</value>
+				</entry>
+				<entry key="ASYN_TRANS_ID">
+					<value>${CEP_OLD_PKG_GROUP}</value>
+				</entry>
+			</map>
+		</property>
+	</bean>
+	
+	<!-- 从返回的CEP报文中提取出嵌套的CEP报文，作为实际CEP报文返回给调用方。 -->
+	<bean id="csb2ClientRespMsgResolver" class="com.al.crm.asynframe.integration.resolver.CSB2ClientRespCEPMsgHandler">
+		<property name="msgHeadResolver">
+			<ref local="csb2ClientRespMsgHeadResolver"/>
+		</property>
+	</bean>
+	
+	
+</beans>

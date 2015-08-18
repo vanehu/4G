@@ -1,0 +1,36 @@
+<div data-role="header" data-position="fixed" data-tap-toggle="false" data-theme="i" id="div_index_top" style="display: none;padding-top: 0px;">
+	<span class="logo4g"></span>
+    <form id="custQueryFirstForm" method="post" action="" class="usersearch">
+		<label>客户定位</label>
+      	<input type="hidden" value="${fromProvFlag}" id="fromProvFlag"/>
+		<input type="hidden" value="${provIsale}" id="provIsale"/>
+		<input type="hidden" value="${provIdentityCd}" id="provIdentityCd"/>
+		<input type="hidden" value="${provIdentityNum}" id="provIdentityNum"/>
+		<input type="hidden" value="${provAreaId}" id="provAreaId"/>
+	  	<input id="diffPlaceFlag" type="hidden" value="${DiffPlaceFlag}"> 
+	  	<#if Session["_ecs_login_session_key"].currentChannelId ?? && (Session["_ecs_login_session_key"].currentChannelId!="") >
+  	  	<input type="text" class="numberTextBox" title="${Session["_ecs_login_session_key"].currentAreaAllName}" style="margin-left:5px; width:100px" readonly id="p_cust_areaId_val" 
+  	  	onclick="javascript:order.cust.mgr.<#if DiffPlaceFlag=="local">chooseArea<#else>chooseAllArea</#if>()" value="${Session["_ecs_login_session_key"].currentAreaAllName}" placeholder="请选择地区" readonly />
+      	<input type="hidden" id="p_cust_areaId" value="${Session["_ecs_login_session_key"].currentAreaId}">
+      	<input type="hidden" DiffPlaceFlag="${DiffPlaceFlag}">
+      	<#else>
+       	<input type="text" class="numberTextBox" style="margin-left:5px; width:100px" 
+       		readonly id="p_cust_areaId_val" onclick="javascript:order.cust.mgr.chooseArea();" value="" placeholder="请选择地区" />
+       	<input type="hidden" id="p_cust_areaId" >
+       	<input type="hidden" DiffPlaceFlag="${DiffPlaceFlag}">
+       	</#if>
+       	<select name="usertype" id="p_cust_identityCd" data-native-menu="false" data-theme="a" class="searchselect" data-icon="select">
+       		<option value="-1" >接入号码</option>
+        	<option value="acctCd" >合同号</option>
+        	<option value="custNumber" >客户编码</option>
+       	</select>
+      	<select name="numonoff" id="isAppointNum" data-role="slider" class="numonoff">
+        	<option value="0">不指定号码</option>
+        	<option value="1" selected="selected">指定号码</option>
+      	</select>
+      	<input type="text" name="usernum" id="p_cust_identityNum" value="${mainPhoneNum_}" class="searchtext">
+      	<a id="a_user_search" href="javascript:void(0);" data-role="button" data-icon="search" data-theme="g">查询</a>
+      	<a id="a_user_create" href="javascript:;" data-role="button"  data-icon="plus" data-theme="g">新建客户</a>
+    </form>
+    <div id="custInfo" style="display: none"></div>
+</div>

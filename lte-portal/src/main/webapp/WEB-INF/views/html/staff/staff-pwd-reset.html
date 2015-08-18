@@ -1,0 +1,44 @@
+<@override name="title">密码重置</@override>
+<@override name="header">
+<script src="${contextPath}/js/busi-js/staff/staffMgr.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/4g-js/order/orderInfo.js" type="text/javascript"></script>
+</@override>
+<@override name="content">
+<div class="main_div" id="main_content">
+	<!--位置导航-->
+    <div class="position">
+            现在位置：<a href="#">工作支持</a>&gt;<a href="#">密码重置</a>       
+    </div>   
+    <!--位置导航 end-->
+	<div class=" main_warp m_top0">    
+        <!--密码重置-->
+        <div class="order_confirmation">
+        	<h2 class="h2_title">密码重置</h2>
+            <div class="main_body">
+                <div class="infoBox">
+                <form id="pwdResetForm">
+                    <table class="network">
+                          <tbody>
+                          <tr>
+					          <td width="100">&nbsp;	需重置工号：</td>
+					          <td>
+					             <div>
+				                        <p class="floatleft"><input id="staffCode" type="text" value="" class="inputWidth150px" data-validate="validate(required:工号不能为空) on(keyup blur)" placeholder="请输入工号" maxlength="16"/></p>
+				                        <div style="margin-top:-4px;" class="floatleft">
+				                            <a class="btna_o" href="javascript:void(0);" id="btn_reset_pwd"><span>重置</span></a>
+				                        </div>
+			                    </div>
+					         </td>
+					      </tr>
+                        </tbody>
+                    </table>
+                    </form>  
+                </div>
+        	</div>
+        </div>
+        <!--密码重置 end-->
+    </div>
+</div>
+
+</@override>
+<@extends name="/main-template.html"/>

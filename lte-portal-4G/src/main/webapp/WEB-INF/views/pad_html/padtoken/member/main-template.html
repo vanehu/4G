@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8"/>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<title><@block name="title"></@block><#if Session["_server_ip"]?? >[${Session["_server_ip"]}]</#if></title>
+		<META HTTP-EQUIV="Pragma" CONTENT="no-cache"> 
+		<META HTTP-EQUIV="Cache-Control" CONTENT="no-store,no-cache,must-revalidate"> 
+		<META HTTP-EQUIV="Expires" CONTENT="0">
+		<META name="keywords" content="电信集团">
+		<META name="description" content="电信集团">
+		<#include "/common-css-tpl.html"/>
+		<#include "/common-js-tpl.html"/>
+		<script src="${contextPath}/js/busi-js/common/const.js?${jsversion}" type="text/javascript"></script>
+		<!-- <script src="${contextPath}/js/busi-js/header/menu.js?${jsversion}" type="text/javascript"></script> -->
+		<script>
+			$(function() {
+				OrderInfo.staff = {
+					staffId : $("#_session_staff_info").attr("staffId"),
+					staffCode : $("#_session_staff_info").attr("staffCode"),
+					staffName : $("#_session_staff_info").attr("staffName"),
+					channelId : $("#_session_staff_info").attr("channelId"),
+					channelName : $("#_session_staff_info").attr("channelName"),
+					areaId : $("#_session_staff_info").attr("areaId"),
+					areaCode : $("#_session_staff_info").attr("areaCode"),
+					areaName : $("#_session_staff_info").attr("areaName"),
+					areaAllName : $("#_session_staff_info").attr("areaAllName"),
+					orgId : $("#_session_staff_info").attr("orgId"),
+					distributorId : $("#_session_staff_info").attr("partnerId"),
+					operatorsId : $("#_session_staff_info").attr("operatorsId"),
+					operatorsName : $("#_session_staff_info").attr("operatorsName"),
+					operatorsNbr : $("#_session_staff_info").attr("operatorsNbr"),
+					soAreaId : $("#_session_staff_info").attr("areaId"),
+					soAreaCode : $("#_session_staff_info").attr("areaCode"),
+					soAreaName : $("#_session_staff_info").attr("areaName"),
+					soAreaAllName : $("#_session_staff_info").attr("areaAllName"),
+					channelType:$("#_session_staff_info").attr("channelType"),
+					idType :$("#_session_staff_info").attr("idType")
+				};
+			});
+	     </script>
+		<@block name="header"></@block>
+		<style type="text/css">
+           .cssINPUT
+         {
+             height: 19PX;
+             padding: 3PX;
+             padding-left: 3px;
+             padding-right: 0px;
+             margin: 0PX;
+             border: 1PX SOLID #C0C0C0;
+             font-family: 宋体,arial;
+             font-size: 9pt;
+         }
+         .select_div_list
+         {
+             border: 1px solid black;
+             background-color: White;
+             overflow: hidden;
+             overflow-y: auto;
+         }
+         .select_div_list_ul
+         {
+             margin: 0px;
+             padding: 0px;
+             list-style-type: none;
+         }
+         .select_div_list_ul li
+         {
+             cursor: pointer;
+             padding-left: 3px;
+             font-family: 宋体,arial;
+             font-size: 9pt; *padding:0px;*height:20px;_height:14px;_margin:0px;_height:14px;*margin:0px;line-height:14px;}
+         .selectSPAN
+         {
+             background-color: Yellow;
+         }
+     </style>
+	</head>
+	<body style="padding: 0px;">
+
+		<!-- 头部 -->
+		<div class="navsort" style="display: none;">
+		<#if Session["_session_pad_flag"]??&&Session["_session_pad_flag"]=="1">
+			<#include "/pad-header.html"/> 
+		<#else>
+			<#include "/pcpublic/main-header.html"/> 
+		</#if>
+		</div>
+		<!--头部 end-->
+		<div class="navsortbg"></div>
+		<#if Session["_ecs_login_session_key"].currentChannelId ?? && (Session["_ecs_login_session_key"].currentChannelId!="") >
+             	<input type="hidden" id="_session_staff_info"
+					staffId="${Session["_ecs_login_session_key"].staffId}" 
+					staffCode="${Session["_ecs_login_session_key"].staffCode}" 
+					staffName="${Session["_ecs_login_session_key"].staffName}" 
+					channelId='${Session["_ecs_login_session_key"].currentChannelId}' 
+					channelName='${Session["_ecs_login_session_key"].currentChannelName}' 
+					areaId='${Session["_ecs_login_session_key"].currentAreaId}'
+					areaCode='${Session["_ecs_login_session_key"].currentAreaCode}'
+					areaName='${Session["_ecs_login_session_key"].currentAreaName}'
+					areaAllName='${Session["_ecs_login_session_key"].currentAreaAllName}'
+					orgId='${Session["_ecs_login_session_key"].orgId}' 
+					operatorsId = '${Session["_ecs_login_session_key"].currentOperatorsId}' 
+					operatorsName = '${Session["_ecs_login_session_key"].currentOperatorsName}' 
+					operatorsNbr = '${Session["_ecs_login_session_key"].currentOperatorsNbr}'
+					channelType = '${Session["_ecs_login_session_key"].currentChannelType}' 
+					idType = '${Session["_ecs_login_session_key"].idType}'
+                	/>
+                </a>
+            	</span>
+             <#else>
+            	<input type="hidden" id="_session_staff_info"
+					staffId="${Session["_ecs_login_session_key"].staffId}" 
+					staffCode="${Session["_ecs_login_session_key"].staffCode}" 
+					staffName="${Session["_ecs_login_session_key"].staffName}" 
+					channelId='' 
+					channelName='' 
+					areaId=''
+					areaCode=''
+					areaName=''
+					orgId='${Session["_ecs_login_session_key"].orgId}' 
+					operatorsId = '' 
+					operatorsName = '' 
+					operatorsNbr = ''  />
+           		</span>
+            </#if>
+		<!--内容 start-->
+		<!--  <div class="main_div">-->
+			<!-- 内容菜单-->
+			<@block name="content">
+			<#include "/padtoken/main/main-content.html"/>
+			</@block>
+		<!-- </div>-->
+		<!--内容 end-->
+		<!--底部 start-->
+		<div class="footer" style="display: none;">
+			<!-- 底部菜单-->
+			<#include "/main-footer.html"/>
+		</div>
+		<!--底部 end-->
+		<!--登录弹出框-->
+			<div>
+				<#include "/login-window.html"/>
+			</div>
+			<!--登录弹出框结束-->
+			<div style="display: none;visibility: hidden;" id="portaltop" class="navdefault" >
+			</div>
+	</body>
+</html>

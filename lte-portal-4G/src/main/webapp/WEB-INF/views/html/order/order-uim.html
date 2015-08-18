@@ -1,0 +1,18 @@
+<li>
+	<label style="width:80px;" id ="uim_lable">
+		<select id="selUim" onchange="prod.changeUim.changeUimSel(this)">
+			<option value="1">预制卡</option>
+			<option value="2">空白卡</option>
+		</select>
+    </label>
+    <input type="hidden" id="selUimType"/>
+    <input type="hidden" id="resultCardNo"/>
+    <input type="hidden" id="resultCardAsciiFStr"/>
+	<input type="text" id="uim_txt_${prodId}" value="" class="inputWidth183px">
+	<input id="uim_check_btn_${prodId}" class="purchase" type="button" value="校验" onclick="prod.uim.checkUim(${prodId});">
+	<input id="uim_release_btn_${prodId}" class="disablepurchase" disabled="disabled" type="button" value="释放" onclick="prod.uim.releaseUim(${prodId});">
+	<input type="button" class="purchase" value="写卡" onclick="order.writeCard.writeReadCard(${prodId});">
+	<input type="hidden" id="isMIFI_${prodId}" value="no"/>
+	<label class="f_red">*</label>
+</li>
+<@extends name="/order/write-card.html"/>

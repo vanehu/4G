@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8"/>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<META HTTP-EQUIV="Pragma" CONTENT="no-cache"> 
+		<META HTTP-EQUIV="Cache-Control" CONTENT="no-store,no-cache,must-revalidate"> 
+		<META HTTP-EQUIV="Expires" CONTENT="0">
+		<link rel="stylesheet" type="text/css" href="${staticResPath}/js/third-js/jquery/zebra-dialog/css/zebra_dialog.css" />
+		<link href="${staticResPath}/css/module.css" rel="stylesheet" media="screen" type="text/css" />
+		<link href="${staticResPath}/js/third-js/jquery/jquery.overlay/style.css" rel="stylesheet" media="screen" type="text/css" />
+		<#include "/common-js-tpl.html"/>
+		<script type="text/javascript" src="${contextPath}/js/4g-js/include.js"></script>
+		<script src="${contextPath}/js/busi-js/batchOrder/batchOrder.js?${jsversion}" type="text/javascript"></script>
+		<style>
+		html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, font, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td {
+		    color: #797979;
+		    font-family: 微软雅黑,宋体,Arial,Tahoma;
+		    font-size: 12px;
+		    font-style: inherit;
+		    font-weight: inherit;
+		}
+		a:link {
+		    text-decoration: none;
+		}
+		li {
+		    list-style-type: none;
+		}
+		
+		.fillin li.full {
+		    width: 600px;
+		}
+		
+		.fillin label {
+		    height: 28px;
+		    text-align: left;
+		    width: 90px;
+		}
+		</style>
+	</head>
+<body>
+
+<form method="post" id="batchUimForm" enctype="multipart/form-data" action="${contextPath}/order/batchOrder/batchImport">
+   <ul class="fillin">
+      <#if batchType!="9">
+   	   <li class="full">
+   	   		订单流水号：${olseq}
+   	   </li>
+   	   </#if>
+   	   <#if code??&&code=="0"&&batchType!="9">
+   	   <#else>
+   	   <li class="full">
+   	   <label>预约时间 :</label>
+	   	   <select id="reserveDt" name="reserveDt" style="width:100px">
+	   	   	<option value="-1">立即执行</option>
+	   	    <#list 0..24 as i>
+	            <#if i<24 >
+	              	<option value="${i}">${i}点</option>
+	            </#if>
+	        </#list>
+	   	   </select>
+   	   </li>
+	   <li class="full">
+			<input type="hidden" name="olId" id="olId" value="${olId}" />
+			<input type="hidden" name="olseq" id="olseq" value="${olseq}" />
+			<input type="hidden" name="batchType" id="batchType" value="${batchType}" />
+			<input type="hidden" name="areaId" id="areaId" value="${areaId}" />
+			<label>EXCEL文件 :</label>
+			<input type="file"   id="upFile" name="upFile" value=""/>
+			<a class="purchase" href="javascript:void(0)" onclick="order.batch.submit();">导 入</a>
+			<a class="purchase" href="javascript:void(0)" onclick="order.batch.download('${batchType}');">模板下载</a>
+			<a class="purchase" href="javascript:void(0)" onclick="order.batch.reset();">重 置</a>
+		</li>
+		</#if>
+		<li style=" border-bottom: 0px;"  class="full">
+		<#if errorStack??>
+			<table width="100%" border="0" cellspacing="0" cellpadding="0">
+		         <tr>
+						<td align="left">
+						错误编码【${errorStack.data.errCode}】${errorStack.data.errMsg}<a style=" color: #FF0000;font-weight: bold;" id="alertMoreOp" href="javascript:void(0);" onclick="order.batch.getMoreError();">&nbsp;【更多】&nbsp;</a></div> 
+						<br/><span id="alertMoreContent" style="display:none">
+							<span style="color: #0000FF;font-weight: bold;">【详细信息】</span><br/> 
+						    <span style="color: #0000FF;font-weight: bold;">入参：</span><br/>
+						    <span> ${errorStack.data.paramMap} </span><br/> 
+						    <#if errorStack.data.resultMap??>
+						    	<span style="color: #0000FF;font-weight: bold;">回参：</span><br/>
+						    	<span> ${errorStack.data.resultMap}</span><br/> 
+						    </#if>
+						    <span style="color: #0000FF;font-weight: bold;">异常信息：</span><br/>
+						    <span> ${errorStack.data.errData} </span><br/> 
+						    </span>
+						 
+				 		</td>
+			 		</tr>
+			 </table>
+			 <script>
+			 $(function(){
+				
+			 });
+			 </script>
+		<#else>
+			<#if message??&&message!="">
+				<table width="100%" border="0" cellspacing="0" cellpadding="0">
+		            <tr>
+			            <td>
+							 <#if code??&&code=="0">
+							 <i class="rule_icon"></i>
+							 <#elseif code??&&code="-1">
+							 <i class="rule_icon_wrong"></i>
+							 </#if>
+						 </td>
+						 <td>
+						  <#if code??>
+							  <#if code=="-2">
+							  	<span style="color:#ff0000">${message}</span>
+							  	<#if errorlist??&&(errorlist?size>0)>
+								  	<table class="contract_list">
+								            <thead>
+								                <tr class="dialog_tittle2">
+								                  <td width="100px">号码</td>
+								                  <td width="100px">号码</td>
+								                </tr>                                               
+								            </thead>
+								            <tbody> 
+								            <#list errorlist?chunk(2) as childList>
+								            	<tr>
+								            	 <#list childList as busiList>
+								            	 	<td>${busiList.PHONE_NUMBER}</td>
+								            	 </#list>
+								            	</tr>
+								            </#list>
+								            </tbody>
+								      </table>
+							      </#if>
+								<#else>
+							 	<span class="rule_font">${message}</span>
+							   </#if>
+						   </#if>
+						 </td>
+					 </tr>
+				</table>
+			<#else>
+				 <table width="100%" border="0" cellspacing="0" cellpadding="0">
+		            <tr>
+			            <td>
+							 <i class="rule_icon_notice"></i>
+						 </td>
+						 <td>
+						 <#if batchType=="1"||batchType=="0">
+						 	<span style="line-height:25px;">(1)仅支持上传xls、xlsx，单元格格式请设置为文本。
+							<br/>(2)新增真实客户时"客户"列填写格式：-1/姓名/证件号码/证件类型&nbsp;<a href="javascript:order.batch.downloadIdType()"><span style="color: #0000FF;font-weight: bold;">证件类型下载</span></a>
+							<br/>(3)新增虚拟客户时"客户"列填写格式：-1
+							<br/>(4)考虑到两级接口性能问题，暂不支撑老客户下新装号码，全部通过新客户模式下发。省内有客户归并需求的，在接口中完成归并。
+							<br/>(5)预约执行时间：例如：选择0点-->导入成功后0点执行；选择23点-->导入成功后23点执行
+							</span>
+						<#elseif batchType=="9">
+							<span style="line-height:25px;">(1)仅支持上传xls、xlsx，单元格格式请设置为文本。
+							<br/>(2)"产品发展人"列填写格式：产品类型@产品规格Id@发展人类型@新发展人id
+							<br/>(3)"销售品发展人"列填写格式：产品类型@销售品规格id@发展人类型@新发展人id
+							<br/>(4)产品类型：1.功能类产品2.接入类产品3.销售品类
+							<br/>(5)发展人类型：40020005.第一发展人 40020006.第二发展人  40020007.第三发展人
+							<br/>(6)预约执行时间：例如：选择0点-->导入成功后0点执行；选择23点-->导入成功后23点执行
+							</span>
+						<#else>
+							<span style="line-height:25px;">(1)仅支持上传xls、xlsx，单元格格式请设置为文本。
+							<br/>(2)预约执行时间：例如：选择0点-->导入成功后0点执行；选择23点-->导入成功后23点执行
+							</span>
+						</#if>
+						 </td>
+					 </tr>
+				</table> 
+			</#if>
+		</#if>
+		</li>
+	</ul>
+</form>
+</body>
+</html>

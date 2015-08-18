@@ -1,0 +1,25 @@
+<p id="tip" style="margin:15px;width:97%;word-break:break-all;font-size:15px;<#if flag==0>color:green;<#else>color:red;</#if>">${message}</p>
+<#if authFailList??>
+<div id="errorList"  class="phone_warp">
+	<table class="numberList">
+		<thead>
+			<tr>
+				<td width="10%">Excel行数</td>
+				<td width="15%">用户号码</td>
+				<td width="15%">充值金额</td>
+				<td width="60%">错误信息</td>
+			</tr>
+		</thead>
+		<tbody>
+			<#list authFailList as authFailItem>
+			<tr>
+				<td>${authFailItem.rowNum}</td>
+				<td>${authFailItem.phoneNumber}</td>
+				<td>${authFailItem.chargeAmount}</td>
+				<td>${authFailItem.errorMsg}</td>
+			</tr>
+			</#list>
+		</tbody>
+	</table>
+</div>
+</#if>

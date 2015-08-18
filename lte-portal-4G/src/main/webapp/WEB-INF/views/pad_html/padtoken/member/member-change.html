@@ -1,0 +1,116 @@
+<div id="main_conetent" class="main_warp">
+	<div class="ordercon" id="ordercon">
+		<h2 class="h2_title">
+			<span>
+				${main.boActionTypeName}
+			</span>
+			<span class="showhide"></span>
+		</h2>
+		<#if main.viceParam?? &&(main.viceParam?size>0)>
+			<#assign i = 0 />
+			<#list main.viceParam as item>
+				<#assign i = i+1 />
+				<#assign prodId = item.objInstId/>
+				<#if i==1>
+					<div id="change_${prodId}">
+						<div id="changePlaninfo">
+							<span class="old">原套餐:${main.oldOfferSpecName}</span>
+							<span>新套餐:${item.offerSpecName}</span>	
+						</div>
+					</div>
+				<#else>
+					<div id="change_${prodId}" style="display:none;">
+						<div id="changePlaninfo">
+							<span class="old">原套餐:${main.oldOfferSpecName}</span>
+							<span>新套餐:${item.offerSpecName}</span>	
+						</div>
+					</div>
+				</#if>
+			</#list>
+		</#if>
+		<div class="height18"></div>
+		<#if main.viceParam?? &&(main.viceParam?size>0)>
+		<div class="cardtab">
+			<ul class="pdcard" >
+				<#assign i = 0 />
+				<#list main.viceParam as item>
+					<#assign i = i+1 />
+					<#if i==1>
+						<li class="setcon" id="tab_${item.objInstId}" prodId="${item.objInstId}" onclick="offerChange.changeTab(${item.objInstId})">${item.roleName}${item.accessNumber}</li>
+					<#else>
+						<li class="" id="tab_${item.objInstId}" prodId="${item.objInstId}" onclick="offerChange.changeTab(${item.objInstId})">${item.roleName}${item.accessNumber}</li>
+					</#if>
+				</#list>
+			
+			<div class="clear"></div>
+			</ul>
+			<div class="clear"></div>
+		</div>
+		</#if>
+		<div class="main_body">
+			<!-- 产品信息展示 -->
+			<div class="cardtabcon">
+				<div id="productDiv">
+				<#if main.viceParam?? &&(main.viceParam?size>0)>	
+					<#assign i = 0 />		
+					<#list main.viceParam as item>		
+						<#assign prodId = item.objInstId/>
+						<#assign i = i+1 />
+						<#if i==1>
+							<div id="attach_tab_${prodId}" >	
+								<h5 class="s_title" >${item.roleName} 可选包/功能</h5>
+								<div type="attach" id="attach_${prodId}" class="infoBox"></div>
+							</div>
+							<div id="uimDiv_${prodId}" style="display: none;">
+								<h5 class="s_title">补换卡： </h5>
+								<div class="pdcardcon show" >
+									<ul class="fillin show">
+										<#include "/padtoken/member/order-uim.html" />
+									</ul>
+								</div>
+							</div>
+						<#else>
+							<div id="attach_tab_${prodId}" style="display:none">
+								<h5 class="s_title" >${item.roleName} 可选包/功能</h5>
+								<div type="attach" id="attach_${prodId}" class="infoBox"></div>
+							</div>
+							<div id="uimDiv_${prodId}" style="display: none;">
+								<h5 class="s_title">补换卡： </h5>
+								<div class="pdcardcon show" >
+									<ul class="fillin show">
+										<#include "/padtoken/member/order-uim.html" />
+									</ul>
+								</div>
+							</div>
+						</#if>
+					</#list>
+				</#if>	
+				</div>
+			</div>
+			<!-- 发展人 -->
+			<div class="height18"></div>
+			<div id="dealerAidDiv" >
+				<@block name="dealer">
+					<#include "/padtoken/member/order-dealer.html" />
+				</@block>
+			</div>
+			<!-- 备注 -->
+			<div class="height18"></div>
+			<div id="orderRemarkDiv" >
+				<@block name="remark">
+					<#include "/padtoken/member/order-remark.html" />
+				</@block>
+			</div>
+			<!--省内订单属性展示-->
+			<div id="orderProvAttrDiv" style="display: none;">
+				<@block name="orderProvAttr">
+					<#include "/padtoken/member/order-prov-attr.html" />
+				</@block>
+			</div>
+		</div>
+	</div>
+	<div align="right" style="margin: 20px auto; padding:0 20px;">
+		<a id="fillLastStep" href="javascript:order.prodModify.cancel()" class="btna_o"><span>取消</span></a> <a id="fillNextStep"
+			href="javascript:void(0)" class="btna_o" style=" margin-left:20px;"><span>下一步</span></a>
+	</div>
+</div>

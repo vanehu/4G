@@ -1,0 +1,24 @@
+<div class="news" style="float:right;width:100%;">
+  <input type="hidden" value="3000" id="intervalTime">
+  <a id="updateNews" style="position: fixed; left: 5px;margin-left:80px" onclick="main.home.queryNotice()" class="newsmore" href="javascript:void(0)">公告更新</a>
+<div id="new" style="width: 90%;margin-left:100px">
+<marquee direction="left" scrollamount="3" style="width: 100%;" id="" onMouseOver="this.stop()"
+onMouseOut="this.start()">
+<#if (infoList)?? &&((infoList)?size>0)>
+	<#list infoList as info>
+		<a href="javascript:void(0)" id="${contextPath}/main/noticeInfo/${info.bulletinId}" onclick="main.home.queryNotice(${info.bulletinId})">
+			[ ${info.bulletinName}  ${info.createDate} ]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		</a> 
+	</#list>
+<#else>
+		<a href="javascript:void(0)">[ 暂无公告,请刷新  ]</a>
+</#if>
+</marquee>
+</div>
+<#if (infoList)?? &&((infoList)?size>0)>
+   
+</#if>
+<div class="detail" style="display:none;"></div>
+</div>
+<!--弹出层-->
+<!--弹出框的内容-->

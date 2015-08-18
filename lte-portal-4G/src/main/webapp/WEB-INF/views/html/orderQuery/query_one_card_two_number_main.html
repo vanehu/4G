@@ -1,0 +1,98 @@
+<@override name="title">一卡双号业务监控</@override>
+
+<@override name="header">
+<#include "/busi-js-tpl.html"/>
+<script src="${contextPath}/js/busi-js/query/queryOCTN.js" type="text/javascript"></script>
+<style>
+.cartLink_fail:hover {
+	text-decoration : underline;
+	cursor : pointer;
+}
+</style>
+</@override>
+
+<@override name="content">
+<div class="main_div" id="d_query" >
+    <div class="main_warp" >
+        <!--订单准备-->       
+        <h2 class="h2_title"><span id="OCTNtitle">一卡双号业务监控</span></h2>
+        <div class="order">
+            <div class="order_content" style="border:none; padding:10px">
+                <div class="order_tab_panel" style="display:block;">
+                        <div class="selectList" id="OCTNselectList">
+                            <dl>
+                                  <dt>主号：</dt>
+                                  <dd>
+                                  	 <input type="text" class="numberTextBox width198" id="p_qryNumber1" value=""/>
+                                  </dd>
+                                  <dt style="width:90px">虚号：</dt>
+                                  <dd>
+                                 	<input type="text" class="numberTextBox width198" id="p_qryNumber2" value=""/> 
+                                    <label class="f_red">*（二选一,优先查询主号）</label>
+                                  </dd>
+                            </dl>      
+                            <dl>
+                            	  <dt>起止时间：</dt>
+                                  <dd>
+                                    <input type="text" class="numberTextBox" style="width:198px" id="p_startDt" readonly="readonly" value="${p_startDt}"  />
+                                    <label class="f_red">*</label>
+                                  </dd>
+                             	  <dt>终止时间：</dt>
+                                  <dd>
+                                     <input type="text" class="numberTextBox" style="width:198px" id="p_endDt" readonly="readonly" value="${p_endDt}"  />
+                                     <label class="f_red">*</label>                                                                    
+                                  </dd>
+                                 <dd>
+									<label class="f_red">&nbsp;&nbsp;</label>
+                                    <input type="button" value="搜 索" class="numberSearch" id="bt_cartQry" />
+								  </dd>                                                                 
+                          	</dl>                         	     
+                  </div>
+						<div class="phone_warp" id="cart_list" >
+           <table class="numberList">
+              <thead>
+               <tr>
+                  <td width="50">序号</td>
+                  <td width="100">日期</td>
+                  <td width="80">申请流水</td>
+                  <td width="80">业务场景</td>
+                  <td width="80">主号</td>
+                  <td width="80">虚号</td>
+                  <td width="80">主号省</td>
+                  <td width="80">虚号省</td>
+                  <td width="80">状态</td>
+                  <td width="80">详情</td>
+               	 </tr>
+              </thead>
+              <tbody>
+              </tbody>
+            </table>
+                        <!--页码-->
+                        <div class="paging">
+                            <label><span class="pageUpGray">上一页</span></label>
+                            <label id="pageNum">
+                            	<a class="pagingSelect" href="#">1</a>
+                            </label> 
+                            <label><span class="pageUpGray">下一页</span></label>
+                            <label class="marginTop4">共0 页</label>
+                            <label class="marginTop4">跳转至</label>
+                            <input type="text" class="inputW20H20" />
+                            <label class="marginTop4">页</label>
+                            <a href="javascript:void(0)" class="determineBtn">跳转</a>
+                        </div>                            
+                        <!--页码 end-->                    
+                    </div>                                                                              
+                </div>                               
+            </div>
+        </div>
+        <!--订单准备 end-->
+    </div>	
+</div>
+<!--内容 end-->	
+</@override>
+
+<#if Session["_session_portal_type"]?? && Session["_session_portal_type"]=="MVNO" >
+<@extends name="/mvno-template.html"/>
+<#else>
+<@extends name="/content-template.html"/>
+</#if>

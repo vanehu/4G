@@ -1,0 +1,23 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>DatePicker - jQuery plugin</title>
+	<script type="text/javascript" src="../jquery-1.7.2.min.js"></script>
+	<script type="text/javascript" src="jquery.json-2.3.js"></script>
+	<script type="text/javascript">
+		var thing = {plugin: '"jquery-json"', version: 2.3};
+		var encoded = $.toJSON( thing );
+		alert(encoded);
+		// '{"plugin":"'jquery-json","version":2.3}'
+		var jsonThin$= $.secureEvalJSON( encoded );
+		var name = jsonThin$.plugin;
+		// "jquery-json"
+		var version = jsonThin$.version;
+		alert('name:='+name+'version:='+version);
+		// 2.3
+	</script>
+</head>
+<body>
+   
+</body>
+</html>
