@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ContractRoot>
+	<TcpCont>
+		<Response>
+			<RspCode>0000</RspCode>
+			<RspDesc>成功</RspDesc>		
+		</Response>
+	</TcpCont>
+	<SvcCont>
+		<Service_Information>
+			<Service_Result_Code>0</Service_Result_Code>
+		    <Reverse_Information>
+		    	<Reverse_Amount>1222</Reverse_Amount>
+		    	<Reverse_Serial_Nbr>23131</Reverse_Serial_Nbr>
+		    	<Reverse_Date>2012-1-1</Reverse_Date>
+		    </Reverse_Information>	
+		</Service_Information>
+	</SvcCont>
+</ContractRoot>

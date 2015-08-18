@@ -1,0 +1,337 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:cache="http://www.springframework.org/schema/cache"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
+http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd
+http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
+http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache-3.1.xsd"
+	default-lazy-init="true">
+	<bean id="multiDataSource" class="com.ailk.ecsp.core.MultiDataSource">  
+	    <!--
+	    <property name="clusterDataSources">  
+	        <list>  
+	            <ref bean="serviceDataSource" />  
+	            <ref bean="srDataSource" />  
+	        </list>  
+	    </property>  
+	    -->
+	    <property name="mappedDataSources">  
+	        <map>
+	            <entry key="portal" value-ref="serviceDataSource"/>
+	            <entry key="gm" value-ref="gmDataSource" />
+	            <entry key="sn" value-ref="snDataSource" />
+	            <entry key="ly" value-ref="lyDataSource" />
+	            <entry key="dxt" value-ref="dxtDataSource" /> 
+	            <entry key="asd" value-ref="asdDataSource" />
+	            <entry key="ty" value-ref="tyDataSource" />
+	            <entry key="hjsj" value-ref="hjsjDataSource" />
+	            <entry key="wwzc" value-ref="wwzcDataSource" />
+	            <entry key="jd" value-ref="jdDataSource" />
+	            <entry key="lm" value-ref="lmDataSource" />
+	            <entry key="llkj" value-ref="llkjDataSource" />
+	            <entry key="cjt" value-ref="cjtDataSource" />
+	            <entry key="fxzx" value-ref="fxzxDataSource" />
+	            <entry key="swhl" value-ref="swhlDataSource" />
+	            <entry key="cjsd" value-ref="cjsdDataSource" />
+				<!--第二批转售商-->
+				<entry key="msds" value-ref="msdsDataSource"/>
+				<entry key="patx" value-ref="patxDataSource"/>
+				<entry key="xmsd" value-ref="xmsdDataSource"/>
+				<entry key="qdrrs" value-ref="qdrrsDataSource"/>
+				<entry key="haihang" value-ref="haihangDataSource"/>
+				<entry key="qdfx" value-ref="qdfxDataSource"/>
+				<entry key="lxtp" value-ref="lxtpDataSource"/>
+				<entry key="fhzc" value-ref="fhzcDataSource"/>
+				<entry key="zzxj" value-ref="zzxjDataSource"/>
+				<entry key="xmkj" value-ref="xmkjDataSource"/>
+	        </map>
+	    </property> 
+	</bean>  
+	<bean id="serviceDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName">
+			<value>jdbc/oracle/crm_app/gm</value>
+		</property>
+		<property name="resourceRef">
+			<value>true</value>  
+		</property> 
+	</bean>	
+		
+	<bean id="gmDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName">
+			<value>jdbc/oracle/crm_app/gm</value>
+		</property>
+		<property name="resourceRef">
+			<value>true</value>  
+		</property> 
+	</bean>	
+
+	<bean id="snDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName">
+			<value>jdbc/oracle/crm_app/sn</value>
+		</property>
+		<property name="resourceRef">
+			<value>true</value>  
+		</property>
+	</bean>
+
+	<bean id="lyDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName">
+			<value>jdbc/oracle/crm_app/ly</value>
+		</property>
+		<property name="resourceRef">
+			<value>true</value>  
+		</property>
+	</bean>
+
+	<bean id="dxtDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName">
+			<value>jdbc/oracle/crm_app/dxt</value>
+		</property>
+		<property name="resourceRef">
+			<value>true</value>  
+		</property>
+	</bean>
+
+	<bean id="asdDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName">
+			<value>jdbc/oracle/crm_app/asd</value>
+		</property>
+		<property name="resourceRef">
+			<value>true</value>  
+		</property>
+	</bean>
+
+	<bean id="tyDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName">
+			<value>jdbc/oracle/crm_app/ty</value>
+		</property>
+		<property name="resourceRef">
+			<value>true</value>  
+		</property>
+	</bean>
+
+	<bean id="hjsjDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName">
+			<value>jdbc/oracle/crm_app/hjsj</value>
+		</property>
+		<property name="resourceRef">
+			<value>true</value>  
+		</property>
+	</bean>
+
+	<bean id="wwzcDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName">
+			<value>jdbc/oracle/crm_app/wwzc</value>
+		</property>
+		<property name="resourceRef">
+			<value>true</value>  
+		</property>
+	</bean>
+
+	<bean id="jdDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName">
+			<value>jdbc/oracle/crm_app/jd</value>
+		</property>
+		<property name="resourceRef">
+			<value>true</value>  
+		</property>
+	</bean>
+
+	<bean id="lmDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName">
+			<value>jdbc/oracle/crm_app/lm</value>
+		</property>
+		<property name="resourceRef">
+			<value>true</value>  
+		</property>
+	</bean>
+
+	<bean id="llkjDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName">
+			<value>jdbc/oracle/crm_app/llkj</value>
+		</property>
+		<property name="resourceRef">
+			<value>true</value>  
+		</property>
+	</bean>
+
+	<bean id="cjtDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName">
+			<value>jdbc/oracle/crm_app/cjt</value>
+		</property>
+		<property name="resourceRef">
+			<value>true</value>  
+		</property>
+	</bean>
+
+	<bean id="fxzxDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName">
+			<value>jdbc/oracle/crm_app/fxzx</value>
+		</property>
+		<property name="resourceRef">
+			<value>true</value>  
+		</property>
+	</bean>
+
+	<bean id="swhlDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName">
+			<value>jdbc/oracle/crm_app/swhl</value>
+		</property>
+		<property name="resourceRef">
+			<value>true</value>  
+		</property>
+	</bean>
+
+	<bean id="cjsdDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName">
+			<value>jdbc/oracle/crm_app/cjsd</value>
+		</property>
+		<property name="resourceRef">
+			<value>true</value>
+		</property>
+	</bean>
+
+	<bean id="msdsDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName">
+			<value>jdbc/oracle/mvno/write/crmApp16</value>
+		</property>
+		<property name="resourceRef">
+			<value>true</value>  
+		</property>
+	</bean>
+
+	<bean id="patxDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName">
+			<value>jdbc/oracle/mvno/write/crmApp17</value>
+		</property>
+		<property name="resourceRef">
+			<value>true</value>
+		</property>
+	</bean>
+
+	<bean id="xmsdDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName">
+			<value>jdbc/oracle/mvno/write/crmApp18</value>
+		</property>
+		<property name="resourceRef">
+			<value>true</value>
+		</property>
+	</bean>
+
+	<bean id="qdrrsDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName">
+			<value>jdbc/oracle/mvno/write/crmApp19</value>
+		</property>
+		<property name="resourceRef">
+			<value>true</value>
+		</property>
+	</bean>
+
+	<bean id="haihangDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName">
+			<value>jdbc/oracle/mvno/write/crmApp20</value>
+		</property>
+		<property name="resourceRef">
+			<value>true</value>
+		</property>
+	</bean>
+
+	<bean id="qdfxDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName">
+			<value>jdbc/oracle/mvno/write/crmApp21</value>
+		</property>
+		<property name="resourceRef">
+			<value>true</value>
+		</property>
+	</bean>
+
+	<bean id="lxtpDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName">
+			<value>jdbc/oracle/mvno/write/crmApp22</value>
+		</property>
+		<property name="resourceRef">
+			<value>true</value>
+		</property>
+	</bean>
+
+	<bean id="fhzcDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName">
+			<value>jdbc/oracle/mvno/write/crmApp23</value>
+		</property>
+		<property name="resourceRef">
+			<value>true</value>
+		</property>
+	</bean>
+
+	<bean id="zzxjDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName">
+			<value>jdbc/oracle/mvno/write/crmApp24</value>
+		</property>
+		<property name="resourceRef">
+			<value>true</value>
+		</property>
+	</bean>
+
+	<bean id="xmkjDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName">
+			<value>jdbc/oracle/mvno/write/crmApp25</value>
+		</property>
+		<property name="resourceRef">
+			<value>true</value>
+		</property>
+	</bean>
+
+	<!-- define the SqlSessionFactory-->
+    <bean id="ecspSqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="multiDataSource" />
+        <property name="mapperLocations">
+			<list>
+				<!-- 表示目录中，以Mapper.xml结尾所有文件 -->
+				<value>classpath:com/ailk/ecsp/mybatis/sqlmapper/*Mapper.xml</value>
+			</list>
+		</property>
+		<!--
+        <property name="mapperLocations" value="classpath*:com/linkage/portal/agent/mybaits/sqlmap/*.xml" />
+        -->
+    </bean>
+    
+    <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+		<property name="dataSource">
+			<ref bean="multiDataSource" />
+		</property>
+	</bean>
+
+    <!--scan for mappers and let them be autowired -->
+    <bean  id="ecsp-mapper"  class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="com.ailk.ecsp.mybatis.mapper" />
+        <property name="sqlSessionFactory" ref="ecspSqlSessionFactory"/>
+    </bean>
+
+
+	<!-- enable transaction demarcation with annotations-->
+	<tx:annotation-driven transaction-manager="ecsp-transactionManager" proxy-target-class="true" />
+	 
+	<!-- transaction manager, use JtaTransactionManager for global tx-->
+    <bean id="ecsp-transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="multiDataSource" />
+       	<qualifier value="ecspTransaction"/>
+    </bean>
+	    <!-- spring 支持国际化,必须放在context里 -->
+	<bean id="configMessageSource"
+		class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+		<property name="basenames">
+			<list>
+				<value>classpath:/portal/portal</value>
+			</list>
+		</property>
+		<!-- 默认不刷新，可以配置定时刷新 <property name="cacheSeconds" value="0"/> -->
+		<!-- 中文情况：JDK1.6时加默认编码才有效，1.5时会直接输出UNICODE字符 <property name="defaultEncoding" value="UTF-8" /> -->
+	</bean>
+	<bean id="propertiesUtils" class="com.al.ecs.common.util.PropertiesUtils">
+		<property name="message" ref="configMessageSource"/> 
+	</bean>
+
+</beans>

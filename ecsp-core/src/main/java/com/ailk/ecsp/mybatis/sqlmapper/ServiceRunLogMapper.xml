@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ailk.ecsp.mybatis.mapper.ServiceRunLogMapper">
+  <resultMap id="BaseResultMap" type="com.ailk.ecsp.mybatis.model.ServiceRunLog">
+    <id column="ID" jdbcType="DECIMAL" property="id" />
+    <result column="LOG_SEQ_ID" jdbcType="VARCHAR" property="logSeqId" />
+    <result column="SERVICE_CODE" jdbcType="VARCHAR" property="serviceCode" />
+    <result column="PORTAL_CODE" jdbcType="VARCHAR" property="portalCode" />
+    <result column="ROLE_CODE" jdbcType="VARCHAR" property="roleCode" />
+    <result column="SERV_RUN_NBR" jdbcType="VARCHAR" property="servRunNbr" />
+    <result column="BUSI_RUN_NBR" jdbcType="VARCHAR" property="busiRunNbr" />
+    <result column="START_TIME" jdbcType="DATE"  property="startTime" />
+    <result column="END_TIME" jdbcType="DATE"  property="endTime" />
+    <result column="USE_TIME" jdbcType="DECIMAL" property="useTime" />
+    <result column="RESULT_CODE" jdbcType="VARCHAR" property="resultCode" />
+    <result column="REMARK" jdbcType="VARCHAR" property="remark" />
+    <result column="REMOTE_ADDR" jdbcType="VARCHAR" property="remoteAddr" />
+    <result column="REMOTE_PORT" jdbcType="VARCHAR" property="remotePort" />
+    <result column="LOCAL_ADDR" jdbcType="VARCHAR" property="localAddr" />
+    <result column="LOCAL_PORT" jdbcType="VARCHAR" property="localPort" />
+    <result column="INTF_URL" jdbcType="VARCHAR" property="intfUrl" />
+    <result column="INTF_METHOD" jdbcType="VARCHAR" property="intfMethod" />
+    
+    <result column="STAFF_ID" jdbcType="VARCHAR" property="staffId" />
+    <result column="STAFF_NAME" jdbcType="VARCHAR" property="staffName" />
+    <result column="CHANNEL_ID" jdbcType="VARCHAR" property="channelId" />
+    <result column="CHANNEL_NAME" jdbcType="VARCHAR" property="channelName" />
+    
+    <result column="OUT_PARAM" jdbcType="VARCHAR" property="outParam" />
+    <result column="IN_PARAM" jdbcType="VARCHAR" property="inParam" />
+    
+    <result column="ERROR_CODE" jdbcType="VARCHAR" property="errorCode" />
+  </resultMap>
+
+ <insert id="insertBatch" parameterType="java.util.List">
+ 	<selectKey resultType="long" keyProperty="id" order="BEFORE"> 
+            SELECT seq_service_run_log.NEXTVAL FROM DUAL 
+    </selectKey> 
+    insert into SP_SERVICE_RUN_LOG (ID, LOG_SEQ_ID, SERVICE_CODE, PORTAL_CODE, 
+      ROLE_CODE, SERV_RUN_NBR, BUSI_RUN_NBR, 
+      START_TIME, END_TIME, USE_TIME, 
+      RESULT_CODE, REMARK, REMOTE_ADDR, 
+      REMOTE_PORT,LOCAL_ADDR,LOCAL_PORT,
+      INTF_URL,INTF_METHOD,STAFF_ID,STAFF_NAME,
+      CHANNEL_ID,CHANNEL_NAME,ERROR_CODE)
+    select  seq_service_run_log.NEXTVAL,A.*  from( 
+	    <foreach collection="list" item="it" index="index"  separator="union all">
+		    select 
+		      #{it.logSeqId,jdbcType=VARCHAR},
+		      #{it.serviceCode,jdbcType=VARCHAR},
+		      #{it.portalCode,jdbcType=VARCHAR}, 
+		      #{it.roleCode,jdbcType=VARCHAR}, 
+		      #{it.servRunNbr,jdbcType=VARCHAR}, 
+		      #{it.busiRunNbr,jdbcType=VARCHAR}, 
+		      #{it.startTime,jdbcType=TIMESTAMP}, 
+		      #{it.endTime,jdbcType=TIMESTAMP}, 
+		      #{it.useTime,jdbcType=DECIMAL}, 
+		      #{it.resultCode,jdbcType=VARCHAR}, 
+		      #{it.remark,jdbcType=VARCHAR}, 
+		      #{it.remoteAddr,jdbcType=VARCHAR}, 
+		      #{it.remotePort,jdbcType=VARCHAR},
+		      #{it.localAddr,jdbcType=VARCHAR}, 
+		      #{it.localPort,jdbcType=VARCHAR},
+		      #{it.intfUrl,jdbcType=VARCHAR},
+		      #{it.intfMethod,jdbcType=VARCHAR},
+		      #{it.staffId,jdbcType=VARCHAR},
+		      #{it.staffName,jdbcType=VARCHAR},
+		      #{it.channelId,jdbcType=VARCHAR},
+		      #{it.channelName,jdbcType=VARCHAR},
+		      #{it.errorCode,jdbcType=VARCHAR}
+		    from dual
+	    </foreach>  
+    ) A 
+  </insert>
+  
+   <insert id="insert" parameterType="com.ailk.ecsp.mybatis.model.ServiceRunLog" >
+ 	<selectKey keyProperty="id" resultType="long" order="BEFORE" > 
+            SELECT seq_service_run_log.NEXTVAL as VALUE FROM DUAL 
+    </selectKey> 
+    insert into SP_SERVICE_RUN_LOG (
+      ID, LOG_SEQ_ID, SERVICE_CODE, PORTAL_CODE, 
+      ROLE_CODE, SERV_RUN_NBR, BUSI_RUN_NBR, 
+      START_TIME, END_TIME, USE_TIME, 
+      RESULT_CODE, REMARK, REMOTE_ADDR, 
+      REMOTE_PORT,LOCAL_ADDR,LOCAL_PORT,
+      INTF_URL,INTF_METHOD,STAFF_ID,STAFF_NAME,
+      CHANNEL_ID,CHANNEL_NAME,ERROR_CODE)
+     VALUES (
+     		  #{id,jdbcType=DECIMAL},
+     		  #{logSeqId,jdbcType=VARCHAR},
+		      #{serviceCode,jdbcType=VARCHAR},
+		      #{portalCode,jdbcType=VARCHAR}, 
+		      #{roleCode,jdbcType=VARCHAR}, 
+		      #{servRunNbr,jdbcType=VARCHAR}, 
+		      #{busiRunNbr,jdbcType=VARCHAR}, 
+		      #{startTime,jdbcType=TIMESTAMP}, 
+		      #{endTime,jdbcType=TIMESTAMP}, 
+		      #{useTime,jdbcType=DECIMAL}, 
+		      #{resultCode,jdbcType=VARCHAR}, 
+		      #{remark,jdbcType=VARCHAR}, 
+		      #{remoteAddr,jdbcType=VARCHAR}, 
+		      #{remotePort,jdbcType=VARCHAR},
+		      #{localAddr,jdbcType=VARCHAR}, 
+		      #{localPort,jdbcType=VARCHAR},
+		      #{intfUrl,jdbcType=VARCHAR},
+		      #{intfMethod,jdbcType=VARCHAR},
+		      #{staffId,jdbcType=VARCHAR},
+		      #{staffName,jdbcType=VARCHAR},
+		      #{channelId,jdbcType=VARCHAR},
+		      #{channelName,jdbcType=VARCHAR},
+		      #{errorCode,jdbcType=VARCHAR}
+		      )
+  </insert>
+  
+  <insert id="insertDetail" parameterType="com.ailk.ecsp.mybatis.model.ServiceRunLog" >
+    insert into SP_SERVICE_RUN_LOG_DETAIL (ID, IN_PARAM, OUT_PARAM)
+     VALUES 
+     (#{id,jdbcType=DECIMAL},#{inParam,jdbcType=VARCHAR},#{outParam,jdbcType=VARCHAR})
+  </insert>
+
+  <select id="query" resultMap="BaseResultMap" parameterType="map" >
+   <![CDATA[
+	 SELECT * 
+		FROM(	
+			select ROWNUM r,
+				srl.* ,
+				srld.in_param,
+				srld.out_param
+			from SP_SERVICE_RUN_LOG srl,
+			     SP_SERVICE_RUN_LOG_DETAIL srld
+			<where>
+				rownum < #{endIndex}
+		        <if test="logSeqId != null">
+		            AND srl.logSeqId = #{logSeqId}
+		        </if>
+		        <if test="errorCode != null">
+		            AND srl.errorCode = #{errorCode}
+		        </if>
+		        <if test="serviceCode != null">
+		            AND srl.serviceCode = #{serviceCode}
+		        </if>
+		        <if test="servRunNbr != null">
+		            AND srl.servRunNbr = #{servRunNbr}
+		        </if>
+		        <if test="resultCode != null">
+		            AND srl.resultCode = #{resultCode}
+		        </if>
+		        <if test="remoteAddr != null">
+		            AND srl.remoteAddr = #{remoteAddr}
+		        </if>
+		        <if test="remotePort != null">
+		            AND srl.remotePort = #{remotePort}
+		        </if>
+		        <if test="localAddr != null">
+		            AND srl.localAddr = #{localAddr}
+		        </if>
+		        <if test="localPort != null">
+		            AND srl.localPort = #{localPort}
+		        </if>
+		        <if test="intfUrl != null">
+		            AND srl.intfUrl = #{intfUrl}
+		        </if>
+		        <if test="intfMethod != null">
+		            AND srl.intfMethod = #{intfMethod}
+		        </if>
+		        <if test="startTime != null && endTime != null">
+		            AND srl.startTime between  #{startTime} and  #{endTime}
+		        </if>
+			</where>
+			order by srl.id desc;
+		) t2 
+		where t2.r >= #{startIndex}    
+   ]]>
+  </select>
+
+</mapper>
