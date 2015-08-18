@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>中国电信4G营业受理</title>
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store,no-cache,must-revalidate">
+<META HTTP-EQUIV="Expires" CONTENT="0">
+<META name="keywords" content="电信集团">
+<META name="description" content="电信集团">
+
+<link href="resources/css/base-1.0.0.min.css" rel="stylesheet" type="text/css" />
+<!-- js -->
+<script src="resources/js/third-js/jquery/jquery-1.7.2.min.js?201501291633"></script>
+<script src="resources/js/common.js?201501291633" type="text/javascript"></script>
+<script src="resources/js/third-js/validate/jquery.ketchup.js?201501291633" type="text/javascript"></script>
+<script src="resources/js/third-js/validate/jquery.ketchup.validations_zh.js?201501291633" type="text/javascript"></script>
+<script src="resources/js/third-js/validate/jquery.ketchup.helpers.js?201501291633" type="text/javascript"></script>
+<script src="resources/js/third-js/utils/md5.js?201501291633" type="text/javascript"></script>
+<script src="resources/js/area.js?201501291633" type="text/javascript"></script>
+<script src="resources/js/login.js?201504021455" type="text/javascript"></script>
+<!-- 如有修改 login.js，需修改下版本号-->
+</head>
+<body style="padding:0px;">
+	<div class="login_top"></div>
+	<div id="portaltop" style="display:none;"></div>
+	<div class="login_bg"></div>
+	<div class="login_con">
+		<div class="logo"></div>
+	    <div class="login_form">
+	        <form id="loginForm" name="loginForm" method="post">
+		        <table width="100%" height="100%" border="0" cellspacing="0" cellpadding="0" class="login_table">
+		          <!-- <tr>
+		            <td><span>
+		            	<label>版&nbsp;&nbsp;&nbsp;&nbsp;本</label>&nbsp;&nbsp;&nbsp;<select id="selVersion">
+		            	<option selected="selected" value="81">版本A</option>
+		            	<option value="82">版本B</option>
+		            </select></span></td>
+		          </tr> -->
+		          <tr>
+		            <td>
+		            	<div id="summary-stock">
+			            	<div class="dt">地&nbsp;&nbsp;&nbsp;&nbsp;市</div>
+			            	<div class="dd">
+								<div class="" id="store-selector">
+									<div class="text"><div title="" id="store-selector-text" area-id="8110000">北京</div><b></b></div>
+									<div class="content">			
+										<div id="ctc-area" class="m ctc-area" data-widget="tabs">
+											<div class="mt">
+												<ul class="tab">
+													<li class="" data-widget="tab-item" data-index="0">
+														<a class="" href="#none"><em>北京</em><i></i></a>
+													</li>
+													<li style="" data-widget="tab-item" data-index="1" class="">
+														<a class="" href="#none" title=""><em></em><i></i></a>
+													</li>
+												</ul>
+												<div class="stock-line"></div>
+											</div>
+											<div id="stock_province_item" data-widget="tab-content" data-area="0" class="mc" style="display: none;">
+												<ul class="area-list">
+													<li><a data-value="8110000" href="#none">北京</a></li><li><a data-value="8310000" href="#none">上海</a></li><li><a data-value="8120000" href="#none">天津</a></li><li><a data-value="8500000" href="#none">重庆</a></li><li><a data-value="8130000" href="#none">河北</a></li><li><a data-value="8140000" href="#none">山西</a></li><li><a data-value="8410000" href="#none">河南</a></li><li><a data-value="8210000" href="#none">辽宁</a></li><li><a data-value="8220000" href="#none">吉林</a></li><li><a data-value="8230000" href="#none">黑龙江</a></li><li><a data-value="8150000" href="#none">内蒙古</a></li><li><a data-value="8320000" href="#none">江苏</a></li><li><a data-value="8370000" href="#none">山东</a></li><li><a data-value="8340000" href="#none">安徽</a></li><li><a data-value="8330000" href="#none">浙江</a></li><li><a data-value="8350000" href="#none">福建</a></li><li><a data-value="8420000" href="#none">湖北</a></li><li><a data-value="8430000" href="#none">湖南</a></li><li><a data-value="8440000" href="#none">广东</a></li><li><a data-value="8450000" href="#none">广西</a></li><li><a data-value="8360000" href="#none">江西</a></li><li><a data-value="8510000" href="#none">四川</a></li><li><a data-value="8460000" href="#none">海南</a></li><li><a data-value="8520000" href="#none">贵州</a></li><li><a data-value="8530000" href="#none">云南</a></li><li><a data-value="8540000" href="#none">西藏</a></li><li><a data-value="8610000" href="#none">陕西</a></li><li><a data-value="8620000" href="#none">甘肃</a></li><li><a data-value="8630000" href="#none">青海</a></li><li><a data-value="8640000" href="#none">宁夏</a></li><li><a data-value="8650000" href="#none">新疆</a><li><a data-value="8990000" href="#none">虚拟省</a></li>
+												</ul>
+											</div>
+											<div id="stock_city_item" data-widget="tab-content" data-area="1" class="mc" style="display: none;">
+												<ul class="area-list">
+													<li><a data-value="8110101" href="#none">东城区</a></li><li><a data-value="8110102" href="#none">西城区</a></li><li><a data-value="8110105" href="#none">朝阳区</a></li><li><a data-value="8110106" href="#none">丰台区</a></li><li><a data-value="8110107" href="#none">石景山区</a></li><li><a data-value="8110108" href="#none">海淀区</a></li><li><a data-value="8110109" href="#none">门头沟区</a></li><li><a data-value="8110111" href="#none">房山区</a></li><li><a data-value="8110112" href="#none">通州区</a></li><li><a data-value="8110113" href="#none">顺义区</a></li><li><a data-value="8110114" href="#none">昌平区</a></li><li><a data-value="8110115" href="#none">大兴区</a></li><li><a data-value="8110116" href="#none">怀柔区</a></li><li><a data-value="8110117" href="#none">平谷区</a></li><li><a data-value="8110228" href="#none">密云县</a></li><li><a data-value="8110229" href="#none">延庆县</a></li>
+												</ul>
+											</div>
+										</div>
+										<span class="clr"></span>
+									</div>
+									<div onclick="$('#store-selector').removeClass('hover')" class="close"></div>
+								</div>
+								<!-- <div id="store-prompt"><strong></strong></div> -->
+			             	</div>
+			            	<span class="clr"></span>
+			            </div>
+		            </td>
+		          </tr>
+		          <tr>
+		            <td><span><label>工&nbsp;&nbsp;&nbsp;&nbsp;号</label><input type="text" value="" id="staffCode" name="staffCode" class="login_input" data-validate="validate(required:工号不能为空) on(blur)" placeholder="请输入工号"></span></td>
+		          </tr>
+		          <tr>
+		            <td><span><label>密&nbsp;&nbsp;&nbsp;&nbsp;码</label><input type="password" value="" id="password" name="password" class="login_input" data-validate="validate(required:密码不能为空) on(blur)" placeholder="请输入密码"></span></td>
+		          </tr>
+		          <tr>
+		            <td><div id="button" class="button_login"></div><div id="resetBtn" class="button_reset"></div></td>
+		          </tr>
+		           <tr>
+		            <td><a alctag="nochecklogin" style="margin-left:260px;" href="javascript:void(0);" id="forgetPasswordBtn" class="cf" onclick="staff.login.getPasswordUrl()">忘记密码?</a></td>
+		           </tr>
+		        </table>
+	        </form>
+	    </div>
+	    <div class="login_copy">版权所有 ©2014 中国电信集团公司</div>
+	</div>
+	<div class="login_foot"></div>
+</body>
+
+</html>
