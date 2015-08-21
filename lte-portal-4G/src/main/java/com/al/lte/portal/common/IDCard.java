@@ -110,8 +110,15 @@ public class IDCard {
 
         if (IDStr.length() == 18) {
             if (Ai.equals(IDStr) == false) {
-                errorInfo = "身份证无效，不是合法的身份证号码";
-                return errorInfo;
+            	if(modValue == 2){
+            		Ai = Ai.substring(0, 17) + "X";
+            		if(Ai.equals(IDStr) == false){
+            			errorInfo = "身份证无效，不是合法的身份证号码";
+                        return errorInfo;
+            		}else {
+                        return "";
+            		}
+            	}
             }
         } else {
             return "";

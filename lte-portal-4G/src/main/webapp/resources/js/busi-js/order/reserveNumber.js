@@ -52,7 +52,7 @@ order.reserveNumber = (function(){
 			},"done" : function(response){
 				SoOrder.getToken();
 				easyDialog.close();
-				if (response.code == 0) {
+				if (response.code == 0) { 
 					$.alert("提示","号码["+_boProdAn.phoneNumber+"]预约成功!");
 					order.phoneNumber.btnQueryPhoneNumber({});
 				}else{
@@ -60,6 +60,8 @@ order.reserveNumber = (function(){
 						$.alert("提示","号码预约请求调用失败，可能原因服务停止或者数据解析异常");
 					}else if (response.code == -2) {
 						$.alertM(response.data);
+					}else if(response.code == 1){
+						$.alert("提示","号码预约失败，失败原因："+response.data.msg);
 					}else{
 						var msg="";
 						if(response.data!=undefined&&response.data.msg!=undefined){
