@@ -2542,8 +2542,8 @@ public class OrderController extends BaseController {
 	public JsonResponse orderSubmit(@RequestBody Map<String, Object> param,
 			HttpServletResponse response,HttpServletRequest request) throws Exception{
 		JsonResponse jsonResponse = null;
-		String str=JacksonUtil.getInstance().objectTojson(param);
-		System.out.println(str);
+//		String str=JacksonUtil.getInstance().objectTojson(param);
+//		System.out.println(str);
 		if(commonBmo.checkToken(request, SysConstant.ORDER_SUBMIT_TOKEN)){
 			try {
 				SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
@@ -2553,6 +2553,14 @@ public class OrderController extends BaseController {
 				orderListInfo.put("staffId", sessionStaff.getStaffId()); //防止前台修改
 				//过滤订单属性
 				List<Map> custOrderAttrs = (List<Map>)orderListInfo.get("custOrderAttrs");
+				
+				//添加客户端IP地址到订单属性 By zhangyu 2015-8-17
+				Map<String, String> IPMap = new HashMap<String, String>();
+				IPMap.put("itemSpecId", "800000039");
+				IPMap.put("value", sessionStaff.getIp());
+				custOrderAttrs.add(IPMap);
+				orderListInfo.put("custOrderAttrs", custOrderAttrs);
+				
 				String isAddOperation= (String)ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.FDSL+"_"+sessionStaff.getStaffId());
 				//没有暂存单权限的员工不能添加暂存单订单属性
 				if(!"0".equals(isAddOperation)){
@@ -2566,6 +2574,10 @@ public class OrderController extends BaseController {
 						orderListInfo.put("custOrderAttrs", filterCustOrderAttrs);
 					}
 				}
+				
+				//由于在此之前对入参进行了处理，故于调用业务层之前再打印输出入参
+				String str=JacksonUtil.getInstance().objectTojson(param);
+				System.out.println(str);
 				
 				Map<String, Object> resMap = orderBmo.orderSubmit(param,null,sessionStaff);
 				if(ResultCode.R_SUCC.equals(resMap.get("resultCode"))){
