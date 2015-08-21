@@ -234,7 +234,7 @@ order.dealer = (function() {
 					if(response.data.length == 0){
 						$.alert("操作提示","没有查询到该员工信息！");
 					}else{
-						$("#dealer_"+objInstId).text(response.data[0].staffName).attr("staffId", response.data[0].staffId);
+						$("#dealer_"+objInstId).attr("value",response.data[0].staffName).attr("staffId", response.data[0].staffId);
 						$("#developModal").modal("hide");
 					}
 				//	$("#developModal").hide();
