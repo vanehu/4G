@@ -301,7 +301,11 @@ public class CommonDAOImpl implements CommonDAO {
 	        				 			 offermap.get("proactiontype")+"')";
 	        		jdbc.update(sb4.toString());
 	        		
-	        		List dealerlist = (List)param.get("dealerMap");
+	        		ArrayList<Object> dealerlist = new ArrayList<Object>();
+	        		for (String k : ((HashMap<String, Object>) param.get("dealerMap")).keySet()) {
+	        			dealerlist.add(((HashMap<String, Object>) param.get("dealerMap")).get(k));
+					}
+//	        		List dealerlist = (List)param.get("dealerMap");
 	        		for (int x=0;x<dealerlist.size();x++){
 	        			Map dealermap = (Map)dealerlist.get(x);
 	        			if(dealermap.get("detype").toString().equals(offermap.get("type").toString()) && dealermap.get("dename").toString().equals(offermap.get("name").toString())){
@@ -392,12 +396,18 @@ public class CommonDAOImpl implements CommonDAO {
 			}
 			
 			//终端预约订单属性，关联agent_portal_config表
-			List terminalinfolist = (List)param.get("terminalinfo");
-			for(int i=0;i<terminalinfolist.size();i++){
-				Map termap = (Map)terminalinfolist.get(i);
-				String sql = "insert into PRESO_ORDER_ATTR(CUST_ORDER_ID,ATTR_ID,ATTR_VALUE_ID,VALUE)"+
-					"values('"+Serialnumber+"','"+termap.get("Id")+"','','"+termap.get("value")+"')";
-				jdbc.update(sql.toString());
+			if (param.containsKey("terminalinfo")) {
+				ArrayList<Object> terminalinfolist = new ArrayList<Object>();
+				for (String k : ((HashMap<String, Object>) param.get("terminalinfo")).keySet()) {
+					terminalinfolist.add(((HashMap<String, Object>) param.get("terminalinfo")).get(k));
+				}
+//				List terminalinfolist = (List)param.get("terminalinfo");
+				for(int i=0;i<terminalinfolist.size();i++){
+					Map termap = (Map)terminalinfolist.get(i);
+					String sql = "insert into PRESO_ORDER_ATTR(CUST_ORDER_ID,ATTR_ID,ATTR_VALUE_ID,VALUE)"+
+						"values('"+Serialnumber+"','"+termap.get("Id")+"','','"+termap.get("value")+"')";
+					jdbc.update(sql.toString());
+				}
 			}
 	        
 	        reallmap.put("INVOICE_ID", INVOICE_PRESO_ID_SEQ);
