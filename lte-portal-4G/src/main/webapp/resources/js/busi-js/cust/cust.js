@@ -213,6 +213,7 @@ order.cust = (function(){
 		$("#"+id).val("");
 		$("#"+id).attr("onkeyup", "value=value.replace(/[^A-Za-z0-9]/ig,'')");
 		var identidiesTypeCd=$(scope).val();
+		$("#"+id).attr("maxlength","");
 		if(identidiesTypeCd==-1){
 			if ("ON" == CacheData.getIntOptSwitch()) {
 				$("#prodTypeCd").show();
@@ -233,6 +234,8 @@ order.cust = (function(){
 			$("#"+id).attr("onkeyup", "value=value.replace(/[^A-Za-z0-9-]/ig,'')");
 			$("#"+id).attr("placeHolder","请输入证件号码");
 			$("#"+id).attr("data-validate","validate(required:请准确填写证件号码) on(keyup)");
+			$("#"+id).attr("maxlength","20");
+			
 		}else{
 			$("#"+id).attr("placeHolder","请输入证件号码");
 			$("#"+id).attr("data-validate","validate(required:请准确填写证件号码) on(keyup)");
@@ -256,6 +259,7 @@ order.cust = (function(){
 		$("#"+id).val("");
 		$("#"+id).attr("onkeyup", "value=value.replace(/[^A-Za-z0-9]/ig,'')");
 		var identidiesTypeCd=$(scope).val();
+		$("#"+id).attr("maxlength","");
 		if(identidiesTypeCd==1){
 			$("#"+id).attr("placeHolder","请输入合法身份证号码");
 			$("#"+id).attr("data-validate","validate(idCardCheck18:请输入合法身份证号码) on(blur)");
@@ -270,6 +274,7 @@ order.cust = (function(){
 			$("#"+id).attr("onkeyup", "value=value.replace(/[^A-Za-z0-9-]/ig,'')");
 			$("#"+id).attr("placeHolder","请输入合法证件号码");
 			$("#"+id).attr("data-validate","validate(required:请准确填写证件号码) on(blur)");
+			$("#"+id).attr("maxlength","20");
 		}else{
 			$("#"+id).attr("placeHolder","请输入合法证件号码");
 			$("#"+id).attr("data-validate","validate(required:请准确填写证件号码) on(blur)");
