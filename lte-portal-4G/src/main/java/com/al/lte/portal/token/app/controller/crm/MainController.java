@@ -615,7 +615,7 @@ public class MainController extends BaseController {
 				if ("0".equals(String.valueOf(resultMap.get("resultCode")))) {
 					result = (Map<String, Object>) resultMap.get("result");
 				}else {
-					model.addAttribute("errorMsg", String.valueOf(result.get("resultMsg")));
+					model.addAttribute("errorMsg", String.valueOf(resultMap.get("resultMsg")));
 					return "/common/error";
 				}				
 				method = "/token/app/order/reload/prodoffer/prepare";

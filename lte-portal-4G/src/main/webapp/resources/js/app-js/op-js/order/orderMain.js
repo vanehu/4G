@@ -760,7 +760,7 @@ order.main = (function(){
 	
 	
 	function _spec_parm(param){
-		$.callServiceAsHtmlGet(contextPath + "/app/order/orderSpecParam",param, {
+		$.callServiceAsHtmlGet(contextPath + "/token/app/order/orderSpecParam",param, {
 			"done" : function(response){
 				if(response && response.code == -2){
 					return ;

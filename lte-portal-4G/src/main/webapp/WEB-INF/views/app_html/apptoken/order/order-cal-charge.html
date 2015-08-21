@@ -102,6 +102,7 @@
 		                  					 		<input type="hidden" id="objInstId_${trid}" value="${busiList.objInstId}" />
 		                  					 		<input type="hidden" id="prodId_${trid}" value="${prodInfoList.prodId}" />
 		                  					 		<input type="hidden" id="boActionType_${trid}" value="${itemList.boActionType}" />
+		                  					 		<input type="hidden" id="realhidden_money${trid}" name="realhidden_" value="${((itemList.realAmount)?number / 100)?string('0.00')}" />
 		                  					 		<#if iseditOperation?? && iseditOperation=="0" && refundType??&&(refundType==0) >
 		                  					 		     <#if acctItemTypeId?? && (itemList.acctItemTypeId == acctItemTypeId)  &&  isEditAdjustOperation?? && isEditAdjustOperation!="0">
 														 <#else>
@@ -149,7 +150,7 @@
 							<input type="hidden" id="paymentAmount_${trid}" value="${itemList.paymentAmount}" />
 							<input type="hidden" id="objId_${trid}" value="${itemList.objId}" />
 							<input type="hidden" id="objType_${trid}" value="${itemList.objType}" />
-							<input type="hidden" id="realhidden_${trid}" value="${((itemList.realAmount)?number / 100)?string('0.00')}" />
+							<input name="realhidden_" type="hidden" id="realhidden_${trid}" value="${((itemList.realAmount)?number / 100)?string('0.00')}" />
 							<input type="hidden" id="acctItemId_${trid}" value="${itemList.acctItemId}" />
 							<input type="hidden" id="acctItemTypeId_${trid}" value="${itemList.acctItemTypeId}" />
 							<input type="hidden" id="boId_${trid}" value="${itemList.boId}" />
@@ -158,6 +159,7 @@
 							<input type="hidden" id="objInstId_${trid}" value="" />
 							<input type="hidden" id="prodId_${trid}" value="" />
 							<input type="hidden" id="boActionType_${trid}" value="${itemList.boActionType}" />
+							<input type="hidden" id="realhidden_money${trid}" name="realhidden_" value="${((itemList.realAmount)?number / 100)?string('0.00')}" />
 							<#if (iseditOperation?? && iseditOperation=="0") && (refundType?? && refundType==0) >
 							   <#if acctItemTypeId?? && (itemList.acctItemTypeId == acctItemTypeId)  &&  isEditAdjustOperation?? && isEditAdjustOperation!="0">
 							   <#else>
@@ -198,7 +200,7 @@
 <nav class="navbar navbar-default navbar-fixed-bottom" id="cal_main_content">
   <div class="container-fluid">
     <div class="btn-group btn-group-justified navbar-btn" role="group" aria-label="...">
-      <div class="btn-group" role="group">
+      <div class="btn-group" role="group" style="display: none;">
         <button type="button" id="printVoucherA" class="btn btn-primary btn-lg"> <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> 打印 </button>
       </div>
       <div class="btn-group" role="group">  

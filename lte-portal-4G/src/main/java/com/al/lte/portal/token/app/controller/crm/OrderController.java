@@ -508,7 +508,8 @@ public class OrderController extends BaseController {
 			log.error("加载产品规格属性/app/order/orderSpecParam方法异常", e);
 			return super.failedStr(model, ErrorCode.ORDER_PROD_ITEM, e, dataBusMap);
 		}
-    	return "/app/order/order-spec-param";
+    	//return "/app/order/order-spec-param";
+    	return "/apptoken/order/order-spec-param";
     }
 
     /*bxw产品实例属性*/
