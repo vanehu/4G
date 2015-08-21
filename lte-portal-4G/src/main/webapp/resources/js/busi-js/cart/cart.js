@@ -119,6 +119,9 @@ cart.main = (function(){
 		$channel.each(function(){
 			$("#qureyChannelList").val($(this).attr("channelName"));
 			$("#p_channelId").val($(this).attr("channelId"));
+			//每次改变渠道时，启动清空受理工号内容
+			$("#qureyStaffCode").val("");
+			$("#p_staffId").val("");
 		});
 		if($channel.length > 0){
 			easyDialog.close();
@@ -787,6 +790,10 @@ $(function(){
 	$("#qureyStaffCode").off("click").on("click",function(){//受理工号查询
 		cart.main.qureyStaffAndChl("queryStaff",0);
 	});
+	$("#bt_resetStaffCode").off("click").on("click",function(){//清空受理工号staffCode和staffId
+		$("#qureyStaffCode").val("");
+		$("#p_staffId").val("");
+	});
 	cart.main.initDic();
 	
 	$("#if_p_olNbr").change(function(){
@@ -801,6 +808,7 @@ $(function(){
 			$("#p_channelId").css("background-color","#E8E8E8").attr("disabled", true);
 			$("#p_couponNumber").css("background-color","#E8E8E8").attr("disabled", true);
 			$("#qureyStaffCode").css("background-color","#E8E8E8").attr("disabled", true);
+			$("#bt_resetStaffCode").attr("disabled", true);
 			if($("#pageType").val() == "link" && $("#permissionsType").val() == "monitor"){
 				$("#p_areaId_val").css("background-color","#E8E8E8").attr("disabled", true) ;
 				$("#qureyChannelList").css("background-color","white").attr("disabled", false) ;
@@ -818,9 +826,10 @@ $(function(){
 			$("#qureyChannelList").css("background-color","white").attr("disabled", false) ;
 			$("#p_channelId").css("background-color","white").attr("disabled", false);
 			$("#p_couponNumber").css("background-color","white").attr("disabled", false);
-			if($("#p_QryChannelAuth").val() == 0)
+			$("#bt_resetStaffCode").attr("disabled", false);
+			//if($("#p_QryChannelAuth").val() == 0)
 				$("#qureyStaffCode").css("background-color","white").attr("disabled", false);
-			else
+			//else
 				//$("#qureyStaffCode").css("background-color","#E8E8E8").attr("disabled", true);
 			if($("#p_channelId").val()!=""){
 				$("#p_areaId_val").css("background-color","#E8E8E8").attr("disabled", true) ;
@@ -836,6 +845,10 @@ $(function(){
 			$("#p_areaId_val").css("background-color","white").attr("disabled", false) ;
 		}
 	});
+//	$("#p_channelId").change(function(){//渠道信息发生改变，自动清空staffCode和staffId
+//		$("#qureyStaffCode").val("");
+//		$("#p_staffId").val("");
+//	});
 	$("#if_p_time").change(function(){
 		if($("#if_p_time").attr("checked")){
 			$("#p_startDt").css("background-color","white").attr("disabled", false) ;
