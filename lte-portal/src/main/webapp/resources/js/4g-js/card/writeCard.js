@@ -157,7 +157,7 @@ order.writeCard = (function(){
 		//alert("opCode::"+opCode);
 		if (opCode != '' && opCode != "FFFF") {
 			//alert("取空卡序列号");
-			serialNum = result.substring(0,result.length - 2);
+			serialNum = result;
 			factoryCode = result.substring(result.length - 2,result.length);
 			//if(factoryCode==42){
 			//	factoryCode=30;
@@ -165,7 +165,7 @@ order.writeCard = (function(){
 		}
 		//alert("serialNumber:="+_cardInfoJson.serialNumber);
 		//如果读取到了空卡序列号就加载卡片信息
-		if (ec.util.defaultStr(serialNum) != "" && serialNum.length == 20) {
+		if (ec.util.defaultStr(serialNum) != "") {
 			_cardInfoJson.serialNumber = serialNum;
 			_cardInfoJson.factoryCode = factoryCode;
 			_cardInfoJson.cardTypeId = serialNum.substr(5,5);
@@ -216,7 +216,7 @@ order.writeCard = (function(){
         if(!g_realWriteCard){
             _haveWriteCard = true;
             $.alert("提示","写卡成功!","confirmation");
-            $("#uim_txt_"+prodId).val(_rscJson.iccid);
+            $("#uim_txt_"+prodId).val(_cardInfoJson.serialNumber);
             var coupon = {
 				couponUsageTypeCd : "3", //物品使用类型
 				inOutTypeId : "1",  //出入库类型
@@ -412,7 +412,7 @@ order.writeCard = (function(){
 		};//动态链接库JSON
 		var serialNum = _cardInfoJson.serialNumber;
 		//alert('serialNum'+serialNum);
-		if (serialNum != undefined && serialNum.length == 20) {
+		if (serialNum != undefined) {
 			// 提取卡商代码
 			
 			var cardFatctoyCode = _cardInfoJson.factoryCode;
@@ -656,16 +656,42 @@ order.writeCard = (function(){
 				var flag = resourceDataJson.flag;
 				if (flag != undefined && flag == "0") {
 					_rscJson = {
-						"iccid":"",
-						"imsi":"",
-						"imsig":"",
-						"data":"",
-						"state":"Y",
-						"prodId":""
+							"iccid":"",
+							"imsi":"",
+							"imsig":"",
+							"data":"",
+							"state":"Y",
+							"uimid":"",
+							"sid":"",
+							"accolc":"",
+							"nid":"",
+							"akey":"",
+							"pin1":"",
+							"pin2":"",
+							"puk1":"",
+							"puk2":"",
+							"imsilte":"",
+//							"adm":"",
+//							"hrpdupp":"",
+//							"hrpdss":"",
+//							"imsig":"",
+//							"acc":"",
+//							"smsp":"",
+							"prodId":""
 					};
 					_rscJson.iccid = resourceDataJson.iccid;
 					_rscJson.imsi = resourceDataJson.imsi;
 					_rscJson.imsig = resourceDataJson.imsig;
+					_rscJson.uimid = resourceDataJson.uimid;
+					_rscJson.sid = resourceDataJson.sid;
+					_rscJson.accolc = resourceDataJson.accolc;
+					_rscJson.nid = resourceDataJson.nid;
+					_rscJson.akey = resourceDataJson.akey;
+					_rscJson.pin2 = resourceDataJson.pin2;
+					_rscJson.pin1 = resourceDataJson.pin1;
+					_rscJson.puk1 = resourceDataJson.puk1;
+					_rscJson.puk2 = resourceDataJson.puk2;
+					_rscJson.imsilte = resourceDataJson.imsilte;
 					_rscJson.data = resourceDataJson.data;
 					_rscJson.dataLength = resourceDataJson.dataLength;
 					_rscJson.prodId = prodId;
@@ -707,14 +733,67 @@ order.writeCard = (function(){
 			                    "StatusCd" : "2",
 			                    "MktResId": "",
 			                    "MktResCd": _cardInfoJson.cardTypeId,
-			                    "MktResInstCode": _rscJson.iccid,
+			                    "MktResInstCode": _cardInfoJson.serialNumber,
 			                    "SalesPrice": "0",
 			                    "CostPrice": "0",
 			                    "Quantity": "1",
 			                    "Unit": "101"
 			                },
 			                "AttrList": [
-			                ]
+			                             
+											{
+											    "AttrId": "60020005",
+											    "AttrValue": _rscJson.iccid
+											},
+											{
+											    "AttrId": "60020002",
+											    "AttrValue": _rscJson.imsi
+											},
+											{
+											    "AttrId": "60020003",
+											    "AttrValue":  _rscJson.imsig
+											},
+											{
+											    "AttrId": "60020004",
+											    "AttrValue": _rscJson.imsilte
+											},
+											{
+											    "AttrId": "65010026",
+											    "AttrValue": _rscJson.pin1
+											},
+											{
+											    "AttrId": "65010027",
+											    "AttrValue": _rscJson.pin2
+											},
+											{
+											    "AttrId": "65010028",
+											    "AttrValue": _rscJson.puk1
+											},
+											{
+											    "AttrId": "65010029",
+											    "AttrValue": _rscJson.puk2
+											},
+											{
+											    "AttrId": "65010030",
+											    "AttrValue": _rscJson.adm
+											},
+											{
+											    "AttrId": "65010033",
+											    "AttrValue":  _rscJson.uimid
+											},
+											{
+											    "AttrId": "65010035",
+											    "AttrValue": _rscJson.akey
+											},  
+											{
+											    "AttrId": "65010037",
+											    "AttrValue": _rscJson.nid
+											},
+											{
+											    "AttrId": "65010038",
+											    "AttrValue": _rscJson.accolc
+											}
+						     ]
 			            }
 			        }
 			    ]
@@ -771,7 +850,7 @@ order.writeCard = (function(){
 					storeName : "11", //仓库名称
 					agentId : 1, //供应商ID
 					apCharge : 0, //物品价格
-					couponInstanceNumber : _rscJson.iccid, //物品实例编码
+					couponInstanceNumber : _cardInfoJson.serialNumber, //物品实例编码
 					ruleId : "", //物品规则ID
 					partyId : OrderInfo.cust.custId, //客户ID
 					prodId :_rscJson.prodId, //产品ID
