@@ -3,12 +3,12 @@
 <div id="div_label_${prodId}" class="cardtab" style="padding:0px">
 	<ul class="pdcard" >
 	    <li id="myfavorites" onclick="AttachOffer.initMyfavoriteSpec(${prodId},'${param.prodSpecId}')">我的收藏</li>
+		<li id="tab_${prodId}_10000" onclick="AttachOffer.changeLabel(${prodId},'${param.prodSpecId}',10000)">功能产品</li>
 		<#if labelMap.result?? &&(labelMap.result?size>1)>
 			<#list labelMap.result as item>
 				<li id="tab_${prodId}_${item.label}" onclick="AttachOffer.changeLabel(${prodId},'${param.prodSpecId}',${item.label})">${item.value}</li>
 			</#list>
 		</#if>
-		<li id="tab_${prodId}_10000" onclick="AttachOffer.changeLabel(${prodId},'${param.prodSpecId}',10000)">功能产品</li>
 	</ul>
 	<div class="clear"></div>
 </div>
