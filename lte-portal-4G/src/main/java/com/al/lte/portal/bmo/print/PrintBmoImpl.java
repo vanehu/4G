@@ -6459,13 +6459,11 @@ public class PrintBmoImpl implements PrintBmo {
 		List<StringBeanSet> aotList = new ArrayList<StringBeanSet>();
 
 		Map<String, Object> titleMap = MapUtils.getMap(event, "orderEventTitle");
-		Map<String, Object> contMap = MapUtils.getMap(event, "orderEventCont");
-		String relaAcceNbr = "";
 		if(event.containsKey("orderEventTitle")){
 			String boActionTypeName = MapUtils.getString(titleMap, "boActionTypeName", "");
-			relaAcceNbr = MapUtils.getString(titleMap, "relaAcceNbr", "");
+			String effectRule = MapUtils.getString(titleMap, "effectRule", "");
 			String offerSpecName = MapUtils.getString(titleMap, "offerSpecName", "");
-			StringBeanSet sbs = buildOrderEvent_6_Title(eventSize,orderSeq,boActionTypeName,offerSpecName);
+			StringBeanSet sbs = buildOrderEvent_6_Title_V2(eventSize, orderSeq, boActionTypeName, offerSpecName, effectRule);
 			aotList.add(sbs);
 		}
 
@@ -7217,6 +7215,19 @@ public class PrintBmoImpl implements PrintBmo {
 		}
 
 		return attachOfferList;
+	}
+
+	private StringBeanSet buildOrderEvent_6_Title_V2(int eventSize,int seq,String boActionTypeName,String offerSpecName,String effectRule) {
+		StringBeanSet strBean = new StringBeanSet();
+		String titleStr = "";
+		titleStr +=  (ChsStringUtil.getSeqNumByInt(seq) + SysConstant.STR_PAU);
+		titleStr += StringUtils.isEmpty(boActionTypeName) ? "" :
+				(SysConstant.STR_LB_BRE + boActionTypeName + SysConstant.STR_RB_BRE);
+		titleStr += StringUtils.isEmpty(offerSpecName) ? "" : offerSpecName;
+		titleStr += StringUtils.isEmpty(effectRule) ? "" :
+				(SysConstant.STR_LL_BRE + effectRule + SysConstant.STR_RL_BRE);
+		strBean.setStrBean(titleStr);
+		return strBean;
 	}
 
 
