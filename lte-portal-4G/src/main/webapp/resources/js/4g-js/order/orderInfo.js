@@ -197,7 +197,8 @@ OrderInfo = (function() {
 					areaId : OrderInfo.staff.soAreaId,
 					partyId : -1,  //新装默认-1
 					distributorId : OrderInfo.staff.distributorId, //转售商标识
-					olTypeCd : olTypeCd  //4g标识
+					olTypeCd : olTypeCd,  //4g标识
+					actionFlag : OrderInfo.actionFlag
 				},
 				custOrderList :[{busiOrder : []}]   //客户订购列表节点
 			}
