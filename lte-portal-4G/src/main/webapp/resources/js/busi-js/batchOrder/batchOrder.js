@@ -64,6 +64,7 @@ order.batch = (function(){
 		var templateType=$("#templateType").val();
 		var startDt = $("#startDt").val();
 		var endDt = $("#endDt").val();
+		var orderStatus = $("#orderStatus").val();//订单状态
 		if(templateType==''){
 			$.alert("提示","种子订单受理类型不能为空!");
 			return;
@@ -76,6 +77,7 @@ order.batch = (function(){
 			"groupId":groupId,
 			"statusCd":statusCd,
 			"templateType":templateType,
+			"orderStatus":orderStatus,
 			"startDt":startDt,
 			"endDt":endDt,
 			"pageIndex":pageIndex,
@@ -394,7 +396,30 @@ order.batch = (function(){
 		location.href=contextPath+"/file/CARTTYPE.xls";
 	};
 	var _initDic = function(){
-		var param = {"attrSpecCode":"BATCH_PROD_GEN_CO_STATUS"} ;
+		//初始化批量订单查询页面的订单状态 By ZhangYu
+		var param = {"attrSpecCode":"EVT-0002"} ;
+		$.callServiceAsJson(contextPath+"/staffMgr/getCTGMainData",param,{
+			"done" : function(response){
+				if(response.code==0){
+					var data = response.data ;
+					if(data!=undefined && data.length>0){
+						for(var i=0;i<data.length;i++){
+							var busiStatus = data[i];
+							$("#orderStatus").append("<option value='"+busiStatus.attrValueCode+"' >"+busiStatus.attrValueName+"</option>");
+							//$("#p_olStatusCd").append("<option value='"+busiStatus.attrValueCode+"' >"+busiStatus.attrValueName+"</option>");
+						}
+					}
+				}else if(response.code==-2){
+					$.alertM(response.data);
+					return;
+				}else{
+					$.alert("提示","调用主数据接口失败！");
+					return;
+				}
+			}
+		});	
+		
+		param = {"attrSpecCode":"BATCH_PROD_GEN_CO_STATUS"} ;
 		$.callServiceAsJson(contextPath+"/staffMgr/getCTGMainData",param,{
 			"done" : function(response){
 				if(response.code==0){
