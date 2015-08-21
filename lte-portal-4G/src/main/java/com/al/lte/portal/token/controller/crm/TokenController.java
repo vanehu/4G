@@ -138,8 +138,7 @@ public class TokenController extends BaseController {
 					resultMap.put("resultCode", "-1");
 					resultMap.put("resultMsg", super.failed(ie, null, ErrorCode.QUERY_STAFF_INFO));
 					return;
-				} catch (Exception e) {
-					log.error("作废购物车/order/delOrder方法异常", e);
+				} catch (Exception e) {			
 					log.error("员工信息查询异常：",e);
 					resultMap.put("resultCode", "-1");
 					resultMap.put("resultMsg", super.failed(ErrorCode.QUERY_STAFF_INFO, e, null));

@@ -17,6 +17,10 @@ order.calcharge = (function(){
 	var _pageFlag='newOrder';
 	var submit_success=false;
 	var inOpetate=false;
+	var cash = ''; //实收费用
+	var payMethod = '';//付费方式
+	var reason = '';//修改原因
+	var remark = '';//备注
 	//弹出业务对象窗口
 	var _addbusiOrder=function(proId,obj){
 		if($("#div_payitem_"+proId)!=undefined&&$("#div_payitem_"+proId).html()!=undefined){
@@ -448,9 +452,8 @@ order.calcharge = (function(){
 	};
 	//修改金额效果
 	var _editMoney=function(obj,val,str){//obj:对象,val:id,str:类型
-		var cash = '';
 		if(typeof obj =="object"){
-		  cash=$.trim($(obj).val());//当前费用
+		    cash=$.trim($(obj).val());//当前费用
 	    }
 		else{
 			cash = obj;
@@ -546,6 +549,10 @@ order.calcharge = (function(){
 				}
 			}
 		}
+		
+		payMethod = $("#changeMethod_"+val).val();  //付费方式
+		reason = $("#chargeModifyReasonCd_"+val).val();//修改原因
+		remark = $("#remark_"+val).val();//备注
 		
 	};
 	var _setGlobeMoney=function(obj){
@@ -1039,6 +1046,16 @@ order.calcharge = (function(){
 				$("#editBtnDiv").html($("#editBtn_"+trid).html());
 //				$("#realAmountDiv").html($("#realAmountText_"+trid).html());
 				$("#realAmount_"+trid).val(realAmount);
+				if(cash!=''){
+					$("#realAmount_"+trid).val(cash);
+				}
+				if(payMethod != ''){
+					$("#changeMethod_"+trid).val(payMethod);  //付费方式
+				}
+				if(reason !=''){
+					$("#chargeModifyReasonCd_"+trid).val(reason);//修改原因
+				}
+				$("#remark_"+trid).val(remark);//备注
 			},
 			fail:function(response){
 			     $.alert("提示","显示费用编辑页面失败，请稍后再试！");

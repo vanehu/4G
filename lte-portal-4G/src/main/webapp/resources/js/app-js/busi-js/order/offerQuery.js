@@ -688,7 +688,7 @@ query.offer = (function() {
 	
 	//预校验
 	var _updateCheckByChange = function(param){
-		var url = contextPath+"/app/order/prodModify/updateCheckByChange";
+		var url = contextPath+"/order/prodModify/updateCheckByChange";
 		$.ecOverlay("<strong>正在预校验中，请稍等...</strong>");
 		var response = $.callServiceAsJson(url,param);
 		$.unecOverlay();

@@ -255,6 +255,26 @@ public class OrderController extends BaseController {
 		
 		return "/app/order/order-offerchange-search";
     }
+	
+	/**
+	 * 预受理-选择套餐页面
+	 * @param params
+	 * @param model
+	 * @param optFlowNum
+	 * @param response
+	 * @param httpSession
+	 * @return
+	 * @throws BusinessException
+	 */
+	@RequestMapping(value = "/yslPack", method = RequestMethod.POST)
+    @AuthorityValid(isCheck = false)
+    public String yslPack(@RequestBody Map<String, Object> params, Model model, @LogOperatorAnn String optFlowNum,
+            HttpServletResponse response, HttpSession httpSession) throws BusinessException {
+
+		System.out.println(0);
+		return "/app/order/order-ysl-pack";
+    }
+	
 	/**
 	 * 手机客户端-主副卡成员变更
 	 * @param params
@@ -771,7 +791,7 @@ public class OrderController extends BaseController {
         	prams.put("pageSize", 50);
         	int totalPage=0;
         	Map<String, Object> map = null;
-         //	prams.put("qryStr", "乐享");
+         prams.put("qryStr", "乐享");
         	map = orderBmo.queryMainOfferSpecList(prams,null, sessionStaff);
         	if(ResultCode.R_SUCCESS.equals(map.get("code"))){
         		//拼装前台显示的套餐详情
@@ -839,6 +859,87 @@ public class OrderController extends BaseController {
 			return super.failedStr(model, ErrorCode.QUERY_MAIN_OFFER, e, prams);
 		}
         return "/app/order/offer-list";
+    }
+    
+    @RequestMapping(value = "/yslOfferSpecList", method = RequestMethod.GET, produces = "text/html;charset=UTF-8")
+    public String getyslOfferSpecList(@RequestParam Map<String, Object> prams,Model model,HttpServletResponse response){
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+                SysConstant.SESSION_KEY_LOGIN_STAFF);	
+        try {
+        	prams.put("channelId", sessionStaff.getCurrentChannelId());
+        	prams.put("areaId", sessionStaff.getCurrentAreaId());
+        	prams.put("staffId", sessionStaff.getStaffId());
+        	prams.put("pageSize", 50);
+        	int totalPage=0;
+        	Map<String, Object> map = null;
+         prams.put("qryStr", "乐享");
+        	map = orderBmo.queryMainOfferSpecList(prams,null, sessionStaff);
+        	if(ResultCode.R_SUCCESS.equals(map.get("code"))){
+        		//拼装前台显示的套餐详情
+        		if(!map.isEmpty()){
+        			List<Map<String,Object>> prodOfferInfosList = (List<Map<String,Object>>) map.get("prodOfferInfos");
+        			if(prodOfferInfosList.size()%10>0){
+        				totalPage=prodOfferInfosList.size()/10+1;
+        			}else{
+        				totalPage=prodOfferInfosList.size()/10;
+        			}
+        			for(int i=0;i<prodOfferInfosList.size();i++){
+        				Map<String,Object> exitParam = new HashMap<String,Object>();
+        				exitParam = (Map<String,Object>) prodOfferInfosList.get(i);
+        				if(exitParam.containsKey("inFlux")){
+        					float influx = 0 ;
+        					String influx_str ="";
+        					/*
+        					 判断返回的流量是否大于1024M，如果大于1024M，显示的单位是G，否则显示的单位是M
+        					 */
+        					if(exitParam.get("inFlux")!=null){
+        						try{
+        							influx = Float.parseFloat(exitParam.get("inFlux").toString());
+        							if(influx<1024){
+        								influx_str = influx+"";
+        								if(influx_str.indexOf(".") > 0){  
+                    						influx_str = influx_str.replaceAll("0+?$", "");//去掉多余的0  
+                    						influx_str = influx_str.replaceAll("[.]$", "");//如最后一位是.则去掉  
+                    			        } 
+        								influx_str = influx_str+"M";
+        							}else{
+        								influx_str = influx/1024+"";
+        								if(influx_str.indexOf(".") > 0){  
+                    						influx_str = influx_str.replaceAll("0+?$", "");//去掉多余的0  
+                    						influx_str = influx_str.replaceAll("[.]$", "");//如最后一位是.则去掉  
+                    			        } 
+        								influx_str = influx_str +"G";
+        							}
+        						}catch(Exception e){
+        							this.log.error("WIFI", e);
+        						}
+        					}
+        					prodOfferInfosList.get(i).put("inFlux", influx_str);
+        				}
+        			}
+        		}
+        		model.addAttribute("resultlst", map.get("prodOfferInfos"));
+        		model.addAttribute("totalPage",totalPage);
+        	}
+        	//model.addAttribute("pnLevelId", prams.get("pnLevelId"));
+        	if(!"".equals(prams.get("subPage"))){
+        		model.addAttribute("subPage", prams.get("subPage"));
+        	}
+        	if(null!=(prams.get("orderflag"))){
+        		model.addAttribute("orderflag", prams.get("orderflag"));
+        	}
+        	if(null!=(prams.get("actionFlag"))){
+        		model.addAttribute("actionFlag", prams.get("actionFlag"));
+        	}
+        } catch (BusinessException be) {
+			this.log.error("查询号码信息失败", be);
+			return super.failedStr(model, be);
+		} catch (InterfaceException ie) {
+			return super.failedStr(model, ie, prams, ErrorCode.QUERY_MAIN_OFFER);
+		} catch (Exception e) {
+			return super.failedStr(model, ErrorCode.QUERY_MAIN_OFFER, e, prams);
+		}
+        return "/app/order/ysl-offer-list";
     }
 
 	@RequestMapping(value = "/queryPackForTerm", method = RequestMethod.POST)
@@ -2104,79 +2205,122 @@ public class OrderController extends BaseController {
 			HttpServletResponse response,HttpServletRequest request)throws Exception{
 		JsonResponse jsonResponse = null;
 		String str=JacksonUtil.getInstance().objectTojson(param);
+		System.out.println(str);
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+                SysConstant.SESSION_KEY_LOGIN_STAFF);
+		Map orderList = (Map)param.get("orderList");
+		System.out.println("++++++++++++orderList="+orderList.toString());
+		Map orderListInfo = (Map)orderList.get("orderListInfo");
+		System.out.println("++++++++++++orderListInfo="+orderListInfo.toString());
 		if(commonBmo.checkToken(request, SysConstant.ORDER_SUBMIT_TOKEN)){
-			/**begin 2015-07-21  订单提交前,进行数据安全校验**/
-			boolean flag =getNewInstallerData(str);
-			if(!flag){
-				String errMessage = "数据存在异常,请核实";
-				jsonResponse = super.failed(errMessage,
-						ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
-				//System.out.println(jsonResponse);
-				return jsonResponse;
-			}
-			/**end*/
-			try {
-				SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
-	                    SysConstant.SESSION_KEY_LOGIN_STAFF);
-				Map orderList = (Map)param.get("orderList");
-				Map orderListInfo = (Map)orderList.get("orderListInfo");
-				orderListInfo.put("staffId", sessionStaff.getStaffId()); //防止前台修改
-				
-				//过滤订单属性
-				List<Map> custOrderAttrs = (List<Map>)orderListInfo.get("custOrderAttrs");
-				String isAddOperation= (String)ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.FDSL+"_"+sessionStaff.getStaffId());
-				//没有暂存单权限的员工不能添加暂存单订单属性
-				if(!"0".equals(isAddOperation)){
-					if(custOrderAttrs != null && custOrderAttrs.size() != 0){
-						List<Map> filterCustOrderAttrs = new ArrayList<Map>();
-						for(Map custOrderAttr : custOrderAttrs){
-							if(custOrderAttr != null && !SysConstant.FDSL_ORDER_ATTR_SPECID.equals(custOrderAttr.get("itemSpecId"))){
-								filterCustOrderAttrs.add(custOrderAttr);
-							}
+			Map<String, Object> resMap = orderBmo.orderSubmit(param,null,sessionStaff);
+			if(ResultCode.R_SUCC.equals(resMap.get("resultCode"))){
+				Map result = (Map)resMap.get("result");
+				String olId = (String)result.get("olId");
+				String soNbr = (String)orderListInfo.get("soNbr");
+				String olTypeCd = orderListInfo.get("olTypeCd").toString();
+				if(result.get("ruleInfos") == null){
+					resMap.put("rolId", olId);
+					resMap.put("rsoNbr", soNbr);
+					resMap.put("checkRule", "checkRule");
+				}else{
+					boolean ruleflag = false;
+					List rulelist = (List)result.get("ruleInfos");
+					for(int i=0;i<rulelist.size();i++){
+						Map rulemap = (Map)rulelist.get(i);
+						String ruleLevel = rulemap.get("ruleLevel").toString();
+						if("4".equals(ruleLevel)){
+							ruleflag = true;
+							break;
 						}
-						orderListInfo.put("custOrderAttrs", filterCustOrderAttrs);
 					}
-				}
-				
-				Map<String, Object> resMap = orderBmo.orderSubmit(param,null,sessionStaff);
-				if(ResultCode.R_SUCC.equals(resMap.get("resultCode"))){
-					Map result = (Map)resMap.get("result");
-					String olId = (String)result.get("olId");
-					String soNbr = (String)orderListInfo.get("soNbr");
-					if(result.get("ruleInfos") == null){
+					if(!ruleflag){
 						resMap.put("rolId", olId);
 						resMap.put("rsoNbr", soNbr);
 						resMap.put("checkRule", "checkRule");
-					}else{
-						boolean ruleflag = false;
-						List rulelist = (List)result.get("ruleInfos");
-						for(int i=0;i<rulelist.size();i++){
-							Map rulemap = (Map)rulelist.get(i);
-							String ruleLevel = rulemap.get("ruleLevel").toString();
-							if("4".equals(ruleLevel)){
-								ruleflag = true;
-								break;
-							}
-						}
-						if(!ruleflag){
-							resMap.put("rolId", olId);
-							resMap.put("rsoNbr", soNbr);
-							resMap.put("checkRule", "checkRule");
-						}
 					}
-					jsonResponse = super.successed(resMap,
-							ResultConstant.SUCCESS.getCode());
-				}else{
-					jsonResponse = super.failed(resMap.get("resultMsg"),
-							ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
 				}
-			} catch (BusinessException e) {
-				return super.failed(e);
-			} catch (InterfaceException ie) {
-				return super.failed(ie, param, ErrorCode.ORDER_SUBMIT);
-			} catch (Exception e) {
-				return super.failed(ErrorCode.ORDER_SUBMIT, e, param);
+				if(olTypeCd.equals("14")){
+					resMap.put("checkRule", "notCheckRule");
+				}
+				jsonResponse = super.successed(resMap,
+						ResultConstant.SUCCESS.getCode());
+			}else{
+				jsonResponse = super.failed(resMap.get("resultMsg"),
+						ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
 			}
+//			/**begin 2015-07-21  订单提交前,进行数据安全校验**/
+//			boolean flag =getNewInstallerData(str);
+//			if(!flag){
+//				String errMessage = "数据存在异常,请核实";
+//				jsonResponse = super.failed(errMessage,
+//						ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+//				//System.out.println(jsonResponse);
+//				return jsonResponse;
+//			}
+//			/**end*/
+//			try {
+//				SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+//	                    SysConstant.SESSION_KEY_LOGIN_STAFF);
+//				Map orderList = (Map)param.get("orderList");
+//				Map orderListInfo = (Map)orderList.get("orderListInfo");
+//				orderListInfo.put("staffId", sessionStaff.getStaffId()); //防止前台修改
+//				
+//				//过滤订单属性
+//				List<Map> custOrderAttrs = (List<Map>)orderListInfo.get("custOrderAttrs");
+//				String isAddOperation= (String)ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.FDSL+"_"+sessionStaff.getStaffId());
+//				//没有暂存单权限的员工不能添加暂存单订单属性
+//				if(!"0".equals(isAddOperation)){
+//					if(custOrderAttrs != null && custOrderAttrs.size() != 0){
+//						List<Map> filterCustOrderAttrs = new ArrayList<Map>();
+//						for(Map custOrderAttr : custOrderAttrs){
+//							if(custOrderAttr != null && !SysConstant.FDSL_ORDER_ATTR_SPECID.equals(custOrderAttr.get("itemSpecId"))){
+//								filterCustOrderAttrs.add(custOrderAttr);
+//							}
+//						}
+//						orderListInfo.put("custOrderAttrs", filterCustOrderAttrs);
+//					}
+//				}
+//				
+//				Map<String, Object> resMap = orderBmo.orderSubmit(param,null,sessionStaff);
+//				if(ResultCode.R_SUCC.equals(resMap.get("resultCode"))){
+//					Map result = (Map)resMap.get("result");
+//					String olId = (String)result.get("olId");
+//					String soNbr = (String)orderListInfo.get("soNbr");
+//					if(result.get("ruleInfos") == null){
+//						resMap.put("rolId", olId);
+//						resMap.put("rsoNbr", soNbr);
+//						resMap.put("checkRule", "checkRule");
+//					}else{
+//						boolean ruleflag = false;
+//						List rulelist = (List)result.get("ruleInfos");
+//						for(int i=0;i<rulelist.size();i++){
+//							Map rulemap = (Map)rulelist.get(i);
+//							String ruleLevel = rulemap.get("ruleLevel").toString();
+//							if("4".equals(ruleLevel)){
+//								ruleflag = true;
+//								break;
+//							}
+//						}
+//						if(!ruleflag){
+//							resMap.put("rolId", olId);
+//							resMap.put("rsoNbr", soNbr);
+//							resMap.put("checkRule", "checkRule");
+//						}
+//					}
+//					jsonResponse = super.successed(resMap,
+//							ResultConstant.SUCCESS.getCode());
+//				}else{
+//					jsonResponse = super.failed(resMap.get("resultMsg"),
+//							ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+//				}
+//			} catch (BusinessException e) {
+//				return super.failed(e);
+//			} catch (InterfaceException ie) {
+//				return super.failed(ie, param, ErrorCode.ORDER_SUBMIT);
+//			} catch (Exception e) {
+//				return super.failed(ErrorCode.ORDER_SUBMIT, e, param);
+//			}
 		}else {
             super.addHeadCode(response, ResultConstant.SERVICE_RESULT_FAILTURE);
 		}
@@ -2368,6 +2512,7 @@ public class OrderController extends BaseController {
 						Object boActionTypeObj = busiOrderObj.get("boActionType");
 						if (boActionTypeObj != null) {
 							JSONObject boActionType = JSONObject.fromObject(boActionTypeObj);
+							System.out.println(boActionType.toString());
 							if (boActionType != null) {
 								int actionClassCd = (Integer) boActionType.get("actionClassCd");
 								String boActionTypeCd = (String) boActionType.get("boActionTypeCd");
@@ -2407,18 +2552,18 @@ public class OrderController extends BaseController {
 														String code = (String) Olddatamap.get("code");
 														if ("POR-0000".equals(code)) {
 															Map<String, Object> baseInfoObj = (Map<String, Object>) Olddatamap.get("baseInfo");
-															int phoneNumlIdForInt = (Integer) baseInfoObj.get("phoneNumId");
-															int pnTypeIdForInt = (Integer) baseInfoObj.get("pnTypeId");
+															String phoneNumlId = baseInfoObj.get("phoneNumId").toString();
+															String pnTypeId = baseInfoObj.get("pnTypeId").toString();
 															String zoneNumber = String.valueOf(baseInfoObj.get("zoneNumber"));
 
 															String pnPrice = String.valueOf(baseInfoObj.get("pnPrice"));
-															int phoneLevelIdForInt = (Integer) baseInfoObj.get("phoneLevelId");
+															String phoneLevelId = baseInfoObj.get("phoneLevelId").toString();
 															String prePrice = String.valueOf(baseInfoObj.get("prePrice"));
 
-															String phoneNumlId = String.valueOf(phoneNumlIdForInt);
-															String pnTypeId = String.valueOf(pnTypeIdForInt);
+															//String phoneNumlId = String.valueOf(phoneNumlIdForInt);
+															//String pnTypeId = String.valueOf(pnTypeIdForInt);
 															//String pnTypeId = "20150717";
-															String phoneLevelId = String.valueOf(phoneLevelIdForInt);
+															//String phoneLevelId = String.valueOf(phoneLevelIdForInt);
 															if (zoneNumber.equals(areaCode) && anId.equals(phoneNumlId) && anTypeCd.equals(pnTypeId)
 																	&& minCharge.equals(pnPrice) && pnLevelId.equals(phoneLevelId)
 																	&& preStore.equals(prePrice)) {

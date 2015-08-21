@@ -585,7 +585,7 @@ order.ysl = (function(){
 		});
 		orderbean.paymentMap = order.ysl.paymentbean;
 		
-		var url=contextPath+"/order/suborderysl";
+		var url=contextPath+"/app/order/suborderysl";
 		var response = $.callServiceAsJson(url, orderbean);
 		if (response.code == -2) {
 			$.alertM(response.data);
@@ -602,7 +602,7 @@ order.ysl = (function(){
 			$("#buyid").html("购物车流水号："+response.data.CUST_SO_NUMBER);
 			$("#buynum").html("产品号码：："+$("#choosedNumSpan").val());
 			$("#yslpage").hide();
-			$("#finishpage").show();
+//			$("#finishpage").show();   //打印发票，打印回执功能未开发 暂时屏蔽
 			$("#tijiao").hide();
 			order.ysl.realmoney=orderbean.paytotal*1;
 			if (order.ysl.realmoney > 0) {
@@ -1476,7 +1476,171 @@ order.ysl = (function(){
 			_queryyslinfos(scrollObj.scroll);
 		}
 	};
+	
+	//弹出套餐选择页面
+	var _showPack = function (){
+		var url=contextPath+"/app/order/yslPack";
+		var param={};
+		$.callServiceAsHtml(url,param,{
+			"before":function(){
+				$.ecOverlay("<strong>正在查询中,请稍等会儿....</strong>");
+			},
+			"always":function(){
+				$.unecOverlay();
+			},
+			"done" : function(response){
+				if(!response){
+					 response.data='选套餐页面加载异常,稍后重试';
+				}
+				if(response.code != 0) {
+					$.alert("提示","查询失败,稍后重试");
+					return;
+				}
+				$("#order").hide();
+				//$("#order_prepare").hide();
+				var content$=$("#packContent");
+				content$.html(response.data).show();
+			}
+		});	
+	};
+	
+	//初始化套餐选择页面
+	var _initPack = function (){
+		OrderInfo.order.step=1;
+		OrderInfo.busitypeflag=2;
+		OrderInfo.actionFlag = 2;
+		//获取初始化查询的条件
+		order.service.queryApConfig();
+		//初始化主套餐查询
+		order.ysl.yslSearchPack();
+	};
+	
+	//主套餐查询
+	var _yslSearchPack = function(flag,scroller,subPage){
+		var custId = OrderInfo.cust.custId;
+		var qryStr=$("#qryStr").val();
+//		var params={"qryStr":qryStr,"pnLevelId":"","custId":custId};
+		var params={"subPage":flag,"qryStr":qryStr,"pnLevelId":"","custId":custId,"PageSize":10};
+		if(flag){
+			
+			var priceVal = $("#select_price").val();
+			if(ec.util.isObj(priceVal)){
+				var priceArr = priceVal.split("-");
+				if(priceArr[0]!=null&&priceArr[0]!=""){
+					params.priceMin = priceArr[0] ;
+				}
+				if(priceArr[1]!=null&&priceArr[1]!=""){
+					params.priceMax = priceArr[1] ;
+				}
+			}
+			var influxVal = $("#select_invoice").val();
+			if(ec.util.isObj(influxVal)){
+				var influxArr = influxVal.split("-");
+				if(influxArr[0]!=null&&influxArr[0]!=""){
+					params.INFLUXMin = influxArr[0]*1024 ;
+				}
+				if(influxArr[1]!=null&&influxArr[1]!=""){
+					params.INFLUXMax = influxArr[1]*1024 ;
+				}
+			}
+			var invoiceVal = $("#select_influx").val();
+			if(ec.util.isObj(invoiceVal)){
+				var invoiceArr = invoiceVal.split("-");
+				if(invoiceArr[0]!=null&&invoiceArr[0]!=""){
+					params.INVOICEMin = invoiceArr[0] ;
+				}
+				if(invoiceArr[1]!=null&&invoiceArr[1]!=""){
+					params.INVOICEMax = invoiceArr[1] ;
+				}
+			}
+		}
+		_yslQueryData(params,flag,scroller);
+		
+	};
+	
+	var _yslQueryData = function(params,flag,scroller) {
+		if(OrderInfo.actionFlag==2){
+			var offerSpecId = order.prodModify.choosedProdInfo.prodOfferId;
+			if(offerSpecId!=undefined){
+				params.changeGradeProdOfferId = offerSpecId;
+			}
+			var prodSpecIds='';
+			$.each(OrderInfo.offer.offerMemberInfos,function(){ //遍历旧套餐构成
+				if(this.objType==CONST.OBJ_TYPE.PROD){  //接入类产品
+					if(this.objId!=undefined){
+						prodSpecIds=prodSpecIds+","+this.objId;
+					}
+				}
+			});
+			if(prodSpecIds!=''){
+				prodSpecIds=prodSpecIds.substring(1, prodSpecIds.length);
+				params.prodSpecId=prodSpecIds;
+			}
+			params.actionFlag=2;
+		}else if(CONST.getAppDesc()==0){
+			params.prodOfferFlag = "4G";
+		}
+		var url = contextPath+"/app/order/yslOfferSpecList";
+		$.callServiceAsHtmlGet(url,params, {
+			"before":function(){
+				$.ecOverlay("<strong>正在查询中,请稍等...</strong>");
+			},
+			"always":function(){
+				$.unecOverlay();
+				$("#search-modal").modal('hide');
+			},
+			"done" : function(response){
+				$("#search-modal").modal('hide');
+				if(response.code != 0) {
+					$.alert("提示","<br/>查询失败,稍后重试");
+					return;
+				}
+				var content$ = $("#offer-list");
+				content$.html(response.data);
+				if(scroller && $.isFunction(scroller)) scroller.apply(this,[]);
+//				$.refresh(content$);
+			},
+			fail:function(response){
+				$.unecOverlay();
+				$("#search-modal").modal('hide');
+				$.alert("提示","套餐加载失败，请稍后再试！");
+			}
+		});
+	};
+	
+	//预受理套餐滚动页面入口
+	var _yslScroll = function(scrollObj){
+		if(scrollObj && scrollObj.page && scrollObj.page >= 1){
+			if(scrollObj.page==1){
+				_yslSearchPack(1,scrollObj.scroll);
+			}else{
+				var show_per_page = 10;
+				var start_from = (scrollObj.page-2) * show_per_page;
+				var end_on = start_from + show_per_page;
+				//$('#ul_offer_list').append($('#div_all_data').children().slice(start_from, end_on)).listview("refresh");
+				$('#div_all_data').children().slice(start_from, end_on).appendTo($('#div_offer_list'));
+//				$('#ul_offer_list').listview("refresh");
+//				$("#ul_offer_list li").off("tap").on("tap",function(){
+//					$(this).addClass("pakeagelistlibg").siblings().removeClass("pakeagelistlibg");
+//				});
+				if(scrollObj.scroll && $.isFunction(scrollObj.scroll)) scrollObj.scroll.apply(this,[]);
+			}
+		}
+	};
+	
+	var _yslSelectPack = function(packName,packCd){
+		$("#offer_spec_name").val(packName);
+		$("#offer_spec_cd").val(packCd);
+		$("#packContent").hide();
+		$("#order").show();
+	};
 	return {
+		yslSelectPack:_yslSelectPack,
+		yslSearchPack:_yslSearchPack,
+		yslQueryData:_yslQueryData,
+		yslScroll:_yslScroll,
+		showPack:_showPack,
+		initPack:_initPack,
 		yslbean:_yslbean,
 		openList:_openList,
 		realmoney:_realmoney,

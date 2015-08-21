@@ -32,15 +32,17 @@
                   <div class="form-group" id="chargeModifyReasonCdDiv_${trid}" style="display:none">
                     <label for="exampleInputPassword1">修改原因</label>
                     <div class="input-group">
-                    <select class="selectpicker show-tick form-control select-top" id="chargeModifyReasonCd_${trid}" style="display:none;border: 1px solid #DCDCDC;height: 23px;line-height: 23px;padding: 1px; width: 100px;">
-													   		<option value="3">补退费</option>
-													   		<option value="2">算费不正确</option>
-													   		<option value="4">营销业务</option>
-													   		<option value="1">其他</option>
-				    </select>
-		            <span class="input-group-addon select-span"></span>
-	         		</div>
-				    <input id="remark_${trid}" type="text" style="display:none ;border: 1px solid #DCDCDC;line-height: 23px;padding: 1px; width: 80px;">
+	                    <select class="selectpicker show-tick form-control select-top" id="chargeModifyReasonCd_${trid}" style="border: 1px solid #DCDCDC;height: 23px;line-height: 23px;padding: 1px; width: 100px;">
+														   		<option value="3">补退费</option>
+														   		<option value="2">算费不正确</option>
+														   		<option value="4">营销业务</option>
+														   		<option value="1">其他</option>
+					    </select>
+			        </div>
+	         		<label for="exampleInputPassword1">备注</label>
+	         		<div class="input-group">
+				       <input id="remark_${trid}" type="text" class="form-control">
+				    </div>
                   </div>
                   
                   <div class="btn-group btn-group-justified" role="group" aria-label="...">

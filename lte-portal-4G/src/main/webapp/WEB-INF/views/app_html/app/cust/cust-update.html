@@ -26,7 +26,7 @@
 			<input type="hidden" id="boCustIdentities" partyName="${modPartyTypeCd.partyName}" addressStr="${modPartyTypeCd.addressStr}" partyTypeCd="${modPartyTypeCd.partyTypeCd}" <#if (identities)?? > identidiesTypeCd="${identities[0].identidiesTypeCd}" identityNum="${identities[0].identityNum}"</#if> />
 			<div class="form-group">
 				<label for="cmCustName">客户姓名<span class="text-warning">*</span></label>
-            	<input type="text" class="form-control" id="cmCustName"  name="cmCustName" placeholder="客户姓名" value="${modPartyTypeCd.partyName}">
+            	<input type="text" class="form-control" id="cmCustName"  name="cmCustName" maxlength="100" placeholder="客户姓名" value="${modPartyTypeCd.partyName}">
 			</div>
 			<div class="form-group" id="div_cm_identidiesType">
 	            <label for="cm_identidiesTypeCd">证件类型</label>
@@ -38,15 +38,15 @@
          	</div>
 			<div class="form-group" id="div-cmcustidcard">
 				<label for="cmCustIdCard">证件号码<span class="text-warning">*</span></label>
-	            <input type="text" class="form-control" id="cmCustIdCard" name="cmCustIdCard" placeholder="证件号码" <#if (identities)?? >value="${identities[0].identityNum}"</#if>>
+	            <input type="text" class="form-control" id="cmCustIdCard" name="cmCustIdCard" maxlength="50" placeholder="证件号码" <#if (identities)?? >value="${identities[0].identityNum}"</#if>>
 			</div>
 			<div class="form-group" id="div-cmcustidcard-none" style="display: none;">
 				<label for="cmCustIdCard">证件号码<span class="text-warning">*</span></label>
-            	<input type="text" class="form-control" id="cmCustIdCardOther" name="cmCustIdCardOther" placeholder="证件号码" <#if (identities)?? >value="${identities[0].identityNum}"</#if>>
+            	<input type="text" class="form-control" id="cmCustIdCardOther" name="cmCustIdCardOther" maxlength="50" placeholder="证件号码" <#if (identities)?? >value="${identities[0].identityNum}"</#if>>
 			</div>
 			<div class="form-group">
 				<label for="cmAddressStr">证件地址<span class="text-warning">*</span></label>
-            	<input type="text" class="form-control" id="cmAddressStr" name="cmAddressStr" placeholder="证件地址" value="${modPartyTypeCd.addressStr}">
+            	<input type="text" class="form-control" id="cmAddressStr" name="cmAddressStr" maxlength="200" placeholder="证件地址" value="${modPartyTypeCd.addressStr}">
 			</div>
 			<div class="form-group" style="display: none;">
 	           <label for="telNumber">联系电话</label>
@@ -54,7 +54,7 @@
 	         </div>
 			<div class="form-group" style="display: none;">
 				<label for="mailAddressStr">通讯地址</label>
-            	<input type="text" class="form-control" id="mailAddressStr" name="mailAddressStr" placeholder="请输入通讯地址" value="${modPartyTypeCd.mailAddressStr}">
+            	<input type="text" class="form-control" id="mailAddressStr" name="mailAddressStr" maxlength="200" placeholder="请输入通讯地址" value="${modPartyTypeCd.mailAddressStr}">
 			</div>
 		</div>
 	</form>

@@ -58,7 +58,7 @@ order.dealer = (function() {
 //				var $dd = $('<dd><input type="text" id="dealer_'+objId+'" staffId="'+OrderInfo.staff.staffId+'" value="'+OrderInfo.staff.staffName+'" data-mini="true"></input></dd>');
 //				$dl.append($dd);
 //			}else{
-				var $td = $('<div class="col-xs-6"><input type="text"  readonly="readonly"  onclick="javascript:order.dealer.showDealer(0,\'dealer\',\''+objId+'\');" onChange="javascript:this.staffId=OrderInfo.staff.staffId;this.value=OrderInfo.staff.staffName" class="form-control" id="dealer_'+objId+'" staffId="'+OrderInfo.staff.staffId+'" value="'+OrderInfo.staff.staffName+'" ></input></div>');
+				var $td = $('<div class="col-xs-6"><input type="text" readonly="readonly" onclick="javascript:order.dealer.showDealer(0,\'dealer\',\''+objId+'\');" onChange="javascript:this.staffId=OrderInfo.staff.staffId;this.value=OrderInfo.staff.staffName" class="form-control" id="dealer_'+objId+'" staffId="'+OrderInfo.staff.staffId+'" value="'+OrderInfo.staff.staffName+'" ></input></div>');
 				$div.append($td);
 //			}
 			$li.append($div);
@@ -291,7 +291,7 @@ order.dealer = (function() {
 					if(response.data.length == 0){
 						$.alert("操作提示","没有查询到该员工信息！");
 					}else{
-						$("#dealer_"+objInstId).text(response.data[0].staffName).attr("staffId", response.data[0].staffId);
+						$("#dealer_"+objInstId).val(response.data[0].staffName).attr("staffId", response.data[0].staffId);
 						$("#developModal").modal("hide");
 					}
 				//	$("#developModal").hide();
