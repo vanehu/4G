@@ -1707,7 +1707,9 @@ public class MktResController extends BaseController {
 				String identityId = param.get("identityId").toString();
 				String idCardFlag = IDCard.IDCardValidate(identityId);
 				if(idCardFlag!=""){
-					return jsonResponse = super.failed(rMap,
+					Map<String,Object> resMap =new HashMap<String,Object>();
+					resMap.put("msg", idCardFlag);
+					return jsonResponse = super.failed(resMap,
 							ResultConstant.FAILD.getCode());
 				}
 				param.put("staffId", sessionStaff.getStaffId());

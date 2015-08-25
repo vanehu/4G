@@ -1380,11 +1380,47 @@ public class OrderController extends BaseController {
      @ResponseBody
      public JsonResponse chargeSubmit(@RequestBody Map<String, Object> param,
  			@LogOperatorAnn String flowNum,HttpServletResponse response,HttpServletRequest request){
-    	 SessionStaff sessionStaff = (SessionStaff) ServletUtils
+    	SessionStaff sessionStaff = (SessionStaff) ServletUtils
  				.getSessionAttribute(super.getRequest(),
  						SysConstant.SESSION_KEY_LOGIN_STAFF);
- 		Map<String, Object> rMap = null;
- 		JsonResponse jsonResponse = null;
+    	Map<String, Object> rMap = null;
+  		JsonResponse jsonResponse = null;
+    	//判断工号， 如果有“免短信验证权限”同时 有“限制提交权限维度”，则 不允许在 收银台界面点收费 提交按钮。
+    	String smsPassFlag= (String)ServletUtils.getSessionAttribute(super.getRequest(),
+    				SysConstant.SMS_PASS_OPSCD+"_"+sessionStaff.getStaffId());
+    	try{
+    		if(smsPassFlag==null){
+    		smsPassFlag=staffBmo.checkOperatSpec(SysConstant.SMS_PASS_OPSCD,sessionStaff);
+    		ServletUtils.setSessionAttribute(super.getRequest(),
+    				SysConstant.SMS_PASS_OPSCD+"_"+sessionStaff.getStaffId(), smsPassFlag);
+    	    }
+    	} catch (BusinessException e) {
+    		smsPassFlag="1";
+    	} catch (InterfaceException ie) {
+    		smsPassFlag="1";
+    	} catch (Exception e) {
+    		smsPassFlag="1";
+    	}
+    	String isLimitSubmit= (String)ServletUtils.getSessionAttribute(super.getRequest(),
+    			SysConstant.LIMIT_SUBMIT+"_"+sessionStaff.getStaffId());
+    		try{
+    			if(isLimitSubmit==null){
+    				isLimitSubmit=staffBmo.checkOperatSpec(SysConstant.LIMIT_SUBMIT,sessionStaff);
+    				ServletUtils.setSessionAttribute(super.getRequest(),
+    						SysConstant.LIMIT_SUBMIT+"_"+sessionStaff.getStaffId(), isLimitSubmit);
+    			}
+    		} catch (BusinessException e) {
+    			isLimitSubmit="1";
+    		} catch (InterfaceException ie) {
+    			isLimitSubmit="1";
+    		} catch (Exception e) {
+    			isLimitSubmit="1";
+    		}
+    	if(smsPassFlag=="0" && isLimitSubmit == "0"){
+    		jsonResponse = super.failed("您的工号有“免短信验证权限”同时有“限制提交权限维”，不允许在收银台界面点收费提交按钮!",
+						ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+    		return jsonResponse;
+    	}
  		try {
  			if(commonBmo.checkToken(request, SysConstant.ORDER_SUBMIT_TOKEN)){
 	 			log.debug("param={}", JsonUtil.toString(param));
@@ -2585,7 +2621,6 @@ public class OrderController extends BaseController {
 					String olId = (String)result.get("olId");
 					String soNbr = (String)orderListInfo.get("soNbr");
 					String olTypeCd = orderListInfo.get("olTypeCd").toString();
-					String actionFlag = orderListInfo.get("actionFlag").toString();
 					if(result.get("ruleInfos") == null){
 						resMap.put("rolId", olId);
 						resMap.put("rsoNbr", soNbr);
@@ -2607,7 +2642,7 @@ public class OrderController extends BaseController {
 							resMap.put("checkRule", "checkRule");
 						}
 					}
-					if(actionFlag.equals("37") || actionFlag.equals("38") ){
+					if(olTypeCd.equals("14")){
 						resMap.put("checkRule", "notCheckRule");
 					}
 					jsonResponse = super.successed(resMap,

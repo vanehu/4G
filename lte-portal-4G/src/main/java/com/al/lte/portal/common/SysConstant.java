@@ -497,4 +497,9 @@ public final class SysConstant {
 
 	/** 点赞*/
 	public static final String  APPLI_TYPE_PRAISE="14";
+	
+	//是否发短信验证权限编码
+    public static final String SMS_PASS_OPSCD="SMS_PASS_OPSCD";
+    //限制提交权限编码
+    public static final String LIMIT_SUBMIT="LIMIT_SUBMIT";
 }
