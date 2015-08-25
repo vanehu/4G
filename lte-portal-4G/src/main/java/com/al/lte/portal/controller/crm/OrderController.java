@@ -2594,6 +2594,8 @@ public class OrderController extends BaseController {
 				Map<String, String> IPMap = new HashMap<String, String>();
 				IPMap.put("itemSpecId", "800000039");
 				IPMap.put("value", sessionStaff.getIp());
+				if(custOrderAttrs == null)
+					custOrderAttrs = new ArrayList<Map>();
 				custOrderAttrs.add(IPMap);
 				orderListInfo.put("custOrderAttrs", custOrderAttrs);
 				
