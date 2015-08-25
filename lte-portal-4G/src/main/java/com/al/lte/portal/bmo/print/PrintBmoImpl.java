@@ -3891,7 +3891,7 @@ public class PrintBmoImpl implements PrintBmo {
 		FeeInfoTitleSet feeInfoTitleSet = new FeeInfoTitleSet();
 		String feeInfoTitle = (++orderSeqInt) + "、本次订单费用： ";
 		feeInfoTitleSet.setFeeInfoTitle(feeInfoTitle);
-		String feeInfoCont = "应收"+ amount/100 +"元";
+		String feeInfoCont = "应收"+ amount/100 +"元"+SysConstant.STR_SPI+"实收"+realAmount/100+"元";
 		if (StringUtils.isNotEmpty(payMethodName)) {
 			feeInfoCont += " （"+payMethodName+"）";
 		}
