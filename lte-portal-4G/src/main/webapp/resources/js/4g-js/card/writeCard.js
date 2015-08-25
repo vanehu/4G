@@ -662,10 +662,14 @@ order.writeCard = (function(){
 		try {
 			fso.GetFile("C:\\WINDOWS\\system32\\" + _cardDllInfoJson.dllName + ".DLL");
 		} catch(e) {
-			$.alert("提示","您插入白卡的卡商写卡组件不存在，请将组件下载保存到C:\\WINDOWS\\system32 目录下！","error");
-			$.alert("提示","您当前使用的卡组件的版本已更新，请下载更新至最新的版本[" + _cardDllInfoJson.dllVersion + "]后重新写卡。");
-			var url = contextPath + "/card/"+ _cardDllInfoJson.dllName+".DLL";
-			location.href = url;
+			$("#cardupdate").attr("href",contextPath + "/card/"+ _cardDllInfoJson.dllName+".DLL");
+			$("#writeTitle").html("写卡组件更新");
+			$("#rcard").hide();
+			$("#cardt").show();
+			//$.alert("提示","您插入白卡的卡商写卡组件不存在，请将组件下载保存到C:\\WINDOWS\\system32 目录下！","error");
+			//$.alert("提示","您当前使用的卡组件的版本已更新，请下载更新至最新的版本[" + _cardDllInfoJson.dllVersion + "]后重新写卡。");
+			//var url = contextPath + "/card/"+ _cardDllInfoJson.dllName+".DLL";
+			//location.href = url;
 			return false;
 		}
 		//alert("fso=="+fso);

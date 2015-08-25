@@ -2,9 +2,9 @@
 <OBJECT id="ocx${prodId}" style="height: 0px;width: 0px;" Classid="clsid:5e497bde-0e29-4ac0-bfb1-4af7b7940277" codeBase="${contextPath}/card/common.ocx#version=1.0.0.1"></OBJECT>
 <div style="display:none" id="ec-dialog-form-container-card${prodId}" class="ec-dialog-form-container">
 	<div class="ec-dialog-form-top">
-		<h1 class="ec-dialog-form-title">写卡</h1>
+		<h1 class="ec-dialog-form-title" id="writeTitle">写卡</h1>
 	</div>
-	<div class="ec-dialog-form-content">
+	<div class="ec-dialog-form-content" id="rcard">
 		<div class="ec-dialog-form-loading" style="display:none"></div>
 		<div class="ec-dialog-form-message" style="display:none"></div>
 		<div class="ec-dialog-form-form" >
@@ -29,6 +29,24 @@
 		</form>
 		</div>
 	</div>
+	<div class="ec-dialog-form-content" id="cardt" style="display:none">
+		<div class="ec-dialog-form-loading" style="display:none"></div>
+		<div class="ec-dialog-form-message" style="display:none"></div>
+		<div class="ec-dialog-form-form" >
+		<form action="#" id="dialogForm">
+			<div>
+				<p class="pb" style="font-weight:bold;height: 30px;top:40px;">
+				           尊敬的用户，系统卡组件近期有更新，请您下载最新的卡组件，把最新的卡组件保存到C:\\WINDOWS\\system32 目录下！
+				</p>
+			</div>
+			<div style="height: 30px;"></div>
+			<div align="left" style="font-weight:bold;margin-left: 5px;">
+			     请点击下载<a id="cardupdate" href = "" style="color:#00F">最新的卡组件</a>
+			</div>
+		</form>
+		</div>
+	</div>
 	<div class="ec-dialog-form-bottom"></div>
 </div>	
+
 
