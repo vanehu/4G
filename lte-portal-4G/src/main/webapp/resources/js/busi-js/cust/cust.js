@@ -213,7 +213,7 @@ order.cust = (function(){
 		$("#"+id).val("");
 		$("#"+id).attr("onkeyup", "value=value.replace(/[^A-Za-z0-9]/ig,'')");
 		var identidiesTypeCd=$(scope).val();
-		$("#"+id).attr("maxlength","");
+		$("#"+id).attr("maxlength","100");
 		if(identidiesTypeCd==-1){
 			if ("ON" == CacheData.getIntOptSwitch()) {
 				$("#prodTypeCd").show();
@@ -259,7 +259,7 @@ order.cust = (function(){
 		$("#"+id).val("");
 		$("#"+id).attr("onkeyup", "value=value.replace(/[^A-Za-z0-9]/ig,'')");
 		var identidiesTypeCd=$(scope).val();
-		$("#"+id).attr("maxlength","");
+		$("#"+id).attr("maxlength","100");
 		if(identidiesTypeCd==1){
 			$("#"+id).attr("placeHolder","请输入合法身份证号码");
 			$("#"+id).attr("data-validate","validate(idCardCheck18:请输入合法身份证号码) on(blur)");
