@@ -67,4 +67,12 @@ public interface CustBmo {
 	public Map<String, Object> decodeUserInfo(Map<String, Object> dataBusMap, String optFlowNum,
             SessionStaff sessionStaff,String dekeyWord) throws Exception;
 	
+	/**
+	 * 根据客户查询接入号
+	 * @param queryParam
+	 * @return
+	 */
+	public Map<String, Object> queryAccNbrByCust(Map<String, Object> dataBusMap, String optFlowNum,
+            SessionStaff sessionStaff) throws Exception;
+	
 }

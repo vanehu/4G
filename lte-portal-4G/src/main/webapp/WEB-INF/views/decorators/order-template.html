@@ -42,9 +42,10 @@
         	<option value="12" selected>移动电话</option>
         	<option value="15">无线上网卡</option>
         </select>
-        <div id="custList" class="usersearchcon" ></div>
+        <div id="custList" class="usersearchcon" style="z-index: 9000;"></div>
+        <div id="custListOverlay" style="margin: 0px; padding: 0px; border: medium none; width: 100%; height: 100%; background: none repeat scroll 0% 0% rgb(51, 51, 51); opacity: 0.6; z-index: 8999; position: fixed; top: 0px; left: 0px; display: none;"></div>
         </li>
-		<li class="usersearch">
+		<li class="usersearch" style="z-index: 0;">
 			<input name="" type="text" class="numberTextBox" id="p_cust_identityNum" onkeyup="value=value.replace(/[^\w]|_/ig,'')" 
 				placeHolder="请输入接入号码" data-validate="validate(isTelecomOridCardCheck:请输入合法接入号码) on(blur)" style="width:158px;"/>
 		</li>

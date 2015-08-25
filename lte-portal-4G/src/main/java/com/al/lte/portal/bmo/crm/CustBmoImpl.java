@@ -490,4 +490,22 @@ public class CustBmoImpl implements CustBmo {
 		return resMap;
 	}
 
+	public Map<String, Object> queryAccNbrByCust(
+			Map<String, Object> dataBusMap, String optFlowNum,
+			SessionStaff sessionStaff) throws Exception {
+		DataBus db = InterfaceClient.callService(dataBusMap, PortalServiceCode.QUERY_ACC_NBR_BY_CUST, optFlowNum, sessionStaff);
+		Map returnMap = db.getReturnlmap();
+		try {
+			String code = (String) returnMap.get("resultCode");
+			Map custInfoMap = null;
+			if (ResultCode.R_SUCC.equals(code)) {
+				custInfoMap = (HashMap) returnMap.get("result");
+			}
+			return custInfoMap;
+		} catch (Exception e) {
+			log.error("后台异常根据客户查询接入号服务返回的数据异常", e);
+			throw new BusinessException(ErrorCode.QUERY_ACC_NBR_BY_CUST, dataBusMap, db.getReturnlmap(), e);
+		}
+	}
+
 }

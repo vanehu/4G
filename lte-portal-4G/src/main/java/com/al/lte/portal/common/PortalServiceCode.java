@@ -883,4 +883,7 @@ public final class PortalServiceCode {
     public static final String QUERY_OFFER_FEE_TYPE = "biz-service/intf.prodOfferService/queryFeeTypeByOfferId";
     //暂存单保存
     public static final String SAVE_ORDER_ATTRS = "biz-service/intf.soService/saveOrderAttrs";
+    
+    /** 根据客户查询接入号 */
+    public static final String QUERY_ACC_NBR_BY_CUST = "biz-service/intf.custService/queryAccNbrByCust"; 
 }

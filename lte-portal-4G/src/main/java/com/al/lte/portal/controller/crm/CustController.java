@@ -199,17 +199,75 @@ public class CustController extends BaseController {
 					sessionStaff.setCardType(String.valueOf(custInfo.get("identityCd")));
 					sessionStaff.setPartyName(String.valueOf(custInfo.get("partyName")));
 					
-					if(idCardNumber != null && idCardNumber.length()==18){
-						 String preStr = idCardNumber.substring(0,6);
-				    	 String subStr = idCardNumber.substring(14);
-				    	 idCardNumber=preStr+"********"+subStr;
-						
-					}else if(idCardNumber != null && idCardNumber.length()==15){
-						String preStr = idCardNumber.substring(0,5);
-				    	 String subStr = idCardNumber.substring(13);
-				    	 idCardNumber=preStr+"********"+subStr;
+					List<String> custIds = new ArrayList<String>();
+					//脱敏
+					for(int i = 0; i < custInfos.size(); i++){
+						Map tmpCustInfo =(Map)custInfos.get(i);
+						String tmpIdCardNumber = (String) tmpCustInfo.get("idCardNumber");
+						if (tmpIdCardNumber != null && tmpIdCardNumber.length() == 18) {
+							String preStr = tmpIdCardNumber.substring(0, 6);
+							String subStr = tmpIdCardNumber.substring(14);
+							tmpIdCardNumber = preStr + "********" + subStr;
+							tmpCustInfo.put("idCardNumber", tmpIdCardNumber);
+						} else if (tmpIdCardNumber != null && tmpIdCardNumber.length() == 15) {
+							String preStr = tmpIdCardNumber.substring(0, 5);
+							String subStr = tmpIdCardNumber.substring(13);
+							tmpIdCardNumber = preStr + "********" + subStr;
+							tmpCustInfo.put("idCardNumber", tmpIdCardNumber);
+						}
+						custIds.add(MapUtils.getString(tmpCustInfo,"custId",""));
 					}
-					model.addAttribute("idCardNumber", idCardNumber);
+					
+					//若省份只返回了一条客户信息，则与原有接口无差异。若省份返回了多条客户信息，则前台需要再次调用后台的新提供的接口，来查询客户下的接入号信息，并拼装报文，按客户ID和接入号逐条展示客户信息
+					if(custInfos.size() > 1){
+						Map<String, Object> accNbrParamMap = new HashMap<String, Object>();
+						accNbrParamMap.put("areaId", paramMap.get("areaId"));
+						accNbrParamMap.put("custIds", custIds);
+						Map accNbrResultMap = custBmo.queryAccNbrByCust(accNbrParamMap, flowNum, sessionStaff);
+						if (MapUtils.isNotEmpty(accNbrResultMap)) {
+							List<Map<String, Object>> accNbrCustInfos = (List<Map<String, Object>>) accNbrResultMap.get("custInfos");
+							List custInfosWithNbr = new ArrayList();
+							for(Map<String, Object> accNbrCustInfo : accNbrCustInfos){
+								String custId = MapUtils.getString(accNbrCustInfo,"custId","");
+								List<Map<String, Object>> accNbrs = (List<Map<String, Object>>) accNbrCustInfo.get("accNbrInfos");
+								
+								if(accNbrs != null && accNbrs.size() != 0){
+									Map custInfoMap = null;
+									for(Object tmpCustInfo : custInfos){
+										if(custId.equals(((Map)tmpCustInfo).get("custId"))){
+											custInfoMap = ((Map)tmpCustInfo);
+											break;
+										}
+									}
+									if(custInfoMap != null){
+										for(Map<String, Object> accNbrMap : accNbrs){
+											String accNbr = MapUtils.getString(accNbrMap, "accNbr", "");
+											Map newCustInfoMap = new HashMap(custInfoMap);
+											newCustInfoMap.put("accNbr", accNbr);
+											custInfosWithNbr.add(newCustInfoMap);
+										}
+									}
+								}
+							}
+							if(custInfosWithNbr.size() != 0){
+								resultMap.put("custInfos", custInfosWithNbr);
+								model.addAttribute("query", paramMap.get("query"));  //综合查询调用标志
+								model.addAttribute("multiCust", "Y");  //多客户标识
+							}
+						}
+					}
+					
+//					if(idCardNumber != null && idCardNumber.length()==18){
+//						 String preStr = idCardNumber.substring(0,6);
+//				    	 String subStr = idCardNumber.substring(14);
+//				    	 idCardNumber=preStr+"********"+subStr;
+//						
+//					}else if(idCardNumber != null && idCardNumber.length()==15){
+//						String preStr = idCardNumber.substring(0,5);
+//				    	 String subStr = idCardNumber.substring(13);
+//				    	 idCardNumber=preStr+"********"+subStr;
+//					}
+//					model.addAttribute("idCardNumber", idCardNumber);
 				}else{
 					int count = (Integer) httpSession.getAttribute(sessionStaff.getStaffCode()+"custcount")+10;
 					httpSession.setAttribute(sessionStaff.getStaffCode()+"custcount", count);

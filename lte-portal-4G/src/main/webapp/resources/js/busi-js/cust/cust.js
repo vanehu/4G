@@ -398,10 +398,13 @@ order.cust = (function(){
 		$(".userclose").off("click").on("click",function(event) {
 			authFlag="";
 			$(".usersearchcon").hide();
+			$("#custListOverlay").hide();
 		});
 		if($("#custListTable").attr("custInfoSize")=="1"){
 			$(".usersearchcon").hide();
+			$("#custListOverlay").hide();
 		}
+		$("#custListOverlay").show();
 	};
 	
 	// 客户重新定位
@@ -415,6 +418,7 @@ order.cust = (function(){
 		}
 		$("#custQryDiv").show();
 		$("#custInfo").hide();
+		$("#custListOverlay").hide();
 		$("#p_cust_identityNum").val("");
 		$("#authPassword").val("");
 		authFlag="";
