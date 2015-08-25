@@ -47,6 +47,7 @@ prod.changeUim = (function() {
 		};
 		OrderInfo.initData(CONST.ACTION_CLASS_CD.PROD_ACTION,areaAtionType,actionFlag,opeName,"");
 		rule.rule.prepare(param,'prod.changeUim.initFillPage',callParam);
+		order.dealer.initDealer();
 	};
 	
 	
