@@ -947,6 +947,8 @@ order.calcharge = (function(){
 				$.unecOverlay();
 				
 				if(OrderInfo.provinceInfo.isFee == "1"){//不收费	
+					//暂存成功，不再取消订单
+					SoOrder.delOrderFin();
 					var redirectUri = OrderInfo.provinceInfo.redirectUri;//回调地址
 					if(redirectUri == null || redirectUri=="" || redirectUri==undefined){
 						$.Zebra_Dialog("<div style='width:100%;font-size:15px;'>订单暂存成功</div>", {

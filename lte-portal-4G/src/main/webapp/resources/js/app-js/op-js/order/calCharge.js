@@ -772,10 +772,14 @@ order.calcharge = (function(){
 					order.undo.toUndoMain(1);
 				});
 			}else{
-				$("#orderCancel").html("继续受理");
+				/*$("#orderCancel").html("继续受理");
 				$("#orderCancel").off("onclick").on("onclick",function(event){
 					_backToEntr();
-				});
+				});*/
+				var redirectUri = OrderInfo.provinceInfo.redirectUri;//回调地址
+				if(redirectUri != null && redirectUri!=undefined && redirectUri!=""){						
+					$("#orderCancel").off("click").on("click",function(event){_backToProvince();});	
+				}
 			}
 			SoOrder.updateResState(); //修改UIM，号码状态
 			//金额不为零，提示收费成功
@@ -856,9 +860,17 @@ order.calcharge = (function(){
 		}
 		$("#btn-dialog-ok").removeAttr("data-dismiss");
 		$('#alert-modal').modal({backdrop: 'static', keyboard: false});
-		$("#btn-dialog-ok").off("click").on("click",function(){
+		/*$("#btn-dialog-ok").off("click").on("click",function(){
 			_backToEntr();
-		});
+		});*/
+		
+		var redirectUri = OrderInfo.provinceInfo.redirectUri;//回调地址
+		if(redirectUri != null && redirectUri!=undefined && redirectUri!=""){		
+			$("#btn-dialog-ok").off("click").on("click",function(event){_backToProvince();});	
+		}else{
+			$("#div_info_btn").hide();
+		}	
+		
 		$("#modal-title").html(title);
 		$("#modal-content").html(msg);
 		$("#alert-modal").modal();
@@ -947,56 +959,81 @@ order.calcharge = (function(){
 				$.ecOverlay("<strong>正在查询中,请稍等会儿....</strong>");
 			},
 			"always":function(){
-				$.unecOverlay();
+				//$.unecOverlay();
 			},
 			"done" : function(response){
+				$.unecOverlay();
+				SoOrder.getToken();
+				
 				if(response.code != 0) {
 					$.alert("提示","收费页面加载失败，请稍后重试");
 					return;
 				}
-				SoOrder.getToken();
-				var content$ = $("#order-confirm").html(response.data).fadeIn();
-				var htmls=$("#paydialog").html();
-				$("#paydialog").html('');
-				$.refresh(content$);
-				$("#paydialog").html(htmls);
-				//$("#navbar").slideUp(500);
-				$.each($(".cashier_dd"),function(){
-					var prodId=$(this).attr("id");
-					var obj=$(this);
-					if($.trim($(this).html())==""&&$(".userorderlist")!=undefined){
-						$.each($("#userorderlist li").find("dl:eq(0)"),function(){
-							 var prodInstId=$(this).attr("prodInstId");
-							 var accNbr=$(this).attr("accNbr");
-							 var prodName=$(this).attr("productName");
-							 if(prodInstId!=undefined&&accNbr!=undefined){
-								 if(prodId==prodInstId){
-									 obj.html(prodName+"&nbsp;-&nbsp;"+accNbr);
+				
+				if(OrderInfo.provinceInfo.isFee == "1"){//不收费
+					//暂存成功，不再取消订单
+					SoOrder.delOrderFin();
+					$("#toComplate").attr("disabled","disabled");
+					var redirectUri = OrderInfo.provinceInfo.redirectUri;//回调地址
+					if(redirectUri!=null && redirectUri!="" && redirectUri!="undefined"){
+						//调用接口
+						_backToProvince();
+					}else{
+						$("#btn-dialog-ok").removeAttr("data-dismiss");
+						$('#alert-modal').modal({backdrop: 'static', keyboard: false});
+						$("#div_info_btn").hide();
+						$("#modal-title").html("提示");
+						$("#modal-content").html("订单暂存成功！");
+						$("#alert-modal").modal();
+						
+//						$.alert("提示","订单缓存成功！");
+					}
+				}else if(OrderInfo.provinceInfo.isFee == "2"){
+					SoOrder.getToken();
+					var content$ = $("#order-confirm").html(response.data).fadeIn();
+					var htmls=$("#paydialog").html();
+					$("#paydialog").html('');
+					$.refresh(content$);
+					$("#paydialog").html(htmls);
+					//$("#navbar").slideUp(500);
+					$.each($(".cashier_dd"),function(){
+						var prodId=$(this).attr("id");
+						var obj=$(this);
+						if($.trim($(this).html())==""&&$(".userorderlist")!=undefined){
+							$.each($("#userorderlist li").find("dl:eq(0)"),function(){
+								 var prodInstId=$(this).attr("prodInstId");
+								 var accNbr=$(this).attr("accNbr");
+								 var prodName=$(this).attr("productName");
+								 if(prodInstId!=undefined&&accNbr!=undefined){
+									 if(prodId==prodInstId){
+										 obj.html(prodName+"&nbsp;-&nbsp;"+accNbr);
+									 }
 								 }
-							 }
-						});	
+							});	
+						}
+						
+					});
+					$("#printVoucherA").off("click").on("click", function(event){
+						if(!_submitParam()){
+							return ;
+						}
+						var voucherInfo = {
+							"olId":_olId,
+							"soNbr":OrderInfo.order.soNbr,
+							"busiType":"1",
+							"chargeItems":_chargeItems,
+							"areaId":OrderInfo.getAreaId()
+						};
+						common.print.signVoucher(voucherInfo);
+					});
+					//_reflashTotal();
+					if(OrderInfo.actionFlag==15){
+						order.refund.conBtns();
+					}else{
+						_conBtns();
 					}
-					
-				});
-				$("#printVoucherA").off("click").on("click", function(event){
-					if(!_submitParam()){
-						return ;
-					}
-					var voucherInfo = {
-						"olId":_olId,
-						"soNbr":OrderInfo.order.soNbr,
-						"busiType":"1",
-						"chargeItems":_chargeItems,
-						"areaId":OrderInfo.getAreaId()
-					};
-					common.print.signVoucher(voucherInfo);
-				});
-				//_reflashTotal();
-				if(OrderInfo.actionFlag==15){
-					order.refund.conBtns();
-				}else{
-					_conBtns();
 				}
+				
 			},
 			"fail":function(response){
 				$.unecOverlay();
@@ -1140,6 +1177,40 @@ order.calcharge = (function(){
 		}
 	};
 	
+	var _backToProvince=function(){
+		var reParams = {
+				provIsale:OrderInfo.provinceInfo.provIsale,
+				extCustOrderID:OrderInfo.orderResult.olId,
+				resultCode:'0',
+				redirectUri:OrderInfo.provinceInfo.redirectUri
+			};
+		$.callServiceAsHtmlGet(contextPath+"/mode/app/backProvince",reParams,{
+			"before":function(){
+				$.ecOverlay("<strong>正在处理中,请稍等会儿....</strong>");
+			},
+			"always":function(){
+				$.unecOverlay();
+			},
+			"done" : function(response){
+				if(response.code==0){								
+					var data = $.parseJSON(response.data) ;
+					if(data.code==0){
+						window.location.href = data.data;
+						return;						
+					}else if(data.code==1){
+						$.alert("提示",data.data);
+					}
+				}else{
+					$.alert("提示","页面回调异常！");
+				}
+			},
+			fail:function(response){
+				$.unecOverlay();
+				$.alert("提示","页面回调可能发生异常，请稍后再试！");
+			}
+		});	
+	};
+	
 	return {
 		addItems:_addItems,
 		delItems:_delItems,
@@ -1160,10 +1231,10 @@ order.calcharge = (function(){
 		confirm : _confirm,
 		close : _close,
 		updateChargeInfoForCheck : _updateChargeInfoForCheck,
-		chargeSave : _chargeSave,
 		feeScroll : _feeScroll,
 		btnQueryfee :_btnQueryfee,
-		back :_back
+		back :_back,
+		backToProvince:_backToProvince
 	};
 })();
 $(function() {

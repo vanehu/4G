@@ -1100,6 +1100,8 @@ order.calcharge = (function(){
 					return;
 				}
 				if(OrderInfo.provinceInfo.isFee == "1"){//不收费	
+					//暂存成功，不再取消订单
+					SoOrder.delOrderFin();
 					var redirectUri = OrderInfo.provinceInfo.redirectUri;//回调地址
 					if(redirectUri == null || redirectUri=="" || redirectUri==undefined){
 						$.ligerDialog.waitting("<div style='width:100%;text-align:center;font-size:15px;'>订单暂存成功</div>");
