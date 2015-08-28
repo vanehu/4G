@@ -79,7 +79,19 @@ order.release = (function(){
 			        return;	
 				}
 			}
+			if(_accNbrType == '3'){//说明是白卡，这个需要做转换
+				var cardNoStr = _accNbr.substring(_accNbr.length - 2,_accNbr.length - 1);
+				var cardNoLast = _accNbr.substring(_accNbr.length -1,_accNbr.length);
+				var serviceName = contextPath + "/mktRes/writeCard/getHexToAscii";
+				var hexStr = _accNbr.substring(_accNbr.length-2,_accNbr.length);
+				var param = {
+					"hexStr":hexStr       
+				};
+				var response = $.callServiceAsJson(serviceName, param);
+				_accNbr = _accNbr.substring(0,_accNbr.length-2)+ response.data.strHex;
+			}
 			queryParam.accNbr = _accNbr;
+			
 		}
 		else{
 			var _beginDate = $("#p_startTime").val();
@@ -128,10 +140,24 @@ order.release = (function(){
 		
 		var _numType = $(a).attr("name");
 		var _numValue = $(a).attr("id");
+		var serialNumberCode = $(a).attr("id");
 		var _areaId = $(a).attr("areaid");
 
+		if(_numType == '3'){
+			var cardNoStr = _numValue.substring(_numValue.length - 2,_numValue.length - 1);
+			var cardNoLast = _numValue.substring(_numValue.length -1,_numValue.length);
+			var serviceName = contextPath + "/mktRes/writeCard/getHexToAscii";
+			var hexStr = _numValue.substring(_numValue.length-2,_numValue.length);
+			var param = {
+				"hexStr":hexStr       
+			};
+			var response = $.callServiceAsJson(serviceName, param);
+			_numValue = _numValue.substring(0,_numValue.length-2)+ response.data.strHex;
+		}
 		var param = {
 				numType : _numType,
+				selUimType:_numType,
+				serialNumberCode:serialNumberCode,
 				numValue : _numValue,
 				areaId: _areaId
 		};
@@ -149,7 +175,7 @@ order.release = (function(){
 						$.alert("提示","成功释放号码："+_numValue);
 					}
 					else{
-						$.alert("提示","成功释放UIM卡："+_numValue);
+						$.alert("提示","成功释放UIM卡："+serialNumberCode);
 					}
 					$.callServiceAsHtmlGet(contextPath+"/mktRes/phonenumber/queryReleaseNum", queryParam, {
 						"done":function(response){

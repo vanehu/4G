@@ -801,7 +801,8 @@ public class MktResController extends BaseController {
 		}
 		
 		JsonResponse jr = new JsonResponse();
-		
+		String selUimType =  MapUtils.getString(param, "selUimType", "");
+		String serialNumberCode = MapUtils.getString(param, "serialNumberCode", "");
 		try{
 			Map<String, Object> resultMap = mktResBmo.releaseErrorNum(dataBusMap, flowNum, sessionStaff);
 			
@@ -809,6 +810,9 @@ public class MktResController extends BaseController {
 				if(resultMap.get("resultCode").equals("0")){
 					//号码释放成功，开始更新被释放的号码的状态，重新组装入参
 					dataBusMap.clear();
+					if("3".equals(selUimType) || "2".equals(selUimType)){
+						numValue = serialNumberCode ;
+					}
 					dataBusMap.put("accNbr", numValue);
 					dataBusMap.put("accNbrType", numType);
 					dataBusMap.put("action", "UPDATE");
@@ -2201,7 +2205,38 @@ public class MktResController extends BaseController {
 		for (int j = 0; j < in.length; j++) {
 			strHex = strHex+ Integer.toString(in[j], 0x10);
 		}
+		strHex = strHex.toUpperCase();
 		rMap.put("strHex", strHex);
+		jsonResponse = super.successed(rMap, ResultConstant.SUCCESS.getCode());
+		return jsonResponse;
+	}
+	
+	/**
+	 * 白卡卡号入库
+	 * @param param
+	 * @param flowNum
+	 * @param response
+	 * @return
+	 */
+	@RequestMapping(value = "/writeCard/intakeSerialNumber", method = RequestMethod.POST)
+	@ResponseBody
+	public JsonResponse intakeSerialNumber(@RequestBody Map<String, Object> param,
+			@LogOperatorAnn String flowNum, HttpServletResponse response) {
+		Map<String, Object> rMap = new HashMap<String, Object>();
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils
+				.getSessionAttribute(super.getRequest(),
+						SysConstant.SESSION_KEY_LOGIN_STAFF);
+		JsonResponse jsonResponse = null;
+		try {
+			param.put("staffId", sessionStaff.getStaffId());
+			param.put("channelId", sessionStaff.getCurrentChannelId());
+			param.put("orderNo", "");
+			String newInstCode = String.valueOf(param.get("instCode"));
+			mktResBmo.intakeSerialNumber(param, newInstCode, "3", sessionStaff, flowNum);
+		}  catch (Exception e) {
+			log.error("白卡入库异常", e);
+			return super.failed(ErrorCode.UIM_E_F, e, param);
+		}	
 		jsonResponse = super.successed(rMap, ResultConstant.SUCCESS.getCode());
 		return jsonResponse;
 	}

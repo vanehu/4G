@@ -349,5 +349,16 @@ public interface MktResBmo {
      */
     public Map<String, Object> queryCouponReserveCodeCheck(Map<String, Object> map, String optFlowNum, SessionStaff sessionStaff)
             throws Exception;
+    
+    /**
+     * 写白卡，卡号入库
+     * @param param
+     * @param newInstCode
+     * @param string
+     * @param sessionStaff
+     * @param flowNum
+     * @throws Exception
+     */
+	public void intakeSerialNumber(Map<String, Object> param,String newInstCode, String string, SessionStaff sessionStaff,String flowNum)throws Exception;
 	
  }

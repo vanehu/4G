@@ -229,6 +229,8 @@ public class MktResBmoImpl implements MktResBmo {
 			interMap.remove("newInstCode");
 		}
 		interMap.remove("phoneNum");
+		interMap.remove("selUimType");
+		interMap.remove("serialNumberCode");
 		interMap.put("areaId", dataBusMap.get("areaId"));
 		if (dataBusMap.containsKey("oldInstCode")) {
 			oldInstCode = String.valueOf(dataBusMap.get("oldInstCode"));
@@ -272,9 +274,15 @@ public class MktResBmoImpl implements MktResBmo {
 		if ("0".equals(StringUtils.defaultString(db.getResultCode()))) {
 			rMap = (Map<String,Object>)db.getReturnlmap().get("result");
 			rMap.put("code", ResultCode.R_SUCCESS);
-			
 			//UIM卡预占成功，记录新增
-			modifyNumToRelease(interMap, newInstCode, "2", sessionStaff, optFlowNum);
+			String selUimType = MapUtils.getString(dataBusMap, "selUimType", "");
+			if("1".equals(selUimType)){//2表示预制卡
+				modifyNumToRelease(interMap, newInstCode, "2", sessionStaff, optFlowNum);
+			}else{//3表示空白卡
+				String serialNumberCode = MapUtils.getString(dataBusMap, "serialNumberCode", "");
+				modifyNumToRelease(interMap, serialNumberCode, "3", sessionStaff, optFlowNum);
+			}
+			
 		} else {
 			rMap.put("code", ResultCode.R_FAIL);
 			rMap.put("msg", db.getResultMsg());
@@ -971,5 +979,15 @@ public class MktResBmoImpl implements MktResBmo {
 			resultMap.put("message", MapUtils.getString(db.getReturnlmap(), "resultMsg", "校验终端预约码失败。"));
 		}
 		return resultMap;
+	}
+ 
+	/**
+	 * 写白卡成功后，卡号入库
+	 */
+	public void intakeSerialNumber(Map<String, Object> param,
+			String newInstCode, String string, SessionStaff sessionStaff,
+			String flowNum) throws Exception {
+		// TODO Auto-generated method stub
+		modifyNumToRelease(param, newInstCode, string, sessionStaff, flowNum);
 	}
 }

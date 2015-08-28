@@ -943,7 +943,18 @@ order.writeCard = (function(){
 //					return false;
 //				}
 
-				
+				if(response.code == 0) {
+					 //写卡成功后把卡数据入库便于异常单释放
+					var phoneNumber = OrderInfo.getAccessNumber(_rscJson.prodId);
+					var inParam = {
+							"instCode" : $("#resultCardAsciiFStr").val(),
+							"phoneNum" : phoneNumber,
+							"remark":$("#selUimType").val(),//
+							"areaId"   : OrderInfo.getProdAreaId(_rscJson.prodId)
+					};
+					var serviceUrl = contextPath + "/mktRes/writeCard/intakeSerialNumber";
+					$.callServiceAsJson(serviceUrl, inParam);
+				}
 				_backFillOrderCardInfo(eventJson.result);
 				return true;
 			} catch(e) {
@@ -977,6 +988,7 @@ order.writeCard = (function(){
 					offerId : "", //销售品实例ID
 					state : "ADD", //动作
 					cardTypeFlag:2,
+					uimType:"2",//标识用于订单成功更新订单状态
 					relaSeq : "" //关联序列	
 				};
 		 if(ec.util.isObj(_cardInfoJson.cardTypeId)) {

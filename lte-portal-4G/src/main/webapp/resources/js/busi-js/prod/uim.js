@@ -63,6 +63,8 @@ prod.uim = (function() {
 		var inParam = {
 			"instCode" : cardNo,
 			"phoneNum" : phoneNumber,
+			"selUimType":selUimType,
+			"serialNumberCode":$.trim($("#uim_txt_"+prodId).val()),
 			"areaId"   : OrderInfo.getProdAreaId(prodId)
 		};
 
@@ -144,10 +146,14 @@ prod.uim = (function() {
 			prodId :  prodId, //产品ID
 			offerId : offerId, //销售品实例ID
 			state : "ADD", //动作
+			uimType:"",//标识用于订单成功更新订单状态
 			relaSeq : "" //关联序列	
 		};
 		if(CONST.getAppDesc()==0){
 			coupon.cardTypeFlag=data.baseInfo.cardTypeFlag;//UIM卡类型
+		}
+		if(selUimType==2 || selUimType==3){
+			coupon.uimType = "2";
 		}
 		$("#uim_check_btn_"+prodId).attr("disabled",true);
 		$("#uim_check_btn_"+prodId).removeClass("purchase").addClass("disablepurchase");
@@ -251,6 +257,8 @@ prod.uim = (function() {
 		//释放UIM并更新门户记录
 		var param = {
 				numType : 2,
+				selUimType:$("#selUimType").val(),
+				serialNumberCode:$.trim($("#uim_txt_"+prodId).val()),
 				numValue : cardNo
 		};
 		var jr = $.callServiceAsJson(contextPath+"/mktRes/phonenumber/releaseErrorNum", param);			
@@ -262,7 +270,7 @@ prod.uim = (function() {
 			$.alert("提示",jr.data);
 			return;
 		}
-		$.alert("提示","成功释放UIM卡："+cardNo);
+		$.alert("提示","成功释放UIM卡："+$.trim($("#uim_txt_"+prodId).val()));
 		if(OrderInfo.actionFlag==22){
 			$('#attach').children().remove();
 			AttachOffer.openServList = [];

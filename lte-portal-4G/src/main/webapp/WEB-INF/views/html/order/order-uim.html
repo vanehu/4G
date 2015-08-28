@@ -1,11 +1,11 @@
 <li>
 	<label style="width:80px;" id ="uim_lable">
-		<select id="selUim" onchange="prod.changeUim.changeUimSel(this)">
+		<select id="selUim" onchange="prod.changeUim.changeUimSel(this,${prodId})">
 			<option value="1">预制卡</option>
 			<option value="2">空白卡</option>
 		</select>
     </label>
-    <input type="hidden" id="selUimType"/>
+    <input type="hidden" id="selUimType" value="1"/>
     <input type="hidden" id="resultCardNo"/>
     <input type="hidden" id="resultCardAsciiFStr"/>
 	<input type="text" id="uim_txt_${prodId}" value="" class="inputWidth183px">
