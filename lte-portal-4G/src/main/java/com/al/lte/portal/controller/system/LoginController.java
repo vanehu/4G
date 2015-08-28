@@ -38,6 +38,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ThemeResolver;
 
+import com.al.common.utils.StringUtil;
 import com.al.ec.serviceplatform.client.DataBus;
 import com.al.ec.serviceplatform.client.ResultCode;
 import com.al.ec.sm.MDA;
@@ -806,7 +807,10 @@ public class LoginController extends BaseController {
 		// 验证码内容
 		String smsPwdSession = (String) ServletUtils.getSessionAttribute(
 				request, SysConstant.SESSION_KEY_LOGIN_SMS);
-		//ServletUtils.removeSessionAttribute(request, SysConstant.SESSION_KEY_LOGIN_SMS);
+		if(StringUtil.isEmpty(smsPwdSession)){
+			return super.failed("短信过期失效，请重新发送!", ResultConstant.FAILD.getCode());
+		}
+		ServletUtils.removeSessionAttribute(request, SysConstant.SESSION_KEY_LOGIN_SMS);
 		// 登陆后，服务层返回的认证后用户信息
 		Map<String, Object> mapSession = (Map<String, Object>) ServletUtils
 				.getSessionAttribute(request, SESSION_KEY_TEMP_LOGIN_STAFF);
