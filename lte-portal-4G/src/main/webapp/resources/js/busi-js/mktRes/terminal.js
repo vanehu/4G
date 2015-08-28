@@ -1565,7 +1565,7 @@ mktRes.terminal = (function($){
 			},
 			"done" : function(response){
 				if (response && response.code == -2) {
-					$.alert("提示","<br/>预约码校验失败！");
+					$.alertM(response.data);
 				} else if(response&&response.data&&response.data.code == 0) {
 					$.alert("提示","<br/>此预约码可以使用！");
 					termInfo.sourceId = response.data.couponInfo.reserveNbr;
