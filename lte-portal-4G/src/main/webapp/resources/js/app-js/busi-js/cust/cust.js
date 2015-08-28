@@ -284,8 +284,9 @@ cust = (function(){
 					if(data!=undefined && data.length>0){
 						for(var i=0;i<data.length;i++){
 							var certTypedate = data[i];
-							$("#cm_identidiesTypeCd").append("<option value='"+certTypedate.certTypeCd+"' >"+certTypedate.name+"</option>");
-							
+							if(certTypedate.certTypeCd == 1){ // 10348 仅显示 居民身份证
+								$("#cm_identidiesTypeCd").append("<option value='"+certTypedate.certTypeCd+"' >"+certTypedate.name+"</option>");
+							}
 						}
 					}
 				}
