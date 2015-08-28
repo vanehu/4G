@@ -371,6 +371,11 @@ order.cust = (function(){
 	//创建客户确认按钮
     var _custcreateButton = function() {
 	    $('#custCreateForm').off().bind('formIsValid',function(event) {
+    	   // 如果填写了联系人相关信息，则联系人名称不能为空
+		   if (!($.trim($("#dishomePhone").val()) == "" && $.trim($("#disofficePhone").val()) == "" && $.trim($("#dismobilePhone").val()) == "") && $.trim($("#discontactName").val()) == "") {
+			   $.alert("提示","联系人名称不能为空！","information");
+			   return;
+		   }
 	    	var url=contextPath+"/order/createorderlonger";
 			var response = $.callServiceAsJson(url, {});
 			if(response.code==0){
@@ -398,13 +403,10 @@ order.cust = (function(){
 		$(".userclose").off("click").on("click",function(event) {
 			authFlag="";
 			$(".usersearchcon").hide();
-			$("#custListOverlay").hide();
 		});
 		if($("#custListTable").attr("custInfoSize")=="1"){
 			$(".usersearchcon").hide();
-			$("#custListOverlay").hide();
 		}
-		$("#custListOverlay").show();
 	};
 	
 	// 客户重新定位
@@ -418,7 +420,6 @@ order.cust = (function(){
 		}
 		$("#custQryDiv").show();
 		$("#custInfo").hide();
-		$("#custListOverlay").hide();
 		$("#p_cust_identityNum").val("");
 		$("#authPassword").val("");
 		authFlag="";
