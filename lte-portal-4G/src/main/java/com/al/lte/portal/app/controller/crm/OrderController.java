@@ -33,6 +33,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.WebRequest;
 
 import com.al.common.json.JacksonUtil;
+import com.al.ec.serviceplatform.client.DataBus;
 import com.al.ec.serviceplatform.client.ResultCode;
 import com.al.ecs.common.entity.JsonResponse;
 import com.al.ecs.common.entity.PageModel;
@@ -103,19 +104,24 @@ public class OrderController extends BaseController {
 	private MktResBmo MktResBmo;
 	
 	@RequestMapping(value = "/orderSubmitComplete", method = RequestMethod.POST)
-	public @ResponseBody JsonResponse orderSubmitComplete(@RequestBody Map<String, Object> reqMap,
+	public @ResponseBody JsonResponse orderSubmitComplete(@RequestBody Map<String, Object> reqMap, String optFlowNum,
 			HttpServletResponse response,HttpServletRequest request){
 		JsonResponse jsonResponse = null;
 		if(commonBmo.checkToken(request, SysConstant.ORDER_SUBMIT_TOKEN)){
 			try {
 				SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
 	                    SysConstant.SESSION_KEY_LOGIN_STAFF);
-				
-				Map<String, Object> resMap = orderBmo.orderSubmitComplete(reqMap,null,sessionStaff);
-				if(ResultCode.R_SUCC.equals(resMap.get("resultCode"))){
-		        	jsonResponse = super.successed(resMap,ResultConstant.SUCCESS.getCode());
+				DataBus db = InterfaceClient.callService(reqMap, PortalServiceCode.ORDER_CHECK,optFlowNum, sessionStaff);
+				if("0".equals(StringUtils.defaultString(db.getResultCode()))){
+					Map<String, Object> resMap = orderBmo.orderSubmitComplete(reqMap,null,sessionStaff);
+					if(ResultCode.R_SUCC.equals(resMap.get("resultCode"))){
+			        	jsonResponse = super.successed(resMap,ResultConstant.SUCCESS.getCode());
+					}else{
+						throw new InterfaceException(ErrType.CATCH, PortalServiceCode.ORDER_SUBMIT, String.valueOf(resMap.get("resultMsg")), JsonUtil.toString(reqMap));
+					}
 				}else{
-					throw new InterfaceException(ErrType.CATCH, PortalServiceCode.ORDER_SUBMIT, String.valueOf(resMap.get("resultMsg")), JsonUtil.toString(reqMap));
+					log.error("省校验失败");
+		            return jsonResponse;
 				}
 	        }  catch (BusinessException be) {
 				this.log.error("订单一点提交失败", be);

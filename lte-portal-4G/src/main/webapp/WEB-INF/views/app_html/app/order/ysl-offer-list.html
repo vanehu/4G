@@ -7,7 +7,7 @@
 	<#if item_index<10>
 	<#if subPage??>
 	
-	   <a href="#" class="list-group-item" onclick="javascript:order.ysl.yslSelectPack('${item.offerSpecName}');">
+	   <a href="#" class="list-group-item" onclick="javascript:order.ysl.yslSelectPack('${item.offerSpecName}','${item.offerSpecId}');">
 		<h5 class="list-group-item-heading">
 			${item.offerSpecName}
 			<span
@@ -20,7 +20,7 @@
 	    </a>
 						
 	<#else>
-	<a href="#" class="list-group-item" onclick="javascript:order.ysl.yslSelectPack('${item.offerSpecName}');">
+	<a href="#" class="list-group-item" onclick="javascript:order.ysl.yslSelectPack('${item.offerSpecName}','${item.offerSpecId}');">
 		<h5 class="list-group-item-heading">
 			${item.offerSpecName}
 			<span
@@ -44,7 +44,7 @@
 	
 	<#if subPage??>
 	
-	   <a href="#" class="list-group-item" onclick="javascript:order.ysl.yslSelectPack('${item.offerSpecName}');">
+	   <a href="#" class="list-group-item" onclick="javascript:order.ysl.yslSelectPack('${item.offerSpecName}','${item.offerSpecId}');">
 		<h5 class="list-group-item-heading">
 			${item.offerSpecName}
 			<span
@@ -57,7 +57,7 @@
 	    </a>
 						
 	<#else>
-		<a href="#" class="list-group-item" onclick="javascript:order.ysl.yslSelectPack('${item.offerSpecName}');">
+		<a href="#" class="list-group-item" onclick="javascript:order.ysl.yslSelectPack('${item.offerSpecName}','${item.offerSpecId}');">
 			<h5 class="list-group-item-heading">
 				${item.offerSpecName}
 				<span
@@ -79,7 +79,7 @@
 	<#if item_index gte 10>
 	<#if subPage??>
 	
-	   <a href="#" class="list-group-item" onclick="javascript:order.ysl.yslSelectPack('${item.offerSpecName}');">
+	   <a href="#" class="list-group-item" onclick="javascript:order.ysl.yslSelectPack('${item.offerSpecName}','${item.offerSpecId}');">
 		<h5 class="list-group-item-heading">
 			${item.offerSpecName}
 			<span
@@ -92,7 +92,7 @@
 	    </a>
 						
 	<#else>
-		<a href="#" class="list-group-item" onclick="javascript:order.ysl.yslSelectPack('${item.offerSpecName}');">
+		<a href="#" class="list-group-item" onclick="javascript:order.ysl.yslSelectPack('${item.offerSpecName}','${item.offerSpecId}');">
 			<h5 class="list-group-item-heading">
 				${item.offerSpecName}
 				<span

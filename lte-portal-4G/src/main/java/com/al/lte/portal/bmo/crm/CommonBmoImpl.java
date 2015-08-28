@@ -147,12 +147,20 @@ public class CommonBmoImpl implements CommonBmo {
 		}
 		/**全量查询---------------------------------开始**/
 		Map<String, Object> instParam=new HashMap<String, Object>();
-		instParam.put("areaId", prodIdInfoMap.get("areaId"));
-		instParam.put("acctNbr", prodIdInfoMap.get("accNbr"));
-		instParam.put("custId", custInfoMap.get("custId"));
-		instParam.put("soNbr", param.get("soNbr"));
-		instParam.put("instId", prodIdInfoMap.get("prodInstId"));
-		instParam.put("type", "2");
+		if(prodIdInfoMap!=null){
+			instParam.put("areaId", prodIdInfoMap.get("areaId"));
+			instParam.put("acctNbr", prodIdInfoMap.get("accNbr"));
+			instParam.put("custId", custInfoMap.get("custId"));
+			instParam.put("soNbr", param.get("soNbr"));
+			instParam.put("instId", prodIdInfoMap.get("prodInstId"));
+			instParam.put("type", "2");
+		}
+		//instParam.put("areaId", prodIdInfoMap.get("areaId"));
+//		instParam.put("acctNbr", prodIdInfoMap.get("accNbr"));
+//		instParam.put("custId", custInfoMap.get("custId"));
+//		instParam.put("soNbr", param.get("soNbr"));
+//		instParam.put("instId", prodIdInfoMap.get("prodInstId"));
+//		instParam.put("type", "2");
 		Map<String, Object> inst=new HashMap<String, Object>();
         try {
         	if(offerMemberInfos.size()>0){

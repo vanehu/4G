@@ -611,6 +611,7 @@ order.ysl = (function(){
 				$("#printfp").addClass("btna_o");
 				$("#printfp").attr("onclick","order.ysl.invoiceprint()");
 			}
+			$.alert("提示","预受理成功！","information");
 		}
 	};
 	

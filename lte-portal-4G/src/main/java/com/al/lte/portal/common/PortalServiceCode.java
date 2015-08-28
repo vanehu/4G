@@ -611,6 +611,8 @@ public final class PortalServiceCode {
     public static final String QUERY_OFFER_PARAM = "biz-service/intf.prodInstService/queryOfferParam";
     //加载实例信息
     public static final String LOAD_INST = "biz-service/intf.pullingDataService/queryProdInfoFromProv"; 
+    //订单下省校验
+    public static final String ORDER_CHECK = "biz-service/intf.soService/checkOrderListAndBusiOrder"; 
     //订单提交
     public static final String ORDER_SUBMIT = "biz-service/intf.soService/commitOrderListAndBusOrder";
     //订单提交（一次性）

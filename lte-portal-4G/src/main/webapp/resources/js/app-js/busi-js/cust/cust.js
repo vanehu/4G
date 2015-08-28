@@ -158,7 +158,7 @@ cust = (function(){
 			"diffPlace":diffPlace,
 			"areaId" : createCustInfo.cAreaId
 		};
-		var url=contextPath+"/cust/checkIdentity";
+		var url=contextPath+"/app/cust/checkIdentity";
 		var response = $.callServiceAsJson(url, params, {"before":function(){
 			$.ecOverlay("<strong>正在查询中,请稍等...</strong>");
 		}});
