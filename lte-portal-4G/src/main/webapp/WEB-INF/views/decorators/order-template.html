@@ -234,9 +234,9 @@
 	<!--步骤1 -->
     <div id="step1" class="step "  style="display:none">
         <ul class="quickthreelink" id="order_quick_nav">
-        	<li url="${contextPath}/mktRes/terminal/prepare" for="order_tab_panel_terminal" id="tab1"><a class="orderbutton" href="javascript:void(0)"><span>购手机</span></a></li>
-            <li url="${contextPath}/order/prodoffer/prepare" for="order_tab_panel_offer" id="tab2"><a class="orderbutton1" href="javascript:void(0)"><span>办套餐</span></a></li>
-            <li url="${contextPath}/mktRes/phonenumber/prepare" for="order_tab_panel_phonenumber" id="tab3"><a class="orderbutton2" href="javascript:void(0)"><span>选号码</span></a></li>
+        	<li url="${contextPath}/mktRes/terminal/prepare" for="order_tab_panel_terminal" id="tab1" onclick="realCheck('${contextPath}')"><a class="orderbutton" href="javascript:void(0)"><span>购手机</span></a></li>
+            <li url="${contextPath}/order/prodoffer/prepare" for="order_tab_panel_offer" id="tab2" onclick="realCheck('${contextPath}')"><a class="orderbutton1" href="javascript:void(0)"><span>办套餐</span></a></li>
+            <li url="${contextPath}/mktRes/phonenumber/prepare" for="order_tab_panel_phonenumber" id="tab3" onclick="realCheck('${contextPath}')"><a class="orderbutton2" href="javascript:void(0)"><span>选号码</span></a></li>
         </ul>
         <ul>
             <li class="fore1"><a href="javascript:void(0);">第一步:订单准备</a><b></b></li>
@@ -267,13 +267,13 @@
         <div class="order">
             <div class="order_nav_new">
                 <ul class="order_nav_ul" id="order_nav">
-                	<li id="tab1" for="order_tab_panel_terminal" url="${contextPath}/mktRes/terminal/prepare">
+                	<li id="tab1" for="order_tab_panel_terminal" url="${contextPath}/mktRes/terminal/prepare" onclick="realCheck('${contextPath}')">
 						<a href="javascript:void(0)"><div class="buy_phone_home"></div>购手机</a>
 					</li>
-					<li id="tab2" for="order_tab_panel_offer" url="${contextPath}/order/prodoffer/prepare">
+					<li id="tab2" for="order_tab_panel_offer" url="${contextPath}/order/prodoffer/prepare" onclick="realCheck('${contextPath}')">
 						<a href="javascript:void(0)"><div class="buy_pack_home"></div>办套餐</a>
 					</li>
-					<li id="tab3" for="order_tab_panel_phonenumber" url="${contextPath}/mktRes/phonenumber/prepare">
+					<li id="tab3" for="order_tab_panel_phonenumber" url="${contextPath}/mktRes/phonenumber/prepare" onclick="realCheck('${contextPath}')">
 						<a href="javascript:void(0)"><div class="buy_nbr_home"></div>选号码</a>
 					</li>
                 </ul>
@@ -749,3 +749,15 @@
 
 
 </#if>
+<script>
+    function realCheck(context){
+        var canRealName=$('#custInfos').attr('canrealname');
+        if(ec.util.isObj(canRealName)&&1!=canRealName){
+            alert("当前为非实名制客户，请先沟通营业员进行资料补登。");
+            var url=window.location.protocol + '//' + window.location.host+context+"/main/home";
+            window.location=url;
+            console.log(url);
+        }
+    }
+
+</script>
