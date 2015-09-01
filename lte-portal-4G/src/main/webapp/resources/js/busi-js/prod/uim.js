@@ -20,19 +20,11 @@ prod.uim = (function() {
 		}
 		if(OrderInfo.actionFlag==3 || OrderInfo.actionFlag==22 || OrderInfo.actionFlag==23 || OrderInfo.actionFlag==6 ){ //可选包变更，补换卡，加装副卡
 			if(ec.util.isArray(OrderInfo.oldprodInstInfos)){//判断是否是纳入老用户
-				if(ec.util.isArray(OrderInfo.viceprodInstInfos) && OrderInfo.oldMvFlag){
-					$.each(OrderInfo.viceprodInstInfos,function(){
-						if(this.prodInstId==prodId){
-							offerId = this.mainProdOfferInstInfos[0].prodOfferInstId;
-						}
-					});
-				}else{
-					$.each(OrderInfo.oldprodInstInfos,function(){
-						if(this.prodInstId==prodId){
-							offerId = this.mainProdOfferInstInfos[0].prodOfferInstId;
-						}
-					});
-				}
+				$.each(OrderInfo.oldprodInstInfos,function(){
+					if(this.prodInstId==prodId){
+						offerId = this.mainProdOfferInstInfos[0].prodOfferInstId;
+					}
+				});
 			}else{
 				offerId = order.prodModify.choosedProdInfo.prodOfferInstId;
 			}

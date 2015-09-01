@@ -107,31 +107,23 @@ order.main = (function(){
 			OrderInfo.actionFlag = 1;
 		}
 		if(OrderInfo.actionFlag==1 || OrderInfo.actionFlag==6 || OrderInfo.actionFlag==13 || OrderInfo.actionFlag==14){
-			_initAcct(0);//初始化主卡帐户列表 
+			order.main.initAcct(0);//初始化主卡帐户列表 
 			if(ec.util.isArray(OrderInfo.oldprodInstInfos)){
-				if(ec.util.isArray(OrderInfo.viceprodInstInfos) && OrderInfo.oldMvFlag){
-					for(var i=0;i<OrderInfo.viceprodInstInfos.length;i++){
-						var prodInfo = OrderInfo.viceprodInstInfos[i];
-						order.dealer.initDealer(prodInfo);// 初始化协销
-					}
-				}else{
-					for(var i=0;i<OrderInfo.oldprodInstInfos.length;i++){
-						var prodInfo = OrderInfo.oldprodInstInfos[i];
-						order.dealer.initDealer(prodInfo);//初始化协销
-					}
+				for(var i=0;i<OrderInfo.oldprodInstInfos.length;i++){
+					var prodInfo = OrderInfo.oldprodInstInfos[i];
+					order.dealer.initDealer(prodInfo);//初始化协销
 				}
 			}else{
 				order.dealer.initDealer();//初始化协销	
 			}
 		}
 		if(ec.util.isArray(OrderInfo.oldprodInstInfos) && OrderInfo.actionFlag==6){//主副卡纳入老用户
-			_initAcct(1);//初始化副卡帐户列表
-			if(ec.util.isArray(OrderInfo.viceprodInstInfos) && OrderInfo.oldMvFlag){
-				_loadMvAttachOffer(param);
-			}else{
-				_loadAttachOffer(param);
-			}
+			order.main.initAcct(1);//初始化副卡帐户列表
+			_loadAttachOffer(param);
 		}else{
+			if(order.service.oldMemberFlag){
+				order.main.initAcct(1);//初始化副卡帐户列表
+			}
 			_loadOther(param);//页面加载完再加载其他元素
 		}
 		if(OrderInfo.actionFlag==1){
@@ -704,22 +696,11 @@ order.main = (function(){
 	
 	//根据产品id获取销售品成员
 	var _getOfferMember = function(prodId){
-		if(ec.util.isArray(OrderInfo.viceprodInstInfos) && OrderInfo.oldMvFlag){
-			for(var j=0;j<OrderInfo.viceOffer.length;j++){
-				for ( var i = 0; i < OrderInfo.viceOffer[j].offerMemberInfos.length; i++) {
-					var offerMember = OrderInfo.viceOffer[j].offerMemberInfos[i];
-					if(offerMember.objInstId==prodId){
-						return offerMember;
-					}
-				}
-			}
-		}else{
-			for(var j=0;j<OrderInfo.oldoffer.length;j++){
-				for ( var i = 0; i < OrderInfo.oldoffer[j].offerMemberInfos.length; i++) {
-					var offerMember = OrderInfo.oldoffer[j].offerMemberInfos[i];
-					if(offerMember.objInstId==prodId){
-						return offerMember;
-					}
+		for(var j=0;j<OrderInfo.oldoffer.length;j++){
+			for ( var i = 0; i < OrderInfo.oldoffer[j].offerMemberInfos.length; i++) {
+				var offerMember = OrderInfo.oldoffer[j].offerMemberInfos[i];
+				if(offerMember.objInstId==prodId){
+					return offerMember;
 				}
 			}
 		}
@@ -788,6 +769,9 @@ order.main = (function(){
 				}
 			}			
 		});
+		if(order.service.oldMemberFlag){
+			order.main.loadAttachOffer();
+		}
 	};
 	
 	var _paymethodChange = function(obj){
@@ -856,13 +840,13 @@ order.main = (function(){
 	
 	//初始化帐户展示
 	var _initAcct = function(flag) {
-		//新客户自动新建帐户
-//		if(OrderInfo.cust.custId==-1){
-//			_createAcct();
-//		}
-//		else{
+		if((OrderInfo.actionFlag==1 || OrderInfo.actionFlag==13 || OrderInfo.actionFlag==14) && flag==0){
+			//新装默认新建帐户
+			_createAcct();
+			return;
+		}
 			//主副卡成员变更业务不能更改帐户，只展示主卡帐户
-			if(OrderInfo.actionFlag==6){
+			if(OrderInfo.actionFlag==6 || OrderInfo.actionFlag==2 || OrderInfo.actionFlag==1){
 				var param = {};
 				if(flag==1){
 					for(var i=0;i<OrderInfo.oldprodInstInfos.length;i++){
@@ -2415,7 +2399,8 @@ order.main = (function(){
 		toChooseUser : _toChooseUser,
 		showChooseUserDialog : _showChooseUserDialog,
 		BIZID:_BIZID,
-		reload:_reload
+		reload:_reload,
+		initAcct:_initAcct
 	};
 })();
 

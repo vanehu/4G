@@ -343,55 +343,24 @@ AttachOffer = (function() {
 				}
 			});
 		}else if(ec.util.isArray(OrderInfo.oldprodInstInfos) && OrderInfo.actionFlag==6){//主副卡纳入老用户
-			if(ec.util.isArray(OrderInfo.viceprodInstInfos) && OrderInfo.oldMvFlag){
-				for(var i=0;i<OrderInfo.viceprodInstInfos.length;i++){
-					if(prodId==OrderInfo.viceprodInstInfos[i].prodInstId){
-						param.acctNbr = OrderInfo.viceprodInstInfos[i].accNbr;
+			var oldoffer = {};
+			for(var j=0;j<OrderInfo.oldoffer.length;j++){
+				oldoffer = OrderInfo.oldoffer[j];
+				for ( var i = 0; i < OrderInfo.oldoffer[j].offerMemberInfos.length; i++) {
+					var offerMember = OrderInfo.oldoffer[j].offerMemberInfos[i];
+					if(offerMember.objInstId==prodId){
+						param.acctNbr = offerMember.accessNumber;
 						$.each(OrderInfo.oldofferSpec,function(){
-							param.offerSpecIds.push(this.offerSpec.offerSpecId);	
-							$.each(this.offerSpec.offerRoles,function(){
-								if(this.memberRoleCd==CONST.MEMBER_ROLE_CD.VICE_CARD || this.memberRoleCd==CONST.MEMBER_ROLE_CD.COMMON_MEMBER){
-									param.offerRoleId = this.offerRoleId;
-								}
-							});
-						});
-					}
-				}
-			}else{
-				/*for(var i=0;i<OrderInfo.oldprodInstInfos.length;i++){
-					if(prodId==OrderInfo.oldprodInstInfos[i].prodInstId){
-						param.acctNbr = OrderInfo.oldprodInstInfos[i].accNbr;
-						$.each(OrderInfo.oldofferSpec,function(){
-							if(this.accNbr==OrderInfo.oldprodInstInfos[i].accNbr){
+							if(this.accNbr==oldoffer.accNbr){
 								param.offerSpecIds.push(this.offerSpec.offerSpecId);	
 								$.each(this.offerSpec.offerRoles,function(){
 									if(this.memberRoleCd==CONST.MEMBER_ROLE_CD.VICE_CARD || this.memberRoleCd==CONST.MEMBER_ROLE_CD.COMMON_MEMBER){
 										param.offerRoleId = this.offerRoleId;
+										return false;
 									}
 								});
 							}
 						});
-					}
-				}*/
-				var oldoffer = {};
-				for(var j=0;j<OrderInfo.oldoffer.length;j++){
-					oldoffer = OrderInfo.oldoffer[j];
-					for ( var i = 0; i < OrderInfo.oldoffer[j].offerMemberInfos.length; i++) {
-						var offerMember = OrderInfo.oldoffer[j].offerMemberInfos[i];
-						if(offerMember.objInstId==prodId){
-							param.acctNbr = offerMember.accessNumber;
-							$.each(OrderInfo.oldofferSpec,function(){
-								if(this.accNbr==oldoffer.accNbr){
-									param.offerSpecIds.push(this.offerSpec.offerSpecId);	
-									$.each(this.offerSpec.offerRoles,function(){
-										if(this.memberRoleCd==CONST.MEMBER_ROLE_CD.VICE_CARD || this.memberRoleCd==CONST.MEMBER_ROLE_CD.COMMON_MEMBER){
-											param.offerRoleId = this.offerRoleId;
-											return false;
-										}
-									});
-								}
-							});
-						}
 					}
 				}
 			}
@@ -534,36 +503,21 @@ AttachOffer = (function() {
 					offerId:offerId	
 				};
 				if(ec.util.isArray(OrderInfo.oldprodInstInfos) && OrderInfo.actionFlag==6){//主副卡纳入老用户
-					if(ec.util.isArray(OrderInfo.viceprodInstInfos) && OrderInfo.oldMvFlag){
-						for(var i=0;i<OrderInfo.viceprodInstInfos.length;i++){
-							if(prodId==OrderInfo.viceprodInstInfos[i].prodInstId){
-								param.areaId = OrderInfo.viceprodInstInfos[i].areaId;
-								param.acctNbr = OrderInfo.viceprodInstInfos[i].accNbr;
+					var flag = false;
+					for(var j=0;j<OrderInfo.oldoffer.length;j++){
+						var oldOffer = OrderInfo.oldoffer[j];
+						for ( var i = 0; i < oldOffer.offerMemberInfos.length; i++) {
+							var oldOfferMember = oldOffer.offerMemberInfos[i];
+							if(oldOfferMember.objInstId==prodId){
+								param.acctNbr = oldOfferMember.accessNumber;
+								flag = true;
+								break;
 							}
 						}
-					}else{
-						/*for(var i=0;i<OrderInfo.oldprodInstInfos.length;i++){
-							if(prodId==OrderInfo.oldprodInstInfos[i].prodInstId){
-								param.areaId = OrderInfo.oldprodInstInfos[i].areaId;
-								param.acctNbr = OrderInfo.oldprodInstInfos[i].accNbr;
-							}
-						}*/
-						var flag = false;
-						for(var j=0;j<OrderInfo.oldoffer.length;j++){
-							var oldOffer = OrderInfo.oldoffer[j];
-							for ( var i = 0; i < oldOffer.offerMemberInfos.length; i++) {
-								var oldOfferMember = oldOffer.offerMemberInfos[i];
-								if(oldOfferMember.objInstId==prodId){
-									param.acctNbr = oldOfferMember.accessNumber;
-									flag = true;
-									break;
-								}
-							}
-							if(flag){
-								for(var i=0;i<OrderInfo.oldprodInstInfos.length;i++){
-									if(offer.accNbr == OrderInfo.oldprodInstInfos[i].accNbr){
-										param.areaId = OrderInfo.oldprodInstInfos[i].areaId;
-									}
+						if(flag){
+							for(var i=0;i<OrderInfo.oldprodInstInfos.length;i++){
+								if(offer.accNbr == OrderInfo.oldprodInstInfos[i].accNbr){
+									param.areaId = OrderInfo.oldprodInstInfos[i].areaId;
 								}
 							}
 						}
@@ -2684,55 +2638,24 @@ AttachOffer = (function() {
 						}
 					});
 				}else if(ec.util.isArray(OrderInfo.oldprodInstInfos) && OrderInfo.actionFlag==6){//主副卡纳入老用户
-					if(ec.util.isArray(OrderInfo.viceprodInstInfos) && OrderInfo.oldMvFlag){
-						for(var i=0;i<OrderInfo.viceprodInstInfos.length;i++){
-							if(prodId==OrderInfo.viceprodInstInfos[i].prodInstId){
-								param.acctNbr = OrderInfo.viceprodInstInfos[i].accNbr;
+					var oldoffer = {};
+					for(var j=0;j<OrderInfo.oldoffer.length;j++){
+						oldoffer = OrderInfo.oldoffer[j];
+						for ( var i = 0; i < OrderInfo.oldoffer[j].offerMemberInfos.length; i++) {
+							var offerMember = OrderInfo.oldoffer[j].offerMemberInfos[i];
+							if(offerMember.objInstId==prodId){
+								param.acctNbr = offerMember.accessNumber;
 								$.each(OrderInfo.oldofferSpec,function(){
-									param.offerSpecIds.push(this.offerSpec.offerSpecId);	
-									$.each(this.offerSpec.offerRoles,function(){
-										if(this.memberRoleCd==CONST.MEMBER_ROLE_CD.VICE_CARD || this.memberRoleCd==CONST.MEMBER_ROLE_CD.COMMON_MEMBER){
-											param.offerRoleId = this.offerRoleId;
-										}
-									});
-								});
-							}
-						}
-					}else{
-						/*for(var i=0;i<OrderInfo.oldprodInstInfos.length;i++){
-							if(prodId==OrderInfo.oldprodInstInfos[i].prodInstId){
-								param.acctNbr = OrderInfo.oldprodInstInfos[i].accNbr;
-								$.each(OrderInfo.oldofferSpec,function(){
-									if(this.accNbr==OrderInfo.oldprodInstInfos[i].accNbr){
+									if(this.accNbr==oldoffer.accNbr){
 										param.offerSpecIds.push(this.offerSpec.offerSpecId);	
 										$.each(this.offerSpec.offerRoles,function(){
 											if(this.memberRoleCd==CONST.MEMBER_ROLE_CD.VICE_CARD || this.memberRoleCd==CONST.MEMBER_ROLE_CD.COMMON_MEMBER){
 												param.offerRoleId = this.offerRoleId;
+												return false;
 											}
 										});
 									}
 								});
-							}
-						}*/
-						var oldoffer = {};
-						for(var j=0;j<OrderInfo.oldoffer.length;j++){
-							oldoffer = OrderInfo.oldoffer[j];
-							for ( var i = 0; i < OrderInfo.oldoffer[j].offerMemberInfos.length; i++) {
-								var offerMember = OrderInfo.oldoffer[j].offerMemberInfos[i];
-								if(offerMember.objInstId==prodId){
-									param.acctNbr = offerMember.accessNumber;
-									$.each(OrderInfo.oldofferSpec,function(){
-										if(this.accNbr==oldoffer.accNbr){
-											param.offerSpecIds.push(this.offerSpec.offerSpecId);	
-											$.each(this.offerSpec.offerRoles,function(){
-												if(this.memberRoleCd==CONST.MEMBER_ROLE_CD.VICE_CARD || this.memberRoleCd==CONST.MEMBER_ROLE_CD.COMMON_MEMBER){
-													param.offerRoleId = this.offerRoleId;
-													return false;
-												}
-											});
-										}
-									});
-								}
 							}
 						}
 					}

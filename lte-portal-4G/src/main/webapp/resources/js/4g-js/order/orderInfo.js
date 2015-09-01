@@ -97,7 +97,7 @@ OrderInfo = (function() {
 	var _choosedNumList = []; // 选择加装副卡
 	var _viceOffer = []; // 加装主副卡保存选择副卡信息
 	var _viceprodInstInfos = []; // 主副卡产品信息
-	var _hasMainCarFlag = false; // 加装主副卡成员中是否包含主卡
+	var _hasMainCarFlag = true; // 加装主副卡成员中是否包含主卡
 	
 	var _viceOfferSpec=[];//副卡换套餐，单产品套餐信息
 	
@@ -890,6 +890,13 @@ OrderInfo = (function() {
 		
 		if(prodId!=undefined && prodId>0){ //二次业务
 			var areaId = order.prodModify.choosedProdInfo.areaId;
+			if(ec.util.isArray(OrderInfo.oldprodInstInfos) && order.service.oldMemberFlag){
+				if(ec.util.isObj(OrderInfo.cust.areaId)){
+					areaId = OrderInfo.cust.areaId;
+				}else{
+					areaId = OrderInfo.staff.soAreaId;
+				}
+			}
 			if(areaId == undefined || areaId==""){
 				$.alert("错误提示","产品信息未返回地区ID，请营业后台核实！");
 				return ; 
@@ -1040,34 +1047,16 @@ OrderInfo = (function() {
 	var _getAccessNumber = function(prodId){
 		var accessNumber = "";
 		if(OrderInfo.actionFlag==1 || OrderInfo.actionFlag==6 || OrderInfo.actionFlag==14){
-			if(ec.util.isArray(OrderInfo.oldprodInstInfos)){//判断是否是纳入老用户
-				if(ec.util.isArray(OrderInfo.viceprodInstInfos) && OrderInfo.oldMvFlag){
-					$.each(OrderInfo.viceOffer,function(){
-						var member = this;
-						$.each(member.offerMemberInfos,function(i){
-							if(this.objInstId==prodId){
-								accessNumber = this.accessNumber;
-								return false;
-							}
-						});
-					});
-				}else{
-					/*$.each(OrderInfo.oldprodInstInfos,function(){
-						if(this.prodInstId==prodId){
-							accessNumber = this.accNbr;
+			if(ec.util.isArray(OrderInfo.oldprodInstInfos)&&OrderInfo.actionFlag==6){//判断是否是纳入老用户
+				$.each(OrderInfo.oldoffer,function(){
+					var oldoffer = this;
+					$.each(oldoffer.offerMemberInfos,function(){
+						if(this.objInstId==prodId){
+							accessNumber = this.accessNumber;
 							return false;
 						}
-					});*/
-					$.each(OrderInfo.oldoffer,function(){
-						var oldoffer = this;
-						$.each(oldoffer.offerMemberInfos,function(){
-							if(this.objInstId==prodId){
-								accessNumber = this.accessNumber;
-								return false;
-							}
-						});
 					});
-				}
+				});
 			}else{
 				for (var i = 0; i < OrderInfo.boProdAns.length; i++) {
 					var an = OrderInfo.boProdAns[i];
@@ -1079,12 +1068,24 @@ OrderInfo = (function() {
 				}
 			}
 		}else if(OrderInfo.actionFlag==2||OrderInfo.actionFlag==21){
-			$.each(OrderInfo.offer.offerMemberInfos,function(i){
-				if(this.objInstId==prodId){
-					accessNumber = this.accessNumber;
-					return false;
+			var newProdId = "'"+prodId+"'";
+			if(newProdId.indexOf("-")!= -1){
+				for (var i = 0; i < OrderInfo.boProdAns.length; i++) {
+					var an = OrderInfo.boProdAns[i];
+					if(an.prodId == prodId){
+						if(an.accessNumber != undefined ){
+							accessNumber =  an.accessNumber;
+						}
+					}
 				}
-			});
+			}else{
+				$.each(OrderInfo.offer.offerMemberInfos,function(i){
+					if(this.objInstId==prodId){
+						accessNumber = this.accessNumber;
+						return false;
+					}
+				});
+			}
 		} else if(OrderInfo.actionFlag == 35){ //分段受理
 			accessNumber = stepOrder.main.getAccessNumber(prodId);
 		} else if(prodId!=undefined && prodId>0){
@@ -1209,23 +1210,11 @@ OrderInfo = (function() {
 			});
 		} else if(prodId!=undefined && prodId>0){
 			if(ec.util.isArray(OrderInfo.oldprodInstInfos) && OrderInfo.actionFlag==6){//判断是否是纳入老用户
-				if(ec.util.isArray(OrderInfo.viceprodInstInfos) && OrderInfo.oldMvFlag){
-					$.each(OrderInfo.viceOffer,function(){
-						var member = this;
-						$.each(member.offerMemberInfos,function(i){
-							if(this.objInstId==prodId){
-								accessNumber = this.accessNumber;
-								return false;
-							}
-						});
-					});
-				}else{
-					$.each(OrderInfo.oldprodInstInfos,function(){
-						if(this.prodInstId==prodId){
-							prodSpecId = this.productId;
-						}
-					});
-				}
+				$.each(OrderInfo.oldprodInstInfos,function(){
+					if(this.prodInstId==prodId){
+						prodSpecId = this.productId;
+					}
+				});
 			}else{
 				prodSpecId = order.prodModify.choosedProdInfo.productId;
 			}

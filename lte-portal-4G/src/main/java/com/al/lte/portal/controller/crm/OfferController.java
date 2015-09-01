@@ -30,6 +30,7 @@ import com.al.ecs.exception.InterfaceException;
 import com.al.ecs.exception.ResultConstant;
 import com.al.ecs.spring.controller.BaseController;
 import com.al.lte.portal.bmo.crm.OfferBmo;
+import com.al.lte.portal.bmo.staff.StaffBmo;
 import com.al.lte.portal.common.MySimulateData;
 import com.al.lte.portal.common.SysConstant;
 import com.al.lte.portal.model.SessionStaff;
@@ -50,6 +51,10 @@ public class OfferController extends BaseController {
 	@Autowired
 	@Qualifier("com.al.lte.portal.bmo.crm.OfferBmo")
 	private OfferBmo offerBmo;
+	
+	@Autowired
+	@Qualifier("com.al.lte.portal.bmo.staff.StaffBmo")
+	private StaffBmo staffBmo;
 	
 	/**
 	 * 获取销售品规格构成
@@ -488,22 +493,35 @@ public class OfferController extends BaseController {
 	@ResponseBody
     public JsonResponse areaidJurisdiction(@RequestParam Map<String, Object> paramMap){
         JsonResponse jsonResponse = null;
-			try {
-				String querytype = paramMap.get("querytype").toString();
-				String flag = "";
-				if("2".equals(querytype)){
-					flag = MySimulateData.getInstance().getParam((String) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_DATASOURCE_KEY),"addMv-"+paramMap.get("areaid").toString());
-				}else{
-					flag = MySimulateData.getInstance().getParam((String) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_DATASOURCE_KEY),paramMap.get("areaid").toString());
+        SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);
+		try {
+			Map map = new HashMap();
+			String flag = MySimulateData.getInstance().getParam((String) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_DATASOURCE_KEY),paramMap.get("areaid").toString());
+			String net_vice_card = (String)ServletUtils.getSessionAttribute(super.getRequest(),
+					"NET_VICE_CARD"+sessionStaff.getStaffId());
+			try{
+				if(net_vice_card==null){
+					net_vice_card=staffBmo.checkOperatSpec("NET_VICE_CARD",sessionStaff);
+					ServletUtils.setSessionAttribute(super.getRequest(),
+							"NET_VICE_CARD"+sessionStaff.getStaffId(), net_vice_card);
 				}
-				jsonResponse = super.successed(flag,ResultConstant.SUCCESS.getCode());
-			} catch (UnsupportedEncodingException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (InterfaceException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			} catch (BusinessException e) {
+				net_vice_card="1";
+	 		} catch (InterfaceException ie) {
+	 			net_vice_card="1";
+			} catch (Exception e) {
+				net_vice_card="1";
 			}
+			map.put("flag", flag);
+			map.put("net_vice_card", net_vice_card);
+			jsonResponse = super.successed(map,ResultConstant.SUCCESS.getCode());
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InterfaceException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return jsonResponse;
     }
 	/**

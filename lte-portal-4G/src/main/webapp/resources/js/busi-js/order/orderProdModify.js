@@ -1952,6 +1952,10 @@ order.prodModify = (function(){
 	//套餐变更
 	var _changeOffer = function () {
 		OrderInfo.busitypeflag=2;
+		OrderInfo.oldprodInstInfos = [];
+		OrderInfo.oldofferSpec = [];
+		OrderInfo.oldoffer = [];
+		OrderInfo.oldAddNumList = [];
 		offerChange.init();
 	};
 	

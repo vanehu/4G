@@ -2,7 +2,10 @@ CommonUtils.regNamespace("order", "service");
 
 order.service = (function(){
 	var _offerprice=""; 
-	
+	var _newMemberFlag = false;
+	var _oldMemberFlag = false;
+	var _newAddList = [];
+	var maxNum = 0;
 	//主套餐查询
 	var _searchPack = function(pageIndex){
 		var custId = OrderInfo.cust.custId;
@@ -189,6 +192,10 @@ order.service = (function(){
 	
 	//获取销售品构成，并选择数量
 	var _opeSer = function(inParam){	
+		_newAddList = [];
+		OrderInfo.oldprodInstInfos = [];
+		OrderInfo.oldofferSpec = [];
+		OrderInfo.oldoffer = [];
 		var param = {
 			offerSpecId : inParam.specId,
 			offerTypeCd : 1,
@@ -224,6 +231,7 @@ order.service = (function(){
 			offerChange.offerChangeView();
 			return;
 		}
+		var areaidflag = order.memberChange.areaidJurisdiction();
 		var iflag = 0; //判断是否弹出副卡选择框 false为不选择
 		var $tbody = $("#member_tbody");
 		$tbody.html("");
@@ -238,15 +246,18 @@ order.service = (function(){
 			}else{
 				$tr.append($td).appendTo($tbody);
 			}
-			
 			$.each(this.roleObjs,function(){
 				var objInstId = offerRole.offerRoleId+"_"+this.objId;//角色id+产品规格id
 				if(this.objType == CONST.OBJ_TYPE.PROD){
+					if(offerRole.memberRoleCd=="401"){
+						_newAddList.push(objInstId);
+					}
 					if(offerRole.minQty == 0){ //加装角色
 						this.minQty = 0;
 						this.dfQty = 0;
 					}
 					var max = this.maxQty<0?"不限制":this.maxQty;//主卡的最大数量
+					var min = this.minQty;
 					$tr.append("<td align='left' colspan='3'>"+this.objName+" :<i id='plan_no' style='margin-top: 3px; display: inline-block; vertical-align: middle;'>"+
 							"<a class='add' href='javascript:order.service.subNum(\""+objInstId+"\","+this.minQty+");'></a>"+
 							"<input id='"+objInstId+"' type='text' value='"+this.dfQty+"' class='numberTextBox width22' readonly='readonly'>"+
@@ -279,6 +290,20 @@ order.service = (function(){
 					iflag++;
 				}
 			});
+			if(offerRole.memberRoleCd=="401" && areaidflag!="" && areaidflag.net_vice_card=="0"){
+				$.each(this.roleObjs,function(){
+					if(this.objType == CONST.OBJ_TYPE.PROD){
+						var max = this.maxQty<0?"不限制":this.maxQty;//主卡的最大数量
+						var min = this.minQty;
+						maxNum = max;
+						var $trOldNbr = "<tr style='background:#f8f8f8;' id='oldnum_1' name='oldnbr'>" +
+						"<td class='borderLTB' style='font-size:14px; padding:0px 0px 0px 12px'><span style='color:#518652; font-size:14px;'>已有移动电话</span></td>" +
+						"<td align='left' colspan='3'><input value='' style='margin-top:10px' class='numberTextBox' id='oldphonenum_1' type='text' >" +
+						"<a style='margin-top:15px' class='add2' href='javascript:order.memberChange.addNum("+max+",\"\");'> </a>"+min+"-"+max+"（张）</td></tr>";	
+						$tbody.append($trOldNbr);
+					}
+				});
+			}
 		});
 		//页面初始化参数
 		var param = {
@@ -308,9 +333,42 @@ order.service = (function(){
 	
 	//选择完主套餐构成后确认
 	var _confirm = function(param){
+		var newnum = 0;
+		$.each(_newAddList,function(){
+			newnum=newnum+Number($("#"+this).val());
+		});
+		var oldnum = 0;
+		$("#member_tbody").find("tr[name='oldnbr']").each(function(){
+			var num = $.trim($(this).children("td").eq(1).children("input").val());
+			if(ec.util.isObj(num)){
+				oldnum++;
+			}
+		});
+		if(parseInt(newnum)+parseInt(oldnum)>maxNum){
+			$.alert("提示","加装数量已经超过能加装的最大数量【"+maxNum+"】!");
+			return;
+		}
 		if(!_setOfferSpec()){
 			$.alert("错误提示","请选择一个接入产品");
 			return;
+		}
+		if(newnum>0){
+			order.service.newMemberFlag = true;
+			param.newnum = newnum;
+		}else{
+			order.service.newMemberFlag = false;
+		}
+		if(oldnum>0){
+			order.service.oldMemberFlag = true;
+			if(!order.memberChange.queryofferinfo()){
+				return;
+			}
+			param.oldprodInstInfos = OrderInfo.oldprodInstInfos;
+			param.oldofferSpec = OrderInfo.oldofferSpec;
+			param.oldoffer = OrderInfo.oldoffer;
+			param.oldnum = oldnum;
+		}else{
+			order.service.oldMemberFlag = false;
 		}
 		if(OrderInfo.actionFlag!=14){ //合约套餐不初始化
 			order.main.buildMainView(param);	
@@ -324,7 +382,9 @@ order.service = (function(){
 		var flag = false;  //判断是否选接入产品
 		$.each(OrderInfo.offerSpec.offerRoles,function(){
 			var offerRole = this;
-			offerRole.prodInsts = []; //角色对象实例
+			if(offerRole.prodInsts==undefined){
+				offerRole.prodInsts = [];
+			}
 			$.each(this.roleObjs,function(){
 				if(this.objType== CONST.OBJ_TYPE.PROD){  //接入类产品
 					var num = 0;  //接入类产品数量选择
@@ -1280,6 +1340,8 @@ order.service = (function(){
 		callBackBuildOrder:_callBackBuildOrder,
 		compareOrder:_compareOrder,
 		compareServOrder:_compareServOrder,
-		dealDevelopingPerson:_dealDevelopingPerson
+		dealDevelopingPerson:_dealDevelopingPerson,
+		oldMemberFlag:_oldMemberFlag,
+		newMemberFlag:_newMemberFlag
 	};
 })();

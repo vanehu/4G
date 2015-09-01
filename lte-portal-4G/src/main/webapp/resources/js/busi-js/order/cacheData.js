@@ -730,22 +730,11 @@ CacheData = (function() {
 	
 	//根据产品id获取销售品成员
 	var _getOldOfferMember = function(prodId){
-		if(ec.util.isArray(OrderInfo.viceprodInstInfos) && OrderInfo.oldMvFlag){
-			for(var j=0;j<OrderInfo.viceOffer.length;j++){
-				for ( var i = 0; i < OrderInfo.viceOffer[j].offerMemberInfos.length; i++) {
-					var offerMember = OrderInfo.viceOffer[j].offerMemberInfos[i];
-					if(offerMember.objInstId==prodId){
-						return offerMember;
-					}
-				}
-			}
-		}else{
-			for(var j=0;j<OrderInfo.oldoffer.length;j++){
-				for ( var i = 0; i < OrderInfo.oldoffer[j].offerMemberInfos.length; i++) {
-					var offerMember = OrderInfo.oldoffer[j].offerMemberInfos[i];
-					if(offerMember.objInstId==prodId){
-						return offerMember;
-					}
+		for(var j=0;j<OrderInfo.oldoffer.length;j++){
+			for ( var i = 0; i < OrderInfo.oldoffer[j].offerMemberInfos.length; i++) {
+				var offerMember = OrderInfo.oldoffer[j].offerMemberInfos[i];
+				if(offerMember.objInstId==prodId){
+					return offerMember;
 				}
 			}
 		}
