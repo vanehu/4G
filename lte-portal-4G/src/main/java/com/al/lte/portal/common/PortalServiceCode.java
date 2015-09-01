@@ -887,5 +887,8 @@ public final class PortalServiceCode {
     public static final String SAVE_ORDER_ATTRS = "biz-service/intf.soService/saveOrderAttrs";
     
     /** 根据客户查询接入号 */
-    public static final String QUERY_ACC_NBR_BY_CUST = "biz-service/intf.custService/queryAccNbrByCust"; 
+    public static final String QUERY_ACC_NBR_BY_CUST = "biz-service/intf.custService/queryAccNbrByCust";
+   
+    /** 查询客户订单业务提示 */
+    public static final String QUERY_ORDER_BUSI_HINT = "biz-service/intf.soService/queryOrderBusiHint" ;
 }

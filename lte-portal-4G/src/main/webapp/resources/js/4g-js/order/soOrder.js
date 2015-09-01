@@ -7,7 +7,7 @@ CommonUtils.regNamespace("SoOrder");
 
 /** 受理订单对象*/
 SoOrder = (function() {
-	
+	var isYWTX = "";
 	//订单准备
 	var _builder = function() {
 		if(query.offer.loadInst()){  //加载实例到缓存
@@ -71,6 +71,26 @@ SoOrder = (function() {
 							var provCheckResult = order.calcharge.tochargeSubmit(response.data);
 							if(provCheckResult.code==0){
 								var returnData = _gotosubmitOrder(response.data);
+								OrderInfo.orderBusiHint = null;
+								//查是否调用业务提示查询开关
+								var propertiesKey = "YWTX-"+OrderInfo.staff.soAreaId.substring(0,3) + "0000";
+								isYWTX = offerChange.queryPortalProperties(propertiesKey);
+								if(isYWTX == "ON"){
+									//下省校验成功之后调用提示接口提醒接口，获取提醒信息
+									var url=contextPath+"/order/queryOrderBusiHint";
+									var params={
+											"olId":response.data.rolId,
+											"soNbr":response.data.rsoNbr,
+											"areaId" : OrderInfo.staff.areaId,
+											"chargeItems":[]
+									};
+									$.ecOverlay("<strong>正在查询提醒信息,请稍等会儿....</strong>");
+									var response = $.callServiceAsJson(url,params);
+									$.unecOverlay();
+									if(response.code == 0){
+										OrderInfo.orderBusiHint = response.data.result.orderPromptInfos;
+									}
+								}
 								_orderConfirm(returnData);
 							}else{//下省校验失败也将转至订单确认页面，展示错误信息，只提供返回按钮
 								response.data.provCheckError = "Y";
@@ -768,6 +788,12 @@ SoOrder = (function() {
 			});
 		}
 		if(ruleFlag){
+			if(OrderInfo.orderBusiHint!=null && OrderInfo.orderBusiHint.length>0 && isYWTX == "ON"){
+				$("#chooseTable").append($('<tr><th width="50%">业务提醒编码</th><th>业务提醒内容</th></tr>'));
+				$.each(OrderInfo.orderBusiHint,function(){
+					$("#chooseTable").append($('<tr><td width="50%">'+this.promptCode+'</td><td>'+this.promptDesc+'</td></tr>'));
+				});
+			}
 			if(OrderInfo.actionFlag==1 || OrderInfo.actionFlag==14 ){
 				_showOrderOffer(); //显示订购的销售品
 			}else if(OrderInfo.actionFlag==2){ //套餐变更 

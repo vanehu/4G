@@ -196,7 +196,8 @@ public enum ErrorCode {
     QUERY_ORDER_LIST_INFO_BY_ORDER_ID("数据抽取查询","010158","01","010158","01"),
     QUERY_SPECLIST_BY_ATTRID("离散值查询接口","010159","01","020144","02"),
     QUERY_COUPON_CONFIG("终端配置查询接口","010160","01","020145","02"),
-    SAVE_RESOURCE_DATA("资源补录","010168","01","010168","01");
+    SAVE_RESOURCE_DATA("资源补录","010168","01","010168","01"),
+	QUERY_ORDERBUSIHINT("查询客户订单业务提示","010169","01","020146","02");
 	
     String name;  
     String code;

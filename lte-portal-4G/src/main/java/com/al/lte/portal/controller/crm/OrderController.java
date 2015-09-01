@@ -3595,4 +3595,34 @@ public class OrderController extends BaseController {
 			return url;
 	    }
 	
+		@RequestMapping(value = "/queryOrderBusiHint", method = RequestMethod.POST)
+	    @ResponseBody
+	    public JsonResponse queryOrderBusiHint(@RequestBody Map<String, Object> param,
+				@LogOperatorAnn String flowNum,HttpServletResponse response){
+	   	 SessionStaff sessionStaff = (SessionStaff) ServletUtils
+					.getSessionAttribute(super.getRequest(),
+							SysConstant.SESSION_KEY_LOGIN_STAFF);
+			Map<String, Object> rMap = null;
+			JsonResponse jsonResponse = null;
+			try {
+				log.debug("param={}", JsonUtil.toString(param));
+				param.put("areaId", sessionStaff.getCurrentAreaId());
+				rMap = orderBmo.queryOrderBusiHint(param, flowNum, sessionStaff);
+				log.debug("return={}", JsonUtil.toString(rMap));
+				if (rMap != null&& ResultCode.R_SUCCESS.equals(rMap.get("code").toString())) {
+					jsonResponse = super.successed(rMap,
+							ResultConstant.SUCCESS.getCode());
+				} else {
+					jsonResponse = super.failed(rMap.get("msg"),
+							ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+				}
+			} catch (BusinessException e) {
+				return super.failed(e);
+			} catch (InterfaceException ie) {
+				return super.failed(ie, param, ErrorCode.CHECK_RULETOPRO);
+			} catch (Exception e) {
+				return super.failed(ErrorCode.CHECK_RULETOPRO, e, param);
+			}
+			return jsonResponse;
+	    }
 }

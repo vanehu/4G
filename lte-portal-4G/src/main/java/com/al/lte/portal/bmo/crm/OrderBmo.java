@@ -494,4 +494,7 @@ public interface OrderBmo {
 		    throws Exception;
 	
 	public Map<String, Object> saveOrderAttrs(Map<String, Object> dataBusMap, String optFlowNum,SessionStaff sessionStaff) throws Exception;
+	
+	 public Map<String,Object> queryOrderBusiHint(Map<String, Object> dataBusMap, String optFlowNum,
+				SessionStaff sessionStaff) throws Exception;
 }

@@ -1753,4 +1753,32 @@ public class OrderBmoImpl implements OrderBmo {
 		}
 		return returnMap;
 	}
+	
+	public Map<String, Object> queryOrderBusiHint(Map<String, Object> dataBusMap,
+			String optFlowNum, SessionStaff sessionStaff)
+			throws Exception {
+		DataBus db = InterfaceClient.callService(dataBusMap,
+				PortalServiceCode.QUERY_ORDER_BUSI_HINT, optFlowNum, sessionStaff);
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		try{
+			if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db
+					.getResultCode()))) {
+				returnMap.put("code", ResultCode.R_SUCCESS);
+				returnMap.put("result",db.getReturnlmap().get("result"));
+			} else {
+				returnMap.put("code", ResultCode.R_FAIL);
+				String msg = "提示信息，下省查询获取提醒信息失败。";
+				if(db.getResultMsg()!=null){
+					if(!db.getResultMsg().trim().equals("")){
+						msg = db.getResultMsg().trim();
+					}
+				}
+				returnMap.put("msg", msg);
+			}
+		} catch(Exception e) {
+			log.error("门户处理营业受理的service/intf.soService/queryOrderBusiHint服务返回的数据异常", e);
+			throw new BusinessException(ErrorCode.QUERY_ORDERBUSIHINT, dataBusMap, db.getReturnlmap(), e);
+		}
+		return returnMap;
+	}
 }

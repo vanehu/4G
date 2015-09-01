@@ -1213,6 +1213,7 @@ offerChange = (function() {
 		checkOfferProd			: _checkOfferProd,
 		getChangeInfo			: _getChangeInfo,
 		initOrderProvAttr		: _initOrderProvAttr,
+		queryPortalProperties  :_queryPortalProperties,
 		setChangeOfferSpec		: _setChangeOfferSpec,
 		newMemberFlag			: _newMemberFlag,
 		oldMemberFlag			: _oldMemberFlag
