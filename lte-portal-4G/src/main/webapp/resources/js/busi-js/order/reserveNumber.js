@@ -1,4 +1,4 @@
-/**
+/** 
  * 号码预约
  * @author linm
  */
@@ -62,6 +62,12 @@ order.reserveNumber = (function(){
 						$.alertM(response.data);
 					}else if(response.code == 1){
 						$.alert("提示","号码预约失败，失败原因："+response.data.msg);
+					}else if(response.code == 1201){
+						$("#vali_code_input").val("");
+						$('#validatecodeImg').css({"width":"80px","height":"32px"}).attr('src',contextPath+'/validatecode/codeimg.jpg?' + Math.floor(Math.random()*100)).fadeIn();
+						easyDialog.open({
+							container : 'Verificationcode_div'
+						});
 					}else{
 						var msg="";
 						if(response.data!=undefined&&response.data.msg!=undefined){

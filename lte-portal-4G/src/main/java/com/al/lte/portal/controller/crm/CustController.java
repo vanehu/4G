@@ -54,7 +54,7 @@ import com.al.lte.portal.model.SessionStaff;
 @RequestMapping("/cust/*")
 @AuthorityValid(isCheck = false)
 public class CustController extends BaseController {
-
+ 
 	@Autowired
 	PropertiesUtils propertiesUtils;
 	@Autowired
@@ -268,15 +268,17 @@ public class CustController extends BaseController {
 //				    	 idCardNumber=preStr+"********"+subStr;
 //					}
 //					model.addAttribute("idCardNumber", idCardNumber);
-				}else{
-					int count = (Integer) httpSession.getAttribute(sessionStaff.getStaffCode()+"custcount")+10;
-					httpSession.setAttribute(sessionStaff.getStaffCode()+"custcount", count);
 				}
+//				else{
+//					int count = (Integer) httpSession.getAttribute(sessionStaff.getStaffCode()+"custcount")+10;
+//					httpSession.setAttribute(sessionStaff.getStaffCode()+"custcount", count);
+//				}
 				model.addAttribute("cust", resultMap);
-			}else{
-				int count = (Integer) httpSession.getAttribute(sessionStaff.getStaffCode()+"custcount")+10;
-				httpSession.setAttribute(sessionStaff.getStaffCode()+"custcount", count);
 			}
+//			else{
+//				int count = (Integer) httpSession.getAttribute(sessionStaff.getStaffCode()+"custcount")+10;
+//				httpSession.setAttribute(sessionStaff.getStaffCode()+"custcount", count);
+//			}
 			if(paramMap.containsKey("query")){	
 				model.addAttribute("query", paramMap.get("query"));  //综合查询调用标志
 			}

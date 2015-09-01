@@ -48,7 +48,7 @@ import com.octo.captcha.service.CaptchaService;
  * @createDate 2012-3-30 下午3:29:40
  * @modifyDate	 tang 2012-3-30 <BR>
  * @copyRight 亚信联创电信CRM研发部
- */
+ */ 
 @Controller("com.al.lte.portal.controller.main.MainController")
 @RequestMapping("/main/*")
 @AuthorityValid(isCheck = false)
@@ -244,6 +244,8 @@ public class MainController extends BaseController {
 				httpSession.removeAttribute(sessionStaff.getStaffCode()+"custcount");
 				httpSession.removeAttribute(sessionStaff.getStaffCode()+"nbrtime");
 				httpSession.removeAttribute(sessionStaff.getStaffCode()+"nbrcount");
+				httpSession.removeAttribute(sessionStaff.getStaffCode()+"reservenumbertime");
+				httpSession.removeAttribute(sessionStaff.getStaffCode()+"reservenumbercount");
 	        	jsonResponse = super.successed("0",ResultConstant.SUCCESS.getCode());
 			}else{
 				jsonResponse = super.successed("1",ResultConstant.FAILD.getCode());

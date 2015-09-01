@@ -57,7 +57,7 @@ import com.al.lte.portal.common.MySimulateData;
 import com.al.lte.portal.common.SysConstant;
 import com.al.lte.portal.core.DataRepository;
 import com.al.lte.portal.model.SessionStaff;
-
+ 
 /**
  * 营销资源控制层
  * 
@@ -1699,13 +1699,49 @@ public class MktResController extends BaseController {
 	 */
 	@RequestMapping(value = "/reservenumber/submit", method = RequestMethod.POST)
 	@ResponseBody
-	public JsonResponse reserveSubmit(@RequestBody Map<String, Object> param,
+	public JsonResponse reserveSubmit(@RequestBody Map<String, Object> param,HttpSession httpSession,
 			@LogOperatorAnn String flowNum,HttpServletResponse response,HttpServletRequest request) {
 		SessionStaff sessionStaff = (SessionStaff) ServletUtils
 				.getSessionAttribute(super.getRequest(),
 						SysConstant.SESSION_KEY_LOGIN_STAFF);
 		Map<String, Object> rMap = null;
 		JsonResponse jsonResponse = null;
+		try{
+			//访问次数限制
+			long endTime = System.currentTimeMillis();
+			long beginTime = 0;
+			if(httpSession.getAttribute(sessionStaff.getStaffCode()+"reservenumbertime")!=null){
+				beginTime = (Long) httpSession.getAttribute(sessionStaff.getStaffCode()+"reservenumbertime");
+			}
+			if(beginTime!=0){
+				Date beginDate = new Date(beginTime);
+				Date endDate = new Date(endTime);
+				long useTime = endDate.getTime()-beginDate.getTime();
+				long limit_time = Long.parseLong(MySimulateData.getInstance().getParam((String) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_DATASOURCE_KEY),"LIMIT_TIME"));
+				int limit_count = Integer.parseInt(MySimulateData.getInstance().getParam((String) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_DATASOURCE_KEY),"LIMIT_COUNT"));
+				if (useTime<=limit_time){
+					int count = (Integer) httpSession.getAttribute(sessionStaff.getStaffCode()+"reservenumbercount")+1;
+					if(count<limit_count){
+						httpSession.setAttribute(sessionStaff.getStaffCode()+"reservenumbercount", count);
+					}else if(count==limit_count){
+						httpSession.setAttribute(sessionStaff.getStaffCode()+"reservenumbercount", count);
+					}else if(count>limit_count){
+						httpSession.setAttribute(sessionStaff.getStaffCode()+"reservenumbercount", count);
+						if(httpSession.getAttribute(sessionStaff.getStaffCode()+"reservenumbercount")!=null){
+							return super.failed("您的操作频繁，请稍后再试！",ResultConstant.ACCESS_LIMIT_FAILTURE.getCode());
+						}
+					}
+				}else{
+					httpSession.setAttribute(sessionStaff.getStaffCode()+"reservenumbertime", endTime);
+					httpSession.setAttribute(sessionStaff.getStaffCode()+"reservenumbercount", 1);
+				}
+			}else{
+				httpSession.setAttribute(sessionStaff.getStaffCode()+"reservenumbertime", endTime);
+				httpSession.setAttribute(sessionStaff.getStaffCode()+"reservenumbercount", 1);
+			}
+		}catch (Exception e) {
+			// TODO: handle exception
+		}
 		try {
 			if(commonBmo.checkToken(request, SysConstant.ORDER_SUBMIT_TOKEN)){
 				String identityId = param.get("identityId").toString();
