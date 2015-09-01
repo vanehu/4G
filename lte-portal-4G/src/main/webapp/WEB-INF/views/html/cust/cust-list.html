@@ -34,7 +34,7 @@
 		</thead>
 		<tbody>
 			<#list cust.custInfos as custInfo>
-			<tr id="custInfos" onclick="order.cust.showCustAuth(this)" 
+			<tr id="custInfos" onclick="order.cust.showCustAuth(this)" <#if custInfo_index gte 9>style="display:none;"</#if>
 				custFlag="${custInfo.custFlag}" norTaxPayer="${custInfo.norTaxPayer}" identityName="${custInfo.identityName}" idCardNumber="${custInfo.idCardNumber}" areaId="${custInfo.areaId}" corCustId="${custInfo.corCustId}" identityCd="${custInfo.identityCd}" addressStr="${custInfo.addressStr}" areaName="${custInfo.areaName}" vipLevel="${custInfo.vipLevel}" vipLevelName="${custInfo.vipLevelName}" segmentId="${custInfo.segmentId}" segmentName="${custInfo.segmentName}" extCustId="${custInfo.extCustId}">
 				<td id="custListTableParName">${custInfo.partyName}</td>
 				<td>${custInfo.identityName}/${custInfo.idCardNumber}</td>
@@ -46,6 +46,11 @@
 			</#list>
 		</tbody>
 	</table>
+	
+	<!--页码-->
+    <@portal.fakeModelPaginationWithNoJump pageModel "order.cust.queryCustByPageIndex"/>
+	<script src="${contextPath}/js/our-js/ec.pagination.js?${jsversion}" type="text/javascript"></script>
+	<!--页码 end-->
 <#else>
 	<div class="userclose"></div>
 	<div><input id="jumpAuthflag" type="hidden" value="${jumpAuthflag}"/></div>

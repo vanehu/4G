@@ -110,6 +110,35 @@
 	</#if>
 </#macro>
 
+<#-- 假分页，无跳转支持 -->
+<#macro fakeModelPaginationWithNoJump pageModel callBackFunc>
+	<#if (pageModel?? && callBackFunc??)>
+	<div class="paging" id="ec-pagination" callBack="${callBackFunc}" pageSize="${pageModel.pageSize}">
+	<#if (pageModel.pageNo<=1)>
+	<label><span id="ec-page-prevs" class="pageUpGray">上一页</span></label>
+	<#else>
+	<label><span id="ec-page-prevs" class="pageUpOrange" page="${pageModel.pageNo-1}">上一页</span></label>
+	</#if>	
+	<label>
+		<a id="ec-page-no" class="pagingSelect" href="javascript:void(0);">${pageModel.pageNo}</a>
+	</label>
+	<#if (pageModel.list?size<pageModel.pageSize)>
+	<label><span id="ec-page-next" class="nextPageGray">下一页</span></label>
+	<#else>
+	<label><span id="ec-page-next" class="nextPageGrayOrange" page="${pageModel.pageNo+1}">下一页</span></label>
+	</#if>
+	<#if pageModel.list?size%pageModel.pageSize==0>
+		<#assign totalPages = pageModel.list?size/pageModel.pageSize />
+	<#else>
+		<#assign totalPages = (pageModel.list?size/pageModel.pageSize)?int + 1 />
+	</#if>
+	<label id="ec-total-page" page="${totalPages}">共 ${totalPages} 页</label>
+	</div>
+	<#else>
+	<iuput type="hidden" value="分页信息缺失"/>
+	</#if>
+</#macro>
+
 <#-- 分页组件modelPagination pageModel-分页封装对象对应类：PageModel使用  pageBlockNum-显示页码个数  callBackFunc-回调函数执行再查询操作，包括一个入参：当着页码  -->
 <#macro modelPagination pageModel pageBlockNum callBackFunc>
 <#if (pageModel?? && pageBlockNum?? && callBackFunc??)>

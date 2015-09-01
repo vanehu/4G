@@ -224,37 +224,76 @@ public class CustController extends BaseController {
 						accNbrParamMap.put("areaId", paramMap.get("areaId"));
 						accNbrParamMap.put("custIds", custIds);
 						Map accNbrResultMap = custBmo.queryAccNbrByCust(accNbrParamMap, flowNum, sessionStaff);
+						
+						List custInfosWithNbr = null;
 						if (MapUtils.isNotEmpty(accNbrResultMap)) {
+							custInfosWithNbr = new ArrayList();
 							List<Map<String, Object>> accNbrCustInfos = (List<Map<String, Object>>) accNbrResultMap.get("custInfos");
-							List custInfosWithNbr = new ArrayList();
-							for(Map<String, Object> accNbrCustInfo : accNbrCustInfos){
-								String custId = MapUtils.getString(accNbrCustInfo,"custId","");
-								List<Map<String, Object>> accNbrs = (List<Map<String, Object>>) accNbrCustInfo.get("accNbrInfos");
+							for(Object tmpCustInfo : custInfos){
+								Map custInfoMap = (Map)tmpCustInfo;
+								String custId = MapUtils.getString(custInfoMap,"custId","");
 								
-								if(accNbrs != null && accNbrs.size() != 0){
-									Map custInfoMap = null;
-									for(Object tmpCustInfo : custInfos){
-										if(custId.equals(((Map)tmpCustInfo).get("custId"))){
-											custInfoMap = ((Map)tmpCustInfo);
-											break;
-										}
-									}
-									if(custInfoMap != null){
-										for(Map<String, Object> accNbrMap : accNbrs){
-											String accNbr = MapUtils.getString(accNbrMap, "accNbr", "");
-											Map newCustInfoMap = new HashMap(custInfoMap);
-											newCustInfoMap.put("accNbr", accNbr);
-											custInfosWithNbr.add(newCustInfoMap);
-										}
+								List<Map<String, Object>> accNbrs = null;
+								for(Map<String, Object> accNbrCustInfo : accNbrCustInfos){
+									if(custId.equals(accNbrCustInfo.get("custId"))){
+										accNbrs = (List<Map<String, Object>>) accNbrCustInfo.get("accNbrInfos");
+										break;
 									}
 								}
+								
+								if(accNbrs != null && accNbrs.size() != 0){
+									for(Map<String, Object> accNbrMap : accNbrs){
+										String accNbr = MapUtils.getString(accNbrMap, "accNbr", "");
+										Map newCustInfoMap = new HashMap(custInfoMap);
+										newCustInfoMap.put("accNbr", accNbr);
+										custInfosWithNbr.add(newCustInfoMap);
+									}
+								} else {
+									custInfosWithNbr.add(custInfoMap);
+								}
 							}
-							if(custInfosWithNbr.size() != 0){
-								resultMap.put("custInfos", custInfosWithNbr);
-								model.addAttribute("query", paramMap.get("query"));  //综合查询调用标志
-								model.addAttribute("multiCust", "Y");  //多客户标识
-							}
+						} else {
+							custInfosWithNbr = custInfos;
 						}
+						resultMap.put("custInfos", custInfosWithNbr);
+						model.addAttribute("query", paramMap.get("query"));  //综合查询调用标志
+						model.addAttribute("multiCust", "Y");  //多客户标识
+						
+						PageModel<Map<String, Object>> pm = PageUtil.buildPageModel(1, 10, custInfosWithNbr.size(),custInfosWithNbr);
+			    		model.addAttribute("pageModel", pm);
+						
+						
+//						if (MapUtils.isNotEmpty(accNbrResultMap)) {
+//							List<Map<String, Object>> accNbrCustInfos = (List<Map<String, Object>>) accNbrResultMap.get("custInfos");
+//							List custInfosWithNbr = new ArrayList();
+//							for(Map<String, Object> accNbrCustInfo : accNbrCustInfos){
+//								String custId = MapUtils.getString(accNbrCustInfo,"custId","");
+//								List<Map<String, Object>> accNbrs = (List<Map<String, Object>>) accNbrCustInfo.get("accNbrInfos");
+//								
+//								if(accNbrs != null && accNbrs.size() != 0){
+//									Map custInfoMap = null;
+//									for(Object tmpCustInfo : custInfos){
+//										if(custId.equals(((Map)tmpCustInfo).get("custId"))){
+//											custInfoMap = ((Map)tmpCustInfo);
+//											break;
+//										}
+//									}
+//									if(custInfoMap != null){
+//										for(Map<String, Object> accNbrMap : accNbrs){
+//											String accNbr = MapUtils.getString(accNbrMap, "accNbr", "");
+//											Map newCustInfoMap = new HashMap(custInfoMap);
+//											newCustInfoMap.put("accNbr", accNbr);
+//											custInfosWithNbr.add(newCustInfoMap);
+//										}
+//									}
+//								}
+//							}
+//							if(custInfosWithNbr.size() != 0){
+//								resultMap.put("custInfos", custInfosWithNbr);
+//								model.addAttribute("query", paramMap.get("query"));  //综合查询调用标志
+//								model.addAttribute("multiCust", "Y");  //多客户标识
+//							}
+//						}
 					}
 					
 //					if(idCardNumber != null && idCardNumber.length()==18){

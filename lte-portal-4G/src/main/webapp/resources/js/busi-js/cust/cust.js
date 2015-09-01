@@ -1527,6 +1527,45 @@ order.cust = (function(){
 			});
 		}).ketchup({bindElement:"userSearchForChooseBtn"});
 	};
+	
+	//多客户分页查询，后台服务不支持分页，故使用假分页（一次查询分次展示）
+	var _queryCustByPageIndex = function(pageIndex){
+		pageIndex = parseInt(pageIndex);
+		if(pageIndex <= 0){
+			$.alert('提示', '页码无效');
+			return;
+		}
+		var pageSize = parseInt($('#ec-pagination').attr('pageSize'));
+		var totalSize = $('#custListTable tbody tr').length;
+		var totalPage = totalSize % pageSize == 0 ? totalSize/pageSize : parseInt(totalSize/pageSize) + 1;
+		if(pageIndex > totalPage){
+			$.alert('提示', '页码超出最大值');
+			return;
+		}
+		
+		$('#custListTable tbody tr').hide();
+		$('#ec-page-no').html(pageIndex);
+		
+		if(pageIndex == 1){
+			$('#custListTable tbody tr:lt('+pageSize*pageIndex+')').show();
+			$('#ec-page-prevs').removeClass('pageUpOrange').removeAttr('page').addClass('pageUpGray');
+		} else {
+			$('#custListTable tbody tr:lt('+pageSize*pageIndex+'):gt('+(pageSize*(pageIndex-1)-1)+')').show();
+			$('#ec-page-prevs').addClass('pageUpOrange').attr('page', pageIndex-1).removeClass('pageUpGray');
+		}
+		if(pageIndex == totalPage){
+			$('#ec-page-next').removeClass('nextPageGrayOrange').removeAttr('page').addClass('nextPageGray');
+		} else {
+			$('#ec-page-next').addClass('nextPageGrayOrange').attr('page', pageIndex+1).removeClass('nextPageGray');
+		}
+		
+		$("a[id^='ec-page-'],span[id^='ec-page-']").off("click.page");
+		
+		$("a[id^='ec-page-'][page],span[id^='ec-page-'][page]").each(function(){
+			$(this).on("click.page",function(){order.cust.queryCustByPageIndex($(this).attr("page"));});
+		});
+	};
+	
 	return {
 		form_valid_init : _form_valid_init,
 		showCustAuth : _showCustAuth,
@@ -1570,7 +1609,8 @@ order.cust = (function(){
 		certTypeByPartyType : _certTypeByPartyType,
 		bindCustQueryForChoose : _bindCustQueryForChoose,
 		tmpChooseUserInfo : _tmpChooseUserInfo,
-		queryForChooseUser : _queryForChooseUser
+		queryForChooseUser : _queryForChooseUser,
+		queryCustByPageIndex : _queryCustByPageIndex
 	};
 })();
 $(function() {
