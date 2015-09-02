@@ -1349,7 +1349,7 @@ SoOrder = (function() {
 		//遍历主销售品构成,添加产品节点
 		for ( var i = 0; i < busiOrder.data.ooRoles.length; i++) {
 			var ooRole = busiOrder.data.ooRoles[i];
-			if(ooRole.objType==2 && ooRole.memberRoleCd!=undefined && ooRole.memberRoleCd=="400"){
+			if(ooRole.objType==2 && ooRole.memberRoleCd!=undefined){
 				busiOrders.push(_createProd(ooRole.objInstId,ooRole.objId));	
 			}		
 		}
