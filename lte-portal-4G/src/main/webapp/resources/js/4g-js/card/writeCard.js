@@ -662,7 +662,7 @@ order.writeCard = (function(){
 		try {
 			fso.GetFile("C:\\WINDOWS\\system32\\" + _cardDllInfoJson.dllName + ".DLL");
 		} catch(e) {
-			$("#cardupdate").attr("href",contextPath + "/card/"+ _cardDllInfoJson.dllName+".DLL");
+			$("#cardupdate").attr("href",contextPath + "/card/"+ _cardDllInfoJson.dllName+".dll");
 			$("#writeTitle").html("写卡组件更新");
 			$("#rcard").hide();
 			$("#cardt").show();
