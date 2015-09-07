@@ -40,7 +40,7 @@
 			<div class="cardtab">
 				<ul class="pdcard">
 				<#assign setconFlag = 0 />
-				<#if (main.newnum?? && (main.newnum?number>0)) || (main.actionFlag?? && main.actionFlag==1)>
+				<#if (main.newnum?? && (main.newnum?number>0)) || (main.actionFlag?? && main.actionFlag==1) || (main.actionFlag?? && main.actionFlag==14)>
 					<#assign j = 0 />
 					<#list offerSpec.offerRoles as offerRole>	
 						<#if (offerRole.prodInsts?? && offerRole.prodInsts?size>0)>
@@ -85,7 +85,7 @@
 			<!-- 产品信息展示 -->
 			<div class="cardtabcon">
 				<div id="productDiv">
-				<#if (main.newnum?? && (main.newnum?number>0)) || (main.actionFlag?? && main.actionFlag==1)>
+				<#if (main.newnum?? && (main.newnum?number>0)) || (main.actionFlag?? && main.actionFlag==1) || (main.actionFlag?? && main.actionFlag==14)>
 					<@block name="product">
 						<#include "/order/order-product.html" />
 					</@block>
