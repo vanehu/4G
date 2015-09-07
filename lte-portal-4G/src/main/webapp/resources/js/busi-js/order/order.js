@@ -333,6 +333,9 @@ order.service = (function(){
 	
 	//选择完主套餐构成后确认
 	var _confirm = function(param){
+		$.each(OrderInfo.offerSpec.offerRoles,function(){
+			this.prodInsts = [];
+		});
 		var newnum = 0;
 		$.each(_newAddList,function(){
 			newnum=newnum+Number($("#"+this).val());

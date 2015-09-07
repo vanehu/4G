@@ -529,14 +529,17 @@ offerChange = (function() {
 			var offerRole = this;
 			if(this.prodInsts!=undefined){
 				$.each(this.prodInsts,function(){
-					var ooRoles = {
-						objId : this.objId, //业务规格ID
-						objInstId : this.prodInstId, //业务对象实例ID,新装默认-1
-						objType : this.objType, // 业务对象类型
-						offerRoleId : offerRole.offerRoleId, //销售品角色ID
-						state : "ADD" //动作
-					};
-					busiOrder.data.ooRoles.push(ooRoles);
+					var prodInstId = '"'+this.prodInstId+'"';
+					if(prodInstId.indexOf("-")==-1){
+						var ooRoles = {
+							objId : this.objId, //业务规格ID
+							objInstId : this.prodInstId, //业务对象实例ID,新装默认-1
+							objType : this.objType, // 业务对象类型
+							offerRoleId : offerRole.offerRoleId, //销售品角色ID
+							state : "ADD" //动作
+						};
+						busiOrder.data.ooRoles.push(ooRoles);
+					}
 				});
 			}
 		});
