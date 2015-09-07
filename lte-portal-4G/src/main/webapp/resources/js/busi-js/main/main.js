@@ -194,6 +194,7 @@ main.home = (function(){
 //		$(".news").css("display","none");
 		$(".homecon").css("width","100%").css("margin-left","0px");
 		$("#div_main_index").removeClass("main_index").addClass("main_div");
+		$(".l-tab-content-item").css("min-height","500px");
 	};
 	
 	/*****************************************************首页弹出框初始化调用函数*****************************************************/
