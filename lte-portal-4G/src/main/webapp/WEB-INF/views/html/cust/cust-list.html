@@ -34,7 +34,7 @@
 		</thead>
 		<tbody>
 			<#list cust.custInfos as custInfo>
-			<tr id="custInfos" onclick="order.cust.showCustAuth(this)" <#if custInfo_index gte 9>style="display:none;"</#if> canRealName="${custInfo.canRealName}"
+			<tr id="custInfos" onclick="order.cust.showCustAuth(this)" <#if custInfo_index gt 9>style="display:none;"</#if> canRealName="${custInfo.canRealName}"
 				custFlag="${custInfo.custFlag}" norTaxPayer="${custInfo.norTaxPayer}" identityName="${custInfo.identityName}" idCardNumber="${custInfo.idCardNumber}" areaId="${custInfo.areaId}" corCustId="${custInfo.corCustId}" identityCd="${custInfo.identityCd}" addressStr="${custInfo.addressStr}" areaName="${custInfo.areaName}" vipLevel="${custInfo.vipLevel}" vipLevelName="${custInfo.vipLevelName}" segmentId="${custInfo.segmentId}" segmentName="${custInfo.segmentName}" extCustId="${custInfo.extCustId}">
 				<td id="custListTableParName">${custInfo.partyName}</td>
 				<td>${custInfo.identityName}/${custInfo.idCardNumber}</td>
