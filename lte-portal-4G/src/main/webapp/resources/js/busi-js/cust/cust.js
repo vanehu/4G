@@ -1532,7 +1532,6 @@ order.cust = (function(){
 	var _queryCustByPageIndex = function(pageIndex){
 		pageIndex = parseInt(pageIndex);
 		if(pageIndex <= 0){
-			$.alert('提示', '页码无效');
 			return;
 		}
 		var pageSize = parseInt($('#ec-pagination').attr('pageSize'));

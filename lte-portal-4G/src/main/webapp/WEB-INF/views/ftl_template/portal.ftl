@@ -115,7 +115,7 @@
 	<#if (pageModel?? && callBackFunc??)>
 	<div class="paging" id="ec-pagination" callBack="${callBackFunc}" pageSize="${pageModel.pageSize}">
 	<#if (pageModel.pageNo<=1)>
-	<label><span id="ec-page-prevs" class="pageUpGray">上一页</span></label>
+	<label><span id="ec-page-prevs" class="pageUpGray" page="${pageModel.pageNo-1}">上一页</span></label>
 	<#else>
 	<label><span id="ec-page-prevs" class="pageUpOrange" page="${pageModel.pageNo-1}">上一页</span></label>
 	</#if>	
