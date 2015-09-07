@@ -375,6 +375,9 @@ order.service = (function(){
 		}
 		if(OrderInfo.actionFlag!=14){ //合约套餐不初始化
 			order.main.buildMainView(param);	
+		}else{
+			mktRes.terminal.newnum = newnum;
+			mktRes.terminal.oldnum = oldnum;
 		}
 		easyDialog.close();
 	};

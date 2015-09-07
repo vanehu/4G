@@ -29,15 +29,17 @@
 					</#if>
 				</#if>
 				</#list>
-				<#list offerSpec.offerRoles as offerRole>	
-					<#if (offerRole.prodInsts?? && offerRole.prodInsts?size>0)>
-						<#list offerRole.prodInsts as prod>
-							<#if prod.memberRoleCd==401>
-								<li class="" id="tab_${prod.prodInstId}" prodId="${prod.prodInstId}" onclick="offerChange.changeTab(${prod.prodInstId})">${prod.offerRoleName}</li>
-							</#if>
-						</#list>
-					</#if>
-				</#list>
+				<#if (main.newnum?number>0)>
+					<#list offerSpec.offerRoles as offerRole>	
+						<#if (offerRole.prodInsts?? && offerRole.prodInsts?size>0)>
+							<#list offerRole.prodInsts as prod>
+								<#if prod.memberRoleCd==401>
+									<li class="" id="tab_${prod.prodInstId}" prodId="${prod.prodInstId}" onclick="offerChange.changeTab(${prod.prodInstId})">${prod.offerRoleName}</li>
+								</#if>
+							</#list>
+						</#if>
+					</#list>
+				</#if>
 				<#if (main.oldnum?number>0)>
 					<#list main.oldprodInstInfos as prodinfos>
 						<#list main.oldoffer as offerinst>
@@ -163,7 +165,7 @@
 				</#if>
 				
 				<!-- 纳入新用户 -->
-				<#if offerSpec.offerRoles?? && (offerSpec.offerRoles?size>0)>
+				<#if offerSpec.offerRoles?? && (offerSpec.offerRoles?size>0) && (main.newnum?number>0)>
 					<#list offerSpec.offerRoles as offerRole>	
 						<#if offerRole.prodInsts?? && (offerRole.prodInsts?size>0)>
 							<#list offerRole.prodInsts as prod>
@@ -237,11 +239,13 @@
 			</div>
 			<div class="height18"></div>
 			<!-- 帐户展示 -->
+			<#if (main.newnum?number>0)>
 			<div id="accountDiv" style="display:none">
 				<@block name="account">
 					<#include "/order/order-account.html" />
 				</@block>
 			</div>
+			</#if>
 			<!-- 发展人 -->
 			<div class="height18"></div>
 			<div id="dealerAidDiv" >

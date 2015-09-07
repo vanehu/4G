@@ -229,7 +229,8 @@ offerChange = (function() {
 			var offerRole = this;
 			if(ec.util.isArray(this.prodInsts)){
 				$.each(this.prodInsts,function(){
-					if(this.memberRoleCd=="400"){
+					var _prodInstId = "'"+this.prodInstId+"'";
+					if(_prodInstId.indexOf("-") == -1){
 						var prodId = this.prodInstId;
 						var param = {
 							areaId : OrderInfo.getProdAreaId(prodId),
@@ -271,7 +272,7 @@ offerChange = (function() {
 							}
 						}
 						uimDivShow=true;
-					}else if(this.memberRoleCd=="401"){
+					}else{
 						var prodInst = this;
 						var param = {   
 							offerSpecId : OrderInfo.offerSpec.offerSpecId,

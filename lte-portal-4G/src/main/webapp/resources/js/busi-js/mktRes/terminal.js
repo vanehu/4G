@@ -15,6 +15,8 @@ mktRes.terminal = (function($){
 	var  maxNum = 10;
 	OrderInfo.couponInfo = [];
 	OrderInfo.termReserveFlag = "";
+	var _newnum = 0;
+	var _oldnum = 0;
 	/**
 	 * 校验是否可以进入下一步
 	 */
@@ -1264,6 +1266,15 @@ mktRes.terminal = (function($){
 			},
 			offerRoles : buyChk.hyOfferRoles
 		};
+		if(mktRes.terminal.newnum>0){
+			param.newnum = mktRes.terminal.newnum;
+		}
+		if(mktRes.terminal.oldnum>0){
+			param.oldprodInstInfos = OrderInfo.oldprodInstInfos;
+			param.oldofferSpec = OrderInfo.oldofferSpec;
+			param.oldoffer = OrderInfo.oldoffer;
+			param.oldnum = mktRes.terminal.oldnum;
+		}
 		OrderInfo.actionTypeName = "订购";
 		SoOrder.builder(); //初始化订单数据
 		order.main.buildMainView(param);
@@ -1619,7 +1630,9 @@ mktRes.terminal = (function($){
 		selectTerminalzdyy : _selectTerminalzdyy,
 		removeTerminal : _removeTerminal,
 		yyTypeChoose : _yyTypeChoose,
-		jumpBtnQueryTerminal : _jumpBtnQueryTerminal
+		jumpBtnQueryTerminal : _jumpBtnQueryTerminal,
+		newnum:_newnum,
+		oldnum:_oldnum
 	};
 })(jQuery);
 
