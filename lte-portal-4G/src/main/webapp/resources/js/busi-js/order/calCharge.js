@@ -1151,6 +1151,7 @@ order.calcharge = (function(){
 							return;
 						}
 					}
+					_changeFeeDisabled($("#calTab"));
 				});
 				// 本地打印回执,只有配置无纸化省份才会提供
 				$("#printVoucherLoc").off("click").on("click", function(event){
@@ -1165,6 +1166,7 @@ order.calcharge = (function(){
 						"areaId":OrderInfo.getAreaId()
 					};
 					common.print.printVoucher(voucherInfo);
+					_changeFeeDisabled($("#calTab"));
 				});
 				if(OrderInfo.actionFlag==37 || OrderInfo.actionFlag==38){ //终端预约暂时未提供模板，不打印回执
 					$("#printVoucherA").removeClass("btna_o").addClass("btna_g").off("click");
@@ -1283,7 +1285,51 @@ order.calcharge = (function(){
 		}
 		return true;
 	};
-	
+
+	//打印后禁用修改费用
+	var _changeFeeDisabled=function(table){
+		table.children("tbody").children("tr").each(function () {
+			//产品-新增费用
+			var addbusiOrder=$(this).children("td:eq(0)").children("a");
+			if(ec.util.isObj(addbusiOrder)&&addbusiOrder.length>0){
+				addbusiOrder.remove();
+			}
+			//费用名称
+			var acctItemTypeId=$(this).children("td:eq(1)").children("select");
+			if(ec.util.isObj(acctItemTypeId)&&acctItemTypeId.length>0){
+				acctItemTypeId.attr("disabled","disabled");
+			}
+			//实收费用
+			var realAmount=$(this).children("td:eq(3)").children("input");
+			if(ec.util.isObj(realAmount)&&realAmount.length>0){
+				realAmount.attr("disabled","disabled");
+			}
+			//付费方式
+			var payMethodText1=$(this).children("td:eq(4)").children("span").children("a");
+			if(ec.util.isObj(payMethodText1)&&payMethodText1.length>0){
+				payMethodText1.removeAttr("onclick");
+			}
+			var payMethodText2=$(this).children("td:eq(4)").children("span").children("select");
+			if(ec.util.isObj(payMethodText2)&&payMethodText2.length>0){
+				payMethodText2.attr("disabled","disabled");
+			}
+			var payMethodText3=$(this).children("td:eq(4)").children("select");
+			if(ec.util.isObj(payMethodText3)&&payMethodText3.length>0){
+				payMethodText3.attr("disabled","disabled");
+			}
+			//修改原因
+			var chargeModifyReasonCd=$(this).children("td:eq(5)").children("select");
+			if(ec.util.isObj(chargeModifyReasonCd)&&chargeModifyReasonCd.length>0){
+				chargeModifyReasonCd.attr("disabled","disabled");
+			}
+			//操作
+			var charge=$(this).children("td:eq(6)").children("a");
+			if(ec.util.isObj(charge)&&charge.length>0){
+				charge.remove();
+			}
+		});
+	};
+
 	return {
 		addItems:_addItems,
 		delItems:_delItems,
@@ -1303,7 +1349,8 @@ order.calcharge = (function(){
 		invaideInvoice:_invaideInvoice,
 		updateChargeInfoForCheck:_updateChargeInfoForCheck,
 		tochargeSubmit:_tochargeSubmit,
-		backToEntr:_backToEntr
+		backToEntr:_backToEntr,
+		changeFeeDisabled:_changeFeeDisabled
 	};
 })();
 
