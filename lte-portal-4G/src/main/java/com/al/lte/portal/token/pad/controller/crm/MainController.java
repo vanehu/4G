@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+
 import org.apache.commons.collections.MapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,11 +18,15 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+
 import com.al.ec.serviceplatform.client.ResultCode;
 import com.al.ec.toolkit.JacksonUtil;
 import com.al.ecs.common.util.JsonUtil;
 import com.al.ecs.common.web.ServletUtils;
 import com.al.ecs.exception.AuthorityException;
+import com.al.ecs.exception.BusinessException;
+import com.al.ecs.exception.ErrorCode;
+import com.al.ecs.exception.InterfaceException;
 import com.al.ecs.spring.annotation.log.LogOperatorAnn;
 import com.al.ecs.spring.annotation.session.AuthorityValid;
 import com.al.ecs.spring.controller.BaseController;
@@ -231,7 +237,7 @@ public class MainController extends BaseController {
 			//客户定位
 			Map<String,Object> custparamMap = new HashMap<String,Object>();
 			custparamMap.put("acctNbr", paramsMap.get("mainPhoneNum").toString());
-			custparamMap.put("areaId",sessionStaff.getCurrentAreaId());
+			custparamMap.put("areaId",paramsMap.get("provCustAreaId").toString());
 			custparamMap.put("diffPlace","local");
 			custparamMap.put("identityCd","");
 			custparamMap.put("identityNum","");
@@ -252,20 +258,20 @@ public class MainController extends BaseController {
 				}
 				sessionStaff.setInPhoneNum(String.valueOf(custparamMap.get("acctNbr")));
 				if(custInfos.size()>0){
-					Map<String,Object> custInfo = custInfos.get(0);
+					Map<String,Object> custInfo =(Map<String,Object>)custInfos.get(0);
 					String idCardNumber = (String) custInfo.get("idCardNumber");
 					sessionStaff.setCustId(String.valueOf(custInfo.get("custId")));
 					sessionStaff.setCardNumber(idCardNumber);
 					sessionStaff.setCardType(String.valueOf(custInfo.get("identityCd")));
 					sessionStaff.setPartyName(String.valueOf(custInfo.get("partyName")));
 					if(idCardNumber != null && idCardNumber.length()==18){
-						String preStr = idCardNumber.substring(0,6);
-				    	String subStr = idCardNumber.substring(14);
-				    	idCardNumber=preStr+"********"+subStr;
+						 String preStr = idCardNumber.substring(0,6);
+				    	 String subStr = idCardNumber.substring(14);
+				    	 idCardNumber=preStr+"********"+subStr;
 					}else if(idCardNumber != null && idCardNumber.length()==15){
 						String preStr = idCardNumber.substring(0,5);
-				    	String subStr = idCardNumber.substring(13);
-				    	idCardNumber=preStr+"********"+subStr;
+				    	 String subStr = idCardNumber.substring(13);
+				    	 idCardNumber=preStr+"********"+subStr;
 					}
 					areaId = (String) custInfo.get("areaId");
 					custId = String.valueOf(custInfo.get("custId"));
@@ -291,9 +297,15 @@ public class MainController extends BaseController {
 			}else{
 				model.addAttribute("querycustflag", "1");
 			}
+		} catch (BusinessException be) {
+			model.addAttribute("querycustflag", "-1");
+			model.addAttribute("errMsg", be.getError().getErrMsg());
+		} catch (InterfaceException ie) {
+			model.addAttribute("querycustflag", "-1");
+			model.addAttribute("errMsg", ie.getMsg());
 		} catch (Exception e) {
 			model.addAttribute("querycustflag", "-1");
-			log.error("客户资料查询异常:",e);
+			model.addAttribute("errMsg", ErrorCode.QUERY_CUST.getErrMsg());
 		}
 		//查询已订购
 		if(querycustflag){
@@ -304,10 +316,11 @@ public class MainController extends BaseController {
 				orderparamMap.put("curPage", "1");
 				orderparamMap.put("custId", custId);
 				orderparamMap.put("pageSize", "5");
+//				orderparamMap.put("prodClass", "12");
 				Map<String, Object> datamap = this.custBmo.queryCustProd(orderparamMap,flowNum, sessionStaff);
 				String code = (String) datamap.get("resultCode");
 				if (ResultCode.R_SUCC.equals(code)) {
-					Map<String, Object> temMap= (Map<String, Object>) datamap.get("result");
+					Map<String, Object> temMap=(Map) datamap.get("result");
 					List<Map<String, Object>> list = (List<Map<String, Object>>) temMap.get("prodInstInfos");
 						if (list == null) {
 							model.addAttribute("queryorderflag", "1");
@@ -346,18 +359,25 @@ public class MainController extends BaseController {
 					}else{
 						model.addAttribute("queryorderflag", "1");
 					}
+			} catch (BusinessException be) {
+				model.addAttribute("queryorderflag", "-1");
+				model.addAttribute("errMsg", be.getError().getErrMsg());
+			} catch (InterfaceException ie) {
+				model.addAttribute("queryorderflag", "-1");
+				model.addAttribute("errMsg", ie.getMsg());
 			} catch (Exception e) {
 				model.addAttribute("queryorderflag", "-1");
-				log.error("已订购产品异常：",e);
+				model.addAttribute("errMsg", ErrorCode.ORDER_PROD.getErrMsg());
 			}
 		}
 		model.addAttribute("provIsale", provIsale);
 		model.addAttribute("reloadFlag", paramsMap.get("reloadFlag").toString());
 		model.addAttribute("redirectUri", redirectUri);
 		model.addAttribute("mainPhoneNum", paramsMap.get("mainPhoneNum").toString());
-		model.addAttribute("newSubPhoneNum", paramsMap.get("newSubPhoneNum").toString());
-		model.addAttribute("oldSubPhoneNum", paramsMap.get("oldSubPhoneNum").toString());
+		model.addAttribute("newSubPhoneNum", paramsMap.get("newSubPhoneNum")==null?"":paramsMap.get("newSubPhoneNum").toString());
+		model.addAttribute("oldSubPhoneNum", paramsMap.get("oldSubPhoneNum")==null?"":paramsMap.get("oldSubPhoneNum").toString());
+		model.addAttribute("mktResInstCode", paramsMap.get("mktResInstCode")==null?"":paramsMap.get("mktResInstCode").toString());
 		model.addAttribute("isFee", isFee);
-		return "/padtoken/member/index";	
+		return "/padtoken/member/main";
     }
 }

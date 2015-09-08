@@ -15,7 +15,8 @@ order.service = (function(){
 			phoneLevel='';
 		}
 		//var subPage=$("#subpageFlag").val(); "subPage":subPage,
-		var params={"qryStr":searchtext,"pnLevelId":phoneLevel,"custId":custId};
+		var subPage=$("#subpageFlag").val();
+		var params={"subPage":subPage,"qryStr":searchtext,"pnLevelId":phoneLevel,"custId":custId,"PageIndex":pageIndex,"PageSize":10};	
 		//解析价格范围条件
 		var price = $.trim($("#select_price").val());
 		if(ec.util.isObj(price)){
@@ -107,12 +108,16 @@ order.service = (function(){
 				$("#ul_offer_list li").off("tap").on("tap",function(){
 					$(this).addClass("pakeagelistlibg").siblings().removeClass("pakeagelistlibg");
 				});
+		
 				if(OrderInfo.busitypeflag==1){
 					$("#btn_enter_prev").show();
 					$("#btn_enter_prev").off("tap").on("tap",function(){
 						$("#ul_busi_area").show();
 						$("#order_prepare").empty();
 					});
+				}else if(OrderInfo.busitypeflag==3){//主副卡成员变更
+					$("#btn_enter_offerlist_next").hide();
+					$("#btn_enter_commit").show();
 				}
 				//绑定选中套餐后下一步操作功能
 				$("#btn_enter_offerlist_next").off("tap").on("tap",function(){
@@ -122,6 +127,12 @@ order.service = (function(){
 					}else{
 						$.alert("提示","请先选择一个套餐,再进入下一步操作.");
 					}
+				});
+				//绑定选中套餐后确认操作功能
+				$("#btn_enter_commit").off("tap").on("tap",function(){
+					var subPage = $("#subPage").val();	
+					var $dl = $("#ul_offer_list .pakeagelistlibg").find("dl");				
+					order.service.choosedOffer($dl.attr("id"),$dl.attr("offerSpecId"),$dl.attr("price"),subPage,$dl.attr("offerSpecName"));
 				});
 			},
 			"always":function(){
@@ -308,16 +319,17 @@ order.service = (function(){
 	//根据页面选择成员数量保存销售品规格构成 offerType为1是单产品
 	var _setOfferSpec = function(offerType){
 		var k = -1;
-		var flag = false;  //判断是否选接入产品
+		var flag = false;  //判断是否选接入产品		
 		$.each(OrderInfo.offerSpec.offerRoles,function(){
 			var offerRole = this;
 			offerRole.prodInsts = []; //角色对象实例
+			
 			$.each(this.roleObjs,function(){
 				if(this.objType== CONST.OBJ_TYPE.PROD){  //接入类产品
 					var num = 0;  //接入类产品数量选择
 					if(offerType==1){  //单产品
 						num = 1;
-					}else{ //多成员销售品
+					}else{ //多成员销售品					
 						num = $("#"+offerRole.offerRoleId+"_"+this.objId).val();  //接入类产品数量选择
 					}
 					if(num==undefined || num==""){
@@ -405,9 +417,12 @@ order.service = (function(){
 	var _releaseFlag = 0;
 	//购机和选号入口的预占号码信息缓存
 	var _boProdAn = {};
+	var _initSpec = function(){
+		$("#search").off("click").on("click",function(){order.service.searchPack();});
+	};
 	var _offerDialog=function(subPage){
 		var param={};
-		var url=contextPath+"/order/prodoffer/prepare?subPage="+subPage;
+		var url=contextPath+"/pad/order/prodoffer/prepare?subPage="+subPage;
 		$.callServiceAsHtmlGet(url,param,{
 			"before":function(){
 				$.ecOverlay("<strong>正在查询中,请稍等会儿....</strong>");
@@ -416,32 +431,39 @@ order.service = (function(){
 				$.unecOverlay();
 			},
 			"done" : function(response){
+				var $pop=$('<div id="chooseofferspec"  data-role="popup" data-transition="slideup" data-corners="false" data-overlay-theme="b" class="popwindow" data-dismissible="false"></div>');
+				$pop.append('<div data-role="header" data-theme="t"> <a href="#" data-role="button" data-icon="back" data-rel="back" data-iconpos="notext" class="ui-btn-right">返回</a><h1>选择套餐</h1></div>');
+			
 				if(!response){
-					 response.data='<div style="margin:2px 0 2px 0;width:100%,height:100%;text-align:center;"><strong>页面显示失败,稍后重试</strong></div>';
+					$pop.append('<div style="margin:2px 0 2px 0;width:100%,height:100%;text-align:center;"><strong>页面显示失败,稍后重试</strong></div>');
 				}
 				if(response.code != 0) {
 					$.alert("提示","页面显示失败,稍后重试");
 					return;
-				}
-				var content$=$("#offerspecContent");
-				content$.html(response.data);
+				}else{
+					$pop.append(response.data);
+				}	
+				$pop.append('</div></div>');
 				order.prepare.backToInit();
 				_initSpec();
-				order.prodOffer.queryApConfig();
+				order.prodOffer.queryApConfig();								
+				//统一弹出框
+				var popup = $.popup("#chooseofferspec",$pop,{
+					width:1200,
+					height:$(window).height(),
+					contentHeight:$(window).height()-120,
+					afterClose:function(){}
+				});
 				order.service.searchPack();
-				$("#chooseofferspecclose").click(function(){
-					_closeChooseDialog();
-				});
-				easyDialog.open({
-					container : 'chooseofferspec'
-				});
+				order.prepare.initOffer();
 			}
 		});	
 	};
 	var _closeChooseDialog = function() {
-		if (!$("#chooseofferspec").is(":hidden")){
+		/*if (!$("#chooseofferspec").is(":hidden")){
 			easyDialog.close();
-		}
+		}*/
+		$("#chooseofferspec").popup("close");
 	};
 	var _choosedOffer=function(id,specId,price,subpage,specName){
 		var param={"offerSpecId":specId};
@@ -464,10 +486,22 @@ order.service = (function(){
 							break;
 						}
 					}
-				}
+				}	
 				if(offerRoleId!=""){
 					_closeChooseDialog();
-					order.prodModify.chooseOfferForMember(specId,subpage,specName,offerRoleId);
+					var prodId=$("#li_"+subpage).attr("objinstid");					
+					var accessnumber=$("#li_"+subpage).attr("accessnumber");					
+					for ( var i = 0; i < OrderInfo.viceOfferSpec.length; i++) {//清除旧数据
+						var viceOfferSpec = OrderInfo.viceOfferSpec[i];
+						if(prodId == viceOfferSpec.prodId){
+							OrderInfo.viceOfferSpec.splice(i,1);
+							break;
+						}
+					}
+					prodOfferSpec.prodId=prodId;
+					prodOfferSpec.accessnumber=accessnumber;
+					OrderInfo.viceOfferSpec.push(prodOfferSpec);
+					order.prodModify.chooseOfferForMember(specId,subpage,specName,offerRoleId);				
 				}else{
 					$.alert("提示","无法选择套餐，套餐规格查询失败！");
 				}
@@ -494,6 +528,7 @@ order.service = (function(){
 		setOfferSpec:_setOfferSpec,
 		confirm		: _confirm,
 		queryData:_queryData,
-		scroll:_scroll
+		scroll:_scroll,
+		initSpec:_initSpec
 	};
 })();

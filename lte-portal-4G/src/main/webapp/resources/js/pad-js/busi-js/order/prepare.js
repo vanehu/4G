@@ -200,13 +200,16 @@ order.prepare = (function(){
 				"done" : function(){}
 			});
 			order.service.boProdAn = {};
-		}
-		mktRes.phoneNbr.resetBoProdAn();
-		_hideOrderTitle();
+		}		
+		mktRes.phoneNbr.resetBoProdAn();		
+		_hideOrderTitle();		
 		$("#step1").hide();
 		$("#main_div").hide();
-		$("#order_prepare").show();
-		$("#order_tab_panel_content").html('');
+		$("#order_prepare").show();	
+		
+		if(OrderInfo.actionFlag != 6){//主副卡变更
+			$("#order_tab_panel_content").html('');
+		}
 		if(OrderInfo.actionFlag == 2){
 			$("#orderedprod").show();
 			$("#arroworder").removeClass();

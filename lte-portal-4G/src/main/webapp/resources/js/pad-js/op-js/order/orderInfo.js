@@ -86,6 +86,27 @@ OrderInfo = (function() {
 			  param7:"" //账单内容
 			  
 		}
+
+	//新装二次加载参数定义
+	var _newOrderInfo={
+		  result:{},
+		  checkMaskList:[],//是否信控信息
+		  prodOfferId:"",
+		  prodOfferName:"",
+		  isReloadFlag:"",
+		  paymentAcctTypeCd:"",
+		  mailingType:"",//投递方式
+		  bankAcct:"",
+		  bankId:"",
+		  limitQty:"",
+		  paymentMan:"",
+		  param1:"",//投递地址
+		  param2:"",//投递周期
+		  param3:"",
+		  param7:"", //账单内容
+		  isLastFlag:""//判断是否需要上一步功能
+		  
+	}
 	
 	var _checkUimData = []; //保存UIM校验后的返回数据
 	var _cust = { //保存客户信息
@@ -1209,6 +1230,7 @@ OrderInfo = (function() {
 		provinceInfo : _provinceInfo,
 		reloadOrderInfo : _reloadOrderInfo,
 		reloadProdInfo :_reloadProdInfo,
-		newOrderNumInfo:_newOrderNumInfo
+		newOrderInfo          	:_newOrderInfo,
+		newOrderNumInfo			:_newOrderNumInfo
 	};
 })();

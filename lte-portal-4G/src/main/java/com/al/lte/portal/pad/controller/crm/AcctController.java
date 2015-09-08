@@ -422,7 +422,8 @@ public class AcctController extends BaseController {
 			ArrayList<Map<String, Object>> bankList = (ArrayList<Map<String, Object>>)resultMap.get("bankList");							
 			PageModel<Map<String, Object>> pm = PageUtil.buildPageModel(pageNo, pageSize, totalRecords<1 ? 1:totalRecords, bankList);
 				
-			model.addAttribute("pageModel", pm);			
+			model.addAttribute("pageModel", pm);
+			model.addAttribute("DiffPlaceFlag", "local");
     	}catch(BusinessException be){
 			return super.failedStr(model, be);
 		}catch (InterfaceException ie){

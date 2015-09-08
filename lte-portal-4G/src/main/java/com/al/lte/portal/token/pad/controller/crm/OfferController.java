@@ -443,4 +443,17 @@ public class OfferController extends BaseController {
 		}
 		return jsonResponse;
 	}
+	
+	/**
+	 * 获取主副卡变更实例页面
+	 * @param param
+	 * @param model
+	 * @param response
+	 * @return
+	 * @throws BusinessException
+	 */
+	@RequestMapping(value = "/queryMember", method = RequestMethod.GET)
+	public String queryMember(@RequestParam("strParam") String param,Model model,HttpServletResponse response){		
+	 	return "/padtoken/member/index";
+	}
 }

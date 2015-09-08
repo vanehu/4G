@@ -18,24 +18,7 @@ $(document).ready(function () {
 		$(this).attr("class", "tab-nav-action"); //设置当前选中项为选中样式
 		divs.hide();//隐藏所有选中项内容
 		divs.eq(index).show(); //显示选中项对应内容
-		var type = $(this).attr("type");
-		if(type == 1){//加装
-			$("#accountDiv").show();
-			$("#orderAttrDiv").show();				
-		}else if(type == 2){//副卡变更
-			$("#accountDiv").hide();
-			$("#orderAttrDiv").hide();
-		}
 	});
-	
-	var actionFlag = '${main.actionFlag}';	
-	if(actionFlag == 6){
-		$("#accountDiv").show();
-		$("#orderAttrDiv").show();
-	}else if(actionFlag == 21){
-		$("#accountDiv").hide();
-		$("#orderAttrDiv").hide();
-	}
 });
 var x_m_d =null;
 var x_m_u = null;
@@ -62,61 +45,23 @@ function m_up(e){
 	<#assign prodId = 0 /> 
 	<#assign offerSpec = main.offerSpec />	
 	<#list 1..main.offerNum as n >
-    <div id="tabs-body" class="tabs-body">
-    	<!-- 产品信息展示 -->    	
-    		<#assign i = 0 />
-   			<#if main.addflag?? && main.addflag=="ADD">
-   				<#list main.prodInstInfos as prodinfos>
-					<#list main.offer as offerinst>
-						<#if prodinfos.accNbr==offerinst.accNbr>
-							<#list offerinst.offerMemberInfos as item>
-								<#if item.objType==2>
-									<#assign prodId = item.objInstId/>
-									<#if i==0>
-										<div class="ordercona orderform" style="display:block;">						
-									<#else>
-										<div class="ordercona orderform" style="display:none;">						
-									</#if>
-										<div class="optional"> 可选包/功能产品 <a href="#optional_${prodId}" data-role="button" data-icon="optional" data-iconpos="notext" data-theme="i">可选包/功能产品</a></div>
-									</div>
-									<#assign i = i+1 />
-								</#if>
-							</#list>
-						</#if>
-					</#list>
-				</#list>
-			<#elseif offerSpec?has_content>
-				<#assign i = i+1 />
+
+    <div id="tabs-body" class="tabs-body">      	
+			<!-- 产品信息展示 -->
+			<#if main.addflag?? && main.addflag=="ADD">
+				
+			<#else>
 				<@block name="product">
 					<#include "/pad/member/order-product.html" />
 				</@block>				
-			</#if>			
-			<#if main.viceParam?? &&(main.viceParam?size>0)>		
-				<#list main.viceParam as item>				
-					<#assign prodId = item.objInstId/>
-					<#if i==0>
-						<div id="change_${prodId}" class="ordercona orderform" style="display:block;">						
-					<#else>
-						<div id="change_${prodId}" class="ordercona orderform" style="display:none;">						
-					</#if>
-							<div id="changePlaninfo" class="ui-grid-a">
-								<div class="ui-grid-c">							
-									<div class="ui-block-a">原套餐:${main.oldOfferSpecName}</div>	
-									<div class="ui-block-b" style="color:#5a9203;">新套餐:${item.offerSpecName}</div>	
-								</div>
-							</div>
-							<div class="optional" style="top: 62px;"> 可选包/功能产品 <a href="#optional_${prodId}" data-role="button" data-icon="optional" data-iconpos="notext" data-theme="i">可选包/功能产品</a></div>
-						</div>
-					<#assign i = i+1 />
-				</#list>
 			</#if>
     </div>
-     <div class="orderconb" style="height: 325px;">
+     <div class="orderconb">
         <div class="many">
       	  <button data-role="button" data-icon="arrow-l" data-iconpos="notext" disabled>向左</button>
 	      <div class="tabsdiv">
 		        <ul id="tabs">
-		        	<!--展示套餐下多个成员标签-->
+	          		<!--展示套餐下多个成员标签-->
 	          		<#assign index = 0>
 					<#if main.addflag?? && main.addflag=="ADD">
 						<#list main.prodInstInfos as prodinfos>
@@ -135,8 +80,7 @@ function m_up(e){
 								</#if>
 							</#list>
 						</#list>
-					<#elseif offerSpec?has_content>
-						<#if offerSpec.offerRoles?? && (offerSpec.offerRoles?size>0)>					
+					<#elseif offerSpec.offerRoles?? && (offerSpec.offerRoles?size>0)>					
 							<#list offerSpec.offerRoles as offerRole>	
 								<#if (offerRole.prodInsts?? && offerRole.prodInsts?size>0)>
 									<#list offerRole.prodInsts as prod>
@@ -148,34 +92,19 @@ function m_up(e){
 										<#assign index = index+1>
 									</#list>
 								</#if>
-							</#list>
-						</#if>					
+							</#list> 					
 					</#if>
-					
-					<#if main.viceParam?? &&(main.viceParam?size>0)>	          			
-						<#list main.viceParam as item>						
-							<#if index==0>
-								<li class="tab-nav-action" id="tab_${item.objInstId}" prodId="${item.objInstId}" type="2" onclick="offerChange.changeTab(${item.objInstId})">${item.roleName}${item.accessNumber}</li>
-							<#else>
-								<li class="tab-nav" id="tab_${item.objInstId}" prodId="${item.objInstId}" type="2" onclick="offerChange.changeTab(${item.objInstId})">${item.roleName}${item.accessNumber}</li>
-							</#if>
-							<#assign index = index+1>
-						</#list>
-	          		</#if>
 	        	</ul>
 	        </div>
 	       <button data-role="button" data-icon="arrow-r" data-iconpos="notext" disabled>向右</button>
 	      </div>
-	      
-	      	<!-- 帐户展示 -->
-	      	<div id="accountDiv">
-	      		<div class="ordertitle">账户信息</div>			
+			<!-- 帐户展示 -->
+			<div class="ordertitle">账户信息</div>
+			<div id="accountDiv" >
 				<@block name="account">
 					<#include "/pad/member/order-account.html" />
-				</@block>				
-	      	</div>
-			
-				
+				</@block>
+			</div>
 	      	<div class="ordertitle">管理属性</div>
 	     	<!-- 发展人展示 -->
 			<@block name="dealer">
@@ -186,22 +115,22 @@ function m_up(e){
 			<@block name="remark">
 				<#include "/pad/member/order-remark.html" />
 			</@block>
-			
 			<!--购物车订单属性展示-->
-			<div id="orderAttrDiv" style="display: none;">
-				<div class="ordertitle">经办人</div>
-				<@block name="orderAttr">
-					<#include "/pad/member/order-attr.html" />
-				</@block>
-			</div>			
-			<!--省内订单属性展示-->
-			<div id="orderProvAttrDiv"  style="display: none;">
-				<@block name="orderProvAttr">
-					<#include "/pad/order/order-prov-attr.html" />
-				</@block>
-			</div>
+			<div class="ordertitle">经办人</div>
+				<div id="orderAttrDiv"  style="display: none;">
+					<@block name="orderAttr">
+						<#include "/pad/member/order-attr.html" />
+					</@block>
+				</div>
+				<!--省内订单属性展示-->
+				<div id="orderProvAttrDiv"  style="display: none;">
+					<@block name="orderProvAttr">
+						<#include "/pad/order/order-prov-attr.html" />
+					</@block>
+				</div>
 	  	</div>
     </#list>
+   
   	
   	<div data-role="footer" data-position="fixed" data-tap-toggle="false" data-theme="n">
  	<div class="orderpackage"><span>${main.boActionTypeName}</span> 
@@ -212,40 +141,26 @@ function m_up(e){
 			<#else>
 				${main.accessNumber}
 			</#if> 
-	</div>     
-     <button id="fillNextStep" data-inline="true" data-icon="next">下一步</button>
-     <button id="fillLastStep" data-inline="true" data-icon="prev">取消</button> 
+	</div>
+    <button id="fillNextStep" data-inline="true" data-icon="next">下一步</button> 
+    <button id="fillLastStep" data-inline="true" data-icon="prev">取消</button> 
  	</div>
  	
  	<#if main.addflag?? && main.addflag=="ADD">
-		<#assign i = 0 />
+		<#assign z = 0 />
 		<#list main.prodInstInfos as prodinfos>
 			<#list main.offer as offerinst>
 				<#if prodinfos.accNbr==offerinst.accNbr>
 					<#list offerinst.offerMemberInfos as item>
 						<#if item.objType==2>
 							<#assign prodId = item.objInstId/>
-							<#assign i = i+1 />
-							<#if i==1>
-								<div type="attach" id="attach_${prodId}">
-							<#else>
-								<div type="attach" id="attach_${prodId}" style="display:none">
-							</#if>									
-								<div id="uimDiv_${prodId}" style="display: none;">
-									<h5 class="s_title" id="title_${prodId}">补换卡： </h5>
-									<div class="pdcardcon show" >
-										<ul class="fillin show">
-											<#include "/pad/member/order-uim.html" />
-										</ul>
-									</div>
-								</div>
-							</div>
+							<div id="attach_${prodId}"></div>
 						</#if>
 					</#list>
 				</#if>
 			</#list>
-		</#list>
-	<#elseif offerSpec?has_content>
+		</#list>					
+	<#else>
 		<#if offerSpec.offerRoles?? && (offerSpec.offerRoles?size>0)>
 			<#list offerSpec.offerRoles as offerRole>
 				<#if offerRole.prodInsts?? && (offerRole.prodInsts?size>0)>
@@ -255,37 +170,8 @@ function m_up(e){
 					</#list>
 				</#if>
 			</#list>
-		</#if> 					
-	</#if>
- 	
- 	<#if main.viceParam?? &&(main.viceParam?size>0)>
-		<#assign i = 0 />		
-		<#list main.viceParam as item>		
-			<#assign prodId = item.objInstId/>
-			<#assign i = i+1 />
-			<#if i==1>			
-				<div id="attach_${prodId}"></div>
-				<div id="uimDiv_${prodId}" style="display: none;">
-					<h5 class="s_title">补换卡： </h5>
-					<div class="pdcardcon show" >
-						<ul class="fillin show">
-							<#include "/pad/member/order-uim.html" />
-						</ul>
-					</div>
-				</div>
-			<#else>
-				<div id="attach_${prodId}" style="display: none;"></div>
-				<div id="uimDiv_${prodId}" style="display: none;">
-					<h5 class="s_title">补换卡： </h5>
-					<div class="pdcardcon show" >
-						<ul class="fillin show">
-							<#include "/pad/member/order-uim.html" />
-						</ul>
-					</div>
-				</div>
-			</#if>
-		</#list>
-	</#if>		
+		</#if> 				
+	</#if>			
  	
  	<!-- 帐户、协销人等弹出框-->
 	<div id="dialogDiv" style="display:none">

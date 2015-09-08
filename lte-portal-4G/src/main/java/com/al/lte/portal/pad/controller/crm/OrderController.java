@@ -312,6 +312,7 @@ public class OrderController extends BaseController {
     	String partyId = request.getParameter("partyId");
     	String offerRoleId = request.getParameter("offerRoleId");
     	String roleCd = request.getParameter("roleCd");
+    	String actionFlag = request.getParameter("actionFlag");
     	
         dataBusMap.put("offerSpecId", offerSpecId);
         dataBusMap.put("prodSpecId", prodSpecId);//379
@@ -331,6 +332,7 @@ public class OrderController extends BaseController {
 			result = orderBmo.orderSpecParam(dataBusMap, null, sessionStaff);
 			if ("0".equals(result.get("code").toString())) {
 				list = (List<Map<String, Object>>) result.get("prodSpecParams");
+				System.out.println("pad里的list:"+list.toString());
 				model.addAttribute("prodSpecParams", list);
 				model.addAttribute("ul_id", ul_id);
 				model.addAttribute("prodId", prodId);
@@ -356,7 +358,11 @@ public class OrderController extends BaseController {
 			log.error("加载产品规格属性/pad/order/orderSpecParam方法异常", e);
 			return super.failedStr(model, ErrorCode.ORDER_PROD_ITEM, e, dataBusMap);
 		}
-    	return "/pad/order/order-spec-param";
+		if("6".equals(actionFlag)){//主副卡成员变更
+			return "/pad/member/order-spec-param";
+		}else{
+			return "/pad/order/order-spec-param";
+		}    	
     }
 
     /*bxw产品实例属性*/
@@ -768,7 +774,15 @@ public class OrderController extends BaseController {
         		model.addAttribute("main", param);
         	}
     		forward = "/pad/offer/offer-change";
-    	}else {
+    	}else if("6".equals(String.valueOf(param.get("actionFlag"))) || "21".equals(String.valueOf(param.get("actionFlag")))){//主副卡成员变更
+    		if (MapUtils.isNotEmpty(param)) {
+        		if (!param.containsKey("offerNum")||param.get("offerNum")==null) {
+        			param.put("offerNum", 1);
+        		}
+        		model.addAttribute("main", param);
+        	}
+    		forward = "/pad/member/member-change";
+    	}else {    	
     		if (MapUtils.isNotEmpty(param)) {
         		if (!param.containsKey("offerNum")||param.get("offerNum")==null) {
         			param.put("offerNum", 1);
@@ -1863,5 +1877,22 @@ public class OrderController extends BaseController {
 		}
 		return jsonResponse;
 	}
+	
+	@RequestMapping(value = "/test", method = RequestMethod.GET)
+ 
+    public String test(Model model ,HttpServletRequest request) throws AuthorityException {
+		
+       return "/pad/main/test";
+    }
+
+	/**
+     * 规则创建入口
+     * @return
+     * @throws BusinessException
+     */
+    @RequestMapping(value = "/rulecreate", method = { RequestMethod.GET })
+    public String rulecreate() throws BusinessException {
+        return "/pad/member/rule-create";
+    }
 
 }

@@ -1,5 +1,6 @@
 package com.al.lte.portal.pad.controller.crm;
 
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,6 +25,7 @@ import com.al.ecs.exception.InterfaceException;
 import com.al.ecs.exception.ResultConstant;
 import com.al.ecs.spring.controller.BaseController;
 import com.al.lte.portal.bmo.crm.OfferBmo;
+import com.al.lte.portal.common.MySimulateData;
 import com.al.lte.portal.common.SysConstant;
 import com.al.lte.portal.model.SessionStaff;
 
@@ -443,4 +445,35 @@ public class OfferController extends BaseController {
 		}
 		return jsonResponse;
 	}
+	
+	/**
+	 * 获取主副卡变更实例页面
+	 * @param param
+	 * @param model
+	 * @param response
+	 * @return
+	 * @throws BusinessException
+	 */
+	@RequestMapping(value = "/queryMember", method = RequestMethod.GET)
+	public String queryMember(@RequestParam("strParam") String param,Model model,HttpServletResponse response){		
+	 	return "/pad/member/index";
+	}
+	
+	/**
+	 * 获取主副卡纳入老用户权限
+	 */
+	@RequestMapping(value = "/areaidJurisdiction", method = RequestMethod.GET)
+	@ResponseBody
+    public JsonResponse areaidJurisdiction(@RequestParam Map<String, Object> paramMap){
+        JsonResponse jsonResponse = null;
+			try {
+				String flag = MySimulateData.getInstance().getParam((String) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_DATASOURCE_KEY),paramMap.get("areaid").toString());
+				jsonResponse = super.successed(flag,ResultConstant.SUCCESS.getCode());
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			} catch (InterfaceException e) {
+				e.printStackTrace();
+			}
+		return jsonResponse;
+    }
 }

@@ -39,7 +39,7 @@ CacheData = (function() {
 		if(spec.servSpecName==undefined){
 			spec.servSpecName = spec.objName;
 		}
-		var flag = true ; 
+		var flag = true ;	
 		for (var i = 0; i < AttachOffer.openServList.length; i++) { //没有开通任何附属
 			var open = AttachOffer.openServList[i];
 			if(open.prodId==prodId){
@@ -678,63 +678,12 @@ CacheData = (function() {
 	};
 	
 	//二次业务把必须功能产品改成不能删除
-	var _parseServ = function(data){
+	var _parseServ = function(data,objInstId){
 		if(ec.util.isObj(data)){
 			if(ec.util.isArray(data.result.servSpec)){
-				for (var i = 0; i < data.result.servSpec.length; i++) {
-					var servSpec = data.result.servSpec[i];
-					var serv = CacheData.getServBySpecId(prodId,servSpec.servSpecId); //已开通里面查找
-					var newSpec = CacheData.getServSpec(prodId,servSpec.servSpecId); //已选里面查找
-					if(servSpec.ifDault==0){
-						if(ec.util.isObj(serv)){
-							var $dd = $("#del_"+prodId+"_"+serv.servId);
-							if(ec.util.isObj($dd)){
-								$dd.removeClass("delete").addClass("mustchoose");
-								$dd.removeAttr("onclick");
-								serv.isdel = "N";
-							}
-						}	
-						else if(ec.util.isObj(newSpec)){
-							var $dd = $("#del_"+prodId+"_"+newSpec.servSpecId);
-							if(ec.util.isObj($dd)){
-								$dd.removeClass("delete").addClass("mustchoose");
-								$dd.removeAttr("onclick");
-								newSpec.isdel = "N";
-							}
-						}else {
-							if(OrderInfo.actionFlag==2){//套餐变更
-								servSpec.isdel = "C";
-								CacheData.setServSpec(prodId,servSpec);
-								AttachOffer.addOpenServList(prodId,servSpec.servSpecId,servSpec.servSpecName,servSpec.ifParams);
-								//AttachOffer.checkServExcludeDepend(prodId,servSpec);
-							}
-						}
-					}else if(OrderInfo.actionFlag==2&&servSpec.ifDault==1){//套餐变更需要展示默认的功能产品
-						if(ec.util.isObj(serv)){
-							var $dd = $("#del_"+prodId+"_"+serv.servId);
-							if(ec.util.isObj($dd)){
-								serv.isdel = "N";
-							}
-						}	
-						else if(ec.util.isObj(newSpec)){
-							var $dd = $("#del_"+prodId+"_"+newSpec.servSpecId);
-							if(ec.util.isObj($dd)){
-								newSpec.isdel = "N";
-							}
-						}else {
-							servSpec.isdel = "C";
-							CacheData.setServSpec(prodId,servSpec);
-							AttachOffer.addOpenServList(prodId,servSpec.servSpecId,servSpec.servSpecName,servSpec.ifParams);
-							//AttachOffer.checkServExcludeDepend(prodId,servSpec);
-						}
-					}
+				if(ec.util.isObj(objInstId)){
+					prodId=objInstId;
 				}
-			}
-		}
-	};
-	var _parseServ = function(data,prodId){
-		if(ec.util.isObj(data)){
-			if(ec.util.isArray(data.result.servSpec)){
 				for (var i = 0; i < data.result.servSpec.length; i++) {
 					var servSpec = data.result.servSpec[i];
 					var serv = CacheData.getServBySpecId(prodId,servSpec.servSpecId); //已开通里面查找
@@ -763,7 +712,7 @@ CacheData = (function() {
 								//AttachOffer.checkServExcludeDepend(prodId,servSpec);
 							}
 						}
-					}else if(OrderInfo.actionFlag==2&&servSpec.ifDault==1){//套餐变更需要展示默认的功能产品
+					}else if((OrderInfo.actionFlag==2||OrderInfo.actionFlag==21)&&servSpec.ifDault==1){//套餐变更需要展示默认的功能产品
 						if(ec.util.isObj(serv)){
 							var $dd = $("#del_"+prodId+"_"+serv.servId);
 							if(ec.util.isObj($dd)){

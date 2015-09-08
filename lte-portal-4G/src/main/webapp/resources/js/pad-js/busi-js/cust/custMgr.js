@@ -67,6 +67,8 @@ order.cust.mgr = (function(){
 	//客户类型选择事件 ok
 	var _partyTypeCdChoose = function(scope,id) {
 		var partyTypeCd=$(scope).val();
+		//客户类型关联证件类型下拉框
+		$("#"+id).empty();
 		_certTypeByPartyType(partyTypeCd,id);
 		//创建客户确认按钮
 		_custCreateButton();

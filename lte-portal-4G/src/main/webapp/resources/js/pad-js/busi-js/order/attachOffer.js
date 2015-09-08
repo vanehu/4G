@@ -2602,6 +2602,70 @@ AttachOffer = (function() {
 		}
 	};
 	
+	var _showMainMemberRoleProd=function(prodId){
+		for (var i = 0; i < OrderInfo.viceOfferSpec.length; i++) {//多张副卡同时进行套餐变更
+			var offerSpec=OrderInfo.viceOfferSpec[i];
+			if(prodId==offerSpec.prodId){
+				for (var j = 0; j < offerSpec.offerRoles.length; j++) {
+					var offerRole = offerSpec.offerRoles[j];
+					if(offerRole.memberRoleCd==CONST.MEMBER_ROLE_CD.VICE_CARD){//主卡
+						for (var k = 0; k < offerRole.roleObjs.length; k++) {
+							var roleObj = offerRole.roleObjs[k];
+							if(roleObj.objType==CONST.OBJ_TYPE.SERV){
+								var servSpecId = roleObj.objId;
+								var $oldLi = $('#li_'+prodId+'_'+servSpecId);
+								var spec = CacheData.getServSpec(prodId,servSpecId);//从已选择功能产品中找
+								if(spec != undefined){
+									if(roleObj.minQty==1){
+										$oldLi.append('<dd class="mustchoose"></dd>');
+									}
+									$oldLi.append('<dd id="jue_'+prodId+'_'+servSpecId+'" class="jue2" title="'+offerRole.offerRoleName+'"></dd>');
+									continue;
+								}
+								var serv = CacheData.getServBySpecId(prodId,servSpecId);//从已订购功能产品中找
+								if(serv!=undefined){ //不在已经开跟已经选里面
+									var $oldLi = $('#li_'+prodId+'_'+serv.servId);
+									if(roleObj.minQty==1){
+										$oldLi.append('<dd class="mustchoose"></dd>');
+									}
+									$oldLi.append('<dd id="jue_'+prodId+'_'+serv.servId+'" class="jue2" title="'+offerRole.offerRoleName+'"></dd>');
+									continue;
+								}
+								if(roleObj.dfQty > 0){ //必选，或者默选
+									var servSpec=jQuery.extend(true, {}, roleObj);
+									CacheData.setServSpec(prodId,servSpec); //添加到已开通列表里
+									spec = servSpec;
+									if(ec.util.isArray(spec.prodSpecParams)){
+										spec.ifParams = "Y";
+									}
+									$('#li_'+prodId+'_'+servSpecId).remove(); //删除可开通功能产品里面
+									var $li = $('<li id="li_'+prodId+'_'+servSpecId+'"></li>');
+									if(roleObj.minQty==0){
+										$li.append('<dd class="delete" onclick="AttachOffer.closeServSpec('+prodId+','+servSpecId+',\''+spec.servSpecName+'\',\''+spec.ifParams+'\')"></dd>');
+									}else{
+										$li.append('<dd class="mustchoose"></dd>');
+									}
+									$li.append('<span>'+spec.servSpecName+'</span>');
+									if (spec.ifParams=="Y"){
+										if(CacheData.setServParam(prodId,spec)){ 
+											$li.append('<dd id="can_'+prodId+'_'+servSpecId+'" class="canshu2" onclick="AttachOffer.showServParam('+prodId+','+servSpecId+');"></dd>');
+										}else {
+											$li.append('<dd id="can_'+prodId+'_'+servSpecId+'" class="canshu" onclick="AttachOffer.showServParam('+prodId+','+servSpecId+');"></dd>');
+										}
+									}
+									$li.append('<dd id="jue_'+prodId+'_'+servSpecId+'" class="jue2" title="'+offerRole.offerRoleName+'"></dd>');
+									$("#open_serv_ul_"+prodId).append($li);
+									spec.isdel = "N";
+									_showHideUim(0,prodId,servSpecId);//显示或者隐藏补换卡
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	};
+	
 	return {
 		addOffer 				: _addOffer,
 		addOfferSpec 			: _addOfferSpec,
@@ -2651,6 +2715,7 @@ AttachOffer = (function() {
 		reductionChangList		: _reductionChangList,
 		filterServ				: _filterServ,
 		changeOfferS            : _changeOfferS,
-		changeOfferOrdered      : _changeOfferOrdered
+		changeOfferOrdered      : _changeOfferOrdered,
+		showMainMemberRoleProd	: _showMainMemberRoleProd
 	};
 })();

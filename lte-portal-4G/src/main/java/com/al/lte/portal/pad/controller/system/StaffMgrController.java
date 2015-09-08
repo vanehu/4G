@@ -88,8 +88,10 @@ public class StaffMgrController extends com.al.lte.portal.controller.system.Staf
                 if (staffParm.get("staffName") != null && "".equals(staffParm.get("staffName"))) {
                     staffParm.remove("staffName");
                 }
-                if (staffParm.get("staffCode") != null && "".equals(staffParm.get("staffCode"))) {
+                if (staffParm.get("qryStaffCode") != null && "".equals(staffParm.get("qryStaffCode"))) {
                     staffParm.remove("staffCode");
+                }else{
+                	staffParm.put("staffCode", staffParm.get("qryStaffCode"));
                 }
                 Map<String, Object> returnMap = this.staffBmo.queryStaffList(staffParm, null, sessionStaff);
                 if (returnMap.get("totalNum") != null) {

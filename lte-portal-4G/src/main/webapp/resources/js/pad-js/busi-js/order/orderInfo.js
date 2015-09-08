@@ -15,7 +15,7 @@ OrderInfo = (function() {
 	 * 
 	 * 13 购买裸机  14 合约套餐  15 补退费  16 改号	17 终端退货 18 终端换货 19返销 20返销,22补换卡,23异地补换卡
 	 * 
-	 * 31改产品密码，32重置产品密码，,33改产品属性，34修改短号，
+	 * 31改产品密码，32重置产品密码，,33改产品属性，34修改短号
 	 * 
 	 */
 	var _actionFlag = 0;
@@ -44,6 +44,43 @@ OrderInfo = (function() {
 	var _orderlonger = "";
 	
 	var _custorderlonger = "";
+	
+	var _provinceInfo={
+			provIsale:"",
+			redirectUri:"",
+			isFee:"1",
+			extCustOrderID:"",
+			reloadFlag:"",
+			prodOfferId:"",
+			prodOfferName:"" 
+	};
+	
+	//新装是否带出主副卡号码
+	var _newOrderNumInfo = {
+		mainPhoneNum:"",
+		newSubPhoneNum:""
+	}
+	
+	//新装二次加载参数定义
+	var _newOrderInfo={
+		  result:{},
+		  checkMaskList:[],//是否信控信息
+		  prodOfferId:"",
+		  prodOfferName:"",
+		  isReloadFlag:"",
+		  paymentAcctTypeCd:"",
+		  mailingType:"",//投递方式
+		  bankAcct:"",
+		  bankId:"",
+		  limitQty:"",
+		  paymentMan:"",
+		  param1:"",//投递地址
+		  param2:"",//投递周期
+		  param3:"",
+		  param7:"", //账单内容
+		  isLastFlag:""//判断是否需要上一步功能
+		  
+	}
 
 	var _cust = { //保存客户信息
 		custId : "",
@@ -1137,6 +1174,9 @@ OrderInfo = (function() {
 		busitypeflag			:_busitypeflag,
 		checkresult				:_checkresult,
 		custorderlonger			:_custorderlonger,
-		prodAttrs				:_prodAttrs
+		prodAttrs				:_prodAttrs,
+		provinceInfo           	:_provinceInfo,
+		newOrderInfo          	:_newOrderInfo,
+		newOrderNumInfo        	:_newOrderNumInfo
 	};
 })();

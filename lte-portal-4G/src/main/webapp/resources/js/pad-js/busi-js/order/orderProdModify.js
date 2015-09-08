@@ -770,13 +770,13 @@ order.prodModify = (function(){
 	//选中套餐返回
 	var _chooseOfferForMember=function(specId,subpage,specName,offerRoleId){
 		$("#"+subpage).html("&nbsp;&nbsp;<span style='color: #327501;'>订购新套餐：</span>"+specName);
-		$("#"+subpage).parent().attr("addSpecId",specId).attr("addRoleId",offerRoleId).attr("del","N");
+		$("#li_"+subpage).attr("addSpecId",specId).attr("addRoleId",offerRoleId).attr("del","N").attr("addSpecName",specName);
 		_ischooseOffer=true;
 		if(document.getElementById("li_"+subpage)){
-			$("#li_"+subpage).css("text-decoration","").attr("del","N").attr("knew","Y");
-			$("#li_"+subpage).find("i:first-child").find("a").text("拆副卡");
-		}
-		
+			$("#label_"+subpage).attr({style:"height:53px;line-height:53px;padding-left:18px;text-decoration:''"});
+			$("#li_"+subpage).attr("del","N").attr("knew","Y");
+			document.getElementById("button_" + subpage).innerHTML = "拆副卡";
+		}		
 	};
 	//主卡拆机副卡新装套餐
 	var _removeAndAdd=function(prodStatusCd,boActionType,templateType){
@@ -2156,6 +2156,9 @@ order.prodModify = (function(){
 			order.prepare.hideStep();
 			$("#orderedprod").show();
 			$("#order_prepare").show();
+			if(OrderInfo.actionFlag == 6){
+				$("#order_tab_panel_content").hide();
+			}
 		},no:function(){
 			
 		}},"question");

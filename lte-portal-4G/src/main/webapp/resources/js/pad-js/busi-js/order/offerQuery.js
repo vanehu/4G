@@ -534,8 +534,12 @@ query.offer = (function() {
 			return false;
 		}
 		offerSpec = SoOrder.sortOfferSpec(offerSpec); //排序主副卡套餐	
-		OrderInfo.offerSpec = offerSpec;
-		return offerSpec;
+		if(OrderInfo.actionFlag==6 && ec.util.isArray(OrderInfo.oldprodInstInfos)){//主副卡纳入老用户
+			OrderInfo.oldofferSpec.push({"offerSpec":offerSpec,"accNbr":param.accNbr});
+		}else{
+			OrderInfo.offerSpec = offerSpec;
+		}
+		return offerSpec;		
 	};
 	
 	/**
@@ -609,8 +613,10 @@ query.offer = (function() {
 	 * 加载实例
 	 * 如果传入了paramInfo，则使用它，否则拼入参
 	 */
-	var _loadInst = function(){
-		OrderInfo.order.soNbr = UUID.getDataId();
+	var _loadInst = function(){	
+		if(OrderInfo.order.soNbr==null || OrderInfo.order.soNbr==undefined || OrderInfo.order.soNbr==""){
+			OrderInfo.order.soNbr = UUID.getDataId();
+		}
 		if(CONST.getAppDesc()!=0){ //不是4g不需要加载
 			return true;
 		}
@@ -673,12 +679,35 @@ query.offer = (function() {
 		param.areaId = OrderInfo.getProdAreaId(param.prodId);
 		param.partyId = OrderInfo.cust.custId;
 		param.distributorId = OrderInfo.staff.distributorId;
+		if(OrderInfo.actionFlag == 3){
+			param.mainOfferSpecId=order.prodModify.choosedProdInfo.prodOfferId;
+		}else if(OrderInfo.actionFlag==21){
+			if(ec.util.isArray(OrderInfo.viceOfferSpec)){
+				$.each(OrderInfo.viceOfferSpec,function(){
+					if(this.prodId==param.prodId){
+						param.mainOfferSpecId=this.offerSpecId;
+						return false;
+					}
+				});
+			}
+		}else{
+			param.mainOfferSpecId=OrderInfo.offerSpec.offerSpecId;
+		}
 		if(ec.util.isObj(OrderInfo.order.soNbr)){  //缓存流水号
 			param.soNbr = OrderInfo.order.soNbr;
 		}
 		if(order.ysl!=undefined){
 			if(order.ysl.yslbean.yslflag!=undefined){
 				param.yslflag = order.ysl.yslbean.yslflag;
+			}
+		}
+		if(ec.util.isArray(OrderInfo.oldprodInstInfos) && OrderInfo.actionFlag==6){//主副卡纳入老用户
+			for(var i=0;i<OrderInfo.oldprodInstInfos.length;i++){
+				if(param.acctNbr==OrderInfo.oldprodInstInfos[i].accNbr){
+					param.areaId = OrderInfo.oldprodInstInfos[i].areaId;
+					param.partyId = OrderInfo.oldprodInstInfos[i].custId;
+					param.mainOfferSpecId=OrderInfo.oldprodInstInfos[i].mainProdOfferInstInfos[0].prodOfferId;
+				}
 			}
 		}
 	};
@@ -704,6 +733,71 @@ query.offer = (function() {
 		}
 	};
 	
+	/**
+	 * 主副卡页面查询 
+	 */
+	var _queryMemberHtml = function(param,callBackFun) {
+		addParam(param);  //添加基本参数
+		var url = contextPath+"/pad/offer/queryMember";
+		if(typeof(callBackFun)=="function"){
+			$.callServiceAsHtmlGet(url,{strParam:JSON.stringify(param)},{
+				"before":function(){
+					$.ecOverlay("<strong>正在查询销售品实例中,请稍后....</strong>");
+				},
+				"always":function(){
+					$.unecOverlay();
+				},
+				"done" : function(response){
+					$.unecOverlay();
+					if (response.code==0) {
+						if(response.data){
+							callBackFun(response.data);
+						}
+					}else {
+						$.alert("提示","附属销售品实例查询失败,稍后重试");
+						return;
+					}
+				}
+			});
+		}else{
+			$.ecOverlay("<strong>查询附属销售品实例中，请稍等...</strong>");
+			var response = $.callServiceAsHtmlGet(url,{strParam:JSON.stringify(param)});	
+			$.unecOverlay();
+			if (response.code==0) {
+				if(response.data){
+					return response.data;
+				}
+			}else {
+				$.alert("提示","查询附属销售品失败,稍后重试");
+				return;
+			}
+		}		
+	};
+	
+	/**
+	 * 查询产品实例属性
+	 * param : {
+	 * prodId : "", //产品实例id
+	 * acctNbr : "", //接入号
+	 * prodSpecId : "", //产品规格id
+	 * areaId : "" //地区id
+	 * }
+	 */
+	var _queryProdInstParam = function(param) {
+		var url = contextPath+"/order/prodInstParam";
+		$.ecOverlay("<strong>查询产品实例属性中，请稍等...</strong>");
+		var response = $.callServiceAsJson(url,param);	
+		$.unecOverlay();
+		if (response.code==0) {
+			if(response.data){
+				return response.data;
+			}
+		}else {
+			$.alert("提示","查询附属销售品失败,稍后重试");
+			return;
+		}
+	};
+	
 	return {
 		checkOperate			: _checkOperate,
 		loadInst				: _loadInst,
@@ -726,6 +820,8 @@ query.offer = (function() {
 		orderSubmit				: _orderSubmit,
 		orderSubmitComplete		: _orderSubmitComplete,
 		updateCheckByChange		: _updateCheckByChange,
-		queryOpenedAttachAndServ: _queryOpenedAttachAndServ
+		queryOpenedAttachAndServ: _queryOpenedAttachAndServ,
+		queryMemberHtml			: _queryMemberHtml,
+		queryProdInstParam		: _queryProdInstParam
 	};
 })();

@@ -722,6 +722,35 @@ offerChange = (function() {
 			divs.eq(index).show(); //显示选中项对应内容
 		});
 	};
+	
+	//初始化省内订单属性
+	var _initOrderProvAttr = function(){
+		//var obj=$("#orderProvAttrIsale").val;
+		if($("#orderProvAttrIsale")){
+			$("#orderProvAttrIsale").val(OrderInfo.provinceInfo.provIsale);
+		}
+		var url=contextPath+"/order/provOrderAttrFlag";
+		$.ecOverlay("<strong>正在查询是否显示省内订单属性,请稍后....</strong>");
+		var response = $.callServiceAsJsonGet(url,{});	
+		$.unecOverlay();
+		if (response.code==0) {
+			if(response.data!=undefined){
+				if("0"==response.data){
+					$("#orderProvAttrDiv").show();
+					if(order.memberChange.reloadFlag=="N"){
+						var custOrderAttrs = order.memberChange.rejson.orderList.orderListInfo.custOrderAttrs;
+						$.each(custOrderAttrs,function(){
+							//省内订单属性
+							if(this.itemSpecId==CONST.BUSI_ORDER_ATTR.PROV_ISALE){
+								$("#orderProvAttrIsale").val(OrderInfo.provinceInfo.provIsale);
+							}
+						});
+					}
+				}
+			}
+		}
+	};
+	
 	return {
 		init 					: _init,
 		changeOffer 			: _changeOffer,
@@ -733,6 +762,7 @@ offerChange = (function() {
 		resultOffer				: _resultOffer,
 		checkOfferProd			: _checkOfferProd,
 		getChangeInfo			: _getChangeInfo,
-		setChangeOfferSpec		: _setChangeOfferSpec
+		setChangeOfferSpec		: _setChangeOfferSpec,
+		initOrderProvAttr		: _initOrderProvAttr
 	};
 })();

@@ -52,21 +52,22 @@
             			<#assign ruleLevelName="限制级别"/>		            		
 	              	</#if>
             		<tr ruleLevel="${flag}">
-		                <td width="50%">${item.ruleCode}</td>
-		                	<td >${ruleLevelName}</td>
+		                <td width="50%" align="center">${item.ruleCode}</td>
+		                <td align="center">${ruleLevelName}</td>
 		                <td>${item.ruleDesc}</td>
 	              	</tr>
             	</#list>
             </tbody>
 		</table>
+		<#if flag != 1>
+			<table id="chooseTable" class="searchtable"></table>
+		</#if>
 		<div data-role="footer" data-position="fixed" data-tap-toggle="false"
 		data-theme="n">
-		<div class="orderpackage" id="tital">
-		</div>
+			<div class="orderpackage" id="tital"></div>
 			<#if flag==1>
 			<button data-inline="true" data-icon="prev" onclick="SoOrder.orderBack();">返回修改</button>
-			<#else>
-			<table id="chooseTable" class="searchtable"></table>
+			<#else>			
 			<button data-inline="true" data-icon="prev" onclick="SoOrder.orderBack();">返回修改</button>
 			<button data-inline="true" data-icon="next" onclick="order.calcharge.calchargeInit();" id="orderConfirmBtn">订单确认</button>
 			</#if>

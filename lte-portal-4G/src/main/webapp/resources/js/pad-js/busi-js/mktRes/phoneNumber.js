@@ -296,7 +296,9 @@ mktRes.phoneNbr = (function(){
 						areaId:areaId,
 						areaCode:areaCode,
 						memberRoleCd:memberRoleCd,
-						idFlag:0
+						idFlag:0,
+						preStore:preStoreFare,
+						minCharge:pnPrice
 					};
 					OrderInfo.boProdAns.push(param);
 				}
@@ -559,7 +561,9 @@ mktRes.phoneNbr = (function(){
 									state : "ADD", //动作	,新装默认ADD	
 									areaId:areaId,
 									areaCode:areaCode,
-									memberRoleCd:memberRoleCd
+									memberRoleCd:memberRoleCd,
+									preStore:preStoreFare,
+									minCharge:pnPrice
 								};
 								OrderInfo.boProdAns.push(param);
 								if(OrderInfo.offerSpec.offerRoles!=undefined){

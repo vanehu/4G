@@ -565,6 +565,7 @@ public class OrderController extends BaseController {
     	String partyId = request.getParameter("partyId");
     	String offerRoleId = request.getParameter("offerRoleId");
     	String roleCd = request.getParameter("roleCd");
+    	String actionFlag = request.getParameter("actionFlag");
     	
         dataBusMap.put("offerSpecId", offerSpecId);
         dataBusMap.put("prodSpecId", prodSpecId);//379
@@ -609,7 +610,11 @@ public class OrderController extends BaseController {
 			log.error("加载产品规格属性/pad/order/orderSpecParam方法异常", e);
 			return super.failedStr(model, ErrorCode.ORDER_PROD_ITEM, e, dataBusMap);
 		}
-    	return "/pad/order/order-spec-param";
+		if("6".equals(actionFlag)){//主副卡成员变更
+			return "/pad/member/order-spec-param";
+		}else{
+			return "/pad/order/order-spec-param";
+		}
     }
 
     /*bxw产品实例属性*/
@@ -993,8 +998,11 @@ public class OrderController extends BaseController {
         		model.addAttribute("main", param);
         	}
     		forward = "/pad/offer/offer-change";
-    	}else if("21".equals(String.valueOf(param.get("actionFlag")))){
+    	}else if("6".equals(String.valueOf(param.get("actionFlag"))) || "21".equals(String.valueOf(param.get("actionFlag")))){    	
     		if (MapUtils.isNotEmpty(param)) {
+        		if (!param.containsKey("offerNum")||param.get("offerNum")==null) {
+        			param.put("offerNum", 1);
+        		}
         		model.addAttribute("main", param);
         	}
     		forward = "/padtoken/member/member-change";
@@ -1159,7 +1167,7 @@ public class OrderController extends BaseController {
 	 		param.remove("checkResult");
 	 		List list = new ArrayList();
 	 		param.put("checkResult", list);
-		}
+		}	
 			Map<String, Object> datamap = this.orderBmo.queryChargeList(param,flowNum, sessionStaff);
 			if (datamap != null) {
 	 		String code = (String) datamap.get("code");
