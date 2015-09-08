@@ -153,7 +153,7 @@ offerChange = (function() {
 					AttachOffer.changeLabel(prodId,this.objId,""); //初始化第一个标签附属
 					if(AttachOffer.isChangeUim(prodId)){ //需要补换卡
 						//uim卡校验
-						if(OrderInfo.mktResInstCode!=undefined && OrderInfo.mktResInstCode!=null && OrderInfo.mktResInstCode!=""){
+						if(OrderInfo.mktResInstCode!=undefined && OrderInfo.mktResInstCode!="null" &&  OrderInfo.mktResInstCode!=null && OrderInfo.mktResInstCode!=""){
 							var array=OrderInfo.mktResInstCode.split(",");
 							if(array.length>0){
 								cleckUim(array[num],prodId);

@@ -1026,8 +1026,8 @@ AttachOffer = (function() {
 		var param = {
 			instCode : instCode,
 			flag : flag,
-			mktResId : "",
-			termGroup : ""
+			mktResId : ""
+		//	termGroup : ""
 		};
 		
 		var data = query.prod.checkTerminal(param);
