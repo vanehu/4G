@@ -759,6 +759,7 @@ order.service = (function(){
 			//产品信息
 			var acctCd="";
 			var acctName = "";
+			var acctId="";//帐户信息中帐户id
 			var mailingType = "";
 			var param1 = "";
 			var param2 = "";
@@ -902,6 +903,13 @@ order.service = (function(){
 						OrderInfo.newOrderInfo.paymentMan=paymentMan;
 						OrderInfo.newOrderInfo.paymentAcctTypeCd=paymentAcctTypeCd;
 					}
+				}else if(busiOrder.boActionType.actionClassCd=="1300" && busiOrder.boActionType.boActionTypeCd=="1"){//当二次加载帐户信息不为新增帐户时
+					if(busiOrder.data.boAccountRelas&&busiOrder.data.boAccountRelas.length>0){
+						acctCd=busiOrder.data.boAccountRelas[0].acctCd;
+						acctId=busiOrder.data.boAccountRelas[0].acctId;
+					}
+				}else{
+					acctCd="";
 				}
 				//取缓存中的已选可选包和已选功能产品
 				var openLists = AttachOffer.openList;
@@ -1010,7 +1018,7 @@ order.service = (function(){
 					}
 				}
 				//帐户信息
-				$("#acctSelect").find("option[value='"+acctCd+"']").attr("selected","selected");
+				//$("#acctSelect").find("option[value='"+acctCd+"']").attr("selected","selected");
 				if(acctCd!=""&&acctCd!=-1){
 					var acctQueryParam = {
 							"acctCd" : acctCd
@@ -1029,15 +1037,36 @@ order.service = (function(){
 							}
 							if(response.code==0){
 								var accountInfo = response.data.accountInfos;
-								var found = false;
-								var custAccts = $("#acctSelect").find("option");
-								$.each(custAccts, function(i, custAcct){
-									if(custAcct.value==accountInfo.acctId){
-										$("#acctSelect").find("option[value="+custAcct.value+"]").attr("selected","selected");
-										found = true;
-										return false;
-									}					
-								});					
+								var returnMap = response.data;
+								var found = false;	
+								if(returnMap.resultCode==0){
+									if(returnMap.accountInfos && returnMap.accountInfos.length > 0){
+										$("#accountDiv").find("label:eq(0)").text("主卡帐户：");
+										//将对应的帐号添加进去
+										$.each(response.data.accountInfos, function(i, custAcct){
+											if(acctId==custAcct.acctId){
+												accountInfo=custAcct;
+												//创建节点
+												$("<option>").text(custAcct.name+" : "+custAcct.accountNumber).attr("value",custAcct.acctId)
+												.attr("acctcd",custAcct.accountNumber).appendTo($("#acctSelect"));
+												
+												//选中节点
+												$("#acctSelect").find("option[value="+custAcct.acctId+"]").attr("selected","selected");
+												found = true;
+												return false;
+											}
+										});
+										$("#accountDiv").find("a:eq(0)").hide();
+										$("#acctSelect").find("option[value='-1']").remove();//将新增的选项进行删除
+										$("#acctSelect").parent().find("a:eq(1)").show();//显示帐户信息按钮
+										$("#defineNewAcct").hide();//隐藏新增帐户对应内容
+									}else{//未查询到帐户信息
+									    $.alert("提示","没有查询到帐户合同号对应的帐户信息");
+									}
+								}else{
+									$.alertM(returnMap.resultMsg);
+								}	
+								
 								$(this).dispatchJEvent("chooseAcct",accountInfo);
 								//隐藏
 								$("#defineNewAcct").hide();

@@ -1810,6 +1810,7 @@ order.main = (function(){
 										$("#acctSelect").find("option[value="+prodAcctInfo.acctId+"]").attr("selected","selected");
 									}
 								});	
+								$("#acctSelect").find("option[value='-1']").remove();//将新增的选项进行删除
 								$("#accountDiv").find("a:eq(0)").hide();
 								$("#acctSelect").parent().find("a:eq(1)").show();//显示帐户信息按钮
 								//$("#defineNewAcct").hide();//隐藏新增帐户对应内容

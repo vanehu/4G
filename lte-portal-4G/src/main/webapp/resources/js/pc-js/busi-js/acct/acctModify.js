@@ -204,13 +204,26 @@ acct.acctModify = (function(){
 		if(OrderInfo.newOrderInfo.isReloadFlag=="N"){
 			$("#postType").find("option[value='"+OrderInfo.newOrderInfo.mailingType+"']").attr("selected","selected");
 			if(OrderInfo.newOrderInfo.mailingType!=""&&OrderInfo.newOrderInfo.mailingType!=-1){
+				_billPostType();//进行账单投递方式初始化
 				//显示其他信息
 				$("#postAddress").show();
-				$(".billPost").show();
+				//$(".billPost").show();
 				$("#billContent").show();
 				$("#postCycle").show();
-				//账单投递地址
-				$("#postAddress").val(OrderInfo.newOrderInfo.param1);
+				if($("#postType").val()==11 ||$("#postType").val()==15){				
+					var str=OrderInfo.newOrderInfo.param1.split(",");
+					for(var i=0;i<str.length;i++){
+						if(i==0){
+							$("#postAddress").val(str[i]);//收件地址
+						}else if(i==1){
+							$("#zipCode").val(str[i])//邮编
+						}else if(i==2){
+							$("#consignee").val(str[i])//收件人
+						}
+					}
+				}else{
+					$("#postAddress").val(OrderInfo.newOrderInfo.param1);//账单投递地址
+				}
 				//账单内容
 				$("#billContent").find("option[value='"+OrderInfo.newOrderInfo.param7+"']").attr("selected", "selected");
 				//投递周期
