@@ -690,6 +690,8 @@ public final class PortalServiceCode {
     public static final String QUERY_OPERAT_AREA_RANGE = "sys-queryOperatAreaRange";
     //bianxw 购物车 查询
     public static final String SHOPPING_CART_LIST = "biz-service/intf.detailService/queryCustomerOrders" ;
+    //客户修改日志查询
+    public static final String QUERY_CUST_MODIFY_LIST = "biz-service/intf.detailService/queryCustOrderModifyLog" ;
     //一卡双号业务监控查询    bdw代表后台BusinessDispatchWeb项目 
     public static final String QUERY_OCTN = "bdw-service/intf.businessDispatchService/queryBusiDispatchOrderProcessInfos" ;
     //bianxw 购物车 详情
