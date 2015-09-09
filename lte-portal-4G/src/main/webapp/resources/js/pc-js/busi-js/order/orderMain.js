@@ -1813,7 +1813,7 @@ order.main = (function(){
 								$("#acctSelect").find("option[value='-1']").remove();//将新增的选项进行删除
 								$("#accountDiv").find("a:eq(0)").hide();
 								$("#acctSelect").parent().find("a:eq(1)").show();//显示帐户信息按钮
-								//$("#defineNewAcct").hide();//隐藏新增帐户对应内容
+								$("#defineNewAcct").hide();//隐藏新增帐户对应内容
 							} else{//未查询到帐户信息
 							    $.alert("提示","没有查询到帐户合同号对应的帐户信息");
 							}
