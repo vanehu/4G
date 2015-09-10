@@ -721,70 +721,7 @@ cust.mgr = (function(){
 		});	
 		
 	};
-	//客户信息查询定位客户
-	var _queryCust = function(){
-		var identityCd="";
-		var acctNbr="";
-		var identityNum="";
-		identityCd=$("#p_cust_identityCd").val();
-		identityNum=$.trim($("#p_cust_identityNum").val());
-		if(identityNum==""){
-			$.alert("提示","请输入证件号码！");
-			return;
-		}
-		//判断是否是号码或身份证输入
-		if(identityCd==1){
-		 identityCd=$("#p_cust_identityCd").val();
-		}
-		if(identityCd==-1){
-			acctNbr=identityNum;
-			identityNum="";
-			identityCd="";
-		}
-
-		diffPlace=$("#DiffPlaceFlag").val();
-		areaId=$("#p_areaId").val();
-		var param = {
-			"acctNbr":acctNbr,
-			"identityCd":identityCd,
-			"identityNum":identityNum,
-			"partyName":"",
-			"custQueryType":$("#custQueryType").val(),
-			"diffPlace":diffPlace,
-			"areaId" : areaId
-		};
-		$.callServiceAsHtmlGet(contextPath+"/cust/queryCustAlone", param, {
-			"before":function(){
-				$.ecOverlay("<strong>正在查询中,请稍等...</strong>");
-			},
-			"always":function(){
-				$.unecOverlay();
-			},
-			"done":function(response){
-				if (response.code == -2) {
-					return;
-				}
-				if(!response){
-					response.data='<div style="margin:2px 0 2px 0;widht:100%,height:100%;text-align:center;"><strong>no data return,please try reload.</strong></div>';					
-				}
-				if(response.data =="fail\r\n"){
-					$.alert("提示","查询失败，请稍后再试");
-					return;
-				}
-				if(response.data =="error\r\n"){
-					$.alert("提示","数据异常，请联系管理员");
-					return;
-				}
-				$("#acctList").html(response.data).show();	
-				$("#acctDetail").hide();
-			},
-			fail:function(response){
-				$.unecOverlay();
-				$.alert("提示","请求可能发生异常，请稍后再试！");
-			}
-		});
-		
-	};
+	
 	//查询客户详情
 	var _queryCustDetail = function(_custId){
 		var param = {

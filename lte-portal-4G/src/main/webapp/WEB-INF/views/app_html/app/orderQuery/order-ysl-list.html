@@ -1,4 +1,25 @@
 <#if code?? && (code>=0) >
+<#if (pageModel.pageNo)?? && (pageModel.pageNo > 1) >
+	<#if (pageModel.list)?? &&((pageModel.list)?size>0)>
+	<#list pageModel.list as order >
+	<!-- 
+	<tr onclick="order.ysl.queryYslDetail('${order.CUST_SO_NUMBER}','${order.STATUS_CD}')">
+	 -->
+	 <tr>
+		<td><button type="button" onclick="order.ysl.showLsh('${order.CUST_SO_NUMBER}')">查看流水号</button></td>
+		<td>${order.NAME}</td>
+        <td>${order.ACCESS_NBR}</td>
+		<!--
+		<td>${order.COMMON_REGION_NAME}</td>
+		<td>${order.CHANNEL_NAME}</td>
+		<td><span class="glyphicon glyphicon-chevron-right"
+			aria-hidden="true"></span>
+		</td>
+	-->
+	</tr>
+	</#list>
+	</#if>
+<#else>
 	<div class="container-fluid">
 		<div class="row">
 			<div class="panel panel-default paneltop">
@@ -7,43 +28,69 @@
 					<span class="glyphicon glyphicon-search" aria-hidden="true"></span>
 					预受理单查询
 				</div>
-	           <@portal.scrollPagination "order-ysl-list" "both" pageModel.totalPages 60 0 "order.ysl.scroll">
-				<table class="table table-striped tablecenter" id="cart-list-table">
+				<#if (pageModel.list)?? &&((pageModel.list)?size>0)>
+				<@portal.scrollPagination "order-ysl-list" "both" pageModel.totalPages 50 0 "order.ysl.scroll">
+				<table class="table table-striped tablecenter" id="cust-list-table">
 					<thead>
 						<tr>
-						    <th>预受理流水号</th>
-							<th>客户姓名</th>
+						    <th>流水号</th>
+							<th>姓名</th>
 							<th>产品号码</th>
+							<!--
 							<th>地区</th>
 							<th>渠道</th>
 							<th></th>
+						-->
 						</tr>
 					</thead>
-					<tbody class="panel-group" id="accordion">
-					  <#if (pageModel.list)?? &&((pageModel.list)?size>0)>
-		               <#list pageModel.list as order >
+					<tbody class="panel-group" id="all_ysl_list">
+		              <#if (pageModel.list)?? &&((pageModel.list)?size>0)>
+		              <#list pageModel.list as order >
+						<!-- 
 						<tr onclick="order.ysl.queryYslDetail('${order.CUST_SO_NUMBER}','${order.STATUS_CD}')">
-							<td>${order.CUST_SO_NUMBER}</td>
+						 -->
+						 <tr>
+							<td><button type="button" onclick="order.ysl.showLsh('${order.CUST_SO_NUMBER}')">查看流水号</button></td>
 							<td>${order.NAME}</td>
                             <td>${order.ACCESS_NBR}</td>
+                            <!--
                             <td>${order.COMMON_REGION_NAME}</td>
                             <td>${order.CHANNEL_NAME}</td>
 							<td><span class="glyphicon glyphicon-chevron-right"
 								aria-hidden="true"></span>
 							</td>
+						-->
 						</tr>
-					 </#list>
-		              <#else>
-		              <tr>
-		                <td colspan="5">没有查询到结果</td> 
-		              </tr>
+					  </#list>
 		              </#if>
-					</tbody>
+	              	</tbody>
 				</table>
 				</@portal.scrollPagination>
+				<#else>
+				<table class="table table-striped tablecenter" id="cust-list-table">
+					<thead>
+						<tr>
+						    <th>流水号</th>
+							<th>姓名</th>
+							<th>产品号码</th>
+							<!--
+							<th>地区</th>
+							<th>渠道</th>
+							<th></th>
+						-->
+						</tr>
+					</thead>
+	              	<tbody class="panel-group" id="accordion">
+	              		<tr>
+	                		<td colspan="3">没有查询到结果</td> 
+	              		</tr>
+				  </tbody>
+			  </table>
+			  </#if>
 			</div>
 		</div>
 	</div>
+</#if>
 <#else>
 	${mess}
 </#if>

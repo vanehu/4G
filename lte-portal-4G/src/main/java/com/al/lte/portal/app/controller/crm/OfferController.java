@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -23,8 +24,10 @@ import com.al.ecs.exception.BusinessException;
 import com.al.ecs.exception.ErrorCode;
 import com.al.ecs.exception.InterfaceException;
 import com.al.ecs.exception.ResultConstant;
+import com.al.ecs.spring.annotation.session.AuthorityValid;
 import com.al.ecs.spring.controller.BaseController;
 import com.al.lte.portal.bmo.crm.OfferBmo;
+import com.al.lte.portal.bmo.crm.OrderBmo;
 import com.al.lte.portal.common.SysConstant;
 import com.al.lte.portal.model.SessionStaff;
 
@@ -44,6 +47,10 @@ public class OfferController extends BaseController {
 	@Autowired
 	@Qualifier("com.al.lte.portal.bmo.crm.OfferBmo")
 	private OfferBmo offerBmo;
+	
+	@Autowired
+	@Qualifier("com.al.lte.portal.bmo.crm.OrderBmo")
+	private OrderBmo orderBmo;
 	
 	/**
 	 * 获取销售品规格构成
@@ -297,6 +304,60 @@ public class OfferController extends BaseController {
 		}
 	 	return "/app/offer/attach-spec";
 	}
+	
+	/**
+	 * 预受理-可选包查询页面
+	 * @param param
+	 * @param model
+	 * @param response
+	 * @return
+	 */
+	@RequestMapping(value = "/queryYslKxb",  method = RequestMethod.POST)
+	@AuthorityValid(isCheck = false)
+	public String queryYslKxb(@RequestBody Map<String, Object> paramMap,Model model,HttpServletResponse response){
+		//Map<String, Object> paramMap = new HashMap();
+		try{
+			SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+					SysConstant.SESSION_KEY_LOGIN_STAFF);	
+			paramMap.put("staffId", sessionStaff.getStaffId());
+			paramMap.put("channelId", sessionStaff.getCurrentChannelId());
+			paramMap.put("areaId", sessionStaff.getCurrentAreaId());
+			paramMap.put("partyId", sessionStaff.getCustId());
+			paramMap.put("queryType", "1,2");
+			paramMap.put("objType", "2");
+			paramMap.put("objId", paramMap.get("prodSpecId"));
+			//paramMap =  JsonUtil.toObject(param, Map.class);
+			
+			//查询销售品角色
+			Map<String, Object> retnMap = new HashMap<String, Object>();
+			
+			//默认必开功能产品
+			Map<String, Object> openServMap = offerBmo.queryServSpec(paramMap,null,sessionStaff);
+			model.addAttribute("openServMap",openServMap);
+			model.addAttribute("openServMapJson", JsonUtil.buildNormal().objectToJson(openServMap));
+			
+			//默认必开附属销售品
+			paramMap.remove("queryType");
+			Map<String, Object> openMap = offerBmo.queryMustAttOffer(paramMap,null,sessionStaff);
+			model.addAttribute("openMap",openMap);
+			model.addAttribute("openMapJson", JsonUtil.buildNormal().objectToJson(openMap));
+			
+			//可订购附属标签查询
+			Map<String, Object> labelMap = offerBmo.queryLabel(paramMap,null,sessionStaff);	
+			model.addAttribute("labelMap",labelMap);
+			model.addAttribute("labelMapJson", JsonUtil.buildNormal().objectToJson(labelMap));
+			
+			model.addAttribute("prodId",paramMap.get("prodId"));
+			model.addAttribute("param",paramMap);
+		} catch (BusinessException be) {
+			return super.failedStr(model, be);
+		} catch (InterfaceException ie) {
+			return super.failedStr(model, ie, paramMap, ErrorCode.QUERY_MUST_OFFER);
+		} catch (Exception e) {
+			return super.failedStr(model, ErrorCode.QUERY_MUST_OFFER, e, paramMap);
+		}
+	 	return "/app/order/ysl-kxb";
+	}
 
 	/**
 	 * 查询默认必须附属销售品
@@ -393,6 +454,7 @@ public class OfferController extends BaseController {
         //	paramMap =  JsonUtil.toObject(param, Map.class);
         	
         	//搜索可订购销售品
+        	paramMap.put("operatorsId", sessionStaff.getOperatorsId()!=""?sessionStaff.getOperatorsId():"99999");
     		Map<String, Object> offerMap = offerBmo.queryCanBuyAttachSpec(paramMap,null,sessionStaff);
     		model.addAttribute("offerMap",offerMap);
     		

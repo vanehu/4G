@@ -2098,8 +2098,8 @@ public class OrderController extends BaseController {
         Map<String, Object> param = new HashMap<String, Object>();
         List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
         Integer nowPage = 1 ;
-        Integer upPage = 1 ;
-        Integer downPage = 10 ;
+//        Integer upPage = 1 ;
+//        Integer downPage = 10 ;
         Integer pageSize = 10 ;
         Integer totalSize = 0 ;
         
@@ -2115,12 +2115,12 @@ public class OrderController extends BaseController {
         try{
     		nowPage = Integer.parseInt(request.getParameter("nowPage").toString());
     		pageSize = Integer.parseInt(request.getParameter("pageSize").toString());
-    		if(nowPage!=1){
-    			upPage = (nowPage-1)*pageSize+1;
-    			downPage = pageSize*nowPage;
-    		}
-    		param.put("nowPage", upPage);
-    		param.put("pageSize", downPage);
+//    		if(nowPage!=1){
+//    			upPage = (nowPage-1)*pageSize+1;
+//    			downPage = pageSize*nowPage;
+//    		}
+    		param.put("nowPage", nowPage);
+    		param.put("pageSize", pageSize);
     		
     		Map<String, Object> map = orderBmo.queryyslList(param, null, sessionStaff);
         	if(map!=null&&map.get("orderLists")!=null){

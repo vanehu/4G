@@ -1,4 +1,4 @@
-<div  id="order">
+<div id="order">
 	<div class="container-fluid">
 		<div class="row">
 		    <div class="panel panel-default paneltop"> 
@@ -126,6 +126,7 @@
 				                 <div class="form-group"  id="tcbm">
 									<label for="offer_spec_cd">套餐编码</label>
 					            	<input type="text" class="form-control"  id="offer_spec_cd" readOnly="readonly">
+					            	<input type="hidden" id="offerRoleId">
 								 </div>
 								 <div class="form-group">
 									<label>产品号码</label>
@@ -163,7 +164,7 @@
 	              		<div class="panel-heading">可选包/功能产品</div>
 	              	    <div class="panel-body">
 	              	    	<div class="container-fluid">
-	              	    	   <button type="button" onClick="javascript:$('#order').hide();$('#attchOffer').show();"
+	              	    	   <button type="button" onClick="order.ysl.showKxb();"
 									class="btn btn-default btn-block button-right">
 									可选包/功能 <span class="glyphicon glyphicon-chevron-right"
 										aria-hidden="true"></span>
@@ -376,6 +377,14 @@
  <!-- 选套餐 -->
  <div class="item" id="packContent" style="display:none">
  
+ </div>
+ <!-- 可选包 -->
+ <div class="item" id="kxbContent" style="display:none">
+ 
+ </div>
+ <!-- 预受理成功页面 -->
+ <div class="item" id="successContent" style="display:none">
+ 	<#include "/app/order/ysl-order-confirm.html" />
  </div>
 <script>
 	//初始化

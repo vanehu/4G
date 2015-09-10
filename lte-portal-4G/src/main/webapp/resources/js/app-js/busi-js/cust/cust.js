@@ -296,7 +296,7 @@ cust = (function(){
 							var certTypedate = data[i];
 							if (certTypedate.certTypeCd == "1") {//身份证
 									$("#cm_identidiesTypeCd").append("<option value='"+certTypedate.certTypeCd+"' >"+certTypedate.name+"</option>");
-								}else if(isAllowChannelType){//如果自有渠道，开放所有
+								}else if(1==1){//如果自有渠道，开放所有
 									$("#cm_identidiesTypeCd").append("<option value='"+certTypedate.certTypeCd+"' >"+certTypedate.name+"</option>");
 								}
 						}

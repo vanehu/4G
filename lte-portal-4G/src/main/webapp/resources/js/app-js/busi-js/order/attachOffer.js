@@ -2273,7 +2273,7 @@ AttachOffer = (function() {
 		_changeLabel(prodId,prodSpecId,labelId);
 	};
 	//切换标签
-	var _changeLabel = function(prodId,prodSpecId,labelId){
+	var _changeLabel = function(prodId,prodSpecId,labelId,YSLofferRoleId){
 		if(labelId==''){
 			labelId=$("#attachType_"+prodId).val();
 		}
@@ -2386,6 +2386,9 @@ AttachOffer = (function() {
 					var prodInst = OrderInfo.getProdInst(prodId);
 					if(prodInst){
 						param.offerRoleId = prodInst.offerRoleId;
+					}
+					if(YSLofferRoleId==undefined){
+						param.offerRoleId = YSLofferRoleId;
 					}
 				}
 				query.offer.queryCanBuyAttachSpec(param,function(data){
