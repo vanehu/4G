@@ -523,6 +523,7 @@ public class PrintBmoImpl implements PrintBmo {
 		remarkInfos.add(new StringBeanSet("4. 请您保持电话畅通，到货后我们将电话通知您到预约门店办理业务。如接到通知3日内未办理，本预约单将自动失效。"));
 		remarkInfos.add(new StringBeanSet("5. 本预约单为后续业务办理凭证，请您妥善保管。"));
 		remarkInfos.add(new StringBeanSet("6. 其他未尽事宜详询门店工作人员或致电门店联系电话。"));
+		remarkInfos.add(new StringBeanSet("7. 本预约仅对拟办理中国电信iPhone 6s/ 6s Plus合约的客户有效，客户可凭此预约单在终端到货时办理中国电信iPhone 6s/ 6s Plus合约。"));
 		return remarkInfos;
 	}
 
