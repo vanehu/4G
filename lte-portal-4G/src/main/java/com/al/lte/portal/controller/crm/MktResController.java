@@ -536,6 +536,13 @@ public class MktResController extends BaseController {
 						SysConstant.SESSION_KEY_LOGIN_STAFF);
 		List<Map<String, Object>> list = null;
 		try {
+			//客户的身份证件 需要与 号码预约时所使用身份证件号码 相同
+			String identityId = MapUtils.getString(param, "identityId", "");
+			Map sessionCustInfo = (Map) super.getRequest().getSession().getAttribute(SysConstant.SESSION_CURRENT_CUST_INFO);
+			if(sessionCustInfo != null && !identityId.equals(sessionCustInfo.get("idCardNumber"))){
+				return super.failedStr(model, ErrorCode.PHONENUM_IDENTITY, "客户的身份证件需要与号码预约时所使用身份证件号码相同", param);
+			}
+
 			String areaId=(String) param.get("areaId");
 			param.putAll(getAreaInfos(areaId));
 			param.put("phoneNumber", "");

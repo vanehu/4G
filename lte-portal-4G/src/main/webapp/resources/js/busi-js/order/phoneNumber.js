@@ -154,11 +154,11 @@ order.phoneNumber = (function(){
 			$.alert("提示","身份证号码输入有误！");
 			return;
 		}
-		//客户的身份证件 需要与 号码预约时所使用身份证件号码 相同
-		if (idcode != $("#custInfos").attr("idCardNumber")) {
-			$.alert("提示","客户的身份证件需要与号码预约时所使用身份证件号码相同！");
-			return;
-		}
+		//客户的身份证件 需要与 号码预约时所使用身份证件号码 相同 //在后端判断
+//		if (idcode != $("#custInfos").attr("idCardNumber")) {
+//			$.alert("提示","客户的身份证件需要与号码预约时所使用身份证件号码相同！");
+//			return;
+//		}
 		//var areaId=$("#p_cust_areaId").val();
 		var param={"identityId":idcode,"areaId":OrderInfo.getAreaId()};
 		$.callServiceAsHtmlGet(contextPath+"/mktRes/phonenumber/listByIdentity",param,{

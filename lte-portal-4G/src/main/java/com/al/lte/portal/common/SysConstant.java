@@ -502,4 +502,10 @@ public final class SysConstant {
     public static final String SMS_PASS_OPSCD="SMS_PASS_OPSCD";
     //限制提交权限编码
     public static final String LIMIT_SUBMIT="LIMIT_SUBMIT";
+    
+    /** session中保存查询出的所有待选的原始客户信息 */
+    public static final String SESSION_LIST_CUST_INFOS = "_listCustInfos";
+    
+    /** session中保存当前客户信息 */
+    public static final String SESSION_CURRENT_CUST_INFO = "_currentCustInfo";
 }

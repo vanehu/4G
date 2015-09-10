@@ -13,7 +13,7 @@
     <#list cust.custInfos as custInfo>
     <tr id="custInfos" canRealName="${custInfo.canRealName}" custFlag="${custInfo.custFlag}" norTaxPayer="${custInfo.norTaxPayer}" identityName="${custInfo.identityName}" areaId="${custInfo.areaId}" corCustId="${custInfo.corCustId}" identityCd="${custInfo.identityCd}" addressStr="${custInfo.addressStr}" areaName="${custInfo.areaName}" vipLevel="${custInfo.vipLevel}" vipLevelName="${custInfo.vipLevelName}" segmentId="${custInfo.segmentId}" segmentName="${custInfo.segmentName}" extCustId="${custInfo.extCustId}" <#if query=="prod">onclick="product.query.chooseCust(this)"<#elseif query=="acct">onclick="account.query.chooseCust(this)"</#if> >
       <td id="custListTableParName">${custInfo.partyName}</td>
-      <td>${custInfo.identityName}/${custInfo.idCardNumber}</td>
+      <td>${custInfo.identityName}/${custInfo.filterIdCardNumber}</td>
 	  <td id="areaName">${custInfo.areaName}</td>
 	  <td id="custListTablecustId" style="display:none;">${custInfo.custId}</td>
 	</tr>
@@ -35,12 +35,12 @@
 		<tbody>
 			<#list cust.custInfos as custInfo>
 			<tr id="custInfos" onclick="order.cust.showCustAuth(this)" <#if custInfo_index gt 9>style="display:none;"</#if> canRealName="${custInfo.canRealName}"
-				custFlag="${custInfo.custFlag}" norTaxPayer="${custInfo.norTaxPayer}" identityName="${custInfo.identityName}" idCardNumber="${custInfo.idCardNumber}" areaId="${custInfo.areaId}" corCustId="${custInfo.corCustId}" identityCd="${custInfo.identityCd}" addressStr="${custInfo.addressStr}" areaName="${custInfo.areaName}" vipLevel="${custInfo.vipLevel}" vipLevelName="${custInfo.vipLevelName}" segmentId="${custInfo.segmentId}" segmentName="${custInfo.segmentName}" extCustId="${custInfo.extCustId}">
+				custFlag="${custInfo.custFlag}" norTaxPayer="${custInfo.norTaxPayer}" identityName="${custInfo.identityName}" idCardNumber="${custInfo.filterIdCardNumber}" areaId="${custInfo.areaId}" corCustId="${custInfo.corCustId}" identityCd="${custInfo.identityCd}" addressStr="${custInfo.addressStr}" areaName="${custInfo.areaName}" vipLevel="${custInfo.vipLevel}" vipLevelName="${custInfo.vipLevelName}" segmentId="${custInfo.segmentId}" segmentName="${custInfo.segmentName}" extCustId="${custInfo.extCustId}">
 				<td id="custListTableParName">${custInfo.partyName}</td>
-				<td>${custInfo.identityName}/${custInfo.idCardNumber}</td>
+				<td>${custInfo.identityName}/${custInfo.filterIdCardNumber}</td>
 				<td id="areaName">${custInfo.areaName}</td>
 				<td id="custListTablecustId" style="display:none;">${custInfo.custId}</td>
-				<td style="display:none;">${custInfo.idCardNumber}</td>
+				<td style="display:none;">${custInfo.filterIdCardNumber}</td>
 				<td id="custAccNbr">${custInfo.accNbr}</td>
 			</tr>
 			</#list>
@@ -65,12 +65,12 @@
 		<tbody>
 			<#list cust.custInfos as custInfo>
 			<tr id="custInfos" onclick="order.cust.showCustAuth(this)"  canRealName="${custInfo.canRealName}"
-				custFlag="${custInfo.custFlag}" norTaxPayer="${custInfo.norTaxPayer}" identityName="${custInfo.identityName}" idCardNumber="${custInfo.idCardNumber}" areaId="${custInfo.areaId}" corCustId="${custInfo.corCustId}" identityCd="${custInfo.identityCd}" addressStr="${custInfo.addressStr}" areaName="${custInfo.areaName}" vipLevel="${custInfo.vipLevel}" vipLevelName="${custInfo.vipLevelName}" segmentId="${custInfo.segmentId}" segmentName="${custInfo.segmentName}" extCustId="${custInfo.extCustId}">
+				custFlag="${custInfo.custFlag}" norTaxPayer="${custInfo.norTaxPayer}" identityName="${custInfo.identityName}" idCardNumber="${custInfo.filterIdCardNumber}" areaId="${custInfo.areaId}" corCustId="${custInfo.corCustId}" identityCd="${custInfo.identityCd}" addressStr="${custInfo.addressStr}" areaName="${custInfo.areaName}" vipLevel="${custInfo.vipLevel}" vipLevelName="${custInfo.vipLevelName}" segmentId="${custInfo.segmentId}" segmentName="${custInfo.segmentName}" extCustId="${custInfo.extCustId}">
 				<td id="custListTableParName">${custInfo.partyName}</td>
-				<td>${custInfo.identityName}/${custInfo.idCardNumber}</td>
+				<td>${custInfo.identityName}/${custInfo.filterIdCardNumber}</td>
 				<td id="areaName">${custInfo.areaName}</td>
 				<td id="custListTablecustId" style="display:none;">${custInfo.custId}</td>
-				<td style="display:none;">${custInfo.idCardNumber}</td>
+				<td style="display:none;">${custInfo.filterIdCardNumber}</td>
 			</tr>
 			</#list>
 		</tbody>
