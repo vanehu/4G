@@ -257,6 +257,7 @@ order.service = (function(){
 						this.dfQty = 0;
 					}
 					var max = this.maxQty<0?"不限制":this.maxQty;//主卡的最大数量
+					maxNum = max;
 					var min = this.minQty;
 					$tr.append("<td align='left' colspan='3'>"+this.objName+" :<i id='plan_no' style='margin-top: 3px; display: inline-block; vertical-align: middle;'>"+
 							"<a class='add' href='javascript:order.service.subNum(\""+objInstId+"\","+this.minQty+");'></a>"+
@@ -290,20 +291,19 @@ order.service = (function(){
 					iflag++;
 				}
 			});
-			if(offerRole.memberRoleCd=="401" && areaidflag!="" && areaidflag.net_vice_card=="0"){
-				$.each(this.roleObjs,function(){
-					if(this.objType == CONST.OBJ_TYPE.PROD){
-						var max = this.maxQty<0?"不限制":this.maxQty;//主卡的最大数量
-						var min = this.minQty;
-						maxNum = max;
-						var $trOldNbr = "<tr style='background:#f8f8f8;' id='oldnum_1' name='oldnbr'>" +
-						"<td class='borderLTB' style='font-size:14px; padding:0px 0px 0px 12px'><span style='color:#518652; font-size:14px;'>已有移动电话</span></td>" +
-						"<td align='left' colspan='3'><input value='' style='margin-top:10px' class='numberTextBox' id='oldphonenum_1' type='text' >" +
-						"<a style='margin-top:15px' class='add2' href='javascript:order.memberChange.addNum("+max+",\"\");'> </a>"+min+"-"+max+"（张）</td></tr>";	
-						$tbody.append($trOldNbr);
-					}
-				});
-			}
+//			if(offerRole.memberRoleCd=="401" && areaidflag!="" && areaidflag.net_vice_card=="0"){
+//				$.each(this.roleObjs,function(){
+//					if(this.objType == CONST.OBJ_TYPE.PROD){
+//						var max = this.maxQty<0?"不限制":this.maxQty;//主卡的最大数量
+//						var min = this.minQty;
+//						var $trOldNbr = "<tr style='background:#f8f8f8;' id='oldnum_1' name='oldnbr'>" +
+//						"<td class='borderLTB' style='font-size:14px; padding:0px 0px 0px 12px'><span style='color:#518652; font-size:14px;'>已有移动电话</span></td>" +
+//						"<td align='left' colspan='3'><input value='' style='margin-top:10px' class='numberTextBox' id='oldphonenum_1' type='text' >" +
+//						"<a style='margin-top:15px' class='add2' href='javascript:order.memberChange.addNum("+max+",\"\");'> </a>"+min+"-"+max+"（张）</td></tr>";	
+//						$tbody.append($trOldNbr);
+//					}
+//				});
+//			}
 		});
 		//页面初始化参数
 		var param = {
@@ -333,6 +333,7 @@ order.service = (function(){
 	
 	//选择完主套餐构成后确认
 	var _confirm = function(param){
+		order.memberChange.viceCartNum = 0;
 		$.each(OrderInfo.offerSpec.offerRoles,function(){
 			this.prodInsts = [];
 		});
@@ -347,10 +348,6 @@ order.service = (function(){
 				oldnum++;
 			}
 		});
-		if(parseInt(newnum)+parseInt(oldnum)>maxNum){
-			$.alert("提示","加装数量已经超过能加装的最大数量【"+maxNum+"】!");
-			return;
-		}
 		if(!_setOfferSpec()){
 			$.alert("错误提示","请选择一个接入产品");
 			return;
@@ -372,6 +369,10 @@ order.service = (function(){
 			param.oldnum = oldnum;
 		}else{
 			order.service.oldMemberFlag = false;
+		}
+		if(parseInt(newnum)+parseInt(order.memberChange.viceCartNum)>maxNum){
+			$.alert("提示","加装数量已经超过能加装的最大数量【"+maxNum+"】!");
+			return;
 		}
 		if(OrderInfo.actionFlag!=14){ //合约套餐不初始化
 			order.main.buildMainView(param);	
