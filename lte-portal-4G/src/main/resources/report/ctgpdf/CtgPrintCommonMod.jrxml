@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="CtgPrintCommonMod" language="groovy" pageWidth="595" pageHeight="842" columnWidth="509" leftMargin="43" rightMargin="43" topMargin="128" bottomMargin="50">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="32"/>
 	<style name="styleNorm" mode="Transparent" fill="Solid" fontName="宋体" fontSize="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Identity-H"/>
 	<style name="styleBold" fill="Solid" fontName="宋体" fontSize="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
 	<style name="styleBlackBold16" fontName="宋体" fontSize="16" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
@@ -22,6 +22,7 @@
 	<field name="channelName" class="java.lang.String"/>
 	<field name="custInfos" class="java.util.List"/>
 	<field name="orderEvents" class="java.util.List"/>
+	<field name="deliveryMethod" class="java.util.List"/>
 	<field name="feeInfos" class="java.util.List"/>
 	<field name="terminalInfos" class="java.util.List"/>
 	<field name="remarkInfos" class="java.util.List"/>
@@ -70,6 +71,42 @@
 					<reportElement style="styleBlackBold10_5" x="10" y="6" width="58" height="15"/>
 					<textElement/>
 					<text><![CDATA[登记信息：]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<group name="groupDeliveryMethod">
+		<groupExpression><![CDATA[$F{deliveryMethod}]]></groupExpression>
+		<groupHeader>
+			<band height="36">
+				<printWhenExpression><![CDATA[$F{deliveryMethod}!=null]]></printWhenExpression>
+				<subreport>
+					<reportElement x="25" y="21" width="475" height="15" isRemoveLineWhenBlank="true">
+						<printWhenExpression><![CDATA[$F{deliveryMethod}!=null&$F{deliveryMethod}.size()>0]]></printWhenExpression>
+					</reportElement>
+					<subreportParameter name="SUBREPORT_DIR">
+						<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+					</subreportParameter>
+					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{deliveryMethod})]]></dataSourceExpression>
+					<subreportExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "CtgPrintBaseString.jasper"]]></subreportExpression>
+				</subreport>
+				<line>
+					<reportElement x="0" y="3" width="500" height="1" isRemoveLineWhenBlank="true">
+						<printWhenExpression><![CDATA[$F{deliveryMethod}!=null&&$F{deliveryMethod}.size()>0]]></printWhenExpression>
+					</reportElement>
+					<graphicElement>
+						<pen lineStyle="Dashed"/>
+					</graphicElement>
+				</line>
+				<staticText>
+					<reportElement style="styleBlackBold10_5" x="10" y="6" width="58" height="15" isRemoveLineWhenBlank="true">
+						<printWhenExpression><![CDATA[$F{deliveryMethod}!=null&$F{deliveryMethod}.size()>0]]></printWhenExpression>
+					</reportElement>
+					<textElement/>
+					<text><![CDATA[提货方式：]]></text>
 				</staticText>
 			</band>
 		</groupHeader>

@@ -1168,12 +1168,12 @@ order.calcharge = (function(){
 					common.print.printVoucher(voucherInfo);
 					_changeFeeDisabled($("#calTab"));
 				});
-				if(OrderInfo.actionFlag==37 || OrderInfo.actionFlag==38){ //终端预约暂时未提供模板，不打印回执
-					$("#printVoucherA").removeClass("btna_o").addClass("btna_g").off("click");
-					if($("#printVoucherLoc").length > 0){
-						$("#printVoucherLoc").removeClass("btna_o").addClass("btna_g").off("click");
-					}
-				}
+				//if(OrderInfo.actionFlag==37 || OrderInfo.actionFlag==38){ //终端预约暂时未提供模板，不打印回执
+				//	$("#printVoucherA").removeClass("btna_o").addClass("btna_g").off("click");
+				//	if($("#printVoucherLoc").length > 0){
+				//		$("#printVoucherLoc").removeClass("btna_o").addClass("btna_g").off("click");
+				//	}
+				//}
 				_reflashTotal();
 			},
 			"fail":function(response){

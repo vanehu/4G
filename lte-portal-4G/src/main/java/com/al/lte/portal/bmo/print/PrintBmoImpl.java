@@ -111,12 +111,24 @@ public class PrintBmoImpl implements PrintBmo {
 	String comment = "";
 	int count = 0;
 	private static List<String> filterList = new ArrayList<String>();
+	private static Map<String,String> payMethodMap = new HashMap<String, String>();
 	static {
 		filterList.add("280000010");//不可及转移
 		filterList.add("280000014");//呼叫等待
 		filterList.add("280000011");//无条件转移
 		filterList.add("280000008");//无应答转移
 		filterList.add("280000009");//遇忙转移
+		//支付方式
+		payMethodMap.put("100000", "现金");
+		payMethodMap.put("110000", "银行");
+		payMethodMap.put("110400", "支票");
+		payMethodMap.put("110101", "在线POS");
+		payMethodMap.put("110102", "在线POS");
+		payMethodMap.put("120000", "第三方支付平台");
+		payMethodMap.put("130000", "渠道代收");
+		payMethodMap.put("140000", "帐务代收类");
+		payMethodMap.put("150000", "抵扣类");
+		payMethodMap.put("160000", "货到付款");
 	}
 
 	/**
@@ -484,12 +496,82 @@ public class PrintBmoImpl implements PrintBmo {
 		retnMap.put("terminalInfos", parseTerminalInfos(dataMap));
 		//终端抵用券
 		retnMap.put("auditTickets", parseAuditTickets(dataMap));
+		//提货方式
+		retnMap.put("deliveryMethod", parseDeliveryMethod(dataMap));
 		//备注信息
 		retnMap.put("remarkInfos", parseRemarkInfos(dataMap));
 		//协议信息
 		retnMap.put("agreements", parseAgreements(dataMap, needAgreement));
+		if(null!=retnMap.get("deliveryMethod")) {
+			List<StringBeanSet> list= (List<StringBeanSet>) MapUtils.getObject(retnMap,"deliveryMethod");
+			if (null!=list&&list.size()>0) {
+				retnMap.put("feeInfos", new ArrayList<FeeInfoSet>());
+				retnMap.put("advtInfos", new ArrayList<StringBeanSet>());
+				retnMap.put("terminalInfos", new ArrayList<TerminalInfoSet>());
+				retnMap.put("remarkInfos",parseRemarkInfosTemp());
+			}
+		}
 
 		return retnMap;
+	}
+
+	private List<StringBeanSet> parseRemarkInfosTemp() {
+		List<StringBeanSet> remarkInfos = new ArrayList<StringBeanSet>();
+		remarkInfos.add(new StringBeanSet("1. 本预约单仅供客户在授权门店预约中国电信终端使用。"));
+		remarkInfos.add(new StringBeanSet("2. 成功预约的客户有机会优先购买中国电信终端，接受预约订单的门店将按预约顺序发货。但受货源影响，可能存在终端到货延迟。"));
+		remarkInfos.add(new StringBeanSet("3. 一个有效身份证件最多可预约【政企客户9个/普通客户5个】中国电信终端。"));
+		remarkInfos.add(new StringBeanSet("4. 请您保持电话畅通，到货后我们将电话通知您到预约门店办理业务。如接到通知3日内未办理，本预约单将自动失效。"));
+		remarkInfos.add(new StringBeanSet("5. 本预约单为后续业务办理凭证，请您妥善保管。"));
+		remarkInfos.add(new StringBeanSet("6. 其他未尽事宜详询门店工作人员或致电门店联系电话。"));
+		return remarkInfos;
+	}
+
+	private List<StringBeanSet> parseDeliveryMethod(Map<String, Object> dataMap) {
+		List<StringBeanSet> deliveryMethodSet = new ArrayList<StringBeanSet>();
+		Map<String, Object> deliveryMethod = MapUtils.getMap(dataMap, "takeMethod");
+		int index=1;
+		if(null==deliveryMethod){
+			return deliveryMethodSet;
+		}
+		Map<String,Object> takeMethod = MapUtils.getMap(deliveryMethod, "takeMethod");
+		if(null!=takeMethod) {
+			StringBeanSet sbs = new StringBeanSet(index++ + SysConstant.STR_POINT + getItemNameValueByMap(takeMethod));
+			deliveryMethodSet.add(sbs);
+		}
+		Map<String,Object> takeTime = MapUtils.getMap(deliveryMethod, "takeTime");
+		if(null!=takeTime) {
+			StringBeanSet sbs = new StringBeanSet(index++ + SysConstant.STR_POINT + getItemNameValueByMap(takeTime));
+			deliveryMethodSet.add(sbs);
+		}
+		Map<String,Object> takePlace = MapUtils.getMap(deliveryMethod, "takePlace");
+		if(null!=takePlace) {
+			StringBeanSet sbs = new StringBeanSet(index++ + SysConstant.STR_POINT + getItemNameValueByMap(takePlace));
+			deliveryMethodSet.add(sbs);
+		}
+		Map<String,Object> payMethod = MapUtils.getMap(deliveryMethod, "payMethod");
+		if(null!=payMethod) {
+			StringBeanSet sbs = new StringBeanSet(index++ + SysConstant.STR_POINT + getItemNameValueByMap(payMethod));
+			deliveryMethodSet.add(sbs);
+		}else {
+			StringBeanSet sbs = new StringBeanSet(getPayMethod(dataMap,index++));
+			deliveryMethodSet.add(sbs);
+		}
+		return deliveryMethodSet;
+	}
+
+	private String getPayMethod(Map<String, Object> dataMap, int i) {
+		String retStr = "";
+		if (MapUtils.getObject(dataMap, "chargeItems") instanceof List) {
+			List<Map<String, Object>> list = (List<Map<String, Object>>) MapUtils.getObject(dataMap, "chargeItems");
+			if (null != list && list.size() > 0) {
+				String payMethodCd = MapUtils.getString(list.get(0), "payMethodCd", "");
+				String payMethod = payMethodMap.get(payMethodCd);
+				if (StringUtils.isNotBlank(payMethod)) {
+					retStr = i++ + SysConstant.STR_POINT + "支付方式" + SysConstant.STR_SEP + payMethod;
+				}
+			}
+		}
+		return retStr;
 	}
 
 	private Map<String, Object> parseCommonInfos(Map<String, Object> dataMap) {
@@ -873,6 +955,8 @@ public class PrintBmoImpl implements PrintBmo {
 					set = buildOrderEvent_5(event, orderEventSeq, eventSize, speCustInfoLen, attachFlag);
 				} else if ("6".equals(orderEventType)) {
 					set = buildOrderEvent_6(event, orderEventSeq, eventSize);
+				}else if("8".equals(orderEventType)){
+					set = buildOrderEvent_8(event, orderEventSeq, eventSize);
 				}
 
 				if (set != null) {
@@ -3452,6 +3536,38 @@ public class PrintBmoImpl implements PrintBmo {
 	}
 
 	/**
+	 * 组装－业务信息_
+	 * @param event
+	 * @return
+	 */
+	private OrderEventSet buildOrderEvent_8(Map<String, Object> event, int orderSeq, int eventSize){
+		OrderEventSet orderEvent = new OrderEventSet();
+		// 设置业务信息_分隔线
+		if(orderSeq <= eventSize && orderSeq != SysConstant.INT_1){
+			orderEvent.setHasPreSplitLine(SysConstant.STR_Y);
+		}
+		List<OEAttachOfferSet> attachOfferList = new ArrayList<OEAttachOfferSet>();
+		OEAttachOfferSet set = new OEAttachOfferSet();
+		List<StringBeanSet> aotList = new ArrayList<StringBeanSet>();
+
+		Map<String, Object> titleMap = MapUtils.getMap(event, "orderEventTitle");
+		if(event.containsKey("orderEventTitle")){
+			String prodSpecName = MapUtils.getString(titleMap, "prodSpecName", "");
+			StringBeanSet sbs = buildOrderEvent_8_Title(eventSize, orderSeq, prodSpecName);
+			aotList.add(sbs);
+		}
+
+		if(event.containsKey("orderEventCont")){
+			Map<String, Object> map = MapUtils.getMap(event,"orderEventCont");
+		    set.setAttachOfferCont(buildOrderEvent_8_Cont(map,orderSeq));
+		}
+		set.setAttachOfferTitle(aotList);
+		attachOfferList.add(set);
+		orderEvent.setAttachOfferList(attachOfferList);
+		return orderEvent;
+	}
+
+	/**
 	 * 组装－业务信息_存费送费_内容
 	 * @param jsonArrayParam
 	 * @return
@@ -3478,7 +3594,23 @@ public class PrintBmoImpl implements PrintBmo {
 		}
 		return attachOfferList;
 	}
+	/**
+	 * 组装－终端预约_内容
+	 * @param contList
+	 * @return
+	 */
+	private List<StringBeanSet> buildOrderEvent_8_Cont(Map<String, Object> map,int seq){
+		if (map == null) {
+			return null;
+		}
+		List<StringBeanSet> attachOfferList = new ArrayList<StringBeanSet>();
+		StringBuffer rstStr = new StringBuffer();
 
+			StringBeanSet strBean = new StringBeanSet();
+			strBean.setStrBean(buildOE_8_AttachOffer_Serv_Cont(map,seq));
+			attachOfferList.add(strBean);
+		return attachOfferList;
+	}
 
 	private String buildOE_6_AttachOffer_Serv_Cont(int tolNbr, int orderSeq, String itemName,String itemRemark,String relaAcceNbr){
 		StringBuffer rstStr = new StringBuffer();
@@ -3491,6 +3623,82 @@ public class PrintBmoImpl implements PrintBmo {
 		return rstStr.toString();
 	}
 
+	private String buildOE_8_AttachOffer_Serv_Cont(Map<String, Object> contMap,int num) {
+		String retStr = "";
+		int index = 0;
+		String resCode = getItemNameValue(contMap, "resCode", ++index);
+		String resType = getItemNameValue(contMap, "resType", (StringUtils.isNotBlank(resCode))?++index:index);
+		String resCfg = getItemNameValue(contMap, "resCfg", (StringUtils.isNotBlank(resType))?++index:index);
+		String resFee = getItemNameValue(contMap, "resFee", (StringUtils.isNotBlank(resCfg))?++index:index);
+		String couponName = getItemNameValue(contMap, "couponName", (StringUtils.isNotBlank(resFee))?++index:index);
+		String couponNum = getItemNameValue(contMap, "couponNum", (StringUtils.isNotBlank(couponName))?++index:index);
+		if (StringUtils.isNotBlank(resCode)) {
+			retStr += (StringUtils.isNotBlank(retStr)) ? (SysConstant.STR_ENT + resCode) : resCode;
+		}
+		if(StringUtils.isNotBlank(resType)){
+			retStr+=(StringUtils.isNotBlank(retStr)) ? (SysConstant.STR_ENT + resType) : resType;
+		}
+		if(StringUtils.isNotBlank(resCfg)){
+			retStr+=(StringUtils.isNotBlank(retStr)) ? (SysConstant.STR_ENT + resCfg) : resCfg;
+		}
+		if(StringUtils.isNotBlank(resFee)){
+			retStr+=(StringUtils.isNotBlank(retStr)) ? (SysConstant.STR_ENT + resFee) : resFee;
+		}
+		if(StringUtils.isNotBlank(couponName)){
+			retStr+=(StringUtils.isNotBlank(retStr)) ? (SysConstant.STR_ENT + couponName) : couponName;
+		}
+		if(StringUtils.isNotBlank(couponNum)){
+			retStr+=(StringUtils.isNotBlank(retStr)) ? (SysConstant.STR_ENT + couponNum) : couponNum;
+		}
+		Map<String, Object> agrInfo = MapUtils.getMap(contMap, "agrInfo");
+		if(null!=agrInfo) {
+			String agrInfoName = MapUtils.getString(agrInfo, "itemName","");
+			if(StringUtils.isNotBlank(agrInfoName)){
+				agrInfoName = index++ + SysConstant.STR_POINT + agrInfoName;
+				retStr+=(StringUtils.isNotBlank(retStr)) ? (SysConstant.STR_ENT + agrInfoName) : agrInfoName;
+			}
+			Map<String, Object> valueMap = MapUtils.getMap(agrInfo, "itemValue");
+			if (null != valueMap) {
+				int tempSeq = 1;
+				List<Map<String, Object>> agrPeriod = (List<Map<String, Object>>) MapUtils.getObject(valueMap, "agrPeriod");
+				List<Map<String, Object>> offerLevel = (List<Map<String, Object>>) MapUtils.getObject(valueMap, "offerLevel");
+				if (null != agrPeriod && agrPeriod.size() == 1) {
+					String agrPeriodStr = SysConstant.STR_SPE + (tempSeq++) + ")" + getItemNameValueByMap(agrPeriod.get(0));
+					retStr+=(StringUtils.isNotBlank(retStr)) ? (SysConstant.STR_ENT + agrPeriodStr) : agrPeriodStr;
+				}
+				if (null != offerLevel && offerLevel.size() == 1) {
+					String offerLevelStr = SysConstant.STR_SPE + (tempSeq++) + ")" + getItemNameValueByMap(offerLevel.get(0));
+					retStr+=(StringUtils.isNotBlank(retStr)) ? (SysConstant.STR_ENT + offerLevelStr) : offerLevelStr;
+				}
+			}
+		}
+		if (StringUtils.isNotBlank(retStr)) {
+			retStr = "预约终端" + num + SysConstant.STR_SEP + SysConstant.STR_ENT + retStr;
+		}
+		return retStr;
+	}
+
+	private String getItemNameValue(Map<String, Object> contMap, String key,int seq) {
+		String retStr = "";
+		String nameValue = getItemNameValueByMap(MapUtils.getMap(contMap,key));
+		if (StringUtils.isNotBlank(nameValue)) {
+			retStr += seq + SysConstant.STR_POINT + nameValue;
+		}
+		return retStr;
+	}
+
+	private  String getItemNameValueByMap(Map<String, Object> map) {
+		String retStr = "";
+		String itemName = MapUtils.getString(map, "itemName", "");
+		String itemValue = MapUtils.getString(map, "itemValue", "");
+		if (StringUtils.isNotBlank(itemName) && StringUtils.isNotBlank(itemValue)) {
+			retStr = itemName + SysConstant.STR_SEP + itemValue;
+		}else {
+			retStr = itemName + itemValue;
+		}
+		return retStr;
+	}
+
 
 	private StringBeanSet buildOrderEvent_6_Title(int eventSize,int seq,String boActionTypeName,String offerSpecName) {
 			StringBeanSet strBean = new StringBeanSet();
@@ -3499,6 +3707,16 @@ public class PrintBmoImpl implements PrintBmo {
             titleStr += StringUtils.isEmpty(boActionTypeName) ? "" :
 				(SysConstant.STR_LB_BRE + boActionTypeName + SysConstant.STR_RB_BRE);
 			titleStr += StringUtils.isEmpty(offerSpecName) ? "" : offerSpecName;
+            strBean.setStrBean(titleStr);
+			return strBean;
+	}
+
+	private StringBeanSet buildOrderEvent_8_Title(int eventSize,int seq,String boActionTypeName) {
+			StringBeanSet strBean = new StringBeanSet();
+			String titleStr = "";
+			titleStr +=  (ChsStringUtil.getSeqNumByInt(seq) + SysConstant.STR_PAU);
+            titleStr += StringUtils.isEmpty(boActionTypeName) ? "" :
+				(SysConstant.STR_LB_BRE + boActionTypeName + SysConstant.STR_RB_BRE);
             strBean.setStrBean(titleStr);
 			return strBean;
 	}
