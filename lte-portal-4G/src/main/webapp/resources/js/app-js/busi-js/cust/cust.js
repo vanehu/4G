@@ -281,12 +281,24 @@ cust = (function(){
 				}
 	   if(response.code==0){
 					var data = response.data ;
+					var currentCT = $("#currentCT").val();//渠道类型
+					//只有定义的渠道类型新建客户的时候可以选择非身份证类型,其他的渠道类型只能选择身份证类型。
+					var isAllowChannelType = false;
+					if (currentCT == CONST.CHANNEL_TYPE_CD.ZQZXDL || currentCT == CONST.CHANNEL_TYPE_CD.GZZXDL
+						|| currentCT == CONST.CHANNEL_TYPE_CD.HYKHZXDL || currentCT == CONST.CHANNEL_TYPE_CD.SYKHZXDL
+						|| currentCT == CONST.CHANNEL_TYPE_CD.XYKHZXDL || currentCT == CONST.CHANNEL_TYPE_CD.GZZXJL
+						|| currentCT == CONST.CHANNEL_TYPE_CD.ZYOUT || currentCT == CONST.CHANNEL_TYPE_CD.ZYINGT
+						|| currentCT == CONST.CHANNEL_TYPE_CD.WBT) { // || _partyTypeCd != "1" //新建政企客户时同样有这个限制
+						isAllowChannelType = true;
+					}
 					if(data!=undefined && data.length>0){
 						for(var i=0;i<data.length;i++){
 							var certTypedate = data[i];
-							if(certTypedate.certTypeCd == 1){ // 10348 仅显示 居民身份证
-								$("#cm_identidiesTypeCd").append("<option value='"+certTypedate.certTypeCd+"' >"+certTypedate.name+"</option>");
-							}
+							if (certTypedate.certTypeCd == "1") {//身份证
+									$("#cm_identidiesTypeCd").append("<option value='"+certTypedate.certTypeCd+"' >"+certTypedate.name+"</option>");
+								}else if(isAllowChannelType){//如果自有渠道，开放所有
+									$("#cm_identidiesTypeCd").append("<option value='"+certTypedate.certTypeCd+"' >"+certTypedate.name+"</option>");
+								}
 						}
 					}
 				}
@@ -477,8 +489,87 @@ cust = (function(){
 		$("#cmAddressStr").val(address);
 	};
 	
+	//新增客户订单查询页面
+	var _custQueryAdd=function(){
+		var param = {};
+		$.callServiceAsHtml(contextPath+"/app/cust/custQueryAdd",param,{
+			"before":function(){
+				$.ecOverlay("加载中请稍等...");
+			},
+			"always":function(){
+				$.unecOverlay();
+			},
+			"done" : function(response){
+				$("#order-content").hide();
+				$("#cust").html(response.data).show();
+			},
+			fail:function(){
+				$.unecOverlay();
+				$.alert("提示","请求可能发生异常，请稍后再试！");
+			}
+		});
+	}
+	//新增客户订单查询列表页面
+	var _custQueryAddList=function(pageIndex,scroller){
+		var curPage = 1 ;
+		if(pageIndex>0){
+			curPage = pageIndex ;
+		}
+		var startDt = $("#p_startDt").val().replace(/-/g,'');
+		var endDt = $("#p_endDt").val().replace(/-/g,'');
+		if(startDt>endDt){
+			$.alert("提示","起始时间不能大于结束时间！");
+			return;
+		}else{
+			param = {
+						"startDt":($("#p_startDt").val()).replace(/-/g,''),
+						"endDt":($("#p_endDt").val()).replace(/-/g,''),
+						nowPage:curPage,
+						pageSize:10
+				};
+			$.callServiceAsHtml(contextPath+"/app/cust/custQueryAddList",param,{
+				"before":function(){
+					$.ecOverlay("查询中请稍等...");
+				},
+				"always":function(){
+					$.unecOverlay();
+				},
+				"done" : function(response){
+					if(response && response.code == -2){
+						return ;
+					}else{
+						if(curPage == 1){
+							$("#cust_search").hide();
+							$("#cust_list").html(response.data).show();
+							$("#cust_list_scroller").css("transform","translate(0px, -40px) translateZ(0px)");
+							if(scroller && $.isFunction(scroller)) scroller.apply(this,[]);
+						}
+						if(curPage > 1){
+							$("#all_cust_list").append(response.data);
+							$("#cust_list_scroller").css("transform","translate(0px, -40px) translateZ(0px)");
+							if(scroller && $.isFunction(scroller)) scroller.apply(this,[]);
+						}
+					}
+				},
+				fail:function(){
+					$.unecOverlay();
+					$.alert("提示","请求可能发生异常，请稍后再试！");
+				}
+			});
+		}
+	}
+	
+	//滚动页面入口
+	var _scroll = function(scrollObj){
+		if(scrollObj && scrollObj.page && scrollObj.page >= 1){
+			_custQueryAddList(scrollObj.page,scrollObj.scroll);
+		}
+	};
 	
 	return {
+		scroll 						: 		_scroll,
+		custQueryAddList 			: 		_custQueryAddList,
+		custQueryAdd 				: 		_custQueryAdd,
 		getIdentidiesTypeCd 		: 		_getIdentidiesTypeCd,
 		identidiesTypeCdChoose		:		_identidiesTypeCdChoose,
 		validatorForm				:		_validatorForm,

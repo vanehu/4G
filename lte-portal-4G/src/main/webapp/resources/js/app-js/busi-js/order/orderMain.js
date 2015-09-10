@@ -860,6 +860,41 @@ order.main = (function(){
 	};
 	
 	var _lastStep = function(callbackFunc) {
+		//购手机第二个页面没下单，返回无需提示取消订单
+		if(OrderInfo.actionFlag == 13 && OrderInfo.order.step == 2){
+			var boProdAns = OrderInfo.boProdAns;
+				var boProd2Tds = OrderInfo.boProd2Tds;
+				//取消订单时，释放被预占的UIM卡
+				if(boProd2Tds.length>0){
+					for(var n=0;n<boProd2Tds.length;n++){
+						var param = {
+								numType : 2,
+								numValue : boProd2Tds[n].terminalCode
+						};
+						$.callServiceAsJson(contextPath+"/app/mktRes/phonenumber/releaseErrorNum", param, {
+							"done" : function(){}
+						});
+					}
+				}
+				//释放预占的号码
+				if(boProdAns.length>0){
+					for(var n=0;n<boProdAns.length;n++){
+						if(boProdAns[n].idFlag){
+							continue;
+						}
+						var param = {
+								numType : 1,
+								numValue : boProdAns[n].accessNumber
+						};
+						$.callServiceAsJson(contextPath+"app/mktRes/phonenumber/releaseErrorNum", param);
+					}
+				}
+				//清除号码的缓存！
+				order.phoneNumber.resetBoProdAn();
+			if(typeof(callbackFunc)=="function"){
+					callbackFunc();
+				}
+		}else{
 		$.confirm("确认","确定要取消该订单吗？",{
 			yes:function(){
 				//TODO　may initialize something;				
@@ -900,6 +935,7 @@ order.main = (function(){
 			},no:function(){
 				
 			}},"question");
+		}
 	};
 	
 	var _getTestParam = function() {

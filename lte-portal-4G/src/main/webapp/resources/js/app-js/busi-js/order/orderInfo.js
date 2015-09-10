@@ -165,7 +165,7 @@ OrderInfo = (function() {
 					areaId : OrderInfo.staff.soAreaId,
 					partyId : -1,  //新装默认-1
 					//distributorId : OrderInfo.staff.distributorId, //转售商标识
-					olTypeCd : CONST.OL_TYPE_CD.FOUR_G  //4g标识
+					olTypeCd : CONST.OL_TYPE_CD.APP  //app标识
 				},
 				custOrderList :[{busiOrder : []}]   //客户订购列表节点
 			}

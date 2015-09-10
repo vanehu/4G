@@ -17,7 +17,6 @@ order.calcharge = (function(){
 	var _pageFlag='newOrder';
 	var submit_success=false;
 	var inOpetate=false;
-	var cash = ''; //实收费用
 	var payMethod = '';//付费方式
 	var reason = '';//修改原因
 	var remark = '';//备注
@@ -116,7 +115,7 @@ order.calcharge = (function(){
 				if($("#paymentAmount_"+val) && $("#paymentAmount_"+val).val()*1==0){
 					
 				}else{
-					var aa=($("#realAmount_"+val).val())*1;
+					var aa=($("#realhidden_"+val).val())*1;
 					if(OrderInfo.actionFlag==11||OrderInfo.actionFlag==19||OrderInfo.actionFlag==20){
 						aa=($("#backAmount_"+val).val())*1;
 					}
@@ -452,6 +451,7 @@ order.calcharge = (function(){
 	};
 	//修改金额效果
 	var _editMoney=function(obj,val,str){//obj:对象,val:id,str:类型
+		var cash = ''; //实收费用
 		if(typeof obj =="object"){
 		    cash=$.trim($(obj).val());//当前费用
 	    }
@@ -550,7 +550,9 @@ order.calcharge = (function(){
 			}
 		}
 		
+		$("#realhidden_"+val).val($(obj).val());
 		payMethod = $("#changeMethod_"+val).val();  //付费方式
+		//alert(payMethod);
 		reason = $("#chargeModifyReasonCd_"+val).val();//修改原因
 		remark = $("#remark_"+val).val();//备注
 		
@@ -580,9 +582,10 @@ order.calcharge = (function(){
 				SoOrder.orderBack();
 			});
 		}
-		
+		//alert(val);
 		if(!submit_success){
 			if(val!=0){
+				//alert("cc");
 				$("#toCharge").removeAttr("disabled");
 				//$("#toCharge").parent().removeClass("ui-state-disabled");
 				$("#toComplate").attr("disabled","disabled");
@@ -590,13 +593,21 @@ order.calcharge = (function(){
 					_updateChargeInfoForCheck('1');
 				});
 				$("#toComplate").off("onclick");
+				$("#toCharge").show();
+				$("#toCharge_2").hide();
 			}else{
+				//alert("dd");
 				//$("#toCharge").attr("disabled","disabled");
-				$("#toComplate").removeAttr("disabled");
-				$("#toCharge").off("onclick");
-				$("#toComplate").off("onclick").on("onclick",function(event){
-					_chargeSave('0',false);
-				});
+				//$("#toComplate").removeAttr("disabled");
+				//\$("#toCharge").removeAttr("onclick");
+//				$("#toCharge").attr("onclick",_chargeSave('0',false));
+//				
+//				
+//				$("#toCharge").off("onclick").on("onclick",function(event){
+//					_chargeSave('0',false);
+//				});
+				$("#toCharge").hide();
+				$("#toCharge_2").show();
 			}
 		}else{
 			$("#toCharge").removeAttr("disabled");
@@ -1045,10 +1056,10 @@ order.calcharge = (function(){
 				$("#payMethodDiv").html($("#payMethodText_"+trid).html());
 				$("#editBtnDiv").html($("#editBtn_"+trid).html());
 //				$("#realAmountDiv").html($("#realAmountText_"+trid).html());
-				$("#realAmount_"+trid).val(realAmount);
-				if(cash!=''){
-					$("#realAmount_"+trid).val(cash);
-				}
+				$("#realAmount_"+trid).val($("#realhidden_"+trid).val());
+//				if(cash!=''){
+//					$("#realAmount_"+trid).val(cash);
+//				}
 				if(payMethod != ''){
 					$("#changeMethod_"+trid).val(payMethod);  //付费方式
 				}

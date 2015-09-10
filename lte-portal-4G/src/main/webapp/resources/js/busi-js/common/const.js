@@ -13,6 +13,7 @@ CONST = (function(){
 	//4g标识
 	var _OL_TYPE_CD = {
 		FOUR_G : 11,
+		APP : 15, // app 标示
 		LTE : 10,
 		UI_LTE : 8,
 		ZDYY : 14

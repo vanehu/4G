@@ -1,6 +1,8 @@
 package com.al.lte.portal.app.controller.crm;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,7 +23,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.context.request.WebRequest;
 
+import com.al.ec.serviceplatform.client.DataBus;
 import com.al.ec.serviceplatform.client.ResultCode;
 import com.al.ecs.common.entity.JsonResponse;
 import com.al.ecs.common.entity.PageModel;
@@ -43,6 +47,8 @@ import com.al.lte.portal.bmo.crm.CustBmo;
 import com.al.lte.portal.bmo.staff.StaffBmo;
 import com.al.lte.portal.common.CommonMethods;
 import com.al.lte.portal.common.EhcacheUtil;
+import com.al.lte.portal.common.InterfaceClient;
+import com.al.lte.portal.common.PortalServiceCode;
 import com.al.lte.portal.common.SysConstant;
 import com.al.lte.portal.model.SessionStaff;
 
@@ -64,6 +70,86 @@ public class CustController extends BaseController {
     @Qualifier("com.al.lte.portal.bmo.staff.StaffBmo")
     private StaffBmo staffBmo;
 
+    /**
+	 * 新增客户订单查询页面
+	 * @param model
+	 * @param session
+	 * @param flowNum
+	 * @return
+	 * @throws AuthorityException
+	 */
+	@RequestMapping(value = "/custQueryAdd", method = RequestMethod.POST)
+    @AuthorityValid(isCheck = false)
+    public String custQueryAdd(Model model,HttpSession session,@LogOperatorAnn String flowNum) {
+		
+		Calendar c = Calendar.getInstance();
+		SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd");
+		String startTime = f.format(c.getTime());
+		
+		model.addAttribute("p_startDt", startTime);
+		model.addAttribute("p_endDt", startTime);
+		
+		return "/app/cust/cust-queryAdd";		
+	}
+	
+	/**
+	 * 新增客户订单查询列表页面
+	 * @param model
+	 * @param session
+	 * @param flowNum
+	 * @return
+	 * @throws AuthorityException
+	 */
+	@RequestMapping(value = "/custQueryAddList", method = RequestMethod.POST)
+    @AuthorityValid(isCheck = false)
+    public String custQueryAddList(@RequestBody Map<String, Object> paramMap,Model model,HttpSession session,@LogOperatorAnn String flowNum) {
+		
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+                SysConstant.SESSION_KEY_LOGIN_STAFF);
+        Map<String, Object> param = new HashMap<String, Object>();
+        List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+        Integer nowPage = 1 ;
+        Integer pageSize = 10 ;
+        Integer totalSize = 0 ;
+        
+        param.put("startDate", paramMap.get("startDt"));
+		param.put("endDate", paramMap.get("endDt"));
+		param.put("areaId", sessionStaff.getAreaId());
+		param.put("staffId", sessionStaff.getStaffId());
+		param.put("olType", "11");
+		param.put("boActionTypeCd", "");//新增：C1   反档：1020500000     为空：都查
+		try{
+    		nowPage = Integer.parseInt(paramMap.get("nowPage").toString());
+    		pageSize = Integer.parseInt(paramMap.get("pageSize").toString());
+    		param.put("nowPage", nowPage);
+    		param.put("pageSize", pageSize);
+    		
+    		DataBus db = InterfaceClient.callService(param, PortalServiceCode.QUERY_CUST_MODIFY_LIST,null, sessionStaff);
+    		Map<String, Object> resultMap = db.getReturnlmap();
+    		Map<String, Object> map = (Map<String, Object>) resultMap.get("result");
+    		totalSize = (Integer) map.get("totalSize");
+    		if(map!=null&&map.get("custOrder")!=null){
+        		list =(List<Map<String, Object>>)map.get("custOrder");
+    		}
+    		PageModel<Map<String, Object>> pm = PageUtil.buildPageModel(
+            		nowPage,
+            		pageSize,
+            		totalSize<1?1:totalSize,
+    				list);
+    		model.addAttribute("pageModel", pm);
+		}catch (BusinessException be) {
+
+			return super.failedStr(model, be);
+		} catch (InterfaceException ie) {
+
+			return super.failedStr(model, ie, param, ErrorCode.CUST_ORDER);
+		} catch (Exception e) {
+			log.error("新增客户订单查询/app/cust/custQueryAddList方法异常", e);
+			return super.failedStr(model, ErrorCode.QUERY_CUST, e, param);
+		}
+		return "/app/cust/cust-queryAdd-list";		
+	}
+	
     @SuppressWarnings("unchecked")
     @RequestMapping(value = "/queryCust", method = { RequestMethod.POST })
     public String queryCust(@RequestBody Map<String, Object> paramMap, Model model, @LogOperatorAnn String flowNum,
@@ -332,6 +418,7 @@ public class CustController extends BaseController {
 				.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);
     	model.addAttribute("sessionStaff",JsonUtil.buildNormal().objectToJson(sessionStaff));
     	model.addAttribute("flag", "real");
+    	model.addAttribute("currentCT", sessionStaff.getCurrentChannelType());
         return "/app/cust/cust-create";
     }
     

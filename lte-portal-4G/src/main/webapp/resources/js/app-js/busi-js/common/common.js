@@ -137,17 +137,22 @@ common = (function($) {
 	};
 	
 	//调用客户端的日历
-	var _callcalendar=function(time,format,method){
+	var _callcalendar=function(time,format,method,textId){
 		var arr=new Array(1);
 		arr[0]=time;
 		arr[1]=format;
 		arr[2]=method;
+		arr[3]=textId;
 		MyPlugin.calendar(arr,
             function(result) {
             },
             function(error) {
             }
 		);
+	};
+	//时间框赋值
+	var _setCalendar = function(time,textId){
+		$("#"+textId).val(time);
 	};
 	
 	//客户端调用此方法返回到上一页 1 为prepare页面  2为order-content（填单）页面 3为order-confirm（订单确认和收银台）页面 4为order-print（打印）页面
@@ -224,6 +229,7 @@ common = (function($) {
 	};
 	
 	return {
+		setCalendar			:	_setCalendar,
 		callcalendar		:	_callcalendar,
 		callCloseWebview	:	_callCloseWebview,
 		callCustInfo		:	_callCustInfo,

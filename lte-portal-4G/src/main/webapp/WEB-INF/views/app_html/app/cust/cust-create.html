@@ -33,6 +33,7 @@
             	<input type="text" class="form-control" id="cmCustName"  maxlength="100" name="cmCustName" placeholder="请输入客户姓名" >
 			</div>
 			<div class="form-group" id="div_cm_identidiesType">
+				<input type="hidden" id="currentCT" value="${currentCT}"/><!-- 渠道类型 -->
 	            <label for="cm_identidiesTypeCd">证件类型</label>
 	            <div class="input-group">
 	            <select id="cm_identidiesTypeCd" class="selectpicker show-tick form-control" onchange="cust.identidiesTypeCdChoose(this)">

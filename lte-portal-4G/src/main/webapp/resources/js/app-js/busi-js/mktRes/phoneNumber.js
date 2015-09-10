@@ -682,9 +682,9 @@ order.phoneNumber = (function(){
 		if(pncharacteristic!=null && pncharacteristic!=""){
 			pnEnd = pncharacteristic;
 		}else{
-			//if(pnEnd=='最后四位'){
-			//	pnEnd='';
-			//}
+			if(pnEnd=='最后四位'){
+				pnEnd='';
+		    }
 		}
 		var phoneNum='';
 //		var phoneNum=$.trim($("#phoneNum").val());

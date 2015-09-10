@@ -802,21 +802,21 @@ public class LoginController extends BaseController {
 		this.log.debug("smsPwd={}", smsPwd);
 		//手机版本使用
 		Object appFlag = ServletUtils.getSessionAttribute(request,SysConstant.SESSION_KEY_APP_FLAG);
-		
-		long l_start = Calendar.getInstance().getTimeInMillis();	
-		// 验证码内容
-		String smsPwdSession = (String) ServletUtils.getSessionAttribute(
-				request, SysConstant.SESSION_KEY_LOGIN_SMS);
-		if(StringUtil.isEmpty(smsPwdSession)){
-			return super.failed("短信过期失效，请重新发送!", ResultConstant.FAILD.getCode());
-		}
-		ServletUtils.removeSessionAttribute(request, SysConstant.SESSION_KEY_LOGIN_SMS);
+		// 系统参数表中的是否发送校验短信标识，1不发送不验证， 其他发送并验证
+		String msgCodeFlag = MySimulateData.getInstance().getParam((String) request.getSession().getAttribute(SysConstant.SESSION_DATASOURCE_KEY),SysConstant.MSG_CODE_FLAG);
 		// 登陆后，服务层返回的认证后用户信息
 		Map<String, Object> mapSession = (Map<String, Object>) ServletUtils
 				.getSessionAttribute(request, SESSION_KEY_TEMP_LOGIN_STAFF);
 		String smsPassFlag = MapUtils.getString(mapSession, "smsPassFlag", "Y");
-		// 系统参数表中的是否发送校验短信标识，1不发送不验证， 其他发送并验证
-		String msgCodeFlag = MySimulateData.getInstance().getParam((String) request.getSession().getAttribute(SysConstant.SESSION_DATASOURCE_KEY),SysConstant.MSG_CODE_FLAG);
+		long l_start = Calendar.getInstance().getTimeInMillis();	
+		// 验证码内容
+		String smsPwdSession = (String) ServletUtils.getSessionAttribute(
+				request, SysConstant.SESSION_KEY_LOGIN_SMS);
+		//如果不需要发送短信，验证码就为空，不提示短信过期失效
+		if(!("1".equals(msgCodeFlag) || "N".equals(smsPassFlag)) && StringUtil.isEmpty(smsPwdSession)){
+			return super.failed("短信过期失效，请重新发送!", ResultConstant.FAILD.getCode());
+		}
+		ServletUtils.removeSessionAttribute(request, SysConstant.SESSION_KEY_LOGIN_SMS);
 		if ("1".equals(msgCodeFlag) || "N".equals(smsPassFlag) || smsPwdSession.equals(smsPwd)) {
 			SessionStaff sessionStaff = SessionStaff.setStaffInfoFromMap(mapSession);
 			
