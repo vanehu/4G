@@ -139,8 +139,6 @@ query.prod = (function() {
 			return response.data;
 		}else if( response.data.code == 1){
 			$.alert("提示", response.data.message);
-		}else if( response.code == 1){
-			$.alert("提示", "校验终端与合约不匹配");
 		}else{
 			$.alert("提示","<br/>校验失败，请稍后重试！");
 		}
