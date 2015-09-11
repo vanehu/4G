@@ -519,11 +519,10 @@ public class PrintBmoImpl implements PrintBmo {
 		List<StringBeanSet> remarkInfos = new ArrayList<StringBeanSet>();
 		remarkInfos.add(new StringBeanSet("1. 本预约单仅供客户在授权门店预约中国电信终端使用。"));
 		remarkInfos.add(new StringBeanSet("2. 成功预约的客户有机会优先购买中国电信终端，接受预约订单的门店将按预约顺序发货。但受货源影响，可能存在终端到货延迟。"));
-		remarkInfos.add(new StringBeanSet("3. 一个有效身份证件最多可预约【政企客户9个/普通客户5个】中国电信终端。"));
-		remarkInfos.add(new StringBeanSet("4. 请您保持电话畅通，到货后我们将电话通知您到预约门店办理业务。如接到通知3日内未办理，本预约单将自动失效。"));
-		remarkInfos.add(new StringBeanSet("5. 本预约单为后续业务办理凭证，请您妥善保管。"));
-		remarkInfos.add(new StringBeanSet("6. 其他未尽事宜详询门店工作人员或致电门店联系电话。"));
-		remarkInfos.add(new StringBeanSet("7. 本预约仅对拟办理中国电信iPhone 6s/ 6s Plus合约的客户有效，客户可凭此预约单在终端到货时办理中国电信iPhone 6s/ 6s Plus合约。"));
+		remarkInfos.add(new StringBeanSet("3. 请您保持电话畅通，到货后我们将电话通知您到预约门店办理业务。如接到通知3日内未办理，本预约单将自动失效。"));
+		remarkInfos.add(new StringBeanSet("4. 本预约单为后续业务办理凭证，请您妥善保管。"));
+		remarkInfos.add(new StringBeanSet("5. 其他未尽事宜详询门店工作人员或致电门店联系电话。"));
+		remarkInfos.add(new StringBeanSet("6. 本预约仅对拟办理中国电信iPhone 6s/ 6s Plus合约的客户有效，客户可凭此预约单在终端到货时办理中国电信iPhone 6s/ 6s Plus合约。"));
 		return remarkInfos;
 	}
 
@@ -2207,7 +2206,7 @@ public class PrintBmoImpl implements PrintBmo {
 				normOfferSet1.setNormOfferComments(normOfferComments1);
 				normOfferList.add(normOfferSet1);
 			}
-			//busiOrderSeq++;
+			busiOrderSeq++;
 		}
 
 		if (attachThreeList != null) {
