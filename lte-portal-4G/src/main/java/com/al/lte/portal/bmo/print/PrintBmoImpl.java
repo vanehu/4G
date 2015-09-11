@@ -5703,8 +5703,13 @@ public class PrintBmoImpl implements PrintBmo {
 			return "";
 		String name=getItemName(map);
 		String value = getItemValue(map);
-		if(StringUtils.isNotBlank(name)&&StringUtils.isNotBlank(value))
-			return name+SysConstant.STR_SEP+value+SysConstant.STR_SPI;
+		if (StringUtils.isNotBlank(name) && StringUtils.isNotBlank(value)) {
+			if (value.endsWith(SysConstant.STR_STO)) {
+				return name + SysConstant.STR_SEP + value;
+			} else {
+				return name + SysConstant.STR_SEP + value + SysConstant.STR_SPI;
+			}
+		}
 		if(StringUtils.isNotBlank(name))
 			return name;
 		if(StringUtils.isNotBlank(value))
