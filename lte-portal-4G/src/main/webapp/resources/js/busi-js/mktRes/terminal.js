@@ -568,12 +568,15 @@ mktRes.terminal = (function($){
 						$("#yyPolicy").append("<option name='cfgRuleId' value='"+this.cfgRuleId+"' >"+this.cfgRuleName+"</option>");
 					}
 				});
-				
+				$("#zdyypurchaseTermA").removeClass("btna_g").addClass("btna_o");
+				$("#zdyypurchaseTermA").click(function(){
+					_zdyypurchase();
+				});
 			}else {
-				$.alert("提示","查询终端配置查询接口错误");
 				$("#yyType option").remove();
 				$("#yyPolicy option").remove();
-				return;
+				$("#zdyypurchaseTermA").removeClass("btna_o").addClass("btna_g");
+				$("#zdyypurchaseTermA").unbind("click");
 			}
 			
 			
@@ -1398,12 +1401,15 @@ mktRes.terminal = (function($){
 							$("#yyPolicy").append("<option name='cfgRuleId' value='"+this.cfgRuleId+"' >"+this.cfgRuleName+"</option>");
 						}
 					});
-					
+					$("#zdyypurchaseTermA").removeClass("btna_g").addClass("btna_o");
+					$("#zdyypurchaseTermA").click(function(){
+						_zdyypurchase();
+					});
 				}else {
-					$.alert("提示","查询终端配置查询接口错误");
 					$("#yyType option").remove();
 					$("#yyPolicy option").remove();
-					return;
+					$("#zdyypurchaseTermA").removeClass("btna_o").addClass("btna_g");
+					$("#zdyypurchaseTermA").unbind("click");
 				}
 				$("#cfsjA").click(function(){
 					_selectHy(1);
@@ -1414,10 +1420,6 @@ mktRes.terminal = (function($){
 				$("#chkTsnA").click(function(){
 					_checkTerminalCode('tsn');
 				});
-				$("#zdyypurchaseTermA").click(function(){
-					_zdyypurchase();
-				});
-                
 			}
 		});	
 	};
@@ -1430,10 +1432,6 @@ mktRes.terminal = (function($){
 		var re = /^[1-9]+[0-9]*]*$/; 
 		if($("#yyType").val()==null || $("#yyType").val() ==""){
 			$.alert("提示","预约类型不能为空");
-			return;
-		}
-		if($("#yyPolicy").val()==null || $("#yyPolicy").val() ==""){
-			$.alert("提示","预约政策不能为空");
 			return;
 		}
 		if(!re.test(zdyynum)){
