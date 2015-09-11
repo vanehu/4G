@@ -100,7 +100,7 @@ CONST = (function(){
 		QUASIREALTIME_AFTER_PAY : 3102, //实时预付费+后附 -后付费用户，准实时预付费用户
 		AFTER_BEFORE_PAY : 1202, //可预可后，默认后附 -后付费用户，预付费用户
 		QUASIREALTIME_BEFORE_PAY: 3101, //预付+准实时预付费 -准实时预付费用户，预付费用户
-		QUASIREALTIME_PAY : 1201, //准实时预付费 -准实时预付费用户
+		QUASIREALTIME_PAY : 1201 //准实时预付费 -准实时预付费用户
 	};
 	
 	//业务动作大类
