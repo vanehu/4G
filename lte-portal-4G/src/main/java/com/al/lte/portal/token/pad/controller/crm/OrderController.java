@@ -235,26 +235,122 @@ public class OrderController extends BaseController {
 			provinceInfo.put("isFee", isFee);
 			provinceInfo.put("actionFlag", actionFlag);
 			provinceInfo.put("reloadFlag", reloadFlag);
-			provinceInfo.put("mktResInstCode", mktResInstCode);
+			//provinceInfo.put("mktResInstCode", mktResInstCode);
+			
+			//UIM卡传参改造
+			String mktResInstCodes="";
+			String codeMsg="";
+			
+			if(checkParam(mainPhoneNum) || checkParam(newSubPhoneNum)){
+				if(checkParam(mktResInstCode)){
+					//解析传入的参数
+					String[] uims=String.valueOf(mktResInstCode).split(",");
+					
+					if(uims!=null && uims.length>0){
+						String checkCode="0";
+						
+						if(uims.length>1){
+							String checkPhone="";
+							String checkUim="";
+							
+							for(String uimCode:uims){
+								String[] uimCodes=uimCode.split("_");
+								
+								if(uimCodes!=null && uimCodes.length==2){
+									String thisPhone=uimCodes[0];
+									String thisUim=uimCodes[1];
+									
+									if(checkPhone!=null && !"".equals(checkPhone)){
+										if(checkPhone.equals(thisPhone) || checkUim.equals(thisUim)){
+											checkCode="1";
+											break;
+										}
+									}else{
+										checkPhone=thisPhone;
+										checkUim=thisUim;
+									}
+								}
+							}
+						}
+						
+						if("1".equals(checkCode)){
+							codeMsg="传入的UIM参数中存在重复数据,传入的UIM参数["+mktResInstCode+"]";
+						}else{
+							//如果主号码不为空
+							if(checkParam(mainPhoneNum)){
+								for(String uimCode:uims){
+									String[] uimCodes=uimCode.split("_");
+									
+									if(uimCodes!=null && uimCodes.length==2){
+										if(mainPhoneNum.equals(uimCodes[0])){
+											mktResInstCodes+="-1_"+uimCodes[1]+",";
+											break;
+										}
+									}
+								}
+							}
+							
+							//如果副号码不为空
+							if(checkParam(newSubPhoneNum)){
+								String[] subPhoneNumbs=newSubPhoneNum.split(",");
+								
+								if(subPhoneNumbs!=null && subPhoneNumbs.length>0){
+									int i=-2;
+									for(String subNum:subPhoneNumbs){
+										for(String uimCode:uims){
+											String[] uimCodes=uimCode.split("_");
+											
+											if(uimCodes!=null && uimCodes.length==2){
+												if(subNum.equals(uimCodes[0])){
+													mktResInstCodes+=i+"_"+uimCodes[1]+",";
+													break;
+												}
+											}
+										}
+										i--;
+									}
+								}
+							}
+							
+							if(!checkParam(mktResInstCodes)){
+								codeMsg="未匹配到适应的UIM卡";
+								if(checkParam(mainPhoneNum)){
+									codeMsg+="，主号码["+mainPhoneNum+"]";
+								}
+								
+								if(checkParam(newSubPhoneNum)){
+									codeMsg+="，副号码["+newSubPhoneNum+"]";
+								}
+								
+								codeMsg+=",传入的UIM参数["+mktResInstCode+"]";
+							}
+						}
+					}
+				}
+			}
+			
+			provinceInfo.put("mktResInstCode", mktResInstCodes);
+			provinceInfo.put("codeMsg", codeMsg);
 			
 			//主套餐内部ID转换接口入参
 			String prodOfferId = "";
 			String prodOfferName = "";
 			String offerNbr = "";
 			//若mainProdOfferId不为空，则直接定位到指定套餐上
-			if(mainProdOfferId!=null&&!mainProdOfferId.equals("")&&!mainProdOfferId.equals("null")){
+			if(mainProdOfferId!=null && !"".equals(mainProdOfferId) && !"null".equals(mainProdOfferId)){
 				if (paramsMap.get("prodOfferId")==null||paramsMap.get("prodOfferName")==null||paramsMap.get("offerNbr")==null) {
 					model.addAttribute("errorMsg", "主套餐id转换参数丢失，请重试。");
 					return "/common/error";
 				}
+				
 				prodOfferId = String.valueOf(paramsMap.get("prodOfferId"));//集团销售品ID
 				prodOfferName = String.valueOf(paramsMap.get("prodOfferName"));//集团销售品
 				offerNbr = String.valueOf(paramsMap.get("offerNbr"));//集团销售品编码
 				//判断是否有传主副卡号码  
-				if(mainPhoneNum!=null&&!"".equals(mainPhoneNum)&&!"null".equals(mainPhoneNum)){
+				if(mainPhoneNum!=null && !"".equals(mainPhoneNum) && !"null".equals(mainPhoneNum)){
 					model.addAttribute("mainPhoneNum",mainPhoneNum);
 				}
-				if (newSubPhoneNum!=null&&!"".equals(newSubPhoneNum)&&!"null".equals(newSubPhoneNum)) {
+				if (newSubPhoneNum!=null && !"".equals(newSubPhoneNum) && !"null".equals(newSubPhoneNum)) {
 					model.addAttribute("newSubPhoneNum",newSubPhoneNum);
 				}
 				//model.addAttribute("prodOfferId",prodOfferId);
@@ -296,24 +392,41 @@ public class OrderController extends BaseController {
        return "/padtoken/order/order-search-index";
     }
 	
+	public boolean checkParam(Object info){
+		boolean result=false;
+		
+		if(info!=null){
+			String infos=String.valueOf(info);
+			
+			if(infos!=null && !"".equals(infos) && !"null".equals(infos)){
+				result=true;
+			}
+		}
+		
+		return result;
+	} 
+	
 	@RequestMapping(value = "/prodoffer/prepare", method = RequestMethod.GET)
     @AuthorityValid(isCheck = false)
-    public String main(@RequestParam(value = "current", required = false,defaultValue = "home") String current,
-            Model model ,HttpServletRequest request) throws AuthorityException {
+    public String main(@RequestParam(value = "current", required = false,defaultValue = "home") String current,Model model ,HttpServletRequest request) throws AuthorityException {
 		String prodOfferId = request.getParameter("prodOfferId") ;
 		String subPage= request.getParameter("subPage") ;
 		String numsubflag= request.getParameter("numsubflag") ;
+		
 		if(prodOfferId!=null&&!prodOfferId.equals("")&&!prodOfferId.equals("null")){
 			model.addAttribute("prodOfferId",prodOfferId);
 		}
+		
 		if(subPage!=null&&!subPage.equals("")&&!subPage.equals("null")){
 			model.addAttribute("subPage",subPage);
 		}
+		
 		if(numsubflag!=null&&!numsubflag.equals("")&&!numsubflag.equals("null")){
 			model.addAttribute("numsubflag",numsubflag);
 		}
-       return "/padtoken/order/order-search";
-    }
+		
+		return "/padtoken/order/order-search";
+	}
 	
 	  /**
      * 公共参数校验

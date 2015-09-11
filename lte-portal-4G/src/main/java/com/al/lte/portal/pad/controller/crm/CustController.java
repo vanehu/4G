@@ -333,7 +333,65 @@ public class CustController extends BaseController {
         } catch (Exception e) {
             return super.failedStr(model, ErrorCode.ORDER_PROD, e, paramMap);
         }
-
+    }
+    
+    /**
+     * 用于首页与分页查询
+     * @param param
+     * @param model
+     * @param session
+     * @param flowNum
+     * @param response
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    @RequestMapping(value = "/orderProdSub", method = RequestMethod.GET)
+    public String orderProdSub(@RequestParam Map<String, Object> param, Model model, HttpSession session,
+            @LogOperatorAnn String flowNum, HttpServletResponse response) {
+        SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
+        List<Map<String, Object>> list = null;
+        if (param.containsKey("isPurchase")) {
+            model.addAttribute("isPurchase", "1");
+            param.remove("isPurchase");
+        }
+        String areaId = MapUtils.getString(param, "areaId", sessionStaff.getCurrentAreaId());
+        Map paramMap = new HashMap();
+        paramMap.put("areaId", areaId);
+        paramMap.put("acctNbr", param.get("acctNbr"));
+        paramMap.put("custId", param.get("custId"));
+        paramMap.put("curPage", param.get("curPage"));
+        String pageSize = MapUtils.getString(param, "pageSize", "8");
+        paramMap.put("pageSize", pageSize);
+        this.log.debug("param={}", JsonUtil.toString(paramMap));
+        try {
+            Map<String, Object> datamap = this.custBmo.queryCustProd(paramMap, flowNum, sessionStaff);
+            this.log.debug("return={}", JsonUtil.toString(datamap));
+            String code = MapUtils.getString(datamap, "resultCode", "");
+            if (ResultCode.R_SUCC.equals(code)) {
+                Map<String, Object> temMap = (Map) datamap.get("result");
+                list = (List<Map<String, Object>>) temMap.get("prodInstInfos");
+                if (list == null) {
+                    super.addHeadCode(response, ResultConstant.SERVICE_RESULT_FAILTURE);
+                } else {
+                    Map<String, Object> mktPageInfo = MapUtil.map(temMap, "page");
+                    // 设置分页对象信息
+                    PageModel<Map<String, Object>> pm = PageUtil.buildPageModel(MapUtils.getIntValue(mktPageInfo,
+                            "pageIndex", 1), MapUtils.getIntValue(mktPageInfo, "pageSize", 8), MapUtils.getIntValue(
+                            mktPageInfo, "totalCount", 1), list);
+                    model.addAttribute("pageModel", pm);
+                }
+            } else {
+                model.addAttribute("msg", MapUtils.getString(datamap, "msg", "抱歉,没有找到已订购的业务！"));
+            }
+            model.addAllAttributes(param);
+            return "/padtoken/cust/cust-order-list";
+        } catch (BusinessException be) {
+            return super.failedStr(model, be);
+        } catch (InterfaceException ie) {
+            return super.failedStr(model, ie, paramMap, ErrorCode.ORDER_PROD);
+        } catch (Exception e) {
+            return super.failedStr(model, ErrorCode.ORDER_PROD, e, paramMap);
+        }
     }
 
     @SuppressWarnings("unchecked")

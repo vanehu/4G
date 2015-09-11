@@ -100,6 +100,10 @@ offerChange = (function() {
 					    offerRoleId : this.offerRoleId,
 					    acctNbr : this.accessNumber
 					};
+					
+					//现在号码
+					var nowPhoneNum=this.accessNumber;
+					
 					var res = query.offer.queryChangeAttachOffer(param);
 					$("#attach_"+prodId).html(res);	
 					//如果objId，objType，objType不为空才可以查询默认必须
@@ -124,24 +128,61 @@ offerChange = (function() {
 //					AttachOffer.changeLabel(prodId,this.objId,""); //初始化第一个标签附属
 					if(AttachOffer.isChangeUim(prodId)){ //需要补换卡
 						//uim卡校验
-						if(OrderInfo.mktResInstCode!=undefined && OrderInfo.mktResInstCode!=null && OrderInfo.mktResInstCode!=""){
+						if(OrderInfo.mktResInstCode!=undefined && OrderInfo.mktResInstCode!=null && OrderInfo.mktResInstCode!="" && OrderInfo.mktResInstCode!="null"){
 							var array=OrderInfo.mktResInstCode.split(",");
-							if(array.length>0){
-								cleckUim(array[num],prodId);
-								$("#uim_check_btn_"+prodId).hide();
-								$("#uim_release_btn_"+prodId).hide();
+							if(array!=null && array.length>0){
+								//首先进行UIM是否重复判断
+								var checkPhone="";
+								var checkUim="";
+								var checkCode="0";
+								for(var i=0;i<array.length;i++){
+									var numAndUim=array[i].split("_");
+									if(numAndUim!=null && numAndUim.length==2){
+										var thisPhone=numAndUim[0];
+										var thisUim=numAndUim[1]
+										if(checkPhone!=null && checkPhone!=""){
+											if(checkPhone==thisPhone || checkUim==thisUim){
+												checkCode="1";
+												break;
+											}
+										}else{
+											checkPhone=thisPhone;
+											checkUim=thisUim;
+										}
+									}
+								}
 								
+								if(checkCode=="1"){
+									$.alert("提示","传入的UIM参数中存在重复数据,参数为["+OrderInfo.mktResInstCode+"]");
+								}else{
+									//没有重复的数据再进行匹配
+									var nowUim="";
+									
+									for(var i=0;i<array.length;i++){
+										var numAndUim=array[i].split("_");
+										if(numAndUim!=null && numAndUim.length==2){
+											var phoneCode=numAndUim[0];
+											var uimCode=numAndUim[1];
+											
+											if(phoneCode==nowPhoneNum){
+												nowUim=uimCode;
+											}
+										}
+									}
+									
+									if(nowUim!=null && nowUim!="" && nowUim!="null"){
+										cleckUim(nowUim,prodId);
+										$("#uim_check_btn_"+prodId).hide();
+										$("#uim_release_btn_"+prodId).hide();
+									}
+								}
 							}
-							
 						}
+						
 						num++;
 						
-							$("#uimDiv_"+prodId).show();
-						//}else{
-						//	$("#uimDiv_"+prodId).hide();
-						//}
+						$("#uimDiv_"+prodId).show();
 					}
-					//uimDivShow=true;
 				});
 			}
 		});
@@ -151,10 +192,9 @@ offerChange = (function() {
 		}
 		order.main.initTounch();
 	};
+	
 	function cleckUim(uim,prodId){
-		var uimParam = {
-				"instCode":uim
-				};
+		var uimParam = {"instCode":uim};
 		var response = $.callServiceAsJsonGet(contextPath+"/token/pc/mktRes/qrymktResInstInfo",uimParam);
 		if (response.code==0) {
 			if(response.data.mktResBaseInfo){
@@ -189,13 +229,18 @@ offerChange = (function() {
 					OrderInfo.clearProdUim(prodId);
 					OrderInfo.boProd2Tds.push(coupon);
 				}else{
-					$.alert("提示","UIM卡不是预占状态，当前为"+response.data.mktResBaseInfo.statusCd);
+					$.alert("提示","UIM卡["+uim+"]不是预占状态，当前为"+response.data.mktResBaseInfo.statusCd);
 				}
 			}else{
-				$.alert("提示","查询不到UIM信息");
+				$.alert("提示","查询不到UIM卡["+uim+"]信息");
 			}
+		}else if (response.code==-2){
+			$.alertM(response.data);
+		}else {
+			$.alert("提示","UIM信息查询接口出错,稍后重试");
 		}
-}
+	}
+	
 	//套餐变更提交组织报文
 	var _changeOffer = function(busiOrders){
 		_createDelOffer(busiOrders,OrderInfo.offer); //退订主销售品

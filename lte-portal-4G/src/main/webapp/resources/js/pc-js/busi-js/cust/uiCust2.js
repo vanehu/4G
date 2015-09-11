@@ -118,7 +118,18 @@ order.uiCusts = (function(){
 
 		}
 		diffPlace=$("#DiffPlaceFlag").val();
-		areaId=$("#p_cust_areaId").val();
+		
+		//旧客户定位地市是获取工号地市，暂不用
+		//areaId=$("#p_cust_areaId").val();
+		
+		//改为使用参数中的地市进行定位
+		areaId=$("#custAreaId_").val();
+		
+		if(areaId==null || areaId=="" || areaId=="null" || areaId=="undefined"){
+			_showPackageDialog("用于客户定位的地市为空，请重试!");
+			return;
+		}
+		
 		//lte进行受理地区市级验证
 		if(CONST.getAppDesc()==0&&areaId.indexOf("0000")>0){
 			_showPackageDialog("省级地区无法进行定位客户,请选择市级地区!");
@@ -375,7 +386,6 @@ order.uiCusts = (function(){
 	
 	//已订购业务第二步
 	var _btnQueryCustProd=function(curPage){
-	
 		//收集参数
 		var param={};
 		if(_choosedCustInfo==null){

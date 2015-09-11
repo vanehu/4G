@@ -655,7 +655,7 @@ public class OfferController extends BaseController {
 			
 			//进行非空判断
 			if(!checkParams(paramsMap)){
-				model.addAttribute("errorMsg", "参数丢失，请重试");
+				model.addAttribute("errorMsg", "缺少必要参数");
 				return "/common/error";
 			}
 			
@@ -699,7 +699,70 @@ public class OfferController extends BaseController {
 			model.addAttribute("redirectUri_", redirectUri);
 			model.addAttribute("isFee_",isFee);
 			model.addAttribute("reloadFlag_",paramsMap.get("reloadFlag"));
-			model.addAttribute("mktResInstCode_", paramsMap.get("mktResInstCode"));
+			model.addAttribute("custAreaId_",provCustAreaId);
+
+			//判断是否传参UIM卡
+			Object mktResInstCode=paramsMap.get("mktResInstCode");
+			String mktResInstCodes="";
+			String codeMsg="";
+			
+			if(mktResInstCode!=null && !"".equals(String.valueOf(mktResInstCode).trim()) && !"null".equals(String.valueOf(mktResInstCode))){
+				//解析传入的参数
+				String[] uims=String.valueOf(mktResInstCode).split(",");
+				String mainPhoneNum=String.valueOf(paramsMap.get("mainPhoneNum"));
+				
+				if(uims!=null && uims.length>0){
+					//如果传入的UIM卡大于1，需要判断是否重复等操作
+					String checkCode="0";
+					
+					if(uims.length>1){
+						String checkPhone="";
+						String checkUim="";
+						
+						for(String uimCode:uims){
+							String[] uimCodes=uimCode.split("_");
+							
+							if(uimCodes!=null && uimCodes.length==2){
+								String thisPhone=uimCodes[0];
+								String thisUim=uimCodes[1];
+								
+								if(checkPhone!=null && !"".equals(checkPhone)){
+									if(checkPhone.equals(thisPhone) || checkUim.equals(thisUim)){
+										checkCode="1";
+										break;
+									}
+								}else{
+									checkPhone=thisPhone;
+									checkUim=thisUim;
+								}
+							}
+						}
+					}
+					
+					if("1".equals(checkCode)){
+						codeMsg="传入的UIM参数中存在重复数据,传入的UIM参数["+mktResInstCode+"]";
+					}else{
+						for(String uimCode:uims){
+							String[] uimCodes=uimCode.split("_");
+							
+							if(uimCodes!=null && uimCodes.length==2){
+								if(mainPhoneNum.equals(uimCodes[0])){
+									mktResInstCodes=uimCodes[1];
+									break;
+								}
+							}
+						}
+						
+						if(mktResInstCodes==null || "".equals(mktResInstCodes) || "null".equals(mktResInstCodes)){
+							codeMsg="未匹配到适应的UIM卡，主号码["+mainPhoneNum+"],传入的UIM参数["+mktResInstCode+"]";
+						}
+					}
+				}
+			}
+			
+			model.addAttribute("mktResInstCode_",mktResInstCodes);
+			model.addAttribute("codeMsg_", codeMsg);
+			
 			
 			//放入流水作为唯一标识码
 			session.setAttribute("provIsale_"+provIsale, provIsale);
@@ -726,18 +789,16 @@ public class OfferController extends BaseController {
 		boolean result=false;
 		
 		if(infoMap!=null && infoMap.size()!=0){
-			Object provIsale=infoMap.get("provIsale");
-			Object provCustIdentityCd=infoMap.get("provCustIdentityCd");
-			Object custNumber=infoMap.get("custNumber");
-			Object provCustIdentityNum=infoMap.get("provCustIdentityNum");
+			Object provIsale=infoMap.get("provIsale");//流水号
 			Object provCustAreaId=infoMap.get("provCustAreaId");
 			Object actionFlag=infoMap.get("actionFlag");
 			Object reloadFlag=infoMap.get("reloadFlag");
 			Object mainPhoneNum=infoMap.get("mainPhoneNum");
 			Object isFee=infoMap.get("isFee");
 			
-			if(provIsale==null || provCustIdentityCd==null || custNumber==null || provCustIdentityNum==null || provCustAreaId==null
-					|| actionFlag==null || reloadFlag==null || mainPhoneNum==null || isFee==null
+			if(provIsale==null || "".equals(String.valueOf(provIsale).trim()) || provCustAreaId==null || "".equals(String.valueOf(provCustAreaId))
+					|| actionFlag==null || "".equals(String.valueOf(actionFlag)) || reloadFlag==null || "".equals(String.valueOf(reloadFlag)) 
+					|| mainPhoneNum==null || "".equals(String.valueOf(mainPhoneNum)) || isFee==null || "".equals(String.valueOf(isFee))
 			){
 				return result;
 			}else{

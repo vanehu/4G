@@ -31,8 +31,6 @@
 <@override name="content">
 <div data-role="content">
 	<input id="p_cust_areaId" type="hidden" value=""/>
-	<input type="hidden" id="mainPhoneNum" value="${mainPhoneNum}"/>
-	<input type="hidden" id="newSubPhoneNum" value="${newSubPhoneNum}"/>
 	<!-- 省份传入主副卡号码 -->
 	<input type="hidden" id="mainPhoneNum" value="${mainPhoneNum}"/>
 	<input type="hidden" id="newSubPhoneNum" value="${newSubPhoneNum}"/>
@@ -125,7 +123,7 @@
 </@override>
 <@extends name="/padtoken/main/main-template.html"/>
 <script type="text/javascript">
-
+	
 	var custInfo = ${custInfo};
 	var provinceInfo = ${provinceInfo};
 	var areaId = "";
@@ -153,10 +151,14 @@
 	OrderInfo.provinceInfo.isFee = provinceInfo.isFee;
 	OrderInfo.provinceInfo.reloadFlag = provinceInfo.reloadFlag;
 	OrderInfo.actionFlag = provinceInfo.actionFlag;
+	OrderInfo.busitypeflag=1;
+	OrderInfo.provinceInfo.codeMsg = provinceInfo.codeMsg;
+	
 	//获取uim卡号
 	if(provinceInfo.mktResInstCode&&provinceInfo.mktResInstCode!=""){
 		OrderInfo.newOrderNumInfo.mktResInstCode=provinceInfo.mktResInstCode;
 	}
+	
 	//账户合同号
 	OrderInfo.acct={acctCd:'${acctCd}'};
 	if(provinceInfo.prodOfferId!=undefined&&provinceInfo.prodOfferId!=""){

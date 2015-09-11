@@ -331,7 +331,105 @@ public class OrderController extends BaseController {
 			model.addAttribute("actionFlag", actionFlag);
 			model.addAttribute("isFee", isFee);
 			model.addAttribute("provIsale", provIsale);
-			model.addAttribute("mktResInstCode", mktResInstCode);
+			
+			//对UIM卡的传参进行改造
+			//model.addAttribute("mktResInstCode", mktResInstCode);
+			
+			//判断是否传参UIM卡
+			String mktResInstCodes="";
+			String codeMsg="";
+			
+			if(checkParam(mainPhoneNum) || checkParam(newSubPhoneNum)){
+				if(checkParam(mktResInstCode)){
+					//解析传入的参数
+					String[] uims=String.valueOf(mktResInstCode).split(",");
+					
+					if(uims!=null && uims.length>0){
+						String checkCode="0";
+						
+						if(uims.length>1){
+							String checkPhone="";
+							String checkUim="";
+							
+							for(String uimCode:uims){
+								String[] uimCodes=uimCode.split("_");
+								
+								if(uimCodes!=null && uimCodes.length==2){
+									String thisPhone=uimCodes[0];
+									String thisUim=uimCodes[1];
+									
+									if(checkPhone!=null && !"".equals(checkPhone)){
+										if(checkPhone.equals(thisPhone) || checkUim.equals(thisUim)){
+											checkCode="1";
+											break;
+										}
+									}else{
+										checkPhone=thisPhone;
+										checkUim=thisUim;
+									}
+								}
+							}
+						}
+						
+						if("1".equals(checkCode)){
+							codeMsg="传入的UIM参数中存在重复数据,传入的UIM参数["+mktResInstCode+"]";
+						}else{
+							//如果主号码不为空
+							if(checkParam(mainPhoneNum)){
+								for(String uimCode:uims){
+									String[] uimCodes=uimCode.split("_");
+									
+									if(uimCodes!=null && uimCodes.length==2){
+										if(mainPhoneNum.equals(uimCodes[0])){
+											mktResInstCodes+="-1_"+uimCodes[1]+",";
+											break;
+										}
+									}
+								}
+							}
+							
+							//如果副号码不为空
+							if(checkParam(newSubPhoneNum)){
+								String[] subPhoneNumbs=newSubPhoneNum.split(",");
+								
+								if(subPhoneNumbs!=null && subPhoneNumbs.length>0){
+									int i=-2;
+									for(String subNum:subPhoneNumbs){
+										for(String uimCode:uims){
+											String[] uimCodes=uimCode.split("_");
+											
+											if(uimCodes!=null && uimCodes.length==2){
+												if(subNum.equals(uimCodes[0])){
+													mktResInstCodes+=i+"_"+uimCodes[1]+",";
+													break;
+												}
+											}
+										}
+										i--;
+									}
+								}
+							}
+							
+							if(!checkParam(mktResInstCodes)){
+								codeMsg="未匹配到适应的UIM卡";
+								if(checkParam(mainPhoneNum)){
+									codeMsg+="，主号码["+mainPhoneNum+"]";
+								}
+								
+								if(checkParam(newSubPhoneNum)){
+									codeMsg+="，副号码["+newSubPhoneNum+"]";
+								}
+								
+								codeMsg+=",传入的UIM参数["+mktResInstCode+"]";
+							}
+						}
+					}
+				}
+			}
+			
+			model.addAttribute("mktResInstCode", mktResInstCodes);
+			model.addAttribute("codeMsg", codeMsg);
+			
 			model.addAttribute("acctCd", acctCd);
 			//主套餐内部ID转换接口入参
 			String prodOfferId = "";
@@ -393,6 +491,21 @@ public class OrderController extends BaseController {
 
 		return "/pctoken/order/order-search";
     }
+	
+	public boolean checkParam(Object info){
+		boolean result=false;
+		
+		if(info!=null){
+			String infos=String.valueOf(info);
+			
+			if(infos!=null && !"".equals(infos) && !"null".equals(infos)){
+				result=true;
+			}
+		}
+		
+		return result;
+	} 
+	
 	/**
 	 * 查询客户详细信息（用客户编码定位）
 	 * @param param
@@ -3285,7 +3398,7 @@ public class OrderController extends BaseController {
 			}
 		}
 		return result;
-	}
+	};
     
     //主副卡入口
 	@RequestMapping(value = "/memberChange/prepare", method = RequestMethod.GET)
@@ -3526,7 +3639,7 @@ public class OrderController extends BaseController {
 				String mainProdOfferId=(String)paramsMap.get("mainProdOfferId");
 				log.info("转换前主套餐Id:"+mainProdOfferId);
 				//获取uim卡号
-				String mktResInstCode =String.valueOf(paramsMap.get("mktResInstCode"));//uim卡号
+				String mktResInstCode =(String)paramsMap.get("mktResInstCode");//uim卡号
 				model.addAttribute("mktResInstCode",mktResInstCode);
 				if(mainProdOfferId!=null && mainProdOfferId.length()>0){
 					//集团销售品ID
@@ -3568,6 +3681,9 @@ public class OrderController extends BaseController {
 						}
 					}
 				}
+				
+				//供前台查询定位客户
+				model.addAttribute("custAreaId_", provCustAreaId);
 				
 				//放入流水作为唯一标识码
 				httpSession.setAttribute("provIsale_"+provIsale, provIsale);

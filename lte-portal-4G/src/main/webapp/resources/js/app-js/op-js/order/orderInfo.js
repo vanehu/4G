@@ -56,7 +56,7 @@ OrderInfo = (function() {
 		prodOfferId:"",
 		prodOfferName:"" 
 	}
-		
+	var newPhoneId="";	
 	var _reloadOrderInfo;
 	var _cust = { //保存客户信息
 		custId : "",
@@ -65,7 +65,7 @@ OrderInfo = (function() {
 		vipLevelName : "",
 		custFlag :"1100"//1000：红客户，1100：白客户，1200：黑客户
 	}; 
-	
+	var _viceParam = {}; //主副卡对象
 	var _staff = { //员工登陆信息
 		staffId : 0,  //员工id
 		channelId : 0,   //受理渠道id
@@ -76,7 +76,15 @@ OrderInfo = (function() {
 		soAreaCode : 0, 
 		distributorId : "" //转售商标识
 	};
-	
+	var _provinceInfo={
+			provIsale:"",
+			redirectUri:"",
+			isFee:"1",
+			extCustOrderID:"",
+			reloadFlag:"",
+			prodOfferId:"",
+			prodOfferName:"" 
+		}
 	//成员变更传入
 	var _memberChangeInfo={
 		//主号码
@@ -84,14 +92,17 @@ OrderInfo = (function() {
 		//新装成员号码： 多个成员使用分隔符‘,’
 		newSubPhoneNum:"",
 		//成员变更时，老用户成员号码：多个成员使用分隔符‘,’
-	    oldSubPhoneNum :""
+	    oldSubPhoneNum :"",
+	    //传入的uim卡
+	    mktResInstCode:""
 	};
 	
 	//新装传入主副卡号码
 	var _newOrderNumInfo = {
 		mainPhoneNum:"",
 		newSubPhoneNum:"",
-		mktResInstCode:""
+		mktResInstCode:"",
+		codeMsg:""
 	};
 	//新装二次加载功能参数
 	var _reloadProdInfo={
@@ -242,6 +253,7 @@ OrderInfo = (function() {
 		if(ec.util.isObj(accNbr)){ //接入号
 			busiOrder.busiObj.accessNumber = accNbr;
 		}
+		cust.getCustInfo();
 		busiOrder.data.boCustInfos.push(OrderInfo.boCustInfos);
 		busiOrder.data.boCustIdentities.push(OrderInfo.boCustIdentities);
 		if($("#tabProfile0").attr("click")=="0"&&($("#contactName").val()!="")){
@@ -381,7 +393,13 @@ OrderInfo = (function() {
 						role : $(this).find("select").val(),
 						value : $(this).find("input").attr("staffid") 
 					};
-					busiOrder.data.busiOrderAttrs.push(dealer);
+					busiOrder.data.busiOrderAttrs.push(dealer);				
+					var dealer_name = {
+						itemSpecId : CONST.BUSI_ORDER_ATTR.DEALER_NAME,
+						role : $(this).find("select").val(),
+						value : $(this).find("input").attr("value") 
+					};
+					busiOrder.data.busiOrderAttrs.push(dealer_name);
 				});
 			}
 			//所属于人节点
@@ -977,11 +995,41 @@ OrderInfo = (function() {
 	var _getAccessNumber = function(prodId){
 		var accessNumber = "";
 		if(OrderInfo.actionFlag==1 || OrderInfo.actionFlag==6 || OrderInfo.actionFlag==14){
-			for (var i = 0; i < OrderInfo.boProdAns.length; i++) {
-				var an = OrderInfo.boProdAns[i];
-				if(an.prodId == prodId){
-					if(an.accessNumber != undefined ){
-						accessNumber =  an.accessNumber;
+			if(ec.util.isArray(OrderInfo.oldprodInstInfos)){//判断是否是纳入老用户
+				if(ec.util.isArray(OrderInfo.viceprodInstInfos) && OrderInfo.oldMvFlag){
+					$.each(OrderInfo.viceOffer,function(){
+						var member = this;
+						$.each(member.offerMemberInfos,function(i){
+							if(this.objInstId==prodId){
+								accessNumber = this.accessNumber;
+								return false;
+							}
+						});
+					});
+				}else{
+					/*$.each(OrderInfo.oldprodInstInfos,function(){
+						if(this.prodInstId==prodId){
+							accessNumber = this.accNbr;
+							return false;
+						}
+					});*/
+					$.each(OrderInfo.oldoffer,function(){
+						var oldoffer = this;
+						$.each(oldoffer.offerMemberInfos,function(){
+							if(this.objInstId==prodId){
+								accessNumber = this.accessNumber;
+								return false;
+							}
+						});
+					});
+				}
+			}else{
+				for (var i = 0; i < OrderInfo.boProdAns.length; i++) {
+					var an = OrderInfo.boProdAns[i];
+					if(an.prodId == prodId){
+						if(an.accessNumber != undefined ){
+							accessNumber =  an.accessNumber;
+						}
 					}
 				}
 			}
@@ -1129,7 +1177,9 @@ OrderInfo = (function() {
 	};
 				
 	return {
-		mktResInstCode:_mktResInstCode,
+		newPhoneId:newPhoneId,
+	    mktResInstCode:_mktResInstCode,
+		viceParam               :  _viceParam,
 		acctId                  : _acctId,
 		acctCd                  : _acctCd,
 		order					: _order,

@@ -1607,7 +1607,6 @@ AttachOffer = (function() {
 						totalNums+=minNum;
 				}
 				var $div = $("#terminalDiv_"+prodId);
-//				$ul.append($li1).append($li2).append($li3).appendTo($div);
 				$ul.appendTo($div);
 				$div.show();
 				if(newSpec.agreementInfos[0].minNum>0){//合约里面至少要有一个终端
@@ -1705,8 +1704,8 @@ AttachOffer = (function() {
 		var param = {
 			instCode : instCode,
 			flag : flag,
-			mktResId : resId,
-			termGroup : terminalGroupId
+			mktResId : resId
+//			termGroup : terminalGroupId
 		};
 		var data = query.prod.checkTerminal(param);
 		if(data==undefined){
@@ -2569,45 +2568,51 @@ AttachOffer = (function() {
 					
 					var actionFalg=OrderInfo.actionFlag;
 					var instCode=OrderInfo.newOrderNumInfo.mktResInstCode;
-					
-					if(actionFalg=="3" && instCode!=null && instCode!="" && OrderInfo.provinceInfo.reloadFlag=="Y"){
-						$("#uim_txt_"+prodId).val(instCode);//将UIM卡信息放入
-						$("#uim_check_btn_"+prodId).hide();
-						$("#uim_release_btn_"+prodId).hide();
-						$("#uim_txt_"+prodId).attr("disabled",true);
-						
-						var uimParam = {
-							"instCode":instCode
-						};
-						
-						var response = $.callServiceAsJsonGet(contextPath+"/token/pc/mktRes/qrymktResInstInfo",uimParam);
-						
-						if (response.code==0) {
-							if(response.data.mktResBaseInfo){
-								var statusCd=response.data.mktResBaseInfo.statusCd;
-								if(statusCd=="1102"){
-									var offerId="";
-									if(ec.util.isArray(OrderInfo.oldprodInstInfos)){//判断是否是纳入老用户
-										$.each(OrderInfo.oldprodInstInfos,function(){
-											if(this.prodInstId==prodId){
-												offerId = this.mainProdOfferInstInfos[0].prodOfferInstId;
+					var codeMsg=OrderInfo.newOrderNumInfo.codeMsg;
+					if(actionFalg=="3" && OrderInfo.provinceInfo.reloadFlag=="Y"){
+						if(codeMsg!=null && codeMsg!=""){
+							alert(codeMsg);
+						}else{
+							if(instCode!=null && instCode!=""){
+								$("#uim_txt_"+prodId).val(instCode);//将UIM卡信息放入
+								$("#uim_check_btn_"+prodId).hide();
+								$("#uim_release_btn_"+prodId).hide();
+								$("#uim_txt_"+prodId).attr("disabled",true);
+								
+								var uimParam = {
+									"instCode":instCode
+								};
+								
+								var response = $.callServiceAsJsonGet(contextPath+"/token/pc/mktRes/qrymktResInstInfo",uimParam);
+								
+								if (response.code==0) {
+									if(response.data.mktResBaseInfo){
+										var statusCd=response.data.mktResBaseInfo.statusCd;
+										if(statusCd=="1102"){
+											var offerId="";
+											if(ec.util.isArray(OrderInfo.oldprodInstInfos)){//判断是否是纳入老用户
+												$.each(OrderInfo.oldprodInstInfos,function(){
+													if(this.prodInstId==prodId){
+														offerId = this.mainProdOfferInstInfos[0].prodOfferInstId;
+													}
+												});
+											}else{
+												offerId = order.prodModify.choosedProdInfo.prodOfferInstId;
 											}
-										});
+											
+											_packageCouponInfo(prodId,offerId,response,instCode);
+										}else{
+											alert("UIM卡不是预占状态，当前为"+statusCd);
+										}
 									}else{
-										offerId = order.prodModify.choosedProdInfo.prodOfferInstId;
+										alert("查询不到UIM卡["+instCode+"]信息");
 									}
-									
-									_packageCouponInfo(prodId,offerId,response,instCode);
-								}else{
-									alert("UIM卡不是预占状态，当前为"+statusCd);
+								}else if (response.code==-2){
+									alert(response.data);
+								}else {
+									alert("UIM信息查询接口出错,稍后重试");
 								}
-							}else{
-								alert("查询不到UIM卡["+instCode+"]信息");
 							}
-						}else if (response.code==-2){
-							alert(response.data);
-						}else {
-							alert("UIM信息查询接口出错,稍后重试");
 						}
 					}
 				}

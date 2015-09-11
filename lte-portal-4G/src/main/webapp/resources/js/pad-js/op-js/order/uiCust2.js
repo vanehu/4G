@@ -123,12 +123,24 @@ order.uiCusts = (function(){
 
 		}
 		diffPlace=$("#DiffPlaceFlag").val();
-		areaId=$("#p_cust_areaId").val();
+		
+		//旧客户定位地市是获取工号地市，暂不用
+		//areaId=$("#p_cust_areaId").val();
+		
+		//改为使用参数中的地市进行定位
+		areaId=$("#custAreaId_").val();
+		
+		if(areaId==null || areaId=="" || areaId=="null" || areaId=="undefined"){
+			$.alert("提示","用于客户定位的地市为空，请重试!");
+			return;
+		}
+		
 		//lte进行受理地区市级验证
 		if(CONST.getAppDesc()==0&&areaId.indexOf("0000")>0){
 			$.alert("提示","省级地区无法进行定位客户,请选择市级地区！");
 			return;
 		}
+		
 		var param = {
 			"acctNbr"		:acctNbr,
 			"identityCd"	:identityCd,
@@ -365,7 +377,7 @@ order.uiCusts = (function(){
 		param.acctNbr=OrderInfo.provinceInfo.mainPhoneNum;
 		
 		//订购产品查询
-		var url = contextPath+"/pad/cust/orderprod";
+		var url = contextPath+"/pad/cust/orderProdSub";
 		$.callServiceAsHtmlGet(url,param,{
 			"before":function(){
 				$.ecOverlay("<strong>正在查询中,请稍等...</strong>");
@@ -414,7 +426,10 @@ order.uiCusts = (function(){
 				//进入具体的功能页面[8-2]
 				//order.prodModify.orderAttachOffer();
 				//order.uiCusts.showOffer();
-				_showoffer();
+				//判断获取客户业务信息是否正确
+				if($("#searchInfos_") && $("#searchInfos_").val()=="0"){
+					_showoffer();
+				}
 			}
 		});	
 	};

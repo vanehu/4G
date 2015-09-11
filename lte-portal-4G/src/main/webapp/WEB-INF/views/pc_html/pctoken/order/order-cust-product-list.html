@@ -142,5 +142,8 @@
                         </div>
                                           </div>
 <#elseif custflag==1>
+<script type="text/javascript">
+order.uiCust.showPackageDialog('${msg}');
+</script>
 <#if msg??><i><img width="25" height="25" style="margin:5px;" src="${contextPath}/image/icon/tip.png"></i><p style="position:relative;left:40px;bottom:30px;margin-bottom:-20px;width:97%;word-break:break-all;color:red;">查询失败：${msg}</p><#else>fail</#if>
 </#if>

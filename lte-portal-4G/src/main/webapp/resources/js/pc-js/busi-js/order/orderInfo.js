@@ -34,7 +34,8 @@ OrderInfo = (function() {
 			reloadFlag:"",
 			prodOfferId:"",
 			prodOfferName:"",
-			mktResInstCode:""
+			mktResInstCode:"",
+			codeMsg:""
 	};
 	//新装是否带出主副卡号码和uim卡信息
 	var _newOrderNumInfo = {

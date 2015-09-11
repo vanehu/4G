@@ -192,7 +192,68 @@ public class MainController extends BaseController {
 			provinceInfo.put("redirectUri", redirectUri);
 			provinceInfo.put("isFee", isFee);
 			provinceInfo.put("reloadFlag", reloadFlag);
-			provinceInfo.put("mktResInstCode", paramsMap.get("mktResInstCode"));
+			//provinceInfo.put("mktResInstCode", paramsMap.get("mktResInstCode"));
+			
+			//判断是否传参UIM卡
+			Object mktResInstCode=paramsMap.get("mktResInstCode");
+			String mktResInstCodes="";
+			String codeMsg="";
+			
+			if(mktResInstCode!=null && !"".equals(String.valueOf(mktResInstCode).trim()) && !"null".equals(String.valueOf(mktResInstCode))){
+				//解析传入的参数
+				String[] uims=String.valueOf(mktResInstCode).split(",");
+				String mainPhoneNum=String.valueOf(paramsMap.get("mainPhoneNum"));
+				
+				String checkCode="0";
+				
+				if(uims.length>1){
+					String checkPhone="";
+					String checkUim="";
+					
+					for(String uimCode:uims){
+						String[] uimCodes=uimCode.split("_");
+						
+						if(uimCodes!=null && uimCodes.length==2){
+							String thisPhone=uimCodes[0];
+							String thisUim=uimCodes[1];
+							
+							if(checkPhone!=null && !"".equals(checkPhone)){
+								if(checkPhone.equals(thisPhone) || checkUim.equals(thisUim)){
+									checkCode="1";
+									break;
+								}
+							}else{
+								checkPhone=thisPhone;
+								checkUim=thisUim;
+							}
+						}
+					}
+				}
+				
+				if("1".equals(checkCode)){
+					codeMsg="传入的UIM参数中存在重复数据,传入的UIM参数["+mktResInstCode+"]";
+				}else{
+					if(uims!=null && uims.length>0){
+						for(String uimCode:uims){
+							String[] uimCodes=uimCode.split("_");
+							
+							if(uimCodes!=null && uimCodes.length==2){
+								if(mainPhoneNum.equals(uimCodes[0])){
+									mktResInstCodes=uimCodes[1];
+									break;
+								}
+							}
+						}
+						
+						if(mktResInstCodes==null || "".equals(mktResInstCodes) || "null".equals(mktResInstCodes)){
+							codeMsg="未匹配到适应的UIM卡，主号码["+mainPhoneNum+"],传入的UIM参数["+mktResInstCode+"]";
+						}
+					}
+				}
+			}
+			
+			provinceInfo.put("mktResInstCode",mktResInstCodes);
+			provinceInfo.put("codeMsg", codeMsg);
 			
 			model.addAttribute("provinceInfo_", JacksonUtil.objectToJson(provinceInfo));
 			
@@ -402,7 +463,12 @@ public class MainController extends BaseController {
     		prodMap.put("areaId",paramMap.get("areaId"));
     	}
     	
-    	prodMap.put("custId",paramMap.get("custId"));
+    	if(paramMap.get("custId")!=null && !"".equals(String.valueOf(paramMap.get("custId"))) && !"null".equals(String.valueOf(paramMap.get("custId")))){
+    		prodMap.put("custId",paramMap.get("custId"));
+    	}else{
+    		prodMap.put("custId","");
+    	}
+    	
     	prodMap.put("curPage","1");
     	prodMap.put("pageSize", "5");
     	prodMap.put("acctNbr",paramMap.get("acctNbr"));
@@ -521,9 +587,104 @@ public class MainController extends BaseController {
 			provinceInfo.put("redirectUri", redirectUri);
 			provinceInfo.put("isFee", isFee);
 			provinceInfo.put("reloadFlag", reloadFlag);
-			provinceInfo.put("mktResInstCode", mktResInstCode);
+			//provinceInfo.put("mktResInstCode", mktResInstCode);
 			//provinceInfo.put("prodOfferId", "81013");
 			//provinceInfo.put("prodOfferName", "乐享4G201407 99元-主套餐");		
+			
+			//UIM卡传参改造
+			String mktResInstCodes="";
+			String codeMsg="";
+			
+			if(checkParam(mainPhoneNum) || checkParam(newSubPhoneNum)){
+				if(checkParam(mktResInstCode)){
+					//解析传入的参数
+					String[] uims=String.valueOf(mktResInstCode).split(",");
+					
+					if(uims!=null && uims.length>0){
+						String checkCode="0";
+						
+						if(uims.length>1){
+							String checkPhone="";
+							String checkUim="";
+							
+							for(String uimCode:uims){
+								String[] uimCodes=uimCode.split("_");
+								
+								if(uimCodes!=null && uimCodes.length==2){
+									String thisPhone=uimCodes[0];
+									String thisUim=uimCodes[1];
+									
+									if(checkPhone!=null && !"".equals(checkPhone)){
+										if(checkPhone.equals(thisPhone) || checkUim.equals(thisUim)){
+											checkCode="1";
+											break;
+										}
+									}else{
+										checkPhone=thisPhone;
+										checkUim=thisUim;
+									}
+								}
+							}
+						}
+						
+						if("1".equals(checkCode)){
+							codeMsg="传入的UIM参数中存在重复数据,传入的UIM参数["+mktResInstCode+"]";
+						}else{
+							//如果主号码不为空
+							if(checkParam(mainPhoneNum)){
+								for(String uimCode:uims){
+									String[] uimCodes=uimCode.split("_");
+									
+									if(uimCodes!=null && uimCodes.length==2){
+										if(mainPhoneNum.equals(uimCodes[0])){
+											mktResInstCodes+="-1_"+uimCodes[1]+",";
+											break;
+										}
+									}
+								}
+							}
+							
+							//如果副号码不为空
+							if(checkParam(newSubPhoneNum)){
+								String[] subPhoneNumbs=newSubPhoneNum.split(",");
+								
+								if(subPhoneNumbs!=null && subPhoneNumbs.length>0){
+									int i=-2;
+									for(String subNum:subPhoneNumbs){
+										for(String uimCode:uims){
+											String[] uimCodes=uimCode.split("_");
+											
+											if(uimCodes!=null && uimCodes.length==2){
+												if(subNum.equals(uimCodes[0])){
+													mktResInstCodes+=i+"_"+uimCodes[1]+",";
+													break;
+												}
+											}
+										}
+										i--;
+									}
+								}
+							}
+							
+							if(!checkParam(mktResInstCodes)){
+								codeMsg="未匹配到适应的UIM卡";
+								if(checkParam(mainPhoneNum)){
+									codeMsg+="，主号码["+mainPhoneNum+"]";
+								}
+								
+								if(checkParam(newSubPhoneNum)){
+									codeMsg+="，副号码["+newSubPhoneNum+"]";
+								}
+								
+								codeMsg+=",传入的UIM参数["+mktResInstCode+"]";
+							}
+						}
+					}
+				}
+			}
+			
+			provinceInfo.put("mktResInstCode", mktResInstCodes);
+			provinceInfo.put("codeMsg", codeMsg);
 			
 			
 			//进行staff获取   staffInfo_ 参数
@@ -636,6 +797,20 @@ public class MainController extends BaseController {
 		}	
 		return "/public/app-params";
     }
+    
+    public boolean checkParam(Object info){
+		boolean result=false;
+		
+		if(info!=null){
+			String infos=String.valueOf(info);
+			
+			if(infos!=null && !"".equals(infos) && !"null".equals(infos)){
+				result=true;
+			}
+		}
+		
+		return result;
+	} 
 
     /**
      * 公共参数校验

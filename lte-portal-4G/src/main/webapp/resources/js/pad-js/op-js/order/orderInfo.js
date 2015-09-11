@@ -53,7 +53,9 @@ OrderInfo = (function() {
 		extCustOrderID:"",
 		reloadFlag:"",
 		prodOfferId:"",
-		prodOfferName:"" 
+		prodOfferName:"",
+		mktResInstCode:"",
+		codeMsg:""
 	}
 			
 	var _reloadOrderInfo;

@@ -97,7 +97,7 @@ public class OfferMainController extends BaseController {
 			//公共跳转参数(公共-必须)
 			Map<String, Object> provinceInfo=new HashMap<String, Object>();
 			
-			String mktResInstCode =String.valueOf(paramsMap.get("mktResInstCode"));//uim卡号
+			String mktResInstCode =(String)paramsMap.get("mktResInstCode");//uim卡号
 			model.addAttribute("mktResInstCode",mktResInstCode);
 			//外部主套餐id
 			String mainProdOfferId=paramsMap.get("mainProdOfferId")!=null?String.valueOf(paramsMap.get("mainProdOfferId")):null;
@@ -173,6 +173,7 @@ public class OfferMainController extends BaseController {
 			//个人参数（非必须）
 			//传入手机号
 			model.addAttribute("mainPhoneNum", paramsMap.get("mainPhoneNum"));
+			model.addAttribute("custAreaId_", provCustAreaId);
 			
 		}catch(Exception e){
 			log.error("套餐变更/业务变更服务加载异常：",e);

@@ -134,6 +134,7 @@ order.uiCust = (function(){
 			//4G所有证件类型定位都需要客户鉴权
 			authFlag="0";
 		}
+		
 		if(identityCd==-1){
 			acctNbr=identityNum;
 			identityNum="";
@@ -144,15 +145,27 @@ order.uiCust = (function(){
 			identityCd="";
 			queryType=$("#p_cust_identityCd").val();
 			queryTypeValue=$.trim($("#p_cust_identityNum").val());
-
 		}
+		
 		diffPlace=$("#DiffPlaceFlag").val();
-		areaId=$("#p_cust_areaId").val();
+		
+		//原来地市是获取员工默认地市
+		//areaId=$("#p_cust_areaId").val();
+		
+		//现在修改为使用省份传输地市
+		areaId=$("#custAreaId_").val();
+		
+		if(areaId==null || areaId=="" || areaId=="null" || areaId=="undefined"){
+			_showPackageDialog("用于客户定位的地市为空，请重试!");
+			return;
+		}
+		
 		//lte进行受理地区市级验证
 		if(CONST.getAppDesc()==0&&areaId.indexOf("0000")>0){
 			_showPackageDialog("省级地区无法进行定位客户,请选择市级地区!");
 			return;
 		}
+		
 		var param = {
 				"acctNbr":acctNbr,
 				"identityCd":identityCd,
@@ -456,7 +469,11 @@ order.uiCust = (function(){
 				if (response.code == -2) {
 					return;
 				}else if(response.code != 0) {
-					_showPackageDialog("查询信息失败,请稍后重试!");
+					if(response.msg!=null && response.msg!=""){
+						_showPackageDialog(response.msg);
+					}else{
+						_showPackageDialog("查询信息失败,请稍后重试!");
+					}
 					//$.alert("提示","查询失败,稍后重试");
 					return;
 				}

@@ -119,7 +119,18 @@ var _choosedCustInfo = {};
 
 		}
 		diffPlace=$("#DiffPlaceFlag").val();
-		areaId=$("#p_cust_areaId").val();
+		
+		//旧客户定位地市是获取工号地市，暂不用
+		//areaId=$("#p_cust_areaId").val();
+		
+		//改为使用参数中的地市进行定位
+		areaId=$("#custAreaId_").val();
+		
+		if(areaId==null || areaId=="" || areaId=="null" || areaId=="undefined"){
+			_showPackageDialog("用于客户定位的地市为空，请重试!");
+			return;
+		}
+		
 		//lte进行受理地区市级验证
 		if(CONST.getAppDesc()==0&&areaId.indexOf("0000")>0){
 			_showPackageDialog("省级地区无法进行定位客户,请选择市级地区!");
@@ -429,7 +440,7 @@ var _custAuthCallBack = function(response) {
 		}
 		
 		//请求地址,查询产品列表
-		var url = contextPath+"/token/pc/cust/orderprod";//原地址是/cust/orderprod
+		var url = contextPath+"/cust/orderprodSub";//原地址是/cust/orderprod
 		$.callServiceAsHtmlGet(url,param,{
 			"before":function(){
 				$.ecOverlay("<strong>正在查询中,请稍等会儿....</strong>");
@@ -2159,8 +2170,8 @@ var _custAuthCallBack = function(response) {
 		var param = {
 			instCode : instCode,
 			flag : flag,
-			mktResId : resId,
-			termGroup : terminalGroupId
+			mktResId : resId
+	//		termGroup : terminalGroupId   update by huangjj #13336需求资源要求这个参数不传
 		};
 		var data = query.prod.checkTerminal(param);
 		if(data==undefined){

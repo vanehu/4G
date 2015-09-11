@@ -165,9 +165,8 @@ order.main = (function(){
 			}
 		}
 		if(OrderInfo.newOrderNumInfo.newSubPhoneNum!=""){
-			var param = {"phoneNum":"",
-						"prodId":""};
-			var numBtns = $("[div^='choosedNum_']");			
+			var param = {"phoneNum":"","prodId":""};			
+			var numBtns = $("input[id^='choosedNum_']");		
 			var nums = OrderInfo.newOrderNumInfo.newSubPhoneNum.split(",");
 			var subNums = [];
 			$.each(numBtns,function(){
@@ -218,63 +217,10 @@ order.main = (function(){
 				$($uimDiv).show();
 			});
 		}
-		//新装处理省份是否传uim信息
-		if(OrderInfo.newOrderNumInfo.mktResInstCode&&OrderInfo.newOrderNumInfo.mktResInstCode!=""){
-			var mktResInstCode = OrderInfo.newOrderNumInfo.mktResInstCode.split(",");	
-			for (var i = 1; i <= mktResInstCode.length; i ++) {
-				if(mktResInstCode[i-1]&&mktResInstCode[i-1]!=""&&mktResInstCode[i-1]!=null){
-					var uimParam = {
-							"instCode":mktResInstCode[i-1]
-					};
-					var response = $.callServiceAsJsonGet(contextPath+"/token/pc/mktRes/qrymktResInstInfo",uimParam);
-					if (response.code==0) {
-						if(response.data&&response.data.mktResBaseInfo){
-							if(response.data.mktResBaseInfo.statusCd=="1102"){
-								$("#uim_check_btn_-"+i).attr("disabled",true);
-								$("#uim_check_btn_-"+i).removeClass("purchase").addClass("disablepurchase");
-								$("#uim_release_btn_-"+i).attr("disabled",false);
-								$("#uim_release_btn_-"+i).removeClass("disablepurchase").addClass("purchase");
-								$("#uim_txt_-" + i).val(mktResInstCode[i-1]);
-								var coupon = {
-										couponUsageTypeCd : "3", //物品使用类型
-										inOutTypeId : "1",  //出入库类型
-										inOutReasonId : 0, //出入库原因
-										saleId : 1, //销售类型
-										couponId : response.data.mktResBaseInfo.mktResId, //物品ID
-										couponinfoStatusCd : "A", //物品处理状态
-										chargeItemCd : "3000", //物品费用项类型
-										couponNum : response.data.mktResBaseInfo.qty, //物品数量
-										storeId : response.data.mktResBaseInfo.mktResStoreId, //仓库ID
-										storeName : "1", //仓库名称
-										agentId : 1, //供应商ID
-										apCharge : 0, //物品价格
-										couponInstanceNumber : response.data.mktResBaseInfo.instCode, //物品实例编码
-										terminalCode : response.data.mktResBaseInfo.instCode,//前台内部使用的UIM卡号
-										ruleId : "", //物品规则ID
-										partyId : OrderInfo.cust.custId, //客户ID
-										prodId :  "-"+i, //产品ID
-										offerId : "-1", //销售品实例ID
-										state : "ADD", //动作
-										relaSeq : "" //关联序列	
-									};
-								OrderInfo.clearProdUim("-"+i);
-								OrderInfo.boProd2Tds.push(coupon);
-							}else{
-								$.alert("提示","UIM卡不是预占状态，当前为"+response.data.mktResBaseInfo.statusCd);
-							}
-						}else{
-							$.alert("提示","没有查询到相应的UIM卡信息");
-						}
-					}else if (response.code==-2){
-						$.alert(response.data);
-					}else {
-						$.alert("提示","UIM信息查询接口出错,稍后重试");
-					}
-				}else{
-					$("#uim_txt_-" + i).val(mktResInstCode[i-1]);
-				}
-			}
-		}
+		
+		//初始化UIM卡
+		_initUimCode();
+		
 		//新装是否传帐户合同号
 		if(OrderInfo.acct&&OrderInfo.acct.acctCd!=null&&OrderInfo.acct.acctCd!=""){//新装传帐户id
 			_createAcctWithId();
@@ -587,6 +533,87 @@ order.main = (function(){
 					}
 				});
 			});
+		}
+	};
+	
+	var _initUimCode = function() {
+		//错误提示信息，如果有号码，但是UIM为空时提示
+		var codeMsg=OrderInfo.provinceInfo.codeMsg;
+		
+		if(OrderInfo.provinceInfo.reloadFlag && OrderInfo.provinceInfo.reloadFlag=="Y"){
+			if(OrderInfo.provinceInfo.codeMsg && codeMsg!=null && codeMsg!=""){
+				$.alert("提示",codeMsg);
+			}else{
+				var mktResInstCodeSub=OrderInfo.newOrderNumInfo.mktResInstCode;
+				
+				if(OrderInfo.newOrderNumInfo.mktResInstCode && mktResInstCodeSub!=null && mktResInstCodeSub!="" && mktResInstCodeSub!="null"){
+					var mktResInstCode = mktResInstCodeSub.split(",");
+					
+					if(mktResInstCode!=null && mktResInstCode.length>0){
+						for (var i = 0; i <= mktResInstCode.length; i ++) {
+							//numAndUim-->号码_UIM
+							var numAndUim=mktResInstCode[i];
+							
+							if(numAndUim!=null && numAndUim!=""){
+								var codes=numAndUim.split("_");
+								if(codes!=null && codes.length==2){
+									var num=codes[0];
+									var uim=codes[1];
+									
+									var uimParam = {"instCode":uim};
+									var response = $.callServiceAsJsonGet(contextPath+"/token/pc/mktRes/qrymktResInstInfo",uimParam);
+									
+									if (response.code==0) {
+										if(response.data&&response.data.mktResBaseInfo){
+											if(response.data.mktResBaseInfo.statusCd=="1102"){
+												$("#uim_check_btn_"+num).attr("disabled",true);
+												$("#uim_check_btn_"+num).removeClass("purchase").addClass("disablepurchase");
+												$("#uim_release_btn_"+num).attr("disabled",false);
+												$("#uim_release_btn_"+num).removeClass("disablepurchase").addClass("purchase");
+												$("#uim_txt_"+ num).val(uim);
+												
+												var coupon = {
+													couponUsageTypeCd : "3", //物品使用类型
+													inOutTypeId : "1",  //出入库类型
+													inOutReasonId : 0, //出入库原因
+													saleId : 1, //销售类型
+													couponId : response.data.mktResBaseInfo.mktResId, //物品ID
+													couponinfoStatusCd : "A", //物品处理状态
+													chargeItemCd : "3000", //物品费用项类型
+													couponNum : response.data.mktResBaseInfo.qty, //物品数量
+													storeId : response.data.mktResBaseInfo.mktResStoreId, //仓库ID
+													storeName : "1", //仓库名称
+													agentId : 1, //供应商ID
+													apCharge : 0, //物品价格
+													couponInstanceNumber : response.data.mktResBaseInfo.instCode, //物品实例编码
+													terminalCode : response.data.mktResBaseInfo.instCode,//前台内部使用的UIM卡号
+													ruleId : "", //物品规则ID
+													partyId : OrderInfo.cust.custId, //客户ID
+													prodId :  num, //产品ID
+													offerId : "-1", //销售品实例ID
+													state : "ADD", //动作
+													relaSeq : "" //关联序列	
+												};
+												
+												OrderInfo.clearProdUim(num);
+												OrderInfo.boProd2Tds.push(coupon);
+											}else{
+												$.alert("提示","UIM卡["+uim+"]不是预占状态，当前为"+response.data.mktResBaseInfo.statusCd);
+											}
+										}else{
+											$.alert("提示","没有查询到相应的UIM卡["+uim+"]信息");
+										}
+									}else if (response.code==-2){
+										$.alert(response.data);
+									}else {
+										$.alert("提示","UIM信息查询接口出错,稍后重试");
+									}
+								}
+							}
+						}
+					}
+				}
+			}
 		}
 	};
 	
