@@ -1506,5 +1506,5 @@ order.cust = (function(){
 })();
 $(function() {
 //   order.cust.form_valid_init();
-//   order.cust.initDic();
+	order.cust.initDic();
 });
