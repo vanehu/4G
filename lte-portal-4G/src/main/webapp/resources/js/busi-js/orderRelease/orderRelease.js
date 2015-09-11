@@ -79,7 +79,7 @@ order.release = (function(){
 			        return;	
 				}
 			}
-			if(_accNbrType == '3'){//说明是白卡，这个需要做转换
+			/*if(_accNbrType == '3'){//说明是白卡，这个需要做转换
 				var cardNoStr = _accNbr.substring(_accNbr.length - 2,_accNbr.length - 1);
 				var cardNoLast = _accNbr.substring(_accNbr.length -1,_accNbr.length);
 				var serviceName = contextPath + "/mktRes/writeCard/getHexToAscii";
@@ -89,7 +89,7 @@ order.release = (function(){
 				};
 				var response = $.callServiceAsJson(serviceName, param);
 				_accNbr = _accNbr.substring(0,_accNbr.length-2)+ response.data.strHex;
-			}
+			}*/
 			queryParam.accNbr = _accNbr;
 			
 		}
