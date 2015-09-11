@@ -743,4 +743,23 @@ public class OfferController extends BaseController {
 		}
 		return jsonResponse;
 	}
+	
+	@RequestMapping(value = "/queryMainCartAttachOffer", method = {RequestMethod.GET})
+	public @ResponseBody JsonResponse queryMainCartAttachOffer(@RequestParam Map<String, Object> paramMap) {
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+				SysConstant.SESSION_KEY_LOGIN_STAFF);
+		JsonResponse jsonResponse = null;
+        try {
+			//已订购附属销售品查询
+			Map<String, Object> openMap = offerBmo.queryAttachOffer(paramMap,null,sessionStaff);
+        	jsonResponse = super.successed(openMap,ResultConstant.SUCCESS.getCode());
+        } catch (BusinessException be) {
+        	return super.failed(be);
+        } catch (InterfaceException ie) {
+        	return super.failed(ie, paramMap, ErrorCode.QUERY_ATTACH_OFFER);
+		} catch (Exception e) {
+			return super.failed(ErrorCode.QUERY_ATTACH_OFFER, e, paramMap);
+		}
+		return jsonResponse;
+	}
 }

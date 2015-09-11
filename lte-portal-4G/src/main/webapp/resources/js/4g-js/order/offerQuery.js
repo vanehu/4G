@@ -613,18 +613,22 @@ query.offer = (function() {
 		var offerRoles = []; //过滤角色
 		var prodSpecId = OrderInfo.getProdSpecId(prodId);
 		var flag = false;
-		$.each(offerSpec.offerRoles,function(){
-			$.each(this.roleObjs,function(){
-				if(this.objId==prodSpecId){
-					flag = true;
+		if(ec.util.isArray(offerSpec.extAttrParams) && offerSpec.extAttrParams[0].attrId=="800000041"){
+			return offerSpec;
+		}else{
+			$.each(offerSpec.offerRoles,function(){
+				$.each(this.roleObjs,function(){
+					if(this.objId==prodSpecId){
+						flag = true;
+						return false;
+					}
+				});
+				if(flag){
+					offerRoles.push(this);
 					return false;
 				}
 			});
-			if(flag){
-				offerRoles.push(this);
-				return false;
-			}
-		});
+		}
 		offerSpec.offerRoles = offerRoles;
 		return offerSpec;
 	};
@@ -871,6 +875,32 @@ query.offer = (function() {
 			return;
 		}
 	};
+	
+	var _queryMainCartAttachOffer = function(param) {
+		addParam(param);  //添加基本参数
+		var url = contextPath+"/offer/queryMainCartAttachOffer";
+		$.callServiceAsJsonGet(url,param,{
+			"before":function(){
+				$.ecOverlay("<strong>正在查询销售品实例中,请稍后....</strong>");
+			},
+			"always":function(){
+				$.unecOverlay();
+			},
+			"done" : function(response){
+				$.unecOverlay();
+				if (response.code==0) {
+					if(response.data){
+						var offerLists = response.data.result.offerLists;
+						AttachOffer.mainCartOpenedList.push({"prodId":param.prodId,"offerLists":offerLists,"accessNumber":param.acctNbr});
+					}
+				}else {
+					$.alert("提示","附属销售品实例查询失败,稍后重试");
+					return;
+				}
+			}
+		});
+	};
+	
 	return {
 		checkOperate			: _checkOperate,
 		loadInst				: _loadInst,
@@ -899,6 +929,7 @@ query.offer = (function() {
 		queryProdInstParam		: _queryProdInstParam,
 		queryMyfavorite         : _queryMyfavorite,
 		addMyfavorite           : _addMyfavorite,
-		delMyfavorite           : _delMyfavorite
+		delMyfavorite           : _delMyfavorite,
+		queryMainCartAttachOffer: _queryMainCartAttachOffer
 	};
 })();

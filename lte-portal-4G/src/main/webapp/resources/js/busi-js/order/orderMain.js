@@ -117,6 +117,24 @@ order.main = (function(){
 				order.dealer.initDealer();//初始化协销	
 			}
 		}
+		if(OrderInfo.actionFlag==6){//查询主卡已订购
+			$.each(OrderInfo.offer.offerMemberInfos,function(){
+				if(this.objType=="2"){
+					var prodId = this.objInstId;
+					var param = {
+							areaId : OrderInfo.getProdAreaId(prodId),
+							channelId : OrderInfo.staff.channelId,
+							staffId : OrderInfo.staff.staffId,
+						    prodId : prodId,
+						    prodSpecId : this.objId,
+						    offerSpecId : order.prodModify.choosedProdInfo.prodOfferId,
+						    offerRoleId : this.offerRoleId,
+						    acctNbr : this.accessNumber
+						};
+					var res = query.offer.queryMainCartAttachOffer(param);
+				}
+			});
+		}
 		if(ec.util.isArray(OrderInfo.oldprodInstInfos) && OrderInfo.actionFlag==6){//主副卡纳入老用户
 			order.main.initAcct(1);//初始化副卡帐户列表
 			_loadAttachOffer(param);

@@ -1136,6 +1136,32 @@ order.prodModify = (function(){
 				if(param.boActionTypeCd==CONST.BO_ACTION_TYPE.OWE_REMOVE_PROD){
 					$("#templateOrderDiv").show();
 				}
+				if(OrderInfo.busitypeflag == 7 || OrderInfo.busitypeflag == 8 || OrderInfo.busitypeflag == 9 || OrderInfo.busitypeflag == 10 || OrderInfo.busitypeflag == 11){
+					var isvicecard = false;
+					$.each(OrderInfo.offer.offerMemberInfos,function(){
+						if(this.roleCd == CONST.MEMBER_ROLE_CD.VICE_CARD&&this.objInstId==order.prodModify.choosedProdInfo.prodInstId){
+							isvicecard=true;	
+						}
+					});
+					if(isvicecard){
+						$.each(OrderInfo.offer.offerMemberInfos,function(){
+							if(this.objType=="2"){
+								var prodId = this.objInstId;
+								var param = {
+										areaId : OrderInfo.getProdAreaId(prodId),
+										channelId : OrderInfo.staff.channelId,
+										staffId : OrderInfo.staff.staffId,
+									    prodId : prodId,
+									    prodSpecId : this.objId,
+									    offerSpecId : order.prodModify.choosedProdInfo.prodOfferId,
+									    offerRoleId : this.offerRoleId,
+									    acctNbr : this.accessNumber
+									};
+								var res = query.offer.queryMainCartAttachOffer(param);
+							}
+						});
+					}
+				}
 			},"always":function(){
 				$.unecOverlay();
 			}

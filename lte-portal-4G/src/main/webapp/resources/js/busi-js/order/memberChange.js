@@ -19,6 +19,7 @@ order.memberChange = function(){
 			accessNumbers:[]
 	};
 	var _rejson = {};
+	var _viceCartNum = 0;//纳入老用户副卡总数量
 	
 	//点击主副卡成员变更跳出一个div
 	var _showOfferCfgDialog=function(){
@@ -640,6 +641,7 @@ order.memberChange = function(){
 				}
 			}
 		}
+		order.memberChange.viceCartNum = addNum;
 		if(offerflag && checkCanAddNum(addNum)){
 			return setProdUim();
 		}
@@ -1144,6 +1146,22 @@ order.memberChange = function(){
 //		$("#fillLastStep").off("click").on("click",function(){
 //			order.main.lastStep();
 //		});
+		$.each(OrderInfo.offer.offerMemberInfos,function(){
+			if(this.objType=="2"){
+				var prodId = this.objInstId;
+				var param = {
+						areaId : OrderInfo.getProdAreaId(prodId),
+						channelId : OrderInfo.staff.channelId,
+						staffId : OrderInfo.staff.staffId,
+					    prodId : prodId,
+					    prodSpecId : this.objId,
+					    offerSpecId : order.prodModify.choosedProdInfo.prodOfferId,
+					    offerRoleId : this.offerRoleId,
+					    acctNbr : this.accessNumber
+					};
+				var res = query.offer.queryMainCartAttachOffer(param);
+			}
+		});
 		var prodInfo = order.prodModify.choosedProdInfo; //获取产品信息
 		//遍历主销售品构成
 		var uimDivShow=false;//是否已经展示了

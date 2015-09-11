@@ -13,6 +13,8 @@ AttachOffer = (function() {
 	
 	var _openedList = []; //已经订购的附属销售品列表，保存附属销售品完整节点，以及参数值
 	
+	var _mainCartOpenedList = [];//主卡已订购的附属销售品列表
+	
 	var _openServList = []; //保存已经选择功能产品列表，保存附属销售品完整节点，以及参数值
 	
 	var _openedServList = []; //保存已经订购功能产品列表，保存附属销售品完整节点，以及参数值
@@ -3938,6 +3940,7 @@ AttachOffer = (function() {
 		addOfferSpecReload      : _addOfferSpecReload,
 		openServSpecReload      : _openServSpecReload,
 		checkTerminalCodeReload : _checkTerminalCodeReload,
-		delServSpec            : _delServSpec
+		delServSpec             : _delServSpec,
+		mainCartOpenedList		:_mainCartOpenedList
 	};
 })();

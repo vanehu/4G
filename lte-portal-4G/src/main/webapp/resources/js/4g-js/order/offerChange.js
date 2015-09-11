@@ -1192,6 +1192,9 @@ offerChange = (function() {
 			if(ec.util.isObj(offerBusiOrder.areaId)){
 				busiOrders.push(offerBusiOrder);
 			}
+			if(ec.util.isObj(offerBusiOrder.areaId)){
+				busiOrders.push(offerBusiOrder);
+			}
 			if(CONST.getAppDesc()==0){ //4g系统需要,补换卡 
 				for ( var i = 0; i < OrderInfo.oldoffer.length; i++) { //遍历主销售品构成
 					$.each(OrderInfo.oldoffer[i].offerMemberInfos,function(){
