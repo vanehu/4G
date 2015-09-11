@@ -56,6 +56,14 @@
 				<label for="mailAddressStr">通讯地址</label>
             	<input type="text" class="form-control" id="mailAddressStr" name="mailAddressStr" maxlength="200" placeholder="请输入通讯地址" value="${modPartyTypeCd.mailAddressStr}">
 			</div>
+			<div class="form-group" >
+				<label for="mailAddressStr">联系人</label>
+            	<input type="text" class="form-control" id="contactAddress" name="contactAddress" maxlength="200" placeholder="请输入联系人" <#if modPartyTypeCd.contactName??> value="${modPartyTypeCd.contactName}" </#if>>
+			</div>
+			<div class="form-group" >
+				<label for="mailAddressStr">联系地址</label>
+            	<input type="text" class="form-control" id="contactAddress" name="contactAddress" maxlength="200" placeholder="请输入联系地址" <#if modPartyTypeCd.mailAddressStr??> value="${modPartyTypeCd.mailAddressStr}" </#if>>
+			</div>
 		</div>
 	</form>
 

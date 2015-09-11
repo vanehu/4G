@@ -52,10 +52,6 @@
 	            	<input type="text" class="form-control" id="cmAddressStr" name="cmAddressStr" placeholder="证件地址" value="${modPartyTypeCd.addressStr}">
 				</div>
 				<#if (partyContactInfos)?? &&((partyContactInfos)?size>0)>
-				 <div class="form-group">
-		            <label for="addcon">通信地址</label>
-		            <input type="text" class="form-control" id="contactAddress" placeholder="通信地址" value="${partyContactInfos[0].contactAddress}">
-		          </div>
 		          <div class="form-group">
 		            <label for="usercon">联系人</label>
 		            <input type="text" class="form-control" id="contactName" placeholder="联系人" value="${partyContactInfos[0].contactName}">
@@ -64,15 +60,19 @@
 		            <input type="hidden" id="contactAddressOld" value="${partyContactInfos[0].contactAddress}">
 		            <input type="hidden" id="headFlagOld" value="${partyContactInfos[0].headFlag}">
 		          </div>
-		          <#else>
 		          <div class="form-group">
-		            <label for="addcon">通信地址</label>
-		            <input type="text" class="form-control" id="contactAddress" placeholder="通信地址" >
+		            <label for="addcon">联系地址</label>
+		            <input type="text" class="form-control" id="contactAddress" placeholder="联系地址" value="${partyContactInfos[0].contactAddress}">
 		          </div>
+		          <#else>
 		          <div class="form-group">
 		            <label for="usercon">联系人</label>
 		            <input type="text" class="form-control" id="contactName" placeholder="联系人">
 		            <input type="hidden" id="headFlag" value="1">
+		          </div>
+		          <div class="form-group">
+		            <label for="addcon">联系地址</label>
+		            <input type="text" class="form-control" id="contactAddress" placeholder="联系地址" >
 		          </div>
 		         </#if>
 		</div>
