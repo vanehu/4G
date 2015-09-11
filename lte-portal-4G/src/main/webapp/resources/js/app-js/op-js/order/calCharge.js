@@ -217,7 +217,11 @@ order.calcharge = (function(){
 			var val = $(this).attr("id");
 			if(val!=undefined&&val!=''){
 				val=val.substr(5,val.length);
-				var realmoney=($("#realAmount_"+val).val())*100+'';
+				var num=($("#realhidden_money"+val).val())*100+'';
+				if(isNaN(num)){
+				   return ;
+				}
+				var realmoney=($("#realhidden_money"+val).val())*100+'';
 				var amount=$("#feeAmount_"+val).val();
 				var feeAmount="";
 				if(amount!=undefined&&amount!=''){
@@ -244,7 +248,7 @@ order.calcharge = (function(){
 				var chargeModifyReasonCd = 1 ;
 				var remark="";
 				//if($("#chargeModifyReasonCd_"+val).parent(".ui-select").parent().is(":hidden")){
-				if($("#chargeModifyReasonCd_"+val).is(":hidden")){
+				if($("#chargeModifyReasonCd_"+val).css('display')=="none"){
 					if(feeAmount!=realmoney){
 						remark="其他";
 					}
@@ -373,6 +377,7 @@ order.calcharge = (function(){
 		var flag = _queryPayMethodByItem(itemTypeId,trid,defmethod);
 		if(flag){
 			if(_queryAuthenticDataRange(trid)){
+				$("#payMethodDiv").html($("#payMethodText_"+trid).html()); 
 				    //$("#chargeModifyReasonCd_"+trid).show();
 					//$("#remark_"+trid).hide();chargeModifyReasonCd
 						$("#chargeModifyReasonCd_"+trid).off("change").on("change",function(){
@@ -463,6 +468,7 @@ order.calcharge = (function(){
 	};
 	//修改金额效果
 	var _editMoney=function(obj,val,str){//obj:对象,val:id,str:类型
+		var trid=$("#trid").val();
 		if(typeof obj =="object"){
 		    cash=$.trim($(obj).val());//当前费用
 	    }
@@ -487,6 +493,7 @@ order.calcharge = (function(){
 					check = false ;
 				}
 				if(check){
+					
 					var real=(cash)*100;
 		  			if(real!=amount){
 		  				$("#chargeModifyReasonCdDiv_"+val).show();
@@ -1114,6 +1121,11 @@ order.calcharge = (function(){
 	var _confirm = function(){
 		var trid=$("#trid").val();
 		_editMoney($("#realAmount_"+trid).val(),trid,'old');
+		//修改付费方式
+		var payMethod=$("#payMethodDiv select").val();
+		if(payMethod!=null && payMethod!="" && payMethod!=undefined){
+			$("#payMethodCd_"+trid).val(payMethod);
+		}
 	};
 	var _close = function(accessNumber,trid,realAmount){
 		$("#cal_main_content").show();

@@ -145,7 +145,7 @@ public class OfferMainController extends BaseController {
 			String provCustAreaId=String.valueOf(paramsMap.get("provCustAreaId")); //客户地区id
 			String mainPhoneNum=(String)paramsMap.get("mainPhoneNum");//传入的号码
 			//uim卡
-			String mktResInstCode =String.valueOf(paramsMap.get("mktResInstCode"));//uim卡号
+			String mktResInstCode =(String)paramsMap.get("mktResInstCode");//uim卡号
 			model.addAttribute("mktResInstCode",mktResInstCode);
 			//进行staff获取
 			Map<String, Object> staffMap=APPModelController.getStaffInfo(request);

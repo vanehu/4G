@@ -332,7 +332,23 @@ order.ysl = (function(){
 //			$.alert("提示","请先查询套餐！");
 //			return;
 //		}
-		AttachOffer.searchAttachOfferSpec('-1',offerSpecId,prodSpecId);
+		var param = {   
+				prodId : "-1",
+			    prodSpecId : prodSpecId,
+			    offerSpecIds : [offerSpecId],
+			    ifCommonUse : "" 
+			};
+		var offerSepcName = $("#search_text_-1").val();
+		if(offerSepcName.replace(/\ /g,"")==""){
+			$.alert("提示","请输入查询条件！");
+			return;
+		}
+		param.offerSpecName = offerSepcName;
+		var data = query.offer.searchAttachOfferSpec(param);
+		if(data!=undefined){
+			$("#attach_div_-1").html(data).show();
+		}
+//		AttachOffer.searchAttachOfferSpec('-1',offerSpecId,prodSpecId);
 	};
 	
 	var _confirmAttachOffer = function(name,id,prodflag){

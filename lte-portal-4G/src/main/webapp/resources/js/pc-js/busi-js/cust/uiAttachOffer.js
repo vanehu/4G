@@ -2527,8 +2527,8 @@ uiAttachOffer = (function() {
 		var param = {
 			instCode : instCode,
 			flag : flag,
-			mktResId : resId,
-			termGroup : terminalGroupId
+			mktResId : resId
+//			termGroup : terminalGroupId   update by huangjj #13336需求资源要求这个参数不传
 		};
 		var data = query.prod.checkTerminal(param);
 		if(data==undefined){

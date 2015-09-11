@@ -1815,8 +1815,8 @@ offerChangeNew = (function() {
 		var param = {
 			instCode : instCode,
 			flag : flag,
-			mktResId : resId,
-			termGroup : terminalGroupId
+			mktResId : resId
+//			termGroup : terminalGroupId
 		};
 		var data = query.prod.checkTerminal(param);
 		if(data==undefined){
