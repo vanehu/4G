@@ -39,7 +39,6 @@
 		</style>
 	</head>
 <body>
-
 <form method="post" id="batchUimForm" enctype="multipart/form-data" action="${contextPath}/order/batchOrder/batchImport">
    <ul class="fillin">
       <#if batchType!="9">
@@ -144,8 +143,13 @@
 							 <i class="rule_icon_notice"></i>
 						 </td>
 						 <td>
-						 <#if batchType=="1"||batchType=="0">
+						 <#if batchType=="0"><!-- 调整描述:活卡批开客户列直接填-1,删除第二行. -->
 						 	<span style="line-height:25px;">(1)仅支持上传xls、xlsx，单元格格式请设置为文本。
+							<br/>(2)新增虚拟客户时"客户"列填写格式：-1
+							<br/>(3)预约执行时间：例如：选择0点-->导入成功后0点执行；选择23点-->导入成功后23点执行
+							</span>
+						<#elseif batchType=="1">
+							<span style="line-height:25px;">(1)仅支持上传xls、xlsx，单元格格式请设置为文本。
 							<br/>(2)新增真实客户时"客户"列填写格式：-1/姓名/证件号码/证件类型&nbsp;<a href="javascript:order.batch.downloadIdType()"><span style="color: #0000FF;font-weight: bold;">证件类型下载</span></a>
 							<br/>(3)新增虚拟客户时"客户"列填写格式：-1
 							<br/>(4)预约执行时间：例如：选择0点-->导入成功后0点执行；选择23点-->导入成功后23点执行
