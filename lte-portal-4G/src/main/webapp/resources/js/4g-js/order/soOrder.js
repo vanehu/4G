@@ -584,7 +584,7 @@ SoOrder = (function() {
 			$("#order_tab_panel_content").hide();
 			$("#zdyypage").hide();
 			$("#tijiao").hide();
-			var $table = $("<table class='contract_list'><tr><td>终端名称</td><td>终端颜色</td><td>预约类型</td><td>预约政策</td><td>预约数量</td></tr></table>");
+			$("#orderTbody").append("<tr><td>终端名称</td><td>终端颜色</td><td>预约类型</td><td>预约政策</td><td>预约数量</td></tr>");
 			$.each(OrderInfo.terminalList,function(){
 				var $newTr = $("<tr></tr>");
 				$newTr.append("<td>"+this.zdyyTerminalListInfo.mktResName+"</td>");
@@ -592,9 +592,8 @@ SoOrder = (function() {
 				$newTr.append("<td>"+this.zdyyTerminalListInfo.yyType+"</td>");
 				$newTr.append("<td>"+this.zdyyTerminalListInfo.yyPolicy+"</td>");
 				$newTr.append("<td>"+this.zdyyTerminalListInfo.zdyynum+"</td>");
-				$table.append($newTr);
+				$("#orderTbody").append($newTr);
 			});
-			$("#orderTbody").append($table);
 		}else if(OrderInfo.actionFlag==38){//终端预约退订
 			$("#orderedprod").hide();
 			$("#order_prepare").hide();

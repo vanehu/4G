@@ -76,7 +76,8 @@
 		</tbody>
 	</table>
 </#if>
-
+<!-- 解决IE7下  easydialog未定义问题-->
+<script src="${contextPath}/js/4g-js/easydialog.min.js?${jsversion}" type="text/javascript"></script>
 <script>
 	order.cust.jumpAuthflag = "";
 	var jumpAuthflag=${jumpAuthflag};

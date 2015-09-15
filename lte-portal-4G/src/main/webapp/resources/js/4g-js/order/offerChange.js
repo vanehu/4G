@@ -211,7 +211,7 @@ offerChange = (function() {
 			param.oldoffer = OrderInfo.oldoffer;
 		}
 		order.main.buildMainView(param);
-		easyDialog.close();
+		//easyDialog.close();
 	}
 	
 	//填充套餐变更页面
