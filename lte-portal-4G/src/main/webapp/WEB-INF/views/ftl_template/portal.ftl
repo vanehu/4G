@@ -122,7 +122,7 @@
 	<label>
 		<a id="ec-page-no" class="pagingSelect" href="javascript:void(0);">${pageModel.pageNo}</a>
 	</label>
-	<#if (pageModel.list?size<pageModel.pageSize)>
+	<#if (pageModel.list?size<=pageModel.pageSize)>
 	<label><span id="ec-page-next" class="nextPageGray">下一页</span></label>
 	<#else>
 	<label><span id="ec-page-next" class="nextPageGrayOrange" page="${pageModel.pageNo+1}">下一页</span></label>

@@ -403,10 +403,13 @@ order.cust = (function(){
 		$(".userclose").off("click").on("click",function(event) {
 			authFlag="";
 			$(".usersearchcon").hide();
+			$("#custListOverlay").hide();
 		});
 		if($("#custListTable").attr("custInfoSize")=="1"){
 			$(".usersearchcon").hide();
+			$("#custListOverlay").hide();
 		}
+		$("#custListOverlay").show();
 	};
 	
 	// 客户重新定位
@@ -420,6 +423,7 @@ order.cust = (function(){
 		}
 		$("#custQryDiv").show();
 		$("#custInfo").hide();
+		$("#custListOverlay").hide();
 		$("#p_cust_identityNum").val("");
 		$("#authPassword").val("");
 		authFlag="";
@@ -1531,7 +1535,7 @@ order.cust = (function(){
 	//多客户分页查询，后台服务不支持分页，故使用假分页（一次查询分次展示）
 	var _queryCustByPageIndex = function(pageIndex){
 		pageIndex = parseInt(pageIndex);
-		if(pageIndex <= 0){
+		if(pageIndex <= 0 || isNaN(pageIndex)){
 			return;
 		}
 		var pageSize = parseInt($('#ec-pagination').attr('pageSize'));

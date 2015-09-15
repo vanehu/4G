@@ -234,50 +234,45 @@ public class CustController extends BaseController {
 						accNbrParamMap.put("areaId", paramMap.get("areaId"));
 						accNbrParamMap.put("custIds", custIds);
 						Map accNbrResultMap = custBmo.queryAccNbrByCust(accNbrParamMap, flowNum, sessionStaff);
+						
+						List custInfosWithNbr = null;
 						if (MapUtils.isNotEmpty(accNbrResultMap)) {
+							custInfosWithNbr = new ArrayList();
 							List<Map<String, Object>> accNbrCustInfos = (List<Map<String, Object>>) accNbrResultMap.get("custInfos");
-							List custInfosWithNbr = new ArrayList();
-							for(Map<String, Object> accNbrCustInfo : accNbrCustInfos){
-								String custId = MapUtils.getString(accNbrCustInfo,"custId","");
-								List<Map<String, Object>> accNbrs = (List<Map<String, Object>>) accNbrCustInfo.get("accNbrInfos");
+							for(Object tmpCustInfo : custInfos){
+								Map custInfoMap = (Map)tmpCustInfo;
+								String custId = MapUtils.getString(custInfoMap,"custId","");
 								
-								if(accNbrs != null && accNbrs.size() != 0){
-									Map custInfoMap = null;
-									for(Object tmpCustInfo : custInfos){
-										if(custId.equals(((Map)tmpCustInfo).get("custId"))){
-											custInfoMap = ((Map)tmpCustInfo);
-											break;
-										}
-									}
-									if(custInfoMap != null){
-										for(Map<String, Object> accNbrMap : accNbrs){
-											String accNbr = MapUtils.getString(accNbrMap, "accNbr", "");
-											Map newCustInfoMap = new HashMap(custInfoMap);
-											newCustInfoMap.put("accNbr", accNbr);
-											custInfosWithNbr.add(newCustInfoMap);
-										}
+								List<Map<String, Object>> accNbrs = null;
+								for(Map<String, Object> accNbrCustInfo : accNbrCustInfos){
+									if(custId.equals(MapUtils.getString(accNbrCustInfo,"custId",""))){
+										accNbrs = (List<Map<String, Object>>) accNbrCustInfo.get("accNbrInfos");
+										break;
 									}
 								}
+								
+								if(accNbrs != null && accNbrs.size() != 0){
+									for(Map<String, Object> accNbrMap : accNbrs){
+										String accNbr = MapUtils.getString(accNbrMap, "accNbr", "");
+										Map newCustInfoMap = new HashMap(custInfoMap);
+										newCustInfoMap.put("accNbr", accNbr);
+										custInfosWithNbr.add(newCustInfoMap);
+									}
+								} else {
+									custInfosWithNbr.add(custInfoMap);
+								}
 							}
-							if(custInfosWithNbr.size() != 0){
-								resultMap.put("custInfos", custInfosWithNbr);
-								model.addAttribute("query", paramMap.get("query"));  //综合查询调用标志
-								model.addAttribute("multiCust", "Y");  //多客户标识
-							}
+						} else {
+							custInfosWithNbr = custInfos;
 						}
+						resultMap.put("custInfos", custInfosWithNbr);
+						model.addAttribute("query", paramMap.get("query"));  //综合查询调用标志
+						model.addAttribute("multiCust", "Y");  //多客户标识
+						
+						PageModel<Map<String, Object>> pm = PageUtil.buildPageModel(1, 10, custInfosWithNbr.size(),custInfosWithNbr);
+			    		model.addAttribute("pageModel", pm);
 					}
 					
-//					if(idCardNumber != null && idCardNumber.length()==18){
-//						 String preStr = idCardNumber.substring(0,6);
-//				    	 String subStr = idCardNumber.substring(14);
-//				    	 idCardNumber=preStr+"********"+subStr;
-//						
-//					}else if(idCardNumber != null && idCardNumber.length()==15){
-//						String preStr = idCardNumber.substring(0,5);
-//				    	 String subStr = idCardNumber.substring(13);
-//				    	 idCardNumber=preStr+"********"+subStr;
-//					}
-//					model.addAttribute("idCardNumber", idCardNumber);
 				}else{
 					int count = (Integer) httpSession.getAttribute(sessionStaff.getStaffCode()+"custcount")+10;
 					httpSession.setAttribute(sessionStaff.getStaffCode()+"custcount", count);
@@ -1148,7 +1143,7 @@ public class CustController extends BaseController {
      * @param flowNum
      * @param response
      * @return
-     * @throws BusinessException
+     * @throws com.al.ecs.exception.BusinessException
      */
     @SuppressWarnings("unchecked")
 	@RequestMapping(value = "/queryCustAlone", method = RequestMethod.GET)
@@ -1190,7 +1185,7 @@ public class CustController extends BaseController {
      * @param flowNum
      * @param response
      * @return
-     * @throws BusinessException
+     * @throws com.al.ecs.exception.BusinessException
      */
     @RequestMapping(value = "/custInfo", method = {RequestMethod.POST})
 	public String custInfo(@RequestBody Map<String, Object> param, Model model,@LogOperatorAnn String optFlowNum, HttpServletResponse response,HttpServletRequest request) {
