@@ -493,6 +493,8 @@ public void toAdvice(HttpServletRequest request,  HttpServletResponse response) 
    .append("&applyType=").append(applyType);
    log.debug(url.toString());
    try {
+	   // IE下iframe跨域cookie无法存取，session丢失，无法正常登录，网上解决如下，但目前不起作用，需手动设置IE
+	   response.setHeader("P3P", "CP=CAO PSA OUR");
        response.setContentType("text/html;charset=UTF-8");
        response.getWriter().print("<script>window.location.href='"+url+"'</script>");
    } catch (IOException e) {
@@ -589,4 +591,12 @@ public void toPraise(HttpServletRequest request,  HttpServletResponse response) 
        e.printStackTrace();
    }
 }
+	/**
+	 * “星光计划”页面
+	 */
+	@RequestMapping(value = "/starlightPlan", method = RequestMethod.GET)
+	@AuthorityValid(isCheck = false)
+	public String starlightPlan() {
+		return "/staff/starlight-plan";
+	}
 }
