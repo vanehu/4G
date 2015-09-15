@@ -3119,13 +3119,13 @@ SoOrder = (function() {
 		for (var i = 0; i < OrderInfo.boProd2Tds.length; i++) {
 			if(OrderInfo.boProd2Tds[i].uimType == "2"){//表示这个订单是白卡，更新uim订单状态的时候需要转换下uim卡号
 				var serviceName = contextPath + "/mktRes/writeCard/getAsciiToHex";
-				var asciiFStr = OrderInfo.boProd2Tds[i].couponInstanceNumber.substring(result.length-4,result.length);
+				var asciiFStr = OrderInfo.boProd2Tds[i].couponInstanceNumber.substring(OrderInfo.boProd2Tds[i].couponInstanceNumber.length-4,OrderInfo.boProd2Tds[i].couponInstanceNumber.length);
 				var param = {
 					"asciiFStr":asciiFStr       
 				};
 				var response = $.callServiceAsJson(serviceName, param);
 				
-				var selUimCard = OrderInfo.boProd2Tds[i].couponInstanceNumber.substring(0,result.length-4)+response.data.asciiStr;
+				var selUimCard = OrderInfo.boProd2Tds[i].couponInstanceNumber.substring(0,OrderInfo.boProd2Tds[i].couponInstanceNumber.length-4)+response.data.asciiStr;
 				var res = {
 						accNbr :selUimCard,
 						accNbrType : 3,  //号码类型（1手机号码2.UIM卡）
