@@ -2699,6 +2699,10 @@ AttachOffer = (function() {
 									var $dd = $('<dd class="canchoose" onclick="AttachOffer.addOfferSpec('+prodId+','+this.offerSpecId+')"></dd>');
 									var $span = $('<span><a href="javascript:AttachOffer.addOfferSpec('+prodId+','+this.offerSpecId+')" >'+this.offerSpecName+'</a></span>');
 									var $dd2 = $('<dd class="time2" onclick="AttachOffer.offerSpecDetail('+prodId+','+this.offerSpecId+')"><img src="../image/common/more.png"/></dd>');
+									if(this.ifReset=="N"){
+										var $dd4 = $('<dd><img src="../image/common/no.png"/></dd>');
+										$dd2.append($dd4);
+									}
 									var $dd3 = $("<dd class=\"canshu2\" onclick=\"AttachOffer.addMyfavoriteSpec("+prodId+","+this.offerSpecId+",'"+this.offerSpecName+"')\"><img src=\"../image/common/cang.png\"/></dd>");
 									$li.append($dd).append($span).append($dd2).append($dd3).appendTo($ul);
 								}
@@ -3573,6 +3577,10 @@ AttachOffer = (function() {
 						var $span = $('<span><a href="javascript:AttachOffer.addOfferSpec('+prodId+','+this.offerSpecId+')" >'+this.offerSpecName+'</a></span>');
 						var $dd2 = $('<dd class="time2" onclick="AttachOffer.offerSpecDetail('+prodId+','+this.offerSpecId+')"><img src="../image/common/more.png"/></dd>');
 						var $dd3 = $('<dd class="canshu2" onclick="AttachOffer.delMyfavoriteSpec('+prodId+','+prodSpecId+','+this.offerSpecId+',\''+this.offerSpecName+'\')"><img src="../image/common/deladd.png"/></dd>');
+						if(this.ifReset=="N"){
+							var $dd4 = $('<dd><img src="../image/common/no.png"/></dd>');
+							$dd2.append($dd4);
+						}
 						$li.append($dd).append($span).append($dd2).append($dd3).appendTo($ul);
 					}
 				});
