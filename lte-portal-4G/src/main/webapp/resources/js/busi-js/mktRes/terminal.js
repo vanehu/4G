@@ -578,7 +578,6 @@ mktRes.terminal = (function($){
 				$("#yyType option").remove();
 				$("#yyPolicy option").remove();
 				$("#zdyypurchaseTermA").removeClass("btna_o").addClass("btna_g");
-				$("#zdyypurchaseTermA").unbind("click");
 			}
 			
 			
@@ -1404,14 +1403,10 @@ mktRes.terminal = (function($){
 						}
 					});
 					$("#zdyypurchaseTermA").removeClass("btna_g").addClass("btna_o");
-					$("#zdyypurchaseTermA").click(function(){
-						_zdyypurchase();
-					});
 				}else {
 					$("#yyType option").remove();
 					$("#yyPolicy option").remove();
 					$("#zdyypurchaseTermA").removeClass("btna_o").addClass("btna_g");
-					$("#zdyypurchaseTermA").unbind("click");
 				}
 				$("#cfsjA").click(function(){
 					_selectHy(1);
@@ -1421,6 +1416,9 @@ mktRes.terminal = (function($){
 				});
 				$("#chkTsnA").click(function(){
 					_checkTerminalCode('tsn');
+				});
+				$("#zdyypurchaseTermA").click(function(){
+					_zdyypurchase();
 				});
 			}
 		});	

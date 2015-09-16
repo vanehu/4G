@@ -1426,6 +1426,9 @@ AttachOffer = (function() {
 			if(ec.util.isObj(newSpec.ifOrderAgain)&&newSpec.ifOrderAgain=="Y"){
 				$li.append('<dd id="can_'+prodId+'_'+offerSpecId+'" class="canshu2" onclick="AttachOffer.setParam('+prodId+','+offerSpecId+');"></dd>');
 			}
+			if(newSpec.ifReset=="N"){
+				$li.append('<dd class="time2"><img src="../image/common/no.png"/></dd>');
+			}
 			$("#open_ul_"+prodId).append($li);
 			newSpec.isdel = "N";
 		}else if((newSpec.isdel=="Y")) { 
@@ -1932,6 +1935,8 @@ AttachOffer = (function() {
 						                AttachOffer.selectAttachOffer(prodId,offerSpecId);
 									}).ketchup({bindElementByClass:"ZebraDialog_Button1"});
 									
+								}else {
+									$.alert("信息提示",data.message);
 								}
 							}
 						}else if(response && response.data && response.data.message
@@ -4236,7 +4241,10 @@ AttachOffer = (function() {
 					                AttachOffer.selectAttachOffer(prodId,offerSpecId);
 								}).ketchup({bindElementByClass:"ZebraDialog_Button1"});
 								
+							}else {
+								$.alert("信息提示",data.message);
 							}
+							
 						}
 					}else if(response && response.data && response.data.message
 							&& response.data.code == 1){
