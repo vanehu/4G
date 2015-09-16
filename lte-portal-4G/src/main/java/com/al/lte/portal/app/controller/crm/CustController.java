@@ -114,9 +114,9 @@ public class CustController extends BaseController {
         
         param.put("startDate", paramMap.get("startDt"));
 		param.put("endDate", paramMap.get("endDt"));
-		param.put("areaId", sessionStaff.getAreaId());
+		param.put("areaId", sessionStaff.getCurrentAreaId());
 		param.put("staffId", sessionStaff.getStaffId());
-		param.put("olType", "11");
+		param.put("olType", "15");
 		param.put("boActionTypeCd", "");//新增：C1   反档：1020500000     为空：都查
 		try{
     		nowPage = Integer.parseInt(paramMap.get("nowPage").toString());
