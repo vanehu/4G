@@ -13,6 +13,7 @@
               <#if (pageModel.list)?? &&((pageModel.list)?size>0)>
               <#list pageModel.list as orderLists >
                 <tr>
+                  <td>${orderLists.custSoNumber}</td>
                   <td>${orderLists.couponName}</td>
                   <td>${(orderLists.apCharge)/100}</td>
                   <td>${orderLists.reserveTime}</td>

@@ -56,6 +56,7 @@ mktRes.terminal = (function($){
 			OrderInfo.actionFlag = 13;
 			$("#treaty").hide();
 			$("#sel_number").hide();
+			$("#reserveCodeDl").show();
 			$("#lj").addClass("selectBoxTwoOn").removeClass("selectBoxTwo");
 			$("#hy").addClass("selectBoxTwo").removeClass("selectBoxTwoOn");
 			
@@ -67,6 +68,10 @@ mktRes.terminal = (function($){
 			OrderInfo.actionFlag = 14;
 			$("#treaty").show();
 			$("#sel_number").show();
+			$("#reserveCodeDl").hide();
+			if($("#if_p_reserveCode").attr("checked")){
+				$("#if_p_reserveCode").removeAttr('checked');
+			}
 			$("#lj").addClass("selectBoxTwo").removeClass("selectBoxTwoOn");
 			$("#hy").addClass("selectBoxTwoOn").removeClass("selectBoxTwo");
 			
@@ -569,9 +574,6 @@ mktRes.terminal = (function($){
 					}
 				});
 				$("#zdyypurchaseTermA").removeClass("btna_g").addClass("btna_o");
-				$("#zdyypurchaseTermA").click(function(){
-					_zdyypurchase();
-				});
 			}else {
 				$("#yyType option").remove();
 				$("#yyPolicy option").remove();
@@ -1561,9 +1563,18 @@ mktRes.terminal = (function($){
 			return;
 		}
 		termInfo.sourceId = "";
+		var terminalPrice = $("#mktLjPrice").val()/100;
+		var luoFlag = "N";
+		if ("hy"==buyChk.buyType) {
+			terminalPrice = $("#price").val()/100;
+		}else if ("lj"==buyChk.buyType){
+			luoFlag = "Y";
+		}
 		var param = {
 				reserveCode : reserveCode,
-				couponId : termInfo.mktResId
+				couponId : termInfo.mktResId,
+				terminalPrice : terminalPrice,
+				luoFlag : luoFlag
 		};
 		var url = contextPath+"/mktRes/terminal/queryCouponReserveCodeCheck ";
 		$.callServiceAsJson(url,param,{
@@ -1576,8 +1587,21 @@ mktRes.terminal = (function($){
 				if (response && response.code == -2) {
 					$.alertM(response.data);
 				} else if(response&&response.data&&response.data.code == 0) {
-					$.alert("提示","<br/>此预约码可以使用！");
-					termInfo.sourceId = response.data.couponInfo.reserveNbr;
+					if(response.data.buyFlag!=null && response.data.buyFlag=="Y"){
+						var content = "您购买的终端和预约的终端不一致，请确认是否需要购买该终端？";
+						$.confirm("信息确认",content,{ 
+							yes:function(){
+							},
+							yesdo:function(){
+								termInfo.sourceId = response.data.couponInfo.reserveNbr;
+							},
+							no:function(){
+							}
+						});
+					}else{
+						$.alert("提示","<br/>此预约码可以使用！");
+						termInfo.sourceId = response.data.couponInfo.reserveNbr;
+					}
 				}else if(response && response.data && response.data.message
 						&& response.data.code == 1){
 					$.alert("提示", response.data.message);
