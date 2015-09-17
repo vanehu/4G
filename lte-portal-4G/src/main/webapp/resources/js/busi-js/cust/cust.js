@@ -415,7 +415,7 @@ order.cust = (function(){
 	// 客户重新定位
 	var _custReset = function() {
 		//填单页面
-		if((0!=OrderInfo.order.step)||(0==OrderInfo.order.step&&OrderInfo.actionFlag==2)){
+		if((0!=OrderInfo.order.step)||(0==OrderInfo.order.step&&OrderInfo.actionFlag==2)||(0==OrderInfo.order.step&&OrderInfo.actionFlag==37)){
 			window.location.reload();
 		}
 		if($("#subPage").val()=="number"){
