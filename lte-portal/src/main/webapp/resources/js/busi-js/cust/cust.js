@@ -16,6 +16,8 @@ order.cust = (function(){
 	var _partyProfiles =[];
 	//客户属性分页列表
 	var _profileTabLists =[];
+	var _tmpChooseUserInfo = {};
+	var _queryForChooseUser = false;
 	
 	var _getCustInfo = function() {
 		return custInfo;
@@ -47,15 +49,20 @@ order.cust = (function(){
 					} catch(e){
 						
 					}
-					custInfo = param;
-					OrderInfo.boCusts.prodId=-1;
-					OrderInfo.boCusts.partyId=_choosedCustInfo.custId;
-					OrderInfo.boCusts.partyProductRelaRoleCd="0";
-					OrderInfo.boCusts.state="ADD";
-					OrderInfo.boCusts.norTaxPayer=_choosedCustInfo.norTaxPayer;
-					
-					OrderInfo.cust = _choosedCustInfo;
-					_custAuthCallBack(response);
+					//TODO 使用人修改1
+					if(!order.cust.queryForChooseUser){
+						custInfo = param;
+						OrderInfo.boCusts.prodId=-1;
+						OrderInfo.boCusts.partyId=_choosedCustInfo.custId;
+						OrderInfo.boCusts.partyProductRelaRoleCd="0";
+						OrderInfo.boCusts.o.boCusts.norTaxPayer=_choosedCustInfo.norTaxPayer;
+						
+						OrderInfo.cust = _choosedCustInfo;
+						_custAuthCallBack(response);
+					} else {
+						//鉴权成功后显示选择使用人弹出框
+						order.main.showChooseUserDialog(param);
+					}
 				},"always":function(){
 					$.unecOverlay();
 				}
@@ -166,7 +173,13 @@ order.cust = (function(){
 		if(identidiesTypeCd!=-1){
 			$("#isAppointNum").attr("checked",false);
 		}
-		_custLookforButton();
+		
+		//TODO 使用人修改5
+		if(id == 'p_cust_identityNum_choose'){
+			_bindCustQueryForChoose();
+		} else {
+			_custLookforButton();
+		}
 		
 		//如果是身份证，则禁止输入，否则启用输入控件
 //		var isID = identidiesTypeCd==1;
@@ -347,15 +360,21 @@ order.cust = (function(){
 					$.alert("提示","客户鉴权失败,稍后重试");
 					return;
 				}
-				custInfo = param;
-				OrderInfo.boCusts.prodId=-1;
-				OrderInfo.boCusts.partyId=_choosedCustInfo.custId;
-				OrderInfo.boCusts.partyProductRelaRoleCd="0";
-				OrderInfo.boCusts.state="ADD";
-				OrderInfo.boCusts.norTaxPayer=_choosedCustInfo.norTaxPayer;
-				
-				OrderInfo.cust = _choosedCustInfo;
-				_custAuthCallBack(response);
+				//TODO 使用人修改2
+				if(!order.cust.queryForChooseUser){
+					custInfo = param;
+					OrderInfo.boCusts.prodId=-1;
+					OrderInfo.boCusts.partyId=_choosedCustInfo.custId;
+					OrderInfo.boCusts.partyProductRelaRoleCd="0";
+					OrderInfo.boCusts.state="ADD";
+					OrderInfo.boCusts.norTaxPayer=_choosedCustInfo.norTaxPayer;
+					
+					OrderInfo.cust = _choosedCustInfo;
+					_custAuthCallBack(response);
+				} else {
+					//鉴权成功后显示选择使用人弹出框
+					order.main.showChooseUserDialog(param);
+				}
 			},"always":function(){
 				$.unecOverlay();
 			}
@@ -373,15 +392,22 @@ order.cust = (function(){
 					$.alert("提示","客户鉴权失败,稍后重试");
 					return;
 				}
-				custInfo = param;
-				OrderInfo.boCusts.prodId=-1;
-				OrderInfo.boCusts.partyId=_choosedCustInfo.custId;
-				OrderInfo.boCusts.partyProductRelaRoleCd="0";
-				OrderInfo.boCusts.state="ADD";
-				OrderInfo.boCusts.norTaxPayer=_choosedCustInfo.norTaxPayer;
 				
-				OrderInfo.cust = _choosedCustInfo;
-				_custAuthCallBack(response);
+				//TODO 使用人修改3
+				if(!order.cust.queryForChooseUser){
+					custInfo = param;
+					OrderInfo.boCusts.prodId=-1;
+					OrderInfo.boCusts.partyId=_choosedCustInfo.custId;
+					OrderInfo.boCusts.partyProductRelaRoleCd="0";
+					OrderInfo.boCusts.state="ADD";
+					OrderInfo.boCusts.norTaxPayer=_choosedCustInfo.norTaxPayer;
+					
+					OrderInfo.cust = _choosedCustInfo;
+					_custAuthCallBack(response);
+				} else {
+					//鉴权成功后显示选择使用人弹出框
+					order.main.showChooseUserDialog(param);
+				}
 			},"always":function(){
 				$.unecOverlay();
 			}
@@ -424,9 +450,27 @@ order.cust = (function(){
 			custFlag :$(scope).attr("custFlag"),
 			vipLevelName :$(scope).attr("vipLevelName")
 		};
+		
+		//TODO 使用人修改4
+		// 判断是否是政企客户
+		var isGovCust = false;
+		for (var i = 0; i <= CacheData.getGovCertType().length; i ++) {
+			if (_choosedCustInfo.identityCd == CacheData.getGovCertType()[i]) {
+				isGovCust = true;
+				break;
+			}
+		}
+		if(order.cust.queryForChooseUser && isGovCust){
+			$.alert('提示','使用人必须是公众客户，请重新定位。');
+			return false;
+		}
+		
 		if(authFlag=="0"){
 			easyDialog.open({
-				container : 'auth'
+				container : 'auth',
+				callback : function(){
+					order.cust.queryForChooseUser = false; //关闭弹出框时重置标识位
+				}
 			});
 			if(order.cust.jumpAuthflag=="0"){
 				$("#jumpAuth").show();
@@ -690,6 +734,18 @@ order.cust = (function(){
 			
 		});
 	};
+	//定位客户选择地区，选择使用人
+	var _chooseAreaForChooseUser = function(){
+		order.area.chooseAreaTree("order/prepare","p_cust_areaId_val_choose","p_cust_areaId_choose",3,function(areaid,areaCode,areaName){
+			OrderInfo.staff.soAreaId =areaid;
+			OrderInfo.staff.soAreaName=areaName;
+			OrderInfo.staff.soAreaCode =areaCode;
+//			$("#order_prepare").show();
+//			$("#order_tab_panel_content").hide();
+//			$("#step1").hide();
+			
+		});
+	};
 	//客户信息查询户选择地区
 	var _preQueryCustChooseArea = function(){
 		order.area.chooseAreaTreeManger("cust/preQueryCust","p_areaId_val","p_areaId",3);
@@ -731,6 +787,7 @@ order.cust = (function(){
 //			}
 //		});
 		_certTypeByPartyType("-1","p_cust_identityCd"); //客户定位也使用根据客户类型查询证件类型接口，p_cust_identityCd=-1表示查询所有已关联的证件类型
+		_certTypeByPartyType("-1","p_cust_identityCd_choose"); //初始化证件类型，p_cust_identityCd=-1表示查询所有已关联的证件类型
 		_custidentidiesTypeCdChoose($("#p_cust_identityCd").children(":first-child"),"p_cust_identityNum");
 		//根据身份证开关隐藏读卡按钮
 		var idType=$("#_session_staff_info").attr("idType");
@@ -1199,6 +1256,89 @@ order.cust = (function(){
 		
 		$("#custAuthbtnID").click();
 	};
+	
+	//绑定客户选择查询事件，使用人
+	var _bindCustQueryForChoose = function(){
+		$('#custQueryForChooseForm').off().bind('formIsValid', function(event, form) {
+			var identityCd="";
+			var idcard="";
+			var diffPlace="";
+			var acctNbr="";
+			var identityNum="";
+			var queryType="";
+			var queryTypeValue="";
+			identityCd=$("#p_cust_identityCd_choose").val();
+			identityNum=$.trim($("#p_cust_identityNum_choose").val());
+			authFlag="0"; //需要鉴权
+			if(identityCd==-1){
+				acctNbr=identityNum;
+				identityNum="";
+				identityCd="";
+			}else if(identityCd=="acctCd"||identityCd=="custNumber"){
+				acctNbr="";
+				identityNum="";
+				identityCd="";
+				queryType=$("#p_cust_identityCd_choose").val();
+				queryTypeValue=$.trim($("#p_cust_identityNum_choose").val());
+			}
+			diffPlace=$("#DiffPlaceFlag_choose").val();
+			areaId=$("#p_cust_areaId_choose").val();
+			//lte进行受理地区市级验证
+			if(CONST.getAppDesc()==0&&areaId.indexOf("0000")>0){
+				$.alert("提示","省级地区无法进行定位客户,请选择市级地区！");
+				return;
+			}
+			var param = {
+					"acctNbr":acctNbr,
+					"identityCd":identityCd,
+					"identityNum":identityNum,
+					"partyName":"",
+					"custQueryType":$("#custQueryType_choose").val(),
+					"diffPlace":diffPlace,
+					"areaId" : areaId,
+					"queryType" :queryType,
+					"queryTypeValue":queryTypeValue,
+					"identidies_type":$("#p_cust_identityCd_choose  option:selected").text()
+			};
+			
+			
+			//JSON.stringify(param)
+			//TODO 
+			$.callServiceAsHtml(contextPath+"/cust/queryCust",param, {
+				"before":function(){
+					$.ecOverlay("<strong>正在查询中，请稍等...</strong>");
+				},"always":function(){
+					$.unecOverlay();
+				},	
+				"done" : function(response){
+					if (response.code == -2) {
+						return;
+					}
+					if(response.data.indexOf("false") >=0) {
+						$.alert("提示","抱歉，没有定位到客户，请尝试其他客户。");
+						return;
+					}
+					
+					order.cust.jumpAuthflag = $(response.data).find('#jumpAuthflag').val();
+					order.cust.showCustAuth($(response.data).find('#custInfos'));
+//					var content$ = $("#custList");
+//					content$.html(response.data).show();
+//					$(".userclose").off("click").on("click",function(event) {
+//						authFlag="";
+//						$(".usersearchcon").hide();
+//					});
+//					if($("#custListTable").attr("custInfoSize")=="1"){
+//						$(".usersearchcon").hide();
+//					}
+				},
+				"fail":function(response){
+					$.unecOverlay();
+					$.alert("提示","查询失败，请稍后再试！");
+				}
+			});
+		}).ketchup({bindElement:"userSearchForChooseBtn"});
+	};
+	
 	return {
 		form_valid_init : _form_valid_init,
 		showCustAuth : _showCustAuth,
@@ -1234,7 +1374,12 @@ order.cust = (function(){
 		back :_back,
 		readCert : _readCert,
 		readCertWhenCreate : _readCertWhenCreate,
-		readCertWhenAuth : _readCertWhenAuth
+		readCertWhenAuth : _readCertWhenAuth,
+		chooseAreaForChooseUser : _chooseAreaForChooseUser,
+		certTypeByPartyType : _certTypeByPartyType,
+		bindCustQueryForChoose : _bindCustQueryForChoose,
+		tmpChooseUserInfo : _tmpChooseUserInfo,
+		queryForChooseUser : _queryForChooseUser
 	};
 })();
 $(function() {

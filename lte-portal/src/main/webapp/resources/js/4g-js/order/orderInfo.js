@@ -140,6 +140,8 @@ OrderInfo = (function() {
 	
 	var _prodAttrs = []; //保存查询产品规格属性时返回的信息
 	
+	var _choosedUserInfos = []; //使用人信息
+	
 	//创建一个订单完整节点
 	var _getOrderData = function(){
 		//订单提交完整节点
@@ -1102,6 +1104,45 @@ OrderInfo = (function() {
 		}
 		return false;
 	};
+	
+	var _updateChooseUserInfos = function(prodId, custInfo){
+		if(!OrderInfo.choosedUserInfos){
+			OrderInfo.choosedUserInfos = [];
+		}
+		var index = -1;
+		for(var i=0; i<OrderInfo.choosedUserInfos.length; i++){
+			if(OrderInfo.choosedUserInfos[i].prodId == prodId){
+				index = i;
+				break;
+			}
+		}
+		if(index == -1){
+			OrderInfo.choosedUserInfos.push({
+				prodId : prodId,
+				custInfo : custInfo
+			});
+		} else {
+			OrderInfo.choosedUserInfos[index].custInfo = custInfo; 
+		}
+	};
+	
+	var _getChooseUserInfo = function(prodId){
+		if(!!OrderInfo.choosedUserInfos && OrderInfo.choosedUserInfos.length){
+			for(var i=0; i<OrderInfo.choosedUserInfos.length; i++){
+				if(OrderInfo.choosedUserInfos[i].prodId == prodId){
+					return OrderInfo.choosedUserInfos[i].custInfo;
+				}
+			}
+		}
+		return null;
+	};
+	
+	var _resetChooseUserInfo = function(){
+		order.cust.queryForChooseUser = false; //重置选择使用人标识
+		order.cust.tmpChooseUserInfo = {};
+		OrderInfo.choosedUserInfos = [];
+	};
+	
 	return {	
 		order					: _order,
 		SEQ						: _SEQ,
@@ -1164,6 +1205,10 @@ OrderInfo = (function() {
 		prodAttrs				:_prodAttrs,
 		isGroupProSpec			: _isGroupProSpec,
 		isGroupProSpecId		: _isGroupProSpecId,
-		isGroupOfferSpecId		: _isGroupOfferSpecId
+		isGroupOfferSpecId		: _isGroupOfferSpecId,
+		choosedUserInfos 		:_choosedUserInfos,
+		updateChooseUserInfos	:_updateChooseUserInfos,
+		getChooseUserInfo		:_getChooseUserInfo,
+		resetChooseUserInfo		:_resetChooseUserInfo
 	};
 })();

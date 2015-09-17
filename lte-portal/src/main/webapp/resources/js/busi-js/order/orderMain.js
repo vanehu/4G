@@ -557,12 +557,122 @@ order.main = (function(){
 				}
 				//$("#order_spec_parm").append(response.data);
 				$("#"+param.ul_id).append(response.data);
+				
+				//判断使用人产品属性是否必填
+				_checkUsersProdAttr(param.prodId, $("#"+param.ul_id));
+				
 			},
 			fail:function(response){
 				$.unecOverlay();
 			}
 		});
 	}
+	
+	//判断使用人产品属性是否必填，mantis 0147689: 关于政企单位用户实名制信息录入相关工作的要求 ；
+	function _checkUsersProdAttr(prodId, dom){
+		//1）新建客户新装，如果是政企客户，填单时必须填写使用人；
+		//2）老客户新装，根据客户查询判断是政企客户（segmentId=1000）时，填单必须填写使用人；
+		var itemId = CONST.PROD_ATTR.PROD_USER + '_' + prodId;
+		if($('#'+itemId).length > 0){
+			var isOptional = true;
+			if(OrderInfo.cust && OrderInfo.cust.custId && OrderInfo.cust.custId != '-1'){ //老客户
+				/*根据证件类型来判断
+				 * var isGovCust = false;
+				for (var i = 0; i <= CacheData.getGovCertType().length; i ++) {
+					if (OrderInfo.cust.identityCd == CacheData.getGovCertType()[i]) {
+						isGovCust = true;
+						break;
+					}
+				}
+				if(isGovCust){ //政企客户
+					isOptional = false;
+				}*/
+				if(OrderInfo.cust.segmentId == '1000'){ //政企客户
+					isOptional = false;
+				}
+			} else { //新建客户
+				if(OrderInfo.boCustInfos && OrderInfo.boCustInfos.partyTypeCd == '2'){ //政企客户
+					isOptional = false;
+				}
+			}
+			if(!isOptional){
+				for(var i=0;i<OrderInfo.prodAttrs.length;i++){
+					if(OrderInfo.prodAttrs[i].id == itemId){
+						OrderInfo.prodAttrs[i].isOptional = 'N';
+						break;
+					}
+				}
+				//绑定弹出框事件，用于定位客户
+				$('#'+itemId).attr({'check_option':'N','readonly':'readonly','disabled':'disabled'}).show();
+				$('#choose_user_btn_'+prodId).off('click').on('click',function(){
+					order.main.toChooseUser(prodId);
+				}).show();
+				
+			} else {
+				$('#'+itemId).attr({'readonly':'readonly','disabled':'disabled'}).hide();
+				$('#choose_user_btn_'+prodId).off('click').hide();
+				$('#choose_user_btn_'+prodId).parent().hide();
+			}
+		}
+	};
+	
+	//显示客户定位弹出框
+	function _toChooseUser(prodId){
+		order.cust.queryForChooseUser = true; //标识客户定位是为了选择使用人
+		order.cust.bindCustQueryForChoose(); //客户定位查询按钮
+		$('#chooseUserBtn').off('click').on('click',function(){
+			if(!!order.cust.tmpChooseUserInfo && order.cust.tmpChooseUserInfo.custId){
+				//保存并显示使用人信息，清空弹出框的客户信息、临时保存的客户信息，关闭弹出框
+				OrderInfo.updateChooseUserInfos(prodId, order.cust.tmpChooseUserInfo);
+				$('#'+CONST.PROD_ATTR.PROD_USER+'_'+prodId+'_name').val(order.cust.tmpChooseUserInfo.partyName);
+				$('#'+CONST.PROD_ATTR.PROD_USER+'_'+prodId).val(order.cust.tmpChooseUserInfo.custId);
+				order.cust.tmpChooseUserInfo = {};
+				
+				easyDialog.close();
+//				$('#p_cust_identityNum_choose').val('');
+//				$('#chooseUserInfo td').html('');
+				$('#chooseUserList').hide();
+			} else {
+				$.alert("提示","请定位客户作为使用人");
+				return false;
+			}
+		});
+		_showChooseUserDialog(null, prodId);
+	};
+	
+	/*
+	 * 显示选择使用人弹出框，custInfo为空则使用prodId定位已保存的使用人信息，custInfo不为空则更新临时保存的使用人信息
+	 */
+	function _showChooseUserDialog(custInfo, prodId){
+		custInfo = custInfo || OrderInfo.getChooseUserInfo(prodId);
+		if(custInfo != null && custInfo.custId){
+			//将客户信息作为使用人tmpChooseUserInfo，确认后保存到OrderInfo.choosedUserInfos
+			order.cust.tmpChooseUserInfo = custInfo;
+//			order.cust.tmpChooseUserInfo.prodId = '';
+			$('#chooseUserInfoName').html(custInfo.partyName);
+			$('#chooseUserInfoNum').html(custInfo.identityName + '/' + custInfo.idCardNumber);
+			$('#chooseUserInfoAreaName').html(custInfo.areaName);
+			$('#chooseUserList').show();
+		} else {
+			$('#chooseUserInfo td').html('');
+			$('#chooseUserList').hide();
+		}
+		$('#p_cust_identityCd_choose option:first').attr('selected','selected');
+		$('#p_cust_identityNum_choose').val('');
+		order.cust.custidentidiesTypeCdChoose($('#p_cust_identityCd_choose'),'p_cust_identityNum_choose');
+		if($.ketchup){
+			$.ketchup.hideAllErrorContainer($("#custQueryForChooseForm"));
+		}
+		easyDialog.open({
+			container : "choose_user_dialog",
+			callback : function(){
+				order.cust.queryForChooseUser = false; //关闭弹出框时重置标识位
+				if($.ketchup){
+					$.ketchup.hideAllErrorContainer($("#custQueryForChooseForm"));
+				}
+			}
+		});
+	};
 	
 	//产品属性 提交
 	function _spec_parm_change_save(){

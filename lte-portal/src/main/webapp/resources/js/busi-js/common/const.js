@@ -96,7 +96,8 @@ CONST = (function(){
 	
 	//产品属性
 	var _PROD_ATTR = {
-		FEE_TYPE : "10020030"
+		FEE_TYPE : "10020030",
+		PROD_USER : "800000011" //使用人			
 	};
 	
 	//账户属性

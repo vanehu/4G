@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
@@ -320,6 +321,15 @@ public class CustController extends BaseController {
 							/*PageModel<Map<String, Object>> pm = PageUtil.buildPageModel(MapUtils.getIntValue(param,
 											"PageIndex", 1), 10, 1, list);
 							model.addAttribute("pageModel", pm);*/
+							
+							/*
+							 * TODO 针对客户类型为“政企客户”的老用户，在查询已订购业务成功后查询产品实例属性，并在会话中保存使用人产品实例属性信息，
+							 * 在进行除“修改使用人”的二次业务时，判断使用人产品实例属性是否为空，如果为空，不允许进行该二次业务，并给出提示“请
+							 * 在‘产品属性变更’中录入‘使用人’信息”，在订单提交时后端判断政企使用人是否为空，二次业务产品实例属性使用人为空或者
+							 * 新装使用人产品属性为空时则提示报错
+							 */
+							
+							
 						}
 				}
 			else if (ResultCode.R_FAIL.equals((String) datamap.get("code"))){

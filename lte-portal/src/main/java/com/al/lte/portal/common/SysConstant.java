@@ -316,5 +316,9 @@ public final class SysConstant {
 	
 	//身份证类型开关
 	public static String IDTYPE = "IDTYPE";
+	
+	/** 产品规格属性--使用人，产品规格属性ID */
+	public static final String PROD_ITEM_SPEC_ID_USER = "800000011";
+	
 }
 

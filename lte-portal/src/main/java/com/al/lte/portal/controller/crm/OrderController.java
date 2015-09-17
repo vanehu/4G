@@ -14,6 +14,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -539,6 +540,44 @@ public class OrderController extends BaseController {
 			model.addAttribute("isAvoidRemind", isAvoidRemind);
 			
         	model.addAttribute("orderSpec", result);
+        	
+        	List<Map<String, Object>> prodInstParams = (List<Map<String, Object>>) result.get("prodSpecParams");
+        	
+        	if(prodInstParams != null){
+				List<Map<String, Object>> filteredProdInstParams = new ArrayList<Map<String,Object>>();
+				String custId = null;
+				if(prodInstParams != null && prodInstParams.size() > 0){
+					for(Map<String, Object> prodInstParam : prodInstParams){
+						if(prodInstParam != null && SysConstant.PROD_ITEM_SPEC_ID_USER.equals(prodInstParam.get("itemSpecId")+"")){
+							filteredProdInstParams.add(prodInstParam);
+							custId = (String) prodInstParam.get("value");
+							break;
+						}
+					}
+				}
+				
+				if(StringUtils.isNotBlank(custId)){ //返回属性值为空字符串时不查询客户详情
+					Map<String, Object> paramMap=new HashMap<String, Object>();
+			    	paramMap.put("partyId", custId);
+			    	paramMap.put("useCustId", custId); //客户详情查询，useCustId表示省内客户ID，后台取该字段后转为集团实例ID并查询
+			    	paramMap.put("areaId", request.getParameter("areaId"));
+			    	try{
+				    	Map datamap = custBmo.queryCustDetail(paramMap, null, sessionStaff);
+						if (ResultCode.R_SUCC.equals(datamap.get("resultCode"))) {
+							Map<String, Object> userInfoDetail = MapUtils.getMap(datamap, "result");
+							model.addAttribute("userInfo", userInfoDetail);
+						}
+			    	} catch (BusinessException be) {
+			    		return super.failedStr(model, be);
+			    	} catch (InterfaceException ie) {
+			    		return super.failedStr(model, ie, paramMap, ErrorCode.QUERY_CUST_EXINFO);
+			    	} catch (Exception e) {
+			    		return super.failedStr(model, ErrorCode.QUERY_CUST_EXINFO, e, paramMap);
+			    	}
+				}
+			}
+        	
+        	
         	//String payMethodCode = MySimulateData.getInstance().getParam(SysConstant.PAY_METHOD_CODE) ;
 			//model.addAttribute("payMethodCode", payMethodCode==null?"error":payMethodCode);
 			String slimitParams = MySimulateData.getInstance().getParam(SysConstant.ORDER_PARAMS_LIMIT_IDS) ;
