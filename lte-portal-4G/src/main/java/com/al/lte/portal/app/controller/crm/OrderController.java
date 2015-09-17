@@ -2208,8 +2208,10 @@ public class OrderController extends BaseController {
 	@RequestMapping(value = "/orderSubmit", method = RequestMethod.POST)
     @ResponseBody
 	public JsonResponse orderSubmit(@RequestBody Map<String, Object> param,
-			HttpServletResponse response,HttpServletRequest request)throws Exception{
+			HttpServletResponse response,HttpServletRequest request){
 		JsonResponse jsonResponse = null;
+		Map<String, Object> custInfoMap = new HashMap<String, Object>();
+		try {
 		String str=JacksonUtil.getInstance().objectTojson(param);
 		System.out.println(str);
 		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
@@ -2246,11 +2248,12 @@ public class OrderController extends BaseController {
 						resMap.put("checkRule", "checkRule");
 					}
 				}
-				if(olTypeCd.equals("14")){
+				if(olTypeCd.equals("15")){
 					resMap.put("checkRule", "notCheckRule");
 				}
 				jsonResponse = super.successed(resMap,
 						ResultConstant.SUCCESS.getCode());
+				//custInfoMap = custBmo.queryCustInfo(reqMap, null, sessionStaff);
 			}else{
 				jsonResponse = super.failed(resMap.get("resultMsg"),
 						ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
@@ -2329,6 +2332,15 @@ public class OrderController extends BaseController {
 //			}
 		}else {
             super.addHeadCode(response, ResultConstant.SERVICE_RESULT_FAILTURE);
+		}
+		}  catch (BusinessException be) {
+			this.log.error("订单提交失败", be);
+			return super.failed(be);
+		} catch (InterfaceException ie) {
+			return super.failed(ie, param, ErrorCode.ORDER_SUBMIT);
+		} catch (Exception e) {
+			log.error("订单提交失败方法异常", e);
+			return super.failed(ErrorCode.ORDER_SUBMIT, e, param);
 		}
 		return jsonResponse;
 	}

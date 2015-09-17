@@ -521,7 +521,7 @@ public class InterfaceClient {
 			if(PortalServiceCode.ORDER_SUBMIT.equals("biz-"+serviceCode)){//订单提交接口
 				Map<String, Object> paramMap = new HashMap<String, Object>();
 				paramMap = JsonUtil.toObject(retnJson, Map.class);
-				if(!paramMap.isEmpty()){
+				if(!paramMap.isEmpty() && ResultCode.R_SUCC.equals(db.getResultCode())){
 					Map<String, Object> map=new HashMap<String, Object>();
 					map=(Map<String, Object>)paramMap.get("result");
 					olIdRemark=map.get("olId")!=null?map.get("olId").toString():"";

@@ -1716,8 +1716,12 @@ order.ysl = (function(){
 		
 	};
 	
-	//附属销售品规格查询
+	//弹出可选包查询页面
 	var _showKxb = function() {
+		if($("#offer_spec_cd").val().length<1){
+			$.alert("提示","请先选择套餐");
+			return;
+		}
 		var param={
 			"mainOfferSpecId": $("#offer_spec_cd").val(),
 			"offerSpecId": $("#offer_spec_cd").val(),
@@ -1775,7 +1779,7 @@ order.ysl = (function(){
 //		});	
 //	};
 	
-	//弹出可选包查询页面
+	//附属销售品规格查询
 	var _queryAttachSpec = function(param,callBackFun) {
 		var url=contextPath+"/app/offer/queryYslKxb";
 		if(typeof(callBackFun)=="function"){
