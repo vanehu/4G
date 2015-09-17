@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.UUID;
 
 import javax.annotation.Resource;
@@ -459,7 +460,10 @@ public class LoginController extends BaseController {
 			} catch (Exception e) {
 				log.error("门户/staff/login/applogindo服务获取ip异常", e);
 			}
-			paramMap.put("wanIp", ip);
+			//获取app登录标识app_login_flag, o:打头 说明是公网登录    i:打头 说明是内网登录
+			Properties properties = MySimulateData.getProperties("/portal/portal.properties");
+			String app_login_flag = properties.getProperty(SysConstant.APP_LOGIN_FLAG);
+			paramMap.put("wanIp", app_login_flag+ip);
 			paramMap.put(InterfaceClient.DATABUS_DBKEYWORD,(String) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_DATASOURCE_KEY));
 			map = staffBmo.loginCheck(paramMap, flowNum, staffSession);
 			map.put("ifSend", paramMap.get("ifSend"));  //是否发送短信

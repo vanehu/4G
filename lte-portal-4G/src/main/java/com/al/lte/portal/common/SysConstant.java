@@ -126,6 +126,8 @@ public final class SysConstant {
     
     //是否记录接口日志 ON OFF
     public static String WRITE_LOG_FLAG = "WRITE_LOG_FLAG";
+    //app登录标识, o:打头 说明是公网登录    i:打头 说明是内网登录
+    public static String APP_LOGIN_FLAG = "APP_LOGIN_FLAG";
     //是否记录日志平台 ON OFF
     public static String WRITE_ASYNCHRONOUS_FLAG = "WRITE_ASYNCHRONOUS_FLAG";
     //是否记录接口日志出入参，数据库字段类型为CLOB，N代表不记录，Y代表记录
