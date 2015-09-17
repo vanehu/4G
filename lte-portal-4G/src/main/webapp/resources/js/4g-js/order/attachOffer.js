@@ -1271,6 +1271,23 @@ AttachOffer = (function() {
 					$span.addClass("del");
 					spec.isdel = "Y";
 					$("#terminalUl_"+prodId+"_"+excludeSpecId).remove();
+					if(OrderInfo.actionFlag!=14){//非购机入口的
+						$("#if_p_reserveCode").change(function(){
+							if($("#if_p_reserveCode").attr("checked")){
+								$("#reserveCode").css("background-color","white").attr("disabled", false) ;
+							}else{
+								$("#reserveCode").css("background-color","#E8E8E8").attr("disabled", true) ;
+							}
+						}); 
+					}else{
+						$("#if_reserveCode").change(function(){
+							if($("#if_reserveCode").attr("checked")){
+								$("#hyreserveCode").css("background-color","white").attr("disabled", false) ;
+							}else{
+								$("#hyreserveCode").css("background-color","#E8E8E8").attr("disabled", true) ;
+							}
+						});
+					}
 				}
 				var offer = CacheData.getOfferBySpecId(prodId,excludeSpecId);
 				if(offer!=undefined){
@@ -4242,7 +4259,7 @@ AttachOffer = (function() {
 								}).ketchup({bindElementByClass:"ZebraDialog_Button1"});
 								
 							}else {
-								$.alert("信息提示",data.message);
+								$.alert("信息提示","预约码校验成功");
 							}
 							
 						}

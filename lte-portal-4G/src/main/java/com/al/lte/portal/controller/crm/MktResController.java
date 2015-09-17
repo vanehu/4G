@@ -2173,6 +2173,18 @@ public class MktResController extends BaseController {
 				.getSessionAttribute(super.getRequest(),
 						SysConstant.SESSION_KEY_LOGIN_STAFF);
 		try {
+			String luoFlag = (String) mktInfo.get("luoFlag");
+			if(luoFlag==null || luoFlag.equals("") || !("Y").equals(luoFlag)){
+				String identityNum = (String) mktInfo.get("identityNum");
+			    String identityTypeCd = (String) mktInfo.get("identityTypeCd");
+			    String custId = mktInfo.get("custId").toString();
+			    if(custId!=null && !custId.equals("-1")){
+			    	identityNum = sessionStaff.getCardNumber() == null ?"":sessionStaff.getCardNumber();
+				    identityTypeCd = sessionStaff.getCardType()== null ?"":sessionStaff.getCardType();
+			    }
+			    mktInfo.put("identityNum", identityNum);
+				mktInfo.put("identityTypeCd", identityTypeCd);
+			}
 			mktInfo.put("areaId", sessionStaff.getCurrentAreaId());
 			Map<String, Object> mktRes = mktResBmo.queryCouponReserveCodeCheck(
 					mktInfo, flowNum, sessionStaff);
