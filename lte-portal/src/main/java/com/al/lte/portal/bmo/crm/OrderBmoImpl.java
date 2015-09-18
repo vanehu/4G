@@ -1198,4 +1198,43 @@ public class OrderBmoImpl implements OrderBmo {
 		}
 		return resultMap;
 	}
+    
+    /**
+	 * 产品实例属性(non-Javadoc)
+	 * 
+	 * @see com.al.lte.portal.bmo.crm.BusiBmo#orderSpecParam(java.util.Map,
+	 * java.lang.String, com.al.lte.portal.model.SessionStaff)
+	 */
+	@SuppressWarnings("unchecked")
+	public Map<String, Object> prodInstParam(Map<String, Object> param, String optFlowNum, SessionStaff sessionStaff)
+    throws Exception{
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		resultMap.put("resultCode", ResultCode.R_FAILURE);
+		resultMap.put("resultMsg", "未获取到产品属性");
+		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+		DataBus db = InterfaceClient.callService(param,PortalServiceCode.PRODUCT_PARAM_QUERY, optFlowNum,sessionStaff);
+		try{
+			resultMap.put("mess", db.getResultMsg());
+			if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db.getResultCode()))) {
+				Map<String, Object> returnMap = db.getReturnlmap() ;
+//				resultMap.put("resultCode", 1);
+				resultMap.put("resultMsg", returnMap.get("resultMsg"));
+				if(ResultCode.R_SUCC.equals(returnMap.get("resultCode"))){
+					Map<String, Object> data = (Map<String, Object>)returnMap.get("result");
+					if(data.get("prodInstParams")!=null){
+						list = (List<Map<String, Object>>) data.get("prodInstParams");
+					}
+				}
+			}
+		}catch(Exception e){
+			throw new BusinessException(ErrorCode.ORDER_PROD_INST,param,db.getReturnlmap(), e);
+		}
+		
+		if(list!=null&&list.size()>0){
+			resultMap.put("resultCode", ResultCode.R_SUCC);
+			resultMap.put("resultMsg", "成功");
+			resultMap.put("prodSpecParams", list);
+		}
+		return resultMap;
+	 }
 }

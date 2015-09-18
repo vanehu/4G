@@ -1309,7 +1309,9 @@ order.main = (function(){
 		checkIncreace6:_checkIncreace6,
 		queryGroup:_queryGroup,
 		queryGroupPage:_queryGroupPage,
-		setGroup:_setGroup
+		setGroup:_setGroup,
+		toChooseUser : _toChooseUser,
+		showChooseUserDialog : _showChooseUserDialog
 	};
 })();
 

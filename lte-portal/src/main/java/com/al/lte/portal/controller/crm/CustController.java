@@ -32,6 +32,7 @@ import com.al.ecs.exception.AuthorityException;
 import com.al.ecs.exception.BusinessException;
 import com.al.ecs.exception.ErrorCode;
 import com.al.ecs.exception.InterfaceException;
+import com.al.ecs.exception.Result;
 import com.al.ecs.exception.ResultConstant;
 import com.al.ecs.exception.InterfaceException.ErrType;
 import com.al.ecs.spring.annotation.log.LogOperatorAnn;
@@ -39,6 +40,7 @@ import com.al.ecs.spring.annotation.session.AuthorityValid;
 import com.al.ecs.spring.annotation.session.SessionValid;
 import com.al.ecs.spring.controller.BaseController;
 import com.al.lte.portal.bmo.crm.CustBmo;
+import com.al.lte.portal.bmo.crm.OrderBmo;
 import com.al.lte.portal.bmo.staff.StaffBmo;
 import com.al.lte.portal.common.CommonMethods;
 import com.al.lte.portal.common.EhcacheUtil;
@@ -57,6 +59,9 @@ public class CustController extends BaseController {
 	@Autowired
 	@Qualifier("com.al.lte.portal.bmo.staff.StaffBmo")
 	private StaffBmo staffBmo;
+	@Autowired
+	@Qualifier("com.al.lte.portal.bmo.crm.OrderBmo")
+	private OrderBmo orderBmo;
 	
 	@RequestMapping(value = "/queryCust", method = { RequestMethod.POST })
     public String queryCust(@RequestBody Map<String, Object> paramMap, Model model,@LogOperatorAnn String flowNum,
@@ -108,6 +113,19 @@ public class CustController extends BaseController {
 				custInfos=(List<Map<String, Object>>) resultMap.get("custInfos");
 				model.addAttribute("custInfoSize", custInfos.size());
 				model.addAttribute("cust", resultMap);
+				
+				//在session中保存查询出的所有待选的原始客户信息
+				Map<String, Map> listCustInfos = (Map<String, Map>) httpSession.getAttribute(SysConstant.SESSION_LIST_CUST_INFOS);
+				if(listCustInfos == null){
+					listCustInfos = new HashMap<String, Map>();
+				}
+				for(int i = 0; i < custInfos.size(); i++){
+					Map tmpCustInfo =(Map)custInfos.get(i);
+					listCustInfos.put(MapUtils.getString(tmpCustInfo,"custId",""), tmpCustInfo);
+				}
+				httpSession.setAttribute(SysConstant.SESSION_LIST_CUST_INFOS, listCustInfos);
+				
+				
 			}		
 			if(paramMap.containsKey("query")){	
 				model.addAttribute("query", paramMap.get("query"));  //综合查询调用标志
@@ -221,6 +239,8 @@ public class CustController extends BaseController {
 		}
 		param.put("idCardNumber", idCardNumber);
 		
+		Map<String, Map> listCustInfos = (Map<String, Map>) httpSession.getAttribute(SysConstant.SESSION_LIST_CUST_INFOS);
+		
 		if("0".equals(authFlag)){
 		try {
 			map = custBmo.custAuth(paramMap,
@@ -244,6 +264,21 @@ public class CustController extends BaseController {
 		}else{
 			map.put("isValidate", "true");
 		}
+		
+		String custId = MapUtils.getString(param, "custId");
+		//在session中保存当前客户信息
+		Map sessionCustInfo = MapUtils.getMap(listCustInfos, custId);  
+		if(sessionCustInfo != null){
+			Map<String, Map> selectedCustInfos = (Map<String, Map>) httpSession.getAttribute(SysConstant.SESSION_SELECTED_CUST_INFOS);
+			if(selectedCustInfos == null){
+				selectedCustInfos = new HashMap<String, Map>();
+			}
+			selectedCustInfos.put(custId, sessionCustInfo);
+			httpSession.setAttribute(SysConstant.SESSION_SELECTED_CUST_INFOS, selectedCustInfos);
+//			listCustInfos.clear();
+			httpSession.setAttribute(SysConstant.SESSION_LIST_CUST_INFOS, null);
+		}
+		
 		map.put("custInfo", param);
 		model.addAttribute("custAuth", map);
 		return "/cust/cust-info";
@@ -329,7 +364,70 @@ public class CustController extends BaseController {
 							 * 新装使用人产品属性为空时则提示报错
 							 */
 							
+//							if(是政企客户){
+//								for(所有产品信息){
+//									查询当前产品的使用人信息
+//									保存客户id、客户类型、产品实例id、使用人信息等；
+//								}
+//							}
 							
+							String oriCustId = MapUtils.getString(param, "custId", "");
+							Map<String, Map> selectedCustInfos = (Map<String, Map>) session.getAttribute(SysConstant.SESSION_SELECTED_CUST_INFOS);
+							if(selectedCustInfos == null || selectedCustInfos.get(oriCustId) == null){
+								return super.failedStr(model, ErrorCode.QUERY_CUST, "客户资料查询出错，未找到相关客户，请通过客户定位查询客户", param);
+							}
+							Map<String, String> oriCustInfo = selectedCustInfos.get(oriCustId);
+							
+							if("1000".equals(MapUtils.getString(oriCustInfo, "segmentId", ""))){ //如果是政企客户
+								
+								//保存客户id、客户类型等；
+								Map<String, Object> custUserInfoMap = (Map<String, Object>) session.getAttribute(SysConstant.SESSION_CUST_USER_INFO_MAP);
+								if(custUserInfoMap == null){
+									custUserInfoMap = new HashMap<String, Object>();
+								}
+								oriCustInfo.put("isGov", "Y"); //是否是政企客户
+								custUserInfoMap.put(oriCustId, oriCustInfo);
+								
+								for(Map<String, Object> prodInfo : list){
+									Map<String, Object> resquestMap = new HashMap<String, Object>(); 
+									String userCustId = null;
+									resquestMap.put("prodId", MapUtils.getString(prodInfo, "prodInstId", "")); //实例id
+									resquestMap.put("acctNbr", MapUtils.getString(prodInfo, "acctNbr", ""));
+									resquestMap.put("prodSpecId", MapUtils.getString(prodInfo, "productId", "")); //规格id
+									resquestMap.put("areaId", MapUtils.getString(prodInfo, "areaId", ""));
+									try {
+										//查询当前产品的使用人信息
+										Map responseMap = orderBmo.prodInstParam(resquestMap, null, sessionStaff);
+										if(responseMap != null && ResultCode.R_SUCC.equals(responseMap.get("resultCode"))){
+											List<Map<String, Object>> prodInstParams = (List<Map<String, Object>>)responseMap.get("prodSpecParams");
+											if(prodInstParams != null){
+												if(prodInstParams != null && prodInstParams.size() > 0){
+													for(Map<String, Object> prodInstParam : prodInstParams){
+														if(prodInstParam != null && SysConstant.PROD_ITEM_SPEC_ID_USER.equals(prodInstParam.get("itemSpecId")+"")){
+															userCustId = MapUtils.getString(prodInstParam, "value", "");
+															break;
+														}
+													}
+												}
+											}
+										}
+										prodInfo.put("hasNoUser", StringUtils.isBlank(userCustId) ? "Y" : "N");
+									} catch (BusinessException be) {
+										return super.failedStr(model, be);
+									} catch (InterfaceException ie) {
+										return super.failedStr(model, ie, resquestMap, ErrorCode.ORDER_PROD_INST);
+									} catch (Exception e) {
+										log.error("查询产品实例属性", e);
+										return super.failedStr(model, ErrorCode.ORDER_PROD_INST, e, resquestMap);
+									} finally {
+										//保存产品实例id、使用人信息等；
+										Map<String, Object> simpleProdInfo = resquestMap;
+										simpleProdInfo.put("userCustId", userCustId);
+										custUserInfoMap.put(MapUtils.getString(prodInfo, "prodInstId", ""), simpleProdInfo); //使用产品实例id作为key，保存使用人id等信息
+										session.setAttribute(SysConstant.SESSION_CUST_USER_INFO_MAP, custUserInfoMap);
+									}
+								}
+							}
 						}
 				}
 			else if (ResultCode.R_FAIL.equals((String) datamap.get("code"))){

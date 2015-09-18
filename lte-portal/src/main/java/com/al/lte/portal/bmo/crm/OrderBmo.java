@@ -396,4 +396,10 @@ public interface OrderBmo {
 	public Map<String, Object> querySeq(Map<String, Object> paramMap,String optFlowNum, 
 			SessionStaff sessionStaff) throws Exception;
 	
+	/**
+	 * 产品实例属性
+	 */
+	public Map<String, Object> prodInstParam(Map<String, Object> param, String optFlowNum, SessionStaff sessionStaff)
+		    throws Exception;
+	
 }

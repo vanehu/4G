@@ -320,5 +320,15 @@ public final class SysConstant {
 	/** 产品规格属性--使用人，产品规格属性ID */
 	public static final String PROD_ITEM_SPEC_ID_USER = "800000011";
 	
+	/** session中保存客户id、客户类型、产品实例id、使用人信息等 */
+	public static final String SESSION_CUST_USER_INFO_MAP = "_custUserInfoMap";
+	
+	
+	/** session中保存查询出的所有待选的原始客户信息 */
+    public static final String SESSION_LIST_CUST_INFOS = "_listCustInfos";
+    
+    /** session中保存已选的客户信息 */
+    public static final String SESSION_SELECTED_CUST_INFOS = "_selectedCustInfos";
+	
 }
 

@@ -47,7 +47,8 @@ order.prodModify = (function(){
 			custId :prodInfoChildTr.attr("custId"),//所属人客户ID
 			is3G :prodInfoChildTr.attr("is3G"),//3G/4G主销售品标识
 			areaCode :prodInfoTr.attr("zoneNumber"),//产品地区CODE
-			areaId : prodInfoTr.attr("areaId")//产品地区id
+			areaId : prodInfoTr.attr("areaId"),//产品地区id
+			hasNoUser : prodInfoTr.attr("hasNoUser") //是否没有使用人，Y表示没有，其他表示有
 		};
 		order.prodModify.choosedProdInfo=_choosedProdInfo;
 	};
@@ -2922,6 +2923,31 @@ order.prodModify = (function(){
 		$('#cmAddressStr').val(man.resultContent.certAddress);//地址
 	};
 	
+	/*
+	 * 所有二次业务的跳转源头;
+	 * href样例：javascript:order.prodModify.showRemoveProd() //拆机
+	 * javascript:order.prodModify.spec_parm_change() //产品属性变更
+	 */
+	var _toSecondBusiness = function(href){
+		if(!href){
+			return false;
+		}
+		try{
+			order.prodModify.getChooseProdInfo();
+			if(!order.prodModify.choosedProdInfo || order.prodModify.choosedProdInfo == {}){
+				$.alert('提示', '请选择一个产品');
+				return false;
+			}
+			if(order.prodModify.choosedProdInfo.hasNoUser == 'Y' && href.indexOf('order.prodModify.spec_parm_change()') < 0){
+				$.alert('提示', '请在“产品属性变更”中录入“使用人”信息');
+				return false;
+			}
+		} catch (e) {
+		}
+		eval(href);
+		OrderInfo.order.step = 1; //订单备注页面
+	};
+	
 	return {
 		changeCard : _changeCard,
 		getChooseProdInfo : _getChooseProdInfo,
@@ -2999,6 +3025,7 @@ order.prodModify = (function(){
 		remark_prodPass :_remark_prodPass,
 		checkProPSW  :_checkProPSW,
 		showRemoveProdGroup:_showRemoveProdGroup,
-		readCertWhenCreate : _readCertWhenCreate
+		readCertWhenCreate : _readCertWhenCreate,
+		toSecondBusiness : _toSecondBusiness
 	};
 })();

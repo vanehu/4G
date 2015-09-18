@@ -453,16 +453,20 @@ order.cust = (function(){
 		
 		//TODO 使用人修改4
 		// 判断是否是政企客户
-		var isGovCust = false;
-		for (var i = 0; i <= CacheData.getGovCertType().length; i ++) {
-			if (_choosedCustInfo.identityCd == CacheData.getGovCertType()[i]) {
-				isGovCust = true;
-				break;
+//		var isGovCust = false;
+//		for (var i = 0; i <= CacheData.getGovCertType().length; i ++) {
+//			if (_choosedCustInfo.identityCd == CacheData.getGovCertType()[i]) {
+//				isGovCust = true;
+//				break;
+//			}
+//		}
+		var isGovCust = _choosedCustInfo.segmentId == '1000';
+		if(order.cust.queryForChooseUser){
+			if(isGovCust){
+				$.alert('提示','使用人必须是公众客户，请重新定位。');
+				return false;
 			}
-		}
-		if(order.cust.queryForChooseUser && isGovCust){
-			$.alert('提示','使用人必须是公众客户，请重新定位。');
-			return false;
+			$('#userCustList').hide();
 		}
 		
 		if(authFlag=="0"){
@@ -479,10 +483,9 @@ order.cust = (function(){
 				easyDialog.close();
 				$("#authPassword").val("");
 			});
-			}
-			else{
-				_custAuth(scope);
-			}
+		} else{
+			_custAuth(scope);
+		}
 
 	};
 	//创键客户
@@ -1269,7 +1272,7 @@ order.cust = (function(){
 			var queryTypeValue="";
 			identityCd=$("#p_cust_identityCd_choose").val();
 			identityNum=$.trim($("#p_cust_identityNum_choose").val());
-			authFlag="0"; //需要鉴权
+			authFlag="1"; //TODO 转售，选择使用人，修改为不需要鉴权（0为需要鉴权）
 			if(identityCd==-1){
 				acctNbr=identityNum;
 				identityNum="";
@@ -1320,16 +1323,18 @@ order.cust = (function(){
 					}
 					
 					order.cust.jumpAuthflag = $(response.data).find('#jumpAuthflag').val();
-					order.cust.showCustAuth($(response.data).find('#custInfos'));
-//					var content$ = $("#custList");
-//					content$.html(response.data).show();
-//					$(".userclose").off("click").on("click",function(event) {
-//						authFlag="";
-//						$(".usersearchcon").hide();
-//					});
-//					if($("#custListTable").attr("custInfoSize")=="1"){
-//						$(".usersearchcon").hide();
-//					}
+//					order.cust.showCustAuth($(response.data).find('#custInfos'));
+					
+					var content$ = $("#userCustList");
+					content$.html(response.data).show();
+					$("#userCustList .userclose").off("click").on("click",function(event) {
+						authFlag="";
+						$("#userCustList").hide();
+					});
+					if($("#userCustList #custListTable").attr("custInfoSize")=="1"){
+						$("#userCustList").hide();
+					}
+					
 				},
 				"fail":function(response){
 					$.unecOverlay();
@@ -1337,6 +1342,15 @@ order.cust = (function(){
 				}
 			});
 		}).ketchup({bindElement:"userSearchForChooseBtn"});
+	};
+	
+	//查询客户返回一条时,出发自动客户鉴权,使用人和一般客户定位元素不同
+	var _checkToDoCustAuth = function(){
+		if(!order.cust.queryForChooseUser){
+			$("#custInfos").click();
+		} else {
+			$("#userCustList #custInfos").click();
+		}
 	};
 	
 	return {
@@ -1379,7 +1393,8 @@ order.cust = (function(){
 		certTypeByPartyType : _certTypeByPartyType,
 		bindCustQueryForChoose : _bindCustQueryForChoose,
 		tmpChooseUserInfo : _tmpChooseUserInfo,
-		queryForChooseUser : _queryForChooseUser
+		queryForChooseUser : _queryForChooseUser,
+		checkToDoCustAuth : _checkToDoCustAuth
 	};
 })();
 $(function() {

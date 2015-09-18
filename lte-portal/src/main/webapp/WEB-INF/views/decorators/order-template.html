@@ -585,7 +585,7 @@
 </div> -->
 
 <!--弹出款-客户定位，选择使用人-->
-<div id="choose_user_dialog" class="easyDialogdiv" style="width:700px;height:250px;">
+<div id="choose_user_dialog" class="easyDialogdiv" style="width:750px;height:250px;">
 <div class="easyDialogclose" id="chooseUserClose" onclick="easyDialog.close()"></div>
     	<table class="contract_list">
             <thead>
@@ -617,7 +617,9 @@
                                   	  	<option value="acctCd" >合同号</option>
                                   	  	<option value="custNumber" >客户编码</option>
         </select>
-        <div id="custList" class="usersearchcon" ></div>
+        <!-- 
+        <div id="userCustList" class="usersearchcon" ></div>
+         -->
         </li>
 		<li class="usersearch">
 			<input name="" type="text" class="numberTextBox" id="p_cust_identityNum_choose" onkeyup="value=value.replace(/[^\w]|_/ig,'')" 
@@ -658,6 +660,8 @@
         <a id="cancelChooseUserBtn" class="btna_o" href="javascript:void(0)" style=" margin-left:20px;" onclick="easyDialog.close()"><span>取消</span></a>
     </div>
 </div>
+
+<div style="display: none; top: 50%; left: 50%;position: fixed; z-index: 9001;margin: -90px 0px 0px -350px;" id="userCustList" class="usersearchcon"></div>
 
 <object id="CertCtl" type="application/cert-reader" width="0" height="0"></object>
 <#else>

@@ -40,7 +40,7 @@
 		</#if>
 			<tr <#if parm_row%2==1 >  class="bg"</#if>>
 			    <td style="text-align:center" areaId="${item.areaId}" accNbr="${item.accNbr}" productName="${item.productName}" prodStateName="${item.prodStateName}" feeType="${item.feeType.feeType}" feeTypeName="${item.feeType.feeTypeName}" 
-			    prodInstId="${item.prodInstId}" prodStateCd="${item.prodStateCd}" productId="${item.productId}" prodClass="${item.prodClass}" stopRecordCd="${item.stopRecordCd}" stopRecordName="${item.stopRecordName}" zoneNumber="${item.zoneNumber}" style="text-align:center"></td>
+			    prodInstId="${item.prodInstId}" prodStateCd="${item.prodStateCd}" productId="${item.productId}" prodClass="${item.prodClass}" stopRecordCd="${item.stopRecordCd}" stopRecordName="${item.stopRecordName}" zoneNumber="${item.zoneNumber}" hasNoUser="${item.hasNoUser}" style="text-align:center"></td>
 			    <td><i class="${item.treeFlag} floatright"></i></td>
 				<td>${item.roleName} ${item.accNbr}</td>
 				<td><#if item.prodOfferName!="">${item.prodOfferName} <#if item.startDt!="">${item.startDt}生效</#if><#else>更多>></#if></td>
@@ -62,7 +62,7 @@
 		  			<#list item.mainProdOfferInstInfos as subitem>
 		  				<tr style=${styletype} >
 		  				<td style="width:67px;" prodOfferName="${subitem.prodOfferName}" startDt="${subitem.startDt}" custName="${subitem.custName}" endDt="${subitem.endDt}"
-		  				prodOfferId="${subitem.prodOfferId}" prodOfferInstId="${subitem.prodOfferInstId}" custId="${subitem.custId}" is3G="${subitem.is3G}" ><i class="${substyletype} floatright"></i></td>
+		  				prodOfferId="${subitem.prodOfferId}" prodOfferInstId="${subitem.prodOfferInstId}" custId="${subitem.custId}" is3G="${subitem.is3G}"><i class="${substyletype} floatright"></i></td>
 		  				<td style="text-align:center"><i class="select"></i></td>
 		  				<td style="width:900px;${styletype}"><i class="open_tree"></i>${subitem.prodOfferName} <#if subitem.statusCd==1101>${subitem.endDt}<#else>${subitem.startDt}</#if> ${subitem.statusName}</td>
 		  				<td style="display:none;">${subitem.custName}</td>
@@ -126,7 +126,8 @@
 			  </td>
 			  <td>
 		</#if>
-			  <a href="<#if busInfo.menuPath?? && (busInfo.menuPath!='#') >${busInfo.menuPath}<#else>javascript:void(0)</#if>" 
+			<!-- <a href="<#if busInfo.menuPath?? && (busInfo.menuPath!='#') >${busInfo.menuPath}<#else>javascript:void(0)</#if>" -->
+			  <a href="<#if busInfo.menuPath?? && (busInfo.menuPath!='#') >javascript:order.prodModify.toSecondBusiness('${busInfo.menuPath}')<#else>javascript:void(0)</#if>" 
 	    		class="<#if lastTypeId_num==0 >purchasebtn2<#else>purchasebtn</#if>" >${busInfo.resourceName}</a>
 			 <input type="hidden" id="productId" value="${productId}"/>
 			  <#assign lastTypeId = busInfo.lableTypeId > 

@@ -294,31 +294,31 @@
 	if(!valid){
 		//$.alert('提示', '非政企客户不能办理修改使用人业务');
 		$('#choose_user_btn_'+prodId).parent().hide();
-		return;
+	} else {
+		<#if userInfo?? && (userInfo.partyList)??>
+		//保存使用人详细信息
+		var tmpChooseUserInfo = {
+				areaId : '<#if userInfo.partyList.areaId??>${userInfo.partyList.areaId}</#if>',
+				areaName : '<#if userInfo.partyList.areaName??>${userInfo.partyList.areaName}</#if>',
+				custId : '<#if userInfo.partyList.partyId??>${userInfo.partyList.partyId}</#if>',
+				idCardNumber : '<#if userInfo.partyList.identities?? && ((userInfo.partyList.identities)?size>0)>${userInfo.partyList.identities[0].identityNum}</#if>',
+				identityCd : '<#if userInfo.partyList.identities?? && ((userInfo.partyList.identities)?size>0)>${userInfo.partyList.identities[0].identidiesTypeCd}</#if>',
+				identityName : '<#if userInfo.partyList.identities?? && ((userInfo.partyList.identities)?size>0)>${userInfo.partyList.identities[0].identidiesTypeName}</#if>',
+				partyName : '<#if userInfo.partyList.partyName??>${userInfo.partyList.partyName}</#if>',
+				segmentId : '<#if userInfo.partyList.segmentId??>${userInfo.partyList.segmentId}</#if>',
+				segmentName : '<#if userInfo.partyList.segmentName??>${userInfo.partyList.segmentName}</#if>'
+		};
+		//order.cust.tmpChooseUserInfo = tmpChooseUserInfo;
+		OrderInfo.updateChooseUserInfos(prodId, tmpChooseUserInfo);
+		</#if>
+		//绑定弹出框事件，用于定位客户
+		var itemId = CONST.PROD_ATTR.PROD_USER + '_' + prodId;
+		$('#'+itemId).attr({'check_option':'N','readonly':'readonly','disabled':'disabled'});
+		$('#choose_user_btn_'+prodId).off('click').on('click',function(){
+			order.main.toChooseUser(prodId);
+		}).show();
 	}
 	
-	<#if userInfo?? && (userInfo.partyList)??>
-	//保存使用人详细信息
-	var tmpChooseUserInfo = {
-			areaId : '<#if userInfo.partyList.areaId??>${userInfo.partyList.areaId}</#if>',
-			areaName : '<#if userInfo.partyList.areaName??>${userInfo.partyList.areaName}</#if>',
-			custId : '<#if userInfo.partyList.partyId??>${userInfo.partyList.partyId}</#if>',
-			idCardNumber : '<#if userInfo.partyList.identities?? && ((userInfo.partyList.identities)?size>0)>${userInfo.partyList.identities[0].identityNum}</#if>',
-			identityCd : '<#if userInfo.partyList.identities?? && ((userInfo.partyList.identities)?size>0)>${userInfo.partyList.identities[0].identidiesTypeCd}</#if>',
-			identityName : '<#if userInfo.partyList.identities?? && ((userInfo.partyList.identities)?size>0)>${userInfo.partyList.identities[0].identidiesTypeName}</#if>',
-			partyName : '<#if userInfo.partyList.partyName??>${userInfo.partyList.partyName}</#if>',
-			segmentId : '<#if userInfo.partyList.segmentId??>${userInfo.partyList.segmentId}</#if>',
-			segmentName : '<#if userInfo.partyList.segmentName??>${userInfo.partyList.segmentName}</#if>'
-	};
-	//order.cust.tmpChooseUserInfo = tmpChooseUserInfo;
-	OrderInfo.updateChooseUserInfos(prodId, tmpChooseUserInfo);
-	</#if>
-	//绑定弹出框事件，用于定位客户
-	var itemId = CONST.PROD_ATTR.PROD_USER + '_' + prodId;
-	$('#'+itemId).attr({'check_option':'N','readonly':'readonly','disabled':'disabled'});
-	$('#choose_user_btn_'+prodId).off('click').on('click',function(){
-		order.main.toChooseUser(prodId);
-	}).show();
 </script>
 
 <#else>${orderSpec.code}</#if><#else>${orderSpec.code}</#if>
