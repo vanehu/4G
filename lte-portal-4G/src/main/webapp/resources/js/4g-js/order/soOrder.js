@@ -68,8 +68,23 @@ SoOrder = (function() {
 					if (response.code == 0) {
 						var data = response.data;
 						if(data.checkRule!=undefined && data.checkRule!="notCheckRule"){
+							//下省校验单
 							var provCheckResult = order.calcharge.tochargeSubmit(response.data);
+							//校验通过，可继续受理
 							if(provCheckResult.code==0){
+								//存在可继续受理的省内校验错误，需要在前台进行提示
+								if(provCheckResult.data.returnCode!=null && provCheckResult.data.returnCode!="0000"){
+									response.data.provCheckErrorCode = provCheckResult.data.returnCode;
+									response.data.provCheckErrorMsg = "";
+									if(provCheckResult.data.returnCode!=undefined && provCheckResult.data.returnCode!=null){
+										response.data.provCheckErrorMsg +=  "【错误编码："+provCheckResult.data.returnCode+"】";
+									}
+									//省内校验欠费的编码和提示
+									if(provCheckResult.data.returnCode=="110019" || provCheckResult.data.returnCode=="110145"){
+										response.data.provCheckErrorMsg += "该用户所在账户存在欠费，请提醒用户及时缴费，避免因欠费影响用户正常使用和业务办理，以及欠费滞纳金的产生。";
+									}
+								}
+								
 								var returnData = _gotosubmitOrder(response.data);
 								OrderInfo.orderBusiHint = null;
 								//查是否调用业务提示查询开关
@@ -92,32 +107,21 @@ SoOrder = (function() {
 									}
 								}
 								_orderConfirm(returnData);
-							}else{//下省校验失败也将转至订单确认页面，展示错误信息，只提供返回按钮
+							}
+							//下省校验失败也将转至订单确认页面，展示错误信息，只提供返回按钮
+							else{
 								response.data.provCheckError = "Y";
-								if(provCheckResult.data.resultMsg!=undefined && $.trim(provCheckResult.data.resultMsg)!=""){
-									response.data.provCheckErrorMsg = provCheckResult.data.resultMsg;
-								} else if(provCheckResult.data.errMsg!=undefined && $.trim(provCheckResult.data.errMsg)!=""){
-									response.data.provCheckErrorMsg = provCheckResult.data.errMsg;
-									if(provCheckResult.data.errCode){
-										response.data.provCheckErrorMsg = "【错误编码："+provCheckResult.data.errCode+"】" + response.data.provCheckErrorMsg;
-									}
-									if(provCheckResult.data.errData){
-										response.data.provCheckErrorData=provCheckResult.data.errData;
-//										try{
-//											var errData=$.parseJSON(provCheckResult.data.errData);
-//											if(response.data.provCheckErrorData){
-												response.data.provCheckErrorMsg+=","+response.data.provCheckErrorData;
-//											}
-//										}catch(e){
-//											
-//										}
-									}
-									if(provCheckResult.data.paramMap){
-										response.data.provCheckErrorMsg += "【入参："+provCheckResult.data.paramMap+"】";
-									}
-								} else{
-									response.data.provCheckErrorMsg = "未返回错误信息，可能是下省请求超时，请返回填单页面并稍后重试订单提交。";
+								response.data.provCheckErrorCode = provCheckResult.data.returnCode;
+								response.data.provCheckErrorMsg = "";
+								if(provCheckResult.data.returnCode!=undefined && provCheckResult.data.returnCode!=null){
+									response.data.provCheckErrorMsg +=  "【错误编码："+provCheckResult.data.returnCode+"】";
 								}
+								if(provCheckResult.data.msg!=undefined && provCheckResult.data.msg!=null){
+									response.data.provCheckErrorMsg += provCheckResult.data.msg;
+								}else{
+									response.data.provCheckErrorMsg += "未返回错误信息，可能是下省请求超时，请返回填单页面并稍后重试订单提交。";
+								}
+								
 								var returnData = _gotosubmitOrder(response.data);
 								_orderConfirm(returnData);								
 							}

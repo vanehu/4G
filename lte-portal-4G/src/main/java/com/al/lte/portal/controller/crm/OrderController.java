@@ -1999,6 +1999,13 @@ public class OrderController extends BaseController {
         }
     }
 	
+	/**
+	 * 下省校验单
+	 * @param param
+	 * @param flowNum
+	 * @param response
+	 * @return
+	 */
 	@RequestMapping(value = "/checkRuleToProv", method = RequestMethod.POST)
     @ResponseBody
     public JsonResponse checkRuleToProv(@RequestBody Map<String, Object> param,
@@ -2006,14 +2013,13 @@ public class OrderController extends BaseController {
    	 SessionStaff sessionStaff = (SessionStaff) ServletUtils
 				.getSessionAttribute(super.getRequest(),
 						SysConstant.SESSION_KEY_LOGIN_STAFF);
-		Map<String, Object> rMap = null;
+   	 
 		JsonResponse jsonResponse = null;
 		try {
-			log.debug("param={}", JsonUtil.toString(param));
 			param.put("areaId", sessionStaff.getCurrentAreaId());
-			rMap = orderBmo.checkRuleToProv(param, flowNum, sessionStaff);
-			log.debug("return={}", JsonUtil.toString(rMap));
-			if (rMap != null&& ResultCode.R_SUCCESS.equals(rMap.get("code").toString())) {
+			Map<String, Object> rMap = orderBmo.checkRuleToProv(param, flowNum, sessionStaff);
+			//下省校验成功
+			if (ResultCode.R_SUCCESS.equals(MapUtils.getString(rMap, "code", "-2"))) {
 				if (rMap.get("result")!=null){
 					List<Map<String,String>> rtList = new ArrayList();
 					List<Map<String,String>> list = (List)rMap.get("result");
@@ -2024,11 +2030,37 @@ public class OrderController extends BaseController {
 					}
 					rMap.put("checkResult", rtList);
 				}
-				jsonResponse = super.successed(rMap,
-						ResultConstant.SUCCESS.getCode());
-			} else {
-				jsonResponse = super.failed(rMap.get("msg"),
-						ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+				jsonResponse = super.successed(rMap, ResultConstant.SUCCESS.getCode());
+			}
+			//下省校验有错误
+			else {
+				//省内校验欠费的错误编码，判断当前工号有否带欠费受理的权限酌情处理
+				if(SysConstant.PROV_CHECK_OVERDUE_1.equals(MapUtils.getString(rMap, "returnCode","-2")) || 
+					SysConstant.PROV_CHECK_OVERDUE_2.equals(MapUtils.getString(rMap, "returnCode","-2"))){
+					String canDoOverdueBusi = staffBmo.checkOperatSpec(SysConstant.OVERDUE_BUSI_CODE, sessionStaff);
+					//当前工号有继续受理的权限
+					if("0".equals(canDoOverdueBusi)){
+						if (rMap.get("result")!=null){
+							List<Map<String,String>> rtList = new ArrayList();
+							List<Map<String,String>> list = (List)rMap.get("result");
+							for(Map<String,String> map:list){
+								if (SysConstant.REDUCE_PRESTORE_STATE.equals(map.get("code"))){
+									rtList.add(map);
+								}
+							}
+							rMap.put("checkResult", rtList);
+						}
+						jsonResponse = super.successed(rMap, ResultConstant.SUCCESS.getCode());
+					}
+					//当前工号没有继续受理的权限，返回错误信息
+					else{
+						jsonResponse = super.failed(rMap, ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+					}
+				}
+				//其他错误编码，直接返回错误信息
+				else{
+					jsonResponse = super.failed(rMap, ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+				}
 			}
 		} catch (BusinessException e) {
 			return super.failed(e);

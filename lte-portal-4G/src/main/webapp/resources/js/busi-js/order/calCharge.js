@@ -782,12 +782,13 @@ order.calcharge = (function(){
 			if(data.checkResult!=undefined){
 				OrderInfo.checkresult=data.checkResult;		
 			}
-			provCheckResult = {							
-					code : 0				
-			};				
-		}else{					
-			provCheckResult = {							
-					code : 1,							
+			provCheckResult = {
+					code : 0,
+					data : response.data
+			};
+		}else{
+			provCheckResult = {
+					code : 1,
 					data : response.data
 			};
 		}

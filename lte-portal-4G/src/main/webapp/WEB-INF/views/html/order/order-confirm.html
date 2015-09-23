@@ -76,11 +76,27 @@
 					</div> 
 				</#if> 
 			<#else>
+				<!-- 存在可继续受理的省内校验错误 -->
+				<#if resMap.provCheckErrorCode??>
+				<table id="ruleTable" class="com_table">
+					<thead>
+		    			<tr>
+			                <th>省内校验提示信息</th>
+		              	</tr>
+		    		</thead>
+		    		<tbody id="ruleTbody">		            	
+		            	<tr>				            
+				        	<td id="provCheckErrorMsg" title='${resMap.provCheckErrorData}' style="color:red;">${resMap.provCheckErrorMsg}</td>
+			          	</tr>
+		            </tbody>
+	    		</table>
+				</#if>
+				<!-- 存在可继续受理的省内校验错误end -->
 				<table id="chooseTable" class="com_table"></table>
 				<div align="right" style="margin: 20px auto;">
 				    <a class="btna_o" href="javascript:SoOrder.orderBack()"><span >返回修改</span></a>
 				    <a style=" margin-left:20px;" class="btna_o" id="orderConfirmBtn" href="javascript:order.calcharge.calchargeInit()"><span>订单确认</span></a>
-				</div>  
+				</div> 
 			</#if> 
 		  </#if>
     	<#else>

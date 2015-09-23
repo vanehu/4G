@@ -1100,6 +1100,9 @@ public class OrderBmoImpl implements OrderBmo {
 		}
     }
 
+    /**
+     * 订单提交下省校验
+     */
 	public Map<String, Object> checkRuleToProv(Map<String, Object> dataBusMap,
 			String optFlowNum, SessionStaff sessionStaff)
 			throws Exception {
@@ -1107,21 +1110,18 @@ public class OrderBmoImpl implements OrderBmo {
 				PortalServiceCode.CHECK_RULE_TO_PROV, optFlowNum, sessionStaff);
 		Map<String, Object> returnMap = new HashMap<String, Object>();
 		try{
-			if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db
-					.getResultCode()))) {
+			Map<String, Object> resultMap = db.getReturnlmap();
+			
+			if(ResultCode.R_SUCC.equals(MapUtils.getString(resultMap, "resultCode", "-2"))){
 				returnMap.put("code", ResultCode.R_SUCCESS);
-				if (db.getReturnlmap().get("checkResult")!=null&&db.getReturnlmap().get("checkResult") instanceof List){
-					returnMap.put("result",(List)db.getReturnlmap().get("checkResult"));
-				}
-			} else {
+				returnMap.put("returnCode", "0000");
+			}else{
 				returnMap.put("code", ResultCode.R_FAIL);
-				String msg = "未返回错误信息，可能是下省请求超时，请返回填单页面并稍后重试订单提交。";
-				if(db.getResultMsg()!=null){
-					if(!db.getResultMsg().trim().equals("")){
-						msg = db.getResultMsg().trim();
-					}
-				}
-				returnMap.put("msg", msg);
+				returnMap.put("returnCode", MapUtils.getString(resultMap, "returnCode", "-2"));
+			}
+			returnMap.put("msg", MapUtils.getString(resultMap, "resultMsg", "未返回错误信息，可能是下省请求超时，请返回填单页面并稍后重试订单提交。"));
+			if(resultMap.get("checkResult")!=null && resultMap.get("checkResult") instanceof List){
+				returnMap.put("result",(List)resultMap.get("checkResult"));
 			}
 		} catch(Exception e) {
 			log.error("门户处理营业受理的service/intf.soService/checkRuleToProv服务返回的数据异常", e);

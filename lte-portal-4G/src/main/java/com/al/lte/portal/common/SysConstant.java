@@ -91,6 +91,8 @@ public final class SysConstant {
     
     public static final String SESSION_KEY_VIEWSENSI="_VIEWSENSI";
     
+    public static final String SESSION_KEY_OVERDUEBUSI = "_overduebusi";
+    
     public static final String SESSION_KEY_BANKPAYMENT = "_bankPayment";
     
     public static final String SESSION_KEY_DEPOSIT="_DEPOSIT";
@@ -102,6 +104,11 @@ public final class SysConstant {
     public static final String QRYCHANNELAUTH_CODE="REGION_CHANNEL_SELECT";
     //查看身份证权限(无脱敏)
     public static final String VIEWSENSI_CODE="TMXX";
+    //欠费用户能否通过省内校验继续受理的员工权限
+    public static final String OVERDUE_BUSI_CODE = "OVERDUEBUSI";
+    //用户欠费的下省校验错误编码（两种均可能）
+    public static final String PROV_CHECK_OVERDUE_1 = "110019";
+    public static final String PROV_CHECK_OVERDUE_2 = "110145";
     //能否选择银行托收
     public static final String ADJUSTBANKPAYMENT_CODE = "BANKPAYMENT";
     //代理商保证金校验
