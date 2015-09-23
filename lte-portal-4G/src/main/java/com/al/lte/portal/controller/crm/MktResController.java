@@ -1074,21 +1074,26 @@ public class MktResController extends BaseController {
 						SysConstant.SESSION_KEY_LOGIN_STAFF);
 		try {
 			mktInfo.put("channelId", sessionStaff.getCurrentChannelId());
-			
+			String offerSpecName = MapUtils.getString(mktInfo, "offerSpecName")==null?" ":MapUtils.getString(mktInfo, "offerSpecName");
+			mktInfo.remove("offerSpecName");
 			Map<String, Object> mktRes = mktResBmo.checkTerminalCode(
 					mktInfo, flowNum, sessionStaff);
 			if (MapUtils.isNotEmpty(mktRes)) {
-				//update by huangjj3 营销资源返回终端可用再调用后台终端规格校验接口
-				if(StringUtils.isNotEmpty(MapUtils.getString(mktInfo, "offerSpecId"))){
-					Map<String, Object> mktInfoBack = new HashMap<String, Object>();
-					mktInfoBack.put("agreementOfferSpecID", MapUtils.getString(mktInfo, "offerSpecId"));
-					mktInfoBack.put("mktResCd", MapUtils.getString(mktRes, "mktResId"));
-					Map<String, Object> mktResBack = mktResBmo.checkTerminalCodeBack(
-							mktInfoBack, flowNum, sessionStaff);
-					if(MapUtils.isNotEmpty(mktResBack)){
-						String IfExists = MapUtils.getString(mktResBack, "IfExists");
-						if(!"Y".equals(IfExists)){
-							return super.failed("校验终端串号失败", ResultConstant.FAILD.getCode());
+				if(ResultCode.R_SUCC.equals(MapUtils.getString(mktRes, "code"))){
+					//update by huangjj3 营销资源返回终端可用再调用后台终端规格校验接口
+					if(StringUtils.isNotEmpty(MapUtils.getString(mktInfo, "offerSpecId"))){
+						Map<String, Object> mktInfoBack = new HashMap<String, Object>();
+						mktInfoBack.put("agreementOfferSpecID", MapUtils.getString(mktInfo, "offerSpecId"));
+						mktInfoBack.put("mktResCd", MapUtils.getString(mktRes, "mktResId"));
+						mktInfoBack.put("agreementName", offerSpecName);
+						mktInfoBack.put("mktResName",  MapUtils.getString(mktRes, "mktResName"));
+						Map<String, Object> mktResBack = mktResBmo.checkTerminalCodeBack(
+								mktInfoBack, flowNum, sessionStaff);
+						if(MapUtils.isNotEmpty(mktResBack)){
+							String resultCode = MapUtils.getString(mktResBack, "code");
+							if("1".equals(resultCode)){
+								return super.failed(MapUtils.getString(mktResBack, "message"), ResultConstant.FAILD.getCode());
+							}
 						}
 					}
 				}

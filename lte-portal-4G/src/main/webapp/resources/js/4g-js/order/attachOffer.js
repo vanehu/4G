@@ -1723,11 +1723,13 @@ AttachOffer = (function() {
 		if(_checkData(objInstId,instCode)){
 			return;
 		}
+		var newSpec = _setSpec(prodId,offerSpecId);
 		var param = {
 			instCode : instCode,
 			flag : flag,
 			mktResId : resId,
-			offerSpecId: offerSpecId
+			offerSpecId: offerSpecId,
+			offerSpecName:newSpec.offerSpecName
 			//termGroup : terminalGroupId  update by huangjj #13336需求资源要求这个参数不传
 		};
 		var data = query.prod.checkTerminal(param);
@@ -2735,8 +2737,8 @@ AttachOffer = (function() {
 				});
 			}
 		});
-		$("#tab_myfavorites").hide();
-		$("#myfavorites").removeClass("setcon");
+		$("#tab_myfavorites_"+prodId).hide();
+		$("#myfavorites_"+prodId).removeClass("setcon");
 		var $ul = $("#ul_"+prodId+"_"+labelId); //创建ul
 		if($ul[0]==undefined){ //没有加载过，重新加载  
 			var queryType = "3";
@@ -3711,8 +3713,8 @@ AttachOffer = (function() {
 		//order.dealer.initDealer();
 	};
 	var _initMyfavoriteSpec = function(prodId,prodSpecId){
-		$("#myfavorites").addClass("setcon");
-		$("#myfavorites").siblings().removeClass("setcon");
+		$("#myfavorites_"+prodId).addClass("setcon");
+		$("#myfavorites_"+prodId).siblings().removeClass("setcon");
 		
 		var offerSpec = OrderInfo.offerSpec; //获取产品信息
         if(offerSpec.offerRoles != undefined  && offerSpec.offerRoles[0].prodInsts != undefined){
@@ -3730,6 +3732,11 @@ AttachOffer = (function() {
     				param.offerRoleId = prodInst.offerRoleId;
     				param.prodId = prodInst.prodInstId;
     				param.offerSpecIds.push(OrderInfo.offerSpec.offerSpecId);
+    			}else if(prodId == '-2'){
+    				param.prodSpecId = prodSpecId;
+    				param.offerRoleId = '';
+    				param.prodId = prodId;
+    				param.offerSpecIds = [];
     			}
     		}
         }else{
@@ -3744,7 +3751,7 @@ AttachOffer = (function() {
 		var data = query.offer.queryMyfavorite(param);
 		//清空缓存中的收藏夹
 		AttachOffer.myFavoriteList = [];
-		var $ul = $('<ul id="tab_myfavorites"></ul>');
+		var $ul = $('<ul id="tab_myfavorites_'+prodId+'"></ul>');
 		if(data!=undefined && data.resultCode == "0"){
 			if(ec.util.isArray(data.result.offerSpecList)){
 				var offerList = CacheData.getOfferList(prodId); //过滤已订购

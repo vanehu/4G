@@ -944,14 +944,10 @@ public class MktResBmoImpl implements MktResBmo {
 				optFlowNum, sessionStaff);
 		// 服务层调用与接口层调用都成功时，返回列表；否则返回空列表
 		if (ResultCode.R_SUCC.equals(db.getResultCode())) {
-			resultMap = MapUtils.getMap(db.getReturnlmap(), "result");
-			Object obj = MapUtils.getObject(MapUtils.getMap(db.getReturnlmap(), "result"), "IfExists");
-			resultMap.put("IfExists", obj);
 			resultMap.put("code", "0");
-			resultMap.put("message", MapUtils.getString(db.getReturnlmap(), "resultMsg", "校验终端串号失败。"));
 		} else {
 			resultMap.put("code", "1");
-			resultMap.put("message", MapUtils.getString(db.getReturnlmap(), "resultMsg", "校验终端串号失败。"));
+			resultMap.put("message", db.getResultMsg());
 		}
 		return resultMap;		
 	}
