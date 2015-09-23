@@ -3100,6 +3100,28 @@ public class PrintBmoImpl implements PrintBmo {
 		osPrompInfoSet.setOsPrompInfos(oInfo);
 		return osPrompInfoSet;
 	}
+	/**
+	 * 组装－业务信息_附属销售品_内容_套餐优惠
+	 * @param baseCount
+	 * @param orderEventContMap
+	 * @return
+	 */
+	private OSPrompInfoSet buildOE_3_PrompInfo_V2(int baseCount, Map<String, Object> orderEventContMap) {
+		List<Map<String, Object>> osPrompInfoMap = (List<Map<String, Object>>) MapUtils.getObject(orderEventContMap, "osPrompInfo");
+		OSPrompInfoSet osPrompInfoSet = new OSPrompInfoSet();
+		if (null != osPrompInfoMap && osPrompInfoMap.size() > 0) {
+			List<StringBeanSet> oTitle = new ArrayList<StringBeanSet>();
+			StringBeanSet strBeanTitle = new StringBeanSet(buildBusiInfoTitle(baseCount, getDetailName(osPrompInfoMap.get(0))));
+			oTitle.add(strBeanTitle);
+			osPrompInfoSet.setPrompInfoTitle(oTitle);
+
+			List<StringBeanSet> oInfo = new ArrayList<StringBeanSet>();
+			StringBeanSet strBeanCont = new StringBeanSet(buildBizReportDetailItemAndDescDto(osPrompInfoMap, true));
+			oInfo.add(strBeanCont);
+			osPrompInfoSet.setOsPrompInfos(oInfo);
+		}
+		return osPrompInfoSet;
+	}
 
 	/**
 	 * 组装－业务信息_附属销售品_内容_叠加包基本信息
@@ -7057,7 +7079,7 @@ public class PrintBmoImpl implements PrintBmo {
 				//套餐优惠
 				if (StringUtils.isNotBlank(MapUtils.getString(orderEventContMap, "osPrompInfo"))) {
 					List<OSPrompInfoSet> osPrompInfoSetList = new ArrayList<OSPrompInfoSet>();
-					OSPrompInfoSet osPrompInfoSet = buildOE_3_PrompInfo(baseCount, orderEventContMap);
+					OSPrompInfoSet osPrompInfoSet = buildOE_3_PrompInfo_V2(baseCount, orderEventContMap);
 					if (osPrompInfoSet != null) {
 						baseCount++;
 						osPrompInfoSetList.add(osPrompInfoSet);
