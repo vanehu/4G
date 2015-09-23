@@ -502,7 +502,7 @@ public class PrintBmoImpl implements PrintBmo {
 		retnMap.put("remarkInfos", parseRemarkInfos(dataMap));
 		//协议信息
 		retnMap.put("agreements", parseAgreements(dataMap, needAgreement));
-		if(null!=retnMap.get("deliveryMethod")) {
+		if(null!=retnMap.get("deliveryMethod")&&SysConstant.OFF.equals(propertiesUtils.getMessage(SysConstant.PRINTNEW))) {
 			List<StringBeanSet> list= (List<StringBeanSet>) MapUtils.getObject(retnMap,"deliveryMethod");
 			if (null!=list&&list.size()>0) {
 				retnMap.put("feeInfos", new ArrayList<FeeInfoSet>());
@@ -6025,6 +6025,8 @@ public class PrintBmoImpl implements PrintBmo {
 					set = buildOrderEvent_5_V2(event, orderEventSeq, eventSize, speCustInfoLen, attachFlag);
 				} else if ("6".equals(orderEventType)) {
 					set = buildOrderEvent_6_V2(event, orderEventSeq, eventSize);
+				}else if("8".equals(orderEventType)) {
+					set = buildOrderEvent_8(event, orderEventSeq, eventSize);
 				}
 
 				if (set != null) {
