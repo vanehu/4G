@@ -116,36 +116,36 @@ order.calcharge = (function(){
 					
 				}else{
 					var aa=($("#realhidden_"+val).val())*1;
-					if(OrderInfo.actionFlag==11||OrderInfo.actionFlag==19||OrderInfo.actionFlag==20){
-						aa=($("#backAmount_"+val).val())*1;
-					}
+//					if(OrderInfo.actionFlag==11||OrderInfo.actionFlag==19||OrderInfo.actionFlag==20){
+//						aa=($("#backAmount_"+val).val())*1;
+//					}
 					realAmount=realAmount+aa;
-					_commitParam(val);
+//					_commitParam(val);
 				}
 			}
 		});
-		if(OrderInfo.actionFlag==15){
-			var backAmount=0;
-			$("#calChangeTab tr").each(function() {
-				var val = $(this).attr("id");
-				if(val!=undefined&&val!=''){
-					if($("#paymentAmount_"+val) && $("#paymentAmount_"+val).val()*1==0){
-						
-					}else{
-						val=val.substr(5,val.length);
-						var aa=($("#backAmount_"+val).val())*1;
-						backAmount=backAmount+aa;
-					}
-				}
-			});
-			$('#backAmount').val(Number(backAmount).toFixed(2));
-		}
+//		if(OrderInfo.actionFlag==15){
+//			var backAmount=0;
+//			$("#calChangeTab tr").each(function() {
+//				var val = $(this).attr("id");
+//				if(val!=undefined&&val!=''){
+//					if($("#paymentAmount_"+val) && $("#paymentAmount_"+val).val()*1==0){
+//						
+//					}else{
+//						val=val.substr(5,val.length);
+//						var aa=($("#backAmount_"+val).val())*1;
+//						backAmount=backAmount+aa;
+//					}
+//				}
+//			});
+//			$('#backAmount').val(Number(backAmount).toFixed(2));
+//		}
 		$('#realMoney').html(Number(realAmount).toFixed(2));
-		if(OrderInfo.actionFlag==15){
-			order.refund.conBtns();
-		}else{
-			_conBtns();
-		}
+//		if(OrderInfo.actionFlag==15){
+//			order.refund.conBtns();
+//		}else{
+//			_conBtns();
+//		}
 	};
 	//提交参数封装
 	var _submitParam=function(){
@@ -457,6 +457,7 @@ order.calcharge = (function(){
 	    }
 		else{
 			cash = obj;
+			$("#realhidden_"+val).val(cash);
 		}
 		if(cash==''){
 			$(obj).val('0');
@@ -553,7 +554,7 @@ order.calcharge = (function(){
 			}
 		}
 		
-		$("#realhidden_"+val).val($(obj).val());
+		$("#realhidden_"+val).val(cash);
 		payMethod = $("#changeMethod_"+val).val();  //付费方式
 		//alert(payMethod);
 		reason = $("#chargeModifyReasonCd_"+val).val();//修改原因
@@ -1039,8 +1040,7 @@ order.calcharge = (function(){
 			}
 		});
 	};
-	var _showEditPage = function(accessNumber,trid,realAmount){alert($("#realhidden_"+trid).val());
-		
+	var _showEditPage = function(accessNumber,trid,realAmount){	
 		var params = {"trid":trid} ;
 		var url = contextPath+"/app/order/getEditPage";
 		$.callServiceAsHtmlGet(url,params, {
