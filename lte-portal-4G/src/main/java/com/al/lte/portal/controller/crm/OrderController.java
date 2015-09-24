@@ -468,9 +468,9 @@ public class OrderController extends BaseController {
 							}
 						}
 					}
-					responseMap.put("prodSpecParams", filteredProdInstParams); //查询未返回使用人属性节点则页面报错
+					responseMap.put("prodSpecParams", filteredProdInstParams);
 					
-					if(StringUtils.isNotBlank(custId)){ //返回属性值为空字符串时不查询客户详情
+					if(custId != null){
 						Map<String, Object> paramMap=new HashMap<String, Object>();
 				    	paramMap.put("partyId", custId);
 				    	paramMap.put("useCustId", custId); //客户详情查询，useCustId表示省内客户ID，后台取该字段后转为集团实例ID并查询

@@ -1,4 +1,4 @@
-<#if (orderSpec.resultCode)?? && (orderSpec.resultCode==0) && (orderSpec.prodSpecParams)?? && ((orderSpec.prodSpecParams)?size>0)>
+<#if (orderSpec.resultCode)?? && (orderSpec.resultCode==0) && userInfo?? && (userInfo.partyList)?? &&((userInfo.partyList)?size>0) && (orderSpec.prodSpecParams)?? && ((orderSpec.prodSpecParams)?size>0)>
 
 
   <div class="main_warp">
@@ -22,14 +22,14 @@
 	<li>
 	<label>${prodSpec.name}：</label>
 		<input type="hidden" 
-			id="${prodSpec.itemSpecId}_${prodId}" name="prodSpec_${prodId}" value="<#if userInfo?? && (userInfo.partyList)??>${userInfo.partyList.partyId}</#if>" 
+			id="${prodSpec.itemSpecId}_${prodId}" name="prodSpec_${prodId}" value="${userInfo.partyList.partyId}" 
 			itemSpecId="${prodSpec.itemSpecId}" prodSpecItemId="${prodSpec.prodSpecParamId}" 
 			check_name="${prodSpec.name}" check_mask="${rule.mask}" check_mess="${rule.maskMsg}" 
 			check_len="${rule.attrLen}" check_option="${rule.isOptional}" 
-			dataType="${prodSpec.dataTypeCd}" oldValue="<#if userInfo?? && (userInfo.partyList)??>${userInfo.partyList.partyId}</#if>" 
+			dataType="${prodSpec.dataTypeCd}" oldValue="${userInfo.partyList.partyId}" 
 			check_type="check"
 			 />
-		<input type="text" class="inputWidth183px" id="${prodSpec.itemSpecId}_${prodId}_name" value="<#if userInfo?? && (userInfo.partyList)??>${userInfo.partyList.partyName}</#if>" readonly="readonly" disabled="disabled"/>
+		<input type="text" class="inputWidth183px" id="${prodSpec.itemSpecId}_${prodId}_name" value="${userInfo.partyList.partyName}" readonly="readonly" disabled="disabled"/>
 		<!-- 使用人 -->
 	    <input type="button" value="选择使用人" class="purchase" id="choose_user_btn_${prodId}" />
 		<#if prodSpec.rule?? && prodSpec.rule.isOptional=="N" >
@@ -70,8 +70,6 @@
 </div>
 
 <script>
-	var prodId = '<#if prodId??>${prodId}</#if>';
-	<#if userInfo?? && (userInfo.partyList)??>
 	//保存使用人详细信息
 	var tmpChooseUserInfo = {
 			areaId : '<#if userInfo.partyList.areaId??>${userInfo.partyList.areaId}</#if>',
@@ -84,9 +82,9 @@
 			segmentId : '<#if userInfo.partyList.segmentId??>${userInfo.partyList.segmentId}</#if>',
 			segmentName : '<#if userInfo.partyList.segmentName??>${userInfo.partyList.segmentName}</#if>'
 	};
+	var prodId = '<#if prodId??>${prodId}</#if>';
 	//order.cust.tmpChooseUserInfo = tmpChooseUserInfo;
 	OrderInfo.updateChooseUserInfos(prodId, tmpChooseUserInfo);
-	</#if>
 	//绑定弹出框事件，用于定位客户
 	var itemId = CONST.PROD_ATTR.PROD_USER + '_' + prodId;
 	$('#'+itemId).attr({'check_option':'N','readonly':'readonly','disabled':'disabled'});
