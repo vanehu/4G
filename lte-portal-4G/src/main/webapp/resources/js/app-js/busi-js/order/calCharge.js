@@ -205,7 +205,7 @@ order.calcharge = (function(){
 			var val = $(this).attr("id");
 			if(val!=undefined&&val!=''){
 				val=val.substr(5,val.length);
-				var realmoney=($("#realAmount_"+val).val())*100+'';
+				var realmoney=($("#realhidden_"+val).val())*100+'';
 				var amount=$("#feeAmount_"+val).val();
 				var feeAmount="";
 				if(amount!=undefined&&amount!=''){
@@ -465,8 +465,11 @@ order.calcharge = (function(){
 			if(str=="old"){//修改费用
 				var amount=$("#feeAmount_"+val).val();
 				var check = true ;
-				if(!/^(-)?[0-9]+([.]\d{1,2})?$/.test(cash)){
-			  		$.alert("提示","费用金额请输入数字，最高保留两位小数！");
+				if(cash<0){
+					$.alert("提示","实收费用金额不能小于0！");
+					check = false ;
+				}else if(!/^(-)?[0-9]+([.]\d{1,2})?$/.test(cash)){
+			  		$.alert("提示","费用金额请输入数字，最高留两位小数！");
 			  		check = false ;
 				}else if((cash*100>amount*1)&&amount>0){
 					$.alert("提示","实收费用金额不能高于应收金额！");
@@ -1036,7 +1039,7 @@ order.calcharge = (function(){
 			}
 		});
 	};
-	var _showEditPage = function(accessNumber,trid,realAmount){
+	var _showEditPage = function(accessNumber,trid,realAmount){alert($("#realhidden_"+trid).val());
 		
 		var params = {"trid":trid} ;
 		var url = contextPath+"/app/order/getEditPage";
