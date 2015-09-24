@@ -58,7 +58,7 @@ order.dealer = (function() {
 //				var $dd = $('<dd><input type="text" id="dealer_'+objId+'" staffId="'+OrderInfo.staff.staffId+'" value="'+OrderInfo.staff.staffName+'" data-mini="true"></input></dd>');
 //				$dl.append($dd);
 //			}else{
-				var $td = $('<div class="col-xs-6"><input type="text" readonly="readonly" onclick="javascript:order.dealer.showDealer(0,\'dealer\',\''+objId+'\');" onChange="javascript:this.staffId=OrderInfo.staff.staffId;this.value=OrderInfo.staff.staffName" class="form-control" id="dealer_'+objId+'" staffId="'+OrderInfo.staff.staffId+'" value="'+OrderInfo.staff.staffName+'" ></input></div>');
+				var $td = $('<div class="col-xs-6"><input type="text" objId="'+objId+'" readonly="readonly" onclick="javascript:order.dealer.showDealer(0,\'dealer\');" onChange="javascript:this.staffId=OrderInfo.staff.staffId;this.value=OrderInfo.staff.staffName" class="form-control showfzr" id="dealer_'+objId+'" staffId="'+OrderInfo.staff.staffId+'" value="'+OrderInfo.staff.staffName+'" ></input></div>');
 				$div.append($td);
 //			}
 			$li.append($div);
@@ -103,7 +103,7 @@ order.dealer = (function() {
 //	    				var $dd = $('<dd><input type="text" id="dealer_'+objId+'" staffId="'+OrderInfo.staff.staffId+'" value="'+OrderInfo.staff.staffName+'" data-mini="true"></input></dd>');
 //	    				$dl.append($dd);
 //	    			}else{
-	    				var $td = $('<div class="col-xs-6"><input type="text" readonly="readonly" onclick="javascript:order.dealer.showDealer(0,\'dealer\',\''+objId+'\');" onChange="javascript:this.staffId=OrderInfo.staff.staffId;this.value=OrderInfo.staff.staffName" class="form-control" id="dealer_'+objId+'" staffId="'+OrderInfo.staff.staffId+'" value="'+OrderInfo.staff.staffName+'" ></input></div>');
+	    				var $td = $('<div class="col-xs-6"><input type="text" objId="'+objId+'" readonly="readonly" onclick="javascript:order.dealer.showDealer(0,\'dealer\');" onChange="javascript:this.staffId=OrderInfo.staff.staffId;this.value=OrderInfo.staff.staffName" class="form-control showfzr" id="dealer_'+objId+'" staffId="'+OrderInfo.staff.staffId+'" value="'+OrderInfo.staff.staffName+'" ></input></div>');
 	    				$div.append($td);
 //	    			}
 	    			$li.append($div);
@@ -177,7 +177,7 @@ order.dealer = (function() {
 //	    				var $dd = $('<dd><input type="text" id="dealer_'+objId+'" staffId="'+OrderInfo.staff.staffId+'" value="'+OrderInfo.staff.staffName+'" data-mini="true"></input></dd>');
 //	    				$dl.append($dd);
 //	    			}else{
-	    				var $td = $('<div class="col-xs-6"><input type="text" readonly="readonly" onclick="javascript:order.dealer.showDealer(0,\'dealer\',\''+objId+'\');" onChange="javascript:this.staffId=OrderInfo.staff.staffId;this.value=OrderInfo.staff.staffName" class="form-control" id="dealer_'+objId+'" staffId="'+OrderInfo.staff.staffId+'" value="'+OrderInfo.staff.staffName+'" ></input></div>');
+	    				var $td = $('<div class="col-xs-6"><input type="text" readonly="readonly" onclick="javascript:order.dealer.showDealer(0,\'dealer\');" onChange="javascript:this.staffId=OrderInfo.staff.staffId;this.value=OrderInfo.staff.staffName" class="form-control" id="dealer_'+objId+'" staffId="'+OrderInfo.staff.staffId+'" value="'+OrderInfo.staff.staffName+'" ></input></div>');
 	    				$div.append($td);
 //	    			}
 	    			$li.append($div);
@@ -192,9 +192,13 @@ order.dealer = (function() {
 		OrderInfo.order.step=3;
 	};
 	function _showDealer(qryPage,v_id,objInstId){
+		if($(".showfzr").length>0){
+			objInstId = $(".showfzr").attr("objId");
+		}
 		//$("#sel").empty();
 		$("#diqu").empty();
-		var areaId = OrderInfo.staff.areaId.substring(0,3)+'0000';
+		var ad = ""+OrderInfo.staff.areaId;
+		var areaId = ad.substring(0,3)+'0000';
 		//var areaName = OrderInfo.staff.areaAllName.substring(0,OrderInfo.staff.areaAllName.indexOf('>'));
 	//	var $sel = $('<select  class="selectpicker show-tick form-control" onChange="order.dealer.queryChildNode('+areaId+')">'); 
 	//	var $opt = $('<option value="">'+areaName+'</option>');
@@ -225,7 +229,9 @@ order.dealer = (function() {
 							var list = response.data;
 							if (list.length > 0) {
 								for(var i=0;i<list.length;i++){
-									if(list[i].commonRegionId==OrderInfo.staff.areaId.substring(0,5)+'00'){
+									var ari = ""+OrderInfo.staff.areaId;
+									ari = ari.substring(0,5)+'00'
+									if(list[i].commonRegionId==ari){
 										selectHtml=selectHtml+"<option  selected='selected' value='" +list[i].commonRegionId + "' zone_number='" +list[i].zoneNumber +"' name='" +list[i].regionName + "'>" + list[i].regionName + "</option>";
 									}else{
 										selectHtml=selectHtml+"<option value='" +list[i].commonRegionId + "' zone_number='" +list[i].zoneNumber +"' name='" +list[i].regionName + "'>" + list[i].regionName + "</option>";
