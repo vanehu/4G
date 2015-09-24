@@ -6,76 +6,32 @@ order.batch = (function(){
 		
 	//导入excel
 	var _submit=function(){
+		var upFile = $.trim($("#upFile").val());
+		var olId = $.trim($("#olId").val());
+		var reserveDt = $.trim($("#reserveDt").val());
+		if (olId === "") {
+			$.alert("提示","购物车流水不能为空！");
+			return;
+		}
 		var batchType=$("#batchType").val();
 		if(batchType==''){
 			$.alert("提示","种子订单受理类型不能为空!");
 			return;
 		}
-		if(batchType == '11'){//批量换挡
-			var upFile = $.trim($("#upFile").val());;
-			var reserveDt = $.trim($("#reserveDt").val());
-			if(reserveDt == ''){
-				//$.alert("提示","请选择预约时间!");
-				$('#alertInfo').html("请选择预约时间!");
-				return;
-			}
-			if (upFile === "") {
-				//$.alert("提示","请选择要导入的Excel文件！");
-				$('#alertInfo').html("请导入Excel文件！");
-				return;
+		if(reserveDt==''){
+			$.alert("提示","请选择预约时间!");
+			return;
+		}
+		if (upFile === "") {
+			$.alert("提示","请选择要导入的Excel文件！");
+			return;
+		} else {
+			file.suffix = upFile.substr(upFile.lastIndexOf(".") + 1);
+			if (file.suffix == "xls" || file.suffix == "xlsx") {
+				$("#batchUimForm").submit();
 			} else {
-				file.suffix = upFile.substr(upFile.lastIndexOf(".") + 1);
-				if (file.suffix == "xls" || file.suffix == "xlsx") {
-					var options  = {
-							type:"post", 
-				                dataType:"text", 
-				                url:"importBatchData",
-								beforeSubmit:function(){
-									$.ecOverlay("<strong>正在提交,请稍等...</strong>");
-								},							
-				                success:function(data){
-									$.unecOverlay();
-									$('#detailInfo').html(data);
-									//$('#alertInfo').html("");//提交成功后清空原有的提示信息
-									$('#alertInfo').empty();
-									var file = $("#upFile");
-									file.after(file.clone().val(""));      
-									file.remove();//提交成功后清空文件
-				                },
-								error: function(data, status, e){
-								$.unecOverlay();
-								$.alert("提示","请求可能发生异常，请稍后再试！");
-								}
-						};
-						$("#batchChangeFeeTypeForm").ajaxSubmit(options);
-				} else {
-					$('#alertInfo').html("导入文件类型错误！");
-					return;
-				}
-			}
-		} else{
-			var upFile = $.trim($("#upFile").val());
-			var olId = $.trim($("#olId").val());
-			var reserveDt = $.trim($("#reserveDt").val());
-			if (olId === "") {
-				$.alert("提示","购物车流水不能为空！");
+				$.alert("提示","导入文件类型错误！");
 				return;
-			}
-			if(reserveDt==''){
-				$.alert("提示","请选择预约时间!");
-				return;
-			}
-			if (upFile === "") {
-				$.alert("提示","请选择要导入的Excel文件！");
-				return;
-			} else {
-				file.suffix = upFile.substr(upFile.lastIndexOf(".") + 1);
-				if (file.suffix == "xls" || file.suffix == "xlsx") {
-					$("#batchUimForm").submit();
-				} else {
-					$.alert("提示","导入文件类型错误！");
-					return;
-				}
 			}
 		}
 	};
@@ -299,7 +255,7 @@ order.batch = (function(){
 							$.alert("提示","请求可能发生异常，请稍后再试！");
 						}
 			        };
-				$('#batchUimForm').ajaxSubmit(options);
+				$('#batchUimForm').ajaxSubmit(options); 
 			} else {
 				$.alert("提示","导入文件类型错误！");
 				return;
@@ -412,14 +368,9 @@ order.batch = (function(){
 		}
 	};
 	
-	// 表单重置
+	// 表单充值
 	var _reset=function(){
 		$("#upFile").val("");
-		if($("#batchType").val() == "11"){
-			//$('#alertInfo').html("");
-			$('#alertInfo').empty();
-			$('#detailInfo').empty();
-		}			
 	};
 	var _download=function(batType){
 		if(batType=='0'){
@@ -436,8 +387,6 @@ order.batch = (function(){
 			location.href=contextPath+"/file/BATCHFAZHANREN.xls";
 		}else if(batType=='10'){
 			location.href=contextPath+"/file/BATCHORDERTERMINAL.xls";
-		}else if(batType=='11'){//批量换挡
-			location.href=contextPath+"/file/BATCHCHANGEFEETYPE.xls";
 		}else{
 			$.alert("提示","未找到批量类型所对应的模板文件，请检查！");
 			return;
@@ -448,7 +397,7 @@ order.batch = (function(){
 	};
 	var _initDic = function(){
 		//初始化批量订单查询页面的订单状态 By ZhangYu
-		var param = {"attrSpecCode":"EVT-0002"};
+		var param = {"attrSpecCode":"EVT-0002"} ;
 		$.callServiceAsJson(contextPath+"/staffMgr/getCTGMainData",param,{
 			"done" : function(response){
 				if(response.code==0){
@@ -587,11 +536,6 @@ $(function(){
 	});
 	$("#endDt").off("click").on("click",function(){
 		$.calendar({ format:'yyyy-MM-dd ',real:'#endDt',minDate:$("#startDt").val(),maxDate:'%y-%M-%d' });
-	});
-
-	//有文件导入时，自动清空页面提示
-	$("#upFile").change(function(){
-		$('#alertInfo').html("");
 	});
 		
 });

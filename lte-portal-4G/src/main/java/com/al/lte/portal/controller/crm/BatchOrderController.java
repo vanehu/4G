@@ -232,7 +232,7 @@ public class BatchOrderController  extends BaseController {
 							param.put("commonRegionId",areaId);
 						}
 						param.put("batchType", batchType);
-						param.put("reserveDt", reserveDt);
+						param.put("reserveDt", reserveDt);	
 						Map<String, Object> busMap = new HashMap<String, Object>();
 						busMap.put("batchOrder", param);
 						try {
@@ -939,7 +939,8 @@ public class BatchOrderController  extends BaseController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/batchImportList", method = RequestMethod.GET)
 	public String batchImportList(Model model,@RequestParam Map<String, Object> param,@LogOperatorAnn String flowNum) {
-		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+					SysConstant.SESSION_KEY_LOGIN_STAFF);
 		param.putAll(getAreaInfos());
 		try {
 			List<Map<String,Object>> resultList=new ArrayList<Map<String,Object>>();
@@ -1006,25 +1007,25 @@ public class BatchOrderController  extends BaseController {
 		model.addAttribute("templateType", SysConstant.BATCHFAZHANREN);
 		model.addAttribute("batchTypeName", batchTypeName);
 		return "/batchOrder/batch-order-editParty";
-	}	
+	}
 	public String getTypeNames(String templateType){
 		Map<String,String> map=new HashMap<String,String>();
-		//0---批量开活卡 1---批量新装	2---批量订购/退订附属	3---组合产品纳入退出	4---批量修改产品属性	5--批量换挡8---拆机 9---批量修改发展人  11--批量换挡
+		//0---批量开活卡 1---批量新装	2---批量订购/退订附属	3---组合产品纳入退出	4---批量修改产品属性	5--批量换挡8---拆机 9---批量修改发展人
 		map.put("0", "批开活卡");
 		map.put("1", "批量新装");
 		map.put("2", "批量订购/退订附属");
 		map.put("3", "组合产品纳入退出");
 		map.put("4", "批量修改产品属性");
-		map.put("5", "批量换挡");//在完成“需求（开发） #18397”时，遇到5和11均表示“批量换挡”的问题，经与后台沟通，仍使用11，5不会影响。
+		map.put("5", "批量换挡");
 		map.put("8", "拆机");
 		map.put("9", "批量修改发展人");
-		map.put("11", "批量换挡");
 		if(map.get(templateType)!=null){
 			return map.get(templateType);
 		}else{
 			return map.get("0");
 		}
 	}
+	
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/batchOrderList", method = RequestMethod.GET)
@@ -1137,23 +1138,6 @@ public class BatchOrderController  extends BaseController {
 		model.addAttribute("batchType", "10");
 		model.addAttribute("batchTypeName", "批量订购裸终端");
 		return "/batchOrder/batch-order-terminal";
-	}
-	
-	/**
-	 * 批量换挡
-	 * @param session
-	 * @param model
-	 * @return
-	 * @author ZhangYu
-	 */
-	@RequestMapping(value = "/batchChangeFeeType", method = RequestMethod.GET)
-	public String batchChangeFeeType(HttpSession session, Model model) {
-		//model.addAttribute("canOrder", EhcacheUtil.pathIsInSession(session,"order/batchOrder/batchChangeFeeType"));//??????????????
-		List<Map<String, Object>> timeList = getTimeList();
-		model.addAttribute("time", timeList);
-		model.addAttribute("batchType", "11");
-		model.addAttribute("batchTypeName", "批量换挡");
-		return "/batchOrder/batch-order-feeType";
 	}
 
 	/**
@@ -1694,283 +1678,5 @@ public class BatchOrderController  extends BaseController {
 
 		return returnMap;
 	
-	}
-	
-	/**
-	 * 批量换挡<br/>Excel校验后，将数据提交与后台，并将后台返回的数据封装到model
-	 * @param model
-	 * @param request
-	 * @param response
-	 * @param flowNum
-	 * @param file
-	 * @param olId
-	 * @return
-	 * @author ZhangYu
-	 */
-	@SuppressWarnings("unchecked")
-	@RequestMapping(value = "/importBatchData", method = RequestMethod.POST)
-	public String importBatchData(Model model, HttpServletRequest request,HttpServletResponse response,
-			@LogOperatorAnn String flowNum,
-			@RequestParam("upFile") MultipartFile file/*,
-			@RequestParam("olId") String olId*/) {
-		String message="";
-		String code="-1";
-		boolean isError = false;
-		//Map<String,Object> errorStack=null;
-		JsonResponse jsonResponse = null;
-		//String olseq = request.getParameter("olseq");
-		String batchType = request.getParameter("batchType");
-		String reserveDt = request.getParameter("reserveDt");
-		log.debug("reserveDt={}", reserveDt);
-		//String areaId = request.getParameter("areaId");
-		if(batchType == null || "".equals(batchType)){
-			message = "订单受理类型为空！";
-			isError = true;
-		}
-		/*if(reserveDt==null||"".equals(reserveDt)){
-			message="预约时间为空！";
-			isError=true;
-		}*/
-		if (null != file) {
-			boolean oldVersion = true;
-			String fileName = file.getOriginalFilename();
-			if (fileName.matches("^.+\\.(?i)(xls)$")) {
-				oldVersion = true;
-			} else if (fileName.matches("^.+\\.(?i)(xlsx)$")) {
-				oldVersion = false;
-			} else {
-				message="导入文件的类型错误，后缀必须为.xls或.xlsx的Excel文件 !";
-				isError = true;
-			}
-			if (!isError) {
-				Workbook workbook = null;
-				try {
-					if (oldVersion) {// 2003版本Excel(.xls)
-						workbook = new HSSFWorkbook(file.getInputStream());
-					} else {// 2007版本Excel或更高版本(.xlsx)
-						workbook = new XSSFWorkbook(file.getInputStream());
-					}
-				} catch (Exception e) {
-					message="文件读取异常，请检查文件后重新尝试 !";
-					isError = true;
-				}
-				if (!isError) {
-					Map<String,Object> checkResult=null;
-					boolean flag=false;
-					SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);
-					String str = sessionStaff.getCustId() +"/"+ sessionStaff.getPartyName() +"/" + sessionStaff.getCardNumber()+"/"+sessionStaff.getCardType();
-					if(SysConstant.BATCHCHANGEFEETYPE.equals(batchType)){
-							checkResult=this.readExcelBatchChange(workbook,batchType,str);
-						if(checkResult.get("code") != null && "0".equals(checkResult.get("code"))){//Excel校验成功
-							//List<Map<String,Object>> orderLists = (List<Map<String,Object>>)checkResult.get("orderLists");//Excel里的接入号和批量换挡ID
-							flag=true;
-						}else{
-							message="批量导入出错:"+(String)checkResult.get("errorData");
-						}	
-					}
-					if(flag){
-						List<Map<String,Object>> orderLists = (List<Map<String,Object>>)checkResult.get("orderLists");
-						Map<String, Object> rMap = null;
-						Map<String, Object> param = new HashMap<String, Object>();
-						param.put("orderList", orderLists);
-						param.put("custOrderId", "");//目前传“”
-						param.putAll(getAreaInfos());
-						param.put("commonRegionId",sessionStaff.getCurrentAreaId());
-						param.put("batchType", batchType);
-						param.put("reserveDt", reserveDt);	
-						Map<String, Object> busMap = new HashMap<String, Object>();
-						busMap.put("batchOrder", param);
-						try {
-							rMap = orderBmo.batchExcelImport(busMap, flowNum, sessionStaff);
-							if (rMap != null && ResultCode.R_SUCCESS.equals(rMap.get("code").toString())) {
-								message = "批量导入成功，导入批次号：<strong>"+rMap.get("groupId")+"</strong>，请到“批量受理查询”功能中查询受理结果";
-								code = "0";
-				 			}else{
-				 				if(rMap == null || rMap.get("msg") == null){
-				 					message = "批量导入服务调用失败";
-				 				}else{
-				 					message = rMap.get("msg").toString();
-				 				}		 				
-				 			}
-						} catch (BusinessException be) {
-							jsonResponse = super.failed(be);
-							//errorStack=this.failedForm(be);
-						} catch (InterfaceException ie) {
-							jsonResponse = super.failed(ie, busMap, ErrorCode.BATCH_IMP_SUBMIT);
-							//errorStack=this.failedForm(ie, param, ErrorCode.CHECK_UIMANDPHONE);
-						} catch (Exception e) {
-							jsonResponse = super.failed(ErrorCode.BATCH_IMP_SUBMIT, e, busMap);
-							//errorStack=this.failedForm(ErrorCode.CHECK_UIMANDPHONE, e, param);
-						}
-					}
-				}
-			}
-		} else {
-			message="文件读取失败";
-		}
-
-		model.addAttribute("message", message);
-		model.addAttribute("code", code);
-		model.addAttribute("batchType", batchType);
-		if(jsonResponse != null)
-			model.addAttribute("errorStack",jsonResponse);
-		
-		return "/batchOrder/batch-order-feeType-list";
-	}
-	
-	/**
-	 * 批量换挡Excel解析
-	 * @param workbook
-	 * @param batchType
-	 * @param str
-	 * @return returnMap
-	 * @author ZhangYu
-	 */
-	private Map<String, Object> readExcelBatchChange(Workbook workbook, String batchType, String str){
-
-	String message = "";
-	String code = "-1";
-	Map<String, Object> returnMap = new HashMap<String, Object>();
-	StringBuffer errorData = new StringBuffer();
-	List<Map<String, Object>> orderLists = new ArrayList<Map<String, Object>>();
-	//List<Map<String, Object>> mktResInstList = new ArrayList<Map<String, Object>>();
-	//List<Map<String, Object>> uList = new ArrayList<Map<String, Object>>();
-	Set<Object> accessNumberSets = new TreeSet<Object>();
-	//Set<Object> uSets = new TreeSet<Object>();
-	Map<String, Object> item = null;
-	//Map<String, Object> pitem = null;
-	//Map<String, Object> uitem = null;
-	
-	// 循环读取每个sheet中的数据放入list集合中
-	for (int sheetIndex = 0; sheetIndex < workbook.getNumberOfSheets(); sheetIndex++) {
-		// 得到当前页sheet
-		Sheet sheet = workbook.getSheetAt(sheetIndex);
-		// 得到Excel的行数
-		int totalRows = sheet.getPhysicalNumberOfRows();
-		if (totalRows > 1) {
-			for (int i = 1; i < totalRows; i++) {
-				item = new HashMap<String, Object>();
-				//pitem = new HashMap<String, Object>();
-				//uitem = new HashMap<String, Object>();
-				Row row = sheet.getRow(i);
-				if (null != row) {
-					boolean cellIsNull = true;
-					if (batchType.equals(SysConstant.BATCHCHANGEFEETYPE)){
-						for (int k = 0; k < 2; k++) {
-							Cell cellTemp = row.getCell(k);
-							if (null != cellTemp) {
-								String cellValue = checkExcelCellValue(cellTemp);
-								if (cellValue != null && !cellValue.equals("") && !cellValue.equals("null")) {
-									cellIsNull = false;
-								}
-							}
-						}
-					}
-					if (cellIsNull) {
-						continue;
-					}
-					Cell cell = row.getCell(0);
-					if (null != cell) {
-						String cellValue = checkExcelCellValue(cell);//???????????????????????????校验单元格类型？？？？？？？？？？
-						if (cellValue == null) {
-							errorData.append("<br/>【第" + (i + 1) + "行】【第1列】单元格格式不对");
-							break;
-						} else if (!"".equals(cellValue)) {
-							if(checkAccessNbrReg(cellValue)){
-								item.put("accessNumber", cellValue);//批量换挡的号码
-							} else{
-								errorData.append("<br/>【第" + (i + 1) + "行】【第1列】换挡号码【"+cellValue+"】"+"不符合手机号码格式");
-								break;
-							}	
-						} else {
-							errorData.append("<br/>【第" + (i + 1) + "行】【第1列】换挡号码不能为空");
-							break;
-						}
-					} else {
-						errorData.append("<br/>【第" + (i + 1) + "行】【第1列】换挡号码不能为空");
-						break;
-					}
-					cell = row.getCell(1);
-					if (null != cell) {
-						String cellValue = checkExcelCellValue(cell);//??????????????????????????????????????????????????????
-						if (cellValue == null) {
-							errorData.append("<br/>【第" + (i + 1) + "行】【第2列】单元格格式不对");
-							break;
-						} else if (!"".equals(cellValue)) {
-							if(checkOfferSpecIdReg(cellValue)){
-								item.put("offerSpecId", cellValue);//批量换挡套餐
-							} else{
-								errorData.append("<br/>【第" + (i + 1) + "行】【第2列】换挡套餐规格ID【"+cellValue+"】"+"格式不正确");
-								break;
-							}
-							
-						} else {
-							errorData.append("<br/>【第" + (i + 1) + "行】【第2列】换挡套餐规格ID不能为空");
-							break;
-						}
-					} else {
-						errorData.append("<br/>【第" + (i + 1) + "行】【第2列】换挡套餐规格ID不能为空");
-						break;
-					}
-				}
-				if (item.size() > 0) {
-					orderLists.add(item);
-				}
-				/*if (pitem.size() > 0) {
-					mktResInstList.add(pitem);
-				}
-				if (uitem.size() > 0) {
-					uList.add(uitem);
-				}*/
-			}
-		} else {
-			message = "批量导入异常:导入数据为空 !";
-		}
-	}//循环读取每个sheet中的数据放入list集合中--end
-
-	// 循环完成再做号卡资源去重判断
-	long time1 = new Date().getTime();
-	for (Map<String, Object> orderList : orderLists) {
-		Object accessNumber = orderList.get("accessNumber");
-		if (!accessNumberSets.add(accessNumber)) {
-			errorData.append("<br/>【" + accessNumber + "】为重复号码，请检查 !");
-			break;
-		}
-	}
-	long time2 = new Date().getTime();
-	if ("".equals(errorData.toString())) {
-		code = "0";
-	}
-	System.out.println("=============去重判断==============" + "批量号码去重判断耗时: " + (time2 - time1));
-	returnMap.put("errorData", errorData.toString());
-	//returnMap.put("mktResInstList", mktResInstList);
-	returnMap.put("orderLists", orderLists);
-	returnMap.put("code", code);
-	returnMap.put("message", message);
-
-	return returnMap;
-	}
-	
-	/**
-	 * 校验手机号码是否以1开头的11位数字
-	 * @param cellValue
-	 * @return 校验成功返回<strong>true</strong>，否则返回<strong>false</strong>
-	 */
-	private boolean checkAccessNbrReg(String cellValue){
-		//Pattern pattern = Pattern.compile("^1\d{10}$");
-		//Matcher matcher = pattern.matcher(cellValue);
-		//return matcher.matches();
-		return Pattern.matches("1\\d{10}", cellValue);
-		
-	}
-	
-	/**
-	 * 校验换挡套餐ID是否为数字
-	 * @param cellValue
-	 * @return 校验成功返回<strong>true</strong>，否则返回<strong>false</strong>
-	 */
-	private boolean checkOfferSpecIdReg(String cellValue){
-		return Pattern.matches("[1-9]\\d*|0", cellValue);//匹配整数
-		
 	}
 }
