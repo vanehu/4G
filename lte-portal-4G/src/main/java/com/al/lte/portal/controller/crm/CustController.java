@@ -595,16 +595,18 @@ public class CustController extends BaseController {
 					if (MapUtil.isNotEmpty(resultMap)) {
 						List custInfos = (List<Map<String, Object>>) resultMap.get("custInfos");
 						if (custInfos.size() > 0) {
-							Map custInfoMap = (Map<String, Object>) custInfos.get(0);
-							String queryCustId = MapUtils.getString(custInfoMap, "custId");
-							String custId = MapUtils.getString(param, "custId");
-							if (custId.equals(queryCustId)){
-								map.put("isValidate", "true");
-								//在session中保存当前客户信息
-								Map sessionCustInfo = MapUtils.getMap(listCustInfos, custId);  
-								if(sessionCustInfo != null){
-									httpSession.setAttribute(SysConstant.SESSION_CURRENT_CUST_INFO, sessionCustInfo);
-									listCustInfos.clear();
+							for (int i = 0; i < custInfos.size(); i++) {
+								Map custInfoMap = (Map<String, Object>) custInfos.get(i);
+								String queryCustId = MapUtils.getString(custInfoMap, "custId");
+								String custId = MapUtils.getString(param,"custId");
+								if (custId.equals(queryCustId)) {
+									map.put("isValidate", "true");
+									// 在session中保存当前客户信息
+									Map sessionCustInfo = MapUtils.getMap(listCustInfos, custId);
+									if (sessionCustInfo != null) {
+										httpSession.setAttribute(SysConstant.SESSION_CURRENT_CUST_INFO,sessionCustInfo);
+										listCustInfos.clear();
+									}
 								}
 							}
 						}
