@@ -2655,6 +2655,7 @@ public class OrderController extends BaseController {
 					String olId = (String)result.get("olId");
 					String soNbr = (String)orderListInfo.get("soNbr");
 					String olTypeCd = orderListInfo.get("olTypeCd").toString();
+					String actionFlag = orderListInfo.get("actionFlag").toString();
 					if(result.get("ruleInfos") == null){
 						resMap.put("rolId", olId);
 						resMap.put("rsoNbr", soNbr);
@@ -2676,7 +2677,7 @@ public class OrderController extends BaseController {
 							resMap.put("checkRule", "checkRule");
 						}
 					}
-					if(olTypeCd.equals("14")){
+					if(actionFlag.equals("37") || actionFlag.equals("38") ){
 						resMap.put("checkRule", "notCheckRule");
 					}
 					jsonResponse = super.successed(resMap,
