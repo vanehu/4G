@@ -2217,30 +2217,6 @@ SoOrder = (function() {
 					}
 				}
 			}
-			var oldMemberUimFlag = true;
-			if(order.memberChange.oldMemberFlag){
-				for ( var i = 0; i < OrderInfo.oldoffer.length; i++) {
-					$.each(OrderInfo.oldoffer[i].offerMemberInfos,function(){
-						var member = this;
-						if(member.objType == CONST.OBJ_TYPE.PROD){  //接入产品
-							if(AttachOffer.isChangeUim(member.objInstId)){
-								var td = OrderInfo.getProdTd(member.objInstId);
-								if(td==""){
-									$.alert("提示","加装移动电话"+member.accessNumber+" UIM卡不能为空！");
-									oldMemberUimFlag = false;
-									return false ; 
-								}
-							}
-						}
-					});
-					if(!oldMemberUimFlag){
-						break;
-					}
-				}
-				if(!oldMemberUimFlag){
-					return;
-				}
-			}
 			var acctId = $("#acctSelect").val();
 			if(acctId==undefined || $.trim(acctId)==""){
 				$.alert("提示","请新建或者查询选择一个可用帐户");
@@ -2407,7 +2383,7 @@ SoOrder = (function() {
 							return false ; 
 						}
 					}
-				}else if(OrderInfo.actionFlag == 6){//主副卡变更，副卡换套餐
+				}else if(OrderInfo.actionFlag == 21){//主副卡变更，副卡换套餐
 					if(ec.util.isArray(OrderInfo.viceOfferSpec)){//多张副卡同时进行换挡
 						var flag=false;
 						$.each(OrderInfo.viceOfferSpec,function(){
@@ -2480,7 +2456,7 @@ SoOrder = (function() {
 					}
 					
 					if(flag){ //该产品已经开通4G功能产品，需要做4G卡终端校验
-						if(OrderInfo.actionFlag == 1 || OrderInfo.actionFlag == 14 || order.memberChange.newMemberFlag || order.memberChange.oldMemberFlag){ //新装
+						if(OrderInfo.actionFlag == 1 || OrderInfo.actionFlag == 6 || OrderInfo.actionFlag == 14){ //新装
 							var uim = OrderInfo.getProdUim(prodId);
 							if(uim.cardTypeFlag=="2"){ //3g卡
 								$.alert("信息提示","您已开通【4G（LTE）上网】功能产品，不能使用3G卡，故无法提交");
@@ -2490,7 +2466,7 @@ SoOrder = (function() {
 								$.alert("信息提示","您已开通【4G（LTE）上网】功能产品，不能使用3G终端，故无法提交");
 								return false;
 							}
-						}else if(OrderInfo.actionFlag == 2 || OrderInfo.actionFlag == 3 || order.memberChange.changeMemberFlag){
+						}else if(OrderInfo.actionFlag == 2 || OrderInfo.actionFlag == 3 || OrderInfo.actionFlag == 21){
 							var oldUim = OrderInfo.getProdOldUim(prodId);
 							if(oldUim.is4GCard!="Y"){//旧卡不是4G卡 就判断新卡是否是4G卡
 								var uim = OrderInfo.getProdUim(prodId);
