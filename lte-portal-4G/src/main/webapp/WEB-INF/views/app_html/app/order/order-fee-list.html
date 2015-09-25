@@ -8,7 +8,7 @@
 					费用详情查询
 				</div>
 				<#if (pageModel.list)?? &&((pageModel.list)?size>0)>
-				<@portal.scrollPagination "cart_list" "both" pageModel.totalPages 60 0 "order.calcharge.feeScroll">
+				<@portal.scrollPagination "fee_list" "both" pageModel.totalPages 60 0 "order.calcharge.feeScroll">
 				<table class="table table-striped tablecenter" id="cart-list-table">
 					<thead>
 						<tr>
@@ -23,7 +23,7 @@
 					<tbody class="panel-group" id="accordion">
 		               <#list pageModel.list as fee >
 						<tr>
-							<td>${fee.soNbr}</td>
+							<td><button onclick="order.ysl.showLsh('${fee.soNbr}')">查看流水号</button></td>
 							<td>${fee.prodName}</td>
 							<td>${fee.feeName}</td>
 							<td>${fee.receivableAmount}</td>

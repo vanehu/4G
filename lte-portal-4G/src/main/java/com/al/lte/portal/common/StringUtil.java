@@ -474,4 +474,33 @@ public class StringUtil {
         }
         return returnStr;
     }
+    
+    /**
+     * 将以分为单位的金额转换为以元为单位
+     * 如"0"->"0.00","10"->"0.10","100"->"1.00"
+     * 
+     * @param fen
+     * @return
+     */
+    public static String transformToYuan(final String fen) {
+    	String yuan = null;
+    	if (null != fen) {
+    		int len = fen.length();
+    		switch (len) {
+    		case 0:
+    			yuan = "0.00";
+    			break;
+    		case 1:
+    			yuan = "0.0" + fen;
+    			break;
+    		case 2:
+    			yuan = "0." + fen;
+    			break;
+    		default:
+    			yuan = fen.substring(0, len - 2) + "." + fen.substring(len - 2);
+    			break;
+    		}
+    	}
+    	return yuan;
+    }
 }

@@ -25,8 +25,6 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.al.lte.portal.common.print.dto.OEPackageTitleTitleContent;
-import com.al.lte.portal.common.print.dto.OETitleContent;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
@@ -72,8 +70,10 @@ import com.al.lte.portal.common.print.dto.ItemInfoTwoNewSet;
 import com.al.lte.portal.common.print.dto.ItemInfoTwoSet;
 import com.al.lte.portal.common.print.dto.OEAttachOfferSet;
 import com.al.lte.portal.common.print.dto.OEMainOfferSet;
+import com.al.lte.portal.common.print.dto.OEPackageTitleTitleContent;
 import com.al.lte.portal.common.print.dto.OEProdChangeSet;
 import com.al.lte.portal.common.print.dto.OETermOfferSet;
+import com.al.lte.portal.common.print.dto.OETitleContent;
 import com.al.lte.portal.common.print.dto.OSAttachOfferSet;
 import com.al.lte.portal.common.print.dto.OSBaseInfoSet;
 import com.al.lte.portal.common.print.dto.OSNormOfferSet;
@@ -373,21 +373,30 @@ public class PrintBmoImpl implements PrintBmo {
 							if(offerInfosObj!=null && offerInfosObj instanceof List){
 								List<Map<String, Object>> offerInfos = (List<Map<String, Object>>) offerInfosObj;
 								for (Map<String, Object> offerInfo : offerInfos) {
-									sb.append(",").append(offerInfo.get("itemName"));
+									if (null != offerInfo.get("prodSpecName")) {
+										sb.append(",").append(offerInfo.get("prodSpecName"));
+									}
 								}
 							}
 
 						}
 					}else if(("5").equals(String.valueOf(map.get("orderEventType")))&& ("1").equals(orderEventTitle.get("boActionTypeCd"))){
 						if(sbNub.length()>0){
-							sbNub.append(",副卡："+orderEventTitle.get("relaAcceNbr"));
+						   if (null != orderEventTitle.get("relaAcceNbr")) {
+								 sbNub.append(",副卡："+orderEventTitle.get("relaAcceNbr"));
+						   }
 						}else{
 							sbNub.append("主卡："+orderEventTitle.get("relaAcceNbr"));
 						}
 					}else if(("3").equals(String.valueOf(map.get("orderEventType")))){
+						if(sb.length()>0){
+							sb.append(",");
+						}
 					   sb.append(orderEventTitle.get("prodSpecName"));
 					   if(sbNub.length()>0){
-						 sbNub.append(",副卡："+orderEventTitle.get("relaAcceNbr"));
+						   if (null != orderEventTitle.get("relaAcceNbr")) {
+								 sbNub.append(",副卡："+orderEventTitle.get("relaAcceNbr"));
+						   }
 					   }else{
 						 sbNub.append("主卡："+orderEventTitle.get("relaAcceNbr"));
 					   }

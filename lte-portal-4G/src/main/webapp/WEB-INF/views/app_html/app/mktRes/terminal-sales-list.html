@@ -8,7 +8,7 @@
 					终端销售详情查询
 				</div>
 				<#if (pageModel.list)?? &&((pageModel.list)?size>0)>  
-				<@portal.scrollPagination "cart_list" "both" pageModel.totalPages 60 0 "mktRes.terminal.termSaleScroll">
+				<@portal.scrollPagination "terminal_sales_list" "both" pageModel.totalPages 60 0 "mktRes.terminal.termSaleScroll">
 				<table class="table table-striped tablecenter" id="cart-list-table">
 					<thead>
 						<tr>
@@ -25,13 +25,13 @@
 					<tbody class="panel-group" id="accordion">
 		              <#list pageModel.list as term >
 						<tr>
-							<td>${term.soNbr}</td>
+							<td><button onclick="mktRes.terminal.showNbr('流水号','${term.soNbr}')">查看流水号</button></td>
 							<td>${term.orderTime}</td>
 							<td>${term.orderChannel}</td>
 							<td>${term.orderStaff}</td>
 							<td>${term.agreementInfo}</td>
 							<td>${term.termName}</td>
-							<td>${term.mktInstCode}</td>	
+							<td><button onclick="mktRes.terminal.showNbr('终端串码','${term.mktInstCode}')">查看终端串码</button></td>	
 							<!-- <td><span class="glyphicon glyphicon-chevron-right"
 								aria-hidden="true"></span>
 							</td> -->

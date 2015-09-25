@@ -802,6 +802,10 @@ mktRes.terminal = (function($){
 			common.callCloseWebview();
 		}
 	};
+	//显示超长数字
+	var _showNbr = function(title, nbr){
+		$.alert(title, nbr);
+	};
 	return {
 		btnQueryTerminal	:_btnQueryTerminal,
 		initPhone			:_initPhone,
@@ -816,9 +820,10 @@ mktRes.terminal = (function($){
 		selectHy			:_selectHy,
 		changeHyContent     :_changeHyContent,
 		changePeriod        :_changePeriod,
-		termSaleScroll     :_termSaleScroll,
+		termSaleScroll      :_termSaleScroll,
 		back     :_back,
-		btnQueryTerminalSale :_btnQueryTerminalSale
+		btnQueryTerminalSale:_btnQueryTerminalSale,
+		showNbr             :_showNbr
 	};
 })(jQuery);
 $(function() {

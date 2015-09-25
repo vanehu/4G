@@ -40,6 +40,7 @@ import com.al.lte.portal.bmo.crm.MktResBmo;
 import com.al.lte.portal.bmo.crm.OrderBmo;
 import com.al.lte.portal.common.CommonMethods;
 import com.al.lte.portal.common.EhcacheUtil;
+import com.al.lte.portal.common.StringUtil;
 import com.al.lte.portal.common.SysConstant;
 import com.al.lte.portal.model.SessionStaff;
 
@@ -152,7 +153,13 @@ public class ReportController extends com.al.lte.portal.controller.crm.ReportCon
 	        	if(map!=null&&map.get("feeInfoList")!=null){
 	        		list =(List<Map<String, Object>>)map.get("feeInfoList");
 	        		//totalSize = (Integer)map.get("totalCnt");
-	        		totalSize = 1000;
+	        		totalSize = 0;
+	        		
+	        		// 将应收金额和实收金额格式化为以元为单位
+	        		for (Map<String, Object> it : list) {
+	        			it.put("receivableAmount", StringUtil.transformToYuan((String) it.get("receivableAmount")));
+	        			it.put("realAmount", StringUtil.transformToYuan((String) it.get("realAmount")));
+	        		}
 	        	}
 	        	PageModel<Map<String, Object>> pm = PageUtil.buildPageModel(
 	        			pageIndex,
@@ -236,7 +243,7 @@ public class ReportController extends com.al.lte.portal.controller.crm.ReportCon
 	        	if(map!=null&&map.get("termSalesInfoList")!=null){
 	        		list =(List<Map<String, Object>>)map.get("termSalesInfoList");
 	        		//totalSize = (Integer)map.get("totalCnt");
-	        		totalSize = 1000;
+	        		totalSize = 0;
 	        	}
 	        	PageModel<Map<String, Object>> pm = PageUtil.buildPageModel(
 	        			pageIndex,
@@ -302,7 +309,7 @@ public class ReportController extends com.al.lte.portal.controller.crm.ReportCon
 		Map<String, Object> defaultAreaInfo = CommonMethods.getDefaultAreaInfo_MinimumC3(sessionStaff);
 		
 		model.addAttribute("p_startDt", startTime);
-		model.addAttribute("status", "300000"); // 竣工状态
+		model.addAttribute("status", "301200"); // 竣工状态
 		model.addAttribute("p_areaId_val", defaultAreaInfo.get("defaultAreaName"));
 		model.addAttribute("p_areaId", defaultAreaInfo.get("defaultAreaId"));
 		return "/app/cart/statistics-cart-main";		
