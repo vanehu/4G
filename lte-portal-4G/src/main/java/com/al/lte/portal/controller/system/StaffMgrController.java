@@ -30,8 +30,6 @@ import com.al.ecs.common.entity.PageModel;
 import com.al.ecs.common.util.JsonUtil;
 import com.al.ecs.common.util.MapUtil;
 import com.al.ecs.common.util.PageUtil;
-import com.al.ecs.common.util.PropertiesUtils;
-import com.al.ecs.common.util.UIDGenerator;
 import com.al.ecs.common.web.ServletUtils;
 import com.al.ecs.exception.AuthorityException;
 import com.al.ecs.exception.BusinessException;
@@ -69,9 +67,6 @@ public class StaffMgrController extends BaseController {
 	@Autowired
 	@Qualifier("com.al.lte.portal.bmo.staff.StaffBmo")
 	private StaffBmo staffBmo;
-	
-	@Autowired
-	PropertiesUtils propertiesUtils;
 	
 	
     
@@ -211,51 +206,10 @@ public class StaffMgrController extends BaseController {
     //跳转至修改密码页面
     @RequestMapping(value = "/updatePwd", method = RequestMethod.GET)
     @AuthorityValid(isCheck = false)
-    public String preUpdatePwd(HttpSession session,Model model,HttpServletRequest request) throws AuthorityException {
+    public String preUpdatePwd(HttpSession session,Model model) throws AuthorityException {
     	model.addAttribute("current", EhcacheUtil.getCurrentPath(session,"staffMgr/updatePwd"));
-    	SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
-				SysConstant.SESSION_KEY_LOGIN_STAFF);
-    	String random = UIDGenerator.getUIDByTime();
-    	request.getSession().setAttribute(SysConstant.SESSION_KEY_SMSPWD_TOKEN, random);
-    	model.addAttribute("token", random);
-    	String staffCode = sessionStaff.getStaffCode();
-    	String areaId = sessionStaff.getAreaId();
-    	if(!"00".equals(areaId.substring(5))){
-			areaId = areaId.substring(0, 5) + "00";
-		}
-    	model.addAttribute("staffCode", staffCode);
-    	model.addAttribute("areaId", areaId);
-    	try {
-			sendMsg(request,sessionStaff.getBindNumber(),sessionStaff.getAreaId());
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} // 发短信 。。。
     	return "/staff/staff-pwd";
     }
-    
-	// 短信发送
-	public Map<String, Object> sendMsg(HttpServletRequest request,String phoneNumber, String areaId)
-			throws Exception {
-		Map<String, Object> retnMap = new HashMap<String, Object>();
-		String smsPwd = UIDGenerator.generateDigitNonce(6);
-		this.log.debug("短信验证码：{}", smsPwd);
-		Map<String, Object> msgMap = new HashMap<String, Object>();
-		msgMap.put("MsgNumber", SysConstant.MSG_NUMBER); //6位
-		msgMap.put("phoneNumber", phoneNumber);
-		msgMap.put("key", smsPwd);
-		msgMap.put("message", propertiesUtils.getMessage("SMS_CODE_CONTENT",
-				new Object[] { smsPwd }));
-
-		if (!"00".equals(areaId.substring(5))) {
-			areaId = areaId.substring(0, 5) + "00";
-		}
-		msgMap.put("areaId", areaId);
-		retnMap = staffBmo.sendMsgInfo(msgMap, null, null);
-		request.getSession().removeAttribute(SysConstant.SESSION_KEY_LOGIN_SMS);
-		request.getSession().setAttribute(SysConstant.SESSION_KEY_LOGIN_SMS, smsPwd);
-		return retnMap;
-	}
     
     /**
      * 员工修改/重置密码
@@ -265,23 +219,14 @@ public class StaffMgrController extends BaseController {
 	@RequestMapping(value = "/staffPwd", method = RequestMethod.POST)
 	@AuthorityValid(isCheck = false)
 	@ResponseBody
-	public JsonResponse staffPwd(@RequestBody Map<String, Object> param,HttpServletRequest request, HttpServletResponse response, @LogOperatorAnn String flowNum){
+	public JsonResponse staffPwd(@RequestBody Map<String, Object> param, HttpServletResponse response, @LogOperatorAnn String flowNum){
 		
 		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
 				SysConstant.SESSION_KEY_LOGIN_STAFF);
-		String token = (String) param.get("token");
-		String tokenBack = (String) (request.getSession().getAttribute(SysConstant.SESSION_KEY_SMSPWD_TOKEN)==null?"": request.getSession().getAttribute(SysConstant.SESSION_KEY_SMSPWD_TOKEN));
-		if(!tokenBack.equals(token)){
-			return successed("非法请求",-1);
-		}
-		String smspwd = (String) param.get("smspwd");
-		String smspwdBack = (String) (request.getSession().getAttribute(SysConstant.SESSION_KEY_LOGIN_SMS)==null?"": request.getSession().getAttribute(SysConstant.SESSION_KEY_LOGIN_SMS));
-		request.getSession().removeAttribute(SysConstant.SESSION_KEY_LOGIN_SMS);
-		if(!smspwdBack.equals(smspwd)){
-			return successed("尊敬的用户您输入短信验证码错误",-1);
-		}
+		
 		param.put("staffId", Long.parseLong(sessionStaff.getStaffId()));		
 		param.put("areaId", Long.parseLong(sessionStaff.getAreaId()));
+						
 		try{			
 			Map<String, Object> resultMap = staffBmo.updateStaffPwd(param, flowNum, sessionStaff);
 			int code = (Integer)resultMap.get("code");
@@ -654,21 +599,4 @@ public void toPraise(HttpServletRequest request,  HttpServletResponse response) 
 	public String starlightPlan() {
 		return "/staff/starlight-plan";
 	}
-	
-	//重发校验码
-		@RequestMapping(value = "/reSend", method = RequestMethod.POST)
-		@ResponseBody
-		public JsonResponse reSend(HttpSession session,Model model ,@RequestBody Map<String, Object> param,HttpServletRequest request) {
-			JsonResponse jsonResponse = new JsonResponse();
-			SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
-					SysConstant.SESSION_KEY_LOGIN_STAFF);
-			try{
-				jsonResponse.setCode(0);
-	        	jsonResponse.setSuccessed(true);
-				sendMsg(request,sessionStaff.getInPhoneNum(),sessionStaff.getAreaId());
-			}catch(Exception e){
-				super.failed(ErrorCode.QUERY_STAFF_INFO, e, null);
-			}
-			return jsonResponse;
-		}
 }

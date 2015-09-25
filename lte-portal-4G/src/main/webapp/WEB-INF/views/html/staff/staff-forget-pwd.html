@@ -141,7 +141,7 @@
 								<tr>
 									<td align="right"><label class="f_red">*</label>新密码:</td>
 									<td>
-										<input type="password" id="newPassword" placeholder="请输入新密码"  data-validate="validate(required:密码不能为空) on(blur)" class="inputWidth228px" />
+										<input type="password" id="newPassword" placeholder="请输入新密码"  data-validate="validate(required:密码不能为空,checkLen:密码必须为{arg1}位.(6)) on(blur)" class="inputWidth228px" maxlength="6"/>
 									</td>
 								</tr>
 								<tr>
@@ -149,7 +149,7 @@
 										<label class="f_red">*</label>确认新密码:
 									</td>
 									<td>
-										<input type="password" id="confirm_password" placeholder="请输入确认密码"  data-validate="validate(depEq:两次密码必须一致(newPassword)) on(blur)" class="inputWidth228px" />
+										<input type="password" id="confirm_password" placeholder="请输入确认密码"  data-validate="validate(depEq:两次密码必须一致(newPassword)) on(blur)" class="inputWidth228px" maxlength="6"/>
 									</td>
 								</tr>
 							</tbody>

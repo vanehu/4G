@@ -2,8 +2,6 @@
 <@override name="header">
 <script src="${contextPath}/js/busi-js/staff/staffMgr.js?${jsversion}" type="text/javascript"></script>
 <script src="${contextPath}/js/4g-js/order/orderInfo.js" type="text/javascript"></script>
-<script src="${contextPath}/js/busi-js/staff/staffForget.js?${jsversion}" type="text/javascript"></script>
-<script src="${contextPath}/js/busi-js/staff/login.js?${jsversion}" type="text/javascript"></script>
 </@override>
 <@override name="content">
 <div class="main_div" id="main_content">
@@ -14,29 +12,18 @@
                 <label id="msg" style="display:none;margin-left:100px;color:red;"></label>                  
 				<div class="infoBox">
 					<form id="staffPwdForm">
-					<input name="token" type="hidden"  id="token" value="${token}"/>
-					<input name="staffCode" type="hidden"  id="staffCode" value="${staffCode}"/>
-					<input name="areaId" type="hidden"  id="areaId" value="${areaId}"/>
 					<table class="network">
 						<tbody>
-						     <tr>
-								<td align="right" width="80px"><label class="f_red">*</label>短信验证码</td>
-								<td>
-									 <input type="text" class="txt2 inputWidth228px" style="float:left; margin:0px 5px;" name="smspwd" id="smspwd" data-validate="validate(required:短信验证码不能为空) on(blur)" placeholder="请输入您手机收到的验证码" maxlength="6"/><p>如您在30秒内仍未收到验证码，请点击<a alctag="nochecklogin" id="smsresend1" class="cf" onclick="javascript:void(0)">重新获取验证码。</a></p>
-								</td>
-								 <td>
-								</td>
-							 </tr>
 							<tr>
 								<td align="right" width="80px"><label class="f_red">*</label>旧密码</td>
 								<td>
-									<input type="password" id="password" placeholder="请输入旧密码"  data-validate="validate(required:旧密码不能为空) on(blur)" class="inputWidth228px"/>
+									<input type="password" id="password" placeholder="请输入旧密码"  data-validate="validate(required:旧密码不能为空) on(blur)" class="inputWidth228px" maxlength="6"/>
 								</td>
 							</tr>
 							<tr>
 								<td align="right"><label class="f_red">*</label>新密码</td>
 								<td>
-									<input type="password" id="newPassword" placeholder="请输入新密码"  data-validate="validate(required:密码不能为空,isSimplePwd:密码强度太低，至少包含一位数字和字母) on(blur)" class="inputWidth228px" />
+									<input type="password" id="newPassword" placeholder="请输入新密码"  data-validate="validate(required:密码不能为空,checkLen:密码必须为{arg1}位.(6),isSimplePwd:密码强度太低，至少包含一位数字和字母) on(blur)" class="inputWidth228px" maxlength="6"/>
 								</td>
 							</tr>
 							<tr>
@@ -44,7 +31,7 @@
 									<label class="f_red">*</label>确认新密码
 								</td>
 								<td>
-									<input type="password" id="confirm_password" placeholder="请输入确认密码"  data-validate="validate(depEq:两次密码必须一致(newPassword)) on(blur)" class="inputWidth228px"/>
+									<input type="password" id="confirm_password" placeholder="请输入确认密码"  data-validate="validate(depEq:两次密码必须一致(newPassword)) on(blur)" class="inputWidth228px" maxlength="6"/>
 								</td>
 							</tr>
 						</tbody>

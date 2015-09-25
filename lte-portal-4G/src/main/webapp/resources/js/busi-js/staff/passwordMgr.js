@@ -29,9 +29,9 @@ password.info = (function(){
 			$("#msg").html("");//先清空之前的错误信息
 			$("#msg").hide();
 			var _newPwd = $.trim($("#newPassword").val());
-			var pattern = /^(?=.*?[a-z])(?=.*?[A-Z])(?=.*?\d)(?=.*?[!$%#@*&.]).*$/;
-			if (_newPwd.length<8|!pattern.test(_newPwd)) {
-				$.alert("提示","您输入的密码不符合密码规范！请确认您的密码：     1.必须不小于8位；      2.大写字母(A-Z)、小写字母(a-z)、数字(0-9)和特殊字符(!$%#@*&.)，每类字符至少包含一个。");
+			var pattern = /(^[a-zA-Z]+\d+)|(^\d+[a-zA-Z]+)/;
+			if (_newPwd.length!=6|!pattern.test(_newPwd)) {
+				$.alert("提示","您输入的密码不符合密码规范！请确认您的密码：     1.必须为6位；      2.不含有空格及特殊字符；     3.至少包含一位字母和数字。");
 				$("#newPassword").val("");
 				$("#confirm_password").val("");
 				return;

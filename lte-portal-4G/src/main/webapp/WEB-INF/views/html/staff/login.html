@@ -91,7 +91,7 @@
 	            <td><span><label>工&nbsp;&nbsp;&nbsp;&nbsp;号</label><input type="text" value="${user.staffCode}" id="staffCode" name="staffCode" class="login_input" data-validate="validate(required:工号不能为空) on(blur)" placeholder="请输入工号"></span></td>
 	          </tr>
 	          <tr>
-	            <td><span><label>密&nbsp;&nbsp;&nbsp;&nbsp;码</label><input type="password" value="${user.password}" id="password" name="password" class="login_input" data-validate="validate(required:密码不能为空且不超过6位) on(blur)" placeholder="请输入密码" ></span></td>
+	            <td><span><label>密&nbsp;&nbsp;&nbsp;&nbsp;码</label><input type="password" value="${user.password}" id="password" name="password" class="login_input" data-validate="validate(required:密码不能为空且不超过6位) on(blur)" placeholder="请输入密码" maxlength="6"></span></td>
 	          </tr>
 	          <tr id="validatecode_li" style="display:none;" code="${image_code}">
 	            <td><span>验证码</span><input type='text' id='vali_code_input' name='validatecode' class="login_input code" placeholder="请输入验证码" maxlength="6"/>
@@ -102,9 +102,6 @@
 	          </tr>
 	          <tr>
 	            <td><div id="button" class="button_login"></div><div id="resetBtn" class="button_reset"></div></td>
-	          </tr>
-	          <tr>
-	            <td><a alctag="nochecklogin" style="margin-left:260px;" href="${contextPath}/passwordMgr/updatePwd">忘记密码?</a></td>
 	          </tr>
 	          <tr>
 	            <td id="login_tip_span" style="display:none;"><div class="login_tishi"></div><span class="login_tip">用户提示：密码错误两次，请填写验证码！</span></td>
