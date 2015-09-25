@@ -516,36 +516,9 @@ SoOrder = (function() {
 				OrderInfo.actionTypeName = "主副卡成员变更";
 			}else if(OrderInfo.actionFlag==6){ //主副卡成员变更纳入副卡
 				$("#accNbrTr").hide();
-				if(ec.util.isArray(OrderInfo.viceOfferSpec)){
-					$.each(OrderInfo.viceOfferSpec,function(){
-						$("#orderTbody").append("<tr><td >新套餐名称：</td><td>"+this.offerSpecName+"</td></tr>");
-					});
-				}
 				$.each(OrderInfo.offer.offerMemberInfos,function(){ //遍历主销售品构成
 					if(this.objType==CONST.OBJ_TYPE.PROD){
 						$("#orderTbody").append("<tr ><td>"+this.roleName+"号码：</td><td>"+this.accessNumber+"</td></tr> ");
-					}
-				});
-				$.each(OrderInfo.offer.offerMemberInfos,function(){ //遍历主销售品构成
-					if(this.objType==CONST.OBJ_TYPE.PROD){
-						if(this.roleCd != CONST.MEMBER_ROLE_CD.MAIN_CARD){
-							var knew="";
-							var del="";
-							var objInstId=this.objInstId;
-							$.each(_viceParam,function(i,val){
-								if(val.objInstId==objInstId&&val.knew=="Y"){
-									knew="Y";
-								}
-								if(val.objInstId==objInstId&&val.del=="Y"){
-									del="Y";
-								}
-							});
-							if(knew=="Y"){
-								$("#orderTbody").append("<tr ><td>订购"+this.roleName+"号码：</td><td>"+this.accessNumber+"</td></tr> ");
-							}else if(del=="Y"){
-								$("#orderTbody").append("<tr ><td>拆除"+this.roleName+"号码：</td><td>"+this.accessNumber+"</td></tr> ");	
-							}
-						}
 					}
 				});
 				$.each(OrderInfo.boProdAns,function(){
