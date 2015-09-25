@@ -402,7 +402,8 @@ order.dealer = (function() {
 		$.each(AttachOffer.openList,function(){
 			var prodId = this.prodId;
 			var accNbr = "";
-			if(ec.util.isArray(OrderInfo.oldprodInstInfos) && OrderInfo.actionFlag==6){//主副卡纳入老用户
+			if(OrderInfo.actionFlag==6){
+				accNbr = OrderInfo.getAccessNumber(prodId);
 				for(var i=0;i<OrderInfo.oldprodInstInfos.length;i++){
 					if(prodId==OrderInfo.oldprodInstInfos[i].prodInstId){
 						accNbr = OrderInfo.oldprodInstInfos[i].accNbr;

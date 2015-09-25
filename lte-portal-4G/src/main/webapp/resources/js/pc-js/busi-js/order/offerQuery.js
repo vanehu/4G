@@ -735,13 +735,21 @@ query.offer = (function() {
 				param.yslflag = order.ysl.yslbean.yslflag;
 			}
 		}
-		if(ec.util.isArray(OrderInfo.oldprodInstInfos) && OrderInfo.actionFlag==6){//主副卡纳入老用户
+		if(OrderInfo.actionFlag==6){//主副卡纳入老用户
 			for(var i=0;i<OrderInfo.oldprodInstInfos.length;i++){
 				if(param.acctNbr==OrderInfo.oldprodInstInfos[i].accNbr){
 					param.areaId = OrderInfo.oldprodInstInfos[i].areaId;
 					param.partyId = OrderInfo.oldprodInstInfos[i].custId;
 					param.mainOfferSpecId=OrderInfo.oldprodInstInfos[i].mainProdOfferInstInfos[0].prodOfferId;
 				}
+			}
+			if(ec.util.isArray(OrderInfo.viceOfferSpec)){
+				$.each(OrderInfo.viceOfferSpec,function(){
+					if(this.prodId==param.prodId){
+						param.mainOfferSpecId=this.offerSpecId;
+						return false;
+					}
+				});
 			}
 		}
 	};
