@@ -1501,7 +1501,8 @@ order.memberChange = function(){
 		delmembers:_delmembers,
 		changemembers:_changemembers,
 		rejson:_rejson,
-		areaidJurisdiction:_areaidJurisdiction
+		areaidJurisdiction:_areaidJurisdiction,
+		viceCartNum:_viceCartNum
 	};
 }();
 $(function(){
