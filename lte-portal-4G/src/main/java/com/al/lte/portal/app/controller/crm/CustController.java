@@ -432,6 +432,7 @@ public class CustController extends BaseController {
     	SessionStaff sessionStaff = (SessionStaff) ServletUtils
 				.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);
     	model.addAttribute("sessionStaff",JsonUtil.buildNormal().objectToJson(sessionStaff));
+    	model.addAttribute("currentCT", sessionStaff.getCurrentChannelType());
         return "/app/cust/cust-create";
     }
     
