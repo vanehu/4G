@@ -116,7 +116,7 @@ order.phoneNumber = (function(){
 	};
 	
 	var _btnIBydentityQuery=function(){
-//		var idcode=$.trim($("#idCode").val());
+		var idcode=$.trim($("#idCode").val());
 //		if(idcode==''){
 //			$.alert("提示","请先输入身份证号码!");
 //			return;
@@ -126,7 +126,8 @@ order.phoneNumber = (function(){
 			return;
 		}
 		var areaId=$("#p_cust_areaId").val();
-		var param={"identityId":idcode,"areaId":areaId};
+		var subPage = $("#subPage").val();
+		var param={"identityId":idcode,"areaId":areaId,"subPage":subPage};
 		$.callServiceAsHtmlGet(contextPath+"/app/mktRes/phonenumber/listByIdentity",param,{
 			"before":function(){
 				$.ecOverlay("<strong>正在查询中,请稍等会儿....</strong>");
