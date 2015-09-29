@@ -100,6 +100,9 @@ common = (function($) {
 	
 	//调用客户端的关闭webview方法
 	var _callCloseWebview=function(){
+		if($("#alert-modal").length>0){
+			$("#alert-modal").hide();
+		}
 		var arr=new Array(1);
 		arr[0]="";
 		MyPlugin.closeWebview(arr,
