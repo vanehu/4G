@@ -563,6 +563,11 @@ order.cust = (function(){
 			vipLevel :$(scope).attr("vipLevel"),
 			vipLevelName :$(scope).attr("vipLevelName")
 		};
+		//设置被选择标识
+		$(scope).attr("selected","selected");
+		$(scope).siblings().each(function () {
+				$(this).removeAttr("selected");
+		});
 		// 判断是否是政企客户
 		var isGovCust = false;
 		for (var i = 0; i <= CacheData.getGovCertType().length; i ++) {
@@ -1568,7 +1573,18 @@ order.cust = (function(){
 			$(this).on("click.page",function(){order.cust.queryCustByPageIndex($(this).attr("page"));});
 		});
 	};
-	
+
+	//实名制校验
+	var _realCheck = function (context) {
+		var canRealName = $('#custInfos').parent().children('[selected="selected"]').attr('canrealname');
+		if (ec.util.isObj(canRealName) && 1 != canRealName) {
+			$.alert("提示", "当前为非实名制客户，请先沟通营业员进行资料补登。","confirmation", function () {
+				var url = window.location.protocol + '//' + window.location.host + context + "/main/home";
+				window.location = url;
+			});
+		}
+	};
+
 	return {
 		form_valid_init : _form_valid_init,
 		showCustAuth : _showCustAuth,
@@ -1613,7 +1629,8 @@ order.cust = (function(){
 		bindCustQueryForChoose : _bindCustQueryForChoose,
 		tmpChooseUserInfo : _tmpChooseUserInfo,
 		queryForChooseUser : _queryForChooseUser,
-		queryCustByPageIndex : _queryCustByPageIndex
+		queryCustByPageIndex : _queryCustByPageIndex,
+		realCheck:_realCheck
 	};
 })();
 $(function() {
