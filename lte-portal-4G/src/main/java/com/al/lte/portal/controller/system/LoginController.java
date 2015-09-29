@@ -622,6 +622,7 @@ public class LoginController extends BaseController {
 				//如果全局开关设定为不发送，或者员工信息表明不发送，或者当前是重新登录不发送短信
 				if ("1".equals(msgCodeFlag) || "N".equals(smsPassFlag) || "N".equals(loginValid)) {
 					successedData.put("data", "N");
+					successedData.put("hintCode", map.get("hintCode"));
 					return super.successed(successedData);
 				}
 				successedData.put("data", "Y");

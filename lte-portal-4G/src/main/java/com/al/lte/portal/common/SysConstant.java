@@ -521,4 +521,10 @@ public final class SysConstant {
     
     /** session中保存当前客户信息 */
     public static final String SESSION_CURRENT_CUST_INFO = "_currentCustInfo";
+    
+    /** session中保存当前客户信息 */
+    public static final String SESSION_KEY_SMS_RESULT ="SESSION_KEY_SMS_RESULT";
+    
+    /** session中保存密码修改的Token */
+    public static final String SESSION_KEY_SMSPWD_TOKEN ="SESSION_KEY_SMSPWD_TOKEN";
 }
