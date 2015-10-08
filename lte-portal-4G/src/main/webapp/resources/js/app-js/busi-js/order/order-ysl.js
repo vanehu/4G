@@ -33,14 +33,8 @@ order.ysl = (function(){
 		if(identidiesTypeCd==undefined){
 			identidiesTypeCd=$("#div_cm_identidiesType  option:selected").val();
 		}
-		$("#cmCustName").removeAttr("readonly");
-		$("#cmCustIdCard").removeAttr("readonly");
-		$("#cmAddressStr").removeAttr("readonly");
 		if(identidiesTypeCd==1){
 			$("#cmCustIdCard").attr("placeHolder","请输入合法身份证号码");
-			$("#cmCustName").attr("readonly","readonly");
-			$("#cmCustIdCard").attr("readonly","readonly");
-			$("#cmAddressStr").attr("readonly","readonly");
 			$("#div-cmcustidcard").show();
 			$("#div-cmcustidcard-none").hide();
 			$('#custFormdata').data('bootstrapValidator').enableFieldValidators("cmCustIdCardOther",false,null);
@@ -637,22 +631,6 @@ order.ysl = (function(){
 //			$.alert("提示","预受理成功！","information");
 			$("#yslbuyid").html(response.data.CUST_SO_NUMBER);
 			$("#yslbuynum").html($("#choosedNumSpan").val());
-			if(order.ysl.paymentbean.length>0){
-				//显示费用项
-				for(var i=0;i<order.ysl.paymentbean.length;i++){
-					var item = order.ysl.paymentbean[i];
-					var contHtml = "";
-					var contHtml = contHtml + '<li class="list-group-item">';
-					var contHtml = contHtml + '<h4 class="list-group-item-heading">费用名称</h4>';
-					var contHtml = contHtml + '<p class="list-group-item-text" id="">'+item.ACCT_ITEM_TYPE+'</p>';
-					var contHtml = contHtml + '<h4 class="list-group-item-heading">费用（元）</h4>';
-					var contHtml = contHtml + '<p class="list-group-item-text" id="">'+item.ACCT_ITEM_FEE+'</p>';
-					var contHtml = contHtml + '<h4 class="list-group-item-heading">付费方式</h4>';
-					var contHtml = contHtml + '<p class="list-group-item-text" id="">'+item.PAY_METHOD_TYPE+'</p>';
-					var contHtml = contHtml + '</li>';
-					$("#orderTbody").append(contHtml);
-				}
-			}
 			$("#yslpage").hide();
 			$("#order").hide();
 			$("#successContent").show();
