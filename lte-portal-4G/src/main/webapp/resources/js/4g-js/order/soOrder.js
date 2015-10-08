@@ -111,13 +111,13 @@ SoOrder = (function() {
 							//下省校验失败也将转至订单确认页面，展示错误信息，只提供返回按钮
 							else{
 								response.data.provCheckError = "Y";
-								response.data.provCheckErrorCode = provCheckResult.data.returnCode;
+								response.data.provCheckErrorCode = provCheckResult.data.errCode;
 								response.data.provCheckErrorMsg = "";
-								if(provCheckResult.data.returnCode!=undefined && provCheckResult.data.returnCode!=null){
-									response.data.provCheckErrorMsg +=  "【错误编码："+provCheckResult.data.returnCode+"】";
+								if(provCheckResult.data.errCode!=undefined && provCheckResult.data.errCode!=null){
+									response.data.provCheckErrorMsg +=  "【错误编码："+provCheckResult.data.errCode+"】";
 								}
-								if(provCheckResult.data.msg!=undefined && provCheckResult.data.msg!=null){
-									response.data.provCheckErrorMsg += provCheckResult.data.msg;
+								if(provCheckResult.data.errMsg!=undefined && provCheckResult.data.errMsg!=null){
+									response.data.provCheckErrorMsg += provCheckResult.data.errMsg;
 								}else{
 									response.data.provCheckErrorMsg += "未返回错误信息，可能是下省请求超时，请返回填单页面并稍后重试订单提交。";
 								}
