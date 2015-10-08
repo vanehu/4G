@@ -6,11 +6,7 @@
 <@override name="content">
 <h2 class="h2_title" style="display: none" >
 	<span>办套餐</span>
-	<!--  <a href="javascript:order.phoneNumber.initPage();" class="numberSearch back3"><span>返回</span></a>-->
-	<!-- <#if subPage??>
-	<#else>
-	<a href="javascript:order.prepare.backToInit();" class="numberSearch back3" id="backbtn"><span>返回</span></a>
-	</#if> -->
+
 </h2>
 <div class="order"  style="display: none" >
 	<div class="order_content" style="border: none; padding: 10px">
@@ -141,9 +137,9 @@
 		<li class="usersearch">
 		   <input id="diffPlaceFlag_choose" type="hidden" value="${DiffPlaceFlag}"> 
 			<#if Session["_ecs_login_session_key"].currentChannelId ?? && (Session["_ecs_login_session_key"].currentChannelId!="") >
-			  <input type="text" class="numberTextBox" style="margin-left:5px; width:100px" readonly id="p_cust_areaId_val_choose" onclick="order.cust.<#if DiffPlaceFlag=="local">chooseAreaForChooseUser<#else></#if>()" value="${Session["_ecs_login_session_key"].currentAreaAllName}" placeholder="请选择地区" readonly />
-	          <input type="hidden" id="p_cust_areaId_choose" value="${Session["_ecs_login_session_key"].currentAreaId}">
-	          <input type="hidden" DiffPlaceFlag="${DiffPlaceFlag}">
+			  <input type="text" class="numberTextBox" style="margin-left:5px; width:100px" readonly="readonly" id="p_cust_areaId_val_choose"  <#if DiffPlaceFlag=="local">onclick="order.cust.chooseAreaForChooseUser();"</#if> value="${Session["_ecs_login_session_key"].currentAreaAllName}" placeholder="请选择地区" />
+	          <input type="hidden" id="p_cust_areaId_choose" value="${Session["_ecs_login_session_key"].currentAreaId}" />
+	          <input type="hidden" DiffPlaceFlag="${DiffPlaceFlag}" />
 	         </#if>
         </li>
 		<li class="ulocation">
@@ -276,6 +272,7 @@
 	OrderInfo.provinceInfo.redirectUri = '${redirectUri}';
 	OrderInfo.provinceInfo.isFee = '${isFee}';
 	OrderInfo.actionFlag=1;
+	OrderInfo.newOrderInfo.isReloadFlag="N";
 	order.prepare.createorderlonger();
 	OrderInfo.busitypeflag=1;
 	order.service.initSpec();

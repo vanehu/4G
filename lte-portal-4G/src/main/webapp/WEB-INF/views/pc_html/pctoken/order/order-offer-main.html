@@ -12,7 +12,18 @@
 
 <@override name="content">
 <!--内容-->
+<style>
+.contract_list thead {
+background: white;
+};
+.contract_list {
+text-align: center;
+width: 100%;
+background-color: #FFF;
 
+};
+
+</style>
 <div class="main_div" style="width:100%;" >
 
     <div class="main_content" style="">
@@ -45,6 +56,36 @@
 </div>
 <div class="easyDialogdiv" style="width:400px;height:200px;vertical-align: middle;" id="packageTip_dialog" >
   <div id="infoTipContent" style="height: 200px;"></div>
+</div>
+
+<!-- 带主套餐id下 -->
+<!--弹出框的内容-->
+<div class="easyDialogdiv" style="width:700px;height:200px;" id="offer_dialog" >
+	
+  	<table  class="contract_list rule">
+        <thead>
+            <tr>
+                <td colspan="2" id="offer_title1">套餐变更</td>
+            </tr>                                                    
+        </thead>
+  	</table>
+  	<br/>
+  	<div style="text-align: center;">
+	  <table  class="contract_list rule">
+        <thead>
+            <tr>
+                <td colspan="2" id="offer_title"></td>
+            </tr>                                                    
+        </thead>
+  	</table>
+  	</table>
+	    
+	      	<div align="center" style="margin: 20px auto;">
+	      		<a href="javascript:void(0)" id="offer_btn" class="btna_o"><span>下一步</span></a>
+	      		<a class="btna_o" id="closeBtn" href="javascript:void(0)" style=" margin-left:20px;display: none;" onclick="easyDialog.close()"><span>取消</span></a>
+	      	</div>
+	    </div>
+  	</div>
 </div>
 
 
@@ -135,11 +176,9 @@
         	  //带主套餐id1
         	if(mainProdOfferId!=null && mainProdOfferId!=""){
         	   
-    	    	OrderInfo.offid=mainProdOfferId;//"81009";//mainProdOfferId;
-    	    	//alert(OrderInfo.offid);
+    	    	OrderInfo.offid=mainProdOfferId;
     	    	OrderInfo.reloadFlag=reloadFlag;
-    	    	//OrderInfo.data=data;
-    	    	order.uiCustes.custQuery();
+    	    	order.uiCustes.custQuery();    	
     		}
     		else{
     		   

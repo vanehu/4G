@@ -58,30 +58,7 @@ var _choosedCustInfo = {};
 	
 	var _custQuery=function(){
 		
-		//开始可选包前进行重载校验 
-		//var isReload=_packageInfo.reloadFlag;
-/*
-		if(isReload=="N"){
-			if(order.uiCust.orderInfo==null || order.uiCust.orderInfo=="" || order.uiCust.orderInfo=="undefined"){
-				_showPackageDialog("二次加载数据信息丢失!");
-				return;
-			}
-			
-			var resultCode=order.uiCust.orderInfo.resultCode;
-			
-			var resultMsg=order.uiCust.orderInfo.resultMsg;
-			
-			if(resultCode==null || resultCode=="" || resultCode=="undefined"){
-				_showPackageDialog("二次加载数据信息丢失!");
-				return;
-			}
-			
-			if(resultCode=="-1" || resultCode=="2"){
-				_showPackageDialog(resultMsg);
-				return;
-			}
-		}
-	*/	
+	
 		var url=contextPath+"/order/createorderlonger";
 		var response = $.callServiceAsJson(url, {});
 		if(response.code==0){
@@ -121,10 +98,12 @@ var _choosedCustInfo = {};
 		diffPlace=$("#DiffPlaceFlag").val();
 		
 		//旧客户定位地市是获取工号地市，暂不用
-		//areaId=$("#p_cust_areaId").val();
+		areaId=$("#p_cust_areaId").val();
+		if(areaId==undefined || areaId==null || areaId=="" || areaId=="null" || areaId=="undefined"){
+			//改为使用参数中的地市进行定位
+			areaId=$("#custAreaId_").val();
+		}
 		
-		//改为使用参数中的地市进行定位
-		areaId=$("#custAreaId_").val();
 		
 		if(areaId==null || areaId=="" || areaId=="null" || areaId=="undefined"){
 			_showPackageDialog("用于客户定位的地市为空，请重试!");
@@ -2252,7 +2231,8 @@ var _custAuthCallBack = function(response) {
 		//3G用户标识
 		$("#is3GCheckbox").off().change(function() { 
 			order.prodModify.getChooseProdInfo();
-			}); 
+		}); 
+		
 		//勾取消
 		$("#phoneNumListtbody tr").filter(".plan_select").children(":first-child").html("");
 		$("#phoneNumListtbody tr").filter(".plan_select")
@@ -2264,41 +2244,56 @@ var _custAuthCallBack = function(response) {
 		
 		$(selected).next("#plan2ndTr").find("#plan2ndDiv tbody tr:first").click();
 		
-		
 		//order.prodModify.orderAttachOffer();
 		//跳转到套餐更新页面
 		
 		OrderInfo.busitypeflag=2
 		$("#custInfo").hide();
 		OrderInfo.actionFlag = 2;
+		
 		if(!query.offer.setOffer()){ //必须先保存销售品实例构成，加载实例到缓存要使用
 			return ;
 		}
+		
 		$("#custInfo").hide();
-		//规则校验入参
-		var boInfos = [{
-			boActionTypeCd : CONST.BO_ACTION_TYPE.DEL_OFFER,
-			instId : prodInfo.prodInstId,
-			specId : CONST.PROD_SPEC.CDMA,
-			prodId : prodInfo.prodInstId
-		},{
-			boActionTypeCd : CONST.BO_ACTION_TYPE.BUY_OFFER,
-			instId : prodInfo.prodInstId,
-			specId : CONST.PROD_SPEC.CDMA,
-			prodId : prodInfo.prodInstId
-		}];
-		if(!rule.rule.ruleCheck(boInfos)){ //规则校验失败
-			return;
-		}
-		//如果是二次加载 
-		if(OrderInfo.reloadFlag=="N"){
-			
-			order.uiCustes.buyService(OrderInfo.offid,"");
-		}
-		else{
-			order.service.buyService(OrderInfo.offid,"");
+		
+		var boInfos;
+		
+		var nowIs3G=order.prodModify.choosedProdInfo.is3G;
+		
+		if(nowIs3G=="Y"){
+			boInfos=[{
+				boActionTypeCd : CONST.BO_ACTION_TYPE.DEL_OFFER,
+				specId : CONST.PROD_SPEC.CDMA,
+			},{
+				boActionTypeCd : CONST.BO_ACTION_TYPE.BUY_OFFER,
+				specId : CONST.PROD_SPEC.CDMA,
+			}];
+		}else{
+			boInfos=[{
+				boActionTypeCd : CONST.BO_ACTION_TYPE.DEL_OFFER,
+				instId : prodInfo.prodInstId,
+				specId : CONST.PROD_SPEC.CDMA,
+				prodId : prodInfo.prodInstId
+			},{
+				boActionTypeCd : CONST.BO_ACTION_TYPE.BUY_OFFER,
+				instId : prodInfo.prodInstId,
+				specId : CONST.PROD_SPEC.CDMA,
+				prodId : prodInfo.prodInstId
+			}];
 		}
 		
+		//进行规则校验
+		if(!rule.rule.ruleCheck(boInfos)){
+			return;
+		}
+		
+		//如果是二次加载 
+		if(OrderInfo.reloadFlag=="N"){
+			order.uiCustes.buyService(OrderInfo.offid,"");
+		}else{
+				order.service.buyService(OrderInfo.offid,"");
+		}
 	};
 
 	return {

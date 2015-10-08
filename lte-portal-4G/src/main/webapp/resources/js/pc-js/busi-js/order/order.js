@@ -56,6 +56,8 @@ order.service = (function(){
 				}
 			}
 		}
+		
+		//查询套餐列表数据信息
 		_queryData(params);
 		
 	};
@@ -106,34 +108,41 @@ order.service = (function(){
 					$.alert("提示","response.code");
 					return;
 				}
-				$("#service_detial").html(response.data).fadeIn();
-				var show_per_page = 10; //每页显示条数
-				var number_of_items = $('#offerlistcont').children().size();
-				if(number_of_items==0){
-					//var noitems_html = "<div style='text-align:center;'>抱歉，没有找到相关的套餐。</div>";
-					var noitems_html = "<img width='25' height='25' src='"+contextPath+"/image/icon/tip.png'>抱歉，没有找到相关的套餐。";
-					$("#errinfo").html(noitems_html);
-					$('#page_navigation').html("");
-				}else{
-					var number_of_pages = Math.ceil(number_of_items/show_per_page);
-					$('#current_page').val(0);
-					$('#show_per_page').val(show_per_page);
-					var navigation_html = '<label><span class="pageUpGray" onclick="order.service.previous();">上一页</span></label><label>';
-					var current_link = 0;
-					while(number_of_pages > current_link){
-						navigation_html += '<a class="page_link" href="javascript:order.service.go_to_page(' + current_link +')" longdesc="' + current_link +'">'+ (current_link + 1) +'</a>';
-						current_link++;
-					}
-					navigation_html += '</label><label><span class="nextPageGrayOrange" onclick="order.service.next();">下一页</span></label>';
-					$('#page_navigation').html(navigation_html);
-					$('#page_navigation .page_link:first').addClass('pagingSelect');
-					//$('#page_navigation .page_link:first').removeClass('page_link');
-					$('#offerlistcont').children().css('display', 'none');
-					$('#offerlistcont').children().slice(0, show_per_page).css('display', 'table-row');
-					if($('.pagingSelect').next('.page_link').length==false){
-						$('.nextPageGrayOrange').removeClass('nextPageGrayOrange').addClass('nextPageGray');
-					}
-				}	
+				
+				//判断是否二次加载，二次不展示套餐
+				var nowReloadFalg=OrderInfo.newOrderInfo.isReloadFlag;
+				
+				if(nowReloadFalg!="N"){
+					jQuery("#service_detial").html(response.data).fadeIn();
+					
+					var show_per_page = 10; //每页显示条数
+					var number_of_items = $('#offerlistcont').children().size();
+					if(number_of_items==0){
+						//var noitems_html = "<div style='text-align:center;'>抱歉，没有找到相关的套餐。</div>";
+						var noitems_html = "<img width='25' height='25' src='"+contextPath+"/image/icon/tip.png'>抱歉，没有找到相关的套餐。";
+						$("#errinfo").html(noitems_html);
+						$('#page_navigation').html("");
+					}else{
+						var number_of_pages = Math.ceil(number_of_items/show_per_page);
+						$('#current_page').val(0);
+						$('#show_per_page').val(show_per_page);
+						var navigation_html = '<label><span class="pageUpGray" onclick="order.service.previous();">上一页</span></label><label>';
+						var current_link = 0;
+						while(number_of_pages > current_link){
+							navigation_html += '<a class="page_link" href="javascript:order.service.go_to_page(' + current_link +')" longdesc="' + current_link +'">'+ (current_link + 1) +'</a>';
+							current_link++;
+						}
+						navigation_html += '</label><label><span class="nextPageGrayOrange" onclick="order.service.next();">下一页</span></label>';
+						$('#page_navigation').html(navigation_html);
+						$('#page_navigation .page_link:first').addClass('pagingSelect');
+						//$('#page_navigation .page_link:first').removeClass('page_link');
+						$('#offerlistcont').children().css('display', 'none');
+						$('#offerlistcont').children().slice(0, show_per_page).css('display', 'table-row');
+						if($('.pagingSelect').next('.page_link').length==false){
+							$('.nextPageGrayOrange').removeClass('nextPageGrayOrange').addClass('nextPageGray');
+						}
+					}	
+				}
 			},
 			"always":function(){
 				$.unecOverlay();
@@ -224,7 +233,21 @@ order.service = (function(){
 					}
 				}
 			}
-			offerChange.offerChangeView();
+			
+			if(OrderInfo.offid!=null && OrderInfo.offid!=""){
+				 $("#offer_title").text("订购新套餐："+OrderInfo.offerSpec.offerSpecName);
+				//弹出套餐确认
+				easyDialog.open({
+					container : "offer_dialog"
+				});
+				$("#offer_btn").off("click").on("click",function(){
+					easyDialog.close();
+					offerChange.offerChangeView();
+				});
+			}
+			else{
+				offerChange.offerChangeView();
+			}
 			return;
 		}
 		var iflag = 0; //判断是否弹出副卡选择框 false为不选择
@@ -333,20 +356,25 @@ order.service = (function(){
 			order.main.buildMainView(param);	
 		}
 		
-		//ie8 无法关闭问题
-		if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersion.match(/8./i)=="8.")  { 
-			if(document.getElementById("closeBtn")){
-				document.getElementById("closeBtn").click();
-			}else{
-				easyDialog.close();
-			}
-		}else{
-			if($("#closeBtn")){
-				$("#closeBtn").click();
-			}
-			
-			easyDialog.close();
-		}
+		//弹出框无法关闭修复wangjz5
+		jQuery("#easyDialogBox").hide();
+		
+		jQuery("#overlay").hide();
+		
+//		//ie8 无法关闭问题
+//		if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersion.match(/8./i)=="8.")  { 
+//			if(document.getElementById("closeBtn")){
+//				document.getElementById("closeBtn").click();
+//			}else{
+//				easyDialog.close();
+//			}
+//		}else{
+//			if($("#closeBtn")){
+//				$("#closeBtn").click();
+//			}
+//			
+//			easyDialog.close();
+//		}
 		
 		
 	};

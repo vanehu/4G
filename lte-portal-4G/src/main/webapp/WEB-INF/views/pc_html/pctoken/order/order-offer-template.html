@@ -623,7 +623,7 @@
 		<li class="usersearch">
 		   <input id="diffPlaceFlag_choose" type="hidden" value="${DiffPlaceFlag}"> 
 			<#if Session["_ecs_login_session_key"].currentChannelId ?? && (Session["_ecs_login_session_key"].currentChannelId!="") >
-			  <input type="text" class="numberTextBox" style="margin-left:5px; width:100px" readonly id="p_cust_areaId_val_choose" onclick="order.cust.<#if DiffPlaceFlag=="local">chooseAreaForChooseUser<#else></#if>()" value="${Session["_ecs_login_session_key"].currentAreaAllName}" placeholder="请选择地区" readonly />
+			  <input type="text" class="numberTextBox" style="margin-left:5px; width:100px" readonly="readonly" id="p_cust_areaId_val_choose" <#if DiffPlaceFlag=="local">onclick="order.cust.chooseAreaForChooseUser();"</#if> value="${Session["_ecs_login_session_key"].currentAreaAllName}" placeholder="请选择地区" />
 	          <input type="hidden" id="p_cust_areaId_choose" value="${Session["_ecs_login_session_key"].currentAreaId}">
 	          <input type="hidden" DiffPlaceFlag="${DiffPlaceFlag}">
 	         </#if>
