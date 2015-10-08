@@ -196,6 +196,8 @@ order.service = (function(){
 		OrderInfo.oldprodInstInfos = [];
 		OrderInfo.oldofferSpec = [];
 		OrderInfo.oldoffer = [];
+		OrderInfo.oldprodAcctInfos = [];
+		OrderInfo.oldAddNumList = [];
 		var param = {
 			offerSpecId : inParam.specId,
 			offerTypeCd : 1,
@@ -333,6 +335,11 @@ order.service = (function(){
 	
 	//选择完主套餐构成后确认
 	var _confirm = function(param){
+		OrderInfo.oldprodInstInfos = [];
+		OrderInfo.oldofferSpec = [];
+		OrderInfo.oldoffer = [];
+		OrderInfo.oldprodAcctInfos = [];
+		OrderInfo.oldAddNumList = [];
 		order.memberChange.viceCartNum = 0;
 		$.each(OrderInfo.offerSpec.offerRoles,function(){
 			this.prodInsts = [];

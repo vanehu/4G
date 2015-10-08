@@ -164,6 +164,11 @@ offerChange = (function() {
 	};
 	
 	function offerChangeConfirm(){
+		OrderInfo.oldprodInstInfos = [];
+		OrderInfo.oldofferSpec = [];
+		OrderInfo.oldoffer = [];
+		OrderInfo.oldprodAcctInfos = [];
+		OrderInfo.oldAddNumList = [];
 		var newnum = 0;
 		var oldnum = 0;
 		order.memberChange.viceCartNum = 0;
@@ -234,8 +239,8 @@ offerChange = (function() {
 			param.oldoffer = OrderInfo.oldoffer;
 		}
 		order.main.buildMainView(param);
-//		easyDialog.close();
-		$("#member_dialog").hide();
+		easyDialog.close();
+//		$("#member_dialog").hide();
 	}
 	
 	//填充套餐变更页面

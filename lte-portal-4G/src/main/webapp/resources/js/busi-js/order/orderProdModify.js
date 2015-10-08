@@ -1981,6 +1981,7 @@ order.prodModify = (function(){
 		OrderInfo.oldprodInstInfos = [];
 		OrderInfo.oldofferSpec = [];
 		OrderInfo.oldoffer = [];
+		OrderInfo.oldprodAcctInfos = [];
 		OrderInfo.oldAddNumList = [];
 		offerChange.init();
 	};
