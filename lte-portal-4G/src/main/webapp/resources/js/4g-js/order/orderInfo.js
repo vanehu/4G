@@ -624,6 +624,7 @@ OrderInfo = (function() {
 				busiOrder.data.ooRoles = [];
 				$.each(offer.offerMemberInfos,function(){
 					var ooRoles = {
+						accessNumber : this.accessNumber,//接入号码
 						objId : this.objId, //业务规格ID
 						objInstId : this.objInstId, //业务对象实例ID,新装默认-1
 						objType : this.objType, // 业务对象类型
