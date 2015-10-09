@@ -33,7 +33,7 @@
 					<#list offerSpec.offerRoles as offerRole>	
 						<#if (offerRole.prodInsts?? && offerRole.prodInsts?size>0)>
 							<#list offerRole.prodInsts as prod>
-								<#if prod.memberRoleCd==401>
+								<#if prod.memberRoleCd==401 && prod.accessNumber==undefined>
 									<li class="" id="tab_${prod.prodInstId}" prodId="${prod.prodInstId}" onclick="offerChange.changeTab(${prod.prodInstId})">${prod.offerRoleName}</li>
 								</#if>
 							</#list>

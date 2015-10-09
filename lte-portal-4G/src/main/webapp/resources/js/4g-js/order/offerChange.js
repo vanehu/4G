@@ -1105,6 +1105,7 @@ offerChange = (function() {
 	
 	var _createMainOrder = function(busiOrders) {
 		var prodInfo = order.prodModify.choosedProdInfo;
+		var offerSpec = OrderInfo.offerSpec;
 		var offerBusiOrder = {};
 		var busiOrder = {
 			areaId : prodInfo.areaId,  //受理地区ID
@@ -1112,8 +1113,8 @@ offerChange = (function() {
 				seq : OrderInfo.SEQ.seq--
 			}, 
 			busiObj : { //业务对象节点
-				objId : prodInfo.prodOfferId,  //业务规格ID
-				instId : prodInfo.prodOfferInstId, //业务对象实例ID
+				objId : offerSpec.offerSpecId,  //业务规格ID
+				instId : "-1", //业务对象实例ID
 				accessNumber : prodInfo.accNbr, //业务号码
 				isComp : "Y", //是否组合
 				offerTypeCd : "1" //1主销售品
