@@ -32,6 +32,7 @@ prod.changeUim = (function() {
 		if(area=="diff"){
 			actionFlag = 23;
 			areaAtionType = CONST.BO_ACTION_TYPE.DIFF_AREA_CHANGE_CARD;
+			param.boInfos[0].boActionTypeCd = CONST.BO_ACTION_TYPE.DIFF_AREA_CHANGE_CARD;//异地补换卡，动作类型boActionTypeCd需要改为DIFF_AREA_CHANGE_CARD
 			opeName = "异地补换卡";
 			var areaid = prodInfo.areaId;
 			if(areaid==undefined || areaid==''){
