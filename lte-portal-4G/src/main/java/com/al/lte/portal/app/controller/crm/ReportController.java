@@ -39,6 +39,7 @@ import com.al.lte.portal.bmo.crm.CartBmo;
 import com.al.lte.portal.bmo.crm.MktResBmo;
 import com.al.lte.portal.bmo.crm.OrderBmo;
 import com.al.lte.portal.common.CommonMethods;
+import com.al.lte.portal.common.Const;
 import com.al.lte.portal.common.EhcacheUtil;
 import com.al.lte.portal.common.StringUtil;
 import com.al.lte.portal.common.SysConstant;
@@ -392,7 +393,7 @@ public class ReportController extends com.al.lte.portal.controller.crm.ReportCon
 		param.put("olStatusCd", request.getParameter("olStatusCd"));
 		param.put("qryNumber", request.getParameter("qryNumber"));
 		param.put("olNbr", request.getParameter("olNbr"));
-		
+		param.put("olTypeCd", Const.OL_TYPE_CD);
 		param.put("qryCnt", "Y");
 		param.put("qryTime", "1");
 		
