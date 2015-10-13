@@ -50,17 +50,23 @@ public class RuleControler extends BaseController {
 	@RequestMapping(value = "/prepare", method = { RequestMethod.POST })
 	@ResponseBody
 	public JsonResponse checkRulePrepare(@RequestBody Map<String, Object> param, Model model, HttpServletResponse response,@LogOperatorAnn String flowNum) throws BusinessException{
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+				SysConstant.SESSION_KEY_LOGIN_STAFF);
+		//填充areaId、channelId、staffId，redmine 24000
+		param.put("areaId", sessionStaff.getAreaId());
+		param.put("channelId", sessionStaff.getCurrentChannelId());
+		param.put("staffId", sessionStaff.getStaffId());
+		
 		if (log.isDebugEnabled()){
 			log.debug("规则校验入参{}", JsonUtil.toString(param));
 		}
+		
 		Map<String, Object> resultMap = new HashMap<String, Object>();
     	Map<String, Object> prodMap = new HashMap<String, Object>();
     	Map<String, Object> ruleMap = new HashMap<String, Object>();
     	Object boInfosObj = null;
 		JsonResponse jsonResponse = null;
 		
-		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
-				SysConstant.SESSION_KEY_LOGIN_STAFF);
 		try {
 			String boActionTypeCd = "";
 			resultMap = ruleBmo.checkRulePrepare(param, flowNum, sessionStaff);
