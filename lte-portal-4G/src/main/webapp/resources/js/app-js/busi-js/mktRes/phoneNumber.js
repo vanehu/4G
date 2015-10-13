@@ -179,6 +179,7 @@ order.phoneNumber = (function(){
 			//套餐月基本费用
 			var packageMonthFare=parseInt(order.service.offerprice);
 			if(packageMonthFare<minMonthFare){
+				$.unecOverlay();
 				$.alert("提示","对不起,此号码不能被选购.(原因:套餐月基本费用必须大于号码月保底消费)");
 				return;
 			}
@@ -223,6 +224,7 @@ order.phoneNumber = (function(){
 				for(var i=0;i<OrderInfo.boProdAns.length;i++){
 					if(OrderInfo.boProdAns[i].prodId!=subnum){
 						if(OrderInfo.boProdAns[i].accessNumber==phoneNumber){
+							$.unecOverlay();
 							$.alert("提示","你已经选择了该号码,请选择其它号码!");
 							return;
 						}
@@ -243,6 +245,7 @@ order.phoneNumber = (function(){
 					$.callServiceAsJson(purchaseUrl, params, {});
 				}
 			}
+			$.unecOverlay();
 			idcode.push(phoneNumber);
 			if(subPage=='number'){
 				var content$=$("#order_fill_content");
@@ -259,7 +262,16 @@ order.phoneNumber = (function(){
 				_boProdAn.preStore=preStoreFare;
 				_boProdAn.minCharge=pnPrice;
 				order.service.boProdAn = _boProdAn;
-				_qryOfferInfoByPhoneNumFee();
+				//_qryOfferInfoByPhoneNumFee();
+				OrderInfo.returnFlag=2;  // 临时处理
+				OrderInfo.order.step=2;
+				$("#tentrance").show();
+				$("#pentrance").hide();
+				$("#nentrance").hide();
+				$("#pakeage").attr("class","tab-pane fade in active");
+				$("#tentrance").css("width","100%");
+				$("#phone").hide();
+				$("#number").hide();
 			}else if(subPage=='terminal'){
 				mktRes.terminal.setNumber(phoneNumber, plevel);
 				_boProdAn.accessNumber=phoneNumber;

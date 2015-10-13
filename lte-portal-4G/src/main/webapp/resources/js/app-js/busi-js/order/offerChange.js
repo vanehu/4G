@@ -43,9 +43,30 @@ offerChange = (function() {
 		if(CONST.getAppDesc()==0){ 
 			//老套餐是3G，新套餐是4G
 			if(order.prodModify.choosedProdInfo.is3G== "Y" && OrderInfo.offerSpec.is3G =="N"){
-				if(!offerChange.checkOrder()){ //省内校验单
-					return;
-				}
+				offerChange.checkOrder(undefined, function(result){
+					if(!result){ //省内校验单
+						return;
+					}
+					//根据UIM类型，设置产品是3G还是4G，并且保存旧卡
+					if(!prod.uim.setProdUim()){ 
+						return ;
+					}
+					//初始化填单页面
+					var prodInfo = order.prodModify.choosedProdInfo;
+					var param = {
+						boActionTypeCd : "S2" ,
+						boActionTypeName : "套餐变更",
+						actionFlag :"2",
+						offerSpec : OrderInfo.offerSpec,
+						prodId : prodInfo.prodInstId,
+						offerMembers : OrderInfo.offer.offerMemberInfos,
+						oldOfferSpecName : prodInfo.prodOfferName,
+						prodClass : prodInfo.prodClass,
+						appDesc : CONST.getAppDesc()
+					};
+					order.main.buildMainView(param);
+				});
+				return;
 			}
 			//根据UIM类型，设置产品是3G还是4G，并且保存旧卡
 			if(!prod.uim.setProdUim()){ 
@@ -274,25 +295,42 @@ offerChange = (function() {
 	};
 	
 	//省里校验单
-	var _checkOrder = function(prodId){
+	var _checkOrder = function(prodId,callBackFun){
 		if(OrderInfo.actionFlag==3){
 			_getAttachOfferInfo();
 		}else{
 			_getChangeInfo();
 		}
-		var data = query.offer.updateCheckByChange(JSON.stringify(OrderInfo.orderData));
-		OrderInfo.orderData.orderList.custOrderList[0].busiOrder = []; //校验完清空	
-		if(data==undefined){
-			return false;
+		if(typeof(callBackFun)=="function"){
+			query.offer.updateCheckByChange(JSON.stringify(OrderInfo.orderData),function(data){
+				OrderInfo.orderData.orderList.custOrderList[0].busiOrder = []; //校验完清空	
+				if(data==undefined){
+					callBackFun(false);
+				}
+				if(data.resultCode==0 && ec.util.isObj(data.result)){ //预校验成功
+					offerChange.resultOffer = data.result;
+				}else {
+					$.alert("预校验规则限制",data.resultMsg);
+					offerChange.resultOffer = {}; 
+					callBackFun(false);
+				}
+				callBackFun(true);
+			});
+		}else{
+			var data = query.offer.updateCheckByChange(JSON.stringify(OrderInfo.orderData));
+			OrderInfo.orderData.orderList.custOrderList[0].busiOrder = []; //校验完清空	
+			if(data==undefined){
+				return false;
+			}
+			if(data.resultCode==0 && ec.util.isObj(data.result)){ //预校验成功
+				offerChange.resultOffer = data.result;
+			}else {
+				$.alert("预校验规则限制",data.resultMsg);
+				offerChange.resultOffer = {}; 
+				return false;
+			}
+			return true;
 		}
-		if(data.resultCode==0 && ec.util.isObj(data.result)){ //预校验成功
-			offerChange.resultOffer = data.result;
-		}else {
-			$.alert("预校验规则限制",data.resultMsg);
-			offerChange.resultOffer = {}; 
-			return false;
-		}
-		return true;
 	};
 	
 	//3G套餐订购4G流量包时预校验的入参封装

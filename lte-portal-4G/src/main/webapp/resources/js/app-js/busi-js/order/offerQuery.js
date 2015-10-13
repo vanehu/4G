@@ -687,21 +687,48 @@ query.offer = (function() {
 	};
 	
 	//预校验
-	var _updateCheckByChange = function(param){
+	var _updateCheckByChange = function(param,callBackFun){
 		var url = contextPath+"/order/prodModify/updateCheckByChange";
-		$.ecOverlay("<strong>正在预校验中，请稍等...</strong>");
-		var response = $.callServiceAsJson(url,param);
-		$.unecOverlay();
-		if (response.code == 0) {
-			return response.data;
-		}else if (response.code == -2) {
-			$.alertM(response.data);
+		if(typeof(callBackFun)=="function"){
+			$.ecOverlay("<strong>正在预校验中，请稍等...</strong>");
+			$.callServiceAsJson(url,param,{
+				"before":function(){
+					$.ecOverlay("<strong>正在预校验中，请稍等...</strong>");
+				},
+				"done" : function(response){
+					$.unecOverlay();
+					if (response.code == 0) {
+						callBackFun(response.data);
+					}else if (response.code == -2) {
+						$.alertM(response.data);
+					}else{
+					    if (response.data.resultMsg) {
+					        $.alert("提示","预校验失败!失败原因为："+response.data.resultMsg);
+					    } else {
+					        $.alert("提示","预校验失败! 集团营业后台未给出原因。");
+					    }
+					}
+				},
+				fail:function(response){
+					$.unecOverlay();
+					$.alert("提示","预校验失败! 集团营业后台未给出原因。");
+				}
+			});
 		}else{
-		    if (response.data.resultMsg) {
-		        $.alert("提示","预校验失败!失败原因为："+response.data.resultMsg);
-		    } else {
-		        $.alert("提示","预校验失败! 集团营业后台未给出原因。");
-		    }
+			$.ecOverlay("<strong>正在预校验中，请稍等...</strong>");
+			var response = $.callServiceAsJson(url,param);
+			$.unecOverlay();
+			if (response.code == 0) {
+				return response.data;
+			}else if (response.code == -2) {
+				$.alertM(response.data);
+			}else{
+			    if (response.data.resultMsg) {
+			        $.alert("提示","预校验失败!失败原因为："+response.data.resultMsg);
+			    } else {
+			        $.alert("提示","预校验失败! 集团营业后台未给出原因。");
+			    }
+			}
 		}
 	};
 	
