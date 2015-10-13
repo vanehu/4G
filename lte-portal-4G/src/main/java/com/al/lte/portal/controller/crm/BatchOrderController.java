@@ -48,8 +48,10 @@ import com.al.ecs.exception.ResultConstant;
 import com.al.ecs.spring.annotation.log.LogOperatorAnn;
 import com.al.ecs.spring.annotation.session.AuthorityValid;
 import com.al.ecs.spring.controller.BaseController;
+import com.al.lte.portal.bmo.crm.CustBmo;
 import com.al.lte.portal.bmo.crm.MktResBmo;
 import com.al.lte.portal.bmo.crm.OrderBmo;
+import com.al.lte.portal.bmo.staff.StaffBmo;
 import com.al.lte.portal.common.EhcacheUtil;
 import com.al.lte.portal.common.SysConstant;
 import com.al.lte.portal.model.SessionStaff;
@@ -64,6 +66,14 @@ public class BatchOrderController  extends BaseController {
 	@Autowired
 	@Qualifier("com.al.lte.portal.bmo.crm.MktResBmo")
 	private MktResBmo mktResBmo;
+	
+	@Autowired
+	@Qualifier("com.al.lte.portal.bmo.staff.StaffBmo")
+	private StaffBmo staffBmo;
+	
+	@Autowired
+	@Qualifier("com.al.lte.portal.bmo.crm.CustBmo")
+	private CustBmo custBmo;
 
 	@RequestMapping(value = "/batchForm", method = RequestMethod.GET)
 	public String batchForm(Model model, HttpServletRequest request) {
@@ -1464,12 +1474,45 @@ public class BatchOrderController  extends BaseController {
 	 * @param str
 	 * @return
 	 */
-	private Map<String, Object> readNewOrderExcelBatch(Workbook workbook,
-			String batchType, String str) {
+	private Map<String, Object> readNewOrderExcelBatch(Workbook workbook, String batchType, String str) {
+		
 		String message = "";
 		String code = "-1";
 		Map<String, Object> returnMap = new HashMap<String, Object>();
 		StringBuffer errorData = new StringBuffer();
+		
+		//批量新装，Excel模板新增一列“使用人custNumber”，校验客户类型：当客户为政企客户(政企证件)，“使用人custNumber”一列不能为空；公众证件置空。
+		boolean custFlag = false;//政企客户(政企证件)：false；个人账户(公众证件)：true
+		try {
+			List<Map<String, Object>> CertTypeList = new ArrayList<Map<String, Object>>();
+			String identifyCd = str.substring(str.lastIndexOf("/") + 1);
+			//查询公众(个人)证件类型
+			Map<String, Object> param = new HashMap<String, Object>(){
+				{put("partyTypeCd", "1");}
+			};
+			SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);
+			Map<String, Object> rMap = custBmo .queryCertType(param, null, sessionStaff);
+			CertTypeList = (List<Map<String, Object>>) rMap.get("result");
+			if(!CertTypeList.isEmpty()){
+				for(int i = 0; i < CertTypeList.size(); i ++){
+					if(identifyCd.equals(CertTypeList.get(i).get("certTypeCd").toString())){
+						//若客户定位的(identifyCd)结果与公众证件类型中某一类型(certTypeCd)一致，则其为个人账户(公众证件)
+						custFlag = true;
+					}
+					
+				}
+			}
+		} catch (Exception e) {
+			code = "-1";
+			message = "处理服务service/intf.custService/queryCertTypeByPartyTypeCd时异常";
+			errorData.append(e.getStackTrace());
+			returnMap.put("errorData", errorData.toString());
+			returnMap.put("code", code);
+			returnMap.put("message", message);
+
+			return returnMap;
+		}
+		
 		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
 		List<Map<String, Object>> mktResInstList = new ArrayList<Map<String, Object>>();
 		List<Map<String, Object>> uList = new ArrayList<Map<String, Object>>();
@@ -1526,8 +1569,7 @@ public class BatchOrderController  extends BaseController {
 						if (null != cell) {
 							String cellValue = checkExcelCellValue(cell);
 							if (cellValue == null) {
-								errorData
-										.append("第" + (i + 1) + "行,第1列单元格格式不对");
+								errorData.append("第" + (i + 1) + "行,第1列单元格格式不对");
 								break;
 							} else if (!"".equals(cellValue)) {
 								item.put("accountId", cellValue);
@@ -1643,6 +1685,25 @@ public class BatchOrderController  extends BaseController {
 						} else {
 							item.put("linkman", "");
 							item.put("linknumber", "");
+						}
+						//校验“批量新装”新增的一列“使用人”
+						//By ZhangYu 2015-09-07
+						if (SysConstant.BATCHNEWORDER.equals(batchType)) {
+							cell = row.getCell(7);
+							if (null != cell && !custFlag) {
+								String cellValue = checkExcelCellValue(cell);
+								if (cellValue == null || cellValue.length() == 0) {
+									errorData.append("第" + (i + 1) + "行,第8列单元格格式不对，政企客户使用人一列不可为空。");
+									break;
+								} else {
+									item.put("custNumber", cellValue);//Excel中第8列“使用人”
+								}
+							} else if(!custFlag && null == cell){
+								errorData.append("第" + (i + 1) + "行,第8列单元格格式不对，政企客户使用人一列不可为空。");
+								break;								
+							} else{
+								item.put("custNumber", "");
+							}
 						}
 					}
 					if (item.size() > 0) {
