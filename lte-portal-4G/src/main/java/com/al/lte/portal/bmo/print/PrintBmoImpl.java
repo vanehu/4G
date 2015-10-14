@@ -7434,11 +7434,12 @@ public class PrintBmoImpl implements PrintBmo {
 		}
 		rstStr.append(SysConstant.STR_LM_BRE + actionType + SysConstant.STR_RM_BRE);
 		rstStr.append(itemName);
-		rstStr.append(SysConstant.STR_LL_BRE + relaAcceNbr + SysConstant.STR_RL_BRE);
+		rstStr.append(SysConstant.STR_LL_BRE + effectRule + SysConstant.STR_RL_BRE);
+		rstStr.append(SysConstant.STR_SEP + relaAcceNbr);
 		if (StringUtils.isNotBlank(itemParam)) {
 			rstStr.append(itemParam);
 		}
-		rstStr.append(SysConstant.STR_LL_BRE + effectRule + SysConstant.STR_RL_BRE + SysConstant.STR_SPI);
+		rstStr.append(SysConstant.STR_SPI);
 
 		return rstStr.toString();
 	}
