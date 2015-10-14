@@ -26,4 +26,9 @@ public class Const {
 	
 	public static final String OFFERCHANGE_FLAG="2";//套餐变更的标识
 	public static final String ACTIVERETURN_FLAG="9";//产品返档(活卡销售返档)的标识
+	
+	
+	public static final String OL_TYPE_CD = "15";// app 系统标示
+	
+	
 }
