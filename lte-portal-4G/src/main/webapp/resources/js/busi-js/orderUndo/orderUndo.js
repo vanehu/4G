@@ -109,7 +109,12 @@ order.undo = (function(){
 	};
 	
 	var _undoCheck = function (all_only,y_n,id) {
-		var statusCd = $("#"+id).attr("statusCd"); 
+		var statusCd = $("#"+id).attr("statusCd");
+		var cancelFlag = $("#"+id).attr("cancelFlag");
+		if(cancelFlag!=null && cancelFlag!="" && cancelFlag !=undefined && cancelFlag==2){
+			$.alert("提示","该订单是电渠ESS订单，且未向ESS异常报竣，请先异常报竣后再撤单！");
+			return;
+		}
 		if(all_only=="all" && statusCd == '100002'){ // 状态
 			var content = "是否作废购物车： " +$("#"+id).attr("olNbr");
 			$.confirm("信息确认",content,{ 
