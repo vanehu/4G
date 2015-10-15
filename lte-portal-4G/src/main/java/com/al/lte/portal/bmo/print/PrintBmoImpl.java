@@ -951,13 +951,16 @@ public class PrintBmoImpl implements PrintBmo {
 			}
 		}
 
-		Map<String, Object> newMap = servEventList.get(0);
-		List<Map<String, Object>> newEventContList = new ArrayList<Map<String, Object>>();
-		newEventContList.addAll(mergeMap.values());
-		newMap.put("orderEventCont", newEventContList);
+		Map<String, Object> newMap = null;
+		if (null != servEventList && servEventList.size() > 0) {
+			newMap = servEventList.get(0);
+			List<Map<String, Object>> newEventContList = new ArrayList<Map<String, Object>>();
+			newEventContList.addAll(mergeMap.values());
+			newMap.put("orderEventCont", newEventContList);
+			//加入到原来列表
+			orderEventList.add(newMap);
+		}
 
-		//加入到原来列表
-		orderEventList.add(newMap);
 
 		return orderEventList;
 	}
