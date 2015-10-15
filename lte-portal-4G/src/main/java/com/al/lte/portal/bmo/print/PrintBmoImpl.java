@@ -915,6 +915,53 @@ public class PrintBmoImpl implements PrintBmo {
 		return orderEventList;
 	}
 
+
+	private List<Map<String, Object>> mergeAcceNbrToServ_V2(List<Map<String, Object>> orderEventList) {
+		List<Map<String, Object>> servEventList = new ArrayList<Map<String, Object>>();
+		//找出orderEventType为3，boActionTypeCd为7的节点，它们是服务变更节点，再进行合并
+		for (int i = orderEventList.size()-1; i >0 ; i--) {
+			Map<String, Object> event = orderEventList.get(i);
+			String orderEventType = MapUtils.getString(event, "orderEventType", "");
+			Map<String, Object> orderEventTitle = (Map<String, Object>) event.get("orderEventTitle");
+			String boActionTypeCd = MapUtils.getString(orderEventTitle, "boActionTypeCd", "");
+			if ("3".equals(orderEventType) && "7".equals(boActionTypeCd)) {
+				servEventList.add(event);
+				orderEventList.remove(i);
+			}
+		}
+		//合并号码
+		Map<String, Map<String, Object>> mergeMap = new HashMap<String, Map<String, Object>>();
+
+		for (int i = 0; i < servEventList.size(); i++) {
+			Map<String, Object> event = servEventList.get(i);
+			List<Map<String, Object>> eventContList = (List<Map<String, Object>>) event.get("orderEventCont");
+
+			for (int j = 0; j < eventContList.size(); j++) {
+				Map<String, Object> eventCont = eventContList.get(j);
+				String objId = MapUtils.getString(eventCont, "objId", "");
+				String currentRelaAcceNbr = MapUtils.getString(eventCont, "relaAcceNbr", "");
+				if(mergeMap.containsKey(objId)) {
+					Map<String, Object> map = mergeMap.get(objId);
+					String relaAcceNbr = MapUtils.getString(map, "relaAcceNbr", "");
+					relaAcceNbr = relaAcceNbr + SysConstant.STR_PAU + currentRelaAcceNbr;
+					map.put("relaAcceNbr",relaAcceNbr);
+				}else{
+					mergeMap.put(objId,eventCont);
+				}
+			}
+		}
+
+		Map<String, Object> newMap = servEventList.get(0);
+		List<Map<String, Object>> newEventContList = new ArrayList<Map<String, Object>>();
+		newEventContList.addAll(mergeMap.values());
+		newMap.put("orderEventCont", newEventContList);
+
+		//加入到原来列表
+		orderEventList.add(newMap);
+
+		return orderEventList;
+	}
+
 	private List<OrderEventSet> parseOrderEvents(Map<String, Object> dataMap, int speCustInfoLen) {
 		List<OrderEventSet> orderEventSets = new ArrayList<OrderEventSet>();
 		if (dataMap.containsKey("orderEvent")) {
@@ -5997,7 +6044,7 @@ public class PrintBmoImpl implements PrintBmo {
 
 			//20140715 处理多个产品时合并展示接入号码的需求
 			//1）[开通]xxxx功能(号码：xxxxxxxxxxx ，xxxxxxxxxxx)；（xx小时内生效）；xx元/月 ；  （多号码可并列）
-			orderEventList = mergeAcceNbrToServ(orderEventList);
+			orderEventList = mergeAcceNbrToServ_V2(orderEventList);
 
 			int eventSize = orderEventList.size();
 			boolean attachFlag = false;
