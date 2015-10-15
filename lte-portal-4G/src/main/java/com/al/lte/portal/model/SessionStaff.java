@@ -126,7 +126,19 @@ public class SessionStaff implements Serializable {
 	private String macAddr;
 	/** 浏览器指纹 */
 	private String fingerPrint;
+	/**客户定位的客户分群标识，1100：公众客户；1000：政企客户*/
+	private String custSegmentId;
 	
+	public String getCustSegmentId() {
+		return custSegmentId;
+	}
+
+
+	public void setCustSegmentId(String custSegmentId) {
+		this.custSegmentId = custSegmentId;
+	}
+
+
 	public String getPhoneModel() {
 		return phoneModel;
 	}

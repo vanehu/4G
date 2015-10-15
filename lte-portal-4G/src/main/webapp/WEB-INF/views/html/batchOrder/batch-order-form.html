@@ -118,7 +118,7 @@
 								                  <td width="100px">号码</td>
 								                </tr>                                               
 								            </thead>
-								            <tbody> 
+								            <tbody>
 								            <#list errorlist?chunk(2) as childList>
 								            	<tr>
 								            	 <#list childList as busiList>
@@ -152,7 +152,8 @@
 							<span style="line-height:25px;">(1)仅支持上传xls、xlsx，单元格格式请设置为文本。
 							<br/>(2)新增真实客户时"客户"列填写格式：-1/姓名/证件号码/证件类型&nbsp;<a href="javascript:order.batch.downloadIdType()"><span style="color: #0000FF;font-weight: bold;">证件类型下载</span></a>
 							<br/>(3)新增虚拟客户时"客户"列填写格式：-1
-							<br/>(4)预约执行时间：例如：选择0点-->导入成功后0点执行；选择23点-->导入成功后23点执行
+							<br/>(4)<strong>使用人</strong>一列只能填省内客户编码，公众证件类型新装时不填，政企证件类型客户新装时必填
+							<br/>(5)预约执行时间：例如：选择0点-->导入成功后0点执行；选择23点-->导入成功后23点执行
 							</span>
 						<#elseif batchType=="9">
 							<span style="line-height:25px;">(1)仅支持上传xls、xlsx，单元格格式请设置为文本。

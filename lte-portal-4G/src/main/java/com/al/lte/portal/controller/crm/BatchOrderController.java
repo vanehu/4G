@@ -1476,21 +1476,18 @@ public class BatchOrderController  extends BaseController {
 	 */
 	private Map<String, Object> readNewOrderExcelBatch(Workbook workbook, String batchType, String str) {
 		
-		String message = "";
-		String code = "-1";
-		Map<String, Object> returnMap = new HashMap<String, Object>();
-		StringBuffer errorData = new StringBuffer();
-		
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);
+		String segmentId = sessionStaff.getCustSegmentId();
+
 		//批量新装，Excel模板新增一列“使用人custNumber”，校验客户类型：当客户为政企客户(政企证件)，“使用人custNumber”一列不能为空；公众证件置空。
-		boolean custFlag = false;//政企客户(政企证件)：false；个人账户(公众证件)：true
-		try {
+		boolean custFlag;//政企客户(政企证件)：false；个人账户(公众证件)：true
+/*		try {
 			List<Map<String, Object>> CertTypeList = new ArrayList<Map<String, Object>>();
 			String identifyCd = str.substring(str.lastIndexOf("/") + 1);
 			//查询公众(个人)证件类型
 			Map<String, Object> param = new HashMap<String, Object>(){
 				{put("partyTypeCd", "1");}
 			};
-			SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);
 			Map<String, Object> rMap = custBmo .queryCertType(param, null, sessionStaff);
 			CertTypeList = (List<Map<String, Object>>) rMap.get("result");
 			if(!CertTypeList.isEmpty()){
@@ -1506,6 +1503,26 @@ public class BatchOrderController  extends BaseController {
 			code = "-1";
 			message = "处理服务service/intf.custService/queryCertTypeByPartyTypeCd时异常";
 			errorData.append(e.getStackTrace());
+			returnMap.put("errorData", errorData.toString());
+			returnMap.put("code", code);
+			returnMap.put("message", message);
+
+			return returnMap;
+		}*/
+		
+		String message = "";
+		String code = "-1";
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		StringBuffer errorData = new StringBuffer();
+		
+		if("1000".equals(segmentId))//政企客户
+			custFlag = false;
+		else if("1100".equals(segmentId))//公众客户
+			custFlag = true;
+		else{
+			code = "-1";
+			message = "无法获取客户定位的客户分群标识segmentId";
+			errorData.append(message);
 			returnMap.put("errorData", errorData.toString());
 			returnMap.put("code", code);
 			returnMap.put("message", message);

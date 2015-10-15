@@ -206,6 +206,7 @@ public class CustController extends BaseController {
 					sessionStaff.setCardNumber(idCardNumber);
 					sessionStaff.setCardType(String.valueOf(custInfo.get("identityCd")));
 					sessionStaff.setPartyName(String.valueOf(custInfo.get("partyName")));
+					sessionStaff.setCustSegmentId(String.valueOf(custInfo.get("segmentId")));
 					
 					//在session中保存查询出的所有待选的原始客户信息
 					Map<String, Map> listCustInfos = (Map<String, Map>) httpSession.getAttribute(SysConstant.SESSION_LIST_CUST_INFOS);
