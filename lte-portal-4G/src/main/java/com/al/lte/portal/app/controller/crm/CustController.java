@@ -1027,38 +1027,46 @@ public class CustController extends BaseController {
             httpSession.setAttribute("custQueryType", "");
         }
         try {
-            resultMap = custBmo.queryCustInfo(paramMap, flowNum, sessionStaff);
-            if (MapUtils.isNotEmpty(resultMap)) {
-            	if (paramMap.containsKey("query")) {
-            		resultMap.put("query", paramMap.get("query")); //综合查询调用标志
-            	}
-        		//进行身份证脱敏
-				List<Map<String, Object>> custInfos = (List<Map<String, Object>>) resultMap.get("custInfos");
-				if (custInfos.size() > 0) {
-					Map<String, Object> custInfoMap = (Map<String, Object>) custInfos.get(0);
-					String idCardNumber = MapUtils.getString(custInfoMap, "idCardNumber");
-					Integer length=idCardNumber.length();
-					if(!isViewOperation.equals("0")&&length==18){
-						 String preStr = idCardNumber.substring(0,6);
-				    	 String subStr = idCardNumber.substring(14);
-				    	 idCardNumber=preStr+"********"+subStr;
-						
-					}else if(!isViewOperation.equals("0")&&length==15){
-						String preStr = idCardNumber.substring(0,5);
-				    	 String subStr = idCardNumber.substring(13);
-				    	 idCardNumber=preStr+"********"+subStr;
+        	String an = paramMap.get("acctNbr").toString();
+        	String ic = paramMap.get("identityCd").toString();
+        	String in = paramMap.get("identityNum").toString();
+        	//接入号  或  证件类型、证件号码不为空时才调用客户资料查询接口
+        	if(an.length()>0 || (ic.length()>0 && in.length()>0)){
+	            resultMap = custBmo.queryCustInfo(paramMap, flowNum, sessionStaff);
+	            if (MapUtils.isNotEmpty(resultMap)) {
+	            	if (paramMap.containsKey("query")) {
+	            		resultMap.put("query", paramMap.get("query")); //综合查询调用标志
+	            	}
+	        		//进行身份证脱敏
+					List<Map<String, Object>> custInfos = (List<Map<String, Object>>) resultMap.get("custInfos");
+					if (custInfos.size() > 0) {
+						Map<String, Object> custInfoMap = (Map<String, Object>) custInfos.get(0);
+						String idCardNumber = MapUtils.getString(custInfoMap, "idCardNumber");
+						Integer length=idCardNumber.length();
+						if(!isViewOperation.equals("0")&&length==18){
+							 String preStr = idCardNumber.substring(0,6);
+					    	 String subStr = idCardNumber.substring(14);
+					    	 idCardNumber=preStr+"********"+subStr;
+							
+						}else if(!isViewOperation.equals("0")&&length==15){
+							String preStr = idCardNumber.substring(0,5);
+					    	 String subStr = idCardNumber.substring(13);
+					    	 idCardNumber=preStr+"********"+subStr;
+						}
+						custInfoMap.put("idCardNumber", idCardNumber);
+						custInfos.remove(custInfoMap);
+						custInfos.add(custInfoMap);
+						resultMap.put("custInfos", custInfos);
 					}
-					custInfoMap.put("idCardNumber", idCardNumber);
-					custInfos.remove(custInfoMap);
-					custInfos.add(custInfoMap);
-					resultMap.put("custInfos", custInfos);
-				}
-            	resultMap.put("jumpAuthflag", iseditOperation);
-            	jsonResponse=super.successed(resultMap, ResultConstant.SUCCESS.getCode());
-            }else{
-            	jsonResponse=super.failed(MapUtils.getString(resultMap, "msg", "客户资料查询业务！"), ResultConstant.SERVICE_RESULT_FAILTURE
-                        .getCode());
-            }
+	            	resultMap.put("jumpAuthflag", iseditOperation);
+	            	jsonResponse=super.successed(resultMap, ResultConstant.SUCCESS.getCode());
+	            }else{
+	            	jsonResponse=super.failed(MapUtils.getString(resultMap, "msg", "客户资料查询业务！"), ResultConstant.SERVICE_RESULT_FAILTURE
+	                        .getCode());
+	            }
+        	}else{
+        		jsonResponse=super.failed(MapUtils.getString(resultMap, "msg", "客户资料查询业务出错，接入号为空或证件类型和证件号码为空！"), ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+        	}
             return jsonResponse;
         } catch (BusinessException be) {
             return super.failed(be);
