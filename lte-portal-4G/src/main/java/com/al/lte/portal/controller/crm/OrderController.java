@@ -874,7 +874,7 @@ public class OrderController extends BaseController {
 			dataBusMap.put("agreementOfferSpecId", aoId);
 			dataBusMap.put("agreementType", agreementType);
 			dataBusMap.put("pnLevelId", pnLevelId);
-			dataBusMap.put("pageSize", 10);
+			dataBusMap.put("pageSize", SysConstant.PAGE_SIZE);
 			try {
 				retnMap = orderBmo.queryMainOfferSpecList(dataBusMap, flowNum, sessionStaff);
 			} catch (BusinessException e) {
