@@ -358,13 +358,15 @@ public class PrintBmoImpl implements PrintBmo {
 			}
 			//办理的业务和号码
 			Object orderEventMap = MapUtils.getObject(resultMap, "orderEvent");
-			if (orderEventMap != null && orderEventMap instanceof List) {
+			List empty = new ArrayList();//空的List 用来比较orderEventMap是否为空
+			if (orderEventMap != null && orderEventMap instanceof List && !empty.equals(orderEventMap)) {
 				List<Map<String, Object>> tmpList = (List<Map<String, Object>>) orderEventMap;
 				StringBuffer sb=new StringBuffer();
 				StringBuffer sbNub=new StringBuffer();
 				for (Map<String, Object> map : tmpList) {
 					Map<String, Object> orderEventTitle=(Map<String, Object>)map.get("orderEventTitle");
 					if(("1").equals(String.valueOf(map.get("orderEventType")))){
+						sb.append("【"+orderEventTitle.get("boActionTypeName")+"】");
 						sb.append(orderEventTitle.get("prodSpecName"));
 						Map<String, Object> orderEventCont=(Map<String, Object>)map.get("orderEventCont");
 						if(orderEventCont.get("osAttachInfos")!=null){
@@ -372,19 +374,36 @@ public class PrintBmoImpl implements PrintBmo {
 							Object offerInfosObj=osAttachInfos.get("offerInfos");
 							if(offerInfosObj!=null && offerInfosObj instanceof List){
 								List<Map<String, Object>> offerInfos = (List<Map<String, Object>>) offerInfosObj;
-								for (Map<String, Object> offerInfo : offerInfos) {
-									if (null != offerInfo.get("prodSpecName")) {
-										sb.append(",").append(offerInfo.get("prodSpecName"));
+								if(offerInfos!=null && offerInfos.size()>0){
+									for(int i=0; i<offerInfos.size(); i++){
+										Map<String, Object> offerInfo = offerInfos.get(i);
+										if (null != offerInfo.get("prodSpecName")) {
+											if(i != 0){
+												sb.append(",</br>");
+											}else sb.append("：</br>");
+											sb.append("&nbsp&nbsp[订购]");
+											sb.append(offerInfo.get("prodSpecName"));
+											sb.append("("+offerInfo.get("effectRule")+")");
+										}
 									}
 								}
+//								for (Map<String, Object> offerInfo : offerInfos) {
+//									if (null != offerInfo.get("prodSpecName")) {
+//										sb.append(",</br>");
+//										sb.append("["+orderEventTitle.get("boActionTypeName")+"]");
+//										sb.append(offerInfo.get("prodSpecName"));
+//									}
+//								}
 							}
 
 						}
 					}else if(("5").equals(String.valueOf(map.get("orderEventType")))&& ("1").equals(orderEventTitle.get("boActionTypeCd"))){
 						if(sbNub.length()>0){
-						   if (null != orderEventTitle.get("relaAcceNbr")) {
-								 sbNub.append(",副卡："+orderEventTitle.get("relaAcceNbr"));
-						   }
+							String zhuka = sbNub.toString().substring(3, 14);
+							   //业务动作大于1时避免出现重复的主副卡号码
+							   if (null != orderEventTitle.get("relaAcceNbr") && !zhuka.equals(orderEventTitle.get("relaAcceNbr").toString())) {
+									 sbNub.append(",副卡："+orderEventTitle.get("relaAcceNbr"));
+							   }
 						}else{
 							sbNub.append("主卡："+orderEventTitle.get("relaAcceNbr"));
 						}
@@ -392,15 +411,53 @@ public class PrintBmoImpl implements PrintBmo {
 						if(sb.length()>0){
 							sb.append(",");
 						}
-					   sb.append(orderEventTitle.get("prodSpecName"));
+						if (null != orderEventTitle.get("prodSpecName")) {
+							sb.append("【"+orderEventTitle.get("boActionTypeName")+"】");
+							sb.append(orderEventTitle.get("prodSpecName"));
+						}
+						//功能产品展示
+						Object orderEventContObj = map.get("orderEventCont");
+						if(orderEventContObj!=null && orderEventContObj instanceof List){
+							List<Map<String, Object>> orderEventCont = (List<Map<String, Object>>) orderEventContObj;
+							if(orderEventCont!=null && orderEventCont.size()>0){
+								for(int i=0; i<orderEventCont.size(); i++){
+									Map<String, Object> item = orderEventCont.get(i);
+									if (null != item.get("itemName")) {
+										sb.append(",</br>");
+										sb.append("&nbsp&nbsp["+item.get("actionName")+"]");
+										sb.append(item.get("itemName"));
+										sb.append("("+item.get("effectRule")+")");
+									}
+								}
+							}
+						}
 					   if(sbNub.length()>0){
-						   if (null != orderEventTitle.get("relaAcceNbr")) {
+						   String zhuka = sbNub.toString().substring(3, 14);
+						   //业务动作大于1时避免出现重复的主副卡号码
+						   if (null != orderEventTitle.get("relaAcceNbr") && !zhuka.equals(orderEventTitle.get("relaAcceNbr").toString())) {
 								 sbNub.append(",副卡："+orderEventTitle.get("relaAcceNbr"));
 						   }
 					   }else{
-						 sbNub.append("主卡："+orderEventTitle.get("relaAcceNbr"));
+						   if (null != orderEventTitle.get("relaAcceNbr")){
+							   sbNub.append("主卡："+orderEventTitle.get("relaAcceNbr"));
+						   }
 					   }
 				    }
+				}
+
+				maps.put("receiptInfo", sb.toString());
+				maps.put("annumber", sbNub.toString());
+			}
+			//购手机
+			else{
+				//终端信息
+				Object terminalInfosMap = MapUtils.getObject(resultMap, "terminalInfos");
+				List<Map<String, Object>> terminalList = (List<Map<String, Object>>) terminalInfosMap;
+				StringBuffer sb=new StringBuffer();
+				StringBuffer sbNub=new StringBuffer();
+				for (Map<String, Object> map : terminalList) {
+					sb.append("【物品清单】:</br>");
+					sb.append("&nbsp&nbsp"+map.get("tiName")+"&nbsp&nbsp"+"1"+map.get("tiParam"));
 				}
 
 				maps.put("receiptInfo", sb.toString());
