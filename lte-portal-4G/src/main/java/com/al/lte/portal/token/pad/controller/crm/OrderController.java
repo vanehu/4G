@@ -1111,7 +1111,7 @@ public class OrderController extends BaseController {
         		model.addAttribute("main", param);
         	}
     		forward = "/pad/offer/offer-change";
-    	}else if("6".equals(String.valueOf(param.get("actionFlag"))) || "21".equals(String.valueOf(param.get("actionFlag")))){    	
+    	}else if("21".equals(String.valueOf(param.get("actionFlag")))){    	
     		if (MapUtils.isNotEmpty(param)) {
         		if (!param.containsKey("offerNum")||param.get("offerNum")==null) {
         			param.put("offerNum", 1);
@@ -1147,6 +1147,14 @@ public class OrderController extends BaseController {
         		model.addAttribute("main", param);
         	}
     		forward = "/pad/offer/offer-change";
+    	}else if("6".equals(String.valueOf(param.get("actionFlag")))){
+    		if (MapUtils.isNotEmpty(param)) {
+        		if (!param.containsKey("offerNum")||param.get("offerNum")==null) {
+        			param.put("offerNum", 1);
+        		}
+        		model.addAttribute("main", param);
+        	}
+    		forward = "/padtoken/member/member-change";
     	}else {
     		if (MapUtils.isNotEmpty(param)) {
         		if (!param.containsKey("offerNum")||param.get("offerNum")==null) {

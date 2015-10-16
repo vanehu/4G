@@ -65,9 +65,9 @@ function m_up(e){
     <div id="tabs-body" class="tabs-body">
     	<!-- 产品信息展示 -->    	
     		<#assign i = 0 />
-   			<#if main.addflag?? && main.addflag=="ADD">
-   				<#list main.prodInstInfos as prodinfos>
-					<#list main.offer as offerinst>
+   			<#if (main.oldnum?? && (main.oldnum?number>0))>
+   				<#list main.oldprodInstInfos as prodinfos>
+					<#list main.oldoffer as offerinst>
 						<#if prodinfos.accNbr==offerinst.accNbr>
 							<#list offerinst.offerMemberInfos as item>
 								<#if item.objType==2>
@@ -75,9 +75,14 @@ function m_up(e){
 									<#if i==0>
 										<div class="ordercona orderform" style="display:block;">						
 									<#else>
-										<div class="ordercona orderform" style="display:none;">						
+										<div class="ordercona orderform" style="display:none;" >						
 									</#if>
 										<div class="optional"> 可选包/功能产品 <a href="#optional_${prodId}" data-role="button" data-icon="optional" data-iconpos="notext" data-theme="i">可选包/功能产品</a></div>
+										<div style="width: 50%; float: left;" class="ui-grid-a">	
+											<div class="ui-grid-a" id="uimDiv_${prodId}"  style="display: none;">
+				                     		<#include "/pad/member/order-uim.html" />
+				                     	</div>
+			                        </div>
 									</div>
 									<#assign i = i+1 />
 								</#if>
@@ -85,7 +90,8 @@ function m_up(e){
 						</#if>
 					</#list>
 				</#list>
-			<#elseif offerSpec?has_content>
+				</#if>
+			<#if (main.newnum?? && (main.newnum?number>0))>
 				<#assign i = i+1 />
 				<@block name="product">
 					<#include "/pad/member/order-product.html" />
@@ -118,9 +124,9 @@ function m_up(e){
 		        <ul id="tabs">
 		        	<!--展示套餐下多个成员标签-->
 	          		<#assign index = 0>
-					<#if main.addflag?? && main.addflag=="ADD">
-						<#list main.prodInstInfos as prodinfos>
-							<#list main.offer as offerinst>
+					<#if (main.oldnum?? && (main.oldnum?number>0))>
+						<#list main.oldprodInstInfos as prodinfos>
+							<#list main.oldoffer as offerinst>
 								<#if prodinfos.accNbr==offerinst.accNbr>
 									<#list offerinst.offerMemberInfos as Member>
 										<#if Member.objType==2>
@@ -135,7 +141,8 @@ function m_up(e){
 								</#if>
 							</#list>
 						</#list>
-					<#elseif offerSpec?has_content>
+						</#if>
+					<#if (main.newnum?? && (main.newnum?number>0))>
 						<#if offerSpec.offerRoles?? && (offerSpec.offerRoles?size>0)>					
 							<#list offerSpec.offerRoles as offerRole>	
 								<#if (offerRole.prodInsts?? && offerRole.prodInsts?size>0)>
@@ -161,7 +168,7 @@ function m_up(e){
 							</#if>
 							<#assign index = index+1>
 						</#list>
-	          		</#if>
+	          		</#if>	
 	        	</ul>
 	        </div>
 	       <button data-role="button" data-icon="arrow-r" data-iconpos="notext" disabled>向右</button>
@@ -217,20 +224,15 @@ function m_up(e){
      <button id="fillLastStep" data-inline="true" data-icon="prev">取消</button> 
  	</div>
  	
- 	<#if main.addflag?? && main.addflag=="ADD">
+ 	<#if (main.oldnum?? && (main.oldnum?number>0))>
 		<#assign i = 0 />
-		<#list main.prodInstInfos as prodinfos>
-			<#list main.offer as offerinst>
+		<#list main.oldprodInstInfos as prodinfos>
+			<#list main.oldoffer as offerinst>
 				<#if prodinfos.accNbr==offerinst.accNbr>
 					<#list offerinst.offerMemberInfos as item>
 						<#if item.objType==2>
 							<#assign prodId = item.objInstId/>
-							<#assign i = i+1 />
-							<#if i==1>
-								<div type="attach" id="attach_${prodId}">
-							<#else>
-								<div type="attach" id="attach_${prodId}" style="display:none">
-							</#if>									
+								<div type="attach" id="attach_${prodId}">								
 								<div id="uimDiv_${prodId}" style="display: none;">
 									<h5 class="s_title" id="title_${prodId}">补换卡： </h5>
 									<div class="pdcardcon show" >
@@ -245,14 +247,15 @@ function m_up(e){
 				</#if>
 			</#list>
 		</#list>
-	<#elseif offerSpec?has_content>
+		</#if>
+	<#if (main.newnum?? && (main.newnum?number>0))>
 		<#if offerSpec.offerRoles?? && (offerSpec.offerRoles?size>0)>
 			<#list offerSpec.offerRoles as offerRole>
 				<#if offerRole.prodInsts?? && (offerRole.prodInsts?size>0)>
-					<#list offerRole.prodInsts as prod>
-						<#assign prodId = prod.prodInstId />
-						<div id="attach_${prodId}"></div>
-					</#list>
+	</#if>
+	
+		<#if main.viceParam?? &&(main.viceParam?size>0)>
+		<#list main.viceParam as item>		
 				</#if>
 			</#list>
 		</#if> 					
@@ -285,7 +288,9 @@ function m_up(e){
 				</div>
 			</#if>
 		</#list>
-	</#if>		
+	</#if>
+ 	
+ 
  	
  	<!-- 帐户、协销人等弹出框-->
 	<div id="dialogDiv" style="display:none">

@@ -417,6 +417,12 @@ OrderInfo = (function() {
 						value : $(this).find("input").attr("staffid") 
 					};
 					busiOrder.data.busiOrderAttrs.push(dealer);
+					var dealer_name = {
+							itemSpecId : CONST.BUSI_ORDER_ATTR.DEALER_NAME,
+							role : $(this).find("select").val(),
+							value : $(this).find("input").attr("value") 
+					};
+					busiOrder.data.busiOrderAttrs.push(dealer_name);
 				});
 			}
 			//所属于人节点
@@ -703,6 +709,9 @@ OrderInfo = (function() {
 			if(ec.util.isObj(proUim.prodId)){ //有新卡
 				busiOrder.data.bo2Coupons = [];
 				busiOrder.data.bo2Coupons.push(proUim);
+				busiOrder.data.bo2Coupons.push(OrderInfo.getProdOldUim(prodServ.prodId));
+			}else if(OrderInfo.zcd_privilege==0){//暂存信息 只录入老卡
+				busiOrder.data.bo2Coupons = [];
 				busiOrder.data.bo2Coupons.push(OrderInfo.getProdOldUim(prodServ.prodId));
 			}else{
 				return false;
@@ -1009,10 +1018,35 @@ OrderInfo = (function() {
 		}
 	};
 	
+//	//根据产品id获取号码
+//	var _getAccessNumber = function(prodId){
+//		var accessNumber = "";
+//		if(OrderInfo.actionFlag==1 || OrderInfo.actionFlag==6 || OrderInfo.actionFlag==14){
+//			for (var i = 0; i < OrderInfo.boProdAns.length; i++) {
+//				var an = OrderInfo.boProdAns[i];
+//				if(an.prodId == prodId){
+//					if(an.accessNumber != undefined ){
+//						accessNumber =  an.accessNumber;
+//					}
+//				}
+//			}
+//		}else if(OrderInfo.actionFlag==2||OrderInfo.actionFlag==21){
+//			$.each(OrderInfo.offer.offerMemberInfos,function(i){
+//				if(this.objInstId==prodId){
+//					accessNumber = this.accessNumber;
+//					return false;
+//				}
+//			});
+//		} else if(prodId!=undefined && prodId>0){
+//			accessNumber = order.prodModify.choosedProdInfo.accNbr;	
+//		}
+//		return accessNumber;
+//	};
+	
 	//根据产品id获取号码
 	var _getAccessNumber = function(prodId){
 		var accessNumber = "";
-		if(OrderInfo.actionFlag==1 || OrderInfo.actionFlag==6 || OrderInfo.actionFlag==14){
+		if(OrderInfo.actionFlag==1 || OrderInfo.actionFlag==14){
 			for (var i = 0; i < OrderInfo.boProdAns.length; i++) {
 				var an = OrderInfo.boProdAns[i];
 				if(an.prodId == prodId){
@@ -1021,6 +1055,27 @@ OrderInfo = (function() {
 					}
 				}
 			}
+		}else if(OrderInfo.actionFlag==6){
+			for (var i = 0; i < OrderInfo.boProdAns.length; i++) {
+				var an = OrderInfo.boProdAns[i];
+				if(an.prodId == prodId){
+					if(an.accessNumber != undefined ){
+						accessNumber =  an.accessNumber;
+					}
+				}
+			}
+			$.each(OrderInfo.oldprodInstInfos,function(){
+				if(this.prodInstId==prodId){
+					accessNumber = this.accNbr;
+					return false;
+				}
+			});
+			$.each(OrderInfo.offer.offerMemberInfos,function(i){
+				if(this.objInstId==prodId){
+					accessNumber = this.accessNumber;
+					return false;
+				}
+			});
 		}else if(OrderInfo.actionFlag==2||OrderInfo.actionFlag==21){
 			$.each(OrderInfo.offer.offerMemberInfos,function(i){
 				if(this.objInstId==prodId){
@@ -1028,6 +1083,8 @@ OrderInfo = (function() {
 					return false;
 				}
 			});
+		} else if(OrderInfo.actionFlag == 35){ //分段受理
+			accessNumber = stepOrder.main.getAccessNumber(prodId);
 		} else if(prodId!=undefined && prodId>0){
 			accessNumber = order.prodModify.choosedProdInfo.accNbr;	
 		}

@@ -3372,6 +3372,98 @@ AttachOffer = (function() {
 							}
 						}
 					}
+					if(order.memberChange.mktResInstCode!="" && order.memberChange.mktResInstCode!=undefined && order.memberChange.reloadFlag=="Y"){
+						var offerId = "-1";
+						if(ec.util.isArray(OrderInfo.oldprodInstInfos)){//判断是否是纳入老用户
+							if(ec.util.isArray(OrderInfo.viceprodInstInfos) && OrderInfo.oldMvFlag){
+								$.each(OrderInfo.viceprodInstInfos,function(){
+									if(this.prodInstId==prodId){
+										offerId = this.mainProdOfferInstInfos[0].prodOfferInstId;
+									}
+								});
+							}else{
+								$.each(OrderInfo.oldprodInstInfos,function(){
+									if(this.prodInstId==prodId){
+										offerId = this.mainProdOfferInstInfos[0].prodOfferInstId;
+									}
+								});
+							}
+						}else{
+							offerId = order.prodModify.choosedProdInfo.prodOfferInstId;
+						}		
+						var mktResInstCodesize = order.memberChange.mktResInstCode.split(",");
+						for(var u=0;u<mktResInstCodesize.length;u++){
+							if(mktResInstCodesize[u]!=""&&mktResInstCodesize[u]!=null&&mktResInstCodesize[u]!="null"){
+								var nbrAndUimCode = mktResInstCodesize[u].split("_");
+								var _accNbr = nbrAndUimCode[0];
+								var _uimCode = nbrAndUimCode[1];
+								var oldSubPhoneNumsize = order.memberChange.oldSubPhoneNum.split(",");
+								for(var n=0;n<oldSubPhoneNumsize.length;n++){
+									if(oldSubPhoneNumsize[n]==_accNbr){
+										$.each(OrderInfo.oldoffer,function(){
+											$.each(this.offerMemberInfos,function(){
+												if(this.accessNumber==_accNbr){
+										$("#uim_txt_"+this.objInstId).attr("disabled",true);
+										var uimParam = {
+												"instCode":_uimCode
+										};
+								var response = $.callServiceAsJsonGet(contextPath+"/token/pc/mktRes/qrymktResInstInfo",uimParam);
+								if (response.code==0) {
+									if(response.data.mktResBaseInfo){
+										if(response.data.mktResBaseInfo.statusCd=="1102"){
+//											$("#uim_check_btn_-"+(n+1)).attr("disabled",true);
+//											$("#uim_check_btn_-"+(n+1)).removeClass("purchase").addClass("disablepurchase");
+//											$("#uim_release_btn_-"+(n+1)).attr("disabled",false);
+//											$("#uim_release_btn_-"+(n+1)).removeClass("disablepurchase").addClass("purchase");
+//											$("#uim_txt_-"+(n+1)).val(_uimCode);								
+											$("#uim_check_btn_"+this.objInstId).attr("disabled",true);
+											$("#uim_check_btn_"+this.objInstId).removeClass("purchase").addClass("disablepurchase");
+											$("#uim_release_btn_"+this.objInstId).attr("disabled",false);
+											$("#uim_release_btn_"+this.objInstId).removeClass("disablepurchase").addClass("purchase");
+											$("#uim_txt_"+this.objInstId).val(_uimCode);
+											var coupon = {
+													couponUsageTypeCd : "3", //物品使用类型
+													inOutTypeId : "1",  //出入库类型
+													inOutReasonId : 0, //出入库原因
+													saleId : 1, //销售类型
+													couponId : response.data.mktResBaseInfo.mktResId, //物品ID
+													couponinfoStatusCd : "A", //物品处理状态
+													chargeItemCd : "3000", //物品费用项类型
+													couponNum : response.data.mktResBaseInfo.qty, //物品数量
+													storeId : response.data.mktResBaseInfo.mktResStoreId, //仓库ID
+													storeName : "1", //仓库名称
+													agentId : 1, //供应商ID
+													apCharge : 0, //物品价格
+													couponInstanceNumber : _uimCode, //物品实例编码
+													terminalCode :_uimCode,//前台内部使用的UIM卡号
+													ruleId : "", //物品规则ID
+													partyId : OrderInfo.cust.custId, //客户ID
+													prodId :  this.objInstId, //产品ID
+													offerId : offerId, //销售品实例ID
+													state : "ADD", //动作
+													relaSeq : "" //关联序列	
+												};
+											OrderInfo.clearProdUim(-(n+1));
+											OrderInfo.boProd2Tds.push(coupon);
+										}else{
+											$.alert("提示","UIM卡不是预占状态，当前为"+response.data.mktResBaseInfo.statusCd);
+										}
+									}else{
+										$.alert("提示","查询不到UIM信息");
+									}
+								}else if (response.code==-2){
+									$.alertM(response.data);
+								}else {
+									$.alert("提示","UIM信息查询接口出错,稍后重试");
+								}
+												}
+										});
+										})
+								}
+								}
+							}
+						}
+					}
 				}
 			}else if(flag==1){//取消开通功能产品
 				if(prodClass==CONST.PROD_CLASS.THREE){ //3G卡，已经显示补卡,判断是否隐藏补卡
@@ -3419,6 +3511,20 @@ AttachOffer = (function() {
 				var member = CacheData.getOfferMember(objId);
 				prodClass = member.prodClass;
 				prodId = member.objInstId;
+			}else if(OrderInfo.actionFlag==6){
+				$.each(OrderInfo.oldprodInstInfos,function(){
+					if(this.prodInstId==objId){
+						prodClass = this.prodClass;
+						prodId = this.prodInstId;
+					}
+				});
+				$.each(OrderInfo.viceOfferSpec,function(){
+					if(this.prodId==prodId){
+						var member = CacheData.getOfferMember(objId);
+						prodClass = member.prodClass;
+						prodId = member.objInstId;
+					}
+				});
 			}
 			if(prodClass==CONST.PROD_CLASS.THREE){ //3G卡，已经显示补卡,判断是否隐藏补卡
 				var servSpec = CacheData.getServSpec(prodId,CONST.PROD_SPEC.PROD_FUN_4G);
