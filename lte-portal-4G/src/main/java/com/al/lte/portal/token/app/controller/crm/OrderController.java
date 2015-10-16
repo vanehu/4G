@@ -32,6 +32,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.WebRequest;
 
 import com.al.ec.serviceplatform.client.ResultCode;
+import com.al.ec.toolkit.JacksonUtil;
 import com.al.ecs.common.entity.JsonResponse;
 import com.al.ecs.common.entity.PageModel;
 import com.al.ecs.common.util.EncodeUtils;
@@ -694,7 +695,19 @@ public class OrderController extends BaseController {
         	prams.put("pageSize", 50);
         	int totalPage=0;
         	Map<String, Object> map = null;
-//        	prams.put("qryStr", new String(prams.get("qryStr").toString().getBytes("iso8859-1"),"UTF-8"));
+        	String qryStr=(String)prams.get("qryStr");
+        	if(qryStr!=null && qryStr.length()>0 ){
+        		if(qryStr.equals("1")){
+        			qryStr="乐享";
+        		}
+        		else if(qryStr.equals("2")){
+        			qryStr="积";
+        		}
+        		else{
+        			qryStr="飞";
+        		}
+        	}
+        	prams.put("qryStr",qryStr);
         	map = orderBmo.queryMainOfferSpecList(prams,null, sessionStaff);
         	if(ResultCode.R_SUCCESS.equals(map.get("code"))){
         		//拼装前台显示的套餐详情
@@ -744,8 +757,9 @@ public class OrderController extends BaseController {
         		model.addAttribute("totalPage",totalPage);
         	}
         	//model.addAttribute("pnLevelId", prams.get("pnLevelId"));
-        	if(!"".equals(prams.get("subPage"))){
-        		model.addAttribute("subPage", prams.get("subPage"));
+        	String subPage=(String)prams.get("subPage");
+        	if(subPage!=null && subPage.length()>0){
+        		model.addAttribute("subPage",subPage);
         	}
         	if(null!=(prams.get("orderflag"))){
         		model.addAttribute("orderflag", prams.get("orderflag"));
@@ -761,7 +775,8 @@ public class OrderController extends BaseController {
 		} catch (Exception e) {
 			return super.failedStr(model, ErrorCode.QUERY_MAIN_OFFER, e, prams);
 		}
-        return "/apptoken/offer-list-new";
+       // return "/apptoken/new_member/offer-list";
+        return "/apptoken/member/offer-list";
     }
     @RequestMapping(value = "/offerSpecListSub2", method = RequestMethod.GET, produces = "text/html;charset=UTF-8")
     public String getOfferSpecListSub2(@RequestParam Map<String, Object> prams,Model model,HttpServletResponse response){
@@ -772,9 +787,22 @@ public class OrderController extends BaseController {
         	prams.put("areaId", sessionStaff.getCurrentAreaId());
         	prams.put("staffId", sessionStaff.getStaffId());
         	prams.put("pageSize", 50);
+        	String qryStr=(String)prams.get("qryStr");
+        	if(qryStr!=null && qryStr.length()>0 ){
+        		if(qryStr.equals("1")){
+        			qryStr="乐享";
+        		}
+        		else if(qryStr.equals("2")){
+        			qryStr="积";
+        		}
+        		else{
+        			qryStr="飞";
+        		}
+        	}
+        	prams.put("qryStr",qryStr);
         	int totalPage=0;
         	Map<String, Object> map = null;
-        	prams.put("qryStr", "乐享");
+        //	prams.put("qryStr", "乐享");
 //        	prams.put("qryStr", new String(prams.get("qryStr").toString().getBytes("iso8859-1"),"UTF-8"));
         	map = orderBmo.queryMainOfferSpecList(prams,null, sessionStaff);
         	if(ResultCode.R_SUCCESS.equals(map.get("code"))){
@@ -854,9 +882,22 @@ public class OrderController extends BaseController {
         	prams.put("areaId", sessionStaff.getCurrentAreaId());
         	prams.put("staffId", sessionStaff.getStaffId());
         	prams.put("pageSize", 50);
+        	String qryStr=(String)prams.get("qryStr");
+        	if(qryStr!=null && qryStr.length()>0 ){
+        		if(qryStr.equals("1")){
+        			qryStr="乐享";
+        		}
+        		else if(qryStr.equals("2")){
+        			qryStr="积";
+        		}
+        		else{
+        			qryStr="飞";
+        		}
+        	}
+        	prams.put("qryStr",qryStr);
         	int totalPage=0;
         	Map<String, Object> map = null;
-//        	prams.put("qryStr", new String(prams.get("qryStr").toString().getBytes("iso8859-1"),"UTF-8"));
+            
         	map = orderBmo.queryMainOfferSpecList(prams,null, sessionStaff);
         	if(ResultCode.R_SUCCESS.equals(map.get("code"))){
         		//拼装前台显示的套餐详情
@@ -1056,7 +1097,11 @@ public class OrderController extends BaseController {
 	 @RequestMapping(value = "/mainsub2", method = { RequestMethod.POST })
 	    public String mainsub2(@RequestBody Map<String, Object> param, Model model,
 				@LogOperatorAnn String flowNum, HttpServletResponse response,HttpSession session) {
-	    	String forward = "" ;
+	    	
+		// String str=JacksonUtil.objectToJson(param);
+		// System.out.print(str);
+		// System.out.println("");
+		 String forward = "" ;
 	    	if("2".equals(String.valueOf(param.get("actionFlag")))){  //套餐变更
 	    		if (MapUtils.isNotEmpty(param)) {
 	        		model.addAttribute("main", param);
@@ -1066,6 +1111,7 @@ public class OrderController extends BaseController {
 	    		if (MapUtils.isNotEmpty(param)) {
 	        		model.addAttribute("main", param);
 	        	}
+	    		//forward = "/apptoken/new_member/order-main-template";
 	    		forward = "/app/offer/member-change";
 	    	}else if("3".equals(String.valueOf(param.get("actionFlag")))){
 	    		if (MapUtils.isNotEmpty(param)) {
@@ -1102,7 +1148,8 @@ public class OrderController extends BaseController {
 	        		}
 	        		model.addAttribute("main", param);
 	        	}
-	    		forward = "/app/order/order-main-template";
+	    		//forward = "/apptoken/member/order-main-template";
+	    		forward = "/apptoken/new_member/order-main-template";
 	    	}
 	    	return forward;
 	    }
@@ -2573,7 +2620,8 @@ public class OrderController extends BaseController {
 		if(numsubflag!=null&&!numsubflag.equals("")&&!numsubflag.equals("null")){
 			model.addAttribute("numsubflag",numsubflag);
 		}
-       return "/apptoken/member/order-search";
+      // return "/apptoken/new_member/order-search";
+		 return "/apptoken/member/order-search";
     }
 
     @RequestMapping(value = "/getEditPage", method = RequestMethod.GET)
