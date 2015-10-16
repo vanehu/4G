@@ -893,4 +893,8 @@ public final class PortalServiceCode {
    
     /** 查询客户订单业务提示 */
     public static final String QUERY_ORDER_BUSI_HINT = "biz-service/intf.soService/queryOrderBusiHint" ;
+    /**系统管理锁定工号的接口*/
+    public static final String LOCKUSER = "sys-lockuser";
+    /**权限校验接口*/
+	public static final String CHECKISACCESSBYSTAFFID = "sys-checkIsAccessByStaffId";
 }

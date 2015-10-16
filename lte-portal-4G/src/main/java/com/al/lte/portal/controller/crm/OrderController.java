@@ -201,6 +201,7 @@ public class OrderController extends BaseController {
 		//mktRes.put("salePrice", MapUtil.asStr(param, "mktPrice"));
 		//mktRes.put("mktPicA", MapUtil.asStr(param, "mktPicA"));
 		//mktRes.put("channelId", sessionStaff.getCurrentChannelId());
+		session.setAttribute(SysConstant.SESSION_KEY_DIFFPLACEFLAG, "diff");
 		model.addAttribute("DiffPlaceFlag", "diff");
 		return "/order/order-prepare";
 	}
@@ -1205,6 +1206,17 @@ public class OrderController extends BaseController {
  	    				}
  	    				model.addAttribute("chargeItems", templist);
  	    			}
+ 	    			HttpSession session = request.getSession();
+ 	    			int sumAmount = 0;
+ 	    			if(templist != null && templist.size() != 0){
+ 		 				for(Map<String, Object> item : templist){
+ 		 					if(item != null){
+ 		 						int realAmount =  (Integer) item.get("realAmount");
+ 		 						sumAmount = sumAmount + realAmount;
+ 		 					}
+ 		 				}
+ 		 			}
+ 	    			session.setAttribute(SysConstant.SESSION_KEY_SUMAMOUNT, sumAmount);
  	    			templist=null;
  	    			if(datamap.get("prodInfo")!=null){
  	    				Object obj1=datamap.get("prodInfo");
@@ -1428,8 +1440,8 @@ public class OrderController extends BaseController {
 	 			
 	 			//去除chargeItems中的重复项，根据acctItemId判断
 	 			List<Map<String, String>> chargeItems = (List<Map<String, String>>) param.get("chargeItems");
+	 			List<Map<String, String>> checkedChargeItems = new ArrayList<Map<String,String>>();
 	 			if(chargeItems != null && chargeItems.size() != 0){
-	 				List<Map<String, String>> checkedChargeItems = new ArrayList<Map<String,String>>();
 	 				for(Map<String, String> item : chargeItems){
 	 					if(item != null){
 	 						String acctItemId = item.get("acctItemId");
@@ -1449,7 +1461,40 @@ public class OrderController extends BaseController {
 	 				}
 	 				param.put("chargeItems", checkedChargeItems);
 	 			}
-	 			
+	 			int sumAmount = 0;
+	 			if(checkedChargeItems != null && checkedChargeItems.size() != 0){
+	 				for(Map<String, String> item : checkedChargeItems){
+	 					if(item != null){
+	 						String realAmount = item.get("realAmount");
+	 						int rlAmount = Integer.parseInt(realAmount);
+	 						sumAmount = sumAmount + rlAmount;
+	 					}
+	 				}
+	 			}
+	 			HttpSession session = request.getSession();
+	 			int amount = (Integer) session.getAttribute(SysConstant.SESSION_KEY_SUMAMOUNT);
+	 			if(amount != sumAmount){
+	 				Map<String, Object> paramMap = new HashMap<String, Object>();
+	 				paramMap.put("operatSpecCd", "OPSCD_FYJM");
+	 				paramMap.put("dataDimensionCd", "DIM_CD_JMFYX");
+	 				paramMap.put("staffId", sessionStaff.getStaffId());
+	 				paramMap.put("areaId", sessionStaff.getCurrentAreaId());
+	 				rMap = orderBmo.queryAuthenticDataRange(paramMap, flowNum, sessionStaff);
+	 				if (rMap != null&& ResultCode.R_SUCCESS.equals(rMap.get("code").toString())) {
+	 					List result = (List)rMap.get("result");
+	 					Map remap = (Map)result.get(0);
+	 					List dataRanges = (List)remap.get("dataRanges");
+	 					if(!(dataRanges.size()>0)){
+	 						jsonResponse = super.failed("您的工号没有修改费用权限，请核对费用！",
+		 							ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+	 						return jsonResponse;
+	 					}
+	 				} else {
+	 					jsonResponse = super.failed("您的工号没有修改费用权限，请核对费用！",
+	 							ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+	 					return jsonResponse;
+	 				}
+	 			}
 	 			rMap = orderBmo.chargeSubmit(param, flowNum, sessionStaff);
 	 			log.debug("return={}", JsonUtil.toString(rMap));
 	 			if (rMap != null&& ResultCode.R_SUCCESS.equals(rMap.get("code").toString())) {

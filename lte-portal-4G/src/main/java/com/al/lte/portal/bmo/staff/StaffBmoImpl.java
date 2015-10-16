@@ -803,4 +803,23 @@ public class StaffBmoImpl implements StaffBmo {
         }  
 		return response;
 	}
+
+
+	public Map<String, Object> checkIsAccessByStaffId(Map<String, Object> dataBusMap,
+			SessionStaff sessionStaff) throws Exception {
+		// TODO Auto-generated method stub
+		dataBusMap.put("staffId", sessionStaff.getStaffId());
+		DataBus db = InterfaceClient.callService(dataBusMap, PortalServiceCode.CHECKISACCESSBYSTAFFID, null, sessionStaff);
+		Map<String, Object> retnMap = new HashMap<String, Object>();
+		if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db
+				.getResultCode()))) {
+			Map<String, Object> resultMap = db.getReturnlmap();
+			retnMap.put("code", resultMap.get("resultCode"));
+		} else {
+			retnMap.put("code", ResultCode.R_FAIL);
+			retnMap.put("msg", db.getResultMsg());
+		}
+		return retnMap;
+	
+	}
 }

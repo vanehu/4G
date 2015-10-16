@@ -169,6 +169,24 @@ public class CustController extends BaseController {
 		}else{
 			httpSession.setAttribute("custQueryType", "");
 		}
+		//update by huangjj3 异地业务加上权限判断
+		String DiffPlaceFlag = (String) (httpSession.getAttribute(SysConstant.SESSION_KEY_DIFFPLACEFLAG)==null?"": httpSession.getAttribute(SysConstant.SESSION_KEY_DIFFPLACEFLAG));
+		if("diff".equals(DiffPlaceFlag)){
+			Map<String,Object> rltMap = new HashMap<String,Object>();
+			Map<String, Object> dataBusMap = new HashMap<String, Object>();
+			dataBusMap.put("opsCd", "YDBHK");
+			try {
+				rltMap = staffBmo.checkIsAccessByStaffId(dataBusMap, sessionStaff);
+				String code = (String) rltMap.get("code");
+				if(!"0".equals(code)){
+					model.addAttribute("showDiffcode", "Y");
+					return "/cust/cust-list";
+				}
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		List custInfos = new ArrayList();
 		try {
 			String regex = "^[A-Za-z0-9]+$";

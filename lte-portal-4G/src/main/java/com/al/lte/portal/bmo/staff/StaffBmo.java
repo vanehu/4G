@@ -53,5 +53,7 @@ public interface StaffBmo {
 	public void insert_sp_busi_run_log(Map<String, Object> logmap,String flowNum,SessionStaff sessionStaff) throws Exception;
 
 	public  String cacheClear(String url);
+
+	public Map<String, Object> checkIsAccessByStaffId(Map<String, Object> dataBusMap,SessionStaff sessionStaff) throws Exception;;
 	
 }

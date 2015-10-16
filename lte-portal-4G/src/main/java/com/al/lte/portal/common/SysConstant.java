@@ -527,4 +527,10 @@ public final class SysConstant {
     
     /** session中保存密码修改的Token */
     public static final String SESSION_KEY_SMSPWD_TOKEN ="SESSION_KEY_SMSPWD_TOKEN";
+
+    /**session中用于保存当前业务是本地业务还是异地业务*/
+	public static final String SESSION_KEY_DIFFPLACEFLAG = "SESSION_KEY_DIFFPLACEFLAG";
+	/**session中用于保存当前订单的费用*/
+	public static final String SESSION_KEY_SUMAMOUNT = "SESSION_KEY_SUMAMOUNT";
+	
 }
