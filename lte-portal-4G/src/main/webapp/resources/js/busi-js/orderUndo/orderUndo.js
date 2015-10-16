@@ -626,6 +626,129 @@ order.undo = (function(){
 			$.alertM(response.data);
 		}	
 	};	
+	
+	//客户查询（弹出框）
+	var _showQueryCust = function(){
+		if($("#p_areaId_val").val()==""){
+			$.alert("提示","请先选择所属地区再进行客户查询");
+			return;
+		}
+		easyDialog.open({
+			container : "d_cust"
+		});
+		$("#cust").val("");
+		$("#custlist").html("");
+		$(".easyDialogclose").click(function(){
+			easyDialog.close();			
+		});
+
+		var param = {attrSpecCode : "PTY-0004"};
+		$.callServiceAsJson(contextPath+"/staffMgr/getCTGMainData",param,{
+			"done" : function(response){
+				if(response.code==0){
+					var data = response.data ;
+					if(data!=undefined && data.length>0){
+						for(var i=0;i<data.length;i++){
+							var busiStatus = data[i];
+							$("#cust_id_type").append("<option value='"+busiStatus.attrValueCode+"' >"+busiStatus.attrValueName+"</option>");							
+						}
+					}
+				}else if(response.code==-2){
+					$.alertM(response.data);
+					return;
+				}else{
+					$.alert("提示","调用主数据接口失败！");
+					return;
+				}
+			}
+		});
+	};
+	
+	//变更客户认证类型
+	var _changeCustIdType = function(option){
+		var type = $(option).val();
+		if(type==0){
+			$("#cust").attr("placeHolder","请输入有效的中国电信手机号");
+			$("#cust").attr("data-validate","validate(isTelecomSection:请输入有效的中国电信号码) on(blur)");
+		}
+		else if(type==1){
+			$("#cust").attr("placeHolder","请输入合法的身份证号码");
+			$("#cust").attr("data-validate","validate(idCardCheck:请准确填写身份证号码) on(blur)");
+		}
+		else if(type==2){
+			$("#cust").attr("placeHolder","请输入合法的军官证");
+			$("#cust").attr("data-validate","validate(required:请准确填写军官证) on(blur)");
+		}
+		else if(type==3){
+			$("#cust").attr("placeHolder","请输入合法的护照");
+			$("#cust").attr("data-validate","validate(required:请准确填写护照) on(blur)");
+		}
+		else{
+			$("#cust").attr("placeHolder","请输入合法的证件号码");
+			$("#cust").attr("data-validate","validate(required:请准确填写证件号码) on(blur)");
+		}
+		$("#cust").val("");
+		_queryCust();
+	};
+	
+	//查询客户
+	var _queryCust = function(){
+		$("#custQueryForm").off().bind("formIsValid", function(event, form){			
+			var _acctNbr = "";
+			var _identityNum = "";
+			var _identityCd = "";
+			if($("#cust_id_type").val()==0){
+				_acctNbr = $("#cust").val();
+			}
+			else{
+				_identityCd = $("#cust_id_type").val();
+				_identityNum = $("#cust").val();
+			}
+			var param = {
+					acctNbr : _acctNbr,
+					identityCd : _identityCd,
+					identityNum : _identityNum,
+					partyName : "",
+					custQueryType : $("#custQueryType").val(),
+					diffPlace : "maybe",
+					areaId : $("#p_areaId").val(),
+					query : "acct",  //账户详情查询的页面标志
+					pageType : "orderUndo"
+			};
+			$.callServiceAsHtml(contextPath+"/cust/queryCust",param,{
+				"before":function(){
+					$.ecOverlay("<strong>正在查询中,请稍等...</strong>");
+				},
+				"always":function(){
+					$.unecOverlay();
+				},
+				"done":function(response){
+					if(response.code != 0) {
+						$.alert("提示","查询失败,稍后重试");
+						return;
+					}
+					if(response.data.indexOf("false") >=0) {
+						$.alert("提示","抱歉，没有定位到客户，请尝试其他客户。");
+						return;
+					}
+					$("#custlist").html(response.data).show();
+				},
+				fail:function(response){
+					$.unecOverlay();
+					$.alert("提示","查询失败，请稍后再试！");
+				}				
+			});
+		}).ketchup({bindElement:"bt_query_cust"});
+	};
+	
+	//选定客户
+	var _chooseCust = function(tr){
+		var custName = $(tr).find("td:eq(0)").text();
+		var custId = $(tr).find("td:eq(3)").text();
+		$("#custName").val(custName).attr("name", custId);
+		easyDialog.close();
+	};
+	
 	return {
 		queryOrderList:_queryOrderList,
 		init:_init,
@@ -639,10 +762,15 @@ order.undo = (function(){
 		chooseArea:_chooseArea,
 		tochargeInit:_tochargeInit,
 		undoCheckSer:_undoCheckSer,
-		orderCheck : _orderCheck
+		orderCheck : _orderCheck,
+		showQueryCust : _showQueryCust,
+		changeCustIdType :_changeCustIdType,
+		queryCust : _queryCust,
+		chooseCust : _chooseCust
 	};	
 })();
 //初始化
 $(function(){	
 	order.undo.init();	
+	order.undo.queryCust();
 });

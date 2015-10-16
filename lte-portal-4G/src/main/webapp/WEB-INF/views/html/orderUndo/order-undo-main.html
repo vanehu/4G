@@ -5,7 +5,6 @@
 
 <script src="${contextPath}/js/busi-js/cart/cart.js?${jsversion}" type="text/javascript"></script>
 <script src="${contextPath}/js/busi-js/orderUndo/orderUndo.js?${jsversion}" type="text/javascript"></script>
-<script src="${contextPath}/js/busi-js/acct/accountQuery.js?${jsversion}" type="text/javascript"></script>
 </@override>
 
 <@override name="content">
@@ -68,7 +67,7 @@
                                   </dd>
                                   <dt>所属客户：</dt>
                                   <dd>
-                                    <input type="text" class="numberTextBox" style="width:160px" readonly="readonly" id="custName" onclick="account.query.showQueryCust()" placeHolder="请查询并选择客户"/>
+                                    <input type="text" class="numberTextBox" style="width:160px" readonly="readonly" id="custName" onclick="order.undo.showQueryCust()" placeHolder="请查询并选择客户"/>
                                   </dd>
                             </dl>  
                             <dl class="noBorder">
@@ -258,12 +257,12 @@
   	            <form id="custQueryForm">
                 <ul class="fillin">
                   <li class="full noBorder">
-                    <select id="cust_id_type" class="selectNumbertype" style="width:220px;margin-top:1px;" onchange="account.query.changeCustIdType(this)">
+                    <select id="cust_id_type" class="selectNumbertype" style="width:220px;margin-top:1px;" onchange="order.undo.changeCustIdType(this)">
                       <option value="0">接入号</option>
                     </select>
                     <input type="text" class="inputWidth228px" id="cust" placeHolder="请输入有效的中国电信手机号码" data-validate="validate(isTelecomSection:请输入有效的中国电信号码) on(blur)"/>
                     <input name="custQueryType" id="custQueryType" type="hidden" value="queryOnly" >
-                    <a id="bt_cust_query" class="purchase">查 询</a>
+                    <a id="bt_query_cust" class="purchase">查 询</a>
                   </li>
                 </ul>
                 <div class="clear"></div>

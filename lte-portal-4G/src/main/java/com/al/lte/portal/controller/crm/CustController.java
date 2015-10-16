@@ -319,6 +319,9 @@ public class CustController extends BaseController {
 			SimpleDateFormat dateFormate = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");//输出的日期格式
 			String locateDate=dateFormate.format(Time);
 			staffBmo.userSearchbtn(locateDate, null, sessionStaff);//定位客户记录日志
+			if(null!=paramMap.get("pageType") && !("").equals(paramMap.get("pageType")) && ("orderUndo").equals(paramMap.get("pageType"))){
+				return "/orderUndo/cust-list";	
+			}
 			return "/cust/cust-list";
 		} catch (BusinessException be) {
 			return super.failedStr(model, be);
