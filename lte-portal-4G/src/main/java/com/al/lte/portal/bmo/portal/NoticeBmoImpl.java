@@ -27,25 +27,35 @@ import com.al.lte.portal.model.SessionStaff;
  */
 @Service("com.al.ecs.portal.agent.bmo.portal.NoticeBmo")
 public class NoticeBmoImpl implements NoticeBmo {
+	
+	/*
+	 * WEB版本专用的公告查询
+	 * @see com.al.lte.portal.bmo.portal.NoticeBmo#getNoticeList(java.util.Map, java.lang.String, com.al.lte.portal.model.SessionStaff)
+	 */
+	public Map<String, Object> getNoticeList_WEB(Map<String, Object> dataBusMap, String optFlowNum, SessionStaff sessionStaff) throws Exception {
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+        try{
+        	DataBus db = InterfaceClient.callService(dataBusMap, PortalServiceCode.NOTICE_QUERY, optFlowNum, sessionStaff);
+        	returnMap = db.getReturnlmap();
+        }catch(Exception e){
+			throw new BusinessException(ErrorCode.BULLET_IN_INFO, dataBusMap, returnMap, e);
+		}
+        return returnMap;
+	}
 
+	/*
+	 * 公告查询（PAD, APP门户使用）
+	 * @see com.al.lte.portal.bmo.portal.NoticeBmo#getNoticeList(java.util.Map, java.lang.String, com.al.lte.portal.model.SessionStaff)
+	 */
 	@SuppressWarnings("unchecked")
-	public List<Map<String, Object>> getNoticeList(Map<String, Object> dataBusMap, String optFlowNum, SessionStaff sessionStaff)
-		throws Exception {
-		
-        List<Map<String, Object>> infoList = new ArrayList<Map<String, Object>>();
-        DataBus db = InterfaceClient.callService(dataBusMap, PortalServiceCode.NOTICE_QUERY,
-                optFlowNum, sessionStaff);
+	public List<Map<String, Object>> getNoticeList(Map<String, Object> dataBusMap, String optFlowNum, SessionStaff sessionStaff) throws Exception {
+		List<Map<String, Object>> infoList = new ArrayList<Map<String, Object>>();
+        DataBus db = InterfaceClient.callService(dataBusMap, PortalServiceCode.NOTICE_QUERY, optFlowNum, sessionStaff);
         try{
         	Map<String, Object> resultMap = db.getReturnlmap();
             if(ResultCode.R_SUCC.equals(resultMap.get("resultCode"))){
             	List<Map<String, Object>> list = (List<Map<String, Object>>)resultMap.get("result");
             	return list;
-            	/*
-            	 Map<String, Object> result = (Map<String, Object>)resultMap.get("result");
-            	 if(result!=null&&result.get("infoList")!=null){
-            		 infoList = (ArrayList<Map<String, Object>>) result.get("infoList");
-            	 }
-            	 */
             }
             return infoList;
         }catch(Exception e){
@@ -72,6 +82,20 @@ public class NoticeBmoImpl implements NoticeBmo {
         	 */
         }
         return result;
+	}
+	
+	/*
+	 * 操作手册查询
+	 */
+	public Map<String, Object> getManualList(Map<String, Object> dataBusMap, String optFlowNum, SessionStaff sessionStaff) throws Exception {
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+        try{
+        	DataBus db = InterfaceClient.callService(dataBusMap, PortalServiceCode.MANUAL_QUERY, optFlowNum, sessionStaff);
+        	returnMap = db.getReturnlmap();
+        }catch(Exception e){
+			throw new BusinessException(ErrorCode.BULLET_IN_INFO, dataBusMap, returnMap, e);
+		}
+        return returnMap;
 	}
 	
 }

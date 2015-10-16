@@ -451,6 +451,9 @@ public final class PortalServiceCode {
     
     /** bianxw 公告列表 */
     public static final String NOTICE_QUERY = "sys-queryBulletinInfo";
+    
+    /**操作手册列表查询*/
+    public static final String MANUAL_QUERY = "sys-queryOperateInfo";
 
     /** bianxw 首页菜单-查询所有 */
     public static final String MENU_QUERY_ALL = "sys-queryMenuInfo";

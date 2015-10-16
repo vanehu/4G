@@ -17,34 +17,25 @@ import com.al.lte.portal.model.SessionStaff;
  * @copyRight 亚信联创电信EC产品部
  */
 public interface NoticeBmo {
+	
 	/**
-     * 加载公告列表
-     * 
-     * @param dataBusMap
-     *            入参
-     * @param optFlowNum
-     *            平台编码，用于记录日志
-     * @param sessionStaff
-     *            员工Session对象
-     * @return List<Map<String,Object>> 返回菜单
-     * @throws Exception
+	 * WEB版专用的公告查询接口
+	 */
+	public Map<String, Object> getNoticeList_WEB(Map<String, Object> dataBusMap, String optFlowNum, SessionStaff sessionStaff) throws Exception;
+	
+	/**
+     * 公告查询接口
      */
-    public List<Map<String, Object>> getNoticeList(Map<String, Object> dataBusMap, String optFlowNum, SessionStaff sessionStaff)
-    	throws Exception;
+	public List<Map<String, Object>> getNoticeList(Map<String, Object> dataBusMap, String optFlowNum, SessionStaff sessionStaff) throws Exception;
     
     /**
      * 加载热卖终端和套餐
-     * 
-     * @param dataBusMap
-     *            入参
-     * @param optFlowNum
-     *            平台编码，用于记录日志
-     * @param sessionStaff
-     *            员工Session对象
-     * @return List<Map<String,Object>> 返回套餐和终端信息
-     * @throws Exception
      */
-    public Map<String, Object> getHotProd(Map<String, Object> dataBusMap, String optFlowNum, SessionStaff sessionStaff)
-	throws Exception;
+    public Map<String, Object> getHotProd(Map<String, Object> dataBusMap, String optFlowNum, SessionStaff sessionStaff) throws Exception;
+    
+    /**
+     * 查询操作手册列表
+     */
+    public Map<String, Object> getManualList(Map<String, Object> dataBusMap, String optFlowNum, SessionStaff sessionStaff) throws Exception;
     
 }

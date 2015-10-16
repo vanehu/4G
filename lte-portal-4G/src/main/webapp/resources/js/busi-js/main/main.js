@@ -99,69 +99,46 @@ main.home = (function(){
 		});
 	};
 	
-	//首页请求公告
+	//首页置顶公告或公告详情
 	var _queryNotice = function(bulletinId){
 		
-		var param = "";
-		if(typeof(bulletinId) !="undefined"){ 
-			 param = {
-					bulletinId : bulletinId
-			 };
+		var params = {
+				"queryType" : "focus",
+				"pageIndex" : 1,
+				"pageSize" : 5
 		}
-		$.callServiceAsHtmlGet(contextPath + "/main/notice",param, {
+		if(typeof(bulletinId)!="undefined"){
+			params.queryType = "detail";
+			params.bulletinId = bulletinId;
+		}
+		$.callServiceAsHtml(contextPath + "/main/notice", params, {
 			"done" : function(response){
-				
-				
-				if(typeof(bulletinId) !='undefined'){
-					$(".detail").html(response.data);
+				if(typeof(bulletinId)!="undefined"){
+					$("#noticeDetail").html(response.data);
 					_createNoticeDialog();
 					return;
 				}
-				
 				if(!response){
 					response = {};
-					response.data='<li><a href="#" class="ft">暂无公告</a></li>';
+					response.data='<li><a href="javascript:void(0)">[ 暂无公告，请刷新 ]</a></li>';
 				}
-				
 				$(".news").html(response.data);
 				var _hasClass = $(".allsort").hasClass("showme");
 				if(_hasClass){
 					$("#updateNews").css("margin-left","190px");
 					$("#new").css("margin-left","200px").css("width","82%");
 				}
-				/*if($(".item").css('display')!="none")
-				{
-					$("#updateNews").css("margin-left","200px");
-					$("#new").css("margin-left","200px").css("width","82%");
-				}*/
-				var intervalTime = $("#intervalTime").val();
-				if(intervalTime == ""){
-					intervalTime = 3000;
-				}
-				
-//				var box=document.getElementById("new"); 
-//				var can=true;
-//				box.innerHTML+=box.innerHTML; 
-//				box.onmouseover=function(){can=false;}; 
-//				box.onmouseout=function(){can=true;}; 
-//				void function(){ 
-//					var stop=box.scrollTop%41==0&&!can; 
-//					if(!stop) {
-//						box.scrollTop==parseInt(box.scrollHeight/2)?box.scrollTop=0:box.scrollTop++;
-//					}
-//					setTimeout(arguments.callee, box.scrollTop%41?10:intervalTime);
-//				}();
-				
-				
-				
 			},
-			fail:function(response){
-				$.unecOverlay();
-				//$.alert("提示","公告加载失败，请稍后再试！");
+			"fail" : function(response){
 			}
 		});
 	};
 	
+	//隐藏弹窗公告
+	var _hidePopNotice = function(){
+		$("#popNotice").css("height", "0px");
+		setTimeout('$("#popNotice").hide();', 1000);
+	};
 	
 	var _createNoticeDialog = function(){
 		easyDialog.open({
@@ -666,6 +643,7 @@ main.home = (function(){
 	return {
 		tabManager				:_tabManager,
 		queryNotice				:_queryNotice,
+		hidePopNotice          : _hidePopNotice,
 		queryMainShortcut		:_queryMainShortcut,
 		getMyList				:_getMyList,
 		getLv1					:_getLv1,

@@ -377,6 +377,8 @@ public final class SysConstant {
     
     //公告附件地址
     public static String NOTICE_URL = "NOTICE_URL";
+    //操作手册附件地址
+    public static String MANUAL_URL = "MANUAL_URL";
     
     public static final String SESSION_KEY_REPORT_CHECK = "is_report_check_session_key";
     
