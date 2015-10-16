@@ -1063,24 +1063,36 @@ OrderInfo = (function() {
 	//根据产品id获取号码
 	var _getAccessNumber = function(prodId){
 		var accessNumber = "";
-		if(OrderInfo.actionFlag==1 || OrderInfo.actionFlag==6 || OrderInfo.actionFlag==14){
-			if(ec.util.isArray(OrderInfo.oldprodInstInfos)){//判断是否是纳入老用户
-				$.each(OrderInfo.oldprodInstInfos,function(){
-					if(this.prodInstId==prodId){
-						accessNumber = this.accNbr;
-						return false;
-					}
-				});
-			}else{
-				for (var i = 0; i < OrderInfo.boProdAns.length; i++) {
-					var an = OrderInfo.boProdAns[i];
-					if(an.prodId == prodId){
-						if(an.accessNumber != undefined ){
-							accessNumber =  an.accessNumber;
-						}
+		if(OrderInfo.actionFlag==1 || OrderInfo.actionFlag==14){
+			for (var i = 0; i < OrderInfo.boProdAns.length; i++) {
+				var an = OrderInfo.boProdAns[i];
+				if(an.prodId == prodId){
+					if(an.accessNumber != undefined ){
+						accessNumber =  an.accessNumber;
 					}
 				}
 			}
+		}else if(OrderInfo.actionFlag==6){
+			for (var i = 0; i < OrderInfo.boProdAns.length; i++) {
+				var an = OrderInfo.boProdAns[i];
+				if(an.prodId == prodId){
+					if(an.accessNumber != undefined ){
+						accessNumber =  an.accessNumber;
+					}
+				}
+			}
+			$.each(OrderInfo.oldprodInstInfos,function(){
+				if(this.prodInstId==prodId){
+					accessNumber = this.accNbr;
+					return false;
+				}
+			});
+			$.each(OrderInfo.offer.offerMemberInfos,function(i){
+				if(this.objInstId==prodId){
+					accessNumber = this.accessNumber;
+					return false;
+				}
+			});
 		}else if(OrderInfo.actionFlag==2||OrderInfo.actionFlag==21){
 			$.each(OrderInfo.offer.offerMemberInfos,function(i){
 				if(this.objInstId==prodId){
@@ -1211,15 +1223,12 @@ OrderInfo = (function() {
 				}
 			});
 		} else if(prodId!=undefined && prodId>0){
-			if(ec.util.isArray(OrderInfo.oldprodInstInfos) && OrderInfo.actionFlag==6){//判断是否是纳入老用户
-				$.each(OrderInfo.oldprodInstInfos,function(){
-					if(this.prodInstId==prodId){
-						prodSpecId = this.productId;
-					}
-				});
-			}else{
-				prodSpecId = order.prodModify.choosedProdInfo.productId;
-			}
+			prodSpecId = order.prodModify.choosedProdInfo.productId;
+			$.each(OrderInfo.oldprodInstInfos,function(){
+				if(this.prodInstId==prodId){
+					prodSpecId = this.productId;
+				}
+			});
 		}
 		return prodSpecId;
 	};

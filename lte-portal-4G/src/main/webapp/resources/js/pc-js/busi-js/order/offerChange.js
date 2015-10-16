@@ -412,6 +412,7 @@ offerChange = (function() {
 			$("#attach_tab_"+$(this).attr("prodId")).hide();
 			$("#uimDiv_"+$(this).attr("prodId")).hide();
 			$("#change_"+$(this).attr("prodId")).hide();
+			$("#newProd_"+$(this).attr("prodId")).hide();
 		});
 		$("#tab_"+prodId).addClass("setcon");
 		$("#attach_tab_"+prodId).show();
@@ -419,6 +420,31 @@ offerChange = (function() {
 		if(AttachOffer.isChangeUim(prodId)){
 			$("#title_"+prodId).show();
 			$("#uimDiv_"+prodId).show();
+		}
+		var newProdId = "'"+prodId+"'";
+		if(newProdId.indexOf("-")!= -1){
+			$("#newProd_"+prodId).show();
+//			$("#accountDiv").show();
+		}else{
+//			$("#accountDiv").hide();
+		}
+		if(OrderInfo.actionFlag == 6){
+			var viceChangeFlag = false;
+			$.each(order.memberChange.viceparams,function(){
+				if(this.objInstId == prodId){
+					viceChangeFlag = true;
+					return false;
+				}
+			});
+			if(viceChangeFlag){
+				$("#accountDiv").hide();
+				$("#orderAttrDiv").hide();
+				$("#orderProvAttrDiv").show();
+			}else{
+				$("#accountDiv").show();
+				$("#orderAttrDiv").show();
+				$("#orderProvAttrDiv").hide();
+			}
 		}
 	};
 	

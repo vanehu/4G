@@ -1304,6 +1304,14 @@ public class OrderController extends BaseController {
         		model.addAttribute("main", param);
         	}
     		forward = "/pctoken/offer/offer-change";
+    	}else if("6".equals(String.valueOf(param.get("actionFlag")))){
+    		if (MapUtils.isNotEmpty(param)) {
+        		if (!param.containsKey("offerNum")||param.get("offerNum")==null) {
+        			param.put("offerNum", 1);
+        		}
+        		model.addAttribute("main", param);
+        	}
+    		forward = "/pctoken/order/order-member-template";
     	}else {
     		if (MapUtils.isNotEmpty(param)) {
         		if (!param.containsKey("offerNum")||param.get("offerNum")==null) {
