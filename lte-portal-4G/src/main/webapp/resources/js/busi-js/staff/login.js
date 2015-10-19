@@ -9,7 +9,7 @@ CommonUtils.regNamespace("staff", "login");
  */
 staff.login = (function($) {
 	//update by huangjj3 清空cookie #23633
-	var cookies = document.cookie.split(";");
+	/** var cookies = document.cookie.split(";");
 
 	for (var i = 0; i < cookies.length; i++) {
 		 var cookie = cookies[i];
@@ -21,6 +21,7 @@ staff.login = (function($) {
 			 $.cookie(name, null, { path: '/' });
 		 }
 	 }
+	 */
 
 	//记录staffId
 	var staffId =null;
@@ -196,18 +197,22 @@ staff.login = (function($) {
 				_setEnable("#button", "#loginForm");
 				return;
 			}
-			var params=_buildLoginInParam();
+			var params = _buildLoginInParam();
 			var vali = $("#vali_code_input").val().toUpperCase();
-			$.callServiceAsJson(contextPath+"/staff/login/logindo?validatecode="+vali, params, {
-				"before" : function(){
+			var url = contextPath + "/staff/login/logindo";
+			if (vali) {
+				url += "?validatecode=" + vali;
+			}
+			$.callServiceAsJson(url, params, {
+				"before": function(){
 					$.ecOverlay("<strong>验证工号信息中,请稍等会儿....</strong>");
 					_setDisable("#button", "#loginForm");
 				},
-				"done" : callBack_success_login,
-				"always" : function(){
+				"done": callBack_success_login,
+				"always": function(){
 					$.unecOverlay();
 				},
-				"fail" : function(response){
+				"fail": function(response){
 					$.alert("提示","请求可能发生异常，请稍候");
 					_setEnable("#button", "#loginForm");
 				}
@@ -218,7 +223,7 @@ staff.login = (function($) {
 	};
 	
 	//修改密码
-	var _pwcFormIsValid = function(event, form) {		
+	var _pwcFormIsValid = function(event, form) {
 		var newPassword = $.trim($("#newPassword").val());
 		var confirm_password = $.trim($("#confirm_password").val());
 		var password = $.trim($("#password").val());
@@ -258,7 +263,7 @@ staff.login = (function($) {
 				areaId : staffProvCode //系管路由标识
 		};
 		$.callServiceAsJson(contextPath + "/staff/staffPwd", param, {
-			"before":function(){
+			"before":function() {
 				$.ecOverlay("数据提交中,请稍等...");
 				ec.util.hideMsg("msg");
 			},
