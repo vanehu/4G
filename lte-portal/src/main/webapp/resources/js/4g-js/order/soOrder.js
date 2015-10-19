@@ -161,6 +161,8 @@ SoOrder = (function() {
 			busiOrders = data;
 		}else if(OrderInfo.actionFlag == 23){//异地补换卡
 			busiOrders = data;
+		}else if(OrderInfo.actionFlag== 40 ){ //新建客户
+			busiOrders.push(data);
 		}else{  //默认单个业务动作
 			_fillBusiOrder(busiOrders,data,"N"); //填充业务对象节点
 		}
@@ -289,7 +291,11 @@ SoOrder = (function() {
 			}
 			var $span = $("<span>"+OrderInfo.actionTypeName+"</span>"+OrderInfo.businessName+"<span class='showhide'></span>");
 			$("#tital").append($span);
-		}else{ //二次业务
+		} else if (OrderInfo.actionFlag==40){ //新建客户
+			OrderInfo.actionTypeName = "新建客户";
+			var $span = $("<span>"+OrderInfo.actionTypeName+"</span>");
+			$("#tital").append($span);
+		} else{ //二次业务
 			var prod = order.prodModify.choosedProdInfo;
 			$("#orderTbody").append("<tr id='offerSpecName'><td >套餐名称：</td><td>"+prod.prodOfferName+"</td></tr>");
 			$("#orderTbody").append("<tr id='accNbrTr'><td>手机号码：</td><td>"+prod.accNbr+"</td></tr> ");	

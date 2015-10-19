@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
@@ -30,6 +31,7 @@ import com.al.ecs.exception.ResultConstant;
 import com.al.ecs.spring.annotation.log.LogOperatorAnn;
 import com.al.ecs.spring.annotation.session.AuthorityValid;
 import com.al.ecs.spring.controller.BaseController;
+import com.al.lte.portal.bmo.crm.CustBmo;
 import com.al.lte.portal.bmo.crm.OfferBmo;
 import com.al.lte.portal.bmo.crm.ProdBmo;
 import com.al.lte.portal.bmo.staff.StaffBmo;
@@ -62,6 +64,10 @@ public class ProdController extends BaseController {
 	@Autowired
 	@Qualifier("com.al.lte.portal.bmo.staff.StaffBmo")
 	private StaffBmo staffBmo;
+	
+	@Autowired
+	@Qualifier("com.al.lte.portal.bmo.crm.CustBmo")
+	private CustBmo custBmo;
 
 	/**
 	 * 转至产品通用查询页面
@@ -329,6 +335,39 @@ public class ProdController extends BaseController {
 							Map<String, Object> itemSpec = (Map<String, Object>)offerProdItem.get("itemSpec");
 							prodItem.put("itemName", itemSpec.get("name"));//属性名称
 							prodItem.put("itemValue", offerProdItem.get("value"));//属性值
+							
+							//使用人产品属性特殊处理，根据value-客户id 查询客户名称并展示
+							if(SysConstant.PROD_ITEM_SPEC_ID_USER.equals(offerProdItem.get("attrId")+"")){
+								String custId = (String) offerProdItem.get("value");
+								if(StringUtils.isNotBlank(custId)){ //返回属性值为空字符串时不查询客户详情
+									Map<String, Object> paramMap=new HashMap<String, Object>();
+							    	paramMap.put("partyId", custId);
+							    	paramMap.put("useCustId", custId); //客户详情查询，useCustId表示省内客户ID，后台取该字段后转为集团实例ID并查询
+							    	paramMap.put("areaId", param.get("areaId"));
+							    	try{
+								    	Map datamap = custBmo.queryCustDetail(paramMap, null, sessionStaff);
+										if (ResultCode.R_SUCC.equals(datamap.get("resultCode"))) {
+											Map<String, Object> userInfoDetail = MapUtils.getMap(datamap, "result");
+											if(userInfoDetail != null){
+												Map<String, Object> partyList = (Map<String, Object>)(userInfoDetail.get("partyList"));
+												if(partyList != null){
+													String partyName = (String) partyList.get("partyName");
+													prodItem.put("itemValue", partyName);//属性值
+												}
+											}
+										}
+							    	} catch (BusinessException be) {
+							    		return super.failedStr(model, be);
+							    	} catch (InterfaceException ie) {
+							    		return super.failedStr(model, ie, paramMap, ErrorCode.QUERY_CUST_EXINFO);
+							    	} catch (Exception e) {
+							    		return super.failedStr(model, ErrorCode.QUERY_CUST_EXINFO, e, paramMap);
+							    	}
+								}
+							}
+							
+							
+							
 							String version = MapUtils.getString(offerProdItem, "version", "").trim();
 							if(version.length()>=10){
 								prodItem.put("updateTime", version.substring(0, 10));//属性修改时间

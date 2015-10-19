@@ -102,6 +102,8 @@ public class OrderController extends BaseController {
 				Map orderList = (Map)param.get("orderList");
 				Map orderListInfo = (Map)orderList.get("orderListInfo");
 				orderListInfo.put("staffId", sessionStaff.getStaffId()); //防止前台修改
+				orderListInfo.put("distributorId", sessionStaff.getPartnerId());
+				
 				Map<String, Object> resMap = orderBmo.orderSubmit(param,null,sessionStaff);
 				if(ResultCode.R_SUCC.equals(resMap.get("resultCode"))){
 					model.addAttribute("resMap",resMap);

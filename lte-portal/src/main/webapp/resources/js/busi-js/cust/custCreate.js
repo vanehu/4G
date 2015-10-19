@@ -101,9 +101,10 @@ cust.create = (function(){
 	};
 	var _SoOrderbuilder = function(){
 		var BO_ACTION_TYPE=CONST.BO_ACTION_TYPE.CUST_CREATE;
-		if(!SoOrder.builder()){//加载实例缓存，并且初始化订单数据
-			return;
-		}
+//		if(!SoOrder.builder()){//加载实例缓存，并且初始化订单数据
+//			return;
+//		}
+		OrderInfo.order.soNbr = UUID.getDataId();
 		OrderInfo.initData(CONST.ACTION_CLASS_CD.CUST_ACTION,BO_ACTION_TYPE,8,CONST.getBoActionTypeName(BO_ACTION_TYPE),"");
 	};
 	//客户属性-展示
@@ -144,7 +145,7 @@ cust.create = (function(){
 			$("#proarroworder").addClass("arrow");
 			$("#tabProfile0").attr("click","1");
 			$("#contactName").attr("data-validate","");
-			_custcreateButton();
+//			_custcreateButton();
 		}
 		/*$("#orderbutton").off("click").on("click",function(event){_btnQueryPhoneNumber();event.stopPropagation();});*/
 	};
@@ -158,7 +159,7 @@ cust.create = (function(){
 			$("#cardtab_pro_0").addClass("setcon");
 			$("#tabProfile0").attr("click","0");
 			$("#contactName").attr("data-validate","validate(required:请准确填写联系人名称) on(keyup)");
-			_custcreateButton();
+//			_custcreateButton();
 		}else if(($("#tabProfile0").attr("click")=="0")&&($("#contactName").val()=="")){
 			$.alert("提示","联系人名称不能为空！","information");
 			return;
@@ -204,7 +205,8 @@ cust.create = (function(){
 				identidiesTypeCd :  $("#div_cc_identidiesType  option:selected").val(),
 				custIdCard :  $.trim($("#ccCustIdCard").val()),
 				areaId :$("#p_cr_cust_areaId").val(),
-				addressStr :$("#ccAddressStr").val()
+				addressStr :$("#ccAddressStr").val(),
+				mailAddressStr : $('#ccMailAddressStr').val()
 			};
 		var data = {};
 		data.boCustInfos = [{
@@ -213,6 +215,7 @@ cust.create = (function(){
 			norTaxPayerId : "0",
 			partyTypeCd : "1",
 			addressStr : CustInfo.addressStr,
+			mailAddressStr : CustInfo.mailAddressStr,
 			state : "ADD"
 		}];
 		data.boCustIdentities = [{
@@ -260,13 +263,15 @@ cust.create = (function(){
 		if($("#tabProfile0").attr("click")=="0"){
 			data.boPartyContactInfo.push(_boPartyContactInfo);
 		}
+		
+		OrderInfo.getOrderData(); //获取订单提交节点
+		SoOrder.getToken();
 		SoOrder.submitOrder(data);
-		};
+	};
 	//下一步确认按钮
 	var _form_custCreateOnly_btn = function() {
 		
 		$('#custCreateOnlyForm').off("formIsValid").on("formIsValid",function(event) {
-			//OrderInfo.actionFlag=21;
 			_checkIdentity();
 		}).ketchup({bindElement:"custCreateOnlyBtn"});
 	};
