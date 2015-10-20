@@ -1,12 +1,14 @@
 <#if code?? && (code>=0) ><table class="numberList" id="tab_orderList" >
               <thead>
                 <tr>
-                  <td width="130">购物车流水</td>
+                  <td width="130">预约购物车流水</td>
                   <td width="130">终端名称</td>
                   <td width="80">终端价格</td>
                   <td width="130">预约时间</td>
                   <td width="130">预约政策</td>
                   <td width="150">订单项ID</td>
+                  <td width="80">预约码状态</td>
+                  <td width="150">业务受理购物车流水</td>
                   <td width="80">操作</td>
                	 </tr>
               </thead>
@@ -20,8 +22,18 @@
                   <td>${orderLists.reserveTime}</td>
                   <td>${orderLists.cfgRuleName}</td>
                   <td>${orderLists.boId}</td>
+                  <#if orderLists.codeStatus ?? && (orderLists.codeStatus=="N")>
+                  <td>可销售</td>
+                  <#elseif orderLists.codeStatus=="C">
+                  <td>已取消</td>
+                  <#elseif orderLists.codeStatus=="S">
+                  <td>已销售</td>
+                  </#if>
+                  <td>${orderLists.useCustSoNumber}</td>
                   <td>
+                  <#if orderLists.codeStatus ?? && (orderLists.codeStatus=="N")>
                   <a class="purchase" href="javascript:order.zdyy.zdyyUnsubscribe('${orderLists.id}')" boId="${orderLists.boId}"id="${orderLists.id}" apCharge="${orderLists.apCharge}" reserveNbr = "${orderLists.reserveNbr}"  couponName = "${orderLists.couponName}" couponId="${orderLists.couponId}" reserveNbr="${orderLists.reserveNbr}">取消预约</a>
+                  </#if>
                   </td>
                	</tr>
               </#list>
