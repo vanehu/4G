@@ -102,7 +102,7 @@ order.memberChange = function(){
 			return;
 		}
 		//根据省份来限制纳入老用户入口,开关在portal.properties
-		var areaidflag = _areaidJurisdiction(1);
+		var areaidflag = _areaidJurisdiction();
 		//暂存单二次加载
 		
 		
@@ -460,9 +460,9 @@ order.memberChange = function(){
 	
 	function _areaidJurisdiction(type){
 		var provid = OrderInfo.staff.soAreaId.substring(0,3) + "0000";
-		var areaparam = {"areaid":provid,"querytype":type};
+		var areaparam = {"areaid":provid};
 		$.ecOverlay("<strong>正在查询中,请稍后....</strong>");
-		var response = $.callServiceAsJsonGet(contextPath+"/offer/areaidJurisdiction",areaparam);	
+		var response = $.callServiceAsJsonGet(contextPath+"/token/pc/offer/areaidJurisdiction",areaparam);	
 		$.unecOverlay();
 		if (response.code==0) {
 			if(response.data=="ON"){
@@ -886,12 +886,12 @@ order.memberChange = function(){
 			}
 			var custId = response.data.custInfos[0].custId;
 			// 主副卡客户校验取客户查询返回结果中的custId,旧的取order.prodModify.choosedProdInfo.custId
-		
+			
 			if(custId!=OrderInfo.cust.custId){
 				$.alert("提示",accNbr+"和主卡的客户不一致！");
 				return false;
 			}
-		
+			
 			custinfolist.push({"accNbr":accNbr,"custId":custId});
 		}else{
 			$.unecOverlay();
@@ -987,7 +987,7 @@ order.memberChange = function(){
 						var prodInstInfos = list[j];
 						prodInstInfos.custId = custinfolist[i].custId;
 						//须要恢复
-					
+						
 						if(prodInstInfos.prodStateCd!=CONST.PROD_STATUS_CD.NORMAL_PROD){
 							orderflag = false;
 							$.alert("提示",custinfolist[i].accNbr+"不是在用产品！");
