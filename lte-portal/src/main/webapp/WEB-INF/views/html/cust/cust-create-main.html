@@ -115,8 +115,9 @@
 <!--内容 end-->
 <object id="CertCtl" type="application/cert-reader" width="0" height="0"></object>
 </@override>
+
 <#if Session["_session_portal_type"]?? && Session["_session_portal_type"]=="MVNO" >
-<@extends name="/main-template.html"/>
-<#else>
 <@extends name="/mvno-template.html"/>
+<#else>
+<@extends name="/main-template.html"/>
 </#if>
