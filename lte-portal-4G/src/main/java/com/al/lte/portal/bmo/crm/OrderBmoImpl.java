@@ -1,6 +1,8 @@
 package com.al.lte.portal.bmo.crm;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,6 +17,7 @@ import com.al.ec.serviceplatform.client.ResultCode;
 import com.al.ecs.common.util.JsonUtil;
 import com.al.ecs.exception.BusinessException;
 import com.al.ecs.exception.ErrorCode;
+import com.al.ecs.exception.InterfaceException;
 import com.al.ecs.log.Log;
 import com.al.lte.portal.common.InterfaceClient;
 import com.al.lte.portal.common.MySimulateData;
@@ -513,7 +516,10 @@ public class OrderBmoImpl implements OrderBmo {
 	public Map<String, Object> batchExcelImport(Map<String, Object> param,
 			String optFlowNum, SessionStaff sessionStaff)
 			throws Exception {
+//		long startTime = System.currentTimeMillis();
 		DataBus db = InterfaceClient.callService(param,PortalServiceCode.INTF_BATCH_IMPORT, optFlowNum, sessionStaff);
+//		long endTime = System.currentTimeMillis();
+//		System.out.println("******************后台导入数据******************共耗时/ms : " + (endTime - startTime));
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		try{
 			if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db.getResultCode()))) {
@@ -532,14 +538,21 @@ public class OrderBmoImpl implements OrderBmo {
 	public Map<String, Object> batchCheckPhoneAndUim(Map<String, Object> param,
 			String optFlowNum, SessionStaff sessionStaff)
 			throws Exception {
+//		long startTime = System.currentTimeMillis();
 		DataBus db = InterfaceClient.callService(param,PortalServiceCode.INTF_PNUIMBATCHVAL_SERVICE, optFlowNum, sessionStaff);
+//		long endTime = System.currentTimeMillis();
+//		System.out.println("******************号码预占******************共耗时/ms : " + (endTime - startTime));
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db.getResultCode()))) {
 			resultMap.put("code", ResultCode.R_SUCCESS);
+			if("E".equals(param.get("actionType")))//batchId只有在号码预占时才会返回
+				resultMap.put("batchId", db.getReturnlmap().get("batchId"));//号码批量预占批次号
 		} else {
 			resultMap.put("code",  ResultCode.R_FAIL);
 			resultMap.put("result", db.getReturnlmap().get("result"));
 			resultMap.put("msg", db.getResultMsg());
+			if("E".equals(param.get("actionType")))//batchId只有在号码预占时才会返回
+				resultMap.put("batchId", db.getReturnlmap().get("batchId"));//号码批量预占批次号
 		}
 		return resultMap;
 	}
@@ -1737,6 +1750,154 @@ public class OrderBmoImpl implements OrderBmo {
 			throw new BusinessException(ErrorCode.SAVE_ORDER_ATTRS, dataBusMap, db.getReturnlmap(), e);
 		}
 		return returnMap;
+	}
+
+	/**
+	 * 批量受理结果查询
+	 * @param param 入参需包含批次号groupId(必填)和地区commonRegionId(非必填)
+	 * @param optFlowNum
+	 * @param sessionStaff
+	 * @return
+	 * @throws Exception
+	 * @author ZhangYu
+	 */
+	public Map<String, Object> batchStatusQuery(Map<String, Object> param, String optFlowNum, SessionStaff sessionStaff) throws BusinessException, Exception {
+		DataBus db = InterfaceClient.callService(param,PortalServiceCode.INTF_BATCH_ORDERSTATUSQUERY, optFlowNum, sessionStaff);
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		try{
+			if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db.getResultCode()))) {//接口调用成功
+					Map<String, Object> returnData = db.getReturnlmap();
+					if(returnData != null && ResultCode.R_SUCC.equals(returnData.get("resultCode"))){//后台数据返回正常
+						if(returnData.get("result") instanceof Map){
+							returnMap = (Map<String, Object>)returnData.get("result") ;
+							returnMap.put("code", ResultCode.R_SUCCESS);
+						}
+					} else{
+						returnMap.put("code", returnData.get("resultCode"));
+						returnMap.put("msg", returnData.get("resultMsg"));
+					}			
+			} else {
+				returnMap.put("code", ResultCode.R_FAIL);
+				returnMap.put("msg", db.getResultMsg());
+			}
+		} catch(Exception e) {
+			log.error("门户处理营业受理的queryGroupBatchOrder服务返回的数据异常", e);
+			throw new BusinessException(ErrorCode.BATCH_IMP_LIST, param, db.getReturnlmap(), e);
+		}
+		return returnMap;
+	}
+
+	/**
+	 * 批次信息查询下的删除和修改
+	 * @author ZhangYu
+	 * @param param
+	 * @param optFlowNum
+	 * @param sessionStaff
+	 * @return
+	 * @throws Exception 
+	 * @throws IOException 
+	 * @throws InterfaceException 
+	 */
+	public Map<String, Object> batchOperate(Map<String, Object> param, String optFlowNum, SessionStaff sessionStaff) throws InterfaceException, IOException, Exception {
+		DataBus db = InterfaceClient.callService(param,PortalServiceCode.INTF_BATCH_ORDEROPERATE, optFlowNum, sessionStaff);
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		try{
+			
+			if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db.getResultCode()))) {//接口调用成功
+					Map<String, Object> returnData = db.getReturnlmap();
+					if(returnData != null && ResultCode.R_SUCC.equals(returnData.get("resultCode"))){//后台数据返回正常
+						if("cancel".equals(param.get("dealFlag"))){
+							returnMap.put("result", returnData.get("result"));
+							returnMap.put("code", ResultCode.R_SUCCESS);
+							returnMap.put("msg", returnData.get("resultMsg"));
+						} else{
+							//returnMap = (Map<String, Object>)returnData.get("result");//由于此处不需要用到result且后台返回result为空，故暂不解析result
+							returnMap.put("code", ResultCode.R_SUCCESS);
+							returnMap.put("msg", returnData.get("resultMsg"));
+						}
+						
+					} else{
+						returnMap.put("code", returnData.get("resultCode"));
+						returnMap.put("msg", returnData.get("resultMsg"));
+						
+					}			
+			} else {
+				returnMap.put("code", ResultCode.R_FAIL);
+				returnMap.put("msg", db.getResultMsg());
+			}
+		} catch(Exception e) {
+			log.error("门户处理营业受理的service/intf.batchOrderService/dealBatchQueueProgress服务返回的数据异常", e);
+			throw new BusinessException(ErrorCode.BATCH_IMP_LIST, param, db.getReturnlmap(), e);//确定错误编码？？？？？？？？？？？？？
+		}
+		return returnMap;
+	}
+
+	/**
+	 * 批次信息查询下的进度查询
+	 * @param param
+	 * @param optFlowNum
+	 * @param sessionStaff
+	 * @return
+	 * @author ZhangYu
+	 * @throws Exception 
+	 * @throws IOException 
+	 * @throws InterfaceException 
+	 */
+	public Map<String, Object> batchProgressQuery(Map<String, Object> param, String optFlowNum, SessionStaff sessionStaff) throws InterfaceException, IOException, Exception {
+		DataBus db = InterfaceClient.callService(param,PortalServiceCode.INTF_BATCH_IMPORTQUERY, optFlowNum, sessionStaff);
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		try{
+			if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db.getResultCode()))) {
+				Map<String, Object> returnData = db.getReturnlmap();
+				if(returnData!=null&&returnData.get("result")!=null){
+					if(returnData.get("result") instanceof Map){
+						resultMap = (Map<String, Object>)returnData.get("result") ;
+						resultMap.put("code", ResultCode.R_SUCCESS);
+					}
+				}
+			} 
+			if(!(resultMap!=null&&ResultCode.R_SUCCESS.equals(resultMap.get("code")))){
+				resultMap.put("code",  ResultCode.R_FAIL);
+				resultMap.put("msg", db.getResultMsg());
+			}
+		}catch(Exception e){
+			log.error("门户处理营业受理后台的service/intf.batchOrderService/queryBatchOrderList服务返回的数据异常", e);
+			throw new BusinessException(ErrorCode.BATCH_IMP_LIST, param, db.getReturnlmap(), e);
+		}	
+		return resultMap;
+	}
+
+	/**
+	 * 批次信息查询
+	 * @param param
+	 * @param optFlowNum
+	 * @param sessionStaff
+	 * @return
+	 * @throws Exception 
+	 * @author ZhangYu
+	 */
+	public Map<String, Object> batchOrderQueryList(Map<String, Object> param, String optFlowNum, SessionStaff sessionStaff) throws Exception {
+
+		DataBus db = InterfaceClient.callService(param,PortalServiceCode.INTF_BATCH_ORDERQUERYLIST, optFlowNum, sessionStaff);
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		try{
+			if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db.getResultCode()))) {//调接口成功
+				Map<String, Object> returnData = db.getReturnlmap();
+				if(returnData != null && ResultCode.R_SUCC.equals(returnData.get("resultCode"))){//后台数据返回正常
+					if(returnData.get("result") instanceof Map){
+						resultMap = (Map<String, Object>)returnData.get("result") ;
+						resultMap.put("code", ResultCode.R_SUCCESS);
+					}
+				}
+			} else{
+				resultMap.put("code",  ResultCode.R_FAIL);
+				resultMap.put("msg", db.getResultMsg());
+			}
+		}catch(Exception e){
+			log.error("门户处理营业受理后台的service/intf.batchOrderService/batchOrderQueryList服务返回的数据异常", e);
+			throw new BusinessException(ErrorCode.BATCH_IMP_LIST, param, db.getReturnlmap(), e);
+		}	
+		return resultMap;
 	}
 	
 	public Map<String, Object> queryOrderBusiHint(Map<String, Object> dataBusMap,

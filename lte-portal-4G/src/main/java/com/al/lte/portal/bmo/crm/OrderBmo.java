@@ -1,6 +1,9 @@
 package com.al.lte.portal.bmo.crm;
+import java.io.IOException;
 import java.util.Map;
 
+import com.al.ecs.exception.BusinessException;
+import com.al.ecs.exception.InterfaceException;
 import com.al.lte.portal.model.SessionStaff;
 
 
@@ -210,6 +213,56 @@ public interface OrderBmo {
 	 */
 	public Map<String,Object> batchOrderQuery(Map<String, Object> param,String optFlowNum, SessionStaff sessionStaff)
 			throws Exception;
+	
+	/**
+	 * 批量受理结果查询
+	 * @param param 入参需包含批次号groupId(必填)和地区commonRegionId(非必填)
+	 * @param optFlowNum
+	 * @param sessionStaff
+	 * @return
+	 * @throws Exception
+	 * @author ZhangYu
+	 */
+	public Map<String,Object> batchStatusQuery(Map<String, Object> param,String optFlowNum, SessionStaff sessionStaff)
+			throws Exception;
+	
+	/**
+	 * 批次信息查询下的删除和修改
+	 * @param param
+	 * @param optFlowNum
+	 * @param sessionStaff
+	 * @return
+	 * @author ZhangYu
+	 * @throws Exception 
+	 * @throws IOException 
+	 * @throws InterfaceException 
+	 */
+	public Map<String,Object> batchOperate(Map<String, Object> param,String optFlowNum, SessionStaff sessionStaff) throws InterfaceException, IOException, Exception;
+	
+	/**
+	 * 批次信息查询下的进度查询
+	 * @param param
+	 * @param optFlowNum
+	 * @param sessionStaff
+	 * @return
+	 * @author ZhangYu
+	 * @throws BusinessException 
+	 * @throws Exception 
+	 * @throws IOException 
+	 * @throws InterfaceException 
+	 */
+	public Map<String,Object> batchProgressQuery(Map<String, Object> param,String optFlowNum, SessionStaff sessionStaff) throws BusinessException, InterfaceException, IOException, Exception;
+	
+	/**
+	 * 批次信息查询
+	 * @param param
+	 * @param optFlowNum
+	 * @param sessionStaff
+	 * @return
+	 * @author ZhangYu
+	 * @throws Exception 
+	 */
+	public Map<String,Object> batchOrderQueryList(Map<String, Object> param,String optFlowNum, SessionStaff sessionStaff) throws Exception;
 	
 	/**
 	 * 作废种子订单

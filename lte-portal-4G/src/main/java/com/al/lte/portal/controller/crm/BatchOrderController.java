@@ -1,5 +1,7 @@
 package com.al.lte.portal.controller.crm;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -13,12 +15,20 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.collections.MapUtils;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.usermodel.HSSFFont;
+import org.apache.poi.hssf.usermodel.HSSFRichTextString;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -35,12 +45,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.al.ec.serviceplatform.client.DataBus;
 import com.al.ec.serviceplatform.client.ResultCode;
 import com.al.ecs.common.entity.JsonResponse;
 import com.al.ecs.common.entity.PageModel;
 import com.al.ecs.common.util.JsonUtil;
 import com.al.ecs.common.util.PageUtil;
+import com.al.ecs.common.util.PropertiesUtils;
 import com.al.ecs.common.web.ServletUtils;
+import com.al.ecs.common.web.SpringContextUtil;
 import com.al.ecs.exception.BusinessException;
 import com.al.ecs.exception.ErrorCode;
 import com.al.ecs.exception.InterfaceException;
@@ -48,11 +61,14 @@ import com.al.ecs.exception.ResultConstant;
 import com.al.ecs.spring.annotation.log.LogOperatorAnn;
 import com.al.ecs.spring.annotation.session.AuthorityValid;
 import com.al.ecs.spring.controller.BaseController;
-import com.al.lte.portal.bmo.crm.CustBmo;
 import com.al.lte.portal.bmo.crm.MktResBmo;
 import com.al.lte.portal.bmo.crm.OrderBmo;
 import com.al.lte.portal.bmo.staff.StaffBmo;
+import com.al.lte.portal.bmo.crm.CustBmo;
+import com.al.lte.portal.common.CommonMethods;
 import com.al.lte.portal.common.EhcacheUtil;
+import com.al.lte.portal.common.InterfaceClient;
+import com.al.lte.portal.common.PortalServiceCode;
 import com.al.lte.portal.common.SysConstant;
 import com.al.lte.portal.model.SessionStaff;
 
@@ -81,7 +97,8 @@ public class BatchOrderController  extends BaseController {
 		String olseq=request.getParameter("olseq");
 		String type=request.getParameter("type");
 		String areaId=request.getParameter("areaId");
-		List<Map<String,Object>>time = getTimeList();
+		//List<Map<String,Object>>time = getTimeList();
+		List<Map<String,Object>>time = getTimeListIn5Days();
     	model.addAttribute("time", time);
 		model.addAttribute("olId", olId);
 		model.addAttribute("olseq", olseq);
@@ -119,6 +136,62 @@ public class BatchOrderController  extends BaseController {
     	}
     	return time;
 	}
+	
+	/**
+	 * 获取未来5天的时间列表，精确到“时”，以实现未来5天的预约时间。该方法目前用于批开活卡、批量新装、批量裸机销售等批量受理。
+	 * @return 时间列表。该时间列表分为“日”和“时”两部分，其中“日”是未来的5天，“时”是每天的24个小时，分24个“时”。
+	 * @author ZhangYu
+	 */
+	public List<Map<String, Object>> getTimeListIn5Days() {
+		List<Map<String, Object>> time = new ArrayList<Map<String, Object>>();
+		Calendar calendar = Calendar.getInstance();
+		int hour = calendar.get(Calendar.HOUR_OF_DAY) + 1;// 小时
+		String startDate = "";
+		String startDateStr = "";
+		String hourStr = "";
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+		// int flag = 0;
+		// 用于标识获取未来几天的时间列表，当reserveFlag = 1时，获取两天时间列表（即预约时间为两天之内）；当reserveFlag = 4时，获取五天时间列表（即预约时间为五天之内）。
+		int reserveFlag = 4;
+		HashMap<String, Object> map = null;
+		for (int i = hour; i < (hour + 24 * reserveFlag); i++) {
+			map = new HashMap<String, Object>();
+			if (i > (23 + 24 * 3) && i <= (23 + 24 * 4)) {
+				hourStr = "00".substring(String.valueOf(i - 24 * 4).length()) + String.valueOf(i - 24 * 4);
+				startDateStr = "第五日" + String.valueOf(i - 24 * 4) + "时";
+				if (i == (23 + 24 * 3) + 1) {
+					calendar.add(Calendar.DAY_OF_MONTH, 1);
+				}
+			} else if (i > (23 + 24 * 2) && i <= (23 + 24 * 3)) {
+				hourStr = "00".substring(String.valueOf(i - 24 * 3).length()) + String.valueOf(i - 24 * 3);
+				startDateStr = "第四日" + String.valueOf(i - 24 * 3) + "时";
+				if (i == (23 + 24 * 2) + 1) {
+					calendar.add(Calendar.DAY_OF_MONTH, 1);
+				}
+			} else if (i > (23 + 24 * 1) && i <= (23 + 24 * 2)) {
+				hourStr = "00".substring(String.valueOf(i - 24 * 2).length()) + String.valueOf(i - 24 * 2);
+				startDateStr = "第三日" + String.valueOf(i - 24 * 2) + "时";
+				if (i == (23 + 24 * 1) + 1) {
+					calendar.add(Calendar.DAY_OF_MONTH, 1);
+				}
+			} else if (i > 23 && i <= (23 + 24 * 1)) {
+				hourStr = "00".substring(String.valueOf(i - 24 * 1).length()) + String.valueOf(i - 24 * 1);
+				startDateStr = "次日" + String.valueOf(i - 24 * 1) + "时";
+				if (i == 23 + 1) {
+					calendar.add(Calendar.DAY_OF_MONTH, 1);
+				}
+			} else {
+				hourStr = "00".substring(String.valueOf(i).length()) + String.valueOf(i);
+				startDateStr = "当日" + String.valueOf(i) + "时";
+			}
+			startDate = sdf.format(calendar.getTime()) + hourStr + "0000";
+			map.put("date", startDate);
+			map.put("dateStr", startDateStr);
+			time.add(map);
+		}
+		return time;
+	}
+	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/batchImport", method = RequestMethod.POST)
 	public String importData(Model model,
@@ -176,6 +249,8 @@ public class BatchOrderController  extends BaseController {
 					isError = true;
 				}
 				if (!isError) {
+					//号码批量预占批次号,在“批开活卡”和“批量新装”情况下，资源的批量预占接口的回参中新增resBatchId，需将resBatchId连同导入的Excel数据传与后台。
+					String resBatchId = null;
 					//message="批量导入成功,导入批次号："+rMap.get("groupId");
 					Map<String,Object> checkResult=null;
 					boolean flag=false;
@@ -184,7 +259,10 @@ public class BatchOrderController  extends BaseController {
 					String str = sessionStaff.getCustId() +"/"+ sessionStaff.getPartyName() +"/" + sessionStaff.getCardNumber()+"/"+sessionStaff.getCardType();
 					if(SysConstant.BATCHNEWORDER.equals(batchType)||SysConstant.BATCHHUOKA.equals(batchType)){//批量开卡、批量新装
 						if(SysConstant.BATCHNEWORDER.equals(batchType)){// #13802，批量新装的时候门户批量新装的模版去掉客户列，调用服务传的custID为定位的客户信息
+//							long startTime = System.currentTimeMillis();
 							checkResult=readNewOrderExcelBatch(workbook,batchType,str);
+//							long endTime = System.currentTimeMillis();
+//							System.out.println("******************Excel解析******************共耗时/ms : " + (endTime - startTime));
 						}else{
 							checkResult=readNewOrderExcel(workbook,batchType);
 						}
@@ -192,6 +270,7 @@ public class BatchOrderController  extends BaseController {
 							List<Map<String,Object>> mktResInstList=(List<Map<String,Object>>)checkResult.get("mktResInstList");
 							if(mktResInstList.size()>0){
 								Map<String,Object> resultMap=PlReservePhoneNums(mktResInstList,"E",flowNum);//批量预占
+								resBatchId = (String) resultMap.get("batchId");//导入批次，资源预占成功后返回resBatchId，需记录到后台
 								String ff=(String)resultMap.get("flag");
 								if(ff.equals("0")){
 									flag=true;
@@ -243,12 +322,13 @@ public class BatchOrderController  extends BaseController {
 						}
 						param.put("batchType", batchType);
 						param.put("reserveDt", reserveDt);
+						param.put("resBatchId", (resBatchId != null) ? resBatchId : "");
 						Map<String, Object> busMap = new HashMap<String, Object>();
 						busMap.put("batchOrder", param);
 						try {
 							rMap = orderBmo.batchExcelImport(busMap, flowNum, sessionStaff);
 							if (rMap != null&& ResultCode.R_SUCCESS.equals(rMap.get("code").toString())) {
-								message="批量导入成功,导入批次号："+rMap.get("groupId")+",请到“批量受理查询”功能中查询受理结果";
+								message="批量导入成功,导入批次号："+rMap.get("groupId")+",请到“批量受理查询”中查询受理结果";
 								code="0";
 				 			}else{
 				 				if(SysConstant.BATCHNEWORDER.equals(batchType)||SysConstant.BATCHHUOKA.equals(batchType)){//批量开卡、批量新装
@@ -279,7 +359,8 @@ public class BatchOrderController  extends BaseController {
 		} else {
 			message="文件读取失败";
 		}
-		List<Map<String,Object>>time = getTimeList();
+//		List<Map<String,Object>>time = getTimeList();
+		List<Map<String,Object>>time = this.getTimeListIn5Days();
     	model.addAttribute("time", time);
 		model.addAttribute("message", message);
 		model.addAttribute("code", code);
@@ -306,6 +387,8 @@ public class BatchOrderController  extends BaseController {
 			Map<String,Object> phoneCheck=orderBmo.batchCheckPhoneAndUim(param, flowNum, sessionStaff);
 			if(phoneCheck!=null&&ResultCode.R_SUCCESS.equals(phoneCheck.get("code").toString())){
 				flag="0";
+				if("E".equals(actionType))
+					returnMap.put("batchId", phoneCheck.get("batchId"));//号码批量预占批次号
 			}else{
 				flag="1";
 				List<Map<String,Object>> check=new ArrayList<Map<String,Object>>();
@@ -317,6 +400,8 @@ public class BatchOrderController  extends BaseController {
 				}
 				returnMap.put("errorlist",check);
 				returnMap.put("msg", phoneCheck.get("msg"));
+				if("E".equals(actionType))
+					returnMap.put("batchId", phoneCheck.get("batchId"));//号码批量预占批次号
 			}
 			returnMap.put("flag", flag);
 		} catch (BusinessException be) {
@@ -838,6 +923,11 @@ public class BatchOrderController  extends BaseController {
 		returnMap.put("message", message);
 		return returnMap;
 	}
+	
+	/**
+	 * 从SessionStaff获取staffId和channelId以Map类型返回
+	 * @return map
+	 */
 	private Map<String, Object> getAreaInfos(){
     	Map<String,Object> map=new HashMap<String,Object>();
 		SessionStaff sessionStaff = (SessionStaff) ServletUtils
@@ -936,6 +1026,10 @@ public class BatchOrderController  extends BaseController {
 	@RequestMapping(value = "/batchImportQuery", method = RequestMethod.GET)
 	@AuthorityValid(isCheck = true)
 	public String batchImportQuery(Model model,HttpServletRequest request,HttpSession session) {
+		
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);
+		Map<String, Object> defaultAreaInfo = CommonMethods.getDefaultAreaInfo_MinimumC3(sessionStaff);
+		
 		model.addAttribute("current", EhcacheUtil.getCurrentPath(session,"order/batchOrder/batchImportQuery"));
 		Calendar calendar = Calendar.getInstance();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -944,8 +1038,20 @@ public class BatchOrderController  extends BaseController {
 		String start = sdf.format(calendar.getTime());
 		model.addAttribute("startDt", start);
 		model.addAttribute("endDt", end);
+		
+		//获取员工权限
+		String permissionsType = CommonMethods.checkBatchQryOperatSpec(staffBmo,super.getRequest(),sessionStaff);
+		model.addAttribute("permissionsType", permissionsType);
+		model.addAttribute("p_areaId", defaultAreaInfo.get("defaultAreaId"));
+		model.addAttribute("p_areaId_val", defaultAreaInfo.get("defaultAreaName"));
+		
+		//根据配置文件portal.properties里的开关，判断执行新旧代码，N执行旧代码，Y执行新代码
+		JsonResponse jsonResponse = this.batchOrderFlag("batchOrderQry");
+		model.addAttribute("batchOrderFlag", jsonResponse.getData().toString());
+		
 		return "/batchOrder/batch-order-imQuery";
 	}
+	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/batchImportList", method = RequestMethod.GET)
 	public String batchImportList(Model model,@RequestParam Map<String, Object> param,@LogOperatorAnn String flowNum) {
@@ -977,8 +1083,351 @@ public class BatchOrderController  extends BaseController {
 			return super.failedStr(model, ErrorCode.BATCH_IMP_LIST, e, param);
 		}
 		return "/batchOrder/batch-order-imlist";
+		//return "/batchOrder/batch-order-progressQuery";
+	}
+
+	/**
+	 * 批次信息查询(即现有页面的“批量受理查询”)，查询结果为符合条件的批次信息，不包含某一批次下的具体信息，一个批次的具体信息，在“进度查询”功能中实现。
+	 * @param param
+	 * @param model
+	 * @param response
+	 * @return
+	 * @author ZhangYu 
+	 */
+	@SuppressWarnings("unchecked")
+	@RequestMapping(value = "/batchOrderQueryList", method = {RequestMethod.POST})
+	public String batchOrderQueryList(@RequestBody Map<String, Object> param, Model model, HttpServletResponse response ) {
+		
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);
+
+		/**
+		* 场景：批量受理查询，新增权限开关；
+		* 应用：这是一个判断是否增加权限优化的标识，暂时用于判断是否执行改造后的新代码(增加权限优化)
+		* 说明："Y"执行改造后的新代码，"N"仍执行原有的旧代码
+		*/
+		if("Y".equals(this.batchOrderFlag("batchOrderAuth").getData().toString())){
+			/**
+			 * 员工权限，由于权限信息已放到js前端，安全起见，在此重新查询权限
+			 * 具体权限控制(后台协定)：
+			 * 	管理员：渠道和staffId传空字符串，地区可选择，地区ID必传；
+			 * 	营业班长：渠道不可空，staffId传空字符，地区不可选，地区ID必传；
+			 * 	营业员：渠道不可空，staffId不可空，地区不可选，地区ID必传；
+			 */
+			String permissionsType = CommonMethods.checkBatchQryOperatSpec(staffBmo,super.getRequest(),sessionStaff);
+			if("admin".equals(permissionsType)){//管理员，不传staffId
+				param.put("staffId", "");
+			} else if("monitor".equals(permissionsType)){//营业班长，不传staffId
+				param.put("staffId", "");
+			} else {//营业员
+				param.put("staffId", sessionStaff.getStaffId());
+			}
+		} else {
+			param.putAll(getAreaInfos());
+		}
+  
+		try {
+			List<Map<String,Object>> resultList=new ArrayList<Map<String,Object>>();
+			Map<String,Object> rMap = orderBmo.batchOrderQueryList(param, null, sessionStaff);
+			if (rMap != null&& ResultCode.R_SUCCESS.equals(rMap.get("code").toString())) {
+				int total=MapUtils.getIntValue(rMap, "totalSize", 0);
+				Object result =rMap.get("objList");
+				if (result instanceof List) {
+					resultList = (List<Map<String, Object>>) result;
+				} else {
+					Map<String,Object> tempMap = (Map<String, Object>) result;
+					resultList.add(tempMap);
+				}
+				if(resultList!=null&&resultList.size()>0){
+					 PageModel<Map<String, Object>> pm = PageUtil.buildPageModel(MapUtils.getIntValue(param,
+		                     "pageIndex", 1), MapUtils.getIntValue(param,"pageSize",10), total, resultList);
+		             model.addAttribute("pageModel", pm);
+				}
+			}
+		} catch (Exception e) {
+			return super.failedStr(model, ErrorCode.BATCH_IMP_LIST, e, param);
+		}
+		
+		//根据配置文件portal.properties里的开关，判断执行新旧代码，N执行旧代码，Y执行新代码
+		JsonResponse jsonResponse = this.batchOrderFlag("batchOrderQry");
+		model.addAttribute("batchOrderFlag", jsonResponse.getData().toString());
+		
+		return "/batchOrder/batch-order-imlist";
 	}
 	
+	/**
+	 * 进度查询，导出Excel
+	 * @param param dealStatus:受理状态(可空); orderStatus:订单状态(可空); groupId:批次号(不可空); batchType:受理类型(不可空)
+	 * @param model
+	 * @param response
+	 * @return 
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	@RequestMapping(value = "/batchOrderExport", method = {RequestMethod.POST})
+	@ResponseBody //@RequestParam @RequestBody
+	public JsonResponse batchOrderExport(@RequestParam Map<String, Object> param, Model model, HttpServletResponse response) {
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);
+		
+		param.putAll(getAreaInfos());
+		try {
+			List<Map<String,Object>> resultList=new ArrayList<Map<String,Object>>();
+			Map<String,Object> rMap = orderBmo.batchProgressQuery(param, null, sessionStaff);
+			if (rMap != null&& ResultCode.R_SUCCESS.equals(rMap.get("code").toString())) {
+				int totalSize = MapUtils.getIntValue(rMap, "totalSize", 0);
+				Object result =rMap.get("objList");
+				if (result instanceof List) {
+					resultList = (List<Map<String, Object>>) result;
+				} else {
+					Map<String,Object> tempMap = (Map<String, Object>) result;
+					resultList.add(tempMap);
+				}
+				if(resultList != null && resultList.size() > 0){
+					String excelTitle = "批次查询受理表单"+param.get("groupId");
+					String[] headers = new String[]{"批次号","主接入号","UIM卡号","受理时间","受理状态","反馈信息","订单状态"};
+					
+					//FileOutputStream fos = new FileOutputStream(new File("c:\\Test\\测试.xls")); 
+					//this.exportExcel(excelTitle, headers, resultList, fos, "yyyy-MM-dd");
+					//fos.close();
+					response.addHeader("Content-Disposition", "attachment;filename="+new String( excelTitle.getBytes("gb2312"), "ISO8859-1" )+".xls");
+					response.setContentType("application/binary;charset=utf-8");  
+					 
+					ServletOutputStream  outputStream = response.getOutputStream();
+					this.exportExcel(excelTitle, headers, resultList, outputStream);
+					outputStream.close();
+//					System.out.println("***************Excel导出成功********************");
+				}
+			}
+		} catch (BusinessException be) {
+			 this.log.error("服务出错", be);
+			 return super.failed(be);
+		} catch (InterfaceException ie) {
+			return super.failed(ie, param, ErrorCode.BATCH_IMP_LIST);
+		} catch (Exception e) {
+			//return super.failedStr(model, ErrorCode.BATCH_IMP_LIST, e, param);
+			return super.failed(ErrorCode.BATCH_IMP_LIST, e.getStackTrace().toString(), param);
+		}
+		
+		//return "/batchOrder/batch-order-progressQuery-dialog";
+		//return jsonResponse = super.successed(rMap,ResultConstant.SUCCESS.getCode());
+		//return jsonResponse = super.successed("导出成功！");
+		return super.successed("导出成功！");
+	}
+
+	/**
+	 * 批次信息查询下的进度查询
+	 */
+	@SuppressWarnings("unchecked")
+	@RequestMapping(value = "/batchProgressQuery", method = {RequestMethod.POST})
+	public String batchProgressQuery(@RequestBody Map<String, Object> param, Model model, HttpServletResponse response) {
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);
+
+		//获取员工权限
+		//String permissionsType = CommonMethods.checkStaffOperatSpec(staffBmo,super.getRequest(),sessionStaff);
+		//model.addAttribute("permissionsType", permissionsType);		
+
+		model.addAttribute("param", param);
+		return "/batchOrder/batch-order-progressQuery-dialog";
+	}
+	
+	/**
+	 * 批次信息查询下的进度查询
+	 * @param param statusCd:受理状态(可空); orderStatus:订单状态(可空); groupId:批次号(不可空); batchType:受理类型(不可空)
+	 * @param model
+	 * @param response
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	@RequestMapping(value = "/batchProgressQueryList", method = {RequestMethod.POST})
+	public String batchProgressQueryList(@RequestBody Map<String, Object> param, Model model, HttpServletResponse response) {
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);
+		
+		param.putAll(getAreaInfos());
+		try {
+			List<Map<String,Object>> resultList=new ArrayList<Map<String,Object>>();
+			Map<String,Object> rMap = orderBmo.batchProgressQuery(param, null, sessionStaff);
+			if (rMap != null&& ResultCode.R_SUCCESS.equals(rMap.get("code").toString())) {
+				int total=MapUtils.getIntValue(rMap, "totalSize", 0);
+				Object result =rMap.get("objList");
+				if (result instanceof List) {
+					resultList = (List<Map<String, Object>>) result;
+				} else {
+					Map<String,Object> tempMap = (Map<String, Object>) result;
+					resultList.add(tempMap);
+				}
+				if(resultList != null && resultList.size() > 0){
+					 PageModel<Map<String, Object>> pm = PageUtil.buildPageModel(MapUtils.getIntValue(param,
+		                     "pageIndex", 1), MapUtils.getIntValue(param,"pageSize",10), total, resultList);
+		             model.addAttribute("pageModel", pm);
+				}
+			}
+		} catch (BusinessException e) {
+			 this.log.error("服务出错", e);
+		} catch (InterfaceException ie) {
+			return super.failedStr(model, ie, param, ErrorCode.BATCH_IMP_LIST);
+		} catch (Exception e) {
+			return super.failedStr(model, ErrorCode.BATCH_IMP_LIST, e, param);
+//			return super.failedStr(model, ErrorCode.BATCH_IMP_LIST, data, param);
+//			failedStr(Model model, ErrorCode error, Object data, Map<String, Object> paramMap)
+		}
+		
+		model.addAttribute("param", param);
+		return "/batchOrder/batch-order-progressQuery-dialog-list";
+	}
+	
+	/**
+	 * 批量受理结果查询，某一批次的具体处理状态："RC">资源返销 "F">建档算费失败 "X">生成购物车失败 "S">生成购物车成功 "C">建档算费成功 "Q">导入成功
+	 * @param model
+	 * @param param
+	 * @param flowNum
+	 * @return
+	 * @author ZhangYu
+	 */
+	@SuppressWarnings("unchecked")
+	@RequestMapping(value = "/batchStatusQuery", method = RequestMethod.GET)
+	public String batchStatusQuery(Model model,@RequestParam Map<String, Object> param,@LogOperatorAnn String flowNum) {
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);
+		//param.putAll(getAreaInfos());
+		Map<String, Object> rMap = null;
+		List<Map<String,Object>> resultList=new ArrayList<Map<String,Object>>();
+		JsonResponse jsonResponse = null;
+		String message = "";
+		Object totalNbr = "";//所有处理状态的总数
+		
+		param.put("commonRegionId", sessionStaff.getAreaId());
+		try {
+			rMap = orderBmo.batchStatusQuery(param, flowNum, sessionStaff);
+			if (rMap != null && ResultCode.R_SUCCESS.equals(rMap.get("code").toString())){
+				Object result = rMap.get("objList");
+				totalNbr =  rMap.get("totalNbr");//后台totalNbr为BigDecimal类型
+				if (result instanceof List) {
+					resultList = (List<Map<String, Object>>) result;
+					model.addAttribute("code", rMap.get("code").toString());
+				}else{
+					message = "营业后台封装的回参objList不是List类型，请检查 !";
+					model.addAttribute("code", rMap.get("code").toString());
+				}
+			} else{
+				message = "业务查询发生异常 :" + rMap.get("msg").toString();
+				model.addAttribute("code", rMap.get("code").toString());
+			}
+		} catch (BusinessException be) {
+			jsonResponse = super.failed(ErrorCode.BATCH_IMP_LIST, be, param);
+		} catch (Exception e) {
+			jsonResponse = super.failed(ErrorCode.BATCH_IMP_LIST, e, param);
+		}
+		
+		model.addAttribute("batchType", rMap.get("batchType"));
+		model.addAttribute("message", message);
+		model.addAttribute("totalNbr", totalNbr);
+		if(jsonResponse != null)
+			model.addAttribute("errorStack",jsonResponse);
+		else
+			model.addAttribute("resultList", resultList);
+		
+		return "/batchOrder/batch-order-statusQuery-dialog";
+	}
+	
+	/**
+	 * 批次信息查询下的“修改”
+	 * @param model
+	 * @param param
+	 * @param flowNum
+	 * @return
+	 * @author ZhangYu
+	 */
+	@SuppressWarnings("unchecked")
+	@RequestMapping(value = "/batchOperate", method = {RequestMethod.POST})
+	@ResponseBody
+	public JsonResponse batchOperate(@RequestBody Map<String, Object> param,Model model,@LogOperatorAnn String flowNum) {
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);
+		param.putAll(getAreaInfos());
+		param.put("areaId", sessionStaff.getAreaId());
+		Map<String, Object> rMap = null;
+		JsonResponse jsonResponse = null;
+		try {
+			rMap = orderBmo.batchOperate(param, null, sessionStaff);
+			if (rMap != null && ResultCode.R_SUCCESS.equals(rMap.get("code").toString())){
+				return super.successed(rMap.get("msg").toString());
+			} else{
+				jsonResponse = super.failed(rMap.get("msg").toString(),ResultConstant.FAILD.getCode());
+			}
+		} catch (InterfaceException ie) {
+			jsonResponse = super.failed(ie, param,ErrorCode.BATCH_IMP_LIST);
+		} catch (IOException e) {
+			jsonResponse = super.failed(ErrorCode.BATCH_IMP_LIST, e, param);
+		} catch (Exception e) {
+			jsonResponse = super.failed(ErrorCode.BATCH_IMP_LIST, e, param);
+		}		
+		return jsonResponse;
+	}
+	
+	/**
+	 * 批次信息查询下的“取消”
+	 * @param param
+	 * @param model
+	 * @param flowNum
+	 * @return
+	 * @author ZhangYu
+	 */
+	@SuppressWarnings("unchecked")
+	@RequestMapping(value = "/batchOperateCancle", method = {RequestMethod.POST})
+	public String batchOperateCancle(@RequestBody Map<String, Object> param,Model model,@LogOperatorAnn String flowNum) {
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);
+		param.putAll(getAreaInfos());
+		param.put("areaId", sessionStaff.getAreaId());
+		Map<String, Object> rMap = null;
+		JsonResponse jsonResponse = null;
+		try {
+			rMap = orderBmo.batchOperate(param, null, sessionStaff);
+			Map<String, Object> invalidInfo = (Map<String, Object>) rMap.get("result");
+			if (rMap != null && ResultCode.R_SUCCESS.equals(rMap.get("code").toString())){
+				if( invalidInfo.size() > 0){
+					model.addAttribute("invalidPhoneNumberList", invalidInfo.get("invalidPhoneNumberList"));
+					model.addAttribute("invalidMktResInstList", invalidInfo.get("invalidMktResInstList"));
+				} else{
+					model.addAttribute("invalidPhoneNumberList", "");
+					model.addAttribute("invalidMktResInstList", "");
+				}
+				model.addAttribute("code", "0");
+				model.addAttribute("message",  rMap.get("msg"));
+			} else{
+				model.addAttribute("code", rMap.get("code"));
+				model.addAttribute("message",  rMap.get("msg"));
+			}
+		} catch (InterfaceException ie) {
+			jsonResponse = super.failed(ie, param, ErrorCode.BATCH_IMP_LIST);
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			jsonResponse = super.failed(ErrorCode.BATCH_IMP_LIST, e, param);
+		}
+		
+		if(jsonResponse != null)
+			model.addAttribute("errorStack",jsonResponse);
+		
+		return "/batchOrder/batch-order-batchCancel_dialog";
+	}
+	
+	/**
+	 * 批次信息查询下的“修改”,该方法用于弹出修改预约时间的对话框
+	 * @param model
+	 * @param param
+	 * @param request
+	 * @param session
+	 * @return
+	 * @author ZhangYu
+	 */
+	@SuppressWarnings("unchecked")
+	@RequestMapping(value = "/batchUpdateMain", method = {RequestMethod.POST})
+	public String batchUpdateMain(@RequestBody Map<String, Object> param,Model model,HttpServletRequest request,HttpSession session) {
+		
+		model.addAttribute("current", EhcacheUtil.getCurrentPath(session,"order/batchOrder/batchUpdateMain"));
+		model.addAttribute("timeList", this.getTimeListIn5Days());
+		model.addAttribute("param", param);
+		
+		return "/batchOrder/batch-order-batchUpdate_dialog";
+	}
+		
 	@RequestMapping(value = "/batchOrderQuery", method = RequestMethod.GET)
 	@AuthorityValid(isCheck = true)
 	public String batchOrderQuery(Model model,HttpServletRequest request,HttpSession session) {
@@ -1008,6 +1457,7 @@ public class BatchOrderController  extends BaseController {
 		model.addAttribute("batchTypeName", batchTypeName);
 		return "/batchOrder/batch-order-query";
 	}
+
 	@RequestMapping(value = "/batchEditParty", method = RequestMethod.GET)
 	@AuthorityValid(isCheck = true)
 	public String batchOrderEditParty(Model model,HttpServletRequest request,HttpSession session) {
@@ -1016,7 +1466,8 @@ public class BatchOrderController  extends BaseController {
 		model.addAttribute("templateType", SysConstant.BATCHFAZHANREN);
 		model.addAttribute("batchTypeName", batchTypeName);
 		return "/batchOrder/batch-order-editParty";
-	}	
+	}
+	
 	public String getTypeNames(String templateType){
 		Map<String,String> map=new HashMap<String,String>();
 		//0---批量开活卡 1---批量新装	2---批量订购/退订附属	3---组合产品纳入退出	4---批量修改产品属性	5--批量换挡8---拆机 9---批量修改发展人  11--批量换挡
@@ -1142,7 +1593,8 @@ public class BatchOrderController  extends BaseController {
 	@RequestMapping(value = "/batchOrderTerminal", method = RequestMethod.GET)
 	public String batchOrderTerminal(HttpSession session, Model model) {
 		model.addAttribute("canOrder", EhcacheUtil.pathIsInSession(session,"order/batchOrder/batchOrderTerminal"));
-		List<Map<String, Object>> time = getTimeList();
+//		List<Map<String, Object>> time = getTimeList();
+		List<Map<String, Object>> time = this.getTimeListIn5Days();
 		model.addAttribute("time", time);
 		model.addAttribute("batchType", "10");
 		model.addAttribute("batchTypeName", "批量订购裸终端");
@@ -1158,8 +1610,9 @@ public class BatchOrderController  extends BaseController {
 	 */
 	@RequestMapping(value = "/batchChangeFeeType", method = RequestMethod.GET)
 	public String batchChangeFeeType(HttpSession session, Model model) {
-		//model.addAttribute("canOrder", EhcacheUtil.pathIsInSession(session,"order/batchOrder/batchChangeFeeType"));//??????????????
-		List<Map<String, Object>> timeList = getTimeList();
+		//model.addAttribute("canOrder", EhcacheUtil.pathIsInSession(session,"order/batchOrder/batchChangeFeeType"));
+		//List<Map<String, Object>> timeList = getTimeList();
+		List<Map<String, Object>> timeList = this.getTimeListIn5Days();
 		model.addAttribute("time", timeList);
 		model.addAttribute("batchType", "11");
 		model.addAttribute("batchTypeName", "批量换挡");
@@ -1530,6 +1983,7 @@ public class BatchOrderController  extends BaseController {
 			return returnMap;
 		}
 		
+		
 		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
 		List<Map<String, Object>> mktResInstList = new ArrayList<Map<String, Object>>();
 		List<Map<String, Object>> uList = new ArrayList<Map<String, Object>>();
@@ -1763,7 +2217,7 @@ public class BatchOrderController  extends BaseController {
 		}
 		long time3 = new Date().getTime();
 		System.out.println("=============去重判断==============" + "号码去重判断耗时"
-				+ (time2 - time1) + "uim卡去重耗时" + (time3 - time2));
+				+ (time2 - time1) + "uim卡去重耗时 " + (time3 - time2));
 		returnMap.put("errorData", errorData.toString());
 		returnMap.put("mktResInstList", mktResInstList);
 		returnMap.put("list", list);
@@ -2050,5 +2504,162 @@ public class BatchOrderController  extends BaseController {
 	private boolean checkOfferSpecIdReg(String cellValue){
 		return Pattern.matches("[1-9]\\d*|0", cellValue);//匹配整数
 		
+	}
+	
+	/**
+	 * 
+	 * @param title
+	 * @param headers
+	 * @param dataList
+	 * @param out
+	 */
+	protected void exportExcel(String title, String[] headers, List<Map<String, Object>> dataList, OutputStream outputStream){
+		//声明一个工作簿
+		HSSFWorkbook workbook = new HSSFWorkbook();
+		//生成一个表格
+		HSSFSheet sheet = workbook.createSheet(title);
+		//设置表格默认列宽度为15个字符
+		sheet.setDefaultColumnWidth(20);
+		//生成一个样式，用来设置标题样式
+		HSSFCellStyle headersStyle = workbook.createCellStyle();
+		headersStyle.setFillForegroundColor(HSSFColor.SKY_BLUE.index);
+		headersStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+		headersStyle.setBorderBottom(HSSFCellStyle.BORDER_THIN);
+		headersStyle.setBorderLeft(HSSFCellStyle.BORDER_THIN);
+		headersStyle.setBorderRight(HSSFCellStyle.BORDER_THIN);
+		headersStyle.setBorderTop(HSSFCellStyle.BORDER_THIN);
+		headersStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+		//生成一个字体
+		HSSFFont headersFont = workbook.createFont();
+		headersFont.setColor(HSSFColor.VIOLET.index);
+		headersFont.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
+		//把字体应用到当前的样式
+		headersStyle.setFont(headersFont);
+		// 生成并设置另一个样式,用于设置内容样式
+		HSSFCellStyle contentStyle = workbook.createCellStyle();
+		contentStyle.setFillForegroundColor(HSSFColor.LIGHT_YELLOW.index);
+		contentStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+		contentStyle.setBorderBottom(HSSFCellStyle.BORDER_THIN);
+		contentStyle.setBorderLeft(HSSFCellStyle.BORDER_THIN);
+		contentStyle.setBorderRight(HSSFCellStyle.BORDER_THIN);
+		contentStyle.setBorderTop(HSSFCellStyle.BORDER_THIN);
+		contentStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+		contentStyle.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);
+		// 生成另一个字体
+		HSSFFont contentFont = workbook.createFont();
+		contentFont.setBoldweight(HSSFFont.BOLDWEIGHT_NORMAL);
+		// 把字体应用到当前的样式
+		contentStyle.setFont(contentFont);
+		//产生表格标题行
+		HSSFRow row = sheet.createRow(0);
+		for(int i = 0; i < headers.length; i++){
+			HSSFCell cell = row.createCell(i);
+			cell.setCellStyle(headersStyle);
+			cell.setCellValue(new HSSFRichTextString(headers[i]));
+		}
+		//填充表格数据内容
+		for (int i = 0; i < dataList.size(); i++) {
+			Map<String,Object> map = (Map<String, Object>) dataList.get(i);
+			row = sheet.createRow(i+1);
+			int j = 0;
+			Object value = null;
+			row.createCell(j++).setCellValue(null == map.get("groupId") ? "" : map.get("groupId").toString());
+			row.createCell(j++).setCellValue(
+					"".equals(map.get("boProdAn").toString()) ? map.get("accessNumber").toString() : map.get("boProdAn").toString());
+			row.createCell(j++).setCellValue(null == map.get("boProd2Td") ? "" : map.get("boProd2Td").toString());//uim卡号
+			row.createCell(j++).setCellValue(null == map.get("genOlDt") ? "" : map.get("genOlDt").toString());//受理时间
+			String tempStr;
+			
+			if(null == map.get("statusCd")){
+				tempStr = "";
+			} else{
+				String statusCd = map.get("statusCd").toString();
+				if("PC".equals(statusCd))
+					tempStr = "派发成功";
+				else if("PD".equals(statusCd))
+					tempStr = "派发失败";
+				else if("Q".equals(statusCd))
+					tempStr = "导入成功";
+				else if("S".equals(statusCd))
+					tempStr = "购物车生成成功";
+				else if("X".equals(statusCd))
+					tempStr = "购物车生成失败";
+				else if("PW".equals(statusCd))
+					tempStr = "正在派发中";
+				else if("C".equals(statusCd))
+					tempStr = "发送后端成功";
+				else if("PE".equals(statusCd))
+					tempStr = "等待重新派发";
+				else if("F".equals(statusCd))
+					tempStr = "发送后端失败";
+				else if("DL".equals(statusCd))
+					tempStr = "受理处理中";
+				else if("RC".equals(statusCd))
+					tempStr = "返销成功";
+				else
+					tempStr = "";
+			}
+			row.createCell(j++).setCellValue(tempStr);
+			row.createCell(j++).setCellValue(map.get("msgInfo").toString() == null ? "" : map.get("msgInfo").toString());
+			row.createCell(j++).setCellValue(map.get("orderStatusName").toString() == null ? "" : map.get("orderStatusName").toString());
+		}
+		try {
+			workbook.write(outputStream);
+		} catch (IOException e) {
+			e.printStackTrace();/////////////////////////////////////////////异常处理////////////////////////////////////
+		}
+	}
+
+	/**
+	 * #“#18396集约CRM系统批量预开通功能优化需求”开关，ON：改造之后(新代码)；OFF：改造之前(旧代码)
+	 * BATCHORDER_QRY_FLAG
+	 * #“# #26339批量订单查询权限控制优化”开关，ON：改造之后；OFF：改造之前
+	 * BATCHORDER_AUTH_FLAG
+	 * @return 
+	 * @author ZhangYu
+	 * 			
+	 */
+	@SuppressWarnings("unchecked")
+	@RequestMapping(value = "/batchOrderFlag", method = {RequestMethod.POST})
+	@ResponseBody
+	public JsonResponse batchOrderFlag(@RequestBody Map<String, Object> param, Model model, HttpServletResponse response) {
+
+		String queryFlag = (String) param.get("queryFlag");
+		return batchOrderFlag(queryFlag);
+	}
+	
+	/**
+	 * 根据配置文件portal.properties里的开关，判断执行新旧代码，N执行旧代码，Y执行新代码
+	 * @param queryFlag	入参为字符串"batchOrderQry"(判断批量预开通优化是否执行新代码)或者"batchOrderAuth"(判断是否增加权限优化)
+	 * @return	返回字符串"N"(执行旧代码)或者"Y"(执行新代码)
+	 * @author ZhangYu 2015-10-19
+	 */
+	private JsonResponse batchOrderFlag(String queryFlag){
+		
+		JsonResponse jsonResponse = null;
+		PropertiesUtils propertiesUtils = (PropertiesUtils) SpringContextUtil.getBean("propertiesUtils");
+		
+		if("batchOrderQry".equals(queryFlag)){
+			String batchOrder_qry_flag = propertiesUtils.getMessage("BATCHORDER_QRY_FLAG");
+			if("ON".equals(batchOrder_qry_flag))
+				jsonResponse = super.successed("Y", ResultConstant.SUCCESS.getCode());
+			else if("OFF".equals(batchOrder_qry_flag))
+				jsonResponse = super.successed("N", ResultConstant.SUCCESS.getCode());
+			else
+				jsonResponse = super.failed("读取配置文件portal.properties异常", -1);
+			
+		} else if("batchOrderAuth".equals(queryFlag)){
+			String batchOrder_auth_flag = propertiesUtils.getMessage("BATCHORDER_AUTH_FLAG");
+			if("ON".equals(batchOrder_auth_flag))
+				jsonResponse = super.successed("Y", ResultConstant.SUCCESS.getCode());
+			else if("OFF".equals(batchOrder_auth_flag))
+				jsonResponse = super.successed("N", ResultConstant.SUCCESS.getCode());
+			else
+				jsonResponse = super.failed("读取配置文件portal.properties异常", -1);
+		} else{
+			jsonResponse = super.failed("判断执行新旧代码的开关入参queryFlag不存在或不正确，请检查", -1);
+		}
+		
+		return jsonResponse; 
 	}
 }

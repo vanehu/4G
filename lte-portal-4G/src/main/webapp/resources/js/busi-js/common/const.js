@@ -396,7 +396,17 @@ CONST = (function(){
 		IS4G: "1",
 		IS3G: "0"
 	};
+	
+	var _BATCHORDER_FLAG = {
+			BATCHORDER_QRY_FLAG : "N",
+			BATCHORDER_AUTH_FLAG : "N"
+			
+	};
+	
 	return {
+		//批量受理查询，是否执行改造后的新代码的开关标识，用于暂时记录是否执行新代码。Y执行改造后的新代码，N执行改造前的旧代码，默认为N。 By ZhangYu 2015-10-20
+		BATCHORDER_FLAG : _BATCHORDER_FLAG,
+		
 		APP_DESC			: _APP_DESC,
 		OFFER_FAST_FILL    :  _OFFER_FAST_FILL,
 		setAppDesc			: _setAppDesc,

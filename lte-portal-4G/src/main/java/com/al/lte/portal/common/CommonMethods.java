@@ -697,4 +697,50 @@ public class CommonMethods {
         }
         return permissionsType;
 	}
+	
+	/**
+	 * 获取“批量受理查询”权限,判断员工是否为管理员、管理班长、无权限
+	 * @param request 请求
+	 * @param sessionStaff
+	 * @return permissionsType 权限类型-personal、admin、monitor
+	 * @author ZhangYu 2015-10-19
+	 */
+	public static String checkBatchQryOperatSpec(StaffBmo staffBmo,HttpServletRequest request,SessionStaff sessionStaff){
+		//查询管理员权限
+    	String isAdmin = (String)ServletUtils.getSessionAttribute(request, SysConstant.BATCHORDER_GLY+"_" + sessionStaff.getStaffId());
+		try{
+			if(isAdmin == null){
+				isAdmin = staffBmo.checkOperatSpec(SysConstant.BATCHORDER_GLY, sessionStaff);
+				ServletUtils.setSessionAttribute(request, SysConstant.BATCHORDER_GLY + "_" + sessionStaff.getStaffId(), isAdmin);
+			}
+		} catch (BusinessException e) {
+			isAdmin=SysConstant.QX_NO;
+		} catch (InterfaceException ie) {
+			isAdmin=SysConstant.QX_NO;
+		} catch (Exception e) {
+			isAdmin=SysConstant.QX_NO;
+		}
+		//查询营业班长权限
+		String isMonitor= (String)ServletUtils.getSessionAttribute(request,
+				SysConstant.BATCHORDER_YYBZ+"_"+sessionStaff.getStaffId());
+		try{
+			if(isMonitor==null){
+			isMonitor=staffBmo.checkOperatSpec(SysConstant.BATCHORDER_YYBZ,sessionStaff);
+			ServletUtils.setSessionAttribute(request,SysConstant.BATCHORDER_YYBZ+"_"+sessionStaff.getStaffId(), isMonitor);
+		    }
+		} catch (BusinessException e) {
+			isMonitor=SysConstant.QX_NO;
+		} catch (InterfaceException ie) {
+			isMonitor=SysConstant.QX_NO;
+		} catch (Exception e) {
+			isMonitor=SysConstant.QX_NO;
+		}
+		String permissionsType = "personal";
+        if(isAdmin==SysConstant.QX_YES){
+        	permissionsType = "admin";
+        }else if(isMonitor == SysConstant.QX_YES){
+        	permissionsType = "monitor";
+        }
+        return permissionsType;
+	}
 }

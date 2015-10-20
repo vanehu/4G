@@ -437,6 +437,10 @@ public final class SysConstant {
 
 
 
+    //批量受理查询，管理员权限 BATCHORDER_GLY，营业班长权限 BATCHORDER_YYBZ	By ZhangYu 2015-10-19
+    public static final String BATCHORDER_GLY = "PLDDCX_GLY";
+    public static final String BATCHORDER_YYBZ = "PLDDCX_YYBZ";
+    public static final String URL_BATCHORDERQRY = "batchOrder/batchImportQuery";
 
 	//撤单管理员权限 GLY，营业班长权限 YYBZ
     public static final String GLY="CD_GLY";
