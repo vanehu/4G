@@ -2051,60 +2051,69 @@ public class OrderController extends BaseController {
 	 * @param response
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/checkRuleToProv", method = RequestMethod.POST)
     @ResponseBody
-    public JsonResponse checkRuleToProv(@RequestBody Map<String, Object> param,
-			@LogOperatorAnn String flowNum,HttpServletResponse response){
-   	 SessionStaff sessionStaff = (SessionStaff) ServletUtils
-				.getSessionAttribute(super.getRequest(),
-						SysConstant.SESSION_KEY_LOGIN_STAFF);
+    public JsonResponse checkRuleToProv(@RequestBody Map<String, Object> param, @LogOperatorAnn String flowNum,HttpServletResponse response) {
    	 
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
 		JsonResponse jsonResponse = null;
 		try {
 			param.put("areaId", sessionStaff.getCurrentAreaId());
-			Map<String, Object> rMap = orderBmo.checkRuleToProv(param, flowNum, sessionStaff);
+			param.put("portalFlag", "Y");
+			Map<String, Object> resultMap = orderBmo.checkRuleToProv(param, flowNum, sessionStaff);
+			Map<String, Object> returnMap = new HashMap<String, Object>();
+			
+			String provCheckCode = MapUtils.getString(resultMap, "returnCode", "0000");//下省校验结果编码
+			String provCheckMsg = MapUtils.getString(resultMap, "resultMsg", "未返回校验结果信息");//下省校验结果信息
+			
 			//下省校验成功
-			if (ResultCode.R_SUCCESS.equals(MapUtils.getString(rMap, "code", "-2"))) {
-				if (rMap.get("result")!=null){
-					List<Map<String,String>> rtList = new ArrayList();
-					List<Map<String,String>> list = (List)rMap.get("result");
-					for(Map<String,String> map:list){
+			if("0000".equals(provCheckCode)){
+				if (resultMap.get("checkResult")!=null){
+					List<Map<String,String>> checkResult = new ArrayList<Map<String,String>>();
+					List<Map<String,String>> list = (List<Map<String,String>>) resultMap.get("checkResult");
+					for(Map<String,String> map : list){
 						if (SysConstant.REDUCE_PRESTORE_STATE.equals(map.get("code"))){
-							rtList.add(map);
+							checkResult.add(map);
 						}
 					}
-					rMap.put("checkResult", rtList);
+					returnMap.put("returnCode", "0000");
+					returnMap.put("checkResult", checkResult);
 				}
-				jsonResponse = super.successed(rMap, ResultConstant.SUCCESS.getCode());
+				jsonResponse = super.successed(returnMap, ResultConstant.SUCCESS.getCode());
 			}
 			//下省校验有错误
 			else {
 				//省内校验欠费的错误编码，判断当前工号有否带欠费受理的权限酌情处理
-				if(SysConstant.PROV_CHECK_OVERDUE_1.equals(MapUtils.getString(rMap, "returnCode","-2")) || 
-					SysConstant.PROV_CHECK_OVERDUE_2.equals(MapUtils.getString(rMap, "returnCode","-2"))){
+				if(SysConstant.PROV_CHECK_OVERDUE_1.equals(provCheckCode) || SysConstant.PROV_CHECK_OVERDUE_2.equals(provCheckCode)){
 					String canDoOverdueBusi = staffBmo.checkOperatSpec(SysConstant.OVERDUE_BUSI_CODE, sessionStaff);
 					//当前工号有继续受理的权限
 					if("0".equals(canDoOverdueBusi)){
-						if (rMap.get("result")!=null){
-							List<Map<String,String>> rtList = new ArrayList();
-							List<Map<String,String>> list = (List)rMap.get("result");
-							for(Map<String,String> map:list){
+						if (resultMap.get("checkResult")!=null){
+							List<Map<String,String>> checkResult = new ArrayList<Map<String,String>>();
+							List<Map<String,String>> list = (List<Map<String,String>>) resultMap.get("checkResult");
+							for(Map<String,String> map : list){
 								if (SysConstant.REDUCE_PRESTORE_STATE.equals(map.get("code"))){
-									rtList.add(map);
+									checkResult.add(map);
 								}
 							}
-							rMap.put("checkResult", rtList);
+							returnMap.put("returnCode", provCheckCode);
+							returnMap.put("checkResult", checkResult);
 						}
-						jsonResponse = super.successed(rMap, ResultConstant.SUCCESS.getCode());
+						jsonResponse = super.successed(returnMap, ResultConstant.SUCCESS.getCode());
 					}
 					//当前工号没有继续受理的权限，返回错误信息
 					else{
-						jsonResponse = super.failed(rMap, ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+						returnMap.put("errCode", provCheckCode);
+						returnMap.put("errMsg", provCheckMsg);
+						jsonResponse = super.failed(returnMap, ResultConstant.FAILD.getCode());
 					}
 				}
 				//其他错误编码，直接返回错误信息
 				else{
-					jsonResponse = super.failed(rMap, ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+					returnMap.put("errCode", provCheckCode);
+					returnMap.put("errMsg", provCheckMsg);
+					jsonResponse = super.failed(returnMap, ResultConstant.FAILD.getCode());
 				}
 			}
 		} catch (BusinessException e) {
