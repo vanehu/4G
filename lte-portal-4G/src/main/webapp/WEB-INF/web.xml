@@ -140,11 +140,11 @@
        <url-pattern>/*</url-pattern>
     </filter-mapping>
     
-	<!-- Csrf过虑器 
+	<!-- Csrf过虑器 -->
 	<filter>
 		<filter-name>csrf_filter</filter-name>
-		<filter-class>com.al.ecs.filter.CsrfPreventionFilter</filter-class>-->
-		<!-- token key
+		<filter-class>com.al.ecs.filter.CsrfPreventionFilter</filter-class>
+		<!-- token key -->
 		<init-param>
 			<param-name>token</param-name>
 			<param-value>_al_ec_token</param-value>
@@ -152,13 +152,20 @@
 		<init-param>
 			<param-name>cookieCheck</param-name>
 			<param-value>false</param-value>
-		</init-param> -->
-		<!-- 需要验证的路径,支持正则表达式,忽略大小写 ,/order/[^(prepare|terminal)].*$ 
+		</init-param>
+		<init-param>
+		    <param-name>sessionKey</param-name>
+		    <param-value>_ecs_login_session_key</param-value>
+		</init-param>
+		<!-- 需要验证的路径,支持正则表达式,忽略大小写 ,/order/[^(prepare|terminal)].*$ -->
 		<init-param>
 			<param-name>entryPoints</param-name>
-			<param-value>/staff/login/logindo$</param-value>
+			<param-value>
+			    /staff/login/logindo,/cust/queryCust,/staffMgr/staffPwd,
+			    /mktRes/phonenumber/purchase,/mktRes/reservenumber/submit
+			</param-value>
 		</init-param>
-	</filter>-->
+	</filter>
     <!-- SpringSide's JCaptcha filter -->
 	<filter>
 		<filter-name>jcaptchaFilter2</filter-name>
@@ -246,16 +253,6 @@
 			<param-value>classpath:/cache/cacheUrl.xml</param-value>
 		</init-param>
 	</filter>-->
-	<!--  
-	<filter>
-		<description>访问某些URL需要校验通过</description>
-		<filter-name>urlFilter</filter-name>
-		<filter-class>com.al.lte.portal.filter.UrlFilter</filter-class>
-	</filter>
-		<filter-mapping>
-		<filter-name>urlFilter</filter-name>
-		<url-pattern>/*</url-pattern>
-	</filter-mapping>-->
 	
 	<!-- jcaptcha图片生成URL. -->
 	<filter-mapping>
@@ -271,11 +268,11 @@
 		<filter-name>jcaptchaFilter2</filter-name>
 		<url-pattern>/passwordMgr/getStaff</url-pattern>
 	</filter-mapping>
-	<!-- CSRF 
 	<filter-mapping>
 		<filter-name>csrf_filter</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
+	<!-- 
 	<filter-mapping>
 		<filter-name>expiresFilter</filter-name>
 		<url-pattern>/*</url-pattern>

@@ -30,24 +30,38 @@
 		contentType :"application/json;charset=UTF-8",
 		timeout : 10000// 默认10秒超时
 	};
-	  var defalut_param_options = {
-	    before:null,// 执行前回调函数
-  		done:null,// 成功回调函数
-  		fail:null,//异常回调函数
-  		always:null,// 执行后回调函数
-  		trim:true,//默认对参数所有值去掉半角和全角空格
-  		cache:false,
-  		timeout:180000// 请求超时时限
-  		};
-	  try{
-		  var token=getToken(); 
-	  }catch(e){}
-	  if(!token)
-		  token="";
-      var headers = {
-    		"_al_ec_token" : token
-  		};
-	var _callService = function(servName, params,datatype,param_options) {
+	var defalut_param_options = {
+		before:null,// 执行前回调函数
+		done:null,// 成功回调函数
+		fail:null,//异常回调函数
+		always:null,// 执行后回调函数
+		trim:true,//默认对参数所有值去掉半角和全角空格
+		cache:false,
+		timeout:180000,// 请求超时时限
+		csrf:false //CSRF请求拦截
+	};
+
+	var _int_array = [1, 2, 3, 4];
+	var _chars = ['A', 'S', 'I', 'A', 'I', 'N', 'F', 'O'];
+	var _mix_chars = ['0','1','2','3','4','5','6','7','8','9','B','C','D','E','G','H','J','K','L','M','P','Q','R','T','U','V','W','X','Y','Z'];
+	var _generateMixed = function(n, arrays) {
+	     var res = [];
+	     for (var i = 0; i < n ; i ++) {
+	         var id = Math.ceil(Math.random() * (arrays.length - 1));
+	         res.push(arrays[id]);
+	     }
+	     return res;
+	};
+	var _generateToken = function() {
+		var integers = _generateMixed(8, _int_array);
+		var mixed_chars = _generateMixed(32, _mix_chars);
+		for (var i = 0; i < _chars.length; i++) {
+			mixed_chars[integers[i] + 4 * i - 1] = _chars[i];
+		}
+		return integers.concat(mixed_chars).join("");
+	};
+
+	var _callService = function(servName, params, datatype, param_options) {
 					if(!(!!servName)) {
 						alert("请求路径必须填写！");
 						return;
@@ -74,7 +88,6 @@
 							}else {
 								params=JSON.stringify(params);
 							}
-
 						}
 						if(params && /^\{(.+:.+,*){1,}\}$/.test(params)){
 							isJsonObjet=true;
@@ -104,45 +117,48 @@
 						}
 						isForm=false;
 					}
-					var response={code:"",errorsList:"",data:"",isjson:true};
-					var reqparm={};
-					if(params){
-						reqparm= {
-								url :  servName,
-								data : params,
-								dataType:datatype,
-								type:paramOptions.type,
-								cache:paramOptions.cache,
-								timeout:paramOptions.timeout,
-								async:asyncs
-							};
-						
+					var response = {code:"",errorsList:"",data:"",isjson:true};
+					var reqparm = {};
+					if (params) {
+						reqparm = {
+							url: servName,
+							data: params,
+							dataType: datatype,
+							type: paramOptions.type,
+							cache: paramOptions.cache,
+							timeout: paramOptions.timeout,
+							csrf: paramOptions.csrf,
+							async:asyncs
+						};
 					} else {
-					 reqparm= {
-							url :  servName,
+						reqparm = {
+							url: servName,
 							dataType:datatype,
 							type:paramOptions.type,
 							cache:paramOptions.cache,
 							timeout:paramOptions.timeout,
+							csrf: paramOptions.csrf,
 							async:asyncs
 						};
 					}
 					//默认表请求类型
-					if(isForm){
-						reqparm.contentType="application/x-www-form-urlencoded;charset=UTF-8";
+					if (isForm) {
+						reqparm.contentType = "application/x-www-form-urlencoded;charset=UTF-8";
 					}
-					var req = $.extend({},default_options,reqparm,{
+					var req = $.extend({}, default_options, reqparm, {
 								beforeSend : function(xhr) {
-									$.each(headers, function(key, value) {
-										xhr.setRequestHeader(key,value);
-								});
-								if($.isFunction(paramOptions.before)) {
-									paramOptions.before.apply(this);
+									if (reqparm.csrf) {
+										var headers = {_al_ec_token: _generateToken()};
+										$.each(headers, function(key, value) {
+											xhr.setRequestHeader(key, value);
+										});
+									};
+									if ($.isFunction(paramOptions.before)) {
+										paramOptions.before.apply(this);
+									}
 								}
-							}
-							}); 
-					
-					 	$.ajax(req).done(function(data,status, xhr ){
+							});
+					 	$.ajax(req).done(function(data, status, xhr) {
 					 		//获取sessionCode
 					 		//判断是否为空，如果不为空则当前工号被强制下线，有其他人正在登录使用
 					 		var sessionCode = xhr.getResponseHeader("sessionCode");
