@@ -272,7 +272,7 @@ order.prodModify = (function(){
 		OrderInfo.initData(CONST.ACTION_CLASS_CD.PROD_ACTION,BO_ACTION_TYPE,0,CONST.getBoActionTypeName(BO_ACTION_TYPE),"");
 		var checkRule = rule.rule.prepare(param,'order.prodModify.commonPrepare',callParam);
 	};
-	//停机保号/取消停机保号准备
+	//停机保号入口
 	var _showStopKeepNumProd = function () {
 		OrderInfo.busitypeflag=6;
 		var submitState="";
@@ -299,7 +299,7 @@ order.prodModify = (function(){
 		OrderInfo.initData(CONST.ACTION_CLASS_CD.PROD_ACTION,BO_ACTION_TYPE,0,CONST.getBoActionTypeName(BO_ACTION_TYPE),"");
 		var checkRule = rule.rule.prepare(param,'order.prodModify.commonPrepare',callParam);
 	};
-	//停机保号/取消停机保号准备
+	//停机保号复机入口
 	var _showStopKeepNumProdReg = function () {
 		OrderInfo.busitypeflag=6;
 		var submitState="";
@@ -323,6 +323,47 @@ order.prodModify = (function(){
 		OrderInfo.initData(CONST.ACTION_CLASS_CD.PROD_ACTION,BO_ACTION_TYPE,0,CONST.getBoActionTypeName(BO_ACTION_TYPE),"");
 		var checkRule = rule.rule.prepare(param,'order.prodModify.commonPrepare',callParam);
 	};
+	
+	//违章停机入口
+	var _showIllegalStop = function(){
+		OrderInfo.busitypeflag = 18;
+		var _boActionTypeCd = CONST.BO_ACTION_TYPE.ILLEGAL_STOP;
+		var _boActionTypeName = CONST.getBoActionTypeName(_boActionTypeCd);
+		var callRuleParam = _getCallRuleParam(_boActionTypeCd, _choosedProdInfo.prodInstId);
+		var callBackFunParam = {
+				"boActionTypeCd" : _boActionTypeCd,
+				"boActionTypeName" : _boActionTypeName,
+				"accessNumber" : _choosedProdInfo.accNbr,
+				"prodStatusCd" : _choosedProdInfo.prodStateCd,
+				"toprodStatusCd" : CONST.PROD_STATUS_CD.STOP_PROD,
+				"prodOfferName" : _choosedProdInfo.prodOfferName,
+				"itemSpecId" : CONST.BUSI_ORDER_ATTR.REMOVE_REASON,
+				"state" : ""
+		};
+		OrderInfo.initData(CONST.ACTION_CLASS_CD.PROD_ACTION, _boActionTypeCd, 0, _boActionTypeName, "");
+		rule.rule.prepare(callRuleParam, "order.prodModify.commonPrepare", callBackFunParam);
+	};
+	
+	//违章停机复机入口
+	var _showIllegalStopRestore = function(){
+		OrderInfo.busitypeflag = 18;
+		var _boActionTypeCd = CONST.BO_ACTION_TYPE.ILLEGAL_STOP_RESTORE;
+		var _boActionTypeName = CONST.getBoActionTypeName(_boActionTypeCd);
+		var callRuleParam = _getCallRuleParam(_boActionTypeCd, _choosedProdInfo.prodInstId);
+		var callBackFunParam = {
+				"boActionTypeCd" : _boActionTypeCd,
+				"boActionTypeName" : _boActionTypeName,
+				"accessNumber" : _choosedProdInfo.accNbr,
+				"prodStatusCd" : _choosedProdInfo.prodStateCd,
+				"toprodStatusCd" : CONST.PROD_STATUS_CD.NORMAL_PROD,
+				"prodOfferName" : _choosedProdInfo.prodOfferName,
+				"itemSpecId" : CONST.BUSI_ORDER_ATTR.REMOVE_REASON,
+				"state" : ""
+		};
+		OrderInfo.initData(CONST.ACTION_CLASS_CD.PROD_ACTION, _boActionTypeCd, 0, _boActionTypeName, "");
+		rule.rule.prepare(callRuleParam, "order.prodModify.commonPrepare", callBackFunParam);
+	};
+	
 	//客户修改资料
 	var _userAddClosed = function() {
 		$("#cCustName").val("");
@@ -2958,6 +2999,8 @@ order.prodModify = (function(){
 		showLossRepProdReg : _showLossRepProdReg,
 		showStopKeepNumProd : _showStopKeepNumProd,
 		showStopKeepNumProdReg :_showStopKeepNumProdReg,
+		showIllegalStop : _showIllegalStop,
+		showIllegalStopRestore : _showIllegalStopRestore,
 		showCustInfoModify : _showCustInfoModify,
 		custInfoModify : _custInfoModify,
 		commonPrepare : _commonPrepare,

@@ -185,6 +185,8 @@ CONST = (function(){
 		DISLOSSREP_PROD :"1172",//解挂
 		STOPKEEPNUM:"19",//停机保号
 		DISSTOPKEEPNUM:"20",//停机保号复机
+		ILLEGAL_STOP : "4060200000",//违章停机
+		ILLEGAL_STOP_RESTORE : "4070200000",//违章停机复机
 		PRODUCT_PASSWORD:"18",//改产品密码
 		PRODUCT_PASSWORD_RESET:"4040800003",//产品密码重置
 		PRODUCT_PARMS:"1179",//改产品属性，改短号
@@ -214,6 +216,8 @@ CONST = (function(){
 		"1172":"解挂",
 		"19":"停机保号",
 		"20":"停机保号复机",
+		"4060200000" : "违章停机",
+		"4070200000" : "违章停机复机",
 		"18":"产品密码修改",
 		"4040800003":"产品密码重置",
 		"C1":"新建客户",
