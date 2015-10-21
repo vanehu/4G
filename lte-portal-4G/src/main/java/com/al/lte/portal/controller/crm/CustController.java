@@ -172,13 +172,9 @@ public class CustController extends BaseController {
 		//update by huangjj3 异地业务加上权限判断
 		String DiffPlaceFlag = (String) (httpSession.getAttribute(SysConstant.SESSION_KEY_DIFFPLACEFLAG)==null?"": httpSession.getAttribute(SysConstant.SESSION_KEY_DIFFPLACEFLAG));
 		if("diff".equals(DiffPlaceFlag)){
-			Map<String,Object> rltMap = new HashMap<String,Object>();
-			Map<String, Object> dataBusMap = new HashMap<String, Object>();
-			dataBusMap.put("opsCd", "YDBHK");
 			try {
-				rltMap = staffBmo.checkIsAccessByStaffId(dataBusMap, sessionStaff);
-				String code = (String) rltMap.get("code");
-				if(!"0".equals(code)){
+				String isCheckFlag=staffBmo.checkOperatSpec(SysConstant.YDBHK,sessionStaff);
+				if(!"0".equals(isCheckFlag)){
 					model.addAttribute("showDiffcode", "Y");
 					return "/cust/cust-list";
 				}
@@ -830,6 +826,7 @@ public class CustController extends BaseController {
 		paramMap.put("areaId", areaId);
 		paramMap.put("acctNbr", param.get("acctNbr"));
 		paramMap.put("custId", param.get("custId"));
+
 		paramMap.put("curPage", param.get("curPage"));
 		if (param.containsKey("prodClass")) {
 			paramMap.put("prodClass", param.get("prodClass"));

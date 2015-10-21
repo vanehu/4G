@@ -538,5 +538,7 @@ public final class SysConstant {
 	public static final String SESSION_KEY_DIFFPLACEFLAG = "SESSION_KEY_DIFFPLACEFLAG";
 	/**session中用于保存当前订单的费用*/
 	public static final String SESSION_KEY_SUMAMOUNT = "SESSION_KEY_SUMAMOUNT";
+	/**异地补换卡权限*/
+	public static final String YDBHK = "YDBHK";
 	
 }
