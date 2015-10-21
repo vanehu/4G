@@ -151,7 +151,11 @@ order.prodModify = (function(){
 			}
 		}
 		
-	}
+	};
+	//短信验证码验证错误次数
+	var _smsErrorCount=0;
+	//短信验证码失效时间5分钟
+	var leftInvalidTime=300;
 	//补换卡规则校验
 	var _showChangeCard = function () {
 		/*if(order.prodModify.choosedProdInfo.prodStateCd==CONST.PROD_STATUS_CD.STOP_PROD){
@@ -164,9 +168,185 @@ order.prodModify = (function(){
 			$.alert("提示","当前产品为省内新装且状态为【未激活】,不允许受理该业务！");
 			return;
 		}
-		OrderInfo.busitypeflag=13;
-		prod.changeUim.init();
+		//补换卡需要短信验证--redmine27429		
+		var param = {'munber':order.prodModify.choosedProdInfo.accNbr,areaId:order.prodModify.choosedProdInfo.areaId};
+		$.callServiceAsJsonGet(contextPath+"/staff/login/changeUimCheck", param , {
+			"before" : function(){
+				$.ecOverlay("<strong>短信权限验证中,请稍等会儿....</strong>");
+			},
+			"done" : function(response){
+				if (response.code == 0) {
+					$('#changeUimSmsForm').bind('formIsValid', _smsFormIsValid).ketchup({bindElement:"changeuimsmsbutton"});
+					easyDialog.open({
+						container : 'CHANGEUIMSMS'
+					});
+					//置空短信校验码框
+					$("#defaultTimeResend").text(second);//验证码提示秒数
+					$("#smspwd").val("").removeClass("ketchup-input-error");
+					$("#changeuimsmsresend").off("click").removeClass("cn").addClass("cf");
+					if(response.data.randomCode !=undefined||response.data.randomCode !=''){
+						$(".randomCode").show();
+						$("#num .txtnum").attr("value",response.data.randomCode);
+					}
+					
+					$("#checkNum .txtnum").attr("value",order.prodModify.choosedProdInfo.accNbr);
+					//重新发送验证码成功后,验证错误次数置0.
+					smsErrorCount=0;
+					//重新发送验证码成功后,验证码有效期初始化5分钟.
+					sendSmsAfter30s();
+					//5分钟倒计时，超过5分钟未输入验证码就失效.
+					leftInvalidTime=300;
+					invalidAfter5Mins();
+					$("#smspwd").focus();
+					_setEnable("#changeuimsmsbutton", "#changeUimSmsForm");
+				}else if(response.code==3){
+					$.alert("提示",response.data);
+					return;
+				}else if(response.code==1002){					
+					OrderInfo.busitypeflag=13;
+					prod.changeUim.init();
+					return;
+				}else if(response.code==1003){
+					$.alert("提示",response.data);
+					return;
+				}else{
+					$.alertM(response.data.errMsg);
+					return;
+				}
+			},
+			"always" : function(){
+				$.unecOverlay();
+			},
+			"fail" : function(response){
+				$.alert("提示","请求可能发生异常，请稍候");
+			}
+		});
 	};
+	
+	//刷新时间
+	var second=30;
+	var interResend=null;
+	var showTime=function(){
+		if (second>0){
+			second=second-1;
+			if(second==0){
+				$("#defaultTimeResend").html("");	
+				$("#changeuimsmsresend").removeClass("cf").addClass("cn").off("click").on("click",_smsResend);
+				if(interResend!=null){
+					window.clearInterval(interResend);
+					$('#timeInfo').html("");
+					$("#changeuimsmsresend").attr("title","请点击重新发送短信验证码.");		
+					return;
+				}
+			}
+			$("#defaultTimeResend").html("在"+second+"秒内");	
+		}
+		$("#changeuimsmsresend").attr("title","请在"+second+"秒后再点击重新发送.");	
+	};
+
+	//短信验证码失效时间5分钟
+	var leftInvalidTime=300;
+	var smsInvalidTime=function(){
+		if (leftInvalidTime>0){
+			leftInvalidTime=leftInvalidTime-1;
+		}
+	};
+	//30秒后重发短信验证码
+	var sendSmsAfter30s=function(){
+		 second=30;
+		 window.clearInterval(interResend);
+		 interResend=window.setInterval(showTime,1000);
+	};
+	//5分钟之后短信验证码过期失效
+	var invalidAfter5Mins=function(){
+		window.setInterval(smsInvalidTime,1000);
+	};
+	
+	//重发验证码
+	var _smsResend=function(){ 
+		$.callServiceAsJsonGet(contextPath+"/staff/login/changeUimReSend",{'smsErrorCount':smsErrorCount} ,{
+			"done" :function(response){				
+				if (response.code==0) {
+					$.alert("提示","验证码发送成功，请及时输入验证.");
+					$("#smsresend").off("click").removeClass("cn").addClass("cf");
+					//randomNum2 = ec.util.getNRandomCode(2);
+					if(response.data.randomCode != null ){
+						$("#num .txtnum").attr("value",response.data.randomCode);
+					}
+					//重新发送验证码成功后,验证错误次数置0.
+					smsErrorCount=0;
+					//重新发送验证码成功后,验证码有效期初始化5分钟.
+					leftInvalidTime=300;
+					sendSmsAfter30s();
+					//5分钟倒计时，超过5分钟未输入验证码就失效.
+					invalidAfter5Mins();
+				} else{
+					if(response.data!=undefined||response.data!=null){
+						$.alert("提示",response.data);
+					}
+				};
+				_setEnable("#changeuimsmsbutton", "#changeUimSmsForm");
+			}
+		});	
+	};
+	
+	var _smsFormIsValid = function(event, form) {
+		//判断短信验证码是否过期
+		if(leftInvalidTime==0){
+			$.alert("提示","对不起,您的短信验证码已经过期,请重新发送后再次验证.");
+			return;
+		}
+		//判断短信验证错误次数,超过三次后,验证码失效，需要重新发送.
+		if(smsErrorCount==3){
+			$.alert("提示","对不起,3次错误输入后验证码已自动失效,请重新发送验证码.");
+			$("#changeuimsmsresend").removeClass("cf").addClass("cn").off("click").on("click",_smsResend);
+			if(interResend!=null){
+				window.clearInterval(interResend);
+				$('#timeInfo').html("");
+				$("#changeuimsmsresend").attr("title","请点击重新发送短信验证码.");	
+				return;
+			}
+			return;
+		}
+		var smspwd = $.trim($("#smspwd").val());
+		if (smspwd=="") {
+			smspwd="N";
+		}
+		var params="smspwd=" + smspwd;
+		_setDisable("#changeuimsmsbutton", "#changeUimSmsForm");
+		$.callServiceAsJson(contextPath+"/staff/login/changeUimSmsValid", params, {
+			"before":function(){
+				$.ecOverlay("<strong>验证短信随机码中,请稍等会儿....</strong>");
+//				_setDisable("#changeuimsmsbutton", "#changeUimSmsForm");
+			},
+			"done" : function(response){
+				if (response.code == 0) {
+					$("#svCloseDiv").click();
+					OrderInfo.busitypeflag=13;
+					prod.changeUim.init();
+				} else if (response.code == 1) {
+					smsErrorCount+=1;
+					$.alert("提示",response.data);
+				}else {
+						$.alert("提示","请求异常，请重新登录再试！");
+				}
+			},
+			"always":function(){
+				$.unecOverlay();
+//				_setEnable("#changeuimsmsbutton", "#changeUimSmsForm");
+			}
+		});
+		_setEnable("#changeuimsmsbutton", "#changeUimSmsForm");
+	};
+	
+	var _setDisable = function(id, form){
+		$(id).attr("disabled", true);
+		$(form).off('formIsValid', _smsFormIsValid);
+	};
+	var _setEnable = function(id, form){
+		$(id).attr("disabled", false);
+		$(form).off('formIsValid').on('formIsValid', _smsFormIsValid);
+	};	
 	
 	//加入群组规则校验
 	var _showAddComp = function(){

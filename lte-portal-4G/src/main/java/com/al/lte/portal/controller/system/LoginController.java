@@ -117,6 +117,10 @@ public class LoginController extends BaseController {
 	public static  List<String> CACHE_CLEAR_RESULT = new ArrayList<String>();
 	/** 短信验证前，登陆会话临时ID */
 	public static final String SESSION_KEY_TEMP_LOGIN_STAFF = "_session_key_tenm_sms";
+	/** 补换卡短信验证号码 */
+	public static final String SESSION_CHANGEUIM_SMS_MUNBER = "_changeUim_sms_munber";
+	/** 补换卡短信验证地区 */
+	public static final String SESSION_CHANGEUIM_SMS_AREAID = "_changeUim_sms_areaId";
 	/***/
 	@Autowired
 	PropertiesUtils propertiesUtils;
@@ -685,7 +689,7 @@ public class LoginController extends BaseController {
 
 
 	@RequestMapping(value = "/login/reSend", method = RequestMethod.GET)
-	@LogOperatorAnn(desc = "短信校验码发送", code = "LOGIN", level = LevelLog.DB)
+	@LogOperatorAnn(desc = "短信校验码重新发送", code = "LOGIN", level = LevelLog.DB)
 	@ResponseBody
 	public JsonResponse reSend(@RequestParam Map<String, Object> paramMap,HttpServletRequest request, @LogOperatorAnn String flowNum) {
 		try {
@@ -731,6 +735,188 @@ public class LoginController extends BaseController {
 		successedData.put("randomCode", ServletUtils.getSessionAttribute(request, SysConstant.SESSION_KEY_LOGIN_RANDONCODE));
 		return super.successed(successedData, ResultConstant.SUCCESS.getCode());
 	}
+	@RequestMapping(value = "/login/changeUimCheck" ,method = RequestMethod.GET)
+	@LogOperatorAnn(desc = "补换卡短信校验码验证", code = "CHANGEUIM", level = LevelLog.DB)
+	@ResponseBody
+	public JsonResponse changeUimMsgSend(@RequestParam Map<String, Object> paramMap,HttpServletRequest request, @LogOperatorAnn String flowNum) {
+		try {
+			String munber = (String) paramMap.get("munber");
+			String areaId = (String) paramMap.get("areaId");
+			request.getSession().setAttribute(SESSION_CHANGEUIM_SMS_MUNBER, munber);
+			request.getSession().setAttribute(SESSION_CHANGEUIM_SMS_AREAID, areaId);
+			SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);
+			String changeUimMsgValid  = staffBmo.checkOperatSpec(SysConstant.CHANGEUIMSMS_CODE, sessionStaff);
+			//当前工号无免补换卡短信验证权限!
+			if("0".equals(changeUimMsgValid)){
+				//短信发送时间间隔,10秒内重复发送，会被拦截！
+				Long sessionTimeL = (Long) request.getSession().getAttribute(SysConstant.SESSION_KEY_TEMP_CHANGEUIM_SMS_TIME);
+				if (sessionTimeL != null) {
+					long sessionTime = sessionTimeL;
+					long nowTime = (new Date()).getTime();
+					long inteval = 10 * 1000;//间隔10秒
+					if (nowTime - sessionTime > inteval ) {		
+						Map<String, Object> msgMap = changeUimSendMsg(request, flowNum); 
+						if (ResultCode.R_FAILURE.equals(msgMap.get("resultCode"))|msgMap.size()==0|msgMap==null) {
+							//如果发送短信异常
+							return super.failed(msgMap.get("resultMsg"), 3);
+						}
+					}else{
+						return super.successed("验证码发送中，请稍后再操作进行验证！", 1003);
+					}
+				}else{
+					Map<String, Object> msgMap = changeUimSendMsg(request, flowNum); 
+					if (ResultCode.R_FAILURE.equals(msgMap.get("resultCode"))|msgMap.size()==0|msgMap==null) {
+						//如果发送短信异常
+						return super.failed(msgMap.get("resultMsg"), 3);
+					}
+				}
+			}else{
+				//该工号有免补换卡短信验证权限!
+				return super.successed("该工号有免补换卡短信验证权限!", 1002);
+			}		
+		} catch (BusinessException be) {
+			this.log.error("错误信息:{}", be);
+			return super.failed(be);
+		} catch (InterfaceException ie) {
+			return super.failed(ie, new HashMap<String, Object>(), ErrorCode.CHANGEUIM_MSG_SEND);
+		} catch (Exception e) {			
+			log.error("门户登录/staff//login/ChangUimSend方法异常", e);
+			return super.failed(ErrorCode.CHANGEUIM_MSG_SEND, e, new HashMap<String, Object>());
+		}
+		Map<String, Object> successedData = new HashMap<String, Object>();
+		successedData.put("data", "短信验证码发送成功!");
+		//successedData.put("randomCode", ServletUtils.getSessionAttribute(request, SysConstant.SESSION_KEY_LOGIN_SMS));
+		successedData.put("randomCode", ServletUtils.getSessionAttribute(request, SysConstant.SESSION_KEY_CHANGEUIM_RANDONCODE));
+		return super.successed(successedData, ResultConstant.SUCCESS.getCode());
+	}
+	
+	@RequestMapping(value = "/login/changeUimReSend", method = RequestMethod.GET)
+	@LogOperatorAnn(desc = "补换卡短信校验码重新发送", code = "CHANGEUIM", level = LevelLog.DB)
+	@ResponseBody
+	public JsonResponse changeUimMsgReSend(@RequestParam Map<String, Object> paramMap,HttpServletRequest request, @LogOperatorAnn String flowNum) {
+		try {
+			Long sessionTimeL = (Long) request.
+					getSession().getAttribute(SysConstant.SESSION_KEY_TEMP_CHANGEUIM_SMS_TIME);
+			if (sessionTimeL != null) {
+				long sessionTime = sessionTimeL;
+				long nowTime = (new Date()).getTime();
+				long inteval = 28 * 1000;//比30秒提前2秒
+				int smsErrorCount = Integer.parseInt((String) paramMap.get("smsErrorCount"));
+				if (nowTime - sessionTime > inteval || smsErrorCount>=3) {					
+					changeUimSendMsg(request, flowNum);					
+				} else {
+					log.debug("time inteval:{}", nowTime - sessionTime);
+					return super.failed("短信验证码发送时间有误!请求太过频烦,请稍后再重发！", 
+							ResultConstant.ACCESS_LIMIT_FAILTURE.getCode());
+				}
+			} else {
+				request.getSession().removeAttribute(
+						SysConstant.SESSION_KEY_TEMP_CHANGEUIM_SMS_TIME);
+				request.getSession().setAttribute(
+						SysConstant.SESSION_KEY_TEMP_CHANGEUIM_SMS_TIME, (new Date()).getTime());
+				return super.failed("短信验证码发送时间有误!请稍后再重发！", 
+						ResultConstant.ACCESS_LIMIT_FAILTURE.getCode());
+			}		
+		} catch (BusinessException be) {
+			this.log.error("错误信息:{}", be);
+			return super.failed(be);
+		} catch (Exception e) {			
+			log.error("门户补换卡短信验证/staff/login/changeUimReSend方法异常", e);
+			return super.failed(ErrorCode.CHANGEUIM_MSG_SEND, e, new HashMap<String, Object>());
+		}
+		Map<String, Object> successedData = new HashMap<String, Object>();
+		successedData.put("data", "短信验证码发送成功!");
+		//successedData.put("randomCode", ServletUtils.getSessionAttribute(request, SysConstant.SESSION_KEY_LOGIN_SMS));
+		successedData.put("randomCode", ServletUtils.getSessionAttribute(request, SysConstant.SESSION_KEY_CHANGEUIM_RANDONCODE));
+		return super.successed(successedData, ResultConstant.SUCCESS.getCode());
+	}
+	
+	// 补换卡短信发送短信
+	@SuppressWarnings("unchecked")
+	public Map<String, Object> changeUimSendMsg(HttpServletRequest request, String flowNum)
+			throws Exception {
+		Map<String, Object> retnMap = new HashMap<String, Object>();
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);
+		if(request.getSession().getAttribute(SESSION_CHANGEUIM_SMS_MUNBER) ==null){
+			retnMap.put("resultCode",ResultCode.R_FAILURE );
+			retnMap.put("resultMsg","短信验证号码获取失败，系统异常！请刷新重试!");
+			return retnMap;
+		}
+		String munber = (String)request.getSession().getAttribute(SESSION_CHANGEUIM_SMS_MUNBER);
+		if(request.getSession().getAttribute(SESSION_CHANGEUIM_SMS_AREAID) ==null){
+			retnMap.put("resultCode",ResultCode.R_FAILURE );
+			retnMap.put("resultMsg","短信验证号码所属地区获取失败，系统异常！请刷新重试!");
+			return retnMap;
+		}
+		String areaId = (String)request.getSession().getAttribute(SESSION_CHANGEUIM_SMS_AREAID);
+		if("".equals(munber)){
+			retnMap.put("resultCode",ResultCode.R_FAILURE );
+			retnMap.put("resultMsg","短信验证号码为空，系统异常！请刷新重试!");
+			return retnMap;
+		}
+		if (sessionStaff != null) {
+			String smsPwd = null;
+			String randomCode =null;
+			//发送4位验证码
+			smsPwd = UIDGenerator.generateDigitNonce(4);
+			randomCode = UIDGenerator.generateDigitNonce(2);
+			for(;randomCode == ServletUtils.getSessionAttribute(request, SysConstant.SESSION_KEY_CHANGEUIM_RANDONCODE);)
+			{
+				randomCode = UIDGenerator.generateDigitNonce(2);
+			}
+			this.log.debug("补换卡短信验证码：{}", smsPwd);
+			Map<String, Object> msgMap = new HashMap<String, Object>();
+			msgMap.put("phoneNumber", munber);
+			msgMap.put("key", smsPwd);
+			msgMap.put("MsgNumber", "5871");
+			if(randomCode != null){
+			msgMap.put("randomCode", randomCode);
+			msgMap.put("message", propertiesUtils.getMessage(
+					"CHANGEUIM_SMS_CODE_CONTENT", new Object[] { smsPwd,randomCode }));
+			}else{
+				msgMap.put("message", propertiesUtils.getMessage(
+							"CHANGEUIM_SMS_CODE_CONTENT", new Object[] { smsPwd }));	
+			}
+			if(!"00".equals(areaId.substring(5))){
+				areaId = areaId.substring(0, 5) + "00";
+			}
+			msgMap.put("areaId", areaId);
+			msgMap.put(InterfaceClient.DATABUS_DBKEYWORD,(String) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_DATASOURCE_KEY));
+			retnMap = staffBmo.sendMsgInfo(msgMap, flowNum, sessionStaff);
+			request.getSession().removeAttribute(SysConstant.SESSION_KEY_CHANGEUIM_SMS);
+			request.getSession().setAttribute(SysConstant.SESSION_KEY_CHANGEUIM_SMS, smsPwd);
+			request.getSession().setAttribute(SysConstant.SESSION_KEY_CHANGEUIM_RANDONCODE, randomCode);				
+			//短信发送时间间隔
+			request.getSession().removeAttribute(SysConstant.SESSION_KEY_TEMP_CHANGEUIM_SMS_TIME);
+			request.getSession().setAttribute(SysConstant.SESSION_KEY_TEMP_CHANGEUIM_SMS_TIME, (new Date()).getTime());
+		} else {
+			this.log.error("错误信息:登录会话失效，请重新登录!");
+		}
+		return retnMap;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(value = "/login/changeUimSmsValid", method = RequestMethod.POST)
+	@ResponseBody
+	public JsonResponse changeUimSmsValidate(@RequestParam("smspwd") String smsPwd,
+			HttpServletRequest request ,HttpServletResponse response) throws Exception {
+		this.log.debug("changeUimsmsPwd={}", smsPwd);
+		// 验证码内容
+		String smsPwdSession = (String) ServletUtils.getSessionAttribute(
+				request, SysConstant.SESSION_KEY_CHANGEUIM_SMS);
+		//如果不需要发送短信，验证码就为空，不提示短信过期失效
+		if(StringUtil.isEmpty(smsPwdSession)){
+			return super.failed("短信过期失效，请重新发送!", ResultConstant.FAILD.getCode());
+		}
+		if (smsPwdSession.equals(smsPwd)) {
+			Map<String,Object> resData=new HashMap<String,Object>();
+			resData.put("msg", "短信验证成功.");
+			return super.successed(resData);
+		}else {
+			return super.failed("短信验证码错误!", ResultConstant.FAILD.getCode());
+		}
+	}
+	
 
 	// 短信发送
 	@SuppressWarnings("unchecked")

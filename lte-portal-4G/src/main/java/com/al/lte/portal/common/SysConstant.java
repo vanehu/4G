@@ -36,7 +36,16 @@ public final class SysConstant {
     /** 随机二位序列号 */
     public static final String SESSION_KEY_LOGIN_RANDONCODE = "_ecs_sms_session_code";
     /**短信验证码发送位数*/
-    public static final String MSG_NUMBERS ="MSG_NUMBER";
+    public static final String MSG_NUMBERS ="MSG_NUMBER";    
+    /** 补换卡短信验证短信发送时间 */
+    public static final String SESSION_KEY_TEMP_CHANGEUIM_SMS_TIME = "_session_key_temp_changeuim_sms_time";    
+    /** 补换卡短信验证 sms Session key */
+    public static final String SESSION_KEY_CHANGEUIM_SMS = "_ecs_changeuim_sms_session_key";
+    /** 补换卡短信验证随机二位序列号 */
+    public static final String SESSION_KEY_CHANGEUIM_RANDONCODE = "_ecs_changeuim_sms_session_code";
+    /**免补换卡短信验证权限*/
+    public static final String CHANGEUIMSMS_CODE = "CHANGEUIMSMS_CODE";
+
     
     public static final String SESSION_KEY_PAD_FLAG="_session_pad_flag";
     

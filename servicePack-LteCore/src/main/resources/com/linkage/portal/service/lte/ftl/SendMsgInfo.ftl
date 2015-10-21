@@ -33,7 +33,7 @@
 					<sentContent></sentContent>
 					<params>${key}</params>
 					<sysCode>001</sysCode>
-					<flowCode>101110000001127</flowCode>
+					<flowCode>${TcpCont.TransactionID}</flowCode>
 					<latnId>${areaId}</latnId>
 					<sentType>SUB</sentType>
 					<businessId>${businessId}</businessId>

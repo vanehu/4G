@@ -55,12 +55,14 @@ public class SendMsgInfo extends Service {
 			String key = null;
 
 			if("5590".equals(MsgNumber)){
-			//4位验证码+2位随机序列号
-			 key = HexUtil.convertAsciiToHexString(String.valueOf("{\"Password\":"+"\""+ dataMap.getInParam("key")+"\""+","+"\"Number\":"+"\""+ dataMap.getInParam("randomCode"))+"\"}", "gbk");
-			
+				//登录4位验证码+2位随机序列号
+				key = HexUtil.convertAsciiToHexString(String.valueOf("{\"Password\":"+"\""+ dataMap.getInParam("key")+"\""+","+"\"Number\":"+"\""+ dataMap.getInParam("randomCode"))+"\"}", "gbk");			
 			}else if("5011".equals(MsgNumber)){
-			// 6位随机验证码
-			 key = HexUtil.convertAsciiToHexString(String.valueOf("{\"Password\":"+"\""+ dataMap.getInParam("key"))+"\"}", "gbk");
+				// 登录6位随机验证码
+				key = HexUtil.convertAsciiToHexString(String.valueOf("{\"Password\":"+"\""+ dataMap.getInParam("key"))+"\"}", "gbk");
+			}else if("5871".equals(MsgNumber)){
+				//补换卡验证码4位加序列号两位
+				key = HexUtil.convertAsciiToHexString(String.valueOf("{\"Password\":"+"\""+ dataMap.getInParam("key")+"\""+","+"\"Number\":"+"\""+ dataMap.getInParam("randomCode"))+"\"}", "gbk");	
 			}
 			String sendflag = MapUtils.getString(dataMap.getInParam(), "sendflag", "");
 			paramMap.put("phoneNumber", phoneNumber);
