@@ -147,6 +147,8 @@ public class OfferMainController extends BaseController {
 			//uim卡
 			String mktResInstCode =(String)paramsMap.get("mktResInstCode");//uim卡号
 			model.addAttribute("mktResInstCode",mktResInstCode);
+			model.addAttribute("newSubPhoneNum", paramsMap.get("newSubPhoneNum")==null?"":paramsMap.get("newSubPhoneNum").toString());
+			model.addAttribute("oldSubPhoneNum", paramsMap.get("oldSubPhoneNum")==null?"":paramsMap.get("oldSubPhoneNum").toString());
 			//进行staff获取
 			Map<String, Object> staffMap=APPModelController.getStaffInfo(request);
 			
