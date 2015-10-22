@@ -198,3 +198,16 @@
 
 <div id="div_offer" style="display:none">
 </div>
+<!-- 订单确认页面、收银台页面 -->
+<div id="order-confirm" style="display: none;">
+</div>
+<!-- 回执内容显示页面 -->
+<div id="order-print" style="display: none;">
+</div>
+
+<!-- 协销人展示 -->
+<div id="order-dealer" style="display: none;">
+	<@block name="dealer">
+		<#include "/app/order/order-dealer.html" />
+	</@block>
+</div>

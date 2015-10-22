@@ -720,6 +720,7 @@ mktRes.terminal = (function($){
 					data.dealers.push(dealer);
 				});
 			}*/
+			$("#terminalMain").hide();
 			SoOrder.getTokenSynchronize();
 			//订单提交
 			SoOrder.submitOrder(data);

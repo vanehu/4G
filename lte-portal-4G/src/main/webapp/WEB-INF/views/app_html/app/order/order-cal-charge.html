@@ -131,7 +131,7 @@
 				<#elseif chargeItems??&&(chargeItems?size>0)>
 					<#list chargeItems as itemList>
 					<#assign trid="${itemList.boId}_${itemList.acctItemId}" />
-					<tr id="item_${trid}" onclick="order.calcharge.showEditPage('${prodInfoList.accessNumber}','${trid}','${((itemList.realAmount)?number / 100)?string('0.00')}')" <#if itemList.paymentAmount?? && (itemList.paymentAmount==0) >style="display:none"</#if> >
+					<tr id="item_${trid}" onclick="order.calcharge.showEditPage('${itemList.accessNumber}','${trid}','${((itemList.realAmount)?number / 100)?string('0.00')}')" <#if itemList.paymentAmount?? && (itemList.paymentAmount==0) >style="display:none"</#if> >
 						<td>${businessName}</td>
 						<td>${itemList.acctItemTypeName}</td>
 						<td>${((itemList.feeAmount)?number / 100)?string('0.00')}</td>
