@@ -3060,6 +3060,7 @@ public class PrintBmoImpl implements PrintBmo {
 		String effectRule = MapUtils.getString(titleMap, "effectRule", "");
 		String relaAcceNbr = MapUtils.getString(titleMap, "relaAcceNbr", "");
 		String offerTypeName = MapUtils.getString(titleMap, "offerTypeName", "");
+		String price = MapUtils.getString(titleMap, "price", "");
 
 		String tmpStr = (tolNbr == SysConstant.INT_1 ? "" : (ChsStringUtil.getSeqNumByInt(orderSeq) + SysConstant.STR_PAU))
 			+ (StringUtils.isEmpty(boActionTypeName) ? "" : (SysConstant.STR_LB_BRE + boActionTypeName + SysConstant.STR_RB_BRE))
@@ -3070,6 +3071,7 @@ public class PrintBmoImpl implements PrintBmo {
 		if (!hasAcceNbr) {
 			tmpStr += (StringUtils.isEmpty(relaAcceNbr) ? "" : (SysConstant.STR_SPE + "用户号码" + SysConstant.STR_SEP + relaAcceNbr));
 		}
+		tmpStr+=price;
 
 		strBean.setStrBean(tmpStr);
 		attachOfferList.add(strBean);
