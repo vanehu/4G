@@ -205,10 +205,10 @@ CacheData = (function() {
 					}else {
 						if(param.rule.isOptional=="N") { //必填
 							selectStr += param.name + ' : <input id="'+prodId+'_'+itemSpecId  
-							+'" class="inputWidth183px" type="text" data-validate="validate(required,reg:'+param.rule.maskMsg+'('+param.rule.mask+')) on(blur)" value="'+paramVal+'" ><label class="f_red">*</label><br>'; 
+							+'" class="inputWidth183px" type="text" mask="'+param.rule.mask+'" maskmsg="'+param.rule.maskMsg+'" value="'+paramVal+'" ><label class="f_red">*</label><br>'; 
 						}else{
 							selectStr += param.name + ' : <input id="'+prodId+'_'+itemSpecId  
-							+'" class="inputWidth183px" type="text" data-validate="validate(reg:'+param.rule.maskMsg+'('+param.rule.mask+')) on(blur)" value="'+paramVal+'" ><br>'; 
+							+'" class="inputWidth183px" type="text" mask="'+param.rule.mask+'" maskmsg="'+param.rule.maskMsg+'" value="'+paramVal+'" ><br>'; 
 						}
 					}
 				}

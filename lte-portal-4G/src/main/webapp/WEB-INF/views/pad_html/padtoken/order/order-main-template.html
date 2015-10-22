@@ -1,0 +1,82 @@
+<#assign offerSpec = main.offerSpec /> 
+<style>
+.ui-page-theme-a.index {
+	background:#fff;
+}
+</style>
+<div data-role="content">
+    <div class="tabs-body" id="tabs-body">
+    	<!-- 产品信息展示 -->
+		<@block name="product">
+			<#include "/pad/order/order-product.html" />
+		</@block>
+    </div>
+	<div class="orderconb">
+		<div class="many"  style="background:#f5f5f5;">
+    	<button data-role="button" data-icon="arrow-l" data-iconpos="notext" disabled>向左</button>
+        <div class="tabsdiv">
+	        <ul id="pdcardTabs">
+		        <#assign i = 0 />
+		        <#if offerSpec.offerRoles?? && (offerSpec.offerRoles?size>0)>
+					<#list offerSpec.offerRoles as offerRole>	
+						<#if offerRole.prodInsts?? && (offerRole.prodInsts?size>0)>
+							<#list offerRole.prodInsts as prod>
+								<#assign prodId = prod.prodInstId /> 
+								<#if prodId==-1 >
+									<li class="tab-nav-action">${prod.offerRoleName}</li>
+								<#else>
+									<li class="tab-nav">${prod.offerRoleName}</li>
+								</#if>	
+							</#list>
+				      	</#if>  
+				    </#list>
+				</#if>
+		        </ul>
+	        </div>
+	        <button data-role="button" data-icon="arrow-r" data-iconpos="notext" disabled>向右</button>
+		</div>
+      	<div class="ordertitle">订单信息</div>
+     	<!-- 发展人展示 -->
+		<@block name="dealer">
+			<#include "/pad/order/order-dealer.html" />
+		</@block>
+      	<!-- 订单备注展示-->
+		<@block name="remark">
+			<#include "/padtoken/order/order-remark.html" />
+		</@block>
+		<@block name="account">
+			<#include "/pad/order/order-account.html" />
+		</@block>
+		<!--省内订单属性展示-->
+		<div id="orderProvAttrDiv"  style="display: none;">
+			<@block name="orderProvAttr">
+				<#include "/pad/order/order-prov-attr.html" />
+			</@block>
+		</div>
+  	</div>
+   	<div data-role="footer" data-position="fixed" data-tap-toggle="false" data-theme="n">
+		<div class="orderpackage" style="margin: 20px 0 0 50px;"><span> ${main.boActionTypeName} </span>
+				<#if main.actionFlag == 1>
+					${main.offerSpec.offerSpecName}
+				<#elseif main.actionFlag == 14>
+					${main.offerSpec.offerSpecName}
+				<#else>
+					${main.accessNumber}
+				</#if>
+		</div>
+	    <button data-inline="true" data-icon="next"  id="fillNextStep">下一步</button> 
+	    <button data-inline="true" data-icon="prev" id="fillLastStep"><#if main.actionFlag == 6>取消<#else>上一步</#if></button> 
+    </div>
+</div>
+<!-- 附属显示 -->
+<#if offerSpec.offerRoles?? && (offerSpec.offerRoles?size>0)>
+<#list offerSpec.offerRoles as offerRole>	
+<#if offerRole.prodInsts?? && (offerRole.prodInsts?size>0)>
+	<#list offerRole.prodInsts as prod>
+		<#assign prodId = prod.prodInstId />
+  			<div id="attach_${prodId}"></div>
+    		</#list>
+    	</#if>  
+  	</#list>
+</#if>	
+<script src="${contextPath}/js/pad-js/our-js/layout.js"></script>

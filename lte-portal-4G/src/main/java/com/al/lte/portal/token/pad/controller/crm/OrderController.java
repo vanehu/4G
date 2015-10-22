@@ -1162,7 +1162,7 @@ public class OrderController extends BaseController {
         		}
         		model.addAttribute("main", param);
         	}
-    		forward = "/pad/order/order-main-template";
+    		forward = "/padtoken/order/order-main-template";
     	}
     	return forward;
     }

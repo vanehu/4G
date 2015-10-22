@@ -386,8 +386,7 @@ public class OfferController extends BaseController {
 	public String searchAttachOfferSpec(@RequestParam("strParam") String param,Model model,HttpServletResponse response){
 		Map<String, Object> paramMap = new HashMap();
         try {
-        	SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
-					SysConstant.SESSION_KEY_LOGIN_STAFF);	
+        	SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);	
         	paramMap =  JsonUtil.toObject(param, Map.class);
         	
         	//搜索可订购销售品
@@ -411,7 +410,7 @@ public class OfferController extends BaseController {
 		} catch (Exception e) {
 			return super.failedStr(model, ErrorCode.QUERY_MUST_OFFER, e, paramMap);
 		}
-		return "/pad/offer/attach-offer-list";
+		return "/padtoken/offer/attach-offer-list";
 	}
 	
 	/**

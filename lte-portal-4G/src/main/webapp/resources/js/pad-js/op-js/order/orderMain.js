@@ -1642,6 +1642,8 @@ order.main = (function(){
 				$("div[name='spec_params']").each(function(){
 					$.jqmRefresh($(this));
 				});
+				//判断使用人产品属性是否必填
+				_checkUsersProdAttr(param.prodId, $("#"+param.ul_id));
 				//只有在新装的时候才可编辑“是否信控”产品属性
 				var xkDom = $("#"+CONST.PROD_ATTR.IS_XINKONG+"_"+param.prodId);
 				if(xkDom.length == 1){
@@ -2896,7 +2898,16 @@ order.main = (function(){
 		//2）老客户新装，根据客户查询判断是政企客户（segmentId=1000）时，填单必须填写使用人；
 		var itemId = CONST.PROD_ATTR.PROD_USER + '_' + prodId;
 		if($('#'+itemId).length > 0){
-			var isOptional = true;
+			// 屏蔽使用人
+			$('#'+itemId).attr({'readonly':'readonly','disabled':'disabled'}).hide();
+			$('#'+itemId).attr({'readonly':'readonly','disabled':'disabled'}).parent().parent().parent().parent().hide();
+			$('#choose_user_btn_'+prodId).off('click').hide();
+			$('#choose_user_btn_'+prodId).parent().hide();
+			if(OrderInfo.actionFlag == 6){//主副卡成员变更
+				$('#MEMBERDIV_'+prodId).hide();					
+			}
+			
+			/*var isOptional = true;
 			if(OrderInfo.cust && OrderInfo.cust.custId && OrderInfo.cust.custId != '-1'){ //老客户
 				if(OrderInfo.cust.segmentId == '1000'){ //政企客户
 					isOptional = false;
@@ -2926,7 +2937,7 @@ order.main = (function(){
 				if(OrderInfo.actionFlag == 6){//主副卡成员变更
 					$('#MEMBERDIV_'+prodId).hide();					
 				}
-			}
+			}*/
 		}
 	};
 	

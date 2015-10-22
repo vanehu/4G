@@ -450,7 +450,8 @@ query.offer = (function() {
 	//查询附属销售品规格
 	var _searchAttachOfferSpec = function(param) {
 		addParam(param);  //添加基本参数
-		var url = contextPath+"/offer/searchAttachOfferSpec";
+		//var url = contextPath+"/offer/searchAttachOfferSpec";
+		var url = contextPath+"/token/pad/offer/searchAttachOfferSpec";
 		$.ecOverlay("<strong>附属销售品查询中，请稍等...</strong>");
 		var response = $.callServiceAsHtmlGet(url,{strParam:JSON.stringify(param)});
 		$.unecOverlay();

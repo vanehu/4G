@@ -852,6 +852,7 @@ SoOrder = (function() {
 		OrderInfo.resetSeq(); //重置序列
 		SoOrder.delOrder();
 		_getToken(); //获取页面步骤
+		$("#order_fill").show();
 		if(CONST.getAppDesc()!=0){
 			if($("#a-cust-modify")[0]){
 				$("#a-cust-modify").show();

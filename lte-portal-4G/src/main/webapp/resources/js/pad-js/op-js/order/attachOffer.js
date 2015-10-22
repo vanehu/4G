@@ -1523,17 +1523,32 @@ AttachOffer = (function() {
 		    offerSpecIds : [offerSpecId],
 		    ifCommonUse : "" 
 		};
+		
 		var offerSepcName = $("#search_text_"+prodId).val();
+		
 		if(offerSepcName.replace(/\ /g,"")==""){
-			$.alert("提示","请输入查询条件！");
-			return;
-		}
-		param.offerSpecName = offerSepcName;
-		var data = query.offer.searchAttachOfferSpec(param);
-		if(data!=undefined){
-			$("#attach_div_"+prodId).html(data).show();
+			alert("请输入查询条件");
+		}else{
+			param.offerSpecName = offerSepcName;
+			var data = query.offer.searchAttachOfferSpec(param);
+			if(data!=undefined){
+				//<ul id="ul_-1_100" class="optionallist noorder ui-listview" style="height:413px" data-inset="false" data-role="listview">
+				//_changeLabel1x(prodId,prodId,"search");
+				
+				$("#attachSearch_div_"+prodId+" ul").each(function(){
+					$(this).hide();
+				});
+				
+				$("#attachSearch_div_"+prodId).append(data);
+				
+				//$.jqmRefresh($("#attachSearch_div_"+prodId));
+			}
 		}
 	};
+	
+	var _dbClickAttachType = function(prodId) {
+		$("#attachType_"+prodId).dblclick();
+	}
 	
 	//点击搜索出来的附属销售品
 	var _selectAttachOffer = function(prodId,offerSpecId){
@@ -1886,6 +1901,12 @@ AttachOffer = (function() {
 			}
 		}
 	};
+	
+	var _addSearchOfferSpec=function(prodId,offerSpecId){
+		$("#attachType_"+prodId).dblclick();
+		
+		AttachOffer.addOfferSpec(prodId,offerSpecId);
+	}
 	
 	//订购附属销售品
 	var _addOfferSpec = function(prodId,offerSpecId){
@@ -2557,8 +2578,8 @@ AttachOffer = (function() {
 			AttachOffer.isTerminal = 1;*/
 			//if(OrderInfo.actionFlag==1 || OrderInfo.actionFlag==6 || OrderInfo.actionFlag==14){				
 				var objInstId = prodId+'_'+newSpec.offerSpecId;
-				$("#terminalDi1").show();
-				$("#terminalDi2").show();
+				//$("#terminalDi1").show();
+				//$("#terminalDi2").show();
 				$("#terminalDiv").append('<input id="terminalText_'+objInstId+'" type="text" class="inputWidth228px inputMargin0" data-validate="validate(terminalCodeCheck) on(keyup blur)" maxlength="50" placeholder="请先输入终端串号" />');
 				
 				//一个终端对应一个ul
@@ -2585,13 +2606,10 @@ AttachOffer = (function() {
 				else{
 					 $li3 = $(
 							'<label>终端校验：</label>'+
-							'<input id="terminalText_'+objInstId+'" type="text" class="ui-input-text ui-shadow-inset ui-body-inherit ui-corner-all ui-textinput-autogrow" style="width:99%;height:45px;" data-validate="validate(terminalCodeCheck) on(keyup blur)" maxlength="50" placeholder="请先输入终端串号" />'+
-							'<input id="terminalBtn_'+objInstId+'" type="button" onclick="AttachOffer.checkTerminalCode('+prodId+','+newSpec.offerSpecId+')" value="校验" class="ui-btn ui-shadow ui-corner-all ui-mini" style="width:100%;"></input>'
+							'<input id="terminalText_'+objInstId+'" type="text" class="ui-input-text ui-shadow-inset ui-body-inherit ui-corner-all ui-textinput-autogrow" style="width:50%;height:45px;" data-validate="validate(terminalCodeCheck) on(keyup blur)" maxlength="50" placeholder="请先输入终端串号" />'+
+							'<input id="terminalBtn_'+objInstId+'" type="button" onclick="AttachOffer.checkTerminalCode('+prodId+','+newSpec.offerSpecId+')" value="校验" class="ui-btn ui-shadow ui-corner-all ui-mini" style="width:50%;"></input>'
 						);	
 				}
-				
-				
-				
 				
 				var $div = $("#terminalDiv_"+prodId);
 				
@@ -2913,7 +2931,13 @@ AttachOffer = (function() {
 				no:function(){
 				}
 			});
+			
+			//order.protocolnbr.init();
 			$('#paramForm').bind('formIsValid', function(event, form){
+				if(!paramInputCheck()){
+					return;
+				}
+				
 				if(!!spec.offerSpecParams){
 					for (var i = 0; i < spec.offerSpecParams.length; i++) {
 						var param = spec.offerSpecParams[i];
@@ -2921,6 +2945,7 @@ AttachOffer = (function() {
 						itemSpec.setValue = $("#"+prodId+"_"+param.itemSpecId).val();
 					}
 				}
+				
 				if(spec.offerRoles!=undefined && spec.offerRoles.length>0){
 					for (var i = 0; i < spec.offerRoles.length; i++) {
 						var offerRole = spec.offerRoles[i];
@@ -2943,6 +2968,23 @@ AttachOffer = (function() {
                 $(".ZebraDialogOverlay").remove();
 			}).ketchup({bindElementByClass:"ZebraDialog_Button1"});	
 		}
+	};
+	
+	//（销售品）参数输入校验（服务参数暂未使用）
+	var paramInputCheck = function(){
+		var pass = true;
+		$("#paramForm").find("input[type=text]").each(function(){
+			var mask = $(this).attr("mask");
+			var maskmsg = $(this).attr("maskmsg");
+			if(mask!=null && mask!="" && mask.substring(0,1)=="/" && mask.substring(mask.length-1,mask.length)=="/"){
+				if(!eval(mask).test($(this).val())){
+					$.alert("提示",maskmsg);
+					pass = false;
+					return false;
+				}
+			}
+		});
+		return pass;
 	};
 	
 	//显示服务参数
@@ -3308,6 +3350,11 @@ AttachOffer = (function() {
 	};*/
 	var _changeLabel1=function(prodId,prodSpecId,obj){
 		var labelId=$(obj).val();
+		_changeLabel(prodId,prodSpecId,labelId);
+	};
+	
+	var _changeLabel1x=function(prodId,prodSpecId,obj){
+		var labelId="search";
 		_changeLabel(prodId,prodSpecId,labelId);
 	};
 	
@@ -4034,6 +4081,8 @@ AttachOffer = (function() {
 		openServSpecReload     :_openServSpecReload,
 		closeServSpecReload   :_closeServSpecReload,
 		delOfferSpecReload    :_delOfferSpecReload,
-		showMainMemberRoleProd	: _showMainMemberRoleProd
+		showMainMemberRoleProd	: _showMainMemberRoleProd,
+		addSearchOfferSpec	:_addSearchOfferSpec,
+		dbClickAttachType :_dbClickAttachType
 	};
 })();

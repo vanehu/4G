@@ -1,6 +1,7 @@
 <@override name="title">中国电信4G营业受理</@override>
 <@override name="header">
 <!-- 这块js类似原来的busi-js-tpl.html后期优化20140731 lsd -->
+<script src="${contextPath}/js/pad-js/op-js/order/memberChange.js?${jsversion}" type="text/javascript"></script>
 <script src="${contextPath}/js/busi-js/common/const.js?${jsversion}" type="text/javascript"></script>
 <script src="${contextPath}/js/busi-js/query/common.js?${jsversion}" type="text/javascript"></script>
 <script src="${contextPath}/js/pad-js/op-js/order/orderInfo.js?${jsversion}" type="text/javascript"></script>
@@ -24,7 +25,6 @@
 <script src="${contextPath}/js/pad-js/op-js/order/offerChange.js?${jsversion}" type="text/javascript"></script>
 <script src="${contextPath}/js/pad-js/op-js/order/soOrder.js?${jsversion}" type="text/javascript"></script>
 <script src="${contextPath}/js/pad-js/busi-js/prod/changeUim.js?${jsversion}" type="text/javascript"></script>
-<!-- all the init action in the main.js -->
 <script src="${contextPath}/js/pad-js/busi-js/main/main.js?${jsversion}" type="text/javascript"></script>
 <script src="${contextPath}/js/pad-js/op-js/order/uiCust2.js?${jsversion}" type="text/javascript"></script>
 </@override>
@@ -134,6 +134,10 @@
 		OrderInfo.provinceInfo.reloadFlag=provinceInfo.reloadFlag;   //是否二次加载
 		OrderInfo.provinceInfo.mainPhoneNum=provinceInfo.mainPhoneNum;  //主套餐号码 
 		OrderInfo.provinceInfo.prodOfferId=provinceInfo.prodOfferId//主套餐id 
+		order.memberChange.reloadFlag = "${reloadFlag}";
+		order.memberChange.newSubPhoneNum = "${newSubPhoneNum}";
+		order.memberChange.oldSubPhoneNum = "${oldSubPhoneNum}";
+		order.memberChange.mktResInstCode = "${mktResInstCode}";
 		$("#p_cust_identityNum").val(OrderInfo.provinceInfo.mainPhoneNum);
 		//是否重载
 		var reload_=OrderInfo.provinceInfo.reloadFlag;
