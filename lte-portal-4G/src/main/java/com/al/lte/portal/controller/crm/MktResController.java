@@ -1,5 +1,8 @@
 package com.al.lte.portal.controller.crm;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -2300,4 +2303,43 @@ public class MktResController extends BaseController {
 		jsonResponse = super.successed(rMap, ResultConstant.SUCCESS.getCode());
 		return jsonResponse;
 	}
+	/**
+	 * 翼支付绑卡
+	 * 跳转到翼支付绑卡添益宝系统，url上所需参数：
+	 * productno：翼支付账号（非必传，但是需要把变量传过去）注：预定传空
+	 * inputuid：操作营业员的工号（必传）
+	 * inputorg: 4G营业厅编号（channel_NBR）（必传）
+	 * 
+	 * 生产环境DCN：http://10.251.2.11:7005/alwaysnotj1/businessBind.do?method=load&productno=&inputuid=1111&inputorg=11111
+	 * 测试环境DCN：http://10.251.2.248:10888/alwaysnotj1/businessBind.do?method=load&productno=&inputuid=1111&inputorg=11111
+	 * 映射生产环境DCN：https://crm.189.cn/alwaysnotj1/businessBind.do?method=load&productno=&inputuid=1111&inputorg=11111
+	 * 映射测试环境DCN：http://10.128.90.194:8101/alwaysnotj1/businessBind.do?method=load&productno=&inputuid=1111&inputorg=11111
+	 * @param response
+	 * @throws Exception 
+	 */
+	@RequestMapping(value = "/yiPayBoundCard", method = RequestMethod.GET)
+    @AuthorityValid(isCheck = false)
+    public void yiPayBoundcard(HttpServletRequest request,  HttpServletResponse response) throws Exception{  
+	    SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);
+	    StringBuffer url=new StringBuffer();
+	    //URL/alwaysnotj1
+	    url.append(MySimulateData.getInstance().getNeeded((String) request.getSession().getAttribute(SysConstant.SESSION_DATASOURCE_KEY),"YIPAYBOUNDCARD","url"));	 	    
+	    String staffCode=sessionStaff.getStaffCode();
+	    String channelCode =sessionStaff.getCurrentChannelCode();
+        try {
+        	staffCode =URLEncoder.encode(staffCode, "UTF-8");
+        	channelCode =URLEncoder.encode(channelCode, "UTF-8");
+        } catch (UnsupportedEncodingException e1) {
+            e1.printStackTrace();
+        }
+        url.append("/businessBind.do?method=load&type=4g&productno=").append("&inputuid=").append(staffCode).append("&inputorg=").append(channelCode);
+	    log.debug("翼支付绑卡添益宝地址："+url.toString());
+	    try {
+	        response.setContentType("text/html;charset=UTF-8");
+	        response.getWriter().print("<iframe src='"+url+"' style='width: 100%;height: 100%' frameborder = '0'></iframe>");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+	}
+	
 }

@@ -89,6 +89,8 @@ public class SessionStaff implements Serializable {
 	private String currentChannelId;
 	/** 受理渠道名  */
 	private String currentChannelName;
+	/** 受理渠道编码  */
+	private String currentChannelCode;
 	/** 受理地区ID*/
 	private String currentAreaId;
 	/** 受理地区区号*/
@@ -375,6 +377,14 @@ public class SessionStaff implements Serializable {
 	public void setCurrentChannelId(String currentChannelId) {
 		this.currentChannelId = currentChannelId;
 	}
+	
+	public void setCurrentChannelCode(String currentChannelCode) {
+		this.currentChannelCode = currentChannelCode;
+	}
+	
+	public String getCurrentChannelCode() {
+		return currentChannelCode;
+	}
 
 
 	public String getCurrentChannelName() {
@@ -555,6 +565,7 @@ public class SessionStaff implements Serializable {
 	public static SessionStaff setChannelInfoFromMap(SessionStaff sessionStaff, Map<String, Object> paramMap) {
 		sessionStaff.setCurrentChannelId(MapUtils.getString(paramMap, "id", ""));
 		sessionStaff.setCurrentChannelName(MapUtils.getString(paramMap, "name", ""));
+		sessionStaff.setCurrentChannelCode(MapUtils.getString(paramMap, "chnNbr", ""));
 		sessionStaff.setCurrentAreaId(MapUtils.getString(paramMap, "areaId", ""));
 		sessionStaff.setCurrentAreaCode(MapUtils.getString(paramMap, "zoneNumber", ""));
 		sessionStaff.setCurrentAreaName(MapUtils.getString(paramMap, "areaName", ""));
@@ -574,6 +585,7 @@ public class SessionStaff implements Serializable {
 	public static SessionStaff setCurrentChannelInfoFromMap(SessionStaff sessionStaff, Map<String, Object> paramMap) {
 		sessionStaff.setCurrentChannelId(MapUtils.getString(paramMap, "id", ""));
 		sessionStaff.setCurrentChannelName(MapUtils.getString(paramMap, "name", ""));
+		sessionStaff.setCurrentChannelCode(MapUtils.getString(paramMap, "chnNbr", ""));
 		sessionStaff.setCurrentAreaId(MapUtils.getString(paramMap, "areaId", ""));
 		sessionStaff.setCurrentAreaCode(MapUtils.getString(paramMap, "zoneNumber", ""));
 		sessionStaff.setCurrentAreaName(MapUtils.getString(paramMap, "areaName", ""));

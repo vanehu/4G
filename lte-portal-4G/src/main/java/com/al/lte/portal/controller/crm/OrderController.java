@@ -6,8 +6,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -1286,6 +1288,37 @@ public class OrderController extends BaseController {
  			model.addAttribute("olId", param.get("olId"));
  			model.addAttribute("showCancelBtn",ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.STEP_ORDER_CANCEL_OPER_FLAG));
  			getApConfigMap(model, flowNum, sessionStaff);
+ 			//查找菜单中有无翼支付绑卡菜单，有则添加菜单ID和URL生成翼支付绑卡菜单按钮
+ 			String yizhifu = "0";
+ 			String yizhifuResourceId = "0";
+ 			String yizhifuResourceUrl = "";
+ 			Object menuList = request.getSession().getAttribute(SysConstant.SESSION_KEY_MENU_LIST);
+			if(menuList!=null && menuList instanceof List){
+				Set<String> authUrls = new HashSet<String>();
+				List<Map> list1 = (List<Map>)menuList;
+				for(Map rowTemp1:list1){
+					List<Map> list2 = (List<Map>)rowTemp1.get("childMenuResources");
+					for(Map rowTemp2:list2){
+						List<Map> list3 = (List<Map>)rowTemp2.get("childMenuResources");
+						for(Map rowTemp3:list3){
+							String resourceName = (String) rowTemp3.get("resourceName");
+							if("翼支付绑卡".equals(resourceName)){
+								yizhifu = "1";
+								if(rowTemp3.get("resourceId")!=null)
+									yizhifuResourceId = rowTemp3.get("resourceId")+"";
+								if((String) rowTemp3.get("menuPath")!=null)
+									yizhifuResourceUrl = (String) rowTemp3.get("menuPath");
+								break;
+							}
+						}
+						if("1".equals(yizhifu))break;
+					}
+					if("1".equals(yizhifu))break;
+				}
+			}
+			model.addAttribute("isYiPayBoundCard", yizhifu);;
+			model.addAttribute("yiPayBoundCardId", yizhifuResourceId);
+			model.addAttribute("yiPayBoundCardUrl", yizhifuResourceUrl);
      	}else{
      		super.addHeadCode(response, ResultConstant.SERVICE_RESULT_FAILTURE);
      	}

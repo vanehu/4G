@@ -297,6 +297,9 @@
 		               <span>pos终端号：</span><input type="text"  class="inputWidth250px" style="width:280px;" id="terminalNumber" name="terminalNumber" onblur="order.calcharge.conBtns();" onfocus ="order.calcharge.conBtns();">
 		               <span>pos流水号：</span><input type="text"  class="inputWidth250px" style="width:280px;"   id="serialNumber" name="serialNumber" onblur="order.calcharge.conBtns();" onfocus ="order.calcharge.conBtns();">
 		       </div>
+		        <#if isYiPayBoundCard??&&(isYiPayBoundCard=="1") >
+		      		<a class="btna_o" href="javascript:window.parent.main.home.addTab('main_tab_${yiPayBoundCardId}','翼支付绑卡','${contextPath}/${yiPayBoundCardUrl}');" id="yiPayBoundCard" style="display:"><span>翼支付绑卡</span></a>
+		       </#if>
 		       <a class="btna_o" href="javascript:void(0)" id="orderSave" style="display:none" onclick="SoOrder.saveOrderSubmit()"><span>暂存</span></a>
 			   <a class="btna_o" href="javascript:void(0)" id="orderCancel" stepOrderParam="${showCancelBtn}"><span>订单取消</span></a>
 		       <#if Session["_loginUrl"]?? >
