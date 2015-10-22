@@ -687,7 +687,7 @@ order.calcharge = (function(){
 				"areaId" : OrderInfo.staff.areaId,
 				"chargeItems":_chargeItems
 		};
-		var url=contextPath+"/order/chargeSubmit?token="+OrderInfo.order.token;
+		var url=contextPath+"/token/pad/order/chargeSubmit?token="+OrderInfo.order.token;
 		var response=$.callServiceAsJson(url, params, {});
 		var msg="";
 		if (response.code == 0) {

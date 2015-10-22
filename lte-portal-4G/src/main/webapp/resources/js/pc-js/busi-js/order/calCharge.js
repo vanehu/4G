@@ -815,7 +815,7 @@ order.calcharge = (function(){
 				value : OrderInfo.staff.staffCode 
 			});
 		}
-		var url=contextPath+"/order/chargeSubmit?token="+OrderInfo.order.token;
+		var url=contextPath+"/token/pc/order/chargeSubmit?token="+OrderInfo.order.token;
 		var response=$.callServiceAsJson(url, params, {});
 		var msg="";
 		if (response.code == 0) {
