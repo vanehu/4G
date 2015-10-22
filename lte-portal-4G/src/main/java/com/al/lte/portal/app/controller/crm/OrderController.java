@@ -797,7 +797,7 @@ public class OrderController extends BaseController {
         	prams.put("pageSize", 50);
         	int totalPage=0;
         	Map<String, Object> map = null;
-            // prams.put("qryStr", "乐享");
+   //          prams.put("qryStr", "乐享");
         	map = orderBmo.queryMainOfferSpecList(prams,null, sessionStaff);
         	if(ResultCode.R_SUCCESS.equals(map.get("code"))){
         		//拼装前台显示的套餐详情
@@ -1913,29 +1913,72 @@ public class OrderController extends BaseController {
     @ResponseBody
     public JsonResponse checkRuleToProv(@RequestBody Map<String, Object> param,
 			@LogOperatorAnn String flowNum,HttpServletResponse response){
-   	 SessionStaff sessionStaff = (SessionStaff) ServletUtils
-				.getSessionAttribute(super.getRequest(),
-						SysConstant.SESSION_KEY_LOGIN_STAFF);
-		Map<String, Object> rMap = null;
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
 		JsonResponse jsonResponse = null;
 		try {
-			log.debug("param={}", JsonUtil.toString(param));
 			param.put("areaId", sessionStaff.getCurrentAreaId());
-			rMap = orderBmo.checkRuleToProv(param, flowNum, sessionStaff);
-			log.debug("return={}", JsonUtil.toString(rMap));
-			if (rMap != null&& ResultCode.R_SUCCESS.equals(rMap.get("code").toString())) {
-				jsonResponse = super.successed("收费校验成功",
-						ResultConstant.SUCCESS.getCode());
-			} else {
-				jsonResponse = super.failed(rMap.get("msg"),
-						ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+			param.put("portalFlag", "Y");
+			Map<String, Object> resultMap = orderBmo.checkRuleToProv(param, flowNum, sessionStaff);
+			Map<String, Object> returnMap = new HashMap<String, Object>();
+			
+			String provCheckCode = MapUtils.getString(resultMap, "returnCode", "0000");//下省校验结果编码
+			String provCheckMsg = MapUtils.getString(resultMap, "resultMsg", "未返回校验结果信息");//下省校验结果信息
+			
+			//下省校验成功
+			if("0000".equals(provCheckCode)){
+				if (resultMap.get("checkResult")!=null){
+					List<Map<String,String>> checkResult = new ArrayList<Map<String,String>>();
+					List<Map<String,String>> list = (List<Map<String,String>>) resultMap.get("checkResult");
+					for(Map<String,String> map : list){
+						if (SysConstant.REDUCE_PRESTORE_STATE.equals(map.get("code"))){
+							checkResult.add(map);
+						}
+					}
+					returnMap.put("returnCode", "0000");
+					returnMap.put("checkResult", checkResult);
+				}
+				jsonResponse = super.successed(returnMap, ResultConstant.SUCCESS.getCode());
+			}
+			//下省校验有错误
+			else {
+				//省内校验欠费的错误编码，判断当前工号有否带欠费受理的权限酌情处理
+				if(SysConstant.PROV_CHECK_OVERDUE_1.equals(provCheckCode) || SysConstant.PROV_CHECK_OVERDUE_2.equals(provCheckCode)){
+					String canDoOverdueBusi = staffBmo.checkOperatSpec(SysConstant.OVERDUE_BUSI_CODE, sessionStaff);
+					//当前工号有继续受理的权限
+					if("0".equals(canDoOverdueBusi)){
+						if (resultMap.get("checkResult")!=null){
+							List<Map<String,String>> checkResult = new ArrayList<Map<String,String>>();
+							List<Map<String,String>> list = (List<Map<String,String>>) resultMap.get("checkResult");
+							for(Map<String,String> map : list){
+								if (SysConstant.REDUCE_PRESTORE_STATE.equals(map.get("code"))){
+									checkResult.add(map);
+								}
+							}
+							returnMap.put("returnCode", provCheckCode);
+							returnMap.put("checkResult", checkResult);
+						}
+						jsonResponse = super.successed(returnMap, ResultConstant.SUCCESS.getCode());
+					}
+					//当前工号没有继续受理的权限，返回错误信息
+					else{
+						returnMap.put("errCode", provCheckCode);
+						returnMap.put("errMsg", provCheckMsg);
+						jsonResponse = super.failed(returnMap, ResultConstant.FAILD.getCode());
+					}
+				}
+				//其他错误编码，直接返回错误信息
+				else{
+					returnMap.put("errCode", provCheckCode);
+					returnMap.put("errMsg", provCheckMsg);
+					jsonResponse = super.failed(returnMap, ResultConstant.FAILD.getCode());
+				}
 			}
 		} catch (BusinessException e) {
 			return super.failed(e);
 		} catch (InterfaceException ie) {
-			return super.failed(ie, param, ErrorCode.CHARGE_SUBMIT);
+			return super.failed(ie, param, ErrorCode.CHECK_RULETOPRO);
 		} catch (Exception e) {
-			return super.failed(ErrorCode.CHARGE_SUBMIT, e, param);
+			return super.failed(ErrorCode.CHECK_RULETOPRO, e, param);
 		}
 		return jsonResponse;
     }
