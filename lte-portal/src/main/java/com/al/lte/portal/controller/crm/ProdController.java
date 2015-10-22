@@ -337,7 +337,7 @@ public class ProdController extends BaseController {
 							prodItem.put("itemValue", offerProdItem.get("value"));//属性值
 							
 							//使用人产品属性特殊处理，根据value-客户id 查询客户名称并展示
-							if(SysConstant.PROD_ITEM_SPEC_ID_USER.equals(offerProdItem.get("attrId")+"")){
+							if(SysConstant.PROD_ITEM_SPEC_ID_USER.equals(offerProdItem.get("itemSpecId")+"")){
 								String custId = (String) offerProdItem.get("value");
 								if(StringUtils.isNotBlank(custId)){ //返回属性值为空字符串时不查询客户详情
 									Map<String, Object> paramMap=new HashMap<String, Object>();
