@@ -601,6 +601,7 @@ query.offer = (function() {
 	var _queryMainOfferSpec = function(param){
 		var offerSpec = query.offer.queryOfferSpec(param); //查询主销售品构成
 		if(offerSpec ==undefined){
+			$.alert("错误提示","销售品规格构成查询: 没有找到销售品规格！");
 			return false;
 		}
 		if( offerSpec.offerRoles ==undefined){

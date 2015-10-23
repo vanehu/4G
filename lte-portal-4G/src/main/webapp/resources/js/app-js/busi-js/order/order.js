@@ -56,7 +56,7 @@ order.service = (function(){
 					params.priceMax = priceArr[1] ;
 				}
 			}
-			var influxVal = $("#select_invoice").val();
+			var influxVal = $("#select_influx").val();
 			if(ec.util.isObj(influxVal)){
 				var influxArr = influxVal.split("-");
 				if(influxArr[0]!=null&&influxArr[0]!=""){
@@ -66,7 +66,7 @@ order.service = (function(){
 					params.INFLUXMax = influxArr[1]*1024 ;
 				}
 			}
-			var invoiceVal = $("#select_influx").val();
+			var invoiceVal = $("#select_invoice").val();
 			if(ec.util.isObj(invoiceVal)){
 				var invoiceArr = invoiceVal.split("-");
 				if(invoiceArr[0]!=null&&invoiceArr[0]!=""){
@@ -172,16 +172,16 @@ order.service = (function(){
 							for(var j=0;j<OFFER_INFLUX.length;j++){
 								var rowKey=OFFER_INFLUX[j].COLUMN_VALUE;
 								var rowVal=OFFER_INFLUX[j].COLUMN_VALUE_NAME;
-								$("#select_invoice option[value='"+rowKey+"']").remove();
-								$("#select_invoice").append("<option value='"+rowKey+"'>"+rowVal+"</option>");
+								$("#select_influx option[value='"+rowKey+"']").remove();
+								$("#select_influx").append("<option value='"+rowKey+"'>"+rowVal+"</option>");
 							}
 						}else if(response.data[i].OFFER_INVOICE){
 							OFFER_INVOICE = response.data[i].OFFER_INVOICE ;
 							for(var j=0;j<OFFER_INVOICE.length;j++){
 								var rowKey=OFFER_INVOICE[j].COLUMN_VALUE;
 								var rowVal=OFFER_INVOICE[j].COLUMN_VALUE_NAME;
-								$("#select_influx option[value='"+rowKey+"']").remove();
-								$("#select_influx").append("<option value='"+rowKey+"'>"+rowVal+"</option>");
+								$("#select_invoice option[value='"+rowKey+"']").remove();
+								$("#select_invoice").append("<option value='"+rowKey+"'>"+rowVal+"</option>");
 							}
 						}
 						$.refresh($("#search-modal"));
@@ -518,50 +518,61 @@ order.service = (function(){
 	
 	var _choosedOffer=function(id,specId,price,subpage,specName){
 		var param={"offerSpecId":specId};
-		var response = $.callServiceAsJson(contextPath+"/app/order/queryOfferSpec",param);
-		if (response.code==0) {
-			if(response.data){
-				var offerRoleId="";
-				var prodOfferSpec=response.data.offerSpec;
-				if (prodOfferSpec && prodOfferSpec.offerRoles) {
-					var offerRoles = prodOfferSpec.offerRoles;
-					for (var i=0;i<offerRoles.length;i++){
-						if (offerRoles[i].memberRoleCd == CONST.MEMBER_ROLE_CD.MAIN_CARD
-								|| offerRoles[i].memberRoleCd == CONST.MEMBER_ROLE_CD.VICE_CARD) {
-							if(offerRoles[i].memberRoleCd == CONST.MEMBER_ROLE_CD.MAIN_CARD){
-								offerRoleId=offerRoles[i].offerRoleId;
-								break;
+		$.callServiceAsJson(contextPath+"/app/order/queryOfferSpec",param,{
+			"before":function(){
+				$.ecOverlay("<strong>正在加载中,请稍等会儿....</strong>");
+			},
+			"done":function(response){
+				$.unecOverlay();
+				if (response.code==0) {
+					if(response.data){
+						var offerRoleId="";
+						var prodOfferSpec=response.data.offerSpec;
+						if (prodOfferSpec && prodOfferSpec.offerRoles) {
+							var offerRoles = prodOfferSpec.offerRoles;
+							for (var i=0;i<offerRoles.length;i++){
+								if (offerRoles[i].memberRoleCd == CONST.MEMBER_ROLE_CD.MAIN_CARD
+										|| offerRoles[i].memberRoleCd == CONST.MEMBER_ROLE_CD.VICE_CARD) {
+									if(offerRoles[i].memberRoleCd == CONST.MEMBER_ROLE_CD.MAIN_CARD){
+										offerRoleId=offerRoles[i].offerRoleId;
+										break;
+									}
+								}else{
+									offerRoleId=offerRoles[i].offerRoleId;
+									break;
+								}
 							}
+						}
+						if(offerRoleId!=""){
+							_closeChooseDialog();
+							var prodId=$("#li_"+subpage).attr("objinstid");
+							var accessnumber=$("#li_"+subpage).attr("accessnumber");
+							for ( var i = 0; i < OrderInfo.viceOfferSpec.length; i++) {//清除旧数据
+								var viceOfferSpec = OrderInfo.viceOfferSpec[i];
+								if(prodId == viceOfferSpec.prodId){
+									OrderInfo.viceOfferSpec.splice(i,1);
+									break;
+								}
+							}
+							prodOfferSpec.prodId=prodId;
+							prodOfferSpec.accessnumber=accessnumber;
+							OrderInfo.viceOfferSpec.push(prodOfferSpec);
+							order.prodModify.chooseOfferForMember(specId,subpage,specName,offerRoleId);
 						}else{
-							offerRoleId=offerRoles[i].offerRoleId;
-							break;
+							$.alert("提示","无法选择套餐，套餐规格查询失败！");
 						}
 					}
-				}
-				if(offerRoleId!=""){
-					_closeChooseDialog();
-					var prodId=$("#li_"+subpage).attr("objinstid");
-					var accessnumber=$("#li_"+subpage).attr("accessnumber");
-					for ( var i = 0; i < OrderInfo.viceOfferSpec.length; i++) {//清除旧数据
-						var viceOfferSpec = OrderInfo.viceOfferSpec[i];
-						if(prodId == viceOfferSpec.prodId){
-							OrderInfo.viceOfferSpec.splice(i,1);
-							break;
-						}
-					}
-					prodOfferSpec.prodId=prodId;
-					prodOfferSpec.accessnumber=accessnumber;
-					OrderInfo.viceOfferSpec.push(prodOfferSpec);
-					order.prodModify.chooseOfferForMember(specId,subpage,specName,offerRoleId);
+				}else if(response.code == -2){
+					$.alertM(response.data);
 				}else{
-					$.alert("提示","无法选择套餐，套餐规格查询失败！");
+					$.alert("提示","套餐详细加载失败，请稍后再试！");
 				}
+			},
+			"always":function(){
+				$.unecOverlay();
 			}
-		}else if(response.code == -2){
-			$.alertM(response.data);
-		}else{
-			$.alert("提示","套餐详细加载失败，请稍后再试！");
-		}
+			}
+		);
 	};
 	return {
 		btnBack					:			_btnBack,

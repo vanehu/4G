@@ -1586,7 +1586,7 @@ order.ysl = (function(){
 					params.priceMax = priceArr[1] ;
 				}
 			}
-			var influxVal = $("#select_invoice").val();
+			var influxVal = $("#select_influx").val();
 			if(ec.util.isObj(influxVal)){
 				var influxArr = influxVal.split("-");
 				if(influxArr[0]!=null&&influxArr[0]!=""){
@@ -1596,7 +1596,7 @@ order.ysl = (function(){
 					params.INFLUXMax = influxArr[1]*1024 ;
 				}
 			}
-			var invoiceVal = $("#select_influx").val();
+			var invoiceVal = $("#select_invoice").val();
 			if(ec.util.isObj(invoiceVal)){
 				var invoiceArr = invoiceVal.split("-");
 				if(invoiceArr[0]!=null&&invoiceArr[0]!=""){
