@@ -267,10 +267,17 @@ order.memberChange = function(){
 						li.attr("del","N").attr("knew","N").attr("objId",this.objId).attr("objInstId",this.objInstId)
 						  .attr("objType",this.objType).attr("offerMemberId",this.offerMemberId).attr("offerRoleId",this.offerRoleId).attr("accessNumber",this.accessNumber);
 						var eleI = $("<i id='plan_no'><a id='' accNbr='"+this.accessNumber+"' class='purchase' href='javascript:void(0)'>拆副卡</a></i>").appendTo(li);
+						var accessNumber = this.accessNumber;
 						eleI.click(function(){
 							if (($(this).parent().attr("del") == "N")) {
-								$(this).parent().css("text-decoration","line-through").attr("del","Y").attr("knew","N");
-								$(this).find("a").text("不 拆");
+								$.confirm("信息确认","是否将副卡"+accessNumber+"拆机，如只是更换副卡，办理其他套餐，请单击“保留”按钮",{ 
+									yesdo:function(){
+										eleI.parent().css("text-decoration","line-through").attr("del","Y").attr("knew","N");
+								        eleI.find("a").text("不 拆");	
+									},
+									no:function(){
+									}
+								});
 							} else {
 								$(this).parent().css("text-decoration","").attr("del","N").attr("knew","N");
 								$(this).find("a").text("拆副卡");
