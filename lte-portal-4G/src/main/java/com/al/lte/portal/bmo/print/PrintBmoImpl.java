@@ -3043,7 +3043,6 @@ public class PrintBmoImpl implements PrintBmo {
 		if(MapUtils.isEmpty(titleMap)){
 			return null;
 		}
-		tmpStr+=price;
 
 		List<StringBeanSet> attachOfferList = new ArrayList<StringBeanSet>();
 		StringBeanSet strBean = new StringBeanSet();
@@ -6272,8 +6271,7 @@ public class PrintBmoImpl implements PrintBmo {
 			String prodSpecName = MapUtils.getString(titleMap, "prodSpecName", "");
 			String effectRule = MapUtils.getString(titleMap, "effectRule", "");
 			String attachOfferSpecName = MapUtils.getString(titleMap, "attachOfferSpecName", "");
-		String offerTypeName = MapUtils.getString(titleMap, "offerTypeName", "");
-		String price = MapUtils.getString(titleMap, "price", "");
+			String offerTypeName = MapUtils.getString(titleMap, "offerTypeName", "");
 
 			StringBeanSet strBean = buildOE_1_Title_V2(eventSize, orderSeq, boActionTypeName, prodSpecName, effectRule, attachFlag, attachOfferSpecName, offerTypeName);
 			strList.add(strBean);
