@@ -381,19 +381,12 @@ public class PrintBmoImpl implements PrintBmo {
 											if(i != 0){
 												sb.append(",</br>");
 											}else sb.append("：</br>");
-											sb.append("&nbsp&nbsp[订购]");
+											sb.append("&nbsp;&nbsp;[订购]");
 											sb.append(offerInfo.get("prodSpecName"));
 											sb.append("("+offerInfo.get("effectRule")+")");
 										}
 									}
 								}
-//								for (Map<String, Object> offerInfo : offerInfos) {
-//									if (null != offerInfo.get("prodSpecName")) {
-//										sb.append(",</br>");
-//										sb.append("["+orderEventTitle.get("boActionTypeName")+"]");
-//										sb.append(offerInfo.get("prodSpecName"));
-//									}
-//								}
 							}
 
 						}
@@ -424,7 +417,7 @@ public class PrintBmoImpl implements PrintBmo {
 									Map<String, Object> item = orderEventCont.get(i);
 									if (null != item.get("itemName")) {
 										sb.append(",</br>");
-										sb.append("&nbsp&nbsp["+item.get("actionName")+"]");
+										sb.append("&nbsp;&nbsp;["+item.get("actionName")+"]");
 										sb.append(item.get("itemName"));
 										sb.append("("+item.get("effectRule")+")");
 									}
@@ -457,7 +450,7 @@ public class PrintBmoImpl implements PrintBmo {
 				StringBuffer sbNub=new StringBuffer();
 				for (Map<String, Object> map : terminalList) {
 					sb.append("【物品清单】:</br>");
-					sb.append("&nbsp&nbsp"+map.get("tiName")+"&nbsp&nbsp"+"1"+map.get("tiParam"));
+					sb.append("&nbsp;&nbsp;"+map.get("tiName")+"&nbsp;&nbsp;"+"1"+map.get("tiParam"));
 				}
 
 				maps.put("receiptInfo", sb.toString());
@@ -5582,6 +5575,7 @@ public class PrintBmoImpl implements PrintBmo {
 			byte[] pdfByte=null;
 			String image=byte2image(data,request);
 			if(image!=null){
+				html = html.replace("</br>", "");
 				html=html.replace("XXXXXSIGN", image);
 				String pdf=convertHtmlToPdf(html,request);
 				String paths=request.getRealPath("resources/image/gongz/")+"/";
