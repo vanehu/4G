@@ -624,7 +624,7 @@ cart.main = (function(){
 		$.unecOverlay();
 		if (response.code==0) {
 			OrderInfo.saveOrder.olId = param.customerOrderId;
-			console.log(response.data);
+//			console.log(response.data);
 			var custOrderAttrs = response.data.orderList.orderListInfo.custOrderAttrs;
 			$.each(custOrderAttrs,function(){
 				if(this.itemSpecId=="30010024"){
@@ -704,7 +704,7 @@ cart.main = (function(){
 							$.each(custOrderList,function(){
 								if(this.boActionType.actionClassCd=="1100" && this.boActionType.boActionTypeCd=="A1"){
 									OrderInfo.cust={
-											areaId:this.areaId,
+											areaId:'"'+this.areaId+'"',
 											custId:this.data.boAccountInfos[0].partyId,
 											partyName:this.data.boAccountInfos[0].acctName
 									}

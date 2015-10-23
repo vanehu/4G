@@ -744,7 +744,7 @@ query.offer = (function() {
 				param.yslflag = order.ysl.yslbean.yslflag;
 			}
 		}
-		if(ec.util.isArray(OrderInfo.oldprodInstInfos) && OrderInfo.actionFlag==6){//主副卡纳入老用户
+		if(ec.util.isArray(OrderInfo.oldprodInstInfos) && (OrderInfo.actionFlag==6 || OrderInfo.actionFlag==2)){//主副卡纳入老用户
 			for(var i=0;i<OrderInfo.oldprodInstInfos.length;i++){
 				if(param.acctNbr==OrderInfo.oldprodInstInfos[i].accNbr){
 					param.areaId = OrderInfo.oldprodInstInfos[i].areaId;

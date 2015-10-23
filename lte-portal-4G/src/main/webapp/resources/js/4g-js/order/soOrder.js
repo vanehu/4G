@@ -895,6 +895,25 @@ SoOrder = (function() {
 				_showAttOffer(this.objInstId);
 			}
 		});
+		$.each(OrderInfo.offerSpec.offerRoles,function(){
+			if(this.memberRoleCd==401){
+				$.each(this.prodInsts,function(){
+					var instid = '"'+this.prodInstId+'"';
+					if(instid.indexOf("-")!=-1){
+						_showAttOffer(this.prodInstId);
+					}
+				});
+			}
+		});
+		if(offerChange.oldMemberFlag){
+			$.each(OrderInfo.oldoffer,function(){
+				$.each(this.offerMemberInfos,function(){
+					if(this.objType==CONST.OBJ_TYPE.PROD){
+						_showAttOffer(this.objInstId);
+					}
+				});
+			});
+		}
 	};
 	
 	//副卡套餐变更销售附属
@@ -2632,7 +2651,8 @@ SoOrder = (function() {
 					for ( var j = 0; j < offerRole.prodInsts.length; j++) {
 						var prodInst = offerRole.prodInsts[j];
 						if(OrderInfo.actionFlag==2){
-							if(prodInst.memberRoleCd=="401"){
+							var instid = '"'+prodInst.prodInstId+'"';
+							if(prodInst.memberRoleCd=="401" && instid.indexOf("-")!=-1){
 								var accNbr = OrderInfo.getProdAn(prodInst.prodInstId).accessNumber;
 								var password = $("#pwd_"+prodInst.prodInstId).val();
 								if(password!="******"){
