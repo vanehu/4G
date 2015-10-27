@@ -1986,12 +1986,12 @@ order.main = (function(){
 			//增加付费方式对翼支付助手功能产品的限制
 			if((OrderInfo.actionFlag==1||OrderInfo.actionFlag==3||OrderInfo.actionFlag==6||OrderInfo.actionFlag==14)
 					&&CacheData.getServSpec(-1,381000960)!=null){
-				var spec = CacheData.getServSpec(-1,381000960);
-				if(spec.isdel==undefined||spec.isdel!="Y"){
+				var yiPaySpec = CacheData.getServSpec(-1,381000960);
+				if(yiPaySpec.isdel==undefined||yiPaySpec.isdel!="Y"){
 					$.confirm("信息确认","您已选择开通【翼支付交费助手】功能产品，如果修改付费类型为预付费，其属性将赋为默认值！",{ 
 						yesdo:function(){
-							for ( var j = 0; j < spec.prodSpecParams.length; j++) {							
-								var prodSpecParam = spec.prodSpecParams[j];
+							for ( var j = 0; j < yiPaySpec.prodSpecParams.length; j++) {							
+								var prodSpecParam = yiPaySpec.prodSpecParams[j];
 								prodSpecParam.setValue = prodSpecParam.value;
 //								if (!!prodSpecParam.valueRange[0]) 
 //									prodSpecParam.setValue = prodSpecParam.valueRange[0].value;
@@ -2008,12 +2008,12 @@ order.main = (function(){
 		} else {
 			if((OrderInfo.actionFlag==1||OrderInfo.actionFlag==3||OrderInfo.actionFlag==6||OrderInfo.actionFlag==14)
 					&&CacheData.getServSpec(-1,381000960)!=null){
-				var spec = CacheData.getServSpec(-1,381000960);
-				if(spec.isdel==undefined||spec.isdel!="Y"){
+				var yiPaySpec = CacheData.getServSpec(-1,381000960);
+				if(yiPaySpec.isdel==undefined||yiPaySpec.isdel!="Y"){
 					$.confirm("信息确认","您已选择开通【翼支付交费助手】功能产品，如果修改付费类型为后付费，将置空其选择属性，且属性不再可选！！",{ 
 						yesdo:function(){
-							for ( var j = 0; j < spec.prodSpecParams.length; j++) {							
-								var prodSpecParam = spec.prodSpecParams[j];
+							for ( var j = 0; j < yiPaySpec.prodSpecParams.length; j++) {							
+								var prodSpecParam = yiPaySpec.prodSpecParams[j];
 								prodSpecParam.setValue = "";
 							}
 						},
