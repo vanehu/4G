@@ -293,19 +293,19 @@ order.service = (function(){
 					iflag++;
 				}
 			});
-			if(offerRole.memberRoleCd=="401" && areaidflag!="" && areaidflag.net_vice_card=="0"){
-				$.each(this.roleObjs,function(){
-					if(this.objType == CONST.OBJ_TYPE.PROD){
-						var max = this.maxQty<0?"不限制":this.maxQty;//主卡的最大数量
-						var min = this.minQty;
-						var $trOldNbr = "<tr style='background:#f8f8f8;' id='oldnum_1' name='oldnbr'>" +
-						"<td class='borderLTB' style='font-size:14px; padding:0px 0px 0px 12px'><span style='color:#518652; font-size:14px;'>已有移动电话</span></td>" +
-						"<td align='left' colspan='3'><input value='' style='margin-top:10px' class='numberTextBox' id='oldphonenum_1' type='text' >" +
-						"<a style='margin-top:15px' class='add2' href='javascript:order.memberChange.addNum("+max+",\"\");'> </a>"+min+"-"+max+"（张）</td></tr>";	
-						$tbody.append($trOldNbr);
-					}
-				});
-			}
+//			if(offerRole.memberRoleCd=="401" && areaidflag!="" && areaidflag.net_vice_card=="0"){
+//				$.each(this.roleObjs,function(){
+//					if(this.objType == CONST.OBJ_TYPE.PROD){
+//						var max = this.maxQty<0?"不限制":this.maxQty;//主卡的最大数量
+//						var min = this.minQty;
+//						var $trOldNbr = "<tr style='background:#f8f8f8;' id='oldnum_1' name='oldnbr'>" +
+//						"<td class='borderLTB' style='font-size:14px; padding:0px 0px 0px 12px'><span style='color:#518652; font-size:14px;'>已有移动电话</span></td>" +
+//						"<td align='left' colspan='3'><input value='' style='margin-top:10px' class='numberTextBox' id='oldphonenum_1' type='text' >" +
+//						"<a style='margin-top:15px' class='add2' href='javascript:order.memberChange.addNum("+max+",\"\");'> </a>"+min+"-"+max+"（张）</td></tr>";	
+//						$tbody.append($trOldNbr);
+//					}
+//				});
+//			}
 		});
 		//页面初始化参数
 		var param = {
