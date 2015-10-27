@@ -1582,9 +1582,9 @@ AttachOffer = (function() {
 //							terminalMinNum=minNum;
 //						}
 						for(var k=1;k<=minNum;k++){
-							var $liTerminal=$('<li style="width:700px"><label>终端校验：</label><input id="terminalText_'+objInstId+'_'+k+'" type="text" class="inputWidth228px inputMargin0" data-validate="validate(terminalCodeCheck) on(keyup blur)" maxlength="50" placeholder="请先输入终端串号" />'
-									+'<input type="checkbox" id="if_p_reserveCode"><label>使用预约码：</label><input type="text" class="inputWidth228px inputMargin0" id="reserveCode" value="" disabled="disabled" maxlength="20" placeholder="请输入预约码" style="width:160px;background-color: #E8E8E8;" /></li>'
-									+'<input id="terminalBtn_'+objInstId+'_'+k+'" type="button" num="'+k+'" flag="'+isFastOffer+'" prodId="'+prodId+'" offerSpecId="'+newSpec.offerSpecId+'" onclick="AttachOffer.checkTerminalCode(this)" value="校验" class="purchase" style="float:left"></input></li>');
+							var $liTerminal=$('<li style="width:700px" name="terminalCodeCheckValidLi"><form name="terminalCodeCheckValidForm"><label>终端校验：</label><input id="terminalText_'+objInstId+'_'+k+'" type="text" class="inputWidth228px inputMargin0" data-validate="validate(terminalCodeCheck) on(keyup blur)" maxlength="50" placeholder="请先输入终端串号" />'
+									+'<input type="checkbox" id="if_p_reserveCode"><label>使用预约码：</label><input type="text" class="inputWidth228px inputMargin0" id="reserveCode" value="" disabled="disabled" maxlength="20" placeholder="请输入预约码" style="width:160px;background-color: #E8E8E8;" />'
+									+'<input id="terminalBtn_'+objInstId+'_'+k+'"name= "terminalCodeCheckValidBtn" type="button" num="'+k+'" flag="'+isFastOffer+'" prodId="'+prodId+'" offerSpecId="'+newSpec.offerSpecId+'" onclick="" value="校验" class="purchase" style="float:left"></input></form></li>');
 							var	$li4 = $('<li id="terminalDesc_'+k+'" style="white-space:nowrap;"><label></label><label id="terminalName_'+k+'"></label></li>');
 							
 							$ulGroups.append($liTerminal).append($li4);
@@ -1596,13 +1596,20 @@ AttachOffer = (function() {
 				var $div = $("#terminalDiv_"+prodId);
 				$ul.append($li1).append($li2).append($li3).appendTo($div);
 				$div.show();
+				$li3.find("li[name=terminalCodeCheckValidLi]").find("form[name=terminalCodeCheckValidForm]").each(function() {
+					var terminalCodeCheckValidBtn =$(this).find("input[name=terminalCodeCheckValidBtn]");
+					var terminalCodeCheckValidBtnId= terminalCodeCheckValidBtn.attr('id');
+	                $(this).off('formIsValid').on('formIsValid',function(event,form){
+	                	AttachOffer.checkTerminalCode(terminalCodeCheckValidBtn);
+	                }).ketchup({bindElement:terminalCodeCheckValidBtnId});  
+	            });  
 				$("#if_p_reserveCode").change(function(){
 					if($("#if_p_reserveCode").attr("checked")){
 						$("#reserveCode").css("background-color","white").attr("disabled", false) ;
 					}else{
 						$("#reserveCode").css("background-color","#E8E8E8").attr("disabled", true) ;
 					}
-				});
+				});	
 				if(newSpec.agreementInfos[0].minNum>0){//合约里面至少要有一个终端
 					newSpec.isTerminal = 1;
 				}

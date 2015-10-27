@@ -465,9 +465,9 @@ mktRes.terminal = (function($){
 				$("#gjsfA").click(function(){
 					_selectHy(2);
 				});
-				$("#chkTsnA").click(function(){
+				$("#chkTsnAForm").off('formIsValid').on('formIsValid',function(event,form){				
 					_checkTerminalCode('tsn');
-				});
+				}).ketchup({bindElement:"chkTsnA"});
 				$("#chkReserveCode").click(function(){
 					_chkReserveCode();
 				});
