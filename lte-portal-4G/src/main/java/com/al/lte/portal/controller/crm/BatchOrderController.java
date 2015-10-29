@@ -139,7 +139,7 @@ public class BatchOrderController  extends BaseController {
 	
 	/**
 	 * 获取未来5天的时间列表，精确到“时”，以实现未来5天的预约时间。该方法目前用于批开活卡、批量新装、批量裸机销售等批量受理。
-	 * @return 时间列表。该时间列表分为“日”和“时”两部分，其中“日”是未来的5天，“时”是每天的24个小时，分24个“时”。
+	 * @return 时间列表
 	 * @author ZhangYu
 	 */
 	public List<Map<String, Object>> getTimeListIn5Days() {
@@ -1182,7 +1182,8 @@ public class BatchOrderController  extends BaseController {
 					resultList.add(tempMap);
 				}
 				if(resultList != null && resultList.size() > 0){
-					String excelTitle = "批次查询受理表单"+param.get("groupId");
+					//String excelTitle = "批次查询受理表单"+param.get("groupId");
+					String excelTitle = param.get("groupId").toString();
 					String[] headers = new String[]{"批次号","主接入号","UIM卡号","受理时间","受理状态","反馈信息","订单状态"};
 					
 					//FileOutputStream fos = new FileOutputStream(new File("c:\\Test\\测试.xls")); 

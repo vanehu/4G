@@ -1158,7 +1158,8 @@ $(function(){
 		$.calendar({ format:'yyyy-MM-dd ',real:'#endDt',minDate:$("#startDt").val(),maxDate:'%y-%M-%d' });
 	});
 	$("#p_reserveDt").off("click").on("click",function(){
-		$.calendar({ format:'yyyy-MM-dd ',real:'#p_reserveDt',minDate:$("").val(),maxDate:'%y-%M-%d' });
+		//$.calendar({ format:'yyyy-MM-dd ',real:'#p_reserveDt',minDate:$("").val(),maxDate:'%y-%M-%d' });
+		$.calendar({ format:'yyyy-MM-dd ',real:'#p_reserveDt',minDate:$("").val()});
 	});
 	
 	//有文件导入时，自动清空页面提示
