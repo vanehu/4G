@@ -1018,7 +1018,7 @@ order.writeCard = (function(){
      	    AttachOffer.queryCardAttachOffer(coupon.cardTypeFlag);  //加载附属销售品
       	 }
  		//3转4弹出促销窗口
- 		if(!prod.changeUim.is4GProdInst && coupon.cardTypeFlag==1){
+ 		if(OrderInfo.actionFlag!=1 && prod.changeUim.is4GProdInst!=null && !prod.changeUim.is4GProdInst && coupon.cardTypeFlag==1){
  			var prodSpecId = OrderInfo.getProdSpecId(prodId);
  			var param = {
  				prodSpecId : prodSpecId,

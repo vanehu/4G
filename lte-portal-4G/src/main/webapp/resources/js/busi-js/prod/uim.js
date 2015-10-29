@@ -179,7 +179,7 @@ prod.uim = (function() {
 			}
 		}
 		//3转4弹出促销窗口
-		if(!prod.changeUim.is4GProdInst && data.baseInfo.cardTypeFlag==1){
+		if(OrderInfo.actionFlag!=1 && prod.changeUim.is4GProdInst!=null && !prod.changeUim.is4GProdInst && data.baseInfo.cardTypeFlag==1){
 			var param = {
 				prodSpecId : prodSpecId,
 				offerSpecIds : [],
