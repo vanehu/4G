@@ -2799,9 +2799,11 @@ AttachOffer = (function() {
 					queryType : queryType,
 					prodId : prodId,
 					partyId : OrderInfo.cust.custId,
-					labelId : labelId,
 					ifCommonUse : ""			
 				};
+				if(OrderInfo.actionFlag != 22 && OrderInfo.actionFlag != 23){
+					param.labelId = labelId;
+				}
 				if(OrderInfo.actionFlag == 2){ //套餐变更		
 					$.each(OrderInfo.offerSpec.offerRoles,function(){
 						if(ec.util.isArray(this.prodInsts)){
@@ -2815,7 +2817,7 @@ AttachOffer = (function() {
 							});
 						}
 					});
-				}else if(OrderInfo.actionFlag == 3 || OrderInfo.actionFlag == 22){  //可选包
+				}else if(OrderInfo.actionFlag == 3 || OrderInfo.actionFlag == 22 || OrderInfo.actionFlag == 23){//可选包、补换卡，异地补换卡
 					var prodInfo = order.prodModify.choosedProdInfo; //获取产品信息
 					param.acctNbr = prodInfo.accNbr;
 					if(!ec.util.isObj(prodInfo.prodOfferId)){
@@ -2827,6 +2829,13 @@ AttachOffer = (function() {
 					}
 					param.offerRoleId = offerRoleId;
 					param.offerSpecIds.push(prodInfo.prodOfferId);
+					if(OrderInfo.actionFlag == 22){
+						param.sceneId = "13";//场景id,和购物车业务动作一致
+						param.ifChangeCard = "Y";//是否补换卡
+					}else if(OrderInfo.actionFlag == 23){
+						param.sceneId = "19";//场景id,和购物车业务动作一致
+						param.ifChangeCard = "Y";//是否补换卡
+					}
 				}else if(OrderInfo.actionFlag == 21){ //副卡套餐变更		
 					$.each(OrderInfo.viceOfferSpec,function(){
 						var offerSpecId=this.offerSpecId;
@@ -3677,7 +3686,7 @@ AttachOffer = (function() {
 			param.prodBigClass = prodInfo.prodBigClass;
 		}
 		var data = query.offer.queryAttachOfferHtml(param);
-	//	SoOrder.initFillPage();
+//		SoOrder.initFillPage();
 		$("#attach").html(data).show();
 		//var member = CacheData.getOfferMember(prodId);
 		//如果objId，objType，objType不为空才可以查询默认必须
@@ -3716,8 +3725,8 @@ AttachOffer = (function() {
 				}
 			});
 		}
-		//AttachOffer.changeLabel(prodId, prodInfo.productId,""); //初始化第一个标签附属
-		//order.dealer.initDealer();
+		AttachOffer.changeLabel(prodId, prodInfo.productId,""); //初始化第一个标签附属
+		order.dealer.initDealer();
 	};
 	var _initMyfavoriteSpec = function(prodId,prodSpecId){
 		$("#myfavorites_"+prodId).addClass("setcon");

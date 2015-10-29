@@ -199,7 +199,7 @@ query.offer = (function() {
 	var _queryAttachOfferHtml = function(param,callBackFun) {
 		addParam(param);  //添加基本参数
 		var url = contextPath+"/offer/queryAttachOffer";
-		if(OrderInfo.actionFlag==22){
+		if(OrderInfo.actionFlag==22 || OrderInfo.actionFlag==23){
 			url = contextPath+"/offer/queryAttachOffer2";
 		}
 		if(typeof(callBackFun)=="function"){

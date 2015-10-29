@@ -41,7 +41,8 @@ OrderInfo = (function() {
 	15 过户
 	16 改账务定制关系
 	17 改产品密码
-	18 撤单*/
+	18 撤单
+	19异地补换卡*/
 	
 	var _busitypeflag = 0;
 	

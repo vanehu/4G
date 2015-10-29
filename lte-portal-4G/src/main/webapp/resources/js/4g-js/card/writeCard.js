@@ -5,6 +5,7 @@
  */
 CommonUtils.regNamespace("order", "writeCard");
 var ty_plugin = null;
+var productId = "";
 var g_realWriteCard = true;//true真实写卡，false假写卡
 //根据浏览器加载
 if ($.browser.msie) {
@@ -295,7 +296,7 @@ order.writeCard = (function(){
 	var _writeCard = function(prodId){
 		
 		_haveWriteCard = false;//false;
-		
+		productId = prodId;
 		//[start]模拟写卡
         if(!g_realWriteCard){
             _haveWriteCard = true;
@@ -1011,11 +1012,65 @@ order.writeCard = (function(){
          }
  		 OrderInfo.clearProdUim(_rscJson.prodId);
          OrderInfo.boProd2Tds.push(coupon);
-         if(OrderInfo.actionFlag==22 && coupon.cardTypeFlag==1 && order.prodModify.choosedProdInfo.productId != '280000000'){
+         if((OrderInfo.actionFlag==22 || OrderInfo.actionFlag==23) && coupon.cardTypeFlag==1 && order.prodModify.choosedProdInfo.productId != '280000000'){
         	AttachOffer.openServList = [];
      		AttachOffer.openList = [];
      	    AttachOffer.queryCardAttachOffer(coupon.cardTypeFlag);  //加载附属销售品
       	 }
+ 		//3转4弹出促销窗口
+ 		if(!prod.changeUim.is4GProdInst && coupon.cardTypeFlag==1){
+ 			var prodSpecId = OrderInfo.getProdSpecId(prodId);
+ 			var param = {
+ 				prodSpecId : prodSpecId,
+ 				offerSpecIds : [],
+ 				queryType : "3",
+ 				prodId : productId,
+ 				partyId : OrderInfo.cust.custId,
+ 				ifCommonUse : "",
+ 				if3Up4:"Y"
+ 			};
+ 			var prodInfo = order.prodModify.choosedProdInfo; //获取产品信息
+ 			var accNbr = prodInfo.accNbr;
+ 			param.acctNbr = accNbr;
+ 			if(!ec.util.isObj(prodInfo.prodOfferId)){
+ 				prodInfo.prodOfferId = "";
+ 			}
+ 			var offerRoleId = CacheData.getOfferMember(prodInfo.prodInstId).offerRoleId;
+ 			if(offerRoleId==undefined){
+ 				offerRoleId = "";
+ 			}
+ 			param.offerRoleId = offerRoleId;
+ 			param.offerSpecIds.push(prodInfo.prodOfferId);
+ 			var data = query.offer.queryCanBuyAttachSpec(param);
+ 			if(data!=undefined && data.resultCode == "0"&&data.result.offerSpecList.length>0){
+ 				var content = '<form id="promotionForm"><table>';
+ 				var selectStr = "";
+ 				var optionStr = "";
+ 				selectStr = selectStr+"<tr><td>可订购促销包: </td><td><select class='inputWidth183px' id="+accNbr+"><br>"; 
+ 				$.each(data.result.offerSpecList,function(){
+ 					var offerSpec = this;
+ 					optionStr +='<option value="'+this.offerSpecId+'">'+this.offerSpecName+'</option>';
+ 				});
+ 				selectStr += optionStr + "</select></td></tr>"; 
+ 				content +=selectStr;
+ 				var offerSpecId;
+ 				$.confirm("促销包选择",content,{ 
+ 					yes:function(){	
+ 						
+ 					},
+ 					no:function(){
+ 						
+ 					}
+ 				});
+ 				$('#promotionForm').bind('formIsValid', function(event, form) {
+ 					offerSpecId = $('#'+accNbr+' option:selected').val();
+ 					$(".ZebraDialog").remove();
+ 	                $(".ZebraDialogOverlay").remove();
+ 	                AttachOffer.selectAttachOffer(productId,offerSpecId);
+ 				}).ketchup({bindElementByClass:"ZebraDialog_Button1"});
+ 				
+ 			}
+ 		}
 	};
 	var _getCardType=function(){
 		var response = $.callServiceAsJson(contextPath + "/mktRes/writeCard/getCardType", {});
