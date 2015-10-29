@@ -556,12 +556,11 @@ order.batch = (function(){
 				if(response.code==0){
 					var batchOrderAuth = response.data;
 					if("Y" == batchOrderAuth){//执行改造后的新代码(增加权限)
-//						$("#qureyStaffCode").css("background-color","white").attr("disabled", false);
 						CONST.BATCHORDER_FLAG.BATCHORDER_AUTH_FLAG = "Y";
 					} else if("N" == batchOrderAuth){//执行改造前的旧代码
 						$("#p_areaId_val").val("暂未开放");
 						$("#p_areaId_val").css("background-color","#E8E8E8").attr("disabled", true);
-						$("#p_channelId").get(0).options[0].text = "暂未开放";
+						$("#p_channelId option:eq(0)").html("暂未开放");
 						$("#p_channelId").css("background-color","#E8E8E8").attr("disabled", true);
 					}
 				}else if(response.code == -2){
@@ -645,7 +644,7 @@ order.batch = (function(){
 			}*/
 
 			var param = {
-				"groupId" : groupId,// 批次号
+				"groupId" : groupId// 批次号
 				//"staffId" : staffId,// 创建该批次的员工的staffId
 				//"areaId" : areaId// 创建该批次的员工的areaId
 			};
@@ -709,7 +708,7 @@ order.batch = (function(){
 		}
 		var param = {
 				"reserveDt":reserveDt,//预约时间
-				"groupId":groupId,// 批次号
+				"groupId":groupId// 批次号
 				//"staffId":staffId,// 创建该批次的员工的staffId
 				//"areaId":areaId// 创建该批次的员工的areaId
 		};
@@ -875,7 +874,7 @@ order.batch = (function(){
 		
 		var param = {
 				"groupId":groupId,//批次号
-				"batchType":batchType,//受理类型
+				"batchType":batchType//受理类型
 		};
 		var url=contextPath+"/order/batchOrder/batchProgressQuery";
 		$.callServiceAsHtml(url,param,{
