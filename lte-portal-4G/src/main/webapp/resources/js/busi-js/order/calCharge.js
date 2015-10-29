@@ -216,7 +216,7 @@ order.calcharge = (function(){
 			var val = $(this).attr("id");
 			if(val!=undefined&&val!=''){
 				val=val.substr(5,val.length);
-				var realmoney=($("#realAmount_"+val).val())*100+'';
+				var realmoney=parseInt(($("#realAmount_"+val).val())*100)+'';
 				var amount=$("#feeAmount_"+val).val();
 				var feeAmount="";
 				if(amount!=undefined&&amount!=''){
