@@ -808,6 +808,8 @@ order.prodModify = (function(){
 	};
 	//证件类型选择事件
 	var _identidiesTypeCdChoose = function(scope) {
+		//每次更换证件类型，置空证件号码输入框的内容
+		$("#cmCustIdCard").val("");
 		var identidiesTypeCd=$(scope).val();
 		if(identidiesTypeCd==undefined){
 			identidiesTypeCd=$("#div_cm_identidiesType  option:selected").val();
