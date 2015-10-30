@@ -122,6 +122,10 @@ mktRes.terminal = (function($){
 	 */
 	var _btnQueryTerminal=function(curPage,scroller){
 		$("#phoneModal").modal("hide");
+		//隐藏选套餐模块
+		if($("#pakeage").length>0){
+			$("#pakeage").hide();
+		}
 		//请求地址
 		var url = contextPath+"/app/mktRes/terminal/list";
 		//收集参数

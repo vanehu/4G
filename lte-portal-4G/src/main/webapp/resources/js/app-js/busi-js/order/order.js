@@ -103,6 +103,8 @@ order.service = (function(){
 			params.prodOfferFlag = "4G";
 		}
 		var url = contextPath+"/app/order/offerSpecList";
+		$("#pakeage").show();
+		$("#pakeage").attr("class","tab-pane fade in active");
 		$.callServiceAsHtmlGet(url,params, {
 			"before":function(){
 				$.ecOverlay("<strong>正在查询中,请稍等...</strong>");

@@ -886,7 +886,9 @@ order.main = (function(){
 								numType : 1,
 								numValue : boProdAns[n].accessNumber
 						};
-						$.callServiceAsJson(contextPath+"app/mktRes/phonenumber/releaseErrorNum", param);
+						$.callServiceAsJson(contextPath+"/app/mktRes/phonenumber/releaseErrorNum", param, {
+							"done" : function(){}
+						});
 					}
 				}
 				//清除号码的缓存！
@@ -922,7 +924,9 @@ order.main = (function(){
 								numType : 1,
 								numValue : boProdAns[n].accessNumber
 						};
-						$.callServiceAsJson(contextPath+"app/mktRes/phonenumber/releaseErrorNum", param);
+						$.callServiceAsJson(contextPath+"/app/mktRes/phonenumber/releaseErrorNum", param, {
+							"done" : function(){}
+						});
 					}
 				}
 				//清除号码的缓存！

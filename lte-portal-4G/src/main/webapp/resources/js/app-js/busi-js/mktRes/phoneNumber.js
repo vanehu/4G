@@ -57,6 +57,10 @@ order.phoneNumber = (function(){
 		if(_queryFlag=='1'){//预约选号
 			param.queryFlag="3";
 		}
+		//隐藏选套餐模块
+		if($("#pakeage").length>0){
+			$("#pakeage").hide();
+		}
 		$.callServiceAsHtml(url,param,{
 			"before":function(){
 				$.ecOverlay("<strong>正在查询中,请稍等会儿....</strong>");
@@ -268,6 +272,7 @@ order.phoneNumber = (function(){
 				$("#tentrance").show();
 				$("#pentrance").hide();
 				$("#nentrance").hide();
+				$("#pakeage").show();
 				$("#pakeage").attr("class","tab-pane fade in active");
 				$("#tentrance").css("width","100%");
 				$("#phone").hide();
@@ -560,6 +565,7 @@ order.phoneNumber = (function(){
 							$("#tentrance").show();
 							$("#pentrance").hide();
 							$("#nentrance").hide();
+							$("#pakeage").show();
 							$("#pakeage").attr("class","tab-pane fade in active");
 							$("#tentrance").css("width","100%");
 							$("#phone").hide();
@@ -1139,39 +1145,129 @@ order.phoneNumber = (function(){
 	};
 	//返回按钮调用
 	var _back = function(){
+//		$("#tentrance").show();
+//		$("#tentrance").attr("class","active");
+//		$("#pentrance").show();
+//		$("#nentrance").show();
+//		$("#nentrance").attr("class","");
+//		$("#tentrance").css("width","");
 		
-		$("#tentrance").show();
-		$("#tentrance").attr("class","active");
-		$("#pentrance").show();
-		$("#nentrance").show();
-		$("#nentrance").attr("class","");
-		$("#tentrance").css("width","");
+//		$("#pakeage").show();
+//		$("#number").attr("class","tab-pane fade");
+//		$("pakeage").attr("class","tab-pane fade in active");
 		
-		$("#pakeage").show();
-		$("#number").attr("class","tab-pane fade");
-		$("pakeage").attr("class","tab-pane fade in active");
-
+//		$("#phone").show();
+//		$("#number").show();
+		//选号第二个页面没下单，返回无需提示取消订单
+		if(OrderInfo.order.step == 1){
+			var boProdAns = OrderInfo.boProdAns;
+				var boProd2Tds = OrderInfo.boProd2Tds;
+				//取消订单时，释放被预占的UIM卡
+				if(boProd2Tds.length>0){
+					for(var n=0;n<boProd2Tds.length;n++){
+						var param = {
+								numType : 2,
+								numValue : boProd2Tds[n].terminalCode
+						};
+						$.callServiceAsJson(contextPath+"/app/mktRes/phonenumber/releaseErrorNum", param, {
+							"done" : function(){}
+						});
+					}
+				}
+				//释放预占的号码
+				if(boProdAns.length>0){
+					for(var n=0;n<boProdAns.length;n++){
+						if(boProdAns[n].idFlag){
+							continue;
+						}
+						var param = {
+								numType : 1,
+								numValue : boProdAns[n].accessNumber
+						};
+						$.callServiceAsJson(contextPath+"/app/mktRes/phonenumber/releaseErrorNum", param, {
+							"done" : function(){}
+						});
+					}
+				}
+				//清除号码的缓存！
+				order.phoneNumber.resetBoProdAn();
+				common.callCloseWebview();
+		}else if(OrderInfo.order.step == 2){
+		$.confirm("确认","确定要取消该订单吗？",{
+			yes:function(){
+				//TODO　may initialize something;				
+				var boProdAns = OrderInfo.boProdAns;
+				var boProd2Tds = OrderInfo.boProd2Tds;
+				var boProdAn = order.service.boProdAn;
+				//取消订单时，释放被预占的UIM卡
+				if(boProd2Tds.length>0){
+					for(var n=0;n<boProd2Tds.length;n++){
+						var param = {
+								numType : 2,
+								numValue : boProd2Tds[n].terminalCode
+						};
+						$.callServiceAsJson(contextPath+"/app/mktRes/phonenumber/releaseErrorNum", param, {
+							"done" : function(){}
+						});
+					}
+				}
+				//释放预占的号码
+				if(boProdAns.length>0){
+					for(var n=0;n<boProdAns.length;n++){
+						if(boProdAns[n].idFlag){
+							continue;
+						}
+						var param = {
+								numType : 1,
+								numValue : boProdAns[n].accessNumber
+						};
+						$.callServiceAsJson(contextPath+"/app/mktRes/phonenumber/releaseErrorNum", param, {
+							"done" : function(){}
+						});
+					}
+				}else if(boProdAn.accessNumber.length>0){//进入选套餐页面返回释放预占号码
+					var param = {
+							numType : 1,
+							numValue : boProdAn.accessNumber
+					};
+					$.callServiceAsJson(contextPath+"/app/mktRes/phonenumber/releaseErrorNum", param, {
+							"done" : function(){}
+						});
+				}
+				//清除号码的缓存！
+				order.phoneNumber.resetBoProdAn();
+				$("#pakeage").hide();
+				$("#pakeage").attr("class","tab-pane fade in active");
+				$("#tentrance").show();
+				$("#phone").show();
+				$("#number").show();
+				$("#pentrance").show();
+				$("#nentrance").show();
+				$("#tentrance").css("width","");
+				$("#nentrance").attr("class","");
+				$("#div_content").html("");
+				$("#vice_modal").modal("hide");
+				$("#order_prepare").show();
+				OrderInfo.order.step=1;
+			},no:function(){
+				
+			}},"question");
+		}
 		
-		$("#phone").show();
-		$("#number").show();
-		
+//		$("#pakeage").show();
 //		$("#pakeage").attr("class","tab-pane fade in active");
 //		$("#tentrance").show();
 //		$("#phone").show();
 //		$("#number").show();
 //		$("#pentrance").show();
 //		$("#nentrance").show();
-//		//phone
-//	    $("#tentrance").css("width","");
-//		pentrance
-//		
+//		$("#tentrance").css("width","");
+//		$("#nentrance").attr("class","");
 //		
 //		if(OrderInfo.order.step==1){
 //			common.callCloseWebview();
 //		}else if(OrderInfo.order.step==2){
-//			$("#tentrance").hide();
 //			$("#pakeage").hide();
-//			$("#number").show();
 //			OrderInfo.order.step=1;
 //		}else{
 //			common.callCloseWebview();

@@ -189,6 +189,9 @@ common = (function($) {
 			}
 			order.main.lastStep(function(){
 				$("#order_prepare").show();
+				if(OrderInfo.actionFlag != 13){
+					$("#pakeage").show();
+				}
 				$("#order").hide();	
 				if(OrderInfo.actionFlag==1){//新装的头部 要发生变化
 						_callTitle(2);//2 头部为已定位客户
