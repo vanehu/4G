@@ -2706,6 +2706,7 @@ public class OrderController extends BaseController {
 				Map orderList = (Map)param.get("orderList");
 				Map orderListInfo = (Map)orderList.get("orderListInfo");
 				orderListInfo.put("staffId", sessionStaff.getStaffId()); //防止前台修改
+				orderListInfo.put("channelId", sessionStaff.getCurrentChannelId()); //防止前台修改
 				//过滤订单属性
 				List<Map> custOrderAttrs = (List<Map>)orderListInfo.get("custOrderAttrs");
 				
