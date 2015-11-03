@@ -254,8 +254,10 @@ public class OrderController extends BaseController {
 			model.addAttribute("soNbr", param.get("soNbr"));
 		} catch (BusinessException e) {
 			return super.failedStr(model, e);
-		}  catch (Exception e) {
-			return super.failedStr(model, ErrorCode.CHECK_RULE, null,
+		} catch (InterfaceException ie) {
+        	return super.failedStr(model, ie, param, null);
+		} catch (Exception e) {
+			return super.failedStr(model, ErrorCode.LOAD_INST, e,
 					param);
 		}
 		
