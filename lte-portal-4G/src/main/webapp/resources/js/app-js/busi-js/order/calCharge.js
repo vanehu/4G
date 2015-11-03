@@ -697,6 +697,7 @@ order.calcharge = (function(){
 		return provCheckResult;
 	};
 	var _chargeSave = function(flag,isparam){
+		order.phoneNumber.resetBoProdAn();//清楚预占号码缓存  IOS重新进入受理不会显示上次预占的号码
 //		if(!isparam){
 //			_disableButton();
 //			if(submit_success){
@@ -730,7 +731,7 @@ order.calcharge = (function(){
 		if (response.code == 0) {
 			submit_success=true;
 			//受理成功，不再取消订单
-			SoOrder.delOrderFin();
+//			SoOrder.delOrderFin();
 			
 			if(OrderInfo.actionFlag==31){//改产品密码，则将session中密码重置，用户需要重新输入密码
 				var url=contextPath+"/cust/passwordReset";
@@ -780,7 +781,7 @@ order.calcharge = (function(){
 					_backToEntr();
 				});
 			}
-			SoOrder.updateResState(); //修改UIM，号码状态
+//			SoOrder.updateResState(); //修改UIM，号码状态
 			//金额不为零，提示收费成功
 			if(flag=='1'){
 				var realmoney=($('#realMoney').html())*1;

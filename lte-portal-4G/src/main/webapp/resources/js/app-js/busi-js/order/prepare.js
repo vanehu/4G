@@ -115,7 +115,7 @@ order.prepare = (function(){
 					OrderInfo.busitypeflag=1;
 					initOffer();
 					order.service.searchPack();
-					mktRes.phoneNbr.resetBoProdAn();
+					order.phoneNumber.resetBoProdAn();
 				}
 			}
 		});	
@@ -200,7 +200,7 @@ order.prepare = (function(){
 			});
 			order.service.boProdAn = {};
 		}
-		mktRes.phoneNbr.resetBoProdAn();
+		order.phoneNumber.resetBoProdAn();
 		_hideOrderTitle();
 		$("#step1").hide();
 		$("#main_div").hide();

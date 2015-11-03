@@ -35,7 +35,7 @@
 	         </div>
 	         <div class="media-body">
 	           <h4 class="media-heading">${(mkt.mktResName)?default("--")} <span class="glyphicon glyphicon-chevron-right pull-right" aria-hidden="true"></span></h4>
-	           	 ￥<#if (mkt.contractPrice)?default(0) != 0>${mkt.contractPrice / 100}<#else>--</#if>元
+	           	 ￥<#if (mkt.salePrice)?default(0) != 0>${mkt.salePrice / 100}<#else>--</#if>元
 	      </div>
 	     </div>
 	</#list>
@@ -78,7 +78,7 @@
 			          </div>
 			          <div class="media-body" >
 			            <h4 class="media-heading">${(mkt.mktResName)?default("--")} <span class="glyphicon glyphicon-chevron-right pull-right" aria-hidden="true"></span></h4>
-				           	 ￥<#if (mkt.contractPrice)?default(0) != 0>${mkt.contractPrice / 100}<#else>--</#if>元
+				           	 ￥<#if (mkt.salePrice)?default(0) != 0>${mkt.salePrice / 100}<#else>--</#if>元
 				      </div>
 				     </div>
 			     </div>
