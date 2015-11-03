@@ -395,15 +395,6 @@ cust = (function(){
 	                    }
 	                }
 	            },
-	            mobilePhone: {
-	            	trigger: 'blur',
-	                validators: {
-	                    regexp: {
-	                        regexp: /(^\d{11}$)/,
-	                        message: '手机号码只能为11数字'
-	                    }
-	                }
-	            },
 	            phonenumber: {
 	            	trigger: 'blur',
 	                validators: {
