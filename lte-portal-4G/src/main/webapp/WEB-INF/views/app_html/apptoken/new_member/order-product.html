@@ -123,7 +123,7 @@ jb+1 /> <#if k==1>
 								class="input-group-btn">
 								<button class="btn btn-default" type="button" onclick="common.callScanning('order.service.scaningCallBack',${prodId})"> 扫描 </button>
 								<button class="btn btn-default" id="uim_release_btn_${prodId}" type="button" onclick="prod.uim.checkUim(${prodId});">校验</button>
-								<button class="btn btn-default disabled" id="uim_release_btn_${prodId}" onclick="prod.uim.releaseUim(${prodId});"type="button">
+								<button class="btn btn-default" id="uim_release_btn_${prodId}" onclick="prod.uim.releaseUim(${prodId});"type="button" disabled>
 									释放</button>
 							</span>
 						</div>
