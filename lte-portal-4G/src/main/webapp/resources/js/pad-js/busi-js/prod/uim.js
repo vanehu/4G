@@ -28,7 +28,9 @@ prod.uim = (function() {
 		}
 		var inParam = {
 			"instCode" : cardNo,
-			"phoneNum" : phoneNumber
+			"selUimType":"1",
+			"phoneNum" : phoneNumber,
+			"areaId"   : OrderInfo.getProdAreaId(prodId)
 		};
 
 		var prodSpecId = OrderInfo.getProdSpecId(prodId);

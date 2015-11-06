@@ -26,6 +26,7 @@ prod.uim = (function() {
 				}
 			});
 		}
+		var selUimType = $("#selUimType").val();
 		var cardNo =$.trim($("#uim_txt_"+prodId).val());
 		if(cardNo==undefined || cardNo==''){
 			$.alert("提示","UIM卡不能为空!");
@@ -33,7 +34,9 @@ prod.uim = (function() {
 		}
 		var inParam = {
 			"instCode" : cardNo,
+			"selUimType":selUimType,
 			"phoneNum" : phoneNumber,
+			"serialNumberCode":$.trim($("#uim_txt_"+prodId).val()),
 			"areaId"   : OrderInfo.getProdAreaId(prodId)
 		};
 
