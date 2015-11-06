@@ -2785,21 +2785,22 @@ SoOrder = (function() {
 		//销售品更功能产品参数校验
 		if(OrderInfo.actionFlag == 1||OrderInfo.actionFlag == 2||OrderInfo.actionFlag == 3
 				|| OrderInfo.actionFlag == 6||OrderInfo.actionFlag == 14||OrderInfo.actionFlag ==21 || OrderInfo.actionFlag ==22){
-			//判断UIM卡校验是否与当前业务匹配
-			for ( var i = 0; i < OrderInfo.checkUimData.length; i++) {
-				var uimData = OrderInfo.checkUimData[i];
-				if (uimData.isWireBusi == 1) { // 上网卡 - 移动电话业务
-					$.alert("提示", "选择的UIM卡为【" + uimData.uimCode
-							+ "+" + uimData.uimName
-							+ "】，无法办理移动电话产品，请使用普通UIM卡办理业务。");
-					return false;
-				} else if (uimData.isWireBusi == 2) { // 普通卡 - 无线业务
-					$.alert("提示", "选择的UIM卡为【" + uimData.uimCode
-							+ "+" + uimData.uimName
-							+ "】，无法办理天翼宽带-无线上网产品，请使用数据卡类型的UIM卡办理业务。");
-					return false;
-				}
-			}
+			//update by jinjian，redmine 33877，取消原有的UIM卡和无线上网卡以及移动电话业务的关联，任意UIM卡都可以受理无线上网卡和移动电话业务
+			//判断UIM卡校验是否与当前业务匹配 
+//			for ( var i = 0; i < OrderInfo.checkUimData.length; i++) {
+//				var uimData = OrderInfo.checkUimData[i];
+//				if (uimData.isWireBusi == 1) { // 上网卡 - 移动电话业务
+//					$.alert("提示", "选择的UIM卡为【" + uimData.uimCode
+//							+ "+" + uimData.uimName
+//							+ "】，无法办理移动电话产品，请使用普通UIM卡办理业务。");
+//					return false;
+//				} else if (uimData.isWireBusi == 2) { // 普通卡 - 无线业务
+//					$.alert("提示", "选择的UIM卡为【" + uimData.uimCode
+//							+ "+" + uimData.uimName
+//							+ "】，无法办理天翼宽带-无线上网产品，请使用数据卡类型的UIM卡办理业务。");
+//					return false;
+//				}
+//			}
 			//附属销售参数设置校验
 			for ( var i = 0; i < AttachOffer.openList.length; i++) {
 				var specList = AttachOffer.openList[i].specList;
