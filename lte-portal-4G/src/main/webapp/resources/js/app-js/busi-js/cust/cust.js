@@ -41,6 +41,17 @@ cust = (function(){
 		OrderInfo.cust.addressStr = $('#cmAddressStr').val();//客户地址
 		OrderInfo.cust.mailAddressStr = $('#mailAddressStr').val();//通信地址
 		OrderInfo.cust.identityCd = $('#cm_identidiesTypeCd').val();//证件类型
+		//联系人不为空时才封装联系人信息上传
+		if($.trim($('#contactName').val()).length>0){
+			OrderInfo.boPartyContactInfo.contactName = $.trim($('#contactName').val());//联系人
+			OrderInfo.boPartyContactInfo.mobilePhone = $.trim($('#mobilePhone').val());//联系人手机
+			OrderInfo.boPartyContactInfo.contactAddress = $.trim($('#contactAddress').val());//联系人地址
+		}else{
+			if($.trim($('#mobilePhone').val())!=0 || $.trim($('#contactAddress').val())!=0){
+				$.alert("错误","请输入联系人！");
+				return;
+			}
+		}
 		if(OrderInfo.cust.identityCd==1){
 			OrderInfo.cust.identityNum = $('#cmCustIdCard').val();//证件号码
 		}else{
@@ -50,11 +61,15 @@ cust = (function(){
 		if(ec.util.isObj(flag)){//有值代表是实名制创建客户页面
 			var data = {
 				boCustInfos : [],
-				boCustIdentities : []	
+				boCustIdentities : [],	
+				boPartyContactInfo : []
 			};
 			_getCustInfo();
 			data.boCustInfos.push(OrderInfo.boCustInfos);
 			data.boCustIdentities.push(OrderInfo.boCustIdentities);
+			if($.trim($('#contactName').val()).length>0){
+				data.boPartyContactInfo.push(OrderInfo.boPartyContactInfo);
+			}
 			SoOrder.submitOrder(data);
 		}else{
 			

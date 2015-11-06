@@ -722,14 +722,14 @@ OrderInfo = (function() {
         contactType : "",//联系人类型
         eMail : "",//参与人的eMail地址
         fax : "",//传真号
-        headFlag : "",//是否首选联系人
+        headFlag : "1",//是否首选联系人 1是  2否
         homePhone : "",//参与人的家庭联系电话
         mobilePhone : "",//参与人的移动电话号码
-        officePhone : "",//参与人办公室的电话号码
+        officePhone : "",//参与人办公室的电话号
         postAddress : "",//参与人的邮件地址
         postcode : "",//参与人联系地址的邮政编码
         staffId : 0,//员工ID
-        state : "",//状态
+        state : "ADD",//状态 新增ADD  删除DEL
         statusCd : "100001"//订单状态
 	};
 	
