@@ -120,6 +120,16 @@
        <url-pattern>/*</url-pattern>
     </filter-mapping>
     
+    <!-- 订单提交报文过滤 -->
+    <filter>
+       <filter-name>OrderInfoFilter</filter-name>
+       <filter-class>com.al.lte.portal.filter.OrderInfoFilter</filter-class>
+    </filter>
+    <filter-mapping>
+       <filter-name>OrderInfoFilter</filter-name>
+       <url-pattern>/order/orderSubmit</url-pattern>
+    </filter-mapping>
+    
     <!-- 敏感信息过滤 -->
     <filter>
        <filter-name>SensitiveInfoFilter</filter-name>

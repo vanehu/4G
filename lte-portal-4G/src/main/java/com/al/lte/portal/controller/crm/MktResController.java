@@ -512,6 +512,9 @@ public class MktResController extends BaseController {
 						model.addAttribute("phoneNumList", list);
 						model.addAttribute("ispurchased", "0");
 						model.addAttribute("areaId", areaId);
+						ServletUtils.removeSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_AGREEMENT+"_"+sessionStaff.getStaffId());
+						ServletUtils.removeSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_TERMINAL+"_"+sessionStaff.getStaffId());
+						ServletUtils.removeSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_NUMBER+"_"+sessionStaff.getStaffId());
 					}
 				}
 			}
@@ -597,6 +600,18 @@ public class MktResController extends BaseController {
 			rMap = mktResBmo.prePhoneNumber(param, flowNum, sessionStaff);
 			if (rMap != null&& ResultCode.R_SUCCESS.equals(rMap.get("code").toString())) {
 				jsonResponse=super.successed(rMap, ResultConstant.SUCCESS.getCode());
+				Object obj =  ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_NUMBER+"_"+sessionStaff.getStaffId());		
+				if(obj == null || "null".equals(obj) || "".equals(obj)){
+					obj = new ArrayList();
+	            }	
+				List list = (List)obj;
+				list.remove(param.get("oldPhoneNumber"));
+				if(param.get("newPhoneNumber") != null){
+					list.add(param.get("newPhoneNumber"));
+				}else{
+					list.add(param.get("phoneNumber"));
+				}
+				ServletUtils.setSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_NUMBER+"_"+sessionStaff.getStaffId(), list);
 			} else {
 				jsonResponse = super.failed(rMap,
 						ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
@@ -937,6 +952,9 @@ public class MktResController extends BaseController {
 						MapUtils.getIntValue(mktPageInfo, "totalCount", 0),
 						mktResList);
 				model.addAttribute("pageModel", pm);
+			    ServletUtils.removeSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_AGREEMENT+"_"+sessionStaff.getStaffId());
+				ServletUtils.removeSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_TERMINAL+"_"+sessionStaff.getStaffId());
+				ServletUtils.removeSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_NUMBER+"_"+sessionStaff.getStaffId());
 			} else {
 				super.setNoCacheHeader(response);
 			}
@@ -1100,6 +1118,25 @@ public class MktResController extends BaseController {
 						}
 					}
 				}
+				ArrayList obj =  (ArrayList) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_TERMINAL+"_"+sessionStaff.getStaffId());		
+				if(obj == null || "null".equals(obj) || "".equals(obj)){
+					obj = new ArrayList();
+				}	
+				List list = (List)obj;
+				if(!list.contains(mktInfo.get("instCode"))){
+					list.add(mktInfo.get("instCode"));
+				}
+				
+				ArrayList obj2 =  (ArrayList)ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_AGREEMENT+"_"+sessionStaff.getStaffId());		
+				if(obj2 == null || "null".equals(obj2) || "".equals(obj2)){
+					obj2 = new ArrayList();
+				}	
+				List list2 = (List)obj2;
+				if(mktInfo.get("offerSpecId") != null && !list2.contains(mktInfo.get("offerSpecId"))){
+					list2.add(mktInfo.get("offerSpecId"));
+				}
+				ServletUtils.setSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_AGREEMENT+"_"+sessionStaff.getStaffId(), list2);
+				ServletUtils.setSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_TERMINAL+"_"+sessionStaff.getStaffId(), list);
 				return super.successed(mktRes);
 			} else {
 				return super.failed("校验终端串号失败", ResultConstant.FAILD.getCode());
