@@ -6011,11 +6011,12 @@ public class PrintBmoImpl implements PrintBmo {
 				Map<String, Object> map = agrPlanMods.get(0);
 				OETitleContent oeTitleContent = buildOETitleContent_V2(0, SysConstant.STR_PAU, map);
 				titleContentList.add(oeTitleContent);
-			}
-			for (int i = 0; i < agrPlanMods.size(); i++) {
-				Map<String, Object> map = agrPlanMods.get(i);
-				OETitleContent oeTitleContent = buildOETitleContent_V2(index++, SysConstant.STR_PAU, map);
-				titleContentList.add(oeTitleContent);
+			} else {
+				for (int i = 0; i < agrPlanMods.size(); i++) {
+					Map<String, Object> map = agrPlanMods.get(i);
+					OETitleContent oeTitleContent = buildOETitleContent_V2(index++, SysConstant.STR_PAU, map);
+					titleContentList.add(oeTitleContent);
+				}
 			}
 		}
 		return titleContentList;
