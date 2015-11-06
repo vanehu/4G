@@ -1252,6 +1252,18 @@ order.phoneNumber = (function(){
 			},no:function(){
 				
 			}},"question");
+		}else if(OrderInfo.order.step==3){
+			SoOrder.orderBack();
+			$("#order-content").show();
+			$("#order-confirm").hide();
+			$("#order-dealer").hide();
+			OrderInfo.order.step=2;
+		}else if(OrderInfo.order.step==4){
+			$("#order-confirm").show();
+			$("#order-print").hide();
+			OrderInfo.order.step=3;
+		}else {
+			common.callCloseWebview();
 		}
 		
 //		$("#pakeage").show();

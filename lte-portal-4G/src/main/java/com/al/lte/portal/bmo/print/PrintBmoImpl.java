@@ -383,7 +383,12 @@ public class PrintBmoImpl implements PrintBmo {
 											}else sb.append("：</br>");
 											sb.append("&nbsp;&nbsp;[订购]");
 											sb.append(offerInfo.get("prodSpecName"));
-											sb.append("("+offerInfo.get("effectRule")+")");
+											if (null != offerInfo.get("effectRule")){
+												sb.append("("+offerInfo.get("effectRule")+")");
+											}
+											if (null != offerInfo.get("relaAcceNbr")){
+												sb.append("["+offerInfo.get("relaAcceNbr")+"]");
+											}
 										}
 									}
 								}
@@ -392,21 +397,28 @@ public class PrintBmoImpl implements PrintBmo {
 						}
 					}else if(("5").equals(String.valueOf(map.get("orderEventType")))&& ("1").equals(orderEventTitle.get("boActionTypeCd"))){
 						if(sbNub.length()>0){
-							String zhuka = sbNub.toString().substring(3, 14);
-							   //业务动作大于1时避免出现重复的主副卡号码
-							   if (null != orderEventTitle.get("relaAcceNbr") && !zhuka.equals(orderEventTitle.get("relaAcceNbr").toString())) {
-									 sbNub.append(",副卡："+orderEventTitle.get("relaAcceNbr"));
-							   }
+							//业务动作大于1时避免出现重复的主副卡号码
+						   if (null != orderEventTitle.get("relaAcceNbr") && sbNub.indexOf(orderEventTitle.get("relaAcceNbr").toString())==-1) {
+							   sbNub.append(","+orderEventTitle.get("relaAcceNbr"));
+						   }
 						}else{
-							sbNub.append("主卡："+orderEventTitle.get("relaAcceNbr"));
+						   if (null != orderEventTitle.get("relaAcceNbr")){
+							   sbNub.append(orderEventTitle.get("relaAcceNbr"));
+						   }
 						}
 					}else if(("3").equals(String.valueOf(map.get("orderEventType")))){
 						if(sb.length()>0){
-							sb.append(",");
+							sb.append(",</br>");
 						}
 						if (null != orderEventTitle.get("prodSpecName")) {
 							sb.append("【"+orderEventTitle.get("boActionTypeName")+"】");
 							sb.append(orderEventTitle.get("prodSpecName"));
+							if (null != orderEventTitle.get("effectRule")){
+								sb.append("("+orderEventTitle.get("effectRule")+")");
+							}
+							if (null != orderEventTitle.get("relaAcceNbr")){
+								sb.append("["+orderEventTitle.get("relaAcceNbr")+"]");
+							}
 						}
 						//功能产品展示
 						Object orderEventContObj = map.get("orderEventCont");
@@ -419,22 +431,36 @@ public class PrintBmoImpl implements PrintBmo {
 										sb.append(",</br>");
 										sb.append("&nbsp;&nbsp;["+item.get("actionName")+"]");
 										sb.append(item.get("itemName"));
-										sb.append("("+item.get("effectRule")+")");
+										if (null != item.get("effectRule")){
+											sb.append("("+item.get("effectRule")+")");
+										}
+										if (null != item.get("relaAcceNbr")){
+											sb.append("["+item.get("relaAcceNbr")+"]");
+										}
+									}
+									if(sbNub.length()>0){
+										//业务动作大于1时避免出现重复的主副卡号码
+									   if (null != item.get("relaAcceNbr") && sbNub.indexOf(item.get("relaAcceNbr").toString())==-1) {
+										   sbNub.append(","+item.get("relaAcceNbr"));
+									   }
+									}else{
+									   if (null != item.get("relaAcceNbr")){
+										   sbNub.append(item.get("relaAcceNbr"));
+									   }
 									}
 								}
 							}
 						}
-					   if(sbNub.length()>0){
-						   String zhuka = sbNub.toString().substring(3, 14);
-						   //业务动作大于1时避免出现重复的主副卡号码
-						   if (null != orderEventTitle.get("relaAcceNbr") && !zhuka.equals(orderEventTitle.get("relaAcceNbr").toString())) {
-								 sbNub.append(",副卡："+orderEventTitle.get("relaAcceNbr"));
+						if(sbNub.length()>0){
+							//业务动作大于1时避免出现重复的主副卡号码
+						   if (null != orderEventTitle.get("relaAcceNbr") && sbNub.indexOf(orderEventTitle.get("relaAcceNbr").toString())==-1) {
+							   sbNub.append(","+orderEventTitle.get("relaAcceNbr"));
 						   }
-					   }else{
+						}else{
 						   if (null != orderEventTitle.get("relaAcceNbr")){
-							   sbNub.append("主卡："+orderEventTitle.get("relaAcceNbr"));
+							   sbNub.append(orderEventTitle.get("relaAcceNbr"));
 						   }
-					   }
+						}
 				    }
 				}
 
