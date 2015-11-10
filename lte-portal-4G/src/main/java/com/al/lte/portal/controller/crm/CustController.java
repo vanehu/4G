@@ -228,7 +228,7 @@ public class CustController extends BaseController {
 						listCustInfos = new HashMap<String, Map>();
 						httpSession.setAttribute(SysConstant.SESSION_LIST_CUST_INFOS, listCustInfos);
 					}
-					ServletUtils.setSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_AREA+"_"+sessionStaff.getStaffId(), custInfo.get("areaId"));
+					
 					List<String> custIds = new ArrayList<String>();
 					//脱敏
 					for(int i = 0; i < custInfos.size(); i++){
@@ -315,9 +315,6 @@ public class CustController extends BaseController {
 			SimpleDateFormat dateFormate = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");//输出的日期格式
 			String locateDate=dateFormate.format(Time);
 			staffBmo.userSearchbtn(locateDate, null, sessionStaff);//定位客户记录日志
-			ServletUtils.removeSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_AGREEMENT+"_"+sessionStaff.getStaffId());
-			ServletUtils.removeSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_TERMINAL+"_"+sessionStaff.getStaffId());
-			ServletUtils.removeSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_NUMBER+"_"+sessionStaff.getStaffId());
 			if(null!=paramMap.get("pageType") && !("").equals(paramMap.get("pageType")) && ("orderUndo").equals(paramMap.get("pageType"))){
 				return "/orderUndo/cust-list";	
 			}
@@ -853,9 +850,7 @@ public class CustController extends BaseController {
 						if (list == null) {
 							super.addHeadCode(response,ResultConstant.SERVICE_RESULT_FAILTURE);
 						} else {
-							if(list.size() > 0){
-		                        ServletUtils.setSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_AREA+"_"+sessionStaff.getStaffId(), list.get(0).get("areaId"));
-		                	}
+
 							Map<String, Object> mktPageInfo = MapUtil.map(temMap, "page");
 							// 设置分页对象信息
 							PageModel<Map<String, Object>> pm = PageUtil.buildPageModel(
@@ -885,9 +880,7 @@ public class CustController extends BaseController {
 			}
 			model.addAttribute("businessLink", businessLink);
 			model.addAttribute("DiffPlaceFlag", DiffPlaceFlag);
-			ServletUtils.removeSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_AGREEMENT+"_"+sessionStaff.getStaffId());
-			ServletUtils.removeSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_TERMINAL+"_"+sessionStaff.getStaffId());
-			ServletUtils.removeSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_NUMBER+"_"+sessionStaff.getStaffId());
+			
 			return "/cust/cust-order-list";
 		} catch (BusinessException be) {
 			return super.failedStr(model, be);

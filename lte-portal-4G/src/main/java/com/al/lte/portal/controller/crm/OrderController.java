@@ -2743,7 +2743,7 @@ public class OrderController extends BaseController {
 					String olId = (String)result.get("olId");
 					String soNbr = (String)orderListInfo.get("soNbr");
 					String olTypeCd = orderListInfo.get("olTypeCd").toString();
-					String actionFlag = orderListInfo.get("actionFlag") !=null ? orderListInfo.get("actionFlag").toString() : "";
+					String actionFlag = orderListInfo.get("actionFlag").toString();
 					if(result.get("ruleInfos") == null){
 						resMap.put("rolId", olId);
 						resMap.put("rsoNbr", soNbr);

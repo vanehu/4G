@@ -90,9 +90,7 @@ public class MainController extends BaseController {
     	SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
                 SysConstant.SESSION_KEY_LOGIN_STAFF
                 );
-    	ServletUtils.removeSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_NUMBER+"_"+sessionStaff.getStaffId());
-    	ServletUtils.removeSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_TERMINAL+"_"+sessionStaff.getStaffId());
-    	ServletUtils.removeSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_AGREEMENT+"_"+sessionStaff.getStaffId());
+    	
     	Map<String, Object> dataBusMap = new HashMap<String, Object>();
     	dataBusMap.put("objCatgName", "recommendOffer,recommendTerminal,hotSaleOffer");
     	
