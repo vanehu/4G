@@ -1,15 +1,16 @@
 <#if code?? && (code>=0) ><table class="numberList" id="tab_orderList" >
               <thead>
                 <tr>
-                  <td width="80">受理地区</td>
+                 <td width="80">受理地区</td>
                   <td width="130">受理渠道</td>
                   <td width="80">受理人</td>
-                  <td width="130">受理时间</td>
-                  <td width="150">购物车流水号</td>
-                  <td width="90">客户名称</td>
+                  <td width="80">受理工号</td>
+                  <td width="120">受理时间</td>
+                  <td width="130">购物车流水号</td>
+                  <td width="70">客户名称</td>
                   <!-- <td width="90">业务动作</td> -->
-                  <td width="80">购物车状态</td>
-                  <td width="80">操作</td>
+                  <td width="70">购物车状态</td>
+                  <td width="70">操作</td>
                	 </tr>
               </thead>
               <tbody>
@@ -22,6 +23,11 @@
                   <td>${orderLists.areaName}</td>
                   <td>${cart.channelName}</td>
                   <td>${cart.staffName}</td>
+                  <#if (cart.staffCode)??>
+                  	<td>${cart.staffCode}</td>
+                  <#else>
+                  	<td>未获取到工号</td>
+                  </#if>
                   <td>${cart.soDate}</td>
                   <td>${cart.olNbr}</td>
                   <td>${cart.partyName}</td>

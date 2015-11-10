@@ -287,9 +287,54 @@
                     </tbody>
                  </table>
                  </#list>
-    			 </#if>
-                  
-                  <div class="height18"></div>
+    			 </#if>             
+
+    <div class="height18"></div>
+<h5 class="s_title">物品信息</h5>
+	<table width="100%" border="0" cellspacing="0" cellpadding="0" class="orderdetail_fs">
+    <thead>
+      <tr>
+        <td>物品类型</td>
+        <td>物品串码</td>
+        <td>备注信息</td>
+        </tr>
+    </thead>
+    <tbody>
+    <#if (cart.couponInfo)?? &&((cart.couponInfo)?size>0)><!-- 如果没有就不传 -->
+    <#assign couponInfoList = cart.couponInfo >
+    <#list couponInfoList as couponInfo >
+      <tr>
+      	<#if couponInfo.flag =="1" >
+        	<td>UIM卡</td>
+        <#else>
+        	<td>终端</td>
+        </#if>
+        <td>${couponInfo.coupInstNbr}</td>
+        <td>${couponInfo.remark}</td>
+      </tr>
+    </#list>
+      <!-- 
+	  <tr>
+        <td>UIM卡</td>
+        <td>768496794769546796</td>
+        <td>UIM(新)</td>
+      </tr>
+      <tr>
+        <td>UIM卡</td>
+        <td>768496794769546796</td>
+        <td>UIM(旧)</td>
+      </tr>
+      <tr>
+        <td>终端</td>
+        <td>AGTG77897</td>
+        <td>终端(新)</td>
+      </tr>、
+         -->
+    </#if>     
+    </tbody>
+</table>
+
+<div class="height18"></div>
   <h5 class="s_title">费用信息</h5>
 
 	<table width="100%" border="0" cellspacing="0" cellpadding="0" class="orderdetail_fs">

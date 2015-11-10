@@ -38,6 +38,12 @@
       			</#if>
       			<#elseif cartLink.boArchiveGrpId??>
       			<td>${cartLink.linkFlagName}<br>归档组ID：${cartLink.boArchiveGrpId}</td>
+      			<#elseif cartLink.msgTypeCd??&& (cartLink.msgTypeCd==102) >
+      				<td>${cartLink.linkFlagName}
+      				<#if (cartLink.transId)??&& (cartLink.transId!="") >
+                  		<br>下省流水：${cartLink.transId}
+                  	</#if>
+                  	</td>
       			<#else>
       			<td>${cartLink.linkFlagName}</td>
       			</#if>
@@ -75,7 +81,7 @@
 	       			<#else>
 	       			<i class="tree_center"><span></span></i>
 	       			</#if>
-	       			</td>
+	              			</td>
 	       			<td>sub.linkFlagName</td>
 	       			<td>sub.busiDesc</td>
 	       			<td>sub.createDt</td>
@@ -91,7 +97,8 @@
 	    </div>
 	  </div>
     </div>
-    <div align="right" style="margin: 20px auto; padding:0 20px;"> <a style=" margin-left:20px;" class="btna_o" href="javascript:cart.main.showMain()"><span>返回</span></a> </div>
+    <div align="right" style="margin: 20px auto; p
+    adding:0 20px;"> <a style=" margin-left:20px;" class="btna_o" href="javascript:cart.main.showMain()"><span>返回</span></a> </div>
   </div>
 </div>
 <!-- 施工单状态弹出框 -->
