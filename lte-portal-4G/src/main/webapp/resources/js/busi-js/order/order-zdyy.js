@@ -318,6 +318,7 @@ order.zdyy = (function(){
 		OrderInfo.actionTypeName = "终端取消预约";
 		OrderInfo.businessName = $("#"+id).attr("couponName");
 		OrderInfo.actionFlag = 38; // 终端退货
+		var custId = $("#zdyy_custId").val();
 		var coupons = [{
 			id: $("#"+id).attr("id"),
 			couponUsageTypeCd : "3", //物品使用类型,1-其他，2-赠送，3-销售，4-活动，5-租机
@@ -335,7 +336,7 @@ order.zdyy = (function(){
 			apCharge : $("#"+id).attr("apCharge") / 100, //物品价格,20140706 退货时价格不再取反
 			couponInstanceNumber : "", //物品实例编码
 			ruleId : "", //物品规则ID
-			partyId : CONST.CUST_COUPON_SALE, //客户ID
+			partyId : custId, //客户ID
 			prodId : 0, //产品ID
 			offerId : 0, //销售品实例ID
 			state : "DEL", //动作

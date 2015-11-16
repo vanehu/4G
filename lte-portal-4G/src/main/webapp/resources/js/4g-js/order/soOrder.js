@@ -439,7 +439,7 @@ SoOrder = (function() {
 		} else {
 			OrderInfo.orderData.orderList.orderListInfo.partyId = CONST.CUST_COUPON_SALE;
 		}
-		if (OrderInfo.actionFlag == 18) {
+		if (OrderInfo.actionFlag == 18 || OrderInfo.actionFlag == 38) {
 			OrderInfo.orderData.orderList.orderListInfo.partyId = coupons[0].partyId;
 		}
 		//填入订单
