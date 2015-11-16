@@ -2785,9 +2785,69 @@ public class OrderController extends BaseController {
             super.addHeadCode(response, ResultConstant.SERVICE_RESULT_FAILTURE);
 		}
 		return jsonResponse;
-	}
-	
-	@RequestMapping(value = "/queryAuthenticDataRange", method = RequestMethod.POST)
+    }
+
+
+    @RequestMapping(value = "/orderSubmit4iot", method = RequestMethod.POST)
+    @ResponseBody
+    public JsonResponse orderSubmit4iot(@RequestBody Map<String, Object> param, HttpServletResponse response,
+            HttpServletRequest request) throws Exception {
+        JsonResponse jsonResponse = null;
+            try {
+                SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+                        SysConstant.SESSION_KEY_LOGIN_STAFF);
+                Map<String,Object> custOrderInfo = (Map) param.get("custOrderInfo");
+
+                custOrderInfo.put("staffCode", sessionStaff.getStaffCode()); //防止前台修改
+                custOrderInfo.put("channelNbr", sessionStaff.getCurrentChannelCode());
+                custOrderInfo.put("commonRegionId", sessionStaff.getAreaId());
+                custOrderInfo.put("busiType", "1");//校验单
+                custOrderInfo.put("transationNbr", UIDGenerator.getRand());
+
+                Map<String, Object> resMap = orderBmo.orderSubmit4iot(param, null, sessionStaff);
+                boolean isCheckOrder=true;
+                if (ResultCode.R_SUCC.equals(resMap.get("resultCode"))) {
+                    custOrderInfo.put("busiType", "0");//正式单
+                    resMap = orderBmo.orderSubmit4iot(param, null, sessionStaff);
+                    jsonResponse = super.successed(resMap, ResultConstant.SUCCESS.getCode());
+                    isCheckOrder=false;
+                }
+                if (isCheckOrder) {
+                    if (ResultCode.R_SUCC.equals(resMap.get("resultCode"))) {
+                        Map result = (Map) resMap.get("result");
+                        if (result.get("ruleInfos") == null) {
+                            resMap.put("checkRule", "checkRule");
+                        } else {
+                            boolean ruleflag = false;
+                            List rulelist = (List) result.get("ruleInfos");
+                            for (int i = 0; i < rulelist.size(); i++) {
+                                Map rulemap = (Map) rulelist.get(i);
+                                String ruleLevel = rulemap.get("ruleLevel").toString();
+                                if ("4".equals(ruleLevel)) {
+                                    ruleflag = true;
+                                    break;
+                                }
+                            }
+                            if (!ruleflag) {
+                                resMap.put("checkRule", "checkRule");
+                            }
+                        }
+                        jsonResponse = super.successed(resMap, ResultConstant.SUCCESS.getCode());
+                    } else {
+                        jsonResponse = super.failed(resMap.get("resultMsg"), ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+                    }
+                }
+            } catch (BusinessException e) {
+                return super.failed(e);
+            } catch (InterfaceException ie) {
+                return super.failed(ie, param, ErrorCode.IOT_TRANSFER_ARCHIVE);
+            } catch (Exception e) {
+                return super.failed(ErrorCode.IOT_TRANSFER_ARCHIVE, e, param);
+            }
+        return jsonResponse;
+    }
+
+    @RequestMapping(value = "/queryAuthenticDataRange", method = RequestMethod.POST)
     @ResponseBody
     public JsonResponse queryAuthenticDataRange(@RequestBody Map<String, Object> param,
 			@LogOperatorAnn String flowNum,HttpServletResponse response){

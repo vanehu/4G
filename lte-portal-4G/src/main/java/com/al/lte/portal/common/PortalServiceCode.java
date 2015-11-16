@@ -918,4 +918,11 @@ public final class PortalServiceCode {
     public static final String LOCKUSER = "sys-lockuser";
     /**权限校验接口*/
 	public static final String CHECKISACCESSBYSTAFFID = "sys-checkIsAccessByStaffId";
+	/**物联网客户查询-终端串码查号码*/
+	public static final String IOT_SERVICE_QUERY_CUST_PHONE = "com.linkage.portal.service.lte.core.resources.IOTqryMktResCodePhoneNum";
+	/**物联网客户查询-号码查询产品信息*/
+	public static final String IOT_SERVICE_QUERY_CUST_PROD = "com.linkage.portal.service.lte.core.resources.IOTqryProdInfo";
+	/**物联网客户查询-订单提交*/
+	public static final String IOT_SERVICE_TRANSFER_ARCHIVE = "com.linkage.portal.service.lte.core.resources.IOTTransferArchive";
+
 }

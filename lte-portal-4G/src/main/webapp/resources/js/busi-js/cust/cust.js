@@ -254,6 +254,19 @@ order.cust = (function(){
 //		var isIdTypeOff = OrderInfo.staff.idType=="OFF";
 //		$('#p_cust_identityNum').attr("disabled",isID&&(!isIdTypeOff));
 	};
+	//客户定位证件类型选择事件
+	var _iotCustidentidiesTypeCdChoose = function(scope,id) {
+
+		var identidiesTypeCd=$(scope).val();
+		if(identidiesTypeCd==-1){
+			$("#"+id).attr("placeHolder","请输入接入号码");
+			$("#"+id).attr("data-validate","validate(number:请准确填写接入号码) on(keyup)");
+		}else if (identidiesTypeCd==100){
+			$("#"+id).attr("placeHolder","请输入终端串码");
+			$("#"+id).attr("data-validate","validate(terminalCodeCheck:请准确填写终端串码) on(keyup)");
+		}
+	};
+
 	//创建客户证件类型选择事件
 	var _identidiesTypeCdChoose = function(scope,id) {
 		$("#"+id).val("");
@@ -957,6 +970,7 @@ order.cust = (function(){
 		_certTypeByPartyType("-1","p_cust_identityCd"); //客户定位也使用根据客户类型查询证件类型接口，p_cust_identityCd=-1表示查询所有已关联的证件类型
 		_certTypeByPartyType("-1","p_cust_identityCd_choose"); //初始化证件类型，p_cust_identityCd=-1表示查询所有已关联的证件类型
 		_custidentidiesTypeCdChoose($("#p_cust_identityCd").children(":first-child"),"p_cust_identityNum");
+		_iotCustidentidiesTypeCdChoose($("#iot_p_cust_identityCd").children(":first-child"),"p_cust_identityNum");
 		_checkAutoCustQry(); //省份甩单，自动定位客户
 		//根据身份证开关隐藏读卡按钮
 		if(OrderInfo.staff.idType=="OFF")
@@ -1634,7 +1648,8 @@ order.cust = (function(){
 		tmpChooseUserInfo : _tmpChooseUserInfo,
 		queryForChooseUser : _queryForChooseUser,
 		queryCustByPageIndex : _queryCustByPageIndex,
-		realCheck:_realCheck
+		realCheck:_realCheck,
+		iotCustidentidiesTypeCdChoose:_iotCustidentidiesTypeCdChoose
 	};
 })();
 $(function() {

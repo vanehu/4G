@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
@@ -21,7 +22,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.al.common.utils.EncodeUtils;
 import com.al.ec.serviceplatform.client.ResultCode;
 import com.al.ecs.common.entity.JsonResponse;
 import com.al.ecs.common.util.JsonUtil;
@@ -228,7 +228,19 @@ public class OrderProdModifyController extends BaseController {
 		}
 		return "/order/order-cust-transfer";
 	}
-	
+    /**
+     * 物联网过户订单准备
+     * @param model
+     * @param request
+     * @param response
+     * @return
+     * @throws BusinessException
+     */
+	@RequestMapping(value = "/custTransfe4iot", method = {RequestMethod.GET})
+	public String custTransfer4iot(Model model,HttpServletRequest request, HttpServletResponse response) {
+		return "/order/order-cust-transfer-iot";
+	}
+
     /**
      * 帐户信息修改：产品下帐户信息查询
      * @param param
@@ -424,6 +436,62 @@ public class OrderProdModifyController extends BaseController {
 			return super.failedStr(model, ErrorCode.QUERY_CUST, e, param);
 		}
 		return "/cust/cust-transfer-list";
+	}
+    /**
+     * 物联网过户定位查询
+     * @param param
+     * @param model
+     * @return
+     * @throws BusinessException
+     */
+	@RequestMapping(value = "/transferQueryCust4iot", method = { RequestMethod.POST })
+    public String transferQueryCust4iot(@RequestBody Map<String, Object> param, Model model, @LogOperatorAnn String flowNum) {
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+                SysConstant.SESSION_KEY_LOGIN_STAFF);
+		Map resMap = null;
+		String identityCd = MapUtils.getString(param, "identityCd", "");
+		String identityNum = MapUtils.getString(param, "identityNum", "");
+		try {
+			Map<String, Object> phoneNumParam = new HashMap<String, Object>();
+			if("100".equals(identityCd)) {
+				Map<String, Object> inParam = new HashMap<String, Object>();
+				inParam.put("mktResourceCode", identityNum);
+				resMap = custBmo.queryCustInfoByMktResCode4iot(inParam, flowNum, sessionStaff);
+				String code=MapUtils.getString(resMap,"resultCode","");
+				if(ResultCode.R_SUCC.equals(code)) {
+					Map<String, Object> resultMap = MapUtils.getMap(resMap, "result");
+					phoneNumParam.put("phoneNum", MapUtils.getString(resultMap, "phoneNum", ""));
+					phoneNumParam.put("prodInstId", MapUtils.getString(resultMap, "prodInstId", ""));
+				}else {
+					String msg = MapUtils.getString(resMap, "resultMsg");
+					return super.failedStr(model, ErrorCode.IOT_MKTRESCODE, msg, param);
+				}
+			}else{
+				phoneNumParam.put("phoneNum",identityNum);
+			}
+			resMap = custBmo.queryCustInfoByPhone4iot(phoneNumParam, flowNum, sessionStaff);
+			String code=MapUtils.getString(resMap,"resultCode","");
+
+			if(ResultCode.R_SUCC.equals(code)) {
+				Map<String,Object> resultMap=MapUtils.getMap(resMap, "result");
+				Map<String, Object> prodInfos = MapUtils.getMap(resultMap, "prodInfos");
+				if (null != prodInfos) {
+					model.addAttribute("iotCustInfo", prodInfos);
+				} else {
+					return super.failedStr(model, ErrorCode.IOT_PRODINFO, "未查询到客户信息", param);
+				}
+			}else {
+				String msg=MapUtils.getString(resMap, "resultMsg", "");
+				return super.failedStr(model, ErrorCode.IOT_PRODINFO, msg, param);
+			}
+		}catch (BusinessException be) {
+			return super.failedStr(model, be);
+		} catch (InterfaceException ie) {
+			return super.failedStr(model,ie, param, ErrorCode.IOT_PRODINFO);
+		} catch (Exception e) {
+			return super.failedStr(model, ErrorCode.IOT_PRODINFO, e, param);
+		}
+		return "/cust/cust-transfer-info-iot";
 	}
     /**
      * 过户客户鉴权

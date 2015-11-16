@@ -15,11 +15,9 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.springframework.stereotype.Service;
 
-import com.al.common.utils.StringUtil;
 import com.al.ec.serviceplatform.client.DataBus;
 import com.al.ec.serviceplatform.client.ResultCode;
 import com.al.ecs.common.util.JsonUtil;
-import com.al.ecs.common.util.PropertiesUtils;
 import com.al.ecs.exception.BusinessException;
 import com.al.ecs.exception.ErrorCode;
 import com.al.ecs.exception.ResultConstant;
@@ -29,7 +27,6 @@ import com.al.lte.portal.common.InterfaceClient;
 import com.al.lte.portal.common.MySimulateData;
 import com.al.lte.portal.common.PortalServiceCode;
 import com.al.lte.portal.common.ServiceClient;
-import com.al.lte.portal.common.SysConstant;
 import com.al.lte.portal.model.SessionStaff;
 
 @Service("com.al.lte.portal.bmo.crm.CustBmo")
@@ -58,6 +55,46 @@ public class CustBmoImpl implements CustBmo {
 		} catch (Exception e) {
 			log.error("能力开放平台异常的客户资料查询queryCust服务返回的数据异常", e);
 			throw new BusinessException(ErrorCode.QUERY_CUST, dataBusMap, db.getReturnlmap(), e);
+		}
+	}
+
+	/**
+	 * 物联网查询客户信息-接入号
+	 * @param dataBusMap
+	 * @param optFlowNum
+	 * @param sessionStaff
+	 * @return
+	 * @throws Exception
+	 */
+	public Map<String, Object> queryCustInfoByPhone4iot(Map<String, Object> dataBusMap,
+			String optFlowNum, SessionStaff sessionStaff) throws Exception {
+		DataBus db = ServiceClient.callService(dataBusMap,
+				PortalServiceCode.IOT_SERVICE_QUERY_CUST_PROD, optFlowNum, sessionStaff);
+		try {
+			return db.getReturnlmap();
+		} catch (Exception e) {
+			log.error("CSB异常的客户资料查询queryCust服务返回的数据异常", e);
+			throw new BusinessException(ErrorCode.IOT_PRODINFO, dataBusMap, db.getReturnlmap(), e);
+		}
+	}
+
+	/**
+	 * 物联网查询客户信息-终端串码
+	 * @param dataBusMap
+	 * @param optFlowNum
+	 * @param sessionStaff
+	 * @return
+	 * @throws Exception
+	 */
+	public Map<String, Object> queryCustInfoByMktResCode4iot(Map<String, Object> dataBusMap,
+			String optFlowNum, SessionStaff sessionStaff) throws Exception {
+		DataBus db = ServiceClient.callService(dataBusMap,
+				PortalServiceCode.IOT_SERVICE_QUERY_CUST_PHONE, optFlowNum, sessionStaff);
+		try {
+			return db.getReturnlmap();
+		} catch (Exception e) {
+			log.error("CSB异常的终端串码查询queryCustInfoByMktResCode4iot服务返回的数据异常", e);
+			throw new BusinessException(ErrorCode.IOT_MKTRESCODE, dataBusMap, db.getReturnlmap(), e);
 		}
 	}
 

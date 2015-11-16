@@ -284,6 +284,97 @@ prod.transferModify = (function(){
 				}, "question");
 			};
 	};
+	//物联网过户订单提交
+	var _iotCustTransfer_Submit = function() {
+
+		var param={
+			"acctOrderItemGrp":{
+				"acctInfos":{
+					"acctName":$("#acctName").val(),
+					"acctNumber":"-1",
+					"action":"ADD",
+					"payMethod":$("#paymentType").val(),
+					"attrInfos":{
+						"attrSpecId":$("#iot_liProduct").attr("attrinfosattrspecid"),
+						"attrValue":$("#iot_liProduct").attr("attrInfosattrValueId"),
+						"action":"ADD"
+					}
+				}
+			},
+			"custOrderInfo":{
+				"custNumber":$("#iot_liCust").attr("custNumber")
+			},
+			"custOrderItemGrp":{
+				"custInfo":{
+					"action":"ADD",
+					"certAddress":$("#transfercAddressStr").val(),
+					"certNumber":$("#transfercCustIdCard").val(),
+					"certType":$("#div_tra_identidiesTypeCd").val(),
+					"custName":$("#transfercCustName").val(),
+					"custNumber":"-1",
+					"custType":$("#div_tra_partyTypeCd").val()
+				}
+			},
+			"prodOrderItemGrp":{
+				"prodInfo":{
+					"acctNumber":"-1",
+					"custNumber":"-1",
+					"logicLanId":"8320100",
+					"prodInstId":$("#iot_liProduct").attr("prodInstId"),
+					"attrInfos":{
+						"attrSpecId":$("#iot_liProduct").attr("attrinfosattrspecid"),
+						"attrValue":$("#iot_liProduct").attr("attrInfosattrValueId")
+					}
+				}
+			}
+		};
+
+		if(!ec.util.isObj($("#iot_liCust").attr("custNumber"))){
+			$.alert("提示","请先定位原客户！");
+			return;
+		}
+		if(!ec.util.isObj($("#transfercCustName").val())){
+			$.alert("提示","客户姓名不能为空！");
+			return;
+		}
+		if(!ec.util.isObj($("#transfercCustIdCard").val())){
+			$.alert("提示","证件号码不能为空！");
+			return;
+		}
+		if(!ec.util.isObj($("#transfercAddressStr").val())){
+			$.alert("提示","客户地址不能为空！");
+			return;
+		}
+		if(!ec.util.isObj($("#acctName").val())){
+			$.alert("提示","帐户名称不能为空！");
+			return;
+		}
+		$.callServiceAsJson(contextPath+"/order/orderSubmit4iot",param,{
+			"before":function(){
+				$.ecOverlay("<strong>正在查询中,请稍等...</strong>");
+			},"done" : function(response){
+				if(response.code ==0) {
+					$.alert("提示","订单提交成功！","confirmation", function () {
+						window.location=contextPath+"/order/prodModify/custTransfe4iot";
+					});
+					return;
+				}else if(response.code==-2){
+					$.alertM(response.data);
+					return;
+				}else{
+					$.alert("错误",response.data,"error");
+					return;
+				}
+			},fail:function(response){
+				$.unecOverlay();
+				$.alert("提示","订单提交失败！");
+			},"always":function(){
+				$.unecOverlay();
+			}
+		});
+
+
+	};
     //客户类型选择事件
 	var _partyTypeCdChoose = function(scope) {
 		var partyTypeCd=$(scope).val();
@@ -304,6 +395,8 @@ prod.transferModify = (function(){
 	};
 	//证件类型选择事件
 	var _identidiesTypeCdChoose = function(scope) {
+		//每次更换证件类型，置空证件号码输入框的内容
+		$("#transfercCustIdCard").val("");
 		var identidiesTypeCd=$(scope).val();
 		if(identidiesTypeCd==1||identidiesTypeCd=="undefined"){
 			$("#transfercCustIdCard").attr("placeHolder","请输入合法身份证号码");
@@ -380,6 +473,39 @@ prod.transferModify = (function(){
 				}
 			});
 		}).ketchup({bindElement:"custTransferBtn"});
+	};
+		//物联网过户至客户定位按钮
+	var _iotFormCustTransferBtn = function() {
+			var identityCd=$("#iot_p_cust_tra_identityCd").val();
+			var identityNum=$.trim($("#iotTransferNum").val());
+			if(identityNum==""){
+				$.alert("提示","请输入查询条件！");
+				return;
+			}
+
+			var param = {
+					"identityCd":identityCd,
+					"identityNum":identityNum
+			};
+			$.callServiceAsHtml(contextPath+"/order/prodModify/transferQueryCust4iot",param,{
+				"before":function(){
+					$.ecOverlay("<strong>正在查询中,请稍等...</strong>");
+				}, "done": function (response) {
+					if (response.code == 0) {
+						var iotCustTransferInfo = $("#iotCustTransferInfo");
+						iotCustTransferInfo.html(response.data).show();
+					} else {
+						$.alert("提示", "查询失败,稍后重试");
+						return;
+					}
+				},fail:function(response){
+					$.unecOverlay();
+					$.alert("提示","查询失败，请稍后再试！");
+				},"always":function(){
+					$.unecOverlay();
+					$("#usersearchbtn").attr("disabled",false);
+				}
+			});
 	};
 	var _form_TransferAuth_btn = function() {
 		//过户至客户客户鉴权按钮
@@ -765,12 +891,23 @@ prod.transferModify = (function(){
 		custTransfer : _custTransfer,
 		showCustCreate :_showCustCreate,
 		custTransfer_Submit :_custTransfer_Submit,
+		iotCustTransfer_Submit :_iotCustTransfer_Submit,
 		jumpAuth:_jumpAuth,
 		partyTypeCdChoose :_partyTypeCdChoose,
 		identidiesTypeCdChoose :_identidiesTypeCdChoose,
+		iotFormCustTransferBtn :_iotFormCustTransferBtn,
+		initDic :_initDic,
 		showCustTransferReturn :_showCustTransferReturn,
 		showCustAuth :_showCustAuth,
 		readCert : _readCert,
-		readCertWhenCreate : _readCertWhenCreate
+		readCertWhenCreate : _readCertWhenCreate,
+		certTypeByPartyType:_certTypeByPartyType
 	};
 })();
+$(function(){
+	prod.transferModify.initDic();
+	//客户类型关联证件类型下拉框
+	$("#div_tra_identidiesTypeCd").empty();
+	prod.transferModify.certTypeByPartyType(1);
+	prod.transferModify.identidiesTypeCdChoose($("#div_tra_identidiesTypeCd").children(":first-child"));
+});

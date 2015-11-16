@@ -492,7 +492,20 @@ public class OrderBmoImpl implements OrderBmo {
 		}
 		return resultMap;
 	}
-	public Map<String, Object> orderSubmitComplete(Map<String, Object> paramMap,String optFlowNum, 
+	public Map<String, Object> orderSubmit4iot(Map<String, Object> paramMap,String optFlowNum,
+			SessionStaff sessionStaff)throws Exception {
+		DataBus db = ServiceClient.callService(paramMap,
+				PortalServiceCode.IOT_SERVICE_TRANSFER_ARCHIVE, optFlowNum, sessionStaff);
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		try{
+				resultMap = db.getReturnlmap();
+		} catch (Exception e) {
+			log.error("门户处理营业后台的commitOrderListAndBusOrder服务返回的数据异常", e);
+			throw new BusinessException(ErrorCode.IOT_TRANSFER_ARCHIVE, paramMap, resultMap, e);
+		}
+		return resultMap;
+	}
+	public Map<String, Object> orderSubmitComplete(Map<String, Object> paramMap,String optFlowNum,
 			SessionStaff sessionStaff)throws Exception {
 		DataBus db = InterfaceClient.callService(paramMap,
 				PortalServiceCode.ORDER_SUBMIT_COMPLETE, optFlowNum, sessionStaff);

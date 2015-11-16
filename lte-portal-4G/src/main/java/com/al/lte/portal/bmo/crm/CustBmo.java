@@ -12,7 +12,22 @@ public interface CustBmo {
 	 */
 	public Map<String, Object> queryCustInfo(Map<String, Object> dataBusMap, String optFlowNum,
             SessionStaff sessionStaff) throws Exception;
-	
+	/**
+	 * 查询物联网客户信息-接入号
+	 * @param queryParam
+	 * @return
+	 */
+	public Map<String, Object> queryCustInfoByPhone4iot(Map<String, Object> dataBusMap, String optFlowNum,
+            SessionStaff sessionStaff) throws Exception;
+
+	/**
+	 * 查询物联网客户信息-接入号
+	 * @param queryParam
+	 * @return
+	 */
+	public Map<String, Object> queryCustInfoByMktResCode4iot(Map<String, Object> dataBusMap, String optFlowNum,
+            SessionStaff sessionStaff) throws Exception;
+
 	/**
 	 * 产品密码鉴权
 	 * @param param

@@ -198,8 +198,11 @@ public enum ErrorCode {
     QUERY_SPECLIST_BY_ATTRID("离散值查询接口","010159","01","020144","02"),
     QUERY_COUPON_CONFIG("终端配置查询接口","010160","01","020145","02"),
     SAVE_RESOURCE_DATA("资源补录","010168","01","010168","01"),
-	QUERY_ORDERBUSIHINT("查询客户订单业务提示","010169","01","020146","02");
-	
+    QUERY_ORDERBUSIHINT("查询客户订单业务提示","010169","01","020146","02"),
+    IOT_MKTRESCODE("物联网终端串码查询号码","011301","01","1300001","13"),
+    IOT_PRODINFO("物联网产品资料查询","011302","01","1300002","13"),
+    IOT_TRANSFER_ARCHIVE("物联网过户返档","011303","01","1300003","13");
+
     String name;  
     String code;
     String oppoCode;
@@ -256,5 +259,6 @@ public enum ErrorCode {
         SYS_MAP.put("10", "DEP");
         SYS_MAP.put("11", "公共技术平台");
         SYS_MAP.put("12", "UAM");
+        SYS_MAP.put("13", "物联网");
     }
 }
