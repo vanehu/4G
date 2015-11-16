@@ -1840,7 +1840,7 @@ public class OrderBmoImpl implements OrderBmo {
 			}
 		} catch(Exception e) {
 			log.error("门户处理营业受理的service/intf.batchOrderService/dealBatchQueueProgress服务返回的数据异常", e);
-			throw new BusinessException(ErrorCode.BATCH_IMP_LIST, param, db.getReturnlmap(), e);//确定错误编码？？？？？？？？？？？？？
+			throw new BusinessException(ErrorCode.BATCH_IMP_LIST, param, db.getReturnlmap(), e);
 		}
 		return returnMap;
 	}

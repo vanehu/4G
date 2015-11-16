@@ -626,20 +626,20 @@ order.batch = (function(){
 	 */
 	var _batchCancel = function(groupId, groupStatusCd) {
 		if(groupStatusCd == null || groupStatusCd == "" || groupStatusCd == undefined){
-			$.alert("提示","批次状态为空，无法进行修改！");
-			//return;
+			$.alert("提示","该批次状态为空，无法进行操作！");
+			return;
 		}
 		if(confirm("您确认要取消该批次吗？")){
 			if (groupId == null || groupId == "" || groupId == undefined) {
-				$.alert("提示", "批次号为空，无法进行查询，请刷新页面或稍后再试！");
+				$.alert("提示", "批次号为空，无法进行操作，请刷新页面或稍后再试！");
 				return;
 			}
 			/*if (staffId == null || staffId == "" || staffId == undefined) {
-				$.alert("提示", "受理工号为空，无法进行查询，请刷新页面或稍后再试！");
+				$.alert("提示", "受理工号为空，无法进行操作，请刷新页面或稍后再试！");
 				return;
 			}*/
 			/*if (areaId == null || areaId == "" || areaId == undefined) {
-				$.alert("提示", "地区ID为空，无法进行查询，请刷新页面或稍后再试！");
+				$.alert("提示", "地区ID为空，无法进行操作，请刷新页面或稍后再试！");
 				return;
 			}*/
 
@@ -687,19 +687,19 @@ order.batch = (function(){
 	 */
 	var _batchUpdateMain = function(groupId, reserveDt, groupStatusCd){
 		if(groupId == null || groupId == "" || groupId == undefined){
-			$.alert("提示","批次号为空，无法进行查询，请刷新页面或稍后再试！");
+			$.alert("提示","批次号为空，无法进行操作，请刷新页面或稍后再试！");
 			return;
 		}
 		/*if(staffId == null || staffId == "" || staffId == undefined){
-			$.alert("提示","受理工号为空，无法进行查询，请刷新页面或稍后再试！");
+			$.alert("提示","受理工号为空，无法进行操作，请刷新页面或稍后再试！");
 			return;
 		}*/
 		/*if(areaId == null || areaId == "" || areaId == undefined){
-			$.alert("提示","地区ID为空，无法进行查询，请刷新页面或稍后再试！");
+			$.alert("提示","地区ID为空，无法进行操作，请刷新页面或稍后再试！");
 			return;
 		}*/
 		if(reserveDt == null || reserveDt == "" || reserveDt == undefined){
-			$.alert("提示","预约时间为空，无法进行查询，请刷新页面或稍后再试！");
+			$.alert("提示","预约时间为空，无法进行操作，请刷新页面或稍后再试！");
 			return;
 		}
 		if(groupStatusCd == null || groupStatusCd == "" || groupStatusCd == undefined){
@@ -749,19 +749,19 @@ order.batch = (function(){
 		var areaId = $("#areaId_dialog").val();
 		
 		if(groupId == null || groupId == "" || groupId == undefined){
-			$.alert("提示","批次号为空，无法进行查询，请刷新页面或稍后再试！");
+			$.alert("提示","批次号为空，无法进行操作，请刷新页面或稍后再试！");
 			return;
 		}
 		/*if(staffId == null || staffId == "" || staffId == undefined){
-			$.alert("提示","受理工号为空，无法进行查询，请刷新页面或稍后再试！");
+			$.alert("提示","受理工号为空，无法进行操作，请刷新页面或稍后再试！");
 			return;
 		}*/
 		/*if(areaId == null || areaId == "" || areaId == undefined){
-			$.alert("提示","地区ID为空，无法进行查询，请刷新页面或稍后再试！");
+			$.alert("提示","地区ID为空，无法进行操作，请刷新页面或稍后再试！");
 			return;
 		}*/
 		if(reserveDt == null || reserveDt == "" || reserveDt == undefined){
-			$.alert("提示","预约时间为空，无法进行查询，请刷新页面或稍后再试！");
+			$.alert("提示","预约时间为空，无法进行操作，请刷新页面或稍后再试！");
 			// return;
 		}
 		var param = {
@@ -1032,11 +1032,11 @@ order.batch = (function(){
 		var batchType = $("#batchType_dialog").val();
 		
 		if(groupId == null || groupId == "" || groupId == undefined){
-			$.alert("提示","批次号为空，无法进行查询，请刷新页面或稍后再试！");
+			$.alert("提示","批次号为空，无法进行操作，请刷新页面或稍后再试！");
 			return;
 		}
 		if(batchType == null || batchType == "" || batchType == undefined){
-			$.alert("提示","受理类型为空，无法进行查询，请刷新页面或稍后再试！");
+			$.alert("提示","受理类型为空，无法进行操作，请刷新页面或稍后再试！");
 			return;
 		}
 

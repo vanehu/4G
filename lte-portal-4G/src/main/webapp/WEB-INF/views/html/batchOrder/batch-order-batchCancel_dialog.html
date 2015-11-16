@@ -31,8 +31,8 @@
 <body>
 	<form method="post" id="batchCancel_dialog" enctype="multipart/form-data">
 		<ul class="fillin">
-			<li style="border-bottom: 0px;" class="full">
-				<#if errorStack??>
+			<#if errorStack??>
+				<li style="border-bottom: 0px;" class="full">
 					<table width="100%" border="0" cellspacing="0" cellpadding="0">
 		         		<tr>
 							<td align="left">
@@ -53,66 +53,57 @@
 				 			</td>
 			 			</tr>
 			 		</table>
-				<#else>
-					<#if message??&&message!="">
-						<table width="100%" border="0" cellspacing="0" cellpadding="0">
-		            		<tr>
-		            			<td>
-		            				<#if code??&&code=="0">
-										<table class="contract_list">
-											<#if invalidPhoneNumberList?? && (invalidPhoneNumberList?size > 0)>
-												<thead>
-													<tr class="dialog_tittle2">
-													  <td width="100px">失败号码</td>
-													  <td width="100px">失败号码</td>
-													</tr>                                               
-												</thead>
-												<tbody> 
-													<#list invalidPhoneNumberList?chunk(2) as numList>
-														<tr>
-														 <#list numList as subNumList>
-															<td>${subNumList.phoneNum}</td>
-														 </#list>
-														</tr>
-													</#list>
-												</tbody>
-											</#if>
-											<#if invalidMktResInstList?? && (invalidMktResInstList?size > 0)>     
-												<thead>
-													<tr class="dialog_tittle2">
-														<td width="100px">失败UIM</td>
-														<td width="100px">失败UIM</td>
-													</tr>                                               
-												</thead>
-												<tbody> 
-													<#list invalidMktResInstList?chunk(2) as UIMList>
-														<tr>
-														 <#list UIMList as subUIMList>
-															<td>${subUIMList.mktResInstCode}</td>
-														 </#list>
-														</tr>
-													</#list>
-												</tbody> 
-											</#if>
-										</table>
-									<#elseif code??&&code="-1">
-									 	<i class="rule_icon_wrong">${message}</i>
-									</#if>
-								</td>
-								 <td>
-								  <#if code??>
-									  <#if code!="0">
-									  	<span style="color:#ff0000">${message}</span>
-										<#else>
-									 	<!-- <span class="rule_font"></span> -->
-									   </#if>
-								   </#if>
-								 </td>
-							</tr>
-						</table>
+			 	</li>
+			<#else>
+				<#if message??&&message!="">
+					<#if code??&&code=="0">
+						<li class="full">
+							<span style="color: #0000FF;font-weight:">取消批次操作：${message}&nbsp;&nbsp;如有异常号码将在下列展示：</span>
+						</li>
+						<li>
+							<table class="contract_list">
+								<#if invalidPhoneNumberList?? && (invalidPhoneNumberList?size >
+								0)>
+								<thead>
+									<tr class="dialog_tittle2">
+										<td width="100px">失败号码</td>
+										<td width="100px">失败号码</td>
+									</tr>
+								</thead>
+								<tbody>
+									<#list invalidPhoneNumberList?chunk(2) as numList>
+									<tr>
+										<#list numList as subNumList>
+										<td>${subNumList.phoneNum}</td> </#list>
+									</tr>
+									</#list>
+								</tbody>
+								</#if> <#if invalidMktResInstList?? && (invalidMktResInstList?size
+								> 0)>
+								<thead>
+									<tr class="dialog_tittle2">
+										<td width="100px">失败UIM</td>
+										<td width="100px">失败UIM</td>
+									</tr>
+								</thead>
+								<tbody>
+									<#list invalidMktResInstList?chunk(2) as UIMList>
+									<tr>
+										<#list UIMList as subUIMList>
+										<td>${subUIMList.mktResInstCode}</td> </#list>
+									</tr>
+									</#list>
+								</tbody>
+								</#if>
+							</table>
+						</li> 
+					<#else>
+						<li class="full">
+							<span style=" color: #FF0000;font-weight: bold;">${message}</span>
+		            	</li>
 					</#if>
 				</#if>
-			</li>
+			</#if>
 		</ul>
 	</form>
 	</body>

@@ -1039,17 +1039,21 @@ public class BatchOrderController  extends BaseController {
 		model.addAttribute("startDt", start);
 		model.addAttribute("endDt", end);
 		
-		//获取员工权限
-		String permissionsType = CommonMethods.checkBatchQryOperatSpec(staffBmo,super.getRequest(),sessionStaff);
-		model.addAttribute("permissionsType", permissionsType);
-		model.addAttribute("p_areaId", defaultAreaInfo.get("defaultAreaId"));
-		model.addAttribute("p_areaId_val", defaultAreaInfo.get("defaultAreaName"));
 		
-		//根据配置文件portal.properties里的开关，判断执行新旧代码，N执行旧代码，Y执行新代码
-		JsonResponse jsonResponse = this.batchOrderFlag("batchOrderQry");
-		model.addAttribute("batchOrderFlag", jsonResponse.getData().toString());
 		
-		return "/batchOrder/batch-order-imQuery";
+		//根据配置文件portal.properties里的开关，判断执行新旧代码，N执行旧代码，Y执行新代码 By ZhangYu 2015-10
+		//JsonResponse jsonResponse = this.batchOrderFlag("batchOrderQry");
+		//model.addAttribute("batchOrderFlag", jsonResponse.getData().toString());
+		if("Y".equals(this.batchOrderFlag("batchOrderQry").getData().toString())){
+			//获取员工权限
+			String permissionsType = CommonMethods.checkBatchQryOperatSpec(staffBmo,super.getRequest(),sessionStaff);
+			model.addAttribute("permissionsType", permissionsType);
+			model.addAttribute("p_areaId", defaultAreaInfo.get("defaultAreaId"));
+			model.addAttribute("p_areaId_val", defaultAreaInfo.get("defaultAreaName"));
+			
+			return "/batchOrder/batch-order-imQuery-new";
+		}else
+			return "/batchOrder/batch-order-imQuery";
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -1087,7 +1091,7 @@ public class BatchOrderController  extends BaseController {
 	}
 
 	/**
-	 * 批次信息查询(即现有页面的“批量受理查询”)，查询结果为符合条件的批次信息，不包含某一批次下的具体信息，一个批次的具体信息，在“进度查询”功能中实现。
+	 * 批量受理查询，查询结果为符合条件的批次信息，展示列表为批次，某一个批次的具体信息，转移到“进度查询”。
 	 * @param param
 	 * @param model
 	 * @param response
@@ -1148,8 +1152,7 @@ public class BatchOrderController  extends BaseController {
 		}
 		
 		//根据配置文件portal.properties里的开关，判断执行新旧代码，N执行旧代码，Y执行新代码
-		JsonResponse jsonResponse = this.batchOrderFlag("batchOrderQry");
-		model.addAttribute("batchOrderFlag", jsonResponse.getData().toString());
+		model.addAttribute("batchOrderFlag", this.batchOrderFlag("batchOrderQry").getData().toString());
 		
 		return "/batchOrder/batch-order-imlist";
 	}
@@ -1381,19 +1384,20 @@ public class BatchOrderController  extends BaseController {
 		try {
 			rMap = orderBmo.batchOperate(param, null, sessionStaff);
 			Map<String, Object> invalidInfo = (Map<String, Object>) rMap.get("result");
-			if (rMap != null && ResultCode.R_SUCCESS.equals(rMap.get("code").toString())){
+			String message = rMap.get("msg").toString();
+			String code = rMap.get("code").toString();
+			if (rMap != null && ResultCode.R_SUCCESS.equals(code)){
 				if( invalidInfo.size() > 0){
-					model.addAttribute("invalidPhoneNumberList", invalidInfo.get("invalidPhoneNumberList"));
-					model.addAttribute("invalidMktResInstList", invalidInfo.get("invalidMktResInstList"));
-				} else{
-					model.addAttribute("invalidPhoneNumberList", "");
-					model.addAttribute("invalidMktResInstList", "");
+					if(invalidInfo.get("invalidPhoneNumberList") != null)
+						model.addAttribute("invalidPhoneNumberList", invalidInfo.get("invalidPhoneNumberList"));
+					if(invalidInfo.get("invalidMktResInstList") != null)
+						model.addAttribute("invalidMktResInstList", invalidInfo.get("invalidMktResInstList"));
 				}
-				model.addAttribute("code", "0");
-				model.addAttribute("message",  rMap.get("msg"));
+				model.addAttribute("code", ResultCode.R_SUCC);
+				model.addAttribute("message",  message);
 			} else{
-				model.addAttribute("code", rMap.get("code"));
-				model.addAttribute("message",  rMap.get("msg"));
+				model.addAttribute("code", code);
+				model.addAttribute("message",  message);
 			}
 		} catch (InterfaceException ie) {
 			jsonResponse = super.failed(ie, param, ErrorCode.BATCH_IMP_LIST);
