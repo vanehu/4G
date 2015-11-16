@@ -3368,6 +3368,9 @@ public class PrintBmoImpl implements PrintBmo {
 	 */
 	private AcceNbrBaseSet buildOE_3_UserAcceNbrs_V2(int baseCount, List<Map<String, Object>> userAcceNbrsList) {
 
+		if (userAcceNbrsList == null || userAcceNbrsList.size() == 0) {
+			return null;
+		}
 		StringBeanSet strBeanPhoneNumberTitle = new StringBeanSet(buildBusiInfoTitle(baseCount, getDetailName(userAcceNbrsList.get(0))));
 
 		AcceNbrBaseSet acceNbrBaseSet = new AcceNbrBaseSet();
