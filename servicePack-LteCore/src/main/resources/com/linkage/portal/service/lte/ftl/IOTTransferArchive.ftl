@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ContractRoot> 
+	<TcpCont>
+		<TransactionID>${TcpCont.TransactionID}</TransactionID>
+		<ActionCode>${TcpCont.ActionCode}</ActionCode>
+        <BusCode>${TcpCont.BusCode}</BusCode>
+        <ServiceCode>${TcpCont.ServiceCode}</ServiceCode>
+        <ServiceContractVer>${TcpCont.ServiceContractVer}</ServiceContractVer>
+		<ServiceLevel>${TcpCont.ServiceLevel}</ServiceLevel>
+		<SrcOrgID>${TcpCont.SrcOrgID}</SrcOrgID>
+		<SrcSysID>${TcpCont.SrcSysID}</SrcSysID>
+		<SrcSysSign>${TcpCont.SrcSysSign}</SrcSysSign>
+		<DstOrgID>${TcpCont.DstOrgID}</DstOrgID>
+		<DstSysID>${TcpCont.DstSysID}</DstSysID>
+		<ReqTime>${TcpCont.ReqTime}</ReqTime>
+	</TcpCont>
+  	<SvcCont> 
+    	<custOrderInfo> 
+      		<busiType>${custOrderInfo.busiType}</busiType>  
+      		<transationNbr>${custOrderInfo.transationNbr}</transationNbr>
+      		<channelNbr>${custOrderInfo.channelNbr}</channelNbr>  
+      		<staffCode>${custOrderInfo.staffCode}</staffCode>  
+      		<commonRegionId>${custOrderInfo.commonRegionId}</commonRegionId>  
+      		<custNumber>${custOrderInfo.custNumber}</custNumber> 
+    	</custOrderInfo>  
+    	<custOrderItemGrp> 
+      		<custInfo> 
+        		<action>ADD</action>  
+        		<certNumber>${custOrderItemGrp.custInfo.certNumber}</certNumber>  
+       		 	<certAddress>${custOrderItemGrp.custInfo.certAddress}</certAddress>  
+        		<certType>${custOrderItemGrp.custInfo.certType}</certType>  
+        		<custName>${custOrderItemGrp.custInfo.custName}</custName>  
+        		<custNumber>${custOrderItemGrp.custInfo.custNumber}</custNumber>  
+        		<custType>${custOrderItemGrp.custInfo.custType}</custType> 
+      		</custInfo> 
+    	</custOrderItemGrp>  
+    	<acctOrderItemGrp> 
+      		<acctInfos> 
+        		<acctName>${acctOrderItemGrp.acctInfos.acctName}</acctName>  
+        		<acctNumber>${acctOrderItemGrp.acctInfos.acctNumber}</acctNumber>  
+        		<action>ADD</action>  
+        		<payMethod>${acctOrderItemGrp.acctInfos.payMethod}</payMethod>
+			<#list acctOrderItemGrp.acctInfos.attrInfos as item>
+                <attrInfos>
+                    <attrSpecId>${item.attrSpecId}</attrSpecId>
+                    <attrValue>${item.attrValue}</attrValue>
+                    <action>${item.action}</action>
+                </attrInfos>
+			</#list>
+			</acctInfos>
+    	</acctOrderItemGrp>  
+    	<prodOrderItemGrp> 
+      		<prodInfo> 
+        		<prodInstId>${prodOrderItemGrp.prodInfo.prodInstId}</prodInstId>  
+        		<custNumber>${prodOrderItemGrp.prodInfo.custNumber}</custNumber>  
+        		<acctNumber>${prodOrderItemGrp.prodInfo.acctNumber}</acctNumber>  
+        		<logicLanId>${prodOrderItemGrp.prodInfo.logicLanId}</logicLanId> 
+      		</prodInfo> 
+    	</prodOrderItemGrp> 
+  	</SvcCont> 
+</ContractRoot>
