@@ -194,7 +194,7 @@ div.plan_second_list {
 #tsn{ text-indent:0px;}
 
 /** alert 提示 更多 功能 样式 **/
-.am_baseMsg{padding-bottom: 6px;padding-top: 6px}
+.am_baseMsg{padding-bottom: 6px;padding-top: 6px;max-height: 150px;overflow-y: auto}
 .am_more{text-align:right;padding-bottom: 6px;padding-right: 6px}
 .am_more a{color:red;font-weight:bold;}
 .am_more a:hover{color:black;font-weight:bold;background-color:#CAE1EE;}
