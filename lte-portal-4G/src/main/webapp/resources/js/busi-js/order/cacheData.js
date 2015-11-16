@@ -258,24 +258,24 @@ CacheData = (function() {
 		}
 		if(ec.util.isArray(param.valueRange)){ //下拉框
 			if(param.rule.isConstant=='Y'){ //不可修改
-				selectStr = param.name + ": <select class='inputWidth183px' id="+prodId+"_"+itemSpecId+" disabled='disabled'>"; 
+				selectStr = selectStr+"<tr><td>"+param.name + ": </td><td><select class='inputWidth183px' id="+prodId+"_"+itemSpecId+" disabled='disabled'>"; 
 			}else {
 				if(param.rule.isOptional=="N") { //必填
 					if(OrderInfo.isGroupProSpecId(specId)){//群功能产品
 						var id=prodId+'_'+specId+'_'+itemSpecId;
-						selectStr = param.name + ": <select class='inputWidth183px' id="+id+" data-validate='validate(required,reg:"
+						selectStr = selectStr+"<tr><td>"+param.name + ": </td><td><select class='inputWidth183px' id="+id+" data-validate='validate(required,reg:"
 						  + param.rule.maskMsg+"("+param.rule.mask+")) on(blur)'><label class='f_red'>*</label><br>"; 
 					}else{
-						selectStr = param.name + ": <select class='inputWidth183px' id="+prodId+"_"+itemSpecId+" data-validate='validate(required,reg:"
+						selectStr = selectStr+"<tr><td>"+param.name + ": </td><td><select class='inputWidth183px' id="+prodId+"_"+itemSpecId+" data-validate='validate(required,reg:"
 							  + param.rule.maskMsg+"("+param.rule.mask+")) on(blur)'><label class='f_red'>*</label><br>"; 
 					}
 				}else{
 					if(OrderInfo.isGroupProSpecId(specId)){//群功能产品
 						var id=prodId+'_'+specId+'_'+itemSpecId;
-						selectStr = param.name + ": <select class='inputWidth183px' id="+id+"><br>"; 
+						selectStr = selectStr+"<tr><td>"+param.name + ": </td><td><select class='inputWidth183px' id="+id+"><br>"; 
 						optionStr +='<option value="" >请选择</option>';  //不是必填可以不选
 					}else{
-						selectStr = param.name + ": <select class='inputWidth183px' id="+prodId+"_"+itemSpecId+"><br>"; 
+						selectStr = selectStr+"<tr><td>"+param.name + ": </td><td><select class='inputWidth183px' id="+prodId+"_"+itemSpecId+"><br>"; 
 						optionStr +='<option value="" >请选择</option>';  //不是必填可以不选
 					}
 				}
@@ -288,55 +288,55 @@ CacheData = (function() {
 					optionStr +='<option value="'+valueRange.value+'">'+valueRange.text+'</option>';
 				}
 			}
-			selectStr += optionStr + "</select><br>"; 
+			selectStr += optionStr + "</select></td></tr>"; 
 		}else { 
 			 if(param.dataTypeCd==1){  //文本框
 				if(param.rule==undefined){
-					selectStr += param.name + ' : <input id="'+prodId+'_'+itemSpecId +'" class="inputWidth183px" type="text" value="'+paramVal+'" ><br>'; 
+					selectStr += '<tr><td>'+param.name + ': </td><td><input id="'+prodId+'_'+itemSpecId +'" class="inputWidth183px" type="text" value="'+paramVal+'" ></td></tr>'; 
 				}else {
 					if(param.rule.isConstant=='Y'){ //不可修改
 						if(ec.util.isObj(specId)&&ec.util.isObj(CONST.getGroupServProdMap(specId,itemSpecId))){//是否是群功能产品
 							var id=prodId+'_'+specId+'_'+itemSpecId;
-							selectStr += param.name + ' : <input id="'+id
+							selectStr += '<tr><td>'+param.name + ': </td><td><input id="'+id
 							+'" class="inputWidth183px" type="text" disabled="disabled" value="'+paramVal+'" >';
 							var type=CONST.getGroupServProdMap(specId,itemSpecId);
 							
 							selectStr+='<a class="purchase" href="javascript:order.main.queryGroup('+type+',0,\''+id+'\');">选择</a>';
 						}else{
-							selectStr += param.name + ' : <input id="'+prodId+'_'+itemSpecId
+							selectStr += '<tr><td>'+param.name + ': </td><td><input id="'+prodId+'_'+itemSpecId
 							+'" class="inputWidth183px" type="text" disabled="disabled" value="'+paramVal+'" >';
 						}
-						selectStr+='<br>';
+						selectStr+='</td></tr>';
 					}else {
 						if(param.rule.isOptional=="N") { //必填
 							if(OrderInfo.isGroupProSpecId(specId)){//群功能产品
 								var id=prodId+'_'+specId+'_'+itemSpecId;
-								selectStr += param.name + ' : <input id="'+id  
-								+'" class="inputWidth183px" type="text" mask="'+param.rule.mask+'" maskmsg="'+param.rule.maskMsg+'" value="'+paramVal+'" ><label style="color: #ff0000;float:right;margin-right:40px;">*</label><br>';
+								selectStr += '<tr><td>'+param.name + ': </td><td><input id="'+id  
+								+'" class="inputWidth183px" type="text" mask="'+param.rule.mask+'" maskmsg="'+param.rule.maskMsg+'" value="'+paramVal+'" ><label style="color: #ff0000;float:right;margin-right:40px;">*</label></td></tr>';
 							}else{
-								selectStr += param.name + ' : <input id="'+prodId+'_'+itemSpecId  
-								+'" class="inputWidth183px" type="text" mask="'+param.rule.mask+'" maskmsg="'+param.rule.maskMsg+'" value="'+paramVal+'" ><label class="f_red">*</label><br>';//data-validate="validate(required,reg:'+param.rule.maskMsg+'('+param.rule.mask+')) on(blur)"
+								selectStr += '<tr><td>'+param.name + ': </td><td><input id="'+prodId+'_'+itemSpecId  
+								+'" class="inputWidth183px" type="text" mask="'+param.rule.mask+'" maskmsg="'+param.rule.maskMsg+'" value="'+paramVal+'" ><label class="f_red">*</label></td></tr>';//data-validate="validate(required,reg:'+param.rule.maskMsg+'('+param.rule.mask+')) on(blur)"
 							}
 						}else{
-							selectStr += param.name + ' : <input id="'+prodId+'_'+itemSpecId  
-							+'" class="inputWidth183px" type="text" mask="'+param.rule.mask+'" maskmsg="'+param.rule.maskMsg+'" value="'+paramVal+'" ><br>';//data-validate="validate(reg:'+param.rule.maskMsg+'('+param.rule.mask+')) on(blur)"
+							selectStr += '<tr><td>'+param.name + ': </td><td><input id="'+prodId+'_'+itemSpecId  
+							+'" class="inputWidth183px" type="text" mask="'+param.rule.mask+'" maskmsg="'+param.rule.maskMsg+'" value="'+paramVal+'" ></td></tr>';//data-validate="validate(reg:'+param.rule.maskMsg+'('+param.rule.mask+')) on(blur)"
 						}
 					}
 				}
 			} else if(param.dataTypeCd==8){  //密码框
 				if(param.rule==undefined){
-					selectStr += param.name + ' : <input id="'+prodId+'_'+itemSpecId +'" class="inputWidth183px" type="password" value="'+paramVal+'" ><br>'; 
+					selectStr += '<tr><td>'+param.name + ': </td><td><input id="'+prodId+'_'+itemSpecId +'" class="inputWidth183px" type="password" value="'+paramVal+'" ></td></tr>'; 
 				}else{
 					if(param.rule.isConstant=='Y'){
-						selectStr += param.name + ' : <input id="'+prodId+'_'+itemSpecId
-						+'" class="inputWidth183px" type="password"  disabled="disabled" value="'+paramVal+'" ><br>';
+						selectStr += '<tr><td>'+param.name + ': </td><td><input id="'+prodId+'_'+itemSpecId
+						+'" class="inputWidth183px" type="password"  disabled="disabled" value="'+paramVal+'" ></td></tr>';
 					}else {
 						if(param.rule.isOptional=="N") {
-							selectStr += param.name + ' : <input id="'+prodId+'_'+itemSpecId  
-							+'" class="inputWidth183px" type="password" data-validate="validate(required,reg:'+param.rule.maskMsg+'('+param.rule.mask+')) on(blur)" value="'+paramVal+'" ><label class="f_red">*</label><br>'; 
+							selectStr += '<tr><td>'+param.name + ': </td><td><input id="'+prodId+'_'+itemSpecId  
+							+'" class="inputWidth183px" type="password" data-validate="validate(required,reg:'+param.rule.maskMsg+'('+param.rule.mask+')) on(blur)" value="'+paramVal+'" ><label class="f_red">*</label></td></tr>'; 
 						}else{
-							selectStr += param.name + ' : <input id="'+prodId+'_'+itemSpecId  
-							+'" class="inputWidth183px" type="password" data-validate="validate(reg:'+param.rule.maskMsg+'('+param.rule.mask+')) on(blur)" value="'+paramVal+'" ><br>'; 
+							selectStr += '<tr><td>'+param.name + ': </td><td><input id="'+prodId+'_'+itemSpecId  
+							+'" class="inputWidth183px" type="password" data-validate="validate(reg:'+param.rule.maskMsg+'('+param.rule.mask+')) on(blur)" value="'+paramVal+'" ></td></tr>'; 
 						}
 					}
 				}
