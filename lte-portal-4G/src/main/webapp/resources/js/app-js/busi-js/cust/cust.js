@@ -255,6 +255,7 @@ cust = (function(){
 						contactAddress : $.trim($("#contactAddress").val()),//参与人的联系地址
 						contactId : "",//参与人联系信息的唯一标识
 						contactName : $.trim($("#contactName").val()),//参与人的联系人名称
+						mobilePhone : $.trim($("#mobilePhone").val()),//参与人的联系人手机
 						headFlag :  $("#headFlag").val(),//是否首选联系人
 						staffId : OrderInfo.staff.staffId,//员工ID
 						state : "ADD",//状态

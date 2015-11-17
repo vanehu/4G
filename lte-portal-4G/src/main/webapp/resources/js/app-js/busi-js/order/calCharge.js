@@ -918,7 +918,8 @@ order.calcharge = (function(){
 			order.cust.mgr.custReset();
 		}*/
 //		window.location.reload();
-		common.callCloseWebview();
+//		common.callCloseWebview();
+		common.relocationCust();
 	};
 	var _calchargeInit=function(){
 		_olId = OrderInfo.orderResult.olId;

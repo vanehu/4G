@@ -348,6 +348,7 @@ mktRes.terminal = (function($){
 					$.alert("提示","<br/>处理失败，请稍后重试！");
 					return;
 				}
+				common.callTitle(3);
 				OrderInfo.order.step=2;
 				var content$=$("#order").html(response.data).show();
 				$.refresh(content$);

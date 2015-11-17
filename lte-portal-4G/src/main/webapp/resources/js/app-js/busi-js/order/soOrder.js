@@ -66,7 +66,7 @@ SoOrder = (function() {
 							if(data.resultCode==0){
 								var msg="";
 								if(OrderInfo.actionFlag==8){
-									msg="客户创建成功，流水号：" + response.data.olId;
+									msg="客户创建成功，购物车ID：" + response.data.olId;
 								}else{
 									msg="客户修改成功";
 								}
