@@ -375,22 +375,46 @@ public class PrintBmoImpl implements PrintBmo {
 							if(offerInfosObj!=null && offerInfosObj instanceof List){
 								List<Map<String, Object>> offerInfos = (List<Map<String, Object>>) offerInfosObj;
 								if(offerInfos!=null && offerInfos.size()>0){
+									//主副卡新装号码拼接
+									String relaAcceNbrs = "";
 									for(int i=0; i<offerInfos.size(); i++){
 										Map<String, Object> offerInfo = offerInfos.get(i);
-										if (null != offerInfo.get("prodSpecName")) {
-											if(i != 0){
-												sb.append(",</br>");
-											}else sb.append("：</br>");
-											sb.append("&nbsp;&nbsp;[订购]");
-											sb.append(offerInfo.get("prodSpecName"));
-											if (null != offerInfo.get("effectRule")){
-												sb.append("("+offerInfo.get("effectRule")+")");
-											}
-											if (null != offerInfo.get("relaAcceNbr")){
-												sb.append("["+offerInfo.get("relaAcceNbr")+"]");
+										if (null != offerInfo.get("relaAcceNbr")){
+											if(relaAcceNbrs.length()>0 && relaAcceNbrs.indexOf(offerInfo.get("relaAcceNbr").toString())==-1){
+												relaAcceNbrs = relaAcceNbrs + "," + offerInfo.get("relaAcceNbr").toString();
+											}else if(relaAcceNbrs.length()==0){
+												relaAcceNbrs = relaAcceNbrs + offerInfo.get("relaAcceNbr").toString();
 											}
 										}
 									}
+									
+									String offerInfoStrs = "";
+									for(int i=0; i<offerInfos.size(); i++){
+										String offerInfoStr = "";
+										String inerStr = "";
+										Map<String, Object> offerInfo = offerInfos.get(i);
+										if (null != offerInfo.get("prodSpecName")) {
+											if(i != 0){
+												offerInfoStr = offerInfoStr + ",</br>";
+											}else offerInfoStr = offerInfoStr + "：</br>";
+											inerStr = inerStr + "&nbsp;&nbsp;[订购]";
+											inerStr = inerStr + offerInfo.get("prodSpecName");
+											if (null != offerInfo.get("effectRule")){
+												inerStr = inerStr + "("+offerInfo.get("effectRule")+")";
+											}
+											if (null != offerInfo.get("relaAcceNbr")){
+												inerStr = inerStr + "["+offerInfo.get("relaAcceNbr")+"]";
+											}else{
+												inerStr = inerStr + "["+relaAcceNbrs+"]";
+											}
+										}
+										offerInfoStr = offerInfoStr + inerStr;
+										//主副卡新装过滤重复销售品
+										if(offerInfoStrs.indexOf(inerStr)==-1){
+											offerInfoStrs = offerInfoStrs + offerInfoStr;
+										}
+									}
+									sb.append(offerInfoStrs);
 								}
 							}
 
