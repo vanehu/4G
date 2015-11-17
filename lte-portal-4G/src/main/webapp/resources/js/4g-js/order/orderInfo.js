@@ -21,6 +21,8 @@ OrderInfo = (function() {
 	 */
 	var _actionFlag = 0;
 	
+	//var _returnFlag = 0; // 手机客户端 返回按钮 标志当前 页面   0 为  号码-》套餐
+	
 	var _isSuccess = "N";  // 补换卡  加载 可选包 是否成功 
 	
 	/*购物车业务动作
@@ -180,7 +182,7 @@ OrderInfo = (function() {
 	var _choosedUserInfos = []; //使用人信息
 	
 	var _checkUimData = []; //保存UIM校验后的返回数据
-	 //window.localStorage.clear();
+	//window.localStorage.clear();
 	//创建一个订单完整节点
 	var _getOrderData = function(){
 		//订单提交完整节点
@@ -193,6 +195,7 @@ OrderInfo = (function() {
 				orderListInfo : { 
 					isTemplateOrder : "N",   //是否批量
 					templateType : OrderInfo.order.templateType,  //模板类型: 1 新装；8 拆机；2 订购附属；3 组合产品纳入/退出
+					shareArea : "",
 					staffId : OrderInfo.staff.staffId,
 					channelId : OrderInfo.staff.channelId,  //受理渠道id
 					areaId : OrderInfo.staff.soAreaId,
@@ -1511,6 +1514,7 @@ OrderInfo = (function() {
 		actionClassCd			: _actionClassCd,
 		boActionTypeCd			: _boActionTypeCd,
 		actionFlag 				: _actionFlag,
+	//	returnFlag             :  _returnFlag,
 		isSuccess 				: _isSuccess,
 		actionTypeName			: _actionTypeName,
 		initData				: _initData,

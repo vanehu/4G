@@ -412,6 +412,18 @@ SoOrder = (function() {
 			}else if(OrderInfo.actionFlag==3){
 				OrderInfo.orderData.orderList.orderListInfo.templateType = 2; //批量可选包订购退订
 			}
+			
+			if(OrderInfo.actionFlag==1){
+				var shareArea = "";
+				//如果共享本地网，则传8320100，如果共享本省，则传8320000。
+				if($("#shareType").val() == "1"){ // 本地网
+					shareArea = OrderInfo.getAreaId().substring(0,5) + "00";
+				}
+				else if($("#shareType").val() == "2"){ // 本省
+					shareArea = OrderInfo.getAreaId().substring(0,3) + "0000";
+				}
+				OrderInfo.orderData.orderList.orderListInfo.shareArea = shareArea;
+			}
 		}else{
 			OrderInfo.orderData.orderList.orderListInfo.isTemplateOrder ="N";
 		}
@@ -3184,6 +3196,7 @@ SoOrder = (function() {
 		if($("#isTemplateOrder").attr("checked")=="checked"){
 			if(OrderInfo.actionFlag==1||OrderInfo.actionFlag==14){
 				$(".template_info_type").show();
+				$(".share_info_type").show();
 				$("#isActivation").removeAttr("checked");
 				$("#isActivation").attr("disabled","disabled");
 				//$("#templateTypeDiv").show();
@@ -3194,6 +3207,7 @@ SoOrder = (function() {
 		}else {
 			$(".template_info_name").hide();
 			$(".template_info_type").hide();
+			$(".share_info_type").hide();
 			$("#templateOrderName").val("");
 			$("#isActivation").removeAttr("disabled");
 			//$("#templateOrderTitle").hide();
