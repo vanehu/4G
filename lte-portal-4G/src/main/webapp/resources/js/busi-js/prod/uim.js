@@ -179,7 +179,7 @@ prod.uim = (function() {
 			}
 		}
 		//3转4弹出促销窗口
-		if(OrderInfo.actionFlag!=1 && order.prodModify.choosedProdInfo.is3G== "Y" && data.baseInfo.cardTypeFlag==1){
+		if(OrderInfo.actionFlag!=1 && order.prodModify.choosedProdInfo.prodClass== "3" && data.baseInfo.cardTypeFlag==1){
 			var param = {
 				prodSpecId : prodSpecId,
 				offerSpecIds : [],
