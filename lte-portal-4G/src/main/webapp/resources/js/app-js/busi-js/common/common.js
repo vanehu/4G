@@ -105,7 +105,7 @@ common = (function($) {
 		}
 		var arr=new Array(1);
 		arr[0]="";
-		MyPlugin.closeWebview(arr,
+		MyPlugin.relocationCust(arr,
             function(result) {
             },
             function(error) {
@@ -196,6 +196,9 @@ common = (function($) {
 				if(OrderInfo.actionFlag==1){//新装的头部 要发生变化
 						_callTitle(2);//2 头部为已定位客户
 					}
+				if(OrderInfo.actionFlag == 13 || OrderInfo.actionFlag == 14){
+					_callTitle(2);//2 头部为已定位客户
+				}
 					OrderInfo.order.step=1;
 			});
 		}else if(OrderInfo.order.step==3){
@@ -235,6 +238,7 @@ common = (function($) {
 	};
 	
 	return {
+		relocationCust		:	_relocationCust,
 		setCalendar			:	_setCalendar,
 		callcalendar		:	_callcalendar,
 		callCloseWebview	:	_callCloseWebview,
