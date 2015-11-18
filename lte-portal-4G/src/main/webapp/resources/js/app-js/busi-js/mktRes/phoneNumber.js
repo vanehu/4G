@@ -836,8 +836,8 @@ order.phoneNumber = (function(){
 		});	
 	};
 	var _initPhonenumber=function(subPage,scroller){
-		$("#phone").empty();
-		OrderInfo.busitypeflag=1;
+		$("#phone").hide();
+//		OrderInfo.busitypeflag=1;
 		$("#subPage").val(subPage);
 		if(CONST.getAppDesc()==1){
 			$("#psw_dt").hide();

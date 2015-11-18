@@ -113,6 +113,21 @@ common = (function($) {
 		);
 	};
 	
+	//调用客户端的类似重定位去除客户缓存方法
+	var _relocationCust=function(){
+		if($("#alert-modal").length>0){
+			$("#alert-modal").hide();
+		}
+		var arr=new Array(1);
+		arr[0]="";
+		MyPlugin.closeWebview(arr,
+            function(result) {
+            },
+            function(error) {
+            }
+		);
+	};
+	
 	
 	//调用客户端的数字签名板
 	var _callDatasign=function(method){
@@ -189,8 +204,13 @@ common = (function($) {
 			}
 			order.main.lastStep(function(){
 				$("#order_prepare").show();
-				if(OrderInfo.actionFlag != 13){
+				if(OrderInfo.actionFlag != 13 || OrderInfo.actionFlag != 14){
 					$("#pakeage").show();
+				}
+				if(OrderInfo.actionFlag == 13 || OrderInfo.actionFlag == 14){
+					$("#phone").show();
+					$("#pakeage").hide();
+					$("#number").hide();
 				}
 				$("#order").hide();	
 				if(OrderInfo.actionFlag==1){//新装的头部 要发生变化

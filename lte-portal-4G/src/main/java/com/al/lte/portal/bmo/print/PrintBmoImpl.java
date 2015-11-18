@@ -430,6 +430,45 @@ public class PrintBmoImpl implements PrintBmo {
 							   sbNub.append(orderEventTitle.get("relaAcceNbr"));
 						   }
 						}
+					}else if(("5").equals(String.valueOf(map.get("orderEventType")))&& (("1020500000").equals(orderEventTitle.get("boActionTypeCd")) || ("4070400000").equals(orderEventTitle.get("boActionTypeCd")))){
+						//客户返档打印回执
+						if(sb.length()>0){
+							sb.append("</br>");
+						}
+						sb.append("【"+orderEventTitle.get("boActionTypeName")+"】");
+						if (null != orderEventTitle.get("relaAcceNbr")){
+							sb.append("["+orderEventTitle.get("relaAcceNbr")+"]");
+						}
+						//返档内容
+						Object orderEventContObj = map.get("orderEventCont");
+						if(orderEventContObj!=null && orderEventContObj instanceof List){
+							List<Map<String, Object>> orderEventCont = (List<Map<String, Object>>) orderEventContObj;
+							if(orderEventCont!=null && orderEventCont.size()>0){
+								for(int i=0; i<orderEventCont.size(); i++){
+									Map<String, Object> item = orderEventCont.get(i);
+									if (null != item.get("itemName0")) {
+										sb.append("</br>");
+										sb.append("&nbsp;&nbsp;"+item.get("itemName0")+":");
+										sb.append(item.get("itemValue0"));
+									}
+									if (null != item.get("itemName1")) {
+										sb.append("</br>");
+										sb.append("&nbsp;&nbsp;"+item.get("itemName1")+":");
+										sb.append(item.get("itemValue1"));
+									}
+								}
+							}
+						}
+						if(sbNub.length()>0){
+							//业务动作大于1时避免出现重复的主副卡号码
+						   if (null != orderEventTitle.get("relaAcceNbr") && sbNub.indexOf(orderEventTitle.get("relaAcceNbr").toString())==-1) {
+							   sbNub.append(","+orderEventTitle.get("relaAcceNbr"));
+						   }
+						}else{
+						   if (null != orderEventTitle.get("relaAcceNbr")){
+							   sbNub.append(orderEventTitle.get("relaAcceNbr"));
+						   }
+						}
 					}else if(("3").equals(String.valueOf(map.get("orderEventType")))){
 						if(sb.length()>0){
 							sb.append(",</br>");

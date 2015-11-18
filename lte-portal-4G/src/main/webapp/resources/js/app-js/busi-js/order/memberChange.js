@@ -296,7 +296,8 @@ order.memberChange = function(){
 };
 	
 	function _areaidJurisdiction(type){
-		var provid = OrderInfo.staff.soAreaId.substring(0,3) + "0000";
+		var sa = OrderInfo.staff.soAreaId.toString();
+		var provid = sa.substring(0,3) + "0000";
 		var areaparam = {"areaid":provid,"querytype":type};
 		$.ecOverlay("<strong>正在查询中,请稍后....</strong>");
 		var response = $.callServiceAsJsonGet(contextPath+"/offer/areaidJurisdiction",areaparam);	
