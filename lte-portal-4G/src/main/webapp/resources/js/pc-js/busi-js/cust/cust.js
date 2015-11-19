@@ -523,7 +523,20 @@ order.cust = (function(){
 			vipLevel :$(scope).attr("vipLevel"),
 			vipLevelName :$(scope).attr("vipLevelName")
 		};
-		if(order.cust.queryForChooseUser && _choosedCustInfo.segmentId != 1100){
+		//设置被选择标识
+		$(scope).attr("selected","selected");
+		$(scope).siblings().each(function () {
+				$(this).removeAttr("selected");
+		});
+		// 判断是否是政企客户
+		var isGovCust = false;
+		for (var i = 0; i <= CacheData.getGovCertType().length; i ++) {
+			if (_choosedCustInfo.identityCd == CacheData.getGovCertType()[i]) {
+				isGovCust = true;
+				break;
+			}
+		}
+		if(order.cust.queryForChooseUser && isGovCust){
 			$.alert('提示','使用人必须是公众客户，请重新定位。');
 			return false;
 		}
