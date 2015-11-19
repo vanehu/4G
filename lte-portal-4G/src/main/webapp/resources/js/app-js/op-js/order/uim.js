@@ -12,7 +12,7 @@ prod.uim = (function() {
 	var _checkUim = function(prodId){
 		var phoneNumber = OrderInfo.getAccessNumber(prodId);
 		var offerId = "-1"; //新装默认，主销售品ID
-		if(OrderInfo.actionFlag==1||OrderInfo.actionFlag==6||OrderInfo.actionFlag==14){ //新装需要选号
+		if(OrderInfo.actionFlag==1||OrderInfo.actionFlag==6||OrderInfo.actionFlag==14||(OrderInfo.actionFlag==2&&offerChange.newMemberFlag)){ //新装需要选号
 			if(phoneNumber==''){
 				$.alert("提示","校验UIM卡前请先选号!");
 				return false;
