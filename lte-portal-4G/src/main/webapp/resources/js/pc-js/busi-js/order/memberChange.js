@@ -6,7 +6,6 @@ order.memberChange = function(){
 	var _newMemberFlag = false;
 	var _oldMemberFlag = false;
 	var _changeMemberFlag = false;
-	var choosenum = 1;
 	var _viceCartNum = 0;//纳入老用户副卡总数量
 	var maxNum = 0;
 	var idnum = 1;
@@ -28,6 +27,8 @@ order.memberChange = function(){
 	var _viceparams = [];
 	var _ooRoless = [];
 	
+	var _viceCartNum = 0;//纳入老用户副卡总数量[W]
+	
 	//点击主副卡成员变更跳出一个div
 	var _showOfferCfgDialog=function(){
 		if(order.prodModify.choosedProdInfo.prodStateCd==CONST.PROD_STATUS_CD.STOP_PROD){
@@ -35,7 +36,6 @@ order.memberChange = function(){
 			return;
 		}
 		_memberAddList=[];
-		choosenum = 1;
 		idnum = 1;
 		OrderInfo.busitypeflag=3;
 		OrderInfo.actionFlag=6;
@@ -60,8 +60,8 @@ order.memberChange = function(){
 			$.alert("提示","3G套餐不允许做主副卡成员变更业务！","information");
 			return;
 		}
-		//根据省份来限制纳入老用户入口,开关在portal.properties
-		var areaidflag = _areaidJurisdiction();
+		//根据省份来限制纳入老用户入口,开关在portal.properties[W]
+		var areaidflag = order.memberChange.areaidJurisdiction();
 		//暂存单二次加载
 		if(order.memberChange.reloadFlag=="N"){
 			if(!queryReOrder()){
@@ -258,7 +258,9 @@ order.memberChange = function(){
 						iflag++;
 					}
 				});
-				if(areaidflag){
+				
+				//[W]
+				if(areaidflag!="" && areaidflag.flag=="ON" && areaidflag.net_vice_card=="0"){
 					//添加老用户
 					$.each(this.roleObjs,function(){
 						if(this.objType == CONST.OBJ_TYPE.PROD){
@@ -269,7 +271,7 @@ order.memberChange = function(){
 								if(newSubPhoneNumsize.length==0 && oldSubPhoneNumsize.length==0){
 									addNumpic = "<a style='margin-top:15px' class='add2' href='javascript:order.memberChange.addNum("+max+",\"\");'> </a>";
 									var olro = "<tr style='background:#f8f8f8;' id='oldnum_1' name='oldnbr'>" +
-									"<td align='left' class='borderLTB' style='font-size:14px; padding:0px 0px 0px 12px'><span style='color:#518652; font-size:14px;'>已有移动电话</span></td>" +
+									"<td class='borderLTB' style='font-size:14px; padding:0px 0px 0px 12px'><span style='color:#518652; font-size:14px;'>已有移动电话</span></td>" +
 									"<td align='left' colspan='3'><input value='' style='margin-top:10px' class='numberTextBox' id='oldphonenum_1' type='text' >" +
 									addNumpic+
 									this.minQty+"-"+max+"（张）"+
@@ -284,7 +286,7 @@ order.memberChange = function(){
 									for(var k=0;k<oldSubPhoneNumsize.length;k++){
 										if(k==0){
 											var olro = "<tr style='background:#f8f8f8;' id='oldnum_1' name='oldnbr'>" +
-											"<td align='left' class='borderLTB' style='font-size:14px; padding:0px 0px 0px 12px'><span style='color:#518652; font-size:14px;'>已有移动电话</span></td>" +
+											"<td class='borderLTB' style='font-size:14px; padding:0px 0px 0px 12px'><span style='color:#518652; font-size:14px;'>已有移动电话</span></td>" +
 											"<td align='left' colspan='3'><input value='"+oldSubPhoneNumsize[k]+"' style='margin-top:10px' class='numberTextBox' id='oldphonenum_1' type='text' readonly='readonly'>" +
 //											addNumpic+
 											this.minQty+"-"+max+"（张）"+
@@ -301,7 +303,6 @@ order.memberChange = function(){
 					});
 				}
 				//副卡成员
-				//$Othertr.after($tr);
 				$.each(OrderInfo.offer.offerMemberInfos,function(){
 					var $Othertr = $("<tr></tr>");
 					if(this.offerRoleId == offerRole.offerRoleId  && this.objType==CONST.OBJ_TYPE.PROD){
@@ -320,7 +321,7 @@ order.memberChange = function(){
 							}
 						});
 						$("<span  id='viceCard_new_"+this.accessNumber+"'></span>").appendTo(li);
-						if(areaidflag){
+						if(areaidflag!="" && areaidflag.flag=="ON"){
 							var eleR = $("<i id='plan_no_remain'><a id='' accNbr='"+this.accessNumber+"' class='purchase' href='javascript:void(0)'>保留>>选择新套餐</a></i>").appendTo(li);
 							eleR.click(function(){
 								order.service.offerDialog('viceCard_new_'+$(this).find("a").attr("accNbr"));
@@ -358,20 +359,21 @@ order.memberChange = function(){
 		}
 	};
 	
-	function _areaidJurisdiction(){
+	var _areaidJurisdiction = function(){
 		var provid = OrderInfo.staff.soAreaId.substring(0,3) + "0000";
 		var areaparam = {"areaid":provid};
 		$.ecOverlay("<strong>正在查询中,请稍后....</strong>");
-		var response = $.callServiceAsJsonGet(contextPath+"/token/pc/offer/areaidJurisdiction",areaparam);	
+		var response = $.callServiceAsJsonGet(contextPath+"/offer/areaidJurisdiction",areaparam);	
 		$.unecOverlay();
 		if (response.code==0) {
-			if(response.data=="ON"){
-				return true;
-			}else{
-				return false;
-			}
+			return response.data;
+//			if(response.data=="ON"){
+//				return true;
+//			}else{
+//				return false;
+//			}
 		}else {
-			return false;
+			return "";
 		}
 	};
 	
@@ -394,11 +396,19 @@ order.memberChange = function(){
 	}
 	
 	var _addNum = function(max,addnum){
-		if(choosenum>=max){
+		var tbody = "";
+		if(OrderInfo.actionFlag==2 || OrderInfo.actionFlag==1){
+			tbody = "member_tbody";
+		}else{
+			tbody = "maincard_member_tbody";
+		}
+		var lis = $("#"+tbody).find("tr[name='oldnbr']");
+		lis = lis.length+1;
+		if(lis>max){
 			return;
 		}
-		idnum++;
-		choosenum++;
+		idnum++;		
+
 		var delNumpic = "";
 		var readonlyflag = "";
 		if(addnum==""){
@@ -407,19 +417,27 @@ order.memberChange = function(){
 			readonlyflag = "readonly='readonly'";
 		}
 		var olro = "<tr style='background:#f8f8f8;' id='oldnum_"+idnum+"' name='oldnbr'>" +
-		"<td align='left' class='borderLTB' style='font-size:14px; padding:0px 0px 0px 12px'><span style='color:#518652; font-size:14px;'>已有移动电话</span></td>" +
+		"<td  class='borderLTB' style='font-size:14px; padding:0px 0px 0px 12px'><span style='color:#518652; font-size:14px;'>已有移动电话</span></td>" +
 		"<td align='left' colspan='3'><input value='"+addnum+"' style='margin-top:10px' class='numberTextBox' id='oldphonenum_"+idnum+"' type='text' "+readonlyflag+">" +
 		delNumpic+
 		"</td></tr>";
-		$("#maincard_member_tbody").append(olro);
+		
+		if(OrderInfo.actionFlag==2 || OrderInfo.actionFlag==1){
+			$("#member_tbody").append(olro);
+		}else{
+			$("#maincard_member_tbody").append(olro);
+		}
 	};
 	
 	var _delNum = function(id){
-		choosenum--;
+		//[W]
+		//choosenum--; 
 		$("#"+id).remove();
 	};
 	
 	var custinfolist = [];
+	
+	//老用户纳入查询开始
 	var _queryofferinfo = function(){
 		OrderInfo.oldprodInstInfos = [];
 		OrderInfo.oldofferSpec = [];
@@ -428,7 +446,17 @@ order.memberChange = function(){
 		custinfolist = [];
 		
 		var oldAddNumList_flag = true;
-		$("#maincard_member_tbody").find("tr").each(function(){
+		
+		var tbody = "";
+		if(OrderInfo.actionFlag==2 || OrderInfo.actionFlag==1){
+			tbody = "member_tbody";
+		}else{
+			tbody = "maincard_member_tbody";
+		}
+		
+		var isReloadFlag= OrderInfo.newOrderInfo.isReloadFlag;
+		
+		$("#"+tbody).find("tr[name='oldnbr']").each(function(){
 			var num = $.trim($(this).children("td").eq(1).children("input").val());
 			if(ec.util.isObj(num)){
 				if(ec.util.isArray(OrderInfo.oldAddNumList)){
@@ -450,9 +478,11 @@ order.memberChange = function(){
 				}
 			}
 		});
+		
 		if(!oldAddNumList_flag){
 			return false;
 		}
+		
 		if(OrderInfo.oldAddNumList.length==0){
 			$.alert("提示","请输入手机号码!");
 			return false;
@@ -466,45 +496,49 @@ order.memberChange = function(){
 					return false;
 				}
 			}
-			var param = {
-					"acctNbr":OrderInfo.oldAddNumList[i].accNbr,
-					"identityCd":"",
-					"identityNum":"",
-					"partyName":"",
-					"diffPlace":"local",
-					"areaId" : $("#p_cust_areaId").val(),
-					"queryType" :"",
-					"queryTypeValue":""
-			};
-			var response = $.callServiceAsJson(contextPath+"/cust/queryoffercust", param, {"before":function(){
-				$.ecOverlay("<strong>正在查询中,请稍等...</strong>");
-			}});
-			if (response.code == 0) {
-				$.unecOverlay();
-				if(response.data.custInfos.length==0){
-					$.alert("提示","抱歉，没有定位到"+OrderInfo.oldAddNumList[i].accNbr+"客户，请尝试其他客户。");
-					custflag = false;
-					return false;
-				}
-				var custId = response.data.custInfos[0].custId;
-				// 主副卡客户校验取客户查询返回结果中的custId,旧的取order.prodModify.choosedProdInfo.custId
-				if(custId!=OrderInfo.cust.custId){
-					custflag = false;
-					$.alert("提示",OrderInfo.oldAddNumList[i].accNbr+"和主卡的客户不一致！");
-					return;
-				}
-				custinfolist.push({"accNbr":OrderInfo.oldAddNumList[i].accNbr,"custId":custId});
-//				QueryofferCustProd(response.data);
-			}else{
-				custflag = false;
-				$.unecOverlay();
-				$.alertM(response.data);
-				return false;
+			custflag = queryoffercust(OrderInfo.oldAddNumList[i].accNbr,custinfolist);
+			if(!custflag){
+				break;
 			}
 		}
 		if(custflag){
 			return QueryofferCustProd();
 		}
+	};
+	
+	var queryoffercust = function(accNbr,custinfolist){
+		var param = {
+				"acctNbr":accNbr,
+				"identityCd":"",
+				"identityNum":"",
+				"partyName":"",
+				"diffPlace":"local",
+				"areaId" : $("#p_cust_areaId").val(),
+				"queryType" :"",
+				"queryTypeValue":""
+		};
+		var response = $.callServiceAsJson(contextPath+"/cust/queryoffercust", param, {"before":function(){
+			$.ecOverlay("<strong>正在查询中,请稍等...</strong>");
+		}});
+		if (response.code == 0) {
+			$.unecOverlay();
+			if(response.data.custInfos.length==0){
+				$.alert("提示","抱歉，没有定位到"+accNbr+"客户，请尝试其他客户。");
+				return false;
+			}
+			var custId = response.data.custInfos[0].custId;
+			// 主副卡客户校验取客户查询返回结果中的custId,旧的取order.prodModify.choosedProdInfo.custId
+			if(OrderInfo.actionFlag!=1 && custId!=OrderInfo.cust.custId){
+				$.alert("提示",accNbr+"和主卡的客户不一致！");
+				return false;
+			}
+			custinfolist.push({"accNbr":accNbr,"custId":custId});
+		}else{
+			$.unecOverlay();
+			$.alertM(response.data);
+			return false;
+		}
+		return true;
 	};
 	
 	var QueryofferCustProd = function(){
@@ -541,15 +575,18 @@ order.memberChange = function(){
 							$.alert("提示",custinfolist[i].accNbr+"不是在用产品！");
 							return;
 						}
-						if(prodInstInfos.feeType.feeType!=order.prodModify.choosedProdInfo.feeType){
+						
+						if(OrderInfo.actionFlag!=1 && prodInstInfos.feeType.feeType!=order.prodModify.choosedProdInfo.feeType){
 							orderflag = false;
 							$.alert("提示",custinfolist[i].accNbr+"和主卡的付费类型不一致！");
 							return;
 						}
+						
 						if(prodInstInfos.productId=="280000000"){
 							$.alert("提示",custinfolist[i].accNbr+"是无线宽带，不能纳入！");
 							return false;
 						}
+						
 						OrderInfo.oldprodInstInfos.push(prodInstInfos);
 						break;
 					}
@@ -685,7 +722,8 @@ order.memberChange = function(){
 						if(max > 0 && (max - existViceCardNum - num) < 0){
 							$.alert("提示","加装数量已经超过能加装的最大数量【"+max+"】!");
 							flag = false;
-							return false;
+							//[W]
+							return;
 						}
 					}
 				});
@@ -696,7 +734,7 @@ order.memberChange = function(){
 	
 	var setProdUim = function(){
 		var produimflag = true;
-		OrderInfo.boProd2OldTds = []; //清空旧卡
+		//OrderInfo.boProd2OldTds = []; //清空旧卡
 		$.each(OrderInfo.oldoffer,function(){
 			var oldoffer = this;
 			var prod = {};
@@ -751,6 +789,14 @@ order.memberChange = function(){
 	
 	//保存旧卡
 	var setOldUim = function(offerId ,prodId,uim){
+		if(ec.util.isArray(OrderInfo.boProd2OldTds)){
+			$.each(OrderInfo.boProd2OldTds,function(){
+				if(this.prodId==prodId){
+					$(this).remove();
+				}
+			})
+		}
+		
 		var oldUim={
 			couponUsageTypeCd : "3", //物品使用类型
 			inOutTypeId : "2",  //出入库类型
@@ -784,25 +830,6 @@ order.memberChange = function(){
 	 * 加载实例
 	 */
 	var loadInst = function(param,prod){
-//		if(OrderInfo.order.soNbr==null || OrderInfo.order.soNbr==undefined || OrderInfo.order.soNbr==""){
-//			OrderInfo.order.soNbr = UUID.getDataId();
-//		}
-//		var instflag = true;
-//		for(var i=0;i<OrderInfo.oldprodInstInfos.length;i++){
-//			var prod = OrderInfo.oldprodInstInfos[i];
-//			if(prod==undefined || prod.prodInstId ==undefined){
-//				instflag = false;
-//				$.alert("提示",OrderInfo.oldprodInstInfos[i].accNbr+"未获取到老用户产品相关信息，无法办理二次业务！");
-//				return;
-//			}
-//			var param = {
-//				areaId : OrderInfo.getProdAreaId(prod.prodInstId),
-//				acctNbr : prod.accNbr,
-//				custId : prod.mainProdOfferInstInfos[0].custId,
-//				soNbr : OrderInfo.order.soNbr,
-//				instId : prod.prodInstId,
-//				type : "2"
-//			};
 			for(var j=0;j<OrderInfo.oldoffer.length;j++){
 				if(OrderInfo.oldoffer[j].accNbr==prod.accNbr){
 					if(ec.util.isArray(OrderInfo.oldoffer[j].offerMemberInfos)){ //遍历主销售品构成
@@ -849,10 +876,6 @@ order.memberChange = function(){
 					}
 				}
 			}
-//		}
-//		if(instflag){
-//			ruleCheck();
-//		}
 	};
 	
 	//生成订单流水号，规则校验
@@ -948,9 +971,11 @@ order.memberChange = function(){
 					return false;
 				}
 		}
-		if(ruleflag){
+		
+		if(ruleflag && OrderInfo.actionFlag!=2 && OrderInfo.actionFlag!=1){
+			addOldSubmit();
+		}else{
 			return true;
-//			addOldSubmit();
 		}
 	};
 	
@@ -958,18 +983,21 @@ order.memberChange = function(){
 		//老用户纳入
 		OrderInfo.initData(CONST.ACTION_CLASS_CD.PROD_ACTION,CONST.BO_ACTION_TYPE.ADDOREXIT_COMP,6,
 				CONST.getBoActionTypeName(CONST.BO_ACTION_TYPE.ADDOREXIT_COMP),"3");
-		var param = {
+		
+		param = {
 			memberChange : "Y",
 			type : 1,
 			boActionTypeName : "主副卡成员变更",
 			viceCardNum : parseInt(OrderInfo.oldAddNumList.length),
 			offerNum : 1,
 			actionFlag:6,
-			offerSpec:OrderInfo.oldofferSpec,
-			prodInstInfos:OrderInfo.oldprodInstInfos,
-			offer:OrderInfo.oldoffer,
-			addflag:"ADD"
+			oldofferSpec:OrderInfo.oldofferSpec,
+			oldprodInstInfos:OrderInfo.oldprodInstInfos,
+			oldoffer:OrderInfo.oldoffer,
+			addflag:"ADD",
+			oldnum:parseInt(OrderInfo.oldAddNumList.length)
 		};
+		
 //		order.service.setOfferSpec(); //把选择的主副卡数量保存
 		var prod = order.prodModify.choosedProdInfo; 
 		var boInfos = [{
@@ -993,7 +1021,6 @@ order.memberChange = function(){
 		order.memberChange.viceCartNum = 0;
 		var num=0; 
 		var oldnum = 0;
-		var ifRemoveProd = false;
 		var lis = $("#maincard_member_tbody tr[style!='background:#f8f8f8;'] td[colspan='4']");
 		for (var i=0;i<lis.length;i++) {
 			if(order.memberChange.delmembers.flag){
@@ -1012,6 +1039,9 @@ order.memberChange = function(){
 				});
 			}
 		}
+		
+		var ifRemoveProd = false;
+		
 		for (var i=0;i<lis.length;i++) {
 			if ($(lis[i]).attr("del") == "Y"||$(lis[i]).attr("knew") == "Y") {
 				ifRemoveProd = true;
@@ -1258,6 +1288,24 @@ order.memberChange = function(){
 //		$("#fillLastStep").off("click").on("click",function(){
 //			order.main.lastStep();
 //		});
+		
+		$.each(OrderInfo.offer.offerMemberInfos,function(){
+			if(this.objType=="2"){
+				var prodId = this.objInstId;
+				var param = {
+						areaId : OrderInfo.getProdAreaId(prodId),
+						channelId : OrderInfo.staff.channelId,
+						staffId : OrderInfo.staff.staffId,
+					    prodId : prodId,
+					    prodSpecId : this.objId,
+					    offerSpecId : order.prodModify.choosedProdInfo.prodOfferId,
+					    offerRoleId : this.offerRoleId,
+					    acctNbr : this.accessNumber
+					};
+				var res = query.offer.queryMainCartAttachOffer(param);
+			}
+		});
+		
 		var prodInfo = order.prodModify.choosedProdInfo; //获取产品信息
 		//遍历主销售品构成
 		var uimDivShow=false;//是否已经展示了
@@ -1602,7 +1650,9 @@ order.memberChange = function(){
 		changeMemberFlag:_changeMemberFlag,
 		viceCartNum:_viceCartNum,
 		viceparams:_viceparams,
-		ooRoless:_ooRoless
+		ooRoless:_ooRoless,
+		areaidJurisdiction:_areaidJurisdiction,
+		viceCartNum:_viceCartNum
 	};
 }();
 $(function(){

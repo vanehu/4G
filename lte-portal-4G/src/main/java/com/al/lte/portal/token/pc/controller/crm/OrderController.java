@@ -331,6 +331,7 @@ public class OrderController extends BaseController {
 			model.addAttribute("actionFlag", actionFlag);
 			model.addAttribute("isFee", isFee);
 			model.addAttribute("provIsale", provIsale);
+			model.addAttribute("oldSubPhoneNum", oldSubPhoneNum);
 			
 			//对UIM卡的传参进行改造
 			//model.addAttribute("mktResInstCode", mktResInstCode);
@@ -2786,13 +2787,11 @@ public class OrderController extends BaseController {
 	
 	@RequestMapping(value = "/orderSubmit", method = RequestMethod.POST)
     @ResponseBody
-	public JsonResponse orderSubmit(@RequestBody Map<String, Object> param,
-			HttpServletResponse response,HttpServletRequest request) {
+	public JsonResponse orderSubmit(@RequestBody Map<String, Object> param,HttpServletResponse response,HttpServletRequest request) {
 		JsonResponse jsonResponse = null;
 		if(commonBmo.checkToken(request, SysConstant.ORDER_SUBMIT_TOKEN)){
 			try {
-				SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
-	                    SysConstant.SESSION_KEY_LOGIN_STAFF);
+				SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);
 				Map orderList = (Map)param.get("orderList");
 				Map orderListInfo = (Map)orderList.get("orderListInfo");
 				orderListInfo.put("staffId", sessionStaff.getStaffId()); //防止前台修改
@@ -3631,29 +3630,20 @@ public class OrderController extends BaseController {
 	    @AuthorityValid(isCheck = false)
 	    public String goPackages(@RequestParam Map<String, Object> params, HttpServletRequest request,Model model,HttpSession httpSession,@LogOperatorAnn String flowNum) throws AuthorityException {
 			SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);
-			
 			try{
-				
 				String commonParamKey = MySimulateData.getInstance().getParam((String) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_DATASOURCE_KEY),"common.param.key");//公共参数加密KEY
-				
 				String paramsJson=request.getParameter("params");
-				
-				
 				if(paramsJson==null){
 					//参数为空，扔公共提示页面
 					model.addAttribute("errorMsg", "参数丢失，请重试。");
 					return "/common/error";
 				}
-				
 				String jmParamsJson = AESUtils.decryptToString(paramsJson, commonParamKey);
-				
 				Map<String,Object> paramsMap = JsonUtil.toObject(jmParamsJson, HashMap.class);
-				
 				if(paramsMap == null || paramsMap.size() <= 0){		
 					model.addAttribute("errorMsg", "参数丢失，请重试。");
 					return "/common/error";
 				}
-                 
 				//TODO 这里需要调用接口，接口暂时不可用，信息自建
 				//String jsonString=JacksonUtil.objectToJson(jsonMap);
 				//手机号码
@@ -3683,6 +3673,8 @@ public class OrderController extends BaseController {
 				//获取uim卡号
 				String mktResInstCode =(String)paramsMap.get("mktResInstCode");//uim卡号
 				model.addAttribute("mktResInstCode",mktResInstCode);
+				model.addAttribute("newSubPhoneNum", paramsMap.get("newSubPhoneNum")==null?"":paramsMap.get("newSubPhoneNum").toString());
+				model.addAttribute("oldSubPhoneNum", paramsMap.get("oldSubPhoneNum")==null?"":paramsMap.get("oldSubPhoneNum").toString());
 				if(mainProdOfferId!=null && mainProdOfferId.length()>0){
 					//集团销售品ID
 					String prodOfferId=paramsMap.get("prodOfferId")!=null?String.valueOf(paramsMap.get("prodOfferId")):null;
@@ -3726,22 +3718,18 @@ public class OrderController extends BaseController {
 				
 				//供前台查询定位客户
 				model.addAttribute("custAreaId_", provCustAreaId);
-				
 				//放入流水作为唯一标识码
 				httpSession.setAttribute("provIsale_"+provIsale, provIsale);
 				httpSession.setAttribute("isFee_"+provIsale,isFee);
-				
 			}catch(Exception e){
 				log.error("套餐变更/业务变更服务加载异常：",e);
 				model.addAttribute("errorMsg", "套餐变更/业务变更服务加载错误!");
 				return "/common/error";
 			}
-			
 			//model.addAttribute("mainPhoneNum", "17767068178");
 		//	model.addAttribute("mainProdOfferId","17767068178");
 		//	model.addAttribute("offid","81009");  //新套餐主销售品id
 			return "/pctoken/order/order-offer-main";
-			
 		}	
 		
 		@RequestMapping(value = "/prodoffer/prepares", method = RequestMethod.GET)

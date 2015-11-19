@@ -25,6 +25,7 @@ OrderInfo = (function() {
 	 * redirectUri 回调省份地址
 	 * isFee  是否收费 1不收费  2收费
 	 * extCustOrderID 集团流水
+	 * mergeFlag 接口合并标识：1合并   0不合并
 	 */
 	var _provinceInfo={
 			provIsale:"",
@@ -35,7 +36,8 @@ OrderInfo = (function() {
 			prodOfferId:"",
 			prodOfferName:"",
 			mktResInstCode:"",
-			codeMsg:""
+			codeMsg:"",
+			mergeFlag:"0"
 	};
 	//新装是否带出主副卡号码和uim卡信息
 	var _newOrderNumInfo = {
@@ -43,6 +45,11 @@ OrderInfo = (function() {
 		newSubPhoneNum:"",
 		mktResInstCode:""
 	};
+	
+	var _oldSubPhoneNum = {
+		oldSubPhoneNum:""
+	};
+	
 	//新装二次加载参数定义
 	var _newOrderInfo={
 		  result:{},
@@ -140,6 +147,8 @@ OrderInfo = (function() {
 	var _oldoffer = []; 
 	
 	var _oldprodAcctInfos = [];
+	
+	var _surplusNum = 0;//剩余可纳入副卡数量
 	
 	var _viceOfferSpec=[];//副卡换套餐，单产品套餐信息
 	
@@ -672,6 +681,11 @@ OrderInfo = (function() {
 						if(this.setValue==undefined){
 							this.setValue = this.value;
 						}
+						var feeType = $("select[name='pay_type_-1']").val();
+						if(feeType==undefined) feeType = order.prodModify.choosedProdInfo.feeType;
+						if(prodServ.servSpecId == CONST.YZFservSpecId && feeType == CONST.PAY_TYPE.AFTER_PAY){
+							this.setValue = "";
+						}
 						if(ec.util.isObj(this.setValue)){
 							var addParam = {
 				                itemSpecId : this.itemSpecId,
@@ -914,6 +928,15 @@ OrderInfo = (function() {
 		
 		if(prodId!=undefined && prodId>0){ //二次业务
 			var areaId = order.prodModify.choosedProdInfo.areaId;
+			
+			if(ec.util.isArray(OrderInfo.oldprodInstInfos) && order.service.oldMemberFlag){
+				if(ec.util.isObj(OrderInfo.cust.areaId)){
+					areaId = OrderInfo.cust.areaId;
+				}else{
+					areaId = OrderInfo.staff.soAreaId;
+				}
+			}
+			
 			if(areaId == undefined || areaId==""){
 				$.alert("错误提示","产品信息未返回地区ID，请营业后台核实！");
 				return ; 
@@ -1064,15 +1087,27 @@ OrderInfo = (function() {
 	var _getAccessNumber = function(prodId){
 		var accessNumber = "";
 		if(OrderInfo.actionFlag==1 || OrderInfo.actionFlag==14){
-			for (var i = 0; i < OrderInfo.boProdAns.length; i++) {
-				var an = OrderInfo.boProdAns[i];
-				if(an.prodId == prodId){
-					if(an.accessNumber != undefined ){
-						accessNumber =  an.accessNumber;
+			if(ec.util.isArray(OrderInfo.oldprodInstInfos) && OrderInfo.actionFlag==6){//判断是否是纳入老用户
+				$.each(OrderInfo.oldoffer,function(){
+					var oldoffer = this;
+					$.each(oldoffer.offerMemberInfos,function(){
+						if(this.objInstId==prodId){
+							accessNumber = this.accessNumber;
+							return false;
+						}
+					});
+				});
+			}else{
+				for (var i = 0; i < OrderInfo.boProdAns.length; i++) {
+					var an = OrderInfo.boProdAns[i];
+					if(an.prodId == prodId){
+						if(an.accessNumber != undefined ){
+							accessNumber =  an.accessNumber;
+						}
 					}
 				}
 			}
-		}else if(OrderInfo.actionFlag==6){
+		}else if(OrderInfo.actionFlag==6 || OrderInfo.actionFlag==2){
 			for (var i = 0; i < OrderInfo.boProdAns.length; i++) {
 				var an = OrderInfo.boProdAns[i];
 				if(an.prodId == prodId){
@@ -1093,7 +1128,7 @@ OrderInfo = (function() {
 					return false;
 				}
 			});
-		}else if(OrderInfo.actionFlag==2||OrderInfo.actionFlag==21){
+		}else if(OrderInfo.actionFlag==21){
 			$.each(OrderInfo.offer.offerMemberInfos,function(i){
 				if(this.objInstId==prodId){
 					accessNumber = this.accessNumber;
@@ -1157,6 +1192,27 @@ OrderInfo = (function() {
 					}
 				});
 			}
+			$.each(OrderInfo.oldoffer,function(){
+				$.each(this.offerMemberInfos,function(){
+					if(this.objInstId == prodId){
+						offerRoleName = this.roleName;  //角色名称
+						return false;
+					}
+				});
+			});
+			if(OrderInfo.offerSpec.offerRoles!=undefined){
+				$.each(OrderInfo.offerSpec.offerRoles,function(i){
+					var roleName = this.offerRoleName;  //角色名称
+					if(this.prodInsts!=undefined){
+						$.each(this.prodInsts,function(){
+							if(this.prodInstId == prodId){
+								offerRoleName = roleName;
+								return false;
+							}
+						});
+					}
+				});
+			}
 		}else{
 			if(OrderInfo.offerSpec.offerRoles!=undefined){
 				$.each(OrderInfo.offerSpec.offerRoles,function(i){
@@ -1185,6 +1241,25 @@ OrderInfo = (function() {
 					prodInst.accNbr = this.accessNumber;
 					return false;
 				}
+			});
+			$.each(OrderInfo.offerSpec.offerRoles,function(i){
+				if(this.prodInsts!=undefined){
+					$.each(this.prodInsts,function(){
+						if(this.prodInstId == prodId){
+							prodInst = this;
+							return false;
+						}
+					});
+				}
+			});
+			$.each(OrderInfo.oldoffer,function(){
+				$.each(this.offerMemberInfos,function(){
+					if(this.objInstId == prodId){
+						prodInst = this;
+						prodInst.accNbr = this.accessNumber;
+						return false;
+					}
+				});
 			});
 		}else if(OrderInfo.actionFlag == 3 || OrderInfo.actionFlag == 22){ //可选包变更
 			prodInst = order.prodModify.choosedProdInfo;
@@ -1222,13 +1297,36 @@ OrderInfo = (function() {
 					return false;
 				}
 			});
+			if(offerChange.oldMemberFlag){
+				$.each(OrderInfo.oldoffer,function(){
+					$.each(this.offerMemberInfos,function(){
+						if(this.objInstId==prodId){
+							prodSpecId = this.objId;
+							return false;
+						}
+					});
+				});
+			}
+			if(offerChange.newMemberFlag){
+				$.each(OrderInfo.offerSpec.offerRoles,function(){
+					$.each(this.prodInsts,function(){
+						if(this.prodInstId == prodId){
+							prodSpecId = this.objId;
+							return false;
+						}
+					});
+				});
+			}
 		} else if(prodId!=undefined && prodId>0){
-			prodSpecId = order.prodModify.choosedProdInfo.productId;
-			$.each(OrderInfo.oldprodInstInfos,function(){
-				if(this.prodInstId==prodId){
-					prodSpecId = this.productId;
-				}
-			});
+			if(ec.util.isArray(OrderInfo.oldprodInstInfos) && OrderInfo.actionFlag==6){//判断是否是纳入老用户
+				$.each(OrderInfo.oldprodInstInfos,function(){
+					if(this.prodInstId==prodId){
+						prodSpecId = this.productId;
+					}
+				});
+			}else{
+				prodSpecId = order.prodModify.choosedProdInfo.productId;
+			}
 		}
 		return prodSpecId;
 	};
@@ -1375,6 +1473,8 @@ OrderInfo = (function() {
 		checkUimData			:_checkUimData,
 		provinceInfo           	:_provinceInfo,
 		newOrderInfo          	:_newOrderInfo,
-		newOrderNumInfo        	:_newOrderNumInfo
+		newOrderNumInfo        	:_newOrderNumInfo,
+		surplusNum				:_surplusNum,
+		oldSubPhoneNum			:_oldSubPhoneNum
 	};
 })();

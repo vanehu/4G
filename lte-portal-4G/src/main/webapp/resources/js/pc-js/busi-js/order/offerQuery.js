@@ -98,7 +98,30 @@ query.offer = (function() {
 			}
 		}
 	};
-	
+	var _queryMainCartAttachOffer = function(param) {
+		addParam(param);  //添加基本参数
+		var url = contextPath+"/offer/queryMainCartAttachOffer";
+		$.callServiceAsJsonGet(url,param,{
+			"before":function(){
+				$.ecOverlay("<strong>正在查询销售品实例中,请稍后....</strong>");
+			},
+			"always":function(){
+				$.unecOverlay();
+			},
+			"done" : function(response){
+				$.unecOverlay();
+				if (response.code==0) {
+					if(response.data){
+						var offerLists = response.data.result.offerLists;
+						AttachOffer.mainCartOpenedList.push({"prodId":param.prodId,"offerLists":offerLists,"accessNumber":param.acctNbr});
+					}
+				}else {
+					$.alert("提示","附属销售品实例查询失败,稍后重试");
+					return;
+				}
+			}
+		});
+	};
 	//根据选择产品查询销售品实例，并保存到OrderInfo.offer
 	var _setOffer = function() {
 		var prod = order.prodModify.choosedProdInfo ; 
@@ -110,7 +133,7 @@ query.offer = (function() {
 			distributorId : ""
 		};
 		var data = query.offer.queryOfferInst(param); //查询销售品实例构成
-		if(data&&data.code == CONST.CODE.SUCC_CODE){
+		if(data && data.code == CONST.CODE.SUCC_CODE){
 			var flag = true;
 			if(ec.util.isArray(data.offerMemberInfos)){
 				CacheData.sortOffer(data);
@@ -559,7 +582,7 @@ query.offer = (function() {
 			return false;
 		}
 		offerSpec = SoOrder.sortOfferSpec(offerSpec); //排序主副卡套餐	
-		if(OrderInfo.actionFlag==6 && ec.util.isArray(OrderInfo.oldprodInstInfos)){//主副卡纳入老用户
+		if((OrderInfo.actionFlag==6||OrderInfo.actionFlag==2||OrderInfo.actionFlag==1) && ec.util.isArray(OrderInfo.oldprodInstInfos)){//主副卡纳入老用户
 			OrderInfo.oldofferSpec.push({"offerSpec":offerSpec,"accNbr":param.accNbr});
 		}else{
 			OrderInfo.offerSpec = offerSpec;
@@ -735,7 +758,7 @@ query.offer = (function() {
 				param.yslflag = order.ysl.yslbean.yslflag;
 			}
 		}
-		if(OrderInfo.actionFlag==6){//主副卡纳入老用户
+		if(OrderInfo.actionFlag==6 || OrderInfo.actionFlag==2){//主副卡纳入老用户
 			for(var i=0;i<OrderInfo.oldprodInstInfos.length;i++){
 				if(param.acctNbr==OrderInfo.oldprodInstInfos[i].accNbr){
 					param.areaId = OrderInfo.oldprodInstInfos[i].areaId;
@@ -842,6 +865,7 @@ query.offer = (function() {
 		updateCheckByChange		: _updateCheckByChange,
 		queryProduct			: _queryProduct,
 		queryOpenedAttachAndServ: _queryOpenedAttachAndServ,
+		queryMainCartAttachOffer:_queryMainCartAttachOffer,
 		queryProdInstParam		: _queryProdInstParam
 		
 		

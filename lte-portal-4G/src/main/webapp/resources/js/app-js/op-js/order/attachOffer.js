@@ -23,6 +23,12 @@ AttachOffer = (function() {
 	
 	var _labelList = []; //标签列表
 	
+	var checkedReserveNbr = "";//已经校验过的终端预约号
+	
+	var checkedReserveCode = "";//已经校验过的终端预约码
+	
+	var checkedOfferSpec = []; //已经校验过的终端预约号对应的促销包
+	
 	var totalNums=0;//记录总共添加了多少个终端输入框
 	//初始化附属销售页面
 	var _init = function(){
@@ -172,8 +178,8 @@ AttachOffer = (function() {
 									}
 									if(roleObj.minQty==1){
 										$oldLi.removeAttr("onclick");
-										var $span = $("#span_"+prodId+"_"+newSpec.servSpecId);
-										var $span_remove = $("#span_remove_"+prodId+"_"+newSpec.servSpecId);
+										var $span = $("#span_"+prodId+"_"+spec.servSpecId);
+										var $span_remove = $("#span_remove_"+prodId+"_"+spec.servSpecId);
 										if(ec.util.isObj($span)){
 											$span.removeClass("del");
 										}
@@ -1084,7 +1090,7 @@ AttachOffer = (function() {
 				},
 				yesdo:function(){
 					excludeAddattch(prodId,offerSpecId,param);
-					excludeAddServ(prodId,"",paramObj);
+					AttachOffer.excludeAddServ(prodId,"",paramObj);
 				},
 				no:function(){
 					
@@ -1278,12 +1284,12 @@ AttachOffer = (function() {
 			//新装二次加载，互斥的销售品处理
 			if(OrderInfo.provinceInfo.reloadFlag&&OrderInfo.provinceInfo.reloadFlag=="N"){
 				AttachOffer.addOpenServList(prodId,servSpecId,serv.servSpecName,serv.ifParams); //添加开通功能
-				excludeAddServ(prodId,servSpecId,param);
+				AttachOffer.excludeAddServ(prodId,servSpecId,param);
 			}else{
 				$.confirm("开通： " + serv.servSpecName,content,{ 
 					yesdo:function(){
 						AttachOffer.addOpenServList(prodId,servSpecId,serv.servSpecName,serv.ifParams); //添加开通功能
-						excludeAddServ(prodId,servSpecId,param);
+						AttachOffer.excludeAddServ(prodId,servSpecId,param);
 					},
 					no:function(){
 					}
@@ -1293,7 +1299,7 @@ AttachOffer = (function() {
 	};
 	
 	//服务互斥依赖时带出添加跟删除
-	var excludeAddServ = function(prodId,servSpecId,param){
+	var _excludeAddServ = function(prodId,servSpecId,param){
 		if(ec.util.isArray(param.excludeServ)){ //有互斥
 			for (var i = 0; i < param.excludeServ.length; i++) { //删除已开通
 				var excludeServSpecId = param.excludeServ[i].servSpecId;
@@ -1482,6 +1488,7 @@ AttachOffer = (function() {
 			return;
 		}
 		var newSpec = _setSpec(prodId,offerSpecId);
+		
 		if(newSpec==undefined){ //没有在已开通附属销售列表中
 			return;
 		}
@@ -1491,6 +1498,9 @@ AttachOffer = (function() {
 			}
 			var $spec = $('#li_'+prodId+'_'+offerSpecId); //在已开通附属里面
 			$spec.remove();
+			
+			$("#li_"+prodId+"_"+offerSpecId).remove();
+			
 			var $li = $('<a id="li_'+prodId+'_'+offerSpecId+'" onclick="AttachOffer.delOfferSpec('+prodId+','+offerSpecId+')" class="list-group-item"></a>');
 			$li.append('<span id="span_'+prodId+'_'+offerSpecId+'">'+newSpec.offerSpecName+'</span>');
 			if(newSpec.ifDault==0){ //必须
@@ -1597,10 +1607,10 @@ AttachOffer = (function() {
 						}
 						$ulGroups.append($liGroups);
 						for(var k=1;k<=minNum;k++){
-							var $liTerminal=$('<li class="form-group" style="list-style-type:none;"><label for="exampleInputPassword1">终端校验：</label><div class="input-group"><input id="terminalText_'+objInstId+'_'+k+'" type="text" class="form-control" maxlength="50" placeholder="请先输入终端串号" />'
+							var $liTerminal=$('<li class="form-group" style="list-style-type:none;"><label for="exampleInputPassword1">终端校验：</label><div class="input-group" style="width:100%;"><input id="terminalText_'+objInstId+'_'+k+'" type="text" class="form-control" maxlength="50" placeholder="请先输入终端串号" />'
+									+'<li class="form-group" style="list-style-type:none;"><input type="checkbox" id="if_p_reserveCode" onclick="AttachOffer.changereserveCode()"><label for="exampleInputPassword1">使用预约码：</label><div class="input-group"><input id="reserveCode" type="text" disabled="disabled" class="form-control" maxlength="50" placeholder="请输入预约码" style="background-color: #E8E8E8;"/>'
 									+'<span class="input-group-btn"><button id="terminalBtn_'+objInstId+'_'+k+'" type="button" num="'+k+'" flag="'+isFastOffer+'" prodId="'+prodId+'" offerSpecId="'+newSpec.offerSpecId+'" onclick="AttachOffer.checkTerminalCode(this)" class="btn btn-default">校验</button></span></div></li>');
 							var	$li4 = $('<li id="terminalDesc_'+k+'" style="display:none;list-style-type:none;" ><label></label><label id="terminalName_'+k+'"></label></li>');
-							
 							$ulGroups.append($liTerminal).append($li4);
 						}
 						$ul.append($ulGroups);
@@ -1655,6 +1665,14 @@ AttachOffer = (function() {
 		}
 	};
 	
+	var _changereserveCode = function(){
+		if(document.getElementById("if_p_reserveCode").checked){
+			$("#reserveCode").css("background-color","white").attr("disabled", false) ;
+		}else{
+			$("#reserveCode").css("background-color","#E8E8E8").attr("disabled", true) ;
+		}
+	}
+	
 	//终端校验
 	var _checkTerminalCode = function(obj){
 		var prodId=$(obj).attr("prodId");
@@ -1665,10 +1683,10 @@ AttachOffer = (function() {
 		if(flag==undefined){
 			flag = 0 ;
 		}
-		
+		OrderInfo.termReserveFlag ="";
 		//清空旧终端信息
 		_filterAttach2Coupons(prodId,offerSpecId,num);
-		
+
 		//清空旧终端信息
 //		for ( var i = 0; i < OrderInfo.attach2Coupons.length; i++) {
 //			var attach2Coupon = OrderInfo.attach2Coupons[i];
@@ -1698,14 +1716,39 @@ AttachOffer = (function() {
 			$.alert("信息提示","终端串码不能为空！");
 			return;
 		}
+		if(document.getElementById("if_p_reserveCode").checked){
+			var reserveCode = $("#reserveCode").val();
+			if(reserveCode ==""){
+				$.alert("信息提示","请输入终端预约码！");
+				return;
+			}
+		}else{
+			$.each(checkedOfferSpec,function(){
+				var offerSpec = this;
+				var specList = CacheData.getOfferSpecList(prodId);
+				$.each(specList,function(){
+					if(offerSpec.offerSpecId == this.offerSpecId){
+						var $span = $("#li_"+prodId+"_"+this.offerSpecId).find("span"); //定位删除的附属
+						this.isdel = "Y";
+						_delServSpec(prodId,this); //取消订购销售品时
+						order.dealer.removeAttDealer(prodId+"_"+offerSpecId); //删除协销人
+						$("#li_"+prodId+"_"+this.offerSpecId).remove();
+					}
+				});
+			});
+			checkedOfferSpec = [];
+		}
 		if(_checkData(objInstId,instCode)){
 			return;
 		}
+		var newSpec = _setSpec(prodId,offerSpecId);
 		var param = {
 			instCode : instCode,
 			flag : flag,
-			mktResId : resId
-//			termGroup : terminalGroupId
+			mktResId : resId,
+			offerSpecId: offerSpecId,
+			offerSpecName:newSpec.offerSpecName
+			//termGroup : terminalGroupId  update by huangjj #13336需求资源要求这个参数不传
 		};
 		var data = query.prod.checkTerminal(param);
 		if(data==undefined){
@@ -1725,12 +1768,6 @@ AttachOffer = (function() {
 			}
 		}
 		if(data.statusCd==CONST.MKTRES_STATUS.USABLE || (data.statusCd==CONST.MKTRES_STATUS.HAVESALE && activtyType=="2")){
-			if(OrderInfo.provinceInfo.reloadFlag=="N"){
-				console.log("信息提示",data.message);
-			}else{
-				$.alert("信息提示",data.message);
-			}
-			
 //			$("#terminalSel_"+objInstId).val(data.mktResId);
 //			$("#terminalName").html(data.mktResName);
 //			$("#terminalDesc").css("display","block");
@@ -1778,7 +1815,8 @@ AttachOffer = (function() {
 				attachSepcId : offerSpecId,
 				state : "ADD", //动作
 				relaSeq : "", //关联序列	
-				num	: num //第几个串码输入框
+				num	: num, //第几个串码输入框
+				attrList:data.mktAttrList //终端属性列表
 			};
 			if(data.statusCd==CONST.MKTRES_STATUS.HAVESALE && activtyType=="2"){//“已销售未补贴”的终端串码可以办理话补合约
 				coupon.couponSource ="2"; //串码话补标识
@@ -1786,7 +1824,206 @@ AttachOffer = (function() {
 			if(CONST.getAppDesc()==0){
 				coupon.termTypeFlag=data.termTypeFlag;
 			}
-			OrderInfo.attach2Coupons.push(coupon);
+			if(document.getElementById("if_p_reserveCode").checked){
+				var custId = OrderInfo.cust.custId;
+				var identityTypeCd  ="";
+				var identityNum ="";
+				if (custId == -1) {
+					identityTypeCd = OrderInfo.boCustIdentities.identidiesTypeCd;
+					identityNum =OrderInfo.boCustIdentities.identityNum;
+				}
+				var param = {
+						reserveCode : reserveCode,
+						couponId : data.mktResId,
+						terminalPrice : mktPrice,
+						custId : custId,
+						identityTypeCd : identityTypeCd,
+						identityNum : identityNum
+				};
+				var url = contextPath+"/mktRes/terminal/queryCouponReserveCodeCheck ";
+				$.callServiceAsJson(url,param,{
+					"before":function(){
+//						$.ecOverlay("<strong>预约码校验中,请稍等...</strong>");
+					},"always":function(){
+//						$.unecOverlay();
+					},
+					"done" : function(response){
+						if (response && response.code == -2) {
+							$.each(checkedOfferSpec,function(){
+								var offerSpec = this;
+								var specList = CacheData.getOfferSpecList(prodId);
+								$.each(specList,function(){
+									if(offerSpec.offerSpecId == this.offerSpecId){
+										var $span = $("#li_"+prodId+"_"+this.offerSpecId).find("span"); //定位删除的附属
+										this.isdel = "Y";
+										_delServSpec(prodId,this); //取消订购销售品时
+										order.dealer.removeAttDealer(prodId+"_"+offerSpecId); //删除协销人
+										$("#li_"+prodId+"_"+this.offerSpecId).remove();
+									}
+								});
+							});
+							checkedOfferSpec = [];
+							$.alertM(response.data);
+							return;
+						} else if(response&&response.data&&response.data.code == 0) {
+							if(response.data.buyFlag!=null && response.data.buyFlag=="Y"){
+								var content = "您购买的终端和预约的终端不一致，请确认是否需要购买该终端？";
+								$.confirm("信息确认",content,{ 
+									yes:function(){
+									},
+									yesdo:function(){
+										if(checkedReserveNbr!=response.data.couponInfo.reserveNbr){
+											$.each(checkedOfferSpec,function(){
+												var offerSpec = this;
+												var specList = CacheData.getOfferSpecList(prodId);
+												$.each(specList,function(){
+													if(offerSpec.offerSpecId == this.offerSpecId){
+														var $span = $("#li_"+prodId+"_"+this.offerSpecId).find("span"); //定位删除的附属
+														this.isdel = "Y";
+														_delServSpec(prodId,this); //取消订购销售品时
+														order.dealer.removeAttDealer(prodId+"_"+offerSpecId); //删除协销人
+														$("#li_"+prodId+"_"+this.offerSpecId).remove();
+													}
+												});
+											});
+										}
+										checkedReserveNbr= response.data.couponInfo.reserveNbr;
+										coupon.sourceId = checkedReserveNbr;
+										OrderInfo.termReserveFlag = CONST.OL_TYPE_CD.ZDYY;
+										OrderInfo.attach2Coupons.push(coupon);
+										if(response.data.offerSpec.length>0){
+											checkedOfferSpec = response.data.offerSpec;
+											var content = '<form id="promotionForm"><div><table>';
+											var selectStr = "";
+											var optionStr = "";
+											selectStr = selectStr+"<tr><td>可订购促销包: </td><td><select class='inputWidth183px' id="+checkedReserveNbr+"><br>"; 
+											$.each(response.data.offerSpec,function(){
+												var offerSpec = this;
+												optionStr +='<option value="'+this.offerSpecId+'">'+this.offerSpecName+'</option>';
+											});
+											selectStr += optionStr + "</select></td></tr></tbody></table></div>"; 
+											content +=selectStr;
+											var offerSpecId;
+											$.confirm("促销包选择",content,{ 
+												yes:function(){	
+													offerSpecId = $('#'+checkedReserveNbr+' option:selected').val();
+													$(".ZebraDialog").remove();
+									                $(".ZebraDialogOverlay").remove();
+									                AttachOffer.selectAttachOffer(prodId,offerSpecId);
+												},
+												no:function(){
+													
+												}
+											});
+//											$('#promotionForm').bind('formIsValid', function(event, form) {
+//												offerSpecId = $('#'+checkedReserveNbr+' option:selected').val();
+//												$(".ZebraDialog").remove();
+//								                $(".ZebraDialogOverlay").remove();
+//								                AttachOffer.selectAttachOffer(prodId,offerSpecId);
+//											}).ketchup({bindElementByClass:"ZebraDialog_Button1"});
+											
+										}
+									},
+									no:function(){
+									}
+								});
+							}else{
+								if(checkedReserveNbr!=response.data.couponInfo.reserveNbr){
+									$.each(checkedOfferSpec,function(){
+										var offerSpec = this;
+										var specList = CacheData.getOfferSpecList(prodId);
+										$.each(specList,function(){
+											if(offerSpec.offerSpecId == this.offerSpecId){
+												var $span = $("#li_"+prodId+"_"+this.offerSpecId).find("span"); //定位删除的附属
+												this.isdel = "Y";
+												_delServSpec(prodId,this); //取消订购销售品时
+												order.dealer.removeAttDealer(prodId+"_"+offerSpecId); //删除协销人
+												$("#li_"+prodId+"_"+this.offerSpecId).remove();
+											}
+										});
+									});
+								}
+								checkedReserveNbr= response.data.couponInfo.reserveNbr;
+								coupon.sourceId = checkedReserveNbr;
+								OrderInfo.termReserveFlag = CONST.OL_TYPE_CD.ZDYY;
+								OrderInfo.attach2Coupons.push(coupon);
+								if(response.data.offerSpec.length>0){
+									checkedOfferSpec = response.data.offerSpec;
+									var content = '<form id="promotionForm"><div><table>';
+									var selectStr = "";
+									var optionStr = "";
+									selectStr = selectStr+"<tr><td>可订购促销包: </td><td><select class='inputWidth183px' id="+checkedReserveNbr+"><br>"; 
+									$.each(response.data.offerSpec,function(){
+										var offerSpec = this;
+										optionStr +='<option value="'+this.offerSpecId+'">'+this.offerSpecName+'</option>';
+									});
+									selectStr += optionStr + "</select></td></tr></tbody></table></div>"; 
+									content +=selectStr;
+									var offerSpecId;
+									$.confirm("促销包选择",content,{ 
+										yes:function(){
+											offerSpecId = $('#'+checkedReserveNbr+' option:selected').val();
+											$(".ZebraDialog").remove();
+							                $(".ZebraDialogOverlay").remove();
+							                AttachOffer.selectAttachOffer(prodId,offerSpecId);
+										},
+										no:function(){
+											
+										}
+									});
+//									$('#ZebraDialog_Button1').bind('click', function(){
+//										offerSpecId = $('#'+checkedReserveNbr+' option:selected').val();
+//										$(".ZebraDialog").remove();
+//						                $(".ZebraDialogOverlay").remove();
+//						                AttachOffer.selectAttachOffer(prodId,offerSpecId);
+//									});
+									
+								}else {
+									$.alert("信息提示",data.message);
+								}
+							}
+						}else if(response && response.data && response.data.message
+								&& response.data.code == 1){
+							$.each(checkedOfferSpec,function(){
+								var offerSpec = this;
+								var specList = CacheData.getOfferSpecList(prodId);
+								$.each(specList,function(){
+									if(offerSpec.offerSpecId == this.offerSpecId){
+										var $span = $("#li_"+prodId+"_"+this.offerSpecId).find("span"); //定位删除的附属
+										this.isdel = "Y";
+										_delServSpec(prodId,this); //取消订购销售品时
+										order.dealer.removeAttDealer(prodId+"_"+offerSpecId); //删除协销人
+										$("#li_"+prodId+"_"+this.offerSpecId).remove();
+									}
+								});
+							});
+							checkedOfferSpec = [];
+							$.alert("提示", response.data.message);
+							return;
+						}else{
+							$.each(checkedOfferSpec,function(){
+								var offerSpec = this;
+								var specList = CacheData.getOfferSpecList(prodId);
+								$.each(specList,function(){
+									if(offerSpec.offerSpecId == this.offerSpecId){
+										var $span = $("#li_"+prodId+"_"+this.offerSpecId).find("span"); //定位删除的附属
+										this.isdel = "Y";
+										_delServSpec(prodId,this); //取消订购销售品时
+										order.dealer.removeAttDealer(prodId+"_"+offerSpecId); //删除协销人
+										$("#li_"+prodId+"_"+this.offerSpecId).remove();
+									}
+								});
+							});
+							checkedOfferSpec = [];
+							$.alert("提示","<br/>终端预约码校验失败，请稍后重试！");
+							return;
+						}
+					}
+				});
+			}else{
+				$.alert("信息提示",data.message);
+				OrderInfo.attach2Coupons.push(coupon);
+			}
 		}else if(data.statusCd==CONST.MKTRES_STATUS.HAVESALE){
 			$.alert("提示","终端当前状态为已销售为补贴[1115],只有在办理话补合约时可用");
 		}else{
@@ -2554,6 +2791,15 @@ AttachOffer = (function() {
 			var prodClass = order.prodModify.choosedProdInfo.prodClass; //可选包变更
 			if(OrderInfo.actionFlag==2||OrderInfo.actionFlag==21){//套餐变更
 				prodClass = CacheData.getOfferMember(prodId).prodClass;
+				if(prodClass==undefined && offerChange.oldMemberFlag){
+					$.each(OrderInfo.oldoffer,function(){
+						$.each(this.offerMemberInfos,function(){
+							if(this.objInstId==prodId){
+								prodClass = this.prodClass;
+							}
+						});
+					});
+				}
 			}else if(ec.util.isArray(OrderInfo.oldprodInstInfos) && OrderInfo.actionFlag==6){
 				for(var i=0;i<OrderInfo.oldprodInstInfos.length;i++){
 					if(prodId == OrderInfo.oldprodInstInfos[i].prodInstId){
@@ -2611,6 +2857,103 @@ AttachOffer = (function() {
 									alert(response.data);
 								}else {
 									alert("UIM信息查询接口出错,稍后重试");
+								}
+							}
+						}
+					}
+					//老用户uim卡
+					if(OrderInfo.actionFlag==2 && OrderInfo.mktResInstCode!=undefined && OrderInfo.mktResInstCode!=null && OrderInfo.mktResInstCode!="" && OrderInfo.mktResInstCode!="null" && OrderInfo.provinceInfo.reloadFlag=="Y"){
+						var nbrlist = [];
+						var nbrflag = true;
+						var offerId = "-1";
+//						offerId = order.prodModify.choosedProdInfo.prodOfferInstId;
+						$.each(OrderInfo.oldprodInstInfos,function(){
+							if(this.prodInstId==prodId){
+								offerId = this.mainProdOfferInstInfos[0].prodOfferInstId;
+							}
+						});
+						var mktResInstCodesize = order.memberChange.mktResInstCode.split(",");
+						for(var u=0;u<mktResInstCodesize.length;u++){
+							if(mktResInstCodesize[u]!=""&&mktResInstCodesize[u]!=null&&mktResInstCodesize[u]!="null"){
+								var nbrAndUimCode = mktResInstCodesize[u].split("_");
+								var _accNbr = nbrAndUimCode[0];
+								var _uimCode = nbrAndUimCode[1];
+								var oldSubPhoneNumsize = order.memberChange.oldSubPhoneNum.split(",");
+								var uimflag = false;
+								$.each(nbrlist,function(){
+									if(this==_accNbr){
+										nbrflag = false;
+										return false;
+									}else{
+										nbrflag = true;
+									}
+								});
+								if(!nbrflag){
+									$.alert("提示","UIM卡"+_uimCode+"对应的号码重复");
+									return;
+								}
+								for(var n=0;n<oldSubPhoneNumsize.length;n++){
+									if(oldSubPhoneNumsize[n]==_accNbr){
+										nbrlist.push(oldSubPhoneNumsize[n]);
+										uimflag = true;
+										$.each(OrderInfo.oldoffer,function(){
+											$.each(this.offerMemberInfos,function(){
+												if(this.accessNumber==_accNbr){
+//													$("#uim_txt_"+this.objInstId).attr("disabled",true);
+													var uimParam = {
+															"instCode":_uimCode
+													};
+													var response = $.callServiceAsJsonGet(contextPath+"/token/pc/mktRes/qrymktResInstInfo",uimParam);
+													if (response.code==0) {
+														if(response.data.mktResBaseInfo){
+															if(response.data.mktResBaseInfo.statusCd=="1102"){
+																$("#uim_check_btn_"+this.objInstId).attr("disabled",true);
+																$("#uim_release_btn_"+this.objInstId).attr("disabled",false);
+																$("#uim_release_btn_"+this.objInstId).removeClass("disabled");
+																$("#uim_txt_"+this.objInstId).attr("disabled",true);
+																$("#uim_txt_"+this.objInstId).val(_uimCode);
+																var coupon = {
+																		couponUsageTypeCd : "3", //物品使用类型
+																		inOutTypeId : "1",  //出入库类型
+																		inOutReasonId : 0, //出入库原因
+																		saleId : 1, //销售类型
+																		couponId : response.data.mktResBaseInfo.mktResId, //物品ID
+																		couponinfoStatusCd : "A", //物品处理状态
+																		chargeItemCd : "3000", //物品费用项类型
+																		couponNum : response.data.mktResBaseInfo.qty, //物品数量
+																		storeId : response.data.mktResBaseInfo.mktResStoreId, //仓库ID
+																		storeName : "1", //仓库名称
+																		agentId : 1, //供应商ID
+																		apCharge : 0, //物品价格
+																		couponInstanceNumber : _uimCode, //物品实例编码
+																		terminalCode :_uimCode,//前台内部使用的UIM卡号
+																		ruleId : "", //物品规则ID
+																		partyId : OrderInfo.cust.custId, //客户ID
+																		prodId :  this.objInstId, //产品ID
+																		offerId : offerId, //销售品实例ID
+																		state : "ADD", //动作
+																		relaSeq : "" //关联序列	
+																	};
+																OrderInfo.clearProdUim(this.objInstId);
+																OrderInfo.boProd2Tds.push(coupon);
+															}else{
+																$.alert("提示","UIM卡不是预占状态，当前为"+response.data.mktResBaseInfo.statusCd);
+															}
+														}else{
+															$.alert("提示","查询不到UIM信息");
+														}
+													}else if (response.code==-2){
+														$.alertM(response.data);
+													}else {
+														$.alert("提示","UIM信息查询接口出错,稍后重试");
+													}
+												}
+											});
+										})
+									}
+								}
+								if(!uimflag){
+									$.alert("提示","UIM卡"+_uimCode+"未匹配到接入号");
 								}
 							}
 						}
@@ -3442,6 +3785,37 @@ AttachOffer = (function() {
 			$('#serv_ul_'+prodId).hide();
 		}
 	};	
+	
+	//删除附属销售品带出删除功能产品
+	var _delServSpec = function(prodId,offerSpec){
+		$.each(offerSpec.offerRoles,function(){
+			$.each(this.roleObjs,function(){
+				var servSpecId = this.objId;
+				if($("#check_"+prodId+"_"+servSpecId).attr("checked")=="checked"){
+					var spec = CacheData.getServSpec(prodId,servSpecId);
+					if(ec.util.isObj(spec)){
+						spec.isdel = "Y";
+						var $li = $("#li_"+prodId+"_"+servSpecId);
+						$li.removeClass("canshu").addClass("canshu2");
+						$li.find("span").addClass("del"); //定位删除的附属
+						_showHideUim(1,prodId,servSpecId);   //显示或者隐藏
+					}
+				}
+			});
+		});
+	};
+	
+	//订购附属销售品
+	var _addOfferSpecReload = function(prodId,offerSpecId){
+		var newSpec = _setSpec(prodId,offerSpecId);
+		if(newSpec==undefined){ //没有在已开通附属销售列表中
+			return;
+		}
+		var content = CacheData.getOfferProdStr(prodId,newSpec,0);
+		CacheData.setServ2OfferSpec(prodId,newSpec);
+		_checkOfferExcludeDepend(prodId,newSpec);
+	};
+	
 	return {
 		filterAttach2Coupons:_filterAttach2Coupons,
 		addOffer 				: _addOffer,
@@ -3502,9 +3876,12 @@ AttachOffer = (function() {
 		offerSpecDetail         : _offerSpecDetail,
 		show         : _show,
 		btnBack     : _btnBack,
-		openServSpecReload      :_openServSpecReload,
-		delOfferSpecReload      :_delOfferSpecReload,
-		closeServSpecReload    :_closeServSpecReload
-		
+		openServSpecReload      : _openServSpecReload,
+		delOfferSpecReload      : _delOfferSpecReload,
+		closeServSpecReload    	: _closeServSpecReload,
+		excludeAddServ			: _excludeAddServ,
+		changereserveCode		: _changereserveCode,
+		delServSpec             : _delServSpec,
+		addOfferSpecReload:_addOfferSpecReload
 	};
 })();

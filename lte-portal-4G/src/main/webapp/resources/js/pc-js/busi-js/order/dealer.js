@@ -59,6 +59,39 @@ order.dealer = (function() {
 			$tr.append($td);
 			OrderInfo.SEQ.dealerSeq++;
 			$("#dealerTbody").append($tr);
+			if(offerChange.newMemberFlag){
+				$.each(OrderInfo.offerSpec.offerRoles,function(){
+		    		$.each(this.prodInsts,function(){
+		    			var _prodInstId = "'"+this.prodInstId+"'";
+						if(_prodInstId.indexOf("-") != -1){
+							var objInstId = this.prodInstId;
+			    			var $tr = $("<tr id='tr_"+objInstId+"' name='tr_"+objInstId+"'></tr>");
+			    			var $tdType = $('<td></td>');
+			    			var objId = objInstId+"_"+OrderInfo.SEQ.dealerSeq;
+			    			var $select = $('<select id="dealerType_'+objId+'" name="dealerType_'+objInstId+'" class="inputWidth183px" onclick=a=this.value; onchange="order.dealer.changeDealer(this,\'dealerType_'+objInstId+'\',a)"></select>');
+			    			$.each(OrderInfo.order.dealerTypeList,function(){
+			    				$select.append("<option value='"+this.PARTYPRODUCTRELAROLECD+"' >"+this.NAME+"</option>");
+			    			});
+			    			$tdType.append($select);
+							$tdType.append('<label class="f_red">*</label>');
+			    			//$tr.append("<td>"+CONST.EVENT.PROD_NEW+"</td>");
+							var accNbr = "未选号";
+							if(this.accNbr!=undefined && this.accNbr!=""){
+								accNbr = prodInst.accNbr;
+							}
+			    			$tr.append("<td>"+accNbr+"</td>");
+							$tr.append("<td>"+this.objName+"</td>");
+							$tr.append($tdType);
+							var $td = $('<td><input type="text" id="dealer_'+objId+'" staffId="'+OrderInfo.staff.staffId+'" value="'+OrderInfo.staff.staffName+'" class="inputWidth183px" readonly="readonly" ></input></td>');
+							$td.append('<a class="purchase" href="javascript:order.main.queryStaff(0,\'dealer\',\''+objId+'\');">选择</a>');
+							$td.append('<a class="purchase" onclick="order.dealer.addProdDealer(this,'+objInstId+',1)">添加</a><label class="f_red">*</label>');
+							$tr.append($td);
+							OrderInfo.SEQ.dealerSeq++;
+							$("#dealerTbody").append($tr);
+			    		}
+		    		});
+		    	});
+			}
 		}
 		if(OrderInfo.actionFlag==6 ){ //加装需要接入产发展人
 //			if(ec.util.isArray(OrderInfo.oldprodInstInfos)){//纳入老用户的发展人

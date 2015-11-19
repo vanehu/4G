@@ -40,6 +40,7 @@ order.main = (function(){
 	 * 
 	 */
 	var _buildMainView = function(param) {
+		//组装数据
 		if (param == undefined || !param) {
 			param = _getTestParam();
 		}
@@ -100,22 +101,14 @@ order.main = (function(){
 			$("#orderAttrDiv").show();
 			_initOrderAttr();//初始化4G经办人	
 		}
-//		if(OrderInfo.actionFlag==2){ //套餐变更时显示省内订单属性
-//			$("#orderProvAttrDiv").show();
-//		}
+
 		if(param.actionFlag==''){
 			OrderInfo.actionFlag = 1;
 		}
+		
 		if(OrderInfo.actionFlag==1 || OrderInfo.actionFlag==6 || OrderInfo.actionFlag==13 || OrderInfo.actionFlag==14){
-			_initAcct(0);//初始化主卡帐户列表 
-//			if(ec.util.isArray(OrderInfo.oldprodInstInfos)){
-//				for(var i=0;i<OrderInfo.oldprodInstInfos.length;i++){
-//					var prodInfo = OrderInfo.oldprodInstInfos[i];
-//					order.dealer.initDealer(prodInfo);//初始化协销
-//				}
-//			}else{
-				order.dealer.initDealer();//初始化协销	
-//			}
+			order.main.initAcct(0);//初始化主卡帐户列表 
+			order.dealer.initDealer();//初始化协销	
 		}
 		if(OrderInfo.actionFlag==6){//主副卡纳入老用户
 			if(order.memberChange.newMemberFlag){
@@ -129,6 +122,9 @@ order.main = (function(){
 				order.memberChange.fillmemberChange(response,param);
 			}
 		}else{
+			if(order.service.oldMemberFlag){
+				order.main.initAcct(1);//初始化副卡帐户列表
+			}
 			_loadOther(param);//页面加载完再加载其他元素
 		}
 		if(OrderInfo.actionFlag==1){
@@ -156,6 +152,7 @@ order.main = (function(){
 			});
 		}
 		_initUimCode();//初始化uim卡号
+		
 		//判断是否初始化帐户信息
 		if(OrderInfo.acct&&OrderInfo.acct.acctCd!=null&&OrderInfo.acct.acctCd!=""){//新装传帐户id
 			_createAcctWithId();
@@ -199,10 +196,10 @@ order.main = (function(){
 				}
 			}
 		}
+		
 		if(OrderInfo.newOrderNumInfo.newSubPhoneNum!=""){
-			var param = {"phoneNum":"",
-						"prodId":""};
-			var numBtns = $("a[id^='nbr_btn_']");			
+			var param = {"phoneNum":"","prodId":""};
+			var numBtns = $("a[id^='nbr_btn_']");
 			var nums = OrderInfo.newOrderNumInfo.newSubPhoneNum.split(",");
 			var subNums = [];
 			$.each(numBtns,function(){
@@ -234,7 +231,8 @@ order.main = (function(){
 								preStore:resData.datamap.baseInfo.prePrice,
 								minCharge:resData.datamap.baseInfo.pnPrice,
 								idFlag:"1"
-							};
+						};
+						
 						if(param.prodId&&param.prodId!="-1"){
 							phoneParam.memberRoleCd = CONST.MEMBER_ROLE_CD.VICE_CARD;
 						}		
@@ -254,40 +252,58 @@ order.main = (function(){
 			var prodOfferName=OrderInfo.newOrderInfo.prodOfferName;
 			order.service.callBackBuildOrder(result,prodOfferId,prodOfferName);
 		}
+		
 		//主副卡纳入新用户选号
+		var nbrlist = [];
+		var nbrflag = true;
 		if(order.memberChange.newSubPhoneNum!="" && order.memberChange.reloadFlag=="Y"){
 			var newSubPhoneNumsize = order.memberChange.newSubPhoneNum.split(",");
 			for(var n=0;n<newSubPhoneNumsize.length;n++){
 				if(newSubPhoneNumsize[n]!=""&&newSubPhoneNumsize[n]!=null&&newSubPhoneNumsize[n]!="null"){
-					$("#nbr_btn_-"+(n+1)).removeAttr("onclick");
-					$("#nbr_btn_-"+(n+1)).removeClass("selectBoxTwo");
-					$("#nbr_btn_-"+(n+1)).addClass("selectBoxTwoOn");
-					var param = {"phoneNum":newSubPhoneNumsize[n]};
-					var data = order.phoneNumber.queryPhoneNumber(param);
-					if(data.datamap.baseInfo){
-						$("#nbr_btn_-"+(n+1)).html(newSubPhoneNumsize[n]+"<u></u>");
-						var boProdAns={
-								prodId : "-"+(n+1), //从填单页面头部div获取
-								accessNumber : data.datamap.baseInfo.phoneNumber, //接入号
-								anChooseTypeCd : "2", //接入号选择方式,自动生成或手工配号，默认传2
-								anId : data.datamap.baseInfo.phoneNumId, //接入号ID
-								pnLevelId : data.datamap.baseInfo.phoneLevelId,
-								anTypeCd : data.datamap.baseInfo.pnTypeId, //号码类型
-								state : "ADD", //动作	,新装默认ADD	
-								areaId : data.datamap.baseInfo.areaId,
-								areaCode:data.datamap.baseInfo.zoneNumber,
-								memberRoleCd:CONST.MEMBER_ROLE_CD.VICE_CARD,
-								preStore:data.datamap.baseInfo.prePrice,
-								minCharge:data.datamap.baseInfo.pnPrice
-							};
-						OrderInfo.boProdAns.push(boProdAns);
-						order.dealer.changeAccNbr("-"+(n+1),newSubPhoneNumsize[n]);//选号玩要刷新发展人管理里面的号码
+					$.each(nbrlist,function(){
+						if(this==newSubPhoneNumsize[n]){
+							nbrflag = false;
+							return false;
+						}else{
+							nbrflag = true;
+						}
+					});
+					if(nbrflag){
+						nbrlist.push(newSubPhoneNumsize[n]);
+						$("#nbr_btn_-"+(n+1)).removeAttr("onclick");
+						$("#nbr_btn_-"+(n+1)).removeClass("selectBoxTwo");
+						$("#nbr_btn_-"+(n+1)).addClass("selectBoxTwoOn");
+						var param = {"phoneNum":newSubPhoneNumsize[n]};
+						var data = order.phoneNumber.queryPhoneNumber(param);
+						if(data.datamap.baseInfo){
+							$("#nbr_btn_-"+(n+1)).html(newSubPhoneNumsize[n]+"<u></u>");
+							var boProdAns={
+									prodId : "-"+(n+1), //从填单页面头部div获取
+									accessNumber : data.datamap.baseInfo.phoneNumber, //接入号
+									anChooseTypeCd : "2", //接入号选择方式,自动生成或手工配号，默认传2
+									anId : data.datamap.baseInfo.phoneNumId, //接入号ID
+									pnLevelId : data.datamap.baseInfo.phoneLevelId,
+									anTypeCd : data.datamap.baseInfo.pnTypeId, //号码类型
+									state : "ADD", //动作	,新装默认ADD	
+									areaId : data.datamap.baseInfo.areaId,
+									areaCode:data.datamap.baseInfo.zoneNumber,
+									memberRoleCd:CONST.MEMBER_ROLE_CD.VICE_CARD,
+									preStore:data.datamap.baseInfo.prePrice,
+									minCharge:data.datamap.baseInfo.pnPrice
+								};
+							OrderInfo.boProdAns.push(boProdAns);
+							order.dealer.changeAccNbr("-"+(n+1),newSubPhoneNumsize[n]);//选号玩要刷新发展人管理里面的号码
+						}
+					}else{
+						$.alert("提示","号码"+newSubPhoneNumsize[n]+"重复输入");
 					}
 				}
 			}
 		}
 		//主副卡纳入新用户UIM卡
 		if(order.memberChange.mktResInstCode!="" && order.memberChange.reloadFlag=="Y"){
+			nbrlist = [];
+			nbrflag = true;
 			var offerId = "-1";
 			offerId = order.prodModify.choosedProdInfo.prodOfferInstId;
 			$.each(OrderInfo.oldprodInstInfos,function(){
@@ -302,8 +318,23 @@ order.main = (function(){
 					var _accNbr = nbrAndUimCode[0];
 					var _uimCode = nbrAndUimCode[1];
 					var newSubPhoneNumsize = order.memberChange.newSubPhoneNum.split(",");
+					var uimflag = false;
+					$.each(nbrlist,function(){
+						if(this==_accNbr){
+							nbrflag = false;
+							return false;
+						}else{
+							nbrflag = true;
+						}
+					});
+					if(!nbrflag){
+						$.alert("提示","UIM卡"+_uimCode+"对应的号码重复");
+						return;
+					}
 					for(var n=0;n<newSubPhoneNumsize.length;n++){
 						if(newSubPhoneNumsize[n]==_accNbr){
+							nbrlist.push(newSubPhoneNumsize[n]);
+							uimflag = true;
 							$("#uim_txt_-"+(n+1)).attr("disabled",true);
 							var uimParam = {
 									"instCode":_uimCode
@@ -352,7 +383,11 @@ order.main = (function(){
 							}else {
 								$.alert("提示","UIM信息查询接口出错,稍后重试");
 							}
+							break;
 						}
+					}
+					if(!uimflag){
+						$.alert("提示","UIM卡"+_uimCode+"未匹配到接入号");
 					}
 				}
 			}
@@ -806,6 +841,10 @@ order.main = (function(){
 				order.main.spec_parm(obj); //加载产品属性
 			}			
 		});
+		
+		if(order.service.oldMemberFlag){
+			order.main.loadAttachOffer();
+		}
 	};
 	
 	var _paymethodChange = function(obj){
@@ -874,13 +913,13 @@ order.main = (function(){
 	
 	//初始化帐户展示
 	var _initAcct = function(flag) {
-		//新客户自动新建帐户
-//		if(OrderInfo.cust.custId==-1){
-//			_createAcct();
-//		}
-//		else{
+		if((OrderInfo.actionFlag==1 || OrderInfo.actionFlag==13 || OrderInfo.actionFlag==14) && flag==0){
+			//新装默认新建帐户
+			_createAcct();
+			return;
+		}
 			//主副卡成员变更业务不能更改帐户，只展示主卡帐户
-			if(OrderInfo.actionFlag==6){
+			if(OrderInfo.actionFlag==6 || OrderInfo.actionFlag==2){
 				var param = {};
 				if(flag==1){
 					for(var i=0;i<OrderInfo.oldprodInstInfos.length;i++){
@@ -917,44 +956,6 @@ order.main = (function(){
 				//新装默认新建帐户
 				_createAcct();
 			}
-			/*
-			else{
-				//先查询客户下的已有帐户
-				var param = {
-					custId : OrderInfo.cust.custId
-				};				
-				$.callServiceAsJson(contextPath+"/order/account", param, {
-					"done" : function(response){
-						if (response==undefined) {
-							$.alert("提示", "帐户查询失败");
-							return;
-						}
-						if (response.code==0) {
-							var returnMap = response.data;
-							if(returnMap.resultCode==0){
-								if(returnMap.accountInfos && returnMap.accountInfos.length > 0){
-									$.each(returnMap.accountInfos, function(i, accountInfo){
-										$("<option>").text("[已有] "+accountInfo.name+" : "+accountInfo.accountNumber).attr("value",accountInfo.acctId).attr("acctcd",accountInfo.accountNumber).appendTo($("#acctSelect"));
-									});
-								}			
-							}
-							else{
-								$.alert("提示", "客户的帐户定位失败，请联系管理员，若要办理新装业务请稍后再试或者使用新建帐户。错误细节："+returnMap.resultMsg);
-							}
-						} else {
-							if (response.code==-2) {
-								$.alertM(response.data);
-								return;
-							} else {
-								$.alert("提示",response.data);
-							}							
-						}
-						//无论是否查询到旧帐户，最后都新建一个账户
-						_createAcct();
-					}
-				});				
-			}*/
-//		}
 	};
 	
 	//初始化订单标签
@@ -1358,12 +1359,14 @@ order.main = (function(){
 					}
 				}
 				//主副卡暂存单二次加载
-				if(order.memberChange.reloadFlag=="N"||OrderInfo.newOrderInfo.isReloadFlag=="N"){				
+				if(order.memberChange.reloadFlag=="N"||OrderInfo.newOrderInfo.isReloadFlag=="N"||OrderInfo.reloadFlag=="N"){				
 					var custOrderList ="";//order.memberChange.rejson.orderList.custOrderList[0].busiOrder;
 					if(order.memberChange.rejson&&order.memberChange.rejson.orderList&&order.memberChange.rejson.orderList.custOrderList[0].busiOrder){
 						custOrderList = order.memberChange.rejson.orderList.custOrderList[0].busiOrder;
-					}else if(OrderInfo.newOrderInfo.result&&OrderInfo.newOrderInfo.result.orderList.custOrderList[0].busiOrder){
+					}else if(OrderInfo.newOrderInfo.result&&OrderInfo.newOrderInfo.result.orderList){
 						custOrderList = OrderInfo.newOrderInfo.result.orderList.custOrderList[0].busiOrder;
+					}else if(OrderInfo.data&&OrderInfo.data.orderList){
+						custOrderList = OrderInfo.data.orderList.custOrderList[0].busiOrder;
 					}
 					$.each(custOrderList,function(){
 						if(this.boActionType.actionClassCd=="1300" && this.boActionType.boActionTypeCd=="1"){//纳入新成员
@@ -2500,7 +2503,8 @@ order.main = (function(){
 		getOfferMember:_getOfferMember,
 		toChooseUser : _toChooseUser,
 		showChooseUserDialog : _showChooseUserDialog,
-		reload:_reload
+		reload:_reload,
+		initAcct:_initAcct
 	};
 })();
 

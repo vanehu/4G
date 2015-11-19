@@ -104,7 +104,7 @@ offerChange = (function() {
 								+"</span>"
 								+"<input type='text' style='margin-top:10px;' readonly='readonly' class='form-control' id='"+objInstId+"' value='"+newSubPhoneNumsize.length+"'>"
 								+"<span class='input-group-btn'>"
-								+"<button class='btn btn-default' type='button' onclick=order.service.addNum('"+objInstId+"',"+this.maxQty+",'"+offerRole.parentOfferRoleId+"')> + </button>"
+								+"<button class='btn btn-default' type='button' onclick=order.service.addNum('"+objInstId+"',"+max+",'"+offerRole.parentOfferRoleId+"')> + </button>"
 								+"</span> </div>"
 								if(max>0){
 									if(oldSubPhoneNumsize.length==0){
@@ -139,7 +139,8 @@ offerChange = (function() {
 				}
 			});
 			$("#div_content").append(str);
-			$("#vice_modal").modal("show");
+//			$("#vice_modal").modal("show");
+			$("#vice_modal").removeClass("modal fade").addClass("modal show");
 			$("#btn_modal").off("click").on("click",function(){
 				offerChangeConfirm();
 			});
@@ -155,6 +156,17 @@ offerChange = (function() {
 			return;
 		}
 		idnum++;
+		if(addnum==""){
+			var sstr = "<div class='input-group input-group-lg' id='oldnum_"+idnum+"'>"
+			+"<label style='width:170px;'>已有移动电话</label>"
+			+"<span class='input-group-btn' style='width:40px'>"
+			+"</span>"
+			+"<input type='text' style='margin-top:10px;' class='form-control' name='oldphonenum' value='"+addnum+"'>"
+			+"<span class='input-group-btn'>"
+			+"<button class='btn btn-default' type='button' onclick=order.memberChange.delNum(\"oldnum_"+idnum+"\")> - </button>"
+			+"</span> </div>"
+			$("#memberTable").append(sstr);
+		}
 		str += "<div class='input-group input-group-lg' id='oldnum_"+idnum+"'>"
 			+"<label style='width:170px;'>已有移动电话</label>"
 			+"<span class='input-group-btn' style='width:40px'>"
@@ -242,7 +254,8 @@ offerChange = (function() {
 			param.oldoffer = OrderInfo.oldoffer;
 		}
 		order.main.buildMainView(param);
-		$("#vice_modal").modal("hide");
+		//$("#vice_modal").modal("hide");
+		$("#vice_modal").removeClass("modal show").addClass("modal fade");
 	}
 	
 	//填充套餐变更页面
@@ -488,36 +501,53 @@ offerChange = (function() {
 		}
 		order.main.initTounch();
 		//新用户选号
+		var nbrlist = [];
+		var nbrflag = true;
 		if(order.memberChange.newSubPhoneNum!="" && OrderInfo.provinceInfo.reloadFlag=="Y"){
 			var newSubPhoneNumsize = order.memberChange.newSubPhoneNum.split(",");
 			for(var n=0;n<newSubPhoneNumsize.length;n++){
 				if(newSubPhoneNumsize[n]!=""&&newSubPhoneNumsize[n]!=null&&newSubPhoneNumsize[n]!="null"){
-					var param = {"phoneNum":newSubPhoneNumsize[n]};
-					var data = order.phoneNumber.queryPhoneNumber(param);
-					if(data.datamap.baseInfo){
-						$("#nbr_btn_-"+(n+1)).val(newSubPhoneNumsize[n]);
-						var boProdAns={
-								prodId : "-"+(n+1), //从填单页面头部div获取
-								accessNumber : data.datamap.baseInfo.phoneNumber, //接入号
-								anChooseTypeCd : "2", //接入号选择方式,自动生成或手工配号，默认传2
-								anId : data.datamap.baseInfo.phoneNumId, //接入号ID
-								pnLevelId : data.datamap.baseInfo.phoneLevelId,
-								anTypeCd : data.datamap.baseInfo.pnTypeId, //号码类型
-								state : "ADD", //动作	,新装默认ADD	
-								areaId : data.datamap.baseInfo.areaId,
-								areaCode:data.datamap.baseInfo.zoneNumber,
-								memberRoleCd:CONST.MEMBER_ROLE_CD.VICE_CARD,
-								preStore:data.datamap.baseInfo.prePrice,
-								minCharge:data.datamap.baseInfo.pnPrice
-							};
-						OrderInfo.boProdAns.push(boProdAns);
-						order.dealer.changeAccNbr("-"+(n+1),newSubPhoneNumsize[n]);//选号玩要刷新发展人管理里面的号码
+					$.each(nbrlist,function(){
+						if(this==newSubPhoneNumsize[n]){
+							nbrflag = false;
+							return false;
+						}else{
+							nbrflag = true;
+						}
+					});
+					if(nbrflag){
+						nbrlist.push(newSubPhoneNumsize[n]);
+						var param = {"phoneNum":newSubPhoneNumsize[n]};
+						var data = order.phoneNumber.queryPhoneNumber(param);
+						if(data.datamap.baseInfo){
+							$("#nbr_btn_-"+(n+1)).val(newSubPhoneNumsize[n]);
+							var boProdAns={
+									prodId : "-"+(n+1), //从填单页面头部div获取
+									accessNumber : data.datamap.baseInfo.phoneNumber, //接入号
+									anChooseTypeCd : "2", //接入号选择方式,自动生成或手工配号，默认传2
+									anId : data.datamap.baseInfo.phoneNumId, //接入号ID
+									pnLevelId : data.datamap.baseInfo.phoneLevelId,
+									anTypeCd : data.datamap.baseInfo.pnTypeId, //号码类型
+									state : "ADD", //动作	,新装默认ADD	
+									areaId : data.datamap.baseInfo.areaId,
+									areaCode:data.datamap.baseInfo.zoneNumber,
+									memberRoleCd:CONST.MEMBER_ROLE_CD.VICE_CARD,
+									preStore:data.datamap.baseInfo.prePrice,
+									minCharge:data.datamap.baseInfo.pnPrice
+								};
+							OrderInfo.boProdAns.push(boProdAns);
+							order.dealer.changeAccNbr("-"+(n+1),newSubPhoneNumsize[n]);//选号玩要刷新发展人管理里面的号码
+						}
+					}else{
+						$.alert("提示","号码"+newSubPhoneNumsize[n]+"重复输入");
 					}
 				}
 			}
 		}
 		//新用户uim卡
 		if(OrderInfo.mktResInstCode!=undefined && OrderInfo.mktResInstCode!=null && OrderInfo.mktResInstCode!="" && OrderInfo.mktResInstCode!="null" && OrderInfo.provinceInfo.reloadFlag=="Y"){
+			nbrlist = [];
+			nbrflag = true;
 			var offerId = "-1";
 //			offerId = order.prodModify.choosedProdInfo.prodOfferInstId;
 //			$.each(OrderInfo.oldprodInstInfos,function(){
@@ -532,8 +562,23 @@ offerChange = (function() {
 					var _accNbr = nbrAndUimCode[0];
 					var _uimCode = nbrAndUimCode[1];
 					var newSubPhoneNumsize = order.memberChange.newSubPhoneNum.split(",");
+					var uimflag = false;
+					$.each(nbrlist,function(){
+						if(this==_accNbr){
+							nbrflag = false;
+							return false;
+						}else{
+							nbrflag = true;
+						}
+					});
+					if(!nbrflag){
+						$.alert("提示","UIM卡"+_uimCode+"对应的号码重复");
+						return;
+					}
 					for(var n=0;n<newSubPhoneNumsize.length;n++){
 						if(newSubPhoneNumsize[n]==_accNbr){
+							nbrlist.push(newSubPhoneNumsize[n]);
+							uimflag = true;
 //							$("#uim_txt_-"+(n+1)).attr("disabled",true);
 							var uimParam = {
 									"instCode":_uimCode
@@ -583,6 +628,12 @@ offerChange = (function() {
 								$.alert("提示","UIM信息查询接口出错,稍后重试");
 							}
 						}
+//						else{
+//							uimflag = false;
+//						}
+					}
+					if(!uimflag){
+						$.alert("提示","UIM卡"+_uimCode+"未匹配到接入号");
 					}
 				}
 			}
@@ -840,14 +891,17 @@ offerChange = (function() {
 			var offerRole = this;
 			if(this.prodInsts!=undefined){
 				$.each(this.prodInsts,function(){
-					var ooRoles = {
-						objId : this.objId, //业务规格ID
-						objInstId : this.prodInstId, //业务对象实例ID,新装默认-1
-						objType : this.objType, // 业务对象类型
-						offerRoleId : offerRole.offerRoleId, //销售品角色ID
-						state : "ADD" //动作
-					};
-					busiOrder.data.ooRoles.push(ooRoles);
+					var prodInstId = '"'+this.prodInstId+'"';
+					if(prodInstId.indexOf("-")==-1){
+						var ooRoles = {
+							objId : this.objId, //业务规格ID
+							objInstId : this.prodInstId, //业务对象实例ID,新装默认-1
+							objType : this.objType, // 业务对象类型
+							offerRoleId : offerRole.offerRoleId, //销售品角色ID
+							state : "ADD" //动作
+						};
+						busiOrder.data.ooRoles.push(ooRoles);
+					}
 				});
 			}
 		});
@@ -943,17 +997,20 @@ offerChange = (function() {
 					if(offerRole.prodInsts!=undefined && offerRole.prodInsts.length>0){
 						for ( var j = 0; j < offerRole.prodInsts.length; j++) {
 							var prodInst = offerRole.prodInsts[j];
-							var ooRole = {
-								objId : prodInst.objId,
-								objInstId : prodInst.prodInstId,
-								objType : prodInst.objType,
-								offerMemberId : OrderInfo.SEQ.offerMemberSeq--,
-								offerRoleId : prodInst.offerRoleId,
-								state : "ADD"
-							};
-							busiOrder.data.ooRoles.push(ooRole);
-							busiOrders.push(SoOrder.createProd(prodInst.prodInstId,prodInst.objId));	
-						}		
+							var instid = '"'+prodInst.prodInstId+'"';
+							if(prodInst.memberRoleCd=="401" && instid.indexOf("-")!=-1){
+								var ooRole = {
+									objId : prodInst.objId,
+									objInstId : prodInst.prodInstId,
+									objType : prodInst.objType,
+									offerMemberId : OrderInfo.SEQ.offerMemberSeq--,
+									offerRoleId : prodInst.offerRoleId,
+									state : "ADD"
+								};
+								busiOrder.data.ooRoles.push(ooRole);
+								busiOrders.push(SoOrder.createProd(prodInst.prodInstId,prodInst.objId));	
+							}
+						}
 					}
 				} 
 			} 
