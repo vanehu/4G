@@ -55,7 +55,7 @@ order.cust = (function(){
 						OrderInfo.boCusts.prodId=-1;
 						OrderInfo.boCusts.partyId=_choosedCustInfo.custId;
 						OrderInfo.boCusts.partyProductRelaRoleCd="0";
-						OrderInfo.boCusts.o.boCusts.norTaxPayer=_choosedCustInfo.norTaxPayer;
+						OrderInfo.boCusts.norTaxPayer=_choosedCustInfo.norTaxPayer;
 						
 						OrderInfo.cust = _choosedCustInfo;
 						_custAuthCallBack(response);
