@@ -70,6 +70,7 @@ query.queryOCTN = (function(){
 				    "endDate": $("#p_endDt").val(),
 				    "mainAccNbr":p_qryNumber1,
 				    "virtualAccNbr":p_qryNumber2,
+					"orderState":$("#p_status").val(),
 					"nowPage":curPage,
 					"pageSize":5
 		};
