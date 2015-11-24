@@ -643,6 +643,7 @@ public class StaffBmoImpl implements StaffBmo {
 		Map<String,Object> params=new HashMap<String,Object>();
 		params.put("staffCode", sessionStaff.getStaffCode());
 		params.put("commonRegionId", sessionStaff.getAreaId());
+		params.put("areaId", sessionStaff.getAreaId());
 		params.put("loginUsedTime", time);
 		params.put("wanIp", sessionStaff.getIp());
 		params.put("macAddr", sessionStaff.getMacStr());
