@@ -901,8 +901,13 @@ offerChange = (function() {
 									newObject.accessNumber = offerMember.accessNumber;
 									newObject.memberRoleCd = offerMember.roleCd;
 									offerRole.prodInsts.push(newObject);
+									roleObj.maxQty == 2;
 									if(offerRole.prodInsts.length>roleObj.maxQty){
-										$.alert("规则限制","新套餐【"+offerRole.offerRoleName+"】角色最多可以办理数量为"+roleObj.maxQty+",而旧套餐数量大于"+roleObj.maxQty);
+										var offerRoleshowName = getMemberRoleNameByCd(offerRole.memberRoleCd);
+										if(offerRoleshowName!=null)
+											$.alert("规则限制","新套餐【"+offerRoleshowName+"】角色最多可以办理数量为"+roleObj.maxQty+",而旧套餐数量大于"+roleObj.maxQty);
+										else
+											$.alert("规则限制","新套餐【"+offerRole.offerRoleName+"】角色最多可以办理数量为"+roleObj.maxQty+",而旧套餐数量大于"+roleObj.maxQty);
 										return false;
 									}
 									break;
@@ -913,13 +918,31 @@ offerChange = (function() {
 						}
 					}
 					if(flag){
-						$.alert("规则限制","旧套餐【"+offerMember.roleName+"】角色在新套餐中不存在，无法变更");
+						if(OrderInfo.offerSpec.offerRoles.length==1){
+							$.alert("规则限制","原套餐为主副卡套餐，无法变更为单产品套餐，请进行主副卡成员变更!");
+						}else{
+							var offerRoleshowName = getMemberRoleNameByCd(offerMember.roleCd);
+							if(offerRoleshowName!=null)
+								$.alert("规则限制","旧套餐【"+offerRoleshowName+"】角色在新套餐中不存在，无法变更!");
+							else
+								$.alert("规则限制","旧套餐【"+offerMember.roleName+"】角色在新套餐中不存在，无法变更!");						
+						}
 						return false;
 					}
 				}
 			}
 		}
 		return true;
+	};
+	
+	//根据成员角色ID获取对应名称，redmine51273_20151118_tangchen
+	var getMemberRoleNameByCd = function(roleCd){
+		memberRoleList = CONST.MEMBER_ROLE_LIST;
+		for (var k = 0; k < memberRoleList.length; k++) {
+			if(memberRoleList[k].MEMBER_ROLE_CD ==roleCd)
+				return memberRoleList[k].MEMBER_ROLE_NAME;
+		}
+		return null;
 	};
 	
 	//获取单产品变更自动匹配的角色

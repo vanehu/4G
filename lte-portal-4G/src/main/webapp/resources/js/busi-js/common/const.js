@@ -254,10 +254,39 @@ CONST = (function(){
 	//销售品角色类型
 	var _MEMBER_ROLE_CD = {
 		COMMON_MEMBER : 1,//普通成员
-		MAIN_CARD : 400, //主卡
-		VICE_CARD : 401, //副卡
+		MAIN_CARD : 400, //天翼主卡
+		VICE_CARD : 401, //天翼副卡
+		BROADBAND_MAIN_CARD : 500, //基础无线宽带
+		BROADBAND_VICE_CARD : 501, //加装无线宽带
 		CONTENT : 99991  //内容产品
 	};
+	//销售品角色类型
+	var _MEMBER_ROLE_LIST = [
+	    {
+	    	MEMBER_ROLE_CD : 1,
+	    	MEMBER_ROLE_NAME : "普通成员"
+	    },{
+	    	MEMBER_ROLE_CD : 400,
+	    	MEMBER_ROLE_NAME : "天翼主卡"
+	    },{	    	
+	    	MEMBER_ROLE_CD : 401,
+	    	MEMBER_ROLE_NAME : "天翼副卡"
+	    },{	    	
+	    	MEMBER_ROLE_CD : 500,
+	    	MEMBER_ROLE_NAME : "天翼宽带主卡"
+	    },{	    	
+	    	MEMBER_ROLE_CD : 501,
+	    	MEMBER_ROLE_NAME : "天翼宽带副卡"
+	    },{	    
+	    	MEMBER_ROLE_CD : 600,
+	    	MEMBER_ROLE_NAME : "基础套餐级可选包"
+	    },{	    	
+	    	MEMBER_ROLE_CD : 601,
+	    	MEMBER_ROLE_NAME : "加装套餐级可选包"
+	    },{	   
+	    	MEMBER_ROLE_CD : 99991,
+	    	MEMBER_ROLE_NAME : "内容产品"
+	}];
 	
 	//结果码
 	var _CODE = {
@@ -415,6 +444,7 @@ CONST = (function(){
 		PROD_STATUS_CD 		: _PROD_STATUS_CD,
 		BUSI_ORDER_ATTR 	: _BUSI_ORDER_ATTR,
 		MEMBER_ROLE_CD 		: _MEMBER_ROLE_CD,
+		MEMBER_ROLE_LIST    : _MEMBER_ROLE_LIST,
 		PROD_SPEC			: _PROD_SPEC,
 		PROD_ATTR			: _PROD_ATTR,
 		ACCT_ATTR      : _ACCT_ATTR,
