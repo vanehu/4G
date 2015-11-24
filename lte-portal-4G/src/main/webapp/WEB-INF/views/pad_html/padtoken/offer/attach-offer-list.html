@@ -5,7 +5,7 @@
 
 <ul id="ul_${prodId}_search" class="optionallist noorder ui-listview" style="height:413px" data-inset="false" data-role="listview">
 	<div style="margin-left: 5px;"> 
-		共${items?size+servItems?size}条查询结果[<a href="javascript:void(0);" onclick="AttachOffer.dbClickAttachType(${prodId});">返回</a>]
+		共${items?size+servItems?size}条查询结果&nbsp;[<a href="javascript:void(0);" onclick="AttachOffer.dbClickAttachType(${prodId});">返回</a>]
 	</div>
 	<#if items?? &&(items?size>0)>
 		<#assign flag = false />
@@ -23,11 +23,11 @@
 				<#else>
 				<li id="li_${prodId}_${item.offerSpecId}" class="ui-li-static ui-body-inherit">
 			</#if> 
-				<div class="block" style="margin-left: 5px;">
-					 ${item_index+1}:${item.offerSpecName}
+				<div class="block" style="background: #fafafa none repeat scroll 0 0;border: 1px solid #5a9203;display: block;height: 60px; margin-left: 5px;">
+					 &nbsp;${item.offerSpecName}
 					<span></span>
-					<span>
-						<a class="abtn03 icon-buy ui-link" href="javascript:AttachOffer.addSearchOfferSpec('${prodId}','${item.offerSpecId}')">[选择]</a>
+					<span style="bottom: 10px;position: absolute;right: 10px;">
+						<a class="abtn03 icon-buy ui-link" href="javascript:AttachOffer.addSearchOfferSpec('${prodId}','${item.offerSpecId}')" style="color: #5a9203;">[选择]</a>
 					</span>
 				</div>
 			</li>
