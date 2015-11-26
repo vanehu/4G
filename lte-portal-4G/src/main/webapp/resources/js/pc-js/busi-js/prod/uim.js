@@ -356,11 +356,36 @@ prod.uim = (function() {
 		return flag;	
 	};
 	
+	var _getCardType=function(mktResCd,mktResId,instCode){
+		var param = {
+			"mktResCd": mktResCd,
+			"mktResId": mktResId,
+			"instCode": instCode
+		};
+		var url = contextPath + "/mktRes/uim/getResCardType";
+		$.ecOverlay("<strong>获取获取卡类型中,请稍等...</strong>");
+		var response = $.callServiceAsJson(url, param);
+		$.unecOverlay();
+		if (response.code == 0) {
+			var result = response.data;
+			if (ec.util.isObj(result) && ec.util.isObj(result[0].uimTypeFlag)) {
+				return result[0].uimTypeFlag;
+			} else {
+				return "";
+			}
+		} else if (response.code == -2) {
+			$.alertM(response.data);
+			return "";
+		} else {
+			return "";
+		}
+	};
 	return {
 		getMktResCd:getMktResCd,
 		checkUim				: _checkUim,
 		releaseUim 				: _releaseUim,
 		setProdUim				: _setProdUim,
+		getCardType				: _getCardType,
 		setOldUim				: _setOldUim
 	};
 })();

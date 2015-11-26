@@ -972,9 +972,7 @@ order.memberChange = function(){
 				}
 		}
 		
-		if(ruleflag && OrderInfo.actionFlag!=2 && OrderInfo.actionFlag!=1){
-			addOldSubmit();
-		}else{
+		if (ruleflag) {
 			return true;
 		}
 	};
