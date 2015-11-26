@@ -66,6 +66,7 @@ public class OfferMainController extends BaseController {
 	@RequestMapping(value = "/changePackageAndService", method = RequestMethod.GET)
     public String changePackageAndService(@RequestParam Map<String, Object> params, HttpServletRequest request,HttpServletResponse response,HttpSession httpSession,Model model,HttpSession session) throws AuthorityException {
 		try{
+			String accessToken=(String) params.get("accessToken");
 			
 			SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);
 			
@@ -153,6 +154,8 @@ public class OfferMainController extends BaseController {
 			Map<String, Object> staffMap=APPModelController.getStaffInfo(request);
 			
 			if(staffMap!=null && staffMap.size()!=0){
+				staffMap.put("soAreaAllName", "");
+				staffMap.put("areaAllName", "");
 				model.addAttribute("staffInfo_", JacksonUtil.objectToJson(staffMap));
 			}
 			
@@ -205,14 +208,14 @@ public class OfferMainController extends BaseController {
 			String method="";
 			//mainProdOfferId="ccc";
 			if(reloadFlag.equals("N")){
-			    method="/token/app/order/prodoffer/offerchange/prepare";
+			    method="/token/app/order/prodoffer/offerchange/prepare?accessToken="+accessToken;
 			}
 			else{
 				if(mainProdOfferId!=null && mainProdOfferId.length()>0){
-					 method="/token/app/order/prodoffer/offerchange/prepare";
+					 method="/token/app/order/prodoffer/offerchange/prepare?accessToken="+accessToken;
 				}
 				else{
-					 method="/token/app/order/prodoffer/offerchangesub/prepare";
+					 method="/token/app/order/prodoffer/offerchangesub/prepare?accessToken="+accessToken;
 				}
 			}
 			

@@ -65,6 +65,7 @@ public class MemberChangeMainContoller extends BaseController{
 	@RequestMapping(value = "/memberChangeService", method = RequestMethod.GET)
     public String changePackageAndService(@RequestParam Map<String, Object> params, HttpServletRequest request,HttpServletResponse response,HttpSession httpSession,Model model,HttpSession session) throws AuthorityException {
 		try{
+			String accessToken=(String) params.get("accessToken");
 			
 			SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);
 			
@@ -141,6 +142,8 @@ public class MemberChangeMainContoller extends BaseController{
 			Map<String, Object> staffMap=APPModelController.getStaffInfo(request);
 			
 			if(staffMap!=null && staffMap.size()!=0){
+				staffMap.put("soAreaAllName", "");
+				staffMap.put("areaAllName", "");
 				model.addAttribute("staffInfo_", JacksonUtil.objectToJson(staffMap));
 			}
 			
@@ -190,7 +193,7 @@ public class MemberChangeMainContoller extends BaseController{
 				return "/common/error";
 			}
 			
-			String method="/token/app/order/prodoffer/memberchange/prepare";
+			String method="/token/app/order/prodoffer/memberchange/prepare?accessToken="+accessToken;
 			
 			Map<String, Object> jumpParams=new HashMap<String, Object>();
 			jumpParams.put("method", method);

@@ -76,6 +76,8 @@ public class TestController extends BaseController {
 			String privateKey = String.valueOf(paramMap.get("privateKey"));
 			String mktResInstCode = String.valueOf(paramMap.get("uimCode"));
 			String acctNumber=String.valueOf(paramMap.get("acctNumber"));
+			String terminalCode=String.valueOf(paramMap.get("terminalCode"));
+			String DevelopmentCode=String.valueOf(paramMap.get("DevelopmentCode"));
 			
 			Map<String,Object> map = new HashMap<String,Object>();
 			map.put("staffCode", staffCode);
@@ -102,9 +104,9 @@ public class TestController extends BaseController {
 			String headPath = (new StringBuilder(String.valueOf(request.getScheme()))).append("://").append(request.getServerName()).append(":").append(request.getServerPort()).append(path).toString();	
 			String url =  headPath + "/accessToken";
 			
-//			String url =  "http://10.128.103.10:8100/ltePortal" + "/accessToken";
+			//String url =  "http://10.128.97.16:8101/provPortal" + "/accessToken";
 //			String url =  "https://crm.189.cn/ltePortal" + "/accessToken";
-//			String url =  "http://10.128.97.35:8102/provPortal" + "/accessToken";
+		//	String url =  "http://10.128.98.136:8101/provPortal" + "/accessToken";
 //			String url =  "http://10.128.98.136:8102/provPortal" + "/accessToken";
 			
 			log.error("测试地址:"+url);
@@ -159,6 +161,8 @@ public class TestController extends BaseController {
 				map.put("isFee", isFee);
 				map.put("mktResInstCode", mktResInstCode);
 				map.put("acctNumber", acctNumber);
+				map.put("terminalCode", terminalCode);
+				map.put("DevelopmentCode", DevelopmentCode);
 				log.error("模拟单点页面参数:"+JacksonUtil.objectToJson(map));
 				jmParams = AESUtils.encryptToString(JacksonUtil.objectToJson(map), privateKey);						
 
@@ -172,6 +176,7 @@ public class TestController extends BaseController {
 				} else {
 					reMap.put("toUrl", "1000");
 				}	
+				//reMap.put("toUrl", "http://10.128.97.16:8101/provPortal");
 				log.error("模拟单点页面加密参数:"+JacksonUtil.objectToJson(reMap));
 				jr = successed(reMap, 0);
 			}else{						
@@ -258,5 +263,43 @@ public class TestController extends BaseController {
 			}
 		}
 		return tmp.toString();
+	}
+	
+	
+	@RequestMapping("/decryptEncryption")
+	@ResponseBody
+	public JsonResponse decryptEncryption(HttpServletRequest request,HttpServletResponse response,@RequestParam Map<String, Object> paramMap, Model model) {		
+		JsonResponse jr = new JsonResponse();
+		try{		
+			String content = String.valueOf(paramMap.get("content"));		
+			String pwd = String.valueOf(paramMap.get("pwd"));		
+			String type = String.valueOf(paramMap.get("type"));		
+			
+			Map<String,Object> reMap = new HashMap<String,Object>();
+			
+			if(content==null || "".equals(content) || pwd==null || "".equals(pwd) || type==null || "".equals(type)){
+				jr = failed("缺少必要参数", 1);
+				return jr;
+			}
+			
+			if("1".equals(type)){
+				//1为加密
+				String encryptStr = AESUtils.encryptToString(content, pwd);
+				
+				reMap.put("outResult", encryptStr);
+			}else{
+				//2为解密
+				String result = AESUtils.decryptToString(content, pwd);
+				reMap.put("outResult", result);
+			}
+			
+			jr = successed(reMap, 0);
+			
+		}catch(Exception ex){
+			log.error("参数加解密异常",ex);	
+			jr = failed(ex, 1);				
+			return jr;
+		}
+		return jr;		
 	}
 }

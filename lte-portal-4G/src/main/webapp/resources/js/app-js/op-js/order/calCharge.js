@@ -1201,9 +1201,10 @@ order.calcharge = (function(){
 				$.ecOverlay("<strong>正在处理中,请稍等会儿....</strong>");
 			},
 			"always":function(){
-				$.unecOverlay();
+				//$.unecOverlay();
 			},
 			"done" : function(response){
+				$.unecOverlay();
 				if(response.code==0){								
 					var data = $.parseJSON(response.data) ;
 					if(data.code==0){

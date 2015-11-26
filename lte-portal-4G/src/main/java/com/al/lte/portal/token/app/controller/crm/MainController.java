@@ -68,6 +68,8 @@ public class MainController extends BaseController {
 	@RequestMapping(value = "/changePackageAndService", method = RequestMethod.GET)
     public String changePackageAndService(@RequestParam Map<String, Object> params, HttpServletRequest request,HttpServletResponse response,HttpSession httpSession,Model model,HttpSession session) throws AuthorityException {
 		try{
+			String accessToken=(String) params.get("accessToken");
+			
 			SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);
 			
 			String commonParamKey = MySimulateData.getInstance().getParam((String) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_DATASOURCE_KEY),"common.param.key");//公共参数加密KEY
@@ -115,6 +117,8 @@ public class MainController extends BaseController {
 			Map<String, Object> staffMap=APPModelController.getStaffInfo(request);
 			
 			if(staffMap!=null && staffMap.size()!=0){
+				staffMap.put("soAreaAllName", "");
+				staffMap.put("areaAllName", "");
 				model.addAttribute("staffInfo_", JacksonUtil.objectToJson(staffMap));
 			}
 			
@@ -178,7 +182,7 @@ public class MainController extends BaseController {
 		    model.addAttribute("prodInfo_", JacksonUtil.objectToJson(prodInfo));
 			
 			//传值跳转地址
-			String method="/token/app/order/attachoffer/prepare";//按各自功能填入
+			String method="/token/app/order/attachoffer/prepare?accessToken="+accessToken;//按各自功能填入
 			
 			Map<String, Object> jumpParams=new HashMap<String, Object>();
 			jumpParams.put("method", method);
@@ -533,6 +537,8 @@ public class MainController extends BaseController {
 	@RequestMapping(value = "/prodoffer/prepare", method = RequestMethod.GET)
     public String prodOfferPrepare(@RequestParam Map<String, Object> params, HttpServletRequest request,HttpServletResponse response,HttpSession httpSession,Model model,HttpSession session) throws AuthorityException {
 		try{
+			String accessToken=(String) params.get("accessToken");
+			
 			SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);
 			
 			String commonParamKey = MySimulateData.getInstance().getParam((String) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_DATASOURCE_KEY),"common.param.key");//公共参数加密KEY		
@@ -690,6 +696,8 @@ public class MainController extends BaseController {
 			//进行staff获取   staffInfo_ 参数
 			Map<String, Object> staffMap=APPModelController.getStaffInfo(request);			
 			if(staffMap!=null && staffMap.size()!=0){
+				staffMap.put("soAreaAllName", "");
+				staffMap.put("areaAllName", "");
 				model.addAttribute("staffInfo_", JacksonUtil.objectToJson(staffMap));
 			}	
 			
@@ -697,7 +705,7 @@ public class MainController extends BaseController {
 			model.addAttribute("acctCd", acctCd);
 			
 			//传值跳转地址
-			String method="/token/app/order/prodoffer/prepare";//新装地址			
+			String method="/token/app/order/prodoffer/prepare?accessToken="+accessToken;//新装地址			
 			//String method="/token/app/order/reload/prodoffer/prepare";//新装二次加载地址			
 		
 			//其他必要参数（非公共）
@@ -779,7 +787,7 @@ public class MainController extends BaseController {
 					model.addAttribute("errorMsg", String.valueOf(resultMap.get("resultMsg")));
 					return "/common/error";
 				}				
-				method = "/token/app/order/reload/prodoffer/prepare";
+				method = "/token/app/order/reload/prodoffer/prepare?accessToken="+accessToken;
 			}
 			model.addAttribute("reloadOrderInfo_", JsonUtil.toString(result));
 			
