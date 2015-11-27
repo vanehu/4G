@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.al.lte.portal.common.AESUtils;
 import com.al.lte.portal.common.Config;
 import com.al.lte.portal.common.Const;
+import com.al.lte.portal.common.DelCookie;
 
 /**
  * Servlet implementation class ModePADServlet
@@ -55,6 +56,8 @@ public class ModePADServlet extends HttpServlet {
 			}
 			
 		}
+		//update by huangjj3 清除客户端4层生成的cookie
+		DelCookie.delCookie(response, "LTEA10", null, "/",  request);
 		String jmAccessToken = AESUtils.decryptToString(accessToken, Const.TOKEN_KEY);
 		String[] accessTokenStr = jmAccessToken.split("#");
 		
