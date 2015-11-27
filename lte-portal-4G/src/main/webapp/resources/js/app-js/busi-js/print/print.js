@@ -178,6 +178,7 @@ common.print = (function($){
 				if (response.code == 0) {
 					$("#order-confirm").show();
 					$("#order-print").hide();
+					$("#printVoucherA").attr("disabled","disabled");//回执保存成功后  回执按钮改为灰色不可操作
 					OrderInfo.order.step=3;
 				}else if (response.code == -2) {
 					$.alertM(response.data);

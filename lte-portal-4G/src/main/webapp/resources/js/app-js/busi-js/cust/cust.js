@@ -46,11 +46,6 @@ cust = (function(){
 			OrderInfo.boPartyContactInfo.contactName = $.trim($('#contactName').val());//联系人
 			OrderInfo.boPartyContactInfo.mobilePhone = $.trim($('#mobilePhone').val());//联系人手机
 			OrderInfo.boPartyContactInfo.contactAddress = $.trim($('#contactAddress').val());//联系人地址
-		}else{
-			if($.trim($('#mobilePhone').val())!=0 || $.trim($('#contactAddress').val())!=0){
-				$.alert("错误","请输入联系人！");
-				return;
-			}
 		}
 		if(OrderInfo.cust.identityCd==1){
 			OrderInfo.cust.identityNum = $('#cmCustIdCard').val();//证件号码
