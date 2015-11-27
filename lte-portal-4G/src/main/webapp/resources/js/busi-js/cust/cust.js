@@ -740,6 +740,23 @@ order.cust = (function(){
 			},
 			"always":function(){
 				$.unecOverlay();
+				$("#phoneNumListtbody tr td[name ='pord_uim_type_query']").each(function(){
+					var param ={
+							prodInstId	: $(this).attr("prodInstId"),
+							areaId		: $(this).attr("areaId"),
+							acctNbr		: $(this).attr("acctNbr")
+						};
+						var terminalInfo = query.prod.getTerminalInfo2(param);
+						if(terminalInfo!=null&&terminalInfo.is4GCard!=null&&terminalInfo.is4GCard!=""){
+							if(terminalInfo.is4GCard =="Y"){
+								$(this).text("4G卡");
+							}else{
+								$(this).text("3G卡");
+							}
+						}else{
+							$(this).text("查询失败");
+						}
+				});
 			},
 			"done" : function(response){
 				if(!response){

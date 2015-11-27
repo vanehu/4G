@@ -16,10 +16,11 @@
              	 <td width="2%">&nbsp;</td>
                  <td width="2%">&nbsp;</td>
                  <td width="15%">产品号码</td>
-                 <td width="30%">套餐名称</td>
+                 <td width="26%">套餐名称</td>
                  <td width="10%">产品规格</td>
-                 <td width="10%">状态</td>
-                 <td width="10%">付费类型</td>
+                 <td width="8%">状态</td>
+                 <td width="8%">付费类型</td>
+                 <td width="8%">卡类型</td>
                  <td style="text-align:center" width="10%">查询</td>
              </tr>                                                    
          </thead>
@@ -46,6 +47,7 @@
 				<td>${item.productName}</td>
 				<td>${item.prodStateName}${item.stopRecordName}</td>
 				<td>${item.feeType.feeTypeName}</td>
+				<td name = "pord_uim_type_query" areaId="${item.areaId}"  prodInstId="${item.prodInstId}" acctNbr="${item.accNbr}"></td>
 				<td style="text-align:center"><a class="purchase" onclick="product.query.queryProdDetail(${item.prodInstId},${item.accNbr},${item.areaId})">详情</a></td>
 				<td style="display:none;">${item.prodInstId}</td>
 				<td style="display:none;">${item.prodStateCd}</td>

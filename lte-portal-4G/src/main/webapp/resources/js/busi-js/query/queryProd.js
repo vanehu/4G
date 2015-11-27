@@ -84,6 +84,28 @@ query.prod = (function() {
 	};
 	
 	/**
+	 * 产品下终端实例数据查询2
+	 * @param  prodId 产品实例ID
+	 * @param  accNbr 产品接入号
+	 * @param  areaId  受理地区
+	 * @callBackFun 回调函数
+	 * @service/intf.soService/queryOfferCouponById
+	 */
+	var _getTerminalInfo2 = function(prod){
+		var params = {
+			prodId: prod.prodInstId,
+			areaId: prod.areaId,
+			acctNbr: prod.acctNbr
+		};
+		var response = $.callServiceAsJson(contextPath+"/order/queryTerminalInfo", params, {});
+		if(response.code == 0){
+			return response.data;
+		}else{
+			return null;
+		}
+	};
+	
+	/**
 	 * 产品下账号信息查询
 	 * @param  prodId 产品实例ID
 	 * @param  acctCd 账号信息
@@ -268,6 +290,7 @@ query.prod = (function() {
 		checkUim				: _checkUim,
 		releaseUim 				: _releaseUim,
 		getTerminalInfo 		: _getTerminalInfo,
+		getTerminalInfo2  		: _getTerminalInfo2,
 		prodSpecParamQuery		: _prodSpecParamQuery,
 		prodInstParamQuery		: _prodInstParamQuery,
 		getOldUim 				: _getOldUim,
