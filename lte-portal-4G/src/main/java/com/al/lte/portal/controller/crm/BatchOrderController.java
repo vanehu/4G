@@ -1129,6 +1129,7 @@ public class BatchOrderController  extends BaseController {
 			param.putAll(getAreaInfos());
 		}
   
+		param.put("reserveDt", "");//根据#52200：现去掉批量受理查询页面的“预约日期”搜索条件，但仍保留该字段，传值为空字符串"" By ZhangYu
 		try {
 			List<Map<String,Object>> resultList=new ArrayList<Map<String,Object>>();
 			Map<String,Object> rMap = orderBmo.batchOrderQueryList(param, null, sessionStaff);

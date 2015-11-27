@@ -950,7 +950,7 @@ order.batch = (function(){
 		var templateType = $("#templateType").val();//受理类型
 		var startDt = $("#startDt").val();
 		var endDt = $("#endDt").val();
-		var reserveDt = $("#p_reserveDt").val();//预约时间
+		//var reserveDt = $("#p_reserveDt").val();//预约时间
 		var groupStatusCd = $("#groupStatusCd").val();//批次状态
 
 		if(templateType == '' || templateType == null){
@@ -969,7 +969,7 @@ order.batch = (function(){
 			"groupStatusCd":groupStatusCd,
 			"startDt":startDt,
 			"endDt":endDt,
-			"reserveDt":reserveDt,
+			//"reserveDt":reserveDt,
 			"pageIndex":pageIndex,
 			"pageSize":"10"
 		};
