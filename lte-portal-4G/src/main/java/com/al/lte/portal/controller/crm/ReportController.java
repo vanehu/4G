@@ -889,11 +889,11 @@ public class ReportController extends BaseController {
  		} catch (InterfaceException ie) {
  			zcd_region_select="1";
 		} catch (Exception e) {
-			zcd_region_select="1";
-		}
-		//获取员工权限
-		String permissionsType = CommonMethods.checkStaffOperatSpec(staffBmo,super.getRequest(),sessionStaff);
-        model.addAttribute("permissionsType", permissionsType);
+            zcd_region_select = "1";
+        }
+        //获取员工权限
+//        String permissionsType = CommonMethods.checkStaffOperatSpec(staffBmo, super.getRequest(), sessionStaff);
+//        model.addAttribute("permissionsType", permissionsType);
         model.addAttribute("zcd_chan_select", zcd_chan_select);
         model.addAttribute("zcd_region_select", zcd_region_select);
         session.setAttribute("saveOrder", "true");

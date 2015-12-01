@@ -185,22 +185,21 @@ cart.main = (function(){
 				param["channelId"] = "" ;
 			}
 		}else if(pageType=="saveOrder"){//暂存单查询
-			var permissionsType = $("#permissionsType").val();
-			if(permissionsType=="admin"){
-				if((!$("#p_hm").val()||$("#p_hm").val()=="") && (!$("#p_areaId_val").val()||$("#p_areaId_val").val()=="")){
-					$.alert("提示","请至少输入地区或者购物车流水中的一个 再查询");
-					return ;
-				}
-			}else {
-				if(!$("#p_areaId_val").val()||$("#p_areaId_val").val()==""){
-					$.alert("提示","请选择'地区'再查询");
-					return ;
-				}
+			var zcd_chan_select = $("#zcd_chan_select").val();
+			var zcd_region_select = $("#zcd_region_select").val();
+			var channelId = $("#p_channelId").val();
+			if(zcd_region_select=="0" && zcd_chan_select!="0"){
+				channelId = "";
+			}else if(zcd_region_select!="0" && zcd_chan_select=="0"){
 				if(!$("#p_channelId").val()||$("#p_channelId").val()==""){
 					$.alert("提示","请选择'渠道'再查询");
 					return ;
 				}
-			}		
+			}else if(zcd_region_select=="0" && zcd_chan_select=="0"){
+				if(!$("#p_channelId").val()||$("#p_channelId").val()==""){
+					channelId = "";
+				}
+			}
 			if(!$("#p_startDt").val()||$("#p_startDt").val()==""){
 				$.alert("提示","请选择'受理时间' 再查询");
 				return ;
@@ -213,7 +212,7 @@ cart.main = (function(){
 					"areaId":$("#p_areaId").val(),
 					"startDt":$("#p_startDt").val().replace(/-/g,''),
 					"endDt":$("#p_endDt").val().replace(/-/g,''),
-					"channelId":$("#p_channelId").val(),
+					"channelId":channelId,
 					"olNbr":$("#p_olNbr").val(),
 					"qryNumber":$("#p_hm").val(),
 					"partyId":$("#custName").attr("name"),
