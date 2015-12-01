@@ -27,7 +27,7 @@
 			</#list>
 		</#if>
 		<div class="media"  onclick="javascript:mktRes.terminal.selectTerminal(this)" 
-	           	mktResTypeCd="${mkt.mktResTypeCd}" mktResId="${mkt.mktResId}" mktResCd="${mkt.mktResCd}" brand="${brand}" phoneType="${phoneType}" phoneColor="${phoneColor}" mktName="${mkt.mktResName}" mktPrice="${(mkt.contractPrice)}" mktPicA="${p_pic}" mktSpecCode="${mktSpecCode}">
+	           	mktResTypeCd="${mkt.mktResTypeCd}" mktResId="${mkt.mktResId}" mktResCd="${mkt.mktResCd}" brand="${brand}" phoneType="${phoneType}" phoneColor="${phoneColor}" mktName="${mkt.mktResName}" mktPrice="${(mkt.salePrice)}" mktPicA="${p_pic}" mktSpecCode="${mktSpecCode}">
 	         <div class="media-left">
 	           <a href="javascript:void(0);">
 	             <img class="media-object" src="${p_pic}" alt="${(mkt.mktResName)?default("--")}">
@@ -70,7 +70,7 @@
 				</#if>
 				<div id="phone-list-all">
 					<div class="media"  onclick="javascript:mktRes.terminal.selectTerminal(this)" 
-			            	mktResTypeCd="${mkt.mktResTypeCd}" mktResId="${mkt.mktResId}" mktResCd="${mkt.mktResCd}" brand="${brand}" phoneType="${phoneType}" phoneColor="${phoneColor}" mktName="${mkt.mktResName}" mktPrice="${(mkt.contractPrice)}" mktPicA="${p_pic}" mktSpecCode="${mktSpecCode}">
+			            	mktResTypeCd="${mkt.mktResTypeCd}" mktResId="${mkt.mktResId}" mktResCd="${mkt.mktResCd}" brand="${brand}" phoneType="${phoneType}" phoneColor="${phoneColor}" mktName="${mkt.mktResName}" mktPrice="${(mkt.salePrice)}" mktPicA="${p_pic}" mktSpecCode="${mktSpecCode}">
 			          <div class="media-left">
 			            <a href="javascript:void(0);">
 			              <img class="media-object" src="${p_pic}" alt="${(mkt.mktResName)?default("--")}">
