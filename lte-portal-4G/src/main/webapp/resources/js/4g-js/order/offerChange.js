@@ -905,9 +905,9 @@ offerChange = (function() {
 									if(offerRole.prodInsts.length>roleObj.maxQty){
 										var offerRoleshowName = getMemberRoleNameByCd(offerRole.memberRoleCd);
 										if(offerRoleshowName!=null)
-											$.alert("规则限制","新套餐【"+offerRoleshowName+"】角色最多可以办理数量为"+roleObj.maxQty+",而旧套餐数量大于"+roleObj.maxQty);
+											$.alert("规则限制","新套餐【"+offerRoleshowName+"】角色最多可以办理数量为"+roleObj.maxQty+",而旧套餐的成员数量大于"+roleObj.maxQty);
 										else
-											$.alert("规则限制","新套餐【"+offerRole.offerRoleName+"】角色最多可以办理数量为"+roleObj.maxQty+",而旧套餐数量大于"+roleObj.maxQty);
+											$.alert("规则限制","新套餐【"+offerRole.offerRoleName+"】角色最多可以办理数量为"+roleObj.maxQty+",而旧套餐的成员数量大于"+roleObj.maxQty);
 										return false;
 									}
 									break;
