@@ -113,7 +113,21 @@ mktRes.terminal = (function($){
 		//请求地址
 		var url = contextPath+"/mktRes/terminal/list";
 		//收集参数
-		var param = _buildInParam(curPage);
+		var pageType = $("#pageType").val();
+		var param;
+		if(pageType!=null && pageType!="" && pageType=="terminalInfo"){
+			var p_phoneType = $("#p_phoneType").val();
+			var p_mktResName = $("#p_mktResName").val();
+			var p_instCode  = $("#p_instCode").val();
+			var p_brand = $("#p_brand").val();
+			if((p_phoneType == null || p_phoneType == "") && (p_mktResName == null || p_mktResName == "") && (p_instCode == null || p_instCode == "") && (p_brand == null || p_brand == "")){
+				$.alert("提示信息","请至少输入一个查询条件");
+				return false;
+			}
+			param = _buildTerminalInfoInParam(curPage);
+		}else{
+			param = _buildInParam(curPage);
+		}
 		$.callServiceAsHtml(url,param,{
 			"before":function(){
 				$.ecOverlay("<strong>正在查询中,请稍等...</strong>");
@@ -1639,6 +1653,45 @@ mktRes.terminal = (function($){
 		_btnQueryTerminal(curPage);
 	};	
 		
+	var _buildTerminalInfoInParam = function(curPage){
+		var p_phoneType = $("#p_phoneType").val();
+		var p_mktResName = $("#p_mktResName").val();
+		var p_brand = $("#p_brand").val();
+		var pageType = $("#pageType").val();
+		var p_instCode  = $("#p_instCode").val(); 
+		//收集参数
+		var attrList = [];
+		if(p_brand != null && p_brand != "") {
+			var attr = {
+				"attrId":CONST.TERMINAL_SPEC_ATTR_ID.BRAND,
+				"attrValue":p_brand
+			};
+			attrList.push(attr);
+		}
+		if(p_phoneType != null && p_phoneType != "") {
+			var attr = {
+					"attrId":CONST.TERMINAL_SPEC_ATTR_ID.PHONE_TYPE,
+					"attrValue":p_phoneType
+			};
+			attrList.push(attr);
+		}
+		return {
+				"mktResCd":"",
+				"mktResName":p_mktResName,
+				"mktResType":"",
+				"minPrice":"",
+				"maxPrice":"",
+				"contractFlag":"",
+				"instCode":p_instCode,
+				"pageInfo":{
+					"pageIndex":curPage,
+					"pageSize":pageSize
+				},
+				"attrList":attrList,
+				"pageType":pageType,
+		};
+	};
+	
 	return {
 		btnQueryTerminal:_btnQueryTerminal,
 		initInParam:_initInParam,
@@ -1653,7 +1706,8 @@ mktRes.terminal = (function($){
 		yyTypeChoose : _yyTypeChoose,
 		jumpBtnQueryTerminal : _jumpBtnQueryTerminal,
 		newnum:_newnum,
-		oldnum:_oldnum
+		oldnum:_oldnum,
+		btnQueryTerminal : _btnQueryTerminal
 	};
 })(jQuery);
 
