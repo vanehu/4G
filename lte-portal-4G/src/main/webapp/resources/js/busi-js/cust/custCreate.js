@@ -122,7 +122,7 @@ cust.create = (function(){
 				
 			}
 		});
-		_SoOrderbuilder();
+//		_SoOrderbuilder();
 		
 	};
 	//客户属性-展示 更多按钮
@@ -141,7 +141,7 @@ cust.create = (function(){
 			$("#proarroworder").addClass("arrow");
 			$("#tabProfile0").attr("click","1");
 			$("#contactName").attr("data-validate","");
-			_custcreateButton();
+//			_custcreateButton();
 		}
 		/*$("#orderbutton").off("click").on("click",function(event){_btnQueryPhoneNumber();event.stopPropagation();});*/
 	};
@@ -155,7 +155,7 @@ cust.create = (function(){
 			$("#cardtab_pro_0").addClass("setcon");
 			$("#tabProfile0").attr("click","0");
 			$("#contactName").attr("data-validate","validate(required:请准确填写联系人名称) on(keyup)");
-			_custcreateButton();
+//			_custcreateButton();
 		}else if(($("#tabProfile0").attr("click")=="0")&&($("#contactName").val()=="")){
 			$.alert("提示","联系人名称不能为空！","information");
 			return;
@@ -201,7 +201,8 @@ cust.create = (function(){
 				identidiesTypeCd :  $("#div_cc_identidiesType  option:selected").val(),
 				custIdCard :  $.trim($("#ccCustIdCard").val()),
 				areaId :$("#p_cr_cust_areaId").val(),
-				addressStr :$("#ccAddressStr").val()
+				addressStr :$("#ccAddressStr").val(),
+				mailAddressStr : $('#ccMailAddressStr').val()
 			};
 		var data = {};
 		data.boCustInfos = [{
@@ -210,6 +211,7 @@ cust.create = (function(){
 			norTaxPayerId : "0",
 			partyTypeCd : "1",
 			addressStr : CustInfo.addressStr,
+			mailAddressStr : CustInfo.mailAddressStr,
 			state : "ADD"
 		}];
 		data.boCustIdentities = [{
@@ -244,7 +246,7 @@ cust.create = (function(){
 		        contactType : $.trim($("#contactType").val()),//联系人类型
 		        eMail : $.trim($("#eMail").val()),//参与人的eMail地址
 		        fax : $.trim($("#fax").val()),//传真号
-		        headFlag :  $("#headFlag  option:selected").val(),//是否首选联系人
+		        headFlag :  $.trim($("#headFlag  option:selected").val()),//是否首选联系人
 		        homePhone : $.trim($("#homePhone").val()),//参与人的家庭联系电话
 		        mobilePhone : $.trim($("#mobilePhone").val()),//参与人的移动电话号码
 		        officePhone : $.trim($("#officePhone").val()),//参与人办公室的电话号码
@@ -257,13 +259,32 @@ cust.create = (function(){
 		if($("#tabProfile0").attr("click")=="0"){
 			data.boPartyContactInfo.push(_boPartyContactInfo);
 		}
-		SoOrder.submitOrder(data);
+		
+		var busiOrder = {
+				areaId : OrderInfo.getAreaId(),  //受理地区ID
+				busiOrderInfo : {
+					seq : OrderInfo.SEQ.seq--
+				}, 
+				busiObj : { //业务对象节点
+					instId : -1 //业务对象实例ID
+				},  
+				boActionType : {
+					actionClassCd : CONST.ACTION_CLASS_CD.CUST_ACTION,
+					boActionTypeCd : CONST.BO_ACTION_TYPE.CUST_CREATE
+				}, 
+				data : data
 		};
+		
+		OrderInfo.getOrderData(); //获取订单提交节点
+		SoOrder.getToken();
+		OrderInfo.order.soNbr = UUID.getDataId();
+		SoOrder.submitOrder(busiOrder);
+	};
 	//下一步确认按钮
 	var _form_custCreateOnly_btn = function() {
 		
 		$('#custCreateOnlyForm').off("formIsValid").on("formIsValid",function(event) {
-			//OrderInfo.actionFlag=21;
+			OrderInfo.actionFlag=40;
 			_checkIdentity();
 		}).ketchup({bindElement:"custCreateOnlyBtn"});
 	};

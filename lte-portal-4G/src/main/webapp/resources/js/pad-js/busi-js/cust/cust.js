@@ -181,7 +181,7 @@ order.cust = (function(){
 	        contactType 	: $.trim($("#contactType").val()),//联系人类型
 	        eMail 			: $.trim($("#eMail").val()),//参与人的eMail地址
 	        fax 			: $.trim($("#fax").val()),//传真号
-	        headFlag 		: $("#headFlag  option:selected").val(),//是否首选联系人
+	        headFlag 		: $.trim($("#headFlag  option:selected").val()),//是否首选联系人
 	        homePhone 		: $.trim($("#homePhone").val()),//参与人的家庭联系电话
 	        mobilePhone 	: $.trim($("#mobilePhone").val()),//参与人的移动电话号码
 	        officePhone 	: $.trim($("#officePhone").val()),//参与人办公室的电话号码
