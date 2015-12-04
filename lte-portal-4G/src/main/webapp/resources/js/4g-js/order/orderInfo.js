@@ -13,7 +13,7 @@ OrderInfo = (function() {
 	 * 
 	 * 6 销售品成员变更加装副卡，7 拆主卡保留副卡 8单独新建客户,10 是公用节点传入 11 撤单，12 加入退出组合 
 	 * 
-	 * 13 购买裸机  14 合约套餐  15 补退费  16 改号	17 终端退货 18 终端换货 19返销 20返销,22补换卡,23异地补换卡
+	 * 13 购买裸机  14 合约套餐  15 补退费  16 改号	17 终端退货 18 终端换货 19返销 20返销,21 副卡套餐变更, 22补换卡,23异地补换卡
 	 * 
 	 * 31改产品密码，32重置产品密码，,33改产品属性，34修改短号，35分段受理（订单确认及后续受理）,36一卡双号订购
 	 * 
@@ -77,6 +77,7 @@ OrderInfo = (function() {
 		soAreaCode : 0, 
 		distributorId : "" //转售商标识
 	}; 
+	var _channelList = [];//渠道列表
 		
 	var _offerSpec = {}; //主销售品构成
 	
@@ -340,6 +341,35 @@ OrderInfo = (function() {
 		busiOrders.push(busiOrder);
 	};
 	
+	
+
+	/**
+	 * 获取渠道List
+	 */
+	var _getChannelList = function (busiOrders,offer,prodId){
+		OrderInfo.channelList = [];
+		if($("i[name='channel_iofo_i']").length==0){
+			OrderInfo.channelList = window.parent.OrderInfo.getChannelList();
+		}else{
+			$("i[name='channel_iofo_i']").each(function(){				
+				var channelId = $(this).attr("channel_Id");
+				var channelName = $(this).attr("channel_Name");
+				var channelNbr = $(this).attr("channel_Nbr");
+				var isSelect = 0;
+				if($(this).hasClass("select"))
+					var isSelect = 1;
+				var channelInfo ={
+						channelId : channelId,
+						channelName : channelName,
+						channelNbr : channelNbr,
+						isSelect : isSelect
+				}
+				OrderInfo.channelList.push(channelInfo)
+			});
+		}
+		return OrderInfo.channelList;
+	};
+
 	/**
 	 * 获取销售品节点
 	 * busiOrders 业务对象节点
@@ -381,7 +411,8 @@ OrderInfo = (function() {
 					var dealer = {
 						itemSpecId : CONST.BUSI_ORDER_ATTR.DEALER,
 						role : $(this).find("select").val(),
-						value : $(this).find("input").attr("staffid") 
+						value : $(this).find("input").attr("staffid"),
+						channelNbr : $(this).find("select[name ='dealerChannel_"+prodId+"_"+offer.offerSpecId+"']").val()
 					};
 					busiOrder.data.busiOrderAttrs.push(dealer);
 					var dealer_name = {
@@ -804,7 +835,8 @@ OrderInfo = (function() {
 						var dealer = {
 							itemSpecId : CONST.BUSI_ORDER_ATTR.DEALER,
 							role : $(this).find("select").val(),
-							value : $(this).find("input").attr("staffid") 
+							value : $(this).find("input").attr("staffid"),
+							channelNbr : $(this).find("select[name ='dealerChannel_"+prodId+"_"+prodServ.servSpecId+"']").val()
 						};
 						busiOrder.data.busiOrderAttrs.push(dealer);
 						var dealer_name = {
@@ -1492,6 +1524,7 @@ OrderInfo = (function() {
 		orderResult				: _orderResult,
 		cust					: _cust,
 		staff					: _staff,
+		channelList				: _channelList,
 		offerSpec				: _offerSpec,
 		offer 					: _offer,
 		attach2Coupons			: _attach2Coupons,
@@ -1522,6 +1555,7 @@ OrderInfo = (function() {
 		getProdBusiOrder		: _getProdBusiOrder,
 		createCust				: _createCust,
 		createAcct				: _createAcct,
+		getChannelList			: _getChannelList,
 		getProdAn				: _getProdAn,
 		getProdTd				: _getProdTd,
 		getProdUim				: _getProdUim,

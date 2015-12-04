@@ -234,11 +234,12 @@
             </thead>
             <tbody>
             	<#if Session["_staff_channel"]?? && (Session["_ecs_login_session_key"].currentChannelId!="") >
-				<#list Session["_staff_channel"] as channel>
-				
+				<#list Session["_staff_channel"] as channel>				
 				<tr <#if channel_index%2="1" >class="bg"</#if> >
 					<td class="channel_sel" onclick="header.menu.chooseChannel('${channel.id}')" >
-                  		<dd><i <#if channel.id=Session["_ecs_login_session_key"].currentChannelId >class="select"</#if> ></i>
+                  		<dd>
+                  		<i name= "channel_iofo_i" channel_Id ="${channel.id}" channel_Name = "${channel.name}" channel_Nbr = "${channel.chnNbr}" 
+                  		<#if channel.id=Session["_ecs_login_session_key"].currentChannelId >class="select"</#if> ></i>
 			      			${channel.name}
 			    		</dd>
 			    	</td>

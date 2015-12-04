@@ -27,13 +27,16 @@ order.dealer = (function() {
 					return;
 				}
 			}
+			if(!ec.util.isArray(OrderInfo.channelList)||OrderInfo.channelList.length==0){
+				OrderInfo.getChannelList();
+			}
 		}
 		if(OrderInfo.actionFlag==1 || OrderInfo.actionFlag==2 || OrderInfo.actionFlag==14){ //新装业务，套餐变更需要主套餐发展人
 			var objInstId = OrderInfo.offerSpec.offerSpecId;
 			var $tr = $("<tr id='tr_"+objInstId+"' name='tr_"+objInstId+"'></tr>");
 			var $tdType = $('<td></td>');
 			var objId = objInstId+"_"+OrderInfo.SEQ.dealerSeq;
-			var $select = $('<select id="dealerType_'+objId+'" name="dealerType_'+objInstId+'" class="inputWidth183px" onclick=a=this.value; onchange="order.dealer.changeDealer(this,\'dealerType_'+objInstId+'\',a)"></select>');
+			var $select = $('<select id="dealerType_'+objId+'" name="dealerType_'+objInstId+'" class="inputWidth183px" style="width:150px;" onclick=a=this.value; onchange="order.dealer.changeDealer(this,\'dealerType_'+objInstId+'\',a)"></select>');
 			if(order.ysl!=undefined){
 				$select.append("<option value='40020005'>第一发展人</option>");
 				$select.append("<option value='40020006'>第二发展人</option>");
@@ -50,13 +53,24 @@ order.dealer = (function() {
 			$tr.append("<td>"+OrderInfo.offerSpec.offerSpecName+"（包含接入产品）</td>");
 			$tr.append($tdType);
 			if(order.ysl!=undefined){
-				var $td = $('<td><input type="text" id="dealer_'+objId+'" staffId="'+OrderInfo.staff.staffId+'" value="'+OrderInfo.staff.staffName+'" class="inputWidth183px"></input></td>');
+				var $td = $('<td><input type="text" id="dealer_'+objId+'" staffId="'+OrderInfo.staff.staffId+'" value="'+OrderInfo.staff.staffName+'" class="inputWidth183px" style="width:150px;"></input></td>');
 			}else{
-				var $td = $('<td><input type="text" id="dealer_'+objId+'" staffId="'+OrderInfo.staff.staffId+'" value="'+OrderInfo.staff.staffName+'" class="inputWidth183px" readonly="readonly" ></input></td>');
+				var $td = $('<td><input type="text" id="dealer_'+objId+'" staffId="'+OrderInfo.staff.staffId+'" value="'+OrderInfo.staff.staffName+'" class="inputWidth183px" style="width:150px;" readonly="readonly" ></input></td>');
 			}
 			$td.append('<a class="purchase" href="javascript:order.main.queryStaff(0,\'dealer\',\''+objId+'\');">选择</a>');
 			$td.append('<a class="purchase" onclick="order.dealer.addProdDealer(this,'+objInstId+',1)">添加</a><label class="f_red">*</label>');
 			$tr.append($td);
+			var $tdChannel = $('<td></td>');
+			var $channelSelect = $('<select id="dealerChannel_'+objId+'" name="dealerChannel_'+objInstId+'" class="inputWidth183px" onclick=a=this.value;></select>');
+			$.each(OrderInfo.channelList,function(){
+				if(this.isSelect==1)
+					$channelSelect.append("<option value='"+this.channelNbr+"' selected ='selected'>"+this.channelName+"</option>");
+				else
+					$channelSelect.append("<option value='"+this.channelNbr+"'>"+this.channelName+"</option>");
+			});
+			$tdChannel.append($channelSelect);
+			$tdChannel.append('<label class="f_red">*</label>');	
+			$tr.append($tdChannel);
 			OrderInfo.SEQ.dealerSeq++;
 			$("#dealerTbody").append($tr);
 		}
@@ -94,7 +108,7 @@ order.dealer = (function() {
 		    			var $tr = $("<tr id='tr_"+objInstId+"' name='tr_"+objInstId+"'></tr>");
 		    			var $tdType = $('<td></td>');
 		    			var objId = objInstId+"_"+OrderInfo.SEQ.dealerSeq;
-		    			var $select = $('<select id="dealerType_'+objId+'" name="dealerType_'+objInstId+'" class="inputWidth183px" onclick=a=this.value; onchange="order.dealer.changeDealer(this,\'dealerType_'+objInstId+'\',a)"></select>');
+		    			var $select = $('<select id="dealerType_'+objId+'" name="dealerType_'+objInstId+'" class="inputWidth183px" style="width:150px;" onclick=a=this.value; onchange="order.dealer.changeDealer(this,\'dealerType_'+objInstId+'\',a)"></select>');
 		    			$.each(OrderInfo.order.dealerTypeList,function(){
 		    				$select.append("<option value='"+this.PARTYPRODUCTRELAROLECD+"' >"+this.NAME+"</option>");
 		    			});
@@ -108,10 +122,21 @@ order.dealer = (function() {
 		    			$tr.append("<td>"+accNbr+"</td>");
 						$tr.append("<td>"+this.objName+"</td>");
 						$tr.append($tdType);
-						var $td = $('<td><input type="text" id="dealer_'+objId+'" staffId="'+OrderInfo.staff.staffId+'" value="'+OrderInfo.staff.staffName+'" class="inputWidth183px" readonly="readonly" ></input></td>');
+						var $td = $('<td><input type="text" id="dealer_'+objId+'" staffId="'+OrderInfo.staff.staffId+'" value="'+OrderInfo.staff.staffName+'" class="inputWidth183px" style="width:150px;" readonly="readonly" ></input></td>');
 						$td.append('<a class="purchase" href="javascript:order.main.queryStaff(0,\'dealer\',\''+objId+'\');">选择</a>');
 						$td.append('<a class="purchase" onclick="order.dealer.addProdDealer(this,'+objInstId+',1)">添加</a><label class="f_red">*</label>');
 						$tr.append($td);
+						var $tdChannel = $('<td></td>');
+						var $channelSelect = $('<select id="dealerChannel_'+objId+'" name="dealerChannel_'+objInstId+'" class="inputWidth183px" onclick=a=this.value;></select>');
+						$.each(OrderInfo.channelList,function(){
+							if(this.isSelect==1)
+								$channelSelect.append("<option value='"+this.channelNbr+"' selected ='selected'>"+this.channelName+"</option>");
+							else
+								$channelSelect.append("<option value='"+this.channelNbr+"'>"+this.channelName+"</option>");
+						});
+						$tdChannel.append($channelSelect);
+						$tdChannel.append('<label class="f_red">*</label>');	
+						$tr.append($tdChannel);
 						OrderInfo.SEQ.dealerSeq++;
 						$("#dealerTbody").append($tr);
 		    		});
@@ -123,17 +148,28 @@ order.dealer = (function() {
 			var $tr = $("<tr id='tr_"+objInstId+"' name='tr_"+objInstId+"'></tr>");
 			var $tdType = $('<td></td>');
 			var objId = objInstId+"_"+OrderInfo.SEQ.dealerSeq;
-			var $select = $('<select id="dealerType_'+objId+'" name="dealerType_'+objInstId+'" class="inputWidth183px" onclick=a=this.value; onchange="order.dealer.changeDealer(this,\'dealerType_'+objInstId+'\',a)"></select>');
+			var $select = $('<select id="dealerType_'+objId+'" name="dealerType_'+objInstId+'" class="inputWidth183px" style="width:150px;" onclick=a=this.value; onchange="order.dealer.changeDealer(this,\'dealerType_'+objInstId+'\',a)"></select>');
 			$.each(OrderInfo.order.dealerTypeList,function(){
 				$select.append("<option value='"+this.PARTYPRODUCTRELAROLECD+"' >"+this.NAME+"</option>");
 			});
 			$tdType.append($select);
 			$tdType.append('<label class="f_red">*</label>');
 			$tr.append($tdType);
-			var $td = $('<td><input type="text" id="dealer_'+objId+'" staffId="'+OrderInfo.staff.staffId+'" value="'+OrderInfo.staff.staffName+'" class="inputWidth183px" readonly="readonly" ></input></td>');
+			var $td = $('<td><input type="text" id="dealer_'+objId+'" staffId="'+OrderInfo.staff.staffId+'" value="'+OrderInfo.staff.staffName+'" class="inputWidth183px" style="width:150px;" readonly="readonly" ></input></td>');
 			$td.append('<a class="purchase" href="javascript:order.main.queryStaff(0,\'dealer\',\''+objId+'\');">选择</a>');
 			$td.append('<a class="purchase" onclick="order.dealer.addProdDealer(this,'+objInstId+',1)">添加</a><label class="f_red">*</label>');
 			$tr.append($td);
+			var $tdChannel = $('<td></td>');
+			var $channelSelect = $('<select id="dealerChannel_'+objId+'" name="dealerChannel_'+objInstId+'" class="inputWidth183px" style="width:150px;" onclick=a=this.value;></select>');
+			$.each(OrderInfo.channelList,function(){
+				if(this.isSelect==1)
+					$channelSelect.append("<option value='"+this.channelNbr+"' selected ='selected'>"+this.channelName+"</option>");
+				else
+					$channelSelect.append("<option value='"+this.channelNbr+"'>"+this.channelName+"</option>");
+			});
+			$tdChannel.append($channelSelect);
+			$tdChannel.append('<label class="f_red">*</label>');	
+			$tr.append($tdChannel);
 			OrderInfo.SEQ.dealerSeq++;
 			$("#dealerMktTbody").append($tr);
 		}
@@ -142,7 +178,7 @@ order.dealer = (function() {
 			var $tr = $("<tr id='tr_"+objInstId+"' name='tr_"+objInstId+"'></tr>");
 			var $tdType = $('<td></td>');
 			var objId = objInstId+"_"+OrderInfo.SEQ.dealerSeq;
-			var $select = $('<select id="dealerType_'+objId+'" name="dealerType_'+objInstId+'" class="inputWidth183px" onclick=a=this.value; onchange="order.dealer.changeDealer(this,\'dealerType_'+objInstId+'\',a)"></select>');
+			var $select = $('<select id="dealerType_'+objId+'" name="dealerType_'+objInstId+'" class="inputWidth183px" style="width:150px;" onclick=a=this.value; onchange="order.dealer.changeDealer(this,\'dealerType_'+objInstId+'\',a)"></select>');
 			if(order.ysl!=undefined){
 				$select.append("<option value='40020005'>第一发展人</option>");
 				$select.append("<option value='40020006'>第二发展人</option>");
@@ -159,13 +195,24 @@ order.dealer = (function() {
 			$tr.append("<td>一卡双号订购</td>");
 			$tr.append($tdType);
 			if(order.ysl!=undefined){
-				var $td = $('<td><input type="text" id="dealer_'+objId+'" staffId="'+OrderInfo.staff.staffId+'" value="'+OrderInfo.staff.staffName+'" class="inputWidth183px"></input></td>');
+				var $td = $('<td><input type="text" id="dealer_'+objId+'" staffId="'+OrderInfo.staff.staffId+'" value="'+OrderInfo.staff.staffName+'" class="inputWidth183px" style="width:150px;"></input></td>');
 			}else{
-				var $td = $('<td><input type="text" id="dealer_'+objId+'" staffId="'+OrderInfo.staff.staffId+'" value="'+OrderInfo.staff.staffName+'" class="inputWidth183px" readonly="readonly" ></input></td>');
+				var $td = $('<td><input type="text" id="dealer_'+objId+'" staffId="'+OrderInfo.staff.staffId+'" value="'+OrderInfo.staff.staffName+'" class="inputWidth183px" style="width:150px;" readonly="readonly" ></input></td>');
 			}
 			$td.append('<a class="purchase" href="javascript:order.main.queryStaff(0,\'dealer\',\''+objId+'\');">选择</a>');
 			$td.append('<a class="purchase" onclick="order.dealer.addProdDealer(this,'+objInstId+',1)">添加</a><label class="f_red">*</label>');
 			$tr.append($td);
+			var $tdChannel = $('<td></td>');
+			var $channelSelect = $('<select id="dealerChannel_'+objId+'" name="dealerChannel_'+objInstId+'" class="inputWidth183px" onclick=a=this.value;></select>');
+			$.each(OrderInfo.channelList,function(){
+				if(this.isSelect==1)
+					$channelSelect.append("<option value='"+this.channelNbr+"' selected ='selected'>"+this.channelName+"</option>");
+				else
+					$channelSelect.append("<option value='"+this.channelNbr+"'>"+this.channelName+"</option>");
+			});
+			$tdChannel.append($channelSelect);
+			$tdChannel.append('<label class="f_red">*</label>');	
+			$tr.append($tdChannel);
 			OrderInfo.SEQ.dealerSeq++;
 			$("#dTbody").append($tr);
 		}
@@ -188,7 +235,7 @@ order.dealer = (function() {
 					if(!flag){
 						return;
 					}
-					var $select = $('<select id="dealerType_'+objId+'" name="dealerType_'+objInstId+'" class="inputWidth183px" onclick=a=this.value; onchange="order.dealer.changeDealer(this,\'dealerType_'+objInstId+'\',a)"></select>');
+					var $select = $('<select id="dealerType_'+objId+'" name="dealerType_'+objInstId+'" class="inputWidth183px" style="width:150px;" onclick=a=this.value; onchange="order.dealer.changeDealer(this,\'dealerType_'+objInstId+'\',a)"></select>');
 					if(order.ysl!=undefined){
 						$select.append("<option value='40020005'>第一发展人</option>");
 						$select.append("<option value='40020006'>第二发展人</option>");
@@ -205,13 +252,24 @@ order.dealer = (function() {
 					$tr.append("<td>"+this.offerSpecName+"（包含接入产品）</td>");
 					$tr.append($tdType);
 					if(order.ysl!=undefined){
-						var $td = $('<td><input type="text" id="dealer_'+objId+'" staffId="'+OrderInfo.staff.staffId+'" value="'+OrderInfo.staff.staffName+'" class="inputWidth183px"></input></td>');
+						var $td = $('<td><input type="text" id="dealer_'+objId+'" staffId="'+OrderInfo.staff.staffId+'" value="'+OrderInfo.staff.staffName+'" class="inputWidth183px" style="width:150px;"></input></td>');
 					}else{
-						var $td = $('<td><input type="text" id="dealer_'+objId+'" staffId="'+OrderInfo.staff.staffId+'" value="'+OrderInfo.staff.staffName+'" class="inputWidth183px" readonly="readonly" ></input></td>');
+						var $td = $('<td><input type="text" id="dealer_'+objId+'" staffId="'+OrderInfo.staff.staffId+'" value="'+OrderInfo.staff.staffName+'" class="inputWidth183px" style="width:150px;" readonly="readonly" ></input></td>');
 					}
 					$td.append('<a class="purchase" href="javascript:order.main.queryStaff(0,\'dealer\',\''+objId+'\');">选择</a>');
 					$td.append('<a class="purchase" onclick="order.dealer.addProdDealer(this,'+objInstId+',1)">添加</a><label class="f_red">*</label>');
 					$tr.append($td);
+					var $tdChannel = $('<td></td>');
+					var $channelSelect = $('<select id="dealerChannel_'+objId+'" name="dealerChannel_'+objInstId+'" class="inputWidth183px" onclick=a=this.value;></select>');
+					$.each(OrderInfo.channelList,function(){
+						if(this.isSelect==1)
+							$channelSelect.append("<option value='"+this.channelNbr+"' selected ='selected'>"+this.channelName+"</option>");
+						else
+							$channelSelect.append("<option value='"+this.channelNbr+"'>"+this.channelName+"</option>");
+					});
+					$tdChannel.append($channelSelect);
+					$tdChannel.append('<label class="f_red">*</label>');	
+					$tr.append($tdChannel);
 					OrderInfo.SEQ.dealerSeq++;
 					$("#dealerTbody").append($tr);
 				});
@@ -261,14 +319,26 @@ order.dealer = (function() {
 					staffName = dealer.attr("value");
 				}
 				if(order.ysl!=undefined){
-					var $td = $('<td><input type="text" id="dealer_'+objId+'" name="dealer_'+id+'" staffId="'+staffId+'" value="'+staffName+'" class="inputWidth183px" style="margin-left:45px;"></input></td>');
+					var $td = $('<td><input type="text" id="dealer_'+objId+'" name="dealer_'+id+'" staffId="'+staffId+'" value="'+staffName+'" class="inputWidth183px" style="width:150px;margin-left:45px;"></input></td>');
 				}else{
-					var $td = $('<td><input type="text" id="dealer_'+objId+'" name="dealer_'+id+'" staffId="'+staffId+'" value="'+staffName+'" class="inputWidth183px" readonly="readonly" style="margin-left:45px;"></input></td>');
+					var $td = $('<td><input type="text" id="dealer_'+objId+'" name="dealer_'+id+'" staffId="'+staffId+'" value="'+staffName+'" class="inputWidth183px" style="width:150px;margin-left:45px;" readonly="readonly"></input></td>');
 				}
 				$td.append('<a class="purchase" href="javascript:order.main.queryStaff(0,\'dealer\',\''+objId+'\');">选择</a>');	
 				$td.append('<a class="purchase" onclick="order.dealer.removeDealer(this);">删除</a>');
 				$td.append('<a class="purchase" onclick="order.dealer.addProdDealer(this,\''+id+'\')">添加</a><label class="f_red">*</label>');
 				$newTr.append($td);
+				var $tdChannel = $('<td></td>');
+				var $channelSelect = $('<select id="dealerChannel_'+objId+'" name="dealerChannel_'+id+'" class="inputWidth183px" onclick=a=this.value;></select>');
+				OrderInfo.getChannelList();
+				$.each(OrderInfo.channelList,function(){
+					if(this.isSelect==1)
+						$channelSelect.append("<option value='"+this.channelNbr+"' selected ='selected'>"+this.channelName+"</option>");
+					else
+						$channelSelect.append("<option value='"+this.channelNbr+"'>"+this.channelName+"</option>");
+				});
+				$tdChannel.append($channelSelect);
+				$tdChannel.append('<label class="f_red">*</label>');	
+				$newTr.append($tdChannel);
 				$("#dealerTbody").append($newTr);
 				OrderInfo.SEQ.dealerSeq++;
 			}	
@@ -296,9 +366,9 @@ order.dealer = (function() {
 		}
 		$tr.append($tdType);
 		if(order.ysl!=undefined){
-			var $td = $('<td><input type="text" id="dealer_'+objId+'" name="dealer_'+objInstId+'" staffId="'+$oldTr.find("input").attr("staffId")+'" value="'+$oldTr.find("input").attr("value")+'" class="inputWidth183px" ></input></td>');
+			var $td = $('<td><input type="text" id="dealer_'+objId+'" name="dealer_'+objInstId+'" staffId="'+$oldTr.find("input").attr("staffId")+'" value="'+$oldTr.find("input").attr("value")+'" class="inputWidth183px" style="width:150px;" ></input></td>');
 		}else{
-			var $td = $('<td><input type="text" id="dealer_'+objId+'" name="dealer_'+objInstId+'" staffId="'+$oldTr.find("input").attr("staffId")+'" value="'+$oldTr.find("input").attr("value")+'" class="inputWidth183px" readonly="readonly" ></input></td>');
+			var $td = $('<td><input type="text" id="dealer_'+objId+'" name="dealer_'+objInstId+'" staffId="'+$oldTr.find("input").attr("staffId")+'" value="'+$oldTr.find("input").attr("value")+'" class="inputWidth183px" style="width:150px;" readonly="readonly" ></input></td>');
 		}
 		$td.append('<a class="purchase" href="javascript:order.main.queryStaff(0,\'dealer\',\''+objId+'\');">选择</a>');
 		$td.append('<a class="purchase" onclick="order.dealer.removeDealer(this);">删除</a><label class="f_red">*</label>');
@@ -308,7 +378,27 @@ order.dealer = (function() {
 			$td.append('<a class="purchase" onclick="order.dealer.removeDealer(this);">删除</a>');
 			$td.append('<a class="purchase" onclick="order.dealer.addProdDealer(this,'+objInstId+')">添加</a><label class="f_red">*</label>');
 		}*/
-		$tr.append($td);	
+		$tr.append($td);
+		var $tdChannel = $('<td></td>');
+		var selectChanne = $oldTr.find("td select[name='dealerChannel_"+objInstId+"']").clone();
+		$(selectChanne).attr("id","dealerChannel_"+objId);
+		
+		$(selectChanne).empty(); 
+		var $channelListOptions ="";
+		$($oldTr.find("td select[name='dealerChannel_"+objInstId+"']")).find("option").each(function(){
+			var $channelListOptionVal  = $(this).val() ; 
+			var $channelListOptionName = $(this).html() ; 
+			if(this.selected==true){
+				$channelListOptions += "<option value='"+$channelListOptionVal+"' selected ='selected'>"+$channelListOptionName+"</option>";
+			}else{
+				$channelListOptions += "<option value='"+$channelListOptionVal+"'>"+$channelListOptionName+"</option>";
+			}
+		});
+		$(selectChanne).append($channelListOptions);
+		$tdChannel.append(selectChanne);
+		$tdChannel.append('<label class="f_red">*</label>');
+//		$tdChannel.append( $("<eg>").append($(selectChanne).eq(0).clone()).html());		
+		$tr.append($tdChannel);
 		$oldTr.after($tr);
 		OrderInfo.SEQ.dealerSeq++;
 	};
@@ -350,7 +440,7 @@ order.dealer = (function() {
 			return;
 		}
 		var $td = $('<td></td>'); //发展人类型
-		var $select = $('<select id="dealerType_'+objId+'" name="dealerType_'+objInstId+'" class="inputWidth250px" style="width:183px;" onclick=a=this.value; onchange="order.dealer.changeDealer(this,\'dealerType_'+objInstId+'\',a)"></select>');
+		var $select = $('<select id="dealerType_'+objId+'" name="dealerType_'+objInstId+'" class="inputWidth250px" style="width:150px;" onclick=a=this.value; onchange="order.dealer.changeDealer(this,\'dealerType_'+objInstId+'\',a)"></select>');
 		$.each(OrderInfo.order.dealerTypeList,function(){
 			if(this.PARTYPRODUCTRELAROLECD==dealerType){
 				$select.append("<option value='"+this.PARTYPRODUCTRELAROLECD+"' selected='selected'>"+this.NAME+"</option>");

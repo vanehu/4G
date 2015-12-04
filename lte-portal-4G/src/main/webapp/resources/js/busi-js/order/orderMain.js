@@ -335,6 +335,20 @@ order.main = (function(){
 							$td.append('<a class="purchase" onclick="order.dealer.removeDealer(this);">删除</a><label class="f_red">*</label>');
 						}
 						$tr.append($td);
+						if(!ec.util.isArray(OrderInfo.channelList)||OrderInfo.channelList.length==0){
+							OrderInfo.getChannelList();
+						}
+						var $tdChannel = $('<td></td>');
+						var $channelSelect = $('<select id="dealerChannel_'+objId+'" name="dealerChannel_'+objInstId+'" class="inputWidth183px" onclick=a=this.value;></select>');
+						$.each(OrderInfo.channelList,function(){
+							if(dealerlist[d].channelNbr==this.channelNbr)
+								$channelSelect.append("<option value='"+this.channelNbr+"' selected ='selected'>"+this.channelName+"</option>");
+							else
+								$channelSelect.append("<option value='"+this.channelNbr+"'>"+this.channelName+"</option>");
+						});
+						$tdChannel.append($channelSelect);
+						$tdChannel.append('<label class="f_red">*</label>');	
+						$tr.append($tdChannel);
 						OrderInfo.SEQ.dealerSeq++;
 						$("#dealerTbody").append($tr);
 					}
@@ -1653,16 +1667,36 @@ order.main = (function(){
 		$(selected).children(":first").html(nike);
 	};
 	//协销人-修改
-	function _setStaff(objInstId){
+	function _setStaff(objInstId){			
 		var $staff = $("#staff_list_body .plan_select");
+		if($staff.length <= 0){
+			$.alert("操作提示","请选择 协销人！");
+			return;
+		}
 		$staff.each(function(){
+			var $channelList = $(this).find("td select[name='channel_list']");
+			$("#dealerChannel_"+objInstId).empty(); 
+			var $channelListOptions ="";
+			if($channelList.length <= 0){
+				$.each(OrderInfo.channelList,function(){
+					if(this.isSelect==1)
+						$channelListOptions += "<option value='"+this.channelNbr+"' selected ='selected'>"+this.channelName+"</option>";				
+				});
+			}else{			
+				$($channelList).find("option").each(function(){
+					var $channelListOptionVal  = $(this).val() ; 
+					var $channelListOptionName = $(this).html() ; 
+					if(this.selected==true){
+						$channelListOptions += "<option value='"+$channelListOptionVal+"' selected ='selected'>"+$channelListOptionName+"</option>";
+					}else{
+						$channelListOptions += "<option value='"+$channelListOptionVal+"'>"+$channelListOptionName+"</option>";
+					}
+				});
+			}
+			$("#dealerChannel_"+objInstId).append($channelListOptions);
 			$("#dealer_"+objInstId).val($(this).attr("staffName")).attr("staffId", $(this).attr("staffId"));
 		});
-		if($staff.length > 0){
-			easyDialog.close();
-		}else{
-			$.alert("操作提示","请选择 协销人！");
-		}
+		easyDialog.close();
 	}
 	/*
 	function _setStaff(v_id,staffId,staffCode,staffName){

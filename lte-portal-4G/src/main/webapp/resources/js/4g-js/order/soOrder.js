@@ -1366,7 +1366,8 @@ SoOrder = (function() {
 					var dealer = {
 							itemSpecId : CONST.BUSI_ORDER_ATTR.DEALER,
 							role : $(this).find("select").val(),
-							value : $(this).find("input").attr("staffid") 
+							value : $(this).find("input").attr("staffid"),
+							channelNbr : $(this).find("select[name ='dealerChannel_"+offerSpec.offerSpecId+"']").val()
 					};
 					busiOrder2.data.busiOrderAttrs.push(dealer);
 					var dealer_name = {
@@ -2324,19 +2325,19 @@ SoOrder = (function() {
 			$tr.each(function(){   //遍历产品有几个发展人
 				var dealer = {
 					itemSpecId : CONST.BUSI_ORDER_ATTR.DEALER,
-					role : $(this).find("select").val(),
-					value : $(this).find("input").attr("staffid") 
+					role : $(this).find("select[name='dealerType_"+OrderInfo.offerSpec.offerSpecId+"']").val(),
+					value : $(this).find("input").attr("staffid"),
+					channelNbr : $(this).find("select[name ='dealerChannel_"+OrderInfo.offerSpec.offerSpecId+"']").val()
 				};
 				busiOrder.data.busiOrderAttrs.push(dealer);
-				var dealer_name = {
+				var dealer_name = { 
 						itemSpecId : CONST.BUSI_ORDER_ATTR.DEALER_NAME,
-						role : $(this).find("select").val(),
+						role : $(this).find("select[name='dealerType_"+OrderInfo.offerSpec.offerSpecId+"']").val(),
 						value : $(this).find("input").attr("value") 
 				};
 				busiOrder.data.busiOrderAttrs.push(dealer_name);
 			});
-		}
-		
+		}		
 		busiOrders.push(busiOrder);
 		return busiOrder;
 	};
@@ -2519,22 +2520,28 @@ SoOrder = (function() {
 		}*/
 		//发展人
 		var $tr;
+		var objInstId_dealer;
 		if(OrderInfo.actionFlag==6){ //加装发展人根据产品
-			$tr = $("#dealerTbody tr[name='tr_"+prodId+"']");
+			objInstId_dealer = prodId;
+//			$tr = $("#dealerTbody tr[name='tr_"+prodId+"']");
 		}else{
-			$tr = $("#dealerTbody tr[name='tr_"+OrderInfo.offerSpec.offerSpecId+"']");
+			objInstId_dealer = OrderInfo.offerSpec.offerSpecId;
+//			$tr = $("#dealerTbody tr[name='tr_"+OrderInfo.offerSpec.offerSpecId+"']");
 		}
+		$tr = $("#dealerTbody tr[name='tr_"+objInstId_dealer+"']");
 		if($tr!=undefined){
 			$tr.each(function(){   //遍历产品有几个发展人
 				var dealer = {
 					itemSpecId : CONST.BUSI_ORDER_ATTR.DEALER,
-					role : $(this).find("select").val(),
-					value : $(this).find("input").attr("staffid") 
+					role : $(this).find("select[name ='dealerType_"+objInstId_dealer+"']").val(),
+					value : $(this).find("input").attr("staffid"),
+					channelNbr : $(this).find("select[name ='dealerChannel_"+objInstId_dealer+"']").val()
+					
 				};
 				busiOrder.data.busiOrderAttrs.push(dealer);
 				var dealer_name = {
 						itemSpecId : CONST.BUSI_ORDER_ATTR.DEALER_NAME,
-						role : $(this).find("select").val(),
+						role : $(this).find("select[name ='dealerType_"+objInstId_dealer+"']").val(),
 						value : $(this).find("input").attr("value") 
 				};
 				busiOrder.data.busiOrderAttrs.push(dealer_name);

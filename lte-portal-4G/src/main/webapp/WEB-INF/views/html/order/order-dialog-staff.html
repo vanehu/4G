@@ -51,7 +51,7 @@
             <td class="borderLTB">员工姓名</td>
             <td class="borderLTB">员工工号</td>
             <td class="borderLTB">组织名称</td>
-            <!-- <td class="borderLTB">归属渠道</td> -->
+            <td class="borderLTB">归属渠道</td>
             <td class="borderLTB"></td>
           </tr>
         </thead>
@@ -65,7 +65,16 @@
             <td class="teleNum">${staffInfo.staffName}</td>
             <td>${staffInfo.staffCode}</td>
             <td>${staffInfo.orgName}</td>
-            <!-- <td>${staffInfo.CHANNEL_NAME}</td> -->
+            <#if (staffInfo.chanInfos)?? &&((staffInfo.chanInfos)?size>0)>
+	      	<td><select	name="channel_list" class="inputWidth183px">
+	      		<#list staffInfo.chanInfos as chanInfo>
+	      		<option value = "${chanInfo.channelNbr}">${chanInfo.channelName}</option>
+	      		</#list>
+	      		</select>
+	      	</td>
+	      	<#else>
+	      	<td>无渠道</td>
+	      	</#if>
           	<td></td>
           	</tr>
         	</#list>
