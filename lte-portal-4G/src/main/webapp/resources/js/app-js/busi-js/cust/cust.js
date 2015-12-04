@@ -259,7 +259,7 @@ cust = (function(){
 				if(ec.util.isObj(_boPartyContactInfoOld.contactId)){
 					data.boPartyContactInfo.push(_boPartyContactInfoOld);
 					data.boPartyContactInfo.push(_boPartyContactInfo);
-				}else if(ec.util.isObj($.trim($("#contactName").val()))&&ec.util.isObj($.trim($("#contactAddress").val()))){
+				}else if(ec.util.isObj($.trim($("#contactName").val()))){
 					data.boPartyContactInfo.push(_boPartyContactInfo);
 				}
 					
