@@ -1019,6 +1019,7 @@ order.writeCard = (function(){
       	 }
  		//3转4弹出促销窗口
  		if(OrderInfo.actionFlag!=1 && order.prodModify.choosedProdInfo.prodClass== "3"  && coupon.cardTypeFlag==1){
+ 			$("#isShow_"+prodId).show();
  			var prodSpecId = OrderInfo.getProdSpecId(prodId);
  			var param = {
  				prodSpecId : prodSpecId,
