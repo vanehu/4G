@@ -2,7 +2,11 @@ package com.al.lte.portal.controller.crm;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -116,8 +120,37 @@ public class CommonController extends BaseController {
 		//身份证类型开发
 		PropertiesUtils propertiesUtils = (PropertiesUtils) SpringContextUtil.getBean("propertiesUtils");
 		return propertiesUtils.getMessage(propertiesKey);
-
-    
     }
 	
+    /*2级菜单信息查询*/
+	@RequestMapping(value="/queryMenuInfo", method = RequestMethod.POST)
+	public @ResponseBody Map<String, Object> queryMenuInfo(@RequestBody Map<String, Object> param,
+			@LogOperatorAnn String flowNum, HttpServletResponse response) throws Exception{
+		String menuName = (String) param.get("menuName");
+		Object menuList = ServletUtils.getSessionAttribute(super.getRequest(),
+                SysConstant.SESSION_KEY_MENU_LIST);
+		String resourceId ="";
+		String menuPath ="";
+	    if (menuList != null && menuList instanceof List) {
+	        Set<String> authUrls = new HashSet<String>();
+	        List<Map> list1 = (List<Map>) menuList;
+	        for (Map rowTemp1 : list1) {
+	            List<Map> list2 = (List<Map>) rowTemp1.get("childMenuResources");
+	            for (Map rowTemp2 : list2) {
+                    String resourceName = (String) rowTemp2.get("resourceName");
+                    if (menuName.equals(resourceName)) {
+                        if (rowTemp2.get("resourceId") != null)
+                        	resourceId = rowTemp2.get("resourceId") + "";
+                        if ((String) rowTemp2.get("menuPath") != null)
+                        	menuPath = (String) rowTemp2.get("menuPath");
+                        break;
+                    }
+                }
+	        }
+	    }
+	    Map<String, Object> returnMap = new HashMap<String, Object>();
+	    returnMap.put("resourceId", resourceId);
+	    returnMap.put("menuPath", menuPath);
+		return returnMap;
+	}
 }

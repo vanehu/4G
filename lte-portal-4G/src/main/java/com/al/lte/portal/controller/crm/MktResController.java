@@ -952,6 +952,8 @@ public class MktResController extends BaseController {
 		}
 		if("zdyy".equals(param.get("pageType"))){
 			return "/mktRes/terminal-zdyylist";
+		}else if("terminalInfo".equals(param.get("pageType"))){
+			return "/mktRes/terminal-infolist";
 		}
 		return "/mktRes/terminal-list";
 	}
@@ -2341,5 +2343,26 @@ public class MktResController extends BaseController {
             e.printStackTrace();
         }
 	}
+	
+	
+    /**
+     * 终端规格查询页面
+     * @param model
+     * @param session
+     * @return
+     * @throws AuthorityException
+     */
+    @RequestMapping(value = "/queryTerminalInfo", method = RequestMethod.GET)
+    @AuthorityValid(isCheck = true)
+    public String queryCardProgress(Model model, HttpSession session) throws AuthorityException {
+        SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+                SysConstant.SESSION_KEY_LOGIN_STAFF);
+        Map<String, Object> defaultAreaInfo = CommonMethods.getDefaultAreaInfo_MinimumC3(sessionStaff);
+        model.addAttribute("p_areaId", defaultAreaInfo.get("defaultAreaId"));
+        model.addAttribute("p_areaId_val", defaultAreaInfo.get("defaultAreaName"));
+        model.addAttribute("pageType", "terminalInfo");
+
+        return "/mktRes/terminalInfo-main";
+    }
 	
 }
