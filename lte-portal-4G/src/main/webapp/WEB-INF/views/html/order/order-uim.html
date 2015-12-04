@@ -14,5 +14,6 @@
 	<input type="button" class="purchase" value="写卡" onclick="order.writeCard.writeReadCard(${prodId});">
 	<input type="hidden" id="isMIFI_${prodId}" value="no"/>
 	<label class="f_red">*</label>
+	<br><label class="f_red" id="isShow_${prodId}" style="display:none;">请核实用户手机终端，如为“不兼容4G卡终端”，需更换4G终端后才能换4G卡。<a href="javascript:AttachOffer.showTerminalInfo()">终端规格查询</a></label>
 </li>
 <@extends name="/order/write-card.html"/>
