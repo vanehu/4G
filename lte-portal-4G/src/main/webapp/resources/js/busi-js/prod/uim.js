@@ -180,6 +180,7 @@ prod.uim = (function() {
 		}
 		//3转4弹出促销窗口
 		if(OrderInfo.actionFlag!=1 && order.prodModify.choosedProdInfo.prodClass== "3" && data.baseInfo.cardTypeFlag==1){
+			$("#isShow_"+prodId).show();
 			var param = {
 				prodSpecId : prodSpecId,
 				offerSpecIds : [],
