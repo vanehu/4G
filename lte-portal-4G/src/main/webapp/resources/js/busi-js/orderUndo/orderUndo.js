@@ -235,10 +235,9 @@ order.undo = (function(){
 			}else{
 				v_name = $("#"+id).attr("name") ;//其他 默认是取name
 			}
-			var arrCust = [];
 			$("a[name='"+v_name+"']").each(function(){
 				if(flag){
-					if(CONST.APP_DESC==0 ){
+					if(CONST.APP_DESC==0 && $(this).attr("is_new")=="0"){
 						if(attr_Inst[$(this).attr("instId")]==null||attr_Inst[$(this).attr("instId")]==undefined){
 							if($(this).attr("boActionTypeCd") != '1'){
 							    OrderInfo.order.soNbr = UUID.getDataId();
@@ -251,10 +250,7 @@ order.undo = (function(){
 										instId : $(this).attr("instId"),
 										type : "2"
 								};
-								if(-1 == $.inArray($(this).attr("acctNbr"), arrCust)){
-									flag = query.offer.invokeLoadInst(param);
-									arrCust.push( $(this).attr("acctNbr"));
-								}
+								flag = query.offer.invokeLoadInst(param);
 								if(flag){
 									attr_Inst[$(this).attr("instId")] = 1 ;
 								}
