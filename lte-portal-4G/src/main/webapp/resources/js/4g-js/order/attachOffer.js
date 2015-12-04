@@ -642,54 +642,167 @@ AttachOffer = (function() {
 	
 	//开通功能产品
 	var _openServSpec = function(prodId,servSpecId,specName,ifParams){
-		$.confirm("信息确认","开通【"+specName+"】功能产品",{ 
-			yesdo:function(){
-				var servSpec = CacheData.getServSpec(prodId,servSpecId); //在已选列表中查找
-				if(servSpec==undefined){   //在可订购功能产品里面 
-					var newSpec = {
-						objId : servSpecId, //调用公用方法使用
-						servSpecId : servSpecId,
-						servSpecName : specName,
-						ifParams : ifParams,
-						isdel : "C"   //加入到缓存列表没有做页面操作为C
-					};
-					var inPamam = {
-						prodSpecId:servSpecId
-					};
-					if(ifParams == "Y"){
-						var data = query.prod.prodSpecParamQuery(inPamam);// 产品功能产品属性
-						if(data==undefined || data.result==undefined){
-							return;
-						}
-						newSpec.prodSpecParams = data.result.prodSpecParams;
-					if(servSpecId==CONST.YZFservSpecId){//翼支付助手根据付费类型改变默认值
-						var feeType = $("select[name='pay_type_-1']").val();
-						if(feeType==undefined) feeType = order.prodModify.choosedProdInfo.feeType;
-						if(feeType == CONST.PAY_TYPE.AFTER_PAY){
-							for ( var j = 0; j < newSpec.prodSpecParams.length; j++) {
-								var prodSpecParam = newSpec.prodSpecParams[j];
-								prodSpecParam.setValue = "";
-							}																			
-						}else{
-							for ( var j = 0; j < newSpec.prodSpecParams.length; j++) {							
-								var prodSpecParam = newSpec.prodSpecParams[j];
-								if (prodSpecParam.value!="") {
-									prodSpecParam.setValue = prodSpecParam.value;
-								} else if (!!prodSpecParam.valueRange[0]&&prodSpecParam.valueRange[0].value!="")
-									//默认值为空则取第一个
-									prodSpecParam.setValue = prodSpecParam.valueRange[0].value;
-						}
-					  }
-					}
-					}
-					CacheData.setServSpec(prodId,newSpec); //添加到已开通列表里
-					servSpec = newSpec;
-				}
-				_checkServExcludeDepend(prodId,servSpec);
-			},
-			no:function(){
+		if(servSpecId=="13409281" || servSpecId=="13409283"){//开国漫相关提示及查询功能
+			var menuInfo= _queryMenuInfo("终端规格查询");
+			var info = "用户卡为"+order.prodModify.choosedProdInfo.prodClass+"G卡，请确认用户终端"+order.prodModify.choosedProdInfo.prodClass+"G类别，按“4G终端配4G卡、3G终端配3G卡";
+			if(OrderInfo.actionFlag==1){
+				info = "用户卡为4G卡，请确认用户终端4G类别，按“4G终端配4G卡、3G终端配3G卡";
 			}
-		});
+			$.confirm("信息确认",info,{
+				yesdo:function(){
+					window.parent.main.home.addTab(menuInfo.data.resourceId,"终端规格查询",contextPath+"/"+menuInfo.data.menuPath);
+					$.confirm("信息确认","开通【"+specName+"】功能产品",{ 
+						yesdo:function(){
+							var servSpec = CacheData.getServSpec(prodId,servSpecId); //在已选列表中查找
+							if(servSpec==undefined){   //在可订购功能产品里面 
+								var newSpec = {
+									objId : servSpecId, //调用公用方法使用
+									servSpecId : servSpecId,
+									servSpecName : specName,
+									ifParams : ifParams,
+									isdel : "C"   //加入到缓存列表没有做页面操作为C
+								};
+								var inPamam = {
+									prodSpecId:servSpecId
+								};
+								if(ifParams == "Y"){
+									var data = query.prod.prodSpecParamQuery(inPamam);// 产品功能产品属性
+									if(data==undefined || data.result==undefined){
+										return;
+									}
+									newSpec.prodSpecParams = data.result.prodSpecParams;
+								if(servSpecId==CONST.YZFservSpecId){//翼支付助手根据付费类型改变默认值
+									var feeType = $("select[name='pay_type_-1']").val();
+									if(feeType==undefined) feeType = order.prodModify.choosedProdInfo.feeType;
+									if(feeType == CONST.PAY_TYPE.AFTER_PAY){
+										for ( var j = 0; j < newSpec.prodSpecParams.length; j++) {
+											var prodSpecParam = newSpec.prodSpecParams[j];
+											prodSpecParam.setValue = "";
+										}																			
+									}else{
+										for ( var j = 0; j < newSpec.prodSpecParams.length; j++) {							
+											var prodSpecParam = newSpec.prodSpecParams[j];
+											if (prodSpecParam.value!="") {
+												prodSpecParam.setValue = prodSpecParam.value;
+											} else if (!!prodSpecParam.valueRange[0]&&prodSpecParam.valueRange[0].value!="")
+												//默认值为空则取第一个
+												prodSpecParam.setValue = prodSpecParam.valueRange[0].value;
+									}
+								  }
+								}
+								}
+								CacheData.setServSpec(prodId,newSpec); //添加到已开通列表里
+								servSpec = newSpec;
+							}
+							_checkServExcludeDepend(prodId,servSpec);
+						},
+						no:function(){
+						}
+					});
+				
+				
+				},
+				no:function(){}
+			});
+		}else{
+			$.confirm("信息确认","开通【"+specName+"】功能产品",{ 
+				yesdo:function(){
+					var servSpec = CacheData.getServSpec(prodId,servSpecId); //在已选列表中查找
+					if(servSpec==undefined){   //在可订购功能产品里面 
+						var newSpec = {
+							objId : servSpecId, //调用公用方法使用
+							servSpecId : servSpecId,
+							servSpecName : specName,
+							ifParams : ifParams,
+							isdel : "C"   //加入到缓存列表没有做页面操作为C
+						};
+						var inPamam = {
+							prodSpecId:servSpecId
+						};
+						if(ifParams == "Y"){
+							var data = query.prod.prodSpecParamQuery(inPamam);// 产品功能产品属性
+							if(data==undefined || data.result==undefined){
+								return;
+							}
+							newSpec.prodSpecParams = data.result.prodSpecParams;
+						if(servSpecId==CONST.YZFservSpecId){//翼支付助手根据付费类型改变默认值
+							var feeType = $("select[name='pay_type_-1']").val();
+							if(feeType==undefined) feeType = order.prodModify.choosedProdInfo.feeType;
+							if(feeType == CONST.PAY_TYPE.AFTER_PAY){
+								for ( var j = 0; j < newSpec.prodSpecParams.length; j++) {
+									var prodSpecParam = newSpec.prodSpecParams[j];
+									prodSpecParam.setValue = "";
+								}																			
+							}else{
+								for ( var j = 0; j < newSpec.prodSpecParams.length; j++) {							
+									var prodSpecParam = newSpec.prodSpecParams[j];
+									if (prodSpecParam.value!="") {
+										prodSpecParam.setValue = prodSpecParam.value;
+									} else if (!!prodSpecParam.valueRange[0]&&prodSpecParam.valueRange[0].value!="")
+										//默认值为空则取第一个
+										prodSpecParam.setValue = prodSpecParam.valueRange[0].value;
+							}
+						  }
+						}
+						}
+						CacheData.setServSpec(prodId,newSpec); //添加到已开通列表里
+						servSpec = newSpec;
+					}
+					_checkServExcludeDepend(prodId,servSpec);
+				},
+				no:function(){
+				}
+			});
+		
+		}
+//		$.confirm("信息确认","开通【"+specName+"】功能产品",{ 
+//			yesdo:function(){
+//				var servSpec = CacheData.getServSpec(prodId,servSpecId); //在已选列表中查找
+//				if(servSpec==undefined){   //在可订购功能产品里面 
+//					var newSpec = {
+//						objId : servSpecId, //调用公用方法使用
+//						servSpecId : servSpecId,
+//						servSpecName : specName,
+//						ifParams : ifParams,
+//						isdel : "C"   //加入到缓存列表没有做页面操作为C
+//					};
+//					var inPamam = {
+//						prodSpecId:servSpecId
+//					};
+//					if(ifParams == "Y"){
+//						var data = query.prod.prodSpecParamQuery(inPamam);// 产品功能产品属性
+//						if(data==undefined || data.result==undefined){
+//							return;
+//						}
+//						newSpec.prodSpecParams = data.result.prodSpecParams;
+//					if(servSpecId==CONST.YZFservSpecId){//翼支付助手根据付费类型改变默认值
+//						var feeType = $("select[name='pay_type_-1']").val();
+//						if(feeType==undefined) feeType = order.prodModify.choosedProdInfo.feeType;
+//						if(feeType == CONST.PAY_TYPE.AFTER_PAY){
+//							for ( var j = 0; j < newSpec.prodSpecParams.length; j++) {
+//								var prodSpecParam = newSpec.prodSpecParams[j];
+//								prodSpecParam.setValue = "";
+//							}																			
+//						}else{
+//							for ( var j = 0; j < newSpec.prodSpecParams.length; j++) {							
+//								var prodSpecParam = newSpec.prodSpecParams[j];
+//								if (prodSpecParam.value!="") {
+//									prodSpecParam.setValue = prodSpecParam.value;
+//								} else if (!!prodSpecParam.valueRange[0]&&prodSpecParam.valueRange[0].value!="")
+//									//默认值为空则取第一个
+//									prodSpecParam.setValue = prodSpecParam.valueRange[0].value;
+//						}
+//					  }
+//					}
+//					}
+//					CacheData.setServSpec(prodId,newSpec); //添加到已开通列表里
+//					servSpec = newSpec;
+//				}
+//				_checkServExcludeDepend(prodId,servSpec);
+//			},
+//			no:function(){
+//			}
+//		});
 	};
 	
 	//开通功能产品
@@ -4343,6 +4456,21 @@ AttachOffer = (function() {
 		}
 	};
 	
+	//查询菜单信息
+	var _queryMenuInfo = function(menuName){
+		var queryParam ={
+		    menuName : menuName
+		};
+		var response = $.callServiceAsJson(contextPath+"/common/queryMenuInfo",queryParam); //提货方式查询
+		return response;
+	};
+	
+	//
+	var _showTerminalInfo = function(){
+		var menuInfo= _queryMenuInfo("终端规格查询");
+		window.parent.main.home.addTab(menuInfo.data.resourceId,"终端规格查询",contextPath+"/"+menuInfo.data.menuPath);
+	};
+	
 	return {
 		addOffer 				: _addOffer,
 		addOfferSpec 			: _addOfferSpec,
@@ -4409,6 +4537,8 @@ AttachOffer = (function() {
 		checkTerminalCodeReload : _checkTerminalCodeReload,
 		delServSpec             : _delServSpec,
 		mainCartOpenedList		:_mainCartOpenedList,
-		chkReserveCode          :_chkReserveCode
+		chkReserveCode          :_chkReserveCode,
+		queryMenuInfo           :_queryMenuInfo,
+		showTerminalInfo        :_showTerminalInfo
 	};
 })();
