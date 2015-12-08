@@ -172,6 +172,7 @@ public class InterfaceClient {
 		}
 		
 		// 开始调用
+		request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
 		String paramString = "";
 		String paramJson="";
 		String retnJson = "";
@@ -550,11 +551,11 @@ public class InterfaceClient {
 			} 
 			String write_asynchronous_flag = MySimulateData.getInstance().getParam(dbKeyWord,SysConstant.WRITE_ASYNCHRONOUS_FLAG);
 			if (SysConstant.ON.equals(write_asynchronous_flag)) {
-				try{
+				/*try{
 					request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
 				}catch (Exception e) {
 					// TODO: handle exception
-				}
+				}*/
 				Map<String, Object> logObj = new HashMap<String, Object>();
 //				String logId = UUID.randomUUID().toString();
 //				logObj.put("LOG_ID", logId);
@@ -972,6 +973,10 @@ public class InterfaceClient {
 			srcSysID = SysConstant.CSB_SRC_SYS_ID_MVNO;
 		} else if (SysConstant.APPDESC_LTE.equals(appDesc)) {
 			srcSysID = SysConstant.CSB_SRC_SYS_ID_LTE;
+		}
+		HttpSession session = ServletUtils.getSession(request);
+		if ("1".equals(session.getAttribute(SysConstant.SESSION_KEY_APP_FLAG))) {
+			srcSysID = SysConstant.CSB_SRC_SYS_ID_APP;
 		}
 		cdm.setSrcSysID(srcSysID);
 		

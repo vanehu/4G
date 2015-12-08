@@ -361,6 +361,8 @@ public final class SysConstant {
     public static final String CSB_SRC_SYS_ID_LTE = "1000000206";
     /** csb发起方编码-集团转售*/
     public static final String CSB_SRC_SYS_ID_MVNO = "1000000210";
+    /** csb发起方编码-翼销售*/
+    public static final String CSB_SRC_SYS_ID_APP = "1000000244";
     
     public static final String MSG_CODE_FLAG = "msgCodeFlag";
     
