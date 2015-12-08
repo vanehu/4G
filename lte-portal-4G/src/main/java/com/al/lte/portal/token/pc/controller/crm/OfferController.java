@@ -2,14 +2,14 @@ package com.al.lte.portal.token.pc.controller.crm;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+import java.util.concurrent.CountDownLatch;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-
 import com.al.ec.serviceplatform.client.ResultCode;
 import com.al.ec.toolkit.JacksonUtil;
 import com.al.ecs.common.entity.JsonResponse;
@@ -304,8 +303,8 @@ public class OfferController extends BaseController {
 	public String queryAttachSpec(@RequestParam("strParam") String param,Model model,HttpServletResponse response){
 		Map<String, Object> paramMap = new HashMap();
 		try{
-			SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
-					SysConstant.SESSION_KEY_LOGIN_STAFF);	
+			SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);	
+			
 			paramMap =  JsonUtil.toObject(param, Map.class);
 			
 			//默认必开功能产品
@@ -658,7 +657,8 @@ public class OfferController extends BaseController {
 				model.addAttribute("errorMsg", "缺少必要参数");
 				return "/common/error";
 			}
-			
+			 //终端串码
+			model.addAttribute("terminalCode",paramsMap.get("termCode")==null?"":paramsMap.get("termCode").toString());
 			String provIsale=String.valueOf(paramsMap.get("provIsale"));
 			String redirectUri=String.valueOf(paramsMap.get("redirectUri"));
 			String isFee=String.valueOf(paramsMap.get("isFee"));
@@ -700,7 +700,13 @@ public class OfferController extends BaseController {
 			model.addAttribute("isFee_",isFee);
 			model.addAttribute("reloadFlag_",paramsMap.get("reloadFlag"));
 			model.addAttribute("custAreaId_",provCustAreaId);
-
+			String interface_merge = MySimulateData.getInstance().getParam((String) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_DATASOURCE_KEY),"INTERFACE_MERGE");
+			String provareaId = paramsMap.get("provCustAreaId").toString().subSequence(0, 3)+"0000";
+			String mergeFlag = "0";
+			if(interface_merge != null && interface_merge.indexOf(provareaId)!=-1){
+				mergeFlag = "1";
+			}
+			model.addAttribute("mergeFlag",mergeFlag);
 			//判断是否传参UIM卡
 			Object mktResInstCode=paramsMap.get("mktResInstCode");
 			String mktResInstCodes="";
@@ -895,6 +901,102 @@ public class OfferController extends BaseController {
 			return super.failedStr(model, ErrorCode.QUERY_ATTACH_OFFER, e, paramMap);
 		}
 	 	return "/pctoken/order/order-package-change";
+	}
+	
+	/**
+	 * 加载实例
+	 * @param param
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value = "/newLoadInst", method = {RequestMethod.GET})
+	@ResponseBody
+	public JsonResponse newLoadInst(@RequestParam Map<String, Object> paramMap,Model model) {
+		JsonResponse jsonResponse = null;
+		Map resMap = new HashMap();
+
+		List<Map<String, Object>> successList=new ArrayList<Map<String,Object>>();
+		List<Map<String, Object>> failList=new ArrayList<Map<String,Object>>();
+        try {
+        	String acctNbr=String.valueOf(paramMap.get("acctNbr"));
+        	String instId=String.valueOf(paramMap.get("instId"));
+        	
+        	String[] acctNbrs=acctNbr.split(",");
+        	String[] instIds=instId.split(",");
+        	
+        	//判断号码个数，如果只为1，直接查询，不建立线程
+        	if(acctNbrs!=null && acctNbrs.length>0){
+        		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);	
+        		
+        		if(acctNbrs.length==1){
+        			paramMap.put("acctNbr", acctNbrs[0]);
+            		paramMap.put("instId", instIds[0]);
+        			
+        			resMap = offerBmo.loadInst(paramMap,null,sessionStaff);
+        			
+        			//加载实例		
+                	if(ResultCode.R_SUCC.equals(resMap.get("code"))){
+                		return super.successed(resMap,ResultConstant.SUCCESS.getCode());
+                	}else{
+                		return super.failed(resMap,ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+                	}
+        		}else{
+        			CountDownLatch latch= new CountDownLatch(acctNbrs.length);
+                	
+                	for(int i=0;i<acctNbrs.length;i++){
+                		paramMap.put("acctNbr", acctNbrs[i]);
+                		paramMap.put("instId", instIds[i]);
+                		
+                		new LoadInstThread(paramMap, latch, successList, failList, super.getRequest(),offerBmo,sessionStaff).start();;
+                	}
+                	
+                	latch.await();
+                	if(failList.size()>0 || successList.size()==0){
+                		return super.failed(resMap,ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+                	}else{
+//                		return super.failed(resMap,ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+                		return super.successed(resMap,ResultConstant.SUCCESS.getCode());
+                	}
+        		}
+        	}
+        } catch (Exception e) {
+			return super.failed(ErrorCode.LOAD_INST, e, paramMap);
+		}
+		return jsonResponse;
+	}
+	
+	/**
+	 * 加载实例
+	 * @param param
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value = "/loadInstNew", method = RequestMethod.POST)
+	@ResponseBody
+	public JsonResponse loadInstNew(@RequestBody Map<String, Object> paramMap,Model model,HttpServletResponse response,HttpServletRequest request) {
+		JsonResponse jsonResponse = null;
+		Map<String, Object> resMap = new HashMap<String,Object>();
+		
+        try {
+        	SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);	
+        	
+        	//调用全量查询新接口(并发）
+        	resMap = offerBmo.newLoadInst(paramMap,null,sessionStaff);
+        		
+        	if(ResultCode.R_SUCC.equals(resMap.get("code"))){
+        		jsonResponse = super.successed(resMap,ResultConstant.SUCCESS.getCode());
+        	}else{
+        		jsonResponse = super.failed(resMap,ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+        	}
+        } catch (BusinessException be) {
+        	return super.failed(be);
+        } catch (InterfaceException ie) {
+        	return super.failed(ie, paramMap, ErrorCode.LOAD_INST);
+		} catch (Exception e) {
+			return super.failed(ErrorCode.LOAD_INST, e, paramMap);
+		}
+        
+        return jsonResponse;
 	}
 	
 }

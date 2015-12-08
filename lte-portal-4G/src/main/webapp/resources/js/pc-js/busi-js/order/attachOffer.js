@@ -1557,7 +1557,10 @@ AttachOffer = (function() {
 //						if(minNum<terminalMinNum){
 //							terminalMinNum=minNum;
 //						}
+						 var minNumArray=new Array();
 						for(var k=1;k<=minNum;k++){
+							var id="terminalText_"+objInstId+'_'+k;
+							minNumArray[k-1]=id;
 							var $liTerminal=$('<li style="width:700px" name="terminalCodeCheckValidLi"><form name="terminalCodeCheckValidForm"><label>终端校验：</label><input id="terminalText_'+objInstId+'_'+k+'" type="text" class="inputWidth228px inputMargin0" data-validate="validate(terminalCodeCheck) on(keyup blur)" maxlength="50" placeholder="请先输入终端串号" />'
 									+'<input type="checkbox" id="if_p_reserveCode" onclick="AttachOffer.changereserveCode()"><label>使用预约码：</label><input type="text" class="inputWidth228px inputMargin0" id="reserveCode" value="" disabled="disabled" maxlength="20" placeholder="请输入预约码" style="width:160px;background-color: #E8E8E8;" />'
 									+'<input id="terminalBtn_'+objInstId+'_'+k+'" name="terminalCodeCheckValidBtn" type="button" num="'+k+'" flag="'+isFastOffer+'" prodId="'+prodId+'" offerSpecId="'+newSpec.offerSpecId+'" onclick="" value="校验" class="purchase" style="float:left"></input></form></li>');
@@ -1570,6 +1573,28 @@ AttachOffer = (function() {
 				}
 				var $div = $("#terminalDiv_"+prodId);
 				$ul.append($li1).append($li2).append($li3).appendTo($div);
+				//
+				var terminalCode="";
+				if(OrderInfo.terminalCode!=null && OrderInfo.terminalCode!="" && OrderInfo.terminalCode!="null" && OrderInfo.reloadFlag!="N"){
+					var	accessNum=OrderInfo.getAccessNumber(prodId);
+					if(accessNum!="" && accessNum!=null && accessNum!= undefined){
+						var terminalCodeArray=OrderInfo.terminalCode.split(",");
+						for(var k=0;k<terminalCodeArray.length;k++){
+							if(terminalCodeArray[k].indexOf(accessNum)!=-1){
+								//取终端串码minNumArray
+								terminalCode=terminalCodeArray[k].split("_")[1];
+								//填值
+								for(var z=0;z<minNumArray.length;z++){
+									if(minNumArray[z].indexOf(prodId)!=-1){
+										$("#"+minNumArray[z]).val(terminalCode);
+			                             break;
+									}
+								}
+							}
+						}
+					}
+				}
+			
 				$div.show();
 				$li3.find("li[name=terminalCodeCheckValidLi]").find("form[name=terminalCodeCheckValidForm]").each(function() {
 					var terminalCodeCheckValidBtn =$(this).find("input[name=terminalCodeCheckValidBtn]");
@@ -3142,10 +3167,10 @@ AttachOffer = (function() {
 			var prodId = order.prodModify.choosedProdInfo.prodInstId;
 			if(OrderInfo.actionFlag==2||OrderInfo.actionFlag==21){//套餐变更
 				var member = CacheData.getOfferMember(objId);
-				if(member==undefined && offerChange.oldMemberFlag){
+				if(member.objInstId==undefined && offerChange.oldMemberFlag){
 					$.each(OrderInfo.oldoffer,function(){
 						$.each(this.offerMemberInfos,function(){
-							if(this.objInstId==prodId){
+							if(this.objInstId==objId){
 								member = this;
 								return false;
 							}
@@ -4224,6 +4249,7 @@ AttachOffer = (function() {
 		openServSpecReload     :_openServSpecReload,
 		checkTerminalCodeReload:_checkTerminalCodeReload,
 		changereserveCode:_changereserveCode,
-		delServSpec             : _delServSpec
+		delServSpec             : _delServSpec,
+		setSpec:_setSpec
 	};
 })();
