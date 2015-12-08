@@ -44,15 +44,7 @@ public interface OrderBmo {
 	 */
 	public Map<String, Object> orderSubmit(Map<String, Object> paramMap,String optFlowNum, 
 			SessionStaff sessionStaff) throws Exception;
-	/**
-	 * 物联网订单提交
-	 * @param paramMap
-	 * @return
-	 * @throws Exception
-	 */
-	public Map<String, Object> orderSubmit4iot(Map<String, Object> paramMap,String optFlowNum,
-			SessionStaff sessionStaff) throws Exception;
-
+	
 	/**
 	 * 订单提交(一次性，用于异地补换卡CRM侧本地订单记录)
 	 * @param paramMap
@@ -512,6 +504,8 @@ public interface OrderBmo {
 	public Map<String, Object> qryFeeInfoList(Map<String, Object> param, String flowNum, SessionStaff sessionStaff) throws Exception;
 
 	public Map<String, Object> qryCountInfoList(Map<String, Object> param, String flowNum, SessionStaff sessionStaff) throws Exception;
+	
+	public Map<String, Object> qryCount(Map<String, Object> param, String flowNum, SessionStaff sessionStaff) throws Exception;
 	
 	/**
 	 * 终端预约记录查询

@@ -515,8 +515,12 @@ public final class PortalServiceCode {
     
     public static final String INTF_QUERY_TERM_SALES_INFO_LIST="inte-qryTermSalesInfoList"; //终端详情查询接口
     
-    
+
     //end 
+    
+    // add by wd 2015/11/27  查询在途订单总数
+    public static final String  INTF_QUERY_COUNT="biz-service/intf.soService/checkOnWayCustomerOrder"; 
+    // end 
     
     public static final String INTF_PROTOCOL_QUERY= "biz-service/intf.prodInstService/queryProtocolServiceByConditions";  // 查询协议  add by wd  14-11-3
     
