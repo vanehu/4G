@@ -41,7 +41,7 @@ public class GetCardDllInfo extends Service {
             if (StringUtils.isBlank(dbKeyWord)){
                 DataSourceRouter.currentRouterStrategy.setKey(dbKeyWord);
             }
-            map = swc.getCardDllInfo(fc);
+            map = swc.getCardDllInfo(dataBus);
             dataBus.setResultCode(ResultConstant.R_POR_SUCCESS.getCode());
             retnMap.put("code",ResultConstant.R_POR_SUCCESS.getCode());
             retnMap.put("cardDllInfo", ObjectUtil.transforKeyLowerCase(map));

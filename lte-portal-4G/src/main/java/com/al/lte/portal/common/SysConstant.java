@@ -550,4 +550,7 @@ public final class SysConstant {
 	/**异地补换卡权限*/
 	public static final String YDBHK = "YDBHK";
 	
+	/**写卡新组件开关*/
+	public static final String CARD_NEW_DLL = "CARD_NEW_DLL";
+	
 }

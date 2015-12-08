@@ -624,27 +624,55 @@ order.writeCard = (function(){
 		_cardDllInfoJson = null;
 		try {
 			if (factoryCode != undefined) {
+				var writeCardNewDLL = $("#writeCardNewDLL").val();//写卡新组件开关
 				//alert("厂商编码2："+factoryCode);
-				var serviceName = contextPath + "/mktRes/writeCard/cardDllInfo";
-				var param = {
-					"factoryCode":factoryCode       
-				};
-				var cardDllInfoJson;
-				var response = $.callServiceAsJson(serviceName, param);
+				if(writeCardNewDLL=='ON'){
+					var serviceName = contextPath + "/mktRes/writeCard/cardDllInfo";
+					var param = {
+						"factoryCode":factoryCode,
+						"cardType":"newCard"
+					};
+					var cardDllInfoJson;
+					var response = $.callServiceAsJson(serviceName, param);
+					
+					if(response.code == 0){
+						cardDllInfoJson = response.data.cardDllInfo;
+					}else{
+						$.alertM(response.data);
+						return false;
+					}
+					//alert("cardDllInfoJson:"+JSON.stringify(cardDllInfoJson));
+					var dllId = cardDllInfoJson.dllId;
+					if (dllId == undefined || dllId == null || dllId == "") {
+						$.alert("提示","卡商(编码=" + factoryCode + ")获取不到对应的组件信息！","error");
+						return false;
+					}
+					_cardDllInfoJson = cardDllInfoJson;
 				
-				if(response.code == 0){
-					cardDllInfoJson = response.data.cardDllInfo;
 				}else{
-					$.alertM(response.data);
-					return false;
+					var serviceName = contextPath + "/mktRes/writeCard/cardDllInfo";
+					var param = {
+						"factoryCode":factoryCode,
+						"cardType":"oldCard" 
+					};
+					var cardDllInfoJson;
+					var response = $.callServiceAsJson(serviceName, param);
+					
+					if(response.code == 0){
+						cardDllInfoJson = response.data.cardDllInfo;
+					}else{
+						$.alertM(response.data);
+						return false;
+					}
+					//alert("cardDllInfoJson:"+JSON.stringify(cardDllInfoJson));
+					var dllId = cardDllInfoJson.dllId;
+					if (dllId == undefined || dllId == null || dllId == "") {
+						$.alert("提示","卡商(编码=" + factoryCode + ")获取不到对应的组件信息！","error");
+						return false;
+					}
+					_cardDllInfoJson = cardDllInfoJson;
 				}
-				//alert("cardDllInfoJson:"+JSON.stringify(cardDllInfoJson));
-				var dllId = cardDllInfoJson.dllId;
-				if (dllId == undefined || dllId == null || dllId == "") {
-					$.alert("提示","卡商(编码=" + factoryCode + ")获取不到对应的组件信息！","error");
-					return false;
-				}
-				_cardDllInfoJson = cardDllInfoJson;
+				
 				return true;
 			} else {
 				$.alert("提示","卡商编码值不可为空！","error");
@@ -1093,8 +1121,8 @@ order.writeCard = (function(){
 	};
 	return {
 		writeReadCard : _writeReadCard,
-		readCard:_readCard,
-		writeCard:_writeCard,
-		getCardType:_getCardType
+		readCard : _readCard,
+		writeCard : _writeCard,
+		getCardType : _getCardType
 	};
 })();

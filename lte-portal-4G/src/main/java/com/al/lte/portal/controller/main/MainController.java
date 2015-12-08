@@ -113,9 +113,11 @@ public class MainController extends BaseController {
 		} catch (Exception e) {
 			
 		}
+        String CARD_NEW_DLL = propertiesUtils.getMessage(SysConstant.CARD_NEW_DLL);
 		model.addAttribute("canOrder", EhcacheUtil.pathIsInSession(session,"order/prepare"));
         model.addAttribute("hotMap", mapHotProd);
         model.addAttribute("DiffPlaceFlag", "local");
+        model.addAttribute("writeCardNewDLL", CARD_NEW_DLL);
         return "/main/main";
     }
     
