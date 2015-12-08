@@ -142,26 +142,6 @@ public class OrderBmoImpl implements OrderBmo {
 		}
 		return returnMap;
 	}
-	
-    //查询在途数量
-	public Map<String, Object> qryCount(Map<String, Object> param,
-			String optFlowNum, SessionStaff sessionStaff) throws Exception {
-		String serviceCode=PortalServiceCode.INTF_QUERY_COUNT;
-    	DataBus db = InterfaceClient.callService(param,serviceCode,optFlowNum, sessionStaff);
-    	Map<String, Object> returnMap = new HashMap<String, Object>();
-		if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db
-				.getResultCode()))) {
-			Map<String, Object> resultMap = db.getReturnlmap();
-			Map<String, Object> datamap = (Map<String, Object>) resultMap
-					.get("result");
-			returnMap.put("code", ResultCode.R_SUCCESS);
-			returnMap.putAll(datamap);
-		} else {
-			returnMap.put("code", ResultCode.R_FAIL);
-			returnMap.put("msg", db.getResultMsg());
-		}
-		return returnMap;
-	}
 	/*
 	 * 订单算费 (non-Javadoc)
 	 * 
@@ -512,7 +492,20 @@ public class OrderBmoImpl implements OrderBmo {
 		}
 		return resultMap;
 	}
-	public Map<String, Object> orderSubmitComplete(Map<String, Object> paramMap,String optFlowNum, 
+	public Map<String, Object> orderSubmit4iot(Map<String, Object> paramMap,String optFlowNum,
+			SessionStaff sessionStaff)throws Exception {
+		DataBus db = ServiceClient.callService(paramMap,
+				PortalServiceCode.IOT_SERVICE_TRANSFER_ARCHIVE, optFlowNum, sessionStaff);
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		try{
+				resultMap = db.getReturnlmap();
+		} catch (Exception e) {
+			log.error("门户处理营业后台的commitOrderListAndBusOrder服务返回的数据异常", e);
+			throw new BusinessException(ErrorCode.IOT_TRANSFER_ARCHIVE, paramMap, resultMap, e);
+		}
+		return resultMap;
+	}
+	public Map<String, Object> orderSubmitComplete(Map<String, Object> paramMap,String optFlowNum,
 			SessionStaff sessionStaff)throws Exception {
 		DataBus db = InterfaceClient.callService(paramMap,
 				PortalServiceCode.ORDER_SUBMIT_COMPLETE, optFlowNum, sessionStaff);
@@ -1847,7 +1840,7 @@ public class OrderBmoImpl implements OrderBmo {
 			}
 		} catch(Exception e) {
 			log.error("门户处理营业受理的service/intf.batchOrderService/dealBatchQueueProgress服务返回的数据异常", e);
-			throw new BusinessException(ErrorCode.BATCH_IMP_LIST, param, db.getReturnlmap(), e);//确定错误编码？？？？？？？？？？？？？
+			throw new BusinessException(ErrorCode.BATCH_IMP_LIST, param, db.getReturnlmap(), e);
 		}
 		return returnMap;
 	}

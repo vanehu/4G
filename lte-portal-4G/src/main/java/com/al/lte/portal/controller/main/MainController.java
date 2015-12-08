@@ -36,7 +36,6 @@ import com.al.ecs.exception.InterfaceException;
 import com.al.ecs.exception.ResultConstant;
 import com.al.ecs.spring.annotation.session.AuthorityValid;
 import com.al.ecs.spring.controller.BaseController;
-import com.al.lte.portal.bmo.crm.OrderBmo;
 import com.al.lte.portal.bmo.portal.NoticeBmo;
 import com.al.lte.portal.common.EhcacheUtil;
 import com.al.lte.portal.common.SysConstant;
@@ -64,9 +63,6 @@ public class MainController extends BaseController {
     @Autowired
     @Qualifier("com.al.ecs.portal.agent.bmo.portal.NoticeBmo")
     private NoticeBmo noticeBmo;
-    @Autowired
-	@Qualifier("com.al.lte.portal.bmo.crm.OrderBmo")
-	private OrderBmo orderBmo;
     
     @Autowired
 	PropertiesUtils propertiesUtils;
@@ -117,31 +113,11 @@ public class MainController extends BaseController {
 		} catch (Exception e) {
 			
 		}
-        Map<String, Object> param = new HashMap<String, Object>();
-        Map<String, Object> rMap = new HashMap<String, Object>();
-        param.put("areaId", sessionStaff.getCurrentAreaId());
-        Map<String, Object> reqMap= new HashMap<String, Object>();
-        reqMap.put("staffId", sessionStaff.getStaffId());
-        param.put("reqInfo", reqMap);
-        Integer total = 0;
-		try {
-			rMap = orderBmo.qryCount(param, null, sessionStaff);
-			if (rMap != null
-					&& ResultCode.R_SUCCESS.equals(rMap.get("code")
-							.toString())) {
-				total = (Integer)rMap.get("totalSize");
-			}
-        } catch (BusinessException be) {
-			this.log.error("加载总量失败", be);
-		} catch (InterfaceException ie) {
-			this.log.error("加载总量失败", ie);
-		} catch (Exception e) {
-			
-		}
-		model.addAttribute("total",total);
+        String CARD_NEW_DLL = propertiesUtils.getMessage(SysConstant.CARD_NEW_DLL);
 		model.addAttribute("canOrder", EhcacheUtil.pathIsInSession(session,"order/prepare"));
         model.addAttribute("hotMap", mapHotProd);
         model.addAttribute("DiffPlaceFlag", "local");
+        model.addAttribute("writeCardNewDLL", CARD_NEW_DLL);
         return "/main/main";
     }
     

@@ -167,7 +167,6 @@
     
     <div class="topuser" id="d_user_menuType" menuType="${Session["_session_portal_type"]}" >
             <span><div class="top_user_sprite"></div></span>
-            <span onclick="main.home.addTab('main_tab_144','受理订单查询','${contextPath}/report/cartMain?strParam=1')">在途订单数量<a id="total" href="javascript:void(0);" onclick="main.home.addTab('main_tab_144','受理订单查询','${contextPath}/report/cartMain?strParam=1')">${total}</a></span>
             <span>${Session["_ecs_login_session_key"].staffName}</span>
             
             <#if Session["_ecs_login_session_key"].currentChannelId ?? && (Session["_ecs_login_session_key"].currentChannelId!="") >
@@ -235,11 +234,12 @@
             </thead>
             <tbody>
             	<#if Session["_staff_channel"]?? && (Session["_ecs_login_session_key"].currentChannelId!="") >
-				<#list Session["_staff_channel"] as channel>
-				
+				<#list Session["_staff_channel"] as channel>				
 				<tr <#if channel_index%2="1" >class="bg"</#if> >
 					<td class="channel_sel" onclick="header.menu.chooseChannel('${channel.id}')" >
-                  		<dd><i <#if channel.id=Session["_ecs_login_session_key"].currentChannelId >class="select"</#if> ></i>
+                  		<dd>
+                  		<i name= "channel_iofo_i" channel_Id ="${channel.id}" channel_Name = "${channel.name}" channel_Nbr = "${channel.chnNbr}" 
+                  		<#if channel.id=Session["_ecs_login_session_key"].currentChannelId >class="select"</#if> ></i>
 			      			${channel.name}
 			    		</dd>
 			    	</td>
@@ -277,4 +277,6 @@
     </div>
 <!--渠道选择弹窗结束-->
 </div>
-<#include "/main/main-notice.html"/>
+<!-- 置顶公告&弹窗公告&公告详情 -->
+<div class="news" style="float:right;width:100%;">
+</div>

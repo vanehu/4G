@@ -29,7 +29,6 @@ import com.al.ecs.exception.ErrorCode;
 import com.al.ecs.exception.InterfaceException;
 import com.al.ecs.spring.annotation.log.LogOperatorAnn;
 import com.al.ecs.spring.annotation.session.AuthorityValid;
-import com.al.ecs.spring.controller.BaseController;
 import com.al.lte.portal.bmo.crm.CartBmo;
 import com.al.lte.portal.bmo.crm.OrderBmo;
 import com.al.lte.portal.bmo.crm.ReportBmo;
@@ -40,7 +39,7 @@ import com.al.lte.portal.model.SessionStaff;
 
 @Controller("com.al.lte.portal.pad.controller.crm.ReportController")
 @RequestMapping("/pad/report/*")
-public class ReportController extends  BaseController {
+public class ReportController extends com.al.lte.portal.controller.crm.ReportController {
 
 	@Autowired
 	@Qualifier("com.al.lte.portal.bmo.crm.ReportBmo")
@@ -64,7 +63,7 @@ public class ReportController extends  BaseController {
 	 */
 	@RequestMapping(value = "/cartMain", method = RequestMethod.GET)
     @AuthorityValid(isCheck = false)
-    public String main(@RequestParam("strParam") String param,Model model,HttpSession session,@LogOperatorAnn String flowNum) throws AuthorityException {
+    public String main(Model model,HttpSession session,@LogOperatorAnn String flowNum) throws AuthorityException {
 		model.addAttribute("current", EhcacheUtil.getCurrentPath(session,"report/cartMain"));
 		
 		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
