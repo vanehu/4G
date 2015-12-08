@@ -3,6 +3,8 @@ package com.linkage.portal.service.lte.dao;
 
 
 import java.util.Map;
+
+import com.al.ec.serviceplatform.client.DataMap;
 /**
  * 卡资源数据库接口
  * @author xuj
@@ -12,11 +14,11 @@ public interface SoWriteCardDAO {
 
 	/**
 	 * 根据卡商编码查找其动态链接库信息
-	 * @param factoryCode
+	 * @param dataBus
 	 * @return
 	 * @throws Exception
 	 */
-	public Map<String,Object> getCardDllInfo(String factoryCode) throws Exception;
+	public Map<String,Object> getCardDllInfo(DataMap dataBus) throws Exception;
 	/**
      * 现场写卡--获取密码
      * @param factoryCode 厂商
