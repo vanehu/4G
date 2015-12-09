@@ -12,6 +12,8 @@
                	 </tr>
               </thead>
                             <#list pageModel.list as mkt>
+                            <#assign isSupport4G = 1>
+                            <#assign isSupportNFC = 2>
 				<#if (mkt.attrList)??>
 					<#list mkt.attrList as attrList>
 						<#if (attrList.attrId)?? && (attrList.attrId) =='60010023'>

@@ -1688,7 +1688,7 @@ mktRes.terminal = (function($){
 					"pageSize":pageSize
 				},
 				"attrList":attrList,
-				"pageType":pageType,
+				"pageType":pageType
 		};
 	};
 	
