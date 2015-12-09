@@ -416,6 +416,31 @@ public class OfferController extends BaseController {
 	}
 	
 	/**
+	 * 查询功能产品规格,(默认1，必须2，可订购3)
+	 * @param param
+	 * @param model
+	 * @return
+	 * @throws BusinessException
+	 */
+	@RequestMapping(value = "/queryServSpecPost", method = {RequestMethod.POST})
+	public @ResponseBody JsonResponse queryServSpecPost(@RequestBody Map<String, Object> paramMap,Model model) {
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+				SysConstant.SESSION_KEY_LOGIN_STAFF);
+		JsonResponse jsonResponse = null;
+        try {
+        	Map<String, Object> resMap = offerBmo.queryCanBuyServ(paramMap,null,sessionStaff);
+        	jsonResponse = super.successed(resMap,ResultConstant.SUCCESS.getCode());
+        } catch (BusinessException be) {
+        	return super.failed(be);
+        } catch (InterfaceException ie) {
+        	return super.failed(ie, paramMap, ErrorCode.ATTACH_OFFER);
+		} catch (Exception e) {
+			return super.failed(ErrorCode.ATTACH_OFFER, e, paramMap);
+		}
+		return jsonResponse;
+	}
+	
+	/**
 	 * 获取附属销售品查询页面
 	 * @param param
 	 * @param model

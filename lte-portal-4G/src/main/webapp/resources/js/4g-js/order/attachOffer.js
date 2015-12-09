@@ -89,6 +89,35 @@ AttachOffer = (function() {
 			if (data) {
 				$("#attach_"+param.prodId).html(data);
 				_showMainRoleProd(param.prodId); //通过主套餐成员显示角字
+				//根据已选功能产品查询带出的可选包
+				var servSpecIds = [];
+				if(AttachOffer.openServList!=null&&AttachOffer.openServList!=undefined){
+					$.each(AttachOffer.openServList,function(){
+						if(this.prodId == param.prodId){
+							var servSpecList = this.servSpecList;
+							if(servSpecList!=null&&servSpecList!=undefined){
+								$.each(servSpecList,function(){
+									if(this.servSpecId!=null&&this.servSpecId!=undefined){
+//										var servSpecListinfo = {
+//												servSpecId : this.servSpecId
+//										};
+//										servSpecIds.push(servSpecListinfo);
+										servSpecIds.push(this.servSpecId);
+									}
+									});
+								}
+						}
+					});					
+				}
+				param.servSpecIds = servSpecIds;
+				var queryData = query.offer.queryServSpecPost(param);
+				if(queryData!=null&&queryData.resultCode==0){
+					if(queryData.result.offerList!=null&&queryData.result.offerList!=undefined){
+						$.each(queryData.result.offerList,function(){
+							AttachOffer.addOpenList(param.prodId,this.offerSpecId); 
+						});
+					}					
+				}				
 				AttachOffer.changeLabel(param.prodId,param.prodSpecId,""); //初始化第一个标签附属
 				if(param.prodId==-1 && OrderInfo.actionFlag==14){ //合约计划特殊处理
 					AttachOffer.addOpenList(param.prodId,mktRes.terminal.offerSpecId);
@@ -497,6 +526,31 @@ AttachOffer = (function() {
 		}
 	};
 	
+	//直接删除附属销售品规格，不提示删除
+	var _delOfferSpec2 = function(prodId,offerSpecId,reflag){
+		var $span = $("#li_"+prodId+"_"+offerSpecId).find("span"); //定位删除的附属
+		if($span.attr("class")=="del"){  //已经取消订购，再订购
+			AttachOffer.addOfferSpec(prodId,offerSpecId);
+		}else { //取消订购
+			var spec = CacheData.getOfferSpec(prodId,offerSpecId);
+			if(reflag!=undefined && reflag=="reload"){//暂存单二次加载
+				$span.addClass("del");
+				spec.isdel = "Y";
+				_delServSpec(prodId,spec); //取消订购销售品时
+				order.dealer.removeAttDealer(prodId+"_"+offerSpecId); //删除协销人
+				$("#terminalUl_"+prodId+"_"+offerSpecId).remove();
+				spec.isTerminal = 0;
+			}else{
+				$span.addClass("del");
+				spec.isdel = "Y";
+				_delServSpec(prodId,spec); //取消订购销售品时
+				order.dealer.removeAttDealer(prodId+"_"+offerSpecId); //删除协销人
+				$("#terminalUl_"+prodId+"_"+offerSpecId).remove();
+				spec.isTerminal = 0;
+			}
+		}
+	};
+	
 	//删除附属销售品实例
 	var _delOffer = function(prodId,offerId,reflag){
 		var $span = $("#li_"+prodId+"_"+offerId).find("span"); //定位删除的附属
@@ -585,28 +639,89 @@ AttachOffer = (function() {
 		var $span = $("#li_"+prodId+"_"+servSpecId).find("span"); //定位删除的附属
 		if($span.attr("class")=="del"){  //已经退订，再订购
 			AttachOffer.openServSpec(prodId,servSpecId,specName,ifParams);
-		}else { //退订
+		}else { //退订			
+			//退订的时候就提示需要退订其为必选成员的已选可选包
+			var toDelOfferSpecList = [];
+			var flag = true;
+			var mustOfferSpecList = [];
+			if(ec.util.isArray(AttachOffer.openList)){
+				for ( var j = 0; j < AttachOffer.openList.length; j++) {
+					if(prodId == AttachOffer.openList[j].prodId){
+						if(ec.util.isArray(AttachOffer.openList[j].specList)){
+							$.each(AttachOffer.openList[j].specList,function(){
+								var offerSpec = this;
+								if(this.isdel!="Y"){									
+									$.each(offerSpec.offerRoles,function(){
+										if(this.minQty>0){
+											$.each(this.roleObjs,function(){
+												if(servSpecId == this.objId&&this.minQty>0){
+													if(offerSpec.ifDault==0){//必选
+														mustOfferSpecList.push(offerSpec);
+														flag = false;
+													}
+													toDelOfferSpecList.push(offerSpec);
+												}
+											});
+										}
+									});
+								}
+							});
+						}
+					}
+				}
+			}
+			if(flag){
 			$.confirm("信息确认","取消开通【"+$span.text()+"】功能产品",{ 
 				yesdo:function(){
-					var spec = CacheData.getServSpec(prodId,servSpecId);
-					if(spec == undefined){ //没有在已开通附属销售列表中
-						return;
-					}
-					$span.addClass("del");
-					spec.isdel = "Y";
-					_showHideUim(1,prodId,servSpecId);   //显示或者隐藏
-					
-					var serv = CacheData.getServBySpecId(prodId,servSpecId);
-					order.dealer.removeAttDealer(prodId+"_"+servSpecId); //删除协销人
-					if(ec.util.isObj(serv)){ //没有在已开通附属销售列表中
-						$span.addClass("del");
-						serv.isdel = "Y";
-						//_showHideUim(1,prodId,servSpecId);   //显示或者隐藏
+					if(toDelOfferSpecList.length>0){
+						var strInfo = "【"+$span.text()+"】功能产品为以下可选包的必选成员，取消开通将取消订购以下可选包，请确认是否取消订购？<br>";
+						$.each(toDelOfferSpecList,function(){
+							strInfo += "【"+this.offerSpecName+"】<br>";
+						});
+						$.confirm("信息确认",strInfo,{ 
+							yesdo:function(){
+								$.each(toDelOfferSpecList,function(){
+									_delOfferSpec2(prodId,this.offerSpecId);
+								});
+								_closeServSpecCallBack(prodId,servSpecId,$span);
+							},
+							no:function(){
+							}
+						});
+					}else{
+						_closeServSpecCallBack(prodId,servSpecId,$span);
 					}
 				},
 				no:function(){
 				}
 			});
+			}else{				
+				var strInfo = "【"+$span.text()+"】功能产品为可选包:<br>";
+				$.each(toDelOfferSpecList,function(){
+					strInfo += "<b>【"+this.offerSpecName+"】</b><br>";
+				});
+				strInfo += "的必选成员，且可选包为默认必选，不可取消。所以【"+$span.text()+"】功能产品无法取消订购!<br>";
+				$.alert("提示",strInfo);
+				return;
+			}
+		}
+	};
+	
+	var _closeServSpecCallBack = function(prodId,servSpecId,$span){
+		var spec = CacheData.getServSpec(prodId,servSpecId);
+		if(spec == undefined){ //没有在已开通附属销售列表中
+			return;
+		}
+		$span.addClass("del");
+		spec.isdel = "Y";
+		_showHideUim(1,prodId,servSpecId);   //显示或者隐藏
+		
+		var serv = CacheData.getServBySpecId(prodId,servSpecId);
+		order.dealer.removeAttDealer(prodId+"_"+servSpecId); //删除协销人
+		if(ec.util.isObj(serv)){ //没有在已开通附属销售列表中
+			$span.addClass("del");
+			serv.isdel = "Y";
+			//_showHideUim(1,prodId,servSpecId);   //显示或者隐藏
 		}
 	};
 	
@@ -1246,18 +1361,20 @@ AttachOffer = (function() {
 		}
 	};*/
 	
-	//解析服务互斥依赖
+	//解析服务互斥依赖,订购时解析
 	var paserServData = function(result,prodId,serv){
 		var servSpecId = serv.servSpecId;
 		var servExclude = result.servSpec.exclude; //互斥
 		var servDepend = result.servSpec.depend; //依赖
 		var servRelated = result.servSpec.related; //连带
+		var servOfferList = result.servSpec.offerList; //带出的可选包
 		var content = "";
 		//转换接口返回的互斥依赖
 		var param = {  
 			excludeServ : [],  //互斥依赖显示列表
 			dependServ : [], //存放互斥依赖列表
-			relatedServ : [] //连带
+			relatedServ : [], //连带
+			offerListServ : [] //带出的可选包
 		};
 		
 		//解析功能产品互斥
@@ -1295,6 +1412,21 @@ AttachOffer = (function() {
 				param.relatedServ.push(this);
 			});
 		}
+		//解析带出的可选包，获取功能产品订购依赖互斥的接口返回的带出可选包拼接成字符串
+		if(ec.util.isArray(servOfferList)){
+			if(servOfferList.length>0){
+				content += "需要订购：   <br>";
+				$.each(servOfferList,function(){
+					if(this.ifDault===0){
+						content += '<input id="check_open_'+prodId+'_'+this.offerSpecId +'" type="checkbox" checked="checked" disabled="disabled">'+this.offerSpecName+'<br>'; 
+					}else{
+						content += '<input id="check_open_'+prodId+'_'+this.offerSpecId +'" type="checkbox" checked="checked">'+this.offerSpecName+'<br>'; 
+					}
+//					content += "需要订购：   " + this.offerSpecName + "<br>";
+					param.offerListServ.push(this);
+				});
+			}
+		}
 		if(content==""){ //没有互斥依赖
 			AttachOffer.addOpenServList(prodId,servSpecId,serv.servSpecName,serv.ifParams);
 		}else{	
@@ -1303,8 +1435,8 @@ AttachOffer = (function() {
 				excludeAddServ(prodId,servSpecId,param);
 			}else{
 				$.confirm("开通： " + serv.servSpecName,content,{ 
-					yesdo:function(){
-						AttachOffer.addOpenServList(prodId,servSpecId,serv.servSpecName,serv.ifParams); //添加开通功能
+					yes:function(){
+						AttachOffer.addOpenServList(prodId,servSpecId,serv.servSpecName,serv.ifParams); //添加开通功能						
 						excludeAddServ(prodId,servSpecId,param);
 					},
 					no:function(){
@@ -1346,6 +1478,14 @@ AttachOffer = (function() {
 				AttachOffer.addOpenServList(prodId,servSpec.servSpecId,servSpec.servSpecName,servSpec.ifParams); 
 			}
 		}
+		if(ec.util.isArray(param.offerListServ)){//添加带出的可选包
+			for (var i = 0; i < param.offerListServ.length; i++) {
+				var servSpec = param.offerListServ[i];
+				if($("#check_open_"+prodId+"_"+servSpec.offerSpecId).attr("checked")=="checked"){
+					AttachOffer.addOpenList(prodId,servSpec.offerSpecId); 
+				}
+			}
+		}	
 	};
 	
 	//互斥依赖时添加
@@ -1608,10 +1748,9 @@ AttachOffer = (function() {
 						if(ec.util.isArray(this.prodSpecParams)){
 							ifParams = "Y";
 						}
-						_addOpenServList(prodId,this.objId,this.objName,ifParams);
-						if(this.minQty>0){
-							_minQtyFileter(prodId,this.objId);
-						}
+						if(this.dfQty>0){//默认配置大于0就带出，添加到已选功能产品中
+							_addOpenServList(prodId,this.objId,this.objName,ifParams);
+						}					
 					}
 				});
 			});
@@ -3479,7 +3618,7 @@ AttachOffer = (function() {
 		return flag;
 	};
 	
-	//销售品角色成员对象是中 minQty大于0的话 就必须设置其为不能删除（暂定）
+	//销售品角色成员对象是中 minQty大于0的话 就必须设置其为不能删除（暂定）--已删除
 	var _minQtyFileter=function(prodId,servSpecId){
 		//从已开通功能产品中找
 		var serv = CacheData.getServBySpecId(prodId,servSpecId); 
