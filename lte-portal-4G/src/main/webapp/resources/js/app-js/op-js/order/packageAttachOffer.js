@@ -36,31 +36,32 @@ PackageAttachOffer = (function() {
 		}
 		
 		OrderInfo.actionFlag = 3;
-		
-		query.offer.setOffer(function(){
-			if(!rule.rule.ruleCheck()){ //规则校验失败
+		if(OrderInfo.provinceInfo.mergeFlag=="0"){
+			if(!query.offer.setOffer()){  
 				return;
 			}
-			var param = {
-					offerSpecId : prodInfo.prodOfferId,
-					offerTypeCd : 1,
-					partyId: OrderInfo.cust.custId
-			};
-			if(ec.util.isObj(prodInfo.prodOfferId)){
-				if(!query.offer.queryMainOfferSpec(param)){ //查询主套餐规格构成，并且保存
-					return;
-				}
-			}else{
-				OrderInfo.offerSpec = {};
+		}
+		if(!rule.rule.ruleCheck()){ //规则校验失败
+			return;
+		}
+		var param = {
+				offerSpecId : prodInfo.prodOfferId,
+				offerTypeCd : 1,
+				partyId: OrderInfo.cust.custId
+		};
+		if(ec.util.isObj(prodInfo.prodOfferId)){
+			if(!query.offer.queryMainOfferSpec(param)){ //查询主套餐规格构成，并且保存
+				return;
 			}
-			if(CONST.getAppDesc()==0){ //4g系统需要
-				if(!prod.uim.setProdUim()){ //根据UIM类型，设置产品是3G还是4G，并且保存旧卡
-					return;	
-				}
+		}else{
+			OrderInfo.offerSpec = {};
+		}
+		if(CONST.getAppDesc()==0){ //4g系统需要
+			if(!prod.uim.setProdUim()){ //根据UIM类型，设置产品是3G还是4G，并且保存旧卡
+				return;	
 			}
-			
-			_queryAttachOffer();
-		});
+		}
+		_queryAttachOffer();
 	}; 
 	
 	//已订购的附属销售品查询
@@ -297,19 +298,60 @@ PackageAttachOffer = (function() {
 									
 									var roleCode="";
 									
-									$(busiOrderAttrs).each(function(i,busiOrderAttr) { 
-										var itemSpecId=busiOrderAttr.itemSpecId;
-										if(itemSpecId=="111111120"){
-											roleCode=busiOrderAttr.role;
-											isNeedAdd=true;
-											return false;
+									//加载发展人
+									//套餐变更APP是有发展人的,以下是发展人数据
+									if(busiOrder.data.busiOrderAttrs!=undefined){
+										var dealerMap1 = {};
+										var dealerMap2 = {};
+										var dealerMap3 = {};
+										$.each(busiOrder.data.busiOrderAttrs,function(){
+											if(this.role=="40020005"){
+												dealerMap1.role = this.role;
+												if(this.itemSpecId==CONST.BUSI_ORDER_ATTR.DEALER){
+													dealerMap1.staffid = this.value;
+												}else if(this.itemSpecId==CONST.BUSI_ORDER_ATTR.DEALER_NAME){
+													dealerMap1.staffname = this.value;
+												}
+												dealerMap1.objInstId=objId;
+												dealerMap1.accessNumber=accessNumber;
+												dealerMap1.objName=objName;
+												dealerMap1.prodId=prodId;
+											}else if(this.role=="40020006"){
+												dealerMap2.role = this.role;
+												if(this.itemSpecId==CONST.BUSI_ORDER_ATTR.DEALER){
+													dealerMap2.staffid = this.value;
+												}else if(this.itemSpecId==CONST.BUSI_ORDER_ATTR.DEALER_NAME){
+													dealerMap2.staffname = this.value;
+												}
+												dealerMap2.objInstId=objId;
+												dealerMap2.accessNumber=accessNumber;
+												dealerMap2.objName=objName;
+												dealerMap2.prodId=prodId;
+											}else if(this.role=="40020007"){
+												dealerMap3.role = this.role;
+												if(this.itemSpecId==CONST.BUSI_ORDER_ATTR.DEALER){
+													dealerMap3.staffid = this.value;
+												}else if(this.itemSpecId==CONST.BUSI_ORDER_ATTR.DEALER_NAME){
+													dealerMap3.staffname = this.value;
+												}
+												dealerMap3.objInstId=objId;
+												dealerMap3.accessNumber=accessNumber;
+												dealerMap3.objName=objName;
+												dealerMap3.prodId=prodId;
+											}										
+										});
+										
+										if(ec.util.isObj(dealerMap1.role)){
+											OrderInfo.reloadProdInfo.dealerlist.push(dealerMap1);
 										}
-									});
-									
-									//新增发展人
-									if(isNeedAdd){
-										//app暂时没有发展人
-										//_addAttachDealerSub(prodId+"_"+objId,accessNumber,objName,roleCode);
+										
+										if(ec.util.isObj(dealerMap2.role)){
+											OrderInfo.reloadProdInfo.dealerlist.push(dealerMap2);
+										}
+										
+										if(ec.util.isObj(dealerMap3.role)){
+											OrderInfo.reloadProdInfo.dealerlist.push(dealerMap3);
+										}
 									}
 									
 									//重载订单中已经选择的服务

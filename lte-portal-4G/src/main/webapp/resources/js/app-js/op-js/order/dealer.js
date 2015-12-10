@@ -30,88 +30,111 @@ order.dealer = (function() {
 		if(OrderInfo.actionFlag!=3&&OrderInfo.actionFlag!=2){
 			$("#head").text(OrderInfo.offerSpec.offerSpecName);  
 		}
+		
+		var isReloadFlag=OrderInfo.provinceInfo.reloadFlag;
+		
 		if(OrderInfo.actionFlag==1 || OrderInfo.actionFlag==2 || OrderInfo.actionFlag==14){ //新装业务，套餐变更需要主套餐发展人
 			var objInstId = OrderInfo.offerSpec.offerSpecId;
 			var $li = $("<li id='tr_"+objInstId+"' name='tr_"+objInstId+"' href='#' class='list-group-item'></li>");
+			
+			//[<a href='javascript:order.dealer.showOfferList();'>添加发展人</a>]
+			
 			$li.append("<h5 class='list-group-item-heading text-warning'>主套餐</h5>");
 			$li.append("<p class='list-group-item-text'>"+OrderInfo.offerSpec.offerSpecName+"</p><p> </p>");
 			var $p = $('<p> </p>');
 			var $div = $('<div class="row"> </div>');
 			var $div2 = $('<div class="col-xs-6"> </div>');
-						//var $field=$('<fieldset data-role="fieldcontain"></fieldset>');
-			var objId = objInstId+"_"+OrderInfo.SEQ.dealerSeq;
+			var nowSeq=OrderInfo.SEQ.dealerSeq;
+			var objId = objInstId+"_"+nowSeq;
+			
+			//将发展人需要的objId放入OrderInfo中
+			OrderInfo.codeInfos.developmentObjId=objId;
+			
 			var $select = $('<select id="dealerType_'+objId+'" name="dealerType_'+objInstId+'"  class="selectpicker show-tick form-control" data-mini="true" data-native-menu="false" data-icon="select" onclick=a=this.value; onchange="order.dealer.changeDealer(this,\'dealerType_'+objInstId+'\',a)"></select>');
-//			if(order.ysl!=undefined){
-//				$select.append("<option value='40020005'>第一发展人</option>");
-//				$select.append("<option value='40020006'>第二发展人</option>");
-//				$select.append("<option value='40020007'>第三发展人</option>");
-//			}else{
-				$.each(OrderInfo.order.dealerTypeList,function(){
-					$select.append("<option value='"+this.PARTYPRODUCTRELAROLECD+"' >"+this.NAME+"</option>");
-				});
-//			}
+			
+			$.each(OrderInfo.order.dealerTypeList,function(){
+				$select.append("<option value='"+this.PARTYPRODUCTRELAROLECD+"' >"+this.NAME+"</option>");
+			});
+			
 			$div2.append($select);
 			$div.append($div2);
-//			if(order.ysl!=undefined){
-//				var $dd = $('<dd><input type="text" id="dealer_'+objId+'" staffId="'+OrderInfo.staff.staffId+'" value="'+OrderInfo.staff.staffName+'" data-mini="true"></input></dd>');
-//				$dl.append($dd);
-//			}else{
+			
+			if(isReloadFlag=="N" && (OrderInfo.actionFlag=="1" || OrderInfo.actionFlag=="2")){
+				if(OrderInfo.reloadProdInfo.dealerlist!=null){
+					$.each(OrderInfo.reloadProdInfo.dealerlist,function(i,item){
+						if(i==0){
+							var staffId=this.staffid;
+							if(staffId!=null && staffId!="" && staffId!=undefined){
+								var $td = $('<div class="col-xs-6"><input type="text" onclick="javascript:order.dealer.showDealer(0,\'dealer\',\''+objId+'\');" onChange="javascript:this.staffId=OrderInfo.staff.staffId;this.value=OrderInfo.staff.staffName" class="form-control" id="dealer_'+objId+'" staffId="'+staffId+'" value="'+this.staffname+'" ></input></div>');
+								$div.append($td);
+							}
+						}
+					});
+				}
+			}else{
 				var $td = $('<div class="col-xs-6"><input type="text" onclick="javascript:order.dealer.showDealer(0,\'dealer\',\''+objId+'\');" onChange="javascript:this.staffId=OrderInfo.staff.staffId;this.value=OrderInfo.staff.staffName" class="form-control" id="dealer_'+objId+'" staffId="'+OrderInfo.staff.staffId+'" value="'+OrderInfo.staff.staffName+'" ></input></div>');
 				$div.append($td);
-//			}
+			}
+			
 			$li.append($div);
 			$li.append($p);
 			OrderInfo.SEQ.dealerSeq++;
 			$("#dealerTbody").append($li);
+			
 			//新装二次业务加载
-			if(OrderInfo.provinceInfo.reloadFlag=="N"){
+			if(isReloadFlag=="N"){
 				if(OrderInfo.reloadProdInfo.dealerlist.length>0){
-					$.each(OrderInfo.reloadProdInfo.dealerlist,function(){
-						if(this.role!=undefined){
-							$("#dealerType_"+OrderInfo.reloadProdInfo.objInstId).find("option[value='"+this.role+"']").attr("selected","selected");
-							$("#dealer_"+OrderInfo.reloadProdInfo.objInstId).val(this.staffname);
+					$.each(OrderInfo.reloadProdInfo.dealerlist,function(dei,item){
+						if(dei==0){
+							if(this.role!=undefined){
+								$("#dealerType_"+OrderInfo.reloadProdInfo.objInstId).find("option[value='"+this.role+"']").attr("selected","selected");
+							}
 						}
 					});
 				}
+				
 				$("#order_remark").val(OrderInfo.reloadProdInfo.orderMark);//订单备注初始化
 			}
+			
 			$.refresh($("#dealerTbody"));
 		}
+		
 		if(OrderInfo.actionFlag==6 ){ //加装需要接入产发展人
-			$.each(OrderInfo.offerSpec.offerRoles,function(){
-	    		$.each(this.prodInsts,function(){
-	    			var objInstId = this.prodInstId;
-	    			var $li = $("<li id='tr_"+objInstId+"' name='tr_"+objInstId+"'></li>");
-	    			var $dl= $("<dl></dl>");
-	    			var $tdType = $('<dd></dd>');
-	    			var $field=$('<fieldset data-role="fieldcontain"></fieldset>');
-	    			var objId = objInstId+"_"+OrderInfo.SEQ.dealerSeq;
-	    			var $select = $('<select id="dealerType_'+objId+'" name="dealerType_'+objInstId+'" data-mini="true" data-native-menu="false" data-icon="select" onclick=a=this.value; onchange="order.dealer.changeDealer(this,\'dealerType_'+objInstId+'\',a)"></select>');
-	    			$.each(OrderInfo.order.dealerTypeList,function(){
-	    				$select.append("<option value='"+this.PARTYPRODUCTRELAROLECD+"' >"+this.NAME+"</option>");
-	    			});
-	    			$field.append($select);
-	    			$tdType.append($field);
-					var accNbr = "未选号";
-					if(this.accNbr!=undefined && this.accNbr!=""){
-						accNbr = prodInst.accNbr;
-					}
-					$dl.append("<dd>"+accNbr+"</dd>");
-					$dl.append("<dd>"+this.objName+"</dd>");
-					$dl.append($tdType);
-					var $dd = $('<dd><input type="text" id="dealer_'+objId+'" staffId="'+OrderInfo.staff.staffId+'" value="'+OrderInfo.staff.staffName+'" data-mini="true" readonly="readonly" ></input></dd>');
-					$dl.append($dd);
-					var $button='<dd class="ui-grid"><div class="ui-grid-a"><div class="ui-block-a">';
-					$button+='<button data-mini="ture" onclick="javascript:order.main.queryStaff(0,\'dealer\',\''+objId+'\');">选择</button></div>';
-					$button+=' <div class="ui-block-b"> <button data-mini="ture" onclick="order.dealer.addProdDealer(this,'+objInstId+',1)">添加</button></div></div></dd>';
-					$dl.append($button);
-					$li.append($dl);
-					OrderInfo.SEQ.dealerSeq++;
-					$("#dealerTbody").append($li);
-					$.jqmRefresh($("#dealerTbody"));
-	    		});
-	    	});
+//			$.each(OrderInfo.offerSpec.offerRoles,function(){
+//	    		$.each(this.prodInsts,function(){
+//	    			var objInstId = this.prodInstId;
+//	    			var $li = $("<li id='tr_"+objInstId+"' name='tr_"+objInstId+"'></li>");
+//	    			var $dl= $("<dl></dl>");
+//	    			var $tdType = $('<dd></dd>');
+//	    			var $field=$('<fieldset data-role="fieldcontain"></fieldset>');
+//	    			var objId = objInstId+"_"+OrderInfo.SEQ.dealerSeq;
+//	    			var $select = $('<select id="dealerType_'+objId+'" name="dealerType_'+objInstId+'" data-mini="true" data-native-menu="false" data-icon="select" onclick=a=this.value; onchange="order.dealer.changeDealer(this,\'dealerType_'+objInstId+'\',a)"></select>');
+//	    			$.each(OrderInfo.order.dealerTypeList,function(){
+//	    				$select.append("<option value='"+this.PARTYPRODUCTRELAROLECD+"' >"+this.NAME+"</option>");
+//	    			});
+//	    			$field.append($select);
+//	    			$tdType.append($field);
+//					var accNbr = "未选号";
+//					if(this.accNbr!=undefined && this.accNbr!=""){
+//						accNbr = prodInst.accNbr;
+//					}
+//					$dl.append("<dd>"+accNbr+"</dd>");
+//					$dl.append("<dd>"+this.objName+"</dd>");
+//					$dl.append($tdType);
+//					var $dd = $('<dd><input type="text" id="dealer_'+objId+'" staffId="'+OrderInfo.staff.staffId+'" value="'+OrderInfo.staff.staffName+'" data-mini="true" readonly="readonly" ></input></dd>');
+//					$dl.append($dd);
+//					var $button='<dd class="ui-grid"><div class="ui-grid-a"><div class="ui-block-a">';
+//					$button+='<button data-mini="ture" onclick="javascript:order.main.queryStaff(0,\'dealer\',\''+objId+'\');">选择</button></div>';
+//					$button+=' <div class="ui-block-b"> <button data-mini="ture" onclick="order.dealer.addProdDealer(this,'+objInstId+',1)">添加</button></div></div></dd>';
+//					$dl.append($button);
+//					$li.append($dl);
+//					OrderInfo.SEQ.dealerSeq++;
+//					$("#dealerTbody").append($li);
+//					$.jqmRefresh($("#dealerTbody"));
+//	    		});
+//	    	});
 		}
+		
 		if(OrderInfo.actionFlag==13){ //裸机销售需要发展人
 			var objInstId = $("#mktResId").val();
 			var $li = $("<li id='tr_"+objInstId+"' name='tr_"+objInstId+"'></li>");
@@ -137,7 +160,71 @@ order.dealer = (function() {
 			$("#dealerMktTbody").append($li);
 			$.jqmRefresh($("#dealerMktTbody"));
 		}
+		
+		//发展人二次加载[W]
+		if(isReloadFlag!=null && isReloadFlag!="" && isReloadFlag=="N"){
+			if(OrderInfo.reloadProdInfo.dealerlist.length>0){
+				$.each(OrderInfo.reloadProdInfo.dealerlist,function(rei,item){
+					var showNum=true;
+					if(OrderInfo.actionFlag=="1" || OrderInfo.actionFlag=="2"){
+						if(rei==0){
+							showNum=false;
+						}
+					}
+					
+					if(showNum){
+						var id=this.objInstId;
+						var prodId=this.prodId;
+						
+						if(this.role!=undefined){
+							var objId = id+"_"+OrderInfo.SEQ.dealerSeq;
+							
+							var $tr = $("#atr_"+id);
+							var $li = $("<li name=\"tr_"+prodId+"_"+id+"\" id=\"tr_"+prodId+"_"+id+"\" class='list-group-item'></li>");
+							
+							//新添加发展人[W]
+							$li.append("<h5 class='list-group-item-heading text-warning'>"+this.accessNumber+"[<a href=\"javascript:order.dealer.removeDealerNew('"+id+"');\">删除</a>]</h5>");
+							$li.append("<p class='list-group-item-text'>"+this.objName+"</p>");
+							$li.append("<p ></p>");
+							
+							//发张人选项和名称开始
+							var $div = $('<div class="row"> </div>');
+							var $div2 = $('<div class="col-xs-6"> </div>');
+							
+							//将发展人需要的objId放入OrderInfo中
+							OrderInfo.codeInfos.developmentObjId=objId;
+							
+							var $select = $('<select id="dealerType_'+objId+'" name="dealerType_'+id+'"  class="selectpicker show-tick form-control" data-mini="true" data-native-menu="false" data-icon="select" onclick=a=this.value; onchange="order.dealer.changeDealer(this,\'dealerType_'+id+'\',a)"></select>');
+							
+							var delType=this.role;
+							
+							$.each(OrderInfo.order.dealerTypeList,function(){
+								if(this.PARTYPRODUCTRELAROLECD==delType){
+									$select.append("<option value='"+this.PARTYPRODUCTRELAROLECD+"' selected=\"selected\">"+this.NAME+"</option>");
+								}else{
+									$select.append("<option value='"+this.PARTYPRODUCTRELAROLECD+"' >"+this.NAME+"</option>");
+								}
+							});
+							
+							$div2.append($select);
+							$div.append($div2);
+							
+							var $td = $('<div class="col-xs-6"><input type="text" onclick="javascript:order.dealer.showDealer(0,\'dealer\',\''+objId+'\');" onChange="javascript:this.staffId=OrderInfo.staff.staffId;this.value=OrderInfo.staff.staffName" class="form-control" id="dealer_'+objId+'" staffId="'+this.staffid+'" value="'+this.staffname+'" ></input></div>');
+							$div.append($td);
+							
+							$li.append($div);
+							$li.append("<p ></p>");
+							
+							$("#dealerTbody").append($li);
+							
+							OrderInfo.SEQ.dealerSeq++;
+						}
+					}
+				});
+			}
+		}
 	};
+	
 	function _showDealer(qryPage,v_id,objInstId){
 		$("#sel").empty();
 		$("#diqu").empty();
@@ -201,20 +288,19 @@ order.dealer = (function() {
 	
 	//协销人-查询
 	function _queryStaff(qryPage,v_id,objInstId){
-//		if(qryPage == 0){
-//			$("#p_staff_areaId").val("");
-//			$("#p_staff_areaId_val").val("");
-//		}
 		if($("#staffName").val()=="" && $("#staffCode").val() == ""){
 			$.alert("操作提示","请输入工号或者姓名！");
 			return;
 		}
+		
+		var staffCode=$("#staffCode").val();
+		
 		var param = {
 				"dealerId":v_id,
 				"areaId":$("#diqu").val(),
 				//"currentAreaAllName":$("#p_staff_areaId_val").val(),
 				"name":$("#staffName").val(),
-				"code":$("#staffCode").val(),
+				"code":staffCode,
 				//"salesCode":$("#qrySalesCode").val(),
 				"pageIndex":1,
 				"objInstId":objInstId,
@@ -232,7 +318,11 @@ order.dealer = (function() {
 				}
 				if(response.code==0){
 					if(response.data.length == 0){
-						$.alert("操作提示","没有查询到该员工信息！");
+						if(staffCode!=null && staffCode!=""){
+							$.alert("操作提示","未查询到工号为["+staffCode+"]的员工信息");
+						}else{
+							$.alert("操作提示","没有查询到该员工信息！");
+						}
 					}else{
 						$("#dealer_"+objInstId).attr("value",response.data[0].staffName).attr("staffId", response.data[0].staffId);
 						$("#developModal").modal("hide");
@@ -286,41 +376,42 @@ order.dealer = (function() {
 					return false;
 				}
 				var $tr = $("#atr_"+id);
-				var $li = $('<li name="tr_'+id+'"></li>');
-				var $dl= $("<dl></dl>");
-				$dl.append("<dd>"+$tr.children().eq(1).text()+"</dd>");
-				$dl.append("<dd>"+$tr.children().eq(2).text()+"</dd>");
-				$dl.append($tdType);
+				var $li = $("<li name='tr_"+id+"' id='tr_"+id+"' class='list-group-item'></li>");
 				
-				var dealer = $("#tr_"+prodId).find("input"); //产品协销人
-				var staffId = 1;
-				var staffName = "";
-				if(dealer[0]==undefined){
-					staffId = OrderInfo.staff.staffId;
-					staffName = OrderInfo.staff.staffName;
-				}else {
-					staffId = dealer.attr("staffId");
-					staffName = dealer.attr("value");
-				}
-				if(order.ysl!=undefined){
-					var $dd = $('<dd><input type="text" id="dealer_'+objId+'" name="dealer_'+id+'" staffId="'+staffId+'" value="'+staffName+'"  data-mini="true"></input></dd>');
-					$dl.append($dd);
-				}else{
-					var $dd = $('<dd><input type="text" id="dealer_'+objId+'" name="dealer_'+id+'" staffId="'+staffId+'" value="'+staffName+'"  data-mini="true"  readonly="readonly"></input></dd>');
-					$dl.append($dd);
-				}
-//				var $button='<dd class="ui-grid"><div class="ui-grid-b"><div class="ui-block-a">';
-//				$button+='<button data-mini="ture" onclick="order.main.queryStaff(\'dealer\',\''+objId+'\');">选择</button></div>';
-//				$button+=' <div class="ui-block-b"> <button data-mini="ture" onclick="order.dealer.addProdDealer(this,\''+id+'\')">添加</button></div>';
-//				$button+=' <div class="ui-block-c"> <button data-mini="ture" onclick="order.dealer.removeDealer(this);">删除</button></div></div></dd>';			
-//				$dl.append($button);
-				$li.append($dl);
+				//新添加发展人[W]
+				$li.append("<h5 class='list-group-item-heading text-warning'>"+$tr.children().eq(1).text()+"[<a href=\"javascript:order.dealer.removeDealerNew('"+id+"');\">删除</a>]</h5>");
+				$li.append("<p class='list-group-item-text'>"+$tr.children().eq(2).text()+"</p>");
+				$li.append("<p ></p>");
+				
+				//发张人选项和名称开始
+				var $div = $('<div class="row"> </div>');
+				var $div2 = $('<div class="col-xs-6"> </div>');
+				
+				//将发展人需要的objId放入OrderInfo中
+				OrderInfo.codeInfos.developmentObjId=objId;
+				
+				var $select = $('<select id="dealerType_'+objId+'" name="dealerType_'+id+'"  class="selectpicker show-tick form-control" data-mini="true" data-native-menu="false" data-icon="select" onclick=a=this.value; onchange="order.dealer.changeDealer(this,\'dealerType_'+id+'\',a)"></select>');
+				
+				$.each(OrderInfo.order.dealerTypeList,function(){
+					$select.append("<option value='"+this.PARTYPRODUCTRELAROLECD+"' >"+this.NAME+"</option>");
+				});
+				
+				$div2.append($select);
+				$div.append($div2);
+				
+				var $td = $('<div class="col-xs-6"><input type="text" onclick="javascript:order.dealer.showDealer(0,\'dealer\',\''+objId+'\');" onChange="javascript:this.staffId=OrderInfo.staff.staffId;this.value=OrderInfo.staff.staffName" class="form-control" id="dealer_'+objId+'" staffId="'+OrderInfo.staff.staffId+'" value="'+OrderInfo.staff.staffName+'" ></input></div>');
+				$div.append($td);
+				
+				$li.append($div);
+				$li.append("<p ></p>");
+				
 				$("#dealerTbody").append($li);
-//				$.jqmRefresh($("#dealerTbody"));
+				
 				OrderInfo.SEQ.dealerSeq++;
 			}	
 		});
-		$("#div_attach_choose").popup("close");
+		//$("#div_attach_choose").popup("close");
+		$("#addModal").modal("hide");
 	};
 	
 	//添加一行产品协销人
@@ -399,37 +490,37 @@ order.dealer = (function() {
 	//校验发展人类型,并获取发展人类型列表
 	var _getDealerType = function(objInstId,objId){
 		
-		
-		var objInstId = OrderInfo.offerSpec.offerSpecId;
-		var $li = $("<li id='tr_"+objInstId+"' name='tr_"+objInstId+"' href='#' class='list-group-item'></li>");
-		$li.append("<h5 class='list-group-item-heading text-warning'>"+accNbr+"（包含接入产品）</h5>");
-		$li.append("<p class='list-group-item-text'>"+OrderInfo.offerSpec.offerSpecName+"</p>");
-		var $p = $('<p> </p>');
-		var $div = $('<div class="row"> </div>');
-		var $div2 = $('<div class="col-xs-6"> </div>');
-					//var $field=$('<fieldset data-role="fieldcontain"></fieldset>');
-		var objId = objInstId+"_"+OrderInfo.SEQ.dealerSeq;
-		var $select = $('<select id="dealerType_'+objId+'" name="dealerType_'+objInstId+'"  class="selectpicker show-tick form-control" data-mini="true" data-native-menu="false" data-icon="select" onclick=a=this.value; onchange="order.dealer.changeDealer(this,\'dealerType_'+objInstId+'\',a)"></select>');
-		if(order.ysl!=undefined){
-			$select.append("<option value='40020005'>第一发展人</option>");
-			$select.append("<option value='40020006'>第二发展人</option>");
-			$select.append("<option value='40020007'>第三发展人</option>");
-		}else{
-			$.each(OrderInfo.order.dealerTypeList,function(){
-				$select.append("<option value='"+this.PARTYPRODUCTRELAROLECD+"' >"+this.NAME+"</option>");
-			});$field
-		}
-		$div2.append($select);
-		$div.append($div2);
-		if(order.ysl!=undefined){
-//			var $dd = $('<dd><input type="text" id="dealer_'+objId+'" staffId="'+OrderInfo.staff.staffId+'" value="'+OrderInfo.staff.staffName+'" data-mini="true"></input></dd>');
-//			$dl.append($dd);
-		}else{
-			var $td = $('<div class="col-xs-6"><input type="text" onFocus="javascript:order.dealer.queryStaff(\'dealer\',\''+objId+'\');"" class="form-control" id="dealer_'+objId+'" staffId="'+OrderInfo.staff.staffId+'" value="'+OrderInfo.staff.staffName+'" readonly="readonly" ></input></div>');
-			$div.append($td);
-		}
-		$p.append($div);
-		$li.append($p);
+//		
+//		var objInstId = OrderInfo.offerSpec.offerSpecId;
+//		var $li = $("<li id='tr_"+objInstId+"' name='tr_"+objInstId+"' href='#' class='list-group-item'></li>");
+//		$li.append("<h5 class='list-group-item-heading text-warning'>"+accNbr+"（包含接入产品）</h5>");
+//		$li.append("<p class='list-group-item-text'>"+OrderInfo.offerSpec.offerSpecName+"</p>");
+//		var $p = $('<p> </p>');
+//		var $div = $('<div class="row"> </div>');
+//		var $div2 = $('<div class="col-xs-6"> </div>');
+//					//var $field=$('<fieldset data-role="fieldcontain"></fieldset>');
+//		var objId = objInstId+"_"+OrderInfo.SEQ.dealerSeq;
+//		var $select = $('<select id="dealerType_'+objId+'" name="dealerType_'+objInstId+'"  class="selectpicker show-tick form-control" data-mini="true" data-native-menu="false" data-icon="select" onclick=a=this.value; onchange="order.dealer.changeDealer(this,\'dealerType_'+objInstId+'\',a)"></select>');
+//		if(order.ysl!=undefined){
+//			$select.append("<option value='40020005'>第一发展人</option>");
+//			$select.append("<option value='40020006'>第二发展人</option>");
+//			$select.append("<option value='40020007'>第三发展人</option>");
+//		}else{
+//			$.each(OrderInfo.order.dealerTypeList,function(){
+//				$select.append("<option value='"+this.PARTYPRODUCTRELAROLECD+"' >"+this.NAME+"</option>");
+//			});$field
+//		}
+//		$div2.append($select);
+//		$div.append($div2);
+//		if(order.ysl!=undefined){
+////			var $dd = $('<dd><input type="text" id="dealer_'+objId+'" staffId="'+OrderInfo.staff.staffId+'" value="'+OrderInfo.staff.staffName+'" data-mini="true"></input></dd>');
+////			$dl.append($dd);
+//		}else{
+//			var $td = $('<div class="col-xs-6"><input type="text" onFocus="javascript:order.dealer.queryStaff(\'dealer\',\''+objId+'\');"" class="form-control" id="dealer_'+objId+'" staffId="'+OrderInfo.staff.staffId+'" value="'+OrderInfo.staff.staffName+'" readonly="readonly" ></input></div>');
+//			$div.append($td);
+//		}
+//		$p.append($div);
+//		$li.append($p);
 		
 		
 		var dealerType = "";
@@ -477,67 +568,40 @@ order.dealer = (function() {
 	
 	//显示已经受理的业务列表
 	var _showOfferList = function(){	
-		$('#attach_pop').empty();
-		//主销售品
-		/*if(OrderInfo.actionFlag == 1 || OrderInfo.actionFlag == 6 || OrderInfo.actionFlag == 14 || OrderInfo.actionFlag == 2){
-			var id = OrderInfo.offerSpec.offerSpecId;
-			if($("tr[name='tr_"+id+"']")[0]==undefined){
-				var $tr = $('<tr id="atr_'+id+'" onclick="order.dealer.checkAttach(\''+id+'\')"></tr>');
-				$tr.append('<td><input type="checkbox" id="'+id+'" onclick="order.dealer.checkAttach(\''+id+'\')" name="attach_dealer"/></td>');
-				$tr.append('<td>主套餐</td><td>'+OrderInfo.offerSpec.offerSpecName+'</td>');
-				$('#attach_tbody').append($tr);
-			}
-		}*/
-		//接入产品
-		/*if(OrderInfo.actionFlag == 1 || OrderInfo.actionFlag == 6 || OrderInfo.actionFlag == 14){
-			$.each(OrderInfo.offerSpec.offerRoles,function(){
-				$.each(this.prodInsts,function(){
-					var accNbr = "未选号";
-					if(this.accNbr!=undefined && this.accNbr!=""){
-						accNbr = prodInst.accNbr;
-					}
-					var id = this.prodInstId;
-					var accNbr = OrderInfo.getProdAn(id).accessNumber;
-					if(accNbr==undefined || accNbr==""){ 
-						accNbr = "未选号";
-					}
-					if($("tr[name='tr_"+id+"']")[0]==undefined){
-						var $tr = $('<tr id="atr_'+id+'" onclick="order.dealer.checkAttach(\''+id+'\')">');
-						$tr.append('<td><input type="checkbox" id="'+id+'" onclick="order.dealer.checkAttach(\''+id+'\')" name="attach_dealer"/></td></tr>');
-						$tr.append('<td>'+accNbr+'</td><td>'+this.objName+'</td>');
-						$('#attach_tbody').append($tr);
-					}
-				});
-			});
-		}*/
-		
-		
-		
-		  
+		$('#addBody').empty();
 		
 		//可选包
-//		var $pop=$('<div id="div_attach_choose"  data-role="popup" data-transition="slideup" data-corners="false" data-overlay-theme="b" class="popwindow" data-dismissible="false"></div>');
-//		$pop.append('<div data-role="header" data-theme="t"> <a href="#" data-role="button" data-icon="back" data-rel="back" data-iconpos="notext" class="ui-btn-right">返回</a><h1>发展人管理</h1></div>');
 		var $content=$('<div data-role="content"></div>');
 		var $table=$('<table class="searchtable"></table>');
-		$table.append('<tr><th>操作</th><th>号码</th><th>发展业务</th></tr>');
+		$table.append("<tr><th>操作</th><th style=\"width:150px;text-align:center;\">号码</th><th style=\"text-align:center;\">发展业务</th></tr>");
 		$.each(AttachOffer.openList,function(){
 			var prodId = this.prodId;
-			var accNbr = OrderInfo.getAccessNumber(prodId);
+			var accNbr = "";
+			if(OrderInfo.actionFlag==6){
+				accNbr = OrderInfo.getAccessNumber(prodId);
+				for(var i=0;i<OrderInfo.oldprodInstInfos.length;i++){
+					if(prodId==OrderInfo.oldprodInstInfos[i].prodInstId){
+						accNbr = OrderInfo.oldprodInstInfos[i].accNbr;
+					}
+				}
+			}else{
+				accNbr = OrderInfo.getAccessNumber(prodId);
+			}
+			
 			if(accNbr==undefined || accNbr==""){ 
 				accNbr = "未选号";
 			}
 			$.each(this.specList,function(){
 				var id = prodId+'_'+this.offerSpecId;
-				if(this.isdel != "Y" && this.isdel != "C" && $("tr[name='tr_"+id+"']")[0]==undefined){  //订购的附属销售品	
-					var $tr = $('<tr id="atr_'+id+'" onclick="order.dealer.checkAttach(\''+id+'\')"></tr>');
-					//var $tr = $('<tr id="atr_'+id+'" onclick="order.dealer.checkAttach(\''+id+'\')"><td><input type="checkbox" id="'+id+'" onclick="order.dealer.checkAttach(\''+id+'\')" name="attach_dealer"/></td></tr>');
-					$tr.append('<td><input type="checkbox" id="'+id+'" onclick="order.dealer.checkAttach(\''+id+'\')" name="attach_dealer"/></td>');
-					$tr.append('<td>'+accNbr+'</td><td>'+this.offerSpecName+'</td>');
+				if(this.isdel != "Y" && this.isdel != "C" && $("li[name='tr_"+id+"']")[0]==undefined){  //订购的附属销售品	
+					var $tr = $("<tr id=\"atr_"+id+"\" onclick=\"order.dealer.checkAttach('"+prodId+"','"+this.offerSpecId+"');\"></tr>");
+					$tr.append("<td style='text-align:center'><input type='checkbox' id=\""+id+"\" onclick=\"order.dealer.checkAttach('"+prodId+"','"+this.offerSpecId+"');\" name=\"attach_dealer\"/></td>");
+					$tr.append("<td style='text-align:center'>"+accNbr+"</td><td style='text-align:center'>"+this.offerSpecName+"</td>");
 					$table.append($tr);
 				};
 			});
 		});
+		
 		//预受理
 		if(order.ysl!=undefined){
 			if(order.ysl.yslbean.yslflag!=undefined){
@@ -561,58 +625,39 @@ order.dealer = (function() {
 							var id = prodId+'_'+order.ysl.openList[j].id;
 							var $tr = $('<tr id="atr_'+id+'" onclick="order.dealer.checkAttach(\''+id+'\')"></tr>');
 							$tr.append('<td><input type="checkbox" id="'+id+'" onclick="order.dealer.checkAttach(\''+id+'\')" name="attach_dealer"/></td>');
-							$tr.append('<td>'+accNbr+'</td><td>'+order.ysl.openList[j].name+'</td>');
+							$tr.append("<td style='text-align:center'>"+accNbr+"</td><td>"+order.ysl.openList[j].name+"</td>");
 							$table.append($tr);
 						}
 					}
 				}
 			}
 		}
-		//功能产品
-		/*$.each(AttachOffer.openServList,function(){
-			var prodId = this.prodId;
-			var accNbr = OrderInfo.getAccessNumber(prodId);
-			if(accNbr==undefined || accNbr==""){ 
-				accNbr = "未选号";
-			}
-			$.each(this.servSpecList,function(){
-				var id = prodId+'_'+this.servSpecId;
-				if(this.isdel != "Y" && this.isdel != "C"  && $("tr[name='tr_"+id+"']")[0]==undefined){  //订购的附属销售品
-					var $tr = $('<tr id="atr_'+id+'" onclick="order.dealer.checkAttach(\''+id+'\')"><td><input type="checkbox" id="'+id+'" onclick="order.dealer.checkAttach(\''+id+'\')" name="attach_dealer"/></td></tr>');
-					$tr.append('<td>'+accNbr+'</td><td>'+this.servSpecName+'</td>');
-					$('#attach_tbody').append($tr);
-				};
-			});
-		});*/
+		
 		$content.append($table);
 		var $footer='<div data-role="footer" data-position="inline" data-tap-toggle="false" data-theme="n"> <button data-inline="true" data-icon="next" id="sureAdddealer">确定</button>';
 		$footer+='<button data-inline="true" data-icon="back" data-rel="back" id="closeAdddealer">取消</button></div>';
-		//$pop.append($content);
-		//$pop.append($footer);
+		
 		$('#addBody').append($content);
+		
 		$("#addModel").modal("show");
-		//$('#attach_pop').append($pop);
-		//统一弹出框
-//		var popup = $.popup("#div_attach_choose",$pop,{
-//			width:800,
-//			height:$(window).height(),
-//			contentHeight:$(window).height()-120,
-//			afterClose:function(){}
-//		});
+
 		$("#sureAdddealer").off("click").on("click",function(){_addAttachDealer();});
+		
+		$("#addModal").modal("show");
 //		$("#closeAdddealer").off("tap").on("tap",function(){$("#div_attach_choose").popup("close");});
 		
 	};
+	
 	//勾选一个附属
-	var _checkAttach = function(id){
+	var _checkAttach = function(prodId,id){
 		//var tr = $("#atr_"+id);
-		var checkbox = $("#"+id);
+		var checkbox = $("#"+prodId+"_"+id);
 		if(checkbox.attr("checked")=="checked"){
 			//tr.removeClass("plan_select");
-			checkbox.attr("checked", false);
+			//checkbox.attr("checked", false);
 		}else {
 			//tr.addClass("plan_select");
-			checkbox.attr("checked", true);
+			//checkbox.attr("checked", true);
 		}
 	};
 	
@@ -620,6 +665,13 @@ order.dealer = (function() {
 	var _removeDealer = function(obj){
 		$(obj).parent().parent().parent().parent().parent().remove();
 		$.refresh($("#dealerTbody"));
+	};
+	
+	//删除协销人
+	var _removeDealerNew = function(id){
+		$("#tr_"+id).remove();
+	//	$(obj).parent().parent().remove();
+		//$.refresh($("#dealerTbody"));
 	};
 	
 	//删除协销人
@@ -642,6 +694,7 @@ order.dealer = (function() {
 		changeDealer		: _changeDealer,
 		queryStaff          : _queryStaff,
 		showDealer          : _showDealer,
-		queryChildNode      : _queryChildNode
+		queryChildNode      : _queryChildNode,
+		removeDealerNew:_removeDealerNew
 	};
 })();

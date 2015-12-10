@@ -69,7 +69,11 @@
 		{  
 			
 		
-			
+			var terminalCode='${terminalCode}'; //终端串码
+			//终端串码
+			if(terminalCode!=null && terminalCode!="" && terminalCode!="null"){
+				OrderInfo.terminalCode=terminalCode;
+			}
 			//用户信息
 			OrderInfo.staff=eval("("+'${staffInfo_}'+")");
 			

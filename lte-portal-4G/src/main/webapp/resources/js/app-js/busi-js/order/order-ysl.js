@@ -1840,7 +1840,7 @@ order.ysl = (function(){
 				}
 			});	
 		}else {
-			$.ecOverlay("<strong>查询查询附属销售品中，请稍等...</strong>");
+			$.ecOverlay("<strong>查询附属销售品中，请稍等...</strong>");
 			var response = $.callServiceAsHtmlGet(url,param);	
 			$.unecOverlay();
 			if (response.code==0) {

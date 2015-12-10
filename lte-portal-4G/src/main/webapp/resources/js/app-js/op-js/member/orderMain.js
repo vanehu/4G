@@ -988,7 +988,7 @@ order.main = (function(){
 			}
 			//老用户加入副卡需要预校验,主卡是4G，加入的老用户为3G
 			if(order.prodModify.choosedProdInfo.is3G== "N" && prodInfo.mainProdOfferInstInfos[0].is3G =="Y"){
-			
+			   
 				if(!order.memberChange.checkOrder(prodInfo,oldoffer)){ //省内校验单
 					return;
 				}
@@ -1411,14 +1411,16 @@ order.main = (function(){
 	//协销人-查询 -列表 ok
 	var _queryStaffPage = function(qryPage,scroller){
 		var param = {
-			"dealerId" :$("#dealer_id").val(),
-			"staffName":$("#qryStaffName").val(),
-			"staffCode":$("#qryStaffCode").val(),
-			"salesCode":$("#qrySalesCode").val(),
-			"pageIndex":qryPage,
-			"objInstId":$("#objInstId").val(),
-			"pageSize" :10
-		};
+				"dealerId" :$("#dealer_id").val(),
+				"qrySalesCode":$("#qrySalesCode").val(),
+				"staffName":$("#qryStaffName").val(),
+				"staffCode":$("#qryStaffCode").val(),
+				"staffCode2":$("#qryStaffCode").val(),
+				"salesCode":$("#qrySalesCode").val(),
+				"pageIndex":qryPage,
+				"objInstId":$("#objInstId").val(),
+				"pageSize" :10
+			};
 		
 		$.callServiceAsHtml(contextPath + "/pad/staffMgr/getStaffList",param,{
 			"before":function(){
@@ -1547,7 +1549,8 @@ order.main = (function(){
 			container : 'acctDialog'
 		});
 		var acctQueryParam = {
-			acctCd : acctSel.find("option:selected").attr("acctcd")
+			acctCd : acctSel.find("option:selected").attr("acctcd"),
+			isServiceOpen:"Y"
 		};			
 		$.callServiceAsJson(contextPath+"/order/account", acctQueryParam, {
 			"before":function(){
