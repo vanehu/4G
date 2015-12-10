@@ -222,7 +222,10 @@ rule.rule = (function(){
 		submit 			: _submit,
 		prepare 		: _prepare,
 		showRuleDiv 	: _showRuleDiv,
-		ruleCheck		: _ruleCheck
+		ruleCheck		: _ruleCheck,
+		init			: _init,
+		getRuleLevelName: _getRuleLevelName,
+		getRuleImgClass : _getRuleImgClass
 	};
 })();
 $(function(){

@@ -4,17 +4,17 @@ import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-
 import com.al.ec.serviceplatform.client.ResultCode;
 import com.al.ecs.common.entity.JsonResponse;
 import com.al.ecs.common.util.JsonUtil;
@@ -256,6 +256,45 @@ public class OfferController extends BaseController {
 	}
 	
 	/**
+	 * 套餐变更附属销售品页面
+	 * @param param
+	 * @param model
+	 * @param response
+	 * @return
+	 * @throws BusinessException
+	 */
+	@RequestMapping(value = "/queryChangeAttachOfferSub", method = RequestMethod.GET)
+	public String queryChangeAttachOfferSub(@RequestParam("strParam") String param,Model model,HttpServletResponse response){
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);
+		
+		Map<String, Object> paramMap =  JsonUtil.toObject(param, Map.class);
+		
+		try{
+			//已订购附属销售品查询
+			Map<String, Object> openMap = offerBmo.queryAttachOffer(paramMap,null,sessionStaff);
+			model.addAttribute("openMap",openMap);
+			model.addAttribute("openMapJson", JsonUtil.buildNormal().objectToJson(openMap));
+			
+			//可订购附属标签查询
+			Map<String, Object> labelMap = offerBmo.queryLabel(paramMap,null,sessionStaff);	
+			model.addAttribute("labelMap",labelMap);
+			model.addAttribute("labelMapJson", JsonUtil.buildNormal().objectToJson(labelMap));
+			
+			model.addAttribute("prodId",paramMap.get("prodId"));
+			model.addAttribute("param",paramMap);
+			
+		} catch (BusinessException e) {
+			log.error("获取附属销售品变更页面失败", e);
+			super.addHeadCode(response, ResultConstant.SERVICE_RESULT_FAILTURE);
+		} catch (InterfaceException ie) {
+			return super.failedStr(model, ie, paramMap, ErrorCode.QUERY_ATTACH_OFFER);
+		} catch (Exception e) {
+			return super.failedStr(model, ErrorCode.QUERY_ATTACH_OFFER, e, paramMap);
+		}
+	 	return "/apptoken/offer/attach-offer-sub";
+	}
+	
+	/**
 	 * 获取附属销售品规格页面
 	 * @param param
 	 * @param model
@@ -444,5 +483,39 @@ public class OfferController extends BaseController {
 			return super.failed(ErrorCode.LOAD_INST, e, paramMap);
 		}
 		return jsonResponse;
+	}
+	
+	/**
+	 * 加载实例
+	 * @param param
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value = "/loadInstNew", method = RequestMethod.POST)
+	@ResponseBody
+	public JsonResponse loadInstNew(@RequestBody Map<String, Object> paramMap,Model model,HttpServletResponse response,HttpServletRequest request) {
+		JsonResponse jsonResponse = null;
+		Map<String, Object> resMap = new HashMap<String,Object>();
+		
+        try {
+        	SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);	
+        	
+        	//调用全量查询新接口(并发）
+        	resMap = offerBmo.newLoadInst(paramMap,null,sessionStaff);
+        		
+        	if(ResultCode.R_SUCC.equals(resMap.get("code"))){
+        		jsonResponse = super.successed(resMap,ResultConstant.SUCCESS.getCode());
+        	}else{
+        		jsonResponse = super.failed(resMap,ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+        	}
+        } catch (BusinessException be) {
+        	return super.failed(be);
+        } catch (InterfaceException ie) {
+        	return super.failed(ie, paramMap, ErrorCode.LOAD_INST);
+		} catch (Exception e) {
+			return super.failed(ErrorCode.LOAD_INST, e, paramMap);
+		}
+        
+        return jsonResponse;
 	}
 }

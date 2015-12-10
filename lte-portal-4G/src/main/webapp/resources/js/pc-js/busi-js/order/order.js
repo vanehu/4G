@@ -245,20 +245,20 @@ order.service = (function(){
 				}
 			}
 			
-			if(OrderInfo.offid!=null && OrderInfo.offid!=""){
-				 $("#offer_title").text("订购新套餐："+OrderInfo.offerSpec.offerSpecName);
-				//弹出套餐确认
-				easyDialog.open({
-					container : "offer_dialog"
-				});
-				$("#offer_btn").off("click").on("click",function(){
-					easyDialog.close();
-					offerChange.offerChangeView();
-				});
-			}
-			else{
+//			if(OrderInfo.offid!=null && OrderInfo.offid!=""){
+//				 $("#offer_title").text("订购新套餐："+OrderInfo.offerSpec.offerSpecName);
+//				//弹出套餐确认
+//				easyDialog.open({
+//					container : "offer_dialog"
+//				});
+//				$("#offer_btn").off("click").on("click",function(){
+//					easyDialog.close();
+//					offerChange.offerChangeView();
+//				});
+//			}
+//			else{
 				offerChange.offerChangeView();
-			}
+//			}
 			return;
 		}
 		
@@ -1246,9 +1246,10 @@ order.service = (function(){
 				//$("#acctSelect").find("option[value='"+acctCd+"']").attr("selected","selected");
 				if(acctCd!=""&&acctCd!=-1){
 					var acctQueryParam = {
-							"acctCd" : acctCd
-						};			
-					$.callServiceAsJson(contextPath+"/order/account", acctQueryParam, {
+						"acctCd" : acctCd,
+						"isServiceOpen":"Y"   //是否能力开放,Y-是,N-否
+					};			
+					$.callServiceAsJson(contextPath+"/token/pc/order/account", acctQueryParam, {
 						"before":function(){
 							$.ecOverlay("<strong>正在查询中,请稍等会儿....</strong>");
 						},

@@ -78,15 +78,7 @@ public class OfferMainController extends BaseController {
 				model.addAttribute("errorMsg", "参数丢失，请重试。");
 				return "/common/error";
 			}
-			/*Map<String,Object> paramsMap = new HashMap<String,Object>();
-			paramsMap.put("provIsale","20150527001011");
-			paramsMap.put("provCustIdentityCd","1212");
-			paramsMap.put("custNumber","12");
-			paramsMap.put("provCustIdentityNum","10");
-			paramsMap.put("provCustAreaId","8330100");
-			paramsMap.put("actionFlag","14");
-			paramsMap.put("reloadFlag","Y");
-			paramsMap.put("isFee","1");*/
+		
 			
                 //进行非空判断
 			
@@ -137,7 +129,6 @@ public class OfferMainController extends BaseController {
 			if("N".equals(reloadFlag)){
 				Map<String,Object> paramMap = new HashMap<String,Object>();
 				paramMap.put("provTransId", provIsale);
-				//paramMap.put("areaId",provCustAreaId);
 				paramMap.put("backFlag","Y");
 				orderMap=this.orderInfoReload(provIsale, provCustAreaId, sessionStaff);
 	
@@ -155,10 +146,13 @@ public class OfferMainController extends BaseController {
 					}
 				}
 			}
-			
-			//model.addAttribute("reloadOrderInfo_", JacksonUtil.objectToJson(orderMap));
-			
-			
+
+			//老用户成员号码：多个成员使用分隔符‘,’
+			String oldSubPhoneNum =paramsMap.get("oldSubPhoneNum")!=null?String.valueOf(paramsMap.get("oldSubPhoneNum")):null;
+		    String newSubPhoneNum=paramsMap.get("newSubPhoneNum")!=null?String.valueOf(paramsMap.get("newSubPhoneNum")):null;
+		   
+		    model.addAttribute("oldSubPhoneNum",oldSubPhoneNum);
+		    model.addAttribute("newSubPhoneNum", newSubPhoneNum);
 			provinceInfo.put("provIsale", provIsale);
 			provinceInfo.put("redirectUri", redirectUri);
 			provinceInfo.put("isFee", isFee);
@@ -169,12 +163,19 @@ public class OfferMainController extends BaseController {
 			
 			//其他必须参数数据
 			model.addAttribute("DiffPlaceFlag", "local");
-			
+			//终端串码
+			model.addAttribute("terminalCode",paramsMap.get("termCode")==null?"":paramsMap.get("termCode").toString());
 			//个人参数（非必须）
 			//传入手机号
 			model.addAttribute("mainPhoneNum", paramsMap.get("mainPhoneNum"));
 			model.addAttribute("custAreaId_", provCustAreaId);
-			
+			String mergeFlag = "0";
+			String interface_merge = MySimulateData.getInstance().getParam((String) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_DATASOURCE_KEY),"INTERFACE_MERGE");
+			String provareaId = paramsMap.get("provCustAreaId").toString().subSequence(0, 3)+"0000";
+			if(interface_merge != null && interface_merge.indexOf(provareaId)!=-1){
+				mergeFlag = "1";
+			}
+			model.addAttribute("mergeFlag", mergeFlag);
 		}catch(Exception e){
 			log.error("套餐变更/业务变更服务加载异常：",e);
 			model.addAttribute("errorMsg", "套餐变更/业务变更服务加载错误!");

@@ -884,13 +884,27 @@ order.memberChange = function(){
 					return false;
 				}
 			}
-			custflag = queryoffercust(OrderInfo.oldAddNumList[i].accNbr,custinfolist);
-			if(!custflag){
-				break;
+			if(OrderInfo.provinceInfo.mergeFlag=="0"){
+				custflag = queryoffercust(OrderInfo.oldAddNumList[i].accNbr,custinfolist);
+				if(!custflag){
+					break;
+				}
+			}else{
+				var provCustAreaId = OrderInfo.staff.soAreaId;
+				custflag = cust.queryCustCompreInfo(OrderInfo.oldAddNumList[i].accNbr,provCustAreaId,3,'OLD');
+				if(!custflag){
+					break;
+				}
 			}
 		}
 		if(custflag){
-			return QueryofferCustProd();
+			if(OrderInfo.provinceInfo.mergeFlag=="0"){
+				return QueryofferCustProd();
+			}else{
+				if(checkCanAddNum(order.memberChange.viceCartNum)){
+					return queryMainOfferSpec();
+				}
+			}
 		}
 	};
 	
@@ -1014,12 +1028,12 @@ order.memberChange = function(){
 						if(prodInstInfos.prodStateCd!=CONST.PROD_STATUS_CD.NORMAL_PROD){
 							orderflag = false;
 							$.alert("提示",custinfolist[i].accNbr+"不是在用产品！");
-							return;
+							return false;
 						}
 						if(prodInstInfos.feeType.feeType!=order.prodModify.choosedProdInfo.feeType){
 							orderflag = false;
 							$.alert("提示",custinfolist[i].accNbr+"和主卡的付费类型不一致！");
-							return;
+							return false;
 						}
 						if(prodInstInfos.productId=="280000000"){
 							$.alert("提示",custinfolist[i].accNbr+"是无线宽带，不能纳入！");
@@ -1037,7 +1051,7 @@ order.memberChange = function(){
 			}
 		}
 		if(orderflag){
-			return queryMainOfferSpec();
+			return setOffer();
 		}
 	};
 	
@@ -1059,7 +1073,7 @@ order.memberChange = function(){
 			}
 		}
 		if(specflag){
-			return setOffer();
+			return setProdUim();
 		}
 	};
 	
@@ -1133,7 +1147,7 @@ order.memberChange = function(){
 		}
 		order.memberChange.viceCartNum = addNum;
 		if(offerflag && checkCanAddNum(addNum)){
-			return setProdUim();
+			return queryMainOfferSpec();
 		}
 	};
 	

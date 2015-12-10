@@ -56,6 +56,8 @@ OrderInfo = (function() {
 	var _custorderlonger = "";
 	//保存uim参数
 	var _mktResInstCode="";
+	//终端串码
+	var _terminalCode="";
 	var _provinceInfo={
 		provIsale:"",
 		redirectUri:"",
@@ -1165,6 +1167,7 @@ OrderInfo = (function() {
 	};
 				
 	return {
+		terminalCode:_terminalCode,
 		state:state,
 		delViceCard:delViceCard,
 		newClothes:newClothes,

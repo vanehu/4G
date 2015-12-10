@@ -45,7 +45,10 @@ OrderInfo = (function() {
 	
 	var _custorderlonger = "";
 	
+	var _oldprodAcctInfos = [];
 	var mktResInstCode="";  //保存uim卡
+	//终端串码
+	var _terminalCode="";
 	var _provinceInfo={
 		provIsale:"",
 		redirectUri:"",
@@ -55,7 +58,8 @@ OrderInfo = (function() {
 		prodOfferId:"",
 		prodOfferName:"",
 		mktResInstCode:"",
-		codeMsg:""
+		codeMsg:"",
+		mergeFlag:"0"
 	}
 			
 	var _reloadOrderInfo;
@@ -63,6 +67,7 @@ OrderInfo = (function() {
 	var _newOrderNumInfo = {
 		mainPhoneNum:"",
 		newSubPhoneNum:"",
+		oldSubPhoneNum:"",
 		mktResInstCode:""
 	}
 	//新装二次加载功能参数
@@ -668,6 +673,11 @@ OrderInfo = (function() {
 						if(this.setValue==undefined){
 							this.setValue = this.value;
 						}
+						var feeType = $("select[name='pay_type_-1']").val();
+						if(feeType==undefined) feeType = order.prodModify.choosedProdInfo.feeType;
+						if(prodServ.servSpecId == CONST.YZFservSpecId && feeType == CONST.PAY_TYPE.AFTER_PAY){
+							this.setValue = "";
+						}
 						if(ec.util.isObj(this.setValue)){
 							var addParam = {
 				                itemSpecId : this.itemSpecId,
@@ -900,12 +910,20 @@ OrderInfo = (function() {
 	//获取选号对应的地区
 	var _getProdAreaId = function(prodId){
 		if(prodId!=undefined && prodId>0){ //二次业务
-			var areaId = order.prodModify.choosedProdInfo.areaId;
-			if(areaId == undefined || areaId==""){
-				$.alert("错误提示","产品信息未返回地区ID，请营业后台核实！");
-				return ; 
+			
+			if(OrderInfo.actionFlag==1)
+			 {
+				return OrderInfo.cust.areaId;
 			}
-			return areaId;
+			else{
+				var areaId = order.prodModify.choosedProdInfo.areaId;
+				if(areaId == undefined || areaId==""){
+					$.alert("错误提示","产品信息未返回地区ID，请营业后台核实！");
+					return ; 
+				}
+				return areaId;
+			}
+			
 		}else { //新装
 			if(ec.util.isObj(OrderInfo.cust.areaId)){
 				return OrderInfo.cust.areaId;
@@ -1046,7 +1064,41 @@ OrderInfo = (function() {
 	//根据产品id获取号码
 	var _getAccessNumber = function(prodId){
 		var accessNumber = "";
-		if(OrderInfo.actionFlag==1 || OrderInfo.actionFlag==14){
+		if(OrderInfo.actionFlag==1){
+			var newProdId = "'"+prodId+"'";
+			if(newProdId.indexOf("-")!= -1){
+				for (var i = 0; i < OrderInfo.boProdAns.length; i++) {
+					var an = OrderInfo.boProdAns[i];
+					if(an.prodId == prodId){
+						if(an.accessNumber != undefined ){
+							accessNumber =  an.accessNumber;
+						}
+					}
+				}
+			}
+			else{
+				
+				$.each(OrderInfo.offer.offerMemberInfos,function(i){
+					if(this.objInstId==prodId){
+						accessNumber = this.accessNumber;
+						return false;
+					}
+				});
+				if((accessNumber==undefined || accessNumber=="") && offerChange.oldMemberFlag){
+					$.each(OrderInfo.oldoffer,function(){
+						$.each(this.offerMemberInfos,function(){
+							if(this.objInstId==prodId){
+								accessNumber = this.accessNumber;
+								return false;
+							}
+						});
+					});
+				}
+				
+			}
+			
+		}
+		else if(OrderInfo.actionFlag==14){
 			for (var i = 0; i < OrderInfo.boProdAns.length; i++) {
 				var an = OrderInfo.boProdAns[i];
 				if(an.prodId == prodId){
@@ -1077,12 +1129,34 @@ OrderInfo = (function() {
 				}
 			});
 		}else if(OrderInfo.actionFlag==2||OrderInfo.actionFlag==21){
-			$.each(OrderInfo.offer.offerMemberInfos,function(i){
-				if(this.objInstId==prodId){
-					accessNumber = this.accessNumber;
-					return false;
+			var newProdId = "'"+prodId+"'";
+			if(newProdId.indexOf("-")!= -1){
+				for (var i = 0; i < OrderInfo.boProdAns.length; i++) {
+					var an = OrderInfo.boProdAns[i];
+					if(an.prodId == prodId){
+						if(an.accessNumber != undefined ){
+							accessNumber =  an.accessNumber;
+						}
+					}
 				}
-			});
+			}else{
+				$.each(OrderInfo.offer.offerMemberInfos,function(i){
+					if(this.objInstId==prodId){
+						accessNumber = this.accessNumber;
+						return false;
+					}
+				});
+				if((accessNumber==undefined || accessNumber=="") && offerChange.oldMemberFlag){
+					$.each(OrderInfo.oldoffer,function(){
+						$.each(this.offerMemberInfos,function(){
+							if(this.objInstId==prodId){
+								accessNumber = this.accessNumber;
+								return false;
+							}
+						});
+					});
+				}
+			}
 		} else if(OrderInfo.actionFlag == 35){ //分段受理
 			accessNumber = stepOrder.main.getAccessNumber(prodId);
 		} else if(prodId!=undefined && prodId>0){
@@ -1222,6 +1296,7 @@ OrderInfo = (function() {
 	};
 				
 	return {	
+		terminalCode:_terminalCode,
 		mktResInstCode:mktResInstCode,
 		checkUimData:_checkUimData,
 		getCheckUimData:_getCheckUimData,
@@ -1290,6 +1365,7 @@ OrderInfo = (function() {
 		reloadOrderInfo : _reloadOrderInfo,
 		reloadProdInfo :_reloadProdInfo,
 		newOrderInfo          	:_newOrderInfo,
-		newOrderNumInfo			:_newOrderNumInfo
+		newOrderNumInfo			:_newOrderNumInfo,
+		oldprodAcctInfos:_oldprodAcctInfos
 	};
 })();

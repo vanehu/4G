@@ -1,15 +1,44 @@
+<script src="${contextPath}/js/pad-js/our-js/layout.js?${jsversion}"></script>
 <#assign offerSpec = main.offerSpec /> 
 <style>
 .ui-page-theme-a.index {
 	background:#fff;
 }
 </style>
-<div data-role="content">
-    <div class="tabs-body" id="tabs-body">
+<div data-role="content" role="main">
+    <div class="tabs-body" id="tabs-body" >
     	<!-- 产品信息展示 -->
+    	<!-- 产品信息展示 -->    	
+    		<#assign j = 0 />
 		<@block name="product">
 			<#include "/pad/order/order-product.html" />
 		</@block>
+		<#if (main.oldnum?? && (main.oldnum?number>0))>
+   				<#list main.oldprodInstInfos as prodinfos>
+					<#list main.oldoffer as offerinst>
+						<#if prodinfos.accNbr==offerinst.accNbr>
+							<#list offerinst.offerMemberInfos as item>
+								<#if item.objType==2>
+									<#assign prodId = item.objInstId/>
+									<#if j==0>
+										<div class="ordercona orderform" style="display:none;">						
+									<#else>
+										<div class="ordercona orderform" style="display:none;" >						
+									</#if>
+										<div class="optional"> 可选包/功能产品 <a href="#optional_${prodId}" data-role="button" data-icon="optional" data-iconpos="notext" data-theme="i">可选包/功能产品</a></div>
+										<div style="width: 50%; float: left;" class="ui-grid-a">	
+											<div class="ui-grid-a" id="uimDiv_${prodId}"  style="display: none;">
+				                     		<#include "/pad/member/order-uim.html" />
+				                     	</div>
+			                        </div>
+									</div>
+									<#assign j = j+1 />
+								</#if>
+							</#list>
+						</#if>
+					</#list>
+				</#list>
+				</#if>
     </div>
 	<div class="orderconb">
 		<div class="many"  style="background:#f5f5f5;">
@@ -23,14 +52,38 @@
 							<#list offerRole.prodInsts as prod>
 								<#assign prodId = prod.prodInstId /> 
 								<#if prodId==-1 >
-									<li class="tab-nav-action">${prod.offerRoleName}</li>
+								    <li class="tab-nav-action" id="tab_${prodId}" prodId="${prodId}" onclick="offerChange.changeTab(${prodId})">${prod.offerRoleName}</li>
+									
 								<#else>
-									<li class="tab-nav">${prod.offerRoleName}</li>
+									<li class="tab-nav" id="tab_${prodId}" prodId="${prodId}" onclick="offerChange.changeTab(${prodId})">${prod.offerRoleName}</li>
+	
 								</#if>	
+								<#assign i = i+1>
 							</#list>
 				      	</#if>  
 				    </#list>
 				</#if>
+				<#if (main.oldnum?? && (main.oldnum?number>0))>
+						<#list main.oldprodInstInfos as prodinfos>
+							<#list main.oldoffer as offerinst>
+								<#if prodinfos.accNbr==offerinst.accNbr>
+									<#list offerinst.offerMemberInfos as Member>
+										<#if Member.objType==2>
+										<!-- 
+										   <#if i==0>
+												<li id="tab_${Member.objInstId}" prodId="${Member.objInstId}" class="tab-nav-action" onclick="offerChange.changeTab(${Member.objInstId})">已有移动电话${Member.accessNumber}</li>									
+											<#else>
+												<li id="tab_${Member.objInstId}" prodId="${Member.objInstId}" class="tab-nav" onclick="offerChange.changeTab(${Member.objInstId})">已有移动电话${Member.accessNumber}</li>	
+											</#if>
+										 -->
+											<li id="tab_${Member.objInstId}" prodId="${Member.objInstId}" class="tab-nav" onclick="offerChange.changeTab(${Member.objInstId})">已有移动电话${Member.accessNumber}</li>	
+											<#assign i = i+1>
+										</#if>
+									</#list>
+								</#if>
+							</#list>
+						</#list>
+					</#if>
 		        </ul>
 	        </div>
 	        <button data-role="button" data-icon="arrow-r" data-iconpos="notext" disabled>向右</button>
@@ -67,8 +120,8 @@
 	    <button data-inline="true" data-icon="next"  id="fillNextStep">下一步</button> 
 	    <button data-inline="true" data-icon="prev" id="fillLastStep"><#if main.actionFlag == 6>取消<#else>上一步</#if></button> 
     </div>
-</div>
-<!-- 附属显示 -->
+ </div>   
+    <!-- 附属显示 -->
 <#if offerSpec.offerRoles?? && (offerSpec.offerRoles?size>0)>
 <#list offerSpec.offerRoles as offerRole>	
 <#if offerRole.prodInsts?? && (offerRole.prodInsts?size>0)>
@@ -78,5 +131,37 @@
     		</#list>
     	</#if>  
   	</#list>
-</#if>	
+</#if>
+
+ 
+<#if (main.oldnum?? && (main.oldnum?number>0))>
+		<#list main.oldprodInstInfos as prodinfos>
+			<#list main.oldoffer as offerinst>
+				<#if prodinfos.accNbr==offerinst.accNbr>
+					<#list offerinst.offerMemberInfos as item>
+						<#if item.objType==2>
+							<#assign prodId = item.objInstId/>
+								<div type="attach" id="attach_${prodId}">	
+								<!--  						
+								<div id="uimDiv_${prodId}" style="display: none;">
+									<h5 class="s_title" id="title_${prodId}">补换卡： </h5>
+									<div class="pdcardcon show" >
+										<ul class="fillin show">
+											<#include "/pad/member/order-uim.html" />
+										</ul>
+									</div>
+								</div>
+								-->	
+							</div>
+						</#if>
+					</#list>
+				</#if>
+			</#list>
+		</#list>
+		</#if>
+    
+    
+
+
+	
 <script src="${contextPath}/js/pad-js/our-js/layout.js"></script>

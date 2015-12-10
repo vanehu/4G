@@ -477,7 +477,7 @@ mktRes.phoneNbr = (function(){
 				}
 			}
 			
-			var purchaseUrl=contextPath+"/mktRes/phonenumber/purchase";
+			var purchaseUrl=contextPath+"/app/mktRes/phonenumber/purchase";//"/mktRes/phonenumber/purchase";
 			$.callServiceAsJson(purchaseUrl, params, {
 				"before":function(){
 					$.ecOverlay("<strong>正在预占号码,请稍等会儿....</strong>");
@@ -961,6 +961,10 @@ mktRes.phoneNbr = (function(){
 						$("#phone_num_btn").tap(function(){$("#div_phoneNbr_choose").popup("close");});
 					}
 					mktRes.phoneNbr.initPhonenumber();
+					
+					$("#nbrPool-button").css({"width":"65px","padding":"5px 40px 6px 20px"});
+					$("#pnCharacterId-button").css({"width":"35px","padding":"5px 40px 6px 20px"});
+					$("#preStore-button").css({"width":"35px","padding":"5px 40px 6px 20px"});
 				}
 			});	
 	};

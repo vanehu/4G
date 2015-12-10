@@ -262,7 +262,7 @@ public class OrderController extends BaseController {
 			String staffInfos=params.get("staffInfos").toString().replace("\\", "");
 			param=CommonMethods.getParams(prodIdInfos, custInfos, staffInfos, getRequest());
 			param.put("actionFlag", Const.OFFERCHANGE_FLAG);
-			Map<String, Object> validatoResutlMap=commonBmo.validatorRule(param, optFlowNum, super.getRequest());
+			Map<String, Object> validatoResutlMap=commonBmo.validatorRuleSub(param, optFlowNum, super.getRequest());
 			if(!ResultCode.R_SUCCESS.equals(validatoResutlMap.get("code"))){
 				model.addAttribute("validatoResutlMap", validatoResutlMap);
 				return "/app/rule/rulecheck";
@@ -278,6 +278,7 @@ public class OrderController extends BaseController {
 		
 		return "/apptoken/order-offerchange-search-new";
     }
+	
 	@RequestMapping(value = "/prodoffer/offerchangesub/prepare", method = RequestMethod.POST)
     @AuthorityValid(isCheck = false)
     public String offerchangePreSub(@RequestBody Map<String, Object> params, Model model, @LogOperatorAnn String optFlowNum,
@@ -290,7 +291,7 @@ public class OrderController extends BaseController {
 			String staffInfos=params.get("staffInfos").toString().replace("\\", "");
 			param=CommonMethods.getParams(prodIdInfos, custInfos, staffInfos, getRequest());
 			param.put("actionFlag", Const.OFFERCHANGE_FLAG);
-			Map<String, Object> validatoResutlMap=commonBmo.validatorRule(param, optFlowNum, super.getRequest());
+			Map<String, Object> validatoResutlMap=commonBmo.validatorRuleSub(param, optFlowNum, super.getRequest());
 			if(!ResultCode.R_SUCCESS.equals(validatoResutlMap.get("code"))){
 				model.addAttribute("validatoResutlMap", validatoResutlMap);
 				return "/app/rule/rulecheck";
@@ -1687,13 +1688,13 @@ public class OrderController extends BaseController {
 	@RequestMapping(value = "/queryTerminalInfo", method = RequestMethod.POST)
     @ResponseBody
     public JsonResponse queryTerminalInfo(@RequestBody Map<String, Object> param, String flowNum, HttpServletResponse response){
+    	SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);
     	
-    	SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
- 				SysConstant.SESSION_KEY_LOGIN_STAFF);
     	Map<String, Object> dataBusMap = new HashMap<String, Object>();
     	dataBusMap.put("prodId", MapUtils.getString(param, "prodId", ""));
     	dataBusMap.put("acctNbr", MapUtils.getString(param, "acctNbr", ""));
     	dataBusMap.put("areaId", MapUtils.getString(param, "areaId", ""));
+    	dataBusMap.put("isServiceOpen", MapUtils.getString(param, "isServiceOpen", ""));
     	JsonResponse jr = new JsonResponse();
     	try{
     		Map<String, Object> resultMap = orderBmo.queryOfferCouponById(dataBusMap, flowNum, sessionStaff);
@@ -2312,6 +2313,7 @@ public class OrderController extends BaseController {
     @ResponseBody
 	public JsonResponse orderSubmit(@RequestBody Map<String, Object> param,HttpServletResponse response,HttpServletRequest request){
 		JsonResponse jsonResponse = null;
+		
 		if(commonBmo.checkToken(request, SysConstant.ORDER_SUBMIT_TOKEN)){
 			try {
 				SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);
@@ -2353,9 +2355,7 @@ public class OrderController extends BaseController {
     @ResponseBody
     public JsonResponse queryAuthenticDataRange(@RequestBody Map<String, Object> param,
 			@LogOperatorAnn String flowNum,HttpServletResponse response){
-   	 SessionStaff sessionStaff = (SessionStaff) ServletUtils
-				.getSessionAttribute(super.getRequest(),
-						SysConstant.SESSION_KEY_LOGIN_STAFF);
+   	 	SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);
 		Map<String, Object> rMap = null;
 		JsonResponse jsonResponse = null;
 		try {

@@ -617,6 +617,19 @@ CacheData = (function() {
 		return {};
 	};
 	
+	//根据产品id获取销售品成员
+	var _getOldOfferMember = function(prodId){
+		for(var j=0;j<OrderInfo.oldoffer.length;j++){
+			for ( var i = 0; i < OrderInfo.oldoffer[j].offerMemberInfos.length; i++) {
+				var offerMember = OrderInfo.oldoffer[j].offerMemberInfos[i];
+				if(offerMember.objInstId==prodId){
+					return offerMember;
+				}
+			}
+		}
+		return {};
+	};
+	
 	//获取功能产品互斥依赖参数
 	var _getExcDepServParam = function(prodId,servSpecId){
 		//互斥依赖入参
@@ -988,6 +1001,7 @@ CacheData = (function() {
 		getExcDepOfferParam		: _getExcDepOfferParam,
 		getOfferRoleId 			: _getOfferRoleId,
 		parseServ				: _parseServ,
-		parseOffer				: _parseOffer
+		parseOffer				: _parseOffer,
+		getOldOfferMember		: _getOldOfferMember
 	};
 })();

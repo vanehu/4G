@@ -1,17 +1,24 @@
 <div id="order-content">
+
 <div class="container-fluid">
 	<div class="row">
 		<div class="panel panel-default paneltop">
 			<!-- 套餐名称 -->
 			<div class="panel-heading">${main.boActionTypeName}
 				<#if main.actionFlag == 1>
-				${main.offerSpec.offerSpecName}
+					${main.offerSpec.offerSpecName}
 				</#if>
 			</div>
 			<div id="carousel-example-generic" class="carousel slide">
 				<!-- 图标 -->
 				<ol style="display: none;">
-				<#assign offerSpec = main.offerSpec /> 
+				<#if main.actionFlag?? && main.actionFlag==1>
+					<#assign offerSpec = main.offerSpec />
+				<#elseif main.oldnum?? && (main.oldnum?number>0)>
+					<#assign offerSpec = main.oldofferSpec />
+				<#else>
+					<#assign offerSpec = main.offerSpec />
+				</#if>
 				<#if offerSpec?? && offerSpec.offerRoles?? && (offerSpec.offerRoles?size>0)>
 				<#assign j = 0 />
 				<#list offerSpec.offerRoles as offerRole>
@@ -31,7 +38,7 @@
 
 
 				<!-- 产品信息-->
-				<div class="carousel-inner">
+				<div class="carousel-inner" style="overflow:visible;">
 				<@block name="product">
 					<#include "/apptoken/order/order-product.html" />
 				</@block>
@@ -44,9 +51,16 @@
 <nav class="navbar navbar-default navbar-fixed-bottom" id="nextNav">
 	<!-- 图标 -->
 	<ol class="carousel-indicators" id="c-indicators">
-	<#assign offerSpec = main.offerSpec /> 
-	<#if offerSpec?? && offerSpec.offerRoles?? && (offerSpec.offerRoles?size>0)>
+	<#if main.actionFlag?? && main.actionFlag==1>
+		<#assign offerSpec = main.offerSpec /> 
+	<#elseif main.oldnum?? && (main.oldnum?number>0)>
+		<#assign offerSpec = main.oldofferSpec /> 
+	<#else>
+		<#assign offerSpec = main.offerSpec /> 
+	</#if>
 	<#assign j = 0 />
+	<#if offerSpec?? && offerSpec.offerRoles?? && (offerSpec.offerRoles?size>0)>
+	
 	<#list offerSpec.offerRoles as offerRole>
 		<#if (offerRole.prodInsts?? && offerRole.prodInsts?size>0)>
 			<#list offerRole.prodInsts as prod>
@@ -61,6 +75,23 @@
 		</#if>
 	</#list>
 	</#if>	
+	
+	<#if main.oldnum?? && (main.oldnum?number>0)>
+				<#assign x =j />
+				<#list main.oldprodInstInfos as prodinfos>
+					<#list main.oldoffer as offerinst>
+						<#if prodinfos.accNbr==offerinst.accNbr>
+							<#list offerinst.offerMemberInfos as Member>
+								<#if Member.objType==2>
+									<li data-target="#carousel-example-generic" id="target-slide-${x}" data-slide-to="${x}"></li>
+									<!-- <li offerRoleId=${Member.objInstId} class="">加装移动电话${k}</li> -->
+									<#assign x = x+1 />
+								</#if>
+							</#list>
+						</#if>
+					</#list>
+				</#list>
+	</#if>
 	</ol>
 
 	<div class="container-fluid">
@@ -74,8 +105,8 @@
 			</div> -->
 			<div class="btn-group" role="group">
 				<button type="button" class="btn btn-info btn-lg" id="fillNextStep">
-					<span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span>
 					下一步
+					<span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span>
 				</button>
 			</div>
 		</div>
@@ -92,7 +123,7 @@
 <!-- 协销人展示 -->
 <div id="order-dealer" style="display: none;">
 	<@block name="dealer">
-		<#include "/app/order/order-dealer.html" />
+		<#include "/apptoken/order/order-dealer.html" />
 	</@block>
 </div>
 

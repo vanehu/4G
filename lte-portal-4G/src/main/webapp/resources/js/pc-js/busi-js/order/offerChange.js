@@ -23,10 +23,11 @@ offerChange = (function() {
 			return;
 		}
 		OrderInfo.actionFlag = 2;
-		if(!query.offer.setOffer()){ //必须先保存销售品实例构成，加载实例到缓存要使用
-			return ;
+		if(OrderInfo.provinceInfo.mergeFlag=="0"){
+			if(!query.offer.setOffer()){ //必须先保存销售品实例构成，加载实例到缓存要使用
+				return ;
+			}
 		}
-		
 		//规则校验入参
 		var boInfos = [{
 			boActionTypeCd : CONST.BO_ACTION_TYPE.DEL_OFFER,
@@ -169,13 +170,14 @@ offerChange = (function() {
 			easyDialog.open({
 				container : "member_dialog"
 			});
-			$("#member_btn").off("click").on("click",function(){
-				offerChangeConfirm();
-			});
+//			$("#member_btn").off("click").on("click",function(){
+//				offerChangeConfirm();
+//				easyDialog.close();
+//			});
 		}
 	};
 	
-	function offerChangeConfirm(){
+	var _offerChangeConfirm = function(){
 		OrderInfo.oldprodInstInfos = [];
 		OrderInfo.oldofferSpec = [];
 		OrderInfo.oldoffer = [];
@@ -251,7 +253,9 @@ offerChange = (function() {
 			param.oldoffer = OrderInfo.oldoffer;
 		}
 		order.main.buildMainView(param);
-		easyDialog.close();
+		$("#member_dialog").hide();
+		$("#overlay").hide();
+//		easyDialog.close();
 	}
 	
 	//填充套餐变更页面
@@ -1351,6 +1355,7 @@ offerChange = (function() {
 		checkOfferProd			: _checkOfferProd,
 		getChangeInfo			: _getChangeInfo,
 		initOrderProvAttr		: _initOrderProvAttr,
-		setChangeOfferSpec		: _setChangeOfferSpec
+		setChangeOfferSpec		: _setChangeOfferSpec,
+		offerChangeConfirm		: _offerChangeConfirm
 	};
 })();

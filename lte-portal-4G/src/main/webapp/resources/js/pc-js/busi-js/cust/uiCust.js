@@ -570,13 +570,14 @@ order.uiCust = (function(){
 		$(selected).next("#plan2ndTr").find("#plan2ndDiv tbody tr:first").click();
 		
 		//产品选择后，跳转到订单填写页面
-		_orderAttachOffer();
+		order.uiCust.orderAttachOffer();
 		
 	};
 	
 	//可选包订购退订
 	var _orderAttachOffer = function () {
 		OrderInfo.busitypeflag=14;
+		$("#main_div_1").show();
 		//order.prodModify.orderAttachOffer();
 		uiAttachOffer.init();
 	};
@@ -588,7 +589,8 @@ order.uiCust = (function(){
 		showCustAuth : _showCustAuth,
 		orderInfo : _orderInfo,
 		packageInfo : _packageInfo,
-		showPackageDialog : _showPackageDialog
+		showPackageDialog : _showPackageDialog,
+		orderAttachOffer:_orderAttachOffer
 	};
 })();
 $(function() {

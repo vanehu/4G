@@ -1011,7 +1011,6 @@ cust.mgr = (function(){
 		init	 				: _init,
 		partyProfiles 			: _partyProfiles,
 		profileTabLists 		: _profileTabLists,
-		queryCust 				: _queryCust,
 		queryCustDetail 		: _queryCustDetail,
 		changeLabel 			: _changeLabel,
 		jumpAuthflag 			: _jumpAuthflag,

@@ -264,6 +264,8 @@ offerChange = (function() {
 		$("#order_prepare").hide();
 		$("#order").html(response.data).show();
 //		_initOfferLabel();//初始化主副卡标签
+		
+		//套餐变更进入下一步
 		$("#fillNextStep").off("click").on("click",function(){
 			if(!SoOrder.checkData()){ //校验通过
 				return false;
@@ -271,6 +273,15 @@ offerChange = (function() {
 			$("#order-content").hide();
 			$("#order-dealer").show();
 			order.dealer.initDealer();
+			
+			//放入需要查询的工号数据[W]
+			var DevelopmentCode= OrderInfo.codeInfos.DevelopmentCode;
+			var reloadFlag= OrderInfo.provinceInfo.reloadFlag;
+			if(DevelopmentCode!=null && DevelopmentCode!="" && DevelopmentCode!="null" && reloadFlag=="Y" && (OrderInfo.actionFlag==1 || OrderInfo.actionFlag==2)){
+				//查询工号数据
+				$("#staffCode").val(DevelopmentCode);
+				order.dealer.queryStaff(0,'dealer',OrderInfo.codeInfos.developmentObjId);
+			}
 		});
 		var prodInfo = order.prodModify.choosedProdInfo; //获取产品信息
 		$("#attach-modal").modal('show');
@@ -1049,6 +1060,14 @@ offerChange = (function() {
 					value : $(this).find("input").attr("staffid") 
 				};
 				busiOrder.data.busiOrderAttrs.push(dealer);
+				
+				//APP发展人名称(原来没有，补上)
+				var dealer_name = {
+					itemSpecId : CONST.BUSI_ORDER_ATTR.DEALER_NAME,
+					role : $(this).find("select").val(),
+					value : $(this).find("input").attr("value") 
+				};
+				busiOrder.data.busiOrderAttrs.push(dealer_name);
 			});
 		}
 		busiOrders.push(busiOrder);

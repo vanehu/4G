@@ -39,9 +39,10 @@ uiAttachOffer = (function() {
 			return;
 		}
 		OrderInfo.actionFlag = 3;
-		
-		if(!uiOfferQuery.setOffer()){ //必须先保存销售品实例构成，加载实例到缓存要使用
-			return ;
+		if(OrderInfo.provinceInfo.mergeFlag=="0"){
+			if(!uiOfferQuery.setOffer()){ //必须先保存销售品实例构成，加载实例到缓存要使用
+				return ;
+			}
 		}
 		//规则校验入参
 		var boInfos = [{

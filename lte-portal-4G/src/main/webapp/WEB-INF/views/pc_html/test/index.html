@@ -45,8 +45,8 @@
 				"isFee":$("#isFee").val(),	
 				"uimCode":$("#uimCode").val(),
 				"acctNumber":$("#acctNumber").val(),
-				"terminalCode":$("#terminalCode").val(),
-				"DevelopmentCode":$("#DevelopmentCode").val()
+				"termCode":$("#termCode").val(),
+				"salesCode":$("#salesCode").val()
 			};
 			var version = $("#version").val();			
 			$.callServiceAsHtmlGet(contextPath+"/test/getModelUrl",reParams,{
@@ -116,10 +116,16 @@
 				return ;
 			}
 			
+			//去除空格等
+			content=content.replace(/\ +/g,"").replace(/[ ]/g,"").replace(/[\r\n]/g,"");
+			$("#content"+type).val(content)
+			pwd=pwd.replace(/\ +/g,"").replace(/[ ]/g,"").replace(/[\r\n]/g,"");
+			$("#pwd"+type).val(pwd);
+			
 			var reParams = {
 				"content":content,
 				"pwd":pwd,
-				"type":type,
+				"type":type
 			};
 			
 			$.callServiceAsHtmlGet(contextPath+"/test/decryptEncryption",reParams,{
@@ -140,7 +146,7 @@
 								return;
 							}
 							
-							$("#outResult"+type).val(outResult);
+							$("#outResult"+type).html(outResult);
 							
 						}else if(data.code==1){
 							$.alert("提示",data.data);
@@ -210,8 +216,8 @@
 					</select>  <br/>
 			UIM卡号:<input id="uimCode" class="inputWidth250px inputTest" value=""/>[多个用","隔开]<br/>
 			帐户合同号:<input id="acctNumber" class="inputWidth250px inputTest" value=""/><br/>
-			终端串码:<input id="terminalCode" class="inputWidth250px inputTest" value=""/><br/>
-			发展人工号:<input id="DevelopmentCode" class="inputWidth250px inputTest" value=""/><br/>
+			终端串码:<input id="termCode" class="inputWidth250px inputTest" value=""/><br/>
+			发展人工号:<input id="salesCode" class="inputWidth250px inputTest" value=""/><br/>
 		</div>
 		
 		<form action="" method="POST" id="form11">
@@ -229,7 +235,8 @@
 		<span class="info_title" style="font-size: 20px; color: #71ab5a; ">参数加密：</span><br/>		
 			加密参数:<input id="content1" class="inputWidth250px inputTest" value=""/><br/>
 			加密密钥:<input id="pwd1" class="inputWidth250px inputTest" value=""/><br/>
-			加密结果:<textarea id="outResult1" rows="4" cols="39" style="font-size: 13px;"></textarea><br/>
+			加密结果:
+			<div id="outResult1" style="max-width:350px;min-width:350px; border-color: gray;min-height: 80px;width:80px; overflow:auto"></div></br>
 			加密操作:<input type="button" class="inputWidth250px inputTest " style="cursor: pointer;" value="加密" onclick="decryptEncryption('1');"/><br/>
 		<br/>
 		</div>
@@ -238,7 +245,8 @@
 		<span class="info_title" style="font-size: 20px; color: #71ab5a; ">参数解密：</span><br/>		
 			解密参数:<input id="content2" class="inputWidth250px inputTest" value=""/><br/>
 			解密密钥:<input id="pwd2" class="inputWidth250px inputTest" value=""/><br/>
-			解密结果:<textarea id="outResult2" rows="4" cols="39" style="font-size: 13px;"></textarea><br/>
+			解密结果:
+			<div id="outResult2" style="max-width:350px;min-width:350px; border-color: gray;min-height: 30px;overflow:auto"></div></br>
 			解密操作:<input type="button" class="inputWidth250px inputTest" style="cursor: pointer;" value="解密" onclick="decryptEncryption('2');"/><br/>
 		<br/>
 		</div>

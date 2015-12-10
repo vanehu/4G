@@ -1260,5 +1260,30 @@ public class CustController extends BaseController {
 			pw.flush();
 			pw.close();
 		}		
-	}	
+	}
+	
+	//客户架构信息查询接口
+	@RequestMapping(value = "/queryCustCompreInfo", method = RequestMethod.POST)
+    @ResponseBody
+    public JsonResponse queryCustCompreInfo(@RequestBody Map<String, Object> paramMap,
+			@LogOperatorAnn String flowNum,HttpServletResponse response){
+		Map<String, Object> resultMap = null;
+		JsonResponse jsonResponse = null;
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+                SysConstant.SESSION_KEY_LOGIN_STAFF);
+		try {
+			resultMap = custBmo.queryCustCompreInfo(paramMap,
+					flowNum, sessionStaff);
+//			if (MapUtils.isNotEmpty(resultMap)) {
+				jsonResponse = super.successed(resultMap,ResultConstant.SUCCESS.getCode());
+//			}
+		} catch (BusinessException be) {
+			return super.failed(be);
+		} catch (InterfaceException ie) {
+			return super.failed(ie, resultMap, ErrorCode.QUERY_CUST_COMPRE_INFO);
+		} catch (Exception e) {
+			return super.failed(ErrorCode.QUERY_CUST_COMPRE_INFO, e, resultMap);
+		}
+		return jsonResponse;
+    }
 }

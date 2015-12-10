@@ -94,7 +94,8 @@ public class MemberChangeMainContoller extends BaseController{
 			//外部主套餐id
 			String mainProdOfferId=paramsMap.get("mainProdOfferId")!=null?String.valueOf(paramsMap.get("mainProdOfferId")):null;
 			
-           
+			 //终端串码
+			model.addAttribute("terminalCode",paramsMap.get("termCode")==null?"":paramsMap.get("termCode").toString());
 			if(mainProdOfferId!=null && mainProdOfferId.length()>0){
 				//集团销售品ID
 				String prodOfferId=paramsMap.get("prodOfferId")!=null?String.valueOf(paramsMap.get("prodOfferId")):null;
@@ -146,53 +147,60 @@ public class MemberChangeMainContoller extends BaseController{
 				staffMap.put("areaAllName", "");
 				model.addAttribute("staffInfo_", JacksonUtil.objectToJson(staffMap));
 			}
-			
-			//进行custnfo获取
-			Map<String, Object> infoMap=new HashMap<String, Object>();
-			infoMap.put("acctNbr",paramsMap.get("mainPhoneNum"));
-			infoMap.put("areaId",paramsMap.get("provCustAreaId"));
-			infoMap.put("identidies_type", "接入号码");
-			
-			Map<String, Object> custInfo=this.queryCustInfo(infoMap, request, response, "");
-			
-			if(custInfo!=null && custInfo.size()!=0){
-				String custInfo_=JacksonUtil.objectToJson(custInfo);
+			String mergeFlag = "0";
+			String interface_merge = MySimulateData.getInstance().getParam((String) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_DATASOURCE_KEY),"INTERFACE_MERGE");
+			String provareaId = paramsMap.get("provCustAreaId").toString().subSequence(0, 3)+"0000";
+			if(interface_merge != null && interface_merge.indexOf(provareaId)!=-1){
+				mergeFlag = "1";
+			}
+			model.addAttribute("mergeFlag", mergeFlag);
+			if("0".equals(mergeFlag)){
+				//进行custnfo获取
+				Map<String, Object> infoMap=new HashMap<String, Object>();
+				infoMap.put("acctNbr",paramsMap.get("mainPhoneNum"));
+				infoMap.put("areaId",paramsMap.get("provCustAreaId"));
+				infoMap.put("identidies_type", "接入号码");
 				
-				List<Map<String, Object>> custInfos= (List<Map<String, Object>>) custInfo.get("custInfos");
+				Map<String, Object> custInfo=this.queryCustInfo(infoMap, request, response, "");
 				
-				if(custInfos!=null && custInfos.size()>0){
-					infoMap.put("custId", custInfos.get(0).get("custId"));
-					infoMap.put("areaId", custInfos.get(0).get("areaId"));
+				if(custInfo!=null && custInfo.size()!=0){
+					String custInfo_=JacksonUtil.objectToJson(custInfo);
 					
-					model.addAttribute("custInfo_", custInfo_);
-				}
-				else{
+					List<Map<String, Object>> custInfos= (List<Map<String, Object>>) custInfo.get("custInfos");
+					
+					if(custInfos!=null && custInfos.size()>0){
+						infoMap.put("custId", custInfos.get(0).get("custId"));
+						infoMap.put("areaId", custInfos.get(0).get("areaId"));
+						
+						model.addAttribute("custInfo_", custInfo_);
+					}
+					else{
+						model.addAttribute("errorMsg", "无法定位客户!");
+						return "/common/error";
+					}
+				}else{
 					model.addAttribute("errorMsg", "无法定位客户!");
 					return "/common/error";
 				}
-			}else{
-				model.addAttribute("errorMsg", "无法定位客户!");
-				return "/common/error";
-			}
-			
-			//进行prodinfo获取
-		    infoMap.put("curPage", 1);
-			Map<String, Object> prodInfo=this.prodInfoQuery(infoMap, request, response, "");
-			
-			if(prodInfo!=null && prodInfo.size()!=0){
-				List<Map<String, Object>> prodInfos=(List<Map<String, Object>>) prodInfo.get("prodInstInfos");
 				
-				if(prodInfos!=null && prodInfos.size()>0){
-					model.addAttribute("prodInfo_", JacksonUtil.objectToJson(prodInfos.get(0)));
+				//进行prodinfo获取
+			    infoMap.put("curPage", 1);
+				Map<String, Object> prodInfo=this.prodInfoQuery(infoMap, request, response, "");
+				
+				if(prodInfo!=null && prodInfo.size()!=0){
+					List<Map<String, Object>> prodInfos=(List<Map<String, Object>>) prodInfo.get("prodInstInfos");
+					
+					if(prodInfos!=null && prodInfos.size()>0){
+						model.addAttribute("prodInfo_", JacksonUtil.objectToJson(prodInfos.get(0)));
+					}else{
+						model.addAttribute("errorMsg", "查询不到客户订购业务数据信息!");
+						return "/common/error";
+					}
 				}else{
 					model.addAttribute("errorMsg", "查询不到客户订购业务数据信息!");
 					return "/common/error";
 				}
-			}else{
-				model.addAttribute("errorMsg", "查询不到客户订购业务数据信息!");
-				return "/common/error";
 			}
-			
 			String method="/token/app/order/prodoffer/memberchange/prepare?accessToken="+accessToken;
 			
 			Map<String, Object> jumpParams=new HashMap<String, Object>();
@@ -249,9 +257,10 @@ public class MemberChangeMainContoller extends BaseController{
 			//其他必要参数（非公共）
 			model.addAttribute("acrNum", paramsMap.get("mainPhoneNum"));
 			model.addAttribute("phoneNum_", paramsMap.get("mainPhoneNum"));
+			model.addAttribute("provCustAreaId", provCustAreaId);
 			model.addAttribute("reloadFlag_",paramsMap.get("reloadFlag"));
 			model.addAttribute("mktResInstCode", paramsMap.get("mktResInstCode")==null?"":paramsMap.get("mktResInstCode").toString());
-			
+			model.addAttribute("salesCode", paramsMap.get("salesCode")==null?"":paramsMap.get("salesCode").toString());
 		}catch(Exception e){
 			log.error("成员变更/业务变更服务加载异常：",e);
 			return super.failedStr(model, ErrorCode.ORDER_PROD, e, params);

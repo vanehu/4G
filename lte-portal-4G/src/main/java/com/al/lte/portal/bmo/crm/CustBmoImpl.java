@@ -70,12 +70,19 @@ public class CustBmoImpl implements CustBmo {
 			String optFlowNum, SessionStaff sessionStaff) throws Exception {
 		DataBus db = ServiceClient.callService(dataBusMap,
 				PortalServiceCode.IOT_SERVICE_QUERY_CUST_PROD, optFlowNum, sessionStaff);
+		Map<String, Object> returnMap = new HashMap<String, Object>();
 		try {
-			return db.getReturnlmap();
+			if (ResultCode.R_SUCCESS.equals(db.getResultCode())) {
+				returnMap = db.getReturnlmap();
+			} else {
+				returnMap.put("resultCode", db.getResultCode());
+				returnMap.put("resultMsg", db.getResultMsg());
+			}
 		} catch (Exception e) {
 			log.error("CSB异常的客户资料查询queryCust服务返回的数据异常", e);
 			throw new BusinessException(ErrorCode.IOT_PRODINFO, dataBusMap, db.getReturnlmap(), e);
 		}
+		return returnMap;
 	}
 
 	/**
@@ -90,12 +97,19 @@ public class CustBmoImpl implements CustBmo {
 			String optFlowNum, SessionStaff sessionStaff) throws Exception {
 		DataBus db = ServiceClient.callService(dataBusMap,
 				PortalServiceCode.IOT_SERVICE_QUERY_CUST_PHONE, optFlowNum, sessionStaff);
+		Map<String, Object> returnMap = new HashMap<String, Object>();
 		try {
-			return db.getReturnlmap();
+			if (ResultCode.R_SUCCESS.equals(db.getResultCode())) {
+				returnMap = db.getReturnlmap();
+			} else {
+				returnMap.put("resultCode", db.getResultCode());
+				returnMap.put("resultMsg", db.getResultMsg());
+			}
 		} catch (Exception e) {
 			log.error("CSB异常的终端串码查询queryCustInfoByMktResCode4iot服务返回的数据异常", e);
 			throw new BusinessException(ErrorCode.IOT_MKTRESCODE, dataBusMap, db.getReturnlmap(), e);
 		}
+		return returnMap;
 	}
 
 	/**
@@ -544,5 +558,22 @@ public class CustBmoImpl implements CustBmo {
 			throw new BusinessException(ErrorCode.QUERY_ACC_NBR_BY_CUST, dataBusMap, db.getReturnlmap(), e);
 		}
 	}
-
+	
+	public Map<String, Object> queryCustCompreInfo(Map<String, Object> dataBusMap,
+			String optFlowNum, SessionStaff sessionStaff) throws Exception {
+		Map<String, Object> retnMap = new HashMap<String, Object>();
+		DataBus db = InterfaceClient.callService(dataBusMap,
+				PortalServiceCode.QUERY_CUST_COMPRE_INFO, optFlowNum, sessionStaff);
+		Map returnMap = db.getReturnlmap();
+		try {
+			String code = (String) returnMap.get("resultCode");
+			if (ResultCode.R_SUCC.equals(code)) {
+				retnMap = (HashMap) returnMap.get("result");
+			}
+			return retnMap;
+		} catch (Exception e) {
+			log.error("能力开放平台的客户架构信息查询queryCustCompreInfo服务返回的数据异常", e);
+			throw new BusinessException(ErrorCode.QUERY_CUST_COMPRE_INFO, dataBusMap, db.getReturnlmap(), e);
+		}
+	}
 }

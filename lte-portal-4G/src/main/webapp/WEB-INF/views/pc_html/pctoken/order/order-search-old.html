@@ -221,59 +221,73 @@
 
 <!--订单准备 end-->
 <script type="text/javascript">
-	//OrderInfo.cust={addressStr: "小关路663号",areaId: "8330100",areaName: "杭州市",authFlag: "1",custFlag: "1100",custId: "140000886805",idCardNumber: "330723********0015",identityCd: "3",identityName: "护照",norTaxPayer: "",partyName: "杭州812",segmentId: "1101",segmentName: "",vipLevel: "1300",vipLevelName: "普通"};
-
-	var custInfos = ${custInfo};
 	var p_cust_areaid = "";
 	var p_cust_areaname= "";
-	$.each(custInfos.custInfos,function(index,custInfo){
-		var addressStr=custInfo.addressStr;
-		var areaId=custInfo.areaId;
-		p_cust_areaid = custInfo.areaId;
-		var areaName=custInfo.areaName;
-		p_cust_areaname = areaName;
-		var authFlag="1";
-		var custFlag=custInfo.custFlag;
-		var custId=custInfo.custId;
-		var idCardNumber=custInfo.idCardNumber;
-		var identityCd=custInfo.identityCd;
-		var identityName=custInfo.identityName;
-		var norTaxPayer="";
-		var partyName=custInfo.partyName;
-		var segmentId=custInfo.segmentId;
-		var segmentName=custInfo.segmentName;
-		var vipLevel=custInfo.vipLevel;
-		var vipLevelName=custInfo.vipLevelName;
-		OrderInfo.cust={addressStr: addressStr,areaId: areaId,areaName: areaName,authFlag: "1",custFlag: custFlag,custId: custId,idCardNumber: idCardNumber,identityCd: identityCd,identityName: identityName,norTaxPayer: "",partyName: partyName,segmentId: segmentId,segmentName: segmentName,vipLevel: vipLevel,vipLevelName: vipLevelName};
-	});
-	OrderInfo.staff={
-			staffId : '${staffId}',
-			channelId : '${channelId}',
-			channelName : "",
-			areaId : p_cust_areaid,
-			areaCode : "",
-			areaName : p_cust_areaname,
-			areaAllName : "",
-			operatorsId:"",
-			operatorsName:"",
-			operatorsNbr:"",
-			soAreaId : p_cust_areaid,
-			soAreaCode : "",
-			channelType:""
-	};
-	OrderInfo.provinceInfo.provIsale = '${provIsale}';
-	OrderInfo.provinceInfo.redirectUri = '${redirectUri}';
-	OrderInfo.provinceInfo.isFee = '${isFee}';
-	OrderInfo.actionFlag=1;
-	OrderInfo.newOrderNumInfo.mktResInstCode = '${mktResInstCode}';
-	OrderInfo.provinceInfo.codeMsg = '${codeMsg}';
-	OrderInfo.acct={acctCd:'${acctCd}'};//账户合同号
-	order.prepare.createorderlonger();
-	OrderInfo.busitypeflag=1;
-	order.service.initSpec();
-	order.prodOffer.init();
-	order.service.searchPack();
-	order.phoneNumber.resetBoProdAn();
+	var nextFlag = false;
+	var mergeFlag = "${mergeFlag}";
+	var custInfos = ${custInfo};
+	if(mergeFlag=="0"){
+		$.each(custInfos.custInfos,function(index,custInfo){
+			var addressStr=custInfo.addressStr;
+			var areaId=custInfo.areaId;
+			p_cust_areaid = custInfo.areaId;
+			var areaName=custInfo.areaName;
+			p_cust_areaname = areaName;
+			var authFlag="1";
+			var custFlag=custInfo.custFlag;
+			var custId=custInfo.custId;
+			var idCardNumber=custInfo.idCardNumber;
+			var identityCd=custInfo.identityCd;
+			var identityName=custInfo.identityName;
+			var norTaxPayer="";
+			var partyName=custInfo.partyName;
+			var segmentId=custInfo.segmentId;
+			var segmentName=custInfo.segmentName;
+			var vipLevel=custInfo.vipLevel;
+			var vipLevelName=custInfo.vipLevelName;
+			OrderInfo.cust={addressStr: addressStr,areaId: areaId,areaName: areaName,authFlag: "1",custFlag: custFlag,custId: custId,idCardNumber: idCardNumber,identityCd: identityCd,identityName: identityName,norTaxPayer: "",partyName: partyName,segmentId: segmentId,segmentName: segmentName,vipLevel: vipLevel,vipLevelName: vipLevelName};
+			nextFlag = true;
+		});
+	}else{
+		var custNumber = "${custNumber}";
+		var provCustAreaId = "${provCustAreaId}";
+		nextFlag = order.cust.queryCustCompreInfo(custNumber,provCustAreaId,1,'');
+		p_cust_areaid = OrderInfo.cust.areaId;
+		p_cust_areaname = OrderInfo.cust.areaName;
+	}
+	if(nextFlag){
+		OrderInfo.staff={
+				staffId : '${staffId}',
+				channelId : '${channelId}',
+				channelName : "",
+				areaId : p_cust_areaid,
+				areaCode : "",
+				areaName : p_cust_areaname,
+				areaAllName : "",
+				operatorsId:"",
+				operatorsName:"",
+				operatorsNbr:"",
+				soAreaId : p_cust_areaid,
+				soAreaCode : "",
+				channelType:""
+		};
+		OrderInfo.provinceInfo.provIsale = '${provIsale}';
+		OrderInfo.provinceInfo.redirectUri = '${redirectUri}';
+		OrderInfo.provinceInfo.isFee = '${isFee}';
+		OrderInfo.provinceInfo.mergeFlag = "${mergeFlag}";
+		OrderInfo.provinceInfo.salesCode = "${salesCode}";
+		OrderInfo.actionFlag=1;
+		OrderInfo.newOrderNumInfo.mktResInstCode = '${mktResInstCode}';
+		OrderInfo.oldSubPhoneNum.oldSubPhoneNum='${oldSubPhoneNum}';
+		OrderInfo.provinceInfo.codeMsg = '${codeMsg}';
+		OrderInfo.acct={acctCd:'${acctCd}'};//账户合同号
+		order.prepare.createorderlonger();
+		OrderInfo.busitypeflag=1;
+		order.service.initSpec();
+		order.prodOffer.init();
+		order.service.searchPack();
+		order.phoneNumber.resetBoProdAn();
+	}
 </script>
 	<!-- 选号界面需要获取的 areaId -->
 	<input type="hidden" id="p_cust_areaId" value="">
@@ -363,6 +377,11 @@ window.onload=function(){
 	}
 	if("${prodOfferId}"!=""){
 		order.service.buyService('${prodOfferId}','${(price)?default("")}');
+	}
+	var terminalCode='${terminalCode}'; //终端串码
+	//终端串码
+	if(terminalCode!=null && terminalCode!="" && terminalCode!="null"){
+		OrderInfo.terminalCode=terminalCode;
 	}
 } 
 

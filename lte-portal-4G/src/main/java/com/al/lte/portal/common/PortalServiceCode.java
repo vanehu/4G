@@ -515,8 +515,12 @@ public final class PortalServiceCode {
     
     public static final String INTF_QUERY_TERM_SALES_INFO_LIST="inte-qryTermSalesInfoList"; //终端详情查询接口
     
-    
+
     //end 
+    
+    // add by wd 2015/11/27  查询在途订单总数
+    public static final String  INTF_QUERY_COUNT="biz-service/intf.soService/checkOnWayCustomerOrder"; 
+    // end 
     
     public static final String INTF_PROTOCOL_QUERY= "biz-service/intf.prodInstService/queryProtocolServiceByConditions";  // 查询协议  add by wd  14-11-3
     
@@ -924,5 +928,11 @@ public final class PortalServiceCode {
 	public static final String IOT_SERVICE_QUERY_CUST_PROD = "com.linkage.portal.service.lte.core.resources.IOTqryProdInfo";
 	/**物联网客户查询-订单提交*/
 	public static final String IOT_SERVICE_TRANSFER_ARCHIVE = "com.linkage.portal.service.lte.core.resources.IOTTransferArchive";
+
+	/*客户架构信息查询接口*/
+    public static final String QUERY_CUST_COMPRE_INFO = "biz-service/intf.custService/queryCustCompreInfo";
+	
+	/**全量多线程查询*/
+	public static final String QUERY_LOAD_INSTIDS = "biz-service/intf.pullingDataService/queryProdInfoFromProvForConcurrent";
 
 }

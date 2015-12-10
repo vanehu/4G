@@ -90,4 +90,12 @@ public interface CustBmo {
 	public Map<String, Object> queryAccNbrByCust(Map<String, Object> dataBusMap, String optFlowNum,
             SessionStaff sessionStaff) throws Exception;
 	
+	/**
+	 * 客户架构信息查询接口
+	 * @param queryParam
+	 * @return
+	 */
+	public Map<String, Object> queryCustCompreInfo(Map<String, Object> dataBusMap, String optFlowNum,
+            SessionStaff sessionStaff) throws Exception;
+	
 }

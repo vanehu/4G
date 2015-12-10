@@ -1998,7 +1998,9 @@ order.prodModify = (function(){
 	//切换新付费帐户
 	var _ifNewAcct = function(acctSelect){
 		if($(acctSelect).val()<0){
-			$("#defineNewAcct").show();
+			if(OrderInfo.actionFlag!=2){
+				$("#defineNewAcct").show();
+			}
 		}
 		else{
 			$("#defineNewAcct").hide();

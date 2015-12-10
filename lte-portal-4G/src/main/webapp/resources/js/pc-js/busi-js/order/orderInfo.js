@@ -7,6 +7,8 @@ CommonUtils.regNamespace("OrderInfo");
 
 /** 订单信息对象*/
 OrderInfo = (function() {
+	//终端串码
+	var _terminalCode="";
 	//传入uim卡号
 	var _mktResInstCode="";
 	//传入的号码
@@ -28,17 +30,19 @@ OrderInfo = (function() {
 	 * mergeFlag 接口合并标识：1合并   0不合并
 	 */
 	var _provinceInfo={
-			provIsale:"",
-			redirectUri:"",
-			isFee:"1",
-			extCustOrderID:"",
-			reloadFlag:"",
-			prodOfferId:"",
-			prodOfferName:"",
-			mktResInstCode:"",
-			codeMsg:"",
-			mergeFlag:"0"
+		provIsale:"",
+		redirectUri:"",
+		isFee:"1",
+		extCustOrderID:"",
+		reloadFlag:"",
+		prodOfferId:"",
+		prodOfferName:"",
+		mktResInstCode:"",
+		codeMsg:"",
+		mergeFlag:"0",
+		salesCode:""
 	};
+	
 	//新装是否带出主副卡号码和uim卡信息
 	var _newOrderNumInfo = {
 		mainPhoneNum:"",
@@ -175,6 +179,8 @@ OrderInfo = (function() {
 	var _checkresult = [];
 
 	var _orderData = {}; //订单提交完整节点
+	
+	var _channelList = [];//渠道列表
 	
 	var _order = {  //订单常用全局变量
 		dealerType : "",   //保存发展人类型
@@ -1390,8 +1396,36 @@ OrderInfo = (function() {
 		}
 		return false;
 	};
+	
+	/**
+	 * 获取渠道List
+	 */
+	var _getChannelList = function (busiOrders,offer,prodId){
+		OrderInfo.channelList = [];
+		if($("i[name='channel_iofo_i']").length==0){
+			OrderInfo.channelList = window.parent.OrderInfo.getChannelList();
+		}else{
+			$("i[name='channel_iofo_i']").each(function(){				
+				var channelId = $(this).attr("channel_Id");
+				var channelName = $(this).attr("channel_Name");
+				var channelNbr = $(this).attr("channel_Nbr");
+				var isSelect = 0;
+				if($(this).hasClass("select"))
+					var isSelect = 1;
+				var channelInfo ={
+						channelId : channelId,
+						channelName : channelName,
+						channelNbr : channelNbr,
+						isSelect : isSelect
+				}
+				OrderInfo.channelList.push(channelInfo)
+			});
+		}
+		return OrderInfo.channelList;
+	};
 				
 	return {
+		terminalCode:_terminalCode,
 		mktResInstCode:_mktResInstCode,
 		order					: _order,
 		SEQ						: _SEQ,
@@ -1475,6 +1509,8 @@ OrderInfo = (function() {
 		newOrderInfo          	:_newOrderInfo,
 		newOrderNumInfo        	:_newOrderNumInfo,
 		surplusNum				:_surplusNum,
-		oldSubPhoneNum			:_oldSubPhoneNum
+		oldSubPhoneNum			:_oldSubPhoneNum,
+		channelList			 	:_channelList,
+		getChannelList			:_getChannelList
 	};
 })();

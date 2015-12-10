@@ -774,7 +774,6 @@ CacheData = (function() {
 							}
 						}
 					}else if((OrderInfo.actionFlag==2||OrderInfo.actionFlag==21 ||OrderInfo.actionFlag==22 )&&servSpec.ifDault==1){//套餐变更需要展示默认的功能产品
-				//	}else if((OrderInfo.actionFlag==2||OrderInfo.actionFlag==21 ||OrderInfo.actionFlag==22 )&&servSpec.ifDault==1){//套餐变更需要展示默认的功能产品
 						if(ec.util.isObj(serv)){
 							var $dd = $("#li_"+prodId+"_"+serv.servId);
 							if(ec.util.isObj($dd)){

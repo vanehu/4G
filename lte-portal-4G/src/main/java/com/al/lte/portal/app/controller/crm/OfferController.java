@@ -263,6 +263,48 @@ public class OfferController extends BaseController {
 	}
 	
 	/**
+	 * 套餐变更附属销售品页面
+	 * @param param
+	 * @param model
+	 * @param response
+	 * @return
+	 * @throws BusinessException
+	 */
+	@RequestMapping(value = "/queryChangeAttachOfferSub", method = RequestMethod.GET)
+	public String queryChangeAttachOfferSub(@RequestParam("strParam") String param,Model model,HttpServletResponse response){
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);
+		Map<String, Object> paramMap =  JsonUtil.toObject(param, Map.class);
+		try{
+			//默认必开功能产品
+			Map<String, Object> openServMap = offerBmo.queryServSpec(paramMap,null,sessionStaff);
+			model.addAttribute("openServMap",openServMap);
+			model.addAttribute("openServMapJson", JsonUtil.buildNormal().objectToJson(openServMap));
+			
+			//已订购附属销售品查询
+			Map<String, Object> openMap = offerBmo.queryAttachOffer(paramMap,null,sessionStaff);
+			model.addAttribute("openMap",openMap);
+			model.addAttribute("openMapJson", JsonUtil.buildNormal().objectToJson(openMap));
+			
+			//可订购附属标签查询
+			Map<String, Object> labelMap = offerBmo.queryLabel(paramMap,null,sessionStaff);	
+			model.addAttribute("labelMap",labelMap);
+			model.addAttribute("labelMapJson", JsonUtil.buildNormal().objectToJson(labelMap));
+			
+			model.addAttribute("prodId",paramMap.get("prodId"));
+			model.addAttribute("param",paramMap);
+		} catch (BusinessException e) {
+			log.error("获取附属销售品变更页面失败", e);
+			super.addHeadCode(response, ResultConstant.SERVICE_RESULT_FAILTURE);
+		} catch (InterfaceException ie) {
+			return super.failedStr(model, ie, paramMap, ErrorCode.QUERY_ATTACH_OFFER);
+		} catch (Exception e) {
+			return super.failedStr(model, ErrorCode.QUERY_ATTACH_OFFER, e, paramMap);
+		}
+	 	//return "/app/offer/attach-offer";
+		return "/app/offer/attach-spec";
+	}
+	
+	/**
 	 * 获取附属销售品规格页面
 	 * @param param
 	 * @param model
@@ -273,8 +315,8 @@ public class OfferController extends BaseController {
 	public String queryAttachSpec(@RequestParam("strParam") String param,Model model,HttpServletResponse response){
 		Map<String, Object> paramMap = new HashMap();
 		try{
-			SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
-					SysConstant.SESSION_KEY_LOGIN_STAFF);	
+			SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);	
+			
 			paramMap =  JsonUtil.toObject(param, Map.class);
 			
 			//默认必开功能产品

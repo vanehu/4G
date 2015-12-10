@@ -218,67 +218,78 @@
 
 <!--订单准备 end-->
 <script type="text/javascript">
-	//OrderInfo.cust={addressStr: "小关路663号",areaId: "8330100",areaName: "杭州市",authFlag: "1",custFlag: "1100",custId: "140000886805",idCardNumber: "330723********0015",identityCd: "3",identityName: "护照",norTaxPayer: "",partyName: "杭州812",segmentId: "1101",segmentName: "",vipLevel: "1300",vipLevelName: "普通"};	
- 	var custInfos = ${custInfo};
- 	var addressStr="";
-	var areaId="";
-	var areaName="";
-	var authFlag="1";
-	var custFlag="";
-	var custId="";
-	var idCardNumber="";
-	var identityCd="";
-	var identityName="";
-	var norTaxPayer="";
-	var partyName="";
-	var segmentId="";
-	var segmentName="";
-	var vipLevel="";
-	var vipLevelName="";
-	$.each(custInfos.custInfos,function(index,custInfo){
-		 addressStr=custInfo.addressStr;
-		 areaId=custInfo.areaId;
-		 areaName=custInfo.areaName;
-		 authFlag="1";
-		 custFlag=custInfo.custFlag;
-		 custId=custInfo.custId;
-		 idCardNumber=custInfo.idCardNumber;
-		 identityCd=custInfo.identityCd;
-		 identityName=custInfo.identityName;
-		 norTaxPayer="";
-		 partyName=custInfo.partyName;
-		 segmentId=custInfo.segmentId;
-		 segmentName=custInfo.segmentName;
-		 vipLevel=custInfo.vipLevel;
-		 vipLevelName=custInfo.vipLevelName;
-		OrderInfo.cust={addressStr: addressStr,areaId: areaId,areaName: areaName,authFlag: "1",custFlag: custFlag,custId: custId,idCardNumber: idCardNumber,identityCd: identityCd,identityName: identityName,norTaxPayer: "",partyName: partyName,segmentId: segmentId,segmentName: segmentName,vipLevel: vipLevel,vipLevelName: vipLevelName};
-	});
-	OrderInfo.staff={
-			staffId : '${staffId}',
-			channelId : '${channelId}',
-			channelName : '${channelName}',
-			areaId : areaId,
-			areaCode : "",
-			areaName : areaName,
-			areaAllName : "",
-			operatorsId:"",
-			operatorsName:"",
-			operatorsNbr:"",
-			soAreaId : areaId,
-			soAreaCode : "",
-			channelType:""
-	};
-	OrderInfo.provinceInfo.provIsale = '${provIsale}';
-	OrderInfo.provinceInfo.redirectUri = '${redirectUri}';
-	OrderInfo.provinceInfo.isFee = '${isFee}';
-	OrderInfo.actionFlag=1;
-	OrderInfo.newOrderInfo.isReloadFlag="N";
-	order.prepare.createorderlonger();
-	OrderInfo.busitypeflag=1;
-	order.service.initSpec();
-	order.prodOffer.init();
-	order.service.searchPack();
-	order.phoneNumber.resetBoProdAn();
+	var nextFlag = false;
+	var mergeFlag = "${mergeFlag}";
+	if(mergeFlag=="0"){
+		var custInfos = ${custInfo};
+	 	var addressStr="";
+		var areaId="";
+		var areaName="";
+		var authFlag="1";
+		var custFlag="";
+		var custId="";
+		var idCardNumber="";
+		var identityCd="";
+		var identityName="";
+		var norTaxPayer="";
+		var partyName="";
+		var segmentId="";
+		var segmentName="";
+		var vipLevel="";
+		var vipLevelName="";
+		$.each(custInfos.custInfos,function(index,custInfo){
+			 addressStr=custInfo.addressStr;
+			 areaId=custInfo.areaId;
+			 areaName=custInfo.areaName;
+			 authFlag="1";
+			 custFlag=custInfo.custFlag;
+			 custId=custInfo.custId;
+			 idCardNumber=custInfo.idCardNumber;
+			 identityCd=custInfo.identityCd;
+			 identityName=custInfo.identityName;
+			 norTaxPayer="";
+			 partyName=custInfo.partyName;
+			 segmentId=custInfo.segmentId;
+			 segmentName=custInfo.segmentName;
+			 vipLevel=custInfo.vipLevel;
+			 vipLevelName=custInfo.vipLevelName;
+			OrderInfo.cust={addressStr: addressStr,areaId: areaId,areaName: areaName,authFlag: "1",custFlag: custFlag,custId: custId,idCardNumber: idCardNumber,identityCd: identityCd,identityName: identityName,norTaxPayer: "",partyName: partyName,segmentId: segmentId,segmentName: segmentName,vipLevel: vipLevel,vipLevelName: vipLevelName};
+			nextFlag = true;
+		});
+	}else{
+		var custNumber = "${custNumber}";
+		var provCustAreaId = "${provCustAreaId}";
+		nextFlag = order.cust.queryCustCompreInfo(custNumber,provCustAreaId,1,'');
+	}
+	if(nextFlag){
+		OrderInfo.staff={
+				staffId : '${staffId}',
+				channelId : '${channelId}',
+				channelName : '${channelName}',
+				areaId : areaId,
+				areaCode : "",
+				areaName : areaName,
+				areaAllName : "",
+				operatorsId:"",
+				operatorsName:"",
+				operatorsNbr:"",
+				soAreaId : areaId,
+				soAreaCode : "",
+				channelType:""
+		};
+		OrderInfo.provinceInfo.provIsale = '${provIsale}';
+		OrderInfo.provinceInfo.redirectUri = '${redirectUri}';
+		OrderInfo.provinceInfo.isFee = '${isFee}';
+		OrderInfo.provinceInfo.mergeFlag = "${mergeFlag}";
+		OrderInfo.actionFlag=1;
+		OrderInfo.newOrderInfo.isReloadFlag="N";
+		order.prepare.createorderlonger();
+		OrderInfo.busitypeflag=1;
+		order.service.initSpec();
+		order.prodOffer.init();
+		order.service.searchPack();
+		order.phoneNumber.resetBoProdAn();
+	}
 </script>
 	<!-- 选号界面需要获取的 areaId -->
 	<input type="hidden" id="p_cust_areaId" value="">
@@ -388,7 +399,11 @@ window.onload=function(){
 	OrderInfo.newOrderInfo.prodOfferName=prodOfferName;
 	OrderInfo.newOrderInfo.isReloadFlag="N";
 	var busiOrders = result.orderList.custOrderList[0].busiOrder;
-	
+	var terminalCode='${terminalCode}'; //终端串码
+	//终端串码
+	if(terminalCode!=null && terminalCode!="" && terminalCode!="null"){
+		OrderInfo.terminalCode=terminalCode;
+	}
 	//进行数据信息验证，是否是新装数据
 	var custOrderAttrs =result.orderList.orderListInfo.custOrderAttrs;
 	
@@ -425,7 +440,7 @@ window.onload=function(){
 			OrderInfo.newOrderInfo.prodOfferId=prodOfferId;
 		}
 	});
-	if(prodOfferId!=""&&prodOfferId!=null){			
+	if(prodOfferId!="" && prodOfferId!=null){		
 		order.service.buyServiceReload(prodOfferId,'${(price)?default("")}',cardNum);	
 	}			
 }

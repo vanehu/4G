@@ -9,16 +9,22 @@
 	</#if>
 	<div class="ordercon" id="ordercon">
 	<#assign prodId = 0 /> 
-	<#assign offerSpec = main.offerSpec /> 
+	<#if main.actionFlag?? && main.actionFlag==1>
+		<#assign offerSpec = main.offerSpec /> 
+	<#elseif main.oldnum?? && (main.oldnum?number>0)>
+		<#assign offerSpec = main.oldofferSpec /> 
+	<#else>
+		<#assign offerSpec = main.offerSpec /> 
+	</#if>
 	<#list 1..main.offerNum as n >
 	<!-- 每个订单展示 -->
 	<div order="${n}" class="order_confirmation ordertabcon" style="display: none" id="ordertabcon">
 		<h2 class="h2_title">
 			<span> ${main.boActionTypeName} </span>
 			<#if main.actionFlag == 1>
-				${main.offerSpec.offerSpecName}
+				${offerSpec.offerSpecName}
 			<#elseif main.actionFlag == 14>
-				${main.offerSpec.offerSpecName}
+				${offerSpec.offerSpecName}
 			<#else>
 				${main.accessNumber}
 			</#if>
@@ -29,44 +35,51 @@
 		</h2>
 		<div class="main_body">
 			<!-- 展示套餐下多个成员标签 -->
-			<#if main.addflag?? && main.addflag=="ADD">
-				<div class="cardtab">
-					<ul class="pdcard">
-					<#assign k = 0 />
-					<#list main.prodInstInfos as prodinfos>
-						<#list main.offer as offerinst>
-							<#if prodinfos.accNbr==offerinst.accNbr>
-								<#list offerinst.offerMemberInfos as Member>
-									<#if Member.objType==2>
-										<#assign k = k+1 />
-										<#if i==1>
-											<li class="setcon" id="tab_${Member.objInstId}" prodId="${Member.objInstId}" onclick="offerChange.changeTab(${Member.objInstId})">${Member.roleName}${Member.accessNumber}</li>
-										<#else>
-											<li class="" id="tab_${Member.objInstId}" prodId="${Member.objInstId}" onclick="offerChange.changeTab(${Member.objInstId})">${Member.roleName}${Member.accessNumber}</li>
-										</#if>
-										<!-- <li offerRoleId=${Member.objInstId} class="">加装移动电话${k}</li> -->
-									</#if>
-								</#list>
-							</#if>
-						</#list>
-					</#list>	
-					</ul>
-					<div class="clear"></div>
-				</div>
-			<#elseif offerSpec.offerRoles?? && (offerSpec.offerRoles?size>0)>
-				<div class="cardtab">
-					<ul class="pdcard">
+			<div class="cardtab">
+				<ul class="pdcard">
+				<#assign setconFlag = 0 />
+				<#if (main.newnum?? && (main.newnum?number>0)) || (main.actionFlag?? && main.actionFlag==1) || (main.actionFlag?? && main.actionFlag==14)>
+					<#assign j = 0 />
 					<#list offerSpec.offerRoles as offerRole>	
 						<#if (offerRole.prodInsts?? && offerRole.prodInsts?size>0)>
 							<#list offerRole.prodInsts as prod>
-								<li offerRoleId=${offerRole.offerRoleId} class="">${prod.offerRoleName}</li>
+							<#assign j = j+1 />
+							<#assign setconFlag = setconFlag+1 />
+							<#if j==1>
+								<li class="setcon" id="tab_${prod.prodInstId}" prodId="${prod.prodInstId}" onclick="offerChange.changeTab(${prod.prodInstId})">${prod.offerRoleName}</li>
+								<!-- <li offerRoleId=${offerRole.offerRoleId} class="">${prod.offerRoleName}</li> -->
+							<#else>
+								<li class="" id="tab_${prod.prodInstId}" prodId="${prod.prodInstId}" onclick="offerChange.changeTab(${prod.prodInstId})">${prod.offerRoleName}</li>
+							</#if>
 							</#list>
 						</#if>
 					</#list>	
-					</ul>
-					<div class="clear"></div>
-				</div>
-			</#if>
+				</#if>
+				
+				<#if main.oldnum?? && (main.oldnum?number>0)>
+				<#assign k = 0 />
+				<#list main.oldprodInstInfos as prodinfos>
+					<#list main.oldoffer as offerinst>
+						<#if prodinfos.accNbr==offerinst.accNbr>
+							<#list offerinst.offerMemberInfos as Member>
+								<#if Member.objType==2>
+									<#assign k = k+1 />
+									<#if k==1 && setconFlag==0>
+										<li class="setcon" id="tab_${Member.objInstId}" prodId="${Member.objInstId}" onclick="offerChange.changeTab(${Member.objInstId})">加装移动电话${Member.accessNumber}</li>
+									<#else>
+										<li class="" id="tab_${Member.objInstId}" prodId="${Member.objInstId}" onclick="offerChange.changeTab(${Member.objInstId})">加装移动电话${Member.accessNumber}</li>
+									</#if>
+									<!-- <li offerRoleId=${Member.objInstId} class="">加装移动电话${k}</li> -->
+								</#if>
+							</#list>
+						</#if>
+					</#list>
+				</#list>
+				</#if>
+				</ul>
+				<div class="clear"></div>
+		</div>
+		
 			
 			<!-- 产品信息展示 -->
 			<div class="cardtabcon">
@@ -107,6 +120,42 @@
 					<@block name="product">
 						<#include "/order/order-product.html" />
 					</@block>
+				</#if>
+				
+				<#if main.oldnum?? && (main.oldnum?number>0)>
+					<#assign z = 0 />
+					<#list main.oldprodInstInfos as prodinfos>
+						<#list main.oldoffer as offerinst>
+							<#if prodinfos.accNbr==offerinst.accNbr>
+								<#list offerinst.offerMemberInfos as item>
+									<#if item.objType==2>
+										<#assign prodId = item.objInstId/>
+										<#assign z = z-1 />
+										<#if main.actionFlag?? && main.actionFlag==1>
+											<div id="attach_tab_${prodId}" style="display:none">
+										<#elseif z==-1>
+											<div id="attach_tab_${prodId}">
+										<#else>
+											<div id="attach_tab_${prodId}" style="display:none">
+										</#if>
+											<div id="attach_tab_${prodId}" >	
+												<h5 class="s_title" >可选包/功能</h5>
+												<div type="attach" id="attach_${prodId}" class="infoBox"></div>
+											</div>
+											<div id="uimDiv_${prodId}" style="display: none;">
+												<h5 class="s_title" id="title_${prodId}">补换卡： </h5>
+												<div class="pdcardcon show" >
+													<ul class="fillin show">
+														<#include "/order/order-uim.html" />
+													</ul>
+												</div>
+											</div>
+										</div>
+									</#if>
+								</#list>
+							</#if>
+						</#list>
+					</#list>
 				</#if>
 				</div>
 			</div>

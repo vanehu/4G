@@ -119,32 +119,32 @@ public class CommonBmoImpl implements CommonBmo {
 //		staffInfoMap=(Map<String, Object>)param.get("staffInfoMap");
 
 		/**主销售品实例构成查询--------------------------开始**/
-		if(param.get("actionFlag")!=null&&Const.OFFERCHANGE_FLAG.equals(param.get("actionFlag"))){
-			Map<String, Object> offerInstParam=new HashMap<String, Object>();
-			offerInstParam.put("offerId", prodIdInfoMap.get("prodOfferInstId"));
-			offerInstParam.put("offerSpecId",prodIdInfoMap.get("prodOfferId"));
-			offerInstParam.put("acctNbr", prodIdInfoMap.get("accNbr"));
-			offerInstParam.put("areaId", prodIdInfoMap.get("areaId"));
-			offerInstParam.put("distributorId", "");
-			offerInstParam.put("staffId", sessionStaff.getStaffId());
-			Map<String, Object> offerInst = new HashMap<String, Object>();
-			
-			DataBus db = InterfaceClient.callService(offerInstParam, PortalServiceCode.INTF_OFFER_INST_QUERY, optFlowNum, sessionStaff);
-			try{
-				if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db.getResultCode()))) {
-					offerInst = MapUtils.getMap(db.getReturnlmap(), "result");
-					offerMemberInfos=(List<HashMap<String, Object>>)offerInst.get("offerMemberInfos");
-					resultMap.put("offerInst", offerInst);//实例构成信息
-				} else {
-					resultMap.put("code",  ResultCode.R_FAIL);
-					resultMap.put("msg", db.getResultMsg());
-					return resultMap;
-				}
-			} catch (Exception e) {
-				log.error("门户处理营业后台的queryOfferMemberById服务返回的数据异常", e);
-				throw new BusinessException(ErrorCode.QUERY_OFFER_PARAM, offerInstParam, resultMap, e);
-			}
-		}
+//		if(param.get("actionFlag")!=null&&Const.OFFERCHANGE_FLAG.equals(param.get("actionFlag"))){
+//			Map<String, Object> offerInstParam=new HashMap<String, Object>();
+//			offerInstParam.put("offerId", prodIdInfoMap.get("prodOfferInstId"));
+//			offerInstParam.put("offerSpecId",prodIdInfoMap.get("prodOfferId"));
+//			offerInstParam.put("acctNbr", prodIdInfoMap.get("accNbr"));
+//			offerInstParam.put("areaId", prodIdInfoMap.get("areaId"));
+//			offerInstParam.put("distributorId", "");
+//			offerInstParam.put("staffId", sessionStaff.getStaffId());
+//			Map<String, Object> offerInst = new HashMap<String, Object>();
+//			
+//			DataBus db = InterfaceClient.callService(offerInstParam, PortalServiceCode.INTF_OFFER_INST_QUERY, optFlowNum, sessionStaff);
+//			try{
+//				if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db.getResultCode()))) {
+//					offerInst = MapUtils.getMap(db.getReturnlmap(), "result");
+//					offerMemberInfos=(List<HashMap<String, Object>>)offerInst.get("offerMemberInfos");
+//					resultMap.put("offerInst", offerInst);//实例构成信息
+//				} else {
+//					resultMap.put("code",  ResultCode.R_FAIL);
+//					resultMap.put("msg", db.getResultMsg());
+//					return resultMap;
+//				}
+//			} catch (Exception e) {
+//				log.error("门户处理营业后台的queryOfferMemberById服务返回的数据异常", e);
+//				throw new BusinessException(ErrorCode.QUERY_OFFER_PARAM, offerInstParam, resultMap, e);
+//			}
+//		}
 		/**全量查询---------------------------------开始**/
 		Map<String, Object> instParam=new HashMap<String, Object>();
 		if(prodIdInfoMap!=null){
@@ -155,12 +155,7 @@ public class CommonBmoImpl implements CommonBmo {
 			instParam.put("instId", prodIdInfoMap.get("prodInstId"));
 			instParam.put("type", "2");
 		}
-		//instParam.put("areaId", prodIdInfoMap.get("areaId"));
-//		instParam.put("acctNbr", prodIdInfoMap.get("accNbr"));
-//		instParam.put("custId", custInfoMap.get("custId"));
-//		instParam.put("soNbr", param.get("soNbr"));
-//		instParam.put("instId", prodIdInfoMap.get("prodInstId"));
-//		instParam.put("type", "2");
+
 		Map<String, Object> inst=new HashMap<String, Object>();
         try {
         	if(offerMemberInfos.size()>0){
@@ -210,6 +205,70 @@ public class CommonBmoImpl implements CommonBmo {
         	log.error("门户处理营业后台的queryProdInfoFromProv服务返回的数据异常", be);
 			throw new BusinessException(ErrorCode.LOAD_INST, instParam, resultMap, be);
         } 
+		/**业务规则校验------------------------------开始**/
+        Map<String, Object> ruleParam=new HashMap<String, Object>();
+        ruleParam.put("areaId", sessionStaff.getCurrentAreaId());
+        ruleParam.put("staffId", sessionStaff.getStaffId());
+        ruleParam.put("channelId", sessionStaff.getCurrentChannelId());
+        ruleParam.put("custId", custInfoMap.get("custId"));
+        ruleParam.put("soNbr", param.get("soNbr"));
+        List<Map<String, Object>> boInfos=new ArrayList<Map<String, Object>>();
+        if(param.get("actionFlag")!=null&&Const.OFFERCHANGE_FLAG.equals(param.get("actionFlag"))){
+        	Map<String, Object> boInfo=new HashMap<String, Object>();
+        	boInfo.put("boActionTypeCd", Const.BO_ACTION_TYPE_BUY_OFFER);
+        	boInfo.put("instId", prodIdInfoMap.get("prodInstId"));
+        	boInfo.put("prodId", prodIdInfoMap.get("prodInstId"));
+        	boInfo.put("specId", Const.PROD_SPEC_CDMA);
+        	boInfos.add(boInfo);
+        	Map<String, Object> boInfo2=new HashMap<String, Object>();
+        	boInfo2.put("boActionTypeCd", Const.BO_ACTION_TYPE_DEL_OFFER);
+        	boInfo2.put("instId", prodIdInfoMap.get("prodInstId"));
+        	boInfo2.put("prodId", prodIdInfoMap.get("prodInstId"));
+        	boInfo2.put("specId", Const.PROD_SPEC_CDMA);
+        	boInfos.add(boInfo2);
+        }else if(param.get("actionFlag")!=null&&Const.ACTIVERETURN_FLAG.equals(param.get("actionFlag"))){
+        	Map<String, Object> boInfo=new HashMap<String, Object>();
+        	boInfo.put("boActionTypeCd", Const.BO_ACTION_TYPE_ACTIVERETURN);
+        	boInfo.put("instId", prodIdInfoMap.get("prodInstId"));
+        	boInfo.put("prodId", prodIdInfoMap.get("prodInstId"));
+        	boInfo.put("specId", Const.PROD_SPEC_CDMA);
+        	boInfos.add(boInfo);
+        }
+        
+        ruleParam.put("boInfos", boInfos);
+        ruleParam.put("prodInfo", prodIdInfoMap);
+        Map<String,Object> ruleMap=new HashMap<String, Object>();
+		DataBus db = InterfaceClient.callService(ruleParam, PortalServiceCode.CHECK_RULE_PREPARE, optFlowNum, sessionStaff);
+		try{
+			if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db.getResultCode()))) {
+				ruleMap = MapUtils.getMap(db.getReturnlmap(), "result");
+				resultMap.put("ruleMap", ruleMap);
+			} else {
+				resultMap.put("code",  ResultCode.R_FAIL);
+				resultMap.put("msg", db.getResultMsg());
+				ruleMap = MapUtils.getMap(db.getReturnlmap(), "result");
+				resultMap.put("ruleMap", ruleMap);
+				return resultMap;
+			}
+		} catch (Exception e) {
+			log.error("门户处理营业后台的check4GRuleSoPrepare服务返回的数据异常", e);
+			throw new BusinessException(ErrorCode.CHECK_RULE, ruleParam, resultMap, e);
+		}
+		resultMap.put("code", ResultCode.R_SUCCESS);
+		return resultMap;	
+	}
+	
+	public Map<String, Object> validatorRuleSub(Map<String, Object> param, String optFlowNum,HttpServletRequest request) throws Exception {
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(request,SysConstant.SESSION_KEY_LOGIN_STAFF);
+		
+		Map<String, Object> resultMap=new HashMap<String, Object>();
+		List<HashMap<String, Object>> offerMemberInfos=new ArrayList<HashMap<String, Object>>();
+		
+		Map<String, Object> prodIdInfoMap=new HashMap<String, Object>();
+		Map<String, Object> custInfoMap=new HashMap<String, Object>();
+		prodIdInfoMap=(Map<String, Object>)param.get("prodIdInfoMap");
+		custInfoMap=(Map<String, Object>)param.get("custInfoMap");
+		
 		/**业务规则校验------------------------------开始**/
         Map<String, Object> ruleParam=new HashMap<String, Object>();
         ruleParam.put("areaId", sessionStaff.getCurrentAreaId());

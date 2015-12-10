@@ -117,6 +117,17 @@ public interface OfferBmo {
     public Map<String, Object> loadInst(Map<String, Object> dataBusMap,String optFlowNum, 
     		SessionStaff sessionStaff) throws Exception;
     
+    
+    /**
+     * 加载实例(多线程改造)
+     * @param dataBusMap
+     * @param optFlowNum
+     * @param sessionStaff
+     * @return
+     * @throws Exception
+     */
+    public Map<String, Object> newLoadInst(Map<String, Object> dataBusMap,String optFlowNum, SessionStaff sessionStaff) throws Exception;
+    
     /**
      * 群号查询
      * @param dataBusMap

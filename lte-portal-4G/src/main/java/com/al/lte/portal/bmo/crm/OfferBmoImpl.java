@@ -1,5 +1,7 @@
 package com.al.lte.portal.bmo.crm;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -275,6 +277,20 @@ public class OfferBmoImpl implements OfferBmo {
 			String optFlowNum, SessionStaff sessionStaff) throws Exception {
 		DataBus db = InterfaceClient.callService(dataBusMap,
 				PortalServiceCode.LOAD_INST, optFlowNum, sessionStaff);
+		Map<String, Object> resMap = new HashMap<String, Object>();
+		try{
+			resMap.put("code", db.getResultCode());
+			resMap.put("msg", db.getReturnlmap());
+			resMap.put("result", db.getResultMsg());
+		} catch (Exception e) {
+			log.error("门户处理营业后台的queryLabelByAreaId服务返回的数据异常", e);
+			throw new BusinessException(ErrorCode.QUERY_OFFER_SPEC, dataBusMap, resMap, e);
+		}
+		return resMap;
+	}
+	
+	public Map<String, Object> newLoadInst(Map<String, Object> dataBusMap,String optFlowNum, SessionStaff sessionStaff) throws Exception {
+		DataBus db = InterfaceClient.callService(dataBusMap,PortalServiceCode.QUERY_LOAD_INSTIDS, optFlowNum, sessionStaff);
 		Map<String, Object> resMap = new HashMap<String, Object>();
 		try{
 			resMap.put("code", db.getResultCode());

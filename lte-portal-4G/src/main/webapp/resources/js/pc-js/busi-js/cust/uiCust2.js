@@ -308,7 +308,8 @@ order.uiCusts = (function(){
 					order.main.showChooseUserDialog(param);
 				}
 			},"always":function(){
-				$.unecOverlay();
+				// 注释后 才会显示下个请求的提示信息
+//				$.unecOverlay();
 			}
 		});
 	};

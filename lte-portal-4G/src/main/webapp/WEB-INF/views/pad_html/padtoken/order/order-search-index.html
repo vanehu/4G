@@ -1,16 +1,17 @@
 <@override name="title">中国电信4G营业受理</@override>
 <@override name="header">
 <!-- 这块js类似原来的busi-js-tpl.html后期优化20140731 lsd -->
+<script src="${contextPath}/js/pad-js/op-js/acct/acctModify.js?${jsversion}" type="text/javascript"></script>
 <script src="${contextPath}/js/busi-js/common/const.js?${jsversion}" type="text/javascript"></script>
 <script src="${contextPath}/js/busi-js/query/common.js?${jsversion}" type="text/javascript"></script>
 <script src="${contextPath}/js/pad-js/op-js/order/orderInfo.js?${jsversion}" type="text/javascript"></script>
 <script src="${contextPath}/js/pad-js/busi-js/order/orderProdModify.js?${jsversion}" type="text/javascript"></script>
-<script src="${contextPath}/js/pad-js/busi-js/order/memberChange.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/pad-js/op-js/order/memberChange.js?${jsversion}" type="text/javascript"></script>
 <script src="${contextPath}/js/pad-js/busi-js/cust/custMgr.js?${jsversion}" type="text/javascript"></script>
 <script src="${contextPath}/js/pad-js/busi-js/common/areaMgr.js?${jsversion}" type="text/javascript"></script>
 <script src="${contextPath}/js/pad-js/busi-js/rule/rule.js?${jsversion}" type="text/javascript"></script>
 <script src="${contextPath}/js/pad-js/busi-js/order/cacheData.js?${jsversion}" type="text/javascript"></script>
-<script src="${contextPath}/js/pad-js/busi-js/order/offerQuery.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/pad-js/op-js/order/offerQuery.js?${jsversion}" type="text/javascript"></script>
 <script src="${contextPath}/js/pad-js/op-js/order/calCharge.js?${jsversion}" type="text/javascript"></script>
 <script src="${contextPath}/js/pad-js/op-js/order/order.js?${jsversion}" type="text/javascript"></script>
 <script src="${contextPath}/js/pad-js/op-js/order/orderMain.js?${jsversion}" type="text/javascript"></script>
@@ -18,9 +19,9 @@
 <script src="${contextPath}/js/pad-js/busi-js/mktRes/terminal.js?${jsversion}" type="text/javascript"></script>
 <script src="${contextPath}/js/pad-js/busi-js/mktRes/phoneNumber.js?${jsversion}" type="text/javascript"></script>
 <script src="${contextPath}/js/pad-js/busi-js/prod/uim.js?${jsversion}" type="text/javascript"></script>
-<script src="${contextPath}/js/busi-js/query/queryProd.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/pad-js/op-js/order/queryProd.js?${jsversion}" type="text/javascript"></script>
 <script src="${contextPath}/js/pad-js/busi-js/print/print.js?${jsversion}" type="text/javascript"></script>
-<script src="${contextPath}/js/pad-js/busi-js/order/prepare.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/pad-js/op-js/order/prepare.js?${jsversion}" type="text/javascript"></script>
 <script src="${contextPath}/js/pad-js/op-js/order/attachOffer.js?${jsversion}" type="text/javascript"></script>
 <script src="${contextPath}/js/pad-js/busi-js/order/offerChange.js?${jsversion}" type="text/javascript"></script>
 <script src="${contextPath}/js/pad-js/op-js/order/soOrder.js?${jsversion}" type="text/javascript"></script>
@@ -34,6 +35,7 @@
 	<!-- 省份传入主副卡号码 -->
 	<input type="hidden" id="mainPhoneNum" value="${mainPhoneNum}"/>
 	<input type="hidden" id="newSubPhoneNum" value="${newSubPhoneNum}"/>
+	<input type="hidden" id="oldSubPhoneNum" value="${oldSubPhoneNum}"/>
 	<div id="div_notice" class="width100" style="display:none">
 		<span class="iconindex icon-news"></span>
 		<span id="span_scroll_notice" style="height:40px;overflow:hidden;">
@@ -123,33 +125,42 @@
 </@override>
 <@extends name="/padtoken/main/main-template.html"/>
 <script type="text/javascript">
-	
-	var custInfo = ${custInfo};
 	var provinceInfo = ${provinceInfo};
 	var areaId = "";
-	$.each(custInfo.custInfos,function(index,custInfo){
-		var addressStr=custInfo.addressStr;
-		areaId=custInfo.areaId;
-		var areaName=custInfo.areaName;
-		var authFlag="1";
-		var custFlag=custInfo.custFlag;
-		var custId=custInfo.custId;
-		var idCardNumber=custInfo.idCardNumber;
-		var identityCd=custInfo.identityCd;
-		var identityName=custInfo.identityName;
-		var norTaxPayer="";
-		var partyName=custInfo.partyName;
-		var segmentId=custInfo.segmentId;
-		var segmentName=custInfo.segmentName;
-		var vipLevel=custInfo.vipLevel;
-		var vipLevelName=custInfo.vipLevelName;
-		OrderInfo.cust={addressStr: addressStr,areaId: areaId,areaName: areaName,authFlag: "1",custFlag: custFlag,custId: custId,idCardNumber: idCardNumber,identityCd: identityCd,identityName: identityName,norTaxPayer: "",partyName: partyName,segmentId: segmentId,segmentName: segmentName,vipLevel: vipLevel,vipLevelName: vipLevelName};
-		return false;
-	});
+	var nextFlag = false;
+	var mergeFlag = "${mergeFlag}";
+	if(mergeFlag=="0"){
+		var custInfo = ${custInfo};
+		$.each(custInfo.custInfos,function(index,custInfo){
+			var addressStr=custInfo.addressStr;
+			areaId=custInfo.areaId;
+			var areaName=custInfo.areaName;
+			var authFlag="1";
+			var custFlag=custInfo.custFlag;
+			var custId=custInfo.custId;
+			var idCardNumber=custInfo.idCardNumber;
+			var identityCd=custInfo.identityCd;
+			var identityName=custInfo.identityName;
+			var norTaxPayer="";
+			var partyName=custInfo.partyName;
+			var segmentId=custInfo.segmentId;
+			var segmentName=custInfo.segmentName;
+			var vipLevel=custInfo.vipLevel;
+			var vipLevelName=custInfo.vipLevelName;
+			OrderInfo.cust={addressStr: addressStr,areaId: areaId,areaName: areaName,authFlag: "1",custFlag: custFlag,custId: custId,idCardNumber: idCardNumber,identityCd: identityCd,identityName: identityName,norTaxPayer: "",partyName: partyName,segmentId: segmentId,segmentName: segmentName,vipLevel: vipLevel,vipLevelName: vipLevelName};
+			return false;
+		});
+		nextFlag = true;
+	}else{
+		var custNumber = "${custNumber}";
+		var provCustAreaId = "${provCustAreaId}";
+		nextFlag = order.cust.mgr.queryCustCompreInfo(custNumber,provCustAreaId,1,'');
+	}
 	OrderInfo.provinceInfo.provIsale = provinceInfo.provIsale;
 	OrderInfo.provinceInfo.redirectUri= provinceInfo.redirectUri;
 	OrderInfo.provinceInfo.isFee = provinceInfo.isFee;
 	OrderInfo.provinceInfo.reloadFlag = provinceInfo.reloadFlag;
+	OrderInfo.provinceInfo.mergeFlag = "${mergeFlag}";
 	OrderInfo.actionFlag = provinceInfo.actionFlag;
 	OrderInfo.busitypeflag=1;
 	OrderInfo.provinceInfo.codeMsg = provinceInfo.codeMsg;
@@ -197,37 +208,51 @@
 		}
 		
 		$("#p_cust_areaId").val(areaId);
-		if(OrderInfo.provinceInfo.prodOfferId!=undefined&&OrderInfo.provinceInfo.prodOfferId!=""&&OrderInfo.provinceInfo.reloadFlag!="N"){
-			//新装主副卡数据
-			if($("#mainPhoneNum").val()!=undefined&&$("#mainPhoneNum").val()!=""){
-				OrderInfo.newOrderNumInfo.mainPhoneNum = $("#mainPhoneNum").val();
-			}
-			if($("#newSubPhoneNum").val()!=undefined&&$("#newSubPhoneNum").val()!=""){
-				OrderInfo.newOrderNumInfo.newSubPhoneNum = $("#newSubPhoneNum").val();
-			}
-			//直接跳过订购界面
-			order.service.buyService("",OrderInfo.provinceInfo.prodOfferId,"");
-		}else if(OrderInfo.provinceInfo.reloadFlag=="N"){
-			//解析二次加载返回数据
-			//解析数据,订购几张副卡
-			var busiOrders = result.orderList.custOrderList[0].busiOrder;
-			//解析数据,订购几张副卡
-			var cardNum = 0;
-			$.each(busiOrders,function(index,busiOrder){
-				if(busiOrder.boActionType.actionClassCd==1300&&busiOrder.boActionType.boActionTypeCd=="1"&&busiOrder.busiObj.instId!="-1"){
-					cardNum = cardNum+1;
+		var terminalCode='${terminalCode}'; //终端串码
+		var mainPhoneNum='${mainPhoneNum}';
+		var newSubPhoneNum='${newSubPhoneNum}';
+		var oldSubPhoneNum='${oldSubPhoneNum}';
+		//终端串码
+		if(terminalCode!=null && terminalCode!="" && terminalCode!="null"){
+			OrderInfo.terminalCode=terminalCode;
+		}
+
+		if(mainPhoneNum!=null && mainPhoneNum!="" && mainPhoneNum!="null"){
+			OrderInfo.newOrderNumInfo.mainPhoneNum = mainPhoneNum;
+		}
+		if(newSubPhoneNum!=null && newSubPhoneNum!="" && newSubPhoneNum!="null"){
+			OrderInfo.newOrderNumInfo.newSubPhoneNum =newSubPhoneNum;
+		}
+		if(oldSubPhoneNum!=null && oldSubPhoneNum!="" && oldSubPhoneNum!="null"){
+			//OrderInfo.newOrderNumInfo.newSubPhoneNum = $("#newSubPhoneNum").val();
+			OrderInfo.newOrderNumInfo.oldSubPhoneNum =oldSubPhoneNum; 
+		}
+		if(nextFlag){
+			if(OrderInfo.provinceInfo.prodOfferId!=undefined&&OrderInfo.provinceInfo.prodOfferId!=""&&OrderInfo.provinceInfo.reloadFlag!="N"){
+				order.prepare.commonTab("${contextPath}/pad/order/prodoffer/prepare.html","order_tab_panel_offer");
+			}else if(OrderInfo.provinceInfo.reloadFlag=="N"){
+				//解析二次加载返回数据
+				//解析数据,订购几张副卡
+				var busiOrders = result.orderList.custOrderList[0].busiOrder;
+				//解析数据,订购几张副卡
+				var cardNum = 0;
+				$.each(busiOrders,function(index,busiOrder){
+					if(busiOrder.boActionType.actionClassCd==1300&&busiOrder.boActionType.boActionTypeCd=="1"&&busiOrder.busiObj.instId!="-1"){
+						cardNum = cardNum+1;
+					}
+					if(busiOrder.boActionType.actionClassCd==1200&&busiOrder.boActionType.boActionTypeCd=="S1"&&busiOrder.busiObj.instId=="-1"){
+						prodOfferId = busiOrder.busiObj.objId;
+						OrderInfo.reloadProdInfo.prodOfferId=prodOfferId;
+					}
+				});
+				OrderInfo.reloadProdInfo.cardNum = cardNum;
+				if(OrderInfo.reloadProdInfo.prodOfferId!=undefined&&OrderInfo.reloadProdInfo.prodOfferId!=""){
+					order.prepare.commonTab("${contextPath}/pad/order/prodoffer/prepare.html","order_tab_panel_offer");
+					//order.service.buyService("",OrderInfo.reloadProdInfo.prodOfferId,"");
 				}
-				if(busiOrder.boActionType.actionClassCd==1200&&busiOrder.boActionType.boActionTypeCd=="S1"&&busiOrder.busiObj.instId=="-1"){
-					prodOfferId = busiOrder.busiObj.objId;
-					OrderInfo.reloadProdInfo.prodOfferId=prodOfferId;
-				}
-			});
-			OrderInfo.reloadProdInfo.cardNum = cardNum;
-			if(OrderInfo.reloadProdInfo.prodOfferId!=undefined&&OrderInfo.reloadProdInfo.prodOfferId!=""){
-				order.service.buyService("",OrderInfo.reloadProdInfo.prodOfferId,"");
+			}else{
+				order.prepare.commonTab("${contextPath}/pad/order/prodoffer/prepare.html","order_tab_panel_offer");
 			}
-		}else{
-			order.prepare.commonTab("${contextPath}/pad/order/prodoffer/prepare.html","order_tab_panel_offer");
 		}
 	}	
 </script>

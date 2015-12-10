@@ -76,44 +76,11 @@ function m_up(e){
 				  
     	<!-- 产品信息展示 -->    	
     		<#assign i = 0 />
-    <#if main.offerMembers?? &&(main.offerMembers?size>0)>		
-		<#list main.offerMembers as item>	
-		<#if item.objType==2>
-			<#assign prodId = item.objInstId/>
-			<#assign i = i+1 />				
-	      <div class="ordercona orderform">
-	        <div class="ui-grid-a">
-	          <div class="ui-block-a">
-	            <div class="ui-grid-a">
-	              <div style="width:400px;" >
-	                <label for="money">原套餐:${main.oldOfferSpecName}</label>
-	              </div>
-	            </div>
-	          </div>
-	          <div class="ui-block-b">
-	                <label for="money">新套餐:${offerSpec.offerSpecName}</label>	          
-	          </div>
-	        </div>      
-			<div class="ui-grid-a" id="uimDiv_${prodId}" style="display: none;">
-				<#include "/padtoken/offer/order-uim.html" />
-			</div>		        
-	        <div class="ui-grid-a">
-	          <div class="ui-block-a">
-	            <div class="ui-grid-a">
-	            </div>
-	          </div>
-	          <div class="ui-block-b">
-				<div class="optional"> 可选包/功能产品 <a href="#optional_${prodId}" data-role="button" data-icon="optional" data-iconpos="notext" data-theme="i">可选包/功能产品</a> </div>
-	          </div>
-	        </div>  	        
-			</div>		        
-		</#if>
-		</#list>	
-		</#if>
-    		
-    		
-    		
-    		
+            <#assign i = i+1 />
+				<@block name="product">
+		
+						<#include "/pad/order/order-product.html" />
+			</@block>		
     		
    			<#if (main.oldnum?? && (main.oldnum?number>0))>
    				<#list main.oldprodInstInfos as prodinfos>
@@ -132,7 +99,7 @@ function m_up(e){
 										<div style="width: 50%; float: left;" class="ui-grid-a">	
 											<div class="ui-grid-a" id="uimDiv_${prodId}"  style="display: none;">
 				                     		<#include "/pad/member/order-uim.html" />
-				                     	</div>
+				                     	    </div>
 			                        </div>
 									</div>
 									<#assign i = i+1 />
@@ -142,12 +109,9 @@ function m_up(e){
 					</#list>
 				</#list>
 				</#if>
-			<#if (main.newnum?? && (main.newnum?number>0))>
-				<#assign i = i+1 />
-				<@block name="product">
-					<#include "/padtoken/offer/order-product.html" />
-				</@block>				
-			</#if>			
+			
+						
+					
 			
     </div>
     
@@ -161,16 +125,21 @@ function m_up(e){
 		        	<!--展示套餐下多个成员标签-->
 	            <#assign index = 0>
 	             <!-- 套餐变更  -->
-	          	<#if main.offerMembers?? &&(main.offerMembers?size>0)>
-					<#list main.offerMembers as item>
-					<#if item.objType==2>
-						<#assign index = index+1 />					
-						<#if index==1>
-							<li class="tab-nav-action" id="tab_${item.objInstId}" prodId="${item.objInstId}" onclick="offerChange.changeTab(${item.objInstId})">${item.roleName}${item.accessNumber}</li>
-						<#else>
-							<li class="tab-nav" id="tab_${item.objInstId}" prodId="${item.objInstId}" onclick="offerChange.changeTab(${item.objInstId})">${item.roleName}${item.accessNumber}</li>
-						</#if>	
-				    </#if>  				    
+	          	<#if offerSpec.offerRoles?? && (offerSpec.offerRoles?size>0)>
+					<#list offerSpec.offerRoles as offerRole>	
+						<#if offerRole.prodInsts?? && (offerRole.prodInsts?size>0)>
+							<#list offerRole.prodInsts as prod>
+								<#assign prodId = prod.prodInstId /> 
+								<#if prodId==-1 >
+								    <li class="tab-nav-action" id="tab_${prodId}" prodId="${prodId}" onclick="offerChange.changeTab(${prodId})">${prod.offerRoleName}</li>
+									
+								<#else>
+									<li class="tab-nav" id="tab_${prodId}" prodId="${prodId}" onclick="offerChange.changeTab(${prodId})">${prod.offerRoleName}</li>
+	
+								</#if>	
+								<#assign i = i+1>
+							</#list>
+				      	</#if>  
 				    </#list>
 				</#if>
 				<!-- 纳入老用户  -->
@@ -191,19 +160,9 @@ function m_up(e){
 							</#list>
 						</#list>
 				 </#if>
-				 <#if (main.newnum?? && (main.newnum?number>0))>
-						<#if offerSpec.offerRoles?? && (offerSpec.offerRoles?size>0)>					
-							<#list offerSpec.offerRoles as offerRole>	
-								<#if (offerRole.prodInsts?? && offerRole.prodInsts?size>0)>
-									<#list offerRole.prodInsts as prod>
-									    <#if prod.memberRoleCd==401>
-										<li offerRoleId=${offerRole.offerRoleId} class="tab-nav">${prod.offerRoleName}</li>	
-										</#if>
-									</#list>
-								</#if>
-							</#list>
-						</#if>					
-				  </#if>
+				 
+								
+				 
 				
 	        	</ul>
 	        </div>
@@ -211,38 +170,41 @@ function m_up(e){
 	       <button data-role="button" data-icon="arrow-r" data-iconpos="notext" disabled>向右</button>
 	      </div>
 	      
-	       <div id="packageinfo" class="ordertitle">订单信息</div>
-	       <!-- 发展人展示 -->
-			<@block name="dealer">
-				<#include "/pad/order/order-dealer.html" />
+      	<div class="ordertitle">订单信息</div>
+     	<!-- 发展人展示 -->
+		<@block name="dealer">
+			<#include "/pad/order/order-dealer.html" />
+		</@block>
+      	<!-- 订单备注展示-->
+		<@block name="remark">
+			<#include "/padtoken/order/order-remark.html" />
+		</@block>
+		<@block name="account">
+			<#include "/pad/order/order-account.html" />
+		</@block>
+		<!--省内订单属性展示-->
+		<div id="orderProvAttrDiv"  style="display: none;">
+			<@block name="orderProvAttr">
+				<#include "/pad/order/order-prov-attr.html" />
 			</@block>
-			<!-- 订单备注展示-->
-			<@block name="remark">
-				<#include "/pad/member/order-remark.html" />
-			</@block>
-			<!-- 帐户展示 -->
-	      	<div id="zhxx" class="ordertitle" style="display: none">账户信息		
-			<@block name="account">
-				<#include "/pad/member/order-account.html" />
-			 </@block>	
-			
-	      		</div>		
+		</div>	
 
 	      	
 			
-			<!--购物车订单属性展示-->
+			<!--购物车订单属性展示
 			<div id="orderAttrDiv" style="display: none;">
 				<div class="ordertitle">经办人</div>
 				<@block name="orderAttr">
 					<#include "/pad/member/order-attr.html" />
 				</@block>
 			</div>			
-			<!--省内订单属性展示-->
+			
 			<div id="orderProvAttrDiv"  style="display: none;">
 				<@block name="orderProvAttr">
 					<#include "/pad/order/order-prov-attr.html" />
 				</@block>
 			</div>
+			-->
 	  	</div>
 	
 
@@ -264,18 +226,16 @@ function m_up(e){
      <button id="fillLastStep" data-inline="true" data-icon="prev">取消</button> 
  	</div>
  	<#assign i = 0 />
- 	<#if main.offerMembers?? &&(main.offerMembers?size>0)>
-	<#list main.offerMembers as item>
-	<#if item.objType==2>
-		<#assign prodId = item.objInstId/>	
-		<#assign i = i+1 />	
-		<div id="attach_tab_${prodId}" >	
-				<div id="attach_${prodId}"></div>
-		</div>
-
-	</#if>  				    
-	</#list>
-	</#if>  	
+ 	<#if offerSpec.offerRoles?? && (offerSpec.offerRoles?size>0)>
+			<#list offerSpec.offerRoles as offerRole>
+				<#if offerRole.prodInsts?? && (offerRole.prodInsts?size>0)>
+					<#list offerRole.prodInsts as prod>
+						<#assign prodId = prod.prodInstId />
+						<div id="attach_${prodId}"></div>
+					</#list>
+				</#if>
+			</#list>
+		</#if> 				
  	<#if (main.oldnum?? && (main.oldnum?number>0))>
 		<#list main.oldprodInstInfos as prodinfos>
 			<#list main.oldoffer as offerinst>
@@ -299,18 +259,7 @@ function m_up(e){
 			</#list>
 		</#list>
 		</#if>
-	<#if (main.newnum?? && (main.newnum?number>0))>
-		<#if offerSpec.offerRoles?? && (offerSpec.offerRoles?size>0)>
-			<#list offerSpec.offerRoles as offerRole>
-				<#if offerRole.prodInsts?? && (offerRole.prodInsts?size>0)>
-					<#list offerRole.prodInsts as prod>
-						<#assign prodId = prod.prodInstId />
-						<div id="attach_${prodId}"></div>
-					</#list>
-				</#if>
-			</#list>
-		</#if> 					
-	</#if>
+	
 	
  	<!-- 帐户、协销人等弹出框-->
 	<div id="dialogDiv" style="display:none">

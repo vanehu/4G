@@ -69,9 +69,11 @@
 						<label for="exampleInputFile">UIM卡号</label>
 						<div class="input-group">
 					      <input type="tel" class="form-control" id="uim_txt_${prodId}">
+					     
 					      <div class="input-group-btn">
-					        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">操作 <span class="caret"></span></button>
-					        <ul class="dropdown-menu dropdown-menu-right" role="menu">
+					        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false" onclick="changeUl();">操作 <span class="caret"></span></button>
+					     
+					     	 <ul class="dropdown-menu dropdown-menu-right" role="menu" id="check_uim_menu_1" style="">
 <!-- 					          <li><button class="btn btn-uim" type="button" onclick="common.callScanning('order.service.scaningCallBack',${prodId})"> <span style="float:left;">扫描 </span></button></li>
  -->					          <li class="divider"></li>
 					          <li><button class="btn btn-uim" type="button" id= "uim_check_btn_${prodId}" onclick="prod.uim.checkUim(${prodId});"><span style="float:left;">校验</span></button></li>
@@ -107,18 +109,6 @@
 							</span>
 						</div>
 					</div>
-					<!-- <div class="form-group">
-						<label for="exampleInputFile">UIM卡号</label>
-						<div class="input-group">
-							<input type="text" id="uim_txt_${prodId}" class="form-control"/> <span
-								class="input-group-btn">
-								<button class="btn btn-default" type="button" onclick="common.callScanning('order.service.scaningCallBack',${prodId})"> 扫描 </button>
-								<button class="btn btn-default" id="uim_release_btn_${prodId}" type="button" onclick="prod.uim.checkUim(${prodId});">校验</button>
-								<button class="btn btn-default" id="uim_release_btn_${prodId}" onclick="prod.uim.releaseUim(${prodId});"type="button" disabled>
-									释放</button>
-							</span>
-						</div>
-					</div> -->
 					<div class="form-group">
 						<label for="exampleInputFile">UIM卡号</label>
 						<div class="input-group">
@@ -127,10 +117,10 @@
 					        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">操作 <span class="caret"></span></button>
 					        <ul class="dropdown-menu dropdown-menu-right" role="menu">
 <!-- 					          <li><button class="btn btn-uim" type="button" onclick="common.callScanning('order.service.scaningCallBack',${prodId})"><span style="float:left;">扫描 </span></button></li>
- -->					          <li class="divider"></li>
-					          <li><button class="btn btn-uim" type="button" id= "uim_check_btn_${prodId}" onclick="prod.uim.checkUim(${prodId});"><span style="float:left;">校验</span></button></li>
-					          <li class="divider"></li>
-					          <li><button class="btn btn-uim" id="uim_release_btn_${prodId}" onclick="prod.uim.releaseUim(${prodId});" disabled="disabled"  type="button">
+ -->					    	<li class="divider"></li>
+					          	<li><button class="btn btn-uim" type="button" id= "uim_check_btn_${prodId}" onclick="prod.uim.checkUim(${prodId});"><span style="float:left;">校验</span></button></li>
+					          	<li class="divider"></li>
+					          	<li><button class="btn btn-uim" id="uim_release_btn_${prodId}" onclick="prod.uim.releaseUim(${prodId});" disabled="disabled"  type="button">
 									<span style="float:left;">释放</span></button></li>
 					        </ul>
 					      </div><!-- /btn-group -->
@@ -152,3 +142,46 @@
 	</#if>
 </#list>	
 </#if>
+
+<#if main.oldnum?? && (main.oldnum?number>0)>
+	<#assign z = k />
+	<#list main.oldprodInstInfos as prodinfos>
+		<#list main.oldoffer as offerinst>
+			<#if prodinfos.accNbr==offerinst.accNbr>
+				<#list offerinst.offerMemberInfos as item>
+					<#if item.objType==2>
+						<#assign prodId = item.objInstId/>
+						<div class="item" id="target_${z}">
+							<div class="panel panel-default panelcon" id="prodinfo_${prodId}">
+								<div class="panel-heading" id=${item.offerRoleId}>加装移动电话:${item.accessNumber}</div>
+								<div class="panel-body" id="item_order_${prodId}">
+									<button type="button" onClick="AttachOffer.show(${prodId})" class="btn btn-default btn-block button-right">
+										可选包/功能 <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"/>
+									</button>
+								</div>
+							</div>
+						</div>
+						<div id="attach_${prodId}" style="display:none"></div>
+					</#if>
+					<#assign z = z+1 />
+				</#list>
+			</#if>
+		</#list>
+	</#list>
+</#if>
+
+<script type="text/javascript">
+	function changeUl(){
+		//获取按钮离页面地步的高度
+		var height=$(window).height();
+		if($("#check_uim_menu_1").is(":hidden")){
+			if(height<=500){
+				$("#check_uim_menu_1").css("top","auto");
+				$("#check_uim_menu_1").css("bottom","100%")
+			}
+		}else{
+			$("#check_uim_menu_1").removeAttr("style");
+		}
+	}
+</script>
+

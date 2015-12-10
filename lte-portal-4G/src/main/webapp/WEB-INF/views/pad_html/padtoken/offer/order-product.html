@@ -21,23 +21,23 @@
 				 <#if prod.memberRoleCd==401>
 					<#assign prodId = prod.prodInstId />
 					<#if prodId==-1 >
-					<div prodId=${prodId} class="ordercona orderform" style="display: block;" id="item_order_${prodId}">
+					<div prodId=${prodId} class="ordercona orderform" style="display: none;" id="item_order_${prodId}">
 					<#else>
 					<div prodId=${prodId} class="ordercona orderform" id="item_order_${prodId}">
 					</#if>
 						<#if prod.objId != 381001824>
 						<div class="ui-grid-a">
-							<div class="ui-block-a">
+							<div class="ui-block-a" style="max-width: 520px;">
 								<div class="ui-grid-b">
 									<div class="ui-block-a">
 						                <label for="recommend">接入号码：</label>
 						            </div>
 						            <div class="ui-block-b">
-						                <input style="font-weight: bold;" type="text" name="choosedNum_${prodId}" id="choosedNum_${prodId}" disabled="disabled">
+						                <input style="font-family:'黑体'; color:#000; font-weight:bold;"  type="text" name="choosedNum_${prodId}" id="choosedNum_${prodId}" readonly="readonly">
 						                <input type="hidden" value="******"  id="pwd_${prodId}">
 						            </div>
-						            <div class="ui-block-c">
-						                <button data-role="button" data-mini="ture" id="btn_choosedNum_${prodId}" onclick="mktRes.phoneNbr.phoneNumDialog('offer','Y2','${prodId}');">选择号码</button>
+						            <div class="ui-block-c" style="width: 100px;">
+						                <button data-role="button" data-mini="ture" id="btn_choosedNum_${prodId}" onclick="mktRes.phoneNbr.phoneNumDialog('offer','Y2','${prodId}');" style="width: 60px;">选号</button>
 						            </div>
 								</div>
 							</div>
@@ -56,7 +56,7 @@
 							            </div>
 							            <div class="ui-block-b">
 							            	<#assign feeType_read = "0">
-											<#if main.actionFlag==6>
+											<#if main.actionFlag==2>
 												<#assign feeType_read = "1">
 											<#else>
 												<#if offerSpec.feeType?? && offerSpec.feeType!="" >

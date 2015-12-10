@@ -3,6 +3,11 @@ CommonUtils.regNamespace("order", "service");
 order.service = (function(){
 	var _offerprice=""; 
 	
+	var _newMemberFlag = false;
+	var _oldMemberFlag = false;
+	var _newAddList = [];
+	var maxNum = 0;
+	
 	//套餐入口-初始化
 	var _init=function(){
 		
@@ -202,6 +207,10 @@ order.service = (function(){
 	
 	//订购销售品
 	var _buyService = function(specId,price) {
+		OrderInfo.oldprodInstInfos = [];
+		OrderInfo.oldofferSpec = [];
+		OrderInfo.oldoffer = [];
+		OrderInfo.oldAddNumList = [];
 		var custId = OrderInfo.cust.custId;
 		offerprice = price;
 		if(OrderInfo.cust==undefined || custId==undefined || custId==""){
@@ -242,6 +251,12 @@ order.service = (function(){
 	
 	//获取销售品构成，并选择数量
 	var _opeSer = function(inParam){	
+		//老号码新增内容
+		_newAddList = [];
+		OrderInfo.oldprodInstInfos = [];
+		OrderInfo.oldofferSpec = [];
+		OrderInfo.oldoffer = [];
+		
 		var param = {
 			offerSpecId : inParam.specId,
 			offerTypeCd : 1,
@@ -277,9 +292,14 @@ order.service = (function(){
 			offerChange.offerChangeView();
 			return;
 		}
+		
+		//老号码新增内容
+		var areaidflag = order.memberChange.areaidJurisdiction();
+		
 		var iflag = 0; //判断是否弹出副卡选择框 false为不选择
 		var max=0;
 		var str="";
+		var oldstr="";
 		$("#div_content").empty();
 		$.each(offerSpec.offerRoles,function(){
 			var offerRole = this;
@@ -287,15 +307,23 @@ order.service = (function(){
 				$.each(this.roleObjs,function(){
 					var objInstId = offerRole.offerRoleId+"_"+this.objId;//角色id+产品规格id
 					if(this.objType == CONST.OBJ_TYPE.PROD){
+						if(offerRole.memberRoleCd=="401"){
+							_newAddList.push(objInstId);
+						}
+						
 						if(offerRole.minQty == 0){ //加装角色
 							this.minQty = 0;
 							this.dfQty = 0;
-						}					
+						}			
+						
 						//新装二次加载，副卡数量
 						if(OrderInfo.provinceInfo.reloadFlag&&OrderInfo.provinceInfo.reloadFlag=="N"){
 							this.dfQty = OrderInfo.reloadProdInfo.cardNum;
 						}
 						max = this.maxQty<0?"不限制":this.maxQty;//主卡的最大数量
+						maxNum = max;
+						var min = this.minQty;
+						
 						//新装传入主副卡号码
 						if(OrderInfo.newOrderNumInfo.newSubPhoneNum!=""&&offerRole.memberRoleCd=="401"){
 							var subPhoneNums = OrderInfo.newOrderNumInfo.newSubPhoneNum.split(",");
@@ -305,10 +333,12 @@ order.service = (function(){
 							this.maxQty = nums;
 							max = nums;
 						}
+						
 						if(OrderInfo.newOrderNumInfo.mainPhoneNum!=""&&OrderInfo.newOrderNumInfo.newSubPhoneNum==""&&offerRole.memberRoleCd=="401"){
 							this.maxQty = 0;
 							max = 0;
 						}
+						
 						str+="<div class='form-group'>"
 							+"<label for='"+objInstId+"'>副卡数量:"+this.minQty+"-"+max+"(张)</label>"
 							+"<div class='input-group input-group-lg'>"
@@ -320,8 +350,70 @@ order.service = (function(){
 							+"<button class='btn btn-default' type='button' onclick=order.service.addNum('"+objInstId+"',"+this.maxQty+",'"+offerRole.parentOfferRoleId+"')> + </button>"
 							+"</span> </div>"
 							+"</div>";
+						$("#div_content").append(str);
 						iflag++;
 						return false;
+					}
+				});
+			}
+			
+			if(offerRole.memberRoleCd=="401" && areaidflag!="" && areaidflag.net_vice_card=="0"){
+				$.each(this.roleObjs,function(){
+					if(this.objType == CONST.OBJ_TYPE.PROD){					
+						var max = this.maxQty<0?"不限制":this.maxQty;//主卡的最大数量
+						var min = this.minQty;
+						//获取老用户纳入号码
+						var oldSubPhoneNums=OrderInfo.oldSubPhoneNum.oldSubPhoneNum;
+						//如果最大个数为0，不展示老用户号码输入框
+						if(this.maxQty!=0){
+							var oldSubPhoneNums="";
+							
+							if(OrderInfo.provinceInfo.reloadFlag && OrderInfo.provinceInfo.reloadFlag=="N"){
+								var result=OrderInfo.reloadOrderInfo;
+								
+								var busiOrders = result.orderList.custOrderList[0].busiOrder;
+								
+								$.each(busiOrders,function(index,busiOrder){
+									//老用户纳入
+									if(busiOrder.boActionType.actionClassCd==1200 && busiOrder.boActionType.boActionTypeCd=="S2" && busiOrder.busiObj.offerTypeCd=="1"){
+										var oldnum=busiOrder.busiObj.accessNumber;
+										OrderInfo.oldAddNumList.push({"accNbr":oldnum});
+										oldSubPhoneNums+=oldnum+",";
+									}
+								});
+							}else{
+								oldSubPhoneNums=OrderInfo.oldSubPhoneNum.oldSubPhoneNum;
+							}
+							
+							oldstr 
+								+="<div class='form-group'>"
+									+"<label >已有移动号码:"+min+"-"+max+"(张)</label>"
+									+"<div class='input-group input-group-lg' id='oldnum_1' name='oldnbr'>"
+										+"<input type='text'  class='form-control' id='oldphonenum_1'>"
+										+"<span class='input-group-btn'>"
+											+"<button class='btn btn-default' type='button' onclick='order.memberChange.addNum("+max+");'> + </button>"
+										+"</span> " 
+										+"</div>"
+								+"</div>";
+							
+							$("#div_content").append(oldstr);
+							
+							if(oldSubPhoneNums!=null && oldSubPhoneNums!=""){
+								var oldSubPhoneNum=oldSubPhoneNums.split(",");
+								
+								if(oldSubPhoneNum!=null && oldSubPhoneNum.length>0){
+									for(var i=0;i<oldSubPhoneNum.length;i++){
+										if(i==0){
+											$("#oldphonenum_1").val(oldSubPhoneNum[i]);
+										}else{
+											//添加输入框
+											order.memberChange.addNum(max);
+											$("#oldphonenum_"+(i+1)).val(oldSubPhoneNum[i]);
+										}
+									}
+								}
+							}
+						}
 					}
 				});
 			}
@@ -335,7 +427,7 @@ order.service = (function(){
 			"type" : 1
 		};
 		if(iflag >0){
-			$("#div_content").append(str);
+			//$("#div_content").append(str);
 			$("#vice_modal").modal("show");
 			//若是新装二次加载，则调过副卡选择框
 			if(OrderInfo.provinceInfo.reloadFlag&&OrderInfo.provinceInfo.reloadFlag=="N"){
@@ -358,13 +450,68 @@ order.service = (function(){
 	
 	//选择完主套餐构成后确认
 	var _confirm = function(param){
+		order.memberChange.viceCartNum = 0;
+		
+		$.each(OrderInfo.offerSpec.offerRoles,function(){
+			this.prodInsts = [];
+		});
+		
+		//新增内容
+		var newnum = 0;
+		$.each(_newAddList,function(){
+			newnum=newnum+Number($("#"+this).val());
+		});
+		
+		var oldnum = 0;
+		$("#div_content").find("div[name='oldnbr']").each(function(){
+			//var num = $.trim($(this).children("td").eq(1).children("input").val());
+			var num = $.trim($(this).children("input").val());
+			if(ec.util.isObj(num)){
+				oldnum++;
+			}
+		});
+		
 		if(!_setOfferSpec()){
 			$.alert("错误提示","请选择一个接入产品");
 			return;
 		}
+		
+		//新装老用户纳入改造[s]
+		if(newnum>0){
+			order.service.newMemberFlag = true;
+			param.newnum = newnum;
+		}else{
+			order.service.newMemberFlag = false;
+		}
+		
+		if(oldnum>0){
+			order.service.oldMemberFlag = true;
+			
+			if(!order.memberChange.queryofferinfo()){
+				return;
+			}
+			
+			param.oldprodInstInfos = OrderInfo.oldprodInstInfos;
+			param.oldofferSpec = OrderInfo.oldofferSpec;
+			param.oldoffer = OrderInfo.oldoffer;
+			param.oldnum = oldnum;
+		}else{
+			order.service.oldMemberFlag = false;
+		}
+		
+		if(parseInt(newnum)+parseInt(order.memberChange.viceCartNum)>maxNum){
+			$.alert("提示","加装数量已经超过能加装的最大数量【"+maxNum+"】---!");
+			return;
+		}
+		//e
+		
 		if(OrderInfo.actionFlag!=14){ //合约套餐不初始化
 			order.main.buildMainView(param);	
+		}else{
+			mktRes.terminal.newnum = newnum;
+			mktRes.terminal.oldnum = oldnum;
 		}
+		
 		$("#vice_modal").modal("hide");
 	};
 	
@@ -374,13 +521,18 @@ order.service = (function(){
 		var flag = false;  //判断是否选接入产品
 		$.each(OrderInfo.offerSpec.offerRoles,function(){
 			var offerRole = this;
-			offerRole.prodInsts = []; //角色对象实例
+			
+			//老用户号码
+			if(offerRole.prodInsts==undefined){
+				offerRole.prodInsts = [];
+			}
+			
 			$.each(this.roleObjs,function(){
 				if(this.objType== CONST.OBJ_TYPE.PROD){  //接入类产品
 					var num = 0;  //接入类产品数量选择
 					if(offerType==1){  //单产品
 						num = 1;
-					}else if(offerRole.memberRoleCd==CONST.MEMBER_ROLE_CD.MAIN_CARD){//主卡的接入类产品数量
+					}else if(offerRole.memberRoleCd==CONST.MEMBER_ROLE_CD.MAIN_CARD && OrderInfo.actionFlag!=2){//主卡的接入类产品数量
 						num = 1;
 					}else{ //多成员销售品
 						num = $("#"+offerRole.offerRoleId+"_"+this.objId).val();  //接入类产品数量选择
@@ -469,6 +621,12 @@ order.service = (function(){
 	var _btnBack=function(){
 		$("#order_prepare").show();
 		$("#order").hide();
+	};
+	
+	//第三步返回到第二步,返回按钮
+	var _backStepTwo=function(){
+		$("#order-content").show();
+		$("#order-dealer").hide();
 	};
 	
 	//订单取消时，释放已预占资源的入口标识。0：初始化状态，1：购机或选号入口，2：套餐入口
@@ -574,6 +732,9 @@ order.service = (function(){
 		offerprice:_offerprice,
 		offerDialog:_offerDialog,
 		choosedOffer:_choosedOffer,
-		confirm		: _confirm
+		confirm		: _confirm,
+		oldMemberFlag:_oldMemberFlag,
+		newMemberFlag:_newMemberFlag,
+		backStepTwo:_backStepTwo
 	};
 })();

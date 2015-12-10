@@ -1606,7 +1606,10 @@ AttachOffer = (function() {
 							$liGroups.append($strAdd).append($strDel);
 						}
 						$ulGroups.append($liGroups);
+                        var minNumArray=new Array();
 						for(var k=1;k<=minNum;k++){
+							var id="terminalText_"+objInstId+'_'+k;
+							minNumArray[k-1]=id;
 							var $liTerminal=$('<li class="form-group" style="list-style-type:none;"><label for="exampleInputPassword1">终端校验：</label><div class="input-group" style="width:100%;"><input id="terminalText_'+objInstId+'_'+k+'" type="text" class="form-control" maxlength="50" placeholder="请先输入终端串号" />'
 									+'<li class="form-group" style="list-style-type:none;"><input type="checkbox" id="if_p_reserveCode" onclick="AttachOffer.changereserveCode()"><label for="exampleInputPassword1">使用预约码：</label><div class="input-group"><input id="reserveCode" type="text" disabled="disabled" class="form-control" maxlength="50" placeholder="请输入预约码" style="background-color: #E8E8E8;"/>'
 									+'<span class="input-group-btn"><button id="terminalBtn_'+objInstId+'_'+k+'" type="button" num="'+k+'" flag="'+isFastOffer+'" prodId="'+prodId+'" offerSpecId="'+newSpec.offerSpecId+'" onclick="AttachOffer.checkTerminalCode(this)" class="btn btn-default">校验</button></span></div></li>');
@@ -1619,6 +1622,26 @@ AttachOffer = (function() {
 				var $div = $("#terminalDiv_"+prodId);
 				$ul.appendTo($div);
 				$div.show();
+				var terminalCode="";
+				if(OrderInfo.terminalCode!=null && OrderInfo.terminalCode!="" && OrderInfo.terminalCode!="null" && OrderInfo.reloadFlag!="N"){
+					var	accessNum=OrderInfo.getAccessNumber(prodId);
+					if(accessNum!="" && accessNum!=null && accessNum!= undefined){
+						var terminalCodeArray=OrderInfo.terminalCode.split(",");
+						for(var k=0;k<terminalCodeArray.length;k++){
+							if(terminalCodeArray[k].indexOf(accessNum)!=-1){
+								//取终端串码minNumArray
+								terminalCode=terminalCodeArray[k].split("_")[1];
+								//填值
+								for(var z=0;z<minNumArray.length;z++){
+									if(minNumArray[z].indexOf(prodId)!=-1){
+										$("#"+minNumArray[z]).val(terminalCode);
+			                             break;
+									}
+								}
+							}
+						}
+					}
+				}
 				if(newSpec.agreementInfos[0].minNum>0){//合约里面至少要有一个终端
 					newSpec.isTerminal = 1;
 				}
@@ -2872,7 +2895,8 @@ AttachOffer = (function() {
 								offerId = this.mainProdOfferInstInfos[0].prodOfferInstId;
 							}
 						});
-						var mktResInstCodesize = order.memberChange.mktResInstCode.split(",");
+						//OrderInfo.newOrderNumInfo.mktResInstCode.split(",");
+						var mktResInstCodesize =order.memberChange.mktResInstCode.split(",");
 						for(var u=0;u<mktResInstCodesize.length;u++){
 							if(mktResInstCodesize[u]!=""&&mktResInstCodesize[u]!=null&&mktResInstCodesize[u]!="null"){
 								var nbrAndUimCode = mktResInstCodesize[u].split("_");

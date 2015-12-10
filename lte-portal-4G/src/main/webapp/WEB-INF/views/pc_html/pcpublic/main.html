@@ -46,71 +46,89 @@
 		soAreaCode : '${Session["_ecs_login_session_key"].currentAreaCode}',
 		channelType:'${Session["_ecs_login_session_key"].currentChannelType}'
 	};
-	var querycustflag = "${querycustflag}";
-	if(querycustflag=="-1"){
-		var errMsg = "${errMsg}";
-		order.uiCust.showPackageDialog(errMsg);
-	}else if(querycustflag=="1"){
-		order.uiCust.showPackageDialog("没有定位到客户！");
-	}else{
-		OrderInfo.cust={
-				addressStr: "${addressStr}",
-				areaId: "${areaId}",
-				areaName: "${areaName}",
-				authFlag: "1",
-				custFlag: "${custFlag}",
-				custId: "${custId}",
-				idCardNumber: "${idCardNumber}",
-				identityCd: "${identityCd}",
-				identityName: "${identityName}",
-				norTaxPayer: "${norTaxPayer}",
-				partyName: "${partyName}",
-				segmentId: "${segmentId}",
-				segmentName: "${segmentName}",
-				vipLevel: "${vipLevel}",
-				vipLevelName: "${vipLevelName}"
-		};
-		var queryorderflag = "${queryorderflag}";
-		if(queryorderflag=="-1"){
+	var terminalCode='${terminalCode}'; //终端串码
+	//终端串码
+	if(terminalCode!=null && terminalCode!="" && terminalCode!="null"){
+		OrderInfo.terminalCode=terminalCode;
+	}
+	var nextFlag = false;
+	var mergeFlag = "${mergeFlag}";
+	if(mergeFlag=="0"){
+		var querycustflag = "${querycustflag}";
+		if(querycustflag=="-1"){
 			var errMsg = "${errMsg}";
 			order.uiCust.showPackageDialog(errMsg);
-		}else if(queryorderflag=="1"){
-			order.uiCust.showPackageDialog("客户下没有可以办理业务的移动用户！");
+		}else if(querycustflag=="1"){
+			order.uiCust.showPackageDialog("没有定位到客户！");
 		}else{
-			order.prodModify.choosedProdInfo = {
-					accNbr :"${accNbr}",//产品接入号
-					productName :"${productName}",//产品规格名称
-					prodStateName :"${prodStateName}",//产品状态名称
-					feeTypeName :"${feeTypeName}",//付费方式名称
-					prodInstId :"${prodInstId}",//产品ID
-					extProdInstId : "${extProdInstId}",//省内产品实例ID
-					corProdInstId : "${corProdInstId}",//外部产品实例ID
-					prodStateCd :"${prodStateCd}",//产品状态CD
-					productId :"${productId}",//产品规格ID
-					feeType :"${feeType}",//付费方式id
-					prodClass :"${prodClass}",//产品大类 4 表示4G；3表示3G
-					stopRecordCd :"${stopRecordCd}",//停机记录CD
-					stopRecordName :"${stopRecordName}",//停机记录名称
-					prodOfferName :"${prodOfferName}",//主套餐名称
-					custName :"${custName}",//所属人客户名称
-					startDt :"${startDt}",//生效时间
-					endDt :"${endDt}",//失效时间
-					prodOfferId :"${prodOfferId}",//主套餐规格ID
-					prodOfferInstId :"${prodOfferInstId}",//主套餐实例ID
-					custId :"${custId}",//所属人客户ID
-					is3G :"${is3G}",//3G/4G主销售品标识
-					areaCode :"${areaCode}",//产品地区CODE
-					areaId : "${areaId}"//产品地区id
+			OrderInfo.cust={
+					addressStr: "${addressStr}",
+					areaId: "${areaId}",
+					areaName: "${areaName}",
+					authFlag: "1",
+					custFlag: "${custFlag}",
+					custId: "${custId}",
+					idCardNumber: "${idCardNumber}",
+					identityCd: "${identityCd}",
+					identityName: "${identityName}",
+					norTaxPayer: "${norTaxPayer}",
+					partyName: "${partyName}",
+					segmentId: "${segmentId}",
+					segmentName: "${segmentName}",
+					vipLevel: "${vipLevel}",
+					vipLevelName: "${vipLevelName}"
 			};
-			OrderInfo.provinceInfo.provIsale = "${provIsale}";
-			OrderInfo.provinceInfo.redirectUri = "${redirectUri}";
-			OrderInfo.provinceInfo.isFee = "${isFee}";
-			order.memberChange.reloadFlag = "${reloadFlag}";
-			order.memberChange.newSubPhoneNum = "${newSubPhoneNum}";
-			order.memberChange.oldSubPhoneNum = "${oldSubPhoneNum}";
-			order.memberChange.mktResInstCode = "${mktResInstCode}";
-			order.memberChange.showOfferCfgDialog();
+			var queryorderflag = "${queryorderflag}";
+			if(queryorderflag=="-1"){
+				var errMsg = "${errMsg}";
+				order.uiCust.showPackageDialog(errMsg);
+			}else if(queryorderflag=="1"){
+				order.uiCust.showPackageDialog("客户下没有可以办理业务的移动用户！");
+			}else{
+				order.prodModify.choosedProdInfo = {
+						accNbr :"${accNbr}",//产品接入号
+						productName :"${productName}",//产品规格名称
+						prodStateName :"${prodStateName}",//产品状态名称
+						feeTypeName :"${feeTypeName}",//付费方式名称
+						prodInstId :"${prodInstId}",//产品ID
+						extProdInstId : "${extProdInstId}",//省内产品实例ID
+						corProdInstId : "${corProdInstId}",//外部产品实例ID
+						prodStateCd :"${prodStateCd}",//产品状态CD
+						productId :"${productId}",//产品规格ID
+						feeType :"${feeType}",//付费方式id
+						prodClass :"${prodClass}",//产品大类 4 表示4G；3表示3G
+						stopRecordCd :"${stopRecordCd}",//停机记录CD
+						stopRecordName :"${stopRecordName}",//停机记录名称
+						prodOfferName :"${prodOfferName}",//主套餐名称
+						custName :"${custName}",//所属人客户名称
+						startDt :"${startDt}",//生效时间
+						endDt :"${endDt}",//失效时间
+						prodOfferId :"${prodOfferId}",//主套餐规格ID
+						prodOfferInstId :"${prodOfferInstId}",//主套餐实例ID
+						custId :"${custId}",//所属人客户ID
+						is3G :"${is3G}",//3G/4G主销售品标识
+						areaCode :"${areaCode}",//产品地区CODE
+						areaId : "${areaId}"//产品地区id
+				};
+				nextFlag = true;
+			}
 		}
+	}else{
+		var mainPhoneNum = "${mainPhoneNum}";
+		var provCustAreaId = "${provCustAreaId}";
+		nextFlag = order.cust.queryCustCompreInfo(mainPhoneNum,provCustAreaId,3,'');
+	}
+	if(nextFlag){
+		OrderInfo.provinceInfo.provIsale = "${provIsale}";
+		OrderInfo.provinceInfo.redirectUri = "${redirectUri}";
+		OrderInfo.provinceInfo.isFee = "${isFee}";
+		order.memberChange.reloadFlag = "${reloadFlag}";
+		order.memberChange.newSubPhoneNum = "${newSubPhoneNum}";
+		order.memberChange.oldSubPhoneNum = "${oldSubPhoneNum}";
+		order.memberChange.mktResInstCode = "${mktResInstCode}";
+		order.memberChange.salesCode = "${salesCode}";
+		OrderInfo.provinceInfo.mergeFlag = "${mergeFlag}";
+		order.memberChange.showOfferCfgDialog();
 	}
 </script>
 

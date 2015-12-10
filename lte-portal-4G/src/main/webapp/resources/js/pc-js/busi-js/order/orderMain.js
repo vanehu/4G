@@ -1123,11 +1123,13 @@ order.main = (function(){
 			//0.查询当前客户下帐户
 			else{
 				acctQueryParam = {
-						custId : OrderInfo.cust.custId
+					custId : OrderInfo.cust.custId,
+					isServiceOpen:"Y"
 				};
 			}	
 			acctQueryParam.areaId=OrderInfo.getAreaId();
-			$.callServiceAsJson(contextPath+"/order/account", acctQueryParam, {
+			
+			$.callServiceAsJson(contextPath+"/token/pc/order/account", acctQueryParam, {
 				"before":function(){
 					$.ecOverlay("<strong>正在查询中,请稍等会儿....</strong>");
 				},
@@ -1681,11 +1683,12 @@ order.main = (function(){
 		easyDialog.close();
 	};
 	
-	//协销人-查询
+	//协销人-查询(发展人查询)
 	function _queryStaffPage(qryPage){
 		_queryStaff(qryPage,$("#dealer_id").val(),$("#objInstId").val());
 	}
-	//协销人-查询
+	
+	//协销人-查询(发展人查询)
 	function _queryStaff(qryPage,v_id,objInstId){
 		if(qryPage == 0){
 			$("#p_staff_areaId").val("");
@@ -1694,7 +1697,8 @@ order.main = (function(){
 		var param = {
 				"dealerId":v_id,
 				"areaId":$("#p_staff_areaId").val(),
-				"currentAreaAllName":$("#p_staff_areaId_val").val(),
+				//"currentAreaAllName":$("#p_staff_areaId_val").val(),//去掉省市信息，因为带了>符号，会被过滤
+				"currentAreaAllName":"",
 				"staffName":$("#qryStaffName").val(),
 				"staffCode":$("#qryStaffCode").val(),
 				"salesCode":$("#qrySalesCode").val(),
@@ -1816,10 +1820,13 @@ order.main = (function(){
 	var _createAcctWithId = function() {
 	   //帐户信息查询参数初始化 
 		var acctQueryParam;
-		acctQueryParam = {acctCd : OrderInfo.acct.acctCd};
+		acctQueryParam = {
+			acctCd : OrderInfo.acct.acctCd,
+			isServiceOpen:"Y"   //是否能力开放,Y-是,N-否
+		};
 		acctQueryParam.areaId=OrderInfo.getAreaId();
 		
-		$.callServiceAsJson(contextPath+"/order/account", acctQueryParam, {
+		$.callServiceAsJson(contextPath+"/token/pc/order/account", acctQueryParam, {
 				"before":function(){	},
 				"always":function(){},
 				"done" : function(response){
@@ -1887,9 +1894,11 @@ order.main = (function(){
 			container : 'acctDialog'
 		});
 		var acctQueryParam = {
-			acctCd : acctSel.find("option:selected").attr("acctcd")
+			acctCd : acctSel.find("option:selected").attr("acctcd"),
+			isServiceOpen:"Y"   //是否能力开放,Y-是,N-否
 		};			
-		$.callServiceAsJson(contextPath+"/order/account", acctQueryParam, {
+		
+		$.callServiceAsJson(contextPath+"/token/pc/order/account", acctQueryParam, {
 			"before":function(){
 				$.ecOverlay("<strong>正在查询中,请稍等会儿....</strong>");
 			},

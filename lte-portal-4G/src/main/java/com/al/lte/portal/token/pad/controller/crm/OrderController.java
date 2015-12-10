@@ -156,77 +156,88 @@ public class OrderController extends BaseController {
 			if(acctCd==null||acctCd.equals("")||acctCd.equals("null")){
 				acctCd="";
 			}
-			//定位客户接口 queryCust
-			custMap.put("acctNbr", "");
-			custMap.put("areaId", provCustAreaId);//provCustAreaId
-			custMap.put("diffPlace", "local");
-			custMap.put("identidies_type", "客户编码");//客户编码
-			custMap.put("identityCd", "");
-			custMap.put("identityNum", "");
-			custMap.put("partyName", "");
-			custMap.put("queryType", "custNumber");//custNumber
-			custMap.put("queryTypeValue", custNumber);
-			
-			/*custMap.put("acctNbr", "15301587004");
-			custMap.put("areaId", provCustAreaId);//provCustAreaId
-			custMap.put("diffPlace", "local");
-			custMap.put("identidies_type", "接入号码");//客户编码
-			custMap.put("identityCd", "");
-			custMap.put("identityNum", "");
-			custMap.put("partyName", "");
-			custMap.put("queryType", "");//custNumber
-			custMap.put("queryTypeValue", "15301587004");*/
-			
-			//查询客户信息
-			Map<String,Object> resultMap = custBmo.queryCustInfo(custMap,null,sessionStaff);
-			List custInfos = new ArrayList();
-			if (resultMap!=null&&resultMap.size()>0) {
-				custInfos=(List<Map<String, Object>>) resultMap.get("custInfos");
-				if(custInfos==null||custInfos.size()<=0){
+			String mergeFlag = "0";
+			String interface_merge = MySimulateData.getInstance().getParam((String) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_DATASOURCE_KEY),"INTERFACE_MERGE");
+			String provareaId = paramsMap.get("provCustAreaId").toString().subSequence(0, 3)+"0000";
+			if(interface_merge != null && interface_merge.indexOf(provareaId)!=-1){
+				mergeFlag = "1";
+			}
+			model.addAttribute("mergeFlag", mergeFlag);
+			model.addAttribute("provCustAreaId", provCustAreaId);
+			model.addAttribute("custNumber", custNumber);
+			String cust_Info = "{}";
+			if("0".equals(mergeFlag)){
+				//定位客户接口 queryCust
+				custMap.put("acctNbr", "");
+				custMap.put("areaId", provCustAreaId);//provCustAreaId
+				custMap.put("diffPlace", "local");
+				custMap.put("identidies_type", "客户编码");//客户编码
+				custMap.put("identityCd", "");
+				custMap.put("identityNum", "");
+				custMap.put("partyName", "");
+				custMap.put("queryType", "custNumber");//custNumber
+				custMap.put("queryTypeValue", custNumber);
+				
+				/*custMap.put("acctNbr", "15301587004");
+				custMap.put("areaId", provCustAreaId);//provCustAreaId
+				custMap.put("diffPlace", "local");
+				custMap.put("identidies_type", "接入号码");//客户编码
+				custMap.put("identityCd", "");
+				custMap.put("identityNum", "");
+				custMap.put("partyName", "");
+				custMap.put("queryType", "");//custNumber
+				custMap.put("queryTypeValue", "15301587004");*/
+				
+				//查询客户信息
+				Map<String,Object> resultMap = custBmo.queryCustInfo(custMap,null,sessionStaff);
+				List custInfos = new ArrayList();
+				if (resultMap!=null&&resultMap.size()>0) {
+					custInfos=(List<Map<String, Object>>) resultMap.get("custInfos");
+					if(custInfos==null||custInfos.size()<=0){
+						model.addAttribute("errorMsg", "未定位到客户信息");
+						return "/common/error";
+					}
+					if(!custMap.get("queryTypeValue").equals("") && !custMap.get("queryType").equals("")){
+						sessionStaff.setCardNumber(String.valueOf(custMap.get("queryTypeValue")));
+						sessionStaff.setCardType(String.valueOf(custMap.get("queryType")));
+					}else if(!custMap.get("identityNum").equals("") && !custMap.get("identityCd").equals("")){
+						sessionStaff.setCardNumber(String.valueOf(custMap.get("identityNum")));
+						sessionStaff.setCardType(String.valueOf(custMap.get("identityCd")));
+					}			
+					sessionStaff.setInPhoneNum(String.valueOf(custMap.get("acctNbr")));
+					if(custInfos.size()>0){
+						Map custInfo =(Map)custInfos.get(0);
+						String idCardNumber = (String) custInfo.get("idCardNumber");
+						
+						sessionStaff.setCustId(String.valueOf(custInfo.get("custId")));
+						sessionStaff.setCardNumber(idCardNumber);
+						sessionStaff.setCardType(String.valueOf(custInfo.get("identityCd")));
+						sessionStaff.setPartyName(String.valueOf(custInfo.get("partyName")));
+						
+						if(idCardNumber != null && idCardNumber.length()==18){
+							 String preStr = idCardNumber.substring(0,6);
+					    	 String subStr = idCardNumber.substring(14);
+					    	 idCardNumber=preStr+"********"+subStr;
+						}else if(idCardNumber != null && idCardNumber.length()==15){
+							String preStr = idCardNumber.substring(0,5);
+					    	 String subStr = idCardNumber.substring(13);
+					    	 idCardNumber=preStr+"********"+subStr;
+						}
+					}
+				}
+				if(resultMap!=null&&resultMap.size()>0){
+					cust_Info = JsonUtil.toString(resultMap);
+				}else {
 					model.addAttribute("errorMsg", "未定位到客户信息");
 					return "/common/error";
 				}
-				if(!custMap.get("queryTypeValue").equals("") && !custMap.get("queryType").equals("")){
-					sessionStaff.setCardNumber(String.valueOf(custMap.get("queryTypeValue")));
-					sessionStaff.setCardType(String.valueOf(custMap.get("queryType")));
-				}else if(!custMap.get("identityNum").equals("") && !custMap.get("identityCd").equals("")){
-					sessionStaff.setCardNumber(String.valueOf(custMap.get("identityNum")));
-					sessionStaff.setCardType(String.valueOf(custMap.get("identityCd")));
-				}			
-				sessionStaff.setInPhoneNum(String.valueOf(custMap.get("acctNbr")));
-				if(custInfos.size()>0){
-					Map custInfo =(Map)custInfos.get(0);
-					String idCardNumber = (String) custInfo.get("idCardNumber");
-					
-					sessionStaff.setCustId(String.valueOf(custInfo.get("custId")));
-					sessionStaff.setCardNumber(idCardNumber);
-					sessionStaff.setCardType(String.valueOf(custInfo.get("identityCd")));
-					sessionStaff.setPartyName(String.valueOf(custInfo.get("partyName")));
-					
-					if(idCardNumber != null && idCardNumber.length()==18){
-						 String preStr = idCardNumber.substring(0,6);
-				    	 String subStr = idCardNumber.substring(14);
-				    	 idCardNumber=preStr+"********"+subStr;
-					}else if(idCardNumber != null && idCardNumber.length()==15){
-						String preStr = idCardNumber.substring(0,5);
-				    	 String subStr = idCardNumber.substring(13);
-				    	 idCardNumber=preStr+"********"+subStr;
-					}
-				}
-			}
-			if(resultMap!=null&&resultMap.size()>0){
-				String custInfo = JsonUtil.toString(resultMap);
-				model.addAttribute("custInfo", custInfo);
-			}else {
-				model.addAttribute("errorMsg", "未定位到客户信息");
-				return "/common/error";
 			}
 			//公共返回的结果集
 			model.addAttribute("staffId", sessionStaff.getStaffId());
 			model.addAttribute("channelId", sessionStaff.getChannelId());
 			model.addAttribute("channelName", sessionStaff.getChannelName());
 			model.addAttribute("acctCd", acctCd);//帐号合同号
-			
+			model.addAttribute("custInfo", cust_Info);
 
 			//公共跳转参数(公共-必须)
 			Map<String, Object> provinceInfo=new HashMap<String, Object>();
@@ -353,12 +364,16 @@ public class OrderController extends BaseController {
 				if (newSubPhoneNum!=null && !"".equals(newSubPhoneNum) && !"null".equals(newSubPhoneNum)) {
 					model.addAttribute("newSubPhoneNum",newSubPhoneNum);
 				}
+				if (oldSubPhoneNum!=null && !"".equals(oldSubPhoneNum) && !"null".equals(oldSubPhoneNum)) {
+					model.addAttribute("oldSubPhoneNum",oldSubPhoneNum);
+				}
 				//model.addAttribute("prodOfferId",prodOfferId);
 				//model.addAttribute("prodOfferName",prodOfferName);
 				provinceInfo.put("prodOfferId", prodOfferId);
 				provinceInfo.put("prodOfferName", prodOfferName);
 			}
-			
+			//终端串码
+			model.addAttribute("terminalCode",paramsMap.get("termCode")==null?"":paramsMap.get("termCode").toString());
 			model.addAttribute("provinceInfo", JacksonUtil.objectToJson(provinceInfo));
 			Map<String, Object> result = new HashMap<String, Object>();
 			//判断是否是二次加载业务
@@ -725,7 +740,12 @@ public class OrderController extends BaseController {
 		}
 		if("6".equals(actionFlag)){//主副卡成员变更
 			return "/pad/member/order-spec-param";
-		}else{
+		}
+		else if("2".equals(actionFlag)){
+			return "/pad/member/order-spec-param";
+		}
+		else
+		{
 			return "/pad/order/order-spec-param";
 		}
     }
@@ -1155,7 +1175,18 @@ public class OrderController extends BaseController {
         		model.addAttribute("main", param);
         	}
     		forward = "/padtoken/member/member-change";
-    	}else {
+    	}
+    	else if("1".equals(String.valueOf(param.get("actionFlag")))){
+    		if (MapUtils.isNotEmpty(param)) {
+        		if (!param.containsKey("offerNum")||param.get("offerNum")==null) {
+        			param.put("offerNum", 1);
+        		}
+        		model.addAttribute("main", param);
+        	}
+    		forward = "/padtoken/order/order-main-template-sub";
+    	}
+    	else {
+    	
     		if (MapUtils.isNotEmpty(param)) {
         		if (!param.containsKey("offerNum")||param.get("offerNum")==null) {
         			param.put("offerNum", 1);

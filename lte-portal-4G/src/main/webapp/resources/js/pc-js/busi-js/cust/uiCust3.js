@@ -447,7 +447,7 @@ var _custAuthCallBack = function(response) {
 						$.confirm("确认","你已重新选择号码，需跳转至上一步，是否确认?",{
 							yes:function(){
 								_cancel();
-								_linkQueryOffer(thisTr);
+								order.uiCustes.linkQueryOffer(thisTr);
 								OrderInfo.order.step=0;
 							},
 							no:function(){
@@ -459,7 +459,7 @@ var _custAuthCallBack = function(response) {
 							yes:function(){
 								SoOrder.orderBack();
 								_cancel();
-								_linkQueryOffer(thisTr);
+								order.uiCustes.linkQueryOffer(thisTr);
 								OrderInfo.order.step=0;
 							},
 							no:function(){
@@ -467,7 +467,7 @@ var _custAuthCallBack = function(response) {
 							}
 						});
 					}else{
-						_linkQueryOffer(this);
+						order.uiCustes.linkQueryOffer(this);
 					}
 					
 					});
@@ -2639,17 +2639,16 @@ var _custAuthCallBack = function(response) {
 		OrderInfo.busitypeflag=2
 		$("#custInfo").hide();
 		OrderInfo.actionFlag = 2;
-		
-		if(!query.offer.setOffer()){ //必须先保存销售品实例构成，加载实例到缓存要使用
-			return ;
+		if(OrderInfo.provinceInfo.mergeFlag=="0"){
+			if(!query.offer.setOffer()){ //必须先保存销售品实例构成，加载实例到缓存要使用
+				return ;
+			}
 		}
-		
 		$("#custInfo").hide();
 		
 		var boInfos;
-		
+		var prodInfo = order.prodModify.choosedProdInfo;
 		var nowIs3G=order.prodModify.choosedProdInfo.is3G;
-		
 		if(nowIs3G=="Y"){
 			boInfos=[{
 				boActionTypeCd : CONST.BO_ACTION_TYPE.DEL_OFFER,
@@ -2681,7 +2680,7 @@ var _custAuthCallBack = function(response) {
 		if(OrderInfo.reloadFlag=="N"){
 			order.uiCustes.buyService(OrderInfo.offid,"");
 		}else{
-				order.service.buyService(OrderInfo.offid,"");
+			order.service.buyService(OrderInfo.offid,"");
 		}
 	};
 
@@ -2718,6 +2717,7 @@ var _custAuthCallBack = function(response) {
 		opeSer:_opeSer,
 		buyService:_buyService,
 		btnQueryCustProd : _btnQueryCustProd,
-		checkUim:_checkUim
+		checkUim:_checkUim,
+		linkQueryOffer:_linkQueryOffer
 	};
 })();

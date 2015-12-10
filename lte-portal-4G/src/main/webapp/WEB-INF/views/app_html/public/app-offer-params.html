@@ -32,132 +32,133 @@
 		<script src="${contextPath}/js/app-js/busi-js/mktRes/phoneNumber.js?${jsversion}" type="text/javascript"></script>
 		<script src="${contextPath}/js/app-js/busi-js/mktRes/terminal.js?${jsversion}" type="text/javascript"></script>
 		<script src="${contextPath}/js/app-js/op-js/order/uim.js?${jsversion}" type="text/javascript"></script>
-		<script src="${contextPath}/js/app-js/busi-js/query/queryProd.js?${jsversion}" type="text/javascript"></script>
+		<script src="${contextPath}/js/app-js/op-js/query/queryProd.js?${jsversion}" type="text/javascript"></script>
 		<script src="${contextPath}/js/app-js/busi-js/print/print.js?${jsversion}" type="text/javascript"></script>
 		<script src="${contextPath}/js/app-js/op-js/order/dealer.js?${jsversion}" type="text/javascript"></script>
 		<script src="${contextPath}/js/app-js/op-js/offerChangeNew.js?${jsversion}" type="text/javascript"></script>
-		
+		<script src="${contextPath}/js/app-js/op-js/member/memberChange.js?${jsversion}" type="text/javascript"></script>
 		<script>
 		window.onload= function() 
 		{  
 			//用户信息
 			OrderInfo.staff=eval("("+'${staffInfo_}'+")");
-			//客户定位
-			var custInfos = eval("("+'${custInfo_}'+")");
-		   //UI马卡信息
-		   var mktResInstCode='${mktResInstCode}';
-		   OrderInfo.mktResInstCode=mktResInstCode;
-			$.each(custInfos.custInfos,function(index,custInfo){
-				var addressStr=custInfo.addressStr;
-				var areaId=custInfo.areaId;
-				var areaName=custInfo.areaName;
-				var authFlag="1";
-				var custFlag=custInfo.custFlag;
-				var custId=custInfo.custId;
-				var idCardNumber=custInfo.idCardNumber;
-				var identityCd=custInfo.identityCd;
-				var identityName=custInfo.identityName;
-				var norTaxPayer="";
-				var partyName=custInfo.partyName;
-				var segmentId=custInfo.segmentId;
-				var segmentName=custInfo.segmentName;
-				var vipLevel=custInfo.vipLevel;
-				var vipLevelName=custInfo.vipLevelName;
-				OrderInfo.cust={"addressStr": addressStr,"areaId": areaId,"areaName": areaName,"authFlag": "1","custFlag": custFlag,"custId": custId,"idCardNumber": idCardNumber,"identityCd": identityCd,"identityName": identityName,"norTaxPayer": "","partyName": partyName,"segmentId": segmentId,"segmentName": segmentName,"vipLevel": vipLevel,"vipLevelName": vipLevelName};
-				return false;
-			});
-
 			//跳转地址
 			var params=eval("("+'${jumpParams_}'+")");
-	            
 			var actionFlag=params.actionFlag;
-		
-			//订购业务
-			if(actionFlag!="1"){
-				var prodInfo=eval("("+'${prodInfo_}'+")");
-				
-				var stopRecordCd="";
-				var stopRecordName="";
-				
-				if(prodInfo.prodStopRecords!=null && prodInfo.prodStopRecords.length>0){
-					$.each(prodInfo.prodStopRecords,function(i,prodStopRecord){
-						stopRecordCd=prodStopRecord.stopRecordCd;
-						stopRecordName=prodStopRecord.stopRecordName;
-					});
+			var nextFlag = false;
+			var mergeFlag = "${mergeFlag}";
+			if(mergeFlag=="0"){
+				//客户定位
+				var custInfos = eval("("+'${custInfo_}'+")");
+				$.each(custInfos.custInfos,function(index,custInfo){
+					var addressStr=custInfo.addressStr;
+					var areaId=custInfo.areaId;
+					var areaName=custInfo.areaName;
+					var authFlag="1";
+					var custFlag=custInfo.custFlag;
+					var custId=custInfo.custId;
+					var idCardNumber=custInfo.idCardNumber;
+					var identityCd=custInfo.identityCd;
+					var identityName=custInfo.identityName;
+					var norTaxPayer="";
+					var partyName=custInfo.partyName;
+					var segmentId=custInfo.segmentId;
+					var segmentName=custInfo.segmentName;
+					var vipLevel=custInfo.vipLevel;
+					var vipLevelName=custInfo.vipLevelName;
+					OrderInfo.cust={"addressStr": addressStr,"areaId": areaId,"areaName": areaName,"authFlag": "1","custFlag": custFlag,"custId": custId,"idCardNumber": idCardNumber,"identityCd": identityCd,"identityName": identityName,"norTaxPayer": "","partyName": partyName,"segmentId": segmentId,"segmentName": segmentName,"vipLevel": vipLevel,"vipLevelName": vipLevelName};
+					return false;
+				});
+				//订购业务
+				if(actionFlag!="1"){
+					var prodInfo=eval("("+'${prodInfo_}'+")");
+					var stopRecordCd="";
+					var stopRecordName="";
+					if(prodInfo.prodStopRecords!=null && prodInfo.prodStopRecords.length>0){
+						$.each(prodInfo.prodStopRecords,function(i,prodStopRecord){
+							stopRecordCd=prodStopRecord.stopRecordCd;
+							stopRecordName=prodStopRecord.stopRecordName;
+						});
+					}
+					var custId="";
+					var custName="";
+					var startDt="";
+					var endDt="";
+					var prodOfferId=""; 
+					var prodOfferInstId="";
+					var is3G="";
+					if(prodInfo.mainProdOfferInstInfos!=null && prodInfo.mainProdOfferInstInfos.length>0){
+						$.each(prodInfo.mainProdOfferInstInfos,function(i,mainProdOfferInstInfo){
+							custId=mainProdOfferInstInfo.custId;
+							custName=mainProdOfferInstInfo.custName;
+							startDt=mainProdOfferInstInfo.startDt;
+							endDt=mainProdOfferInstInfo.endDt;
+							prodOfferId=mainProdOfferInstInfo.prodOfferId;
+							prodOfferInstId=mainProdOfferInstInfo.prodOfferInstId;
+							is3G=mainProdOfferInstInfo.is3G;
+						});
+					}
+					var _choosedProdInfo  = {
+						"accNbr" :prodInfo.accNbr,//产品接入号
+						"productName" :prodInfo.productName,//产品规格名称
+						"prodStateName" :prodInfo.prodStateName,//产品状态名称
+						"feeTypeName" :prodInfo.feeType.feeTypeName,//付费方式名称
+						"prodInstId" :prodInfo.prodInstId,//产品ID
+						"extProdInstId" : prodInfo.extProdInstId,//省内产品实例ID
+						"corProdInstId" : prodInfo.corProdInstId,//外部产品实例ID
+						"prodStateCd" :prodInfo.prodStateCd,//产品状态CD
+						"productId" :prodInfo.productId,//产品规格ID
+						"feeType" :prodInfo.feeType.feeType,//付费方式id
+						"prodClass" :prodInfo.prodClass,//产品大类 4 表示4G；3表示3G
+						"stopRecordCd" :stopRecordCd,//停机记录CD
+						"stopRecordName" :stopRecordName,//停机记录名称
+						"prodOfferName" :prodInfo.prodOfferName,//主套餐名称
+						"custName" :custName,//所属人客户名称
+						"startDt" :startDt,//生效时间
+						"endDt" :endDt,//失效时间
+						"prodOfferId" :prodOfferId,//主套餐规格ID
+						"prodOfferInstId" :prodOfferInstId,//主套餐实例ID
+						"custId" :custId,//所属人客户ID
+						"is3G" :is3G,//3G/4G主销售品标识
+						"areaCode" :prodInfo.zoneNumber,//产品地区CODE
+						"areaId" : prodInfo.areaId//产品地区id
+					};
+					order.prodModify.choosedProdInfo=_choosedProdInfo;
+					nextFlag = true;
 				}
-				
-				var custId="";
-				var custName="";
-				var startDt="";
-				var endDt="";
-				var prodOfferId=""; 
-				var prodOfferInstId="";
-				var is3G="";
-				
-				if(prodInfo.mainProdOfferInstInfos!=null && prodInfo.mainProdOfferInstInfos.length>0){
-					$.each(prodInfo.mainProdOfferInstInfos,function(i,mainProdOfferInstInfo){
-						custId=mainProdOfferInstInfo.custId;
-						custName=mainProdOfferInstInfo.custName;
-						startDt=mainProdOfferInstInfo.startDt;
-						endDt=mainProdOfferInstInfo.endDt;
-						prodOfferId=mainProdOfferInstInfo.prodOfferId;
-						prodOfferInstId=mainProdOfferInstInfo.prodOfferInstId;
-						is3G=mainProdOfferInstInfo.is3G;
-					});
-				}
-				
-				var _choosedProdInfo  = {
-					"accNbr" :prodInfo.accNbr,//产品接入号
-					"productName" :prodInfo.productName,//产品规格名称
-					"prodStateName" :prodInfo.prodStateName,//产品状态名称
-					"feeTypeName" :prodInfo.feeType.feeTypeName,//付费方式名称
-					"prodInstId" :prodInfo.prodInstId,//产品ID
-					"extProdInstId" : prodInfo.extProdInstId,//省内产品实例ID
-					"corProdInstId" : prodInfo.corProdInstId,//外部产品实例ID
-					"prodStateCd" :prodInfo.prodStateCd,//产品状态CD
-					"productId" :prodInfo.productId,//产品规格ID
-					"feeType" :prodInfo.feeType.feeType,//付费方式id
-					"prodClass" :prodInfo.prodClass,//产品大类 4 表示4G；3表示3G
-					"stopRecordCd" :stopRecordCd,//停机记录CD
-					"stopRecordName" :stopRecordName,//停机记录名称
-					"prodOfferName" :prodInfo.prodOfferName,//主套餐名称
-					"custName" :custName,//所属人客户名称
-					"startDt" :startDt,//生效时间
-					"endDt" :endDt,//失效时间
-					"prodOfferId" :prodOfferId,//主套餐规格ID
-					"prodOfferInstId" :prodOfferInstId,//主套餐实例ID
-					"custId" :custId,//所属人客户ID
-					"is3G" :is3G,//3G/4G主销售品标识
-					"areaCode" :prodInfo.zoneNumber,//产品地区CODE
-					"areaId" : prodInfo.areaId//产品地区id
-				};
-				
-				order.prodModify.choosedProdInfo=_choosedProdInfo;
-				
+			}else{
+				var acrNum = "${acrNum}";
+				var provCustAreaId = "${provCustAreaId}";
+				nextFlag = cust.queryCustCompreInfo(acrNum,provCustAreaId,2,'');
 			}
-			
+		   //UIM卡信息
+		   var mktResInstCode='${mktResInstCode}';
+		   OrderInfo.mktResInstCode=mktResInstCode;
+		   order.memberChange.newSubPhoneNum = "${newSubPhoneNum}";
+		   order.memberChange.oldSubPhoneNum = "${oldSubPhoneNum}";
+			var terminalCode='${terminalCode}'; //终端串码
+			//终端串码
+			if(terminalCode!=null && terminalCode!="" && terminalCode!="null"){
+				OrderInfo.terminalCode=terminalCode;
+			}
 			//订单必要参数
 			var provinceInfo=eval("("+'${provinceInfo_}'+")");
-			
 			var reloadFlag=provinceInfo.reloadFlag;
-			
 			OrderInfo.provinceInfo.provIsale=provinceInfo.provIsale;
-			
 			OrderInfo.provinceInfo.redirectUri=provinceInfo.redirectUri;
-			
 			OrderInfo.provinceInfo.isFee=provinceInfo.isFee;
-			
 			OrderInfo.provinceInfo.reloadFlag=provinceInfo.reloadFlag;
-			
-			
 		    OrderInfo.provinceInfo.prodOfferId=provinceInfo.prodOfferId;
-	
 
-		  
+		    //终端数据和发展人数据
+		    OrderInfo.codeInfos.DevelopmentCode=provinceInfo.DevelopmentCode;
+			OrderInfo.codeInfos.terminalCode=provinceInfo.terminalCode;
+
 			OrderInfo.provinceInfo.prodOfferName=provinceInfo.prodOfferName;
+			OrderInfo.provinceInfo.mergeFlag = "${mergeFlag}";
 			if(OrderInfo.provinceInfo.reloadFlag=="N"){
-	    //		var data={"orderList":{"orderListInfo":{"isTemplateOrder":"N","templateType":1,"staffId":"30033961426","channelId":"89461","areaId":"8330100","partyId":140000889522,"olTypeCd":8,"custOrderAttrs":[{"itemSpecId":"111111199","value":"N"}],"extCustOrderId":"8244433100000000000005111","soNbr":"2bdcc64d-db0f-4b5c-befe-d28ed7b87d93"},"custOrderList":[{"busiOrder":[{"areaId":"8330100","busiOrderInfo":{"seq":-1},"busiObj":{"instId":140009526290,"objId":81013,"offerTypeCd":1,"objName":"乐享4G201407 99元-主套餐","accessNumber":"17767069610"},"boActionType":{"actionClassCd":1200,"boActionTypeCd":"S2"},"data":{"ooOwners":[{"partyId":140000889522,"state":"DEL"}],"ooRoles":[{"objId":"235010000","objInstId":140029767627,"objType":"2","offerRoleId":"30055","state":"DEL","offerMemberId":140029767628}]}},{"areaId":"8330100","busiOrderInfo":{"seq":-2},"busiObj":{"instId":-1,"objId":81009,"offerTypeCd":"1","accessNumber":"17767069610"},"boActionType":{"actionClassCd":1200,"boActionTypeCd":"S1"},"data":{"ooRoles":[{"objId":235010000,"objInstId":140029767627,"objType":2,"offerRoleId":30045,"state":"ADD"}],"ooOwners":[{"partyId":140000889522,"state":"ADD"}],"busiOrderAttrs":[{"itemSpecId":"111111116","role":"40020005","value":"30033961426"}]}},{"areaId":"8330100","busiOrderInfo":{"seq":-3},"busiObj":{"instId":-2,"objId":81045,"offerTypeCd":2,"objName":"爱听4G定向流量包201407 0元-可选包","accessNumber":"17767069610"},"boActionType":{"actionClassCd":1200,"boActionTypeCd":"S1"},"data":{"ooOwners":[{"partyId":140000889522,"state":"ADD"}],"ooRoles":[{"prodId":140029767627,"offerRoleId":30068,"objId":235010000,"objType":2,"relaType":"1000","state":"ADD","objInstId":140029767627},{"prodId":140029767627,"offerRoleId":30068,"objId":235010008,"objType":4,"relaType":"1001","state":"ADD","objInstId":"140029767631"},{"prodId":140029767627,"offerRoleId":30068,"objId":235010003,"objType":4,"relaType":"1001","state":"ADD","objInstId":"140029767636"},{"prodId":140029767627,"offerRoleId":30068,"objId":280000020,"objType":4,"relaType":"1001","state":"ADD","objInstId":"140029767629"}]}},{"areaId":"8330100","busiOrderInfo":{"seq":-4},"busiObj":{"instId":-3,"objId":81046,"offerTypeCd":2,"objName":"爱玩4G定向流量包201407 0元-可选包","accessNumber":"17767069610"},"boActionType":{"actionClassCd":1200,"boActionTypeCd":"S1"},"data":{"ooOwners":[{"partyId":140000889522,"state":"ADD"}],"ooRoles":[{"prodId":140029767627,"offerRoleId":30067,"objId":235010000,"objType":2,"relaType":"1000","state":"ADD","objInstId":140029767627},{"prodId":140029767627,"offerRoleId":30067,"objId":235010008,"objType":4,"relaType":"1001","state":"ADD","objInstId":"140029767631"},{"prodId":140029767627,"offerRoleId":30067,"objId":235010003,"objType":4,"relaType":"1001","state":"ADD","objInstId":"140029767636"},{"prodId":140029767627,"offerRoleId":30067,"objId":280000020,"objType":4,"relaType":"1001","state":"ADD","objInstId":"140029767629"}]}},{"areaId":"8330100","busiOrderInfo":{"seq":-5},"busiObj":{"instId":-4,"objId":81837,"offerTypeCd":2,"objName":"乐享4G合约计划201409 399元42%机补24个月-促销","accessNumber":"17767069610"},"boActionType":{"actionClassCd":1200,"boActionTypeCd":"S1"},"data":{"ooOwners":[{"partyId":140000889522,"state":"ADD"}],"bo2Coupons":[{"couponUsageTypeCd":"5","inOutTypeId":"1","inOutReasonId":0,"saleId":1,"couponId":263,"couponinfoStatusCd":"A","chargeItemCd":"2007000","couponNum":1,"storeId":8330100,"storeName":"1","agentId":1,"apCharge":"1400","couponInstanceNumber":"A02005458268B6","ruleId":"","partyId":140000889522,"prodId":"140029767627","offerId":-4,"attachSepcId":"81837","state":"ADD","relaSeq":"","num":"1","termTypeFlag":"1"}],"ooRoles":[{"prodId":140029767627,"offerRoleId":31616,"objId":235010000,"objType":2,"relaType":"1000","state":"ADD","objInstId":140029767627}]}}]}]}};
 				OrderInfo.reloadOrderInfo=eval("("+'${reloadOrderInfo_}'+")");
+				
 		   		var custOrderAttrs=OrderInfo.reloadOrderInfo.orderList.orderListInfo.custOrderAttrs;
 		   		var is=false;
 		   		$.each(custOrderAttrs,function(){
@@ -182,7 +183,9 @@
 			var custInfos=OrderInfo.cust;//JSON.stringify(OrderInfo.cust);//$.parseJSON(window.localStorage.getItem("OrderInfo.cust"));
 			var staffInfos=OrderInfo.staff;//JSON.stringify(OrderInfo.staff);//$.parseJSON(window.localStorage.getItem("OrderInfo.staff"));
 			var prodIdInfos=order.prodModify.choosedProdInfo//JSON.stringify(order.prodModify.choosedProdInfo);//$.parseJSON(window.localStorage.getItem("order.prodModify.choosedProdInfo"));
-			common.callOrderServer(staffInfos,custInfos,prodIdInfos,params);
+			if(nextFlag){
+				common.callOrderServer(staffInfos,custInfos,prodIdInfos,params);
+			}
 		}
 		</script>
 	</head>

@@ -6,14 +6,16 @@
 <script src="${contextPath}/js/busi-js/query/common.js?${jsversion}" type="text/javascript"></script>
 <script src="${contextPath}/js/pad-js/op-js/order/orderInfo.js?${jsversion}" type="text/javascript"></script>
 <script src="${contextPath}/js/pad-js/op-js/order/orderProdModify.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/pad-js/busi-js/cust/cust.js?${jsversion}" type="text/javascript"></script>
 <script src="${contextPath}/js/pad-js/busi-js/cust/custMgr.js?${jsversion}" type="text/javascript"></script>
 <script src="${contextPath}/js/pad-js/busi-js/common/areaMgr.js?${jsversion}" type="text/javascript"></script>
 <script src="${contextPath}/js/pad-js/busi-js/rule/rule.js?${jsversion}" type="text/javascript"></script>
 <script src="${contextPath}/js/pad-js/busi-js/order/cacheData.js?${jsversion}" type="text/javascript"></script>
 <script src="${contextPath}/js/pad-js/op-js/order/offerQuery.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/pad-js/op-js/acct/acctModify.js?${jsversion}" type="text/javascript"></script>
 <script src="${contextPath}/js/pad-js/op-js/order/calCharge.js?${jsversion}" type="text/javascript"></script>
 <script src="${contextPath}/js/pad-js/op-js/order/order.js?${jsversion}" type="text/javascript"></script>
-<script src="${contextPath}/js/pad-js/busi-js/order/orderMain.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/pad-js/op-js/order/orderMain.js?${jsversion}" type="text/javascript"></script>
 <script src="${contextPath}/js/pad-js/busi-js/order/dealer.js?${jsversion}" type="text/javascript"></script>
 <script src="${contextPath}/js/pad-js/busi-js/mktRes/terminal.js?${jsversion}" type="text/javascript"></script>
 <script src="${contextPath}/js/pad-js/busi-js/mktRes/phoneNumber.js?${jsversion}" type="text/javascript"></script>
@@ -134,10 +136,16 @@
 		OrderInfo.provinceInfo.reloadFlag=provinceInfo.reloadFlag;   //是否二次加载
 		OrderInfo.provinceInfo.mainPhoneNum=provinceInfo.mainPhoneNum;  //主套餐号码 
 		OrderInfo.provinceInfo.prodOfferId=provinceInfo.prodOfferId//主套餐id 
+		OrderInfo.provinceInfo.mergeFlag = "${mergeFlag}";
 		order.memberChange.reloadFlag = "${reloadFlag}";
 		order.memberChange.newSubPhoneNum = "${newSubPhoneNum}";
 		order.memberChange.oldSubPhoneNum = "${oldSubPhoneNum}";
 		order.memberChange.mktResInstCode = "${mktResInstCode}";
+		var terminalCode='${terminalCode}'; //终端串码
+		//终端串码
+		if(terminalCode!=null && terminalCode!="" && terminalCode!="null"){
+			OrderInfo.terminalCode=terminalCode;
+		}
 		$("#p_cust_identityNum").val(OrderInfo.provinceInfo.mainPhoneNum);
 		//是否重载
 		var reload_=OrderInfo.provinceInfo.reloadFlag;

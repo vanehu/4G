@@ -1822,6 +1822,10 @@ order.prodModify = (function(){
 	//套餐变更
 	var _changeOffer = function () {
 		OrderInfo.busitypeflag=2;
+		OrderInfo.oldprodInstInfos = [];
+		OrderInfo.oldofferSpec = [];
+		OrderInfo.oldoffer = [];
+		OrderInfo.oldAddNumList = [];
 		offerChange.init();
 	};
 	
@@ -2065,7 +2069,8 @@ order.prodModify = (function(){
 	//帐户查询请求（二次业务时查询已有帐户）
 	var _returnAccount = function(acctQueryParam){
 		acctQueryParam.areaId =  _choosedProdInfo.areaId;
-		var response = $.callServiceAsJson(contextPath+"/order/account", acctQueryParam);
+		acctQueryParam.isServiceOpen="Y";   //是否能力开放,Y-是,N-否
+		var response = $.callServiceAsJson(contextPath+"/token/pc/order/account", acctQueryParam);
 		if(response.code==-2){
 			$.alertM(response.data);
 			return;

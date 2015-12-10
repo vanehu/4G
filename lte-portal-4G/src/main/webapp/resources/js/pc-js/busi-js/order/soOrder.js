@@ -2476,6 +2476,8 @@ SoOrder = (function() {
 					!(!order.memberChange.oldMemberFlag && !order.memberChange.newMemberFlag  && order.memberChange.changeMemberFlag)){
 				for ( var i = 0; i < OrderInfo.offerSpec.offerRoles.length; i++) {
 					var offerRole = OrderInfo.offerSpec.offerRoles[i];
+					var prodInsts=OrderInfo.offerSpec.offerRoles[i].prodInsts;
+					if(prodInsts!=undefined && prodInsts!=null && prodInsts!=""){
 					for ( var j = 0; j < offerRole.prodInsts.length; j++) {
 						var prodInst = offerRole.prodInsts[j];
 						if(OrderInfo.actionFlag==2){
@@ -2563,6 +2565,7 @@ SoOrder = (function() {
 							return false;
 						}
 					}
+				  }
 				}
 			}
 			

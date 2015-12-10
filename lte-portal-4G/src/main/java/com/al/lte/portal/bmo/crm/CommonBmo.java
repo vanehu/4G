@@ -61,6 +61,16 @@ public interface CommonBmo {
 	public Map<String, Object> validatorRule(Map<String, Object> param,String optFlowNum,HttpServletRequest request) throws Exception ;
 	
 	/**
+	 * 在原接口上，去除全量查询
+	 * @param param
+	 * @param optFlowNum
+	 * @param request
+	 * @return
+	 * @throws Exception
+	 */
+	public Map<String, Object> validatorRuleSub(Map<String, Object> param,String optFlowNum,HttpServletRequest request) throws Exception ;
+	
+	/**
 	 * 离散值查询
 	 */
 	public Map<String, Object> querySpecListByAttrID(Map<String, Object> dataBusMap,String flowNum,SessionStaff sessionStaff)

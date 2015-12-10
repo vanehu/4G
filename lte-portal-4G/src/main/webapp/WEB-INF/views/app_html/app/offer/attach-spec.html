@@ -1,5 +1,4 @@
-
-    <ul id="myTab" class="nav nav-tabs nav-justified tabsa">
+<ul id="myTab" class="nav nav-tabs nav-justified tabsa">
       <li class="dropdown active" style="width:50%;"> <a id="myTabDrop1_${prodId}" href="#" class="dropdown-toggle" data-toggle="dropdown">可订购 <b class="caret"></b> </a>
         <ul class="dropdown-menu" role="menu" aria-labelledby="myTabDrop1_${prodId}">
          <#if labelMap.result?? &&(labelMap.result?size>1)>
@@ -68,21 +67,6 @@
 	      			 <a href="javascript:void(0);" onclick="AttachOffer.delOfferSpec(${prodId},${item.offerSpecId})" id="li_${param.prodId}_${item.offerSpecId}" offerSpecId="${item.offerSpecId}" isdel='N' class="list-group-item">
 			          <span id="span_${prodId}_${item.offerSpecId}">${item.offerSpecName}</span>
 			          <span id="span_remove_${prodId}_${item.offerSpecId}" class="glyphicon glyphicon-remove pull-right" aria-hidden="true"></span>
-			          <!-- <div class="row">
-			            <div class="col-xs-6 pull-right">
-			              <div class="btn-group btn-group-justified" role="group" aria-label="...">
-			                <div class="btn-group" role="group">
-			                  <button type="button" class="btn btn-default">时</button>
-			                </div>
-			                <div class="btn-group" role="group">
-			                  <button type="button" class="btn btn-default">参</button>
-			                </div>
-			                <div class="btn-group" role="group">
-			                  <button type="button" class="btn btn-default">删</button>
-			                </div>
-			              </div>
-			            </div>
-			          </div> -->
 			         </a> 
 			         </#if>
                 </#list>
@@ -90,6 +74,7 @@
 	    </#if>
         </div>
         </div>
+        
         <div class="tab-pane fade" id="prod_${prodId}">
         <div class="list-group" id="open_serv_ul_${param.prodId}"> 
         <#if openServMap.result.servSpec??>
@@ -104,21 +89,6 @@
 			             <a href="javascript:void(0);"  onclick="AttachOffer.closeServSpec(${prodId},${item.servSpecId},'${item.servSpecName}','${item.ifParams}')" id="li_${prodId}_${item.servSpecId}" offerSpecId="${item.servSpecId}" isdel='N' class="list-group-item abtn02 icon-del">
 			          <span id="span_${prodId}_${item.servSpecId}">${item.servSpecName}</span>
 			          <span id="span_remove_${prodId}_${item.servSpecId}" class="glyphicon glyphicon-remove pull-right" aria-hidden="true"></span>
-			          <!-- <div class="row">
-			            <div class="col-xs-6 pull-right">
-			              <div class="btn-group btn-group-justified" role="group" aria-label="...">
-			                <div class="btn-group" role="group">
-			                  <button type="button" class="btn btn-default">时</button>
-			                </div>
-			                <div class="btn-group" role="group">
-			                  <button type="button" class="btn btn-default">参</button>
-			                </div>
-			                <div class="btn-group" role="group">
-			                  <button type="button" class="btn btn-default">删</button>
-			                </div>
-			              </div>
-			            </div>
-			          </div> -->
 			         </a>
 			        </#if> 
                 </#list>
