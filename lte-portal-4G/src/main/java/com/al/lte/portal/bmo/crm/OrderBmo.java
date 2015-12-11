@@ -513,6 +513,8 @@ public interface OrderBmo {
 
 	public Map<String, Object> qryCountInfoList(Map<String, Object> param, String flowNum, SessionStaff sessionStaff) throws Exception;
 	
+	public Map<String, Object> qryCount(Map<String, Object> param, String flowNum, SessionStaff sessionStaff) throws Exception;
+	
 	/**
 	 * 终端预约记录查询
 	  */

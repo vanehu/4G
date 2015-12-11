@@ -142,6 +142,26 @@ public class OrderBmoImpl implements OrderBmo {
 		}
 		return returnMap;
 	}
+	
+    //查询在途数量
+	public Map<String, Object> qryCount(Map<String, Object> param,
+			String optFlowNum, SessionStaff sessionStaff) throws Exception {
+		String serviceCode=PortalServiceCode.INTF_QUERY_COUNT;
+    	DataBus db = InterfaceClient.callService(param,serviceCode,optFlowNum, sessionStaff);
+    	Map<String, Object> returnMap = new HashMap<String, Object>();
+		if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db
+				.getResultCode()))) {
+			Map<String, Object> resultMap = db.getReturnlmap();
+			Map<String, Object> datamap = (Map<String, Object>) resultMap
+					.get("result");
+			returnMap.put("code", ResultCode.R_SUCCESS);
+			returnMap.putAll(datamap);
+		} else {
+			returnMap.put("code", ResultCode.R_FAIL);
+			returnMap.put("msg", db.getResultMsg());
+		}
+		return returnMap;
+	}
 	/*
 	 * 订单算费 (non-Javadoc)
 	 * 

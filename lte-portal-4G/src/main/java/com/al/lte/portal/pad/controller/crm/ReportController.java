@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.WebRequest;
-
 import com.al.ecs.common.entity.PageModel;
 import com.al.ecs.common.util.PageUtil;
 import com.al.ecs.common.web.ServletUtils;
@@ -29,6 +28,7 @@ import com.al.ecs.exception.ErrorCode;
 import com.al.ecs.exception.InterfaceException;
 import com.al.ecs.spring.annotation.log.LogOperatorAnn;
 import com.al.ecs.spring.annotation.session.AuthorityValid;
+import com.al.ecs.spring.controller.BaseController;
 import com.al.lte.portal.bmo.crm.CartBmo;
 import com.al.lte.portal.bmo.crm.OrderBmo;
 import com.al.lte.portal.bmo.crm.ReportBmo;
@@ -39,7 +39,7 @@ import com.al.lte.portal.model.SessionStaff;
 
 @Controller("com.al.lte.portal.pad.controller.crm.ReportController")
 @RequestMapping("/pad/report/*")
-public class ReportController extends com.al.lte.portal.controller.crm.ReportController {
+public class ReportController extends  BaseController {
 
 	@Autowired
 	@Qualifier("com.al.lte.portal.bmo.crm.ReportBmo")

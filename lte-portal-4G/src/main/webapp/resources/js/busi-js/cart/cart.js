@@ -522,7 +522,12 @@ cart.main = (function(){
 					if(data!=undefined && data.length>0){
 						for(var i=0;i<data.length;i++){
 							var busiStatus = data[i];
-							$("#p_busiStatusCd").append("<option value='"+busiStatus.attrValueCode+"' >"+busiStatus.attrValueName+"</option>");
+							if($("#flag").val() == "1" && busiStatus.attrValueCode == 200000){
+								$("#p_busiStatusCd").append("<option value='"+busiStatus.attrValueCode+"' selected>"+busiStatus.attrValueName+"</option>");
+							}
+							else{
+								$("#p_busiStatusCd").append("<option value='"+busiStatus.attrValueCode+"' >"+busiStatus.attrValueName+"</option>");
+							}
 							$("#p_olStatusCd").append("<option value='"+busiStatus.attrValueCode+"' >"+busiStatus.attrValueName+"</option>");
 						}
 					}

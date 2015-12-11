@@ -215,13 +215,13 @@ public class ReportController extends BaseController {
 	 * @param flowNum
 	 * @return
 	 * @throws AuthorityException
-	 */
-	@RequestMapping(value = "/cartMain", method = RequestMethod.GET)
+     */
+    @RequestMapping(value = "/cartMain", method = RequestMethod.GET)
     @AuthorityValid(isCheck = true)
-    public String main(Model model,HttpSession session,@LogOperatorAnn String flowNum) throws AuthorityException {
-		model.addAttribute("current", EhcacheUtil.getCurrentPath(session,"report/cartMain"));
-		
-		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+    public String main(@RequestParam Map<String, Object> param,Model model, HttpSession session, @LogOperatorAnn String flowNum) throws AuthorityException {
+        model.addAttribute("current", EhcacheUtil.getCurrentPath(session, "report/cartMain"));
+
+        SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
 				SysConstant.SESSION_KEY_LOGIN_STAFF);
 		
 		//判别用户是否具有查询某地区下的所有渠道的权限
@@ -246,13 +246,13 @@ public class ReportController extends BaseController {
 		
 		model.addAttribute("p_startDt", startTime);
 		model.addAttribute("p_endDt", endTime);
-		model.addAttribute("p_areaId", defaultAreaInfo.get("defaultAreaId"));
-		model.addAttribute("p_areaId_val", defaultAreaInfo.get("defaultAreaName"));
-		model.addAttribute("pageType", "detail");
-		
-		return "/cart/cart-main";		
-	}
-	
+        model.addAttribute("p_areaId", defaultAreaInfo.get("defaultAreaId"));
+        model.addAttribute("p_areaId_val", defaultAreaInfo.get("defaultAreaName"));
+        model.addAttribute("pageType", "detail");
+        model.addAttribute("flag", param.get("strParam"));  // 在途单 标志
+        return "/cart/cart-main";
+    }
+
 	/**
 	 * 购物车列表查询
 	 * @param session
