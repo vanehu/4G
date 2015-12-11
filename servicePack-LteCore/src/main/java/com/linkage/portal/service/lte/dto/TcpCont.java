@@ -3,12 +3,8 @@ package com.linkage.portal.service.lte.dto;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
-
 import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.slf4j.Logger;
@@ -16,10 +12,13 @@ import org.slf4j.LoggerFactory;
 
 import com.ailk.ecsp.core.DataRepository;
 import com.ailk.ecsp.core.SysConstant;
+import com.ailk.ecsp.util.IConstant;
 import com.al.ec.serviceplatform.client.DataMap;
 import com.al.ecs.common.util.JsonUtil;
 import com.al.ecs.common.util.MapUtil;
 import com.linkage.portal.service.lte.LteConstants;
+import com.linkage.portal.service.lte.dao.CommonDAO;
+import com.linkage.portal.service.lte.dao.CommonDAOImpl;
 import com.linkage.portal.service.lte.protocols.FreemarkerHandler;
 
 
@@ -86,8 +85,8 @@ public class TcpCont {
 //        }
 		tcpContMap.put("ActionCode", "0"); // 动作类型标识 0：表示请求
 		tcpContMap.put("ServiceLevel", "1"); // 服务等级,处理的优先级 1
-		tcpContMap.put("TransactionID", getTranID(srcSysID));
-		tcpContMap.put("TransactionNo", getTranID(""));
+		tcpContMap.put("TransactionID", getTranID(srcSysID, inMap));
+		tcpContMap.put("TransactionNo", getTranID("", inMap));
 		tcpContMap.put("ReqTime",DateFormatUtils.format(new Date(), "yyyyMMddHHmmss"));
 		inMap.put("TcpCont", tcpContMap);
 		//inMap.put("Common", createCommonInfo(inMap,db));
@@ -111,14 +110,26 @@ public class TcpCont {
 		return commonMap;
 	}
 */
-	public static String getTranID(String id) {
-		// 【10位系统/平台编码代码】+【8位日期编码YYYYMMDD】＋【10位流水号】
-		StringBuffer sb = new StringBuffer();
-		sb.append(id).append(DateFormatUtils.format(new Date(), "yyyyMMdd"))
-				.append(getHourInMillis())
-				.append(RandomStringUtils.randomNumeric(2));
-		Calendar.getInstance().getTimeInMillis();
-		return sb.toString();
+	private static String getTranID(String id, Map<String, Object> inMap) throws Exception {
+		//10位系统平台编码+8位日期编码yyyyMMdd+序列
+		String dbKeyWord = MapUtils.getString(inMap, IConstant.CON_DB_KEY_WORD);
+    	CommonDAO dao = new CommonDAOImpl();
+        Map<String,Object> reqMap = new HashMap<String,Object>();
+        if ("provinceAreaId".equals(IConstant.CON_DB_KEY_WORD)){
+        	reqMap.put("seq", "SEQ_CRM_CSB");
+        }else{
+        	reqMap.put("seq", "LTE_TRANSACTIONID_SEQ");
+        }
+        try{
+        	long tranId = dao.GetTranId(reqMap, dbKeyWord);
+        	StringBuffer sb = new StringBuffer();
+        	sb.append(id)
+        	    .append(DateFormatUtils.format(new Date(), "yyyyMMdd"))
+        	    .append(String.valueOf(tranId));
+        	return sb.toString();
+        }catch (Exception e) {
+			throw new Exception(e);
+		}
 	}
 
 	public static String parseTemplate(Map inMap, String ftlName) throws Exception {

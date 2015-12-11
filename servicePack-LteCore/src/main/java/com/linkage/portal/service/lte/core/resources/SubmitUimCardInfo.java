@@ -73,7 +73,8 @@ public class SubmitUimCardInfo extends Service {
         logInfo.put("STATE",state);
 		
 		inParamMap.put("submitInfo",submitInfo);
-		inParamMap.put("dataMap", dataMap); 
+		inParamMap.put("dataMap", dataMap);
+		inParamMap.put(IConstant.CON_DB_KEY_WORD, MapUtils.getString(dataMap.getInParam(), IConstant.CON_DB_KEY_WORD));
         
 		String inXML = TcpCont.parseTemplate(inParamMap, "SubmitUimCardInfo");
 		if(StringUtils.isBlank(inXML)){
