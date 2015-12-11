@@ -355,6 +355,8 @@ public final class SysConstant {
     public static final String CSB_SERVICE_LEVEL = "1";
     /** csb密码 */
     public static final String CSB_SRC_SYS_SIGN = "123";
+    /** 翼销售csb密码 */
+    public static final String CSB_SRC_SYS_SIGN_YSX = "yxs1000000244";
     /** csb组织编码-集团 */
     public static final String CSB_ORG_ID_GROUP = "100000";
     /** csb发起方编码-集团 4G*/
