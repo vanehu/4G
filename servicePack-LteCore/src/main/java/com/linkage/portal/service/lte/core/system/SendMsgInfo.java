@@ -74,6 +74,7 @@ public class SendMsgInfo extends Service {
 			paramMap.put("nowDateTime", DateUtil.getFormatDate());
 			paramMap.put("channelName", dataMap.getChannelName());
 			paramMap.put("staffName", dataMap.getStaffName());
+			paramMap.put(IConstant.CON_DB_KEY_WORD, MapUtils.getString(dataMap.getInParam(), IConstant.CON_DB_KEY_WORD));
 			String inXML = "";
 			if(!"".equals(sendflag) && sendflag!=null){
 				Map ma = new HashMap();
