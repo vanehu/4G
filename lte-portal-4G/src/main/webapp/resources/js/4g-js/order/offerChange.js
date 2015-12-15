@@ -309,16 +309,18 @@ offerChange = (function() {
 								}
 							});					
 						}
-						param.queryType = "1,2";//查询必选，默认
-						param.servSpecIds = servSpecIds;
-						var queryData = query.offer.queryServSpecPost(param);
-						if(queryData!=null&&queryData.resultCode==0){
-							if(queryData.result.offerList!=null&&queryData.result.offerList!=undefined){
-								$.each(queryData.result.offerList,function(){
-									AttachOffer.addOpenList(param.prodId,this.offerSpecId); 
-								});
-							}					
-						}							
+						if(servSpecIds.length>0){
+							param.queryType = "1,2";//查询必选，默认
+							param.servSpecIds = servSpecIds;
+							var queryData = query.offer.queryServSpecPost(param);
+							if(queryData!=null&&queryData.resultCode==0){
+								if(queryData.result.offerList!=null&&queryData.result.offerList!=undefined){
+									$.each(queryData.result.offerList,function(){
+										AttachOffer.addOpenList(param.prodId,this.offerSpecId); 
+									});
+								}					
+							}	
+						}
 						AttachOffer.changeLabel(prodId,this.objId,""); //初始化第一个标签附属
 						if(AttachOffer.isChangeUim(prodId)){ //需要补换卡
 							if(!uimDivShow){

@@ -109,15 +109,17 @@ AttachOffer = (function() {
 						}
 					});					
 				}
-				param.servSpecIds = servSpecIds;
-				var queryData = query.offer.queryServSpecPost(param);
-				if(queryData!=null&&queryData.resultCode==0){
-					if(queryData.result.offerList!=null&&queryData.result.offerList!=undefined){
-						$.each(queryData.result.offerList,function(){
-							AttachOffer.addOpenList(param.prodId,this.offerSpecId); 
-						});
-					}					
-				}				
+				if(servSpecIds.length>0){
+					param.servSpecIds = servSpecIds;
+					var queryData = query.offer.queryServSpecPost(param);
+					if(queryData!=null&&queryData.resultCode==0){
+						if(queryData.result.offerList!=null&&queryData.result.offerList!=undefined){
+							$.each(queryData.result.offerList,function(){
+								AttachOffer.addOpenList(param.prodId,this.offerSpecId); 
+							});
+						}					
+					}	
+				}
 				AttachOffer.changeLabel(param.prodId,param.prodSpecId,""); //初始化第一个标签附属
 				if(param.prodId==-1 && OrderInfo.actionFlag==14){ //合约计划特殊处理
 					AttachOffer.addOpenList(param.prodId,mktRes.terminal.offerSpecId);
