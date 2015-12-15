@@ -3202,7 +3202,7 @@ AttachOffer = (function() {
 					$("#uimDiv_"+prodId).show();
 				}
 			}else if(flag==1){//取消开通功能产品
-				if(prodClass==CONST.PROD_CLASS.THREE){ //3G卡，已经显示补卡,判断是否隐藏补卡
+				if(prodClass==CONST.PROD_CLASS.THREE && OrderInfo.busitypeflag!=14){ //3G卡，已经显示补卡,判断是否隐藏补卡
 					$("#uimDiv_"+prodId).hide();
 				}
 			}

@@ -2155,6 +2155,9 @@ order.prodModify = (function(){
 	var _orderAttachOffer = function () {
 		OrderInfo.busitypeflag=14;
 		AttachOffer.init();
+		$("#title_"+prodId).show();
+		$("#uimDiv_"+prodId).show();
+		$("#isMust_"+prodId).hide();
 	};
 	
 	//套餐变更
