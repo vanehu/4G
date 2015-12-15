@@ -522,7 +522,7 @@ offerChange = (function() {
 //		if(offerChange.newMemberFlag || offerChange.oldMemberFlag){
 //			_createMainOrder(busiOrders);//纳入新老用户
 //		}
-//		_createChangeFeeType(busiOrders,OrderInfo.offer); //变更付费类型
+		_createChangeFeeType(busiOrders,OrderInfo.offer); //变更付费类型
 		AttachOffer.setAttachBusiOrder(busiOrders);  //订购退订附属销售品
 		if(CONST.getAppDesc()==0){ //4g系统需要,补换卡 
 			if(ec.util.isArray(OrderInfo.offer.offerMemberInfos)){ //遍历主销售品构成
