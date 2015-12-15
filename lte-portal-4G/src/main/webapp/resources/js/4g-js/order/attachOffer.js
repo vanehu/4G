@@ -1938,20 +1938,20 @@ AttachOffer = (function() {
 //		}
 		var objInstId = prodId+"_"+offerSpecId;
 //		var resId = $("#terminalSel_"+objInstId+"_"+terminalGroupId).val();
-		var resIdArray = [];
+//		var resIdArray = [];
 		var terminalGroupIdArray = [];
-		$("#"+objInstId+"  option").each(function(){
-			resIdArray.push($(this).val());
-		});
+		//$("#"+objInstId+"  option").each(function(){
+		//	resIdArray.push($(this).val());
+		//});
 		$("#group_"+objInstId+"  option").each(function(){
 			terminalGroupIdArray.push($(this).val());
 		});
-		var resId = resIdArray.join("|"); //拼接可用的资源规格id
+		//var resId = resIdArray.join("|"); //拼接可用的资源规格id
 		var terminalGroupId = terminalGroupIdArray.join("|"); //拼接可用的资源终端组id
-		if((resId==undefined || $.trim(resId)=="") && (terminalGroupId==undefined || $.trim(terminalGroupId)=="")){
-			$.alert("信息提示","终端规格不能为空！");
-			return;
-		}
+		//if((resId==undefined || $.trim(resId)=="") && (terminalGroupId==undefined || $.trim(terminalGroupId)=="")){
+		//	$.alert("信息提示","终端规格不能为空！");
+		//	return;
+		//}
 		var instCode = $("#terminalText_"+objInstId + "_"+num).val();
 		if(instCode==undefined || $.trim(instCode)==""){
 			$.alert("信息提示","终端串码不能为空！");
@@ -1986,7 +1986,7 @@ AttachOffer = (function() {
 		var param = {
 			instCode : instCode,
 			flag : flag,
-			mktResId : resId,
+			//mktResId : resId,
 			offerSpecId: offerSpecId,
 			offerSpecName:newSpec.offerSpecName
 			//termGroup : terminalGroupId  update by huangjj #13336需求资源要求这个参数不传
@@ -4265,20 +4265,20 @@ AttachOffer = (function() {
 //		}
 		var objInstId = prodId+"_"+offerSpecId;
 //		var resId = $("#terminalSel_"+objInstId+"_"+terminalGroupId).val();
-		var resIdArray = [];
+//		var resIdArray = [];
 		var terminalGroupIdArray = [];
-		$("#"+objInstId+"  option").each(function(){
-			resIdArray.push($(this).val());
-		});
+		//$("#"+objInstId+"  option").each(function(){
+		//	resIdArray.push($(this).val());
+		//});
 		$("#group_"+objInstId+"  option").each(function(){
 			terminalGroupIdArray.push($(this).val());
 		});
-		var resId = resIdArray.join("|"); //拼接可用的资源规格id
+		//var resId = resIdArray.join("|"); //拼接可用的资源规格id
 		var terminalGroupId = terminalGroupIdArray.join("|"); //拼接可用的资源终端组id
-		if((resId==undefined || $.trim(resId)=="") && (terminalGroupId==undefined || $.trim(terminalGroupId)=="")){
-			$.alert("信息提示","终端规格不能为空！");
-			return;
-		}
+		//if((resId==undefined || $.trim(resId)=="") && (terminalGroupId==undefined || $.trim(terminalGroupId)=="")){
+		//	$.alert("信息提示","终端规格不能为空！");
+		//	return;
+		//}
 		var instCode = $("#terminalText_"+objInstId + "_"+num).val();
 		if(instCode==undefined || $.trim(instCode)==""){
 			$.alert("信息提示","终端串码不能为空！");
@@ -4290,7 +4290,7 @@ AttachOffer = (function() {
 		var param = {
 			instCode : instCode,
 			flag : flag,
-			mktResId : resId,
+			//mktResId : resId,
 			termGroup : terminalGroupId
 		};
 		var data = query.prod.checkTerminal(param);
