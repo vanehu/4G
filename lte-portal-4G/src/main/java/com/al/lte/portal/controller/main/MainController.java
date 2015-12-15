@@ -120,6 +120,8 @@ public class MainController extends BaseController {
         Map<String, Object> param = new HashMap<String, Object>();
         Map<String, Object> rMap = new HashMap<String, Object>();
         param.put("areaId", sessionStaff.getCurrentAreaId());
+        param.put("pageIndex", "1");
+        param.put("pageSize", "10");
         Map<String, Object> reqMap= new HashMap<String, Object>();
         reqMap.put("staffId", sessionStaff.getStaffId());
         param.put("reqInfo", reqMap);
