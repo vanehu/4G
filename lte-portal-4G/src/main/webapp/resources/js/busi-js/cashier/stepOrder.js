@@ -836,7 +836,7 @@ stepOrder.main = (function(){
 			return false;
 		}
 		var offerId = "-1"; //新装默认，主销售品ID
-		var prodId = "-1"; //TODO 确认资源补录时是否需要传入产品ID,均传入-1是否可行
+		var prodId = "-1"; //确认资源补录时是否需要传入产品ID,均传入-1是否可行
 		var cardNo =$.trim($("#uim_txt_"+accessNumber).val());
 		if(cardNo==undefined || cardNo==''){
 			$.alert("提示","UIM卡不能为空!");
@@ -888,7 +888,7 @@ stepOrder.main = (function(){
 		$("#uim_release_btn_"+accessNumber).attr("disabled",false);
 		$("#uim_release_btn_"+accessNumber).removeClass("disablepurchase").addClass("purchase");
 		$("#uim_txt_"+accessNumber).attr("disabled",true);
-		//TODO MIFI卡校验
+		//MIFI卡校验
 //		if(getIsMIFICheck(accessNumber)){//判断是否通过MIFI 校验
 //			$("#isMIFI_"+accessNumber).val("yes");
 //		}else{
@@ -1312,7 +1312,7 @@ stepOrder.main = (function(){
 					order.orderList.orderListInfo.templateType = 2;
 				} else if(_busitypeflag == 3){ //主副卡成员变更
 					order.orderList.orderListInfo.templateType = 3; 
-				} else { //TODO 确认其他动作时templateType参数
+				} else { //确认其他动作时templateType参数
 					order.orderList.orderListInfo.templateType = 1;
 				}
 				
@@ -1419,30 +1419,72 @@ stepOrder.main = (function(){
 		if(response === true){
 			_setDisabled(); //disable释放按钮
 			//订单还原后重下校验单(资源补录之后)，将省份反馈的国际漫游免预存标识拼装到算费入参
-			//下省校验,开始		
+			//下省校验,开始
 			var url=contextPath+"/order/checkRuleToProv";
 			var paramsProv={
-					"olId":stepOrder.main.orderParam.olId,
-					"soNbr":stepOrder.main.orderParam.soNbr,
-					"areaId" : OrderInfo.staff.areaId,
-					"chargeItems":[]
+					"rolId":stepOrder.main.orderParam.olId,
+					"rsoNbr":stepOrder.main.orderParam.soNbr
+					//"areaId" : OrderInfo.staff.areaId,
+					//"chargeItems":[]
 			};
-			var response = $.callServiceAsJson(url,paramsProv,{
-				"before":function(){
-					$.ecOverlay("<strong>正在查询中,请稍等会儿....</strong>");
-				},
-				"always":function(){
-					$.unecOverlay();
-				},
-				"done" : function(response){
-					if (response.code == 0) {
-						var data = response.data;
-						if(data.checkResult!=undefined)
-							OrderInfo.checkresult=data.checkResult; //获取到免预存标志
+			var provCheckResult = order.calcharge.tochargeSubmit(paramsProv);
+			if(provCheckResult.code==0){
+				if(provCheckResult.data.returnCode == "0000"){//下省校验成功
+					order.calcharge.calchargeInit(); //加载收银台 
+				} else if(provCheckResult.data.returnCode=="110019" || provCheckResult.data.returnCode=="110145"){
+					$.confirm("信息确认","该账户为欠费状态，请确定是否继续受理？",{
+						yesdo:function(){
+							order.calcharge.calchargeInit(); //加载收银台
+						},
+						no:function(){
+							return;
+						}
+					});
+				} else{
+					var provCheckErrorCode = "";
+					var provCheckErrorMsg = "";
+					if(provCheckResult.data.errCode != null && provCheckResult.data.errCode != ""){
+						provCheckErrorCode = provCheckResult.data.errCode;
+						provCheckErrorMsg = provCheckResult.data.errMsg;
 					}
-					order.calcharge.calchargeInit(); //加载收银台
+					$.confirm("信息确认","下省校验未通过，【错误编码："+ provCheckErrorCode +" 异常信息：" + provCheckErrorMsg + "】请确定是否作废该订单",{
+						yesdo:function(){
+							_orderCancel();//作废订单
+						},
+						no:function(){
+							return;
+						}
+					});
 				}
-			});		
+			} else if(provCheckResult.code == 1){
+				if(provCheckResult.data.returnCode=="110019" || provCheckResult.data.returnCode=="110145"){
+					$.confirm("信息确认","该账户为欠费状态，请确定是否继续受理？",{
+						yesdo:function(){
+							order.calcharge.calchargeInit(); //加载收银台
+						},
+						no:function(){
+							return;
+						}
+					});
+				} else{
+					var provCheckErrorCode = "";
+					var provCheckErrorMsg = "";
+					if(provCheckResult.data.errCode != null && provCheckResult.data.errCode != ""){
+						provCheckErrorCode = provCheckResult.data.errCode;
+						provCheckErrorMsg = provCheckResult.data.errMsg;
+					}
+					$.confirm("信息确认","下省校验未通过，【错误编码："+ provCheckErrorCode +" 异常信息：" + provCheckErrorMsg + "】是否确定作废该订单？",{
+						yesdo:function(){
+							_orderCancel();//作废订单
+						},
+						no:function(){
+							return;
+						}
+					});
+				}
+			}else{
+				$.alert("提示", "请求可能发生异常，请稍后再试！");
+			}
 			//下省校验,结束	
 		}
 	};
@@ -1461,7 +1503,10 @@ stepOrder.main = (function(){
 		 });
 	};
 	
-	//订单取消
+	/*
+	 * 订单取消
+	 * 下省校验失败作废订单也在使用该函数
+	 */
 	var _orderCancel = function(){
 		if(stepOrder.main.isStepOrder && stepOrder.main.delOrderOperate){ //具有订单取消的权限才能取消订单
 			$("#order_confirm").hide(); //隐藏订单确认页面
@@ -1472,10 +1517,19 @@ stepOrder.main = (function(){
 			if(_funcIfCancel != null && typeof(_funcIfCancel) == "function"){
 				_funcIfCancel();
 			}
+		} else if(! stepOrder.main.isStepOrder){
+			$(".ZebraDialog").remove();
+			$.alert("提示","该订单【订单号："+stepOrder.main.orderParam.olId+"】不是分段受理订单，无法进行删除操作。");
+		} else if(! stepOrder.main.delOrderOperate){
+			$(".ZebraDialog").remove();
+			$.alert("提示","您没有权限删除该订单。");
 		}
 	};
 	
-	//作废购物车
+	/*
+	 * 作废购物车
+	 * 下省校验失败作废订单也在使用该函数
+	 */
 	var _delOrder = function(){
 		if(stepOrder.main.delOrderOperate){
 			if(stepOrder.main.orderParam.olId && stepOrder.main.areaId){  //作废购物车
@@ -1498,22 +1552,22 @@ stepOrder.main = (function(){
 	};
 	
 	return {
-		orderReduction : _orderReduction,
-		orderBack : _orderBack,
-		isStepOrder : _isStepOrder,
-		attach2Coupons : _attach2Coupons,
-		boProd2Tds : _boProd2Tds,
-		changeLabel : _changeLabel,
-		addAndDelTerminal : _addAndDelTerminal,
-		checkTerminalCode : _checkTerminalCode,
-		checkUim : _checkUim,
-		getAccessNumber : _getAccessNumber,
-		orderParam : _orderParam,
-		areaId : _areaId,
-		releaseUim : _releaseUim,
-		stepOrderConfirm : _stepOrderConfirm,
-		delOrderOperate : _delOrderOperate,
-		orderCancel : _orderCancel
+		orderReduction 	: _orderReduction,
+		orderBack		: _orderBack,
+		isStepOrder 	: _isStepOrder,
+		attach2Coupons 	: _attach2Coupons,
+		boProd2Tds 		: _boProd2Tds,
+		changeLabel 	: _changeLabel,
+		addAndDelTerminal 	: _addAndDelTerminal,
+		checkTerminalCode 	: _checkTerminalCode,
+		checkUim 			: _checkUim,
+		getAccessNumber 	: _getAccessNumber,
+		orderParam 			: _orderParam,
+		areaId 				: _areaId,
+		releaseUim 			: _releaseUim,
+		stepOrderConfirm 	: _stepOrderConfirm,
+		delOrderOperate 	: _delOrderOperate,
+		orderCancel 		: _orderCancel
 	};
 	
 })();
