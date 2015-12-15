@@ -129,7 +129,12 @@
 		                  					<!-- 只撤单个，不考虑其他情况及副卡其他关联，撤主卡才考虑-->
 											<a class="purchase" href="javascript:order.undo.undoCheck('only','N','${order.olNbr}_${sub.objInstId}_${sub.boId}')" name="${order.olNbr}" id="${order.olNbr}_${sub.objInstId}_${sub.boId}" olId="${order.olId}" olNbr="${order.olNbr}" partyid="${order.partyId}" 
                   								objId="${sub.objSpecId}" instId="${sub.objInstId}" boActionTypeCd="${sub.boActionTypeCd}" acctNbr="${sub.num}" custId="${order.partyId}" relaBoId="${sub.boId}" relatesBoId="${sub.relatesBoId}" areaId="${order.areaId}" queryAreaId ="${sub.areaId}" actionClassCd="${sub.actionClassCd}" is_new="${new_prod_num}" statusCd="${sub.statusCd}" cancelFlag="${order.cancelFlag}">撤单</a>
-		                  				<#elseif sub.actionClassCd==1300||sub.actionClassCd==1200 >
+		                  				<#elseif sub.actionClassCd==1300>
+		                  				<!-- 57560 update by huangjj3 1、撤单查询若订单项的actionClassCd=1300时，即产品类订单项，后台在原有list节点下拼装接入产品节点，
+		                  				prodInstId为接入产品实例ID ，prodSpecId为接入产品规格，前台订单提交时，若actionClassCd=1300时，busiObj节点下的instId传接入产品实例ID，objId传接入产品 规格ID。-->
+		                  					<a class="purchase2" style="display: none" name="${order.olNbr}" id="${order.olNbr}_${sub.objInstId}_${sub.boId}" olId="${order.olId}" olNbr="${order.olNbr}" partyid="${order.partyId}" 
+                  								objId="${sub.prodSpecId}" instId="${sub.prodInstId}" boActionTypeCd="${sub.boActionTypeCd}" acctNbr="${sub.num}" custId="${order.partyId}" relaBoId="${sub.boId}" relatesBoId="${sub.relatesBoId}" areaId="${order.areaId}" queryAreaId ="${sub.areaId}" actionClassCd="${sub.actionClassCd}" is_new="${new_prod_num}" statusCd="${sub.statusCd}" cancelFlag="${order.cancelFlag}">撤单</a>
+		                  				<#elseif sub.actionClassCd==1200 >
 		                  					<a class="purchase2" style="display: none" name="${order.olNbr}" id="${order.olNbr}_${sub.objInstId}_${sub.boId}" olId="${order.olId}" olNbr="${order.olNbr}" partyid="${order.partyId}" 
                   								objId="${sub.objSpecId}" instId="${sub.objInstId}" boActionTypeCd="${sub.boActionTypeCd}" acctNbr="${sub.num}" custId="${order.partyId}" relaBoId="${sub.boId}" relatesBoId="${sub.relatesBoId}" areaId="${order.areaId}" queryAreaId ="${sub.areaId}" actionClassCd="${sub.actionClassCd}" is_new="${new_prod_num}" statusCd="${sub.statusCd}" cancelFlag="${order.cancelFlag}">撤单</a>
 		                  				</#if>
@@ -138,6 +143,10 @@
 		                  				<#if sub.boActionTypeCd?? && sub.boActionTypeCd=="1" >
                							    <a class="purchase" href="javascript:order.undo.undoCheck('main','Y','${order.olNbr}_${sub.objInstId}_${sub.boId}')" name="${order.olNbr}" id="${order.olNbr}_${sub.objInstId}_${sub.boId}" olId="${order.olId}" olNbr="${order.olNbr}" partyid="${order.partyId}" 
                   								objId="${sub.objSpecId}" instId="${sub.objInstId}" boActionTypeCd="${sub.boActionTypeCd}" acctNbr="${sub.num}" custId="${order.partyId}" relaBoId="${sub.boId}" relatesBoId="${sub.relatesBoId}" areaId="${order.areaId}" queryAreaId ="${sub.areaId}" actionClassCd="${sub.actionClassCd}" is_new="${new_prod_num}" statusCd="${sub.statusCd}" cancelFlag="${order.cancelFlag}">撤单</a>
+		                  				<#elseif sub.actionClassCd==1300>
+		                  				    <!-- 不能做撤单操作，但是需要带出的数据 -->
+               							    <a class="purchase2" style="display: none" name="${order.olNbr}" id="${order.olNbr}_${sub.objInstId}_${sub.boId}" olId="${order.olId}" olNbr="${order.olNbr}" partyid="${order.partyId}" 
+                  								objId="${sub.prodSpecId}" instId="${sub.prodInstId}" boActionTypeCd="${sub.boActionTypeCd}"  acctNbr="${sub.num}" custId="${order.partyId}" relaBoId="${sub.boId}" relatesBoId="${sub.relatesBoId}" areaId="${order.areaId}" queryAreaId ="${sub.areaId}" actionClassCd="${sub.actionClassCd}" is_new="${new_prod_num}" statusCd="${sub.statusCd}" cancelFlag="${order.cancelFlag}">撤单</a>
 		                  				<#else>
         									<!-- 不能做撤单操作，但是需要带出的数据 -->
                							    <a class="purchase2" style="display: none" name="${order.olNbr}" id="${order.olNbr}_${sub.objInstId}_${sub.boId}" olId="${order.olId}" olNbr="${order.olNbr}" partyid="${order.partyId}" 
@@ -145,12 +154,22 @@
 		                  				</#if>
 		                  			<#elseif undo_num==1 >
 		                  				<!-- 非新装 二次业务等撤单 -->
+		                  				<#if sub.actionClassCd==1300>
                							    <a class="purchase2" style="display: none" name="${order.olNbr}" id="${order.olNbr}_${sub.objInstId}_${sub.boId}" olId="${order.olId}" olNbr="${order.olNbr}" partyid="${order.partyId}" 
+                  								objId="${sub.prodSpecId}" instId="${sub.prodInstId}" boActionTypeCd="${sub.boActionTypeCd}" acctNbr="${sub.num}" custId="${order.partyId}" relaBoId="${sub.boId}" relatesBoId="${sub.relatesBoId}" areaId="${order.areaId}" queryAreaId ="${sub.areaId}" actionClassCd="${sub.actionClassCd}" is_new="${new_prod_num}" statusCd="${sub.statusCd}" cancelFlag="${order.cancelFlag}">撤单</a>
+		                  			     <#else>
+		                  			         <a class="purchase2" style="display: none" name="${order.olNbr}" id="${order.olNbr}_${sub.objInstId}_${sub.boId}" olId="${order.olId}" olNbr="${order.olNbr}" partyid="${order.partyId}" 
                   								objId="${sub.objSpecId}" instId="${sub.objInstId}" boActionTypeCd="${sub.boActionTypeCd}" acctNbr="${sub.num}" custId="${order.partyId}" relaBoId="${sub.boId}" relatesBoId="${sub.relatesBoId}" areaId="${order.areaId}" queryAreaId ="${sub.areaId}" actionClassCd="${sub.actionClassCd}" is_new="${new_prod_num}" statusCd="${sub.statusCd}" cancelFlag="${order.cancelFlag}">撤单</a>
+		                  			     </#if>
 		                  			<#else>
 		                  				<!-- 不能做撤单操作，但是需要带出的数据 -->
+		                  				<#if sub.actionClassCd==1300>
                							    <a class="purchase2" style="display: none" name="${order.olNbr}" id="${order.olNbr}_${sub.objInstId}_${sub.boId}" olId="${order.olId}" olNbr="${order.olNbr}" partyid="${order.partyId}" 
+                  								objId="${sub.prodSpecId}" instId="${sub.prodInstId}" boActionTypeCd="${sub.boActionTypeCd}" acctNbr="${sub.num}" custId="${order.partyId}" relaBoId="${sub.boId}" relatesBoId="${sub.relatesBoId}" areaId="${order.areaId}" queryAreaId ="${sub.areaId}" actionClassCd="${sub.actionClassCd}" is_new="${new_prod_num}" statusCd="${sub.statusCd}" cancelFlag="${order.cancelFlag}">撤单</a>
+		                  			    <#else>
+		                  			        <a class="purchase2" style="display: none" name="${order.olNbr}" id="${order.olNbr}_${sub.objInstId}_${sub.boId}" olId="${order.olId}" olNbr="${order.olNbr}" partyid="${order.partyId}" 
                   								objId="${sub.objSpecId}" instId="${sub.objInstId}" boActionTypeCd="${sub.boActionTypeCd}" acctNbr="${sub.num}" custId="${order.partyId}" relaBoId="${sub.boId}" relatesBoId="${sub.relatesBoId}" areaId="${order.areaId}" queryAreaId ="${sub.areaId}" actionClassCd="${sub.actionClassCd}" is_new="${new_prod_num}" statusCd="${sub.statusCd}" cancelFlag="${order.cancelFlag}">撤单</a>
+		                  			    </#if>
 		                  			</#if>
 		                  		</#if>
 		                  		</#if>
@@ -159,6 +178,9 @@
 		                  		</#if>
                   		</td>
                		</tr>
+               	</#list>
+               	<#list order.phoneNumbers as phoneNum >
+               	  <a style="display: none" index="${phoneNum_index}"name="phoneList" areaId="${phoneNum.areaId}" phoneNumer="${phoneNum.phoneNumber}"></a>
                	</#list>
                 </#if>
               </#list>

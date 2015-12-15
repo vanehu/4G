@@ -224,8 +224,10 @@ order.undo = (function(){
 					flag = query.offer.invokeLoadInst(param);
 				}
 			}
-			var busiOrder_row = _bindParam(id);
-			busiOrder.push(busiOrder_row);
+			if(attr_Inst[$(this).attr("statusCd")]!=401300){//已撤单的订单提交节点不传   57560
+				var busiOrder_row = _bindParam($(this).attr("id"));
+				busiOrder.push(busiOrder_row);
+			}
 		}else{
 			var v_name = null ;
 			if(undo_type=="all"){//撤整个购物车
@@ -240,26 +242,32 @@ order.undo = (function(){
 					if(CONST.APP_DESC==0 && $(this).attr("is_new")=="0"){
 						if(attr_Inst[$(this).attr("instId")]==null||attr_Inst[$(this).attr("instId")]==undefined){
 							if($(this).attr("boActionTypeCd") != '1'){
-							    OrderInfo.order.soNbr = UUID.getDataId();
-								var param = {
-										areaId : $(this).attr("queryAreaId"),
-										acctNbr : $(this).attr("acctNbr"),
-										custId : $(this).attr("custId"),
-										soNbr : OrderInfo.order.soNbr ,
-										//queryType : "1,2,3,4,5",
-										instId : $(this).attr("instId"),
-										type : "2"
-								};
-								flag = query.offer.invokeLoadInst(param);
 								if(flag){
 									attr_Inst[$(this).attr("instId")] = 1 ;
 								}
 							}
 						}
 					}
-					var busiOrder_row = _bindParam($(this).attr("id"));
-					busiOrder.push(busiOrder_row);
+					if($(this).attr("statusCd")!=401300){//已撤单的订单提交节点不传   57560
+						var busiOrder_row = _bindParam($(this).attr("id"));
+						busiOrder.push(busiOrder_row);
+					}
 				}
+			});
+			$("a[name='phoneList']").each(function(){
+				    if($(this).attr("index")==0){
+				    	OrderInfo.order.soNbr = UUID.getDataId();
+				    }
+					var param = {
+							areaId : $(this).attr("areaId"),
+							acctNbr : $(this).attr("phoneNumer"),
+							custId : '',
+							soNbr : OrderInfo.order.soNbr ,
+							//queryType : "1,2,3,4,5",
+							instId : '',
+							type : "2"
+					};
+					flag = query.offer.invokeLoadInst(param);
 			});
 		}
 		
