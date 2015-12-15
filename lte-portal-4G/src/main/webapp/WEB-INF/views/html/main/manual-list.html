@@ -3,7 +3,10 @@
 	<thead>
 		<tr>
 			<td width="80">发布人</td>
+           	<td width="80">功能模块</td>
            	<td width="130">手册描述</td>
+           	<td width="80">需求编号</td>
+           	<td width="80">内部编号</td>
           	<td width="80">发布时间</td>
            	<td width="80">手册下载</td>
 		</tr>
@@ -13,14 +16,23 @@
 		<#list pageModel.list as manual>
 		<tr>
 			<td>${manual.issuerName}</td>
+			<td>
+				<#if manual.allModular=="1">营业受理
+				<#elseif manual.allModular=="2">系统管理
+				<#elseif manual.allModular=="3">渠道管理
+				<#elseif manual.allModular=="4">营销资源
+				<#else></#if>
+			</td>
 			<td>${manual.manualDesc}</td>
+			<td>${manual.requiRementNumber}</td>
+			<td>${manual.innerNumber}</td>
 			<td>${manual.createDate}</td>
 			<td><a style="text-decoration:underline;" href="${manual.attachmentUrl}">${manual.attachmentName}</a></td>
 		</tr>
 		</#list>
 	<#else>
 		<tr>
-			<td colspan="4">没有查询到操作手册</td>
+			<td colspan="7">没有查询到操作手册</td>
 		</tr>
 	</#if>
 	</tbody>
