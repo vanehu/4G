@@ -56,6 +56,8 @@
                           			<input type="text" class="numberTextBox" style="width:198px" id="p_endDt" readonly="readonly" value="${p_endDt}"  />
 									<label class="f_red">&nbsp;</label>
                           		</dd>
+                          		
+                          		<!-- 
                           		<dt>渠道：</dt>
                                 <dd>
                                   	<select id="p_channelId" class="width202" >
@@ -68,6 +70,36 @@
                                 	</select>
                                   	<label class="f_red">&nbsp;&nbsp;</label>
                                  </dd>
+                          		 -->
+                          		 
+                          		 <!-- 有权限的工号，才能查询到“地区”下面的所有渠道，且以弹出框形式进行渠道的查询；
+                                	否则，只能选择自己归属的渠道，并以下拉列表的形式展示渠道列表。 -->
+                               	<#if QryChannelAuth == "0">
+                               		<dt>选择地区：</dt>
+                                  	<dd>
+                                  		<input type="text" class="numberTextBox width198" readonly="readonly" id="p_areaId_val" onclick="cashier.main.chooseArea()" value="${p_areaId_val}" placeholder="请选择地区" />
+                                  		<input type="hidden" id="p_areaId" value="${p_areaId}">
+                                  		<label class="f_red">*</label>
+                                  	</dd>
+                                	<dt>渠道：</dt>
+                                	<dd>
+	                                  	<input id="qureyChannelList" class="numberTextBox width100" type="text" readonly="readonly" value="" />
+	                                  	<input id="p_channelId" class="numberTextBox width100" type="hidden" readonly="readonly" value="" />
+	                                  	<input id="channelTypeCd" class="numberTextBox width100" type="hidden" readonly="readonly" value="" />								
+	                                  	<label class="f_red">&nbsp;</label>
+                                 	</dd>
+                               	<#else>
+                                	<dt>渠道：</dt>
+                                	<select id="p_channelId" class="width202" >
+                                 	<option value="" >--选择渠道--</option>
+                               			<#if Session["_staff_channel"]?? && (Session["_staff_channel"]?size>0) >
+											<#list Session["_staff_channel"] as channel>
+		                                 		<option value="${channel.id}" areaid="${channel.areaId}" >${channel.name}</option>
+		                                	</#list>
+										</#if>
+                               		</select>
+                               		<label class="f_red">&nbsp;&nbsp;</label>
+                               	</#if>                                
                           		
                           	</dl>     
                           	     
@@ -181,6 +213,10 @@
 		<div class="easyDialogclose" id="d_offer_close"></div>
 		<div id="d_offer_info" ></div>
 	</div>
+	
+	<!-- 渠道查询弹出框 --start-->	 
+	<div id="qureyByChannel_dialog" class="easyDialogdiv" style="width: 1080px; height: 460px; display: none; margin: 0px;"></div>	
+	<!-- 渠道查询弹出框 --end-->
 	
 </@override>
 

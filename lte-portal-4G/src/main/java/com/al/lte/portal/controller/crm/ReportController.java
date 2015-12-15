@@ -109,9 +109,10 @@ public class ReportController extends BaseController {
         iPageSize = Integer.parseInt(pageSize);
 
         Map<String, Object> queryParam = new HashMap<String, Object>(param);
-    	
-    	if("queryChannel".equals(queryParam.get("queryFlag"))){//**渠道查询**
-			htmlDialog = "query-channel-dialog";
+        model.addAttribute("pageType", queryParam.get("pageType"));
+
+        if ("queryChannel".equals(queryParam.get("queryFlag"))) {//**渠道查询**
+            htmlDialog = "query-channel-dialog";
 			queryParam.remove("queryFlag");	
 			
 			if(iPage == 0){//首次打开弹窗页面，不进行数据查询
@@ -287,9 +288,34 @@ public class ReportController extends BaseController {
         		param.put("tSOrder", request.getParameter("tSOrder"));
         		if(request.getParameter("partyId")!=null){
         			param.put("partyId", request.getParameter("partyId"));
+                }
+            }
+        }
+        
+        //查询分段受理暂存单时门户后端判断如果没有“收银台查询权限”，不能查询该工号未分配的渠道，并提示异常
+        if("queryCashier".equals(pageType)){
+        	String qryChannelAuth = (String) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.CASHIER_CHANNEL_QUERY+"_"+sessionStaff.getStaffId());;
+        	if(!"0".equals(qryChannelAuth)){
+        		String channelId = request.getParameter("channelId");
+        		boolean invalidChannel = true;
+        		if(channelId == null || channelId.trim().length() == 0){
+        			invalidChannel = true;
+        		} else {
+        			List<Map> channelList = (List<Map>)session.getAttribute(SysConstant.SESSION_KEY_STAFF_CHANNEL);
+        			for(Map channelRow : channelList){
+        				String id = MapUtils.getString(channelRow, "id", "");
+        				if(id.equals(channelId)){
+        					invalidChannel = false;
+        					break;
+        				}
+        			}
+        		}
+        		if(invalidChannel){
+        			throw new BusinessException(ErrorCode.CUST_ORDER, param, null, new Throwable("分段受理暂存单查询异常，未分配收银台查询权限，不能查询未分配的渠道"));
         		}
         	}
         }
+        
         /*
          * 修改于2015-7-24 By zhangyu
          * 由于“收银台查询”和“受理订单查询”共用此代码，但二者“受理时间”限制不同，为“收银台查询”添加标志位，修改如下：
@@ -755,19 +781,33 @@ public class ReportController extends BaseController {
 	 * @throws AuthorityException
 	 */
 	@RequestMapping(value = "/queryCashier", method = RequestMethod.GET)
-	@AuthorityValid(isCheck = true)
-	public String queryCashier(Model model, HttpSession session)throws  AuthorityException{
-		model.addAttribute("current", EhcacheUtil.getCurrentPath(session,"report/queryCashier"));
+    @AuthorityValid(isCheck = true)
+    public String queryCashier(Model model, HttpSession session) throws AuthorityException {
+        model.addAttribute("current", EhcacheUtil.getCurrentPath(session, "report/queryCashier"));
+        
+        
+        SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+        		SysConstant.SESSION_KEY_LOGIN_STAFF);
+        //判别用户是否具有 收银台渠道查询权限
+        String qryChannelAuth = (String) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.CASHIER_CHANNEL_QUERY+"_"+sessionStaff.getStaffId());;
+        try {
+            if (qryChannelAuth == null) {
+                qryChannelAuth = staffBmo.checkOperatSpec(SysConstant.CASHIER_CHANNEL_QUERY, sessionStaff);
+                ServletUtils.setSessionAttribute(super.getRequest(),SysConstant.CASHIER_CHANNEL_QUERY+"_"+sessionStaff.getStaffId(), qryChannelAuth);
+            }
+        } catch (Exception e) {
+        	e.printStackTrace();
+            qryChannelAuth = "-1";
+        }
+        model.addAttribute("QryChannelAuth", qryChannelAuth);
 
-		Calendar c = Calendar.getInstance();
-		SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd");
-		String currentTime = f.format(c.getTime());
+        Calendar c = Calendar.getInstance();
+        SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd");
+        String currentTime = f.format(c.getTime());
 
-		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
-				SysConstant.SESSION_KEY_LOGIN_STAFF);
 
-		Map<String, Object> defaultAreaInfo = CommonMethods.getDefaultAreaInfo_MinimumC3(sessionStaff);
-		model.addAttribute("p_areaId", defaultAreaInfo.get("defaultAreaId"));
+        Map<String, Object> defaultAreaInfo = CommonMethods.getDefaultAreaInfo_MinimumC3(sessionStaff);
+        model.addAttribute("p_areaId", defaultAreaInfo.get("defaultAreaId"));
 		model.addAttribute("p_areaId_val", defaultAreaInfo.get("defaultAreaName"));
 		model.addAttribute("pageType", "queryCashier");
 		

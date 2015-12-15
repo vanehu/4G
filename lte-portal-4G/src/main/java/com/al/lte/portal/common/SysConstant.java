@@ -557,4 +557,7 @@ public final class SysConstant {
 	/**写卡新组件开关*/
 	public static final String CARD_NEW_DLL = "CARD_NEW_DLL";
 	
+	/** 收银台渠道查询权限--关键字 */
+	public static final String CASHIER_CHANNEL_QUERY = "CASHIER_CHANNEL_QUERY";
+	
 }

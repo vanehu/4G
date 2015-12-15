@@ -12,9 +12,9 @@ cashier.main = (function(){
 		if(pageIndex>0){
 			curPage = pageIndex ;
 		}
-		var pageType=$("#pageType").val();
-		var qryNumber=$("#p_qryNumber").val();
-		var p_olNbr = $("#p_olNbr").val();		
+		var pageType = $.trim($("#pageType").val());
+		var qryNumber = $.trim($("#p_qryNumber").val());
+		var p_olNbr = $.trim($("#p_olNbr").val());		
 		var startDt = $("#p_startDt").val().replace(/-/g,'');
 		var endDt = $("#p_endDt").val().replace(/-/g,'');
 		var temp = $("#p_channelId").val();
@@ -25,10 +25,20 @@ cashier.main = (function(){
 		} else{
 			channelId = temp;
 		}		
-		if(endDt - startDt > 7){
-			$.alert("提示","请将查询时间段缩小到7天之内 !");
-			return;
+		
+		try {
+			var startDate = new Date($("#p_startDt").val());
+			var endDate = new Date($("#p_endDt").val());
+			if((endDate.getTime() - startDate.getTime())/1000/60/60/24 > 7){
+				$.alert("提示","请将查询时间段缩小到7天之内 !");
+				return;
+			}
+		} catch (e) {
 		}
+//		if(endDt - startDt > 7){
+//			$.alert("提示","请将查询时间段缩小到7天之内 !");
+//			return;
+//		}
 		if(channelId==null ||channelId==""||channelId==undefined){
 			$.alert("提示","渠道Id为空");
 			return ;
@@ -103,7 +113,7 @@ cashier.main = (function(){
     		$.alert("提示","购物车Id为空,该暂存单不能还原！");
 			return;
     	}
-    	window.location.href=contextPath+"/order/orderReduction?areaId="+orderParam.areaId+"&acctNbr="+orderParam.acctNbr+"&custId="+orderParam.custId+"&soNbr="+orderParam.soNbr+"&instId="+orderParam.instId+"&olId="+orderParam.olId;
+    	window.location.href=contextPath+"/order/orderReduction?areaId="+orderParam.areaId+"&acctNbr="+orderParam.acctNbr+"&custId="+orderParam.custId+"&soNbr="+orderParam.soNbr+"&instId="+orderParam.instId+"&olId="+orderParam.olId+"&channelId="+orderParam.channelId;
     };
 	
 	var _initDic = function(){
@@ -149,14 +159,149 @@ cashier.main = (function(){
 		_queryCashierList(queryParam);
 		
 	};
-		
 	
+	//受理工号查询和渠道查询(现用于受理订单查询页面)
+	var _qureyStaffAndChlPage = function(qryPage){
+		/*var channelTypeCd = $("#channelTypeCd").val();
+		if(channelTypeCd == undefined || channelTypeCd == ""){
+			$.alert("提示","请选择渠道类型");
+			return ;
+		}*/
+		_qureyStaffAndChl($("#queryFlag_dialog").val(),qryPage);
+	};
+	
+	var _qureyStaffAndChl = function(queryFlag,qryPage){
+		
+		var pageType = 'cashier'; //页面标识，查询购物车，区别于受理订单查询
+		var param = {};
+		var div_dialog;
+		var pageSize = 10;
+		var list_body;
+		
+		//获取地区ID
+		var aredId = $("#p_areaId").val();
+		
+		if("queryStaff" == queryFlag){//拼装受理工号查询参数
+			if($("#p_channelId").val() == undefined || $("#p_channelId").val() == "" || $("#p_channelId").val() == null){
+				$.alert("提示","请先选择渠道 !");
+				return ;
+			}
+			var channelId = $("#p_channelId").val();
+			var channelName = $("#qureyChannelList").val();
+			if(channelName == "" || channelName == null || channelName == undefined)
+				channelName = $("#p_channelId").find("option:selected").text();
+			param = {		
+					"pageType" : pageType,
+					"queryFlag":queryFlag,//查询标志，用于区分受理工号查询和渠道查询
+					"areaId":aredId,
+					"areaId_val":$("#p_areaId_val").val(),
+					"staffCode":$("#staffCode_dialog").val(),//受理工号
+					"staffName":$("#staffName_dialog").val(),//受理人
+					"channelId":channelId,
+					"channelName":channelName,
+					"pageSize":pageSize,
+					"pageIndex":qryPage
+			};
+			div_dialog = "qureyByStaffCode_dialog";
+			list_body = "staff_list_body";
+			
+		} else if("queryChannel" == queryFlag){//拼装渠道查询参数
+			
+			param = {
+					"pageType" : pageType,
+					"queryFlag":queryFlag,//查询标志，用于区分受理工号查询和渠道查询(不作为后台的入参)
+					"dbRouteLog":aredId,//数据库路由标识,针对转售系统：转售商Id; 4G系统：地区ID
+					"commonRegionId":aredId,
+					"areaId_val":$("#p_areaId_val").val(),
+					"channelName":$("#channelName_dialog").val(),
+					"channelId":$("#p_channelId").val(),
+					//"channelTypeCd":$("#channelTypeCd_dialog").val(),//渠道类别
+					"pageSize":""+pageSize+"",
+					"pageIndex":""+qryPage+""
+			};
+			div_dialog = "qureyByChannel_dialog";
+			list_body = "channel_list_body";
+		}
+
+		$.callServiceAsHtml(contextPath+"/report/qureyStaffAndChl",param,{
+			"before":function(){
+				$.ecOverlay("正在查询，请稍等...");
+			},
+			"always":function(){
+				$.unecOverlay();
+			},
+			"done" : function(response){
+				if(!response){
+					response.data='';
+				}
+				$("#"+div_dialog).html(response.data);
+				
+				$("#"+list_body+" tr").each(function(){$(this).off("click").on("click",function(event){
+					_linkSelectPlan("#"+list_body+" tr",this);
+					event.stopPropagation();
+					});});
+				easyDialog.open({
+					container : div_dialog
+				});
+			},
+			"fail":function(response){
+				$.unecOverlay();
+				$.alert("提示","请求可能发生异常，请稍后再试！");
+			}
+		});
+	};
+	
+	var _linkSelectPlan=function(loc, selected){
+		$(loc).removeClass("plan_select");
+		$(loc).children(":first-child").html("");
+		$(selected).addClass("plan_select");
+		var nike="<i class='select'></i>";
+		$(selected).children(":first").html(nike);
+	};
+	
+	var _setStaff = function(){
+		var $staff = $("#staff_list_body .plan_select");
+		$staff.each(function(){
+			$("#qureyStaffCode").val($(this).attr("staffCode"));
+			$("#p_staffId").val($(this).attr("staffId"));
+		});
+		if($staff.length > 0){
+			easyDialog.close();
+		}else{
+			$.alert("操作提示","您没有选择任何记录 !");
+		}
+	};
+	
+	var _setChannel = function(){
+		var $channel = $("#channel_list_body .plan_select");
+		$channel.each(function(){
+			$("#qureyChannelList").val($(this).attr("channelName"));
+			$("#p_channelId").val($(this).attr("channelId"));
+			//每次改变渠道时，启动清空受理工号内容
+			$("#qureyStaffCode").val("");
+			$("#p_staffId").val("");
+		});
+		if($channel.length > 0){
+			easyDialog.close();
+		}else{
+			$.alert("操作提示","您没有选择任何记录 !");
+		}
+	};
+	
+	var _chooseArea = function(){
+		order.area.chooseAreaTreeManger("report/cartMain","p_areaId_val","p_areaId",3);
+	};
 	
 	return {
 		queryCartList:_queryCartList,
 		initDic:_initDic,
 		queryCashierList:_queryCashierList,
-		reduction:_reduction
+		reduction:_reduction,
+		qureyStaffAndChl:_qureyStaffAndChl,
+		qureyStaffAndChlPage:_qureyStaffAndChlPage,
+		setStaff:_setStaff,
+		setChannel:_setChannel,
+		chooseArea : _chooseArea
 	};
 	
 })();
@@ -168,6 +313,10 @@ $(function(){
 	});
 	$("#p_endDt").off("click").on("click",function(){
 		$.calendar({ format:'yyyy年MM月dd日 ',real:'#p_endDt',minDate:$("#p_startDt").val(),maxDate:'%y-%M-%d' });	
+	});
+	
+	$("#qureyChannelList").off("click").on("click",function(){//渠道查询	
+		cashier.main.qureyStaffAndChl("queryChannel",0);
 	});
 	
 	cashier.main.initDic();

@@ -50,6 +50,7 @@ import com.al.ecs.exception.ResultConstant;
 import com.al.ecs.spring.annotation.log.LogOperatorAnn;
 import com.al.ecs.spring.annotation.session.AuthorityValid;
 import com.al.ecs.spring.controller.BaseController;
+import com.al.lte.portal.bmo.crm.CartBmo;
 import com.al.lte.portal.bmo.crm.CommonBmo;
 import com.al.lte.portal.bmo.crm.CustBmo;
 import com.al.lte.portal.bmo.crm.OrderBmo;
@@ -100,12 +101,16 @@ public class OrderController extends BaseController {
 	@Qualifier("com.al.lte.portal.bmo.staff.StaffBmo")
 	private StaffBmo staffBmo;
 	
-	@Autowired
-	@Qualifier("com.al.lte.portal.bmo.crm.ProdBmo")
-	private ProdBmo prodBmo;
-	
-	@Autowired
-	PropertiesUtils propertiesUtils;
+    @Autowired
+    @Qualifier("com.al.lte.portal.bmo.crm.ProdBmo")
+    private ProdBmo prodBmo;
+    
+    @Autowired
+    @Qualifier("com.al.lte.portal.bmo.crm.CartBmo")
+    private CartBmo cartBmo;
+
+    @Autowired
+    PropertiesUtils propertiesUtils;
 	
 	/** 短信验证前，登陆会话临时ID */
 	public static final String SESSION_KEY_TEMP_LOGIN_STAFF = "_session_key_tenm_sms";
@@ -3206,22 +3211,65 @@ public class OrderController extends BaseController {
 		model.addAttribute("resMapJson", JsonUtil.buildNormal().objectToJson(param));	
 		return "/cashier/step-order-confirm";
 	}
-	
-	/**
-	 * 分段受理--订单还原入口
-	 * @param param orderParam = {areaId:"",accNbr:"",custId:"",soNbr:"",prodInstId:"",olId:""}
-	 * @param model
-	 * @param response
-	 * @param request
+
+    /**
+     * 分段受理--订单还原入口
+     * @param param orderParam = {areaId:"",accNbr:"",custId:"",soNbr:"",prodInstId:"",olId:"",channelId:""}
+     * @param model
+     * @param response
+     * @param request
 	 * @return
 	 */
 	@RequestMapping(value = "/orderReduction", method = RequestMethod.GET)
 	public String orderReduction(@RequestParam Map<String, Object> param,Model model
 			,HttpServletResponse response,HttpServletRequest request){
-		model.addAttribute("orderParam", JsonUtil.buildNormal().objectToJson(param));
-		log.debug("orderReduction.param={}", param);
-		return "/cashier/step-order-main";
-	}
+        model.addAttribute("orderParam", JsonUtil.buildNormal().objectToJson(param));
+        log.debug("orderReduction.param={}", param);
+        
+        SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+        		SysConstant.SESSION_KEY_LOGIN_STAFF);
+        //分段受理暂存单“还原”时，门户后端判断，如果没有“收银台查询权限”，获取该订单对应的渠道id，如果不在该工号已分配的渠道范围内，则不能还原，并提示异常。
+        try {
+        	String qryChannelAuth = (String) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.CASHIER_CHANNEL_QUERY+"_"+sessionStaff.getStaffId());;
+        	if(!"0".equals(qryChannelAuth)){
+        		boolean invalidChannel = true;
+        		String channelId = (String) param.get("channelId");
+        		if(channelId == null || channelId.trim().length() == 0){
+        			//后台查询购物车详情接口，没有在orderListInfo中返回channelId，取订单项orderLists中的首个节点channelId，如果没有订单项，则为空；此验证方式待改造，不应从前端获取channelId
+	        		Map<String, Object> paramMap = new HashMap<String, Object>();
+	        		paramMap.put("areaId", param.get("areaId"));
+	        		paramMap.put("olId", param.get("olId"));
+	        		Map cartInfo = cartBmo.queryCartOrder(paramMap, null, sessionStaff);
+	        		if(cartInfo != null && cartInfo.get("orderLists") != null){
+	        			channelId = (String)(((Map)(((List)(((Map)(((List)(cartInfo.get("orderLists"))).get(0))).get("list"))).get(0))).get("channelId"));
+	        		}
+        		}
+        		if(channelId == null || channelId.trim().length() == 0){
+        			invalidChannel = true;
+        		} else {
+        			List<Map> channelList = (List<Map>)request.getSession().getAttribute(SysConstant.SESSION_KEY_STAFF_CHANNEL);
+        			for(Map channelRow : channelList){
+        				String id = MapUtils.getString(channelRow, "id", "");
+        				if(id.equals(channelId)){
+        					invalidChannel = false;
+        					break;
+        				}
+        			}
+        		}
+        		if(invalidChannel){
+        			throw new BusinessException(ErrorCode.CUST_ORDER, param, null, new Throwable("分段受理暂存单还原异常，未分配收银台查询权限，不能受理未分配的渠道订单"));
+        		}
+        	}
+        } catch (BusinessException be) {
+            return super.failedStr(model, be);
+        } catch (InterfaceException ie) {
+            return super.failedStr(model, ie, param, ErrorCode.CUST_ORDER_DETAIL);
+        } catch (Exception e) {
+            return super.failedStr(model, ErrorCode.CUST_ORDER_DETAIL, e, param);
+        }
+        
+        return "/cashier/step-order-main";
+    }
 	
 	/**
 	 * 获取暂存权限

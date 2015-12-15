@@ -49,7 +49,7 @@
                     <#elseif pageType=="link">
                     <a class="purchase" href="javascript:cart.main.queryCartLink('${orderLists.olId}', '${cart.areaId}', '${cart.olNbr}', '${cart.channelId}')" type="main">环节</a>
                     <#elseif pageType=="queryCashier">
-                    <a class="purchase" href="javascript:cashier.main.reduction({areaId:'${cart.areaId}',acctNbr:'${cart.accessNumber}',custId:'${cart.partyId}',soNbr:'${orderLists.soNbr}',instId:'${cart.objInstId}',olId:'${orderLists.olId}'})" type="main" >还原</a>
+                    <a class="purchase" href="javascript:cashier.main.reduction({areaId:'${cart.areaId}',acctNbr:'${cart.accessNumber}',custId:'${cart.partyId}',soNbr:'${orderLists.soNbr}',instId:'${cart.objInstId}',olId:'${orderLists.olId}',channelId:'${cart.channelId}'})" type="main" >还原</a>
                     <#elseif pageType=="saveOrder">
                     <a class="purchase" href="javascript:cart.main.queryReOrder({areaId:'${cart.areaId}',customerOrderId:'${orderLists.olId}',backFlag:'Y',acctNbr:'${cart.accessNumber}'})" type="main" >处理</a>
                     <a class="purchase" href="javascript:cart.main.delOrder({areaId:'${cart.areaId}',olId:'${orderLists.olId}'})" type="main" >取消</a>
