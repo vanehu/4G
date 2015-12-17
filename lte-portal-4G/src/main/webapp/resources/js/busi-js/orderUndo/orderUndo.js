@@ -208,26 +208,25 @@ order.undo = (function(){
 		
 		
 		if(submit_type=="N"){
-			if (CONST.APP_DESC == 0 && $("#" + id).attr("is_new") == "0") {
-				//var actionClassCd = $("#" + id).attr("actionClassCd");
-				var boActionTypeCd = $("#" + id).attr("boActionTypeCd");
-				if (boActionTypeCd != 1) {
-					var param = {
-						areaId : $("#" + id).attr("queryAreaId"),
-						acctNbr : $("#" + id).attr("acctNbr"),
-						custId : $("#" + id).attr("custId"),
-						soNbr : OrderInfo.order.soNbr,
-						// queryType : "1,2,3,4,5",
-						instId : $("#" + id).attr("instId"),
-						type : "2"
-					};
-					flag = query.offer.invokeLoadInst(param);
-				}
-			}
-			if(attr_Inst[$(this).attr("statusCd")]!=401300){//已撤单的订单提交节点不传   57560
-				var busiOrder_row = _bindParam($(this).attr("id"));
+			if($("#" + id).attr("statusCd")!=401300){//已撤单的订单提交节点不传   57560
+				var busiOrder_row = _bindParam($("#" + id).attr("id"));
 				busiOrder.push(busiOrder_row);
 			}
+			$("a[name='phoneList']").each(function(){//查全量
+			    if($(this).attr("index")==0){
+			    	OrderInfo.order.soNbr = UUID.getDataId();
+			    }
+				var param = {
+						areaId : $(this).attr("areaId"),
+						acctNbr : $(this).attr("phoneNumer"),
+						custId : '',
+						soNbr : OrderInfo.order.soNbr ,
+						//queryType : "1,2,3,4,5",
+						instId : '',
+						type : "2"
+				};
+				flag = query.offer.invokeLoadInst(param);
+		   });
 		}else{
 			var v_name = null ;
 			if(undo_type=="all"){//撤整个购物车
