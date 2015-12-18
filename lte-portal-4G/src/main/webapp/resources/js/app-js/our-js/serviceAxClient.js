@@ -242,6 +242,12 @@
 						 			return;
 						 		}
 				 			}
+				 			
+				 			if (xhr.statusText == "timeout") {
+								alert("请求超时！")
+					 			return;
+				 			} 
+				 			
 				 			if (xhr.status == 0) {//未初始化
 				 				return;
 				 			} else if (xhr.status == 404) {
