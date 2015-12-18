@@ -1207,7 +1207,7 @@ AttachOffer = (function() {
 			}
 			if (optDependOffer != undefined && ec.util.isArray(optDependOffer)) {
 				for (var i = 0; i < optDependOffer.length; i++) {
-					content += "可以开通：" + '<input id="'+optDependOffer[i].offerSpecId+'" checked="checked" type="checkbox" value="'+optDependOffer[i].offerSpecId+'"/>' + optDependOffer[i].offerSpecName + "<br>";
+					content += "可选订购：" + '<input id="'+optDependOffer[i].offerSpecId+'" type="checkbox" value="'+optDependOffer[i].offerSpecId+'"/>' + optDependOffer[i].offerSpecName + "<br>";
 					param.optDependOffer.push(optDependOffer[i].offerSpecId);
 				}
 			}
@@ -1220,7 +1220,7 @@ AttachOffer = (function() {
 			content = "<div style='max-height:300px;overflow:auto;'>" + content + "</div>";
 			$.confirm("订购： " + specName,content,{ 
 				yes:function(){
-					CacheData.setOffer2ExcludeOfferSpec(param);
+					CacheData.setOffer2ExcludeOfferSpec(prodId,param);
 					excludeAddattch(prodId,offerSpecId,param);
 					excludeAddServ(prodId,"",paramObj);
 				},
@@ -1694,7 +1694,10 @@ AttachOffer = (function() {
 				$li.append('<dd class="time" id="time_'+prodId+'_'+offerSpecId+'" onclick="AttachOffer.showTime('+prodId+','+offerSpecId+',\''+newSpec.offerSpecName+'\');"></dd>');
 			}
 			if(ec.util.isObj(newSpec.ifOrderAgain)&&newSpec.ifOrderAgain=="Y"){
-				$li.append('<dd id="can_'+prodId+'_'+offerSpecId+'" class="canshu2" onclick="AttachOffer.setParam('+prodId+','+offerSpecId+');"></dd>');
+				if($li.find("dd.canshu").length + $li.find("dd.canshu2").length > 0)
+					$li.append('<dd id="can_'+prodId+'_'+offerSpecId+'" class="canshu2" style="top:20px;" onclick="AttachOffer.setParam('+prodId+','+offerSpecId+');"></dd>');
+				else
+					$li.append('<dd id="can_'+prodId+'_'+offerSpecId+'" class="canshu2" onclick="AttachOffer.setParam('+prodId+','+offerSpecId+');"></dd>');
 			}
 			if(newSpec.ifReset=="N"){
 				$li.append('<dd class="time2"><img src="../image/common/no.png"/></dd>');
@@ -2355,7 +2358,7 @@ AttachOffer = (function() {
 	
 	//显示参数
 	var _showParam = function(prodId,offerSpecId,flag){	
-		if(flag==1){ //显示已订购附属		
+		if(flag==1){ //显示已订购附属
 			var offer = CacheData.getOfferBySpecId(prodId,offerSpecId);
 			if(!ec.util.isArray(offer.offerMemberInfos)){	
 				var param = {
@@ -3861,7 +3864,7 @@ AttachOffer = (function() {
 			newSpec.counts=offer.counts;
 		}
 		var content = '<form id="paramForm">' ;
-		content += "次数" + ' : <input id="text_'+prodId+'_'+offerSpecId  
+		content += "重复订购次数" + ' : <input id="text_'+prodId+'_'+offerSpecId  
 		+'" class="inputWidth183px" type="text" value="'+newSpec.counts+'"><br>'; 
 		content +='</form>' ;
 		$.confirm("参数设置： ",content,{ 

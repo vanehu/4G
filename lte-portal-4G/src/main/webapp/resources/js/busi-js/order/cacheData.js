@@ -74,7 +74,7 @@ CacheData = (function() {
 	};
 	
 	//把选中的销售品保存到依赖或互斥的销售品规格中
-	var _setOffer2ExcludeOfferSpec = function(param){
+	var _setOffer2ExcludeOfferSpec = function(prodId,param){
 		if(param.dependOffer.offerGrpInfos.length>0){  // 依赖组
 			var dependOffer=param.dependOffer;
 			for (var i = 0; i < dependOffer.offerGrpInfos.length; i++) {
@@ -89,6 +89,21 @@ CacheData = (function() {
 							subOfferSpecInfo.isCheck=true;
 						}
 					});
+				}
+			}
+		}
+		/**
+		 * 	可选依赖包遍历optDependOffer
+		 * 	defaultOffer	默认，默认打钩，钩可以去掉，
+		 *	dependOffer 	依赖，默认打钩，钩不能去掉，
+		 *	excludeOffer	互斥，用来和已订购的销售品对比，如果有互斥中的，就退订，
+		 *	optDependOffer	可选依赖
+		 */
+		if(param.optDependOffer.length > 0){
+			var optDependOffers = param.optDependOffer;
+			for (var i = 0; i < optDependOffers.length; i++) {
+				if($("#"+optDependOffers[i]+"").attr("checked") == "checked"){
+					AttachOffer.addOpenList(prodId,optDependOffers[i]);
 				}
 			}
 		}
