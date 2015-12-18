@@ -106,9 +106,10 @@ OrderInfo = (function() {
 			redirectUri:"",
 			isFee:"1",
 			extCustOrderID:"",
-			reloadFlag:"",
-			prodOfferId:"",
-			prodOfferName:"" 
+		reloadFlag:"",
+		prodOfferId:"",
+		prodOfferName:"",
+		mergeFlag:"0"
 	}
 	
 	var _surplusNum = 0;//剩余可纳入副卡数量
