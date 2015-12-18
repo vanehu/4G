@@ -103,14 +103,11 @@ offerChangeNew = (function() {
 		if(OrderInfo.provinceInfo.reloadFlag=="N"){
 			//alert("二次加载");
 			url = contextPath+"/token/app/order/offerSpecListSub";
-		}
-		else{
-			
+		}else{
 			if(OrderInfo.provinceInfo.prodOfferId!=null && OrderInfo.provinceInfo.prodOfferId!="" && OrderInfo.provinceInfo.prodOfferId!="" && OrderInfo.provinceInfo.prodOfferId!="undefined"){
 				//alert("带主套餐id");
 				url = contextPath+"/token/app/order/offerSpecListSub";
-			}
-			else{
+			}else{
 				//alert("不带主套餐id");
 				url = contextPath+"/token/app/order/offerSpecList";
 			}
@@ -141,11 +138,17 @@ offerChangeNew = (function() {
 				if(OrderInfo.provinceInfo.reloadFlag=="N"){
 					//获取数据里的主套餐id
 					
-					var offid=OrderInfo.reloadOrderInfo.orderList.custOrderList[0].busiOrder[1].busiObj.objId;
+					var offid="";
 
+					//获取主套餐ID，原先获取方法错误
+					$.each(OrderInfo.reloadOrderInfo.orderList.custOrderList[0].busiOrder,function(){
+						if(this.boActionType.actionClassCd=="1200" && this.boActionType.boActionTypeCd=="S1" && this.busiObj.offerTypeCd=="1"){
+							offid=this.busiObj.objId;
+						}
+					});
+					
 					offerChangeNew.buyService(offid,"");
-				}
-				else{
+				}else{
 					if(OrderInfo.provinceInfo.prodOfferId!=null && OrderInfo.provinceInfo.prodOfferId!=""){
 						order.service.buyService(OrderInfo.provinceInfo.prodOfferId,"");
 					}
@@ -159,6 +162,7 @@ offerChangeNew = (function() {
 			}
 		});
 	};
+	
 	//订购销售品
 	var _buyService = function(specId,price) {
 		
@@ -174,7 +178,7 @@ offerChangeNew = (function() {
 					"areaId" : OrderInfo.staff.soAreaId
 			};
 			if(OrderInfo.actionFlag == 2){  //套餐变更不做校验
-				offerChangeNew.opeSer(param);   
+				offerChangeNew.opeSer(param);
 			}else {  //新装
 				var boInfos = [{
 					boActionTypeCd: "S1",//动作类型
@@ -207,11 +211,13 @@ offerChangeNew = (function() {
 			offerTypeCd : 1,
 			partyId: OrderInfo.cust.custId
 		};
+		
 		var offerSpec = query.offer.queryMainOfferSpec(param); //查询主销售品构成
 	
 		if(!offerSpec){
 			return;
 		}
+		
 		if(OrderInfo.actionFlag == 2){ //套餐变更
 			var url=contextPath+"/app/order/queryFeeType";
 			$.ecOverlay("<strong>正在查询是否判断付费类型的服务中,请稍后....</strong>");
@@ -311,10 +317,12 @@ offerChangeNew = (function() {
 		if(oldLen>1){ //多成员角色，目前只支持主副卡
 			memberNum = 2;
 		}
+		
 		//把旧套餐的产品自动匹配到新套餐中
 		if(!_setChangeOfferSpec(memberNum,viceNum)){  
 			return;
 		};
+		
 		//4g系统需要
 		if(CONST.getAppDesc()==0){ 
 			//老套餐是3G，新套餐是4G
@@ -328,7 +336,8 @@ offerChangeNew = (function() {
 				return ;
 			}
 		}
-		if(OrderInfo.actionFlag == 2){ //套餐变更	
+		
+		if(OrderInfo.actionFlag == 2){ //套餐变更
 			var custOrderList = OrderInfo.reloadOrderInfo.orderList.custOrderList[0].busiOrder;
 			var newsplitflag = 1;
 			var oldsplitflag = 1;
@@ -1213,6 +1222,7 @@ offerChangeNew = (function() {
 									var newObject = jQuery.extend(true, {}, roleObj); 
 									newObject.prodInstId = offerMember.objInstId;
 									newObject.accessNumber = offerMember.accessNumber;
+									newObject.memberRoleCd = offerMember.roleCd;
 									offerRole.prodInsts.push(newObject);
 									if(offerRole.prodInsts.length>roleObj.maxQty){
 										$.alert("规则限制","新套餐【"+offerRole.offerRoleName+"】角色最多可以办理数量为"+roleObj.maxQty+",而旧套餐数量大于"+roleObj.maxQty);
@@ -1617,6 +1627,9 @@ offerChangeNew = (function() {
 											//开始解析终端
 											for(var i=0;i<zdDatas.bo2Coupons.length;i++){
 												var bo2Coupons = zdDatas.bo2Coupons[i];
+												if(bo2Coupons.num==undefined){
+													bo2Coupons.num=i+1;
+												}
 												$("#terminalText_"+bo2Coupons.prodId+"_"+bo2Coupons.attachSepcId+"_"+bo2Coupons.num).val(bo2Coupons.couponInstanceNumber);
 												offerChangeNew.checkTerminalCode(bo2Coupons.prodId,bo2Coupons.attachSepcId,bo2Coupons.num,"0");
 											}
@@ -2216,7 +2229,8 @@ offerChangeNew = (function() {
 	var _delOffer = function(prodId,offerId){
 		var $span = $("#li_"+prodId+"_"+offerId).find("span"); //定位删除的附属
 		if($span.attr("class")=="del"){  //已经退订，再订购
-			AttachOffer.addOffer(prodId,offerId,$span.text());
+			//二次加载，如果原先就是删除状态，不需要操作
+			//AttachOffer.addOffer(prodId,offerId,$span.text());
 		}else { //退订
 			var offer = CacheData.getOffer(prodId,offerId);
 		
@@ -2272,6 +2286,7 @@ offerChangeNew = (function() {
 			delServByOffer(prodId,offer);
 		}
 	};
+	
 	//删除附属销售品带出删除功能产品
 	var delServByOffer = function(prodId,offer){	
 		$.each(offer.offerMemberInfos,function(){

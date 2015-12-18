@@ -525,7 +525,8 @@ PackageAttachOffer = (function() {
 	var _delOffer = function(prodId,offerId){
 		var $span = $("#li_"+prodId+"_"+offerId).find("span"); //定位删除的附属
 		if($span.attr("class")=="del"){  //已经退订，再订购
-			AttachOffer.addOffer(prodId,offerId,$span.text());
+			//二次加载，如果原先就是删除状态，不需要操作
+			//AttachOffer.addOffer(prodId,offerId,$span.text());
 		}else { //退订
 			var offer = CacheData.getOffer(prodId,offerId);
 			if(!ec.util.isArray(offer.offerMemberInfos)){	

@@ -476,7 +476,7 @@ uiAttachOffer = (function() {
 	var _delOfferSub = function(prodId,offerId){
 		var $span = $("#li_"+prodId+"_"+offerId).find("span"); //定位删除的附属
 		if($span.attr("class")=="del"){  //已经退订，再订购
-			AttachOffer.addOffer(prodId,offerId,$span.text());
+			//AttachOffer.addOffer(prodId,offerId,$span.text());
 		}else { //退订
 			var offer = _getOffer(prodId,offerId);
 			if(!ec.util.isArray(offer.offerMemberInfos)){	
