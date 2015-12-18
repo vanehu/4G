@@ -1035,6 +1035,126 @@ order.cust.mgr = (function(){
 		$("#acctList").show();
 	};
 	
+	//客户架构信息查询接口
+	var _queryCustCompreInfo = function(mainPhoneNum,provCustAreaId,busitypeflag,oldFlag){
+		var param = {
+			    "acctNbr": "",
+			    "areaId": provCustAreaId,
+			    "diffPlace": "local",
+			    "identidies_type": "",
+			    "identityCd": "",
+			    "identityNum": "",
+			    "olTypeCd": "8",
+			    "operType": busitypeflag,
+			    "partyName": "",
+			    "prodClass": "12",
+			    "queryType": "",
+			    "queryTypeValue": ""
+			};
+		if(busitypeflag==1){
+			param.queryTypeValue = mainPhoneNum;
+			param.identidies_type = "客户编码";
+			param.queryType = "custNumber";
+		}else{
+			param.acctNbr = mainPhoneNum;
+			param.identidies_type = "接入号码";
+		}
+		$.ecOverlay("<strong>正在查询客户架构信息中,请稍等...</strong>");
+		var response = $.callServiceAsJson(contextPath+"/token/pc/cust/queryCustCompreInfo", param);
+		$.unecOverlay();
+		if(oldFlag=="OLD"){
+//			var oldCust = {
+//					addressStr: "上海市",
+//					areaId: "8320100",
+//					areaName: "南京市",
+//					authFlag: "1",
+//					custFlag: "1100",
+//					custId: "700000483622",
+//					idCardNumber: "905899",
+//					identityCd: "2",
+//					identityName: "军人身份证件",
+//					norTaxPayer: "",
+//					partyName: "AH测试",
+//					segmentId: "1100",
+//					segmentName: "公众客户",
+//					vipLevel: "1300",
+//					vipLevelName: "普通"
+//			}
+//			if(OrderInfo.actionFlag!=1 && oldCust.custId!=OrderInfo.cust.custId){
+//				$.alert("提示",accNbr+"和主卡的客户不一致！");
+//				return false;
+//			}
+			OrderInfo.oldprodInstInfos=[{"stopRecordCd":"","prodBigClass":"12","ownerId":null,"roleName":"乐享主卡","treeFlag":"","areaId":"8320100","extProdInstId":"251248460392","prodStateName":"在用","prodClass":"3","prodOfferName":"乐享4G201407 399元-主套餐","startDt":"2015-12-01 00:00:00","prodStateCd":"100000","feeType":{"feeType":"1200","feeTypeName":"后付费"},"prodStopRecords":[{"stopRecordCd":"","stopRecordName":"","statusCd":""}],"custId":700000483622,"ownerName":null,"roleCd":"10100002","stopRecordName":"","corProdInstId":"993400700019668028","productId":235010000,"ifLteNewInstall":"Y","accNbr":"17751762731","prodInstId":700019668028,"mainProdOfferInstInfos":[{"prodOfferName":"乐享4G201407 399元-主套餐","extProdOfferId":"300509026761","prodOfferId":81009,"prodOfferInstId":700003952036,"extProdOfferInstId":"993400700003952036","startDt":"2015-12-01 00:00:00","endDt":"3000-01-01 00:00:00","description":"天翼乐享4G-201406/399元","custName":"30000101000000","custId":700000483622,"offerType":"11","offerNbr":"5000001801100008","roleName":"乐享主卡","roleCd":"10100002","is3G":"N"}],"productName":"移动电话（仅含本地语音）","zoneNumber":"025"}]
+//			if(OrderInfo.oldprodInstInfos.prodStateCd!=CONST.PROD_STATUS_CD.NORMAL_PROD){
+//				$.alert("提示",custinfolist[i].accNbr+"不是在用产品！");
+//				return false;
+//			}
+//			if(OrderInfo.actionFlag!=1 && OrderInfo.oldprodInstInfos.feeType!=order.prodModify.choosedProdInfo.feeType){
+//				$.alert("提示",custinfolist[i].accNbr+"和主卡的付费类型不一致！");
+//				return false;
+//			}
+//			if(OrderInfo.oldprodInstInfos.productId=="280000000"){
+//				$.alert("提示",custinfolist[i].accNbr+"是无线宽带，不能纳入！");
+//				return false;
+//			}
+			OrderInfo.oldoffer=[{"offerMemberInfos":[{"accessNumber":"17751762731","endDt":"","ifHardCode":"Y","minQty":"1","objId":"235010000","extObjId":"379","objInstId":700019668028,"extObjInstId":"993400700019668028","objType":"2","offerId":700003952036,"extOfferId":"993400700003952036","offerMemberId":700019687386,"offerRoleId":"30045","roleCd":"400","roleName":"乐享主卡","startDt":"","stateName":"","statusCd":"","prodId":"251248460392","statusList":[],"prodClass":"3"},{"accessNumber":"17712918261","endDt":"","ifHardCode":"Y","minQty":"0","objId":"235010000","extObjId":"","objInstId":700019668029,"extObjInstId":"993400700019668029","objType":"2","offerId":700003952036,"extOfferId":"993400700003952036","offerMemberId":700019687387,"offerRoleId":"30046","roleCd":"401","roleName":"乐享副卡","startDt":"","stateName":"","statusCd":"","prodId":"251248460393","statusList":[],"prodClass":"3"}],"offerId":700003952036,"offerSpecId":81009,"offerSpecName":"乐享4G201407 399元-主套餐","accNbr":"17751762731"}]			
+			order.memberChange.viceCartNum = 0;
+			$.each(OrderInfo.oldoffer,function(){
+				$.each(this.offerMemberInfos,function(){
+					if(this.objType==CONST.OBJ_TYPE.PROD){
+						order.memberChange.viceCartNum++;
+					}
+				})
+			});
+		}else{
+			OrderInfo.cust={
+					addressStr: "",
+					areaId: "8320100",
+					areaName: "南京市",
+					authFlag: "1",
+					custFlag: "1100",
+					custId: "700000483622",
+					idCardNumber: "2",
+					identityCd: "",
+					identityName: "",
+					norTaxPayer: "",
+					partyName: "AH测试",
+					segmentId: "1100",
+					segmentName: "公众客户",
+					vipLevel: "1300",
+					vipLevelName: "普通"
+			}
+				order.prodModify.choosedProdInfo={
+					accNbr: "17712877897",
+					areaCode: "025",
+					areaId: "8320100",
+					corProdInstId: "993400700019669948",
+					custId: "700000483622",
+					custName: "30000101000000",
+					endDt: "3000-01-01 00:00:00",
+					extProdInstId: "251248460525",
+					feeType: "1200",
+					feeTypeName: "后付费",
+					is3G: "N",
+					prodBigClass: "12",
+					prodClass: "3",
+					prodInstId: "700019669948",
+					prodOfferId: "81013",
+					prodOfferInstId: "700003943730",
+					prodOfferName: "乐享4G201407 99元-主套餐",
+					prodStateCd: "100000",
+					prodStateName: "在用",
+					productId: "235010000",
+					productName: "移动电话（仅含本地语音）",
+					startDt: "2015-10-19 15:35:08",
+					stopRecordCd: "",
+					stopRecordName: ""
+				}
+				OrderInfo.offer={"offerId":"700003943730","offerSpecId":"81013","offerMemberInfos":[{"accessNumber":"17712877897","endDt":"","ifHardCode":"Y","minQty":"1","objId":"235010000","extObjId":"379","objInstId":700019669948,"extObjInstId":"993400700019669948","objType":"2","offerId":700003943730,"extOfferId":"993400700003943730","offerMemberId":700019669967,"offerRoleId":"30055","roleCd":"400","roleName":"乐享主卡","startDt":"","stateName":"","statusCd":"","prodId":"251248460525","statusList":[]}],"offerSpecName":"乐享4G201407 99元-主套餐"}
+		}
+		return true;
+	};
+	
 	return {
 		showCustAuth 			: _showCustAuth,
 		showCustCreate 			: _showCustCreate,
@@ -1066,6 +1186,7 @@ order.cust.mgr = (function(){
 		linkSelectPlan			: _linkSelectPlan,
 		back 					: _back,
 		fromProvFlag 			: _fromProvFlag,
-		provIsale 				: _provIsale
+		provIsale 				: _provIsale,
+		queryCustCompreInfo		: _queryCustCompreInfo
 	};
 })();

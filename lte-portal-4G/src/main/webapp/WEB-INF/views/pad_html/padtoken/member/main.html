@@ -129,21 +129,24 @@
 <script type="text/javascript">
 	$(document).ready(function() {
 		OrderInfo.staff={
-				staffId : "${Session['_ecs_login_session_key'].staffId}",
-				staffName : "${Session['_ecs_login_session_key'].staffName}",
-				channelId : '${Session["_ecs_login_session_key"].currentChannelId}',
-				channelName : '${Session["_ecs_login_session_key"].currentChannelName}',
-				areaId : '${Session["_ecs_login_session_key"].currentAreaId}',
-				areaCode : '${Session["_ecs_login_session_key"].currentAreaCode}',
-				areaName : '${Session["_ecs_login_session_key"].currentAreaName}',
-				areaAllName : '${Session["_ecs_login_session_key"].currentAreaAllName}',
-				operatorsId:'${Session["_ecs_login_session_key"].operatorsId}',
-				operatorsName:'${Session["_ecs_login_session_key"].currentOperatorsName}',
-				operatorsNbr:'${Session["_ecs_login_session_key"].currentOperatorsNbr}',
-				soAreaId : '${Session["_ecs_login_session_key"].currentAreaId}',
-				soAreaCode : '${Session["_ecs_login_session_key"].currentAreaCode}',
-				channelType:'${Session["_ecs_login_session_key"].currentChannelType}'
-			};
+			staffId : "${Session['_ecs_login_session_key'].staffId}",
+			staffName : "${Session['_ecs_login_session_key'].staffName}",
+			channelId : '${Session["_ecs_login_session_key"].currentChannelId}',
+			channelName : '${Session["_ecs_login_session_key"].currentChannelName}',
+			areaId : '${Session["_ecs_login_session_key"].currentAreaId}',
+			areaCode : '${Session["_ecs_login_session_key"].currentAreaCode}',
+			areaName : '${Session["_ecs_login_session_key"].currentAreaName}',
+			areaAllName : '${Session["_ecs_login_session_key"].currentAreaAllName}',
+			operatorsId:'${Session["_ecs_login_session_key"].operatorsId}',
+			operatorsName:'${Session["_ecs_login_session_key"].currentOperatorsName}',
+			operatorsNbr:'${Session["_ecs_login_session_key"].currentOperatorsNbr}',
+			soAreaId : '${Session["_ecs_login_session_key"].currentAreaId}',
+			soAreaCode : '${Session["_ecs_login_session_key"].currentAreaCode}',
+			channelType:'${Session["_ecs_login_session_key"].currentChannelType}'
+		};
+		var nextFlag = false;
+		var mergeFlag = "${mergeFlag}";
+		if(mergeFlag=="0"){
 			var querycustflag = "${querycustflag}";
 			if(querycustflag=="-1"){
 				//$.alert("错误","客户定位异常！");
@@ -202,16 +205,25 @@
 							areaCode :"${areaCode}",//产品地区CODE
 							areaId : "${areaId}"//产品地区id
 					};
-					OrderInfo.provinceInfo.provIsale = "${provIsale}";
-					OrderInfo.provinceInfo.redirectUri = "${redirectUri}";
-					OrderInfo.provinceInfo.isFee = "${isFee}";
-					order.memberChange.reloadFlag = "${reloadFlag}";
-					order.memberChange.newSubPhoneNum = "${newSubPhoneNum}";
-					order.memberChange.oldSubPhoneNum = "${oldSubPhoneNum}";
-					order.memberChange.mktResInstCode = "${mktResInstCode}";
-					order.memberChange.showOfferCfgDialog();
+					nextFlag = true;
 				}
 			}
+		}else{
+			var mainPhoneNum = "${mainPhoneNum}";
+			var provCustAreaId = "${provCustAreaId}";
+			nextFlag = order.cust.mgr.queryCustCompreInfo(mainPhoneNum,provCustAreaId,3,'');
+		}
+		if(nextFlag){
+			OrderInfo.provinceInfo.provIsale = "${provIsale}";
+			OrderInfo.provinceInfo.redirectUri = "${redirectUri}";
+			OrderInfo.provinceInfo.isFee = "${isFee}";
+			OrderInfo.provinceInfo.mergeFlag = "${mergeFlag}";
+			order.memberChange.reloadFlag = "${reloadFlag}";
+			order.memberChange.newSubPhoneNum = "${newSubPhoneNum}";
+			order.memberChange.oldSubPhoneNum = "${oldSubPhoneNum}";
+			order.memberChange.mktResInstCode = "${mktResInstCode}";
+			order.memberChange.showOfferCfgDialog();
+		}
 	});
 </script>
 

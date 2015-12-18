@@ -268,6 +268,7 @@ public class MainController extends BaseController {
 		String provIsale="";
 		String redirectUri="";
 		String isFee="";
+		String mergeFlag = "0";
 		boolean querycustflag = false;
 		Map<String,Object> paramsMap = new HashMap<String,Object>();
 		try {

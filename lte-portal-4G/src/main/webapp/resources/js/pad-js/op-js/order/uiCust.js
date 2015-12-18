@@ -106,8 +106,14 @@ order.uiCust = (function(){
 		if(response.code==0){
 			OrderInfo.custorderlonger=response.data;
 		}
-		
-		_custLookforButton();
+		if(OrderInfo.provinceInfo.mergeFlag=="0"){
+			_custLookforButton();
+		}else{
+			var provCustAreaId = $("#custAreaId_").val();
+			if(order.cust.mgr.queryCustCompreInfo(OrderInfo.provinceInfo.mainPhoneNum,14,'')){
+				order.prodModify.orderAttachOffer();
+			}
+		}
 	};
 	
 	//客户定位开始 [1]
