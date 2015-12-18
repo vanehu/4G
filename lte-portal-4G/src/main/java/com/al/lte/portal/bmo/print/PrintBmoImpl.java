@@ -6144,6 +6144,19 @@ public class PrintBmoImpl implements PrintBmo {
 		return false;
 	}
 	/**
+	 * 长行校验
+	 * @param itemMap
+	 * @return true 长行，false不是长行
+	 */
+	private boolean isLongline(Map<String, Object> itemMap) {
+		double defaultLen=20;
+		String lineInfo=getItem(itemMap);
+		if (getLength(lineInfo)>defaultLen) {
+			return true;
+		}
+		return false;
+	}
+	/**
 	 * 分离单行与可合并行为两个listMap
 	 * @param dataList
 	 * @return
@@ -6155,7 +6168,7 @@ public class PrintBmoImpl implements PrintBmo {
 		if(null==dataList||dataList.size()==0){return retnMap;}
 		for (int i = 0; i < dataList.size(); i++) {
 			Map<String, Object> itemMap = dataList.get(i);
-			if (isNewline(itemMap)) {
+			if (isLongline(itemMap)) {
 				lineItemList.add(itemMap);
 			} else {
 				normItemList.add(itemMap);
