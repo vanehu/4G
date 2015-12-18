@@ -442,38 +442,40 @@ order.memberChange = function(){
 					
 				 }
 			 }
-		}
-	   else{
-		for(var i=1;i<=idnum;i++){
-			var num = $.trim($("#oldphonenum_"+i).val());	
-			if(ec.util.isObj(num)){
-				if(ec.util.isArray(OrderInfo.oldAddNumList)){
-					if(!oldAddNumList_flag){
-						return false;
-					}
-					$.each(OrderInfo.oldAddNumList,function(){
-						if(num==this.accNbr){
-							oldAddNumList_flag = false;
-							$.alert("提示",num+"重复，请重新输入！");
+		}else{
+			for(var i=1;i<=idnum;i++){
+				var num = $.trim($("#oldphonenum_"+i).val());	
+				if(ec.util.isObj(num)){
+					if(ec.util.isArray(OrderInfo.oldAddNumList)){
+						if(!oldAddNumList_flag){
 							return false;
 						}
-					});
-					if(oldAddNumList_flag){
+						$.each(OrderInfo.oldAddNumList,function(){
+							if(num==this.accNbr){
+								oldAddNumList_flag = false;
+								$.alert("提示",num+"重复，请重新输入！");
+								return false;
+							}
+						});
+						if(oldAddNumList_flag){
+							OrderInfo.oldAddNumList.push({"accNbr":num});
+						}
+					}else{
 						OrderInfo.oldAddNumList.push({"accNbr":num});
 					}
-				}else{
-					OrderInfo.oldAddNumList.push({"accNbr":num});
 				}
 			}
 		}
-	}
+		
 		if(!oldAddNumList_flag){
 			return false;
 		}
+		
 		if(OrderInfo.oldAddNumList.length==0){
 			$.alert("提示","请输入手机号码!");
 			return false;
 		}
+		
 		var custflag = true;
 		for(var i=0;i<OrderInfo.oldAddNumList.length;i++){
 			for(var v=0;v<OrderInfo.offer.offerMemberInfos.length;v++){
@@ -508,7 +510,7 @@ order.memberChange = function(){
 					var custId = response.data.custInfos[0].custId;
 					// 主副卡客户校验取客户查询返回结果中的custId,旧的取order.prodModify.choosedProdInfo.custId
 					
-					if(custId!=OrderInfo.cust.custId){
+					if(OrderInfo.actionFlag!=1 && custId!=OrderInfo.cust.custId){
 						custflag = false;
 						$.alert("提示",OrderInfo.oldAddNumList[i].accNbr+"和主卡的客户不一致！");
 						return false;
@@ -662,11 +664,13 @@ order.memberChange = function(){
 							$.alert("提示",custinfolist[i].accNbr+"不是在用产品！");
 							return false;
 						}
-						if(prodInstInfos.feeType.feeType!=order.prodModify.choosedProdInfo.feeType){
+	
+						if(OrderInfo.actionFlag!=1 && prodInstInfos.feeType.feeType!=order.prodModify.choosedProdInfo.feeType){
 							orderflag = false;
 							$.alert("提示",custinfolist[i].accNbr+"和主卡的付费类型不一致！");
 							return false;
 						}
+						
 						if(prodInstInfos.productId=="280000000"){
 							$.alert("提示",custinfolist[i].accNbr+"是无线宽带，不能纳入！");
 							return false;
@@ -826,7 +830,10 @@ order.memberChange = function(){
 					custId : prod.custId,
 					soNbr : OrderInfo.order.soNbr,
 					instId : prod.prodInstId,
-					type : "2"
+					type : "2",
+					queryType: "1,2,3,4,5",
+					acctNbr : "",
+					data:[]
 				};
 				if(!loadInst(param,prod)){  //加载实例到缓存
 					instflag = false;
@@ -876,44 +883,45 @@ order.memberChange = function(){
 	 * 加载实例
 	 */
 	var loadInst = function(param,prod){
-//		if(OrderInfo.order.soNbr==null || OrderInfo.order.soNbr==undefined || OrderInfo.order.soNbr==""){
-//			OrderInfo.order.soNbr = UUID.getDataId();
-//		}
-//		var instflag = true;
-//		for(var i=0;i<OrderInfo.oldprodInstInfos.length;i++){
-//			var prod = OrderInfo.oldprodInstInfos[i];
-//			if(prod==undefined || prod.prodInstId ==undefined){
-//				instflag = false;
-//				$.alert("提示",OrderInfo.oldprodInstInfos[i].accNbr+"未获取到老用户产品相关信息，无法办理二次业务！");
-//				return;
-//			}
-//			var param = {
-//				areaId : OrderInfo.getProdAreaId(prod.prodInstId),
-//				acctNbr : prod.accNbr,
-//				custId : prod.mainProdOfferInstInfos[0].custId,
-//				soNbr : OrderInfo.order.soNbr,
-//				instId : prod.prodInstId,
-//				type : "2"
-//			};
-			for(var j=0;j<OrderInfo.oldoffer.length;j++){
-				if(OrderInfo.oldoffer[j].accNbr==prod.accNbr){
-					if(ec.util.isArray(OrderInfo.oldoffer[j].offerMemberInfos)){ //遍历主销售品构成
-						var flag = true;
-						$.each(OrderInfo.oldoffer[j].offerMemberInfos,function(){
-							if(this.objType == CONST.OBJ_TYPE.PROD && this.accessNumber==prod.accNbr){ //选中号码在销售品实例构成中，为了防止销售品实例缓存
-								instflag = false;
-								flag = false;
-								return;
-							}
-						});
-						if(flag){ //不在销售品实例缓存
-							return query.offer.invokeLoadInst(param);
-//							if(!query.offer.invokeLoadInst(param)){
-//								instflag = false;
-//								return;
-//							}
+		var queryMergeFlag=OrderInfo.provinceInfo.mergeFlag;
+		
+		for(var j=0;j<OrderInfo.oldoffer.length;j++){
+			if(OrderInfo.oldoffer[j].accNbr==prod.accNbr){
+				if(ec.util.isArray(OrderInfo.oldoffer[j].offerMemberInfos)){ //遍历主销售品构成
+					var flag = true;
+					$.each(OrderInfo.oldoffer[j].offerMemberInfos,function(){
+						if(this.objType == CONST.OBJ_TYPE.PROD && this.accessNumber==prod.accNbr){ //选中号码在销售品实例构成中，为了防止销售品实例缓存
+							instflag = false;
+							flag = false;
+							return;
+						}
+					});
+					
+					if(flag){ //不在销售品实例缓存
+						if(queryMergeFlag!=null && queryMergeFlag!="" && queryMergeFlag!="undefined" && queryMergeFlag=="1"){
+							param.data.push({accessNbr:prod.accNbr,instId:prod.prodInstId});
+							return  query.offer.invokeLoadInstSub(param);
 						}else{
-							var vFlag = true;
+							return query.offer.invokeLoadInst(param);
+						}
+					}else{
+						var vFlag = true;
+						
+						//1调用新接口，如果是0，就是按照旧的方式调用
+						if(queryMergeFlag!=null && queryMergeFlag!="" && queryMergeFlag!="undefined" && queryMergeFlag=="1"){
+							$.each(OrderInfo.oldoffer[j].offerMemberInfos,function(){
+								if(this.objType == CONST.OBJ_TYPE.PROD){
+									param.data.push({accessNbr:this.accessNumber,instId:this.objInstId});
+								}
+							});
+							
+							if(param!=null){
+								if (!query.offer.invokeLoadInstSub(param)) {
+									vFlag = false;
+									return false;
+								}
+							}
+						}else{
 							$.each(OrderInfo.oldoffer[j].offerMemberInfos,function(){
 								if(this.objType == CONST.OBJ_TYPE.PROD){
 									param.acctNbr = this.accessNumber;
@@ -922,29 +930,22 @@ order.memberChange = function(){
 										vFlag = false;
 										return false;
 									}
-//									var loadinstflag = query.offer.invokeLoadInst(param);
-//									if(!loadinstflag){
-////									if (!query.offer.invokeLoadInst(param)) {
-//										instflag = false;
-//										return;
-//									}
 								}
 							});
-							return vFlag;
 						}
+						
+						return vFlag;
+					}
+				}else{
+					if(queryMergeFlag!=null && queryMergeFlag!="" && queryMergeFlag!="undefined" && queryMergeFlag=="1"){
+						param.data.push({accessNbr:prod.accNbr,instId:prod.prodInstId});
+						return query.offer.invokeLoadInstSub(param);
 					}else{
 						return query.offer.invokeLoadInst(param);
-//						if(!query.offer.invokeLoadInst(param)){
-//							instflag = false;
-//							return;
-//						}
 					}
 				}
 			}
-//		}
-//		if(instflag){
-//			ruleCheck();
-//		}
+		}
 	};
 	
 	//生成订单流水号，规则校验

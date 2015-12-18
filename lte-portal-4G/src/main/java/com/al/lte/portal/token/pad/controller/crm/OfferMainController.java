@@ -131,7 +131,6 @@ public class OfferMainController extends BaseController {
 				paramMap.put("provTransId", provIsale);
 				paramMap.put("backFlag","Y");
 				orderMap=this.orderInfoReload(provIsale, provCustAreaId, sessionStaff);
-	
 				if(orderMap!=null){
 					String resultCode=String.valueOf(orderMap.get("resultCode"));
 					
@@ -153,6 +152,7 @@ public class OfferMainController extends BaseController {
 		   
 		    model.addAttribute("oldSubPhoneNum",oldSubPhoneNum);
 		    model.addAttribute("newSubPhoneNum", newSubPhoneNum);
+		    model.addAttribute("reloadFlag", reloadFlag);
 			provinceInfo.put("provIsale", provIsale);
 			provinceInfo.put("redirectUri", redirectUri);
 			provinceInfo.put("isFee", isFee);
@@ -165,6 +165,8 @@ public class OfferMainController extends BaseController {
 			model.addAttribute("DiffPlaceFlag", "local");
 			//终端串码
 			model.addAttribute("terminalCode",paramsMap.get("termCode")==null?"":paramsMap.get("termCode").toString());
+			//发展人工号
+			model.addAttribute("salesCode",paramsMap.get("salesCode")==null?"":paramsMap.get("salesCode").toString());
 			//个人参数（非必须）
 			//传入手机号
 			model.addAttribute("mainPhoneNum", paramsMap.get("mainPhoneNum"));

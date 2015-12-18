@@ -20,7 +20,7 @@
 <script src="${contextPath}/js/pad-js/busi-js/mktRes/terminal.js?${jsversion}" type="text/javascript"></script>
 <script src="${contextPath}/js/pad-js/busi-js/mktRes/phoneNumber.js?${jsversion}" type="text/javascript"></script>
 <script src="${contextPath}/js/pad-js/busi-js/prod/uim.js?${jsversion}" type="text/javascript"></script>
-<script src="${contextPath}/js/busi-js/query/queryProd.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/pad-js/op-js/order/queryProd.js?${jsversion}" type="text/javascript"></script>
 <script src="${contextPath}/js/pad-js/busi-js/print/print.js?${jsversion}" type="text/javascript"></script>
 <script src="${contextPath}/js/pad-js/busi-js/order/prepare.js?${jsversion}" type="text/javascript"></script>
 <script src="${contextPath}/js/pad-js/op-js/order/attachOffer.js?${jsversion}" type="text/javascript"></script>
@@ -146,6 +146,11 @@
 		if(terminalCode!=null && terminalCode!="" && terminalCode!="null"){
 			OrderInfo.terminalCode=terminalCode;
 		}
+		var salesCode='${salesCode}'; 
+		//发展人
+		if(salesCode!=null && salesCode!="" && salesCode!="null"){
+			OrderInfo.salesCode=salesCode;
+		}
 		$("#p_cust_identityNum").val(OrderInfo.provinceInfo.mainPhoneNum);
 		//是否重载
 		var reload_=OrderInfo.provinceInfo.reloadFlag;
@@ -156,26 +161,23 @@
 			var custOrderAttrs=OrderInfo.reloadOrderInfo.orderList.orderListInfo.custOrderAttrs;
 			var is=false;
 			$.each(custOrderAttrs,function(){
-			  if(this.itemSpecId=="30010024"){
-			   if(this.value=="2"){
-			        is=true;
-			        return false;
-			    }
-			  }
-
+				if(this.itemSpecId=="30010024"){
+					if(this.value=="2"){
+			        	is=true;
+			        	return false;
+			    	}
+			  	}
 			});
+			
 			if(is){
 				order.uiCusts.packageQuery();
+			}else{
+				$.alert("提示","不是套餐变更受理流水号，请重试！");
+				return;
 			}
-			else{
-				 $.alert("提示","不是套餐变更受理流水号，请重试！");
-				 return;
-			}
-		}
-		else{
+		}else{
 			order.uiCusts.packageQuery();
 		}
-		
 	});
 </script>
 

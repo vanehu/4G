@@ -76,8 +76,8 @@ public class TestController extends BaseController {
 			String privateKey = String.valueOf(paramMap.get("privateKey"));
 			String mktResInstCode = String.valueOf(paramMap.get("uimCode"));
 			String acctNumber=String.valueOf(paramMap.get("acctNumber"));
-			String terminalCode=String.valueOf(paramMap.get("terminalCode"));
-			String DevelopmentCode=String.valueOf(paramMap.get("DevelopmentCode"));
+			String termCode=String.valueOf(paramMap.get("termCode"));
+			String salesCode=String.valueOf(paramMap.get("salesCode"));
 			
 			Map<String,Object> map = new HashMap<String,Object>();
 			map.put("staffCode", staffCode);
@@ -161,8 +161,8 @@ public class TestController extends BaseController {
 				map.put("isFee", isFee);
 				map.put("mktResInstCode", mktResInstCode);
 				map.put("acctNumber", acctNumber);
-				map.put("terminalCode", terminalCode);
-				map.put("DevelopmentCode", DevelopmentCode);
+				map.put("termCode", termCode);
+				map.put("salesCode", salesCode);
 				log.error("模拟单点页面参数:"+JacksonUtil.objectToJson(map));
 				jmParams = AESUtils.encryptToString(JacksonUtil.objectToJson(map), privateKey);						
 

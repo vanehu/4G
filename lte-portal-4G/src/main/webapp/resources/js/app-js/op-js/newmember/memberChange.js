@@ -1238,7 +1238,7 @@ order.memberChange = function(){
 								&& this.accessNumber == prod.accNbr) { // 选中号码在销售品实例构成中，为了防止销售品实例缓存
 							instflag = false;
 							flag = false;
-							return false;
+							return;
 						}
 					});
 					if (flag) { // 不在销售品实例缓存
@@ -1271,9 +1271,9 @@ order.memberChange = function(){
 						$.each(OrderInfo.oldoffer[j].offerMemberInfos,function(){
 							if(this.objType == CONST.OBJ_TYPE.PROD && this.accessNumber==prod.accNbr){ //选中号码在销售品实例构成中，为了防止销售品实例缓存
 								instflag = false;
-							flag = false;
-							return false;
-						}
+								flag = false;
+								return;
+							}
 						});
 						if(flag){ //不在销售品实例缓存
 							return query.offer.invokeLoadInst(param);

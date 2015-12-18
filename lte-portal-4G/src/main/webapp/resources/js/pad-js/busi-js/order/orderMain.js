@@ -52,11 +52,13 @@ order.main = (function(){
 				is_same_feeType=true;
 			}else if(param.feeTypeMain=="1201" && (param.offerSpec.feeType=="1201"||param.offerSpec.feeType=="3101"||param.offerSpec.feeType=="3102"||param.offerSpec.feeType=="3103")){
 				is_same_feeType=true;
-			}			
+			}	
+			/*****
 			if(!is_same_feeType){
 				$.alert("提示","主副卡付费类型不一致，无法进行主副卡成员变更。");
 				return;
 			}
+			*/
 		}		
 		$.callServiceAsHtml(contextPath+"/pad/order/main",param,{
 			"before":function(){
@@ -1089,14 +1091,16 @@ order.main = (function(){
 	var _queryStaffPage = function(qryPage,scroller){
 		
 		var param = {
-			"dealerId" :$("#dealer_id").val(),
-			"staffName":$("#qryStaffName").val(),
-			"qryStaffCode":$("#qryStaffCode").val(),
-			"salesCode":$("#qrySalesCode").val(),
-			"pageIndex":qryPage,
-			"objInstId":$("#objInstId").val(),
-			"pageSize" :10
-		};
+				"dealerId" :$("#dealer_id").val(),
+				"qrySalesCode":$("#qrySalesCode").val(),
+				"staffName":$("#qryStaffName").val(),
+				"staffCode":$("#qryStaffCode").val(),
+				"staffCode2":$("#qryStaffCode").val(),
+				"salesCode":$("#qrySalesCode").val(),
+				"pageIndex":qryPage,
+				"objInstId":$("#objInstId").val(),
+				"pageSize" :10
+			};
 		
 		$.callServiceAsHtml(contextPath + "/pad/staffMgr/getStaffList",param,{
 			"before":function(){

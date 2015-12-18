@@ -19,7 +19,7 @@
 <script src="${contextPath}/js/pad-js/busi-js/mktRes/terminal.js?${jsversion}" type="text/javascript"></script>
 <script src="${contextPath}/js/pad-js/busi-js/mktRes/phoneNumber.js?${jsversion}" type="text/javascript"></script>
 <script src="${contextPath}/js/pad-js/busi-js/prod/uim.js?${jsversion}" type="text/javascript"></script>
-<script src="${contextPath}/js/busi-js/query/queryProd.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/pad-js/op-js/order/queryProd.js?${jsversion}" type="text/javascript"></script>
 <script src="${contextPath}/js/pad-js/busi-js/print/print.js?${jsversion}" type="text/javascript"></script>
 <script src="${contextPath}/js/pad-js/busi-js/order/prepare.js?${jsversion}" type="text/javascript"></script>
 <script src="${contextPath}/js/pad-js/busi-js/order/prodOffer.js?${jsversion}" type="text/javascript"></script>
@@ -128,6 +128,16 @@
 
 <script type="text/javascript">
 	$(document).ready(function() {
+		var terminalCode='${terminalCode}'; //终端串码
+		//终端串码
+		if(terminalCode!=null && terminalCode!="" && terminalCode!="null"){
+			OrderInfo.terminalCode=terminalCode;
+		}
+		var salesCode='${salesCode}'; 
+		//发展人
+		if(salesCode!=null && salesCode!="" && salesCode!="null"){
+			OrderInfo.salesCode=salesCode;
+		}
 		OrderInfo.staff={
 			staffId : "${Session['_ecs_login_session_key'].staffId}",
 			staffName : "${Session['_ecs_login_session_key'].staffName}",

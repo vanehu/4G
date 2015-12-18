@@ -38,6 +38,11 @@
 		<script src="${contextPath}/js/app-js/op-js/offerChangeNew.js?${jsversion}" type="text/javascript"></script>
 		<script src="${contextPath}/js/app-js/op-js/order/memberChange.js?${jsversion}" type="text/javascript"></script>
 		<script>
+		//初始化渠道
+		$(function() {
+			OrderInfo.getChannelList();
+		});
+		
 		window.onload= function() 
 		{  
 			//用户信息
@@ -201,13 +206,18 @@
 		<!-- 省份传入主副卡号码 -->
 		<input type="hidden" id="mainPhoneNum" value="${mainPhoneNum}"/>
 		<input type="hidden" id="newSubPhoneNum" value="${newSubPhoneNum}"/>
-		<div align="center" id="load">
-		</div>
-		<div id="content">
-		</div>
+		
+		<div align="center" id="load"></div>
+		
+		<div id="content"></div>
+		
 		<!--接口异常错误封装展示-->
 		<#include "/public/public-app-error.html"/>
+		
 		<!--弹出框-->
 		<#include "/public/public-app-dialog.html"/>
+		
+		<!-- 渠道展示 -->
+		<#include "/public/app-channels.html"/>
 	</body>
 </html>

@@ -392,6 +392,10 @@ order.main = (function(){
 				}
 			}
 		}
+		//发展人
+		if(OrderInfo.provinceInfo.salesCode!=""&&(OrderInfo.newOrderInfo.isReloadFlag!="N" || order.memberChange.reloadFlag=="Y")){
+			order.main.queryDealer();
+		}
 		//主副卡暂存单二次加载
 		if(order.memberChange.reloadFlag=="N"){
 			$("#dealerTbody").empty();
@@ -471,6 +475,7 @@ order.main = (function(){
 							dealerMap1.role = this.role;
 							if(this.itemSpecId==CONST.BUSI_ORDER_ATTR.DEALER){
 								dealerMap1.staffid = this.value;
+								dealerMap1.channelNbr = this.channelNbr;
 							}else if(this.itemSpecId==CONST.BUSI_ORDER_ATTR.DEALER_NAME){
 								dealerMap1.staffname = this.value;
 							}
@@ -478,6 +483,7 @@ order.main = (function(){
 							dealerMap2.role = this.role;
 							if(this.itemSpecId==CONST.BUSI_ORDER_ATTR.DEALER){
 								dealerMap2.staffid = this.value;
+								dealerMap2.channelNbr = this.channelNbr;
 							}else if(this.itemSpecId==CONST.BUSI_ORDER_ATTR.DEALER_NAME){
 								dealerMap2.staffname = this.value;
 							}
@@ -485,6 +491,7 @@ order.main = (function(){
 							dealerMap3.role = this.role;
 							if(this.itemSpecId==CONST.BUSI_ORDER_ATTR.DEALER){
 								dealerMap3.staffid = this.value;
+								dealerMap3.channelNbr = this.channelNbr;
 							}else if(this.itemSpecId==CONST.BUSI_ORDER_ATTR.DEALER_NAME){
 								dealerMap3.staffname = this.value;
 							}
@@ -555,6 +562,20 @@ order.main = (function(){
 							$td.append('<a class="purchase" onclick="order.dealer.removeDealer(this);">删除</a><label class="f_red">*</label>');
 						}
 						$tr.append($td);
+						if(!ec.util.isArray(OrderInfo.channelList)||OrderInfo.channelList.length==0){
+							OrderInfo.getChannelList();
+						}
+						var $tdChannel = $('<td></td>');
+						var $channelSelect = $('<select id="dealerChannel_'+objId+'" name="dealerChannel_'+objInstId+'" class="inputWidth183px" onclick=a=this.value;></select>');
+						$.each(OrderInfo.channelList,function(){
+							if(dealerlist[d].channelNbr==this.channelNbr)
+								$channelSelect.append("<option value='"+this.channelNbr+"' selected ='selected'>"+this.channelName+"</option>");
+							else
+								$channelSelect.append("<option value='"+this.channelNbr+"'>"+this.channelName+"</option>");
+						});
+						$tdChannel.append($channelSelect);
+						$tdChannel.append('<label class="f_red">*</label>');	
+						$tr.append($tdChannel);
 						OrderInfo.SEQ.dealerSeq++;
 						$("#dealerTbody").append($tr);
 					}
@@ -1741,16 +1762,36 @@ order.main = (function(){
 		$(selected).children(":first").html(nike);
 	};
 	//协销人-修改
-	function _setStaff(objInstId){
+	function _setStaff(objInstId){			
 		var $staff = $("#staff_list_body .plan_select");
+		if($staff.length <= 0){
+			$.alert("操作提示","请选择 协销人！");
+			return;
+		}
 		$staff.each(function(){
+			var $channelList = $(this).find("td select[name='channel_list']");
+			$("#dealerChannel_"+objInstId).empty(); 
+			var $channelListOptions ="";
+			if($channelList.length <= 0){
+				$.each(OrderInfo.channelList,function(){
+					if(this.isSelect==1)
+						$channelListOptions += "<option value='"+this.channelNbr+"' selected ='selected'>"+this.channelName+"</option>";				
+				});
+			}else{			
+				$($channelList).find("option").each(function(){
+					var $channelListOptionVal  = $(this).val() ; 
+					var $channelListOptionName = $(this).html() ; 
+					if(this.selected==true){
+						$channelListOptions += "<option value='"+$channelListOptionVal+"' selected ='selected'>"+$channelListOptionName+"</option>";
+					}else{
+						$channelListOptions += "<option value='"+$channelListOptionVal+"'>"+$channelListOptionName+"</option>";
+					}
+				});
+			}
+			$("#dealerChannel_"+objInstId).append($channelListOptions);
 			$("#dealer_"+objInstId).val($(this).attr("staffName")).attr("staffId", $(this).attr("staffId"));
 		});
-		if($staff.length > 0){
-			easyDialog.close();
-		}else{
-			$.alert("操作提示","请选择 协销人！");
-		}
+		easyDialog.close();
 	}
 	/*
 	function _setStaff(v_id,staffId,staffCode,staffName){
@@ -2477,6 +2518,45 @@ order.main = (function(){
 		}
 	};
 	
+	//发展人-查询
+	function _queryDealer(){
+		var param = {
+				"dealerId":"",
+				"areaId":OrderInfo.staff.soAreaId.substring(0,3) + "0000",
+				"currentAreaAllName":"",
+				"staffName":"",
+				"staffCode":OrderInfo.provinceInfo.salesCode,
+				"salesCode":"",
+				"pageIndex":1,
+				"objInstId":"",
+				"pageSize":10
+		};
+		$.callServiceAsJson(contextPath + "/token/pc/cust/getDealerList",param,{
+			"before":function(){
+				$.ecOverlay("<strong>正在查询中,请稍等会儿....</strong>");
+			},
+			"always":function(){
+				$.unecOverlay();
+			},
+			"done" : function(response){
+				if (response.code == 0) {
+					var list = response.data;
+					var staffName = list[0].staffName;
+					var staffId = list[0].staffId;
+					$("#dealerTbody").find("tr").each(function(){
+						var td = $(this).children("td").eq(3).children("input");
+						var id = td.attr("id");
+						$("#"+id).attr("value",staffName);
+						$("#"+id).attr("staffid",staffId);
+						return false;
+					});
+				}else{
+					$.alertM(response.data);
+				}
+			}
+		});	
+	}
+	
 	return {
 		buildMainView : _buildMainView,
 		copyOrder : _copyOrder,
@@ -2513,7 +2593,8 @@ order.main = (function(){
 		toChooseUser : _toChooseUser,
 		showChooseUserDialog : _showChooseUserDialog,
 		reload:_reload,
-		initAcct:_initAcct
+		initAcct:_initAcct,
+		queryDealer:_queryDealer
 	};
 })();
 

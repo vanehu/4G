@@ -703,19 +703,23 @@ order.memberChange = function(){
 					}		
 					var checkRuleInfo = checkData.result.resultInfo;  //业务规则校验
 					if(checkRuleInfo!=undefined && checkRuleInfo.length > 0){
-						/*$.each(checkRuleInfo, function(i, ruleInfo) {
-							$("<tr><td>"+ruleInfo.resultCode+"</td>" +
-									"<td>"+ruleInfo.ruleDesc+"</td>" +
-									"<td>"+rule.rule.getRuleLevelName(ruleInfo.ruleLevel)+"</td>" +
-									"<td><div style='display:block;margin-left:30px;' class='"+rule.rule.getRuleImgClass(ruleInfo.ruleLevel)+"'></div></td>" +
-							"</tr>").appendTo($("#ruleBody"));
-						});
-						easyDialog.open({
-							container : 'ruleDiv'
-						});
+						_showRuleCreate();
+						var ruleStr = "";
+						$("#ruleTable").html("");
+						$.each(checkRuleInfo, function(i, ruleInfo) {
+							ruleStr += "<tr>";
+							ruleStr += "<th>"+ruleInfo.resultCode+"</th>";
+							ruleStr += "<th>"+ruleInfo.ruleDesc+"</th>";
+							ruleStr += "<th>"+rule.rule.getRuleLevelName(ruleInfo.ruleLevel)+"</th>";
+							ruleStr += "<th>"+rule.rule.getRuleImgClass(ruleInfo.ruleLevel)+"</th>";
+							ruleStr += "</tr>";
+						});	
 						ruleflag = false;
-						return;*/
-						order.memberChange.showRuleCreate();
+						setTimeout(function(){
+							$("#ruleTable").append(ruleStr);
+							$.jqmRefresh($("#order_tab_panel_content"));
+						},100);
+						return;
 					}
 				}else{
 					ruleflag = false;

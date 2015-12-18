@@ -216,7 +216,11 @@
 		if(terminalCode!=null && terminalCode!="" && terminalCode!="null"){
 			OrderInfo.terminalCode=terminalCode;
 		}
-
+		var salesCode='${salesCode}'; //终端串码
+		//发展人
+		if(salesCode!=null && salesCode!="" && salesCode!="null"){
+			OrderInfo.salesCode=salesCode;
+		}
 		if(mainPhoneNum!=null && mainPhoneNum!="" && mainPhoneNum!="null"){
 			OrderInfo.newOrderNumInfo.mainPhoneNum = mainPhoneNum;
 		}

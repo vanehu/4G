@@ -2,18 +2,17 @@ package com.al.lte.portal.token.pad.controller.crm;
 
 import java.util.HashMap;
 import java.util.Map;
-
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-
 import com.al.ec.serviceplatform.client.ResultCode;
 import com.al.ecs.common.entity.JsonResponse;
 import com.al.ecs.common.util.JsonUtil;
@@ -454,5 +453,39 @@ public class OfferController extends BaseController {
 	@RequestMapping(value = "/queryMember", method = RequestMethod.GET)
 	public String queryMember(@RequestParam("strParam") String param,Model model,HttpServletResponse response){		
 	 	return "/padtoken/member/index";
+	}
+	
+	/**
+	 * 加载实例
+	 * @param param
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value = "/loadInstNew", method = RequestMethod.POST)
+	@ResponseBody
+	public JsonResponse loadInstNew(@RequestBody Map<String, Object> paramMap,Model model,HttpServletResponse response,HttpServletRequest request) {
+		JsonResponse jsonResponse = null;
+		Map<String, Object> resMap = new HashMap<String,Object>();
+		
+        try {
+        	SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);	
+        	
+        	//调用全量查询新接口(并发）
+        	resMap = offerBmo.newLoadInst(paramMap,null,sessionStaff);
+        		
+        	if(ResultCode.R_SUCC.equals(resMap.get("code"))){
+        		jsonResponse = super.successed(resMap,ResultConstant.SUCCESS.getCode());
+        	}else{
+        		jsonResponse = super.failed(resMap,ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+        	}
+        } catch (BusinessException be) {
+        	return super.failed(be);
+        } catch (InterfaceException ie) {
+        	return super.failed(ie, paramMap, ErrorCode.LOAD_INST);
+		} catch (Exception e) {
+			return super.failed(ErrorCode.LOAD_INST, e, paramMap);
+		}
+        
+        return jsonResponse;
 	}
 }

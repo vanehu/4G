@@ -1962,6 +1962,7 @@ order.prodModify = (function(){
 	//帐户查询请求（二次业务时查询已有帐户）
 	var _returnAccount = function(acctQueryParam){
 		acctQueryParam.areaId =  _choosedProdInfo.areaId;
+		acctQueryParam.isServiceOpen="Y";
 		var response = $.callServiceAsJson(contextPath+"/order/account", acctQueryParam);
 		if(response.code==-2){
 			$.alertM(response.data);

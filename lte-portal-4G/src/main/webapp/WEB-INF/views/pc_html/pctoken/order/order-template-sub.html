@@ -685,6 +685,60 @@ var iacc_nbr="${acrNum}";
     </div>
 </div>
 
-
+<!--渠道选择弹窗-->
+<div class="easyDialogdiv" style="width:450px; max-height: 380px;min-height: 250px" id="qudao">
+    	<div class="easyDialogclose" id="qudaoclose"></div>
+    	<table class="contract_list">
+            <thead>
+                <tr>
+                    <td>选择渠道</td>
+                    <td>省份</td>
+                    <td>地区</td>
+               </tr>                                                    
+            </thead>
+            <tbody>
+            	<#if Session["_staff_channel"]?? && (Session["_ecs_login_session_key"].currentChannelId!="") >
+				<#list Session["_staff_channel"] as channel>				
+				<tr <#if channel_index%2="1" >class="bg"</#if> >
+					<td class="channel_sel" onclick="header.menu.chooseChannel('${channel.id}')" >
+                  		<dd>
+                  		<i name= "channel_iofo_i" channel_Id ="${channel.id}" channel_Name = "${channel.name}" channel_Nbr = "${channel.chnNbr}" 
+                  		<#if channel.id=Session["_ecs_login_session_key"].currentChannelId >class="select"</#if> ></i>
+			      			${channel.name}
+			    		</dd>
+			    	</td>
+			    	<td class="channel_sel" onclick="header.menu.chooseChannel('${channel.id}')" >
+                  		<dd>
+			      			${channel.cityName}
+			    		</dd>
+			    	</td>
+			    	<td class="channel_sel" onclick="header.menu.chooseChannel('${channel.id}')" >
+                  		<dd>
+			      			${channel.areaName}
+			    		</dd>
+			    	</td>
+				</tr>
+				
+                <!-- 
+                <tr <#if channel_index%2="1" >class="bg"</#if> >
+                  <td class="channel_sel" 
+                  	channelname="${channel.name}" channelid="${channel.id}" agenttypecd="${channel.type}" 
+                  	areaid="${channel.areaId}" areacode="${channel.areaCode}" areaName="${channel.areaName}" 
+                  	onclick="header.menu.chooseChannel(this)" >${channel.name}</td>
+                </tr>
+                <tr class="bg">
+                  <td>XX营业厅</td>
+                </tr>
+                <tr>
+                  <td>XX营业厅</td>
+                </tr>
+                 -->
+                 
+                </#list>
+				</#if>
+            </tbody>
+        </table>
+    </div>
+<!--渠道选择弹窗结束-->
 
 </#if>

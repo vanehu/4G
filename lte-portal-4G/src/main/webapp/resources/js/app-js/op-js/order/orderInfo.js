@@ -101,15 +101,16 @@ OrderInfo = (function() {
 		distributorId : "" //转售商标识
 	};
 	
+	var _channelList = [];//渠道列表
+	
 	var _provinceInfo={
 			provIsale:"",
 			redirectUri:"",
 			isFee:"1",
 			extCustOrderID:"",
-		reloadFlag:"",
-		prodOfferId:"",
-		prodOfferName:"",
-		mergeFlag:"0"
+			reloadFlag:"",
+			prodOfferId:"",
+			prodOfferName:"" 
 	}
 	
 	var _surplusNum = 0;//剩余可纳入副卡数量
@@ -266,6 +267,33 @@ OrderInfo = (function() {
 		OrderInfo.orderData = data;
 		return OrderInfo.orderData;
 	};		
+	
+	/**
+	 * 获取渠道List
+	 */
+	var _getChannelList = function (busiOrders,offer,prodId){
+		OrderInfo.channelList = [];
+		if($("i[name='channel_iofo_i']").length==0){
+			OrderInfo.channelList = window.parent.OrderInfo.getChannelList();
+		}else{
+			$("i[name='channel_iofo_i']").each(function(){		
+				var channelId = $(this).attr("channel_Id");
+				var channelName = $(this).attr("channel_Name");
+				var channelNbr = $(this).attr("channel_Nbr");
+				var isSelect = 0;
+				if($(this).hasClass("select"))
+					var isSelect = 1;
+				var channelInfo ={
+						channelId : channelId,
+						channelName : channelName,
+						channelNbr : channelNbr,
+						isSelect : isSelect
+				}
+				OrderInfo.channelList.push(channelInfo)
+			});
+		}
+		return OrderInfo.channelList;
+	};
 		
 	//创建客户节点
 	var _createCust = function(busiOrders) {
@@ -421,20 +449,23 @@ OrderInfo = (function() {
 		}
 		
 		if(offer.boActionTypeCd == CONST.BO_ACTION_TYPE.BUY_OFFER){ //订购销售品
-			//发展人
+			//发展人(公共)
 			var $tr = $("li[name='tr_"+prodId+"_"+offer.offerSpecId+"']");
 			if($tr!=undefined&&$tr.length>0){
 				busiOrder.data.busiOrderAttrs = [];
 				$tr.each(function(){   //遍历产品有几个发展人
 					var dealer = {
 						itemSpecId : CONST.BUSI_ORDER_ATTR.DEALER,
-						role : $(this).find("select").val(),
-						value : $(this).find("input").attr("staffid") 
+						role:$(this).find("select[name='dealerType_"+prodId+"_"+offer.offerSpecId+"']").val(),
+						value : $(this).find("input").attr("staffid"),
+						//APP发展人渠道[W]
+						channelNbr:$(this).find("select[name='dealerChannel_"+prodId+"_"+offer.offerSpecId+"']").val()
 					};
-					busiOrder.data.busiOrderAttrs.push(dealer);				
+					busiOrder.data.busiOrderAttrs.push(dealer);		
+					
 					var dealer_name = {
 						itemSpecId : CONST.BUSI_ORDER_ATTR.DEALER_NAME,
-						role : $(this).find("select").val(),
+						role:$(this).find("select[name='dealerType_"+prodId+"_"+offer.offerSpecId+"']").val(),
 						value : $(this).find("input").attr("value") 
 					};
 					busiOrder.data.busiOrderAttrs.push(dealer_name);
@@ -1408,6 +1439,8 @@ OrderInfo = (function() {
 		oldAddNumList			:_oldAddNumList,
 		surplusNum				:_surplusNum,
 		oldSubPhoneNum			:_oldSubPhoneNum,
-		codeInfos:_codeInfos
+		codeInfos:_codeInfos,
+		getChannelList:_getChannelList,
+		channelList:_channelList
 	};
 })();

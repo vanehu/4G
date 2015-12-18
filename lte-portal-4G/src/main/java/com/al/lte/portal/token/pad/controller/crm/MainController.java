@@ -206,7 +206,17 @@ public class MainController extends BaseController {
 			model.addAttribute("mainPhoneNum_", paramsMap.get("mainPhoneNum"));
 			
 			model.addAttribute("custAreaId_", provCustAreaId);
-			
+			String mergeFlag = "0";
+			String interface_merge = MySimulateData.getInstance().getParam((String) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_DATASOURCE_KEY),"INTERFACE_MERGE");
+			String provareaId = paramsMap.get("provCustAreaId").toString().subSequence(0, 3)+"0000";
+			if(interface_merge != null && interface_merge.indexOf(provareaId)!=-1){
+				mergeFlag = "1";
+			}
+			model.addAttribute("mergeFlag", mergeFlag);
+			//发展人工号
+			model.addAttribute("salesCode",paramsMap.get("salesCode")==null?"":paramsMap.get("salesCode").toString());
+			//终端串码
+			model.addAttribute("terminalCode",paramsMap.get("termCode")==null?"":paramsMap.get("termCode").toString());
 		}catch(Exception e){
 			log.error("可选包/业务变更服务加载异常：",e);
 			model.addAttribute("errorMsg", "可选包/业务变更服务加载错误!");
@@ -295,151 +305,167 @@ public class MainController extends BaseController {
 			provIsale=paramsMap.get("provIsale")!=null?String.valueOf(paramsMap.get("provIsale")):null;
 			redirectUri=paramsMap.get("redirectUri")!=null?String.valueOf(paramsMap.get("redirectUri")):null;
 			isFee=paramsMap.get("isFee")!=null?String.valueOf(paramsMap.get("isFee")):null;
-
-			//客户定位
-			Map<String,Object> custparamMap = new HashMap<String,Object>();
-			custparamMap.put("acctNbr", paramsMap.get("mainPhoneNum").toString());
-			custparamMap.put("areaId",paramsMap.get("provCustAreaId").toString());
-			custparamMap.put("diffPlace","local");
-			custparamMap.put("identityCd","");
-			custparamMap.put("identityNum","");
-			custparamMap.put("partyName","");
-			custparamMap.put("queryType","");
-			custparamMap.put("queryTypeValue","");
-			custparamMap.put("staffId",sessionStaff.getStaffId());
-			Map<String,Object> resultMap = custBmo.queryCustInfo(custparamMap,flowNum,sessionStaff);
-			List<Map<String,Object>> custInfos = new ArrayList<Map<String,Object>>();
-			if (MapUtils.isNotEmpty(resultMap)) {
-				custInfos=(List<Map<String, Object>>) resultMap.get("custInfos");
-				if(!custparamMap.get("queryTypeValue").equals("") && !custparamMap.get("queryType").equals("")){
-					sessionStaff.setCardNumber(String.valueOf(custparamMap.get("queryTypeValue")));
-					sessionStaff.setCardType(String.valueOf(custparamMap.get("queryType")));
-				}else if(!custparamMap.get("identityNum").equals("") && !custparamMap.get("identityCd").equals("")){
-					sessionStaff.setCardNumber(String.valueOf(custparamMap.get("identityNum")));
-					sessionStaff.setCardType(String.valueOf(custparamMap.get("identityCd")));
-				}
-				sessionStaff.setInPhoneNum(String.valueOf(custparamMap.get("acctNbr")));
-				if(custInfos.size()>0){
-					Map<String,Object> custInfo =(Map<String,Object>)custInfos.get(0);
-					String idCardNumber = (String) custInfo.get("idCardNumber");
-					sessionStaff.setCustId(String.valueOf(custInfo.get("custId")));
-					sessionStaff.setCardNumber(idCardNumber);
-					sessionStaff.setCardType(String.valueOf(custInfo.get("identityCd")));
-					sessionStaff.setPartyName(String.valueOf(custInfo.get("partyName")));
-					if(idCardNumber != null && idCardNumber.length()==18){
-						 String preStr = idCardNumber.substring(0,6);
-				    	 String subStr = idCardNumber.substring(14);
-				    	 idCardNumber=preStr+"********"+subStr;
-					}else if(idCardNumber != null && idCardNumber.length()==15){
-						String preStr = idCardNumber.substring(0,5);
-				    	 String subStr = idCardNumber.substring(13);
-				    	 idCardNumber=preStr+"********"+subStr;
-					}
-					areaId = (String) custInfo.get("areaId");
-					custId = String.valueOf(custInfo.get("custId"));
-					querycustflag = true;
-					model.addAttribute("addressStr", (String) custInfo.get("idCardNumber"));
-					model.addAttribute("areaId", (String) custInfo.get("areaId"));
-					model.addAttribute("areaName", (String) custInfo.get("areaName"));
-					model.addAttribute("custFlag", (String) custInfo.get("custFlag"));
-					model.addAttribute("custId", String.valueOf(custInfo.get("custId")));
-					model.addAttribute("idCardNumber", idCardNumber);
-					model.addAttribute("identityCd", (String) custInfo.get("identityCd"));
-					model.addAttribute("identityName", (String) custInfo.get("identityName"));
-					model.addAttribute("norTaxPayer", (String) custInfo.get("norTaxPayer"));
-					model.addAttribute("partyName", (String) custInfo.get("partyName"));
-					model.addAttribute("segmentId", (String) custInfo.get("segmentId"));
-					model.addAttribute("segmentName", (String) custInfo.get("segmentName"));
-					model.addAttribute("vipLevel", (String) custInfo.get("vipLevel"));
-					model.addAttribute("vipLevelName", (String) custInfo.get("vipLevelName"));
-					model.addAttribute("querycustflag", "0");
-				}else{
-					model.addAttribute("querycustflag", "1");
-				}
-			}else{
-				model.addAttribute("querycustflag", "1");
+			String interface_merge = MySimulateData.getInstance().getParam((String) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_DATASOURCE_KEY),"INTERFACE_MERGE");
+			String provareaId = paramsMap.get("provCustAreaId").toString().subSequence(0, 3)+"0000";
+			if(interface_merge != null && interface_merge.indexOf(provareaId)!=-1){
+				mergeFlag = "1";
 			}
-		} catch (BusinessException be) {
-			model.addAttribute("querycustflag", "-1");
-			model.addAttribute("errMsg", be.getError().getErrMsg());
-		} catch (InterfaceException ie) {
-			model.addAttribute("querycustflag", "-1");
-			model.addAttribute("errMsg", ie.getMsg());
-		} catch (Exception e) {
-			model.addAttribute("querycustflag", "-1");
-			model.addAttribute("errMsg", ErrorCode.QUERY_CUST.getErrMsg());
-		}
-		//查询已订购
-		if(querycustflag){
-			try {
-				Map<String,Object> orderparamMap = new HashMap<String,Object>();
-				orderparamMap.put("acctNbr", paramsMap.get("mainPhoneNum").toString());
-				orderparamMap.put("areaId", areaId);
-				orderparamMap.put("curPage", "1");
-				orderparamMap.put("custId", custId);
-				orderparamMap.put("pageSize", "5");
-//				orderparamMap.put("prodClass", "12");
-				Map<String, Object> datamap = this.custBmo.queryCustProd(orderparamMap,flowNum, sessionStaff);
-				String code = (String) datamap.get("resultCode");
-				if (ResultCode.R_SUCC.equals(code)) {
-					Map<String, Object> temMap=(Map) datamap.get("result");
-					List<Map<String, Object>> list = (List<Map<String, Object>>) temMap.get("prodInstInfos");
-						if (list == null) {
-							model.addAttribute("queryorderflag", "1");
-						} else {
-							model.addAttribute("queryorderflag", "0");
-							Map<String,Object> ordermap = list.get(0);
-							Map<String,Object> feeType = (Map<String,Object>) ordermap.get("feeType");
-							List<Map<String,Object>> prodStopRecords = (List<Map<String,Object>>)ordermap.get("prodStopRecords");
-							Map<String,Object> prodStopRecordsmap = (Map<String,Object>) prodStopRecords.get(0);
-							List<Map<String,Object>> mainProdOfferInstInfos = (List<Map<String,Object>>)ordermap.get("mainProdOfferInstInfos");
-							Map<String,Object> mainProdOfferInstInfosmap = (Map<String,Object>)mainProdOfferInstInfos.get(0);
-							model.addAttribute("accNbr", ordermap.get("accNbr").toString());
-							model.addAttribute("productName", ordermap.get("productName").toString());
-							model.addAttribute("prodStateName", ordermap.get("prodStateName").toString());
-							model.addAttribute("feeTypeName", feeType.get("feeTypeName"));
-							model.addAttribute("prodInstId", ordermap.get("prodInstId").toString());
-							model.addAttribute("extProdInstId", ordermap.get("extProdInstId").toString());
-							model.addAttribute("corProdInstId", ordermap.get("corProdInstId").toString());
-							model.addAttribute("prodStateCd", ordermap.get("prodStateCd").toString());
-							model.addAttribute("productId", ordermap.get("productId").toString());
-							model.addAttribute("feeType", feeType.get("feeType").toString());
-							model.addAttribute("prodClass", ordermap.get("prodClass").toString());
-							model.addAttribute("stopRecordCd", prodStopRecordsmap.get("stopRecordCd").toString());
-							model.addAttribute("stopRecordName", prodStopRecordsmap.get("stopRecordName").toString());
-							model.addAttribute("prodOfferName", mainProdOfferInstInfosmap.get("prodOfferName").toString());
-							model.addAttribute("custName", mainProdOfferInstInfosmap.get("custName").toString());
-							model.addAttribute("startDt", mainProdOfferInstInfosmap.get("startDt").toString());
-							model.addAttribute("endDt", mainProdOfferInstInfosmap.get("endDt").toString());
-							model.addAttribute("prodOfferId", mainProdOfferInstInfosmap.get("prodOfferId").toString());
-							model.addAttribute("prodOfferInstId", mainProdOfferInstInfosmap.get("prodOfferInstId").toString());
-							model.addAttribute("custId", mainProdOfferInstInfosmap.get("custId").toString());
-							model.addAttribute("is3G", mainProdOfferInstInfosmap.get("is3G").toString());
-							model.addAttribute("zoneNumber", ordermap.get("zoneNumber").toString());
-							model.addAttribute("areaId", ordermap.get("areaId").toString());
+			if("0".equals(mergeFlag)){
+				try{
+					//客户定位
+					Map<String,Object> custparamMap = new HashMap<String,Object>();
+					custparamMap.put("acctNbr", paramsMap.get("mainPhoneNum").toString());
+					custparamMap.put("areaId",paramsMap.get("provCustAreaId").toString());
+					custparamMap.put("diffPlace","local");
+					custparamMap.put("identityCd","");
+					custparamMap.put("identityNum","");
+					custparamMap.put("partyName","");
+					custparamMap.put("queryType","");
+					custparamMap.put("queryTypeValue","");
+					custparamMap.put("staffId",sessionStaff.getStaffId());
+					Map<String,Object> resultMap = custBmo.queryCustInfo(custparamMap,flowNum,sessionStaff);
+					List<Map<String,Object>> custInfos = new ArrayList<Map<String,Object>>();
+					if (MapUtils.isNotEmpty(resultMap)) {
+						custInfos=(List<Map<String, Object>>) resultMap.get("custInfos");
+						if(!custparamMap.get("queryTypeValue").equals("") && !custparamMap.get("queryType").equals("")){
+							sessionStaff.setCardNumber(String.valueOf(custparamMap.get("queryTypeValue")));
+							sessionStaff.setCardType(String.valueOf(custparamMap.get("queryType")));
+						}else if(!custparamMap.get("identityNum").equals("") && !custparamMap.get("identityCd").equals("")){
+							sessionStaff.setCardNumber(String.valueOf(custparamMap.get("identityNum")));
+							sessionStaff.setCardType(String.valueOf(custparamMap.get("identityCd")));
+						}
+						sessionStaff.setInPhoneNum(String.valueOf(custparamMap.get("acctNbr")));
+						if(custInfos.size()>0){
+							Map<String,Object> custInfo =(Map<String,Object>)custInfos.get(0);
+							String idCardNumber = (String) custInfo.get("idCardNumber");
+							sessionStaff.setCustId(String.valueOf(custInfo.get("custId")));
+							sessionStaff.setCardNumber(idCardNumber);
+							sessionStaff.setCardType(String.valueOf(custInfo.get("identityCd")));
+							sessionStaff.setPartyName(String.valueOf(custInfo.get("partyName")));
+							if(idCardNumber != null && idCardNumber.length()==18){
+								 String preStr = idCardNumber.substring(0,6);
+						    	 String subStr = idCardNumber.substring(14);
+						    	 idCardNumber=preStr+"********"+subStr;
+							}else if(idCardNumber != null && idCardNumber.length()==15){
+								String preStr = idCardNumber.substring(0,5);
+						    	 String subStr = idCardNumber.substring(13);
+						    	 idCardNumber=preStr+"********"+subStr;
+							}
+							areaId = (String) custInfo.get("areaId");
+							custId = String.valueOf(custInfo.get("custId"));
+							querycustflag = true;
+							model.addAttribute("addressStr", (String) custInfo.get("idCardNumber"));
+							model.addAttribute("areaId", (String) custInfo.get("areaId"));
+							model.addAttribute("areaName", (String) custInfo.get("areaName"));
+							model.addAttribute("custFlag", (String) custInfo.get("custFlag"));
+							model.addAttribute("custId", String.valueOf(custInfo.get("custId")));
+							model.addAttribute("idCardNumber", idCardNumber);
+							model.addAttribute("identityCd", (String) custInfo.get("identityCd"));
+							model.addAttribute("identityName", (String) custInfo.get("identityName"));
+							model.addAttribute("norTaxPayer", (String) custInfo.get("norTaxPayer"));
+							model.addAttribute("partyName", (String) custInfo.get("partyName"));
+							model.addAttribute("segmentId", (String) custInfo.get("segmentId"));
+							model.addAttribute("segmentName", (String) custInfo.get("segmentName"));
+							model.addAttribute("vipLevel", (String) custInfo.get("vipLevel"));
+							model.addAttribute("vipLevelName", (String) custInfo.get("vipLevelName"));
+							model.addAttribute("querycustflag", "0");
+						}else{
+							model.addAttribute("querycustflag", "1");
 						}
 					}else{
-						model.addAttribute("queryorderflag", "1");
+						model.addAttribute("querycustflag", "1");
 					}
-			} catch (BusinessException be) {
-				model.addAttribute("queryorderflag", "-1");
-				model.addAttribute("errMsg", be.getError().getErrMsg());
-			} catch (InterfaceException ie) {
-				model.addAttribute("queryorderflag", "-1");
-				model.addAttribute("errMsg", ie.getMsg());
-			} catch (Exception e) {
-				model.addAttribute("queryorderflag", "-1");
-				model.addAttribute("errMsg", ErrorCode.ORDER_PROD.getErrMsg());
+				} catch (BusinessException be) {
+					model.addAttribute("querycustflag", "-1");
+					model.addAttribute("errMsg", be.getError().getErrMsg());
+				} catch (InterfaceException ie) {
+					model.addAttribute("querycustflag", "-1");
+					model.addAttribute("errMsg", ie.getMsg());
+				} catch (Exception e) {
+					model.addAttribute("querycustflag", "-1");
+					model.addAttribute("errMsg", ErrorCode.QUERY_CUST.getErrMsg());
+				}
+				//查询已订购
+				if(querycustflag){
+					try {
+						Map<String,Object> orderparamMap = new HashMap<String,Object>();
+						orderparamMap.put("acctNbr", paramsMap.get("mainPhoneNum").toString());
+						orderparamMap.put("areaId", areaId);
+						orderparamMap.put("curPage", "1");
+						orderparamMap.put("custId", custId);
+						orderparamMap.put("pageSize", "5");
+		//				orderparamMap.put("prodClass", "12");
+						Map<String, Object> datamap = this.custBmo.queryCustProd(orderparamMap,flowNum, sessionStaff);
+						String code = (String) datamap.get("resultCode");
+						if (ResultCode.R_SUCC.equals(code)) {
+							Map<String, Object> temMap=(Map) datamap.get("result");
+							List<Map<String, Object>> list = (List<Map<String, Object>>) temMap.get("prodInstInfos");
+								if (list == null) {
+									model.addAttribute("queryorderflag", "1");
+								} else {
+									model.addAttribute("queryorderflag", "0");
+									Map<String,Object> ordermap = list.get(0);
+									Map<String,Object> feeType = (Map<String,Object>) ordermap.get("feeType");
+									List<Map<String,Object>> prodStopRecords = (List<Map<String,Object>>)ordermap.get("prodStopRecords");
+									Map<String,Object> prodStopRecordsmap = (Map<String,Object>) prodStopRecords.get(0);
+									List<Map<String,Object>> mainProdOfferInstInfos = (List<Map<String,Object>>)ordermap.get("mainProdOfferInstInfos");
+									Map<String,Object> mainProdOfferInstInfosmap = (Map<String,Object>)mainProdOfferInstInfos.get(0);
+									model.addAttribute("accNbr", ordermap.get("accNbr").toString());
+									model.addAttribute("productName", ordermap.get("productName").toString());
+									model.addAttribute("prodStateName", ordermap.get("prodStateName").toString());
+									model.addAttribute("feeTypeName", feeType.get("feeTypeName"));
+									model.addAttribute("prodInstId", ordermap.get("prodInstId").toString());
+									model.addAttribute("extProdInstId", ordermap.get("extProdInstId").toString());
+									model.addAttribute("corProdInstId", ordermap.get("corProdInstId").toString());
+									model.addAttribute("prodStateCd", ordermap.get("prodStateCd").toString());
+									model.addAttribute("productId", ordermap.get("productId").toString());
+									model.addAttribute("feeType", feeType.get("feeType").toString());
+									model.addAttribute("prodClass", ordermap.get("prodClass").toString());
+									model.addAttribute("stopRecordCd", prodStopRecordsmap.get("stopRecordCd").toString());
+									model.addAttribute("stopRecordName", prodStopRecordsmap.get("stopRecordName").toString());
+									model.addAttribute("prodOfferName", mainProdOfferInstInfosmap.get("prodOfferName").toString());
+									model.addAttribute("custName", mainProdOfferInstInfosmap.get("custName").toString());
+									model.addAttribute("startDt", mainProdOfferInstInfosmap.get("startDt").toString());
+									model.addAttribute("endDt", mainProdOfferInstInfosmap.get("endDt").toString());
+									model.addAttribute("prodOfferId", mainProdOfferInstInfosmap.get("prodOfferId").toString());
+									model.addAttribute("prodOfferInstId", mainProdOfferInstInfosmap.get("prodOfferInstId").toString());
+									model.addAttribute("custId", mainProdOfferInstInfosmap.get("custId").toString());
+									model.addAttribute("is3G", mainProdOfferInstInfosmap.get("is3G").toString());
+									model.addAttribute("zoneNumber", ordermap.get("zoneNumber").toString());
+									model.addAttribute("areaId", ordermap.get("areaId").toString());
+								}
+							}else{
+								model.addAttribute("queryorderflag", "1");
+							}
+					} catch (BusinessException be) {
+						model.addAttribute("queryorderflag", "-1");
+						model.addAttribute("errMsg", be.getError().getErrMsg());
+					} catch (InterfaceException ie) {
+						model.addAttribute("queryorderflag", "-1");
+						model.addAttribute("errMsg", ie.getMsg());
+					} catch (Exception e) {
+						model.addAttribute("queryorderflag", "-1");
+						model.addAttribute("errMsg", ErrorCode.ORDER_PROD.getErrMsg());
+					}
+				}
 			}
-		}
-		model.addAttribute("provIsale", provIsale);
-		model.addAttribute("reloadFlag", paramsMap.get("reloadFlag").toString());
-		model.addAttribute("redirectUri", redirectUri);
-		model.addAttribute("mainPhoneNum", paramsMap.get("mainPhoneNum").toString());
-		model.addAttribute("newSubPhoneNum", paramsMap.get("newSubPhoneNum")==null?"":paramsMap.get("newSubPhoneNum").toString());
-		model.addAttribute("oldSubPhoneNum", paramsMap.get("oldSubPhoneNum")==null?"":paramsMap.get("oldSubPhoneNum").toString());
-		model.addAttribute("mktResInstCode", paramsMap.get("mktResInstCode")==null?"":paramsMap.get("mktResInstCode").toString());
-		model.addAttribute("isFee", isFee);
+			model.addAttribute("provIsale", provIsale);
+			model.addAttribute("reloadFlag", paramsMap.get("reloadFlag").toString());
+			model.addAttribute("redirectUri", redirectUri);
+			model.addAttribute("mainPhoneNum", paramsMap.get("mainPhoneNum").toString());
+			model.addAttribute("newSubPhoneNum", paramsMap.get("newSubPhoneNum")==null?"":paramsMap.get("newSubPhoneNum").toString());
+			model.addAttribute("oldSubPhoneNum", paramsMap.get("oldSubPhoneNum")==null?"":paramsMap.get("oldSubPhoneNum").toString());
+			model.addAttribute("mktResInstCode", paramsMap.get("mktResInstCode")==null?"":paramsMap.get("mktResInstCode").toString());
+			model.addAttribute("isFee", isFee);
+			model.addAttribute("mergeFlag", mergeFlag);
+			model.addAttribute("provCustAreaId", paramsMap.get("provCustAreaId").toString());
+			//发展人工号
+			model.addAttribute("salesCode",paramsMap.get("salesCode")==null?"":paramsMap.get("salesCode").toString());
+			//终端串码
+			model.addAttribute("terminalCode",paramsMap.get("termCode")==null?"":paramsMap.get("termCode").toString());
+		}catch(Exception e){
+    		
+    	}
 		return "/padtoken/member/main";
     }
 }

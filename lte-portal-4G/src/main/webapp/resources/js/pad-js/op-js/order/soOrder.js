@@ -63,8 +63,8 @@ SoOrder = (function() {
 					_getToken();
 					if (response.code == 0) {
 						var data = response.data;
-						if(data.result.ruleInfos!=undefined && data.result.ruleInfos.length > 0){
-							var ruleDesc = "";
+						var ruleInfos=data.result.ruleInfos;
+						if(ruleInfos!=undefined && ruleInfos.length > 0){							var ruleDesc = "";
 							$.each(data.result.ruleInfos, function(){
 								ruleDesc += this.ruleDesc+"<br/>";
 							});

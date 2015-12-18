@@ -2108,7 +2108,8 @@ order.main = (function(){
 			//0.查询当前客户下帐户
 			else{
 				acctQueryParam = {
-						custId : OrderInfo.cust.custId
+					custId : OrderInfo.cust.custId,
+					isServiceOpen:"Y"
 				};
 			}			
 			$.callServiceAsJson(contextPath+"/order/account", acctQueryParam, {
@@ -2629,9 +2630,8 @@ order.main = (function(){
 	var _createAcctWithId = function() {
 	   //帐户信息查询参数初始化 
 		var acctQueryParam;
-		acctQueryParam = {acctCd : OrderInfo.acct.acctCd};
+		acctQueryParam = {acctCd : OrderInfo.acct.acctCd,isServiceOpen:"Y"};
 		acctQueryParam.areaId=OrderInfo.getAreaId();
-		
 		$.callServiceAsJson(contextPath+"/order/account", acctQueryParam, {
 				"before":function(){	},
 				"always":function(){},
@@ -2694,7 +2694,8 @@ order.main = (function(){
 			container : 'acctDialog'
 		});
 		var acctQueryParam = {
-			acctCd : acctSel.find("option:selected").attr("acctcd")
+			acctCd : acctSel.find("option:selected").attr("acctcd"),
+			isServiceOpen:"Y"
 		};			
 		$.callServiceAsJson(contextPath+"/order/account", acctQueryParam, {
 			"before":function(){
@@ -3767,8 +3768,10 @@ order.main = (function(){
 			
 			if(acctCd!=""&&acctCd!=-1){
 				var acctQueryParam = {
-						"acctCd" : acctCd
-					};			
+					"acctCd" : acctCd,
+					"isServiceOpen":"Y"
+				};
+				
 				$.callServiceAsJson(contextPath+"/order/account", acctQueryParam, {
 					"before":function(){
 						$.ecOverlay("<strong>正在查询中,请稍等会儿....</strong>");

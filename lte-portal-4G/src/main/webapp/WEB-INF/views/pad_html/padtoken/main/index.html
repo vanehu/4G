@@ -17,7 +17,7 @@
 <script src="${contextPath}/js/pad-js/busi-js/mktRes/terminal.js?${jsversion}" type="text/javascript"></script>
 <script src="${contextPath}/js/pad-js/busi-js/mktRes/phoneNumber.js?${jsversion}" type="text/javascript"></script>
 <script src="${contextPath}/js/pad-js/busi-js/prod/uim.js?${jsversion}" type="text/javascript"></script>
-<script src="${contextPath}/js/busi-js/query/queryProd.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/pad-js/op-js/order/queryProd.js?${jsversion}" type="text/javascript"></script>
 <script src="${contextPath}/js/pad-js/busi-js/print/print.js?${jsversion}" type="text/javascript"></script>
 <script src="${contextPath}/js/pad-js/busi-js/order/prepare.js?${jsversion}" type="text/javascript"></script>
 <script src="${contextPath}/js/pad-js/op-js/order/attachOffer.js?${jsversion}" type="text/javascript"></script>
@@ -132,7 +132,16 @@
 		var provIsale_="${provIsale_}";
 		var redirectUri_="${redirectUri_}";
 		var isFee_="${isFee_}";
-		
+		var terminalCode='${terminalCode}'; //终端串码
+		//终端串码
+		if(terminalCode!=null && terminalCode!="" && terminalCode!="null"){
+			OrderInfo.terminalCode=terminalCode;
+		}
+		var salesCode='${salesCode}';
+		//发展人
+		if(salesCode!=null && salesCode!="" && salesCode!="null"){
+			OrderInfo.salesCode=salesCode;
+		}
 		OrderInfo.provinceInfo.provIsale=provinceInfo.provIsale;
 		OrderInfo.provinceInfo.redirectUri=provinceInfo.redirectUri;
 		OrderInfo.provinceInfo.isFee=provinceInfo.isFee;

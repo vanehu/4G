@@ -3122,7 +3122,8 @@ order.prodModify = (function(){
 				var dealer = {
 					itemSpecId : CONST.BUSI_ORDER_ATTR.DEALER,
 					role : $(this).find("select").val(),
-					value : $(this).find("input").attr("staffid") 
+					value : $(this).find("input").attr("staffid"),
+					channelNbr : $(this).find("select[name ='dealerChannel_"+mainAccNbr+"']").val()
 				};
 				param.busiOrderAttrs.push(dealer);
 				var dealer_name = {

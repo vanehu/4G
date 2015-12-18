@@ -49,6 +49,8 @@ OrderInfo = (function() {
 	var mktResInstCode="";  //保存uim卡
 	//终端串码
 	var _terminalCode="";
+	//发展人
+	var _salesCode="";
 	var _provinceInfo={
 		provIsale:"",
 		redirectUri:"",
@@ -1295,7 +1297,8 @@ OrderInfo = (function() {
 		}
 	};
 				
-	return {	
+	return {
+		salesCode:_salesCode,
 		terminalCode:_terminalCode,
 		mktResInstCode:mktResInstCode,
 		checkUimData:_checkUimData,

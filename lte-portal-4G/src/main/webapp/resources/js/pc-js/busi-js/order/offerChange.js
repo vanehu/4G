@@ -560,6 +560,10 @@ offerChange = (function() {
 				}
 			}
 		}
+		//发展人
+		if(OrderInfo.provinceInfo.salesCode!=""&&OrderInfo.reloadFlag=="Y"){
+			order.main.queryDealer();
+		}
 	};
 	
 	function cleckUim(uim,prodId){
@@ -833,7 +837,8 @@ offerChange = (function() {
 				var dealer = {
 					itemSpecId : CONST.BUSI_ORDER_ATTR.DEALER,
 					role : $(this).find("select").val(),
-					value : $(this).find("input").attr("staffid") 
+					value : $(this).find("input").attr("staffid"),
+					channelNbr : $(this).find("select[name ='dealerChannel_"+OrderInfo.offerSpec.offerSpecId+"']").val()
 				};
 				busiOrder.data.busiOrderAttrs.push(dealer);
 				var dealer_name = {

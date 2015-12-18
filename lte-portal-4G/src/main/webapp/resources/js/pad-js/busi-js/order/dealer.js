@@ -50,6 +50,31 @@ order.dealer = (function() {
 			$dl.append("<dd>"+accNbr+"</dd>");
 			$dl.append("<dd>"+OrderInfo.offerSpec.offerSpecName+"（包含接入产品）</dd>");
 			$dl.append($tdType);
+			//判断是否
+			if(OrderInfo.salesCode!=null && OrderInfo.salesCode!="" && OrderInfo.salesCode!="null" && OrderInfo.salesCode!=undefined){
+				var param = {
+						"dealerId":"",
+						"areaId":"",
+						"currentAreaAllName":"",
+						"staffName":"",
+						"staffCode":OrderInfo.salesCode,
+						"staffCode2":OrderInfo.salesCode,
+						"salesCode":"",
+						"pageIndex":1,
+						"objInstId":objInstId,
+						"pageSize":10
+				};
+				var url=contextPath+"/token/pad/staffMgr/getStaffList";
+				$.ecOverlay("<strong>正在查询发展人的服务中,请稍后....</strong>");
+				var response = $.callServiceAsJson(url,param);	
+				$.unecOverlay();
+				var code=response.code;
+                if(code==0){
+                	var data=response.data.result;
+                	OrderInfo.staff.staffId=data[0].staffId;
+                	OrderInfo.staff.staffName=data[0].staffName;
+                }
+			}
 			if(order.ysl!=undefined){
 				var $dd = $('<dd><input type="text" id="dealer_'+objId+'" staffId="'+OrderInfo.staff.staffId+'" value="'+OrderInfo.staff.staffName+'" data-mini="true"></input></dd>');
 				$dl.append($dd);
@@ -67,43 +92,31 @@ order.dealer = (function() {
 			$.jqmRefresh($("#dealerTbody"));
 		}
 		if(OrderInfo.actionFlag==6 ){ //加装需要接入产发展人
-			/*if(ec.util.isArray(OrderInfo.oldprodInstInfos)){//纳入老用户的发展人
-				
-			}else{
-				$.each(OrderInfo.offerSpec.offerRoles,function(){
-		    		$.each(this.prodInsts,function(){
-		    			var objInstId = this.prodInstId;
-		    			var $li = $("<li id='tr_"+objInstId+"' name='tr_"+objInstId+"'></li>");
-		    			var $dl= $("<dl></dl>");
-		    			var $tdType = $('<dd></dd>');
-		    			var $field=$('<fieldset data-role="fieldcontain"></fieldset>');
-		    			var objId = objInstId+"_"+OrderInfo.SEQ.dealerSeq;
-		    			var $select = $('<select id="dealerType_'+objId+'" name="dealerType_'+objInstId+'" data-mini="true" data-native-menu="false" data-icon="select" onclick=a=this.value; onchange="order.dealer.changeDealer(this,\'dealerType_'+objInstId+'\',a)"></select>');
-		    			$.each(OrderInfo.order.dealerTypeList,function(){
-		    				$select.append("<option value='"+this.PARTYPRODUCTRELAROLECD+"' >"+this.NAME+"</option>");
-		    			});
-		    			$field.append($select);
-		    			$tdType.append($field);
-						var accNbr = "未选号";
-						if(this.accNbr!=undefined && this.accNbr!=""){
-							accNbr = prodInst.accNbr;
-						}
-						$dl.append("<dd>"+accNbr+"</dd>");
-						$dl.append("<dd>"+this.objName+"</dd>");
-						$dl.append($tdType);
-						var $dd = $('<dd><input type="text" id="dealer_'+objId+'" staffId="'+OrderInfo.staff.staffId+'" value="'+OrderInfo.staff.staffName+'" data-mini="true" readonly="readonly" ></input></dd>');
-						$dl.append($dd);
-						var $button='<dd class="ui-grid"><div class="ui-grid-a"><div class="ui-block-a">';
-						$button+='<button data-mini="ture" onclick="javascript:order.main.queryStaff(\'dealer\',\''+objId+'\');">选择</button></div>';
-						$button+=' <div class="ui-block-b"> <button data-mini="ture" onclick="order.dealer.addProdDealer(this,'+objInstId+',1)">添加</button></div></div></dd>';
-						$dl.append($button);
-						$li.append($dl);
-						OrderInfo.SEQ.dealerSeq++;
-						$("#dealerTbody").append($li);
-						$.jqmRefresh($("#dealerTbody"));
-		    		});
-		    	});
-			}	*/	
+			//判断是否
+			if(OrderInfo.salesCode!=null && OrderInfo.salesCode!="" && OrderInfo.salesCode!="null" && OrderInfo.salesCode!=undefined){
+				var param = {
+						"dealerId":"",
+						"areaId":"",
+						"currentAreaAllName":"",
+						"staffName":"",
+						"staffCode":OrderInfo.salesCode,
+						"staffCode2":OrderInfo.salesCode,
+						"salesCode":"",
+						"pageIndex":1,
+						"objInstId":objInstId,
+						"pageSize":10
+				};
+				var url=contextPath+"/token/pad/staffMgr/getStaffList";
+				$.ecOverlay("<strong>正在查询发展人的服务中,请稍后....</strong>");
+				var response = $.callServiceAsJson(url,param);	
+				$.unecOverlay();
+				var code=response.code;
+                if(code==0){
+                	var data=response.data.result;
+                	OrderInfo.staff.staffId=data[0].staffId;
+                	OrderInfo.staff.staffName=data[0].staffName;
+                }
+			}
 			if(order.memberChange.newMemberFlag){
 				$.each(OrderInfo.offerSpec.offerRoles,function(){
 		    		$.each(this.prodInsts,function(){

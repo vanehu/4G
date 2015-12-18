@@ -69,10 +69,12 @@ query.prod = (function() {
 		var params = {
 			prodId: prod.prodInstId,
 			areaId: OrderInfo.getProdAreaId(prod.prodInstId),
-			acctNbr: prod.accNbr
+			acctNbr: prod.accNbr,
+			isServiceOpen:"Y"
 		};
 		$.ecOverlay("<strong>正在查询产品下终端实例数据中,请稍后....</strong>");
-		var response = $.callServiceAsJson(contextPath+"/order/queryTerminalInfo", params, {});
+		//var response = $.callServiceAsJson(contextPath+"/order/queryTerminalInfo", params, {});
+		var response = $.callServiceAsJson(contextPath+"/token/pad/order/queryTerminalInfo", params, {});
 		$.unecOverlay();
 		if(response.code == 0){
 			return response.data;
@@ -92,6 +94,7 @@ query.prod = (function() {
 	 * @service/intf.soService/queryOfferCouponById
 	 */
 	var _queryAcct = function(param,callBackFun) {
+		param.isServiceOpen="Y";
 		var url= contextPath+"/order/account";
 		if(typeof(callBackFun)=="function"){
 			$.callServiceAsJsonGet(url,param,{

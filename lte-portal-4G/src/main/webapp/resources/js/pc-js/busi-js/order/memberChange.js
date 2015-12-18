@@ -13,7 +13,6 @@ order.memberChange = function(){
 	var _newSubPhoneNum;
 	var _oldSubPhoneNum;
 	var _mktResInstCode;
-	var _salesCode;
 	var _newmembers = {};
 	var _oldmembers = {
 			objInstId:[]
@@ -1508,7 +1507,8 @@ order.memberChange = function(){
 				var dealer = {
 					itemSpecId : CONST.BUSI_ORDER_ATTR.DEALER,
 					role : $(this).find("select").val(),
-					value : $(this).find("input").attr("staffid") 
+					value : $(this).find("input").attr("staffid"),
+					channelNbr : $(this).find("select[name ='dealerChannel_"+OrderInfo.offerSpec.offerSpecId+"']").val()
 				};
 				busiOrder.data.busiOrderAttrs.push(dealer);
 				var dealer_name = {
@@ -1679,8 +1679,7 @@ order.memberChange = function(){
 		viceparams:_viceparams,
 		ooRoless:_ooRoless,
 		areaidJurisdiction:_areaidJurisdiction,
-		viceCartNum:_viceCartNum,
-		salesCode:_salesCode
+		viceCartNum:_viceCartNum
 	};
 }();
 $(function(){

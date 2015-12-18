@@ -1286,4 +1286,52 @@ public class CustController extends BaseController {
 		}
 		return jsonResponse;
     }
+	
+	//发展人查询
+    @RequestMapping(value = "/getDealerList", method = RequestMethod.POST)
+    @ResponseBody
+    public JsonResponse getDealerList(HttpSession session,@RequestBody Map<String, Object> param) {
+    	SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+                SysConstant.SESSION_KEY_LOGIN_STAFF);
+    	JsonResponse jsonResponse = null;
+    	Integer totalSize = 1;
+    	List list = new ArrayList();
+    	String areaId = param.get("areaId")== null || param.get("areaId") == ""?sessionStaff.getAreaId():param.get("areaId").toString();
+    	String areaName = param.get("currentAreaAllName")== null || param.get("currentAreaAllName") == ""?sessionStaff.getCurrentAreaAllName():param.get("currentAreaAllName").toString();
+    	Integer iAreaId = areaId==null?0:Integer.parseInt(areaId);
+    	String pageIndex = param.get("pageIndex")==null?"":param.get("pageIndex").toString();
+    	String pageSize = param.get("pageSize")==null?"":param.get("pageSize").toString();
+    	int iPage = 1;
+    	int iPageSize = 10 ;
+    	Map staffParm = new HashMap(param);
+    	try{
+    		iPage = Integer.parseInt(pageIndex);
+    		iPageSize = Integer.parseInt(pageSize) ;
+    		if(iPage>0){
+    			staffParm.remove("dealerId");
+        		staffParm.put("areaId", iAreaId);
+        		if(staffParm.get("staffName")!=null&&"".equals(staffParm.get("staffName"))){
+        			staffParm.remove("staffName");
+        		}
+        		if(staffParm.get("staffCode")!=null&&"".equals(staffParm.get("staffCode"))){
+        			staffParm.remove("staffCode");
+        		}
+        		Map returnMap = staffBmo.queryStaffList(staffParm, null, sessionStaff);
+            	if(returnMap.get("totalNum")!=null){
+            		totalSize = Integer.parseInt(returnMap.get("totalNum").toString());
+            		if(totalSize>0){
+            			list = (List)returnMap.get("result");
+            		}
+            	}
+            	jsonResponse = super.successed(list,ResultConstant.SUCCESS.getCode());	
+    		}
+    	}catch(BusinessException be){
+    		return super.failed(be);
+		}catch(InterfaceException ie){
+			return super.failed(ie, staffParm, ErrorCode.QUERY_STAFF_INFO);
+		}catch(Exception e){
+			return super.failed(ErrorCode.QUERY_STAFF_INFO, e, staffParm);
+		}
+    	return jsonResponse;
+    }
 }

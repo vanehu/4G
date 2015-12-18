@@ -1135,11 +1135,11 @@ order.memberChange = function(){
 						var flag = true;
 						$.each(OrderInfo.oldoffer[j].offerMemberInfos,function(){
 							if(this.objType == CONST.OBJ_TYPE.PROD && this.accessNumber==prod.accNbr){ //选中号码在销售品实例构成中，为了防止销售品实例缓存
-							instflag = false;
-							flag = false;
-							return false;
-						}
-					});
+								instflag = false;
+								flag = false;
+								return;
+							}
+						});
 						
 						if(flag){
 							//判断调用接口
@@ -1763,11 +1763,21 @@ order.memberChange = function(){
 		if($tr!=undefined){
 			$tr.each(function(){   //遍历产品有几个发展人
 				var dealer = {
-					itemSpecId : CONST.BUSI_ORDER_ATTR.DEALER,
-					role : $(this).find("select").val(),
-					value : $(this).find("input").attr("staffid") 
-				};
-				busiOrder.data.busiOrderAttrs.push(dealer);
+						itemSpecId : CONST.BUSI_ORDER_ATTR.DEALER,
+						role:$(this).find("select[name='dealerType_"+OrderInfo.offerSpec.offerSpecId+"']").val(),
+						value : $(this).find("input").attr("staffid"),
+						//APP发展人渠道[W]
+						channelNbr:$(this).find("select[name='dealerChannel_"+OrderInfo.offerSpec.offerSpecId+"']").val()
+					};
+					busiOrder.data.busiOrderAttrs.push(dealer);
+					
+					//APP发展人名称(原来没有，补上)
+					var dealer_name = {
+						itemSpecId : CONST.BUSI_ORDER_ATTR.DEALER_NAME,
+						role:$(this).find("select[name='dealerType_"+OrderInfo.offerSpec.offerSpecId+"']").val(),
+						value : $(this).find("input").attr("value") 
+					};
+					busiOrder.data.busiOrderAttrs.push(dealer_name);
 			});
 		}
 		busiOrders.push(busiOrder);

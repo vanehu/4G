@@ -110,7 +110,7 @@ order.uiCust = (function(){
 			_custLookforButton();
 		}else{
 			var provCustAreaId = $("#custAreaId_").val();
-			if(order.cust.mgr.queryCustCompreInfo(OrderInfo.provinceInfo.mainPhoneNum,14,'')){
+			if(order.cust.mgr.queryCustCompreInfo(OrderInfo.provinceInfo.mainPhoneNum,provCustAreaId,14,'')){
 				order.prodModify.orderAttachOffer();
 			}
 		}

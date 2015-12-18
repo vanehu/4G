@@ -1184,7 +1184,8 @@ SoOrder = (function() {
 					var dealer = {
 							itemSpecId : CONST.BUSI_ORDER_ATTR.DEALER,
 							role : $(this).find("select").val(),
-							value : $(this).find("input").attr("staffid") 
+							value : $(this).find("input").attr("staffid"),
+							channelNbr : $(this).find("select[name ='dealerChannel_"+offerSpec.offerSpecId+"']").val()
 					};
 					busiOrder2.data.busiOrderAttrs.push(dealer);
 					var dealer_name = {
@@ -2155,7 +2156,8 @@ SoOrder = (function() {
 				var dealer = {
 					itemSpecId : CONST.BUSI_ORDER_ATTR.DEALER,
 					role : $(this).find("select").val(),
-					value : $(this).find("input").attr("staffid")
+					value : $(this).find("input").attr("staffid"),
+					channelNbr : $(this).find("select[name ='dealerChannel_"+OrderInfo.offerSpec.offerSpecId+"']").val()
 				};
 				busiOrder.data.busiOrderAttrs.push(dealer);
 				var dealer_name = {
@@ -2324,9 +2326,12 @@ SoOrder = (function() {
 		}*/
 		//发展人
 		var $tr;
+		var objInstId_dealer;
 		if(OrderInfo.actionFlag==6){ //加装发展人根据产品
+			objInstId_dealer = prodId;
 			$tr = $("tr[name='tr_"+prodId+"']");
 		}else{
+			objInstId_dealer = OrderInfo.offerSpec.offerSpecId;
 			$tr = $("#dealerTbody tr[name='tr_"+OrderInfo.offerSpec.offerSpecId+"']");
 		}
 		if($tr!=undefined){
@@ -2334,7 +2339,8 @@ SoOrder = (function() {
 				var dealer = {
 					itemSpecId : CONST.BUSI_ORDER_ATTR.DEALER,
 					role : $(this).find("select").val(),
-					value : $(this).find("input").attr("staffid") 
+					value : $(this).find("input").attr("staffid"),
+					channelNbr : $(this).find("select[name ='dealerChannel_"+objInstId_dealer+"']").val()
 				};
 				busiOrder.data.busiOrderAttrs.push(dealer);
 				var dealer_name = {

@@ -1062,95 +1062,163 @@ order.cust.mgr = (function(){
 		$.ecOverlay("<strong>正在查询客户架构信息中,请稍等...</strong>");
 		var response = $.callServiceAsJson(contextPath+"/token/pc/cust/queryCustCompreInfo", param);
 		$.unecOverlay();
-		if(oldFlag=="OLD"){
-//			var oldCust = {
-//					addressStr: "上海市",
-//					areaId: "8320100",
-//					areaName: "南京市",
-//					authFlag: "1",
-//					custFlag: "1100",
-//					custId: "700000483622",
-//					idCardNumber: "905899",
-//					identityCd: "2",
-//					identityName: "军人身份证件",
-//					norTaxPayer: "",
-//					partyName: "AH测试",
-//					segmentId: "1100",
-//					segmentName: "公众客户",
-//					vipLevel: "1300",
-//					vipLevelName: "普通"
-//			}
-//			if(OrderInfo.actionFlag!=1 && oldCust.custId!=OrderInfo.cust.custId){
-//				$.alert("提示",accNbr+"和主卡的客户不一致！");
-//				return false;
-//			}
-			OrderInfo.oldprodInstInfos=[{"stopRecordCd":"","prodBigClass":"12","ownerId":null,"roleName":"乐享主卡","treeFlag":"","areaId":"8320100","extProdInstId":"251248460392","prodStateName":"在用","prodClass":"3","prodOfferName":"乐享4G201407 399元-主套餐","startDt":"2015-12-01 00:00:00","prodStateCd":"100000","feeType":{"feeType":"1200","feeTypeName":"后付费"},"prodStopRecords":[{"stopRecordCd":"","stopRecordName":"","statusCd":""}],"custId":700000483622,"ownerName":null,"roleCd":"10100002","stopRecordName":"","corProdInstId":"993400700019668028","productId":235010000,"ifLteNewInstall":"Y","accNbr":"17751762731","prodInstId":700019668028,"mainProdOfferInstInfos":[{"prodOfferName":"乐享4G201407 399元-主套餐","extProdOfferId":"300509026761","prodOfferId":81009,"prodOfferInstId":700003952036,"extProdOfferInstId":"993400700003952036","startDt":"2015-12-01 00:00:00","endDt":"3000-01-01 00:00:00","description":"天翼乐享4G-201406/399元","custName":"30000101000000","custId":700000483622,"offerType":"11","offerNbr":"5000001801100008","roleName":"乐享主卡","roleCd":"10100002","is3G":"N"}],"productName":"移动电话（仅含本地语音）","zoneNumber":"025"}]
-//			if(OrderInfo.oldprodInstInfos.prodStateCd!=CONST.PROD_STATUS_CD.NORMAL_PROD){
-//				$.alert("提示",custinfolist[i].accNbr+"不是在用产品！");
-//				return false;
-//			}
-//			if(OrderInfo.actionFlag!=1 && OrderInfo.oldprodInstInfos.feeType!=order.prodModify.choosedProdInfo.feeType){
-//				$.alert("提示",custinfolist[i].accNbr+"和主卡的付费类型不一致！");
-//				return false;
-//			}
-//			if(OrderInfo.oldprodInstInfos.productId=="280000000"){
-//				$.alert("提示",custinfolist[i].accNbr+"是无线宽带，不能纳入！");
-//				return false;
-//			}
-			OrderInfo.oldoffer=[{"offerMemberInfos":[{"accessNumber":"17751762731","endDt":"","ifHardCode":"Y","minQty":"1","objId":"235010000","extObjId":"379","objInstId":700019668028,"extObjInstId":"993400700019668028","objType":"2","offerId":700003952036,"extOfferId":"993400700003952036","offerMemberId":700019687386,"offerRoleId":"30045","roleCd":"400","roleName":"乐享主卡","startDt":"","stateName":"","statusCd":"","prodId":"251248460392","statusList":[],"prodClass":"3"},{"accessNumber":"17712918261","endDt":"","ifHardCode":"Y","minQty":"0","objId":"235010000","extObjId":"","objInstId":700019668029,"extObjInstId":"993400700019668029","objType":"2","offerId":700003952036,"extOfferId":"993400700003952036","offerMemberId":700019687387,"offerRoleId":"30046","roleCd":"401","roleName":"乐享副卡","startDt":"","stateName":"","statusCd":"","prodId":"251248460393","statusList":[],"prodClass":"3"}],"offerId":700003952036,"offerSpecId":81009,"offerSpecName":"乐享4G201407 399元-主套餐","accNbr":"17751762731"}]			
-			order.memberChange.viceCartNum = 0;
-			$.each(OrderInfo.oldoffer,function(){
-				$.each(this.offerMemberInfos,function(){
-					if(this.objType==CONST.OBJ_TYPE.PROD){
-						order.memberChange.viceCartNum++;
+		if(response.code == 0) {
+			if(response.data == null){
+				$.alert("提示","客户架构信息接口无数据返回。");
+				return false;
+			}
+			if(response.data.custInfos==undefined){
+				$.alert("提示","抱歉，没有定位到客户，请尝试其他客户。");
+				return false;
+			}
+			if(response.data.prodInstInfos==undefined && busitypeflag!=1){
+				$.alert("提示","客户下没有可以办理业务的移动用户。");
+				return false;
+			}
+			if(response.data.offerMemberInfos==undefined && busitypeflag!=1){
+				$.alert("提示","查询销售品实例构成，没有返回成员实例无法继续受理。");
+				return false;
+			}
+			if(oldFlag=="OLD"){
+				var custInfos = response.data.custInfos;
+				if(OrderInfo.actionFlag!=1 && custInfos[0].custId!=OrderInfo.cust.custId){
+					$.alert("提示",mainPhoneNum+"和主卡的客户不一致！");
+					return false;
+				}
+				var prodInstInfos = {};
+				var prodInfos = response.data.prodInstInfos;
+				$.each(prodInfos,function(){
+					if(this.accNbr==mainPhoneNum){
+						prodInstInfos = this;
+						if(prodInstInfos.prodStateCd!=CONST.PROD_STATUS_CD.NORMAL_PROD){
+							$.alert("提示",mainPhoneNum+"不是在用产品！");
+							return false;
+						}
+						if(OrderInfo.actionFlag!=1 && prodInstInfos.feeType.feeType!=order.prodModify.choosedProdInfo.feeType){
+							$.alert("提示",mainPhoneNum+"和主卡的付费类型不一致！");
+							return false;
+						}
+						if(prodInstInfos.productId=="280000000"){
+							$.alert("提示",mainPhoneNum+"是无线宽带，不能纳入！");
+							return false;
+						}
+						prodInstInfos.custId = custInfos[0].custId;
+						OrderInfo.oldprodInstInfos.push(prodInstInfos);
 					}
 				})
-			});
-		}else{
-			OrderInfo.cust={
-					addressStr: "",
-					areaId: "8320100",
-					areaName: "南京市",
-					authFlag: "1",
-					custFlag: "1100",
-					custId: "700000483622",
-					idCardNumber: "2",
-					identityCd: "",
-					identityName: "",
-					norTaxPayer: "",
-					partyName: "AH测试",
-					segmentId: "1100",
-					segmentName: "公众客户",
-					vipLevel: "1300",
-					vipLevelName: "普通"
-			}
-				order.prodModify.choosedProdInfo={
-					accNbr: "17712877897",
-					areaCode: "025",
-					areaId: "8320100",
-					corProdInstId: "993400700019669948",
-					custId: "700000483622",
-					custName: "30000101000000",
-					endDt: "3000-01-01 00:00:00",
-					extProdInstId: "251248460525",
-					feeType: "1200",
-					feeTypeName: "后付费",
-					is3G: "N",
-					prodBigClass: "12",
-					prodClass: "3",
-					prodInstId: "700019669948",
-					prodOfferId: "81013",
-					prodOfferInstId: "700003943730",
-					prodOfferName: "乐享4G201407 99元-主套餐",
-					prodStateCd: "100000",
-					prodStateName: "在用",
-					productId: "235010000",
-					productName: "移动电话（仅含本地语音）",
-					startDt: "2015-10-19 15:35:08",
-					stopRecordCd: "",
-					stopRecordName: ""
+				
+				var flag = true;
+				for ( var i = 0; i < response.data.offerMemberInfos.length; i++) {
+					var member = response.data.offerMemberInfos[i];
+					if(member.objType==""){
+						$.alert("提示","销售品实例构成 "+member.roleName+" 成员类型【objType】节点为空，无法继续受理,请营业后台核实");
+						return false;
+					}else if(member.objType==CONST.OBJ_TYPE.PROD){
+						if(member.accessNumber==""){
+							$.alert("提示","销售品实例构成 "+member.roleName+" 接入产品号码【accessNumber】节点为空，无法继续受理,请营业后台核实");
+							return false;
+						}
+					}
+					if(member.objInstId==prodInstInfos.prodInstId){
+						flag = false;
+					}
 				}
-				OrderInfo.offer={"offerId":"700003943730","offerSpecId":"81013","offerMemberInfos":[{"accessNumber":"17712877897","endDt":"","ifHardCode":"Y","minQty":"1","objId":"235010000","extObjId":"379","objInstId":700019669948,"extObjInstId":"993400700019669948","objType":"2","offerId":700003943730,"extOfferId":"993400700003943730","offerMemberId":700019669967,"offerRoleId":"30055","roleCd":"400","roleName":"乐享主卡","startDt":"","stateName":"","statusCd":"","prodId":"251248460525","statusList":[]}],"offerSpecName":"乐享4G201407 99元-主套餐"}
+				if(flag){
+					$.alert("提示","销售品实例构成中 没有包含选中接入号码【"+prodInstInfos.accNbr+"】，无法继续受理，请业务后台核实");
+					return false;
+				}
+				var offerInfos = {
+					"offerMemberInfos":	response.data.offerMemberInfos,
+					"offerId":prodInstInfos.mainProdOfferInstInfos[0].prodOfferInstId,
+					"offerSpecId":prodInstInfos.mainProdOfferInstInfos[0].prodOfferId,
+					"offerSpecName":prodInstInfos.mainProdOfferInstInfos[0].prodOfferName,
+					"accNbr":prodInstInfos.accNbr
+				};
+				OrderInfo.oldoffer.push(offerInfos);
+				order.memberChange.viceCartNum = 0;
+				$.each(OrderInfo.oldoffer,function(){
+					$.each(this.offerMemberInfos,function(){
+						if(this.objType==CONST.OBJ_TYPE.PROD){
+							order.memberChange.viceCartNum++;
+						}
+					})
+				});
+			}else{
+				var custInfos = response.data.custInfos;
+				OrderInfo.cust={
+					addressStr: custInfos[0].addressStr,
+					areaId: custInfos[0].areaId,
+					areaName: custInfos[0].areaName,
+					authFlag: custInfos[0].authType,
+					custFlag: custInfos[0].custFlag,
+					custId: custInfos[0].custId,
+					idCardNumber: custInfos[0].idCardNumber,
+					identityCd: custInfos[0].identityCd,
+					identityName: custInfos[0].identityName,
+					norTaxPayer: "",
+					partyName: custInfos[0].partyName,
+					segmentId: custInfos[0].segmentId,
+					segmentName: custInfos[0].segmentName,
+					vipLevel: custInfos[0].vipLevel,
+					vipLevelName: custInfos[0].vipLevelName
+				}
+				if(busitypeflag!=1){
+					var prodInstInfos = response.data.prodInstInfos;
+					order.prodModify.choosedProdInfo={
+						accNbr: prodInstInfos[0].accNbr,
+						areaCode: prodInstInfos[0].zoneNumber,
+						areaId: prodInstInfos[0].areaId,
+						corProdInstId: prodInstInfos[0].corProdInstId,
+						custId: prodInstInfos[0].mainProdOfferInstInfos[0].custId,
+						custName: prodInstInfos[0].mainProdOfferInstInfos[0].custName,
+						endDt: prodInstInfos[0].mainProdOfferInstInfos[0].endDt,
+						extProdInstId: prodInstInfos[0].extProductId,
+						feeType: prodInstInfos[0].feeType.feeType,
+						feeTypeName: prodInstInfos[0].feeType.feeTypeName,
+						is3G: prodInstInfos[0].mainProdOfferInstInfos[0].is3G,
+						prodBigClass: prodInstInfos[0].prodBigClass,
+						prodClass: prodInstInfos[0].prodClass,
+						prodInstId: prodInstInfos[0].prodInstId,
+						prodOfferId: prodInstInfos[0].mainProdOfferInstInfos[0].prodOfferId,
+						prodOfferInstId: prodInstInfos[0].mainProdOfferInstInfos[0].prodOfferInstId,
+						prodOfferName: prodInstInfos[0].mainProdOfferInstInfos[0].prodOfferName,
+						prodStateCd: prodInstInfos[0].prodStateCd,
+						prodStateName: prodInstInfos[0].prodStateName,
+						productId: prodInstInfos[0].productId,
+						productName: prodInstInfos[0].productName,
+						startDt: prodInstInfos[0].mainProdOfferInstInfos[0].startDt,
+						stopRecordCd: prodInstInfos[0].prodStopRecords[0].stopRecordCd,
+						stopRecordName: prodInstInfos[0].prodStopRecords[0].stopRecordName
+					}
+					var flag = true;
+					for ( var i = 0; i < response.data.offerMemberInfos.length; i++) {
+						var member = response.data.offerMemberInfos[i];
+						if(member.objType==""){
+							$.alert("提示","销售品实例构成 "+member.roleName+" 成员类型【objType】节点为空，无法继续受理,请营业后台核实");
+							return false;
+						}else if(member.objType==CONST.OBJ_TYPE.PROD){
+							if(member.accessNumber==""){
+								$.alert("提示","销售品实例构成 "+member.roleName+" 接入产品号码【accessNumber】节点为空，无法继续受理,请营业后台核实");
+								return false;
+							}
+						}
+						if(member.objInstId==order.prodModify.choosedProdInfo.prodInstId){
+							flag = false;
+						}
+					}
+					if(flag){
+						$.alert("提示","销售品实例构成中 没有包含选中接入号码【"+order.prodModify.choosedProdInfo.accNbr+"】，无法继续受理，请业务后台核实");
+						return false;
+					}
+					OrderInfo.offer.offerMemberInfos = response.data.offerMemberInfos; 
+					OrderInfo.offer.offerId = order.prodModify.choosedProdInfo.prodOfferInstId;
+					OrderInfo.offer.offerSpecId = order.prodModify.choosedProdInfo.prodOfferId;
+					OrderInfo.offer.offerSpecName = order.prodModify.choosedProdInfo.prodOfferName;
+				}
+			}
+		}else{
+			$.alertM(response.data);
+			return false;
 		}
 		return true;
 	};

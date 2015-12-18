@@ -8,6 +8,7 @@ CommonUtils.regNamespace("offerChangeNew");
 
 offerChangeNew = (function() {
 	var _newAddList = [];
+	var maxNum = 0;
 	//初始化套餐变更页面
 	var _init = function (){
 	   
@@ -1236,7 +1237,8 @@ offerChangeNew = (function() {
 						}
 					}
 					if(flag){
-						$.alert("规则限制","旧套餐【"+offerMember.roleName+"】角色在新套餐中不存在，无法变更");
+						alert("旧套餐【"+offerMember.roleName+"】角色在新套餐中不存在，无法变更");
+						//$.alert("规则限制","旧套餐【"+offerMember.roleName+"】角色在新套餐中不存在，无法变更");
 						return false;
 					}
 				}
@@ -1270,6 +1272,7 @@ offerChangeNew = (function() {
 	var _getChangeInfo = function(){
 		OrderInfo.getOrderData(); //获取订单提交节点	
 		OrderInfo.orderData.orderList.orderListInfo.partyId = OrderInfo.cust.custId;
+		OrderInfo.orderData.orderList.orderListInfo.areaId = OrderInfo.cust.areaId;
 		var busiOrders = OrderInfo.orderData.orderList.custOrderList[0].busiOrder;//获取业务对象数组
 		_createDelOffer(busiOrders,OrderInfo.offer); //退订主销售品
 		_createMainOffer(busiOrders,OrderInfo.offer); //订购主销售品	
@@ -1608,6 +1611,7 @@ offerChangeNew = (function() {
 								var accessNumber=busiObj.accessNumber;
 								var objName=busiObj.objName;
 								var prodId=null;
+								var offerTypeCd=this.busiObj.offerTypeCd;
 								
 								var ooRoles=data.ooRoles;
 								var busiOrderAttrs=data.busiOrderAttrs;
@@ -1647,6 +1651,7 @@ offerChangeNew = (function() {
 											dealerMap1.role = this.role;
 											if(this.itemSpecId==CONST.BUSI_ORDER_ATTR.DEALER){
 												dealerMap1.staffid = this.value;
+												dealerMap1.channelNbr = this.channelNbr;
 											}else if(this.itemSpecId==CONST.BUSI_ORDER_ATTR.DEALER_NAME){
 												dealerMap1.staffname = this.value;
 											}
@@ -1654,10 +1659,12 @@ offerChangeNew = (function() {
 											dealerMap1.accessNumber=accessNumber;
 											dealerMap1.objName=objName;
 											dealerMap1.prodId=prodId;
+											dealerMap1.offerTypeCd=offerTypeCd;
 										}else if(this.role=="40020006"){
 											dealerMap2.role = this.role;
 											if(this.itemSpecId==CONST.BUSI_ORDER_ATTR.DEALER){
 												dealerMap2.staffid = this.value;
+												dealerMap2.channelNbr = this.channelNbr;
 											}else if(this.itemSpecId==CONST.BUSI_ORDER_ATTR.DEALER_NAME){
 												dealerMap2.staffname = this.value;
 											}
@@ -1665,10 +1672,12 @@ offerChangeNew = (function() {
 											dealerMap2.accessNumber=accessNumber;
 											dealerMap2.objName=objName;
 											dealerMap2.prodId=prodId;
+											dealerMap2.offerTypeCd=offerTypeCd;
 										}else if(this.role=="40020007"){
 											dealerMap3.role = this.role;
 											if(this.itemSpecId==CONST.BUSI_ORDER_ATTR.DEALER){
 												dealerMap3.staffid = this.value;
+												dealerMap3.channelNbr = this.channelNbr;
 											}else if(this.itemSpecId==CONST.BUSI_ORDER_ATTR.DEALER_NAME){
 												dealerMap3.staffname = this.value;
 											}
@@ -1676,6 +1685,7 @@ offerChangeNew = (function() {
 											dealerMap3.accessNumber=accessNumber;
 											dealerMap3.objName=objName;
 											dealerMap3.prodId=prodId;
+											dealerMap3.offerTypeCd=offerTypeCd;
 										}										
 									});
 									
@@ -1994,16 +2004,6 @@ offerChangeNew = (function() {
 					});
 				});
 			});
-		}
-	};
-	
-	//校验销售品的互斥依赖 第三步
-	var _checkOfferExcludeDependSub = function(prodId,offerSpec){
-		var offerSpecId = offerSpec.offerSpecId;
-		var param = CacheData.getExcDepOfferParam(prodId,offerSpecId);
-		var data = query.offer.queryExcludeDepend(param);//查询规则校验
-		if(data!=undefined){
-			paserOfferDataSub(data.result,prodId,offerSpecId,offerSpec.offerSpecName); //解析数据
 		}
 	};
 	
@@ -2454,6 +2454,7 @@ offerChangeNew = (function() {
 		}
 		return false;
 	};
+	
 	//添加可选包到缓存列表
 	var _setSpec = function(prodId,offerSpecId){
 		var newSpec = CacheData.getOfferSpec(prodId,offerSpecId);  //没有在已选列表里面

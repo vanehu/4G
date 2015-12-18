@@ -27,6 +27,9 @@ order.dealer = (function() {
 					return;
 				}
 			}
+			if(!ec.util.isArray(OrderInfo.channelList)||OrderInfo.channelList.length==0){
+				OrderInfo.getChannelList();
+			}
 		}
 		if(OrderInfo.actionFlag==1 || OrderInfo.actionFlag==2 || OrderInfo.actionFlag==14){ //新装业务，套餐变更需要主套餐发展人
 			var objInstId = OrderInfo.offerSpec.offerSpecId;
@@ -57,6 +60,17 @@ order.dealer = (function() {
 			$td.append('<a class="purchase" href="javascript:order.main.queryStaff(0,\'dealer\',\''+objId+'\');">选择</a>');
 			$td.append('<a class="purchase" onclick="order.dealer.addProdDealer(this,'+objInstId+',1)">添加</a><label class="f_red">*</label>');
 			$tr.append($td);
+			var $tdChannel = $('<td></td>');
+			var $channelSelect = $('<select id="dealerChannel_'+objId+'" name="dealerChannel_'+objInstId+'" class="inputWidth183px" onclick=a=this.value;></select>');
+			$.each(OrderInfo.channelList,function(){
+				if(this.isSelect==1)
+					$channelSelect.append("<option value='"+this.channelNbr+"' selected ='selected'>"+this.channelName+"</option>");
+				else
+					$channelSelect.append("<option value='"+this.channelNbr+"'>"+this.channelName+"</option>");
+			});
+			$tdChannel.append($channelSelect);
+			$tdChannel.append('<label class="f_red">*</label>');	
+			$tr.append($tdChannel);
 			OrderInfo.SEQ.dealerSeq++;
 			$("#dealerTbody").append($tr);
 			if(offerChange.newMemberFlag){
@@ -86,6 +100,17 @@ order.dealer = (function() {
 							$td.append('<a class="purchase" href="javascript:order.main.queryStaff(0,\'dealer\',\''+objId+'\');">选择</a>');
 							$td.append('<a class="purchase" onclick="order.dealer.addProdDealer(this,'+objInstId+',1)">添加</a><label class="f_red">*</label>');
 							$tr.append($td);
+							var $tdChannel = $('<td></td>');
+							var $channelSelect = $('<select id="dealerChannel_'+objId+'" name="dealerChannel_'+objInstId+'" class="inputWidth183px"  onclick=a=this.value;></select>');
+							$.each(OrderInfo.channelList,function(){
+								if(this.isSelect==1)
+									$channelSelect.append("<option value='"+this.channelNbr+"' selected ='selected'>"+this.channelName+"</option>");
+								else
+									$channelSelect.append("<option value='"+this.channelNbr+"'>"+this.channelName+"</option>");
+							});
+							$tdChannel.append($channelSelect);
+							$tdChannel.append('<label class="f_red">*</label>');	
+							$tr.append($tdChannel);
 							OrderInfo.SEQ.dealerSeq++;
 							$("#dealerTbody").append($tr);
 			    		}
@@ -145,6 +170,17 @@ order.dealer = (function() {
 						$td.append('<a class="purchase" href="javascript:order.main.queryStaff(0,\'dealer\',\''+objId+'\');">选择</a>');
 						$td.append('<a class="purchase" onclick="order.dealer.addProdDealer(this,'+objInstId+',1)">添加</a><label class="f_red">*</label>');
 						$tr.append($td);
+						var $tdChannel = $('<td></td>');
+						var $channelSelect = $('<select id="dealerChannel_'+objId+'" name="dealerChannel_'+objInstId+'" class="inputWidth183px"  onclick=a=this.value;></select>');
+						$.each(OrderInfo.channelList,function(){
+							if(this.isSelect==1)
+								$channelSelect.append("<option value='"+this.channelNbr+"' selected ='selected'>"+this.channelName+"</option>");
+							else
+								$channelSelect.append("<option value='"+this.channelNbr+"'>"+this.channelName+"</option>");
+						});
+						$tdChannel.append($channelSelect);
+						$tdChannel.append('<label class="f_red">*</label>');	
+						$tr.append($tdChannel);
 						OrderInfo.SEQ.dealerSeq++;
 						$("#dealerTbody").append($tr);
 		    		});
@@ -192,6 +228,17 @@ order.dealer = (function() {
 					$td.append('<a class="purchase" href="javascript:order.main.queryStaff(0,\'dealer\',\''+objId+'\');">选择</a>');
 					$td.append('<a class="purchase" onclick="order.dealer.addProdDealer(this,'+objInstId+',1)">添加</a><label class="f_red">*</label>');
 					$tr.append($td);
+					var $tdChannel = $('<td></td>');
+					var $channelSelect = $('<select id="dealerChannel_'+objId+'" name="dealerChannel_'+objInstId+'" class="inputWidth183px"  onclick=a=this.value;></select>');
+					$.each(OrderInfo.channelList,function(){
+						if(this.isSelect==1)
+							$channelSelect.append("<option value='"+this.channelNbr+"' selected ='selected'>"+this.channelName+"</option>");
+						else
+							$channelSelect.append("<option value='"+this.channelNbr+"'>"+this.channelName+"</option>");
+					});
+					$tdChannel.append($channelSelect);
+					$tdChannel.append('<label class="f_red">*</label>');	
+					$tr.append($tdChannel);
 					OrderInfo.SEQ.dealerSeq++;
 					$("#dealerTbody").append($tr);
 				});
@@ -348,6 +395,18 @@ order.dealer = (function() {
 				$td.append('<a class="purchase" onclick="order.dealer.removeDealer(this);">删除</a>');
 				$td.append('<a class="purchase" onclick="order.dealer.addProdDealer(this,\''+id+'\')">添加</a><label class="f_red">*</label>');
 				$newTr.append($td);
+				var $tdChannel = $('<td></td>');
+				var $channelSelect = $('<select id="dealerChannel_'+objId+'" name="dealerChannel_'+id+'" class="inputWidth183px" onclick=a=this.value;></select>');
+				OrderInfo.getChannelList();
+				$.each(OrderInfo.channelList,function(){
+					if(this.isSelect==1)
+						$channelSelect.append("<option value='"+this.channelNbr+"' selected ='selected'>"+this.channelName+"</option>");
+					else
+						$channelSelect.append("<option value='"+this.channelNbr+"'>"+this.channelName+"</option>");
+				});
+				$tdChannel.append($channelSelect);
+				$tdChannel.append('<label class="f_red">*</label>');	
+				$newTr.append($tdChannel);
 				$("#dealerTbody").append($newTr);
 				OrderInfo.SEQ.dealerSeq++;
 			}	

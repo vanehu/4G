@@ -374,6 +374,8 @@ public class OrderController extends BaseController {
 			}
 			//终端串码
 			model.addAttribute("terminalCode",paramsMap.get("termCode")==null?"":paramsMap.get("termCode").toString());
+			//发展人工号
+			model.addAttribute("salesCode",paramsMap.get("salesCode")==null?"":paramsMap.get("salesCode").toString());
 			model.addAttribute("provinceInfo", JacksonUtil.objectToJson(provinceInfo));
 			Map<String, Object> result = new HashMap<String, Object>();
 			//判断是否是二次加载业务
@@ -1676,14 +1678,15 @@ public class OrderController extends BaseController {
 	@RequestMapping(value = "/queryTerminalInfo", method = RequestMethod.POST)
     @ResponseBody
     public JsonResponse queryTerminalInfo(@RequestBody Map<String, Object> param, String flowNum, HttpServletResponse response){
+    	SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);
     	
-    	SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
- 				SysConstant.SESSION_KEY_LOGIN_STAFF);
     	Map<String, Object> dataBusMap = new HashMap<String, Object>();
     	dataBusMap.put("prodId", MapUtils.getString(param, "prodId", ""));
     	dataBusMap.put("acctNbr", MapUtils.getString(param, "acctNbr", ""));
     	dataBusMap.put("areaId", MapUtils.getString(param, "areaId", ""));
+    	dataBusMap.put("isServiceOpen", MapUtils.getString(param, "isServiceOpen", ""));
     	JsonResponse jr = new JsonResponse();
+    	
     	try{
     		Map<String, Object> resultMap = orderBmo.queryOfferCouponById(dataBusMap, flowNum, sessionStaff);
     		String couponTypeCd = MySimulateData.getInstance().getParam((String) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_DATASOURCE_KEY),"couponTypeCd");
@@ -1696,6 +1699,7 @@ public class OrderController extends BaseController {
 				}else{
 					for (int i=0;i<offerCoupon.size();i++){
 						String currentCouponTypeCd = offerCoupon.get(i).get("couponTypeCd").toString();
+						
 						if(couponTypeCd.equals(currentCouponTypeCd)){
 							returnMap = (Map) offerCoupon.get(i);
 						}
@@ -1707,8 +1711,7 @@ public class OrderController extends BaseController {
 					}
 				}
 			} else {
-				jr = super.failed(resultMap.get("msg").toString(),
-						ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+				jr = super.failed(resultMap.get("msg").toString(),ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
 			}
         	return jr;
    		}catch (BusinessException be) {

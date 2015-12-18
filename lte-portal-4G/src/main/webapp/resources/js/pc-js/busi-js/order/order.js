@@ -1503,6 +1503,20 @@ order.service = (function(){
 								$td.append('<a class="purchase" onclick="order.dealer.removeDealer(this);">删除</a><label class="f_red">*</label>');
 							}					
 							$tr.append($td);
+							if(!ec.util.isArray(OrderInfo.channelList)||OrderInfo.channelList.length==0){
+								OrderInfo.getChannelList();
+							}
+							var $tdChannel = $('<td></td>');
+							var $channelSelect = $('<select id="dealerChannel_'+objId+'" name="dealerChannel_'+objInstId+'" class="inputWidth183px" onclick=a=this.value;></select>');
+							$.each(OrderInfo.channelList,function(){
+								if(dealerlist[d].channelNbr==this.channelNbr)
+									$channelSelect.append("<option value='"+this.channelNbr+"' selected ='selected'>"+this.channelName+"</option>");
+								else
+									$channelSelect.append("<option value='"+this.channelNbr+"'>"+this.channelName+"</option>");
+							});
+							$tdChannel.append($channelSelect);
+							$tdChannel.append('<label class="f_red">*</label>');	
+							$tr.append($tdChannel);
 							OrderInfo.SEQ.dealerSeq++;
 							$("#dealerTbody").append($tr);
 					   }else{
@@ -1535,6 +1549,20 @@ order.service = (function(){
 								$td.append('<a class="purchase" onclick="order.dealer.removeDealer(this);">删除</a><label class="f_red">*</label>');
 							}
 							$tr.append($td);
+							if(!ec.util.isArray(OrderInfo.channelList)||OrderInfo.channelList.length==0){
+								OrderInfo.getChannelList();
+							}
+							var $tdChannel = $('<td></td>');
+							var $channelSelect = $('<select id="dealerChannel_'+objId+'" name="dealerChannel_'+objInstId+'" class="inputWidth183px" onclick=a=this.value;></select>');
+							$.each(OrderInfo.channelList,function(){
+								if(dealerlist[d].channelNbr==this.channelNbr)
+									$channelSelect.append("<option value='"+this.channelNbr+"' selected ='selected'>"+this.channelName+"</option>");
+								else
+									$channelSelect.append("<option value='"+this.channelNbr+"'>"+this.channelName+"</option>");
+							});
+							$tdChannel.append($channelSelect);
+							$tdChannel.append('<label class="f_red">*</label>');	
+							$tr.append($tdChannel);
 							OrderInfo.SEQ.dealerSeq++;
 							$("#dealerTbody").append($tr);
 					   }
