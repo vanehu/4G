@@ -361,4 +361,6 @@ public interface MktResBmo {
      */
 	public void intakeSerialNumber(Map<String, Object> param,String newInstCode, String string, SessionStaff sessionStaff,String flowNum)throws Exception;
 	
+	public void intcardNubInfoLog(Map<String, Object> param, String flowNum,SessionStaff sessionStaff)throws Exception;
+	
  }

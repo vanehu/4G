@@ -816,10 +816,17 @@ order.phoneNumber = (function(){
 		});	
 	};
 	var _initPhonenumber=function(){
-		if(CONST.getAppDesc()==1){
+	    var phoneNumNewFlag = $("#phoneNumFlag").val();
+		if(phoneNumNewFlag=='new'){//只选号不预占，用于写卡申请传卡管做混配
+		   $("#psw_dt").hide();
+		   $("#psw_dd").hide();
+		}else{
+		  if(CONST.getAppDesc()==1){
 			$("#psw_dt").hide();
 			$("#psw_dd").hide();
+		  }
 		}
+		
 		selectedObj=null;
 		ispurchased=0;
 		selectedLevel="";
@@ -963,11 +970,16 @@ order.phoneNumber = (function(){
 	//靓号预存和保底金额查询
 	var queryPnLevelProdOffer = function(str){
 		var url=contextPath+"/mktRes/phonenumber/queryPnLevelProdOffer";
-		var areaId = "";
-		if(order.ysl!=undefined||str!=undefined){
-			areaId=$("#_session_staff_info").attr("areaid");
+		var phoneNumNewFlag = $("#phoneNumFlag").val();
+		if(phoneNumNewFlag=='new'){//只选号不预占，用于写卡申请传卡管做混配
+		   var areaId = $("#areaIdcard").val();
 		}else{
+		  var areaId = "";
+		  if(order.ysl!=undefined||str!=undefined){
+			areaId=$("#_session_staff_info").attr("areaid");
+		  }else{
 			areaId=$("#p_cust_areaId").val();
+		  }
 		}
 		areaId = areaId.substring(0,3)+"0000";
 		var param={"areaId":areaId};
@@ -1021,24 +1033,32 @@ order.phoneNumber = (function(){
 			$.alert("提示","请先选择号码！");
 			return;
 		}
-		if(ispurchased==1){
-			_btnToOffer(selectedObj);
+		var phoneNumNewFlag = $("#phoneNumFlag").val();
+		if(phoneNumNewFlag=='new'){//只选号不预占，用于写卡申请传卡管做混配
+			var phoneNumberVal = $(selectedObj).attr("numberVal").split("_")[0];
+			$("#phoneNumNew").val(phoneNumberVal);
+			$("#nbr_btn_phoneNum").html(phoneNumberVal);
+			$(".modal-close").click();
 		}else{
-			var phoneNumberVal_06 = $(selectedObj).attr("numberVal").split("_")[7]; 
-			if(phoneNumberVal_06=="1"){
-				easyDialog.open({
-					container : 'password_dialog'
-				});
+			if(ispurchased==1){
+				_btnToOffer(selectedObj);
 			}else{
-				_btnPurchase(selectedObj);
+				var phoneNumberVal_06 = $(selectedObj).attr("numberVal").split("_")[7]; 
+				if(phoneNumberVal_06=="1"){
+					easyDialog.open({
+						container : 'password_dialog'
+					});
+				}else{
+					_btnPurchase(selectedObj);
+				}
 			}
+			$("#uim_check_btn_"+prodId).attr("disabled",false);
+			$("#uim_check_btn_"+prodId).removeClass("disablepurchase").addClass("purchase");
+			$("#uim_release_btn_"+prodId).attr("disabled",true);
+			$("#uim_release_btn_"+prodId).removeClass("purchase").addClass("disablepurchase");
+			$("#uim_txt_"+prodId).attr("disabled",false);
+			$("#uim_txt_"+prodId).val("");
 		}
-		$("#uim_check_btn_"+prodId).attr("disabled",false);
-		$("#uim_check_btn_"+prodId).removeClass("disablepurchase").addClass("purchase");
-		$("#uim_release_btn_"+prodId).attr("disabled",true);
-		$("#uim_release_btn_"+prodId).removeClass("purchase").addClass("disablepurchase");
-		$("#uim_txt_"+prodId).attr("disabled",false);
-		$("#uim_txt_"+prodId).val("");
 	};
 	/**
 	 * obj被选中的号码对象

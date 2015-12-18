@@ -543,6 +543,9 @@ public class MktResBmoImpl implements MktResBmo {
 		// 服务层调用与接口层调用都成功时，返回列表；否则返回空列表
 		if (ResultCode.R_SUCCESS.equals(StringUtils.defaultString(db.getResultCode()))) {
 			resultMap.putAll(db.getReturnlmap());
+			Map<String, Object> TcpCont = new HashMap<String, Object>();
+			TcpCont = (Map<String, Object>) db.getParammap().get("TcpCont");
+			resultMap.put("TransactionID",TcpCont.get("TransactionID"));
 		} else {
 			resultMap.put("code",  ResultCode.R_FAIL);
 			resultMap.put("message", db.getResultMsg());
@@ -597,7 +600,7 @@ public class MktResBmoImpl implements MktResBmo {
 
 			}else{
 				resultMap.putAll(db.getReturnlmap());
-			}			
+			}
 		} else {
 			resultMap.put("code",  db.getResultCode());
 			resultMap.put("message", db.getResultMsg());
@@ -976,7 +979,15 @@ public class MktResBmoImpl implements MktResBmo {
 		}
 		return resultMap;
 	}
- 
+    /**
+     * 写卡入库
+     */
+	public void intcardNubInfoLog(Map<String, Object> param, String flowNum,
+			SessionStaff sessionStaff) throws Exception {
+		// TODO Auto-generated method stub
+		InterfaceClient.callService(param, PortalServiceCode.SUBMIT_UIM_CARD_INFOLOG, flowNum, sessionStaff);
+	}
+
 	/**
 	 * 写白卡成功后，卡号入库
 	 */

@@ -81,15 +81,15 @@ order.writeCard = (function(){
 	};
 	var ocx;
 	var _writeReadCard=function(prodId){
-		var phoneNumber = OrderInfo.getAccessNumber(prodId);
+		var phoneNumber = $("#phoneNumNew").val();
 		if (phoneNumber==""){
 			$.alert("提示",'请选择号码!','confirmation');
 			return;
 		}
 		ec.form.dialog.createDialog({"id":"-card"+prodId,width:350,"initCallBack":function(){			
-			$("#write_card_phone_number"+prodId).val(phoneNumber);
 			//ActiveX 控件无法用JQUERY方法获取
 			ocx = document.getElementById("ocx"+prodId);
+			$("#write_card_phone_number"+prodId).val(phoneNumber);
 			//绑定读卡按钮事件
 			$("#btnReadCard"+prodId).click(function(){
 				$("#btnReadCard"+prodId).attr("disabled","disabled");
@@ -133,22 +133,6 @@ order.writeCard = (function(){
 			if(!_getCardType()){
 				return false;
 			}
-			if(ec.util.isObj(_cardInfoJson.cardTypeId)){
-				if(prod.changeUim.is4GProdInst&&(OrderInfo.actionFlag==22 || OrderInfo.actionFlag==23)){//判断是否有开通4G功能产品
-					//var flag=false;//默认3G卡
-					//for(var i=0;i<_4GCARDS.length;i++){
-					//	if(_cardInfoJson.cardTypeId==_4GCARDS[i]){//4G卡
-					//		flag=true;
-					//		break;
-					//	}
-					//}
-					//if(!flag){
-					if(CONST.UIMTYPE3G4G.IS3G==prod.uim.getCardType("","",_cardInfoJson.serialNumber)){
-						$.alert("信息提示","您已开通了【4G（LTE）上网】功能产品，而UIM卡是3G卡，请使用4G的白卡！");
-						return false;
-					}
-				}
-			 }
 			return true;
 		}
 		// 读取ICCID 转
@@ -254,21 +238,6 @@ order.writeCard = (function(){
 		if(!_getCardType()){
 			return false;
 		}
-		if(ec.util.isObj(_cardInfoJson.cardTypeId)){
-			if(prod.changeUim.is4GProdInst&&(OrderInfo.actionFlag==22 || OrderInfo.actionFlag==23)){//判断是否有开通4G功能产品
-				//var flag=false;//默认3G卡
-				//for(var i=0;i<_4GCARDS.length;i++){
-				//	if(_cardInfoJson.cardTypeId==_4GCARDS[i]){//4G卡
-				//		flag=true;
-				//		break;
-				//	}
-				//}
-				if(CONST.UIMTYPE3G4G.IS3G==prod.uim.getCardType("","",_cardInfoJson.serialNumber)){
-					$.alert("信息提示","您已开通了【4G（LTE）上网】功能产品，而UIM卡是3G卡，请使用4G的白卡！");
-					return false;
-				}
-			}
-		 }
 		//alert("_cardInfoJson:="+JSON.stringify(_cardInfoJson));
 		if (iccid == 'FFFFFFFFFFFFFFFFFFFF' || iccid == '00000000000000000000') {
 			_cardInfoJson.canWrite = 'Y';
@@ -318,8 +287,8 @@ order.writeCard = (function(){
 				apCharge : 0, //物品价格
 				couponInstanceNumber : "8230007407312006106", //物品实例编码
 				ruleId : "", //物品规则ID
-				partyId : OrderInfo.cust.custId, //客户ID
-				prodId :prodId, //产品ID
+				partyId : "", //客户ID
+				prodId :"", //产品ID
 				state : "ADD", //动作
 				relaSeq : "" //关联序列	
 			};
@@ -696,7 +665,7 @@ order.writeCard = (function(){
 					factoryCode:_cardDllInfoJson.factoryCode,
 					authCodeType:_cardDllInfoJson.authCodeType,
 					version:_cardDllInfoJson.dllName,
-					serviceCode:OrderInfo.busitypeflag,
+					serviceCode:20,
 					isUpdate:'0',//表示不需要更新
 					cardSource:_cardDllInfoJson.remark
 				};
@@ -712,7 +681,7 @@ order.writeCard = (function(){
 					factoryCode:_cardDllInfoJson.factoryCode,
 					authCodeType:_cardDllInfoJson.authCodeType,
 					version:_cardDllInfoJson.dllName,
-					serviceCode:OrderInfo.busitypeflag,
+					serviceCode:20,
 					isUpdate:'1',//表示需要更新
 					cardSource:_cardDllInfoJson.remark
 				};
@@ -766,19 +735,15 @@ order.writeCard = (function(){
 			try {
 				//alert(JSON.stringify(order.prodModify.choosedProdInfo));
 				// 提取卡商代码
-				var areaCode = OrderInfo.getAreaCode(prodId);
-				if (areaCode == undefined || areaCode ==""){
-					areaCode = OrderInfo.staff.areaCode;
-				}
 				var param = {
 					factoryCode:_cardDllInfoJson.factoryCode,
 					authCodeType:_cardDllInfoJson.authCodeType,
 					hmUimid:'',//黑莓
 					cardNo:_cardInfoJson.cardTypeId,
-					phoneNumber:OrderInfo.getAccessNumber(prodId),
-					areaId:OrderInfo.getProdAreaId(prodId),
-					areaCode:areaCode,//归属地区号
-					fromAreaCode:OrderInfo.staff.areaCode//漫游地区号
+					phoneNumber:$("#phoneNumNew").val(),
+					areaId:$("#areaIdcard").val(),
+					areaCode:$("#areaCodecard").val(),//归属地区号
+					fromAreaCode:$("#areaCodecard").val()//漫游地区号
 				};
 				var resourceDataJson;
 				var response = $.callServiceAsJson(serviceName, param);
@@ -850,7 +815,7 @@ order.writeCard = (function(){
 	_completeWriteCard=function(result,resultCode){
 			var serviceName = contextPath + "/mktRes/writeCard/completeWriteCard";
 			var srInParam = {
-				"areaId": OrderInfo.getProdAreaId(_rscJson.prodId),
+				"areaId": $("#areaIdcard").val(),
 			    "InoutInfo": {
 			        "ApplyNo": "001",
 			        "InoutId": "",
@@ -859,16 +824,16 @@ order.writeCard = (function(){
 			        "BatchId": "",
 			        "OperationType": "1100",
 			        "MktResStoreId": "",
-			        "ChannelId": OrderInfo.staff.channelId,
-			        "AreaId": OrderInfo.getProdAreaId(_rscJson.prodId),
-			        "StaffId": OrderInfo.staff.staffId
+			        "ChannelId": $("#channelIdcard").val(),
+			        "AreaId": $("#areaIdcard").val(),
+			        "StaffId": $("#staffId").val()
 			    },
 			    "MktResInstInfos": [
 			        {
 			            "MktResInstInfo": {
 			                "BaseInfo": {
 			                    "MktResTypeCd": "",
-			                    "StatusCd" : "2",
+			                    "StatusCd" : "1",
 			                    "MktResId": "",
 			                    "MktResCd": _cardInfoJson.cardTypeId,
 			                    "MktResInstCode": _cardInfoJson.serialNumber,    //_rscJson.iccid,
@@ -948,7 +913,7 @@ order.writeCard = (function(){
 								},
 								{
 								    "AttrId": "60029003",
-								    "AttrValue": OrderInfo.staff.channelId
+								    "AttrValue": $("#channelIdcard").val()
 								},
 								{
 								    "AttrId": "60029004",
@@ -960,7 +925,7 @@ order.writeCard = (function(){
 								},
 								{
 								    "AttrId": "65010019",
-								    "AttrValue": OrderInfo.getProdAreaId(_rscJson.prodId)
+								    "AttrValue": $("#areaIdcard").val()
 								}
 			                ]
 			            }
@@ -974,11 +939,11 @@ order.writeCard = (function(){
 				iccid:_rscJson.iccid,  
 				resultCode:result,
 				resultMessage:"写卡器返回结果编码"+resultCode,
-				phoneNumber:OrderInfo.getAccessNumber(_rscJson.prodId),
+				phoneNumber:$("#phoneNumNew").val(),
 				cardType:_cardInfoJson.cardTypeId,
 				eventType:"2",
-				areaId:OrderInfo.getProdAreaId(_rscJson.prodId),
-				serviceCode:OrderInfo.busitypeflag,//新增一个动作表示，用于记日志update by huangjj
+				areaId:$("#areaIdcard").val(),
+				serviceCode:20,//新增一个动作表示，用于记日志update by huangjj
 				TransactionID:_TransactionID,
 				remark:_cardDllInfoJson.remark,
 				"srInParam":srInParam
@@ -1013,135 +978,11 @@ order.writeCard = (function(){
 //					//$.alert("提示","调用卡资源回填到卡管系统异常！" + msg,"error");
 //					return false;
 //				}
-
-				if(response.code == 0) {
-					 //写卡成功后把卡数据入库便于异常单释放
-					var phoneNumber = OrderInfo.getAccessNumber(_rscJson.prodId);
-					var inParam = {
-							"instCode" : $("#resultCardAsciiFStr").val(),
-							"phoneNum" : phoneNumber,
-							"remark":$("#selUimType").val(),//
-							"areaId"   : OrderInfo.getProdAreaId(_rscJson.prodId)
-					};
-					var serviceUrl = contextPath + "/mktRes/writeCard/intakeSerialNumber";
-					$.callServiceAsJson(serviceUrl, inParam);
-				}
-				_backFillOrderCardInfo(eventJson.result);
 				return true;
 			} catch(e) {
 				$.alert("提示","调用卡资源回填到卡管系统异常！" + e.message,"error");
 				return false;
 			}
-	};
-	_backFillOrderCardInfo=function(result){
-		//要求截取前19位编码
-		if (_rscJson.iccid.length==20){
-			_rscJson.iccid = _rscJson.iccid.substr(0,_rscJson.iccid.length-1);
-		}
-		 $("#uim_txt_"+_rscJson.prodId).val($("#resultCardAsciiFStr").val());
-		 var coupon= {
-					couponUsageTypeCd : "3", //物品使用类型
-					inOutTypeId : "1",  //出入库类型
-					inOutReasonId : 0, //出入库原因
-					saleId : 1, //销售类型
-					couponId :result.mktResId, //物品ID
-					couponinfoStatusCd : "A", //物品处理状态
-					chargeItemCd : CONST.ACCT_ITEM_TYPE.UIM_CHARGE_ITEM_CD, //物品费用项类型
-					couponNum : "1", //物品数量
-					storeId : result.mktStoreId, //仓库ID
-					storeName : "11", //仓库名称
-					agentId : 1, //供应商ID
-					apCharge : 0, //物品价格
-					couponInstanceNumber : _cardInfoJson.serialNumber,  //物品实例编码 _rscJson.iccid
-					ruleId : "", //物品规则ID
-					partyId : OrderInfo.cust.custId, //客户ID
-					prodId :_rscJson.prodId, //产品ID
-					offerId : "", //销售品实例ID
-					state : "ADD", //动作
-					cardTypeFlag:2,
-					uimType:"2",//标识用于订单成功更新订单状态
-					relaSeq : "" //关联序列	
-				};
-		 if(ec.util.isObj(_cardInfoJson.cardTypeId)) {
-			 var uimCardType = prod.uim.getCardType("", "", _cardInfoJson.serialNumber);
-			 if (CONST.UIMTYPE3G4G.IS4G == uimCardType) {//4G卡
-				 coupon.cardTypeFlag = 1;
-			 }
-			 //补换卡和异地补换卡增加4g卡不能补3g卡的限制
-			 if(prod.changeUim.is4GProdInst&&(OrderInfo.actionFlag==22 || OrderInfo.actionFlag==23)){//判断是否有开通4G功能产品
-					if(CONST.UIMTYPE3G4G.IS3G==uimCardType){
-						$.alert("信息提示","您已开通了【4G（LTE）上网】功能产品，而UIM卡是3G卡，请使用4G的白卡！");
-						return false;
-					}
-				}
-		 }
-         if(OrderInfo.actionFlag==1 || OrderInfo.actionFlag==6 || OrderInfo.actionFlag==14){
-         	coupon.offerId = "-1";
-         }else{
-         	coupon.offerId = order.prodModify.choosedProdInfo.prodOfferInstId; //销售品实例ID
-         }
- 		 OrderInfo.clearProdUim(_rscJson.prodId);
-         OrderInfo.boProd2Tds.push(coupon);
-         if((OrderInfo.actionFlag==22 || OrderInfo.actionFlag==23) && coupon.cardTypeFlag==1 && order.prodModify.choosedProdInfo.productId != '280000000'){
-        	AttachOffer.openServList = [];
-     		AttachOffer.openList = [];
-     	    AttachOffer.queryCardAttachOffer(coupon.cardTypeFlag);  //加载附属销售品
-      	 }
- 		//3转4弹出促销窗口
- 		if(OrderInfo.actionFlag!=1 && order.prodModify.choosedProdInfo.prodClass== "3"  && coupon.cardTypeFlag==1){
- 			$("#isShow_"+prodId).show();
- 			var prodSpecId = OrderInfo.getProdSpecId(prodId);
- 			var param = {
- 				prodSpecId : prodSpecId,
- 				offerSpecIds : [],
- 				queryType : "3",
- 				prodId : productId,
- 				partyId : OrderInfo.cust.custId,
- 				ifCommonUse : "",
- 				if3Up4:"Y"
- 			};
- 			var prodInfo = order.prodModify.choosedProdInfo; //获取产品信息
- 			var accNbr = prodInfo.accNbr;
- 			param.acctNbr = accNbr;
- 			if(!ec.util.isObj(prodInfo.prodOfferId)){
- 				prodInfo.prodOfferId = "";
- 			}
- 			var offerRoleId = CacheData.getOfferMember(prodInfo.prodInstId).offerRoleId;
- 			if(offerRoleId==undefined){
- 				offerRoleId = "";
- 			}
- 			param.offerRoleId = offerRoleId;
- 			param.offerSpecIds.push(prodInfo.prodOfferId);
- 			var data = query.offer.queryCanBuyAttachSpec(param);
- 			if(data!=undefined && data.resultCode == "0"&&data.result.offerSpecList.length>0){
- 				var content = '<form id="promotionForm"><table>';
- 				var selectStr = "";
- 				var optionStr = "";
- 				selectStr = selectStr+"<tr><td>可订购促销包: </td><td><select class='inputWidth183px' id="+accNbr+"><br>"; 
- 				$.each(data.result.offerSpecList,function(){
- 					var offerSpec = this;
- 					optionStr +='<option value="'+this.offerSpecId+'">'+this.offerSpecName+'</option>';
- 				});
- 				selectStr += optionStr + "</select></td></tr>"; 
- 				content +=selectStr;
- 				var offerSpecId;
- 				$.confirm("促销包选择",content,{ 
- 					yes:function(){	
- 						
- 					},
- 					no:function(){
- 						
- 					}
- 				});
- 				$('#promotionForm').bind('formIsValid', function(event, form) {
- 					offerSpecId = $('#'+accNbr+' option:selected').val();
- 					$(".ZebraDialog").remove();
- 	                $(".ZebraDialogOverlay").remove();
- 	                AttachOffer.selectAttachOffer(productId,offerSpecId);
- 				}).ketchup({bindElementByClass:"ZebraDialog_Button1"});
- 				
- 			}
- 		}
 	};
 	var _getCardType=function(){
 		var response = $.callServiceAsJson(contextPath + "/mktRes/writeCard/getCardType", {});
@@ -1161,10 +1002,59 @@ order.writeCard = (function(){
 		}
 		return false;
 	};
+	
+	//弹出选择号码窗口
+	//subPage入口:终端入口，号码入口，订单填写入口:terminal\offer\number
+	//subnum订单序号：O1、O2区分暂存单允许多个订单的情况
+	//subFlag选号类型：新装主卡选号、新装副卡选号 Y1、Y2
+	var _phoneNumDialog=function(subPage,subFlag,subnum){
+		var position=["15%"];
+		if ($.browser.mozilla) {
+			position=["15%"];
+		}
+		ec.form.dialog.createDialog({
+				"id":"-phonenumber",
+				"width":970,
+				"height":440,
+				"position":position,
+				"initCallBack":function(dialogForm,dialog){
+					var param={"subPage":subPage};
+					var url=contextPath+"/mktRes/phonenumber/prepare";
+					$.callServiceAsHtmlGet(url,param,{
+						"before":function(){
+							$.ecOverlay("<strong>正在查询中,请稍等会儿....</strong>");
+						},
+						"always":function(){
+							$.unecOverlay();
+						},
+						"done" : function(response){
+							if(!response){
+								 response.data='<div style="margin:2px 0 2px 0;width:100%,height:100%;text-align:center;"><strong>not data return,please try reload again.</strong></div>';
+							}
+							if(response.code != 0) {
+								$.alert("提示","查询失败,稍后重试");
+								return;
+							}
+							order.phoneNumber.dialogForm=dialogForm;
+							order.phoneNumber.dialog=dialog;
+							var content$=$("#phonenumberContent");
+							content$.html(response.data);
+							$("#subPage").val(subPage);
+							$("#subFlag").val(subFlag);
+							$("#subnum").val(subnum);
+							order.phoneNumber.initPhonenumber();
+						}
+					});	
+				 },
+				"submitCallBack":function(dialogForm,dialog){}
+		});
+	};
+	
 	return {
 		writeReadCard : _writeReadCard,
 		readCard : _readCard,
 		writeCard : _writeCard,
-		getCardType : _getCardType
+		getCardType : _getCardType,
+		phoneNumDialog:_phoneNumDialog
 	};
 })();

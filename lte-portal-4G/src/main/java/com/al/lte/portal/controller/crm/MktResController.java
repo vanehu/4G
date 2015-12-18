@@ -1368,30 +1368,69 @@ public class MktResController extends BaseController {
 	@RequestMapping(value = "/writeCard/completeWriteCard", method = RequestMethod.POST)
 	@ResponseBody
 	public JsonResponse completeWriteCard(@RequestBody Map<String, Object> param,
-			@LogOperatorAnn String flowNum, HttpServletResponse response) {
+			@LogOperatorAnn String flowNum,HttpServletRequest request, HttpServletResponse response) {
 		SessionStaff sessionStaff = (SessionStaff) ServletUtils
 				.getSessionAttribute(super.getRequest(),
 						SysConstant.SESSION_KEY_LOGIN_STAFF);
 		Map<String, Object> rMap = null;
 		JsonResponse jsonResponse = null;
+		String couponInstanceCode =  (String) (param.get("iccserial")==null?"":param.get("iccserial"));
+		String iccId = (String) (param.get("iccid")==null?"":param.get("iccid"));
+		int serviceCode = (Integer) (param.get("serviceCode")==null?"":param.get("serviceCode"));
+		String TransactionID = (String) (param.get("TransactionID")==null?"":param.get("TransactionID"));
+		String remark = (String) (param.get("remark")==null?"":param.get("remark"));
+		param.remove("serviceCode");
+		param.remove("TransactionID");
+		param.remove("remark");
+		String ip = ServletUtils.getIpAddr(request);
+		Map<String, Object> logparam =  new HashMap<String, Object>();
+		//入库成功后记录日志
+		logparam.put("channelId", sessionStaff.getCurrentChannelId());
+		logparam.put("staffId", sessionStaff.getStaffId());
+		logparam.put("couponInstanceCode",couponInstanceCode);
+		logparam.put("areaId", sessionStaff.getAreaId());
+		logparam.put("iccId",iccId);
+		logparam.put("serviceCode", serviceCode+"");
+		logparam.put("ip", ip);
+		logparam.put("cardSource", remark);
+		logparam.put("operateDate", new Date());
+		logparam.put("contactRecord", TransactionID);
+		logparam.put("methodName", "W");//写卡
 		try {
 			param.put("StaffId", sessionStaff.getStaffId());
-			
-	        rMap = mktResBmo.submitUimCardInfo(param, flowNum, sessionStaff);
+			rMap = mktResBmo.submitUimCardInfo(param, flowNum, sessionStaff);
 			if (rMap != null&& ResultCode.R_SUCC.equals(MapUtils.getString(rMap, "code"))) {
 				jsonResponse=super.successed(rMap, ResultConstant.SUCCESS.getCode());
+				logparam.put("errDesc", "成功");
+				logparam.put("result", ResultConstant.SUCCESS.getCode());
 			} else {
 				jsonResponse = super.failed(ErrorCode.COMPLETE_WRITE_CARD, rMap, param);
+				logparam.put("errDesc", rMap);
+				logparam.put("result", ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
 			}
+			
 		} catch (BusinessException e) {
 			this.log.error("写卡上报", e);
+			logparam.put("errDesc", e.getResultMap());
+			logparam.put("result", ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
 			jsonResponse = super.failed("写卡上报",
 					ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
 		}catch (InterfaceException ie) {
+			logparam.put("errDesc", ie.getErrStack());
+			logparam.put("result", ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
 			return super.failed(ie, param, ErrorCode.QUERY_COUPON);
 		}catch (Exception e) {
 			this.log.error("写卡上报", e);
+			logparam.put("errDesc", "失败");
+			logparam.put("result", ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
 			return super.failed(ErrorCode.COMPLETE_WRITE_CARD, e, param);
+		}finally{
+			try {
+				mktResBmo.intcardNubInfoLog(logparam, flowNum, sessionStaff);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		return jsonResponse;
 	}
@@ -2344,8 +2383,7 @@ public class MktResController extends BaseController {
         }
 	}
 	
-	
-    /**
+	/**
      * 终端规格查询页面
      * @param model
      * @param session
@@ -2365,4 +2403,36 @@ public class MktResController extends BaseController {
         return "/mktRes/terminalInfo-main";
     }
 	
+	@RequestMapping(value = "/writeCardNew", method = RequestMethod.GET)
+	 @AuthorityValid(isCheck = true)
+	public String writeCardNew(HttpServletRequest request,Model model,HttpSession session) {
+		    SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+					SysConstant.SESSION_KEY_LOGIN_STAFF);
+		    model.addAttribute("prodId", "0");
+		    model.addAttribute("areaCode",sessionStaff.getAreaCode());
+		    model.addAttribute("areaId",sessionStaff.getAreaId());
+		    model.addAttribute("channelId",sessionStaff.getCurrentChannelId());
+		    model.addAttribute("staffId",sessionStaff.getStaffId());
+			return "/order/write-card-new";
+	}
+	
+	@RequestMapping(value = "/writeCard/writecardLog", method = RequestMethod.POST)
+	@ResponseBody
+	public void writecardLog(@RequestBody Map<String, Object> param,HttpServletRequest request,
+			@LogOperatorAnn String flowNum) {
+		    SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+					SysConstant.SESSION_KEY_LOGIN_STAFF);
+		    param.put("channelId", sessionStaff.getCurrentChannelId());
+		    param.put("staffId", sessionStaff.getStaffId());
+		    param.put("areaId", sessionStaff.getAreaId());
+		    param.put("ip", ServletUtils.getIpAddr(request));
+		    param.put("operateDate", new Date());
+		    param.put("methodName", "U");//卡组件记录
+			try {
+				mktResBmo.intcardNubInfoLog(param, flowNum, sessionStaff);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	}
 }

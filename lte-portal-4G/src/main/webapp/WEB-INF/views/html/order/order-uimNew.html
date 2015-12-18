@@ -1,0 +1,31 @@
+<li>
+	<label style="width:80px;" id ="uim_lable">
+		空白卡
+    </label>
+    <input type="hidden" id="selUimType" value="1"/>
+    <input type="hidden" id="resultCardNo"/>
+    <input type="hidden" id="resultCardAsciiFStr"/>
+	<input type="text" id="uim_txt_${prodId}" value="" class="inputWidth183px">
+	<input type="button" class="purchase" value="写卡" onclick="order.writeCard.writeReadCard(${prodId});">
+	<input type="hidden" id="isMIFI_${prodId}" value="no"/>
+	<label class="f_red">*</label>
+</li>
+<!--弹出款-选择号码的内容-->
+<div style="display:none" id="ec-dialog-form-container-phonenumber" class="ec-dialog-form-container">
+  <div class="ec-dialog-form-top">
+    <h1 class="ec-dialog-form-title">选择号码</h1>
+  </div>
+  <div class="ec-dialog-form-content">
+    <div class="ec-dialog-form-loading" style="display:none"></div>
+    <div class="ec-dialog-form-message" style="display:none"></div>
+    <div class="ec-dialog-form-form" >
+      <form action="#" style="" id="dialogForm">
+        <div class="form-content" id="phonenumberContent" style="min-height:200px">      
+        </div>
+      </form>
+    </div>
+  </div>
+  <div class="ec-dialog-form-bottom"></div>
+</div>
+<!--弹出框的内容-->
+<@extends name="/order/write-card.html"/>

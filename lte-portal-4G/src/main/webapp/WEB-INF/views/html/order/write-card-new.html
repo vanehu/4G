@@ -1,0 +1,86 @@
+<script type="text/javascript">
+var contextPath = "${request.getContextPath()}";
+var globalAppDesc = "${APPDESC}";
+function getToken(){
+	var token="${Request['_al_ec_token']}";
+	return token;
+}
+</script>
+<#include "/common-css-tpl.html"/>
+<script src="${contextPath}/js/third-js/jquery/jquery-1.7.2.min.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/third-js/json/json2.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/third-js/utils/md5.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/third-js/utils/Base64.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/third-js/utils/UUID.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/third-js/validate/jquery.ketchup.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/third-js/validate/jquery.ketchup.validations_zh.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/third-js/validate/jquery.ketchup.helpers.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/third-js/jquery/zebra-dialog/zebra_dialog.src.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/third-js/jquery/jquery.overlay/jquery.overlay.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/third-js/jquery/jquery.jevent.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/third-js/jquery/jquery.cookies.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/third-js/jquery/jquery.simplemodal/jquery.simplemodalForWriteCard.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/third-js/jquery/jquery.lhgcalendar/lhgcalendar.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/third-js/utils/DateUtil.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/third-js/utils/validateSimple.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/third-js/jquery/jquery.ztree/jquery.ztree.core-3.4.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/third-js/ligerUI/ligerui.min.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/our-js/common.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/busi-js/common/page.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/busi-js/common/arrayPage.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/our-js/ec.agent.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/our-js/ec.dialog.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/our-js/ec.util.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/our-js/serviceAxClient.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/our-js/login.windowpub.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/our-js/ec.form.dialog.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/4g-js/global.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/4g-js/jquery.idTabs.min.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/4g-js/top_plugins.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/4g-js/jquery.scrolltotop.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/4g-js/nav.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/4g-js/easydialog.min.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/4g-js/other.js?${jsversion}" type="text/javascript"></script>
+
+<script src="${contextPath}/js/4g-js/card/writeCardNew.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/4g-js/order/orderInfo.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/busi-js/order/order.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/busi-js/order/prepare.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/busi-js/order/phoneNumber.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/busi-js/common/const.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/4g-js/order/soOrder.js?${jsversion}" type="text/javascript"></script>
+<input type="hidden" id="areaCodecard" value="${areaCode}"/>
+<input type="hidden" id="areaIdcard" value="${areaId}"/>
+<input type="hidden" id="channelIdcard" value="${channelId}"/>
+<input type="hidden" id="staffId" value="${staffId}"/>
+<input type="hidden" id="phoneNumFlag" value="new"/>
+<input type="hidden" id="phoneNumNew" value=""/>
+<div class="main_warp">
+	<div class="ordercon">
+		<!--订单确认-->
+		<div class="order_confirmation ordertabcon">
+			<h2 class="h2_title">
+				<span>预写卡</span>
+				<span class="showhide"></span>
+			</h2>
+			<div class="main_body">
+				<div class="cardtabcon">
+					<div class="pdcardcon show">
+					  <ul id="item_order_${prodId}" class="fillin show" >
+							<li>
+								<label style="width:120px;">接入号码：</label>
+								<a class="selectBoxTwo selectNumbel" href="javascript:void(0);" id="nbr_btn_phoneNum" onclick="order.writeCard.phoneNumDialog('offer','Y2','${prodId}');" href="javascript:void(0);">选择号码<u></u></a>
+								<label class="f_red">*</label>
+							</li>
+							<#include "/order/order-uimNew.html" />
+                        </ul>
+					</div>
+				</div>
+				<div class="height18"></div>
+				<div type="attach" id="attach">
+				</div>
+				<div class="height18"></div>
+			</div>
+		</div>
+	</div>
+</div>

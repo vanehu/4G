@@ -928,6 +928,9 @@ public final class PortalServiceCode {
 	public static final String IOT_SERVICE_QUERY_CUST_PROD = "com.linkage.portal.service.lte.core.resources.IOTqryProdInfo";
 	/**物联网客户查询-订单提交*/
 	public static final String IOT_SERVICE_TRANSFER_ARCHIVE = "com.linkage.portal.service.lte.core.resources.IOTTransferArchive";
+	
+	 //写卡入库
+    public static final String SUBMIT_UIM_CARD_INFOLOG = "biz-service/intf.soService/saveWriteCardLog";
 
 	/*客户架构信息查询接口*/
     public static final String QUERY_CUST_COMPRE_INFO = "biz-service/intf.custService/queryCustCompreInfo";
