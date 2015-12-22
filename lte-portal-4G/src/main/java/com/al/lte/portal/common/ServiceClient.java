@@ -79,11 +79,15 @@ public class ServiceClient {
 			}
 		}
 		if (areaId == null || areaId ==""){
-				areaId = (String)dataBusMap.get("areaId");
-				if (areaId != null &&  areaId !=""){
-					dataBusMap.put("provinceAreaId", areaId.substring(0, 3)+"0000");
-				}
+			areaId = (String)dataBusMap.get("areaId");
+			if (areaId != null &&  areaId !=""){
+				dataBusMap.put("provinceAreaId", areaId.substring(0, 3)+"0000");
+			}
 		}
+		if(!dataBusMap.containsKey("provinceAreaId")){
+			dataBusMap.put("provinceAreaId", DataSourceManager.getCurrentDataSourceKey());
+		}
+		
 		db.setServiceCode(serviceCode);
 		String busiFlowNum = null;
 		if (StringUtils.isNotEmpty(optFlowNum)) {

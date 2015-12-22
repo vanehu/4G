@@ -1,9 +1,7 @@
 package com.al.lte.portal.common;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -12,18 +10,13 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.springframework.cache.Cache;
-import org.springframework.cache.ehcache.EhCacheCacheManager;
-
 import com.al.ecs.common.web.ServletUtils;
 import com.al.ecs.common.web.SpringContextUtil;
 import com.al.ecs.exception.BusinessException;
 import com.al.ecs.exception.InterfaceException;
 import com.al.lte.portal.bmo.staff.StaffBmo;
-import com.al.lte.portal.bmo.system.AuthenticBmo;
 import com.al.lte.portal.model.SessionStaff;
 
-import net.sf.ehcache.Ehcache;
 
 /**
  * Ehcache 工具 类 概述 .

@@ -16,7 +16,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.lf5.util.StreamUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.UrlPathHelper;
 
@@ -25,6 +24,7 @@ import com.al.ecs.common.web.ServletUtils;
 import com.al.ecs.common.web.SpringContextUtil;
 import com.al.ecs.log.Log;
 import com.al.ecs.spring.interceptor.SessionInterceptor;
+import com.al.lte.portal.common.StreamUtils;
 import com.al.lte.portal.common.SysConstant;
 import com.al.lte.portal.core.DataSourceManager;
 import com.al.lte.portal.model.SessionStaff;
@@ -167,12 +167,14 @@ public class PortalDataSourceFilter extends OncePerRequestFilter {
 		log.debug("------PortalDataSourceFilter------ path:{} ,currentDatasourceKey:{}", request.getServletPath(),session.getAttribute(SysConstant.SESSION_DATASOURCE_KEY));
 		filterChain.doFilter(request, response);
 	}
+	
 
 	/*
 	 * 设置session中的路由参数
 	 */
 	private void setSessionDbKeyWordAttr(HttpSession session,String dbKeyWord){
 		try {
+			DataSourceManager.setCurrentDataSourceKey(dbKeyWord);
 			session.setAttribute(SysConstant.SESSION_DATASOURCE_KEY, dbKeyWord);
 			SessionStaff sessionStaff = (SessionStaff) session.getAttribute(SysConstant.SESSION_KEY_LOGIN_STAFF);
 			if(sessionStaff != null){

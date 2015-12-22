@@ -15,6 +15,9 @@ public class DataSourceManager {
 	public static final String DEFAULT_DATASOURCE_KEY = "portal";
 	
 	private List<String> configDataSourceKeys;
+	
+	/** 保存当前使用的数据源关键字 */
+	private static final ThreadLocal<String> currentDataSourceKey = new ThreadLocal<String>();
 
 	public List<String> getConfigDataSourceKeys() {
 		return configDataSourceKeys;
@@ -41,7 +44,7 @@ public class DataSourceManager {
 	}
 	
 	
-	//TODO 根据areaId返回匹配的dbKeyWord
+	//根据areaId返回匹配的dbKeyWord
 	public String areaIdToDbKeyWord(String areaId){
 		if(areaId == null || areaId.trim().length() == 0){
 			return null;
@@ -57,5 +60,12 @@ public class DataSourceManager {
 		return null;
 	}
 	
+	public static String getCurrentDataSourceKey(){
+		return currentDataSourceKey.get();
+	}
+	
+	public static void setCurrentDataSourceKey(String dbKey){
+		currentDataSourceKey.set(dbKey);
+	}
 	
 }

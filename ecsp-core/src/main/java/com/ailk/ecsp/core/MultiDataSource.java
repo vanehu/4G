@@ -13,8 +13,6 @@ import javax.sql.DataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.ailk.ecsp.util.IConstant;
-
 /**
  * 复合多数据源
  */
@@ -86,7 +84,7 @@ public class MultiDataSource implements DataSource {
 	public  DataSource getCurrentDataSource() {
 		// 如果路由策略存在，且更新过，则根据路由算法选择新的DataSource
 		synchronized(obj){
-			RouterStrategy strategy = DataSourceRouter.currentRouterStrategyThread.get();
+			RouterStrategy strategy = DataSourceRouter.getCurrentRouterStrategy();
 //			if (strategy == null) {
 //				throw new IllegalArgumentException(
 //						"DataSource RouterStrategy No found.");
@@ -125,7 +123,7 @@ public class MultiDataSource implements DataSource {
 	public void choiceMappedDataSources(String key) {
 		DataSource ds = this.mappedDataSources.get(key);
 		if (ds == null) {
-			throw new IllegalStateException("No Mapped DataSources Exist!");
+			throw new IllegalStateException("No Mapped DataSources Exist! key: " + key);
 		}
 		this.currentDataSourceHolder.set(ds);
 	}
