@@ -1,7 +1,33 @@
+
+var pageTitle = $("head title").text();
+//当前弹窗的服务器IP
+var alertIP = pageTitle.substring(pageTitle.indexOf("["), pageTitle.lastIndexOf("]") + 1);
+//当前弹窗的时间戳
+var getAlertTimeStamp = function(){
+	var now = new Date();
+	var year = now.getFullYear();
+	var month = now.getMonth()+1;
+	var date = now.getDate();
+	var hour = now.getHours();
+	if(hour<10){
+		hour = "0"+hour;
+	}
+	var minute = now.getMinutes();
+	if(minute<10){
+		minute = "0"+minute;
+	}
+	var second = now.getSeconds();
+	if(second<10){
+		second = "0"+second;
+	}
+	return year+"/"+month+"/"+date+" "+hour+":"+minute+":"+second;
+};
+
 (function($) {
 	$.extend($,{
 		//error, warning, question, information 
 		confirm : function(title,content,options,type) {
+			var confirmTitle = title + alertIP + getAlertTimeStamp();
 			var buttons= ['确定', '取消'];
 			if(!$.isFunction(options.no)){
 				buttons= ['确定'];
@@ -12,7 +38,7 @@
             	'overlay_close':false,
             	'overlay_opacity':.5,
                 'type':    !!type?type:'confirmation',
-                'title':    title,
+                'title':    confirmTitle,
                 'buttons':  buttons,
                 'onClose':  function(caption) {
                     if(caption == '确定'){
@@ -37,6 +63,7 @@
 		},
 		//error, warning, question, information,confirmation
 		alert:function(title,content,type,callBack){
+			var alertTitle = title + alertIP + getAlertTimeStamp();
 			if(typeof(callBack)=="function"){
 				new $.Zebra_Dialog(content, {
 					'open_speed':0,
@@ -45,7 +72,7 @@
 	            	'overlay_close':false,
 	            	'overlay_opacity':.5,
 	                'type':     !!type?type:'information',
-	                'title':    title,
+	                'title':    alertTitle,
 	                'buttons' :  ['确定'],
 	                'onClose' : callBack
 				});
@@ -57,7 +84,7 @@
 	            	'overlay_close':false,
 	            	'overlay_opacity':.5,
 	                'type':     !!type?type:'information',
-	                'title':    title,
+	                'title':    alertTitle,
 	                'buttons' :  ['确定']
 				});
 			}
@@ -107,11 +134,10 @@
 			var contId = "alertMoreContent" + rand;
 			var errData = ec.util.defaultStr(err.errData, "未知");
 			var c  = '<div>';
-			var pageTitle = $("head title").text();
-			var errTitle = '异常信息' + pageTitle.substring(pageTitle.indexOf("["), pageTitle.lastIndexOf("]") + 1);
+			var errTitle = '异常信息' + alertIP + getAlertTimeStamp();
 			var typeIcon = 'error';
 			if (errData == 'ERR_RULE_-2') {
-				errTitle = '规则提示';
+				errTitle = '规则提示' + alertIP + getAlertTimeStamp();
 				typeIcon = 'warning';
 				c += '<div class="am_baseMsg">';
 				c += '规则编码【'+ec.util.defaultStr(err.errCode, "未知") + '】' + ec.util.encodeHtml(ec.util.defaultStr(err.errMsg, "未知"));
