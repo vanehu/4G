@@ -676,12 +676,7 @@ order.phoneNumber = (function(){
 	//构造查询条件 
 	var _buildInParam = function(param){
 		var query_flag_01= $('input:radio[name="query_flag_01"]:checked').val();
-		var areaId="";
-		if(OrderInfo.cust==undefined || OrderInfo.cust.custId==undefined || OrderInfo.cust.custId==""){
-			areaId=$("#p_cust_areaId").val();
-		}else{
-			areaId=OrderInfo.getAreaId();
-		}
+		var areaId = $("#p_cust_areaId").val();
 		var pnHead = $("#pnHead").find("a.selected").attr("val");
 		var pncharacteristic = $("#pncharacteristic").find("a.selected").attr("val");
 		var pnEnd =$.trim($("#pnEnd").val());
