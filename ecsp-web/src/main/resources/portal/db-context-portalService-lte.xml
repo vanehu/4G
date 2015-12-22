@@ -9,6 +9,24 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
 http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
 http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache-3.1.xsd"
 	default-lazy-init="true">
+	
+	<!-- 数据源源配置文件 -->
+	<context:property-placeholder location="classpath*:/sysConfig/datasource-config.properties" />
+	
+	<bean id="configMessageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource" >
+		<property name="basenames">
+			<list>
+				<value>classpath:/sysConfig/datasource-config</value>
+				<value>classpath:/portal/portal</value>
+			</list>
+		</property>
+		<!-- 默认不刷新，可以配置定时刷新 <property name="cacheSeconds" value="0"/> -->
+		<!-- 中文情况：JDK1.6时加默认编码才有效，1.5时会直接输出UNICODE字符 <property name="defaultEncoding" value="UTF-8" /> -->
+	</bean>
+	<bean id="propertiesUtils" class="com.al.ecs.common.util.PropertiesUtils">
+		<property name="message" ref="configMessageSource"/> 
+	</bean>
+	
 	<bean id="multiDataSource" class="com.ailk.ecsp.core.MultiDataSource">  
 	    <!--
 	    <property name="clusterDataSources">  
@@ -20,6 +38,7 @@ http://www.springframework.org/schema/cache http://www.springframework.org/schem
 	    -->
 	    <property name="mappedDataSources">  
 	        <map>
+	        <!-- 
 	            <entry key="portal" value-ref="serviceDataSource"/>
 	           	<entry key="guangdong" value-ref="guangdongDataSource" />
 				<entry key="jiangsu" value-ref="jiangsuDataSource" />
@@ -52,267 +71,668 @@ http://www.springframework.org/schema/cache http://www.springframework.org/schem
 				<entry key="hainan" value-ref="hainanDataSource" />
 				<entry key="ningxia" value-ref="ningxiaDataSource" />
 				<entry key="xicang" value-ref="xicangDataSource" />
+	         -->
+	         
+	         	<entry key="datasource.manage" value-ref="serviceDataSource"/>
+				<entry key="datasource.guangdong.write" value-ref="guangdongDataSourceWrite" />
+				<entry key="datasource.jiangsu.write" value-ref="jiangsuDataSourceWrite" />
+				<entry key="datasource.sichuan.write" value-ref="sichuanDataSourceWrite" />
+				<entry key="datasource.zhejiang.write" value-ref="zhejiangDataSourceWrite" />
+				<entry key="datasource.anhui.write" value-ref="anhuiDataSourceWrite" />
+				<entry key="datasource.shanxi.write" value-ref="shanxiDataSourceWrite" />
+				<entry key="datasource.fujian.write" value-ref="fujianDataSourceWrite" />
+				<entry key="datasource.shanghai.write" value-ref="shanghaiDataSourceWrite" />
+				<entry key="datasource.hebei.write" value-ref="hebeiDataSourceWrite" />
+				<entry key="datasource.neimenggu.write" value-ref="neimengguDataSourceWrite" />
+				<entry key="datasource.hunan.write" value-ref="hunanDataSourceWrite" />
+				<entry key="datasource.liaoning.write" value-ref="liaoningDataSourceWrite" />
+				<entry key="datasource.hubei.write" value-ref="hubeiDataSourceWrite" />
+				<entry key="datasource.guizhou.write" value-ref="guizhouDataSourceWrite" />
+				<entry key="datasource.shandong.write" value-ref="shandongDataSourceWrite" />
+				<entry key="datasource.chongqing.write" value-ref="chongqingDataSourceWrite" />
+				<entry key="datasource.xinjiang.write" value-ref="xinjiangDataSourceWrite" />
+				<entry key="datasource.beijing.write" value-ref="beijingDataSourceWrite" />
+				<entry key="datasource.tianjin.write" value-ref="tianjinDataSourceWrite" />
+				<entry key="datasource.jiangxi.write" value-ref="jiangxiDataSourceWrite" />
+				<entry key="datasource.qinghai.write" value-ref="qinghaiDataSourceWrite" />
+				<entry key="datasource.gansu.write" value-ref="gansuDataSourceWrite" />
+				<entry key="datasource.jilin.write" value-ref="jilinDataSourceWrite" />
+				<entry key="datasource.henan.write" value-ref="henanDataSourceWrite" />
+				<entry key="datasource.heilongjiang.write" value-ref="heilongjiangDataSourceWrite" />
+				<entry key="datasource.yunnan.write" value-ref="yunnanDataSourceWrite" />
+				<entry key="datasource.guangxi.write" value-ref="guangxiDataSourceWrite" />
+				<entry key="datasource.shxi.write" value-ref="shxiDataSourceWrite" />
+				<entry key="datasource.hainan.write" value-ref="hainanDataSourceWrite" />
+				<entry key="datasource.ningxia.write" value-ref="ningxiaDataSourceWrite" />
+				<entry key="datasource.xizang.write" value-ref="xizangDataSourceWrite" />
+				<entry key="datasource.gangaotai.write" value-ref="gangaotaiDataSourceWrite" />
+				<entry key="datasource.guangdong.read" value-ref="guangdongDataSourceRead" />
+				<entry key="datasource.jiangsu.read" value-ref="jiangsuDataSourceRead" />
+				<entry key="datasource.sichuan.read" value-ref="sichuanDataSourceRead" />
+				<entry key="datasource.zhejiang.read" value-ref="zhejiangDataSourceRead" />
+				<entry key="datasource.anhui.read" value-ref="anhuiDataSourceRead" />
+				<entry key="datasource.shanxi.read" value-ref="shanxiDataSourceRead" />
+				<entry key="datasource.fujian.read" value-ref="fujianDataSourceRead" />
+				<entry key="datasource.shanghai.read" value-ref="shanghaiDataSourceRead" />
+				<entry key="datasource.hebei.read" value-ref="hebeiDataSourceRead" />
+				<entry key="datasource.neimenggu.read" value-ref="neimengguDataSourceRead" />
+				<entry key="datasource.hunan.read" value-ref="hunanDataSourceRead" />
+				<entry key="datasource.liaoning.read" value-ref="liaoningDataSourceRead" />
+				<entry key="datasource.hubei.read" value-ref="hubeiDataSourceRead" />
+				<entry key="datasource.guizhou.read" value-ref="guizhouDataSourceRead" />
+				<entry key="datasource.shandong.read" value-ref="shandongDataSourceRead" />
+				<entry key="datasource.chongqing.read" value-ref="chongqingDataSourceRead" />
+				<entry key="datasource.xinjiang.read" value-ref="xinjiangDataSourceRead" />
+				<entry key="datasource.beijing.read" value-ref="beijingDataSourceRead" />
+				<entry key="datasource.tianjin.read" value-ref="tianjinDataSourceRead" />
+				<entry key="datasource.jiangxi.read" value-ref="jiangxiDataSourceRead" />
+				<entry key="datasource.qinghai.read" value-ref="qinghaiDataSourceRead" />
+				<entry key="datasource.gansu.read" value-ref="gansuDataSourceRead" />
+				<entry key="datasource.jilin.read" value-ref="jilinDataSourceRead" />
+				<entry key="datasource.henan.read" value-ref="henanDataSourceRead" />
+				<entry key="datasource.heilongjiang.read" value-ref="heilongjiangDataSourceRead" />
+				<entry key="datasource.yunnan.read" value-ref="yunnanDataSourceRead" />
+				<entry key="datasource.guangxi.read" value-ref="guangxiDataSourceRead" />
+				<entry key="datasource.shxi.read" value-ref="shxiDataSourceRead" />
+				<entry key="datasource.hainan.read" value-ref="hainanDataSourceRead" />
+				<entry key="datasource.ningxia.read" value-ref="ningxiaDataSourceRead" />
+				<entry key="datasource.xizang.read" value-ref="xizangDataSourceRead" />
+				<entry key="datasource.gangaotai.read" value-ref="gangaotaiDataSourceRead" />
 	        </map>  
 	    </property> 
 	</bean>  
 	<!--管理库数据源-->
 	<bean id="serviceDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
 		<property name="jndiName">
-			<value>jdbc/oracle/lte/manage/crmapplte</value>
+			<value>${datasource.manage}</value>
 		</property>
 		<property name="resourceRef">
 			<value>true</value>  
 		</property> 
-	</bean>	
-	<!--写库数据源-->
-	<bean id="guangdongDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+	</bean>	
+	
+	<!--##################### 写库数据源 start #####################-->
+	<bean id="guangdongDataSourceWrite" class="org.springframework.jndi.JndiObjectFactoryBean">
 		<property name="jndiName">
-			<value>jdbc/oracle/lte/write/crmapp01</value>
+			<value>${datasource.guangdong.write}</value>
 		</property>
 		<property name="resourceRef">
-			<value>true</value>  
-		</property> 
-	</bean>	
-	<bean id="jiangsuDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+			<value>true</value>
+  		</property>
+ 	</bean>
+
+	<bean id="jiangsuDataSourceWrite" class="org.springframework.jndi.JndiObjectFactoryBean">
 		<property name="jndiName">
-			<value>jdbc/oracle/lte/write/crmapp02</value>
+			<value>${datasource.jiangsu.write}</value>
+		</property>
+    	<property name="resourceRef">
+			<value>true</value>
+  		</property>
+ 	</bean>
+
+	<bean id="sichuanDataSourceWrite" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName">
+			<value>${datasource.sichuan.write}</value>
 		</property>
 		<property name="resourceRef">
-			<value>true</value>  
-		</property> 
-	</bean>	
-	<bean id="sichuanDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+			<value>true</value>
+  		</property>
+ 	</bean>
+
+	<bean id="zhejiangDataSourceWrite" class="org.springframework.jndi.JndiObjectFactoryBean">
 		<property name="jndiName">
-			<value>jdbc/oracle/lte/write/crmapp03</value>
+			<value>${datasource.zhejiang.write}</value>
 		</property>
 		<property name="resourceRef">
-			<value>true</value>  
-		</property> 
-	</bean>	
-	<bean id="zhejiangDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+			<value>true</value>
+  		</property>
+ 	</bean>
+
+	<bean id="anhuiDataSourceWrite" class="org.springframework.jndi.JndiObjectFactoryBean">
 		<property name="jndiName">
-			<value>jdbc/oracle/lte/write/crmapp04</value>
+			<value>${datasource.anhui.write}</value>
 		</property>
 		<property name="resourceRef">
-			<value>true</value>  
-		</property> 
-	</bean>		
-	<bean id="anhuiDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+			<value>true</value>
+  		</property>
+ 	</bean>
+
+	<bean id="shanxiDataSourceWrite" class="org.springframework.jndi.JndiObjectFactoryBean">
 		<property name="jndiName">
-			<value>jdbc/oracle/lte/write/crmapp05</value>
+			<value>${datasource.shanxi.write}</value>
 		</property>
 		<property name="resourceRef">
-			<value>true</value>  
-		</property> 
-	</bean>
-	<bean id="shaanxiDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+			<value>true</value>
+  		</property>
+ 	</bean>
+
+	<bean id="fujianDataSourceWrite" class="org.springframework.jndi.JndiObjectFactoryBean">
 		<property name="jndiName">
-			<value>jdbc/oracle/lte/write/crmapp06</value>
+			<value>${datasource.fujian.write}</value>
 		</property>
 		<property name="resourceRef">
-			<value>true</value>  
-		</property> 
-	</bean>
-	<bean id="fujianDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+			<value>true</value>
+  		</property>
+ 	</bean>
+
+	<bean id="shanghaiDataSourceWrite" class="org.springframework.jndi.JndiObjectFactoryBean">
 		<property name="jndiName">
-			<value>jdbc/oracle/lte/write/crmapp07</value>
+			<value>${datasource.shanghai.write}</value>
 		</property>
 		<property name="resourceRef">
-			<value>true</value>  
-		</property> 
-	</bean>
-	<bean id="shanghaiDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+			<value>true</value>
+  		</property>
+ 	</bean>
+
+	<bean id="hebeiDataSourceWrite" class="org.springframework.jndi.JndiObjectFactoryBean">
 		<property name="jndiName">
-			<value>jdbc/oracle/lte/write/crmapp08</value>
+			<value>${datasource.hebei.write}</value>
 		</property>
 		<property name="resourceRef">
-			<value>true</value>  
-		</property> 
-	</bean>
-	<bean id="hebeiDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+			<value>true</value>
+  		</property>
+ 	</bean>
+
+	<bean id="neimengguDataSourceWrite" class="org.springframework.jndi.JndiObjectFactoryBean">
 		<property name="jndiName">
-			<value>jdbc/oracle/lte/write/crmapp09</value>
+			<value>${datasource.neimenggu.write}</value>
 		</property>
 		<property name="resourceRef">
-			<value>true</value>  
-		</property> 
-	</bean>
-	<bean id="neimengguDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+			<value>true</value>
+  		</property>
+ 	</bean>
+
+	<bean id="hunanDataSourceWrite" class="org.springframework.jndi.JndiObjectFactoryBean">
 		<property name="jndiName">
-			<value>jdbc/oracle/lte/write/crmapp10</value>
+			<value>${datasource.hunan.write}</value>
 		</property>
 		<property name="resourceRef">
-			<value>true</value>  
-		</property> 
-	</bean>
-	<bean id="hunanDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+			<value>true</value>
+  		</property>
+ 	</bean>
+
+	<bean id="liaoningDataSourceWrite" class="org.springframework.jndi.JndiObjectFactoryBean">
 		<property name="jndiName">
-			<value>jdbc/oracle/lte/write/crmapp11</value>
+			<value>${datasource.liaoning.write}</value>
 		</property>
 		<property name="resourceRef">
-			<value>true</value>  
-		</property> 
-	</bean>
-	<bean id="liaoningDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+			<value>true</value>
+  		</property>
+ 	</bean>
+
+	<bean id="hubeiDataSourceWrite" class="org.springframework.jndi.JndiObjectFactoryBean">
 		<property name="jndiName">
-			<value>jdbc/oracle/lte/write/crmapp11</value>
+			<value>${datasource.hubei.write}</value>
 		</property>
 		<property name="resourceRef">
-			<value>true</value>  
-		</property> 
-	</bean>
-	<bean id="hubeiDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+			<value>true</value>
+  		</property>
+ 	</bean>
+
+	<bean id="guizhouDataSourceWrite" class="org.springframework.jndi.JndiObjectFactoryBean">
 		<property name="jndiName">
-			<value>jdbc/oracle/lte/write/crmapp13</value>
+			<value>${datasource.guizhou.write}</value>
 		</property>
 		<property name="resourceRef">
-			<value>true</value>  
-		</property> 
-	</bean>
-	<bean id="guizhouDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+			<value>true</value>
+  		</property>
+ 	</bean>
+
+	<bean id="shandongDataSourceWrite" class="org.springframework.jndi.JndiObjectFactoryBean">
 		<property name="jndiName">
-			<value>jdbc/oracle/lte/write/crmapp14</value>
+			<value>${datasource.shandong.write}</value>
 		</property>
 		<property name="resourceRef">
-			<value>true</value>  
-		</property> 
-	</bean>
-	<bean id="shandongDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+			<value>true</value>
+  		</property>
+ 	</bean>
+
+	<bean id="chongqingDataSourceWrite" class="org.springframework.jndi.JndiObjectFactoryBean">
 		<property name="jndiName">
-			<value>jdbc/oracle/lte/write/crmapp15</value>
+			<value>${datasource.chongqing.write}</value>
 		</property>
 		<property name="resourceRef">
-			<value>true</value>  
-		</property> 
-	</bean>
-	<bean id="chongqingDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+			<value>true</value>
+  		</property>
+ 	</bean>
+
+	<bean id="xinjiangDataSourceWrite" class="org.springframework.jndi.JndiObjectFactoryBean">
 		<property name="jndiName">
-			<value>jdbc/oracle/lte/write/crmapp16</value>
+			<value>${datasource.xinjiang.write}</value>
 		</property>
 		<property name="resourceRef">
-			<value>true</value>  
-		</property> 
-	</bean>
-	<bean id="xinjiangDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+			<value>true</value>
+  		</property>
+ 	</bean>
+
+	<bean id="beijingDataSourceWrite" class="org.springframework.jndi.JndiObjectFactoryBean">
 		<property name="jndiName">
-			<value>jdbc/oracle/lte/write/crmapp17</value>
+			<value>${datasource.beijing.write}</value>
 		</property>
 		<property name="resourceRef">
-			<value>true</value>  
-		</property> 
-	</bean>
-	<bean id="beijingDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+			<value>true</value>
+  		</property>
+ 	</bean>
+
+	<bean id="tianjinDataSourceWrite" class="org.springframework.jndi.JndiObjectFactoryBean">
 		<property name="jndiName">
-			<value>jdbc/oracle/lte/write/crmapp18</value>
+			<value>${datasource.tianjin.write}</value>
 		</property>
 		<property name="resourceRef">
-			<value>true</value>  
-		</property> 
-	</bean>
-	<bean id="tianjinDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+			<value>true</value>
+  		</property>
+ 	</bean>
+
+	<bean id="jiangxiDataSourceWrite" class="org.springframework.jndi.JndiObjectFactoryBean">
 		<property name="jndiName">
-			<value>jdbc/oracle/lte/write/crmapp19</value>
+			<value>${datasource.jiangxi.write}</value>
 		</property>
 		<property name="resourceRef">
-			<value>true</value>  
-		</property> 
-	</bean>
-	<bean id="jiangxiDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+			<value>true</value>
+  		</property>
+ 	</bean>
+
+	<bean id="qinghaiDataSourceWrite" class="org.springframework.jndi.JndiObjectFactoryBean">
 		<property name="jndiName">
-			<value>jdbc/oracle/lte/write/crmapp20</value>
+			<value>${datasource.qinghai.write}</value>
 		</property>
 		<property name="resourceRef">
-			<value>true</value>  
-		</property> 
-	</bean>
-	<bean id="qinghaiDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+			<value>true</value>
+  		</property>
+ 	</bean>
+
+	<bean id="gansuDataSourceWrite" class="org.springframework.jndi.JndiObjectFactoryBean">
 		<property name="jndiName">
-			<value>jdbc/oracle/lte/write/crmapp21</value>
+			<value>${datasource.gansu.write}</value>
 		</property>
 		<property name="resourceRef">
-			<value>true</value>  
-		</property> 
-	</bean>
-	<bean id="gansuDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+			<value>true</value>
+  		</property>
+ 	</bean>
+
+	<bean id="jilinDataSourceWrite" class="org.springframework.jndi.JndiObjectFactoryBean">
 		<property name="jndiName">
-			<value>jdbc/oracle/lte/write/crmapp22</value>
+			<value>${datasource.jilin.write}</value>
 		</property>
 		<property name="resourceRef">
-			<value>true</value>  
-		</property> 
-	</bean>
-	<bean id="jilinDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+			<value>true</value>
+  		</property>
+ 	</bean>
+
+	<bean id="henanDataSourceWrite" class="org.springframework.jndi.JndiObjectFactoryBean">
 		<property name="jndiName">
-			<value>jdbc/oracle/lte/write/crmapp23</value>
+			<value>${datasource.henan.write}</value>
 		</property>
 		<property name="resourceRef">
-			<value>true</value>  
-		</property> 
-	</bean>
-	<bean id="henanDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+			<value>true</value>
+  		</property>
+ 	</bean>
+
+	<bean id="heilongjiangDataSourceWrite" class="org.springframework.jndi.JndiObjectFactoryBean">
 		<property name="jndiName">
-			<value>jdbc/oracle/lte/write/crmapp24</value>
+			<value>${datasource.heilongjiang.write}</value>
 		</property>
 		<property name="resourceRef">
-			<value>true</value>  
-		</property> 
-	</bean>
-	<bean id="heilongjiangDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+			<value>true</value>
+  		</property>
+ 	</bean>
+
+	<bean id="yunnanDataSourceWrite" class="org.springframework.jndi.JndiObjectFactoryBean">
 		<property name="jndiName">
-			<value>jdbc/oracle/lte/write/crmapp25</value>
+			<value>${datasource.yunnan.write}</value>
 		</property>
 		<property name="resourceRef">
-			<value>true</value>  
-		</property> 
-	</bean>
-	<bean id="yunnanDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+			<value>true</value>
+  		</property>
+ 	</bean>
+
+	<bean id="guangxiDataSourceWrite" class="org.springframework.jndi.JndiObjectFactoryBean">
 		<property name="jndiName">
-			<value>jdbc/oracle/lte/write/crmapp26</value>
+			<value>${datasource.guangxi.write}</value>
 		</property>
 		<property name="resourceRef">
-			<value>true</value>  
-		</property> 
-	</bean>
-	<bean id="guangxiDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+			<value>true</value>
+  		</property>
+ 	</bean>
+
+	<bean id="shxiDataSourceWrite" class="org.springframework.jndi.JndiObjectFactoryBean">
 		<property name="jndiName">
-			<value>jdbc/oracle/lte/write/crmapp27</value>
+			<value>${datasource.shxi.write}</value>
 		</property>
 		<property name="resourceRef">
-			<value>true</value>  
-		</property> 
-	</bean>
-	<bean id="shanxiDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+			<value>true</value>
+  		</property>
+ 	</bean>
+
+	<bean id="hainanDataSourceWrite" class="org.springframework.jndi.JndiObjectFactoryBean">
 		<property name="jndiName">
-			<value>jdbc/oracle/lte/write/crmapp28</value>
+			<value>${datasource.hainan.write}</value>
 		</property>
 		<property name="resourceRef">
-			<value>true</value>  
-		</property> 
-	</bean>
-	<bean id="hainanDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+			<value>true</value>
+  		</property>
+ 	</bean>
+
+	<bean id="ningxiaDataSourceWrite" class="org.springframework.jndi.JndiObjectFactoryBean">
 		<property name="jndiName">
-			<value>jdbc/oracle/lte/write/crmapp29</value>
+			<value>${datasource.ningxia.write}</value>
 		</property>
 		<property name="resourceRef">
-			<value>true</value>  
-		</property> 
-	</bean>
-	<bean id="ningxiaDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+			<value>true</value>
+  		</property>
+ 	</bean>
+
+	<bean id="xizangDataSourceWrite" class="org.springframework.jndi.JndiObjectFactoryBean">
 		<property name="jndiName">
-			<value>jdbc/oracle/lte/write/crmapp30</value>
+			<value>${datasource.xizang.write}</value>
 		</property>
 		<property name="resourceRef">
-			<value>true</value>  
-		</property> 
-	</bean>
-	<bean id="xicangDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+			<value>true</value>
+  		</property>
+ 	</bean>
+
+	<bean id="gangaotaiDataSourceWrite" class="org.springframework.jndi.JndiObjectFactoryBean">
 		<property name="jndiName">
-			<value>jdbc/oracle/lte/write/crmapp31</value>
+			<value>${datasource.gangaotai.write}</value>
 		</property>
 		<property name="resourceRef">
-			<value>true</value>  
-		</property> 
-	</bean>	
+			<value>true</value>
+  		</property>
+ 	</bean>
+ 	<!--##################### 写库数据源 end #####################-->
+
+	<!--##################### 读库数据源 start #####################-->
+	<bean id="guangdongDataSourceRead" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName">
+			<value>${datasource.guangdong.read}</value>
+		</property>
+		<property name="resourceRef">
+			<value>true</value>
+  		</property>
+ 	</bean>
+
+	<bean id="jiangsuDataSourceRead" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName">
+			<value>${datasource.jiangsu.read}</value>
+		</property>
+    	<property name="resourceRef">
+			<value>true</value>
+  		</property>
+ 	</bean>
+
+	<bean id="sichuanDataSourceRead" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName">
+			<value>${datasource.sichuan.read}</value>
+		</property>
+		<property name="resourceRef">
+			<value>true</value>
+  		</property>
+ 	</bean>
+
+	<bean id="zhejiangDataSourceRead" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName">
+			<value>${datasource.zhejiang.read}</value>
+		</property>
+		<property name="resourceRef">
+			<value>true</value>
+  		</property>
+ 	</bean>
+
+	<bean id="anhuiDataSourceRead" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName">
+			<value>${datasource.anhui.read}</value>
+		</property>
+		<property name="resourceRef">
+			<value>true</value>
+  		</property>
+ 	</bean>
+
+	<bean id="shanxiDataSourceRead" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName">
+			<value>${datasource.shanxi.read}</value>
+		</property>
+		<property name="resourceRef">
+			<value>true</value>
+  		</property>
+ 	</bean>
+
+	<bean id="fujianDataSourceRead" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName">
+			<value>${datasource.fujian.read}</value>
+		</property>
+		<property name="resourceRef">
+			<value>true</value>
+  		</property>
+ 	</bean>
+
+	<bean id="shanghaiDataSourceRead" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName">
+			<value>${datasource.shanghai.read}</value>
+		</property>
+		<property name="resourceRef">
+			<value>true</value>
+  		</property>
+ 	</bean>
+
+	<bean id="hebeiDataSourceRead" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName">
+			<value>${datasource.hebei.read}</value>
+		</property>
+		<property name="resourceRef">
+			<value>true</value>
+  		</property>
+ 	</bean>
+
+	<bean id="neimengguDataSourceRead" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName">
+			<value>${datasource.neimenggu.read}</value>
+		</property>
+		<property name="resourceRef">
+			<value>true</value>
+  		</property>
+ 	</bean>
+
+	<bean id="hunanDataSourceRead" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName">
+			<value>${datasource.hunan.read}</value>
+		</property>
+		<property name="resourceRef">
+			<value>true</value>
+  		</property>
+ 	</bean>
+
+	<bean id="liaoningDataSourceRead" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName">
+			<value>${datasource.liaoning.read}</value>
+		</property>
+		<property name="resourceRef">
+			<value>true</value>
+  		</property>
+ 	</bean>
+
+	<bean id="hubeiDataSourceRead" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName">
+			<value>${datasource.hubei.read}</value>
+		</property>
+		<property name="resourceRef">
+			<value>true</value>
+  		</property>
+ 	</bean>
+
+	<bean id="guizhouDataSourceRead" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName">
+			<value>${datasource.guizhou.read}</value>
+		</property>
+		<property name="resourceRef">
+			<value>true</value>
+  		</property>
+ 	</bean>
+
+	<bean id="shandongDataSourceRead" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName">
+			<value>${datasource.shandong.read}</value>
+		</property>
+		<property name="resourceRef">
+			<value>true</value>
+  		</property>
+ 	</bean>
+
+	<bean id="chongqingDataSourceRead" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName">
+			<value>${datasource.chongqing.read}</value>
+		</property>
+		<property name="resourceRef">
+			<value>true</value>
+  		</property>
+ 	</bean>
+
+	<bean id="xinjiangDataSourceRead" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName">
+			<value>${datasource.xinjiang.read}</value>
+		</property>
+		<property name="resourceRef">
+			<value>true</value>
+  		</property>
+ 	</bean>
+
+	<bean id="beijingDataSourceRead" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName">
+			<value>${datasource.beijing.read}</value>
+		</property>
+		<property name="resourceRef">
+			<value>true</value>
+  		</property>
+ 	</bean>
+
+	<bean id="tianjinDataSourceRead" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName">
+			<value>${datasource.tianjin.read}</value>
+		</property>
+		<property name="resourceRef">
+			<value>true</value>
+  		</property>
+ 	</bean>
+
+	<bean id="jiangxiDataSourceRead" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName">
+			<value>${datasource.jiangxi.read}</value>
+		</property>
+		<property name="resourceRef">
+			<value>true</value>
+  		</property>
+ 	</bean>
+
+	<bean id="qinghaiDataSourceRead" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName">
+			<value>${datasource.qinghai.read}</value>
+		</property>
+		<property name="resourceRef">
+			<value>true</value>
+  		</property>
+ 	</bean>
+
+	<bean id="gansuDataSourceRead" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName">
+			<value>${datasource.gansu.read}</value>
+		</property>
+		<property name="resourceRef">
+			<value>true</value>
+  		</property>
+ 	</bean>
+
+	<bean id="jilinDataSourceRead" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName">
+			<value>${datasource.jilin.read}</value>
+		</property>
+		<property name="resourceRef">
+			<value>true</value>
+  		</property>
+ 	</bean>
+
+	<bean id="henanDataSourceRead" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName">
+			<value>${datasource.henan.read}</value>
+		</property>
+		<property name="resourceRef">
+			<value>true</value>
+  		</property>
+ 	</bean>
+
+	<bean id="heilongjiangDataSourceRead" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName">
+			<value>${datasource.heilongjiang.read}</value>
+		</property>
+		<property name="resourceRef">
+			<value>true</value>
+  		</property>
+ 	</bean>
+
+	<bean id="yunnanDataSourceRead" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName">
+			<value>${datasource.yunnan.read}</value>
+		</property>
+		<property name="resourceRef">
+			<value>true</value>
+  		</property>
+ 	</bean>
+
+	<bean id="guangxiDataSourceRead" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName">
+			<value>${datasource.guangxi.read}</value>
+		</property>
+		<property name="resourceRef">
+			<value>true</value>
+  		</property>
+ 	</bean>
+
+	<bean id="shxiDataSourceRead" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName">
+			<value>${datasource.shxi.read}</value>
+		</property>
+		<property name="resourceRef">
+			<value>true</value>
+  		</property>
+ 	</bean>
+
+	<bean id="hainanDataSourceRead" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName">
+			<value>${datasource.hainan.read}</value>
+		</property>
+		<property name="resourceRef">
+			<value>true</value>
+  		</property>
+ 	</bean>
+
+	<bean id="ningxiaDataSourceRead" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName">
+			<value>${datasource.ningxia.read}</value>
+		</property>
+		<property name="resourceRef">
+			<value>true</value>
+  		</property>
+ 	</bean>
+
+	<bean id="xizangDataSourceRead" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName">
+			<value>${datasource.xizang.read}</value>
+		</property>
+		<property name="resourceRef">
+			<value>true</value>
+  		</property>
+ 	</bean>
+
+	<bean id="gangaotaiDataSourceRead" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName">
+			<value>${datasource.gangaotai.read}</value>
+		</property>
+		<property name="resourceRef">
+			<value>true</value>
+  		</property>
+ 	</bean>
+ 	<!--##################### 读库数据源 end #####################-->
+
+
+
 	<!-- define the SqlSessionFactory-->
     <bean id="ecspSqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
         <property name="dataSource" ref="multiDataSource" />
@@ -333,9 +753,10 @@ http://www.springframework.org/schema/cache http://www.springframework.org/schem
 		</property>
 	</bean>
     <!--scan for mappers and let them be autowired -->
-    <bean  id="ecsp-mapper"  class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+    <bean  id="ecsp-mapper"  class="org.mybatis.spring.mapper.MapperScannerConfigurer" >
         <property name="basePackage" value="com.ailk.ecsp.mybatis.mapper" />
-        <property name="sqlSessionFactory" ref="ecspSqlSessionFactory"/>
+        <!-- <property name="sqlSessionFactory" ref="ecspSqlSessionFactory"/> -->
+        <property name="sqlSessionFactoryBeanName" value="ecspSqlSessionFactory"/>
     </bean>
 	<!-- enable transaction demarcation with annotations-->
 	<tx:annotation-driven transaction-manager="ecsp-transactionManager" proxy-target-class="true" />
@@ -345,18 +766,5 @@ http://www.springframework.org/schema/cache http://www.springframework.org/schem
         <property name="dataSource" ref="multiDataSource" />
        	<qualifier value="ecspTransaction"/>
     </bean>
-	    <!-- spring 支持国际化,必须放在context里 -->
-	<bean id="configMessageSource"
-		class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
-		<property name="basenames">
-			<list>
-				<value>classpath:/portal/portal</value>
-			</list>
-		</property>
-		<!-- 默认不刷新，可以配置定时刷新 <property name="cacheSeconds" value="0"/> -->
-		<!-- 中文情况：JDK1.6时加默认编码才有效，1.5时会直接输出UNICODE字符 <property name="defaultEncoding" value="UTF-8" /> -->
-	</bean>
-	<bean id="propertiesUtils" class="com.al.ecs.common.util.PropertiesUtils">
-		<property name="message" ref="configMessageSource"/> 
-	</bean>    
+
 </beans>
