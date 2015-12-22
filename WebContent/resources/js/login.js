@@ -56,9 +56,13 @@ staff.login = (function($) {
 		    dataType: "json",
 		    url: "login",
 		    data: {"province":province,"_":time},
-		    success: function (res) {
-		    	if(res!="9"){
-		    		var version = res;
+		    success: function (response) {
+		    	var provVersion = response.provVersion;
+		    	var provDomain =  response.provDomain;
+		    	if(provDomain == null || provDomain == "")
+		    		provDomain = window.location.hostname;
+		    	if(provVersion!="9"){
+		    		var version = provVersion;
 		    		var httpconfig = "http";
 		    		if(version=="81" || version=="82"){
 		    			httpconfig = "http";
@@ -69,7 +73,7 @@ staff.login = (function($) {
 		    		var password = $("#password").val();
 		    		password = MD5(password);
 		    		var staffProvCode = $("#store-selector-text").attr("area-id");
-		    		var url = httpconfig+"://"+window.location.hostname+":"+version+"/provPortal/staff/login/page?areaId="+staffProvCode+"&areaName="+areaName
+		    		var url = httpconfig+"://"+provDomain+":"+version+"/provPortal/staff/login/page?areaId="+staffProvCode+"&areaName="+areaName
 		    	    +"&provinceName="+provinceName+"&staffCode="+staffCode+"&password="+password+"&prov="+province;
 		    		window.location = url;
 		    	}

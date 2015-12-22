@@ -30,6 +30,33 @@ public class Config {
 		}
 		return ip;
 	}
+	
+	/**
+	 * 根据配置文件中的ipconfig判别是否公网，如是公网，则返回分省域名，分省域名从配置文件中读取；如非公网环境，保持原代码逻辑，不做改动。
+	 * @param req
+	 * @param province 省份拼音，如jiangsu、beijing，根据该拼音，获取对应的分省域名
+	 * @return 如果是公网，则以字符串形式返回分省域名。
+	 */
+	public static String getIpconfig(HttpServletRequest req, String province){
+		String ipconfig = getProperties().getProperty("ipconfig");//0表示启用公网， 1表示启用http请求头的ip，2表示测试环境10101
+		if(ipconfig==null){
+			ipconfig = "0";
+			//默认设置为公网时，将ip改为分省域名
+			String domain = Config.getDomain(province);
+			ip = (null == domain || "".equals(domain)) ? ip : domain;
+		}
+		if(!"0".equals(ipconfig)){
+			String header =req.getHeader("x-ip-config");
+			if(header!=null){
+				ip = header;
+			}
+		} else if("0".equals(ipconfig)){//如果是公网环境，将ip改为分省域名
+			String domain = Config.getDomain(province);
+			ip = (null == domain || "".equals(domain)) ? ip : domain;//若获取分省域名失败，则返回crm.189.cn
+		}
+		return ip;
+	}
+	
 	/**
 	 * 获取密码
 	 * @return
@@ -47,7 +74,7 @@ public class Config {
 	 * 获取登陆配置文件
 	 * @return
 	 */
-	private static Properties getProperties() {	
+	public static Properties getProperties() {	
 		Properties p = new Properties();
 		try {
 			InputStream in = Config.class.getResourceAsStream("/portal/loginConfig.properties");
@@ -191,5 +218,23 @@ public class Config {
         }
         return null;
     }
+	
+	/**
+	 * 获取分省域名字符串<br/>
+	 * 根据营业前台登录，根据选择省分不同，重定向至分省域名 如，选择江苏 重定向至js.crm.189.cn/xxxx
+	 * @param province省份拼音
+	 * @return 分省域名字符串<br/>
+	 * 域名为完整域名，从配置文件中获取。例如：北京域名应为"beijing.crm.189.cn"，山西域名应为"shxi.crm.189.cn"这样的格式，端口信息(如":83")以及HTTP请求头信息(如"http://")不应添加到域名里面。
+	 * <br/>如果无法从配置文件读取数据或读取失败，则返回空字符串""
+	 * @author ZhangYu
+	 */
+	public static String getDomain(String province){
+		String domain = getProperties().getProperty(province+"Domain");
+		if((domain == null) ||  ("".equals(domain)))
+			return ip;
+		else
+			return domain;
+		
+	}
 
 }

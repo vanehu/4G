@@ -13,13 +13,14 @@ public class MainServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	
 	 @Override  
-	 protected void doGet(HttpServletRequest req, HttpServletResponse resp){  
+	 protected void doGet(HttpServletRequest req, HttpServletResponse resp){
 		 resp.setContentType( "text/html;charset=utf-8" ) ;  //设置响应页面字符编码   
 		 String url = "";
 		 Cookie areack = Config.getCookie(req,"_UNIFY_LOGIN_AREA_SIGN");
 		 if(areack!=null){
 			 String province = areack.getValue();
 			 String Port = Config.getProvVersion(province);
+			 String domain = ("ON".equals(Config.getProperties().getProperty("DisasterTolerance"))) ? Config.getIpconfig(req, province) : Config.getIpconfig(req);
 			 String httpconfig = "";
 			 if("81".equals(Port) || "82".equals(Port)){
 				 httpconfig = "http";
@@ -27,7 +28,7 @@ public class MainServlet extends HttpServlet {
 				 httpconfig = "https";
 			 }
 			 String uri = req.getRequestURI().replaceAll("ltePortal", "provPortal");
-			 url = httpconfig+"://"+Config.getIpconfig(req)+":"+Port+uri;
+			 url = httpconfig+"://"+domain+":"+Port+uri;
 			 if(req.getQueryString()!=null&&!("".equals(req.getQueryString()))){
 				 url+="?"+ req.getQueryString();
 			 }

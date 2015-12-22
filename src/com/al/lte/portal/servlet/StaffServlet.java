@@ -65,6 +65,7 @@ public class StaffServlet extends HttpServlet {
 		//update by huangjj3 清除客户端4层生成的cookie
 		DelCookie.delCookie(resp, "LTEA10", null, "/", req);
 		String Port = Config.getProvVersion(province);
+		String domain = ("ON".equals(Config.getProperties().getProperty("DisasterTolerance"))) ? Config.getIpconfig(req, province) : Config.getIpconfig(req);
 		String httpconfig = "";
 		if("81".equals(Port) || "82".equals(Port)){
 			httpconfig = "http";
@@ -72,7 +73,7 @@ public class StaffServlet extends HttpServlet {
 			httpconfig = "https";
 		}
 		String uri = req.getRequestURI().replaceAll("ltePortal", "provPortal");
-		String url = httpconfig + "://" + Config.getIpconfig(req) + ":"
+		String url = httpconfig + "://" + domain + ":"
 			+ Port + uri +"?"+ req.getQueryString()
 			+ "&prov=" + province;
 		try {
