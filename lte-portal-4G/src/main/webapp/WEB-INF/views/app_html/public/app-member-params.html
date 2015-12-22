@@ -65,10 +65,12 @@
 	    <script src="${contextPath}/js/app-js/op-js/member/memberChange.js?${jsversion}" type="text/javascript"></script>
 		
 		<script>
-		window.onload= function() 
-		{  
-			
+		//初始化渠道
+		$(function() {
+			OrderInfo.getChannelList();
+		});
 		
+		window.onload= function() {  
 			var terminalCode='${terminalCode}'; //终端串码
 			//终端串码
 			if(terminalCode!=null && terminalCode!="" && terminalCode!="null"){
@@ -198,9 +200,9 @@
 			OrderInfo.provinceInfo.prodOfferName=provinceInfo.prodOfferName;
 
 			if(OrderInfo.provinceInfo.reloadFlag=="N"){
-	           OrderInfo.reloadOrderInfo=eval("("+'${reloadOrderInfo_}'+")");
-	           order.memberChange.rejson=OrderInfo.reloadOrderInfo;
-	           var custOrderAttrs=OrderInfo.reloadOrderInfo.orderList.orderListInfo.custOrderAttrs;
+				OrderInfo.reloadOrderInfo=eval("("+'${reloadOrderInfo_}'+")");
+	           	order.memberChange.rejson=OrderInfo.reloadOrderInfo;
+	           	var custOrderAttrs=OrderInfo.reloadOrderInfo.orderList.orderListInfo.custOrderAttrs;
 		   		var is=false;
 		   		$.each(custOrderAttrs,function(){
 		   		  if(this.itemSpecId=="30010024"){
@@ -227,17 +229,23 @@
 		}
 		</script>
 	</head>
-	<body><!-- app 二次业务统一入口 -->
-			<!-- 省份传入主副卡号码 -->
+	<body>
+		<!-- app 二次业务统一入口 -->
+		<!-- 省份传入主副卡号码 -->
 		<input type="hidden" id="mainPhoneNum" value="${mainPhoneNum}"/>
 		<input type="hidden" id="newSubPhoneNum" value="${newSubPhoneNum}"/>
-		<div align="center" id="load">
-		</div>
-		<div id="content">
-		</div>
+		
+		<div align="center" id="load"></div>
+		
+		<div id="content"></div>
+		
 		<!--接口异常错误封装展示-->
 		<#include "/public/public-app-error.html"/>
+		
 		<!--弹出框-->
 		<#include "/public/public-app-dialog.html"/>
+		
+		<!-- 渠道展示 -->
+		<#include "/public/app-channels.html"/>
 	</body>
 </html>

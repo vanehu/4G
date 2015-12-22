@@ -1779,14 +1779,17 @@ SoOrder = (function() {
 			$tr.each(function(){   //遍历产品有几个发展人
 				var dealer = {
 					itemSpecId : CONST.BUSI_ORDER_ATTR.DEALER,
-					role : $(this).find("select").val(),
-					value : $(this).find("input").attr("staffid") 
+					role:$(this).find("select[name='dealerType_"+OrderInfo.offerSpec.offerSpecId+"']").val(),
+					value : $(this).find("input").attr("staffid"),
+					//APP发展人渠道[W]
+					channelNbr:$(this).find("select[name='dealerChannel_"+OrderInfo.offerSpec.offerSpecId+"']").val()
 				};
 				busiOrder.data.busiOrderAttrs.push(dealer);
+				
 				var dealer_name = {
-						itemSpecId : CONST.BUSI_ORDER_ATTR.DEALER_NAME,
-						role : $(this).find("select").val(),
-						value : $(this).find("input").attr("value") 
+					itemSpecId : CONST.BUSI_ORDER_ATTR.DEALER_NAME,
+					role:$(this).find("select[name='dealerType_"+OrderInfo.offerSpec.offerSpecId+"']").val(),
+					value : $(this).find("input").attr("value") 
 				};
 				busiOrder.data.busiOrderAttrs.push(dealer_name);
 			});

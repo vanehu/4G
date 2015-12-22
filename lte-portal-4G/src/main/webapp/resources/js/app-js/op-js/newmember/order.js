@@ -275,7 +275,8 @@ order.service = (function(){
 							is_same_feeType=true;//准实时预付费
 						}
 						if(!is_same_feeType){
-							$.alert("提示","付费类型不一致,无法进行套餐变更。");
+							alert("付费类型不一致,无法进行套餐变更。");
+							//$.alert("提示","付费类型不一致,无法进行套餐变更。");
 							return;
 						}
 					}

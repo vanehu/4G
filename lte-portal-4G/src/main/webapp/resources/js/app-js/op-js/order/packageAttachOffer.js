@@ -285,6 +285,7 @@ PackageAttachOffer = (function() {
 									var accessNumber=busiObj.accessNumber;
 									var objName=busiObj.objName;
 									var prodId=null;
+									var offerTypeCd=this.busiObj.offerTypeCd;
 									
 									var ooRoles=data.ooRoles;
 									var busiOrderAttrs=data.busiOrderAttrs;
@@ -309,6 +310,7 @@ PackageAttachOffer = (function() {
 												dealerMap1.role = this.role;
 												if(this.itemSpecId==CONST.BUSI_ORDER_ATTR.DEALER){
 													dealerMap1.staffid = this.value;
+													dealerMap1.channelNbr = this.channelNbr;
 												}else if(this.itemSpecId==CONST.BUSI_ORDER_ATTR.DEALER_NAME){
 													dealerMap1.staffname = this.value;
 												}
@@ -316,10 +318,12 @@ PackageAttachOffer = (function() {
 												dealerMap1.accessNumber=accessNumber;
 												dealerMap1.objName=objName;
 												dealerMap1.prodId=prodId;
+												dealerMap1.offerTypeCd=offerTypeCd;
 											}else if(this.role=="40020006"){
 												dealerMap2.role = this.role;
 												if(this.itemSpecId==CONST.BUSI_ORDER_ATTR.DEALER){
 													dealerMap2.staffid = this.value;
+													dealerMap2.channelNbr = this.channelNbr;
 												}else if(this.itemSpecId==CONST.BUSI_ORDER_ATTR.DEALER_NAME){
 													dealerMap2.staffname = this.value;
 												}
@@ -327,10 +331,12 @@ PackageAttachOffer = (function() {
 												dealerMap2.accessNumber=accessNumber;
 												dealerMap2.objName=objName;
 												dealerMap2.prodId=prodId;
+												dealerMap2.offerTypeCd=offerTypeCd;
 											}else if(this.role=="40020007"){
 												dealerMap3.role = this.role;
 												if(this.itemSpecId==CONST.BUSI_ORDER_ATTR.DEALER){
 													dealerMap3.staffid = this.value;
+													dealerMap3.channelNbr = this.channelNbr;
 												}else if(this.itemSpecId==CONST.BUSI_ORDER_ATTR.DEALER_NAME){
 													dealerMap3.staffname = this.value;
 												}
@@ -338,6 +344,7 @@ PackageAttachOffer = (function() {
 												dealerMap3.accessNumber=accessNumber;
 												dealerMap3.objName=objName;
 												dealerMap3.prodId=prodId;
+												dealerMap3.offerTypeCd=offerTypeCd;
 											}										
 										});
 										
@@ -525,7 +532,8 @@ PackageAttachOffer = (function() {
 	var _delOffer = function(prodId,offerId){
 		var $span = $("#li_"+prodId+"_"+offerId).find("span"); //定位删除的附属
 		if($span.attr("class")=="del"){  //已经退订，再订购
-			AttachOffer.addOffer(prodId,offerId,$span.text());
+			//二次加载，如果原先就是删除状态，不需要操作
+			//AttachOffer.addOffer(prodId,offerId,$span.text());
 		}else { //退订
 			var offer = CacheData.getOffer(prodId,offerId);
 			if(!ec.util.isArray(offer.offerMemberInfos)){	

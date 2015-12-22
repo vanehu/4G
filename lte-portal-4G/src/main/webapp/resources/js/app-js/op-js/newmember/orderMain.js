@@ -299,6 +299,7 @@ order.main = (function(){
 						var accessNumber=this.busiObj.accessNumber;
 						var objName=this.busiObj.objName;
 						var prodId=this.data.ooRoles[0].prodId;
+						var offerTypeCd=this.busiObj.offerTypeCd;
 						
 						if(this.data.busiOrderAttrs!=undefined){
 							var dealerMap1 = {};
@@ -309,6 +310,7 @@ order.main = (function(){
 									dealerMap1.role = this.role;
 									if(this.itemSpecId==CONST.BUSI_ORDER_ATTR.DEALER){
 										dealerMap1.staffid = this.value;
+										dealerMap1.channelNbr = this.channelNbr;
 									}else if(this.itemSpecId==CONST.BUSI_ORDER_ATTR.DEALER_NAME){
 										dealerMap1.staffname = this.value;
 									}
@@ -316,10 +318,12 @@ order.main = (function(){
 									dealerMap1.accessNumber=accessNumber;
 									dealerMap1.objName=objName;
 									dealerMap1.prodId=prodId;
+									dealerMap1.offerTypeCd=offerTypeCd;
 								}else if(this.role=="40020006"){
 									dealerMap2.role = this.role;
 									if(this.itemSpecId==CONST.BUSI_ORDER_ATTR.DEALER){
 										dealerMap2.staffid = this.value;
+										dealerMap2.channelNbr = this.channelNbr;
 									}else if(this.itemSpecId==CONST.BUSI_ORDER_ATTR.DEALER_NAME){
 										dealerMap2.staffname = this.value;
 									}
@@ -327,10 +331,12 @@ order.main = (function(){
 									dealerMap2.accessNumber=accessNumber;
 									dealerMap2.objName=objName;
 									dealerMap2.prodId=prodId;
+									dealerMap2.offerTypeCd=offerTypeCd;
 								}else if(this.role=="40020007"){
 									dealerMap3.role = this.role;
 									if(this.itemSpecId==CONST.BUSI_ORDER_ATTR.DEALER){
 										dealerMap3.staffid = this.value;
+										dealerMap3.channelNbr = this.channelNbr;
 									}else if(this.itemSpecId==CONST.BUSI_ORDER_ATTR.DEALER_NAME){
 										dealerMap3.staffname = this.value;
 									}
@@ -338,6 +344,7 @@ order.main = (function(){
 									dealerMap3.accessNumber=accessNumber;
 									dealerMap3.objName=objName;
 									dealerMap3.prodId=prodId;
+									dealerMap3.offerTypeCd=offerTypeCd;
 								}										
 							});
 							
