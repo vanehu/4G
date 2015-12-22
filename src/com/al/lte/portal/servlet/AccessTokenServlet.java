@@ -58,34 +58,42 @@ public class AccessTokenServlet extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request,HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType( "text/html;charset=utf-8" ) ;  //设置响应页面字符编码   
-		String provinceCodeE = request.getParameter("provinceCode");
-		String jmParams = request.getParameter("params");
-
-		String provinceCode = AESUtils.decryptToString(provinceCodeE,Const.TOKEN_PROVINCE_KEY);
-		String province = Config.getAreaName(provinceCode);
-		String Port = Config.getProvVersion(province);
-		String httpconfig = "";
-		if ("81".equals(Port) || "82".equals(Port) ) {
-			httpconfig = "http";
-		} else if ("83".equals(Port) || "84".equals(Port) || "85".equals(Port)) {
-			httpconfig = "https";
-		} else {
-			httpconfig = "http";
-		}
-		String uri = request.getRequestURI().replaceAll("ltePortal",
-				"provPortal");
-		String url = httpconfig + "://" + Config.getIpconfig(request) + ":" + Port + uri+"?prov="+province ;
-		HttpPost httpost = new HttpPost(url);
-		List<NameValuePair> params = new ArrayList<NameValuePair>();
-		params.add(new BasicNameValuePair("provinceCode", provinceCodeE));
-		params.add(new BasicNameValuePair("params", jmParams));
-		httpost.setEntity(new UrlEncodedFormEntity(params,  "utf-8"));
-		httpclient.getParams().setParameter(CoreConnectionPNames.CONNECTION_TIMEOUT,  15000);//连接时间15s
-		httpclient.getParams().setParameter(CoreConnectionPNames.SO_TIMEOUT,  30000);//数据传输时间30s
-		HttpResponse res = httpclient.execute(httpost);
-		String result = EntityUtils.toString(res.getEntity(), "utf-8");
 		try {
-			response.getWriter().print(result);;
+			String provinceCodeE = request.getParameter("provinceCode");
+			String jmParams = request.getParameter("params");
+			String provinceCode = "";
+			try{
+				provinceCode = AESUtils.decryptToString(provinceCodeE,Const.TOKEN_PROVINCE_KEY);
+				if(provinceCode==null){
+					response.getWriter().print("{resultCode:\"-1\",resultMsg:\"参数解密异常\"}");
+					return;
+				}
+			}catch(Exception e){
+				
+			}
+			String province = Config.getAreaName(provinceCode);
+			String Port = Config.getProvVersion("NL-"+province);
+			String httpconfig = "";
+			if ("81".equals(Port) || "82".equals(Port) ) {
+				httpconfig = "http";
+			} else if ("83".equals(Port) || "84".equals(Port) || "85".equals(Port)) {
+				httpconfig = "https";
+			} else {
+				httpconfig = "http";
+			}
+			String uri = request.getRequestURI().replaceAll("ltePortal",
+					"provPortal");
+			String url = httpconfig + "://" + Config.getIpconfig(request) + ":" + Port + uri+"?prov="+province ;
+			HttpPost httpost = new HttpPost(url);
+			List<NameValuePair> params = new ArrayList<NameValuePair>();
+			params.add(new BasicNameValuePair("provinceCode", provinceCodeE));
+			params.add(new BasicNameValuePair("params", jmParams));
+			httpost.setEntity(new UrlEncodedFormEntity(params,  "utf-8"));
+			httpclient.getParams().setParameter(CoreConnectionPNames.CONNECTION_TIMEOUT,  15000);//连接时间15s
+			httpclient.getParams().setParameter(CoreConnectionPNames.SO_TIMEOUT,  30000);//数据传输时间30s
+			HttpResponse res = httpclient.execute(httpost);
+			String result = EntityUtils.toString(res.getEntity(), "utf-8");
+			response.getWriter().print(result);
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally{
