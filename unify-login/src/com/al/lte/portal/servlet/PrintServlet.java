@@ -23,6 +23,7 @@ public class PrintServlet extends HttpServlet {
 		String areaId = req.getParameter("areaId");
 		String province = Config.getAreaName(areaId);
 		String Port = Config.getProvVersion(province);
+		String domain = ("ON".equals(Config.getProperties().getProperty("DisasterTolerance"))) ? Config.getIpconfig(req, province) : Config.getIpconfig(req);
 		String httpconfig = "";
 		 if("81".equals(Port) || "82".equals(Port)){
 			httpconfig = "http";
@@ -30,7 +31,7 @@ public class PrintServlet extends HttpServlet {
 			httpconfig = "https";
 		 }
 		String uri = req.getRequestURI().replaceAll("ltePortal", "provPortal");
-		String url = httpconfig + "://" + Config.getIpconfig(req) + ":"
+		String url = httpconfig + "://" + domain + ":"
 			+ Port + uri +"?"+ req.getQueryString()
 			+ "&prov=" + province;
 		try {
