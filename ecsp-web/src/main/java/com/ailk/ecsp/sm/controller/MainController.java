@@ -10,7 +10,6 @@ import javax.servlet.http.HttpSession;
 import net.sf.json.JSONObject;
 
 import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,7 +19,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.ailk.ecsp.core.DataSourceRouter;
 import com.ailk.ecsp.core.RouterStrategy;
-import com.al.ecs.common.util.PropertiesUtils;
 
 
 @Controller
@@ -36,9 +34,6 @@ public class MainController {
 		}
 		legalDbTypesDesc = legalDbTypesDesc.substring(0, legalDbTypesDesc.length() - 1);
 	}
-	
-	@Autowired
-    PropertiesUtils propertiesUtils;
 	
     @RequestMapping(value = "/index", method = RequestMethod.GET)
     public String index(@RequestParam Map<String, Object> param, Model model,HttpSession session){
@@ -77,6 +72,7 @@ public class MainController {
             json.put("resultCode", "0");
             json.put("resultMsg", "success");
         } catch (Exception e) {
+        	e.printStackTrace();
             json.put("resultCode", "1");
             json.put("resultMsg", e.getMessage());
         }
@@ -102,6 +98,7 @@ public class MainController {
             json.put("resultCode", "0");
             json.put("resultMsg", keyMap);
         } catch (Exception e) {
+        	e.printStackTrace();
             json.put("resultCode", "1");
             json.put("resultMsg", e.getMessage());
         }
