@@ -358,9 +358,9 @@ public class InterfaceClient {
 				}
 				
 				Map<String, Object> rootMap = JsonUtil.toObject(retnJson, Map.class);
-				rootMap.put("logSeqId", logSeqId);
+				
 				if (MapUtils.isEmpty(rootMap) || !rootMap.containsKey("resultCode")) {
-					if (!rootMap.containsKey("rspCode")&&!rootMap.containsKey("code")) {
+					if (rootMap == null || (!rootMap.containsKey("rspCode")&&!rootMap.containsKey("code"))) {
 						//异常判断：返回不是个JSON对象或没有包含resultCode
 						throw new InterfaceException(ErrType.OPPOSITE, serviceCode, retnJson, paramString, logSeqId);
 					}else if(rootMap.containsKey("code")){
@@ -392,7 +392,7 @@ public class InterfaceClient {
 						checkError(rootMap, sys, serviceCode, resultCode, resultMsg, retnJson, paramString, logSeqId);
 						
 					}
-					
+					rootMap.put("logSeqId", logSeqId);
 					db.setReturnlmap(rootMap);
 				}
 			} else if (WS_WAY.equals(invokeWay)) {
