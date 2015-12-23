@@ -11,12 +11,12 @@ http://www.springframework.org/schema/cache http://www.springframework.org/schem
 	default-lazy-init="true">
 	
 	<!-- 数据源源配置文件 -->
-	<context:property-placeholder location="classpath*:/sysConfig/datasource-config.properties" />
+	<context:property-placeholder location="classpath*:/portal/datasource-config.properties" />
 	
 	<bean id="configMessageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource" >
 		<property name="basenames">
 			<list>
-				<value>classpath:/sysConfig/datasource-config</value>
+				<value>classpath:/portal/datasource-config</value>
 				<value>classpath:/portal/portal</value>
 			</list>
 		</property>

@@ -12,12 +12,15 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.ailk.ecsp.util.SpringContextUtil;
 import com.al.ecs.common.util.PropertiesUtils;
 
 
 public class DataSourceRouter {
+	private static Logger log = LoggerFactory.getLogger(DataSourceRouter.class);
 	public static RouterStrategy currentRouterStrategy = new RouterStrategy();
 	public final static ThreadLocal<RouterStrategy> currentRouterStrategyThread = new ThreadLocal<RouterStrategy>();
 	
@@ -26,7 +29,7 @@ public class DataSourceRouter {
 	/** 默认数据源 */
 	public static final String DEFAULT_DATASOURCE_KEY = MANAGE_DATASOURCE_KEY;
 	
-	private static final String DATASOURCE_CONFIG_FILE = "sysConfig/datasource-config.properties"; 
+	private static final String DATASOURCE_CONFIG_FILE = "portal/datasource-config.properties"; 
 	
 	private static final String baseDir = DataSourceRouter.class.getClassLoader().getResource("").getPath();
 	
@@ -76,6 +79,7 @@ public class DataSourceRouter {
 	}
 	
 	public static Map<String, String> getRouterStrategyKeyMap() throws IOException{
+		log.info("----------------------getRouterStrategyKeyMap start");
 		Map<String, String> map = new HashMap<String, String>();
 		Properties prop = new Properties();
 		InputStream in = null;
@@ -102,10 +106,12 @@ public class DataSourceRouter {
 				e.printStackTrace();
 			}
 		}
+		log.info("----------------------getRouterStrategyKeyMap end, result: {}", map);
 		return map;
 	}
 	
 	public static void updateRouterStrategyKey(Map<String, String> keyMap) throws IOException{
+		log.info("----------------------updateRouterStrategyKey start, keyMap: {}", keyMap);
 		Properties prop = new Properties();
 		Set<String> keys = keyMap.keySet();
 		InputStream in = null;
@@ -147,6 +153,7 @@ public class DataSourceRouter {
 			}
 		}
 		clearCache();
+		log.info("----------------------updateRouterStrategyKey end");
 	}
 	
 	public static void clearCache() throws IOException{
