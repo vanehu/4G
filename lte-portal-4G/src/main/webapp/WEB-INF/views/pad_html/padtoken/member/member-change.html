@@ -252,41 +252,27 @@ function m_up(e){
 		<#if offerSpec.offerRoles?? && (offerSpec.offerRoles?size>0)>
 			<#list offerSpec.offerRoles as offerRole>
 				<#if offerRole.prodInsts?? && (offerRole.prodInsts?size>0)>
-	</#if>
-	
-		<#if main.viceParam?? &&(main.viceParam?size>0)>
-		<#list main.viceParam as item>		
+					<#list offerRole.prodInsts as prod>
+						<#assign prodId = prod.prodInstId />
+						<div id="attach_${prodId}"></div>
+					</#list>
 				</#if>
 			</#list>
 		</#if> 					
 	</#if>
- 	
- 	<#if main.viceParam?? &&(main.viceParam?size>0)>
-		<#assign i = 0 />		
+	
+		<#if main.viceParam?? &&(main.viceParam?size>0)>
 		<#list main.viceParam as item>		
 			<#assign prodId = item.objInstId/>
-			<#assign i = i+1 />
-			<#if i==1>			
-				<div id="attach_${prodId}"></div>
-				<div id="uimDiv_${prodId}" style="display: none;">
-					<h5 class="s_title">补换卡： </h5>
-					<div class="pdcardcon show" >
-						<ul class="fillin show">
-							<#include "/pad/member/order-uim.html" />
-						</ul>
-					</div>
+			<div id="attach_${prodId}"></div>
+			<div id="uimDiv_${prodId}" style="display: none;">
+				<h5 class="s_title">补换卡： </h5>
+				<div class="pdcardcon show" >
+					<ul class="fillin show">
+						<#include "/pad/member/order-uim.html" />
+					</ul>
 				</div>
-			<#else>
-				<div id="attach_${prodId}" style="display: none;"></div>
-				<div id="uimDiv_${prodId}" style="display: none;">
-					<h5 class="s_title">补换卡： </h5>
-					<div class="pdcardcon show" >
-						<ul class="fillin show">
-							<#include "/pad/member/order-uim.html" />
-						</ul>
-					</div>
-				</div>
-			</#if>
+			</div>
 		</#list>
 	</#if>
  	
