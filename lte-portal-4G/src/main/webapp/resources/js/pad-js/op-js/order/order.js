@@ -122,7 +122,7 @@ order.service = (function(){
 				$("#btn_enter_offerlist_next").off("tap").on("tap",function(){
 					if($("#ul_offer_list .pakeagelistlibg").length==1){
 						var $dl = $("#ul_offer_list .pakeagelistlibg").find("dl");
-						_buyService($dl.attr("id"),$dl.attr("offerSpecId"),$dl.attr("price"));
+						order.uiCusts.buyService($dl.attr("offerSpecId"),$dl.attr("price"));
 					}else{
 						$.alert("提示","请先选择一个套餐,再进入下一步操作.");
 					}
@@ -416,7 +416,7 @@ order.service = (function(){
 					});
 				 $("#dlg-memberRole-num").css("display","none");
 				 $("#dlg-memberRole-num").popup("close");
-				 $("#dlg-memberRole-num").popup("close");
+				// $("#dlg-memberRole-num").popup("close");
 				// order.service.confirm(param);
 			 }else{
 					var popup = $.popup("#dlg-memberRole-num",htmlStr,{
