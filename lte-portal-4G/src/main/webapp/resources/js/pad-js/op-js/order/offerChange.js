@@ -730,9 +730,16 @@ offerChange = (function() {
 				var dealer = {
 					itemSpecId : CONST.BUSI_ORDER_ATTR.DEALER,
 					role : $(this).find("select").val(),
-					value : $(this).find("input").attr("staffid") 
+					value : $(this).find("input").attr("staffid"),
+					channelNbr : $(this).find("select[name ='dealerChannel_"+OrderInfo.offerSpec.offerSpecId+"']").val()
 				};
 				busiOrder.data.busiOrderAttrs.push(dealer);
+				var dealer_name = {
+						itemSpecId : CONST.BUSI_ORDER_ATTR.DEALER_NAME,
+						role : $(this).find("select").val(),
+						value : $(this).find("input").attr("value") 
+				};
+				busiOrder.data.busiOrderAttrs.push(dealer_name);
 			});
 		}
 	//	AttachOffer.setAttachBusiOrder(busiOrders);//添加附属
@@ -921,6 +928,7 @@ offerChange = (function() {
 	var _getChangeInfo = function(){
 		OrderInfo.getOrderData(); //获取订单提交节点	
 		OrderInfo.orderData.orderList.orderListInfo.partyId = OrderInfo.cust.custId;
+		OrderInfo.orderData.orderList.orderListInfo.areaId = OrderInfo.cust.areaId;
 		var busiOrders = OrderInfo.orderData.orderList.custOrderList[0].busiOrder;//获取业务对象数组
 		_createDelOffer(busiOrders,OrderInfo.offer); //退订主销售品
 		_createMainOffer(busiOrders,OrderInfo.offer); //订购主销售品	

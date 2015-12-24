@@ -72,6 +72,7 @@ OrderInfo = (function() {
 		oldSubPhoneNum:"",
 		mktResInstCode:""
 	}
+	var _channelList = [];//渠道列表
 	//新装二次加载功能参数
 	var _reloadProdInfo={
 			  prodOfferId:"",
@@ -220,7 +221,32 @@ OrderInfo = (function() {
 		}
 		return "";
 	};
-	
+	/**
+	 * 获取渠道List
+	 */
+	var _getChannelList = function (busiOrders,offer,prodId){
+		OrderInfo.channelList = [];
+		if($("i[name='channel_iofo_i']").length==0){
+			OrderInfo.channelList = window.parent.OrderInfo.getChannelList();
+		}else{
+			$("i[name='channel_iofo_i']").each(function(){				
+				var channelId = $(this).attr("channel_Id");
+				var channelName = $(this).attr("channel_Name");
+				var channelNbr = $(this).attr("channel_Nbr");
+				var isSelect = 0;
+				if($(this).hasClass("select"))
+					var isSelect = 1;
+				var channelInfo ={
+						channelId : channelId,
+						channelName : channelName,
+						channelNbr : channelNbr,
+						isSelect : isSelect
+				}
+				OrderInfo.channelList.push(channelInfo)
+			});
+		}
+		return OrderInfo.channelList;
+	};
 	var _boCusts = []; //客户信息节点
 
 	var _boProdItems = []; //产品属性节点列表
@@ -421,7 +447,8 @@ OrderInfo = (function() {
 					var dealer = {
 						itemSpecId : CONST.BUSI_ORDER_ATTR.DEALER,
 						role : $(this).find("select").val(),
-						value : $(this).find("input").attr("staffid") 
+						value : $(this).find("input").attr("staffid"),
+						channelNbr : $(this).find("select[name ='dealerChannel_"+OrderInfo.offerSpec.offerSpecId+"']").val()
 					};
 					busiOrder.data.busiOrderAttrs.push(dealer);
 					var dealer_name = {
@@ -1298,6 +1325,8 @@ OrderInfo = (function() {
 	};
 				
 	return {
+		getChannelList			: _getChannelList,
+		channelList				: _channelList,
 		salesCode:_salesCode,
 		terminalCode:_terminalCode,
 		mktResInstCode:mktResInstCode,

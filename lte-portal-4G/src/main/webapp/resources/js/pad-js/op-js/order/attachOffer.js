@@ -1323,28 +1323,43 @@ AttachOffer = (function() {
 	
 	//可订购的附属查询 
 	var _queryAttachOfferSpec = function(param) {
-		//改成同步
-		var data = query.offer.queryAttachSpec(param);
+	
+		var data=query.offer.queryAttachSpec(param);
 		if (data) {
 			$("#attach_"+param.prodId).html(data);
 			$.jqmRefresh($("#attach_"+param.prodId));
 			_showMainRoleProd(param.prodId); //通过主套餐成员显示角字
+			//根据已选功能产品查询带出的可选包
+			var servSpecIds = [];
+			if(AttachOffer.openServList!=null&&AttachOffer.openServList!=undefined){
+				$.each(AttachOffer.openServList,function(){
+					if(this.prodId == param.prodId){
+						var servSpecList = this.servSpecList;
+						if(servSpecList!=null&&servSpecList!=undefined){
+							$.each(servSpecList,function(){
+								if(this.servSpecId!=null&&this.servSpecId!=undefined){
+
+									servSpecIds.push(this.servSpecId);
+								}
+								});
+							}
+					}
+				});					
+			}
+			param.servSpecIds = servSpecIds;
+			var queryData = query.offer.queryServSpecPost(param);
+			if(queryData!=null&&queryData.resultCode==0){
+				if(queryData.result.offerList!=null&&queryData.result.offerList!=undefined){
+					$.each(queryData.result.offerList,function(){
+						AttachOffer.addOpenList(param.prodId,this.offerSpecId); 
+					});
+				}					
+			}				
 			AttachOffer.changeLabel(param.prodId,param.prodSpecId,""); //初始化第一个标签附属
 			if(param.prodId==-1 && OrderInfo.actionFlag==14){ //合约计划特殊处理
 				AttachOffer.addOpenList(param.prodId,mktRes.terminal.offerSpecId);
 			}
 		}
-		/*query.offer.queryAttachSpec(param,function(data){
-			if (data) {
-				$("#attach_"+param.prodId).html(data);
-				$.jqmRefresh($("#attach_"+param.prodId));
-				_showMainRoleProd(param.prodId); //通过主套餐成员显示角字
-				AttachOffer.changeLabel(param.prodId,param.prodSpecId,""); //初始化第一个标签附属
-				if(param.prodId==-1 && OrderInfo.actionFlag==14){ //合约计划特殊处理
-					AttachOffer.addOpenList(param.prodId,mktRes.terminal.offerSpecId);
-				}
-			}
-		});*/
 	};
 	var _changeOfferS=function(obj,prodId){
 		var val=$(obj).val();

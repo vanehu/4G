@@ -106,7 +106,14 @@ order.main = (function(){
 		if(OrderInfo.actionFlag==1 || OrderInfo.actionFlag==6 || OrderInfo.actionFlag==13 || OrderInfo.actionFlag==14){
 			//_initAcct();//初始化帐户列表 
 			$("#acctName").val(OrderInfo.cust.partyName);
-			order.dealer.initDealer();//初始化协销		
+			if(ec.util.isArray(OrderInfo.oldprodInstInfos)){
+				for(var i=0;i<OrderInfo.oldprodInstInfos.length;i++){
+					var prodInfo = OrderInfo.oldprodInstInfos[i];
+					order.dealer.initDealer(prodInfo);//初始化协销
+				}
+			}else{
+				order.dealer.initDealer();//初始化协销	
+			}	
 		}
 		/*if(OrderInfo.actionFlag==1){
 			$("#templateOrderDiv").show();
@@ -1137,6 +1144,26 @@ order.main = (function(){
 	var _setStaff = function(objInstId){
 		var $staff = $("#div_order_dealer_list tr.userorderlistlibg");
 		$staff.each(function(){
+			var $channelList = $(this).find("dd select[name='channel_list']");
+			$("#dealerChannel_"+objInstId).empty(); 
+			var $channelListOptions ="";
+			if($channelList.length <= 0){
+				$.each(OrderInfo.channelList,function(){
+					if(this.isSelect==1)
+						$channelListOptions += "<option value='"+this.channelNbr+"' selected ='selected'>"+this.channelName+"</option>";				
+				});
+			}else{			
+				$($channelList).find("option").each(function(){
+					var $channelListOptionVal  = $(this).val() ; 
+					var $channelListOptionName = $(this).html() ; 
+					if(this.selected==true){
+						$channelListOptions += "<option value='"+$channelListOptionVal+"' selected ='selected'>"+$channelListOptionName+"</option>";
+					}else{
+						$channelListOptions += "<option value='"+$channelListOptionVal+"'>"+$channelListOptionName+"</option>";
+					}
+				});
+			}
+			$("#dealerChannel_"+objInstId).append($channelListOptions);
 			$("#dealer_"+objInstId).val($(this).attr("staffName")).attr("staffId", $(this).attr("staffId"));
 		});
 		if($staff.length > 0){

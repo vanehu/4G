@@ -1059,9 +1059,9 @@ order.cust.mgr = (function(){
 			param.acctNbr = mainPhoneNum;
 			param.identidies_type = "接入号码";
 		}
-		$.ecOverlay("<strong>正在查询客户架构信息中,请稍等...</strong>");
+		//$.ecOverlay("<strong>正在查询客户架构信息中,请稍等...</strong>");
 		var response = $.callServiceAsJson(contextPath+"/token/pc/cust/queryCustCompreInfo", param);
-		$.unecOverlay();
+		//$.unecOverlay();
 		if(response.code == 0) {
 			if(response.data == null){
 				$.alert("提示","客户架构信息接口无数据返回。");

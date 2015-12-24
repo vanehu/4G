@@ -439,11 +439,42 @@ order.main = (function(){
 									$button+='<div class="ui-block-b"><button data-mini="ture" onclick="order.dealer.removeDealer(this);" class="ui-btn ui-shadow ui-corner-all ui-mini">删除</button></div></div></dd>';
 								}
 								$dl.append($button);
+								//发展渠道
+								var $tdChannel = $('<dd></dd>');
+								var $channelSelect = $('<select id="dealerChannel_'+objId+'" name="dealerChannel_'+objInstId+'" class="inputWidth183px" onclick=a=this.value;></select>');
+								if(OrderInfo.provinceInfo.reloadFlag=="N"){
+									//获取编码
+									var busiOrders = OrderInfo.reloadOrderInfo.orderList.custOrderList[0].busiOrder;
+									var channelNbr="";
+									for(var i=0;i<busiOrders.length;i++){
+										if(busiOrders[i].boActionType.actionClassCd=="1200" && busiOrders[i].boActionType.boActionTypeCd=="S1" && busiOrders[i].busiObj.offerTypeCd=="1"){
+											var busiOrderAttrs=busiOrders[i].data.busiOrderAttrs;
+											for(var j=0;j<busiOrderAttrs.length;j++){
+												if(busiOrderAttrs[j].channelNbr!=undefined){
+													channelNbr=busiOrderAttrs[j].channelNbr;
+													break;
+												}
+											}
+										}
+									}
+									for(var i=0;i<OrderInfo.channelList.length;i++){
+										if(OrderInfo.channelList[i].channelNbr==channelNbr){
+											$channelSelect.append("<option value='"+OrderInfo.channelList[i].channelNbr+"' selected ='selected'>"+OrderInfo.channelList[i].channelName+"</option>");
+										}
+										else{
+											$channelSelect.append("<option value='"+OrderInfo.channelList[i].channelNbr+"'>"+OrderInfo.channelList[i].channelName+"</option>");
+										}
+									}
+									
+								
+								}
+								$tdChannel.append($channelSelect);
+								$tdChannel.append('<label class="f_red">*</label>');
+								$dl.append($tdChannel);
 								$li.append($dl);
 								OrderInfo.SEQ.dealerSeq++;
 								$("#dealerTbody").append($li);
-								$("#dealerType_"+objId).selectmenu().selectmenu('refresh');
-								$("#dealer_"+objId).textinput();
+								$.jqmRefresh($("#dealerTbody"));
 							}	
 						}else if(this.boActionType.actionClassCd=="1200" && this.boActionType.boActionTypeCd=="S1"&&this.busiObj.instId!="-1"){
 							for(var d=0;d<dealerlist.length;d++){
@@ -1551,7 +1582,46 @@ order.main = (function(){
 			//				$button+='<div class="ui-block-c"> <button data-mini="ture" onclick="order.dealer.removeDealer(this);">删除</button></div></div></dd>';	
 						}
 						$dl.append($button);
-						$li.append($dl);						
+						//$li.append($dl);
+						//发展渠道
+						var $tdChannel = $('<dd></dd>');
+						var $channelSelect = $('<select id="dealerChannel_'+objId+'" name="dealerChannel_'+objInstId+'" class="inputWidth183px" onclick=a=this.value;></select>');
+						if(order.memberChange.reloadFlag=="N"){
+							//获取编码
+							var busiOrders = order.memberChange.rejson.orderList.custOrderList[0].busiOrder;
+							var channelNbr="";
+							for(var i=0;i<busiOrders.length;i++){
+								if(busiOrders[i].boActionType.actionClassCd=="1300" && busiOrders[i].boActionType.boActionTypeCd=="1"){
+									var busiOrderAttrs=busiOrders[i].data.busiOrderAttrs;
+									for(var j=0;j<busiOrderAttrs.length;j++){
+										if(busiOrderAttrs[j].channelNbr!=undefined){
+											channelNbr=busiOrderAttrs[j].channelNbr;
+											break;
+										}
+									}
+								}
+							}
+							for(var i=0;i<OrderInfo.channelList.length;i++){
+								if(OrderInfo.channelList[i].channelNbr==channelNbr){
+									$channelSelect.append("<option value='"+OrderInfo.channelList[i].channelNbr+"' selected ='selected'>"+OrderInfo.channelList[i].channelName+"</option>");
+								}
+								else{
+									$channelSelect.append("<option value='"+OrderInfo.channelList[i].channelNbr+"'>"+OrderInfo.channelList[i].channelName+"</option>");
+								}
+							}
+						}
+						else{
+							$.each(OrderInfo.channelList,function(){
+								if(this.isSelect==1)
+									$channelSelect.append("<option value='"+this.channelNbr+"' selected ='selected'>"+this.channelName+"</option>");
+								else
+									$channelSelect.append("<option value='"+this.channelNbr+"'>"+this.channelName+"</option>");
+							});
+						}
+						$tdChannel.append($channelSelect);
+						$tdChannel.append('<label class="f_red">*</label>');
+						$dl.append($tdChannel);
+						$li.append($dl);
 						OrderInfo.SEQ.dealerSeq++;
 						$("#dealerTbody").append($li);
 						$.jqmRefresh($("#dealerTbody"));

@@ -1434,7 +1434,8 @@ SoOrder = (function() {
 							var dealer = {
 									itemSpecId : CONST.BUSI_ORDER_ATTR.DEALER,
 									role : $(this).find("select").val(),
-									value : $(this).find("input").attr("staffid") 
+									value : $(this).find("input").attr("staffid"),
+									channelNbr : $(this).find("select[name ='dealerChannel_"+offerSpec.offerSpecId+"']").val()
 							};
 							busiOrder2.data.busiOrderAttrs.push(dealer);
 							var dealer_name = {
@@ -2051,7 +2052,8 @@ SoOrder = (function() {
 				var dealer = {
 					itemSpecId : CONST.BUSI_ORDER_ATTR.DEALER,
 					role : $(this).find("select").val(),
-					value : $(this).find("input").attr("staffid") 
+					value : $(this).find("input").attr("staffid"),
+					channelNbr : $(this).find("select[name ='dealerChannel_"+OrderInfo.offerSpec.offerSpecId+"']").val()
 				};
 				busiOrder.data.busiOrderAttrs.push(dealer);
 				var dealer_name = {
@@ -2220,8 +2222,15 @@ SoOrder = (function() {
 				var dealer = {
 					itemSpecId : CONST.BUSI_ORDER_ATTR.DEALER,
 					role : $(this).find("select").val(),
-					value : $(this).find("input").attr("staffid") 
+					value : $(this).find("input").attr("staffid")
+					
 				};
+				if(OrderInfo.actionFlag==6){
+					dealer.channelNbr=$(this).find("select[name ='dealerChannel_"+prodId+"']").val();
+				}
+				else{
+					dealer.channelNbr=$(this).find("select[name ='dealerChannel_"+OrderInfo.offerSpec.offerSpecId+"']").val();
+				}
 				busiOrder.data.busiOrderAttrs.push(dealer);
 				var dealer_name = {
 						itemSpecId : CONST.BUSI_ORDER_ATTR.DEALER_NAME,
@@ -2232,19 +2241,6 @@ SoOrder = (function() {
 			});
 		}
 		
-		/*var $option = $("#acctSelect").find("option:selected");
-		var acctId = $option.attr("value");
-		var acctCd = -1;
-		if(acctId==undefined){
-			acctId = -1;
-			acctCd = -1;
-		}else if(acctId<0 ){ //新增
-			acctCd = acctId;
-		}else{
-			acctCd = $option.attr("acctcd");
-		}*/
-		/*var acctId= $("#acctSelect").val();
-		var acctCd=acctId;*/
 		var acctId=-1;
 		if(OrderInfo.acct!=undefined&&OrderInfo.acct.acctId!=undefined&&OrderInfo.acct.acctId!=null&&OrderInfo.acct.acctId!=""){//新装传帐户id
 			acctId=OrderInfo.acct.acctId;
