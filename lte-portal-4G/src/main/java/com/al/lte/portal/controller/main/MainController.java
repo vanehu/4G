@@ -125,22 +125,22 @@ public class MainController extends BaseController {
         Map<String, Object> reqMap= new HashMap<String, Object>();
         reqMap.put("staffId", sessionStaff.getStaffId());
         param.put("reqInfo", reqMap);
-        Integer total = 0;
-		try {
-			rMap = orderBmo.qryCount(param, null, sessionStaff);
-			if (rMap != null
-					&& ResultCode.R_SUCCESS.equals(rMap.get("code")
-							.toString())) {
-				total = (Integer)rMap.get("totalSize");
-			}
-        } catch (BusinessException be) {
-			this.log.error("加载总量失败", be);
-		} catch (InterfaceException ie) {
-			this.log.error("加载总量失败", ie);
-		} catch (Exception e) {
-			
-		}
-		model.addAttribute("total",total);
+//        Integer total = 0;
+//		try {
+//			rMap = orderBmo.qryCount(param, null, sessionStaff);
+//			if (rMap != null
+//					&& ResultCode.R_SUCCESS.equals(rMap.get("code")
+//							.toString())) {
+//				total = (Integer)rMap.get("totalSize");
+//			}
+//        } catch (BusinessException be) {
+//			this.log.error("加载总量失败", be);
+//		} catch (InterfaceException ie) {
+//			this.log.error("加载总量失败", ie);
+//		} catch (Exception e) {
+//			
+//		}
+//		model.addAttribute("total",total);
         String CARD_NEW_DLL = propertiesUtils.getMessage(SysConstant.CARD_NEW_DLL);
 		model.addAttribute("canOrder", EhcacheUtil.pathIsInSession(session,"order/prepare"));
         model.addAttribute("hotMap", mapHotProd);
