@@ -79,9 +79,10 @@ public class AgentPortalConfigDAOImpl implements AgentPortalConfigDAO {
         String image = MapUtils.getString(param, "image", "");
         StringBuffer sql = new StringBuffer();
         sql.append("INSERT INTO AGENT_PORTAL_CONFIG(TABLE_NAME,COLUMN_NAME,COLUMN_VALUE,").append(
-                "COLUMN_VALUE_NAME,SORT_VALUE,IMAGE,CONF_ID) ").append("VALUES(").append("'" + tableName + "',")
-                .append("'" + columnName + "',").append("'" + columnValue + "',").append("'" + columnValueName + "',")
-                .append("'" + sortValue + "',").append("'" + image + "',").append("seq_agent_portal_config.NEXTVAL)");
-        jdbc.execute(sql.toString());
+                "COLUMN_VALUE_NAME,SORT_VALUE,IMAGE,CONF_ID) VALUES( ? ,? ,? ,? ,? ,?,").append("SEQ_AGENT_PORTAL_CONFIG.NEXTVAL)");
+        //防注入处理 add by lsd 2015-09-09
+        Object[] paramObj = { tableName, columnName, columnValue,columnValueName,sortValue,image };
+        int[] paramType = { Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR , Types.VARCHAR};
+        jdbc.update(sql.toString(),paramObj, paramType);
     }
 }
