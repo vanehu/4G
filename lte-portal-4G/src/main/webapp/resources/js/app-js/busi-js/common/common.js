@@ -223,6 +223,24 @@ common = (function($) {
 					OrderInfo.order.step=1;
 			});
 		}else if(OrderInfo.order.step==3){
+			//可选包变更订单页面返回 释放UIM卡
+			if(OrderInfo.actionFlag == 3){
+				var boProd2Tds = OrderInfo.boProd2Tds;
+				//取消订单时，释放被预占的UIM卡
+				if(boProd2Tds.length>0){
+					for(var n=0;n<boProd2Tds.length;n++){
+						var param = {
+								numType : 2,
+								numValue : boProd2Tds[n].terminalCode
+						};
+						$.callServiceAsJson(contextPath+"/app/mktRes/phonenumber/releaseErrorNum", param, {
+							"done" : function(){}
+						});
+					}
+				}
+				_callCloseWebview();
+				return;
+			}
 			SoOrder.orderBack();
 			$("#order-content").show();
 			$("#order-confirm").hide();
