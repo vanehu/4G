@@ -140,7 +140,7 @@
        <url-pattern>/*</url-pattern>
     </filter-mapping>
     
-    <!-- 屏蔽关键字过滤
+    <!-- 屏蔽关键字过滤-->
     <filter>
        <filter-name>ForbiddenKeywordFilter</filter-name>
        <filter-class>com.al.lte.portal.filter.ForbiddenKeywordFilter</filter-class>
@@ -149,8 +149,8 @@
        <filter-name>ForbiddenKeywordFilter</filter-name>
        <url-pattern>/*</url-pattern>
     </filter-mapping>
-     -->
-    <!-- 会话管理控制 -->
+     
+    <!-- 会话管理控制 
     <filter>
        <filter-name>SessionCtrlFilter</filter-name>
        <filter-class>com.al.lte.portal.filter.SessionCtrlFilter</filter-class>
@@ -159,7 +159,7 @@
        <filter-name>SessionCtrlFilter</filter-name>
        <url-pattern>/*</url-pattern>
     </filter-mapping>
-    
+    -->
 	<!-- Csrf过虑器 -->
 	<filter>
 		<filter-name>csrf_filter</filter-name>
