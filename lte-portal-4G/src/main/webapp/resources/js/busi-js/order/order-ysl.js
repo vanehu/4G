@@ -1599,12 +1599,31 @@ order.ysl = (function(){
 			$("#custnum").show();
 		}
 	};
+
+	var _readCert = function() {
+		var man = cert.readCert();
+		if (man.resultFlag != 0){
+			$.alert("提示", man.errorMsg);
+			return;
+		}
+		$("#partyTypeCd").val("1");
+		_certTypeByPartyType();
+		$("#cCustName").val(man.resultContent.partyName); //姓名
+		$("#cCustIdCard").val(man.resultContent.certNumber); //设置身份证号
+		$("#cAddressStr").val(man.resultContent.certAddress); //地址
+		$("#cCustName").blur();
+		$("#cCustIdCard").blur();
+		$("#cAddressStr").blur();
+		$("#cCustName").attr("disabled", true);
+		$("#cCustIdCard").attr("disabled", true);
+		$("#cAddressStr").attr("disabled", true);
+	};
 	
 	var _checkIdentityCard = function(){
 		var param = {
 			"IdentityCard":$("#cCustIdCard").val(),
 			"queryflag":"9"
-		}
+		};
 		var url=contextPath+"/order/checkIdentityCard";
 		var response = $.callServiceAsJson(url, param);
 		if(response.code == 0){
@@ -1622,7 +1641,7 @@ order.ysl = (function(){
 			$.alert("错误","查询证件号码出错","information");
 			return false;
 		}
-	}
+	};
     
 	return {
 		yslbean:_yslbean,
@@ -1659,7 +1678,8 @@ order.ysl = (function(){
 		queryfeeitems:_queryfeeitems,
 		termOrderQuery:_termOrderQuery,
 		custchoose:_custchoose,
-		checkIdentityCard:_checkIdentityCard
+		checkIdentityCard:_checkIdentityCard,
+		readCert:_readCert
 	};
 })();
 $(function() {

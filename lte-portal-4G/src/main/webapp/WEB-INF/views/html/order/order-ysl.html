@@ -35,7 +35,7 @@ function createDialog(){
     </li>
     <li>
       <label>证件类型：</label>
-      <select id="identidiesTypeCd" onchange="order.cust.identidiesTypeCdChoose(this,'cCustIdCard');$('#cCustIdCard').blur();" style="width:100px;margin-left:3px"></select>
+      <select id="identidiesTypeCd" onchange="order.cust.identidiesTypeCdChoose(this,'cCustIdCard');" style="width:100px;margin-left:3px"></select>
       <!-- <label class="f_red">*</label> -->
     </li>
     <li style="height:28px">
@@ -45,17 +45,18 @@ function createDialog(){
     </li>
     <li style="height:28px">
       <label>证件号码：</label>
-      <input type="text" placeHolder="请输入合法证件号码" data-validate="validate(idCardCheck:请输入合法证件号码) on(blur)" maxLength="100" class="inputWidth183px" id="cCustIdCard"/>
+      <input type="text" id="cCustIdCard" placeHolder="请输入合法证件号码" data-validate="validate(idCardCheck:请输入合法证件号码) on(blur)" maxLength="100" class="inputWidth183px"/>
       <label class="f_red">*</label>
+      <a class="btn_h30" id="btn_readCert" onclick="javascript:order.ysl.readCert()" style="margin-top:0px"><span>读 卡</span></a>
     </li>
     <li>
       <label>联系电话：</label>
-      <input type="text" class="inputWidth183px"  value="" id="cCustphone"/>
+      <input type="text" class="inputWidth183px" value="" id="cCustphone"/>
       <label class="f_red" id="cCustphoneLabel" style="display: none;">*</label> 
     </li>
     <li style="height:28px">
       <label>客户地址：</label>
-      <input type="text" placeHolder="请填写客户地址"  class="inputWidth183px" data-validate="validate(required:请准确填写客户地址) on(blur)" maxlength="64" id="cAddressStr"/>
+      <input type="text" id="cAddressStr" placeHolder="请填写客户地址" class="inputWidth183px" style="width:228px" data-validate="validate(required:请准确填写客户地址) on(blur)" maxlength="64"/>
       <label class="f_red">*</label>
     </li>
      <li>
@@ -406,10 +407,11 @@ function createDialog(){
 	</div>
 </div>  
 
-
 <!--发票弹出框的内容-->
 <#include "/print/invoice-prepare.html"/>
 <!--弹出层-->
+
+<object id="CertCtl" type="application/cert-reader" width="0" height="0"></object>
 
 <script>
 $(document).ready(function(e) {
