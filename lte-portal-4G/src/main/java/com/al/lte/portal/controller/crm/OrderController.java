@@ -34,8 +34,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.WebRequest;
 
-import com.al.common.json.JacksonUtil;
-import com.al.common.utils.DateUtil;
 import com.al.ec.serviceplatform.client.ResultCode;
 import com.al.ecs.common.entity.JsonResponse;
 import com.al.ecs.common.entity.PageModel;
@@ -2749,8 +2747,6 @@ public class OrderController extends BaseController {
     public JsonResponse orderSubmit(@RequestBody Map<String, Object> param, HttpServletResponse response,
             HttpServletRequest request) throws Exception {
         JsonResponse jsonResponse = null;
-        //		String str=JacksonUtil.getInstance().objectTojson(param);
-        //		System.out.println(str);
         if (commonBmo.checkToken(request, SysConstant.ORDER_SUBMIT_TOKEN)) {
             try {
                 SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
@@ -2762,10 +2758,12 @@ public class OrderController extends BaseController {
                 //过滤订单属性
                 List<Map> custOrderAttrs = (List<Map>) orderListInfo.get("custOrderAttrs");
 
-                //添加客户端IP地址到订单属性 By zhangyu 2015-8-17
+                //添加客户端IP地址到订单属性 By zhangyu
                 Map<String, String> IPMap = new HashMap<String, String>();
+                String IP = sessionStaff.getIp();
+                IP = (IP == null || "".equals(IP)) ? ServletUtils.getIpAddr(request) : IP;
                 IPMap.put("itemSpecId", "800000039");
-                IPMap.put("value", sessionStaff.getIp());
+                IPMap.put("value", (IP == null || "".equals(IP)) ? "NoIP" : IP);
                 if (custOrderAttrs == null)
                     custOrderAttrs = new ArrayList<Map>();
                 custOrderAttrs.add(IPMap);
@@ -2786,10 +2784,6 @@ public class OrderController extends BaseController {
                         orderListInfo.put("custOrderAttrs", filterCustOrderAttrs);
                     }
                 }
-
-                //由于在此之前对入参进行了处理，故于调用业务层之前再打印输出入参
-                String str = JacksonUtil.getInstance().objectTojson(param);
-                System.out.println(str);
 
                 Map<String, Object> resMap = orderBmo.orderSubmit(param, null, sessionStaff);
                 if (ResultCode.R_SUCC.equals(resMap.get("resultCode"))) {

@@ -1136,6 +1136,39 @@ CacheData = (function() {
 		}
 		return govCertTyteArr;
 	};
+	//获取浏览器类型和版本
+	var _getBrowserTypeVersion =function(){
+		var userAgentStr = window.navigator.userAgent.toLowerCase();
+		//ie
+		if (userAgentStr.indexOf("msie") >= 0) {
+			var ver = userAgentStr.match(/msie ([\d.]+)/)[1];
+			return "IE:" + ver;
+		}
+		//firefox
+		else if (userAgentStr.indexOf("firefox") >= 0) {
+			var ver = userAgentStr.match(/firefox\/([\d.]+)/)[1];
+			return "Firefox:" + ver;
+		}
+		//Chrome
+		else if (userAgentStr.indexOf("chrome") >= 0) {
+			var ver = userAgentStr.match(/chrome\/([\d.]+)/)[1];
+			return "Chrome:" + ver;
+		}
+		//Opera
+		else if (userAgentStr.indexOf("opera") >= 0) {
+			var ver = userAgentStr.match(/opera.([\d.]+)/)[1];
+			return "Opera:" + ver;
+		}
+		//Safari
+		else if (userAgentStr.indexOf("Safari") >= 0) {
+			var ver = userAgentStr.match(/version\/([\d.]+)/)[1];
+			return "Safari:" + ver;
+		}
+		//Other
+		else {
+			return "Other";
+		}
+	};
 	return {
 		setParam				: _setParam,
 		setServParam			: _setServParam,
@@ -1176,6 +1209,7 @@ CacheData = (function() {
 		setMyfavoriteSpec       : _setMyfavoriteSpec,
 		getIntOptSwitch         : _getIntOptSwitch,
 		getGovCertType          : _getGovCertType,
-		getOldOfferMember		: _getOldOfferMember
+		getOldOfferMember       : _getOldOfferMember,
+		getBrowserTypeVersion   : _getBrowserTypeVersion
 	};
 })();

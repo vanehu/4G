@@ -196,7 +196,15 @@ SoOrder = (function() {
 		custOrderAttrs.push({ //订单时长
 			itemSpecId : "111111113",
 			value : OrderInfo.orderlonger
-		});	
+		});
+		custOrderAttrs.push({ //浏览器类型版本
+			itemSpecId: "800000046",
+			value: CacheData.getBrowserTypeVersion()
+		});
+		custOrderAttrs.push({ //useragent
+			itemSpecId: "800000047",
+			value: navigator.userAgent
+		});
 		custOrderAttrs.push({ //业务类型
 			itemSpecId : CONST.BUSI_ORDER_ATTR.BUSITYPE_FLAG,
 			value : OrderInfo.busitypeflag
