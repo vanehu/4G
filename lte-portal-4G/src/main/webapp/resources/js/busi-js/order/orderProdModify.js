@@ -642,8 +642,12 @@ order.prodModify = (function(){
 			
 	};
 	var _form_custInfomodify_btn = function() {
-		//修改客户下一步确认按钮
-		$('#custModifyForm').off("formIsValid").on("formIsValid",function(event) {
+		//修改客户下一步确认按钮 
+		$('#custModifyForm').off("formIsValid").on("formIsValid",function(event) {  
+			if ($.trim($("#cm_identidiesTypeCd  option:selected").val()) == "1" && $('#cmCustIdCard').data("flag") != "1"){
+        		$.alert("提示","请先读卡"); 
+        		return false;
+        	}
 			var modifyCustInfo={};
 			modifyCustInfo = {
 					custName : $.trim($("#cmCustName").val()),
@@ -3625,6 +3629,7 @@ order.prodModify = (function(){
 	}
 	//新建客户时读卡
 	var _readCertWhenCreate = function() {
+		$('#cmCustIdCard').data("flag", "1");
 		var man = cert.readCert();
 		if (man.resultFlag != 0){
 			$.alert("提示", man.errorMsg);

@@ -383,7 +383,12 @@ order.cust = (function(){
 	 };
 	//创建客户确认按钮
     var _custcreateButton = function() {
-	    $('#custCreateForm').off().bind('formIsValid',function(event) {
+    	$('#custCreateForm').off().bind('formIsValid',function(event) {
+    		
+    		if ($.trim($("#identidiesTypeCd  option:selected").val()) == "1" && $('#cCustIdCard').data("flag") != "1"){
+        		$.alert("提示","请先读卡");
+        		return false;
+        	}
     	   // 如果填写了联系人相关信息，则联系人名称不能为空
 		   if (!($.trim($("#dishomePhone").val()) == "" && $.trim($("#disofficePhone").val()) == "" && $.trim($("#dismobilePhone").val()) == "") && $.trim($("#discontactName").val()) == "") {
 			   $.alert("提示","联系人名称不能为空！","information");
@@ -1204,7 +1209,7 @@ order.cust = (function(){
 			cAreaId : OrderInfo.staff.soAreaId,// $("#p_ncust_areaId").val(),
 			cAreaName : OrderInfo.staff.soAreaName,
 			cCustName : $.trim($("#cCustName").val()),
-			cCustIdCard :  $.trim($("#cCustIdCard").val()),
+			cCustIdCard :  $('#cCustIdCard').data("certNumber"),
 			cPartyTypeCd : $.trim($("#partyTypeCd  option:selected").val()), //($.trim($("#partyTypeCd  option:selected").val())==1) ? "1100":"1000",
 			cPartyTypeName : ($.trim($("#partyTypeCd  option:selected").val())==1) ? "个人客户":"政企客户",
 			cIdentidiesTypeCd : $.trim($("#identidiesTypeCd  option:selected").val()),
@@ -1329,7 +1334,7 @@ order.cust = (function(){
 				cAreaId : areaId,
 				cAreaName : custName,
 				cCustName : $.trim($("#cCustName").val()),
-				cCustIdCard :  $.trim($("#cCustIdCard").val()),
+				cCustIdCard :  $('#cCustIdCard').data("certNumber"),
 				cPartyTypeCd : $.trim($("#partyTypeCd  option:selected").val()),
 				cIdentidiesTypeCd : $.trim($("#identidiesTypeCd  option:selected").val()),
 				cAddressStr :$.trim($("#cAddressStr").val())
@@ -1462,6 +1467,7 @@ order.cust = (function(){
 	};
 	//新建客户时读卡
 	var _readCertWhenCreate = function() {
+		$('#cCustIdCard').data("flag", "1");
 		var man = cert.readCert();
 		if (man.resultFlag != 0){
 			$.alert("提示", man.errorMsg);
@@ -1472,6 +1478,7 @@ order.cust = (function(){
 		$('#identidiesTypeCd').val(1);//身份证类型
 		_identidiesTypeCdChoose($("#identidiesTypeCd option:selected"),"cCustIdCard");
 		$('#cCustIdCard').val(man.resultContent.certNumber);//设置身份证号
+		$('#cCustIdCard').data("certNumber", man.resultContent.certNumber);
 		$('#cCustIdCard').attr("disabled",true);
 		$('#cCustName').val(man.resultContent.partyName);//姓名
 		$('#cCustName').attr("disabled",true);
