@@ -63,20 +63,25 @@ public class CsrfPreventionFilter extends OncePerRequestFilter {
     private String token = CSRF_NONCE_REQUEST_PARAM;
     /**全局域名*/
     private String domain = null;
-    /**会话健 */
-    private String sessionKey;
 
     private boolean checkReferer(HttpServletRequest request) {
         String headerReferer = request.getHeader("Referer");
-        if (domain != null) {
-            if (headerReferer == null || headerReferer.length() < 8) {
-                return false;
-            }
-            String headDomain = headerReferer.substring(0, headerReferer.indexOf("/", headerReferer.indexOf(".")));
+        //配置域名或者地址，及来源请求地址不为空进行判断 ，否则放行 
+        if (StringUtils.isNotBlank(domain) && StringUtils.isNotBlank(headerReferer)) {
             Perl5Util matcher = new Perl5Util();
-            if (matcher.match("/(http|https):\\/\\/" + domain + ".*$/i", headDomain)) {
+            //直接访问本机的情况,相同放行，否则继续比对配置地址
+            String local = request.getLocalAddr();
+            if(matcher.match("/(http|https):\\/\\/" + local + ".*$/i", headerReferer)){
                 return true;
             }
+            String[] dm = domain.split(",");
+            // String headDomain = headerReferer.substring(0, headerReferer.indexOf("/", headerReferer.indexOf(".")));
+            for (String s : dm) {
+                if (matcher.match("/(http|https):\\/\\/" + s + ".*$/i", headerReferer)) {
+                    return true;
+                }
+            }
+
             return false;
         }
         return true;
@@ -179,8 +184,12 @@ public class CsrfPreventionFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected boolean shouldNotFilter(HttpServletRequest request)
-            throws ServletException {
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        //临时方案2015-11-09 app接入的直接过
+        String appFlag = (String) ServletUtils.getSessionAttribute(request, "_session_app_flag");
+        if (StringUtils.equals("1", appFlag)) {
+            return true;
+        }
         //与CharacterAndFileEncodingFilter结合
         String isRul = MDC.get(PortalConstant.MDC_IS_RESOURCE_URL);
         if (StringUtils.isNotBlank(isRul)) {
@@ -229,9 +238,8 @@ public class CsrfPreventionFilter extends OncePerRequestFilter {
                 }
             }
 
-            @SuppressWarnings("unchecked")
-            LruCache<String> nonceCache = (LruCache<String>) req.getSession(true)
-            .getAttribute(CSRF_NONCE_SESSION_ATTR_NAME);
+            @SuppressWarnings("unchecked") LruCache<String> nonceCache = (LruCache<String>) req.getSession(true)
+                    .getAttribute(CSRF_NONCE_SESSION_ATTR_NAME);
 
             String previousNonce = null;
             if (!skipNonceCheck) {
@@ -362,13 +370,6 @@ public class CsrfPreventionFilter extends OncePerRequestFilter {
      */
     public void setDomain(String domain) {
         this.domain = domain;
-    }
-
-    /**
-     * @param sessionKey the sessionKey to set
-     */
-    public void setSessionKey(String sessionKey) {
-        this.sessionKey = sessionKey;
     }
 
 }
