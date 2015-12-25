@@ -128,10 +128,6 @@ prod.transferModify = (function(){
 			var busiOrder = [	];
 			//新建客户节点
 			if(toCustId==""){
-				var identityPic = $("#img_custPhoto").data("identityPic");
-				if (identityPic === undefined) {
-					identityPic = "";
-				}
 				var createCust = {						
 						areaId : order.prodModify.choosedProdInfo.areaId,						
 						boActionType : {							
@@ -149,8 +145,7 @@ prod.transferModify = (function(){
 								identidiesTypeCd : toIdentidiesTypeCd,	//证件类型编码			                
 								identityNum : toIdCardNumber, //证件号码
 								defaultIdType :toIdentidiesTypeCd,	//证件类型编码		
-								state : "ADD",
-								identidies_pic : identityPic
+								state : "ADD"
 				            }],				        
 				            boCustInfos: [{				                
 				            	areaId : order.prodModify.choosedProdInfo.areaId,  
@@ -402,25 +397,19 @@ prod.transferModify = (function(){
 	var _identidiesTypeCdChoose = function(scope) {
 		//每次更换证件类型，置空证件号码输入框的内容
 		$("#transfercCustIdCard").val("");
-		var identidiesTypeCd = $(scope).val();
-		if (identidiesTypeCd == "1" || identidiesTypeCd == "undefined") {
+		var identidiesTypeCd=$(scope).val();
+		if(identidiesTypeCd==1||identidiesTypeCd=="undefined"){
 			$("#transfercCustIdCard").attr("placeHolder","请输入合法身份证号码");
 			$("#transfercCustIdCard").attr("data-validate","validate(idCardCheck:请输入合法身份证号码) on(blur)");
-		} else {
-			var $custPhoto = $("#tr_custPhoto");
-			if ("none" != $custPhoto.css("display")) {
-				$custPhoto.hide();
-			}
-			if(identidiesTypeCd==2){
-				$("#transfercCustIdCard").attr("placeHolder","请输入合法军官证");
-				$("#transfercCustIdCard").attr("data-validate","validate(required:请准确填写军官证) on(blur)");
-			}else if(identidiesTypeCd==3){
-				$("#transfercCustIdCard").attr("placeHolder","请输入合法护照");
-				$("#transfercCustIdCard").attr("data-validate","validate(required:请准确填写护照) on(blur)");
-			}else{
-				$("#transfercCustIdCard").attr("placeHolder","请输入合法证件号码");
-				$("#transfercCustIdCard").attr("data-validate","validate(required:请准确填写证件号码) on(blur)");
-			}
+		}else if(identidiesTypeCd==2){
+			$("#transfercCustIdCard").attr("placeHolder","请输入合法军官证");
+			$("#transfercCustIdCard").attr("data-validate","validate(required:请准确填写军官证) on(blur)");
+		}else if(identidiesTypeCd==3){
+			$("#transfercCustIdCard").attr("placeHolder","请输入合法护照");
+			$("#transfercCustIdCard").attr("data-validate","validate(required:请准确填写护照) on(blur)");
+		}else{
+			$("#transfercCustIdCard").attr("placeHolder","请输入合法证件号码");
+			$("#transfercCustIdCard").attr("data-validate","validate(required:请准确填写证件号码) on(blur)");
 		}
 		_form_TransfercustCreate_btn();
 		
@@ -701,9 +690,6 @@ prod.transferModify = (function(){
 			$('#div_tra_partyTypeCd').val(_transferCreatedCustInfos.partyTypeCd);//个人
 			prod.transferModify.partyTypeCdChoose($("#div_tra_partyTypeCd option[value='"+_transferCreatedCustInfos.partyTypeCd+"']"));
 			$('#div_tra_identidiesTypeCd').val(_transferCreatedCustInfos.identidiesTypeCd);//身份证类型
-			if ("1" == _transferCreatedCustInfos.identidiesTypeCd) {
-				$("#tr_custPhoto").show();
-			}
 			prod.transferModify.identidiesTypeCdChoose($("#div_tra_identidiesTypeCd option[value='"+_transferCreatedCustInfos.identidiesTypeCd+"']"));
 			$('#transfercCustIdCard').val(_transferCreatedCustInfos.cCustIdCard);//设置身份证号
 			$('#transfercCustName').val(_transferCreatedCustInfos.cCustName);//姓名
@@ -897,11 +883,6 @@ prod.transferModify = (function(){
 		prod.transferModify.identidiesTypeCdChoose($("#div_tra_identidiesTypeCd option[value='1']"));
 		$('#transfercCustName').val(man.resultContent.partyName);//姓名
 		$('#transfercCustIdCard').val(man.resultContent.certNumber);//设置身份证号
-		if (man.resultContent.identityPic !== undefined) {
-			$("#img_custPhoto").attr("src", "data:image/jpeg;base64," + man.resultContent.identityPic);
-			$("#img_custPhoto").data("identityPic", man.resultContent.identityPic);
-			$("#tr_custPhoto").show();
-		}
 		$('#transfercAddressStr').val(man.resultContent.certAddress);//地址
 	};
 

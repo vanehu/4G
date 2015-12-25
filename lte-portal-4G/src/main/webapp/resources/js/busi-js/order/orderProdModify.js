@@ -671,32 +671,25 @@ order.prodModify = (function(){
 				addressStr :modifyCustInfo.addressStr,
 				state : "ADD"
 			}];
-			var identityPic = $("#img_custPhoto").data("identityPic");
-			if (identityPic === undefined) {
-				identityPic = "";
-			}
 			if(OrderInfo.cust.idCardNumber==""||OrderInfo.cust.idCardNumber==null){
 				data.boCustIdentities = [{
 					identidiesTypeCd :modifyCustInfo.identidiesTypeCd,
 					identityNum : modifyCustInfo.custIdCard,
 					isDefault : "Y",
-					state : "ADD",
-					identidies_pic : identityPic
+					state : "ADD"
 				}];	
 			}else{
-				data.boCustIdentities = [{
-					identidiesTypeCd :OrderInfo.cust.identityCd,
-					identityNum : OrderInfo.cust.idCardNumber,
-					isDefault : "Y",
-					state : "DEL",
-					identidies_pic : ""
-				},{
-					identidiesTypeCd :modifyCustInfo.identidiesTypeCd,
-					identityNum : modifyCustInfo.custIdCard,
-					isDefault : "Y",
-					state : "ADD",
-					identidies_pic : identityPic
-				}];
+			data.boCustIdentities = [{
+				identidiesTypeCd :OrderInfo.cust.identityCd,
+				identityNum : OrderInfo.cust.idCardNumber,
+				isDefault : "Y",
+				state : "DEL"
+			},{
+				identidiesTypeCd :modifyCustInfo.identidiesTypeCd,
+				identityNum : modifyCustInfo.custIdCard,
+				isDefault : "Y",
+				state : "ADD"
+			}];
 			}
 			data.boCustProfiles=[];
 			//客户属性信息
@@ -828,21 +821,15 @@ order.prodModify = (function(){
 		if(identidiesTypeCd==1){
 			$("#cmCustIdCard").attr("placeHolder","请输入合法身份证号码");
 			$("#cmCustIdCard").attr("data-validate","validate(idCardCheck18:请输入合法身份证号码) on(blur)");
-		}else {
-			var $custPhoto = $("#tr_custPhoto");
-			if ("none" != $custPhoto.css("display")) {
-				$custPhoto.hide();
-			}
-			if(identidiesTypeCd==2){
-				$("#cmCustIdCard").attr("placeHolder","请输入合法军官证");
-				$("#cmCustIdCard").attr("data-validate","validate(required:请准确填写军官证) on(blur)");
-			}else if(identidiesTypeCd==3){
-				$("#cmCustIdCard").attr("placeHolder","请输入合法护照");
-				$("#cmCustIdCard").attr("data-validate","validate(required:请准确填写护照) on(blur)");
-			}else{
-				$("#cmCustIdCard").attr("placeHolder","请输入合法证件号码");
-				$("#cmCustIdCard").attr("data-validate","validate(required:请准确填写证件号码) on(blur)");
-			}
+		}else if(identidiesTypeCd==2){
+			$("#cmCustIdCard").attr("placeHolder","请输入合法军官证");
+			$("#cmCustIdCard").attr("data-validate","validate(required:请准确填写军官证) on(blur)");
+		}else if(identidiesTypeCd==3){
+			$("#cmCustIdCard").attr("placeHolder","请输入合法护照");
+			$("#cmCustIdCard").attr("data-validate","validate(required:请准确填写护照) on(blur)");
+		}else{
+			$("#cmCustIdCard").attr("placeHolder","请输入合法证件号码");
+			$("#cmCustIdCard").attr("data-validate","validate(required:请准确填写证件号码) on(blur)");
 		}
 		_form_custInfomodify_btn();
 		
@@ -3654,11 +3641,6 @@ order.prodModify = (function(){
 		order.prodModify.identidiesTypeCdChoose($("#cm_identidiesTypeCd option[value='1']"));
 		$('#cmCustName').val(man.resultContent.partyName);//姓名
 		$('#cmCustIdCard').val(man.resultContent.certNumber);//设置身份证号
-		if (man.resultContent.identityPic !== undefined) {
-			$("#img_custPhoto").attr("src", "data:image/jpeg;base64," + man.resultContent.identityPic);
-			$("#img_custPhoto").data("identityPic", man.resultContent.identityPic);
-			$("#tr_custPhoto").show();
-		}
 		$('#cmAddressStr').val(man.resultContent.certAddress);//地址
 	};
 	
