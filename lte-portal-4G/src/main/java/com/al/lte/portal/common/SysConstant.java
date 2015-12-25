@@ -104,6 +104,16 @@ public final class SysConstant {
     
     public static final String SESSION_KEY_BANKPAYMENT = "_bankPayment";
     
+    public static final String SESSION_KEY_AREA = "_area"; //地区
+    
+    public static final String SESSION_KEY_CHANNEL = "_channel"; //渠道
+    
+    public static final String SESSION_KEY_NUMBER = "_number"; // 号码
+    
+    public static final String SESSION_KEY_TERMINAL = "_terminal"; // 终端
+    
+    public static final String SESSION_KEY_AGREEMENT = "_agreement"; // 合约
+    
     public static final String SESSION_KEY_DEPOSIT="_DEPOSIT";
     //纳税人权限控制
     public static final String EDITTAXPAYER_CODE="EDITTAXPAYER";
