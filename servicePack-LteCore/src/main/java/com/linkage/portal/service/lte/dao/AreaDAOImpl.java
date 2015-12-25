@@ -38,21 +38,24 @@ public class AreaDAOImpl implements AreaDAO {
         sql.append("       T.ZIP_CODE ");
         sql.append("  FROM COMMON_REGION T");
         sql.append(" WHERE ");
-        sql.append(" T.AREA_LEVEL = '"+MapUtils.getString(param, "areaLevel")+"' ");
+        sql.append(" T.AREA_LEVEL = ? ");
+        
+        String lev = MapUtils.getString(param, "areaLevel");
+        
         List<Map<String, Object>> rList = new ArrayList<Map<String, Object>>();
         if ("".equals(StringUtils.defaultString(MapUtils.getString(param, "upRegionId")))) {
             if(! "".equals(StringUtils.defaultString(MapUtils.getString(param, "areaId")))){
         		sql.append(" AND  T.COMMON_REGION_ID = ?");
         		sql.append(" ORDER BY T.REGION_NAME");
-       		    return this.jdbc.queryForList(sql.toString(), new Object[] {MapUtils.getString(param, "areaId") }, new int[] { Types.INTEGER });
+       		    return this.jdbc.queryForList(sql.toString(), new Object[] {lev,MapUtils.getString(param, "areaId") }, new int[] {Types.VARCHAR, Types.INTEGER });
         	}
             sql.append(" ORDER BY T.REGION_NAME ");
-            return this.jdbc.queryForList(sql.toString());
+            return this.jdbc.queryForList(sql.toString(),new Object[] {lev}, new int[] {Types.VARCHAR});
         } else {
         	if(! "".equals(StringUtils.defaultString(MapUtils.getString(param, "upRegionId")))){
         		sql.append(" AND  T.UP_REGION_ID = ?");
         		sql.append(" ORDER BY T.REGION_NAME");
-        		return this.jdbc.queryForList(sql.toString(), new Object[] {MapUtils.getString(param, "upRegionId") }, new int[] { Types.INTEGER });
+        		return this.jdbc.queryForList(sql.toString(), new Object[] {lev, MapUtils.getString(param, "upRegionId") }, new int[] {Types.VARCHAR, Types.INTEGER });
         	}
         	
         }
@@ -68,9 +71,9 @@ public class AreaDAOImpl implements AreaDAO {
         sql.append(" SELECT AREA_ID,NAME,ZONE_NUMBER FROM PORTAL_AREA ");
         sql
                 .append(" WHERE PARENT_AREA IN(SELECT AREA_ID FROM PORTAL_AREA WHERE PARENT_AREA = 8100000 START WITH AREA_ID IN(");
-        sql.append(" SELECT AREA_ID FROM PORTAL_AREA WHERE ZONE_NUMBER='").append(areaId).append("')");
+        sql.append(" SELECT AREA_ID FROM PORTAL_AREA WHERE ZONE_NUMBER=?)");
         sql.append(" CONNECT BY PRIOR PARENT_AREA= AREA_ID)");
-        rList = jdbc.queryForList(sql.toString());
+        rList = jdbc.queryForList(sql.toString(),new Object[] {areaId}, new int[] {Types.VARCHAR});
         return rList;
     }
 

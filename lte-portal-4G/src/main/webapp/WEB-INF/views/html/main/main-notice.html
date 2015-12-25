@@ -6,7 +6,7 @@
 		<#if noticeList?? &&(noticeList?size>0)>
 		<#list noticeList as notice>
 			<a href="javascript:void(0)" id="${contextPath}/main/noticeInfo/${notice.bulletinId}" onclick="main.home.queryNotice(${notice.bulletinId})">
-				[ ${notice.bulletinName}  ${notice.createDate} ]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				<#escape x as x?html>[ ${notice.bulletinName}  ${notice.createDate} ]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</#escape>
 			</a>
 		</#list>
 		<#else>

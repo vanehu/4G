@@ -88,22 +88,22 @@ public class ReserveNumberDAOImpl implements ReserveNumberDAO {
         StringBuffer sb = new StringBuffer();
         sb.append("INSERT INTO RESERVE_NUMBER(ACC_NBR,ACC_NBR_TYPE,").append(
                 "STAFF_ID,CREATE_DATE,IS_RELEASE,RELEASE_TIME,AREA_ID,PROVINCE_CODE,CHANNEL_ID)").append(
-                "VALUES('")
-                .append(MapUtils.getString(param, "accNbr")).append("','")
-                .append(MapUtils.getString(param, "accNbrType")).append("','")
-                .append(MapUtils.getString(param, "staffId")).append("',SYSDATE,'1',SYSDATE,'")
-                .append(MapUtils.getString(param, "areaId")).append("','")
-                .append(MapUtils.getString(param, "provinceCode")).append("','")
-                .append(MapUtils.getString(param, "channelId")).append("')");
-        return jdbc.update(sb.toString());
+                "VALUES(?,?,?,SYSDATE,'1',SYSDATE,?,?,?)");
+        
+        Object[] sbParamObj = {MapUtils.getString(param, "accNbr"),MapUtils.getString(param, "accNbrType"),
+                MapUtils.getString(param, "staffId"),MapUtils.getString(param, "areaId"),
+                MapUtils.getString(param, "provinceCode"),MapUtils.getString(param, "channelId")};
+        int[] sbParamType = {Types.VARCHAR,Types.VARCHAR,Types.VARCHAR,Types.VARCHAR,Types.VARCHAR,Types.VARCHAR};
+        return jdbc.update(sb.toString(),sbParamObj,sbParamType);
     }
 
     public int updateAccNbr(Map<String, Object> map) throws Exception {
         StringBuffer sb = new StringBuffer();
         String phoneNumber = MapUtils.getString(map, "accNbr");
         sb
-                .append("UPDATE RESERVE_NUMBER SET RELEASE_TIME=SYSDATE , IS_RELEASE='0' WHERE IS_RELEASE='1' AND ACC_NBR='" + phoneNumber
-                        + "'");
-        return jdbc.update(sb.toString());
+                .append("UPDATE RESERVE_NUMBER SET RELEASE_TIME=SYSDATE , IS_RELEASE='0' WHERE IS_RELEASE='1' AND ACC_NBR= ? ");
+        Object[] sbParamObj ={phoneNumber};
+        int[] sbParamType = {Types.VARCHAR};
+        return jdbc.update(sb.toString(),sbParamObj,sbParamType);
     }
 }

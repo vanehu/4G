@@ -10,7 +10,7 @@
 			<div class="selectList">
 				<dl class="width120">
 					<dt>公告标题：</dt>
-					<dd>${bulletinName}</dd>
+					<dd><#escape x as x?html>${bulletinName}</#escape></dd>
 				</dl>
 				<dl class="width120">
 					<dt>发布人：</dt>
@@ -22,7 +22,7 @@
 				</dl>
 				<dl class="width120">
 					<dt id="shoujuDt">公告内容：</dt>
-					<dd>${bulletinText}</dd>
+					<dd><#escape x as x?html>${bulletinText}</#escape></dd>
 				</dl>
 				<dl class="width120">
 					<dt>附件下载：</dt>

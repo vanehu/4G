@@ -19,12 +19,13 @@
 
 <title>地区树</title>
 <script>
+<#escape x as x?html>
 var contextPath="${contextPath}";
 var areaType = "${areaType}" ;
 var areaLeve = "${areaLeve}"==""?3:"${areaLeve}" ;
 var areaLimit = "${areaLimit}"==""?0:"${areaLimit}" ;
 var areaData = [] ;
-
+</#escape>
 function areaValSet(parentId,parentNodeName){
 	parent.areaNameVal = parentNodeName ;
 	var p_id = parentId ;
