@@ -1209,7 +1209,7 @@ order.cust = (function(){
 			cAreaId : OrderInfo.staff.soAreaId,// $("#p_ncust_areaId").val(),
 			cAreaName : OrderInfo.staff.soAreaName,
 			cCustName : $.trim($("#cCustName").val()),
-			cCustIdCard :  $('#cCustIdCard').data("certNumber"),
+			cCustIdCard :  $.trim($("#cCustIdCard").val()),
 			cPartyTypeCd : $.trim($("#partyTypeCd  option:selected").val()), //($.trim($("#partyTypeCd  option:selected").val())==1) ? "1100":"1000",
 			cPartyTypeName : ($.trim($("#partyTypeCd  option:selected").val())==1) ? "个人客户":"政企客户",
 			cIdentidiesTypeCd : $.trim($("#identidiesTypeCd  option:selected").val()),
