@@ -1334,7 +1334,7 @@ order.cust = (function(){
 				cAreaId : areaId,
 				cAreaName : custName,
 				cCustName : $.trim($("#cCustName").val()),
-				cCustIdCard :  $('#cCustIdCard').data("certNumber"),
+				cCustIdCard : $.trim($("#cCustIdCard").val()),
 				cPartyTypeCd : $.trim($("#partyTypeCd  option:selected").val()),
 				cIdentidiesTypeCd : $.trim($("#identidiesTypeCd  option:selected").val()),
 				cAddressStr :$.trim($("#cAddressStr").val())
