@@ -198,11 +198,11 @@ order.cust = (function(){
 							$("#"+id).append("<option value='"+certTypedate.certTypeCd+"' >"+certTypedate.name+"</option>");
 						}
 						//屏蔽身份证
-						if(id=="identidiesTypeCd" && OrderInfo.staff.idType=="OFF")
+						/*if(id=="identidiesTypeCd" && OrderInfo.staff.idType=="OFF")
 						{
 							$("#"+id+" option[value='1']").remove();
 							$("#readCertBtnCreate").hide();
-						}
+						}*/
 					}
 				}
 	};
@@ -276,21 +276,27 @@ order.cust = (function(){
 		if(identidiesTypeCd==1){
 			$("#"+id).attr("placeHolder","请输入合法身份证号码");
 			$("#"+id).attr("data-validate","validate(idCardCheck18:请输入合法身份证号码) on(blur)");
-		}else if(identidiesTypeCd==2){
-		    $("#"+id).attr("onkeyup", "value=value.replace(/[^A-Za-z0-9\u4e00-\u9fa5]/ig,'')");
-			$("#"+id).attr("placeHolder","请输入合法军官证");
-			$("#"+id).attr("data-validate","validate(required:请准确填写军官证) on(blur)");
-		}else if(identidiesTypeCd==3){
-			$("#"+id).attr("placeHolder","请输入合法护照");
-			$("#"+id).attr("data-validate","validate(required:请准确填写护照) on(blur)");
-		}else if(identidiesTypeCd==15) {
-			$("#"+id).attr("onkeyup", "value=value.replace(/[^A-Za-z0-9-]/ig,'')");
-			$("#"+id).attr("placeHolder","请输入合法证件号码");
-			$("#"+id).attr("data-validate","validate(required:请准确填写证件号码) on(blur)");
-			$("#"+id).attr("maxlength","20");
-		}else{
-			$("#"+id).attr("placeHolder","请输入合法证件号码");
-			$("#"+id).attr("data-validate","validate(required:请准确填写证件号码) on(blur)");
+		} else {
+			var $custPhoto = $("#tr_custPhoto");
+			if ("none" != $custPhoto.css("display")) {
+				$custPhoto.hide();
+			}
+			if(identidiesTypeCd==2){
+				$("#"+id).attr("onkeyup", "value=value.replace(/[^A-Za-z0-9\u4e00-\u9fa5]/ig,'')");
+				$("#"+id).attr("placeHolder","请输入合法军官证");
+				$("#"+id).attr("data-validate","validate(required:请准确填写军官证) on(blur)");
+			}else if(identidiesTypeCd==3){
+				$("#"+id).attr("placeHolder","请输入合法护照");
+				$("#"+id).attr("data-validate","validate(required:请准确填写护照) on(blur)");
+			}else if(identidiesTypeCd==15) {
+				$("#"+id).attr("onkeyup", "value=value.replace(/[^A-Za-z0-9-]/ig,'')");
+				$("#"+id).attr("placeHolder","请输入合法证件号码");
+				$("#"+id).attr("data-validate","validate(required:请准确填写证件号码) on(blur)");
+				$("#"+id).attr("maxlength","20");
+			}else{
+				$("#"+id).attr("placeHolder","请输入合法证件号码");
+				$("#"+id).attr("data-validate","validate(required:请准确填写证件号码) on(blur)");
+			}
 		}
 		_custcreateButton();
 		
@@ -1244,6 +1250,10 @@ order.cust = (function(){
 	OrderInfo.boCustInfos.mailAddressStr=createCustInfo.cMailAddressStr;//通信地址
 	OrderInfo.boCustIdentities.identidiesTypeCd=createCustInfo.cIdentidiesTypeCd;//证件类型
 	OrderInfo.boCustIdentities.identityNum=createCustInfo.cCustIdCard;//证件号码
+	var identityPic = $("#img_custPhoto").data("identityPic");
+	if (identityPic !== undefined) {
+		OrderInfo.boCustIdentities.identidies_pic=identityPic;
+	}
 	//boPartyContactInfo
 	OrderInfo.boPartyContactInfo.contactAddress= _boPartyContactInfo.contactAddress,//参与人的联系地址
 	OrderInfo.boPartyContactInfo.contactDesc =_boPartyContactInfo.contactDesc,//参与人联系详细信息
@@ -1334,7 +1344,7 @@ order.cust = (function(){
 				cAreaId : areaId,
 				cAreaName : custName,
 				cCustName : $.trim($("#cCustName").val()),
-				cCustIdCard : $.trim($("#cCustIdCard").val()),
+				cCustIdCard :   $.trim($("#cCustIdCard").val()),
 				cPartyTypeCd : $.trim($("#partyTypeCd  option:selected").val()),
 				cIdentidiesTypeCd : $.trim($("#identidiesTypeCd  option:selected").val()),
 				cAddressStr :$.trim($("#cAddressStr").val())
@@ -1480,10 +1490,18 @@ order.cust = (function(){
 		$('#cCustIdCard').val(man.resultContent.certNumber);//设置身份证号
 		$('#cCustIdCard').data("certNumber", man.resultContent.certNumber);
 		$('#cCustIdCard').attr("disabled",true);
+		if (man.resultContent.identityPic !== undefined) {
+			$("#img_custPhoto").attr("src", "data:image/jpeg;base64," + man.resultContent.identityPic);
+			$("#img_custPhoto").data("identityPic", man.resultContent.identityPic);
+			$("#tr_custPhoto").show();
+		}
 		$('#cCustName').val(man.resultContent.partyName);//姓名
 		$('#cCustName').attr("disabled",true);
 		$('#cAddressStr').val(man.resultContent.certAddress);//地址
 		$('#cAddressStr').attr("disabled",true);
+		$('#cCustName').blur();
+		$('#cCustIdCard').blur();
+		$('#cAddressStr').blur();
 	};
 	//用户鉴权时读卡
 	var _readCertWhenAuth = function() {

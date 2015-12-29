@@ -170,7 +170,8 @@ public class OrderInfoFilter extends OncePerRequestFilter {
 										JSONObject boActionType = JSONObject.fromObject(boActionTypeObj);
 										//System.out.println(boActionType.toString());
 										if (boActionType != null) {
-											int actionClassCd = (Integer) boActionType.get("actionClassCd");
+											String actionClassCdStr = boActionType.get("actionClassCd").toString();
+											int actionClassCd = Integer.parseInt(actionClassCdStr);
 											String boActionTypeCd = (String) boActionType.get("boActionTypeCd");
 											Object busiObj = busiOrderObj.get("busiObj");
 											if (actionClassCd == 1200) {
@@ -216,18 +217,20 @@ public class OrderInfoFilter extends OncePerRequestFilter {
 														if (bo2CouponsObjs != null) {
 															JSONArray bo2Coupons = JSONArray.fromObject(bo2CouponsObjs);
 															Object bo2CouponsArrs[] = bo2Coupons.toArray();
-															for (int  m= 0; m < dataArrs.length; m++) {
-																Object dataArr2 = bo2CouponsArrs[m];
-																JSONObject dataArrObj2 = JSONObject.fromObject(dataArr2);
-																String couponInstanceNumber = (String) dataArrObj2.get("couponInstanceNumber");
-																if (couponInstanceNumber != null && list3 !=null ) {
-																	for(String tmps: list3){
-																		if(couponInstanceNumber.toString().equals(tmps)){
-																			flag2 = "success";
+															if(bo2CouponsArrs.length>0){
+																for (int  m= 0; m < dataArrs.length; m++) {
+																	Object dataArr2 = bo2CouponsArrs[m];
+																	JSONObject dataArrObj2 = JSONObject.fromObject(dataArr2);
+																	String couponInstanceNumber = (String) dataArrObj2.get("couponInstanceNumber");
+																	if (couponInstanceNumber != null && list3 !=null ) {
+																		for(String tmps: list3){
+																			if(couponInstanceNumber.toString().equals(tmps)){
+																				flag2 = "success";
+																			}
 																		}
 																	}
+																	
 																}
-																
 															}
 														}
 														Object boProdAnsObjs = dataArrObj.get("boProdAns");
