@@ -1500,7 +1500,14 @@ order.uiCusts = (function(){
 					}
 				}
 			}
-		    order.uiCusts.offerChangeView(inParam,offerSpec);			
+		    order.uiCusts.offerChangeView(inParam,offerSpec);
+		    if(OrderInfo.provinceInfo.reloadFlag=="Y"){
+		    	 if(OrderInfo.provinceInfo.prodOfferId!=null && OrderInfo.provinceInfo.prodOfferId!=""){
+				    	$("#dlg-memberRole-num-popup").removeClass("ui-popup-hidden");
+						$("#dlg-memberRole-num-popup").removeClass("ui-popup-truncate");
+						$("#dlg-memberRole-num-popup").removeClass("slideup");
+				    }
+		    }
 			return;
 		}
 		
@@ -1754,14 +1761,12 @@ order.uiCusts = (function(){
 					oldnum+=1;
 				}
 			});
-			if(OrderInfo.provinceInfo.prodOfferId!=null && OrderInfo.provinceInfo.prodOfferId!=""){
-				$("#dlg-memberRole-num-popup").addClass("ui-popup-hidden");
-			}
-			else{
-				$("#dlg-memberRole-num").popup("close");
-			}
+			
 			confirm(newnum,oldnum);
 			}
+			$("#dlg-memberRole-num-popup").removeClass("ui-popup-hidden");
+			$("#dlg-memberRole-num-popup").removeClass("ui-popup-truncate");
+
 		}else{
 			if(!order.service.setOfferSpec(1)){
 				$.alert("错误提示","请选择一个接入产品");
@@ -1923,6 +1928,9 @@ order.uiCusts = (function(){
 			}
 		}
 		_showLayer(inParam,offerSpec);
+		if(OrderInfo.provinceInfo.reloadFlag=="N"){
+			$("#dlg-memberRole-num-popup").addClass("ui-popup-hidden");
+		}
 		//order.uiCusts.buildMainView(param);
 	};
 	

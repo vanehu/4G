@@ -1070,6 +1070,9 @@ order.cust.mgr = (function(){
 			if(response.data.custInfos==undefined){
 				$.alert("提示","抱歉，没有定位到客户，请尝试其他客户。");
 				return false;
+			}else if(!ec.util.isArray(response.data.custInfos)){
+				$.alert("提示","抱歉，没有定位到客户，请尝试其他客户。");
+				return false;
 			}
 			if(response.data.prodInstInfos==undefined && busitypeflag!=1){
 				$.alert("提示","客户下没有可以办理业务的移动用户。");
