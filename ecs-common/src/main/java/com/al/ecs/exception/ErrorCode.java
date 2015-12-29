@@ -1,4 +1,4 @@
-package com.al.ecs.exception;
+﻿package com.al.ecs.exception;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -158,6 +158,7 @@ public enum ErrorCode {
     QUERY_ACC_NBR_BY_CUST("根据客户查询接入号","010344","01","020001","02"),
     CHANGEUIM_MSG_SEND("补换卡短信验证","010345","01","050106","05"),
     QUERY_CUST_COMPRE_INFO("客户架构信息查询","010346","01","020346","02"),
+    QUERY_SERVDEPEND_FORCANCEL("查询被依赖的销售品或功能产品","010347","01","020131","02"),
   ///************************************************************服务层接口异常编码（临时使用）************************************************************/ 
     GET_INVOICE_TEMPLATES("获取打印模板","010097","01","010098","01"),
     AREA_ALL("地区字典-门户接口","010101","01","010101","01"),

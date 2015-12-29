@@ -11,7 +11,7 @@
    			<#if item.ifDault==0 || (item.counts?? && (item.counts>1))>
    				<dd class="mustchoose"></dd>
    			<#else>
-   				<dd id="del_${prodId}_${item.offerId}" class="delete" onclick="AttachOffer.delOffer(${prodId},${item.offerId})"></dd>
+   				<dd id="del_${prodId}_${item.offerId}" class="delete" offerSpecId="${item.offerSpecId}" onclick="AttachOffer.delOffer(${prodId},${item.offerId})"></dd>
    			</#if>
 	        <span>${item.offerSpecName}</span>
 	        <#if item.ifParams=="Y" && item.offerSpecId?? && item.offerSpecId!="">
@@ -35,11 +35,11 @@
 <div class="fs_choosed">
 	<ul id="serv_ul_${prodId}">
 		<#list servList as item>
-   		<li id="li_${prodId}_${item.servId}" >
+   		<li id="li_${prodId}_${item.servId}" servSpecId="${item.servSpecId}" name="product">
    			<#if item.ifDault==0 >
    				<dd class="mustchoose"></dd>
    			<#else>
-   				<dd id="del_${prodId}_${item.servId}" class="delete" onclick="AttachOffer.closeServ(${prodId},${item.servId})"></dd>
+   				<dd id="del_${prodId}_${item.servId}" class="delete" servSpecId="${item.servSpecId}" onclick="AttachOffer.closeServ(${prodId},${item.servId})"></dd>
    			</#if>
 	        <span>${item.servSpecName}</span>
 	        <#if item.ifParams =="Y" && item.servSpecId?? && item.servSpecId!="">

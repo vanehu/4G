@@ -36,6 +36,14 @@ AttachOffer = (function() {
 	
 	var checkedOfferSpec = []; //已经校验过的终端预约号对应的促销包
 	
+	var _orderedOfferSpecIds = [];//已订购销售品规格
+	
+	var _servSpecIds = [];//已订购功能产品规格
+	
+	var _servSpecs = [];
+	
+	var _offerSpecs = [];
+	
 	//初始化附属销售页面
 	var _init = function(){
 		var prodInfo = order.prodModify.choosedProdInfo;
@@ -558,6 +566,8 @@ AttachOffer = (function() {
 		var $span = $("#li_"+prodId+"_"+offerId).find("span"); //定位删除的附属
 		if($span.attr("class")=="del"){  //已经退订，再订购
 			AttachOffer.addOffer(prodId,offerId,reflag);
+			var thisServSpecId =  $("#del_"+prodId+"_"+offerId).attr("offerSpecId");
+			_removeOfferAndServ(thisServSpecId);
 		}else { //退订
 			var offer = CacheData.getOffer(prodId,offerId);
 			if(!ec.util.isArray(offer.offerMemberInfos)){	
@@ -612,10 +622,28 @@ AttachOffer = (function() {
 				offer.offerMemberInfos = data.offerMemberInfos=offerMemberInfos;
 				offer.offerSpec = data.offerSpec;
 			}
+			var respnose = "";
+			if($("#del_"+prodId+"_"+offerId).attr("offerSpecId") !="" && $("#del_"+prodId+"_"+offerId).attr("offerSpecId") !=null){
+				$("li[isdel='N']").each(function(){
+					if($(this).attr('offerSpecId') !=""){
+						_orderedOfferSpecIds.push($(this).attr('offerSpecId'));
+					}
+				});
+				$("li[name='product']").each(function(){
+					if($(this).attr('servSpecId') !=""){
+						_servSpecIds.push($(this).attr('servSpecId'));
+					}
+				});
+				respnose = AttachOffer.queryOfferAndServDependForCancel($("#del_"+prodId+"_"+offerId).attr("offerSpecId"),"");
+			}
+			
 			if(reflag!=undefined && reflag=="reload"){//暂存单二次加载
 				offer.isdel = "Y";
 				$span.addClass("del");
 				delServByOffer(prodId,offer);
+				if(respnose !="" && respnose.data.resultCode == "0" && respnose.data.result.servSpec!=undefined && respnose.data.result.offerSpec!=undefined ){
+					_addOfferAndServDepend(respnose.data.result.servSpec,respnose.data.result.offerSpec,$("#del_"+prodId+"_"+offerId).attr("offerSpecId"));
+				}
 			}else{
 				var content = "";
 				if(offer.offerSpec!=undefined){
@@ -623,11 +651,31 @@ AttachOffer = (function() {
 				}else {
 					content = '退订【'+$span.text()+'】可选包' ;
 				}
+				var contentAppend = "";
+				if(respnose !="" && respnose.data.resultCode == "0" && respnose.data.result.servSpec!=undefined && respnose.data.result.servSpec !=null && respnose.data.result.servSpec !=""){
+					$.each(respnose.data.result.servSpec,function(){
+						contentAppend = ","+contentAppend + this.servSpecName; 
+					});
+				}
+				if(respnose !="" && respnose.data.resultCode == "0" && respnose.data.result.offerSpec!=undefined && respnose.data.result.offerSpec !=null && respnose.data.result.offerSpec !=""){
+					$.each(respnose.data.result.offerSpec,function(){
+						contentAppend = ","+contentAppend + this.offerSpecName; 
+					});
+				}
+				if(contentAppend !=""){
+					content = content + "此可选包与"+contentAppend+"相依赖，系统会自动退订已订购的相关的依赖销售品。"
+				}
 				$.confirm("信息确认",content,{ 
 					yes:function(){
 						offer.isdel = "Y";
 						$span.addClass("del");
 						delServByOffer(prodId,offer);
+						
+						//增加退订的依赖销售品
+						if(respnose !="" && respnose.data.resultCode == "0" && respnose.data.result.servSpec!=undefined && respnose.data.result.offerSpec!=undefined ){
+							_addOfferAndServDepend(respnose.data.result.servSpec,respnose.data.result.offerSpec,$("#del_"+prodId+"_"+offerId).attr("offerSpecId"));
+						}
+						
 					},
 					no:function(){	
 					}
@@ -732,7 +780,10 @@ AttachOffer = (function() {
 		var serv = CacheData.getServ(prodId,servId);
 		var $span = $("#li_"+prodId+"_"+serv.servId).find("span");
 		if($span.attr("class")=="del"){  //已经关闭，取消关闭
+			var thisServSpecId =  $("#li_"+prodId+"_"+serv.servId).attr("servSpecId");
+			_removeOfferAndServ(thisServSpecId);
 			_openServ(prodId,serv,reflag);
+			
 		}else if("13409244"==serv.servSpecId){//一卡双号虚号
 			$.alert("提示","请通过“一卡双号退订”入口或者短信入口退订此功能");
 		}else{ //关闭
@@ -741,19 +792,148 @@ AttachOffer = (function() {
 				$.alert("提示","4G卡不能退订【4G（LTE）上网】功能产品");
 				return;
 			}
+			var respnose = "";
+			if($("#del_"+prodId+"_"+servId).attr("servSpecId") !="" && $("#del_"+prodId+"_"+servId).attr("servSpecId") !=null){
+				$("li[isdel='N']").each(function(){
+					if($(this).attr('offerSpecId') !=""){
+						_orderedOfferSpecIds.push($(this).attr('offerSpecId'));
+					}
+				});
+				$("li[name='product']").each(function(){
+					if($(this).attr('servSpecId') !=""){
+						_servSpecIds.push($(this).attr('servSpecId'));
+					}
+				});
+				respnose = AttachOffer.queryOfferAndServDependForCancel("",$("#del_"+prodId+"_"+servId).attr("servSpecId"));
+			}
+			
 			if(reflag!=undefined && reflag=="reload"){//暂存单二次加载
 				$span.addClass("del");
 				serv.isdel = "Y";
+				if(respnose !="" && respnose.data.resultCode == "0" && respnose.data.result.servSpec!=undefined && respnose.data.result.offerSpec!=undefined ){
+					_addOfferAndServDepend(respnose.data.result.servSpec,respnose.data.result.offerSpec,$("#del_"+prodId+"_"+servId).attr("servSpecId"));
+				}
 			}else{
-				$.confirm("信息确认","关闭【"+$span.text()+"】功能产品",{ 
+				var contentAppend = "";
+				if(respnose !="" &&  respnose.data.resultCode == "0" && respnose.data.result.servSpec!=undefined && respnose.data.result.servSpec !=null && respnose.data.result.servSpec !=""){
+					$.each(respnose.data.result.servSpec,function(){
+						contentAppend = contentAppend + this.servSpecName +","; 
+					});
+				}
+				if(respnose !="" &&  respnose.data.resultCode == "0" && respnose.data.result.servSpec!=undefined && respnose.data.result.offerSpec !=null && respnose.data.result.offerSpec !=""){
+					$.each(respnose.data.result.offerSpec,function(){
+						contentAppend = contentAppend + this.offerSpecName+","; 
+					});
+				}
+				var content= $span.text();
+				if(contentAppend !=""){
+					content = content + "此可选包与"+contentAppend+"相依赖，系统会自动退订已订购的相关的依赖销售品。"
+				}
+				$.confirm("信息确认","关闭【"+content+"】功能产品",{ 
 					yesdo:function(){
 						$span.addClass("del");
 						serv.isdel = "Y";
+						if(respnose !="" && respnose.data.resultCode == "0" && respnose.data.result.servSpec!=undefined && respnose.data.result.offerSpec!=undefined ){
+							_addOfferAndServDepend(respnose.data.result.servSpec,respnose.data.result.offerSpec,$("#del_"+prodId+"_"+servId).attr("servSpecId"));
+						}
+						
 					},
 					no:function(){						
 					}
 				});
 			}
+		}
+	};
+	
+	var _removeOfferAndServ = function(thisServSpecId){
+		//update by huangjj3  61419 取消关闭，把依赖的销售品从开通的去除
+		for(var i=0;i<_servSpecs.length;i++){
+			var servSpecs = _servSpecs[i];
+			if(thisServSpecId == servSpecs.servSpecId){
+				for(var j=0;j<servSpecs.servSpe.length;j++){
+					var servSpe = servSpecs.servSpe[j];
+						for(var n=0;n<AttachOffer.openedServList[0].servList.length;n++){
+							var opendServ = AttachOffer.openedServList[0].servList[n];
+							if(servSpe.servSpecId == opendServ.servSpecId){
+								opendServ.isdel = "N";
+								//AttachOffer.openedServList[0].servList.splice(n,1);//删除因为依赖加入的销售品
+							}
+					}
+				}
+			}
+		}
+		
+		for(var i=0;i<_offerSpecs.length;i++){
+			var servSpecs = _offerSpecs[i];
+			if(thisServSpecId == servSpecs.servSpecId){
+				for(var j=0;j<servSpecs.offerSpe.length;j++){
+					var offerSpe = servSpecs.offerSpe[j];
+					for(var n=0;n<AttachOffer.openedList[0].offerList.length;n++){
+							var opendServ = AttachOffer.openedServList[0].servList[n];
+							if(offerSpe.offerId == opendServ.offerId){
+								opendServ.isdel = "N";
+								//AttachOffer.openedList[0].offerList.splice(n,1);//删除因为依赖加入的销售品
+							}
+					}
+				}
+			}
+		}
+		
+		for(var i=0;i<_offerSpecs.length;i++){
+			var servSpecs = _offerSpecs[i];
+			if(thisServSpecId == servSpecs.servSpecId){
+				_offerSpecs.slice(i, 1);
+			}
+		}
+		
+		for(var i=0;i<_servSpecs.length;i++){
+			var servSpecs = _servSpecs[i];
+			if(thisServSpecId == servSpecs.servSpecId){
+				_servSpecs.slice(i, 1);
+			}
+		}
+	};
+	
+	var _addOfferAndServDepend = function(reSrvSpec,reOfferSpec,OfferORServId){
+		if(reSrvSpec !=""){
+			var servSpec ={
+					servSpecId:OfferORServId,
+					servSpe:reSrvSpec,
+					offerSpe:[]
+			};
+			_servSpecs.push(servSpec);
+			
+			$.each(reSrvSpec,function(){
+					if(AttachOffer.openedServList.length>0){
+						for(var j=0;j<AttachOffer.openedServList[0].servList.length;j++){
+							var openedServ = AttachOffer.openedServList[0].servList[j];
+							if(this.servSpecId == openedServ.servSpecId){
+								openedServ.isdel = "Y";
+							}
+						}
+					}
+			});
+			
+		}
+		if(reOfferSpec !=""){
+			var offerSpec ={
+					servSpecId:OfferORServId,
+					offerSpe:reOfferSpec,
+					servSpe:[]
+			};
+			_offerSpecs.push(offerSpec);
+			
+			$.each(reOfferSpec,function(){
+					if(AttachOffer.openedList.length>0){
+						for(var j=0;j<AttachOffer.openedList[0].offerList.length;j++){
+							var openedServ = AttachOffer.openedList[0].offerList[j];
+							if(this.offerId == openedServ.offerId){
+								openedServ.isdel = "Y";
+							}
+						}
+					}
+			});
+			
 		}
 	};
 	
@@ -3259,6 +3439,7 @@ AttachOffer = (function() {
 					}
 				}
 			});
+	       
 		});
 		//遍历已开通附属销售品列表
 		for ( var i = 0; i < AttachOffer.openList.length; i++) {
@@ -3307,6 +3488,14 @@ AttachOffer = (function() {
 					
 				}
 			}
+			
+			$.each(_offerSpecs,function(){
+				for(var i=0;i<this.offerSpec.length;i++){
+					var spec = this.offerSpec[i];
+					SoOrder.createAttOffer(spec,open.prodId,1,busiOrders);
+				}
+				
+			});
 		}
 		
 		//遍历已选增值业务
@@ -4631,6 +4820,20 @@ AttachOffer = (function() {
 		window.parent.main.home.addTab(menuInfo.data.resourceId,"终端规格查询",contextPath+"/"+menuInfo.data.menuPath);
 	};
 	
+	var _queryOfferAndServDependForCancel = function(offerSpecId,servSpecId){
+		if(OrderInfo.order.soNbr==null || OrderInfo.order.soNbr==undefined || OrderInfo.order.soNbr==""){
+			OrderInfo.order.soNbr = UUID.getDataId();
+		}
+		var param={
+				orderedOfferSpecIds : _orderedOfferSpecIds,
+				servSpecIds : _servSpecIds,
+				offerSpecId : offerSpecId,
+				servSpecId : servSpecId,
+				soNbr : OrderInfo.order.soNbr
+		};
+		var response = $.callServiceAsJson(contextPath+"/offer/queryOfferAndServDependForCancel",param); //依赖销售品查询
+		return response;
+	};
 	return {
 		addOffer 				: _addOffer,
 		addOfferSpec 			: _addOfferSpec,
@@ -4699,6 +4902,7 @@ AttachOffer = (function() {
 		mainCartOpenedList		:_mainCartOpenedList,
 		chkReserveCode          :_chkReserveCode,
 		queryMenuInfo           :_queryMenuInfo,
-		showTerminalInfo        :_showTerminalInfo
+		showTerminalInfo        :_showTerminalInfo,
+		queryOfferAndServDependForCancel : _queryOfferAndServDependForCancel
 	};
 })();

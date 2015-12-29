@@ -475,5 +475,26 @@ public class OfferBmoImpl implements OfferBmo {
 		}
 		return resultMap;
 	}
+
+	public Map<String, Object> queryOfferAndServDependForCancel(
+			Map<String, Object> paramMap, String optFlowNum,
+			SessionStaff sessionStaff) throws Exception {
+		DataBus db = InterfaceClient.callService(paramMap,
+				PortalServiceCode.QUERY_SERVDEPEND_FORCANCEL, optFlowNum, sessionStaff);
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		try{
+			// 服务层调用与接口层调用都成功时，返回列表；否则返回空列表
+			if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db.getResultCode()))) {
+				resultMap = db.getReturnlmap();
+			} else {
+				resultMap.put("code", ResultCode.R_FAIL);
+				resultMap.put("msg", db.getResultMsg());
+			}
+		} catch (Exception e) {
+			log.error("门户处理营业后台的queryOfferAndServDependForCancel服务返回的数据异常", e);
+			throw new BusinessException(ErrorCode.QUERY_SERVDEPEND_FORCANCEL, paramMap, resultMap, e);
+		}
+		return resultMap;
+	}
 	
 }

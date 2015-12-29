@@ -188,5 +188,15 @@ public interface OfferBmo {
      * @throws Exception
      */
 	public Map<String, Object> delMyfavorite(Map<String, Object> paramMap,String optFlowNum, SessionStaff sessionStaff)throws Exception;
+	
+	/**
+	 * 
+	 * @param paramMap
+	 * @param optFlowNum
+	 * @param sessionStaff
+	 * @return
+	 * @throws Exception
+	 */
+	public Map<String, Object> queryOfferAndServDependForCancel(Map<String, Object> paramMap, String optFlowNum,SessionStaff sessionStaff)throws Exception;
 
 }
