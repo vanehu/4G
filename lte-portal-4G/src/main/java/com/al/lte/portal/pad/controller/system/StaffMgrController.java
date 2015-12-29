@@ -78,21 +78,38 @@ public class StaffMgrController extends com.al.lte.portal.controller.system.Staf
         String pageSize = MapUtils.getString(param, "pageSize", "");
         int iPage = 1;
         int iPageSize = 10;
-        Map<String, Object> staffParm = new HashMap<String, Object>(param);
+        Map<String, Object> staffParm = new HashMap<String, Object>();
         try {
             iPage = Integer.parseInt(pageIndex);
             iPageSize = Integer.parseInt(pageSize);
+            staffParm.put("objInstId", param.get("objInstId"));
+            staffParm.put("pageIndex", param.get("pageIndex"));
+            staffParm.put("pageSize", param.get("pageSize"));
+            String staffName=(String)param.get("staffName");
+            String staffCode=(String)param.get("staffCode2");
+            String qrySalesCode=(String)param.get("qrySalesCode");
             if (iPage > 0) {
-                staffParm.remove("dealerId");
+              //  staffParm.remove("dealerId");
                 staffParm.put("areaId", iAreaId);
-                if (staffParm.get("staffName") != null && "".equals(staffParm.get("staffName"))) {
+                if(staffName!=null && staffName.trim().length()>0){
+                	staffParm.put("staffName", staffName);
+                }
+                if(staffCode!=null && staffCode.trim().length()>0){
+                	staffParm.put("staffCode",staffCode);
+                }
+                if(qrySalesCode!=null && qrySalesCode.trim().length()>0){
+                	staffParm.put("qrySalesCode",qrySalesCode);
+                }
+                /*
+                if (staffParm.get("staffName") == null && "".equals(staffParm.get("staffName"))) {
                     staffParm.remove("staffName");
                 }
-                if (staffParm.get("qryStaffCode") != null && "".equals(staffParm.get("qryStaffCode"))) {
+                if (staffParm.get("qryStaffCode") == null && "".equals(staffParm.get("qryStaffCode"))) {
                     staffParm.remove("staffCode");
                 }else{
                 	staffParm.put("staffCode", staffParm.get("qryStaffCode"));
                 }
+                */
                 Map<String, Object> returnMap = this.staffBmo.queryStaffList(staffParm, null, sessionStaff);
                 if (returnMap.get("totalNum") != null) {
                     totalSize = Integer.parseInt(returnMap.get("totalNum").toString());
@@ -101,6 +118,7 @@ public class StaffMgrController extends com.al.lte.portal.controller.system.Staf
                     }
                 }
             }
+           
         } catch (BusinessException be) {
             super.failed(be);
         } catch (InterfaceException ie) {

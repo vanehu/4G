@@ -698,14 +698,16 @@ order.main = (function(){
 	//协销人-查询 -列表 ok
 	var _queryStaffPage = function(qryPage,scroller){
 		var param = {
-			"dealerId" :$("#dealer_id").val(),
-			"staffName":$("#qryStaffName").val(),
-			"staffCode":$("#qryStaffCode").val(),
-			"salesCode":$("#qrySalesCode").val(),
-			"pageIndex":qryPage,
-			"objInstId":$("#objInstId").val(),
-			"pageSize" :10
-		};
+				"dealerId" :$("#dealer_id").val(),
+				"qrySalesCode":$("#qrySalesCode").val(),
+				"staffName":$("#qryStaffName").val(),
+				"staffCode":$("#qryStaffCode").val(),
+				"staffCode2":$("#qryStaffCode").val(),
+				"salesCode":$("#qrySalesCode").val(),
+				"pageIndex":qryPage,
+				"objInstId":$("#objInstId").val(),
+				"pageSize" :10
+			};
 		
 		$.callServiceAsHtml(contextPath + "/pad/staffMgr/getStaffList",param,{
 			"before":function(){
