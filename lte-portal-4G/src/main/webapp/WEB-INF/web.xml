@@ -186,7 +186,7 @@
 		<init-param>
 			<param-name>entryPoints</param-name>
 			<param-value>
-			    /staff/login/logindo,/main/notice,/cust/queryCust,/cust/queryCertType,/staffMgr/staffPwd,
+			    /staff/login/logindo,/cust/queryCust,/cust/queryCertType,/staffMgr/staffPwd,
 			    /mktRes/phonenumber/purchase,/mktRes/reservenumber/submit,/order/batchOrder/batchOrderFlag,
 			    /orderQuery/area,/orderQuery/areaManager,/staffMgr/getCTGMainData,/staffMgr/setCurrentChannel
 			</param-value>
