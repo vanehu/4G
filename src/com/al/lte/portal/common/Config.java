@@ -35,7 +35,7 @@ public class Config {
 	 * 根据配置文件中的ipconfig判别是否公网，如是公网，则返回分省域名，分省域名从配置文件中读取；如非公网环境，保持原代码逻辑，不做改动。
 	 * @param req
 	 * @param province 省份拼音，如jiangsu、beijing，根据该拼音，获取对应的分省域名
-	 * @return 如果是公网，则以字符串形式返回分省域名。
+	 * @return 如果是公网，则以字符串形式返回分省域名；若分省域名获取失败，则返回crm.189.cn，不会返回null或者""。
 	 */
 	public static String getIpconfig(HttpServletRequest req, String province){
 		String ipconfig = getProperties().getProperty("ipconfig");//0表示启用公网， 1表示启用http请求头的ip，2表示测试环境10101
@@ -138,7 +138,12 @@ public class Config {
 	 */
 	public static String getProvVersion(String province){
 		String version = getProperties().getProperty(province+"Version");
-		if(!"81".equals(version) && !"82".equals(version) && !"83".equals(version) && !"84".equals(version)){
+		if(!"81".equals(version) && 
+				!"82".equals(version) && 
+				!"83".equals(version) && 
+				!"84".equals(version) && 
+				!"93".equals(version) && 
+				!"94".equals(version)){
 			version = "9";//获取文件失败
 		}
 		System.out.println(province+"端口=============="+version);
@@ -225,7 +230,7 @@ public class Config {
 	 * @param province省份拼音
 	 * @return 分省域名字符串<br/>
 	 * 域名为完整域名，从配置文件中获取。例如：北京域名应为"beijing.crm.189.cn"，山西域名应为"shxi.crm.189.cn"这样的格式，端口信息(如":83")以及HTTP请求头信息(如"http://")不应添加到域名里面。
-	 * <br/>如果无法从配置文件读取数据或读取失败，则返回空字符串""
+	 * <br/>如果无法从配置文件读取数据或读取失败，则返回字符串crm.189.cn
 	 * @author ZhangYu
 	 */
 	public static String getDomain(String province){

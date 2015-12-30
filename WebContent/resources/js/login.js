@@ -68,6 +68,8 @@ staff.login = (function($) {
 		    			httpconfig = "http";
 		    		}else if(version=="83" || version=="84"){
 		    			httpconfig ="https";
+		    		}else if(version=="93" || version=="94"){
+		    			httpconfig = "https";
 		    		}
 		    		var staffCode = $("#staffCode").val();
 		    		var password = $("#password").val();

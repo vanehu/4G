@@ -20,13 +20,16 @@ public class MainServlet extends HttpServlet {
 		 if(areack!=null){
 			 String province = areack.getValue();
 			 String Port = Config.getProvVersion(province);
-			 String domain = ("ON".equals(Config.getProperties().getProperty("DisasterTolerance"))) ? Config.getIpconfig(req, province) : Config.getIpconfig(req);
+			 //String domain = ("ON".equals(Config.getProperties().getProperty("DisasterTolerance"))) ? Config.getIpconfig(req, province) : Config.getIpconfig(req);
+			 String domain = Config.getIpconfig(req, province);
 			 String httpconfig = "";
 			 if("81".equals(Port) || "82".equals(Port)){
 				 httpconfig = "http";
 			 }else if("83".equals(Port) || "84".equals(Port)){
 				 httpconfig = "https";
-			 }
+			 }else if("93".equals(Port) || "94".equals(Port)){
+				httpconfig = "https";
+			}
 			 String uri = req.getRequestURI().replaceAll("ltePortal", "provPortal");
 			 url = httpconfig+"://"+domain+":"+Port+uri;
 			 if(req.getQueryString()!=null&&!("".equals(req.getQueryString()))){
