@@ -557,7 +557,7 @@ order.calcharge = (function(){
 	var _setGlobeMoney=function(obj){
 		money=$.trim($(obj).val());
 	};
-	var _disableButton=function(){
+	/*var _disableButton=function(){
 		$("#toCharge").removeClass("btna_o").addClass("btna_g");
 		$("#toComplate").removeClass("btna_o").addClass("btna_g");
 		$("#orderCancel").removeClass("btna_o").addClass("btna_g");
@@ -566,7 +566,7 @@ order.calcharge = (function(){
 		$("#toComplate").off("click");
 		$("#toCharge").off("click");
 		$("#orderSave").off("click");
-	};
+	};*/
 	var _conBtns=function(){
 		$("#orderCancel").removeClass("btna_g").addClass("btna_o");
 		var val=($('#realmoney').val())*1;
@@ -653,18 +653,30 @@ order.calcharge = (function(){
 	};
 	
 	var _updateChargeInfoForCheck=function(flag){
-		_disableButton();
+		//_disableButton();
 		if(submit_success){
 			$.alert("提示","订单已经建档成功,不能重复操作!");
 			return;
 		}
 		if(inOpetate){
+			$.alert("提示","请务重复点击收费按钮!");
 			return;
 		}
 		if(!_submitParam()){
+			$.alert("提示","订单数据异常，请核对数据!");
 			_conBtns();
 			return ;
 		}
+		//解决收费按钮置灰
+		$("#toCharge").removeClass("btna_o").addClass("btna_g");
+		$("#toComplate").removeClass("btna_o").addClass("btna_g");
+		$("#orderCancel").removeClass("btna_o").addClass("btna_g");
+		$("#orderSave").removeClass("btna_o").addClass("btna_g");
+		$("#orderCancel").off("click");
+		$("#toComplate").off("click");
+		$("#toCharge").off("click");
+		$("#orderSave").off("click");
+		
 		inOpetate=true;
 		var url=contextPath+"/order/updateChargeInfoForCheck";
 		var params={
