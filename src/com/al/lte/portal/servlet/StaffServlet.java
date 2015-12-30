@@ -74,6 +74,8 @@ public class StaffServlet extends HttpServlet {
 			httpconfig = "http";
 		}else if("83".equals(Port) || "84".equals(Port)){
 			httpconfig = "https";
+		}else if("93".equals(Port) || "94".equals(Port)){
+			httpconfig = "https";
 		}
 		String uri = req.getRequestURI().replaceAll("ltePortal", "provPortal");
 		String url = httpconfig + "://" + domain + ":"
