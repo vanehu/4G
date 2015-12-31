@@ -103,7 +103,7 @@
 	}
 
 </style>
-
+<#escape x as x?html>
 <div id="popNotice">
 	<div id="popNoticeTitle">重要通知</div>
 	<a id="popClose" onclick="main.home.hidePopNotice()"></a>
@@ -116,7 +116,7 @@
 		</div>
 	</div>
 </div>
-
+</#escape>
 <script>
 	$(function(){
 		$("#popNotice").show();

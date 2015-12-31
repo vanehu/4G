@@ -183,25 +183,26 @@ public class CharacterAndFileEncodingFilter extends OncePerRequestFilter {
             MDC.put(PortalConstant.MDC_USER_IP, address == null ? "" : address);
         }
         try {
+
             //against some types of XSS (cross-site scripting) attacks
             response.setHeader("X-XSS-Protection", "1;mode=block");
             //prevent Internet Explorer from MIME-sniffing a response away from the declared content-type
             response.setHeader("X-Content-Type-Options", "nosniff");
-            //会话ID重写，禁止页面脚本读取cookie中的jsessionid
-            String sessionid = request.getSession().getId();
+            //会话ID重写，禁止页面脚本读取cookie中的jsessionid  was不支持代码设置，通过server配置
+            /*String sessionid = request.getSession().getId();
             String contextPath = request.getContextPath();
             if (request.isSecure()) {
                 response.setHeader("Set-Cookie", "JSESSIONID=" + sessionid + "; Path=" + contextPath
                         + "; HttpOnly ; Secure");
             } else {
                 response.setHeader("Set-Cookie", "JSESSIONID=" + sessionid + "; Path=" + contextPath + "; HttpOnly");
-            }
+            }*/
             //只有允许来自同个origin iframe访问
             if (xframeOptions != null) {
                 response.addHeader("X-Frame-Options", xframeOptions);
             }
             filterChain.doFilter(request, response);
-
+			
         } finally {
             if (!isResourceUrl) {
                 // 从MDC的堆栈中删除网络地址.
