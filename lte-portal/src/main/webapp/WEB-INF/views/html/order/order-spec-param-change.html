@@ -32,6 +32,11 @@
   <ul class="fillin show" id="order_spc_update"  partyId="${partyId}" >
 	
 	<#list orderSpec.prodSpecParams as prodSpec>
+	
+	<#if prodSpec.itemSpecId=="800000011" && realNameReg=="OFF">
+	<!-- 政企客户使用人开关为关闭状态则略过当前的使用人属性 -->
+	<#else>
+	
 		<#assign params_show = 1 >
 		<#if (limitParams)?? &&((limitParams)?size>0)>
 			<#list limitParams as limitParam>
@@ -244,6 +249,7 @@
 	</#if>
 	</li>
 	
+	</#if>
 	</#list>
 	
 	<#if ((orderSpec.prodSpecParams)?size) % 2 == 1>

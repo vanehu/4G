@@ -1,6 +1,9 @@
 <#if (prodSpecParams)?? &&((prodSpecParams)?size>0)>
 	
 	<#list prodSpecParams as prodSpec>
+	<#if prodSpec.itemSpecId=="800000011" && realNameReg=="OFF">
+	<!-- 政企客户使用人开关为关闭状态则略过当前的使用人属性 -->
+	<#else>
 	<#assign rule=prodSpec.rule />
 	<li>
 	
@@ -188,6 +191,7 @@
 	</#if>
 	
 	</li>
+	</#if>
 	</#list>
 	
 	<#if ((prodSpecParams)?size) % 2 == 1>

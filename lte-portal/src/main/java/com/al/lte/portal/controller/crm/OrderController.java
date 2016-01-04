@@ -420,6 +420,12 @@ public class OrderController extends BaseController {
 				model.addAttribute("roleCd", roleCd);
 				//String payMethodCode = MySimulateData.getInstance().getParam(SysConstant.PAY_METHOD_CODE) ;
 				//model.addAttribute("payMethodCode", payMethodCode==null?"error":payMethodCode);
+				//获取当前转售商实名认证开关状态
+				String realNameReg = propertiesUtils.getMessage(SysConstant.BUSI_REAL_NAME_REG_SWITCH+"_"+sessionStaff.getPartnerId());
+				if(!"ON".equals(realNameReg) && !"OFF".equals(realNameReg)){
+					realNameReg = "ON";//默认开启
+				}
+				model.addAttribute("realNameReg", realNameReg);
 				model.addAttribute("code", 0);
 			} else {
 				model.addAttribute("code", 1);
@@ -542,6 +548,12 @@ public class OrderController extends BaseController {
 			model.addAttribute("isAvoidRemind", isAvoidRemind);
 			
         	model.addAttribute("orderSpec", result);
+        	//获取当前转售商实名认证开关状态
+    		String realNameReg = propertiesUtils.getMessage(SysConstant.BUSI_REAL_NAME_REG_SWITCH+"_"+sessionStaff.getPartnerId());
+    		if(!"ON".equals(realNameReg) && !"OFF".equals(realNameReg)){
+    			realNameReg = "ON";//默认开启
+    		}
+    		model.addAttribute("realNameReg", realNameReg);
         	
         	List<Map<String, Object>> prodInstParams = (List<Map<String, Object>>) result.get("prodSpecParams");
         	

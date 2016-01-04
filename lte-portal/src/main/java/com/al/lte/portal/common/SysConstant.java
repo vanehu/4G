@@ -329,6 +329,9 @@ public final class SysConstant {
     
     /** session中保存已选的客户信息 */
     public static final String SESSION_SELECTED_CUST_INFOS = "_selectedCustInfos";
+    
+    /** 政企使用人实名认证开关 */
+    public static final String BUSI_REAL_NAME_REG_SWITCH = "BUSI_REAL_NAME_REG_SWITCH";
 	
 }
 
