@@ -1458,7 +1458,10 @@ AttachOffer = (function() {
 							$liGroups.append($strAdd).append($strDel);
 						}
 						$ulGroups.append($liGroups);
+						var minNumArray=new Array();
 						for(var k=1;k<=minNum;k++){
+							var id="terminalText_"+objInstId+'_'+k;
+							minNumArray[k-1]=id;
 							var $liTerminal=$('<li class="form-group" style="list-style-type:none;"><label for="exampleInputPassword1">终端校验<span class="text-warning">*</span></label><div class="input-group"><input id="terminalText_'+objInstId+'_'+k+'" type="text" class="form-control" maxlength="50" placeholder="请先输入终端串号" />'
 									+'<span class="input-group-btn"><button id="terminalBtn_'+objInstId+'_'+k+'" type="button" num="'+k+'" flag="'+isFastOffer+'" prodId="'+prodId+'" offerSpecId="'+newSpec.offerSpecId+'" onclick="AttachOffer.checkTerminalCode(this)" class="btn btn-default">校验</button></span></div></li>');
 							var	$li4 = $('<li id="terminalDesc_'+k+'" style="display:none;list-style-type:none;" ><label></label><label id="terminalName_'+k+'"></label></li>');
@@ -1472,6 +1475,26 @@ AttachOffer = (function() {
 //				$ul.append($li1).append($li2).append($li3).appendTo($div);
 				$ul.appendTo($div);
 				$div.show();
+				var terminalCode="";
+				if(OrderInfo.terminalCode!=null && OrderInfo.terminalCode!="" && OrderInfo.terminalCode!="null" && OrderInfo.reloadFlag!="N"){
+					var	accessNum=OrderInfo.getAccessNumber(prodId);
+					if(accessNum!="" && accessNum!=null && accessNum!= undefined){
+						var terminalCodeArray=OrderInfo.terminalCode.split(",");
+						for(var k=0;k<terminalCodeArray.length;k++){
+							if(terminalCodeArray[k].indexOf(accessNum)!=-1){
+								//取终端串码minNumArray
+								terminalCode=terminalCodeArray[k].split("_")[1];
+								//填值
+								for(var z=0;z<minNumArray.length;z++){
+									if(minNumArray[z].indexOf(prodId)!=-1){
+										$("#"+minNumArray[z]).val(terminalCode);
+			                             break;
+									}
+								}
+							}
+						}
+					}
+				}
 				if(newSpec.agreementInfos[0].minNum>0){//合约里面至少要有一个终端
 					newSpec.isTerminal = 1;
 				}
