@@ -659,6 +659,11 @@ OrderInfo = (function() {
 				            };
 							busiOrder.data.boServItems.push(delParam);
 						}
+						var feeType = $("select[name='pay_type_-1']").val();
+						if(feeType==undefined) feeType = order.prodModify.choosedProdInfo.feeType;
+						if(prodServ.servSpecId == CONST.YZFservSpecId && feeType == CONST.PAY_TYPE.AFTER_PAY){
+							this.setValue = "";
+						}
 						if(ec.util.isObj(this.setValue)){
 							var addParam = {
 				                itemSpecId : this.itemSpecId,
