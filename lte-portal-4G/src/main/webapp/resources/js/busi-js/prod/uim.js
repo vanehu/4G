@@ -346,6 +346,11 @@ prod.uim = (function() {
 		$("#uim_release_btn_"+prodId).removeClass("purchase").addClass("disablepurchase");
 		$("#uim_txt_"+prodId).attr("disabled",false);
 		$("#uim_txt_"+prodId).val("");
+		$.each(OrderInfo.boProd2Tds,function(){
+			var prodId = this.prodId;
+		    var accNbr = OrderInfo.getAccessNumber(prodId);
+		    order.dealer.removeAttDealer(accNbr); //删除协销人
+		});
 		OrderInfo.clearCheckUimData(prodId);
 		OrderInfo.clearProdUim(prodId);
 	};

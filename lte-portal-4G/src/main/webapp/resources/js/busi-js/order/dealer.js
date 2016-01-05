@@ -275,6 +275,49 @@ order.dealer = (function() {
 				});
 			}
 		}
+		if(OrderInfo.actionFlag==22 || OrderInfo.actionFlag==23){ //补换卡、异地补换卡
+			var objInstId = order.prodModify.choosedProdInfo.accNbr;
+			var $tr = $("<tr id='tr_"+objInstId+"' name='tr_"+objInstId+"'></tr>");
+			var $tdType = $('<td></td>');
+			var objId = objInstId+"_"+OrderInfo.SEQ.dealerSeq;
+			var $select = $('<select id="dealerType_'+objId+'" name="dealerType_'+objInstId+'" class="inputWidth183px" style="width:150px;" onclick=a=this.value; onchange="order.dealer.changeDealer(this,\'dealerType_'+objInstId+'\',a)"></select>');
+			if(order.ysl!=undefined){
+				$select.append("<option value='40020005'>第一发展人</option>");
+				$select.append("<option value='40020006'>第二发展人</option>");
+				$select.append("<option value='40020007'>第三发展人</option>");
+			}else{
+				$.each(OrderInfo.order.dealerTypeList,function(){
+					$select.append("<option value='"+this.PARTYPRODUCTRELAROLECD+"' >"+this.NAME+"</option>");
+				});
+			}
+			$tdType.append($select);
+			$tdType.append('<label class="f_red">*</label>');
+			var accNbr = order.prodModify.choosedProdInfo.accNbr;
+			$tr.append("<td>"+accNbr+"</td>");
+			$tr.append("<td>补换卡</td>");
+			$tr.append($tdType);
+			if(order.ysl!=undefined){
+				var $td = $('<td><input type="text" id="dealer_'+objId+'" staffId="'+OrderInfo.staff.staffId+'" value="'+OrderInfo.staff.staffName+'" class="inputWidth183px" style="width:150px;"></input></td>');
+			}else{
+				var $td = $('<td><input type="text" id="dealer_'+objId+'" staffId="'+OrderInfo.staff.staffId+'" value="'+OrderInfo.staff.staffName+'" class="inputWidth183px" style="width:150px;" readonly="readonly" ></input></td>');
+			}
+			$td.append('<a class="purchase" href="javascript:order.main.queryStaff(0,\'dealer\',\''+objId+'\');">选择</a>');
+			$td.append('<a class="purchase" onclick="order.dealer.addProdDealer(this,'+objInstId+',1)">添加</a><label class="f_red">*</label>');
+			$tr.append($td);
+			var $tdChannel = $('<td></td>');
+			var $channelSelect = $('<select id="dealerChannel_'+objId+'" name="dealerChannel_'+objInstId+'" class="inputWidth183px" onclick=a=this.value;></select>');
+			$.each(OrderInfo.channelList,function(){
+				if(this.isSelect==1)
+					$channelSelect.append("<option value='"+this.channelNbr+"' selected ='selected'>"+this.channelName+"</option>");
+				else
+					$channelSelect.append("<option value='"+this.channelNbr+"'>"+this.channelName+"</option>");
+			});
+			$tdChannel.append($channelSelect);
+			$tdChannel.append('<label class="f_red">*</label>');	
+			$tr.append($tdChannel);
+			OrderInfo.SEQ.dealerSeq++;
+			$("#dealerTbody").append($tr);
+		}
 	};
 	
 	//修改发展人角色
@@ -570,6 +613,21 @@ order.dealer = (function() {
 				};
 			});
 		});
+		if(OrderInfo.actionFlag==2 || OrderInfo.actionFlag==3 || OrderInfo.actionFlag==22 ||OrderInfo.actionFlag==23){
+			$.each(OrderInfo.boProd2Tds,function(){
+				var prodId = this.prodId;
+			    var accNbr = OrderInfo.getAccessNumber(prodId);
+			    if(accNbr==undefined || accNbr==""){ 
+				    accNbr = "未选号";
+			    }
+			    var id = accNbr;
+			    if(this.isdel != "Y" && this.isdel != "C"  && $("tr[name='tr_"+id+"']")[0]==undefined){  //补换卡
+				    var $tr = $('<tr id="atr_'+id+'" onclick="order.dealer.checkAttach(\''+id+'\')"><td><input type="checkbox" id="'+id+'" onclick="order.dealer.checkAttach(\''+id+'\')" name="attach_dealer"/></td></tr>');
+				    $tr.append('<td>'+accNbr+'</td><td>补换卡</td>');
+				    $('#attach_tbody').append($tr);
+			    };
+		    });
+		}
 		easyDialog.open({
 			container : "div_attach_dialog"
 		});

@@ -2054,17 +2054,15 @@ SoOrder = (function() {
 	var _createAttOrder = function(busiOrders){	
 		AttachOffer.setAttachBusiOrder(busiOrders);		
 		var prodInfo = order.prodModify.choosedProdInfo;
-		if(AttachOffer.isChangeUim(prodInfo.prodInstId)){
-			if(OrderInfo.boProd2Tds.length>0||OrderInfo.zcd_privilege==0){
-				var prod = {
-					prodId : prodInfo.prodInstId,
-					prodSpecId : prodInfo.productId,
-					isComp : "N",
-					accessNumber : prodInfo.accNbr,
-					boActionTypeCd : CONST.BO_ACTION_TYPE.CHANGE_CARD
-				};
-				busiOrders.push(OrderInfo.getProdBusiOrder(prod));
-			}
+		if(OrderInfo.boProd2Tds.length>0||OrderInfo.zcd_privilege==0){
+			var prod = {
+				prodId : prodInfo.prodInstId,
+				prodSpecId : prodInfo.productId,
+				isComp : "N",
+				accessNumber : prodInfo.accNbr,
+				boActionTypeCd : CONST.BO_ACTION_TYPE.CHANGE_CARD
+			};
+			busiOrders.push(OrderInfo.getProdBusiOrder(prod));
 		}
 	};
 	

@@ -4188,7 +4188,6 @@ AttachOffer = (function() {
 			});
 		}
 		AttachOffer.changeLabel(prodId, prodInfo.productId,""); //初始化第一个标签附属
-		order.dealer.initDealer();
 	};
 	var _initMyfavoriteSpec = function(prodId,prodSpecId){
 		$("#myfavorites_"+prodId).addClass("setcon");

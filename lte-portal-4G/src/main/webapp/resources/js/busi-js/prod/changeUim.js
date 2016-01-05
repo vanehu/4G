@@ -48,7 +48,6 @@ prod.changeUim = (function() {
 		};
 		OrderInfo.initData(CONST.ACTION_CLASS_CD.PROD_ACTION,areaAtionType,actionFlag,opeName,"");
 		rule.rule.prepare(param,'prod.changeUim.initFillPage',callParam);
-		order.dealer.initDealer();
 	};
 	
 	
@@ -80,6 +79,7 @@ prod.changeUim = (function() {
 					$("#uim_release_btn_" + prodInfo.prodInstId).css("display","none");
 					$("#uim_lable").text("写卡：");
 				}
+				order.dealer.initDealer();
 				//_queryAttachOffer();
 			},
 			"always":function(){
