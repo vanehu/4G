@@ -89,6 +89,13 @@ AttachOffer = (function() {
 		}
 		AttachOffer.queryAttachOffer();
 		
+		_orderedOfferSpecIds = [];//已订购销售品规格
+		
+		 _servSpecIds = [];//已订购功能产品规格
+		
+		_servSpecs = [];
+		
+		 _offerSpecs = [];
 	}; 
 	
 	//可订购的附属查询 
@@ -508,21 +515,90 @@ AttachOffer = (function() {
 		var $span = $("#li_"+prodId+"_"+offerSpecId).find("span"); //定位删除的附属
 		if($span.attr("class")=="del"){  //已经取消订购，再订购
 			AttachOffer.addOfferSpec(prodId,offerSpecId);
+			_removeOfferAndServOpen(offerSpecId,prodId);
 		}else { //取消订购
+			var respnose = "";
+			if(offerSpecId !="" && offerSpecId !=null){
+				$("li[isdel='N']").each(function(){
+					if($(this).attr('offerSpecId') !=""){
+						_orderedOfferSpecIds.push($(this).attr('offerSpecId'));
+					}
+				});
+				
+				if(AttachOffer.openList.length>0){
+					for(var j=0;j<AttachOffer.openList[0].specList.length;j++){
+						var openedServ = AttachOffer.openList[0].specList[j];
+						if(openedServ.isdel ==undefined || "Y"!= openedServ.isdel){
+							_orderedOfferSpecIds.push(openedServ.offerSpecId);
+						}
+					}
+				}
+				$("li[name='product']").each(function(){
+					if($(this).attr('servSpecId') !=""){
+						_servSpecIds.push($(this).attr('servSpecId'));
+					}
+				});
+				
+				if(AttachOffer.openServList.length>0){
+					for(var n=0;n<AttachOffer.openServList[0].servSpecList.length;n++){
+						var opendServ = AttachOffer.openServList[0].servSpecList[n];
+						if(opendServ.isdel ==undefined || "Y"!= opendServ.isdel){
+							_servSpecIds.push(opendServ.servSpecId);
+						}
+					}
+				}
+				respnose = AttachOffer.queryOfferAndServDependForCancel(offerSpecId,"");
+			}
+			
 			var spec = CacheData.getOfferSpec(prodId,offerSpecId);
 			if(reflag!=undefined && reflag=="reload"){//暂存单二次加载
 				$span.addClass("del");
 				spec.isdel = "Y";
+				if(respnose !="" && respnose.data.resultCode == "0" && respnose.data.result.servSpec!=undefined && respnose.data.result.offerSpec!=undefined ){
+					_addOfferAndServDependOpen(respnose.data.result.servSpec,respnose.data.result.offerSpec,offerSpecId,prodId);
+				}
 				_delServSpec(prodId,spec); //取消订购销售品时
 				order.dealer.removeAttDealer(prodId+"_"+offerSpecId); //删除协销人
 				$("#terminalUl_"+prodId+"_"+offerSpecId).remove();
 				spec.isTerminal = 0;
 			}else{
+				var contentAppend = "";
+				if(respnose !="" &&  respnose.data.resultCode == "0" && respnose.data.result.servSpec!=undefined && respnose.data.result.servSpec !=null && respnose.data.result.servSpec !=""){
+					$.each(respnose.data.result.servSpec,function(){
+						if(AttachOffer.openServList.length>0){
+							for(var n=0;n<AttachOffer.openServList[0].servSpecList.length;n++){
+								var opendServ = AttachOffer.openServList[0].servSpecList[n];
+								if(this.servSpecId == opendServ.servSpecId){
+									contentAppend = contentAppend + this.servSpecName +"<br>"; 
+								}
+							}
+						}
+					});
+				}
+				if(respnose !="" &&  respnose.data.resultCode == "0" && respnose.data.result.servSpec!=undefined && respnose.data.result.offerSpec !=null && respnose.data.result.offerSpec !=""){
+					$.each(respnose.data.result.offerSpec,function(){
+						if(AttachOffer.openList.length>0){
+							for(var n=0;n< AttachOffer.openList[0].specList.length;n++){
+								var opendServ =  AttachOffer.openList[0].specList[n];
+								if(this.offerSpecId == opendServ.offerSpecId){
+									contentAppend = contentAppend +this.offerSpecName+"<br>";  
+								}
+							}
+						}
+					});
+				}
 				var content = CacheData.getOfferProdStr(prodId,spec,2);
+				if(contentAppend !=""){
+					content = "【"+content  +"】功能产品，"+"与以下销售品或功能产品相依赖，系统会自动退订相关的依赖销售品。<br>"+contentAppend;
+				}
+				
 				$.confirm("信息确认",content,{ 
 					yes:function(){
 						$span.addClass("del");
 						spec.isdel = "Y";
+						if(respnose !="" && respnose.data.resultCode == "0" && respnose.data.result.servSpec!=undefined && respnose.data.result.offerSpec!=undefined ){
+							_addOfferAndServDependOpen(respnose.data.result.servSpec,respnose.data.result.offerSpec,offerSpecId,prodId);
+						}
 						_delServSpec(prodId,spec); //取消订购销售品时
 						order.dealer.removeAttDealer(prodId+"_"+offerSpecId); //删除协销人
 						$("#terminalUl_"+prodId+"_"+offerSpecId).remove();
@@ -567,7 +643,7 @@ AttachOffer = (function() {
 		if($span.attr("class")=="del"){  //已经退订，再订购
 			AttachOffer.addOffer(prodId,offerId,reflag);
 			var thisServSpecId =  $("#del_"+prodId+"_"+offerId).attr("offerSpecId");
-			_removeOfferAndServ(thisServSpecId);
+			_removeOfferAndServ(thisServSpecId,prodId);
 		}else { //退订
 			var offer = CacheData.getOffer(prodId,offerId);
 			if(!ec.util.isArray(offer.offerMemberInfos)){	
@@ -629,11 +705,28 @@ AttachOffer = (function() {
 						_orderedOfferSpecIds.push($(this).attr('offerSpecId'));
 					}
 				});
+				if(AttachOffer.openList.length>0){
+					for(var j=0;j<AttachOffer.openList[0].specList.length;j++){
+						var openedServ = AttachOffer.openList[0].specList[j];
+						if(openedServ.isdel ==undefined || "Y"!= openedServ.isdel){
+							_orderedOfferSpecIds.push(openedServ.offerSpecId);
+						}
+					}
+				}
 				$("li[name='product']").each(function(){
 					if($(this).attr('servSpecId') !=""){
 						_servSpecIds.push($(this).attr('servSpecId'));
 					}
 				});
+				
+				if(AttachOffer.openServList.length>0){
+					for(var n=0;n<AttachOffer.openServList[0].servSpecList.length;n++){
+						var opendServ = AttachOffer.openServList[0].servSpecList[n];
+						if(opendServ.isdel ==undefined || "Y"!= opendServ.isdel){
+							_servSpecIds.push(opendServ.servSpecId);
+						}
+					}
+				}
 				respnose = AttachOffer.queryOfferAndServDependForCancel($("#del_"+prodId+"_"+offerId).attr("offerSpecId"),"");
 			}
 			
@@ -642,7 +735,7 @@ AttachOffer = (function() {
 				$span.addClass("del");
 				delServByOffer(prodId,offer);
 				if(respnose !="" && respnose.data.resultCode == "0" && respnose.data.result.servSpec!=undefined && respnose.data.result.offerSpec!=undefined ){
-					_addOfferAndServDepend(respnose.data.result.servSpec,respnose.data.result.offerSpec,$("#del_"+prodId+"_"+offerId).attr("offerSpecId"));
+					_addOfferAndServDepend(respnose.data.result.servSpec,respnose.data.result.offerSpec,$("#del_"+prodId+"_"+offerId).attr("offerSpecId"),prodId);
 				}
 			}else{
 				var content = "";
@@ -654,16 +747,30 @@ AttachOffer = (function() {
 				var contentAppend = "";
 				if(respnose !="" && respnose.data.resultCode == "0" && respnose.data.result.servSpec!=undefined && respnose.data.result.servSpec !=null && respnose.data.result.servSpec !=""){
 					$.each(respnose.data.result.servSpec,function(){
-						contentAppend = ","+contentAppend + this.servSpecName; 
+						if(AttachOffer.openServList.length>0){
+							for(var n=0;n<AttachOffer.openServList[0].servSpecList.length;n++){
+								var opendServ = AttachOffer.openServList[0].servSpecList[n];
+								if(this.servSpecId == opendServ.servSpecId){
+									contentAppend = contentAppend + this.servSpecName +"<br>"; 
+								}
+							}
+						}
 					});
 				}
 				if(respnose !="" && respnose.data.resultCode == "0" && respnose.data.result.offerSpec!=undefined && respnose.data.result.offerSpec !=null && respnose.data.result.offerSpec !=""){
 					$.each(respnose.data.result.offerSpec,function(){
-						contentAppend = ","+contentAppend + this.offerSpecName; 
+						if(AttachOffer.openList.length>0){
+							for(var n=0;n<AttachOffer.openList[0].offerList.length;n++){
+								var opendServ = AttachOffer.openedServList[0].servList[n];
+								if(this.offerSpecId == opendServ.offerSpecId){
+									contentAppend = contentAppend + this.offerSpecName+"<br>";  
+								}
+							}
+						}
 					});
 				}
 				if(contentAppend !=""){
-					content = content + "此可选包与"+contentAppend+"相依赖，系统会自动退订已订购的相关的依赖销售品。"
+					content = content + "此可选包<br>"+contentAppend+"相依赖，系统会自动退订已订购的相关的依赖销售品。"
 				}
 				$.confirm("信息确认",content,{ 
 					yes:function(){
@@ -673,7 +780,7 @@ AttachOffer = (function() {
 						
 						//增加退订的依赖销售品
 						if(respnose !="" && respnose.data.resultCode == "0" && respnose.data.result.servSpec!=undefined && respnose.data.result.offerSpec!=undefined ){
-							_addOfferAndServDepend(respnose.data.result.servSpec,respnose.data.result.offerSpec,$("#del_"+prodId+"_"+offerId).attr("offerSpecId"));
+							_addOfferAndServDepend(respnose.data.result.servSpec,respnose.data.result.offerSpec,$("#del_"+prodId+"_"+offerId).attr("offerSpecId"),prodId);
 						}
 						
 					},
@@ -689,6 +796,7 @@ AttachOffer = (function() {
 		var $span = $("#li_"+prodId+"_"+servSpecId).find("span"); //定位删除的附属
 		if($span.attr("class")=="del"){  //已经退订，再订购
 			AttachOffer.openServSpec(prodId,servSpecId,specName,ifParams);
+			_removeOfferAndServOpen(servSpecId,prodId);
 		}else { //退订			
 			//退订的时候就提示需要退订其为必选成员的已选可选包
 			var toDelOfferSpecList = [];
@@ -721,7 +829,69 @@ AttachOffer = (function() {
 				}
 			}
 			if(flag){
-			$.confirm("信息确认","取消开通【"+$span.text()+"】功能产品",{ 
+				var respnose = "";
+				if(servSpecId !="" && servSpecId !=null){
+					$("li[isdel='N']").each(function(){
+						if($(this).attr('offerSpecId') !=""){
+							_orderedOfferSpecIds.push($(this).attr('offerSpecId'));
+						}
+					});
+					
+					if(AttachOffer.openList.length>0){
+						for(var j=0;j<AttachOffer.openList[0].specList.length;j++){
+							var openedServ = AttachOffer.openList[0].specList[j];
+							if(openedServ.isdel ==undefined || "Y"!= openedServ.isdel){
+								_orderedOfferSpecIds.push(openedServ.offerSpecId);
+							}
+						}
+					}
+					$("li[name='product']").each(function(){
+						if($(this).attr('servSpecId') !=""){
+							_servSpecIds.push($(this).attr('servSpecId'));
+						}
+					});
+					
+					if(AttachOffer.openServList.length>0){
+						for(var n=0;n<AttachOffer.openServList[0].servSpecList.length;n++){
+							var opendServ = AttachOffer.openServList[0].servSpecList[n];
+							if(opendServ.isdel ==undefined || "Y"!= opendServ.isdel){
+								_servSpecIds.push(opendServ.servSpecId);
+							}
+						}
+					}
+					respnose = AttachOffer.queryOfferAndServDependForCancel("",servSpecId);
+				}	
+			var contentAppend = "";
+			if(respnose !="" &&  respnose.data.resultCode == "0" && respnose.data.result.servSpec!=undefined && respnose.data.result.servSpec !=null && respnose.data.result.servSpec !=""){
+				$.each(respnose.data.result.servSpec,function(){
+					if(AttachOffer.openServList.length>0){
+						for(var n=0;n<AttachOffer.openServList[0].servSpecList.length;n++){
+							var opendServ = AttachOffer.openServList[0].servSpecList[n];
+							if(this.servSpecId == opendServ.servSpecId){
+								contentAppend = contentAppend + this.servSpecName +"<br>"; 
+							}
+						}
+					}
+				});
+			}
+			if(respnose !="" &&  respnose.data.resultCode == "0" && respnose.data.result.servSpec!=undefined && respnose.data.result.offerSpec !=null && respnose.data.result.offerSpec !=""){
+				$.each(respnose.data.result.offerSpec,function(){
+					if(AttachOffer.openList.length>0){
+						for(var n=0;n<AttachOffer.openList[0].specList.length;n++){
+							var opendServ = AttachOffer.openList[0].specList[n];
+							if(this.offerSpecId == opendServ.offerSpecId){
+								contentAppend = contentAppend +this.offerSpecName+"<br>";  
+							}
+						}
+					}
+				});
+			}
+			var content= $span.text();
+			if(contentAppend !=""){
+				content = "【"+content  +"】功能产品，"+"与以下销售品或功能产品相依赖，系统会自动退订相关的依赖销售品。<br>"+contentAppend;
+			}
+				
+			$.confirm("信息确认","取消开通"+content,{ 
 				yesdo:function(){
 					if(toDelOfferSpecList.length>0){
 						var strInfo = "【"+$span.text()+"】功能产品为以下可选包的必选成员，取消开通将取消订购以下可选包，请确认是否取消订购？<br>";
@@ -733,12 +903,18 @@ AttachOffer = (function() {
 								$.each(toDelOfferSpecList,function(){
 									_delOfferSpec2(prodId,this.offerSpecId);
 								});
+								if(respnose !="" && respnose.data.resultCode == "0" && respnose.data.result.servSpec!=undefined && respnose.data.result.offerSpec!=undefined ){
+									_addOfferAndServDependOpen(respnose.data.result.servSpec,respnose.data.result.offerSpec,servSpecId,prodId);
+								}
 								_closeServSpecCallBack(prodId,servSpecId,$span);
 							},
 							no:function(){
 							}
 						});
 					}else{
+						if(respnose !="" && respnose.data.resultCode == "0" && respnose.data.result.servSpec!=undefined && respnose.data.result.offerSpec!=undefined ){
+							_addOfferAndServDependOpen(respnose.data.result.servSpec,respnose.data.result.offerSpec,servSpecId,prodId);
+						}
 						_closeServSpecCallBack(prodId,servSpecId,$span);
 					}
 				},
@@ -781,7 +957,7 @@ AttachOffer = (function() {
 		var $span = $("#li_"+prodId+"_"+serv.servId).find("span");
 		if($span.attr("class")=="del"){  //已经关闭，取消关闭
 			var thisServSpecId =  $("#li_"+prodId+"_"+serv.servId).attr("servSpecId");
-			_removeOfferAndServ(thisServSpecId);
+			_removeOfferAndServ(thisServSpecId,prodId);
 			_openServ(prodId,serv,reflag);
 			
 		}else if("13409244"==serv.servSpecId){//一卡双号虚号
@@ -799,11 +975,29 @@ AttachOffer = (function() {
 						_orderedOfferSpecIds.push($(this).attr('offerSpecId'));
 					}
 				});
+				
+				if(AttachOffer.openList.length>0){
+					for(var j=0;j<AttachOffer.openList[0].specList.length;j++){
+						var openedServ = AttachOffer.openList[0].specList[j];
+						if(openedServ.isdel ==undefined || "Y"!= openedServ.isdel){
+							_orderedOfferSpecIds.push(openedServ.offerSpecId);
+						}
+					}
+				}
 				$("li[name='product']").each(function(){
 					if($(this).attr('servSpecId') !=""){
 						_servSpecIds.push($(this).attr('servSpecId'));
 					}
 				});
+				
+				if(AttachOffer.openServList.length>0){
+					for(var n=0;n<AttachOffer.openServList[0].servSpecList.length;n++){
+						var opendServ = AttachOffer.openServList[0].servSpecList[n];
+						if(opendServ.isdel ==undefined || "Y"!= opendServ.isdel){
+							_servSpecIds.push(opendServ.servSpecId);
+						}
+					}
+				}
 				respnose = AttachOffer.queryOfferAndServDependForCancel("",$("#del_"+prodId+"_"+servId).attr("servSpecId"));
 			}
 			
@@ -811,30 +1005,56 @@ AttachOffer = (function() {
 				$span.addClass("del");
 				serv.isdel = "Y";
 				if(respnose !="" && respnose.data.resultCode == "0" && respnose.data.result.servSpec!=undefined && respnose.data.result.offerSpec!=undefined ){
-					_addOfferAndServDepend(respnose.data.result.servSpec,respnose.data.result.offerSpec,$("#del_"+prodId+"_"+servId).attr("servSpecId"));
+					_addOfferAndServDepend(respnose.data.result.servSpec,respnose.data.result.offerSpec,$("#del_"+prodId+"_"+servId).attr("servSpecId"),prodId);
 				}
 			}else{
 				var contentAppend = "";
 				if(respnose !="" &&  respnose.data.resultCode == "0" && respnose.data.result.servSpec!=undefined && respnose.data.result.servSpec !=null && respnose.data.result.servSpec !=""){
 					$.each(respnose.data.result.servSpec,function(){
-						contentAppend = contentAppend + this.servSpecName +","; 
+						if(AttachOffer.openedServList.length>0){
+							for(var n=0;n<AttachOffer.openedServList[0].servList.length;n++){
+								var opendServ = AttachOffer.openedServList[0].servList[n];
+								if(this.servSpecId == opendServ.servSpecId){
+									contentAppend = contentAppend + this.servSpecName +"<br>"; 
+								}
+							}
+						}
+					});
+				}
+				if(respnose !="" &&  respnose.data.resultCode == "0" && respnose.data.result.servSpec!=undefined && respnose.data.result.servSpec !=null && respnose.data.result.servSpec !=""){
+					$.each(respnose.data.result.servSpec,function(){
+						if(AttachOffer.openServList.length>0){
+							for(var n=0;n<AttachOffer.openServList[0].servSpecList.length;n++){
+								var opendServ = AttachOffer.openServList[0].servSpecList[n];
+								if(this.servSpecId == opendServ.servSpecId){
+									contentAppend = contentAppend + this.servSpecName +"<br>"; 
+								}
+							}
+						}
 					});
 				}
 				if(respnose !="" &&  respnose.data.resultCode == "0" && respnose.data.result.servSpec!=undefined && respnose.data.result.offerSpec !=null && respnose.data.result.offerSpec !=""){
 					$.each(respnose.data.result.offerSpec,function(){
-						contentAppend = contentAppend + this.offerSpecName+","; 
+						if(AttachOffer.openedList.length>0){
+							for(var n=0;n<AttachOffer.openedList[0].offerList.length;n++){
+								var opendServ = AttachOffer.openedServList[0].servList[n];
+								if(this.offerSpecId == opendServ.offerSpecId){
+									contentAppend = contentAppend +this.offerSpecName+"<br>";  
+								}
+							}
+						}
 					});
 				}
 				var content= $span.text();
 				if(contentAppend !=""){
-					content = content + "此可选包与"+contentAppend+"相依赖，系统会自动退订已订购的相关的依赖销售品。"
+					content = "【"+content  +"】功能产品，"+"与以下销售品或功能产品相依赖，系统会自动退订相关的依赖销售品。<br>"+contentAppend;
 				}
-				$.confirm("信息确认","关闭【"+content+"】功能产品",{ 
+				$.confirm("信息确认","关闭"+content,{ 
 					yesdo:function(){
 						$span.addClass("del");
 						serv.isdel = "Y";
 						if(respnose !="" && respnose.data.resultCode == "0" && respnose.data.result.servSpec!=undefined && respnose.data.result.offerSpec!=undefined ){
-							_addOfferAndServDepend(respnose.data.result.servSpec,respnose.data.result.offerSpec,$("#del_"+prodId+"_"+servId).attr("servSpecId"));
+							_addOfferAndServDepend(respnose.data.result.servSpec,respnose.data.result.offerSpec,$("#del_"+prodId+"_"+servId).attr("servSpecId"),prodId);
 						}
 						
 					},
@@ -845,19 +1065,22 @@ AttachOffer = (function() {
 		}
 	};
 	
-	var _removeOfferAndServ = function(thisServSpecId){
+	var _removeOfferAndServOpen = function(thisServSpecId,prodId){
 		//update by huangjj3  61419 取消关闭，把依赖的销售品从开通的去除
 		for(var i=0;i<_servSpecs.length;i++){
 			var servSpecs = _servSpecs[i];
 			if(thisServSpecId == servSpecs.servSpecId){
 				for(var j=0;j<servSpecs.servSpe.length;j++){
 					var servSpe = servSpecs.servSpe[j];
-						for(var n=0;n<AttachOffer.openedServList[0].servList.length;n++){
-							var opendServ = AttachOffer.openedServList[0].servList[n];
+					if(AttachOffer.openServList.length>0){
+						for(var n=0;n<AttachOffer.openServList[0].servSpecList.length;n++){
+							var opendServ = AttachOffer.openServList[0].servSpecList[n];
 							if(servSpe.servSpecId == opendServ.servSpecId){
 								opendServ.isdel = "N";
+								$("#li"+prodId+"_"+opendServ.servId).find("span").removeClass("del");
 								//AttachOffer.openedServList[0].servList.splice(n,1);//删除因为依赖加入的销售品
 							}
+					    }
 					}
 				}
 			}
@@ -868,12 +1091,15 @@ AttachOffer = (function() {
 			if(thisServSpecId == servSpecs.servSpecId){
 				for(var j=0;j<servSpecs.offerSpe.length;j++){
 					var offerSpe = servSpecs.offerSpe[j];
-					for(var n=0;n<AttachOffer.openedList[0].offerList.length;n++){
-							var opendServ = AttachOffer.openedServList[0].servList[n];
+					if(AttachOffer.openList.length>0){
+						for(var n=0;n<AttachOffer.openList[0].specList.length;n++){
+							var opendServ = AttachOffer.openList[0].specList[n];
 							if(offerSpe.offerId == opendServ.offerId){
 								opendServ.isdel = "N";
+								$("#li_"+prodId+"_"+opendServ.offerId).find("span").removeClass("del");
 								//AttachOffer.openedList[0].offerList.splice(n,1);//删除因为依赖加入的销售品
 							}
+					   }
 					}
 				}
 			}
@@ -894,7 +1120,114 @@ AttachOffer = (function() {
 		}
 	};
 	
-	var _addOfferAndServDepend = function(reSrvSpec,reOfferSpec,OfferORServId){
+	var _removeOfferAndServ = function(thisServSpecId,prodId){
+		//update by huangjj3  61419 取消关闭，把依赖的销售品从开通的去除
+		for(var i=0;i<_servSpecs.length;i++){
+			var servSpecs = _servSpecs[i];
+			if(thisServSpecId == servSpecs.servSpecId){
+				for(var j=0;j<servSpecs.servSpe.length;j++){
+					var servSpe = servSpecs.servSpe[j];
+					if(AttachOffer.openedServList.length>0){
+						for(var n=0;n<AttachOffer.openedServList[0].servList.length;n++){
+								var opendServ = AttachOffer.openedServList[0].servList[n];
+								if(servSpe.servSpecId == opendServ.servSpecId){
+									opendServ.isdel = "N";
+									$("#li"+prodId+"_"+opendServ.servId).find("span").removeClass("del");
+									//AttachOffer.openedServList[0].servList.splice(n,1);//删除因为依赖加入的销售品
+								}
+						}
+					}
+					if(AttachOffer.openServList.length>0){
+					   for(var n=0;n<AttachOffer.openServList[0].servSpecList.length;n++){
+								var opendServ = AttachOffer.openServList[0].servSpecList[n];
+								if(this.servSpecId == opendServ.servSpecId){
+									opendServ.isdel = "Y";
+							         	$("#li_"+prodId+"_"+openedServ.servId).find("span").addClass("del"); 
+								}
+					  }
+					}
+				}
+			}
+		}
+		
+		for(var i=0;i<_offerSpecs.length;i++){
+			var servSpecs = _offerSpecs[i];
+			if(thisServSpecId == servSpecs.servSpecId){
+				for(var j=0;j<servSpecs.offerSpe.length;j++){
+					var offerSpe = servSpecs.offerSpe[j];
+					if(AttachOffer.openedList.length>0){
+						for(var n=0;n<AttachOffer.openedList[0].offerList.length;n++){
+							var opendServ = AttachOffer.openedList[0].offerList[n];
+							if(offerSpe.offerId == opendServ.offerId){
+								opendServ.isdel = "N";
+								$("#li_"+prodId+"_"+opendServ.offerId).find("span").removeClass("del");
+								//AttachOffer.openedList[0].offerList.splice(n,1);//删除因为依赖加入的销售品
+							}
+					}
+					}
+				}
+			}
+		}
+		
+		for(var i=0;i<_offerSpecs.length;i++){
+			var servSpecs = _offerSpecs[i];
+			if(thisServSpecId == servSpecs.servSpecId){
+				_offerSpecs.slice(i, 1);
+			}
+		}
+		
+		for(var i=0;i<_servSpecs.length;i++){
+			var servSpecs = _servSpecs[i];
+			if(thisServSpecId == servSpecs.servSpecId){
+				_servSpecs.slice(i, 1);
+			}
+		}
+	};
+	var _addOfferAndServDependOpen = function(reSrvSpec,reOfferSpec,OfferORServId,prodId){
+		if(reSrvSpec !=""){
+			var servSpec ={
+					servSpecId:OfferORServId,
+					servSpe:reSrvSpec,
+					offerSpe:[]
+			};
+			_servSpecs.push(servSpec);
+			
+			$.each(reSrvSpec,function(){
+					if(AttachOffer.openServList.length>0){
+						for(var j=0;j<AttachOffer.openServList[0].servSpecList.length;j++){
+							var openedServ = AttachOffer.openServList[0].servSpecList[j];
+							if(this.servSpecId == openedServ.servSpecId){
+								openedServ.isdel = "Y";
+								$("#li_"+prodId+"_"+openedServ.servSpecId).find("span").addClass("del");
+							}
+						}
+					}
+			});
+			
+		}
+		if(reOfferSpec !=""){
+			var offerSpec ={
+					servSpecId:OfferORServId,
+					offerSpe:reOfferSpec,
+					servSpe:[]
+			};
+			_offerSpecs.push(offerSpec);
+			
+			$.each(reOfferSpec,function(){
+					if(AttachOffer.openList.length>0){
+						for(var j=0;j<AttachOffer.openList[0].specList.length;j++){
+							var openedServ = AttachOffer.openList[0].specList[j];
+							if(this.offerId == openedServ.offerId){
+								openedServ.isdel = "Y";
+								$("#li_"+prodId+"_"+openedServ.offerSpecId).find("span").addClass("del");
+							}
+						}
+					}
+			});
+			
+		}
+	};
+	var _addOfferAndServDepend = function(reSrvSpec,reOfferSpec,OfferORServId,prodId){
 		if(reSrvSpec !=""){
 			var servSpec ={
 					servSpecId:OfferORServId,
@@ -909,8 +1242,18 @@ AttachOffer = (function() {
 							var openedServ = AttachOffer.openedServList[0].servList[j];
 							if(this.servSpecId == openedServ.servSpecId){
 								openedServ.isdel = "Y";
+								$("#li_"+prodId+"_"+openedServ.servId).find("span").addClass("del");
 							}
 						}
+					}
+					if(AttachOffer.openServList.length>0){
+							for(var n=0;n<AttachOffer.openServList[0].servSpecList.length;n++){
+								var opendServ = AttachOffer.openServList[0].servSpecList[n];
+								if(this.servSpecId == opendServ.servSpecId){
+									opendServ.isdel = "Y";
+									$("#li_"+prodId+"_"+opendServ.servSpecId).find("span").addClass("del"); 
+								}
+							}
 					}
 			});
 			
@@ -929,6 +1272,7 @@ AttachOffer = (function() {
 							var openedServ = AttachOffer.openedList[0].offerList[j];
 							if(this.offerId == openedServ.offerId){
 								openedServ.isdel = "Y";
+								$("#li_"+prodId+"_"+openedServ.offerId).find("span").addClass("del");
 							}
 						}
 					}
@@ -3488,14 +3832,6 @@ AttachOffer = (function() {
 					
 				}
 			}
-			
-			$.each(_offerSpecs,function(){
-				for(var i=0;i<this.offerSpec.length;i++){
-					var spec = this.offerSpec[i];
-					SoOrder.createAttOffer(spec,open.prodId,1,busiOrders);
-				}
-				
-			});
 		}
 		
 		//遍历已选增值业务
