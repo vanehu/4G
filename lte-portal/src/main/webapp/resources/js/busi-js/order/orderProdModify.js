@@ -2971,17 +2971,23 @@ order.prodModify = (function(){
 	 */
 	var _toSecondBusiness = function(href){
 		if(!href){
-			return false;
+			$.alert("提示", "无效的二次业务入口");
+			return;
 		}
 		try{
 			order.prodModify.getChooseProdInfo();
 			if(!order.prodModify.choosedProdInfo || order.prodModify.choosedProdInfo == {}){
 				$.alert('提示', '请选择一个产品');
-				return false;
+				return;
 			}
-			if(order.prodModify.choosedProdInfo.hasNoUser == 'Y' && href.indexOf('order.prodModify.spec_parm_change()') < 0){
-				$.alert('提示', '请在“产品属性变更”中录入“使用人”信息');
-				return false;
+			//获取政企客户实名制开关状态，若开关开启，则校验有否使用人信息
+			var params = {};
+			var checkRealNameResp = $.callServiceAsJson(contextPath+"/order/checkRealNameSwitch", params);
+			if(checkRealNameResp.data=="ON"){
+				if(order.prodModify.choosedProdInfo.hasNoUser == 'Y' && href.indexOf('order.prodModify.spec_parm_change()') < 0){
+					$.alert('提示', '请在“产品属性变更”中录入“使用人”信息');
+					return;
+				}
 			}
 		} catch (e) {
 		}

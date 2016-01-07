@@ -442,6 +442,24 @@ public class OrderController extends BaseController {
 		}
     	return "/order/order-spec-param";
     }
+    
+    /**
+     * 获取政企客户实名制开关状态
+     * @param params
+     * @param flowNum
+     * @param response
+     * @return
+     * @throws BusinessException
+     */
+    @RequestMapping(value = "/checkRealNameSwitch", method = RequestMethod.POST)
+    @ResponseBody
+    public JsonResponse checkRealNameSwitch(@RequestBody Map<String, Object> params, @LogOperatorAnn String flowNum, HttpServletResponse response) 
+    		throws BusinessException {
+    	SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
+    	String realNameReg = propertiesUtils.getMessage(SysConstant.BUSI_REAL_NAME_REG_SWITCH+"_"+sessionStaff.getPartnerId());
+    	return successed(realNameReg, 0);
+    }
+    
     //查询是否免停权限
 	private String checkIsAvoidRemind() {
 		// TODO Auto-generated method stub
