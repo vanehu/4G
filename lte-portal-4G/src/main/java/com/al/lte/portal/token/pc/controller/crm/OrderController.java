@@ -3709,6 +3709,8 @@ public class OrderController extends BaseController {
 				model.addAttribute("newSubPhoneNum", paramsMap.get("newSubPhoneNum")==null?"":paramsMap.get("newSubPhoneNum").toString());
 				model.addAttribute("oldSubPhoneNum", paramsMap.get("oldSubPhoneNum")==null?"":paramsMap.get("oldSubPhoneNum").toString());
 				model.addAttribute("salesCode", paramsMap.get("salesCode")==null?"":paramsMap.get("salesCode").toString());
+				 //终端串码
+				model.addAttribute("terminalCode",paramsMap.get("termCode")==null?"":paramsMap.get("termCode").toString());
 				if(mainProdOfferId!=null && mainProdOfferId.length()>0){
 					//集团销售品ID
 					String prodOfferId=paramsMap.get("prodOfferId")!=null?String.valueOf(paramsMap.get("prodOfferId")):null;
