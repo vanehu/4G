@@ -1621,10 +1621,14 @@ order.main = (function(){
 			$("#p_staff_areaId").val("");
 			$("#p_staff_areaId_val").val("");
 		}
+		var currentAreaAllName = $("#p_staff_areaId_val").val();
+		if(currentAreaAllName!=undefined){
+			currentAreaAllName = currentAreaAllName.replace(/>/g,"-")
+		}
 		var param = {
 				"dealerId":v_id,
 				"areaId":$("#p_staff_areaId").val(),
-				"currentAreaAllName":$("#p_staff_areaId_val").val(),
+				"currentAreaAllName":currentAreaAllName,
 				"staffName":$("#qryStaffName").val(),
 				"staffCode":$("#qryStaffCode").val(),
 				"salesCode":$("#qrySalesCode").val(),
