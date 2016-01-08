@@ -5,10 +5,34 @@
  */
 CommonUtils.regNamespace("mktRes", "terminal", "receive");
 
-mktRes.terminal.receive = (function($){
-	var _init =function(){
-		
+mktRes.terminal.receive = (function(){
+	
+	//仓库查询
+	var _queryStore = function(){
+		var storeNameQryInp = $.trim($("#storeNameQryInp").val());
+		if(storeNameQryInp==""){
+			return;
+		}
+		_queryStoreReset();
+		var resultCount = 0;
+		$("#storeSel option").each(function(){
+			if($(this).text().indexOf(storeNameQryInp)>=0){
+				$(this).attr("style", "color:blue;");
+				$("#storeSel option").removeAttr("selected");
+				$(this).attr("selected", "selected");
+				resultCount ++;
+			}
+		});
+		if(resultCount>1){
+			$.alert("提示", "搜索结果多于一条，请在左侧下拉框中继续手动筛选");
+		}
 	};
+	
+	//仓库查询重置
+	var _queryStoreReset = function(){
+		$("#storeSel option").removeAttr("style");
+	};
+	
 	var _changeStore=function(){
 		$("#termCode").val("");
 		$("#terminalTable").empty();
@@ -156,14 +180,15 @@ mktRes.terminal.receive = (function($){
 	};
 	
 	return {
-		init:_init,
+		queryStore : _queryStore,
+		queryStoreReset : _queryStoreReset,
 		btnAddTerminal:_btnAddTerminal,
 		btnDelTerminal:_btnDelTerminal,
 		btnTerminalUse:_btnTerminalUse,
 		checkAll : _checkAll,
 		changeStore : _changeStore
 	};
-})(jQuery);
+})();
 
 //初始化
 $(function(){

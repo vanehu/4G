@@ -29,12 +29,17 @@
           <dl class="noBorder">
             <dt>仓库：</dt>
             <dd>
-               <select id="storeSel" class="selectNumbertype" style="width:260px;margin:1px 7px 10px 13px;" onchange="javascript:mktRes.terminal.receive.changeStore()">
+               <select id="storeSel" class="selectNumbertype" style="width:260px;margin:6px 7px 10px 13px;" onchange="javascript:mktRes.terminal.receive.changeStore()">
                  <#list list as list>
                     <option value="${list.mktResStoreId}">${list.mktResStoreName}</option>  
                  </#list>     
               </select> 
               <label class="f_red">*</label>
+             </dd>
+             <dd>
+             	<input type="text" id="storeNameQryInp" class="numberTextBox width198" />
+             	<input type="button" value="仓库查询" onclick="javascript:mktRes.terminal.receive.queryStore()" class="numberSearch" />
+             	<input type="button" value="重置" onclick="javascript:mktRes.terminal.receive.queryStoreReset()" class="numberSearch" />
              </dd>
           </dl>
         </div>
