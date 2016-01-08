@@ -11,43 +11,40 @@ order.batch = (function(){
 			$.alert("提示","种子订单受理类型不能为空!");
 			return;
 		}
-		if(batchType == '11'){//批量换挡
+		if(batchType == '11' || batchType == '12'){//批量换挡、批量换卡
 			var upFile = $.trim($("#upFile").val());;
 			var reserveDt = $.trim($("#reserveDt").val());
 			if(reserveDt == ''){
-				//$.alert("提示","请选择预约时间!");
 				$('#alertInfo').html("请选择预约时间!");
 				return;
 			}
 			if (upFile === "") {
-				//$.alert("提示","请选择要导入的Excel文件！");
 				$('#alertInfo').html("请导入Excel文件！");
 				return;
 			} else {
 				file.suffix = upFile.substr(upFile.lastIndexOf(".") + 1);
 				if (file.suffix == "xls" || file.suffix == "xlsx") {
 					var options  = {
-							type:"post", 
-				                dataType:"text", 
-				                url:"importBatchData",
-								beforeSubmit:function(){
-									$.ecOverlay("<strong>正在提交,请稍等...</strong>");
-								},							
-				                success:function(data){
-									$.unecOverlay();
-									$('#detailInfo').html(data);
-									//$('#alertInfo').html("");//提交成功后清空原有的提示信息
-									$('#alertInfo').empty();
-									var file = $("#upFile");
-									file.after(file.clone().val(""));   
-									file.remove();//提交成功后清空文件
-				                },
-								error: function(data, status, e){
-								$.unecOverlay();
-								$.alert("提示","请求可能发生异常，请稍后再试！");
-								}
-						};
-						$("#batchChangeFeeTypeForm").ajaxSubmit(options);
+						type	: 'post',
+			            dataType: 'text',
+			            url		: 'importBatchData',
+			            beforeSubmit:function(){
+								$.ecOverlay("<strong>正在提交,请稍等...</strong>");
+						},							
+			            success:function(data){
+							$.unecOverlay();
+							$('#detailInfo').html(data);
+							$('#alertInfo').empty();//提交成功后清空原有的提示信息
+							var file = $("#upFile");
+							file.after(file.clone().val(""));
+							file.remove();//提交成功后清空文件
+						},
+						error: function(data, status, e){
+							$.unecOverlay();
+							$.alert("提示","请求可能发生异常，请稍后再试！");
+						}
+					};
+					$('#batchOrderChangeForm').ajaxSubmit(options);
 				} else {
 					$('#alertInfo').html("导入文件类型错误！");
 					return;
@@ -415,8 +412,7 @@ order.batch = (function(){
 	// 表单重置
 	var _reset=function(){
 		$("#upFile").val("");
-		if($("#batchType").val() == "11"){
-			//$('#alertInfo').html("");
+		if($("#batchType").val() == "11" || $("#batchType").val() == "12"){
 			$('#alertInfo').empty();
 			$('#detailInfo').empty();
 		}			
@@ -438,6 +434,8 @@ order.batch = (function(){
 			location.href=contextPath+"/file/BATCHORDERTERMINAL.xls";
 		}else if(batType=='11'){//批量换挡
 			location.href=contextPath+"/file/BATCHCHANGEFEETYPE.xls";
+		}else if(batType=='12'){//批量换卡
+			location.href=contextPath+"/file/BATCHCHANGEUIM.xls";
 		}else{
 			$.alert("提示","未找到批量类型所对应的模板文件，请检查！");
 			return;
@@ -621,7 +619,8 @@ order.batch = (function(){
 	
 	/**
 	 * 批次信息查询下的“取消”
-	 * areaId:创建该批次的员工的areaId, staffId:创建该批次的员工的staffId, groupId:批次号, dealFlag:标志位，取值为“cancel（取消）”或"update（修改）"
+	 * dealFlag:标志位，取值为“cancel（取消）”或"update（修改）"
+	 * 注意：groupStatusCd不可去掉，虽然入参中没有该字段，但由于旧有批次没有“批次状态”这一概念，且这样的批次不可取消，故需校验
 	 * @author ZhangYu
 	 */
 	var _batchCancel = function(groupId, groupStatusCd) {
@@ -629,60 +628,48 @@ order.batch = (function(){
 			$.alert("提示","该批次状态为空，无法进行操作！");
 			return;
 		}
-		if(confirm("您确认要取消该批次吗？")){
-			if (groupId == null || groupId == "" || groupId == undefined) {
-				$.alert("提示", "批次号为空，无法进行操作，请刷新页面或稍后再试！");
+		if (groupId == null || groupId == "" || groupId == undefined) {
+			$.alert("提示", "批次号为空，无法进行操作，请刷新页面或稍后再试！");
+			return;
+		}
+		$.confirm("信息确认","您确认要取消该批次吗？",{
+			yesdo:function(){
+				_DoBatchCancel(groupId);
+			},
+			no:function(){
 				return;
 			}
-			/*if (staffId == null || staffId == "" || staffId == undefined) {
-				$.alert("提示", "受理工号为空，无法进行操作，请刷新页面或稍后再试！");
-				return;
-			}*/
-			/*if (areaId == null || areaId == "" || areaId == undefined) {
-				$.alert("提示", "地区ID为空，无法进行操作，请刷新页面或稍后再试！");
-				return;
-			}*/
-
-			var param = {
-				"groupId" : groupId// 批次号
-				//"staffId" : staffId,// 创建该批次的员工的staffId
-				//"areaId" : areaId// 创建该批次的员工的areaId
-			};
-			param["dealFlag"] = "cancel";
-			var url = contextPath + "/order/batchOrder/batchOperateCancle";
-			$.callServiceAsHtml(url, param, {
-				"before" : function() {
-					$.ecOverlay("<strong>正在查询,请稍等....</strong>");
-				},
-				"always" : function() {
-					$.unecOverlay();
-				},
-				"done" : function(response) {
-					/*if (response.code == 0) {
-						$.alert("提示", "操作成功，该批次已被删除!");
-					} else if (response.code == -2) {
-						$.alertM(response.data);
-					} else {
-						$.alert("提示", "操作失败!");
-					}*/
-					//刷新页面
-					//self.location.reload();
-					$("#batchCancel_dialog").html(response.data);
-					easyDialog.open({
-						container : "ec-dialog-form-container-cancel"
-					});
-				},
-				fail : function(response) {
-					$.unecOverlay();
-					$.alert("提示", "请求可能发生异常，请稍后再试！");
-				}
-			});
-		}
+		});
+	};
+	
+	var _DoBatchCancel = function(groupId){
+		var param = {"groupId" : groupId};// 批次号
+		param["dealFlag"] = "cancel";
+		var url = contextPath + "/order/batchOrder/batchOperateCancle";
+		$.callServiceAsHtml(url, param, {
+			"before" : function() {
+				$.ecOverlay("<strong>正在取消批次,请稍等...</strong>");
+			},
+			"always" : function() {
+				$.unecOverlay();
+			},
+			"done" : function(response) {
+				$("#batchCancel_dialog").html(response.data);
+				easyDialog.open({
+					container : "ec-dialog-form-container-cancel"
+				});
+			},
+			fail : function(response) {
+				$.unecOverlay();
+				$.alert("提示", "请求可能发生异常，请稍后再试！");
+			}
+		});
 	};
 	
 	/**
 	 * 批次信息查询下的“修改”
 	 * dealFlag:标志位，取值为“cancel（取消）”或"update（修改）"
+	 * 注意：groupStatusCd不可去掉，虽然入参中没有该字段，但由于旧有批次没有“批次状态”这一概念，且这样的批次不可取消，故需校验
 	 * @author ZhangYu
 	 */
 	var _batchUpdateMain = function(groupId, reserveDt, groupStatusCd){
@@ -690,14 +677,6 @@ order.batch = (function(){
 			$.alert("提示","批次号为空，无法进行操作，请刷新页面或稍后再试！");
 			return;
 		}
-		/*if(staffId == null || staffId == "" || staffId == undefined){
-			$.alert("提示","受理工号为空，无法进行操作，请刷新页面或稍后再试！");
-			return;
-		}*/
-		/*if(areaId == null || areaId == "" || areaId == undefined){
-			$.alert("提示","地区ID为空，无法进行操作，请刷新页面或稍后再试！");
-			return;
-		}*/
 		if(reserveDt == null || reserveDt == "" || reserveDt == undefined){
 			$.alert("提示","预约时间为空，无法进行操作，请刷新页面或稍后再试！");
 			return;
@@ -707,10 +686,8 @@ order.batch = (function(){
 			return;
 		}
 		var param = {
-				"reserveDt":reserveDt,//预约时间
-				"groupId":groupId// 批次号
-				//"staffId":staffId,// 创建该批次的员工的staffId
-				//"areaId":areaId// 创建该批次的员工的areaId
+			"reserveDt":reserveDt,//预约时间
+			"groupId":groupId// 批次号
 		};
 		param["dealFlag"] = "update";
 		var url = contextPath+"/order/batchOrder/batchUpdateMain";
@@ -737,7 +714,6 @@ order.batch = (function(){
 	
 	/**
 	 * 批次信息查询下的“修改”，其中“修改”仅限于修改时间。批次“未处理”时，才可以修改“预约处理时间”；其他情况，不允许修改。
-	 * areaId:创建该批次的员工的areaId, staffId:创建该批次的员工的staffId, groupId:批次号,reserveDt:更新后的预约时间,
 	 * dealFlag:标志位，取值为“cancel（取消）”或"update（修改）"
 	 * @author ZhangYu
 	 */
@@ -745,29 +721,19 @@ order.batch = (function(){
 
 		var reserveDt = $("#reserveDt_dialog").val();
 		var groupId = $("#groupId_dialog").val();
-		//var staffId = $("#staffId_dialog").val();
 		var areaId = $("#areaId_dialog").val();
 		
 		if(groupId == null || groupId == "" || groupId == undefined){
 			$.alert("提示","批次号为空，无法进行操作，请刷新页面或稍后再试！");
 			return;
 		}
-		/*if(staffId == null || staffId == "" || staffId == undefined){
-			$.alert("提示","受理工号为空，无法进行操作，请刷新页面或稍后再试！");
-			return;
-		}*/
-		/*if(areaId == null || areaId == "" || areaId == undefined){
-			$.alert("提示","地区ID为空，无法进行操作，请刷新页面或稍后再试！");
-			return;
-		}*/
 		if(reserveDt == null || reserveDt == "" || reserveDt == undefined){
 			$.alert("提示","预约时间为空，无法进行操作，请刷新页面或稍后再试！");
-			// return;
+			return;
 		}
 		var param = {
 				"reserveDt":reserveDt,//预约时间
 				"groupId":groupId,// 批次号
-				//"staffId":staffId,// 创建该批次的员工的staffId
 				"areaId":areaId
 		};
 		param["dealFlag"] = "update";
@@ -788,9 +754,6 @@ order.batch = (function(){
 				}else{
 					$.alert("提示","操作失败!");
 				}
-				//easyDialog.close();
-				//刷新页面
-				//self.location.reload();
 			},
 			fail:function(response){
 				$.unecOverlay();
@@ -801,6 +764,7 @@ order.batch = (function(){
 	
 	/**
 	 * 进度查询，获取数据列表
+	 * 分页使用，由于进度查询页面有固定的查询条件不随点击“下一页”而更新，所以该函数为分页使用
 	 * @param statusCd:受理状态(可空); orderStatus:订单状态(可空); groupId:批次号(不可空); batchType:受理类型(不可空)
 	 * @author ZhangYu
 	 */
@@ -1018,6 +982,10 @@ order.batch = (function(){
 				}
 				var content$=$("#batchImportlist");
 				content$.html(response.data);
+				//分页展示总记录数(总条数)
+				//var pagination = $("#ec-total-page");
+				var totalNum = $("#totalNum").val();
+				$("#ec-total-page").after("<label class='marginTop4'>共"+totalNum+"条</label>");
 			},
 			fail:function(response){
 				$.unecOverlay();
@@ -1040,12 +1008,13 @@ order.batch = (function(){
 			return;
 		}
 
+		var statusCd = orderStatus = pageIndex 	= pageSize 	= "";//由于导出Excel要查询所有记录，故将其置为""
 		var url=contextPath+"/order/batchOrder/batchOrderExport?groupId="+groupId
 															+"&batchType="+batchType
-															+"&statusCd=''"
-															+"&orderStatus=''"
-															+"&pageIndex=''"
-															+"&pageSize=''";
+															+"&statusCd="+statusCd
+															+"&orderStatus="+orderStatus
+															+"&pageIndex="+pageIndex
+															+"&pageSize="+pageSize;
 		
 		$("#processQuery_action").attr("action", url);
 		$("#processQuery_action").submit();
@@ -1061,32 +1030,82 @@ order.batch = (function(){
 		}
 			//order.area.chooseAreaTreeManger("orderUndo/main","p_areaId_val","p_areaId",3);
 			//order.area.chooseAreaTreeAll("p_areaId_val","p_areaId",3);
+	};
+	
+	/**
+	 * 批次进度查询下的“取消”和“重发”
+	 * @param groupId:批次号；statusCd:受理状态；batchId:定位一个批次下的某条记录；flag:处理标识，1:取消，2:重发
+	 * @author ZhangYu
+	 */
+	var _batchReprocess = function(groupId, statusCd, batchId, flag){
+		var param = {
+				"groupId"	:groupId,
+				"statusCd"	:statusCd,
+				"batchId"	:batchId,
+				"flag"		:flag
 		};
+		var alertMsg = flag == '1' ? "确定取消此条记录吗？" : "确定重发此条记录吗？";
+		$.confirm("信息确认",alertMsg,{
+			yesdo:function(){
+				_DoBatchReprocess(param);
+			},
+			no:function(){
+				return;
+			}
+		});
+	};
+	
+	//该函数私有，不对外调用，用于处理进度查询下的“取消”和“重发”操作  By ZhangYu
+	var _DoBatchReprocess = function(param){
+		var url = contextPath+"/order/batchOrder/batchReprocess";
+		$.callServiceAsJson(url,param,{
+			"before":function(){
+				$.ecOverlay("<strong>正在操作,请稍等....</strong>");
+			},
+			"always":function(){
+				$.unecOverlay();
+			},
+			"done" : function(response){
+				if (response.code == 0) {
+					$.alert("提示",response.data);
+				}else if (response.code == -2) {
+					$.alertM(response.data);
+				}else{
+					$.alertM("提示",response.data);
+				}
+			},
+			fail:function(response){
+				$.unecOverlay();
+				$.alert("提示","请求可能发生异常，请稍后再试！");
+			}
+		});
+	};
 	
 	return {
-		submit :_submit,
-		batchOrderList:_batchOrderList,
-		batchImportList:_batchImportList,
-		batchOrderDel:_batchOrderDel,
-		barchImport:_barchImport,
-		reset:_reset,
-		toVerify:_toVerify,
-		toImportFile:_toImportFile,
-		download:_download,
-		downloadIdType:_downloadIdType,
-		initDic:_initDic,
-		getMoreError:_getMoreError,
-		slideFailInfo:_slideFailInfo,
-		//批量预开通相关操作优化 By ZhangyYu 2015-10-12
-		chooseArea:_chooseArea,//批次信息查询，增加权限优化
-		batchStatusQuery:_batchStatusQuery,//批量受理结果查询
-		batchCancel:_batchCancel,//批次信息查询下的删除
-		batchUpdateConfirm:_batchUpdateConfirm,//批次信息查询下的修改
-		batchUpdateMain:_batchUpdateMain,//批次信息查询下的修改(弹出框)
-		batchProgressQuery:_batchProgressQuery,//批次信息查询下的进度查询
-		batchProgressQueryList:_batchProgressQueryList,//批次信息查询下的进度查询
-		batchOrderQueryList:_batchOrderQueryList,//批次信息查询
-		exportExcel:_exportExcel//导出Excel
+		submit 			:_submit,
+		batchOrderList	:_batchOrderList,
+		batchImportList	:_batchImportList,
+		batchOrderDel	:_batchOrderDel,
+		barchImport		:_barchImport,
+		reset			:_reset,
+		toVerify		:_toVerify,
+		toImportFile	:_toImportFile,
+		download		:_download,
+		downloadIdType	:_downloadIdType,
+		initDic			:_initDic,
+		getMoreError	:_getMoreError,
+		slideFailInfo	:_slideFailInfo,
+		//批量预开通相关操作优化 By ZhangyYu
+		batchReprocess		:_batchReprocess,			//进度查询下的“取消”和“重发”
+		chooseArea			:_chooseArea,				//批次信息查询，权限优化，增加地区选择
+		batchStatusQuery	:_batchStatusQuery,			//批量受理结果查询
+		batchCancel			:_batchCancel,				//批次信息查询下的“删除”
+		batchUpdateMain		:_batchUpdateMain,			//批次信息查询下的“修改”(弹出框)
+		batchUpdateConfirm	:_batchUpdateConfirm,		//批次信息查询下的“修改”(确认按钮)
+		batchProgressQuery	:_batchProgressQuery,		//批次信息查询下的进度查询
+		batchProgressQueryList:_batchProgressQueryList,	//批次信息查询下的进度查询(分页)
+		batchOrderQueryList	:_batchOrderQueryList,		//批次信息查询
+		exportExcel			:_exportExcel				//导出Excel
 	};
 })();
 //初始化
@@ -1132,23 +1151,6 @@ $(function(){
 		order.batch.initDic();
 	}
 	
-	//批次信息查询页面精确查询，后台暂未支持
-/*	$("#groupId").attr("disabled", true);
-	
-	$("#groupId_checkbox").change(function(){
-		if($("#groupId_checkbox").attr("checked")){
-			$("#startDt").attr("disabled", true);
-			$("#endDt").attr("disabled", true);
-			$("#p_reserveDt").attr("disabled", true);
-			$("#groupId").attr("disabled", false);
-		} else{
-			$("#startDt").attr("disabled", false);
-			$("#endDt").attr("disabled", false);
-			$("#p_reserveDt").attr("disabled", false);
-			$("#groupId").attr("disabled", true);
-		}
-	});*/
-	
 	//时间段选择控件限制
 	$("#startDt").off("click").on("click",function(){
 		$.calendar({ format:'yyyy-MM-dd ',real:'#startDt',maxDate:$("#endDt").val() });
@@ -1165,5 +1167,5 @@ $(function(){
 	$("#upFile").change(function(){
 		$('#alertInfo').html("");
 	});
-		
+
 });

@@ -1146,6 +1146,7 @@ public class BatchOrderController  extends BaseController {
 					 PageModel<Map<String, Object>> pm = PageUtil.buildPageModel(MapUtils.getIntValue(param,
 		                     "pageIndex", 1), MapUtils.getIntValue(param,"pageSize",10), total, resultList);
 		             model.addAttribute("pageModel", pm);
+		             model.addAttribute("totalNum", total);
 				}
 			}
 		} catch (Exception e) {
@@ -1188,13 +1189,13 @@ public class BatchOrderController  extends BaseController {
 				if(resultList != null && resultList.size() > 0){
 					//String excelTitle = "批次查询受理表单"+param.get("groupId");
 					String excelTitle = param.get("groupId").toString();
-					String[] headers = new String[]{"批次号","主接入号","UIM卡号","受理时间","受理状态","反馈信息","订单状态"};
+					String[] headers = new String[]{"批次号","主接入号","UIM卡号","受理时间","受理状态","反馈信息","订单状态","下省流水","购物车流水"};
 					
 					//FileOutputStream fos = new FileOutputStream(new File("c:\\Test\\测试.xls")); 
 					//this.exportExcel(excelTitle, headers, resultList, fos, "yyyy-MM-dd");
 					//fos.close();
 					response.addHeader("Content-Disposition", "attachment;filename="+new String( excelTitle.getBytes("gb2312"), "ISO8859-1" )+".xls");
-					response.setContentType("application/binary;charset=utf-8");  
+					response.setContentType("application/binary;charset=utf-8");
 					 
 					ServletOutputStream  outputStream = response.getOutputStream();
 					this.exportExcel(excelTitle, headers, resultList, outputStream);
@@ -1330,6 +1331,45 @@ public class BatchOrderController  extends BaseController {
 			model.addAttribute("resultList", resultList);
 		
 		return "/batchOrder/batch-order-statusQuery-dialog";
+	}
+	
+	/**
+	 * 进度查询下的“取消”和“删除”
+	 * @param param = {"areaId":"登录员工的areaId","batchId":"批次号","action":"cancel或者retry","statusCd":"批次状态", "staffId":"登录员工的staffId","channelId":"登录员工的channelId"}
+	 * @param model
+	 * @param flowNum
+	 * @return {"resultCode":"0或者1""resultMsg":"重发成功/取消成功"}
+	 * @author ZhangYu
+	 */
+	@SuppressWarnings("unchecked")
+	@RequestMapping(value = "/batchReprocess", method = {RequestMethod.POST})
+	@ResponseBody
+	public JsonResponse batchReprocess(@RequestBody Map<String, Object> param,Model model,@LogOperatorAnn String flowNum) {
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);
+		if("1".equals(param.get("flag").toString()))
+			param.put("action", "cancel");//进度查询下的"取消"
+		else
+			param.put("action", "retry");//进度查询下的"重发"
+		param.remove("flag");
+		param.putAll(getAreaInfos());
+		param.put("areaId", sessionStaff.getAreaId());
+		Map<String, Object> rMap = null;
+		JsonResponse jsonResponse = null;
+		try {
+			rMap = orderBmo.batchReprocess(param, null, sessionStaff);
+			if (rMap != null && ResultCode.R_SUCCESS.equals(rMap.get("code").toString())){
+				return super.successed(rMap.get("msg").toString());
+			} else{
+				jsonResponse = super.failed(rMap.get("msg").toString(),ResultConstant.FAILD.getCode());
+			}
+		} catch (InterfaceException ie) {
+			jsonResponse = super.failed(ie, param,ErrorCode.BATCH_IMP_LIST);
+		} catch (IOException e) {
+			jsonResponse = super.failed(ErrorCode.BATCH_IMP_LIST, e, param);
+		} catch (Exception e) {
+			jsonResponse = super.failed(ErrorCode.BATCH_IMP_LIST, e, param);
+		}		
+		return jsonResponse;
 	}
 	
 	/**
@@ -1474,9 +1514,14 @@ public class BatchOrderController  extends BaseController {
 		return "/batchOrder/batch-order-editParty";
 	}
 	
+	/**
+	 * 0--批开活卡		1--批量新装		2--批量订购/退订附属		3--组合产品纳入退出		4--批量修改产品属性<br/>
+	 * 5--批量换挡		8--拆机 			9--批量修改发展人  		11--批量换挡				12--批量换卡
+	 * @param templateType 上述0~12
+	 * @return 批量业务类型名称，以字符串返回，若templateType不为null且没有匹配类型，则默认templateType为"0"，返回"批开活卡"。
+	 */
 	public String getTypeNames(String templateType){
-		Map<String,String> map=new HashMap<String,String>();
-		//0---批量开活卡 1---批量新装	2---批量订购/退订附属	3---组合产品纳入退出	4---批量修改产品属性	5--批量换挡8---拆机 9---批量修改发展人  11--批量换挡
+		Map<String,String> map = new HashMap<String,String>();
 		map.put("0", "批开活卡");
 		map.put("1", "批量新装");
 		map.put("2", "批量订购/退订附属");
@@ -1486,7 +1531,8 @@ public class BatchOrderController  extends BaseController {
 		map.put("8", "拆机");
 		map.put("9", "批量修改发展人");
 		map.put("11", "批量换挡");
-		if(map.get(templateType)!=null){
+		map.put("12", "批量换卡");
+		if(map.get(templateType) != null){
 			return map.get(templateType);
 		}else{
 			return map.get("0");
@@ -1608,21 +1654,25 @@ public class BatchOrderController  extends BaseController {
 	}
 	
 	/**
-	 * 批量换挡
+	 * 批量换挡、批量换卡
 	 * @param session
 	 * @param model
 	 * @return
 	 * @author ZhangYu
 	 */
-	@RequestMapping(value = "/batchChangeFeeType", method = RequestMethod.GET)
-	public String batchChangeFeeType(HttpSession session, Model model) {
+	@RequestMapping(value = "/batchOrderChange", method = RequestMethod.GET)
+	public String batchOrderChange(Model model,HttpServletRequest request,HttpSession session) {
 		//model.addAttribute("canOrder", EhcacheUtil.pathIsInSession(session,"order/batchOrder/batchChangeFeeType"));
 		//List<Map<String, Object>> timeList = getTimeList();
 		List<Map<String, Object>> timeList = this.getTimeListIn5Days();
+		String batchType = request.getParameter("batchType");
+		String batchTypeName  = this.getTypeNames(batchType);
+		
 		model.addAttribute("time", timeList);
-		model.addAttribute("batchType", "11");
-		model.addAttribute("batchTypeName", "批量换挡");
-		return "/batchOrder/batch-order-feeType";
+		model.addAttribute("batchType", batchType);
+		model.addAttribute("batchTypeName", batchTypeName);
+		
+		return "/batchOrder/batch-order-change";
 	}
 
 	/**
@@ -2235,7 +2285,7 @@ public class BatchOrderController  extends BaseController {
 	}
 	
 	/**
-	 * 批量换挡<br/>Excel校验后，将数据提交与后台，并将后台返回的数据封装到model
+	 * 批量换挡、批量换卡<br/>Excel校验后，将数据提交与后台，并将后台返回的数据封装到model
 	 * @param model
 	 * @param request
 	 * @param response
@@ -2249,16 +2299,17 @@ public class BatchOrderController  extends BaseController {
 	@RequestMapping(value = "/importBatchData", method = RequestMethod.POST)
 	public String importBatchData(Model model, HttpServletRequest request,HttpServletResponse response,
 			@LogOperatorAnn String flowNum,
-			@RequestParam("upFile") MultipartFile file/*,
-			@RequestParam("olId") String olId*/) {
-		String message="";
-		String code="-1";
+			@RequestParam("upFile") MultipartFile file,
+			@RequestParam("batchType") String batchType,
+			@RequestParam("reserveDt") String reserveDt) {
+		String message = "";
+		String code = "-1";
 		boolean isError = false;
 		//Map<String,Object> errorStack=null;
 		JsonResponse jsonResponse = null;
 		//String olseq = request.getParameter("olseq");
-		String batchType = request.getParameter("batchType");
-		String reserveDt = request.getParameter("reserveDt");
+		//String batchType = request.getParameter("batchType");
+		//String reserveDt = request.getParameter("reserveDt");
 		log.debug("reserveDt={}", reserveDt);
 		//String areaId = request.getParameter("areaId");
 		if(batchType == null || "".equals(batchType)){
@@ -2283,35 +2334,31 @@ public class BatchOrderController  extends BaseController {
 			if (!isError) {
 				Workbook workbook = null;
 				try {
-					if (oldVersion) {// 2003版本Excel(.xls)
+					if (oldVersion)// 2003版本Excel(.xls)
 						workbook = new HSSFWorkbook(file.getInputStream());
-					} else {// 2007版本Excel或更高版本(.xlsx)
+					else// 2007版本Excel或更高版本(.xlsx)
 						workbook = new XSSFWorkbook(file.getInputStream());
-					}
 				} catch (Exception e) {
 					message="文件读取异常，请检查文件后重新尝试 !";
 					isError = true;
 				}
 				if (!isError) {
-					Map<String,Object> checkResult=null;
-					boolean flag=false;
+					Map<String,Object> checkResult = null;
+					boolean flag = false;
 					SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);
 					String str = sessionStaff.getCustId() +"/"+ sessionStaff.getPartyName() +"/" + sessionStaff.getCardNumber()+"/"+sessionStaff.getCardType();
-					if(SysConstant.BATCHCHANGEFEETYPE.equals(batchType)){
-							checkResult=this.readExcelBatchChange(workbook,batchType,str);
-						if(checkResult.get("code") != null && "0".equals(checkResult.get("code"))){//Excel校验成功
-							//List<Map<String,Object>> orderLists = (List<Map<String,Object>>)checkResult.get("orderLists");//Excel里的接入号和批量换挡ID
-							flag=true;
-						}else{
-							message="批量导入出错:"+(String)checkResult.get("errorData");
-						}	
+					if(SysConstant.BATCHCHANGEFEETYPE.equals(batchType) || SysConstant.BATCHCHANGEUIM.equals(batchType)){
+							checkResult = this.readExcelBatchChange(workbook, batchType, str);
+						if(checkResult.get("code") != null && ResultCode.R_SUCC.equals(checkResult.get("code")))//Excel校验成功
+							flag = true;
+						else
+							message = "批量导入出错:" + (String)checkResult.get("errorData");
 					}
 					if(flag){
 						List<Map<String,Object>> orderLists = (List<Map<String,Object>>)checkResult.get("orderLists");
-						Map<String, Object> rMap = null;
 						Map<String, Object> param = new HashMap<String, Object>();
 						param.put("orderList", orderLists);
-						param.put("custOrderId", "");//目前传“”
+						param.put("custOrderId", "");//与后台协商，目前传""，但不可不传，避免空指针
 						param.putAll(getAreaInfos());
 						param.put("commonRegionId",sessionStaff.getCurrentAreaId());
 						param.put("batchType", batchType);
@@ -2319,26 +2366,22 @@ public class BatchOrderController  extends BaseController {
 						Map<String, Object> busMap = new HashMap<String, Object>();
 						busMap.put("batchOrder", param);
 						try {
-							rMap = orderBmo.batchExcelImport(busMap, flowNum, sessionStaff);
+							Map<String, Object> rMap = orderBmo.batchExcelImport(busMap, flowNum, sessionStaff);
 							if (rMap != null && ResultCode.R_SUCCESS.equals(rMap.get("code").toString())) {
 								message = "批量导入成功，导入批次号：<strong>"+rMap.get("groupId")+"</strong>，请到“批量受理查询”功能中查询受理结果";
 								code = "0";
 				 			}else{
-				 				if(rMap == null || rMap.get("msg") == null){
+				 				if(rMap == null || rMap.get("msg") == null)
 				 					message = "批量导入服务调用失败";
-				 				}else{
+				 				else
 				 					message = rMap.get("msg").toString();
-				 				}		 				
 				 			}
 						} catch (BusinessException be) {
 							jsonResponse = super.failed(be);
-							//errorStack=this.failedForm(be);
 						} catch (InterfaceException ie) {
 							jsonResponse = super.failed(ie, busMap, ErrorCode.BATCH_IMP_SUBMIT);
-							//errorStack=this.failedForm(ie, param, ErrorCode.CHECK_UIMANDPHONE);
 						} catch (Exception e) {
 							jsonResponse = super.failed(ErrorCode.BATCH_IMP_SUBMIT, e, busMap);
-							//errorStack=this.failedForm(ErrorCode.CHECK_UIMANDPHONE, e, param);
 						}
 					}
 				}
@@ -2353,11 +2396,11 @@ public class BatchOrderController  extends BaseController {
 		if(jsonResponse != null)
 			model.addAttribute("errorStack",jsonResponse);
 		
-		return "/batchOrder/batch-order-feeType-list";
+		return "/batchOrder/batch-order-change-list";
 	}
 	
 	/**
-	 * 批量换挡Excel解析
+	 * 批量换挡、批量换卡Excel解析
 	 * @param workbook
 	 * @param batchType
 	 * @param str
@@ -2371,13 +2414,8 @@ public class BatchOrderController  extends BaseController {
 	Map<String, Object> returnMap = new HashMap<String, Object>();
 	StringBuffer errorData = new StringBuffer();
 	List<Map<String, Object>> orderLists = new ArrayList<Map<String, Object>>();
-	//List<Map<String, Object>> mktResInstList = new ArrayList<Map<String, Object>>();
-	//List<Map<String, Object>> uList = new ArrayList<Map<String, Object>>();
 	Set<Object> accessNumberSets = new TreeSet<Object>();
-	//Set<Object> uSets = new TreeSet<Object>();
 	Map<String, Object> item = null;
-	//Map<String, Object> pitem = null;
-	//Map<String, Object> uitem = null;
 	
 	// 循环读取每个sheet中的数据放入list集合中
 	for (int sheetIndex = 0; sheetIndex < workbook.getNumberOfSheets(); sheetIndex++) {
@@ -2388,12 +2426,10 @@ public class BatchOrderController  extends BaseController {
 		if (totalRows > 1) {
 			for (int i = 1; i < totalRows; i++) {
 				item = new HashMap<String, Object>();
-				//pitem = new HashMap<String, Object>();
-				//uitem = new HashMap<String, Object>();
 				Row row = sheet.getRow(i);
 				if (null != row) {
 					boolean cellIsNull = true;
-					if (batchType.equals(SysConstant.BATCHCHANGEFEETYPE)){
+					if (SysConstant.BATCHCHANGEFEETYPE.equals(batchType) || SysConstant.BATCHCHANGEUIM.equals(batchType)){
 						for (int k = 0; k < 2; k++) {
 							Cell cellTemp = row.getCell(k);
 							if (null != cellTemp) {
@@ -2409,57 +2445,63 @@ public class BatchOrderController  extends BaseController {
 					}
 					Cell cell = row.getCell(0);
 					if (null != cell) {
-						String cellValue = checkExcelCellValue(cell);//???????????????????????????校验单元格类型？？？？？？？？？？
+						String cellValue = checkExcelCellValue(cell);
 						if (cellValue == null) {
 							errorData.append("<br/>【第" + (i + 1) + "行】【第1列】单元格格式不对");
 							break;
 						} else if (!"".equals(cellValue)) {
 							if(checkAccessNbrReg(cellValue)){
-								item.put("accessNumber", cellValue);//批量换挡的号码
+								item.put("accessNumber", cellValue);//接入号码
 							} else{
-								errorData.append("<br/>【第" + (i + 1) + "行】【第1列】换挡号码【"+cellValue+"】"+"不符合手机号码格式");
+								errorData.append("<br/>【第" + (i + 1) + "行】【第1列】接入号码【"+cellValue+"】"+"不符合手机号码格式");
 								break;
 							}	
 						} else {
-							errorData.append("<br/>【第" + (i + 1) + "行】【第1列】换挡号码不能为空");
+							errorData.append("<br/>【第" + (i + 1) + "行】【第1列】接入号码不能为空");
 							break;
 						}
 					} else {
-						errorData.append("<br/>【第" + (i + 1) + "行】【第1列】换挡号码不能为空");
+						errorData.append("<br/>【第" + (i + 1) + "行】【第1列】接入号码不能为空");
 						break;
 					}
 					cell = row.getCell(1);
 					if (null != cell) {
-						String cellValue = checkExcelCellValue(cell);//??????????????????????????????????????????????????????
+						String cellValue = checkExcelCellValue(cell);
 						if (cellValue == null) {
 							errorData.append("<br/>【第" + (i + 1) + "行】【第2列】单元格格式不对");
 							break;
 						} else if (!"".equals(cellValue)) {
 							if(checkOfferSpecIdReg(cellValue)){
-								item.put("offerSpecId", cellValue);//批量换挡套餐
+								if(SysConstant.BATCHCHANGEFEETYPE.equals(batchType))
+									item.put("offerSpecId", cellValue);//批量换挡套餐
+								if(SysConstant.BATCHCHANGEUIM.equals(batchType))
+									item.put("newUim", cellValue);//新UIM卡号
 							} else{
-								errorData.append("<br/>【第" + (i + 1) + "行】【第2列】换挡套餐规格ID【"+cellValue+"】"+"格式不正确");
+								if(SysConstant.BATCHCHANGEFEETYPE.equals(batchType))
+									errorData.append("<br/>【第" + (i + 1) + "行】【第2列】换挡套餐规格ID：【"+cellValue+"】"+"格式不正确");
+								if(SysConstant.BATCHCHANGEUIM.equals(batchType))
+									errorData.append("<br/>【第" + (i + 1) + "行】【第2列】UIM卡号：【"+cellValue+"】"+"格式不正确");
 								break;
 							}
 							
 						} else {
-							errorData.append("<br/>【第" + (i + 1) + "行】【第2列】换挡套餐规格ID不能为空");
+							if(SysConstant.BATCHCHANGEFEETYPE.equals(batchType))
+								errorData.append("<br/>【第" + (i + 1) + "行】【第2列】换挡套餐规格ID：【"+cellValue+"】"+"格式不正确");
+							if(SysConstant.BATCHCHANGEUIM.equals(batchType))
+								errorData.append("<br/>【第" + (i + 1) + "行】【第2列】UIM卡号：【"+cellValue+"】"+"格式不正确");
 							break;
 						}
 					} else {
-						errorData.append("<br/>【第" + (i + 1) + "行】【第2列】换挡套餐规格ID不能为空");
+						if(SysConstant.BATCHCHANGEFEETYPE.equals(batchType))
+							errorData.append("<br/>【第" + (i + 1) + "行】【第2列】换挡套餐规格ID不能为空");
+						if(SysConstant.BATCHCHANGEUIM.equals(batchType))
+							errorData.append("<br/>【第" + (i + 1) + "行】【第2列】新UIM卡号不能为空");
 						break;
 					}
 				}
 				if (item.size() > 0) {
 					orderLists.add(item);
 				}
-				/*if (pitem.size() > 0) {
-					mktResInstList.add(pitem);
-				}
-				if (uitem.size() > 0) {
-					uList.add(uitem);
-				}*/
 			}
 		} else {
 			message = "批量导入异常:导入数据为空 !";
@@ -2477,11 +2519,10 @@ public class BatchOrderController  extends BaseController {
 	}
 	long time2 = new Date().getTime();
 	if ("".equals(errorData.toString())) {
-		code = "0";
+		code = ResultCode.R_SUCC;
 	}
 	System.out.println("=============去重判断==============" + "批量号码去重判断耗时: " + (time2 - time1));
 	returnMap.put("errorData", errorData.toString());
-	//returnMap.put("mktResInstList", mktResInstList);
 	returnMap.put("orderLists", orderLists);
 	returnMap.put("code", code);
 	returnMap.put("message", message);
@@ -2503,7 +2544,7 @@ public class BatchOrderController  extends BaseController {
 	}
 	
 	/**
-	 * 校验换挡套餐ID是否为数字
+	 * 校验换挡套餐ID是否为数字(批量换卡也在使用)
 	 * @param cellValue
 	 * @return 校验成功返回<strong>true</strong>，否则返回<strong>false</strong>
 	 */
@@ -2608,6 +2649,8 @@ public class BatchOrderController  extends BaseController {
 			row.createCell(j++).setCellValue(tempStr);
 			row.createCell(j++).setCellValue(map.get("msgInfo").toString() == null ? "" : map.get("msgInfo").toString());
 			row.createCell(j++).setCellValue(map.get("orderStatusName").toString() == null ? "" : map.get("orderStatusName").toString());
+			row.createCell(j++).setCellValue(map.get("transactionId").toString() == null ? "" : map.get("transactionId").toString());//下省流水
+			row.createCell(j++).setCellValue(map.get("custSoNumber").toString() == null ? "" : map.get("custSoNumber").toString());//购物车流水
 		}
 		try {
 			workbook.write(outputStream);

@@ -248,6 +248,19 @@ public interface OrderBmo {
 	public Map<String,Object> batchOperate(Map<String, Object> param,String optFlowNum, SessionStaff sessionStaff) throws InterfaceException, IOException, Exception;
 	
 	/**
+	 * 进度查询下的“取消”和“删除”
+	 * @param param  = {"areaId":"登录员工的areaId","batchId":"批次号","action":"cancel或者retry","statusCd":"批次状态", "staffId":"登录员工的staffId","channelId":"登录员工的channelId"}
+	 * @param optFlowNum
+	 * @param sessionStaff
+	 * @return {"resultCode":"0或者1""resultMsg":"重发成功/取消成功"}
+	 * @throws InterfaceException
+	 * @throws IOException
+	 * @throws Exception
+	 * @author ZhangYu
+	 */
+	public Map<String, Object> batchReprocess(Map<String, Object> param, String optFlowNum, SessionStaff sessionStaff) throws InterfaceException, IOException, Exception;
+	
+	/**
 	 * 批次信息查询下的进度查询
 	 * @param param
 	 * @param optFlowNum

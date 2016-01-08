@@ -2,13 +2,14 @@
 		<table class="contract_list numberList">
 			<thead>
 				<tr>
-			       <td width="20%">批次号</td>
-			       <td width="10%">主接入号</td>
-			       <td width="15%">uim卡号</td>
-			       <td width="15%">受理时间</td>
-			       <td width="10%">受理状态</td>
-			       <td width="20%">反馈信息</td>
-			       <td width="10%">订单状态</td>
+			       <td width="18%">批次号</td>
+			       <td width="9%">主接入号</td>
+			       <td width="13%">uim卡号</td>
+			       <td width="13%">受理时间</td>
+			       <td width="9%">受理状态</td>
+			       <td width="19%">反馈信息</td>
+			       <td width="9%">订单状态</td>
+			       <td width="10%">操作</td>
 	     		</tr>
 			</thead>
 			<tbody>
@@ -36,7 +37,7 @@
 				     	 	<#elseif childList.statusCd=="PE">等待重新派发
 				     	 	<#elseif childList.statusCd=="F">发送后端失败
 				     	 	<#elseif childList.statusCd=="DL">受理处理中
-				     	 	<#elseif childList.statusCd=="RC">返销成功
+				     	 	<#elseif childList.statusCd=="RC">取消成功
 				     	 	</#if>
 			     	 	</td>
 			     	 	<td>
@@ -50,6 +51,15 @@
 			     	 	<td>
 			     	 		${childList.orderStatusName}
 			     	 	</td>
+			     	 	<td>
+			     	 		<#if childList.statusCd=="X">
+			     	 			<i id="plan_detail" onclick="order.batch.batchReprocess('${childList.groupId}','${childList.statusCd}','${childList.batchId}','1')">取消</i>&nbsp;
+		     	 				<i id="plan_detail" onclick="order.batch.batchReprocess('${childList.groupId}','${childList.statusCd}','${childList.batchId}','2')">重发</i>
+			     	 		<#elseif childList.statusCd=="F">
+			     	 			<i id="plan_detail" onclick="order.batch.batchReprocess('${childList.groupId}','${childList.statusCd}','${childList.batchId}','2')">重发</i>
+			     	 		<#else>
+			     	 		</#if>
+	     	 			</td>
 	     	 		</tr>
 	     			</#list>
 				</#if>

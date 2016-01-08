@@ -1822,7 +1822,6 @@ public class OrderBmoImpl implements OrderBmo {
 
 	/**
 	 * 批次信息查询下的删除和修改
-	 * @author ZhangYu
 	 * @param param
 	 * @param optFlowNum
 	 * @param sessionStaff
@@ -1830,6 +1829,7 @@ public class OrderBmoImpl implements OrderBmo {
 	 * @throws Exception 
 	 * @throws IOException 
 	 * @throws InterfaceException 
+	 * @author ZhangYu
 	 */
 	public Map<String, Object> batchOperate(Map<String, Object> param, String optFlowNum, SessionStaff sessionStaff) throws InterfaceException, IOException, Exception {
 		DataBus db = InterfaceClient.callService(param,PortalServiceCode.INTF_BATCH_ORDEROPERATE, optFlowNum, sessionStaff);
@@ -1864,6 +1864,39 @@ public class OrderBmoImpl implements OrderBmo {
 		}
 		return returnMap;
 	}
+	
+	/**
+	 * 进度查询下的“取消”和“删除”
+	 * @param param  = {"areaId":"登录员工的areaId","batchId":"批次号","action":"cancel或者retry","statusCd":"批次状态", "staffId":"登录员工的staffId","channelId":"登录员工的channelId"}
+	 * @param optFlowNum
+	 * @param sessionStaff
+	 * @return {"resultCode":"0或者1""resultMsg":"重发成功/取消成功"}
+	 * @throws InterfaceException
+	 * @throws IOException
+	 * @throws Exception
+	 * @author ZhangYu
+	 */
+	public Map<String, Object> batchReprocess(Map<String, Object> param, String optFlowNum, SessionStaff sessionStaff) throws InterfaceException, IOException, Exception {
+		DataBus db = InterfaceClient.callService(param,PortalServiceCode.INTF_BATCH_BATCHREPROCESS, optFlowNum, sessionStaff);
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		try{
+			if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db.getResultCode()))) {//接口调用成功
+				Map<String, Object> returnData = db.getReturnlmap();
+				if(returnData != null && ResultCode.R_SUCC.equals(returnData.get("resultCode")))//后台数据返回正常
+					returnMap.put("code", ResultCode.R_SUCCESS);
+				else
+					returnMap.put("code", returnData.get("resultCode"));
+				returnMap.put("msg", returnData.get("resultMsg"));
+			} else {
+				returnMap.put("code", ResultCode.R_FAIL);
+				returnMap.put("msg", db.getResultMsg());
+			}
+		} catch(Exception e) {
+			log.error("门户处理营业受理的service/intf.batchOrderService/cancelOrRetrySingleBatch服务返回的数据异常", e);
+			throw new BusinessException(ErrorCode.BATCH_IMP_LIST, param, db.getReturnlmap(), e);
+		}
+		return returnMap;
+	}
 
 	/**
 	 * 批次信息查询下的进度查询
@@ -1871,10 +1904,10 @@ public class OrderBmoImpl implements OrderBmo {
 	 * @param optFlowNum
 	 * @param sessionStaff
 	 * @return
-	 * @author ZhangYu
 	 * @throws Exception 
 	 * @throws IOException 
-	 * @throws InterfaceException 
+	 * @throws InterfaceException
+	 * @author ZhangYu 
 	 */
 	public Map<String, Object> batchProgressQuery(Map<String, Object> param, String optFlowNum, SessionStaff sessionStaff) throws InterfaceException, IOException, Exception {
 		DataBus db = InterfaceClient.callService(param,PortalServiceCode.INTF_BATCH_IMPORTQUERY, optFlowNum, sessionStaff);

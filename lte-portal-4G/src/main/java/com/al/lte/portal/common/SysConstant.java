@@ -149,10 +149,10 @@ public final class SysConstant {
     public static String BATCHCHANGE="5";
     public static String BATCHFAZHANREN="9";
     public static String BATCHORDERTERMINAL="10";
-    /**
-     * 批量换挡
-     */
+    /**批量换挡*/
     public static String BATCHCHANGEFEETYPE = "11";
+    /**批量换卡*/
+    public static String BATCHCHANGEUIM = "12";
     
     //是否记录接口日志 ON OFF
     public static String WRITE_LOG_FLAG = "WRITE_LOG_FLAG";

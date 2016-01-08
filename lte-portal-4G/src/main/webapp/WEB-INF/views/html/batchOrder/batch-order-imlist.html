@@ -85,6 +85,7 @@
 	</table>
 	
 <@portal.modelPagination pageModel 5 "order.batch.batchOrderQueryList"/>
+<input type="hidden" name="totalNum" id="totalNum" value="${totalNum}"/>
 <script src="${contextPath}/js/our-js/ec.pagination.js?${jsversion}" type="text/javascript"></script>
 <#else>
     <div class="no_search"> 

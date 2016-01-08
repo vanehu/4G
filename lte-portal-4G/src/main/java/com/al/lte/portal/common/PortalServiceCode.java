@@ -573,19 +573,25 @@ public final class PortalServiceCode {
      * 批量受理结果查询
      * @author ZhangYu
      */
-    public static final String INTF_BATCH_ORDERSTATUSQUERY ="biz-service/intf.batchOrderService/queryGroupBatchOrder";
+    public static final String INTF_BATCH_ORDERSTATUSQUERY = "biz-service/intf.batchOrderService/queryGroupBatchOrder";
     
     /**
      * 批次信息查询下的取消和修改
      * @author ZhangYu
      */
-    public static final String INTF_BATCH_ORDEROPERATE ="biz-service/intf.batchOrderService/dealBatchQueueProgress";
+    public static final String INTF_BATCH_ORDEROPERATE = "biz-service/intf.batchOrderService/dealBatchQueueProgress";
+    
+    /**
+     * 进度查询下的“取消”和“重发”
+     * @author ZhangYu
+     */
+    public static final String INTF_BATCH_BATCHREPROCESS = "biz-service/intf.batchOrderService/cancelOrRetrySingleBatch";
     
     /**
      * 批次信息查询
      * @author ZhangYu
      */
-    public static final String INTF_BATCH_ORDERQUERYLIST ="biz-service/intf.batchOrderService/queryGroupBatchOrderInfo";
+    public static final String INTF_BATCH_ORDERQUERYLIST = "biz-service/intf.batchOrderService/queryGroupBatchOrderInfo";
     
     public static final String INTF_PNUIMBATCHVAL_SERVICE="res-PnPiReserveService";
     

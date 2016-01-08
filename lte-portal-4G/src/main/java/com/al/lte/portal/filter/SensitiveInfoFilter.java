@@ -105,6 +105,12 @@ public class SensitiveInfoFilter extends OncePerRequestFilter {
 				return true;
 			}
 		}
+		
+		//非json格式不过滤(批量业务)
+		String contentType = request.getContentType();
+		if(contentType == null || contentType.indexOf("JSON_CONTENT_TYPE") == -1)
+			return true;
+		
 		return false;
 	}
 

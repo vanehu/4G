@@ -59,7 +59,7 @@
 			<div class="order_content" style="border:none; padding:10px">
 				<div class="order_tab_panel" style="display:block;">
 					<div class="selectList">
-						<form method="post" id="batchChangeFeeTypeForm" enctype="multipart/form-data">
+						<form method="post" id="batchOrderChangeForm" enctype="multipart/form-data">
 							<dl>
 								<dt>
 									预约时间&nbsp;:
@@ -79,7 +79,7 @@
 								</dt>
 								<dd>
 									<input type="hidden" name="batchType" id="batchType" value="${batchType}"/>
-									<input type="file"  name="upFile" id="upFile" name="upFile" style="text-indent: 0px"/>
+									<input type="file"  name="upFile" id="upFile" style="text-indent: 0px"/>
 								</dd>
 								<dd>
 									<a class="purchase" href="javascript:void(0)" onclick="order.batch.submit();">导 入</a>
@@ -115,4 +115,3 @@
 <#else>
 <@extends name="/content-template.html"/>
 </#if>
-<!-- action="${contextPath}/order/batchOrder/importBatchData" -->
