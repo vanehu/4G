@@ -37,8 +37,12 @@ public class DataSourceRouter {
 	
 	private static Properties properties;
 	
+	//areaId 与 数据源名称 映射表
+	private static Map<String, String> dataSourceKeyMap;
+	
 	static{
 		try {
+			initDataSourceKeyMap();
 			clearCache();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -52,7 +56,8 @@ public class DataSourceRouter {
 		 */
 		String dataSourceKey = null;
 		if(StringUtils.isNotBlank(key)){
-			dataSourceKey = DataRepository.getInstence().getSysParamValue(DEFAULT_DATASOURCE_KEY,key, "7"); //从管理库配置数据中获取key对应的数据源名称
+//			dataSourceKey = DataRepository.getInstence().getSysParamValue(DEFAULT_DATASOURCE_KEY,key, "7"); //从管理库配置数据中获取key对应的数据源名称
+			dataSourceKey = dataSourceKeyMap.get(key); //临时方案，从本地获取，不再从数据库读取；且数据库为全量更新无法与不同版本的程序（因生产环境发布为1/3递进发布）保持一致
 		}
 		
 		if (StringUtils.isBlank(dataSourceKey)){
@@ -175,5 +180,44 @@ public class DataSourceRouter {
 			}
 		}
 	} 
+	
+	
+	//初始化dataSourceKeyMap （与 datasource-config.properties 保持一致）
+	private static void initDataSourceKeyMap(){
+		dataSourceKeyMap = new HashMap<String, String>();
+		dataSourceKeyMap.put("default", MANAGE_DATASOURCE_KEY);
+		dataSourceKeyMap.put("8440000", "guangdong");
+		dataSourceKeyMap.put("8320000", "jiangsu");
+		dataSourceKeyMap.put("8510000", "sichuan");
+		dataSourceKeyMap.put("8330000", "zhejiang");
+		dataSourceKeyMap.put("8340000", "anhui");
+		dataSourceKeyMap.put("8610000", "shanxi");
+		dataSourceKeyMap.put("8350000", "fujian");
+		dataSourceKeyMap.put("8310000", "shanghai");
+		dataSourceKeyMap.put("8130000", "hebei");
+		dataSourceKeyMap.put("8150000", "neimenggu");
+		dataSourceKeyMap.put("8430000", "hunan");
+		dataSourceKeyMap.put("8210000", "liaoning");
+		dataSourceKeyMap.put("8420000", "hubei");
+		dataSourceKeyMap.put("8520000", "guizhou");
+		dataSourceKeyMap.put("8370000", "shandong");
+		dataSourceKeyMap.put("8500000", "chongqing");
+		dataSourceKeyMap.put("8650000", "xinjiang");
+		dataSourceKeyMap.put("8110000", "beijing");
+		dataSourceKeyMap.put("8120000", "tianjin");
+		dataSourceKeyMap.put("8360000", "jiangxi");
+		dataSourceKeyMap.put("8630000", "qinghai");
+		dataSourceKeyMap.put("8620000", "gansu");
+		dataSourceKeyMap.put("8220000", "jilin");
+		dataSourceKeyMap.put("8410000", "henan");
+		dataSourceKeyMap.put("8230000", "heilongjiang");
+		dataSourceKeyMap.put("8530000", "yunnan");
+		dataSourceKeyMap.put("8450000", "guangxi");
+		dataSourceKeyMap.put("8140000", "shxi");
+		dataSourceKeyMap.put("8460000", "hainan");
+		dataSourceKeyMap.put("8640000", "ningxia");
+		dataSourceKeyMap.put("8540000", "xizang");
+		dataSourceKeyMap.put("9110000", "gangaotai");
+	}
 	
 }
