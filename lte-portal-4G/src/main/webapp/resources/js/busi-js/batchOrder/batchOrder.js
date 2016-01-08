@@ -771,6 +771,7 @@ order.batch = (function(){
 	var _batchProgressQueryList = function(pageIndex){
 		var groupId = $("#groupId_dialog").val();
 		var batchType = $("#batchType_dialog").val();
+		var phoneNumber = $.trim($("#phoneNumber").val());
 		
 		if(groupId == null || groupId == "" || groupId == undefined){
 			$.alert("提示","批次号为空，无法进行查询，请刷新页面或稍后再试！");
@@ -793,6 +794,7 @@ order.batch = (function(){
 				"batchType":batchType,//受理类型
 				"statusCd":statusCd,//受理状态
 				"orderStatus":orderStatus,//订单状态
+				"phoneNumber":phoneNumber,
 				"pageIndex":pageIndex,
 				"pageSize":"10"
 		};
