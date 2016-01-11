@@ -2742,6 +2742,98 @@ public class OrderController extends BaseController {
         return "/order/order-confirm";
     }
 
+    /**
+     * 身份证相片解码.
+     * @param request
+     * @param param
+     * @return
+     * @throws Exception
+     */
+    @SuppressWarnings("unchecked")
+    private boolean picDecode(HttpServletRequest request, Map<String, Object> param) throws Exception {
+        List<Map<String, Object>> custOrderList = null;
+        List<Map<String, Object>> busiOrderList = null;
+        List<Map<String, Object>> dataList = null;
+        List<Map<String, Object>> identitiesList = null;
+        String custName = null;
+        String custIdCard = null;
+        String addressStr = null;
+        Map<String, Object> orderList = (Map<String, Object>) param.get("orderList");
+        Object object = orderList.get("custOrderList");
+        if (object instanceof Map) {
+            Map<String, Object> custMap = (Map<String, Object>) object;
+            custOrderList = new ArrayList<Map<String, Object>>();
+            custOrderList.add(custMap);
+        } else {
+            custOrderList = (List<Map<String, Object>>) object;
+        }
+        for (Map<String, Object> custOrder : custOrderList) {
+            Object busiObject = custOrder.get("busiOrder");
+            if (busiObject instanceof Map) {
+                Map<String, Object> busiMap = (Map<String, Object>) busiObject;
+                busiOrderList = new ArrayList<Map<String, Object>>();
+                busiOrderList.add(busiMap);
+            } else {
+                busiOrderList = (List<Map<String, Object>>) busiObject;
+            }
+            for (Map<String, Object> busiOrder : busiOrderList) {
+                boolean result = false;
+                Object boActionTypeObj = busiOrder.get("boActionType");
+                if (null != boActionTypeObj) {
+                    Map<String, Object> boActionType = (Map<String, Object>) boActionTypeObj;
+                    String boActionTypeCd = (String) boActionType.get("boActionTypeCd");
+                    //实名制从服务端取数据--Add by chenhr at 2016-01-07
+                    if ("C1".equalsIgnoreCase(boActionTypeCd)) { //新建客户
+                       Object tokenObject = param.get("token");
+                       if (null == tokenObject) {
+                           return false;
+                       } else {
+                           String token = (String) tokenObject;
+                           if (StringUtils.isNotBlank(token)) {
+                               Object mapObject = ServletUtils.getSessionAttribute(request, "_certInfo");
+                               if (null == mapObject) {
+                                   return false;
+                               } else {
+                                   Map<String, Object> map = (Map<String, Object>) mapObject;
+                                   String initToken = (String) map.get("token");
+                                   if (initToken.equals(token)) {
+                                       result = true;
+                                       param.remove("token");
+                                       custName = (String) map.get("custName");
+                                       custIdCard = (String) map.get("custIdCard");
+                                       addressStr = (String) map.get("addressStr");
+                                   } else {
+                                       return false;
+                                   }
+                               }
+                           } else {
+                               return false;
+                           }
+                       }
+                    }
+                }
+                Object dataObject = busiOrder.get("data");
+                if (dataObject instanceof Map) {
+                    Map<String, Object> dataMap = (Map<String, Object>) dataObject;
+                    dataList = new ArrayList<Map<String, Object>>();
+                    dataList.add(dataMap);
+                } else {
+                    dataList = (List<Map<String, Object>>) dataObject;
+                }
+                for (Map<String, Object> data : dataList) {
+                    if (result) {
+                        Map<String, Object> custInfos = (Map<String, Object>) ((List<Map<String, Object>>) data.get("boCustInfos")).get(0);
+                        Map<String, Object> identities = (Map<String, Object>) ((List<Map<String, Object>>) data.get("boCustIdentities")).get(0);
+                        custInfos.put("name", custName);
+                        identities.put("identityNum", custIdCard);
+                        custInfos.put("addressStr", addressStr);
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
     @RequestMapping(value = "/orderSubmit", method = RequestMethod.POST)
     @ResponseBody
     public JsonResponse orderSubmit(@RequestBody Map<String, Object> param, HttpServletResponse response,
@@ -2751,6 +2843,10 @@ public class OrderController extends BaseController {
             try {
                 SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
                         SysConstant.SESSION_KEY_LOGIN_STAFF);
+                //Add by chenhr at 2016-01-04
+                if (!picDecode(request, param)) {
+                    return super.failed(ErrorCode.ORDER_SUBMIT, "您当前的证件信息非通过正常渠道录入，请核对！", param);
+                }
                 Map orderList = (Map) param.get("orderList");
                 Map orderListInfo = (Map) orderList.get("orderListInfo");
                 orderListInfo.put("staffId", sessionStaff.getStaffId()); //防止前台修改
@@ -3906,4 +4002,30 @@ public class OrderController extends BaseController {
         }
         return jsonResponse;
     }
+
+    @ResponseBody
+    @AuthorityValid(isCheck = false)
+    @RequestMapping(value = "/certInfo", method = RequestMethod.POST)
+    public JsonResponse cacheCertInfo(@RequestBody Map<String, Object> param,
+            HttpServletRequest request) {
+        JsonResponse jsonResponse = null;
+        try {
+            String custName = (String) param.get("custName");
+            String custIdCard = (String) param.get("custIdCard");
+            String addressStr = (String) param.get("addressStr");
+            if (StringUtils.isBlank(custName) || StringUtils.isBlank(custIdCard)
+                || StringUtils.isBlank(addressStr)) {
+                return super.failed("无效信息", 1);
+            }
+            ServletUtils.removeSessionAttribute(request, "_certInfo");
+            String uidKey = UIDGenerator.generatorUID();
+            param.put("token", uidKey);
+            ServletUtils.setSessionAttribute(request, "_certInfo", param);
+            jsonResponse = super.successed(uidKey, ResultConstant.SUCCESS.getCode());
+            return jsonResponse;
+        } catch (Exception e) {
+            return super.failed("缓存信息异常", -1);
+        }
+    }
+
 }

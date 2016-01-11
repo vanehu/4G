@@ -53,6 +53,8 @@ OrderInfo = (function() {
 	var _orderlonger = "";
 	
 	var _custorderlonger = "";
+
+	var _custCreateToken = "";
 	
 	var _zcd_privilege =""; //是否具有分段受理权限
 	
@@ -748,7 +750,7 @@ OrderInfo = (function() {
 			busiOrder.busiObj.accessNumber = accNbr;
 		}
 		
-		if(prodServ.boActionTypeCd == CONST.BO_ACTION_TYPE.PRODUCT_PARMS){ //改产品属性
+		if(prodServ.boActionTypeCd == CONST.BO_ACTION_TYPE.PRODUCT_PARMS){ //改产品属性,mark
 			if(ec.util.isArray(prodServ.prodSpecParams)){
 				busiOrder.data.boServOrders = [];
 				busiOrder.data.boServOrders.push({
@@ -1633,6 +1635,7 @@ OrderInfo = (function() {
 		checkUimData			:_checkUimData,
 		saveOrder				:_saveOrder,
 		provinceInfo           	:_provinceInfo,
-		newOrderInfo			:_newOrderInfo
+		newOrderInfo			:_newOrderInfo,
+		custCreateToken         :_custCreateToken
 	};
 })();

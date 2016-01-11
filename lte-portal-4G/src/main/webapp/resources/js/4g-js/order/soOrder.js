@@ -57,6 +57,9 @@ SoOrder = (function() {
 			if(OrderInfo.order.token!=""){
 				url = contextPath+"/order/orderSubmit?token="+OrderInfo.order.token;
 			}
+			if (OrderInfo.custCreateToken !== undefined || OrderInfo.custCreateToken !== "") {
+				OrderInfo.orderData.token = OrderInfo.custCreateToken;
+			}
 			$.callServiceAsJson(url,JSON.stringify(OrderInfo.orderData), {
 				"before":function(){
 					$.ecOverlay("<strong>订单提交中，请稍等...</strong>");
@@ -70,7 +73,7 @@ SoOrder = (function() {
 						if(data.checkRule!=undefined && data.checkRule!="notCheckRule"){
 							//下省校验单
 							var provCheckResult = order.calcharge.tochargeSubmit(response.data);
-							//校验通过，可继续受理
+							//下省校验请求成功
 							if(provCheckResult.code==0){
 								//存在可继续受理的省内校验错误，需要在前台进行提示
 								if(provCheckResult.data.returnCode!=null && provCheckResult.data.returnCode!="0000"){
