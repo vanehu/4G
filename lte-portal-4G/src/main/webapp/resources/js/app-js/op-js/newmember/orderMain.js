@@ -624,8 +624,8 @@ order.main = (function(){
     				$("#nbr_btn_-"+(n+1)).removeAttr("onclick");
     				$("#nbr_btn_-"+(n+1)).removeClass("selectBoxTwo");
     				$("#nbr_btn_-"+(n+1)).addClass("selectBoxTwoOn");
-    				var param = {"phoneNum":newSubPhoneNumsize[n]};
-    				var data = order.phoneNumber.queryPhoneNumber(param);
+    				var param1 = {"phoneNum":newSubPhoneNumsize[n]};
+    				var data = order.phoneNumber.queryPhoneNumber(param1);
     				if(data.datamap.baseInfo){
     					//$("#nbr_btn_-"+(n+1)).html(newSubPhoneNumsize[n]+"<u></u>");
     					$("#nbr_btn_-"+(n+1)).val(newSubPhoneNumsize[n]);

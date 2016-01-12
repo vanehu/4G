@@ -115,7 +115,7 @@ query.offer = (function() {
 				if (response.code==0) {
 					if(response.data){
 						var offerLists = response.data.result.offerLists;
-						AttachOffer.mainCartOpenedList.push({"prodId":param.prodId,"offerLists":offerLists,"accessNumber":param.acctNbr});
+						//AttachOffer.mainCartOpenedList.push({"prodId":param.prodId,"offerLists":offerLists,"accessNumber":param.acctNbr});
 					}
 				}else {
 					$.alert("提示","附属销售品实例查询失败,稍后重试");
