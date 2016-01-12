@@ -121,6 +121,8 @@
     </filter-mapping>
     
     <!-- 订单提交报文过滤 -->
+    <!-- 原意为防止修改订单数据，如渠道、地区、号码等，有问题时才弹出如上提示，这块处理细节可能有点问题，待进一步确认，目前先拿掉该过滤器  -->
+    <!-- 
     <filter>
        <filter-name>OrderInfoFilter</filter-name>
        <filter-class>com.al.lte.portal.filter.OrderInfoFilter</filter-class>
@@ -129,6 +131,7 @@
        <filter-name>OrderInfoFilter</filter-name>
        <url-pattern>/order/orderSubmit</url-pattern>
     </filter-mapping>
+     -->
     
     <!-- 敏感信息过滤 -->
     <filter>
