@@ -30,5 +30,10 @@ public class Const {
 	
 	public static final String OL_TYPE_CD = "15";// app 系统标示
 	
+	//发展人数据
+	public static Object ASSISTANT_TYPE = null;
+	
+	//证件类型
+	public static Object ID_CARD_TYPE=null;
 	
 }

@@ -2,6 +2,7 @@
 # 只读取后缀为js或css的文件
 # 以#号开始的行会被视作注释
 # 路径从WEB-INF的上级目录作为基础目录
+# 读取能力开放APP版本需要压缩的JS文件
 resources/js/app-js/third-js/jquery-1.11.1.min.js
 resources/js/app-js/third-js/bootstrap.min.js
 resources/js/app-js/third-js/bootstrap-select.js
@@ -10,6 +11,7 @@ resources/js/app-js/third-js/bootstrap-datetimepicker.zh-CN.js
 resources/js/app-js/third-js/jquery.nouislider.min.js
 resources/js/app-js/third-js/bootstrap-toggle.min.js
 resources/js/app-js/third-js/touch.min.js
+resources/js/app-js/third-js/bootstrapValidator.js
 resources/js/third-js/jquery/jquery.cookies.js
 resources/js/third-js/utils/UUID.js
 resources/js/pad-js/third-js/iscroll.js

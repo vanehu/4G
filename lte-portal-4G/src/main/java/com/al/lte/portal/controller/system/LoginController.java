@@ -70,6 +70,7 @@ import com.al.lte.portal.bmo.staff.StaffBmo;
 import com.al.lte.portal.bmo.staff.StaffChannelBmo;
 import com.al.lte.portal.bmo.system.MenuBmo;
 import com.al.lte.portal.common.CommonMethods;
+import com.al.lte.portal.common.Const;
 import com.al.lte.portal.common.EhcacheUtil;
 import com.al.lte.portal.common.InterfaceClient;
 import com.al.lte.portal.common.MySessionInterceptor;
@@ -1903,6 +1904,10 @@ public class LoginController extends BaseController {
 			if (result  != 0) {
 				msg = "SP_SYS_PARAM数据表缓存刷新失败！！";
 			}
+			
+			//清除能力开放缓存数据
+			resetTokenParams();
+			
 			propertiesUtils.clear();
 			msg += "portal.properties配置文件缓存刷新成功。";
 			//顺便清除apConfig缓存
@@ -1914,6 +1919,16 @@ public class LoginController extends BaseController {
 			return "/common/success";
 		}
     }	
+	
+	/**清空能力开放缓存数据*/
+	public int resetTokenParams(){
+		int data=0;
+		
+		Const.ASSISTANT_TYPE=null;
+		Const.ID_CARD_TYPE=null;
+		
+		return data;
+	}
 		
 	/**
      * 重置 发票模版缓存

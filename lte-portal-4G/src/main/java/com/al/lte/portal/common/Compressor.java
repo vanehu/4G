@@ -64,6 +64,21 @@ public class Compressor {
 		}
 		return -1;
 	}
+	
+	public static int compressThirdPADJs(String version) {
+		String inputFileListName = "resources/merge/js/thirdPADJsList.txt";
+		String outputFilename = "resources/merge/js/thirdPAD";
+		if (StringUtils.isEmpty(version)) {
+			outputFilename += "-1.0.0.all.js";
+		} else {
+			outputFilename += "-" + version + ".all.js";
+		}
+		int combineResult = combine(inputFileListName, outputFilename);
+		if (combineResult == 0) {
+			return compress(outputFilename, DEF_TYPE_JS);
+		}
+		return -1;
+	}
 
 	public static int compressBaseJs(String version) {
 		String inputFileListName = "resources/merge/js/baseJsList.txt";
@@ -83,6 +98,67 @@ public class Compressor {
 	public static int compressBusiJs(String version) {
 		String inputFileListName = "resources/merge/js/busiJsList.txt";
 		String outputFilename = "resources/merge/js/busi";
+		if (StringUtils.isEmpty(version)) {
+			outputFilename += "-1.0.0.all.js";
+		} else {
+			outputFilename += "-" + version + ".all.js";
+		}
+		int result = combine(inputFileListName, outputFilename);
+		if (result == 0) {
+			return compress(outputFilename, DEF_TYPE_JS);
+		}
+		return -1;
+	}
+	
+	public static int compressBusiPCJs(String version) {
+		String inputFileListName = "resources/merge/js/busiPCJsList.txt";
+		String outputFilename = "resources/merge/js/busiPC";
+		if (StringUtils.isEmpty(version)) {
+			outputFilename += "-1.0.0.all.js";
+		} else {
+			outputFilename += "-" + version + ".all.js";
+		}
+		int result = combine(inputFileListName, outputFilename);
+		if (result == 0) {
+			return compress(outputFilename, DEF_TYPE_JS);
+		}
+		return -1;
+	}
+	
+	public static int compressBusiAPPJs(String version) {
+		String inputFileListName = "resources/merge/js/busiAPPJsList.txt";
+		String outputFilename = "resources/merge/js/busiAPP";
+		if (StringUtils.isEmpty(version)) {
+			outputFilename += "-1.0.0.all.js";
+		} else {
+			outputFilename += "-" + version + ".all.js";
+		}
+		int result = combine(inputFileListName, outputFilename);
+		if (result == 0) {
+			return compress(outputFilename, DEF_TYPE_JS);
+		}
+		return -1;
+	}
+	
+	/**APP版本*/
+	public static int compressBusiAppMemJs(String version) {
+		String inputFileListName = "resources/merge/js/busiAppMemJsList.txt";
+		String outputFilename = "resources/merge/js/busiAppMem";
+		if (StringUtils.isEmpty(version)) {
+			outputFilename += "-1.0.0.all.js";
+		} else {
+			outputFilename += "-" + version + ".all.js";
+		}
+		int result = combine(inputFileListName, outputFilename);
+		if (result == 0) {
+			return compress(outputFilename, DEF_TYPE_JS);
+		}
+		return -1;
+	}
+	
+	public static int compressBusiPADJs(String version) {
+		String inputFileListName = "resources/merge/js/busiPADJsList.txt";
+		String outputFilename = "resources/merge/js/busiPAD";
 		if (StringUtils.isEmpty(version)) {
 			outputFilename += "-1.0.0.all.js";
 		} else {

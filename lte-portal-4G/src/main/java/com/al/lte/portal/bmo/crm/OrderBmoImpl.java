@@ -19,6 +19,7 @@ import com.al.ecs.exception.BusinessException;
 import com.al.ecs.exception.ErrorCode;
 import com.al.ecs.exception.InterfaceException;
 import com.al.ecs.log.Log;
+import com.al.lte.portal.common.Const;
 import com.al.lte.portal.common.InterfaceClient;
 import com.al.lte.portal.common.MySimulateData;
 import com.al.lte.portal.common.PortalServiceCode;
@@ -1081,29 +1082,41 @@ public class OrderBmoImpl implements OrderBmo {
 	 * @see com.al.lte.portal.bmo.crm.BusiBmo#orderSpecParam(java.util.Map,
 	 * java.lang.String, com.al.lte.portal.model.SessionStaff)
 	 */
-	public Map<String, Object> assistantTypeQuery(Map<String, Object> dataBusMap,String flowNum,SessionStaff sessionStaff)
-	throws Exception{
+	public Map<String, Object> assistantTypeQuery(Map<String, Object> dataBusMap,String flowNum,SessionStaff sessionStaff) throws Exception{
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		resultMap.put("code", "1");
 		resultMap.put("mess", "接口调用异常");
-		DataBus db = InterfaceClient.callService(dataBusMap, PortalServiceCode.QUERY_PARTY_TWO_PRODU_ROLE, flowNum, sessionStaff);
-		if(db.getReturnlmap()!=null){
-			Map<String,Object> returnMap = db.getReturnlmap();
-			if(returnMap!=null){
-				if(ResultCode.R_SUCC.equals(returnMap.get("resultCode"))){
-					if(returnMap.get("result")!=null && returnMap.get("result") instanceof List){
-						resultMap.put("code", "0");
-						resultMap.put("data", returnMap.get("result"));
+		
+		//获取发展人常量，判断是否需要调用接口
+		Object data= Const.ASSISTANT_TYPE;
+		
+		if(data!=null && data instanceof List){
+			resultMap.put("code", "0");
+			resultMap.put("data", data);
+			resultMap.put("mess", "获取数据成功");
+		}else{
+			DataBus db = InterfaceClient.callService(dataBusMap, PortalServiceCode.QUERY_PARTY_TWO_PRODU_ROLE, flowNum, sessionStaff);
+			if(db.getReturnlmap()!=null){
+				Map<String,Object> returnMap = db.getReturnlmap();
+				if(returnMap!=null){
+					if(ResultCode.R_SUCC.equals(returnMap.get("resultCode"))){
+						if(returnMap.get("result")!=null && returnMap.get("result") instanceof List){
+							resultMap.put("code", "0");
+							resultMap.put("data",returnMap.get("result"));
+							resultMap.put("mess", "调用数据成功");
+							Const.ASSISTANT_TYPE=returnMap.get("result");
+						}else{
+							resultMap.put("code", "1");
+							resultMap.put("mess", returnMap.get("resultMsg")==null?"":returnMap.get("resultMsg").toString());
+						}
 					}else{
 						resultMap.put("code", "1");
 						resultMap.put("mess", returnMap.get("resultMsg")==null?"":returnMap.get("resultMsg").toString());
 					}
-				}else{
-					resultMap.put("code", "1");
-					resultMap.put("mess", returnMap.get("resultMsg")==null?"":returnMap.get("resultMsg").toString());
 				}
 			}
 		}
+		
 		return resultMap;
 	}
 

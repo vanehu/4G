@@ -1,0 +1,33 @@
+<script>
+	var contextPath = "${request.getContextPath()}";//上文变量
+	var globalAppDesc = "${APPDESC}";
+</script>
+
+<#if COMPRESS_JS_LEVEL?? && (COMPRESS_JS_LEVEL == "BASE" || COMPRESS_JS_LEVEL == "BUSI")>
+<script src="${contextPath}/merge/js/third-${BASE_VERSION}.min.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/app-js/third-js/bootstrapValidator.js?${jsversion}"></script>
+<#else>
+<script src="${contextPath}/js/app-js/third-js/jquery-1.11.1.min.js?${jsversion}"></script>
+<script src="${contextPath}/js/app-js/third-js/bootstrap.min.js?${jsversion}"></script>
+<script src="${contextPath}/js/app-js/third-js/bootstrap-select.js?${jsversion}"></script>
+<script src="${contextPath}/js/app-js/third-js/bootstrap-datetimepicker.min.js?${jsversion}"></script>
+<script src="${contextPath}/js/app-js/third-js/bootstrap-datetimepicker.zh-CN.js?${jsversion}"></script>
+<script src="${contextPath}/js/app-js/third-js/jquery.nouislider.min.js?${jsversion}"></script>
+<script src="${contextPath}/js/app-js/third-js/bootstrap-toggle.min.js?${jsversion}"></script>
+<script src="${contextPath}/js/app-js/third-js/touch.min.js?${jsversion}"></script>
+<script src="${contextPath}/js/app-js/third-js/bootstrapValidator.js?${jsversion}"></script><!-- 表单验证的js -->
+<script src="${contextPath}/js/third-js/jquery/jquery.cookies.js?${jsversion}"></script>
+<script src="${contextPath}/js/third-js/utils/UUID.js?${jsversion}"></script>
+<script src="${contextPath}/js/pad-js/third-js/iscroll.js"></script>
+<!-- 以上是第三方js -->
+<script src="${contextPath}/js/our-js/common.js?${jsversion}"></script>
+<script src="${contextPath}/js/app-js/our-js/serviceAxClient.js?${jsversion}"></script>
+<script src="${contextPath}/js/app-js/our-js/jquery.overlay.js?${jsversion}"></script>
+<script src="${contextPath}/js/app-js/our-js/ec.dialog.js?${jsversion}"></script>
+<script src="${contextPath}/js/app-js/our-js/ec.jqm.js?${jsversion}"></script>
+<script src="${contextPath}/js/app-js/our-js/bs.beamDialog.js?${jsversion}"></script>
+<script src="${contextPath}/js/app-js/our-js/ec.pagination.scroll.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/our-js/ec.util.js?${jsversion}"></script>
+<script src="${contextPath}/js/our-js/cordova.js"></script>
+<script src="${contextPath}/js/our-js/myplugin.js"></script>
+</#if>

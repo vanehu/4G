@@ -73,7 +73,7 @@
 		if(reload_=="N"){
 			order.uiCust.orderInfo=${orderJson_};
 			if(order.uiCust.orderInfo==null || order.uiCust.orderInfo=="" || order.uiCust.orderInfo=="undefined"){
-				_showPackageDialog("二次加载数据信息丢失!");
+				order.uiCust.showPackageDialog("二次加载数据信息丢失!");
 				return;
 			}
 			
@@ -82,12 +82,12 @@
 			var resultMsg=order.uiCust.orderInfo.resultMsg;
 			
 			if(resultCode==null || resultCode=="" || resultCode=="undefined"){
-				_showPackageDialog("二次加载数据信息丢失!");
+				order.uiCust.showPackageDialog("二次加载数据信息丢失!");
 				return;
 			}
 			
 			if(order.uiCust.orderInfo.result.orderList==null || order.uiCust.orderInfo.result.orderList==""){
-				_showPackageDialog(resultMsg);
+				order.uiCust.showPackageDialog(resultMsg);
 				return;
 			}
 		
@@ -104,12 +104,12 @@
 			});
 			
 			if(isRight=="1"){
-				_showPackageDialog("不是可选包变更受理流水号，请重试!");
+				order.uiCust.showPackageDialog("不是可选包变更受理流水号，请重试!");
 				return;
 			}
 			
 			if(resultCode=="-1" || resultCode=="2"){
-				_showPackageDialog(resultMsg);
+				order.uiCust.showPackageDialog(resultMsg);
 				return;
 			}
 		}

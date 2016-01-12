@@ -192,31 +192,113 @@ public class DataEngine implements ServletContextAware{
     	String busiVersion = propertiesUtils.getMessage(SysConstant.BUSI_VERSION);
     	if (SysConstant.LEVEL_BUSI.equals(level)) {
     		try {
-    			int baseResult = Compressor.compressBaseJs(baseVersion);
+    			//PC版本能力开放JS
+    			int busiPCResult = Compressor.compressBusiPCJs(busiVersion);
+        		if (busiPCResult == 0) {
+        			servletContext.setAttribute(SysConstant.COMPRESS_JS_LEVEL, SysConstant.LEVEL_BUSI);
+    			}
+        		
+        		//APP版本能力开放JS
+        		int busiAPPResult = Compressor.compressBusiAPPJs(busiVersion);
+        		if (busiAPPResult == 0) {
+        			servletContext.setAttribute(SysConstant.COMPRESS_JS_LEVEL, SysConstant.LEVEL_BUSI);
+    			}
+        		
+        		//APP版本能力开放主副卡变更独立压缩JS
+        		int memAPPResult = Compressor.compressBusiAppMemJs(busiVersion);
+        		if (memAPPResult == 0) {
+        			servletContext.setAttribute(SysConstant.COMPRESS_JS_LEVEL, SysConstant.LEVEL_BUSI);
+    			}
+        		
+        		//APP版本能力开放主副卡变更独立压缩JS
+        		int memAPPResult = Compressor.compressBusiAppMemJs(busiVersion);
+        		if (memAPPResult == 0) {
+        			servletContext.setAttribute(SysConstant.COMPRESS_JS_LEVEL, SysConstant.LEVEL_BUSI);
+    			}
+        		
+        		//PAD版本能力开放JS
+        		int busiPADResult = Compressor.compressBusiPADJs(busiVersion);
+        		if (busiPADResult == 0) {
+        			servletContext.setAttribute(SysConstant.COMPRESS_JS_LEVEL, SysConstant.LEVEL_BUSI);
+    			}
+        		
+        		//APP版本能力开放第三方公共JS
+        		int thirdAPPResult = Compressor.compressThirdJs(baseVersion);
+        		if (thirdAPPResult == 0) {
+        			servletContext.setAttribute(SysConstant.COMPRESS_JS_LEVEL, SysConstant.LEVEL_BASE);
+    			}
+        		
+        		int thirdPADResult = Compressor.compressThirdPADJs(baseVersion);
+        		if (thirdPADResult == 0) {
+        			servletContext.setAttribute(SysConstant.COMPRESS_JS_LEVEL, SysConstant.LEVEL_BASE);
+    			}
+    			
+        		int baseResult = Compressor.compressBaseJs(baseVersion);
     			if (baseResult == 0) {
     				servletContext.setAttribute(SysConstant.COMPRESS_JS_LEVEL, SysConstant.LEVEL_BASE);
     			}
+        		
         		int busiResult = Compressor.compressBusiJs(busiVersion);
         		if (busiResult == 0) {
         			servletContext.setAttribute(SysConstant.COMPRESS_JS_LEVEL, SysConstant.LEVEL_BUSI);
     			}
+        		
         		servletContext.setAttribute(SysConstant.BASE_VERSION, baseVersion);
         		servletContext.setAttribute(SysConstant.BUSI_VERSION, busiVersion);
     		} catch (Exception e) {
     			servletContext.setAttribute(SysConstant.COMPRESS_JS_LEVEL, SysConstant.LEVEL_NONE);
     		}
-    		
     	} else if (SysConstant.LEVEL_BASE.equals(level)) {
     		try {
+    			int busiPCResult = Compressor.compressBusiPCJs(busiVersion);
+        		if (busiPCResult == 0) {
+        			servletContext.setAttribute(SysConstant.COMPRESS_JS_LEVEL, SysConstant.LEVEL_BUSI);
+    			}
+        		
+        		//APP版本能力开放JS
+        		int busiAPPResult = Compressor.compressBusiAPPJs(busiVersion);
+        		if (busiAPPResult == 0) {
+        			servletContext.setAttribute(SysConstant.COMPRESS_JS_LEVEL, SysConstant.LEVEL_BUSI);
+    			}
+        		
+        		//APP版本能力开放主副卡变更独立压缩JS
+        		int memAPPResult = Compressor.compressBusiAppMemJs(busiVersion);
+        		if (memAPPResult == 0) {
+        			servletContext.setAttribute(SysConstant.COMPRESS_JS_LEVEL, SysConstant.LEVEL_BUSI);
+    			}
+        		
+        		//APP版本能力开放主副卡变更独立压缩JS
+        		int memAPPResult = Compressor.compressBusiAppMemJs(busiVersion);
+        		if (memAPPResult == 0) {
+        			servletContext.setAttribute(SysConstant.COMPRESS_JS_LEVEL, SysConstant.LEVEL_BUSI);
+    			}
+        		
+        		int busiPADResult = Compressor.compressBusiPADJs(busiVersion);
+        		if (busiPADResult == 0) {
+        			servletContext.setAttribute(SysConstant.COMPRESS_JS_LEVEL, SysConstant.LEVEL_BUSI);
+    			}
+        		
+        		//APP版本能力开放第三方公共JS
+        		int thirdAPPResult = Compressor.compressThirdJs(baseVersion);
+        		if (thirdAPPResult == 0) {
+        			servletContext.setAttribute(SysConstant.COMPRESS_JS_LEVEL, SysConstant.LEVEL_BASE);
+    			}
+        		
+        		int thirdPADResult = Compressor.compressThirdPADJs(baseVersion);
+        		if (thirdPADResult == 0) {
+        			servletContext.setAttribute(SysConstant.COMPRESS_JS_LEVEL, SysConstant.LEVEL_BASE);
+    			}
+        		
     			int baseResult = Compressor.compressBaseJs(baseVersion);
     			if (baseResult == 0) {
     				servletContext.setAttribute(SysConstant.COMPRESS_JS_LEVEL, SysConstant.LEVEL_BASE);
     			}
-        		servletContext.setAttribute(SysConstant.BASE_VERSION, baseVersion);
+    			
+    			servletContext.setAttribute(SysConstant.BASE_VERSION, baseVersion);
+        		servletContext.setAttribute(SysConstant.BUSI_VERSION, busiVersion);
     		} catch (Exception e ) {
     			servletContext.setAttribute(SysConstant.COMPRESS_JS_LEVEL, SysConstant.LEVEL_NONE);
     		}
-    		
     	} else {
     		servletContext.setAttribute(SysConstant.COMPRESS_JS_LEVEL, SysConstant.LEVEL_NONE);
     	}

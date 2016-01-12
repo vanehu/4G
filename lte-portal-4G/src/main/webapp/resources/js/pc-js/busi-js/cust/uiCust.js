@@ -590,7 +590,8 @@ order.uiCust = (function(){
 		orderInfo : _orderInfo,
 		packageInfo : _packageInfo,
 		showPackageDialog : _showPackageDialog,
-		orderAttachOffer:_orderAttachOffer
+		orderAttachOffer:_orderAttachOffer,
+		showDialogInfo:showDialogInfo
 	};
 })();
 $(function() {
