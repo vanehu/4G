@@ -128,6 +128,35 @@ public class SignController extends BaseController {
     	return "/app/print/printVoucher";
     }
     
+    /**
+     * 返回根据模板生成预览的html
+     * @param paramMap
+     * @param flowNum
+     * @param response
+     * @return
+     */
+    @RequestMapping(value = "/previewHtmlForAgentSign", method = RequestMethod.POST)
+	public String previewHtmlForAgentSign(@RequestBody Map<String, Object> paramMap,Model model,
+			@LogOperatorAnn String flowNum, HttpServletResponse response) {
+    	paramMap.put("signFlag", SysConstant.PREVIEW_SIGN_HTML);
+		try {
+			Map<String, Object> resultMap = printBmo.printVoucherForAgent(paramMap, flowNum,
+					super.getRequest(), response);
+			if (MapUtils.isNotEmpty(resultMap)) {
+				model.addAttribute("htmlStr", resultMap.get("htmlStr").toString().replace("src=\"XXXXXSIGN\"", ""));
+				HttpSession session=ServletUtils.getSession(getRequest());
+				session.setAttribute("htmlStrSession", resultMap.get("htmlStr")+"</body></html>");
+				log.debug("htmlStr={}", JsonUtil.toString(resultMap.get("htmlStr")));
+			}
+		}catch (BusinessException be) {
+			return super.failedStr(model, be);
+		} catch (InterfaceException ie) {
+			return super.failedStr(model, ie, paramMap, ErrorCode.PRINT_VOUCHER);
+		} catch (Exception e) {
+			return super.failedStr(model,ErrorCode.PRINT_VOUCHER, e, paramMap);
+		}
+    	return "/agent/print/printVoucher";
+    }
     @RequestMapping(value = "/saveSignPdfForApp", method = RequestMethod.POST)
 	public @ResponseBody JsonResponse saveSignPdfForApp(@RequestBody Map<String, Object> paramMap,
 			@LogOperatorAnn String flowNum, 

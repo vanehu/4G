@@ -130,7 +130,17 @@ public class SessionStaff implements Serializable {
 	private String fingerPrint;
 	/**客户定位的客户分群标识，1100：公众客户；1000：政企客户*/
 	private String custSegmentId;
-	
+	/**强商agent标识*/
+	private String isStrBusi;
+	public String getIsStrBusi() {
+		return isStrBusi;
+	}
+
+
+	public void setIsStrBusi(String isStrBusi) {
+		this.isStrBusi = isStrBusi;
+	}
+
 	public String getCustSegmentId() {
 		return custSegmentId;
 	}

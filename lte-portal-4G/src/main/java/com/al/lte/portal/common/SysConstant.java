@@ -387,6 +387,8 @@ public final class SysConstant {
     public static final String SM_PADPLATFORM_CODE="10010";
     
     public static final String SM_APPPLATFORM_CODE="10008";
+    /** 强商标识*/
+    public static final String SM_AGENT_PLATFORM_CODE="10019";
     
     public static final String SM_PADPLATFORM_ANDROID_CODE="10011";
     /** 是否免预存编码*/

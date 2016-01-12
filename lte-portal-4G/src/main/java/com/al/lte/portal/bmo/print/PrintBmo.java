@@ -22,6 +22,8 @@ import com.al.lte.portal.model.SessionStaff;
 public interface PrintBmo {
 	Map<String, Object> printVoucher(Map<String, Object> paramMap, String optFlowNum,
 		HttpServletRequest request, HttpServletResponse response) throws Exception;
+	Map<String, Object> printVoucherForAgent(Map<String, Object> paramMap, String optFlowNum,
+			HttpServletRequest request, HttpServletResponse response) throws Exception;
 	Map<String, Object> getInvoiceItems(Map<String, Object> paramMap, String optFlowNum,
 		SessionStaff sessionStaff) throws Exception;
 	Map<String, Object> getInvoiceTemplates(Map<String, Object> paramMap, String optFlowNum,
@@ -43,5 +45,7 @@ public interface PrintBmo {
 			String optFlowNum, SessionStaff sessionStaff)
 			throws Exception;
 	Map<String, Object> getInvoiceInfo(Map<String, Object> paramMap, String optFlowNum,
+			SessionStaff sessionStaff) throws Exception;
+	Map<String, Object> getEQCodeInfo(Map<String, Object> paramMap, String optFlowNum,
 			SessionStaff sessionStaff) throws Exception;
 }

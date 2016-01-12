@@ -1613,6 +1613,11 @@ public class LoginController extends BaseController {
 			channelResultMap = staffChannelBmo.qryCurrentChannelByStaff(sessionStaff, currentChannelId);
 			if(channelResultMap != null && ResultCode.R_SUCC.equals(channelResultMap.get("code"))){
 				SessionStaff.setChannelInfoFromMap(sessionStaff, channelResultMap);
+				String isStrBusi = "";
+				if(channelResultMap.get("isStrBusi")!=null && channelResultMap.get("isStrBusi").toString()!=""){
+					isStrBusi = channelResultMap.get("isStrBusi").toString();
+				}
+				sessionStaff.setIsStrBusi(isStrBusi);
 			}else{
 				return super.failed(channelResultMap, ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
 			}
@@ -1634,7 +1639,9 @@ public class LoginController extends BaseController {
 		if(padFlag!=null&&padFlag.equals("2")){
 			paramMap.put("platformCode", SysConstant.SM_PADPLATFORM_CODE);
 		}else if(padFlag!=null&&padFlag.equals("3")){
-			paramMap.put("platformCode", SysConstant.SM_APPPLATFORM_CODE);
+			if("20".equals(sessionStaff.getIsStrBusi())){
+				paramMap.put("platformCode", SysConstant.SM_AGENT_PLATFORM_CODE);
+			}else paramMap.put("platformCode", SysConstant.SM_APPPLATFORM_CODE);
 		}else{
 			paramMap.put("platformCode", SysConstant.SM_PLATFORM_CODE);//旧：dataBusMap.put("systemPlatformId", 1);
 		}

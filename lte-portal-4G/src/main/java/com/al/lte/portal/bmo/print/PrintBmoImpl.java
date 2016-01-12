@@ -131,6 +131,20 @@ public class PrintBmoImpl implements PrintBmo {
 		payMethodMap.put("160000", "货到付款");
 	}
 
+	public Map<String, Object> getEQCodeInfo(Map<String, Object> dataBusMap,String flowNum, SessionStaff sessionStaff) throws Exception {
+		DataBus db = InterfaceClient.callService(dataBusMap,PortalServiceCode.INIF_QUERY_ERCODE,flowNum, sessionStaff);
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		Map<String, Object> resultMap = db.getReturnlmap();
+		if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db.getResultCode()))) {
+			Map<String, Object> datamap = (Map<String, Object>) resultMap.get("result");
+			returnMap.put("code", ResultCode.R_SUCCESS);
+			returnMap.put("EQCodeInfo",datamap);
+		} else {
+			returnMap.put("code", ResultCode.R_FAIL);
+			returnMap.put("msg", resultMap.get("resultMsg"));
+		}
+		return returnMap;
+	}
 	/**
 	 * 1. 业务类型判断 2. 获取打印参数、设置打印模板 3. 数据驱动模板、展示打印页面
 	 */
@@ -292,6 +306,7 @@ public class PrintBmoImpl implements PrintBmo {
 	private Map<String, Object> getVoucherData(Map<String, Object> paramMap, boolean needAgreement, String optFlowNum, HttpServletRequest request)
 			throws Exception {
 		Map<String, Object> resultMap = null;
+		try{
 		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(
 				request, SysConstant.SESSION_KEY_LOGIN_STAFF);
 
@@ -309,6 +324,9 @@ public class PrintBmoImpl implements PrintBmo {
 				}
 				resultMap = parseVoucherData(resultMap, needAgreement);
 			}
+		}
+		}catch(Exception e){
+			e.printStackTrace();
 		}
 		return resultMap;
 	}
@@ -338,6 +356,8 @@ public class PrintBmoImpl implements PrintBmo {
 		if(!resultMap.isEmpty()){
 			//客户资料
 			Map<String, Object> custInfoMap = MapUtils.getMap(resultMap, "custInfo");
+			//终端信息
+			Object terminalInfosMap = MapUtils.getObject(resultMap, "terminalInfos");
 			if(MapUtils.isNotEmpty(custInfoMap)){
 				Object obj = MapUtils.getObject(custInfoMap, "norCustInfo");
 				if (obj != null && obj instanceof List) {
@@ -524,26 +544,110 @@ public class PrintBmoImpl implements PrintBmo {
 							   sbNub.append(orderEventTitle.get("relaAcceNbr"));
 						   }
 						}
+				    }else if(("5").equals(String.valueOf(map.get("orderEventType"))) && ("14").equals(orderEventTitle.get("boActionTypeCd"))){//补换卡
+
+						if(sb.length()>0){
+							sb.append(",</br>");
+						}
+						if (null != orderEventTitle.get("prodSpecName")) {
+							sb.append("【"+orderEventTitle.get("boActionTypeName")+"】");
+							//sb.append(orderEventTitle.get("prodSpecName"));
+							sb.append("&nbsp;&nbsp;移动电话补换卡&nbsp;&nbsp;");
+							if (null != orderEventTitle.get("effectRule")){
+								sb.append("("+orderEventTitle.get("effectRule")+")");
+							}
+							if (null != orderEventTitle.get("relaAcceNbr")){
+								sb.append("["+orderEventTitle.get("relaAcceNbr")+"]");
+							}
+						}
+						//功能产品展示
+						Object orderEventContObj = map.get("orderEventCont");
+						if(orderEventContObj!=null && orderEventContObj instanceof List){
+							List<Map<String, Object>> orderEventCont = (List<Map<String, Object>>) orderEventContObj;
+							if(orderEventCont!=null && orderEventCont.size()>0){
+								for(int i=0; i<orderEventCont.size(); i++){
+									Map<String, Object> item = orderEventCont.get(i);
+									/*if (null != item.get("itemName0")) {
+										sb.append(",</br>");
+										sb.append("&nbsp;&nbsp;["+item.get("actionName")+"]");
+										sb.append(item.get("itemName0"));
+										if (null != item.get("effectRule")){
+											sb.append("("+item.get("effectRule")+")");
+										}
+										if (null != item.get("relaAcceNbr")){
+											sb.append("["+item.get("relaAcceNbr")+"]");
+										}
+									}*/
+									if(sbNub.length()>0){
+										//业务动作大于1时避免出现重复的主副卡号码
+									   if (null != item.get("relaAcceNbr") && sbNub.indexOf(item.get("relaAcceNbr").toString())==-1) {
+										   sbNub.append(","+item.get("relaAcceNbr"));
+									   }
+									}else{
+									   if (null != item.get("relaAcceNbr")){
+										   sbNub.append(item.get("relaAcceNbr"));
+									   }
+									}
+								}
+							}
+						}
+						
+						/************************************begin************************************/
+						//新旧uim卡
+//						Object terminalInfosMap = MapUtils.getObject(resultMap, "terminalInfos");
+						if (orderEventMap != null && terminalInfosMap instanceof List && !empty.equals(terminalInfosMap)) {
+							List<Map<String, Object>> terminalList = (List<Map<String, Object>>) terminalInfosMap;
+							if(terminalList!=null && terminalList.size()>0){
+								for(int i=0; i<terminalList.size(); i++){
+									Map<String, Object> item = terminalList.get(i);
+									if (null != item.get("isNew")) {
+										//旧卡
+										if("N".equals(item.get("isNew"))){
+											maps.put("oldUimCard", item.get("tiRemark"));
+										}
+										if("Y".equals(item.get("isNew"))){
+											maps.put("newUimCard", item.get("tiRemark"));
+											
+										}
+									}
+								}
+							}
+						}
+						/************************************end************************************/
 				    }
 				}
-
-				maps.put("receiptInfo", sb.toString());
-				maps.put("annumber", sbNub.toString());
+				String sbStr = sb.toString();
+				String sbNubStr = sbNub.toString();
+				if(sbStr.indexOf(",")!=-1){
+					sbStr = sbStr.replaceAll(",", "&nbsp;&nbsp;");
+					maps.put("receiptInfo", sbStr);
+				}else{
+					maps.put("receiptInfo", sb.toString());
+				}
+				if(sbNubStr.indexOf(",")!=-1){
+					sbNubStr = sbNubStr.replaceAll(",", "&nbsp;&nbsp;");
+					maps.put("annumber", sbNubStr);
+				}else{
+					maps.put("annumber", sbNub.toString());
+				}
+				
 			}
 			//购手机
-			else{
+			if (terminalInfosMap != null && terminalInfosMap instanceof List ){
 				//终端信息
-				Object terminalInfosMap = MapUtils.getObject(resultMap, "terminalInfos");
+//				Object terminalInfosMap = MapUtils.getObject(resultMap, "terminalInfos");
 				List<Map<String, Object>> terminalList = (List<Map<String, Object>>) terminalInfosMap;
-				StringBuffer sb=new StringBuffer();
-				StringBuffer sbNub=new StringBuffer();
-				for (Map<String, Object> map : terminalList) {
-					sb.append("【物品清单】:</br>");
-					sb.append("&nbsp;&nbsp;"+map.get("tiName")+"&nbsp;&nbsp;"+"1"+map.get("tiParam"));
-				}
+				if(terminalList!=null && terminalList.size()>0 && "手机终端".equals(terminalList.get(0).get("couponTypeName"))){
+					StringBuffer sb=new StringBuffer();
+					StringBuffer sbNub=new StringBuffer();
+					for (Map<String, Object> map : terminalList) {
+						sb.append("【物品清单】:</br>");
+						sb.append("&nbsp;&nbsp;"+map.get("tiName")+"&nbsp;&nbsp;"+"1"+map.get("tiParam"));
+					}
 
-				maps.put("receiptInfo", sb.toString());
-				maps.put("annumber", sbNub.toString());
+					maps.put("receiptInfo", sb.toString());
+					maps.put("annumber", sbNub.toString());
+				}
 			}
 		}
 		return maps;
@@ -5670,7 +5774,7 @@ public class PrintBmoImpl implements PrintBmo {
 				html = html.replace("</br>", "");
 				html=html.replace("XXXXXSIGN", image);
 				String pdf=convertHtmlToPdf(html,request);
-				String paths=request.getRealPath("resources/image/gongz/")+"/";
+				String paths=request.getRealPath("/resources/image/gongz/");
 				String imagePath=paths+image;
 				File fileImg=new File(imagePath);
 				if(fileImg.exists())
@@ -5684,41 +5788,48 @@ public class PrintBmoImpl implements PrintBmo {
 			}
 			return pdfByte;
 		} catch (Exception e) {
+			e.printStackTrace();
 			return null;
 		}
 	}
 
 	//将html保存成pdf
 	private String convertHtmlToPdf(String html,HttpServletRequest request)throws Exception {
-		String paths=request.getRealPath("resources/image/gongz/");
-		String str= UIDGenerator.getRand()+".pdf";
-		String outputFile=paths+"/"+str;
+		String str= "";
+		try{
+		String paths=request.getRealPath("/resources/image/gongz/");
+		str= UIDGenerator.getRand()+".pdf";
+		String outputFile=paths+str;
 		OutputStream os = new FileOutputStream(outputFile);
         ITextRenderer renderer = new ITextRenderer();
         renderer.setDocumentFromString(html);
         // 解决中文支持问题
         ITextFontResolver fontResolver = renderer.getFontResolver();
         //解决图片的相对路径问题
-        renderer.getSharedContext().setBaseURL("file:/"+paths+"/");
+        renderer.getSharedContext().setBaseURL("file:/"+paths);
         renderer.layout();
         renderer.createPDF(os);
 
         os.flush();
         os.close();
-        return str;
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return str;
 	}
 
 	//保存签名文件为图片
 	public String byte2image(byte[] data,HttpServletRequest request){
-		String paths=request.getRealPath("resources/image/gongz/");
-		String str= UIDGenerator.getRand()+".jpg";
-		String path=paths+"/"+str;
-	    if(data.length<3||path.equals("")) return null;
-	    try{
-	    FileImageOutputStream imageOutput = new FileImageOutputStream(new File(path));
-	    imageOutput.write(data, 0, data.length);
-	    imageOutput.close();
-	    log.debug("path", path);
+		String str = "";
+		try{
+			String paths=request.getRealPath("/resources/image/gongz/");
+			str= UIDGenerator.getRand()+".jpg";
+			String path=paths+str;
+		    if(data.length<3||path.equals("")) return null;
+		    FileImageOutputStream imageOutput = new FileImageOutputStream(new File(path));
+		    imageOutput.write(data, 0, data.length);
+		    imageOutput.close();
+		    log.debug("path", path);
 	    } catch(Exception ex) {
 	      ex.printStackTrace();
 	    }
@@ -7701,5 +7812,245 @@ public class PrintBmoImpl implements PrintBmo {
 		Calendar calendar = Calendar.getInstance();
 		String str = DateUtil.getFormatTimeString(calendar.getTime(), "yyyy/MM/dd HH:mm:ss");
 		System.out.println(str + "\r" +"bb");
+	}
+	public Map<String, Object> printVoucherForAgent(Map<String, Object> paramMap, String optFlowNum,HttpServletRequest request, HttpServletResponse response)
+			throws Exception {
+		String busiType = MapUtils.getString(paramMap, "busiType");
+		String printType = MapUtils.getString(paramMap, "printType");
+		String agreement = MapUtils.getString(paramMap, "needAgreement");
+		String signFlag = MapUtils.getString(paramMap, "signFlag");//0:打印 1:数字签名预览 2:生成pdf保存 3:生成未签名的pdf文件保存 4:手机端数字签名预览 5:保存客手机端的pdf文件
+		if(signFlag==null){
+			signFlag="0";
+		}
+		boolean needAgreement = SysConstant.STR_Y.equals(agreement);
+		Map<String,Object> params=new HashMap<String,Object>();
+		params.putAll(paramMap);
+		if(params.get("signStr")!=null){
+			params.remove("signStr");
+		}
+		if(params.get("signFlag")!=null){
+			params.remove("signFlag");
+		}
+		Map<String, Object> printData = new HashMap<String, Object>();
+
+		if (SysConstant.BUSI_TYPE_CRM_COMMON.equals(busiType)) {
+			printData = getVoucherData(params, needAgreement, optFlowNum, request);
+
+		} else if (SysConstant.BUSI_TYPE_FRESH_DATA.equals(busiType)) {
+
+		} else if (SysConstant.BUSI_TYPE_WITH_PARAM.equals(busiType)) {
+
+		} else if (SysConstant.BUSI_TYPE_TERMINAL_ORDER.equals(busiType)) {
+			printData = paramMap;
+		} else {
+
+		}
+
+		//如果printData为空，则返回失败
+		if (MapUtils.isEmpty(printData)) {
+			System.out.println("++++++如果printData为空，则返回失败");
+			return printData;
+		}
+		if(signFlag.equals(SysConstant.PREVIEW_SIGN)){
+			return runVoucherPrint(printData, response, printType, needAgreement,signFlag);
+		}else if(signFlag.equals(SysConstant.PREVIEW_SIGN_HTML)){
+			return getVoucherDataForAgentApp(params, needAgreement, optFlowNum, request);
+		}else if(signFlag.equals(SysConstant.SAVE_PDF)){
+	    	SessionStaff sessionStaff = (SessionStaff) ServletUtils
+					.getSessionAttribute(request, SysConstant.SESSION_KEY_LOGIN_STAFF);
+	    	String login_area_id = "";
+	    	Object area=request.getSession().getAttribute("padLogin_area");
+	    	if(area!=null&&!area.equals("")){
+	    		login_area_id=area.toString();
+	    	}else{
+	    		login_area_id=sessionStaff.getAreaId();
+	    	}
+			byte[] signBytes = DataSignTool.hexStr2Bytes(paramMap.get("signStr").toString());
+			InputStream is = new ByteArrayInputStream(signBytes);
+			InputStream is2 =request.getSession().getServletContext().getResourceAsStream("/resources/image/gongz/"+login_area_id+".png");
+			if(is2==null){
+				byte[] sealBytes = DataSignTool.creatImageToByte(paramMap.get("sealInfo").toString());
+				is2 = new ByteArrayInputStream(sealBytes);
+			}
+			printData.put("signPic",is);
+			printData.put("companyseal", is2);
+			is.close();
+			is2.close();
+			Map<String, Object> ret=runVoucherPrint(printData, response, printType, needAgreement,signFlag);
+			ret.put("olId", params.get("olId"));
+			ret.put("areaId", sessionStaff.getAreaId());
+			ret.put("action", "ADD");
+			if(ret!=null&&ret.get("orderInfo")!=null){
+				Map<String,Object> obj= postPdfData(ret,optFlowNum,request);
+				return obj;
+			}else{
+				return null;
+			}
+		}else if(signFlag.equals(SysConstant.SAVE_SIGN_PDF_APP)){
+	    	SessionStaff sessionStaff = (SessionStaff) ServletUtils
+					.getSessionAttribute(request, SysConstant.SESSION_KEY_LOGIN_STAFF);
+	    	String login_area_id = "";
+	    	Object area=request.getSession().getAttribute("appLogin_area");
+	    	if(area!=null&&!area.equals("")){
+	    		login_area_id=area.toString();
+	    	}else{
+	    		login_area_id=sessionStaff.getAreaId();
+	    	}
+
+	    	byte[] data=savePdfApp(Base64.decodeBase64(params.get("sign").toString()),params.get("orderInfo").toString(),request);
+	    	String orderInfo=Base64.encodeBase64String(data).replaceAll("\n|\r", "");
+
+	    	Map<String, Object> ret=new HashMap<String, Object>();
+			ret.put("olId", params.get("olId"));
+			ret.put("areaId", sessionStaff.getAreaId());
+			ret.put("action", "ADD");
+			ret.put("orderInfo", orderInfo);
+			if(ret!=null&&ret.get("orderInfo")!=null){
+				Map<String,Object> obj= postPdfData(ret,optFlowNum,request);
+				return obj;
+			}else{
+				return null;
+			}
+		}else if(signFlag.equals(SysConstant.SAVE_NO_SIGN_PDF)){
+	    	SessionStaff sessionStaff = (SessionStaff) ServletUtils
+					.getSessionAttribute(request, SysConstant.SESSION_KEY_LOGIN_STAFF);
+			Map<String, Object> ret=runVoucherPrint(printData, response, printType, needAgreement,signFlag);
+			ret.put("olId", params.get("olId"));
+			ret.put("areaId", sessionStaff.getAreaId());
+			ret.put("action", "ADD");
+			if(ret!=null&&ret.get("orderInfo")!=null){
+				Map<String,Object> obj= postPdfData(ret,optFlowNum,request);
+				return obj;
+			}else{
+				return null;
+			}
+		}else{
+			// 3. 数据驱动模板、展示打印页面
+			runVoucherPrint(printData, response, printType, needAgreement,signFlag);
+			return printData;
+		}	
+	}
+	private Map<String, Object> getVoucherDataForAgentApp(Map<String, Object> paramMap, boolean needAgreement, String optFlowNum, HttpServletRequest request)throws Exception {
+		Map<String, Object> resultMap = null;
+		Map<String, Object> resultParseMap = new HashMap<String, Object>();
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(
+				request, SysConstant.SESSION_KEY_LOGIN_STAFF);
+
+		DataBus db = InterfaceClient.callService(paramMap,
+				PortalServiceCode.INTF_GET_VOUCHER_DATA,
+				optFlowNum, sessionStaff);
+		if (ResultCode.R_SUCC.equals(db.getResultCode())) {
+			resultMap = MapUtils.getMap(db.getReturnlmap(), "result");
+			if (resultMap != null) {
+				resultMap.put("chargeItems", paramMap.get("chargeItems"));
+			}
+			resultParseMap.put("htmlStr", getSignHtmlForAgent(resultMap,sessionStaff));
+		}
+		return resultParseMap;
+	}
+	private Object getSignHtmlForAgent(Map<String, Object> resultMap,
+			SessionStaff sessionStaff) {
+		Map<String, Object> result=getData(resultMap);
+		StringBuffer html = new StringBuffer();
+		html.append("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">");
+		html.append("<html xmlns=\"http://www.w3.org/1999/xhtml\">");
+		html.append("<head>");
+		html.append("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"/>");
+		html.append("<title>业务回执客户联</title>");
+		html.append("</head>");
+		html.append("<body style=\"margin:0;padding:0;\">");
+		html.append("<nav class=\"navbar navbar-default navbar-fixed-top\">");
+		html.append("<div class=\"container-fluid\">");
+		html.append("<div class=\"navbar-header\">");
+		html.append("<button type=\"button\" class=\"navbar-toggle collapsed\" data-toggle=\"collapse\" data-target=\"#bs-example-navbar-collapse-1\" aria-expanded=\"false\">");
+		html.append("<span class=\"sr-only\"></span>");
+		html.append("<span class=\"icon-bar\"></span>");
+		html.append("<span class=\"icon-bar\"></span>");
+		html.append("<span class=\"icon-bar\"></span>");
+		html.append("</button>");
+		html.append("<a  class=\"navbar-brand\"  onclick=\"common.callReturnBack();\" ><span class=\"glyphicon glyphicon-chevron-left\" aria-hidden=\"true\"></span>返回</a>");
+		html.append("<h4 class=\"header-title\">电子回执</h4>");
+		html.append(" </div>");
+		html.append("<div class=\"collapse navbar-collapse\" id=\"bs-example-navbar-collapse-1\">");
+		html.append(" </div>");
+		html.append("</div>");
+		html.append(" </nav>");
+		html.append("<div class=\"container-fluid\">");
+		html.append("<div class=\"row\">");
+		html.append("<div class=\"panel panel-default paneltop\">" );
+		html.append("<div class=\"panel-heading\">业务回执客户联</div>");
+		html.append("<table class=\"table\">");
+		html.append("<tbody>");
+		html.append("<tr>");
+		html.append("<th class=\"col-xs-4\">客户名称</th>");
+		html.append("<td class=\"col-xs-8\">");
+		html.append(result.get("custName")) ;
+		html.append("</td>");
+		html.append("</tr>");
+		html.append("<tr>");
+		html.append("<th>受理时间</th>");
+		html.append("<td>");
+		html.append(result.get("soDate"));
+		html.append("</td>");
+		html.append("</tr>");
+		html.append("<tr>");
+		html.append("<th class=\"\">购物车流水</th>");
+		html.append("<td>");
+		html.append(result.get("olNbr"));
+		html.append("</td>");
+		html.append("</tr>");
+		if(result.get("annumber")!=null && !"".equals(result.get("annumber"))){
+			html.append("<tr>");
+			html.append("<th class=\"\">您所办理的号码</th>");
+			html.append("<td>");
+			html.append(result.get("annumber"));
+			html.append("</td>");
+			html.append("</tr>");
+		}
+		/**************************begin************************/
+		if(result.get("oldUimCard")!=null && !"".equals(result.get("oldUimCard"))){
+			html.append("<tr>");
+			html.append("<th class=\"\">旧uim卡</th>");
+			html.append("<td>");
+			html.append(result.get("oldUimCard"));
+			html.append("</td>");
+			html.append("</tr>");
+		}
+		if(result.get("newUimCard")!=null && !"".equals(result.get("newUimCard"))){
+			html.append("<tr>");
+			html.append("<th class=\"\">新uim卡</th>");
+			html.append("<td>");
+			html.append(result.get("newUimCard"));
+			html.append("</td>");
+			html.append("</tr>");
+		}
+		/**************************end************************/
+		html.append("</tbody>");
+		html.append("</table>");
+		html.append("<ul class=\"list-group orderlist\">");
+		html.append("<li class=\"list-group-item active\">您所办理的业务</li>");
+		html.append("<li class=\"list-group-item\">");
+		html.append("<p class=\"list-group-item-text\">"+result.get("receiptInfo")+"</p>");
+		html.append("</li>");
+		html.append("<li class=\"list-group-item active\">");
+		html.append("</li>");	
+		html.append("</ul>");	
+		html.append("<table class=\"table\">");
+		html.append("<tbody>");
+		html.append("<tr>");
+		html.append("<th class=\"col-xs-4\">业务受理人</th>");
+		html.append("<td class=\"col-xs-8\">"+sessionStaff.getStaffName()+"</td>");
+		html.append("</tr>");
+		html.append("<tr>");
+		html.append("<th class=\"col-xs-6\">申请人/办理人签字</th>");
+		html.append("<td class=\"col-xs-8\"><img id=\"datasign\" width=\"100%\" src=\"XXXXXSIGN\"></img></td>");
+		html.append("</tr>");  			
+		html.append("</tbody>");
+		html.append("</table>");     
+		html.append("</div>");
+		html.append("</div>");
+		html.append("</div>");
+		
+		return html.toString();
 	}
 }
