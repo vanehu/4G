@@ -442,7 +442,7 @@ order.dealer = (function() {
 				$dl.append($button);
 				//发展渠道
 				var $tdChannel = $('<dd></dd>');
-				var $channelSelect = $('<select id="dealerChannel_'+objId+'" name="dealerChannel_'+objInstId+'" class="inputWidth183px" onclick=a=this.value;></select>');
+				var $channelSelect = $('<select id="dealerChannel_'+objId+'" name="dealerChannel_'+id+'" class="inputWidth183px" onclick=a=this.value;></select>');
 				$.each(OrderInfo.channelList,function(){
 					if(this.isSelect==1)
 						$channelSelect.append("<option value='"+this.channelNbr+"' selected ='selected'>"+this.channelName+"</option>");
@@ -581,15 +581,15 @@ order.dealer = (function() {
 			var prodId = this.prodId;
 			var accNbr = OrderInfo.getAccessNumber(prodId);
 			
-			if(ec.util.isArray(OrderInfo.oldprodInstInfos) && OrderInfo.actionFlag==6){//主副卡纳入老用户
-				for(var i=0;i<OrderInfo.oldprodInstInfos.length;i++){
-					if(prodId==OrderInfo.oldprodInstInfos[i].prodInstId){
-						accNbr = OrderInfo.oldprodInstInfos[i].accNbr;
-					}
-				}
-			}else{
-				accNbr = OrderInfo.getAccessNumber(prodId);
-			}
+//			if(ec.util.isArray(OrderInfo.oldprodInstInfos) && OrderInfo.actionFlag==6){//主副卡纳入老用户
+//				for(var i=0;i<OrderInfo.oldprodInstInfos.length;i++){
+//					if(prodId==OrderInfo.oldprodInstInfos[i].prodInstId){
+//						accNbr = OrderInfo.oldprodInstInfos[i].accNbr;
+//					}
+//				}
+//			}else{
+//				accNbr = OrderInfo.getAccessNumber(prodId);
+//			}
 			
 			if(accNbr==undefined || accNbr==""){ 
 				accNbr = "未选号";
@@ -638,6 +638,37 @@ order.dealer = (function() {
 			}
 		}
 		
+		//功能产品
+		$.each(AttachOffer.openServList,function(){
+			var prodId = this.prodId;
+			var accNbr = OrderInfo.getAccessNumber(prodId);
+			if(accNbr==undefined || accNbr==""){ 
+				accNbr = "未选号";
+			}
+			$.each(this.servSpecList,function(){
+				var id = prodId+'_'+this.servSpecId;
+				if(this.isdel != "Y" && this.isdel != "C"  && $("tr[name='tr_"+id+"']")[0]==undefined){  //订购的附属销售品
+					var $tr = $('<tr id="atr_'+id+'" onclick="order.dealer.checkAttach(\''+id+'\')"><td><input type="checkbox" id="'+id+'" onclick="order.dealer.checkAttach(\''+id+'\')" name="attach_dealer"/></td></tr>');
+					$tr.append('<td>'+accNbr+'</td><td>'+this.servSpecName+'</td>');
+					$table.append($tr);
+				};
+			});
+		});
+		if(OrderInfo.actionFlag==2 || OrderInfo.actionFlag==3 || OrderInfo.actionFlag==22 ||OrderInfo.actionFlag==23){
+			$.each(OrderInfo.boProd2Tds,function(){
+				var prodId = this.prodId;
+			    var accNbr = OrderInfo.getAccessNumber(prodId);
+			    if(accNbr==undefined || accNbr==""){ 
+				    accNbr = "未选号";
+			    }
+			    var id = accNbr;
+			    if(this.isdel != "Y" && this.isdel != "C"  && $("tr[name='tr_"+id+"']")[0]==undefined){  //补换卡
+				    var $tr = $('<tr id="atr_'+id+'" onclick="order.dealer.checkAttach(\''+id+'\')"><td><input type="checkbox" id="'+id+'" onclick="order.dealer.checkAttach(\''+id+'\')" name="attach_dealer"/></td></tr>');
+				    $tr.append('<td>'+accNbr+'</td><td>补换卡</td>');
+				    $table.append($tr);
+			    };
+		    });
+		}
 		$content.append($table);
 		var $footer='<div data-role="footer" data-position="inline" data-tap-toggle="false" data-theme="n"> <button data-inline="true" data-icon="next" id="sureAdddealer">确定</button>';
 		$footer+='<button data-inline="true" data-icon="back" data-rel="back" id="closeAdddealer">取消</button></div>';

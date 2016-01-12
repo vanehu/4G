@@ -725,7 +725,7 @@ OrderInfo = (function() {
 				}
 				
 				//发展人
-				/*var $tr = $("tr[name='tr_"+prodId+"_"+prodServ.servSpecId+"']");
+				var $tr = $("tr[name='tr_"+prodId+"_"+prodServ.servSpecId+"']");
 				if($tr!=undefined&&$tr.length>0){
 					if(!ec.util.isArray(busiOrder.data.busiOrderAttrs)){
 						busiOrder.data.busiOrderAttrs = [];
@@ -738,7 +738,7 @@ OrderInfo = (function() {
 						};
 						busiOrder.data.busiOrderAttrs.push(dealer);
 					});
-				}*/
+				}
 			}
 		}else if(prodServ.boActionTypeCd == CONST.BO_ACTION_TYPE.REMOVE_PROD){  //拆机
 			busiOrder.data.boProdStatuses = [{ 
