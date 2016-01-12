@@ -2,25 +2,24 @@
 <@override name="header">
 <#include "/pcpublic/busi-js-tpl.html"/>
 <#include "/pcpublic/common-js-tpl.html" />
+<script src="${contextPath}/js/4g-js/easydialog.min.js?${jsversion}" type="text/javascript"></script>
 <script src="${contextPath}/js/pc-js/busi-js/order/offerChange.js?${jsversion}" type="text/javascript"></script>
 <script src="${contextPath}/js/pc-js/busi-js/order/offer-dealer.js?${jsversion}" type="text/javascript"></script>
 <script src="${contextPath}/js/pc-js/busi-js/cust/uiCust2.js?${jsversion}" type="text/javascript"></script>
 <script src="${contextPath}/js/pc-js/busi-js/cust/uiCust3.js?${jsversion}" type="text/javascript"></script>
-<script src="${contextPath}/js/4g-js/easydialog.min.js?${jsversion}" type="text/javascript"></script>
 
 </@override>
 
 <@override name="content">
 <!--内容-->
 <style>
-.contract_list thead {
-background: white;
-};
+
+.contract_list thead {background: white;};
+
 .contract_list {
 text-align: center;
 width: 100%;
 background-color: #FFF;
-
 };
 
 </style>
@@ -92,7 +91,7 @@ background-color: #FFF;
 <#include "/validate-window.html"/>
 
 <script type="text/javascript">
-	$(document).ready(function() {
+	window.onload = function() { 
 		var nextFlag = false;
 	    var mainPhoneNum='${mainPhoneNum}';   //手机号码
 		var isFee='${isFee}';   //是否收费
@@ -190,6 +189,7 @@ background-color: #FFF;
      			  }
      		   }
     		}else{
+    			//判断是否使用新接口,0-不调用
     		   if(mergeFlag=="0"){
     			   order.uiCusts.custQuery();
     		   }else{
@@ -200,7 +200,7 @@ background-color: #FFF;
     		   }
     		}
         } 
-	});
+	};
 </script>
 
 </@override>
