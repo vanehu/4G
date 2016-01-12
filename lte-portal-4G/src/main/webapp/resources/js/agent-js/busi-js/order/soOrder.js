@@ -46,7 +46,7 @@ SoOrder = (function() {
 	//提交订单节点
 	var _submitOrder = function(data) {
 		if(OrderInfo.actionFlag==14){
-			if (OrderInfo.cust.custId != undefined && OrderInfo.cust.custId != "") {alert(OrderInfo.boProd2Tds[0].partyId);
+			if (OrderInfo.cust.custId != undefined && OrderInfo.cust.custId != "") {
 				for(var i=0;i<OrderInfo.boProd2Tds.length;i++){
 					OrderInfo.boProd2Tds[i].partyId = OrderInfo.cust.custId;
 				}
@@ -956,6 +956,11 @@ SoOrder = (function() {
 		}
 		if(OrderInfo.actionFlag==22&&OrderInfo.order.step==3){
 			$("#order_fill_content").show();
+		}
+		if(OrderInfo.order.step==4 && (OrderInfo.actionFlag == 13 || OrderInfo.actionFlag == 14)){
+			$("#order-confirm").empty();
+			$("#cust-content").show();
+			OrderInfo.order.step=3;
 		}
 	};
 	
