@@ -1776,7 +1776,18 @@ order.uiCusts = (function(){
 	};
 	
 	function confirm(newnum,oldnum){
-	
+		if(CONST.getAppDesc()==0){ 
+			//老套餐是3G，新套餐是4G
+			if(order.prodModify.choosedProdInfo.is3G== "Y" && OrderInfo.offerSpec.is3G =="N"){
+				if(!offerChange.checkOrder()){ //省内校验单
+					return;
+				}
+			}
+			//根据UIM类型，设置产品是3G还是4G，并且保存旧卡
+			if(!prod.uim.setProdUim()){ 
+				return ;
+			}
+		}
 				//纳入老用户数量
 		//order.memberChange.choosenum=oldnum;
 		OrderInfo.oldprodInstInfos = [];
@@ -1914,7 +1925,7 @@ order.uiCusts = (function(){
 		if(!offerChange.setChangeOfferSpec(memberNum,viceNum)){  
 			return;
 		};
-		//4g系统需要
+		/*//4g系统需要
 		if(CONST.getAppDesc()==0){ 
 			//老套餐是3G，新套餐是4G
 			if(order.prodModify.choosedProdInfo.is3G== "Y" && OrderInfo.offerSpec.is3G =="N"){
@@ -1927,6 +1938,7 @@ order.uiCusts = (function(){
 				return ;
 			}
 		}
+		*/
 		_showLayer(inParam,offerSpec);
 		if(OrderInfo.provinceInfo.reloadFlag=="N"){
 			$("#dlg-memberRole-num-popup").addClass("ui-popup-hidden");

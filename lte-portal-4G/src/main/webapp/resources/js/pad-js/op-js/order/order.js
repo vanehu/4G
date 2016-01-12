@@ -809,7 +809,9 @@ order.service = (function(){
 			}
 		}		
 	};
-	
+	var _initSpec = function(){
+		$("#search").off("click").on("click",function(){order.service.searchPack();});
+	};
 	var _subNum = function(id,min){
 		var num = Number($("#"+id).val());
 		if(num>min){
@@ -900,6 +902,7 @@ order.service = (function(){
 		queryPackForTerm:_queryPackForTerm,
 		addNum:_addNum,
 		subNum:_subNum,
+		initSpec:_initSpec,
 		opeSer : _opeSer,
 		buyService :_buyService,
 		releaseFlag:_releaseFlag,
