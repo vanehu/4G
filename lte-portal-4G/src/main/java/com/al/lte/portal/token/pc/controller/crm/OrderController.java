@@ -438,7 +438,10 @@ public class OrderController extends BaseController {
 					}
 				}
 			}
-			
+			//判断是否有传主副卡号码  
+			if(mainPhoneNum!=null&&!"".equals(mainPhoneNum)&&!"null".equals(mainPhoneNum)){
+				model.addAttribute("mainPhoneNum",mainPhoneNum);
+			}
 			model.addAttribute("mktResInstCode", mktResInstCodes);
 			model.addAttribute("codeMsg", codeMsg);
 			model.addAttribute("salesCode", paramsMap.get("salesCode")==null?"":paramsMap.get("salesCode").toString());
@@ -456,10 +459,6 @@ public class OrderController extends BaseController {
 				prodOfferId = String.valueOf(paramsMap.get("prodOfferId"));//集团销售品ID
 				prodOfferName = String.valueOf(paramsMap.get("prodOfferName"));//集团销售品
 				offerNbr = String.valueOf(paramsMap.get("offerNbr"));//集团销售品编码
-				//判断是否有传主副卡号码  
-				if(mainPhoneNum!=null&&!"".equals(mainPhoneNum)&&!"null".equals(mainPhoneNum)){
-					model.addAttribute("mainPhoneNum",mainPhoneNum);
-				}
 				if (newSubPhoneNum!=null&&!"".equals(newSubPhoneNum)&&!"null".equals(newSubPhoneNum)) {
 					model.addAttribute("newSubPhoneNum",newSubPhoneNum);
 				}

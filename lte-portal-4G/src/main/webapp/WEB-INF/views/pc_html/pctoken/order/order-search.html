@@ -155,6 +155,10 @@
 		nextFlag = order.cust.queryCustCompreInfo(custNumber,provCustAreaId,1,'');
 	}
 	if(nextFlag){
+		var mainPhoneNum = "${mainPhoneNum}";
+		if(mainPhoneNum!=undefined &&mainPhoneNum!=""){
+			OrderInfo.newOrderNumInfo.mainPhoneNum = mainPhoneNum;
+		}
 		OrderInfo.actionFlag=1;
 		OrderInfo.newOrderInfo.isLastFlag="true";
 		OrderInfo.provinceInfo.provIsale = '${provIsale}';
@@ -175,7 +179,6 @@
 	<!-- 选号界面需要获取的 areaId -->
 	<input type="hidden" id="p_cust_areaId" value="">
   	<div class="main_warp" id="order_tab_panel_content" style="display:none">
-        
     </div>
     <!-- 填单页面用 -->
     <div class="main_warp" id="order_fill_content" style="display:none">

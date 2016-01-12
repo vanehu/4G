@@ -510,7 +510,7 @@ order.service = (function(){
 					}
 					offerRole.selQty = num;
 				}else{ //功能类产品
-					if(this.minQty==0){
+					if(this.minQty==0 && OrderInfo.actionFlag==1){
 						if($("#"+offerRole.offerRoleId+"_"+this.objId).attr("checked")=="checked"){
 							this.dfQty = 1;
 						}else{

@@ -481,7 +481,7 @@ offerChange = (function() {
 //			});
 			var mktResInstCodesize = OrderInfo.mktResInstCode.split(",");
 			for(var u=0;u<mktResInstCodesize.length;u++){
-				if(mktResInstCodesize[u]!=""&&mktResInstCodesize[u]!=null&&mktResInstCodesize[u]!="null"){
+				if(mktResInstCodesize[u]!=""&&mktResInstCodesize[u]!=null&&mktResInstCodesize[u]!="null" && order.memberChange.newSubPhoneNum!=""){
 					var nbrAndUimCode = mktResInstCodesize[u].split("_");
 					var _accNbr = nbrAndUimCode[0];
 					var _uimCode = nbrAndUimCode[1];

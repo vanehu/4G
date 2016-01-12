@@ -1184,7 +1184,7 @@ AttachOffer = (function() {
 				excludeAddServ(prodId,servSpecId,param);
 			}else{
 				$.confirm("开通： " + serv.servSpecName,content,{ 
-					yesdo:function(){
+					yes:function(){
 						AttachOffer.addOpenServList(prodId,servSpecId,serv.servSpecName,serv.ifParams); //添加开通功能
 						excludeAddServ(prodId,servSpecId,param);
 					},
@@ -3038,7 +3038,7 @@ AttachOffer = (function() {
 							mktResInstCodesize = order.memberChange.mktResInstCode.split(",");
 						}
 						for(var u=0;u<mktResInstCodesize.length;u++){
-							if(mktResInstCodesize[u]!=""&&mktResInstCodesize[u]!=null&&mktResInstCodesize[u]!="null"){
+							if(mktResInstCodesize[u]!=""&&mktResInstCodesize[u]!=null&&mktResInstCodesize[u]!="null" && order.memberChange.oldSubPhoneNum!=""){
 								var nbrAndUimCode = mktResInstCodesize[u].split("_");
 								var _accNbr = nbrAndUimCode[0];
 								var _uimCode = nbrAndUimCode[1];
@@ -4189,7 +4189,6 @@ AttachOffer = (function() {
 	};
 	
 	return {
-		excludeAddServ:excludeAddServ,
 		excludeAddServ:excludeAddServ,
 		addOffer 				: _addOffer,
 		addOfferSpec 			: _addOfferSpec,
