@@ -1037,7 +1037,7 @@ AttachOffer = (function() {
 					$.each(respnose.data.result.offerSpec,function(){
 						if(AttachOffer.openedList.length>0){
 							for(var n=0;n<AttachOffer.openedList[0].offerList.length;n++){
-								var opendServ = AttachOffer.openedServList[0].servList[n];
+								var opendServ = AttachOffer.openedList[0].offerList[n];
 								if(this.offerSpecId == opendServ.offerSpecId){
 									contentAppend = contentAppend +this.offerSpecName+"<br>";  
 								}
