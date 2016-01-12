@@ -178,7 +178,7 @@
 								</#if>
 									<h5 class="s_title" id="prodInfo_${prodId}">${prod.offerRoleName}产品信息</h5>
 									<ul id="item_order_${prodId}" class="fillin show" >
-										<#if prod.objId != 381001824>
+										<#if prod.objId != 381001824 && prod.objId != 13409900>
 											<li>
 												<label style="width:120px;">接入号码：</label>
 												<a class="selectBoxTwo selectNumbel" href="javascript:void(0);" id="nbr_btn_${prodId}" onclick="order.prepare.phoneNumDialog('offer','Y2','${prodId}');" href="javascript:void(0);">选择号码<u></u></a>

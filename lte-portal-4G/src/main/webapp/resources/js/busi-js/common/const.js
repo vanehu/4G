@@ -399,7 +399,7 @@ CONST = (function(){
 	};
 	
 	//群产品规格
-	var _GROUP_PROD_SPEC = ["381001824"];
+	var _GROUP_PROD_SPEC = ["381001824","13409900"];
 	
 	//群功能产品规格ID	旺铺助手（网络版）-235010013	
 	var _GROUP_SERV_SPEC_ID=["235010013","381001823"];
