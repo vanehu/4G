@@ -210,12 +210,6 @@ public class DataEngine implements ServletContextAware{
         			servletContext.setAttribute(SysConstant.COMPRESS_JS_LEVEL, SysConstant.LEVEL_BUSI);
     			}
         		
-        		//APP版本能力开放主副卡变更独立压缩JS
-        		int memAPPResult = Compressor.compressBusiAppMemJs(busiVersion);
-        		if (memAPPResult == 0) {
-        			servletContext.setAttribute(SysConstant.COMPRESS_JS_LEVEL, SysConstant.LEVEL_BUSI);
-    			}
-        		
         		//PAD版本能力开放JS
         		int busiPADResult = Compressor.compressBusiPADJs(busiVersion);
         		if (busiPADResult == 0) {
@@ -258,12 +252,6 @@ public class DataEngine implements ServletContextAware{
         		//APP版本能力开放JS
         		int busiAPPResult = Compressor.compressBusiAPPJs(busiVersion);
         		if (busiAPPResult == 0) {
-        			servletContext.setAttribute(SysConstant.COMPRESS_JS_LEVEL, SysConstant.LEVEL_BUSI);
-    			}
-        		
-        		//APP版本能力开放主副卡变更独立压缩JS
-        		int memAPPResult = Compressor.compressBusiAppMemJs(busiVersion);
-        		if (memAPPResult == 0) {
         			servletContext.setAttribute(SysConstant.COMPRESS_JS_LEVEL, SysConstant.LEVEL_BUSI);
     			}
         		
