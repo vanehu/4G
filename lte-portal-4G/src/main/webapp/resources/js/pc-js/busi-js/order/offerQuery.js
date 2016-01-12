@@ -905,6 +905,26 @@ query.offer = (function() {
 		}
 	};
 	
+	// 查询功能产品规格,(默认1，必须2，可订购3)
+	var _queryServSpecPost = function(param) {
+		addParam(param);  //添加基本参数
+		var url = contextPath+"/offer/queryServSpecPost";
+		$.ecOverlay("<strong>查询可订购功能产品中，请稍等...</strong>");
+		var response = $.callServiceAsJson(url,param);	
+		$.unecOverlay();
+		if (response.code==0) {
+			if(response.data){
+				return response.data;
+			}
+		}else if (response.code==-2){
+			$.alertM(response.data);
+			return;
+		}else {
+			$.alert("提示","可订购功能产品失败,稍后重试");
+			return;
+		}
+	};
+	
 	return {
 		checkOperate			: _checkOperate,
 		loadInst				: _loadInst,
@@ -930,9 +950,10 @@ query.offer = (function() {
 		updateCheckByChange		: _updateCheckByChange,
 		queryProduct			: _queryProduct,
 		queryOpenedAttachAndServ: _queryOpenedAttachAndServ,
-		queryMainCartAttachOffer:_queryMainCartAttachOffer,
+		queryMainCartAttachOffer: _queryMainCartAttachOffer,
 		queryProdInstParam		: _queryProdInstParam,
-		invokeLoadInstSub		:_invokeLoadInstSub
+		invokeLoadInstSub		:_invokeLoadInstSub,
+		queryServSpecPost		: _queryServSpecPost
 		
 	};
 })();
