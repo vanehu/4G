@@ -420,6 +420,37 @@ public class MktResBmoImpl implements MktResBmo {
 		}
 		return resultMap;
 	}
+	
+	/**
+	 * 根据终端串码查询机型信息2
+	 * @param dataBusMap
+	 * @param optFlowNum
+	 * @param sessionStaff
+	 * @return
+	 * @throws Exception
+	 */
+	public Map<String, Object> queryMktResInfoByCode2(Map<String, Object> dataBusMap, String optFlowNum, SessionStaff sessionStaff) throws Exception {
+
+		// 终端信息
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+
+		DataBus db = InterfaceClient.callService(dataBusMap,
+				PortalServiceCode.TERM_INFO_QUERY_SERVICE, optFlowNum,
+				sessionStaff);
+		// 服务层调用与接口层调用都成功时，返回列表；否则返回空列表
+		if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db
+				.getResultCode()))) {
+			Map<String, Object> rMap = MapUtils.getMap(db.getReturnlmap(), "result");
+			Map<String,Object> baseInfoMap=MapUtils.getMap(rMap,"baseInfo");
+			List<Map<String, Object>> attrMapList = (List<Map<String, Object>>) MapUtils.getObject(rMap, "attrList");
+			resultMap.put("mktResBaseInfo", baseInfoMap);
+			resultMap.put("mktResAttrList", attrMapList);
+		}else{
+			String msg = StringUtils.defaultString(db.getResultMsg());
+			resultMap.put("resultMsg", msg);
+		}
+		return resultMap;
+	}
 
 	@SuppressWarnings("unchecked")
 	public Map<String, Object> queryNewInfoMktRes(Map<String, Object> dataBusMap,

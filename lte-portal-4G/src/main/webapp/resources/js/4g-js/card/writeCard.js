@@ -1038,7 +1038,19 @@ order.writeCard = (function(){
 		if (_rscJson.iccid.length==20){
 			_rscJson.iccid = _rscJson.iccid.substr(0,_rscJson.iccid.length-1);
 		}
-		 $("#uim_txt_"+_rscJson.prodId).val($("#resultCardAsciiFStr").val());
+		$("#uim_txt_"+_rscJson.prodId).val($("#resultCardAsciiFStr").val());
+		var resp = $.callServiceAsJson(contextPath+"/mktRes/terminal/infoQueryByCode", {instCode:_cardInfoJson.serialNumber});//mark 根据串码获取卡类型
+		if(resp.code ==0&&ec.util.isObj(resp.data.mktResBaseInfo)&&ec.util.isObj(resp.data.mktResBaseInfo.mktResId)){
+			result.mktResId = resp.data.mktResBaseInfo.mktResId;
+		}else{
+			if(ec.util.isObj(resp.data.resultMsg)){
+				$.alert("信息提示","根据串码："+_cardInfoJson.serialNum+"获取卡类型失败！失败原因："+resp.data.resultMsg);
+				return ;
+			}else{
+				$.alert("信息提示","根据串码："+_cardInfoJson.serialNum+"获取卡类型失败！失败原因未返回！");
+				return ;
+			}				
+		}
 		 var coupon= {
 					couponUsageTypeCd : "3", //物品使用类型
 					inOutTypeId : "1",  //出入库类型

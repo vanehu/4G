@@ -1079,6 +1079,36 @@ public class MktResController extends BaseController {
 			}
 		return "/mktRes/terminal-info";
 	}
+	/**
+	 * 终端信息查询
+	 * 
+	 * @param 终端串码
+	 * @param flowNum
+	 * @return
+	 */
+	@RequestMapping(value = "/terminal/infoQueryByCode", method = RequestMethod.POST)
+	@ResponseBody
+	public JsonResponse terminalInfoQueryByCode(@RequestBody Map<String, Object> param,
+			@LogOperatorAnn String flowNum, HttpServletResponse response) {
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils
+				.getSessionAttribute(super.getRequest(),
+						SysConstant.SESSION_KEY_LOGIN_STAFF);
+		Map<String, Object> paramTemp = new HashMap<String, Object>();
+		Map<String, Object> mktResMap = new HashMap<String, Object>();
+		paramTemp.put("instCode",param.get("instCode"));
+		try {
+			mktResMap = mktResBmo.queryMktResInfoByCode2(paramTemp, flowNum, sessionStaff);
+		} catch (BusinessException be) {
+			this.log.error("门户/terminal/infoQueryByCode服务异常", be);
+			return super.failed(be);
+		} catch (InterfaceException ie) {
+			return super.failed(ie, mktResMap, ErrorCode.CHECK_TERMINAL);
+		} catch (Exception e) {
+			this.log.error("门户/terminal/infoQueryByCode服务异常", e);
+			return super.failed(ErrorCode.CHECK_TERMINAL, e, mktResMap);
+		}
+		return super.successed(mktResMap);
+	}
 
 	/**
 	 * 终端串号校验

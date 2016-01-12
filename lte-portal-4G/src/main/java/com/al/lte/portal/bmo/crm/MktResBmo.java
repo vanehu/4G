@@ -125,6 +125,8 @@ public interface MktResBmo {
 
     public Map<String, Object> queryMktResInfoByCode(Map<String, Object> dataBusMap, String optFlowNum,
             SessionStaff sessionStaff) throws Exception;
+    public Map<String, Object> queryMktResInfoByCode2(Map<String, Object> dataBusMap, String optFlowNum,
+            SessionStaff sessionStaff) throws Exception;
 
 	public Map<String, Object> queryNewInfoMktRes(Map<String, Object> dataBusMap,
 			String optFlowNum, SessionStaff sessionStaff)
