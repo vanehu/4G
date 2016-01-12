@@ -1217,7 +1217,7 @@ AttachOffer = (function() {
 					if(AttachOffer.openList.length>0){
 						for(var j=0;j<AttachOffer.openList[0].specList.length;j++){
 							var openedServ = AttachOffer.openList[0].specList[j];
-							if(this.offerId == openedServ.offerId){
+							if(this.offerSpecId  == openedServ.offerSpecId){
 								openedServ.isdel = "Y";
 								$("#li_"+prodId+"_"+openedServ.offerSpecId).find("span").addClass("del");
 							}
@@ -1270,7 +1270,7 @@ AttachOffer = (function() {
 					if(AttachOffer.openedList.length>0){
 						for(var j=0;j<AttachOffer.openedList[0].offerList.length;j++){
 							var openedServ = AttachOffer.openedList[0].offerList[j];
-							if(this.offerId == openedServ.offerId){
+							if(this.offerSpecId == openedServ.offerSpecId){
 								openedServ.isdel = "Y";
 								$("#li_"+prodId+"_"+openedServ.offerId).find("span").addClass("del");
 							}
