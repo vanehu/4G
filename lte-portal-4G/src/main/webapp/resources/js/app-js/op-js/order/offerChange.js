@@ -327,6 +327,39 @@ offerChange = (function() {
 						}*/
 						AttachOffer.showMainRoleProd(prodId); //显示新套餐构成
 	//					AttachOffer.changeLabel(prodId,this.objId,""); //初始化第一个标签附属
+						
+						//根据已选功能产品查询带出的可选包
+						var servSpecIds = [];
+						if(AttachOffer.openServList!=null&&AttachOffer.openServList!=undefined){
+							$.each(AttachOffer.openServList,function(){
+								if(this.prodId == param.prodId){
+									var servSpecList = this.servSpecList;
+									if(servSpecList!=null&&servSpecList!=undefined){
+										$.each(servSpecList,function(){
+											if(this.servSpecId!=null&&this.servSpecId!=undefined){
+												servSpecIds.push(this.servSpecId);
+											}
+										});
+									}
+								}
+							});					
+						}
+						
+						if(servSpecIds.length>0){
+							param.queryType = "1,2";//查询必选，默认
+							param.servSpecIds = servSpecIds;
+							var queryData = query.offer.queryServSpecPost(param);
+							if(queryData!=null&&queryData.resultCode==0){
+								if(queryData.result.offerList!=null&&queryData.result.offerList!=undefined){
+									$.each(queryData.result.offerList,function(){
+										AttachOffer.addOpenList(param.prodId,this.offerSpecId); 
+									});
+								}					
+							}	
+						}
+						
+						//AttachOffer.changeLabel(prodId,this.objId,""); //初始化第一个标签附属
+						
 						if(AttachOffer.isChangeUim(prodId)){ //需要补换卡
 							//uim卡校验
 							if(OrderInfo.mktResInstCode!=undefined && OrderInfo.mktResInstCode!=null && OrderInfo.mktResInstCode!="" && OrderInfo.mktResInstCode!="null"){
@@ -352,6 +385,7 @@ offerChange = (function() {
 											}
 										}
 									}
+									
 									if(checkCode=="1"){
 										$.alert("提示","传入的UIM参数中存在重复数据,参数为["+OrderInfo.mktResInstCode+"]");
 									}else{

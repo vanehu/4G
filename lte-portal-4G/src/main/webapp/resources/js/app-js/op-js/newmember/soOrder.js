@@ -40,6 +40,7 @@ SoOrder = (function() {
 		OrderInfo.orderResult = {}; //清空购物车
 		OrderInfo.getOrderData(); //获取订单提交节点	
 		OrderInfo.orderData.orderList.orderListInfo.partyId = OrderInfo.cust.custId;
+		OrderInfo.orderData.orderList.orderListInfo.actionFlag = OrderInfo.actionFlag;
 		OrderInfo.orderData.orderList.orderListInfo.areaId = OrderInfo.getAreaId();
 	};
 	
@@ -140,11 +141,11 @@ SoOrder = (function() {
 	};
 	
 	var _gotosubmitOrder = function(orderdata){
-			var url = contextPath+"/app/order/gotosubmitOrder";
-			$.ecOverlay("<strong>订单提交中，请稍等...</strong>");
-			var response = $.callServiceAsHtml(url,JSON.stringify(orderdata));
-			$.unecOverlay();
-			return response.data;
+		var url = contextPath+"/app/order/gotosubmitOrder";
+		$.ecOverlay("<strong>订单提交中，请稍等...</strong>");
+		var response = $.callServiceAsHtml(url,JSON.stringify(orderdata));
+		$.unecOverlay();
+		return response.data;
 	};
 	
 	//填充订单信息
@@ -202,8 +203,7 @@ SoOrder = (function() {
 					params = {viceParam:viceparam,ooRoles:ooRoles,remark:$("#order_remark").val()};
 				}
 				_createMainOrder(busiOrders,params);
-			}
-			else{
+			}else{
 				var viceparam = [];
 				var ooRoles =[];
 				var params =[];
@@ -1301,9 +1301,6 @@ SoOrder = (function() {
 			} 
 		
 		} 
-	
-	
-		
 		
 		//拆副卡或拆副卡换套餐
 		if(OrderInfo.delViceCard=="true" && data!=null){
@@ -1311,9 +1308,12 @@ SoOrder = (function() {
 	        var newData = data.viceParam ;
 	        _viceParam=newData;
 	        var ooRoles = data.ooRoles; 
-	        $.each(ooRoles,function(){
-	        	busiOrder.data.ooRoles.push(this);
-	        });
+	        if(ooRoles!=null){
+	        	 $.each(ooRoles,function(){
+	 	        	busiOrder.data.ooRoles.push(this);
+	 	        });
+	        }
+	       
 //	        var param = {
 //	    			offerSpecId : prodInfo.prodOfferId,  //业务规格ID
 //	    			offerId : prodInfo.prodOfferInstId,  //业务对象实例ID
@@ -1443,7 +1443,6 @@ SoOrder = (function() {
 	    		//	AttachOffer.setAttachBusiOrder(busiOrders);  //订购退订附属销售品
 	    		}
 		   }
-		
 		AttachOffer.setAttachBusiOrder(busiOrders);//添加附属
 		busiOrders.push(busiOrder);
 	};
@@ -1836,6 +1835,7 @@ SoOrder = (function() {
 			}, 
 			busiObj : { //业务对象节点
 				objId : OrderInfo.offerSpec.offerSpecId,  //业务规格ID
+				objName : OrderInfo.offerSpec.offerSpecName,//业务名称
 				instId : OrderInfo.SEQ.offerSeq--, //业务对象实例ID
 				isComp : "N", //是否组合
 				offerTypeCd : "1" //1主销售品
@@ -2041,54 +2041,40 @@ SoOrder = (function() {
 				state : "ADD"
 			});
 		}
+		
 		//发展人
 		var $tr;
+		var objInstId_dealer;
 		if(OrderInfo.actionFlag==6){ //加装发展人根据产品
-			//发展人
-			var $tr;
-			if(OrderInfo.actionFlag==6){ //加装发展人根据产品
-				$tr = $("li[name='tr_"+OrderInfo.offerSpec.offerSpecId+"']");
-			}else{
-				$tr = $("#dealerTbody tr[name='tr_"+OrderInfo.offerSpec.offerSpecId+"']");
-			}
-			if($tr!=undefined){
-				$tr.each(function(){   //遍历产品有几个发展人
-					var dealer = {
-						itemSpecId : CONST.BUSI_ORDER_ATTR.DEALER,
-						role : $(this).find("select").val(),
-						value : $(this).find("input").attr("staffid") 
-					};
-					busiOrder.data.busiOrderAttrs.push(dealer);
-					var dealer_name = {
-							itemSpecId : CONST.BUSI_ORDER_ATTR.DEALER_NAME,
-							role : $(this).find("select").val(),
-							value : $(this).find("input").attr("value") 
-					};
-					busiOrder.data.busiOrderAttrs.push(dealer_name);
-				});
-			}
-			/*
-			var dealerType=$("#dealerType_"+OrderInfo.offerSpec.offerSpecId+"_"+OrderInfo.SEQ.dealerSeq);
-			var dealerName=$("#dealer_"+OrderInfo.offerSpec.offerSpecId);
-			if(dealerType!=undefined  && dealerType!=null && dealerName!=undefined && dealerName!=null){
-				var dealer = {
-						itemSpecId : CONST.BUSI_ORDER_ATTR.DEALER,
-						role : $(dealerType).val(),
-						value : $(dealerName).attr("staffid") 
-					};
-					busiOrder.data.busiOrderAttrs.push(dealer);
-					var dealer_name = {
-							itemSpecId : CONST.BUSI_ORDER_ATTR.DEALER_NAME,
-							role : $(dealerType).val(),
-							value : $(this).attr("value") 
-					};
-					busiOrder.data.busiOrderAttrs.push(dealer_name);
-					
-			}
-			
-			*/
+			objInstId_dealer = prodId;
+		}else{
+			objInstId_dealer = OrderInfo.offerSpec.offerSpecId;
 		}
 		
+		//获取所有的发展人数据[W]
+		$tr = $("#dealerTbody li[name='tr_"+objInstId_dealer+"']");
+		
+		if($tr!=undefined){
+			 //遍历产品有几个发展人
+			$tr.each(function(){  
+				//编码
+				var dealer = {
+					itemSpecId : CONST.BUSI_ORDER_ATTR.DEALER,
+					role : $(this).find("select[name ='dealerType_"+objInstId_dealer+"']").val(),
+					value : $(this).find("input").attr("staffid"),
+					channelNbr : $(this).find("select[name ='dealerChannel_"+objInstId_dealer+"']").val()
+				};
+				busiOrder.data.busiOrderAttrs.push(dealer);
+				
+				//名称
+				var dealer_name = {
+					itemSpecId : CONST.BUSI_ORDER_ATTR.DEALER_NAME,
+					role : $(this).find("select[name ='dealerType_"+objInstId_dealer+"']").val(),
+					value : $(this).find("input").attr("value") 
+				};
+				busiOrder.data.busiOrderAttrs.push(dealer_name);
+			});
+		}
 		
 		var acctId= -1;
 		var acctCd=-1;

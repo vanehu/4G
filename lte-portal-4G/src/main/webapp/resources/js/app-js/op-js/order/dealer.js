@@ -33,45 +33,49 @@ order.dealer = (function() {
 		
 		var isReloadFlag=OrderInfo.provinceInfo.reloadFlag;
 		
-		if(OrderInfo.actionFlag==1 || OrderInfo.actionFlag==2 || OrderInfo.actionFlag==14){ //新装业务，套餐变更需要主套餐发展人
+		//新装业务，套餐变更需要主套餐发展人
+		if(OrderInfo.actionFlag==1 || OrderInfo.actionFlag==2 || OrderInfo.actionFlag==14){ 
 			var objInstId = OrderInfo.offerSpec.offerSpecId;
-			var $li = $("<li id='tr_"+objInstId+"' name='tr_"+objInstId+"' href='#' class='list-group-item'></li>");
-			
-			//号码或者主套餐
-			$li.append("<h5 class='list-group-item-heading text-warning'>主套餐</h5>");
-			
-			//套餐名称
-			$li.append("<p class='list-group-item-text'>"+OrderInfo.offerSpec.offerSpecName+"</p><p> </p>");
-			
-			var $p = $('<p> </p>');
-			
-			//主div
-			var $div = $('<div class="row"> </div>');
-			var $div2 = $('<div class="col-xs-6" style=\"width:33%\"> </div>');//发展人数序div
-			
-			var nowSeq=OrderInfo.SEQ.dealerSeq;
-			var objId = objInstId+"_"+nowSeq;
-			
-			//将发展人需要的objId放入OrderInfo中
-			OrderInfo.codeInfos.developmentObjId=objId;
-			
-			//第一个选择框（选择是第几个发展人）【1】
-			var $select = $('<select id="dealerType_'+objId+'" name="dealerType_'+objInstId+'"  class="selectpicker show-tick form-control" data-mini="true" data-native-menu="false" data-icon="select" onclick=a=this.value; onchange="order.dealer.changeDealer(this,\'dealerType_'+objInstId+'\',a)"></select>');
-			
-			//第二个输入框[2]
-			var $td;
-			
-			//第三个选择框，渠道数据信息[3]
-			var $tdChannel = $("<div class='col-xs-6' style=\"width:33%\"></div>");
-			var $channelSelect = $('<select id="dealerChannel_'+objId+'" name="dealerChannel_'+objInstId+'" class="selectpicker show-tick form-control styled-select" onclick=a=this.value;></select>');
-			
-			//主套餐二次加载的发展人顺序和发展人渠道
 			
 			if(isReloadFlag=="N"){
 				//获取offerTypeCd为1的，也就是主套餐的发展人
 				if(OrderInfo.reloadProdInfo.dealerlist.length>0){
 					$.each(OrderInfo.reloadProdInfo.dealerlist,function(dei,item){
 						if(this.offerTypeCd=="1"){
+							var $li = $("<li id='tr_"+objInstId+"' name='tr_"+objInstId+"' href='#' class='list-group-item'></li>");
+							
+							var nowSeq=OrderInfo.SEQ.dealerSeq;
+							var objId = objInstId+"_"+nowSeq;
+							
+							//号码或者主套餐
+							//function(parentObj,obj,id,type){
+							//$li.append("<p><h5 class='list-group-item-heading text-warning' style='float:left;'>主套餐 </h5>[<a href=\"javascript:order.dealer.addProdDealer('tr_"+objInstId+"','"+objInstId+"','"+objId+"','');\">添加</a>]</p>");
+							$li.append("<h5 class='list-group-item-heading text-warning' >主套餐 </h5>");
+							
+							//套餐名称
+							$li.append("<p class='list-group-item-text'>"+OrderInfo.offerSpec.offerSpecName+"</p><p> </p>");
+							
+							var $p = $('<p> </p>');
+							
+							//主div
+							var $div = $('<div class="row"> </div>');
+							var $div2 = $('<div class="col-xs-6" style=\"width:33%\"> </div>');//发展人数序div
+							
+							//将发展人需要的objId放入OrderInfo中
+							OrderInfo.codeInfos.developmentObjId=objId;
+							
+							//第一个选择框（选择是第几个发展人）【1】
+							var $select = $('<select id="dealerType_'+objId+'" name="dealerType_'+objInstId+'"  class="selectpicker show-tick form-control" data-mini="true" data-native-menu="false" data-icon="select" onclick=a=this.value; onchange="order.dealer.changeDealer(this,\'dealerType_'+objInstId+'\',a)"></select>');
+							
+							//第二个输入框[2]
+							var $td;
+							
+							//第三个选择框，渠道数据信息[3]
+							var $tdChannel = $("<div class='col-xs-6' style=\"width:33%\"></div>");
+							var $channelSelect = $('<select id="dealerChannel_'+objId+'" name="dealerChannel_'+objInstId+'" class="selectpicker show-tick form-control styled-select" onclick=a=this.value;></select>');
+							
+							//主套餐二次加载的发展人顺序和发展人渠道
+							
 							//第一个选择框
 							if(this.role!=undefined){
 								var delType=this.role;
@@ -103,12 +107,67 @@ order.dealer = (function() {
 								}
 							});
 						}
+						
+						//[1]
+						$div2.append($select);
+						$div.append($div2);
+						
+						//[2]
+						$div.append($td);
+						
+						//[3]
+						$tdChannel.append($channelSelect);
+						
+						$div.append($tdChannel);
+						
+						//将div放置到li中
+						$li.append($div);
+						
+						//末尾添加一个p标签
+						$li.append($p);
+						
+						OrderInfo.SEQ.dealerSeq++;
+						
+						$("#dealerTbody").append($li);
 					});
 				}
 				
 				//订单备注初始化
 				$("#order_remark").val(OrderInfo.reloadProdInfo.orderMark);
 			}else{
+				var $li = $("<li id='tr_"+objInstId+"' name='tr_"+objInstId+"' href='#' class='list-group-item'></li>");
+				
+				var nowSeq=OrderInfo.SEQ.dealerSeq;
+				var objId = objInstId+"_"+nowSeq;
+				
+				//号码或者主套餐
+				//[<a href=\"javascript:order.dealer.addProdDealer('tr_"+objInstId+"','"+objInstId+"','"+objId+"','');\">添加</a>]
+				$li.append("<h5 class='list-group-item-heading text-warning'>主套餐 </h5>");
+				
+				//套餐名称
+				$li.append("<p class='list-group-item-text' style='text-align:left;'>"+OrderInfo.offerSpec.offerSpecName+"</p><p> </p>");
+				
+				var $p = $('<p> </p>');
+				
+				//主div
+				var $div = $('<div class="row"> </div>');
+				var $div2 = $('<div class="col-xs-6" style=\"width:33%\"> </div>');//发展人数序div
+				
+				//将发展人需要的objId放入OrderInfo中
+				OrderInfo.codeInfos.developmentObjId=objId;
+				
+				//第一个选择框（选择是第几个发展人）【1】
+				var $select = $('<select id="dealerType_'+objId+'" name="dealerType_'+objInstId+'"  class="selectpicker show-tick form-control" data-mini="true" data-native-menu="false" data-icon="select" onclick=a=this.value; onchange="order.dealer.changeDealer(this,\'dealerType_'+objInstId+'\',a)"></select>');
+				
+				//第二个输入框[2]
+				var $td;
+				
+				//第三个选择框，渠道数据信息[3]
+				var $tdChannel = $("<div class='col-xs-6' style=\"width:33%\"></div>");
+				var $channelSelect = $('<select id="dealerChannel_'+objId+'" name="dealerChannel_'+objInstId+'" class="selectpicker show-tick form-control styled-select" onclick=a=this.value;></select>');
+				
+				//主套餐二次加载的发展人顺序和发展人渠道
+				
 				//[1]-发展顺序
 				$.each(OrderInfo.order.dealerTypeList,function(i,item){
 					$select.append("<option value='"+this.PARTYPRODUCTRELAROLECD+"' >"+this.NAME+"</option>");
@@ -125,67 +184,160 @@ order.dealer = (function() {
 						$channelSelect.append("<option value='"+this.channelNbr+"'>"+this.channelName+"</option>");
 					}
 				});
+				
+				//[1]
+				$div2.append($select);
+				$div.append($div2);
+				
+				//[2]
+				$div.append($td);
+				
+				//[3]
+				$tdChannel.append($channelSelect);
+				
+				$div.append($tdChannel);
+				
+				//将div放置到li中
+				$li.append($div);
+				
+				//末尾添加一个p标签
+				$li.append($p);
+				
+				OrderInfo.SEQ.dealerSeq++;
+				
+				$("#dealerTbody").append($li);
 			}
-			
-			//[1]
-			$div2.append($select);
-			$div.append($div2);
-			
-			//[2]
-			$div.append($td);
-			
-			//[3]
-			$tdChannel.append($channelSelect);
-			
-			$div.append($tdChannel);
-			
-			//将div放置到li中
-			$li.append($div);
-			
-			//末尾添加一个p标签
-			$li.append($p);
-			
-			OrderInfo.SEQ.dealerSeq++;
-			
-			$("#dealerTbody").append($li);
 			
 			$.refresh($("#dealerTbody"));
 		}
 		
-		if(OrderInfo.actionFlag==6 ){ //加装需要接入产发展人
-//			$.each(OrderInfo.offerSpec.offerRoles,function(){
-//	    		$.each(this.prodInsts,function(){
-//	    			var objInstId = this.prodInstId;
-//	    			var $li = $("<li id='tr_"+objInstId+"' name='tr_"+objInstId+"'></li>");
-//	    			var $dl= $("<dl></dl>");
-//	    			var $tdType = $('<dd></dd>');
-//	    			var $field=$('<fieldset data-role="fieldcontain"></fieldset>');
-//	    			var objId = objInstId+"_"+OrderInfo.SEQ.dealerSeq;
-//	    			var $select = $('<select id="dealerType_'+objId+'" name="dealerType_'+objInstId+'" data-mini="true" data-native-menu="false" data-icon="select" onclick=a=this.value; onchange="order.dealer.changeDealer(this,\'dealerType_'+objInstId+'\',a)"></select>');
-//	    			$.each(OrderInfo.order.dealerTypeList,function(){
-//	    				$select.append("<option value='"+this.PARTYPRODUCTRELAROLECD+"' >"+this.NAME+"</option>");
-//	    			});
-//	    			$field.append($select);
-//	    			$tdType.append($field);
-//					var accNbr = "未选号";
-//					if(this.accNbr!=undefined && this.accNbr!=""){
-//						accNbr = prodInst.accNbr;
-//					}
-//					$dl.append("<dd>"+accNbr+"</dd>");
-//					$dl.append("<dd>"+this.objName+"</dd>");
-//					$dl.append($tdType);
-//					var $dd = $('<dd><input type="text" id="dealer_'+objId+'" staffId="'+OrderInfo.staff.staffId+'" value="'+OrderInfo.staff.staffName+'" data-mini="true" readonly="readonly" ></input></dd>');
-//					$dl.append($dd);
-//					var $button='<dd class="ui-grid"><div class="ui-grid-a"><div class="ui-block-a">';
-//					$button+='<button data-mini="ture" onclick="javascript:order.main.queryStaff(0,\'dealer\',\''+objId+'\');">选择</button></div>';
-//					$button+=' <div class="ui-block-b"> <button data-mini="ture" onclick="order.dealer.addProdDealer(this,'+objInstId+',1)">添加</button></div></div></dd>';
-//					$dl.append($button);
-//					$li.append($dl);
-//					OrderInfo.SEQ.dealerSeq++;
-//					$("#dealerTbody").append($li);
-//					$.jqmRefresh($("#dealerTbody"));
-//	    		});
-//	    	});
+		if(OrderInfo.actionFlag==6){ //加装需要接入产发展人
+			if(order.memberChange.newMemberFlag){
+				$.each(OrderInfo.offerSpec.offerRoles,function(){
+		    		$.each(this.prodInsts,function(){
+						//----------------------------
+						var objInstId = this.prodInstId;
+						
+						var $li = $("<li id='tr_"+objInstId+"' name='tr_"+objInstId+"' href='#' class='list-group-item'></li>");
+						
+						var accNbr = "未选号";
+						if(this.accNbr!=undefined && this.accNbr!=""){
+							accNbr = prodInst.accNbr;
+						}
+						
+						//号码或者主套餐
+						$li.append("<h5 class='list-group-item-heading text-warning'>"+accNbr+"</h5>");
+						
+						//套餐名称
+						$li.append("<p class='list-group-item-text'>"+this.objName+"</p><p> </p>");
+						
+						var $p = $('<p> </p>');
+						
+						//主div
+						var $div = $('<div class="row"> </div>');
+						var $div2 = $('<div class="col-xs-6" style=\"width:33%\"> </div>');//发展人数序div
+						
+						var nowSeq=OrderInfo.SEQ.dealerSeq;
+						var objId = objInstId+"_"+nowSeq;
+						
+						//将发展人需要的objId放入OrderInfo中
+						OrderInfo.codeInfos.developmentObjId=objId;
+						
+						//第一个选择框（选择是第几个发展人）【1】
+						var $select = $('<select id="dealerType_'+objId+'" name="dealerType_'+objInstId+'"  class="selectpicker show-tick form-control" data-mini="true" data-native-menu="false" data-icon="select" onclick=a=this.value; onchange="order.dealer.changeDealer(this,\'dealerType_'+objInstId+'\',a)"></select>');
+						
+						//第二个输入框[2]
+						var $td;
+						
+						//第三个选择框，渠道数据信息[3]
+						var $tdChannel = $("<div class='col-xs-6' style=\"width:33%\"></div>");
+						var $channelSelect = $('<select id="dealerChannel_'+objId+'" name="dealerChannel_'+objInstId+'" class="selectpicker show-tick form-control styled-select" onclick=a=this.value;></select>');
+						
+						//主套餐二次加载的发展人顺序和发展人渠道
+						
+						if(isReloadFlag=="N"){
+							//获取offerTypeCd为1的，也就是主套餐的发展人
+							if(OrderInfo.reloadProdInfo.dealerlist.length>0){
+								$.each(OrderInfo.reloadProdInfo.dealerlist,function(dei,item){
+									if(this.prodId==objInstId && this.actionClassCd=="1300" && this.boActionTypeCd=="1"){
+										//第一个选择框
+										if(this.role!=undefined){
+											var delType=this.role;
+											$.each(OrderInfo.order.dealerTypeList,function(){
+												if(this.PARTYPRODUCTRELAROLECD==delType){
+													$select.append("<option value='"+this.PARTYPRODUCTRELAROLECD+"' selected=\"selected\">"+this.NAME+"</option>");
+												}else{
+													$select.append("<option value='"+this.PARTYPRODUCTRELAROLECD+"' >"+this.NAME+"</option>");
+												}
+											});
+										}
+										
+										//第二个输入框【2】
+										var staffId=this.staffid;
+										if(staffId!=null && staffId!="" && staffId!=undefined){
+											$td = $('<div class="col-xs-6" style="width:33%"><input type="text" onclick="javascript:order.dealer.showDealer(0,\'dealer\',\''+objId+'\');" onChange="javascript:this.staffId=OrderInfo.staff.staffId;this.value=OrderInfo.staff.staffName" class="form-control" id="dealer_'+objId+'" staffId="'+staffId+'" value="'+this.staffname+'" ></input></div>');
+										}
+									
+										//第三个渠道选择[3]
+										var nowChannelNbr=this.channelNbr;
+										$.each(OrderInfo.channelList,function(){
+											if(this.channelNbr==nowChannelNbr){
+												$channelSelect.append("<option value='"+this.channelNbr+"' selected ='selected'>"+this.channelName+"</option>");
+											}else{
+												$channelSelect.append("<option value='"+this.channelNbr+"'>"+this.channelName+"</option>");
+											}
+										});
+									}
+								});
+							}
+							
+							//订单备注初始化
+							$("#order_remark").val(OrderInfo.reloadProdInfo.orderMark);
+						}else{
+							//[1]-发展顺序
+							$.each(OrderInfo.order.dealerTypeList,function(i,item){
+								$select.append("<option value='"+this.PARTYPRODUCTRELAROLECD+"' >"+this.NAME+"</option>");
+							});
+							
+							//[2]-发展人
+							$td = $('<div class="col-xs-6" style="width:33%"><input type="text" onclick="javascript:order.dealer.showDealer(0,\'dealer\',\''+objId+'\');" onChange="javascript:this.staffId=OrderInfo.staff.staffId;this.value=OrderInfo.staff.staffName" class="form-control" id="dealer_'+objId+'" staffId="'+OrderInfo.staff.staffId+'" value="'+OrderInfo.staff.staffName+'" ></input></div>');
+						
+							//[3]-渠道数据
+							$.each(OrderInfo.channelList,function(){
+								if(this.isSelect==1){
+									$channelSelect.append("<option value='"+this.channelNbr+"' selected ='selected'>"+this.channelName+"</option>");
+								}else{
+									$channelSelect.append("<option value='"+this.channelNbr+"'>"+this.channelName+"</option>");
+								}
+							});
+						}
+						
+						//[1]
+						$div2.append($select);
+						$div.append($div2);
+						
+						//[2]
+						$div.append($td);
+						
+						//[3]
+						$tdChannel.append($channelSelect);
+						
+						$div.append($tdChannel);
+						
+						//将div放置到li中
+						$li.append($div);
+						
+						//末尾添加一个p标签
+						$li.append($p);
+						
+						OrderInfo.SEQ.dealerSeq++;
+						
+						$("#dealerTbody").append($li);
+						
+						$.refresh($("#dealerTbody"));
+		    		});
+		    	});
+			}
 		}
 		
 		if(OrderInfo.actionFlag==13){ //裸机销售需要发展人
@@ -491,69 +643,69 @@ order.dealer = (function() {
 		$("#addModal").modal("hide");
 	};
 	
-	//添加一行产品协销人
-	var _addProdDealer = function(obj,objInstId,type){
+	//添加一行产品协销人-第二第三发展人[W]
+	var _addProdDealer = function(parentObj,obj,id,type){
+		var $oldTr=$("#"+parentObj);
+		var objId = obj+"_"+OrderInfo.SEQ.dealerSeq;
+		var $tdType = _getDealerType(obj,id);
 		
-		
-//		var objInstId = OrderInfo.offerSpec.offerSpecId;
-//		var $li = $("<li id='tr_"+objInstId+"' name='tr_"+objInstId+"' href='#' class='list-group-item'></li>");
-//		$li.append("<h5 class='list-group-item-heading text-warning'>"+accNbr+"（包含接入产品）</h5>");
-//		$li.append("<p class='list-group-item-text'>"+OrderInfo.offerSpec.offerSpecName+"</p>");
-//		var $p = $('<p> </p>');
-//		var $div = $('<div class="row"> </div>');
-//		var $div2 = $('<div class="col-xs-6"> </div>');
-//					//var $field=$('<fieldset data-role="fieldcontain"></fieldset>');
-//		var objId = objInstId+"_"+OrderInfo.SEQ.dealerSeq;
-//		var $select = $('<select id="dealerType_'+objId+'" name="dealerType_'+objInstId+'"  class="selectpicker show-tick form-control" data-mini="true" data-native-menu="false" data-icon="select" onclick=a=this.value; onchange="order.dealer.changeDealer(this,\'dealerType_'+objInstId+'\',a)"></select>');
-//		if(order.ysl!=undefined){
-//			$select.append("<option value='40020005'>第一发展人</option>");
-//			$select.append("<option value='40020006'>第二发展人</option>");
-//			$select.append("<option value='40020007'>第三发展人</option>");
-//		}else{
-//			$.each(OrderInfo.order.dealerTypeList,function(){
-//				$select.append("<option value='"+this.PARTYPRODUCTRELAROLECD+"' >"+this.NAME+"</option>");
-//			});$field
-//		}
-//		$div2.append($select);
-//		$div.append($div2);
-//		if(order.ysl!=undefined){
-////			var $dd = $('<dd><input type="text" id="dealer_'+objId+'" staffId="'+OrderInfo.staff.staffId+'" value="'+OrderInfo.staff.staffName+'" data-mini="true"></input></dd>');
-////			$dl.append($dd);
-//		}else{
-//			var $td = $('<div class="col-xs-6"><input type="text" onFocus="javascript:_queryStaff(\'dealer\',\''+objId+'\');"" class="form-control" id="dealer_'+objId+'" staffId="'+OrderInfo.staff.staffId+'" value="'+OrderInfo.staff.staffName+'" readonly="readonly" ></input></div>');
-//			$div.append($dd);
-//		}
-//		$p.append($div);
-//		$li.append($p);
-		
-		
-		var $oldTr = $(obj).parent().parent().parent().parent().parent();
-		var objId = objInstId+"_"+OrderInfo.SEQ.dealerSeq;
-		var $tdType = _getDealerType(objInstId,objId);
 		if($tdType==undefined){
-			return;
+			return false;
 		}
-		var $li = $('<li name="tr_'+objInstId+'"></li>');
-		var $dl= $("<dl></dl>");
+		
+		var $tr = $("#atr_"+id);
+		var $li = $("<li name='tr_"+obj+"' id='tr_"+obj+"' class='list-group-item'></li>");
+		
+		//从第一发展人获取号码套餐等信息
 		if (OrderInfo.actionFlag != 13) {
-			$dl.append("<dd>"+$oldTr.find("dd").eq(0).text()+"</dd>");
-			$dl.append("<dd>"+$oldTr.find("dd").eq(1).text()+"</dd>");
+			$li.append("<h5 class='list-group-item-heading text-warning'>"+$oldTr.find("h5").eq(0).html()+"[<a href=\"javascript:order.dealer.removeDealerNew('"+id+"');\">删除</a>]</h5><p> </p>");
+			$li.append("<p class='list-group-item-text'>"+$oldTr.find("p").eq(2).html()+"</p>");
 		}
-		$dl.append($tdType);
-		if(order.ysl!=undefined){
-			var $dd = $('<dd><input type="text" id="dealer_'+objId+'" name="dealer_'+objInstId+'" staffId="'+$oldTr.find("input").attr("staffId")+'" value="'+$oldTr.find("input").attr("value")+'"  data-mini="true"></input></dd>');
-			$dl.append($dd);
-		}else{
-			var $dd = $('<dd><input type="text" id="dealer_'+objId+'" name="dealer_'+objInstId+'" staffId="'+$oldTr.find("input").attr("staffId")+'" value="'+$oldTr.find("input").attr("value")+'"  data-mini="true"  readonly="readonly"></input></dd>');
-			$dl.append($dd);
-		}
-		var $button='<dd class="ui-grid"><div class="ui-grid-a"><div class="ui-block-a">';
-		$button+='<button data-mini="ture" onclick="order.main.queryStaff(\'dealer\',\''+objId+'\');">选择</button></div>';
-		$button+=' <div class="ui-block-b"> <button data-mini="ture" onclick="order.dealer.removeDealer(this);">删除</button></div></div></dd>';			
-		$dl.append($button);
-		$li.append($dl);	
-		$oldTr.after($li);
-		$.jqmRefresh($("#dealerTbody"));
+		
+		//新添加发展人[W]
+		//$li.append("<h5 class='list-group-item-heading text-warning'>"+$tr.children().eq(1).text()+"[<a href=\"javascript:order.dealer.removeDealerNew('"+id+"');\">删除</a>]</h5>");
+		//$li.append("<p class='list-group-item-text'>"+$tr.children().eq(2).text()+"</p>");
+		$li.append("<p ></p>");
+		
+		//发张人选项和名称开始
+		var $div = $('<div class="row"> </div>');
+		var $div2 = $('<div class="col-xs-6" style=\"width:33%\"> </div>');
+		
+		//将发展人需要的objId放入OrderInfo中
+		OrderInfo.codeInfos.developmentObjId=objId;
+		
+		//var $select = $('<select id="dealerType_'+objId+'" name="dealerType_'+id+'"  class="selectpicker show-tick form-control" data-mini="true" data-native-menu="false" data-icon="select" onclick=a=this.value; onchange="order.dealer.changeDealer(this,\'dealerType_'+id+'\',a)"></select>');
+		
+		//$.each(OrderInfo.order.dealerTypeList,function(){
+			//$select.append("<option value='"+this.PARTYPRODUCTRELAROLECD+"' >"+this.NAME+"</option>");
+		///\});
+		
+		
+		//$div2.append($select);
+		$div.append($tdType);
+		
+		var $td = $('<div class="col-xs-6" style=\"width:33%\"><input type="text" onclick="javascript:order.dealer.showDealer(0,\'dealer\',\''+objId+'\');" onChange="javascript:this.staffId=OrderInfo.staff.staffId;this.value=OrderInfo.staff.staffName" class="form-control" id="dealer_'+objId+'" staffId="'+OrderInfo.staff.staffId+'" value="'+OrderInfo.staff.staffName+'" ></input></div>');
+		$div.append($td);
+		
+		//渠道数据信息
+		var $tdChannel = $("<div class='col-xs-6' style=\"width:33%\"></div>");
+		var $channelSelect = $('<select id="dealerChannel_'+objId+'" name="dealerChannel_'+obj+'" class="selectpicker show-tick form-control styled-select" onclick=a=this.value;></select>');
+		$.each(OrderInfo.channelList,function(){
+			if(this.isSelect==1)
+				$channelSelect.append("<option value='"+this.channelNbr+"' selected ='selected'>"+this.channelName+"</option>");
+			else
+				$channelSelect.append("<option value='"+this.channelNbr+"'>"+this.channelName+"</option>");
+		});
+		
+		$tdChannel.append($channelSelect);
+		
+		$div.append($tdChannel);
+		
+		$li.append($div);
+		$li.append("<p ></p>");
+		
+		$("#dealerTbody").append($li);
+		
 		OrderInfo.SEQ.dealerSeq++;
 	};
 	
@@ -566,40 +718,6 @@ order.dealer = (function() {
 	
 	//校验发展人类型,并获取发展人类型列表
 	var _getDealerType = function(objInstId,objId){
-		
-//		
-//		var objInstId = OrderInfo.offerSpec.offerSpecId;
-//		var $li = $("<li id='tr_"+objInstId+"' name='tr_"+objInstId+"' href='#' class='list-group-item'></li>");
-//		$li.append("<h5 class='list-group-item-heading text-warning'>"+accNbr+"（包含接入产品）</h5>");
-//		$li.append("<p class='list-group-item-text'>"+OrderInfo.offerSpec.offerSpecName+"</p>");
-//		var $p = $('<p> </p>');
-//		var $div = $('<div class="row"> </div>');
-//		var $div2 = $('<div class="col-xs-6"> </div>');
-//					//var $field=$('<fieldset data-role="fieldcontain"></fieldset>');
-//		var objId = objInstId+"_"+OrderInfo.SEQ.dealerSeq;
-//		var $select = $('<select id="dealerType_'+objId+'" name="dealerType_'+objInstId+'"  class="selectpicker show-tick form-control" data-mini="true" data-native-menu="false" data-icon="select" onclick=a=this.value; onchange="order.dealer.changeDealer(this,\'dealerType_'+objInstId+'\',a)"></select>');
-//		if(order.ysl!=undefined){
-//			$select.append("<option value='40020005'>第一发展人</option>");
-//			$select.append("<option value='40020006'>第二发展人</option>");
-//			$select.append("<option value='40020007'>第三发展人</option>");
-//		}else{
-//			$.each(OrderInfo.order.dealerTypeList,function(){
-//				$select.append("<option value='"+this.PARTYPRODUCTRELAROLECD+"' >"+this.NAME+"</option>");
-//			});$field
-//		}
-//		$div2.append($select);
-//		$div.append($div2);
-//		if(order.ysl!=undefined){
-////			var $dd = $('<dd><input type="text" id="dealer_'+objId+'" staffId="'+OrderInfo.staff.staffId+'" value="'+OrderInfo.staff.staffName+'" data-mini="true"></input></dd>');
-////			$dl.append($dd);
-//		}else{
-//			var $td = $('<div class="col-xs-6"><input type="text" onFocus="javascript:order.dealer.queryStaff(\'dealer\',\''+objId+'\');"" class="form-control" id="dealer_'+objId+'" staffId="'+OrderInfo.staff.staffId+'" value="'+OrderInfo.staff.staffName+'" readonly="readonly" ></input></div>');
-//			$div.append($td);
-//		}
-//		$p.append($div);
-//		$li.append($p);
-		
-		
 		var dealerType = "";
 		if(order.ysl!=undefined){
 			OrderInfo.order.dealerTypeList = [{"PARTYPRODUCTRELAROLECD":40020005,"NAME":"第一发展人"},{"PARTYPRODUCTRELAROLECD":40020006,"NAME":"第二发展人"},{"PARTYPRODUCTRELAROLECD":40020007,"NAME":"第三发展人"}];
@@ -627,9 +745,7 @@ order.dealer = (function() {
 			$.alert("信息提示","每个业务发展人类型不能重复");
 			return;
 		}
-		var $tdType = $('<dd></dd>');
-		//var $field=$('<fieldset data-role="fieldcontain"></fieldset>');
-		var objId = objInstId+"_"+OrderInfo.SEQ.dealerSeq;
+		var $tdType = $('<div class="col-xs-6" style="width:33%">');
 		var $select = $('<select id="dealerType_'+objId+'" name="dealerType_'+objInstId+'"  class="selectpicker show-tick form-control" data-mini="true" data-native-menu="false" data-icon="select" onclick=a=this.value; onchange="order.dealer.changeDealer(this,\'dealerType_'+objInstId+'\',a)"></select>');
 		$.each(OrderInfo.order.dealerTypeList,function(){
 			if(this.PARTYPRODUCTRELAROLECD==dealerType){
@@ -709,7 +825,7 @@ order.dealer = (function() {
 				}
 			}
 		}
-		
+
 		$content.append($table);
 		var $footer='<div data-role="footer" data-position="inline" data-tap-toggle="false" data-theme="n"> <button data-inline="true" data-icon="next" id="sureAdddealer">确定</button>';
 		$footer+='<button data-inline="true" data-icon="back" data-rel="back" id="closeAdddealer">取消</button></div>';

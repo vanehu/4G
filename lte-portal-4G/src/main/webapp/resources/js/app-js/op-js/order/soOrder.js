@@ -40,6 +40,7 @@ SoOrder = (function() {
 		OrderInfo.orderResult = {}; //清空购物车
 		OrderInfo.getOrderData(); //获取订单提交节点	
 		OrderInfo.orderData.orderList.orderListInfo.partyId = OrderInfo.cust.custId;
+		OrderInfo.orderData.orderList.orderListInfo.actionFlag = OrderInfo.actionFlag;
 		OrderInfo.orderData.orderList.orderListInfo.areaId = OrderInfo.getAreaId();
 	};
 	
@@ -1609,6 +1610,7 @@ SoOrder = (function() {
 			}, 
 			busiObj : { //业务对象节点
 				objId : OrderInfo.offerSpec.offerSpecId,  //业务规格ID
+				objName : OrderInfo.offerSpec.offerSpecName,//业务名称
 				instId : OrderInfo.SEQ.offerSeq--, //业务对象实例ID
 				isComp : "N", //是否组合
 				offerTypeCd : "1" //1主销售品
@@ -1903,26 +1905,41 @@ SoOrder = (function() {
 				state : "ADD"
 			});
 		}
-		//发展人
-//		var $tr;
-//		if(OrderInfo.actionFlag==6){ //加装发展人根据产品
-//			$tr = $("li[name='tr_"+prodId+"']");
-//		}else{
-//			$tr = $("li[name='tr_"+OrderInfo.offerSpec.offerSpecId+"']");
-//		}
-//		if($tr!=undefined){
-//			$tr.each(function(){   //遍历产品有几个发展人
-//				var dealer = {
-//					itemSpecId : CONST.BUSI_ORDER_ATTR.DEALER,
-//					role : $(this).find("select").val(),
-//					value : $(this).find("input").attr("staffid") 
-//				};
-//				busiOrder.data.busiOrderAttrs.push(dealer);
-//			});
-//		}
 		
-		//var acctId= -1;
-		//var acctCd=-1;
+		//发展人
+		var $tr;
+		var objInstId_dealer;
+		if(OrderInfo.actionFlag==6){ //加装发展人根据产品
+			objInstId_dealer = prodId;
+		}else{
+			objInstId_dealer = OrderInfo.offerSpec.offerSpecId;
+		}
+		
+		//获取所有的发展人数据[W]
+		$tr = $("#dealerTbody li[name='tr_"+objInstId_dealer+"']");
+		
+		if($tr!=undefined){
+			 //遍历产品有几个发展人
+			$tr.each(function(){  
+				//编码
+				var dealer = {
+					itemSpecId : CONST.BUSI_ORDER_ATTR.DEALER,
+					role : $(this).find("select[name ='dealerType_"+objInstId_dealer+"']").val(),
+					value : $(this).find("input").attr("staffid"),
+					channelNbr : $(this).find("select[name ='dealerChannel_"+objInstId_dealer+"']").val()
+				};
+				busiOrder.data.busiOrderAttrs.push(dealer);
+				
+				//名称
+				var dealer_name = {
+					itemSpecId : CONST.BUSI_ORDER_ATTR.DEALER_NAME,
+					role : $(this).find("select[name ='dealerType_"+objInstId_dealer+"']").val(),
+					value : $(this).find("input").attr("value") 
+				};
+				busiOrder.data.busiOrderAttrs.push(dealer_name);
+			});
+		}
+		
 		var acctId=-1;
 		if(OrderInfo.acct!=undefined&&OrderInfo.acct.acctId!=undefined&&OrderInfo.acct.acctId!=null&&OrderInfo.acct.acctId!=""){//新装传帐户id
 			acctId=OrderInfo.acct.acctId;

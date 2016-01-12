@@ -1928,7 +1928,10 @@ order.memberChange = function(){
 		delNum:_delNum,
 		areaidJurisdiction:_areaidJurisdiction,
 		viceCartNum:_viceCartNum,
-		newSubPhoneNum:_newSubPhoneNum
+		newSubPhoneNum:_newSubPhoneNum,
+		newMemberFlag:_newMemberFlag,
+		oldMemberFlag:_oldMemberFlag,
+		changeMemberFlag:_changeMemberFlag
 	};
 }();
 $(function(){

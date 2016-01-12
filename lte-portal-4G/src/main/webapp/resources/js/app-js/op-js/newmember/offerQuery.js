@@ -483,6 +483,26 @@ query.offer = (function() {
 		}
 	};
 	
+	// 查询功能产品规格,(默认1，必须2，可订购3)[W]
+	var _queryServSpecPost = function(param) {
+		addParam(param);  //添加基本参数
+		var url = contextPath+"/offer/queryServSpecPost";
+		$.ecOverlay("<strong>查询可订购功能产品中，请稍等...</strong>");
+		var response = $.callServiceAsJson(url,param);	
+		$.unecOverlay();
+		if (response.code==0) {
+			if(response.data){
+				return response.data;
+			}
+		}else if (response.code==-2){
+			$.alertM(response.data);
+			return;
+		}else {
+			$.alert("提示","可订购功能产品失败,稍后重试");
+			return;
+		}
+	};
+	
 	//销售品互斥依赖查询
 	var _queryExcludeDepend = function(param){
 		addParam(param);  //添加基本参数
@@ -674,18 +694,22 @@ query.offer = (function() {
 		var offerRoles = []; //过滤角色
 		var prodSpecId = OrderInfo.getProdSpecId(prodId);
 		var flag = false;
-		$.each(offerSpec.offerRoles,function(){
-			$.each(this.roleObjs,function(){
-				if(this.objId==prodSpecId){
-					flag = true;
+		if(ec.util.isArray(offerSpec.extAttrParams) && offerSpec.extAttrParams[0].attrId=="800000041"){
+			return offerSpec;
+		}else{
+			$.each(offerSpec.offerRoles,function(){
+				$.each(this.roleObjs,function(){
+					if(this.objId==prodSpecId){
+						flag = true;
+						return false;
+					}
+				});
+				if(flag){
+					offerRoles.push(this);
 					return false;
 				}
 			});
-			if(flag){
-				offerRoles.push(this);
-				return false;
-			}
-		});
+		}
 		offerSpec.offerRoles = offerRoles;
 		return offerSpec;
 	};
@@ -991,6 +1015,7 @@ query.offer = (function() {
 		queryOpenedAttachAndServ: _queryOpenedAttachAndServ,
 		queryProdInstParam		: _queryProdInstParam,
 		addParam:addParam,
-		invokeLoadInstSub:_invokeLoadInstSub	
+		invokeLoadInstSub:_invokeLoadInstSub,
+		queryServSpecPost:_queryServSpecPost
 	};
 })();

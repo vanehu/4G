@@ -11,6 +11,9 @@ order.memberChange = function(){
 	var _newSubPhoneNum; //前台传入的参数
 	var _oldSubPhoneNum; //前台传入的参数
 	var _mktResInstCode;  //传入的uim卡
+	var _newMemberFlag = false;
+	var _oldMemberFlag = false;
+	var _changeMemberFlag = false;
 	//纳入新成员
 	var _newmembers = {};
 	//纳入老用户
@@ -1527,7 +1530,7 @@ order.memberChange = function(){
 			param.access=_offerProd.accessNumber;
 			param.newofferSpec=OrderInfo.offerSpec;
 			param.newClothes="true";
-			
+			order.memberChange.newMemberFlag = true;
 			order.service.setOfferSpec(); //把选择的主副卡数量保存
 			if(rule.rule.ruleCheck(boInfos)){	
 			}
@@ -1538,6 +1541,7 @@ order.memberChange = function(){
 			//order.memberChange.closeDialog();
 		}else{
 			param.newClothes="false";
+			order.memberChange.newMemberFlag = false;
 		}
 		
 		//纳入老成员
@@ -2374,7 +2378,10 @@ order.memberChange = function(){
 		changemembers:_changemembers,
 		rejson:_rejson,
 		subPage:_subPage,
-		checkUim:_checkUim
+		checkUim:_checkUim,
+		newMemberFlag:_newMemberFlag,
+		oldMemberFlag:_oldMemberFlag,
+		changeMemberFlag:_changeMemberFlag,
 	};
 }();
 $(function(){
