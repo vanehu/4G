@@ -1,6 +1,9 @@
 package com.al.lte.portal.bmo.crm;
 
 import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
 import com.al.lte.portal.model.SessionStaff;
 
 public interface CustBmo {
@@ -80,7 +83,7 @@ public interface CustBmo {
 	 * @return
 	 */
 	public Map<String, Object> decodeUserInfo(Map<String, Object> dataBusMap, String optFlowNum,
-            SessionStaff sessionStaff,String dekeyWord) throws Exception;
+            SessionStaff sessionStaff,String dekeyWord,HttpServletRequest request) throws Exception;
 	
 	/**
 	 * 根据客户查询接入号
