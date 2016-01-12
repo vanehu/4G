@@ -48,7 +48,7 @@ cashier.main = (function(){
 		}
 		var param = {"areaId":$("#p_areaId").val(),
 				"olNbr":p_olNbr,
-				"qryBusiOrder":"1",
+				"qryBusiOrder":$("#p_qryBusiOrder").val(),
 				"startDt":startDt,
 				"endDt":endDt,
 				"qryNumber":qryNumber,
@@ -143,7 +143,7 @@ cashier.main = (function(){
 		var queryParam = {
 				"areaId":$("#p_areaId").val(),
 				"olNbr":"",
-				"qryBusiOrder":"1",
+				"qryBusiOrder":$("#p_qryBusiOrder").val(),
 				"startDt":$("#p_startDt").val().replace(/-/g,''),
 				"endDt":$("#p_endDt").val().replace(/-/g,''),
 				"qryNumber":"",
