@@ -2756,8 +2756,8 @@ public class OrderController extends BaseController {
         String addressStr = null;
         Map<String, Object> orderList = (Map<String, Object>) param.get("orderList");
         Map<String, Object> orderListInfo = (Map<String, Object>) orderList.get("orderListInfo");
-        int actionFlag = (Integer) orderListInfo.get("actionFlag");
-        if (1 == actionFlag) { //新装
+        String actionFlag = orderListInfo.get("actionFlag") + "";
+        if ("1".equals(actionFlag)) { //新装
             List<Map<String, Object>> custOrderList = (List<Map<String, Object>>) orderList.get("custOrderList");
             for (Map<String, Object> custOrder : custOrderList) {
                 List<Map<String, Object>> busiOrderList = (List<Map<String, Object>>) custOrder.get("busiOrder");
