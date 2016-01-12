@@ -118,8 +118,11 @@ public class UrlFilter extends OncePerRequestFilter {
 			if(filterUrls == null || filterUrls.size() == 0){
 				return false;
 			}
-			
 			String path = urlPathHelper.getOriginatingRequestUri(request).substring(request.getContextPath().length());
+			String queryString = urlPathHelper.getOriginatingQueryString(request);//获取请求参数
+			if(queryString != null && queryString.length() > 0){
+				path = path + "?" + queryString;//拼装成完整的、包含请求参数（如果有请求参数）的请求路径，例如order/batchOrder/batchOrderQuery?batchType=0
+			}
 			if(path.startsWith("/")){
 				path = path.substring(1); //去掉开头的/
 			}
