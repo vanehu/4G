@@ -40,15 +40,10 @@
 			<groupId>com.al.ecs</groupId>
 			<artifactId>ecs-validator</artifactId>
 		</dependency>
-		<!-- <dependency>
-			<groupId>com.al.ecs</groupId>
-			<artifactId>ecs-print</artifactId>
-			<version>4.0.1-SNAPSHOT</version>
-		</dependency> -->
 		<dependency>
 			<groupId>com.al.ecs</groupId>
 			<artifactId>portal-service-client</artifactId>
-			<version>1.0.3</version>
+			<version>1.0.3</version><!--$NO-MVN-MAN-VER$-->
 			<exclusions>
 				<exclusion>
 					<groupId>com.al.ecs</groupId>
@@ -111,12 +106,35 @@
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-core</artifactId>
 		</dependency>
-
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
 		</dependency>
-
+	<!-- added by xiejf for jenkins compilation error -->
+	<dependency>
+		<groupId>log4j</groupId>
+		<artifactId>log4j</artifactId>
+		<version>1.2.15</version>
+		<exclusions>
+			<exclusion>
+				<groupId>javax.mail</groupId>
+				<artifactId>mail</artifactId>
+			</exclusion>
+			<exclusion>
+				<groupId>javax.jms</groupId>
+				<artifactId>jms</artifactId>
+			</exclusion>
+			<exclusion>
+				<groupId>com.sun.jdmk</groupId>
+				<artifactId>jmxtools</artifactId>
+			</exclusion>
+			<exclusion>
+				<groupId>com.sun.jmx</groupId>
+				<artifactId>jmxri</artifactId>
+			</exclusion>
+		</exclusions>
+		<scope>compile</scope>
+	</dependency>
 		<!-- @Inject -->
 		<dependency>
 			<groupId>javax.inject</groupId>
@@ -375,6 +393,27 @@
 		  <artifactId>yuicompressor</artifactId>
 		</dependency>
 		<!-- yui compressor END   -->
+		<dependency>
+           <groupId>com.al.ecs</groupId>
+	       <artifactId>ecs-print</artifactId>
+	       <version>4.0.2</version>
+	       <scope>compile</scope>
+		   <exclusions>
+		    	<exclusion>
+					<groupId>org.xhtmlrenderer</groupId>
+					<artifactId>flying-saucer-core</artifactId>
+		        </exclusion>
+		    	<exclusion>
+					<groupId>org.xhtmlrenderer</groupId>
+					<artifactId>flying-saucer-pdf-itext5</artifactId>
+		        </exclusion>		        
+		   </exclusions>		       
+        </dependency>
+        <dependency>
+		  <groupId>sun.misc</groupId>
+		  <artifactId>base64</artifactId>
+		  <version>1.5</version>
+		</dependency>		
 	</dependencies>
 	<properties>
         <pro.outerDirectory>src/main/webapp</pro.outerDirectory> 
@@ -430,16 +469,6 @@
 			<id>20AL-External</id>
 			<name>local private nexus</name>
 			<url>http://192.168.1.20:8083/nexus/content/groups/public/</url>
-		</repository>
-		<repository>
-			<id>172.16.9.3</id>
-			<name>local private nexus</name>
-			<url>http://172.16.9.3:8081/nexus/content/groups/AL-Public</url>
-		</repository>
-		<repository>
-			<id>50AL-External</id>
-			<name>local private nexus</name>
-			<url>http://192.168.1.50:8081/nexus/content/groups/public/</url>
 		</repository>
 		<repository>
 			<id>22AL-External</id>
