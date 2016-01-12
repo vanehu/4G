@@ -596,7 +596,7 @@ order.dealer = (function() {
 			}
 		}
 		//功能产品
-		/*$.each(AttachOffer.openServList,function(){
+		$.each(AttachOffer.openServList,function(){
 			var prodId = this.prodId;
 			var accNbr = OrderInfo.getAccessNumber(prodId);
 			if(accNbr==undefined || accNbr==""){ 
@@ -610,7 +610,25 @@ order.dealer = (function() {
 					$('#attach_tbody').append($tr);
 				};
 			});
-		});*/
+		});
+		if(OrderInfo.actionFlag==1 || OrderInfo.actionFlag==2 || OrderInfo.actionFlag==3 || OrderInfo.actionFlag==6){
+			$.each(OrderInfo.boProd2Tds,function(){
+				var prodId = this.prodId;
+				var _prodId = "'"+prodId+"'";
+				if(_prodId.indexOf("-") == -1){
+				    var accNbr = OrderInfo.getAccessNumber(prodId);
+				    if(accNbr==undefined || accNbr==""){ 
+					    accNbr = "未选号";
+				    }
+				    var id = accNbr;
+				    if(this.isdel != "Y" && this.isdel != "C"  && $("tr[name='tr_"+id+"']")[0]==undefined){  //补换卡
+					    var $tr = $('<tr id="atr_'+id+'" onclick="order.dealer.checkAttach(\''+id+'\')"><td><input type="checkbox" id="'+id+'" onclick="order.dealer.checkAttach(\''+id+'\')" name="attach_dealer"/></td></tr>');
+					    $tr.append('<td>'+accNbr+'</td><td>补换卡</td>');
+					    $('#attach_tbody').append($tr);
+				    };
+				}
+		    });
+		}
 		easyDialog.open({
 			container : "div_attach_dialog"
 		});
