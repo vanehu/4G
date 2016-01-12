@@ -176,6 +176,12 @@ common = (function($) {
 	//客户端调用此方法返回到上一页 1 为prepare页面  2为order-content（填单）页面 3为order-confirm（订单确认和收银台）页面 4为order-print（打印）页面
 	var _callReturnBack=function(){
 		$.unecOverlay();//网络出现故障或手机出现故障时按返回关闭“加载中”提示框
+		//如果收费成功  安卓手机返回按钮不可返回
+		if($("#toCharge").length>0){
+			if("disabled"==$("#toCharge").attr("disabled")){
+				return;
+			}
+		}
 		if(OrderInfo.actionFlag==4||OrderInfo.actionFlag==8){//客户新增和修改
 			_callCloseWebview();
 			return;

@@ -745,7 +745,8 @@ order.calcharge = (function(){
 				}
 			}else{
 				msg="受理成功";
-			}	
+			}
+			$("#toCharge").attr("disabled","disabled");
 			$("#toComplate").removeAttr("disabled");
 			$("#orderCancel").removeAttr("disabled");
 			$("#printVoucherA").attr("disabled","disabled");
