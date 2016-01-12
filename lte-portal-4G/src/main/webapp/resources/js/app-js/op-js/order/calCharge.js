@@ -1208,8 +1208,12 @@ order.calcharge = (function(){
 				if(response.code==0){								
 					var data = $.parseJSON(response.data) ;
 					if(data.code==0){
+						//判断
+						if(data.data.indexOf("&amp;")!=-1){
+							data.data=data.data.replace(/\&amp;/g,"&");
+						}
 						window.location.href = data.data;
-						return;						
+						return;									
 					}else if(data.code==1){
 						$.alert("提示",data.data);
 					}
