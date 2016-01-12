@@ -825,7 +825,43 @@ order.dealer = (function() {
 				}
 			}
 		}
-
+		
+		//功能产品
+		$.each(AttachOffer.openServList,function(){
+			var prodId = this.prodId;
+			var accNbr = OrderInfo.getAccessNumber(prodId);
+			if(accNbr==undefined || accNbr==""){ 
+				accNbr = "未选号";
+			}
+			$.each(this.servSpecList,function(){
+				var id = prodId+'_'+this.servSpecId;
+				if(this.isdel != "Y" && this.isdel != "C"  && $("li[name='tr_"+id+"']")[0]==undefined){  //订购的附属销售品
+					var $tr = $("<tr id=\"atr_"+id+"\" onclick=\"order.dealer.checkAttach('"+prodId+"','"+this.offerSpecId+"');\"></tr>");
+					$tr.append("<td style='text-align:center'><input type='checkbox' id=\""+id+"\" onclick=\"order.dealer.checkAttach('"+prodId+"','"+this.offerSpecId+"');\" name=\"attach_dealer\"/></td>");
+					$tr.append("<td style='text-align:center'>"+accNbr+"</td><td style='text-align:center'>"+this.servSpecName+"</td>");
+					$table.append($tr);
+				};
+			});
+		});
+		
+		//补换卡
+		if(OrderInfo.actionFlag==2 || OrderInfo.actionFlag==3 || OrderInfo.actionFlag==22 ||OrderInfo.actionFlag==23){
+			$.each(OrderInfo.boProd2Tds,function(){
+				var prodId = this.prodId;
+			    var accNbr = OrderInfo.getAccessNumber(prodId);
+			    if(accNbr==undefined || accNbr==""){ 
+				    accNbr = "未选号";
+			    }
+			    var id = accNbr;
+			    if(this.isdel != "Y" && this.isdel != "C"  && $("li[name='tr_"+id+"']")[0]==undefined){  //补换卡
+			    	var $tr = $("<tr id=\"atr_"+id+"\" onclick=\"order.dealer.checkAttach('"+id+"');\"></tr>");
+					$tr.append("<td style='text-align:center'><input type='checkbox' id=\""+id+"\" onclick=\"order.dealer.checkAttach('"+id+"');\" name=\"attach_dealer\"/></td>");
+					$tr.append("<td style='text-align:center'>"+accNbr+"</td><td style='text-align:center'>补换卡</td>");
+					$table.append($tr);
+			    };
+		    });
+		}
+		
 		$content.append($table);
 		var $footer='<div data-role="footer" data-position="inline" data-tap-toggle="false" data-theme="n"> <button data-inline="true" data-icon="next" id="sureAdddealer">确定</button>';
 		$footer+='<button data-inline="true" data-icon="back" data-rel="back" id="closeAdddealer">取消</button></div>';

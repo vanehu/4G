@@ -736,21 +736,32 @@ OrderInfo = (function() {
 					});
 				}
 				
-				//发展人
-				/*var $tr = $("tr[name='tr_"+prodId+"_"+prodServ.servSpecId+"']");
-				if($tr!=undefined&&$tr.length>0){
+				//功能产品-发展人数据信息
+				var prodId=prodServ.prodId;
+				var $tr = $("li[name='tr_"+prodId+"_"+prodServ.servSpecId+"']");
+				if($tr!=undefined && $tr.length>0){
 					if(!ec.util.isArray(busiOrder.data.busiOrderAttrs)){
 						busiOrder.data.busiOrderAttrs = [];
 					}
+					
 					$tr.each(function(){   //遍历产品有几个发展人
 						var dealer = {
 							itemSpecId : CONST.BUSI_ORDER_ATTR.DEALER,
-							role : $(this).find("select").val(),
-							value : $(this).find("input").attr("staffid") 
+							role:$(this).find("select[name='dealerType_"+prodId+"_"+prodServ.servSpecId+"']").val(),
+							value : $(this).find("input").attr("staffid"),
+							//APP发展人渠道[W]
+							channelNbr:$(this).find("select[name='dealerChannel_"+prodId+"_"+prodServ.servSpecId+"']").val()
 						};
-						busiOrder.data.busiOrderAttrs.push(dealer);
+						busiOrder.data.busiOrderAttrs.push(dealer);		
+						
+						var dealer_name = {
+							itemSpecId : CONST.BUSI_ORDER_ATTR.DEALER_NAME,
+							role:$(this).find("select[name='dealerType_"+prodId+"_"+prodServ.servSpecId+"']").val(),
+							value : $(this).find("input").attr("value") 
+						};
+						busiOrder.data.busiOrderAttrs.push(dealer_name);
 					});
-				}*/
+				}
 			}
 		}else if(prodServ.boActionTypeCd == CONST.BO_ACTION_TYPE.REMOVE_PROD){  //拆机
 			busiOrder.data.boProdStatuses = [{ 
@@ -759,8 +770,35 @@ OrderInfo = (function() {
 			},{prodStatusCd : CONST.PROD_STATUS_CD.REMOVE_PROD,
 				state : "ADD"
 			}];
-		}else if(prodServ.boActionTypeCd == CONST.BO_ACTION_TYPE.CHANGE_CARD ||
-				prodServ.boActionTypeCd == CONST.BO_ACTION_TYPE.DIFF_AREA_CHANGE_CARD){  //补换卡	
+		}else if(prodServ.boActionTypeCd == CONST.BO_ACTION_TYPE.CHANGE_CARD || prodServ.boActionTypeCd == CONST.BO_ACTION_TYPE.DIFF_AREA_CHANGE_CARD){  //补换卡	
+			//补换卡-发展人数据信息
+			var accNbr = order.prodModify.choosedProdInfo.accNbr;
+			
+			var $tr = $("li[name='tr_"+accNbr+"']");
+			if($tr!=undefined && $tr.length>0){
+				if(!ec.util.isArray(busiOrder.data.busiOrderAttrs)){
+					busiOrder.data.busiOrderAttrs = [];
+				}
+				
+				$tr.each(function(){   //遍历产品有几个发展人
+					var dealer = {
+						itemSpecId : CONST.BUSI_ORDER_ATTR.DEALER,
+						role:$(this).find("select[name='dealerType_"+accNbr+"']").val(),
+						value : $(this).find("input").attr("staffid"),
+						//APP发展人渠道[W]
+						channelNbr:$(this).find("select[name='dealerChannel_"+accNbr+"']").val()
+					};
+					busiOrder.data.busiOrderAttrs.push(dealer);		
+					
+					var dealer_name = {
+						itemSpecId : CONST.BUSI_ORDER_ATTR.DEALER_NAME,
+						role:$(this).find("select[name='dealerType_"+accNbr+"']").val(),
+						value : $(this).find("input").attr("value") 
+					};
+					busiOrder.data.busiOrderAttrs.push(dealer_name);
+				});
+			}
+			
 			var proUim = OrderInfo.getProdUim(prodServ.prodId); //获取新卡
 			if(ec.util.isObj(proUim.prodId)){ //有新卡
 				busiOrder.data.bo2Coupons = [];
