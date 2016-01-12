@@ -360,6 +360,23 @@ public interface MktResBmo {
      * @throws Exception
      */
 	public void intakeSerialNumber(Map<String, Object> param,String newInstCode, String string, SessionStaff sessionStaff,String flowNum)throws Exception;
+	/**
+	 * 终端规格排序
+	 * @param map
+	 * @param flowNum
+	 * @param sessionStaff
+	 * @return
+	 */
+	public Map<String, Object> termSort(Map<String, Object> dataBusMap, String flowNum, SessionStaff sessionStaff)throws Exception;
+	/**
+	 * 终端查询
+	 * @param dataBusMap
+	 * @param flowNum
+	 * @param sessionStaff
+	 * @return
+	 * @throws Exception
+	 */
+	public Map<String, Object> termQuery(Map<String, Object> dataBusMap, String flowNum, SessionStaff sessionStaff)throws Exception;
 	
 	public void intcardNubInfoLog(Map<String, Object> param, String flowNum,SessionStaff sessionStaff)throws Exception;
 	

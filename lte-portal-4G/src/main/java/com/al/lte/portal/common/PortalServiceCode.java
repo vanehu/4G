@@ -499,6 +499,8 @@ public final class PortalServiceCode {
  
     public static final String QUERY_OFFER_SPEC = "biz-service/intf.prodOfferService/queryOfferSpecParamsBySpec";
 
+    public static final String INIF_QUERY_ERCODE ="biz-service/intf.detailService/queryCustemerOrderDetailForCarrier";
+    
     public static final String seal_ca = "ca-ca/cert/sealPdf";
     
     public static final String QUERY_MAIN_OFFER = "biz-service/intf.prodOfferService/queryMainOfferSpecList"; 
@@ -506,6 +508,11 @@ public final class PortalServiceCode {
     public static final String QUERY_OFFER_SPEC_CONFIG = "queryOfferSpecConfig";
     
     public static final String INTF_QUERY_PHONENUMBER_LIST="res-PnQueryService";
+    
+    public static final String INTF_TERMSORT="res-TermSortService";
+    
+    public static final String INTF_TERMQUERY="res-termQueryService";
+    
     
     // add by wd 2015/6/2  手机客户端  - 新增 - 统计功能（接口组提供）
     
