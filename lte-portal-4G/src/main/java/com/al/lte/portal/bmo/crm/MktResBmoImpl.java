@@ -979,6 +979,16 @@ public class MktResBmoImpl implements MktResBmo {
 		}
 		return resultMap;
 	}
+ 
+	/**
+	 * 写白卡成功后，卡号入库
+	 */
+	public void intakeSerialNumber(Map<String, Object> param,
+			String newInstCode, String string, SessionStaff sessionStaff,
+			String flowNum) throws Exception {
+		// TODO Auto-generated method stub
+		modifyNumToRelease(param, newInstCode, string, sessionStaff, flowNum);
+	}
     /**
      * 写卡入库
      */
@@ -989,12 +999,57 @@ public class MktResBmoImpl implements MktResBmo {
 	}
 
 	/**
-	 * 写白卡成功后，卡号入库
+	 * 终端规格排序
+	 * @param dataBusMap
+	 * @param flowNum
+	 * @param sessionStaff
+	 * @return
+	 * @throws Exception 
+	 * @throws IOException 
+	 * @throws Exception 
 	 */
-	public void intakeSerialNumber(Map<String, Object> param,
-			String newInstCode, String string, SessionStaff sessionStaff,
-			String flowNum) throws Exception {
-		// TODO Auto-generated method stub
-		modifyNumToRelease(param, newInstCode, string, sessionStaff, flowNum);
+	@SuppressWarnings("unchecked")
+	public Map<String, Object> termSort(Map<String, Object> dataBusMap, String flowNum, SessionStaff sessionStaff) throws Exception{
+		/**
+		 * {
+		 *      "resultMsg": "成功",
+			    "resultCode": "0",
+			    "rspInfo": {
+			        "tranId": "1000000045201111231150000263",
+			        "rspTime": "20151203192821"
+			    }
+			}
+		 */
+		log.debug("dataBusMap={}",JsonUtil.toString(dataBusMap));
+		DataBus db = InterfaceClient.callService(dataBusMap,PortalServiceCode.INTF_TERMSORT,flowNum, sessionStaff);
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db.getResultCode()))) {
+			Map<String, Object> resultMap = db.getReturnlmap();
+			Map<String, Object> datamap = (Map<String, Object>) resultMap.get("rspInfo");
+			returnMap.put("resultCode", db.getResultCode());
+			returnMap.put("resultMsg",db.getResultMsg());
+			returnMap.putAll(datamap);
+		} else {
+			returnMap.put("resultCode", db.getResultCode());
+			returnMap.put("resultMsg",db.getResultMsg());
+		}
+		return returnMap;
+	}
+    /**
+     * 终端查询
+     */
+	public Map<String, Object> termQuery(Map<String, Object> dataBusMap, String flowNum, SessionStaff sessionStaff) throws Exception {
+		DataBus db = InterfaceClient.callService(dataBusMap,PortalServiceCode.INTF_TERMSORT,flowNum, sessionStaff);
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db.getResultCode()))) {
+			Map<String, Object> resultMap = db.getReturnlmap();
+			Map<String, Object> datamap = (Map<String, Object>) resultMap.get("rspInfo");
+			returnMap.put("code", ResultCode.R_SUCCESS);
+			returnMap.putAll(datamap);
+		} else {
+			returnMap.put("code", ResultCode.R_FAIL);
+			returnMap.put("msg", "号码查询接口调用失败");
+		}
+		return returnMap;
 	}
 }
