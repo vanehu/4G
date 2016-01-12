@@ -31,7 +31,6 @@ import com.al.ecs.exception.BusinessException;
 import com.al.ecs.exception.ErrorCode;
 import com.al.ecs.exception.ResultConstant;
 import com.al.ecs.log.Log;
-import com.al.lte.portal.common.Const;
 import com.al.lte.portal.common.Des33;
 import com.al.lte.portal.common.InterfaceClient;
 import com.al.lte.portal.common.MySimulateData;
@@ -488,34 +487,28 @@ public class CustBmoImpl implements CustBmo {
 	public Map<String, Object> queryCertType(Map<String, Object> paramMap, String optFlowNum, SessionStaff sessionStaff) throws Exception{
 		Map<String, Object> result = new HashMap<String, Object>();
 		
-		Object idCardType=Const.ID_CARD_TYPE;
-		
-		if(idCardType!=null && idCardType instanceof List){
-			result.put("code", ResultCode.R_SUCCESS);
-			result.put("result", (List<Map<String, Object>>)idCardType);
-			return result;
-		}else{
-			// 服务层调用与接口层调用都成功时，返回列表；否则返回空列表
-			DataBus db = InterfaceClient.callService(paramMap,PortalServiceCode.INTF_QUERY_CERTTYPE, optFlowNum,sessionStaff);
-			try {
-				if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db.getResultCode()))) {
-					Map<String, Object> resultMap = db.getReturnlmap();
-					List<Map<String, Object>> returnList = new ArrayList<Map<String, Object>>();
-					if (MapUtils.isNotEmpty(resultMap)) {
-						returnList = (List<Map<String, Object>>) resultMap.get("result");
-					}
-					result.put("code", ResultCode.R_SUCCESS);
-					result.put("result", returnList);
-					Const.ID_CARD_TYPE=returnList;
-				} else {
-					result.put("code", ResultCode.R_FAIL);
-					result.put("msg", db.getResultMsg());
+		// 服务层调用与接口层调用都成功时，返回列表；否则返回空列表
+		DataBus db = InterfaceClient.callService(paramMap,
+				PortalServiceCode.INTF_QUERY_CERTTYPE, optFlowNum,
+				sessionStaff);
+		try {
+			if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db
+					.getResultCode()))) {
+				Map<String, Object> resultMap = db.getReturnlmap();
+				List<Map<String, Object>> returnList = new ArrayList<Map<String, Object>>();
+				if (MapUtils.isNotEmpty(resultMap)) {
+					returnList = (List<Map<String, Object>>) resultMap.get("result");
 				}
-				return result;
-			} catch (Exception e) {
-				log.error("根据员工类型查询员工证件类型的queryCertTypeByPartyTypeCd服务返回的数据异常", e);
-				throw new BusinessException(ErrorCode.ORDER_CTGMAINDATA, paramMap, db.getReturnlmap(), e);
+				result.put("code", ResultCode.R_SUCCESS);
+				result.put("result", returnList);
+			} else {
+				result.put("code", ResultCode.R_FAIL);
+				result.put("msg", db.getResultMsg());
 			}
+			return result;
+		} catch (Exception e) {
+			log.error("根据员工类型查询员工证件类型的queryCertTypeByPartyTypeCd服务返回的数据异常", e);
+			throw new BusinessException(ErrorCode.ORDER_CTGMAINDATA, paramMap, db.getReturnlmap(), e);
 		}
 	}
 	
