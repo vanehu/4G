@@ -1,6 +1,7 @@
 package com.al.lte.portal.controller.crm;
 
 import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -2743,90 +2744,56 @@ public class OrderController extends BaseController {
     }
 
     /**
-     * 身份证相片解码.
+     * 身份证信息验证.
      * @param request
      * @param param
      * @return
-     * @throws Exception
      */
     @SuppressWarnings("unchecked")
-    private boolean picDecode(HttpServletRequest request, Map<String, Object> param) throws Exception {
-        List<Map<String, Object>> custOrderList = null;
-        List<Map<String, Object>> busiOrderList = null;
-        List<Map<String, Object>> dataList = null;
-        List<Map<String, Object>> identitiesList = null;
+    private boolean papersCheck(HttpServletRequest request, Map<String, Object> param) {
         String custName = null;
         String custIdCard = null;
         String addressStr = null;
         Map<String, Object> orderList = (Map<String, Object>) param.get("orderList");
-        Object object = orderList.get("custOrderList");
-        if (object instanceof Map) {
-            Map<String, Object> custMap = (Map<String, Object>) object;
-            custOrderList = new ArrayList<Map<String, Object>>();
-            custOrderList.add(custMap);
-        } else {
-            custOrderList = (List<Map<String, Object>>) object;
-        }
-        for (Map<String, Object> custOrder : custOrderList) {
-            Object busiObject = custOrder.get("busiOrder");
-            if (busiObject instanceof Map) {
-                Map<String, Object> busiMap = (Map<String, Object>) busiObject;
-                busiOrderList = new ArrayList<Map<String, Object>>();
-                busiOrderList.add(busiMap);
-            } else {
-                busiOrderList = (List<Map<String, Object>>) busiObject;
-            }
-            for (Map<String, Object> busiOrder : busiOrderList) {
-                boolean result = false;
-                Object boActionTypeObj = busiOrder.get("boActionType");
-                if (null != boActionTypeObj) {
-                    Map<String, Object> boActionType = (Map<String, Object>) boActionTypeObj;
+        Map<String, Object> orderListInfo = (Map<String, Object>) orderList.get("orderListInfo");
+        int actionFlag = (Integer) orderListInfo.get("actionFlag");
+        if (1 == actionFlag) { //新装
+            List<Map<String, Object>> custOrderList = (List<Map<String, Object>>) orderList.get("custOrderList");
+            for (Map<String, Object> custOrder : custOrderList) {
+                List<Map<String, Object>> busiOrderList = (List<Map<String, Object>>) custOrder.get("busiOrder");
+                for (Map<String, Object> busiOrder : busiOrderList) {
+                    Map<String, Object> boActionType = (Map<String, Object>) busiOrder.get("boActionType");
                     String boActionTypeCd = (String) boActionType.get("boActionTypeCd");
-                    //实名制从服务端取数据--Add by chenhr at 2016-01-07
                     if ("C1".equalsIgnoreCase(boActionTypeCd)) { //新建客户
-                       Object tokenObject = param.get("token");
-                       if (null == tokenObject) {
-                           return false;
-                       } else {
-                           String token = (String) tokenObject;
-                           if (StringUtils.isNotBlank(token)) {
-                               Object mapObject = ServletUtils.getSessionAttribute(request, "_certInfo");
-                               if (null == mapObject) {
-                                   return false;
-                               } else {
-                                   Map<String, Object> map = (Map<String, Object>) mapObject;
-                                   String initToken = (String) map.get("token");
-                                   if (initToken.equals(token)) {
-                                       result = true;
-                                       param.remove("token");
-                                       custName = (String) map.get("custName");
-                                       custIdCard = (String) map.get("custIdCard");
-                                       addressStr = (String) map.get("addressStr");
-                                   } else {
-                                       return false;
-                                   }
-                               }
-                           } else {
-                               return false;
-                           }
-                       }
-                    }
-                }
-                Object dataObject = busiOrder.get("data");
-                if (dataObject instanceof Map) {
-                    Map<String, Object> dataMap = (Map<String, Object>) dataObject;
-                    dataList = new ArrayList<Map<String, Object>>();
-                    dataList.add(dataMap);
-                } else {
-                    dataList = (List<Map<String, Object>>) dataObject;
-                }
-                for (Map<String, Object> data : dataList) {
-                    if (result) {
-                        Map<String, Object> custInfos = (Map<String, Object>) ((List<Map<String, Object>>) data.get("boCustInfos")).get(0);
+                        Map<String, Object> data = (Map<String, Object>) busiOrder.get("data");
                         Map<String, Object> identities = (Map<String, Object>) ((List<Map<String, Object>>) data.get("boCustIdentities")).get(0);
-                        custInfos.put("name", custName);
-                        identities.put("identityNum", custIdCard);
-                        custInfos.put("addressStr", addressStr);
+                        String identidiesTypeCd = (String) identities.get("identidiesTypeCd");
+                        if ("1".equals(identidiesTypeCd)) { //身份证
+                            String token = (String) param.get("token");
+                            if (StringUtils.isNotBlank(token)) {
+                                Object mapObject = ServletUtils.getSessionAttribute(request, "_certInfo");
+                                if (null == mapObject) {
+                                    return false;
+                                } else {
+                                    Map<String, Object> map = (Map<String, Object>) mapObject;
+                                    String initToken = (String) map.get("token");
+                                    if (initToken.equals(token)) {
+                                        param.remove("token");
+                                        Map<String, Object> custInfos = (Map<String, Object>) ((List<Map<String, Object>>) data.get("boCustInfos")).get(0);
+                                        custName = (String) map.get("custName");
+                                        custIdCard = (String) map.get("custIdCard");
+                                        addressStr = (String) map.get("addressStr");
+                                        custInfos.put("name", custName);
+                                        identities.put("identityNum", custIdCard);
+                                        custInfos.put("addressStr", addressStr);
+                                    } else {
+                                        return false;
+                                    }
+                                }
+                            } else {
+                                return false;
+                            }
+                        }
                     }
                 }
             }
@@ -2843,8 +2810,8 @@ public class OrderController extends BaseController {
             try {
                 SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
                         SysConstant.SESSION_KEY_LOGIN_STAFF);
-                //Add by chenhr at 2016-01-04
-                if (!picDecode(request, param)) {
+                //Add by chenhr at 2016-01-07
+                if (!papersCheck(request, param)) {
                     return super.failed(ErrorCode.ORDER_SUBMIT, "您当前的证件信息非通过正常渠道录入，请核对！", param);
                 }
                 Map orderList = (Map) param.get("orderList");
