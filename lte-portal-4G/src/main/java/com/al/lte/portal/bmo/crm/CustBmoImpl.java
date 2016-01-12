@@ -35,6 +35,7 @@ import com.al.lte.portal.common.Des33;
 import com.al.lte.portal.common.InterfaceClient;
 import com.al.lte.portal.common.MySimulateData;
 import com.al.lte.portal.common.PortalServiceCode;
+import com.al.lte.portal.common.RunShellUtil;
 import com.al.lte.portal.common.ServiceClient;
 import com.al.lte.portal.common.SysConstant;
 import com.al.lte.portal.model.SessionStaff;
