@@ -1149,7 +1149,7 @@ public class CustController extends BaseController {
     	String dekeyWord=(String)request.getSession().getAttribute(SysConstant.SESSION_DATASOURCE_KEY);
     	JsonResponse jsonResponse=new JsonResponse();
     	try {
-    		resMap = custBmo.decodeUserInfo(param, flowNum, sessionStaff,dekeyWord);  
+    		resMap = custBmo.decodeUserInfo(param, flowNum, sessionStaff,dekeyWord,request);  
     		if(Integer.valueOf(resMap.get("code").toString())==ResultConstant.SUCCESS.getCode()){
     			jsonResponse=super.successed(resMap, ResultConstant.SUCCESS.getCode());
     		}else{
