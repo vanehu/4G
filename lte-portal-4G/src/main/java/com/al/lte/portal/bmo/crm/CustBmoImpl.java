@@ -514,7 +514,7 @@ public class CustBmoImpl implements CustBmo {
 
 
 	public Map<String, Object> decodeUserInfo(Map<String, Object> dataBusMap,
-		String optFlowNum, SessionStaff sessionStaff,String dekeyWord) throws Exception {
+		String optFlowNum, SessionStaff sessionStaff,String dekeyWord,HttpServletRequest request) throws Exception {
 		Map<String, Object> paramMap = new HashMap<String, Object>();
 		paramMap.put("mac", dataBusMap.get("mac"));
 		String secretKey = "";
@@ -537,7 +537,50 @@ public class CustBmoImpl implements CustBmo {
 		        JSON json = xmlSerializer.read(userInfoXml);  
 		        resMap.put("code", ResultConstant.SUCCESS.getCode());
 				resMap.put("msg", "成功");
-		        resMap.put("userInfo", json.toString(2));
+		        resMap.put("userInfo", JsonUtil.toObject(json.toString(2), Map.class) );
+		        //新增照片出来逻辑
+		        JSONObject jsonObj =JSONObject.fromObject(json.toString(2));
+		        boolean jsonflag = jsonObj.containsKey("identityPic");
+		        String identityPic= null;
+		        if(jsonflag) {
+		        	identityPic = jsonObj.getString("identityPic");	
+		        }
+		       
+		        if(StringUtils.isNotBlank(identityPic)) {
+		        	  byte[] decode = new BASE64Decoder().decodeBuffer(identityPic);
+		        	  //Properties properties = MySimulateData.getProperties("/portal/config.properties");
+		        	  
+		        	  //String soDir = CustBmoImpl.class.getClassLoader().getResource("/soFile").getPath();
+		        	  String soDir = request.getRealPath("/resources/soFile/");
+		  			  if(StringUtils.isNotBlank(soDir)){
+		  				RunShellUtil runShellUtil = new RunShellUtil();
+		  				String name = UUID.randomUUID().toString();
+		  				String wltDir = soDir+name+".wlt";
+		  				String bmpDir = soDir+name+".bmp";
+		  				String jpgDir = soDir+name+".jpg";
+		  				runShellUtil.getFileFromBytes(decode,wltDir);
+		  				runShellUtil.soDec(soDir, name);
+		  				File srcFile = new File(bmpDir);
+		  				if (!srcFile.exists()){
+		  					log.debug("decodeUserInfo出错：{}","bmp文件不存在");
+		  				}
+		  				boolean flag = runShellUtil.compressPic(bmpDir,jpgDir);
+		  				if(!flag) {
+		  					log.debug("decodeUserInfo出错：{}","jpg文件不存在");
+		  				}
+		  				byte[] identityPicDecode = runShellUtil.getByteFromFile(jpgDir);
+		  				identityPic = new BASE64Encoder().encode(identityPicDecode);
+		  				if(StringUtils.isNotBlank(identityPic)){
+		  					runShellUtil.deleteFile(bmpDir);
+		  					runShellUtil.deleteFile(wltDir);
+		  					runShellUtil.deleteFile(jpgDir);
+		  					jsonObj.put("identityPic", identityPic);
+						    //resMap.put("userInfo", jsonObj.toString(2));
+		  			        resMap.put("userInfo", JsonUtil.toObject(jsonObj.toString(2), Map.class) );
+		  				}
+		  			  }
+		        }
+		      
 			}catch (JSONException e) {
 				resMap.put("code", 3);
 				resMap.put("msg", "xml格式转json格式出错，请确认xml格式是否正确,"+e.getMessage());
