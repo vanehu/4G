@@ -1,0 +1,196 @@
+<nav class="navbar navbar-default navbar-fixed-top">
+	<div class="container-fluid">
+		<!-- Brand and toggle get grouped for better mobile display -->
+		<div class="navbar-header">
+			<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+				<span class="sr-only">Toggle navigation</span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</button>
+			<a id="query-cust-back-btn" class="navbar-brand" onclick="common.callReturnBack();"><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>返回</a>
+			<h4 class="header-title">客户定位</h4>
+		</div>
+
+		<!-- Collect the nav links, forms, and other content for toggling -->
+		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+
+		</div>
+		<!-- /.navbar-collapse -->
+	</div>
+	<!-- /.container-fluid -->
+</nav>
+<div id="agent-cust-query" class="container-fluid">
+	<form class="form-list">
+		<input id="diffPlaceFlag" type="hidden" value="local">
+		<input id="defaultAreaName" type="hidden" value="">
+		<div class="form-group">
+			<input type="hidden" id="p_cust_areaId" value="">
+			<label for="">选择地区</label>
+			<ul class="treelist">
+				<!-- <li>
+					<span>山东</span>
+					<ul>
+						<li area_id="123456">济南</li>
+						<li area_id="67890">青岛</li>
+					</ul>
+				</li>
+				<li>
+					<span>河北</span>
+					<ul>
+						<li area_id="6765756">市级1</li>
+						<li area_id="6587658">市级2</li>
+					</ul>
+				</li> -->
+				
+			</ul>
+		</div>
+		<div class="form-group">
+			<label for="idtype">证件类型</label>
+			<select onchange="cust.custidentidiesTypeCdChoose(this,'userid')" name="Cities" id="identidiesType" class="myselect form-control" data-role="none">
+				<!--<option value="-1" >接入号码</option>
+                <option value="acctCd" >合同号</option>
+                <option value="custNumber" >客户编码</option>
+                <option value="1" >居民身份证</option>
+			--></select>
+		</div>
+		<div class="form-group">
+			<label for="username">指定号码</label>
+			<br />
+			<input id="isAppointNum" type="checkbox" class="form-control numberyes" checked>
+		</div>
+		<div class="form-group">
+			<label for="userid">输入号码</label>
+			<div class="input-group">
+				<input type="text" class="form-control" id="userid" placeholder="">
+				<span class="input-group-btn">
+                	<button class="btn btn-info" type="button" onclick="common.callGenerationRec('cust.getCustIdCard')" disabled> 读卡 </button>
+                </span> 
+            </div>
+		</div>
+	</form>
+</div>
+<div id="cust-query-list" class="container-fluid">
+</div>
+<div id="custInfo">
+</div>
+<nav class="navbar navbar-default navbar-fixed-bottom">
+	<div class="container-fluid">
+		<div class="btn-group btn-group-justified navbar-btn" role="group" aria-label="...">
+			<div class="btn-group" role="group">
+				<button id="query-cust-btn" type="button" class="btn btn-primary btn-lg" onclick="cust.queryCust()">
+					<span class="glyphicon glyphicon-search" aria-hidden="true"></span> 查询
+				</button>
+			</div>
+
+		</div>
+	</div>
+</nav>
+
+<script>
+	// 如果存在客户及产品信息 则跳过客户定位
+	if (ec.util.isObj(OrderInfo.staff.staffId) && ec.util.isObj(OrderInfo.cust.custId) && ec.util.isObj(order.prodModify.choosedProdInfo)) {
+		var params={};
+		// 办号卡
+		if ("1" == OrderInfo.actionFlag) {
+			params.method ='/agent/order/prodoffer/prepare';
+			params.actionFlag = 1;
+		}
+		// 套餐变更
+		if ("2" == OrderInfo.actionFlag) {
+			params.method ="/agent/order/prodoffer/offerchange/prepare";
+			params.actionFlag = 2;
+		}
+		// 客户资料返档
+		if ("9" == OrderInfo.actionFlag) {
+			params.method ="/agent/prodModify/prepare";
+			params.actionFlag = 9;
+		}
+		// 补换卡
+		if ("22" == OrderInfo.actionFlag) {
+			params.method ="/agent/prodModify/toCheckUimUI";
+			params.actionFlag = 22;
+		}
+		if (ec.util.isObj(params.method)) {
+			common.callOrderServer(OrderInfo.staff, OrderInfo.cust, order.prodModify.choosedProdInfo, params);
+		}
+	} else {
+		//加载地区树
+		$.ecOverlay("地区加载中，请稍等...");
+		order.area.initTree();
+		$.unecOverlay();
+		// 加载客户定位证件类型
+		cust.agentCertTypeByPartyType("-1","identidiesType");
+	}
+	
+	//加载地区树
+	//order.area.initTree();
+	// 加载客户定位证件类型
+	//cust.agentCertTypeByPartyType("-1","idtype");
+	
+	$(function(argument) {
+		$('[type="checkbox"].numberyes').bootstrapSwitch();
+		// 开关点击切换事件
+		$('[type="checkbox"].numberyes').on('switchChange.bootstrapSwitch', function (event, state) {  
+			if (state) {
+				cust.isAppointNum();
+			}
+		});  
+	})
+</script>
+<script>
+	$(function() {
+		OrderInfo.order.step = 1;
+		if(OrderInfo.actionFlag == 13 || OrderInfo.actionFlag == 14){
+			OrderInfo.order.step = 2;
+		}
+		if(OrderInfo.actionFlag == 1){
+			OrderInfo.order.step = 2;
+		}
+		if(OrderInfo.actionFlag == 9){
+			$(".input-group-btn").hide();
+		}
+		function init() {
+			// Select demo initialization
+			/*
+			$('.myselect').mobiscroll().select({
+				theme: "android-holo-light", // Specify theme like: theme: 'ios' or omit setting to use default 
+				mode: "scroller", // Specify scroller mode like: mode: 'mixed' or omit setting to use default 
+				display: "bottom", // Specify display mode like: display: 'bottom' or omit setting to use default 
+				lang: "zh", // Specify language like: lang: 'pl' or omit setting to use default 
+				inputClass: "form-control",
+			});
+			*/
+			var i = Math.floor($('.treelist>li').length / 2);
+			var j = Math.floor($('.treelist>li').eq(i).find('ul li').length / 2);  
+			// Treelist demo initialization
+			$('.treelist').mobiscroll().treelist({
+				theme: "android-holo-light", // Specify theme like: theme: 'ios' or omit setting to use default 
+				mode: "scroller", // Specify scroller mode like: mode: 'mixed' or omit setting to use default 
+				display: "bottom", // Specify display mode like: display: 'bottom' or omit setting to use default 
+				lang: "zh", // Specify language like: lang: 'pl' or omit setting to use default 
+				inputClass: "form-control",
+				labels: ['省', '市'], // More info about labels: http://docs.mobiscroll.com/2-14-0/list#!opt-labels
+				placeholder: $("#defaultAreaName").val(),
+				defaultValue: [0,0],
+				formatResult: function (array) { //返回自定义格式结果  
+					var defaultArea = $('.treelist>li').eq(array[0]).children('span').attr("areaId");
+					var areaId = $('.treelist>li').eq(array[0]).find('ul li').eq(array[1]).attr("areaId");
+					if (ec.util.isObj(areaId)) {
+						$("#p_cust_areaId").val(areaId);
+					} else {
+						$("#p_cust_areaId").val(defaultArea);
+					}
+					return $('.treelist>li').eq(array[0]).children('span').text() +' '+ $('.treelist>li').eq(array[0]).find('ul li').eq(array[1]).text().trim(' ');  
+				}  
+
+			});
+		}
+		// -------------------------------------------------------------------
+		// Demo page code START, you can disregard this in your implementation
+		var demo, theme, mode, display, lang;
+		init();
+		// Demo page code END
+		// -------------------------------------------------------------------
+	});
+</script>

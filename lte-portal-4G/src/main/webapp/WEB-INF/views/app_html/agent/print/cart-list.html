@@ -1,0 +1,91 @@
+<#if code?? && (code>=0) >
+	<div class="container-fluid">
+		<div class="row">
+			<div class="panel panel-default paneltop">
+				<!-- Default panel contents -->
+				<div class="panel-heading">
+					<span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+					受理订单查询
+				</div>
+				<#if (pageModel.list)?? &&((pageModel.list)?size>0)>
+				<@portal.scrollPagination "cart_list" "both" pageModel.totalPages 60 0 "cart.main.rqscroll">
+				<table class="table table-striped tablecenter" id="cart-list-table">
+					<thead>
+						<tr>
+							<th>客户姓名</th>
+							<th>受理人</th>
+							<th>受理时间</th>
+							<th>操作</th>
+							<!-- <th></th> -->
+						</tr>
+					</thead>
+					<tbody class="panel-group" id="accordion">
+		              <#list pageModel.list as orderLists >
+		              <#if (orderLists.list)?? &&((orderLists.list)?size>0)>
+		              <#list orderLists.list as cart >
+						<tr>
+							<td>${cart.partyName}</td>
+							<td>${cart.staffName}</td>
+							<td>${cart.soDate}</td>
+							<td onclick="common.printEQCode('${orderLists.olId}');">补打二维码</td>
+							<!-- <td><span class="glyphicon glyphicon-chevron-right"
+								aria-hidden="true"></span>
+							</td> -->
+						</tr>
+					  </#list>
+		              </#if>
+		              </#list>
+	              	</tbody>
+				</table>
+				</@portal.scrollPagination>
+				<#else>
+				<table class="table table-striped tablecenter" id="cart-list-table">
+					<thead>
+						<tr>
+							<th>客户姓名</th>
+							<th>受理人</th>
+							<th>受理时间</th>
+							<th>状态</th>
+							<!-- <th></th> -->
+						</tr>
+					</thead>
+	              	<tbody class="panel-group" id="accordion">
+	              		<tr>
+	                		<td colspan="4">没有查询到结果</td> 
+	              		</tr>
+				  </tbody>
+			  </table>
+			  </#if>
+			</div>
+		</div>
+	</div>
+<#else>
+	${mess}
+</#if>
+	<div  id="qrcode" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" style="display: none;"; aria-hidden="true" class="modal">
+	  <div class="modal_wrapper">
+	  	<div class="modal-dialog">
+	    <div class="modal-content">
+	      
+	      <div class="modal-body text-center" id="alertMessage">
+	        
+	      </div>
+	      <div class="modal-footer">
+	      	<div class="btn-group btn-group-justified" role="group" aria-label="...">
+	          
+	          <div class="btn-group" role="group">
+	            <button type="button" data-dismiss="modal"  class="btn btn-primary btn-lg" id="backClose">返回</button>
+	          </div>
+	        </div>
+	      </div>
+	    </div>
+	  </div>
+	  </div>
+	</div>
+	
+<script type="text/javascript">
+   $("#backClose").on("click",function(){
+          $("#qrcode").css("display","none");
+          $("#alertMessage").html("");
+   });
+</script>

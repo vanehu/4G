@@ -1,0 +1,66 @@
+
+<meta charset="utf-8">
+
+    <form id="jbrFormdata" method="post" >
+   		<div class="container-fluid">
+   			<div class="row">
+				<div class="panel panel-default paneltop">
+					<div class="panel-heading">经办人信息</div>
+			<div class="panel-body">
+			<div class="form-group">
+				<label for="orderAttrName">经办人姓名<span class="text-warning"></span></label>
+            	<input type="text" class="form-control" id="orderAttrName"  maxlength="100">
+			</div>
+			<div class="form-group" id="div_cm_identidiesType">
+	            <label for="orderPartyTypeCd">客户类型</label>
+	            <select id="orderPartyTypeCd" class="myselect form-control" onchange="cust.jbrpartyTypeCdChoose(this,'orderIdentidiesTypeCd')">
+	            	<option value=1 >个人</option>
+                    <option value=2>政企客户</option>
+	            </select>
+         	</div>
+         	<div class="form-group">
+				<label for="orderAttrPhoneNbr">经办人号码<span class="text-warning"></span></label>
+            	<input type="text" class="form-control" id="orderAttrPhoneNbr"  maxlength="11" name="orderAttrPhoneNbr">
+			</div>
+			<div class="form-group" id="">
+	            <label for="orderIdentidiesTypeCd">证件类型</label>
+	            <select id="orderIdentidiesTypeCd" class="myselect form-control" onchange="cust.jbridentidiesTypeCdChoose(this,'sfzorderAttrIdCard')"><!-- onchange="cust.identidiesTypeCdChoose(this,'orderAttrIdCard')" -->
+	            </select>
+         	</div>
+			<div class="form-group" id="jbrsfz">
+	            <div class="form-group feedback-btn1" style="width: 87%; display: block;float: left;" id="">
+					<label for="sfzorderAttrIdCard">证件号码<span class="text-warning"></span></label>
+		                <input type="text" class="form-control" id="sfzorderAttrIdCard" name="sfzorderAttrIdCard" maxlength="50" placeholder="">
+				</div>
+				<div class="form-group feedback-btn1" style="width:13%;margin-top: 25px;display: block;float: left;" id="">
+				         <span class="input-group-btn">
+		                      <button class="btn btn-info" onClick="common.callGenerationRec('cust.getjbrGenerationInfos')" type="button"> 读卡 </button>
+		                 </span>
+				</div>
+				<div style="clear:both"></div>
+			</div>
+			<div class="form-group" id="qtzj" style="display: none;">
+				<label for="orderAttrIdCard">证件号码<span class="text-warning"></span></label>
+            	<input type="text" class="form-control" id="orderAttrIdCard" name="orderAttrIdCard" maxlength="50">
+			</div>
+			<div class="form-group">
+				<label for="orderAttrAddr">证件地址<span class="text-warning"></span></label>
+            	<input type="text" class="form-control" id="orderAttrAddr" maxlength="200">
+			</div>
+		</div>
+         </div>
+         </div>
+         </div>
+       </form>
+    
+    <nav class="navbar navbar-default navbar-fixed-bottom">
+			<div class="container-fluid">
+				<div class="btn-group btn-group-justified navbar-btn" role="group" aria-label="...">
+					<div class="btn-group" role="group">
+						<button type="button" class="btn btn-primary btn-lg" onClick="javascript:mktRes.terminal.closeJBR()">
+							<span class="glyphicon glyphicon-ok" aria-hidden="true"></span> 确定
+						</button>
+					</div>
+				</div>
+			</div>
+	 </nav>

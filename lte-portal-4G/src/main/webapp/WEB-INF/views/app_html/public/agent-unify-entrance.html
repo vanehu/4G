@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0;" name="viewport" />
+		<title>业务受理</title>
+		<META HTTP-EQUIV="Pragma" CONTENT="no-cache"> 
+		<META HTTP-EQUIV="Cache-Control" CONTENT="no-store,no-cache,must-revalidate"> 
+		<META HTTP-EQUIV="Expires" CONTENT="0">
+		<META name="keywords" content="电信集团">
+		<META name="description" content="电信集团">
+		<#include "/public/common-agent-css-tpl.html"/>
+		<#include "/public/common-agent-js-tpl.html"/>
+		<script src="${contextPath}/js/agent-js/busi-js/order/areaTree.js?${jsversion}" type="text/javascript"></script>
+		<script src="${contextPath}/js/agent-js/busi-js/common/const.js?${jsversion}" type="text/javascript"></script>
+		<script src="${contextPath}/js/agent-js/busi-js/common/common.js?${jsversion}" type="text/javascript"></script>
+		<script src="${contextPath}/js/agent-js/busi-js/order/orderProdModify.js?${jsversion}" type="text/javascript"></script>
+		<script src="${contextPath}/js/agent-js/busi-js/order/orderInfo.js?${jsversion}" type="text/javascript"></script>
+		<script src="${contextPath}/js/agent-js/busi-js/order/soOrder.js?${jsversion}" type="text/javascript"></script>
+		<script src="${contextPath}/js/agent-js/busi-js/order/attachOffer.js?${jsversion}" type="text/javascript"></script>
+		<script src="${contextPath}/js/agent-js/busi-js/order/calCharge.js?${jsversion}" type="text/javascript"></script>
+		<script src="${contextPath}/js/agent-js/busi-js/order/order.js?${jsversion}" type="text/javascript"></script>
+		<script src="${contextPath}/js/agent-js/busi-js/order/orderMain.js?${jsversion}" type="text/javascript"></script>
+		<script src="${contextPath}/js/agent-js/busi-js/order/offerQuery.js?${jsversion}" type="text/javascript"></script>
+		<script src="${contextPath}/js/agent-js/busi-js/order/offerChange.js?${jsversion}" type="text/javascript"></script>
+		<script src="${contextPath}/js/agent-js/busi-js/order/cacheData.js?${jsversion}" type="text/javascript"></script>
+		<script src="${contextPath}/js/agent-js/busi-js/cust/custMgr.js?${jsversion}" type="text/javascript"></script>
+		<script src="${contextPath}/js/agent-js/busi-js/cust/cust.js?${jsversion}" type="text/javascript"></script>
+		<script src="${contextPath}/js/agent-js/busi-js/cart/cart.js?${jsversion}" type="text/javascript"></script>
+		<script src="${contextPath}/js/agent-js/busi-js/order/order-ysl.js?${jsversion}" type="text/javascript"></script>
+		<script src="${contextPath}/js/agent-js/busi-js/rule/rule.js?${jsversion}" type="text/javascript"></script>
+		<script src="${contextPath}/js/agent-js/busi-js/mktRes/phoneNumber.js?${jsversion}" type="text/javascript"></script>
+		<script src="${contextPath}/js/agent-js/busi-js/mktRes/terminal.js?${jsversion}" type="text/javascript"></script>
+		<script src="${contextPath}/js/agent-js/busi-js/prod/uim.js?${jsversion}" type="text/javascript"></script>
+		<script src="${contextPath}/js/agent-js/busi-js/query/queryProd.js?${jsversion}" type="text/javascript"></script>
+		<script src="${contextPath}/js/agent-js/busi-js/print/print.js?${jsversion}" type="text/javascript"></script>
+		<script src="${contextPath}/js/agent-js/busi-js/order/dealer.js?${jsversion}" type="text/javascript"></script>
+		<script src="${contextPath}/js/agent-js/busi-js/order/memberChange.js?${jsversion}" type="text/javascript"></script>
+		<!--  -->
+		<script src="${contextPath}/js/agent-js/busi-js/prod/changeUim.js?${jsversion}" type="text/javascript"></script>
+		<script>
+		window.onload= function() 
+		{  
+			var app_flag="${app_flag}";//1表示来至手机端，空值表示来至浏览器
+			if(!app_flag){//方便浏览器开发
+				var params={};
+				var menu = ${menu}; //菜单测试
+				if(!menu){
+					menu = 1;
+				}
+				switch(menu){
+				case 1 :
+					params.method = "/app/cust/create"; //实名制客户新增
+					break;
+				case 9 :
+					params.method = "/app/cust/realCreate"; //客户新增
+					break;
+				case 2 :
+					params.method = "/app/cust/update"; //资料修改
+					break;
+				case 3 :
+					params.method = "/agent/prodModify/prepare"; //客户资料返档
+					actionFlag = 9;
+					break;
+				case 4 :
+					params.method = "/app/report/cartMain"; //受理单查询
+					break;
+				case 5 :
+					params.method = "/agent/order/prodoffer/prepare"; //新装
+					params.actionFlag = 1;
+					break;
+				case 6 :
+					params.method = "/agent/order/prodoffer/offerchange/prepare"; //套餐变更
+					params.actionFlag = 2;
+					break;
+				case 7 :
+					params.method = "/app/prod/prodDetailQuery"; //销售品信息查询
+					break;
+				case 8 :
+					params.method = "/app/order/attachoffer/prepare"; //可选包功能产品
+					break;
+				case 10 :
+					params.method = "/agent/mktRes/phoneList"; //购手机
+					break;
+				case 11 :
+					params.method = "/agent/prodModify/toCheckUimUI"; //补换卡
+					break;
+				case 12 :
+					params.method = "/agent/cust/custQuery/prepare"; //客户定位
+					break;
+				case 13 :
+					params.method = "/agent/mktRes/terminalListUI"; //主推终端
+					break;
+				}  
+				
+				var custInfos=$.parseJSON(window.localStorage.getItem("OrderInfo.cust"));
+				//if (window.localStorage.getItem("OrderInfo.staff") != null){
+					var staffInfos=$.parseJSON(window.localStorage.getItem("OrderInfo.staff").replace(/>/g, "&gt;"));
+					var prodIdInfos=$.parseJSON(window.localStorage.getItem("order.prodModify.choosedProdInfo"));
+					common.callOrderServer(staffInfos,custInfos,prodIdInfos,params);
+				//}
+			}
+		}
+		</script>
+	</head>
+	<body>
+		<!-- app业务统一入口 -->
+		<div align="center" id="load">
+		</div>
+		<div id="content">
+		</div>
+		<!--接口异常错误封装展示-->
+		<#include "/public/public-agent-error.html"/>
+		<!--弹出框-->
+		<#include "/public/public-agent-dialog.html"/>
+	</body>
+</html>

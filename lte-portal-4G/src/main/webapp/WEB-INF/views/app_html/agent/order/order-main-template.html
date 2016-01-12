@@ -1,0 +1,62 @@
+<div id="order-content">
+<#include "/agent/order/order-product.html" />
+</div>
+<!-- 主副卡页面 -->
+<div id="order-memeber" style="display: none;">
+  <#include "/agent/order/order-member-fill.html" />
+</div>
+<!-- 客户新增页面 -->
+<div id="cust-content" style="display: none;">
+	<nav class="navbar navbar-default navbar-fixed-top">
+		<div class="container-fluid">
+			<!-- Brand and toggle get grouped for better mobile display -->
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+					<span class="sr-only">Toggle navigation</span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+				<a id="offer-change-back-btn" onclick="common.callReturnBack();" class="navbar-brand"><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>返回</a>
+				<h4 id="navbar-header-title" class="header-title">办号卡</h4>
+			</div>
+			<!-- Collect the nav links, forms, and other content for toggling -->
+			<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+			</div>
+			<!-- /.navbar-collapse -->
+		</div>
+		<!-- /.container-fluid -->
+	</nav>
+  <#include "/agent/cust/cust-create.html" />
+</div>
+<!-- 协销人展示 -->
+<div id="order-dealer" style="display: none;">
+	<@block name="dealer">
+		<#include "/agent/order/order-dealer.html" />
+	</@block>
+</div>
+<!-- 订单确认页面、收银台页面 -->
+<div id="order-confirm" style="display: none;">
+</div>
+<!-- 回执内容显示页面 -->
+<div id="order-print" style="display: none;">
+</div>
+<!-- 套餐页面 -->
+<div id="offer-prepare" style="display: none;">
+</div>
+<!-- 套餐页面 -->
+<div id="phonenumberContent" style="display: none;">
+</div>
+<!-- 经办人展示 -->
+<div id="jbr" style="display: none;">
+	<#include "/agent/mktRes/jbr-create.html" />
+</div>
+
+<script type="text/javascript">
+	//初始化经办人客户类型,证件类型
+	cust.jbrvalidatorForm();
+	cust.jbrpartyTypeCdChoose($("#orderPartyTypeCd").children(":first-child"),"orderIdentidiesTypeCd");
+    OrderInfo.actionFlag = ${actionFlag};
+	SoOrder.initFillPage();
+</script>
+
