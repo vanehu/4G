@@ -8,6 +8,7 @@ CommonUtils.regNamespace("SoOrder");
 /** 受理订单对象*/
 SoOrder = (function() {
 	var isYWTX = "";
+	var _inSubmit = false; //标识位，是否正在进行订单提交
 	//订单准备
 	var _builder = function() {
 		if(query.offer.loadInst()){  //加载实例到缓存
@@ -48,98 +49,162 @@ SoOrder = (function() {
 		}
 	};
 	
+	//判断是否正在进行订单提交
+	var _isInSubmitOrder = function(){
+		return SoOrder.inSubmit;
+	};
+	
+	//开始订单提交 （设置标识，屏蔽提交按钮）
+	var _beginSubmitOrder = function(){
+		SoOrder.inSubmit = true;
+		//屏蔽提交按钮（或链接）
+		var $eles = $("#fillNextStep"); //可在此添加 需要屏蔽click效果的元素，如 $("#fillNextStep,#submitButtonId") 
+		if($eles.length > 0){
+			//将绑定的click事件处理函数保存到自定义的click_o事件中，然后解绑click事件
+			for(var i=0;i<$eles.length;i++){
+				var events = $.data($eles[i],"events");
+				if(events && events.click){
+					for(var j=0;j<events.click.length;j++){
+						$($eles[i]).on("click_o",events.click[j].data,events.click[j].handler);
+					}
+					$($eles[i]).off("click");
+				}
+				//置灰，将href参数保存到href_o ，然后去除href参数
+				$($eles[i]).removeClass("btna_o").addClass("btna_g").attr({"href_o":$($eles[i]).attr("href"),"disabled":"disabled"}).removeAttr("href");
+			}
+		}
+	};
+	
+	//完成订单提交（设置标识，还原提交按钮）
+	var _completeSubmitOrder = function(){
+		//激活提交按钮（或链接）
+		var $eles = $("#fillNextStep"); //可在此添加 需要还原click效果的元素，如 $("#fillNextStep,#submitButtonId")
+		if($eles.length > 0){
+			for(var i=0;i<$eles.length;i++){
+				//去除置灰，从href_o参数还原href参数 ，然后去除href_o参数
+				$($eles[i]).removeClass("btna_g").addClass("btna_o").attr("href",$($eles[i]).attr("href_o")).removeAttr("href_o").removeAttr("disabled");
+				//从绑定的click_o事件中还原绑定click事件，然后解绑click_o事件
+				var events = $.data($eles[i],"events");
+				if(events && events.click_o){
+					for(var j=0;j<events.click_o.length;j++){
+						$($eles[i]).on("click",events.click_o[j].data,events.click_o[j].handler);
+					}
+					$($eles[i]).off("click_o");
+				}
+			}
+		}
+		SoOrder.inSubmit = false;
+	};
+	
 	//提交订单节点
 	var _submitOrder = function(data) {
-		_getCheckOperatSpec();
-		if(_getOrderInfo(data)){
-			//订单提交
-			var url = contextPath+"/order/orderSubmit";
-			if(OrderInfo.order.token!=""){
-				url = contextPath+"/order/orderSubmit?token="+OrderInfo.order.token;
-			}
-			if (OrderInfo.custCreateToken !== undefined || OrderInfo.custCreateToken !== "") {
-				OrderInfo.orderData.token = OrderInfo.custCreateToken;
-			}
-			$.callServiceAsJson(url,JSON.stringify(OrderInfo.orderData), {
-				"before":function(){
-					$.ecOverlay("<strong>订单提交中，请稍等...</strong>");
-				},"always":function(){
-					$.unecOverlay();
-				},	
-				"done" : function(response){
-					_getToken();
-					if (response.code == 0) {
-						var data = response.data;
-						if(data.checkRule!=undefined && data.checkRule!="notCheckRule"){
-							//下省校验单
-							var provCheckResult = order.calcharge.tochargeSubmit(response.data);
-							//下省校验请求成功
-							if(provCheckResult.code==0){
-								//存在可继续受理的省内校验错误，需要在前台进行提示
-								if(provCheckResult.data.returnCode!=null && provCheckResult.data.returnCode!="0000"){
-									response.data.provCheckErrorCode = provCheckResult.data.returnCode;
-									response.data.provCheckErrorMsg = "";
-									if(provCheckResult.data.returnCode!=undefined && provCheckResult.data.returnCode!=null){
-										response.data.provCheckErrorMsg +=  "【错误编码："+provCheckResult.data.returnCode+"】";
-									}
-									//省内校验欠费的编码和提示
-									if(provCheckResult.data.returnCode=="110019" || provCheckResult.data.returnCode=="110145"){
-										response.data.provCheckErrorMsg += "该用户所在账户存在欠费，请提醒用户及时缴费，避免因欠费影响用户正常使用和业务办理，以及欠费滞纳金的产生。";
-									}
-								}
-								
-								var returnData = _gotosubmitOrder(response.data);
-								OrderInfo.orderBusiHint = null;
-								//查是否调用业务提示查询开关
-								var propertiesKey = "YWTX-"+OrderInfo.staff.soAreaId.substring(0,3) + "0000";
-								isYWTX = offerChange.queryPortalProperties(propertiesKey);
-								if(isYWTX == "ON"){
-									//下省校验成功之后调用提示接口提醒接口，获取提醒信息
-									var url=contextPath+"/order/queryOrderBusiHint";
-									var params={
-											"olId":response.data.rolId,
-											"soNbr":response.data.rsoNbr,
-											"areaId" : OrderInfo.staff.areaId,
-											"chargeItems":[]
-									};
-									$.ecOverlay("<strong>正在查询提醒信息,请稍等会儿....</strong>");
-									var response = $.callServiceAsJson(url,params);
-									$.unecOverlay();
-									if(response.code == 0){
-										OrderInfo.orderBusiHint = response.data.result.orderPromptInfos;
-									}
-								}
-								_orderConfirm(returnData);
-							}
-							//下省校验失败也将转至订单确认页面，展示错误信息，只提供返回按钮
-							else{
-								response.data.provCheckError = "Y";
-								response.data.provCheckErrorCode = provCheckResult.data.errCode;
-								response.data.provCheckErrorMsg = "";
-								if(provCheckResult.data.errCode!=undefined && provCheckResult.data.errCode!=null){
-									response.data.provCheckErrorMsg +=  "【错误编码："+provCheckResult.data.errCode+"】";
-								}
-								if(provCheckResult.data.errMsg!=undefined && provCheckResult.data.errMsg!=null){
-									response.data.provCheckErrorMsg += provCheckResult.data.errMsg;
-								}else{
-									response.data.provCheckErrorMsg += "未返回错误信息，可能是下省请求超时，请返回填单页面并稍后重试订单提交。";
-								}
-								
-								var returnData = _gotosubmitOrder(response.data);
-								_orderConfirm(returnData);								
-							}
-						}else{
-							var returnData = _gotosubmitOrder(response.data);
-							_orderConfirm(returnData);
-						}
-					}else{
-						$.alertM(response.data);
-//						_getToken();
-						OrderInfo.orderData.orderList.custOrderList[0].busiOrder = [];
-						OrderInfo.resetSeq(); //重置序列
-					}
+		if(_isInSubmitOrder()){
+			$.alert("提示","订单已提交，请耐心等待或刷新重试！");
+			return;
+		}
+		_beginSubmitOrder();
+		var async = false; //是否是异步请求
+		try {
+			_getCheckOperatSpec();
+			if(_getOrderInfo(data)){
+				//订单提交
+				var url = contextPath+"/order/orderSubmit";
+				if(OrderInfo.order.token!=""){
+					url = contextPath+"/order/orderSubmit?token="+OrderInfo.order.token;
 				}
-			});
+				if (OrderInfo.custCreateToken !== undefined || OrderInfo.custCreateToken !== "") {
+					OrderInfo.orderData.token = OrderInfo.custCreateToken;
+				}
+				async = true;
+				$.callServiceAsJson(url,JSON.stringify(OrderInfo.orderData), {
+					"before":function(){
+						$.ecOverlay("<strong>订单提交中，请稍等...</strong>");
+					},"always":function(){
+						//如果是同步请求，在finally中 重置标识位；如果为异步请求，在请求处理完成时，重置标识位
+						_completeSubmitOrder();
+						$.unecOverlay();
+					},	
+					"done" : function(response){
+						try {
+							_getToken();
+							if (response.code == 0) {
+								var data = response.data;
+								if(data.checkRule!=undefined && data.checkRule!="notCheckRule"){
+									//下省校验单
+									var provCheckResult = order.calcharge.tochargeSubmit(response.data);
+									//下省校验请求成功
+									if(provCheckResult.code==0){
+										//存在可继续受理的省内校验错误，需要在前台进行提示
+										if(provCheckResult.data.returnCode!=null && provCheckResult.data.returnCode!="0000"){
+											response.data.provCheckErrorCode = provCheckResult.data.returnCode;
+											response.data.provCheckErrorMsg = "";
+											if(provCheckResult.data.returnCode!=undefined && provCheckResult.data.returnCode!=null){
+												response.data.provCheckErrorMsg +=  "【错误编码："+provCheckResult.data.returnCode+"】";
+											}
+											//省内校验欠费的编码和提示
+											if(provCheckResult.data.returnCode=="110019" || provCheckResult.data.returnCode=="110145"){
+												response.data.provCheckErrorMsg += "该用户所在账户存在欠费，请提醒用户及时缴费，避免因欠费影响用户正常使用和业务办理，以及欠费滞纳金的产生。";
+											}
+										}
+									
+										var returnData = _gotosubmitOrder(response.data);
+										OrderInfo.orderBusiHint = null;
+										//查是否调用业务提示查询开关
+										var propertiesKey = "YWTX-"+OrderInfo.staff.soAreaId.substring(0,3) + "0000";
+										isYWTX = offerChange.queryPortalProperties(propertiesKey);
+										if(isYWTX == "ON"){
+											//下省校验成功之后调用提示接口提醒接口，获取提醒信息
+											var url=contextPath+"/order/queryOrderBusiHint";
+											var params={
+													"olId":response.data.rolId,
+													"soNbr":response.data.rsoNbr,
+													"areaId" : OrderInfo.staff.areaId,
+													"chargeItems":[]
+											};
+											$.ecOverlay("<strong>正在查询提醒信息,请稍等会儿....</strong>");
+											var response = $.callServiceAsJson(url,params);
+											$.unecOverlay();
+											if(response.code == 0){
+												OrderInfo.orderBusiHint = response.data.result.orderPromptInfos;
+											}
+										}
+										_orderConfirm(returnData);
+									}
+									//下省校验失败也将转至订单确认页面，展示错误信息，只提供返回按钮
+									else{
+										response.data.provCheckError = "Y";
+										response.data.provCheckErrorCode = provCheckResult.data.errCode;
+										response.data.provCheckErrorMsg = "";
+										if(provCheckResult.data.errCode!=undefined && provCheckResult.data.errCode!=null){
+											response.data.provCheckErrorMsg +=  "【错误编码："+provCheckResult.data.errCode+"】";
+										}
+										if(provCheckResult.data.errMsg!=undefined && provCheckResult.data.errMsg!=null){
+											response.data.provCheckErrorMsg += provCheckResult.data.errMsg;
+										}else{
+											response.data.provCheckErrorMsg += "未返回错误信息，可能是下省请求超时，请返回填单页面并稍后重试订单提交。";
+										}
+									
+										var returnData = _gotosubmitOrder(response.data);
+										_orderConfirm(returnData);								
+									}
+								}else{
+									var returnData = _gotosubmitOrder(response.data);
+									_orderConfirm(returnData);
+								}
+							}else{
+								$.alertM(response.data);
+//								_getToken();
+								OrderInfo.orderData.orderList.custOrderList[0].busiOrder = [];
+								OrderInfo.resetSeq(); //重置序列
+							}
+						} catch (e) {
+							try {
+				    			console.log(e);
+					    	} catch (e2) {
+					    	}
+						}
+					}
+				});
 //					var result = query.offer.orderSubmit(JSON.stringify(OrderInfo.orderData));
 //					if(result){
 //						_orderConfirm(result);
@@ -148,6 +213,12 @@ SoOrder = (function() {
 //						OrderInfo.orderData.orderList.custOrderList[0].busiOrder = [];
 //						OrderInfo.resetSeq(); //重置序列
 //					}
+			}
+		} finally{
+			//如果是同步请求，在finally中 重置标识位；如果为异步请求，在请求处理完成时，重置标识位
+			if(!async){ 
+				_completeSubmitOrder();
+			}
 		}	
 	};
 	
@@ -3401,6 +3472,7 @@ SoOrder = (function() {
 		orderPrepare			: _orderPrepare,
 		getCheckOperatSpec		: _getCheckOperatSpec,
 		saveOrderSubmit			: _saveOrderSubmit,
-		createProd				: _createProd
+		createProd				: _createProd,
+		inSubmit				: _inSubmit
 	};
 })();

@@ -1287,11 +1287,15 @@ AttachOffer = (function() {
 			var menuInfo= _queryMenuInfo("终端规格查询");
 			var info = "用户卡为"+order.prodModify.choosedProdInfo.prodClass+"G卡，请确认用户终端"+order.prodModify.choosedProdInfo.prodClass+"G类别，按“4G终端配4G卡、3G终端配3G卡";
 			if(OrderInfo.actionFlag==1){
-				info = "用户卡为4G卡，请确认用户终端4G类别，按“4G终端配4G卡、3G终端配3G卡";
+				info = "用户卡为4G卡，请确认用户终端4G类别，按“4G终端配4G卡、3G终端配3G卡”";
 			}
 			$.confirm("信息确认",info,{
 				yesdo:function(){
-					window.parent.main.home.addTab(menuInfo.data.resourceId,"终端规格查询",contextPath+"/"+menuInfo.data.menuPath);
+					if(!menuInfo.data || !menuInfo.data.menuPath){
+						$.alert("提示信息","终端规格查询异常，请联系管理员配置终端规格查询的菜单权限。");
+					} else {
+						window.parent.main.home.addTab(menuInfo.data.resourceId,"终端规格查询",contextPath+"/"+menuInfo.data.menuPath);
+					}
 					$.confirm("信息确认","开通【"+specName+"】功能产品",{ 
 						yesdo:function(){
 							var servSpec = CacheData.getServSpec(prodId,servSpecId); //在已选列表中查找
@@ -5152,7 +5156,11 @@ AttachOffer = (function() {
 	//
 	var _showTerminalInfo = function(){
 		var menuInfo= _queryMenuInfo("终端规格查询");
-		window.parent.main.home.addTab(menuInfo.data.resourceId,"终端规格查询",contextPath+"/"+menuInfo.data.menuPath);
+		if(!menuInfo.data || !menuInfo.data.menuPath){
+			$.alert("提示信息","终端规格查询异常，请联系管理员配置终端规格查询的菜单权限。");
+		} else {
+			window.parent.main.home.addTab(menuInfo.data.resourceId,"终端规格查询",contextPath+"/"+menuInfo.data.menuPath);
+		}
 	};
 	
 	var _queryOfferAndServDependForCancel = function(offerSpecId,servSpecId){
