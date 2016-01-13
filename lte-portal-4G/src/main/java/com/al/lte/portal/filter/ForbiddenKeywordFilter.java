@@ -21,6 +21,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 import org.codehaus.jackson.JsonNode;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -29,6 +31,8 @@ import org.springframework.web.util.UrlPathHelper;
 
 import com.al.ecs.common.entity.JsonResponse;
 import com.al.ecs.common.util.JsonUtil;
+import com.al.ecs.common.util.PropertiesUtils;
+import com.al.ecs.common.web.SpringContextUtil;
 import com.al.ecs.exception.ErrorCode;
 import com.al.ecs.log.Log;
 import com.al.lte.portal.common.FilterBaseData;
@@ -53,6 +57,23 @@ public class ForbiddenKeywordFilter extends OncePerRequestFilter {
     private static Set<String> defaultExcludeUrls = null; //默认不需要过滤的链接
     /** 默认的XSS过虑内容*/
     private static Set<String> defaultForbiddenKeyWords;
+    /** 配置文件读取入口 */
+    PropertiesUtils propertiesUtils;
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void initFilterBean() throws ServletException {
+        if (propertiesUtils == null) {
+            try {
+                propertiesUtils = (PropertiesUtils) SpringContextUtil.getBean("propertiesUtils");
+            } catch (Exception e) {
+                log.error(e);
+            }
+        }
+    }
+
     static {
         defaultExcludeUrls = new HashSet<String>(10);
         //defaultExcludeUrls.add("/staff/login/page");
@@ -68,7 +89,7 @@ public class ForbiddenKeywordFilter extends OncePerRequestFilter {
         defaultForbiddenKeyWords = new HashSet<String>(10);
         defaultForbiddenKeyWords.add("'");
         defaultForbiddenKeyWords.add("<");
-        defaultForbiddenKeyWords.add(">");
+        //defaultForbiddenKeyWords.add(">");
         //defaultForbiddenKeyWords.add("+");
         //defaultForbiddenKeyWords.add("\"");
     }
@@ -91,7 +112,9 @@ public class ForbiddenKeywordFilter extends OncePerRequestFilter {
 
         //根据数据路由获取对应的配置数据：功能开关及要屏蔽的关键字
         String dbKey = (String) request.getSession().getAttribute(SysConstant.SESSION_DATASOURCE_KEY);
-        boolean isFilterForbidden = FilterBaseData.getInstance().isFilterForbiddenKeyWord(dbKey);
+        //boolean isFilterForbidden = FilterBaseData.getInstance().isFilterForbiddenKeyWord(dbKey);开关不走数据库，保证1/3发包时不出现数据库读取问题
+        boolean isFilterForbidden = BooleanUtils.toBoolean(StringUtils.defaultString(propertiesUtils
+                .getMessage(SysConstant.XSS_FILTER_FLAG), "OFF"));
         request.setAttribute(ATTR_IS_FILTER_FORBIDDEN, isFilterForbidden);
         if (!isFilterForbidden) {
             return true;
@@ -151,7 +174,7 @@ public class ForbiddenKeywordFilter extends OncePerRequestFilter {
                 checkInfo.setForbidden(true);
                 checkInfo.setParameters("parameter name=" + HtmlUtils.htmlEscape(paraName));
                 return checkInfo;
-            } 
+            }
             //值判断
             String[] paraValues = request.getParameterValues(paraName);
             if (paraValues != null) {
