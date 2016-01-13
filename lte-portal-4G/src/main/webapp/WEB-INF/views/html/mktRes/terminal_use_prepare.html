@@ -2,12 +2,7 @@
 
 <@override name="header">
 <#include "/busi-js-tpl.html"/>
-<style>
-.cartLink_fail:hover {
-    text-decoration : underline;
-    cursor : pointer;
-}
-</style>
+<script src="${contextPath}/js/busi-js/mktRes/terminalReceive.js?${jsversion}" type="text/javascript"></script>
 </@override>
 
 <@override name="content">
@@ -30,8 +25,8 @@
             <dt>仓库：</dt>
             <dd>
                <select id="storeSel" class="selectNumbertype" style="width:260px;margin:6px 7px 10px 13px;" onchange="javascript:mktRes.terminal.receive.changeStore()">
-                 <#list list as list>
-                    <option value="${list.mktResStoreId}">${list.mktResStoreName}</option>  
+                 <#list list as store>
+                    <option value="${store.mktResStoreId}" receive="${store.receiveWay}">${store.mktResStoreName}</option>  
                  </#list>     
               </select> 
               <label class="f_red">*</label>
@@ -52,6 +47,7 @@
                 <input type="text" class="numberTextBox width198" id="termCode">
               </dd>
               <dd>
+              	<input type="button" value="重置" onclick="javascript:mktRes.terminal.receive.termCodeReset()" class="numberSearch" />
                 <input type="button" value="添 加" onclick = "javascript:mktRes.terminal.receive.btnAddTerminal()" class="numberSearch" />
                 <input type="button" value="删 除" onclick = "javascript:mktRes.terminal.receive.btnDelTerminal()" class="numberSearch" />
               </dd>

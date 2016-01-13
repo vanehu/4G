@@ -33,10 +33,67 @@ mktRes.terminal.receive = (function(){
 		$("#storeSel option").removeAttr("style");
 	};
 	
-	var _changeStore=function(){
+	var lastKeyDownTimeStamp = null;//上一次按下按键时间戳
+	var lastKeyUpTimeStamp = null;//上一次放开按键时间戳
+	var disableTerminalInput;//将串码输入框置灰的延时事件
+	//切换仓库时重置串码输入框，终端信息列表，以及串码录入方式
+	var _changeStore = function(){
 		$("#termCode").val("");
 		$("#terminalTable").empty();
+		$("#termCode").removeAttr("disabled");
+		lastKeyUpTimeStamp = null;
+		lastKeyDownTimeStamp = null;
+		//只允许扫码录入的特殊处理
+		if($("#storeSel").find("option:selected").attr("receive")=="2"){
+			//按下按键事件
+			$("#termCode").off("keydown").on("keydown", function(){
+				lastKeyDownTimeStamp = new Date().getTime();
+				if(lastKeyUpTimeStamp==null){
+					return;
+				}
+				clearTimeout(disableTerminalInput);
+				if(lastKeyDownTimeStamp-lastKeyUpTimeStamp>20){
+					$("#termCode").val("");
+					lastKeyUpTimeStamp = null;
+					lastKeyDownTimeStamp = null;
+					$.alert("提示", "请使用扫码录入！");
+					return;
+				}
+			});
+			//放开按键事件
+			$("#termCode").off("keyup").on("keyup", function(){
+				lastKeyUpTimeStamp = new Date().getTime();
+				if(lastKeyUpTimeStamp-lastKeyDownTimeStamp>20){
+					$("#termCode").val("");
+					lastKeyUpTimeStamp = null;
+					lastKeyDownTimeStamp = null;
+					$.alert("提示", "请使用扫码录入！");
+					return;
+				}
+				//23ms内无新输入认为扫码枪扫码输出完毕，将输入框置灰
+				disableTerminalInput = setTimeout(function(){
+					$("#termCode").attr("disabled", "disabled");
+				}, 23);
+			});
+			//屏蔽复制/剪切/粘贴事件
+			$("#termCode").off("cut copy paste").on("cut copy paste", function(e){  
+		        e.preventDefault();
+		    });
+		}else{
+			$("#termCode").off("keydown");
+			$("#termCode").off("keyup");
+			$("#termCode").off("cut copy paste");
+		}
 	};
+	
+	//重置串码录入
+	var _termCodeReset = function(){
+		$("#termCode").val("");
+		$("#termCode").removeAttr("disabled");
+		lastKeyUpTimeStamp = null;
+		lastKeyDownTimeStamp = null;
+	};
+	
 	/**
 	 * 按钮添加
 	 */
@@ -182,6 +239,7 @@ mktRes.terminal.receive = (function(){
 	return {
 		queryStore : _queryStore,
 		queryStoreReset : _queryStoreReset,
+		termCodeReset : _termCodeReset,
 		btnAddTerminal:_btnAddTerminal,
 		btnDelTerminal:_btnDelTerminal,
 		btnTerminalUse:_btnTerminalUse,
@@ -192,5 +250,5 @@ mktRes.terminal.receive = (function(){
 
 //初始化
 $(function(){
-	
+	mktRes.terminal.receive.changeStore();
 });
