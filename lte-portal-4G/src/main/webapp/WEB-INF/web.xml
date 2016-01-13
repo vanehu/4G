@@ -182,7 +182,7 @@
 		</init-param>
 		<init-param>
 		    <param-name>domain</param-name>
-		    <param-value>localhost,127.0.0.1,192.168.2.72,10.128.90.194,crm.189.cn,10.128.90.2,10.128.98.136,10.128.97.35,42.99.16.141,10.128.97.136</param-value>
+		    <param-value>localhost,10.128.86.10,127.0.0.1,192.168.2.72,10.128.90.194,crm.189.cn,10.128.90.2,10.128.98.136,10.128.97.35,42.99.16.141,10.128.97.136</param-value>
 		    <description>The test environment use IP,porduct environment use crm.189.cn</description>
 		</init-param>
 		<!-- 需要验证的路径,支持正则表达式,忽略大小写 ,/order/[^(prepare|terminal)].*$ -->
