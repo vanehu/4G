@@ -1825,6 +1825,9 @@ mktRes.terminal = (function($){
 							//$("#nbr_btn_"+subnum).addClass("selectBoxTwoOn");
 							mktRes.terminal.setNumber(phoneNumber, response.data.phoneLevelId);
 							$("#nbr_btn_"+subnum).val(phoneNumber);
+							if($("#fk_phoneNumber_"+subnum).length>0){
+								$("#fk_phoneNumber_"+subnum).text(phoneNumber);
+							}
 							order.phoneNumber.boProdAn.accessNumber=phoneNumber;
 							order.phoneNumber.boProdAn.level=selectedLevel;
 							order.phoneNumber.boProdAn.org_level=response.data.phoneLevelId;
@@ -2536,6 +2539,31 @@ mktRes.terminal = (function($){
 		}
 		});
 	}
+	
+	//浏览副卡
+	var _viewZjfk=function(n){
+		$("#terminalMain").hide();
+		$("#zjfk_"+n).show();
+	}
+	//关闭浏览副卡
+	var _closeviewZjfk=function(n){
+		phoneNumber = $("#nbr_btn_"+n).val().trim();
+		if(phoneNumber==undefined || phoneNumber == ""){
+			$.alert("信息提示","号码不能为空！");
+			return false;
+		}
+		uim = $("#uim_txt_"+n).val().trim();
+		if(uim==undefined || uim == ""){
+			$.alert("信息提示","UIM卡不能为空！");
+			return false;
+		} 
+		if($("#tip_"+n).text() != "校验通过"){
+			$.alert("信息提示","请先校验UIM卡!");
+			return false;
+		}
+		$("#terminalMain").show();
+		$("#zjfk_"+n).hide();
+	}
 	//关闭增加副卡
 	var _closeZjfk=function(){
 		phoneNumber = $("#nbr_btn_"+cardIndex).val().trim();
@@ -2558,8 +2586,8 @@ mktRes.terminal = (function($){
 		var html='';
 		var offerSpecName= $("#choosedOfferPlan").text(); 
 //		var prodId = cardIndex;
-	    html='<a class="list-group-item" id="li_'+cardIndex+'">';
-		html+='<h4 class="list-group-item-heading">'+ phoneNumber +' <span class="glyphicon glyphicon-remove pull-right" id="span_'+cardIndex+'" onClick="javascript:mktRes.terminal.deleteZjfk()" style="display:none;" aria-hidden="true"></span></h4>';
+	    html='<a class="list-group-item" id="li_'+cardIndex+'" onClick="javascript:mktRes.terminal.viewZjfk('+cardIndex+')">';
+		html+='<h4 class="list-group-item-heading"><span id="fk_phoneNumber_'+cardIndex+'">'+ phoneNumber +'</span><span class="glyphicon glyphicon-remove pull-right" id="span_'+cardIndex+'" onClick="javascript:mktRes.terminal.deleteZjfk()" style="display:none;" aria-hidden="true"></span></h4>';
 		html+='<p class="list-group-item-text">'+ offerSpecName +'</p>';
 		html+='</a>';
 		$ul.append(html);
@@ -2569,6 +2597,8 @@ mktRes.terminal = (function($){
 //		}
 		$("#terminalMain").show();
 		$("#zjfk_"+cardIndex).hide();
+		$("#nav_1_"+cardIndex).hide();
+		$("#nav_2_"+cardIndex).show();
 		cardIndex = cardIndex-1;
 	}
 	
@@ -2947,6 +2977,8 @@ mktRes.terminal = (function($){
 		btnBack             :_btnBack,
 		zjfk				:_zjfk,
 		selectNum			:_selectNum,
+		viewZjfk            :_viewZjfk,
+		closeviewZjfk       :_closeviewZjfk,
 		qxZjfk            	:_qxZjfk,
 		closeZjfk			:_closeZjfk,
 		deleteZjfk			:_deleteZjfk,

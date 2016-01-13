@@ -29,7 +29,7 @@
 			<div class="col-xs-6">
 				<div class="thumbnail" onclick="javascript:mktRes.terminal.selectTerminal(this)" 
 		            	mktResTypeCd="${mkt.mktResTypeCd}" mktResId="${mkt.mktResId}" mktResCd="${mkt.mktResCd}" brand="${brand}" phoneType="${phoneType}" phoneColor="${phoneColor}" mktName="${mkt.mktResName}" mktPrice="${(mkt.salePrice)}" mktPicA="${p_pic}" mktSpecCode="${mktSpecCode}">
-					<img class="media-object" src="${p_pic}" alt="${(mkt.mktResName)?default("--")}">
+					<img class="media-object" style="width:178px;height:178px;" src="${p_pic}" alt="${(mkt.mktResName)?default("--")}">
 					<div class="caption">
 						<h5>${(mkt.mktResName)?default("--")} </h5>
 						<p class="text-warning">￥<#if (mkt.salePrice)?default(0) != 0>${mkt.salePrice / 100}<#else>--</#if>元</p>
