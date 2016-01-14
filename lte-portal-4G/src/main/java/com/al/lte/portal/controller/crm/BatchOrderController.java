@@ -2647,10 +2647,10 @@ public class BatchOrderController  extends BaseController {
 					tempStr = "";
 			}
 			row.createCell(j++).setCellValue(tempStr);
-			row.createCell(j++).setCellValue(map.get("msgInfo").toString() == null ? "" : map.get("msgInfo").toString());
-			row.createCell(j++).setCellValue(map.get("orderStatusName").toString() == null ? "" : map.get("orderStatusName").toString());
-			row.createCell(j++).setCellValue(map.get("transactionId").toString() == null ? "" : map.get("transactionId").toString());//下省流水
-			row.createCell(j++).setCellValue(map.get("custSoNumber").toString() == null ? "" : map.get("custSoNumber").toString());//购物车流水
+			row.createCell(j++).setCellValue(map.get("msgInfo") == null ? "" : map.get("msgInfo").toString());
+			row.createCell(j++).setCellValue(map.get("orderStatusName") == null ? "" : map.get("orderStatusName").toString());
+			row.createCell(j++).setCellValue(map.get("transactionId") == null ? "" : map.get("transactionId").toString());//下省流水
+			row.createCell(j++).setCellValue(map.get("custSoNumber") == null ? "" : map.get("custSoNumber").toString());//购物车流水
 		}
 		try {
 			workbook.write(outputStream);
