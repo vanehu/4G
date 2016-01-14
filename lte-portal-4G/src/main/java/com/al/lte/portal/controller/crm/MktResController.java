@@ -541,18 +541,45 @@ public class MktResController extends BaseController {
 				.getSessionAttribute(super.getRequest(),
 						SysConstant.SESSION_KEY_LOGIN_STAFF);
 		List<Map<String, Object>> list = null;
+		Map<String, Object> listByIdentityParam = new HashMap<String, Object>();
+		listByIdentityParam.put("identityId", MapUtils.getString(param, "identityId", ""));
+		listByIdentityParam.put("areaId", MapUtils.getString(param, "areaId", ""));
 		try {
-			//客户的身份证件 需要与 号码预约时所使用身份证件号码 相同
-			String identityId = MapUtils.getString(param, "identityId", "");
-			Map sessionCustInfo = (Map) super.getRequest().getSession().getAttribute(SysConstant.SESSION_CURRENT_CUST_INFO);
-			if(sessionCustInfo != null && !identityId.equals(sessionCustInfo.get("idCardNumber"))){
-				return super.failedStr(model, ErrorCode.PHONENUM_IDENTITY, "客户的身份证件需要与号码预约时所使用身份证件号码相同", param);
+			Map<String, Object> checkIdMap = new HashMap<String, Object>();
+			try {
+				//客户的身份证件 需要与 号码预约时所使用身份证件号码 相同
+				Map sessionCustInfo = (Map) super.getRequest().getSession().getAttribute(SysConstant.SESSION_CURRENT_CUST_INFO);
+				if (sessionCustInfo != null && sessionCustInfo.containsKey("custId") && sessionCustInfo.containsKey("areaId")) {
+					checkIdMap = param;
+					checkIdMap.put("areaId", sessionCustInfo.get("areaId"));
+					checkIdMap.put("custId", sessionCustInfo.get("custId"));
+					checkIdMap.put("staffId", sessionStaff.getStaffId());
+					checkIdMap.put("idCardNumber", MapUtils.getString(param, "identityId", ""));
+					checkIdMap.remove("identityId");
+					
+					Map<String, Object> datamap = this.mktResBmo.checkIdCardNumber(checkIdMap,
+							flowNum, sessionStaff);
+					if (datamap != null) {
+						String code = (String) datamap.get("code");
+						if (!ResultCode.R_SUCC.equals(code)) {
+							model.addAttribute("isUnified","false");
+							return "/order/order-phonenumber-list";
+						}
+					}
+				}
+			} catch (BusinessException e) {
+				this.log.error("客户证件校验失败", e);
+				super.addHeadCode(response, ResultConstant.SERVICE_RESULT_FAILTURE);
+			} catch (InterfaceException ie) {
+				return super.failedStr(model, ie, checkIdMap, ErrorCode.IDCARDNUM_CHECK);
+			} catch (Exception e) {
+				return super.failedStr(model, ErrorCode.IDCARDNUM_CHECK, e, checkIdMap);
 			}
 
-			String areaId=(String) param.get("areaId");
-			param.putAll(getAreaInfos(areaId));
-			param.put("phoneNumber", "");
-			Map<String, Object> datamap = this.mktResBmo.queryNumberByIdentityId(param,
+			String areaId=(String) listByIdentityParam.get("areaId");
+			listByIdentityParam.putAll(getAreaInfos(areaId));
+			listByIdentityParam.put("phoneNumber", "");
+			Map<String, Object> datamap = this.mktResBmo.queryNumberByIdentityId(listByIdentityParam,
 					flowNum, sessionStaff);
 			if (datamap != null) {
 				String code = (String) datamap.get("code");
@@ -577,11 +604,11 @@ public class MktResController extends BaseController {
 			this.log.error("查询号码信息失败", e);
 			super.addHeadCode(response, ResultConstant.SERVICE_RESULT_FAILTURE);
 		} catch (InterfaceException ie) {
-			return super.failedStr(model, ie, param, ErrorCode.PHONENUM_IDENTITY);
+			return super.failedStr(model, ie, listByIdentityParam, ErrorCode.PHONENUM_IDENTITY);
 		} catch (Exception e) {
-			return super.failedStr(model, ErrorCode.PHONENUM_IDENTITY, e, param);
+			return super.failedStr(model, ErrorCode.PHONENUM_IDENTITY, e, listByIdentityParam);
 		}
-		model.addAllAttributes(param);
+		model.addAllAttributes(listByIdentityParam);
 		return "/order/order-phonenumber-list";
 	}
 	@RequestMapping(value = "/phonenumber/purchase", method = RequestMethod.POST)

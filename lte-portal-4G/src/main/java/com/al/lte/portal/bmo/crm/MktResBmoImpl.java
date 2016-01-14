@@ -1083,4 +1083,27 @@ public class MktResBmoImpl implements MktResBmo {
 		}
 		return returnMap;
 	}
+	
+	/**
+	 * 客户证件校验接口
+	 * @param checkIdMap
+	 * @param flowNum
+	 * @param sessionStaff
+	 * @throws Exception
+	 */
+	public Map<String, Object> checkIdCardNumber(Map<String, Object> map, String flowNum,
+			SessionStaff sessionStaff) throws Exception {
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		DataBus db = InterfaceClient.callService(map, 
+				PortalServiceCode.CHECK_IDCARDNUMBER,
+				flowNum, sessionStaff);
+		if (ResultCode.R_SUCC.equals(db.getResultCode())) {
+			resultMap.put("code", ResultCode.R_SUCC);
+			resultMap.put("message", MapUtils.getString(db.getReturnlmap(), "resultMsg", "客户证件校验失败。"));
+		} else {
+			resultMap.put("code", ResultCode.R_FAILURE);
+			resultMap.put("message", MapUtils.getString(db.getReturnlmap(), "resultMsg", "客户证件校验失败。"));
+		}
+		return resultMap;
+	}
 }

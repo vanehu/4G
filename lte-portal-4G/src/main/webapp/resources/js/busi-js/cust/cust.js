@@ -385,6 +385,8 @@ order.cust = (function(){
 		if ($("#p_cust_identityCd").val() == -1 && "ON" == CacheData.getIntOptSwitch()) {
 			param.prodClass = $("#prodTypeCd").val();
 		}
+		// 将客户查询入参保存，供查询预约号码用
+		order.cust.custQueryParam = param;
 		$.callServiceAsHtml(contextPath+"/cust/queryCust",param,{
 			"before":function(){
 				$.ecOverlay("<strong>正在查询中,请稍等...</strong>");

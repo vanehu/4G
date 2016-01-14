@@ -952,5 +952,6 @@ public final class PortalServiceCode {
 	public static final String QUERY_LOAD_INSTIDS = "biz-service/intf.pullingDataService/queryProdInfoFromProvForConcurrent";
 	/**根据销售品（或功能产品）规格Id查询被依赖的销售品或功能产品*/
 	public static final String QUERY_SERVDEPEND_FORCANCEL ="biz-service/intf.prodOfferService/queryOfferAndServDependForCancel";
-
+	/**客户证件校验接口*/
+	public static final String CHECK_IDCARDNUMBER = "biz-service/intf.custService/checkIdCardNumber";
 }

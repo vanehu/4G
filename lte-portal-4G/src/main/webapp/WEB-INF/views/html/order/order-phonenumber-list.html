@@ -19,11 +19,17 @@
 <!--号码列表 end-->  
 <input type="hidden" id="chooseAreaId" value="${areaId}">
 <#else>
-<div class="no_search"> 
-	<div class="h1">
-		<img style="vertical-align:middle" src="${contextPath}/image/common/query_search.gif" />&nbsp;&nbsp;抱歉，没有找到相关的号码，请尝试其他筛选条件。
+ <#if isUnified == "false">
+ 	<script>
+ 		$.alert("提示","客户的身份证件需要与号码预约时所使用身份证件号码相同");
+ 	</script>
+ <#else>
+	<div class="no_search"> 
+		<div class="h1">
+			<img style="vertical-align:middle" src="${contextPath}/image/common/query_search.gif" />&nbsp;&nbsp;抱歉，没有找到相关的号码，请尝试其他筛选条件。
+		</div>
 	</div>
-</div>
+ </#if>
 </#if>
 <!--上下步按钮 end-->
 <#if showVerificationcode=="Y">

@@ -381,5 +381,12 @@ public interface MktResBmo {
 	public Map<String, Object> termQuery(Map<String, Object> dataBusMap, String flowNum, SessionStaff sessionStaff)throws Exception;
 	
 	public void intcardNubInfoLog(Map<String, Object> param, String flowNum,SessionStaff sessionStaff)throws Exception;
-	
+	/**
+	 * 客户证件校验接口
+	 * @param checkIdMap
+	 * @param flowNum
+	 * @param sessionStaff
+	 * @throws Exception
+	 */
+	public Map<String, Object> checkIdCardNumber(Map<String, Object> checkIdMap, String flowNum, SessionStaff sessionStaff) throws Exception;
  }
