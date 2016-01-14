@@ -486,7 +486,28 @@ SoOrder = (function() {
 			};
 			_getRQCode(params);
 		});
-		if(OrderInfo.actionFlag==1 ||OrderInfo.actionFlag==14){ //新装
+		if(OrderInfo.actionFlag==1){ //新装
+			var length = $('#ul_memeber').find("a").find("h4").text().length;
+			var i = 0;
+			$("#orderTbody").append('<li class="list-group-item" id="offerSpecName"> <h4 class="list-group-item-heading"> 套餐名称</h4><p class="list-group-item-text">'+OrderInfo.offerSpec.offerSpecName+'</p></li>');
+			$("#tital").html("<span>订购</span>"+OrderInfo.offerSpec.offerSpecName);
+			$.each(OrderInfo.offerSpec.offerRoles,function(){
+				$.each(this.prodInsts,function(){
+					 var num = length / 11;
+					 if(this.prodInstId ==-1){
+                        $("#orderTbody").append('<li class="list-group-item" id="offerSpecName"> <h4 class="list-group-item-heading"> '+this.offerRoleName+'</h4><p class="list-group-item-text">'+
+								  OrderInfo.getProdAn(this.prodInstId).accessNumber+'</p></li>');
+					 }
+					 else if($('#ul_memeber').find("a").length > 0 && num > 0){
+						 $("#orderTbody").append('<li class="list-group-item" id="offerSpecName"> <h4 class="list-group-item-heading"> '+this.offerRoleName+'</h4><p class="list-group-item-text">'+
+								$('#ul_memeber').find("a").find("h4").text().substring(i,11+i)+'</p></li>');
+						 i = i + 11;
+						 length = length -11;
+					}	
+			});
+			});
+		}
+		else if(OrderInfo.actionFlag==14){ //新装
 			$("#orderTbody").append('<li class="list-group-item" id="offerSpecName"> <h4 class="list-group-item-heading"> 套餐名称</h4><p class="list-group-item-text">'+OrderInfo.offerSpec.offerSpecName+'</p></li>');
 			$("#tital").html("<span>订购</span>"+OrderInfo.offerSpec.offerSpecName);
 			$.each(OrderInfo.offerSpec.offerRoles,function(){
@@ -956,6 +977,7 @@ SoOrder = (function() {
 		}
 		if(OrderInfo.actionFlag==22&&OrderInfo.order.step==3){
 			$("#order_fill_content").show();
+			$("#selectOrderedOffer").css("display","block");
 		}
 		if(OrderInfo.order.step==4 && (OrderInfo.actionFlag == 13 || OrderInfo.actionFlag == 14)){
 			$("#order-confirm").empty();

@@ -968,7 +968,9 @@ mktRes.terminal = (function($){
 	 */
 	var _purchase=function(){
 		if ("lj"==buyChk.buyType) {
-			termInfo.mktResId = $("#mktResId").val();
+			if(termInfo.mktResId==undefined || termInfo.mktResId==""){
+				termInfo.mktResId = $("#mktResId").val();
+			}
 //			if (!buyChk.tsnFlag) {
 //				$.alert("提示","<br/>请先校验终端串号。");
 //				return;
@@ -1034,7 +1036,9 @@ mktRes.terminal = (function($){
 		} else {
 			return;
 		}
-		termInfo.mktResId=$("#mktResId").val();
+		if(termInfo.mktResId==undefined || termInfo.mktResId==""){
+			termInfo.mktResId = $("#mktResId").val();
+		}
 		var coupon = {
 			couponUsageTypeCd 	: "5", //物品使用类型,1-其他，2-赠送，3-销售，4-活动，5-租机
 			inOutTypeId 		: "1",  //出入库类型
@@ -1919,12 +1923,15 @@ mktRes.terminal = (function($){
 				}
 			}
 		if ("lj"==buyChk.buyType) {
-//			if (!buyChk.tsnFlag) {
-//				if($("#tsn").val().length>0){
-//					$.alert("提示","<br/>请先校验终端串号。");
-//					return;
-//				}
-//			}
+			if (!buyChk.tsnFlag) {
+				if($("#tsn").val().length>0){
+					$.alert("提示","<br/>请先校验终端串号。");
+					return;
+				}
+			}
+			if($("#passcust").length>0){
+				$("#passcust").show();
+			}
 			_purchase();
 		} else if ("hy"==buyChk.buyType) {
 			//订单提交
@@ -1932,6 +1939,7 @@ mktRes.terminal = (function($){
 			for(var n=0;n<OrderInfo.attach2Coupons.length;n++){
 				OrderInfo.attach2Coupons[n].couponInstanceNumber = $("#tsn").val();
 				OrderInfo.attach2Coupons[n].storeId = termInfo.mktResStoreId;
+				OrderInfo.attach2Coupons[n].couponId = termInfo.mktResId;
 			}
 //			_submitOrder(data);
 //			return;
@@ -1944,6 +1952,9 @@ mktRes.terminal = (function($){
 				return false;
 			}
 //			OrderInfo.actionFlag = 1;
+			if($("#passcust").length>0){
+				$("#passcust").hide();
+			}
 		}
 //		OrderInfo.actionFlag = 1;
 		//var param = {};
@@ -1955,7 +1966,11 @@ mktRes.terminal = (function($){
 		$("#cust-content").show();
 		OrderInfo.order.step = 3;//第三步   进入新增客户页面
 	};
-	
+	//裸机销售跳过客户定位
+	var _passcust = function(){
+		OrderInfo.order.step = 4;
+		SoOrder.submitOrder(mktRes.terminal.Ljdata);
+	}
 	//提交订单节点
 	var _submitOrder = function(data) {
 		if(_getOrderInfo(data)){
@@ -2720,6 +2735,19 @@ mktRes.terminal = (function($){
 				}
 			}
 		}
+		
+		$.each(OrderInfo.offerSpec.offerRoles,function(){
+			var offerRole = this;
+			if(offerRole.memberRoleCd==CONST.MEMBER_ROLE_CD.VICE_CARD){
+//			offerRole.prodInsts = []; //角色对象实例
+			for(var n=0;n<offerRole.prodInsts.length;n++){
+				if(n==(0-cardIndex-2)){
+					offerRole.prodInsts.splice(n);
+				}
+			}
+			}
+		});
+		
 		$("#terminalMain").show();
 		$("#zjfk_"+cardIndex).hide();
 	}
@@ -2968,6 +2996,7 @@ mktRes.terminal = (function($){
 	};
 	//
 	return {
+		passcust            :_passcust,
 		closeFZR            :_closeFZR,
 		showFZR             :_showFZR,
 		closeJBR            :_closeJBR,
