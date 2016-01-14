@@ -1150,7 +1150,7 @@ order.main = (function(){
 		var $ul = $('#ul_memeber');
 		var html='';
 		var offerSpecName= $("#txt_offer_-1").val(); 
-		var prodId = $('#ul_memeber').find("a").length == 0 ?-2:-$('#ul_memeber').find("a").length-1;
+		var prodId =-$('#ul_memeber').find("a").length-2;
 	    html='<a class="list-group-item"  id="li_'+prodId+'">';
 		html+='<h4 class="list-group-item-heading">'+ phoneNumber +'</h4>';
 		html+='<p class="list-group-item-text">'+ offerSpecName +'</p>';
@@ -1161,6 +1161,17 @@ order.main = (function(){
 	var _removeMember = function(prodId,phoneNumber,uim){
 		$("#order-content").show();
 		$("#order-memeber").hide();
+		var prodId = -$('#ul_memeber').find("a").length-2;
+	    var num = prodId+1;
+	    if(prodId !=-2 && num !=-1){
+	    	$('#nbr_btn_'+prodId).attr("id","nbr_btn_"+num);
+			$('#tip_'+prodId).attr("id","tip_"+num);
+			$('#attach_'+prodId).attr("id","attach_"+num);
+			$('#uim_txt_'+prodId).attr("id","uim_txt_"+num);
+			$('#uim_release_btn'+prodId).attr("id","uim_release_btn_"+num);
+			$('#uim_check_btn_'+prodId).attr("id","uim_check_btn_"+num);
+			$('#numberBtn_'+prodId).attr("id","numberBtn_"+num);
+		}
 		//$('#li_'+prodId).remove();
 		//释放预占的号码
 		var param = {
@@ -1191,18 +1202,37 @@ order.main = (function(){
 			return false;
 		}
 		OrderInfo.returnFlag = "fk";
-		$("#nbr_btn_-2").val("");
-		$("#uim_txt_-2").val("");
-		$("#tip_-2").text("");
+	    var prodId = -$('#ul_memeber').find("a").length-2;
+	    var num = prodId+1;
+	    if(prodId !=-2 && num !=-1){
+	    	$('#nbr_btn_'+num).attr("id","nbr_btn_"+prodId);
+			$('#tip_'+num).attr("id","tip_"+prodId);
+			$('#attach_'+num).attr("id","attach_"+prodId);
+			$('#uim_txt_'+num).attr("id","uim_txt_"+prodId);
+			$('#uim_release_btn'+num).attr("id","uim_release_btn_"+prodId);
+			$('#uim_check_btn_'+num).attr("id","uim_check_btn_"+prodId);
+			$('#numberBtn_'+num).attr("id","numberBtn_"+prodId);
+	    }
+//	    var prodId = -$('#ul_memeber').find("a").length-2;
+//		$('#nbr_btn_-2').attr("id","nbr_btn_"+prodId);
+//		$('#tip_-2').attr("id","tip_"+prodId);
+//		$('#attach_-2').attr("id","attach_"+prodId);
+//		$('#uim_txt_-2').attr("id","uim_txt_"+prodId);
+//		$('#uim_release_btn_-2').attr("id","uim_release_btn_"+prodId);
+//		$('#uim_check_btn_-2').attr("id","uim_check_btn_"+prodId);
+		$('#attach_'+prodId).css("display","block");
+		
+		$("#nbr_btn_"+prodId).val("");
+		$("#uim_txt_"+prodId).val("");
+		$("#tip_"+prodId).text("");
 		$("#order-content").hide();
 		$("#order-memeber").show();
-		$("#uim_txt_-2").attr("disabled",false);
-		$("#uim_check_btn_"+-2).attr("disabled",false);
+		$("#uim_txt_"+prodId).attr("disabled",false);
+		$("#uim_check_btn_"+prodId).attr("disabled",false);
 		//$("#uim_check_btn_"+prodId).removeClass("disablepurchase").addClass("purchase");
-		$("#uim_release_btn_"+-2).attr("disabled","disabled");
-		$("#uim_scann_btn_"+-2).attr("disabled",false);
-//		content$.html(response.data).show();
-//		var prodId = $('#ul_memeber').find("a").length == 0 ?-2:-$('#ul_memeber').find("a").length-1;
+		$("#uim_release_btn_"+prodId).attr("disabled","disabled");
+		$('#numberBtn_'+prodId).attr("disabled",false);
+		$("#uim_scann_btn_"+prodId).attr("disabled",false);
 //		var param={};
 //		var url=contextPath+"/agent/order/member/prepare?prodId="+prodId;
 //		$.callServiceAsHtml(url,param,{
@@ -1220,9 +1250,20 @@ order.main = (function(){
 //					$.alert("提示","页面显示失败,稍后重试");
 //					return;
 //				}
-//				$("#order-content").hide();
-//				var content$=$("#order-memeber");
+//				//$("#order-content").hide();
+//				//var content$=$("#order-memeber");
 //				content$.html(response.data).show();
+//				
+//				$("#nbr_btn_" + prodId).val("");
+//				$("#uim_txt_" + prodId).val("");
+//				$("#tip_"+prodId).text("");
+//				$("#order-content").hide();
+//				$("#order-memeber").show();
+//				$("#uim_txt_"+prodId).attr("disabled",false);
+//				$("#uim_check_btn_"+prodId).attr("disabled",false);
+//				//$("#uim_check_btn_"+prodId).removeClass("disablepurchase").addClass("purchase");
+//				$("#uim_release_btn_"+prodId).attr("disabled","disabled");
+//				$("#uim_scann_btn_"+prodId).attr("disabled",false);
 //			}	
 //         });	
 	};

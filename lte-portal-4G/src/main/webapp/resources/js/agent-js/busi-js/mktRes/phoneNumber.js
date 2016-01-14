@@ -591,7 +591,9 @@ order.phoneNumber = (function(){
 							//$("#nbr_btn_"+subnum).removeClass("selectBoxTwo");
 							//$("#nbr_btn_"+subnum).addClass("selectBoxTwoOn");
 							$("#nbr_btn_"+subnum).val(phoneNumber);
-							mktRes.terminal.setNumber(phoneNumber, response.data.phoneLevelId);
+							if(OrderInfo.actionFlag!=1){
+								mktRes.terminal.setNumber(phoneNumber, response.data.phoneLevelId);
+							}
 							$("#choosedNumSpan").val(phoneNumber);
 							_boProdAn.accessNumber=phoneNumber;
 							_boProdAn.level=selectedLevel;

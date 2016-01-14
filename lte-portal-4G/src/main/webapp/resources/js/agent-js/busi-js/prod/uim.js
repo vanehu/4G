@@ -73,7 +73,7 @@ prod.uim = (function() {
 		}
 		if(OrderInfo.actionFlag==1){
 			$("#offerBtn").attr("disabled","disabled");
-			$("#numberBtn").attr("disabled","disabled");
+			$("#numberBtn_"+prodId).attr("disabled","disabled");
 		}
 		$("#tip_"+prodId).text("校验通过");
 		//根据uim返回数据组织物品节点
