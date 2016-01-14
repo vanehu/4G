@@ -162,8 +162,6 @@ public final class SysConstant {
     public static String WRITE_ASYNCHRONOUS_FLAG = "WRITE_ASYNCHRONOUS_FLAG";
     //是否记录接口日志出入参，数据库字段类型为CLOB，N代表不记录，Y代表记录
     public static String WRITE_LOG_DETAIL = "WRITE_LOG_DETAIL";
-    //XSS过虑总开关  ON-开，OFF或者没有配置-关
-    public static String XSS_FILTER_FLAG = "XSS_FILTER_FLAG";
     public static String LOG_PS = "PS";
     public static String LOG_UNILOG = "UNILOG";
     public static String LOG_NONE = "NONE";
