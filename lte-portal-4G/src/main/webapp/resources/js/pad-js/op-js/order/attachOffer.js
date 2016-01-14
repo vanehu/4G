@@ -187,10 +187,10 @@ AttachOffer = (function() {
 								html+=this.servSpecName+'<span></span><span>';
 								html+='<a href="javascript:AttachOffer.openServSpec('+prodId+','+this.servSpecId+',\''+this.servSpecName+'\',\''+this.ifParams+'\')" class="abtn03 icon-buy">&nbsp;</a></span>';
 								html+='</span>';
-								if(i%2==1){
+								//if(i%2==1){
 									html+='</div></li>';
 									$ul.append(html);
-								}
+								//}
 								i++;
 							}
 						});
@@ -268,10 +268,12 @@ AttachOffer = (function() {
 									html+=this.offerSpecName+'<span></span><span>';
 									html+='<a href="javascript:AttachOffer.addOfferSpec('+prodId+','+this.offerSpecId+')" class="abtn03 icon-buy">&nbsp;</a></span>';
 									html+='</span>';
-									if(i%2==1){
-										html+='</div></li>';
-										$ul.append(html);
-									}
+									
+									html+='</div></li>';
+									$ul.append(html);
+									//if(i%2==1){
+										
+									//}
 									i++;
 								}
 							});

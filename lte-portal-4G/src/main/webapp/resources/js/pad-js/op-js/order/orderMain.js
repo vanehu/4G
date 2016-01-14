@@ -105,7 +105,7 @@ order.main = (function(){
 			OrderInfo.actionFlag = 1;
 		}
 		mktRes.phoneNbr.initOffer('-1');//主卡自动填充号码入口已选过的号码
-		_loadOther(param);//页面加载完再加载其他元素
+		_loadOtherSub(param);//页面加载完再加载其他元素
 		if(OrderInfo.actionFlag==1 || OrderInfo.actionFlag==6 || OrderInfo.actionFlag==13 || OrderInfo.actionFlag==14){
 			//_initAcct();//初始化帐户列表 
 			$("#acctName").val(OrderInfo.cust.partyName);

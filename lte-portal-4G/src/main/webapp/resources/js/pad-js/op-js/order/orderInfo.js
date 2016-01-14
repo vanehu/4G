@@ -725,7 +725,7 @@ OrderInfo = (function() {
 				}
 				
 				//发展人
-				var $tr = $("tr[name='tr_"+prodId+"_"+prodServ.servSpecId+"']");
+				var $tr = $("li[name='tr_"+prodId+"_"+prodServ.servSpecId+"']");
 				if($tr!=undefined&&$tr.length>0){
 					if(!ec.util.isArray(busiOrder.data.busiOrderAttrs)){
 						busiOrder.data.busiOrderAttrs = [];
@@ -737,6 +737,12 @@ OrderInfo = (function() {
 							value : $(this).find("input").attr("staffid") 
 						};
 						busiOrder.data.busiOrderAttrs.push(dealer);
+						var dealer_name = {
+								itemSpecId : CONST.BUSI_ORDER_ATTR.DEALER_NAME,
+								role : $(this).find("select").val(),
+								value : $(this).find("input").attr("value") 
+						};
+						busiOrder.data.busiOrderAttrs.push(dealer_name);	
 					});
 				}
 			}

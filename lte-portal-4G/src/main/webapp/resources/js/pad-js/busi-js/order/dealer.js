@@ -654,7 +654,7 @@ order.dealer = (function() {
 				};
 			});
 		});
-		if(OrderInfo.actionFlag==2 || OrderInfo.actionFlag==3 || OrderInfo.actionFlag==22 ||OrderInfo.actionFlag==23){
+		if(OrderInfo.actionFlag==1 || OrderInfo.actionFlag==2 || OrderInfo.actionFlag==3 || OrderInfo.actionFlag==6){
 			$.each(OrderInfo.boProd2Tds,function(){
 				var prodId = this.prodId;
 			    var accNbr = OrderInfo.getAccessNumber(prodId);
