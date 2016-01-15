@@ -26,12 +26,12 @@
 						<beans:value>text/plain;charset=UTF-8</beans:value>
 					</beans:list>
 				</beans:property>
-				<beans:property name="objectMapper" ref="htmlEscapingObjectMapper"/>
+				<!--beans:property name="objectMapper" ref="htmlEscapingObjectMapper"/-->
 		</beans:bean>
 		<beans:bean class="org.springframework.http.converter.FormHttpMessageConverter"/>
 		</message-converters>
 	</annotation-driven>
-	<beans:bean id="htmlEscapingObjectMapper" class="com.al.lte.portal.common.mapper.HtmlEscapingObjectMapperFactory" />
+	<!--beans:bean id="htmlEscapingObjectMapper" class="com.al.lte.portal.common.mapper.HtmlEscapingObjectMapperFactory" /-->
 	
 	<!-- Configure the multipart resolver -->
 	<beans:bean id="multipartResolver"
