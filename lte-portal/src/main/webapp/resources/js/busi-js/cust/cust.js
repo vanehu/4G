@@ -1216,7 +1216,7 @@ order.cust = (function(){
 		$("#acctList").show();
 	};
 	//定位客户时读卡
-	var _readCert = function() {
+	var _readCert = function(typeNum) {
 		var man = cert.readCert();
 		if (man.resultFlag != 0){
 			$.alert("提示", man.errorMsg);
@@ -1224,10 +1224,13 @@ order.cust = (function(){
 		}
 		$('#p_cust_identityCd').val(1);//身份证类型
 		_custidentidiesTypeCdChoose($("#p_cust_identityCd option:selected"),"p_cust_identityNum");
-		$('#p_cust_identityNum').val(man.resultContent.certNumber);
-//		$('#p_cust_identityNum').attr("disabled",true);
-		//查询
-		$("#usersearchbtn").click();
+		if(typeNum==0){//业务受理处的客户查询
+			$("#p_cust_identityNum").val(man.resultContent.certNumber);
+			$("#usersearchbtn").click();
+		}else if(typeNum==1){//新装和改产品属性处的使用人查询
+			$("#p_cust_identityNum_choose").val(man.resultContent.certNumber);
+			$("#userSearchForChooseBtn").click();
+		}
 	};
 	//新建客户时读卡
 	var _readCertWhenCreate = function() {

@@ -46,7 +46,7 @@
         </li>
         <li class="ubtn">
 		    <a class="btn_h30" id="usersearchbtn"  href="javascript:void(0)"  class="btn" style="margin-left:30px;"><span>查 询</span></a>
-		    <a class="btn_h30" id="readCertBtn" onclick="javascript:order.cust.readCert()"><span>读 卡</span></a>
+		    <a class="btn_h30" id="readCertBtn" onclick="javascript:order.cust.readCert(0)"><span>读 卡</span></a>
 		    <#if DiffPlaceFlag=="local">
 		    <a class="btn_h30" id="createUserbtn" onclick="javascript:order.cust.showCustCreate(this)"><span>新建客户</span></a>
 		     </#if>
@@ -633,7 +633,7 @@
 		 -->
         <li class="ubtn">
 		    <a id="userSearchForChooseBtn" href="javascript:void(0)"  class="btn_h30 btn" style="margin-left:30px;" onclick=""><span>查 询</span></a>
-		    <a class="btn_h30" id="readCertBtn" onclick="javascript:order.cust.readCert()"><span>读 卡</span></a>
+		    <a class="btn_h30" id="readCertBtn" onclick="javascript:order.cust.readCert(1)"><span>读 卡</span></a>
 		</li>
 		</ul>
 		</form>
