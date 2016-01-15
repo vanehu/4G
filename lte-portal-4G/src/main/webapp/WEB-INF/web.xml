@@ -164,6 +164,7 @@
     </filter-mapping>
     -->
 	<!-- Csrf过虑器 -->
+	<!--
 	<filter>
 		<filter-name>csrf_filter</filter-name>
 		<filter-class>com.al.ecs.filter.CsrfPreventionFilter</filter-class>
@@ -194,7 +195,7 @@
 			    /orderQuery/area,/orderQuery/areaManager,/staffMgr/getCTGMainData,/staffMgr/setCurrentChannel
 			</param-value>
 		</init-param>
-	</filter>
+	</filter>-->
     <!-- SpringSide's JCaptcha filter -->
 	<filter>
 		<filter-name>jcaptchaFilter2</filter-name>
@@ -297,10 +298,10 @@
 		<filter-name>jcaptchaFilter2</filter-name>
 		<url-pattern>/passwordMgr/getStaff</url-pattern>
 	</filter-mapping>
-	<filter-mapping>
+	<!--<filter-mapping>
 		<filter-name>csrf_filter</filter-name>
 		<url-pattern>/*</url-pattern>
-	</filter-mapping>
+	</filter-mapping>-->
 	<!-- 
 	<filter-mapping>
 		<filter-name>expiresFilter</filter-name>
