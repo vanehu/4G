@@ -1923,12 +1923,12 @@ mktRes.terminal = (function($){
 				}
 			}
 		if ("lj"==buyChk.buyType) {
-			if (!buyChk.tsnFlag) {
-				if($("#tsn").val().length>0){
-					$.alert("提示","<br/>请先校验终端串号。");
-					return;
-				}
-			}
+//			if (!buyChk.tsnFlag) {
+//				if($("#tsn").val().length>0){
+//					$.alert("提示","<br/>请先校验终端串号。");
+//					return;
+//				}
+//			}
 			if($("#passcust").length>0){
 				$("#passcust").show();
 			}
@@ -2461,7 +2461,7 @@ mktRes.terminal = (function($){
 	//增加副卡
 	var _zjfk=function(){
 		if(cardIndex + maxCard +2 ==0){
-			$.alert("信息提示","副卡不可超过4张!");
+			$.alert("信息提示","副卡不可超过"+maxCard+"张!");
 			return;
 		}
 		$("#nbr_btn_"+cardIndex).val("");

@@ -401,7 +401,7 @@ public class PrintBmoImpl implements PrintBmo {
 										Map<String, Object> offerInfo = offerInfos.get(i);
 										if (null != offerInfo.get("relaAcceNbr")){
 											if(relaAcceNbrs.length()>0 && relaAcceNbrs.indexOf(offerInfo.get("relaAcceNbr").toString())==-1){
-												relaAcceNbrs = relaAcceNbrs + "," + offerInfo.get("relaAcceNbr").toString();
+												relaAcceNbrs = relaAcceNbrs + ",</br>" + offerInfo.get("relaAcceNbr").toString();
 											}else if(relaAcceNbrs.length()==0){
 												relaAcceNbrs = relaAcceNbrs + offerInfo.get("relaAcceNbr").toString();
 											}
@@ -443,7 +443,7 @@ public class PrintBmoImpl implements PrintBmo {
 						if(sbNub.length()>0){
 							//业务动作大于1时避免出现重复的主副卡号码
 						   if (null != orderEventTitle.get("relaAcceNbr") && sbNub.indexOf(orderEventTitle.get("relaAcceNbr").toString())==-1) {
-							   sbNub.append(","+orderEventTitle.get("relaAcceNbr"));
+							   sbNub.append(",</br>"+orderEventTitle.get("relaAcceNbr"));
 						   }
 						}else{
 						   if (null != orderEventTitle.get("relaAcceNbr")){
@@ -524,7 +524,7 @@ public class PrintBmoImpl implements PrintBmo {
 									if(sbNub.length()>0){
 										//业务动作大于1时避免出现重复的主副卡号码
 									   if (null != item.get("relaAcceNbr") && sbNub.indexOf(item.get("relaAcceNbr").toString())==-1) {
-										   sbNub.append(","+item.get("relaAcceNbr"));
+										   sbNub.append(",</br>"+item.get("relaAcceNbr"));
 									   }
 									}else{
 									   if (null != item.get("relaAcceNbr")){
@@ -581,7 +581,7 @@ public class PrintBmoImpl implements PrintBmo {
 									if(sbNub.length()>0){
 										//业务动作大于1时避免出现重复的主副卡号码
 									   if (null != item.get("relaAcceNbr") && sbNub.indexOf(item.get("relaAcceNbr").toString())==-1) {
-										   sbNub.append(","+item.get("relaAcceNbr"));
+										   sbNub.append(",</br>"+item.get("relaAcceNbr"));
 									   }
 									}else{
 									   if (null != item.get("relaAcceNbr")){

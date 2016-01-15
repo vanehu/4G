@@ -855,8 +855,7 @@ order.calcharge = (function(){
 			SoOrder.getToken();
 			inOpetate=false;
 			if(response.data!=undefined){
-				alert(response.data);
-				//$.alert("提示",response.data);
+				$.alert("提示",response.data);
 			}else{
 				$.alert("提示","费用信息提交失败!");
 			}
