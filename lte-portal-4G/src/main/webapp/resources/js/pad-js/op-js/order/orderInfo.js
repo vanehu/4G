@@ -755,6 +755,28 @@ OrderInfo = (function() {
 			}];
 		}else if(prodServ.boActionTypeCd == CONST.BO_ACTION_TYPE.CHANGE_CARD ||
 				prodServ.boActionTypeCd == CONST.BO_ACTION_TYPE.DIFF_AREA_CHANGE_CARD){  //补换卡	
+			//发展人
+			var $tr = $("li[name='tr_"+accNbr+"']");
+			if($tr!=undefined&&$tr.length>0){
+				if(!ec.util.isArray(busiOrder.data.busiOrderAttrs)){
+					busiOrder.data.busiOrderAttrs = [];
+				}
+				$tr.each(function(){   //遍历产品有几个发展人
+					var dealer = {
+						itemSpecId : CONST.BUSI_ORDER_ATTR.DEALER,
+						role : $(this).find("select").val(),
+						value : $(this).find("input").attr("staffid") 
+					};
+					busiOrder.data.busiOrderAttrs.push(dealer);
+					var dealer_name = {
+							itemSpecId : CONST.BUSI_ORDER_ATTR.DEALER_NAME,
+							role : $(this).find("select").val(),
+							value : $(this).find("input").attr("value") 
+					};
+					busiOrder.data.busiOrderAttrs.push(dealer_name);	
+				});
+			}
+			
 			var proUim = OrderInfo.getProdUim(prodServ.prodId); //获取新卡
 			if(ec.util.isObj(proUim.prodId)){ //有新卡
 				busiOrder.data.bo2Coupons = [];
