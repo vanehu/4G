@@ -265,6 +265,12 @@ public class MktResController extends BaseController {
         } catch (Exception e1) {
             e1.printStackTrace();
         }
+        String st = (String) param.get("subnum");
+        if(st!=null && st!=""){
+        	String sb = param.get("subnum").toString();
+        	int subnum = Integer.parseInt(sb);
+        	model.addAttribute("prodId", subnum);
+        }
         model.addAttribute("subPage", subPage);
         return "/agent/mktRes/phonenumber-prepare";
     }

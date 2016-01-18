@@ -2,6 +2,8 @@
 CommonUtils.regNamespace("order", "main");
 
 order.main = (function(){ 
+	var _fkcardIndex = -2;//标记副卡序号
+	var _fkmaxCard = 0;
 	
 	/**
 	 * 填单页面展示
@@ -1295,12 +1297,400 @@ order.main = (function(){
 //			}
 //	    });
 	};
+	
+	//增加副卡
+	var _zjfk=function(){
+		var offerSpecName= $.trim($("#txt_offer_-1").val()); 
+		if(offerSpecName==undefined || offerSpecName == ""){
+			$.alert("信息提示","请先选择套餐！");
+			return false;
+		} 
+		var fkcardIndex = order.main.fkcardIndex;
+		if(fkcardIndex + order.main.fkmaxCard +2 ==0){
+			$.alert("信息提示","副卡不可超过"+order.main.fkmaxCard+"张!");
+			return;
+		}
+		$("#nbr_btn_"+fkcardIndex).val("");
+		$("#uim_txt_"+fkcardIndex).val("");
+		$("#uim_txt_"+fkcardIndex).attr("disabled",false);
+		$("#tip_"+fkcardIndex).text("");
+		$("#uim_check_btn_"+fkcardIndex).attr("disabled",false);
+			
+		$("#zjfk_"+fkcardIndex).show();
+		$("#order-content").hide();
+		$.each(OrderInfo.offerSpec.offerRoles,function(){
+			var offerRole = this;
+			if(offerRole.memberRoleCd==CONST.MEMBER_ROLE_CD.VICE_CARD){//往副卡里面加
+//			offerRole.prodInsts = []; //角色对象实例
+			$.each(this.roleObjs,function(){
+				if(this.objType== CONST.OBJ_TYPE.PROD){  //接入类产品
+					var num = 0-fkcardIndex-1;  //接入类产品数量
+//					for ( var i = 0; i < num; i++) {
+						var newObject = jQuery.extend(true, {}, this); 
+						newObject.prodInstId = fkcardIndex;
+						if(num>1){ //同一个规格产品选择多个
+							newObject.offerRoleName = offerRole.offerRoleName+(num-1);
+						}else{
+							newObject.offerRoleName = offerRole.offerRoleName;
+						}
+						newObject.memberRoleCd = offerRole.memberRoleCd;
+						offerRole.prodInsts.push(newObject);   
+//					}
+					offerRole.selQty = num;
+				}
+			});
+			}
+		});
+		
+		//动态添加产品属性、附属销售品等
+		$.each(OrderInfo.offerSpec.offerRoles,function(){ //遍历主套餐规格
+			var offerRole = this;
+			if(offerRole.memberRoleCd==CONST.MEMBER_ROLE_CD.VICE_CARD){//往副卡里面加
+				var i = 0-fkcardIndex-2;  //接入类产品数量
+				var prodInst = this.prodInsts[i];
+				var param = {   
+					offerSpecId : OrderInfo.offerSpec.offerSpecId,
+					prodSpecId : prodInst.objId,
+					offerRoleId: prodInst.offerRoleId,
+					prodId : prodInst.prodInstId,
+					queryType : "1,2",
+					objType: prodInst.objType,
+					objId: prodInst.objId,
+					memberRoleCd : prodInst.memberRoleCd
+				};
+				_queryAttachOfferSpec(param);  //加载附属销售品
+				var obj = {
+					div_id : "item_order_"+prodInst.prodInstId,
+					prodId : prodInst.prodInstId,
+					offerSpecId : OrderInfo.offerSpec.offerSpecId,
+					compProdSpecId : "",
+					prodSpecId : prodInst.objId,
+					roleCd : offerRole.roleCd,
+					offerRoleId : offerRole.offerRoleId,
+					partyId : OrderInfo.cust.custId
+				};
+				order.main.spec_parm(obj); //加载产品属性
+		}
+		});
+	}
+	
+	//关闭增加副卡
+	var _closeZjfk=function(){
+		var fkcardIndex = order.main.fkcardIndex;
+		phoneNumber = $("#nbr_btn_"+fkcardIndex).val().trim();
+		if(phoneNumber==undefined || phoneNumber == ""){
+			$.alert("信息提示","号码不能为空！");
+			return false;
+		}
+		uim = $("#uim_txt_"+fkcardIndex).val().trim();
+		if(uim==undefined || uim == ""){
+			$.alert("信息提示","UIM卡不能为空！");
+			return false;
+		} 
+		if($("#tip_"+fkcardIndex).text() != "校验通过"){
+			$.alert("信息提示","请先校验UIM卡!");
+			return false;
+		} 
+		$("#order-content").show();
+		$("#order-memeber").hide();
+		var $ul = $('#ul_memeber');
+		var html='';
+		var offerSpecName= $("#choosedOfferPlan").text(); 
+//		var prodId = cardIndex;
+	    html='<a class="list-group-item" id="li_'+fkcardIndex+'" onClick="javascript:order.main.viewZjfk('+fkcardIndex+')">';
+		html+='<h4 class="list-group-item-heading"><span id="fk_phoneNumber_'+fkcardIndex+'">'+ phoneNumber +'</span><span class="glyphicon glyphicon-remove pull-right" id="span_'+fkcardIndex+'" onClick="javascript:order.main.deleteZjfk()" style="display:none;" aria-hidden="true"></span></h4>';
+		html+='<p class="list-group-item-text">'+ offerSpecName +'</p>';
+		html+='</a>';
+		$ul.append(html);
+//		if(cardIndex!=-2){
+//			var sp = cardIndex + 1;
+//			$("#span_"+sp).hide();
+//		}
+		$("#zjfk_"+fkcardIndex).hide();
+		$("#nav_1_"+fkcardIndex).hide();
+		$("#nav_2_"+fkcardIndex).show();
+		order.main.fkcardIndex = fkcardIndex-1;
+	}
+	
+	//取消副卡
+	var _qxZjfk=function(){
+		var fkcardIndex = order.main.fkcardIndex;
+		var prodId = fkcardIndex;
+		var boProdAns = OrderInfo.boProdAns;
+		var boProd2Tds = OrderInfo.boProd2Tds;
+		//取消订单时，释放被预占的UIM卡
+		if(boProd2Tds.length>0){
+			for(var n=0;n<boProd2Tds.length;n++){
+				if(boProd2Tds[n].prodId==prodId){
+					var param = {
+						numType : 2,
+						numValue : boProd2Tds[n].terminalCode
+					};
+					$.callServiceAsJson(contextPath+"/agent/mktRes/phonenumber/releaseErrorNum", param, {
+						"done" : function(){}
+					});
+					OrderInfo.boProd2Tds.splice(n,1);//清楚JS中某个UIM预占缓存
+				}
+			}
+		}
+		//释放预占的号码
+		if(boProdAns.length>0){
+			for(var n=0;n<boProdAns.length;n++){
+				if(boProdAns[n].prodId==prodId){
+					var param = {
+						numType : 1,
+						numValue : boProdAns[n].accessNumber
+					};
+					$.callServiceAsJson(contextPath+"/agent/mktRes/phonenumber/releaseErrorNum", param, {
+						"done" : function(){}
+					});
+					OrderInfo.boProdAns.splice(n,1);//清楚JS中某个号码预占缓存
+				}
+			}
+		}
+		
+		$.each(OrderInfo.offerSpec.offerRoles,function(){
+			var offerRole = this;
+			if(offerRole.memberRoleCd==CONST.MEMBER_ROLE_CD.VICE_CARD){
+//			offerRole.prodInsts = []; //角色对象实例
+			for(var n=0;n<offerRole.prodInsts.length;n++){
+				if(n==(0-fkcardIndex-2)){
+					offerRole.prodInsts.splice(n);
+				}
+			}
+			}
+		});
+		
+		$("#order-content").show();
+		$("#zjfk_"+fkcardIndex).hide();
+	}
+	
+	//浏览副卡
+	var _viewZjfk=function(n){
+		$("#order-content").hide();
+		$("#zjfk_"+n).show();
+	}
+	//关闭浏览副卡
+	var _closeviewZjfk=function(n){
+		phoneNumber = $("#nbr_btn_"+n).val().trim();
+		if(phoneNumber==undefined || phoneNumber == ""){
+			$.alert("信息提示","号码不能为空！");
+			return false;
+		}
+		uim = $("#uim_txt_"+n).val().trim();
+		if(uim==undefined || uim == ""){
+			$.alert("信息提示","UIM卡不能为空！");
+			return false;
+		} 
+		if($("#tip_"+n).text() != "校验通过"){
+			$.alert("信息提示","请先校验UIM卡!");
+			return false;
+		}
+		$("#order-content").show();
+		$("#zjfk_"+n).hide();
+	}
+	
+	//删除副卡
+	var _deleteZjfk=function(){
+		var fkcardIndex = order.main.fkcardIndex;
+		var prodId = fkcardIndex + 1;
+		var boProdAns = OrderInfo.boProdAns;
+		var boProd2Tds = OrderInfo.boProd2Tds;
+		//取消订单时，释放被预占的UIM卡
+		if(boProd2Tds.length>0){
+			for(var n=0;n<boProd2Tds.length;n++){
+				if(boProd2Tds[n].prodId==prodId){
+					var param = {
+						numType : 2,
+						numValue : boProd2Tds[n].terminalCode
+					};
+					$.callServiceAsJson(contextPath+"/agent/mktRes/phonenumber/releaseErrorNum", param, {
+						"done" : function(){}
+					});
+					OrderInfo.boProd2Tds.splice(n,1);//清楚JS中某个UIM预占缓存
+				}
+			}
+		}
+		//释放预占的号码
+		if(boProdAns.length>0){
+			for(var n=0;n<boProdAns.length;n++){
+				if(boProdAns[n].prodId==prodId){
+					var param = {
+						numType : 1,
+						numValue : boProdAns[n].accessNumber
+					};
+					$.callServiceAsJson(contextPath+"/agent/mktRes/phonenumber/releaseErrorNum", param, {
+						"done" : function(){}
+					});
+					OrderInfo.boProdAns.splice(n,1);//清楚JS中某个号码预占缓存
+				}
+			}
+		}
+		
+		$.each(OrderInfo.offerSpec.offerRoles,function(){
+			var offerRole = this;
+			if(offerRole.memberRoleCd==CONST.MEMBER_ROLE_CD.VICE_CARD){
+//			offerRole.prodInsts = []; //角色对象实例
+			for(var n=0;n<offerRole.prodInsts.length;n++){
+				if(n==(0-fkcardIndex-3)){
+					offerRole.prodInsts.splice(n);
+				}
+			}
+			}
+		});
+		
+		for(var n=0;n<AttachOffer.openAppList.length;n++){
+			if(AttachOffer.openAppList[n].prodId==prodId){
+				AttachOffer.openAppList.splice(n,1);
+			}
+		}
+		for(var n=0;n<AttachOffer.openServList.length;n++){
+			if(AttachOffer.openServList[n].prodId==prodId){
+				AttachOffer.openServList.splice(n,1);
+			}
+		}
+		for(var n=0;n<AttachOffer.openedServList.length;n++){
+			if(AttachOffer.openedServList[n].prodId==prodId){
+				AttachOffer.openedServList.splice(n,1);
+			}
+		}
+		for(var n=0;n<AttachOffer.openList.length;n++){
+			if(AttachOffer.openList[n].prodId==prodId){
+				AttachOffer.openList.splice(n,1);
+			}
+		}
+		for(var n=0;n<AttachOffer.openedList.length;n++){
+			if(AttachOffer.openedList[n].prodId==prodId){
+				AttachOffer.openedList.splice(n,1);
+			}
+		}
+		if(prodId!=-2){
+			var sp = prodId + 1;
+//			$("#span_"+sp).show();
+		}
+		$('#li_'+prodId).remove();
+		order.main.fkcardIndex = fkcardIndex + 1;
+	}
+	
+	//可订购的附属查询 
+	var _queryAttachOfferSpec = function(param) {
+		_queryAttachSpec(param,function(data){
+			if (data) {
+				$("#attach_phone_"+param.prodId).html(data);
+				AttachOffer.showMainRoleProd(param.prodId); //通过主套餐成员显示角字
+				AttachOffer.changeLabel(param.prodId,param.prodSpecId,"10001"); //初始化第一个标签附属
+				if(param.prodId==-1 && OrderInfo.actionFlag==14){ //合约计划特殊处理
+					AttachOffer.addOpenList(param.prodId,mktRes.terminal.offerSpecId);
+				}
+			}
+		});
+	};
+	
+	//附属销售品规格查询
+	var _queryAttachSpec = function(param,callBackFun) {
+		addParam(param);  //添加基本参数
+		var url = contextPath+"/agent/offer/queryAttachSpecPhone";
+		if(typeof(callBackFun)=="function"){
+			$.callServiceAsHtmlGet(url,{strParam:JSON.stringify(param)},{
+				"before":function(){
+					$.ecOverlay("<strong>正在查询附属销售品中,请稍后....</strong>");
+				},
+				"always":function(){
+					$.unecOverlay();
+				},
+				"done" : function(response){
+					if (response.code==0) {
+						if(response.data){
+							callBackFun(response.data);
+						}
+					}else if (response.code==-2){
+						$.alertM(response.data);
+						return;
+					}else {
+						$.alert("提示","附属销售品查询失败,稍后重试");
+						return;
+					}
+				}
+			});	
+		}else {
+			$.ecOverlay("<strong>查询查询附属销售品中，请稍等...</strong>");
+			var response = $.callServiceAsHtmlGet(url,{strParam:JSON.stringify(param)});	
+			$.unecOverlay();
+			if (response.code==0) {
+				if(response.data){
+					return response.data;
+				}
+			}else if (response.code==-2){
+				$.alertM(response.data);
+				return;
+			}else {
+				$.alert("提示","查询附属销售品失败,稍后重试");
+				return;
+			}
+		}
+	};
+	
+	//补充查询基本条件
+	var addParam = function(param){
+		//param.staffId = '1762126';
+		param.staffId = OrderInfo.staff.staffId;
+		//param.channelId = '1388783';
+		param.channelId	= OrderInfo.staff.channelId;
+		
+		//param.areaId = '8320102';
+		param.areaId = OrderInfo.getProdAreaId(param.prodId);
+		param.partyId = OrderInfo.cust.custId;
+		if(OrderInfo.actionFlag == 3){
+			param.mainOfferSpecId=order.prodModify.choosedProdInfo.prodOfferId;
+		}else if(OrderInfo.actionFlag==21){
+			if(ec.util.isArray(OrderInfo.viceOfferSpec)){
+				$.each(OrderInfo.viceOfferSpec,function(){
+					if(this.prodId==param.prodId){
+						param.mainOfferSpecId=this.offerSpecId;
+						return false;
+					}
+				});
+			}
+		}else{
+			param.mainOfferSpecId=OrderInfo.offerSpec.offerSpecId;
+		}
+		if(ec.util.isObj(OrderInfo.order.soNbr)){  //缓存流水号
+			param.soNbr = OrderInfo.order.soNbr;
+		}
+		else{
+			param.soNbr = UUID.getDataId();
+			OrderInfo.order.soNbr = UUID.getDataId();
+		}
+		if(order.ysl!=undefined){
+			if(order.ysl.yslbean.yslflag!=undefined){
+//				param.yslflag = order.ysl.yslbean.yslflag;
+			}
+		}
+		if(ec.util.isArray(OrderInfo.oldprodInstInfos) && OrderInfo.actionFlag==6){//主副卡纳入老用户
+			for(var i=0;i<OrderInfo.oldprodInstInfos.length;i++){
+				if(param.acctNbr==OrderInfo.oldprodInstInfos[i].accNbr){
+					param.areaId = OrderInfo.oldprodInstInfos[i].areaId;
+					param.partyId = OrderInfo.oldprodInstInfos[i].custId;
+					param.mainOfferSpecId=OrderInfo.oldprodInstInfos[i].mainProdOfferInstInfos[0].prodOfferId;
+				}
+			}
+		}
+	};
+	
 	return {
+		zjfk				: _zjfk,
+		viewZjfk            :_viewZjfk,
+		closeviewZjfk       :_closeviewZjfk,
+		qxZjfk            	:_qxZjfk,
+		closeZjfk			:_closeZjfk,
+		deleteZjfk			:_deleteZjfk,
+		fkcardIndex			: _fkcardIndex,
+		fkmaxCard			: _fkmaxCard,
 		phone_callBackBuildView		:_phone_callBackBuildView,
-		buildMainView 				:				 _buildMainView,
+		buildMainView 		: _buildMainView,
 		feeTypeCascadeChange		:				 _feeTypeCascadeChange,
-		initTounch					:				 _initTounch,
-		spec_parm					: 				 _spec_parm,
+		initTounch			: _initTounch,
+		spec_parm			: _spec_parm,
 		check_parm			: _check_parm,
 		queryScroll			: _queryScroll,
 		queryStaff			: _queryStaff,

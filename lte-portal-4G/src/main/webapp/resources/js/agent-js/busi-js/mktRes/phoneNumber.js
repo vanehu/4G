@@ -816,7 +816,7 @@ order.phoneNumber = (function(){
 	};
 	var _initPage=function(subnum,subPage){
 		var url=contextPath+"/agent/mktRes/phonenumber/prepare";
-		var param={};
+		var param={"subnum":subnum};
 		$.callServiceAsHtmlGet(url,param,{
 			"before":function(){
 				$.ecOverlay("<strong>正在查询中,请稍等会儿....</strong>");
@@ -1153,13 +1153,31 @@ order.phoneNumber = (function(){
 				$('#phonenumberContent').hide();
 		    }
 		    else{
-		    	$("#order-content").show();
+//		    	$("#order-content").show();
+		    	if($("#zjfk_"+order.main.fkcardIndex).length>0){
+					$("#zjfk_"+order.main.fkcardIndex).show();
+				}
 				$('#phonenumberContent').hide();
 		    }
 		    return;
 		   }
-		    $("#order").show();
-			$('#phonenumberContent').hide();
+		 if(OrderInfo.actionFlag==14){
+		    if(prodId == -1){
+		    	$("#order").show();
+				$('#phonenumberContent').hide();
+		    }
+		    else{
+//		    	$("#order-content").show();
+		    	$("#order").show();
+		    	if($("#zjfk_"+prodId).length>0){
+					$("#zjfk_"+prodId).show();
+				}
+				$('#phonenumberContent').hide();
+		    }
+		    return;
+		   }
+		$("#order").show();
+		$('#phonenumberContent').hide();
 	};
 	//滚动页面入口
 	var _scroll = function(scrollObj){

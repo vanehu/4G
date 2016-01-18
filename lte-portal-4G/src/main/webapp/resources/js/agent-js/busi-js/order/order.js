@@ -374,7 +374,8 @@ order.service = (function(){
 					if((offerRole.memberRoleCd==CONST.MEMBER_ROLE_CD.MAIN_CARD  ||  offerRole.memberRoleCd==CONST.MEMBER_ROLE_CD.COMMON_MEMBER)&&OrderInfo.actionFlag!=6){//主卡的接入类产品数量
 						num = 1;
 					}else{ //多成员销售品
-						num = max;  //接入类产品数量选择
+//						num = max;  //接入类产品数量选择
+						num = 0;//先不加装副卡
 					}
 					if(num==undefined || num==""){
 						num = 0;
@@ -391,7 +392,16 @@ order.service = (function(){
 						offerRole.prodInsts.push(newObject);   
 						flag = true;
 					}
-					offerRole.selQty = num;
+					if(offerRole.memberRoleCd==CONST.MEMBER_ROLE_CD.MAIN_CARD){
+						offerRole.selQty = num;
+					}else{
+						if(max==undefined || max==""){
+							max = 0;
+						}
+						offerRole.selQty = max;
+						order.main.fkmaxCard = max;
+						order.main.fkcardIndex = -2;
+					}
 				}else{ //功能类产品
 					if(this.minQty==0){
 						this.dfQty = 1;

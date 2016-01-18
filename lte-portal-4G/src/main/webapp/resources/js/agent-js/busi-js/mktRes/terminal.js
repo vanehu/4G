@@ -65,10 +65,12 @@ mktRes.terminal = (function($){
 	};
 	var _setNumber=function(num, numLevel){
 		$("#nbr_btn_-1").val(num);
-		buyChk.numFlag = true;
-		buyChk.numLevel = numLevel;
-		_chkState();
-		$("#treaty").show();
+		if(OrderInfo.actionFlag != 1){
+			buyChk.numFlag = true;
+			buyChk.numLevel = numLevel;
+			_chkState();
+			$("#treaty").show();
+		}
 	};
 
 	//滚动页面入口
@@ -1546,12 +1548,14 @@ mktRes.terminal = (function($){
 	};
 	var _selectNum=function(subnum,subPage){
 					var custId = OrderInfo.cust.custId;
-					_chkState();
+					if(OrderInfo.actionFlag != 1){
+						_chkState();
+					}
 					_initPage(subnum,subPage);
 				};
 	var _initPage=function(subnum,subPage){
 		var url=contextPath+"/agent/mktRes/phonenumber/prepare";
-		var param={};
+		var param={"subnum":subnum};
 		$.callServiceAsHtmlGet(url,param,{
 			"before":function(){
 				$.ecOverlay("<strong>正在查询中,请稍等会儿....</strong>");
@@ -1569,6 +1573,14 @@ mktRes.terminal = (function($){
 				}
 				$("#order").hide();
 				$("#order_prepare").hide();
+				if(OrderInfo.actionFlag==1){
+					if($("#order-content").length>0){
+					$("#order-content").hide();
+				}
+				}
+				if($("#zjfk_"+subnum).length>0){
+					$("#zjfk_"+subnum).hide();
+				}
 				var content$=$("#phonenumberContent");
 				content$.html(response.data).show();
 				$("#subnum").val(subnum);
@@ -1827,10 +1839,18 @@ mktRes.terminal = (function($){
 						}else if(subPage=='offer'){
 							//$("#nbr_btn_"+subnum).removeClass("selectBoxTwo");
 							//$("#nbr_btn_"+subnum).addClass("selectBoxTwoOn");
-							mktRes.terminal.setNumber(phoneNumber, response.data.phoneLevelId);
+							if(OrderInfo.actionFlag!=1){
+								mktRes.terminal.setNumber(phoneNumber, response.data.phoneLevelId);
+							}
 							$("#nbr_btn_"+subnum).val(phoneNumber);
 							if($("#fk_phoneNumber_"+subnum).length>0){
 								$("#fk_phoneNumber_"+subnum).text(phoneNumber);
+							}
+							if(OrderInfo.actionFlag==1 && $("#zjfk_"+subnum).length>0){
+								$("#zjfk_"+subnum).show();
+							}
+							if(OrderInfo.actionFlag==14 && $("#zjfk_"+subnum).length>0){
+								$("#zjfk_"+subnum).show();
 							}
 							order.phoneNumber.boProdAn.accessNumber=phoneNumber;
 							order.phoneNumber.boProdAn.level=selectedLevel;
@@ -1891,6 +1911,15 @@ mktRes.terminal = (function($){
 //							}
 							$("#order").show();
 							//$("#order_prepare").show();
+							if($("#order-content").length>0){
+								$("#order-content").hide();
+							}
+							if(OrderInfo.actionFlag==1){
+								if(subnum==-1){
+									$("#order-content").show();
+								}
+							}
+							
 							$("#phonenumberContent").hide();
 						}
 					}else if (response.code == -2) {
@@ -2473,32 +2502,6 @@ mktRes.terminal = (function($){
 		$("#zjfk_"+cardIndex).show();
 		$("#terminalMain").hide();
 		//添加一个角色
-//		var parentId = "";
-//		$.each(OrderInfo.offerSpec.offerRoles,function(){
-//			var offerRole = this;
-//			if(offerRole.memberRoleCd==CONST.MEMBER_ROLE_CD.VICE_CARD){//副卡接入类产品
-//				$.each(this.roleObjs,function(){
-//					if(this.objType == CONST.OBJ_TYPE.PROD){
-//						parentId = offerRole.parentOfferRoleId;
-//					}
-//				});
-//			}
-//		});
-//		if(ec.util.isObj(parentId)){
-//			var offerRoles = [];
-//			var parentMaxQty = 0;
-//			$.each(OrderInfo.offerSpec.offerRoles,function(){
-//				var offerRole = this;
-//				$.each(this.roleObjs,function(){
-//					if(this.objType == CONST.OBJ_TYPE.PROD){
-//						if(ec.util.isObj(offerRole.parentOfferRoleId) && parentOfferRoleId==offerRole.parentOfferRoleId){
-//							offerRoles.push(offerRole);
-//						}
-//					}
-//				});
-//			});
-//		}		
-//		var k =-2;
 		$.each(OrderInfo.offerSpec.offerRoles,function(){
 			var offerRole = this;
 			if(offerRole.memberRoleCd==CONST.MEMBER_ROLE_CD.VICE_CARD){//往副卡里面加
