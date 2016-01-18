@@ -1527,9 +1527,8 @@ AttachOffer = (function() {
 						if(ec.util.isArray(this.prodSpecParams)){
 							ifParams = "Y";
 						}
-						_addOpenServList(prodId,this.objId,this.objName,ifParams);
-						if(this.minQty>0){
-							_minQtyFileter(prodId,this.objId);
+						if(this.dfQty>0){//默认配置大于0就带出，添加到已选功能产品中
+							_addOpenServList(prodId,this.objId,this.objName,ifParams);
 						}
 					}
 				});
