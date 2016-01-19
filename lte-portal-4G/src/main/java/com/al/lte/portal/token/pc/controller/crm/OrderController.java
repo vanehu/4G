@@ -1022,7 +1022,7 @@ public class OrderController extends BaseController {
 		prams.put("areaId", sessionStaff.getCurrentAreaId());
 		prams.put("staffId", sessionStaff.getStaffId());
 		prams.put("operatorsId", sessionStaff.getOperatorsId()!=""?sessionStaff.getOperatorsId():"99999");
-		prams.put("pageSize", 50);
+		prams.put("pageSize",SysConstant.PAGE_SIZE);
 		if (sessionStaff != null) {
             Map<String, Object> map = null;
             try {
@@ -2798,7 +2798,6 @@ public class OrderController extends BaseController {
     @ResponseBody
 	public JsonResponse orderSubmit(@RequestBody Map<String, Object> param,HttpServletResponse response,HttpServletRequest request) {
 		JsonResponse jsonResponse = null;
-
 		if(commonBmo.checkToken(request, SysConstant.ORDER_SUBMIT_TOKEN)){
 			try {
 				SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);
@@ -3735,7 +3734,6 @@ public class OrderController extends BaseController {
 					//paramMap.put("areaId",provCustAreaId);
 					paramMap.put("backFlag","Y");
 					Map<String, Object> orderMap = offerBmo.queryTemporaryOrder(paramMap, null, sessionStaff);
-		
 					if(orderMap!=null){
 						String resultCode=String.valueOf(orderMap.get("resultCode"));
 						
