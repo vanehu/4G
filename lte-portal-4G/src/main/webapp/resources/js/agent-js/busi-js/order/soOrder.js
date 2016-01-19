@@ -97,7 +97,7 @@ SoOrder = (function() {
 							if(data.checkRule!=undefined && data.checkRule!="notCheckRule"){
 								var provCheckResult = order.calcharge.tochargeSubmit(response.data);
 								if(provCheckResult.code==0){
-									var returnData = (response.data);
+									var returnData = _gotosubmitOrder(response.data);
 									_orderConfirm(returnData);
 								}else{//下省校验失败也将转至订单确认页面，展示错误信息，只提供返回按钮
 									response.data.provCheckError = "Y";
@@ -156,8 +156,6 @@ SoOrder = (function() {
 	
 	var _gotosubmitOrder = function(orderdata){
 		    if(OrderInfo.actionFlag==1){
-		    	OrderInfo.returnFlag="";
-		    	OrderInfo.returnFlag="";
 		    	OrderInfo.returnFlag="";
 		    }
 			var url = contextPath+"/agent/order/gotosubmitOrder";

@@ -275,7 +275,7 @@ public class MktResBmoImpl implements MktResBmo {
 			rMap = (Map<String,Object>)db.getReturnlmap().get("result");
 			rMap.put("code", ResultCode.R_SUCCESS);
 			//UIM卡预占成功，记录新增
-			String selUimType = MapUtils.getString(dataBusMap, "selUimType", "");
+			String selUimType = MapUtils.getString(dataBusMap, "selUimType", "1"); // 强商没有卡类型 所以设置默认值为1 预制卡
 			if("1".equals(selUimType)){//2表示预制卡
 				modifyNumToRelease(interMap, newInstCode, "2", sessionStaff, optFlowNum);
 			}else{//3表示空白卡
