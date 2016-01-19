@@ -357,6 +357,7 @@ order.phoneNumber = (function(){
 					OrderInfo.boCustInfos.telNumber=phoneNumber;
 				}
 				$("#order_content").show();
+				$("#order-content").show();
 				//$("#order_prepare").show();
 				$("#phonenumberContent").hide();
 			}
