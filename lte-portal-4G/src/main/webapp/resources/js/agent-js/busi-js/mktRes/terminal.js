@@ -1620,7 +1620,7 @@ mktRes.terminal = (function($){
 		var idcode=$.trim($("#idCode").val());
 		var url = contextPath+"/agent/mktRes/phonenumber/list_fk";
 		if(idcode!=''){
-		    _btnIBydentityQuery();
+			order.phoneNumber.btnIBydentityQuery();
 			return;
 		}
 		selectedObj=null;//初始化原先选中的号码
