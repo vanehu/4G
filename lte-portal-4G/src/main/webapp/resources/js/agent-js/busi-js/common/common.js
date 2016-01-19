@@ -227,6 +227,25 @@ common = (function($) {
 			return;
 		}
 		if(OrderInfo.order.step==1){
+			//补换卡返回释放uim卡
+			if(OrderInfo.actionFlag==22){
+				var boProd2Tds = OrderInfo.boProd2Tds;
+				//取消订单时，释放被预占的UIM卡
+				if(boProd2Tds.length>0){
+					for(var n=0;n<boProd2Tds.length;n++){
+						var param = {
+								numType : 2,
+								numValue : boProd2Tds[n].terminalCode
+						};
+						$.callServiceAsJson(contextPath+"/agent/mktRes/phonenumber/releaseErrorNum", param, {
+							"done" : function(){}
+						});
+					}
+				}
+				_callCloseWebview();
+				return;
+			}
+			//
 			if(OrderInfo.actionFlag==1){
 				order.main.lastStep(function(){
 					_callCloseWebview();
@@ -276,7 +295,7 @@ common = (function($) {
 				$("#order-confirm").hide();
 				$("#order_fill_content").show();
 				$("#isCheck_Card").css("display","none");
-				OrderInfo.order.step = 2;
+				OrderInfo.order.step = 1;
 				return;
 			}
 			//如果是购手机，返回购手机订单页
