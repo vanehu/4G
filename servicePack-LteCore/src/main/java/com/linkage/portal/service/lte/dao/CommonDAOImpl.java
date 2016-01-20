@@ -305,10 +305,14 @@ public class CommonDAOImpl implements CommonDAO {
 	        		jdbc.update(sb4.toString(),sb4ParamObj,sb4ParamType);
 	        		
 	        		ArrayList<Object> dealerlist = new ArrayList<Object>();
-	        		for (String k : ((HashMap<String, Object>) param.get("dealerMap")).keySet()) {
-	        			dealerlist.add(((HashMap<String, Object>) param.get("dealerMap")).get(k));
-					}
-//	        		List dealerlist = (List)param.get("dealerMap");
+	        		//翼销售get("dealerMap")结点为HsahMap,4G为List，分支兼容
+	        		if(param.get("dealerMap") instanceof List){
+		        		dealerlist = (ArrayList)param.get("dealerMap");
+	        		}else{
+	        			for (String k : ((HashMap<String, Object>) param.get("dealerMap")).keySet()) {
+	        				dealerlist.add(((HashMap<String, Object>) param.get("dealerMap")).get(k));
+	        			}
+	        		}
 	        		for (int x=0;x<dealerlist.size();x++){
 	        			Map dealermap = (Map)dealerlist.get(x);
 	        			if(dealermap.get("detype").toString().equals(offermap.get("type").toString()) && dealermap.get("dename").toString().equals(offermap.get("name").toString())){
@@ -408,11 +412,15 @@ public class CommonDAOImpl implements CommonDAO {
 			
 			//终端预约订单属性，关联agent_portal_config表
 			if (param.containsKey("terminalinfo")) {
-				ArrayList<Object> terminalinfolist = new ArrayList<Object>();
-				for (String k : ((HashMap<String, Object>) param.get("terminalinfo")).keySet()) {
-					terminalinfolist.add(((HashMap<String, Object>) param.get("terminalinfo")).get(k));
-				}
-//				List terminalinfolist = (List)param.get("terminalinfo");
+				ArrayList<Object> terminalinfolist = new ArrayList<Object>();				
+				//翼销售get("terminalinfo")结点为HsahMap,4G为List，分支兼容
+        		if(param.get("terminalinfo") instanceof List){
+        			terminalinfolist = (ArrayList)param.get("terminalinfo");
+        		}else{
+        			for (String k : ((HashMap<String, Object>) param.get("terminalinfo")).keySet()) {
+    					terminalinfolist.add(((HashMap<String, Object>) param.get("terminalinfo")).get(k));
+    				}
+        		}			
 				for(int i=0;i<terminalinfolist.size();i++){
 					Map termap = (Map)terminalinfolist.get(i);
 					String sql = "INSERT INTO PRESO_ORDER_ATTR(CUST_ORDER_ID,ATTR_ID,ATTR_VALUE_ID,VALUE) VALUES(?,?,'',?)";
