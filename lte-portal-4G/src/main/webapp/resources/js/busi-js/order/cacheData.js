@@ -114,29 +114,80 @@ CacheData = (function() {
 		var content = '<form id="paramForm"><table>' ;
 		if(flag==2){  //功能产品规格参数
 			if(ec.util.isArray(spec.prodSpecParams)){ //拼接功能产品规格参数
+				if(spec.servSpecId == 13409940){//根据属性ID排序，方便展示，暂时只为亲情功能产品
+				spec.prodSpecParams = spec.prodSpecParams.sort(
+			                function(a, b){
+			                    if(a.itemSpecId < b.itemSpecId) return -1;
+			                    if(a.itemSpecId > b.itemSpecId) return 1;
+			                    return 0;});
+				}
 				for (var i = 0; i < spec.prodSpecParams.length; i++) { 
 					var param = spec.prodSpecParams[i];
+					var qinqingNumberFlag = 0;//亲情号码功能产品标识，根据亲情号码最大可订购数是否存在判断，存放最大可订购数，0为不存在
 					if(param.value==undefined){
 						param.value = "";
 					}
-					content += _getStrByParam(prodId,param,spec.servSpecId,param.itemSpecId,param.value);
+					for (var k = 0; k < spec.prodSpecParams.length; k++) { 
+						var paramTemp = spec.prodSpecParams[k];
+						if(paramTemp.itemSpecId==10020070){
+							if(ec.util.isObj(paramTemp.setValue)){
+								qinqingNumberFlag = paramTemp.setValue;
+							}else{
+								qinqingNumberFlag = paramTemp.value;
+							}
+						}
+					}
+					if(ec.util.isObj(qinqingNumberFlag)){
+						qinqingNumberFlag = Number(qinqingNumberFlag);//转成数字，不然下面加10020059会出问题
+					}
+					//当存在亲情号码功能产品，将大于亲情号码最大可订购数的亲情号码不展示输入框
+					if(!(qinqingNumberFlag!=0&&param.itemSpecId>=10020059&&param.itemSpecId<=10020068&&param.itemSpecId>=10020059+qinqingNumberFlag)){
+						content += _getStrByParam(prodId,param,spec.servSpecId,param.itemSpecId,param.value);
+					}					
 				}
 			}
 		}else if(flag==3){ //功能产品实例参数
 			if(ec.util.isArray(spec.prodSpecParams)){ //拼接功能产品规格参数
+				if(spec.servSpecId == 13409940){//根据属性ID排序，方便展示，暂时只为亲情功能产品
+					spec.prodSpecParams = spec.prodSpecParams.sort(
+				                function(a, b){
+				                    if(a.itemSpecId < b.itemSpecId) return -1;
+				                    if(a.itemSpecId > b.itemSpecId) return 1;
+				                    return 0;});
+					}
 				for (var i = 0; i < spec.prodSpecParams.length; i++) { 
 					var param = spec.prodSpecParams[i];
+					var qinqingNumberFlag = 0;//亲情号码功能产品标识，根据亲情号码最大可订购数是否存在判断，存放最大可订购数，0为不存在
 					if(ec.util.isArray(spec.prodInstParams)){ //拼接功能产品实例参数
 						$.each(spec.prodInstParams,function(){
 							if(this.itemSpecId==param.itemSpecId){
 								param.value = this.value;
 							}
+							if(this.itemSpecId==10020070){//亲情号码最大可订购ID
+								for (var k = 0; k < spec.prodSpecParams.length; k++) { 
+									var paramTemp = spec.prodSpecParams[k];
+									if(paramTemp.itemSpecId==10020070){
+										paramTemp.value = this.value;
+										if(ec.util.isObj(paramTemp.setValue)){
+											qinqingNumberFlag = paramTemp.setValue;
+										}else{
+											qinqingNumberFlag = paramTemp.value;
+										}
+									}
+								}
+							}
 						});
 					}
 					if(param.value==undefined){
 						param.value = "";
+					}					
+					//当存在亲情号码功能产品，将大于亲情号码最大可订购数的亲情号码不展示输入框
+					if(ec.util.isObj(qinqingNumberFlag)){
+						qinqingNumberFlag = Number(qinqingNumberFlag);//转成数字，不然下面加10020059会出问题
 					}
-					content += _getStrByParam(prodId,param,spec.servSpecId,param.itemSpecId,param.value);
+					if(!(qinqingNumberFlag!=0&&param.itemSpecId>=10020059&&param.itemSpecId<=10020068&&param.itemSpecId>=10020059+qinqingNumberFlag)){
+						content += _getStrByParam(prodId,param,spec.servSpecId,param.itemSpecId,param.value);
+					}					
 				}
 			}
 		} else if(flag==1){  //销售品实例参数

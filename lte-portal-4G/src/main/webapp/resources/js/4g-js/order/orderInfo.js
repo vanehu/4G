@@ -750,7 +750,7 @@ OrderInfo = (function() {
 			busiOrder.busiObj.accessNumber = accNbr;
 		}
 		
-		if(prodServ.boActionTypeCd == CONST.BO_ACTION_TYPE.PRODUCT_PARMS){ //改产品属性,mark
+		if(prodServ.boActionTypeCd == CONST.BO_ACTION_TYPE.PRODUCT_PARMS){ //改产品属性
 			if(ec.util.isArray(prodServ.prodSpecParams)){
 				busiOrder.data.boServOrders = [];
 				busiOrder.data.boServOrders.push({

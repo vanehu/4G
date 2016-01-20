@@ -3080,14 +3080,54 @@ AttachOffer = (function() {
 			});
 			$('#paramForm').bind('formIsValid', function(event, form) {
 				var isset = false;
-				$.each(serv.prodSpecParams,function(){
-					var prodItem = CacheData.getServInstParam(prodId,serv.servId,this.itemSpecId);
-					prodItem.setValue = $("#"+prodId+"_"+this.itemSpecId).val();	
-					if(prodItem.value!=prodItem.setValue){
-						prodItem.isUpdate = "Y";
-						isset = true;
+				for(var i = 0;i<serv.prodSpecParams.length;i++){
+//				$.each(serv.prodSpecParams,function(){
+					var prodItem = CacheData.getServInstParam(prodId,serv.servId,serv.prodSpecParams[i].itemSpecId);
+					var thisValue = $("#"+prodId+"_"+serv.prodSpecParams[i].itemSpecId).val();
+					//十个亲情号码的属性ID进行输入校验
+					/*
+					国内，省内亲情：
+					1［3，5，7，8]＋9位数字
+					或者0开头的12或者11位数字
+					或者非0开头的8位或者7位数字
+					市内亲情：
+					1［3，5，7，8]＋9位数字
+					或者非0开头的8位或者7位数字
+					*/
+					if(serv.prodSpecParams[i].itemSpecId>=10020059&&serv.prodSpecParams[i].itemSpecId<=10020068){
+						var theValue = $.trim(thisValue);
+						if(theValue!=""){
+							var munberType = $("#"+prodId+"_10020069").val();
+							var munberMask = "";
+							var munberTypeStr = "";
+							if(munberType==10){//市内
+								munberMask = /^(1[3578]\d{9}|0\d{11}|0\d{9}|[1-9]\d{7}|[1-9]\d{6})$/;
+								munberTypeStr = "市内";
+							}else if(munberType==20){//国内
+								munberMask = /^(1[3578]\d{9}|[1-9]\d{7}|[1-9]\d{6})$/;
+								munberTypeStr = "国内";
+							}else if(munberType==30){//省内
+								munberMask = /^(1[3578]\d{9}|[1-9]\d{7}|[1-9]\d{6})$/;
+								munberTypeStr = "省内";
+							}else{
+								$.alert("错误提示","返回亲情号码类型有误，请刷新后重试！");
+								return;
+							}
+							if(!munberMask.test(theValue)){
+								$.alert("提示",serv.prodSpecParams[i].name+"不符合"+munberTypeStr+"号码规则,请确认后重新输入！");
+								return	;
+							}
+						}
 					}
-				});
+					prodItem.setValue = thisValue;
+					if(prodItem.value!=prodItem.setValue){
+						if(!(prodItem.itemSpecId>=10020059&&prodItem.itemSpecId<=10020068&&prodItem.setValue==undefined)){//亲情功能产品属性中超过可订购数的不判断是否更新
+							prodItem.isUpdate = "Y";
+							isset = true;
+						}
+					}
+//				});
+				}
 				if(isset){
 					$("#can_"+prodId+"_"+serv.servId).removeClass("canshu").addClass("canshu2");
 					serv.isset = "Y";
@@ -3099,8 +3139,7 @@ AttachOffer = (function() {
 				}
 				$(".ZebraDialog").remove();
                 $(".ZebraDialogOverlay").remove();
-			}).ketchup({bindElementByClass:"ZebraDialog_Button1"});
-		
+			}).ketchup({bindElementByClass:"ZebraDialog_Button1"});	
 		}else {
 			var spec = CacheData.getServSpec(prodId,servSpecId);
 			if(spec == undefined){  //未开通的附属销售品，需要获取销售品构成
@@ -3149,8 +3188,42 @@ AttachOffer = (function() {
 				if(!!spec.prodSpecParams){
 					for (var i = 0; i < spec.prodSpecParams.length; i++) {
 						var param = spec.prodSpecParams[i];
+						var thisValue = $.trim($("#"+prodId+"_"+param.itemSpecId).val());
+						if(param.itemSpecId>=10020059&&param.itemSpecId<=10020068){//十个亲情号码的属性ID进行输入校验
+							/*
+							国内,省内亲情：
+							1［3，5，7，8]＋9位数字
+							或者0开头的12或者11位数字
+							或者非0开头的8位或者7位数字
+							市内亲情：
+							1［3，5，7，8]＋9位数字
+							或者非0开头的8位或者7位数字
+							*/
+							var munberType = $("#"+prodId+"_10020069").val();
+							if(thisValue!=""&&thisValue!=undefined){
+								var munberMask;
+								var munberTypeStr = "";
+								if(munberType==10){//市内
+									munberMask = /^(1[3578]\d{9}|0\d{11}|0\d{9}|[1-9]\d{7}|[1-9]\d{6})$/;
+									munberTypeStr = "市内";
+								}else if(munberType==20){//国内
+									munberMask = /^(1[3578]\d{9}|[1-9]\d{7}|[1-9]\d{6})$/;
+									munberTypeStr = "国内";
+								}else if(munberType==30){//省内
+									munberMask = /^(1[3578]\d{9}|[1-9]\d{7}|[1-9]\d{6})$/;
+									munberTypeStr = "省内";
+								}else{
+									$.alert("错误提示","返回亲情号码类型有误，请刷新后重试！");
+									return;
+								}
+								if(!munberMask.test(thisValue)){
+									$.alert("提示",param.name+"不符合"+munberTypeStr+"号码规则,请确认后重新输入！");
+									return ;
+								}
+							}
+						}
 						var itemSpec = CacheData.getServSpecParam(prodId,servSpecId,param.itemSpecId);
-						itemSpec.setValue = $("#"+prodId+"_"+param.itemSpecId).val();
+						itemSpec.setValue = thisValue;
 					}
 				}
 				$("#can_"+prodId+"_"+servSpecId).removeClass("canshu").addClass("canshu2");
@@ -4024,6 +4097,7 @@ AttachOffer = (function() {
 		$.each(newSpec.offerRoles,function(){
 			$.each(this.roleObjs,function(){
 				if(this.objType==4 && this.selQty==1){
+				     var offerProdSpecParams = this.prodSpecParams;
 						var servSpec = CacheData.getServSpec(prodId,this.objId); //在已选列表中查找
 						if(servSpec==undefined){   //在可订购功能产品里面 
 							var serv = CacheData.getServBySpecId(prodId,this.objId); //在已开通列表中查找
@@ -4036,13 +4110,97 @@ AttachOffer = (function() {
 										prodSpecParams : this.prodSpecParams,
 										isdel : "C"   //加入到缓存列表没有做页面操作为C
 								};
+								if(ec.util.isArray(this.prodSpecParams)){
+									newServSpec.ifParams ="Y";
+								}
 								CacheData.setServSpec(prodId,newServSpec); //添加到已开通列表里
 								servSpec = newServSpec;
 							}else{
+							    if(serv.servSpecId == 13409940){//亲情号码功能产品属性先查出来 mark
+									var param = {
+											prodId : serv.servId,
+											ifServItem:"Y"
+									};
+									if(!serv.isGetParamSpec){  //已订购附属没有参数，需要获取销售品参数	
+										param.prodSpecId = serv.servSpecId;
+										var dataSepc = query.prod.prodSpecParamQuery(param); //重新获取销售品参数
+										if(dataSepc==undefined){
+											return;
+										}else{
+											serv.prodSpecParams = dataSepc.result.prodSpecParams;
+											serv.isGetParamSpec = true;
+										}
+									}
+									if(!serv.isGetParamInst){  //已订购附属没有参数，需要获取销售品参数
+										var data = query.prod.prodInstParamQuery(param); //重新获取销售品参数
+										if(data==undefined){
+											return;
+										}else{
+											serv.prodInstParams = data.result.prodInstParams;
+											serv.isGetParamInst = true;
+										}
+									}
+								}
 								servSpec=serv;
 							}
 						}
 						var servSpecId = servSpec.servSpecId;
+						if(servSpecId == 13409940){//亲情号码功能产品属性依赖与当前选中可选包属性来展示 mark			
+							if(ec.util.isArray(servSpec.prodSpecParams)){
+								if(ec.util.isArray(offerProdSpecParams)){//先遍历新可选包亲情成员的属性是否比原来的多，多的加入，并把属性置为“”
+									if(offerProdSpecParams.length>servSpec.prodSpecParams.length){
+										for(var k = 0;k<offerProdSpecParams.length;k++){
+											var hasSpecParam = false;
+											for(var l = 0;l<servSpec.prodSpecParams.length;l++){
+												if(offerProdSpecParams[k].itemSpecId == servSpec.prodSpecParams[l].itemSpecId){
+														hasSpecParam = true;				
+													}
+												}
+											if(!hasSpecParam){
+												var offerProdSpecParamK= offerProdSpecParams[k];
+												offerProdSpecParamK.value = "";
+												servSpec.prodSpecParams.push(offerProdSpecParamK);
+											}
+										}
+									}
+								}							
+								var prodSpecParamFlag = false;//亲情属性是否有变动标识
+								$.each(servSpec.prodSpecParams,function(){
+									if(ec.util.isArray(servSpec.prodInstParams)){
+										for(var k = 0;k<servSpec.prodInstParams.length;k++){
+											if(servSpec.prodInstParams[k].itemSpecId == this.itemSpecId){
+												this.value = servSpec.prodSpecParams[k].value;
+											}
+										}
+									}
+									if(ec.util.isArray(offerProdSpecParams)){//属性在新可选包成员属性的中是否存在，存在就将新属性设置为修改的属性。不存在就将属性修改为空
+										var setValueFlag = false;//属性在新可选包成员属性的中是否存在标识
+										for(var k = 0;k<offerProdSpecParams.length;k++){										
+											if(offerProdSpecParams[k].itemSpecId == this.itemSpecId){
+												var offerProdSpecParamValue = this.value;//原来的值
+												if(this.setValue!=undefined) offerProdSpecParamValue = this.setValue;
+												if(offerProdSpecParams[k].value != offerProdSpecParamValue){												
+													this.isUpdate = "Y";
+													this.setValue = offerProdSpecParams[k].value;
+													prodSpecParamFlag = true;											
+												}
+												setValueFlag = true;
+											}
+										}
+										if(!setValueFlag){//不存在就把属性修改为“”，并标识为已修改
+											if(!ec.util.isObj(this.value)){
+												this.isUpdate = "Y";
+												this.setValue = "";
+												prodSpecParamFlag = true;				
+											}
+										}
+									}
+								});
+								if(prodSpecParamFlag){//属性修改
+									servSpec.update = "Y";
+								}
+							}						
+						}
 						var param = CacheData.getExcDepServParam(prodId,servSpecId);
 						if(param.orderedServSpecIds.length == 0){
 //							AttachOffer.addOpenServList(prodId,servSpecId,servSpec.servSpecName,servSpec.ifParams);
