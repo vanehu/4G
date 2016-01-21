@@ -533,9 +533,9 @@ public class CommonDAOImpl implements CommonDAO {
             Object[] subParamObj = ArrayUtils.subarray(sbParamObj, 0, k);
             int[] subParamType = ArrayUtils.subarray(sbParamType, 0, k);
             
-            
 	        rList = jdbc.queryForList(sb1.toString(),subParamObj,subParamType);
-	        int totalCnt = jdbc.queryForInt(sb2.toString(),subParamObj,subParamType);
+//	        int totalCnt = jdbc.queryForInt(sb2.toString(),subParamObj,subParamType);
+	        int totalCnt = jdbc.queryForInt(sb2.toString(),ArrayUtils.subarray(sbParamObj, 0, k-2),ArrayUtils.subarray(sbParamType, 0, k-2));
 	        reallmap.put("orderLists", rList);
 	        reallmap.put("totalCnt", totalCnt);
     	}else{
