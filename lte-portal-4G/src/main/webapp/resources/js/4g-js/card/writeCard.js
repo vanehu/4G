@@ -1039,15 +1039,15 @@ order.writeCard = (function(){
 			_rscJson.iccid = _rscJson.iccid.substr(0,_rscJson.iccid.length-1);
 		}
 		$("#uim_txt_"+_rscJson.prodId).val($("#resultCardAsciiFStr").val());
-		var resp = $.callServiceAsJson(contextPath+"/mktRes/terminal/infoQueryByCode", {instCode:_cardInfoJson.serialNumber});//mark 根据串码获取卡类型
+		var resp = $.callServiceAsJson(contextPath+"/mktRes/terminal/infoQueryByCode", {instCode:_cardInfoJson.serialNumber,"areaId": OrderInfo.getProdAreaId(_rscJson.prodId)});//mark 根据串码获取卡类型，异地补换卡，获取产品的地区
 		if(resp.code ==0&&ec.util.isObj(resp.data.mktResBaseInfo)&&ec.util.isObj(resp.data.mktResBaseInfo.mktResId)){
 			result.mktResId = resp.data.mktResBaseInfo.mktResId;
 		}else{
 			if(ec.util.isObj(resp.data.resultMsg)){
-				$.alert("信息提示","根据串码："+_cardInfoJson.serialNum+"获取卡类型失败！失败原因："+resp.data.resultMsg);
+				$.alert("信息提示","根据串码："+_cardInfoJson.serialNumber+"获取卡类型失败！失败原因："+resp.data.resultMsg);
 				return ;
 			}else{
-				$.alert("信息提示","根据串码："+_cardInfoJson.serialNum+"获取卡类型失败！失败原因未返回！");
+				$.alert("信息提示","根据串码："+_cardInfoJson.serialNumber+"获取卡类型失败！失败原因未返回！");
 				return ;
 			}				
 		}
