@@ -1106,18 +1106,25 @@ public class MktResController extends BaseController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/terminal/mktplan", method = RequestMethod.GET)
 	public String termainlPlanOffer(@RequestParam("mktResCd") int mktResCd,
-			@RequestParam("agreementType") int agreementType, Model model,
+			@RequestParam("agreementType") int agreementType,
+			@RequestParam("offerSpecId") String offerSpecId,
+			@RequestParam("offerSpecName") String offerSpecName,
+			Model model,
 			@LogOperatorAnn String flowNum, HttpServletResponse response) {
 		SessionStaff sessionStaff = (SessionStaff) ServletUtils
 				.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
 		Map<String, Object> paramMap = new HashMap<String, Object>();
 		try {
+			paramMap.put("offerSpecId", offerSpecId);
+			paramMap.put("ifQS", "Y");
 			paramMap.put("mktResCd", mktResCd);
 			paramMap.put("agreementType", agreementType);
 			paramMap.put("areaId", sessionStaff.getCurrentAreaId());
 			paramMap.put("staffId", sessionStaff.getStaffId());
 			paramMap.put("channelId", sessionStaff.getCurrentChannelId());
 			model.addAttribute("agreementType", agreementType);
+			model.addAttribute("tc_offerSpecId", offerSpecId);
+			model.addAttribute("tc_offerSpecName", offerSpecName);
 			
 			Map<String, Object> offerByMtkResCdMap = mktResBmo
 					.queryOfferByMtkResCd(paramMap, flowNum, sessionStaff);
@@ -1527,9 +1534,12 @@ public class MktResController extends BaseController {
 						SysConstant.SESSION_KEY_LOGIN_STAFF);
 		try {
 			mktInfo.put("channelId", sessionStaff.getCurrentChannelId());
+			mktInfo.put("receiveFlag","1");
+			mktInfo.put("staffId",sessionStaff.getStaffId());
+			mktInfo.put("channelName",sessionStaff.getCurrentChannelName());
 			String offerSpecName = MapUtils.getString(mktInfo, "offerSpecName")==null?" ":MapUtils.getString(mktInfo, "offerSpecName");
 			mktInfo.remove("offerSpecName");
-			Map<String, Object> mktRes = mktResBmo.checkTerminalCode(
+			Map<String, Object> mktRes = mktResBmo.checkTerminalCodeForAgent(
 					mktInfo, flowNum, sessionStaff);
 			if (MapUtils.isNotEmpty(mktRes)) {
 				if(ResultCode.R_SUCC.equals(MapUtils.getString(mktRes, "code"))){

@@ -19,23 +19,8 @@ order.service = (function(){
 	var current="";
 	//列表导航切换
 	var _tabChange=function(obj){
-		if(current!=obj){
-			var btn=$(".btn-group button");
-			$.each(btn,function(){
-				if(obj==this){
-					$("#qryStr").val($(this).attr("value"));
-					_searchPack();
-					current=obj;
-					$(this).removeClass("btn btn-default");
-					$(this).removeClass("btn btn-default active");
-					$(this).addClass("btn btn-default btn-group-active");
-				}else{
-					$(this).removeClass("btn btn-default active");
-					$(this).removeClass("btn btn-default btn-group-active");
-					$(this).addClass("btn btn-default");
-				}
-			});
-		}
+		$("#qryStr").val($(obj).val());
+		_searchPack();
 	};
 	
 	//主套餐查询
@@ -99,6 +84,9 @@ order.service = (function(){
 		}
 		params.prodId = flag;
 		var url = contextPath+"/agent/order/offerSpecList";
+		if(OrderInfo.actionFlag == 14){
+			url = contextPath+"/agent/order/phone_offerSpecList";
+		}
 		$("#pakeage").show();
 		$("#pakeage").attr("class","tab-pane fade in active");
 		$.callServiceAsHtmlGet(url,params, {
@@ -401,6 +389,9 @@ order.service = (function(){
 						offerRole.selQty = max;
 						order.main.fkmaxCard = max;
 						order.main.fkcardIndex = -2;
+						if(OrderInfo.actionFlag==1){
+							$("#max_num").text(max);//显示最大副卡数量
+						}
 					}
 				}else{ //功能类产品
 					if(this.minQty==0){

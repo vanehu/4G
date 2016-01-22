@@ -14,6 +14,7 @@ mktRes.terminal = (function($){
 	var hy_flag;
 	var cardIndex = -2;//标记副卡序号
 	var maxCard = 0;
+	var hytcmc = "";
 	/**
 	 * 校验是否可以进入下一步
 	 */
@@ -503,7 +504,8 @@ mktRes.terminal = (function($){
 	/**
 	 * 切换终端颜色
 	 */
-	var _selectColor=function(obj){
+	var _selectColor=function(id){
+		var obj = $("#"+id);
 		var p_pic				=$(obj).attr("p_pic");
 		var mktResName			=$(obj).attr("mktResName");
 		var mktSalePrice		=$(obj).attr("mktSalePrice");
@@ -562,9 +564,55 @@ mktRes.terminal = (function($){
 		$(obj).addClass("active");
 		buyChk.hyFlag = true;
 		_chkState();
+		_offePre();
+//		var param={
+//				"mktResCd":$("#mktResId").val(),
+//				"agreementType":agreementType
+//		};
+//		var url=contextPath+"/agent/mktRes/terminal/mktplan";
+//		$.callServiceAsHtmlGet(url,param,{
+//			"before":function(){
+//			},
+//			"always":function(){
+//			},
+//			"done" : function(response){
+//				if(!response){
+//					$.alert("提示","<br/>处理失败，请稍后重试！");
+//					return;
+//				}
+//				if(response.code != 0) {
+//					if (response.code == 1006){
+//						$.alert("提示","<br/>查询不到，请稍后重试");
+//					} else {								
+//						$.alert("提示","<br/>查询失败，请稍后重试");
+//					}
+//					return;
+//				}
+//				$("#div_offer").html(response.data).show();
+//				$.refresh($("#div_offer"));
+//				$("#terminalMain").hide();
+//				var offerSpecId=$("#select_offerSpecId_0").val();
+//				_queryOffer(offerSpecId,agreementType);
+//				//绑定确定按钮click事件
+//				$("#termOfferSpecConfirm").off("click").on("click",function(event){
+//					_selectPlan();
+//				});
+//			}
+//		});
+	};
+	
+	var _selectTc=function(offerSpecId,offerSpecName){
+		var agreementType = 1;
+		if (buyChk.hyType == 'cfsj') {
+			agreementType = 1;
+		} else {
+			agreementType = 2;
+		}
 		var param={
 				"mktResCd":$("#mktResId").val(),
-				"agreementType":agreementType
+				"agreementType":agreementType,
+				"offerSpecId":offerSpecId,
+				"offerSpecName":offerSpecName
 		};
 		var url=contextPath+"/agent/mktRes/terminal/mktplan";
 		$.callServiceAsHtmlGet(url,param,{
@@ -579,7 +627,7 @@ mktRes.terminal = (function($){
 				}
 				if(response.code != 0) {
 					if (response.code == 1006){
-						$.alert("提示","<br/>查询不到，请稍后重试");
+						$.alert("提示","<br/>查询不到合约");
 					} else {								
 						$.alert("提示","<br/>查询失败，请稍后重试");
 					}
@@ -587,9 +635,9 @@ mktRes.terminal = (function($){
 				}
 				$("#div_offer").html(response.data).show();
 				$.refresh($("#div_offer"));
-				$("#terminalMain").hide();
-				var offerSpecId=$("#select_offerSpecId_0").val();
-				_queryOffer(offerSpecId,agreementType);
+				$("#offer-prepare").hide();
+//				var offerSpecId=$("#select_offerSpecId_0").val();
+//				_queryOffer(offerSpecId,agreementType);
 				//绑定确定按钮click事件
 				$("#termOfferSpecConfirm").off("click").on("click",function(event){
 					_selectPlan();
@@ -597,21 +645,24 @@ mktRes.terminal = (function($){
 			}
 		});
 	};
+	
 	/**
 	 * 切换合约
 	 */
 	_changeHyContent=function(obj,agreementType){
-		var offerSpecId=$(obj).val();
+		var offerSpecId=$(obj).attr("title");
+		$(".success").removeClass("success");
+		$(obj).addClass("success");
 		_queryOffer(offerSpecId,agreementType);
 	};
 	/**
 	 * 切换话补或者机补比例
 	 */
-	_changePeriod=function(obj,agreementType){
-		var tabIndex=$(obj).val();
-		$("#tab_content .itemMain").hide();
+	_changePeriod=function(ti,agreementType){
+		var tabIndex=ti;
+		$(".itemMain").hide();
 		$("#tab_content_"+tabIndex).show();
-		_changeHyContent($("#select_offerSpecId_"+tabIndex),agreementType);
+//		_changeHyContent($("#select_offerSpecId_"+tabIndex),agreementType);
 	};
 	/**
 	 * 查询套餐后生成展示内容
@@ -619,66 +670,78 @@ mktRes.terminal = (function($){
 	var _queryOffer=function(offerSpecId, agreementType){
 		//调用order.js中的方法获得主销售品规格
 		$("#select_offerSpecId").val(offerSpecId);
-		var response = order.service.queryPackForTerm(offerSpecId, agreementType, '');
-		if (typeof(response) == "undefined" || response==null){
-			$.alert("提示","<br/>未查到套餐，请稍后再试！");
-			return;
-		}
-		if (response.code == -2){
-			$.alertM(response.data);
-			$.unecOverlay();
-			return;
-		}
-		if(response.code != 0 || response.data.code != "POR-0000"){
-			$.alert("提示","<br/>未查到合适套餐，请稍后再试！");
-			return;
-		}
-		var offerHtml="<table class='table table-striped tablecenter'>";
-		offerHtml+="  <thead>";
-		offerHtml+="    <tr>";
-		offerHtml+="      <th>套餐名称</th>";
-		offerHtml+="    </tr>";
-		offerHtml+="  </thead>";
-		offerHtml+="  <tbody class='panel-group'>";
-		var offerInfos = response.data.prodOfferInfos;
-		if (offerInfos.length == 0) {
-			$.alert("提示","<br/>未查到套餐，请稍后再试！");
-		}
-		for(var i=0;i<offerInfos.length;i++){
-			var offer = offerInfos[i];
-			var inFlux = '';
-			if (offer.inFlux >= 1024) {
-				inFlux = offer.inFlux / 1024 + 'G';
-			} else {
-				inFlux = offer.inFlux + 'M';
-			}
-			var inVoice=ec.util.defaultStr(offer.inVoice);
-			var inWIFI=ec.util.defaultStr(offer.inWIFI);
-			var inSMS=ec.util.defaultStr(offer.inSMS);
-			var inMMS=ec.util.defaultStr(offer.inMMS);
-			var outFlux=ec.util.defaultStr(offer.outFlux);
-			var outVoice=ec.util.defaultStr(offer.outVoice);
-			
-			offerHtml+="<tr offerSpecId='"+offer.offerSpecId+"'";
-			offerHtml+=" offerSpecName='"+offer.offerSpecName+"'";
-			offerHtml+=" price='"+offer.price+"'";
-			offerHtml+=" inWIFI='"+inWIFI+"'";
-			offerHtml+=" inFlux='"+inFlux+"'";
-			offerHtml+=" inSMS='"+inSMS+"'";
-			offerHtml+=" inMMS='"+inMMS+"'";
-			offerHtml+=" outFlux='"+outFlux+"'";
-			offerHtml+=" outVoice='"+outVoice+"'";
-			offerHtml+=" inVoice='"+inVoice+"'>";
-			offerHtml+=" <td>"+ec.util.defaultStr(offer.offerSpecName)+"</td>";
-			offerHtml+="</tr>";
-		}
-		offerHtml+="  </tbody>";
-		offerHtml+="  </table>";
-		
-		$("#offerSecond").html(offerHtml);
-		$.refresh($("#offerSecond"));
-		$("#offerSecond tbody tr").off("click").on("click",function(event){_linkSelectPlan(this);event.stopPropagation();});
+		_selectTc_hy("");
+//		var response = order.service.queryPackForTerm(offerSpecId, agreementType, '');
+//		if (typeof(response) == "undefined" || response==null){
+//			$.alert("提示","<br/>未查到套餐，请稍后再试！");
+//			return;
+//		}
+//		if (response.code == -2){
+//			$.alertM(response.data);
+//			$.unecOverlay();
+//			return;
+//		}
+//		if(response.code != 0 || response.data.code != "POR-0000"){
+//			$.alert("提示","<br/>未查到合适套餐，请稍后再试！");
+//			return;
+//		}
+//		var offerHtml="<table class='table table-striped tablecenter'>";
+//		offerHtml+="  <thead>";
+//		offerHtml+="    <tr>";
+//		offerHtml+="      <th>套餐名称</th>";
+//		offerHtml+="    </tr>";
+//		offerHtml+="  </thead>";
+//		offerHtml+="  <tbody class='panel-group'>";
+//		var offerInfos = response.data.prodOfferInfos;
+//		if (offerInfos.length == 0) {
+//			$.alert("提示","<br/>未查到套餐，请稍后再试！");
+//		}
+//		for(var i=0;i<offerInfos.length;i++){
+//			var offer = offerInfos[i];
+//			var inFlux = '';
+//			if (offer.inFlux >= 1024) {
+//				inFlux = offer.inFlux / 1024 + 'G';
+//			} else {
+//				inFlux = offer.inFlux + 'M';
+//			}
+//			var inVoice=ec.util.defaultStr(offer.inVoice);
+//			var inWIFI=ec.util.defaultStr(offer.inWIFI);
+//			var inSMS=ec.util.defaultStr(offer.inSMS);
+//			var inMMS=ec.util.defaultStr(offer.inMMS);
+//			var outFlux=ec.util.defaultStr(offer.outFlux);
+//			var outVoice=ec.util.defaultStr(offer.outVoice);
+//			
+//			offerHtml+="<tr offerSpecId='"+offer.offerSpecId+"'";
+//			offerHtml+=" offerSpecName='"+offer.offerSpecName+"'";
+//			offerHtml+=" price='"+offer.price+"'";
+//			offerHtml+=" inWIFI='"+inWIFI+"'";
+//			offerHtml+=" inFlux='"+inFlux+"'";
+//			offerHtml+=" inSMS='"+inSMS+"'";
+//			offerHtml+=" inMMS='"+inMMS+"'";
+//			offerHtml+=" outFlux='"+outFlux+"'";
+//			offerHtml+=" outVoice='"+outVoice+"'";
+//			offerHtml+=" inVoice='"+inVoice+"'>";
+//			offerHtml+=" <td>"+ec.util.defaultStr(offer.offerSpecName)+"</td>";
+//			offerHtml+="</tr>";
+//		}
+//		offerHtml+="  </tbody>";
+//		offerHtml+="  </table>";
+//		
+//		$("#offerSecond").html(offerHtml);
+//		$.refresh($("#offerSecond"));
+//		$("#offerSecond tbody tr").off("click").on("click",function(event){_linkSelectPlan(this);event.stopPropagation();});
 	};
+	//选套餐后选合约
+	var _selectTc_hy=function(selected){
+//		$("#offerSecond tbody tr").removeClass("success");
+		var offerSpecId = $("#tc_offerSpecId").val();
+		var result = _queryOfferSpec(offerSpecId, selected);
+		if (result) {
+//			$(selected).addClass("success");
+			$("#offerSpecId-1").val(offerSpecId);
+		}
+	};
+	
 	var _linkSelectPlan=function(selected){
 		$("#offerSecond tbody tr").removeClass("success");
 		var offerSpecId = $(selected).attr("offerSpecId");
@@ -691,7 +754,7 @@ mktRes.terminal = (function($){
 	
 	var _queryOfferSpec=function(offerSpecId, selected){
 		var inParam = {
-			"price":$(selected).attr("price"),
+//			"price":$(selected).attr("price"),
 			"id" : 'tcnum1',
 			"specId" : offerSpecId,
 			"custId" : OrderInfo.cust.custId,
@@ -859,7 +922,7 @@ mktRes.terminal = (function($){
 	 * 在合约套餐窗口选择套餐
 	 */
 	var _selectPlan=function(){
-		var offerSpec=$("#offerSecond tbody tr[class='success']");
+		var offerSpec=$(".success");
 		//搜索是否有
 		if (offerSpec==undefined || offerSpec.length!=1 || hy_flag==0) {
 			offerSpec.removeClass("success");
@@ -876,13 +939,17 @@ mktRes.terminal = (function($){
 		if(chose){
 			mktRes.terminal.offerSpecId = $("#select_offerSpecId").val();
 			buyChk.hyFlag = true;
-			buyChk.hyOfferSpecId=offerSpec.attr("offerSpecId");
-			buyChk.hyOfferSpecName=offerSpec.attr("offerSpecName");
+//			buyChk.hyOfferSpecId=offerSpec.attr("offerSpecId");
+//			buyChk.hyOfferSpecName=offerSpec.attr("offerSpecName");
+			buyChk.hyOfferSpecId=$("#tc_offerSpecId").val();
+			buyChk.hyOfferSpecName=$("#tc_offerSpecName").val();
 			_chkState();
 			$("#agreementFie").show();
-			$("#choosedOfferPlan").html(offerSpec.attr("offerSpecName"));
+			$("#choosedOfferPlan").val(offerSpec.attr("offerSpecName"));
 			$("#terminalMain").show();
 			$("#div_offer").hide();
+			var max_num = maxCard;
+			$("#max_num").text(maxCard);//显示最大副卡数量
 			_purchase();
 		}else{
 			$.alert("提示","请选择一个接入产品！");
@@ -2617,6 +2684,8 @@ mktRes.terminal = (function($){
 		$("#zjfk_"+cardIndex).hide();
 		$("#nav_1_"+cardIndex).hide();
 		$("#nav_2_"+cardIndex).show();
+		var cur_num = -1-cardIndex;
+		$("#cur_num").text(cur_num);
 		cardIndex = cardIndex-1;
 	}
 	
@@ -2699,6 +2768,8 @@ mktRes.terminal = (function($){
 //			$("#span_"+sp).show();
 		}
 		$('#li_'+prodId).remove();
+		var cur_num = -3-cardIndex;
+		$("#cur_num").text(cur_num);
 		cardIndex = cardIndex + 1;
 	}
 	
@@ -2997,8 +3068,118 @@ mktRes.terminal = (function($){
 			"mktResList":mktResList
 		};
 	};
-	//
+	//购手机选套餐
+	var _offePre=function(subPage){
+//		SoOrder.initFillPage();
+		var param={"ifQS":"Y"};
+		var url=contextPath+"/agent/order/offer/prepare_phone";
+		$.callServiceAsHtmlGet(url,param,{
+			"before":function(){
+				$.ecOverlay("<strong>正在查询中,请稍等会儿....</strong>");
+			},
+			"always":function(){
+				$.unecOverlay();
+			},
+			"done" : function(response){
+				if(!response){
+					 response.data='<div style="margin:2px 0 2px 0;width:100%,height:100%;text-align:center;"><strong>页面显示失败,稍后重试</strong></div>';
+				}
+				if(response.code != 0) {
+					$.alert("提示","页面显示失败,稍后重试");
+					return;
+				}
+//				OrderInfo.returnFlag = "tc";
+				$("#terminalMain").hide();
+				var content$=$("#offer-prepare");
+				content$.html(response.data).show();
+			}
+		});	
+	};
+	
+	//套餐入口-初始化
+	var _init=function(){
+		//获取初始化查询的条件
+		order.service.queryApConfig();
+		//初始化主套餐查询
+		_searchPack("");
+	};
+	
+	//主套餐查询
+	var _searchPack = function(flag,scroller,subPage){
+		var custId = OrderInfo.cust.custId;
+		var qryStr=$("#qryStr").val();
+		var params={"subPage":"","qryStr":qryStr,"pnLevelId":"","custId":custId,"PageSize":10};
+		if(flag){
+			var priceMinVal = $("#select_price_min").val();
+			var priceMaxVal = $("#select_price_max").val();
+			if(ec.util.isObj(priceMinVal) && $.isNumeric(priceMinVal)){
+				params.priceMin = priceMinVal;
+			}
+			if(ec.util.isObj(priceMaxVal) && $.isNumeric(priceMaxVal)){
+				params.priceMax = priceMaxVal;
+			}
+			
+			var influxMinVal = $("#select_influx_min").val();
+			var influxMaxVal = $("#select_influx_max").val();
+			if(ec.util.isObj(influxMinVal) && $.isNumeric(influxMinVal)){
+				params.INFLUXMin = influxMinVal*1024 ;
+			}
+			if(ec.util.isObj(influxMaxVal) && $.isNumeric(influxMaxVal)){
+				params.INFLUXMax = influxMaxVal*1024 ;
+			}
+			
+			var invoiceMinVal = $("#select_invoice_min").val();
+			var invoiceMaxVal = $("#select_invoice_max").val();
+			if(ec.util.isObj(invoiceMinVal) && $.isNumeric(invoiceMinVal)){
+				params.INVOICEMin = invoiceMinVal;
+			}
+			if(ec.util.isObj(invoiceMaxVal) && $.isNumeric(invoiceMaxVal)){
+				params.INVOICEMax = invoiceMaxVal;
+			}
+		}
+		_queryData(params,flag,scroller);
+		
+	};
+	var _queryData = function(params,flag,scroller) {
+		if(CONST.getAppDesc()==0){
+			params.prodOfferFlag = "4G";
+		}
+		params.prodId = flag;
+		var url = contextPath+"/agent/order/phone_offerSpecList";
+		$("#pakeage").show();
+		$("#pakeage").attr("class","tab-pane fade in active");
+		$.callServiceAsHtmlGet(url,params, {
+			"before":function(){
+				$.ecOverlay("<strong>正在查询中,请稍等...</strong>");
+			},
+			"always":function(){
+				$.unecOverlay();
+				$("#search-modal").modal('hide');
+			},
+			"done" : function(response){
+				$("#search-modal").modal('hide');
+				if(response.code != 0) {
+					$.alert("提示","<br/>查询失败,稍后重试");
+					return;
+				}
+				
+				var content$ = $("#offer-list");
+				content$.html(response.data);
+				$("#offer-list").show();
+				if(scroller && $.isFunction(scroller)) scroller.apply(this,[]);
+//				$.refresh(content$);
+			},
+			fail:function(response){
+				$.unecOverlay();
+				$("#search-modal").modal('hide');
+				$.alert("提示","套餐加载失败，请稍后再试！");
+			}
+		});
+	};
+	
 	return {
+		selectTc			:_selectTc,
+		init				:_init,
 		passcust            :_passcust,
 		closeFZR            :_closeFZR,
 		showFZR             :_showFZR,

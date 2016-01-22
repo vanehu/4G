@@ -1,48 +1,52 @@
-<div class="container-fluid">
-  	<div class="row contract">
-  	<#if aoList?? >  
-	  	<div class="col-xs-6">
-	  		<div class="input-group">
-				<select id="select_agreementType" class="selectpicker show-tick form-control" onchange="mktRes.terminal.changePeriod(this,'${agreementType}');">
-					<#list aoList as item>
-					<#if item_index==0>
-						<option value="${item_index}" selected="selected">
-					<#else>
-		              	<option value="${item_index}">
-		            </#if>
-			              <#if agreementType==1>
-			              	${item.period}%机补
-			              <#else>
-			              	${item.period}%话补
-			              </#if>
-		              </option>
-		            </#list>
-		        </select>
-	            <span class="input-group-addon select-span"></span>
-       		</div>
-	    </div>
-	    <div id="tab_content">
-	    <input id="select_offerSpecId" type="hidden">
-	    <#list aoList as item>
+<div class="container-fluid form-list">
+<form class="form-horizontal">
+<input id="tc_offerSpecId" type="hidden" value="${tc_offerSpecId}">
+<input id="tc_offerSpecName" type="hidden" value="${tc_offerSpecName}">	
+  <div class="form-group">
+    <label for="inputEmail3" class="col-xs-2 control-label">
+    	<#if agreementType==1>
+			机补
+		<#else>
+			话补
+		</#if>
+    </label>
+    <div class="col-xs-10">
+    	<div class="btn-group btn-group-justified" data-toggle="buttons">
+    	<#if aoList?? >
+    	<#list aoList as item>
+		<#if item_index==0>
+			<label class="btn btn-default active" onclick="mktRes.terminal.changePeriod('${item_index}','${agreementType}');">
+				<input type="radio" name="phonetc" value="${item_index}">${item.period}%
+			</label>
+		<#else>
+            <label class="btn btn-default" onclick="mktRes.terminal.changePeriod('${item_index}','${agreementType}');">
+				<input type="radio" name="phonetc" value="${item_index}" >${item.period}%
+			</label>
+        </#if>
+        </#list>
+        </#if>
+		</div>
+	</div>
+  </div>
+  </form>
+  <div class="row" id="pakeage">
+        <div class="list-group">
+        <input id="select_offerSpecId" type="hidden">	
+        <#if aoList?? >
+          <#list aoList as item>
 	        <#if item_index==0>
-	    		<div id="tab_content_${item_index}" class="itemMain">
+	    	<div id="tab_content_${item_index}" class="itemMain">
 		    <#else>
-		    	<div id="tab_content_${item_index}" class="itemMain" style="display: none">
+		    <div id="tab_content_${item_index}" class="itemMain" style="display: none">
 		    </#if>
-		    <div class="col-xs-6">
-		    <div class="input-group">
-		    	<select id="select_offerSpecId_${item_index}" class="selectpicker show-tick form-control" onchange="mktRes.terminal.changeHyContent(this,'${agreementType}');"">
-		    	    <#list item.subList as subItem>
-		    		<#if subItem_index==0>
-		            <option value="${subItem.offerSpecId}" selected="selected">${subItem.offerSpecName}</option>
-		            <#else>
-		            <option value="${subItem.offerSpecId}">${subItem.offerSpecName}</option>
-		            </#if>
-		            </#list>
-		         </select>
-           	 	<span class="input-group-addon select-span"></span>
-       		</div>
-	         <#list item.subList as subItem>
+		    <#list item.subList as subItem>
+	            <a href="#" class="list-group-item" id="select_offerSpecId_${item_index}" title="${subItem.offerSpecId}" offerSpecName="${subItem.offerSpecName}" onclick="mktRes.terminal.changeHyContent(this,'${agreementType}');">
+	            <h5 class="list-group-item-heading">${subItem.offerSpecName}<span class="glyphicon glyphicon-chevron-right pull-right" aria-hidden="true"></span></h5>
+	            <div class="row"> <small class="col-xs-6"></small> <small class="col-xs-6"></small></div>
+	          	</a>
+            </#list>
+        	</div>
+        	<#list item.subList as subItem>
 	         <span offerSpecId="${subItem.offerSpecId}"
 				offerSpecName="${subItem.offerSpecName}"
 				agreementType="${agreementType}"
@@ -56,14 +60,10 @@
 				lastmonthReturn="${subItem.lastmonthReturn}" id="subItem_${item_index}_${subItem.offerSpecId}">
 			 <span>
 			 </#list>
-			 </div>
-		</div>
-		</#list>
-		</div>
-	</#if>
-  </div>
-  <div class="row" id="offerSecond">
-  </div>   	
+			</#list>
+      </div>
+      </#if>
+</div>
 </div>
 <nav class="navbar navbar-default navbar-fixed-bottom">
   <div class="container-fluid">

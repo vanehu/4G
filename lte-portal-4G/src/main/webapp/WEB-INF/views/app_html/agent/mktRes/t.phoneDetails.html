@@ -38,14 +38,14 @@
 										<div class="btn-group btn-group-justified">
 									</#if>
 									<#if mkt.mktResId == (mktRes.mktResId)>
-									<label class="btn btn-default active">
-										<input type="radio" name="phonecolor" onclick = "javascript:mktRes.terminal.selectColor($(this))"
+									<label class="btn btn-default active" onclick = "javascript:mktRes.terminal.selectColor('color${mkt_index}')">
+										<input type="radio" name="phonecolor"
 									 id="color${mkt_index}" mktValue="${attrListTmp.attrValue}"  mktResId="${mktResId}" mktResName="${mktResName}" mktSalePrice="${mktSalePrice}" mktNormalSalePrice="${(mkt.salePrice)?default(0)}" p_pic="${p_pic_color}" mktResTypeCd="${mktResTypeCd}" mktSpecCode="${mktSpecCode}">
 										${attrListTmp.attrValue}
 									</label>
 									<#else>
-									<label class="btn btn-default">
-										<input type="radio" name="phonecolor" onclick = "javascript:mktRes.terminal.selectColor($(this))"
+									<label class="btn btn-default" onclick = "javascript:mktRes.terminal.selectColor('color${mkt_index}')">
+										<input type="radio" name="phonecolor" 
 									 id="color${mkt_index}" mktValue="${attrListTmp.attrValue}"  mktResId="${mktResId}" mktResName="${mktResName}" mktSalePrice="${mktSalePrice}" mktNormalSalePrice="${(mkt.salePrice)?default(0)}" p_pic="${p_pic_color}" mktResTypeCd="${mktResTypeCd}" mktSpecCode="${mktSpecCode}">
 										${attrListTmp.attrValue}
 									</label>
@@ -67,14 +67,14 @@
 										<div class="btn-group btn-group-justified" data-toggle="buttons">
 									</#if>
 									<#if mkt.mktResId == (mktRes.mktResId)>
-									<label class="btn btn-default active">
-										<input type="radio" name="phonecolor" onclick = "javascript:mktRes.terminal.selectColor($(this))"
+									<label class="btn btn-default active" onclick = "javascript:mktRes.terminal.selectColor('color${mkt_index}')">
+										<input type="radio" name="phonecolor"
 									 id="color${mkt_index}" mktValue="${attrListTmp.attrValue}"  mktResId="${mktResId}" mktResName="${mktResName}" mktSalePrice="${mktSalePrice}" mktNormalSalePrice="${(mkt.salePrice)?default(0)}" p_pic="${p_pic_color}" mktResTypeCd="${mktResTypeCd}" mktSpecCode="${mktSpecCode}">
 										${attrListTmp.attrValue}
 									</label>
 									<#else>
-									<label class="btn btn-default">
-										<input type="radio" name="phonecolor" onclick = "javascript:mktRes.terminal.selectColor($(this))"
+									<label class="btn btn-default" onclick = "javascript:mktRes.terminal.selectColor('color${mkt_index}')">
+										<input type="radio" name="phonecolor"
 									 id="color${mkt_index}" mktValue="${attrListTmp.attrValue}"  mktResId="${mktResId}" mktResName="${mktResName}" mktSalePrice="${mktSalePrice}" mktNormalSalePrice="${(mkt.salePrice)?default(0)}" p_pic="${p_pic_color}" mktResTypeCd="${mktResTypeCd}" mktSpecCode="${mktSpecCode}">
 										${attrListTmp.attrValue}
 									</label>
@@ -131,7 +131,7 @@
 			<div class="form-group" style="display: none;" id="agreementFie">
 				<label for="exampleInputPassword1">合约套餐</label>
 				<div class="input-group">
-					<span class="form-control" id="choosedOfferPlan"></span>
+					<input class="form-control" id="choosedOfferPlan" disabled="disabled"/>
 					<input type="hidden" id="offerSpecId-1"/>
 					<span class="input-group-btn">
                       <button class="btn btn-info" type="button" id="cxhy" onClick="javascript:mktRes.terminal.reSelectHy()"> 重选 </button>
@@ -166,7 +166,7 @@
 			<div class="panel panel-default displaydiv" id="fkxx" style="display:none;">
 				<div class="panel-heading">副卡信息</div>
 				<div class="panel-body">
-					<button  type="button" onClick="javascript:mktRes.terminal.zjfk()" class="btn btn-info btn-group-justified">增加副卡</button>
+					<button  type="button" onClick="javascript:mktRes.terminal.zjfk()" class="btn btn-info btn-group-justified">增加副卡<span id="cur_num">0</span>-<span id="max_num">0</span></button>
 				</div>
 
 				
@@ -212,6 +212,9 @@
 <input type="hidden" id="mktSpecCode" value="${(mktRes.mktSpecCode)?default('')}" />
 
 <div id="div_offer" style="display:none">
+</div>
+<!-- 选套餐页面 -->
+<div id="offer-prepare" style="display:none">
 </div>
 <!-- 订单确认页面、收银台页面 -->
 <div id="order-confirm" style="display: none;">

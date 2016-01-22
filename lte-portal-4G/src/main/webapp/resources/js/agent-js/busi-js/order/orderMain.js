@@ -1280,6 +1280,9 @@ order.main = (function(){
 		if(!SoOrder.checkData()){ //校验通过
 			return false;
 		}
+	    if(OrderInfo.actionFlag==1){
+	    	OrderInfo.returnFlag="";
+	    }
 		//var param = {};
 		$("#order-content").hide();
 		$("#cust-content").show();
@@ -1409,6 +1412,8 @@ order.main = (function(){
 		$("#zjfk_"+fkcardIndex).hide();
 		$("#nav_1_"+fkcardIndex).hide();
 		$("#nav_2_"+fkcardIndex).show();
+		var cur_num = -1-fkcardIndex;
+		$("#cur_num").text(cur_num);
 		order.main.fkcardIndex = fkcardIndex-1;
 	}
 	
@@ -1569,6 +1574,8 @@ order.main = (function(){
 //			$("#span_"+sp).show();
 		}
 		$('#li_'+prodId).remove();
+		var cur_num = -3-fkcardIndex;
+		$("#cur_num").text(cur_num);
 		order.main.fkcardIndex = fkcardIndex + 1;
 	}
 	

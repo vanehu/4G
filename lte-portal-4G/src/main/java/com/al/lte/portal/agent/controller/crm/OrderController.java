@@ -368,6 +368,25 @@ public class OrderController extends BaseController {
         return "/agent/order/order-search";
     }
 
+	 @RequestMapping(value = "/offer/prepare_phone", method = RequestMethod.GET)
+	    @AuthorityValid(isCheck = false)
+	    public String order_search_agent(@RequestParam(value = "current", required = false, defaultValue = "home") String current,
+	            Model model, HttpServletRequest request) throws AuthorityException {
+
+	        String prodOfferId = request.getParameter("prodOfferId");
+	        String subPage = request.getParameter("subPage");
+	        String numsubflag = request.getParameter("numsubflag");
+	        if (prodOfferId != null && !prodOfferId.equals("") && !prodOfferId.equals("null")) {
+	            model.addAttribute("prodOfferId", prodOfferId);
+	        }
+	        if (subPage != null && !subPage.equals("") && !subPage.equals("null")) {
+	            model.addAttribute("subPage", subPage);
+	        }
+	        if (numsubflag != null && !numsubflag.equals("") && !numsubflag.equals("null")) {
+	            model.addAttribute("numsubflag", numsubflag);
+	        }
+	        return "/agent/order/order-search-agent";
+	    }
     
 	/**
 	 * 手机客户端-套餐变更
@@ -918,6 +937,91 @@ public class OrderController extends BaseController {
 			return super.failedStr(model, ErrorCode.QUERY_MAIN_OFFER, e, prams);
 		}
         return "/agent/order/offer-list";
+    }
+    
+    @RequestMapping(value = "/phone_offerSpecList", method = RequestMethod.GET, produces = "text/html;charset=UTF-8")
+    public String getphone_offerSpecList(@RequestParam Map<String, Object> prams,Model model,HttpServletResponse response){
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+                SysConstant.SESSION_KEY_LOGIN_STAFF);	
+        try {
+        	prams.put("ifQS", "Y");
+        	prams.put("channelId", sessionStaff.getCurrentChannelId());
+        	prams.put("areaId", sessionStaff.getCurrentAreaId());
+        	prams.put("staffId", sessionStaff.getStaffId());
+        	prams.put("pageSize", SysConstant.PAGE_SIZE);
+        	int totalPage=0;
+        	Map<String, Object> map = null;
+   //          prams.put("qryStr", "乐享");
+        	map = orderBmo.queryMainOfferSpecList(prams,null, sessionStaff);
+        	if(ResultCode.R_SUCCESS.equals(map.get("code"))){
+        		//拼装前台显示的套餐详情
+        		if(!map.isEmpty()){
+        			List<Map<String,Object>> prodOfferInfosList = (List<Map<String,Object>>) map.get("prodOfferInfos");
+        			if(prodOfferInfosList.size()%10>0){
+        				totalPage=prodOfferInfosList.size()/10+1;
+        			}else{
+        				totalPage=prodOfferInfosList.size()/10;
+        			}
+        			for(int i=0;i<prodOfferInfosList.size();i++){
+        				Map<String,Object> exitParam = new HashMap<String,Object>();
+        				exitParam = (Map<String,Object>) prodOfferInfosList.get(i);
+        				if(exitParam.containsKey("inFlux")){
+        					float influx = 0 ;
+        					String influx_str ="";
+        					/*
+        					 判断返回的流量是否大于1024M，如果大于1024M，显示的单位是G，否则显示的单位是M
+        					 */
+        					if(exitParam.get("inFlux")!=null){
+        						try{
+        							influx = Float.parseFloat(exitParam.get("inFlux").toString());
+        							if(influx<1024){
+        								influx_str = influx+"";
+        								if(influx_str.indexOf(".") > 0){  
+                    						influx_str = influx_str.replaceAll("0+?$", "");//去掉多余的0  
+                    						influx_str = influx_str.replaceAll("[.]$", "");//如最后一位是.则去掉  
+                    			        } 
+        								influx_str = influx_str+"M";
+        							}else{
+        								influx_str = influx/1024+"";
+        								if(influx_str.indexOf(".") > 0){  
+                    						influx_str = influx_str.replaceAll("0+?$", "");//去掉多余的0  
+                    						influx_str = influx_str.replaceAll("[.]$", "");//如最后一位是.则去掉  
+                    			        } 
+        								influx_str = influx_str +"G";
+        							}
+        						}catch(Exception e){
+        							this.log.error("WIFI", e);
+        						}
+        					}
+        					prodOfferInfosList.get(i).put("inFlux", influx_str);
+        				}
+        			}
+        		}
+        		model.addAttribute("resultlst", map.get("prodOfferInfos"));
+        		model.addAttribute("totalPage",totalPage);
+        	}
+        	//model.addAttribute("pnLevelId", prams.get("pnLevelId"));
+        	if(!"".equals(prams.get("subPage"))){
+        		model.addAttribute("subPage", prams.get("subPage"));
+        	}
+        	if(null!=(prams.get("orderflag"))){
+        		model.addAttribute("orderflag", prams.get("orderflag"));
+        	}
+        	if(null!=(prams.get("actionFlag"))){
+        		model.addAttribute("actionFlag", prams.get("actionFlag"));
+        	}
+        	if(null!=(prams.get("prodId"))){
+        		model.addAttribute("prodId", prams.get("prodId"));
+        	}
+        } catch (BusinessException be) {
+			this.log.error("查询号码信息失败", be);
+			return super.failedStr(model, be);
+		} catch (InterfaceException ie) {
+			return super.failedStr(model, ie, prams, ErrorCode.QUERY_MAIN_OFFER);
+		} catch (Exception e) {
+			return super.failedStr(model, ErrorCode.QUERY_MAIN_OFFER, e, prams);
+		}
+        return "/agent/mktRes/t.phone-offer-list";
     }
     
     @RequestMapping(value = "/yslOfferSpecList", method = RequestMethod.GET, produces = "text/html;charset=UTF-8")
@@ -2850,6 +2954,10 @@ public class OrderController extends BaseController {
 	    if(eqCodeInfo.containsKey("OldRatePlanDescription")){
 	    	eqCodeInfo.remove("OldRatePlanDescription");
 	    }
+	    
+	    if(eqCodeInfo.containsKey("OfferName")){
+	    	eqCodeInfo.remove("OfferName");
+	    }
 
 	    String result="CTCT02"+JacksonUtil.getInstance().objectTojson(eqCodeInfo);
 		try {
@@ -2857,10 +2965,10 @@ public class OrderController extends BaseController {
 				byte[] data=result.getBytes("UTF-8");
 				byte[] str3 = ThreeDesUtil.des3EncodeECB(key,data);
 				String a = new BASE64Encoder().encode(str3);
-				String RQCode = "data:image/png;base64,"+new QrCodeImageGen().encoderQRCodeToBase64(a,"png",40,'Q');
+				String RQCode = "data:image/png;base64,"+new QrCodeImageGen().encoderQRCodeToBase64(a,"png",30,'M');
 				jsonResponse = super.successed(RQCode, ResultConstant.SUCCESS.getCode());	
 			}else{
-				 jsonResponse = super.failed("生成二维码失败", ResultConstant.SERVICE_RESULT_FAILTURE .getCode());
+				jsonResponse = super.failed("生成二维码失败", ResultConstant.SERVICE_RESULT_FAILTURE .getCode());
 			}
 
 		} catch (Exception e) {
