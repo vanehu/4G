@@ -469,6 +469,7 @@ public class CustController extends BaseController {
 			//客户详情查询
 			paramMap.put("partyId", ((Map<String, Object>)param.get("custInfoMap")).get("custId"));
 			paramMap.put("areaId", ((Map<String, Object>)param.get("custInfoMap")).get("areaId"));
+			paramMap.put("_test_appFlag", "app_chuanjian");
 			datamap = this.custBmo.queryCustDetail(paramMap, optFlowNum,sessionStaff);
 			String code = (String) datamap.get("resultCode");
 			List<Map<String, Object>> identitiesList = null;
@@ -865,6 +866,7 @@ public class CustController extends BaseController {
         Map paramMap = new HashMap();
         paramMap.put("partyId", param.get("partyId"));
         paramMap.put("areaId", param.get("areaId"));
+    	paramMap.put("_test_appFlag", "app_xianqing");
         String sussFlag = "";
         Map<String, Object> datamap = null;
         Map<String, Object> resultMap = null;
@@ -1032,6 +1034,7 @@ public class CustController extends BaseController {
         	String in = paramMap.get("identityNum").toString();
         	//接入号  或  证件类型、证件号码不为空时才调用客户资料查询接口
         	if(an.length()>0 || (ic.length()>0 && in.length()>0)){
+        		paramMap.put("_test_appFlag", "app");
 	            resultMap = custBmo.queryCustInfo(paramMap, flowNum, sessionStaff);
 	            if (MapUtils.isNotEmpty(resultMap)) {
 	            	if (paramMap.containsKey("query")) {

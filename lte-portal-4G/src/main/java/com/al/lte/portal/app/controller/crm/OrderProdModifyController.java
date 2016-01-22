@@ -99,6 +99,7 @@ public class OrderProdModifyController extends BaseController {
 			//客户详情查询
 			paramMap.put("partyId", ((Map<String, Object>)param.get("custInfoMap")).get("custId"));
 			paramMap.put("areaId", ((Map<String, Object>)param.get("custInfoMap")).get("areaId"));
+			paramMap.put("_test_appFlag", "app_fandang");
 			datamap = this.custBmo.queryCustDetail(paramMap, optFlowNum,
 					sessionStaff);
 			String code = (String) datamap.get("resultCode");

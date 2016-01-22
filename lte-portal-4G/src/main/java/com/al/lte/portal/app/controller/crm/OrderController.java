@@ -145,6 +145,7 @@ public class OrderController extends BaseController {
         try {
         	SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
                     SysConstant.SESSION_KEY_LOGIN_STAFF);
+        	reqMap.put("_test_appFlag", "app_delorder");
         	Map<String, Object> resMap = orderBmo.delOrder(reqMap,null,sessionStaff);
         	jsonResponse = super.successed(resMap,ResultConstant.SUCCESS.getCode());	
 		} catch (BusinessException be) {
