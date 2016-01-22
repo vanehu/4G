@@ -1207,6 +1207,16 @@ public class OrderController extends BaseController {
         SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
                 SysConstant.SESSION_KEY_LOGIN_STAFF);
         try {
+        	Map<String, Object> orderData =sessionStaff.getOrderData();
+        	if(orderData!=null){
+        		Map result = (Map) orderData.get("result");
+                String olId = (String) result.get("olId");
+                if(olId.equals(param.get("olId")) && result.get("ruleInfos") != null){
+                	 model.addAttribute("resMap", orderData);
+                     model.addAttribute("resMapJson", JsonUtil.buildNormal().objectToJson(orderData));
+                     return "/order/order-confirm";
+                }
+        	}
             if (commonBmo.checkToken(request, SysConstant.ORDER_SUBMIT_TOKEN)) {
                 if (param.get("actionFlag") != null) {
                     String actionFlag = (String) param.get("actionFlag");
@@ -2868,6 +2878,7 @@ public class OrderController extends BaseController {
                             String ruleLevel = rulemap.get("ruleLevel").toString();
                             if ("4".equals(ruleLevel)) {
                                 ruleflag = true;
+                                sessionStaff.setOrderData(resMap);
                                 break;
                             }
                         }

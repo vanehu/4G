@@ -132,6 +132,11 @@ public class SessionStaff implements Serializable {
 	private String custSegmentId;
 	/**强商agent标识*/
 	private String isStrBusi;
+	/**订单提交返回报文*/
+	private Map<String, Object> orderData;
+	
+	
+	
 	public String getIsStrBusi() {
 		return isStrBusi;
 	}
@@ -735,5 +740,15 @@ public class SessionStaff implements Serializable {
 
 	public void setFingerprint(String fingerPrint) {
 		this.fingerPrint = fingerPrint;
+	}
+
+
+	public void setOrderData(Map<String, Object> orderData) {
+		this.orderData = orderData;
+	}
+
+
+	public Map<String, Object> getOrderData() {
+		return orderData;
 	}
 }
