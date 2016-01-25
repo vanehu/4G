@@ -3087,11 +3087,11 @@ AttachOffer = (function() {
 					//十个亲情号码的属性ID进行输入校验
 					/*
 					国内，省内亲情：
-					1［3，5，7，8]＋9位数字
+					以1开头11位数字
 					或者0开头的12或者11位数字
 					或者非0开头的8位或者7位数字
 					市内亲情：
-					1［3，5，7，8]＋9位数字
+					以1开头11位数字
 					或者非0开头的8位或者7位数字
 					*/
 					if(serv.prodSpecParams[i].itemSpecId>=10020059&&serv.prodSpecParams[i].itemSpecId<=10020068){
@@ -3100,21 +3100,25 @@ AttachOffer = (function() {
 							var munberType = $("#"+prodId+"_10020069").val();
 							var munberMask = "";
 							var munberTypeStr = "";
+							var ruleMsg = "";
 							if(munberType==10){//市内
-								munberMask = /^(1[3578]\d{9}|0\d{11}|0\d{9}|[1-9]\d{7}|[1-9]\d{6})$/;
+								munberMask = /^(1\d{10}|[1-9]\d{7}|[1-9]\d{6})$/;
 								munberTypeStr = "市内";
+								ruleMsg = "以1开头11位数字，或者非0开头的8位或者7位数字。";
 							}else if(munberType==20){//国内
-								munberMask = /^(1[3578]\d{9}|[1-9]\d{7}|[1-9]\d{6})$/;
+								munberMask = /^(1\d{10}|0\d{11}|0\d{10}|[1-9]\d{7}|[1-9]\d{6})$/;
 								munberTypeStr = "国内";
+								ruleMsg = "以1开头11位数字，或者非0开头的8位或者7位数字，或者非0开头的8位或者7位数字。";
 							}else if(munberType==30){//省内
-								munberMask = /^(1[3578]\d{9}|[1-9]\d{7}|[1-9]\d{6})$/;
+								munberMask = /^(1\d{10}|0\d{11}|0\d{10}|[1-9]\d{7}|[1-9]\d{6})$/;				
 								munberTypeStr = "省内";
+								ruleMsg = "以1开头11位数字，或者0开头的12或者11位数字，或者非0开头的8位或者7位数字。";
 							}else{
 								$.alert("错误提示","返回亲情号码类型有误，请刷新后重试！");
 								return;
 							}
 							if(!munberMask.test(theValue)){
-								$.alert("提示",serv.prodSpecParams[i].name+"不符合"+munberTypeStr+"号码规则,请确认后重新输入！");
+								$.alert("提示",serv.prodSpecParams[i].name+"不符合"+munberTypeStr+"号码规则,请确认后重新输入！号码规则为："+ruleMsg);
 								return	;
 							}
 						}
@@ -3192,32 +3196,36 @@ AttachOffer = (function() {
 						if(param.itemSpecId>=10020059&&param.itemSpecId<=10020068){//十个亲情号码的属性ID进行输入校验
 							/*
 							国内,省内亲情：
-							1［3，5，7，8]＋9位数字
+							1＋10位数字
 							或者0开头的12或者11位数字
 							或者非0开头的8位或者7位数字
 							市内亲情：
-							1［3，5，7，8]＋9位数字
+							1＋10位数字
 							或者非0开头的8位或者7位数字
 							*/
 							var munberType = $("#"+prodId+"_10020069").val();
 							if(thisValue!=""&&thisValue!=undefined){
 								var munberMask;
 								var munberTypeStr = "";
+								var ruleMsg = "";
 								if(munberType==10){//市内
-									munberMask = /^(1[3578]\d{9}|0\d{11}|0\d{9}|[1-9]\d{7}|[1-9]\d{6})$/;
+									munberMask = /^(1\d{10}|[1-9]\d{7}|[1-9]\d{6})$/;
 									munberTypeStr = "市内";
+									ruleMsg = "以1开头11位数字，或者非0开头的8位或者7位数字。";
 								}else if(munberType==20){//国内
-									munberMask = /^(1[3578]\d{9}|[1-9]\d{7}|[1-9]\d{6})$/;
+									munberMask = /^(1\d{10}|0\d{11}|0\d{10}|[1-9]\d{7}|[1-9]\d{6})$/;
 									munberTypeStr = "国内";
+									ruleMsg = "以1开头11位数字，或者非0开头的8位或者7位数字，或者非0开头的8位或者7位数字。";
 								}else if(munberType==30){//省内
-									munberMask = /^(1[3578]\d{9}|[1-9]\d{7}|[1-9]\d{6})$/;
+									munberMask = /^(1\d{10}|0\d{11}|0\d{10}|[1-9]\d{7}|[1-9]\d{6})$/;
 									munberTypeStr = "省内";
+									ruleMsg = "以1开头11位数字，或者0开头的12或者11位数字，或者非0开头的8位或者7位数字。";
 								}else{
 									$.alert("错误提示","返回亲情号码类型有误，请刷新后重试！");
 									return;
 								}
 								if(!munberMask.test(thisValue)){
-									$.alert("提示",param.name+"不符合"+munberTypeStr+"号码规则,请确认后重新输入！");
+									$.alert("提示",param.name+"不符合"+munberTypeStr+"号码规则,请确认后重新输入！号码规则为："+ruleMsg);
 									return ;
 								}
 							}
