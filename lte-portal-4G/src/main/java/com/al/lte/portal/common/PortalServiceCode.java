@@ -471,6 +471,8 @@ public final class PortalServiceCode {
     
     public static final String INTF_TERM_VALIDATE = "res-TermValidateService";
     
+    public static final String INTF_TERM_RECEIVE = "res-ITermReceiveService";
+    
     public static final String INTF_TERM_UIM_CARD_TYPE_VALIDATE = "res-UimCardTypeValidator";
 
 //	2013.12.11 终端出库改走营业受理后台，不直接调用营销资源
