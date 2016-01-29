@@ -13,6 +13,7 @@
 		<!-- Bootstrap -->
 		<script>
 			$(function() {
+				OrderInfo.order.step=1;
 				prod.changeUim.initAgent();
 				$(".noUiSlidera").noUiSlider({
 					range: [0, 500],
@@ -89,14 +90,14 @@
 				<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 
 					<ul class="nav navbar-nav">
-						<li class="bottomline"><a href="index.html">首页</a></li>
+						<!-- <li class="bottomline"><a href="index.html">首页</a></li>
 						<li><a href="t.phoneList.html">购手机</a></li>
 						<li class="bottomline"><a href="t.numberOrderFill.html">办号卡</a></li>
 						<li><a href="t.packageChangeSearch.html">套餐变更</a></li>
 						<li><a href="t.cardFillSearch.html">补换卡</a></li>
 						<li class="bottomline"><a href="t.nameRealScan.html">快销卡返档</a></li>
 						<li><a href="t.orderNotSearch.html">暂存单查询</a></li>
-						<li><a href="t.orderSearch.html">订单查询</a></li>
+						<li><a href="t.orderSearch.html">订单查询</a></li> -->
 					</ul>
 
 				</div>
@@ -104,6 +105,7 @@
 			</div>
 			<!-- /.container-fluid -->
 		</nav>
+		<input type="hidden" id="isOut" name="isOut" value="0"/>
 		<div id="order_fill_content" class="container-fluid form-list">
 		</div>
 		<div id="order-content" class="container-fluid form-list">
@@ -132,7 +134,8 @@
 		</div>
 		
 		<div id="order-print"></div>
-		
+		<div id="checkRuleDiv" style="display:none">
+		</div>
 	<div class="container-fluid" id="error_rule_div" style="display:none">
 		<div class="row">
 			<div class="panel panel-default paneltop">

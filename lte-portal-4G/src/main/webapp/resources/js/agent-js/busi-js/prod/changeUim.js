@@ -96,7 +96,11 @@ prod.changeUim = (function() {
 			},
 			"done" : function(response){
 				$("#btn_checkUim_submit_div").css("display","block");
-				$("#order_fill_content").html(response.data).show();
+				var isOut = $("#isOut").val();
+				//0 展示uim效验页面 1 展示规则效验
+				if(isOut == "0"){
+					$("#order_fill_content").html(response.data).show();
+				}
 				$("#fillLastStep").click(function(){
 					order.prodModify.cancel();
 				});

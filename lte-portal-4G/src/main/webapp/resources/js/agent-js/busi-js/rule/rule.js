@@ -224,38 +224,43 @@ rule.rule = (function(){
 		_callBackStr = callBackStr;
 		_callBackParam = callBackParam;
 		if(!query.offer.loadInst()){  //加载实例到缓存
-			return;
+			return; 
 		};
 		var inParam ={
 			prodInfo : order.prodModify.choosedProdInfo,
 			areaId : param.areaId,
-			staffId : param.staffId,
+			staffId : param.staffId, 
 			channelId : param.channelId,
 			custId : param.custId,
 			boInfos : param.boInfos,
-			soNbr : OrderInfo.order.soNbr
+			soNbr : OrderInfo.order.soNbr 
 		};
-		$.ecOverlay("<strong>客户级规则校验中，请稍等...</strong>");
-		var response = $.callServiceAsJson(contextPath+"/rule/prepare",inParam); //调用规则校验
-		$.unecOverlay();
-		var checkData = response.data;
-		if(response.code==0){
-			if(checkData == null){
-				$.alert("提示","规则校验异常，请联系管理人员！");
-				return;
+		//
+		$.callServiceAsHtml(contextPath+"/app/rule/prepare", inParam, {
+			"before":function(){
+				$.ecOverlay("<strong>客户级规则校验中，请稍等...</strong>");
+			},	
+			"done" : function(response){
+				setTimeout(function () { 
+					$.unecOverlay();
+					var checkData = response.data;
+					//有错误限制
+					if(checkData.trim() != ""){
+						$("#checkRuleDiv").css("display","block");
+						$("#checkRuleDiv").html(response.data).show();
+						$("#isOut").val("1");
+					}
+					OrderInfo.order.step=1;
+					_credit();	
+					SoOrder.initFillPage();	
+					if(typeof(callBack)=="function"){
+						callBack(checkData);
+					}
+			    }, 800);
 			}
-		}else{
-			$.alertM(response.data);
-			return;
-		}
-		
-		if(checkData.ruleType == "portal"){
-			if (checkData.resultCode == "0"){
-				$.alert("提示",checkData.resultMsg);
-				return true;
-			}
-		}		
-		if (checkData.result && checkData.result.resultInfo) {
+		});
+		//
+	/*	if (checkData.result && checkData.result.resultInfo) {
 			var checkRuleInfo = checkData.result.resultInfo;
 			if (checkRuleInfo != null && checkRuleInfo.length > 0) {
 				$("#order_fill_content").css("display","none");
@@ -283,7 +288,7 @@ rule.rule = (function(){
 		} else {
 			checkObj = param;
 			checkFlag = true;
-		}
+		}*/
 	};
 	
 	return {
