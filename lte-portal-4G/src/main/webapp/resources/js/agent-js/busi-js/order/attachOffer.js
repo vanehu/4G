@@ -1372,7 +1372,6 @@ AttachOffer = (function() {
 			}else{
 				var $span = $("#li_"+prodId+"_"+offer.offerId).find("span");
 				$span.removeClass("del");
-//				$("#li_"+prodId+"_"+offer.offerId).remove();
 				offer.isdel = "N";
 			}
 			return;
@@ -1387,12 +1386,20 @@ AttachOffer = (function() {
 			}
 			var $spec = $('#li_'+prodId+'_'+offerSpecId); //在已开通附属里面
 			$spec.remove();
-			var $li = $('<a id="li_'+prodId+'_'+offerSpecId+'" onclick="AttachOffer.delOfferSpec('+prodId+','+offerSpecId+')" class="list-group-item"></a>');
+			var $li = $('<a id="li_'+prodId+'_'+offerSpecId+'"  class="list-group-item"></a>');
 			$li.append('<span id="span_'+prodId+'_'+offerSpecId+'">'+newSpec.offerSpecName+'</span>');
 			if(newSpec.ifDault==0){ //必须
 				$li.removeAttr("onclick");	
 			}else{
-				$li.append('<span id="span_remove_'+prodId+'_'+offerSpecId+'" class="glyphicon glyphicon-remove pull-right" aria-hidden="true"></span>');
+				if(newSpec.ifParams){ 
+					if(CacheData.setParam(prodId,newSpec)){ 
+						$li.append('<span id="can_'+prodId+'_'+offerSpecId+'"  isset="N"  class="abtn01 btn-span"><button type="button" class="btn btn-info" style="right:40px;width:48px;" data-toggle="modal" data-target="#setting" onclick="AttachOffer.showParam('+prodId+','+offerSpecId+');"><span style="color:red;">参<span></button><span  class="glyphicon glyphicon-remove pull-right" aria-hidden="true" onclick="AttachOffer.delOfferSpec('+prodId+','+offerSpecId+')"></span></span>');
+					}else {
+						$li.append('<span id="can_'+prodId+'_'+offerSpecId+'" isset="Y"  class="abtn03 btn-span"><button type="button" class="btn btn-info" style="right:40px;width:48px;" data-toggle="modal" data-target="#setting" onclick="AttachOffer.showParam('+prodId+','+offerSpecId+');">参</button><span  class="glyphicon glyphicon-remove pull-right" aria-hidden="true" onclick="AttachOffer.delOfferSpec('+prodId+','+offerSpecId+')"></span></span>');
+					}
+				}else{
+					$li.append('<span id="span_remove_'+prodId+'_'+offerSpecId+'" class="glyphicon glyphicon-remove pull-right" aria-hidden="true" onclick="AttachOffer.delOfferSpec('+prodId+','+offerSpecId+')"></span>');
+				}
 			}
 			$("#open_ul_"+prodId).append($li);
 			newSpec.isdel = "N";
@@ -1404,12 +1411,20 @@ AttachOffer = (function() {
 		}else {  //容错处理 //if((newSpec.isdel=="N")) 
 			var $spec = $('#li_'+prodId+'_'+offerSpecId); //在已开通附属里面
 			$spec.remove();
-			var $li = $('<a id="li_'+prodId+'_'+offerSpecId+'" onclick="AttachOffer.delOfferSpec('+prodId+','+offerSpecId+')" class="list-group-item"></a>');
+			var $li = $('<a class="list-group-item"></a>');
 			$li.append('<span id="span_'+prodId+'_'+offerSpecId+'">'+newSpec.offerSpecName+'</span>');
 			if(newSpec.ifDault==0){ //必须
 				$li.removeAttr("onclick");	
-			}else{
-				$li.append('<span id="span_remove_'+prodId+'_'+offerSpecId+'" class="glyphicon glyphicon-remove pull-right" aria-hidden="true"></span>');
+			}else{	
+				if(newSpec.ifParams){      
+					if(CacheData.setParam(prodId,newSpec)){ 
+						$li.append('<span id="can_'+prodId+'_'+offerSpecId+'" class="canshu2 btn-span"><button type="button" class="btn btn-info" style="right:40px;width:48px;" data-toggle="modal" data-target="#setting" onclick="AttachOffer.showParam('+prodId+','+offerSpecId+');"><span style="color:red;">参<span></button><span  class="glyphicon glyphicon-remove pull-right" aria-hidden="true" onclick="AttachOffer.delOfferSpec('+prodId+','+offerSpecId+')"></span></span>');
+					}else {
+						$li.append('<span id="can_'+prodId+'_'+offerSpecId+'" class="canshu btn-span"><button type="button" class="btn btn-info" style="right:40px;width:48px;" data-toggle="modal" data-target="#setting" onclick="AttachOffer.showParam('+prodId+','+offerSpecId+');">参</button><span  class="glyphicon glyphicon-remove pull-right" aria-hidden="true" onclick="AttachOffer.delOfferSpec('+prodId+','+offerSpecId+')"></span></span>');
+					}
+				}else{
+					$li.append('<span id="span_remove_'+prodId+'_'+offerSpecId+'" class="glyphicon glyphicon-remove pull-right" aria-hidden="true" onclick="AttachOffer.delOfferSpec('+prodId+','+offerSpecId+')"></span>');
+				}
 			}
 			$("#open_ul_"+prodId).append($li);
 		}
@@ -1799,42 +1814,51 @@ AttachOffer = (function() {
 			}
 			var content = CacheData.getParamContent(prodId,offer,flag);
 			$.confirm("参数设置： ",content,{ 
-				yes:function(){		
+				yes:function(){	
+					var isset = false;
+					$.each(offer.offerSpec.offerSpecParams,function(){
+						var itemInfo = CacheData.getOfferParam(prodId,offer.offerId,this.itemSpecId);
+						itemInfo.setValue = $("#"+prodId+"_"+this.itemSpecId).val();	
+						if(itemInfo.value!=itemInfo.setValue){
+							itemInfo.isUpdate = "Y";
+							isset = true;
+						}
+					});
+					if(isset){
+						$("#can_"+prodId+"_"+offer.offerId).removeClass("abtn03").addClass("abtn01");
+						offer.isset = "Y";
+						offer.update = "Y";
+					}else{
+						$("#can_"+prodId+"_"+offer.offerId).removeClass("abtn01").addClass("abtn03");
+						offer.isset = "N";
+						offer.update = "N";
+					}
 				},
 				no:function(){
 				}
 			});
-			order.protocolnbr.init();
-			$('#paramForm').bind('formIsValid', function(event, form) {
-				//参数输入校验
-				if(!paramInputCheck()){
-					return;
-				}
-				var isset = false;
-				$.each(offer.offerSpec.offerSpecParams,function(){
-					var itemInfo = CacheData.getOfferParam(prodId,offer.offerId,this.itemSpecId);
-					if(itemInfo.itemSpecId == CONST.ITEM_SPEC.PROT_NUMBER){
-						itemInfo.setValue = $("#select1").val();
-					}else{
-					    itemInfo.setValue = $("#"+prodId+"_"+this.itemSpecId).val();
-					}
-					if(itemInfo.value!=itemInfo.setValue){
-						itemInfo.isUpdate = "Y";
-						isset = true;
-					}
-				});
-				if(isset){
-					$("#can_"+prodId+"_"+offer.offerId).removeClass("canshu").addClass("canshu2");
-					offer.isset = "Y";
-					offer.update = "Y";
-				}else{
-					$("#can_"+prodId+"_"+offer.offerId).removeClass("canshu2").addClass("canshu");
-					offer.isset = "N";
-					offer.update = "N";
-				}
-				$(".ZebraDialog").remove();
-                $(".ZebraDialogOverlay").remove();
-			}).ketchup({bindElementByClass:"ZebraDialog_Button1"});		
+//			$('#paramForm').bind('formIsValid', function(event, form) {
+//				var isset = false;
+//				$.each(offer.offerSpec.offerSpecParams,function(){
+//					var itemInfo = CacheData.getOfferParam(prodId,offer.offerId,this.itemSpecId);
+//					itemInfo.setValue = $("#"+prodId+"_"+this.itemSpecId).val();	
+//					if(itemInfo.value!=itemInfo.setValue){
+//						itemInfo.isUpdate = "Y";
+//						isset = true;
+//					}
+//				});
+//				if(isset){
+//					$("#can_"+prodId+"_"+offer.offerId).removeClass("abtn03").addClass("abtn01");
+//					offer.isset = "Y";
+//					offer.update = "Y";
+//				}else{
+//					$("#can_"+prodId+"_"+offer.offerId).removeClass("abtn01").addClass("abtn03");
+//					offer.isset = "N";
+//					offer.update = "N";
+//				}
+//				$(".ZebraDialog").remove();
+//                $(".ZebraDialogOverlay").remove();
+//			}).ketchup({bindElementByClass:"cls-beamDialog-TQV0OgiyMRaAw6I"});		
 		}else {
 			var spec = CacheData.getOfferSpec(prodId,offerSpecId);
 			if(spec == undefined){  //未开通的附属销售品，需要获取销售品构成
@@ -1846,48 +1870,40 @@ AttachOffer = (function() {
 			var content = CacheData.getParamContent(prodId,spec,flag);	
 			$.confirm("参数设置： ",content,{ 
 				yes:function(){
-				},
-				no:function(){
-				}
-			});
-			order.protocolnbr.init();
-			$('#paramForm').bind('formIsValid', function(event, form){
-				//参数输入校验
-				if(!paramInputCheck()){
-					return;
-				}
-				if(!!spec.offerSpecParams){
-					for (var i = 0; i < spec.offerSpecParams.length; i++) {
-						var param = spec.offerSpecParams[i];
-						var itemSpec = CacheData.getSpecParam(prodId,offerSpecId,param.itemSpecId);
-						if(itemSpec.itemSpecId == CONST.ITEM_SPEC.PROT_NUMBER){
-							itemSpec.setValue = $("#select1").val();
-						}else{
+					if(!!spec.offerSpecParams){
+						for (var i = 0; i < spec.offerSpecParams.length; i++) {
+							var param = spec.offerSpecParams[i];
+							var itemSpec = CacheData.getSpecParam(prodId,offerSpecId,param.itemSpecId);
 							itemSpec.setValue = $("#"+prodId+"_"+param.itemSpecId).val();
 						}
 					}
-				}
-				if(spec.offerRoles!=undefined && spec.offerRoles.length>0){
-					for (var i = 0; i < spec.offerRoles.length; i++) {
-						var offerRole = spec.offerRoles[i];
-						for (var j = 0; j < offerRole.roleObjs.length; j++) {
-							var roleObj = offerRole.roleObjs[j];
-							if(!!roleObj.prodSpecParams){
-								for (var k = 0; k < roleObj.prodSpecParams.length; k++) {
-									var prodParam = roleObj.prodSpecParams[k];
-									var prodItem = CacheData.getProdSpecParam(prodId,offerSpecId,prodParam.itemSpecId);
-									prodItem.value = $("#"+prodId+"_"+prodParam.itemSpecId).val();
+					if(spec.offerRoles!=undefined && spec.offerRoles.length>0){
+						for (var i = 0; i < spec.offerRoles.length; i++) {
+							var offerRole = spec.offerRoles[i];
+							for (var j = 0; j < offerRole.roleObjs.length; j++) {
+								var roleObj = offerRole.roleObjs[j];
+								if(!!roleObj.prodSpecParams){
+									for (var k = 0; k < roleObj.prodSpecParams.length; k++) {
+										var prodParam = roleObj.prodSpecParams[k];
+										var prodItem = CacheData.getProdSpecParam(prodId,offerSpecId,prodParam.itemSpecId);
+										prodItem.value = $("#"+prodId+"_"+prodParam.itemSpecId).val();
+									}
 								}
 							}
 						}
 					}
+					$("#can_"+prodId+"_"+offerSpecId).removeClass("abtn03").addClass("abtn01");
+					var attchSpec = CacheData.getOfferSpec(prodId,offerSpecId);
+					attchSpec.isset = "Y";
+				},
+				no:function(){
 				}
-				$("#can_"+prodId+"_"+offerSpecId).removeClass("canshu").addClass("canshu2");
-				var attchSpec = CacheData.getOfferSpec(prodId,offerSpecId);
-				attchSpec.isset = "Y";
-				$(".ZebraDialog").remove();
-                $(".ZebraDialogOverlay").remove();
-			}).ketchup({bindElementByClass:"ZebraDialog_Button1"});	
+			});
+//			$('#paramForm').bind('formIsValid', function(event, form){
+//
+//				$(".ZebraDialog").remove();
+//                $(".ZebraDialogOverlay").remove();
+//			}).ketchup({bindElementByClass:"cls-beamDialog-TQV0OgiyMRaAw6I"});	
 		}
 	};
 	
