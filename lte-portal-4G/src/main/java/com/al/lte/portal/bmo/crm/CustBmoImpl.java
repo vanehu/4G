@@ -9,21 +9,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.UUID;
-
 import javax.servlet.http.HttpServletRequest;
-
 import net.sf.json.JSON;
 import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
 import net.sf.json.xml.XMLSerializer;
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
-
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.springframework.stereotype.Service;
-
 import com.al.ec.serviceplatform.client.DataBus;
 import com.al.ec.serviceplatform.client.ResultCode;
 import com.al.ecs.common.util.JsonUtil;
@@ -31,6 +27,7 @@ import com.al.ecs.exception.BusinessException;
 import com.al.ecs.exception.ErrorCode;
 import com.al.ecs.exception.ResultConstant;
 import com.al.ecs.log.Log;
+import com.al.lte.portal.common.Const;
 import com.al.lte.portal.common.Des33;
 import com.al.lte.portal.common.InterfaceClient;
 import com.al.lte.portal.common.MySimulateData;
@@ -39,7 +36,6 @@ import com.al.lte.portal.common.RunShellUtil;
 import com.al.lte.portal.common.ServiceClient;
 import com.al.lte.portal.common.SysConstant;
 import com.al.lte.portal.model.SessionStaff;
-
 
 @Service("com.al.lte.portal.bmo.crm.CustBmo")
 public class CustBmoImpl implements CustBmo {
@@ -472,28 +468,50 @@ public class CustBmoImpl implements CustBmo {
 			throw new BusinessException(ErrorCode.STAFF_LOGIN, paramMap, db.getReturnlmap(), e);
 		}
 	}
+	
 	//list去重
 	public static void removeDuplicate(List list) {
-		   for ( int i = 0 ; i < list.size() - 1 ; i ++ ) {
-		     for ( int j = list.size() - 1 ; j > i; j -- ) {
-		       if (list.get(j).equals(list.get(i))) {
+		for ( int i = 0 ; i < list.size() - 1 ; i ++ ) {
+			for ( int j = list.size() - 1 ; j > i; j -- ) {
+				if (list.get(j).equals(list.get(i))) {
 		         list.remove(j);
-		       }
-		      }
-		    }
-		    //System.out.println(list);
+				}
+			}
 		}
+	}
+	
+	/**
+	 * 通过客户类型，获取证件类型数据信息
+	 */
 	@SuppressWarnings("unchecked")
 	public Map<String, Object> queryCertType(Map<String, Object> paramMap, String optFlowNum, SessionStaff sessionStaff) throws Exception{
 		Map<String, Object> result = new HashMap<String, Object>();
 		
-		// 服务层调用与接口层调用都成功时，返回列表；否则返回空列表
-		DataBus db = InterfaceClient.callService(paramMap,
-				PortalServiceCode.INTF_QUERY_CERTTYPE, optFlowNum,
-				sessionStaff);
+		//先判断缓存中是否有该编码的数据信息
+		Object idCardType=Const.ID_CARD_TYPE;//可修改的常量中的证件类型数据
+		String partyTypeCd=paramMap.get("partyTypeCd")!=null ? String.valueOf(paramMap.get("partyTypeCd")):"";//客户类型
+		
+		List<Map<String,Object>> cardTypeList=null;
+		
+		if(idCardType!=null && idCardType instanceof List && partyTypeCd!=null && !"".equals(partyTypeCd)){
+			cardTypeList=(List<Map<String, Object>>)idCardType;
+			
+			if(cardTypeList!=null && cardTypeList.size()!=0){
+				for(Map<String, Object> cardTypeInfo:cardTypeList){
+					if(cardTypeInfo.get(partyTypeCd)!=null){
+						result.put("code", ResultCode.R_SUCCESS);
+						result.put("result",(List<Map<String, Object>>)cardTypeInfo.get(partyTypeCd));
+						result.put("mess", "获取数据成功");
+						return result;
+					}
+				}
+			}
+		}
+		
+		//如果缓存中没有数据信息,调用接口获取数据,服务层调用与接口层调用都成功时，返回列表；否则返回空列表
+		DataBus db = InterfaceClient.callService(paramMap,PortalServiceCode.INTF_QUERY_CERTTYPE, optFlowNum,sessionStaff);
 		try {
-			if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db
-					.getResultCode()))) {
+			if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db.getResultCode()))) {
 				Map<String, Object> resultMap = db.getReturnlmap();
 				List<Map<String, Object>> returnList = new ArrayList<Map<String, Object>>();
 				if (MapUtils.isNotEmpty(resultMap)) {
@@ -501,10 +519,26 @@ public class CustBmoImpl implements CustBmo {
 				}
 				result.put("code", ResultCode.R_SUCCESS);
 				result.put("result", returnList);
+				
+				//将数据信息保存到缓存-start
+				Map<String, Object> cardMap=new HashMap<String, Object>();
+				cardMap.put(partyTypeCd, returnList);
+				
+				//传入缓存，用获取类型作为key
+				if(cardTypeList!=null && cardTypeList.size()!=0){
+					cardTypeList.add(cardMap);
+				}else{
+					cardTypeList=new ArrayList<Map<String,Object>>();
+					cardTypeList.add(cardMap);
+				}
+				
+				Const.ID_CARD_TYPE=cardTypeList;
+				//将数据信息保存到缓存-end
 			} else {
 				result.put("code", ResultCode.R_FAIL);
 				result.put("msg", db.getResultMsg());
 			}
+			
 			return result;
 		} catch (Exception e) {
 			log.error("根据员工类型查询员工证件类型的queryCertTypeByPartyTypeCd服务返回的数据异常", e);
@@ -512,8 +546,6 @@ public class CustBmoImpl implements CustBmo {
 		}
 	}
 	
-
-
 	public Map<String, Object> decodeUserInfo(Map<String, Object> dataBusMap,
 		String optFlowNum, SessionStaff sessionStaff,String dekeyWord,HttpServletRequest request) throws Exception {
 		Map<String, Object> paramMap = new HashMap<String, Object>();
