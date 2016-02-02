@@ -196,7 +196,56 @@
 	    </div>
   	</div>
 </div>
-
+<!--用户鉴权弹窗-->
+	<div class="easyDialogdiv" style="height:300px;display:none" id="auth">
+		<div class="easyDialogclose" id="authClose"></div>
+		<form id="custAuthForm">
+		<h1 class="easyDialogTitle">客户身份鉴权</h1>
+		<div class="infoBox">
+			<table class="network">
+				<tbody>
+					<tr>
+						<td width="100"><label class="f_red">*</label><label id="custAuthTypeName">产品密码：</label></td>
+						<td width="300">
+							<input id="authPassword" type="password" placeHolder="请输入密码" data-validate="validate(required:密码不能为空, maxlength:密码长度最多为{arg1}(12)) on(blur)" class="inputWidth150px">
+							<a class="purchase" id="custAuthbtn" href="javascript:void(0)">校验</a><a class="purchase" id="jumpAuth" style="display:none" onclick="order.cust.jumpAuth()">跳过校验</a>
+						</td>
+					</tr>   
+				</tbody>
+	         </table>
+	    </div>
+	    </form>
+	</div>
+	
+	<!--用户鉴权弹窗 end-->
+	
+	<!--用户鉴权弹窗-身份证号-->
+	<div class="easyDialogdiv" style="height:2px;display:none" id="authID">
+		<div class="easyDialogclose" id="authIDClose"></div>
+		<form id="custAuthFormID">
+		<h1 class="easyDialogTitle">客户身份鉴权</h1>
+		<div class="infoBox">
+			<table class="network">
+				<tbody>
+					<tr>
+						<td width="100">
+					    	<label class="f_red">*</label>
+					    	<label id="custAuthTypeNameID">身份证号：</label>
+						</td>
+					    <td width="300">
+					    	<input id="authIDTD" type="password" placeHolder="请输入身份证号" data-validate="validate(required:身份证不能为空,idCardCheck:请准确填写身份证号码) on(blur)" class="inputWidth150px">
+					    	<a class="purchase" id="readCertBtnID" onclick="order.cust.readCertWhenAuth()">读卡</a>
+							<a  class="purchase" id="custAuthbtnID" href="javascript:void(0)">校验</a>
+							<a class="purchase" id="jumpAuthID" style="display:none" onclick="order.cust.jumpAuth()">跳过校验</a>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+	    </div>
+	    </form>
+	</div>
+	
+	<!--用户鉴权弹窗-身份证号 end-->
 <!-- 规则弹窗 -->  
 <div id="ruleDiv" style="width: 650px; height: 400px; display: none; margin: 0px;" class="easyDialogdiv" >
   <div id="ruleclose" class="easyDialogclose"></div>
