@@ -1680,34 +1680,103 @@ AttachOffer = (function() {
 		if($div.attr("class")=="block deldiv"){  //已经退订，再订购		
 			AttachOffer.addOffer(prodId,offerId,$div.text());
 		}else { //退订
-			var offer = CacheData.getOffer(prodId,offerId);
-			if(!ec.util.isArray(offer.offerMemberInfos)){	
-				var param = {
-					prodId:prodId,
-					areaId: OrderInfo.getProdAreaId(prodId),
-					offerId:offerId	
-				};
-				param.acctNbr = OrderInfo.getAccessNumber(prodId);
-				var data = query.offer.queryOfferInst(param);
-				if(data==undefined){
-					return;
+			var uim = OrderInfo.getProdUim(prodId);
+			
+			if(serv.servSpecId=="280000020" && (OrderInfo.actionFlag==22 || OrderInfo.actionFlag==23) && uim.cardTypeFlag=="1"){//补换卡补4G卡不能退订4G上网功能产品
+				$.alert("提示","4G卡不能退订【4G（LTE）上网】功能产品");
+				return;
+			}
+			
+			var respnose = "";
+			if($("#span_"+prodId+"_"+servId).attr("servSpecId") !="" && $("#span_"+prodId+"_"+servId).attr("servSpecId") !=null){
+				$("a[isdel='N']").each(function(){
+					if($(this).attr('offerSpecId') !=""){
+						_orderedOfferSpecIds.push($(this).attr('offerSpecId'));
+					}
+				});
+				
+				if(AttachOffer.openList.length>0){
+					for(var j=0;j<AttachOffer.openList[0].specList.length;j++){
+						var openedServ = AttachOffer.openList[0].specList[j];
+						if(openedServ.isdel ==undefined || "Y"!= openedServ.isdel){
+							_orderedOfferSpecIds.push(openedServ.offerSpecId);
+						}
+					}
 				}
-				offer.offerMemberInfos = data.offerMemberInfos;
-				offer.offerSpec = data.offerSpec;
+				
+				$("li[name='product']").each(function(){
+					if($(this).attr('servSpecId') !=""){
+						_servSpecIds.push($(this).attr('servSpecId'));
+					}
+				});
+				
+				if(AttachOffer.openServList.length>0){
+					for(var n=0;n<AttachOffer.openServList[0].servSpecList.length;n++){
+						var opendServ = AttachOffer.openServList[0].servSpecList[n];
+						if(opendServ.isdel ==undefined || "Y"!= opendServ.isdel){
+							_servSpecIds.push(opendServ.servSpecId);
+						}
+					}
+				}
+				respnose = AttachOffer.queryOfferAndServDependForCancel("",$("#span_"+prodId+"_"+servId).attr("servSpecId"));
 			}
-			var content = "";
-			if(offer.offerSpec!=undefined){
-				content = CacheData.getOfferProdStr(prodId,offer,1);
-			}else {
-				content = '退订【'+$div.text()+'】可选包' ;
+			
+			var contentAppend = "";
+			if(respnose !="" &&  respnose.data.resultCode == "0" && respnose.data.result.servSpec!=undefined && respnose.data.result.servSpec !=null && respnose.data.result.servSpec !=""){
+				$.each(respnose.data.result.servSpec,function(){
+					if(AttachOffer.openedServList.length>0){
+						for(var n=0;n<AttachOffer.openedServList[0].servList.length;n++){
+							var opendServ = AttachOffer.openedServList[0].servList[n];
+							if(this.servSpecId == opendServ.servSpecId){
+								contentAppend = contentAppend + this.servSpecName +"<br>"; 
+							}
+						}
+					}
+				});
 			}
-			$.confirm("信息确认",content,{ 
-				yes:function(){
-					offer.isdel = "Y";
-					$div.addClass("deldiv");
-					delServByOffer(prodId,offer);
+			
+			if(respnose !="" &&  respnose.data.resultCode == "0" && respnose.data.result.servSpec!=undefined && respnose.data.result.servSpec !=null && respnose.data.result.servSpec !=""){
+				$.each(respnose.data.result.servSpec,function(){
+					if(AttachOffer.openServList.length>0){
+						for(var n=0;n<AttachOffer.openServList[0].servSpecList.length;n++){
+							var opendServ = AttachOffer.openServList[0].servSpecList[n];
+							if(this.servSpecId == opendServ.servSpecId){
+								contentAppend = contentAppend + this.servSpecName +"<br>"; 
+							}
+						}
+					}
+				});
+			}
+			
+			if(respnose !="" &&  respnose.data.resultCode == "0" && respnose.data.result.servSpec!=undefined && respnose.data.result.offerSpec !=null && respnose.data.result.offerSpec !=""){
+				$.each(respnose.data.result.offerSpec,function(){
+					if(AttachOffer.openedList.length>0){
+						for(var n=0;n<AttachOffer.openedList[0].offerList.length;n++){
+							var opendServ = AttachOffer.openedList[0].offerList[n];
+							if(this.offerSpecId == opendServ.offerSpecId){
+								contentAppend = contentAppend +this.offerSpecName+"<br>";  
+							}
+						}
+					}
+				});
+			}
+			
+			var content= $span.text();
+			if(contentAppend !=""){
+				content = "【"+content  +"】功能产品，"+"与以下销售品或功能产品相依赖，系统会自动退订相关的依赖销售品。<br>"+contentAppend;
+			}
+			
+			$.confirm("信息确认","关闭"+content,{ 
+				yesdo:function(){
+					$span.addClass("del");
+					serv.isdel = "Y";
+					
+					//删除一些依赖包
+					if(respnose !="" && respnose.data.resultCode == "0" && respnose.data.result.servSpec!=undefined && respnose.data.result.offerSpec!=undefined ){
+						_addOfferAndServDepend(respnose.data.result.servSpec,respnose.data.result.offerSpec,$("#span_"+prodId+"_"+servId).attr("servSpecId"),prodId);
+					}
 				},
-				no:function(){	
+				no:function(){						
 				}
 			});
 		}
@@ -1770,10 +1839,101 @@ AttachOffer = (function() {
 		if($div.attr("class")=="block deldiv"){  //已经退订，再订购
 			_openServ(prodId,serv);
 		}else { //关闭
-			$.confirm("信息确认","关闭【"+$div.text()+"】功能产品",{ 
+			var uim = OrderInfo.getProdUim(prodId);
+			
+			if(serv.servSpecId=="280000020" && (OrderInfo.actionFlag==22 || OrderInfo.actionFlag==23) && uim.cardTypeFlag=="1"){//补换卡补4G卡不能退订4G上网功能产品
+				$.alert("提示","4G卡不能退订【4G（LTE）上网】功能产品");
+				return;
+			}
+			
+			var respnose = "";
+			if($("#span_"+prodId+"_"+servId).attr("servSpecId") !="" && $("#span_"+prodId+"_"+servId).attr("servSpecId") !=null){
+				$("a[isdel='N']").each(function(){
+					if($(this).attr('offerSpecId') !=""){
+						_orderedOfferSpecIds.push($(this).attr('offerSpecId'));
+					}
+				});
+				
+				if(AttachOffer.openList.length>0){
+					for(var j=0;j<AttachOffer.openList[0].specList.length;j++){
+						var openedServ = AttachOffer.openList[0].specList[j];
+						if(openedServ.isdel ==undefined || "Y"!= openedServ.isdel){
+							_orderedOfferSpecIds.push(openedServ.offerSpecId);
+						}
+					}
+				}
+				
+				$("li[name='product']").each(function(){
+					if($(this).attr('servSpecId') !=""){
+						_servSpecIds.push($(this).attr('servSpecId'));
+					}
+				});
+				
+				if(AttachOffer.openServList.length>0){
+					for(var n=0;n<AttachOffer.openServList[0].servSpecList.length;n++){
+						var opendServ = AttachOffer.openServList[0].servSpecList[n];
+						if(opendServ.isdel ==undefined || "Y"!= opendServ.isdel){
+							_servSpecIds.push(opendServ.servSpecId);
+						}
+					}
+				}
+				respnose = AttachOffer.queryOfferAndServDependForCancel("",$("#span_"+prodId+"_"+servId).attr("servSpecId"));
+			}
+			
+			var contentAppend = "";
+			if(respnose !="" &&  respnose.data.resultCode == "0" && respnose.data.result.servSpec!=undefined && respnose.data.result.servSpec !=null && respnose.data.result.servSpec !=""){
+				$.each(respnose.data.result.servSpec,function(){
+					if(AttachOffer.openedServList.length>0){
+						for(var n=0;n<AttachOffer.openedServList[0].servList.length;n++){
+							var opendServ = AttachOffer.openedServList[0].servList[n];
+							if(this.servSpecId == opendServ.servSpecId){
+								contentAppend = contentAppend + this.servSpecName +"<br>"; 
+							}
+						}
+					}
+				});
+			}
+			
+			if(respnose !="" &&  respnose.data.resultCode == "0" && respnose.data.result.servSpec!=undefined && respnose.data.result.servSpec !=null && respnose.data.result.servSpec !=""){
+				$.each(respnose.data.result.servSpec,function(){
+					if(AttachOffer.openServList.length>0){
+						for(var n=0;n<AttachOffer.openServList[0].servSpecList.length;n++){
+							var opendServ = AttachOffer.openServList[0].servSpecList[n];
+							if(this.servSpecId == opendServ.servSpecId){
+								contentAppend = contentAppend + this.servSpecName +"<br>"; 
+							}
+						}
+					}
+				});
+			}
+			
+			if(respnose !="" &&  respnose.data.resultCode == "0" && respnose.data.result.servSpec!=undefined && respnose.data.result.offerSpec !=null && respnose.data.result.offerSpec !=""){
+				$.each(respnose.data.result.offerSpec,function(){
+					if(AttachOffer.openedList.length>0){
+						for(var n=0;n<AttachOffer.openedList[0].offerList.length;n++){
+							var opendServ = AttachOffer.openedList[0].offerList[n];
+							if(this.offerSpecId == opendServ.offerSpecId){
+								contentAppend = contentAppend +this.offerSpecName+"<br>";  
+							}
+						}
+					}
+				});
+			}
+			
+			var content= $div.text();
+			if(contentAppend !=""){
+				content = "【"+content  +"】功能产品，"+"与以下销售品或功能产品相依赖，系统会自动退订相关的依赖销售品。<br>"+contentAppend;
+			}
+			
+			$.confirm("信息确认","关闭"+content,{ 
 				yesdo:function(){
 					$div.addClass("deldiv");
 					serv.isdel = "Y";
+					
+					//删除一些依赖包
+					if(respnose !="" && respnose.data.resultCode == "0" && respnose.data.result.servSpec!=undefined && respnose.data.result.offerSpec!=undefined ){
+						_addOfferAndServDepend(respnose.data.result.servSpec,respnose.data.result.offerSpec,$("#span_"+prodId+"_"+servId).attr("servSpecId"),prodId);
+					}
 				},
 				no:function(){						
 				}
@@ -2247,12 +2407,14 @@ AttachOffer = (function() {
 		var servExclude = result.servSpec.exclude; //互斥
 		var servDepend = result.servSpec.depend; //依赖
 		var servRelated = result.servSpec.related; //连带
+		var servOfferList = result.servSpec.offerList; //带出的可选包[W]
 		var content = "";
 		//转换接口返回的互斥依赖
 		var param = {  
-			excludeServ : [],  //互斥依赖显示列表
-			dependServ : [], //存放互斥依赖列表
-			relatedServ : [] //连带
+				excludeServ : [],  //互斥依赖显示列表
+				dependServ : [], //存放互斥依赖列表
+				relatedServ : [] , //连带
+				offerListServ : []
 		};
 		
 		//解析功能产品互斥
@@ -2289,6 +2451,21 @@ AttachOffer = (function() {
 				content += "需要开通：   " + this.servSpecName + "<br>";
 				param.relatedServ.push(this);
 			});
+		}
+		//解析带出的可选包，获取功能产品订购依赖互斥的接口返回的带出可选包拼接成字符串[W]
+		if(ec.util.isArray(servOfferList)){
+			if(servOfferList.length>0){
+				content += "需要订购：   <br>";
+				$.each(servOfferList,function(){
+					if(this.ifDault===0){
+						content += '<input id="check_open_'+prodId+'_'+this.offerSpecId +'" type="checkbox" checked="checked" disabled="disabled">'+this.offerSpecName+'<br>'; 
+					}else{
+						content += '<input id="check_open_'+prodId+'_'+this.offerSpecId +'" type="checkbox" checked="checked">'+this.offerSpecName+'<br>'; 
+					}
+//					content += "需要订购：   " + this.offerSpecName + "<br>";
+					param.offerListServ.push(this);
+				});
+			}
 		}
 		if(content==""){ //没有互斥依赖
 			AttachOffer.addOpenServList(prodId,servSpecId,serv.servSpecName,serv.ifParams);
@@ -2584,9 +2761,14 @@ AttachOffer = (function() {
 						if(ec.util.isArray(this.prodSpecParams)){
 							ifParams = "Y";
 						}
+						/*
 						_addOpenServList(prodId,this.objId,this.objName,ifParams);
 						if(this.minQty>0){
 							_minQtyFileter(prodId,this.objId);
+						}
+						*/
+						if(this.dfQty>0){//默认配置大于0就带出，添加到已选功能产品中
+							_addOpenServList(prodId,this.objId,this.objName,ifParams);
 						}
 					}
 				});
