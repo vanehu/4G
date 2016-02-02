@@ -295,7 +295,7 @@ query.offer = (function() {
 	var _queryChangeAttachOffer = function(param,callBackFun) {
 		addParam(param);  //添加基本参数
 		param.isServiceOpen="Y";
-		var url = contextPath+"/app/offer/queryChangeAttachOffer";
+		var url = contextPath+"/token/app/offer/queryChangeAttachOfferNew";
 		if(typeof(callBackFun)=="function"){
 			$.callServiceAsHtmlGet(url,{strParam:JSON.stringify(param)},{
 				"before":function(){

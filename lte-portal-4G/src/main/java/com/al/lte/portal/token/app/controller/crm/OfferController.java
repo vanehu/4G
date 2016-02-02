@@ -3,7 +3,6 @@ package com.al.lte.portal.token.app.controller.crm;
 import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -195,17 +194,18 @@ public class OfferController extends BaseController {
 	 */
 	@RequestMapping(value = "/queryAttachOffer", method = RequestMethod.GET)
 	public String queryAttachOffer(@RequestParam("strParam") String param,Model model,HttpServletResponse response){
-		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
-				SysConstant.SESSION_KEY_LOGIN_STAFF);
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);
 		Map<String, Object> paramMap =  null;	
 		try{	
 			paramMap =  JsonUtil.toObject(param, Map.class);
 			Map<String, Object> labelMap = offerBmo.queryLabel(paramMap,null,sessionStaff);	
 			model.addAttribute("labelMap",labelMap);
 			model.addAttribute("labelMapJson", JsonUtil.buildNormal().objectToJson(labelMap));
+			
 			Map<String, Object> openMap = offerBmo.queryAttachOffer(paramMap,null,sessionStaff);
 			model.addAttribute("openMap",openMap);
 			model.addAttribute("openMapJson", JsonUtil.buildNormal().objectToJson(openMap));
+			
 			model.addAttribute("prodId",paramMap.get("prodId"));
 			model.addAttribute("param",paramMap);
 		} catch (BusinessException be) {
@@ -253,6 +253,43 @@ public class OfferController extends BaseController {
 			return super.failedStr(model, ErrorCode.QUERY_ATTACH_OFFER, e, paramMap);
 		}
 	 	return "/app/offer/attach-offer";
+	}
+	
+	/**
+	 * 套餐变更附属销售品页面
+	 * @param param
+	 * @param model
+	 * @param response
+	 * @return
+	 * @throws BusinessException
+	 */
+	@RequestMapping(value = "/queryChangeAttachOfferNew", method = RequestMethod.GET)
+	public String queryChangeAttachOfferNew(@RequestParam("strParam") String param,Model model,HttpServletResponse response){
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+				SysConstant.SESSION_KEY_LOGIN_STAFF);
+		Map<String, Object> paramMap =  JsonUtil.toObject(param, Map.class);
+		try{
+			//已订购附属销售品查询
+			Map<String, Object> openMap = offerBmo.queryAttachOffer(paramMap,null,sessionStaff);
+			model.addAttribute("openMap",openMap);
+			model.addAttribute("openMapJson", JsonUtil.buildNormal().objectToJson(openMap));
+			
+			//可订购附属标签查询
+			Map<String, Object> labelMap = offerBmo.queryLabel(paramMap,null,sessionStaff);	
+			model.addAttribute("labelMap",labelMap);
+			model.addAttribute("labelMapJson", JsonUtil.buildNormal().objectToJson(labelMap));
+			
+			model.addAttribute("prodId",paramMap.get("prodId"));
+			model.addAttribute("param",paramMap);
+		} catch (BusinessException e) {
+			log.error("获取附属销售品变更页面失败", e);
+			super.addHeadCode(response, ResultConstant.SERVICE_RESULT_FAILTURE);
+		} catch (InterfaceException ie) {
+			return super.failedStr(model, ie, paramMap, ErrorCode.QUERY_ATTACH_OFFER);
+		} catch (Exception e) {
+			return super.failedStr(model, ErrorCode.QUERY_ATTACH_OFFER, e, paramMap);
+		}
+	 	return "/apptoken/order/attach-offer-change";
 	}
 	
 	/**

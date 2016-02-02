@@ -2,7 +2,7 @@
     <h4 class="floatleft">可选附属业务</h4>
     <input type="text" id="search_text_${param.prodId}" placeholder="请输入您想要办理的附属业务的名称"  
     		onkeydown='if(event.keyCode==13){AttachOffer.searchAttachOfferSpec(${param.prodId},${param.offerSpecId},${param.prodSpecId})}' class="numberTextBox width330">  
-    <input type="button" onclick="AttachOffer.searchAttachOfferSpec(${param.prodId},${param.offerSpecId},${param.prodSpecId})" class="purchase" value="搜索"/> 
+    <input type="button" onclick="AttachOffer.searchAttachOfferSpec('${param.prodId}','${param.offerSpecId}','${param.prodSpecId}')" class="purchase" value="搜索"/> 
     <div id="attach_div_${param.prodId}" class="absolute"></div>
 	<div class="height18"></div>
 </div>

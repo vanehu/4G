@@ -30,6 +30,15 @@ AttachOffer = (function() {
 	var checkedOfferSpec = []; //已经校验过的终端预约号对应的促销包
 	
 	var totalNums=0;//记录总共添加了多少个终端输入框
+	
+	var _orderedOfferSpecIds = [];//已订购销售品规格
+	
+	var _servSpecIds = [];//已订购功能产品规格
+	
+	var _servSpecs = [];
+	
+	var _offerSpecs = [];
+	
 	//初始化附属销售页面
 	var _init = function(){
 		var prodInfo = order.prodModify.choosedProdInfo;
@@ -38,6 +47,7 @@ AttachOffer = (function() {
 			return;
 		}
 		OrderInfo.actionFlag = 3;
+		
 		query.offer.setOffer(function(){
 			if(!rule.rule.ruleCheck()){ //规则校验失败
 				return;
@@ -47,6 +57,7 @@ AttachOffer = (function() {
 					offerTypeCd : 1,
 					partyId: OrderInfo.cust.custId
 			};
+			
 			if(ec.util.isObj(prodInfo.prodOfferId)){
 				if(!query.offer.queryMainOfferSpec(param)){ //查询主套餐规格构成，并且保存
 					return;
@@ -54,17 +65,23 @@ AttachOffer = (function() {
 			}else{
 				OrderInfo.offerSpec = {};
 			}
+			
 			if(CONST.getAppDesc()==0){ //4g系统需要
 				if(!prod.uim.setProdUim()){ //根据UIM类型，设置产品是3G还是4G，并且保存旧卡
 					return;	
 				}
 			}
 			AttachOffer.queryAttachOffer();
+			
+			_orderedOfferSpecIds = [];//已订购销售品规格
+			
+			_servSpecIds = [];//已订购功能产品规格
+				
+			_servSpecs = [];
+				
+			_offerSpecs = [];
 		});
-//		if(!query.offer.setOffer()){ //必须先保存销售品实例构成，加载实例到缓存要使用
-//			return ;
-//		}
-		
+
 	}; 
 	
 	//可订购的附属查询 
@@ -776,12 +793,159 @@ AttachOffer = (function() {
 		}else if("13409244"==serv.servSpecId){//一卡双号虚号
 			$.alert("提示","请通过“一卡双号退订”入口或者短信入口退订此功能");
 		}else{ //关闭
-			$.confirm("信息确认","关闭【"+$span.text()+"】功能产品",{ 
+			var uim = OrderInfo.getProdUim(prodId);
+			
+			if(serv.servSpecId=="280000020" && (OrderInfo.actionFlag==22 || OrderInfo.actionFlag==23) && uim.cardTypeFlag=="1"){//补换卡补4G卡不能退订4G上网功能产品
+				$.alert("提示","4G卡不能退订【4G（LTE）上网】功能产品");
+				return;
+			}
+			
+			var respnose = "";
+			if($("#span_"+prodId+"_"+servId).attr("servSpecId") !="" && $("#span_"+prodId+"_"+servId).attr("servSpecId") !=null){
+				$("a[isdel='N']").each(function(){
+					if($(this).attr('offerSpecId') !=""){
+						_orderedOfferSpecIds.push($(this).attr('offerSpecId'));
+					}
+				});
+				
+				if(AttachOffer.openList.length>0){
+					for(var j=0;j<AttachOffer.openList[0].specList.length;j++){
+						var openedServ = AttachOffer.openList[0].specList[j];
+						if(openedServ.isdel ==undefined || "Y"!= openedServ.isdel){
+							_orderedOfferSpecIds.push(openedServ.offerSpecId);
+						}
+					}
+				}
+				
+				$("li[name='product']").each(function(){
+					if($(this).attr('servSpecId') !=""){
+						_servSpecIds.push($(this).attr('servSpecId'));
+					}
+				});
+				
+				if(AttachOffer.openServList.length>0){
+					for(var n=0;n<AttachOffer.openServList[0].servSpecList.length;n++){
+						var opendServ = AttachOffer.openServList[0].servSpecList[n];
+						if(opendServ.isdel ==undefined || "Y"!= opendServ.isdel){
+							_servSpecIds.push(opendServ.servSpecId);
+						}
+					}
+				}
+				respnose = AttachOffer.queryOfferAndServDependForCancel("",$("#span_"+prodId+"_"+servId).attr("servSpecId"));
+			}
+			
+			var contentAppend = "";
+			if(respnose !="" &&  respnose.data.resultCode == "0" && respnose.data.result.servSpec!=undefined && respnose.data.result.servSpec !=null && respnose.data.result.servSpec !=""){
+				$.each(respnose.data.result.servSpec,function(){
+					if(AttachOffer.openedServList.length>0){
+						for(var n=0;n<AttachOffer.openedServList[0].servList.length;n++){
+							var opendServ = AttachOffer.openedServList[0].servList[n];
+							if(this.servSpecId == opendServ.servSpecId){
+								contentAppend = contentAppend + this.servSpecName +"<br>"; 
+							}
+						}
+					}
+				});
+			}
+			
+			if(respnose !="" &&  respnose.data.resultCode == "0" && respnose.data.result.servSpec!=undefined && respnose.data.result.servSpec !=null && respnose.data.result.servSpec !=""){
+				$.each(respnose.data.result.servSpec,function(){
+					if(AttachOffer.openServList.length>0){
+						for(var n=0;n<AttachOffer.openServList[0].servSpecList.length;n++){
+							var opendServ = AttachOffer.openServList[0].servSpecList[n];
+							if(this.servSpecId == opendServ.servSpecId){
+								contentAppend = contentAppend + this.servSpecName +"<br>"; 
+							}
+						}
+					}
+				});
+			}
+			
+			if(respnose !="" &&  respnose.data.resultCode == "0" && respnose.data.result.servSpec!=undefined && respnose.data.result.offerSpec !=null && respnose.data.result.offerSpec !=""){
+				$.each(respnose.data.result.offerSpec,function(){
+					if(AttachOffer.openedList.length>0){
+						for(var n=0;n<AttachOffer.openedList[0].offerList.length;n++){
+							var opendServ = AttachOffer.openedList[0].offerList[n];
+							if(this.offerSpecId == opendServ.offerSpecId){
+								contentAppend = contentAppend +this.offerSpecName+"<br>";  
+							}
+						}
+					}
+				});
+			}
+			
+			var content= $span.text();
+			if(contentAppend !=""){
+				content = "【"+content  +"】功能产品，"+"与以下销售品或功能产品相依赖，系统会自动退订相关的依赖销售品。<br>"+contentAppend;
+			}
+			
+			$.confirm("信息确认","关闭"+content,{ 
 				yesdo:function(){
 					$span.addClass("del");
 					serv.isdel = "Y";
+					
+					//删除一些依赖包
+					if(respnose !="" && respnose.data.resultCode == "0" && respnose.data.result.servSpec!=undefined && respnose.data.result.offerSpec!=undefined ){
+						_addOfferAndServDepend(respnose.data.result.servSpec,respnose.data.result.offerSpec,$("#span_"+prodId+"_"+servId).attr("servSpecId"),prodId);
+					}
 				},
 				no:function(){						
+				}
+			});
+		}
+	};
+	
+	var _addOfferAndServDepend = function(reSrvSpec,reOfferSpec,OfferORServId,prodId){
+		if(reSrvSpec !=""){
+			var servSpec ={
+				servSpecId:OfferORServId,
+				servSpe:reSrvSpec,
+				offerSpe:[]
+			};
+			
+			_servSpecs.push(servSpec);
+			
+			$.each(reSrvSpec,function(){
+				if(AttachOffer.openedServList.length>0){
+					for(var j=0;j<AttachOffer.openedServList[0].servList.length;j++){
+						var openedServ = AttachOffer.openedServList[0].servList[j];
+						if(this.servSpecId == openedServ.servSpecId){
+							openedServ.isdel = "Y";
+							$("#li_"+prodId+"_"+openedServ.servId).find("span").addClass("del");
+						}
+					}
+				}
+				
+				if(AttachOffer.openServList.length>0){
+					for(var n=0;n<AttachOffer.openServList[0].servSpecList.length;n++){
+						var opendServ = AttachOffer.openServList[0].servSpecList[n];
+							if(this.servSpecId == opendServ.servSpecId){
+								opendServ.isdel = "Y";
+								$("#li_"+prodId+"_"+opendServ.servSpecId).find("span").addClass("del"); 
+							}
+						}
+				}
+			});
+		}
+		
+		if(reOfferSpec !=""){
+			var offerSpec ={
+				servSpecId:OfferORServId,
+				offerSpe:reOfferSpec,
+				servSpe:[]
+			};
+			
+			_offerSpecs.push(offerSpec);
+			
+			$.each(reOfferSpec,function(){
+				if(AttachOffer.openedList.length>0){
+					for(var j=0;j<AttachOffer.openedList[0].offerList.length;j++){
+						var openedServ = AttachOffer.openedList[0].offerList[j];
+						if(this.offerSpecId == openedServ.offerSpecId){
+							openedServ.isdel = "Y";
+							$("#li_"+prodId+"_"+openedServ.offerId).find("span").addClass("del");
+						}
+					}
 				}
 			});
 		}
@@ -4036,6 +4200,21 @@ AttachOffer = (function() {
 		_checkOfferExcludeDepend(prodId,newSpec);
 	};
 	
+	var _queryOfferAndServDependForCancel = function(offerSpecId,servSpecId){
+		if(OrderInfo.order.soNbr==null || OrderInfo.order.soNbr==undefined || OrderInfo.order.soNbr==""){
+			OrderInfo.order.soNbr = UUID.getDataId();
+		}
+		var param={
+				orderedOfferSpecIds : _orderedOfferSpecIds,
+				servSpecIds : _servSpecIds,
+				offerSpecId : offerSpecId,
+				servSpecId : servSpecId,
+				soNbr : OrderInfo.order.soNbr
+		};
+		var response = $.callServiceAsJson(contextPath+"/offer/queryOfferAndServDependForCancel",param); //依赖销售品查询
+		return response;
+	};
+	
 	return {
 		filterAttach2Coupons:_filterAttach2Coupons,
 		addOffer 				: _addOffer,
@@ -4104,5 +4283,10 @@ AttachOffer = (function() {
 		delServSpec             : _delServSpec,
 		addOfferSpecReload:_addOfferSpecReload,
 		excludeAddServ			: _excludeAddServ,
+		queryOfferAndServDependForCancel:_queryOfferAndServDependForCancel,
+		orderedOfferSpecIds:_orderedOfferSpecIds,
+		servSpecIds:_servSpecIds,
+		servSpecs:_servSpecs,
+		offerSpecs:_offerSpecs
 	};
 })();
