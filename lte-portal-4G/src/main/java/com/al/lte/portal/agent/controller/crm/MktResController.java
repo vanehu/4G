@@ -600,7 +600,10 @@ public class MktResController extends BaseController {
 		}
 		
 		List<Map<String, Object>> list = null;
-		String areaId=(String) param.get("areaId");
+		String areaId = "";
+		if(param.get("areaId")!=null && param.get("areaId")!=""){
+			areaId = param.get("areaId").toString();
+		}
 		param.putAll(getAreaInfos(areaId));
 		param.remove("isReserveFlag");
 		try {

@@ -943,6 +943,7 @@ order.main = (function(){
 				}
 				//清除号码的缓存！
 				order.phoneNumber.resetBoProdAn();
+				OrderInfo.boProdAns = [];
 			if(typeof(callbackFunc)=="function"){
 					callbackFunc();
 				}
@@ -981,6 +982,7 @@ order.main = (function(){
 				}
 				//清除号码的缓存！
 				order.phoneNumber.resetBoProdAn();
+				OrderInfo.boProdAns = [];
 				if (OrderInfo.actionFlag == 2) {
 					$("#order-content").hide();
 					$("#order_prepare").show();
