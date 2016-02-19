@@ -2814,6 +2814,37 @@ SoOrder = (function() {
 							$.alert("信息提示","没有配置付费类型，无法提交");
 							return false;
 						}
+						//属性A的值会影响属性B是否必填
+						var prodAttrRelationFlag = false;
+						var prodAttrRelationName = null;
+						var prodAttrName = null;
+						var prodAttrText = null;
+						$(OrderInfo.prodAttrs).each(function(){
+							if(!prodAttrRelationFlag){
+								var val=$.trim($("#"+this.id).val());
+								prodAttrName = this.name;
+							    $(this.valueRange).each(function(){
+							    	valueRan = this;
+	                                if(val == this.value){
+	                                	$(this.itemRelation).each(function(){
+	                                        if(this.minQty!=null && this.minQty != "" && this.minQty == 1){
+	                                        	var itemRelVal=$.trim($("#"+this.itemRelId).val());
+	                                        	if(itemRelVal == "" || itemRelVal == undefined){
+	                                        		prodAttrRelationFlag = true;
+	                        						prodAttrRelationName = this.itemSpecName;
+	                        						prodAttrText = valueRan.text;
+	        									}
+	                                        }
+	                                        
+	        						    });
+	                                }
+							    });
+							}
+						});
+						if(prodAttrRelationFlag){
+                    		$.alert("信息提示","产品属性（"+prodAttrRelationName+"）未配置，无法提交，失败原因：产品属性（"+prodAttrName+"）选择'"+prodAttrText+"'时，产品属性（"+prodAttrRelationName+"）为必填。");
+							return false;
+						}
 						//校验必填的产品属性和是否有重复的产品属性
 						var prodAttrEmptyFlag = false; //必填产品属性是否已输入
 						var prodAttrRepeatFlag = false; //是否包含重复的产品属性
@@ -2845,7 +2876,6 @@ SoOrder = (function() {
 							$.alert("信息提示","产品属性("+prodAttrRepeatCheckName+")重复，无法提交");
 							return false;
 						}
-						
 						if(!order.main.templateTypeCheck()){
 							return false;
 						}

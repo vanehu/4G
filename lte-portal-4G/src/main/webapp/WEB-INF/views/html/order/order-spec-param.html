@@ -84,12 +84,39 @@
 <script type="text/javascript" charset="utf-8">
 	var prodAttrs = [];
 	<#list prodSpecParams as prodSpec>
-		prodAttrs.push({
-			"isOptional" : "${prodSpec.rule.isOptional}",
-			"name" : "${prodSpec.name}",
-			"value" : "${prodSpec.value}",
-			"id" : "${prodSpec.itemSpecId}_${prodId}"
-		});
+		<#if prodSpec.dataSourceTypeCd==4 >
+		var valueRange = [];
+		<#list prodSpec.valueRange as valueRan>
+		    var itemRelation = [];
+		    <#list valueRan.itemRelation as itemRel>
+		        itemRelation.push({
+		        	"itemRelId" : "${itemRel.itemSpecId}_${prodId}",
+		    	    "itemSpecId" : "${itemRel.itemSpecId}",
+		    	    "itemSpecName" : "${itemRel.itemSpecName}",
+		    	    "minQty" : "${itemRel.minQty}"
+		        });
+		    </#list>
+		    valueRange.push({
+		    	"value" : "${valueRan.value}",
+		    	"text" : "${valueRan.text}",
+		    	"itemRelation" : itemRelation
+		    });
+		</#list>
+		    prodAttrs.push({
+			    "isOptional" : "${prodSpec.rule.isOptional}",
+			    "name" : "${prodSpec.name}",
+			    "value" : "${prodSpec.value}",
+			    "id" : "${prodSpec.itemSpecId}_${prodId}",
+			    "valueRange" : valueRange
+		    });
+		<#else>
+		    prodAttrs.push({
+			    "isOptional" : "${prodSpec.rule.isOptional}",
+			    "name" : "${prodSpec.name}",
+			    "value" : "${prodSpec.value}",
+			    "id" : "${prodSpec.itemSpecId}_${prodId}",
+		    });
+		</#if>
 	</#list>
 	OrderInfo.prodAttrs = prodAttrs;
 </script>  	
