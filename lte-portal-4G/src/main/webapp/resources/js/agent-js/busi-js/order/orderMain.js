@@ -117,7 +117,8 @@ order.main = (function(){
 //		if(OrderInfo.actionFlag==1 || OrderInfo.actionFlag==6 || OrderInfo.actionFlag==13 || OrderInfo.actionFlag==14){
 //			_initAcct();//初始化帐户列表 
 //			$("#acctName").val(OrderInfo.cust.partyName);
-//			order.dealer.initDealer();//初始化协销		
+//			order.dealer.initDealer();//加载发展人 
+			mktRes.terminal.initDealer();//直接加载发展人 不显示	
 //		}
 //		_addEvent();//添加页面事件*/
 //		order.phoneNumber.initOffer('-1');//主卡自动填充号码入口已选过的号码

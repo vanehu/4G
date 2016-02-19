@@ -3178,6 +3178,7 @@ mktRes.terminal = (function($){
 	};
 	
 	return {
+		initDealer			:_initDealer,
 		selectTc			:_selectTc,
 		init				:_init,
 		passcust            :_passcust,
