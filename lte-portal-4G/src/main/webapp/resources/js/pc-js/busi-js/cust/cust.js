@@ -508,9 +508,9 @@ order.cust = (function(){
 	//客户列表点击
 	var _showCustAuth = function(scope) {
 		_choosedCustInfo = {
-			custId : $(scope).find("td:eq(3)").text(),
-			partyName : $(scope).find("td:eq(0)").text(),
-			idCardNumber : $(scope).find("td:eq(4)").text(),
+			custId : $(scope).attr("custId"),
+			partyName : $(scope).attr("partyName"),
+			idCardNumber : $(scope).attr("idCardNumber"),
 			identityName : $(scope).attr("identityName"),
 			areaName : $(scope).attr("areaName"),
 			areaId : $(scope).attr("areaId"),
