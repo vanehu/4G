@@ -340,32 +340,38 @@ order.undo = (function(){
 				$.ecOverlay("<strong>撤单提交中，请稍等...</strong>");
 			},
 			"done" : function(response){
-				var result = response.data ;
-				if(result){
-					var ruleInfos = result.result.ruleInfos;
-					if(ruleInfos!=undefined && ruleInfos.length > 0){
-						$.unecOverlay();
-						rule.rule.init();
-						$.each(ruleInfos, function(i, ruleInfo) {
-							$("<tr><td>"+ruleInfo.ruleCode+"</td>" +
-									"<td>"+ruleInfo.ruleDesc+"</td>" +
-									"<td>"+rule.rule.getRuleLevelName(ruleInfo.ruleLevel)+"</td>" +
-									"<td><div style='display:block;margin-left:30px;' class='"+rule.rule.getRuleImgClass(ruleInfo.ruleLevel)+"'></div></td>" +
-							"</tr>").appendTo($("#ruleBody"));
-						});
-						easyDialog.open({
-							container : 'ruleDiv'
-						});
-					}else{
-						if(if_undo=='Y'){
-							_getOrderConfirm(response.data);
-						}else{
-							_orderCheck(response);
-						}
-					}
-				}else{
-					$.alert("提示","撤单提交失败！");
+				if(response.code!=0){
 					$.unecOverlay();
+					$.alertM(response.data);		
+					return;
+				}else{
+					var result = response.data ;
+					if(result&&result.result!=undefined){
+						var ruleInfos = result.result.ruleInfos;
+						if(ruleInfos!=undefined && ruleInfos.length > 0){
+							$.unecOverlay();
+							rule.rule.init();
+							$.each(ruleInfos, function(i, ruleInfo) {
+								$("<tr><td>"+ruleInfo.ruleCode+"</td>" +
+										"<td>"+ruleInfo.ruleDesc+"</td>" +
+										"<td>"+rule.rule.getRuleLevelName(ruleInfo.ruleLevel)+"</td>" +
+										"<td><div style='display:block;margin-left:30px;' class='"+rule.rule.getRuleImgClass(ruleInfo.ruleLevel)+"'></div></td>" +
+								"</tr>").appendTo($("#ruleBody"));
+							});
+							easyDialog.open({
+								container : 'ruleDiv'
+							});
+						}else{
+							if(if_undo=='Y'){
+								_getOrderConfirm(response.data);
+							}else{
+								_orderCheck(response);
+							}
+						}
+					}else{
+						$.alert("提示","撤单提交失败！");
+						$.unecOverlay();
+					}
 				}
 			},
 			fail:function(response){
