@@ -152,11 +152,11 @@ cust = (function(){
 		createCustInfo = {
 			cAreaId : areaId,
 			cAreaName : custName,
-			cCustName : $.trim($("#cCustName").val()),
-			cCustIdCard :  $.trim($("#cCustIdCard").val()),
-			cPartyTypeCd : $.trim($("#partyTypeCd  option:selected").val()),
-			cIdentidiesTypeCd : $.trim($("#identidiesTypeCd  option:selected").val()),
-			cAddressStr :$.trim($("#cAddressStr").val())
+			cCustName : $.trim($("#cmCustName").val()),
+			cCustIdCard :  $.trim($("#cmCustIdCard").val()),
+			cPartyTypeCd : $.trim($("#cmPartyTypeCd").val()),
+			cIdentidiesTypeCd : $.trim($("#cm_identidiesTypeCd").val()),
+			cAddressStr :$.trim($("#cmAddressStr").val())
 		};
 		diffPlace=$("#DiffPlaceFlag").val();
 		var params = {
