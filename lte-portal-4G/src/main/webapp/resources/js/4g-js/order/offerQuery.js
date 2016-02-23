@@ -467,6 +467,8 @@ query.offer = (function() {
 	//销售品互斥依赖查询
 	var _queryExcludeDepend = function(param){
 		addParam(param);  //添加基本参数
+		var prodSpecId = OrderInfo.getProdSpecId(param.prodId);
+		param.prodSpecId = prodSpecId;
 		var url = contextPath+"/offer/queryExcludeDepend";
 		$.ecOverlay("<strong>规则校验中,请稍等...</strong>");
 		var response = $.callServiceAsJsonGet(url,{strParam:JSON.stringify(param)});
