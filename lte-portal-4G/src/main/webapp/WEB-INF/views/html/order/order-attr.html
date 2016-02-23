@@ -3,6 +3,8 @@
 	<li class="full" id="li_order_attr">
 		<label>经办人姓名：</label> 
 		<input id="orderAttrName" class="inputWidth250px" maxlength="16" type="text" style="width:280px;">
+		<span style="line-height: 28px; float:left;"></span>
+		<label class="f_red">*</label>
 	</li>
 	<li class="full" id="li_order_remark">
 		<label>客户类型：</label> 
@@ -10,23 +12,37 @@
                                         <option value=1 >个人</option>
                                         <option value=2>政企客户</option>
         </select>
+        <label class="f_red">*</label>
 	</li>
 	<li class="full" id="li_order_remark4">
 		<label>联系人号码：</label> 
 		<input id="orderAttrPhoneNbr" class="inputWidth250px" type="text" maxlength="16"style="width:280px;">
+		<label class="f_red">*</label>
 	</li>
 	<li class="full" id="li_order_remark1">
 		<label>证件类型：</label>
         <select id="orderIdentidiesTypeCd" onchange="order.cust.identidiesTypeCdChoose(this,'orderAttrIdCard')">
         </select>
+        <label class="f_red">*</label>
+        <a class="btn_h30" id="orderAttrReadCertBtn" onclick="javascript:order.cust.readCertWhenOrder()" style="margin-top: 0px; display: none;"><span>读 卡</span></a>
 	</li>
 	<li class="full" id="li_order_remark2">
 		<label>证件号码：</label> 
 		<input id="orderAttrIdCard" class="inputWidth250px"maxlength="50"type="text" style="width:280px;">
+		<span style="line-height: 28px; float:left;"></span>
+		<label class="f_red">*</label>
 	</li>
 	<li class="full" id="li_order_remark3">
 		<label>证件地址：</label> 
 		<input id="orderAttrAddr" class="inputWidth250px" maxlength="125"type="text" style="width:280px;">
+		<span style="line-height: 28px; float:left;"></span>
+		<label class="f_red">*</label>
 	</li>
 </ul>
 <div class="height18"></div>
+<script>
+	//新建客户或老客户，如果是政企客户，经办人必填
+	if(OrderInfo.boCustInfos.partyTypeCd != '2' && !order.cust.isCovCust(OrderInfo.cust.identityCd)){ 
+		$("#orderAttrDiv .f_red").hide();
+	}
+</script>

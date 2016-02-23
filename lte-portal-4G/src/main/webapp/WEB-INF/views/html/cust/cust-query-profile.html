@@ -127,6 +127,23 @@
 		<#if (profileTabLists.tabProfile)?? &&((profileTabLists.tabProfile)?size>0)>
 		<table id="${profileTabLists.tabProfileNum}" class="network" style="display:none; margin:0px 15px">
 		  <tbody>
+		  	<#if profileTabLists.partyProfileCatgTypeCd?? && profileTabLists.partyProfileCatgTypeCd == 3>
+			  	<tr>
+			  		<td width="90" align="right" style="text-align:right">客户类型：</td>
+			  		<td width="150">
+			  			<select id="custCAttrPartyType" class="inputWidth183px" style="margin-left: 3px; width: 188px;" onchange="order.cust.partyTypeCdChoose(this,'custCAttrIdentidiesTypeCd')">
+				  			<option value="1" >个人</option>
+		                    <option value="2">政企客户</option>
+			  			</select>
+			  		</td>
+			  		<td width="90" align="right" style="text-align:right">证件类型：</td>
+			  		<td width="150">
+			  			<select id="custCAttrIdentidiesTypeCd" style="width: 92px;" onchange="order.cust.identidiesTypeCdChoose(this,'custCAttrIdCard')">
+				        </select>
+				        <a class="btn_h30" id="custCAttrReadCertBtn" onclick="javascript:order.cust.readCertWhenCustCAttr()" style="margin-top: 0px; display: none;"><span>读 卡</span></a>
+			  		</td>
+			  	</tr>
+		  	</#if>
 		    <#assign parm_row = 0 />
 			<#list profileTabLists.tabProfile as tabProfile1>
 			<#if tabProfile1.attrSpecTypeCd?? && tabProfile1.attrSpecTypeCd!="" >
@@ -143,7 +160,7 @@
 								<option value="${valueRange.value}" <#if tabProfile1.value==valueRange.value >selected="selected"</#if> >${valueRange.text}</option>	
 							</#list>
 						  </select>
-						    
+						  <span name="${tabProfile1.attrId}"></span>
 						<#else>
 						   <input type="<#if tabProfile1.dataTypeCd==8 >password<#else>text</#if>" class="inputWidth183px" id="${tabProfile1.attrId}"
 							<#if tabProfile1.dataTypeCd?? && tabProfile1.dataTypeCd="4" >
@@ -153,6 +170,7 @@
 							<#else>
 							</#if>
 							/>
+							<span name="${tabProfile1.attrId}"></span>
 						</#if>
 				</td>
 			    <#if parm_row%2==0||((profileTabLists.tabProfile)?size==parm_row)></tr></#if>
@@ -164,3 +182,7 @@
 	</#list>
     </#if>
 </#if>
+<script>
+	// 证件类型初始化（不加不会加载证件）
+	$("#custCAttrPartyType").change();
+</script>
