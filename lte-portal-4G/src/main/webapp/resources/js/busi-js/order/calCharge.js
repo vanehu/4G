@@ -226,7 +226,7 @@ order.calcharge = (function(){
 				}
 				if(OrderInfo.actionFlag==11||OrderInfo.actionFlag==19||OrderInfo.actionFlag==20){
 					feeAmount = $("#feeAmount_"+val).val()*1+'';
-					realmoney = (0-($("#backAmount_"+val).val())*100)+'';
+					realmoney = (0-parseInt(($("#backAmount_"+val).val())*100))+'';
 					//realmoney = (parseInt(feeAmount) + parseInt(realmoney))+'';
 					//alert("feeAmount="+feeAmount+"||realmoney="+realmoney);
 				}
