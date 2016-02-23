@@ -3,6 +3,9 @@
 		<select id="selUim" onchange="prod.changeUim.changeUimSel(this,${prodId})">
 			<option value="1">预制卡</option>
 			<option value="2">空白卡</option>
+			<#if newCard =="0">
+			<option value="4">测试组件</option>
+			</#if>
 		</select>
     </label>
     <input type="hidden" id="selUimType" value="1"/>

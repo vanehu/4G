@@ -200,7 +200,6 @@ order.writeCard = (function(){
 		//end
 		if (opCode != '' && opCode != "FFFF") {
 			//update by huangjj3 #13318，如果选择的是空白卡，cardNo需要做下逻辑处理
-			$("#selUim").val("2");//下拉框选择为空白卡
 			var serviceName = contextPath + "/mktRes/writeCard/getAsciiToHex";
 			var asciiFStr = result.substring(result.length-4,result.length);
 			var param = {
@@ -212,7 +211,12 @@ order.writeCard = (function(){
 			$("#uim_txt_"+prodId).val(selUimCard);
 			$("#resultCardAsciiFStr").val(selUimCard);
 			$("#resultCardNo").val(result);
-			$("#selUimType").val("3");
+			if($("#selUimType").val()!="4"){
+				$("#selUimType").val("3");
+				$("#selUim").val("2");//下拉框选择为空白卡
+			}else{
+				$("#selUim").val("4");
+			}
 			$("#uim_lable").attr("disabled",true);  
 			serialNum = result;//#13318，所有的白卡都不截取，现直接入库
 			factoryCode = result.substring(result.length - 2,result.length);
@@ -625,9 +629,9 @@ order.writeCard = (function(){
 		_cardDllInfoJson = null;
 		try {
 			if (factoryCode != undefined) {
-				var writeCardNewDLL = $("#writeCardNewDLL").val();//写卡新组件开关
+				var writeCardNewDLL = $("#selUimType").val();//写卡新组件开关
 				//alert("厂商编码2："+factoryCode);
-				if(writeCardNewDLL=='ON'){
+				if(writeCardNewDLL=='4'){
 					var serviceName = contextPath + "/mktRes/writeCard/cardDllInfo";
 					var param = {
 						"factoryCode":factoryCode,
@@ -1020,7 +1024,7 @@ order.writeCard = (function(){
 					var inParam = {
 							"instCode" : $("#resultCardAsciiFStr").val(),
 							"phoneNum" : phoneNumber,
-							"remark":$("#selUimType").val(),//
+							"remark": "3",//
 							"areaId"   : OrderInfo.getProdAreaId(_rscJson.prodId)
 					};
 					var serviceUrl = contextPath + "/mktRes/writeCard/intakeSerialNumber";

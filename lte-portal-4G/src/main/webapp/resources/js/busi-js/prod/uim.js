@@ -48,7 +48,7 @@ prod.uim = (function() {
 			cardNo = cardNo.substring(0,cardNo.length-2)+ response.data.strHex;
 			
 		}
-		if(selUimType == 3){//表示读取的是空白卡
+		if(selUimType == 3 || selUimType == 4){//表示读取的是空白卡
 			cardNo = $("#resultCardNo").val();
 		}
 		$("#uim_lable").attr("disabled",false); 
@@ -144,7 +144,7 @@ prod.uim = (function() {
 		if(CONST.getAppDesc()==0){
 			coupon.cardTypeFlag=data.baseInfo.cardTypeFlag;//UIM卡类型
 		}
-		if(selUimType==2 || selUimType==3){
+		if(selUimType==2 || selUimType==3 || selUimType==4){
 			coupon.uimType = "2";
 		}
 		$("#uim_check_btn_"+prodId).attr("disabled",true);

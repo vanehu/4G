@@ -1174,6 +1174,14 @@ public class OrderController extends BaseController {
             }
             forward = "/order/order-main-template";
         }
+        String iseditOperation = "-1";
+		try {
+			iseditOperation = this.staffBmo.checkOperatSpec(SysConstant.YCZJQX_TEST, sessionStaff2);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        model.addAttribute("newCard", iseditOperation);
         return forward;
     }
 
