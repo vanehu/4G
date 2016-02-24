@@ -1220,6 +1220,16 @@ CacheData = (function() {
 			return "Other";
 		}
 	};
+
+	var recordId = "";
+	//设置鉴权日志id
+	var _setRecordId = function (id) {
+		recordId = id;
+	};
+	//获取鉴权日志id
+	var _getRecordId = function () {
+		return recordId;
+	};
 	return {
 		setParam				: _setParam,
 		setServParam			: _setServParam,
@@ -1261,6 +1271,8 @@ CacheData = (function() {
 		getIntOptSwitch         : _getIntOptSwitch,
 		getGovCertType          : _getGovCertType,
 		getOldOfferMember       : _getOldOfferMember,
-		getBrowserTypeVersion   : _getBrowserTypeVersion
+		getBrowserTypeVersion   : _getBrowserTypeVersion,
+		getRecordId				: _getRecordId,
+		setRecordId				: _setRecordId
 	};
 })();

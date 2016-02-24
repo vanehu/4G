@@ -570,6 +570,7 @@ public class CustController extends BaseController {
 		paramMap.put("areaId",param.get("areaId"));
 		String authFlag=(String) param.get("authFlag");
 		String identityNum=(String) param.get("identityNum");
+		String validateType=(String) param.get("validateType");
 		areaName = (String) param.get("areaName");
 		if(areaName==null){
 			areaName=sessionStaff.getCurrentAreaAllName();	
@@ -611,14 +612,14 @@ public class CustController extends BaseController {
 		Map<String, Map> listCustInfos = (Map<String, Map>) httpSession.getAttribute(SysConstant.SESSION_LIST_CUST_INFOS);
 		
 		if ("0".equals(authFlag)) {
-			if ("1".equals(pCustIdentityCd)) {
+			if ("2".equals(validateType)) {
 				//用户信息查询
 				Map custParam = new HashMap();
 				try {
 					custParam.put("areaId", param.get("areaId"));
 					custParam.put("identityCd", identityCd);
 					custParam.put("identityNum", StringUtils.isNotBlank(identityNum)?Base64.eryDecoder(identityNum):"");
-					custParam.put("staffId", param.get("staffId"));
+					custParam.put("staffId", sessionStaff.getStaffId());
 					custParam.put("transactionId", param.get("transactionId"));
 					resultMap = custBmo.queryCustInfo(custParam, flowNum, sessionStaff);
 					if (MapUtil.isNotEmpty(resultMap)) {

@@ -279,6 +279,10 @@ SoOrder = (function() {
 			itemSpecId: "800000047",
 			value: navigator.userAgent
 		});
+		custOrderAttrs.push({ //鉴权日志id
+			itemSpecId: "800000048",
+			value: CacheData.getRecordId()
+		});
 		custOrderAttrs.push({ //业务类型
 			itemSpecId : CONST.BUSI_ORDER_ATTR.BUSITYPE_FLAG,
 			value : OrderInfo.busitypeflag

@@ -47,7 +47,14 @@ OrderInfo = (function() {
 	19异地补换卡
 	20预写白卡
 	*/
-	
+	var _authRecord={
+		menuId:"",
+		validateType:"",
+		resultCode:""
+	};//保存鉴权临时结果
+
+	var _cust_validateType = "";//客户鉴权方式
+
 	var _busitypeflag = 0;
 	
 	var _orderlonger = "";
@@ -1636,6 +1643,8 @@ OrderInfo = (function() {
 		saveOrder				:_saveOrder,
 		provinceInfo           	:_provinceInfo,
 		newOrderInfo			:_newOrderInfo,
-		custCreateToken         :_custCreateToken
+		custCreateToken         :_custCreateToken,
+		authRecord				:_authRecord,
+		cust_validateType		:_cust_validateType
 	};
 })();

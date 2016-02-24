@@ -36,6 +36,11 @@ prod.transferModify = (function(){
 	};
 	//过户返档
 	var _showCustTransferReturn = function () {
+		if(OrderInfo.authRecord.resultCode!="0"){
+			order.prodModify.querySecondBusinessAuth("11","Y","prod.transferModify.showCustTransferReturn");
+			return;
+		}
+
 		if(order.prodModify.choosedProdInfo.prodStateCd!=CONST.PROD_STATUS_CD.NORMAL_PROD){
 			$.alert("提示","当前产品状态不是【在用】,不允许受理该业务！");
 			return;
