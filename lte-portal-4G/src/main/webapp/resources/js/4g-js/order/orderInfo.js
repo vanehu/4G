@@ -970,7 +970,8 @@ OrderInfo = (function() {
 		identidiesTypeCd : "1", //证件类型
 		identityNum : "", //证件号码
 		isDefault : "Y", //是否首选
-		state : "ADD"  //状态
+		state : "ADD",  //状态
+		identidiesPic : "" //证件照片
 	};
 
 	//客户联系人节点

@@ -54,7 +54,8 @@ OrderInfo = (function() {
 		partyName : "",
 		vipLevel : "",
 		vipLevelName : "",
-		custFlag :"1100"//1000：红客户，1100：白客户，1200：黑客户
+		custFlag :"1100", //1000：红客户，1100：白客户，1200：黑客户
+		identityPic : ""
 	}; 
 	
 	var _staff = { //员工登陆信息
@@ -165,7 +166,8 @@ OrderInfo = (function() {
 					areaId : OrderInfo.staff.soAreaId,
 					partyId : -1,  //新装默认-1
 					//distributorId : OrderInfo.staff.distributorId, //转售商标识
-					olTypeCd : CONST.OL_TYPE_CD.APP  //app标识
+					olTypeCd : CONST.OL_TYPE_CD.APP,  //app标识
+					actionFlag : OrderInfo.actionFlag
 				},
 				custOrderList :[{busiOrder : []}]   //客户订购列表节点
 			}
@@ -708,7 +710,8 @@ OrderInfo = (function() {
 		identidiesTypeCd : "1", //证件类型
 		identityNum : "", //证件号码
 		isDefault : "Y", //是否首选
-		state : "ADD"  //状态
+		state : "ADD",  //状态
+		identidiesPic : "" //证件照片	
 	};
 
 	//客户联系人节点
@@ -1124,9 +1127,8 @@ OrderInfo = (function() {
 			};
 			return query.offer.checkOperate(param);
 		}
-	};
-				
-	return {	
+	};		
+	return {
 		order					: _order,
 		acctId                  : _acctId,
 		acctCd                  : _acctCd,

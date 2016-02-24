@@ -15,10 +15,7 @@ import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
-
 import org.apache.commons.lang.StringUtils;
-
-import com.sun.image.codec.jpeg.*;
 
 public class RunShellUtil {
 	
@@ -144,7 +141,7 @@ public class RunShellUtil {
         // 要使用压缩，必须指定压缩方式为MODE_EXPLICIT  
         imgWriteParams.setCompressionMode(imgWriteParams.MODE_EXPLICIT);  
         // 这里指定压缩的程度，参数qality是取值0~1范围内，  
-        imgWriteParams.setCompressionQuality((float)0.8);  
+        imgWriteParams.setCompressionQuality((float)0.4);  
         imgWriteParams.setProgressiveMode(imgWriteParams.MODE_DISABLED);  
         ColorModel colorModel = ColorModel.getRGBdefault();  
         // 指定压缩时使用的色彩模式  
@@ -223,5 +220,10 @@ public class RunShellUtil {
         }
 		return data;  
     }
+    
+    /*public static void main(String[] args) throws Exception {
+    	RunShellUtil r = new RunShellUtil();
+    	r.compressPic("d:\\wangyc.bmp", "d:\\wangyc111.jpg");
+	}*/
     
 }

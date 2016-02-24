@@ -102,7 +102,7 @@ cust = (function(){
 		
 		OrderInfo.boCustIdentities.identidiesTypeCd = OrderInfo.cust.identityCd;//证件类型
 		OrderInfo.boCustIdentities.identityNum = OrderInfo.cust.identityNum;//证件号码
-		OrderInfo.boCustIdentities.identidiesPic = encodeURIComponent(OrderInfo.cust.identityPic);//证件照片
+		OrderInfo.boCustIdentities.identidiesPic = OrderInfo.cust.identityPic;//证件照片
 		OrderInfo.boCustIdentities.isDefault = "Y";
 		OrderInfo.boCustIdentities.state = "ADD";
 	};
@@ -145,7 +145,7 @@ cust = (function(){
 					identityNum : modifyCustInfo.custIdCard,
 					isDefault : "Y",
 					state : "ADD",
-					identidiesPic : encodeURIComponent(identityPic)
+					identidiesPic : identityPic
 				}];	
 			}else{
 				data.boCustIdentities = [{
@@ -159,7 +159,7 @@ cust = (function(){
 					identityNum : modifyCustInfo.custIdCard,
 					isDefault : "Y",
 					state : "ADD",
-					identidiesPic : encodeURIComponent(identityPic)
+					identidiesPic : identityPic
 				}];
 			}
 			SoOrder.submitOrder(data);
@@ -252,7 +252,7 @@ cust = (function(){
 						identityNum : modifyCustInfo.custIdCard,
 						isDefault : "Y",
 						state : "ADD",
-						identidiesPic : encodeURIComponent(identityPic)
+						identidiesPic : identityPic
 					}];	
 				}else{
 					data.boCustIdentities = [{
@@ -266,7 +266,7 @@ cust = (function(){
 						identityNum : modifyCustInfo.custIdCard,
 						isDefault : "Y",
 						state : "ADD",
-						identidiesPic : encodeURIComponent(identityPic)
+						identidiesPic : identityPic
 					}];
 				}
 //				//客户联系人
@@ -443,7 +443,7 @@ cust = (function(){
 		if ("9" == OrderInfo.actionFlag) {
 			$("#userid").attr("placeholder", "请输入接入号码");
 			$("#" + id).append('<option value="-1" >接入号码</option>');
-			var params = {"partyTypeCd":_partyTypeCd} ;
+			/*var params = {"partyTypeCd":_partyTypeCd} ;
 			var url=contextPath+"/cust/queryCertType";
 			var response = $.callServiceAsJson(url, params, {});
 			if (response.code == -2) {
@@ -499,7 +499,7 @@ cust = (function(){
 						$("#readCertBtnCreate").hide();
 					}
 				}
-			}
+			}*/
 		} else {
 			$("#" + id).append('<option value="1" >居民身份证</option>');
 			$("#userid").attr("placeholder", "请输入身份证号码");
@@ -1195,6 +1195,8 @@ cust = (function(){
 		param.custId = _choosedCustInfo.custId;
 		param.authFlag=authFlag;
 		$('#authID').modal('hide');
+		// done区域内，弹框不显示 ，在always区域判断
+		var isCustIdAuthFail = false;
 		$.callServiceAsHtml(contextPath+"/agent/cust/custAuth",param,{
 			"before":function(){
 				$.ecOverlay("<strong>正在查询中,请稍等...</strong>");
@@ -1203,7 +1205,7 @@ cust = (function(){
 					return;
 				}
 				if(response.data.indexOf("false") >=0) {
-					$.alert("提示","抱歉，您输入的身份证号有误，请重新输入。");
+					isCustIdAuthFail = true;
 					return;
 				}
 				//判断能否转为json，可以的话返回的就是错误信息
@@ -1230,6 +1232,9 @@ cust = (function(){
 				}
 			},"always":function(){
 				$.unecOverlay();
+				if (isCustIdAuthFail) {
+					$.alert("提示","抱歉，您输入的身份证号有误，请重新输入。");
+				}
 			}
 		});
 	};
@@ -1507,6 +1512,32 @@ cust = (function(){
 				content$.html(response.data);
 				// 隐藏已订购查询按钮
 				$("#query-cust-prod").hide();
+				// 卡类型查询
+				/*$("#phoneNumListtbody td[name ='pord_uim_type_query']").each(function () {
+					var currentTd = $(this);
+					var param = {
+							prodId	: $(this).attr("prodInstId"),
+							areaId		: $(this).attr("areaId"),
+							acctNbr		: $(this).attr("acctNbr")
+						};
+					$.callServiceAsJson(contextPath+"/order/queryTerminalInfo", param, {
+						"done" : function(response){
+							if(response.code == 0) {
+								var terminalInfo = response.data;
+								if(ec.util.isObj(terminalInfo.is4GCard)){
+									if(terminalInfo.is4GCard == "Y"){
+										currentTd.text("4G卡");
+									}else{
+										currentTd.text("3G卡");
+									}
+								}
+							} else {
+								currentTd.text("查询失败");
+							}
+						}
+					});
+				});*/
+				
 				//_linkSelectPlan("#phoneNumListtbody tr",$("#phoneNumListtbody").children(":first-child"));
 				//绑定每行合约click事件
 //				$("#phoneNumListtbody tr").off("click").on("click",function(event){
@@ -1600,6 +1631,39 @@ cust = (function(){
 		OrderInfo.boCusts.state="ADD";
 		OrderInfo.cust = "";
 	};
+	// 查询卡类型
+	var _queryCardType = function(_prodId, _areaId, _acctNbr) {
+		var currentTd = $("td[name=pord_uim_type_query][prodInstId='" + _prodId + "']");
+		var param = {
+				prodId	: _prodId,
+				areaId	: _areaId,
+				acctNbr	: _acctNbr
+			};
+		if (currentTd.text() == "4G卡" || currentTd.text() == "3G卡") {
+			return;
+		}
+		$.callServiceAsJson(contextPath+"/agent/order/queryTerminalInfo", param, {
+			"before":function(){
+				currentTd.text("查询中...");
+			},
+			"done" : function(response){
+				if(response.code == 0) {
+					var terminalInfo = response.data;
+					if(ec.util.isObj(terminalInfo.is4GCard)){
+						if(terminalInfo.is4GCard == "Y"){
+							currentTd.text("4G卡");
+						}else{
+							currentTd.text("3G卡");
+						}
+					}
+				} else {
+					currentTd.text("查询失败");
+				}
+			},
+			"always":function(){
+			}
+		});
+	};
 	return {
 		jbridentidiesTypeCdChoose 	: 		_jbridentidiesTypeCdChoose,
 		jbrvalidatorForm 			: 		_jbrvalidatorForm,
@@ -1634,6 +1698,7 @@ cust = (function(){
 		orderBtnflag 				:		_orderBtnflag,
 		queryCustNext				:		_queryCustNext,
 		custReset					:		_custReset,
-		getCustIdCard				:		_getCustIdCard
+		getCustIdCard				:		_getCustIdCard,
+		queryCardType				:		_queryCardType
 	};	
 })();

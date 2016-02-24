@@ -603,6 +603,7 @@ public class CustBmoImpl implements CustBmo {
 		  				}
 		  				byte[] identityPicDecode = runShellUtil.getByteFromFile(jpgDir);
 		  				identityPic = new BASE64Encoder().encode(identityPicDecode);
+		  				identityPic = identityPic.replaceAll("\n|\r", "");
 		  				if(StringUtils.isNotBlank(identityPic)){
 		  					runShellUtil.deleteFile(bmpDir);
 		  					runShellUtil.deleteFile(wltDir);

@@ -28,6 +28,7 @@ cust = (function(){
 				OrderInfo.custorderlonger=response.data;
 			}*/
 			_checkIdentity();
+
 		}
 	};
 	
@@ -85,6 +86,7 @@ cust = (function(){
 		
 		OrderInfo.boCustIdentities.identidiesTypeCd = OrderInfo.cust.identityCd;//证件类型
 		OrderInfo.boCustIdentities.identityNum = OrderInfo.cust.identityNum;//证件号码
+		OrderInfo.boCustIdentities.identidiesPic = OrderInfo.cust.identityPic;//证件照片
 		OrderInfo.boCustIdentities.isDefault = "Y";
 		OrderInfo.boCustIdentities.state = "ADD";
 	};
@@ -117,24 +119,31 @@ cust = (function(){
 				addressStr :modifyCustInfo.addressStr,
 				state : "ADD"
 			}];
+			var identityPic = OrderInfo.cust.identityPic;
+			if (identityPic === undefined) {
+				identityPic = "";
+			}
 			if(!ec.util.isObj(OrderInfo.cust.idCardNumber)){
 				data.boCustIdentities = [{
 					identidiesTypeCd :modifyCustInfo.identidiesTypeCd,
 					identityNum : modifyCustInfo.custIdCard,
 					isDefault : "Y",
-					state : "ADD"
+					state : "ADD",
+					identidiesPic : identityPic
 				}];	
 			}else{
 				data.boCustIdentities = [{
 					identidiesTypeCd :OrderInfo.cust.identityCd,
 					identityNum : OrderInfo.cust.idCardNumber,
 					isDefault : "Y",
-					state : "DEL"
+					state : "DEL",
+					identidiesPic : ""
 				},{
 					identidiesTypeCd :modifyCustInfo.identidiesTypeCd,
 					identityNum : modifyCustInfo.custIdCard,
 					isDefault : "Y",
-					state : "ADD"
+					state : "ADD",
+					identidiesPic : identityPic
 				}];
 			}
 			SoOrder.submitOrder(data);
@@ -168,23 +177,29 @@ cust = (function(){
 			"diffPlace":diffPlace,
 			"areaId" : createCustInfo.cAreaId
 		};
-		var url=contextPath+"/app/cust/checkIdentity";
-		var response = $.callServiceAsJson(url, params, {"before":function(){
-			$.ecOverlay("<strong>正在查询中,请稍等...</strong>");
-		}});
-		var msg="";
-		if (response.code == 0) {
-			$.unecOverlay();
-			$.confirm("确认","此证件号码已存在,是否确认新建?",{ 
-				yes:function(){	
-					_custSubmit();
-				},
-				no:function(){
-					
-				}
-			});
+		var flag=$("#flag").val();
+		if(flag){
+			var url=contextPath+"/app/cust/checkIdentity";
+			var response = $.callServiceAsJson(url, params, {"before":function(){
+				$.ecOverlay("<strong>正在查询中,请稍等...</strong>");
+			}});
+			var msg="";
+			if (response.code == 0) {
+				$.unecOverlay();
+				$.confirm("确认","此证件号码已存在,是否确认新建?",{ 
+					yes:function(){	
+						_custSubmit();
+					},
+					no:function(){
+						
+					}
+				});
+			}else{
+				$.unecOverlay();
+				_custSubmit();
+			}
+			
 		}else{
-			$.unecOverlay();
 			_custSubmit();
 		}
 	};
@@ -217,24 +232,31 @@ cust = (function(){
 					addressStr :modifyCustInfo.addressStr,
 					state : "ADD"
 				}];
+				var identityPic = OrderInfo.cust.identityPic;
+				if (identityPic === undefined) {
+					identityPic = "";
+				}
 				if(!ec.util.isObj(OrderInfo.cust.idCardNumber)){
 					data.boCustIdentities = [{
 						identidiesTypeCd :modifyCustInfo.identidiesTypeCd,
 						identityNum : modifyCustInfo.custIdCard,
 						isDefault : "Y",
-						state : "ADD"
+						state : "ADD",
+						identidiesPic : identityPic
 					}];	
 				}else{
 					data.boCustIdentities = [{
 						identidiesTypeCd :OrderInfo.cust.identityCd,
 						identityNum : OrderInfo.cust.idCardNumber,
 						isDefault : "Y",
-						state : "DEL"
+						state : "DEL",
+						identidiesPic : ""
 					},{
 						identidiesTypeCd :modifyCustInfo.identidiesTypeCd,
 						identityNum : modifyCustInfo.custIdCard,
 						isDefault : "Y",
-						state : "ADD"
+						state : "ADD",
+						identidiesPic : identityPic
 					}];
 				}
 //				//客户联系人
@@ -501,12 +523,13 @@ cust = (function(){
 		$("#photos").attr("src","data:image/jpg;base64,"+photosBase64);
 	};
 	
-	var _getGenerationInfos=function(name,idcard,address){
+	var _getGenerationInfos=function(name,idcard,address,identityPic){
 		$("#cmCustName").val(name);
 		$("#cm_identidiesTypeCd").val("1");
 		$("#cm_identidiesTypeCd").change();
 		$("#cmCustIdCard").val(idcard);
 		$("#cmAddressStr").val(address);
+		OrderInfo.cust.identityPic = identityPic;//证件照片
 	};
 	
 	//新增客户订单查询页面
