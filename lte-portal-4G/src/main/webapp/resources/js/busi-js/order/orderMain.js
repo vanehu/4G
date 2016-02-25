@@ -1523,7 +1523,7 @@ order.main = (function(){
 				itemSpecId : CONST.ITEM_SPEC_ID_CODE.busiOrderAttrs ,//"111111122",//备注的ID，待修改
 				value : $("#order_remark").val()
 			}];
-			chang_row++;
+//			chang_row++;
 		}
 		if(chang_row<1){
 			$.alert("提示","您未修改订单属性");
