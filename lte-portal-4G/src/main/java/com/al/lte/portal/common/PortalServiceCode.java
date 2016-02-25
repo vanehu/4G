@@ -956,16 +956,4 @@ public final class PortalServiceCode {
 	public static final String QUERY_SERVDEPEND_FORCANCEL ="biz-service/intf.prodOfferService/queryOfferAndServDependForCancel";
 	/**客户证件校验接口*/
 	public static final String CHECK_IDCARDNUMBER = "biz-service/intf.custService/checkIdCardNumber";
-
-	/**
-	 * 查询二次业务菜单对应的鉴权权限
-	 * @author liuteng
-	 */
-	public static final String QUERY_BIZ_SECONDBUSINESS_MENU_AUTH = "biz-service/intf.soService/qryBusiOptionalAuthentiMode";
-
-	/**
-	 * 鉴权日志记录接口用于记录每次的鉴权方式，鉴权时间等相关参数，后台返回一个记录id给前台
-	 * @author liuteng
-	 */
-	public static final String SAVE_BIZ_AUTH_RECORD = "biz-service/intf.custService/custIdentityAuthRecord";
 }
