@@ -1661,6 +1661,18 @@ order.cust = (function(){
 		return true;
 	};
 	
+	// 判断是否是政企客户(入参identityCd 为要判断的证件类型)
+	var _isCovCust = function (identityCd) {
+		var isGovCustFlag = false;
+		for (var i = 0; i < CacheData.getGovCertType().length; i ++) {
+			if (identityCd == CacheData.getGovCertType()[i]) {
+				isGovCustFlag = true;
+				break;
+			}
+		}
+		return isGovCustFlag;
+	};
+	
 	return {
 		form_valid_init : _form_valid_init,
 		showCustAuth : _showCustAuth,
@@ -1705,7 +1717,8 @@ order.cust = (function(){
 		bindCustQueryForChoose : _bindCustQueryForChoose,
 		tmpChooseUserInfo : _tmpChooseUserInfo,
 		queryForChooseUser : _queryForChooseUser,
-		queryCustCompreInfo:_queryCustCompreInfo
+		queryCustCompreInfo:_queryCustCompreInfo,
+		isCovCust:_isCovCust
 	};
 })();
 $(function() {
