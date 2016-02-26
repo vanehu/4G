@@ -31,6 +31,9 @@ public class DateUtil {
 	/** 日期 format: yyyy-MM-dd HH:mm:ss. */
 	public static final String DATE_FORMATE_STRING_A = "yyyy-MM-dd HH:mm:ss";
 
+	/** 日期 format: yyyy/MM/dd HH:mm:ss. */
+	public static final String DATE_FORMATE_STRING_A2 = "yyyy/MM/dd HH:mm:ss";
+
 	/** 日期 format: yyyy-MM-dd. */
 	public static final String DATE_FORMATE_STRING_B = "yyyy-MM-dd";
 
