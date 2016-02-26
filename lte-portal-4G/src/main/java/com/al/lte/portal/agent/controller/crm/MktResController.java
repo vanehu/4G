@@ -68,7 +68,7 @@ import com.al.lte.portal.model.SessionStaff;
  */
 @Controller("com.al.lte.portal.agent.controller.crm.MktResController")
 @RequestMapping("/agent/mktRes/*")
-public class MktResController extends BaseController {
+public class MktResController extends BaseController { 
 
     @Autowired
     @Qualifier("com.al.lte.portal.bmo.crm.MktResBmo")

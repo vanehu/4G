@@ -6,7 +6,7 @@
 CommonUtils.regNamespace("SoOrder");
 
 /** 受理订单对象*/
-SoOrder = (function() { 
+SoOrder = (function() {  
 	
 	//订单准备
 	var _builder = function() {

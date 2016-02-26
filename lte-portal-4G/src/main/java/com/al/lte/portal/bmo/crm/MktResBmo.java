@@ -29,7 +29,7 @@ public interface MktResBmo {
 	  * @throws BusinessException
 	  */
 	 public Map<String, Object> prePhoneNumber(Map<String, Object> dataBusMap, String optFlowNum,
-	            SessionStaff sessionStaff) throws Exception;
+	            SessionStaff sessionStaff) throws Exception; 
 	 /**
 	  * 号码查询
 	  * @param dataBusMap

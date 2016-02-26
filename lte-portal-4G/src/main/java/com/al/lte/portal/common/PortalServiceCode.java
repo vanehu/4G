@@ -505,6 +505,9 @@ public final class PortalServiceCode {
     
     public static final String seal_ca = "ca-ca/cert/sealPdf";
     
+    //主销售品目录查询
+    public static final String QUERY_MAIN_OFFER_CATEGORY = "biz-service/intf.prodOfferService/queryOfferCategorys";
+    
     public static final String QUERY_MAIN_OFFER = "biz-service/intf.prodOfferService/queryMainOfferSpecList"; 
     
     public static final String QUERY_OFFER_SPEC_CONFIG = "queryOfferSpecConfig";

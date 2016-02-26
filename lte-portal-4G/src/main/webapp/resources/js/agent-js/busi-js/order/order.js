@@ -4,7 +4,7 @@ order.service = (function(){
 	var _offerprice=""; 
 	var _subPage=""; 
 	//套餐入口-初始化
-	var _init=function(){ 
+	var _init=function(){  
 		
 		//定义 1 为prepare页面  2为order-content（填单）页面 3为order-confirm（订单确认和收银台）页面 4为order-print（打印）页面
 		OrderInfo.order.step=1;

@@ -4,7 +4,7 @@
  * @author wukf
  * date 2013-08-22
  */
-CommonUtils.regNamespace("AttachOffer");
+CommonUtils.regNamespace("AttachOffer"); 
 
 /** 附属销售品受理对象*/
 AttachOffer = (function() {

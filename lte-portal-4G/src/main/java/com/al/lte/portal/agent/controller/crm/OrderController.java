@@ -172,7 +172,7 @@ public class OrderController extends BaseController {
 			@LogOperatorAnn String flowNum,HttpServletResponse response,HttpServletRequest request){
    	 SessionStaff sessionStaff = (SessionStaff) ServletUtils
 				.getSessionAttribute(super.getRequest(),
-						SysConstant.SESSION_KEY_LOGIN_STAFF);
+						SysConstant.SESSION_KEY_LOGIN_STAFF); 
 		Map<String, Object> rMap = null;
 		JsonResponse jsonResponse = null;
 		try {

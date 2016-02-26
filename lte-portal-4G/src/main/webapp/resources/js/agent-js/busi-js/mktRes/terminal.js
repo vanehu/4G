@@ -4,7 +4,7 @@
  * @author dujb3
  * @modifyby liusd
  */
-CommonUtils.regNamespace("mktRes", "terminal");
+CommonUtils.regNamespace("mktRes", "terminal"); 
 
 mktRes.terminal = (function($){ 
 	var _offerSpecId = ""; //保存合约附属ID，合约套餐使用
