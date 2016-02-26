@@ -176,7 +176,7 @@ public class OrderController extends BaseController {
 		Map<String, Object> rMap = null;
 		JsonResponse jsonResponse = null;
 		try {
-			if(commonBmo.checkToken(request, SysConstant.ORDER_SUBMIT_TOKEN)){
+			if(commonBmo.checkToken(request, SysConstant.ORDER_SUBMIT_TOKEN)){ 
 	 			log.debug("param={}", JsonUtil.toString(param));
 	 			param.put("areaId", sessionStaff.getCurrentAreaId());
 	 			rMap = orderBmo.chargeSubmit(param, flowNum, sessionStaff);

@@ -8,7 +8,7 @@ CommonUtils.regNamespace("order", "phoneNumber");
  * 号码查询
  */
 var phoneNum_level="";
-var selectedObj=null;
+var selectedObj=null; 
 var _queryFlag="0";
 order.phoneNumber = (function(){
 	var _boProdAn = {

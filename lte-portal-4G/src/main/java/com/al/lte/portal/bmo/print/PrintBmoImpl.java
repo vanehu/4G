@@ -101,7 +101,7 @@ import com.al.lte.portal.model.SessionStaff;
  * @copyRight 亚信联创电信CRM研发部
  */
 @Service("com.al.lte.portal.bmo.print.PrintBmo")
-public class PrintBmoImpl implements PrintBmo {
+public class PrintBmoImpl implements PrintBmo { 
 
 	private final Log log = Log.getLog(getClass());
 

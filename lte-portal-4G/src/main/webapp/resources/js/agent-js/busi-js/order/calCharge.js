@@ -7,7 +7,7 @@ CommonUtils.regNamespace("order", "calcharge");
 /**
  * 订单算费
  */
-order.calcharge = (function(){
+order.calcharge = (function(){ 
 	var _chargeItems = [];
 	var _prints=[];
 	var _olId=0;

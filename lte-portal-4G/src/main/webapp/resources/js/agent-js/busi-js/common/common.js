@@ -3,7 +3,7 @@
  * 
  */
 CommonUtils.regNamespace("common");
-common = (function($) {
+common = (function($) { 
 	
 	var _callOrderServer=function(staffInfos,custInfos,prodIdInfos,url){
 		var staffInfosParams=JSON.stringify(staffInfos);//登录信息
