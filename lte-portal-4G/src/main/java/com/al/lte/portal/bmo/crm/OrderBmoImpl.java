@@ -569,27 +569,41 @@ public class OrderBmoImpl implements OrderBmo {
 		}	
 		return resultMap;
 	}
+	
+	
+	/**
+	 * 根据“#88538集约开卡平台优化需求-需求内容补充”调整批量导入Excel的业务逻辑，将批量号码预占置于后台进行预占，
+	 * 前台门户不再调资源接口进行号码预占，为了尽可能减少代码改造，重写了该方法，使其直接返回预占成功，相当于跳过该方法，
+	 * 以达到需求的效果。</br>
+	 * Updated by ZhangYu  2016-01-28
+	 */
 	public Map<String, Object> batchCheckPhoneAndUim(Map<String, Object> param,
 			String optFlowNum, SessionStaff sessionStaff)
 			throws Exception {
-//		long startTime = System.currentTimeMillis();
-		DataBus db = InterfaceClient.callService(param,PortalServiceCode.INTF_PNUIMBATCHVAL_SERVICE, optFlowNum, sessionStaff);
-//		long endTime = System.currentTimeMillis();
-//		System.out.println("******************号码预占******************共耗时/ms : " + (endTime - startTime));
+		
 		Map<String, Object> resultMap = new HashMap<String, Object>();
-		if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db.getResultCode()))) {
-			resultMap.put("code", ResultCode.R_SUCCESS);
-			if("E".equals(param.get("actionType")))//batchId只有在号码预占时才会返回
-				resultMap.put("batchId", db.getReturnlmap().get("batchId"));//号码批量预占批次号
-		} else {
-			resultMap.put("code",  ResultCode.R_FAIL);
-			resultMap.put("result", db.getReturnlmap().get("result"));
-			resultMap.put("msg", db.getResultMsg());
-			if("E".equals(param.get("actionType")))//batchId只有在号码预占时才会返回
-				resultMap.put("batchId", db.getReturnlmap().get("batchId"));//号码批量预占批次号
-		}
+		resultMap.put("code", ResultCode.R_SUCCESS);
+		if("E".equals(param.get("actionType")))//batchId只有在号码预占时才会返回
+			resultMap.put("batchId", "");//号码批量预占批次号
+		
 		return resultMap;
+		
+//		DataBus db = InterfaceClient.callService(param,PortalServiceCode.INTF_PNUIMBATCHVAL_SERVICE, optFlowNum, sessionStaff);
+//		Map<String, Object> resultMap = new HashMap<String, Object>();
+//		if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db.getResultCode()))) {
+//			resultMap.put("code", ResultCode.R_SUCCESS);
+//			if("E".equals(param.get("actionType")))//batchId只有在号码预占时才会返回
+//				resultMap.put("batchId", db.getReturnlmap().get("batchId"));//号码批量预占批次号
+//		} else {
+//			resultMap.put("code",  ResultCode.R_FAIL);
+//			resultMap.put("result", db.getReturnlmap().get("result"));
+//			resultMap.put("msg", db.getResultMsg());
+//			if("E".equals(param.get("actionType")))//batchId只有在号码预占时才会返回
+//				resultMap.put("batchId", db.getReturnlmap().get("batchId"));//号码批量预占批次号
+//		}
+//		return resultMap;
 	}
+	
 	public Map<String,Object> qryOrderList(Map<String, Object> param, String optFlowNum, SessionStaff sessionStaff)
 	throws Exception{
 
