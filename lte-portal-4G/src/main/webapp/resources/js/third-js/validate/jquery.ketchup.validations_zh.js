@@ -81,7 +81,7 @@ jQuery.ketchup
 })
 
 .validation('isTelecomSection', '必须为有效的中国电信手机号码.', function(form, el, value) {
-  return /^(180|189|133|134|153|181|108|170|177)\d{8}$/.test(value);
+  return CONST.LTE_PHONE_HEAD.test(value);
 })
 
 .validation('isMVNOSection','请输入正确的手机号码', function(form, el, value){
@@ -89,7 +89,7 @@ jQuery.ketchup
 })
 
 .validation('isTelecomOridCardCheck', '必须为有效的中国电信手机号码或输入合法身份证号码，', function(form, el, value) {
-  return (/^(180|189|133|134|153|181|108|170|177)\d{8}$/.test(value))||(this.idCardCheck(value));
+  return (CONST.LTE_PHONE_HEAD.test(value))||(this.idCardCheck(value));
 })
 .validation('isStaffCode', '4-16位字符,可由英文、数字及"_"、"-"组成.', function(form, el, value) {
   return /^[a-zA-Z\d][\w-]{2,14}[a-zA-Z\d]$/.test(value);

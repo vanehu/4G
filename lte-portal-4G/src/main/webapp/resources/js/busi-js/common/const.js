@@ -373,7 +373,7 @@ CONST = (function(){
 		CONST.APP_DESC = globalAppDesc;
 	};
 	
-	var _LTE_PHONE_HEAD = /^(180|189|133|134|153|181|108|170|177)\d{8}$/;
+	var _LTE_PHONE_HEAD = /^(180|189|133|134|153|181|108|170|173|177)\d{8}$/;
 	
 	var _MVNO_PHONE_HEAD = /^(170)\d{8}$/;
 	

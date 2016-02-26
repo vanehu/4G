@@ -66,7 +66,7 @@ order.release = (function(){
 			var _accNbr = $.trim($("#num").val());
 			var check;
 			if($("#numtype").val()==1){
-				check = /^(180|189|133|134|153|181|108|170|177)\d{8}$/.test(_accNbr);
+				check = CONST.LTE_PHONE_HEAD.test(_accNbr);
 				if(check==false){
 					$.alert("提示","若要进行精确查询，请输入有效的中国电信手机号");
 					return;

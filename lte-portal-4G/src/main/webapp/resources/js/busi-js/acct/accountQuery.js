@@ -164,7 +164,7 @@ account.query = (function(){
 		}
 		if(queryNum!=""){
 			if($("#query_type").val()==1){
-				var check = /^(180|189|133|134|153|181|108|170|177)\d{8}$/.test(queryNum);
+				var check = CONST.LTE_PHONE_HEAD.test(queryNum);
 				if(check==false){
 					$.alert("提示","请输入有效的中国电信手机号");
 					return;

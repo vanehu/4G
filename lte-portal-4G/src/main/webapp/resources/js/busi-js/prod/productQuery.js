@@ -147,7 +147,7 @@ product.query = (function(){
 				fail:function(response){
 					$.unecOverlay();
 					$.alert("提示","查询失败，请稍后再试！");
-				}				
+				}
 			});
 		}).ketchup({bindElement:"bt_cust_query"});
 	};
@@ -185,7 +185,7 @@ product.query = (function(){
 				return;
 			}
 			var _acctNbr = $.trim($("#num").val());
-			var check = /^(180|189|133|134|153|181|108|170|177)\d{8}$/.test(_acctNbr);
+			var check = CONST.LTE_PHONE_HEAD.test(_acctNbr);
 			if(check==false){
 				$.alert("提示","若要进行精确查询，请输入有效的中国电信手机号");
 				return;

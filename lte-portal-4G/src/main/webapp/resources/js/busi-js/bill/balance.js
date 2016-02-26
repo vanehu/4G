@@ -124,7 +124,7 @@ bill.balance = (function(){
 			$.alert("提示","请先查询并选择地区");
 			return;
 		}
-		var check = /^(180|189|133|134|153|181|108|170|177)\d{8}$/.test($.trim($("#phoneNumber").val()));
+		var check = CONST.LTE_PHONE_HEAD.test($.trim($("#phoneNumber").val()));
 		if(check==false){
 			$.alert("提示","请输入有效的中国电信手机号");
 			return;
