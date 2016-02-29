@@ -3755,7 +3755,7 @@ order.prodModify = (function(){
 		var param={
 			menuId:menuId,
 			isSimple:isSimple
-		}
+		};
 		var response= $.callServiceAsHtml(url,param);
 		$("#auth2").empty().append(response.data);
 		var authTypeStr=$("#authTypeStr").html();
@@ -3763,6 +3763,11 @@ order.prodModify = (function(){
 			return false;
 		}
 
+		if (OrderInfo.cust.identityCd == "1") {
+			$("#readCertBtnID2").show();
+		} else {
+			$("#readCertBtnID2").hide();
+		}
 		if (response.code == 0) {
 			easyDialog.open({
 				container: 'auth2',

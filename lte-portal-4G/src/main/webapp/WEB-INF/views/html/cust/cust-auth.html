@@ -8,9 +8,9 @@
             <li id="auth_tab1" onclick="order.cust.changeTab(1)" class="setcon">产品密码鉴权</li></#if>
         <#if rules.rule2=="Y">
             <#if rules.rule1=="N">
-                <li id="auth_tab2" onclick="order.cust.changeTab(2)" class="setcon">证件类型鉴权</li>
+                <li id="auth_tab2" onclick="order.cust.changeTab(2)" class="setcon">证件号码鉴权</li>
             <#else>
-                <li id="auth_tab2" onclick="order.cust.changeTab(2)">证件类型鉴权</li></#if>
+                <li id="auth_tab2" onclick="order.cust.changeTab(2)">证件号码鉴权</li></#if>
         </#if>
         <#if rules.rule3=="Y">
             <#if rules.rule1=="N"&&rules.rule2=="N">
@@ -43,7 +43,7 @@
                 <table class="network">
                     <tbody>
                     <tr>
-                        <td width="100"><label class="f_red">*</label><label id="custAuthTypeName2">证件类型鉴权：</label>
+                        <td width="100"><label class="f_red">*</label><label id="custAuthTypeName2">证件号码鉴权：</label>
                         </td>
                         <td width="300">
                             <input id="idCardNumber2" type="password" placeHolder="请输入证件号码"

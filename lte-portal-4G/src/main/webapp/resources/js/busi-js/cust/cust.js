@@ -1879,7 +1879,8 @@ order.cust = (function(){
 	var _smsResend = function () {
 		var param = {
 			"pageIndex": 1,
-			"pageSize": 10
+			"pageSize": 10,
+			'munber':order.prodModify.choosedProdInfo.accNbr
 		};
 		$.callServiceAsJson(contextPath + "/staffMgr/reSend", param, {
 			"done": function (response) {
