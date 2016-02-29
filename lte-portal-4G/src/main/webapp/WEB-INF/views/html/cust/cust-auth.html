@@ -4,16 +4,16 @@
 
 <div class="infoBox">
     <ul class="pdcard">
-        <#if rules.rule1=="Y">
+        <#if rules.rule3=="Y">
             <li id="auth_tab1" onclick="order.cust.changeTab(1)" class="setcon">产品密码鉴权</li></#if>
-        <#if rules.rule2=="Y">
-            <#if rules.rule1=="N">
+        <#if rules.rule1=="Y">
+            <#if rules.rule3=="N">
                 <li id="auth_tab2" onclick="order.cust.changeTab(2)" class="setcon">证件号码鉴权</li>
             <#else>
                 <li id="auth_tab2" onclick="order.cust.changeTab(2)">证件号码鉴权</li></#if>
         </#if>
-        <#if rules.rule3=="Y">
-            <#if rules.rule1=="N"&&rules.rule2=="N">
+        <#if rules.rule2=="Y">
+            <#if rules.rule3=="N"&&rules.rule1=="N">
                 <li id="auth_tab3" onclick="order.cust.changeTab(3)" class="setcon">短信鉴权</li>
             <#else>
                 <li id="auth_tab3" onclick="order.cust.changeTab(3)">短信鉴权</li></#if>
