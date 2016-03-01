@@ -386,24 +386,27 @@ public class MktResController extends BaseController {
 				return "/order/reserve-phonenumber-list";
 			}
 		}
-//		try{
-//			//记录表SP_BUSI_RUN_LOG
-//			Map<String, Object> logmap = new HashMap<String, Object>();
-//			logmap.put("STAFF_CODE", sessionStaff.getStaffCode());
-//			logmap.put("SESSIONINFO", "");
-//			logmap.put("STATUS_CD", "选择号码");
-//			logmap.put("INTF_URL", "PnQueryService");
-//			logmap.put("IDENTIDIES_TYPE", "");
-//			logmap.put("IDENTITY_NUM", "");
-//			logmap.put("OPERATION_PLATFORM", SysConstant.APPDESC_LTE);
-//			logmap.put("ACTION_IP", sessionStaff.getIp());
-//			logmap.put("CHANNEL_ID", sessionStaff.getCurrentChannelId());
-//			logmap.put("OPERATORS_ID", sessionStaff.getOperatorsId());
-//			logmap.put("IN_PARAM", JsonUtil.toString(param));
-//			staffBmo.insert_sp_busi_run_log(logmap,flowNum,sessionStaff);
-//		}catch (Exception e) {
-//			// TODO: handle exception
-//		}
+		try{
+			//记录表SP_BUSI_RUN_LOG
+			String custlogflag = MySimulateData.getInstance().getParam((String) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_DATASOURCE_KEY),"CUSTLOGFLAG");
+			if("ON".equals(custlogflag)){
+				Map<String, Object> logmap = new HashMap<String, Object>();
+				logmap.put("STAFF_CODE", sessionStaff.getStaffCode());
+				logmap.put("SESSIONINFO", "");
+				logmap.put("STATUS_CD", "选择号码");
+				logmap.put("INTF_URL", "PnQueryService");
+				logmap.put("IDENTIDIES_TYPE", "");
+				logmap.put("IDENTITY_NUM", "");
+				logmap.put("OPERATION_PLATFORM", SysConstant.APPDESC_LTE);
+				logmap.put("ACTION_IP", ServletUtils.getIpAddr(request));
+				logmap.put("CHANNEL_ID", sessionStaff.getCurrentChannelId());
+				logmap.put("OPERATORS_ID", sessionStaff.getOperatorsId());
+				logmap.put("IN_PARAM", JsonUtil.toString(param));
+				staffBmo.insert_sp_busi_run_log(logmap,flowNum,sessionStaff);
+			}
+		}catch (Exception e) {
+			// TODO: handle exception
+		}
 		
 		try{
 			//访问次数限制
