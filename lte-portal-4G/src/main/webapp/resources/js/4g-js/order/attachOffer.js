@@ -3207,6 +3207,7 @@ AttachOffer = (function() {
 				}
 			}
 			if(!serv.isGetParamInst){  //已订购附属没有参数，需要获取销售品参数
+				param.prodSpecId = serv.servSpecId;
 				var data = query.prod.prodInstParamQuery(param); //重新获取销售品参数
 				if(data==undefined){
 					return;
@@ -5548,6 +5549,7 @@ AttachOffer = (function() {
 		myFavoriteList          : _myFavoriteList,
 		queryAttachOffer 		: _queryAttachOffer,
 		queryAttachOfferSpec 	: _queryAttachOfferSpec,
+		terminCheckShow 		: _terminCheckShow,
 		queryCardAttachOffer    : _queryCardAttachOffer,
 		showParam 				: _showParam,
 		showServParam			: _showServParam,
