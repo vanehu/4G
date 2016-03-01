@@ -1018,6 +1018,21 @@ public class LoginController extends BaseController {
 				return channelResp;
 			}
 			Map<String, Object> channelResultMap = (Map<String, Object>) channelResp.getData();
+			
+			List channelList = (List) channelResultMap.get("channelList");
+			for(int i=0;i<channelList.size();i++){
+				Map<String, Object> map = (Map<String, Object>) channelList.get(i);
+				String pic_ctrl = "";
+				if(channelResultMap.get("areaId")!=null && channelResultMap.get("areaId").toString()!=""){
+					String provinceID = channelResultMap.get("areaId").toString().substring(0, 3)+"0000";
+					//获取实名制身份证图片读取开关pic_省份编码
+					Properties properties = MySimulateData.getProperties("/portal/portal.properties");
+					pic_ctrl = properties.getProperty("pic_"+provinceID);
+				}
+				map.put("pic_ctrl", pic_ctrl);
+				channelList.set(i, map);
+			}
+			channelResultMap.put("channelList", channelList);
 			String version=null;
             String padFlag=(String)ServletUtils.getSessionAttribute(
 					request, SysConstant.SESSION_KEY_PAD_FLAG);

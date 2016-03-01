@@ -283,6 +283,11 @@ prod.uim = (function() {
 		$("#cf").attr("disabled",true);
 		$("#gj").attr("disabled",true);
 		$("#cxhy").attr("disabled",true);
+		//切换终端颜色不可用
+		var zdys = $(".zdys");
+		for(var ii=0;ii<zdys.length;ii++){
+			$(zdys[ii]).attr("disabled",true);
+		}
 		
 		if(getIsMIFICheck(prodId)){//判断是否通过MIFI 校验
 			$("#isMIFI_"+prodId).val("yes");
