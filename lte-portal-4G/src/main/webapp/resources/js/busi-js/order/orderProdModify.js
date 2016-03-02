@@ -1547,6 +1547,11 @@ order.prodModify = (function(){
 	
 	//修改产品实例属性:修改使用人
 	var _spec_parm_user_change = function(){
+		if(OrderInfo.authRecord.resultCode!="0"){
+			if (_querySecondBusinessAuth("27", "Y", "spec_parm_user_change")) {
+				return;
+			}
+		}
 		var valid = false;
 		if(OrderInfo.cust && OrderInfo.cust.custId && OrderInfo.cust.custId != '-1'){ //老客户
 			valid = OrderInfo.cust.segmentId == '1000'; //政企客户
