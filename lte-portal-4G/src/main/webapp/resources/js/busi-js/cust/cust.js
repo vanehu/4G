@@ -2027,7 +2027,6 @@ order.cust = (function(){
 					_saveAuthRecordFail(recordParam);
 					return;
 				} catch(e){
-					_saveAuthRecordFail(recordParam);
 				}
 				//window.localStorage.setItem("OrderInfo.cust",JSON.stringify(OrderInfo.cust));
 				if(!order.cust.queryForChooseUser){
