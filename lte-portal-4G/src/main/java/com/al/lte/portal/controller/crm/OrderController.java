@@ -2785,7 +2785,7 @@ public class OrderController extends BaseController {
                     if ("C1".equalsIgnoreCase(boActionTypeCd)) { //新建客户
                         Map<String, Object> data = (Map<String, Object>) busiOrder.get("data");
                         Map<String, Object> identities = (Map<String, Object>) ((List<Map<String, Object>>) data.get("boCustIdentities")).get(0);
-                        String identidiesTypeCd = (String) identities.get("identidiesTypeCd");
+                        String identidiesTypeCd = MapUtils.getString(identities, "identidiesTypeCd");
                         if ("1".equals(identidiesTypeCd)) { //身份证
                             String token = (String) param.get("token");
                             if (StringUtils.isNotBlank(token)) {
