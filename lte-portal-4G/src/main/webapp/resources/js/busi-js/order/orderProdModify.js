@@ -157,9 +157,9 @@ order.prodModify = (function(){
 	//短信验证码失效时间5分钟
 	var leftInvalidTime=300;
 	//补换卡规则校验
-	var _showChangeCard = function () {
+	var _showChangeCard = function (addChange) {
 		if(OrderInfo.authRecord.resultCode!="0"){
-			if (_querySecondBusinessAuth("13", "N", "showChangeCard")) {
+			if (_querySecondBusinessAuth(addChange, "N", "showChangeCard")) {
 				return;
 			}
 		}
@@ -227,7 +227,14 @@ order.prodModify = (function(){
 			}
 		});
 	};
-	
+	//补卡规则校验
+	var _showChangeCard4Add = function () {
+		_showChangeCard("25");
+	};
+	//换卡规则校验
+	var _showChangeCard4Change = function () {
+		_showChangeCard("26");
+	};
 	//刷新时间
 	var second=30;
 	var interResend=null;
@@ -3763,10 +3770,13 @@ order.prodModify = (function(){
 			return false;
 		}
 
+		$("#idCardType2").text(OrderInfo.cust.identityName);
 		if (OrderInfo.cust.identityCd == "1") {
 			$("#readCertBtnID2").show();
+			$("#idCardNumber2").attr("disabled", "disabled");
 		} else {
 			$("#readCertBtnID2").hide();
+			$("#idCardNumber2").removeAttr("disabled");
 		}
 		if (response.code == 0) {
 			easyDialog.open({
@@ -3810,6 +3820,8 @@ order.prodModify = (function(){
 		showNoActiveRemoveProd:_showNoActiveRemoveProd,
 		spec_parm_change : _spec_parm_change,
 		showChangeCard : _showChangeCard,
+		showChangeCard4Add : _showChangeCard4Add,
+		showChangeCard4Change : _showChangeCard4Change,
 		spec_password_change : _spec_password_change,
 		spec_password_change_save : _spec_password_change_save,
 		showPasswordChange : _showPasswordChange,

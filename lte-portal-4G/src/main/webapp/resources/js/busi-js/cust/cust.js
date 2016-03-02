@@ -1844,13 +1844,6 @@ order.cust = (function(){
 			$(this).hide();
 		});
 		$("#content"+tabId).show();
-		if (tabId == 2) {
-			if (_choosedCustInfo.identityCd == 1) {
-				$("#idCardNumber2").attr("disabled", "disabled");
-			} else {
-				$("#idCardNumber2").removeAttr("disabled");
-			}
-		}
 	};
 
 	//鉴权方式日志记录
