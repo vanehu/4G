@@ -2023,7 +2023,11 @@ order.cust = (function(){
 				//判断能否转为json，可以的话返回的就是错误信息
 				try {
 					var errorData = $.parseJSON(response.data);
-					$.alertMore("异常信息", errorData.resultMsg, errorData.errorStack,"error");
+					if (ec.util.isObj(errorData) && errorData == false) {
+						$.alertM("提示", "鉴权失败！");
+					} else {
+						$.alertMore("异常信息", errorData.resultMsg, errorData.errorStack, "error");
+					}
 					_saveAuthRecordFail(recordParam);
 					return;
 				} catch(e){
