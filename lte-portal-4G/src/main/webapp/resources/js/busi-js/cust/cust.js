@@ -69,7 +69,7 @@ order.cust = (function(){
 						//鉴权成功后显示选择使用人弹出框
 						order.main.showChooseUserDialog(param);
 					}
-					OrderInfo.cust_validateType = "1";//保存鉴权方式
+					OrderInfo.cust_validateType = "3";//保存鉴权方式
 				},"always":function(){
 					$.unecOverlay();
 				}
@@ -2024,7 +2024,7 @@ order.cust = (function(){
 				try {
 					var errorData = $.parseJSON(response.data);
 					if (ec.util.isObj(errorData) && errorData == false) {
-						$.alertM("提示", "鉴权失败！");
+						$.alert("提示", "鉴权失败！");
 					} else {
 						$.alertMore("异常信息", errorData.resultMsg, errorData.errorStack, "error");
 					}
