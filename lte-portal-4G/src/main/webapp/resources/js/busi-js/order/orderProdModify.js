@@ -158,6 +158,9 @@ order.prodModify = (function(){
 	var leftInvalidTime=300;
 	//补换卡规则校验
 	var _showChangeCard = function (addChange) {
+		if (!ec.util.isObj(addChange)) {
+			addChange = "13";
+		}
 		if(OrderInfo.authRecord.resultCode!="0"){
 			if (_querySecondBusinessAuth(addChange, "N", "showChangeCard")) {
 				return;
