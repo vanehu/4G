@@ -4170,6 +4170,8 @@ public class OrderController extends BaseController {
         String orderNbr = (String) param.get("orderNbr");
         if(orderNbr !=null && orderNbr.length()<12){
         	orderNbr = "0"+orderNbr;
+        }else if(orderNbr !=null && orderNbr.length()>12){
+        	orderNbr = orderNbr.substring(0, 11);
         }
         Calendar c = Calendar.getInstance();
         SimpleDateFormat f = new SimpleDateFormat("yyyyMMddHHmmss");
@@ -4229,6 +4231,9 @@ public class OrderController extends BaseController {
                 	session.setAttribute(SysConstant.JFKJCG+"_"+acctItemId+sessionStaff.getInPhoneNum(), "Y");
                 	session.setAttribute(SysConstant.JFKJCG+"_"+sessionStaff.getInPhoneNum(), "Y");
                 	session.setAttribute(SysConstant.JFKJCG+"_oldNbr"+acctItemId+sessionStaff.getInPhoneNum(), param.get("orderNbr"));//把订单记录下来用于扣减的入参
+                }else{
+                	session.setAttribute(SysConstant.JFKJCG+"_"+acctItemId+sessionStaff.getInPhoneNum(), "N");
+                	session.setAttribute(SysConstant.JFKJCG+"_"+sessionStaff.getInPhoneNum(), "N");
                 }
             } else {
                 jsonResponse = super.failed(rMap.get("msg"), ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
