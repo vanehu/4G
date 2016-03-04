@@ -1966,7 +1966,6 @@ order.cust = (function(){
 					$.alertMore("异常信息", errorData.resultMsg, errorData.errorStack,"error");
 					return;
 				} catch(e){
-					_saveAuthRecordFail(recordParam);
 				}
 				if(!order.cust.queryForChooseUser){
 					custInfo = param;
