@@ -129,16 +129,16 @@
 		  <tbody>
 		  	<#if profileTabLists.partyProfileCatgTypeCd?? && profileTabLists.partyProfileCatgTypeCd == 3>
 			  	<tr>
-			  		<td width="90" align="right" style="text-align:right">客户类型：</td>
-			  		<td width="150">
+			  		<!-- 经办人为个人用户，证件类型只显示个人证件类型，隐藏客户类型 -->
+			  		<td style="display: none;" width="90" align="right" style="text-align:right">客户类型：</td>
+			  		<td style="display: none;" width="150">
 			  			<select id="custCAttrPartyType" class="inputWidth183px" style="margin-left: 3px; width: 188px;" onchange="order.cust.partyTypeCdChoose(this,'custCAttrIdentidiesTypeCd')">
 				  			<option value="1" >个人</option>
-		                    <option value="2">政企客户</option>
 			  			</select>
 			  		</td>
 			  		<td width="90" align="right" style="text-align:right">证件类型：</td>
-			  		<td width="150">
-			  			<select id="custCAttrIdentidiesTypeCd" style="width: 92px;" onchange="order.cust.identidiesTypeCdChoose(this,'custCAttrIdCard')">
+			  		<td colspan="3">
+			  			<select id="custCAttrIdentidiesTypeCd" style="width: 188px; margin-left: 3px;" onchange="order.cust.identidiesTypeCdChoose(this,'custCAttrIdCard')">
 				        </select>
 				        <a class="btn_h30" id="custCAttrReadCertBtn" onclick="javascript:order.cust.readCertWhenCustCAttr()" style="margin-top: 0px; display: none;"><span>读 卡</span></a>
 			  		</td>

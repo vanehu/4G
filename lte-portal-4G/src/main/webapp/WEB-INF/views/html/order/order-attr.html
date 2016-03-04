@@ -6,11 +6,11 @@
 		<span style="line-height: 28px; float:left;"></span>
 		<label class="f_red">*</label>
 	</li>
-	<li class="full" id="li_order_remark">
+	<!-- 经办人为个人用户，证件类型只显示个人证件类型，隐藏客户类型 -->
+	<li class="full" id="li_order_remark" style="display: none;">
 		<label>客户类型：</label> 
 		<select id="orderPartyTypeCd" onchange="order.cust.partyTypeCdChoose(this,'orderIdentidiesTypeCd')">
-                                        <option value=1 >个人</option>
-                                        <option value=2>政企客户</option>
+                                        <option value="1" >个人</option>
         </select>
         <label class="f_red">*</label>
 	</li>
@@ -45,4 +45,6 @@
 	if(OrderInfo.boCustInfos.partyTypeCd != '2' && !order.cust.isCovCust(OrderInfo.cust.identityCd)){ 
 		$("#orderAttrDiv .f_red").hide();
 	}
+	// 证件类型初始化（不加不会加载证件）
+	$("#orderPartyTypeCd").change();
 </script>
