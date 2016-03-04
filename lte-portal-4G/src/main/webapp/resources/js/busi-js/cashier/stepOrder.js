@@ -748,7 +748,7 @@ stepOrder.main = (function(){
 		html += '</div>';
 		html += '<input type="hidden" id="iccid" value=""/>';
 		html += '<input type="hidden" id="imsi" value=""/>';
-		html += '<a href = "${contextPath}/card/CardMan3x21_V1_1_1_0.exe">下载写卡器驱动</a>';
+		html += '<a href = "${contextPath}/phoneimg/card/CardMan3x21_V1_1_1_0.exe">下载写卡器驱动</a>';
 		html += '</form>';
 		html += '</div>';
 		html += '</div>';
