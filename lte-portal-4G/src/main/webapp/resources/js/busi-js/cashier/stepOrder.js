@@ -1447,7 +1447,7 @@ stepOrder.main = (function(){
 						provCheckErrorCode = provCheckResult.data.errCode;
 						provCheckErrorMsg = provCheckResult.data.errMsg;
 					}
-					$.confirm("信息确认","下省校验未通过，" + provCheckResult.data.resultMsg + "<br />【订单号："+stepOrder.main.orderParam.olId + "】请确定是否作废该订单？",{
+					$.confirm("信息确认","下省校验未通过，" + ec.util.defaultStr(provCheckErrorMsg) + ec.util.defaultStr(provCheckResult.data.resultMsg) + "<br />【订单号："+stepOrder.main.orderParam.olId + "】请确定是否作废该订单？",{
 						yesdo:function(){
 							stepOrder.main.delOrderOperate = true;
 							_orderCancel();//作废订单
@@ -1474,7 +1474,7 @@ stepOrder.main = (function(){
 						provCheckErrorCode = provCheckResult.data.errCode;
 						provCheckErrorMsg = provCheckResult.data.errMsg;
 					}
-					$.confirm("信息确认","下省校验未通过，" + provCheckResult.data.resultMsg + "<br />【订单号："+stepOrder.main.orderParam.olId + "】请确定是否作废该订单？",{
+					$.confirm("信息确认","下省校验未通过，" + ec.util.defaultStr(provCheckErrorMsg) + ec.util.defaultStr(provCheckResult.data.resultMsg) + "<br />【订单号："+stepOrder.main.orderParam.olId + "】请确定是否作废该订单？",{
 						yesdo:function(){
 							stepOrder.main.delOrderOperate = true;
 							_orderCancel();//作废订单
