@@ -4171,7 +4171,7 @@ public class OrderController extends BaseController {
         if(orderNbr !=null && orderNbr.length()<12){
         	orderNbr = "0"+orderNbr;
         }else if(orderNbr !=null && orderNbr.length()>12){
-        	orderNbr = orderNbr.substring(0, 11);
+        	orderNbr = orderNbr.substring(0, 12);
         }
         Calendar c = Calendar.getInstance();
         SimpleDateFormat f = new SimpleDateFormat("yyyyMMddHHmmss");
