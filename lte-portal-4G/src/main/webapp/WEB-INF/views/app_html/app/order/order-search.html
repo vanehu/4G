@@ -23,17 +23,23 @@
 			<div class="tab-pane fade in active" id="pakeage">
 				<div class="row divtab">
 					<div class="col-xs-10">
+						<!--
 						<input type="hidden" id="qryStr" value="乐享"/>
+						-->
+						<input type="hidden" id="categoryNodeId" value="90132141"/>
 						<div class="btn-group btn-group-justified btn-group-noborder"
 							data-toggle="buttons-radio" role="group" aria-label="...">
 							<div class="btn-group" role="group">
-								<button type="button" class="btn btn-default active" value="乐享" onclick="order.service.tabChange(this)">乐享套餐</button>
+								<button type="button" class="btn btn-default active" value="90132141" onclick="order.service.tabChange(this)">乐享</button>
 							</div>
 							<div class="btn-group" role="group">
-								<button type="button" class="btn btn-default" value="积木" onclick="order.service.tabChange(this)">积木套餐</button>
+								<button type="button" class="btn btn-default" value="90132143" onclick="order.service.tabChange(this)">积木</button>
 							</div>
 							<div class="btn-group" role="group">
-								<button type="button" class="btn btn-default" value="飞" onclick="order.service.tabChange(this)">飞Young套餐</button>
+								<button type="button" class="btn btn-default" value="90139849" onclick="order.service.tabChange(this)">飞Young</button>
+							</div>
+							<div class="btn-group" role="group">
+								<button type="button" class="btn btn-default" value="-9999" onclick="order.service.tabChange(this)">其他</button>
 							</div>
 						</div>
 					</div>

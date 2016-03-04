@@ -88,10 +88,11 @@ mktRes.terminal = (function($){
 		var param = {} ;
 		param = {
 					"startDate":($("#p_startDt").val()).replace(/-/g,''),
+					"endDate":($("#p_endDt").val()).replace(/-/g,''),
 					"channelId":$("#p_channelId").val(),
 					"areaId":$("#p_channelId").attr("areaid"),
 					pageIndex:curPage,
-					pageSize:10
+					pageSize:200
 		};
         $.callServiceAsHtmlGet(contextPath+"/app/report/terminalSalesList",param,{
 			"before":function(){

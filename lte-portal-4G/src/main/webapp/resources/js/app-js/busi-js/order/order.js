@@ -23,7 +23,8 @@ order.service = (function(){
 			var btn=$(".btn-group button");
 			$.each(btn,function(){
 				if(obj==this){
-					$("#qryStr").val($(this).attr("value"));
+//					$("#qryStr").val($(this).attr("value"));//根据套餐名称模糊搜索套餐
+					$("#categoryNodeId").val($(this).attr("value"));//根据套餐目录ID搜索套餐
 					_searchPack();
 					current=obj;
 					$(this).removeClass("btn btn-default");
@@ -43,7 +44,12 @@ order.service = (function(){
 		var custId = OrderInfo.cust.custId;
 		var qryStr=$("#qryStr").val();
 //		var params={"qryStr":qryStr,"pnLevelId":"","custId":custId};
-		var params={"subPage":flag,"qryStr":qryStr,"pnLevelId":"","custId":custId,"PageSize":10};
+		var params={"subPage":"","qryStr":qryStr,"pnLevelId":"","custId":custId,"PageSize":10};
+		if($("#categoryNodeId").length>0){
+			var categoryNodeId=$("#categoryNodeId").val();
+			params.categoryNodeId = categoryNodeId;
+		}
+		
 		if(flag){
 			
 			var priceVal = $("#select_price").val();
@@ -134,15 +140,18 @@ order.service = (function(){
 	
 	//滚动页面入口
 	var _scroll = function(scrollObj){
-		if(scrollObj && scrollObj.page && scrollObj.page >= 1){
+		if(scrollObj && scrollObj.page && scrollObj.page >= 1){ 
 			if(scrollObj.page==1){
 				_searchPack(1,scrollObj.scroll);
 			}else{
 				var show_per_page = 10;
-				var start_from = (scrollObj.page-2) * show_per_page;
-				var end_on = start_from + show_per_page;
+				var size = $('#div_all_data').children().length;
+				if(size<show_per_page){
+					show_per_page = size;
+				}
 				//$('#ul_offer_list').append($('#div_all_data').children().slice(start_from, end_on)).listview("refresh");
-				$('#div_all_data').children().slice(start_from, end_on).appendTo($('#div_offer_list'));
+				//alert($('#div_all_data').children().length);
+				$('#div_all_data').children().slice(0,show_per_page).appendTo($('#div_offer_list'));
 //				$('#ul_offer_list').listview("refresh");
 //				$("#ul_offer_list li").off("tap").on("tap",function(){
 //					$(this).addClass("pakeagelistlibg").siblings().removeClass("pakeagelistlibg");

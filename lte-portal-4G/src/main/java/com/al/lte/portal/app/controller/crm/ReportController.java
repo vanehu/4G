@@ -103,7 +103,7 @@ public class ReportController extends com.al.lte.portal.controller.crm.ReportCon
 			Calendar c = Calendar.getInstance();
 			SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd");
 			String endTime = f.format(c.getTime());
-			//c.add(Calendar.DATE, -7);
+			c.add(Calendar.DATE, -7);
 			String startTime = f.format(c.getTime());
 			Map<String, Object> defaultAreaInfo = CommonMethods.getDefaultAreaInfo_MinimumC3(sessionStaff);
 			
@@ -126,7 +126,7 @@ public class ReportController extends com.al.lte.portal.controller.crm.ReportCon
 	        Integer totalSize = 0 ;
 	        
 	        param.put("startDate", request.getParameter("startDate") + "000000");
-	        param.put("endDate", request.getParameter("startDate") + "000000");
+	        param.put("endDate", request.getParameter("endDate") + "000000");
 	        
 	        
 	        
@@ -198,7 +198,7 @@ public class ReportController extends com.al.lte.portal.controller.crm.ReportCon
 			Calendar c = Calendar.getInstance();
 			SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd");
 			String endTime = f.format(c.getTime());
-			//c.add(Calendar.DATE, -7);
+			c.add(Calendar.DATE, -7);
 			String startTime = f.format(c.getTime());
 			Map<String, Object> defaultAreaInfo = CommonMethods.getDefaultAreaInfo_MinimumC3(sessionStaff);
 			
@@ -221,7 +221,7 @@ public class ReportController extends com.al.lte.portal.controller.crm.ReportCon
 	        Integer totalSize = 0 ;
 	        
 	        param.put("startDate", request.getParameter("startDate") + "000000");
-	        param.put("endDate", request.getParameter("startDate") + "000000");
+	        param.put("endDate", request.getParameter("endDate") + "000000");
 			param.put("areaId", request.getParameter("areaId"));
 			//param.put("qryBusiOrder", request.getParameter("qryBusiOrder"));
 			param.put("channelId", request.getParameter("channelId"));
@@ -280,10 +280,13 @@ public class ReportController extends com.al.lte.portal.controller.crm.ReportCon
 				SysConstant.SESSION_KEY_LOGIN_STAFF);
 		Calendar c = Calendar.getInstance();
 		SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd");
+		String endTime = f.format(c.getTime());
+		c.add(Calendar.DATE, -7);
 		String startTime = f.format(c.getTime());
 		Map<String, Object> defaultAreaInfo = CommonMethods.getDefaultAreaInfo_MinimumC3(sessionStaff);
 		
 		model.addAttribute("p_startDt", startTime);
+		model.addAttribute("p_endDt", endTime);
 		model.addAttribute("p_areaId", defaultAreaInfo.get("defaultAreaId"));
 		model.addAttribute("p_areaId_val", defaultAreaInfo.get("defaultAreaName"));
 		
@@ -306,10 +309,13 @@ public class ReportController extends com.al.lte.portal.controller.crm.ReportCon
 				SysConstant.SESSION_KEY_LOGIN_STAFF);
 		Calendar c = Calendar.getInstance();
 		SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd");
+		String endTime = f.format(c.getTime());
+		c.add(Calendar.DATE, -7);
 		String startTime = f.format(c.getTime());
 		Map<String, Object> defaultAreaInfo = CommonMethods.getDefaultAreaInfo_MinimumC3(sessionStaff);
 		
 		model.addAttribute("p_startDt", startTime);
+		model.addAttribute("p_endDt", endTime);
 		model.addAttribute("status", "301200"); // 竣工状态
 		model.addAttribute("p_areaId_val", defaultAreaInfo.get("defaultAreaName"));
 		model.addAttribute("p_areaId", defaultAreaInfo.get("defaultAreaId"));
@@ -336,11 +342,11 @@ public class ReportController extends com.al.lte.portal.controller.crm.ReportCon
 		JsonResponse jsonResponse = new JsonResponse();
 		Calendar c = Calendar.getInstance();
 		SimpleDateFormat f = new SimpleDateFormat("yyyyMMdd");
-		//String endTime = f.format(c.getTime());
-		// c.add(Calendar.DATE, -7);
+		String endTime = f.format(c.getTime());
+		 c.add(Calendar.DATE, -7);
 		String startTime = f.format(c.getTime());
 		param.put("startDate", startTime +"000000");
-		param.put("endDate", startTime +"000000");
+		param.put("endDate", endTime +"000000");
 		param.put("pageIndex", 1);
 		param.put("pageSize", 10);
 		try {

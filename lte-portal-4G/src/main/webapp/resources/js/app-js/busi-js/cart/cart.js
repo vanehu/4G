@@ -38,7 +38,7 @@ cart.main = (function(){
 		}else{
 			param = {
 					"startDt":($("#p_startDt").val()).replace(/-/g,''),
-					"endDt":($("#p_startDt").val()).replace(/-/g,''),
+					"endDt":($("#p_endDt").val()).replace(/-/g,''),
 					"qryNumber":qryNumber,
 					"olStatusCd":$("#p_olStatusCd").val(),
 					"busiStatusCd":$("#p_busiStatusCd").val(),
@@ -47,7 +47,7 @@ cart.main = (function(){
 					"channelId":$("#p_channelId").val(),
 					"areaId":$("#p_channelId").attr("areaid"),
 					nowPage:curPage,
-					pageSize:10
+					pageSize:200
 			};
 //			$('#cartFormdata').data('bootstrapValidator').enableFieldValidators("p_olNbr",false,null);
 //			if(ec.util.isObj($("#p_qryNumber").val())){
@@ -77,11 +77,21 @@ cart.main = (function(){
 				if(response && response.code == -2){
 					return ;
 				}else{
-					$("#cart_search").hide();
-					$("#cart_list").html(response.data).show();
 					OrderInfo.order.step=2;
 					$("#cart_list_scroller").css("transform","translate(0px, -40px) translateZ(0px)");
 					if(scroller && $.isFunction(scroller)) scroller.apply(this,[]);
+					
+					if(curPage == 1){
+							$("#cart_search").hide();
+							$("#cart_list").html(response.data).show();
+							$("#cart_list_scroller").css("transform","translate(0px, -40px) translateZ(0px)");
+							if(scroller && $.isFunction(scroller)) scroller.apply(this,[]);
+						}
+						if(curPage > 1){
+							$("#all_cart_list").append(response.data);
+							$("#cart_list_scroller").css("transform","translate(0px, -40px) translateZ(0px)");
+							if(scroller && $.isFunction(scroller)) scroller.apply(this,[]);
+						}
 				}
 			},
 			fail:function(response){
