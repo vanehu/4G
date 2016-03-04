@@ -148,13 +148,33 @@ public class OrderController extends BaseController {
         }
     }
 
+    /**
+     * 暂存单查询，“取消”按钮触发该操作请求
+     * @param reqMap
+     * @param model
+     * @return
+     */
     @RequestMapping(value = "/delOrder", method = { RequestMethod.GET })
     public @ResponseBody
     JsonResponse delOrder(@RequestParam Map<String, Object> reqMap, Model model) {
         JsonResponse jsonResponse = null;
         try {
-            SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
-                    SysConstant.SESSION_KEY_LOGIN_STAFF);
+        	//从会话中获取缓存的订单数据(购物车ID和订单类型),对于能力开放和界面集成的单子限制其在集团CRM进行受理
+            Map<String, Object> orderListsInfo = (Map<String, Object>) ServletUtils.getSessionAttribute(super.getRequest(), "orderListsInfo");
+            Map<String, Object> saveOrderLists = (Map<String, Object>) orderListsInfo.get("saveOrderLists");
+            String olId = reqMap.get("olId").toString();
+            if(saveOrderLists.containsKey(olId)){//客户端请求中的olId在会话中存在
+            	String olTypeCd = saveOrderLists.get(olId).toString();//订单类型
+            	if("8".equals(olTypeCd)){//界面集成订单(前台UI暂存订单)
+        			throw new BusinessException(ErrorCode.PORTAL_INPARAM_ERROR, reqMap, null, new Throwable("订单号["+olId+"]为界面集成订单(UI暂存订单)，不可以在集团CRM进行受理，请不要非法操作."));
+            	} else if("9".equals(olTypeCd)){//能力开放订单(API接口暂存订单)
+        			throw new BusinessException(ErrorCode.PORTAL_INPARAM_ERROR, reqMap, null, new Throwable("订单号["+olId+"]为能力开放订单(API接口暂存订单)，不可以在集团CRM进行受理，请不要非法操作."));
+            	}
+            } else{//会话中不存在客户端请求中的olId，可能有非正常请求，例如前端js的限制被篡改
+    			throw new BusinessException(ErrorCode.PORTAL_INPARAM_ERROR, reqMap, null, new Throwable("订单号["+olId+"]数据异常，当前会话中不存在该订单号，请刷新页面再尝试."));
+            }
+            
+            SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
             Map<String, Object> resMap = orderBmo.delOrder(reqMap, null, sessionStaff);
             jsonResponse = super.successed(resMap, ResultConstant.SUCCESS.getCode());
         } catch (BusinessException be) {
@@ -307,13 +327,11 @@ public class OrderController extends BaseController {
 
     @RequestMapping(value = "/remove/submit", method = { RequestMethod.POST })
     public String removeSubmit(@RequestBody Map<String, Object> param, Model model, HttpServletResponse response) {
-        //TODO call bmo
         return "";//return general order submit url
     }
 
     @RequestMapping(value = "/remove/cancel", method = { RequestMethod.POST })
     public String callRemove(@RequestBody Map<String, Object> param, Model model, HttpServletResponse response) {
-        //TODO call bmo
         return "";//return general order cancel url
     }
 
@@ -3348,10 +3366,25 @@ public class OrderController extends BaseController {
         model.addAttribute("orderParam", JsonUtil.buildNormal().objectToJson(param));
         log.debug("orderReduction.param={}", param);
         
-        SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
-        		SysConstant.SESSION_KEY_LOGIN_STAFF);
-        //分段受理暂存单“还原”时，门户后端判断，如果没有“收银台查询权限”，获取该订单对应的渠道id，如果不在该工号已分配的渠道范围内，则不能还原，并提示异常。
+        SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
+
         try {
+        	//从会话中获取缓存的订单数据(购物车ID和订单类型),对于能力开放和界面集成的单子限制其在集团CRM进行受理
+            Map<String, Object> orderListsInfo = (Map<String, Object>) ServletUtils.getSessionAttribute(super.getRequest(), "orderListsInfo");
+            Map<String, Object> reductionOrderLists = (Map<String, Object>) orderListsInfo.get("reductionOrderLists");
+            String olId = param.get("olId").toString();
+            if(reductionOrderLists.containsKey(olId)){//客户端请求中的olId在会话中存在
+            	String olTypeCd = reductionOrderLists.get(olId).toString();//订单类型
+            	if("8".equals(olTypeCd)){//界面集成订单(前台UI暂存订单)
+        			throw new BusinessException(ErrorCode.PORTAL_INPARAM_ERROR, param, null, new Throwable("订单号["+olId+"]为界面集成订单(UI暂存订单)，不可以在集团CRM进行受理，请不要非法操作."));
+            	} else if("9".equals(olTypeCd)){//能力开放订单(API接口暂存订单)
+        			throw new BusinessException(ErrorCode.PORTAL_INPARAM_ERROR, param, null, new Throwable("订单号["+olId+"]为能力开放订单(API接口暂存订单)，不可以在集团CRM进行受理，请不要非法操作."));
+            	}
+            } else{//会话中不存在客户端请求中的olId，可能有非正常请求，例如前端js的限制被篡改
+    			throw new BusinessException(ErrorCode.PORTAL_INPARAM_ERROR, param, null, new Throwable("订单号["+olId+"]数据异常，当前会话中不存在该订单号，请刷新页面再尝试."));
+            }
+            
+            //分段受理暂存单“还原”时，门户后端判断，如果没有“收银台查询权限”，获取该订单对应的渠道id，如果不在该工号已分配的渠道范围内，则不能还原，并提示异常。
         	String qryChannelAuth = (String) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.CASHIER_CHANNEL_QUERY+"_"+sessionStaff.getStaffId());;
         	if(!"0".equals(qryChannelAuth)){
         		boolean invalidChannel = true;

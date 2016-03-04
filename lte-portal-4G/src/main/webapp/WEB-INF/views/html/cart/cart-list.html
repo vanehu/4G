@@ -48,11 +48,20 @@
                     <a olId="${orderLists.olId}" ifInvoice="${orderLists.ifInvoice}" areaId="${cart.areaId}" class="purchase" href="javascript:common.print.preInvoice('${orderLists.olId}','${cart.olNbr}','2')" type="main" >补打发票</a>
                     <#elseif pageType=="link">
                     <a class="purchase" href="javascript:cart.main.queryCartLink('${orderLists.olId}', '${cart.areaId}', '${cart.olNbr}', '${cart.channelId}')" type="main">环节</a>
-                    <#elseif pageType=="queryCashier">
-                    <a class="purchase" href="javascript:cashier.main.reduction({areaId:'${cart.areaId}',acctNbr:'${cart.accessNumber}',custId:'${cart.partyId}',soNbr:'${orderLists.soNbr}',instId:'${cart.objInstId}',olId:'${orderLists.olId}',channelId:'${cart.channelId}'})" type="main" >还原</a>
-                    <#elseif pageType=="saveOrder">
-                    <a class="purchase" href="javascript:cart.main.queryReOrder({areaId:'${cart.areaId}',customerOrderId:'${orderLists.olId}',backFlag:'Y',acctNbr:'${cart.accessNumber}'})" type="main" >处理</a>
-                    <a class="purchase" href="javascript:cart.main.delOrder({areaId:'${cart.areaId}',olId:'${orderLists.olId}'})" type="main" >取消</a>
+                    <#elseif pageType=="queryCashier"><!-- 分段受理单还原 -->
+                    	<#if orderLists.olTypeCd == 8 || orderLists.olTypeCd == 9>
+                    		<a id="p_${orderLists.olId}" onmousemove="cashier.main.addStyle(${orderLists.olId})" onmouseout="cashier.main.removeStyle(${orderLists.olId})" title="能力开放订单(界面集成订单)不可在集团CRM进行受理" >还原</a>
+                    	<#else>
+                    		<a class="purchase" href="javascript:cashier.main.reduction({areaId:'${cart.areaId}',acctNbr:'${cart.accessNumber}',custId:'${cart.partyId}',soNbr:'${orderLists.soNbr}',instId:'${cart.objInstId}',olId:'${orderLists.olId}',channelId:'${cart.channelId}'})" type="main" >还原</a>
+                    	</#if>
+                    <#elseif pageType=="saveOrder"><!-- 暂存单 -->
+                    	<#if orderLists.olTypeCd == 8 || orderLists.olTypeCd == 9>
+                    		<a id="p_${orderLists.olId}" onmousemove="cart.main.addStyle(${orderLists.olId})" onmouseout="cart.main.removeStyle(${orderLists.olId})" title="能力开放订单(界面集成订单)不可在集团CRM进行受理" >处理</a>&nbsp;
+                    		<a id="p_${orderLists.olId}" onmousemove="cart.main.addStyle(${orderLists.olId})" onmouseout="cart.main.removeStyle(${orderLists.olId})" title="能力开放订单(界面集成订单)不可在集团CRM进行受理" >取消</a>
+                    	<#else>
+                    		<a class="purchase" href="javascript:cart.main.queryReOrder({areaId:'${cart.areaId}',customerOrderId:'${orderLists.olId}',backFlag:'Y',acctNbr:'${cart.accessNumber}'})" type="main" >处理</a>
+                    		<a class="purchase" href="javascript:cart.main.delOrder({areaId:'${cart.areaId}',olId:'${orderLists.olId}'})" type="main" >取消</a>
+                    	</#if>
                     </#if>
                     <#if cart.statusCd?? && cart.statusCd!="301200" ></#if>
                   </td>

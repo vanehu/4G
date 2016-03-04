@@ -153,7 +153,7 @@ public interface OfferBmo {
 			SessionStaff sessionStaff) throws Exception;
     
     /**
-     * 咱存单查询
+     * 暂存单查询
      * @param paramMap
      * @param optFlowNum
      * @param sessionStaff

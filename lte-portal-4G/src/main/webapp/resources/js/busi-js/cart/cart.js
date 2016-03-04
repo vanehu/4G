@@ -754,27 +754,40 @@ cart.main = (function(){
 		});
 	}
 	
+	/**
+	 * 需求：#81646，收银台、暂存单查询，这2个菜单，能力开放的暂存单（包括界面集成、接口）限制继续受理
+	 * 说明：当查询到的单子为能力开放的单子，此时该函数为暂存单查询的“取消”和“处理”按钮添加样式，_addStyle须与_removeStyle配合使用，缺一不可。
+	 * @author ZhangYu 2016-2-1
+	 */
+	var _addStyle = function(olId){
+		$("a#p_"+olId).css("color","red");
+	};
+	var _removeStyle = function(olId){
+		//$("#p_"+olId).css("color","");
+		$("a#p_"+olId).removeAttr("style");
+	};
+	
 	return {
-		//受理订单查询页面的受理工号查询和渠道查询
-		qureyStaffAndChl:_qureyStaffAndChl,
+		addStyle			:_addStyle,
+		removeStyle			:_removeStyle,
+		qureyStaffAndChl	:_qureyStaffAndChl,
 		qureyStaffAndChlPage:_qureyStaffAndChlPage,
-		setStaff:_setStaff,
-		setChannel:_setChannel,
-
-		queryCartList:_queryCartList,
-		initDic:_initDic,
-		queryCartInfo:_queryCartInfo,
-		showMain:_showMain,
-		showOffer:_showOffer,
-		queryCartLink:_queryCartLink,
-		slideFailInfo : _slideFailInfo,
-		chooseArea:_chooseArea,
+		setStaff			:_setStaff,
+		setChannel			:_setChannel,
+		queryCartList		:_queryCartList,
+		initDic				:_initDic,
+		queryCartInfo		:_queryCartInfo,
+		showMain			:_showMain,
+		showOffer			:_showOffer,
+		queryCartLink		:_queryCartLink,
+		slideFailInfo		: _slideFailInfo,
+		chooseArea			:_chooseArea,
 		queryConstructionState:_queryConstructionState,
-		resendCustOrder:_resendCustOrder,
-		linkBackMain:_linkBackMain,
-		cardProgressQuery:_cardProgressQuery,
-		delOrder:_delOrder,
-		queryReOrder:_queryReOrder
+		resendCustOrder		:_resendCustOrder,
+		linkBackMain		:_linkBackMain,
+		cardProgressQuery	:_cardProgressQuery,
+		delOrder			:_delOrder,
+		queryReOrder		:_queryReOrder
 	};
 	
 })();

@@ -292,16 +292,31 @@ cashier.main = (function(){
 		order.area.chooseAreaTreeManger("report/cartMain","p_areaId_val","p_areaId",3);
 	};
 	
+	/**
+	 * 需求：#81646，收银台、暂存单查询，这2个菜单，能力开放的暂存单（包括界面集成、接口）限制继续受理
+	 * 说明：当查询到的单子为能力开放的单子，此时该函数为收银台查询的“还原”按钮添加样式，_addStyle须与_removeStyle配合使用，缺一不可。
+	 * @author ZhangYu 2016-2-1
+	 */
+	var _addStyle = function(olId){
+		$("#p_"+olId).css("color","red");
+	};
+	var _removeStyle = function(olId){
+//		$("#p_"+olId).css("color","");
+		$("#p_"+olId).removeAttr("style");
+	};
+	
 	return {
-		queryCartList:_queryCartList,
-		initDic:_initDic,
-		queryCashierList:_queryCashierList,
-		reduction:_reduction,
-		qureyStaffAndChl:_qureyStaffAndChl,
+		removeStyle			:_removeStyle,
+		addStyle			:_addStyle,
+		queryCartList		:_queryCartList,
+		initDic				:_initDic,
+		queryCashierList	:_queryCashierList,
+		reduction			:_reduction,
+		qureyStaffAndChl	:_qureyStaffAndChl,
 		qureyStaffAndChlPage:_qureyStaffAndChlPage,
-		setStaff:_setStaff,
-		setChannel:_setChannel,
-		chooseArea : _chooseArea
+		setStaff			:_setStaff,
+		setChannel			:_setChannel,
+		chooseArea			:_chooseArea
 	};
 	
 })();
