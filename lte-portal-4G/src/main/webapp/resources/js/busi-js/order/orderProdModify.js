@@ -3774,7 +3774,7 @@ order.prodModify = (function(){
 		var response= $.callServiceAsHtml(url,param);
 		$("#auth2").empty().append(response.data);
 		var authTypeStr=$("#authTypeStr").html();
-		if(authTypeStr.toString().indexOf(OrderInfo.cust_validateType)!=-1){
+		if(authTypeStr.toString().indexOf(OrderInfo.cust_validateType)!=-1||authTypeStr.toString()=="4"){
 			return false;
 		}
 
