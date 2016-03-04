@@ -19,6 +19,7 @@ order.calcharge = (function(){
 	var inOpetate=false;
 	var olpos = false;
 	var _posPayMethodIofo = []; //记录使用 离线pos支付方式 的费用项trid
+	var ranNum = 1;//随机数，用于积分扣减生成不同的订单号
 	var _addbusiOrder=function(proId,obj){
 		var html=$("#pro_"+proId).html();
 		if(html!=undefined&&html!=''){
@@ -568,6 +569,7 @@ order.calcharge = (function(){
 		$("#orderSave").off("click");
 	};*/
 	var _conBtns=function(){
+		ranNum = 1;//随机数重新赋值
 		$("#orderCancel").removeClass("btna_g").addClass("btna_o");
 		var val=($('#realmoney').val())*1;
 		if(OrderInfo.actionFlag==11){
@@ -1342,6 +1344,156 @@ order.calcharge = (function(){
 			}
 		});
 	};
+	
+	var _changePoingts = function(itemTypeId,trid,acctItemId,serviceCodeB,acctItemName,obj){
+		var state = "";
+		var acount = 0;
+		if($(obj).is(":checked")){
+			state = "DEL";	
+			acount = 1;
+			ranNum++;
+		}else{
+			acount = -1;
+			state = "ADD";
+		}
+		var params={
+				"olId":_olId,
+				'acctItemId':acctItemId,
+				"orderNbr":  ranNum + OrderInfo.order.soNbr.substring(OrderInfo.order.soNbr.length-10,OrderInfo.order.soNbr.length),
+				"amount" : "0",
+				"totalScore" : "0",
+                "state": state,
+				"pointInfos": [
+				               {
+				                   "recordType": "1",
+				                   "serviceNo": "1",
+				                   "serviceCodeA": "21",
+				                   "serviceCodeB": serviceCodeB,
+				                   "serviceName": acctItemName,
+				                   "amount": acount,
+				                   "price": "0",
+				                   "serviceScore": "0"
+				               }
+				              ]
+		};
+		var url = contextPath+"/order/reducePoingts";
+		var response = $.callServiceAsJson(url,params);
+		if(response.code==0){
+			if(state == "DEL"){
+				$("#realAmount_"+trid).click();
+				$("#realAmount_"+trid).val("0.00");
+				$("#realAmount_"+trid).blur();
+				$("#chargeModifyReasonCd_"+trid).val("5");
+			}else if(state == "ADD"){
+				$("#realAmount_"+trid).click();
+				$("#realAmount_"+trid).val($("#realhidden_"+trid).val());
+				$("#realAmount_"+trid).blur();
+			}
+		}else if (response.code==-2){
+			if("ADD"==state){
+				$(obj).attr("checked",'true');
+			}else{
+				$(obj).removeAttr("checked");
+			}
+			if (response.data.errMsg) {
+				$.alertM(response.data.errMsg);
+			}else{
+				$.alert("提示","积分扣减异常");
+			}
+			$.alert("提示","尊敬的用户，积分操作结果不影响订单处理，请知晓！");
+		}else if (response.code==1002){
+			if("ADD"==state){
+				$(obj).attr("checked",'true');
+			}else{
+				$(obj).removeAttr("checked");
+			}
+			$.alert("提示",response.data);
+			$.alert("提示","尊敬的用户，积分操作结果不影响订单处理，请知晓！");
+		}else {
+			if("ADD"==state){
+				$(obj).attr("checked",'true');
+			}else{
+				$(obj).removeAttr("checked");
+			}
+			$.alert("提示","积分扣减的服务失败,稍后重试");
+			$.alert("提示","尊敬的用户，积分操作结果不影响订单处理，请知晓！");
+		}
+	};
+	
+	var _changePoingts = function(itemTypeId,trid,acctItemId,serviceCodeB,acctItemName,obj){
+		var state = "";
+		var acount = 0;
+		if($(obj).is(":checked")){
+			state = "DEL";	
+			acount = 1;
+			ranNum++;
+		}else{
+			acount = -1;
+			state = "ADD";
+		}
+		var params={
+				"olId":_olId,
+				'acctItemId':acctItemId,
+				"orderNbr":  ranNum + OrderInfo.order.soNbr.substring(OrderInfo.order.soNbr.length-10,OrderInfo.order.soNbr.length),
+				"amount" : "0",
+				"totalScore" : "0",
+                "state": state,
+				"pointInfos": [
+				               {
+				                   "recordType": "1",
+				                   "serviceNo": "1",
+				                   "serviceCodeA": "21",
+				                   "serviceCodeB": serviceCodeB,
+				                   "serviceName": acctItemName,
+				                   "amount": acount,
+				                   "price": "0",
+				                   "serviceScore": "0"
+				               }
+				              ]
+		};
+		var url = contextPath+"/order/reducePoingts";
+		var response = $.callServiceAsJson(url,params);
+		if(response.code==0){
+			if(state == "DEL"){
+				$("#realAmount_"+trid).click();
+				$("#realAmount_"+trid).val("0.00");
+				$("#realAmount_"+trid).blur();
+				$("#chargeModifyReasonCd_"+trid).val("5");
+			}else if(state == "ADD"){
+				$("#realAmount_"+trid).click();
+				$("#realAmount_"+trid).val($("#realhidden_"+trid).val());
+				$("#realAmount_"+trid).blur();
+			}
+		}else if (response.code==-2){
+			if("ADD"==state){
+				$(obj).attr("checked",'true');
+			}else{
+				$(obj).removeAttr("checked");
+			}
+			if (response.data.errMsg) {
+				$.alertM(response.data.errMsg);
+			}else{
+				$.alert("提示","积分扣减异常");
+			}
+			$.alert("提示","尊敬的用户，积分操作结果不影响订单处理，请知晓！");
+		}else if (response.code==1002){
+			if("ADD"==state){
+				$(obj).attr("checked",'true');
+			}else{
+				$(obj).removeAttr("checked");
+			}
+			$.alert("提示",response.data);
+			$.alert("提示","尊敬的用户，积分操作结果不影响订单处理，请知晓！");
+		}else {
+			if("ADD"==state){
+				$(obj).attr("checked",'true');
+			}else{
+				$(obj).removeAttr("checked");
+			}
+			$.alert("提示","积分扣减的服务失败,稍后重试");
+			$.alert("提示","尊敬的用户，积分操作结果不影响订单处理，请知晓！");
+		}
+	};
 
 	return {
 		addItems:_addItems,
@@ -1363,7 +1515,8 @@ order.calcharge = (function(){
 		updateChargeInfoForCheck:_updateChargeInfoForCheck,
 		tochargeSubmit:_tochargeSubmit,
 		backToEntr:_backToEntr,
-		changeFeeDisabled:_changeFeeDisabled
+		changeFeeDisabled:_changeFeeDisabled,
+		changePoingts:_changePoingts
 	};
 })();
 

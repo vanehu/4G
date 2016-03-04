@@ -134,9 +134,36 @@ public class SessionStaff implements Serializable {
 	private String isStrBusi;
 	/**订单提交返回报文*/
 	private Map<String, Object> orderData;
+	/**星级服务开关*/
+	private String poingtType;
+	/**证件类型编码*/
+	private String custType;
+	
+	/**客户编码*/
+	private String custCode;
 	
 	
 	
+	public String getCustType() {
+		return custType;
+	}
+
+
+	public void setCustType(String custType) {
+		this.custType = custType;
+	}
+
+
+	public String getCustCode() {
+		return custCode;
+	}
+
+
+	public void setCustCode(String custCode) {
+		this.custCode = custCode;
+	}
+
+
 	public String getIsStrBusi() {
 		return isStrBusi;
 	}
@@ -574,6 +601,10 @@ public class SessionStaff implements Serializable {
 		sessionStaff.setPhoneModel(MapUtils.getString(staffInfoMap, "phoneModel", ""));
 		sessionStaff.setMacAddr(MapUtils.getString(staffInfoMap, "macAddr", ""));
 		sessionStaff.setFingerprint(MapUtils.getString(staffInfoMap, "fingerPrint", ""));
+		
+		//增加星级服务开关
+		PropertiesUtils propertiesUtils = (PropertiesUtils) SpringContextUtil.getBean("propertiesUtils");
+		sessionStaff.setPoingtType(propertiesUtils.getMessage(SysConstant.POINGTTYPE+"-"+MapUtils.getString(staffInfoMap, "areaId","").substring(0,3)+"0000"));
 		return sessionStaff;
 	}
 	
@@ -751,4 +782,16 @@ public class SessionStaff implements Serializable {
 	public Map<String, Object> getOrderData() {
 		return orderData;
 	}
+
+
+	public String getPoingtType() {
+		return poingtType;
+	}
+
+
+	public void setPoingtType(String poingtType) {
+		this.poingtType = poingtType;
+	}
+	
+	
 }

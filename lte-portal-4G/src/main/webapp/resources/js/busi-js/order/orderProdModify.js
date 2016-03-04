@@ -3807,6 +3807,74 @@ order.prodModify = (function(){
 		return true;
 	};
 
+	var _urgentOpen = function(){
+		//查询权益项是否有紧急开机权益
+		var param={"accNbr":_choosedProdInfo.accNbr};
+		$.callServiceAsHtmlGet(contextPath + "/order/goUrgentOpen",param, {
+			"before":function(){
+				$.ecOverlay("<strong>正在查询中,请稍等会儿....</strong>");
+			},
+			"always":function(){
+				$.unecOverlay();
+			},
+			"done" : function(response){
+				_gotoOrderModify(response);
+				$('#password_form').bind('formIsValid',_spec_password_change_check).ketchup({bindElement:"btsubmit"});
+			}
+		});	
+	};
+	
+	var _phoneOpen = function(){
+		var params={
+				"accessNbr" : _choosedProdInfo.accNbr,
+				"prodStatusCd" : "100000",
+				"oldProdStatusCd" : "120000",
+				"recordId" : "100600",
+				"orderNbr":OrderInfo.order.soNbr
+		};
+		var response = $.callServiceAsJson(contextPath + "/order/urgentOpen", params);
+		if(response.code == 0){
+			$.alertM("受理成功！");
+		}else{
+			$.alertM(response.data);
+			return false;
+		}
+	};
+
+	var _urgentOpen = function(){
+		//查询权益项是否有紧急开机权益
+		var param={"accNbr":_choosedProdInfo.accNbr};
+		$.callServiceAsHtmlGet(contextPath + "/order/goUrgentOpen",param, {
+			"before":function(){
+				$.ecOverlay("<strong>正在查询中,请稍等会儿....</strong>");
+			},
+			"always":function(){
+				$.unecOverlay();
+			},
+			"done" : function(response){
+				_gotoOrderModify(response);
+				$('#password_form').bind('formIsValid',_spec_password_change_check).ketchup({bindElement:"btsubmit"});
+			}
+		});	
+	};
+	
+	var _phoneOpen = function(){
+		var params={
+				"accessNbr" : _choosedProdInfo.accNbr,
+				"prodStatusCd" : "100000",
+				"oldProdStatusCd" : "120000",
+				"recordId" : "100600",
+				"orderNbr":OrderInfo.order.soNbr
+		};
+		var response = $.callServiceAsJson(contextPath + "/order/urgentOpen", params);
+		if(response.code == 0){
+			$.alertM("受理成功！");
+		}else{
+			$.alertM(response.data);
+			return false;
+		}
+	};
+	
 	return {
 		changeCard : _changeCard,
 		getChooseProdInfo : _getChooseProdInfo,
@@ -3897,6 +3965,8 @@ order.prodModify = (function(){
 		initChangeProdAttrs : _initChangeProdAttrs,
 		spec_parm_change_fee_type_save : _spec_parm_change_fee_type_save,
 		readCertWhenCreate : _readCertWhenCreate,
-		querySecondBusinessAuth:_querySecondBusinessAuth
+		querySecondBusinessAuth:_querySecondBusinessAuth,
+		urgentOpen : _urgentOpen,
+		phoneOpen : _phoneOpen
 	};
 })();

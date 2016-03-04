@@ -2006,4 +2006,125 @@ public class OrderBmoImpl implements OrderBmo {
 		}
 		return returnMap;
 	}
+
+	public Map<String, Object> reducePoingts(Map<String, Object> param,
+			String flowNum, SessionStaff sessionStaff) throws Exception {
+		DataBus db = InterfaceClient.callService(param,PortalServiceCode.REDUCE_POINGTS, flowNum, sessionStaff);
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		try{
+			if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db.getResultCode()))) {//调接口成功
+				Map<String, Object> returnData = db.getReturnlmap();
+				if(returnData != null && ResultCode.R_SUCC.equals(returnData.get("resultCode"))){//后台数据返回正常
+					resultMap.put("code", ResultCode.R_SUCCESS);
+				}
+			} else{
+				resultMap.put("code",  ResultCode.R_FAIL);
+				resultMap.put("msg", db.getResultMsg());
+			}
+		}catch(Exception e){
+			log.error("门户处理营业受理后台的biz-service/intf.custService/reducePoingts服务返回的数据异常", e);
+			throw new BusinessException(ErrorCode.REDUCE_POINGTS, param, db.getReturnlmap(), e);
+		}	
+		return resultMap;
+	}
+
+	public Map<String, Object> queryIntegral(Map<String, Object> paramMap,
+			String flowNum, SessionStaff sessionStaff) throws Exception {
+		DataBus db = InterfaceClient.callService(paramMap,PortalServiceCode.QUERY_INTEGRAL, flowNum, sessionStaff);
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		try{
+			if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db.getResultCode()))) {//调接口成功
+				Map<String, Object> returnData = db.getReturnlmap();
+				if(returnData != null && ResultCode.R_SUCC.equals(returnData.get("resultCode"))){//后台数据返回正常
+					if(returnData.get("result") instanceof Map){
+						resultMap = (Map<String, Object>)returnData.get("result") ;
+						resultMap.put("code", ResultCode.R_SUCCESS);
+						resultMap.put("resultCode",returnData.get("resultCode"));
+					}
+				}
+			} else{
+				resultMap.put("code",  ResultCode.R_FAIL);
+				resultMap.put("msg", db.getResultMsg());
+			}
+		}catch(Exception e){
+			log.error("门户处理营业受理后台的biz-service/intf.custService/queryIntegral服务返回的数据异常", e);
+			throw new BusinessException(ErrorCode.QUERY_INTEGRAL, paramMap, db.getReturnlmap(), e);
+		}	
+		return resultMap;
+	}
+
+	public Map<String, Object> queryStarHisList(Map<String, Object> param,
+			String flowNum, SessionStaff sessionStaff) throws Exception {
+		DataBus db = InterfaceClient.callService(param,PortalServiceCode.QUERY_STARBONUSHIS, flowNum, sessionStaff);
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		try{
+			if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db.getResultCode()))) {//调接口成功
+				Map<String, Object> returnData = db.getReturnlmap();
+				if(returnData != null && ResultCode.R_SUCC.equals(returnData.get("resultCode"))){//后台数据返回正常
+					if(returnData.get("result") instanceof Map){
+						resultMap = (Map<String, Object>)returnData.get("result") ;
+						resultMap.put("code", ResultCode.R_SUCCESS);
+						resultMap.put("resultCode",returnData.get("resultCode"));
+					}
+				}
+			} else{
+				resultMap.put("code",  ResultCode.R_FAIL);
+				resultMap.put("msg", db.getResultMsg());
+			}
+		}catch(Exception e){
+			log.error("门户处理营业受理后台的biz-service/intf.custService/queryBonusIntegralhis服务返回的数据异常", e);
+			throw new BusinessException(ErrorCode.QUERY_STARBONUSHIS, param, db.getReturnlmap(), e);
+		}	
+		return resultMap;
+	}
+
+	public Map<String, Object> queryStarConsumeHisList(
+			Map<String, Object> param, String flowNum, SessionStaff sessionStaff)
+			throws Exception {
+		DataBus db = InterfaceClient.callService(param,PortalServiceCode.QUERY_STARBONUSHIS, flowNum, sessionStaff);
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		try{
+			if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db.getResultCode()))) {//调接口成功
+				Map<String, Object> returnData = db.getReturnlmap();
+				if(returnData != null && ResultCode.R_SUCC.equals(returnData.get("resultCode"))){//后台数据返回正常
+					if(returnData.get("result") instanceof Map){
+						resultMap = (Map<String, Object>)returnData.get("result") ;
+						resultMap.put("code", ResultCode.R_SUCCESS);
+						resultMap.put("resultCode",returnData.get("resultCode"));
+					}
+				}
+			} else{
+				resultMap.put("code",  ResultCode.R_FAIL);
+				resultMap.put("msg", db.getResultMsg());
+			}
+		}catch(Exception e){
+			log.error("门户处理营业受理后台的biz-service/intf.custService/queryBonusIntegralhis服务返回的数据异常", e);
+			throw new BusinessException(ErrorCode.QUERY_STARBONUSHIS, param, db.getReturnlmap(), e);
+		}	
+		return resultMap;
+	}
+
+	public Map<String, Object> urgentOpen(Map<String, Object> param,
+			String flowNum, SessionStaff sessionStaff) throws Exception {
+		DataBus db = InterfaceClient.callService(param,PortalServiceCode.EMERGENCYBOOT, flowNum, sessionStaff);
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		try{
+			if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db.getResultCode()))) {//调接口成功
+				Map<String, Object> returnData = db.getReturnlmap();
+				if(returnData != null && ResultCode.R_SUCC.equals(returnData.get("resultCode"))){//后台数据返回正常
+					if(returnData.get("result") instanceof Map){
+						resultMap = (Map<String, Object>)returnData.get("result") ;
+						resultMap.put("code", ResultCode.R_SUCCESS);
+					}
+				}
+			} else{
+				resultMap.put("code",  ResultCode.R_FAIL);
+				resultMap.put("msg", db.getResultMsg());
+			}
+		}catch(Exception e){
+			log.error("门户处理营业受理后台的biz-service/intf.soService/emergencyBoot服务返回的数据异常", e);
+			throw new BusinessException(ErrorCode.EMERGENCYBOOT, param, db.getReturnlmap(), e);
+		}	
+		return resultMap;
+	}
 }

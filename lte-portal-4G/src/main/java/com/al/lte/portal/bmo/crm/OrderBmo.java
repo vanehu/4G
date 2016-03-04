@@ -573,4 +573,18 @@ public interface OrderBmo {
 	
 	 public Map<String,Object> queryOrderBusiHint(Map<String, Object> dataBusMap, String optFlowNum,
 				SessionStaff sessionStaff) throws Exception;
+
+	/**积分扣减服务*/
+	public Map<String, Object> reducePoingts(Map<String, Object> param,String flowNum, SessionStaff sessionStaff)throws Exception;
+
+	/**积分权益查询服务*/
+	public Map<String, Object> queryIntegral(Map<String, Object> paramMap,String flowNum, SessionStaff sessionStaff)throws Exception;
+
+	/**积分历史查询*/
+	public Map<String, Object> queryStarHisList(Map<String, Object> param,String flowNum, SessionStaff sessionStaff)throws Exception;
+	
+	/**积分消费历史查询*/
+	public Map<String, Object> queryStarConsumeHisList(Map<String, Object> param,String flowNum, SessionStaff sessionStaff)throws Exception;
+
+	public Map<String, Object> urgentOpen(Map<String, Object> param,String flowNum, SessionStaff sessionStaff)throws Exception;
 }

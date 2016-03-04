@@ -147,6 +147,7 @@
 													   		<option value="3">补退费</option>
 													   		<option value="2">算费不正确</option>
 													   		<option value="4">营销业务</option>
+													   		<option value="5">星级服务权益</option>
 													   		<option value="1">其他</option>
 													   </select>
 													   <input id="remark_${trid}" type="text" value="" class="txt_cal_edit" style="display:none;border: 1px solid #DCDCDC;height: 23px;line-height: 23px;padding: 1px; width: 120px;">
@@ -168,9 +169,14 @@
 		                  					 		<#if iseditOperation?? && iseditOperation=="0" && refundType??&&(refundType==0) >
 		                  					 		     <#if acctItemTypeId?? && (itemList.acctItemTypeId == acctItemTypeId)  &&  isEditAdjustOperation?? && isEditAdjustOperation!="0">
 														 <#else>
-		                  					 		        <a class="charge_add money_upd money_edit_gray" style="background-color:#95B27B;" href="javascript:void(0);"  onclick="order.calcharge.changePayMethod('${itemList.acctItemTypeId}','${trid}','${itemList.payMethodCd}',this);">修改费用</a>
+		                  					 		        <a class="charge_add money_upd money_edit_gray" style="background-color:#95B27B;" href="javascript:void(0);"  onclick="order.calcharge.changePayMethod('${itemList.acctItemTypeId}','${trid}','${itemList.payMethodCd}',this);">修改费用</a><br>
 													        <!-- <a class="charge_add money_cut" href="javascript:void(0);"  onclick="order.calcharge.delItems2(this,'${itemList.acctItemTypeId}','${trid}','old');">&nbsp;&nbsp;</a>-->
 													    </#if>
+													</#if>
+													<#if INTEREST_BHK =="have" && itemList.boActionType=="14">
+												    <input type="checkbox"  onclick="order.calcharge.changePoingts('${itemList.acctItemTypeId}','${trid}','${itemList.acctItemId}','100300','免费补换卡',this);"/><a class="charge_add money_upd money_edit_gray" style="background-color:#95B27B;" href="javascript:void(0);">免费补换卡</a><br>
+													<#elseif INTEREST_GM =="have" && itemList.objId ==13409281>
+													 <input type="checkbox"  onclick="order.calcharge.changePoingts('${itemList.acctItemTypeId}','${trid}','${itemList.acctItemId}','100800','国漫免预存',this);"/><a class="charge_add money_upd money_edit_gray" style="background-color:#95B27B;" href="javascript:void(0);">国漫免预存</a><br>
 													</#if>
 							                        </td>
 							                     </tr> 

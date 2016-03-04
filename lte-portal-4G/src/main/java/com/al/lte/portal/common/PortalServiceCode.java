@@ -971,4 +971,16 @@ public final class PortalServiceCode {
 	 * @author liuteng
 	 */
 	public static final String SAVE_BIZ_AUTH_RECORD = "biz-service/intf.custService/custIdentityAuthRecord";
+	/**积分（权益）查询"服务*/
+	public static final String QUERY_INTEGRAL = "biz-service/intf.custService/queryIntegral";
+	
+	/**积分扣减服务*/
+	public static final String REDUCE_POINGTS = "biz-service/intf.chargeService/reducePoingts";
+	/**积分历史查询服务*/
+	public static final String QUERY_STARHIS = "biz-service/intf.custService/queryIntegralhis";
+	
+	/**积分消费查询服务*/
+	public static final String QUERY_STARBONUSHIS = "biz-service/intf.custService/queryBonusIntegralhis";
+	/**紧急开机服务*/
+	public static final String EMERGENCYBOOT = "biz-service/intf.soService/emergencyBoot";
 }

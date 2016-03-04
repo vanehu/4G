@@ -375,6 +375,7 @@ public class MySessionInterceptor implements ISessionInterceptor {
 		//身份证类型开发
 		PropertiesUtils propertiesUtils = (PropertiesUtils) SpringContextUtil.getBean("propertiesUtils");
 		sessionStaff.setIdType(propertiesUtils.getMessage(SysConstant.IDTYPE+"-"+MapUtils.getString(chanel_map, "areaId","").substring(0,3)+"0000"));
+		sessionStaff.setPoingtType(propertiesUtils.getMessage(SysConstant.POINGTTYPE+"-"+MapUtils.getString(chanel_map, "areaId","").substring(0,3)+"0000"));
 		// 存到session中
 		session.setAttribute(SysConstant.SESSION_KEY_LOGIN_STAFF, sessionStaff);
 		RedisUtil.set((String) session.getAttribute(SysConstant.SESSION_DATASOURCE_KEY),sessionStaff.getStaffId(),session.getId());

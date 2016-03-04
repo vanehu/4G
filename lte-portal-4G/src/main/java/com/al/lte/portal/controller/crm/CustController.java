@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.context.request.WebRequest;
 
 import com.al.common.utils.StringUtil;
 import com.al.ec.serviceplatform.client.ResultCode;
@@ -43,8 +44,10 @@ import com.al.ecs.spring.annotation.log.LogOperatorAnn;
 import com.al.ecs.spring.annotation.session.AuthorityValid;
 import com.al.ecs.spring.controller.BaseController;
 import com.al.lte.portal.bmo.crm.CustBmo;
+import com.al.lte.portal.bmo.crm.OrderBmo;
 import com.al.lte.portal.bmo.staff.StaffBmo;
 import com.al.lte.portal.common.Base64;
+import com.al.lte.portal.common.CommonMethods;
 import com.al.lte.portal.common.EhcacheUtil;
 import com.al.lte.portal.common.MySimulateData;
 import com.al.lte.portal.common.SysConstant;
@@ -63,6 +66,9 @@ public class CustController extends BaseController {
 	@Autowired
 	@Qualifier("com.al.lte.portal.bmo.staff.StaffBmo")
 	private StaffBmo staffBmo;
+	@Autowired
+    @Qualifier("com.al.lte.portal.bmo.crm.OrderBmo")
+    private OrderBmo orderBmo;
 	
 	@RequestMapping(value = "/queryCust", method = { RequestMethod.POST })
     public String queryCust(@RequestBody Map<String, Object> paramMap, Model model,@LogOperatorAnn String flowNum,
@@ -250,7 +256,12 @@ public class CustController extends BaseController {
 						}
 						custIds.add(MapUtils.getString(tmpCustInfo,"custId",""));
 					}
-					
+					//增加客户定位的证件标识用于星级服务
+					if("".equals(String.valueOf(paramMap.get("identityCd"))) && "".equals(String.valueOf(paramMap.get("queryType")))){//表示接入号定位
+						sessionStaff.setCustType("11");
+					}else{
+						sessionStaff.setCustType("15");
+					}
 					//若省份只返回了一条客户信息，则与原有接口无差异。若省份返回了多条客户信息，则前台需要再次调用后台的新提供的接口，来查询客户下的接入号信息，并拼装报文，按客户ID和接入号逐条展示客户信息
 					if(custInfos.size() > 1){
 						Map<String, Object> accNbrParamMap = new HashMap<String, Object>();
@@ -301,6 +312,7 @@ public class CustController extends BaseController {
 					httpSession.setAttribute(sessionStaff.getStaffCode()+"custcount", count);
 				}
 				model.addAttribute("cust", resultMap);
+
 			}else{
 				int count = (Integer) httpSession.getAttribute(sessionStaff.getStaffCode()+"custcount")+10;
 				httpSession.setAttribute(sessionStaff.getStaffCode()+"custcount", count);
@@ -677,6 +689,7 @@ public class CustController extends BaseController {
 			}
 		}
 		map.put("custInfo", param);
+		model.addAttribute("poingtType",sessionStaff.getPoingtType());
 		model.addAttribute("custAuth", map);
 		return "/cust/cust-info";
 	}
@@ -1374,4 +1387,176 @@ public class CustController extends BaseController {
 		}
 		return jsonResponse;
 	}
+	
+	/**
+	 * 星级服务查询页面
+	 * @param model
+	 * @param param
+	 * @return
+	 */
+	@RequestMapping(value = "/starServiceQuery", method = RequestMethod.GET)
+	@AuthorityValid(isCheck = true)
+	public String starServiceQuery(Model model,@RequestParam Map<String, Object> param) {
+		Calendar c = Calendar.getInstance();
+        SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd");
+        String endTime = f.format(c.getTime());
+        c.set(Calendar.DAY_OF_MONTH, 1);
+        String startTime = f.format(c.getTime());
+        model.addAttribute("p_startDt", startTime);
+        model.addAttribute("p_endDt", endTime);
+		model.addAttribute("current", "business");	
+		return "/cust/starServiceQueryMain";
+	}
+	
+	 /**
+     * 星级列表查询
+     * @param session
+     * @param model
+     * @param request
+     * @return
+     * @throws BusinessException
+     */
+    @SuppressWarnings("unchecked")
+    @RequestMapping(value = "/starQueryList", method = RequestMethod.GET)
+    public String starQueryList(Model model,@RequestParam Map<String, Object> paramMap,@LogOperatorAnn String flowNum,HttpSession session) throws BusinessException {
+        SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+                SysConstant.SESSION_KEY_LOGIN_STAFF);
+        Map resultMap = new HashMap();
+        Map<String, Object> param = new HashMap<String, Object>();
+        Integer nowPage = 1;
+        Integer pageSize = 10;
+        Integer totalSize = 0;
+        try {
+        	paramMap.put("diffPlace", "local");
+        	paramMap.put("identidies_type", "接入号码");
+        	paramMap.put("identityCd", "");
+        	paramMap.put("identityNum", "");
+        	paramMap.put("partyName", "");
+        	paramMap.put("queryType", "");
+        	paramMap.put("queryTypeValue", "");
+			resultMap = custBmo.queryCustInfo(paramMap,
+					flowNum, sessionStaff);
+			 List custInfos = new ArrayList();
+			 if (MapUtils.isNotEmpty(resultMap)) {
+				custInfos=(List<Map<String, Object>>) resultMap.get("custInfos");
+				if(custInfos.size()>0){
+					Map custInfo =(Map)custInfos.get(0);
+					String idCardNumber = (String) custInfo.get("idCardNumber");
+					session.setAttribute(SysConstant.IDCARDNUMBER+String.valueOf(paramMap.get("acctNbr")), idCardNumber);
+                	param.put("identityCd", "");
+                	param.put("identityNum", idCardNumber);
+                	param.put("queryType", "11");
+                	param.put("queryTypeValue", String.valueOf(paramMap.get("acctNbr")));
+                	param.put("password", "");
+                	Map<String, Object> returnMap = orderBmo.queryIntegral(param, flowNum, sessionStaff);
+                    List<Map<String, Object>> pointInfolist = null;
+                    Map<String, Object> custInfoMap = null;
+                    Map<String, Object> pointInfoMap = null;
+                    Map<String, Object> membershipLevelInfoMap = null;
+                    String code = (String) returnMap.get("resultCode");
+					if (ResultCode.R_SUCC.equals(code) && returnMap.get("custInfo") !=null  && returnMap.get("membershipLevelInfo") !=null 
+							&& returnMap.get("pointInfo") !=null) {
+	                    	Object objCust = returnMap.get("custInfo");
+	                        if (objCust instanceof Map) {
+	                        	custInfoMap = (Map<String, Object>) objCust;
+	                        } else {
+	                        	custInfoMap = new HashMap<String, Object>();
+	                        	custInfoMap.putAll((Map<String, Object>) objCust);
+	                        }
+	                    	
+	                        Object objmembershipLevelInfo = returnMap.get("membershipLevelInfo");
+	                        if (objmembershipLevelInfo instanceof Map) {
+	                        	membershipLevelInfoMap = (Map<String, Object>) objmembershipLevelInfo;
+	                        } else {
+	                        	membershipLevelInfoMap = new HashMap<String, Object>();
+	                        	membershipLevelInfoMap.putAll((Map<String, Object>) objmembershipLevelInfo);
+	                        }
+	                        
+	                    	Object objPointInfo = returnMap.get("pointInfo");
+	                        if (objPointInfo instanceof Map) {
+	                        	pointInfoMap = (Map<String, Object>) objPointInfo;
+	                        } else {
+	                        	pointInfoMap = new HashMap<String, Object>();
+	                        	pointInfoMap.putAll((Map<String, Object>) objPointInfo);
+	                        }
+	                        
+	                        Object obj = pointInfoMap.get("pointitems");
+	                        if (obj instanceof List) {
+	                        	pointInfolist = (List<Map<String, Object>>) obj;
+	                        } else {
+	                        	pointInfolist = new ArrayList<Map<String, Object>>();
+	                        	pointInfolist.add((Map<String, Object>) obj);
+	                        }
+	                        List<Map<String, Object>> pointlist = new ArrayList<Map<String, Object>>();
+	                        for(int i=0;i<pointInfolist.size();i++){
+	                        	Map<String, Object> map= pointInfolist.get(i);
+	                        	if("100300".equals(map.get("pointItemID")) || "100800".equals(map.get("pointItemID")) || "100600".equals(map.get("pointItemID"))){
+	                        		pointlist.add(pointInfolist.get(i));
+	                        	}
+	                        }
+	                        PageModel<Map<String, Object>> pm = PageUtil.buildPageModel(nowPage, pageSize, totalSize < 1 ? 1
+	                                : totalSize, pointlist);
+	                        model.addAttribute("pageModel", pm);
+	                        model.addAttribute("pointInfoMap", pointInfoMap);
+	                        model.addAttribute("code", code);
+	                        model.addAttribute("custInfoMap", custInfoMap);
+	                        model.addAttribute("acctNbr",String.valueOf(paramMap.get("acctNbr")));
+	                        model.addAttribute("membershipLevelInfoMap", membershipLevelInfoMap);
+	                        model.addAttribute("areaName", custInfo.get("areaName"));
+					}
+				}
+			}
+		} catch (BusinessException be) {
+			return super.failedStr(model, be);
+		} catch (InterfaceException ie) {
+			return super.failedStr(model, ie, param, ErrorCode.QUERY_INTEGRAL);
+		} catch (Exception e) {
+			return super.failedStr(model, ErrorCode.QUERY_INTEGRAL, e, param);
+		}
+        return "/cust/starServiceQueryList";
+    }
+    @SuppressWarnings("unchecked")
+    @RequestMapping(value = "/starQueryHisList", method = RequestMethod.GET)
+    public String starQueryHisList(Model model,@RequestParam Map<String, Object> paramMap,@LogOperatorAnn String flowNum,HttpSession session) throws BusinessException {
+        SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+                SysConstant.SESSION_KEY_LOGIN_STAFF);
+        List<Map<String, Object>> pointHistory = null;
+        Integer nowPage = 1;
+        Integer pageSize = 10;
+        Integer totalSize = 0;
+        if(StringUtils.isNotEmpty(String.valueOf(paramMap.get("queryTypeValue")))){
+        	String idCardNumber = (String) session.getAttribute(SysConstant.IDCARDNUMBER+String.valueOf(paramMap.get("queryTypeValue")));
+        	if(StringUtils.isNotEmpty(idCardNumber)){
+        		paramMap.put("identityCd", "");
+        		paramMap.put("identityNum", idCardNumber);
+        		paramMap.put("queryType", "11");
+        		paramMap.put("password", "");
+            	try {
+					Map<String, Object> returnMap = orderBmo.queryStarHisList(paramMap, flowNum, sessionStaff);
+					String code = (String) returnMap.get("resultCode");
+					if (ResultCode.R_SUCC.equals(code) && returnMap.get("pointCosumeHistory")!=null) {
+						Object obj = returnMap.get("pointCosumeHistory");
+						if (obj instanceof List) {
+							pointHistory = (List<Map<String, Object>>) obj;
+                        } else {
+                        	pointHistory = new ArrayList<Map<String, Object>>();
+                        	pointHistory.add((Map<String, Object>) obj);
+                        }
+					}
+					model.addAttribute("code", code);
+				} catch (BusinessException be) {
+					return super.failedStr(model, be);
+				} catch (InterfaceException ie) {
+					return super.failedStr(model, ie, paramMap, ErrorCode.QUERY_STARBONUSHIS);
+				} catch (Exception e) {
+					return super.failedStr(model, ErrorCode.QUERY_STARBONUSHIS, e, paramMap);
+				}
+        	}
+        }
+        PageModel<Map<String, Object>> pm = PageUtil.buildPageModel(nowPage, pageSize, totalSize < 1 ? 1
+                : totalSize, pointHistory);
+        model.addAttribute("pageModel", pm);
+        return "/cust/starServiceQueryHisList";
+    }
+    
 }

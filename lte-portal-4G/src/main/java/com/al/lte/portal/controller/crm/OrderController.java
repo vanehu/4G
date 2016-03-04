@@ -35,6 +35,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.WebRequest;
 
+import com.al.common.utils.StringUtil;
 import com.al.ec.serviceplatform.client.ResultCode;
 import com.al.ecs.common.entity.JsonResponse;
 import com.al.ecs.common.entity.PageModel;
@@ -1283,6 +1284,7 @@ public class OrderController extends BaseController {
                     List list = new ArrayList();
                     param.put("checkResult", list);
                 }
+                
                 Map<String, Object> datamap = this.orderBmo.queryChargeList(param, flowNum, sessionStaff);
                 if (datamap != null) {
                     String code = (String) datamap.get("code");
@@ -1298,6 +1300,7 @@ public class OrderController extends BaseController {
                             }
                             model.addAttribute("chargeItems", templist);
                         }
+                        boolean checkFlag = false;//标识判断是否查权益
                         HttpSession session = request.getSession();
                         int sumAmount = 0;
                         if (templist != null && templist.size() != 0) {
@@ -1305,8 +1308,86 @@ public class OrderController extends BaseController {
                                 if (item != null) {
                                     int realAmount = (Integer) item.get("realAmount");
                                     sumAmount = sumAmount + realAmount;
+                                    //遍历订单项，查看订单项是否有补换卡，国漫等业务，如果有查询用户的权益   
+                                    //首先判断省份开关是否打开
+                                    if(SysConstant.ON.equals(sessionStaff.getPoingtType())){
+                                    	 String boActionType = (String) item.get("boActionType");
+                                         int objId = (Integer) item.get("objId");
+                                         if("14".equals(boActionType) || objId==13409281){//补换卡   //国际及港澳台漫游电话（包含语音及短信）
+                                         	checkFlag = true;
+                                         }
+                                    }
                                 }
                             }
+                        }
+                        
+                        if(checkFlag){//查询权益
+                        	Map<String, Object> paramMap = new HashMap<String, Object>();
+                        	paramMap.put("identityCd", sessionStaff.getCardType());
+                        	paramMap.put("identityNum", sessionStaff.getCardNumber());
+                        	paramMap.put("queryType", sessionStaff.getCustType());
+                        	if("11".equals(sessionStaff.getCustType())){
+                        		paramMap.put("queryTypeValue", sessionStaff.getInPhoneNum());
+                        	}else{
+                        		paramMap.put("queryTypeValue", sessionStaff.getCustCode());
+                        	}
+                        	try {//catch 异常，即使出错，单子继续做下去
+	                        	Map<String, Object> returnMap = orderBmo.queryIntegral(paramMap, flowNum, sessionStaff);
+	                            List<Map<String, Object>> pointInfolist = null;
+	                            Map<String, Object> pointInfoMap = null;
+	                            if(returnMap.get("pointInfo") !=null){
+	                            	Object objPointInfo = returnMap.get("pointInfo");
+	    	                        if (objPointInfo instanceof Map) {
+	    	                        	pointInfoMap = (Map<String, Object>) objPointInfo;
+	    	                        } else {
+	    	                        	pointInfoMap = new HashMap<String, Object>();
+	    	                        	pointInfoMap.putAll((Map<String, Object>) objPointInfo);
+	    	                        }
+	    	                        
+	    	                        Object obj = pointInfoMap.get("pointitems");
+	                                if (obj instanceof List) {
+	                                	pointInfolist = (List<Map<String, Object>>) obj;
+	                                } else {
+	                                	pointInfolist = new ArrayList<Map<String, Object>>();
+	                                	pointInfolist.add((Map<String, Object>) obj);
+	                                }
+	                                for(Map<String, Object> pointInfo : pointInfolist){
+	                                	Date date = new Date();
+	                                	String pointItemValueStr = (String) ("".equals(pointInfo.get("pointItemValue"))?"0":pointInfo.get("pointItemValue"));
+	                                	int pointItemValue = Integer.parseInt(pointItemValueStr);
+	                        			String pointItemTime = (String) pointInfo.get("pointItemTime");
+	                        			String serviceEffectTime = (String) pointInfo.get("serviceEffectTime");
+	                        			//如果返回时间为空，就直接
+	                        			if(!StringUtil.isEmpty(pointItemTime) && !StringUtil.isEmpty(serviceEffectTime)){
+	                        				SimpleDateFormat sdf1 = new SimpleDateFormat("yyyyMMdd");
+	                            			Date pointItemDate = sdf1.parse(pointItemTime);
+	                            			SimpleDateFormat sdf2 = new SimpleDateFormat("yyyyMMddHHmmss");
+	                            			Date serviceEffectDate = sdf2.parse(serviceEffectTime);
+	                            			if(pointItemValue>=1 && (serviceEffectDate.compareTo(date)<0) && date.compareTo(pointItemDate)<0){//true 表示有权益
+	                            				//补换卡权益
+	                                        	if("100300".equals(pointInfo.get("pointItemID"))){
+	                                        		session.setAttribute(SysConstant.INTEREST_BHK+sessionStaff.getCardNumber(), "true");
+	                                        		model.addAttribute("INTEREST_BHK", "have");
+	                                        	}
+	                                        	//国漫权益 100800 国漫免预存
+	                                        	if("100800".equals(pointInfo.get("pointItemID"))){
+	                                        		session.setAttribute(SysConstant.INTEREST_GM+sessionStaff.getCardNumber(), "true");
+	                                        		model.addAttribute("INTEREST_GM", "have");
+	                                        	}
+	                                        	//紧急开机 100600 
+	                                        	if("100600".equals(pointInfo.get("pointItemID"))){
+	                                        		session.setAttribute(SysConstant.INTEREST_JJKJ+sessionStaff.getCardNumber(), "true");
+	                                        		model.addAttribute("INTEREST_JJKJ", "have");
+	                                        	}
+	                        			   }
+	                        			}
+	                                }
+	                            }
+	                            
+	                        }catch (BusinessException e) {
+	                        } catch (InterfaceException ie) {
+	                        } catch (Exception e) {
+	                        }
                         }
                         session.setAttribute(SysConstant.SESSION_KEY_SUMAMOUNT, sumAmount);
                         templist = null;
@@ -1558,6 +1639,7 @@ public class OrderController extends BaseController {
                     ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
             return jsonResponse;
         }
+        boolean checkFlag = false;
         try {
             if (commonBmo.checkToken(request, SysConstant.ORDER_SUBMIT_TOKEN)) {
                 log.debug("param={}", JsonUtil.toString(param));
@@ -1581,6 +1663,11 @@ public class OrderController extends BaseController {
                                 if (!exist) {
                                     checkedChargeItems.add(item);
                                 }
+                            }
+                            String boActionType = (String) item.get("boActionType");
+                            String objId = (String) item.get("objId");
+                            if("14".equals(boActionType) || "13409281".equals(objId)){//补换卡   //国际及港澳台漫游电话（包含语音及短信）
+                            	checkFlag = true;
                             }
                         }
                     }
@@ -1610,16 +1697,37 @@ public class OrderController extends BaseController {
                         Map remap = (Map) result.get(0);
                         List dataRanges = (List) remap.get("dataRanges");
                         if (!(dataRanges.size() > 0)) {
-                            jsonResponse = super.failed("您的工号没有修改费用权限，请核对费用！", ResultConstant.SERVICE_RESULT_FAILTURE
-                                    .getCode());
-                            return jsonResponse;
+                        	//首先判断可有积分权益扣减
+                        	if(checkFlag){//表示//补换卡   //国际及港澳台漫游电话（包含语音及短信）
+                        		String checkJFKJ = (String) session.getAttribute(SysConstant.JFKJCG+"_"+sessionStaff.getInPhoneNum());
+                        		if(!"Y".equals(checkJFKJ)){
+                        			jsonResponse = super.failed("您的工号没有修改费用权限，请核对费用！", ResultConstant.SERVICE_RESULT_FAILTURE
+                                            .getCode());
+                                    return jsonResponse;
+                        		}
+                        	}
                         }
                     } else {
-                        jsonResponse = super.failed("您的工号没有修改费用权限，请核对费用！", ResultConstant.SERVICE_RESULT_FAILTURE
+                    	if(checkFlag){//表示//补换卡   //国际及港澳台漫游电话（包含语音及短信）
+                    		String checkJFKJ = (String) session.getAttribute(SysConstant.JFKJCG+"_"+sessionStaff.getInPhoneNum());
+                    		if(!"Y".equals(checkJFKJ)){
+                    			jsonResponse = super.failed("您的工号没有修改费用权限，请核对费用！", ResultConstant.SERVICE_RESULT_FAILTURE
+                                        .getCode());
+                                return jsonResponse;
+                    		}
+                    	}
+                    }
+                   //如果金额不一致判断是否有星级权益和修改费用权限
+                   /* String iseditOperation = (String) ServletUtils.getSessionAttribute(super.getRequest(),
+                            SysConstant.SESSION_KEY_EDITCHARGE + "_" + sessionStaff.getStaffId());
+                    if(iseditOperation !="0" && "是否扣减积分权益"=="" ){
+                    	jsonResponse = super.failed("您的工号没有修改费用权限，请核对费用！", ResultConstant.SERVICE_RESULT_FAILTURE
                                 .getCode());
                         return jsonResponse;
-                    }
+                    }*/
                 }
+                
+                
                 rMap = orderBmo.chargeSubmit(param, flowNum, sessionStaff);
                 log.debug("return={}", JsonUtil.toString(rMap));
                 if (rMap != null && ResultCode.R_SUCCESS.equals(rMap.get("code").toString())) {
@@ -4047,6 +4155,213 @@ public class OrderController extends BaseController {
         } catch (Exception e) {
             return super.failed("缓存信息异常", -1);
         }
+    }
+    
+    @RequestMapping(value = "/reducePoingts", method = RequestMethod.POST)
+    @ResponseBody
+    public JsonResponse reducePoingts(@RequestBody Map<String, Object> param, @LogOperatorAnn String flowNum,
+            HttpServletResponse response, HttpServletRequest request) {
+        SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+                SysConstant.SESSION_KEY_LOGIN_STAFF);
+        Map<String, Object> rMap = null;
+        JsonResponse jsonResponse = null;
+        String acctItemId = (String) param.get("acctItemId");
+        String state = (String) param.get("state");
+        String orderNbr = (String) param.get("orderNbr");
+        if(orderNbr !=null && orderNbr.length()<12){
+        	orderNbr = "0"+orderNbr;
+        }
+        Calendar c = Calendar.getInstance();
+        SimpleDateFormat f = new SimpleDateFormat("yyyyMMddHHmmss");
+        String dealTime = f.format(c.getTime());
+        //生成省份需要的格式orderNbr由门户传，28位  10位平台编码（1000000200）+6位日期（160302）+加2位序号（01,02,03）+购物车流水（20位）后10位
+        orderNbr = "1000000200" + dealTime.substring(2, 8)+orderNbr;
+        param.put("orderNbr",orderNbr);
+        //首先判断可有积分扣减的权益
+        HttpSession session = request.getSession();
+        String bhk = (String) session.getAttribute(SysConstant.INTEREST_BHK+sessionStaff.getCardNumber());
+		String gm = (String) session.getAttribute(SysConstant.INTEREST_GM+sessionStaff.getCardNumber());
+		String jjkj = (String) session.getAttribute(SysConstant.INTEREST_JJKJ+sessionStaff.getCardNumber());
+		String jfgj = (String) session.getAttribute(SysConstant.JFKJCG+"_"+acctItemId+sessionStaff.getInPhoneNum());
+		if("ADD".equals(state)){
+			if(!"Y".equals(jfgj)){
+				jsonResponse = super.failed("非法请求", ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+				return jsonResponse;
+			}
+			param.put("orderNbr", session.getAttribute(SysConstant.JFKJCG+"_oldNbr"+acctItemId+sessionStaff.getInPhoneNum()));//替换入参
+		}else{
+			if("100300".equals(acctItemId)){//免费换卡
+				if(!"true".equals(bhk)){
+					jsonResponse = super.failed("非法请求", ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+					return jsonResponse;
+				}	
+				
+			}else if("100600".equals(acctItemId)){//紧急开机
+				if(!"true".equals(jjkj)){
+					jsonResponse = super.failed("非法请求", ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+					return jsonResponse;
+				}
+			}else if("100800".equals(acctItemId)){//国漫
+				if(!"true".equals(gm)){
+					jsonResponse = super.failed("非法请求", ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+					return jsonResponse;
+				}
+			}
+		}
+        try {
+            param.put("areaId", sessionStaff.getCurrentAreaId());
+            param.put("identityNum", sessionStaff.getCardNumber());
+            param.put("queryType", sessionStaff.getCustType());
+            param.put("accessNbr", sessionStaff.getInPhoneNum());
+            param.put("channelNbr", sessionStaff.getCurrentChannelId());
+            param.put("staffCode", sessionStaff.getStaffCode());
+            param.put("queryTypeValue", sessionStaff.getInPhoneNum());
+            
+            param.put("dealTime", dealTime);
+            param.put("createDt", dealTime);
+            
+            rMap = orderBmo.reducePoingts(param, flowNum, sessionStaff);
+            log.debug("return={}", JsonUtil.toString(rMap));
+            if (rMap != null && ResultCode.R_SUCCESS.equals(rMap.get("code").toString())) {
+                jsonResponse = super.successed("积分操作成功", ResultConstant.SUCCESS.getCode());
+                //扣减成功了要记录下来
+                if("DEL".equals(state)){
+                	session.setAttribute(SysConstant.JFKJCG+"_"+acctItemId+sessionStaff.getInPhoneNum(), "Y");
+                	session.setAttribute(SysConstant.JFKJCG+"_"+sessionStaff.getInPhoneNum(), "Y");
+                	session.setAttribute(SysConstant.JFKJCG+"_oldNbr"+acctItemId+sessionStaff.getInPhoneNum(), param.get("orderNbr"));//把订单记录下来用于扣减的入参
+                }
+            } else {
+                jsonResponse = super.failed(rMap.get("msg"), ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+            }    
+        } catch (BusinessException e) {
+            return super.failed(e);
+        } catch (InterfaceException ie) {
+        	String errStack  = ie.getErrStack();
+        	jsonResponse = super.failed(errStack, ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+            //return super.failed(ie, param, ErrorCode.REDUCE_POINGTS);
+        } catch (Exception e) {
+            return super.failed(ErrorCode.REDUCE_POINGTS, e, param);
+        }
+        return jsonResponse;
+    }
+    
+    @RequestMapping(value = "/goUrgentOpen", method = RequestMethod.GET)
+    public String goUrgentOpen(HttpSession session, Model model, @LogOperatorAnn String flowNum, HttpServletRequest request,
+            HttpServletResponse response) {
+    	SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+                SysConstant.SESSION_KEY_LOGIN_STAFF);
+    	String flag = "no";
+    	Map<String, Object> paramMap = new HashMap<String, Object>();
+    	paramMap.put("identityCd", sessionStaff.getCardType());
+    	paramMap.put("identityNum", sessionStaff.getCardNumber());
+    	paramMap.put("queryType", sessionStaff.getCustType());
+    	if("11".equals(sessionStaff.getCustType())){
+    		paramMap.put("queryTypeValue", sessionStaff.getInPhoneNum());
+    	}else{
+    		paramMap.put("queryTypeValue", sessionStaff.getCustCode());
+    	}
+    	Map<String, Object> returnMap;
+    	Map<String, Object> pointInfoMap = null;
+		try {
+			returnMap = orderBmo.queryIntegral(paramMap, flowNum, sessionStaff);
+			List<Map<String, Object>> pointInfolist = null;
+	        if(returnMap.get("pointInfo") !=null){
+	        	Object objPointInfo = returnMap.get("pointInfo");
+	        	if (objPointInfo instanceof Map) {
+                	pointInfoMap = (Map<String, Object>) objPointInfo;
+                } else {
+                	pointInfoMap = new HashMap<String, Object>();
+                	pointInfoMap.putAll((Map<String, Object>) objPointInfo);
+                }
+                
+                Object obj = pointInfoMap.get("pointitems");
+	            if (obj instanceof List) {
+	            	pointInfolist = (List<Map<String, Object>>) obj;
+	            } else {
+	            	pointInfolist = new ArrayList<Map<String, Object>>();
+	            	pointInfolist.add((Map<String, Object>) obj);
+	            }
+	            for(Map<String, Object> pointInfo : pointInfolist){
+	            	Date date = new Date();
+                	String pointItemValueStr = (String) ("".equals(pointInfo.get("pointItemValue"))?"0":pointInfo.get("pointItemValue"));
+                	int pointItemValue = Integer.parseInt(pointItemValueStr);
+        			String pointItemTime = (String) pointInfo.get("pointItemTime");
+        			String serviceEffectTime = (String) pointInfo.get("serviceEffectTime");
+        			//如果返回时间为空，就直接
+        			if(!StringUtil.isEmpty(pointItemTime) && !StringUtil.isEmpty(serviceEffectTime)){
+        				SimpleDateFormat sdf1 = new SimpleDateFormat("yyyyMMdd");
+    	    			Date pointItemDate = sdf1.parse(pointItemTime);
+    	    			SimpleDateFormat sdf2 = new SimpleDateFormat("yyyyMMddHHmmss");
+    	    			Date serviceEffectDate = sdf2.parse(serviceEffectTime);
+    	    			if(pointItemValue>=1 && (serviceEffectDate.compareTo(date)<0) && date.compareTo(pointItemDate)<0){//true 表示有权益
+    	                	//紧急开机 100600 
+    	                	if("100600".equals(pointInfo.get("pointItemID"))){
+    	                		session.setAttribute(SysConstant.INTEREST_JJKJ+sessionStaff.getCardNumber(), "true");
+    	                		flag = "have";
+    	                	}
+    	    			}
+        			}
+	            }
+	        }
+		}catch (BusinessException e) {
+			return super.failedStr(model, e);
+        } catch (InterfaceException ie) {
+            return super.failedStr(model,ie, paramMap, ErrorCode.QUERY_INTEGRAL);
+        } catch (Exception e) {
+            return super.failedStr(model,ErrorCode.QUERY_INTEGRAL, e, paramMap);
+        }
+    	model.addAttribute("jjkj", flag);
+    	return "/order/urgentOpen";
+    }
+    
+    @RequestMapping(value = "/urgentOpen", method = RequestMethod.POST)
+    @ResponseBody
+    public JsonResponse urgentOpen(@RequestBody Map<String, Object> param, @LogOperatorAnn String flowNum,
+            HttpServletResponse response, HttpServletRequest request) {
+    	SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+                SysConstant.SESSION_KEY_LOGIN_STAFF);
+        Map<String, Object> rMap = null;
+        JsonResponse jsonResponse = null;
+        String orderNbr = (String) param.get("orderNbr");
+        param.remove("orderNbr");
+        try {
+			rMap = orderBmo.urgentOpen(param, flowNum, sessionStaff);
+			 if (rMap != null && ResultCode.R_SUCCESS.equals(rMap.get("code").toString())) {
+				 jsonResponse = super.successed("紧急开机成功", ResultConstant.SUCCESS.getCode());
+                 //扣取紧急开机权益
+				 Map<String, Object> pointInfos = new HashMap<String, Object>();
+				 pointInfos.put("recordType", "1");
+				 pointInfos.put("serviceNo", "1");
+				 pointInfos.put("serviceCodeA", "21");
+				 pointInfos.put("serviceCodeB", "100600");
+				 pointInfos.put("serviceName", "紧急开机");
+				 pointInfos.put("amount", 1);
+				 pointInfos.put("price", "0");
+				 pointInfos.put("serviceScore", "0");
+				 pointInfos.put("state", "ADD");
+				 Map<String, Object> paramMap = new HashMap<String, Object>();
+				 paramMap.put("acctItemId", "100600");
+				 paramMap.put("orderNbr", orderNbr);
+				 paramMap.put("areaId", sessionStaff.getCurrentAreaId());
+				 paramMap.put("identityNum", sessionStaff.getCardNumber());
+				 paramMap.put("queryType", sessionStaff.getCustType());
+				 paramMap.put("accessNbr", sessionStaff.getInPhoneNum());
+				 paramMap.put("pointInfos", pointInfos);
+				 rMap = orderBmo.reducePoingts(param, flowNum, sessionStaff);
+				 if (!(rMap != null && ResultCode.R_SUCCESS.equals(rMap.get("code").toString()))) {
+					 jsonResponse = super.successed("紧急开机成功积分扣减失败！", ResultConstant.SUCCESS.getCode());
+				 }
+             } else {
+                 jsonResponse = super.failed(rMap.get("msg"), ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+             }
+		} catch (BusinessException e) {
+            return super.failed(e);
+        } catch (InterfaceException ie) {
+            return super.failed(ie, param, ErrorCode.EMERGENCYBOOT);
+        } catch (Exception e) {
+            return super.failed(ErrorCode.EMERGENCYBOOT, e, param);
+        }
+        return jsonResponse;
     }
 
 }

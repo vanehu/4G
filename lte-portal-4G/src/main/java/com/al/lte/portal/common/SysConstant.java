@@ -575,6 +575,26 @@ public final class SysConstant {
 	//归档管理员
     public static final String FILE_ADMIN="GDGLY";
 
-	 public static final String YCZJQX_TEST="YCZJQX_TEST";
+	/**星级服务补换卡权益*/
+	public static final String INTEREST_BHK = "INTEREST_BHK";
+	
+	/**星级服务国漫权益*/
+	public static final String INTEREST_GM = "INTEREST_GM";
+	
+	/**星级服务紧急开机权益*/
+	public static final String INTEREST_JJKJ = "INTEREST_JJKJ";
+
+    /**星级服务分省开关*/
+	public static final String POINGTTYPE = "POINGTTYPE";
+	
+	/**身份证号*/
+	public static final String IDCARDNUMBER = "IDCARDNUMBER";
+	
+	public static final String YCZJQX_TEST="YCZJQX_TEST";
+
+
+	public static final String JFKJCG = "JFKJCG";
+	
+	
 
 }
