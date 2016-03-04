@@ -43,7 +43,11 @@
 <div class="easyDialogdiv" style="width:1080px;height:460px;" id="div_staff_dialog">
 
   </div>
-
+<!--用户鉴权弹窗-->
+<div style="height:300px;display:none;background:#fff; -webkit-border-radius:5px; -moz-border-radius:5px; border-radius:5px;-webkit-box-shadow:0 8px 8px rgba(0,0,0,0.4);-moz-box-shadow:0 8px 8px rgba(0,0,0,0.4);box-shadow:0 8px 8px rgba(0,0,0,0.4); border:5px solid #cbced0;
+	display:none;
+	overflow-y:auto;" id="auth2">
+</div>
 <!-- 发展人管理弹窗 -->  
 <div id="div_attach_dialog" class="easyDialogdiv" style="width:980px;height:460px;">
 	<div class="easyDialogclose" id="staff_dialog_close" onclick="easyDialog.close()"></div>
@@ -501,6 +505,7 @@
 			  <input type="text" class="numberTextBox" style="margin-left:5px; width:100px" readonly id="p_cust_areaId_val_choose" onclick="order.cust.<#if DiffPlaceFlag=="local">chooseAreaForChooseUser<#else></#if>()" value="${Session["_ecs_login_session_key"].currentAreaAllName}" placeholder="请选择地区" readonly />
 	          <input type="hidden" id="p_cust_areaId_choose" value="${Session["_ecs_login_session_key"].currentAreaId}">
 	          <input type="hidden" DiffPlaceFlag="${DiffPlaceFlag}">
+	           <input type="hidden" id="p_cust_areaId" value="${Session["_ecs_login_session_key"].currentAreaId}">
 	         </#if>
         </li>
 		<li class="ulocation">
