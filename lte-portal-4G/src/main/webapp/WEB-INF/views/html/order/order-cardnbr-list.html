@@ -46,6 +46,12 @@
   </li>
 </ul>
 </div>
+<!--购物车订单属性展示-->
+<div id="orderAttrDiv">
+	<@block name="orderAttr">
+		<#include "/order/order-attr.html" />
+	</@block>
+</div>
 <table id="chooseTable" class="com_table"></table>
 					<div align="right" style="margin: 20px auto;">
 					    <a class="btna_o" href="javascript:SoOrder.orderBack()"><span >返回修改</span></a>

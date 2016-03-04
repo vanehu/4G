@@ -337,12 +337,12 @@ SoOrder = (function() {
 			var orderAttrAddr = $.trim($("#orderAttrAddr").val()); //地址
 			var orderAttrPhoneNbr = $.trim($("#orderAttrPhoneNbr").val()); //联系人号码
 			// 新建客户或二次业务，政企客户，经办人必填
-			/*if (OrderInfo.boCustInfos.partyTypeCd == '2' || order.cust.isCovCust(OrderInfo.cust.identityCd)) {
+			if (OrderInfo.boCustInfos.partyTypeCd == '2' || order.cust.isCovCust(OrderInfo.cust.identityCd)) {
 				if (!(ec.util.isObj(orderAttrName) && ec.util.isObj(orderAttrIdCard) && ec.util.isObj(orderAttrAddr) && ec.util.isObj(orderAttrPhoneNbr))) {
 					$.alert("提示", "政企单位用户经办人为必填项！");
 					return false;
 				}
-			}*/
+			}
 			if(ec.util.isObj(orderAttrName)&&ec.util.isObj(orderAttrIdCard)&&ec.util.isObj(orderAttrPhoneNbr)){
 				if(ec.util.isObj(orderAttrName)){
 					custOrderAttrs.push({

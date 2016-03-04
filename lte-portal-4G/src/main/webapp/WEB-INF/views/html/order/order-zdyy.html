@@ -281,6 +281,12 @@ function createDialog(){
         </li>
       </ul>
     </div>
+    <!--购物车订单属性展示-->
+	<div id="orderAttrDiv">
+		<@block name="orderAttr">
+			<#include "/order/order-attr.html" />
+		</@block>
+	</div>
   </div>
     <!-- 订单确认页面-->
     <div class="main_warp" id="order_confirm" style="display:none"></div>
