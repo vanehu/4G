@@ -767,6 +767,38 @@ cart.main = (function(){
 		$("a#p_"+olId).removeAttr("style");
 	};
 	
+	//购物车自动归档
+	var _updateArchivedAuto = function(_olId, _areaId){
+		var param = {				
+				olId : _olId,
+				areaId : _areaId
+		};
+		var url = contextPath+"/order/updateArchivedAuto";
+		$.callServiceAsJson(url,param,{
+			"before":function(){
+				$.ecOverlay("正在执行手动归档，请稍等...");
+			},
+			"always":function(){
+				$.unecOverlay();
+			},
+			"done" : function(response){
+				if(response.code==0){
+					$.alert("提示","归档成功！");
+				}else if (response.code == -2) {
+					$.alertM(response.data);
+				}else{
+					$.alert("提示","归档异常");
+					return;
+				}
+			},
+			fail:function(response){
+				$.unecOverlay();
+				$.alert("提示","请求可能发生异常，请稍后再试！");
+			}
+		});
+		
+	};
+	
 	return {
 		addStyle			:_addStyle,
 		removeStyle			:_removeStyle,
@@ -787,7 +819,8 @@ cart.main = (function(){
 		linkBackMain		:_linkBackMain,
 		cardProgressQuery	:_cardProgressQuery,
 		delOrder			:_delOrder,
-		queryReOrder		:_queryReOrder
+		queryReOrder		:_queryReOrder,
+		updateArchivedAuto  :_updateArchivedAuto
 	};
 	
 })();

@@ -2150,6 +2150,8 @@ public class OrderController extends BaseController {
                 SysConstant.SESSION_KEY_LOGIN_STAFF);
         Map<String, Object> res = new HashMap<String, Object>();
         try {
+        	param.put("flag", "1");//1代表门户
+        	param.put("staffId", sessionStaff.getStaffId());
             res = orderBmo.updateArchivedAuto(param, flowNum, sessionStaff);
             return super.successed(res);
         } catch (BusinessException be) {

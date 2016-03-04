@@ -424,7 +424,26 @@ public class ReportController extends BaseController {
             model.addAttribute("code", map.get("code"));
             model.addAttribute("mess", map.get("mess"));
             model.addAttribute("pageType", request.getParameter("pageType")); //link:环节显示 detail:详情显示
-
+            String fileAdminFlag  = "";
+            if (null != pageType && !"".equals(pageType) && "link".equals(pageType)){
+            	//归档管理员权限
+                fileAdminFlag = (String) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.FILE_ADMIN
+                        + "_" + sessionStaff.getStaffId());
+                try {
+                    if (fileAdminFlag == null) {
+                    	fileAdminFlag = staffBmo.checkOperatSpec(SysConstant.FILE_ADMIN, sessionStaff);
+                        ServletUtils.setSessionAttribute(super.getRequest(), SysConstant.FILE_ADMIN + "_"
+                                + sessionStaff.getStaffId(), fileAdminFlag);
+                    }
+                } catch (BusinessException e) {
+                	fileAdminFlag = "1";
+                } catch (InterfaceException ie) {
+                	fileAdminFlag = "1";
+                } catch (Exception e) {
+                	fileAdminFlag = "1";
+                }
+            }
+            model.addAttribute("fileAdminFlag", fileAdminFlag);
             String refundFlag = request.getParameter("refundFlag");
             if (refundFlag != null && "refund".equals(refundFlag)) {
                 return "/charge/order-refund-list";
@@ -971,5 +990,5 @@ public class ReportController extends BaseController {
         session.setAttribute("saveOrder", "true");
         return "/orderUndo/query-save-order";
     }
-
+    
 }

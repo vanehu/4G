@@ -48,6 +48,9 @@
                     <a olId="${orderLists.olId}" ifInvoice="${orderLists.ifInvoice}" areaId="${cart.areaId}" class="purchase" href="javascript:common.print.preInvoice('${orderLists.olId}','${cart.olNbr}','2')" type="main" >补打发票</a>
                     <#elseif pageType=="link">
                     <a class="purchase" href="javascript:cart.main.queryCartLink('${orderLists.olId}', '${cart.areaId}', '${cart.olNbr}', '${cart.channelId}')" type="main">环节</a>
+                    <#if fileAdminFlag=="0" && orderLists.olStatusCd =="201300">
+                    <a class="purchase" href="javascript:cart.main.updateArchivedAuto('${orderLists.olId}', '${cart.areaId}')" type="main">归档</a>
+                    </#if>
                     <#elseif pageType=="queryCashier"><!-- 分段受理单还原 -->
                     	<#if orderLists.olTypeCd == 8 || orderLists.olTypeCd == 9>
                     		<a id="p_${orderLists.olId}" onmousemove="cashier.main.addStyle(${orderLists.olId})" onmouseout="cashier.main.removeStyle(${orderLists.olId})" title="能力开放订单(界面集成订单)不可在集团CRM进行受理" >还原</a>

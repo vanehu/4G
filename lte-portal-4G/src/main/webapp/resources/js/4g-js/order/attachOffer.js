@@ -2969,7 +2969,7 @@ AttachOffer = (function() {
 				OrderInfo.attach2Coupons.push(coupon);
 			}
 		}else if(data.statusCd==CONST.MKTRES_STATUS.HAVESALE){
-			$.alert("提示","终端当前状态为已销售为补贴[1115],只有在办理话补合约时可用");
+			$.alert("提示","终端当前状态为已销售未补贴[1115],只有在办理话补合约时可用");
 		}else{
 			$.alert("提示",data.message);
 		}
@@ -5245,7 +5245,7 @@ AttachOffer = (function() {
 			}
 			OrderInfo.attach2Coupons.push(coupon);
 		}else if(data.statusCd==CONST.MKTRES_STATUS.HAVESALE){
-			$.alert("提示","终端当前状态为已销售为补贴[1115],只有在办理话补合约时可用");
+			$.alert("提示","终端当前状态为已销售未补贴[1115],只有在办理话补合约时可用");
 		}else{
 			$.alert("提示",data.message);
 		}

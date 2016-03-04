@@ -571,7 +571,10 @@ public final class SysConstant {
 	
 	/** 收银台渠道查询权限--关键字 */
 	public static final String CASHIER_CHANNEL_QUERY = "CASHIER_CHANNEL_QUERY";
-	
+
+	//归档管理员
+    public static final String FILE_ADMIN="GDGLY";
+
 	 public static final String YCZJQX_TEST="YCZJQX_TEST";
-	
+
 }

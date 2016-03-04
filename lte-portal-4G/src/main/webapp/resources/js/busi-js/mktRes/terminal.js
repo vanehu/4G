@@ -1094,7 +1094,7 @@ mktRes.terminal = (function($){
 							termInfo = response.data;
 							termInfo.couponSourc = "2"; //串码话补标识,“2”已销售未补贴
 						}else{
-							$.alert("提示","终端当前状态为已销售为补贴[1115],只有在办理话补合约时可用");
+							$.alert("提示","终端当前状态为已销售未补贴[1115],只有在办理话补合约时可用");
 						}
 						
 						
