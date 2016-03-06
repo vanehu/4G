@@ -371,19 +371,19 @@ public class ReportController extends BaseController {
                 
                 //暂存单查询、收银台查询限制能力开放和界面集成的单子在集团CRM进行受理，为避免前端修改订单数据，将订单信息存于会话 ZhangYu 2016-01-24
                 Map<String, Object> orderListsInfo = new HashMap<String, Object>();
-                Map<String, Object> reductionOrderLists = new HashMap<String, Object>();//存放分段受理订单信息
-                Map<String, Object> saveOrderLists = new HashMap<String, Object>();//存放暂存单信息
                 if("queryCashier".equals(pageType)){//分段受理单
+                    Map<String, Object> reductionOrderLists = new HashMap<String, Object>();//存放分段受理订单信息
                 	for(Map<String, Object> orderList : list){
                 		reductionOrderLists.put(orderList.get("olId").toString(), orderList.get("olTypeCd"));//购物车ID和订单类型
                     }
+                    orderListsInfo.put("reductionOrderLists",reductionOrderLists);
                 }else if("saveOrder".equals(pageType)){//暂存单
+                    Map<String, Object> saveOrderLists = new HashMap<String, Object>();//存放暂存单信息
                 	for(Map<String, Object> orderList : list){
                 		saveOrderLists.put(orderList.get("olId").toString(), orderList.get("olTypeCd"));//购物车ID和订单类型
                     }
+                    orderListsInfo.put("saveOrderLists",saveOrderLists);
                 }
-                orderListsInfo.put("reductionOrderLists",reductionOrderLists);
-                orderListsInfo.put("saveOrderLists",saveOrderLists);
                 httpSession.setAttribute("orderListsInfo", orderListsInfo);
                 
                 //判断某个购物车是否为新装，取订购销售品节点的subBusiOrders，判断是否有产品新装

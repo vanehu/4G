@@ -600,7 +600,7 @@ cart.main = (function(){
 		});		
 	};
 	
-	//作废购物车
+	//作废购物车(收银台的"订单取消"、暂存单查询下的"取消")
 	var _delOrder = function(param){
 		param.flag = "U";
 		$.callServiceAsJsonGet(contextPath+"/order/delOrder",param,{
@@ -622,6 +622,7 @@ cart.main = (function(){
 		});
 	};
 	
+	//暂存单下的"处理"
 	var _queryReOrder = function(param){
 		$.ecOverlay("<strong>正在查询中,请稍后....</strong>");
 		var response = $.callServiceAsJsonGet(contextPath+"/accessToken/queryOrderInfos",param);	
