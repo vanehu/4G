@@ -45,6 +45,8 @@ public final class SysConstant {
     public static final String SESSION_KEY_CHANGEUIM_RANDONCODE = "_ecs_changeuim_sms_session_code";
     /**免补换卡短信验证权限*/
     public static final String CHANGEUIMSMS_CODE = "CHANGEUIMSMS_CODE";
+    /**跳过二次鉴权验证权限*/
+    public static final String SECOND_JUMPSPECIAL = "JUMPSPECIAL";
 
     
     public static final String SESSION_KEY_PAD_FLAG="_session_pad_flag";

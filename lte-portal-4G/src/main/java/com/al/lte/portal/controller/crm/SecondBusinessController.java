@@ -11,6 +11,7 @@ import com.al.ecs.exception.ResultConstant;
 import com.al.ecs.spring.annotation.log.LogOperatorAnn;
 import com.al.ecs.spring.controller.BaseController;
 import com.al.lte.portal.bmo.crm.SecondBusiness;
+import com.al.lte.portal.bmo.staff.StaffBmo;
 import com.al.lte.portal.common.SysConstant;
 import com.al.lte.portal.model.SessionStaff;
 import org.apache.commons.collections.MapUtils;
@@ -47,6 +48,9 @@ public class SecondBusinessController extends BaseController {
     @Autowired
     @Qualifier("com.al.lte.portal.bmo.crm.SecondBusiness")
     private SecondBusiness secondBusiness;
+    @Autowired
+    @Qualifier("com.al.lte.portal.bmo.staff.StaffBmo")
+    private StaffBmo staffBmo;
 
 
     /**
@@ -90,6 +94,8 @@ public class SecondBusinessController extends BaseController {
                 }
                 model.addAttribute("rules", rules);
             }
+            String isSecondJump = staffBmo.checkOperatSpec(SysConstant.SECOND_JUMPSPECIAL, sessionStaff);
+            model.addAttribute("isSecondJump", isSecondJump);
             return "/cust/cust-auth";
         } catch (BusinessException e) {
             return super.failedStr(model, e);
