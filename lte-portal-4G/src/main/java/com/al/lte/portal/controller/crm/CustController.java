@@ -688,6 +688,39 @@ public class CustController extends BaseController {
 				listCustInfos.clear();
 			}
 		}
+		
+		if(SysConstant.ON.equals(sessionStaff.getPoingtType())){//星级服务开关打开
+			Map<String, Object> paramMapXJ = new HashMap<String, Object>();
+			paramMapXJ.put("identityCd", sessionStaff.getCardType());
+			paramMapXJ.put("identityNum", sessionStaff.getCardNumber());
+			paramMapXJ.put("queryType", sessionStaff.getCustType());
+        	if("11".equals(sessionStaff.getCustType())){
+        		paramMapXJ.put("queryTypeValue", sessionStaff.getInPhoneNum());
+        	}else{
+        		paramMapXJ.put("queryTypeValue", sessionStaff.getCustCode());
+        	}
+        	paramMapXJ.put("password", "");
+        	try {
+            	Map<String, Object> returnMap = orderBmo.queryIntegral(paramMapXJ, flowNum, sessionStaff);
+                Map<String, Object> membershipLevelInfoMap = null;
+                String code = (String) returnMap.get("resultCode");
+				if (ResultCode.R_SUCC.equals(code) && returnMap.get("custInfo") !=null  && returnMap.get("membershipLevelInfo") !=null 
+						&& returnMap.get("pointInfo") !=null) {
+                        Object objmembershipLevelInfo = returnMap.get("membershipLevelInfo");
+                        if (objmembershipLevelInfo instanceof Map) {
+                        	membershipLevelInfoMap = (Map<String, Object>) objmembershipLevelInfo;
+                        } else {
+                        	membershipLevelInfoMap = new HashMap<String, Object>();
+                        	membershipLevelInfoMap.putAll((Map<String, Object>) objmembershipLevelInfo);
+                        }
+                        model.addAttribute("membershipLevel", membershipLevelInfoMap.get("membershipLevel"));
+				}
+        	} catch (BusinessException be) {
+			} catch (InterfaceException ie) {
+			} catch (Exception e) {
+			}
+		}
+		
 		map.put("custInfo", param);
 		model.addAttribute("poingtType",sessionStaff.getPoingtType());
 		model.addAttribute("custAuth", map);
