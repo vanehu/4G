@@ -2055,12 +2055,8 @@ order.cust = (function(){
 		});
 	};
 
-	//路过鉴权--二次业务
+	//跳过鉴权--二次业务
 	var _jumpAuth2 = function() {
-		if(order.cust.jumpAuthflag!="0"){
-			$.alert("提示","没有跳过校验权限！");
-			return;
-		}
 		var param = _choosedCustInfo;
 		var recordParam={};
 		recordParam.validateType="4";
@@ -2069,37 +2065,9 @@ order.cust = (function(){
 		recordParam.accessNbr=param.accessNumber;
 		recordParam.certType=param.identityCd;
 		recordParam.certNumber=param.idCardNumber;
-
-		param.authFlag="1";
-		$.callServiceAsHtml(contextPath+"/cust/custAuth",param,{
-			"before":function(){
-				$.ecOverlay("<strong>正在查询中,请稍等...</strong>");
-			},"done" : function(response){
-				if(response.code != 0) {
-					$.alert("提示","客户鉴权失败,稍后重试");
-					return;
-				}
-
-				//window.localStorage.setItem("OrderInfo.cust",JSON.stringify(OrderInfo.cust));
-				if(!order.cust.queryForChooseUser){
-					custInfo = param;
-					OrderInfo.boCusts.prodId=-1;
-					OrderInfo.boCusts.partyId=_choosedCustInfo.custId;
-					OrderInfo.boCusts.partyProductRelaRoleCd="0";
-					OrderInfo.boCusts.state="ADD";
-					OrderInfo.boCusts.norTaxPayer=_choosedCustInfo.norTaxPayer;
-
-					OrderInfo.cust = _choosedCustInfo;
-				} else {
-					//鉴权成功后显示选择使用人弹出框
-					order.main.showChooseUserDialog(param);
-				}
-				OrderInfo.cust_validateType="4";//保存鉴权方式
-				_saveAuthRecordSuccess(recordParam);
-			},"always":function(){
-				$.unecOverlay();
-			}
-		});
+		OrderInfo.authRecord.resultCode = "0";
+		easyDialog.close();
+		_saveAuthRecordSuccess(recordParam);
 	};
 
 	return {

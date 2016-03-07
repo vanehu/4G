@@ -89,13 +89,11 @@ public class SecondBusinessController extends BaseController {
                 if (resultMap != null) {
                     List<Map<String, Object>> scenes = (List<Map<String, Object>>) MapUtils.getObject(resultMap, "scenes");
                     if (scenes != null && scenes.size() > 0) {
-                        rules = authCompute(scenes);
+                        rules = authCompute(scenes,sessionStaff);
                     }
                 }
                 model.addAttribute("rules", rules);
             }
-            String isSecondJump = staffBmo.checkOperatSpec(SysConstant.SECOND_JUMPSPECIAL, sessionStaff);
-            model.addAttribute("isSecondJump", isSecondJump);
             return "/cust/cust-auth";
         } catch (BusinessException e) {
             return super.failedStr(model, e);
@@ -158,12 +156,16 @@ public class SecondBusinessController extends BaseController {
      * @param scenes 二次菜单下包含的所有的功能点所对应的鉴权方式
      * @return 计算后的鉴权方式，取交集。
      */
-    private Map<String, Object> authCompute(List<Map<String, Object>> scenes) {
+    private Map<String, Object> authCompute(List<Map<String, Object>> scenes,SessionStaff sessionStaff) throws Exception {
         String authTypeStr = "";
+        String isSecondJump = staffBmo.checkOperatSpec(SysConstant.SECOND_JUMPSPECIAL, sessionStaff);
         if (scenes == null || scenes.size() == 0) {
             return null;
         } else if (scenes.size() == 1) {
             Map<String, Object> rulesMap = MapUtils.getMap(scenes.get(0), "rules");
+            if (isSecondJump == "0") {
+                rulesMap.put("rule4", "Y");
+            }
             if (SysConstant.STR_Y.equals(MapUtils.getString(rulesMap,"rule1",""))) {
                 authTypeStr += "1";
             }
@@ -204,7 +206,9 @@ public class SecondBusinessController extends BaseController {
                 rule5 = and4String(rule5, MapUtils.getString(rules, "rule5", SysConstant.STR_N));//规则5：预留字段
                 rule6 = and4String(rule6, MapUtils.getString(rules, "rule6", SysConstant.STR_N));//规则6：预留字段
             }
-
+            if (isSecondJump == "0") {
+                rule4 = "Y";
+            }
             if(SysConstant.STR_Y.equals(rule1)){
                 authTypeStr+="1";
             }
