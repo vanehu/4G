@@ -1278,6 +1278,17 @@ OrderInfo = (function() {
 					return false;
 				}
 			});
+			if(ec.util.isArray(OrderInfo.oldprodInstInfos)&&OrderInfo.actionFlag==6){//判断是否是纳入老用户
+				$.each(OrderInfo.oldoffer,function(){
+					var oldoffer = this;
+					$.each(oldoffer.offerMemberInfos,function(){
+						if(this.objInstId==prodId){
+							accessNumber = this.accessNumber;
+							return false;
+						}
+					});
+				});
+			}
 //			if(ec.util.isArray(OrderInfo.oldprodInstInfos)&&OrderInfo.actionFlag==6){//判断是否是纳入老用户
 //				$.each(OrderInfo.oldoffer,function(){
 //					var oldoffer = this;
