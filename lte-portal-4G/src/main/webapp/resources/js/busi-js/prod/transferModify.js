@@ -873,8 +873,9 @@ prod.transferModify = (function(){
 		$('#p_cust_tra_identityCd').val(1);//身份证类型
 		order.cust.custidentidiesTypeCdChoose($("#p_cust_tra_identityCd option[value='1']"),"TransferNum");
 		$('#TransferNum').val(man.resultContent.certNumber);
+		order.cust.showReadCert(man, "custTransferBtn");
 		//查询
-		$("#custTransferBtn").click();
+//		$("#custTransferBtn").click();
 	};
 	//新建客户时读卡
 	var _readCertWhenCreate = function() {

@@ -126,6 +126,9 @@ order.cust = (function(){
 		$("#useraddclose").off("click").on("click",function(event){
 			easyDialog.close();
 		});
+		$("#userinfoclose,#custsussbtn").off("click").on("click",function(event){
+			easyDialog.close();
+		});
 		//重置
 		$("#custresetBtn").off("click").on("click",function(event){
 			if($.ketchup)
@@ -1580,6 +1583,26 @@ order.cust = (function(){
 		$("#acctDetail").hide();
 		$("#acctList").show();
 	};
+	var _showReadCert = function(man, id) {
+		$("#td_cust_name").text(man.resultContent.partyName);
+		$("#td_cust_idCard").text(man.resultContent.certNumber);
+		if (man.resultContent.identityPic !== undefined) {
+			$("#img_cust_photo").attr("src", "data:image/jpeg;base64," + man.resultContent.identityPic);
+			$("#tr_cust_photo").show();
+		}
+		$("#td_address_str").text(man.resultContent.certAddress);
+		easyDialog.open({
+			container : 'user_info',
+			callback : function() {
+				$("#td_cust_name").text("");
+				$("#td_cust_idCard").text("");
+				$("#img_cust_photo").attr("src", "");
+				$("#tr_cust_photo").hide();
+				$("#td_address_str").text("");
+				$("#" + id).click();
+			}
+		});
+	};
 	//定位客户时读卡
 	var _readCert = function() {
 		var man = cert.readCert();
@@ -1590,9 +1613,10 @@ order.cust = (function(){
 		$('#p_cust_identityCd').val(1);//身份证类型
 		_custidentidiesTypeCdChoose($("#p_cust_identityCd option:selected"),"p_cust_identityNum");
 		$('#p_cust_identityNum').val(man.resultContent.certNumber);
+		_showReadCert(man, "usersearchbtn");
 //		$('#p_cust_identityNum').attr("disabled",true);
 		//查询
-		$("#usersearchbtn").click();
+//		$("#usersearchbtn").click();
 	};
 	var _submitCertInfo = function(certInfo) {
 		var url = contextPath + "/order/certInfo";
@@ -1644,8 +1668,8 @@ order.cust = (function(){
 		}
 		$('#authIDTD').val(man.resultContent.certNumber);
 //		$('#authIDTD').attr("disabled",true);
-		
-		$("#custAuthbtnID").click();
+		_showReadCert(man, "custAuthbtnID");
+//		$("#custAuthbtnID").click();
 	};
 
 	//用户鉴权时读卡二次业务
@@ -1656,7 +1680,8 @@ order.cust = (function(){
 			return;
 		}
 		$('#idCardNumber2').val(man.resultContent.certNumber);
-		$("#custAuthbtn2").click();
+		_showReadCert(man, "custAuthbtn2");
+//		$("#custAuthbtn2").click();
 	};
 
 	// 填单页面经办人读卡
@@ -2130,7 +2155,8 @@ order.cust = (function(){
 		smsResend:_smsResend,
 		smsvalid:_smsvalid,
 		productPwdAuth:_productPwdAuth,
-		identityTypeAuth:_identityTypeAuth
+		identityTypeAuth:_identityTypeAuth,
+		showReadCert:_showReadCert
 	};
 })();
 $(function() {
