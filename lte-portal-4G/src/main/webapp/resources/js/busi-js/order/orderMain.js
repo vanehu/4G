@@ -145,6 +145,10 @@ order.main = (function(){
 			_loadOther(param);//页面加载完再加载其他元素
 		}
 		if(OrderInfo.actionFlag==1){
+			//为主套餐属性自动设置服务参数
+			if(CacheData.setParam(-1,OrderInfo.offerSpec)){ 
+				$("#mainOffer").removeClass("canshu").addClass("canshu2");
+			}
 			$("#templateOrderDiv").show();
 		}
 		_addEvent();//添加页面事件

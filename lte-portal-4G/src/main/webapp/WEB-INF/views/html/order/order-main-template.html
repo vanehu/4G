@@ -30,6 +30,9 @@
 			<#else>
 				${main.accessNumber}
 			</#if>
+			<#if main.offerSpec??&& main.offerSpec.offerSpecParams?? && (main.offerSpec.offerSpecParams?size>0)>
+                <span id="mainOffer" class="canshu" onclick="AttachOffer.showMainParam();"></span>
+			</#if>
 			<span class="showhide"></span>
 			<#if main.actionFlag == 1 && offerSpec.ifShowTime=="Y">
 				<a class="numberSearch setssxiao" onclick="javascript:AttachOffer.showOfferTime();">生失效设置</a>

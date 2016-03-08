@@ -44,6 +44,8 @@ AttachOffer = (function() {
 	
 	var _offerSpecs = [];
 	
+	var _newViceParam = [];//用来保存副卡拆装新套餐的信息
+	
 	//初始化附属销售页面
 	var _init = function(){
 		var prodInfo = order.prodModify.choosedProdInfo;
@@ -3048,18 +3050,95 @@ AttachOffer = (function() {
 	};
 	
 	//现在主销售品参数
-	var _showMainParam = function(){
-		var content = CacheData.getParamContent(-1,OrderInfo.offerSpec,0);
-		$.confirm("参数设置： ",content,{ 
-			yes:function(){	
-				
-			},
-			no:function(){
-				
+	var _showMainParam = function(accessNumber){
+		if(OrderInfo.actionFlag == 21){//副卡换套餐,可能有多个主套餐参数，根据参数号码来区分\
+			if(!ec.util.isObj(accessNumber)){
+				$.alert("提示","获取副卡号码失败，请刷新页面重试！");
+				return;
 			}
-		});
-		$('#paramForm').bind('formIsValid', function(event, form) {
-		}).ketchup({bindElement:"easyDialogYesBtn"});
+			var spec = {};
+			if(ec.util.isArray(AttachOffer.newViceParam)){
+				for(var i = 0;i < AttachOffer.newViceParam.length; i++){
+					if(accessNumber==AttachOffer.newViceParam[i].accessNumber){
+						spec = AttachOffer.newViceParam[i];
+					}
+				}
+			}
+			if(!ec.util.isObj(spec)){
+				$.alert("提示","获取副卡新套餐参数失败，请刷新页面重试！");
+				return;
+			}
+			var tempProdId = accessNumber;//用号码赋值prodID
+			var content = CacheData.getParamContent(tempProdId,spec,0);
+			$.confirm("参数设置： ",content,{ 
+				yes:function(){	
+				},
+				no:function(){			
+				}
+			});
+			$('#paramForm').bind('formIsValid', function(event, form) {	
+				//参数输入校验
+				if(!paramInputCheck()){
+					return;
+				}	
+				if(!!spec.offerSpecParams){
+					for (var i = 0; i < spec.offerSpecParams.length; i++) {
+						var itemSpec = spec.offerSpecParams[i];
+						var newSpecParam = $.trim($("#"+tempProdId+"_"+itemSpec.itemSpecId).val());
+						if(newSpecParam!=null){
+							if(itemSpec.rule.isOptional=="N"&&newSpecParam=="") { //必填
+								$.alert("提示","属性："+itemSpec.name+"  为必填属性，不能为空！");
+								return;
+							}
+							itemSpec.setValue = newSpecParam;
+							itemSpec.isSet = true;
+						}else{
+							itemSpec.isSet = false;
+						}
+					}
+				}
+				spec.isset ="Y"
+				$("#mainOffer_"+accessNumber).removeClass("canshu").addClass("canshu2");
+				$(".ZebraDialog").remove();
+	            $(".ZebraDialogOverlay").remove();
+			}).ketchup({bindElementByClass:"ZebraDialog_Button1"});
+		}else{
+			var tempProdId = -1;//prodID赋值为-1
+			var content = CacheData.getParamContent(tempProdId,OrderInfo.offerSpec,0);
+			$.confirm("参数设置： ",content,{ 
+				yes:function(){	
+				},
+				no:function(){			
+				}
+			});
+			$('#paramForm').bind('formIsValid', function(event, form) {	
+				//参数输入校验
+				if(!paramInputCheck()){
+					return;
+				}
+				var spec = OrderInfo.offerSpec;
+				if(!!spec.offerSpecParams){
+					for (var i = 0; i < spec.offerSpecParams.length; i++) {
+						var itemSpec = spec.offerSpecParams[i];
+						var newSpecParam = $.trim($("#"+tempProdId+"_"+itemSpec.itemSpecId).val());
+						if(newSpecParam!=null){
+							if(itemSpec.rule.isOptional=="N"&&newSpecParam=="") { //必填
+								$.alert("提示","属性："+itemSpec.name+"  为必填属性，不能为空！");
+								return;
+							}
+							itemSpec.setValue = newSpecParam;
+							itemSpec.isSet = true;
+						}else{
+							itemSpec.isSet = false;
+						}
+					}
+				}
+				spec.isset ="Y"
+				$("#mainOffer").removeClass("canshu").addClass("canshu2");
+				$(".ZebraDialog").remove();
+	            $(".ZebraDialogOverlay").remove();
+			}).ketchup({bindElementByClass:"ZebraDialog_Button1"});
+		}	
 	};
 	
 	//显示参数
@@ -5592,6 +5671,7 @@ AttachOffer = (function() {
 		chkReserveCode          :_chkReserveCode,
 		queryMenuInfo           :_queryMenuInfo,
 		showTerminalInfo        :_showTerminalInfo,
-		queryOfferAndServDependForCancel : _queryOfferAndServDependForCancel
+		queryOfferAndServDependForCancel : _queryOfferAndServDependForCancel,
+		newViceParam:_newViceParam
 	};
 })();

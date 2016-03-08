@@ -3283,6 +3283,42 @@ a.money_edit_gray,  a.money_edit_gray:hover{
 	color:#f15a1f;
 	margin:0px 10px;
 }
+/*套餐样式*/
+.h2_title span.canshu{
+    background:url(../image/common/fsIcon.png) no-repeat scroll 0 0 transparent;
+    height:16px;
+    width:16px;
+    cursor:pointer;
+    position:absolute;
+    top:16px;
+    background-position: 0 -128px;
+}
+.h2_title span.canshu2{
+    background:url(../image/common/fsIcon.png) no-repeat scroll 0 0 transparent;
+    height:16px;
+    width:16px;
+    cursor:pointer;
+    position:absolute;
+    top:16px;
+    background-position: 0 -48px;
+}
+/*套餐变更*/
+#changePlaninfo span.canshu{
+	background:url(../image/common/fsIcon.png) no-repeat scroll 0 0 transparent;
+	height: 16px;
+	margin-top: 8px;
+	margin-left: 4px;
+	border: 0;
+	background-position: 0 -128px;
+}
+#changePlaninfo span.canshu2{
+	background:url(../image/common/fsIcon.png) no-repeat scroll 0 0 transparent;
+	height: 16px;
+	margin-top: 8px;
+	margin-left: 4px;
+	border: 0;
+	background-position: 0 -48px;
+}
 .h2_title_noborder{background-color:transparent;border-bottom:none; font-size:12px; font-weight:600; padding-left:0; padding-bottom:6px; }
 .checkbox{vertical-align:middle; margin-top:-1px; margin-bottom:1px;}/*让复选框单选框与文字对齐*/
 #GoTop{ position:absolute; right:25px; top:210px;right:50%; width:25px;margin-right:-516px; z-index:9;}/*返回顶部*/
@@ -4467,3 +4503,74 @@ cursor:pointer;
     position: relative;
 }
 /* 多页签样式  end*/
+
+/**
+*搜索提示功能
+*/
+.autocomplete-container {
+    position: relative;
+    width: 283px;
+    height: 32px;
+    margin: 0 auto;
+}
+
+.autocomplete-input {
+    padding: 9px;
+    border-radius: 3px;
+    font-family: inherit;
+    float: left;
+    font-size: 1em;
+    border: 1px solid rgba(0, 0, 0, 0.19);
+    margin: 0;
+}
+
+.autocomplete-button {
+    font-family: inherit;
+    border: none;
+    background-color: #990101;
+    color: white;
+    padding: 8px;
+    float: left;
+    cursor: pointer;
+    border-radius: 0px 3px 3px 0px;
+    transition: all 0.2s ease-out 0s;
+    margin: 0.5px 0px 0px -1px;
+}
+
+.autocomplete-button:HOVER {
+    background-color: #D11E1E;
+}
+
+.proposal-box {
+    position: absolute;
+    height: auto;
+    border-left: 1px solid rgba(0, 0, 0, 0.11);
+    border-right: 1px solid rgba(0, 0, 0, 0.11);
+    left: 0px;
+}
+
+.proposal-list {
+    list-style: none;
+    box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.44);
+    -webkit-margin-before: 0em;
+    -webkit-margin-after: 0em;
+    -webkit-margin-start: 0px;
+    -webkit-margin-end: 0px;
+    -webkit-padding-start: 0px;
+}
+
+.proposal-list li {
+    text-align: left;
+    padding: 5px;
+    font-family: inherit;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.16);
+    height: 25px;
+    line-height: 25px;
+    background-color: rgba(255, 255, 255, 0.8);
+    cursor: pointer;
+}
+
+li.proposal.selected {
+    background-color: rgba(175, 42, 0, 0.52);
+    color: white;
+}

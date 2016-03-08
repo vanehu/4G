@@ -415,7 +415,10 @@ offerChange = (function() {
 		});
 		order.dealer.initDealer(); //初始化发展人
 		_initOrderProvAttr();//初始化省内订单属性
-		
+		//为主套餐属性自动设置服务参数
+		if(CacheData.setParam(-1,OrderInfo.offerSpec)){ 
+			$("#mainOffer").removeClass("canshu").addClass("canshu2");
+		}
 		if(CONST.getAppDesc()==0 && order.prodModify.choosedProdInfo.is3G== "Y" && OrderInfo.offerSpec.is3G =="N"){ //3G转4G需要校验
 		    offerChange.checkOfferProd();
 		}else{
@@ -773,11 +776,14 @@ offerChange = (function() {
 			busiOrder.data.ooParams = [];
 			for (var i = 0; i < offerSpec.offerSpecParams.length; i++) {
 				var param = offerSpec.offerSpecParams[i];
+				if(param.setValue==undefined){
+					param.setValue = param.value;
+				}
 				var ooParam = {
 	                itemSpecId : param.itemSpecId,
 	                offerParamId : OrderInfo.SEQ.paramSeq--,
 	                offerSpecParamId : param.offerSpecParamId,
-	                value : param.value,
+	                value : param.setValue,
 	                state : "ADD"
 	            };
 	            busiOrder.data.ooParams.push(ooParam);

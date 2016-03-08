@@ -1030,21 +1030,34 @@ order.memberChange = function(){
 		   var viceparam = [];
 			$.each(lis,function(i, li){//所有副卡信息
 				if ($(this).attr("knew") == "Y"||$(this).attr("del") == "Y") {
-					viceparam.push({
-						objId : $(this).attr("objId"),
-						objInstId : $(this).attr("objInstId"),
-						objType : $(this).attr("objType"),
-						offerRoleId : $(this).attr("addRoleId"),
-						offerSpecId :$(this).attr("addSpecId"),
-						offerMemberId:$(this).attr("offerMemberId"),
-						del : $(this).attr("del"),
-						accessNumber : $(this).attr("accessNumber"),
-						offerSpecName : $(this).attr("addSpecName"),
-						roleName : "基础移动电话",
-						knew : $(this).attr("knew")
-					});
+					var accessNumber = $(this).attr("accessNumber");
+					if(accessNumber!=undefined){
+						var offerSpecParams = [];
+						for(var k = 0;k<OrderInfo.viceOfferSpec.length;k++){
+							if(accessNumber == OrderInfo.viceOfferSpec[k].accessnumber){
+								if(ec.util.isArray(OrderInfo.viceOfferSpec[k].offerSpecParams)){
+									offerSpecParams = OrderInfo.viceOfferSpec[k].offerSpecParams;
+								}				
+							}
+						}
+						viceparam.push({
+							objId : $(this).attr("objId"),
+							objInstId : $(this).attr("objInstId"),
+							objType : $(this).attr("objType"),
+							offerRoleId : $(this).attr("addRoleId"),
+							offerSpecId :$(this).attr("addSpecId"),
+							offerMemberId:$(this).attr("offerMemberId"),
+							del : $(this).attr("del"),
+							accessNumber : $(this).attr("accessNumber"),
+							offerSpecName : $(this).attr("addSpecName"),
+							roleName : "基础移动电话",
+							knew : $(this).attr("knew"),
+							offerSpecParams : offerSpecParams
+						});
+					}
 				}
 			});
+			AttachOffer.newViceParam = viceparam;
 			var ooRoles = [];
 			$.each(lis,function(i, li){
 				if ($(this).attr("del") == "Y"||$(this).attr("knew") == "Y") {
@@ -1232,6 +1245,14 @@ order.memberChange = function(){
 		});
 		order.dealer.initDealer(); //初始化发展人
 		offerChange.initOrderProvAttr();//初始化省内订单属性
+		//为副卡新主套餐属性自动设置服务参数
+		if(ec.util.isObj(AttachOffer.newViceParam)){
+			for(var i=0;i<AttachOffer.newViceParam.length;i++){
+				if(CacheData.setParam(-1,AttachOffer.newViceParam[i])){ 
+					$("#mainOffer_"+AttachOffer.newViceParam[i].accessNumber).removeClass("canshu").addClass("canshu2");
+				}
+			}
+		}
 		order.main.reload();
 	};
 	
@@ -1245,7 +1266,7 @@ order.memberChange = function(){
 		var viceparam = [];
 		var ooRoles =[];
 		var params =[];
-		viceparam=date.viceParam;
+		viceparam=AttachOffer.newViceParam;
 		ooRoles=date.ooRoles;
 		params = {viceParam:viceparam,ooRoles:ooRoles,remark:$("#order_remark").val()};
 		SoOrder.submitOrder(params);
