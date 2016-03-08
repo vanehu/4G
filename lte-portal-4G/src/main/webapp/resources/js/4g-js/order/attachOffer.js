@@ -3091,6 +3091,9 @@ AttachOffer = (function() {
 								return;
 							}
 							itemSpec.setValue = newSpecParam;
+							if (itemSpec.dateSourceTypeCd == "17") {//搜索框类型组件获取code属性中的值作为设置值
+								itemSpec.setValue = $.trim($("#" + tempProdId + "_" + itemSpec.itemSpecId).attr("code"));
+							}
 							itemSpec.isSet = true;
 						}else{
 							itemSpec.isSet = false;
@@ -3127,6 +3130,9 @@ AttachOffer = (function() {
 								return;
 							}
 							itemSpec.setValue = newSpecParam;
+							if (itemSpec.dateSourceTypeCd == "17") {//搜索框类型组件获取code属性中的值作为设置值
+								itemSpec.setValue = $.trim($("#" + tempProdId + "_" + itemSpec.itemSpecId).attr("code"));
+							}
 							itemSpec.isSet = true;
 						}else{
 							itemSpec.isSet = false;
@@ -3191,7 +3197,9 @@ AttachOffer = (function() {
 					var itemInfo = CacheData.getOfferParam(prodId,offer.offerId,this.itemSpecId);
 					if(itemInfo.itemSpecId == CONST.ITEM_SPEC.PROT_NUMBER){
 						itemInfo.setValue = $("#select1").val();
-					}else{
+					} else if (itemSpec.dateSourceTypeCd == "17") {//搜索框类型组件获取code属性中的值作为设置值
+						itemSpec.setValue = $.trim($("#" + prodId + "_" + this.itemSpecId).attr("code"));
+					} else {
 					    itemInfo.setValue = $("#"+prodId+"_"+this.itemSpecId).val();
 					}
 					if(itemInfo.value!=itemInfo.setValue){
@@ -3238,7 +3246,9 @@ AttachOffer = (function() {
 						var itemSpec = CacheData.getSpecParam(prodId,offerSpecId,param.itemSpecId);
 						if(itemSpec.itemSpecId == CONST.ITEM_SPEC.PROT_NUMBER){
 							itemSpec.setValue = $("#select1").val();
-						}else{
+						} else if (itemSpec.dateSourceTypeCd == "17") {//搜索框类型组件获取code属性中的值作为设置值
+							itemSpec.setValue = $.trim($("#" + prodId + "_" + param.itemSpecId).attr("code"));
+						} else {
 							itemSpec.setValue = $("#"+prodId+"_"+param.itemSpecId).val();
 						}
 					}
@@ -5601,6 +5611,46 @@ AttachOffer = (function() {
 		var response = $.callServiceAsJson(contextPath+"/offer/queryOfferAndServDependForCancel",param); //依赖销售品查询
 		return response;
 	};
+	//学校信息搜索
+	var _searchSchools = function (id) {
+		var keyword= $.trim($("#"+id).val());
+		if(!ec.util.isObj(keyword)){
+			$.alert("提示","输入学校名称不能为空！");
+			return;
+		}
+		$("#search_info_div").remove();//清除原有的追加节点信息
+		var schools = CacheData.getSearchs();
+		var schools_filter=[];
+		$.each(schools, function () {
+			var currentText=this.text;
+			if (currentText.indexOf(keyword) != -1) {
+				schools_filter.push(this);
+			}
+		});
+		var div_info='<div id="search_info_div" class="absolute_canshu" style="display: block;">';
+		var div_schools_info='<div id="schools_info_content_div" style="width:100%;">';
+		var table_info='<div id="search_info_div_close" class="userclose" onclick="AttachOffer.schoolClose()"></div><table class="contract_list" style="width:360px;"><thead><tr><td width="300">学校信息</td></tr></thead><tbody>';
+		var tr_td = "";
+		$.each(schools_filter,function(){
+			tr_td += '<tr onclick="AttachOffer.selectSearch(\''+id+'\',\''+this.value+'\',\''+this.text+'\')" id="'+this.value+'"><td>'+this.text+'</td></tr>';
+		});
+		if(schools_filter.length>5){
+			div_schools_info='<div id="schools_info_content_div" style="overflow-x:hidden;overflow-y:auto;width:100%;height: 200px;">';
+		}
+		$("#"+id).parent().append(div_info+div_schools_info+table_info+tr_td+"</tbody></table></div></div>");
+		return schools_filter;
+	};
+
+	//选择搜索结果集中的一条记录
+	var _searchSelect=function(id,code,name){
+		$("#"+id).val(name);
+		$("#"+id).attr("code",code);
+		$("#search_info_div").hide();
+	};
+	//关闭搜索结果集
+	var _searchClose=function(){
+		$("#search_info_div").hide();
+	};
 	return {
 		addOffer 				: _addOffer,
 		addOfferSpec 			: _addOfferSpec,
@@ -5672,6 +5722,10 @@ AttachOffer = (function() {
 		queryMenuInfo           :_queryMenuInfo,
 		showTerminalInfo        :_showTerminalInfo,
 		queryOfferAndServDependForCancel : _queryOfferAndServDependForCancel,
-		newViceParam:_newViceParam
+		newViceParam			: _newViceParam,
+		queryOfferAndServDependForCancel : _queryOfferAndServDependForCancel,
+		searchSchools			: _searchSchools,
+		selectSearch			: _searchSelect,
+		schoolClose				: _searchClose
 	};
 })();

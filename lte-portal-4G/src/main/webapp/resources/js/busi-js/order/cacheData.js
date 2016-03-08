@@ -322,7 +322,19 @@ CacheData = (function() {
 				return selectStr;
 			}
 		}
-		if(ec.util.isArray(param.valueRange)){ //下拉框
+		if (ec.util.isArray(param.valueRange) && param.dateSourceTypeCd == "17") {//带搜索功能输入组件
+			var id=prodId+'_'+itemSpecId;
+			if(ec.util.isObj(specId)){
+				id=prodId+'_'+specId+'_'+itemSpecId;
+			}
+			selectStr = selectStr + '<tr><td>' + param.name + ': </td></tr>';
+			CacheData.setSearchs(param.valueRange);
+			if(ec.util.isObj(paramVal)){
+				selectStr = selectStr + '<tr><td id="td_schools"><input id="'+id+'" code="'+paramVal+'" value="'+CacheData.getSearchName(paramVal)+'" placeholder="请输入学校名称" data-validate="validate(required,reg:()) on(blur)" class="inputWidth183px" type="text" /><input type="button" onclick="AttachOffer.searchSchools(\''+id+'\');" class="purchase" value="搜索"/></td></tr>';
+			}else{
+				selectStr = selectStr + '<tr><td id="td_schools"><input id="'+id+'" placeholder="请输入学校名称" data-validate="validate(required,reg:()) on(blur)" class="inputWidth183px" type="text" /><input type="button" onclick="AttachOffer.searchSchools(\''+id+'\');" class="purchase" value="搜索"/></td></tr>';
+			}
+		} else if (ec.util.isArray(param.valueRange)) { //下拉框
 			if(param.rule.isConstant=='Y'){ //不可修改
 				selectStr = selectStr+"<tr><td>"+param.name + ": </td><td><select class='inputWidth183px' id="+prodId+"_"+itemSpecId+" disabled='disabled'>"; 
 			}else {
@@ -1161,7 +1173,7 @@ CacheData = (function() {
 		} 
 		return intOptSwitch;
 	};
-	
+
 	// 获取政企客户证件类型
 	var govCertTyteArr = [];
 	var _getGovCertType = function() {
@@ -1230,6 +1242,44 @@ CacheData = (function() {
 	var _getRecordId = function () {
 		return recordId;
 	};
+
+
+	//获取搜索集信息
+	var searchs=[];
+	var _getSearchs=function(){
+		return searchs;
+	};
+	var _setSearchs=function(values){
+		searchs=values;
+	};
+	//通过学校编码获取学校名称
+	var _getSearchName=function(school_code){
+		var schools_name = "";
+		if(!ec.util.isObj(school_code)){
+			$.alert("提示","学校编码不能为空！");
+			return "";
+		}
+		$.each(searchs,function(){
+			if(this.value==school_code){
+				schools_name=this.text;
+			}
+		});
+		return schools_name;
+	};
+	//通过学校名称获取学校编码
+	var _getSearchCode=function(value){
+		var key = "";
+		if(!ec.util.isObj(value)){
+			$.alert("提示","学校名称不能为空！");
+			return "";
+		}
+		$.each(searchs,function(){
+			if(this.text==value){
+				key=this.value;
+			}
+		});
+		return key;
+	};
 	return {
 		setParam				: _setParam,
 		setServParam			: _setServParam,
@@ -1273,6 +1323,10 @@ CacheData = (function() {
 		getOldOfferMember       : _getOldOfferMember,
 		getBrowserTypeVersion   : _getBrowserTypeVersion,
 		getRecordId				: _getRecordId,
-		setRecordId				: _setRecordId
+		setRecordId				: _setRecordId,
+		setSearchs				: _setSearchs,
+		getSearchs				: _getSearchs,
+		getSearchName			: _getSearchName,
+		getSearchCode			: _getSearchCode
 	};
 })();
