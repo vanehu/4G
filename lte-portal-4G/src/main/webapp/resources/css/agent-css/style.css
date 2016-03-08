@@ -622,6 +622,9 @@ li.form-group {
 .btn-group .btn {
 	border-color: #dfdfdf;
 }
+.btn {
+	white-space:normal;
+}
 .glyphicon-remove {
 	color:#ff9c00;
 }
