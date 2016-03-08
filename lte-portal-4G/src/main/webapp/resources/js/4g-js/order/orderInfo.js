@@ -321,6 +321,10 @@ OrderInfo = (function() {
 				boAccountMailings : [] //账单投递信息节点	
 			}
 		};
+		// 如果账号名称默认取客户名称，则送后台加密后的客户名称（客户信息脱敏后，导致后台下省也脱敏）
+		if (acctName == OrderInfo.cust.partyName) {
+			busiOrder.data.boAccountInfos[0].CN = OrderInfo.cust.CN;
+		}
 		var accNbr = _getAccessNumber(-1);
 		if(ec.util.isObj(accNbr)){ //接入号
 			busiOrder.busiObj.accessNumber = accNbr;

@@ -678,6 +678,7 @@ order.cust = (function(){
 		_choosedCustInfo = {
 			custId : $(scope).attr("custId"), //$(scope).find("td:eq(3)").text(),
 			partyName : $(scope).attr("partyName"), //$(scope).find("td:eq(0)").text(),
+			CN : $(scope).attr("CN"),
 			idCardNumber : $(scope).attr("idCardNumber"), //$(scope).find("td:eq(4)").text(),
 			identityName : $(scope).attr("identityName"),
 			areaName : $(scope).attr("areaName"),
