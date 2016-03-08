@@ -169,14 +169,14 @@ public class OrderController extends BaseController {
             	if(saveOrderLists != null && saveOrderLists.size() > 0){
             		String olId = reqMap.get("olId").toString();
                     if(saveOrderLists.containsKey(olId)){//客户端请求中的olId在会话中存在
-                    	String olTypeCd = saveOrderLists.get(olId).toString();//订单类型
+                    	String olTypeCd = saveOrderLists.get(olId).toString();//获取订单类型
                     	if("8".equals(olTypeCd)){//界面集成订单(前台UI暂存订单)
                 			throw new BusinessException(ErrorCode.PORTAL_INPARAM_ERROR, reqMap, null, new Throwable("订单号["+olId+"]为界面集成订单(UI暂存订单)，不可以在集团CRM进行受理，请不要非法操作."));
                     	} else if("9".equals(olTypeCd)){//能力开放订单(API接口暂存订单)
                 			throw new BusinessException(ErrorCode.PORTAL_INPARAM_ERROR, reqMap, null, new Throwable("订单号["+olId+"]为能力开放订单(API接口暂存订单)，不可以在集团CRM进行受理，请不要非法操作."));
                     	}
                     } else{//会话中不存在客户端请求中的olId，可能有非正常请求，例如前端js的限制被篡改
-            			throw new BusinessException(ErrorCode.PORTAL_INPARAM_ERROR, reqMap, null, new Throwable("订单号["+olId+"]数据异常，当前会话中不存在该订单号，请刷新页面再尝试."));
+//            			throw new BusinessException(ErrorCode.PORTAL_INPARAM_ERROR, reqMap, null, new Throwable("订单号["+olId+"]数据异常，当前会话中不存在该订单号，请刷新页面再尝试."));
                     }
             	}
             }
