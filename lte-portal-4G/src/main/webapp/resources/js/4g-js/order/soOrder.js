@@ -3479,6 +3479,7 @@ SoOrder = (function() {
 					$.alert("提示","订单暂存成功");
 					OrderInfo.saveOrder.flag = "true";
 					$("#orderSave").removeClass("btna_o").addClass("btna_g").off("click");
+					$('#orderSave').removeAttr("onclick");
 				}else{
 					$.alertM(response.data);
 				}
