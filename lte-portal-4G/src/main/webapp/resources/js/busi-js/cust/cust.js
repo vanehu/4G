@@ -54,7 +54,6 @@ order.cust = (function(){
 					} catch(e){
 						
 					}
-					//window.localStorage.setItem("OrderInfo.cust",JSON.stringify(OrderInfo.cust));
 					if(!order.cust.queryForChooseUser){
 						custInfo = param;
 						OrderInfo.boCusts.prodId=-1;
@@ -693,7 +692,8 @@ order.cust = (function(){
 			segmentName :$(scope).attr("segmentName"),
 			custFlag :$(scope).attr("custFlag"),
 			vipLevel :$(scope).attr("vipLevel"),
-			vipLevelName :$(scope).attr("vipLevelName")
+			vipLevelName :$(scope).attr("vipLevelName"),
+			accNbr:$(scope).attr("accNbr")
 		};
 		//设置被选择标识
 		$(scope).attr("selected","selected");
@@ -720,27 +720,44 @@ order.cust = (function(){
 				$("#custAuthTypeName").html("产品密码：");
 			}
 			var pCustIdentityCd = $("#p_cust_identityCd").val();
-			if("1"==pCustIdentityCd){
-//				var isIdTypeOff = OrderInfo.staff.idType=="OFF";
-//				$('#authIDTD').attr("disabled",!isIdTypeOff);//身份鉴权的身份证在读卡时被禁用，此处根据开关控制是否允许输入
+			$("#idCardType2").text(_choosedCustInfo.identityName);
+			if (_choosedCustInfo.identityCd == "1") {
+				$("#readCertBtnID2").show();
+				$("#idCardNumber2").attr("disabled", "disabled");
+			} else {
+				$("#readCertBtnID2").hide();
+				$("#idCardNumber2").removeAttr("disabled");
+			}
+			var canRealName = $('#custInfos').parent().children('[selected="selected"]').attr('canrealname');
+			var accessNumber=_choosedCustInfo.accNbr;
+			if(!ec.util.isObj(accessNumber)){
+				$("#auth_tab1").removeClass();
+				$("#auth_tab1").hide();
+				$("#auth_tab2").addClass("setcon");
+				$("#auth_tab3").removeClass();
+				$("#auth_tab3").hide();
+				$("#content1").hide();
+				$("#content2").show();
+				$("#content3").hide();
+			}else{
+				$("#auth_tab1").addClass("setcon");
+				$("#auth_tab3").removeClass();
+				$("#auth_tab2").removeClass();
+				$("#content1").show();
+				$("#content2").hide();
+				$("#content3").hide();
+			}
+			if (ec.util.isObj(canRealName) && 1 == canRealName) {
 				easyDialog.open({
-					container:'authID',
-					callback : function(){
+					container: 'auth3',
+					callback: function () {
 						order.cust.queryForChooseUser = false; //关闭弹出框时重置标识位
 					}
 				});
 			}else{
-				easyDialog.open({
-					container : 'auth',
-					callback : function(){
-						order.cust.queryForChooseUser = false; //关闭弹出框时重置标识位
-					}
-				});
+				_realCheck(contextPath);
 			}
 			if(order.cust.jumpAuthflag=="0"){
-				//$("#jumpAuth").off('click').on('click', function(){
-				//	order.cust.jumpAuth();
-				//});
 				$("#jumpAuth").show();
 				$("#jumpAuthID").show();
 			}
@@ -1895,11 +1912,21 @@ order.cust = (function(){
 	};
 
 	//短信发送
-	var _smsResend = function () {
+	var _smsResend = function (level) {
+		var accNbr = "";
+		if (level == "1") {
+			accNbr = _choosedCustInfo.accNbr;
+		} else if (level == "2") {
+			accNbr = order.prodModify.choosedProdInfo.accNbr;
+		}
+		if(!ec.util.isObj(accNbr)){
+			$.alert("提示","手机号不存在，无法发送短信");
+			return;
+		}
 		var param = {
 			"pageIndex": 1,
 			"pageSize": 10,
-			'munber':order.prodModify.choosedProdInfo.accNbr
+			'munber':accNbr
 		};
 		$.callServiceAsJson(contextPath + "/staffMgr/reSend", param, {
 			"done": function (response) {
@@ -1913,7 +1940,7 @@ order.cust = (function(){
 		});
 	};
 	//短信验证
-	var _smsvalid=function(){
+	var _smsvalid=function(level){
 		var params="smspwd="+$("#smspwd2").val();
 		if(!ec.util.isObj($("#smspwd2").val())){
 			$.alert("提示","验证码不能为空！");
@@ -1922,7 +1949,7 @@ order.cust = (function(){
 		var param = _choosedCustInfo;
 		var recordParam={};
 		recordParam.validateType="3";
-		recordParam.validateLevel="2";
+		recordParam.validateLevel=level;
 		recordParam.custId=param.custId;
 		recordParam.accessNbr=param.accessNumber;
 		recordParam.certType=param.identityCd;
@@ -1937,7 +1964,11 @@ order.cust = (function(){
 				if(response.code==0){
 					OrderInfo.authRecord.validateType="3";
 					OrderInfo.authRecord.resultCode="0";
-					easyDialog.close();
+					if (level == "1") {
+						_custAuthCallBack(response);
+					} else {
+						easyDialog.close();
+					}
 					_saveAuthRecordSuccess(recordParam);
 				}else{
 					$.alert("提示",response.data);
@@ -1954,7 +1985,7 @@ order.cust = (function(){
 	};
 
 	//客户鉴权--产品密码
-	var _productPwdAuth=function(){
+	var _productPwdAuth=function(level){
 
 		var param = _choosedCustInfo;
 		param.prodPwd = $.trim($("#authPassword2").val());
@@ -1968,7 +1999,7 @@ order.cust = (function(){
 
 		var recordParam={};
 		recordParam.validateType="1";
-		recordParam.validateLevel="2";
+		recordParam.validateLevel=level;
 		recordParam.custId=param.custId;
 		recordParam.accessNbr=param.accessNumber;
 		recordParam.certType=param.identityCd;
@@ -1990,6 +2021,7 @@ order.cust = (function(){
 				try {
 					var errorData = $.parseJSON(response.data);
 					$.alertMore("异常信息", errorData.resultMsg, errorData.errorStack,"error");
+					_saveAuthRecordFail(recordParam);
 					return;
 				} catch(e){
 				}
@@ -2005,6 +2037,11 @@ order.cust = (function(){
 					OrderInfo.authRecord.validateType="1";
 					OrderInfo.authRecord.resultCode="0";
 					easyDialog.close();
+					if (level == "1") {
+						_custAuthCallBack(response);
+					} else {
+						easyDialog.close();
+					}
 				} else {
 					//鉴权成功后显示选择使用人弹出框
 					order.main.showChooseUserDialog(param);
@@ -2016,7 +2053,7 @@ order.cust = (function(){
 		});
 	};
 	//客户鉴权--证件类型
-	var _identityTypeAuth=function(){
+	var _identityTypeAuth=function(level){
 
 		var param = _choosedCustInfo;
 		param.validateType="2";
@@ -2031,7 +2068,7 @@ order.cust = (function(){
 
 		var recordParam={};
 		recordParam.validateType="2";
-		recordParam.validateLevel="2";
+		recordParam.validateLevel=level;
 		recordParam.custId=param.custId;
 		recordParam.accessNbr=param.accessNumber;
 		recordParam.certType=param.identityCd;
@@ -2069,7 +2106,11 @@ order.cust = (function(){
 					OrderInfo.cust = _choosedCustInfo;
 					OrderInfo.authRecord.validateType="2";
 					OrderInfo.authRecord.resultCode="0";
-					easyDialog.close();
+					if (level == "1") {
+						_custAuthCallBack(response);
+					} else {
+						easyDialog.close();
+					}
 				} else {
 					//鉴权成功后显示选择使用人弹出框
 					order.main.showChooseUserDialog(param);
