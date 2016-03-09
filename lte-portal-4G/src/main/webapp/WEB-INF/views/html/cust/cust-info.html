@@ -8,7 +8,7 @@ ${error}
     <li id="area" areaId="${custAuth.custInfo.areaId}" class="uicon">地区</li><li id="area" class="ucon">${custAuth.custInfo.areaName}</li>
     <#if custQueryType!="queryOnly">
     <#if poingtType =="ON">
-    <li class="uicon"><a onclick="window.parent.main.home.addTab('main_tab_5029','客户星级','/ltePortal/cust/starServiceQuery')" href="javascript:void(0);">客户星级</a></li><li  class="ucon">${membershipLevel}</li>
+    <li class="uicon"><a onclick="window.parent.main.home.addTab('main_tab_5029','客户星级','${contextPath}/cust/starServiceQuery')" href="javascript:void(0);">客户星级</a></li><li  class="ucon">${membershipLevel}</li>
     <#else>
     <li class="uicon">客户等级</li><li id="vipLevelName" class="ucon">${custAuth.custInfo.vipLevelName}</li>
     </#if>
