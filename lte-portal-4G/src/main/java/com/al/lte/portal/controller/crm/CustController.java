@@ -624,7 +624,7 @@ public class CustController extends BaseController {
 		Map<String, Map> listCustInfos = (Map<String, Map>) httpSession.getAttribute(SysConstant.SESSION_LIST_CUST_INFOS);
 		
 		if ("0".equals(authFlag)) {
-			if ("2".equals(validateType)) {
+			if ("2".equals(validateType)||"1".equals(pCustIdentityCd)) {//兼容客户定位省份证定位和二次业务证件类型定位
 				//用户信息查询
 				Map custParam = new HashMap();
 				try {
@@ -1430,6 +1430,9 @@ public class CustController extends BaseController {
 	@RequestMapping(value = "/starServiceQuery", method = RequestMethod.GET)
 	@AuthorityValid(isCheck = true)
 	public String starServiceQuery(Model model,@RequestParam Map<String, Object> param) {
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+                SysConstant.SESSION_KEY_LOGIN_STAFF);
+		
 		Calendar c = Calendar.getInstance();
         SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd");
         String endTime = f.format(c.getTime());
@@ -1437,7 +1440,11 @@ public class CustController extends BaseController {
         String startTime = f.format(c.getTime());
         model.addAttribute("p_startDt", startTime);
         model.addAttribute("p_endDt", endTime);
-		model.addAttribute("current", "business");	
+		model.addAttribute("current", "business");
+		Map<String, Object> defaultAreaInfo = CommonMethods.getDefaultAreaInfo_MinimumC3(sessionStaff);
+
+        model.addAttribute("p_areaId", defaultAreaInfo.get("defaultAreaId"));
+        model.addAttribute("p_areaId_val", defaultAreaInfo.get("defaultAreaName"));
 		return "/cust/starServiceQueryMain";
 	}
 	
@@ -1481,6 +1488,7 @@ public class CustController extends BaseController {
                 	param.put("queryType", "11");
                 	param.put("queryTypeValue", String.valueOf(paramMap.get("acctNbr")));
                 	param.put("password", "");
+                	param.put("areaId", String.valueOf(paramMap.get("areaId")));
                 	Map<String, Object> returnMap = orderBmo.queryIntegral(param, flowNum, sessionStaff);
                     List<Map<String, Object>> pointInfolist = null;
                     Map<String, Object> custInfoMap = null;
@@ -1537,6 +1545,8 @@ public class CustController extends BaseController {
 	                        model.addAttribute("membershipLevelInfoMap", membershipLevelInfoMap);
 	                        model.addAttribute("areaName", custInfo.get("areaName"));
 					}
+				}else{
+					model.addAttribute("code", "-1");
 				}
 			}
 		} catch (BusinessException be) {

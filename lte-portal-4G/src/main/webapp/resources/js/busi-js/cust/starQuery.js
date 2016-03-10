@@ -12,7 +12,8 @@ cust.starQuery = (function(){
 			return	;
 		}
 		var param ={
-				"acctNbr":star_pm
+				"acctNbr":star_pm,
+				"areaId":$("#p_areaId").val()
 		};
 		$.callServiceAsHtmlGet(contextPath+"/cust/starQueryList",param,{
 			"before":function(){
@@ -76,8 +77,13 @@ cust.starQuery = (function(){
 			}
 		});
 	};
+	
+	var _chooseArea = function(){
+		order.area.chooseAreaTreeManger("report/cartMain","p_areaId_val","p_areaId",3);
+	};
 	return {
 		starServiceQuery : _starServiceQuery,
+		chooseArea : _chooseArea,
 		starQueryHisList : _starQueryHisList 
 	};
 })();

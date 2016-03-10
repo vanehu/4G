@@ -20,6 +20,11 @@
 					<div class="order_tab_panel" style="display: block;">
 						<div class="selectList">
 							<dl>
+							    <dt>选择地区：</dt>
+                                  <dd>
+                                  	<input type="text" class="numberTextBox width198" readonly="readonly" id="p_areaId_val" onclick="cust.starQuery.chooseArea()" value="${p_areaId_val}" placeholder="请选择地区" />
+                                  	<input type="hidden" id="p_areaId" value="${p_areaId}">
+                                  </dd>
 								<dt>接入号：</dt>
 								<dd>
 									<input type="text" class="numberTextBox width198" id="star_pm"
