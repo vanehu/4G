@@ -65,17 +65,50 @@
 		</ul>
 		</form>
 	</div>
+	<#--<!--客户定位未定位 end&ndash;&gt;-->
+    <#--<div class="easyDialogdiv" style="width:500px;height:390px;display:none" id="user_info">-->
+        <#--<div class="easyDialogclose" id="userinfoclose"></div>-->
+        <#--<form id="custInfoForm">-->
+        <#--<table class="contract_list">-->
+            <#--<thead>-->
+                <#--<tr>-->
+                    <#--<td>客户信息</td>-->
+                <#--</tr>-->
+            <#--</thead>-->
+        <#--</table>-->
+        <#--<div class="infoBox">-->
+            <#--<table class="network" style="margin: 0px 15px;">-->
+                <#--<tbody>-->
+                    <#--<tr>-->
+                        <#--<td width="60"> 客户姓名：</td>-->
+                        <#--<td id="td_cust_name"></td>-->
+                    <#--</tr>-->
+                    <#--<tr>-->
+                        <#--<td> 证件号码：</td>-->
+                        <#--<td id="td_cust_idCard"></td>-->
+                    <#--</tr>-->
+                    <#--<tr id="tr_cust_photo" style="display:none">-->
+                        <#--<td> 证件相片：</td>-->
+                        <#--<td>-->
+                            <#--<img id="img_cust_photo" alt="相片" src=""/>-->
+                        <#--</td>-->
+                    <#--</tr>-->
+                    <#--<tr>-->
+                        <#--<td width="60"> 客户地址：</td>-->
+                        <#--<td id="td_address_str"></td>-->
+                    <#--</tr>-->
+                <#--</tbody>-->
+            <#--</table>-->
+        <#--</div>-->
+        <#--<div align="center" style="margin: 20px auto;">-->
+            <#--<a class="btna_o" id="custsussbtn" href="javascript:void(0)"><span>确定</span></a>-->
+        <#--</div> -->
+        <#--</form>-->
+    <#--</div>-->
+	<#--<!--客户定位已定位&ndash;&gt;-->
 	<!--客户定位未定位 end-->
-    <div class="easyDialogdiv" style="width:500px;height:390px;display:none" id="user_info">
-        <div class="easyDialogclose" id="userinfoclose"></div>
+    <div style="display:none" id="user_info2">
         <form id="custInfoForm">
-        <table class="contract_list">
-            <thead>
-                <tr>
-                    <td>客户信息</td>
-                </tr>
-            </thead>
-        </table>
         <div class="infoBox">
             <table class="network" style="margin: 0px 15px;">
                 <tbody>
@@ -100,9 +133,6 @@
                 </tbody>
             </table>
         </div>
-        <div align="center" style="margin: 20px auto;">
-            <a class="btna_o" id="custsussbtn" href="javascript:void(0)"><span>确定</span></a>
-        </div> 
         </form>
     </div>
 	<!--客户定位已定位-->
@@ -663,6 +693,25 @@
     </div>
   </div>
 </div>
+<!-- 规则弹窗 -->
+<div id="ruleDiv2" style="width: 800px; height: 400px; display: none; margin: 0px;">
+  <div class="form-content">
+    <div style="margin:0px 10px;" class="phone_warp">
+      <table class="numberList">
+        <thead>
+          <tr>
+            <td style="width:24%" class="borderLTB">规则编码</td>
+            <td style="width:44%" class="borderLTB">规则名称</td>
+            <td style="width:18%" class="borderLTB">规则等级</td>
+            <td style="width:14%" class="borderLTB">校验结果</td>
+          </tr>
+        </thead>
+        <tbody id="ruleBody2">
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
 <!--主副卡变更弹窗-->
 <div style="display:none" style="width:1100px;" id="ec-dialog-form-container-memeberChange" class="ec-dialog-form-container">
   <div class="ec-dialog-form-top">
@@ -888,3 +937,4 @@
 
 
 </#if>
+<script src="${contextPath}/js/4g-js/easydialog.min.js?${jsversion}" type="text/javascript"></script>

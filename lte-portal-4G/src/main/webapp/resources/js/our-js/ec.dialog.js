@@ -89,6 +89,35 @@ var getAlertTimeStamp = function(){
 				});
 			}
 		},
+		alertW:function(title,content,type,callBack,width){//可自定义宽度弹出窗
+			var alertTitle = title + alertIP + getAlertTimeStamp();
+			if(typeof(callBack)=="function"){
+				new $.Zebra_Dialog(content, {
+					'open_speed':0,
+					'keyboard':false,
+	            	'modal':true,
+	            	'overlay_close':false,
+	            	'overlay_opacity':.5,
+	                'type':     !!type?type:'information',
+	                'title':    alertTitle,
+	                'width' :  width,
+	                'buttons' :  ['确定'],
+	                'onClose' : callBack
+				});
+			}else{
+				new $.Zebra_Dialog(content, {
+					'open_speed':0,
+					'keyboard':false,
+	            	'modal':true,
+	            	'overlay_close':false,
+	            	'overlay_opacity':.5,
+	                'type':     !!type?type:'information',
+	                'width':    width,
+	                'title':    alertTitle,
+	                'buttons' :  ['确定']
+				});
+			}
+		},
 		alertFast:function(title,content,type){
 			new $.Zebra_Dialog(content, {
 				'open_speed':0,

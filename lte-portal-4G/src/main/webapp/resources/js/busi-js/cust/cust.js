@@ -730,6 +730,9 @@ order.cust = (function(){
 			}
 			var canRealName = $('#custInfos').parent().children('[selected="selected"]').attr('canrealname');
 			var accessNumber=_choosedCustInfo.accNbr;
+			if(-1==$("#p_cust_identityCd").val()){
+				accessNumber=$.trim($("#p_cust_identityNum").val());
+			}
 			if(!ec.util.isObj(accessNumber)){
 				$("#auth_tab1").removeClass();
 				$("#auth_tab1").hide();
@@ -747,6 +750,10 @@ order.cust = (function(){
 				$("#content2").hide();
 				$("#content3").hide();
 			}
+			//初始化弹出窗口
+			$("#authPassword2").val("");
+			$("#idCardNumber2").val("");
+			$("#smspwd2").val("");
 			if (ec.util.isObj(canRealName) && 1 == canRealName) {
 				easyDialog.open({
 					container: 'auth3',
@@ -1608,17 +1615,20 @@ order.cust = (function(){
 			$("#tr_cust_photo").show();
 		}
 		$("#td_address_str").text(man.resultContent.certAddress);
-		easyDialog.open({
-			container : 'user_info',
-			callback : function() {
-				$("#td_cust_name").text("");
-				$("#td_cust_idCard").text("");
-				$("#img_cust_photo").attr("src", "");
-				$("#tr_cust_photo").hide();
-				$("#td_address_str").text("");
-				$("#" + id).click();
-			}
-		});
+		//easyDialog.open({
+		//	container : 'user_info',
+		//	callback : function() {
+		//		$("#td_cust_name").text("");
+		//		$("#td_cust_idCard").text("");
+		//		$("#img_cust_photo").attr("src", "");
+		//		$("#tr_cust_photo").hide();
+		//		$("#td_address_str").text("");
+		//		$("#" + id).click();
+		//	}
+		//});
+		$.alertW("身份证信息展示",$("#user_info2").html(),"",function(){
+			$("#" + id).click();
+		},400);
 	};
 	//定位客户时读卡
 	var _readCert = function() {
@@ -1698,7 +1708,7 @@ order.cust = (function(){
 		}
 		$('#idCardNumber2').val(man.resultContent.certNumber);
 		_showReadCert(man, "custAuthbtn2");
-//		$("#custAuthbtn2").click();
+		//$("#custAuthbtn2").click();
 	};
 
 	// 填单页面经办人读卡
@@ -1913,9 +1923,13 @@ order.cust = (function(){
 
 	//短信发送
 	var _smsResend = function (level) {
+		$("#smspwd2").val("");
 		var accNbr = "";
 		if (level == "1") {
 			accNbr = _choosedCustInfo.accNbr;
+			if(-1==$("#p_cust_identityCd").val()){
+				accNbr=$.trim($("#p_cust_identityNum").val());
+			}
 		} else if (level == "2") {
 			accNbr = order.prodModify.choosedProdInfo.accNbr;
 		}
@@ -1935,7 +1949,6 @@ order.cust = (function(){
 				} else {
 					$.alert("提示", "验证码发送失败，请重新发送.");
 				}
-				;
 			}
 		});
 	};
@@ -1965,7 +1978,34 @@ order.cust = (function(){
 					OrderInfo.authRecord.validateType="3";
 					OrderInfo.authRecord.resultCode="0";
 					if (level == "1") {
-						_custAuthCallBack(response);
+						var param = _choosedCustInfo;
+						param.authFlag="1";
+						$.callServiceAsHtml(contextPath+"/cust/custAuth",param,{
+							"before":function(){
+								$.ecOverlay("<strong>正在查询中,请稍等...</strong>");
+							},"done" : function(response){
+								if(response.code != 0) {
+									$.alert("提示","客户鉴权失败,稍后重试");
+									return;
+								}
+								if(!order.cust.queryForChooseUser){
+									custInfo = param;
+									OrderInfo.boCusts.prodId=-1;
+									OrderInfo.boCusts.partyId=_choosedCustInfo.custId;
+									OrderInfo.boCusts.partyProductRelaRoleCd="0";
+									OrderInfo.boCusts.state="ADD";
+									OrderInfo.boCusts.norTaxPayer=_choosedCustInfo.norTaxPayer;
+
+									OrderInfo.cust = _choosedCustInfo;
+									_custAuthCallBack(response);
+								} else {
+									//鉴权成功后显示选择使用人弹出框
+									order.main.showChooseUserDialog(param);
+								}
+							},"always":function(){
+								$.unecOverlay();
+							}
+						});
 					} else {
 						easyDialog.close();
 					}
