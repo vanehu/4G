@@ -109,6 +109,7 @@ STB.reserve = (function(){
 					"done" : function(response){
 						if(response.code==0){
 							$("#reserveFlowNum").html(response.data);
+							$("#STBreservePrintBtn").attr("href", "javascript:common.print.STBReserveReceipt("+response.data+")");
 							$("#STBreserveOrderForm").hide();
 							$("#reserveSuccessPage").show();
 						}
@@ -170,7 +171,7 @@ $(function(){
 	$("#STB_reserve_800000055").find("option[value=2]").attr("selected", true);
 	
 	//限制预约数只能输入正整数
-	$("#STB_reserve_800000056").attr("onkeyup", "this.value=this.value.replace(/[^1-9]/g,'')").attr("onafterpaste", "this.value=this.value.replace(/[^1-9]/g,'')");
+	$("#STB_reserve_800000056").attr("onkeyup", "if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/[^0-9]/g,'')}").attr("onafterpaste", "if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/[^0-9]/g,'')}");
 	//预约数量默认1
 	$("#STB_reserve_800000056").val("1");
 	//限制预约金只能输入非负整数

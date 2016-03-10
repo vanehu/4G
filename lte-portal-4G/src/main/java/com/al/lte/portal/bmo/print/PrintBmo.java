@@ -48,4 +48,9 @@ public interface PrintBmo {
 			SessionStaff sessionStaff) throws Exception;
 	Map<String, Object> getEQCodeInfo(Map<String, Object> paramMap, String optFlowNum,
 			SessionStaff sessionStaff) throws Exception;
+	
+	/**
+	 * 天翼高清机顶盒预约单回执打印
+	 */
+	public String printSTBReserveReceipt(Map<String, Object> dataBusMap, String optFlowNum, SessionStaff sessionStaff, HttpServletResponse response) throws Exception;
 }

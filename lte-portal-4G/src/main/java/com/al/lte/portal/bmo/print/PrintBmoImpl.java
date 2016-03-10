@@ -5637,7 +5637,80 @@ public class PrintBmoImpl implements PrintBmo {
 
 		return resultMap;
 	}
+	
+	/**
+	 * 打印天翼预约单回执
+	 */
+	public String printSTBReserveReceipt(Map<String, Object> dataBusMap, String optFlowNum, SessionStaff sessionStaff, HttpServletResponse response) throws Exception {
+		
+		DataBus db = InterfaceClient.callService(dataBusMap, PortalServiceCode.QUERY_STB_RESERVE_INFO_FOR_PRINT, optFlowNum, sessionStaff);
+		
+		String resultCode = ResultCode.R_FAILURE;
+		if(ResultCode.R_SUCC.equals(db.getResultCode())){
+			
+			Map<String, Object> result = MapUtils.getMap(db.getReturnlmap(), "result");
+			
+			ArrayList<Map<String, Object>> attrList = (ArrayList<Map<String, Object>>) result.get("attrList");
+			ArrayList<Map<String, Object>> reserveCustInfo = new ArrayList<Map<String, Object>>();
+			ArrayList<Map<String, Object>> reserveTerminalInfo = new ArrayList<Map<String, Object>>();
+			ArrayList<Map<String, Object>> pickUpInfo = new ArrayList<Map<String, Object>>();
+			for(Map<String, Object> attrItem : attrList){
+				String businessTypeCd = MapUtils.getString(attrItem, "businessTypeCd");
+				if("1004".equals(businessTypeCd)){//预约人信息
+					reserveCustInfo.add(attrItem);
+				}else if("1005".equals(businessTypeCd)){//预约终端信息
+					reserveTerminalInfo.add(attrItem);
+				}else if("1006".equals(businessTypeCd)){//取货信息
+					pickUpInfo.add(attrItem);
+				}
+			}
+			
+			Map<String, Object> printData = new HashMap<String, Object>();
+			
+			printData.put("areaName", MapUtils.getString(result, "areaName"));
+			printData.put("reserveDate", MapUtils.getString(result, "createDt"));
+			
+			printData.put("custName", MapUtils.getString(result, "custName"));
+			printData.put("certName", MapUtils.getString(result, "certName"));
+			printData.put("identityNum", MapUtils.getString(result, "identityNum"));
+			printData.put("phoneNumber", MapUtils.getString(result, "phoneNumber"));
+			printData.put("reserveCustInfo", reserveCustInfo);
+			
+			printData.put("reserveId", MapUtils.getString(result, "reserveId"));
+			printData.put("reserveNumber", MapUtils.getString(result, "reserveNumber"));
+			printData.put("reserveTerminalInfo", reserveTerminalInfo);
+			
+			printData.put("pickUpInfo", pickUpInfo);
+			
+			ArrayList<Map<String, Object>> remarkList = (ArrayList<Map<String, Object>>) result.get("remarkInfos");
+			printData.put("remarkList", remarkList);
+			
+			printData.put("staffCode", sessionStaff.getStaffCode());
+			printData.put("channelName", sessionStaff.getCurrentChannelName());
+			
+			String printTypeDir = SysConstant.P_MOD_SUB_BASE_DIR + SysConstant.P_MOD_SUB_STBRESERVE;
+            String strJasperFileName = SysConstant.P_MOD_BASE_DIR + SysConstant.P_MOD_SUB_STBRESERVE 
+            		+ SysConstant.P_MOD_FILE_STBRESERVE + SysConstant.P_MOD_FILE_SUBFIX;
 
+            Collection<Map<String, Object>> inFields = new ArrayList<Map<String, Object>>();
+            inFields.add(printData);
+            
+            Map<String, Object> reportParams = new HashMap<String, Object>();
+            reportParams.put("SUBREPORT_DIR", printTypeDir);
+            
+            //输出打印内容
+            if(SysConstant.PRINT_TYPE_HTML.equals(MapUtils.getString(dataBusMap, "printType"))){
+            	commonHtmlPrint(strJasperFileName, reportParams, inFields, response, 0, 0);
+            }else{
+            	commonPdfPrint(strJasperFileName, reportParams, inFields, response, 0, 0);
+            }
+            resultCode = ResultCode.R_SUCC;
+		}else{
+			resultCode = ResultCode.R_FAILURE;
+		}
+		return resultCode;
+	}
+	
 	protected Map<String, Object> runInvoicePrint(Map<String, Object> printData,
 			HttpServletResponse response, String printType,
 			Map<String, Object> templateInfoMap) throws Exception {

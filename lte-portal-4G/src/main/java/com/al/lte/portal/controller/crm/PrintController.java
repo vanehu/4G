@@ -507,6 +507,62 @@ public class PrintController extends BaseController {
 			}
 		}
 	}
+    
+    /**
+     * 天翼高清机顶盒预约回执打印
+     * @param paramsStr
+     * @param flowNum
+     * @param request
+     * @param response
+     */
+    @SuppressWarnings("unchecked")
+	@RequestMapping(value = "/STBReserveReceipt", method = RequestMethod.POST)
+    public void printSTBReserveReceipt(@RequestParam("STBReserveReceipt") String paramsStr, @LogOperatorAnn String flowNum, HttpServletRequest request, HttpServletResponse response){
+    	
+    	SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
+    	Map<String, Object> params = JsonUtil.toObject(paramsStr, Map.class);
+    	params.put("areaId", sessionStaff.getCurrentAreaId());
+    	try {
+    		String resultCode = printBmo.printSTBReserveReceipt(params, flowNum, sessionStaff, response);
+			if(ResultCode.R_SUCC.equals(resultCode)){
+				return;
+			}else{
+				response.sendRedirect(request.getContextPath() + "/error/500.jsp");
+			}
+		} catch (BusinessException e) {
+			try {
+				request.getRequestDispatcher("/error/500.jsp").forward(request, response);
+			} catch (Exception e1) {
+				
+			}
+		} catch (InterfaceException ie) {
+			try {
+				JsonResponse jsonResponse = failed(ie, params, ErrorCode.QUERY_STB_RESERVE_INFO_FOR_PRINT);
+				Map<String, Object> errorMap = new HashMap<String, Object>();
+				errorMap.put("code", "-2");
+				errorMap.put("data", jsonResponse.getData());
+				String errorJson = JsonUtil.toString(errorMap);
+				request.setAttribute("errorJson", errorJson);
+				request.getRequestDispatcher("/error/500.jsp").forward(request, response);
+			} catch (Exception e1) {
+		
+			}
+		} catch (Exception e) {
+			DataBus db = new DataBus();
+			db.setParammap(params);
+			try {
+				JsonResponse jsonResponse = failed(ErrorCode.QUERY_STB_RESERVE_INFO_FOR_PRINT, e, params);
+				Map<String, Object> errorMap = new HashMap<String, Object>();
+				errorMap.put("code", "-2");
+				errorMap.put("data", jsonResponse.getData());
+				String errorJson = JsonUtil.toString(errorMap);
+				request.setAttribute("errorJson", errorJson);
+				request.getRequestDispatcher("/error/500.jsp").forward(request, response);
+			} catch (Exception e1) {
+		
+			}
+		}
+    }
 
     /**
      * @param paramMap

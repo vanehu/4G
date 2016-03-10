@@ -65,7 +65,6 @@ public class STBController extends BaseController {
 		
 		try {
 			Map<String, Object> resultMap = STBBmo.querySTBReserveSpecInfo(params, null, sessionStaff);
-			String aa = JsonUtil.buildNormal().objectToJson(resultMap);
 			if(ResultCode.R_SUCC.equals(MapUtils.getString(resultMap, "resultCode"))){
 				Map<String, Object> result = MapUtils.getMap(resultMap, "result", new HashMap<String, Object>());
 				ArrayList<Map<String, Object>> specList = (ArrayList<Map<String, Object>>) result.get("itemSpec");
@@ -120,10 +119,6 @@ public class STBController extends BaseController {
 			params.put("channelId", sessionStaff.getCurrentChannelId());
 			dataBusMap.put("orderInfo", params);
 			
-			String aa = JsonUtil.buildNormal().objectToJson(dataBusMap);
-			
-			System.out.println(aa);
-			
 			Map<String, Object> resultMap = STBBmo.commitSTBReserveInfo(dataBusMap, flowNum, sessionStaff);
 			
 			if(ResultCode.R_SUCC.equals(MapUtils.getString(resultMap, "resultCode"))){
@@ -172,6 +167,10 @@ public class STBController extends BaseController {
     	SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
     	try{
     		Map<String, Object> resultMap = STBBmo.querySTBReserveInfo(params, flowNum, sessionStaff);
+    		
+    		String aa = JsonUtil.buildNormal().objectToJson(resultMap);
+			System.out.println(aa);
+			
     		if(ResultCode.R_SUCC.equals(MapUtils.getString(resultMap, "resultCode"))){
     			ArrayList<Map<String, Object>> result = (ArrayList<Map<String, Object>>) resultMap.get("result");
     			model.addAttribute("reserveOrderList", result);

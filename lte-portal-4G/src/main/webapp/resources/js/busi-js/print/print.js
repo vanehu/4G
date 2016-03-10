@@ -1063,6 +1063,8 @@ common.print = (function($){
 		    })).appendTo("body").submit();
 		}
 	};
+	
+	//以旧换新回执单打印
 	var _printOld2new=function(areaId,relaId){
 		var param = {
 			"areaId" : areaId,
@@ -1081,6 +1083,27 @@ common.print = (function($){
 			value: JSON.stringify(param)
 		})).appendTo("body").submit();
 	};
+	
+	//天翼高清机顶盒预约单回执打印
+	var _STBReserveReceipt = function(_reserveId){
+		var params = {
+				reserveId : _reserveId
+		};
+		$("<form>", {
+			id: "STBReserveReceiptForm",
+			style: "display:none;",
+			target: "_blank",
+			method: "POST",
+			action: contextPath + "/print/STBReserveReceipt"
+		}).append($("<input>", {
+			id: "STBReserveReceipt",
+			name: "STBReserveReceipt",
+			type: "hidden",
+			value: JSON.stringify(params)
+		})).appendTo("body").submit();
+	}
+	
+	
 	return {
 		preVoucher:_preVoucher,
 		printVoucher:_printVoucher,
@@ -1093,7 +1116,8 @@ common.print = (function($){
 		printInvoice : _printInvoice,
 		preSign:_preSign,
 		signVoucher:_signVoucher,
-		printOld2new:_printOld2new
+		printOld2new:_printOld2new,
+		STBReserveReceipt : _STBReserveReceipt
 	};
 })(jQuery);
 

@@ -242,6 +242,7 @@ public final class SysConstant {
 	public final static String P_MOD_SUB_CTG_PDF = "ctgpdf/";
 	public final static String P_MOD_SUB_INVOICE = "invoice/";
 	public final static String P_MOD_SUB_OLD2NEW = "old2new/";
+	public final static String P_MOD_SUB_STBRESERVE = "STBreserve/";
 	public final static String P_MOD_ABS_INVOICE = "D:/temp/invoice/";
 	//充值收据（发票）模板目录
 	public final static String P_MOD_DIR_CHARGE_RECEIPT = "chargeReceiptAndInvoice/";
@@ -254,6 +255,8 @@ public final class SysConstant {
 	public final static String P_MOD_FILE_INVOICE = "invoiceGroup";  // 发票打印业务
 	//以旧换新模板名称
 	public final static String P_MOD_FILE_OLD2NEW = "printOld2New";  // 发票打印业务
+	//天翼高清机顶盒预约回执主模板
+	public final static String P_MOD_FILE_STBRESERVE = "receiptMain";
 	//充值收据（发票）模板名称
 	public final static String P_MOD_FILE_CHARGE_RECEIPT = "chargeReceipt"; //充值收据
 	//业务模板类型
