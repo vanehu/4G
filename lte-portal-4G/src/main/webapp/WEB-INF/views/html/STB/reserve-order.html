@@ -1,0 +1,148 @@
+<@override name="title">天翼高清机顶盒预约</@override>
+
+<@override name="header">
+<#include "/busi-js-tpl.html"/>
+<script src="${contextPath}/js/busi-js/STB/STBreserve.js?${jsversion}" type="text/javascript"></script>
+</@override>
+
+<@override name="content">
+
+<#if flag=="0">
+<div class="main_div"> 
+	<div class=" main_warp" id="STBreserveOrderForm">
+  		<div class="ordercon">
+    		<div class="order_confirmation ordertabcon">
+  				<h2 class="h2_title">天翼高清机顶盒预约</h2>
+  				<div class="main_body">
+  					<div class="cardtabcon">
+  						<div class="pdcardcon show">
+  						
+  							<h5 class="s_title">预约人信息</h5>
+  							<ul class="fillin show">
+  								<#list reserveCustInfo as custInfo>
+  								<li>
+      								<label>${custInfo.name}：</label>
+      								<#if custInfo.dsTypeCd==1>
+      								<input id="STB_reserve_${custInfo.itemSpecId}" type="text" class="inputWidth183px STBreserveInput <#if custInfo.nullable=='N'>notNull</#if>" 
+      									<#if custInfo.dataTypeCd==4>
+											readonly="readonly" onclick="$.calendar({ format:'yyyy-MM-dd' });" 
+										<#elseif custInfo.dataTypeCd==16>
+											readonly="readonly" onclick="$.calendar({ format:'yyyy-MM-dd HH:mm:ss' });"
+										<#else></#if> />
+      								<#elseif custInfo.dsTypeCd==4>
+      								<select id="STB_reserve_${custInfo.itemSpecId}" class="STBreserveInput <#if custInfo.nullable=='N'>notNull</#if>">
+      									<#list custInfo.discreteValueLists as option>
+      									<option value="${option.value}">${option.name}</option>
+      									</#list>
+      								</select>
+      								</#if>
+      								<#if custInfo.nullable=="N"><label class="f_red">*</label></#if>
+   								</li>
+   								</#list>
+  							</ul>
+  
+							<div class="height18"></div>
+   							
+   							<h5 class="s_title">预约终端信息</h5>
+							<ul class="fillin">
+								<#list reserveTerminalInfo as terminalInfo>
+  								<li>
+      								<label>${terminalInfo.name}：</label>
+      								<#if terminalInfo.dsTypeCd==1>
+      								<input id="STB_reserve_${terminalInfo.itemSpecId}" type="text" class="inputWidth183px STBreserveInput <#if terminalInfo.nullable=='N'>notNull</#if>" 
+      									<#if terminalInfo.dataTypeCd==4>
+											readonly="readonly" onclick="$.calendar({ format:'yyyy-MM-dd' });" 
+										<#elseif terminalInfo.dataTypeCd==16>
+											readonly="readonly" onclick="$.calendar({ format:'yyyy-MM-dd HH:mm:ss' });"
+										<#else></#if> /><#if terminalInfo.itemSpecId==800000057><span style="margin-left:5px;margin-top:5px;float:left;">元</span></#if>
+      								<#elseif terminalInfo.dsTypeCd==4>
+      								<select id="STB_reserve_${terminalInfo.itemSpecId}" class="STBreserveInput <#if terminalInfo.nullable=='N'>notNull</#if>">
+      									<#list terminalInfo.discreteValueLists as option>
+      									<option value="${option.value}">${option.name}</option>
+      									</#list>
+      								</select>
+      								</#if>
+      								<#if terminalInfo.nullable=="N"><label class="f_red">*</label></#if>
+   								</li>
+   								</#list>
+    							<!-- <li class="full">
+    							<label>其他：</label>
+    							<textarea name="beizhu" cols="" rows=""></textarea>
+  								</li> -->
+  							</ul>
+  
+  							<div class="height18"></div>
+   
+   							<h5 class="s_title">提货方式</h5>
+							<ul class="fillin">
+  								<#list pickUpInfo as pickUp>
+  								<li>
+      								<label>${pickUp.name}：</label>
+      								<#if pickUp.dsTypeCd==1>
+      								<input id="STB_reserve_${pickUp.itemSpecId}" type="text" class="inputWidth183px STBreserveInput <#if pickUp.nullable=='N'>notNull</#if>" 
+      									<#if pickUp.dataTypeCd==4>
+											readonly="readonly" onclick="$.calendar({ format:'yyyy-MM-dd' });" 
+										<#elseif pickUp.dataTypeCd==16>
+											readonly="readonly" onclick="$.calendar({ format:'yyyy-MM-dd HH:mm:ss' });"
+										<#else></#if> />
+      								<#elseif pickUp.dsTypeCd==4>
+      								<select id="STB_reserve_${pickUp.itemSpecId}" class="STBreserveInput <#if pickUp.nullable=='N'>notNull</#if>">
+      									<#if pickUp.itemSpecId==800000059>
+      									<option value="">-- 请选择 --</option>
+      									</#if>
+      									<#list pickUp.discreteValueLists as option>
+      									<option value="${option.value}">${option.name}</option>
+      									</#list>
+      								</select>
+      								</#if>
+      								<#if pickUp.nullable=="N"><label class="f_red">*</label></#if>
+   								</li>
+   								</#list>
+  							</ul>
+
+						</div>
+						<div class="height18"></div>
+					</div>
+				</div>
+			</div>
+			<div align="right" style="margin: 20px auto; padding:0 20px;">
+				<a class="btna_o" href="javascript:STB.reserve.commitOrder()"><span >确认预约</span></a>
+			</div>
+		</div>
+	</div>
+	
+	<div class=" main_warp" id="reserveSuccessPage" style="display:none;">
+		<div class="order_confirmation">
+			<h2 class="h2_title">天翼高清机顶盒预约</h2>
+			<div class="main_body">
+				<h2 class="s_title">预约成功</h2>
+				<table class="table_txt">
+					<tbody>
+						<tr>
+							<td width="20%">预约编号：</td>
+							<td class="f_red" id="reserveFlowNum"></td>
+						</tr>
+					</tbody>
+				</table>
+				
+				<div class="height18"></div>
+				
+				<div align="right" style="margin: 20px auto; padding:0 20px;">
+					<a class="btna_o" href="javascript:STB.reserve.fin()"><span >受理完成</span></a>
+					<!-- <a style="margin-left:20px;" class="btna_g" href=""><span>回执打印</span></a> -->
+				</div>
+			</div>
+		</div>
+	</div>
+	
+</div>
+<#else>
+预约单规格信息查询失败，请稍后再试
+</#if>
+</@override>
+
+<#if Session["_session_portal_type"]?? && Session["_session_portal_type"]=="MVNO" >
+<@extends name="/mvno-template.html"/>
+<#else>
+<@extends name="/content-template.html"/>
+</#if>

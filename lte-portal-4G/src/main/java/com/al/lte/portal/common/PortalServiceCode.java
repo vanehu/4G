@@ -983,4 +983,14 @@ public final class PortalServiceCode {
 	public static final String QUERY_STARBONUSHIS = "biz-service/intf.custService/queryBonusIntegralhis";
 	/**紧急开机服务*/
 	public static final String EMERGENCYBOOT = "biz-service/intf.soService/emergencyBoot";
+	
+	/**天翼高清机顶盒预约信息规格查询*/
+	public static final String QUERY_STB_RESERVE_SPEC_INFO = "biz-service/intf.soService/querySTBSpecInfo";
+	/**天翼高清机顶盒预约订单提交*/
+	public static final String COMMIT_STB_RESERVE_INFO = "biz-service/intf.soService/saveSTBReservInfo";
+	/**天翼高清机顶盒预约回执打印信息查询*/
+	public static final String QUERY_STB_RESERVE_INFO_FOR_PRINT = "biz-service/intf.soService/querySTBReservInfoForPrint";
+	/**天翼高清机顶盒预约单查询*/
+	public static final String QUERY_STB_RESERVE_INFO = "biz-service/intf.soService/querySTBReservInfo";
+	
 }
