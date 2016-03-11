@@ -311,8 +311,8 @@ order.cust = (function(){
 				$("#orderAttrIdCard").hide();
 				$("#orderAttrAddr").hide();
 				$("#li_order_attr span").show();
-				$("#orderAttrIdCard span").show();
-				$("#orderAttrAddr span]").show();
+				$("#li_order_remark2 span").show();
+				$("#li_order_remark3 span").show();
 			}
 			// 新建客户经办人读卡
 			if (id == "custCAttrIdCard") {
@@ -349,10 +349,10 @@ order.cust = (function(){
 
 				$("#li_order_attr span").hide();
 				$("#li_order_attr span").text("");
-				$("#orderAttrIdCard span").hide();
-				$("#orderAttrIdCard span").text("");
-				$("#orderAttrAddr span").hide();
-				$("#orderAttrAddr span").text("");
+				$("#li_order_remark2 span").hide();
+				$("#li_order_remark2 span").text("");
+				$("#li_order_remark3 span").hide();
+				$("#li_order_remark3 span").text("");
 			}
 			// 新建客户经办人非身份证
 			if (id == "custCAttrIdCard") {
