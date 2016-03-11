@@ -343,7 +343,7 @@ SoOrder = (function() {
 					return false;
 				}
 			}
-			if(ec.util.isObj(orderAttrName)&&ec.util.isObj(orderAttrIdCard)&&ec.util.isObj(orderAttrPhoneNbr)){
+			if(ec.util.isObj(orderAttrName)&&ec.util.isObj(orderAttrIdCard)&&ec.util.isObj(orderAttrPhoneNbr)&&ec.util.isObj(orderAttrAddr)){
 				if(ec.util.isObj(orderAttrName)){
 					custOrderAttrs.push({
 						itemSpecId : CONST.BUSI_ORDER_ATTR.orderAttrName,
@@ -372,17 +372,21 @@ SoOrder = (function() {
 						value : orderAttrAddr
 					});	
 				}
-			}else if(ec.util.isObj(orderAttrName)||ec.util.isObj(orderAttrIdCard)||ec.util.isObj(orderAttrPhoneNbr)){
+			}else if(ec.util.isObj(orderAttrName)||ec.util.isObj(orderAttrIdCard)||ec.util.isObj(orderAttrPhoneNbr)||ec.util.isObj(orderAttrAddr)){
 				if(!ec.util.isObj(orderAttrName)){
-					$.alert("提示","经办人姓名为空，经办人姓名、联系人号码、证件号码必须同时为空或不为空，因此无法提交！");
+					$.alert("提示","经办人姓名为空，经办人姓名、联系人号码、证件号码、证件地址必须同时为空或不为空，因此无法提交！");
 					return false;
 				}
 				if(!ec.util.isObj(orderAttrPhoneNbr)){
-					$.alert("提示","联系人号码为空，经办人姓名、联系人号码、证件号码必须同时为空或不为空，因此无法提交！");
+					$.alert("提示","联系人号码为空，经办人姓名、联系人号码、证件号码、证件地址必须同时为空或不为空，因此无法提交！");
 					return false;
 				}
 				if(!ec.util.isObj(orderAttrIdCard)){
-					$.alert("提示","证件号码为空，经办人姓名、联系人号码、证件号码必须同时为空或不为空，因此无法提交！");
+					$.alert("提示","证件号码为空，经办人姓名、联系人号码、证件号码、证件地址必须同时为空或不为空，因此无法提交！");
+					return false;
+				}
+				if(!ec.util.isObj(orderAttrAddr)){
+					$.alert("提示","证件地址为空，经办人姓名、联系人号码、证件号码、证件地址必须同时为空或不为空，因此无法提交！");
 					return false;
 				}
 			}
