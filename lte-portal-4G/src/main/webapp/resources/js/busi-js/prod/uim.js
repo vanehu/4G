@@ -179,7 +179,31 @@ prod.uim = (function() {
 			}
 		}
 		//3转4弹出促销窗口
-		if(OrderInfo.actionFlag!=1 && order.prodModify.choosedProdInfo.prodClass== "3" && data.baseInfo.cardTypeFlag==1){
+		//查询卡类型
+		var oldCardis4GCard = "";
+		if(prodId!=null && prodId!="-1"){
+			var param ={
+					prodInstId	: prodId,
+					areaId		: order.prodModify.choosedProdInfo.areaId,
+					acctNbr		: phoneNumber
+				};
+			    var terminalInfo = query.prod.getTerminalInfo2(param);
+				if(terminalInfo!=null&&terminalInfo.is4GCard!=null&&terminalInfo.is4GCard!=""){
+				    if(terminalInfo.is4GCard =="Y"){
+				    	oldCardis4GCard = "Y";
+					}else{
+						oldCardis4GCard = "N";
+					}
+				}else{
+					if(order.prodModify.choosedProdInfo.prodClass== "3"){
+						oldCardis4GCard = "N";
+					}else{
+						oldCardis4GCard = "Y";
+					}
+				}
+		}
+		
+		if(oldCardis4GCard == "N" && data.baseInfo.cardTypeFlag==1){
 			$("#isShow_"+prodId).show();
 			var param = {
 				prodSpecId : prodSpecId,

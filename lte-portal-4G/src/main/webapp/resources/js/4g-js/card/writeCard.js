@@ -1021,6 +1021,7 @@ order.writeCard = (function(){
 				if(response.code == 0) {
 					 //写卡成功后把卡数据入库便于异常单释放
 					var phoneNumber = OrderInfo.getAccessNumber(_rscJson.prodId);
+					_rscJson.phoneNumber = phoneNumber;
 					var inParam = {
 							"instCode" : $("#resultCardAsciiFStr").val(),
 							"phoneNum" : phoneNumber,
@@ -1103,8 +1104,30 @@ order.writeCard = (function(){
      		AttachOffer.openList = [];
      	    AttachOffer.queryCardAttachOffer(coupon.cardTypeFlag);  //加载附属销售品
       	 }
- 		//3转4弹出促销窗口
- 		if(OrderInfo.actionFlag!=1 && order.prodModify.choosedProdInfo.prodClass== "3"  && coupon.cardTypeFlag==1){
+ 		//3转4弹出促销窗口//查询卡类型
+ 		var oldCardis4GCard = "";
+ 		if(prodId!=null && prodId!="-1"){
+ 			var param ={
+ 					prodInstId	: _rscJson.prodId,
+ 					areaId		: order.prodModify.choosedProdInfo.areaId,
+ 					acctNbr		: _rscJson.phoneNumber
+ 				};
+ 			    var terminalInfo = query.prod.getTerminalInfo2(param);
+ 				if(terminalInfo!=null&&terminalInfo.is4GCard!=null&&terminalInfo.is4GCard!=""){
+ 				    if(terminalInfo.is4GCard =="Y"){
+ 				    	oldCardis4GCard = "Y";
+ 					}else{
+ 						oldCardis4GCard = "N";
+ 					}
+ 				}else{
+ 					if(order.prodModify.choosedProdInfo.prodClass== "3"){
+ 						oldCardis4GCard = "N";
+ 					}else{
+ 						oldCardis4GCard = "Y";
+ 					}
+ 				}
+ 		}
+ 		if(oldCardis4GCard == "N" && coupon.cardTypeFlag==1){
  			$("#isShow_"+prodId).show();
  			var prodSpecId = OrderInfo.getProdSpecId(prodId);
  			var param = {
