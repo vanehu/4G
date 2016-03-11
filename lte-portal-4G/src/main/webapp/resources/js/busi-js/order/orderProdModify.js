@@ -1147,11 +1147,11 @@ order.prodModify = (function(){
 			return;
 		}
 		if(_showMemberWin()){
-			$("#delPhoneTitle").html(CONST.getBoActionTypeName(CONST.BO_ACTION_TYPE.OWE_REMOVE_PROD)+'-是否保留成员');
+			$("#delPhoneTitle").html(CONST.getBoActionTypeName(CONST.BO_ACTION_TYPE.OWE_REMOVE_PROD)+'-是否保留成员');			
 			$("#delPhoneNumber .btna_o:first").off("click").on("click",function(event){
 				_closeDialog();
 				_removeAndAdd(CONST.PROD_STATUS_CD.REMOVE_PROD,CONST.BO_ACTION_TYPE.OWE_REMOVE_PROD,8);
-			});
+			});			
 			_commonShowDialog();
 		}else{
 			_removeCommit(CONST.PROD_STATUS_CD.REMOVE_PROD,CONST.BO_ACTION_TYPE.OWE_REMOVE_PROD,8);
