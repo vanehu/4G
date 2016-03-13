@@ -1317,10 +1317,12 @@ public class OrderController extends BaseController {
                                     //首先判断省份开关是否打开
                                     if(SysConstant.ON.equals(sessionStaff.getPoingtType())){
                                     	 String boActionType = (String) item.get("boActionType");
-                                         int objId = (Integer) item.get("objId");
-                                         if("14".equals(boActionType) || objId==13409281){//补换卡   //国际及港澳台漫游电话（包含语音及短信）
-                                         	checkFlag = true;
-                                         }
+                                    	 if(item.get("objId") != null){
+                                    		 int objId = ((Integer)item.get("objId")).intValue();//业务对象ID
+                                             if("14".equals(boActionType) || objId==13409281){//补换卡   //国际及港澳台漫游电话（包含语音及短信）
+                                             	checkFlag = true;
+                                             }
+                                    	 }
                                     }
                                 }
                             }
