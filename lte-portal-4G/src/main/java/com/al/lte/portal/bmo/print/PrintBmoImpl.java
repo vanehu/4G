@@ -5659,6 +5659,10 @@ public class PrintBmoImpl implements PrintBmo {
 				if("1004".equals(businessTypeCd)){//预约人信息
 					reserveCustInfo.add(attrItem);
 				}else if("1005".equals(businessTypeCd)){//预约终端信息
+					if("800000057".equals(MapUtils.getString(attrItem, "itemSpecId"))){
+						String reserveCashWithUnit = MapUtils.getString(attrItem, "valueName") + " 元";
+						attrItem.put("valueName", reserveCashWithUnit);
+					}
 					reserveTerminalInfo.add(attrItem);
 				}else if("1006".equals(businessTypeCd)){//取货信息
 					pickUpInfo.add(attrItem);
