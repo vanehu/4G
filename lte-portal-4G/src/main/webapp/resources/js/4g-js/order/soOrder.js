@@ -164,7 +164,7 @@ SoOrder = (function() {
 											$.ecOverlay("<strong>正在查询提醒信息,请稍等会儿....</strong>");
 											var response = $.callServiceAsJson(url,params);
 											$.unecOverlay();
-											if(response.code == 0){
+											if(response.code == 0 && response.data.result!=null && response.data.result.orderPromptInfos!=null){
 												OrderInfo.orderBusiHint = response.data.result.orderPromptInfos;
 											}
 										}
