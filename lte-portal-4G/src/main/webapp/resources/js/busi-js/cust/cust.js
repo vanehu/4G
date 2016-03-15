@@ -558,6 +558,8 @@ order.cust = (function(){
 		$("#authPassword").val("");
 		authFlag="";
 		OrderInfo.boCusts.partyId="";
+		//重新定位重置已选产品信息缓存
+		order.prodModify.choosedProdInfo={};
 		//新建客户
 		OrderInfo.boCustInfos.name="";
 		OrderInfo.boCustIdentities.identityNum="";
