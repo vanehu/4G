@@ -141,19 +141,28 @@ public final class SysConstant {
     
     public static String MAIN_OFFER_ROLE_TYPE = "400";
     public static String VICE_OFFER_ROLE_TYPE = "401";
-    
-    public static String BATCHCHAIJI="8";
+		
+    /**批开活卡-0*/
     public static String BATCHHUOKA="0";
+    /**批量新装-2*/
     public static String BATCHNEWORDER="1";
+    /**批量订购/退订附属-2*/
     public static String BATCHFUSHU="2";
+    /**组合产品纳入退出-3*/
     public static String BATCHZUHE="3";
+    /**批量修改产品属性-4*/
     public static String BATCHEDITATTR="4";
+    /**批量换挡(在完成“需求（开发） #18397”时，遇到5和11均表示“批量换挡”的问题，经与后台沟通，仍使用11，5不会影响)*/
     public static String BATCHCHANGE="5";
+    /**批量拆机*/
+    public static String BATCHCHAIJI="8";
+    /**批量修改发展人-9*/
     public static String BATCHFAZHANREN="9";
+    /**批量订购裸终端-10*/
     public static String BATCHORDERTERMINAL="10";
-    /**批量换挡*/
+    /**批量换挡-11*/
     public static String BATCHCHANGEFEETYPE = "11";
-    /**批量换卡*/
+    /**批量换卡-12*/
     public static String BATCHCHANGEUIM = "12";
     
     //是否记录接口日志 ON OFF

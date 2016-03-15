@@ -24,8 +24,18 @@
 <#if message?? && message != "">
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
-		<td> <#if code?? && code == "0"> <i class="rule_icon"></i> <#elseif code?? && code= "-1"> <i class="rule_icon_wrong"></i> </#if> </td>
-		<td> <#if code??> <span class="rule_font">${message}</span></#if></td>
+		<td> 
+			<#if code?? && code == "0"> 
+				<i class="rule_icon"></i> 
+			<#elseif code?? && code= "-1"> 
+				<i class="rule_icon_wrong"></i> 
+			</#if> 
+		</td>
+		<td> 
+			<#if code??> 
+				<span class="rule_font">${message}</span>
+			</#if>
+		</td>
 	</tr>
 </table>
 <#else>

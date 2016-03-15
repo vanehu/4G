@@ -573,37 +573,24 @@ public final class PortalServiceCode {
     
     public static final String INTF_QUERY_PAYMETHOD="biz-service/intf.chargeService/queryAvilablePayMethodCdByAcctItemTypeCd";
     
-    public static final String INTF_BATCH_IMPORT="biz-service/intf.batchOrderService/saveBatchOrderImport";
+    /**文件上传成功通知接口，在Excel文件上传上传成功后调用该接口*/
+    public static final String INTF_BATCH_FILEUPLOADSUCCESSNOTICE = "biz-service/intf.batchOrderService/fileUpLoadSuccessNotice";
+    /**批量受理结果查询*/
+    public static final String INTF_BATCH_ORDERSTATUSQUERY = "biz-service/intf.batchOrderService/queryGroupBatchOrder";
+    /**批次信息查询下的取消和修改*/
+    public static final String INTF_BATCH_ORDEROPERATE = "biz-service/intf.batchOrderService/dealBatchQueueProgress";
+    /**进度查询下的“取消”和“重发”*/
+    public static final String INTF_BATCH_BATCHREPROCESS = "biz-service/intf.batchOrderService/cancelOrRetrySingleBatch";
+    /**批次信息查询*/
+    public static final String INTF_BATCH_ORDERQUERYLIST = "biz-service/intf.batchOrderService/queryGroupBatchOrderInfo";
+    /**批量导入(批量数据以json报文形式传送)*/
+    public static final String INTF_BATCH_IMPORT="biz-service/intf.batchOrderService/saveBatchOrderImport"; 
     
     public static final String INTF_BATCH_IMPORTQUERY="biz-service/intf.batchOrderService/queryBatchOrderList";
     
     public static final String INTF_BATCH_ORDERQUERY="biz-service/intf.batchOrderService/queryBatchOrderTemplageList";
     
     public static final String INTF_BATCH_ORDERDEL="biz-service/intf.batchOrderService/updateOrderListForCustOrderDel";
-    
-    /**
-     * 批量受理结果查询
-     * @author ZhangYu
-     */
-    public static final String INTF_BATCH_ORDERSTATUSQUERY = "biz-service/intf.batchOrderService/queryGroupBatchOrder";
-    
-    /**
-     * 批次信息查询下的取消和修改
-     * @author ZhangYu
-     */
-    public static final String INTF_BATCH_ORDEROPERATE = "biz-service/intf.batchOrderService/dealBatchQueueProgress";
-    
-    /**
-     * 进度查询下的“取消”和“重发”
-     * @author ZhangYu
-     */
-    public static final String INTF_BATCH_BATCHREPROCESS = "biz-service/intf.batchOrderService/cancelOrRetrySingleBatch";
-    
-    /**
-     * 批次信息查询
-     * @author ZhangYu
-     */
-    public static final String INTF_BATCH_ORDERQUERYLIST = "biz-service/intf.batchOrderService/queryGroupBatchOrderInfo";
     
     public static final String INTF_PNUIMBATCHVAL_SERVICE="res-PnPiReserveService";
     

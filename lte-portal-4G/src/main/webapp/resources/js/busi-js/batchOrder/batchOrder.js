@@ -11,7 +11,7 @@ order.batch = (function(){
 			$.alert("提示","种子订单受理类型不能为空!");
 			return;
 		}
-		if(batchType == '11' || batchType == '12'){//批量换挡、批量换卡
+		if(batchType == '10' || batchType == '11' || batchType == '12'){//批量订购裸终端、批量换挡、批量换卡
 			var upFile = $.trim($("#upFile").val());;
 			var reserveDt = $.trim($("#reserveDt").val());
 			if(reserveDt == ''){
@@ -411,39 +411,43 @@ order.batch = (function(){
 	
 	// 表单重置
 	var _reset=function(){
-		$("#upFile").val("");
-		if($("#batchType").val() == "11" || $("#batchType").val() == "12"){
+//		$("#upFile").val("");
+		$("#upFile").empty();
+		if($("#batchType").val() == "10" || $("#batchType").val() == "11" || $("#batchType").val() == "12"){
 			$('#alertInfo').empty();
 			$('#detailInfo').empty();
-		}			
+		}
 	};
+	
 	var _download=function(batType){
-		if(batType=='0'){
-			location.href=contextPath+"/file/BATCHHUOKA.xls";
-		}else if(batType=='1'){
-			location.href=contextPath+"/file/BATCHNEWORDER.xls";
-		}else if(batType=='2'){
-			location.href=contextPath+"/file/BATCHFUSHU.xls";
+		if(batType=='0'){//批开活卡
+			location.href=contextPath+"/file/BATCHHUOKA.xlsx";
+		}else if(batType=='1'){//批量新装
+			location.href=contextPath+"/file/BATCHNEWORDER.xlsx";
+		}else if(batType=='2'){//批量订购、退订附属
+			location.href=contextPath+"/file/BATCHFUSHU.xlsx";
 		}else if(batType=='5'){
-			location.href=contextPath+"/file/BATCHCHANGE.xls";
-		}else if(batType=='8'){
-			location.href=contextPath+"/file/BATCHCHAIJI.xls";
-		}else if(batType=='9'){
-			location.href=contextPath+"/file/BATCHFAZHANREN.xls";
-		}else if(batType=='10'){
-			location.href=contextPath+"/file/BATCHORDERTERMINAL.xls";
+			location.href=contextPath+"/file/BATCHCHANGE.xlsx";
+		}else if(batType=='8'){//批量拆机
+			location.href=contextPath+"/file/BATCHCHAIJI.xlsx";
+		}else if(batType=='9'){//批量修改发展人
+			location.href=contextPath+"/file/BATCHFAZHANREN.xlsx";
+		}else if(batType=='10'){//批量订购裸终端
+			location.href=contextPath+"/file/BATCHORDERTERMINAL.xlsx";
 		}else if(batType=='11'){//批量换挡
-			location.href=contextPath+"/file/BATCHCHANGEFEETYPE.xls";
+			location.href=contextPath+"/file/BATCHCHANGEFEETYPE.xlsx";
 		}else if(batType=='12'){//批量换卡
-			location.href=contextPath+"/file/BATCHCHANGEUIM.xls";
+			location.href=contextPath+"/file/BATCHCHANGEUIM.xlsx";
 		}else{
 			$.alert("提示","未找到批量类型所对应的模板文件，请检查！");
 			return;
 		}
 	};
+	
 	var _downloadIdType=function(){
 		location.href=contextPath+"/file/CARTTYPE.xls";
 	};
+	
 	var _initDic = function(){
 		//初始化批量订单查询页面的订单状态 By ZhangYu
 		var param = {"attrSpecCode":"EVT-0002"};
