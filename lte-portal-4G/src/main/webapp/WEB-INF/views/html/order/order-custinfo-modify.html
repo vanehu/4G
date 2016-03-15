@@ -6,13 +6,13 @@
         	<h2 class="h2_title">${boActionTypeName}</h2>
             <div class="main_body">
             	<form id="custModifyForm">
-            	<h5 class="s_title">基本信息</h5>
-                <div class="infoBox">
-                    <table class="network">
-                          <tbody id="boCustIdentities" partyName="${modPartyTypeCd.partyName}" pName="${modPartyTypeCd.pName}" addressStr="${modPartyTypeCd.addressStr}" address="${modPartyTypeCd.address}" partyTypeCd="${modPartyTypeCd.partyTypeCd}" <#if (identities)?? > identidiesTypeCd="${identities[0].identidiesTypeCd}" identityNum="${identities[0].identityNum}"</#if> >
-                          <tr>
-                                <td width="70"><label class="f_red">*</label>客户姓名</td>
-                                <td width="780">
+	            	<h5 class="s_title">基本信息</h5>
+	                <div class="infoBox">
+	                    <table class="network">
+	                          <tbody id="boCustIdentities" partyName="${modPartyTypeCd.partyName}" pName="${modPartyTypeCd.pName}" addressStr="${modPartyTypeCd.addressStr}" address="${modPartyTypeCd.address}" partyTypeCd="${modPartyTypeCd.partyTypeCd}" <#if (identities)?? > identidiesTypeCd="${identities[0].identidiesTypeCd}" identityNum="${identities[0].identityNum}" certNum="${identities[0].certNum}"</#if> >
+	                          <tr>
+	                                <td width="70"><label class="f_red">*</label>客户姓名</td>
+	                                <td width="780">
                                   <input type="text" placeHolder="请准确填写客户姓名" data-validate="validate(required:请准确填写客户姓名) on(blur)" value="${modPartyTypeCd.partyName}" class="inputWidth228px" maxlength="64" id="cmCustName"/>
                                 </td>
                           </tr>
@@ -27,12 +27,13 @@
                           </tr>
                           <tr>
                                 <td><label class="f_red">*</label> 证件类型</td>
-                                <td>
-                                    <div id="div_cm_identidiesType">
-                                	<select id="cm_identidiesTypeCd" onchange="order.prodModify.identidiesTypeCdChoose(this)">
-                                    </div>
-                                </td>
-                          </tr>
+	                                <td>
+	                                    <div id="div_cm_identidiesType">
+	                                	<select id="cm_identidiesTypeCd" onchange="order.prodModify.identidiesTypeCdChoose(this)">
+	                                	</select>
+	                                    </div>
+	                                </td>
+	                          </tr>
                           <tr>
                                 <td><label class="f_red">*</label> 证件号码</td>
                                 <td width="780">

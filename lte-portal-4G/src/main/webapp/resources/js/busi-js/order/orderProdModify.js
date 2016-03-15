@@ -723,8 +723,9 @@ order.prodModify = (function(){
 			}else{
 			data.boCustIdentities = [{
 				identidiesTypeCd :OrderInfo.cust.identityCd,
-				identityNum : OrderInfo.cust.idCardNumber,
-				isDefault : "Y",
+					identityNum : OrderInfo.cust.idCardNumber,
+					certNum : $("#boCustIdentities").attr("certNum"), // 加密后的证件号
+					isDefault : "Y",
 				state : "DEL"
 			},{
 				identidiesTypeCd :modifyCustInfo.identidiesTypeCd,
@@ -855,7 +856,7 @@ order.prodModify = (function(){
 	//证件类型选择事件
 	var _identidiesTypeCdChoose = function(scope) {
 		//每次更换证件类型，置空证件号码输入框的内容
-		$("#cmCustIdCard").val("");
+//		$("#cmCustIdCard").val(""); 首次加载就把证件号清空了
 		var identidiesTypeCd=$(scope).val();
 		if(identidiesTypeCd==undefined){
 			identidiesTypeCd=$("#div_cm_identidiesType  option:selected").val();
