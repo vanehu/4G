@@ -67,7 +67,7 @@ import com.al.lte.portal.core.DataRepository;
 import com.al.lte.portal.model.SessionStaff;
 
 /**
- * 订单受理控制层 主要受理，新装，变更，附属变更
+ * 订单受理控制层 主要受理，新装，变更，附属变更 
  * 
  * @author wukf
  * @version V1.0 2013-08-07

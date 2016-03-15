@@ -6,7 +6,7 @@
 CommonUtils.regNamespace("OrderInfo");
 
 /** 订单信息对象*/
-OrderInfo = (function() {
+OrderInfo = (function() { 
 	
 	/*
 	 * 每个功能点标识，0是产品变更等单业务动作订单提交，1新装，2变更,3可选包变更,4客户资料变更 5.拆副卡
