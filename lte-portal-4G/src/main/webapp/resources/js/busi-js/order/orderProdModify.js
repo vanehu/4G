@@ -55,7 +55,7 @@ order.prodModify = (function(){
 		};
 		OrderInfo.ifLteNewInstall = prodInfoTr.attr("ifLteNewInstall");
 		order.prodModify.choosedProdInfo=_choosedProdInfo;
-//		window.localStorage.setItem("order.prodModify.choosedProdInfo",JSON.stringify(order.prodModify.choosedProdInfo));
+		window.localStorage.setItem("order.prodModify.choosedProdInfo",JSON.stringify(order.prodModify.choosedProdInfo));
 	};
 	//业务规则校验
 	var _getCallRuleParam = function(boActionTypeCd,prodId) {
@@ -699,9 +699,11 @@ order.prodModify = (function(){
 			data.boCustInfos = [{
 				areaId : OrderInfo.cust.areaId,
 				name : $("#boCustIdentities").attr("partyName"),
+				custName : $("#boCustIdentities").attr("pName"), // 加密后的客户名称
 				norTaxPayerId : "0",
 				partyTypeCd : $("#boCustIdentities").attr("partyTypeCd"),
 				addressStr :$("#boCustIdentities").attr("addressStr"),
+				address :$("#boCustIdentities").attr("address"), // 加密后的客户地址
 				state : "DEL"
 			},{
 				areaId : OrderInfo.cust.areaId,
