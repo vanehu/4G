@@ -741,8 +741,8 @@ order.cust = (function(){
 				//$("#jumpAuth").off('click').on('click', function(){
 				//	order.cust.jumpAuth();
 				//});
-				$("#jumpAuth").show();
-				$("#jumpAuthID").show();
+				$("#auth").find("#jumpAuth").show();
+				$("#auth").find("#jumpAuthID").show();
 			}
 			$("#authClose").off("click").on("click",function(event){
 				easyDialog.close();
