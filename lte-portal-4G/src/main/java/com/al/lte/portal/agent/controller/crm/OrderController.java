@@ -860,6 +860,7 @@ public class OrderController extends BaseController {
 		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
                 SysConstant.SESSION_KEY_LOGIN_STAFF);	
         try {
+        	prams.put("ifQS", "Y");
         	prams.put("channelId", sessionStaff.getCurrentChannelId());
         	prams.put("areaId", sessionStaff.getCurrentAreaId());
         	prams.put("staffId", sessionStaff.getStaffId());
