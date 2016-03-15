@@ -3777,9 +3777,9 @@ order.prodModify = (function(){
 		var response= $.callServiceAsHtml(url,param);
 		$("#auth2").empty().append(response.data);
 		var authTypeStr=$("#authTypeStr").html();
-		if(authTypeStr.toString().indexOf(OrderInfo.cust_validateType)!=-1||authTypeStr.toString().indexOf("4")!=-1||authTypeStr.toString()=="4"){
+		// if(authTypeStr.toString().indexOf(OrderInfo.cust_validateType)!=-1||authTypeStr.toString().indexOf("4")!=-1||authTypeStr.toString()=="4"){
 			return false;
-		}
+		// }
 
 		$("#idCardType2").text(OrderInfo.cust.identityName);
 		if (OrderInfo.cust.identityCd == "1") {
