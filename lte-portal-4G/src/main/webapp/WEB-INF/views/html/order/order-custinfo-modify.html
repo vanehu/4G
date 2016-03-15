@@ -331,12 +331,13 @@ postcode=""
 	</#list>
     </#if>	
      </div>
-     <!--购物车订单属性展示-->
-	<div id="orderAttrDiv">
-		<@block name="orderAttr">
-			<#include "/order/order-attr.html" />
-		</@block>
-	</div>
+			    </form>
+			    <!--购物车订单属性展示-->
+				<div id="orderAttrDiv">
+					<@block name="orderAttr">
+						<#include "/order/order-attr.html" />
+					</@block>
+				</div>
                 <!--上下步按钮-->
                 <div align="right" style="margin: 20px auto;">
                     <a id="fillLastStep" class="btna_o" href="javascript:void(0)" class="btna_o"><span>取消</span></a>
@@ -344,7 +345,7 @@ postcode=""
                 </div>                  
                 <!--上下步按钮 end-->  
                 
-            </form>
+            
         	</div>
         </div>
         <!--订单确认 end-->
