@@ -1,6 +1,8 @@
 package com.al.lte.portal.controller.crm;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,6 +31,7 @@ import com.al.ecs.exception.ResultConstant;
 import com.al.ecs.spring.annotation.log.LogOperatorAnn;
 import com.al.ecs.spring.annotation.session.AuthorityValid;
 import com.al.ecs.spring.controller.BaseController;
+import com.al.lte.portal.common.CommonMethods;
 import com.al.lte.portal.common.EhcacheUtil;
 import com.al.lte.portal.common.SysConstant;
 import com.al.lte.portal.model.SessionStaff;
@@ -148,6 +151,20 @@ public class STBController extends BaseController {
     @AuthorityValid(isCheck = false)
     public String preQueryReserveOrders(Model model, HttpSession session) throws AuthorityException {
     	
+    	 SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
+    	 
+    	 Map<String, Object> defaultAreaInfo = CommonMethods.getDefaultAreaInfo_MinimumC3(sessionStaff);
+    	 Calendar c = Calendar.getInstance();
+         SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd");
+         String defaultEndDate = f.format(c.getTime());
+         c.add(Calendar.DAY_OF_MONTH, -7);
+         String defaultStartDate = f.format(c.getTime());
+         
+         model.addAttribute("defaultStartDate", defaultStartDate);
+         model.addAttribute("defaultEndDate", defaultEndDate);
+         model.addAttribute("defaultAreaId", defaultAreaInfo.get("defaultAreaId"));
+         model.addAttribute("defaultAreaName", defaultAreaInfo.get("defaultAreaName"));
+    	
 		model.addAttribute("current", EhcacheUtil.getCurrentPath(session, "STB/preQueryReserveOrders"));
 		return "/STB/reserve-query";
     }
@@ -160,20 +177,42 @@ public class STBController extends BaseController {
      * @return
      * @throws BusinessException
      */
-    @SuppressWarnings("unchecked")
+	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/queryReserveOrders", method = RequestMethod.GET)
 	public String queryReserveOrders(@RequestParam Map<String, Object> params, @LogOperatorAnn String flowNum, Model model)throws BusinessException{
     	
     	SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
     	try{
     		Map<String, Object> resultMap = STBBmo.querySTBReserveInfo(params, flowNum, sessionStaff);
-    		
-    		String aa = JsonUtil.buildNormal().objectToJson(resultMap);
-			System.out.println(aa);
 			
     		if(ResultCode.R_SUCC.equals(MapUtils.getString(resultMap, "resultCode"))){
-    			ArrayList<Map<String, Object>> result = (ArrayList<Map<String, Object>>) resultMap.get("result");
-    			model.addAttribute("reserveOrderList", result);
+    			Map<String, Object> result = MapUtils.getMap(resultMap, "result");
+    			
+    			ArrayList<Map<String, Object>> reserveOrders = new ArrayList<Map<String, Object>>();
+    			
+    			ArrayList<Map<String, Object>> orderList = (ArrayList<Map<String, Object>>) result.get("orderList");
+    			for(Map<String, Object> reserveOrder : orderList){
+    				ArrayList<Map<String, Object>> attrList = (ArrayList<Map<String, Object>>) reserveOrder.get("attrList");
+    				for(Map<String, Object> attrItem : attrList){
+    					String attrSpecId = MapUtils.getString(attrItem, "itemSpecId");
+    					String attrValue = MapUtils.getString(attrItem, "value");
+    					String attrContent = MapUtils.getString(attrItem, "valueName");
+    					if("800000057".equals(attrSpecId)){
+    						reserveOrder.put("reserveFee", attrValue);//预约金额
+    					}else if("800000058".equals(attrSpecId)){
+    						reserveOrder.put("deliverWay", attrContent);//提货方式
+    					}else if("800000059".equals(attrSpecId)){
+    						reserveOrder.put("deliverTime", attrValue);//取货时间
+    					}else if("800000060".equals(attrSpecId)){
+    						reserveOrder.put("deliverAddr", attrValue);//寄送地址
+    					}else if("800000061".equals(attrSpecId)){
+    						reserveOrder.put("payType", attrContent);//付款方式
+    					}
+    				}
+    				reserveOrder.remove("attrList");
+    				reserveOrders.add(reserveOrder);
+    			}
+    			model.addAttribute("reserveOrders", reserveOrders);
     			model.addAttribute("flag", "0");
     		}else{
     			model.addAttribute("flag", "1");
