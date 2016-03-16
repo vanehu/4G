@@ -327,12 +327,12 @@ CacheData = (function() {
 			if(ec.util.isObj(specId)){
 				id=prodId+'_'+specId+'_'+itemSpecId;
 			}
-			selectStr = selectStr + '<tr><td>' + param.name + ': </td></tr>';
+			selectStr = selectStr + '<tr><td>' + param.name + ': </td>';
 			CacheData.setSearchs(param.valueRange);
 			if(ec.util.isObj(paramVal)){
-				selectStr = selectStr + '<tr><td id="td_schools"><input id="'+id+'" code="'+paramVal+'" value="'+CacheData.getSearchName(paramVal)+'" placeholder="请输入学校名称" data-validate="validate(required,reg:()) on(blur)" class="inputWidth183px" type="text" /><input type="button" onclick="AttachOffer.searchSchools(\''+id+'\');" class="purchase" value="搜索"/></td></tr>';
+				selectStr = selectStr + '<td id="td_schools"><input id="'+id+'" code="'+paramVal+'" value="'+CacheData.getSearchName(paramVal)+'" placeholder="请输入学校名称" data-validate="validate(required,reg:()) on(blur)" class="inputWidth183px" type="text" /><input type="button" onclick="AttachOffer.searchSchools(\''+id+'\');" class="purchase" value="搜索"/></td></tr>';
 			}else{
-				selectStr = selectStr + '<tr><td id="td_schools"><input id="'+id+'" placeholder="请输入学校名称" data-validate="validate(required,reg:()) on(blur)" class="inputWidth183px" type="text" /><input type="button" onclick="AttachOffer.searchSchools(\''+id+'\');" class="purchase" value="搜索"/></td></tr>';
+				selectStr = selectStr + '<td id="td_schools"><input id="'+id+'" placeholder="请输入学校名称" data-validate="validate(required,reg:()) on(blur)" class="inputWidth183px" type="text" /><input type="button" onclick="AttachOffer.searchSchools(\''+id+'\');" class="purchase" value="搜索"/></td></tr>';
 			}
 		} else if (ec.util.isArray(param.valueRange)) { //下拉框
 			if(param.rule.isConstant=='Y'){ //不可修改
