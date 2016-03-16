@@ -744,7 +744,7 @@ order.cust = (function(){
 				//	order.cust.jumpAuth();
 				//});
 				$("#auth").find("#jumpAuth").show();
-				$("#auth").find("#jumpAuthID").show();
+				$("#authID").find("#jumpAuthID").show();
 			}
 			$("#authClose").off("click").on("click",function(event){
 				easyDialog.close();
