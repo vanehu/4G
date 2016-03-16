@@ -59,7 +59,13 @@
             </div>
 <#if subPage=='number'>                    
 		</div>
-	<!--挑靓号 end-->                         
+	<!--挑靓号 end-->  
+	<!--购物车订单属性展示-->
+	<div id="orderAttrDiv">
+		<@block name="orderAttr">
+			<#include "/order/order-attr.html" />
+		</@block>
+	</div>                       
 	</div>
 </div>
 </#if>
