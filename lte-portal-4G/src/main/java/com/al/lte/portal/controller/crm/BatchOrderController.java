@@ -1230,6 +1230,7 @@ public class BatchOrderController  extends BaseController {
 						Map<String, Object> ftpResultMap = null;
 
 						param.put("custOrderId", "");//与后台协商，目前传""，但不可不传，避免空指针
+						param.put("custId", "");//与后台协商，目前传""，但不可不传，避免空指针
 						param.putAll(getAreaInfos());
 						param.put("commonRegionId",sessionStaff.getCurrentAreaId());
 						param.put("batchType", batchType);

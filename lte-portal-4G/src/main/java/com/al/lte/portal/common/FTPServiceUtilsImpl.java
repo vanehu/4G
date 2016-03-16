@@ -84,7 +84,7 @@ public class FTPServiceUtilsImpl implements FTPServiceUtils {
 			uploadResult.put("mess", "FTP服务器连接失败");
 		}
 
-		//关闭服务器连接
+		//不管是否上传成功，关闭服务器连接
 		ftpUtils.closeFTPServerConnect();
 		
 		//上传失败后重新尝试再上传
