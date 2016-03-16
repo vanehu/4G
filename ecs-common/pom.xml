@@ -165,6 +165,14 @@
 			<artifactId>jedis</artifactId>
 		</dependency>
 		<!-- 集中会话 end -->
+		<dependency>
+            <groupId>commons-net</groupId>
+            <artifactId>commons-net</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.jcraft</groupId>
+            <artifactId>jsch</artifactId>
+        </dependency>
 	</dependencies>
 	<build>
 		<finalName>ecs-common</finalName>
