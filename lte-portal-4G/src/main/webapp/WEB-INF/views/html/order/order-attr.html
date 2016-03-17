@@ -41,10 +41,11 @@
 </ul>
 <div class="height18"></div>
 <script>
-	//新建客户或老客户，如果是政企客户，经办人必填
-	if(OrderInfo.boCustInfos.partyTypeCd != '2' && !order.cust.isCovCust(OrderInfo.cust.identityCd)){ 
+	//新建客户或老客户，如果是政企客户，经办人必填（2016-3-17回退）
+	/* if(OrderInfo.boCustInfos.partyTypeCd != '2' && !order.cust.isCovCust(OrderInfo.cust.identityCd)){ 
 		$("#orderAttrDiv .f_red").hide();
-	}
+	} */
+	$("#orderAttrDiv .f_red").hide();
 	// 证件类型初始化（不加不会加载证件）
 	$("#orderPartyTypeCd").change();
 </script>
