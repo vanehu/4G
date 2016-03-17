@@ -202,7 +202,7 @@ public class STBController extends BaseController {
     					}else if("800000058".equals(attrSpecId)){
     						reserveOrder.put("deliverWay", attrContent);//提货方式
     					}else if("800000059".equals(attrSpecId)){
-    						reserveOrder.put("deliverTime", attrValue);//取货时间
+    						reserveOrder.put("deliverTime", attrContent);//取货时间
     					}else if("800000060".equals(attrSpecId)){
     						reserveOrder.put("deliverAddr", attrValue);//寄送地址
     					}else if("800000061".equals(attrSpecId)){
