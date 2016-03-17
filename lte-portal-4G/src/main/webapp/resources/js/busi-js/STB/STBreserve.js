@@ -147,6 +147,9 @@ STB.reserve = (function(){
 		//预约数量默认1
 		$("#STB_reserve_800000056").val("1");
 		
+		//预约订金重置
+		$("#STB_reserve_800000057").removeAttr("disabled");
+		
 		$("#reserveSuccessPage").hide();
 		$("#STBreserveOrderForm").show();
 		$("#reserveFlowNum").html("");

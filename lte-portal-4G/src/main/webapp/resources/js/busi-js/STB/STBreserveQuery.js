@@ -74,11 +74,17 @@ STB.reserveQuery = (function(){
 		});
 		
 	};
+	
+	//显示或者隐藏额外信息
+	var _slideMoreInfo = function(a){
+		$(a).parent().find("p").slideToggle();
+	};
 
 	
 	return {
 		chooseArea : _chooseArea,
-		queryReserveOrders : _queryReserveOrders
+		queryReserveOrders : _queryReserveOrders,
+		slideMoreInfo : _slideMoreInfo
 	};
 	
 })();
