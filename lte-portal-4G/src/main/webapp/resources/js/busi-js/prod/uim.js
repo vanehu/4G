@@ -181,7 +181,7 @@ prod.uim = (function() {
 		//3转4弹出促销窗口
 		//查询卡类型
 		var oldCardis4GCard = "";
-		if(prodId!=null && prodId!="-1"){
+		if(prodId!=null && prodId>=0){//不为新装
 			var param ={
 					prodInstId	: prodId,
 					areaId		: order.prodModify.choosedProdInfo.areaId,
