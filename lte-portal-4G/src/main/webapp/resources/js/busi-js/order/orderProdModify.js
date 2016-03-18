@@ -336,7 +336,12 @@ order.prodModify = (function(){
 			},
 			"done" : function(response){
 				if (response.code == 0) {
-					$("#svCloseDiv").click();
+					try{
+						easyDialog.close();
+					}catch(e){
+						$("#CHANGEUIMSMS").hide();
+						$("#overlay").hide();
+					}
 					OrderInfo.busitypeflag=13;
 					prod.changeUim.init();
 				} else if (response.code == 1) {
