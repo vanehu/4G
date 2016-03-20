@@ -1593,17 +1593,20 @@ order.cust = (function(){
 			$("#tr_cust_photo").show();
 		}
 		$("#td_address_str").text(man.resultContent.certAddress);
-		easyDialog.open({
-			container : 'user_info',
-			callback : function() {
-				$("#td_cust_name").text("");
-				$("#td_cust_idCard").text("");
-				$("#img_cust_photo").attr("src", "");
-				$("#tr_cust_photo").hide();
-				$("#td_address_str").text("");
-				$("#" + id).click();
-			}
-		});
+		//easyDialog.open({
+		//	container : 'user_info',
+		//	callback : function() {
+		//		$("#td_cust_name").text("");
+		//		$("#td_cust_idCard").text("");
+		//		$("#img_cust_photo").attr("src", "");
+		//		$("#tr_cust_photo").hide();
+		//		$("#td_address_str").text("");
+		//		$("#" + id).click();
+		//	}
+		//});
+		$.alertW("身份证信息展示",$("#user_info2").html(),"",function(){
+			$("#" + id).click();
+		},400);
 	};
 	//定位客户时读卡
 	var _readCert = function() {
