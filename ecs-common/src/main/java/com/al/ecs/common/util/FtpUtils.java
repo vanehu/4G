@@ -67,7 +67,7 @@ public class FtpUtils {
 				if(ftpClient.login(userName, password)){
 					ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
 					flag = true;
-					LOG.debug(" login success !!!");
+//					LOG.debug(" login success !!!");
 				}
 				
 				ftpClient.enterLocalPassiveMode();
@@ -93,7 +93,7 @@ public class FtpUtils {
 			boolean flag = false;
 			try {
 				flag = ftpClient.changeWorkingDirectory(remotePath);
-				LOG.debug("set working directory successful !!! ");
+//				LOG.debug("set working directory successful !!! ");
 			} catch (IOException e) {
 				flag = false;
 				LOG.error("set working directory failed !!! flag = {}", flag);
@@ -119,9 +119,9 @@ public class FtpUtils {
 				String destinationFileName = new String(fileName.getBytes("GBK"), ftpClient.DEFAULT_CONTROL_ENCODING);
 				flag = ftpClient.storeFile(destinationFileName, is);
 				if (flag) {
-					LOG.debug("upload success !!!");
+//					LOG.debug("upload success !!!");
 				} else {
-					LOG.debug("upload failed !!!");
+//					LOG.debug("upload failed !!!");
 				}
 			} catch (IOException e) {
 				flag = false;
@@ -178,7 +178,7 @@ public class FtpUtils {
 				// 从FTPServer上下载文件
 				flag = ftpClient.retrieveFile(new String(fileName.getBytes("GBK"), ftpClient.DEFAULT_CONTROL_ENCODING), os);
 				if (flag) {
-					LOG.debug("download success !!! ");
+//					LOG.debug("download success !!! ");
 				} else {
 					LOG.debug("download failed !!! ");
 				}
@@ -218,7 +218,7 @@ public class FtpUtils {
 						} 
 					}
 				}
-				LOG.debug("disconnect success !!!");
+//				LOG.debug("disconnect success !!!");
 			} catch (Exception e) {
 				LOG.error("not disconnect !!! ");
 				LOG.error("closeFTPServerConnect IOException : {}", e);
@@ -236,7 +236,7 @@ public class FtpUtils {
 				if(ftpClient != null){
 				flag=ftpClient.deleteFile(filePath);
 				}
-				//log.debug("delete success !!!");
+//				LOG.debug("delete success !!!");
 			} catch (Exception e) {
 				LOG.error("not delete !!! ");
 				LOG.error("deleteFilesOnFTPServer IOException : {}", e);
