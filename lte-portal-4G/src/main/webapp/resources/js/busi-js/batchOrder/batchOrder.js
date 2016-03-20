@@ -421,23 +421,23 @@ order.batch = (function(){
 	
 	var _download=function(batType){
 		if(batType=='0'){//批开活卡
-			location.href=contextPath+"/file/BATCHHUOKA.xlsx";
+			location.href=contextPath+"/file/BATCHHUOKA.xls";
 		}else if(batType=='1'){//批量新装
-			location.href=contextPath+"/file/BATCHNEWORDER.xlsx";
+			location.href=contextPath+"/file/BATCHNEWORDER.xls";
 		}else if(batType=='2'){//批量订购、退订附属
-			location.href=contextPath+"/file/BATCHFUSHU.xlsx";
+			location.href=contextPath+"/file/BATCHFUSHU.xls";
 		}else if(batType=='5'){
-			location.href=contextPath+"/file/BATCHCHANGE.xlsx";
+			location.href=contextPath+"/file/BATCHCHANGE.xls";
 		}else if(batType=='8'){//批量拆机
-			location.href=contextPath+"/file/BATCHCHAIJI.xlsx";
+			location.href=contextPath+"/file/BATCHCHAIJI.xls";
 		}else if(batType=='9'){//批量修改发展人
-			location.href=contextPath+"/file/BATCHFAZHANREN.xlsx";
+			location.href=contextPath+"/file/BATCHFAZHANREN.xls";
 		}else if(batType=='10'){//批量订购裸终端
-			location.href=contextPath+"/file/BATCHORDERTERMINAL.xlsx";
+			location.href=contextPath+"/file/BATCHORDERTERMINAL.xls";
 		}else if(batType=='11'){//批量换挡
-			location.href=contextPath+"/file/BATCHCHANGEFEETYPE.xlsx";
+			location.href=contextPath+"/file/BATCHCHANGEFEETYPE.xls";
 		}else if(batType=='12'){//批量换卡
-			location.href=contextPath+"/file/BATCHCHANGEUIM.xlsx";
+			location.href=contextPath+"/file/BATCHCHANGEUIM.xls";
 		}else{
 			$.alert("提示","未找到批量类型所对应的模板文件，请检查！");
 			return;
