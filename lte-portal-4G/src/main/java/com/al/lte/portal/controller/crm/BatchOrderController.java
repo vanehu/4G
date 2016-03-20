@@ -123,7 +123,6 @@ public class BatchOrderController  extends BaseController {
 		String batchType = request.getParameter("batchType");
 		String reserveDt = request.getParameter("reserveDt");
 		String areaId = request.getParameter("areaId");
-		PropertiesUtils propertiesUtils = (PropertiesUtils) SpringContextUtil.getBean("propertiesUtils");
 		
 		if (olId == null || "".equals(olId)) {
 			message = "购物id为空！";
@@ -237,38 +236,29 @@ public class BatchOrderController  extends BaseController {
 						
 						//Excel校验成功后上传Excel文件
 						try {
-							if(!"ON".equals(propertiesUtils.getMessage("CLUSTERFLAG"))){
-								//上传到单台FTP服务器
-								ftpResultMap = ftpServiceUtils.fileUpload2FTP(file.getInputStream(), fileName, batchType);
-							} else{
-								//根据省份与多台FTP服务器的映射，上传文件到某台FTP服务器
-								ftpResultMap = ftpServiceUtils.fileUpload2FTP4Cluster(file.getInputStream(), fileName, batchType, sessionStaff.getProvinceCode());
-							}
+							ftpResultMap = ftpServiceUtils.fileUpload2FTP(file.getInputStream(), fileName, batchType);
 						} catch (Exception e) {
 							jsonResponse = super.failed(ErrorCode.FTP_UPLOAD_ERROR, e, busMap);
 						};
 
-						//若上传文件发生异常，则直接返回异常信息不再继续执行
-						if(jsonResponse == null){
-							try {
-								if (ftpResultMap != null && ResultCode.R_SUCCESS.equals(ftpResultMap.get("code").toString())) {
-									//Excel上传成功后，入参中填充FTP信息
-									param.put("ftpInfos", ftpResultMap.get("ftpInfos"));
-									//调后台服务通知接口，通知后台上传文件完成同时获取批次号
-									Map<String, Object> returnMap = batchBmo.getGroupIDfromSOAfterUpload(busMap, sessionStaff);
-									message = "批量导入成功，导入批次号：<strong>"+returnMap.get("groupId")+"</strong>，请到“批量受理查询”功能中查询受理结果";
-									code = "0";
-					 			}else{
-					 				if(ftpResultMap == null || ftpResultMap.get("mess") == null)
-					 					message = "批量导入服务调用失败";
-					 				else
-					 					message = ftpResultMap.get("mess").toString();
-					 			}
-							} catch (InterfaceException ie) {
-								jsonResponse = super.failed(ie, busMap, ErrorCode.BATCH_FILEUPLOAD_NOTICE);
-							} catch (Exception e) {
-								jsonResponse = super.failed(ErrorCode.BATCH_FILEUPLOAD_NOTICE, e, busMap);
-							}
+						try {
+							if (ftpResultMap != null && ResultCode.R_SUCCESS.equals(ftpResultMap.get("code").toString())) {
+								//Excel上传成功后，入参中填充FTP信息
+								param.put("ftpInfos", ftpResultMap.get("ftpInfos"));
+								//调后台服务通知接口，通知后台上传文件完成同时获取批次号
+								Map<String, Object> returnMap = batchBmo.getGroupIDfromSOAfterUpload(busMap, sessionStaff);
+								message = "批量导入成功，导入批次号：<strong>"+returnMap.get("groupId")+"</strong>，请到“批量受理查询”功能中查询受理结果";
+								code = "0";
+				 			}else{
+				 				if(ftpResultMap == null || ftpResultMap.get("msg") == null)
+				 					message = "批量导入服务调用失败";
+				 				else
+				 					message = ftpResultMap.get("mess").toString();
+				 			}
+						} catch (InterfaceException ie) {
+							jsonResponse = super.failed(ie, busMap, ErrorCode.BATCH_FILEUPLOAD_NOTICE);
+						} catch (Exception e) {
+							jsonResponse = super.failed(ErrorCode.BATCH_FILEUPLOAD_NOTICE, e, busMap);
 						}
 					}
 				}
@@ -507,11 +497,11 @@ public class BatchOrderController  extends BaseController {
 					String excelTitle = param.get("groupId").toString();
 					String[] headers = new String[]{"批次号","主接入号","UIM卡号","受理时间","受理状态","反馈信息","订单状态","下省流水","购物车流水"};
 					
-					response.addHeader("Content-Disposition", "attachment;filename="+new String( excelTitle.getBytes("gb2312"), "ISO8859-1" )+".xlsx");
+					response.addHeader("Content-Disposition", "attachment;filename="+new String( excelTitle.getBytes("gb2312"), "ISO8859-1" )+".xls");
 					response.setContentType("application/binary;charset=utf-8");
 					 
 					ServletOutputStream  outputStream = response.getOutputStream();
-					batchBmo.exportExcel(excelTitle, headers, resultList, outputStream);
+					this.exportExcel(excelTitle, headers, resultList, outputStream);
 					outputStream.close();
 				}
 			}
@@ -659,7 +649,7 @@ public class BatchOrderController  extends BaseController {
 			param.put("action", "retry");//进度查询下的"重发"
 		param.remove("flag");
 		param.putAll(getAreaInfos());
-		param.put("areaId", sessionStaff.getCurrentAreaId());//原此处为sessionStaff.getAreaId()
+		param.put("areaId", sessionStaff.getAreaId());//*******************************sessionStaff.getCurrentAreaId()
 		Map<String, Object> rMap = null;
 		JsonResponse jsonResponse = null;
 		try {
@@ -937,7 +927,7 @@ public class BatchOrderController  extends BaseController {
 		 * ZhangYu 2016-03-14
 		 */
 		List<Map<String, Object>> timeList = batchBmo.getTimeListIn5Days();
-		String batchType = "10";//批量订购裸终端batchType=10
+		String batchType = "10";//批量订购裸终端batchType为10
 		String batchTypeName  = batchBmo.getTypeNames(batchType);
 		
 		model.addAttribute("time", timeList);
@@ -971,11 +961,8 @@ public class BatchOrderController  extends BaseController {
 	}
 
 	/**
-	 * 批量订购裸终端 - 文件校验</br>
-	 * @deprecated #88538：前台将不在进行号码预占等业务操作，非空、去重校验成功后直接上传Excel至FTP服务器，所以此方法目前不再使用
-	 * updated by ZhangYu 2016-03-20
+	 * 批量订购裸终端 - 文件校验
 	 */
-	@Deprecated
 	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/batchOrderVerify", method = RequestMethod.POST)
 	public String checkTerminal(Model model, HttpServletRequest request, HttpServletResponse response, @LogOperatorAnn String flowNum,
@@ -1125,10 +1112,7 @@ public class BatchOrderController  extends BaseController {
 	
 	/**
 	 * 批量订购裸终端 - 文件提交
-	 * @deprecated #88538：前台将不在进行号码预占等业务操作，非空、去重校验成功后直接上传Excel至FTP服务器，所以此方法目前不再使用
-	 * updated by ZhangYu 2016-03-20
 	 */
-	@Deprecated
 	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/batchTerminalImport", method = RequestMethod.POST)
 	public @ResponseBody JsonResponse batchTerminalImport(@RequestBody Map<String, Object> params,HttpServletRequest request,
@@ -1195,7 +1179,6 @@ public class BatchOrderController  extends BaseController {
 		String code = "-1";
 		boolean isError = false;
 		JsonResponse jsonResponse = null;
-		PropertiesUtils propertiesUtils = (PropertiesUtils) SpringContextUtil.getBean("propertiesUtils");
 		
 		if(batchType == null || "".equals(batchType)){
 			message = "订单受理类型为空！";
@@ -1257,41 +1240,29 @@ public class BatchOrderController  extends BaseController {
 						busMap.put("batchOrder", param);
 						
 						try {
-							//上传文件
-							if(!"ON".equals(propertiesUtils.getMessage("CLUSTERFLAG"))){
-								//上传到单台FTP服务器
-								ftpResultMap = ftpServiceUtils.fileUpload2FTP(file.getInputStream(), fileName, batchType);
-							} else{
-								//根据省份与多台FTP服务器的映射，上传文件到某台FTP服务器
-								ftpResultMap = ftpServiceUtils.fileUpload2FTP4Cluster(file.getInputStream(), fileName, batchType, sessionStaff.getProvinceCode());
-							}
+							ftpResultMap = ftpServiceUtils.fileUpload2FTP(file.getInputStream(), fileName, batchType);
 						} catch (Exception e) {
 							jsonResponse = super.failed(ErrorCode.FTP_UPLOAD_ERROR, e, busMap);
 						};
 
-						//若上传文件发生异常，则直接返回异常信息不再继续执行
-						if(jsonResponse == null){
-							try {
-								if (ftpResultMap != null && ResultCode.R_SUCCESS.equals(ftpResultMap.get("code").toString())) {
-									//上传成功后，入参中填充FTP信息
-									param.put("ftpInfos", ftpResultMap.get("ftpInfos"));
-									//调后台服务通知接口，通知后台上传文件完成同时获取批次号
-									Map<String, Object> returnMap = batchBmo.getGroupIDfromSOAfterUpload(busMap, sessionStaff);
-									message = "批量导入成功，导入批次号：<strong>"+returnMap.get("groupId")+"</strong>，请到“批量受理查询”功能中查询受理结果";
-									code = "0";
-					 			}else{
-					 				if(ftpResultMap == null || ftpResultMap.get("mess") == null)
-					 					message = "批量导入服务调用失败";
-					 				else
-					 					message = ftpResultMap.get("mess").toString();
-					 			}
-							} catch (BusinessException be) {
-								jsonResponse = super.failed(be);
-							} catch (InterfaceException ie) {
-								jsonResponse = super.failed(ie, busMap, ErrorCode.BATCH_FILEUPLOAD_NOTICE);
-							} catch (Exception e) {
-								jsonResponse = super.failed(ErrorCode.BATCH_FILEUPLOAD_NOTICE, e, busMap);
-							}
+						try {
+							if (ftpResultMap != null && ResultCode.R_SUCCESS.equals(ftpResultMap.get("code").toString())) {
+								//上传成功后，入参中填充FTP信息
+								param.put("ftpInfos", ftpResultMap.get("ftpInfos"));
+								//调后台服务通知接口，通知后台上传文件完成同时获取批次号
+								Map<String, Object> returnMap = batchBmo.getGroupIDfromSOAfterUpload(busMap, sessionStaff);
+								message = "批量导入成功，导入批次号：<strong>"+returnMap.get("groupId")+"</strong>，请到“批量受理查询”功能中查询受理结果";
+								code = "0";
+				 			}else{
+				 				if(ftpResultMap == null || ftpResultMap.get("mess") == null)
+				 					message = "批量导入服务调用失败";
+				 				else
+				 					message = ftpResultMap.get("mess").toString();
+				 			}
+						} catch (InterfaceException ie) {
+							jsonResponse = super.failed(ie, busMap, ErrorCode.BATCH_FILEUPLOAD_NOTICE);
+						} catch (Exception e) {
+							jsonResponse = super.failed(ErrorCode.BATCH_FILEUPLOAD_NOTICE, e, busMap);
 						}
 					}
 				}
@@ -1308,6 +1279,113 @@ public class BatchOrderController  extends BaseController {
 		}
 		
 		return "/batchOrder/batch-order-change-list";
+	}
+
+	/**
+	 * 进度查询下的导入Excel方法</br>
+	 * 该方法将查询该批次下的所有记录，并以Excel文件形式导出共用户保存
+	 * @param title
+	 * @param headers
+	 * @param dataList
+	 * @param out
+	 * @author ZhangYu
+	 */
+	protected void exportExcel(String title, String[] headers, List<Map<String, Object>> dataList, OutputStream outputStream){
+		//定义工作簿
+		HSSFWorkbook workbook = new HSSFWorkbook();
+		//定义表单
+		HSSFSheet sheet = workbook.createSheet(title);
+		//设置表格默认列宽度
+		sheet.setDefaultColumnWidth(20);
+		//设置标题样式
+		HSSFCellStyle headersStyle = workbook.createCellStyle();
+		headersStyle.setFillForegroundColor(HSSFColor.SKY_BLUE.index);
+		headersStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+		headersStyle.setBorderBottom(HSSFCellStyle.BORDER_THIN);
+		headersStyle.setBorderLeft(HSSFCellStyle.BORDER_THIN);
+		headersStyle.setBorderRight(HSSFCellStyle.BORDER_THIN);
+		headersStyle.setBorderTop(HSSFCellStyle.BORDER_THIN);
+		headersStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+		//字体
+		HSSFFont headersFont = workbook.createFont();
+		headersFont.setColor(HSSFColor.VIOLET.index);
+		headersFont.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
+		//把字体应用到当前的样式
+		headersStyle.setFont(headersFont);
+		//设置内容样式
+		HSSFCellStyle contentStyle = workbook.createCellStyle();
+		contentStyle.setFillForegroundColor(HSSFColor.LIGHT_YELLOW.index);
+		contentStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+		contentStyle.setBorderBottom(HSSFCellStyle.BORDER_THIN);
+		contentStyle.setBorderLeft(HSSFCellStyle.BORDER_THIN);
+		contentStyle.setBorderRight(HSSFCellStyle.BORDER_THIN);
+		contentStyle.setBorderTop(HSSFCellStyle.BORDER_THIN);
+		contentStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+		contentStyle.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);
+		//生成字体
+		HSSFFont contentFont = workbook.createFont();
+		contentFont.setBoldweight(HSSFFont.BOLDWEIGHT_NORMAL);
+		//把字体应用到当前的样式
+		contentStyle.setFont(contentFont);
+		//产生表格标题行
+		HSSFRow row = sheet.createRow(0);
+		for(int i = 0; i < headers.length; i++){
+			HSSFCell cell = row.createCell(i);
+			cell.setCellStyle(headersStyle);
+			cell.setCellValue(new HSSFRichTextString(headers[i]));
+		}
+		//填充表格数据内容
+		for (int i = 0; i < dataList.size(); i++) {
+			Map<String,Object> map = (Map<String, Object>) dataList.get(i);
+			row = sheet.createRow(i+1);
+			int j = 0;
+			row.createCell(j++).setCellValue(null == map.get("groupId") ? "" : map.get("groupId").toString());
+			row.createCell(j++).setCellValue("".equals(map.get("boProdAn").toString()) ? map.get("accessNumber").toString() : map.get("boProdAn").toString());
+			row.createCell(j++).setCellValue(null == map.get("boProd2Td") ? "" : map.get("boProd2Td").toString());//uim卡号
+			row.createCell(j++).setCellValue(null == map.get("genOlDt") ? "" : map.get("genOlDt").toString());//受理时间
+			
+			String statusCdStr;
+			if(null == map.get("statusCd")){
+				statusCdStr = "无状态信息";
+			} else{
+				String statusCd = map.get("statusCd").toString();
+				if("PC".equals(statusCd))
+					statusCdStr = "派发成功";
+				else if("PD".equals(statusCd))
+					statusCdStr = "派发失败";
+				else if("Q".equals(statusCd))
+					statusCdStr = "导入成功";
+				else if("S".equals(statusCd))
+					statusCdStr = "购物车生成成功";
+				else if("X".equals(statusCd))
+					statusCdStr = "购物车生成失败";
+				else if("PW".equals(statusCd))
+					statusCdStr = "正在派发中";
+				else if("C".equals(statusCd))
+					statusCdStr = "发送后端成功";
+				else if("PE".equals(statusCd))
+					statusCdStr = "等待重新派发";
+				else if("F".equals(statusCd))
+					statusCdStr = "发送后端失败";
+				else if("DL".equals(statusCd))
+					statusCdStr = "受理处理中";
+				else if("RC".equals(statusCd))
+					statusCdStr = "返销成功";
+				else
+					statusCdStr = "无状态信息";
+			}
+			
+			row.createCell(j++).setCellValue(statusCdStr);
+			row.createCell(j++).setCellValue(map.get("msgInfo") == null ? "" : map.get("msgInfo").toString());
+			row.createCell(j++).setCellValue(map.get("orderStatusName") == null ? "" : map.get("orderStatusName").toString());
+			row.createCell(j++).setCellValue(map.get("transactionId") == null ? "" : map.get("transactionId").toString());//下省流水
+			row.createCell(j++).setCellValue(map.get("custSoNumber") == null ? "" : map.get("custSoNumber").toString());//购物车流水
+		}
+		try {
+			workbook.write(outputStream);
+		} catch (IOException e) {
+			e.printStackTrace();/////////////////////////////////////////////异常处理////////////////////////////////////
+		}
 	}
 
 	/**

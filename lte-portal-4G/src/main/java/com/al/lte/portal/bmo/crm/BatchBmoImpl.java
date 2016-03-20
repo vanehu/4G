@@ -1,7 +1,6 @@
 package com.al.lte.portal.bmo.crm;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -10,17 +9,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
-import org.apache.poi.hssf.usermodel.HSSFFont;
-import org.apache.poi.hssf.usermodel.HSSFRichTextString;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -29,6 +21,7 @@ import org.springframework.stereotype.Service;
 
 import com.al.ec.serviceplatform.client.DataBus;
 import com.al.ec.serviceplatform.client.ResultCode;
+import com.al.ecs.common.util.JsonUtil;
 import com.al.ecs.exception.BusinessException;
 import com.al.ecs.exception.ErrorCode;
 import com.al.ecs.exception.InterfaceException;
@@ -973,115 +966,6 @@ public class BatchBmoImpl implements BatchBmo {
 	}
 	
 	/**
-	 * 进度查询下的导入Excel方法</br>
-	 * 该方法将查询该批次下的所有记录，并以Excel文件形式导出
-	 * @param title
-	 * @param headers
-	 * @param dataList
-	 * @param out
-	 * @author ZhangYu
-	 * @throws BusinessException 
-	 */
-	public void exportExcel(String title, String[] headers, List<Map<String, Object>> dataList, OutputStream outputStream) throws BusinessException {
-		//定义工作簿
-		HSSFWorkbook workbook = new HSSFWorkbook();
-		//定义表单
-		HSSFSheet sheet = workbook.createSheet(title);
-		//设置表格默认列宽度
-		sheet.setDefaultColumnWidth(20);
-		//设置标题样式
-		HSSFCellStyle headersStyle = workbook.createCellStyle();
-		headersStyle.setFillForegroundColor(HSSFColor.SEA_GREEN.index);
-		headersStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
-		headersStyle.setBorderBottom(HSSFCellStyle.BORDER_THIN);
-		headersStyle.setBorderLeft(HSSFCellStyle.BORDER_THIN);
-		headersStyle.setBorderRight(HSSFCellStyle.BORDER_THIN);
-		headersStyle.setBorderTop(HSSFCellStyle.BORDER_THIN);
-		headersStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);
-		//字体
-		HSSFFont headersFont = workbook.createFont();
-		headersFont.setColor(HSSFColor.BLACK.index);
-		headersFont.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
-		//把字体应用到当前的样式
-		headersStyle.setFont(headersFont);
-		//设置内容样式
-		HSSFCellStyle contentStyle = workbook.createCellStyle();
-		contentStyle.setFillForegroundColor(HSSFColor.LIGHT_YELLOW.index);
-		contentStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
-		contentStyle.setBorderBottom(HSSFCellStyle.BORDER_THIN);
-		contentStyle.setBorderLeft(HSSFCellStyle.BORDER_THIN);
-		contentStyle.setBorderRight(HSSFCellStyle.BORDER_THIN);
-		contentStyle.setBorderTop(HSSFCellStyle.BORDER_THIN);
-		contentStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);
-		contentStyle.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);
-		//生成字体
-		HSSFFont contentFont = workbook.createFont();
-		contentFont.setBoldweight(HSSFFont.BOLDWEIGHT_NORMAL);
-		//把字体应用到当前的样式
-		contentStyle.setFont(contentFont);
-		//产生表格标题行
-		HSSFRow row = sheet.createRow(0);
-		for(int i = 0; i < headers.length; i++){
-			HSSFCell cell = row.createCell(i);
-			cell.setCellStyle(headersStyle);
-			cell.setCellValue(new HSSFRichTextString(headers[i]));
-		}
-		//填充表格数据内容
-		for (int i = 0; i < dataList.size(); i++) {
-			Map<String,Object> map = (Map<String, Object>) dataList.get(i);
-			row = sheet.createRow(i+1);
-			int j = 0;
-			row.createCell(j++).setCellValue(null == map.get("groupId") ? "" : map.get("groupId").toString());
-			row.createCell(j++).setCellValue("".equals(map.get("boProdAn").toString()) ? map.get("accessNumber").toString() : map.get("boProdAn").toString());
-			row.createCell(j++).setCellValue(null == map.get("boProd2Td") ? "" : map.get("boProd2Td").toString());//uim卡号
-			row.createCell(j++).setCellValue(null == map.get("genOlDt") ? "" : map.get("genOlDt").toString());//受理时间
-			
-			String statusCdStr;
-			if(null == map.get("statusCd")){
-				statusCdStr = "无状态信息";
-			} else{
-				String statusCd = map.get("statusCd").toString();
-				if("PC".equals(statusCd))
-					statusCdStr = "派发成功";
-				else if("PD".equals(statusCd))
-					statusCdStr = "派发失败";
-				else if("Q".equals(statusCd))
-					statusCdStr = "导入成功";
-				else if("S".equals(statusCd))
-					statusCdStr = "购物车生成成功";
-				else if("X".equals(statusCd))
-					statusCdStr = "购物车生成失败";
-				else if("PW".equals(statusCd))
-					statusCdStr = "正在派发中";
-				else if("C".equals(statusCd))
-					statusCdStr = "发送后端成功";
-				else if("PE".equals(statusCd))
-					statusCdStr = "等待重新派发";
-				else if("F".equals(statusCd))
-					statusCdStr = "发送后端失败";
-				else if("DL".equals(statusCd))
-					statusCdStr = "受理处理中";
-				else if("RC".equals(statusCd))
-					statusCdStr = "返销成功";
-				else
-					statusCdStr = "无状态信息";
-			}
-			
-			row.createCell(j++).setCellValue(statusCdStr);
-			row.createCell(j++).setCellValue(map.get("msgInfo") == null ? "" : map.get("msgInfo").toString());
-			row.createCell(j++).setCellValue(map.get("orderStatusName") == null ? "" : map.get("orderStatusName").toString());
-			row.createCell(j++).setCellValue(map.get("transactionId") == null ? "" : map.get("transactionId").toString());//下省流水
-			row.createCell(j++).setCellValue(map.get("custSoNumber") == null ? "" : map.get("custSoNumber").toString());//购物车流水
-		}
-			
-		try {
-			workbook.write(outputStream);
-		} catch (IOException e) {
-			throw new BusinessException(ErrorCode.BATCH_EXPORTEXCEL_ERROR, null, null, e);
-		}
-	}
-	
-	/**
 	 * 文件上传成功通知服务</br>
 	 * 批量导入的Excel文件上传成功后，调后台接口，完成两件事：1.通知后台(SO)文件上传完成；2.从后台获取批次号(groupId)
 	 * @param requestParamMap
@@ -1092,7 +976,7 @@ public class BatchBmoImpl implements BatchBmo {
 	 * @throws InterfaceException 
 	 */
 	@SuppressWarnings("unchecked")
-	public Map<String, Object> getGroupIDfromSOAfterUpload(Map<String, Object> requestParamMap, SessionStaff sessionStaff) throws BusinessException, InterfaceException, IOException, Exception{
+	public Map<String, Object> getGroupIDfromSOAfterUpload(Map<String, Object> requestParamMap, SessionStaff sessionStaff) throws InterfaceException, IOException, Exception{
 		
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		DataBus db = InterfaceClient.callService(requestParamMap,PortalServiceCode.INTF_BATCH_FILEUPLOADSUCCESSNOTICE, null, sessionStaff);
@@ -1167,8 +1051,8 @@ public class BatchBmoImpl implements BatchBmo {
 		int hour = calendar.get(Calendar.HOUR_OF_DAY) + 1;// 小时
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
 		
-		// 用于标识获取未来几天的时间列表，当reserveFlag=1时，获取两天时间列表（即预约时间为两天之内）；当reserveFlag=4时，获取五天时间列表（即预约时间为五天之内）。
-		 final int reserveFlag = 4;
+		// 用于标识获取未来几天的时间列表，当reserveFlag = 1时，获取两天时间列表（即预约时间为两天之内）；当reserveFlag = 4时，获取五天时间列表（即预约时间为五天之内）。
+		int reserveFlag = 4;
 		for (int i = hour; i < (hour + 24 * reserveFlag); i++) {
 			dataMap = new HashMap<String, Object>();
 			if (i > (23 + 24 * 3) && i <= (23 + 24 * 4)) {

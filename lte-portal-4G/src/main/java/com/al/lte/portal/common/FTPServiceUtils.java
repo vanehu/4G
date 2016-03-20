@@ -25,11 +25,11 @@ public interface FTPServiceUtils {
 	
 	/**
 	 * 上传文件到FTP服务器，服务器集群，目前配置为6台翼销售服务器</br>
-	 * 按照5个省一台服务器规划，当一台服务器故障，则顺序读取下一台服务器上传文件
+	 * 按照5个省一台服务器规划，当一台服务器故障，则顺序读取下一台服务器，上传文件
 	 * @param fileInputStream
 	 * @param provinceCode 省份编码
 	 * @return
 	 * @author ZhangYu
 	 */
-	public Map<String, Object> fileUpload2FTP4Cluster(InputStream fileInputStream, String uploadFileName, String batchType, String provinceCode) throws Exception;
+	public Map<String, Object> fileUpload2FTP4Cluster(InputStream fileInputStream, String provinceCode);
 }
