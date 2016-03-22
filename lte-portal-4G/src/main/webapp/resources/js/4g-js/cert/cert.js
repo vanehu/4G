@@ -16,6 +16,16 @@ cert = (function(){
 	    	conn = {"resultFlag":-1,"errorMsg":"连接读卡器失败，可能未安装驱动及控件"};
 	    }
 	    if (conn.resultFlag != 0) {
+	    	//判断是否有设备接入
+		    var jsonStr = null;
+		    try {
+		    	var jsonSt = CertCtl.getStatus();
+		    	jsonStr = JSON.parse(jsonSt);
+		    } catch(e) {
+		    }
+		    if(jsonStr.status == 1){
+		    	conn = {"resultFlag":-1,"errorMsg":"请确认已接入身份证识别仪"};
+		    }
 	        return conn;
 	    }
 	    var man = JSON.parse(CertCtl.readCert());
