@@ -1106,7 +1106,7 @@ order.writeCard = (function(){
       	 }
  		//3转4弹出促销窗口//查询卡类型
  		var oldCardis4GCard = "";
- 		if(prodId!=null && prodId>=0){//不为新装
+ 		if(ec.util.isObj(_rscJson.prodId)&& _rscJson.prodId>=0){//不为新装
  			var param ={
  					prodInstId	: _rscJson.prodId,
  					areaId		: order.prodModify.choosedProdInfo.areaId,
