@@ -78,9 +78,9 @@
 									 <div class="btn-group"  role="group" onclick = "javascript:mktRes.terminal.selectColor($(this))"
 										 id="color${mkt_index}" mktValue="${attrListTmp.attrValue}"  mktResId="${mktResId}" mktResName="${mktResName}" mktSalePrice="${mktSalePrice}" mktNormalSalePrice="${(mkt.salePrice)?default(0)}" p_pic="${p_pic_color}" mktResTypeCd="${mktResTypeCd}" mktSpecCode="${mktSpecCode}">
 										<#if mkt.mktResId == (mktRes.mktResId)>
-											 <button type="button" class="btn btn-default active" >${attrListTmp.attrValue}</button>
+											 <button type="button" class="btn btn-default zdys_btn active" >${attrListTmp.attrValue}</button>
 							            <#else>
-							                 <button type="button" class="btn btn-default">${attrListTmp.attrValue}</button>
+							                 <button type="button" class="btn btn-default zdys_btn">${attrListTmp.attrValue}</button>
 							            </#if>
 							         </div>
 						         	<#if count%3=2>
@@ -102,9 +102,9 @@
 									<div class="btn-group"  role="group" onclick = "javascript:mktRes.terminal.selectColor($(this))"
 									 id="color${mkt_index}" mktValue="${attrListTmp.attrValue}"  mktResId="${mktResId}" mktResName="${mktResName}" mktSalePrice="${mktSalePrice}" mktNormalSalePrice="${(mkt.salePrice)?default(0)}" p_pic="${p_pic_color}" mktResTypeCd="${mktResTypeCd}" mktSpecCode="${mktSpecCode}">
 									<#if mkt.mktResId == (mktRes.mktResId)>
-										 <button type="button" class="btn btn-default active" >${attrListTmp.attrValue}</button>
+										 <button type="button" class="btn btn-default zdys_btn active" >${attrListTmp.attrValue}</button>
 						            <#else>
-						                 <button type="button" class="btn btn-default">${attrListTmp.attrValue}</button>
+						                 <button type="button" class="btn btn-default zdys_btn">${attrListTmp.attrValue}</button>
 						            </#if>
 						         	</div>
 						         	<#if count%3=2>
