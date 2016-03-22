@@ -8039,12 +8039,12 @@ public class PrintBmoImpl implements PrintBmo {
 		html.append("<nav class=\"navbar navbar-default navbar-fixed-top\">");
 		html.append("<div class=\"container-fluid\">");
 		html.append("<div class=\"navbar-header\">");
-		html.append("<button type=\"button\" class=\"navbar-toggle collapsed\" data-toggle=\"collapse\" data-target=\"#bs-example-navbar-collapse-1\" aria-expanded=\"false\">");
-		html.append("<span class=\"sr-only\"></span>");
-		html.append("<span class=\"icon-bar\"></span>");
-		html.append("<span class=\"icon-bar\"></span>");
-		html.append("<span class=\"icon-bar\"></span>");
-		html.append("</button>");
+//		html.append("<button type=\"button\" class=\"navbar-toggle collapsed\" data-toggle=\"collapse\" data-target=\"#bs-example-navbar-collapse-1\" aria-expanded=\"false\">");
+//		html.append("<span class=\"sr-only\"></span>");
+//		html.append("<span class=\"icon-bar\"></span>");
+//		html.append("<span class=\"icon-bar\"></span>");
+//		html.append("<span class=\"icon-bar\"></span>");
+//		html.append("</button>");
 		html.append("<a  class=\"navbar-brand\"  onclick=\"common.callReturnBack();\" ><span class=\"glyphicon glyphicon-chevron-left\" aria-hidden=\"true\"></span>返回</a>");
 		html.append("<h4 class=\"header-title\">电子回执</h4>");
 		html.append(" </div>");

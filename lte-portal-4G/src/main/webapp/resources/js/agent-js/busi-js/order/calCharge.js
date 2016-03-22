@@ -457,8 +457,10 @@ order.calcharge = (function(){
 	    }
 		else{
 			cash = obj;
+			if(cash=='') cash = "0";
 			$("#realhidden_"+val).val(cash);
 		}
+		
 		if(cash==''){
 			$(obj).val('0');
 			order.calcharge.reflashTotal();
@@ -1081,7 +1083,7 @@ order.calcharge = (function(){
 	};
 	var _showEditPage = function(accessNumber,trid,realAmount){	
 		var params = {"trid":trid} ;
-		var url = contextPath+"/app/order/getEditPage";
+		var url = contextPath+"/agent/order/getEditPage";
 		$.callServiceAsHtmlGet(url,params, {
 			"before":function(){
 				$.ecOverlay("<strong>正在加载中,请稍等...</strong>");
@@ -1095,9 +1097,8 @@ order.calcharge = (function(){
 				$("#cal_main_content").hide();
 				$("#edit_content").show();
 				$("#pnumber").text(accessNumber);
-				
 				var html = "<select class='selectpicker show-tick form-control'>";
-				html =html+"<option>"+$("#payMethodText_"+trid).html()+"</option></select>";
+				html =html+"<option value='100000'>现金</option></select>";
 				$("#payMethodDiv").html(html);
 				$("#editBtnDiv").html($("#editBtn_"+trid).html());
 //				$("#realAmountDiv").html($("#realAmountText_"+trid).html());

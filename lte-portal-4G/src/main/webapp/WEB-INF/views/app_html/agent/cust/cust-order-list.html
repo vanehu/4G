@@ -25,7 +25,7 @@
 			  			<#else>
 			  			<#assign substyletype="tree_center">
 			</#if>
-            <tr data-toggle="collapse" data-parent="phoneNumListtbody" href="#collapse-${parm_row}">
+            <tr>
                 <td prodBigClass="${item.prodBigClass}" areaId="${item.areaId}" accNbr="${item.accNbr}" productName="${item.productName}" prodStateName="${item.prodStateName}" feeType="${item.feeType.feeType}" feeTypeName="${item.feeType.feeTypeName}" 
 			    prodInstId="${item.prodInstId}" extProdInstId="${item.extProdInstId}" corProdInstId="${item.corProdInstId}" prodStateCd="${item.prodStateCd}" productId="${item.productId}" prodClass="${item.prodClass}" stopRecordCd="${item.stopRecordCd}" stopRecordName="${item.stopRecordName}" zoneNumber="${item.zoneNumber}" ifLteNewInstall="${item.ifLteNewInstall}">
                 	<h4><small>${item.roleName}</small><br>${item.accNbr}</h4>
@@ -33,9 +33,9 @@
                 <td>${item.prodStateName}${item.stopRecordName}</td>
                 <td>
                 	<#if item.prodOfferName!="">
-                		<button type="button" class="btn btn-info choose-flag" onClick="order.prodModify.getChooseProdInfo(this, '');">选择</button>
+                		<button type="button" data-toggle="collapse" data-parent="phoneNumListtbody" href="#collapse-${parm_row}" class="btn btn-info choose-flag" onClick="order.prodModify.getChooseProdInfo(this, '');cust.queryCardType(${item.prodInstId}, ${item.areaId}, ${item.accNbr});">选择</button>
                 	<#else>
-                		<button type="button" class="btn btn-info">更多</button>
+                		<button type="button" data-toggle="collapse" data-parent="phoneNumListtbody" href="#collapse-${parm_row}" class="btn btn-info" onclick = "cust.queryCardType(${item.prodInstId}, ${item.areaId}, ${item.accNbr});">更多</button>
                 	</#if>
                 </td>
                 <td style="display:none;">${item.prodInstId}</td>
@@ -75,6 +75,10 @@
 	                        <tr>
 	                        	<td>付费类型</td>
 	                            <td>${item.feeType.feeTypeName}</td>
+	                        </tr>
+	                        <tr>
+	                        	<td>卡类型</td>
+	                        	<td name="pord_uim_type_query"  prodInstId="${item.prodInstId}"></td>
 	                        </tr>
 	                    </tbody>
 	                </table>

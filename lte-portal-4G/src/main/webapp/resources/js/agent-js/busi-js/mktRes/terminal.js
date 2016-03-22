@@ -14,7 +14,10 @@ mktRes.terminal = (function($){
 	var hy_flag;
 	var cardIndex = -2;//标记副卡序号
 	var maxCard = 0;
-	var hytcmc = "";
+	var hytcmc = "";//合约名称
+	var hytcid = "";//合约id
+	var isSelect = "N";//是否已经选择合约依赖
+	var isSelectPhoneNum = "N";//是否已经加载过选号
 	/**
 	 * 校验是否可以进入下一步
 	 */
@@ -250,6 +253,12 @@ mktRes.terminal = (function($){
 		var pnCharacterId="";
 		var Greater = $("#Greater").val();
 		var Less  = $("#Less").val();
+		//第一次搜索号码时默认搜索预存话费0元的号码
+		if(isSelectPhoneNum == "N"){
+			Greater = "0";
+			Less  = "0";
+			isSelectPhoneNum = "Y";
+		}
 //		var preStore$=$("#preStore").find("a.selected");
 //		if(preStore$.length>0){
 //			Greater= preStore$.attr("Greater");
@@ -407,23 +416,85 @@ mktRes.terminal = (function($){
 	var _hyClick=function(obj){
 		if(buyChk.buyType == 'hy'){
 			return true;
+		}else{
+		$.confirm("信息确认","您确定要取消裸机订购吗？",{ 
+			yesdo:function(){
+				_initBuyChk();
+				buyChk.buyType = 'hy';
+				_chkState();
+				$("#buyTypeBtns .btn-default").removeClass("active");
+				$(obj).addClass("active");
+				var buytype = $("input[name='buytype']:checked").val();
+					if (buytype == "2") {
+						$(".displaydiv").hide();
+						$(".hidediv").show();
+					} else {
+						$(".displaydiv").show();
+						$(".hidediv").hide();
+					}
+			},
+			no:function(){
+				$("#goulj").addClass("active");
+				$(obj).removeClass("active");
+			}
+		});
 		}
-		_initBuyChk();
-		buyChk.buyType = 'hy';
-		_chkState();
-		$("#buyTypeBtns .btn-default").removeClass("active");
-		$(obj).addClass("active");
 	};
 	var _ljClick=function(obj){
 		if(buyChk.buyType == 'lj'){
 			return true;
+		}else{
+		$.confirm("信息确认","您确定要取消合约机订购吗？",{ 
+			yesdo:function(){
+				$("#nbr_btn_-1").val("");
+				_initBuyChk();
+				buyChk.buyType = 'lj';
+				_chkState();
+				$("#buyTypeBtns .btn-default").removeClass("active");
+				$(obj).addClass("active");
+				var boProdAns = OrderInfo.boProdAns;
+				var boProd2Tds = OrderInfo.boProd2Tds;
+				//取消订单时，释放被预占的UIM卡
+				if(boProd2Tds.length>0){
+					for(var n=0;n<boProd2Tds.length;n++){
+							var param = {
+								numType : 2,
+								numValue : boProd2Tds[n].terminalCode
+							};
+							$.callServiceAsJson(contextPath+"/agent/mktRes/phonenumber/releaseErrorNum", param, {
+								"done" : function(){}
+							});
+							OrderInfo.boProd2Tds.splice(n,1);//清楚JS中某个UIM预占缓存
+					}
+				}
+				//释放预占的号码
+				if(boProdAns.length>0){
+					for(var n=0;n<boProdAns.length;n++){
+							var param = {
+								numType : 1,
+								numValue : boProdAns[n].accessNumber
+							};
+							$.callServiceAsJson(contextPath+"/agent/mktRes/phonenumber/releaseErrorNum", param, {
+								"done" : function(){}
+							});
+							OrderInfo.boProdAns.splice(n,1);//清楚JS中某个号码预占缓存
+					}
+				}
+				var buytype = $("input[name='buytype']:checked").val();
+					if (buytype == "2") {
+						$(".displaydiv").hide();
+						$(".hidediv").show();
+					} else {
+						$(".displaydiv").show();
+						$(".hidediv").hide();
+					}
+			},
+			no:function(){
+				$("#gouhyj").addClass("active");
+				$(obj).removeClass("active");
+			}
+		});
 		}
-		$("#nbr_btn_-1").val("");
-		_initBuyChk();
-		buyChk.buyType = 'lj';
-		_chkState();
-		$("#buyTypeBtns .btn-default").removeClass("active");
-		$(obj).addClass("active");
 	};
 	
 	var _newCClick=function(obj){
@@ -439,6 +510,8 @@ mktRes.terminal = (function($){
 	 * 选择立即订购终端
 	 */
 	var _selectTerminal=function(obj){
+		isSelectPhoneNum = "N";//初始化是否已经加载过选号页面
+		isSelect = "N";
 		maxCard = 0;
 		cardIndex = -2;
 		var param = {
@@ -659,6 +732,8 @@ mktRes.terminal = (function($){
 		}
 		$(obj).addClass("selectHy");
 		_queryOffer(offerSpecId,agreementType);
+		hytcid = offerSpecId;
+		hytcmc = $(obj).attr("offerSpecName");
 	};
 	/**
 	 * 切换话补或者机补比例
@@ -1626,43 +1701,63 @@ mktRes.terminal = (function($){
 					_initPage(subnum,subPage);
 				};
 	var _initPage=function(subnum,subPage){
-		var url=contextPath+"/agent/mktRes/phonenumber/prepare";
-		var param={"subnum":subnum};
-		$.callServiceAsHtmlGet(url,param,{
-			"before":function(){
-				$.ecOverlay("<strong>正在查询中,请稍等会儿....</strong>");
-			},
-			"always":function(){
-				$.unecOverlay();
-			},
-			"done" : function(response){
-				if(!response){
-					 response.data='选号页面加载异常,稍后重试';
-				}
-				if(response.code != 0) {
-					$.alert("提示","查询失败,稍后重试");
-					return;
-				}
-				$("#order").hide();
-				$("#order_prepare").hide();
-				if(OrderInfo.actionFlag==1){
-					if($("#order-content").length>0){
-					$("#order-content").hide();
-				}
-				}
-				if($("#zjfk_"+subnum).length>0){
-					$("#zjfk_"+subnum).hide();
-				}
-				var content$=$("#phonenumberContent");
-				content$.html(response.data).show();
-				$("#subnum").val(subnum);
-				$("#subPage").val(subPage);
-				//$("#div_content").append(response.data);
-				//$("#number_modal").modal("show");
-				order.phoneNumber.boProdAn = {accessNumber : "",level : "",anId : "",anTypeCd : ""};
-				_initPhonenumber(subPage,null,subnum);
+		//如果已经打开过选号页面，就不用重新加载选号页面，直接用原条件搜索号码
+		if(isSelectPhoneNum == "Y" && $("#number-list").length>0){
+			$("#order").hide();
+			$("#order_prepare").hide();
+			if(OrderInfo.actionFlag==1){
+				if($("#order-content").length>0){
+				$("#order-content").hide();
 			}
-		});	
+			}
+			if($("#zjfk_"+subnum).length>0){
+				$("#zjfk_"+subnum).hide();
+			}
+			$("#phonenumberContent").show();
+			$("#number-list").empty();
+			var param={"subnum":subnum};
+			_btnQueryPhoneNumber(param,null,subnum);
+		}
+		else{
+			isSelectPhoneNum = "N";
+			var url=contextPath+"/agent/mktRes/phonenumber/prepare";
+			var param={"subnum":subnum};
+			$.callServiceAsHtmlGet(url,param,{
+				"before":function(){
+					$.ecOverlay("<strong>正在查询中,请稍等会儿....</strong>");
+				},
+				"always":function(){
+					$.unecOverlay();
+				},
+				"done" : function(response){
+					if(!response){
+						 response.data='选号页面加载异常,稍后重试';
+					}
+					if(response.code != 0) {
+						$.alert("提示","查询失败,稍后重试");
+						return;
+					}
+					$("#order").hide();
+					$("#order_prepare").hide();
+					if(OrderInfo.actionFlag==1){
+						if($("#order-content").length>0){
+						$("#order-content").hide();
+					}
+					}
+					if($("#zjfk_"+subnum).length>0){
+						$("#zjfk_"+subnum).hide();
+					}
+					var content$=$("#phonenumberContent");
+					content$.html(response.data).show();
+					$("#subnum").val(subnum);
+					$("#subPage").val(subPage);
+					//$("#div_content").append(response.data);
+					//$("#number_modal").modal("show");
+					order.phoneNumber.boProdAn = {accessNumber : "",level : "",anId : "",anTypeCd : ""};
+					_initPhonenumber(subPage,null,subnum);
+				}
+			});	
+		}
 	};
 	
 	var _initPhonenumber=function(subPage,scroller,subnum){
@@ -1707,6 +1802,7 @@ mktRes.terminal = (function($){
 		if($("#pakeage").length>0){
 			$("#pakeage").hide();
 		}
+		OrderInfo.returnFlag="hm";
 		$.callServiceAsHtml(url,param,{
 			"before":function(){
 				$.ecOverlay("<strong>正在查询中,请稍等会儿....</strong>");
@@ -1911,7 +2007,7 @@ mktRes.terminal = (function($){
 						}else if(subPage=='offer'){
 							//$("#nbr_btn_"+subnum).removeClass("selectBoxTwo");
 							//$("#nbr_btn_"+subnum).addClass("selectBoxTwoOn");
-							if(OrderInfo.actionFlag!=1){
+							if(OrderInfo.actionFlag!=1 && subnum==-1){
 								mktRes.terminal.setNumber(phoneNumber, response.data.phoneLevelId);
 							}
 							$("#nbr_btn_"+subnum).val(phoneNumber);
@@ -2021,6 +2117,11 @@ mktRes.terminal = (function($){
 				if($("#tsn").val().length>0){
 					$.alert("提示","<br/>请先校验终端串号。");
 					return;
+				}else{
+					if(isSelect=="N" && OrderInfo.actionFlag==14){
+						AttachOffer.phone_checkOfferExcludeDepend(-1,hytcid,hytcmc);
+						isSelect="Y";
+					}
 				}
 			}
 		if ("lj"==buyChk.buyType) {
@@ -2851,22 +2952,22 @@ mktRes.terminal = (function($){
 					return false;
 				}
 				if(!ec.util.isObj($.trim($("#orderAttrName").val()))){
-					$.alert("提示","经办人姓名为空，经办人姓名、联系人号码、证件号码必须同时为空或不为空，因此无法提交！");
+					$.alert("提示","经办人姓名为空，经办人姓名、经办人号码、证件号码必须同时为空或不为空，因此无法提交！");
 					return false;
 				}
 				if(!ec.util.isObj($.trim($("#orderAttrPhoneNbr").val()))){
-					$.alert("提示","联系人号码为空，经办人姓名、联系人号码、证件号码必须同时为空或不为空，因此无法提交！");
+					$.alert("提示","经办人号码为空，经办人姓名、经办人号码、证件号码必须同时为空或不为空，因此无法提交！");
 					return false;
 				}
 				if($.trim($("#orderIdentidiesTypeCd").val())==1){
 					if(!ec.util.isObj($.trim($("#sfzorderAttrIdCard").val()))){
-						$.alert("提示","证件号码为空，经办人姓名、联系人号码、证件号码必须同时为空或不为空，因此无法提交！");
+						$.alert("提示","证件号码为空，经办人姓名、经办人号码、证件号码必须同时为空或不为空，因此无法提交！");
 						return false;
 					}
 				}
 				if($.trim($("#orderIdentidiesTypeCd").val())!=1){
 					if(!ec.util.isObj($.trim($("#orderAttrIdCard").val()))){
-						$.alert("提示","证件号码为空，经办人姓名、联系人号码、证件号码必须同时为空或不为空，因此无法提交！");
+						$.alert("提示","证件号码为空，经办人姓名、经办人号码、证件号码必须同时为空或不为空，因此无法提交！");
 						return false;
 					}
 				}
@@ -3093,7 +3194,7 @@ mktRes.terminal = (function($){
 					$.alert("提示","页面显示失败,稍后重试");
 					return;
 				}
-//				OrderInfo.returnFlag = "tc";
+				OrderInfo.returnFlag = "tc";
 				$("#terminalMain").hide();
 				var content$=$("#offer-prepare");
 				content$.html(response.data).show();

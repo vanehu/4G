@@ -6,7 +6,7 @@ body {
 }
 #UseSearch {
 	margin-top:8px;
-}
+} 
 
 /* 头部 */
 .navbar-default.navbar-fixed-top {
@@ -336,12 +336,7 @@ table.tablecenter>tbody>tr>td .btn {
 .medialist .media .media-heading span.glyphicon {
 	margin-top:20px;
 }
-.zdys_btn {
-	margin-top:20px;
-}
 .table-head thead tr th {
-	background:#ffaa01;
-	color:#fff;
 	padding-top:2px;
 	padding-bottom:2px;
 	border-bottom:none;
@@ -556,4 +551,10 @@ li.form-group {
 }
 .select-span{
   background-color: white;
+}
+.form-list {
+	margin-top:20px;
+}
+.zdys_btn {
+	white-space:normal;
 }

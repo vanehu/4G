@@ -36,7 +36,7 @@
 	<ul class="list-group" onclick="changeIcon(this, 'ready_offer')">
 		<!-- 已订购促销 -->
 		<a id="ordered_offer" class="list-group-item" href="#ordering_offer_${prodId}" tabindex="-1" data-toggle="tab">
-			已订购促销
+			${param.acctNbr}&nbsp&nbsp&nbsp&nbsp已订购促销
 			<span class="glyphicon glyphicon-chevron-right pull-right" aria-hidden="true"></span>
 		</a>
 	</ul>
@@ -49,7 +49,7 @@
 		</div>
 	</div>
 	<#if labelMap.result?? &&(labelMap.result?size>1)>
-		<ul class="list-group" onclick="changeIcon(this, 'ordered_offer')">
+		<ul class="list-group" onclick="changeIcon(this, 'ordered_offer')" style="display:none;">
 			<!-- 只保留促销 -->
 			<#list labelMap.result as item>
 				<#if item.label == 10001>

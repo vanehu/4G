@@ -146,7 +146,7 @@
 		                  					 		     <#if acctItemTypeId?? && (itemList.acctItemTypeId == acctItemTypeId)  &&  isEditAdjustOperation?? && isEditAdjustOperation!="0">
 														 <#else>
 														 <span id="editBtn_${trid}" style="display:none">
-														 <button type="button" class="btn btn-default" onclick="order.calcharge.changePayMethod('${itemList.acctItemTypeId}','${trid}','${itemList.payMethodCd}',this);">减免费用</button>
+														 <button type="button" class="btn btn-primary btn-lg" onclick="order.calcharge.changePayMethod('${itemList.acctItemTypeId}','${trid}','${itemList.payMethodCd}',this);">减免费用</button>
 		                  					 		        <!--  <a class="charge_add money_upd money_edit_gray" style="background-color:#95B27B;" href="javascript:void(0);"  onclick="order.calcharge.changePayMethod('${itemList.acctItemTypeId}','${trid}','${itemList.payMethodCd}',this);">修改费用</a>-->
 													        <!-- <a class="charge_add money_cut" href="javascript:void(0);"  onclick="order.calcharge.delItems2(this,'${itemList.acctItemTypeId}','${trid}','old');">&nbsp;&nbsp;</a>-->
 													    </span>
@@ -202,7 +202,7 @@
 							   <#if acctItemTypeId?? && (itemList.acctItemTypeId == acctItemTypeId)  &&  isEditAdjustOperation?? && isEditAdjustOperation!="0">
 							   <#else>
 							   <span id="editBtn_${trid}" style="display:none">
-							      <button  type="button" class="btn btn-default" onclick="order.calcharge.changePayMethod('${itemList.acctItemTypeId}','${trid}','${itemList.payMethodCd}',this);">减免费用</button>
+							      <button  type="button" class="btn btn-primary btn-lg" onclick="order.calcharge.changePayMethod('${itemList.acctItemTypeId}','${trid}','${itemList.payMethodCd}',this);">减免费用</button>
 							      <!-- <a class="charge_add money_upd money_edit_gray" style="background-color:#95B27B;" href="javascript:void(0);"  onclick="order.calcharge.changePayMethod('${itemList.acctItemTypeId}','${trid}','${itemList.payMethodCd}',this);">修改费用</a> -->
 							  <!-- <a class="charge_add money_cut" href="javascript:void(0);"  onclick="order.calcharge.delItems2(this,'${itemList.acctItemTypeId}','${trid}','old');">&nbsp;&nbsp;</a> -->
 							    </span>

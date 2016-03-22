@@ -1,7 +1,7 @@
 <div class="tab-content">
-	<ul class="list-group" onclick="changeIcon(this, 'ready_offer')">
+	<ul class="list-group" onclick="changeIcon(this, 'ydgcx')">
 		<!-- 已订购促销 -->
-		<a id="ordered_offer" class="list-group-item" href="#offer_${prodId}" onclick="changeIcon(this, 'ready_offer')" tabindex="-1" data-toggle="tab">
+		<a id="ydgcx" class="list-group-item" href="#offer_${prodId}" onclick="changeIcon(this, 'ydgcx')" tabindex="-1" data-toggle="tab">
 			已选择促销
 			<span class="glyphicon glyphicon-chevron-right pull-right" aria-hidden="true"></span>
 		</a>
@@ -25,9 +25,9 @@
 	    </#if>
 		</div>
 	</div>
-	<ul class="list-group" onclick="changeIcon(this, 'ready_offer')">
+	<ul class="list-group" onclick="changeIcon(this, 'yxzgncp')">
 		<!-- 已订购促销 -->
-		<a id="ordered_offer" class="list-group-item" href="#prod_${prodId}" onclick="changeIcon(this, 'ready_offer')" tabindex="-1" data-toggle="tab">
+		<a id="yxzgncp" class="list-group-item" href="#prod_${prodId}" onclick="changeIcon(this, 'yxzgncp')" tabindex="-1" data-toggle="tab">
 			已选择功能产品
 			<span class="glyphicon glyphicon-chevron-right pull-right" aria-hidden="true"></span>
 		</a>
@@ -82,7 +82,7 @@
       </div>
      -->
 	<#if labelMap.result?? &&(labelMap.result?size>1)>
-		<ul class="list-group" onclick="changeIcon(this, 'ordered_offer')"> 
+		<ul class="list-group" onclick="changeIcon(this, 'ready_offer')"> 
 			<!-- 只保留促销 -->
 			<#list labelMap.result as item>
 				<#if item.label == 10001>
@@ -154,4 +154,19 @@
 		$(obj).find("span").removeClass().addClass("glyphicon glyphicon-chevron-down pull-right");
 		$("#" + id).find("span").removeClass().addClass("glyphicon glyphicon-chevron-right pull-right");
 	}
+	$("#ydgcx").click(function(){
+  		$("#offer_-1").toggle();
+  		$("#prod_-1").hide();
+  		$("#orderno_-1").hide();
+	});
+	$("#yxzgncp").click(function(){
+  		$("#prod_-1").toggle();
+  		$("#offer_-1").hide();
+  		$("#orderno_-1").hide();
+	});
+	$("#ready_offer").click(function(){
+  		$("#orderno_-1").toggle();
+  		$("#prod_-1").hide();
+  		$("#offer_-1").hide();
+	});
 </script>

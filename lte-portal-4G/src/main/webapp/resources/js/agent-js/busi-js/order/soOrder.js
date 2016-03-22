@@ -3,13 +3,13 @@
  * 
  * @author wukf
  */
-CommonUtils.regNamespace("SoOrder");
+CommonUtils.regNamespace("SoOrder"); 
 
 /** 受理订单对象*/
 SoOrder = (function() {  
 	
 	//订单准备
-	var _builder = function() {
+	var _builder = function() { 
 		if(query.offer.loadInst()){  //加载实例到缓存
 			SoOrder.initFillPage();
 			return true;
@@ -200,6 +200,10 @@ SoOrder = (function() {
 			itemSpecId : CONST.BUSI_ORDER_ATTR.THRETOFOUR_ITEM,//3转4标志
 			value : itemValue
 		});
+		custOrderAttrs.push({ //鉴权日志id
+			itemSpecId: "800000048",
+			value: CacheData.getRecordId()
+		});
 		custOrderAttrs.push({ //业务类型
 			itemSpecId : CONST.BUSI_ORDER_ATTR.BUSITYPE_FLAG,
 			value : OrderInfo.busitypeflag
@@ -290,15 +294,15 @@ SoOrder = (function() {
 				}
 			}else if(ec.util.isObj(orderAttrName)||ec.util.isObj(orderAttrIdCard)||ec.util.isObj(orderAttrPhoneNbr)){
 				if(!ec.util.isObj(orderAttrName)){
-					$.alert("提示","经办人姓名为空，经办人姓名、联系人号码、证件号码必须同时为空或不为空，因此无法提交！");
+					$.alert("提示","经办人姓名为空，经办人姓名、经办人号码、证件号码必须同时为空或不为空，因此无法提交！");
 					return false;
 				}
 				if(!ec.util.isObj(orderAttrPhoneNbr)){
-					$.alert("提示","联系人号码为空，经办人姓名、联系人号码、证件号码必须同时为空或不为空，因此无法提交！");
+					$.alert("提示","经办人号码为空，经办人姓名、经办人号码、证件号码必须同时为空或不为空，因此无法提交！");
 					return false;
 				}
 				if(!ec.util.isObj(orderAttrIdCard)){
-					$.alert("提示","证件号码为空，经办人姓名、联系人号码、证件号码必须同时为空或不为空，因此无法提交！");
+					$.alert("提示","证件号码为空，经办人姓名、经办人号码、证件号码必须同时为空或不为空，因此无法提交！");
 					return false;
 				}
 			}

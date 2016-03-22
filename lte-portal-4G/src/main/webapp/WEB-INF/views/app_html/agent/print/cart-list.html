@@ -8,7 +8,7 @@
 					受理订单查询
 				</div>
 				<#if (pageModel.list)?? &&((pageModel.list)?size>0)>
-				<@portal.scrollPagination "cart_list" "both" pageModel.totalPages 60 0 "cart.main.rqscroll">
+				<@portal.scrollPagination "cart_list" "both" pageModel.totalPages 50 0 "cart.main.rqscroll">
 				<table class="table table-striped tablecenter" id="cart-list-table">
 					<thead>
 						<tr>
@@ -27,7 +27,7 @@
 							<td>${cart.partyName}</td>
 							<td>${cart.staffName}</td>
 							<td>${cart.soDate}</td>
-							<td onclick="common.printEQCode('${orderLists.olId}');">补打二维码</td>
+							<td onclick="common.printEQCode('${orderLists.olId}');"><a>补打二维码</a></td>
 							<!-- <td><span class="glyphicon glyphicon-chevron-right"
 								aria-hidden="true"></span>
 							</td> -->

@@ -266,16 +266,16 @@
 			$(document).ready(function() {
 				//$(".displaydiv").show();
 				$(".hidediv").hide();
-				$("input[name='buytype']").change(function() { //判断购机方式隐藏不需要的组件
-					var buytype = $("input[name='buytype']:checked").val();
-					if (buytype == "2") {
-						$(".displaydiv").hide();
-						$(".hidediv").show();
-					} else {
-						$(".displaydiv").show();
-						$(".hidediv").hide();
-					}
-				})
+				//$("input[name='buytype']").change(function() { //判断购机方式隐藏不需要的组件
+				//	var buytype = $("input[name='buytype']:checked").val();
+				//	if (buytype == "2") {
+				//		$(".displaydiv").hide();
+				//		$(".hidediv").show();
+				//	} else {
+				//		$(".displaydiv").show();
+				//		$(".hidediv").hide();
+				//	}
+				//})
 				
 			//初始化经办人客户类型,证件类型
 			cust.jbrvalidatorForm();

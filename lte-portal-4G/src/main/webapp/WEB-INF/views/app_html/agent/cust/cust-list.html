@@ -11,9 +11,10 @@
   </thead>
   <tbody class="panel-group" id="accordion">
     <#list cust.custInfos as custInfo>
-    <tr id="custInfos" class="custInfo_${custInfo_index}" canRealName="${custInfo.canRealName}" custFlag="${custInfo.custFlag}" norTaxPayer="${custInfo.norTaxPayer}" identityName="${custInfo.identityName}" custId="${custInfo.custId}" partyName="${custInfo.partyName}" areaId="${custInfo.areaId}" corCustId="${custInfo.corCustId}" identityCd="${custInfo.identityCd}" addressStr="${custInfo.addressStr}" areaName="${custInfo.areaName}" vipLevel="${custInfo.vipLevel}" vipLevelName="${custInfo.vipLevelName}" segmentId="${custInfo.segmentId}" segmentName="${custInfo.segmentName}" extCustId="${custInfo.extCustId}" <#if query=="prod">onclick="product.query.chooseCust(this)"<#elseif query=="acct">onclick="account.query.chooseCust(this)"</#if> >
+    <tr id="custInfos" class="custInfo_${custInfo_index}" canRealName="${custInfo.canRealName}" custFlag="${custInfo.custFlag}" norTaxPayer="${custInfo.norTaxPayer}" identityName="${custInfo.identityName}" custId="${custInfo.custId}" partyName="${custInfo.partyName}" areaId="${custInfo.areaId}" corCustId="${custInfo.corCustId}" identityCd="${custInfo.identityCd}" addressStr="${custInfo.addressStr}" areaName="${custInfo.areaName}" vipLevel="${custInfo.vipLevel}" vipLevelName="${custInfo.vipLevelName}" segmentId="${custInfo.segmentId}" segmentName="${custInfo.segmentName}" extCustId="${custInfo.extCustId}" accNbr="${custInfo.accNbr}" <#if query=="prod">onclick="product.query.chooseCust(this)"<#elseif query=="acct">onclick="account.query.chooseCust(this)"</#if> >
       <td id="custListTableParName">${custInfo.partyName}</td>
       <td>${custInfo.filterIdCardNumber}</td>
+      <td id="custAccNbr">${custInfo.accNbr}</td>
 	  <!-- <td id="areaName">${custInfo.areaName}</td> -->
 	  <td><button type="button" class="btn btn-info">选择</button></td>
 	  <td id="custListTablecustId" style="display:none;">${custInfo.custId}</td>
@@ -36,7 +37,7 @@
 		<tbody class="panel-group">
 			<#list cust.custInfos as custInfo>
 			<tr id="custInfos" class="custInfo_${custInfo_index}" onclick="cust.showCustAuth(this)" canRealName="${custInfo.canRealName}"
-				custFlag="${custInfo.custFlag}" norTaxPayer="${custInfo.norTaxPayer}" identityName="${custInfo.identityName}" custId="${custInfo.custId}" partyName="${custInfo.partyName}" idCardNumber="${custInfo.filterIdCardNumber}" areaId="${custInfo.areaId}" corCustId="${custInfo.corCustId}" identityCd="${custInfo.identityCd}" addressStr="${custInfo.addressStr}" areaName="${custInfo.areaName}" vipLevel="${custInfo.vipLevel}" vipLevelName="${custInfo.vipLevelName}" segmentId="${custInfo.segmentId}" segmentName="${custInfo.segmentName}" extCustId="${custInfo.extCustId}">
+				custFlag="${custInfo.custFlag}" norTaxPayer="${custInfo.norTaxPayer}" identityName="${custInfo.identityName}" custId="${custInfo.custId}" partyName="${custInfo.partyName}" idCardNumber="${custInfo.filterIdCardNumber}" areaId="${custInfo.areaId}" corCustId="${custInfo.corCustId}" identityCd="${custInfo.identityCd}" addressStr="${custInfo.addressStr}" areaName="${custInfo.areaName}" vipLevel="${custInfo.vipLevel}" vipLevelName="${custInfo.vipLevelName}" segmentId="${custInfo.segmentId}" segmentName="${custInfo.segmentName}" extCustId="${custInfo.extCustId}" accNbr="${custInfo.accNbr}"> 
 				<td id="custListTableParName">${custInfo.partyName}</td>
 				<!-- <td>${custInfo.filterIdCardNumber}</td> -->
 				<!-- <td id="areaName">${custInfo.areaName}</td> -->
@@ -67,7 +68,7 @@
 		<tbody class="panel-group">
 			<#list cust.custInfos as custInfo>
 			<tr id="custInfos" class="custInfo_${custInfo_index}" onclick="cust.showCustAuth(this)"  canRealName="${custInfo.canRealName}"
-				custFlag="${custInfo.custFlag}" norTaxPayer="${custInfo.norTaxPayer}" identityName="${custInfo.identityName}" custId="${custInfo.custId}" partyName="${custInfo.partyName}" idCardNumber="${custInfo.filterIdCardNumber}" areaId="${custInfo.areaId}" corCustId="${custInfo.corCustId}" identityCd="${custInfo.identityCd}" addressStr="${custInfo.addressStr}" areaName="${custInfo.areaName}" vipLevel="${custInfo.vipLevel}" vipLevelName="${custInfo.vipLevelName}" segmentId="${custInfo.segmentId}" segmentName="${custInfo.segmentName}" extCustId="${custInfo.extCustId}">
+				custFlag="${custInfo.custFlag}" norTaxPayer="${custInfo.norTaxPayer}" identityName="${custInfo.identityName}" custId="${custInfo.custId}" partyName="${custInfo.partyName}" idCardNumber="${custInfo.filterIdCardNumber}" areaId="${custInfo.areaId}" corCustId="${custInfo.corCustId}" identityCd="${custInfo.identityCd}" addressStr="${custInfo.addressStr}" areaName="${custInfo.areaName}" vipLevel="${custInfo.vipLevel}" vipLevelName="${custInfo.vipLevelName}" segmentId="${custInfo.segmentId}" segmentName="${custInfo.segmentName}" extCustId="${custInfo.extCustId}" accNbr="${custInfo.accNbr}" >
 				<td id="custListTableParName">${custInfo.partyName}</td>
 				<td>${custInfo.filterIdCardNumber}</td>
 				<!-- <td id="areaName">${custInfo.areaName}</td> -->
@@ -86,10 +87,11 @@
 	var jumpAuthflag=${jumpAuthflag};
 	var custInfoSize=${custInfoSize};
 	cust.jumpAuthflag=jumpAuthflag;
-	if(custInfoSize>1 && (OrderInfo.actionFlag==1 || OrderInfo.actionFlag==13 || OrderInfo.actionFlag==14)){//新装老客户定位默认使用第一个
-		cust.authType = '${cust.custInfos[0].authType}';
-		$(".custInfo_0").click();
-	}else if(custInfoSize==1){
+	//if(custInfoSize>1 && (OrderInfo.actionFlag==1 || OrderInfo.actionFlag==13 || OrderInfo.actionFlag==14)){//新装老客户定位默认使用第一个
+	//	cust.authType = '${cust.custInfos[0].authType}';
+	//	$(".custInfo_0").click();
+	//}else 
+	if(custInfoSize==1){
 		cust.authType = '${cust.custInfos[0].authType}';
 		$("#custInfos").click();
 	}

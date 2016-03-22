@@ -758,6 +758,15 @@ AttachOffer = (function() {
 		}*/
 	};
 	
+	//购合约机选合约校验依赖
+	var _phone_checkOfferExcludeDepend = function(prodId,offerSpecId,offerSpecName){
+		var param = CacheData.getExcDepOfferParam(prodId,offerSpecId);
+		var data = query.offer.queryExcludeDepend(param);//查询规则校验
+		if(data!=undefined){
+			paserOfferData(data.result,prodId,offerSpecId,offerSpecName); //解析数据
+		}
+	};
+	
 	//校验服务的互斥依赖
 	var _checkServExcludeDepend = function(prodId,serv,flag){
 		var servSpecId = serv.servSpecId;
@@ -1402,6 +1411,10 @@ AttachOffer = (function() {
 				}
 			}
 			$("#open_ul_"+prodId).append($li);
+			if($("#ydgcx").length>0){
+				$("#ydgcx").css("color","#FF9900");
+				$("#ydgcx").css("font-weight","bold");
+			}
 			newSpec.isdel = "N";
 		}else if((newSpec.isdel=="Y")) { 
 			var $span = $("#li_"+prodId+"_"+offerSpecId).find("span");
@@ -1427,6 +1440,10 @@ AttachOffer = (function() {
 				}
 			}
 			$("#open_ul_"+prodId).append($li);
+			if($("#ydgcx").length>0){
+				$("#ydgcx").css("color","#FF9900");
+				$("#ydgcx").css("font-weight","bold");
+			}
 		}
 		
 		//获取销售品节点校验销售品下功能产品的互斥依赖
@@ -1509,7 +1526,7 @@ AttachOffer = (function() {
 						$ulGroups.append($liGroups);
 						for(var k=1;k<=minNum;k++){
 							var $liTerminal=$('<li class="form-group" style="list-style-type:none;"><label for="exampleInputPassword1">终端校验<span class="text-warning">*</span></label><div class="input-group"><input id="terminalText_'+objInstId+'_'+k+'" type="text" class="form-control" maxlength="50" placeholder="请先输入终端串号" />'
-									+'<span class="input-group-btn"><button id="terminalBtn_'+objInstId+'_'+k+'" type="button" num="'+k+'" flag="'+isFastOffer+'" prodId="'+prodId+'" offerSpecId="'+newSpec.offerSpecId+'" onclick="AttachOffer.checkTerminalCode(this)" class="btn btn-default">校验</button></span></div></li>');
+									+'<span class="input-group-btn"><button id="terminalBtn_'+objInstId+'_'+k+'" type="button" num="'+k+'" flag="'+isFastOffer+'" prodId="'+prodId+'" offerSpecId="'+newSpec.offerSpecId+'" onclick="AttachOffer.checkTerminalCode(this)" class="btn btn-info">校验</button></span></div></li>');
 							var	$li4 = $('<li id="terminalDesc_'+k+'" style="display:none;list-style-type:none;" ><label></label><label id="terminalName_'+k+'"></label></li>');
 							
 							$ulGroups.append($liTerminal).append($li4);
@@ -1616,7 +1633,7 @@ AttachOffer = (function() {
 		var param = {
 			instCode : instCode,
 			flag : flag,
-			mktResId : resId,
+		//	mktResId : resId,
 			offerSpecId: offerSpecId
 			//termGroup : terminalGroupId  update by huangjj #13336需求资源要求这个参数不传
 		};
@@ -3336,6 +3353,7 @@ AttachOffer = (function() {
 	};
 	//
 	return {
+		phone_checkOfferExcludeDepend : _phone_checkOfferExcludeDepend,
 		addOffer 				: _addOffer,
 		addOfferSpec 			: _addOfferSpec,
 		addOpenList				: _addOpenList,

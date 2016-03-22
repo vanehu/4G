@@ -99,7 +99,7 @@ order.main = (function(){
 		
 		//_initTounch();
 		//_initOfferLabel();//初始化主副卡标签
-		//_initFeeType(param);//初始化付费方式
+//		_initFeeType(param);//初始化付费方式
 //		if(param.actionFlag==''){
 //			OrderInfo.actionFlag = 1;
 //		}
@@ -506,7 +506,7 @@ order.main = (function(){
 	
 	
 	function _spec_parm(param){
-		$.callServiceAsHtmlGet(contextPath + "/app/order/orderSpecParam",param, {
+		$.callServiceAsHtmlGet(contextPath + "/agent/order/orderSpecParam",param, {
 			"done" : function(response){
 				if(response && response.code == -2){
 					return ;

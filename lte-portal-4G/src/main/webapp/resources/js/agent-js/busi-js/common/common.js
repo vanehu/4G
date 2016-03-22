@@ -208,23 +208,62 @@ common = (function($) {
 			order.phoneNumber.back(); 
 			return;
 		}
-		if(OrderInfo.returnFlag=="fk" && OrderInfo.actionFlag==1){ //副卡
-			$("#order-memeber").hide();
-			$("#order-content").show();
-			OrderInfo.returnFlag="";
-			return;
+		if(OrderInfo.returnFlag=="fk"){ //副卡
+			if(OrderInfo.actionFlag==14 && OrderInfo.order.step<3){
+				$("#order-memeber").hide();
+				$("#phonenumberContent").hide();
+				$("#offer-prepare").hide();
+				$("#order").show();
+				$("#terminalMain").show();
+				OrderInfo.returnFlag="";
+				return;
+			}
+			if(OrderInfo.actionFlag==1){
+				$("#order-memeber").hide();
+				$("#phonenumberContent").hide();
+				$("#offer-prepare").hide();
+				$("#order-content").show();
+				OrderInfo.returnFlag="";
+				return;
+			}
 		}
-		if(OrderInfo.returnFlag=="tc" && OrderInfo.actionFlag==1){ // 套餐 
-			$("#offer-prepare").hide();
-			$("#order-content").show();
-			OrderInfo.returnFlag="";
-			return;
+		if(OrderInfo.returnFlag=="tc"){ // 套餐 
+			if(OrderInfo.actionFlag==14 && OrderInfo.order.step<3){
+				$("#order-memeber").hide();
+				$("#phonenumberContent").hide();
+				$("#offer-prepare").hide();
+				$("#order").show();
+				$("#terminalMain").show();
+				OrderInfo.returnFlag="";
+				return;
+			}
+			if(OrderInfo.actionFlag==1){
+				$("#order-memeber").hide();
+				$("#phonenumberContent").hide();
+				$("#offer-prepare").hide();
+				$("#order-content").show();
+				OrderInfo.returnFlag="";
+				return;
+			}
 		}
-		if(OrderInfo.returnFlag=="hm" && OrderInfo.actionFlag==1){//号码
-			$("#phonenumberContent").hide();
-			$("#order-content").show();
-			OrderInfo.returnFlag="";
-			return;
+		if(OrderInfo.returnFlag=="hm"){//号码
+			if(OrderInfo.actionFlag==14 && OrderInfo.order.step<3){
+				$("#order-memeber").hide();
+				$("#phonenumberContent").hide();
+				$("#offer-prepare").hide();
+				$("#order").show();
+				$("#terminalMain").show();
+				OrderInfo.returnFlag="";
+				return;
+			}
+			if(OrderInfo.actionFlag==1){
+				$("#order-memeber").hide();
+				$("#phonenumberContent").hide();
+				$("#offer-prepare").hide();
+				$("#order-content").show();
+				OrderInfo.returnFlag="";
+				return;
+			}
 		}
 		if(OrderInfo.order.step==1){
 			//补换卡返回释放uim卡
