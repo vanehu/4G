@@ -645,11 +645,11 @@ public class OrderController extends BaseController {
 
 			return super.failedStr(model, ie, dataBusMap, ErrorCode.ORDER_PROD_ITEM);
 		} catch (Exception e) {
-			log.error("加载产品规格属性/app/order/orderSpecParam方法异常", e);
+			log.error("加载产品规格属性/agent/order/orderSpecParam方法异常", e);
 			return super.failedStr(model, ErrorCode.ORDER_PROD_ITEM, e, dataBusMap);
 		}
-    	return "/app/order/order-spec-param";
-    }
+    	return "/agent/order/order-spec-param";
+    } 
 
     /*bxw产品实例属性*/
     @RequestMapping(value = "/orderSpecParamChange", method = RequestMethod.GET)
@@ -936,7 +936,7 @@ public class OrderController extends BaseController {
 			return super.failedStr(model, ie, prams, ErrorCode.QUERY_MAIN_OFFER);
 		} catch (Exception e) {
 			return super.failedStr(model, ErrorCode.QUERY_MAIN_OFFER, e, prams);
-		}
+		} 
         return "/agent/order/offer-list";
     }
     
@@ -1577,7 +1577,7 @@ public class OrderController extends BaseController {
      public String getEditPage(@RequestParam Map<String, Object> param, Model model,
  			@LogOperatorAnn String flowNum,HttpServletResponse response){
     	 model.addAttribute("trid", param.get("trid"));
-		return "/app/order/order-cal-edit-item";
+		return "/agent/order/order-cal-edit-item";
      }
      /**
       * 帐户资料查询（新装与改帐务定制关系时查询已有帐户）

@@ -1,7 +1,7 @@
-<div class="form-group" id="uimDiv_${prodId}" style="display: none;">
+<div class="form-group" id="uimDiv_${prodId}" style="display: none;"> 
 	<label for="exampleInputFile">UIM卡号<span class="text-warning">*</span>&nbsp;&nbsp;&nbsp;&nbsp;<span id="tip_${prodId}" class="text-warning"></span></label>
 	<div class="input-group">
-      <input type="tel" class="form-control" id="uim_txt_${prodId}">
+      <input type="tel" class="form-control" id="uim_txt_${prodId}" onkeyup="this.value=this.value.replace(/\D/gi,'')">
       <div class="input-group-btn">
         <button type="button" class="btn btn-primary dropdown-toggle" style="border: 0;" id= "uim_check_btn_${prodId}" onclick="prod.uim.checkUim(${prodId});"><span style="float:left;">校验</span></button>
         <button type="button" class="btn btn-primary dropdown-toggle" style="border: 0;" data-toggle="dropdown" aria-expanded="false"> <span class="caret"></span></button>

@@ -734,6 +734,8 @@ order.calcharge = (function(){
 		var response=$.callServiceAsJson(url, params, {});
 		var msg="";
 		if (response.code == 0) {
+			//受理成功  受理完成按钮亮色
+			$("#slwc").css("color","#FC9C08");
 			submit_success=true;
 			//受理成功，不再取消订单
 //			SoOrder.delOrderFin();

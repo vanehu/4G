@@ -1,7 +1,7 @@
 <#if (prodSpecParams)?? &&((prodSpecParams)?size>0)>
-<#list prodSpecParams as prodSpec>
+<#list prodSpecParams as prodSpec> 
 <#assign rule=prodSpec.rule />
-<div class="form-group">
+<div class="form-group" style="display:none;">
 	<label for="exampleInputEmail1">${prodSpec.name}</label>
 	<#if prodSpec.itemSpecId=="800000011" > 
 	<div class="input-group">

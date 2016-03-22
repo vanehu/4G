@@ -4,7 +4,7 @@
  * @author wukf
  * date 2014-01-15
  */
-CommonUtils.regNamespace("CacheData");
+CommonUtils.regNamespace("CacheData"); 
 
 /** 缓存数据对象*/
 CacheData = (function() {

@@ -41,7 +41,7 @@
 		    </#if>
 		    <#list item.subList as subItem>
 	            <a href="#" class="list-group-item" id="select_offerSpecId_${item_index}" title="${subItem.offerSpecId}" offerSpecName="${subItem.offerSpecName}" onclick="mktRes.terminal.changeHyContent(this,'${agreementType}');">
-	            <h5 class="list-group-item-heading">${subItem.offerSpecName}<span class="glyphicon glyphicon-chevron-right pull-right" aria-hidden="true"></span></h5>
+	            <h5 class="list-group-item-heading">${subItem.offerSpecName}</h5>
 	            <div class="row"> <small class="col-xs-6"></small> <small class="col-xs-6"></small></div>
 	          	</a>
             </#list>

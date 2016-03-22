@@ -652,7 +652,12 @@ mktRes.terminal = (function($){
 	_changeHyContent=function(obj,agreementType){
 		var offerSpecId=$(obj).attr("title");
 		$(".success").removeClass("success");
+		//购合约机 选中的合约亮色
 		$(obj).addClass("success");
+		if($(".selectHy").length>0){
+			$(".selectHy").removeClass("selectHy");
+		}
+		$(obj).addClass("selectHy");
 		_queryOffer(offerSpecId,agreementType);
 	};
 	/**

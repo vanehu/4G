@@ -1,6 +1,6 @@
 
-				<form>
-				<div id="item_order_1">
+				<form> 
+				<div id="item_order_-1">
 					<div class="form-group">
 						<label for="exampleInputEmail1">付费方式</label>
 						<#assign feeType_read = "0">
@@ -45,7 +45,7 @@
 		                      </span>
 		                </div>
 		                --><div class="input-group">
-					      <input type="tel" class="form-control" id="uim_txt_-1">
+					      <input type="tel" class="form-control" id="uim_txt_-1" onkeyup="this.value=this.value.replace(/\D/gi,'')">
 					      <div class="input-group-btn">
 					        <button type="button" class="btn btn-primary dropdown-toggle" id= "uim_check_btn_-1" onclick="prod.uim.checkUimPhone(-1);"><span style="float:left;">校验</span></button>
 					        <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><span class="caret"></span></button>

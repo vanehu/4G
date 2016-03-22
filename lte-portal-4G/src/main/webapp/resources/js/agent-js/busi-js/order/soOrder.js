@@ -2319,7 +2319,7 @@ SoOrder = (function() {
 				return false ; 
 			}
 			if(OrderInfo.boProd2Tds.length==0){
-				$.alert("提示","UIM卡不能为空！");
+				$.alert("提示","请填写并校验UIM卡！");
 				return false ; 
 			}
 		}

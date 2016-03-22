@@ -1,5 +1,5 @@
 
-CommonUtils.regNamespace("order", "main");
+CommonUtils.regNamespace("order", "main"); 
 
 order.main = (function(){ 
 	var _fkcardIndex = -2;//标记副卡序号
