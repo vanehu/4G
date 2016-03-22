@@ -334,6 +334,10 @@ order.cust = (function(){
 					$("#td_custName").html($("#td_custName").data("custName"));
 					$("#td_custIdCard").html($("#td_custIdCard").data("custIdCard"));
 					$("#td_addressStr").html($("#td_addressStr").data("addressStr"));
+					var identityPic = $("#img_custPhoto").data("identityPic");
+					if (identityPic != undefined) {
+						$("#img_custPhoto").removeData("identityPic");
+					}
 					$("#cCustName").focus();
 				}
 			}
@@ -1330,10 +1334,15 @@ order.cust = (function(){
 			createCustInfo.cCustName = _certInfo.custName;
 			createCustInfo.cCustIdCard = _certInfo.custIdCard;
 			createCustInfo.cAddressStr = _certInfo.addressStr;
+			var identityPic = $("#img_custPhoto").data("identityPic");
+			if (identityPic != undefined) {
+				OrderInfo.boCustIdentities.identidiesPic=identityPic;
+			}
 		} else {
 			createCustInfo.cCustName = $.trim($("#cCustName").val());
 			createCustInfo.cCustIdCard = $.trim($("#cCustIdCard").val());
 			createCustInfo.cAddressStr = $.trim($("#cAddressStr").val());
+			OrderInfo.boCustIdentities.identidiesPic="";
 		}
 		
 	var _boPartyContactInfo = {
@@ -1662,6 +1671,11 @@ order.cust = (function(){
 		_submitCertInfo(man.resultContent);
 		$('#td_custName').text(man.resultContent.partyName);//姓名
 		$('#td_custIdCard').text(man.resultContent.certNumber);//设置身份证号
+		if (man.resultContent.identityPic !== undefined) {
+			$("#img_custPhoto").attr("src", "data:image/jpeg;base64," + man.resultContent.identityPic);
+			$("#img_custPhoto").data("identityPic", man.resultContent.identityPic);
+			$("#tr_custPhoto").show();
+		}
 		$('#td_addressStr').text(man.resultContent.certAddress);//地址
 	};
 	//用户鉴权时读卡

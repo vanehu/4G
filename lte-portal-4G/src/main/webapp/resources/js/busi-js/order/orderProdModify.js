@@ -718,26 +718,28 @@ order.prodModify = (function(){
 				addressStr :modifyCustInfo.addressStr,
 				state : "ADD"
 			}];
-			if(OrderInfo.cust.idCardNumber==""||OrderInfo.cust.idCardNumber==null){
-				data.boCustIdentities = [{
-					identidiesTypeCd :modifyCustInfo.identidiesTypeCd,
-					identityNum : modifyCustInfo.custIdCard,
-					isDefault : "Y",
-					state : "ADD"
-				}];	
-			}else{
-			data.boCustIdentities = [{
-				identidiesTypeCd :OrderInfo.cust.identityCd,
-					identityNum : OrderInfo.cust.idCardNumber,
-					certNum : $("#boCustIdentities").attr("certNum"), // 加密后的证件号
-					isDefault : "Y",
-				state : "DEL"
-			},{
+			var modifyCustIdentity = {
 				identidiesTypeCd :modifyCustInfo.identidiesTypeCd,
 				identityNum : modifyCustInfo.custIdCard,
 				isDefault : "Y",
 				state : "ADD"
-			}];
+			};
+			if ("1" === modifyCustInfo.identidiesTypeCd) {
+				var identityPic = $("#img_custModifyPhoto").data("identityPic");
+				if (identityPic != undefined) {
+					modifyCustIdentity.identidiesPic = identityPic;
+				}
+			}
+			if(OrderInfo.cust.idCardNumber==""||OrderInfo.cust.idCardNumber==null){
+				data.boCustIdentities = [modifyCustIdentity];
+			}else{
+				data.boCustIdentities = [{
+					identidiesTypeCd :OrderInfo.cust.identityCd,
+					identityNum : OrderInfo.cust.idCardNumber,
+					certNum : $("#boCustIdentities").attr("certNum"), // 加密后的证件号
+					isDefault : "Y",
+					state : "DEL"
+				}, modifyCustIdentity];
 			}
 			data.boCustProfiles=[];
 			//客户属性信息
@@ -869,15 +871,25 @@ order.prodModify = (function(){
 		if(identidiesTypeCd==1){
 			$("#cmCustIdCard").attr("placeHolder","请输入合法身份证号码");
 			$("#cmCustIdCard").attr("data-validate","validate(idCardCheck18:请输入合法身份证号码) on(blur)");
-		}else if(identidiesTypeCd==2){
-			$("#cmCustIdCard").attr("placeHolder","请输入合法军官证");
-			$("#cmCustIdCard").attr("data-validate","validate(required:请准确填写军官证) on(blur)");
-		}else if(identidiesTypeCd==3){
-			$("#cmCustIdCard").attr("placeHolder","请输入合法护照");
-			$("#cmCustIdCard").attr("data-validate","validate(required:请准确填写护照) on(blur)");
-		}else{
-			$("#cmCustIdCard").attr("placeHolder","请输入合法证件号码");
-			$("#cmCustIdCard").attr("data-validate","validate(required:请准确填写证件号码) on(blur)");
+		}else {
+			var $custPhoto = $("#tr_custModifyPhoto");
+			if ("none" != $custPhoto.css("display")) {
+				$custPhoto.hide();
+				var identityPic = $("#img_custModifyPhoto").data("identityPic");
+				if (identityPic != undefined) {
+					$("#img_custModifyPhoto").removeData("identityPic");
+				}
+			}
+			if(identidiesTypeCd==2){
+				$("#cmCustIdCard").attr("placeHolder","请输入合法军官证");
+				$("#cmCustIdCard").attr("data-validate","validate(required:请准确填写军官证) on(blur)");
+			}else if(identidiesTypeCd==3){
+				$("#cmCustIdCard").attr("placeHolder","请输入合法护照");
+				$("#cmCustIdCard").attr("data-validate","validate(required:请准确填写护照) on(blur)");
+			}else{
+				$("#cmCustIdCard").attr("placeHolder","请输入合法证件号码");
+				$("#cmCustIdCard").attr("data-validate","validate(required:请准确填写证件号码) on(blur)");
+			}
 		}
 		_form_custInfomodify_btn();
 		
@@ -3363,6 +3375,7 @@ order.prodModify = (function(){
 						OrderInfo.orderItemCd =objList.data[i].orderItemCd;
 						OrderInfo.buyBack_orderItemObjId = objList.data[i].orderItemObjId;
 						OrderInfo.buyBack_orderItemObjInstId = objList.data[i].orderItemObjInstId;
+						OrderInfo.orderResult.oldOlNbr = objList.data[i].olNbr;
 						break;
 					}
 				}
@@ -3377,6 +3390,7 @@ order.prodModify = (function(){
 						    OrderInfo.orderItemCd =objList.data[i].orderItemCd;
 						    OrderInfo.buyBack_orderItemObjId = objList.data[i].orderItemObjId;
 						    OrderInfo.buyBack_orderItemObjInstId = objList.data[i].orderItemObjInstId;
+						    OrderInfo.orderResult.oldOlNbr = objList.data[i].olNbr;
 						    break;
 					    }else if(objList.data[i].boActionTypeCd == CONST.BO_ACTION_TYPE.CHANGE_CARD){
 						    boActionTypeCd = CONST.BO_ACTION_TYPE.BUY_BACK_CHANGE_CARD;
@@ -3387,6 +3401,7 @@ order.prodModify = (function(){
 						    OrderInfo.orderItemCd =objList.data[i].orderItemCd;
 						    OrderInfo.buyBack_orderItemObjId = objList.data[i].orderItemObjId;
 						    OrderInfo.buyBack_orderItemObjInstId = objList.data[i].orderItemObjInstId;
+						    OrderInfo.orderResult.oldOlNbr = objList.data[i].olNbr;
 					    }else {
 						    $.alert("提示","当前业务动作类型【"+objList.data[i].boActionTypeCd +"】不能返销！");
 						    return;
@@ -3770,6 +3785,11 @@ order.prodModify = (function(){
 		order.prodModify.identidiesTypeCdChoose($("#cm_identidiesTypeCd option[value='1']"));
 		$('#cmCustName').val(man.resultContent.partyName);//姓名
 		$('#cmCustIdCard').val(man.resultContent.certNumber);//设置身份证号
+		if (man.resultContent.identityPic !== undefined) {
+			$("#img_custModifyPhoto").attr("src", "data:image/jpeg;base64," + man.resultContent.identityPic);
+			$("#img_custModifyPhoto").data("identityPic", man.resultContent.identityPic);
+			$("#tr_custModifyPhoto").show();
+		}
 		$('#cmAddressStr').val(man.resultContent.certAddress);//地址
 	};
 	//二次业务菜单鉴权方式查询
