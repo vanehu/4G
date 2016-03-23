@@ -187,7 +187,51 @@ rule.rule = (function(){
 			prodInfo : order.prodModify.choosedProdInfo	
 		};
 		
-		$.callServiceAsHtml(contextPath+"/app/rule/prepare", inParam, {
+		$.ecOverlay("<strong>客户级规则校验中，请稍等...</strong>");
+		var response = $.callServiceAsJson(contextPath+"/agent/rule/prepare",inParam); //调用规则校验
+		$.unecOverlay();
+		if (!ec.util.isObj(response.data)) {
+			return true;
+		} else {
+			$.alert("规则提示", response.data);
+			return;
+		}
+		/*if(response!=undefined && response.code==0){
+			var checkData = response.data;
+			if(checkData == null){
+				$.alert("提示","规则校验异常，请联系管理人员！");
+				return false;
+			}
+			if(checkData.ruleType == "portal"){  //门户层校验
+				if (checkData.resultCode == "0"){  // 0为门户层校验为通过
+					$.alert("提示",checkData.resultMsg);
+					return false;
+				}
+			}		
+			var checkRuleInfo = checkData.result.resultInfo;  //业务规则校验
+			if(checkRuleInfo!=undefined && checkRuleInfo.length > 0){
+				$.each(checkRuleInfo, function(i, ruleInfo) {
+					$("<tr><td>"+ruleInfo.resultCode+"</td>" +
+							"<td>"+ruleInfo.ruleDesc+"</td>" +
+							"<td>"+_getRuleLevelName(ruleInfo.ruleLevel)+"</td>" +
+							"<td><div style='display:block;margin-left:30px;' class='"+_getRuleImgClass(ruleInfo.ruleLevel)+"'></div></td>" +
+					"</tr>").appendTo($("#ruleBody2"));
+				});
+				//easyDialog.open({
+				//	container : 'ruleDiv'
+				//});
+//				$.alertW("规则提示",$("#ruleDiv2").html(),"error","",800);
+				$.alert("规则提示",JSON.stringify(checkRuleInfo));
+				return false;
+			}else {
+				return true;
+			}
+		}else{
+			$.alertM(response.data);
+			return;
+		}*/
+		
+		/*$.callServiceAsHtml(contextPath+"/app/rule/prepare", inParam, {
 			"before":function(){
 				$.ecOverlay("<strong>客户级规则校验中，请稍等...</strong>");
 			},	
@@ -200,7 +244,7 @@ rule.rule = (function(){
 					}
 			    }, 800);
 			}
-		});
+		});*/
 		
 //		$.ecOverlay("<strong>客户级规则校验中，请稍等...</strong>");
 //		var response = $.callServiceAsHtml(contextPath+"/app/rule/prepare",inParam); //调用规则校验

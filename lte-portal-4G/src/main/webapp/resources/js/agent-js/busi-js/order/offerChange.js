@@ -10,11 +10,27 @@ offerChange = (function() {
 	
 	//初始化套餐变更页面
 	var _init = function (){
+		var prodInfo = order.prodModify.choosedProdInfo;
 		OrderInfo.order.step=1;
 		OrderInfo.busitypeflag=2;
 		OrderInfo.actionFlag = 2;
 		if(!query.offer.setOffer()){ //必须先保存销售品实例构成，加载实例到缓存要使用
 			return ;
+		}
+		//规则校验入参
+		var boInfos = [{
+			boActionTypeCd : CONST.BO_ACTION_TYPE.DEL_OFFER,
+			instId : prodInfo.prodInstId,
+			specId : CONST.PROD_SPEC.CDMA,
+			prodId : prodInfo.prodInstId
+		},{
+			boActionTypeCd : CONST.BO_ACTION_TYPE.BUY_OFFER,
+			instId : prodInfo.prodInstId,
+			specId : CONST.PROD_SPEC.CDMA,
+			prodId : prodInfo.prodInstId
+		}];
+		if(!rule.rule.ruleCheck(boInfos)){ //规则校验失败
+			return;
 		}
 		//获取初始化查询的条件
 		order.service.queryApConfig();
