@@ -1970,7 +1970,7 @@ SoOrder = (function() {
 	};
 	
 	//创建产品节点
-	var _createProd = function(prodId,prodSpecId) {	
+	var _createProd = function(prodId,prodSpecId) {
 		var busiOrder = {
 			areaId : OrderInfo.getProdAreaId(prodId),  //受理地区ID
 			busiOrderInfo : {
@@ -2003,6 +2003,44 @@ SoOrder = (function() {
 				busiOrderAttrs : [] //订单属性节点
 			}
 		};
+		//如果没有校验终端串号就不封装bo2Coupons
+		if(OrderInfo.actionFlag=="13"||OrderInfo.actionFlag=="14"){
+			var tsn = $("#tsn").val();
+			if(!tsn){
+				busiOrder = {
+					areaId : OrderInfo.getProdAreaId(prodId),  //受理地区ID
+					busiOrderInfo : {
+						seq : OrderInfo.SEQ.seq-- 
+					}, 
+					busiObj : { //业务对象节点
+						objId : prodSpecId,  //业务对象ID
+						instId : prodId, //业务对象实例ID
+						isComp : "N"  //是否组合
+						//accessNumber : "" //接入号码
+					},  
+					boActionType : {
+						actionClassCd : CONST.ACTION_CLASS_CD.PROD_ACTION,
+						boActionTypeCd : "1"
+					}, 
+					data:{
+						boProdFeeTypes : [], //付费方式节点
+						boProdSpecs : [{
+							prodSpecId : prodSpecId,
+							state : 'ADD'
+						}], //产品规格节点
+						boCusts : [],  //客户信息节点		
+						boProdItems : [], //产品属性节点
+						boProdPasswords : [], //产品密码节点
+						boProdAns : [], //号码信息节点
+						//boProd2Tds : [], //UIM卡节点信息
+//						bo2Coupons : [],  //物品信息节点
+						boAccountRelas : [], //帐户关联关系节
+						boProdStatuses : [], //产品状态节点
+						busiOrderAttrs : [] //订单属性节点
+					}
+				};
+			}
+		}
 		
 		var prodStatus = CONST.PROD_STATUS_CD.NORMAL_PROD;
 		//封装产品状态节点
@@ -2021,14 +2059,33 @@ SoOrder = (function() {
 			}
 		}
 		
-		//封装UIM卡信息节点
-		var boProd2Tds = OrderInfo.boProd2Tds;
-		for ( var i = 0; i < boProd2Tds.length; i++) {
-			if(boProd2Tds[i].prodId==prodId){
-				busiOrder.data.bo2Coupons.push(boProd2Tds[i]);
-				break;
+		//如果没有校验终端串号就不封装bo2Coupons
+		if(OrderInfo.actionFlag=="13"||OrderInfo.actionFlag=="14"){
+			var tsn = $("#tsn").val();
+			if(!tsn){
+//							$.alert("提示","终端串码为空,请先暂存订单！");
+//							return;
+			}else{
+				//封装UIM卡信息节点
+				var boProd2Tds = OrderInfo.boProd2Tds;
+				for ( var i = 0; i < boProd2Tds.length; i++) {
+					if(boProd2Tds[i].prodId==prodId){
+						busiOrder.data.bo2Coupons.push(boProd2Tds[i]);
+						break;
+					}
+				}
+			}
+		}else{
+			//封装UIM卡信息节点
+			var boProd2Tds = OrderInfo.boProd2Tds;
+			for ( var i = 0; i < boProd2Tds.length; i++) {
+				if(boProd2Tds[i].prodId==prodId){
+					busiOrder.data.bo2Coupons.push(boProd2Tds[i]);
+					break;
+				}
 			}
 		}
+		
 		
 		//封装客户与产品之间的关系信息
 		busiOrder.data.boCusts.push({
@@ -2662,8 +2719,15 @@ SoOrder = (function() {
 	
 	//订单暂存
 	var _saveOrderSubmit = function(){
-		
-		var params = {
+		if(OrderInfo.actionFlag==13){
+			$("#alertMessage").html("裸机销售不可暂存订单！");
+			$("#saveOrderSubmitStatus").val("1");
+			$(this).attr("disabled",true);
+			$("#backIndex").on("click",function(){
+				common.callCloseWebview();
+			});
+		}else{
+			var params = {
 				"areaId":OrderInfo.getAreaId(),
 				"custOrderAttrs":[{
 					"itemSpecId":"111111198",
@@ -2672,26 +2736,28 @@ SoOrder = (function() {
 				"olId":OrderInfo.orderResult.olId
 				};
 		
-		$.callServiceAsJson(contextPath+"/agent/order/saveOrderAttrs",JSON.stringify(params), {
-			"before":function(){
-				//$.ecOverlay("<strong>订单暂存中，请稍等...</strong>");
-			},"always":function(){
-				//$.unecOverlay();
-			},	
-			"done" : function(response){
-				_getToken();
-				if (response.code == 0) {
-					$("#alertMessage").html("订单暂存成功");
-					$("#saveOrderSubmitStatus").val("1");
-					$(this).attr("disabled",true);
-					$("#backIndex").on("click",function(){
-						common.callCloseWebview();
-					});
-				}else{
-					$.alertM(response.data);
+			$.callServiceAsJson(contextPath+"/agent/order/saveOrderAttrs",JSON.stringify(params), {
+				"before":function(){
+					//$.ecOverlay("<strong>订单暂存中，请稍等...</strong>");
+				},"always":function(){
+					//$.unecOverlay();
+				},	
+				"done" : function(response){
+					_getToken();
+					if (response.code == 0) {
+						$("#alertMessage").html("订单暂存成功");
+						$("#saveOrderSubmitStatus").val("1");
+						$(this).attr("disabled",true);
+						$("#backIndex").on("click",function(){
+							common.callCloseWebview();
+						});
+					}else{
+						$.alertM(response.data);
+					}
 				}
-			}
-		});
+			});
+		}
+		
 	}
 	
 	//生成二维码
