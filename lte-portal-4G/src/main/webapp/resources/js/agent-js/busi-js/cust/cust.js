@@ -989,7 +989,9 @@ cust = (function(){
 //			if ("ON" == CacheData.getIntOptSwitch()) {
 //				$("#prodTypeCd").show();
 //			}
-			$("#isAppointNum").parents(".form-group").show();
+			if(OrderInfo.actionFlag != "9"){
+				$("#isAppointNum").parents(".form-group").show();
+			}
 			$("#"+id).attr("placeHolder","请输入接入号码");
 			$("#"+id).attr("data-validate","validate(required:请准确填写接入号码) on(keyup)");
 		}else if (identidiesTypeCd==1){
@@ -1118,7 +1120,10 @@ cust = (function(){
 			}
 			var canRealName = $('#custInfos').parent().children('[selected="selected"]').attr('canrealname');
 			var accessNumber=_choosedCustInfo.accNbr;
-			if(OrderInfo.actionFlag == 2 || OrderInfo.actionFlag == 3 || OrderInfo.actionFlag == 9 || OrderInfo.actionFlag == 22) {
+			if(OrderInfo.actionFlag == "2" && OrderInfo.actionFlag == "22" && -1==$("#identidiesType").val() && !ec.util.isObj(_choosedCustInfo.accNbr)){
+				_choosedCustInfo.accNbr = $.trim($("#userid").val());
+			}
+			if(OrderInfo.actionFlag == "2" || OrderInfo.actionFlag == "3" || OrderInfo.actionFlag == "9" || OrderInfo.actionFlag == "22") {
 				if(!_querySecondBusinessAuth(OrderInfo.actionFlag, "Y")) {
 					if(-1==$("#identidiesType").val()){
 						accessNumber=$.trim($("#userid").val());
@@ -1327,6 +1332,13 @@ cust = (function(){
 			$.ketchup.hideAllErrorContainer($("#custCreateForm"));
 		var content$ = $("#custInfo");
 		content$.html(response.data).show();
+		if("2" == OrderInfo.actionFlag || "22"== OrderInfo.actionFlag ) {
+			if(_choosedCustInfo.accNbr != null && ec.util.isObj(_choosedCustInfo.accNbr) &&(response.data).indexOf("query-cust-prod") != -1) {
+				$("#query-cust-prod").click();
+				$("#query-cust-prod").hide();
+			}
+		}
+		
 		// 改变返回按钮事件
 		$("#query-cust-back-btn").attr("onclick", "cust.custReset()");
 		_queryCustNext();
@@ -1504,11 +1516,19 @@ cust = (function(){
 		// 客户定位指定接入号 已订购只返回该号码信息
 		if($("#identidiesType").val() == -1 && $("#isAppointNum").prop("checked")){
 			param.acctNbr=$.trim($("#userid").val());
+
 			if(CONST.getAppDesc()==0){
 				param.areaId=$("#p_cust_areaId").val();
 			}
 		}else {
-			param.acctNbr="";
+			param.acctNbr = "";
+			if("2" == OrderInfo.actionFlag || "22"== OrderInfo.actionFlag ) {
+				if(_choosedCustInfo.accNbr != null && ec.util.isObj(_choosedCustInfo.accNbr))
+				{
+				    param.acctNbr = _choosedCustInfo.accNbr; 
+				}
+			}
+			
 		}
 //		if(document.getElementById("custPageSize")){
 //			param.pageSize=$.trim($("#custPageSize").val());
@@ -1551,6 +1571,11 @@ cust = (function(){
 				}
 				var content$=$("#orderedprod");
 				content$.html(response.data);
+				if("2" == OrderInfo.actionFlag || "22"== OrderInfo.actionFlag ) {
+					if(_choosedCustInfo.accNbr != null && ec.util.isObj(_choosedCustInfo.accNbr) && (response.data).indexOf("更多") == -1) {
+						$("#custHasprodOfferName").click();
+					}
+				}
 				// 隐藏已订购查询按钮
 				$("#query-cust-prod").hide();
 				// 卡类型查询

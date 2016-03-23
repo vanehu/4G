@@ -33,7 +33,7 @@
                 <td>${item.prodStateName}${item.stopRecordName}</td>
                 <td>
                 	<#if item.prodOfferName!="">
-                		<button type="button" data-toggle="collapse" data-parent="phoneNumListtbody" href="#collapse-${parm_row}" class="btn btn-info choose-flag" onClick="order.prodModify.getChooseProdInfo(this, '');cust.queryCardType(${item.prodInstId}, ${item.areaId}, ${item.accNbr});">选择</button>
+                		<button id = "custHasprodOfferName" type="button" data-toggle="collapse" data-parent="phoneNumListtbody" href="#collapse-${parm_row}" class="btn btn-info choose-flag" onClick="order.prodModify.getChooseProdInfo(this, '');cust.queryCardType(${item.prodInstId}, ${item.areaId}, ${item.accNbr});">选择</button>
                 	<#else>
                 		<button type="button" data-toggle="collapse" data-parent="phoneNumListtbody" href="#collapse-${parm_row}" class="btn btn-info" onclick = "cust.queryCardType(${item.prodInstId}, ${item.areaId}, ${item.accNbr});">更多</button>
                 	</#if>
