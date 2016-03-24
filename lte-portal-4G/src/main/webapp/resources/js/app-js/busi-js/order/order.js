@@ -12,7 +12,7 @@ order.service = (function(){
 		OrderInfo.actionFlag = 1;
 		//获取初始化查询的条件
 		order.service.queryApConfig();
-		//初始化主套餐查询
+		//初始化主套餐查询 
 		order.service.searchPack(_subPage);
 	};
 	

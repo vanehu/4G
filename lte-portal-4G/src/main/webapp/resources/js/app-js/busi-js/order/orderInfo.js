@@ -1127,7 +1127,17 @@ OrderInfo = (function() {
 			};
 			return query.offer.checkOperate(param);
 		}
-	};		
+	};	
+	
+	//是否是群功能产品
+	var _isGroupProSpecId=function(specId){
+		for(var i=0;i<CONST.GROUP_SERV_SPEC_ID.length;i++){
+			if(CONST.GROUP_SERV_SPEC_ID[i]==specId){
+				return true;
+			}
+		}
+		return false;
+	};
 	return {
 		order					: _order,
 		acctId                  : _acctId,
@@ -1192,6 +1202,7 @@ OrderInfo = (function() {
 		busitypeflag			:_busitypeflag,
 		checkresult				:_checkresult,
 		custorderlonger			:_custorderlonger,
-		prodAttrs				:_prodAttrs
+		prodAttrs				:_prodAttrs,
+		isGroupProSpecId        :_isGroupProSpecId
 	};
 })();

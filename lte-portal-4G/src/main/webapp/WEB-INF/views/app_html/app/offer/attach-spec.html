@@ -56,11 +56,12 @@
       </div>
       
       <div class="tab-pane fade" id="offer_${prodId}">
-        <div class="list-group" id="open_ul_${param.prodId}"> 
+        <div class="list-group" id="open_ul_${param.prodId}" style="min-height: 200px;"> 
         <#if openMap.result??>
 			<#assign openSpecList=openMap.result.offerSpec />
 			<#if openSpecList?? &&(openSpecList?size>0)>	
 				<#list openSpecList as item>
+				<!-- 
 				<#if item.ifDault==0>
 	      			<a href="javascript:void(0);" id="li_${param.prodId}_${item.offerSpecId}" offerSpecId="${item.offerSpecId}" isdel='N' class="list-group-item" class="abtn03 icon-nodel">&nbsp;<span id="span_${prodId}_${item.offerSpecId}">${item.offerSpecName}</span></a>
 	      		 <#else>
@@ -69,6 +70,23 @@
 			          <span id="span_remove_${prodId}_${item.offerSpecId}" class="glyphicon glyphicon-remove pull-right" aria-hidden="true"></span>
 			         </a> 
 			         </#if>
+			         - -->
+			        <#if item.ifDault==0 >
+		   				<span class="mustchoose"></span>
+		   			<#else>
+		   		     <a href="javascript:void(0);" onclick="AttachOffer.delOfferSpec(${prodId},${item.offerSpecId})" id="li_${param.prodId}_${item.offerSpecId}" offerSpecId="${item.offerSpecId}" isdel='N' class="list-group-item">
+			          <span id="span_${prodId}_${item.offerSpecId}">${item.offerSpecName}</span>
+			          <span id="span_remove_${prodId}_${item.offerSpecId}" class="glyphicon glyphicon-remove pull-right" aria-hidden="true"></span>
+			         </a>
+		   			</#if>
+			        <#if item.ifParams >
+			        	<a id="li_${param.prodId}_${item.offerSpecId}" offerSpecId="${item.offerSpecId}" isdel='N' class="list-group-item" class="abtn03 icon-nodel">&nbsp;<span id="span_${prodId}_${item.offerSpecId}" >${item.offerSpecName}</span><span class="abtn03 btn-span"><button type="button" class="btn btn-info" style="right:40px;width:48px;" data-toggle="modal" data-target="#setting" onclick="AttachOffer.showParam(${prodId},${item.offerSpecId},0);">参</button></span></a>
+			        	<#else>
+			        		<a href="javascript:void(0);" id="li_${param.prodId}_${item.offerSpecId}" offerSpecId="${item.offerSpecId}" isdel='N' class="list-group-item" class="abtn03 icon-nodel">&nbsp;<span id="span_${prodId}_${item.offerSpecId}">${item.offerSpecName}</span></a>
+			        </#if>
+			        <#if item.ifShowTime=="Y">
+			        	<a class="time" id="time_${prodId}_${item.offerSpecId}" isset="N" ><button type="button" class="btn btn-info" style="right:40px;width:48px;" data-toggle="modal" data-target="#setting" onclick="AttachOffer.showTime(${prodId},${item.offerSpecId},'${item.offerSpecName}');" >时</button></a>
+			     	</#if>
                 </#list>
 		    </#if>
 	    </#if>
@@ -76,7 +94,7 @@
         </div>
         
         <div class="tab-pane fade" id="prod_${prodId}">
-        <div class="list-group" id="open_serv_ul_${param.prodId}"> 
+        <div class="list-group" id="open_serv_ul_${param.prodId}" style="min-height: 200px;"> 
         <#if openServMap.result.servSpec??>
 			<#assign openServList=openServMap.result.servSpec />
 			<#if openServList?? &&(openServList?size>0)>	
