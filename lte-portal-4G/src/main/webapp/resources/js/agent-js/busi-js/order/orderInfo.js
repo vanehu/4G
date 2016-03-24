@@ -385,11 +385,22 @@ OrderInfo = (function() {
 				busiOrder.data.ooTimes.push(offer.ooTimes);
 			}
 			//销售品物品节点
+			
 			$.each(OrderInfo.attach2Coupons,function(){
 				if(offer.offerSpecId == this.attachSepcId && prodId==this.prodId){
 					this.offerId = offer.offerId;
-					busiOrder.data.bo2Coupons = [];
-					busiOrder.data.bo2Coupons.push(this);
+					//购合约机如果没有校验终端串号就不封装bo2Coupons
+					if(OrderInfo.actionFlag=="13"||OrderInfo.actionFlag=="14"){
+						var tsn = $("#tsn").val();
+						if(!tsn){
+						}else{
+							busiOrder.data.bo2Coupons = [];
+							busiOrder.data.bo2Coupons.push(this);
+						}
+					}else{
+						busiOrder.data.bo2Coupons = [];
+						busiOrder.data.bo2Coupons.push(this);
+					}
 					return false;
 				}	
 			});
