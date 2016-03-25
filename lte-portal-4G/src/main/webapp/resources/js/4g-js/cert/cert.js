@@ -23,7 +23,7 @@ cert = (function(){
 		    	jsonStr = JSON.parse(jsonSt);
 		    } catch(e) {
 		    }
-		    if(jsonStr.status == 1){
+		    if(jsonStr!=null && jsonStr.status !=null && jsonStr.status == 1){
 		    	conn = {"resultFlag":-1,"errorMsg":"请确认已接入身份证识别仪"};
 		    }
 	        return conn;
