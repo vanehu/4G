@@ -34,30 +34,36 @@
 	                                    </div>
 	                                </td>
 	                          </tr>
-                          <tr>
-                                <td><label class="f_red">*</label> 证件号码</td>
-                                <td width="780">
-                                  <input type="text" placeHolder="请输入合法身份证号码" data-validate="validate(idCardCheck:请输入合法身份证号码) on(blur)" <#if (identities)?? >value="${identities[0].identityNum}"</#if>  class="inputWidth228px" id="cmCustIdCard"/>
-                                  <a class="btn_h30" id="readCertModifyBtnCreate" onclick="javascript:order.prodModify.readCertWhenCreate()"><span>读 卡</span></a>
-                                </td>
-                          </tr> 
-                          <tr>
-                                <td><label class="f_red">&nbsp;</label> 客户地址</td>
-                                <td width="780">
-                                  <input type="text" placeHolder="请输入客户地址"  value="${modPartyTypeCd.addressStr}" class="inputWidth228px" id="cmAddressStr" maxlength="64"/>
-                                </td>
-                          </tr> 
-                          <tr>
-							<td>
-							<a href="javascript:void(0)" onclick="order.prodModify.btnMoreProfile()">更多属性>></a>
-							</td>
-							<td></td>
-						  </tr>                    
-                          
-                        </tbody>
-                    </table>                
-                </div>
-                <div id="modPartyProfile" style="display: none;">
+	                          <tr>
+	                                <td><label class="f_red">*</label> 证件号码</td>
+	                                <td width="780">
+	                                  <input type="text" placeHolder="请输入合法身份证号码" data-validate="validate(idCardCheck:请输入合法身份证号码) on(blur)" <#if (identities)?? >value="${identities[0].identityNum}"</#if>  class="inputWidth228px" id="cmCustIdCard"/>
+	                                  <a class="btn_h30" id="readCertModifyBtnCreate" onclick="javascript:order.prodModify.readCertWhenCreate()"><span>读 卡</span></a>
+	                                </td>
+	                          </tr>
+	                          <tr id="tr_custModifyPhoto" style="display:none">
+	                              <td> 证件相片：</td>
+	                              <td>
+	                                  <img id="img_custModifyPhoto" alt="相片" src=""/>
+	                              </td>
+	                          </tr>
+	                          <tr>
+	                                <td><label class="f_red">&nbsp;</label> 客户地址</td>
+	                                <td width="780">
+	                                  <input type="text" placeHolder="请输入客户地址"  value="${modPartyTypeCd.addressStr}" class="inputWidth228px" id="cmAddressStr" maxlength="64"/>
+	                                </td>
+	                          </tr> 
+	                          <tr>
+								<td>
+								<a href="javascript:void(0)" onclick="order.prodModify.btnMoreProfile()">更多属性>></a>
+								</td>
+								<td></td>
+							  </tr>                    
+	                          
+	                        </tbody>
+	                    </table>                
+	                </div>
+	                <div id="modPartyProfile" style="display: none;">
 		        <div  class="infoBox" >
 		        <h5 class="s_title">详细信息</h5>
 		        <!--客户属性tab页-->

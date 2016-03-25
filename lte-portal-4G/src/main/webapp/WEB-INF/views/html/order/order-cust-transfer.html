@@ -145,7 +145,7 @@
             	<tbody>
                 	<tr>
                     	<td width="70"> 客户姓名</td>
-                        <td width="430">
+                        <td width="430" id="td_custName">
                         	<input type="text" placeHolder="请准确填写客户姓名" data-validate="validate(required:请准确填写客户姓名) on(blur)" class="inputWidth228px" id="transfercCustName"/>
                         	<label class="f_red">*</label>
                        	</td>
@@ -170,15 +170,21 @@
           			</tr>
             		<tr>
                   		<td> 证件号码</td>
-                  		<td>
+                  		<td id="td_custIdCard">
                  			<input type="text" placeHolder="请输入合法身份证号码" data-validate="validate(idCardCheck:请输入合法身份证号码) on(blur)" class="inputWidth228px" id="transfercCustIdCard"/>
                  			<label class="f_red">*</label>
                  			<a class="btn_h30" id="readCertTransferBtnCreate" onclick="javascript:prod.transferModify.readCertWhenCreate()"><span>读 卡</span></a>
                      	</td>
          			</tr>
+         			<tr id="tr_ransferCustPhoto" style="display:none">
+                        <td> 证件相片：</td>
+                        <td>
+                            <img id="img_ransferCustPhoto" alt="相片" src=""/>
+                        </td>
+                    </tr>
             		<tr>
                   		<td> 客户地址</td>
-                  		<td>
+                  		<td id="td_addressStr">
                  			<input type="text" data-validate="validate(required:请准确填写客户地址) on(blur)" placeHolder="请输入客户地址"  class="inputWidth228px" id="transfercAddressStr"/>
                  			<label class="f_red">*</label>
                      	</td>

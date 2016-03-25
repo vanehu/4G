@@ -233,6 +233,12 @@
                                   <input type="text" onkeyup="value=value.replace(/[^\w]|_/ig,'')" placeHolder="请输入合法身份证号码" data-validate="validate(idCardCheck:请输入合法身份证号码) on(blur)" maxLength="100" class="inputWidth228px" id="cCustIdCard"/><label class="f_red">*</label>
                                 </td>
                           </tr>
+                          <tr id="tr_custPhoto" style="display:none">
+                                <td> 证件相片：</td>
+                                <td>
+                                    <img id="img_custPhoto" alt="相片" src=""/>
+                                </td>
+                          </tr>
                           <tr>
                                 <td width="60"> 客户地址：</td>
                                 <td width="430" id="td_addressStr">
