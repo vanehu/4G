@@ -1710,6 +1710,8 @@ mktRes.terminal = (function($){
 				$("#order-content").hide();
 			}
 			}
+			$("#subnum").val(subnum);
+			$("#subPage").val(subPage);
 			if($("#zjfk_"+subnum).length>0){
 				$("#zjfk_"+subnum).hide();
 			}

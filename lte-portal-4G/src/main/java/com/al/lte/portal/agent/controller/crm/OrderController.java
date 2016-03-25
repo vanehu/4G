@@ -272,11 +272,20 @@ public class OrderController extends BaseController {
 			String staffInfos=params.get("staffInfos").toString().replace("\\", "");
 			param=CommonMethods.getParams(prodIdInfos, custInfos, staffInfos, getRequest());
 			param.put("actionFlag", Const.OFFERCHANGE_FLAG);
+			//传递收费类型  用于过滤套餐
+			String feeTypeCd = "";
+			if(param.get("prodIdInfoMap")!=null){
+				Map<String, Object> prodInfoMap = (Map<String, Object>) param.get("prodIdInfoMap");
+				if(prodInfoMap.get("feeType")!=null){
+					feeTypeCd = prodInfoMap.get("feeType").toString();
+				}
+			}
 			Map<String, Object> validatoResutlMap=commonBmo.validatorRule(param, optFlowNum, super.getRequest());
 			if(!ResultCode.R_SUCCESS.equals(validatoResutlMap.get("code"))){
 				model.addAttribute("validatoResutlMap", validatoResutlMap);
 				return "/app/rule/rulecheck";
 			}
+			model.addAttribute("feeTypeCd", feeTypeCd);
 			model.addAttribute("flag", Const.OFFERCHANGE_FLAG);
 			model.addAttribute("soNbr", param.get("soNbr"));
 		} catch (BusinessException e) {

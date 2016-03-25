@@ -2282,10 +2282,11 @@ SoOrder = (function() {
 									return false;
 								}	
 							});
-							if(flag){
-								$.alert("提示",roleName+" "+spec.offerSpecName+"：终端信息未填写");
-								return false ; 
-							}
+							//可先不填写终端   可在后续补录
+//							if(flag){
+//								$.alert("提示",roleName+" "+spec.offerSpecName+"：终端信息未填写");
+//								return false ; 
+//							}
 						}
 					}
 				}

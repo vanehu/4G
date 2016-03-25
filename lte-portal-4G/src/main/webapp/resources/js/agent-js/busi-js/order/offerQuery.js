@@ -515,7 +515,7 @@ query.offer = (function() {
 	var _searchAttachOfferSpec = function(param,callBackFunc) {
 		
 		addParam(param);  //添加基本参数
-		var url = contextPath+"/app/offer/searchAttachOfferSpec";
+		var url = contextPath+"/agent/offer/searchAttachOfferSpec";
 		if(typeof(callBackFunc)=="function"){
 			$.callServiceAsHtmlGet(url,{strParam:encodeURI(JSON.stringify(param),"utf-8")},{
 				"before":function(){

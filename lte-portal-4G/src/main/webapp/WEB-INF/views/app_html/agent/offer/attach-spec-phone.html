@@ -1,4 +1,4 @@
-<ul id="myTab" class="nav nav-tabs nav-justified tabsa">
+<ul id="myTab" class="nav nav-tabs nav-justified tabsa" style="top:50px; position:fixed; z-index:100;">
       <li class="dropdown active" style="width:50%;"> <a id="myTabDrop1_${prodId}" href="#" class="dropdown-toggle" data-toggle="dropdown">可订购 <b class="caret"></b> </a>
         <ul class="dropdown-menu" role="menu" aria-labelledby="myTabDrop1_${prodId}">
          <#if labelMap.result?? &&(labelMap.result?size>1)>
@@ -23,16 +23,16 @@
       </li>
     </ul>
     
-  <div id="myTabContent" class="tab-content">
+  <div id="myTabContent" class="tab-content" style="margin-top:50px;">
       <div class="tab-pane fade in active" id="orderno_${prodId}">
-      	<div class="panel-body" style="display:none;">
+      	<div class="panel-body">
        
-            <div class="form-group has-feedback">
+            <div class="form-group has-feedback" >
              <div class="input-group">
-              <input type="text" class="form-control"id="search_text_${param.prodId}" name="search_text_${param.prodId}"  aria-describedby="inputSuccess2Status" placeholder="请输入可选包名称">
+              <input type="text" class="form-control"id="search_text_${param.prodId}" name="search_text_${param.prodId}"  aria-describedby="inputSuccess2Status" placeholder="请输入促销包名称">
               <span class="input-group-btn">
-                      <button class="btn btn-default" onclick='AttachOffer.searchAttachOfferSpec(${param.prodId},${param.offerSpecId},${param.prodSpecId})' type="button"> 搜索 </button>
-                      <button class="btn btn-default" onclick="AttachOffer.closeAttachSearch(${prodId})" type="button"> 隐藏 </button>
+                      <button class="btn btn-primary" onclick='AttachOffer.searchAttachOfferSpec(${param.prodId},${param.offerSpecId},${param.prodSpecId})' type="button"> 搜索 </button>
+                      <button class="btn btn-primary" onclick="AttachOffer.closeAttachSearch(${prodId})" type="button"> 隐藏 </button>
                </span> 
                </div>
             </div>

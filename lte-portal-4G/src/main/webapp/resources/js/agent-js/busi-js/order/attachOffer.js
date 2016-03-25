@@ -368,6 +368,8 @@ AttachOffer = (function() {
 			if(prodInst){
 				param.offerRoleId = prodInst.offerRoleId;
 			}
+			//新装只保留促销
+			param.labelId = "10001";
 		}
 		var offerSepcName = $("#search_text_"+prodId).val();
 		if(offerSepcName.replace(/\ /g,"")==""){

@@ -79,6 +79,7 @@ order.service = (function(){
 				params.prodSpecId=prodSpecIds;
 			}
 			params.actionFlag=2;
+			params.feeTypeCd=$("#tc_feeTypeCd").val().trim();
 		}else if(CONST.getAppDesc()==0){
 			params.prodOfferFlag = "4G";
 		}
