@@ -72,8 +72,10 @@
 		     	 	</#if>
 				</td>
 	     	 	<td>
-		     	 	<i id="plan_detail" onclick="order.batch.batchCancel('${childList.groupId}','${childList.groupStatusCd}')">取消</i>&nbsp;
-		     	 	<i id="plan_detail" onclick="order.batch.batchUpdateMain('${childList.groupId}','${childList.reserveDt}','${childList.groupStatusCd}')">修改</i>&nbsp;
+					<#if childList.batchType!="12">
+		     	 		<i id="plan_detail" onclick="order.batch.batchCancel('${childList.groupId}','${childList.groupStatusCd}')">取消</i>&nbsp;
+			     	</#if>		     	 	
+			     	<i id="plan_detail" onclick="order.batch.batchUpdateMain('${childList.groupId}','${childList.reserveDt}','${childList.groupStatusCd}')">修改</i>&nbsp;
 	     	 	</td>
 	     	 	<td>
 		     	 	<i id="plan_detail" onclick="order.batch.batchProgressQuery('${childList.groupId}','${childList.batchType}',1)">进度查询</i>
