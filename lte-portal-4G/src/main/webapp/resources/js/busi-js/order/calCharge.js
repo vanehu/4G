@@ -950,7 +950,7 @@ order.calcharge = (function(){
 			_conBtns();
 			SoOrder.getToken();
 			inOpetate=false;
-			$.alertM(response.data);
+			alertMM(response.data);
 		}else{
 			_conBtns();
 			SoOrder.getToken();
@@ -1422,6 +1422,49 @@ order.calcharge = (function(){
 		}
 	};
 
+	var alertMM = function(err){//此方法仅针对收费出错的弹出框。
+		var rand = ec.util.getNRandomCode(5);
+		var opId = "alertMoreOp" + rand;
+		var contId = "alertMoreContent" + rand;
+		var c  = '<div>';
+			c += '<div class="am_baseMsg">错误编码【'+ec.util.defaultStr(err.errCode, "未知") + '】' + ec.util.defaultStr(err.errMsg, "未知")+'</div>';
+		    c += '<div class="am_more"><a id="'+ opId +'" href="javascript:void(0);" onclick="">&nbsp;【更多】&nbsp;</a></div>';
+		    c += '<div id="'+ contId +'" class="am_moreMsg"><font>【详细信息】</font><br/>';
+		    c += '<font>异常信息：</font><br/><span>'+ec.util.encodeHtml(ec.util.defaultStr(err.errData, "未知"))+'</span><br/>';
+		    c += '<font>入参：</font><br/><span>'+ec.util.encodeHtml(ec.util.defaultStr(err.paramMap, "未知"))+'</span><br/>';
+		    if (err.resultMap) {
+		    	c += '<font>回参：</font><br/><span>'+ec.util.defaultStr(err.resultMap, "未知")+'</span><br/>';
+		    }
+		    c += '</div></div>';
+		
+		new $.Zebra_Dialog(c, {
+			'keyboard'	:true,
+        	'modal'		:true,
+        	'animation_speed':500,
+        	'overlay_close':false,
+        	'overlay_opacity':.5,
+            'type'		: "error",
+            'title'		: "异常信息",
+            'position' 	: ['left + 380', 'top + 100'],
+            'width'		: 430,
+            'buttons'	: ['确定']
+		});
+		
+		$("#"+contId).slideDown("normal");
+		
+		
+//		$("#alertMoreOp").off("click").on("click",function(){$("#alertMoreContent").slideDown("slow");});
+		$("#"+opId).off("click").toggle(
+			function(){
+				$("#"+contId).slideDown("normal");
+			},
+			function(){
+				$("#"+contId).slideUp("fast");
+			}
+		);
+	};
+
+	
 	return {
 		addItems:_addItems,
 		delItems:_delItems,
