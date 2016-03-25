@@ -358,6 +358,36 @@ function createDialog(){
         </form>
     </div>
 </div>
+<!-- 读卡信息展示弹出层 -->
+<div style="display:none" id="user_info2">
+        <form id="custInfoForm">
+        <div class="infoBox">
+            <table class="network" style="margin: 0px 15px;">
+                <tbody>
+                    <tr>
+                        <td width="60"> 客户姓名：</td>
+                        <td id="td_cust_name"></td>
+                    </tr>
+                    <tr>
+                        <td> 证件号码：</td>
+                        <td id="td_cust_idCard"></td>
+                    </tr>
+                    <tr id="tr_cust_photo" style="display:none">
+                        <td> 证件相片：</td>
+                        <td>
+                            <img id="img_cust_photo" alt="相片" src=""/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="60"> 客户地址：</td>
+                        <td id="td_address_str"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        </form>
+    </div>
+
 <script>
 $(document).ready(function(e) {
 	var $ = function(){
