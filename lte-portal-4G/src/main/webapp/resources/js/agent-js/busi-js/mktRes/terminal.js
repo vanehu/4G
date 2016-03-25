@@ -586,6 +586,9 @@ mktRes.terminal = (function($){
 		var mktResId			=$(obj).attr("mktResId");
 		var mktResTypeCd		=$(obj).attr("mktResTypeCd");
 		var mktSpecCode			=$(obj).attr("mktSpecCode");
+		if(mktResId == $("#mktResId").val()) {
+			return;
+		}
 		$("#term_pic_id").attr("src",p_pic);
 		$("#mkt_resname_id").html(mktResName);
 		$("#mkt_saleprice_id").html(mktSalePrice+" 元");
@@ -605,7 +608,22 @@ mktRes.terminal = (function($){
 		$("#tsn").val("");
 		$("#nbr_btn_-1").val("");
 		$("#choosedOfferPlan").html("");
-		termInfo = {};
+		var boProdAns = OrderInfo.boProdAns;
+		//释放预占的号码
+		if(boProdAns.length>0){
+			for(var n=0;n<boProdAns.length;n++){
+				if(boProdAns[n].prodId==-1){
+					var param = {
+						numType : 1,
+						numValue : boProdAns[n].accessNumber
+					};
+					$.callServiceAsJson(contextPath+"/agent/mktRes/phonenumber/releaseErrorNum", param, {
+						"done" : function(){}
+					});
+					OrderInfo.boProdAns.splice(n,1);//清楚JS中某个号码预占缓存
+				}
+			}
+		}
 	};
 	
 	/**

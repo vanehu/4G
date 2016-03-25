@@ -200,10 +200,7 @@ SoOrder = (function() {
 			itemSpecId : CONST.BUSI_ORDER_ATTR.THRETOFOUR_ITEM,//3转4标志
 			value : itemValue
 		});
-		custOrderAttrs.push({ //鉴权日志id
-			itemSpecId: "800000048",
-			value: CacheData.getRecordId()
-		});
+		
 		custOrderAttrs.push({ //业务类型
 			itemSpecId : CONST.BUSI_ORDER_ATTR.BUSITYPE_FLAG,
 			value : OrderInfo.busitypeflag
