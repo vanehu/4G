@@ -57,7 +57,7 @@ public interface BatchBmo {
 	public Map<String,Object> readOrderTerminalExcel(Workbook workbook);
 	
 	/**
-	 * 批量换挡(11)、批量换卡(12)Excel解析
+	 * 批量换档(11)、批量换卡(12)Excel解析
 	 * @param workbook
 	 * @param batchType
 	 * @param str

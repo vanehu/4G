@@ -609,7 +609,7 @@ query.offer = (function() {
 		if(OrderInfo.actionFlag==3){//可选包
 			param.mainOfferSpecId = order.prodModify.choosedProdInfo.prodOfferId;
 		}
-		if(OrderInfo.actionFlag==21){//副卡换挡
+		if(OrderInfo.actionFlag==21){//副卡换档
 			if(ec.util.isArray(OrderInfo.viceOfferSpec)){
 				$.each(OrderInfo.viceOfferSpec,function(){
 					if(this.prodId==prodId){

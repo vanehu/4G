@@ -503,9 +503,9 @@ SoOrder = (function() {
 			OrderInfo.orderData.orderList.orderListInfo.isTemplateOrder ="Y";
 			OrderInfo.orderData.orderList.orderListInfo.templateOrderName =$("#templateOrderName").val();
 			if(OrderInfo.actionFlag==1||OrderInfo.actionFlag==14){
-				OrderInfo.orderData.orderList.orderListInfo.templateType = $("#templateOrderDiv").find("select").val(); //批量换挡
+				OrderInfo.orderData.orderList.orderListInfo.templateType = $("#templateOrderDiv").find("select").val(); //批量换档
 			}else if(OrderInfo.actionFlag==2){
-				OrderInfo.orderData.orderList.orderListInfo.templateType = 5; //批量换挡
+				OrderInfo.orderData.orderList.orderListInfo.templateType = 5; //批量换档
 			}else if(OrderInfo.actionFlag==3){
 				OrderInfo.orderData.orderList.orderListInfo.templateType = 2; //批量可选包订购退订
 			}
@@ -3109,7 +3109,7 @@ SoOrder = (function() {
 						}
 					}
 				}else if(OrderInfo.actionFlag == 21){//主副卡变更，副卡换套餐
-					if(ec.util.isArray(OrderInfo.viceOfferSpec)){//多张副卡同时进行换挡
+					if(ec.util.isArray(OrderInfo.viceOfferSpec)){//多张副卡同时进行换档
 						var flag=false;
 						$.each(OrderInfo.viceOfferSpec,function(){
 							var prodId=this.prodId;

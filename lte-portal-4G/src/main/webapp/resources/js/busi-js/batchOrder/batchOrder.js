@@ -11,7 +11,7 @@ order.batch = (function(){
 			$.alert("提示","种子订单受理类型不能为空!");
 			return;
 		}
-		if(batchType == '10' || batchType == '11' || batchType == '12'){//批量订购裸终端、批量换挡、批量换卡
+		if(batchType == '10' || batchType == '11' || batchType == '12'){//批量订购裸终端、批量换档、批量换卡
 			var upFile = $.trim($("#upFile").val());;
 			var reserveDt = $.trim($("#reserveDt").val());
 			if(reserveDt == ''){
@@ -434,7 +434,7 @@ order.batch = (function(){
 			location.href=contextPath+"/file/BATCHFAZHANREN.xls";
 		}else if(batType=='10'){//批量订购裸终端
 			location.href=contextPath+"/file/BATCHORDERTERMINAL.xls";
-		}else if(batType=='11'){//批量换挡
+		}else if(batType=='11'){//批量换档
 			location.href=contextPath+"/file/BATCHCHANGEFEETYPE.xls";
 		}else if(batType=='12'){//批量换卡
 			location.href=contextPath+"/file/BATCHCHANGEUIM.xls";
