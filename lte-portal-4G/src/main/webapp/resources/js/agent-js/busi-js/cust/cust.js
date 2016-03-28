@@ -1211,7 +1211,8 @@ cust = (function(){
 			segmentName :$(scope).attr("segmentName"),
 			custFlag :$(scope).attr("custFlag"),
 			vipLevel :$(scope).attr("vipLevel"),
-			vipLevelName :$(scope).attr("vipLevelName")
+			vipLevelName :$(scope).attr("vipLevelName"),
+			accNbr:$(scope).attr("accNbr")
 		};
 		//设置被选择标识
 		$(scope).attr("selected","selected");
