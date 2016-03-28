@@ -198,5 +198,14 @@ public interface OfferBmo {
 	 * @throws Exception
 	 */
 	public Map<String, Object> queryOfferAndServDependForCancel(Map<String, Object> paramMap, String optFlowNum,SessionStaff sessionStaff)throws Exception;
+	
+	/**
+	 * 从查询可订购附属销售品的回参中，去除当月到期且到期不可重复订购的附属销售品
+	 * @param paramMap
+	 * @param resultMap
+	 * @return resultMap
+	 * @author ZhangYu 2016-03-27
+	 */
+	public Map<String, Object> removeAttachOfferExpired(Map<String, Object> paramMap, Map<String, Object> offerMap);
 
 }

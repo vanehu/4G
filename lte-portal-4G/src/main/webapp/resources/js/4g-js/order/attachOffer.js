@@ -611,6 +611,7 @@ AttachOffer = (function() {
 			return;
 		}
 		param.offerSpecName = offerSepcName;
+		param.attachOfferOrderedList =  CacheData.getOfferList(prodId);//已订购附属销售品
 		var data = query.offer.searchAttachOfferSpec(param);
 		if(data!=undefined){
 			$("#attach_div_"+prodId).html(data).show();
@@ -4044,13 +4045,37 @@ AttachOffer = (function() {
 								AttachOffer.allOfferList.push(this);
 								var offerSpecId = this.offerSpecId;
 								var flag = true;
-								var ifOrderAgain=this.ifOrderAgain;//是否可以重复订购
+								var ifOrderAgain = this.ifOrderAgain;//是否可以重复订购
+								var ifDueOrderAgain = this.ifDueOrderAgain;//当月到期是否可以重复订购
+								//从可订购中过滤掉已订购的且不可重复订购的附属销售品
 								$.each(offerList,function(){
-									if(this.offerSpecId==offerSpecId&&this.isDel!="C"&&ifOrderAgain!="Y"){
-										flag = false;
-										return false;
+									if(this.offerSpecId==offerSpecId&&this.isDel!="C"){
+										//1.如果可订购附属销售品在已订购列表
+										var expireDate = this.expDate;//已订购的附属销售品的失效时间
+										expireDate = expireDate.substring(4,6);//截取失效时间20150201000000的月份02
+										var currentMonth = new Date().getMonth() + 1;//获取当前月份(0-11,从0开始，如0为1月份，1为2月份)
+										if(currentMonth < 10){
+											//1.1如果月份为个位数，则补充"0"于首位
+											currentMonth = "0" + currentMonth;
+										}
+										if(expireDate == currentMonth){
+											//2.如果该附属销售品当月到期
+											if(ifOrderAgain != "Y" && ifDueOrderAgain != "Y"){
+												//2.1如果ifOrderAgain和ifDueOrderAgain这两个节点有一个值为Y，则不过滤，展示于页面可订购
+												//2.2否则过滤该销售品，不展示于页面
+												flag = false;
+												return false;
+											}
+										} else{
+											//3.如果不是当月到期，且不可重复订购，则过滤不展示页面
+											if(ifOrderAgain != "Y"){
+												flag = false;
+												return false;
+											} 
+										}
 									}
 								});
+								//从可订购中过滤掉已选择的且不可重复订购的附属销售品
 								$.each(offerSpecList,function(){
 									if(this.offerSpecId==offerSpecId&&ifOrderAgain!="Y"){
 										flag = false;

@@ -1,7 +1,6 @@
 package com.al.lte.portal.bmo.crm;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -51,6 +50,78 @@ public class OfferBmoImpl implements OfferBmo {
 			log.error("门户处理营业后台的queryCanBuyAttachOfferSpec服务返回的数据异常", e);
 			throw new BusinessException(ErrorCode.ATTACH_OFFER, paramMap, resultMap, e);
 		}
+		return resultMap;
+	}
+	
+	/**
+	 * 从查询可订购附属销售品的回参中，去除当月到期且到期不可重复订购的附属销售品<br/>
+	 * 分别循环遍历可订购附属列表和已订购附属列表，其中已订购列表拼装在查询入参中。该方法目前用户可订购附属销售品的搜索框。
+	 * @param paramMap
+	 * @param resultMap
+	 * @return resultMap
+	 * @author ZhangYu 2016-03-27
+	 */
+	@SuppressWarnings("unchecked")
+	public Map<String, Object> removeAttachOfferExpired(Map<String, Object> paramMap, Map<String, Object> resultMap){
+		
+		//已订购附属销售品
+		List<Map<String, Object>> attachOfferOrderedList = new ArrayList<Map<String, Object>>();
+		//可订购附属销售品
+		List<Map<String, Object>> offerSpecCanBuyList = new ArrayList<Map<String, Object>>();
+		//中间变量，为获取可订购附属销售品回参中的offerSpecList
+		Map<String, Object> offerSpecMap = new HashMap<String, Object>();
+		
+		attachOfferOrderedList = (List<Map<String, Object>>) paramMap.get("attachOfferOrderedList");
+		offerSpecMap = (Map<String, Object>) resultMap.get("result");
+		if(offerSpecMap.size() > 0){
+			offerSpecCanBuyList = (List<Map<String, Object>>) offerSpecMap.get("offerSpecList");
+		}
+		
+		if(attachOfferOrderedList.size() > 0 && offerSpecCanBuyList.size() > 0){			
+			//循环遍历可订购附属销售品
+			for(int i = 0; i < offerSpecCanBuyList.size(); i++){				
+				Map<String, Object> offerSpecCanBuy = offerSpecCanBuyList.get(i);				
+				String offerSpecId = offerSpecCanBuy.get("offerSpecId").toString();
+				String ifOrderAgain = offerSpecCanBuy.get("ifOrderAgain").toString();//是否可重复订购
+				String ifDueOrderAgain = offerSpecCanBuy.get("ifDueOrderAgain").toString();//当月到期是否可重复订购
+				
+				//循环遍历已订购附属销售品
+				for(int j = 0; j < attachOfferOrderedList.size(); j++){
+					Map<String, Object> attachOfferOrdered = attachOfferOrderedList.get(j);
+					//如果已订购附属在可订购附属列表中
+					if(offerSpecId.equals(attachOfferOrdered.get("offerSpecId").toString())){
+						//获取已订购的附属销售品的失效时间
+						String expireDate = attachOfferOrdered.get("expDate").toString();
+						//截取失效时间(20150201000000)的月份(02)
+						expireDate = expireDate.substring(4,6);
+						////获取当前月份(0-11,从0开始，如0为1月份，1为2月份)
+						Calendar calendar = Calendar.getInstance();
+						int month = calendar.get(Calendar.MONTH) + 1; 
+						String currentMonthStr = null;
+						//如果月份为个位数，则补充"0"于首位
+						if(month < 10){
+							currentMonthStr = String.valueOf(month);
+							currentMonthStr = "0" + currentMonthStr;
+						} else{
+							currentMonthStr = String.valueOf(month);
+						}
+						//如果已订购是当月到期
+						if(currentMonthStr.equals(expireDate)){
+							//如果该附属可重复订购或到期当月可重复订购，则不过滤；否则过滤给可订购附属销售品
+							if((!"Y".equals(ifOrderAgain)) && (!"Y".equals(ifDueOrderAgain))){
+								offerSpecCanBuyList.remove(i);
+							}
+						}
+						
+					}
+				}
+			}
+		}
+		
+		//去除当月到期且当月到期不可重复订购的附属销售品之后，返回新的resultMap
+		offerSpecMap.put("offerSpecList", offerSpecCanBuyList);
+		resultMap.put("result", offerSpecMap);
+		
 		return resultMap;
 	}
 	
@@ -330,7 +401,6 @@ public class OfferBmoImpl implements OfferBmo {
 	}
 
 	public Map<String, Object> prodOfferChange(Map<String, Object> paramMap,String optFlowNum, SessionStaff sessionStaff) throws Exception {
-		// TODO Auto-generated method stub
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		DataBus db = InterfaceClient.callService(paramMap, PortalServiceCode.INTF_PRODOFFER_CHANGE, optFlowNum, sessionStaff);
 		try{
@@ -349,7 +419,6 @@ public class OfferBmoImpl implements OfferBmo {
 	}
 
 	public Map<String, Object> queryTemporaryOrder(Map<String, Object> paramMap, String optFlowNum,SessionStaff sessionStaff) throws Exception {
-		// TODO Auto-generated method stub
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		DataBus db = InterfaceClient.callService(paramMap, PortalServiceCode.INTF_TEMPORARYORDER_QUERY, optFlowNum, sessionStaff);
 		try{

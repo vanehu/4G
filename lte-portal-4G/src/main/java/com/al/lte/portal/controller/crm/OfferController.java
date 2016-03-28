@@ -459,6 +459,7 @@ public class OfferController extends BaseController {
         	//搜索可订购销售品
         	paramMap.put("operatorsId", sessionStaff.getOperatorsId()!=""?sessionStaff.getOperatorsId():"99999");
     		Map<String, Object> offerMap = offerBmo.queryCanBuyAttachSpec(paramMap,null,sessionStaff);
+    		offerMap = offerBmo.removeAttachOfferExpired(paramMap, offerMap);
     		model.addAttribute("offerMap",offerMap);
     		
         	//搜索可订购功能产品

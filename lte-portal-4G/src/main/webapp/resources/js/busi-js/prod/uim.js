@@ -226,15 +226,51 @@ prod.uim = (function() {
 			}
 			param.offerRoleId = offerRoleId;
 			param.offerSpecIds.push(prodInfo.prodOfferId);
-			var data = query.offer.queryCanBuyAttachSpec(param);
+
+			var data = query.offer.queryCanBuyAttachSpec(param);//可订购附属销售品			
 			if(data!=undefined && data.resultCode == "0"&&data.result.offerSpecList.length>0){
+				
+				var attachOfferList = CacheData.getOfferList(prodId);//已订购附属销售品
 				var content = '<form id="promotionForm"><table>';
 				var selectStr = "";
-				var optionStr = "";
+				var optionStr = "";				
 				selectStr = selectStr+"<tr><td>可订购促销包: </td><td><select class='inputWidth183px' id="+accNbr+"><br>"; 
+
+				//循环遍历可订购附属销售品
 				$.each(data.result.offerSpecList,function(){
 					var offerSpec = this;
-					optionStr +='<option value="'+this.offerSpecId+'">'+this.offerSpecName+'</option>';
+					var offerSpecId = this.offerSpecId;
+					var offerSpecName = this.offerSpecName;
+					var ifOrderAgain = this.ifOrderAgain;//是否可以重复订购
+					var ifDueOrderAgain = this.ifDueOrderAgain;//当月到期是否可以重复订购
+					
+					if(attachOfferList != undefined && attachOfferList.length > 0){
+						//循环遍历已订购附属销售品
+						$.each(attachOfferList,function(){
+							//如果可订购附属在已订购列表中
+							if(this.offerSpecId == offerSpecId && this.isDel != "C"){
+								var expireDate = this.expDate;//已订购的附属销售品的失效时间
+								expireDate = expireDate.substring(4,6);//截取失效时间(20150201000000)的月份(02)
+								var currentMonth = new Date().getMonth() + 1;//获取当前月份(0-11,从0开始，如0为1月份，1为2月份)
+								if(currentMonth < 10){
+									currentMonth = "0" + currentMonth;//如果月份为个位数，则补充"0"于首位
+								}
+								if(expireDate == currentMonth){
+									//如果已订购是当月到期
+									if(ifOrderAgain == "Y" || ifDueOrderAgain == "Y"){
+										//如果该附属可重复订购或者到期当月可重复订购，则展示；否则屏蔽不展示
+										optionStr += '<option value="' + offerSpecId + '">' + offerSpecName + '</option>';
+									}
+								}
+							} else{
+								//如果该可订购附属没有在已订购列表中，则不过滤
+								optionStr += '<option value="' + offerSpecId + '">' + offerSpecName + '</option>';
+							}
+						});
+					} else{
+						//如果没有已订购附属，则不对可订购进行过滤，直接展示
+						optionStr += '<option value="' + offerSpecId + '">' + offerSpecName + '</option>';
+					}
 				});
 				selectStr += optionStr + "</select></td></tr>"; 
 				content +=selectStr;
