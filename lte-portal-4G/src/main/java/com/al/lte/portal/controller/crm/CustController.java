@@ -914,11 +914,21 @@ public class CustController extends BaseController {
 			model.addAllAttributes(param);
 			
 			String DiffPlaceFlag = param.get("DiffPlaceFlag")==null?"":param.get("DiffPlaceFlag").toString();
+			String menuName = param.get("menuName")==null?"":param.get("menuName").toString();
 			List businessLink = null ;
-			if(DiffPlaceFlag.equals("local")){
-				businessLink = EhcacheUtil.getBusinessMenu(session,"YWSL");//菜单权限编码
-			}else if(DiffPlaceFlag.equals("diff")){
-				businessLink = EhcacheUtil.getBusinessMenu(session,"YDSL");
+			if(menuName.equals("")){
+				if(DiffPlaceFlag.equals("local")){
+					businessLink = EhcacheUtil.getBusinessMenu(session,"YWSL");//菜单权限编码
+				}else if(DiffPlaceFlag.equals("diff")){
+					businessLink = EhcacheUtil.getBusinessMenu(session,"YDSL");
+				}
+			}else{
+				if(SysConstant.GKHZLFD.equals(menuName)){//暂只用这两个菜单
+					businessLink = EhcacheUtil.getBusinessMenuByName(session,SysConstant.GKHZLFD_NAME);
+				}else if(SysConstant.GHFD.equals(menuName)){
+					businessLink = EhcacheUtil.getBusinessMenuByName(session,SysConstant.GHFD_NAME);
+				}
+				
 			}
 			model.addAttribute("businessLink", businessLink);
 			model.addAttribute("DiffPlaceFlag", DiffPlaceFlag);

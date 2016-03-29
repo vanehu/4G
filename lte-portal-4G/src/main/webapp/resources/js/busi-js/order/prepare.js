@@ -42,6 +42,11 @@ order.prepare = (function(){
 			$("#order_prepare").hide();
 			$("#nothreelinks").show();
 		}
+			var menuName = $("#menuName").attr("menuName");
+			if ((ec.util.isObj(menuName) && (CONST.MENU_FANDANG == menuName || CONST.MENU_CUSTFANDANG == menuName))) {
+				$("#order_prepare").hide();
+				$("#nothreelinks").hide();
+			}
 		
 		//如果有资源ID，则跳转到终端详情
 		var mktResCd$ = $("#mktResHidId").attr("mktResCd");

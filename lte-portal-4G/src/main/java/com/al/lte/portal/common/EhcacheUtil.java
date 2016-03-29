@@ -289,6 +289,45 @@ public class EhcacheUtil {
 		}
 		return listMenu ;
 	}
+	/**
+	 * 查找本地二次业务菜单中有menuName的菜单，有则返回对应菜单
+	 */
+	public static List<Map> getBusinessMenuByName(HttpSession session,String menuName){	
+		boolean hasMenu = false ;
+        Object obj = session.getAttribute(SysConstant.SESSION_KEY_MENU_LIST);
+        List<Map> list = new ArrayList<Map>();
+		List<Map> listMenu = new ArrayList<Map>();
+		if(obj!=null && obj instanceof List){
+			List<Map> list1 = (List<Map>)obj;
+			for(Map rowTemp1:list1){
+				if(hasMenu){
+					break ;
+				}
+				if(!hasMenu&&rowTemp1.get("resourceCode")!=null&&rowTemp1.get("resourceCode").equals("YWSL")){//业务受理类下面的二次业务的菜单
+					list = (List<Map>)rowTemp1.get("childMenuResources");
+					hasMenu = true ;
+				}
+				List<Map> list2 = (List<Map>)rowTemp1.get("childMenuResources");
+				for(Map rowTemp2:list2){
+					if(hasMenu){
+						break ;
+					}
+					if(rowTemp2.get("resourceCode")!=null&&rowTemp2.get("resourceCode").equals("YWSL")){
+						list = (List<Map>)rowTemp2.get("childMenuResources");
+						hasMenu = true ;
+					}
+				}
+			}
+		}
+		if(hasMenu&&list!=null&&list.size()>0){
+			for(Map rowMap:list){
+				if("N".equals(rowMap.get("isMainMenu"))&&rowMap.get("resourceName").equals(menuName)){
+					listMenu.add(rowMap);
+				}
+			}
+		}
+		return listMenu ;
+	}
 
 	public static String filterUrl(Object path,String x){
 		if(path==null){

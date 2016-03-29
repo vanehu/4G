@@ -28,6 +28,9 @@
 	          <input type="hidden" id="p_cust_areaId" >
 	          <input type="hidden" DiffPlaceFlag="${DiffPlaceFlag}">
 	         </#if>
+	         	<#if menuName??>
+				<input type="hidden" menuName="${menuName}" id="menuName">
+			 </#if>
         </li>
 		<li class="ulocation">
 			<h2 style="margin: 4px 8px 0 5px;">客户定位</h2>

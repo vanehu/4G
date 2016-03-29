@@ -244,6 +244,38 @@ public class OrderController extends BaseController {
         model.addAttribute("DiffPlaceFlag", "diff");
         return "/order/order-prepare";
     }
+    /**
+     * 改客户资料返档入口
+     * 
+     * @param param
+     * @param model
+     * @return
+     */
+    @RequestMapping(value = "/prepareCustfd", method = RequestMethod.GET)
+    @AuthorityValid(isCheck = true)
+    public String prepareCustFanDang(@RequestParam Map<String, Object> mktRes, HttpServletRequest request, Model model,
+            HttpSession session) {
+        model.addAttribute("canOrder", EhcacheUtil.pathIsInSession(session, "order/prepare"));
+        model.addAttribute("menuName", SysConstant.GKHZLFD);
+        model.addAttribute("DiffPlaceFlag", "local");
+        return "/order/order-prepare";
+    }
+    /**
+     * 过户返档入口
+     * 
+     * @param param
+     * @param model
+     * @return
+     */
+    @RequestMapping(value = "/preparefd", method = RequestMethod.GET)
+    @AuthorityValid(isCheck = true)
+    public String preparCustFanDang(@RequestParam Map<String, Object> mktRes, HttpServletRequest request, Model model,
+            HttpSession session) {
+        model.addAttribute("canOrder", EhcacheUtil.pathIsInSession(session, "order/prepare"));
+        model.addAttribute("menuName", SysConstant.GHFD);
+        model.addAttribute("DiffPlaceFlag", "local");
+        return "/order/order-prepare";
+    }
 
     /**
      * ?flowStep=order_tab_panel_offer-10011,5000000901100003#step1 第一个参数是入口TAB
@@ -1289,7 +1321,6 @@ public class OrderController extends BaseController {
                     List list = new ArrayList();
                     param.put("checkResult", list);
                 }
-                
                 Map<String, Object> datamap = this.orderBmo.queryChargeList(param, flowNum, sessionStaff);
                 if (datamap != null) {
                     String code = (String) datamap.get("code");

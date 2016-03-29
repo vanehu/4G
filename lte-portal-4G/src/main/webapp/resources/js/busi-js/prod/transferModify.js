@@ -826,6 +826,11 @@ prod.transferModify = (function(){
 				$("#fillLastStep").click(function(){
 					order.prodModify.cancel();
 				});
+				var menuName = $("#menuName").attr("menuName");
+				if((ec.util.isObj(menuName)&&(CONST.MENU_FANDANG==menuName||CONST.MENU_CUSTFANDANG==menuName))){
+					$("#fillLastStep").hide();
+					$("#order_quick_nav").hide();
+				}
 				_initDic();
 				_form_custTransfer_btn();
 			}

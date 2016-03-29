@@ -770,7 +770,8 @@ order.cust = (function(){
 			$("#authPassword2").val("");
 			$("#idCardNumber2").val("");
 			$("#smspwd2").val("");
--			if (ec.util.isObj(canRealName) && 1 == canRealName) {
+			var menuName = $("#menuName").attr("menuName");
+			if ((ec.util.isObj(canRealName) && 1 == canRealName)||(ec.util.isObj(menuName)&&(CONST.MENU_FANDANG==menuName||CONST.MENU_CUSTFANDANG==menuName))) {
 				easyDialog.open({
 					container: 'auth3',
 					callback: function () {
@@ -880,6 +881,12 @@ order.cust = (function(){
 		}
 		param.curPage=curPage;
 		param.DiffPlaceFlag=$("#DiffPlaceFlag").val();
+		var menuName = $("#menuName").attr("menuName");
+		if(ec.util.isObj(menuName)){
+			param.menuName = menuName;
+		}else{
+			param.menuName = "";
+		}
 		if(param.custId==null||param.custId==""){
 			$.alert("提示","无法查询已订购产品");
 			return;

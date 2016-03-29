@@ -609,6 +609,14 @@ public final class SysConstant {
 
 	public static final String JFKJCG = "JFKJCG";
 	
+	/**改客户资料返档*/
+	public static final String GKHZLFD = "GKHZLFD";
+	/**过户返档*/
+	public static final String GHFD = "GHFD";
+	/**改客户资料返档菜单名*/
+	public static final String GKHZLFD_NAME = "改客户资料返档";
+	/**过户返档菜单名*/
+	public static final String GHFD_NAME = "过户返档";
 	
 
 }
