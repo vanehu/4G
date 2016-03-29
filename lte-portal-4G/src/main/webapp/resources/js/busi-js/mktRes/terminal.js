@@ -470,8 +470,14 @@ mktRes.terminal = (function($){
 						$.alert("提示","在选号码之前请先进行客户定位或者新建客户！");
 						return;
 					}
-					_chkState();
-					order.prepare.phoneNumDialog('terminal','Y1','01');
+					var callback = function () {
+						_chkState();
+						order.prepare.phoneNumDialog('terminal', 'Y1', '01');
+					};
+					var authResult = order.prodModify.querySecondBusinessAuth("28", "Y", callback);
+					if (!authResult) {
+						callback();
+					}
 				});
 				$("#cfsjA").click(function(){
 					_selectHy(1);

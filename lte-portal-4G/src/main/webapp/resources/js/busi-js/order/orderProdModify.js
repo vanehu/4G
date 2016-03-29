@@ -953,7 +953,6 @@ order.prodModify = (function(){
 				$(".ordercon").show();
 				$(".ordertabcon").show();
 				$("#step1").show();
-				
 				$(".ordercon a:first span").text("取 消");
 				_form_custInfomodify_btn();
 			},"always":function(){
@@ -1179,11 +1178,11 @@ order.prodModify = (function(){
 			return;
 		}
 		if(_showMemberWin()){
-			$("#delPhoneTitle").html(CONST.getBoActionTypeName(CONST.BO_ACTION_TYPE.OWE_REMOVE_PROD)+'-是否保留成员');			
+			$("#delPhoneTitle").html(CONST.getBoActionTypeName(CONST.BO_ACTION_TYPE.OWE_REMOVE_PROD)+'-是否保留成员');
 			$("#delPhoneNumber .btna_o:first").off("click").on("click",function(event){
 				_closeDialog();
 				_removeAndAdd(CONST.PROD_STATUS_CD.REMOVE_PROD,CONST.BO_ACTION_TYPE.OWE_REMOVE_PROD,8);
-			});			
+			});
 			_commonShowDialog();
 		}else{
 			_removeCommit(CONST.PROD_STATUS_CD.REMOVE_PROD,CONST.BO_ACTION_TYPE.OWE_REMOVE_PROD,8);
@@ -3814,9 +3813,9 @@ order.prodModify = (function(){
 		var response= $.callServiceAsHtml(url,param);
 		$("#auth2").empty().append(response.data);
 		var authTypeStr=$("#authTypeStr").html();
-		// if(authTypeStr.toString().indexOf(OrderInfo.cust_validateType)!=-1||authTypeStr.toString().indexOf("4")!=-1||authTypeStr.toString()=="4"){
+		if(authTypeStr.toString().indexOf(OrderInfo.cust_validateType)!=-1||authTypeStr.toString()=="4"){
 			return false;
-		// }
+		}
 
 		$("#idCardType2").text(OrderInfo.cust.identityName);
 		if (OrderInfo.cust.identityCd == "1") {
@@ -3831,10 +3830,16 @@ order.prodModify = (function(){
 				container: 'auth2',
 				callback:function(){
 					if (OrderInfo.authRecord.resultCode == "0") {
-						if (callbackFunc.indexOf(".") != -1) {
-							eval(callbackFunc + "()");
-						} else {
-							eval("order.prodModify." + callbackFunc + "()");
+						if (ec.util.isObj(callbackFunc)) {
+							if (typeof callbackFunc == "string") {
+								if (callbackFunc.indexOf(".") != -1) {
+									eval(callbackFunc + "()");
+								} else {
+									eval("order.prodModify." + callbackFunc + "()");
+								}
+							}else if(typeof callbackFunc == "function"){
+								callbackFunc();
+							}
 						}
 						OrderInfo.authRecord.resultCode = "";
 						OrderInfo.authRecord.validateType = "";
@@ -3880,7 +3885,7 @@ order.prodModify = (function(){
 			return false;
 		}
 	};
-	
+
 	return {
 		changeCard : _changeCard,
 		getChooseProdInfo : _getChooseProdInfo,

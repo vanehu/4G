@@ -9,71 +9,92 @@ CommonUtils.regNamespace("order", "prepare");
  */
 order.prepare = (function(){
 	//三个入口选择
-	var _tabChange= function(){
-		$("#order_quick_nav li").each(function(){$(this).off("click").on("click",function(event){
-			OrderInfo.actionFlag= 1;
-			var url=$(this).attr("url");
-			var forTab = $(this).attr("for");
-			if(forTab == "order_tab_panel_phonenumber"){
-				var custId = OrderInfo.cust.custId;
-				if(OrderInfo.cust==undefined || custId==undefined || custId==""){
-					$.alert("提示","在选号码之前请先进行客户定位或者新建客户！");
-					return;
+	var _tabChange= function() {
+		$("#order_quick_nav li").each(function () {
+			$(this).off("click").on("click", function (event) {
+				OrderInfo.actionFlag = 1;
+				var url = $(this).attr("url");
+				var forTab = $(this).attr("for");
+				if (forTab == "order_tab_panel_phonenumber") {
+					var custId = OrderInfo.cust.custId;
+					if (OrderInfo.cust == undefined || custId == undefined || custId == "") {
+						$.alert("提示", "在选号码之前请先进行客户定位或者新建客户！");
+						return;
+					}
+					var authResult = order.prodModify.querySecondBusinessAuth("30", "Y", function () {
+						callback(event, url, forTab);
+					});
+					if (!authResult) {
+						callback(event, url, forTab);
+					}
+				} else {
+					callback(event, url, forTab);
 				}
-			}
-			_commonTab(url,forTab);
-			event.stopPropagation();});});
-		$("#order_nav li").each(function(){$(this).off("click").on("click",function(event){
-			OrderInfo.actionFlag= 1;
-			var url=$(this).attr("url");
-			var forTab = $(this).attr("for");
-			if(forTab == "order_tab_panel_phonenumber"){
-				var custId = OrderInfo.cust.custId;
-				if(OrderInfo.cust==undefined || custId==undefined || custId==""){
-					$.alert("提示","在选号码之前请先进行客户定位或者新建客户！");
-					return;
+			});
+		});
+		$("#order_nav li").each(function () {
+			$(this).off("click").on("click", function (event) {
+				OrderInfo.actionFlag = 1;
+				var url = $(this).attr("url");
+				var forTab = $(this).attr("for");
+				if (forTab == "order_tab_panel_phonenumber") {
+					var custId = OrderInfo.cust.custId;
+					if (OrderInfo.cust == undefined || custId == undefined || custId == "") {
+						$.alert("提示", "在选号码之前请先进行客户定位或者新建客户！");
+						return;
+					}
+					var authResult = order.prodModify.querySecondBusinessAuth("30", "Y", function () {
+						callback(event, url, forTab);
+					});
+					if (!authResult) {
+						callback(event, url, forTab);
+					}
+				} else {
+					callback(event, url, forTab);
 				}
+			});
+		});
+		var callback = function (event, url, forTab) { //异地业务隐藏三个入口
+			_commonTab(url, forTab);
+			event.stopPropagation();
+			var diffPlaceFlag = $("#diffPlaceFlag").val();
+			if (diffPlaceFlag == "diff") {
+				$("#order_prepare").hide();
+				$("#nothreelinks").show();
 			}
-			_commonTab(url,forTab);
-			event.stopPropagation();});});
-		//异地业务隐藏三个入口
-		var diffPlaceFlag = $("#diffPlaceFlag").val();
-		if (diffPlaceFlag == "diff") {
-			$("#order_prepare").hide();
-			$("#nothreelinks").show();
-		}
 			var menuName = $("#menuName").attr("menuName");
 			if ((ec.util.isObj(menuName) && (CONST.MENU_FANDANG == menuName || CONST.MENU_CUSTFANDANG == menuName))) {
 				$("#order_prepare").hide();
 				$("#nothreelinks").hide();
 			}
-		
-		//如果有资源ID，则跳转到终端详情
-		var mktResCd$ = $("#mktResHidId").attr("mktResCd");
-		var offerSpecId$ = $("#offerSpecHidId").val();
-		if (mktResCd$ && mktResCd$.length > 0) {
-			var url = contextPath+"/mktRes/terminal/prepare";
-			var param={};
-			var response = $.callServiceAsHtmlGet(url,param);
-			var content$=$("#order_tab_panel_content");
-			content$.html(response.data);
-			mktRes.terminal.selectTerminal($("#mktResHidId"));
-			$("#order_prepare").hide();
-			order.prepare.step(1);//显示"第一步：订单准备"
-			_showOrderTitle("", "购手机", true);
-			content$.show();
-		}else if (offerSpecId$ && offerSpecId$.length > 0) {
-			var url = contextPath+"/order/prodoffer/prepare";
-			var param={"prodOfferId":offerSpecId$};
-			var response = $.callServiceAsHtmlGet(url,param);
-			var content$=$("#order_tab_panel_content");
-			content$.html(response.data);
-			$("#order_prepare").hide();
-			order.prepare.step(1);//显示"第一步：订单准备"
-			_showOrderTitle("", "办套餐", true);
-			content$.show();
-			order.service.initSpec();
-			order.prodOffer.init();
+
+			//如果有资源ID，则跳转到终端详情
+			var mktResCd$ = $("#mktResHidId").attr("mktResCd");
+			var offerSpecId$ = $("#offerSpecHidId").val();
+			if (mktResCd$ && mktResCd$.length > 0) {
+				var url = contextPath + "/mktRes/terminal/prepare";
+				var param = {};
+				var response = $.callServiceAsHtmlGet(url, param);
+				var content$ = $("#order_tab_panel_content");
+				content$.html(response.data);
+				mktRes.terminal.selectTerminal($("#mktResHidId"));
+				$("#order_prepare").hide();
+				order.prepare.step(1);//显示"第一步：订单准备"
+				_showOrderTitle("", "购手机", true);
+				content$.show();
+			} else if (offerSpecId$ && offerSpecId$.length > 0) {
+				var url = contextPath + "/order/prodoffer/prepare";
+				var param = {"prodOfferId": offerSpecId$};
+				var response = $.callServiceAsHtmlGet(url, param);
+				var content$ = $("#order_tab_panel_content");
+				content$.html(response.data);
+				$("#order_prepare").hide();
+				order.prepare.step(1);//显示"第一步：订单准备"
+				_showOrderTitle("", "办套餐", true);
+				content$.show();
+				order.service.initSpec();
+				order.prodOffer.init();
+			}
 		}
 	};
 	var _commonTab=function(url,forTab){

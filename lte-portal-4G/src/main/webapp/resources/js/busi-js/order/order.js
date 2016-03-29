@@ -165,28 +165,34 @@ order.service = (function(){
 	var _buyService = function(id,specId,price) {
 		var custId = OrderInfo.cust.custId;
 		offerprice = price;
-		if(OrderInfo.cust==undefined || custId==undefined || custId==""){
-			$.alert("提示","在订购套餐之前请先进行客户定位！");
+		if (OrderInfo.cust == undefined || custId == undefined || custId == "") {
+			$.alert("提示", "在订购套餐之前请先进行客户定位！");
 			return;
 		}
-		var param = {
-			"price":price,
-			"id" : id,
-			"specId" : specId,
-			"custId" : OrderInfo.cust.custId,
-			"areaId" : OrderInfo.staff.soAreaId
+		var callback = function () {
+			var param = {
+				"price": price,
+				"id": id,
+				"specId": specId,
+				"custId": OrderInfo.cust.custId,
+				"areaId": OrderInfo.staff.soAreaId
+			};
+			if (OrderInfo.actionFlag == 2) {  //套餐变更不做校验
+				order.service.opeSer(param);
+			} else {  //新装
+				var boInfos = [{
+					boActionTypeCd: "S1",//动作类型
+					instId: "",
+					specId: specId //产品（销售品）规格ID
+				}];
+				if (rule.rule.ruleCheck(boInfos)) {  //业务规则校验通过
+					order.service.opeSer(param);
+				}
+			}
 		};
-		if(OrderInfo.actionFlag == 2){  //套餐变更不做校验
-			order.service.opeSer(param);   
-		}else {  //新装
-			var boInfos = [{
-	            boActionTypeCd: "S1",//动作类型
-	            instId : "",
-	            specId : specId //产品（销售品）规格ID
-	        }];
-	        if(rule.rule.ruleCheck(boInfos)){  //业务规则校验通过
-	        	order.service.opeSer(param);   
-	        }
+		var authResult = order.prodModify.querySecondBusinessAuth("29", "Y", callback);
+		if (!authResult) {
+			callback();
 		}
 	};
 	
@@ -387,7 +393,12 @@ order.service = (function(){
 			mktRes.terminal.newnum = newnum;
 			mktRes.terminal.oldnum = oldnum;
 		}
-		easyDialog.close();
+		try {
+			easyDialog.close();
+		} catch (e) {
+			$("#member_dialog").hide();
+			$("#overlay").hide();
+		}
 	};
 	
 	//根据页面选择成员数量保存销售品规格构成 offerType为1是单产品

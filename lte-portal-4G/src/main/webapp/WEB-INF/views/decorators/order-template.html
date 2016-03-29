@@ -632,7 +632,7 @@
 
 <!--弹出框的内容-->
 <div class="easyDialogdiv" style="width:700px;height:450px;" id="member_dialog" >
-	<div class="easyDialogclose" onclick="easyDialog.close()"></div>
+	<div class="easyDialogclose" onclick="try{easyDialog.close()} catch(e) {$('#member_dialog').hide();$('#overlay').hide();}"></div>
   	<table class="contract_list rule">
         <thead>
             <tr>
@@ -650,7 +650,7 @@
 	      	<div align="center" style="margin: 20px auto;">
 	      		<a href="javascript:void(0)" id="member_btn" class="btna_o"><span>确认</span></a>
 	      			<button style="display:none" id="btncustreset" type="reset">ssss</button>
-	        	<a id="custresetBtn" href="javascript:easyDialog.close();" class="btna_o" style=" margin-left:20px;"><span>取消</span></a>
+	        	<a id="custresetBtn" href="javascript:try{easyDialog.close()} catch(e) {$('#member_dialog').hide();$('#overlay').hide();}" class="btna_o" style=" margin-left:20px;"><span>取消</span></a>
 	      	</div>
 	    </div>
   	</div>
