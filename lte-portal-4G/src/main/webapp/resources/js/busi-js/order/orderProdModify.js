@@ -7,7 +7,8 @@ CommonUtils.regNamespace("order", "prodModify");
 /**
  * 订单准备
  */
-order.prodModify = (function(){	
+order.prodModify = (function(){
+	var addOrChange = "13";//补换卡，补卡，换卡
 	var boActionTypeCd="";//业务动作小类
 	var authFlag="";
 	var _coupon="";
@@ -161,6 +162,12 @@ order.prodModify = (function(){
 		if (!ec.util.isObj(addChange)) {
 			addChange = "13";
 		}
+		if("25"==addChange){
+			addOrChange=21;
+		}else if("26"==addChange){
+			addOrChange=22;
+		}
+
 		if(OrderInfo.authRecord.resultCode!="0"){
 			if (_querySecondBusinessAuth(addChange, "N", "showChangeCard")) {
 				return;
@@ -210,8 +217,8 @@ order.prodModify = (function(){
 				}else if(response.code==3){
 					$.alert("提示",response.data);
 					return;
-				}else if(response.code==1002){					
-					OrderInfo.busitypeflag=13;
+				}else if(response.code==1002){
+					OrderInfo.busitypeflag=addOrChange;
 					prod.changeUim.init();
 					return;
 				}else if(response.code==1003){
@@ -342,7 +349,7 @@ order.prodModify = (function(){
 						$("#CHANGEUIMSMS").hide();
 						$("#overlay").hide();
 					}
-					OrderInfo.busitypeflag=13;
+					OrderInfo.busitypeflag=addOrChange;
 					prod.changeUim.init();
 				} else if (response.code == 1) {
 					smsErrorCount+=1;
