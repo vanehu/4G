@@ -123,7 +123,6 @@
 
 <!--订单准备 end-->
 <script type="text/javascript">
-window.onload=function(){
 	var p_cust_areaid = "";
 	var nextFlag = false;
 	var mergeFlag = "${mergeFlag}";
@@ -168,18 +167,13 @@ window.onload=function(){
 		OrderInfo.provinceInfo.salesCode = "${salesCode}";
 		OrderInfo.newOrderNumInfo.mktResInstCode = '${mktResInstCode}';
 		OrderInfo.acct={acctCd:'${acctCd}'};//账户合同号
-		OrderInfo.busitypeflag=1;
-		/*
 		order.prepare.createorderlonger();
+		OrderInfo.busitypeflag=1;
 		order.service.initSpec();
 		order.prodOffer.init();
 		order.service.searchPack();
 		order.phoneNumber.resetBoProdAn();
-		*/
-		$("#p_cust_areaId").val(p_cust_areaid);
-		order.prodModify.querySecondBusinessAuthSub();
 	}
-}
 </script>
 	<!-- 选号界面需要获取的 areaId -->
 	<input type="hidden" id="p_cust_areaId" value="">
@@ -324,11 +318,7 @@ window.onload=function(){
         <a id="cancelChooseUserBtn" class="btna_o" href="javascript:void(0)" style=" margin-left:20px;" onclick="easyDialog.close()"><span>取消</span></a>
     </div>
 </div>
-	<!--用户鉴权弹窗-->
-<div style="height:300px;display:none;background:#fff; -webkit-border-radius:5px; -moz-border-radius:5px; border-radius:5px;-webkit-box-shadow:0 8px 8px rgba(0,0,0,0.4);-moz-box-shadow:0 8px 8px rgba(0,0,0,0.4);box-shadow:0 8px 8px rgba(0,0,0,0.4); border:5px solid #cbced0;
-	display:none;
-	overflow-y:auto;" id="auth2">
-</div>
+
 <!--用户鉴权弹窗-->
 	<div class="easyDialogdiv" style="height:300px;display:none" id="auth">
 	<div class="easyDialogclose" id="authClose"></div>
@@ -351,3 +341,8 @@ window.onload=function(){
 <!--用户鉴权弹窗 end-->
 </@override>
 <@extends name="/pcpublic/main-template.html"/>
+<script type="text/javascript">
+	window.onload = function(){
+		$("#p_cust_areaId").val(p_cust_areaid);
+	};
+</script>
