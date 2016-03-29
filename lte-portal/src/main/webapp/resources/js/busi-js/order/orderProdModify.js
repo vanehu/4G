@@ -2984,8 +2984,10 @@ order.prodModify = (function(){
 			var params = {};
 			var checkRealNameResp = $.callServiceAsJson(contextPath+"/order/checkRealNameSwitch", params);
 			if(checkRealNameResp.data=="ON"){
-				if(order.prodModify.choosedProdInfo.hasNoUser == 'Y' && href.indexOf('order.prodModify.spec_parm_change()') < 0){
-					$.alert('提示', '请在“产品属性变更”中录入“使用人”信息');
+				if(order.prodModify.choosedProdInfo.hasNoUser=="Y" && 
+					href.indexOf("order.prodModify.spec_parm_change()")<0 && 
+					href.indexOf("order.prodModify.showBreakRuleRemoveProd()")<0){
+					$.alert("提示", "请在“产品属性变更”中录入“使用人”信息");
 					return;
 				}
 			}
