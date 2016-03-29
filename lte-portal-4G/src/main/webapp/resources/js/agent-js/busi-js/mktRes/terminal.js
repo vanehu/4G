@@ -750,8 +750,8 @@ mktRes.terminal = (function($){
 		}
 		$(obj).addClass("selectHy");
 		_queryOffer(offerSpecId,agreementType);
-		hytcid = offerSpecId;
-		hytcmc = $(obj).attr("offerSpecName");
+		mktRes.terminal.hytcid = offerSpecId;
+		mktRes.terminal.hytcmc = $(obj).attr("offerSpecName");
 	};
 	/**
 	 * 切换话补或者机补比例
@@ -2139,18 +2139,21 @@ mktRes.terminal = (function($){
 					return;
 				}else{
 					if(isSelect=="N" && OrderInfo.actionFlag==14){
-						AttachOffer.phone_checkOfferExcludeDepend(-1,hytcid,hytcmc);
+						AttachOffer.phone_checkOfferExcludeDepend(-1,mktRes.terminal.hytcid,mktRes.terminal.hytcmc);
 						isSelect="Y";
 					}
 				}
 			}
 		if ("lj"==buyChk.buyType) {
-//			if (!buyChk.tsnFlag) {
-//				if($("#tsn").val().length>0){
-//					$.alert("提示","<br/>请先校验终端串号。");
-//					return;
-//				}
-//			}
+			if (!buyChk.tsnFlag) {
+				if($("#tsn").val().length>0){
+					$.alert("提示","<br/>请先校验终端串号。");
+					return;
+				}else if($("#tsn").val().length==0){
+					$.alert("提示","<br/>请填写终端串号。");
+					return;
+				}
+			}
 			if($("#passcust").length>0){
 				$("#passcust").show();
 			}
@@ -3304,6 +3307,8 @@ mktRes.terminal = (function($){
 	};
 	
 	return {
+		hytcmc				:hytcmc,
+		hytcid				:hytcid,
 		initDealer			:_initDealer,
 		selectTc			:_selectTc,
 		init				:_init,

@@ -994,6 +994,10 @@ AttachOffer = (function() {
 			$.confirm("订购： " + specName,content,{ 
 				yes:function(){
 					CacheData.setOffer2ExcludeOfferSpec(param);
+					if(specName.indexOf("合约计划")>=0){
+						mktRes.terminal.hytcmc = specName;
+						mktRes.terminal.hytcid = offerSpecId;
+					}
 				},
 				yesdo:function(){
 					excludeAddattch(prodId,offerSpecId,param);
@@ -1467,6 +1471,11 @@ AttachOffer = (function() {
 		}
 		if(ec.util.isArray(newSpec.agreementInfos)){ //合约销售品需要输入终端
 			if(OrderInfo.actionFlag!=14){//非购机入口的
+				var objInstId = prodId+'_'+newSpec.offerSpecId;
+				var terminalUl=$("#terminalUl_"+objInstId);//如果有就不添加串码框了，防止重复
+				if(terminalUl.length>0){
+					return;
+				}
 				totalNums=0;
 				_removeAttach2Coupons(prodId,newSpec.offerSpecId);//清除串码组
 				var objInstId = prodId+'_'+newSpec.offerSpecId;
