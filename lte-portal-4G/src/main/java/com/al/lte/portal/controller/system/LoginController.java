@@ -1,44 +1,5 @@
 package com.al.lte.portal.controller.system;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.InetAddress;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.UUID;
-
-import javax.annotation.Resource;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import javax.validation.Valid;
-
-import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang3.BooleanUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.dom4j.Document;
-import org.dom4j.Element;
-import org.dom4j.io.SAXReader;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.ThemeResolver;
-
 import com.al.common.utils.StringUtil;
 import com.al.ec.serviceplatform.client.DataBus;
 import com.al.ec.serviceplatform.client.ResultCode;
@@ -46,19 +7,9 @@ import com.al.ec.sm.MDA;
 import com.al.ecs.common.entity.JsonResponse;
 import com.al.ecs.common.entity.LevelLog;
 import com.al.ecs.common.entity.Switch;
-import com.al.ecs.common.util.CryptoUtils;
-import com.al.ecs.common.util.DateUtil;
-import com.al.ecs.common.util.JsonUtil;
-import com.al.ecs.common.util.PropertiesUtils;
-import com.al.ecs.common.util.UIDGenerator;
+import com.al.ecs.common.util.*;
 import com.al.ecs.common.web.ServletUtils;
-import com.al.ecs.exception.AuthorityException;
-import com.al.ecs.exception.BusinessException;
-import com.al.ecs.exception.ErrorCode;
-import com.al.ecs.exception.InterfaceException;
-import com.al.ecs.exception.PortalCheckedException;
-import com.al.ecs.exception.ResultConstant;
-import com.al.ecs.exception.InterfaceException.ErrType;
+import com.al.ecs.exception.*;
 import com.al.ecs.log.Log;
 import com.al.ecs.spring.annotation.log.LogOperatorAnn;
 import com.al.ecs.spring.annotation.session.AuthorityValid;
@@ -69,23 +20,38 @@ import com.al.lte.portal.bmo.crm.SignBmo;
 import com.al.lte.portal.bmo.staff.StaffBmo;
 import com.al.lte.portal.bmo.staff.StaffChannelBmo;
 import com.al.lte.portal.bmo.system.MenuBmo;
-import com.al.lte.portal.common.CommonMethods;
-import com.al.lte.portal.common.Const;
-import com.al.lte.portal.common.EhcacheUtil;
-import com.al.lte.portal.common.InterfaceClient;
-import com.al.lte.portal.common.MySessionInterceptor;
-import com.al.lte.portal.common.MySimulateData;
-import com.al.lte.portal.common.PortalServiceCode;
-import com.al.lte.portal.common.PortalUtils;
-import com.al.lte.portal.common.RedisUtil;
-import com.al.lte.portal.common.ServiceClient;
-import com.al.lte.portal.common.SysConstant;
+import com.al.lte.portal.common.*;
 import com.al.lte.portal.common.print.PrintHelperMgnt;
 import com.al.lte.portal.core.DataEngine;
 import com.al.lte.portal.core.DataRepository;
 import com.al.lte.portal.filter.SingleSignListener;
 import com.al.lte.portal.model.SessionStaff;
 import com.al.lte.portal.model.Staff;
+import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.dom4j.Document;
+import org.dom4j.Element;
+import org.dom4j.io.SAXReader;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ThemeResolver;
+
+import javax.annotation.Resource;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.InetAddress;
+import java.util.*;
 
 
 /**
@@ -123,6 +89,9 @@ public class LoginController extends BaseController {
 	/** 补换卡短信验证地区 */
 	public static final String SESSION_CHANGEUIM_SMS_AREAID = "_changeUim_sms_areaId";
 	/***/
+	/** 客户鉴权短信验证号码 */
+	public static final String SESSION_CUSTAUTH_SMS_MUNBER = "_custauth_sms_munber";
+	/***/	
 	@Autowired
 	PropertiesUtils propertiesUtils;
 
@@ -743,12 +712,13 @@ public class LoginController extends BaseController {
 		try {
 			String munber = (String) paramMap.get("munber");
 			String areaId = (String) paramMap.get("areaId");
+			String isSecond = (String) paramMap.get("isSecond");
 			request.getSession().setAttribute(SESSION_CHANGEUIM_SMS_MUNBER, munber);
 			request.getSession().setAttribute(SESSION_CHANGEUIM_SMS_AREAID, areaId);
 			SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);
 			String changeUimMsgValid  = staffBmo.checkOperatSpec(SysConstant.CHANGEUIMSMS_CODE, sessionStaff);
 			//当前工号无免补换卡短信验证权限!
-			if("0".equals(changeUimMsgValid)){
+			if("0".equals(changeUimMsgValid)||SysConstant.STR_Y.equals(isSecond)){
 				//短信发送时间间隔,10秒内重复发送，会被拦截！
 				Long sessionTimeL = (Long) request.getSession().getAttribute(SysConstant.SESSION_KEY_TEMP_CHANGEUIM_SMS_TIME);
 				if (sessionTimeL != null) {
@@ -798,26 +768,21 @@ public class LoginController extends BaseController {
 		try {
 			Long sessionTimeL = (Long) request.
 					getSession().getAttribute(SysConstant.SESSION_KEY_TEMP_CHANGEUIM_SMS_TIME);
-			if (sessionTimeL != null) {
-				long sessionTime = sessionTimeL;
-				long nowTime = (new Date()).getTime();
-				long inteval = 28 * 1000;//比30秒提前2秒
-				int smsErrorCount = Integer.parseInt((String) paramMap.get("smsErrorCount"));
-				if (nowTime - sessionTime > inteval || smsErrorCount>=3) {					
-					changeUimSendMsg(request, flowNum);					
-				} else {
-					log.debug("time inteval:{}", nowTime - sessionTime);
-					return super.failed("短信验证码发送时间有误!请求太过频烦,请稍后再重发！", 
-							ResultConstant.ACCESS_LIMIT_FAILTURE.getCode());
-				}
+			if (sessionTimeL == null) {
+				request.getSession().setAttribute(SysConstant.SESSION_KEY_TEMP_CHANGEUIM_SMS_TIME, (new Date()).getTime());
+				sessionTimeL = 0L;
+			}
+			long sessionTime = sessionTimeL;
+			long nowTime = (new Date()).getTime();
+			long inteval = 28 * 1000;//比30秒提前2秒
+			int smsErrorCount = MapUtils.getIntValue(paramMap, "smsErrorCount", 0);
+			if (nowTime - sessionTime > inteval || smsErrorCount >= 3) {
+				changeUimSendMsg(request, flowNum);
 			} else {
-				request.getSession().removeAttribute(
-						SysConstant.SESSION_KEY_TEMP_CHANGEUIM_SMS_TIME);
-				request.getSession().setAttribute(
-						SysConstant.SESSION_KEY_TEMP_CHANGEUIM_SMS_TIME, (new Date()).getTime());
-				return super.failed("短信验证码发送时间有误!请稍后再重发！", 
+				log.debug("time inteval:{}", nowTime - sessionTime);
+				return super.failed("短信验证码发送时间有误!请求太过频烦,请稍后再重发！",
 						ResultConstant.ACCESS_LIMIT_FAILTURE.getCode());
-			}		
+			}
 		} catch (BusinessException be) {
 			this.log.error("错误信息:{}", be);
 			return super.failed(be);
@@ -836,21 +801,25 @@ public class LoginController extends BaseController {
 	@SuppressWarnings("unchecked")
 	public Map<String, Object> changeUimSendMsg(HttpServletRequest request, String flowNum)
 			throws Exception {
+		String munber = (String)request.getSession().getAttribute(SESSION_CHANGEUIM_SMS_MUNBER);
+		String areaId = (String)request.getSession().getAttribute(SESSION_CHANGEUIM_SMS_AREAID);
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
+		String isSecond=request.getParameter("isSecond");
+		String accNbr=request.getParameter("munber");
 		Map<String, Object> retnMap = new HashMap<String, Object>();
-		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);
-		if(request.getSession().getAttribute(SESSION_CHANGEUIM_SMS_MUNBER) ==null){
+		if(SysConstant.STR_Y.equals(isSecond)&&StringUtils.isNotBlank(accNbr)){
+			munber = accNbr;
+			areaId = sessionStaff.getCurrentAreaId();
+		}else if(request.getSession().getAttribute(SESSION_CHANGEUIM_SMS_MUNBER) ==null){
 			retnMap.put("resultCode",ResultCode.R_FAILURE );
 			retnMap.put("resultMsg","短信验证号码获取失败，系统异常！请刷新重试!");
 			return retnMap;
-		}
-		String munber = (String)request.getSession().getAttribute(SESSION_CHANGEUIM_SMS_MUNBER);
-		if(request.getSession().getAttribute(SESSION_CHANGEUIM_SMS_AREAID) ==null){
+		}else if(request.getSession().getAttribute(SESSION_CHANGEUIM_SMS_AREAID) ==null){
 			retnMap.put("resultCode",ResultCode.R_FAILURE );
 			retnMap.put("resultMsg","短信验证号码所属地区获取失败，系统异常！请刷新重试!");
 			return retnMap;
 		}
-		String areaId = (String)request.getSession().getAttribute(SESSION_CHANGEUIM_SMS_AREAID);
-		if("".equals(munber)){
+		if(StringUtils.isBlank(munber)){
 			retnMap.put("resultCode",ResultCode.R_FAILURE );
 			retnMap.put("resultMsg","短信验证号码为空，系统异常！请刷新重试!");
 			return retnMap;
@@ -865,7 +834,7 @@ public class LoginController extends BaseController {
 			{
 				randomCode = UIDGenerator.generateDigitNonce(2);
 			}
-			this.log.debug("补换卡短信验证码：{}", smsPwd);
+			this.log.debug("业务受理短信验证码：{}", smsPwd);
 			Map<String, Object> msgMap = new HashMap<String, Object>();
 			msgMap.put("phoneNumber", munber);
 			msgMap.put("key", smsPwd);
@@ -1195,6 +1164,115 @@ public class LoginController extends BaseController {
 			return super.failed("短信验证码出错!", ResultConstant.FAILD.getCode());
 		}
 	}
+	
+	@RequestMapping(value = "/login/custAuthSmsSend", method = RequestMethod.GET)
+	@LogOperatorAnn(desc = "客户鉴权短信校验码发送", code = "CHANGEUIM", level = LevelLog.DB)
+	@ResponseBody
+	public JsonResponse custAuthSmsSend(@RequestParam Map<String, Object> paramMap,HttpServletRequest request, @LogOperatorAnn String flowNum) {
+		try {
+			Long sessionTimeL = (Long) request.
+					getSession().getAttribute(SysConstant.SESSION_KEY_TEMP_CUSTAUTH_SMS_TIME);
+			if (sessionTimeL != null) {
+				long sessionTime = sessionTimeL;
+				long nowTime = (new Date()).getTime();
+				long inteval = 28 * 1000;//比30秒提前2秒
+				String phoneNum = (String) paramMap.get("phoneNum");
+				if (nowTime - sessionTime > inteval) {					
+					custAuthSmsSendMsg(request, flowNum,phoneNum);				
+				} else {
+					log.debug("time inteval:{}", nowTime - sessionTime);
+					return super.failed("短信验证码发送时间有误!请求太过频烦,请稍后再重发！", 
+							ResultConstant.ACCESS_LIMIT_FAILTURE.getCode());
+				}
+			} else {
+				String phoneNum = (String) paramMap.get("phoneNum");
+				custAuthSmsSendMsg(request, flowNum,phoneNum);
+			}		
+		} catch (BusinessException be) {
+			this.log.error("错误信息:{}", be);
+			return super.failed(be);
+		} catch (Exception e) {			
+			log.error("门户补换卡短信验证/staff/login/custAuthSMSSend方法异常", e);
+			return super.failed(ErrorCode.CHANGEUIM_MSG_SEND, e, new HashMap<String, Object>());
+		}
+		Map<String, Object> successedData = new HashMap<String, Object>();
+		successedData.put("data", "短信验证码发送成功!");
+		successedData.put("randomCode", ServletUtils.getSessionAttribute(request, SysConstant.SESSION_KEY_CUSTAUTH_RANDONCODE));
+		return super.successed(successedData, ResultConstant.SUCCESS.getCode());
+	}	
+	
+	// 用户短信鉴权
+	@SuppressWarnings("unchecked")
+	public Map<String, Object> custAuthSmsSendMsg(HttpServletRequest request, String flowNum,String phoneNum)
+			throws Exception {
+		Map<String, Object> retnMap = new HashMap<String, Object>();
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);
+
+		if (sessionStaff != null) {
+			String smsPwd = null;
+			String randomCode =null;
+			//发送4位验证码
+			smsPwd = UIDGenerator.generateDigitNonce(4);
+			randomCode = UIDGenerator.generateDigitNonce(2);
+			for(;randomCode == ServletUtils.getSessionAttribute(request, SysConstant.SESSION_KEY_CHANGEUIM_RANDONCODE);)
+			{
+			randomCode = UIDGenerator.generateDigitNonce(2);
+			}
+			
+			
+			this.log.debug("用户短信鉴权验证码：{}", smsPwd);
+			Map<String, Object> msgMap = new HashMap<String, Object>();
+			msgMap.put("phoneNumber", phoneNum);
+			msgMap.put("key", smsPwd);
+			msgMap.put("MsgNumber", "5871");
+			
+			if(randomCode != null){
+				msgMap.put("randomCode", randomCode);
+				msgMap.put("message", propertiesUtils.getMessage(
+				"CUSTAUTH_SMS_CODE_CONTENT", new Object[] { smsPwd,randomCode }));
+			}else{
+				msgMap.put("message", propertiesUtils.getMessage(
+				"CUSTAUTH_SMS_CODE_CONTENT", new Object[] { smsPwd }));
+			}
+
+
+			msgMap.put(InterfaceClient.DATABUS_DBKEYWORD, (String) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_DATASOURCE_KEY));
+			retnMap = staffBmo.sendMsgInfo(msgMap, flowNum, sessionStaff);
+			request.getSession().removeAttribute(SysConstant.SESSION_KEY_CUSTAUTH_SMS);
+			request.getSession().setAttribute(SysConstant.SESSION_KEY_CUSTAUTH_SMS, smsPwd);
+			request.getSession().setAttribute(SysConstant.SESSION_KEY_CUSTAUTH_RANDONCODE, randomCode);
+
+			//短信发送时间间隔
+			request.getSession().removeAttribute(SysConstant.SESSION_KEY_TEMP_CUSTAUTH_SMS_TIME);
+			request.getSession().setAttribute(SysConstant.SESSION_KEY_TEMP_CUSTAUTH_SMS_TIME, (new Date()).getTime());
+		} else {
+			this.log.error("错误信息:登录会话失效，请重新登录!");
+		}
+		return retnMap;
+	}	
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(value = "/login/custAuthSmsValid", method = RequestMethod.POST)
+	@ResponseBody
+	public JsonResponse custAuthSmsValid(@RequestParam("smspwd") String smsPwd,
+			HttpServletRequest request ,HttpServletResponse response) throws Exception {
+		this.log.debug("changeUimsmsPwd={}", smsPwd);
+		// 验证码内容
+		String smsPwdSession = (String) ServletUtils.getSessionAttribute(
+				request, SysConstant.SESSION_KEY_CUSTAUTH_SMS);
+		//如果不需要发送短信，验证码就为空，不提示短信过期失效
+		if(StringUtil.isEmpty(smsPwdSession)){
+			return super.failed("短信过期失效，请重新发送!", ResultConstant.FAILD.getCode());
+		}
+		if (smsPwdSession.equals(smsPwd)) {
+			Map<String,Object> resData=new HashMap<String,Object>();
+			resData.put("msg", "短信验证成功.");
+			return super.successed(resData);
+		}else {
+			return super.failed("短信验证码错误!", ResultConstant.FAILD.getCode());
+		}
+	}		
+	
 
 	@RequestMapping(value = "/login/logout", method = RequestMethod.GET)
 	@SessionValid
@@ -1977,6 +2055,16 @@ public class LoginController extends BaseController {
 		String checkCode = request.getParameter("code") ;
 		if("DV82KN".equals(checkCode)){
 			DataEngine.resetjsversion();
+			try {
+				Thread.sleep(10000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			String level = propertiesUtils.getMessage(SysConstant.COMPRESS_JS_LEVEL);
+	    	String baseVersion = propertiesUtils.getMessage(SysConstant.BASE_VERSION);
+	    	String busiVersion = propertiesUtils.getMessage(SysConstant.BUSI_VERSION);
+			DataEngine.compressNLFile(level,baseVersion,busiVersion);
 			model.addAttribute("success", "js版本号重置成功。");
 			return "/common/success";
 		}else{

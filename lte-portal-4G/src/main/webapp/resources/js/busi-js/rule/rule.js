@@ -13,6 +13,7 @@ rule.rule = (function(){
 	
 	var _init = function() {
 		$("#ruleBody").html("");
+		$("#ruleBody2").html("");
 		$("#ruleclose").click(function(){
 			_closeRuleDiv();
 		});
@@ -83,11 +84,9 @@ rule.rule = (function(){
 							"<td>"+ruleInfo.ruleDesc+"</td>" +
 							"<td>"+_getRuleLevelName(ruleInfo.ruleLevel)+"</td>" +
 							"<td><div style='display:block;margin-left:30px;' class='"+_getRuleImgClass(ruleInfo.ruleLevel)+"'></div></td>" +
-					"</tr>").appendTo($("#ruleBody"));
+					"</tr>").appendTo($("#ruleBody2"));
 				});
-				easyDialog.open({
-					container : 'ruleDiv'
-				});
+				$.alertW("规则提示",$("#ruleDiv2").html(),"error","",800);
 			} else {
 				_credit();	
 				SoOrder.initFillPage();		
@@ -208,11 +207,12 @@ rule.rule = (function(){
 							"<td>"+ruleInfo.ruleDesc+"</td>" +
 							"<td>"+_getRuleLevelName(ruleInfo.ruleLevel)+"</td>" +
 							"<td><div style='display:block;margin-left:30px;' class='"+_getRuleImgClass(ruleInfo.ruleLevel)+"'></div></td>" +
-					"</tr>").appendTo($("#ruleBody"));
+					"</tr>").appendTo($("#ruleBody2"));
 				});
-				easyDialog.open({
-					container : 'ruleDiv'
-				});
+				//easyDialog.open({
+				//	container : 'ruleDiv'
+				//});
+				$.alertW("规则提示",$("#ruleDiv2").html(),"error","",800);
 				return false;
 			}else {
 				return true;

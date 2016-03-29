@@ -1,31 +1,6 @@
 package com.al.lte.portal.controller.crm;
 
 
-import java.net.URLDecoder;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
-import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-
 import com.al.ec.serviceplatform.client.DataBus;
 import com.al.ec.serviceplatform.client.ResultCode;
 import com.al.ecs.common.entity.JsonResponse;
@@ -33,11 +8,7 @@ import com.al.ecs.common.entity.PageModel;
 import com.al.ecs.common.util.JsonUtil;
 import com.al.ecs.common.util.PageUtil;
 import com.al.ecs.common.web.ServletUtils;
-import com.al.ecs.exception.AuthorityException;
-import com.al.ecs.exception.BusinessException;
-import com.al.ecs.exception.ErrorCode;
-import com.al.ecs.exception.InterfaceException;
-import com.al.ecs.exception.ResultConstant;
+import com.al.ecs.exception.*;
 import com.al.ecs.spring.annotation.log.LogOperatorAnn;
 import com.al.ecs.spring.annotation.session.AuthorityValid;
 import com.al.ecs.spring.controller.BaseController;
@@ -51,6 +22,20 @@ import com.al.lte.portal.common.SysConstant;
 import com.al.lte.portal.common.print.CustomizeBillUtils;
 import com.al.lte.portal.common.print.bill.CustomizeBill;
 import com.al.lte.portal.model.SessionStaff;
+import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.net.URLDecoder;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * 计费相关业务控制层
@@ -1612,7 +1597,7 @@ public class BillController extends BaseController {
 		String iseditOperation= (String)ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_JUMPAUTH+"_"+sessionStaff.getStaffId());				
 		try{		 			
 			if(iseditOperation==null){		 				
-				iseditOperation=staffBmo.checkOperatSpec(SysConstant.JUMPAUTH_CODE,sessionStaff);		 				
+				iseditOperation=staffBmo.checkOperatSpec(SysConstant.SECOND_JUMPSPECIAL,sessionStaff);
 				ServletUtils.setSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_JUMPAUTH+"_"+sessionStaff.getStaffId(), iseditOperation);
 			}
 		} catch (BusinessException e) {

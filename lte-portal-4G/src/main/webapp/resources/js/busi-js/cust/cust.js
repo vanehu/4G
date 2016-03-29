@@ -54,7 +54,6 @@ order.cust = (function(){
 					} catch(e){
 						
 					}
-					//window.localStorage.setItem("OrderInfo.cust",JSON.stringify(OrderInfo.cust));
 					if(!order.cust.queryForChooseUser){
 						custInfo = param;
 						OrderInfo.boCusts.prodId=-1;
@@ -543,7 +542,7 @@ order.cust = (function(){
 			$(".usersearchcon").hide();
 			$("#custListOverlay").hide();
 		}
-		$("#custListOverlay").show();
+		//$("#custListOverlay").show();
 	};
 	
 	// 客户重新定位
@@ -561,6 +560,7 @@ order.cust = (function(){
 		$("#p_cust_identityNum").val("");
 		$("#authPassword").val("");
 		authFlag="";
+		OrderInfo.cust_validateType="";//重置客户鉴权方式
 		OrderInfo.boCusts.partyId="";
 		//重新定位重置已选产品信息缓存
 		order.prodModify.choosedProdInfo={};
@@ -664,8 +664,14 @@ order.cust = (function(){
 	};
 	// cust auth callback
 	var _custAuthCallBack = function(response) {
+		OrderInfo.authRecord.resultCode="";
 		if(authFlag=="0"){
-			easyDialog.close();
+			try{
+				easyDialog.close();
+			}catch(e){
+				$("#auth3").hide();
+				$("#overlay").hide();
+			}
 		}
 		$("#custList").hide();
 		$("#custQryDiv").hide();
@@ -699,7 +705,8 @@ order.cust = (function(){
 			segmentName :$(scope).attr("segmentName"),
 			custFlag :$(scope).attr("custFlag"),
 			vipLevel :$(scope).attr("vipLevel"),
-			vipLevelName :$(scope).attr("vipLevelName")
+			vipLevelName :$(scope).attr("vipLevelName"),
+			accNbr:$(scope).attr("accNbr")
 		};
 		//设置被选择标识
 		$(scope).attr("selected","selected");
@@ -726,37 +733,61 @@ order.cust = (function(){
 				$("#custAuthTypeName").html("产品密码：");
 			}
 			var pCustIdentityCd = $("#p_cust_identityCd").val();
-			if("1"==pCustIdentityCd){
-//				var isIdTypeOff = OrderInfo.staff.idType=="OFF";
-//				$('#authIDTD').attr("disabled",!isIdTypeOff);//身份鉴权的身份证在读卡时被禁用，此处根据开关控制是否允许输入
+			$("#idCardType2").text(_choosedCustInfo.identityName);
+			if (_choosedCustInfo.identityCd == "1") {
+				$("#readCertBtnID2").show();
+				$("#idCardNumber2").attr("disabled", "disabled");
+			} else {
+				$("#readCertBtnID2").hide();
+				$("#idCardNumber2").removeAttr("disabled");
+			}
+			var canRealName = $('#custInfos').parent().children('[selected="selected"]').attr('canrealname');
+			var accessNumber=_choosedCustInfo.accNbr;
+			if(-1==$("#p_cust_identityCd").val()){
+				accessNumber=$.trim($("#p_cust_identityNum").val());
+			}
+			if(!ec.util.isObj(accessNumber)){
+				$("#auth_tab1").removeClass();
+				$("#auth_tab1").hide();
+				$("#auth_tab2").addClass("setcon");
+				$("#auth_tab3").removeClass();
+				$("#auth_tab3").hide();
+				$("#content1").hide();
+				$("#content2").show();
+				$("#content3").hide();
+			}else{
+				$("#auth_tab1").addClass("setcon");
+				$("#auth_tab2").removeClass();
+				$("#auth_tab3").removeClass();
+				$("#auth_tab1").show();
+				$("#auth_tab2").show();
+				$("#auth_tab3").show();
+				$("#content1").show();
+				$("#content2").hide();
+				$("#content3").hide();
+			}
+			//初始化弹出窗口
+			$("#authPassword2").val("");
+			$("#idCardNumber2").val("");
+			$("#smspwd2").val("");
+-			if (ec.util.isObj(canRealName) && 1 == canRealName) {
 				easyDialog.open({
-					container:'authID',
-					callback : function(){
+					container: 'auth3',
+					callback: function () {
 						order.cust.queryForChooseUser = false; //关闭弹出框时重置标识位
 					}
 				});
 			}else{
-				easyDialog.open({
-					container : 'auth',
-					callback : function(){
-						order.cust.queryForChooseUser = false; //关闭弹出框时重置标识位
-					}
-				});
+				_realCheck(contextPath);
 			}
 			if(order.cust.jumpAuthflag=="0"){
-				//$("#jumpAuth").off('click').on('click', function(){
-				//	order.cust.jumpAuth();
-				//});
-				$("#auth").find("#jumpAuth").show();
-				$("#authID").find("#jumpAuthID").show();
+				$("#jumpAuth").show();
 			}
 			$("#authClose").off("click").on("click",function(event){
 				easyDialog.close();
-				$("#authPassword").val("");
-			});
-			$("#authIDClose").off("click").on("click",function(event){
-				easyDialog.close();
-				$("#authIDTD").val("");
+				$("#authPassword2").val("");
+				$("#idCardNumber2").val("");
+				$("#smspwd2").val("");
 			});
 		} else{
 			_custAuth(scope);
@@ -881,7 +912,7 @@ order.cust = (function(){
 			},
 			"done" : function(response){
 				if(!response){
-					 response.data='<div style="margin:2px 0 2px 0;width:100%,height:100%;text-align:center;"><strong>not data return,please try reload again.</strong></div>';
+					 response.data='<div style="margin:2px 0 2px 0;width:100%;height:100%;text-align:center;"><strong>not data return,please try reload again.</strong></div>';
 				}
 				if (response.code == -2) {
 					return;
@@ -1393,7 +1424,6 @@ order.cust = (function(){
 	OrderInfo.boPartyContactInfo.staffId =_boPartyContactInfo.staffId;//员工ID
 	OrderInfo.boPartyContactInfo.state =_boPartyContactInfo.state;//状态
 	OrderInfo.boPartyContactInfo.statusCd =_boPartyContactInfo.statusCd;//订单状态
-
 	OrderInfo.cust = {
 		custId:-1,	
 		partyName : createCustInfo.cCustName,
@@ -1709,7 +1739,7 @@ order.cust = (function(){
 		}
 		$('#idCardNumber2').val(man.resultContent.certNumber);
 		_showReadCert(man, "custAuthbtn2");
-//		$("#custAuthbtn2").click();
+		//$("#custAuthbtn2").click();
 	};
 
 	// 填单页面经办人读卡
@@ -1809,15 +1839,15 @@ order.cust = (function(){
 					
 					order.cust.jumpAuthflag = $(response.data).find('#jumpAuthflag').val();
 					order.cust.showCustAuth($(response.data).find('#custInfos'));
-//					var content$ = $("#custList");
-//					content$.html(response.data).show();
-//					$(".userclose").off("click").on("click",function(event) {
-//						authFlag="";
-//						$(".usersearchcon").hide();
-//					});
-//					if($("#custListTable").attr("custInfoSize")=="1"){
-//						$(".usersearchcon").hide();
-//					}
+					var content$ = $("#custList");
+					content$.html(response.data).show();
+					$(".userclose").off("click").on("click",function(event) {
+						authFlag="";
+						$(".usersearchcon").hide();
+					});
+					if($("#custListTable").attr("custInfoSize")=="1"){
+						$(".usersearchcon").hide();
+					}
 				},
 				"fail":function(response){
 					$.unecOverlay();
@@ -1889,15 +1919,15 @@ order.cust = (function(){
 	
 
 	//多种鉴权方式的tab页切换
-	var _changeTab = function (tabId) {
-		$.each($("#auth_tab"+tabId).parent().find("li"),function(){
+	var _changeTab = function (id,tabId) {
+		$.each($("#"+id+" #auth_tab"+tabId).parent().find("li"),function(){
 			$(this).removeClass("setcon");
 		});
-		$("#auth_tab"+tabId).addClass("setcon");
-		$.each($("#contents div"),function(){
+		$("#"+id+" #auth_tab"+tabId).addClass("setcon");
+		$.each($("#"+id+" #contents div"),function(){
 			$(this).hide();
 		});
-		$("#content"+tabId).show();
+		$("#"+id+" #content"+tabId).show();
 	};
 
 	//鉴权方式日志记录
@@ -1923,25 +1953,42 @@ order.cust = (function(){
 	};
 
 	//短信发送
-	var _smsResend = function () {
+	var _smsResend = function (level) {
+		$("#smspwd2").val("");
+		var accNbr = "";
+		if (level == "1") {
+			accNbr = _choosedCustInfo.accNbr;
+			if(-1==$("#p_cust_identityCd").val()){
+				accNbr=$.trim($("#p_cust_identityNum").val());
+			}
+		} else if (level == "2") {
+			accNbr = order.prodModify.choosedProdInfo.accNbr;
+		}
+		if(!ec.util.isObj(accNbr)){
+			$.alert("提示","手机号不存在，无法发送短信");
+			return;
+		}
 		var param = {
 			"pageIndex": 1,
 			"pageSize": 10,
-			'munber':order.prodModify.choosedProdInfo.accNbr
+			"munber":accNbr,
+			"isSecond":"Y"
 		};
-		$.callServiceAsJson(contextPath + "/staffMgr/reSend", param, {
+		$.callServiceAsJsonGet(contextPath + "/staff/login/changeUimReSend", param, {
 			"done": function (response) {
 				if (response.code == 0) {
+					if(response.data.randomCode != null ){
+						$("#num .txtnum").attr("value",response.data.randomCode);
+					}
 					$.alert("提示", "验证码发送成功，请及时输入验证.");
 				} else {
-					$.alert("提示", "验证码发送失败，请重新发送.");
+					$.alert("提示", response.data);
 				}
-				;
 			}
 		});
 	};
 	//短信验证
-	var _smsvalid=function(){
+	var _smsvalid=function(level){
 		var params="smspwd="+$("#smspwd2").val();
 		if(!ec.util.isObj($("#smspwd2").val())){
 			$.alert("提示","验证码不能为空！");
@@ -1949,23 +1996,60 @@ order.cust = (function(){
 		}
 		var param = _choosedCustInfo;
 		var recordParam={};
-		recordParam.validateType="3";
-		recordParam.validateLevel="2";
+		recordParam.validateType="2";
+		recordParam.validateLevel=level;
 		recordParam.custId=param.custId;
-		recordParam.accessNbr=param.accessNumber;
+		recordParam.accessNbr=param.accNbr;
 		recordParam.certType=param.identityCd;
 		recordParam.certNumber=param.idCardNumber;
 
 
-		$.callServiceAsJson(contextPath+"/passwordMgr/smsValid", params, {
+		$.callServiceAsJson(contextPath+"/staff/login/changeUimSmsValid", params, {
 			"before":function(){
 				$.ecOverlay("<strong>验证短信随机码中,请稍等会儿....</strong>");
 			},
 			"done" : function(response){
 				if(response.code==0){
-					OrderInfo.authRecord.validateType="3";
+					OrderInfo.authRecord.validateType="2";
 					OrderInfo.authRecord.resultCode="0";
-					easyDialog.close();
+					if (level == "1") {
+						OrderInfo.cust_validateType = "2";//保存鉴权方式
+						var param = _choosedCustInfo;
+						param.authFlag="1";
+						$.callServiceAsHtml(contextPath+"/cust/custAuth",param,{
+							"before":function(){
+								$.ecOverlay("<strong>正在查询中,请稍等...</strong>");
+							},"done" : function(response){
+								if(response.code != 0) {
+									$.alert("提示","客户鉴权失败,稍后重试");
+									return;
+								}
+								if(!order.cust.queryForChooseUser){
+									custInfo = param;
+									OrderInfo.boCusts.prodId=-1;
+									OrderInfo.boCusts.partyId=_choosedCustInfo.custId;
+									OrderInfo.boCusts.partyProductRelaRoleCd="0";
+									OrderInfo.boCusts.state="ADD";
+									OrderInfo.boCusts.norTaxPayer=_choosedCustInfo.norTaxPayer;
+
+									OrderInfo.cust = _choosedCustInfo;
+									_custAuthCallBack(response);
+								} else {
+									//鉴权成功后显示选择使用人弹出框
+									order.main.showChooseUserDialog(param);
+								}
+							},"always":function(){
+								$.unecOverlay();
+							}
+						});
+					} else {
+						try{
+							easyDialog.close();
+						}catch(e){
+							$("#auth2").hide();
+							$("#overlay").hide();
+						}
+					}
 					_saveAuthRecordSuccess(recordParam);
 				}else{
 					$.alert("提示",response.data);
@@ -1982,7 +2066,7 @@ order.cust = (function(){
 	};
 
 	//客户鉴权--产品密码
-	var _productPwdAuth=function(){
+	var _productPwdAuth=function(level){
 
 		var param = _choosedCustInfo;
 		param.prodPwd = $.trim($("#authPassword2").val());
@@ -1990,13 +2074,13 @@ order.cust = (function(){
 			$.alert("提示","产品密码不能为空！");
 			return;
 		}
-		param.validateType = "1";
-		param.accessNumber=_choosedCustInfo.accessNumber;
+		param.validateType = "3";
+		param.accessNumber=_choosedCustInfo.accNbr;
 		param.authFlag=authFlag;
 
 		var recordParam={};
-		recordParam.validateType="1";
-		recordParam.validateLevel="2";
+		recordParam.validateType="3";
+		recordParam.validateLevel=level;
 		recordParam.custId=param.custId;
 		recordParam.accessNbr=param.accessNumber;
 		recordParam.certType=param.identityCd;
@@ -2018,6 +2102,7 @@ order.cust = (function(){
 				try {
 					var errorData = $.parseJSON(response.data);
 					$.alertMore("异常信息", errorData.resultMsg, errorData.errorStack,"error");
+					_saveAuthRecordFail(recordParam);
 					return;
 				} catch(e){
 				}
@@ -2030,9 +2115,19 @@ order.cust = (function(){
 					OrderInfo.boCusts.norTaxPayer=_choosedCustInfo.norTaxPayer;
 
 					OrderInfo.cust = _choosedCustInfo;
-					OrderInfo.authRecord.validateType="1";
+					OrderInfo.authRecord.validateType="3";
 					OrderInfo.authRecord.resultCode="0";
-					easyDialog.close();
+					if (level == "1") {
+						OrderInfo.cust_validateType = "3";//保存鉴权方式
+						_custAuthCallBack(response);
+					} else {
+						try{
+							easyDialog.close();
+						}catch(e){
+							$("#auth2").hide();
+							$("#overlay").hide();
+						}
+					}
 				} else {
 					//鉴权成功后显示选择使用人弹出框
 					order.main.showChooseUserDialog(param);
@@ -2044,22 +2139,22 @@ order.cust = (function(){
 		});
 	};
 	//客户鉴权--证件类型
-	var _identityTypeAuth=function(){
+	var _identityTypeAuth=function(level){
 
 		var param = _choosedCustInfo;
-		param.validateType="2";
+		param.validateType="1";
 		param.identityNum = base64encode($.trim($("#idCardNumber2").val()));
 		if(!ec.util.isObj(param.identityNum)){
 			$.alert("提示","证件号码不能为空！");
 			return;
 		}
 		param.identityCd=param.identityCd;
-		param.accessNumber=_choosedCustInfo.accessNumber;
+		param.accessNumber=_choosedCustInfo.accNbr;
 		param.authFlag=authFlag;
 
 		var recordParam={};
-		recordParam.validateType="2";
-		recordParam.validateLevel="2";
+		recordParam.validateType="1";
+		recordParam.validateLevel=level;
 		recordParam.custId=param.custId;
 		recordParam.accessNbr=param.accessNumber;
 		recordParam.certType=param.identityCd;
@@ -2095,9 +2190,19 @@ order.cust = (function(){
 					OrderInfo.boCusts.norTaxPayer=_choosedCustInfo.norTaxPayer;
 
 					OrderInfo.cust = _choosedCustInfo;
-					OrderInfo.authRecord.validateType="2";
+					OrderInfo.authRecord.validateType="1";
 					OrderInfo.authRecord.resultCode="0";
-					easyDialog.close();
+					if (level == "1") {
+						OrderInfo.cust_validateType = "1";//保存鉴权方式
+						_custAuthCallBack(response);
+					} else {
+						try{
+							easyDialog.close();
+						}catch(e){
+							$("#auth2").hide();
+							$("#overlay").hide();
+						}
+					}
 				} else {
 					//鉴权成功后显示选择使用人弹出框
 					order.main.showChooseUserDialog(param);
@@ -2120,7 +2225,12 @@ order.cust = (function(){
 		recordParam.certType=param.identityCd;
 		recordParam.certNumber=param.idCardNumber;
 		OrderInfo.authRecord.resultCode = "0";
-		easyDialog.close();
+		try{
+			easyDialog.close();
+		}catch(e){
+			$("#auth2").hide();
+			$("#overlay").hide();
+		}
 		_saveAuthRecordSuccess(recordParam);
 	};
 

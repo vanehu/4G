@@ -1,57 +1,33 @@
 package com.al.lte.portal.controller.crm;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
-import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.context.request.WebRequest;
-
 import com.al.common.utils.StringUtil;
 import com.al.ec.serviceplatform.client.ResultCode;
 import com.al.ecs.common.entity.JsonResponse;
 import com.al.ecs.common.entity.PageModel;
-import com.al.ecs.common.util.JsonUtil;
-import com.al.ecs.common.util.MapUtil;
-import com.al.ecs.common.util.PageUtil;
-import com.al.ecs.common.util.PropertiesUtils;
-import com.al.ecs.common.util.UIDGenerator;
+import com.al.ecs.common.util.*;
 import com.al.ecs.common.web.ServletUtils;
-import com.al.ecs.exception.AuthorityException;
-import com.al.ecs.exception.BusinessException;
-import com.al.ecs.exception.ErrorCode;
-import com.al.ecs.exception.InterfaceException;
-import com.al.ecs.exception.ResultConstant;
+import com.al.ecs.exception.*;
 import com.al.ecs.spring.annotation.log.LogOperatorAnn;
 import com.al.ecs.spring.annotation.session.AuthorityValid;
 import com.al.ecs.spring.controller.BaseController;
 import com.al.lte.portal.bmo.crm.CustBmo;
 import com.al.lte.portal.bmo.crm.OrderBmo;
 import com.al.lte.portal.bmo.staff.StaffBmo;
-import com.al.lte.portal.common.Base64;
-import com.al.lte.portal.common.CommonMethods;
-import com.al.lte.portal.common.EhcacheUtil;
-import com.al.lte.portal.common.MySimulateData;
-import com.al.lte.portal.common.SysConstant;
+import com.al.lte.portal.common.*;
 import com.al.lte.portal.model.SessionStaff;
+import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Controller("com.al.lte.portal.controller.crm.CustController")
 @RequestMapping("/cust/*")
@@ -152,7 +128,7 @@ public class CustController extends BaseController {
 		String iseditOperation = null; //存在多次定位客户时，有时不显示跳过检验按钮的问题；尝试每次都调用接口重新获取权限；
 		try{
  			if(iseditOperation==null){
- 				iseditOperation=staffBmo.checkOperatSpec(SysConstant.JUMPAUTH_CODE,sessionStaff);
+ 				iseditOperation=staffBmo.checkOperatSpec(SysConstant.SECOND_JUMPSPECIAL,sessionStaff);
  				ServletUtils.setSessionAttribute(super.getRequest(),
  						SysConstant.SESSION_KEY_JUMPAUTH+"_"+sessionStaff.getStaffId(), iseditOperation);
  			}
@@ -164,7 +140,8 @@ public class CustController extends BaseController {
 				iseditOperation="1";
 			}
 		model.addAttribute("jumpAuthflag", iseditOperation);
-		
+
+		String qryAcctNbr=MapUtils.getString(paramMap,"acctNbr","");
 		String areaId=(String) paramMap.get("areaId");
 		if(("").equals(areaId)||areaId==null){
 			paramMap.put("areaId", sessionStaff.getCurrentAreaId());
@@ -263,7 +240,7 @@ public class CustController extends BaseController {
 						sessionStaff.setCustType("15");
 					}
 					//若省份只返回了一条客户信息，则与原有接口无差异。若省份返回了多条客户信息，则前台需要再次调用后台的新提供的接口，来查询客户下的接入号信息，并拼装报文，按客户ID和接入号逐条展示客户信息
-					if(custInfos.size() > 1){
+					if(custInfos.size() >= 1){
 						Map<String, Object> accNbrParamMap = new HashMap<String, Object>();
 						accNbrParamMap.put("areaId", paramMap.get("areaId"));
 						accNbrParamMap.put("custIds", custIds);
@@ -290,6 +267,13 @@ public class CustController extends BaseController {
 										String accNbr = MapUtils.getString(accNbrMap, "accNbr", "");
 										Map newCustInfoMap = new HashMap(custInfoMap);
 										newCustInfoMap.put("accNbr", accNbr);
+										if(StringUtils.isNotBlank(qryAcctNbr)&&!qryAcctNbr.equals(accNbr))
+											continue;
+										custInfosWithNbr.add(newCustInfoMap);
+									}
+									if (custInfosWithNbr.size()==0&&StringUtils.isNotBlank(qryAcctNbr)) {
+										Map newCustInfoMap = new HashMap(custInfoMap);
+										newCustInfoMap.put("accNbr", qryAcctNbr);
 										custInfosWithNbr.add(newCustInfoMap);
 									}
 								} else {
@@ -300,6 +284,7 @@ public class CustController extends BaseController {
 							custInfosWithNbr = custInfos;
 						}
 						resultMap.put("custInfos", custInfosWithNbr);
+						model.addAttribute("custInfoSize", custInfosWithNbr.size());
 						model.addAttribute("query", paramMap.get("query"));  //综合查询调用标志
 						model.addAttribute("multiCust", "Y");  //多客户标识
 						
@@ -427,7 +412,7 @@ public class CustController extends BaseController {
 		String iseditOperation = null; //存在多次定位客户时，有时不显示跳过检验按钮的问题；尝试每次都调用接口重新获取权限；
 		try{
  			if(iseditOperation==null){
- 				iseditOperation=staffBmo.checkOperatSpec(SysConstant.JUMPAUTH_CODE,sessionStaff);
+ 				iseditOperation=staffBmo.checkOperatSpec(SysConstant.SECOND_JUMPSPECIAL,sessionStaff);
  				ServletUtils.setSessionAttribute(super.getRequest(),
  						SysConstant.SESSION_KEY_JUMPAUTH+"_"+sessionStaff.getStaffId(), iseditOperation);
  			}
@@ -577,7 +562,12 @@ public class CustController extends BaseController {
         String pCustIdentityCd=MapUtils.getString(param,"pCustIdentityCd");
 		String idCardNumber="";
 		/*{accessNumber:'11969577',areaId:21,prodPwd:'000000'}*/
-		paramMap.put("accessNumber", httpSession.getAttribute("queryCustAccNbr"));
+		String accNbr= (String) httpSession.getAttribute("queryCustAccNbr");
+		if (StringUtils.isNotBlank(accNbr)) {
+			paramMap.put("accessNumber", accNbr);
+		} else {
+			paramMap.put("accessNumber", MapUtils.getString(param, "accessNumber", ""));
+		}
 		paramMap.put("prodPwd", param.get("prodPwd"));
 		paramMap.put("areaId",param.get("areaId"));
 		String authFlag=(String) param.get("authFlag");
@@ -624,7 +614,7 @@ public class CustController extends BaseController {
 		Map<String, Map> listCustInfos = (Map<String, Map>) httpSession.getAttribute(SysConstant.SESSION_LIST_CUST_INFOS);
 		
 		if ("0".equals(authFlag)) {
-			if ("2".equals(validateType)||"1".equals(pCustIdentityCd)) {//兼容客户定位省份证定位和二次业务证件类型定位
+			if ("1".equals(validateType)) {//兼容客户定位省份证定位和二次业务证件类型定位
 				//用户信息查询
 				Map custParam = new HashMap();
 				try {

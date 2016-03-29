@@ -154,7 +154,7 @@ public class SecondBusinessController extends BaseController {
      * 权限合并计算，返回计算后的鉴权方式
      *
      * @param scenes 二次菜单下包含的所有的功能点所对应的鉴权方式
-     * @return 计算后的鉴权方式，取交集。
+     * @return 计算后的鉴权方式，取合集。
      */
     private Map<String, Object> authCompute(List<Map<String, Object>> scenes,SessionStaff sessionStaff) throws Exception {
         String authTypeStr = "";
@@ -199,12 +199,12 @@ public class SecondBusinessController extends BaseController {
 
             for (Map<String, Object> scene : scenes) {
                 Map<String, Object> rules = MapUtils.getMap(scene, "rules");
-                rule1 = and4String(rule1, MapUtils.getString(rules, "rule1", SysConstant.STR_N));//规则1：是/否（Y/N）证件鉴权
-                rule2 = and4String(rule2, MapUtils.getString(rules, "rule2", SysConstant.STR_N));//规则2：是/否（Y/N）短信鉴权
-                rule3 = and4String(rule3, MapUtils.getString(rules, "rule3", SysConstant.STR_N));//规则3：是/否（Y/N）产品密码鉴权
-                rule4 = and4String(rule4, MapUtils.getString(rules, "rule4", SysConstant.STR_N));//规则4：是/否（Y/N）无须出示有效证件，不需核验用户身份即可办理
-                rule5 = and4String(rule5, MapUtils.getString(rules, "rule5", SysConstant.STR_N));//规则5：预留字段
-                rule6 = and4String(rule6, MapUtils.getString(rules, "rule6", SysConstant.STR_N));//规则6：预留字段
+                rule1 = or4String(rule1, MapUtils.getString(rules, "rule1", SysConstant.STR_N));//规则1：是/否（Y/N）证件鉴权
+                rule2 = or4String(rule2, MapUtils.getString(rules, "rule2", SysConstant.STR_N));//规则2：是/否（Y/N）短信鉴权
+                rule3 = or4String(rule3, MapUtils.getString(rules, "rule3", SysConstant.STR_N));//规则3：是/否（Y/N）产品密码鉴权
+                rule4 = or4String(rule4, MapUtils.getString(rules, "rule4", SysConstant.STR_N));//规则4：是/否（Y/N）无须出示有效证件，不需核验用户身份即可办理
+                rule5 = or4String(rule5, MapUtils.getString(rules, "rule5", SysConstant.STR_N));//规则5：预留字段
+                rule6 = or4String(rule6, MapUtils.getString(rules, "rule6", SysConstant.STR_N));//规则6：预留字段
             }
             if (isSecondJump == "0") {
                 rule4 = "Y";
@@ -242,7 +242,7 @@ public class SecondBusinessController extends BaseController {
 
     /**
      * 计算字符串形式表示的布尔值返回Y/N
-     *
+     * 与操作
      * @param a 将要进行计算的字符串布尔值，取值为Y/N
      * @param b 另一个同类型参数
      * @return 返回字符串Y/N
@@ -251,6 +251,22 @@ public class SecondBusinessController extends BaseController {
         Boolean x = BooleanUtils.toBoolean(a);
         Boolean y = BooleanUtils.toBoolean(b);
         if (x && y) {
+            return SysConstant.STR_Y;
+        } else {
+            return SysConstant.STR_N;
+        }
+    }
+    /**
+     * 计算字符串形式表示的布尔值返回Y/N
+     * 或操作
+     * @param a 将要进行计算的字符串布尔值，取值为Y/N
+     * @param b 另一个同类型参数
+     * @return 返回字符串Y/N
+     */
+    private String or4String(String a, String b) {
+        Boolean x = BooleanUtils.toBoolean(a);
+        Boolean y = BooleanUtils.toBoolean(b);
+        if (x || y) {
             return SysConstant.STR_Y;
         } else {
             return SysConstant.STR_N;
