@@ -1511,6 +1511,15 @@ order.cust = (function(){
 			$.unecOverlay();
 			_createCustConfirm();
 		}
+		
+		//表示新建客户是身份证，保存信息用户身份证预约号码比对
+		if($.trim($("#identidiesTypeCd option:selected").val()) == 1){
+			var param = {
+					"identityId":_certInfo.custIdCard,
+					"areaId" : OrderInfo.getAreaId()
+			};
+			order.cust.custQueryParam = param;
+		}
 	};
 	//切换标签
 	var _changeLabel = function(labelId){
