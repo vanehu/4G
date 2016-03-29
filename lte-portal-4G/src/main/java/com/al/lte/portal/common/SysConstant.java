@@ -609,6 +609,11 @@ public final class SysConstant {
 
 	public static final String JFKJCG = "JFKJCG";
 	
+    /**客户鉴权短信验证短信发送时间 */
+    public static final String SESSION_KEY_TEMP_CUSTAUTH_SMS_TIME = "_session_key_temp_custauth_sms_time";    
+    /** 客户鉴权短信验证 sms Session key */
+    public static final String SESSION_KEY_CUSTAUTH_SMS = "_ecs_custauth_sms_session_key";	
+    
 	/**改客户资料返档*/
 	public static final String GKHZLFD = "GKHZLFD";
 	/**过户返档*/
@@ -618,5 +623,8 @@ public final class SysConstant {
 	/**过户返档菜单名*/
 	public static final String GHFD_NAME = "过户返档";
 	
+    /** 客户鉴权短信验证证随机二位序列号 */
+    public static final String SESSION_KEY_CUSTAUTH_RANDONCODE = "_ecs_custauth_sms_session_code";
 
+  
 }
