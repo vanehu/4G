@@ -133,9 +133,15 @@
     <div id="order_confirm"></div>
     <!-- business part end -->
 </div>
+	<!--用户鉴权弹窗-->
+<div style="height:300px;display:none;background:#fff; -webkit-border-radius:5px; -moz-border-radius:5px; border-radius:5px;-webkit-box-shadow:0 8px 8px rgba(0,0,0,0.4);-moz-box-shadow:0 8px 8px rgba(0,0,0,0.4);box-shadow:0 8px 8px rgba(0,0,0,0.4); border:5px solid #cbced0;
+	
+	overflow-y:auto;" id="auth2">
+</div>
 </@override>
 <@extends name="/padtoken/main/main-template.html"/>
 <script type="text/javascript">
+    OrderInfo.actionFlag==1;
 	var provinceInfo = ${provinceInfo};
 	var areaId = "";
 	var nextFlag = false;
@@ -244,7 +250,9 @@
 		}
 		if(nextFlag){
 			if(OrderInfo.provinceInfo.prodOfferId!=undefined&&OrderInfo.provinceInfo.prodOfferId!=""&&OrderInfo.provinceInfo.reloadFlag!="N"){
-				order.prepare.commonTab("${contextPath}/pad/order/prodoffer/prepare.html","order_tab_panel_offer");
+				//order.prepare.commonTab("${contextPath}/pad/order/prodoffer/prepare.html","order_tab_panel_offer");
+				//二次鉴权
+				order.prodModify.querySecondBusinessAuthSub();
 			}else if(OrderInfo.provinceInfo.reloadFlag=="N"){
 				//解析二次加载返回数据
 				//解析数据,订购几张副卡
@@ -266,7 +274,9 @@
 					//order.service.buyService("",OrderInfo.reloadProdInfo.prodOfferId,"");
 				}
 			}else{
-				order.prepare.commonTab("${contextPath}/pad/order/prodoffer/prepare.html","order_tab_panel_offer");
+				//二次鉴权
+				order.prodModify.querySecondBusinessAuthSub();
+				//order.prepare.commonTab("${contextPath}/pad/order/prodoffer/prepare.html","order_tab_panel_offer");
 			}
 		}
 	}	

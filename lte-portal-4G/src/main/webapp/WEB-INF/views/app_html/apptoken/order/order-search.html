@@ -1,3 +1,4 @@
+<script src="${contextPath}/js/busi-js/prod/changeUim.js?${jsversion}" type="text/javascript"></script>
 <style type="text/css">
 <!--
 .btn-group-active{
@@ -248,12 +249,15 @@
 </div>
 <!-- 选号页面用 -->
 <div class="item" id="phonenumberContent" style="display:none">
- 
 </div>
+  <div style="display:none;height:300px;background:#fff; -webkit-border-radius:5px; -moz-border-radius:5px; border-radius:5px;-webkit-box-shadow:0 8px 8px rgba(0,0,0,0.4);-moz-box-shadow:0 8px 8px rgba(0,0,0,0.4);box-shadow:0 8px 8px rgba(0,0,0,0.4); border:5px solid #cbced0;
+	         
+	          overflow-y:auto;" id="auth2">
+  </div>
 <script>
 //初始化
 $(function(){
-	order.service.init();
+	
 	//新装主副卡数据
 	if($("#mainPhoneNum").val()!=undefined&&$("#mainPhoneNum").val()!=""){
 		OrderInfo.newOrderNumInfo.mainPhoneNum = $("#mainPhoneNum").val();
@@ -262,8 +266,13 @@ $(function(){
 		OrderInfo.newOrderNumInfo.newSubPhoneNum = $("#newSubPhoneNum").val();
 	}
 	var prodOfferId = OrderInfo.provinceInfo.prodOfferId;
+	OrderInfo.actionFlag="1";
+	order.prodModify.querySecondBusinessAuthSub();
 	if(prodOfferId&&prodOfferId.length>0){
-		order.service.buyService(prodOfferId,"");
+		//order.service.buyService(prodOfferId,"");
+	}
+	else{
+		//order.service.init();
 	}
 });
 </script>

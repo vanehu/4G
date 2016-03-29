@@ -282,10 +282,7 @@
 		OrderInfo.acct={acctCd:'${acctCd}'};//账户合同号
 		order.prepare.createorderlonger();
 		OrderInfo.busitypeflag=1;
-		order.service.initSpec();
-		order.prodOffer.init();
-		order.service.searchPack();
-		order.phoneNumber.resetBoProdAn();
+
 	}
 </script>
 	<!-- 选号界面需要获取的 areaId -->
@@ -345,7 +342,11 @@
 			<a class="btna_o" href="javascript:void(0)" onclick="easyDialog.close()" style=" margin-left:20px;"><span>取消</span></a>
 		</div>
 	</div>
-	
+		<!--用户鉴权弹窗-->
+<div style="height:300px;display:none;background:#fff; -webkit-border-radius:5px; -moz-border-radius:5px; border-radius:5px;-webkit-box-shadow:0 8px 8px rgba(0,0,0,0.4);-moz-box-shadow:0 8px 8px rgba(0,0,0,0.4);box-shadow:0 8px 8px rgba(0,0,0,0.4); border:5px solid #cbced0;
+	display:none;
+	overflow-y:auto;" id="auth2">
+</div>
 	<!-- 功能产品销售品详情弹窗 -->
 	<div id="div_detail_dialog" class="easyDialogdiv" style="width:980px;height:460px;">
 		<div class="easyDialogclose" id="staff_dialog_close" onclick="easyDialog.close()"></div>
@@ -375,13 +376,15 @@ window.onload=function(){
 		OrderInfo.newOrderNumInfo.newSubPhoneNum = newSubPhoneNum;
 	}
 	if("${prodOfferId}"!=""){
-		order.service.buyService('${prodOfferId}','${(price)?default("")}');
+		OrderInfo.offid="${prodOfferId}";
+		//order.service.buyService('${prodOfferId}','${(price)?default("")}');
 	}
 	var terminalCode='${terminalCode}'; //终端串码
 	//终端串码
 	if(terminalCode!=null && terminalCode!="" && terminalCode!="null"){
 		OrderInfo.terminalCode=terminalCode;
 	}
+	order.prodModify.querySecondBusinessAuthSub();
 } 
 
 </script> 
