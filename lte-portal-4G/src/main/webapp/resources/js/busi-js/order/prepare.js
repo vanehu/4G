@@ -54,9 +54,7 @@ order.prepare = (function(){
 				}
 			});
 		});
-		var callback = function (event, url, forTab) { //异地业务隐藏三个入口
-			_commonTab(url, forTab);
-			event.stopPropagation();
+		var init=function(){
 			var diffPlaceFlag = $("#diffPlaceFlag").val();
 			if (diffPlaceFlag == "diff") {
 				$("#order_prepare").hide();
@@ -96,6 +94,12 @@ order.prepare = (function(){
 				order.prodOffer.init();
 			}
 		}
+		var callback = function (event, url, forTab) { //异地业务隐藏三个入口
+			_commonTab(url, forTab);
+			event.stopPropagation();
+			init();
+		};
+		init();
 	};
 	var _commonTab=function(url,forTab){
 		var param={};
