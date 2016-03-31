@@ -441,7 +441,8 @@ public class OfferController extends BaseController {
 	}
 	
 	/**
-	 * 获取附属销售品查询页面
+	 * 获取附属销售品查询页面<br/>
+	 * 如果要改造该方法，建议首先过目一下searchAttachOfferSpecPost这个方法，就在该方法的下面
 	 * @param param
 	 * @param model
 	 * @param response
@@ -484,7 +485,10 @@ public class OfferController extends BaseController {
 	
 	/**
 	 * 获取附属销售品查询页面<br/>
-	 * POST请求
+	 * 由于原版方法(就是上面的searchAttachOfferSpec方法)为GET请求，报文长度受限，影响到后期改造，
+	 * 同时考虑到该方法为公共方法，为安全起见，故将支持POST请求的该方法独立出来。<br/>
+	 * 如果该方法后期改造，应当考虑同步修改上面的原版方法。<br/>
+	 * Updated by ZhangYu 2016-03-31
 	 * @param param
 	 * @param model
 	 * @param response

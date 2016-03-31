@@ -498,7 +498,11 @@ query.offer = (function() {
 		}
 	};
 	
-	//查询附属销售品规格
+	/**
+	 * 查询附属销售品规格
+	 * 原版为GET请求，因报文限制，现改为POST请求
+	 * Updated by ZhangYu 2016-03-31
+	 */
 	var _searchAttachOfferSpec = function(param) {
 		addParam(param);  //添加基本参数
 //		var url = contextPath+"/offer/searchAttachOfferSpec";

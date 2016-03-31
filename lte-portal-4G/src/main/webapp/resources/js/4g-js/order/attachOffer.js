@@ -611,8 +611,10 @@ AttachOffer = (function() {
 			return;
 		}
 		param.offerSpecName = offerSepcName;
-		var attachOffersOrdered2Filter = CacheData.getOfferList(prodId);//已订购附属销售品
-		$.each(attachOffersOrdered2Filter,function(){
+		//获取已订购附属销售品，送到后端进行遍历过滤
+		var attachOffersOrdered = CacheData.getOfferList(prodId);
+		$.each(attachOffersOrdered,function(){
+			//summary和offerSpecName两个节点包含大量文字，且这里不需要该节点，故遍历去除，以减少报文大小
 			if(this.summary != null){
 				this.summary = "";
 			}
@@ -620,7 +622,7 @@ AttachOffer = (function() {
 				this.offerSpecName = "";
 			}
 		});
-		param.attachOfferOrderedList = attachOffersOrdered2Filter;
+		param.attachOfferOrderedList = attachOffersOrdered;
 		var data = query.offer.searchAttachOfferSpec(param);
 		if(data!=undefined){
 			$("#attach_div_"+prodId).html(data).show();
