@@ -483,6 +483,46 @@ public class OfferController extends BaseController {
 	}
 	
 	/**
+	 * 获取附属销售品查询页面<br/>
+	 * POST请求
+	 * @param param
+	 * @param model
+	 * @param response
+	 * @return
+	 * @throws BusinessException
+	 */
+	@RequestMapping(value = "/searchAttachOfferSpecPost", method = { RequestMethod.POST })
+		public String searchAttachOfferSpecPost(@RequestBody Map<String, Object> paramMap, Model model,HttpServletResponse response){
+        try {
+        	SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);	
+        	
+        	//搜索可订购销售品
+        	paramMap.put("operatorsId", sessionStaff.getOperatorsId()!=""?sessionStaff.getOperatorsId():"99999");
+    		Map<String, Object> offerMap = offerBmo.queryCanBuyAttachSpec(paramMap,null,sessionStaff);
+    		offerMap = offerBmo.removeAttachOfferExpired(paramMap, offerMap);
+    		model.addAttribute("offerMap",offerMap);
+    		
+        	//搜索可订购功能产品
+    		paramMap.put("matchString", paramMap.get("offerSpecName"));
+    		Map<String, Object> servMap = offerBmo.queryCanBuyServ(paramMap,null,sessionStaff);
+    		model.addAttribute("servMap",servMap);
+    		
+        	model.addAttribute("param",paramMap);
+    		model.addAttribute("prodId",paramMap.get("prodId"));
+    		if(paramMap.get("yslflag")!=null){
+    			model.addAttribute("yslflag",paramMap.get("yslflag"));
+    		}
+        } catch (BusinessException be) {
+        	return super.failedStr(model,be);
+        } catch (InterfaceException ie) {
+        	return super.failedStr(model, ie, paramMap, ErrorCode.QUERY_MUST_OFFER);
+		} catch (Exception e) {
+			return super.failedStr(model, ErrorCode.QUERY_MUST_OFFER, e, paramMap);
+		}
+		return "/offer/attach-offer-list";
+	}
+	
+	/**
 	 * 加载实例
 	 * @param param
 	 * @param model

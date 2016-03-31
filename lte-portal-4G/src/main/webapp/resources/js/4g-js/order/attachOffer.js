@@ -611,7 +611,16 @@ AttachOffer = (function() {
 			return;
 		}
 		param.offerSpecName = offerSepcName;
-		param.attachOfferOrderedList =  CacheData.getOfferList(prodId);//已订购附属销售品
+		var attachOffersOrdered2Filter = CacheData.getOfferList(prodId);//已订购附属销售品
+		$.each(attachOffersOrdered2Filter,function(){
+			if(this.summary != null){
+				this.summary = "";
+			}
+			if(this.offerSpecName != null){
+				this.offerSpecName = "";
+			}
+		});
+		param.attachOfferOrderedList = attachOffersOrdered2Filter;
 		var data = query.offer.searchAttachOfferSpec(param);
 		if(data!=undefined){
 			$("#attach_div_"+prodId).html(data).show();
