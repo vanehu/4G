@@ -6296,19 +6296,33 @@ public class PrintBmoImpl implements PrintBmo {
 
 		List<StringBeanSet> strBeanContentList = new ArrayList<StringBeanSet>();
 		List<Map<String, Object>> bizReportDetailItemDto = (List<Map<String, Object>>) MapUtils.getObject(map, "bizReportDetailItemDto");
+		boolean hasSeq = false;
+		int index=0;
 		if(null!=bizReportDetailItemDto&&bizReportDetailItemDto.size()>0) {
+			if(bizReportDetailItemDto.size()>1) {
+				hasSeq = true;
+			}
 			for (Map<String, Object> itemMap : bizReportDetailItemDto) {
 				StringBeanSet strBeanContent = new StringBeanSet();
 				String content = getItem(itemMap);
+				if(hasSeq) {
+					content = (char) (SysConstant.CIRCLENUMBERBASE + index++) + content;
+				}
 				strBeanContent.setStrBean(content);
 				strBeanContentList.add(strBeanContent);
 			}
 		}
 		List<Map<String, Object>> bizReportDetailDescDto = (List<Map<String, Object>>) MapUtils.getObject(map, "bizReportDetailDescDto");
 		if(null!=bizReportDetailDescDto&&bizReportDetailDescDto.size()>0) {
+			if(bizReportDetailDescDto.size()>1) {
+				hasSeq = true;
+			}
 			for (Map<String, Object> descMap : bizReportDetailDescDto) {
 				StringBeanSet strBeanContent = new StringBeanSet();
 				String content = getItem(descMap);
+				if(hasSeq) {
+					content = (char) (SysConstant.CIRCLENUMBERBASE + index++) + content;
+				}
 				strBeanContent.setStrBean(content);
 				strBeanContentList.add(strBeanContent);
 			}

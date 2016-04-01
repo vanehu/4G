@@ -626,5 +626,8 @@ public final class SysConstant {
     /** 客户鉴权短信验证证随机二位序列号 */
     public static final String SESSION_KEY_CUSTAUTH_RANDONCODE = "_ecs_custauth_sms_session_code";
 
-  
+    /**
+     * 带圆圈的数字的Unicode基本编码值
+     */
+    public static final int CIRCLENUMBERBASE = 9312;
 }
