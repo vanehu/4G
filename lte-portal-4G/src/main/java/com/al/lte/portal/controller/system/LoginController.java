@@ -283,6 +283,7 @@ public class LoginController extends BaseController {
 					session.setAttribute(SysConstant.SERVER_NAME,getSerName());
 					session.setAttribute(SysConstant.SESSION_KEY_MENU_LIST, menuResultMap.get("menuList"));
 					session.setAttribute(SysConstant.SESSION_KEY_MENU_AUTH_URL_LIST, EhcacheUtil.getAuthUrlInMenuList(menuResultMap.get("menuList")));
+					session.setAttribute(SysConstant.SERVER_IP,CommonUtils.getSerAddrPart());
 					
 					RedisUtil.set((String) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_DATASOURCE_KEY),sessionStaff.getStaffId(),session.getId());
 					//对登录成功用户名进行加密储存至cookie
