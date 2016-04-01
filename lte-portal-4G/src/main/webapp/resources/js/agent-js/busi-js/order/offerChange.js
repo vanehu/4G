@@ -128,8 +128,10 @@ offerChange = (function() {
 					    prodSpecId : this.objId,
 					    offerSpecId : prodInfo.prodOfferId,
 					    offerRoleId : this.offerRoleId,
-					    acctNbr : this.accessNumber
+					    acctNbr : this.accessNumber,
 					};
+					// 增加主副卡信息，用于界面展示区分
+					_getOfferMemberByAcctNbr(param);
 					var res = query.offer.queryChangeAttachOffer(param);
 					$("#attach_"+prodId).html(res);	
 					//如果objId，objType，objType不为空才可以查询默认必须
@@ -168,6 +170,18 @@ offerChange = (function() {
 			offerChange.checkOfferProd();
 		}
 		order.main.initTounch();
+	};
+	
+	// 通过接入号获取offerMember,以在页面显示主副卡信息
+	var _getOfferMemberByAcctNbr = function(param) {
+		// 如果有主副卡，则增加入参
+		if (ec.util.isObj(OrderInfo.offer.offerMemberInfos) && OrderInfo.offer.offerMemberInfos.length > 1) {
+			$.each(OrderInfo.offer.offerMemberInfos, function(i, offerMemberInfo) {
+				if (ec.util.isObj(offerMemberInfo.accessNumber) && offerMemberInfo.accessNumber == param.acctNbr) {
+					param.offerMember = offerMemberInfo;
+				}
+			});
+		}
 	};
 	
 	//套餐变更提交组织报文

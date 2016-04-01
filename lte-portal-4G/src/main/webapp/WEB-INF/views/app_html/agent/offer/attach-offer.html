@@ -36,7 +36,7 @@
 	<ul class="list-group" onclick="changeIcon(this, 'ordering_offer_${prodId}')">
 		<!-- 已订购促销 -->
 		<a id="ordered_offer" class="list-group-item" href="#ordering_offer_${prodId}" tabindex="-1" data-toggle="tab">
-			${param.acctNbr}&nbsp&nbsp&nbsp&nbsp已订购促销
+			<#if param.offerMember??>${param.offerMember.roleName}</#if> ${param.acctNbr}&nbsp&nbsp&nbsp&nbsp已订购促销
 			<span class="glyphicon glyphicon-chevron-right pull-right" aria-hidden="true"></span>
 		</a>
 	</ul>
