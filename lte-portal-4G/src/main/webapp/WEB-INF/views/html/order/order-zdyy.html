@@ -414,47 +414,6 @@ function createDialog(){
 <!--发票弹出框的内容-->
 <#include "/print/invoice-prepare.html"/>
 <!--弹出层-->
-<!--身份证读卡信息-->
-<div id="easyDialogBox" style="margin: -200px 0px 0px -255px; padding: 0px; border: none; z-index: 9000; position: fixed; top: 50%; left: 50%; display: none;"><div class="easyDialogdiv" style="width: 500px; height: 390px; display: block; margin: 0px;" id="user_info">
-        <div class="easyDialogclose" id="userinfoclose"></div>
-        <form id="custInfoForm">
-        <table class="contract_list">
-            <thead>
-                <tr>
-                    <td>客户信息</td>
-                </tr>
-            </thead>
-        </table>
-        <div class="infoBox">
-            <table class="network" style="margin: 0px 15px;">
-                <tbody>
-                    <tr>
-                        <td width="60"> 客户姓名：</td>
-                        <td id="td_cust_name"></td>
-                    </tr>
-                    <tr>
-                        <td> 证件号码：</td>
-                        <td id="td_cust_idCard"></td>
-                    </tr>
-                    <tr id="tr_cust_photo" style="display: none;">
-                        <td> 证件相片：</td>
-                        <td>
-                            <img id="img_cust_photo" alt="相片" src="">
-                        </td>
-                    </tr>
-                    <tr>
-                        <td width="60"> 客户地址：</td>
-                        <td id="td_address_str"></td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        <div align="center" style="margin: 20px auto;">
-            <a class="btna_o" id="custsussbtn" href="javascript:void(0)"><span>确定</span></a>
-        </div> 
-        </form>
-    </div>
-</div>
 <!-- 读卡信息展示弹出层 -->
 <div style="display:none" id="user_info2">
         <form id="custInfoForm">
