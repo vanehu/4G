@@ -765,6 +765,11 @@ OrderInfo = (function() {
 		
 		if(prodServ.boActionTypeCd == CONST.BO_ACTION_TYPE.PRODUCT_PARMS){ //改产品属性
 			if(ec.util.isArray(prodServ.prodSpecParams)){
+				busiOrder.data.boServs = [];
+				busiOrder.data.boServs.push({
+					servId : prodServ.memberId,
+					state : "KIP"
+				});
 				busiOrder.data.boServOrders = [];
 				busiOrder.data.boServOrders.push({
 					servId: prodServ.memberId,
