@@ -52,10 +52,10 @@
 			     	 		${childList.orderStatusName}
 			     	 	</td>
 			     	 	<td>
-			     	 		<#if childList.statusCd=="X" && childList.batchType!="12">
+			     	 		<#if childList.statusCd=="X">
 			     	 			<i id="plan_detail" onclick="order.batch.batchReprocess('${childList.groupId}','${childList.statusCd}','${childList.batchId}','1')">取消</i>&nbsp;
 		     	 				<i id="plan_detail" onclick="order.batch.batchReprocess('${childList.groupId}','${childList.statusCd}','${childList.batchId}','2')">重发</i>
-			     	 		<#elseif childList.statusCd=="F" && childList.batchType!="12">
+			     	 		<#elseif childList.statusCd=="F">
 			     	 			<i id="plan_detail" onclick="order.batch.batchReprocess('${childList.groupId}','${childList.statusCd}','${childList.batchId}','2')">重发</i>
 			     	 		<#else>
 			     	 		</#if>
