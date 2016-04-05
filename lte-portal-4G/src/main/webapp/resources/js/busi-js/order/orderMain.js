@@ -1329,18 +1329,8 @@ order.main = (function(){
 		if($('#'+itemId).length > 0){
 			var isOptional = true;
 			if(OrderInfo.cust && OrderInfo.cust.custId && OrderInfo.cust.custId != '-1'){ //老客户
-				/*根据证件类型来判断
-				 * var isGovCust = false;
-				for (var i = 0; i <= CacheData.getGovCertType().length; i ++) {
-					if (OrderInfo.cust.identityCd == CacheData.getGovCertType()[i]) {
-						isGovCust = true;
-						break;
-					}
-				}
-				if(isGovCust){ //政企客户
-					isOptional = false;
-				}*/
-				if(OrderInfo.cust.segmentId == '1000'){ //政企客户
+				// 根据证件类型来判断
+				if(order.cust.isCovCust(OrderInfo.cust.identityCd)){ //政企客户
 					isOptional = false;
 				}
 			} else { //新建客户
