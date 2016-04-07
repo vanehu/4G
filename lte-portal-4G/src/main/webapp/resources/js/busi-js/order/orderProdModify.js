@@ -8,7 +8,7 @@ CommonUtils.regNamespace("order", "prodModify");
  * 订单准备
  */
 order.prodModify = (function(){
-	var addOrChange = "13";//补换卡，补卡，换卡
+	var addOrChange = 13;//补换卡，补卡，换卡
 	var boActionTypeCd="";//业务动作小类
 	var authFlag="";
 	var _coupon="";
