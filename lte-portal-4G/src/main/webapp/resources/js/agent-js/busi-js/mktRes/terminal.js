@@ -527,7 +527,7 @@ mktRes.terminal = (function($){
 		};
 		if(CONST.getAppDesc()==0){
 			param.mktSpecCode=$(obj).attr("mktSpecCode");
-			param.pageInfo={pageIndex:1,pageSize:pageSize};
+			param.pageInfo={pageIndex:1,pageSize:20};
 			param.attrList=[];
 			param.is4G="yes";
 		}
@@ -1049,6 +1049,7 @@ mktRes.terminal = (function($){
 			var max_num = maxCard;
 			$("#max_num").text(maxCard);//显示最大副卡数量
 			_purchase();
+			OrderInfo.returnFlag="";
 		}else{
 			$.alert("提示","请选择一个接入产品！");
 			return;
@@ -1812,6 +1813,7 @@ mktRes.terminal = (function($){
 		}
 		selectedObj=null;//初始化原先选中的号码
 		//收集参数
+		subnum = $("#subnum").val();
 		param = _buildPhoneParam(param);
 		param.subnum = subnum;
 		param.isReserveFlag=_queryFlag;
@@ -1822,7 +1824,7 @@ mktRes.terminal = (function($){
 		if($("#pakeage").length>0){
 			$("#pakeage").hide();
 		}
-		OrderInfo.returnFlag="hm";
+		if(OrderInfo.returnFlag!="fk") OrderInfo.returnFlag="hm";
 		$.callServiceAsHtml(url,param,{
 			"before":function(){
 				$.ecOverlay("<strong>正在查询中,请稍等会儿....</strong>");
@@ -1882,6 +1884,7 @@ mktRes.terminal = (function($){
 	
 	//购手机副卡号码预占
 	var _btnPurchase=function(obj,needPsw,index){
+		if(OrderInfo.returnFlag!="fk") OrderInfo.returnFlag="";
 		phoneNumberVal = $(obj).attr("numberVal"); 
 		var memberRoleCd=CONST.MEMBER_ROLE_CD.MAIN_CARD;
 		//选号类型：新装主卡选号、新装副卡选号 Y1、Y2
@@ -2685,6 +2688,7 @@ mktRes.terminal = (function($){
 	
 	//增加副卡
 	var _zjfk=function(){
+		OrderInfo.returnFlag="fk";
 		if(cardIndex + maxCard +2 ==0){
 			$.alert("信息提示","副卡不可超过"+maxCard+"张!");
 			return;
@@ -2758,6 +2762,7 @@ mktRes.terminal = (function($){
 	var _viewZjfk=function(n){
 		$("#terminalMain").hide();
 		$("#zjfk_"+n).show();
+		OrderInfo.returnFlag="fk";
 	}
 	//关闭浏览副卡
 	var _closeviewZjfk=function(n){
@@ -2777,6 +2782,7 @@ mktRes.terminal = (function($){
 		}
 		$("#terminalMain").show();
 		$("#zjfk_"+n).hide();
+		OrderInfo.returnFlag="";
 	}
 	//关闭增加副卡
 	var _closeZjfk=function(){
@@ -2816,6 +2822,7 @@ mktRes.terminal = (function($){
 		var cur_num = -1-cardIndex;
 		$("#cur_num").text(cur_num);
 		cardIndex = cardIndex-1;
+		OrderInfo.returnFlag="";
 	}
 	
 	//删除副卡
@@ -2953,6 +2960,7 @@ mktRes.terminal = (function($){
 		
 		$("#terminalMain").show();
 		$("#zjfk_"+cardIndex).hide();
+		OrderInfo.returnFlag="";
 	}
 	
 	//显示经办人

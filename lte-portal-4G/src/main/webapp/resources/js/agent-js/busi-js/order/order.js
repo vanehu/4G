@@ -239,6 +239,7 @@ order.service = (function(){
 //	        }
 //			}
 		}
+		OrderInfo.returnFlag="";
 	};
 	
 	//获取销售品构成，获取数量
@@ -550,6 +551,7 @@ order.service = (function(){
 							prodOfferSpec.accessnumber=accessnumber;
 							OrderInfo.viceOfferSpec.push(prodOfferSpec);
 							order.prodModify.chooseOfferForMember(specId,subpage,specName,offerRoleId);
+							OrderInfo.returnFlag="";
 						}else{
 							$.alert("提示","无法选择套餐，套餐规格查询失败！");
 						}

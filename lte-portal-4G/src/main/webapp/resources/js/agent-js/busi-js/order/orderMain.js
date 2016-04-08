@@ -1306,6 +1306,7 @@ order.main = (function(){
 	
 	//增加副卡
 	var _zjfk=function(){
+		OrderInfo.returnFlag="fk";
 		var offerSpecName= $.trim($("#txt_offer_-1").val()); 
 		if(offerSpecName==undefined || offerSpecName == ""){
 			$.alert("信息提示","请先选择套餐！");
@@ -1418,6 +1419,7 @@ order.main = (function(){
 		var cur_num = -1-fkcardIndex;
 		$("#cur_num").text(cur_num);
 		order.main.fkcardIndex = fkcardIndex-1;
+		OrderInfo.returnFlag="";
 	}
 	
 	//取消副卡
@@ -1471,12 +1473,14 @@ order.main = (function(){
 		
 		$("#order-content").show();
 		$("#zjfk_"+fkcardIndex).hide();
+		OrderInfo.returnFlag="";
 	}
 	
 	//浏览副卡
 	var _viewZjfk=function(n){
 		$("#order-content").hide();
 		$("#zjfk_"+n).show();
+		OrderInfo.returnFlag="fk";
 	}
 	//关闭浏览副卡
 	var _closeviewZjfk=function(n){
@@ -1496,6 +1500,7 @@ order.main = (function(){
 		}
 		$("#order-content").show();
 		$("#zjfk_"+n).hide();
+		OrderInfo.returnFlag="";
 	}
 	
 	//删除副卡

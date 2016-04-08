@@ -448,6 +448,7 @@ order.phoneNumber = (function(){
 	
 	//号码预占
 	var _btnPurchase=function(obj,needPsw){
+		if(OrderInfo.returnFlag!="fk") OrderInfo.returnFlag="";
 		phoneNumberVal = $(obj).attr("numberVal"); 
 		var memberRoleCd=CONST.MEMBER_ROLE_CD.MAIN_CARD;
 		//选号类型：新装主卡选号、新装副卡选号 Y1、Y2

@@ -333,7 +333,7 @@ mktRes.terminal = (function($){
 		};
 		if(CONST.getAppDesc()==0){
 			param.mktSpecCode=$(obj).attr("mktSpecCode");
-			param.pageInfo={pageIndex:1,pageSize:pageSize};
+			param.pageInfo={pageIndex:1,pageSize:20};
 			param.attrList=[];
 			param.is4G="yes";
 		}
