@@ -298,7 +298,19 @@
 				<groupId>com.linkage</groupId>
 				<artifactId>AsiaLinkage-Util</artifactId>
 				<version>0.0.1-SNAPSHOT</version>
-			</dependency>			
+			</dependency>
+			<!-- 统一配置平台begin -->
+			<dependency>
+			  	<groupId>com.al</groupId>
+			  	<artifactId>al-uniconfig</artifactId>
+			  	<version>1.0.2-SNAPSHOT</version>
+			</dependency>
+			<dependency>
+				<groupId>com.al</groupId>
+				<artifactId>al-notifier</artifactId>
+				<version>1.0.1-SNAPSHOT</version>		
+			</dependency>					
+			<!-- 统一配置平台 end -->			
 		</dependencies>
 	</dependencyManagement>
   <build>

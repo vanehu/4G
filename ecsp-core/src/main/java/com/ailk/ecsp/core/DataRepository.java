@@ -5,12 +5,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
+
 import com.ailk.ecsp.mybatis.WebParam;
 import com.ailk.ecsp.mybatis.model.Pack;
 import com.ailk.ecsp.mybatis.model.Portal;
 import com.ailk.ecsp.mybatis.model.ServiceModel;
 import com.ailk.ecsp.mybatis.model.ServiceRole;
 import com.ailk.ecsp.service.Service;
+import com.al.ecs.common.util.MDA;
 
 public class DataRepository {
 	private HashMap<String, Pack> allPack;
@@ -193,8 +195,12 @@ public class DataRepository {
 	
 	//获取默认数据源的配置数据
 	public String getSysParamValue(String paramCode,String groupId){
-		String dbKeyWord = DataSourceRouter.DEFAULT_DATASOURCE_KEY;
-		return getSysParamValue(dbKeyWord, paramCode, groupId);
+		if(paramCode.equals(SysConstant.CON_CSB_URL_KEY)){//csb地址从MDA配置文件取
+			return MDA.CSB_WS_URL;
+		}else{
+			String dbKeyWord = DataSourceRouter.DEFAULT_DATASOURCE_KEY;
+			return getSysParamValue(dbKeyWord, paramCode, groupId);
+		}
 	}
 	
 	public WebParam getWebParam() {

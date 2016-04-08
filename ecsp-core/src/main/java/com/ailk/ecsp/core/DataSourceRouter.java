@@ -41,12 +41,12 @@ public class DataSourceRouter {
 	private static Map<String, String> dataSourceKeyMap;
 	
 	static{
-		try {
+//		try {
 			initDataSourceKeyMap();
-			clearCache();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+			//clearCache();
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
 	}
 	
 	public static void setRouteFactor(String key){
@@ -63,11 +63,12 @@ public class DataSourceRouter {
 		if (StringUtils.isBlank(dataSourceKey)){
 			dataSourceKey = DEFAULT_DATASOURCE_KEY;
 		}
-		String routerStrategyKey = getRouterStrategyKeyFromProperties(dataSourceKey);
-		if (routerStrategyKey == null) {
-			throw new IllegalStateException("No Mapped DataSources Exist! key: " + key);
-		}
-		currentRouterStrategyThread.set(new RouterStrategy(routerStrategyKey));
+//		String routerStrategyKey = getRouterStrategyKeyFromProperties(dataSourceKey);
+//		if (routerStrategyKey == null) {
+//			throw new IllegalStateException("No Mapped DataSources Exist! key: " + key);
+//		}
+//		currentRouterStrategyThread.set(new RouterStrategy(routerStrategyKey));
+		currentRouterStrategyThread.set(new RouterStrategy(dataSourceKey));
 	}
 	
 	//从配置文件中读取当前省份的数据源关键字 

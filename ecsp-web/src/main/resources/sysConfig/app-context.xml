@@ -21,6 +21,7 @@ default-lazy-init="true">
     <!-- controller层的属性和配置文件读入 ,多个用逗号隔开
     <context:property-placeholder location="classpath:/properties/config.properties" />
  -->
+ 	<import resource="classpath:/sysConfig/uniconfig-client.xml"/>
 	<import resource="classpath:/portal/db-context-portalService-lte.xml"/>
 	<bean class="com.ailk.ecsp.util.SpringContextUtil" lazy-init="false" />
 </beans>
