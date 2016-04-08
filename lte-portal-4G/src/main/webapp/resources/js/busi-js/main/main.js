@@ -639,7 +639,26 @@ main.home = (function(){
 		}
 		
 **************************/
-	
+
+
+	/**
+	 * 渠道搜索过滤
+	 * @private
+	 */
+		var _searchChannel = function () {
+			var searchParam = $.trim($("#qudao #searchParam").val());
+			var channelList = $("#qudao>table>tbody>tr");
+			$.each(channelList, function () {
+				var channel_name = $(this).find("td:eq(0)>dd>i").attr("channel_name");
+				if (channel_name.indexOf(searchParam) == -1) {
+					$(this).hide();
+				} else {
+					$(this).show();
+				}
+			});
+		};
+
+
 	return {
 		tabManager				:_tabManager,
 		queryNotice				:_queryNotice,
@@ -662,7 +681,8 @@ main.home = (function(){
 		getSelectedTabName		:_getSelectedTabName,
 		addTab					:_addTab,
 		backTab					:_backTab,
-		loadTab					:_loadTab
+		loadTab					:_loadTab,
+		searchChannel			:_searchChannel
 	};
 	
 })();

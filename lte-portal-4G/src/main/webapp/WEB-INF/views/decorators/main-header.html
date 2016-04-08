@@ -224,8 +224,13 @@
 
 <!--渠道选择弹窗-->
 <div class="easyDialogdiv" style="width:450px; max-height: 380px;min-height: 250px" id="qudao">
-    	<div class="easyDialogclose" id="qudaoclose"></div>
-    	<table class="contract_list">
+    <div class="easyDialogclose" id="qudaoclose"></div>
+    <div>
+         <input type="text" class="numberTextBox" id="searchParam" placeholder="请输入搜索关键字"
+         data-validate="validate(required:请输入搜索关键字) on(keyup)" maxlength="100" style="margin-top:0px;">
+         <input type="button" onclick="main.home.searchChannel()" class="purchase" value="搜索">
+    </div>
+    <table class="contract_list">
             <thead>
                 <tr>
                     <td>选择渠道</td>
