@@ -28,13 +28,13 @@
 				<div class="panel-heading" id="tital" olNbr="${result.olNbr}" olId="${result.olId}"></div>
 				<!-- List group -->
 				<ul class="list-group" id="orderTbody">
-					<li class="list-group-item">
+					<li class="list-group-item" id = "orderTS" >
 						<label for="idtype">选择回执类型</label>
 						<div class="btn-group btn-group-justified" data-toggle="buttons">
 							<label class="btn btn-default active" onclick="SoOrder.chooseReceiptType(1)">
 								<input type="radio" name="buytype" value="1" checked="checked"> 提交受理
 							</label>
-							<label class="btn btn-default" onclick="SoOrder.chooseReceiptType(2)">
+							<label  class="btn btn-default" onclick="SoOrder.chooseReceiptType(2)">
 								<input type="radio" name="buytype" value="2"> 暂存受理
 							</label>
 						</div>
@@ -256,4 +256,8 @@
 	if (resMap.resultCode == 0) {
 		OrderInfo.orderResult = resMap.result;
 	}
+	if(OrderInfo.actionFlag==13){
+		$("#orderTS").hide();
+	}
+	
 </script>

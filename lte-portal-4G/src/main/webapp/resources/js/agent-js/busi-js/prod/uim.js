@@ -489,7 +489,9 @@ prod.uim = (function() {
 	//
 	//uim卡号校验（补换卡专用）
 	var _checkUimAgent = function(prodId){
-
+        if (OrderInfo.uimtypeflag == 0) {
+        	OrderInfo.uimtypeflag = 21;
+        }
 		var phoneNumber = OrderInfo.getAccessNumber(prodId);
 		var offerId = "-1"; //新装默认，主销售品ID
 		if(OrderInfo.actionFlag==1||OrderInfo.actionFlag==6||OrderInfo.actionFlag==14){ //新装需要选号
@@ -679,6 +681,13 @@ prod.uim = (function() {
 		$("#isCheck_Card").css("display","none");
 		OrderInfo.clearProdUim(prodId);
 	};
+	var _selUimAgent = function(){
+		var uimSel = $("#uimSel").val();
+		if(uimSel !=undefined) {
+			OrderInfo.uimtypeflag = parseInt(uimSel);
+		}
+	}
+	 
 	//
 	return {
 		getMktResCd:getMktResCd,
@@ -688,6 +697,7 @@ prod.uim = (function() {
 		setProdUim				: _setProdUim,
 		setOldUim				: _setOldUim,
 		checkUimAgent				: _checkUimAgent,
-		releaseUimAgent				: _releaseUimAgent
+		releaseUimAgent				: _releaseUimAgent,
+		selUimAgent              :_selUimAgent
 	};
 })();
