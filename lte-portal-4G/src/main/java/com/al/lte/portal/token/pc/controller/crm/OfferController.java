@@ -622,7 +622,7 @@ public class OfferController extends BaseController {
 		try{
 			SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);
 			
-			String commonParamKey = MySimulateData.getInstance().getParam((String) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_DATASOURCE_KEY),"common.param.key");//公共参数加密KEY
+			String commonParamKey = MySimulateData.getInstance().getParam("COMMON_PARAM_KEY",(String) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_DATASOURCE_KEY),"common.param.key");//公共参数加密KEY
 			
 			String paramsJson=request.getParameter("params");
 			
@@ -700,7 +700,7 @@ public class OfferController extends BaseController {
 			model.addAttribute("isFee_",isFee);
 			model.addAttribute("reloadFlag_",paramsMap.get("reloadFlag"));
 			model.addAttribute("custAreaId_",provCustAreaId);
-			String interface_merge = MySimulateData.getInstance().getParam((String) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_DATASOURCE_KEY),"INTERFACE_MERGE");
+			String interface_merge = MySimulateData.getInstance().getParam("INTERFACE_MERGE",(String) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_DATASOURCE_KEY),"INTERFACE_MERGE");
 			String provareaId = paramsMap.get("provCustAreaId").toString().subSequence(0, 3)+"0000";
 			String mergeFlag = "0";
 			if(interface_merge != null && interface_merge.indexOf(provareaId)!=-1){

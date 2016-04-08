@@ -901,7 +901,7 @@ public class OrderController extends BaseController {
         	prams.put("pageSize", 50);
         	int totalPage=0;
         	Map<String, Object> map = null;
-         prams.put("qryStr", "乐享");
+            
         	map = orderBmo.queryMainOfferSpecList(prams,null, sessionStaff);
         	if(ResultCode.R_SUCCESS.equals(map.get("code"))){
         		//拼装前台显示的套餐详情

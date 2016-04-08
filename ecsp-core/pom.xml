@@ -279,7 +279,16 @@
 				 -->				
 			</exclusions>
 		</dependency>
-			
+		<!-- 统一配置平台 -->
+		<dependency>
+			<groupId>com.al</groupId>
+			<artifactId>al-uniconfig</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.al</groupId>
+			<artifactId>al-notifier</artifactId>	
+		</dependency>
+		<!-- 统一配置平台 -->		
 	</dependencies>
   
    <build>

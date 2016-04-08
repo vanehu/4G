@@ -622,17 +622,23 @@
 				<version>1.0.1-SNAPSHOT</version>
 			</dependency>
 			<dependency>
-				<groupId>com.al</groupId>
-				<artifactId>al-uniconfig</artifactId>
-				<version>1.0.2-SNAPSHOT</version>
-			</dependency>
-			<dependency>
 				<groupId>redis.clients</groupId>
 				<artifactId>jedis</artifactId>
 				<version>2.2.0</version>
 			</dependency>
 			<!-- 集中会话 end -->
-			
+			<!-- 统一配置平台begin -->
+			<dependency>
+			  	<groupId>com.al</groupId>
+			  	<artifactId>al-uniconfig</artifactId>
+			  	<version>1.0.2-SNAPSHOT</version>
+			</dependency>
+			<dependency>
+				<groupId>com.al</groupId>
+				<artifactId>al-notifier</artifactId>
+				<version>1.0.1-SNAPSHOT</version>		
+			</dependency>					
+			<!-- 统一配置平台 end -->	
 			<!-- CRM异步框架 BEGIN -->
 			<dependency>
 		  		<groupId>com.al.crm.asynframe</groupId>

@@ -379,7 +379,12 @@
 			<artifactId>jedis</artifactId>
 		</dependency>
 		<!-- 集中会话 end -->
-
+     
+		<dependency>
+			<groupId>com.al</groupId>
+			<artifactId>al-notifier</artifactId>	
+		</dependency>
+		<!-- 统一配置平台 -->
 		<!-- CRM异步框架 BEGIN -->
 		<dependency>
 	  		<groupId>com.al.crm.asynframe</groupId>

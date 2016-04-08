@@ -3,6 +3,7 @@ package com.al.lte.portal.common;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
@@ -12,6 +13,7 @@ import java.util.Properties;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 
+import com.al.ecs.common.util.MDA;
 import com.al.ecs.common.util.PropertiesUtils;
 import com.al.ecs.common.web.SpringContextUtil;
 import com.al.ecs.exception.InterfaceException;
@@ -121,6 +123,60 @@ public class MySimulateData {
 		log.debug("APPDESC={}", appDesc);
 		return appDesc;
 	}
+	
+	 public String getParam(String MDACode,String dbKeyWord,String keys) throws UnsupportedEncodingException, InterfaceException{
+		// java反射遍历MDA类中是否存在该属性
+			boolean isHasProperty = false;
+			String propertyValue = "";
+			Map<String, String> propertyMap = new HashMap<String, String>();
+			Field[] fields = MDA.class.getDeclaredFields();
+			for (Field field : fields) {
+				// 遍历String类型属性
+				if (field.getGenericType().equals(String.class)) {
+					if (MDACode.equals(field.getName())) {
+						try {
+							propertyValue = (String) field.get(new MDA());
+						} catch (IllegalArgumentException e) {
+							e.printStackTrace();
+						} catch (IllegalAccessException e) {
+							e.printStackTrace();
+						}
+						isHasProperty = true;
+					}
+				}
+				// 遍历Map类型属性
+				if (field.getGenericType().toString().equals("java.util.Map<java.lang.String, java.lang.String>")) {
+					try {
+						propertyMap = (Map<String, String>) field.get(new MDA());
+					} catch (IllegalArgumentException e) {
+						e.printStackTrace();
+					} catch (IllegalAccessException e) {
+						e.printStackTrace();
+					}
+					for (String key : propertyMap.keySet()) {
+						if (MDACode.equals(key)) {
+							propertyValue = propertyMap.get(key);
+							isHasProperty = true;
+							break;
+						}
+					}
+				}
+				if (isHasProperty) {
+					break;
+				}
+			}
+			//从mda取数据
+			if(isHasProperty){
+				return propertyValue;
+			}
+			//走原有方法
+			else{
+				propertyValue=getParam(dbKeyWord,keys);
+				return propertyValue;
+			}	
+	 }
+	
+	
 	/**
 	 * 获取配置文件中指定的参数值，没有则从缓存中获取
 	 * @param key
@@ -129,17 +185,12 @@ public class MySimulateData {
 	 * @throws InterfaceException 
 	 */
 	public String getParam(String dbKeyWord,String key) throws UnsupportedEncodingException, InterfaceException{
+		
+		
 		String returnStr = "";
-//		try {
-			//相对地址变换获得路径
-//			properties = getProperties(resource);
-			//URI定义路径
-//			properties = getPropertiesByAbs(absResource);
-			//invokeWay指调用方式，HTTP、WS、SIMULATE
-		//如果配置
 		PropertiesUtils propertiesUtils = (PropertiesUtils) SpringContextUtil.getBean("propertiesUtils");
 		if (SysConstant.ON.equals(propertiesUtils.getMessage(SysConstant.FILE_PREFER_FLAG))) {
-			returnStr = propertiesUtils.getMessage(key);
+			returnStr =propertiesUtils.getMessage(key);
 			if (StringUtils.isNotBlank(returnStr)) {
 				returnStr = new String(returnStr.getBytes("ISO-8859-1"), "UTF-8");
 				return returnStr;
@@ -171,15 +222,6 @@ public class MySimulateData {
 			return null ;
 		}
 		returnStr = new String(returnStr.getBytes("ISO-8859-1"), "UTF-8");
-//		} catch (Exception e) {
-			// 取值异常
-			// NullPointerException - if key is null
-			// MissingResourceException - if no object for the given key can be
-			// found
-			// ClassCastException - if the object found for the given key is not
-			// a string
-//			returnStr = "";
-//		}
 		return returnStr;
 	}
 	public static Properties getProperties(String resource) {

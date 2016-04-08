@@ -243,5 +243,5 @@
 		Imports user-defined @Controller beans that process client requests
 	-->
 	<beans:import resource="servlet-controllers.xml" />
-
+	<beans:import resource="uniconfig-client.xml" />
 </beans:beans>

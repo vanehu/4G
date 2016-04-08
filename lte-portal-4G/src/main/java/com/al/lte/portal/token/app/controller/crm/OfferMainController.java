@@ -70,7 +70,7 @@ public class OfferMainController extends BaseController {
 			
 			SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);
 			
-			String commonParamKey = MySimulateData.getInstance().getParam((String) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_DATASOURCE_KEY),"common.param.key");//公共参数加密KEY
+			String commonParamKey = MySimulateData.getInstance().getParam("COMMON_PARAM_KEY",(String) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_DATASOURCE_KEY),"common.param.key");//公共参数加密KEY
 			
 			String paramsJson=request.getParameter("params");
 			
@@ -164,7 +164,7 @@ public class OfferMainController extends BaseController {
 				model.addAttribute("staffInfo_", JacksonUtil.objectToJson(staffMap));
 			}
 			String mergeFlag = "0";
-			String interface_merge = MySimulateData.getInstance().getParam((String) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_DATASOURCE_KEY),"INTERFACE_MERGE");
+			String interface_merge = MySimulateData.getInstance().getParam("INTERFACE_MERGE",(String) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_DATASOURCE_KEY),"INTERFACE_MERGE");
 			String provareaId = paramsMap.get("provCustAreaId").toString().subSequence(0, 3)+"0000";
 			if(interface_merge != null && interface_merge.indexOf(provareaId)!=-1){
 				mergeFlag = "1";
@@ -486,7 +486,7 @@ public class OfferMainController extends BaseController {
 		try{
 			SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);
 			
-			String commonParamKey = MySimulateData.getInstance().getParam((String) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_DATASOURCE_KEY),"common.param.key");//公共参数加密KEY		
+			String commonParamKey = MySimulateData.getInstance().getParam("COMMON_PARAM_KEY",(String) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_DATASOURCE_KEY),"common.param.key");//公共参数加密KEY		
 			String paramsJson=request.getParameter("params");			
 			if(paramsJson==null){
 				//参数为空，扔公共提示页面

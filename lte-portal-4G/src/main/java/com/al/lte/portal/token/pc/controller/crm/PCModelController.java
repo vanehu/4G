@@ -27,6 +27,7 @@ import com.al.ec.serviceplatform.client.ResultCode;
 import com.al.ec.toolkit.JacksonUtil;
 import com.al.ecs.common.entity.JsonResponse;
 import com.al.ecs.common.util.JsonUtil;
+import com.al.ecs.common.util.MDA;
 import com.al.ecs.common.util.PropertiesUtils;
 import com.al.ecs.common.web.ServletUtils;
 import com.al.ecs.exception.InterfaceException;
@@ -90,7 +91,7 @@ public class PCModelController extends BaseController {
 				model.addAttribute("errorMsg", "参数集合为空");
 				return "/common/error";
 			}
-			String tokenKey = MySimulateData.getInstance().getParam((String) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_DATASOURCE_KEY),"token.key");//令牌key
+			String tokenKey = MySimulateData.getInstance().getParam("TOKENKEY",(String) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_DATASOURCE_KEY),"token.key");//令牌key
 			log.error("令牌key："+tokenKey);
 			String jmAccessToken = AESUtils.decryptToString(accessToken, tokenKey);
 			if(StringUtil.isEmptyStr(jmAccessToken)){				
@@ -131,7 +132,7 @@ public class PCModelController extends BaseController {
 			sessionStaff = SessionStaff.setStaffInfoFromMap(staffInfo);		
 			initSessionStaff(sessionStaff, request.getSession());
 			
-			String privateKey = MySimulateData.getInstance().getParam((String) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_DATASOURCE_KEY),"token."+provinceCode+".key");//私钥
+			String privateKey = MySimulateData.getInstance().getParam("token."+provinceCode+".key",(String) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_DATASOURCE_KEY),"token."+provinceCode+".key");
 			log.error("省份私钥："+privateKey);
 			if(StringUtil.isEmptyStr(privateKey)){		
 				model.addAttribute("errorMsg", "私钥为空");
@@ -188,20 +189,20 @@ public class PCModelController extends BaseController {
 				request.getSession().setAttribute("PC.BACKURI"+provIsale,redirectUri);
 			}		
 			
-			String modelUrl = MySimulateData.getInstance().getParam((String) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_DATASOURCE_KEY),"pc."+actionFlag+".url");//业务跳转地址
+			String modelUrl = MySimulateData.getInstance().getParam("pc."+actionFlag+".url",(String) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_DATASOURCE_KEY),"pc."+actionFlag+".url");//业务跳转地址
 			log.error("业务跳转地址："+modelUrl);
 			if(StringUtil.isEmptyStr(modelUrl)){	
 				model.addAttribute("errorMsg", "业务跳转地址为空");
 				return "/common/error";
 			}
-			String commonParamKey = MySimulateData.getInstance().getParam((String) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_DATASOURCE_KEY),"common.param.key");//公共参数加密KEY
+			String commonParamKey = MySimulateData.getInstance().getParam("COMMON_PARAM_KEY",(String) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_DATASOURCE_KEY),"common.param.key");//公共参数加密KEY
 			log.error("公共参数加密KEY："+commonParamKey);
 			StringBuilder strb = new StringBuilder();
 			strb.append("?params="+ AESUtils.encryptToString(JsonUtil.toString(paramsMap), commonParamKey)).append("&accessToken="+accessToken);
 			modelUrl = (new StringBuilder(String.valueOf(modelUrl))).append(strb.toString()).toString();
 			log.error("回调地址："+modelUrl);
 			String dbKeyWord = (String) request.getSession().getAttribute(SysConstant.SESSION_DATASOURCE_KEY);
-			String flag = MySimulateData.getInstance().getParam(dbKeyWord,"UNIFYLOGIN");
+			String flag = MySimulateData.getInstance().getParam("UNIFYLOGIN",dbKeyWord,"UNIFYLOGIN");
 			//response.sendRedirect(modelUrl);
 //			return "redirect:"+modelUrl;
 //			int port = request.getServerPort();
@@ -294,7 +295,7 @@ public class PCModelController extends BaseController {
 					jr = failed("省份编码为空！", 1);				
 					return jr;					
 				}
-				String backUrl = MySimulateData.getInstance().getParam((String) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_DATASOURCE_KEY),"pc.uri."+provinceCode);//省份回调地址
+				String backUrl = MySimulateData.getInstance().getParam("pc.uri."+provinceCode,(String) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_DATASOURCE_KEY),"pc.uri."+provinceCode);//省份回调地址
 				if(StringUtil.isEmptyStr(backUrl)){
 					jr = failed("省份回调地址未配置！", 1);				
 					return jr;					
@@ -333,7 +334,7 @@ public class PCModelController extends BaseController {
 					map.put("provIsale", provIsale);
 					map.put("extCustOrderID", extCustOrderID);
 					map.put("resultCode", resultCode);
-					String privateKey = MySimulateData.getInstance().getParam((String) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_DATASOURCE_KEY),"token."+provinceCode+".key");//私钥
+					String privateKey = MySimulateData.getInstance().getParam("token."+provinceCode+".key",(String) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_DATASOURCE_KEY),"token."+provinceCode+".key");
 					String params = AESUtils.encryptToString(JacksonUtil.objectToJson(map), privateKey);
 					String[] urlSplit = redirectUri.split("[?]");
 					if(urlSplit.length > 1){//带参数

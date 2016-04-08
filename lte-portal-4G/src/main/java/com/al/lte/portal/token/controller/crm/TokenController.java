@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
-
 import javax.annotation.Resource;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -83,7 +82,8 @@ public class TokenController extends BaseController {
 				resultMap.put("resultMsg", "参数集合为空");
 				return;
 			}
-			String publicKey = MySimulateData.getInstance().getParam((String) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_DATASOURCE_KEY),"token.province.key");//公钥						
+			
+			String publicKey = MySimulateData.getInstance().getParam("TOKENPROVINEKEY",(String) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_DATASOURCE_KEY),"token.province.key");//公钥						
 			log.error("公钥:"+publicKey);
 			if(StringUtil.isEmptyStr(publicKey)){
 				resultMap.put("resultCode", "2");
@@ -97,7 +97,7 @@ public class TokenController extends BaseController {
 				resultMap.put("resultMsg", "省份编码解密异常");
 				return;
 			}
-			String privateKey = MySimulateData.getInstance().getParam((String) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_DATASOURCE_KEY),"token."+jmProvinceCode+".key");//私钥TOKEN_8110000_KEY
+			String privateKey = MySimulateData.getInstance().getParam("token."+jmProvinceCode+".key",(String) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_DATASOURCE_KEY),"token."+jmProvinceCode+".key");//私钥TOKEN_8110000_KEY
 			log.error("省份私钥:"+privateKey);
 			if(StringUtil.isEmptyStr(privateKey)){
 				resultMap.put("resultCode", "2");
@@ -149,9 +149,9 @@ public class TokenController extends BaseController {
 				resultMap.put("resultMsg", "工号或者地市为空，无法生成令牌");
 				return;
 			}
-			String tokenTimes = MySimulateData.getInstance().getParam((String) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_DATASOURCE_KEY),"token.times");//令牌失效时间
+			String tokenTimes = MySimulateData.getInstance().getParam("TOKENTIMES",(String) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_DATASOURCE_KEY),"token.times");//令牌失效时间
 			log.error("令牌失效时间:"+tokenTimes);
-			String tokenKey = MySimulateData.getInstance().getParam((String) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_DATASOURCE_KEY),"token.key");//令牌key
+			String tokenKey = MySimulateData.getInstance().getParam("TOKENKEY",(String) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_DATASOURCE_KEY),"token.key");//令牌key
 			log.error("令牌key:"+tokenKey);
 			paramMap.put("tokenTimes",tokenTimes);
 			paramMap.put("tokenKey",tokenKey);		

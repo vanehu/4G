@@ -199,9 +199,6 @@ public class OrderQueryController extends BaseController {
 			String operateSpecInfo = EhcacheUtil.getOperateSpecInfo(session, urlType);
 			if(SysConstant.URL_ORDERUNDO.equals(urlType)){
 				operateSpecInfo = SysConstant.GLY;
-			} else if(SysConstant.URL_BATCHORDERQRY.equals(urlType)){
-				//批量受理查询，按“撤单”模式新增权限优化(管理员可查询地区，其他不可查询修改地区，仅默认地区) By ZhangYu 2015-10-19
-				operateSpecInfo = SysConstant.BATCHORDER_GLY;
 			}
 			List<Map<String, Object>> list = CommonMethods.getAreaRangeList(sessionStaff, params, operateSpecInfo);
 			return successed(list);

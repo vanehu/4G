@@ -175,7 +175,7 @@ public class OrderController extends BaseController {
 		Map<String, Object> custMap = new HashMap<String, Object>();
 		try {
 			//公共参数加密KEY
-			String commonParamKey = MySimulateData.getInstance().getParam((String) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_DATASOURCE_KEY),"common.param.key");
+			String commonParamKey = MySimulateData.getInstance().getParam("COMMON_PARAM_KEY",(String) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_DATASOURCE_KEY),"common.param.key");
 			String paramsJson=request.getParameter("params");
 			
 			if(paramsJson==null){
@@ -261,7 +261,7 @@ public class OrderController extends BaseController {
 				return "/common/error";
 			}
 			String mergeFlag = "0";
-			String interface_merge = MySimulateData.getInstance().getParam((String) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_DATASOURCE_KEY),"INTERFACE_MERGE");
+			String interface_merge = MySimulateData.getInstance().getParam("INTERFACE_MERGE",(String) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_DATASOURCE_KEY),"INTERFACE_MERGE");
 			String provareaId = paramsMap.get("provCustAreaId").toString().subSequence(0, 3)+"0000";
 			if(interface_merge != null && interface_merge.indexOf(provareaId)!=-1){
 				mergeFlag = "1";
@@ -768,8 +768,6 @@ public class OrderController extends BaseController {
 				model.addAttribute("partyId", partyId);
 				model.addAttribute("offerRoleId", offerRoleId);
 				model.addAttribute("roleCd", roleCd);
-				//String payMethodCode = MySimulateData.getInstance().getParam(SysConstant.PAY_METHOD_CODE) ;
-				//model.addAttribute("payMethodCode", payMethodCode==null?"error":payMethodCode);
 				model.addAttribute("code", 0);
 			} else {
 				model.addAttribute("code", 1);
@@ -3464,7 +3462,7 @@ public class OrderController extends BaseController {
 		boolean querycustflag = false;
 		Map<String,Object> paramsMap = new HashMap();
 		try {
-			String commonParamKey = MySimulateData.getInstance().getParam((String) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_DATASOURCE_KEY),"common.param.key");//公共参数加密KEY
+			String commonParamKey = MySimulateData.getInstance().getParam("COMMON_PARAM_KEY",(String) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_DATASOURCE_KEY),"common.param.key");//公共参数加密KEY
 			String paramsJson=request.getParameter("params");
 			if(paramsJson==null){
 				//参数为空，扔公共提示页面

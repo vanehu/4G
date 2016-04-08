@@ -494,8 +494,6 @@ public class OrderController extends BaseController {
 				model.addAttribute("partyId", partyId);
 				model.addAttribute("offerRoleId", offerRoleId);
 				model.addAttribute("roleCd", roleCd);
-				//String payMethodCode = MySimulateData.getInstance().getParam((String) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_DATASOURCE_KEY),SysConstant.PAY_METHOD_CODE) ;
-				//model.addAttribute("payMethodCode", payMethodCode==null?"error":payMethodCode);
 				model.addAttribute("code", 0);
 			} else {
 				model.addAttribute("code", 1);
@@ -546,9 +544,7 @@ public class OrderController extends BaseController {
         List<Map<String, Object>> list = null;
         try {
         	result = orderBmo.orderSpecParamChange(dataBusMap1 ,dataBusMap2, null, sessionStaff);
-        	model.addAttribute("orderSpec", result);
-        	//String payMethodCode = MySimulateData.getInstance().getParam((String) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_DATASOURCE_KEY),SysConstant.PAY_METHOD_CODE) ;
-			//model.addAttribute("payMethodCode", payMethodCode==null?"error":payMethodCode);
+        	model.addAttribute("orderSpec", result);        	
 			String slimitParams = MySimulateData.getInstance().getParam((String) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_DATASOURCE_KEY),SysConstant.ORDER_PARAMS_LIMIT_IDS) ;
 			List<String> limitParams = new ArrayList<String>();
 			if(slimitParams!=null&&!slimitParams.equals("null")){
