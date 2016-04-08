@@ -3813,7 +3813,17 @@ order.prodModify = (function(){
 		var response= $.callServiceAsHtml(url,param);
 		$("#auth2").empty().append(response.data);
 		var authTypeStr=$("#authTypeStr").html();
-		if(authTypeStr.toString().indexOf(OrderInfo.cust_validateType)!=-1||authTypeStr.toString()=="4"){
+		if (ec.util.isObj(OrderInfo.cust_validateType) && ec.util.isObj(OrderInfo.cust_validateNum) && ec.util.isObj(order.prodModify.choosedProdInfo.accNbr)) {
+			if ((OrderInfo.cust_validateType == "3" || OrderInfo.cust_validateType == "2") && OrderInfo.cust_validateNum == order.prodModify.choosedProdInfo.accNbr) {
+				if (authTypeStr.toString().indexOf(OrderInfo.cust_validateType) != -1 || authTypeStr.toString() == "4") {
+					return false;
+				}
+			}else if((OrderInfo.cust_validateType == "1" || OrderInfo.cust_validateType == "4")){
+				if (authTypeStr.toString().indexOf(OrderInfo.cust_validateType) != -1 || authTypeStr.toString() == "4") {
+					return false;
+				}
+			}
+		} else if (authTypeStr.toString().indexOf(OrderInfo.cust_validateType) != -1 || authTypeStr.toString() == "4") {
 			return false;
 		}
 

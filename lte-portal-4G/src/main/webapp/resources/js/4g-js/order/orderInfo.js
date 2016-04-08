@@ -57,6 +57,8 @@ OrderInfo = (function() {
 
 	var _cust_validateType = "";//客户鉴权方式
 
+	var _cust_validateNum = "";//客户鉴权号码
+
 	var _busitypeflag = 0;
 	
 	var _orderlonger = "";
@@ -1668,6 +1670,7 @@ OrderInfo = (function() {
 		newOrderInfo			:_newOrderInfo,
 		custCreateToken         :_custCreateToken,
 		authRecord				:_authRecord,
-		cust_validateType		:_cust_validateType
+		cust_validateType		:_cust_validateType,
+		cust_validateNum		:_cust_validateNum
 	};
 })();

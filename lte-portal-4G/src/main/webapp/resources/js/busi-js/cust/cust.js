@@ -561,6 +561,7 @@ order.cust = (function(){
 		$("#authPassword").val("");
 		authFlag="";
 		OrderInfo.cust_validateType="";//重置客户鉴权方式
+		OrderInfo.cust_validateNum="";//保存鉴权号码
 		OrderInfo.boCusts.partyId="";
 		//重新定位重置已选产品信息缓存
 		order.prodModify.choosedProdInfo={};
@@ -2020,9 +2021,10 @@ order.cust = (function(){
 					OrderInfo.authRecord.validateType="2";
 					OrderInfo.authRecord.resultCode="0";
 					if (level == "1") {
-						OrderInfo.cust_validateType = "2";//保存鉴权方式
 						var param = _choosedCustInfo;
 						param.authFlag="1";
+						OrderInfo.cust_validateType = "2";//保存鉴权方式
+						OrderInfo.cust_validateNum = _choosedCustInfo.accNbr;//保存鉴权号码
 						$.callServiceAsHtml(contextPath+"/cust/custAuth",param,{
 							"before":function(){
 								$.ecOverlay("<strong>正在查询中,请稍等...</strong>");
@@ -2126,6 +2128,7 @@ order.cust = (function(){
 					OrderInfo.authRecord.resultCode="0";
 					if (level == "1") {
 						OrderInfo.cust_validateType = "3";//保存鉴权方式
+						OrderInfo.cust_validateNum = _choosedCustInfo.accNbr;//保存鉴权号码
 						_custAuthCallBack(response);
 					} else {
 						try{
