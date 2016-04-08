@@ -1,5 +1,6 @@
-<#if COMPRESS_JS_LEVEL?? && (COMPRESS_JS_LEVEL == "BUSI" || COMPRESS_JS_LEVEL == "BASE")>
+<#if COMPRESS_JS_LEVEL?? && COMPRESS_JS_LEVEL == "BUSI">
 <script src="${contextPath}/merge/js/busiPC-${BUSI_VERSION}.min.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/4g-js/cert/cert.js?${jsversion}" type="text/javascript"></script>
 <#else>
 <script src="${contextPath}/js/4g-js/card/writeCard.js?${jsversion}" type="text/javascript"></script>
 <script src="${contextPath}/js/pc-js/busi-js/order/attachOffer.js?${jsversion}" type="text/javascript"></script>
@@ -35,4 +36,5 @@
 <script src="${contextPath}/js/pc-js/busi-js/cust/uiCust3.js?${jsversion}" type="text/javascript"></script>
 <script src="${contextPath}/js/pc-js/busi-js/cust/uiAttachOffer.js?${jsversion}" type="text/javascript"></script>
 <script src="${contextPath}/js/pc-js/busi-js/cust/uiOfferQuery.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/4g-js/cert/cert.js?${jsversion}" type="text/javascript"></script>
 </#if>
