@@ -1066,8 +1066,9 @@ cust = (function(){
 		}
 		return true;
 	};
+
 	//客户列表点击
-/*	var _showCustAuth = function(scope) {
+	var _showCustAuth = function(scope) {
 		_choosedCustInfo = {
 			custId : $(scope).attr("custId"), //$(scope).find("td:eq(3)").text(),
 			partyName : $(scope).attr("partyName"), //$(scope).find("td:eq(0)").text(),
@@ -1141,7 +1142,7 @@ cust = (function(){
 				
 			}
 			
-			if(!ec.util.isObj(accessNumber)){
+			/*if(!ec.util.isObj(accessNumber)){
 				$("#auth_tab1").hide();
 				$("#auth_tab3").hide();
 				$("#content1").hide();
@@ -1153,26 +1154,27 @@ cust = (function(){
 				$("#content1").show();
 				$("#content2").hide();
 				$("#content3").hide();
-			}
+			}*/
 			//初始化弹出窗口
 			$("#authPassword2").val("");
 			$("#idCardNumber2").val("");
 			$("#smspwd2").val("");
 			$("#num").val("");
+			
 			if("9" != OrderInfo.actionFlag) {
-				if (ec.util.isObj(canRealName) && 1 == canRealName) {
+				if ( ec.util.isObj(canRealName) && 1 == canRealName) {
 					$('#auth3').modal('show');
 				}else{
-					$.alert("提示","您还未实名制客户不能进行此次操作");
+					$.alert("提示","非实名制不能进行此操作");
 				}
 			}else {
-				if (ec.util.isObj(canRealName) && 1 == canRealName) {
-					$.alert("提示","您是实名制客户不能进行此次操作");
-				}else{
+				if ( !ec.util.isObj(canRealName) && 1 != canRealName) {
 					$('#auth3').modal('show');
+				}else{
+					$.alert("提示","实名制不能进行此操作");
 				}
 			}
-			
+
 
 			if(cust.jumpAuthflag=="0"){
 				//$("#jumpAuth").off('click').on('click', function(){
@@ -1181,92 +1183,6 @@ cust = (function(){
 				$("#jumpAuth1").show();
 				$("#jumpAuth2").show();
 				$("#jumpAuth3").show();
-			}
-//			$("#authClose").off("click").on("click",function(event){
-//				easyDialog.close();
-//				$("#authPassword").val("");
-//			});
-//			$("#authIDClose").off("click").on("click",function(event){
-//				easyDialog.close();
-//				$("#authIDTD").val("");
-//			});
-		} else{
-			_custAuth(scope);
-		}
-	};
-	*/
-	//客户列表点击
-	var _showCustAuth = function(scope) {
-		_choosedCustInfo = {
-			custId : $(scope).attr("custId"), //$(scope).find("td:eq(3)").text(),
-			partyName : $(scope).attr("partyName"), //$(scope).find("td:eq(0)").text(),
-			idCardNumber : $(scope).attr("idCardNumber"), //$(scope).find("td:eq(4)").text(),
-			identityName : $(scope).attr("identityName"),
-			areaName : $(scope).attr("areaName"),
-			areaId : $(scope).attr("areaId"),
-			identityCd :$(scope).attr("identityCd"),
-			addressStr :$(scope).attr("addressStr"),
-			norTaxPayer :$(scope).attr("norTaxPayer"),
-			segmentId :$(scope).attr("segmentId"),
-			segmentName :$(scope).attr("segmentName"),
-			custFlag :$(scope).attr("custFlag"),
-			vipLevel :$(scope).attr("vipLevel"),
-			vipLevelName :$(scope).attr("vipLevelName"),
-			accNbr:$(scope).attr("accNbr")
-		};
-		//设置被选择标识
-		$(scope).attr("selected","selected");
-		$(scope).siblings().each(function () {
-				$(this).removeAttr("selected");
-		});
-		// 判断是否是政企客户
-//		var isGovCust = false;
-//		for (var i = 0; i <= CacheData.getGovCertType().length; i ++) {
-//			if (_choosedCustInfo.identityCd == CacheData.getGovCertType()[i]) {
-//				isGovCust = true;
-//				break;
-//			}
-//		}
-//		if(cust.queryForChooseUser && isGovCust){
-//			$.alert('提示','使用人必须是公众客户，请重新定位。');
-//			return false;
-//		}
-		if(authFlag=="0"){
-			//TODO init view 
-			if(cust.authType == '00'){
-				$("#custAuthTypeName").html("客户密码：");
-			} else {
-				$("#custAuthTypeName").html("产品密码：");
-			}
-			if(OrderInfo.actionFlag == "2" && OrderInfo.actionFlag == "22" && -1==$("#identidiesType").val() && !ec.util.isObj(_choosedCustInfo.accNbr)){
-				_choosedCustInfo.accNbr = $.trim($("#userid").val());
-			}
-			var pCustIdentityCd = $("#identidiesType").val();
-			if("1"==pCustIdentityCd){
-//				var isIdTypeOff = OrderInfo.staff.idType=="OFF";
-//				$('#authIDTD').attr("disabled",!isIdTypeOff);//身份鉴权的身份证在读卡时被禁用，此处根据开关控制是否允许输入
-//				easyDialog.open({
-//					container:'authID',
-//					callback : function(){
-//						cust.queryForChooseUser = false; //关闭弹出框时重置标识位
-//					}
-//				});
-				$('#authID').modal('show');
-			}else{
-//				easyDialog.open({
-//					container : 'auth',
-//					callback : function(){
-//						cust.queryForChooseUser = false; //关闭弹出框时重置标识位
-//					}
-//				});
-				$('#auth').modal('show');
-			}
-			if(cust.jumpAuthflag=="0"){
-				//$("#jumpAuth").off('click').on('click', function(){
-				//	order.cust.jumpAuth();
-				//});
-				$("#jumpAuth").show();
-				$("#jumpAuthID").show();
 			}
 //			$("#authClose").off("click").on("click",function(event){
 //				easyDialog.close();
@@ -1386,44 +1302,6 @@ cust = (function(){
 		}
 		var param = _choosedCustInfo;
 		param.authFlag="1";
-		$('#auth').modal('hide');
-		$('#authID').modal('hide');
-		$.callServiceAsHtml(contextPath+"/agent/cust/custAuth",param,{
-			"before":function(){
-				$.ecOverlay("<strong>正在查询中,请稍等...</strong>");
-			},"done" : function(response){
-				if(response.code != 0) {
-					$.alert("提示","客户鉴权失败,稍后重试");
-					return;
-				}
-				
-				if(!cust.queryForChooseUser){
-					custInfo = param;
-					OrderInfo.boCusts.prodId=-1;
-					OrderInfo.boCusts.partyId=_choosedCustInfo.custId;
-					OrderInfo.boCusts.partyProductRelaRoleCd="0";
-					OrderInfo.boCusts.state="ADD";
-					OrderInfo.boCusts.norTaxPayer=_choosedCustInfo.norTaxPayer;
-					
-					OrderInfo.cust = _choosedCustInfo;
-					_custAuthCallBack(response);
-				} else {
-					//鉴权成功后显示选择使用人弹出框
-					order.main.showChooseUserDialog(param);
-				}
-			},"always":function(){
-				$.unecOverlay();
-			}
-		});
-	};
-	
-	/*var _jumpAuth = function() {
-		if(cust.jumpAuthflag!="0"){
-			$.alert("提示","没有跳过校验权限！");
-			return;
-		}
-		var param = _choosedCustInfo;
-		param.authFlag="1";
 		$('#auth3').modal('hide');
 		$.callServiceAsHtml(contextPath+"/agent/cust/custAuth",param,{
 			"before":function(){
@@ -1452,7 +1330,7 @@ cust = (function(){
 				$.unecOverlay();
 			}
 		});
-	};*/
+	};
 	// cust auth callback
 	var _custAuthCallBack = function(response) {
 //		if(authFlag=="0"){
@@ -2023,7 +1901,7 @@ cust = (function(){
 			"done": function (response) {
 				if (response.code == 0) {
 					if(response.data.randomCode != null ){
-						$("#num").attr("value",response.data.randomCode);
+						$("#num").val(response.data.randomCode);
 					}
 					$.alert("提示", "验证码发送成功，请及时输入验证.");
 				} else {

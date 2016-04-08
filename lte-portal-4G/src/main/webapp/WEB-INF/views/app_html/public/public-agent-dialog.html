@@ -30,7 +30,7 @@
   </div>
   </div>
 </div>
-<!-- <div id="auth3" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+<div id="auth3" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
   <div class="modal-dialog modal-sm" style="display:block;">
     <div class="modal-content">
     	<div class="modal-header">
@@ -44,7 +44,7 @@
     <li id="auth_tab3" role="presentation"><a href="#content3" aria-controls="content3" onclick="cust.changeTab(3)" role="tab" data-toggle="tab">短信</a></li>
   </ul>
 
-  Tab panes
+  <!-- Tab panes -->
   <div class="tab-content">
     <div role="tabpanel" class="tab-pane active" id="content1">
     		<form class="form-list">
@@ -54,7 +54,7 @@
 				
 			</form>
 		<div class="modal-footer">
-	        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+	        <!-- <button type="button" class="btn btn-default" data-dismiss="modal">取消</button> -->
 	        <button id="custAuthbtn1" type="button" class="btn btn-primary"  onclick="cust.productPwdAuth('1')">校验</button>
 	        <button id="jumpAuth1" style="display:none" onclick="cust.jumpAuth()" type="button" class="btn btn-primary">跳过校验</button>
 	    </div>
@@ -73,7 +73,7 @@
 			</div>
 			</form>
 		<div class="modal-footer">
-	        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+	        <!-- <button type="button" class="btn btn-default" data-dismiss="modal">取消</button> -->
 	        <button id="custAuthbtn" type="button" class="btn btn-primary" onclick="cust.identityTypeAuth('1')" >校验</button>
 	        <button id="jumpAuth2" style="display:none" onclick="cust.jumpAuth()" type="button" class="btn btn-primary">跳过校验</button>
 	    </div>
@@ -92,7 +92,7 @@
 					随机序列号:<input id="num" disabled='disabled'  style="float:right; margin:0px 5px;height:24px" />
 		 </div>
 		<div class="modal-footer">
-	        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+	        <!-- <button type="button" class="btn btn-default" data-dismiss="modal">取消</button> -->
 	        <button id="custAuthbt3" type="button" class="btn btn-primary" onclick="cust.smsvalid('1')" >校验</button>
 	        <button id="jumpAuth3" style="display:none" onclick="cust.jumpAuth()" type="button" class="btn btn-primary">跳过校验</button>
 	    </div>
@@ -101,9 +101,9 @@
           </div>
     </div>
   </div>
-</div> -->
+</div>
 <!-- 客户鉴权框 -->
- <div id="auth" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+ <!-- <div id="auth" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
   <div class="modal-dialog modal-sm" style="display:block;">
     <div class="modal-content">
     	<div class="modal-header">
@@ -121,14 +121,14 @@
         	</form>
 	    </div>
 	    <div class="modal-footer">
-	        <!-- <button type="button" class="btn btn-default" data-dismiss="modal">取消</button> -->
+	        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
 	        <button id="custAuthbtn" type="button" class="btn btn-primary" onclick="cust.custAuth()">校验</button>
 	        <button id="jumpAuth" style="display:none" onclick="cust.jumpAuth()" type="button" class="btn btn-primary">跳过校验</button>
 	    </div>
     </div>
   </div>
 </div> 
-<!-- 客户身份证鉴权框 -->
+客户身份证鉴权框
  <div id="authID" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
   <div class="modal-dialog modal-sm" style="display:block;">
     <div class="modal-content">
@@ -146,11 +146,11 @@
         	</form>
 	    </div>
 	    <div class="modal-footer">
-	       <!--  <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-	        <button id="readCertBtnID" type="button" class="btn btn-primary" data-dismiss="modal" onclick="cust.readCertWhenAuth()">取消</button> -->
+	        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+	        <button id="readCertBtnID" type="button" class="btn btn-primary" data-dismiss="modal" onclick="cust.readCertWhenAuth()">取消</button>
 	        <button id="custAuthbtnID" type="button" class="btn btn-primary" onclick="cust.custIdAuth()">校验</button>
 	        <button id="jumpAuthID" style="display:none" onclick="cust.jumpAuth()" type="button" class="btn btn-primary">跳过校验</button>
 	    </div>
     </div>
   </div>
-</div> 
+</div>  -->

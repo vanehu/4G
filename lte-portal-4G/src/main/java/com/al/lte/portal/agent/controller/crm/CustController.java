@@ -545,7 +545,7 @@ public class CustController extends BaseController {
 		return "/agent/cust/cust-info";
 	}*/
     
-/*    @RequestMapping(value = "/custAuth", method = { RequestMethod.POST })
+    @RequestMapping(value = "/custAuth", method = { RequestMethod.POST })
 	public String custAuth(@RequestBody Map<String, Object> param, Model model,@LogOperatorAnn String flowNum, HttpServletResponse response,HttpSession httpSession) throws BusinessException {
 		SessionStaff sessionStaff = (SessionStaff) ServletUtils
 				.getSessionAttribute(super.getRequest(),
@@ -557,7 +557,7 @@ public class CustController extends BaseController {
 		String identityCd="";
         String pCustIdentityCd=MapUtils.getString(param,"pCustIdentityCd");
 		String idCardNumber="";
-		{accessNumber:'11969577',areaId:21,prodPwd:'000000'}
+		//{accessNumber:'11969577',areaId:21,prodPwd:'000000'}
 		String accNbr= (String) httpSession.getAttribute("queryCustAccNbr");
 		if (StringUtils.isNotBlank(accNbr)) {
 			paramMap.put("accessNumber", accNbr);
@@ -680,9 +680,9 @@ public class CustController extends BaseController {
 		model.addAttribute("poingtType",sessionStaff.getPoingtType());
 		model.addAttribute("custAuth", map);
 		return "/agent/cust/cust-info";
-	}*/
+	}
     
-    @RequestMapping(value = "/custAuth", method = { RequestMethod.POST })
+  /*  @RequestMapping(value = "/custAuth", method = { RequestMethod.POST })
    	public String custAuth(@RequestBody Map<String, Object> param, Model model,@LogOperatorAnn String flowNum, HttpServletResponse response,HttpSession httpSession) throws BusinessException {
    		SessionStaff sessionStaff = (SessionStaff) ServletUtils
    				.getSessionAttribute(super.getRequest(),
@@ -698,7 +698,7 @@ public class CustController extends BaseController {
    		String identityCd="";
            String pCustIdentityCd=MapUtils.getString(param,"pCustIdentityCd");
    		String idCardNumber="";
-   		/*{accessNumber:'11969577',areaId:21,prodPwd:'000000'}*/
+   		{accessNumber:'11969577',areaId:21,prodPwd:'000000'}
    		paramMap.put("accessNumber", httpSession.getAttribute("queryCustAccNbr"));
    		paramMap.put("prodPwd", param.get("prodPwd"));
    		paramMap.put("areaId",param.get("areaId"));
@@ -816,7 +816,7 @@ public class CustController extends BaseController {
    		model.addAttribute("custAuth", map);
    		return "/agent/cust/cust-info";
    	}
-
+*/
 
     @ResponseBody
     @RequestMapping(value = "/passwordReset", method = RequestMethod.POST)
