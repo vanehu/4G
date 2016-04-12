@@ -60,6 +60,9 @@ public class CustController extends BaseController {
 			if("ON".equals(custlogflag)){
 				Map<String, Object> logmap = new HashMap<String, Object>();
 				logmap.put("STAFF_CODE", sessionStaff.getStaffCode());
+				logmap.put("STAFF_ID", sessionStaff.getStaffId());
+				logmap.put("SALES_CODE", sessionStaff.getSalesCode());
+				logmap.put("HOST_IP", CommonUtils.getAllAddrPart());
 				logmap.put("SESSIONINFO", "");
 				logmap.put("STATUS_CD", "客户定位");
 				logmap.put("INTF_URL", "service/intf.custService/queryCust");
@@ -73,7 +76,7 @@ public class CustController extends BaseController {
 				staffBmo.insert_sp_busi_run_log(logmap,flowNum,sessionStaff);
 			}
 		}catch (Exception e) {
-			// TODO: handle exception
+			//异常在之前就捕获了，这里不做处理
 		}
 		
 		try{
@@ -348,6 +351,9 @@ public class CustController extends BaseController {
 				logmap.put("STAFF_CODE", sessionStaff.getStaffCode());
 				logmap.put("SESSIONINFO", "");
 				logmap.put("STATUS_CD", "客户定位");
+				logmap.put("STAFF_ID", sessionStaff.getStaffId());
+				logmap.put("SALES_CODE", sessionStaff.getSalesCode());
+				logmap.put("HOST_IP", CommonUtils.getSerAddrPart());
 				logmap.put("INTF_URL", "service/intf.custService/queryCust");
 				logmap.put("IDENTIDIES_TYPE", paramMap.get("identidies_type").toString());
 				logmap.put("IDENTITY_NUM", (String) (paramMap.get("acctNbr")==""?paramMap.get("identityNum")==""?paramMap.get("queryTypeValue"):paramMap.get("identityNum"):paramMap.get("acctNbr")));
@@ -359,9 +365,8 @@ public class CustController extends BaseController {
 				staffBmo.insert_sp_busi_run_log(logmap,flowNum,sessionStaff);
 			}
 		}catch (Exception e) {
-			// TODO: handle exception
+			//异常在之前就捕获了，这里不做处理
 		}
-		
 		try{
 			//访问次数限制
 			model.addAttribute("showVerificationcode", "N");

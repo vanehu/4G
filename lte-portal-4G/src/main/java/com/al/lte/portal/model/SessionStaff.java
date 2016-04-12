@@ -25,6 +25,8 @@ public class SessionStaff implements Serializable {
 	private String staffId;
 	/** 工号或者是登录账号 */
 	private String staffCode;
+	/** 销售员编码 */
+	private String salesCode;
 	/** 工号名 */
 	private String staffName;
 	/** 归属地区ID */
@@ -570,6 +572,7 @@ public class SessionStaff implements Serializable {
 		sessionStaff.setStaffId(MapUtils.getString(staffInfoMap, "staffId", ""));
 		sessionStaff.setStaffCode(MapUtils.getString(staffInfoMap, "staffCode",""));
 		sessionStaff.setStaffName(MapUtils.getString(staffInfoMap, "staffName",""));
+		sessionStaff.setSalesCode(MapUtils.getString(staffInfoMap, "salesCode",""));
 		sessionStaff.setAreaId(MapUtils.getString(staffInfoMap, "areaId", ""));
 		sessionStaff.setAreaCode(MapUtils.getString(staffInfoMap, "areaCode",""));
 		sessionStaff.setRegionName(MapUtils.getString(staffInfoMap, "regionName",""));
@@ -791,6 +794,16 @@ public class SessionStaff implements Serializable {
 
 	public void setPoingtType(String poingtType) {
 		this.poingtType = poingtType;
+	}
+
+
+	public void setSalesCode(String salesCode) {
+		this.salesCode = salesCode;
+	}
+
+
+	public String getSalesCode() {
+		return salesCode;
 	}
 	
 	

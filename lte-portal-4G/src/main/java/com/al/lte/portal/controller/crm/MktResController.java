@@ -54,6 +54,7 @@ import com.al.lte.portal.bmo.crm.MktResBmo;
 import com.al.lte.portal.bmo.crm.OrderBmo;
 import com.al.lte.portal.bmo.staff.StaffBmo;
 import com.al.lte.portal.common.CommonMethods;
+import com.al.lte.portal.common.CommonUtils;
 import com.al.lte.portal.common.EhcacheUtil;
 import com.al.lte.portal.common.IDCard;
 import com.al.lte.portal.common.MySimulateData;
@@ -394,6 +395,9 @@ public class MktResController extends BaseController {
 				logmap.put("STAFF_CODE", sessionStaff.getStaffCode());
 				logmap.put("SESSIONINFO", "");
 				logmap.put("STATUS_CD", "选择号码");
+				logmap.put("STAFF_ID", sessionStaff.getStaffId());
+				logmap.put("SALES_CODE", sessionStaff.getSalesCode());
+				logmap.put("HOST_IP", CommonUtils.getAllAddrPart());
 				logmap.put("INTF_URL", "PnQueryService");
 				logmap.put("IDENTIDIES_TYPE", "");
 				logmap.put("IDENTITY_NUM", "");
@@ -405,7 +409,7 @@ public class MktResController extends BaseController {
 				staffBmo.insert_sp_busi_run_log(logmap,flowNum,sessionStaff);
 			}
 		}catch (Exception e) {
-			// TODO: handle exception
+			//异常在之前就捕获了，这里不做处理
 		}
 		
 		try{

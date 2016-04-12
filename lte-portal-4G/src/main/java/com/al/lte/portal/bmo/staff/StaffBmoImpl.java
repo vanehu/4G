@@ -35,6 +35,7 @@ import com.al.ecs.exception.InterfaceException;
 import com.al.ecs.exception.ResultConstant;
 import com.al.ecs.log.Log;
 import com.al.lte.portal.common.InterfaceClient;
+import com.al.lte.portal.common.MySimulateData;
 import com.al.lte.portal.common.PortalServiceCode;
 import com.al.lte.portal.common.ServiceClient;
 import com.al.lte.portal.common.SysConstant;
@@ -757,7 +758,12 @@ public class StaffBmoImpl implements StaffBmo {
 	
 	//记录表SP_BUSI_RUN_LOG
 	public void insert_sp_busi_run_log(Map<String, Object> logmap,String flowNum,SessionStaff sessionStaff)throws Exception {
-		ServiceClient.callService(logmap,PortalServiceCode.INSERT_SP_BUSI_RUN_LOG,flowNum,sessionStaff);
+		String custlogflag = MySimulateData.getInstance().getParam(sessionStaff.getDbKeyWord(),"CUSTLOGFLAG_WRITE_ASYNCHRONOUS_FLAG");
+		if(custlogflag.equals("ON")){
+			InterfaceClient.callLogService(logmap, flowNum, sessionStaff);
+		}else{
+			ServiceClient.callService(logmap,PortalServiceCode.INSERT_SP_BUSI_RUN_LOG,flowNum,sessionStaff);			
+		}
 	}
 
 	public String cacheClear(String url) {		

@@ -88,10 +88,8 @@ public class LoginController extends BaseController {
 	public static final String SESSION_CHANGEUIM_SMS_MUNBER = "_changeUim_sms_munber";
 	/** 补换卡短信验证地区 */
 	public static final String SESSION_CHANGEUIM_SMS_AREAID = "_changeUim_sms_areaId";
-	/***/
 	/** 客户鉴权短信验证号码 */
 	public static final String SESSION_CUSTAUTH_SMS_MUNBER = "_custauth_sms_munber";
-	/***/	
 	@Autowired
 	PropertiesUtils propertiesUtils;
 

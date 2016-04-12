@@ -23,5 +23,16 @@ public class CommonUtils {
     	}
 		return sIP ;
 	}
+	public static String getAllAddrPart(){
+		String sIP = "" ;
+		try{
+            InetAddress address = InetAddress.getLocalHost();  
+            sIP = ""+ address.getHostAddress();//10.128.21.56
+    	}catch(Exception e){
+    		log.error("获取服务当前IP失败");
+    		//e.printStackTrace();
+    	}
+		return sIP ;
+	}
 
 }
