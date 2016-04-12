@@ -289,8 +289,10 @@ public class CustController extends BaseController {
 						resultMap.put("custInfos", custInfosWithNbr);
 						model.addAttribute("custInfoSize", custInfosWithNbr.size());
 						model.addAttribute("query", paramMap.get("query"));  //综合查询调用标志
-						model.addAttribute("multiCust", "Y");  //多客户标识
-						
+						if(custInfosWithNbr.size()>1){
+							model.addAttribute("multiCust", "Y");  //多客户标识
+						}
+
 						PageModel<Map<String, Object>> pm = PageUtil.buildPageModel(1, 10, custInfosWithNbr.size(),custInfosWithNbr);
 			    		model.addAttribute("pageModel", pm);
 					}
