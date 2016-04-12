@@ -937,7 +937,7 @@ order.cust = (function(){
 				content$.html(response.data);
 				//_linkSelectPlan("#phoneNumListtbody tr",$("#phoneNumListtbody").children(":first-child"));
 				//绑定每行合约click事件
-				$("#phoneNumListtbody tr").off("click").on("click",function(event){
+				$("#phoneNumListtbody>tr").off("click").on("click",function(event){
 					var thisTr=this;
 					if(1==OrderInfo.order.step&&(!$(thisTr).hasClass("plan_select"))){
 						$.confirm("确认","你已重新选择号码，需跳转至上一步，是否确认?",{
