@@ -27,7 +27,7 @@ DateUtil.Format=function(fmtCode,date){
     var patrn_time_11=/^h{1,2}:m{1,2}:s{1,2}$/;   
     var patrn_time_2=/^h{2}时m{2}分s{2}秒$/;   
     var patrn_time_22=/^h{1,2}时m{1,2}分s{1,2}秒$/;   
-       
+    
     if(!fmtCode){fmtCode="yyyy/MM/dd hh:mm:ss";}   
     if(date){   
         d=new Date(date);   
@@ -114,7 +114,11 @@ DateUtil.Format=function(fmtCode,date){
     else if(patrn_time_22.test(fmtCode)){   
         arr_d=splitDate(d);   
         result=arr_d.hh+"时"+arr_d.mm+"分"+arr_d.ss+"秒";   
-    }   
+    }
+    else if(fmtCode=="yyyymmddhhmmssx"){
+    	 arr_d=splitDate(d,true);   
+         result=d.getFullYear()+arr_d.MM+arr_d.dd+arr_d.hh+arr_d.mm+arr_d.ss;   
+    }
     else{   
         msgBox("没有匹配的时间格式!");   
         return;   
@@ -130,7 +134,7 @@ function splitDate(d,isZero){
          dd=d.getDate()<10?"0"+d.getDate():d.getDate();   
          hh=d.getHours()<10?"0"+d.getHours():d.getHours();   
          mm=d.getMinutes()<10?"0"+d.getMinutes():d.getMinutes();   
-         ss=d.getSeconds()<10?"0"+d.getSeconds():d.getSeconds();   
+         ss=d.getSeconds()<10?"0"+d.getSeconds():d.getSeconds(); 
     }else{   
          yyyy=d.getYear();   
          MM=d.getMonth()+1;   

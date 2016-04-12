@@ -1061,6 +1061,25 @@ order.calcharge = (function(){
 			_showFinDialog("0", "暂存成功！");
 			return;
 		}
+		if(OrderInfo.actionFlag==40){
+			//手机紧急开机积分扣减
+			var param={
+			    "olId":OrderInfo.orderResult.olId,
+			    "olNbr":OrderInfo.orderResult.olNbr
+		    };
+			var url = contextPath+"/order/reduceIntegral";
+			var response = $.callServiceAsJson(url,param);
+			$.unecOverlay();
+			if(response.code == 0){
+				
+			}else if(response.code == 1002){
+				$.alert("提示",response.data);
+				return;
+			}else{
+				$.alertM(response.data);
+				return;
+			}
+		}
 		$("#step1").hide();
 		$("#step2").hide();
 		$("#step3").show();

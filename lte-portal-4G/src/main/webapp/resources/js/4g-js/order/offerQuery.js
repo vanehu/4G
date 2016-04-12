@@ -790,6 +790,9 @@ query.offer = (function() {
 		var response = $.callServiceAsJsonGet(url,param);
 		$.unecOverlay();
 		if (response.code== 0) {
+			if(response.result!=null && response.result.creditLimitId!=null){
+				OrderInfo.creditLimitId = response.result.creditLimitId;
+			}
 			return true;
 		}else if(response.code==-2){
 			$.alertM(response.data);

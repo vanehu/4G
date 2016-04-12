@@ -4287,10 +4287,13 @@ public class OrderController extends BaseController {
         }
         return jsonResponse;
     }
-    
-    @RequestMapping(value = "/goUrgentOpen", method = RequestMethod.GET)
-    public String goUrgentOpen(HttpSession session, Model model, @LogOperatorAnn String flowNum, HttpServletRequest request,
-            HttpServletResponse response) {
+    /**
+     *积分查询，获取是否有紧急开机权限
+    **/
+    @RequestMapping(value = "/goUrgentOpen", method = RequestMethod.POST)
+    @ResponseBody
+    public JsonResponse goUrgentOpen(@RequestBody Map<String, Object> param, @LogOperatorAnn String flowNum,
+            HttpServletResponse response, HttpServletRequest request) {
     	SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
                 SysConstant.SESSION_KEY_LOGIN_STAFF);
     	String flag = "no";
@@ -4305,6 +4308,8 @@ public class OrderController extends BaseController {
     	}
     	Map<String, Object> returnMap;
     	Map<String, Object> pointInfoMap = null;
+    	JsonResponse jsonResponse = null;
+    	Map<String, Object> rMap = new HashMap<String, Object>();
 		try {
 			returnMap = orderBmo.queryIntegral(paramMap, flowNum, sessionStaff);
 			List<Map<String, Object>> pointInfolist = null;
@@ -4339,22 +4344,23 @@ public class OrderController extends BaseController {
     	    			if(pointItemValue>=1 && (serviceEffectDate.compareTo(date)<0) && date.compareTo(pointItemDate)<0){//true 表示有权益
     	                	//紧急开机 100600 
     	                	if("100600".equals(pointInfo.get("pointItemID"))){
+    	                		rMap.put("urgentFlag", "Y");
+    	                		HttpSession session = request.getSession();
     	                		session.setAttribute(SysConstant.INTEREST_JJKJ+sessionStaff.getCardNumber(), "true");
-    	                		flag = "have";
     	                	}
     	    			}
         			}
 	            }
 	        }
 		}catch (BusinessException e) {
-			return super.failedStr(model, e);
+            return super.failed(e);
         } catch (InterfaceException ie) {
-            return super.failedStr(model,ie, paramMap, ErrorCode.QUERY_INTEGRAL);
+            return super.failed(ie, paramMap, ErrorCode.QUERY_INTEGRAL);
         } catch (Exception e) {
-            return super.failedStr(model,ErrorCode.QUERY_INTEGRAL, e, paramMap);
+            return super.failed(ErrorCode.QUERY_INTEGRAL, e, paramMap);
         }
-    	model.addAttribute("jjkj", flag);
-    	return "/order/urgentOpen";
+        jsonResponse = super.successed(rMap, ResultConstant.SUCCESS.getCode());
+    	return jsonResponse;
     }
     
     @RequestMapping(value = "/urgentOpen", method = RequestMethod.POST)
@@ -4403,6 +4409,74 @@ public class OrderController extends BaseController {
             return super.failed(ie, param, ErrorCode.EMERGENCYBOOT);
         } catch (Exception e) {
             return super.failed(ErrorCode.EMERGENCYBOOT, e, param);
+        }
+        return jsonResponse;
+    }
+    
+    /**
+     * 手机紧急开机 积分扣减
+    **/
+    @RequestMapping(value = "/reduceIntegral", method = RequestMethod.POST)
+    @ResponseBody
+    public JsonResponse reduceIntegral(@RequestBody Map<String, Object> param, @LogOperatorAnn String flowNum,
+            HttpServletResponse response, HttpServletRequest request) {
+    	SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+                SysConstant.SESSION_KEY_LOGIN_STAFF);
+        Map<String, Object> rMap = null;
+        JsonResponse jsonResponse = null;
+        //先判断是否有手机积分扣减权益
+        HttpSession session = request.getSession();
+		String jjkj = (String) session.getAttribute(SysConstant.INTEREST_JJKJ+sessionStaff.getCardNumber());
+		jjkj = "Y";
+		if(!"Y".equals(jjkj)){
+        	return super.failed("该用户无紧急开机的权益！", ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+        }
+        Calendar c = Calendar.getInstance();
+        SimpleDateFormat f = new SimpleDateFormat("yyyyMMddHHmmss");
+        String dealTime = f.format(c.getTime());
+        String olId = (String)param.get("olId");
+        //生成省份需要的格式orderNbr由门户传，28位  10位平台编码（1000000200）+6位日期（160302）+加2位序号(这边写死 01)+购物车流水（20位）后10位
+        String olNbr = (String)param.get("olNbr");
+        String orderNbr = "1000000200" + dealTime.substring(2, 8)+"01"+olNbr.substring(10, 20);
+        try {
+        	 Map<String, Object> pointInfos = new HashMap<String, Object>();
+			 pointInfos.put("recordType", "1");
+			 pointInfos.put("serviceNo", "1");
+			 pointInfos.put("serviceCodeA", "21");
+			 pointInfos.put("serviceCodeB", "100600");
+			 pointInfos.put("serviceName", "手机紧急开机");
+			 pointInfos.put("amount", 1);
+			 pointInfos.put("price", "0");
+			 pointInfos.put("serviceScore", "0");
+			 List pointInfoList = new ArrayList();
+			 pointInfoList.add(pointInfos);
+			 Map<String, Object> paramMap = new HashMap<String, Object>();
+			 paramMap.put("accessNbr", sessionStaff.getInPhoneNum());
+			 paramMap.put("amount", "0");
+			 paramMap.put("areaId", sessionStaff.getCurrentAreaId());
+			 paramMap.put("channelNbr", sessionStaff.getCurrentChannelId());
+			 paramMap.put("dealTime", dealTime);
+			 paramMap.put("createDt", dealTime);
+			 paramMap.put("olId", olId);
+			 paramMap.put("orderNbr", orderNbr);
+			 paramMap.put("queryType","11");
+			 paramMap.put("queryTypeValue",sessionStaff.getInPhoneNum());
+			 paramMap.put("staffCode", sessionStaff.getStaffCode());
+			 paramMap.put("state", "ADD");
+			 paramMap.put("totalScore", "0");
+			 paramMap.put("pointInfos", pointInfoList);
+			 rMap = orderBmo.reducePoingts(paramMap, flowNum, sessionStaff);
+			 if (rMap != null && ResultCode.R_SUCCESS.equals(rMap.get("code").toString())) {
+				 jsonResponse = super.successed("手机紧急开机积分扣减成功！", ResultConstant.SUCCESS.getCode());
+			 }else {
+                 jsonResponse = super.failed(rMap.get("msg"), ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+             }
+		} catch (BusinessException e) {
+            return super.failed(e);
+        } catch (InterfaceException ie) {
+            return super.failed(ie, param, ErrorCode.REDUCE_POINGTS);
+        } catch (Exception e) {
+            return super.failed(ErrorCode.REDUCE_POINGTS, e, param);
         }
         return jsonResponse;
     }

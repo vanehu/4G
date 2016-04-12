@@ -3863,20 +3863,49 @@ order.prodModify = (function(){
 	};
 
 	var _urgentOpen = function(){
+		if(OrderInfo.authRecord.resultCode!="0"){
+			if (_querySecondBusinessAuth("20", "Y", "urgentOpen")) {//鉴权方式同停机保号
+				return;
+			}
+		}
+		if(_choosedProdInfo.prodStateCd!=null && _choosedProdInfo.prodStateCd == CONST.PROD_STATUS_CD.NORMAL_PROD){
+			$.alert("提示","产品状态为'在用'不需要紧急开机！");
+			return;
+		}
 		//查询权益项是否有紧急开机权益
 		var param={"accNbr":_choosedProdInfo.accNbr};
-		$.callServiceAsHtmlGet(contextPath + "/order/goUrgentOpen",param, {
-			"before":function(){
-				$.ecOverlay("<strong>正在查询中,请稍等会儿....</strong>");
-			},
-			"always":function(){
-				$.unecOverlay();
-			},
-			"done" : function(response){
-				_gotoOrderModify(response);
-				$('#password_form').bind('formIsValid',_spec_password_change_check).ketchup({bindElement:"btsubmit"});
-			}
-		});	
+		var url = contextPath+"/order/goUrgentOpen";
+		var response = $.callServiceAsJson(url,param);
+		$.unecOverlay();
+		if(response.code == 0 && response.data.urgentFlag!=null && response.data.urgentFlag =="Y"){
+			var submitState="";
+	        var BO_ACTION_TYPE="";
+	        var inprodStatusCd="";
+	        var intoprodStatusCd="";
+				BO_ACTION_TYPE=CONST.BO_ACTION_TYPE.URGENT_BOOT;
+				inprodStatusCd=_choosedProdInfo.prodStateCd;
+				intoprodStatusCd=CONST.PROD_STATUS_CD.STOP_PROD;
+				if(inprodStatusCd==""){
+					inprodStatusCd=CONST.PROD_STATUS_CD.NORMAL_PROD;
+				}
+			var param = _getCallRuleParam(BO_ACTION_TYPE,_choosedProdInfo.prodInstId);
+			var callParam = {
+				boActionTypeCd : BO_ACTION_TYPE,
+				boActionTypeName : CONST.getBoActionTypeName(BO_ACTION_TYPE),
+				accessNumber : _choosedProdInfo.accNbr,
+				prodStatusCd :inprodStatusCd,
+				toprodStatusCd : intoprodStatusCd,
+				prodOfferName : _choosedProdInfo.prodOfferName,
+				itemSpecId : CONST.BUSI_ORDER_ATTR.REMARK,
+				state:submitState
+			};
+			OrderInfo.initData(CONST.ACTION_CLASS_CD.PROD_ACTION,BO_ACTION_TYPE,40,CONST.getBoActionTypeName(BO_ACTION_TYPE),"");
+			var checkRule = rule.rule.prepare(param,'order.prodModify.commonPrepare',callParam);
+		}else if(response.code == 0){
+			$.alert("提示","该用户无紧急开机的权益！");
+		}else{
+			$.alertM(response.data);
+		}
 	};
 	
 	var _phoneOpen = function(){
