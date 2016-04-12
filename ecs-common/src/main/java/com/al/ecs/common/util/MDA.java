@@ -206,4 +206,12 @@ public class MDA {
 	 * 
 	 * */
 	public static final String COMPRESS_ALL_JS=new String ("");
+	/**
+	 * 记录过频间隔
+	 * */
+	public static final String OF_TIME=new String ("");
+	/**
+	 * 记录过频次数
+	 * */
+	public static final String OF_COUNT=new String ("");
 }
