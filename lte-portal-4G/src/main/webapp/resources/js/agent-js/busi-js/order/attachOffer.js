@@ -178,7 +178,7 @@ AttachOffer = (function() {
 								var serv = CacheData.getServBySpecId(prodId,servSpecId);//从已订购功能产品中找
 								if(serv!=undefined){ //不在已经开跟已经选里面
 									var $oldLi = $('#li_'+prodId+'_'+serv.servId);
-									if(roleObj.minQty==1){
+									if(roleObj.minQty==1 && OrderInfo.actionFlag != 2){ // 过滤套餐变更，套餐变更简化流程，不需要相关展示（offer未定义）
 										var $span = $("#span_"+prodId+"_"+offer.servId);
 										var $span_remove = $("#span_remove_"+prodId+"_"+offer.servId);
 										if(ec.util.isObj($span)){
