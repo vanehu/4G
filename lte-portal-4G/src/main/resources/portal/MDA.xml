@@ -416,5 +416,7 @@
  	     <const type="String" name="APPDESC" value="LTE" description="LTE 或 MVNO "/>
  	     <const type="String" name="FILE_PREFER_FLAG" value="ON" description="决定参数是先从以下配置中取，还是先从数据库参数表取 "/>
  	     <const type="String" name="ABS_DIRECTORY_KEY" value="/app/data/portal/invoiceTemplate/" description="如果启用绝对路径，则使用下面路径作为父级路径 "/>
+ 	     <const type="String" name="OF_TIME" value="600000" description="过频操作时间段"/>
+         <const type="String" name="OF_COUNT" value="80" description="过频操作次数"/>      
  	</mda>
 </mdas>

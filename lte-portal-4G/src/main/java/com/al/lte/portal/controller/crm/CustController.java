@@ -51,6 +51,9 @@ public class CustController extends BaseController {
             HttpServletResponse response,HttpSession httpSession,HttpServletRequest request) {
 		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
                 SysConstant.SESSION_KEY_LOGIN_STAFF);
+		if(sessionStaff == null){
+			return "/cust/cust-list";
+		}
 		try{
 			//记录表SP_BUSI_RUN_LOG
 			String custlogflag = MySimulateData.getInstance().getParam((String) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_DATASOURCE_KEY),"CUSTLOGFLAG");
@@ -74,8 +77,8 @@ public class CustController extends BaseController {
 		}
 		
 		try{
-			//访问次数限制
-			model.addAttribute("showVerificationcode", "N");
+			//访问次数限制  update by huangjj3 20160411 通过过滤器对过频操作进行限制
+			/*model.addAttribute("showVerificationcode", "N");
 			long endTime = System.currentTimeMillis();
 			long beginTime = 0;
 			if(httpSession.getAttribute(sessionStaff.getStaffCode()+"custtime")!=null){
@@ -108,7 +111,7 @@ public class CustController extends BaseController {
 			}else{
 				httpSession.setAttribute(sessionStaff.getStaffCode()+"custtime", endTime);
 				httpSession.setAttribute(sessionStaff.getStaffCode()+"custcount", 1);
-			}
+			}*/
 		}catch (Exception e) {
 			// TODO: handle exception
 		}
@@ -293,14 +296,14 @@ public class CustController extends BaseController {
 					}
 					
 				}else{
-					int count = (Integer) httpSession.getAttribute(sessionStaff.getStaffCode()+"custcount")+10;
-					httpSession.setAttribute(sessionStaff.getStaffCode()+"custcount", count);
+					/*int count = (Integer) httpSession.getAttribute(sessionStaff.getStaffCode()+"custcount")+10;
+					httpSession.setAttribute(sessionStaff.getStaffCode()+"custcount", count);*/
 				}
 				model.addAttribute("cust", resultMap);
 
 			}else{
-				int count = (Integer) httpSession.getAttribute(sessionStaff.getStaffCode()+"custcount")+10;
-				httpSession.setAttribute(sessionStaff.getStaffCode()+"custcount", count);
+				/*int count = (Integer) httpSession.getAttribute(sessionStaff.getStaffCode()+"custcount")+10;
+				httpSession.setAttribute(sessionStaff.getStaffCode()+"custcount", count);*/
 			}
 			if(paramMap.containsKey("query")){	
 				model.addAttribute("query", paramMap.get("query"));  //综合查询调用标志

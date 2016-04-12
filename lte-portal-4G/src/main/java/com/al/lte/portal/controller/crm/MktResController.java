@@ -409,7 +409,7 @@ public class MktResController extends BaseController {
 		}
 		
 		try{
-			//访问次数限制
+			/*//访问次数限制  update by huangjj3 20160411 通过过滤器对过频操作进行限制
 			model.addAttribute("showVerificationcode", "N");
 			long endTime = System.currentTimeMillis();
 			long beginTime = 0;
@@ -447,7 +447,7 @@ public class MktResController extends BaseController {
 			}else{
 				session.setAttribute(sessionStaff.getStaffCode()+"nbrtime", endTime);
 				session.setAttribute(sessionStaff.getStaffCode()+"nbrcount", 1);
-			}
+			}*/
 		}catch (Exception e) {
 			// TODO: handle exception
 		}

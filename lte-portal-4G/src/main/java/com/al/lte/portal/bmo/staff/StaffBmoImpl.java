@@ -823,4 +823,11 @@ public class StaffBmoImpl implements StaffBmo {
 		return retnMap;
 	
 	}
+
+	public void lockUser(Map<String, Object> dataBusMap, String string,
+			SessionStaff sessionStaff) throws Exception {
+		// TODO Auto-generated method stub
+		dataBusMap.put("staffId", sessionStaff.getStaffId());
+		DataBus db = InterfaceClient.callService(dataBusMap, PortalServiceCode.LOCKUSER, null, sessionStaff);
+	}
 }

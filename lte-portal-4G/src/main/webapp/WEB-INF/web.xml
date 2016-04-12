@@ -152,6 +152,16 @@
        <filter-name>ForbiddenKeywordFilter</filter-name>
        <url-pattern>/*</url-pattern>
     </filter-mapping>
+    
+    <filter>
+       <filter-name>OverFrequencyFilter</filter-name>
+       <filter-class>com.al.lte.portal.filter.OverFrequencyFilter</filter-class>
+    </filter>
+    <filter-mapping>
+       <filter-name>OverFrequencyFilter</filter-name>
+       <url-pattern>/cust/queryCust</url-pattern>
+       <url-pattern>/mktRes/phonenumber/list</url-pattern>
+    </filter-mapping>
      
     <!-- 会话管理控制 
     <filter>

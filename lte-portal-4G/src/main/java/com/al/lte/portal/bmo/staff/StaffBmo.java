@@ -54,6 +54,8 @@ public interface StaffBmo {
 
 	public  String cacheClear(String url);
 
-	public Map<String, Object> checkIsAccessByStaffId(Map<String, Object> dataBusMap,SessionStaff sessionStaff) throws Exception;;
+	public Map<String, Object> checkIsAccessByStaffId(Map<String, Object> dataBusMap,SessionStaff sessionStaff) throws Exception;
+
+	public void lockUser(Map<String, Object> paramMap, String string,SessionStaff sessionStaff)throws Exception;
 	
 }

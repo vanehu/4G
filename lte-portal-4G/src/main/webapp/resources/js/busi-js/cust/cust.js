@@ -523,6 +523,11 @@ order.cust = (function(){
 			});
 			return;
 		}
+		if(response.data.indexOf("errCode=405") >=0) {
+			$.alert("提示","抱歉，业务操作过频，工号锁定!");
+			return;
+		}
+		
 		if(response.data.indexOf("showDiffcode") >=0) {
 			$.alert("提示","抱歉，该工号没有异地业务的权限！");
 			return;
