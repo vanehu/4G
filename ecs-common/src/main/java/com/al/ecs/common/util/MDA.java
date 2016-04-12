@@ -214,4 +214,8 @@ public class MDA {
 	 * 记录过频次数
 	 * */
 	public static final String OF_COUNT=new String ("");
+	/**
+	 * 记录客户定位数据是否记录到日志平台
+	 * */
+	public static final String CUSTLOGFLAG_WRITE_ASYNCHRONOUS_FLAG=new String ("");
 }
