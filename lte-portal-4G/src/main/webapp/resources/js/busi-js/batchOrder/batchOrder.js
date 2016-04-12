@@ -147,38 +147,42 @@ order.batch = (function(){
 	//查询种子订单列表
 	var _batchOrderList=function(pageIndex){
 		var templateType=$("#templateType").val();
+		if(templateType == '' || templateType == null){
+			$.alert("提示","种子订单受理类型不能为空，请刷新页面或稍后重试");
+			return;
+		}
 		var url=contextPath+"/order/batchOrder/batchOrderList";
 		var param={
-				templateType : templateType,
-				pageIndex : pageIndex,
-				pageSize : 10,
-				custOrderId : "",
-				custSoNumber : "",
-				startDt : "",
-				endDt : "",
+				templateType	: templateType,
+				pageIndex		: pageIndex,
+				pageSize		: 10,
+				custOrderId		: "",
+				custSoNumber	: "",
+				startDt			: "",
+				endDt			: "",
 				templateOrderName : ""
 			};
 		if(templateType!="9"){
 			if($("#cartId").attr("checked")){
-				if(!/^[0-9]*$/.test($.trim($("#custOrderId").val()))){
-					$.alert("提示","购物车ID格式错误");
+				if(!/^[0-9]+$/.test($.trim($("#custOrderId").val()))){
+					$.alert("提示","购物车ID为空或格式错误，仅限数字");
 					return;
+				} else{
+					param.custOrderId = $.trim($("#custOrderId").val());
 				}
-				param.custOrderId = $.trim($("#custOrderId").val());
-			}
-			else if($("#cartNbr").attr("checked")){
-				param.custSoNumber = $.trim($("#custSoNumber").val());
-			}
-			else{
+			} else if($("#cartNbr").attr("checked")){
+				if(!/^[0-9]+$/.test($.trim($("#custSoNumber").val()))){
+					$.alert("提示","购物车流水为空或格式错误，仅限数字");
+					return;
+				} else{
+					param.custSoNumber = $.trim($("#custSoNumber").val());
+				}
+			} else{
 				param.templateOrderName = $.trim($("#templateOrderName").val());
 				param.startDt = $("#startDt").val();
 				param.endDt = $("#endDt").val();
 			}
-		}
-		if(templateType==''){
-			$.alert("提示","种子订单受理类型不能为空!");
-			return;
-		}		
+		}				
 		$.callServiceAsHtmlGet(url,param,{
 			"before":function(){
 				$.ecOverlay("<strong>正在查询中,请稍等会儿....</strong>");
@@ -428,7 +432,7 @@ order.batch = (function(){
 			location.href=contextPath+"/file/BATCHFUSHU.xls";
 		}else if(batType=='5'){
 			location.href=contextPath+"/file/BATCHCHANGE.xls";
-		}else if(batType=='8'){//批量拆机
+		}else if(batType=='8' || batType=='14' || batType=='15'){//批量欠费拆机(8)、在用拆机(14)、未激活拆机(15)
 			location.href=contextPath+"/file/BATCHCHAIJI.xls";
 		}else if(batType=='9'){//批量修改发展人
 			location.href=contextPath+"/file/BATCHFAZHANREN.xls";
