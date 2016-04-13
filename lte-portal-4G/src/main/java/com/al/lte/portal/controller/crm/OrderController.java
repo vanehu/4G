@@ -1364,6 +1364,10 @@ public class OrderController extends BaseController {
                         	paramMap.put("identityCd", sessionStaff.getCardType());
                         	paramMap.put("identityNum", sessionStaff.getCardNumber());
                         	paramMap.put("queryType", sessionStaff.getCustType());
+                        	String areaId = (String) session.getAttribute("pointareaId");
+                			if(!"".equals(areaId) && areaId !=null){
+                				paramMap.put("areaId",areaId);
+                			}
                         	if("11".equals(sessionStaff.getCustType())){
                         		paramMap.put("queryTypeValue", sessionStaff.getInPhoneNum());
                         	}else{
@@ -4301,6 +4305,11 @@ public class OrderController extends BaseController {
     	paramMap.put("identityCd", sessionStaff.getCardType());
     	paramMap.put("identityNum", sessionStaff.getCardNumber());
     	paramMap.put("queryType", sessionStaff.getCustType());
+    	HttpSession session = request.getSession();
+    	String areaId = (String) session.getAttribute("pointareaId");
+		if(!"".equals(areaId) && areaId !=null){
+			paramMap.put("areaId",areaId);
+		}
     	if("11".equals(sessionStaff.getCustType())){
     		paramMap.put("queryTypeValue", sessionStaff.getInPhoneNum());
     	}else{
@@ -4345,7 +4354,7 @@ public class OrderController extends BaseController {
     	                	//紧急开机 100600 
     	                	if("100600".equals(pointInfo.get("pointItemID"))){
     	                		rMap.put("urgentFlag", "Y");
-    	                		HttpSession session = request.getSession();
+    	                		session = request.getSession();
     	                		session.setAttribute(SysConstant.INTEREST_JJKJ+sessionStaff.getCardNumber(), "true");
     	                	}
     	    			}

@@ -198,8 +198,8 @@ public class CustController extends BaseController {
 					sessionStaff.setCardNumber(String.valueOf(paramMap.get("identityNum")));
 					sessionStaff.setCardType(String.valueOf(paramMap.get("identityCd")));
 				}
-				
 				sessionStaff.setInPhoneNum(String.valueOf(paramMap.get("acctNbr")));
+				httpSession.setAttribute("pointareaId", areaId);
 				model.addAttribute("custInfoSize", custInfos.size());
 				if(custInfos.size()>0){
 					Map custInfo =(Map)custInfos.get(0);
@@ -694,6 +694,10 @@ public class CustController extends BaseController {
 			paramMapXJ.put("identityCd", sessionStaff.getCardType());
 			paramMapXJ.put("identityNum", sessionStaff.getCardNumber());
 			paramMapXJ.put("queryType", sessionStaff.getCustType());
+			String areaId = (String) httpSession.getAttribute("pointareaId");
+			if(!"".equals(areaId) && areaId !=null){
+				paramMapXJ.put("areaId",areaId);
+			}
         	if("11".equals(sessionStaff.getCustType())){
         		paramMapXJ.put("queryTypeValue", sessionStaff.getInPhoneNum());
         	}else{
