@@ -1161,9 +1161,12 @@ public class MktResController extends BaseController {
 						SysConstant.SESSION_KEY_LOGIN_STAFF);
 		try {
 			mktInfo.put("channelId", sessionStaff.getCurrentChannelId());
+			mktInfo.put("receiveFlag","1");
+			mktInfo.put("staffId",sessionStaff.getStaffId());
+			mktInfo.put("channelName",sessionStaff.getCurrentChannelName());
 			String offerSpecName = MapUtils.getString(mktInfo, "offerSpecName")==null?" ":MapUtils.getString(mktInfo, "offerSpecName");
 			mktInfo.remove("offerSpecName");
-			Map<String, Object> mktRes = mktResBmo.checkTerminalCode(
+			Map<String, Object> mktRes = mktResBmo.checkTermCompVal(
 					mktInfo, flowNum, sessionStaff);
 			if (MapUtils.isNotEmpty(mktRes)) {
 				if(ResultCode.R_SUCC.equals(MapUtils.getString(mktRes, "code"))){

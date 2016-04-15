@@ -1135,4 +1135,34 @@ public class MktResBmoImpl implements MktResBmo {
 		}
 		return resultMap;
 	}
+
+	public Map<String, Object> checkTermCompVal(Map<String, Object> map,
+			String optFlowNum, SessionStaff sessionStaff) throws Exception {
+		// TODO Auto-generated method stub
+		// 终端校验信息
+				Map<String, Object> resultMap = new HashMap<String, Object>();
+
+				DataBus db = InterfaceClient.callService(map, 
+						PortalServiceCode.INTF_TERM_RECEIVE,
+						optFlowNum, sessionStaff);
+				// 服务层调用与接口层调用都成功时，返回列表；否则返回空列表
+				if (ResultCode.R_SUCC.equals(db.getResultCode())) {
+					resultMap = MapUtils.getMap(db.getReturnlmap(), "result");
+					List<Map<String, Object>> mktAttrList=new ArrayList<Map<String, Object>>();
+					Object obj = MapUtils.getObject(MapUtils.getMap(db.getReturnlmap(), "result"), "mktAttrList");
+					if (obj instanceof List) {
+						mktAttrList = (ArrayList<Map<String, Object>>) obj;
+					} else if (obj instanceof Map) {
+						mktAttrList.add((Map<String, Object>) obj);
+					}
+					resultMap = MapUtils.getMap(resultMap, "baseInfo");
+					resultMap.put("mktAttrList", mktAttrList);
+					resultMap.put("code", "0");
+					resultMap.put("message", MapUtils.getString(db.getReturnlmap(), "resultMsg", "校验终端串号失败。"));
+				} else {
+					resultMap.put("code", "1");
+					resultMap.put("message", MapUtils.getString(db.getReturnlmap(), "resultMsg", "校验终端串号失败。"));
+				}
+				return resultMap;
+	}
 }

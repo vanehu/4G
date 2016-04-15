@@ -391,4 +391,6 @@ public interface MktResBmo {
 	public Map<String, Object> checkIdCardNumber(Map<String, Object> checkIdMap, String flowNum, SessionStaff sessionStaff) throws Exception;
 	
 	public Map<String, Object> checkTerminalCodeForAgent(Map<String, Object> map, String optFlowNum,SessionStaff sessionStaff) throws Exception ;
+	
+	public Map<String, Object> checkTermCompVal(Map<String, Object> map, String optFlowNum,SessionStaff sessionStaff) throws Exception ;
  }
