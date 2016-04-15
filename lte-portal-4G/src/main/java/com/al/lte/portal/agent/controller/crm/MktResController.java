@@ -762,7 +762,7 @@ public class MktResController extends BaseController {
 			return super.failedStr(model, ErrorCode.PHONENUM_IDENTITY, e, param);
 		}
 		model.addAllAttributes(param);
-        return "/app/mktRes/phonenumber-list";
+        return "/agent/mktRes/phonenumber-list-fk";
     }
 
 

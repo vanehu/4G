@@ -1871,7 +1871,7 @@ mktRes.terminal = (function($){
 		selectedObj = obj;
 		ispurchased=purchas;
 		if(ispurchased==1){
-			_btnToOffer(selectedObj);
+			order.phoneNumber.btnToOffer(selectedObj,null,index);
 		}else{
 			var phoneNumberVal_06 = $(selectedObj).attr("numberVal").split("_")[7]; 
 			if(phoneNumberVal_06=="1"){

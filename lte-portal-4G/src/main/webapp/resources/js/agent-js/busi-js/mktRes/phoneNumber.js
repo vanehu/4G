@@ -133,7 +133,9 @@ order.phoneNumber = (function(){
 		var areaId=$("#p_cust_areaId").val();
 		var subPage = $("#subPage").val();
 		var param={"identityId":idcode,"areaId":areaId,"subPage":subPage};
-		$.callServiceAsHtmlGet(contextPath+"/app/mktRes/phonenumber/listByIdentity",param,{
+		var subnum = $("#subnum").val();
+		param.subnum = subnum;
+		$.callServiceAsHtmlGet(contextPath+"/agent/mktRes/phonenumber/listByIdentity",param,{
 			"before":function(){
 				$.ecOverlay("<strong>正在查询中,请稍等会儿....</strong>");
 			},
@@ -163,18 +165,24 @@ order.phoneNumber = (function(){
 		});	
 	};
 	//选择身份证预占的号码
-	var _btnToOffer=function(obj){
+	var _btnToOffer=function(obj,needPsw,index){
+	if(OrderInfo.returnFlag!="fk") OrderInfo.returnFlag="";
 		phoneNumberVal = $(obj).attr("numberVal"); 
 		var memberRoleCd=CONST.MEMBER_ROLE_CD.MAIN_CARD;
 		//选号类型：新装主卡选号、新装副卡选号 Y1、Y2
 		var subFlag=$("#subFlag").val();
-		if(subFlag=='Y2'){
+//		if(subFlag=='Y2'){
+//			memberRoleCd=CONST.MEMBER_ROLE_CD.VICE_CARD;
+//		}
+		if(index!=-1){
 			memberRoleCd=CONST.MEMBER_ROLE_CD.VICE_CARD;
 		}
 		//订单序号：O1、O2区分暂存单允许多个订单的情况
 		var subnum=$("#subnum").val();
+		subnum = index;
 		//入口终端入口，号码入口，订单填写入口:terminal\offer\number
-		var subPage=$("#subPage").val();
+//		var subPage=$("#subPage").val();
+		var subPage="offer";
 		//号码的预存话费
 		var preStoreFare=phoneNumberVal.split("_")[1];
 		//保底消费
@@ -279,7 +287,10 @@ order.phoneNumber = (function(){
 				$("#phone").hide();
 				$("#number").hide();
 			}else if(subPage=='terminal'){
-				mktRes.terminal.setNumber(phoneNumber, plevel);
+				if(OrderInfo.actionFlag!=1 && subnum==-1){
+					mktRes.terminal.setNumber(phoneNumber, plevel);
+				}
+//				mktRes.terminal.setNumber(phoneNumber, plevel);
 				_boProdAn.accessNumber=phoneNumber;
 				_boProdAn.anTypeCd=anTypeCd;
 				_boProdAn.level=plevel;
@@ -295,6 +306,19 @@ order.phoneNumber = (function(){
 				$("#order").show();
 				$("#phonenumberContent").hide();
 			}else if(subPage=='offer'){
+				if(OrderInfo.actionFlag!=1 && subnum==-1){
+					mktRes.terminal.setNumber(phoneNumber, plevel);
+				}
+				$("#nbr_btn_"+subnum).val(phoneNumber);
+				if($("#fk_phoneNumber_"+subnum).length>0){
+					$("#fk_phoneNumber_"+subnum).text(phoneNumber);
+				}
+				if(OrderInfo.actionFlag==1 && $("#zjfk_"+subnum).length>0){
+					$("#zjfk_"+subnum).show();
+				}
+				if(OrderInfo.actionFlag==14 && $("#zjfk_"+subnum).length>0){
+					$("#zjfk_"+subnum).show();
+				}
 				_boProdAn.anTypeCd=anTypeCd;
 				_boProdAn.anId=phoneNumId;
 				_boProdAn.accessNumber=phoneNumber;
@@ -309,8 +333,8 @@ order.phoneNumber = (function(){
 //				$("#nbr_btn_"+subnum).addClass("selectBoxTwoOn");
 //				$("#nbr_btn_"+subnum).html(phoneNumber+"<u></u>");
 //				$("#choosedNumSpan").val(phoneNumber);
-				$("#nbr_btn_"+subnum).val(phoneNumber);
-				$("#choosedNumSpan").val(phoneNumber);
+//				$("#nbr_btn_"+subnum).val(phoneNumber);
+//				$("#choosedNumSpan").val(phoneNumber);
 				var isExists=false;
 				if(OrderInfo.boProdAns.length>0){
 					for(var i=0;i<OrderInfo.boProdAns.length;i++){
@@ -326,7 +350,9 @@ order.phoneNumber = (function(){
 							OrderInfo.boProdAns[i].preStore=preStoreFare;
 							OrderInfo.boProdAns[i].minCharge=pnPrice;
 							isExists=true;
-							OrderInfo.setProdAn(OrderInfo.boProdAns[i]);  //保存到产品实例列表里面
+							if(OrderInfo.offerSpec.offerRoles!=undefined){
+								OrderInfo.setProdAn(OrderInfo.boProdAns[i]);  //保存到产品实例列表里面
+							}
 							order.dealer.changeAccNbr(subnum,phoneNumber); //选号玩要刷新发展人管理里面的号码
 							break;
 						}
@@ -356,9 +382,17 @@ order.phoneNumber = (function(){
 				if(subnum=='-1'){
 					OrderInfo.boCustInfos.telNumber=phoneNumber;
 				}
-				$("#order_content").show();
-				$("#order-content").show();
+				$("#order").show();
 				//$("#order_prepare").show();
+				if($("#order-content").length>0){
+					$("#order-content").hide();
+				}
+				if(OrderInfo.actionFlag==1){
+					if(subnum==-1){
+						$("#order-content").show();
+					}
+				}
+				
 				$("#phonenumberContent").hide();
 			}
 		} else {
@@ -1331,6 +1365,7 @@ order.phoneNumber = (function(){
 //		}
 	};
 	return {
+		btnToOffer:_btnToOffer,
 		qryPhoneNbrLevelInfoList:_qryPhoneNbrLevelInfoList,
 		selectNum:_selectNum,
 		endSelectNum:_endSelectNum,
