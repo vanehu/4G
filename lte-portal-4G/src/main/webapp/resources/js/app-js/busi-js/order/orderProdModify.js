@@ -43,7 +43,7 @@ order.prodModify = (function(){
 		
 		if (response.code == 0) {
 			var recordParam={};
-			recordParam.validateType="4";
+			recordParam.validateType=OrderInfo.typeCd;
 			recordParam.validateLevel="2";
 			recordParam.custId=OrderInfo.cust.custId;
 			recordParam.accessNbr=OrderInfo.acctNbr;
@@ -57,7 +57,26 @@ order.prodModify = (function(){
 			//员工权限
 			var iseditOperation=rules.iseditOperation;
 			//和后台配置一致,可以跳过,或者员工工号有跳过权限
-			if(rules.rule=="Y"){
+			var rule2="";
+			 for(var r in rules){ 
+				 if(r==rule){
+					   if(rule=="rule1"){
+						   rule2=rules.rule1;
+					   }
+					   else if(rule=="rule2"){
+						   rule2=rules.rule2;
+					   }
+					   else if(rule=="rule3"){
+						   rule2=rules.rule3;
+					   }
+					   else if(rule=="rule4"){
+						   rule2=rules.rule4;
+					   }
+						
+					}
+			 }
+			//和后台配置一致,可以跳过,或者员工工号有跳过权限
+			if(rule2=="Y"){
 				//记录到日志里
 				cust.saveAuthRecordFail(recordParam);
 				//如果是套餐变更
@@ -96,22 +115,13 @@ order.prodModify = (function(){
 			else if(iseditOperation=="0"){
 				$("#auth2").css('display','block'); 
 				$("#iseditOperation").attr("style","");
-				/*
-				easyDialog.open({
-					container: 'auth2'
-				});
-				*/
+				
 			}
 			
 			else{
 //				//显示跳过鉴权按钮 
 				$("#iseditOperation").attr("style","");
 				$("#auth2").css('display','block'); 
-				/*
-				easyDialog.open({
-					container: 'auth2'
-				});
-				*/
 			}
 			
 		} 
@@ -134,9 +144,28 @@ order.prodModify = (function(){
             
 			var iseditOperation=OrderInfo.rulesJson.iseditOperation;
 			//和后台配置一致,可以跳过,或者员工工号有跳过权限
-			
+			if(OrderInfo.typeCd=="1"){
+				var recordParam={};
+				recordParam.validateType="1";
+				recordParam.validateLevel="2";
+				recordParam.custId=OrderInfo.cust.custId;
+				recordParam.accessNbr=OrderInfo.acctNbr;
+				recordParam.certType=OrderInfo.cust.identityCd;
+				recordParam.certNumber=OrderInfo.cust.idCardNumber;
+				//记录到日志里
+				cust.saveAuthRecordFail(recordParam);
+				$("#auth2").css('display','none');
+				var prodOfferId=OrderInfo.provinceInfo.prodOfferId;
+				if(prodOfferId!="" && prodOfferId!=null &&prodOfferId!="null"){
+					order.service.buyService(prodOfferId,"");
+				}
+				else{
+					 $("#order_prepare").css('display','block');
+					order.service.init();
+				}
+			}
 			//工号有跳过鉴权权限 
-			 if(iseditOperation=="0"){
+			else  if(iseditOperation=="0"){
 				$("#auth2").css('display','block'); 
 				$("#iseditOperation").attr("style","");
 			}

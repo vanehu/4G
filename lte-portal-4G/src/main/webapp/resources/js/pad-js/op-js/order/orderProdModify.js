@@ -2881,7 +2881,25 @@ order.prodModify = (function(){
 			//员工权限
 			var iseditOperation=rules.iseditOperation;
 			//和后台配置一致,可以跳过,或者员工工号有跳过权限
-			if(rules.rule=="Y"){
+			var rule2="";
+			 for(var r in rules){ 
+				 if(r==rule){
+					   if(rule=="rule1"){
+						   rule2=rules.rule1;
+					   }
+					   else if(rule=="rule2"){
+						   rule2=rules.rule2;
+					   }
+					   else if(rule=="rule3"){
+						   rule2=rules.rule3;
+					   }
+					   else if(rule=="rule4"){
+						   rule2=rules.rule4;
+					   }
+						
+					}
+			 }
+			if(rule2=="Y"){
 				//记录到日志里
 				order.cust.saveAuthRecordFail(recordParam);
 				//如果是套餐变更
@@ -2942,7 +2960,22 @@ order.prodModify = (function(){
 			var iseditOperation=rules.iseditOperation;
 			$("#auth2").css('display','block'); 
 			//工号有跳过鉴权权限 
-			if(iseditOperation=="0"){
+			
+			if(OrderInfo.typeCd=="1"){
+				var recordParam={};
+				recordParam.validateType="4";
+				recordParam.validateLevel="2";
+				recordParam.custId=OrderInfo.cust.custId;
+				recordParam.accessNbr=OrderInfo.acctNbr;
+				recordParam.certType=OrderInfo.cust.identityCd;
+				recordParam.certNumber=OrderInfo.cust.idCardNumber;
+				//记录到日志里
+				order.cust.saveAuthRecordFail(recordParam);
+				url=contextPath+"/pad/order/prodoffer/prepare.html";
+				$("#auth2").css('display','none'); 
+				order.prepare.commonTab(url,"order_tab_panel_offer");
+			}
+			else if(iseditOperation=="0"){
 				
 				$("#iseditOperation").attr("style","");
 			}

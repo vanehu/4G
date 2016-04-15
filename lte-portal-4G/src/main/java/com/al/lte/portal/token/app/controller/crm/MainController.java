@@ -200,11 +200,10 @@ public class MainController extends BaseController {
 			String verifyLevel=paramsMap.get("verifyLevel")!=null?String.valueOf(paramsMap.get("verifyLevel")):null;
 			model.addAttribute("verifyLevel",verifyLevel);
 			String typeCd=paramsMap.get("typeCd")!=null?String.valueOf(paramsMap.get("typeCd")):null;
+			model.addAttribute("typeCd",typeCd);
 			Map<String, Object> jumpParams=new HashMap<String, Object>();
 			jumpParams.put("method", method);
 			jumpParams.put("actionFlag", "14");//按功能填入
-			jumpParams.put("verifyLevel", verifyLevel);
-			jumpParams.put("typeCd", typeCd);
 			model.addAttribute("jumpParams_", JacksonUtil.objectToJson(jumpParams));
 			
 			//公共跳转参数(公共-必须)
@@ -586,7 +585,10 @@ public class MainController extends BaseController {
 			paramsMap.put("reloadFlag","N");
 			paramsMap.put("isFee","1");*/
 			
-			
+			String verifyLevel=paramsMap.get("verifyLevel")!=null?String.valueOf(paramsMap.get("verifyLevel")):null;
+			model.addAttribute("verifyLevel",verifyLevel);
+			String typeCd=paramsMap.get("typeCd")!=null?String.valueOf(paramsMap.get("typeCd")):null;
+			model.addAttribute("typeCd",typeCd);
 			String provIsale=String.valueOf(paramsMap.get("provIsale"));
 			String redirectUri=String.valueOf(paramsMap.get("redirectUri"));
 			String isFee=String.valueOf(paramsMap.get("isFee"));

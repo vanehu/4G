@@ -20,6 +20,8 @@
 		});
 		
 		window.onload= function(){ 
+			OrderInfo.typeCd="${typeCd}";
+			OrderInfo.verifyLevel='${verifyLevel}';
 			//用户信息
 			OrderInfo.staff=eval("("+'${staffInfo_}'+")");
 			//跳转地址
@@ -28,8 +30,6 @@
 			var nextFlag = false;
 			var mergeFlag = "${mergeFlag}";
 			OrderInfo.actionFlag=3;
-			OrderInfo.verifyLevel=params.verifyLevel;
-			OrderInfo.typeCd=params.typeCd;
 			if(mergeFlag=="0"){
 				//客户定位
 				var custInfos = eval("("+'${custInfo_}'+")");
@@ -176,6 +176,7 @@
 			var custInfos=OrderInfo.cust;//JSON.stringify(OrderInfo.cust);//$.parseJSON(window.localStorage.getItem("OrderInfo.cust"));
 			var staffInfos=OrderInfo.staff;//JSON.stringify(OrderInfo.staff);//$.parseJSON(window.localStorage.getItem("OrderInfo.staff"));
 			var prodIdInfos=order.prodModify.choosedProdInfo//JSON.stringify(order.prodModify.choosedProdInfo);//$.parseJSON(window.localStorage.getItem("order.prodModify.choosedProdInfo"));
+			$("#p_cust_areaId").val(OrderInfo.cust.areaId);
 			if(nextFlag){
 				common.callOrderServer(staffInfos,custInfos,prodIdInfos,params);
 			}
@@ -187,7 +188,7 @@
 		<!-- 省份传入主副卡号码 -->
 		<input type="hidden" id="mainPhoneNum" value="${mainPhoneNum}"/>
 		<input type="hidden" id="newSubPhoneNum" value="${newSubPhoneNum}"/>
-		<input type="hidden" id="p_cust_areaId" value="${Session["_ecs_login_session_key"].currentAreaId}">
+		<input type="hidden" id="p_cust_areaId" value="">
 		<div align="center" id="load"></div>
 		<div id="content"></div>
 		

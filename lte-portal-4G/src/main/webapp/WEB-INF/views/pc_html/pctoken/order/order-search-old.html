@@ -384,6 +384,8 @@ window.onload=function(){
 	if(terminalCode!=null && terminalCode!="" && terminalCode!="null"){
 		OrderInfo.terminalCode=terminalCode;
 	}
+	OrderInfo.typeCd="${typeCd}";
+	OrderInfo.verifyLevel='${verifyLevel}';
 	order.prodModify.querySecondBusinessAuthSub();
 } 
 

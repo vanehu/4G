@@ -218,6 +218,10 @@ public class OfferMainController extends BaseController {
 				}
 			}
 			String method="";
+			String verifyLevel=paramsMap.get("verifyLevel")!=null?String.valueOf(paramsMap.get("verifyLevel")):null;
+			model.addAttribute("verifyLevel",verifyLevel);
+			String typeCd=paramsMap.get("typeCd")!=null?String.valueOf(paramsMap.get("typeCd")):null;
+			model.addAttribute("typeCd",typeCd);
 			//mainProdOfferId="ccc";
 			if(reloadFlag.equals("N")){
 			    method="/token/app/order/prodoffer/offerchange/prepare?accessToken="+accessToken;

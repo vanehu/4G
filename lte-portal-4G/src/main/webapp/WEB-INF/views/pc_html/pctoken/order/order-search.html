@@ -177,6 +177,8 @@ window.onload=function(){
 		order.phoneNumber.resetBoProdAn();
 		*/
 		$("#p_cust_areaId").val(p_cust_areaid);
+		OrderInfo.typeCd="${typeCd}";
+		OrderInfo.verifyLevel='${verifyLevel}';
 		order.prodModify.querySecondBusinessAuthSub();
 	}
 }

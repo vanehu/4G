@@ -5,7 +5,7 @@
 
 
 
-<#if COMPRESS_JS_LEVEL?? && (COMPRESS_JS_LEVEL == "BASE" || COMPRESS_JS_LEVEL == "BUSI")>
+<#if COMPRESS_JS_LEVEL?? && COMPRESS_JS_LEVEL == "BUSI">
    <script src="${contextPath}/merge/js/busiPAD-1.0.0.min.js" type="text/javascript"></script>
    <script src="${contextPath}/js/pad-js/busi-js/order/order.js?${jsversion}" type="text/javascript"></script>
 <#else>
@@ -39,6 +39,7 @@
 <script src="${contextPath}/js/pad-js/busi-js/order/order.js?${jsversion}" type="text/javascript"></script>
 
 </#if>
+<script src="${contextPath}/js/busi-js/prod/changeUim.js?${jsversion}" type="text/javascript"></script>
 </@override>
 <@override name="content">
 <div data-role="content">
@@ -122,10 +123,11 @@
        	<span class="font16">常用操作</span>
        	<a href="javascript:;" data-role="button" data-icon="settings" data-iconpos="notext" data-theme="i">设置</a>
     </div>
-     <!--用户鉴权弹窗  display:none;-->
-
-          <div style="width: 100%;"   id="auth2">
-          </div>
+<!--用户鉴权弹窗-->
+<div style="height:300px;background:#fff; -webkit-border-radius:5px; -moz-border-radius:5px; border-radius:5px;-webkit-box-shadow:0 8px 8px rgba(0,0,0,0.4);-moz-box-shadow:0 8px 8px rgba(0,0,0,0.4);box-shadow:0 8px 8px rgba(0,0,0,0.4); border:5px solid #cbced0;
+	
+	overflow-y:auto;" id="auth2">
+</div>
 <!--     不需要快捷设置 -->
     <ul id="ul_quick_set" class="quick ul-slide-left" style="display: none;">
     	
@@ -140,6 +142,8 @@
 
 <script type="text/javascript">
 	$(document).ready(function() {
+		OrderInfo.typeCd="${typeCd}";
+		OrderInfo.verifyLevel='${verifyLevel}';
 		OrderInfo.actionFlag=6;
 		var terminalCode='${terminalCode}'; //终端串码
 		//终端串码

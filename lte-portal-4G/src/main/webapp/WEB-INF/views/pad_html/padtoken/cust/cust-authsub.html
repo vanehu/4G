@@ -60,7 +60,7 @@
 		</ul>
 		<div id="div1" name="box" class="box_1">
 			<div class="info_box">
-				<p class="p_text">证件类型：<span class="span_text">军人身份证件</span></p>
+				<p class="p_text">证件类型：<span class="span_text" id="custAuthType"></span></p>
 			</div>
 			<div class="info_box">
 				<span class="span_text"><span class="red">*</span>证件号码</span>
@@ -100,6 +100,12 @@
 			$("#div"+id).removeClass("dis_none");
 		});
 	</script>
+	<script type="text/javascript">
+
+        rulesJson='${rulesJson}';
+        OrderInfo.rulesJson=eval("("+rulesJson+")");
+        $("#custAuthType").html(OrderInfo.cust.identityName);
+</script>
 </body>
 </html>
 <#else>

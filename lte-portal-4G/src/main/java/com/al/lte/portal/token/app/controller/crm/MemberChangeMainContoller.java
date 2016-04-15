@@ -205,11 +205,10 @@ public class MemberChangeMainContoller extends BaseController{
 			String verifyLevel=paramsMap.get("verifyLevel")!=null?String.valueOf(paramsMap.get("verifyLevel")):null;
 			model.addAttribute("verifyLevel",verifyLevel);
 			String typeCd=paramsMap.get("typeCd")!=null?String.valueOf(paramsMap.get("typeCd")):null;
+			model.addAttribute("typeCd",typeCd);
 			Map<String, Object> jumpParams=new HashMap<String, Object>();
 			jumpParams.put("method", method);
 			jumpParams.put("actionFlag", "3");//按功能填入
-			jumpParams.put("verifyLevel", verifyLevel);
-			jumpParams.put("typeCd", typeCd);
 			model.addAttribute("jumpParams_", JacksonUtil.objectToJson(jumpParams));
 			//如果是二次加载，调用接口获取暂存单数据信息
 			if("N".equals(reloadFlag)){

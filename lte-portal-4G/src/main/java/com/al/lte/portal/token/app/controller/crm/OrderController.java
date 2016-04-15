@@ -254,7 +254,7 @@ public class OrderController extends BaseController {
     @AuthorityValid(isCheck = false)
     public String offerchangePre(@RequestBody Map<String, Object> params, Model model, @LogOperatorAnn String optFlowNum,
             HttpServletResponse response, HttpSession httpSession) throws BusinessException {
-
+    
 		Map<String, Object> param = new HashMap<String, Object>();
 		try {
 			String prodIdInfos=params.get("prodIdInfos").toString().replace("\\", "");
@@ -262,16 +262,17 @@ public class OrderController extends BaseController {
 			String staffInfos=params.get("staffInfos").toString().replace("\\", "");
 			param=CommonMethods.getParams(prodIdInfos, custInfos, staffInfos, getRequest());
 			param.put("actionFlag", Const.OFFERCHANGE_FLAG);
-			Map<String, Object> validatoResutlMap=commonBmo.validatorRuleSub(param, optFlowNum, super.getRequest());
-			if(!ResultCode.R_SUCCESS.equals(validatoResutlMap.get("code"))){
-				model.addAttribute("validatoResutlMap", validatoResutlMap);
-				return "/app/rule/rulecheck";
-			}
+//			Map<String, Object> validatoResutlMap=commonBmo.validatorRuleSub(param, optFlowNum, super.getRequest());
+//			if(!ResultCode.R_SUCCESS.equals(validatoResutlMap.get("code"))){
+//				model.addAttribute("validatoResutlMap", validatoResutlMap);
+//				return "/app/rule/rulecheck";
+//			}
 			model.addAttribute("flag", Const.OFFERCHANGE_FLAG);
 			model.addAttribute("soNbr", param.get("soNbr"));
-		} catch (BusinessException e) {
-			return super.failedStr(model, e);
-		}  catch (Exception e) {
+		} //catch (BusinessException e) {
+		//	return super.failedStr(model, e);
+		//}  
+		catch (Exception e) {
 			return super.failedStr(model, ErrorCode.CHECK_RULE, null,
 					param);
 		}
@@ -283,7 +284,7 @@ public class OrderController extends BaseController {
     @AuthorityValid(isCheck = false)
     public String offerchangePreSub(@RequestBody Map<String, Object> params, Model model, @LogOperatorAnn String optFlowNum,
             HttpServletResponse response, HttpSession httpSession) throws BusinessException {
-
+     
 		Map<String, Object> param = new HashMap<String, Object>();
 		try {
 			String prodIdInfos=params.get("prodIdInfos").toString().replace("\\", "");
@@ -291,16 +292,20 @@ public class OrderController extends BaseController {
 			String staffInfos=params.get("staffInfos").toString().replace("\\", "");
 			param=CommonMethods.getParams(prodIdInfos, custInfos, staffInfos, getRequest());
 			param.put("actionFlag", Const.OFFERCHANGE_FLAG);
+			/*
 			Map<String, Object> validatoResutlMap=commonBmo.validatorRuleSub(param, optFlowNum, super.getRequest());
 			if(!ResultCode.R_SUCCESS.equals(validatoResutlMap.get("code"))){
 				model.addAttribute("validatoResutlMap", validatoResutlMap);
 				return "/app/rule/rulecheck";
 			}
+			*/
 			model.addAttribute("flag", Const.OFFERCHANGE_FLAG);
 			model.addAttribute("soNbr", param.get("soNbr"));
-		} catch (BusinessException e) {
-			return super.failedStr(model, e);
-		}  catch (Exception e) {
+		} 
+		//    catch (BusinessException e) {
+		//	return super.failedStr(model, e);
+		//}  
+		catch (Exception e) {
 			return super.failedStr(model, ErrorCode.CHECK_RULE, null,
 					param);
 		}

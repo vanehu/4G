@@ -450,6 +450,10 @@ public class OrderController extends BaseController {
 			String prodOfferId = "";
 			String prodOfferName = "";
 			String offerNbr = "";
+			String verifyLevel=paramsMap.get("verifyLevel")!=null?String.valueOf(paramsMap.get("verifyLevel")):null;
+			model.addAttribute("verifyLevel",verifyLevel);
+			String typeCd=paramsMap.get("typeCd")!=null?String.valueOf(paramsMap.get("typeCd")):null;
+			model.addAttribute("typeCd",typeCd);
 			//若mainProdOfferId不为空，则直接定位到指定套餐上
 			if(mainProdOfferId!=null&&!mainProdOfferId.equals("")&&!mainProdOfferId.equals("null")){
 				if (paramsMap.get("prodOfferId")==null||paramsMap.get("prodOfferName")==null||paramsMap.get("offerNbr")==null) {
@@ -463,7 +467,7 @@ public class OrderController extends BaseController {
 					model.addAttribute("newSubPhoneNum",newSubPhoneNum);
 				}
 				model.addAttribute("prodOfferId",prodOfferId);
-				model.addAttribute("prodOfferName",prodOfferName);			
+				model.addAttribute("prodOfferName",prodOfferName);	
 				if (!"N".equals(reloadFlag)) {
 					return "/pctoken/order/order-search-old";
 				}

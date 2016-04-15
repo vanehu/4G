@@ -347,6 +347,11 @@ public class OrderController extends BaseController {
 			String prodOfferId = "";
 			String prodOfferName = "";
 			String offerNbr = "";
+			String verifyLevel=paramsMap.get("verifyLevel")!=null?String.valueOf(paramsMap.get("verifyLevel")):null;
+			model.addAttribute("verifyLevel",verifyLevel);
+			String typeCd=paramsMap.get("typeCd")!=null?String.valueOf(paramsMap.get("typeCd")):null;
+			model.addAttribute("typeCd",typeCd);
+			
 			//若mainProdOfferId不为空，则直接定位到指定套餐上
 			if(mainProdOfferId!=null && !"".equals(mainProdOfferId) && !"null".equals(mainProdOfferId)){
 				if (paramsMap.get("prodOfferId")==null||paramsMap.get("prodOfferName")==null||paramsMap.get("offerNbr")==null) {
