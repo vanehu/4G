@@ -1100,6 +1100,10 @@ order.calcharge = (function(){
 		if(pageIndex>0){
 			curPage = pageIndex ;
 		}
+		if(pageIndex==1){
+			$("#islastPage").val(0);
+			$("#currentPage").val(1);
+		}
 		var param = {} ;
 		param = {
 					"startDate":($("#p_startDt").val()).replace(/-/g,''),
@@ -1107,21 +1111,29 @@ order.calcharge = (function(){
 					"channelId":$("#p_channelId").val(),
 					"areaId":$("#p_channelId").attr("areaid"),
 					pageIndex:curPage,
-					pageSize:200
+					pageSize:10
 		};
         $.callServiceAsHtmlGet(contextPath+"/app/report/freeInfoList",param,{
 			"before":function(){
 				$.ecOverlay("终端销售详情查询中，请稍等...");
 			},
 			"always":function(){
-				$.unecOverlay();
+			  //$.unecOverlay();
 			},
 			"done" : function(response){
+				$.unecOverlay();
 				if(response && response.code == -2){
 					return ;
 				}else{
+					if((response.data).indexOf("没有查询到结果")>=0){
+						$("#islastPage").val(1);
+						$("#currentPage").val(Number(curPage)-1);
+						$.alert("提示","没有查询到结果");
+						return;
+					}
 					$("#fee_search").hide();
 					$("#fee_list").html(response.data).show();
+					$("#fee_list_div").show();
 					OrderInfo.order.step=2;
 					$("#fee_list_scroller").css("transform","translate(0px, -40px) translateZ(0px)");
 					if(scroller && $.isFunction(scroller)) scroller.apply(this,[]);
@@ -1139,11 +1151,37 @@ order.calcharge = (function(){
 			common.callCloseWebview();
 		}else if(OrderInfo.order.step==2){
 			$("#fee_search").show();
-			$("#fee_list").hide();
+			$("#fee_list_div").hide();
 			OrderInfo.order.step=1;
 		}else{
 			common.callCloseWebview();
 		}
+	};
+	//费用总和查询上一页
+	var _upPage = function(){
+		var currentPage =Number($("#currentPage").val());
+		if(currentPage==1){
+			$.alert("提示","当前已经是第一页");
+			return;
+		}else{
+			currentPage = currentPage-1;
+		}
+		$("#islastPage").val(0);
+		$("#currentPage").val(currentPage);
+		_btnQueryfee(currentPage)
+		
+	};
+	//受理单查询下一页
+	var _nextPage = function(){
+		var currentPage = Number($("#currentPage").val());
+		var isLastPage = $("#islastPage").val();
+		if(isLastPage==1){
+			$.alert("提示","已经到最后一页!");
+			return;	
+		}
+		currentPage = currentPage+1;
+		$("#currentPage").val(currentPage);
+		_btnQueryfee(currentPage)
 	};
 	return {
 		addItems:_addItems,
@@ -1168,7 +1206,9 @@ order.calcharge = (function(){
 		chargeSave : _chargeSave,
 		feeScroll : _feeScroll,
 		btnQueryfee :_btnQueryfee,
-		back :_back
+		back :_back,
+		upPage                 :           _upPage,
+		nextPage               :           _nextPage,
 	};
 })();
 $(function() {

@@ -126,7 +126,7 @@ public class ReportController extends com.al.lte.portal.controller.crm.ReportCon
 	        Integer totalSize = 0 ;
 	        
 	        param.put("startDate", request.getParameter("startDate") + "000000");
-	        param.put("endDate", request.getParameter("endDate") + "000000");
+	        param.put("endDate", request.getParameter("endDate") + "235959");
 	        
 	        
 	        
@@ -221,7 +221,7 @@ public class ReportController extends com.al.lte.portal.controller.crm.ReportCon
 	        Integer totalSize = 0 ;
 	        
 	        param.put("startDate", request.getParameter("startDate") + "000000");
-	        param.put("endDate", request.getParameter("endDate") + "000000");
+	        param.put("endDate", request.getParameter("endDate") + "235959");
 			param.put("areaId", request.getParameter("areaId"));
 			//param.put("qryBusiOrder", request.getParameter("qryBusiOrder"));
 			param.put("channelId", request.getParameter("channelId"));
@@ -343,10 +343,10 @@ public class ReportController extends com.al.lte.portal.controller.crm.ReportCon
 		Calendar c = Calendar.getInstance();
 		SimpleDateFormat f = new SimpleDateFormat("yyyyMMdd");
 		String endTime = f.format(c.getTime());
-		 c.add(Calendar.DATE, -7);
+		// c.add(Calendar.DATE, );
 		String startTime = f.format(c.getTime());
 		param.put("startDate", startTime +"000000");
-		param.put("endDate", endTime +"000000");
+		param.put("endDate", endTime +"235959");
 		param.put("pageIndex", 1);
 		param.put("pageSize", 10);
 		try {

@@ -83,7 +83,11 @@ mktRes.terminal = (function($){
 		OrderInfo.actionFlag=150;
 		var curPage = 1 ;
 		if(pageIndex>0){
-			curPage = pageIndex ;
+			curPage = pageIndex;
+		}
+		if(pageIndex==1){
+			$("#islastPage").val(0);
+			$("#currentPage").val(1);
 		}
 		var param = {} ;
 		param = {
@@ -92,22 +96,30 @@ mktRes.terminal = (function($){
 					"channelId":$("#p_channelId").val(),
 					"areaId":$("#p_channelId").attr("areaid"),
 					pageIndex:curPage,
-					pageSize:200
+					pageSize:10
 		};
         $.callServiceAsHtmlGet(contextPath+"/app/report/terminalSalesList",param,{
 			"before":function(){
 				$.ecOverlay("终端销售详情查询中，请稍等...");
 			},
 			"always":function(){
-				$.unecOverlay();
+				//$.unecOverlay();
 			},
 			"done" : function(response){
+				$.unecOverlay();
 				if(response && response.code == -2){
 					return ;
 				}else{
+					if(response.data==""||(response.data).indexOf("没有查询到结果")>=0){
+						$("#islastPage").val(1);
+						$("#currentPage").val(Number(curPage)-1);
+						$.alert("提示","没有查询到结果");
+						return;
+					}
 					OrderInfo.order.step=2;
 					$("#terminal_sales_search").hide();
-					$("#terminal_sales_list").html(response.data).show();
+					$("#terminal_sales_list").html(response.data);
+					$("#terminal_sales_list_div").show();
 					$("#terminal_sales_list_scroller").css("transform","translate(0px, -40px) translateZ(0px)");
 					if(scroller && $.isFunction(scroller)) scroller.apply(this,[]);
 				}
@@ -803,7 +815,7 @@ mktRes.terminal = (function($){
 			common.callCloseWebview();
 		}else if(OrderInfo.order.step==2){
 			$("#terminal_sales_search").show();
-			$("#terminal_sales_list").hide();
+			$("#terminal_sales_list_div").hide();
 			OrderInfo.order.step=1;
 		}else{
 			common.callCloseWebview();
@@ -812,6 +824,32 @@ mktRes.terminal = (function($){
 	//显示超长数字
 	var _showNbr = function(title, nbr){
 		$.alert(title, nbr);
+	};
+	//受理单查询上一页
+	var _upPage = function(){
+		var currentPage =Number($("#currentPage").val());
+		if(currentPage==1){
+			$.alert("提示","当前已经是第一页");
+			return;
+		}else{
+			currentPage = currentPage-1;
+		}
+		$("#islastPage").val(0);
+		$("#currentPage").val(currentPage);
+		_btnQueryTerminalSale(currentPage)
+		
+	};
+	//受理单查询下一页
+	var _nextPage = function(){
+		var currentPage = Number($("#currentPage").val());
+		var isLastPage = $("#islastPage").val();
+		if(isLastPage==1){
+			$.alert("提示","已经到最后一页!");
+			return;	
+		}
+		currentPage = currentPage+1;
+		$("#currentPage").val(currentPage);
+		_btnQueryTerminalSale(currentPage)
 	};
 	return {
 		btnQueryTerminal	:_btnQueryTerminal,
@@ -830,7 +868,9 @@ mktRes.terminal = (function($){
 		termSaleScroll      :_termSaleScroll,
 		back     :_back,
 		btnQueryTerminalSale:_btnQueryTerminalSale,
-		showNbr             :_showNbr
+		showNbr             :_showNbr,
+		upPage                 :           _upPage,
+		nextPage               :           _nextPage
 	};
 })(jQuery);
 $(function() {

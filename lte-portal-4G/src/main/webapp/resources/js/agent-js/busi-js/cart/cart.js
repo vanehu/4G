@@ -13,6 +13,10 @@ cart.main = (function(){
 		if(pageIndex>0){
 			curPage = pageIndex ;
 		}
+		if(pageIndex==1){
+			$("#islastPage").val(0);
+			$("#currentPage").val(1);
+		}
 		var qryNumber=$("#p_qryNumber").val();
 		var param = {} ;
 		if($("#if_p_olNbr").is(':checked')){
@@ -86,6 +90,10 @@ cart.main = (function(){
 				}else{
 					$("#cart_search").hide();
 					$("#cart_list").html(response.data).show();
+					$("#cart_list_div").show();
+					if((response.data).indexOf("没有查询到结果")>=0){
+						$("#islastPage").val(1);
+					}
 					OrderInfo.order.step=2;
 					$("#cart_list_scroller").css("transform","translate(0px, -40px) translateZ(0px)");
 					if(scroller && $.isFunction(scroller)) scroller.apply(this,[]);
@@ -103,6 +111,10 @@ cart.main = (function(){
 		var curPage = 1 ;
 		if(pageIndex>0){
 			curPage = pageIndex ;
+		}
+		if(pageIndex==1){
+			$("#islastPage").val(0);
+			$("#currentPage").val(1);
 		}
 		var qryNumber=$("#p_qryNumber").val();
 		var param = {} ;
@@ -177,6 +189,10 @@ cart.main = (function(){
 				}else{
 					$("#cart_search").hide();
 					$("#cart_list").html(response.data).show();
+					$("#cart_list_div").show();
+					if((response.data).indexOf("没有查询到结果")>=0){
+						$("#islastPage").val(1);
+					}
 					OrderInfo.order.step=2;
 					$("#cart_list_scroller").css("transform","translate(0px, -40px) translateZ(0px)");
 					if(scroller && $.isFunction(scroller)) scroller.apply(this,[]);
@@ -299,7 +315,7 @@ cart.main = (function(){
 				if(response && response.code == -2){
 					return ;
 				}else{
-					$("#cart_list").hide();
+					$("#cart_list_div").hide();
 					$("#cart_info").html(response.data).show();
 					OrderInfo.order.step=3;
 				}
@@ -378,10 +394,10 @@ cart.main = (function(){
 			common.callCloseWebview();
 		}else if(OrderInfo.order.step==2){
 			$("#cart_search").show();
-			$("#cart_list").hide();
+			$("#cart_list_div").hide();
 			OrderInfo.order.step=1;
 		}else if(OrderInfo.order.step==3){
-			$("#cart_list").show();
+			$("#cart_list_div").show();
 			$("#cart_info").hide();
 			OrderInfo.order.step=2;
 		}else if(OrderInfo.order.step==4){
@@ -391,6 +407,60 @@ cart.main = (function(){
 		}else{
 			common.callCloseWebview();
 		}
+	};
+	
+	//受理单查询上一页
+	var _upPage = function(){
+		var currentPage =Number($("#currentPage").val());
+		if(currentPage==1){
+			$.alert("提示","当前已经是第一页");
+			return;
+		}else{
+			currentPage = currentPage-1;
+		}
+		$("#islastPage").val(0);
+		$("#currentPage").val(currentPage);
+		_queryCartList(currentPage)
+		
+	};
+	//受理单查询下一页
+	var _nextPage = function(){
+		var currentPage = Number($("#currentPage").val());
+		var isLastPage = $("#islastPage").val();
+		if(isLastPage==1){
+			$.alert("提示","已经到最后一页!");
+			return;	
+		}
+		currentPage = currentPage+1;
+		$("#currentPage").val(currentPage);
+		_queryCartList(currentPage)
+	};
+	
+	//二维码补打上一页
+	var _eqUpPage = function(){
+		var currentPage =Number($("#currentPage").val());
+		if(currentPage==1){
+			$.alert("提示","当前已经是第一页");
+			return;
+		}else{
+			currentPage = currentPage-1;
+		}
+		$("#islastPage").val(0)
+		$("#currentPage").val(currentPage);
+		_rqqueryCartList(currentPage)
+		
+	};
+	//二维码补打下一页
+	var _eqNextPage = function(){
+		var currentPage = Number($("#currentPage").val());
+		var isLastPage = $("#islastPage").val();
+		if(isLastPage==1){
+			$.alert("提示","已经到最后一页!");
+			return;	
+		}
+		currentPage = currentPage+1;
+		$("#currentPage").val(currentPage);
+		_rqqueryCartList(currentPage)
 	};
 	return {
 		cartBack				:			_cartBack,
@@ -404,7 +474,11 @@ cart.main = (function(){
 		setCalendar				:			_setCalendar,
 		showOffer				:			_showOffer,
 		validatorForm			:			_validatorForm,
-		rqqueryCartList        :           _rqqueryCartList
+		rqqueryCartList        :           _rqqueryCartList,
+		upPage                 :           _upPage,
+		nextPage               :           _nextPage,
+		eqUpPage                 :         _eqUpPage,
+		eqNextPage               :         _eqNextPage
 	};
 	
 })();

@@ -27,11 +27,9 @@
 				<div class="panel-heading">
 					<span class="glyphicon glyphicon-search" aria-hidden="true"></span>
 					受理订单查询
-					
 						</div>
 				<form id="cartFormdata" method="post">
-<div class="panel-body">
-					
+                   <div class="panel-body">
 						<div class="form-group" style="display: none;">
 							<label for="p_areaId_val">选择地区</label> 
 							<input type="text" readonly="readonly" id="p_areaId_val"
@@ -113,6 +111,8 @@
 							</select>
 						</div>
 					</div>
+					<input type="hidden" id="currentPage" value="1"/>
+					<input type="hidden" id="islastPage" value="0"/>
 				</form>
 			</div>
 		</div>
@@ -132,7 +132,29 @@
 		</div>
 	</nav>
 </div>
-<div id="cart_list" style="display: none;">
+<div id="cart_list_div" style="display: none;">
+<div id="cart_list">
+</div>
+<nav class="navbar navbar-default navbar-fixed-bottom">
+	<div class="container-fluid">
+		<div class="btn-group btn-group-justified navbar-btn" role="group"
+			aria-label="...">
+			<div class="btn-group" role="group">
+				<button type="button" class="btn btn-primary btn-lg" id="bt_cartQry" onclick="cart.main.upPage()">
+					<span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+					上一页
+				</button>
+			</div>
+			<div class="btn-group" role="group">
+				<button type="button" class="btn btn-primary btn-lg" id="bt_cartQry" onclick="cart.main.nextPage()">
+					<span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+					下一页
+				</button>
+			</div>
+
+		</div>
+	</div>
+</nav>
 </div>
 <div id="cart_info" style="display: none;">
 </div>

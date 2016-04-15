@@ -1,21 +1,5 @@
 <#if code?? && (code>=0) >
-<#if (pageModel.pageNo)?? && (pageModel.pageNo > 1) >
-	<#if (pageModel.list)?? &&((pageModel.list)?size>0)>
-	<#list pageModel.list as orderLists >
-      <#if (orderLists.list)?? &&((orderLists.list)?size>0)>
-      <#list orderLists.list as cart >
-		<tr onclick="cart.main.queryCartInfo('${orderLists.olId}')">
-			<td>${cart.partyName}</td>
-			<td>${cart.staffName}</td>
-			<td>${cart.soDate}</td>
-			<td>${orderLists.olStatusName}</td>
-		</tr>
-	  </#list>
-      </#if>
-      </#list>
-	</#if>
-<#else>
-	<div class="container-fluid">
+	<div class="container-fluid"> 
 		<div class="row">
 			<div class="panel panel-default paneltop">
 				<!-- Default panel contents -->
@@ -35,7 +19,7 @@
 							<!-- <th></th> -->
 						</tr>
 					</thead>
-					<tbody class="panel-group" id="all_cart_list">
+					<tbody class="panel-group" id="accordion">
 		              <#list pageModel.list as orderLists >
 		              <#if (orderLists.list)?? &&((orderLists.list)?size>0)>
 		              <#list orderLists.list as cart >
@@ -75,7 +59,6 @@
 			</div>
 		</div>
 	</div>
-</#if>
 <#else>
 	${mess}
 </#if>
