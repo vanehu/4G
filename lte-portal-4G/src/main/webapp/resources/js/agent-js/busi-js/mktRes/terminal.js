@@ -3283,6 +3283,12 @@ mktRes.terminal = (function($){
 			params.prodOfferFlag = "4G";
 		}
 		params.prodId = flag;
+		if(OrderInfo.actionFlag == 1 || OrderInfo.actionFlag == 14){
+			if(params.qryStr == "我的收藏"){
+				params.ifQueryFavorite = "Y";
+				params.qryStr = "";
+			}
+		}
 		var url = contextPath+"/agent/order/phone_offerSpecList";
 		$("#pakeage").show();
 		$("#pakeage").attr("class","tab-pane fade in active");

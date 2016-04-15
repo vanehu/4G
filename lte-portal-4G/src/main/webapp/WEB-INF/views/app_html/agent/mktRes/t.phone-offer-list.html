@@ -7,14 +7,14 @@
 	<#list resultlst as item>
 	<#if item_index<10>
 	<#if subPage??>
-		<a href="#" class="list-group-item" onclick="mktRes.terminal.selectTc('${item.offerSpecId}','${item.offerSpecName}')">
-            <h5 class="list-group-item-heading">${item.offerSpecName}<span class="glyphicon glyphicon-chevron-right pull-right" aria-hidden="true"></span></h5>
-            <div class="row"> <small class="col-xs-6">国内语音：<#if item.inVoice??>${item.inVoice}分钟<#else>无</#if></small> <small class="col-xs-6">国内流量：<#if item.inFlux??>${item.inFlux}<#else>无</#if></small> </div>
+		<a href="#" class="list-group-item">
+            <h5 class="list-group-item-heading" style="padding-left: 40px;" onclick="mktRes.terminal.selectTc('${item.offerSpecId}','${item.offerSpecName}')">${item.offerSpecName}<span class="glyphicon glyphicon-chevron-right pull-right" aria-hidden="true"></span></h5>
+            <div class="row" style="padding-left: 40px;"> <small class="col-xs-6">国内语音：<#if item.inVoice??>${item.inVoice}分钟<#else>无</#if></small> <small class="col-xs-6">国内流量：<#if item.inFlux??>${item.inFlux}<#else>无</#if></small> </div>
         </a>				
 	<#else>
-		<a href="#" class="list-group-item" offerSpecName = "${item.offerSpecName}" onclick="mktRes.terminal.selectTc('${item.offerSpecId}','${item.offerSpecName}')">
-            <h5 class="list-group-item-heading">${item.offerSpecName}<span class="glyphicon glyphicon-chevron-right pull-right" aria-hidden="true"></span></h5>
-            <div class="row"> <small class="col-xs-6">国内语音：<#if item.inVoice??>${item.inVoice}分钟<#else>无</#if></small> <small class="col-xs-6">国内流量：<#if item.inFlux??>${item.inFlux}<#else>无</#if></small> </div>
+		<a href="#" class="list-group-item" offerSpecName = "${item.offerSpecName}">
+            <h5 class="list-group-item-heading" style="padding-left: 40px;" onclick="mktRes.terminal.selectTc('${item.offerSpecId}','${item.offerSpecName}')">${item.offerSpecName}<span class="glyphicon glyphicon-chevron-right pull-right" aria-hidden="true"></span></h5>
+            <div class="row" style="padding-left: 40px;"> <small class="col-xs-6">国内语音：<#if item.inVoice??>${item.inVoice}分钟<#else>无</#if></small> <small class="col-xs-6">国内流量：<#if item.inFlux??>${item.inFlux}<#else>无</#if></small> </div>
         </a>
 	</#if>
 	</#if>
@@ -27,14 +27,24 @@
 	<#list resultlst as item>
 	<#if item_index<10>
 	<#if subPage??>
-		<a href="#" class="list-group-item" onclick="mktRes.terminal.selectTc('${item.offerSpecId}','${item.offerSpecName}')">
-            <h5 class="list-group-item-heading">${item.offerSpecName}<span class="glyphicon glyphicon-chevron-right pull-right" aria-hidden="true"></span></h5>
-            <div class="row"> <small class="col-xs-6">国内语音：<#if item.inVoice??>${item.inVoice}分钟<#else>无</#if></small> <small class="col-xs-6">国内流量：<#if item.inFlux??>${item.inFlux}<#else>无</#if></small> </div>
+		<a href="#" class="list-group-item">
+			<#if item.ifQueryFavorite??>
+			<span class="glyphicon glyphicon-star icon-star" onclick="AttachOffer.delMainfavoriteSpec('${item.offerSpecId}','${item.offerSpecName}');"></span>
+			<#else>
+			<span class="glyphicon glyphicon-star nostar" onclick="AttachOffer.addMainfavoriteSpec('${item.offerSpecId}','${item.offerSpecName}');"></span>
+            </#if>
+            <h5 class="list-group-item-heading" style="padding-left: 40px;" onclick="mktRes.terminal.selectTc('${item.offerSpecId}','${item.offerSpecName}')">${item.offerSpecName}<span class="glyphicon glyphicon-chevron-right pull-right" aria-hidden="true"></span></h5>
+            <div class="row" style="padding-left: 40px;"> <small class="col-xs-6">国内语音：<#if item.inVoice??>${item.inVoice}分钟<#else>无</#if></small> <small class="col-xs-6">国内流量：<#if item.inFlux??>${item.inFlux}<#else>无</#if></small> </div>
         </a>			
 	<#else>
-		<a href="#" class="list-group-item"  onclick="mktRes.terminal.selectTc('${item.offerSpecId}','${item.offerSpecName}')">
-            <h5 class="list-group-item-heading">${item.offerSpecName}<span class="glyphicon glyphicon-chevron-right pull-right" aria-hidden="true"></span></h5>
-            <div class="row"> <small class="col-xs-6">国内语音：<#if item.inVoice??>${item.inVoice}分钟<#else>无</#if></small> <small class="col-xs-6">国内流量：<#if item.inFlux??>${item.inFlux}<#else>无</#if></small> </div>
+		<a href="#" class="list-group-item">
+			<#if item.ifQueryFavorite??>
+			<span class="glyphicon glyphicon-star icon-star" onclick="AttachOffer.delMainfavoriteSpec('${item.offerSpecId}','${item.offerSpecName}');"></span>
+			<#else>
+			<span class="glyphicon glyphicon-star nostar" onclick="AttachOffer.addMainfavoriteSpec('${item.offerSpecId}','${item.offerSpecName}');"></span>
+            </#if>
+            <h5 class="list-group-item-heading" onclick="mktRes.terminal.selectTc('${item.offerSpecId}','${item.offerSpecName}')" style="padding-left: 40px;">${item.offerSpecName}<span class="glyphicon glyphicon-chevron-right pull-right" aria-hidden="true"></span></h5>
+            <div class="row" style="padding-left: 40px;"> <small class="col-xs-6">国内语音：<#if item.inVoice??>${item.inVoice}分钟<#else>无</#if></small> <small class="col-xs-6">国内流量：<#if item.inFlux??>${item.inFlux}<#else>无</#if></small> </div>
         </a>
 	</#if>
 	</#if>
@@ -46,19 +56,29 @@
 	<#list resultlst as item>
 	<#if item_index gte 10>
 	<#if subPage??>
-		<a href="#" class="list-group-item" onclick="mktRes.terminal.selectTc('${item.offerSpecId}','${item.offerSpecName}')">
-            <h5 class="list-group-item-heading">${item.offerSpecName}<span class="glyphicon glyphicon-chevron-right pull-right" aria-hidden="true"></span></h5>
-            <div class="row"> <small class="col-xs-6">国内语音：<#if item.inVoice??>${item.inVoice}分钟<#else>无</#if></small> <small class="col-xs-6">国内流量：<#if item.inFlux??>${item.inFlux}<#else>无</#if></small> </div>
+		<a href="#" class="list-group-item">
+			<#if item.ifQueryFavorite??>
+			<span class="glyphicon glyphicon-star icon-star" onclick="AttachOffer.delMainfavoriteSpec('${item.offerSpecId}','${item.offerSpecName}');"></span>
+			<#else>
+			<span class="glyphicon glyphicon-star nostar" onclick="AttachOffer.addMainfavoriteSpec('${item.offerSpecId}','${item.offerSpecName}');"></span>
+            </#if>
+            <h5 class="list-group-item-heading" style="padding-left: 40px;" onclick="mktRes.terminal.selectTc('${item.offerSpecId}','${item.offerSpecName}')">${item.offerSpecName}<span class="glyphicon glyphicon-chevron-right pull-right" aria-hidden="true"></span></h5>
+            <div class="row" style="padding-left: 40px;"> <small class="col-xs-6">国内语音：<#if item.inVoice??>${item.inVoice}分钟<#else>无</#if></small> <small class="col-xs-6">国内流量：<#if item.inFlux??>${item.inFlux}<#else>无</#if></small> </div>
         </a>			
 	<#else>
-		<a href="#" class="list-group-item" onclick="mktRes.terminal.selectTc('${item.offerSpecId}','${item.offerSpecName}')">
-			<h5 class="list-group-item-heading">
+		<a href="#" class="list-group-item">
+			<#if item.ifQueryFavorite??>
+			<span class="glyphicon glyphicon-star icon-star" onclick="AttachOffer.delMainfavoriteSpec('${item.offerSpecId}','${item.offerSpecName}');"></span>
+			<#else>
+			<span class="glyphicon glyphicon-star nostar" onclick="AttachOffer.addMainfavoriteSpec('${item.offerSpecId}','${item.offerSpecName}');"></span>
+            </#if>
+			<h5 class="list-group-item-heading" style="padding-left: 40px;" onclick="mktRes.terminal.selectTc('${item.offerSpecId}','${item.offerSpecName}')">
 				${item.offerSpecName}
 				<span
 					class="glyphicon glyphicon-chevron-right pull-right"
 					aria-hidden="true"></span>
 			</h5>
-			<div class="row">
+			<div class="row" style="padding-left: 40px;">
 				<small class="col-xs-6">国内语音：<#if item.inVoice??>${item.inVoice}分钟<#else>无</#if></small> <small class="col-xs-6">国内流量：<#if item.inFlux??>${item.inFlux}<#else>无</#if></small>
 			</div>
 		</a>

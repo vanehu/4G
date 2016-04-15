@@ -211,10 +211,10 @@ common = (function($) {
 		if(OrderInfo.returnFlag=="fk"){ //副卡不可返回，只能确定或取消
 			return;
 		}
-//		if(OrderInfo.returnFlag=="sc"){ //收藏
-//			AttachOffer.cangBack();
-//			return;
-//		}
+		if(OrderInfo.returnFlag=="sc"){ //收藏
+			AttachOffer.cangBack();
+			return;
+		}
 		if(OrderInfo.returnFlag=="fk"){ //副卡
 			if(OrderInfo.actionFlag==14 && OrderInfo.order.step<3){
 				$("#order-memeber").hide();

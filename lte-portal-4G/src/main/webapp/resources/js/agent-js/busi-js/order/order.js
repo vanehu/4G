@@ -84,6 +84,12 @@ order.service = (function(){
 			params.prodOfferFlag = "4G";
 		}
 		params.prodId = flag;
+		if(OrderInfo.actionFlag == 1 || OrderInfo.actionFlag == 14){
+			if(params.qryStr == "我的收藏"){
+				params.ifQueryFavorite = "Y";
+				params.qryStr = "";
+			}
+		}
 		var url = contextPath+"/agent/order/offerSpecList";
 		if(OrderInfo.actionFlag == 14){
 			url = contextPath+"/agent/order/phone_offerSpecList";
@@ -107,6 +113,9 @@ order.service = (function(){
 				
 				var content$ = $("#offer-list");
 				content$.html(response.data);
+				if(params.ifQueryFavorite && params.ifQueryFavorite == "Y"){
+					AttachOffer.myFavoriteOfferList = response.data.resultlst;
+				}
 				$("#offer-list").show();
 				if(scroller && $.isFunction(scroller)) scroller.apply(this,[]);
 //				$.refresh(content$);
@@ -311,6 +320,11 @@ order.service = (function(){
 				});
 			}
 		});
+//		if(OrderInfo.actionFlag == 1){
+//			if(offerSpec.offerSpecParams && (offerSpec.offerSpecParams.size>0)){
+//				$("#offerCanBtn").show();
+//			}
+//		}
 		$("#max").text("0-"+max);
 		_setOfferSpec(max);
 		order.main.buildMainView(param);
@@ -552,6 +566,11 @@ order.service = (function(){
 							OrderInfo.viceOfferSpec.push(prodOfferSpec);
 							order.prodModify.chooseOfferForMember(specId,subpage,specName,offerRoleId);
 							OrderInfo.returnFlag="";
+//							if(OrderInfo.actionFlag == 1){
+//								if(prodOfferSpec.offerSpecParams && (prodOfferSpec.offerSpecParams.size>0)){
+//									$("#offerCanBtn").show();
+//								}
+//							}
 						}else{
 							$.alert("提示","无法选择套餐，套餐规格查询失败！");
 						}

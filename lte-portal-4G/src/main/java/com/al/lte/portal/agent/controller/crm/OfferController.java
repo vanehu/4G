@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -561,7 +562,7 @@ public class OfferController extends BaseController {
 		} catch (Exception e) {
 			return super.failedStr(model, ErrorCode.QUERY_MUST_OFFER, e, paramMap);
 		}
-		return "/app/offer/attach-offer-list";
+		return "/agent/offer/attach-offer-list";
 	}
 	
 	/**
@@ -677,5 +678,99 @@ public class OfferController extends BaseController {
 			return super.failedStr(model, ErrorCode.QUERY_ATTACH_OFFER, e, paramMap);
 		}
 	 	return "/offer/card-attach-offer-change";
+	}
+	
+	/**
+	 * 查询我的收藏
+	 * @param param
+	 * @param model
+	 * @return
+	 * @throws BusinessException
+	 */
+	@RequestMapping(value = "/queryMyfavorite", method = {RequestMethod.GET})
+	public @ResponseBody JsonResponse queryMyfavorite(@RequestParam("strParam") String param,Model model) {
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+				SysConstant.SESSION_KEY_LOGIN_STAFF);
+		JsonResponse jsonResponse = null;
+		Map<String, Object> paramMap = null;
+        try {
+        	paramMap =  JsonUtil.toObject(param, Map.class);
+        	paramMap.put("operatorsId", sessionStaff.getOperatorsId()!=""?sessionStaff.getOperatorsId():"99999");
+        	Map<String, Object> resMap = offerBmo.queryMyfavorite(paramMap,null,sessionStaff);
+        	jsonResponse = super.successed(resMap,ResultConstant.SUCCESS.getCode());
+        } catch (BusinessException be) {
+        	return super.failed(be);
+        } catch (InterfaceException ie) {
+        	return super.failed(ie, paramMap, ErrorCode.QUERY_MY_FAVORITE);
+		} catch (Exception e) {
+			return super.failed(ErrorCode.QUERY_MY_FAVORITE, e, paramMap);
+		}
+		return jsonResponse;
+	}
+	/**
+	 * 收藏销售品
+	 * @param param
+	 * @param model
+	 * @return
+	 * @throws BusinessException
+	 */
+	@RequestMapping(value = "/addMyfavorite", method = {RequestMethod.GET})
+	public @ResponseBody JsonResponse addMyfavorite(@RequestParam Map<String, Object> paramMap,Model model,HttpSession httpSession) {
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+				SysConstant.SESSION_KEY_LOGIN_STAFF);
+		JsonResponse jsonResponse = null;
+        try {
+        	Map<String, Object> resMap = offerBmo.addMyfavorite(paramMap,null,sessionStaff);
+        	if(ResultCode.R_SUCC.equals(resMap.get("resultCode")+"")){
+        		if(paramMap.get("main")!=null){//刷新收藏的主套餐ids
+        			String ids = httpSession.getAttribute("OfferIds").toString();
+        			ids += paramMap.get("offerSpecId").toString()+",";
+        			httpSession.setAttribute("OfferIds", ids);
+        		}
+				jsonResponse = super.successed(resMap,
+						ResultConstant.SUCCESS.getCode());
+			}else{
+				jsonResponse = super.failed(resMap.get("msg"),
+						Integer.parseInt(resMap.get("code").toString()));
+			}
+        } catch (BusinessException be) {
+        	return super.failed(be);
+        } catch (InterfaceException ie) {
+        	return super.failed(ie, paramMap, ErrorCode.ADD_MY_FAVORITE);
+		} catch (Exception e) {
+			return super.failed(ErrorCode.ADD_MY_FAVORITE, e, paramMap);
+		}
+		return jsonResponse;
+	}
+	
+	/**
+	 * 删除收藏夹中销售品
+	 * @param param
+	 * @param model
+	 * @return
+	 * @throws BusinessException
+	 */
+	@RequestMapping(value = "/delMyfavorite", method = {RequestMethod.GET})
+	public @ResponseBody JsonResponse delMyfavorite(@RequestParam Map<String, Object> paramMap,Model model,HttpSession httpSession) {
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+				SysConstant.SESSION_KEY_LOGIN_STAFF);
+		JsonResponse jsonResponse = null;
+        try {
+        	Map<String, Object> resMap = offerBmo.delMyfavorite(paramMap,null,sessionStaff);
+        	jsonResponse = super.successed(resMap,ResultConstant.SUCCESS.getCode());
+        	if(paramMap.get("main")!=null){//刷新收藏的主套餐ids
+    			String ids = httpSession.getAttribute("OfferIds").toString();
+    			String id = paramMap.get("offerSpecId").toString()+",";
+    			ids = ids.replace(id,"");
+    			httpSession.setAttribute("OfferIds", ids);
+    		}
+        } catch (BusinessException be) {
+        	return super.failed(be);
+        } catch (InterfaceException ie) {
+        	return super.failed(ie, paramMap, ErrorCode.DEL_MY_FAVORITE);
+		} catch (Exception e) {
+			return super.failed(ErrorCode.DEL_MY_FAVORITE, e, paramMap);
+		}
+		return jsonResponse;
 	}
 }

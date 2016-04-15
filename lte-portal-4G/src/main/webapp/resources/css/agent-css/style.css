@@ -697,3 +697,38 @@ table {
 .mbsc-android-holo-light .dwwr, .mbsc-android-holo-light .dw-cal-sc-c {
 	background: #fff;
 }
+
+/*收藏样式开始*/
+/*
+.packagelist a.list-group-item {
+	padding-left: 50px;
+}
+*/
+.icon-star {
+	position: absolute;
+	top: 18px;
+	left: 10px;
+	font-size: 30px;
+	color: #fac126;
+}
+.nostar {
+	position: absolute;
+	top: 18px;
+	left: 10px;
+	font-size: 30px;
+	color: #e5e5e5;
+}
+.ordersale .icon-star {
+	font-size: 30px;
+	vertical-align: middle;
+	margin-right: 10px;
+	color: #fac126;
+}
+.ordersale .icon-star.nostar {
+	font-size: 30px;
+	vertical-align: middle;
+	margin-right: 10px;
+	color: #fac126;
+	color: #e5e5e5;
+}
+/*收藏样式结束*/
