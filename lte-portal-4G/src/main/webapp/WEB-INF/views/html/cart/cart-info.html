@@ -334,6 +334,43 @@
     </tbody>
 </table>
 
+<h5 class="s_title">鉴权信息</h5>
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="orderdetail_fs">
+    <thead>
+    <tr>
+        <td>鉴权类型</td>
+        <td>鉴权级别</td>
+        <td>鉴权时间</td>
+    </tr>
+    </thead>
+<tbody>
+  <#if (cart.validateList)??&&((cart.validateList)?size>0)>
+    <#assign validateInfoList = cart.validateList >
+    <#list validateInfoList as validate >
+      <#assign type = validate.validateType >
+      <#assign level = validate.valiedateLevel >
+    <tr>
+        <td>
+          <#if level??&&level=="1">客户
+          <#elseif level??&&level=="2">用户
+          <#else>未知
+          </#if>
+        </td>
+        <td>
+          <#if type??&&type=="1">证件鉴权
+          <#elseif type??&&type=="2">短信鉴权
+          <#elseif type??&&type=="3">产品密码鉴权
+          <#elseif type??&&type=="4">跳过鉴权
+          <#else >未知
+          </#if>
+        </td>
+        <td>${validate.handleDate}</td>
+    </tr>
+    </#list>
+  </#if>
+  </tbody>
+  </table>
+
 <div class="height18"></div>
   <h5 class="s_title">费用信息</h5>
 
