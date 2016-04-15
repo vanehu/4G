@@ -1061,10 +1061,51 @@ public class MktResController extends BaseController {
 						SysConstant.SESSION_KEY_LOGIN_STAFF);
 		try {
 			mktInfo.put("channelId", sessionStaff.getCurrentChannelId());
-			
-			Map<String, Object> mktRes = mktResBmo.checkTerminalCode(
+			mktInfo.put("receiveFlag","1");
+			mktInfo.put("staffId",sessionStaff.getStaffId());
+			mktInfo.put("channelName",sessionStaff.getCurrentChannelName());
+			String offerSpecName = MapUtils.getString(mktInfo, "offerSpecName")==null?" ":MapUtils.getString(mktInfo, "offerSpecName");
+			mktInfo.remove("offerSpecName");
+			Map<String, Object> mktRes = mktResBmo.checkTerminalCodeForAgent(
 					mktInfo, flowNum, sessionStaff);
 			if (MapUtils.isNotEmpty(mktRes)) {
+				if(ResultCode.R_SUCC.equals(MapUtils.getString(mktRes, "code"))){
+					//update by huangjj3 营销资源返回终端可用再调用后台终端规格校验接口
+					if(StringUtils.isNotEmpty(MapUtils.getString(mktInfo, "offerSpecId"))){
+						Map<String, Object> mktInfoBack = new HashMap<String, Object>();
+						mktInfoBack.put("agreementOfferSpecID", MapUtils.getString(mktInfo, "offerSpecId"));
+						mktInfoBack.put("mktResCd", MapUtils.getString(mktRes, "mktResId"));
+						mktInfoBack.put("agreementName", offerSpecName);
+						mktInfoBack.put("mktResName",  MapUtils.getString(mktRes, "mktResName"));
+						Map<String, Object> mktResBack = mktResBmo.checkTerminalCodeBack(
+								mktInfoBack, flowNum, sessionStaff);
+						if(MapUtils.isNotEmpty(mktResBack)){
+							String resultCode = MapUtils.getString(mktResBack, "code");
+							if("1".equals(resultCode)){
+								return super.failed(MapUtils.getString(mktResBack, "message"), ResultConstant.FAILD.getCode());
+							}
+						}
+					}
+				}
+				ArrayList obj =  (ArrayList) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_TERMINAL+"_"+sessionStaff.getStaffId());		
+				if(obj == null || "null".equals(obj) || "".equals(obj)){
+					obj = new ArrayList();
+				}	
+				List list = (List)obj;
+				if(!list.contains(mktInfo.get("instCode"))){
+					list.add(mktInfo.get("instCode"));
+				}
+				
+				ArrayList obj2 =  (ArrayList)ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_AGREEMENT+"_"+sessionStaff.getStaffId());		
+				if(obj2 == null || "null".equals(obj2) || "".equals(obj2)){
+					obj2 = new ArrayList();
+				}	
+				List list2 = (List)obj2;
+				if(mktInfo.get("offerSpecId") != null && !list2.contains(mktInfo.get("offerSpecId"))){
+					list2.add(mktInfo.get("offerSpecId"));
+				}
+				ServletUtils.setSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_AGREEMENT+"_"+sessionStaff.getStaffId(), list2);
+				ServletUtils.setSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_TERMINAL+"_"+sessionStaff.getStaffId(), list);
 				return super.successed(mktRes);
 			} else {
 				return super.failed("校验终端串号失败", ResultConstant.FAILD.getCode());

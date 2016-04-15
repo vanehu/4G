@@ -143,6 +143,18 @@ public interface MktResBmo {
      */
     public Map<String, Object> checkTerminalCode(Map<String, Object> map, String optFlowNum, SessionStaff sessionStaff)
             throws Exception;
+    
+    /**
+     * 能力开放
+     * 终端串号校验
+     * @param map 入参
+     * @param optFlowNum 操作流水
+     * @param sessionStaff 会话对象
+     * @return 操作结果
+     * @throws BusinessException
+     */
+    public Map<String, Object> checkTerminalCodeSub(Map<String, Object> map, String optFlowNum,
+			SessionStaff sessionStaff) throws Exception;
     /**
      * 终端串号校验
      * @param map 入参

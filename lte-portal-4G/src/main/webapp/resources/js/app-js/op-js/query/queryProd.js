@@ -131,7 +131,7 @@ query.prod = (function() {
 	 * 终端串号校验
 	 */
 	var _checkTerminal = function(param){
-		var url = contextPath+"/mktRes/terminal/checkTerminal";
+		var url = contextPath+"/token/pc/mktRes/terminal/checkTerminal";
 		$.ecOverlay("<strong>终端校验中,请稍后....</strong>");
 		var response = $.callServiceAsJson(url,param);
 		$.unecOverlay();
