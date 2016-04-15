@@ -1065,6 +1065,7 @@ mktRes.terminal = (function($){
 		$("#tsn_hid").val("");
 		
 		var tc = $(id).val();
+		tc = tc.replace(/(^\s*)|(\s*$)/g, "");
 		if(tc == "")
 			return ;
 		var param = {
@@ -1157,7 +1158,7 @@ mktRes.terminal = (function($){
 				storeName : "1", //仓库名称
 				agentId : 1, //供应商ID
 				apCharge : apCharge, //物品价格
-				couponInstanceNumber : $("#tsn").val(), //termInfo.instCode物品实例编码
+				couponInstanceNumber : ($("#tsn").val()).replace(/(^\s*)|(\s*$)/g, ""), //termInfo.instCode物品实例编码
 				ruleId : "", //物品规则ID
 				partyId : CONST.CUST_COUPON_SALE, //客户ID
 				prodId : 0, //产品ID
@@ -1220,7 +1221,7 @@ mktRes.terminal = (function($){
 			storeName 			: "1", //仓库名称
 			agentId 			: 1, //供应商ID
 			apCharge 			: $("#price").val() / 100, //物品价格
-			couponInstanceNumber: $("#tsn").val(),//termInfo.instCode, //物品实例编码
+			couponInstanceNumber: ($("#tsn").val()).replace(/(^\s*)|(\s*$)/g, ""),//termInfo.instCode, //物品实例编码
 			ruleId 				: "", //物品规则ID
 			partyId 			: OrderInfo.cust.custId, //客户ID
 			prodId 				: -1, //产品ID
@@ -2165,7 +2166,7 @@ mktRes.terminal = (function($){
 			//订单提交
 //			_checkTerminalCode('#tsn');
 			for(var n=0;n<OrderInfo.attach2Coupons.length;n++){
-				OrderInfo.attach2Coupons[n].couponInstanceNumber = $("#tsn").val();
+				OrderInfo.attach2Coupons[n].couponInstanceNumber = ($("#tsn").val()).replace(/(^\s*)|(\s*$)/g, "");
 				OrderInfo.attach2Coupons[n].storeId = termInfo.mktResStoreId;
 				OrderInfo.attach2Coupons[n].couponId = termInfo.mktResId;
 			}
