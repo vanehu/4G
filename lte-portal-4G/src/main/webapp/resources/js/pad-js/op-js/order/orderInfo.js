@@ -19,7 +19,18 @@ OrderInfo = (function() {
 	 * 
 	 */
 	var _actionFlag = 0;
-	
+	var _rulesJson="";
+	//鉴权类别
+	var _typeCd="";
+	//传入的号码
+	var _acctNbr="";
+	//鉴权级别
+	var _verifyLevel="";
+	var _authRecord={
+			menuId:"",
+			validateType:"",
+			resultCode:""
+		};//保存鉴权临时结果
 	/*购物车业务动作
 	1 新装
 	2  套餐变更
@@ -1431,6 +1442,11 @@ OrderInfo = (function() {
 		reloadProdInfo :_reloadProdInfo,
 		newOrderInfo          	:_newOrderInfo,
 		newOrderNumInfo			:_newOrderNumInfo,
-		oldprodAcctInfos:_oldprodAcctInfos
+		oldprodAcctInfos:_oldprodAcctInfos,
+		authRecord:_authRecord,
+		typeCd:_typeCd,
+		verifyLevel:_verifyLevel,
+		rulesJson:_rulesJson,
+		acctNbr:_acctNbr
 	};
 })();

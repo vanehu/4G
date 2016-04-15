@@ -7,9 +7,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
 import com.al.ec.serviceplatform.client.ResultCode;
 import com.al.ec.toolkit.JacksonUtil;
 import com.al.ecs.common.entity.JsonResponse;
@@ -273,12 +276,12 @@ public class OfferController extends BaseController {
 			Map<String, Object> openMap = offerBmo.queryAttachOffer(paramMap,null,sessionStaff);
 			model.addAttribute("openMap",openMap);
 			model.addAttribute("openMapJson", JsonUtil.buildNormal().objectToJson(openMap));
-			
+			String a=JsonUtil.buildNormal().objectToJson(openMap);
 			//可订购附属标签查询
 			Map<String, Object> labelMap = offerBmo.queryLabel(paramMap,null,sessionStaff);	
 			model.addAttribute("labelMap",labelMap);
 			model.addAttribute("labelMapJson", JsonUtil.buildNormal().objectToJson(labelMap));
-			
+			String b=JsonUtil.buildNormal().objectToJson(labelMap);
 			model.addAttribute("prodId",paramMap.get("prodId"));
 			model.addAttribute("param",paramMap);
 		} catch (BusinessException e) {
@@ -768,8 +771,10 @@ public class OfferController extends BaseController {
 			
 			model.addAttribute("mktResInstCode_",mktResInstCodes);
 			model.addAttribute("codeMsg_", codeMsg);
-			
-			
+			String typeCd=paramsMap.get("typeCd")!=null?String.valueOf(paramsMap.get("typeCd")):null;
+			model.addAttribute("typeCd",typeCd);
+			String verifyLevel=paramsMap.get("verifyLevel")!=null?String.valueOf(paramsMap.get("verifyLevel")):null;
+			model.addAttribute("verifyLevel",verifyLevel);
 			//放入流水作为唯一标识码
 			session.setAttribute("provIsale_"+provIsale, provIsale);
 			session.setAttribute("isFee_"+provIsale,isFee);

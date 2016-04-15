@@ -1,6 +1,5 @@
-<script src="${contextPath}/js/app-js/op-js/order/packageAttachOffer.js?${jsversion}" type="text/javascript"></script>
 
-<div id="order-content">
+<div id="order-content" style="display: block">
 	<div class="modal fade " id="attach-modal" tabindex="-1" role="dialog"
 		aria-labelledby="myModalLabel" aria-hidden="true">
 		<div class="modal_wrapper">
@@ -12,6 +11,12 @@
 		</div>
 	</div>
 </div>
+<!--用户鉴权弹窗 -->
+
+          <div style="display:none; height:300px;background:#fff; -webkit-border-radius:5px; -moz-border-radius:5px; border-radius:5px;-webkit-box-shadow:0 8px 8px rgba(0,0,0,0.4);-moz-box-shadow:0 8px 8px rgba(0,0,0,0.4);box-shadow:0 8px 8px rgba(0,0,0,0.4); border:5px solid #cbced0;
+	         
+	          overflow-y:auto;"  id="auth2">
+          </div>
 <script type="text/javascript">
 //初始化
 $(function(){
@@ -65,8 +70,13 @@ $(function(){
 	
 	//设置可选包订单唯一标识
 	OrderInfo.busitypeflag="14";
-	
-	PackageAttachOffer.init();
+	if(reloadFlag=="N"){
+		PackageAttachOffer.init();
+	}
+	else{
+		 order.prodModify.querySecondBusinessAuth('3','N');
+	}
+
 	//AttachOffer.init();
 });
 </script>

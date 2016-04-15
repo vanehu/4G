@@ -46,7 +46,7 @@ OrderInfo = (function() {
 	var oldMember="false";
 	//定义拆副卡变套餐或者拆副卡动作
 	var delViceCard="false";
-	
+	var _acctNbr="";
 	//定义执行状态
 	var state="";
 	
@@ -245,6 +245,16 @@ OrderInfo = (function() {
 	var _attach2Coupons = []; //附属销售品需要的物品信息
 	
 	var _prodAttrs = []; //保存查询产品规格属性时返回的信息
+	var _rulesJson="";
+	//鉴权类别
+    var _typeCd="";
+		//鉴权级别
+	var _verifyLevel="";
+	var _authRecord={
+				menuId:"",
+				validateType:"",
+				resultCode:""
+			};//保存鉴权临时结果
 	
 	//创建一个订单完整节点
 	var _getOrderData = function(){
@@ -1484,6 +1494,11 @@ OrderInfo = (function() {
 		oldSubPhoneNum			:_oldSubPhoneNum,
 		codeInfos:_codeInfos,
 		getChannelList:_getChannelList,
-		channelList:_channelList
+		channelList:_channelList,
+		authRecord:_authRecord,
+		typeCd:_typeCd,
+		verifyLevel:_verifyLevel,
+		rulesJson:_rulesJson,
+		acctNbr:_acctNbr
 	};
 })();

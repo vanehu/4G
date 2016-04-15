@@ -358,7 +358,27 @@ order.dealer = (function() {
 			$(select).val(value);
 		}
 	};
-	
+	//勾选所有附属
+	var _checkAllAttach = function(box){
+		var checkboxAll = $(box);
+		var checkTbody = checkboxAll.closest(".contract_list").find("tbody");
+		var checkList = checkTbody.find("tr").find("td").find("input[name='attach_dealer']");
+		if(checkboxAll.attr("checked")!="checked"){
+			$.each(checkList,function(){
+				var tr = $(this).parent();
+				var checkbox = $(this);
+				tr.removeClass("plan_select");
+				checkbox.attr("checked", false);
+			})		
+		}else {
+			$.each(checkList,function(){
+				var tr = $(this).parent();
+				var checkbox = $(this);
+				tr.addClass("plan_select");
+				checkbox.attr("checked", true);
+			})				
+		}
+	};
 	//点击确认，添加附属销售品发展人
 	var _addAttachDealer = function(){
 		$("input[name=attach_dealer]:checked").each(function(){	
@@ -668,6 +688,7 @@ order.dealer = (function() {
 		checkAttach			: _checkAttach,
 		removeDealer		: _removeDealer,
 		removeAttDealer		: _removeAttDealer,
-		changeDealer		: _changeDealer
+		changeDealer		: _changeDealer,
+		checkAllAttach:_checkAllAttach
 	};
 })();

@@ -113,7 +113,11 @@
 	    </div>
 	    </form>
 	</div>
-	
+	<!--用户鉴权弹窗-->
+<div style="height:300px;display:none;background:#fff; -webkit-border-radius:5px; -moz-border-radius:5px; border-radius:5px;-webkit-box-shadow:0 8px 8px rgba(0,0,0,0.4);-moz-box-shadow:0 8px 8px rgba(0,0,0,0.4);box-shadow:0 8px 8px rgba(0,0,0,0.4); border:5px solid #cbced0;
+	display:none;
+	overflow-y:auto;" id="auth2">
+</div>
 	<!--用户鉴权弹窗-身份证号 end-->
 	<!--客户新增弹出窗-->
 	<div class="easyDialogdiv" style="width:650px;height:450px;display:none" id="user_add">
@@ -317,7 +321,7 @@
 	<div class="easyDialogclose" id="staff_dialog_close" onclick="easyDialog.close()"></div>
 	<table class="contract_list">
 		<thead>
-			<tr><td>操作</td><td>号码</td><td>发展业务</td></tr>
+			<tr><td><input type="checkbox" name="attach_dealer_check_all" onclick="order.dealer.checkAllAttach(this)">操作</td><td>号码</td><td>发展业务</td></tr>
 		</thead>
 		<tbody id="attach_tbody">
 		</tbody>

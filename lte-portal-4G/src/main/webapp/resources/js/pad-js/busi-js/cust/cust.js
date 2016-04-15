@@ -4,6 +4,7 @@
 CommonUtils.regNamespace("order", "cust");
 
 order.cust = (function(){
+	var _choosedCustInfo={};
 	//客户类型选择事件
 	var _partyTypeCdChoose = function(scope,id) {
 		var partyTypeCd=$(scope).val();	
@@ -157,7 +158,191 @@ order.cust = (function(){
 			_createCustConfirm();
 		}
 	};
+	//客户鉴权--证件类型
+	var _identityTypeAuth=function(){
+
+		var param = _choosedCustInfo;
+		param.validateType="1";
+		param.identityNum =$.trim($("#idCardNumber2").val());
+		if(!ec.util.isObj(param.identityNum)){
+			$.alert("提示","证件号码不能为空！");
+			return;
+		}
+		param.accessNumber=OrderInfo.acctNbr;
+		param.identityCd=OrderInfo.cust.identityCd;
+		param.areaId=OrderInfo.cust.areaId;
+		param.custId=OrderInfo.cust.custId;
+
+		var recordParam={};
+		recordParam.validateType="1";
+		recordParam.validateLevel="2";
+		recordParam.custId=OrderInfo.cust.custId;
+		recordParam.accessNbr=OrderInfo.acctNbr;
+		recordParam.certType=OrderInfo.cust.identityCd;
+		recordParam.certNumber=OrderInfo.cust.idCardNumber;
+		$.ecOverlay("<strong>正在校验中,请稍等...</strong>");
+		var response= $.callServiceAsJson(contextPath+"/token/pad/cust/custAuthSub",param);
+		$.unecOverlay();
+		//_saveAuthRecordFail(recordParam);  错误
+		// _saveAuthRecordSuccess(recordParam);成功
+		
+		if(response.data.code=="0"){
+			//成功
+			OrderInfo.authRecord.validateType="3";
+			OrderInfo.authRecord.resultCode="0";
+			_saveAuthRecordSuccess(recordParam);
+			_goService();
+			
+		}else{
+			//错误
+			_saveAuthRecordFail(recordParam);
+			$.alertM(response.data);
+		}
+	};
+	//客户鉴权--产品密码
+	var _productPwdAuth=function(){
+
+		var param = _choosedCustInfo;
+		param.prodPwd = $.trim($("#authPassword2").val());
+		if(!ec.util.isObj(param.prodPwd)){
+			$.alert("提示","产品密码不能为空！");
+			return;
+		}
+		param.validateType = "3";
+		param.accessNumber=OrderInfo.acctNbr;
+		param.identityCd=OrderInfo.cust.identityCd;
+		param.idCardNumber=OrderInfo.cust.idCardNumber;
+		param.areaId=OrderInfo.cust.areaId;
+		param.custId=OrderInfo.cust.custId;
+		
+		var recordParam={};
+		recordParam.validateType="3";
+		recordParam.validateLevel="2";
+		recordParam.custId=OrderInfo.cust.custId;
+		recordParam.accessNbr=OrderInfo.acctNbr;
+		recordParam.certType=OrderInfo.cust.identityCd;
+		recordParam.certNumber=OrderInfo.cust.idCardNumber;
+		$.ecOverlay("<strong>正在校验中,请稍等...</strong>");
+		var response= $.callServiceAsJson(contextPath+"/token/pad/cust/custAuthSub",param);
+		$.unecOverlay();
+		//_saveAuthRecordFail(recordParam);  错误
+		// _saveAuthRecordSuccess(recordParam);成功
+		
+		if(response.data.isValidate=="true"){
+			//成功
+			OrderInfo.authRecord.validateType="3";
+			OrderInfo.authRecord.resultCode="0";
+			_saveAuthRecordSuccess(recordParam);
+			_goService();
+			
+			
+		}else{
+			//错误
+			_saveAuthRecordFail(recordParam);
+			$.alertM(response.data.message);
+		}
+		
+	};
 	
+
+	//多种鉴权方式的tab页切换
+	var _changeTab = function (tabId) {
+		$.each($("#auth_tab"+tabId).parent().find("li"),function(){
+			$(this).removeClass("setcon");
+		});
+		$("#auth_tab"+tabId).addClass("setcon");
+		$.each($("#contents div"),function(){
+			$(this).hide();
+		});
+		$("#content"+tabId).show();
+		if (tabId == 2) {
+			if (_choosedCustInfo.identityCd == 1) {
+				$("#idCardNumber2").attr("disabled", "disabled");
+			} else {
+				$("#idCardNumber2").removeAttr("disabled");
+			}
+		}
+	};
+	//短信发送
+	var _smsResend = function () {
+		var param = {
+			"pageIndex": 1,
+			"pageSize": 10
+		};
+		$.callServiceAsJson(contextPath + "/staffMgr/reSend", param, {
+			"done": function (response) {
+				if (response.code == 0) {
+					$.alert("提示", "验证码发送成功，请及时输入验证.");
+				} else {
+					$.alert("提示", "验证码发送失败，请重新发送.");
+				}
+				;
+			}
+		});
+	};
+	//短信验证
+	var _smsvalid=function(){
+		var params="smspwd="+$("#smspwd2").val();
+		if(!ec.util.isObj($("#smspwd2").val())){
+			$.alert("提示","验证码不能为空！");
+			return;
+		}
+		var param = _choosedCustInfo;
+		var recordParam={};
+		recordParam.validateType="2";
+		recordParam.validateLevel="2";
+		recordParam.custId=OrderInfo.cust.custId;
+		recordParam.accessNbr=OrderInfo.acctNbr;
+		recordParam.certType=OrderInfo.cust.identityCd;
+		recordParam.certNumber=OrderInfo.cust.idCardNumber;
+
+
+		$.callServiceAsJson(contextPath+"/passwordMgr/smsValid", params, {
+			"before":function(){
+				$.ecOverlay("<strong>验证短信随机码中,请稍等会儿....</strong>");
+			},
+			"done" : function(response){
+				if(response.code==0){
+					OrderInfo.authRecord.validateType="2";
+					OrderInfo.authRecord.resultCode="0";
+					_saveAuthRecordSuccess(recordParam);
+					_goService();
+				}else{
+					$.alert("提示",response.data);
+					_saveAuthRecordFail(recordParam);
+				}
+			},
+			"fail" : function(response){
+				_saveAuthRecordFail(recordParam);
+			},
+			"always":function(){
+				$.unecOverlay();
+			}
+		});
+	};
+
+	//鉴权方式日志记录
+	var _saveAuthRecord=function(param){
+		var url=contextPath+"/secondBusi/saveAuthRecord";
+		var response= $.callServiceAsJson(url,param);
+		if(response.code==0){
+			var result=response.data.result;
+			CacheData.setRecordId(result.recordId);
+		}else{
+			$.alertM(response.data);
+		}
+	};
+	//鉴权方式日志记录成功
+	var _saveAuthRecordSuccess=function(param){
+		param.resultCode = "0";
+		_saveAuthRecord(param);
+	};
+	//鉴权方式日志记录失败
+	var _saveAuthRecordFail=function(param){
+		param.resultCode = "1";
+		_saveAuthRecord(param);
+	};
+
 	//保存静态客户信息
 	var _createCustConfirm = function() {
 		createCustInfo = {
@@ -273,12 +458,291 @@ order.cust = (function(){
 			}
 		});
    };
-   
+	//客户鉴权--证件类型
+	var _identityTypeAuth=function(){
+
+		var param = _choosedCustInfo;
+		param.validateType="1";
+		param.identityNum = $.trim($("#idCardNumber2").val());
+		if(!ec.util.isObj(param.identityNum)){
+			$.alert("提示","证件号码不能为空！");
+			return;
+		}
+		param.accessNumber=OrderInfo.acctNbr;
+		param.identityCd=OrderInfo.cust.identityCd;
+		param.areaId=OrderInfo.cust.areaId;
+		param.custId=OrderInfo.cust.custId;
+
+		var recordParam={};
+		recordParam.validateType="1";
+		recordParam.validateLevel="2";
+		recordParam.custId=OrderInfo.cust.custId;
+		recordParam.accessNbr=OrderInfo.acctNbr;
+		recordParam.certType=OrderInfo.cust.identityCd;
+		recordParam.certNumber=OrderInfo.cust.idCardNumber;
+		$.ecOverlay("<strong>正在校验中,请稍等...</strong>");
+		var response= $.callServiceAsJson(contextPath+"/token/pad/cust/custAuthSub",param);
+		$.unecOverlay();
+		//_saveAuthRecordFail(recordParam);  错误
+		// _saveAuthRecordSuccess(recordParam);成功
+		
+		if(response.data.code=="0"){
+			//成功
+			OrderInfo.authRecord.validateType="3";
+			OrderInfo.authRecord.resultCode="0";
+			_saveAuthRecordSuccess(recordParam);
+			_goService();
+			
+		}else{
+			//错误
+			_saveAuthRecordFail(recordParam);
+			if(response.code=="-2"){
+				$.alertM(response.data);
+			}
+			else{
+				$.alertM(response.data);
+			}
+			
+		}
+	};
+	//客户鉴权--产品密码
+	var _productPwdAuth=function(){
+
+		var param = _choosedCustInfo;
+		param.prodPwd = $.trim($("#authPassword2").val());
+		if(!ec.util.isObj(param.prodPwd)){
+			$.alert("提示","产品密码不能为空！");
+			return;
+		}
+		param.validateType = "3";
+		param.accessNumber=OrderInfo.acctNbr;
+		param.identityCd=OrderInfo.cust.identityCd;
+		param.idCardNumber=OrderInfo.cust.idCardNumber;
+		param.areaId=OrderInfo.cust.areaId;
+		param.custId=OrderInfo.cust.custId;
+		
+		var recordParam={};
+		recordParam.validateType="3";
+		recordParam.validateLevel="2";
+		recordParam.custId=OrderInfo.cust.custId;
+		recordParam.accessNbr=OrderInfo.acctNbr;
+		recordParam.certType=OrderInfo.cust.identityCd;
+		recordParam.certNumber=OrderInfo.cust.idCardNumber;
+		$.ecOverlay("<strong>正在校验中,请稍等...</strong>");
+		var response= $.callServiceAsJson(contextPath+"/token/pad/cust/custAuthSub",param);
+		$.unecOverlay();
+		//_saveAuthRecordFail(recordParam);  错误
+		// _saveAuthRecordSuccess(recordParam);成功
+		
+		if(response.data.isValidate=="true"){
+			//成功
+			OrderInfo.authRecord.validateType="3";
+			OrderInfo.authRecord.resultCode="0";
+			_saveAuthRecordSuccess(recordParam);
+			_goService();
+			
+			
+		}else{
+			//错误
+			_saveAuthRecordFail(recordParam);
+			if(response.code=="-2"){
+				$.alertM(response.data);
+			}
+			else{
+				$.alertM(response.data);
+			}
+			
+		}
+		
+	};
+	//跳过鉴权
+	var _jumpAuth2 = function() {
+		var recordParam={};
+		recordParam.validateType="4";
+		recordParam.validateLevel="2";
+		recordParam.custId=OrderInfo.cust.custId;
+		recordParam.accessNbr=OrderInfo.acctNbr;
+		recordParam.certType=OrderInfo.cust.identityCd;
+		recordParam.certNumber=OrderInfo.cust.idCardNumber;
+		//记录到日志里
+		order.cust.saveAuthRecordFail(recordParam);
+		OrderInfo.authRecord.validateType="4";
+		OrderInfo.authRecord.resultCode="0";
+		if (OrderInfo.authRecord.resultCode == "0") {
+		//	
+			//如果是套餐变更
+			if(OrderInfo.actionFlag==2){
+				if(OrderInfo.offid!="" && OrderInfo.offid!=null && OrderInfo.offid!="null"){
+					order.uiCustes.linkQueryOffer();
+					
+				}
+				else{
+					offerChange.init();
+				}
+				
+			}
+			//主副卡
+			else if(OrderInfo.actionFlag==6){
+	
+				order.memberChange.showOfferCfgDialog();
+			}
+			//可选包
+			else if(OrderInfo.actionFlag==3){
+	
+				order.prodModify.orderAttachOffer();
+			}
+			OrderInfo.authRecord.resultCode = "";
+			OrderInfo.authRecord.validateType = "";
+		}
+	};
+
+	//多种鉴权方式的tab页切换
+	var _changeTab = function (tabId) {
+		$.each($("#auth_tab"+tabId).parent().find("li"),function(){
+			$(this).removeClass("setcon");
+		});
+		$("#auth_tab"+tabId).addClass("setcon");
+		$.each($("#contents div"),function(){
+			$(this).hide();
+		});
+		$("#content"+tabId).show();
+		if (tabId == 2) {
+			if (_choosedCustInfo.identityCd == 1) {
+				$("#idCardNumber2").attr("disabled", "disabled");
+			} else {
+				$("#idCardNumber2").removeAttr("disabled");
+			}
+		}
+	};
+	//短信发送
+	var _smsResend = function () {
+		var param = {
+			"pageIndex": 1,
+			"pageSize": 10
+		};
+		$.callServiceAsJson(contextPath + "/staffMgr/reSend", param, {
+			"done": function (response) {
+				if (response.code == 0) {
+					$.alert("提示", "验证码发送成功，请及时输入验证.");
+				} else {
+					$.alert("提示", "验证码发送失败，请重新发送.");
+				}
+				;
+			}
+		});
+	};
+	//短信验证
+	var _smsvalid=function(){
+		var params="smspwd="+$("#smspwd2").val();
+		if(!ec.util.isObj($("#smspwd2").val())){
+			$.alert("提示","验证码不能为空！");
+			return;
+		}
+		var param = _choosedCustInfo;
+		var recordParam={};
+		recordParam.validateType="2";
+		recordParam.validateLevel="2";
+		recordParam.custId=OrderInfo.cust.custId;
+		recordParam.accessNbr=OrderInfo.acctNbr;
+		recordParam.certType=OrderInfo.cust.identityCd;
+		recordParam.certNumber=OrderInfo.cust.idCardNumber;
+
+
+		$.callServiceAsJson(contextPath+"/passwordMgr/smsValid", params, {
+			"before":function(){
+				$.ecOverlay("<strong>验证短信随机码中,请稍等会儿....</strong>");
+			},
+			"done" : function(response){
+				if(response.code==0){
+					OrderInfo.authRecord.validateType="2";
+					OrderInfo.authRecord.resultCode="0";
+					_saveAuthRecordSuccess(recordParam);
+					_goService();
+				}else{
+					$.alert("提示",response.data);
+					_saveAuthRecordFail(recordParam);
+				}
+			},
+			"fail" : function(response){
+				_saveAuthRecordFail(recordParam);
+			},
+			"always":function(){
+				$.unecOverlay();
+			}
+		});
+	};
+	var _goService=function (){
+	
+		if (OrderInfo.authRecord.resultCode == "0") {
+			//如果是套餐变更
+			if(OrderInfo.actionFlag==2){
+				if(OrderInfo.offid!="" && OrderInfo.offid!=null && OrderInfo.offid!="null"){
+					order.uiCusts.offerinit(OrderInfo.provinceInfo.prodOfferId,null);
+				}
+				else{
+					order.uiCusts.initSub();	
+				}
+				
+			}
+			//主副卡
+			else if(OrderInfo.actionFlag==6){
+				order.memberChange.showOfferCfgDialog();
+			}
+			//可选包
+			else if(OrderInfo.actionFlag==3){
+				order.prodModify.orderAttachOffer();
+			}
+			OrderInfo.authRecord.resultCode = "";
+			OrderInfo.authRecord.validateType = "";
+		}
+		
+	};
+	//鉴权方式日志记录
+	var _saveAuthRecord=function(param){
+		var url=contextPath+"/secondBusi/saveAuthRecord";
+		var response= $.callServiceAsJson(url,param);
+		if(response.code==0){
+			var result=response.data.result;
+			CacheData.setRecordId(result.recordId);
+		}else{
+			$.alertM(response.data);
+		}
+	};
+	//鉴权方式日志记录成功
+	var _saveAuthRecordSuccess=function(param){
+		param.resultCode = "0";
+		_saveAuthRecord(param);
+	};
+	//鉴权方式日志记录失败
+	var _saveAuthRecordFail=function(param){
+		param.resultCode = "1";
+		_saveAuthRecord(param);
+	};
+
 	return {	
 		identidiesTypeCdChoose :_identidiesTypeCdChoose,
 		partyTypeCdChoose :_partyTypeCdChoose,
 		certTypeByPartyType : _certTypeByPartyType,
-		custcreateButton :_custcreateButton
+		custcreateButton :_custcreateButton,
+		saveAuthRecordFail:_saveAuthRecordFail,
+		saveAuthRecordSuccess:_saveAuthRecordSuccess,
+		saveAuthRecord:_saveAuthRecord,
+		productPwdAuth:_productPwdAuth,
+		changeTab:_changeTab,
+		smsResend:_smsResend,
+		smsvalid:_smsvalid,
+		jumpAuth2:_jumpAuth2,
+		identityTypeAuth:_identityTypeAuth,
+		saveAuthRecordFail:_saveAuthRecordFail,
+		saveAuthRecordSuccess:_saveAuthRecordSuccess,
+		saveAuthRecord:_saveAuthRecord,
+		productPwdAuth:_productPwdAuth,
+		changeTab:_changeTab,
+		smsResend:_smsResend,
+		smsvalid:_smsvalid,
+		jumpAuth2:_jumpAuth2,
+		identityTypeAuth:_identityTypeAuth,
+		choosedCustInfo:_choosedCustInfo
 	};
 })();
 $(function() {

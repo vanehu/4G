@@ -3,7 +3,6 @@
 <#include "/pcpublic/busi-js-tpl.html"/>
 </@override>
 <@override name="content">
-
 <!--内容-->
 <div class="main_div" style="width:100%;display: none;" id="main_div_1" >
     <div class="main_content" style="background:#71ab5a;">
@@ -38,7 +37,8 @@
 <#include "/validate-window.html"/>
 
 <script type="text/javascript">
-	$(document).ready(function() {
+window.onload = function() { 
+		OrderInfo.actionFlag=3;
 		//初始化参数数据
 		var provIsale_="${provIsale_}";
 		var redirectUri_="${redirectUri_}";
@@ -47,6 +47,7 @@
 		var codeMsg_="${codeMsg_}";
 		var provCustAreaId = "${custAreaId_}";
 		var mainPhoneNum='${phoneNum_}';
+		OrderInfo.acctNbr=mainPhoneNum;
 		var orderJson;
 		var terminalCode='${terminalCode}'; //终端串码
 		//终端串码
@@ -115,9 +116,10 @@
 			order.uiCust.custQuery();
 		}else{
 			order.cust.queryCustCompreInfo(mainPhoneNum,provCustAreaId,14,'');
-			order.uiCust.orderAttachOffer();
+			//order.uiCust.orderAttachOffer();
+			 order.prodModify.querySecondBusinessAuth('3','N');
 		}
-	});
+   };
 </script>
 
 </@override>

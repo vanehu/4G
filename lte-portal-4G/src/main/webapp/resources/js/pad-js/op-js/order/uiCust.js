@@ -111,7 +111,8 @@ order.uiCust = (function(){
 		}else{
 			var provCustAreaId = $("#custAreaId_").val();
 			if(order.cust.mgr.queryCustCompreInfo(OrderInfo.provinceInfo.mainPhoneNum,provCustAreaId,14,'')){
-				order.prodModify.orderAttachOffer();
+				//order.prodModify.orderAttachOffer();
+				order.prodModify.querySecondBusinessAuth('4','N');
 			}
 		}
 	};
@@ -1195,6 +1196,7 @@ order.uiCust = (function(){
 		back 					: _back,
 		fromProvFlag 			: _fromProvFlag,
 		provIsale 				: _provIsale
+
 	};
 	
 })();

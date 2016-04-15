@@ -122,7 +122,10 @@
        	<span class="font16">常用操作</span>
        	<a href="javascript:;" data-role="button" data-icon="settings" data-iconpos="notext" data-theme="i">设置</a>
     </div>
-    
+     <!--用户鉴权弹窗  display:none;-->
+
+          <div style="width: 100%;"   id="auth2">
+          </div>
 <!--     不需要快捷设置 -->
     <ul id="ul_quick_set" class="quick ul-slide-left" style="display: none;">
     	
@@ -137,6 +140,7 @@
 
 <script type="text/javascript">
 	$(document).ready(function() {
+		OrderInfo.actionFlag=6;
 		var terminalCode='${terminalCode}'; //终端串码
 		//终端串码
 		if(terminalCode!=null && terminalCode!="" && terminalCode!="null"){
@@ -241,7 +245,7 @@
 			order.memberChange.newSubPhoneNum = "${newSubPhoneNum}";
 			order.memberChange.oldSubPhoneNum = "${oldSubPhoneNum}";
 			order.memberChange.mktResInstCode = "${mktResInstCode}";
-			order.memberChange.showOfferCfgDialog();
+			order.prodModify.querySecondBusinessAuth('4','N');
 		}
 	});
 </script>

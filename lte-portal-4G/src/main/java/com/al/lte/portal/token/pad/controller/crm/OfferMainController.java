@@ -160,7 +160,10 @@ public class OfferMainController extends BaseController {
 			provinceInfo.put("mainPhoneNum", paramsMap.get("mainPhoneNum"));
 			
 			model.addAttribute("provinceInfo_", JacksonUtil.objectToJson(provinceInfo));
-			
+			String verifyLevel=paramsMap.get("verifyLevel")!=null?String.valueOf(paramsMap.get("verifyLevel")):null;
+			model.addAttribute("verifyLevel",verifyLevel);
+			String typeCd=paramsMap.get("typeCd")!=null?String.valueOf(paramsMap.get("typeCd")):null;
+			model.addAttribute("typeCd",typeCd);
 			//其他必须参数数据
 			model.addAttribute("DiffPlaceFlag", "local");
 			//终端串码

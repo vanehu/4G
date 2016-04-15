@@ -19,7 +19,7 @@
 			OrderInfo.getChannelList();
 		});
 		
-		window.onload= function(){  
+		window.onload= function(){ 
 			//用户信息
 			OrderInfo.staff=eval("("+'${staffInfo_}'+")");
 			//跳转地址
@@ -27,6 +27,9 @@
 			var actionFlag=params.actionFlag;
 			var nextFlag = false;
 			var mergeFlag = "${mergeFlag}";
+			OrderInfo.actionFlag=3;
+			OrderInfo.verifyLevel=params.verifyLevel;
+			OrderInfo.typeCd=params.typeCd;
 			if(mergeFlag=="0"){
 				//客户定位
 				var custInfos = eval("("+'${custInfo_}'+")");

@@ -1,4 +1,5 @@
-<div id="member_prepare">
+
+<div id="member_prepare" style="display: none;">
 	<div class="container-fluid">
   <div class="row">
     <div class="panel panel-default paneltop"> 
@@ -28,17 +29,29 @@
 </div>
 <div id="offerspecContent" style="display: none;">
 </div>
+  <div style="display:none;height:300px;background:#fff; -webkit-border-radius:5px; -moz-border-radius:5px; border-radius:5px;-webkit-box-shadow:0 8px 8px rgba(0,0,0,0.4);-moz-box-shadow:0 8px 8px rgba(0,0,0,0.4);box-shadow:0 8px 8px rgba(0,0,0,0.4); border:5px solid #cbced0;
+	         
+	          overflow-y:auto;" id="auth2">
+  </div>
 <div id="order" style="display: none;">
 </div>
 <div id="phonenumberContent" style="display: none;">
 </div>
 
 
+
+
 <script>
 	//初始化
 	$(function() {
 		OrderInfo.order.soNbr='${soNbr}';
+		if(OrderInfo.provinceInfo.reloadFlag=="N"){
+			order.memberChange.init();
+		}
+		else{
+			//offerChangeNew.init();
+			order.prodModify.querySecondBusinessAuth('20','Y');
+		}
 		
-		order.memberChange.init();
 	});
 </script>

@@ -1,5 +1,5 @@
 
-<div id="order_prepare">
+<div style="display: none" id="order_prepare">
 	<div class="container-fluid">
 		<div class="row">
 			<div class="row divtab">
@@ -170,14 +170,26 @@
 
 <div id="phonenumberContent" style="display: none;">
 </div>
+ <!--用户鉴权弹窗 -->
 
+          <div style="background:#fff; -webkit-border-radius:5px; -moz-border-radius:5px; border-radius:5px;-webkit-box-shadow:0 8px 8px rgba(0,0,0,0.4);-moz-box-shadow:0 8px 8px rgba(0,0,0,0.4);box-shadow:0 8px 8px rgba(0,0,0,0.4); border:5px solid #cbced0;
+	         
+	          overflow-y:auto;" id="auth2">
+          </div>
 <div id="order" >
 </div>
 <script>
 	//初始化
-	$(function() {
+//	window.onload = function() { 
+		OrderInfo.actionFlag=2;
 		//OrderInfo.order.soNbr=UUID.getDataId();
 		OrderInfo.order.soNbr="${soNbr}";//UUID.getDataId();
-		offerChangeNew.init();
-	});
+		if(OrderInfo.provinceInfo.reloadFlag=="N"){
+			offerChangeNew.init();
+		}
+		else{
+			order.prodModify.querySecondBusinessAuth('1','N');
+		}
+		
+	//}
 </script>

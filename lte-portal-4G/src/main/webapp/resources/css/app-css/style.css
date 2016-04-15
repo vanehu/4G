@@ -2,6 +2,7 @@
 /* CSS Document */
 
 body {
+	padding-top:50px;
 	padding-bottom:50px;
 }
 #UseSearch {
@@ -553,6 +554,8 @@ li.form-group {
   background-color: white;
 }
 .form-list {
+	margin-top:20px;
+}.form-list {
 	margin-top:20px;
 }
 .zdys_btn {

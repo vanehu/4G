@@ -30,6 +30,8 @@
 <#include "/validate-window.html"/>
 
 <script type="text/javascript">
+window.onload = function() { 
+    OrderInfo.actionFlag=6;
 	OrderInfo.staff={
 		staffId : "${Session['_ecs_login_session_key'].staffId}",
 		channelId : '${Session["_ecs_login_session_key"].currentChannelId}',
@@ -115,6 +117,7 @@
 	}else{
 		var mainPhoneNum = "${mainPhoneNum}";
 		var provCustAreaId = "${provCustAreaId}";
+		OrderInfo.acctNbr=mainPhoneNum;
 		nextFlag = order.cust.queryCustCompreInfo(mainPhoneNum,provCustAreaId,3,'');
 	}
 	if(nextFlag){
@@ -127,8 +130,10 @@
 		order.memberChange.mktResInstCode = "${mktResInstCode}";
 		OrderInfo.provinceInfo.salesCode = "${salesCode}";
 		OrderInfo.provinceInfo.mergeFlag = "${mergeFlag}";
-		order.memberChange.showOfferCfgDialog();
+		//order.memberChange.showOfferCfgDialog();
+		 order.prodModify.querySecondBusinessAuth('4','N');
 	}
+}
 </script>
 
 </@override>

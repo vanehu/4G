@@ -46,7 +46,10 @@
 				"uimCode":$("#uimCode").val(),
 				"acctNumber":$("#acctNumber").val(),
 				"termCode":$("#termCode").val(),
-				"salesCode":$("#salesCode").val()
+				"salesCode":$("#salesCode").val(),
+				"typeCd":$("#typeCd").val(),
+				"verifyLevel":$("verifyLevel").val()
+				
 			};
 			var version = $("#version").val();			
 			$.callServiceAsHtmlGet(contextPath+"/test/getModelUrl",reParams,{
@@ -206,7 +209,9 @@
 				<option value ="Y">新加载</option>  
 				<option value ="N">二次加载</option>
 			</select> <br/>
+			<!--  
 			回调URL地址：<input id="redirectUri" class="inputWidth250px inputTest" value=""/><br/>
+			-->
 			主号码：<input id="mainPhoneNum" class="inputWidth250px inputTest" value="17767073265"/><br/>
 			新装成员号码：<input id="newSubPhoneNum" class="inputWidth250px inputTest" value=""/><br/>
 			老用户成员号码：<input id="oldSubPhoneNum" class="inputWidth250px inputTest" value=""/><br/>			
@@ -217,7 +222,10 @@
 			UIM卡号:<input id="uimCode" class="inputWidth250px inputTest" value=""/>[多个用","隔开]<br/>
 			帐户合同号:<input id="acctNumber" class="inputWidth250px inputTest" value=""/><br/>
 			终端串码:<input id="termCode" class="inputWidth250px inputTest" value=""/><br/>
-			发展人工号:<input id="salesCode" class="inputWidth250px inputTest" value=""/><br/>
+			发展人工号:<input id="salesCode" class="inputWidth250px inputTest" value=""/><br/> 
+			鉴权方式:<input id="typeCd" class="inputWidth250px inputTest" value="4"/><br/>
+			鉴权级别:<input id="verifyLevel" class="inputWidth250px inputTest" value="2"/><br/>
+			
 		</div>
 		
 		<form action="" method="POST" id="form11">

@@ -70,7 +70,8 @@
 			OrderInfo.getChannelList();
 		});
 		
-		window.onload= function() {  
+		window.onload= function() { 
+			OrderInfo.actionFlag=6;
 			var terminalCode='${terminalCode}'; //终端串码
 			//终端串码
 			if(terminalCode!=null && terminalCode!="" && terminalCode!="null"){
@@ -104,7 +105,8 @@
 
 			//跳转地址
 			var params=eval("("+'${jumpParams_}'+")");
-	            
+			OrderInfo.verifyLevel=params.verifyLevel;
+			OrderInfo.typeCd=params.typeCd 
 			var actionFlag=params.actionFlag;
 		
 			//订购业务

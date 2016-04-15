@@ -8,7 +8,10 @@ CommonUtils.regNamespace("CacheData");
 
 /** 缓存数据对象*/
 CacheData = (function() {
-	
+	//设置鉴权日志id
+	var _setRecordId = function (id) {
+		recordId = id;
+	};
 	//把销售品规格保存到开通列表里面
 	var _setOfferSpec = function(prodId,offerSpec){
 		offerSpec.isdel="C";
@@ -985,6 +988,7 @@ CacheData = (function() {
 		getExcDepOfferParam		: _getExcDepOfferParam,
 		getOfferRoleId 			: _getOfferRoleId,
 		parseServ				: _parseServ,
-		parseOffer				: _parseOffer
+		parseOffer				: _parseOffer,
+		setRecordId:_setRecordId
 	};
 })();

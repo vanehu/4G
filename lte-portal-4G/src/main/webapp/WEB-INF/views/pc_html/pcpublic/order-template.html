@@ -53,7 +53,7 @@
 	<div class="easyDialogclose" id="staff_dialog_close" onclick="easyDialog.close()"></div>
 	<table class="contract_list">
 		<thead>
-			<tr><td>操作</td><td>号码</td><td>发展业务</td></tr>
+			<tr><td><input type="checkbox" name="attach_dealer_check_all" onclick="order.dealer.checkAllAttach(this)">操作</td><td>号码</td><td>发展业务</td></tr>
 		</thead>
 		<tbody id="attach_tbody">
 		</tbody>
@@ -482,7 +482,26 @@
 	</div>
   </div>
 </div> -->
+<!--用户鉴权弹窗-->
+	<div class="easyDialogdiv" style="height:300px;display:none" id="auth">
+	<div class="easyDialogclose" id="authClose"></div>
+	<form id="custAuthForm">
+	<h1 class="easyDialogTitle">客户身份鉴权</h1>
+	<div class="infoBox">
+		<table class="network">
+                          <tbody>
+                          <tr>
+                                <td width="100"><label class="f_red">*</label><label id="custAuthTypeName">产品密码：</label></td>
+                                <td width="300"><input id="authPassword" type="password" placeHolder="请输入密码" data-validate="validate(required:密码不能为空, maxlength:密码长度最多为{arg1}(12)) on(blur)" class="inputWidth150px"><a  class="purchase" id="custAuthbtn" href="javascript:void(0)">校验</a><a class="purchase" id="jumpAuth" style="display:none" onclick="order.cust.jumpAuth()">跳过校验</a>
+                                </td>
+                          </tr>   
 
+                        </tbody>
+         </table>
+    </div>
+    </form>
+	</div>
+<!--用户鉴权弹窗 end-->
 <!--弹出款-客户定位，选择使用人-->
 <div id="choose_user_dialog" class="easyDialogdiv" style="width:700px;height:250px;">
 <div class="easyDialogclose" id="chooseUserClose" onclick="easyDialog.close()"></div>

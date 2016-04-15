@@ -1,5 +1,6 @@
 
-<div id="order_prepare">
+
+<div id="order_prepare" style="display: block">
 	<div class="container-fluid">
 		<div style="display: none" class="row">
 			<div class="row divtab">
@@ -177,11 +178,26 @@
 </div>
 <div id="order" style="display: none;">
 </div>
-<script>
+ <!--用户鉴权弹窗 -->
+
+          <div style="background:#fff; -webkit-border-radius:5px; -moz-border-radius:5px; border-radius:5px;-webkit-box-shadow:0 8px 8px rgba(0,0,0,0.4);-moz-box-shadow:0 8px 8px rgba(0,0,0,0.4);box-shadow:0 8px 8px rgba(0,0,0,0.4); border:5px solid #cbced0;
+	         
+	          overflow-y:auto;"  id="auth2">
+          </div>
+          
+<script type="text/javascript">
 	//初始化
-	$(function() {
+	//window.onload = function() { 
+	
 		OrderInfo.order.soNbr='${soNbr}';
-		offerChangeNew.init();
-		//offerChange.init();
-	});
+		OrderInfo.actionFlag=2;
+		//offerChangeNew.init();
+		if(OrderInfo.provinceInfo.reloadFlag=="N"){
+			offerChangeNew.init();
+		}
+		else{
+			//offerChangeNew.init();
+			order.prodModify.querySecondBusinessAuth('1','N');
+		}
+	//};
 </script>

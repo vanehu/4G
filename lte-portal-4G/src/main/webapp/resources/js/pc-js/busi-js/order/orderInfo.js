@@ -7,16 +7,21 @@ CommonUtils.regNamespace("OrderInfo");
 
 /** 订单信息对象*/
 OrderInfo = (function() {
+	var _rulesJson="";
 	//终端串码
 	var _terminalCode="";
 	//传入uim卡号
 	var _mktResInstCode="";
 	//传入的号码
-	var acctNbr="";
+	var _acctNbr="";
 	//套餐id
 	var offid="";
 	//判断是否二次加载
 	var reloadFlag="";
+	//鉴权类别
+	var _typeCd="";
+	//鉴权级别
+	var _verifyLevel="";
 	//二次加载的数据
 	var data="";
 	//保存发展人
@@ -49,7 +54,11 @@ OrderInfo = (function() {
 		newSubPhoneNum:"",
 		mktResInstCode:""
 	};
-	
+	var _authRecord={
+			menuId:"",
+			validateType:"",
+			resultCode:""
+		};//保存鉴权临时结果
 	var _oldSubPhoneNum = {
 		oldSubPhoneNum:""
 	};
@@ -1546,6 +1555,12 @@ OrderInfo = (function() {
 		surplusNum				:_surplusNum,
 		oldSubPhoneNum			:_oldSubPhoneNum,
 		channelList			 	:_channelList,
-		getChannelList			:_getChannelList
+		getChannelList			:_getChannelList,
+		authRecord:_authRecord,
+		typeCd:_typeCd,
+		verifyLevel:_verifyLevel,
+		rulesJson:_rulesJson,
+		acctNbr:_acctNbr
+		
 	};
 })();

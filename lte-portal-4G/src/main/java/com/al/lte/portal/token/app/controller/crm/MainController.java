@@ -197,11 +197,14 @@ public class MainController extends BaseController {
 			model.addAttribute("prodInfo_", prod_Info);
 			//传值跳转地址
 			String method="/token/app/order/attachoffer/prepare?accessToken="+accessToken;//按各自功能填入
-			
+			String verifyLevel=paramsMap.get("verifyLevel")!=null?String.valueOf(paramsMap.get("verifyLevel")):null;
+			model.addAttribute("verifyLevel",verifyLevel);
+			String typeCd=paramsMap.get("typeCd")!=null?String.valueOf(paramsMap.get("typeCd")):null;
 			Map<String, Object> jumpParams=new HashMap<String, Object>();
 			jumpParams.put("method", method);
 			jumpParams.put("actionFlag", "14");//按功能填入
-			
+			jumpParams.put("verifyLevel", verifyLevel);
+			jumpParams.put("typeCd", typeCd);
 			model.addAttribute("jumpParams_", JacksonUtil.objectToJson(jumpParams));
 			
 			//公共跳转参数(公共-必须)

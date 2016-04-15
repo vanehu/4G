@@ -4,6 +4,10 @@
 </@override>
 
 <@override name="content">
+<!--
+
+//-->
+</script>
 <!--内容-->
 <style>
 
@@ -85,6 +89,7 @@ background-color: #FFF;
 
 <script type="text/javascript">
 	window.onload = function() { 
+		OrderInfo.actionFlag=2;
 		var nextFlag = false;
 	    var mainPhoneNum='${mainPhoneNum}';   //手机号码
 		var isFee='${isFee}';   //是否收费
@@ -98,6 +103,12 @@ background-color: #FFF;
 		var mktResInstCode='${mktResInstCode}';//传入uim卡号码
 		var mergeFlag = "${mergeFlag}";
 		var provCustAreaId = "${custAreaId_}";
+		OrderInfo.typeCd="${typeCd}";
+		OrderInfo.verifyLevel='${verifyLevel}';
+		
+		if(terminalCode!=null && terminalCode!="" && terminalCode!="null"){
+			OrderInfo.terminalCode=terminalCode;
+		}
 		if(mktResInstCode!=null && mktResInstCode!=""){
 			OrderInfo.mktResInstCode=mktResInstCode;
 		}
@@ -119,6 +130,8 @@ background-color: #FFF;
 		OrderInfo.provinceInfo.isFee=isFee;
 		OrderInfo.provinceInfo.extCustOrderID="";
 		OrderInfo.provinceInfo.mergeFlag = "${mergeFlag}";
+		
+		
         if(reloadFlag=="N"){
         	var d=eval("("+data+")");
         	if(d==null){
@@ -177,10 +190,12 @@ background-color: #FFF;
     	    		order.uiCustes.custQuery();   
      		   }else{
      			  nextFlag = order.cust.queryCustCompreInfo(mainPhoneNum,provCustAreaId,2,'');
-     			  if(nextFlag){
-   			  	  	order.uiCustes.linkQueryOffer();
+     			  if(nextFlag){		
+     				 // oauthTypeStrrder.prodModify.querySecondBusinessAuth('20','Y');
+     				 order.prodModify.querySecondBusinessAuth('1','N');
+     				 }
+     				
      			  }
-     		   }
     		}else{
     			//判断是否使用新接口,0-不调用
     		   if(mergeFlag=="0"){
@@ -188,7 +203,7 @@ background-color: #FFF;
     		   }else{
     			   nextFlag = order.cust.queryCustCompreInfo(mainPhoneNum,provCustAreaId,2,'');
     			   if(nextFlag){
-    				   offerChange.init();  
+    				   order.prodModify.querySecondBusinessAuth('1','N');
     			   }
     		   }
     		}

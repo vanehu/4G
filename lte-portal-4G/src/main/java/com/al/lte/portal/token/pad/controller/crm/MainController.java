@@ -105,7 +105,10 @@ public class MainController extends BaseController {
 			String isFee=String.valueOf(paramsMap.get("isFee"));
 			String reloadFlag=String.valueOf(paramsMap.get("reloadFlag"));
 			String provCustAreaId=String.valueOf(paramsMap.get("provCustAreaId"));
-			
+			String verifyLevel=paramsMap.get("verifyLevel")!=null?String.valueOf(paramsMap.get("verifyLevel")):null;
+			model.addAttribute("verifyLevel",verifyLevel);
+			String typeCd=paramsMap.get("typeCd")!=null?String.valueOf(paramsMap.get("typeCd")):null;
+			model.addAttribute("typeCd",typeCd);
 			//判断是否二次加载，二次加载获取二次加载数据
 			Map<String, Object> orderMap=new HashMap<String, Object>();
 			
@@ -449,6 +452,10 @@ public class MainController extends BaseController {
 					}
 				}
 			}
+			String verifyLevel=paramsMap.get("verifyLevel")!=null?String.valueOf(paramsMap.get("verifyLevel")):null;
+			model.addAttribute("verifyLevel",verifyLevel);
+			String typeCd=paramsMap.get("typeCd")!=null?String.valueOf(paramsMap.get("typeCd")):null;
+			model.addAttribute("typeCd",typeCd);
 			model.addAttribute("provIsale", provIsale);
 			model.addAttribute("reloadFlag", paramsMap.get("reloadFlag").toString());
 			model.addAttribute("redirectUri", redirectUri);

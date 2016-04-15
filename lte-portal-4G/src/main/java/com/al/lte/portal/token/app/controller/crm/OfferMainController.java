@@ -572,15 +572,19 @@ public class OfferMainController extends BaseController {
 				model.addAttribute("errorMsg", "查询不到客户订购业务数据信息!");
 				return "/common/error";
 			}
+			String verifyLevel=paramsMap.get("verifyLevel")!=null?String.valueOf(paramsMap.get("verifyLevel")):null;
+			model.addAttribute("verifyLevel",verifyLevel);
+			String typeCd=paramsMap.get("typeCd")!=null?String.valueOf(paramsMap.get("typeCd")):null;
 			Map<String, Object> jumpParams=new HashMap<String, Object>();
 			//reloadFlag="N";  //写死参数测试
 			//传值跳转地址
 			String method="/token/app/order/prodoffer/offerchange/prepare";//套餐变更 
 			jumpParams.put("method", method);
-
 			jumpParams.put("actionFlag", "2");//按功能填入
 			jumpParams.put("mainProdOfferId",mainProdOfferId);  //主套餐外部id
 			jumpParams.put("reloadFlag",reloadFlag);   //是否二次加载
+			jumpParams.put("verifyLevel", verifyLevel);
+			jumpParams.put("typeCd", typeCd);
 			model.addAttribute("jumpParams_", JacksonUtil.objectToJson(jumpParams));
 			
 			//其他必要参数（非公共）

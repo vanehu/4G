@@ -3196,6 +3196,88 @@ order.prodModify = (function(){
 		});
 	
 	};
+	//二次鉴权
+	var _querySecondBusinessAuth=function(menuId,isSimple){
+		var url=contextPath+"/token/pc/secondBusi/querySecondBusinessMenuAuth";
+		var param={
+			menuId:menuId,
+			isSimple:isSimple,
+			typeCd:OrderInfo.typeCd   //鉴权类别
+		}
+		var response= $.callServiceAsHtml(url,param);
+		$("#auth2").empty().append(response.data);
+		
+		var authTypeStr=$("#authTypeStr").html();
+		if(authTypeStr.toString().indexOf(OrderInfo.cust_validateType)!=-1){
+			return;
+		}
+        
+		
+		if (response.code == 0) {
+			var recordParam={};
+			recordParam.validateType="4";
+			recordParam.validateLevel="2";
+			recordParam.custId=OrderInfo.cust.custId;
+			recordParam.accessNbr=OrderInfo.acctNbr;
+			recordParam.certType=OrderInfo.cust.identityCd;
+			recordParam.certNumber=OrderInfo.cust.idCardNumber;
+			  //判断结果
+			var is=false;
+			var rules=OrderInfo.rulesJson;
+			//判断是否可以跳过鉴权
+			var rule="rule"+OrderInfo.typeCd;
+			//员工权限
+			var iseditOperation=rules.iseditOperation;
+			//和后台配置一致,可以跳过,或者员工工号有跳过权限
+			if(rules.rule=="Y"){
+				//记录到日志里
+				order.cust.saveAuthRecordFail(recordParam);
+				//如果是套餐变更
+				if(OrderInfo.actionFlag==2){
+					if(OrderInfo.offid!="" && OrderInfo.offid!=null && OrderInfo.offid!="null"){
+						order.uiCustes.linkQueryOffer();
+					}
+					else{
+						offerChange.init();
+					}
+				}
+				//主副卡
+				else if(OrderInfo.actionFlag==6){
+					order.memberChange.showOfferCfgDialog();
+				}
+				//可选包
+				else if(OrderInfo.actionFlag==3){
+					order.uiCust.orderAttachOffer();
+				}
+				OrderInfo.authRecord.resultCode = "";
+				OrderInfo.authRecord.validateType = "";
+				
+			}
+			
+			//工号有跳过鉴权权限 
+			else if(iseditOperation=="0"){
+
+				$("#iseditOperation").attr("style","");
+				easyDialog.open({
+					container: 'auth2'
+				});
+			}
+			
+			else{
+//				//显示跳过鉴权按钮 
+//				$("#iseditOperation").attr("style","");
+				easyDialog.open({
+					container: 'auth2'
+				});
+			}
+			
+		} 
+		
+		else {
+			$.alertM(response.data);
+		}
+	};
+	
 	
 	//一卡双号订购退订正式单接口
 	var _exchangeAccNbr = function (param) {
@@ -3306,6 +3388,8 @@ order.prodModify = (function(){
 		exchangeAccNbr:_exchangeAccNbr,
 		chooseAccNbrArea:_chooseAccNbrArea,
 		spec_parm_user_change : _spec_parm_user_change,
-		spec_parm_user_show : _spec_parm_user_show
+		spec_parm_user_show : _spec_parm_user_show,
+		querySecondBusinessAuth:_querySecondBusinessAuth
+		
 	};
 })();

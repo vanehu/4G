@@ -1155,15 +1155,16 @@ order.uiCusts = (function(){
 			_loadData();
 		}
 		else{
+		/*
 			if(OrderInfo.provinceInfo.prodOfferId!=null && OrderInfo.provinceInfo.prodOfferId!=""){
 				//带主套餐id
 				order.uiCusts.offerinit(OrderInfo.provinceInfo.prodOfferId,null);
 			}
 			else{
-				order.uiCusts.initSub();
-				
-				
+				order.uiCusts.initSub();	
 			}
+		*/	
+			order.prodModify.querySecondBusinessAuth('1','N');
 		}
 	};
 	

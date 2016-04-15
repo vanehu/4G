@@ -3629,7 +3629,10 @@ public class OrderController extends BaseController {
 					}
 				}
 			}
-			 //终端串码
+			String typeCd=paramsMap.get("typeCd")!=null?String.valueOf(paramsMap.get("typeCd")):null;
+			String verifyLevel=paramsMap.get("verifyLevel")!=null?String.valueOf(paramsMap.get("verifyLevel")):null;
+			model.addAttribute("verifyLevel",verifyLevel);
+			model.addAttribute("typeCd",typeCd);
 			model.addAttribute("terminalCode",paramsMap.get("termCode")==null?"":paramsMap.get("termCode").toString());
 			model.addAttribute("provCustAreaId", paramsMap.get("provCustAreaId").toString());
 			model.addAttribute("provIsale", provIsale);
@@ -3667,6 +3670,8 @@ public class OrderController extends BaseController {
 					model.addAttribute("errorMsg", "参数丢失，请重试。");
 					return "/common/error";
 				}
+				
+				
 				//TODO 这里需要调用接口，接口暂时不可用，信息自建
 				//String jsonString=JacksonUtil.objectToJson(jsonMap);
 				//手机号码
@@ -3746,6 +3751,10 @@ public class OrderController extends BaseController {
 						}
 					}
 				}
+				String verifyLevel=paramsMap.get("verifyLevel")!=null?String.valueOf(paramsMap.get("verifyLevel")):null;
+				model.addAttribute("verifyLevel",verifyLevel);
+				String typeCd=paramsMap.get("typeCd")!=null?String.valueOf(paramsMap.get("typeCd")):null;
+				model.addAttribute("typeCd",typeCd);
 				
 				//供前台查询定位客户
 				model.addAttribute("custAreaId_", provCustAreaId);

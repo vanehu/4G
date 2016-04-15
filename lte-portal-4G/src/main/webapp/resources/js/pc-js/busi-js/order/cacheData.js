@@ -57,7 +57,10 @@ CacheData = (function() {
 		}
 		CacheData.getServSpecList(prodId).push(spec);//添加到已开通列表里
 	};
-	
+	//设置鉴权日志id
+	var _setRecordId = function (id) {
+		recordId = id;
+	};
 	//把选中的服务保存到销售品规格中
 	var _setServ2OfferSpec = function(prodId,offerSpec){
 		if(offerSpec!=undefined){
@@ -1071,6 +1074,7 @@ CacheData = (function() {
 		parseServ				: _parseServ,
 		parseOffer				: _parseOffer,
 		getOldOfferMember		: _getOldOfferMember,
-		getGovCertType          : _getGovCertType
+		getGovCertType          : _getGovCertType,
+		setRecordId:_setRecordId
 	};
 })();
