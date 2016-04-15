@@ -591,6 +591,11 @@ order.cust = (function(){
 	
 				order.prodModify.orderAttachOffer();
 			}
+			else if(OrderInfo.actionFlag==1){
+				url=contextPath+"/pad/order/prodoffer/prepare.html";
+				$("#auth2").css('display','none'); 
+				order.prepare.commonTab(url,"order_tab_panel_offer");
+			}
 			OrderInfo.authRecord.resultCode = "";
 			OrderInfo.authRecord.validateType = "";
 		}
@@ -673,7 +678,7 @@ order.cust = (function(){
 	};
 	var _goService=function (){
 	
-		if (OrderInfo.authRecord.resultCode == "0") {
+		
 			//如果是套餐变更
 			if(OrderInfo.actionFlag==2){
 				if(OrderInfo.offid!="" && OrderInfo.offid!=null && OrderInfo.offid!="null"){
@@ -692,9 +697,13 @@ order.cust = (function(){
 			else if(OrderInfo.actionFlag==3){
 				order.prodModify.orderAttachOffer();
 			}
+			else if(OrderInfo.actionFlag==1){
+				url=contextPath+"/pad/order/prodoffer/prepare.html";
+				$("#auth2").css('display','none'); 
+				order.prepare.commonTab(url,"order_tab_panel_offer");
+			}
 			OrderInfo.authRecord.resultCode = "";
 			OrderInfo.authRecord.validateType = "";
-		}
 		
 	};
 	//鉴权方式日志记录

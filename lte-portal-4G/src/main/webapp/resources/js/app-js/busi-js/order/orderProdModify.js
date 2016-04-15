@@ -120,11 +120,44 @@ order.prodModify = (function(){
 			$.alertM(response.data);
 		}
 	};
-	
+	//二次鉴权
+	var _querySecondBusinessAuthSub=function(){
+		var url=contextPath+"/token/secondBusi/querySecondBusinessMenuAuthSub";
+		var param={
+			types:"app"
+		}
+		var response= $.callServiceAsHtml(url,param);
+		$("#auth2").empty().append(response.data);
+        
+		
+		if (response.code == 0) {
+            
+			var iseditOperation=OrderInfo.rulesJson.iseditOperation;
+			//和后台配置一致,可以跳过,或者员工工号有跳过权限
+			
+			//工号有跳过鉴权权限 
+			 if(iseditOperation=="0"){
+				$("#auth2").css('display','block'); 
+				$("#iseditOperation").attr("style","");
+			}
+			
+			else{
+//				//显示跳过鉴权按钮 
+				$("#iseditOperation").attr("style","");
+				$("#auth2").css('display','block'); 
+			}
+			
+		} 
+		
+		else {
+			$.alertM(response.data);
+		}
+	};
 
 	return {
 		choosedProdInfo				:		_choosedProdInfo,
 		chooseOfferForMember        :      _chooseOfferForMember,
-		querySecondBusinessAuth:_querySecondBusinessAuth
+		querySecondBusinessAuth:_querySecondBusinessAuth,
+		querySecondBusinessAuthSub:_querySecondBusinessAuthSub
 	};	
 })();

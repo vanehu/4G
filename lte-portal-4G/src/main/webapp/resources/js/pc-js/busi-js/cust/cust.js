@@ -1817,6 +1817,23 @@ order.cust = (function(){
 				easyDialog.close();
 				order.uiCust.orderAttachOffer();
 			}
+		    //新装
+			else if(OrderInfo.actionFlag==1){
+				if(OrderInfo.offid!="" && OrderInfo.offid!=null && OrderInfo.offid!="null"){
+					order.service.initSpec();
+					order.prodOffer.init();
+					order.service.searchPack();
+					order.phoneNumber.resetBoProdAn();
+					order.service.buyService(OrderInfo.offid,"");
+				}
+				else{
+					order.prepare.createorderlonger();
+					order.service.initSpec();
+					order.prodOffer.init();
+					order.service.searchPack();
+					order.phoneNumber.resetBoProdAn();
+				}
+			}
 			OrderInfo.authRecord.resultCode = "";
 			OrderInfo.authRecord.validateType = "";
 		}
@@ -1928,6 +1945,24 @@ order.cust = (function(){
 			//可选包
 			else if(OrderInfo.actionFlag==3){
 				order.uiCust.orderAttachOffer();
+			}
+			//新装
+			else if(OrderInfo.actionFlag==1){
+				if(OrderInfo.offid!="" && OrderInfo.offid!=null && OrderInfo.offid!="null"){
+					order.service.initSpec();
+					order.prodOffer.init();
+					order.service.searchPack();
+					order.phoneNumber.resetBoProdAn();
+					order.service.buyService(OrderInfo.offid,"");
+				}
+				else{
+					order.prepare.createorderlonger();
+					order.service.initSpec();
+					order.prodOffer.init();
+					order.service.searchPack();
+					order.phoneNumber.resetBoProdAn();
+				}
+
 			}
 			OrderInfo.authRecord.resultCode = "";
 			OrderInfo.authRecord.validateType = "";

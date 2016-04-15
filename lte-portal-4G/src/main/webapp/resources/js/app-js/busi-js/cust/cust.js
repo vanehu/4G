@@ -931,6 +931,19 @@ cust = (function(){
 				}
 				AttachOffer.init();
 			}
+			//新装
+			else if(OrderInfo.actionFlag=="1"){
+				$("#auth2").css('display','none');
+				var prodOfferId=OrderInfo.provinceInfo.prodOfferId;
+				if(prodOfferId!="" && prodOfferId!=null &&prodOfferId!="null"){
+					order.service.buyService(prodOfferId,"");
+				}
+				else{
+					 $("#order_prepare").css('display','block');
+					order.service.init();
+				}
+				
+			}
 			OrderInfo.authRecord.resultCode = "";
 			OrderInfo.authRecord.validateType = "";
 		}
@@ -1041,6 +1054,17 @@ cust = (function(){
 					$("#order-content") .css('display', 'block');
 				}
 				AttachOffer.init();
+			}
+			else if(OrderInfo.actionFlag==1){
+				$("#auth2").css('display','none');
+				var prodOfferId=OrderInfo.provinceInfo.prodOfferId;
+				if(prodOfferId!="" && prodOfferId!=null &&prodOfferId!="null"){
+					order.service.buyService(prodOfferId,"");
+				}
+				else{
+					 $("#order_prepare").css('display','block');
+					order.service.init();
+				}
 			}
 			OrderInfo.authRecord.resultCode = "";
 			OrderInfo.authRecord.validateType = "";

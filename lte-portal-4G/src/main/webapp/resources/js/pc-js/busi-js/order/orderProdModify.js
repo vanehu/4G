@@ -3278,6 +3278,35 @@ order.prodModify = (function(){
 		}
 	};
 	
+	//二次鉴权
+	var _querySecondBusinessAuthSub=function(menuId,isSimple){
+		var url=contextPath+"/token/secondBusi/querySecondBusinessMenuAuthSub";
+		var param={
+			types:'pc'
+		}
+		var response= $.callServiceAsHtml(url,param);
+		if (response.code == 0) {
+			$("#auth2").empty().append(response.data);
+			var rules=OrderInfo.rulesJson;
+			//员工权限
+			var iseditOperation=rules.iseditOperation;
+			 if(iseditOperation=="0"){
+				$("#iseditOperation").attr("style","");
+				 easyDialog.open({
+				        container : 'auth2',
+				        overlay : false
+				    });
+			}
+			 else{
+				 easyDialog.open({
+				        container : 'auth2',
+				        overlay : false
+				    });
+			 }
+			
+		}
+	};
+	
 	
 	//一卡双号订购退订正式单接口
 	var _exchangeAccNbr = function (param) {
@@ -3389,7 +3418,8 @@ order.prodModify = (function(){
 		chooseAccNbrArea:_chooseAccNbrArea,
 		spec_parm_user_change : _spec_parm_user_change,
 		spec_parm_user_show : _spec_parm_user_show,
-		querySecondBusinessAuth:_querySecondBusinessAuth
+		querySecondBusinessAuth:_querySecondBusinessAuth,
+		querySecondBusinessAuthSub:_querySecondBusinessAuthSub
 		
 	};
 })();

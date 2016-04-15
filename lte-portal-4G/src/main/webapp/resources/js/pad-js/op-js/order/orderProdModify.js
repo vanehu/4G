@@ -2924,7 +2924,35 @@ order.prodModify = (function(){
 			$.alertM(response.data);
 		}
 	};
-	
+	//二次鉴权
+	var _querySecondBusinessAuthSub=function(){
+		var url=contextPath+"/token/secondBusi/querySecondBusinessMenuAuthSub";
+		var param={
+			types:"pad"
+		}
+		var response= $.callServiceAsHtml(url,param);
+		$("#auth2").empty().append(response.data);
+		
+		var authTypeStr=$("#authTypeStr").html();
+
+		if (response.code == 0) {
+
+			var rules=OrderInfo.rulesJson;
+			//员工权限
+			var iseditOperation=rules.iseditOperation;
+			$("#auth2").css('display','block'); 
+			//工号有跳过鉴权权限 
+			if(iseditOperation=="0"){
+				
+				$("#iseditOperation").attr("style","");
+			}
+			
+		} 
+		
+		else {
+			$.alertM(response.data);
+		}
+	};
 
 	return {
 		changeCard : _changeCard,
@@ -3002,6 +3030,7 @@ order.prodModify = (function(){
 		changeLabel : _changeLabel,
 		remark_prodPass :_remark_prodPass,
 		checkProPSW  :_checkProPSW,
-		querySecondBusinessAuth:_querySecondBusinessAuth
+		querySecondBusinessAuth:_querySecondBusinessAuth,
+		querySecondBusinessAuthSub:_querySecondBusinessAuthSub
 	};
 })();
