@@ -188,6 +188,7 @@ SoOrder = (function() {
 			itemSpecId : CONST.BUSI_ORDER_ATTR.BUSITYPE_FLAG,
 			value : OrderInfo.busitypeflag
 		});
+		
 		custOrderAttrs.push({ //定位客户时长
 			itemSpecId : "30010050",
 			value : OrderInfo.custorderlonger
@@ -2125,11 +2126,14 @@ SoOrder = (function() {
 			busiOrder.data.ooParams = [];
 			for (var i = 0; i < offerSpecParams.length; i++) {
 				var param = offerSpecParams[i];
+				if(param.setValue==undefined || param.setValue==""){
+					param.setValue = param.value;
+				}
 				var ooParam = {
 	                itemSpecId : param.itemSpecId,
 	                offerParamId : OrderInfo.SEQ.paramSeq--,
 	                offerSpecParamId : param.offerSpecParamId,
-	                value : param.value,
+	                value : param.setValue,
 	                state : "ADD"
 	            };
 	            busiOrder.data.ooParams.push(ooParam);

@@ -3318,7 +3318,7 @@ order.prodModify = (function(){
 				recordParam.certType=OrderInfo.cust.identityCd;
 				recordParam.certNumber=OrderInfo.cust.idCardNumber;
 				//记录到日志里
-				cust.saveAuthRecordFail(recordParam);
+				order.cust.saveAuthRecordFail(recordParam);
 				if(OrderInfo.offid!="" && OrderInfo.offid!=null && OrderInfo.offid!="null"){
 					order.service.initSpec();
 					order.prodOffer.init();

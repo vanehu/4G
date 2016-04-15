@@ -84,8 +84,9 @@ order.prodModify = (function(){
 					//$("#auth2").css('display','none'); 
 					var sy=$("#order_prepare").css("display");
 					if(sy=="none"){
-						$("#order_prepare") .css('display', 'block');
+						$("#order_prepare").css('display', 'block');
 					}
+					$("#auth2").css('display', 'none');
 					offerChangeNew.init();
 				}
 				//主副卡

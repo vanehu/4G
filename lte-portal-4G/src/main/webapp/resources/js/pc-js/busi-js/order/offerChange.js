@@ -853,11 +853,14 @@ offerChange = (function() {
 			busiOrder.data.ooParams = [];
 			for (var i = 0; i < offerSpec.offerSpecParams.length; i++) {
 				var param = offerSpec.offerSpecParams[i];
+				if(param.setValue==undefined || param.setValue==""){
+					param.setValue = param.value;
+				}
 				var ooParam = {
 	                itemSpecId : param.itemSpecId,
 	                offerParamId : OrderInfo.SEQ.paramSeq--,
 	                offerSpecParamId : param.offerSpecParamId,
-	                value : param.value,
+	                value : param.setValue,
 	                state : "ADD"
 	            };
 	            busiOrder.data.ooParams.push(ooParam);

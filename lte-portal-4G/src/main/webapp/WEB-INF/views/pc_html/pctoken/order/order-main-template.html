@@ -23,6 +23,10 @@
 			<span> ${main.boActionTypeName} </span>
 			<#if main.actionFlag == 1>
 				${offerSpec.offerSpecName}
+				 
+                <#if offerSpec.offerSpecParams?? && (offerSpec.offerSpecParams?size>0)>
+                <span id="mainOffer" class="canshu" onclick="AttachOffer.showMainParam();"></span>
+			    </#if>
 			<#elseif main.actionFlag == 14>
 				${offerSpec.offerSpecName}
 			<#else>

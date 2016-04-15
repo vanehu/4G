@@ -32,6 +32,7 @@
 <script type="text/javascript">
 window.onload = function() { 
     OrderInfo.actionFlag=6;
+    OrderInfo.typeCd='${typeCd}';
 	OrderInfo.staff={
 		staffId : "${Session['_ecs_login_session_key'].staffId}",
 		channelId : '${Session["_ecs_login_session_key"].currentChannelId}',

@@ -13,6 +13,9 @@
 		<div id="changePlaninfo">
 			<span class="old">原套餐:${main.oldOfferSpecName}</span>
 			<span>新套餐:${offerSpec.offerSpecName}</span>	
+			<#if offerSpec.offerSpecParams?? && (offerSpec.offerSpecParams?size>0)>
+                <span id="mainOffer" class="canshu" onclick="AttachOffer.showMainParam();"></span>
+			</#if>
 		</div>
 		<div class="height18"></div>
 		<#if main.offerMembers?? &&(main.offerMembers?size>1)>

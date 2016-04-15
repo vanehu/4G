@@ -2662,12 +2662,40 @@ AttachOffer = (function() {
 		$.confirm("参数设置： ",content,{ 
 			yes:function(){	
 			},
-			no:function(){
-				
+			no:function(){			
 			}
 		});
-		$('#paramForm').bind('formIsValid', function(event, form) {
-		}).ketchup({bindElement:"easyDialogYesBtn"});
+		$('#paramForm').bind('formIsValid', function(event, form) {	
+			//参数输入校验
+			if(!paramInputCheck()){
+				return;
+			}
+			var spec = OrderInfo.offerSpec;
+			if(!!spec.offerSpecParams){
+				for (var i = 0; i < spec.offerSpecParams.length; i++) {
+					var itemSpec = spec.offerSpecParams[i];
+					var newSpecParam = $.trim($("#"+tempProdId+"_"+itemSpec.itemSpecId).val());
+					if(newSpecParam!=null){
+						if(itemSpec.rule.isOptional=="N"&&newSpecParam=="") { //必填
+							$.alert("提示","属性："+itemSpec.name+"  为必填属性，不能为空！");
+							return;
+						}
+						itemSpec.setValue = newSpecParam;
+						if (itemSpec.dateSourceTypeCd == "17") {//搜索框类型组件获取code属性中的值作为设置值
+							itemSpec.setValue = $.trim($("#" + tempProdId + "_" + itemSpec.itemSpecId).attr("code"));
+						}
+						itemSpec.isSet = true;
+					}else{
+						itemSpec.isSet = false;
+					}
+				}
+			}
+			spec.isset ="Y"
+			$("#mainOffer").removeClass("canshu").addClass("canshu2");
+			$(".ZebraDialog").remove();
+            $(".ZebraDialogOverlay").remove();
+		}).ketchup({bindElementByClass:"ZebraDialog_Button1"});
+	  }
 	};
 	
 	//显示参数
