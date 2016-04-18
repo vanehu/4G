@@ -1,7 +1,6 @@
 package com.al.lte.portal.filter;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -14,20 +13,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.lang3.BooleanUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.UrlPathHelper;
 
-import com.al.ecs.common.util.JsonUtil;
 import com.al.ecs.common.web.ServletUtils;
-import com.al.ecs.exception.InterfaceException;
 import com.al.ecs.log.Log;
 import com.al.lte.portal.bmo.staff.StaffBmo;
 import com.al.lte.portal.bmo.staff.StaffBmoImpl;
-import com.al.lte.portal.common.FilterBaseData;
+import com.al.lte.portal.common.CommonUtils;
 import com.al.lte.portal.common.MySimulateData;
 import com.al.lte.portal.common.SysConstant;
 import com.al.lte.portal.model.SessionStaff;
@@ -123,8 +116,30 @@ public class OverFrequencyFilter extends OncePerRequestFilter{
 							response.getWriter().close();
 							//更改工号状态
 							Map<String, Object> paramMap = new HashMap<String, Object>();
-							paramMap.put("statusCd", "1100");
+							paramMap.put("statusCd", "1020");
 							staffBmo.lockUser(paramMap, "", sessionStaff);
+							Map<String, Object> logmap = new HashMap<String, Object>();
+							logmap.put("STAFF_CODE", sessionStaff.getStaffCode());
+							logmap.put("STAFF_ID", sessionStaff.getStaffId());
+							logmap.put("SALES_CODE", sessionStaff.getSalesCode());
+							logmap.put("HOST_IP", CommonUtils.getAllAddrPart());
+							logmap.put("SESSIONINFO", "");
+							if("custType".equals(type)){
+								logmap.put("STATUS_CD", "客户定位次数超过阀值"+limit_count);
+							}else if("phoneType".equals(type)){
+								logmap.put("STATUS_CD", "号码查询次数超过阀值"+limit_count);
+							}else{
+								logmap.put("STATUS_CD", "未知");
+							}
+							logmap.put("INTF_URL", type);
+							logmap.put("IDENTIDIES_TYPE", " ");
+							logmap.put("IDENTITY_NUM", " ");
+							logmap.put("OPERATION_PLATFORM", SysConstant.APPDESC_LTE);
+							logmap.put("ACTION_IP", ServletUtils.getIpAddr(request));
+							logmap.put("CHANNEL_ID", sessionStaff.getCurrentChannelId());
+							logmap.put("OPERATORS_ID", sessionStaff.getOperatorsId());
+							logmap.put("IN_PARAM", " ");
+							staffBmo.insert_sp_busi_run_log(logmap,"",sessionStaff);
 							ServletUtils.removeSessionAttribute(request, SysConstant.SESSION_KEY_LOGIN_STAFF);
 						}
 					}
