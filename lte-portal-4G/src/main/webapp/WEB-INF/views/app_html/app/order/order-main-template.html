@@ -8,7 +8,10 @@
 				  ${main.offerSpec.offerSpecName}
 				<#else>
 				  ${main.accessNumber}
-			</#if>
+				</#if>
+				<#if main.offerSpec.offerSpecParams?? && (main.offerSpec.offerSpecParams?size>0)>
+				<button type="button" class="btn btn-info" onclick="AttachOffer.offer_showMainParam();">参</button>
+				</#if>
 			</div>
 			<div id="carousel-example-generic" class="carousel slide">
 				<!-- 图标 -->
