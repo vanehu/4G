@@ -302,6 +302,10 @@ order.cust = (function(){
 				$("#td_custIdCard").html("");
 				$("#td_addressStr").data("addressStr", $("#td_addressStr").html());
 				$("#td_addressStr").html("");
+				var $custPhoto = $("#tr_custPhoto");
+				if ("none" != $custPhoto.css("display")) {
+					$custPhoto.hide();
+				}
 			}
 			// 填单页面经办人读卡
 			if (id == "orderAttrIdCard") {
@@ -372,10 +376,6 @@ order.cust = (function(){
 				$("span[name='" + CONST.BUSI_ORDER_ATTR.orderAttrIdCard + "']").text("");
 				$("span[name='" + CONST.BUSI_ORDER_ATTR.orderAttrAddr + "']").hide();
 				$("span[name='" + CONST.BUSI_ORDER_ATTR.orderAttrAddr + "']").text("");
-			}
-			var $custPhoto = $("#tr_custPhoto");
-			if ("none" != $custPhoto.css("display")) {
-				$custPhoto.hide();
 			}
 			if(identidiesTypeCd==2){
 				$("#"+id).attr("onkeyup", "value=value.replace(/[^A-Za-z0-9\u4e00-\u9fa5]/ig,'')");
