@@ -599,7 +599,7 @@ order.cust = (function(){
 	 */
 	var _custAuth = function(scope) {
 		var param = _choosedCustInfo;
-		param.prodPwd = $.trim($("#authPassword").val());
+		param.prodPwd = $.trim($("#auth3 #authPassword2").val());
 		param.authFlag=authFlag;
 		$.callServiceAsHtml(contextPath+"/cust/custAuth",param,{
 			"before":function(){
@@ -773,9 +773,9 @@ order.cust = (function(){
 				$("#content3").hide();
 			}
 			//初始化弹出窗口
-			$("#authPassword2").val("");
-			$("#idCardNumber2").val("");
-			$("#smspwd2").val("");
+			$("#auth3 #authPassword2").val("");
+			$("#auth3 #idCardNumber2").val("");
+			$("#auth3 #smspwd2").val("");
 			var menuName = $("#menuName").attr("menuName");
 			if ((ec.util.isObj(canRealName) && 1 == canRealName)||(ec.util.isObj(menuName)&&(CONST.MENU_FANDANG==menuName||CONST.MENU_CUSTFANDANG==menuName))) {
 				easyDialog.open({
@@ -788,13 +788,13 @@ order.cust = (function(){
 				_realCheck(contextPath);
 			}
 			if(order.cust.jumpAuthflag=="0"){
-				$("#jumpAuth").show();
+				$("#auth3 #jumpAuth").show();
 			}
 			$("#authClose").off("click").on("click",function(event){
 				easyDialog.close();
-				$("#authPassword2").val("");
-				$("#idCardNumber2").val("");
-				$("#smspwd2").val("");
+				$("#auth3 #authPassword2").val("");
+				$("#auth3 #idCardNumber2").val("");
+				$("#auth3 #smspwd2").val("");
 			});
 		} else{
 			_custAuth(scope);
@@ -1967,14 +1967,15 @@ order.cust = (function(){
 
 	//短信发送
 	var _smsResend = function (level) {
-		$("#smspwd2").val("");
 		var accNbr = "";
 		if (level == "1") {
+			$("#auth3 #smspwd2").val("");
 			accNbr = _choosedCustInfo.accNbr;
 			if(-1==$("#p_cust_identityCd").val()){
 				accNbr=$.trim($("#p_cust_identityNum").val());
 			}
 		} else if (level == "2") {
+			$("#auth2 #smspwd2").val("");
 			accNbr = order.prodModify.choosedProdInfo.accNbr;
 		}
 		if(!ec.util.isObj(accNbr)){
@@ -2002,8 +2003,14 @@ order.cust = (function(){
 	};
 	//短信验证
 	var _smsvalid=function(level){
-		var params="smspwd="+$("#smspwd2").val();
-		if(!ec.util.isObj($("#smspwd2").val())){
+		var smspwd2 = "";
+		if (level == "1") {
+			smspwd2 = $("#auth3 #smspwd2").val();
+		} else if (level == "2") {
+			smspwd2 = $("#auth2 #smspwd2").val();
+		}
+		var params = "smspwd=" + smspwd2;
+		if (!ec.util.isObj(smspwd2)) {
 			$.alert("提示","验证码不能为空！");
 			return;
 		}
@@ -2081,9 +2088,14 @@ order.cust = (function(){
 
 	//客户鉴权--产品密码
 	var _productPwdAuth=function(level){
-
+		var authPassword2 = "";
+		if (level == "1") {
+			authPassword2 = $("#auth3 #authPassword2").val();
+		} else if (level == "2") {
+			authPassword2 = $("#auth2 #authPassword2").val();
+		}
 		var param = _choosedCustInfo;
-		param.prodPwd = $.trim($("#authPassword2").val());
+		param.prodPwd = $.trim(authPassword2);
 		if(!ec.util.isObj(param.prodPwd)){
 			$.alert("提示","产品密码不能为空！");
 			return;
@@ -2155,10 +2167,15 @@ order.cust = (function(){
 	};
 	//客户鉴权--证件类型
 	var _identityTypeAuth=function(level){
-
+		var idCardNumber2 = "";
+		if (level == "1") {
+			idCardNumber2 = $("#auth3 #idCardNumber2").val();
+		} else if (level == "2") {
+			idCardNumber2 = $("#auth2 #idCardNumber2").val();
+		}
 		var param = _choosedCustInfo;
-		param.validateType="1";
-		param.identityNum = base64encode($.trim($("#idCardNumber2").val()));
+		param.validateType = "1";
+		param.identityNum = base64encode(idCardNumber2);
 		if(!ec.util.isObj(param.identityNum)){
 			$.alert("提示","证件号码不能为空！");
 			return;
