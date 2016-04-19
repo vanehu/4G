@@ -35,3 +35,5 @@ resources/js/busi-js/prod/uim.js
 resources/js/busi-js/query/queryProd.js
 resources/js/busi-js/rule/rule.js
 resources/js/busi-js/orderRelease/orderRelease.js
+resources/js/busi-js/order/protocolNbrSel.js
+resources/js/4g-js/cert/cert.js
