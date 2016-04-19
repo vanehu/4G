@@ -1843,6 +1843,7 @@ order.cust = (function(){
 			OrderInfo.authRecord.resultCode = "";
 			OrderInfo.authRecord.validateType = "";
 		}
+	
 	};
 
 	//多种鉴权方式的tab页切换
@@ -1952,12 +1953,6 @@ order.cust = (function(){
 			}
 			//主副卡
 			else if(OrderInfo.actionFlag==6){
-				if($.browser.msie) {
-				    // 此浏览器为 IE
-				} else {
-					easyDialog.close();
-				}
-				
 				order.memberChange.showOfferCfgDialog();
 			}
 			//可选包
