@@ -975,7 +975,7 @@ public class InterfaceClient {
 			srcSysID = SysConstant.CSB_SRC_SYS_ID_LTE;
 		}
 		HttpSession session = ServletUtils.getSession(request);
-		if ("1".equals(session.getAttribute(SysConstant.SESSION_KEY_APP_FLAG))) {
+		if (session != null && "1".equals(session.getAttribute(SysConstant.SESSION_KEY_APP_FLAG))) {
 			srcSysID = SysConstant.CSB_SRC_SYS_ID_APP;
 			cdm.setSrcSysSign(SysConstant.CSB_SRC_SYS_SIGN_YSX);
 		}
