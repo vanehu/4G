@@ -2850,10 +2850,11 @@ order.prodModify = (function(){
 	};
 	//二次鉴权
 	var _querySecondBusinessAuth=function(menuId,isSimple){
-		var url=contextPath+"/token/pad/secondBusi/querySecondBusinessMenuAuth";
+		var url=contextPath+"/token/secondBusi/querySecondBusinessMenuAuth";
 		var param={
 			menuId:menuId,
-			isSimple:isSimple
+			isSimple:isSimple,
+			types:"pad"
 		}
 		var response= $.callServiceAsHtml(url,param);
 		$("#auth2").empty().append(response.data);

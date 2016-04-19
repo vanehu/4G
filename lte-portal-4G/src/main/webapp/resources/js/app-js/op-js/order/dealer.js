@@ -902,7 +902,29 @@ order.dealer = (function() {
 	//	$(obj).parent().parent().remove();
 		//$.refresh($("#dealerTbody"));
 	};
+	//勾选所有附属
+	var _checkAllAttach = function(box){
+		var checkboxAll =$("#dealer1");
+		//alert($(checkboxAll).attr("checked"));
+		var checkTbody = $(".searchtable");//checkboxAll.closest(".searchtable").find("tbody");
+		var checkList =  checkTbody.find("tr").find("td").find("input[name='attach_dealer']");
 	
+		if($("#dealer1").attr("checked")==undefined){
+			
+			for(var i=0;i<checkList.length;i++){
+				checkList[i].checked = true; 
+			}
+			//$("[name='attach_dealer']").removeAttr("checked");
+			$("#dealer1").attr("checked",'true');
+			
+		}else {
+			//$("[name='attach_dealer']").attr("checked",true);
+			for(var i=0;i<checkList.length;i++){
+				checkList[i].checked = false; 
+			}
+			$("#dealer1").removeAttr("checked");
+		}
+	};
 	//删除协销人
 	var _removeAttDealer = function(id){
 		$("li[name^='tr_"+id+"']").each(function(){
@@ -924,6 +946,7 @@ order.dealer = (function() {
 		queryStaff          : _queryStaff,
 		showDealer          : _showDealer,
 		queryChildNode      : _queryChildNode,
-		removeDealerNew:_removeDealerNew
+		removeDealerNew:_removeDealerNew,
+		checkAllAttach:_checkAllAttach
 	};
 })();

@@ -3198,11 +3198,12 @@ order.prodModify = (function(){
 	};
 	//二次鉴权
 	var _querySecondBusinessAuth=function(menuId,isSimple){
-		var url=contextPath+"/token/pc/secondBusi/querySecondBusinessMenuAuth";
+		var url=contextPath+"/token/secondBusi/querySecondBusinessMenuAuth";
 		var param={
 			menuId:menuId,
 			isSimple:isSimple,
-			typeCd:OrderInfo.typeCd   //鉴权类别
+			typeCd:OrderInfo.typeCd,   //鉴权类别
+			types:'pc'
 		}
 		var response= $.callServiceAsHtml(url,param);
 		$("#auth2").empty().append(response.data);
@@ -3277,17 +3278,18 @@ order.prodModify = (function(){
 			else if(iseditOperation=="0"){
 
 				$("#iseditOperation").attr("style","");
-				easyDialog.open({
-					container: 'auth2'
-				});
+				 easyDialog.open({
+				        container : 'auth2',
+				        overlay : false
+				    });
 			}
 			
 			else{
-//				//显示跳过鉴权按钮 
-//				$("#iseditOperation").attr("style","");
-				easyDialog.open({
-					container: 'auth2'
-				});
+				 easyDialog.open({
+				        container : 'auth2',
+				        overlay : false
+				    });
+			
 			}
 			
 		} 

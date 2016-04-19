@@ -574,7 +574,7 @@ order.dealer = (function() {
 		$pop.append('<div data-role="header" data-theme="t"> <a href="#" id="order_dealer_btn" data-role="button" data-icon="back" data-rel="back" data-iconpos="notext" class="ui-btn-right">返回</a><h1>发展人管理</h1></div>');
 		var $content=$('<div data-role="content"></div>');
 		var $table=$('<table class="searchtable"></table>');
-		$table.append('<tr><th>操作</th><th>号码</th><th>发展业务</th></tr>');
+		$table.append('<tr><th><input  id="dealer1"  type="checkbox" name="attach_dealer_check_all" onclick="order.dealer.checkAllAttach(this)">操作</th><th>号码</th><th>发展业务</th></tr>');
 		
 		$.each(AttachOffer.openList,function(){
 			
@@ -688,6 +688,29 @@ order.dealer = (function() {
 			$("#order_dealer_btn").tap(function(){$("#div_attach_choose").popup("close");});
 		}
 	};
+	//勾选所有附属
+	var _checkAllAttach = function(box){
+		var checkboxAll =$("#dealer1");
+		//alert($(checkboxAll).attr("checked"));
+		var checkTbody = $(".searchtable");//checkboxAll.closest(".searchtable").find("tbody");
+		var checkList =  checkTbody.find("tr").find("td").find("input[name='attach_dealer']");
+	
+		if($("#dealer1").attr("checked")=="checked"){
+			
+			for(var i=0;i<checkList.length;i++){
+				checkList[i].checked = true; 
+			}
+			$("#dealer1").attr("checked",'true');
+			
+		}else {
+			//$("[name='attach_dealer']").attr("checked",true);
+			for(var i=0;i<checkList.length;i++){
+				checkList[i].checked = false; 
+			}
+			$("#dealer1").removeAttr("checked");
+		}
+	};
+	
 	//勾选一个附属
 	var _checkAttach = function(id){
 		//var tr = $("#atr_"+id);
@@ -724,6 +747,7 @@ order.dealer = (function() {
 		checkAttach			: _checkAttach,
 		removeDealer		: _removeDealer,
 		removeAttDealer		: _removeAttDealer,
-		changeDealer		: _changeDealer
+		changeDealer		: _changeDealer,
+		checkAllAttach:_checkAllAttach
 	};
 })();

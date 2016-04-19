@@ -1782,6 +1782,14 @@ order.cust = (function(){
 	};
 	//跳过鉴权
 	var _jumpAuth2 = function() {
+//		easyDialog.close();
+		//$('#auth2').dialog('close');
+		if($.browser.msie) {
+		   $("#auth2").css('display','none');
+            
+		} else {
+			easyDialog.close();
+		}
 		var recordParam={};
 		recordParam.validateType="4";
 		recordParam.validateLevel="2";
@@ -1794,10 +1802,9 @@ order.cust = (function(){
 		OrderInfo.authRecord.validateType="4";
 		OrderInfo.authRecord.resultCode="0";
 		if (OrderInfo.authRecord.resultCode == "0") {
-		//	
+			
 			//如果是套餐变更
 			if(OrderInfo.actionFlag==2){
-				easyDialog.close();
 				if(OrderInfo.offid!="" && OrderInfo.offid!=null && OrderInfo.offid!="null"){
 					order.uiCustes.linkQueryOffer();
 					
@@ -1809,12 +1816,11 @@ order.cust = (function(){
 			}
 			//主副卡
 			else if(OrderInfo.actionFlag==6){
-				easyDialog.close();
+				
 				order.memberChange.showOfferCfgDialog();
 			}
 			//可选包
 			else if(OrderInfo.actionFlag==3){
-				easyDialog.close();
 				order.uiCust.orderAttachOffer();
 			}
 		    //新装
@@ -1926,8 +1932,14 @@ order.cust = (function(){
 		});
 	};
 	var _goService=function (){
-		easyDialog.close();
+		//easyDialog.close();
 		if (OrderInfo.authRecord.resultCode == "0") {
+			if($.browser.msie) {
+				   $("#auth2").css('display','none');
+		            
+				} else {
+					easyDialog.close();
+				}
 			//如果是套餐变更
 			if(OrderInfo.actionFlag==2){
 				if(OrderInfo.offid!="" && OrderInfo.offid!=null && OrderInfo.offid!="null"){
@@ -1940,6 +1952,12 @@ order.cust = (function(){
 			}
 			//主副卡
 			else if(OrderInfo.actionFlag==6){
+				if($.browser.msie) {
+				    // 此浏览器为 IE
+				} else {
+					easyDialog.close();
+				}
+				
 				order.memberChange.showOfferCfgDialog();
 			}
 			//可选包

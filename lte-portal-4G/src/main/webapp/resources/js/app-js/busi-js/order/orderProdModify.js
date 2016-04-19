@@ -25,11 +25,12 @@ order.prodModify = (function(){
 	};
 	//二次鉴权
 	var _querySecondBusinessAuth=function(menuId,isSimple){
-		var url=contextPath+"/token/app/secondBusi/querySecondBusinessMenuAuth";
+		var url=contextPath+"/token/secondBusi/querySecondBusinessMenuAuth";
 		var param={
 			menuId:menuId,
 			isSimple:isSimple,
-			typeCd:OrderInfo.typeCd   //鉴权类别
+			typeCd:OrderInfo.typeCd,   //鉴权类别
+			types:"app"
 		}
 		var response= $.callServiceAsHtml(url,param);
 		$("#auth2").empty().append(response.data);
