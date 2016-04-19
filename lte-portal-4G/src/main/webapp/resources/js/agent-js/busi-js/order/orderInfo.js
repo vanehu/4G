@@ -205,14 +205,14 @@ OrderInfo = (function() {
 		busiOrder.data.boCustInfos.push(OrderInfo.boCustInfos);
 		busiOrder.data.boCustIdentities.push(OrderInfo.boCustIdentities);
 		// 联系人信息为空的情况下，新开户移动号码时，默认以本人及新办的手机号（如果是主副卡的，默认主号码）作为联系人信息
-//		if(OrderInfo.actionFlag==1 || OrderInfo.actionFlag==14){
-//			if(OrderInfo.boPartyContactInfo.contactName == ""){
-//				var custName = OrderInfo.boCustInfos.name;
-//				OrderInfo.boPartyContactInfo.contactName = custName;
-//				OrderInfo.boPartyContactInfo.mobilePhone = accNbr;
-//			}
-//			busiOrder.data.boPartyContactInfo.push(OrderInfo.boPartyContactInfo);
-//		}
+		if(OrderInfo.actionFlag==1 || OrderInfo.actionFlag==14){
+			if(OrderInfo.boPartyContactInfo.contactName == ""){
+				var custName = OrderInfo.boCustInfos.name;
+				OrderInfo.boPartyContactInfo.contactName = custName;
+				OrderInfo.boPartyContactInfo.mobilePhone = accNbr;
+			}
+			busiOrder.data.boPartyContactInfo.push(OrderInfo.boPartyContactInfo);
+		}
 //		if(OrderInfo.boCustProfiles!=undefined && OrderInfo.boCustProfiles!=""){
 //			busiOrder.data.boCustProfiles = [];
 //			busiOrder.data.boCustProfiles = OrderInfo.boCustProfiles;

@@ -216,6 +216,14 @@ OrderInfo = (function() {
 //			busiOrder.data.boCustProfiles = [];
 //			busiOrder.data.boCustProfiles = OrderInfo.boCustProfiles;
 //		}
+		if(OrderInfo.actionFlag==1 || OrderInfo.actionFlag==14){
+			if(OrderInfo.boPartyContactInfo.contactName == ""){
+				var custName = OrderInfo.boCustInfos.name;
+				OrderInfo.boPartyContactInfo.contactName = custName;
+				OrderInfo.boPartyContactInfo.mobilePhone = accNbr;
+			}
+			busiOrder.data.boPartyContactInfo.push(OrderInfo.boPartyContactInfo);
+		}
 		busiOrders.push(busiOrder);
 	};
 	
