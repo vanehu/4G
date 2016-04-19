@@ -637,6 +637,13 @@ order.cust = (function(){
 			return;
 		}
 		var param = _choosedCustInfo;
+		var recordParam={};
+		recordParam.validateType="4";
+		recordParam.validateLevel="1";
+		recordParam.custId=param.custId;
+		recordParam.accessNbr=param.accessNumber;
+		recordParam.certType=param.identityCd;
+		recordParam.certNumber=param.idCardNumber;
 		param.authFlag="1";
 		$.callServiceAsHtml(contextPath+"/cust/custAuth",param,{
 			"before":function(){
@@ -644,6 +651,7 @@ order.cust = (function(){
 			},"done" : function(response){
 				if(response.code != 0) {
 					$.alert("提示","客户鉴权失败,稍后重试");
+					_saveAuthRecordFail(recordParam);
 					return;
 				}
 				
@@ -663,6 +671,7 @@ order.cust = (function(){
 					order.main.showChooseUserDialog(param);
 				}
 				OrderInfo.cust_validateType="4";//保存鉴权方式
+				_saveAuthRecordSuccess(recordParam);
 			},"always":function(){
 				$.unecOverlay();
 			}
