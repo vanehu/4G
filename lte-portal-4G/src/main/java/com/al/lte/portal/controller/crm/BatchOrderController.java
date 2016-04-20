@@ -321,13 +321,13 @@ public class BatchOrderController  extends BaseController {
 						if(SysConstant.BATCHNEWORDER.equals(batchType)){//批量新装
 							for (int i=0 ; i<list.size(); i++){
 								list.get(i).put("custId", str);
-								list.get(i).put("encryptCustName", encryptCustName);
 							}
 						}
 						Map<String, Object> rMap = null;
 						Map<String, Object> param = new HashMap<String, Object>();
 						param.put("orderList", list);
 						param.put("custOrderId", olId);
+						param.put("encryptCustName", encryptCustName);
 						param.putAll(getAreaInfos());
 						if(SysConstant.BATCHFAZHANREN.equals(batchType)){
 							param.put("commonRegionId",sessionStaff.getCurrentAreaId());
