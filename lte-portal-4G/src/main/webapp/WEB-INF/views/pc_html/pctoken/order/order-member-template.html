@@ -27,27 +27,35 @@
 			<#list main.viceParam as item>
 				<#assign i = i+1 />
 				<#assign prodId = item.objInstId/>
-				<#if item.offerSpecName??>
-				<#if i==1>
+				<#if i==1 && (main.newnum?? && (main.newnum?number==0)) && (main.oldnum?? && (main.oldnum?number==0))>
 					<div id="change_${prodId}">
 						<div id="changePlaninfo">
-							<span class="old">原套餐:${main.oldOfferSpecName}</span>
+							<span class="old">原套餐:${main.oldOfferSpecName}aaaa</span>
 							<span>新套餐:${item.offerSpecName}</span>	
-							<#if item.offerSpecParams?? && (item.offerSpecParams?size>0)>
-                				<span id="mainOffer_${item.accessNumber}" class="canshu" onclick="AttachOffer.showMainParam('${item.accessNumber}');"></span>
-							</#if>
 						</div>
 					</div>
 				<#else>
-					<div id="change_${prodId}" style="display:none;">
+				  <#if item.offerSpecName ??>
+				    <div id="change_${prodId}">
 						<div id="changePlaninfo">
 							<span class="old">原套餐:${main.oldOfferSpecName}</span>
-							<span>新套餐:${item.offerSpecName}</span>
-							<#if item.offerSpecParams?? && (item.offerSpecParams?size>0)>
-                				<span id="mainOffer_${item.accessNumber}" class="canshu" onclick="AttachOffer.showMainParam('${item.accessNumber}');"></span>
-							</#if>	
+							<span>新套餐:${item.offerSpecName}</span>	
+							<!--  
+							<#if main.offerSpec.offerSpecParams?? && (main.offerSpec.offerSpecParams?size>0)>
+                                <span id="mainOffer" class="canshu" onclick="AttachOffer.showMainParam(${item.accessNumber});"></span>
+			                </#if>
+			                -->
 						</div>
 					</div>
+				     <#else>
+					<div id="change_${prodId}" style="display: none;">
+						<div id="changePlaninfo">
+							<span class="old">原套餐:${main.oldOfferSpecName}</span>
+							<span>新套餐:${item.offerSpecName}</span>	
+							
+						</div>
+					</div>
+					</#if>
 				</#if>
 			</#list>
 		</#if>
