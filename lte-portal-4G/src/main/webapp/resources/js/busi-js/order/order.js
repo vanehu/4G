@@ -190,9 +190,13 @@ order.service = (function(){
 				}
 			}
 		};
-		var authResult = order.prodModify.querySecondBusinessAuth("29", "Y", callback);
-		if (!authResult) {
+		if (OrderInfo.busitypeflag == 2) {
 			callback();
+		} else {
+			var authResult = order.prodModify.querySecondBusinessAuth("29", "Y", callback);
+			if (!authResult) {
+				callback();
+			}
 		}
 	};
 	
