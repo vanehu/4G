@@ -257,8 +257,21 @@ public class BatchOrderController  extends BaseController {
 					SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
 	 						SysConstant.SESSION_KEY_LOGIN_STAFF);
 					String str = sessionStaff.getCustId() +"/"+ sessionStaff.getPartyName() +"/" + sessionStaff.getCardNumber()+"/"+sessionStaff.getCardType();
+					String encryptCustName = "";//客户定位回参中的CN点
+					
 					if(SysConstant.BATCHNEWORDER.equals(batchType)||SysConstant.BATCHHUOKA.equals(batchType)){//批量开卡、批量新装
 						if(SysConstant.BATCHNEWORDER.equals(batchType)){// #13802，批量新装的时候门户批量新装的模版去掉客户列，调用服务传的custID为定位的客户信息
+							//针对批量新装的客户定位，由于脱敏原因，在入参中增加CN节点用于解密，CN即为客户定位回参中的CN节点
+							Map<String, Object> sessionCustInfo = (Map<String, Object>) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_CURRENT_CUST_INFO);
+							if(sessionCustInfo != null){
+								if(sessionCustInfo.get("CN") != null){
+									encryptCustName = sessionCustInfo.get("CN").toString();
+								} else{
+									encryptCustName = sessionStaff.getCN();
+								}
+							} else{
+								encryptCustName = sessionStaff.getCN();
+							}
 //							long startTime = System.currentTimeMillis();
 							checkResult=readNewOrderExcelBatch(workbook,batchType,str);
 //							long endTime = System.currentTimeMillis();
@@ -308,6 +321,7 @@ public class BatchOrderController  extends BaseController {
 						if(SysConstant.BATCHNEWORDER.equals(batchType)){//批量新装
 							for (int i=0 ; i<list.size(); i++){
 								list.get(i).put("custId", str);
+								list.get(i).put("encryptCustName", encryptCustName);
 							}
 						}
 						Map<String, Object> rMap = null;
@@ -1516,7 +1530,7 @@ public class BatchOrderController  extends BaseController {
 	
 	/**
 	 * 0--批开活卡		1--批量新装		2--批量订购/退订附属		3--组合产品纳入退出		4--批量修改产品属性<br/>
-	 * 5--批量换档		8--拆机 			9--批量修改发展人  		11--批量换档				12--批量换卡
+	 * 5--批量换挡		8--拆机 			9--批量修改发展人  		11--批量换挡				12--批量换卡
 	 * @param templateType 上述0~12
 	 * @return 批量业务类型名称，以字符串返回，若templateType不为null且没有匹配类型，则默认templateType为"0"，返回"批开活卡"。
 	 */
@@ -1527,10 +1541,10 @@ public class BatchOrderController  extends BaseController {
 		map.put("2", "批量订购/退订附属");
 		map.put("3", "组合产品纳入退出");
 		map.put("4", "批量修改产品属性");
-		map.put("5", "批量换档");//在完成“需求（开发） #18397”时，遇到5和11均表示“批量换档”的问题，经与后台沟通，仍使用11，5不会影响。
+		map.put("5", "批量换挡");//在完成“需求（开发） #18397”时，遇到5和11均表示“批量换挡”的问题，经与后台沟通，仍使用11，5不会影响。
 		map.put("8", "拆机");
 		map.put("9", "批量修改发展人");
-		map.put("11", "批量换档");
+		map.put("11", "批量换挡");
 		map.put("12", "批量换卡");
 		if(map.get(templateType) != null){
 			return map.get(templateType);
@@ -1654,7 +1668,7 @@ public class BatchOrderController  extends BaseController {
 	}
 	
 	/**
-	 * 批量换档、批量换卡
+	 * 批量换挡、批量换卡
 	 * @param session
 	 * @param model
 	 * @return
@@ -2285,7 +2299,7 @@ public class BatchOrderController  extends BaseController {
 	}
 	
 	/**
-	 * 批量换档、批量换卡<br/>Excel校验后，将数据提交与后台，并将后台返回的数据封装到model
+	 * 批量换挡、批量换卡<br/>Excel校验后，将数据提交与后台，并将后台返回的数据封装到model
 	 * @param model
 	 * @param request
 	 * @param response
@@ -2400,7 +2414,7 @@ public class BatchOrderController  extends BaseController {
 	}
 	
 	/**
-	 * 批量换档、批量换卡Excel解析
+	 * 批量换挡、批量换卡Excel解析
 	 * @param workbook
 	 * @param batchType
 	 * @param str
@@ -2473,12 +2487,12 @@ public class BatchOrderController  extends BaseController {
 						} else if (!"".equals(cellValue)) {
 							if(checkOfferSpecIdReg(cellValue)){
 								if(SysConstant.BATCHCHANGEFEETYPE.equals(batchType))
-									item.put("offerSpecId", cellValue);//批量换档套餐
+									item.put("offerSpecId", cellValue);//批量换挡套餐
 								if(SysConstant.BATCHCHANGEUIM.equals(batchType))
 									item.put("newUim", cellValue);//新UIM卡号
 							} else{
 								if(SysConstant.BATCHCHANGEFEETYPE.equals(batchType))
-									errorData.append("<br/>【第" + (i + 1) + "行】【第2列】换档套餐规格ID：【"+cellValue+"】"+"格式不正确");
+									errorData.append("<br/>【第" + (i + 1) + "行】【第2列】换挡套餐规格ID：【"+cellValue+"】"+"格式不正确");
 								if(SysConstant.BATCHCHANGEUIM.equals(batchType))
 									errorData.append("<br/>【第" + (i + 1) + "行】【第2列】UIM卡号：【"+cellValue+"】"+"格式不正确");
 								break;
@@ -2486,14 +2500,14 @@ public class BatchOrderController  extends BaseController {
 							
 						} else {
 							if(SysConstant.BATCHCHANGEFEETYPE.equals(batchType))
-								errorData.append("<br/>【第" + (i + 1) + "行】【第2列】换档套餐规格ID：【"+cellValue+"】"+"格式不正确");
+								errorData.append("<br/>【第" + (i + 1) + "行】【第2列】换挡套餐规格ID：【"+cellValue+"】"+"格式不正确");
 							if(SysConstant.BATCHCHANGEUIM.equals(batchType))
 								errorData.append("<br/>【第" + (i + 1) + "行】【第2列】UIM卡号：【"+cellValue+"】"+"格式不正确");
 							break;
 						}
 					} else {
 						if(SysConstant.BATCHCHANGEFEETYPE.equals(batchType))
-							errorData.append("<br/>【第" + (i + 1) + "行】【第2列】换档套餐规格ID不能为空");
+							errorData.append("<br/>【第" + (i + 1) + "行】【第2列】换挡套餐规格ID不能为空");
 						if(SysConstant.BATCHCHANGEUIM.equals(batchType))
 							errorData.append("<br/>【第" + (i + 1) + "行】【第2列】新UIM卡号不能为空");
 						break;
@@ -2544,7 +2558,7 @@ public class BatchOrderController  extends BaseController {
 	}
 	
 	/**
-	 * 校验换档套餐ID是否为数字(批量换卡也在使用)
+	 * 校验换挡套餐ID是否为数字(批量换卡也在使用)
 	 * @param cellValue
 	 * @return 校验成功返回<strong>true</strong>，否则返回<strong>false</strong>
 	 */

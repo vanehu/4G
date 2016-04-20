@@ -1,7 +1,9 @@
 package com.al.lte.portal.common;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.al.ecs.common.entity.LevelLog;
 import com.al.ecs.common.util.PortalConstant;
@@ -630,4 +632,23 @@ public final class SysConstant {
      * 带圆圈的数字的Unicode基本编码值
      */
     public static final int CIRCLENUMBERBASE = 9312;
+    
+    public static final Map<String, String> templateTypeMap = new HashMap<String, String>() {
+		private static final long serialVersionUID = 1L;
+		{
+			put("0", "批开活卡");
+			put("1", "批量新装");
+			put("2", "批量订购/退订附属");
+			put("3", "组合产品纳入退出");
+			put("4", "批量修改产品属性");
+			put("5", "批量换档");//在完成#18397时，遇到5和11均表示“批量换档”的问题，经与后台沟通，仍使用11，5不会影响。
+			put("8", "批量欠费拆机");
+			put("9", "批量修改发展人");
+			put("10", "批量订购裸终端");
+			put("11", "批量换档");
+			put("12", "批量换卡");
+			put("14", "批量在用拆机");
+			put("15", "批量未激活拆机");
+		}
+	};
 }

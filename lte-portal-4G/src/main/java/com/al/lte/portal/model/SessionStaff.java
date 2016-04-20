@@ -144,7 +144,8 @@ public class SessionStaff implements Serializable {
 	/**客户编码*/
 	private String custCode;
 	
-	
+	/**记录service/intf.custService/queryCust中的CN节点*/
+	private String CN;
 	
 	public String getCustType() {
 		return custType;
@@ -805,6 +806,14 @@ public class SessionStaff implements Serializable {
 	public String getSalesCode() {
 		return salesCode;
 	}
-	
+
+
+	public String getCN() {
+		return CN;
+	}
+
+	public void setCN(String cN) {
+		CN = cN;
+	}	
 	
 }
