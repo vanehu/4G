@@ -74,6 +74,7 @@ AttachOffer = (function() {
 			if (data) {
 				$("#attach_"+param.prodId).html(data);
 				_showMainRoleProd(param.prodId); //通过主套餐成员显示角字
+				AttachOffer.initMyfavoriteSpec(param.prodId,0);//初始化我的收藏
 				AttachOffer.changeLabel(param.prodId,param.prodSpecId,"10001"); //初始化第一个标签附属
 				if(param.prodId==-1 && OrderInfo.actionFlag==14){ //合约计划特殊处理
 					AttachOffer.addOpenList(param.prodId,mktRes.terminal.offerSpecId);
@@ -2466,9 +2467,14 @@ AttachOffer = (function() {
 								});
 								if(flag){
 									if(OrderInfo.actionFlag == 1 || OrderInfo.actionFlag == 14){
-										html='<a id="li_'+prodId+'_'+this.offerSpecId+'" class="list-group-item" style="padding-right: 55px;" href="javascript:void(0);">';
-										html+='<h5 class="list-group-item-heading" onclick="AttachOffer.addOfferSpec('+prodId+','+this.offerSpecId+')">'+ this.offerSpecName +'</h5>';
-										html+='<span class="btn-span"><button type="button" class="btn btn-info" onclick="AttachOffer.addMyfavoriteSpec('+prodId+','+this.offerSpecId+',\''+this.offerSpecName+'\');">藏</button></span>';
+										html='<a id="li_'+prodId+'_'+this.offerSpecId+'" class="list-group-item" href="javascript:void(0);">';
+										var newSpec = _setMyfavoriteSpec(prodId,this.offerSpecId);
+										if(newSpec==undefined){
+											html+='<span class="glyphicon glyphicon-star nostar" style="margin-top: -6px;" onclick="AttachOffer.addMyfavoriteSpec('+prodId+','+this.offerSpecId+',\''+this.offerSpecName+'\',$(this)'+');"></span>';
+										}else{
+											html+='<span class="glyphicon glyphicon-star icon-star" style="margin-top: -6px;" onclick="AttachOffer.delMyfavoriteSpec('+prodId+',\''+'\','+this.offerSpecId+',\''+this.offerSpecName+'\',$(this)'+');"></span>';
+										}
+										html+='<h5 class="list-group-item-heading" style="padding-left: 40px;" onclick="AttachOffer.addOfferSpec('+prodId+','+this.offerSpecId+')">'+ this.offerSpecName +'</h5>';
 										html+='</a>';
 										$ul.append(html);
 										i++;
@@ -3378,7 +3384,7 @@ AttachOffer = (function() {
 		}
 	};
 	
-	var _initMyfavoriteSpec = function(prodId){
+	var _initMyfavoriteSpec = function(prodId,first){
 		OrderInfo.returnFlag="sc";
 		cang_prodId = prodId;
 		var prodSpecId = OrderInfo.getProdSpecId(prodId);
@@ -3448,9 +3454,9 @@ AttachOffer = (function() {
 						}
 					});
 					if(flag){
-						html+='<a id="li_'+prodId+'_'+this.offerSpecId+'" class="list-group-item" style="padding-right: 55px;" href="javascript:void(0);">';
-						html+='<h5 class="list-group-item-heading" onclick="AttachOffer.addOfferSpec('+prodId+','+this.offerSpecId+')">'+ this.offerSpecName +'</h5>';
-						html+='<span class="btn-span"><button type="button" class="btn btn-info" style="font-color:red;" onclick="AttachOffer.delMyfavoriteSpec('+prodId+','+prodSpecId+','+this.offerSpecId+',\''+this.offerSpecName+'\');">删</button></span>';
+						html+='<a id="li_'+prodId+'_'+this.offerSpecId+'" class="list-group-item" href="javascript:void(0);">';
+						html+='<span class="glyphicon glyphicon-star icon-star" style="margin-top: -6px;" onclick="AttachOffer.delMyfavoriteSpec('+prodId+','+prodSpecId+','+this.offerSpecId+',\''+this.offerSpecName+'\');"></span>';
+						html+='<h5 class="list-group-item-heading" style="padding-left: 40px;" onclick="AttachOffer.addOfferSpec('+prodId+','+this.offerSpecId+')">'+ this.offerSpecName +'</h5>';
 						html+='</a>';
 						i++;
 					}
@@ -3460,19 +3466,22 @@ AttachOffer = (function() {
 				html+='<a href="javascript:void(0);" class="list-group-item"><span>没有收藏的销售品</span></a>';
 			}
 		}
-		if(OrderInfo.actionFlag == 1){
-			$("#order-content").hide();
-		}else{
-			$('#terminalMain').hide();
+		if(first==undefined){
+			if(OrderInfo.actionFlag == 1){
+				$("#order-content").hide();
+			}else{
+				$('#terminalMain').hide();
+			}
+			if(prodId != -1){
+	    		$("#zjfk_"+prodId).hide();
+	    	}
+			$("#cang_div").html(html);
+			$("#my-cang").show();
 		}
-		if(prodId != -1){
-    		$("#zjfk_"+prodId).hide();
-    	}
-		$("#cang_div").html(html);
-		$("#my-cang").show();
+		
 	};
 	//收藏销售品到我的收藏里
-	var _addMyfavoriteSpec = function(prodId,offerSpecId,offerSpecName){
+	var _addMyfavoriteSpec = function(prodId,offerSpecId,offerSpecName,obj){
 		//去重，和已收藏的销售品去重
 		var newSpec = _setMyfavoriteSpec(prodId,offerSpecId);
 		if(newSpec==undefined){
@@ -3487,6 +3496,8 @@ AttachOffer = (function() {
 					query.offer.addMyfavorite(param);
 					newSpec = query.offer.queryAttachOfferSpec(prodId,offerSpecId); //重新获取销售品构成
 					CacheData.setMyfavoriteSpec(prodId,newSpec);
+					$(obj).removeClass("nostar").addClass("icon-star");
+					$(obj).attr("onclick","AttachOffer.delMyfavoriteSpec("+prodId+',\''+'\','+offerSpecId+',\''+offerSpecName+'\',$(this)'+");");
 				},
 				no:function(){
 				}
@@ -3496,9 +3507,10 @@ AttachOffer = (function() {
 		}
 	};
 	
-	var _delMyfavoriteSpec = function (prodId,prodSpecId,offerSpecId,offerSpecName){
-		//去重，和已收藏的销售品去重
-		//去重成功后，我的收藏重新加载，不调用服务，重缓存中去
+	var _delMyfavoriteSpec = function (prodId,prodSpecId,offerSpecId,offerSpecName,obj){
+		if(prodSpecId==""){
+			prodSpecId = OrderInfo.getProdSpecId(prodId);
+		}
 		var param = {   
 				offerSpecId : offerSpecId
 		};
@@ -3508,6 +3520,8 @@ AttachOffer = (function() {
 			},
 			yesdo:function(){
 				query.offer.delMyfavorite(param);
+				$(obj).removeClass("icon-star").addClass("nostar");
+				$(obj).attr("onclick","AttachOffer.addMyfavoriteSpec("+prodId+','+offerSpecId+',\''+offerSpecName+'\',$(this)'+");");
 				_initMyfavoriteSpec(prodId,prodSpecId);
 			},
 			no:function(){

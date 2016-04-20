@@ -10,9 +10,15 @@
 		<h5 class="list-group-item-heading">${item.offerSpecName}</h5>
 	</a>
 	<#else>
-	<a class="list-group-item" href="javascript:void(0);" id="str_${prodId}_${item.offerSpecId}" style="padding-right: 55px;">
+	<a class="list-group-item" href="javascript:void(0);" id="str_${prodId}_${item.offerSpecId}">
+	<!--
+		<#if item.ifFavorite??>
+		<span class="glyphicon glyphicon-star icon-star" style="margin-top: -6px;" onclick="AttachOffer.delMyfavoriteSpec('${prodId}','','${item.offerSpecId}','${item.offerSpecName}');"></span>
+		<#else>
+		<span class="glyphicon glyphicon-star nostar" style="margin-top: -6px;" onclick="AttachOffer.addMyfavoriteSpec('${prodId}','${item.offerSpecId}','${item.offerSpecName}');"></span>
+        </#if>
+		-->
 		<h5 class="list-group-item-heading" onclick="AttachOffer.selectAttachOffer(${prodId},${item.offerSpecId})">${item.offerSpecName}</h5>
-		<span class="btn-span"><button type="button" class="btn btn-info" onclick="AttachOffer.addMyfavoriteSpec('${prodId}','${item.offerSpecId}','${item.offerSpecName}');">藏</button></span>
 	</a>
 	</#if>
 	</#list>

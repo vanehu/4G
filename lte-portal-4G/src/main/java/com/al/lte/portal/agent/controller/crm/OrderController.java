@@ -920,17 +920,17 @@ public class OrderController extends BaseController {
         						}
         					}
         					prodOfferInfosList.get(i).put("inFlux", influx_str);
-        					if("Y".equals(prams.get("ifQueryFavorite"))){
-        						prodOfferInfosList.get(i).put("ifQueryFavorite", "Y");
-        						OfferIds += prodOfferInfosList.get(i).get("offerSpecId").toString()+",";//存储已收藏套餐的ＩＤ
-        					}
-        					if(httpSession.getAttribute("OfferIds")!=null){
-        						String ids = httpSession.getAttribute("OfferIds").toString();
-        						if(ids.indexOf(prodOfferInfosList.get(i).get("offerSpecId").toString())>=0){
-        							prodOfferInfosList.get(i).put("ifQueryFavorite", "Y");//已收藏的套餐打上收藏标识
-        						}
-        					}
         				}
+        				if("Y".equals(prams.get("ifQueryFavorite"))){
+    						prodOfferInfosList.get(i).put("ifQueryFavorite", "Y");
+    						OfferIds += prodOfferInfosList.get(i).get("offerSpecId").toString()+",";//存储已收藏套餐的ＩＤ
+    					}
+    					if(httpSession.getAttribute("OfferIds")!=null){
+    						String ids = httpSession.getAttribute("OfferIds").toString();
+    						if(ids.indexOf(prodOfferInfosList.get(i).get("offerSpecId").toString())>=0){
+    							prodOfferInfosList.get(i).put("ifQueryFavorite", "Y");//已收藏的套餐打上收藏标识
+    						}
+    					}
         			}
         			if("Y".equals(prams.get("ifQueryFavorite")) && httpSession.getAttribute("OfferIds")==null){
         				httpSession.setAttribute("OfferIds", OfferIds);
@@ -1019,17 +1019,17 @@ public class OrderController extends BaseController {
         						}
         					}
         					prodOfferInfosList.get(i).put("inFlux", influx_str);
-        					if("Y".equals(prams.get("ifQueryFavorite"))){
-        						prodOfferInfosList.get(i).put("ifQueryFavorite", "Y");
-        						OfferIds += prodOfferInfosList.get(i).get("offerSpecId").toString()+",";//存储已收藏套餐的ＩＤ
-        					}
-        					if(httpSession.getAttribute("OfferIds")!=null){
-        						String ids = httpSession.getAttribute("OfferIds").toString();
-        						if(ids.indexOf(prodOfferInfosList.get(i).get("offerSpecId").toString())>=0){
-        							prodOfferInfosList.get(i).put("ifQueryFavorite", "Y");//已收藏的套餐打上收藏标识
-        						}
-        					}
         				}
+        				if("Y".equals(prams.get("ifQueryFavorite"))){
+    						prodOfferInfosList.get(i).put("ifQueryFavorite", "Y");
+    						OfferIds += prodOfferInfosList.get(i).get("offerSpecId").toString()+",";//存储已收藏套餐的ＩＤ
+    					}
+    					if(httpSession.getAttribute("OfferIds")!=null){
+    						String ids = httpSession.getAttribute("OfferIds").toString();
+    						if(ids.indexOf(prodOfferInfosList.get(i).get("offerSpecId").toString())>=0){
+    							prodOfferInfosList.get(i).put("ifQueryFavorite", "Y");//已收藏的套餐打上收藏标识
+    						}
+    					}
         			}
         			if("Y".equals(prams.get("ifQueryFavorite")) && httpSession.getAttribute("OfferIds")==null){
         				httpSession.setAttribute("OfferIds", OfferIds);

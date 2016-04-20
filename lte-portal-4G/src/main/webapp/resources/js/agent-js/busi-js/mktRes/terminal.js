@@ -1476,6 +1476,7 @@ mktRes.terminal = (function($){
 			if (data) {
 				$("#attach_phone_"+param.prodId).html(data);
 				AttachOffer.showMainRoleProd(param.prodId); //通过主套餐成员显示角字
+				AttachOffer.initMyfavoriteSpec(param.prodId,0);//初始化我的收藏
 				AttachOffer.changeLabel(param.prodId,param.prodSpecId,"10001"); //初始化第一个标签附属
 				if(param.prodId==-1 && OrderInfo.actionFlag==14){ //合约计划特殊处理
 					AttachOffer.addOpenList(param.prodId,mktRes.terminal.offerSpecId);
