@@ -11,6 +11,7 @@ import com.al.ecs.spring.annotation.log.LogOperatorAnn;
 import com.al.ecs.spring.annotation.session.AuthorityValid;
 import com.al.ecs.spring.controller.BaseController;
 import com.al.lte.portal.bmo.crm.CustBmo;
+import com.al.lte.portal.bmo.crm.MktResBmo;
 import com.al.lte.portal.bmo.crm.OrderBmo;
 import com.al.lte.portal.bmo.staff.StaffBmo;
 import com.al.lte.portal.common.*;
@@ -45,7 +46,10 @@ public class CustController extends BaseController {
 	@Autowired
     @Qualifier("com.al.lte.portal.bmo.crm.OrderBmo")
     private OrderBmo orderBmo;
-	
+	@Autowired
+    @Qualifier("com.al.lte.portal.bmo.crm.MktResBmo")
+    private MktResBmo mktResBmo;
+
 	@RequestMapping(value = "/queryCust", method = { RequestMethod.POST })
     public String queryCust(@RequestBody Map<String, Object> paramMap, Model model,@LogOperatorAnn String flowNum,
             HttpServletResponse response,HttpSession httpSession,HttpServletRequest request) {
@@ -642,13 +646,25 @@ public class CustController extends BaseController {
 								Map custInfoMap = (Map<String, Object>) custInfos.get(i);
 								String queryCustId = MapUtils.getString(custInfoMap, "custId");
 								String custId = MapUtils.getString(param,"custId");
-								if (custId.equals(queryCustId)) {
-									map.put("isValidate", "true");
-									// 在session中保存当前客户信息
-									Map sessionCustInfo = MapUtils.getMap(listCustInfos, custId);
-									if (sessionCustInfo != null) {
-										httpSession.setAttribute(SysConstant.SESSION_CURRENT_CUST_INFO,sessionCustInfo);
-										listCustInfos.clear();
+
+								Map<String, Object> checkIdMap = new HashMap<String, Object>();
+								checkIdMap.put("areaId", MapUtils.getString(param,"areaId",""));
+								checkIdMap.put("custId", custId);
+								checkIdMap.put("idCardNumber",StringUtils.isNotBlank(identityNum)?Base64.eryDecoder(identityNum):"");
+								checkIdMap.put("idCardType",identityCd);
+
+								Map<String, Object> datamap = mktResBmo.checkIdCardNumber(checkIdMap,
+										flowNum, sessionStaff);
+								if (datamap != null) {
+									String code = (String) datamap.get("code");
+									if (ResultCode.R_SUCC.equals(code)) {
+										map.put("isValidate", "true");
+										// 在session中保存当前客户信息
+										Map sessionCustInfo = MapUtils.getMap(listCustInfos, custId);
+										if (sessionCustInfo != null) {
+											httpSession.setAttribute(SysConstant.SESSION_CURRENT_CUST_INFO,sessionCustInfo);
+											listCustInfos.clear();
+										}
 									}
 								}
 							}
