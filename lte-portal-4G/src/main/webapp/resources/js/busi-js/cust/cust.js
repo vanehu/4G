@@ -78,7 +78,7 @@ order.cust = (function(){
 		$('#custAuthFormID').bind('formIsValid', function(event, form) {
 			var param = _choosedCustInfo;
             param.pCustIdentityCd = $("#p_cust_identityCd").val();
-			param.identityNum =base64encode($.trim($("#authIDTD").val()));
+			param.identityNum =base64encode(utf16to8($.trim($("#authIDTD").val())));
 			param.custId = _choosedCustInfo.custId;
 			param.authFlag=authFlag;
 			$.callServiceAsHtml(contextPath+"/cust/custAuth",param,{
@@ -2208,7 +2208,7 @@ order.cust = (function(){
 		}
 		var param = _choosedCustInfo;
 		param.validateType = "1";
-		param.identityNum = base64encode(idCardNumber2);
+		param.identityNum = base64encode(utf16to8(idCardNumber2));
 		if(!ec.util.isObj(param.identityNum)){
 			$.alert("提示","证件号码不能为空！");
 			return;
