@@ -748,13 +748,13 @@ order.cust = (function(){
 				$("#custAuthTypeName").html("产品密码：");
 			}
 			var pCustIdentityCd = $("#p_cust_identityCd").val();
-			$("#idCardType2").text(_choosedCustInfo.identityName);
+			$("#auth3 #idCardType2").text(_choosedCustInfo.identityName);
 			if (_choosedCustInfo.identityCd == "1") {
-				$("#readCertBtnID2").show();
-				$("#idCardNumber2").attr("disabled", "disabled");
+				$("#auth3 #readCertBtnID2").show();
+				$("#auth3 #idCardNumber2").attr("disabled", "disabled");
 			} else {
-				$("#readCertBtnID2").hide();
-				$("#idCardNumber2").removeAttr("disabled");
+				$("#auth3 #readCertBtnID2").hide();
+				$("#auth3 #idCardNumber2").removeAttr("disabled");
 			}
 			var canRealName = $('#custInfos').parent().children('[selected="selected"]').attr('canrealname');
 			var accessNumber=_choosedCustInfo.accNbr;
@@ -1950,6 +1950,14 @@ order.cust = (function(){
 			$(this).hide();
 		});
 		$("#"+id+" #content"+tabId).show();
+		if (tabId == 2 && _choosedCustInfo.identityCd != "1") {
+			if (_isSelfChannel()) {
+				$("#" + id + " #idCardNumber2").removeAttr("disabled");
+			} else {
+				$("#" + id + " #idCardNumber2").attr("disabled", "disabled");
+				$.alert("提示", "请到电信自有营业厅办理业务！");
+			}
+		}
 	};
 
 	//鉴权方式日志记录
@@ -2179,8 +2187,24 @@ order.cust = (function(){
 		var idCardNumber2 = "";
 		if (level == "1") {
 			idCardNumber2 = $("#auth3 #idCardNumber2").val();
+			if (_choosedCustInfo.identityCd != "1") {
+				if (_isSelfChannel()) {
+					$("#auth3 #idCardNumber2").removeAttr("disabled");
+				} else {
+					$("#auth3 #idCardNumber2").attr("disabled", "disabled");
+					$.alert("提示", "请到电信自有营业厅办理业务！");
+				}
+			}
 		} else if (level == "2") {
 			idCardNumber2 = $("#auth2 #idCardNumber2").val();
+			if (_choosedCustInfo.identityCd != "1") {
+				if (_isSelfChannel()) {
+					$("#auth2 #idCardNumber2").removeAttr("disabled");
+				} else {
+					$("#auth2 #idCardNumber2").attr("disabled", "disabled");
+					$.alert("提示", "请到电信自有营业厅办理业务！");
+				}
+			}
 		}
 		var param = _choosedCustInfo;
 		param.validateType = "1";
@@ -2275,6 +2299,19 @@ order.cust = (function(){
 		_saveAuthRecordSuccess(recordParam);
 	};
 
+	//返回是否是自营渠道
+	var _isSelfChannel = function () {
+		var isSelfChannel = false;
+		if (OrderInfo.staff.channelType == CONST.CHANNEL_TYPE_CD.ZQZXDL || OrderInfo.staff.channelType == CONST.CHANNEL_TYPE_CD.GZZXDL
+			|| OrderInfo.staff.channelType == CONST.CHANNEL_TYPE_CD.HYKHZXDL || OrderInfo.staff.channelType == CONST.CHANNEL_TYPE_CD.SYKHZXDL
+			|| OrderInfo.staff.channelType == CONST.CHANNEL_TYPE_CD.XYKHZXDL || OrderInfo.staff.channelType == CONST.CHANNEL_TYPE_CD.GZZXJL
+			|| OrderInfo.staff.channelType == CONST.CHANNEL_TYPE_CD.ZYOUT || OrderInfo.staff.channelType == CONST.CHANNEL_TYPE_CD.ZYINGT
+			|| OrderInfo.staff.channelType == CONST.CHANNEL_TYPE_CD.WBT) {
+			isSelfChannel = true;
+		}
+		return isSelfChannel;
+	};
+
 	return {
 		form_valid_init : _form_valid_init,
 		showCustAuth : _showCustAuth,
@@ -2335,7 +2372,8 @@ order.cust = (function(){
 		smsvalid:_smsvalid,
 		productPwdAuth:_productPwdAuth,
 		identityTypeAuth:_identityTypeAuth,
-		showReadCert:_showReadCert
+		showReadCert:_showReadCert,
+		isSelfChannel:_isSelfChannel
 	};
 })();
 $(function() {
