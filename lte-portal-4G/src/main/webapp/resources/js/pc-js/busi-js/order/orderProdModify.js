@@ -3249,7 +3249,7 @@ order.prodModify = (function(){
 					}
 			 }
 		
-			if(rule2=="Y"){
+			if(rule2=="Y" ||(iseditOperation=="0" && OrderInfo.typeCd==4) ){
 				//记录到日志里
 				order.cust.saveAuthRecordFail(recordParam);
 				//如果是套餐变更
@@ -3311,10 +3311,10 @@ order.prodModify = (function(){
 			var rules=OrderInfo.rulesJson;
 			//员工权限
 			var iseditOperation=rules.iseditOperation;
-			if(OrderInfo.typeCd=="1"){
+			if(OrderInfo.typeCd=="1" ||(iseditOperation=="0" && OrderInfo.typeCd==4) ){
 				var recordParam={};
 				recordParam.validateType="1";
-				recordParam.validateLevel="2";
+				recordParam.validateLevel="1";
 				recordParam.custId=OrderInfo.cust.custId;
 				recordParam.accessNbr=OrderInfo.acctNbr;
 				recordParam.certType=OrderInfo.cust.identityCd;

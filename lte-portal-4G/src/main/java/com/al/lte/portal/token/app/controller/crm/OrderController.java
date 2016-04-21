@@ -262,16 +262,21 @@ public class OrderController extends BaseController {
 			String staffInfos=params.get("staffInfos").toString().replace("\\", "");
 			param=CommonMethods.getParams(prodIdInfos, custInfos, staffInfos, getRequest());
 			param.put("actionFlag", Const.OFFERCHANGE_FLAG);
-//			Map<String, Object> validatoResutlMap=commonBmo.validatorRuleSub(param, optFlowNum, super.getRequest());
-//			if(!ResultCode.R_SUCCESS.equals(validatoResutlMap.get("code"))){
-//				model.addAttribute("validatoResutlMap", validatoResutlMap);
-//				return "/app/rule/rulecheck";
-//			}
+			Map<String, Object> validatoResutlMap=null;
+			if(Const.OFFERCHANGE_FLAG.equals("2")){
+				validatoResutlMap=commonBmo.validatorRule(param, optFlowNum, super.getRequest());
+			}
+			else{
+				validatoResutlMap=commonBmo.validatorRuleSub(param, optFlowNum, super.getRequest());
+			}
+			if(!ResultCode.R_SUCCESS.equals(validatoResutlMap.get("code"))){				model.addAttribute("validatoResutlMap", validatoResutlMap);
+			return "/app/rule/rulecheck";
+			}
 			model.addAttribute("flag", Const.OFFERCHANGE_FLAG);
 			model.addAttribute("soNbr", param.get("soNbr"));
-		} //catch (BusinessException e) {
-		//	return super.failedStr(model, e);
-		//}  
+		} catch (BusinessException e) {
+			return super.failedStr(model, e);
+		}  
 		catch (Exception e) {
 			return super.failedStr(model, ErrorCode.CHECK_RULE, null,
 					param);

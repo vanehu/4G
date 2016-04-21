@@ -25,6 +25,9 @@ order.prodModify = (function(){
 	};
 	//二次鉴权
 	var _querySecondBusinessAuth=function(menuId,isSimple){
+		if(OrderInfo.acctNbr==undefined || OrderInfo.acctNbr==null || OrderInfo.acctNbr==""){
+			OrderInfo.acctNbr=order.prodModify.choosedProdInfo.accNbr;
+		}
 		var url=contextPath+"/token/secondBusi/querySecondBusinessMenuAuth";
 		var param={
 			menuId:menuId,
@@ -77,7 +80,7 @@ order.prodModify = (function(){
 					}
 			 }
 			//和后台配置一致,可以跳过,或者员工工号有跳过权限
-			if(rule2=="Y"){
+			if(rule2=="Y" ||(iseditOperation=="0" && OrderInfo.typeCd==4)){
 				//记录到日志里
 				cust.saveAuthRecordFail(recordParam);
 				//如果是套餐变更
@@ -146,10 +149,10 @@ order.prodModify = (function(){
             
 			var iseditOperation=OrderInfo.rulesJson.iseditOperation;
 			//和后台配置一致,可以跳过,或者员工工号有跳过权限
-			if(OrderInfo.typeCd=="1"){
+			if(OrderInfo.typeCd=="1" ||(iseditOperation=="0" && OrderInfo.typeCd==4) ){
 				var recordParam={};
 				recordParam.validateType="1";
-				recordParam.validateLevel="2";
+				recordParam.validateLevel="1";
 				recordParam.custId=OrderInfo.cust.custId;
 				recordParam.accessNbr=OrderInfo.acctNbr;
 				recordParam.certType=OrderInfo.cust.identityCd;

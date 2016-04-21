@@ -1766,7 +1766,7 @@ order.cust = (function(){
 		}else{
 			//错误
 			_saveAuthRecordFail(recordParam);
-			$.alertM(response.data.message);
+			$.alertM(response.data);
 		}
 		
 	};
@@ -1879,9 +1879,10 @@ order.cust = (function(){
 	var _smsResend = function () {
 		var param = {
 			"pageIndex": 1,
-			"pageSize": 10
+			"pageSize": 10,
+			"phone":OrderInfo.acctNbr
 		};
-		$.callServiceAsJson(contextPath + "/staffMgr/reSend", param, {
+		$.callServiceAsJson(contextPath + "/token/pad/staffMgr/reSendSub", param, {
 			"done": function (response) {
 				if (response.code == 0) {
 					$.alert("提示", "验证码发送成功，请及时输入验证.");

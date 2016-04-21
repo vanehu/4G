@@ -810,7 +810,7 @@ cust = (function(){
 			$.alert("提示","证件号码不能为空！");
 			return;
 		}
-		param.accessNumber=order.prodModify.choosedProdInfo.accNbr;
+		param.accessNumber=OrderInfo.acctNbr;
 		param.identityCd=OrderInfo.cust.identityCd;
 		param.areaId=OrderInfo.cust.areaId;
 		param.custId=OrderInfo.cust.custId;
@@ -883,7 +883,7 @@ cust = (function(){
 		}else{
 			//错误
 			_saveAuthRecordFail(recordParam);
-			$.alertM(response.data.message);
+			$.alertM(response.data);
 		}
 		
 	};
@@ -952,9 +952,10 @@ cust = (function(){
 	var _smsResend = function () {
 		var param = {
 			"pageIndex": 1,
-			"pageSize": 10
+			"pageSize": 10,
+			"phone":OrderInfo.acctNbr
 		};
-		$.callServiceAsJson(contextPath + "/staffMgr/reSend", param, {
+		$.callServiceAsJson(contextPath + "/token/pad/staffMgr/reSendSub", param, {
 			"done": function (response) {
 				if (response.code == 0) {
 					$.alert("提示", "验证码发送成功，请及时输入验证.");
@@ -975,7 +976,7 @@ cust = (function(){
 		var param = _choosedCustInfo;
 		var recordParam={};
 		recordParam.validateType="2";
-		recordParam.validateLevel="2";
+		recordParam.validateLevel="1";
 		recordParam.custId=OrderInfo.cust.custId;
 		recordParam.accessNbr=OrderInfo.acctNbr;
 		recordParam.certType=OrderInfo.cust.identityCd;

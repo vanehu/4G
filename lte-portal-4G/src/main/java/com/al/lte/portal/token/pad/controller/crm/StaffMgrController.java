@@ -664,4 +664,21 @@ public void toPraise(HttpServletRequest request,  HttpServletResponse response) 
 			}
 			return jsonResponse;
 	}
+	//重发校验码
+		@RequestMapping(value = "/reSendSub", method = RequestMethod.POST)
+		@ResponseBody
+		public JsonResponse reSendSub(HttpSession session,Model model ,@RequestBody Map<String, Object> param) {
+				JsonResponse jsonResponse = new JsonResponse();
+				SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+						SysConstant.SESSION_KEY_LOGIN_STAFF);
+				String phone=(String)param.get("phone");
+				try{
+					jsonResponse.setCode(0);
+		        	jsonResponse.setSuccessed(true);
+					sendMsg(session,phone,sessionStaff.getAreaId());
+				}catch(Exception e){
+					super.failed(ErrorCode.QUERY_STAFF_INFO, e, null);
+				}
+				return jsonResponse;
+		}
 }

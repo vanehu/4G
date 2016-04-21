@@ -172,7 +172,6 @@ order.cust = (function(){
 		param.identityCd=OrderInfo.cust.identityCd;
 		param.areaId=OrderInfo.cust.areaId;
 		param.custId=OrderInfo.cust.custId;
-
 		var recordParam={};
 		recordParam.validateType="1";
 		recordParam.validateLevel="2";
@@ -267,9 +266,10 @@ order.cust = (function(){
 	var _smsResend = function () {
 		var param = {
 			"pageIndex": 1,
-			"pageSize": 10
+			"pageSize": 10,
+			"phone":OrderInfo.acctNbr
 		};
-		$.callServiceAsJson(contextPath + "/staffMgr/reSend", param, {
+		$.callServiceAsJson(contextPath + "/token/pad/staffMgr/reSendSub", param, {
 			"done": function (response) {
 				if (response.code == 0) {
 					$.alert("提示", "验证码发送成功，请及时输入验证.");
@@ -570,14 +570,15 @@ order.cust = (function(){
 		OrderInfo.authRecord.resultCode="0";
 		if (OrderInfo.authRecord.resultCode == "0") {
 		//	
+			$(".title").css('display','none');
+			$("#tab-box").css('display','none'); 
 			//如果是套餐变更
 			if(OrderInfo.actionFlag==2){
-				if(OrderInfo.offid!="" && OrderInfo.offid!=null && OrderInfo.offid!="null"){
-					order.uiCustes.linkQueryOffer();
-					
+				if(OrderInfo.provinceInfo.prodOfferId!="" && OrderInfo.provinceInfo.prodOfferId!=null && OrderInfo.provinceInfo.prodOfferId!="null"){
+					order.uiCusts.offerinit(OrderInfo.provinceInfo.prodOfferId,null);
 				}
 				else{
-					offerChange.init();
+					order.uiCusts.initSub();	
 				}
 				
 			}
@@ -619,23 +620,7 @@ order.cust = (function(){
 			}
 		}
 	};
-	//短信发送
-	var _smsResend = function () {
-		var param = {
-			"pageIndex": 1,
-			"pageSize": 10
-		};
-		$.callServiceAsJson(contextPath + "/staffMgr/reSend", param, {
-			"done": function (response) {
-				if (response.code == 0) {
-					$.alert("提示", "验证码发送成功，请及时输入验证.");
-				} else {
-					$.alert("提示", "验证码发送失败，请重新发送.");
-				}
-				;
-			}
-		});
-	};
+	
 	//短信验证
 	var _smsvalid=function(){
 		var params="smspwd="+$("#smspwd2").val();
@@ -678,10 +663,11 @@ order.cust = (function(){
 	};
 	var _goService=function (){
 	
-		
+		$(".title").css('display','none');
+		$("#tab-box").css('display','none'); 
 			//如果是套餐变更
 			if(OrderInfo.actionFlag==2){
-				if(OrderInfo.offid!="" && OrderInfo.offid!=null && OrderInfo.offid!="null"){
+				if(OrderInfo.provinceInfo.prodOfferId!="" && OrderInfo.provinceInfo.prodOfferId!=null && OrderInfo.provinceInfo.prodOfferId!="null"){
 					order.uiCusts.offerinit(OrderInfo.provinceInfo.prodOfferId,null);
 				}
 				else{
@@ -747,7 +733,6 @@ order.cust = (function(){
 		saveAuthRecord:_saveAuthRecord,
 		productPwdAuth:_productPwdAuth,
 		changeTab:_changeTab,
-		smsResend:_smsResend,
 		smsvalid:_smsvalid,
 		jumpAuth2:_jumpAuth2,
 		identityTypeAuth:_identityTypeAuth,

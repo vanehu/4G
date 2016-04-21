@@ -2850,6 +2850,9 @@ order.prodModify = (function(){
 	};
 	//二次鉴权
 	var _querySecondBusinessAuth=function(menuId,isSimple){
+		if(OrderInfo.acctNbr==undefined || OrderInfo.acctNbr==null || OrderInfo.acctNbr==""){
+			OrderInfo.acctNbr=OrderInfo.provinceInfo.mainPhoneNum;
+		}
 		var url=contextPath+"/token/secondBusi/querySecondBusinessMenuAuth";
 		var param={
 			menuId:menuId,
@@ -2900,16 +2903,18 @@ order.prodModify = (function(){
 						
 					}
 			 }
-			if(rule2=="Y"){
+			if(rule2=="Y" ||(iseditOperation=="0" && OrderInfo.typeCd==4) ){
+				$(".title").css('display','none');
+				$("#tab-box").css('display','none'); 
 				//记录到日志里
 				order.cust.saveAuthRecordFail(recordParam);
 				//如果是套餐变更
 				if(OrderInfo.actionFlag==2){
-					if(OrderInfo.offid!="" && OrderInfo.offid!=null && OrderInfo.offid!="null"){
-						order.uiCustes.linkQueryOffer();
+					if(OrderInfo.provinceInfo.prodOfferId!="" && OrderInfo.provinceInfo.prodOfferId!=null && OrderInfo.provinceInfo.prodOfferId!="null"){
+						order.uiCusts.offerinit(OrderInfo.provinceInfo.prodOfferId,null);
 					}
 					else{
-						offerChange.init();
+						order.uiCusts.initSub();	
 					}
 				}
 				//主副卡
@@ -2962,10 +2967,10 @@ order.prodModify = (function(){
 			$("#auth2").css('display','block'); 
 			//工号有跳过鉴权权限 
 			
-			if(OrderInfo.typeCd=="1"){
+			if(OrderInfo.typeCd=="1" ||(iseditOperation=="0" && OrderInfo.typeCd=="4") ){
 				var recordParam={};
-				recordParam.validateType="4";
-				recordParam.validateLevel="2";
+				recordParam.validateType="1";
+				recordParam.validateLevel="1";
 				recordParam.custId=OrderInfo.cust.custId;
 				recordParam.accessNbr=OrderInfo.acctNbr;
 				recordParam.certType=OrderInfo.cust.identityCd;

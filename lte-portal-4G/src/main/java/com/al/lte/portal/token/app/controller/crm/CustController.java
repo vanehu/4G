@@ -144,9 +144,7 @@ public class CustController extends BaseController {
   				paramMap.put("prodPwd", param.get("prodPwd"));
   				paramMap.put("areaId",param.get("areaId"));
   				map=new HashMap();	
-  				//map = custBmo.custAuth(paramMap,flowNum, sessionStaff);
-  				map.put("code", "0");
-  				map.put("isValidate", "true");
+  				map = custBmo.custAuth(paramMap,flowNum, sessionStaff);
   				String resultCode = MapUtils.getString(map, "code");
   				String isValidateStr = MapUtils.getString(map, "isValidate");
   				if ("true".equals(isValidateStr)) {
@@ -158,11 +156,11 @@ public class CustController extends BaseController {
   					map.put("message","产品密码错误");
   					jsonResponse = super.failed(ErrorCode.CUST_AUTH, map, paramMap);
   				}
-  			} //catch (BusinessException be) {
-  			//	return super.failed(be);
-  			//} catch (InterfaceException ie) {
-  				//return super.failed(ie, map, ErrorCode.CUST_AUTH);
-  			//} 
+  			} catch (BusinessException be) {
+  				return super.failed(be);
+  			} catch (InterfaceException ie) {
+  				return super.failed(ie, map, ErrorCode.CUST_AUTH);
+  			} 
   		     catch (Exception e) {
   				return super.failed(ErrorCode.CUST_AUTH, e, map);
   			}
