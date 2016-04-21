@@ -143,7 +143,7 @@ order.cust = (function(){
 	};
 	//客户类型选择事件
 	var _partyTypeCdChoose = function(scope,id) {
-		var partyTypeCd=$(scope).val();
+		var partyTypeCd=OrderInfo.cust.identityCd;//$(scope).val();
 		//客户类型关联证件类型下拉框
 		$("#"+id).empty();
 		_certTypeByPartyType(partyTypeCd,id);
@@ -242,7 +242,7 @@ order.cust = (function(){
 	};
 	//创建客户证件类型选择事件
 	var _identidiesTypeCdChoose = function(scope,id) {
-		var identidiesTypeCd=$(scope).val();
+		var identidiesTypeCd=OrderInfo.cust.identityCd;//$(scope).val();
 		if(identidiesTypeCd==1){
 			$("#"+id).attr("placeHolder","请输入合法身份证号码");
 			$("#"+id).attr("data-validate","validate(idCardCheck18:请输入合法身份证号码) on(blur)");
@@ -451,10 +451,10 @@ order.cust = (function(){
 	};
 	
 	var _jumpAuth = function() {
-		if(order.cust.jumpAuthflag!="0"){
-			$.alert("提示","没有跳过校验权限！");
-			return;
-		}
+//		if(order.cust.jumpAuthflag!="0"){
+//			$.alert("提示","没有跳过校验权限！");
+//			return;
+//		}
 		var param = _choosedCustInfo;
 		param.authFlag="1";
 		$.callServiceAsHtml(contextPath+"/cust/custAuth",param,{
@@ -1476,6 +1476,7 @@ order.cust = (function(){
 					
 					order.cust.jumpAuthflag = $(response.data).find('#jumpAuthflag').val();
 					order.cust.showCustAuth($(response.data).find('#custInfos'));
+					_jumpAuth();
 //					var content$ = $("#custList");
 //					content$.html(response.data).show();
 //					$(".userclose").off("click").on("click",function(event) {

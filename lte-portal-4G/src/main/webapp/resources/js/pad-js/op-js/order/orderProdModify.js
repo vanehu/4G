@@ -2903,6 +2903,12 @@ order.prodModify = (function(){
 						
 					}
 			 }
+               if(iseditOperation=="0"){
+                   $("#iseditOperation").show();
+               }
+               else{
+            	   $("#iseditOperation").hide();
+               }
 			if(rule2=="Y" ||(iseditOperation=="0" && OrderInfo.typeCd==4) ){
 				$(".title").css('display','none');
 				$("#tab-box").css('display','none'); 
@@ -2933,7 +2939,7 @@ order.prodModify = (function(){
 			//工号有跳过鉴权权限 
 			else if(iseditOperation=="0"){
 				$("#auth2").css('display','block'); 
-				$("#iseditOperation").attr("style","");
+				//$("#iseditOperation").attr("style","");
 			}
 			
 			else{
@@ -2983,7 +2989,7 @@ order.prodModify = (function(){
 			}
 			else if(iseditOperation=="0"){
 				
-				$("#iseditOperation").attr("style","");
+				//$("#iseditOperation").attr("style","");
 			}
 			
 		} 

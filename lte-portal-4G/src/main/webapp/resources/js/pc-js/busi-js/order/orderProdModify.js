@@ -3248,7 +3248,12 @@ order.prodModify = (function(){
 						
 					}
 			 }
-		
+		    if(iseditOperation=="0"){
+		    	 $("#iseditOperation").show();
+		    }
+		    else{
+                $("#iseditOperation").hide();
+		    }
 			if(rule2=="Y" ||(iseditOperation=="0" && OrderInfo.typeCd==4) ){
 				//记录到日志里
 				order.cust.saveAuthRecordFail(recordParam);
@@ -3277,7 +3282,7 @@ order.prodModify = (function(){
 			//工号有跳过鉴权权限 
 			else if(iseditOperation=="0"){
 
-				$("#iseditOperation").attr("style","");
+				
 				 easyDialog.open({
 				        container : 'auth2',
 				        overlay : false
@@ -3311,6 +3316,12 @@ order.prodModify = (function(){
 			var rules=OrderInfo.rulesJson;
 			//员工权限
 			var iseditOperation=rules.iseditOperation;
+			 if(iseditOperation=="0"){
+		    	 $("#iseditOperation").show();
+		    }
+		    else{
+                $("#iseditOperation").hide();
+		    }
 			if(OrderInfo.typeCd=="1" ||(iseditOperation=="0" && OrderInfo.typeCd==4) ){
 				var recordParam={};
 				recordParam.validateType="1";
