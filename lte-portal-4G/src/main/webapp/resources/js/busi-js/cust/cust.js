@@ -2193,6 +2193,7 @@ order.cust = (function(){
 				} else {
 					$("#auth3 #idCardNumber2").attr("disabled", "disabled");
 					$.alert("提示", "请到电信自有营业厅办理业务！");
+					return;
 				}
 			}
 		} else if (level == "2") {
@@ -2203,6 +2204,7 @@ order.cust = (function(){
 				} else {
 					$("#auth2 #idCardNumber2").attr("disabled", "disabled");
 					$.alert("提示", "请到电信自有营业厅办理业务！");
+					return;
 				}
 			}
 		}
