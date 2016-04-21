@@ -4471,7 +4471,7 @@ public class OrderController extends BaseController {
 			 paramMap.put("queryType","11");
 			 paramMap.put("queryTypeValue",sessionStaff.getInPhoneNum());
 			 paramMap.put("staffCode", sessionStaff.getStaffCode());
-			 paramMap.put("state", "ADD");
+			 paramMap.put("state", "DEL");
 			 paramMap.put("totalScore", "0");
 			 paramMap.put("pointInfos", pointInfoList);
 			 rMap = orderBmo.reducePoingts(paramMap, flowNum, sessionStaff);
