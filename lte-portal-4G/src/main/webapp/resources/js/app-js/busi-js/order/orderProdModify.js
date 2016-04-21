@@ -63,9 +63,7 @@ order.prodModify = (function(){
 			if(iseditOperation!="0"){
 				$("#iseditOperation").hide();
 			}
-			else{
-				$("#iseditOperation").show();
-			}
+			
 			//和后台配置一致,可以跳过,或者员工工号有跳过权限
 			var rule2="";
 			 for(var r in rules){ 
@@ -157,9 +155,7 @@ order.prodModify = (function(){
 			if(iseditOperation!="0"){
 				$("#iseditOperation").hide();
 			}
-			else{
-				$("#iseditOperation").show();
-			}
+			
 			//和后台配置一致,可以跳过,或者员工工号有跳过权限
 			if(OrderInfo.typeCd=="1" ||(iseditOperation=="0" && OrderInfo.typeCd==4) ){
 				var recordParam={};
@@ -184,13 +180,13 @@ order.prodModify = (function(){
 			//工号有跳过鉴权权限 
 			else  if(iseditOperation=="0"){
 				$("#auth2").css('display','block'); 
-				//$("#iseditOperation").attr("style","");
+//				//$("#iseditOperation").attr("style","");
 			}
 			
 			else{
 //				//显示跳过鉴权按钮 
-				$("#iseditOperation").attr("style","");
-				//$("#auth2").css('display','block'); 
+//				$("#iseditOperation").attr("style","");
+				 $("#auth2").css('display','block'); 
 			}
 			
 		} 

@@ -2937,16 +2937,12 @@ order.prodModify = (function(){
 			}
 			
 			//工号有跳过鉴权权限 
-			else if(iseditOperation=="0"){
+			else {
 				$("#auth2").css('display','block'); 
 				//$("#iseditOperation").attr("style","");
 			}
 			
-			else{
-//				//显示跳过鉴权按钮 
-//				$("#iseditOperation").attr("style","");
-				
-			}
+
 			
 		} 
 		
@@ -2972,7 +2968,12 @@ order.prodModify = (function(){
 			var iseditOperation=rules.iseditOperation;
 			$("#auth2").css('display','block'); 
 			//工号有跳过鉴权权限 
-			
+			 if(iseditOperation=="0"){
+                 $("#iseditOperation").show();
+             }
+             else{
+          	   $("#iseditOperation").hide();
+             }
 			if(OrderInfo.typeCd=="1" ||(iseditOperation=="0" && OrderInfo.typeCd=="4") ){
 				var recordParam={};
 				recordParam.validateType="1";
@@ -2987,8 +2988,8 @@ order.prodModify = (function(){
 				$("#auth2").css('display','none'); 
 				order.prepare.commonTab(url,"order_tab_panel_offer");
 			}
-			else if(iseditOperation=="0"){
-				
+			else {
+				$("#auth2").css('display','block'); 
 				//$("#iseditOperation").attr("style","");
 			}
 			
