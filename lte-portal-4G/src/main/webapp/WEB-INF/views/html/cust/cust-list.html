@@ -22,7 +22,10 @@
 </table>
 <#elseif multiCust=="Y">
 	<div class="userclose"></div>
-	<div><input id="jumpAuthflag" type="hidden" value="${jumpAuthflag}"/></div>
+	<div>
+		<input id="jumpAuthflag" type="hidden" value="${jumpAuthflag}"/>
+		<input id="custInfoSize" type="hidden" value="${custInfoSize}"/>
+	</div>
 	<table class="contract_list" id="custListTable" style="width:700px;" custInfoSize="${custInfoSize}">
 		<thead>
 			<tr>
@@ -53,7 +56,10 @@
 	<!--页码 end-->
 <#else>
 	<div class="userclose"></div>
-	<div><input id="jumpAuthflag" type="hidden" value="${jumpAuthflag}"/></div>
+	<div>
+		<input id="jumpAuthflag" type="hidden" value="${jumpAuthflag}"/>
+		<input id="custInfoSize" type="hidden" value="${custInfoSize}"/>
+	</div>
 	<table class="contract_list" id="custListTable" style="width:700px;" custInfoSize="${custInfoSize}">
 		<thead>
 			<tr>

@@ -758,7 +758,7 @@ order.cust = (function(){
 				$("#auth3 #readCertBtnID2").hide();
 				$("#auth3 #idCardNumber2").removeAttr("disabled");
 			}
-			var canRealName = $('#custInfos').parent().children('[selected="selected"]').attr('canrealname');
+			var canRealName = $(scope).attr('canrealname');
 			var accessNumber=_choosedCustInfo.accNbr;
 			if(-1==$("#p_cust_identityCd").val()){
 				accessNumber=$.trim($("#p_cust_identityNum").val());
@@ -1862,10 +1862,25 @@ order.cust = (function(){
 					}
 					
 					order.cust.jumpAuthflag = $(response.data).find('#jumpAuthflag').val();
-					order.cust.showCustAuth($(response.data).find('#custInfos'));
-					var content$ = $("#custList");
-					content$.html(response.data).show();
+					var custInfoSize = $(response.data).find('#custInfoSize').val();
+					// 使用人定位时，存在多客户的情况
+					if (custInfoSize == 1) {
+						order.cust.showCustAuth($(response.data).find('#custInfos'));
+					} else if (custInfoSize > 1) {
+						$("#choose_multiple_user_dialog").html(response.data);
+						easyDialog.open({
+							container: 'choose_multiple_user_dialog',
+							callback: function () {
+							}
+						});
+					}
 					$(".userclose").off("click").on("click",function(event) {
+						try {
+							easyDialog.close();
+						} catch (e) {
+							$('#choose_multiple_user_dialog').hide();
+							$('#overlay').hide();
+						}
 						authFlag="";
 						$(".usersearchcon").hide();
 					});
