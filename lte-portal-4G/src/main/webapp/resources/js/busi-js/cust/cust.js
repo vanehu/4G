@@ -948,7 +948,7 @@ order.cust = (function(){
 				content$.html(response.data);
 				//_linkSelectPlan("#phoneNumListtbody tr",$("#phoneNumListtbody").children(":first-child"));
 				//绑定每行合约click事件
-				$("#phoneNumListtbody>tr").off("click").on("click",function(event){
+				$("#phoneNumListtbody>tr:even").off("click").on("click",function(event){
 					var thisTr=this;
 					if(1==OrderInfo.order.step&&(!$(thisTr).hasClass("plan_select"))){
 						$.confirm("确认","你已重新选择号码，需跳转至上一步，是否确认?",{
@@ -1032,7 +1032,7 @@ order.cust = (function(){
 		//打勾操作
 		var nike="<i class='select'></i>";
 		$(selected).children(":first-child").html(nike);
-		
+
 		$(selected).next("#plan2ndTr").find("#plan2ndDiv tbody tr:first").click();
 		
 	};
