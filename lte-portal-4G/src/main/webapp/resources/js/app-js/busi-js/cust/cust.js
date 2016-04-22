@@ -48,6 +48,7 @@ cust = (function(){
 			OrderInfo.boPartyContactInfo.contactName = $.trim($('#contactName').val());//联系人
 			OrderInfo.boPartyContactInfo.mobilePhone = $.trim($('#mobilePhone').val());//联系人手机
 			OrderInfo.boPartyContactInfo.contactAddress = $.trim($('#contactAddress').val());//联系人地址
+			OrderInfo.cust.custOther1 = JSON.stringify(OrderInfo.boPartyContactInfo);
 		}
 		if(OrderInfo.cust.identityCd==1){
 			OrderInfo.cust.identityNum = $('#cmCustIdCard').val();//证件号码
@@ -69,7 +70,6 @@ cust = (function(){
 			}
 			SoOrder.submitOrder(data);
 		}else{
-			
 			common.saveCust();
 		}
 	};

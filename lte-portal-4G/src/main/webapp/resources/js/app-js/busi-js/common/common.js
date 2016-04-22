@@ -19,6 +19,10 @@ common = (function($) {
 		}
 		if(ec.util.isObj(custInfos)){
 			OrderInfo.cust=$.parseJSON(custInfosParams);
+			var custOther1 = OrderInfo.cust.custOther1;
+			if(custOther1 && custOther1!=""){
+			   OrderInfo.boPartyContactInfo = $.parseJSON(custOther1);
+			}
 		}
 		var param={
 			"staffInfos":staffInfosParams,

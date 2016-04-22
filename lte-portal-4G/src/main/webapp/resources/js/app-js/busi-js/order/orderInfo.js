@@ -55,7 +55,8 @@ OrderInfo = (function() {
 		vipLevel : "",
 		vipLevelName : "",
 		custFlag :"1100", //1000：红客户，1100：白客户，1200：黑客户
-		identityPic : ""
+		identityPic : "",
+		custOther1:""
 	}; 
 	
 	var _staff = { //员工登陆信息

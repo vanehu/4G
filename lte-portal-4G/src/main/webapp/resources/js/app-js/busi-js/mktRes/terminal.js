@@ -641,7 +641,7 @@ mktRes.terminal = (function($){
 		}else{
 			param.mktResId=$("#mktResId").val();
 		}
-		var url = contextPath+"/mktRes/terminal/checkTerminal";
+		var url = contextPath+"/app/mktRes/terminal/checkTerminal";
 		$.callServiceAsJson(url,param,{
 			"done" : function(response){
 				if (response && response.code == -2) {
