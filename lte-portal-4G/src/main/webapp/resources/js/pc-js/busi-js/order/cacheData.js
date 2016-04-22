@@ -98,6 +98,38 @@ CacheData = (function() {
 		}
 	};
 	
+	//把我已收藏的销售品保存到开通列表里面
+	var _setMyfavoriteSpec = function(prodId,offerSpec){
+		var flag = true ; 
+		for (var i = 0; i < AttachOffer.myFavoriteList.length; i++) { //没有收藏
+			var favorite = AttachOffer.myFavoriteList[i];
+			if(favorite.prodId==prodId){
+				flag = false;
+				break;
+			}
+		} 
+		if(flag){
+			var favorite = {
+				prodId : prodId,
+				favoriteList : []
+			};
+			AttachOffer.myFavoriteList.push(favorite);
+		}
+		CacheData.getMyfavoriteSpecList(prodId).push(offerSpec);//添加到我已收藏的销售品列表中
+	};
+	
+	//通过产品id获取产品已收藏的销售品列表
+	var _getMyfavoriteSpecList = function (prodId){
+		for ( var i = 0; i < AttachOffer.myFavoriteList.length; i++) {
+			var favorite = AttachOffer.myFavoriteList[i];
+			if(favorite.prodId == prodId){
+				return favorite.favoriteList;
+			} 
+		}
+		return []; //如果没值返回空数组
+	};
+	
+	
 	//获取参数内容
 	var _getParamContent = function(prodId,spec,flag){
 		var content = '<form id="paramForm"><table>' ;
@@ -1015,6 +1047,18 @@ CacheData = (function() {
 		}
 		data.offerMemberInfos = tmpOfferMemberInfos;
 	};
+	//通过产品id,跟销售品规格id获取销售品构成
+	var _getFavoriteSpec = function(prodId,offerSpecId){
+		var favoriteList = _getMyfavoriteSpecList(prodId);
+		if(favoriteList!=undefined){
+			for ( var i = 0; i < favoriteList.length; i++) {
+				if(favoriteList[i].offerSpecId==offerSpecId){
+					return favoriteList[i];
+				}
+			}
+		}
+	};
+	
 	// 获取政企客户证件类型
 	var govCertTyteArr = [];
 	var _getGovCertType = function() {
@@ -1076,6 +1120,9 @@ CacheData = (function() {
 		parseOffer				: _parseOffer,
 		getOldOfferMember		: _getOldOfferMember,
 		getGovCertType          : _getGovCertType,
-		setRecordId:_setRecordId
+		setRecordId:_setRecordId,
+		setMyfavoriteSpec:_setMyfavoriteSpec,
+		getMyfavoriteSpecList:_getMyfavoriteSpecList,
+		getFavoriteSpec:_getFavoriteSpec
 	};
 })();

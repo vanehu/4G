@@ -772,7 +772,25 @@ query.offer = (function() {
 			}
 		}
 	};
-	
+	//添加销售品
+	var _addMyfavorite = function (param){
+		addParam(param);  //添加基本参数
+		var url = contextPath+"/offer/addMyfavorite";
+		$.ecOverlay("<strong>收藏功能产品中，请稍等...</strong>");
+		var response = $.callServiceAsJsonGet(url,param);	
+		$.unecOverlay();
+		if (response.code==0) {
+			if(response.data){
+				return response.data;
+			}
+		}else if (response.code==1){
+			$.alert("提示",response.data);
+			return;
+		}else {
+			$.alert("提示","收藏功能产品失败,稍后重试");
+			return;
+		}
+	};
 	//补充查询基本条件
 	var addParam = function(param){
 		param.staffId = OrderInfo.staff.staffId;
@@ -904,7 +922,44 @@ query.offer = (function() {
 			return;
 		}
 	};
-	
+	//查询我的收藏
+	var _queryMyfavorite = function(param) {
+		addParam(param);  //添加基本参数
+		var url = contextPath+"/offer/queryMyfavorite";
+		$.ecOverlay("<strong>查询收藏功能产品中，请稍等...</strong>");
+		var response = $.callServiceAsJsonGet(url,{strParam:JSON.stringify(param)});	
+		$.unecOverlay();
+		if (response.code==0) {
+			if(response.data){
+				return response.data;
+			}
+		}else if (response.code==-2){
+			$.alertM(response.data);
+			return;
+		}else {
+			$.alert("提示","查询我的收藏失败,稍后重试");
+			return;
+		}
+	};
+	//取消收藏销售品
+	var _delMyfavorite = function (param){
+		addParam(param);  //添加基本参数
+		var url = contextPath+"/offer/delMyfavorite";
+		$.ecOverlay("<strong>取消收藏功能产品中，请稍等...</strong>");
+		var response = $.callServiceAsJsonGet(url,param);	
+		$.unecOverlay();
+		if (response.code==0) {
+			if(response.data){
+				return response.data;
+			}
+		}else if (response.code==-2){
+			$.alertM(response.data);
+			return;
+		}else {
+			$.alert("提示","取消收藏功能产品失败,稍后重试");
+			return;
+		}
+	};
 	// 查询功能产品规格,(默认1，必须2，可订购3)
 	var _queryServSpecPost = function(param) {
 		addParam(param);  //添加基本参数
@@ -953,7 +1008,10 @@ query.offer = (function() {
 		queryMainCartAttachOffer: _queryMainCartAttachOffer,
 		queryProdInstParam		: _queryProdInstParam,
 		invokeLoadInstSub		:_invokeLoadInstSub,
-		queryServSpecPost		: _queryServSpecPost
+		queryServSpecPost		: _queryServSpecPost,
+		queryMyfavorite:_queryMyfavorite,
+		delMyfavorite:_delMyfavorite,
+		addMyfavorite:_addMyfavorite
 		
 	};
 })();

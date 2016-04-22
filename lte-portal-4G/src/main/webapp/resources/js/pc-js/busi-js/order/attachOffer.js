@@ -9,7 +9,7 @@ CommonUtils.regNamespace("AttachOffer");
 
 /** 附属销售品受理对象*/
 AttachOffer = (function() {
-
+	var _myFavoriteList = [];//保存我已收藏的销售品
 	var _openList = []; //保存已经选择的附属销售品列表，保存附属销售品完整节点，以及参数值
 	
 	var _openedList = []; //已经订购的附属销售品列表，保存附属销售品完整节点，以及参数值
@@ -3342,6 +3342,13 @@ AttachOffer = (function() {
 				});
 			}
 		});
+  $("#[id^=myfavorites_]").removeClass("setcon");
+  $("#[id^=tab_myfavorites_]").hide();
+//	  var id="div_label_"+prodId;
+//	  $("#"+id+" ul").find("li").each(function () {
+//	   $(this).removeClass("setcon");
+//		});
+//		$("#tab_"+prodId+"_"+labelId).addClass("setcon");
 		var $ul = $("#ul_"+prodId+"_"+labelId); //创建ul
 		if($ul[0]==undefined){ //没有加载过，重新加载  
 			var queryType = "3";
@@ -3522,7 +3529,10 @@ AttachOffer = (function() {
 									var $dd = $('<dd class="canchoose" onclick="AttachOffer.addOfferSpec('+prodId+','+this.offerSpecId+')"></dd>');
 									var $span = $('<span><a href="javascript:AttachOffer.addOfferSpec('+prodId+','+this.offerSpecId+')" >'+this.offerSpecName+'</a></span>');
 									var $dd2 = $('<dd class="canshu2" onclick="AttachOffer.offerSpecDetail('+prodId+','+this.offerSpecId+')"><img src="'+contextPath+'/image/common/more.png"/></dd>');
-									$li.append($dd).append($span).append($dd2).appendTo($ul);
+								//	var $dd3 = $('<dd class="canshu2" onclick="AttachOffer.addMyfavoriteSpec('+prodId+','+this.offerSpecId+')"><img src="'+contextPath+'/image/common/cang.png"/></dd>');
+									var $dd3 = $("<dd class=\"canshu2\" onclick=\"AttachOffer.addMyfavoriteSpec("+prodId+","+this.offerSpecId+",'"+this.offerSpecName+"')\"><img src=\""+contextPath+"/image/common/cang.png\"/></dd>");
+									$li.append($dd).append($span).append($dd2).append($dd3);
+									$ul.append($li);
 								}
 							});
 						}
@@ -3532,7 +3542,142 @@ AttachOffer = (function() {
 			}
 		}
 	};
+	//我的收藏
+	var _initMyfavoriteSpec = function(prodId,prodSpecId){
+		var id="div_label_"+prodId
+		$("#"+id+" ul").find("li").each(function () {
+			 $(this).removeClass("setcon");
+		});
+		
+		$("#myfavorites_"+prodId).addClass("setcon");
+		//$("#myfavorites_"+prodId).siblings().removeClass("setcon");
+		
+		var offerSpec = OrderInfo.offerSpec; //获取产品信息
+        if(offerSpec.offerRoles != undefined  && offerSpec.offerRoles[0].prodInsts != undefined){
+        	var prodInsts = offerSpec.offerRoles[0].prodInsts;
+    		var param = {
+    				prodSpecId : '',
+    				offerSpecIds : [],
+    				offerRoleId: '',
+    				prodId : ''			
+    		};
+    		for ( var i = 0; i < prodInsts.length; i++) {
+    			var prodInst = prodInsts[i];
+    			if(prodInst.prodInstId == prodId){
+    				param.prodSpecId = prodInst.objId;
+    				param.offerRoleId = prodInst.offerRoleId;
+    				param.prodId = prodInst.prodInstId;
+    				param.offerSpecIds.push(OrderInfo.offerSpec.offerSpecId);
+    			}else if(prodId == '-2'){
+    				param.prodSpecId = prodSpecId;
+    				param.offerRoleId = '';
+    				param.prodId = prodId;
+    				param.offerSpecIds = [];
+    			}
+    		}
+        }else{
+        	var param = {
+    				prodSpecId : prodSpecId,
+    				offerSpecIds : [],
+    				offerRoleId: '',
+    				prodId : prodId			
+    		};
+        }
+		
+		var data = query.offer.queryMyfavorite(param);
+		//清空缓存中的收藏夹
+		AttachOffer.myFavoriteList = [];
+		var $ul = $('<ul id="tab_myfavorites_'+prodId+'"></ul>');
+		if(data!=undefined && data.resultCode == "0"){
+			if(ec.util.isArray(data.result.offerSpecList)){
+				var offerList = CacheData.getOfferList(prodId); //过滤已订购
+				var offerSpecList = CacheData.getOfferSpecList(prodId);//过滤已选择
+				$.each(data.result.offerSpecList,function(){
+					CacheData.setMyfavoriteSpec(prodId,this);//把我的收藏放在缓存里
+					var offerSpecId = this.offerSpecId;
+					var flag = true;
+					var ifOrderAgain=this.ifOrderAgain;//是否可以重复订购
+					$.each(offerList,function(){
+						if(this.offerSpecId==offerSpecId&&this.isDel!="C"&&ifOrderAgain!="Y"){
+							flag = false;
+							return false;
+						}
+					});
+					$.each(offerSpecList,function(){
+						if(this.offerSpecId==offerSpecId&&ifOrderAgain!="Y"){
+							flag = false;
+							return false;
+						}
+					});
+					if(flag){
+						var $li = $('<li id="li_'+prodId+'_'+this.offerSpecId+'"></li>');
+						if(ec.util.isObj(ifOrderAgain)&&ifOrderAgain=="Y"){
+							$li = $('<li id="li_'+prodId+'_'+this.offerSpecId+'_'+ifOrderAgain+'"></li>');
+						}
+						var $dd = $('<dd class="canchoose" onclick="AttachOffer.addOfferSpec('+prodId+','+this.offerSpecId+')"></dd>');
+						var $span = $('<span><a href="javascript:AttachOffer.addOfferSpec('+prodId+','+this.offerSpecId+')" >'+this.offerSpecName+'</a></span>');
+						var $dd2 = $('<dd class="time2" onclick="AttachOffer.offerSpecDetail('+prodId+','+this.offerSpecId+')"><img src="'+contextPath+'/image/common/more.png"/></dd>');
+						var $dd3 = $('<dd class="canshu2" onclick="AttachOffer.delMyfavoriteSpec('+prodId+','+prodSpecId+','+this.offerSpecId+',\''+this.offerSpecName+'\')"><img src="'+contextPath+'/image/common/deladd.png"/></dd>');
+						if(this.ifReset=="N"){
+							var $dd4 = $('<dd><img src="'+contextPath+'/image/common/no.png"/></dd>');
+							$dd2.append($dd4);
+						}
+						$li.append($dd).append($span).append($dd2).append($dd3);
+						$ul.append($li);
+					}
+				});
+			}
+		}
+		$("#div_"+prodId).html($ul);
+	};
+	//添加可选包到缓存列表
+	var _setMyfavoriteSpec = function(prodId,offerSpecId){
+		var newSpec = CacheData.getFavoriteSpec(prodId,offerSpecId);  //没有在已收藏列表里面
+		return newSpec;
+	};
+	//收藏销售品到我的收藏里
+	var _addMyfavoriteSpec = function(prodId,offerSpecId,offerSpecName){
+		//去重，和已收藏的销售品去重
+		var newSpec = _setMyfavoriteSpec(prodId,offerSpecId);
+		if(newSpec==undefined){
+			var param = {   
+					offerSpecId : offerSpecId
+			};
+			var content = '收藏【'+offerSpecName+'】' ;
+			$.confirm("信息确认",content,{ 
+				yes:function(){
+				},
+				yesdo:function(){
+					query.offer.addMyfavorite(param);
+					newSpec = query.offer.queryAttachOfferSpec(prodId,offerSpecId); //重新获取销售品构成
+					CacheData.setMyfavoriteSpec(prodId,newSpec);
+				},
+				no:function(){
+				}
+			});
+		}else{
+			$.alert("提示","该销售品已收藏");
+		}
+	};
 	
+	var _delMyfavoriteSpec = function (prodId,prodSpecId,offerSpecId,offerSpecName){
+		//去重，和已收藏的销售品去重
+		//去重成功后，我的收藏重新加载，不调用服务，重缓存中去
+		var param = {   
+				offerSpecId : offerSpecId
+		};
+		var content = '取消收藏【'+offerSpecName+'】' ;
+		$.confirm("信息确认",content,{ 
+			yes:function(){
+			},
+			yesdo:function(){
+				query.offer.delMyfavorite(param);
+				_initMyfavoriteSpec(prodId,prodSpecId);
+			},
+			no:function(){
+			}
+		});
+	};
 	//开通跟取消开通功能产品时判断是否显示跟隐藏补换卡
 	var _showHideUim = function(flag,prodId,servSpecId){
 		if(CONST.getAppDesc()==0 && servSpecId == CONST.PROD_SPEC.PROD_FUN_4G){ //4G系统并且是开通或者关闭4g功能产品
@@ -4861,6 +5006,11 @@ AttachOffer = (function() {
 		changereserveCode:_changereserveCode,
 		delServSpec             : _delServSpec,
 		setSpec:				_setSpec,
-		queryOfferAndServDependForCancel : _queryOfferAndServDependForCancel
+		queryOfferAndServDependForCancel : _queryOfferAndServDependForCancel,
+		initMyfavoriteSpec:_initMyfavoriteSpec,
+		addMyfavoriteSpec:_addMyfavoriteSpec,
+		delMyfavoriteSpec:_delMyfavoriteSpec,
+		myFavoriteList:_myFavoriteList
+		
 	};
 })();
