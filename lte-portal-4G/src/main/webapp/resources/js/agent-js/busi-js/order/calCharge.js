@@ -947,6 +947,13 @@ order.calcharge = (function(){
 				return;
 			}
 		}
+		if(OrderInfo.actionFlag=="1" && $(".tsn").length>0){
+			var tsn = $(".tsn").val();
+			if(!tsn){
+				$.alert("提示","终端串码为空,请先暂存订单！");
+				return;
+			}
+		}
 		_olId = OrderInfo.orderResult.olId;
 		_soNbr = OrderInfo.orderResult.soNbr;
 		_chargeItems = [];

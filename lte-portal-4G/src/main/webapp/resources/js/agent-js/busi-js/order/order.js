@@ -2,7 +2,8 @@ CommonUtils.regNamespace("order", "service");
 
 order.service = (function(){
 	var _offerprice=""; 
-	var _subPage=""; 
+	var _subPage="";
+	var _tabChange_flag=0;
 	//套餐入口-初始化
 	var _init=function(){  
 		
@@ -19,17 +20,45 @@ order.service = (function(){
 	var current="";
 	//列表导航切换
 	var _tabChange=function(obj){
-		$("#qryStr").val($(obj).val());
-		_searchPack();
+		if(order.service.tabChange_flag == 0){
+			$("#qryStr").val($(obj).val());
+			_searchPack();
+		}
+		
 	};
 	
 	//主套餐查询
 	var _searchPack = function(flag,scroller,subPage){
 		var custId = OrderInfo.cust.custId;
 		var qryStr=$("#qryStr").val();
+		var categoryNodeId = "";//套餐目录
+		if(qryStr == "乐享") {
+			qryStr = "";
+			$("#qryStr").val("");
+			categoryNodeId = "90132141";
+		}else if(qryStr == "积木") {
+			qryStr = "";
+			$("#qryStr").val("");
+			categoryNodeId = "90132143";
+		}else if(qryStr == "飞") {
+			qryStr = "";
+			$("#qryStr").val("");
+			categoryNodeId = "90139849";
+		}else if(qryStr == "其他") {
+			qryStr = "";
+			$("#qryStr").val("");
+			categoryNodeId = "-9999";
+		}else if(qryStr == "我的收藏") {
+			$("#qryStr").val("");
+		}
 //		var params={"qryStr":qryStr,"pnLevelId":"","custId":custId};
 		var params={"subPage":"","qryStr":qryStr,"pnLevelId":"","custId":custId,"PageSize":10};
+		if(categoryNodeId.length>0){
+			params.categoryNodeId = categoryNodeId;
+		}
 		if(flag){
+			order.service.tabChange_flag = 1;
+			$("#offer_tab option[value='']").attr("selected",true);
 			var priceMinVal = $("#select_price_min").val();
 			var priceMaxVal = $("#select_price_max").val();
 			if(ec.util.isObj(priceMinVal) && $.isNumeric(priceMinVal)){
@@ -56,6 +85,7 @@ order.service = (function(){
 			if(ec.util.isObj(invoiceMaxVal) && $.isNumeric(invoiceMaxVal)){
 				params.INVOICEMax = invoiceMaxVal;
 			}
+			order.service.tabChange_flag = 0;
 		}
 		_queryData(params,flag,scroller);
 		
@@ -88,6 +118,7 @@ order.service = (function(){
 			if(params.qryStr == "我的收藏"){
 				params.ifQueryFavorite = "Y";
 				params.qryStr = "";
+				$("#qryStr").val("");
 			}
 		}
 		var url = contextPath+"/agent/order/offerSpecList";
@@ -588,6 +619,7 @@ order.service = (function(){
 		);
 	};
 	return {
+		tabChange_flag			:			_tabChange_flag,
 		btnBack					:			_btnBack,
 		buyService 				:			_buyService,
 		queryApConfig			:			_queryApConfig,

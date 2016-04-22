@@ -1248,7 +1248,7 @@ cust = (function(){
 		}
 		var param = _choosedCustInfo;
         param.pCustIdentityCd = $("#identidiesType").val();
-		param.identityNum =base64encode(authIDTD);
+		param.identityNum =base64encode(utf16to8(authIDTD));
 		param.custId = _choosedCustInfo.custId;
 		param.authFlag=authFlag;
 		$('#authID').modal('hide');
@@ -1813,7 +1813,7 @@ cust = (function(){
 
 		var param = _choosedCustInfo;
 		param.validateType="1";
-		param.identityNum = base64encode($.trim($("#idCardNumber2").val()));
+		param.identityNum = base64encode(utf16to8($.trim($("#idCardNumber2").val())));
 		if(!ec.util.isObj(param.identityNum)){
 			$.alert("提示","证件号码不能为空！");
 			return;

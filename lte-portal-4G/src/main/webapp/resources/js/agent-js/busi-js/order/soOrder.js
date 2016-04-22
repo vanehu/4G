@@ -2250,7 +2250,11 @@ SoOrder = (function() {
 			if($("#tip_-1").text() != "校验通过"){
 				$.alert("信息提示","请先校验UIM卡!");
 				return false;
-			} 
+			}
+			if(OrderInfo.actionFlag == 1 && $(".tsn").length>0 && $(".tsn").val().length>0 && $(".guige").html() == ""){
+				$.alert("提示","<br/>请先校验终端串号。");
+				return false;
+			}
 		
 		}	
 		//销售品更功能产品参数校验

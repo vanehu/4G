@@ -1549,9 +1549,9 @@ AttachOffer = (function() {
 						}
 						$ulGroups.append($liGroups);
 						for(var k=1;k<=minNum;k++){
-							var $liTerminal=$('<li class="form-group" style="list-style-type:none;"><label for="exampleInputPassword1">终端校验<span class="text-warning">*</span></label><div class="input-group"><input id="terminalText_'+objInstId+'_'+k+'" type="text" class="form-control" maxlength="50" placeholder="请先输入终端串号" />'
+							var $liTerminal=$('<li class="form-group" style="list-style-type:none;"><label for="exampleInputPassword1">终端校验<span class="text-warning">*</span></label><div class="input-group"><input id="terminalText_'+objInstId+'_'+k+'" type="text" class="form-control tsn" maxlength="50" placeholder="请先输入终端串号" />'
 									+'<span class="input-group-btn"><button id="terminalBtn_'+objInstId+'_'+k+'" type="button" num="'+k+'" flag="'+isFastOffer+'" prodId="'+prodId+'" offerSpecId="'+newSpec.offerSpecId+'" onclick="AttachOffer.checkTerminalCode(this)" class="btn btn-info">校验</button></span></div></li>');
-							var	$li4 = $('<li id="terminalDesc_'+k+'" style="display:none;list-style-type:none;" ><label></label><label id="terminalName_'+k+'"></label></li>');
+							var	$li4 = $('<li id="terminalDesc_'+k+'" style="display:none;list-style-type:none;"><label></label><label class="guige" id="terminalName_'+k+'"></label></li>');
 							
 							$ulGroups.append($liTerminal).append($li4);
 						}
@@ -3391,7 +3391,7 @@ AttachOffer = (function() {
 	};
 	
 	var _initMyfavoriteSpec = function(prodId,first){
-		OrderInfo.returnFlag="sc";
+//		OrderInfo.returnFlag="sc";
 		cang_prodId = prodId;
 		var prodSpecId = OrderInfo.getProdSpecId(prodId);
 //		$("#myfavorites_"+prodId).addClass("setcon");
@@ -3482,6 +3482,7 @@ AttachOffer = (function() {
 	    		$("#zjfk_"+prodId).hide();
 	    	}
 			$("#cang_div").html(html);
+			OrderInfo.returnFlag="sc";
 			$("#my-cang").show();
 		}
 		
@@ -3528,7 +3529,7 @@ AttachOffer = (function() {
 				query.offer.delMyfavorite(param);
 				$(obj).removeClass("icon-star").addClass("nostar");
 				$(obj).attr("onclick","AttachOffer.addMyfavoriteSpec("+prodId+','+offerSpecId+',\''+offerSpecName+'\',$(this)'+");");
-				_initMyfavoriteSpec(prodId,prodSpecId);
+				_initMyfavoriteSpec(prodId);
 			},
 			no:function(){
 			}
