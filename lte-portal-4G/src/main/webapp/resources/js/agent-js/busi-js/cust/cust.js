@@ -39,6 +39,16 @@ cust = (function(){
 	
 	
 	var _custSubmit = function(){
+		if(OrderInfo.cust.custId==undefined){
+			OrderInfo.cust = { //保存客户信息
+				custId : "",
+				partyName : "",
+				vipLevel : "",
+				vipLevelName : "",
+				custFlag :"1100", //1000：红客户，1100：白客户，1200：黑客户
+				identityPic : ""
+			}
+		}
 		//从页面信息读取到cust缓存
 		OrderInfo.cust.custId = -1;//客户地区
 		OrderInfo.cust.partyName = $('#cmCustName').val();//客户名称

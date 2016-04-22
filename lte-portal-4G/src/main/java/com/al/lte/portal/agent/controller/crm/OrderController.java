@@ -2942,15 +2942,18 @@ public class OrderController extends BaseController {
 	    String actionFlag = eqCodeInfo.get("ActionFlag")==null?"":eqCodeInfo.get("ActionFlag").toString();
 	    if(!"".equals(custName)){
 	    	custName = DataConcealUtil.toConceal(custName, "1");
-	    	eqCodeInfo.put("CustName", custName);
+	    	eqCodeInfo.put("CUN", custName);
+	    	eqCodeInfo.remove("CustName");
 	    }
 	    if(!"".equals(mobileNumber)){
 	    	mobileNumber = DataConcealUtil.toConceal(mobileNumber, "3");
-	    	eqCodeInfo.put("MobileNumber", mobileNumber);	
+	    	eqCodeInfo.put("MN", mobileNumber);
+	    	eqCodeInfo.remove("MobileNumber");
 	    }
 	    if(!"".equals(certNumber)){
 	    	certNumber = DataConcealUtil.toConceal(certNumber, "2");
-	    	eqCodeInfo.put("CertNumber", certNumber);
+	    	eqCodeInfo.put("CEN", certNumber);
+	    	eqCodeInfo.remove("CertNumber");
 	    }
 	    
 	    if(eqCodeInfo.containsKey("BillingAccountNumber")){
@@ -2996,6 +2999,81 @@ public class OrderController extends BaseController {
 	    if(eqCodeInfo.containsKey("OfferName")){
 	    	eqCodeInfo.remove("OfferName");
 	    }
+	    if(eqCodeInfo.containsKey("OldOfferName")){
+	    	eqCodeInfo.remove("OldOfferName");
+	    }
+	    if(eqCodeInfo.containsKey("PreferPurchasePrice")){
+	         eqCodeInfo.remove("PreferPurchasePrice");
+	    }
+	    
+	    if(eqCodeInfo.containsKey("ActionFlag")){
+	    	eqCodeInfo.put("AF",eqCodeInfo.get("ActionFlag"));
+	    	eqCodeInfo.remove("ActionFlag");
+	    }
+	    if(eqCodeInfo.containsKey("OfferCode")){
+	    	eqCodeInfo.put("OC",eqCodeInfo.get("OfferCode"));
+	    	eqCodeInfo.remove("OfferCode");
+	    }
+	    if(eqCodeInfo.containsKey("StaffNumber")){
+	    	eqCodeInfo.put("SN",eqCodeInfo.get("StaffNumber"));
+	    	eqCodeInfo.remove("StaffNumber");
+	    }
+	    if(eqCodeInfo.containsKey("StoreNumber")){
+	    	eqCodeInfo.put("STN",eqCodeInfo.get("StoreNumber"));
+	    	eqCodeInfo.remove("StoreNumber");
+	    }
+	    if(eqCodeInfo.containsKey("ActivationType")){
+	    	eqCodeInfo.put("AT",eqCodeInfo.get("ActivationType"));
+	    	eqCodeInfo.remove("ActivationType");
+	    }
+	    if(eqCodeInfo.containsKey("Currency")){
+	    	eqCodeInfo.put("C",eqCodeInfo.get("Currency"));
+	    	eqCodeInfo.remove("Currency");
+	    }
+	    if(eqCodeInfo.containsKey("DateOfProcessing")){
+	    	eqCodeInfo.put("DP",eqCodeInfo.get("DateOfProcessing"));
+	    	eqCodeInfo.remove("DateOfProcessing");
+	    }
+	    if(eqCodeInfo.containsKey("CustomerType")){
+	    	eqCodeInfo.put("CT",eqCodeInfo.get("CustomerType"));
+	    	eqCodeInfo.remove("CustomerType");
+	    }
+	    if(eqCodeInfo.containsKey("TotalMoneyNeedToPaid")){
+	    	eqCodeInfo.put("TP",eqCodeInfo.get("TotalMoneyNeedToPaid"));
+	    	eqCodeInfo.remove("TotalMoneyNeedToPaid");
+	    }
+	    if(eqCodeInfo.containsKey("ContractNumber")){
+	    	eqCodeInfo.put("CN",eqCodeInfo.get("ContractNumber"));
+	    	eqCodeInfo.remove("ContractNumber");
+	    }
+	    if(eqCodeInfo.containsKey("ChangeUimFee")){
+	    	eqCodeInfo.put("CUF",eqCodeInfo.get("ChangeUimFee"));
+	    	eqCodeInfo.remove("ChangeUimFee");
+	    }
+	    if(eqCodeInfo.containsKey("CarrierPrepayment")){
+	    	eqCodeInfo.put("CP",eqCodeInfo.get("CarrierPrepayment"));
+	    	eqCodeInfo.remove("CarrierPrepayment");
+	    }
+	    if(eqCodeInfo.containsKey("DeviceWithinTheContact")){
+	    	eqCodeInfo.put("DC",eqCodeInfo.get("DeviceWithinTheContact"));
+	    	eqCodeInfo.remove("DeviceWithinTheContact");
+	    }
+	    if(eqCodeInfo.containsKey("HandsetPrepayment")){
+	    	eqCodeInfo.put("HAP",eqCodeInfo.get("HandsetPrepayment"));
+	    	eqCodeInfo.remove("HandsetPrepayment");
+	    }
+	    if(eqCodeInfo.containsKey("HandsetPrice")){
+	    	eqCodeInfo.put("HP",eqCodeInfo.get("HandsetPrice"));
+	    	eqCodeInfo.remove("HandsetPrice");
+	    }
+	    if(eqCodeInfo.containsKey("DeviceDiscount")){
+	    	eqCodeInfo.put("DD",eqCodeInfo.get("DeviceDiscount"));
+	    	eqCodeInfo.remove("DeviceDiscount");
+	    }
+	    if(eqCodeInfo.containsKey("OldOfferCode")){
+	    	eqCodeInfo.put("OOC",eqCodeInfo.get("OldOfferCode"));
+	    	eqCodeInfo.remove("OldOfferCode");
+	    }
 
 	    String result="CTCT02"+JacksonUtil.getInstance().objectTojson(eqCodeInfo);
 		try {
@@ -3003,7 +3081,7 @@ public class OrderController extends BaseController {
 				byte[] data=result.getBytes("UTF-8");
 				byte[] str3 = ThreeDesUtil.des3EncodeECB(key,data);
 				String a = new BASE64Encoder().encode(str3);
-				String RQCode = "data:image/png;base64,"+new QrCodeImageGen().encoderQRCodeToBase64(a,"png",30,'M');
+				String RQCode = "data:image/png;base64,"+new QrCodeImageGen().encoderQRCodeToBase64(a,"png",20,'L');
 				jsonResponse = super.successed(RQCode, ResultConstant.SUCCESS.getCode());	
 			}else{
 				jsonResponse = super.failed("生成二维码失败", ResultConstant.SERVICE_RESULT_FAILTURE .getCode());
