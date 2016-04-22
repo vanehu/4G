@@ -348,6 +348,11 @@ order.service = (function(){
 				order.main.buildMainView(param);	
 			}
 		}
+		if(OrderInfo.actionFlag == 1){
+			if(offerSpec.offerSpecParams && (offerSpec.offerSpecParams.length>0)){
+				$("#offerCanBtn").show();
+			}
+		}
 	};
 	
 	//选择完主套餐构成后确认
@@ -569,6 +574,11 @@ order.service = (function(){
 							prodOfferSpec.accessnumber=accessnumber;
 							OrderInfo.viceOfferSpec.push(prodOfferSpec);
 							order.prodModify.chooseOfferForMember(specId,subpage,specName,offerRoleId);
+							if(OrderInfo.actionFlag == 1){
+								if(prodOfferSpec.offerSpecParams && (prodOfferSpec.offerSpecParams.length>0)){
+									$("#offerCanBtn").show();
+								}
+							}
 						}else{
 							$.alert("提示","无法选择套餐，套餐规格查询失败！");
 						}

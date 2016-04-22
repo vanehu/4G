@@ -15,7 +15,11 @@
 					<input type="hidden" class="form-control"  id="offerSpecId">
 					<span class="input-group-btn">
                       <button class="btn btn-info" type="button" id="offerBtn" onclick="order.service.offePre('offer');"> 选择 </button>
-                    </span> </div>
+                    </span>
+                    <span class="input-group-btn" id="offerCanBtn" style="display:none;">
+                      <button class="btn btn-info" type="button" onclick="AttachOffer.offer_showMainParam();">参</button>
+                    </span>
+                 </div>
 			</div>
 			<div class="form-group">
 				<label for="exampleInputPassword1">号码 <small class="text-warning" id="numberShow"></small></label>

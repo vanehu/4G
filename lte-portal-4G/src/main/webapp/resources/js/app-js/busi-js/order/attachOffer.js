@@ -24,6 +24,9 @@ AttachOffer = (function() {
 	var _labelList = []; //标签列表
 	
 	var totalNums=0;//记录总共添加了多少个终端输入框
+	
+	var _newViceParam = [];//用来保存副卡拆装新套餐的信息
+	
 	//初始化附属销售页面
 	var _init = function(){
 		var prodInfo = order.prodModify.choosedProdInfo;
@@ -163,8 +166,8 @@ AttachOffer = (function() {
 									}
 									if(roleObj.minQty==1){
 										$oldLi.removeAttr("onclick");
-										var $span = $("#span_"+prodId+"_"+newSpec.servSpecId);
-										var $span_remove = $("#span_remove_"+prodId+"_"+newSpec.servSpecId);
+										var $span = $("#span_"+prodId+"_"+servSpecId);
+										var $span_remove = $("#span_remove_"+prodId+"_"+servSpecId);
 										if(ec.util.isObj($span)){
 											$span.removeClass("del");
 										}
@@ -179,8 +182,8 @@ AttachOffer = (function() {
 								if(serv!=undefined){ //不在已经开跟已经选里面
 									var $oldLi = $('#li_'+prodId+'_'+serv.servId);
 									if(roleObj.minQty==1){
-										var $span = $("#span_"+prodId+"_"+offer.servId);
-										var $span_remove = $("#span_remove_"+prodId+"_"+offer.servId);
+										var $span = $("#span_"+prodId+"_"+serv.servId);
+										var $span_remove = $("#span_remove_"+prodId+"_"+serv.servId);
 										if(ec.util.isObj($span)){
 											$span.removeClass("del");
 										}
@@ -200,10 +203,13 @@ AttachOffer = (function() {
 										spec.ifParams = "Y";
 									}
 									$('#li_'+prodId+'_'+servSpecId).remove(); //删除可开通功能产品里面
-									var $li = $('<a id="li_'+prodId+'_'+servSpecId+'" onclick="AttachOffer.closeServSpec('+prodId+','+servSpecId+',\''+spec.servSpecName+'\',\''+spec.ifParams+'\')" class="list-group-item"></a>');
+									var $li = $('<a id="li_'+prodId+'_'+servSpecId+'" class="list-group-item"></a>');
 									$li.append('<span id="span_'+prodId+'_'+servSpecId+'">'+spec.servSpecName+'</span>');
+									if(spec.ifParams){
+										$li.append('<span class="canshu btn-span"><button type="button" style="right:40px;width:48px;" class="btn btn-info" onclick="AttachOffer.showServParam('+prodId+','+servSpecId+');">参</button></span>');
+									}
 									if(roleObj.minQty==0){
-										$li.append('<span id="span_remove_'+prodId+'_'+servSpecId+'" class="glyphicon glyphicon-remove pull-right" aria-hidden="true"></span>');
+										$li.append('<span id="span_remove_'+prodId+'_'+servSpecId+'" class="glyphicon glyphicon-remove pull-right" aria-hidden="true" onclick="AttachOffer.closeServSpec('+prodId+','+servSpecId+',\''+spec.servSpecName+'\',\''+spec.ifParams+'\')"></span>');
 									}else{
 										$li.removeAttr("onclick");
 									}
@@ -3334,8 +3340,103 @@ AttachOffer = (function() {
 			});
 		}
 	};
+	
+	//设置主销售品参数
+	var _offer_showMainParam = function(accessNumber){
+		if(OrderInfo.actionFlag == 21){//副卡换套餐,可能有多个主套餐参数，根据参数号码来区分\
+			if(!ec.util.isObj(accessNumber)){
+				$.alert("提示","获取副卡号码失败，请刷新页面重试！");
+				return;
+			}
+			var spec = {};
+			if(ec.util.isArray(AttachOffer.newViceParam)){
+				for(var i = 0;i < AttachOffer.newViceParam.length; i++){
+					if(accessNumber==AttachOffer.newViceParam[i].accessNumber){
+						spec = AttachOffer.newViceParam[i];
+					}
+				}
+			}
+			if(!ec.util.isObj(spec)){
+				$.alert("提示","获取副卡新套餐参数失败，请刷新页面重试！");
+				return;
+			}
+			var tempProdId = accessNumber;//用号码赋值prodID
+			var content = CacheData.getParamContent(tempProdId,spec,0);
+			$.confirm("参数设置： ",content,{ 
+				yes:function(){	
+				},
+				no:function(){			
+				}
+			});
+			$('#paramForm').bind('formIsValid', function(event, form) {	
+				//参数输入校验
+				if(!paramInputCheck()){
+					return;
+				}	
+				if(!!spec.offerSpecParams){
+					for (var i = 0; i < spec.offerSpecParams.length; i++) {
+						var itemSpec = spec.offerSpecParams[i];
+						var newSpecParam = $.trim($("#"+tempProdId+"_"+itemSpec.itemSpecId).val());
+						if(newSpecParam!=null){
+							if(itemSpec.rule.isOptional=="N"&&newSpecParam=="") { //必填
+								$.alert("提示","属性："+itemSpec.name+"  为必填属性，不能为空！");
+								return;
+							}
+							itemSpec.setValue = newSpecParam;
+							if (itemSpec.dateSourceTypeCd == "17") {//搜索框类型组件获取code属性中的值作为设置值
+								itemSpec.setValue = $.trim($("#" + tempProdId + "_" + itemSpec.itemSpecId).attr("code"));
+							}
+							itemSpec.isSet = true;
+						}else{
+							itemSpec.isSet = false;
+						}
+					}
+				}
+				spec.isset ="Y"
+//				$("#mainOffer_"+accessNumber).removeClass("canshu").addClass("canshu2");
+//				$(".ZebraDialog").remove();
+//	            $(".ZebraDialogOverlay").remove();
+			}).ketchup({bindElement:"easyDialogYesBtn"});
+		}else{
+			var tempProdId = -1;//prodID赋值为-1
+			var content = CacheData.getParamContent(tempProdId,OrderInfo.offerSpec,0);
+			$.confirm("参数设置： ",content,{ 
+				yes:function(){
+					//参数输入校验
+					if(!paramInputCheck()){
+						return;
+					}
+					var spec = OrderInfo.offerSpec;
+					if(!!spec.offerSpecParams){
+						for (var i = 0; i < spec.offerSpecParams.length; i++) {
+							var itemSpec = spec.offerSpecParams[i];
+							var newSpecParam = $.trim($("#"+tempProdId+"_"+itemSpec.itemSpecId).val());
+							if(newSpecParam!=null){
+								if(itemSpec.rule.isOptional=="N"&&newSpecParam=="") { //必填
+									$.alert("提示","属性："+itemSpec.name+"  为必填属性，不能为空！");
+									return;
+								}
+								itemSpec.setValue = newSpecParam;
+								if (itemSpec.dateSourceTypeCd == "17") {//搜索框类型组件获取code属性中的值作为设置值
+									itemSpec.setValue = $.trim($("#" + tempProdId + "_" + itemSpec.itemSpecId).attr("code"));
+								}
+								itemSpec.isSet = true;
+							}else{
+								itemSpec.isSet = false;
+							}
+						}
+					}
+					spec.isset ="Y"
+				},
+				no:function(){			
+				}
+			});
+		}	
+	};
+	
 	//
 	return {
+		offer_showMainParam		: _offer_showMainParam,
 		addOffer 				: _addOffer,
 		addOfferSpec 			: _addOfferSpec,
 		addOpenList				: _addOpenList,
@@ -3394,7 +3495,8 @@ AttachOffer = (function() {
 		offerSpecDetail         : _offerSpecDetail,
 		show         : _show,
 		btnBack     : _btnBack,
-		queryCardAttachOfferAgent     : _queryCardAttachOfferAgent
+		queryCardAttachOfferAgent     : _queryCardAttachOfferAgent,
+		newViceParam:_newViceParam
 		
 	};
 })();

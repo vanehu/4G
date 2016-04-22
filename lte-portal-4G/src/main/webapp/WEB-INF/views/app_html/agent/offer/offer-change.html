@@ -4,7 +4,11 @@
 		<!-- 套餐名称 -->
 		<ul class="list-group">
 		  <li class="list-group-item">原套餐: <small class="text-warning">${main.oldOfferSpecName}</small></li>
-		  <li class="list-group-item">新套餐: <small class="text-warning">${offerSpec.offerSpecName}</small></li>
+		  <li class="list-group-item">新套餐: <small class="text-warning">${offerSpec.offerSpecName}</small>
+		  <#if offerSpec.offerSpecParams?? && (offerSpec.offerSpecParams?size>0)>
+		  <span class="btn-span" id="offerCanBtn"><button type="button" class="btn btn-info" onclick="AttachOffer.offer_showMainParam();">参</button></span>
+		  </#if>
+		  </li>
 		</ul>
 		<!-- 产品信息-->
 		<!-- <div class="carousel-inner"> -->

@@ -143,6 +143,17 @@ offerChange = (function() {
 						param.offerSpecId=OrderInfo.offerSpec.offerSpecId;
 						//默认必须可选包
 						var data = query.offer.queryDefMustOfferSpec(param);
+						//根据查询默认必选返回可选包再遍历查询可选包规格构成，来支撑默认必选带出的可选包触发终端校验框加入 redmine 111364
+							if(data.result!=null&&data.result!=undefined){
+								if(data.result.offerSpec!=null&&data.result.offerSpec!=undefined){
+									$.each(data.result.offerSpec,function(){
+										var fullOfferSpec = query.offer.queryAttachOfferSpec(param.prodId,this.offerSpecId);
+										for(var attr in fullOfferSpec){ //把可选包规格构成查询到的属性添加到原默认必选返回的规格中
+											this[attr] = fullOfferSpec[attr];
+											}  						
+									});										
+								}
+							}
 						CacheData.parseOffer(data,prodId);
 						//默认必须功能产品
 						param.queryType = "1";//只查询必选，不查默认
@@ -166,6 +177,10 @@ offerChange = (function() {
 			}
 		});
 //		order.dealer.initDealer(); //初始化发展人
+		//为主套餐属性自动设置服务参数
+		if(CacheData.setParam(-1,OrderInfo.offerSpec)){ 
+//			$("#mainOffer").removeClass("canshu").addClass("canshu2");
+		}
 		if(CONST.getAppDesc()==0 && order.prodModify.choosedProdInfo.is3G== "Y" && OrderInfo.offerSpec.is3G =="N"){ //3G转4G需要校验
 			offerChange.checkOfferProd();
 		}
@@ -270,11 +285,14 @@ offerChange = (function() {
 			busiOrder.data.ooParams = [];
 			for (var i = 0; i < offerSpec.offerSpecParams.length; i++) {
 				var param = offerSpec.offerSpecParams[i];
+				if(param.setValue==undefined){
+					param.setValue = param.value;
+				}
 				var ooParam = {
 	                itemSpecId : param.itemSpecId,
 	                offerParamId : OrderInfo.SEQ.paramSeq--,
 	                offerSpecParamId : param.offerSpecParamId,
-	                value : param.value,
+	                value : param.setValue,
 	                state : "ADD"
 	            };
 	            busiOrder.data.ooParams.push(ooParam);

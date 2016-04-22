@@ -13,14 +13,20 @@
 							<div id="change_${prodId}">
 								<div id="changePlaninfo">
 									<span class="old">原套餐:${main.oldOfferSpecName}</span>
-									<span>新套餐:${item.offerSpecName}</span>	
+									<span>新套餐:${item.offerSpecName}</span>
+									<#if item.offerSpecParams?? && (item.offerSpecParams?size>0)>
+                					<span class="btn-span" id="offerCanBtn"><button type="button" class="btn btn-info" onclick="AttachOffer.offer_showMainParam('${item.accessNumber}');">参</button></span>
+									</#if>	
 								</div>
 							</div>
 						<#else>
 							<div id="change_${prodId}" style="display:none;">
 								<div id="changePlaninfo">
 									<span class="old">原套餐:${main.oldOfferSpecName}</span>
-									<span>新套餐:${item.offerSpecName}</span>	
+									<span>新套餐:${item.offerSpecName}</span>
+									<#if item.offerSpecParams?? && (item.offerSpecParams?size>0)>
+                					<span class="btn-span" id="offerCanBtn"><button type="button" class="btn btn-info" onclick="AttachOffer.offer_showMainParam('${item.accessNumber}');">参</button></span>
+									</#if>		
 								</div>
 							</div>
 						</#if>

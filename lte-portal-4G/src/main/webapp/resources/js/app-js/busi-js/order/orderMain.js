@@ -121,6 +121,13 @@ order.main = (function(){
 //			order.dealer.initDealer();//初始化协销		
 //		}
 //		_addEvent();//添加页面事件*/
+		if(OrderInfo.actionFlag==1){
+			//为主套餐属性自动设置服务参数
+			if(CacheData.setParam(-1,OrderInfo.offerSpec)){ 
+//				$("#mainOffer").removeClass("canshu").addClass("canshu2");
+			}
+//			$("#templateOrderDiv").show();
+		}
 		order.phoneNumber.initOffer('-1');//主卡自动填充号码入口已选过的号码
 		$("#fillNextStep").off("click").on("click",function(){
 			//SoOrder.submitOrder();

@@ -6,7 +6,12 @@
 			<#assign offerSpec = main.offerSpec />
 			<div class="panel-heading">
 				原套餐:${main.oldOfferSpecName}</br>
-				新套餐:${offerSpec.offerSpecName}<p>
+				新套餐:${offerSpec.offerSpecName}
+				<#if offerSpec.offerSpecParams?? && (offerSpec.offerSpecParams?size>0)>
+				<button type="button" class="btn btn-info" onclick="AttachOffer.offer_showMainParam();">参</button>
+				</#if>
+				<p>
+				
 			</div>
 			<div id="carousel-example-generic" class="carousel slide">
 				<!-- 图标 -->

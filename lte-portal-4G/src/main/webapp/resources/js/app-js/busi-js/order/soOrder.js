@@ -1026,6 +1026,24 @@ SoOrder = (function() {
 					break;
 				}
 			}
+			//保留副卡订购新套餐副卡新套餐销售参数节点
+			if(ec.util.isArray(offerSpec.offerSpecParams)){  
+				busiOrder2.data.ooParams = [];
+				for (var k = 0; k < offerSpec.offerSpecParams.length; k++) {
+					var param = offerSpec.offerSpecParams[k];
+					if(param.setValue==undefined){
+						param.setValue = param.value;
+					}
+					var ooParam = {
+		                itemSpecId : param.itemSpecId,
+		                offerParamId : OrderInfo.SEQ.paramSeq--,
+		                offerSpecParamId : param.offerSpecParamId,
+		                value : param.setValue,
+		                state : "ADD"
+		            };
+					busiOrder2.data.ooParams.push(ooParam);
+				}				
+			}
 			busiOrders.push(busiOrder2);
 			}else{
 			        var prod = {
@@ -1740,11 +1758,14 @@ SoOrder = (function() {
 			busiOrder.data.ooParams = [];
 			for (var i = 0; i < offerSpecParams.length; i++) {
 				var param = offerSpecParams[i];
+				if(param.setValue==undefined){
+					param.setValue = param.value;
+				}
 				var ooParam = {
 	                itemSpecId : param.itemSpecId,
 	                offerParamId : OrderInfo.SEQ.paramSeq--,
 	                offerSpecParamId : param.offerSpecParamId,
-	                value : param.value,
+	                value : param.setValue,
 	                state : "ADD"
 	            };
 	            busiOrder.data.ooParams.push(ooParam);
@@ -2074,6 +2095,27 @@ SoOrder = (function() {
 		//销售品更功能产品参数校验
 		if(OrderInfo.actionFlag == 1||OrderInfo.actionFlag == 2||OrderInfo.actionFlag == 3
 				|| OrderInfo.actionFlag == 6||OrderInfo.actionFlag == 14){
+			//主销售参数设置校验 
+			if(OrderInfo.actionFlag == 1||OrderInfo.actionFlag == 2){
+				var spec = OrderInfo.offerSpec;
+				if(spec.ifParams&&spec.offerSpecParams!=null&&spec.offerSpecParams.length>0){  //销售参数节点
+					if(spec.isset !="Y"){
+						$.alert("提示","主套餐【"+spec.offerSpecName+"】：参数未设置！");
+						return false ; 
+					}
+				}
+			}
+			if(OrderInfo.actionFlag == 21){
+				var spec = AttachOffer.newViceParam;
+				for(var i = 0;i < spec.length; i++){
+					if(spec[i].offerSpecParams!=null&&spec[i].offerSpecParams.length>0){  //销售参数节点
+						if(spec[i].isset !="Y"){
+							$.alert("提示","副卡号码："+spec[i].accessNumber+"的新套餐【"+spec[i].offerSpecName+"】：参数未设置！");
+							return false ; 
+						}
+					}
+				}		
+			}
 			//附属销售参数设置校验
 			for ( var i = 0; i < AttachOffer.openList.length; i++) {
 				var specList = AttachOffer.openList[i].specList;

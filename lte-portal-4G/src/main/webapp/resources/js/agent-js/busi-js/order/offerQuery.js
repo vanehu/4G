@@ -621,7 +621,7 @@ query.offer = (function() {
 			return false;
 		}
 		offerSpec = SoOrder.sortOfferSpec(offerSpec); //排序主副卡套餐	
-		if(OrderInfo.actionFlag==6 && ec.util.isArray(OrderInfo.oldprodInstInfos)){//主副卡纳入老用户
+		if((OrderInfo.actionFlag==6||OrderInfo.actionFlag==2||OrderInfo.actionFlag==1) && ec.util.isArray(OrderInfo.oldprodInstInfos)){//主副卡纳入老用户
 			OrderInfo.oldofferSpec.push({"offerSpec":offerSpec,"accNbr":param.accNbr});
 		}else{
 			OrderInfo.offerSpec = offerSpec;

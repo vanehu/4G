@@ -30,6 +30,9 @@ AttachOffer = (function() {
 	var totalNums=0;//记录总共添加了多少个终端输入框
 	
 	var cang_prodId=0;//标记哪一张卡打开的我的收藏
+	
+	var _newViceParam = [];//用来保存副卡拆装新套餐的信息
+	
 	//初始化附属销售页面
 	var _init = function(){
 		var prodInfo = order.prodModify.choosedProdInfo;
@@ -170,8 +173,8 @@ AttachOffer = (function() {
 									}
 									if(roleObj.minQty==1){
 										$oldLi.removeAttr("onclick");
-										var $span = $("#span_"+prodId+"_"+newSpec.servSpecId);
-										var $span_remove = $("#span_remove_"+prodId+"_"+newSpec.servSpecId);
+										var $span = $("#span_"+prodId+"_"+servSpecId);
+										var $span_remove = $("#span_remove_"+prodId+"_"+servSpecId);
 										if(ec.util.isObj($span)){
 											$span.removeClass("del");
 										}
@@ -186,8 +189,8 @@ AttachOffer = (function() {
 								if(serv!=undefined){ //不在已经开跟已经选里面
 									var $oldLi = $('#li_'+prodId+'_'+serv.servId);
 									if(roleObj.minQty==1 && OrderInfo.actionFlag != 2){ // 过滤套餐变更，套餐变更简化流程，不需要相关展示（offer未定义）
-										var $span = $("#span_"+prodId+"_"+offer.servId);
-										var $span_remove = $("#span_remove_"+prodId+"_"+offer.servId);
+										var $span = $("#span_"+prodId+"_"+serv.servId);
+										var $span_remove = $("#span_remove_"+prodId+"_"+serv.servId);
 										if(ec.util.isObj($span)){
 											$span.removeClass("del");
 										}
@@ -207,10 +210,13 @@ AttachOffer = (function() {
 										spec.ifParams = "Y";
 									}
 									$('#li_'+prodId+'_'+servSpecId).remove(); //删除可开通功能产品里面
-									var $li = $('<a id="li_'+prodId+'_'+servSpecId+'" onclick="AttachOffer.closeServSpec('+prodId+','+servSpecId+',\''+spec.servSpecName+'\',\''+spec.ifParams+'\')" class="list-group-item"></a>');
+									var $li = $('<a id="li_'+prodId+'_'+servSpecId+'" class="list-group-item"></a>');
 									$li.append('<span id="span_'+prodId+'_'+servSpecId+'">'+spec.servSpecName+'</span>');
+									if(spec.ifParams){
+										$li.append('<span class="canshu btn-span"><button type="button" style="right:40px;width:48px;" class="btn btn-info" onclick="AttachOffer.showServParam('+prodId+','+servSpecId+');">参</button></span>');
+									}
 									if(roleObj.minQty==0){
-										$li.append('<span id="span_remove_'+prodId+'_'+servSpecId+'" class="glyphicon glyphicon-remove pull-right" aria-hidden="true"></span>');
+										$li.append('<span id="span_remove_'+prodId+'_'+servSpecId+'" class="glyphicon glyphicon-remove pull-right" aria-hidden="true" onclick="AttachOffer.closeServSpec('+prodId+','+servSpecId+',\''+spec.servSpecName+'\',\''+spec.ifParams+'\')"></span>');
 									}else{
 										$li.removeAttr("onclick");
 									}
@@ -3775,7 +3781,8 @@ AttachOffer = (function() {
 		show         : _show,
 		btnBack     : _btnBack,
 		cangBack	: _cangBack,
-		queryCardAttachOfferAgent     : _queryCardAttachOfferAgent
+		queryCardAttachOfferAgent     : _queryCardAttachOfferAgent,
+		newViceParam:_newViceParam
 		
 	};
 })();

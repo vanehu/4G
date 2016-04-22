@@ -57,18 +57,35 @@
 		prodId : prodId,
 		offerList : []
 	};
-	var servOpen = {
-		prodId : prodId,
-		servList : []
-	};
 	if(openMap!=undefined && openMap.result!=undefined){
 		if(openMap.result.offerLists!=undefined && openMap.result.offerLists!=""){
 			open.offerList = openMap.result.offerLists; 
 			AttachOffer.openedList.push(open);
+			$.each(openMap.result.offerSpec,function(){
+			if(this.ifParams){
+				var flag = CacheData.setParam(prodId,this);
+				//if(flag){
+				//	$("#can_"+prodId+'_'+this.offerSpecId).removeClass("abtn03").addClass("abtn01");
+				//}
+			}
+		});
 		}
-		if(openMap.result.servLists!=undefined && openMap.result.servLists!=""){
-			servOpen.servList = openMap.result.servLists; 
-			AttachOffer.openedServList.push(servOpen);
-		}
+	}
+	var openServMap=${openServMapJson};
+	var openServ = {
+		prodId : prodId,
+		servSpecList : []
+	};
+	if(openServMap!=undefined && openServMap.result!=undefined){
+		openServ.servSpecList = openServMap.result.servSpec;
+		AttachOffer.openServList.push(openServ);
+		$.each(openServMap.result.servSpec,function(){
+			if(this.ifParams){
+				var flag = CacheData.setServParam(prodId,this);
+				//if(flag){
+				//	$("#can_"+prodId+'_'+this.servSpecId).removeClass("canshu").addClass("canshu2");
+				//}
+			}
+		});
 	}
 </script>	
