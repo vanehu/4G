@@ -306,6 +306,8 @@ order.cust = (function(){
 				if ("none" != $custPhoto.css("display")) {
 					$custPhoto.hide();
 				}
+				// 照片隐藏后再清除原来的src
+				$("#img_custPhoto").attr("src", "");
 			}
 			// 填单页面经办人读卡
 			if (id == "orderAttrIdCard") {
