@@ -3812,7 +3812,7 @@ order.prodModify = (function(){
 		};
 		var response= $.callServiceAsHtml(url,param);
 		$("#auth2").empty().append(response.data);
-		var authTypeStr=$("#authTypeStr").html();
+		var authTypeStr=$("#auth2 #authTypeStr").html();
 		if (ec.util.isObj(OrderInfo.cust_validateType) && ec.util.isObj(OrderInfo.cust_validateNum) && ec.util.isObj(order.prodModify.choosedProdInfo.accNbr)) {
 			if ((OrderInfo.cust_validateType == "3" || OrderInfo.cust_validateType == "2") && OrderInfo.cust_validateNum == order.prodModify.choosedProdInfo.accNbr) {
 				if (authTypeStr.toString().indexOf(OrderInfo.cust_validateType) != -1 || authTypeStr.toString() == "4") {
@@ -3827,13 +3827,13 @@ order.prodModify = (function(){
 			return false;
 		}
 
-		$("#idCardType2").text(OrderInfo.cust.identityName);
+		$("#auth2 #idCardType2").text(OrderInfo.cust.identityName);
 		if (OrderInfo.cust.identityCd == "1") {
-			$("#readCertBtnID2").show();
-			$("#idCardNumber2").attr("disabled", "disabled");
+			$("#auth2 #readCertBtnID2").show();
+			$("#auth2 #idCardNumber2").attr("disabled", "disabled");
 		} else {
-			$("#readCertBtnID2").hide();
-			$("#idCardNumber2").removeAttr("disabled");
+			$("#auth2 #readCertBtnID2").hide();
+			$("#auth2 #idCardNumber2").removeAttr("disabled");
 		}
 		if (response.code == 0) {
 			easyDialog.open({
