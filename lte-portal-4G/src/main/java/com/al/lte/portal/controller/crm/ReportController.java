@@ -15,6 +15,9 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
@@ -25,18 +28,23 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.al.common.utils.DateUtil;
 import com.al.common.utils.EncodeUtils;
 import com.al.ec.serviceplatform.client.ResultCode;
 import com.al.ecs.common.entity.JsonResponse;
 import com.al.ecs.common.entity.PageModel;
+import com.al.ecs.common.util.JsonUtil;
 import com.al.ecs.common.util.PageUtil;
+import com.al.ecs.common.util.PropertiesUtils;
 import com.al.ecs.common.web.ServletUtils;
+import com.al.ecs.common.web.SpringContextUtil;
 import com.al.ecs.exception.AuthorityException;
 import com.al.ecs.exception.BusinessException;
 import com.al.ecs.exception.ErrorCode;
 import com.al.ecs.exception.InterfaceException;
+import com.al.ecs.exception.ResultConstant;
 import com.al.ecs.spring.annotation.log.LogOperatorAnn;
 import com.al.ecs.spring.annotation.session.AuthorityValid;
 import com.al.ecs.spring.controller.BaseController;
@@ -47,6 +55,7 @@ import com.al.lte.portal.bmo.staff.StaffBmo;
 import com.al.lte.portal.bmo.staff.StaffChannelBmo;
 import com.al.lte.portal.common.CommonMethods;
 import com.al.lte.portal.common.EhcacheUtil;
+import com.al.lte.portal.common.FTPServiceUtils;
 import com.al.lte.portal.common.SysConstant;
 import com.al.lte.portal.model.SessionStaff;
 
@@ -82,6 +91,10 @@ public class ReportController extends BaseController {
     @Autowired
     @Qualifier("com.al.lte.portal.bmo.staff.StaffChannelBmo")
     private StaffChannelBmo staffChannelBmo;
+    
+	@Autowired
+	@Qualifier("com.al.lte.portal.common.FTPServiceUtils")
+	private FTPServiceUtils ftpServiceUtils;
 
     /**
      * 受理工号查询和渠道查询(现用于受理单查询页面的渠道和受理工号查询)
@@ -991,4 +1004,139 @@ public class ReportController extends BaseController {
         return "/orderUndo/query-save-order";
     }
     
+    /**
+     * 一卡双号虚号省退订
+     */
+    @RequestMapping(value = "/unsubVirtualNumPrepare", method = RequestMethod.GET)
+    @AuthorityValid(isCheck = true)
+    public String unsubVirtualNumPrepare(Model model, HttpSession session) throws AuthorityException {
+        model.addAttribute("current", EhcacheUtil.getCurrentPath(session, "report/unsubVirtualNumPrepare"));
+
+        SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+                SysConstant.SESSION_KEY_LOGIN_STAFF);
+        return "/cart/virtual-num-main";
+    }
+    
+    /**
+     * 根据虚号查主号
+     */
+    @RequestMapping(value = "/queryMainInfo", method = { RequestMethod.POST })
+    public String queryVirtualInfo(@RequestBody Map<String, Object> param, Model model, HttpServletResponse response) {
+        List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+        SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+                SysConstant.SESSION_KEY_LOGIN_STAFF);
+        try {
+            Map<String, Object> resMap = orderBmo.queryMainInfo(param, null, sessionStaff);
+            if (ResultCode.R_SUCC.equals(resMap.get("resultCode"))) {
+                ArrayList dataList = (ArrayList) resMap.get("data");
+                Map<String, Object> accNbrMap = (Map<String, Object>) dataList.get(0);
+                model.addAttribute("accNbrMap", accNbrMap);
+            }
+            model.addAttribute("resMap", resMap);
+            model.addAttribute("param", param);
+            return "/cart/unsub-cardnbr";
+        } catch (BusinessException be) {
+            return super.failedStr(model, be);
+        } catch (InterfaceException ie) {
+            return super.failedStr(model, ie, param, ErrorCode.QUERY_MAININFO);
+        } catch (Exception e) {
+            log.error("一卡双号根据虚号查询主号接口方法异常", e);
+            return super.failedStr(model, ErrorCode.QUERY_MAININFO, e, param);
+        }
+    }
+    /**
+     *一卡双号虚号省退订新增黑名单 
+    **/
+    @RequestMapping(value = "/addBlackUserInfo", method = RequestMethod.POST)	
+    public String addBlackUserInfo(Model model,HttpServletRequest request,
+    		HttpServletResponse response,
+    		@LogOperatorAnn String flowNum,
+    		@RequestParam("evidenceFile") MultipartFile file) {
+        SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+                SysConstant.SESSION_KEY_LOGIN_STAFF);
+        JsonResponse jsonResponse = null;
+		PropertiesUtils propertiesUtils = (PropertiesUtils) SpringContextUtil.getBean("propertiesUtils");
+		Map<String, Object> ftpResultMap = null;
+		Map<String, Object> rMap = null;
+		String mainAccNbr = request.getParameter("mainAccNbr");
+		String mainAreaId = request.getParameter("mainAreaId");
+		String reason = request.getParameter("blacklistReason");
+		String virtualAccNbr = request.getParameter("virtualAccNbr");
+		String virtualAreaId = request.getParameter("virtualAreaId");
+		Map<String, Object> param = new HashMap<String, Object>();
+		param.put("areaId", virtualAreaId);
+		ArrayList<Map<String, Object>> data =  new ArrayList<Map<String, Object>>();
+		Map<String, Object> dataMaps = new HashMap<String, Object>();
+		dataMaps.put("mainAccNbr", mainAccNbr);
+		dataMaps.put("mainAreaId", mainAreaId);
+		dataMaps.put("reason", reason);
+		dataMaps.put("staffCd", sessionStaff.getStaffCode());
+		dataMaps.put("virtualAccNbr", virtualAccNbr);
+		dataMaps.put("virtualAreaId", virtualAreaId);
+		String message = "";
+		String code =ResultCode.R_FAIL;
+		if (null != file) {
+			String fileName = file.getOriginalFilename();
+			try {
+				//上传文件
+				if(!"ON".equals(propertiesUtils.getMessage("CLUSTERFLAG"))){
+					//上传到单台FTP服务器
+					ftpResultMap = ftpServiceUtils.fileUpload2FTP(file.getInputStream(), fileName, "evidenceFile");
+				} else{
+					//根据省份与多台FTP服务器的映射，上传文件到某台FTP服务器
+					ftpResultMap = ftpServiceUtils.fileUpload2FTP4Cluster(file.getInputStream(), fileName, "evidenceFile", sessionStaff.getProvinceCode());
+				}
+			} catch (Exception e) {
+				jsonResponse = super.failed(ErrorCode.FTP_UPLOAD_ERROR, e, rMap);
+			};
+
+			//若上传文件发生异常，则直接返回异常信息不再继续执行
+			if(jsonResponse == null){
+				try {
+					if (ftpResultMap != null && ResultCode.R_SUCCESS.equals(ftpResultMap.get("code").toString())) {
+						//上传成功后，入参中填充FTP信息
+						dataMaps.put("fileUrl",ftpResultMap.get("ftpInfos"));
+						data.add(dataMaps);
+						param.put("data", data);
+						//新增黑名单
+						Map<String, Object> returnMap = orderBmo.addBlackUserInfo(param, null, sessionStaff);
+						if (ResultCode.R_SUCC.equals(returnMap.get("resultCode"))) {
+							message = "增加黑名单成功";
+							ArrayList<Map<String, Object>> retrunData =  new ArrayList<Map<String, Object>>();
+							if(returnMap.get("data")!=null){
+								retrunData = (ArrayList<Map<String, Object>>) returnMap.get("data");
+								Map<String, Object> respData = retrunData.get(0);
+								message =  (String) respData.get("failReason");
+							}
+							code = ResultCode.R_SUCC;
+			            }else{
+			            	jsonResponse = super.failed(returnMap.get("resultMsg"), ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+			            }
+		 			}else{
+		 				if(ftpResultMap == null || ftpResultMap.get("mess") == null)
+		 					jsonResponse = super.failed("黑名单证据文件上传失败", ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+		 				else{
+		 					jsonResponse = super.failed(ftpResultMap.get("mess").toString(), ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+		 				}
+		 			}
+				} catch (BusinessException be) {
+					jsonResponse = super.failed(be);
+				} catch (InterfaceException ie) {
+					jsonResponse = super.failed(ie, rMap, ErrorCode.ADD_BLACK_USERINFO);
+				} catch (Exception e) {
+					jsonResponse = super.failed(ErrorCode.ADD_BLACK_USERINFO, e, rMap);
+				}
+			}else{
+					jsonResponse = super.failed("黑名单证据文件上传失败", ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+			}
+		}else{
+			jsonResponse = super.failed("文件读取失败,加入黑名单失败", ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+		}
+		model.addAttribute("message",message);
+		model.addAttribute("code",code);
+		if(jsonResponse!=null){
+			model.addAttribute("errorStack",jsonResponse);
+		}
+		return "/cart/blacklist-add-confirm";
+    }
 }

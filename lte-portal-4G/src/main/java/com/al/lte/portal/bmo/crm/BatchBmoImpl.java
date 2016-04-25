@@ -989,6 +989,7 @@ public class BatchBmoImpl implements BatchBmo {
 	 * 10--批量订购裸终端<br/>
 	 * 11--批量换档<br/>
 	 * 12--批量换卡
+	 * 13--批量一卡双号黑名单
 	 * @param templateType 上述0~12
 	 * @return 批量业务类型名称，以字符串返回
 	 */
@@ -1153,5 +1154,145 @@ public class BatchBmoImpl implements BatchBmo {
 		}*/
 		return Pattern.matches("^[0-9]+(.[0-9]{1,2})?$", cellValue);
 		
+	}
+	
+	
+	/**
+	 * 批量一卡双号Excel解析
+	 * @param workbook
+	 * @return Map<String,Object>
+	 */
+	public Map<String, Object> readBlacklistTerminalExcel(Workbook workbook) {
+		
+		String message = "";
+		String code = "-1";
+		final int columns = 5;//在批量一卡双号Excel中共有5列数据
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		StringBuffer errorData = new StringBuffer();
+		List<String> BlackList = null; //保存Excel中串码列，用于去重校验
+		Map<String, Object> dataOfRowMap = null;// 记录Excel中的一行数据
+		List<Map<String, Object>> dataOfExcelList = new ArrayList<Map<String, Object>>();
+		
+		//循环读取每个sheet中的数据放入list集合中
+		for (int sheetIndex = 0; sheetIndex < workbook.getNumberOfSheets(); sheetIndex++) {
+			//获取当前页sheet
+			Sheet sheet = workbook.getSheetAt(sheetIndex);
+			//获取Excel的行数
+			int totalRows = sheet.getPhysicalNumberOfRows();
+			if (totalRows > 1) {
+				for (int i = 1; i < totalRows; i++) {
+					dataOfRowMap = new HashMap<String, Object>();
+					BlackList = new ArrayList<String>(); 
+					Row row = sheet.getRow(i);
+					if (null != row) {
+						boolean cellIsNull = true;
+						for (int k = 0; k < columns; k++) {
+							Cell cellTemp = row.getCell(k);
+							if (null != cellTemp) {
+								String cellValue = checkExcelCellValue(cellTemp);
+								if (cellValue != null && !cellValue.equals("") && !cellValue.equals("null")) {
+									cellIsNull = false;//如果当前行的每一列不为空，则遍历，否则跳过该行
+								}
+							}
+						}
+						if (cellIsNull) {
+							continue;
+						}
+						
+						Cell cell = row.getCell(0);
+						if (null != cell) {
+							String cellValue = checkExcelCellValue(cell);
+							if (cellValue == null) {
+								errorData.append("<br/>【第" + (i + 1) + "行,第1列】单元格格式不正确");
+								break;
+							} else {
+								dataOfRowMap.put("mainAreaId", cellValue);
+							}
+						}else{
+							dataOfRowMap.put("mainAreaId", "");
+						}
+						cell = row.getCell(1);
+						if (null != cell) {
+							String cellValue = checkExcelCellValue(cell);
+							if (cellValue == null) {
+								errorData.append("<br/>【第" + (i + 1) + "行,第2列】单元格格式不正确");
+								break;
+							} else if (!"".equals(cellValue)) {
+								dataOfRowMap.put("mainAccNbr", cellValue);
+								if(!this.checkAccessNbrReg(cellValue)){
+									errorData.append("<br/>【第" + (i + 1) + "行,第2列】主号号码【"+cellValue+"】输入错误");
+									break;
+								}
+							}else{
+								errorData.append("<br/>【第" + (i + 1) + "行,第2列】主号号码不能为空");
+								break;
+							}
+						}else{
+							errorData.append("<br/>【第" + (i + 1) + "行,第2列】数据读取异常");
+							break;
+						}
+						cell = row.getCell(2);
+						if (null != cell) {
+							String cellValue = checkExcelCellValue(cell);
+							if (cellValue == null) {
+								errorData.append("<br/>【第" + (i + 1) + "行,第3列】单元格格式不正确");
+								break;
+							} else {
+								dataOfRowMap.put("virtualAreaId", cellValue);
+							}
+						}else{
+							dataOfRowMap.put("virtualAreaId", "");
+						}
+						cell = row.getCell(3);
+						if (null != cell) {
+							String cellValue = checkExcelCellValue(cell);
+							if (cellValue == null) {
+								errorData.append("<br/>【第" + (i + 1) + "行,第4列】单元格格式不正确");
+								break;
+							} else if (!"".equals(cellValue)) {
+								dataOfRowMap.put("virtualAccNbr", cellValue);
+								if(!this.checkAccessNbrReg(cellValue)){
+									errorData.append("<br/>【第" + (i + 1) + "行,第4列】虚号号码【"+cellValue+"】输入错误");
+									break;
+								}
+							}else{
+								errorData.append("<br/>【第" + (i + 1) + "行,第4列】虚号号码不能为空");
+								break;
+							}
+						}else{
+							errorData.append("<br/>【第" + (i + 1) + "行,第4列】数据读取异常");
+							break;
+						}
+						cell = row.getCell(4);
+						if (null != cell) {
+							String cellValue = checkExcelCellValue(cell);
+							if (cellValue == null) {
+								errorData.append("<br/>【第" + (i + 1) + "行,第5列】单元格格式不正确");
+								break;
+							} else {
+								dataOfRowMap.put("reason", cellValue);
+							}
+						}else{
+							dataOfRowMap.put("reason", "");
+						}
+					}
+					if (dataOfRowMap.size() > 0) {
+						dataOfExcelList.add(dataOfRowMap);
+					}
+				}
+			}
+		}
+
+		if("".equals(errorData.toString())){
+			code="0";
+		}
+		
+		returnMap.put("errorData", errorData.toString());
+		returnMap.put("data", dataOfExcelList);
+		returnMap.put("code", code);
+		returnMap.put("message", message);
+		returnMap.put("totalDataSize", BlackList.size());
+		
+		return returnMap;
 	}
 }

@@ -49,6 +49,7 @@ import com.al.ec.serviceplatform.client.DataBus;
 import com.al.ec.serviceplatform.client.ResultCode;
 import com.al.ecs.common.entity.JsonResponse;
 import com.al.ecs.common.entity.PageModel;
+import com.al.ecs.common.util.FtpUtils;
 import com.al.ecs.common.util.JsonUtil;
 import com.al.ecs.common.util.PageUtil;
 import com.al.ecs.common.util.PropertiesUtils;
@@ -2314,6 +2315,7 @@ public class BatchOrderController  extends BaseController {
 	public String importBatchData(Model model, HttpServletRequest request,HttpServletResponse response,
 			@LogOperatorAnn String flowNum,
 			@RequestParam("upFile") MultipartFile file,
+			@RequestParam("evidenceFile") MultipartFile evidenceFile,
 			@RequestParam("batchType") String batchType,
 			@RequestParam("reserveDt") String reserveDt) {
 		String message = "";
@@ -2724,5 +2726,62 @@ public class BatchOrderController  extends BaseController {
 		}
 		
 		return jsonResponse; 
+	}
+	
+	/**
+	 * 批量一卡双号黑名单
+	 */
+	@RequestMapping(value = "/importBlacklist", method = RequestMethod.GET)
+	public String importBlacklist(Model model,HttpServletRequest request,HttpSession session) {
+		
+		List<Map<String, Object>> timeList = batchBmo.getTimeListIn5Days();
+		String batchType = request.getParameter("batchType");
+		String batchTypeName  = batchBmo.getTypeNames(batchType);
+		
+		model.addAttribute("time", timeList);
+		model.addAttribute("batchType", batchType);
+		model.addAttribute("batchTypeName", batchTypeName);
+		
+		return "/batchOrder/batch-order-change";
+	}
+	
+	@RequestMapping(value = "/downloadFile", method = {RequestMethod.POST})
+	@ResponseBody
+	public JsonResponse downloadFile(@RequestParam Map<String, Object> param, Model model, HttpServletResponse response) throws IOException {
+		try {
+			FtpUtils ftpUtils = new FtpUtils();
+			String fileUrl = (String) param.get("fileUrl");
+			String fileName = (String) param.get("fileName");
+			String[] fileUrls = fileUrl.split(",");
+			String ftpMapping = fileUrls[0];
+			String newFileName = fileUrls[1];
+			String filePath = fileUrls[2];
+			
+			//2.获取FTP服务器的具体登录信息
+			//3.根据服务器映射获取对应的FTP服务器配置信息
+			PropertiesUtils propertiesUtils = (PropertiesUtils) SpringContextUtil.getBean("propertiesUtils");
+			String ftpServiceConfig = propertiesUtils.getMessage(ftpMapping);
+			String[] ftpServiceConfigs = ftpServiceConfig.split(",");
+			String remoteAddress = ftpServiceConfigs[0];//FTP服务器地址(IP)
+			String remotePort = ftpServiceConfigs[1];//FTP服务器端口
+			String userName = ftpServiceConfigs[2];//FTP服务器用户名
+			String password = ftpServiceConfigs[3];//FTP服务器密码
+			
+			ServletOutputStream  outputStream = response.getOutputStream();
+			
+			response.addHeader("Content-Disposition", "attachment;filename="+fileName);
+			response.setContentType("application/binary;charset=utf-8");
+			
+			ftpUtils.connectFTPServer(remoteAddress,remotePort,userName,password);
+			boolean isFileExist = ftpUtils.isFileExist(newFileName,filePath);
+			if(isFileExist){
+				ftpUtils.downloadFileByPath(filePath+newFileName, outputStream);
+			}
+			outputStream.close();
+			return super.successed("导出成功！");
+		} catch (Exception e) {
+			return super.failed("导出文件异常",ResultConstant.FAILD.getCode());
+		}
+		
 	}
 }

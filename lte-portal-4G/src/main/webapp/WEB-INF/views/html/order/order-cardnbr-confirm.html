@@ -1,12 +1,13 @@
 <div class="order_confirmation">
-	<h2 class="h2_title">
+	
 		<#if param.pageType=="unOrderAccNber">
+		<h2 class="h2_title">
 		<span> 一卡双号退订</span>
-		<#else>
+		<#elseif param.pageType=="orderAccNber">
 		<span> 一卡双号订购</span>
-		</#if>
 		<span class="showhide"></span>
-	</h2>
+	    </h2>
+		</#if>
     <div class="main_body">
     	<h2 class="s_title">受理完成</h2>
 <#if resMap.resultCode==0>
@@ -41,7 +42,12 @@
 		            </tbody>
 	    		</table>
 	    		<div align="right" style="margin: 20px auto;">
-					<a class="btna_o" href="javascript:SoOrder.orderBack()"><span >返回修改</span></a>
+	    		    <#if param.pageType=="unOrderVirtualAccNber">
+	    		    <a class="btna_o" id="confirmBack"><span >返回修改</span></a>
+		            <#else>
+		            <a class="btna_o" href="javascript:SoOrder.orderBack()"><span >返回修改</span></a>
+		            </#if>
+					
 				</div>
 </#if>
 </div>

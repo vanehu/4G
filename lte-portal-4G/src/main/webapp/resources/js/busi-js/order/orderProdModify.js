@@ -3537,63 +3537,99 @@ order.prodModify = (function(){
 		if(!rule.rule.ruleCheck(boInfos)){ //规则校验失败
 			return;
 		}
-		$.callServiceAsHtml(contextPath + "/order/cardNumberOrder", param, {
+		var qryParam = {
+			    "areaId":_choosedProdInfo.areaId,
+			    "nbrType":"main",
+			    "accNbr":_choosedProdInfo.accNbr,
+			    nowPage:1,
+				pageSize:10
+		};
+		var qryUrl = contextPath + "/order/queryBlackList";
+		$.callServiceAsJson(qryUrl,qryParam,{
 			"before":function(){
-				$.ecOverlay("<strong>正在查询中,请稍等会儿....</strong>");
-			},"done" : function(response){
-				var content$ = $("#order_fill_content");
-				content$.html(response.data).show();
-				$("#ordercon").show();
-				$("#ordertabcon").show();
-				order.prepare.step(1);
-				OrderInfo.order.step=1;//订单备注页面
-				$("#orderedprod").hide();
-				$("#order_prepare").hide();
-				$(".ordercon a:first span").text("取 消");
-				$(".main_body").css("height","150px");
-				$(".main_body").css("min-height","150px");
-				$("#order_confirm").empty();
-				$("#fillLastStep").click(function(){
-					order.prodModify.cancel();
-				});
-                
-				$("#queryAccNbrList").unbind("click").bind("click",function(){
-					var param = {
-					    areaId : $("#areaId").val(),
-					    scene: "ADD", 
-					    preHandle: "C", 
-					    mainAccNbr: $("#mainAccNbr").val(),
-					    virtualAreaId: $("#p_areaId").val(),
-					    soChannelId: OrderInfo.staff.channelId
-					};
-					$.callServiceAsHtml(contextPath+"/order/queryAccNbrList",param,{
+				$.ecOverlay("正在查询黑名单中，请稍等...");
+			},
+			"always":function(){
+				$.unecOverlay();
+			},
+			"done" : function(response){
+				if(response.code==0){
+					if(response.data.data!=null && response.data.data.length>0){
+						$.alert("提示", "该用户被加入黑名单，不能订购一卡双号！");
+						return;
+					}
+					$.callServiceAsHtml(contextPath + "/order/cardNumberOrder", param, {
 						"before":function(){
-							$.ecOverlay("虚号号码查询中，请稍等...");
-						},
-						"always":function(){
-							$.unecOverlay();
-						},
-						"done" : function(response){
-							order.prepare.step(2);
-							OrderInfo.order.step=2;//订单确认页面
-							$("#order_fill_content").hide();
-							var content$ = $("#order_confirm");
+							$.ecOverlay("<strong>正在查询中,请稍等会儿....</strong>");
+						},"done" : function(response){
+							var content$ = $("#order_fill_content");
 							content$.html(response.data).show();
-							OrderInfo.actionFlag = 36;
-							OrderInfo.orderAccNbr = _choosedProdInfo.accNbr;
-							order.dealer.initDealer();
-						},
-						fail:function(response){
+							$("#ordercon").show();
+							$("#ordertabcon").show();
+							order.prepare.step(1);
+							OrderInfo.order.step=1;//订单备注页面
+							$("#orderedprod").hide();
+							$("#order_prepare").hide();
+							$(".ordercon a:first span").text("取 消");
+							$(".main_body").css("height","150px");
+							$(".main_body").css("min-height","150px");
+							$("#order_confirm").empty();
+							$("#fillLastStep").click(function(){
+								order.prodModify.cancel();
+							});
+			                
+							$("#queryAccNbrList").unbind("click").bind("click",function(){
+								var param = {
+								    areaId : $("#areaId").val(),
+								    scene: "ADD", 
+								    preHandle: "C", 
+								    mainAccNbr: $("#mainAccNbr").val(),
+								    virtualAreaId: $("#p_areaId").val(),
+								    soChannelId: OrderInfo.staff.channelId
+								};
+								$.callServiceAsHtml(contextPath+"/order/queryAccNbrList",param,{
+									"before":function(){
+										$.ecOverlay("虚号号码查询中，请稍等...");
+									},
+									"always":function(){
+										$.unecOverlay();
+									},
+									"done" : function(response){
+										order.prepare.step(2);
+										OrderInfo.order.step=2;//订单确认页面
+										$("#order_fill_content").hide();
+										var content$ = $("#order_confirm");
+										content$.html(response.data).show();
+										OrderInfo.actionFlag = 36;
+										OrderInfo.orderAccNbr = _choosedProdInfo.accNbr;
+										order.dealer.initDealer();
+									},
+									fail:function(response){
+										$.unecOverlay();
+										$.alert("提示","请求可能发生异常，请稍后再试！");
+									}
+								});
+							});
+						},"always":function(){
 							$.unecOverlay();
-							$.alert("提示","请求可能发生异常，请稍后再试！");
 						}
 					});
-				});
-			},"always":function(){
+				}else if (response.code == -2) {
+					$.alertM(response.data);
+					return;
+				}else if(response.code==1){
+					$.alert("查询失败", response.data);
+					return;
+				}else{
+					$.alert("提示","查询黑名单异常");
+					return;
+				}
+			},
+			fail:function(response){
 				$.unecOverlay();
+				$.alert("提示","请求可能发生异常，请稍后再试！");
 			}
 		});
-	
 	};
 	//订购一卡双号
 	var _orderAccNbr = function () {
@@ -3872,6 +3908,7 @@ order.prodModify = (function(){
 			$.alert("提示","产品状态为'在用'不需要紧急开机！");
 			return;
 		}
+		OrderInfo.creditLimitId ="";
 		//查询权益项是否有紧急开机权益
 		var param={"accNbr":_choosedProdInfo.accNbr};
 		var url = contextPath+"/order/goUrgentOpen";

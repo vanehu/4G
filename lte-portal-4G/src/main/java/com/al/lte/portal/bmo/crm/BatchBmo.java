@@ -28,6 +28,12 @@ public interface BatchBmo {
 	public Map<String, Object> readExcel4NewOrder(Workbook workbook, String batchType, String str, SessionStaff sessionStaff);
 	
 	/**
+	 * 批开活卡解析Excel(多线程)
+	 * @author ZhangYu 2016-04-10
+	 */
+	public Map<String, Object> readExcel4HKUseThreads(Workbook workbook, String batchType);	
+	
+	/**
 	 * 批开活卡(0)解析Excel
 	 * @param workbook
 	 * @param batchType
@@ -36,7 +42,7 @@ public interface BatchBmo {
 	public Map<String, Object> readExcel4HK(Workbook workbook, String batchType);
 	
 	/**
-	 * 批量拆机(8)、批量订购/退订附属(2)解析Excel
+	 * 批量拆机(8)、批量订购/退订附属(2)、批量在用拆机(14)、批量未激活拆机(15)解析Excel
 	 * @param workbook
 	 * @return
 	 */
@@ -99,5 +105,13 @@ public interface BatchBmo {
 	 * @throws IOException 
 	 * @throws InterfaceException 
 	 */
-	public Map<String, Object> getGroupIDfromSOAfterUpload(Map<String, Object> requestParamMap, SessionStaff sessionStaff) throws BusinessException, InterfaceException, IOException, Exception;	
+	public Map<String, Object> getGroupIDfromSOAfterUpload(Map<String, Object> requestParamMap, SessionStaff sessionStaff) throws BusinessException, InterfaceException, IOException, Exception;
+	
+	/**
+	 * 批量一卡双号黑名单(14)Excel
+	 * @param workbook
+	 * @return Map<String,Object>
+	 */
+	public Map<String,Object> readBlacklistTerminalExcel(Workbook workbook);
+	
 }

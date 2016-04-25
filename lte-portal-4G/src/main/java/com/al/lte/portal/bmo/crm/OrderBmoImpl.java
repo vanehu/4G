@@ -2127,4 +2127,68 @@ public class OrderBmoImpl implements OrderBmo {
 		}	
 		return resultMap;
 	}
+	
+	public Map<String, Object> queryMainInfo(Map<String, Object> paramMap,String optFlowNum, 
+			SessionStaff sessionStaff)throws Exception {
+		DataBus db = InterfaceClient.callService(paramMap,
+				PortalServiceCode.QUERY_MAININFO, optFlowNum, sessionStaff);
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		try{
+			// 服务层调用与接口层调用都成功时，返回列表；否则返回空列表
+			if (ResultCode.R_SUCC.equals(db.getResultCode())) {
+				resultMap = db.getReturnlmap();
+				resultMap.put("resultCode", ResultCode.R_SUCC);
+			} else {
+				resultMap.put("resultCode", ResultCode.R_FAILURE);
+				resultMap.put("resultMsg", db.getResultMsg());
+			}
+		} catch (Exception e) {
+			log.error("门户处理营业后台的一卡双号根据虚号查询主号接口服务返回的数据异常", e);
+			throw new BusinessException(ErrorCode.QUERY_MAININFO, paramMap, resultMap, e);
+		}
+		return resultMap;
+	}
+	
+	public Map<String, Object> addBlackUserInfo(Map<String, Object> paramMap,String optFlowNum, 
+			SessionStaff sessionStaff)throws Exception {
+		DataBus db = InterfaceClient.callService(paramMap,
+				PortalServiceCode.ADD_BLACK_USERINFO, optFlowNum, sessionStaff);
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		try{
+			// 服务层调用与接口层调用都成功时，返回列表；否则返回空列表
+			if (ResultCode.R_SUCC.equals(db.getResultCode())) {
+				resultMap = db.getReturnlmap();
+				resultMap.put("resultCode", ResultCode.R_SUCC);
+			} else {
+				resultMap.put("resultCode", ResultCode.R_FAILURE);
+				resultMap.put("resultMsg", db.getResultMsg());
+			}
+		} catch (Exception e) {
+			log.error("门户处理营业后台的一卡双号黑名单新增服务接口服务返回的数据异常", e);
+			throw new BusinessException(ErrorCode.QUERY_MAININFO, paramMap, resultMap, e);
+		}
+		return resultMap;
+	}
+	
+	public Map<String, Object> queryBlackUserInfo(Map<String, Object> paramMap,String optFlowNum, 
+			SessionStaff sessionStaff)throws Exception {
+		DataBus db = InterfaceClient.callService(paramMap,
+				PortalServiceCode.QUERY_BLACK_USERINFO, optFlowNum, sessionStaff);
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		try{
+			// 服务层调用与接口层调用都成功时，返回列表；否则返回空列表
+			if (ResultCode.R_SUCC.equals(db.getResultCode())) {
+				resultMap = db.getReturnlmap();
+				resultMap.put("resultCode", ResultCode.R_SUCC);
+			} else {
+				resultMap.put("resultCode", ResultCode.R_FAILURE);
+				resultMap.put("resultMsg", db.getResultMsg());
+			}
+		} catch (Exception e) {
+			log.error("门户处理营业后台的一卡双号黑名单查询接口服务返回的数据异常", e);
+			throw new BusinessException(ErrorCode.QUERY_BLACK_USERINFO, paramMap, resultMap, e);
+		}
+		return resultMap;
+	}
+	
 }

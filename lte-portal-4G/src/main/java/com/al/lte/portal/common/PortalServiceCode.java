@@ -979,5 +979,10 @@ public final class PortalServiceCode {
 	public static final String QUERY_STB_RESERVE_INFO_FOR_PRINT = "biz-service/intf.soService/querySTBReservInfoForPrint";
 	/**天翼高清机顶盒预约单查询*/
 	public static final String QUERY_STB_RESERVE_INFO = "biz-service/intf.soService/querySTBReservInfo";
-	
+    /**一卡双号根据虚号查询主号*/
+    public static final String QUERY_MAININFO = "bdw-service/intf.businessDispatchService/queryMainInfo";
+    /**一卡双号黑名单新增*/
+    public static final String ADD_BLACK_USERINFO = "bdw-service/intf.businessDispatchService/addBlackUserInfo";
+    /**一卡双号黑名单查询*/
+    public static final String QUERY_BLACK_USERINFO = "bdw-service/intf.businessDispatchService/queryBlackUserInfo";
 }

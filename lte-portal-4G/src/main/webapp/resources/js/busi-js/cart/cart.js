@@ -800,6 +800,236 @@ cart.main = (function(){
 		
 	};
 	
+	var _qryVirtualNumber = function(){
+		var virtualAccNbr=$("#virtualNumber").val();
+		if(virtualAccNbr==null || virtualAccNbr ==""){
+			$.alert("提示","请输入 '虚号接入号' 再查询");
+			return;
+		}
+		var param = {
+		    "virtualAccNbr":virtualAccNbr,
+		    "areaId":OrderInfo.staff.areaId
+		};
+        
+		$.callServiceAsHtml(contextPath+"/report/queryMainInfo",param,{
+			"before":function(){
+				$.ecOverlay("根据虚号查询主号中，请稍等...");
+			},
+			"always":function(){
+				$.unecOverlay();
+			},
+			"done" : function(response){
+				var content$=$("#unsub_fill_content");
+				content$.html(response.data).show();
+				$("#unsub_prepare").hide();
+				$("#ubsubLastStep").click(function(){
+					$("#unsub_fill_content").hide();
+					$("#unsub_prepare").show();
+				});
+				$("#undoAccNbr").unbind("click").bind("click",function(){//先加入黑名单，再退订
+					var evidenceFile = $.trim($("#evidenceFile").val());
+					if (evidenceFile === "") {
+						$.alert("提示","请导入黑名单证据文件！");
+						return;
+					}else{
+						var suffix = evidenceFile.substr(evidenceFile.lastIndexOf(".") + 1);
+						//支持word、pdf、图片格式
+						if(suffix != "doc" && suffix != "docx" && suffix != "pdf" && suffix != "png" && suffix != "gif" && suffix != "jpeg" && suffix != "jpg"){
+							$.alert("提示","导入黑名单证据文件类型错误，黑名单证据文件类型支持word，pdf,图片类型！");
+							return;
+						};
+					}
+					var reason = $("#blacklistReason").val();
+					if(reason==null || reason==""){
+						$.alert("提示","请填写'黑名单原因'！");
+						return;
+					}
+					var params = {
+						areaId: $("#mainAreaId").val(),
+						scene: "DEL",
+					    preHandle: "C",
+						mainAccNbr: $("#mainAccNbr").val(),
+						virtualAreaId: $("#virtualAreaId").val(),
+						virtualAccNbr: $("#virtualAccNbr").val(),
+						vir_flag: true,
+						pageType:"unOrderVirtualAccNber"
+					};
+					$.callServiceAsHtml(contextPath+"/order/exchangeAccNbr",params,{
+						"before":function(){
+							$.ecOverlay("一卡双号虚号省退订中，请稍等...");
+						},
+						"always":function(){
+							$.unecOverlay();
+						},
+						"done" : function(response){
+							$("#unsub_fill_content").hide();
+							var content$ = $("#unsub_confirm");
+							content$.html(response.data).show();
+							$("#confirmBack").click(function(){
+								$("#unsub_confirm").hide();
+								$("#unsub_fill_content").show();
+							});
+							$("#successTip_dialog_cnt").click(function(){
+								window.location.href = contextPath+"/report/unsubVirtualNumPrepare";
+								return;
+							});
+						},
+						fail:function(response){
+							$.unecOverlay();
+							$.alert("提示","请求可能发生异常，请稍后再试！");
+						}
+					});
+				    //不管是否退订成功，加入黑名单
+					_addBlacklistSubmit("unsubPage");
+				});
+			},
+			fail:function(response){
+				$.unecOverlay();
+			}
+		});
+		
+	};
+	
+	var _qryBlackUserInfo = function(pageIndex){
+		var curPage = 1 ;
+		if(pageIndex>0){
+			curPage = pageIndex ;
+		}
+		if(!$("#p_areaId_val").val()||$("#p_areaId_val").val()==""){
+			$.alert("提示","请选择 '地区' 再查询");
+			return ;
+		}
+		var accNbr=$("#accNbr").val();
+		var nbrType = $("#nbrType").val();
+		if(accNbr==null || accNbr ==""){
+			$.alert("提示","请输入 '接入号' 再查询");
+			return;
+		}
+		var param = {
+		    "areaId":$("#p_areaId").val(),
+		    "nbrType":nbrType,
+		    "accNbr":accNbr,
+		    nowPage:curPage,
+			pageSize:10
+		};
+        
+		$.callServiceAsHtml(contextPath+"/order/queryBlackUserInfo",param,{
+			"before":function(){
+				$.ecOverlay("根据虚号查询主号中，请稍等...");
+			},
+			"always":function(){
+				$.unecOverlay();
+			},
+			"done" : function(response){
+				if(response && response.code == -2){
+					return ;
+				}else if(response.data && response.data.substring(0,6)!="<table"){
+					$.alert("提示",response.data);
+				}else{
+					$("#blackList_list").html(response.data).show();
+				}
+			},
+			fail:function(response){
+				$.unecOverlay();
+			}
+		});
+		
+	};
+	
+	var _showAddBlacklist = function(){
+		$("#blacklist_qry").hide();
+		$("#blacklist_add").show();
+		$("#addLastStep").unbind("click").bind("click",function(){
+			$("#blacklist_add").hide();
+			$("#blacklist_qry").show();
+		});
+		$("#addBlacklistUserInfo").unbind("click").bind("click",function(){
+			var mainAreaId = $("#mainAreaId").val();
+			var mainAccNbr = $("#mainAccNbr").val();
+			var virtualAreaId = $("#virtualAreaId").val();
+			var virtualAccNbr = $("#virtualAccNbr").val();
+			if(mainAreaId==null || mainAreaId==""){
+				$.alert("提示","请选择'主号地区'！");
+				return;
+			}
+			if(mainAreaId.indexOf("0000")>0){
+				$.alert("提示","主号地区为省级地区,请选择市级地区！");
+				return;
+			}
+			if(mainAccNbr==null || mainAccNbr==""){
+				$.alert("提示","请填写'主号接入号'！");
+				return;
+			}
+			if(virtualAreaId==null || virtualAreaId==""){
+				$.alert("提示","请选择'虚号地区'！");
+				return;
+			}
+			if(virtualAreaId.indexOf("0000")>0){
+				$.alert("提示","虚号地区为省级地区,请选择市级地区！");
+				return;
+			}
+			if(virtualAccNbr==null || virtualAccNbr==""){
+				$.alert("提示","请填写'虚号接入号'！");
+				return;
+			}
+			var evidenceFile = $.trim($("#evidenceFile").val());
+			if (evidenceFile === "") {
+				$.alert("提示","请导入黑名单证据文件！");
+				return;
+			}else{
+				var suffix = evidenceFile.substr(evidenceFile.lastIndexOf(".") + 1);
+				//支持word、pdf、图片格式
+				if(suffix != "doc" && suffix != "docx" && suffix != "pdf" && suffix != "png" && suffix != "gif" && suffix != "jpeg" && suffix != "jpg"){
+					$.alert("提示","导入黑名单证据文件类型错误，黑名单证据文件类型支持word，pdf,图片类型！");
+					return;
+				};
+			}
+			var reason = $("#blacklistReason").val();
+			if(reason==null || reason==""){
+				$.alert("提示","请填写'黑名单原因'！");
+				return;
+			}
+			_addBlacklistSubmit("addPage");
+		});
+	};
+	
+	var _addBlacklistSubmit = function(pageType){
+		var url =  contextPath +"/report/addBlackUserInfo";
+		var options  = {
+				type	: 'post',
+	            dataType: 'text',
+	            url		: url,
+            beforeSubmit:function(){
+			    $.ecOverlay("<strong>正在提交,请稍等...</strong>");
+			},							
+            success:function(data){
+				$.unecOverlay();
+				if(pageType=="addPage"){
+					$("#blacklist_add").hide();
+					var content$ = $("#add_confirm");
+					content$.html(data).show();
+				}
+				$("#add_confirmBack").unbind("click").bind("click",function(){
+					$("#add_confirm").hide();
+					$("#blacklist_add").show();
+				});
+				$("#success_add_blacklist").click(function(){
+					window.location.href = contextPath+"/order/manageBlacklist";
+					return;
+				});
+			},
+			error: function(data, status, e){
+				alert(data);
+				$.unecOverlay();
+				$.alert("提示","请求可能发生异常，请稍后再试！");
+			}
+		};
+		$('#blacklistEvidence').ajaxSubmit(options);
+	};
+	var _chooseBlacklistArea = function(areaName,areaId){
+		order.area.chooseAreaTreeAll(areaName,areaId,"3");
+	};
+	
 	return {
 		addStyle			:_addStyle,
 		removeStyle			:_removeStyle,
@@ -821,7 +1051,12 @@ cart.main = (function(){
 		cardProgressQuery	:_cardProgressQuery,
 		delOrder			:_delOrder,
 		queryReOrder		:_queryReOrder,
-		updateArchivedAuto  :_updateArchivedAuto
+		updateArchivedAuto  :_updateArchivedAuto,
+		qryVirtualNumber    :_qryVirtualNumber,
+		qryBlackUserInfo    :_qryBlackUserInfo,
+	 	showAddBlacklist    :_showAddBlacklist,
+	 	addBlacklistSubmit  :_addBlacklistSubmit,
+	 	chooseBlacklistArea :_chooseBlacklistArea
 	};
 	
 })();
@@ -829,6 +1064,8 @@ cart.main = (function(){
 $(function(){
 	
 	$("#bt_cartQry").off("click").on("click",function(){cart.main.queryCartList(1);});
+	$("#qry_virtualNumber").off("click").on("click",function(){cart.main.qryVirtualNumber();});
+	$("#qry_blackUserInfo").off("click").on("click",function(){cart.main.qryBlackUserInfo(1);});
 	$("#p_startDt").off("click").on("click",function(){
 		$.calendar({ format:'yyyy年MM月dd日 ',real:'#p_startDt',maxDate:$("#p_endDt").val() });
 	});

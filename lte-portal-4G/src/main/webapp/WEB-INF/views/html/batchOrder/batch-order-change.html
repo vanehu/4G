@@ -73,6 +73,21 @@
 									</select>
 								</dd>
 							</dl>
+							
+							<#if batchType=="13">
+							<dl>
+								<dt>
+									黑名单证据:
+								</dt>
+								<dd>
+									<input type="file"  name="evidenceFile" id="evidenceFile" style="text-indent:0px;height:30px;""/>
+								</dd>
+							</dl>
+							<#else>
+							    <div class="order" id="unsub_fill_content" style="display:none">
+							   	    <input type="file"  name="evidenceFile" id="evidenceFile" style="text-indent:0px;height:30px;""/>
+							    </div>
+							</#if>
 							<dl>
 								<dt>
 									EXCEL文件&nbsp;:
@@ -92,9 +107,13 @@
 									<tr>
 										<td><i class="rule_icon_notice"></i></td>
 										<td><span style="line-height:25px;"> 
-											(1) 仅支持上传xls、xlsx文件，单元格格式请设置为文本
+											(1) ${batchTypeName}EXCEL文件：仅支持上传xls、xlsx文件，单元格格式请设置为文本
+											<br/>(2) 预约执行时间：例如：选择0点-->导入成功后0点执行；选择23点-->导入成功后23点执行
+											<br/>(3)批量处理可能需要持续一段时间，请耐心等待... 
+											<#if batchType=="13">
 											<br/>
-											(2) 预约执行时间：例如：选择0点-->导入成功后0点执行；选择23点-->导入成功后23点执行 
+											(3) 黑名单证据文件名后缀为：doc,docx,pdf,png,gif,jpeg,jpg中的一种。
+							                </#if>
 											</span>
 										</td>
 									</tr>

@@ -65,6 +65,9 @@
 			<!--<input type="hidden" name="segmentId" id="segmentId" value="" />-->
 			<label>EXCEL文件 :</label>
 			<input type="file"   id="upFile" name="upFile" value=""/>
+			<div class="order" id="unsub_fill_content" style="display:none">
+			    <input type="file"  name="evidenceFile" id="evidenceFile" style="text-indent:0px;height:30px;""/>
+			</div>
 			<a class="purchase" href="javascript:void(0)" onclick="order.batch.submit();">导 入</a>
 			<a class="purchase" href="javascript:void(0)" onclick="order.batch.download('${batchType}');">模板下载</a>
 			<a class="purchase" href="javascript:void(0)" onclick="order.batch.reset();">重 置</a>

@@ -50,6 +50,9 @@ public class FTPServiceUtilsImpl implements FTPServiceUtils {
 		
 		//1.从配置文件获取服务器配置信息
 		String ftpRemotePath = propertiesUtils.getMessage("FTPREMOTEPATH");//访问FTP的路径
+		if(batchType=="evidenceFile"){//黑名单自己文件上传到/blackListEvidenceFile目录下
+			ftpRemotePath = propertiesUtils.getMessage("FTPBLACKLISTPATH");//访问FTP的路径
+		}
 		String ftpServiceConfig = propertiesUtils.getMessage("FTPSERVICECONFIG");
 		if(ftpRemotePath == null || ftpServiceConfig == null){
 			throw new IOException("FTP服务器配置信息获取失败，请检查配置文件");
@@ -73,7 +76,8 @@ public class FTPServiceUtilsImpl implements FTPServiceUtils {
 		uploadParam.put("ftpRemotePath", ftpRemotePath);
 		uploadParam.put("fileInputStream", fileInputStream);
 		uploadParam.put("newUploadFileName", newUploadFileName);
-		
+		uploadParam.put("oldUploadFileName", uploadFileName);
+		uploadParam.put("ftpConfigFlag", "FTPSERVICECONFIG");
 		//5.上传文件，如果不成功则重新尝试上传
 		for(int i = retryTimes + 1; i > 0; i--){
 			if (!ResultCode.R_SUCCESS.equals(uploadResult.get("code"))) {
@@ -113,6 +117,9 @@ public class FTPServiceUtilsImpl implements FTPServiceUtils {
 		// 获取服务器配置信息
 		//1.访问FTP的路径
 		String ftpRemotePath = propertiesUtils.getMessage("FTPREMOTEPATH");
+		if(batchType=="evidenceFile"){//黑名单自己文件上传到/blackListEvidenceFile目录下
+			ftpRemotePath = propertiesUtils.getMessage("FTPBLACKLISTPATH");//访问FTP的路径
+		}
 		//2.根据省份编码provinceCode获取该省对应的服务器映射
 		provinceCode = provinceCode.substring(0, 3) + "0000";
 		ftpMapping = propertiesUtils.getMessage("FTP_" + provinceCode);
@@ -140,7 +147,8 @@ public class FTPServiceUtilsImpl implements FTPServiceUtils {
 		uploadParam.put("ftpRemotePath", ftpRemotePath);
 		uploadParam.put("fileInputStream", fileInputStream);
 		uploadParam.put("newUploadFileName", newUploadFileName);
-		
+		uploadParam.put("oldUploadFileName", uploadFileName);
+		uploadParam.put("ftpConfigFlag", ftpMapping);		
 		//7.连接某一台FTP服务器失败后，连续尝试多次连接，如果仍然失败，则返回错误信息
 		for(int i = retryTimes + 1; i > 0; i--){
 			if (!ResultCode.R_SUCCESS.equals(uploadResult.get("code"))) {
@@ -235,6 +243,8 @@ public class FTPServiceUtilsImpl implements FTPServiceUtils {
 		String password = uploadParam.get("password").toString();
 		String ftpRemotePath = uploadParam.get("ftpRemotePath").toString();
 		String newUploadFileName = uploadParam.get("newUploadFileName").toString();
+		String oldUploadFileName = uploadParam.get("oldUploadFileName").toString();
+		String ftpConfigFlag = uploadParam.get("ftpConfigFlag").toString();
 		InputStream fileInputStream = (InputStream) uploadParam.get("fileInputStream");
 		
 		//2.连接FTP服务器
@@ -253,6 +263,8 @@ public class FTPServiceUtilsImpl implements FTPServiceUtils {
 					ftpInfos.put("servicePort", remotePort);
 					ftpInfos.put("filePath", ftpRemotePath);
 					ftpInfos.put("fileName", newUploadFileName);
+					ftpInfos.put("oldUploadFileName", oldUploadFileName);
+					ftpInfos.put("ftpConfigFlag", ftpConfigFlag);
 					uploadResult.put("ftpInfos", ftpInfos);
 					uploadResult.put("code", ResultCode.R_SUCCESS);
 				} else{

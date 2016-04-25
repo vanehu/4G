@@ -1,0 +1,96 @@
+<@override name="title">一卡双号虚号省退订</@override>
+
+<@override name="header">
+<#include "/busi-js-tpl.html"/>
+<script>
+	$.extend($, {
+		httpData : function(xhr, type, s) {
+			var ct = xhr.getResponseHeader("content-type"), xml = type == "xml" || !type && ct && ct.indexOf("xml") >= 0, data = xml ? xhr.responseXML : xhr.responseText;
+
+			if (xml && data.documentElement.tagName == "parsererror")
+				throw "parsererror";
+			if (s && s.dataFilter)
+				data = s.dataFilter(data, type);
+			if ( typeof data === "string") {
+				if (type == "script")
+					jQuery.globalEval(data);
+				if (type == "json")
+					data = window["eval"]("(" + data + ")");
+			}
+			return data;
+		},
+		handleError : function(s, xhr, status, e) {
+			if (s.error)
+				s.error(xhr, status, e);
+			else if (xhr.responseText)
+				console.log(xhr.responseText);
+		}
+	});
+
+	$(function() {
+		/* $('#upFile').change(function() {
+			$('#importExcel').removeClass("purchase").addClass("disablepurchase");
+			$('#importExcel').off('click');
+		}); */
+	})
+</script>
+<script src="${contextPath}/js/third-js/jquery/jquery.form.js" type="text/javascript"></script>
+<script src="${contextPath}/js/busi-js/cart/cart.js?${jsversion}" type="text/javascript"></script>
+<style>
+.cartLink_fail:hover {
+	text-decoration : underline;
+	cursor : pointer;
+}
+</style>
+</@override>
+
+<@override name="content">
+<input type="hidden" id="pageType" value="${pageType}">
+<#if pageType=="link">
+<input type="hidden" id="permissionsType" value="${permissionsType}"/>
+</#if>
+<div class="main_div" id="d_query" >
+
+    <div class="main_warp" >
+        <!--订单准备-->       
+        <h2 class="h2_title">一卡双号虚号省退订<span></span>
+        </h2>
+        <div class="order" id="unsub_prepare">
+            <div class="order_content" style="border:none; padding:10px">
+                
+                <!--挑靓号-->
+                <div class="order_tab_panel" style="display:block;">
+                        <div class="selectList">
+                            <dl>
+                            	  <dt>虚号接入号：</dt>
+                                  <dd>
+                                    <input type="text" class="numberTextBox width198" id="virtualNumber" value=""/>
+                                    <label class="f_red">&nbsp;</label>
+                                  </dd>
+                                  <dd>
+									<label class="f_red">&nbsp;&nbsp;</label>
+                                    <input type="button" value="查询" class="numberSearch" id="qry_virtualNumber" />
+								  </dd>
+                          	</dl>
+                  </div>
+                    </div>
+                </div>
+                                        
+            </div>
+        </div>
+        <!-- 填单页面用 -->
+        <div class="order" id="unsub_fill_content" style="display:none"></div>
+        <!-- 订单确认页面-->
+        <div class="order" id="unsub_confirm" style="display:none"></div>    
+    </div>
+    	
+
+</div>
+	
+</@override>
+
+<#if Session["_session_portal_type"]?? && Session["_session_portal_type"]=="MVNO" >
+<@extends name="/mvno-template.html"/>
+<#else>
+<@extends name="/content-template.html"/>
+</#if>

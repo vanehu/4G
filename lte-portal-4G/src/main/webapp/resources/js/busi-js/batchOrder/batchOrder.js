@@ -11,12 +11,27 @@ order.batch = (function(){
 			$.alert("提示","种子订单受理类型不能为空!");
 			return;
 		}
-		if(batchType == '10' || batchType == '11' || batchType == '12'){//批量订购裸终端、批量换档、批量换卡
-			var upFile = $.trim($("#upFile").val());;
+		//批量订购裸终端、批量换档、批量换卡、批量在用拆机、批量未激活拆机
+		if(batchType == '10' || batchType == '11' || batchType == '12'|| batchType == '13' || batchType == '14'|| batchType == '15'){
+			var upFile = $.trim($("#upFile").val());
 			var reserveDt = $.trim($("#reserveDt").val());
 			if(reserveDt == ''){
 				$('#alertInfo').html("请选择预约时间!");
 				return;
+			}
+			if(batchType == '13'){
+				var evidenceFile = $.trim($("#evidenceFile").val());
+				if (evidenceFile === "") {
+					$('#alertInfo').html("请导入黑名单证据文件！");
+					return;
+				}else{
+					var suffix = evidenceFile.substr(evidenceFile.lastIndexOf(".") + 1);
+					//支持word、pdf、图片格式
+					if(suffix != "doc" && suffix != "docx" && suffix != "pdf" && suffix != "png" && suffix != "gif" && suffix != "jpeg" && suffix != "jpg"){
+						$('#alertInfo').html("导入黑名单证据文件类型错误，黑名单证据文件类型支持word，pdf,图片类型！");
+						return;
+					};
+				}
 			}
 			if (upFile === "") {
 				$('#alertInfo').html("请导入Excel文件！");
@@ -38,6 +53,11 @@ order.batch = (function(){
 							var file = $("#upFile");
 							file.after(file.clone().val(""));
 							file.remove();//提交成功后清空文件
+							if(batchType == '13'){
+							    var evidenceFile = $("#evidenceFile");
+							    evidenceFile.after(evidenceFile.clone().val(""));
+							    evidenceFile.remove();
+							}
 						},
 						error: function(data, status, e){
 							$.unecOverlay();
@@ -415,9 +435,10 @@ order.batch = (function(){
 	
 	// 表单重置
 	var _reset=function(){
+		var batchType = $("#batchType").val();
 //		$("#upFile").val("");
 		$("#upFile").empty();
-		if($("#batchType").val() == "10" || $("#batchType").val() == "11" || $("#batchType").val() == "12"){
+		if(batchType== "10" || batchType == "11" || batchType == "12" || batchType == "14" || batchType == "15"){
 			$('#alertInfo').empty();
 			$('#detailInfo').empty();
 		}
@@ -442,6 +463,8 @@ order.batch = (function(){
 			location.href=contextPath+"/file/BATCHCHANGEFEETYPE.xls";
 		}else if(batType=='12'){//批量换卡
 			location.href=contextPath+"/file/BATCHCHANGEUIM.xls";
+		}else if(batType=='13'){//批量一卡双号黑名单
+			location.href=contextPath+"/file/BATCHBLACKLIST.xls";
 		}else{
 			$.alert("提示","未找到批量类型所对应的模板文件，请检查！");
 			return;
@@ -1091,6 +1114,12 @@ order.batch = (function(){
 		});
 	};
 	
+	var _downloadFile = function(fileName,fileUrl){
+		var url=contextPath+"/order/batchOrder/downloadFile?fileUrl="+fileUrl+"&fileName="+fileName;
+        $("#upload_file").attr("action", url);
+        $("#upload_file").submit();
+	};
+	
 	return {
 		submit 			:_submit,
 		batchOrderList	:_batchOrderList,
@@ -1115,7 +1144,8 @@ order.batch = (function(){
 		batchProgressQuery	:_batchProgressQuery,		//批次信息查询下的进度查询
 		batchProgressQueryList:_batchProgressQueryList,	//批次信息查询下的进度查询(分页)
 		batchOrderQueryList	:_batchOrderQueryList,		//批次信息查询
-		exportExcel			:_exportExcel				//导出Excel
+		exportExcel			:_exportExcel,				//导出Excel
+		downloadFile        :_downloadFile              //下载文件
 	};
 })();
 //初始化

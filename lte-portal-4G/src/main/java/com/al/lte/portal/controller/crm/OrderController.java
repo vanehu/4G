@@ -3671,6 +3671,10 @@ public class OrderController extends BaseController {
                 SysConstant.SESSION_KEY_LOGIN_STAFF);
         param.put("soChannelId", sessionStaff.getCurrentChannelId());
         param.put("staffId", sessionStaff.getStaffId());
+        if(param.get("pageType")!=null && param.get("pageType").equals("unOrderVirtualAccNber")){
+        	String extCustOrderId = UIDGenerator.getRand();
+            param.put("extCustOrderId", extCustOrderId);
+        }
         try {
             Map<String, Object> resMap = orderBmo.exchangeAccNbr(param, null, sessionStaff);
             model.addAttribute("param", param);
@@ -4489,5 +4493,79 @@ public class OrderController extends BaseController {
         }
         return jsonResponse;
     }
+    
+    /**
+     * 一卡双号黑名单管理
+     */
+    @RequestMapping(value = "/manageBlacklist", method = RequestMethod.GET)
+    @AuthorityValid(isCheck = true)
+    public String manageBlacklist(Model model, HttpSession session) throws AuthorityException {
+        model.addAttribute("current", EhcacheUtil.getCurrentPath(session, "order/manageBlacklist"));
 
+        SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+                SysConstant.SESSION_KEY_LOGIN_STAFF);
+        return "/order/blacklist-manage-main";
+    }
+    /**
+     * 一卡双号黑名单查询分页
+     */
+    @RequestMapping(value = "/queryBlackUserInfo", method = { RequestMethod.POST })
+    public String queryBlackUserInfo(@RequestBody Map<String, Object> param, Model model, HttpServletResponse response) {
+        List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+        SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+                SysConstant.SESSION_KEY_LOGIN_STAFF);
+        Integer totalSize = 0;
+        
+        Integer nowPage = Integer.parseInt(param.get("nowPage").toString());
+        Integer pageSize = Integer.parseInt(param.get("pageSize").toString());
+        try {
+            Map<String, Object> resMap = orderBmo.queryBlackUserInfo(param, null, sessionStaff);
+            if (ResultCode.R_SUCC.equals(resMap.get("resultCode")) && resMap.get("data")!=null) {
+            	list =  (List<Map<String, Object>>) resMap.get("data");
+            	totalSize = MapUtils.getInteger(resMap, "totalCnt", 1);
+            }
+            PageModel<Map<String, Object>> pm = PageUtil.buildPageModel(nowPage, pageSize, totalSize < 1 ? 1
+                    : totalSize, list);
+            model.addAttribute("pageModel", pm);
+            model.addAttribute("code", resMap.get("resultCode"));
+            model.addAttribute("mess", resMap.get("resultMsg"));
+            model.addAttribute("resMap", resMap);
+            model.addAttribute("param", param);
+            return "/order/blackList-list";
+        } catch (BusinessException be) {
+            return super.failedStr(model, be);
+        } catch (InterfaceException ie) {
+            return super.failedStr(model, ie, param, ErrorCode.QUERY_BLACK_USERINFO);
+        } catch (Exception e) {
+            log.error("一卡双号黑名单查询接口方法异常", e);
+            return super.failedStr(model, ErrorCode.QUERY_BLACK_USERINFO, e, param);
+        }
+    }
+    
+    @RequestMapping(value = "/queryBlackList", method = RequestMethod.POST)
+    @ResponseBody
+    public JsonResponse queryBlackList(@RequestBody Map<String, Object> param, @LogOperatorAnn String flowNum,
+            HttpServletResponse response) {
+        SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+                SysConstant.SESSION_KEY_LOGIN_STAFF);
+        Map<String, Object> rMap = null;
+        JsonResponse jsonResponse = null;
+        try {
+            log.debug("param={}", JsonUtil.toString(param));
+            rMap =  orderBmo.queryBlackUserInfo(param, flowNum, sessionStaff);
+            log.debug("return={}", JsonUtil.toString(rMap));
+            if (rMap != null && ResultCode.R_SUCC.equals(rMap.get("resultCode"))) {
+                jsonResponse = super.successed(rMap, ResultConstant.SUCCESS.getCode());
+            } else {
+                jsonResponse = super.failed(rMap.get("resultMsg"), ResultConstant.FAILD.getCode());
+            }
+        } catch (BusinessException e) {
+            return super.failed(e);
+        } catch (InterfaceException ie) {
+            return super.failed(ie, param, ErrorCode.QUERY_BLACK_USERINFO);
+        } catch (Exception e) {
+            return super.failed(ErrorCode.QUERY_BLACK_USERINFO, e, param);
+        }
+        return jsonResponse;
+    }
 }

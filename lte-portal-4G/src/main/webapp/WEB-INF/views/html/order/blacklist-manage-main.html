@@ -1,0 +1,174 @@
+<@override name="title">一卡双号黑名单管理</@override>
+
+<@override name="header">
+<#include "/busi-js-tpl.html"/>
+<script>
+	$.extend($, {
+		httpData : function(xhr, type, s) {
+			var ct = xhr.getResponseHeader("content-type"), xml = type == "xml" || !type && ct && ct.indexOf("xml") >= 0, data = xml ? xhr.responseXML : xhr.responseText;
+
+			if (xml && data.documentElement.tagName == "parsererror")
+				throw "parsererror";
+			if (s && s.dataFilter)
+				data = s.dataFilter(data, type);
+			if ( typeof data === "string") {
+				if (type == "script")
+					jQuery.globalEval(data);
+				if (type == "json")
+					data = window["eval"]("(" + data + ")");
+			}
+			return data;
+		},
+		handleError : function(s, xhr, status, e) {
+			if (s.error)
+				s.error(xhr, status, e);
+			else if (xhr.responseText)
+				console.log(xhr.responseText);
+		}
+	});
+
+	$(function() {
+		/* $('#upFile').change(function() {
+			$('#importExcel').removeClass("purchase").addClass("disablepurchase");
+			$('#importExcel').off('click');
+		}); */
+	})
+</script>
+<script src="${contextPath}/js/third-js/jquery/jquery.form.js" type="text/javascript"></script>
+<script src="${contextPath}/js/busi-js/cart/cart.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/busi-js/batchOrder/batchOrder.js?${jsversion}" type="text/javascript"></script>
+
+<style>
+.cartLink_fail:hover {
+	text-decoration : underline;
+	cursor : pointer;
+}
+</style>
+</@override>
+
+<@override name="content">
+<div class="main_div" id="d_query" >
+
+    <div class="main_warp" >
+        <!--订单准备-->       
+        <h2 class="h2_title">一卡双号黑名单管理<span></span>
+        </h2>
+        <div class="order" id="blacklist_qry">
+            <div class="order_content" style="border:none; padding:10px">
+                
+                <!--挑靓号-->
+                <div class="order_tab_panel" style="display:block;">
+                        <div class="selectList">
+                            <dl>
+                                <dt>选择地区：</dt>
+                                <dd>
+                                    <input type="text" class="numberTextBox width150" readonly="readonly" id="p_areaId_val" onclick="cart.main.chooseArea()" value="${p_areaId_val}" placeholder="请选择地区" />
+                                  	<input type="hidden" id="p_areaId" value="${p_areaId}">
+                                  	<label class="f_red">*</label>
+                                </dd>
+                                <dt style="width:100px">选择号码类型：&nbsp;</dt>
+                                <dd>
+                                    <select id="nbrType" style="width:100px">
+	                                 	<option value="main" >主号</option>
+			                            <option value="virtual" >虚号</option>
+	                                </select>
+                                </dd>
+                            </dl>
+                            <dl>
+                                  
+                            	  <dt>接入号：</dt>
+                                  <dd>
+                                    <input type="text" class="numberTextBox width150" id="accNbr" value=""/>
+                                    <label class="f_red">&nbsp;</label>
+                                  </dd>
+                                  <dd>
+									<label class="f_red">&nbsp;&nbsp;</label>
+                                    <input type="button" value="查询" class="numberSearch" id="qry_blackUserInfo" />
+								  </dd>
+								  <dd>
+									<label class="f_red">&nbsp;&nbsp;</label>
+                                    <input type="button" value="新增黑名单" class="numberSearch" id="add_blackUserInfo" onclick="cart.main.showAddBlacklist()"/>
+								  </dd>
+                          	</dl>
+                  </div>
+                <div class="phone_warp" id="blackList_list" >   
+                </div>
+                </div>
+                                        
+            </div>
+        </div>
+        <!-- 黑名单新增页面 -->
+        <div class="order" id="blacklist_add" style="display:none">
+            <div class="order_confirmation">
+                <div class="main_body">
+                    <form method="post" id="blacklistEvidence" enctype="multipart/form-data" action="${contextPath}/report/addBlackUserInfo">
+                    <div class="selectList">
+                        <dl>
+                            <dt style="width:100px">选择主号地区：</dt>
+                            <dd>
+                                <input type="text" class="numberTextBox width150" readonly="readonly" id="p_mainAreaId_val" onclick="cart.main.chooseBlacklistArea('p_mainAreaId_val','mainAreaId')" value="${p_areaId_val}" placeholder="请选择地区" />
+                                <input type="hidden" name="mainAreaId" id="mainAreaId" value="${p_areaId}">
+                                <label class="f_red">*</label>
+                            </dd>
+                            <dt>主号接入号：</dt>
+                            <dd>
+                                <input type="text" class="numberTextBox width150" id="mainAccNbr" name="mainAccNbr"/>
+                                <label class="f_red">&nbsp;</label>
+                            </dd>
+                        </dl>
+                        <dl>
+                            <dt style="width:100px">选择虚号地区：</dt>
+                            <dd>
+                                <input type="text" class="numberTextBox width150" readonly="readonly" id="p_virtualAccNbr_val" onclick="cart.main.chooseBlacklistArea('p_virtualAccNbr_val','virtualAreaId')" value="${p_areaId_val}" placeholder="请选择地区" />
+                                <input type="hidden"name="virtualAreaId" id="virtualAreaId" value="${p_areaId}">
+                                <label class="f_red">*</label>
+                            </dd>
+                            <dt>虚号接入号：</dt>
+                            <dd>
+                                <input type="text" class="numberTextBox width150" id="virtualAccNbr" name="virtualAccNbr"/>
+                                <label class="f_red">&nbsp;</label>
+                            </dd>
+                        </dl>   
+                    </div>
+                    <div id="blacklist_evidence">
+                        <div class="height18"></div>
+                        <h5 class="s_title">黑名单证据：</h5>
+                            <ul class="fillin">
+                              <li class="full">
+                                <label>黑名单证据：&nbsp;&nbsp;</label>
+                                <input type="file"  name="evidenceFile" id="evidenceFile" style="text-indent: 0px;height:20px;"/>
+                              </li>
+                            </ul>
+                    </div>
+                    <div id="blacklist_reason">
+                        <div class="height18"></div>
+                        <h5 class="s_title">黑名单原因：</h5>
+                        <ul class="fillin">
+                          <li class="full">
+                            <label>黑名单原因：</label>
+                            <textarea id="blacklistReason" class="order-remark" name="blacklistReason" rows="4"></textarea>
+                          </li>
+                        </ul>
+                    </div>
+                    </form>
+    	            <div align="right" style="margin: 20px auto; padding:0 20px;">
+	    	            <a id="addLastStep" href="javascript:void(0)" class="btna_o"><span>返回</span></a> 
+	    	            <a id="addBlacklistUserInfo" href="javascript:void(0)" class="btna_o" style=" margin-left:20px;"><span>确认</span></a>
+    	            </div>
+    	            </div>
+    	    </div>
+        </div>
+        <!-- 订单确认页面-->
+        <div class="order" id="add_confirm" style="display:none"></div>
+    </div>
+    	
+
+</div>
+	
+</@override>
+
+<#if Session["_session_portal_type"]?? && Session["_session_portal_type"]=="MVNO" >
+<@extends name="/mvno-template.html"/>
+<#else>
+<@extends name="/content-template.html"/>
+</#if>

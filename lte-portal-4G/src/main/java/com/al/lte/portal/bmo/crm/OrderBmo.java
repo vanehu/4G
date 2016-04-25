@@ -587,4 +587,21 @@ public interface OrderBmo {
 	public Map<String, Object> queryStarConsumeHisList(Map<String, Object> param,String flowNum, SessionStaff sessionStaff)throws Exception;
 
 	public Map<String, Object> urgentOpen(Map<String, Object> param,String flowNum, SessionStaff sessionStaff)throws Exception;
+	
+	/**
+	 * 一卡双号根据虚号查询主号接口
+	 */
+	public Map<String, Object> queryMainInfo(Map<String, Object> paramMap,String optFlowNum, 
+			SessionStaff sessionStaff) throws Exception;
+	/**
+	 * 一卡双号黑名单新增
+	 */
+	public Map<String, Object> addBlackUserInfo(Map<String, Object> paramMap,String optFlowNum, 
+			SessionStaff sessionStaff) throws Exception;
+	
+	/**
+	 * 一卡双号黑名单查询
+	 */
+	public Map<String, Object> queryBlackUserInfo(Map<String, Object> paramMap,String optFlowNum, 
+			SessionStaff sessionStaff) throws Exception;
 }
