@@ -71,13 +71,13 @@ public class SecondBusinessController extends BaseController {
             if (StringUtils.isNotBlank(menuId)) {
                 inParamMap.put("menuId", menuId);
             }
-            if (StringUtils.isNotBlank(menuId)) {
+            if (StringUtils.isNotBlank(menuName)) {
                 inParamMap.put("menuName", menuName);
             }
-            if (StringUtils.isNotBlank(menuId)) {
+            if (StringUtils.isNotBlank(isSimple)) {
                 inParamMap.put("isSimple", isSimple);
             }
-            if (StringUtils.isNotBlank(menuId)) {
+            if (StringUtils.isNotBlank(areaId)) {
                 inParamMap.put("areaId", areaId);
             }
 
