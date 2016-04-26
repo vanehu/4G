@@ -60,6 +60,8 @@
 			});
 			var id=$(this).attr("id");
 			$("#div"+id).removeClass("dis_none");
+			
+			
 		});
 	</script>
 	<script type="text/javascript">
@@ -67,6 +69,13 @@
 	OrderInfo.rulesJson=eval("("+rulesJson+")");
 	//居民身份证要读卡
 	$("#custAuthType").html(OrderInfo.cust.identityName);
+	
+	if(!order.cust.isSelfChannel()){
+		  $("#idCardNumber2").attr("readonly","readonly");
+			 $.alert("提示","请到电信自有营业厅办理业务");			
+       }
+
+	
 	
 	</script>
 </body>

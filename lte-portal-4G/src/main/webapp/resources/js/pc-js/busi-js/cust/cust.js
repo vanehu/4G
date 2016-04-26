@@ -143,7 +143,7 @@ order.cust = (function(){
 	};
 	//客户类型选择事件
 	var _partyTypeCdChoose = function(scope,id) {
-		var partyTypeCd=OrderInfo.cust.identityCd;//$(scope).val();
+		var partyTypeCd=$(scope).val();//OrderInfo.cust.identityCd;//$(scope).val();
 		//客户类型关联证件类型下拉框
 		$("#"+id).empty();
 		_certTypeByPartyType(partyTypeCd,id);
@@ -153,6 +153,110 @@ order.cust = (function(){
 		//_custcreateButton();
 
 	};
+	//判断是否是自营渠道
+	var _isSelfChannel=function(){
+		var is=false;
+		if(OrderInfo.staff.channelType==CONST.CHANNEL_TYPE_CD.ZQZXDL || OrderInfo.staff.channelType==CONST.CHANNEL_TYPE_CD.GZZXDL
+				|| OrderInfo.staff.channelType==CONST.CHANNEL_TYPE_CD.HYKHZXDL || OrderInfo.staff.channelType==CONST.CHANNEL_TYPE_CD.SYKHZXDL
+				|| OrderInfo.staff.channelType==CONST.CHANNEL_TYPE_CD.XYKHZXDL || OrderInfo.staff.channelType==CONST.CHANNEL_TYPE_CD.GZZXJL
+				|| OrderInfo.staff.channelType==CONST.CHANNEL_TYPE_CD.ZYOUT || OrderInfo.staff.channelType==CONST.CHANNEL_TYPE_CD.ZYINGT
+				|| OrderInfo.staff.channelType==CONST.CHANNEL_TYPE_CD.WBT){// || _partyTypeCd != "1" ){
+			is = true;
+		}
+		if(!is && OrderInfo.cust.identityCd==1){
+			is=true;
+		}
+		return is;
+	}
+	
+	//用户鉴权时读卡二次业务  /custAuthSub
+	var _readCertWhenAuth3 = function() {
+//		var man =_readCertSub();
+//		if (man.resultFlag != 0){
+//			$.alert("提示", man.errorMsg);
+//			return;
+//		}
+//		$('#idCardNumber2').val(man.resultContent.certNumber);
+		 if (CertCtl == null || CertCtl == undefined) {
+		    	return {"resultFlag":-1,"errorMsg":"浏览器不支持读卡器"};
+		    }
+		    var conn = null;
+		    try {
+		    	var ret = CertCtl.connect();
+		    	conn = JSON.parse(ret);
+		    } catch(e) {
+		    	conn = {"resultFlag":-1,"errorMsg":"连接读卡器失败，可能未安装驱动及控件"};
+		    }
+		    if (conn.resultFlag != 0) {
+		        return conn;
+		    }
+		    if(conn.isCloud==1){
+		    	_readCertCloud();
+		    }
+		    else{
+		    	  var  man = JSON.parse(CertCtl.readCert());
+			  	    try {
+			  		    CertCtl.disconnect();
+			  	    } catch(e) {
+			  	    }
+			  	  if (man.resultFlag != 0){
+						$.alert("提示", man.errorMsg);
+						return;
+					}
+					$('#idCardNumber2').val(man.resultContent.certNumber);
+		    }
+		
+	};
+	
+	/**
+	 * 读取二代证云读卡
+	 */
+
+	function _readCertCloud(){
+	    //云读卡
+	    	//获取协议
+	    	var param={};
+	    	param.teminalType="PC";
+	    	var response = $.callServiceAsJson(contextPath+"/common/getCloudParam", param);
+	    	if(response.code==0){
+	    		var appId=response.data.appId;
+	    		var timestamp=response.data.timestamp;
+	    		var nonce=response.data.nonce;
+	    		var businessExt=response.data.businessExt;
+	    		var signature=response.data.signature;
+	    		
+                try{
+                	var jsonStr =CertCtl.cloudReadCert(appId,timestamp,nonce,businessExt,signature);
+                	//断开连接
+                	CertCtl.disconnect();
+                	if(jsonStr.resultFlag==0){
+                		var p={};
+                		p.cotent=jsonStr.resultContent;
+                		//解密
+                		var resp = $.callServiceAsJson(contextPath+"/common/getCloudParam",p );
+                		if(resp.code==0){
+                			var certNumber=resp.data.certNumber;
+                			$('#idCardNumber2').val(certNumber);
+                		}
+                		else{
+                			alertM("数据解密异常");
+                    		return ;
+                		}
+                	}
+                	else{
+                		alertM(jsonStr.errorMsg);
+                		return ;
+                	}
+                }
+                catch(e){
+                	
+                }
+	    	}
+	    	else{
+	    		$.alertM(response.errorMsg);
+	    		return ;
+	    	}
+	}
 	//客户类型关联证件类型下拉框
 	var _certTypeByPartyType = function(_partyTypeCd,id){
 		var params = {"partyTypeCd":_partyTypeCd} ;
@@ -242,7 +346,7 @@ order.cust = (function(){
 	};
 	//创建客户证件类型选择事件
 	var _identidiesTypeCdChoose = function(scope,id) {
-		var identidiesTypeCd=OrderInfo.cust.identityCd;//$(scope).val();
+		var identidiesTypeCd=$(scope).val();//OrderInfo.cust.identityCd;
 		if(identidiesTypeCd==1){
 			$("#"+id).attr("placeHolder","请输入合法身份证号码");
 			$("#"+id).attr("data-validate","validate(idCardCheck18:请输入合法身份证号码) on(blur)");
@@ -1688,7 +1792,12 @@ order.cust = (function(){
 	
 	//客户鉴权--证件类型
 	var _identityTypeAuth=function(){
-
+		//判断是否是自营渠道
+		if(!order.cust.isSelfChannel()){
+			 $("#idCardNumber2").attr("readonly","readonly");
+			 $.alert("提示","请到电信自有营业厅办理业务");
+			 return;
+		}
 		var param = _choosedCustInfo;
 		param.validateType="1";
 		param.identityNum = base64encode($.trim($("#idCardNumber2").val()));
@@ -1696,6 +1805,7 @@ order.cust = (function(){
 			$.alert("提示","证件号码不能为空！");
 			return;
 		}
+
 		param.accessNumber=OrderInfo.acctNbr;
 		param.identityCd=OrderInfo.cust.identityCd;
 		param.areaId=OrderInfo.cust.areaId;
@@ -1862,6 +1972,13 @@ order.cust = (function(){
 				$("#idCardNumber2").attr("disabled", "disabled");
 			} else {
 				$("#idCardNumber2").removeAttr("disabled");
+			}
+		}
+		if(tabId==1){
+			//判断是否是自营渠道
+			if(!order.cust.isSelfChannel()){
+				 $("#idCardNumber2").attr("readonly","readonly");
+				 $.alert("提示","请到电信自有营业厅办理业务");
 			}
 		}
 	};
@@ -2060,7 +2177,8 @@ order.cust = (function(){
 		smsvalid:_smsvalid,
 		jumpAuth2:_jumpAuth2,
 		identityTypeAuth:_identityTypeAuth,
-		readCertWhenAuth2:_readCertWhenAuth2
+		readCertWhenAuth2:_readCertWhenAuth2,
+		isSelfChannel:_isSelfChannel
 	};
 })();
 $(function() {

@@ -38,27 +38,25 @@
 	</div>
 	<div id="tab-box" class="tab-box">
 		<ul class="tab">
-		<#if rules.rule1=="Y">
-                <li id="1"  class="tab_1 li-active">证件号码鉴权</li>
-        </#if>
-        
-         <#if rules.rule2=="Y">
-            <#if rules.rule1=="Y" >
+		
+		<#if rules.rule3=="Y">
+		   <li id="3" class="tab_3 li-active"  class="setcon">产品密码鉴权</li>
+		</#if>
+		<#if rules.rule2=="Y">
+		     <#if rules.rule3=="Y" >
                 <li id="2" class="tab_2">短信鉴权</li>
               <#else>
                 <li id="2" class="tab_2 li-active"  class="setcon">短信鉴权</li>
-            </#if>
-            
-             <#if rules.rule3=="Y">
-                 <#if rules.rule1=="Y" || rules.rule2=="Y">
-                      <li id="3" class="tab_3" ">产品密码鉴权</li>
+              </#if>
+         </#if>
+            <#if rules.rule1=="Y">
+                 <#if rules.rule3=="Y" || rules.rule2=="Y">
+                      <li id="1"  class="tab_1">证件号码鉴权</li>
                       <#else>
-                       <li id="3" class="tab_3 li-active"  class="setcon">产品密码鉴权</li>
-                 </#if>
-                 
+                      <li id="1"  class="tab_1 li-active">证件号码鉴权</li>
+                 </#if> 
             </#if>
-        </#if>   
-
+		
 		</ul>
 		<div id="div1" name="box" class="box_1">
 			<div class="info_box">
@@ -100,6 +98,12 @@
 			});
 			var id=$(this).attr("id");
 			$("#div"+id).removeClass("dis_none");
+			if(id=="1"){
+				if(!order.cust.isSelfChannel()){
+					  $("#idCardNumber2").attr("readonly","readonly");
+						 $.alert("提示","请到电信自有营业厅办理业务");			
+			       }
+			}
 		});
 	</script>
 	<script type="text/javascript">
@@ -107,6 +111,13 @@
         rulesJson='${rulesJson}';
         OrderInfo.rulesJson=eval("("+rulesJson+")");
         $("#custAuthType").html(OrderInfo.cust.identityName);
+        
+        if($("#1").attr("class")=="tab_1 li-active"){
+        	if(!order.cust.isSelfChannel()){
+      		  $("#idCardNumber2").attr("readonly","readonly");
+      			 $.alert("提示","请到电信自有营业厅办理业务");			
+             }
+        }
 </script>
 </body>
 </html>

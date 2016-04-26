@@ -8,34 +8,36 @@
       <div class="panel panel-default">
           <div class="panel-body">
             <ul class="nav nav-tabs" id="ul1" role="tablist">
-
- 
-
-        <#if rules.rule1=="Y">
-                <li id="li1" role="presentation" class="active"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">证件</a></li>
+            
+          <#if rules.rule3=="Y">
+                 <li id="li3" role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">产品密码</a></li>
+                
         </#if>
         
          <#if rules.rule2=="Y">
-            <#if rules.rule1=="Y" >
+            <#if rules.rule3=="Y" >
                 <li id="li2" role="presentation" ><a href="#messages" aria-controls="messages" role="tab" data-toggle="tab">短信</a></li>
               <#else>
                 <li id="li2"  role="presentation" class="active"><a href="#messages" aria-controls="messages" role="tab" data-toggle="tab">短信</a></li>
             </#if>
-            
-             <#if rules.rule3=="Y">
-                 <#if rules.rule1=="Y" || rules.rule2=="Y">
-                     <li id="li3" role="presentation" ><a href="#home" aria-controls="home" role="tab" data-toggle="tab">产品密码</a></li>
+         </#if>    
+         <#if rules.rule1=="Y">
+                 <#if rules.rule3=="Y" || rules.rule2=="Y">
+                     <li id="li1" role="presentation" class=""><a  id="a1" onclick="fun()" href="javascript:void(0);" aria-controls="profile" role="tab" data-toggle="tab">证件</a></li>
                       <#else>
-                       <li id="li3" role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">产品密码</a></li>
+                      <li id="li1" role="presentation" class="active"><a id="a1" onclick="fun()" href="javascript:void(0);" aria-controls="profile" role="tab" data-toggle="tab">证件</a></li>
                  </#if>
                  
-            </#if>
-        </#if>   
-            </ul>
+          </#if>
+         
+   
+   </ul>
+ 
+      
 
   <!-- Tab panes -->
   <div class="tab-content">
-  <div role="tabpanel" class="tab-pane active" id="profile">
+  <div role="tabpanel" class="tab-pane " id="profile">
     		<form class="form-list">
 				<div class="form-group">
 				  <label id="custAuthType" class="show-tick form-control"></label>
@@ -80,7 +82,7 @@
 											<span class="glyphicon glyphicon glyphicon-screenshot" aria-hidden="true"></span> 校验
 										</button>
 									</div>
-									<div id="iseditOperation" style="display: none" class="btn-group" role="group">
+									<div id="iseditOperation"  class="btn-group" role="group">
 										<button onclick="cust.jumpAuth2();" type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#TipModal">
 											<span class="glyphicon glyphicon glyphicon glyphicon-arrow-right" aria-hidden="true"></span> 跳过
 										</button>
@@ -116,6 +118,27 @@
 		  }
 		  */
 	  }
+	  //产品密码
+	  if(OrderInfo.rulesJson.rule3=="Y"){
+		  $("#home").addClass("active"); 
+	  }
+	  else if(OrderInfo.rulesJson.rule2=="Y"){
+		  $("#messages").addClass("active");
+
+	  }
+	  else if(OrderInfo.rulesJson.rule1=="Y"){
+		  $("#profile").addClass("active");
+	  }
+	  
+	 
+	  if($("#li1").attr("class")=="active"){
+		  if(!cust.isSelfChannel()){
+				 $("#idCardNumber2").attr("readonly","readonly");
+				 $.alert("提示","请到电信自有营业厅办理业务");
+			}
+	  }
+	  
+	  
 </script>
 <script >
   function clecks(){
@@ -127,6 +150,11 @@
 		    	
 		    	//身份鉴权
 		    	if(id=="li1"){
+		    		if(!cust.isSelfChannel()){
+			   			 $("#idCardNumber2").attr("readonly","readonly");
+			   			 $.alert("提示","请到电信自有营业厅办理业务");
+			   			 return ;
+			   		}
 		    		cust.identityTypeAuth();
 		    	}
 		    	//短信
@@ -140,6 +168,15 @@
 		    	
 		    }
 		});
+  }
+  function fun(){
+	 
+	//判断是否是自营渠道
+		if(!cust.isSelfChannel()){
+			 $("#idCardNumber2").attr("readonly","readonly");
+			 $.alert("提示","请到电信自有营业厅办理业务");
+		}
+	    document.getElementById("a1").href="#profile"; 
   }
   
 </script>

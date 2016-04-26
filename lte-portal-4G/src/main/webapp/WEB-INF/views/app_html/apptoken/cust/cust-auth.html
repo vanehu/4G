@@ -27,7 +27,8 @@
 			</div>
 			</form>
     </div>
-    <div role="tabpanel" class="tab-pane " id="home">
+   <!--  
+    <div role="tabpanel" class="tab-pane" id="home">
     		<form class="form-list">
 				<div class="form-group">
 					<input id="authPassword2" data-validate="validate(required:密码不能为空, maxlength:密码长度最多为{arg1}(12)) on(blur)" type="password" class="form-control" id="userid" placeholder="请输入产品密码">
@@ -35,8 +36,8 @@
 				
 			</form>
     </div>
-    
-    
+  --> 
+ <!-- 
     <div role="tabpanel" class="tab-pane" id="messages">
     	<form class="form-list">
     		<div class="form-group">
@@ -45,9 +46,10 @@
 					<span class="input-group-btn">
                       <button onclick="cust.smsResend();" class="btn btn-default" type="button"> 获取 </button>
                       </span> </div>
-			</div>
-	</form>
+            </div>
+	  </form>
     </div>
+-->   
   </div>
           </div>
           <div class=" divfoot modal-footer">
@@ -57,7 +59,7 @@
 											<span class="glyphicon glyphicon glyphicon-screenshot" aria-hidden="true"></span> 校验
 										</button>
 									</div>
-									<div id="iseditOperation" style="display: none" class="btn-group" role="group">
+									<div id="iseditOperation" class="btn-group" role="group">
 										<button onclick="cust.jumpAuth2();" type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#TipModal">
 											<span class="glyphicon glyphicon glyphicon glyphicon-arrow-right" aria-hidden="true"></span> 跳过
 										</button>
@@ -79,6 +81,7 @@
   var rulesJson='${rulesJson}';
   OrderInfo.rulesJson=eval("("+rulesJson+")");
   $("#custAuthType").html(OrderInfo.cust.identityName);
+
 </script>
 
 <script >
@@ -91,6 +94,11 @@
 		    	
 		    	//身份鉴权
 		    	if(id=="li1"){
+		    		if(!cust.isSelfChannel()){
+						 $("#idCardNumber2").attr("readonly","readonly");
+						 $.alert("提示","请到电信自有营业厅办理业务");
+						 return 
+					}
 		    		cust.identityTypeAuth();
 		    	}
 		    	//短信

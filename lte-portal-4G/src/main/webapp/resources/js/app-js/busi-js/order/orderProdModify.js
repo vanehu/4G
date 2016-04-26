@@ -188,7 +188,11 @@ order.prodModify = (function(){
 //				$("#iseditOperation").attr("style","");
 				 $("#auth2").css('display','block'); 
 			}
-			
+			//判断是否是自营渠道
+			if(!cust.isSelfChannel()){
+				 $("#idCardNumber2").attr("readonly","readonly");
+				 $.alert("提示","请到电信自有营业厅办理业务");
+			}
 		} 
 		
 		else {

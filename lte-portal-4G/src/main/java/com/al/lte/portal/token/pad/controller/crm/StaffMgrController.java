@@ -249,7 +249,28 @@ public class StaffMgrController extends BaseController {
 		session.setAttribute(SysConstant.SESSION_KEY_LOGIN_SMS, smsPwd);
 		return retnMap;
 	}
-    
+	// 短信发送
+		public Map<String, Object> sendMsgSub(HttpSession session,String phoneNumber, String areaId)
+				throws Exception {
+			Map<String, Object> retnMap = new HashMap<String, Object>();
+			String smsPwd = UIDGenerator.generateDigitNonce(6);
+			this.log.debug("短信验证码：{}", smsPwd);
+			Map<String, Object> msgMap = new HashMap<String, Object>();
+			msgMap.put("MsgNumber", SysConstant.MSG_NUMBER); //6位
+			msgMap.put("phoneNumber", phoneNumber);
+			msgMap.put("key", smsPwd);
+			msgMap.put("message", propertiesUtils.getMessage("SMS_CODE_CONTENT",
+					new Object[] { smsPwd }));
+
+			if (!"00".equals(areaId.substring(5))) {
+				areaId = areaId.substring(0, 5) + "00";
+			}
+			msgMap.put("areaId", areaId);
+			retnMap = staffBmo.sendMsgInfo(msgMap, null, null);
+			session.removeAttribute(SysConstant.SESSION_KEY_LOGIN_SMS);
+			session.setAttribute(SysConstant.SESSION_KEY_LOGIN_SMS, smsPwd);
+			return retnMap;
+		}
     /**
      * 员工修改/重置密码
      * @param param 

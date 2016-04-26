@@ -160,7 +160,7 @@ order.cust = (function(){
 	};
 	//客户鉴权--证件类型
 	var _identityTypeAuth=function(){
-
+		
 		var param = _choosedCustInfo;
 		param.validateType="1";
 		param.identityNum =$.trim($("#idCardNumber2").val());
@@ -460,7 +460,11 @@ order.cust = (function(){
    };
 	//客户鉴权--证件类型
 	var _identityTypeAuth=function(){
-
+		if(!order.cust.isSelfChannel()){
+			  $("#idCardNumber2").attr("readonly","readonly");
+				 $.alert("提示","请到电信自有营业厅办理业务");
+				 return ;
+	       }
 		var param = _choosedCustInfo;
 		param.validateType="1";
 		param.identityNum = $.trim($("#idCardNumber2").val());
@@ -488,7 +492,7 @@ order.cust = (function(){
 		
 		if(response.data.code=="0"){
 			//成功
-			OrderInfo.authRecord.validateType="3";
+			OrderInfo.authRecord.validateType="1";
 			OrderInfo.authRecord.resultCode="0";
 			_saveAuthRecordSuccess(recordParam);
 			_goService();
@@ -703,6 +707,21 @@ order.cust = (function(){
 			$.alertM(response.data);
 		}
 	};
+	//判断是否是自营渠道
+	var _isSelfChannel=function(){
+		var is=false;
+		if(OrderInfo.staff.channelType==CONST.CHANNEL_TYPE_CD.ZQZXDL || OrderInfo.staff.channelType==CONST.CHANNEL_TYPE_CD.GZZXDL
+				|| OrderInfo.staff.channelType==CONST.CHANNEL_TYPE_CD.HYKHZXDL || OrderInfo.staff.channelType==CONST.CHANNEL_TYPE_CD.SYKHZXDL
+				|| OrderInfo.staff.channelType==CONST.CHANNEL_TYPE_CD.XYKHZXDL || OrderInfo.staff.channelType==CONST.CHANNEL_TYPE_CD.GZZXJL
+				|| OrderInfo.staff.channelType==CONST.CHANNEL_TYPE_CD.ZYOUT || OrderInfo.staff.channelType==CONST.CHANNEL_TYPE_CD.ZYINGT
+				|| OrderInfo.staff.channelType==CONST.CHANNEL_TYPE_CD.WBT){// || _partyTypeCd != "1" ){
+			is = true;
+		}
+		if(!is && OrderInfo.cust.identityCd==1){
+			is=true;
+		}
+		return is;
+	}
 	//鉴权方式日志记录成功
 	var _saveAuthRecordSuccess=function(param){
 		param.resultCode = "0";
@@ -735,8 +754,8 @@ order.cust = (function(){
 		changeTab:_changeTab,
 		smsvalid:_smsvalid,
 		jumpAuth2:_jumpAuth2,
-		identityTypeAuth:_identityTypeAuth,
-		choosedCustInfo:_choosedCustInfo
+		choosedCustInfo:_choosedCustInfo,
+		isSelfChannel:_isSelfChannel
 	};
 })();
 $(function() {

@@ -362,12 +362,10 @@ public class CustController extends BaseController {
 						SysConstant.SESSION_KEY_LOGIN_STAFF);
 		JsonResponse jsonResponse = null;
 		Map map = new HashMap();
-		
 		Map resultMap = new HashMap();
 		//证件类型
 		String identityCd=MapUtils.getString(param,"identityCd");
         String pCustIdentityCd=MapUtils.getString(param,"pCustIdentityCd");
-		String idCardNumber="";
 		//鉴权类别
 		String validateType=MapUtils.getString(param,"validateType");
 		

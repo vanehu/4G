@@ -733,12 +733,10 @@ public class CustController extends BaseController {
 						SysConstant.SESSION_KEY_LOGIN_STAFF);
 		JsonResponse jsonResponse = null;
 		Map map = new HashMap();
-		
 		Map resultMap = new HashMap();
 		//证件类型
 		String identityCd=MapUtils.getString(param,"identityCd");
         String pCustIdentityCd=MapUtils.getString(param,"pCustIdentityCd");
-		String idCardNumber="";
 		//鉴权类别
 		String validateType=MapUtils.getString(param,"validateType");
 		Map paramMap = new HashMap();
@@ -751,8 +749,6 @@ public class CustController extends BaseController {
 				custParam.put("identityCd", identityCd);
 				custParam.put("identityNum",StringUtils.isNotBlank(MapUtils.getString(param,"identityNum"))?Base64.eryDecoder(MapUtils.getString(param,"identityNum")):"");//证件号码
 				custParam.put("staffId", sessionStaff.getStaffId());
-				//custParam.put("transactionId", param.get("transactionId"));
-				
 				resultMap = custBmo.queryCustInfo(custParam, flowNum, sessionStaff);
 				boolean b=false;
 				if (MapUtil.isNotEmpty(resultMap)) {

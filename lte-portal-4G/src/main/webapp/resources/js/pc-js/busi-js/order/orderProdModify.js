@@ -3273,9 +3273,7 @@ order.prodModify = (function(){
 				}
 				OrderInfo.authRecord.resultCode = "";
 				OrderInfo.authRecord.validateType = "";
-				
 			}
-			
 			//工号有跳过鉴权权限 
 			else if(iseditOperation=="0"){
 				 easyDialog.open({
@@ -3291,6 +3289,11 @@ order.prodModify = (function(){
 				    });
 			
 			}
+//			//判断是否是自营渠道
+//			if(!order.cust.isSelfChannel()){
+//				 $("#idCardNumber2").attr("readonly","readonly");
+//			     $.alert("提示","请到电信自有营业厅办理业务");
+//			}
 			
 		} 
 		
@@ -3301,6 +3304,7 @@ order.prodModify = (function(){
 	
 	//二次鉴权
 	var _querySecondBusinessAuthSub=function(menuId,isSimple){
+		
 		var url=contextPath+"/token/secondBusi/querySecondBusinessMenuAuthSub";
 		var param={
 			types:'pc'
@@ -3354,7 +3358,11 @@ order.prodModify = (function(){
 				        overlay : false
 				    });
 			 }
-			
+			//判断是否是自营渠道
+			if(!order.cust.isSelfChannel()){
+				 $("#idCardNumber2").attr("readonly","readonly");
+				 $.alert("提示","请到电信自有营业厅办理业务");
+			}
 		}
 	};
 	

@@ -6,28 +6,28 @@
     <ul class="pdcard">
     
         
-        <#if rules.rule1=="Y">
-                <li id="auth_tab1" onclick="order.cust.changeTab(1)" class="setcon">证件号码鉴权</li>
+        
+        <#if rules.rule2=="Y">
+            <li id="auth_tab2" onclick="order.cust.changeTab(2)" class="setcon">短信鉴权</li>
         </#if>
         
-         <#if rules.rule2=="Y">
-            <#if rules.rule1=="Y" >
-                <li id="auth_tab2" onclick="order.cust.changeTab(2)" >短信鉴权</li>
-              <#else>
-                <li id="auth_tab2" onclick="order.cust.changeTab(2)" class="setcon">短信鉴权</li>
-            </#if>
-            
-             <#if rules.rule3=="Y">
+        <#if rules.rule3=="Y">
                  <#if rules.rule1=="Y" || rules.rule2=="Y">
                       <li id="auth_tab3" onclick="order.cust.changeTab(3)">产品密码鉴权</li>
                       <#else>
                        <li id="auth_tab3" onclick="order.cust.changeTab(3)" class="setcon">产品密码鉴权</li>
                  </#if>
                  
-            </#if>
-        </#if>   
+          </#if>
         
-      
+         <#if rules.rule1=="Y">
+            <#if rules.rule2=="Y" >
+                <li id="auth_tab1" onclick="order.cust.changeTab(1)" class="">证件号码鉴权</li>
+              <#else>
+               <li id="auth_tab1" onclick="order.cust.changeTab(1)" class="setcon">证件号码鉴权</li>
+             </#if> 
+         </#if> 
+       
         
     </ul>
     <div id="contents">
@@ -49,7 +49,7 @@
                 </table>
             </form>
         </div>
-        <div id="content1" >
+        <div id="content1" style="display: none">
             <form id="custAuthForm2">
                 <table class="network">
                     <tbody>
@@ -138,6 +138,7 @@
   OrderInfo.rulesJson=eval("("+rulesJson+")");
 </script>
 <script type="text/javascript">	 
+      
 	  var rules=OrderInfo.rulesJson;
 	  if(rules.rule1=="Y"){ 
 		  $("#custAuthType").html(OrderInfo.cust.identityName);
@@ -147,7 +148,29 @@
 			  $("#readCertBtnID2").attr("style","");
 			  $("#idCardNumber2").attr("readonly","readonly");
 		  }
+//		  var c=$("#auth_tab1").attr("class");
 		  
+//		  if(c=="setcon"){
+			//判断是否是自营渠道
+//				if(!order.cust.isSelfChannel()){
+//					 $("#idCardNumber2").attr("readonly","readonly");
+//					 $.alert("提示","请到电信自有营业厅办理业务");
+//				}
+//		  }
+	  }
+	  if(rules.rule3=="Y"){
+		  $("#content3").css('display','block');
+	  }
+	  else if(rules.rule2=="Y"){
+		  $("#content2").css('display','block');
+	  }
+	  else if(rules.rule1=="Y"){
+		  $("#content1").css('display','block');
+	  }
+	  if($("#content1").css("display")=="block"){
+		  if(!order.cust.isSelfChannel()){
+			  $("#idCardNumber2").attr("readonly","readonly");
+				 $.alert("提示","请到电信自有营业厅办理业务");			}
 	  }
 </script>
 

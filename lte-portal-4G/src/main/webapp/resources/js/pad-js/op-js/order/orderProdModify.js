@@ -2933,17 +2933,12 @@ order.prodModify = (function(){
 				}
 				OrderInfo.authRecord.resultCode = "";
 				OrderInfo.authRecord.validateType = "";
-				
 			}
 			
 			//工号有跳过鉴权权限 
 			else {
 				$("#auth2").css('display','block'); 
-				//$("#iseditOperation").attr("style","");
 			}
-			
-
-			
 		} 
 		
 		else {

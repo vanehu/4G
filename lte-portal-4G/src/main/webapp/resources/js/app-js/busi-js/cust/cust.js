@@ -18,7 +18,21 @@ cust = (function(){
 		$('#cmCustIdCardOther').val("");
 		cust.validatorForm();
 	};
-	
+	//判断是否是自营渠道
+	var _isSelfChannel=function(){
+		var is=false;
+		if(OrderInfo.staff.channelType==CONST.CHANNEL_TYPE_CD.ZQZXDL || OrderInfo.staff.channelType==CONST.CHANNEL_TYPE_CD.GZZXDL
+				|| OrderInfo.staff.channelType==CONST.CHANNEL_TYPE_CD.HYKHZXDL || OrderInfo.staff.channelType==CONST.CHANNEL_TYPE_CD.SYKHZXDL
+				|| OrderInfo.staff.channelType==CONST.CHANNEL_TYPE_CD.XYKHZXDL || OrderInfo.staff.channelType==CONST.CHANNEL_TYPE_CD.GZZXJL
+				|| OrderInfo.staff.channelType==CONST.CHANNEL_TYPE_CD.ZYOUT || OrderInfo.staff.channelType==CONST.CHANNEL_TYPE_CD.ZYINGT
+				|| OrderInfo.staff.channelType==CONST.CHANNEL_TYPE_CD.WBT){// || _partyTypeCd != "1" ){
+			is = true;
+		}
+		if(!is && OrderInfo.cust.identityCd==1){
+			is=true;
+		}
+		return is;
+	}
 	//客户新增提交
 	var _newCustSubmit = function(){
 		$('#custFormdata').data('bootstrapValidator').validate();
@@ -1117,7 +1131,8 @@ cust = (function(){
 		changeTab:_changeTab,
 		productPwdAuth:_productPwdAuth,
 		smsResend:_smsResend,
-		smsvalid:_smsvalid
+		smsvalid:_smsvalid,
+		isSelfChannel:_isSelfChannel
 
 	};	
 })();
