@@ -40,22 +40,20 @@ cust.starQuery = (function(){
 	};
 	
 	var _starQueryHisList = function starQueryHisList(acctNbr){
-		var conditions = []; 
-		var condition1 = {
-				  "condItemId" :"2",
-           	   "condItemValue" : $("#startDt").val().replace(/-/g,'')
-		};
-		var condition2 = {
-         	   "condItemId" :"3",
-        	   "condItemValue" : $("#endDt").val().replace(/-/g,'')
-         };
-		conditions.push(condition1);
-		conditions.push(condition2);
 		var param ={
 				"queryTypeValue":acctNbr,
-				"conditions" : conditions
+				"conditions" : [
+								{
+									  "condItemId" :"2",
+									   "condItemValue" : $("#startDt").val().replace(/-/g,'')
+								},
+								{
+						         	   "condItemId" :"3",
+						        	   "condItemValue" : $("#endDt").val().replace(/-/g,'')
+						         }
+				                ]
 		};
-		$.callServiceAsHtmlGet(contextPath+"/cust/starQueryHisList",param,{
+		$.callServiceAsHtml(contextPath+"/cust/starQueryHisList",param,{
 			"before":function(){
 				$.ecOverlay("星级服务历史记录查询中，请稍等...");
 			},

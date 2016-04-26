@@ -1590,8 +1590,8 @@ public class CustController extends BaseController {
         return "/cust/starServiceQueryList";
     }
     @SuppressWarnings("unchecked")
-    @RequestMapping(value = "/starQueryHisList", method = RequestMethod.GET)
-    public String starQueryHisList(Model model,@RequestParam Map<String, Object> paramMap,@LogOperatorAnn String flowNum,HttpSession session) throws BusinessException {
+    @RequestMapping(value = "/starQueryHisList", method = RequestMethod.POST)
+    public String starQueryHisList(Model model,@RequestBody Map<String, Object> paramMap,@LogOperatorAnn String flowNum,HttpSession session) throws BusinessException {
         SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
                 SysConstant.SESSION_KEY_LOGIN_STAFF);
         List<Map<String, Object>> pointHistory = null;
