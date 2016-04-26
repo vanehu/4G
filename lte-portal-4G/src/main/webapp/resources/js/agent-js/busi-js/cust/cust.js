@@ -1185,7 +1185,7 @@ cust = (function(){
 				if ( ec.util.isObj(canRealName) && 1 != canRealName) {
 					$('#auth3').modal('show');
 				}else{
-					$.alert("提示","预开通状态才能进行此操作");
+					$.alert("提示","实名制不能进行此操作");
 				}
 			}
 
