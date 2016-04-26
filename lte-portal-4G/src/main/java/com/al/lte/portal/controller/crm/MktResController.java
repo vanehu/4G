@@ -1130,6 +1130,7 @@ public class MktResController extends BaseController {
 		Map<String, Object> paramTemp = new HashMap<String, Object>();
 		Map<String, Object> mktResMap = new HashMap<String, Object>();
 		paramTemp.put("instCode",param.get("instCode"));
+		paramTemp.put("areaId",param.get("areaId"));
 		try {
 			mktResMap = mktResBmo.queryMktResInfoByCode2(paramTemp, flowNum, sessionStaff);
 		} catch (BusinessException be) {
