@@ -1329,7 +1329,8 @@ mktRes.terminal = (function($){
 					partyId : -1,  //新装默认-1
 					//distributorId : OrderInfo.staff.distributorId, //转售商标识
 					olTypeCd : CONST.OL_TYPE_CD.AGENT,  //app标识
-					actionFlag : OrderInfo.actionFlag
+					actionFlag : OrderInfo.actionFlag,
+					extSystem : "1000000244"
 				},
 				custOrderList :[{busiOrder : []}]   //客户订购列表节点
 			}

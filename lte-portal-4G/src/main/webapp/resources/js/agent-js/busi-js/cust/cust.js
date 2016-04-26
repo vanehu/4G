@@ -530,6 +530,7 @@ cust = (function(){
 		if(identidiesTypeCd==1){
 			$("#cmCustIdCard").attr("placeHolder","请输入合法身份证号码");
 			$("#div-cmcustidcard").show();
+			$("#div-readcmcustidcard").show();
 			$("#div-cmcustidcard-none").hide();
 			
 			$("#cmCustName").attr("readonly","readonly");
@@ -542,18 +543,21 @@ cust = (function(){
 			$("#cmCustIdCardOther").attr("placeHolder","请输入合法军官证");
 			$("#div-cmcustidcard-none").show();
 			$("#div-cmcustidcard").hide();
+			$("#div-readcmcustidcard").hide();
 			$('#custFormdata').data('bootstrapValidator').enableFieldValidators("cmCustIdCardOther",true,null);
 			$('#custFormdata').data('bootstrapValidator').enableFieldValidators("cmCustIdCard",false,null);
 		}else if(identidiesTypeCd==3){
 			$("#cmCustIdCardOther").attr("placeHolder","请输入合法护照");
 			$("#div-cmcustidcard-none").show();
 			$("#div-cmcustidcard").hide();
+			$("#div-readcmcustidcard").hide();
 			$('#custFormdata').data('bootstrapValidator').enableFieldValidators("cmCustIdCardOther",true,null);
 			$('#custFormdata').data('bootstrapValidator').enableFieldValidators("cmCustIdCard",false,null);
 		}else{
 			$("#cmCustIdCardOther").attr("placeHolder","请输入合法证件号码");
 			$("#div-cmcustidcard-none").show();
 			$("#div-cmcustidcard").hide();
+			$("#div-readcmcustidcard").hide();
 			$('#custFormdata').data('bootstrapValidator').enableFieldValidators("cmCustIdCardOther",true,null);
 			$('#custFormdata').data('bootstrapValidator').enableFieldValidators("cmCustIdCard",false,null);
 		}
@@ -1821,6 +1825,30 @@ cust = (function(){
 	//客户鉴权--证件类型
 	var _identityTypeAuth=function(level){
 
+		var idCardNumber2 = "";
+		if (level == "1") {
+			idCardNumber2 = $("#idCardNumber2").val();
+			if (_choosedCustInfo.identityCd != "1") {
+				if (_isSelfChannel()) {
+					$("#idCardNumber2").removeAttr("disabled");
+				} else {
+					$("#idCardNumber2").attr("disabled", "disabled");
+					$.alert("提示", "请到电信自有营业厅办理业务！");
+					return;
+				}
+			}
+		} else if (level == "2") {
+			idCardNumber2 = $("#idCardNumber2").val();
+			if (_choosedCustInfo.identityCd != "1") {
+				if (_isSelfChannel()) {
+					$("#idCardNumber2").removeAttr("disabled");
+				} else {
+					$("#idCardNumber2").attr("disabled", "disabled");
+					$.alert("提示", "请到电信自有营业厅办理业务！");
+					return;
+				}
+			}
+		}
 		var param = _choosedCustInfo;
 		param.validateType="1";
 		param.identityNum = base64encode(utf16to8($.trim($("#idCardNumber2").val())));
@@ -1992,6 +2020,31 @@ cust = (function(){
 		});
 	};
 
+	//多种鉴权方式的tab页切换
+	var _changeTab = function (tabId) {alert(tabId);
+		if (tabId == 2 && _choosedCustInfo.identityCd != "1") {
+			if (_isSelfChannel()) {
+				$("#idCardNumber2").removeAttr("disabled");
+			} else {
+				$("#idCardNumber2").attr("disabled", "disabled");
+				$.alert("提示", "请到电信自有营业厅办理业务！");
+			}
+		}
+	};
+	
+	//返回是否是自营渠道
+	var _isSelfChannel = function () {
+		var isSelfChannel = false;
+		if (OrderInfo.staff.channelType == CONST.CHANNEL_TYPE_CD.ZQZXDL || OrderInfo.staff.channelType == CONST.CHANNEL_TYPE_CD.GZZXDL
+			|| OrderInfo.staff.channelType == CONST.CHANNEL_TYPE_CD.HYKHZXDL || OrderInfo.staff.channelType == CONST.CHANNEL_TYPE_CD.SYKHZXDL
+			|| OrderInfo.staff.channelType == CONST.CHANNEL_TYPE_CD.XYKHZXDL || OrderInfo.staff.channelType == CONST.CHANNEL_TYPE_CD.GZZXJL
+			|| OrderInfo.staff.channelType == CONST.CHANNEL_TYPE_CD.ZYOUT || OrderInfo.staff.channelType == CONST.CHANNEL_TYPE_CD.ZYINGT
+			|| OrderInfo.staff.channelType == CONST.CHANNEL_TYPE_CD.WBT) {
+			isSelfChannel = true;
+		}
+		return isSelfChannel;
+	};
+	
 	//鉴权方式日志记录成功
 	var _saveAuthRecordSuccess=function(param){
 		param.resultCode = "0";
@@ -2108,6 +2161,8 @@ cust = (function(){
 		saveAuthRecord              :       _saveAuthRecord,
 		saveAuthRecordSuccess       :       _saveAuthRecordSuccess,
 		saveAuthRecordFail          :       _saveAuthRecordFail,
-		getreadCertBtnID            :       _getreadCertBtnID
+		getreadCertBtnID            :       _getreadCertBtnID,
+		changeTab					:		_changeTab,
+		isSelfChannel				:		_isSelfChannel
 	};	
 })();
