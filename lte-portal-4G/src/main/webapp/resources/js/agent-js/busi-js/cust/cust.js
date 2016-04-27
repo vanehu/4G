@@ -2021,7 +2021,7 @@ cust = (function(){
 	};
 
 	//多种鉴权方式的tab页切换
-	var _changeTab = function (tabId) {alert(tabId);
+	var _changeTab = function (tabId) {
 		if (tabId == 2 && _choosedCustInfo.identityCd != "1") {
 			if (_isSelfChannel()) {
 				$("#idCardNumber2").removeAttr("disabled");
