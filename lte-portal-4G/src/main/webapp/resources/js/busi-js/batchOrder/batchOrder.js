@@ -794,8 +794,7 @@ order.batch = (function(){
 	};
 	
 	/**
-	 * 进度查询，获取数据列表
-	 * 分页使用，由于进度查询页面有固定的查询条件不随点击“下一页”而更新，所以该函数为分页使用
+	 * 批次进度查询(获取数据列表)，
 	 * @param statusCd:受理状态(可空); orderStatus:订单状态(可空); groupId:批次号(不可空); batchType:受理类型(不可空)
 	 * @author ZhangYu
 	 */
@@ -855,7 +854,7 @@ order.batch = (function(){
 	};
 	
 	/**
-	 * 批次进度查询，查询某一批次的具体处理情况
+	 * 批次进度查询(获取弹窗页面)，查询某一批次的具体处理情况
 	 * @author ZhangYu
 	 */
 	var _batchProgressQuery = function(groupId,batchType,pageIndex){
@@ -1050,9 +1049,7 @@ order.batch = (function(){
 															+"&pageSize="+pageSize;
 		
 		$("#processQuery_action").attr("action", url);
-		$("#processQuery_action").submit();
-			
-			
+		$("#processQuery_action").submit();			
 	};
 	
 	var _chooseArea = function(){
@@ -1115,7 +1112,9 @@ order.batch = (function(){
 	};
 	
 	var _downloadFile = function(fileName,fileUrl){
-		var url=contextPath+"/order/batchOrder/downloadFile?fileUrl="+fileUrl+"&fileName="+fileName;
+		$("#upload_file_fileName").val(fileName);
+		$("#upload_file_fileUrl").val(fileUrl);
+		var url=contextPath+"/order/batchOrder/downloadFile";
         $("#upload_file").attr("action", url);
         $("#upload_file").submit();
 	};
@@ -1134,7 +1133,6 @@ order.batch = (function(){
 		initDic			:_initDic,
 		getMoreError	:_getMoreError,
 		slideFailInfo	:_slideFailInfo,
-		//批量预开通相关操作优化 By ZhangyYu
 		batchReprocess		:_batchReprocess,			//进度查询下的“取消”和“重发”
 		chooseArea			:_chooseArea,				//批次信息查询，权限优化，增加地区选择
 		batchStatusQuery	:_batchStatusQuery,			//批量受理结果查询

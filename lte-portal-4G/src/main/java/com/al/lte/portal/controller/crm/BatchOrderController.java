@@ -1420,11 +1420,15 @@ public class BatchOrderController  extends BaseController {
 	
 	@RequestMapping(value = "/downloadFile", method = {RequestMethod.POST})
 	@ResponseBody
-	public JsonResponse downloadFile(@RequestParam Map<String, Object> param, Model model, HttpServletResponse response) throws IOException {
+	public JsonResponse downloadFile(Model model, 
+			@RequestParam("fileUrl") String fileUrl, 
+			@RequestParam("fileName") String fileName,
+			HttpServletResponse response) throws IOException {
+
 		try {
 			FtpUtils ftpUtils = new FtpUtils();
-			String fileUrl = (String) param.get("fileUrl");
-			String fileName = (String) param.get("fileName");
+//			String fileUrl = (String) param.get("fileUrl");
+//			String fileName = (String) param.get("fileName");
 			String[] fileUrls = fileUrl.split(",");
 			String ftpMapping = fileUrls[0];
 			String newFileName = fileUrls[1];
@@ -1442,7 +1446,7 @@ public class BatchOrderController  extends BaseController {
 			
 			ServletOutputStream  outputStream = response.getOutputStream();
 			
-			response.addHeader("Content-Disposition", "attachment;filename="+fileName);
+			response.addHeader("Content-Disposition", "attachment;filename="+new String(fileName.getBytes("gb2312"), "ISO8859-1"));
 			response.setContentType("application/binary;charset=utf-8");
 			
 			ftpUtils.connectFTPServer(remoteAddress,remotePort,userName,password);
@@ -1453,7 +1457,7 @@ public class BatchOrderController  extends BaseController {
 			outputStream.close();
 			return super.successed("导出成功！");
 		} catch (Exception e) {
-			return super.failed("导出文件异常",ResultConstant.FAILD.getCode());
+			return super.failed("导出文件异常：<br/>" + e, ResultConstant.FAILD.getCode());
 		}
 		
 	}

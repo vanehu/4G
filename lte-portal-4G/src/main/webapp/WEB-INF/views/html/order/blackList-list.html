@@ -32,7 +32,10 @@
                     <td>${orderLists.endDt}</td>
                     <td>${orderLists.staffCd}</td>
                     <td>
-                        <form method="post" id="upload_file"></form>
+                        <form method="post" id="upload_file" enctype="multipart/form-data">
+                        	<input type="hidden" name="fileName" id="upload_file_fileName" value=""/>
+                        	<input type="hidden" name="fileUrl" id="upload_file_fileUrl" value=""/>
+                        </form>
                         <a href="javascript:order.batch.downloadFile('${orderLists.fileName}','${orderLists.fileUrl}')" type="main" >${orderLists.fileName}</a>
                     </td>
                   </tr>
@@ -43,7 +46,6 @@
               </tr>
               </#if>
               </tbody>
-              </form>
             </table>            
             <@portal.simplifyModelPagination pageModel "cart.main.qryBlackUserInfo"/>
 			<!--页码 end-->
