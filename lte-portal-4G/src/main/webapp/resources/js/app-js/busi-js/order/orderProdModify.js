@@ -122,6 +122,7 @@ order.prodModify = (function(){
 			
 			//工号有跳过鉴权权限 
 			else if(iseditOperation=="0"){
+				
 				$("#auth2").css('display','block'); 
 				//$("#iseditOperation").attr("style","");
 				
@@ -179,20 +180,26 @@ order.prodModify = (function(){
 			}
 			//工号有跳过鉴权权限 
 			else  if(iseditOperation=="0"){
+				//判断是否是自营渠道
+				if(!cust.isSelfChannel()){
+					 $("#idCardNumber2").attr("readonly","readonly");
+					 $.alert("提示","请到电信自有营业厅办理业务");
+				}
 				$("#auth2").css('display','block'); 
 //				//$("#iseditOperation").attr("style","");
 			}
 			
 			else{
+				//判断是否是自营渠道
+				if(!cust.isSelfChannel()){
+					 $("#idCardNumber2").attr("readonly","readonly");
+					 $.alert("提示","请到电信自有营业厅办理业务");
+				}
 //				//显示跳过鉴权按钮 
 //				$("#iseditOperation").attr("style","");
 				 $("#auth2").css('display','block'); 
 			}
-			//判断是否是自营渠道
-			if(!cust.isSelfChannel()){
-				 $("#idCardNumber2").attr("readonly","readonly");
-				 $.alert("提示","请到电信自有营业厅办理业务");
-			}
+			
 		} 
 		
 		else {

@@ -131,7 +131,6 @@ public class PCModelController extends BaseController {
 			staffInfo.put("channelCode", channelCode);
 			sessionStaff = SessionStaff.setStaffInfoFromMap(staffInfo);		
 			initSessionStaff(sessionStaff, request.getSession());
-			
 			String privateKey = MySimulateData.getInstance().getParam("token."+provinceCode+".key",(String) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_DATASOURCE_KEY),"token."+provinceCode+".key");
 			log.error("省份私钥："+privateKey);
 			if(StringUtil.isEmptyStr(privateKey)){		
@@ -242,6 +241,8 @@ public class PCModelController extends BaseController {
 		sessionStaff.setCurrentAreaName(MapUtils.getString(chanelMap,"areaName", ""));
 		sessionStaff.setCurrentAreaAllName(MapUtils.getString(chanelMap,"areaAllName", ""));
 		sessionStaff.setOperatorsId(MapUtils.getString(chanelMap, "operatorsId", ""));
+		//渠道大类
+		sessionStaff.setCurrentChannelType(MapUtils.getString(chanelMap, "type", ""));
 		// 存到session中
 		session.setAttribute(SysConstant.SESSION_KEY_LOGIN_STAFF, sessionStaff);
 		RedisUtil.set((String) session.getAttribute(SysConstant.SESSION_DATASOURCE_KEY),sessionStaff.getStaffId(),session.getId());

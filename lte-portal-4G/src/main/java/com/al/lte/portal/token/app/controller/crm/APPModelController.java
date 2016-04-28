@@ -239,6 +239,9 @@ public class APPModelController extends BaseController {
 		sessionStaff.setCurrentAreaName(MapUtils.getString(chanelMap,"areaName", ""));
 		sessionStaff.setCurrentAreaAllName(MapUtils.getString(chanelMap,"areaAllName", ""));
 		sessionStaff.setOperatorsId(MapUtils.getString(chanelMap, "operatorsId", ""));
+		//渠道大类
+	    sessionStaff.setCurrentChannelType(MapUtils.getString(chanelMap, "type", ""));
+				
 		// 存到session中
 		session.setAttribute(SysConstant.SESSION_KEY_LOGIN_STAFF, sessionStaff);
 		RedisUtil.set((String) session.getAttribute(SysConstant.SESSION_DATASOURCE_KEY),sessionStaff.getStaffId(),session.getId());
@@ -381,6 +384,7 @@ public class APPModelController extends BaseController {
 		result.put("soAreaCode", sessionStaff.getCurrentAreaCode());
 		result.put("soAreaName", sessionStaff.getCurrentAreaName());
 		result.put("soAreaAllName", sessionStaff.getCurrentAreaAllName());
+		result.put("channelType", sessionStaff.getCurrentChannelType());
 		/**----测试数据----**/
 		/*result.put("staffId", "2340030");//员工id
 		result.put("channelId", "1610587"); //受理渠道id

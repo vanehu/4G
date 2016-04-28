@@ -2937,6 +2937,13 @@ order.prodModify = (function(){
 			
 			//工号有跳过鉴权权限 
 			else {
+				if(OrderInfo.actionFlag==6)
+				 {
+					if(!order.cust.isSelfChannel()){
+						  $("#idCardNumber2").attr("readonly","readonly");
+							 $.alert("提示","请到电信自有营业厅办理业务");			
+				       }
+				}
 				$("#auth2").css('display','block'); 
 			}
 		} 
@@ -2984,6 +2991,11 @@ order.prodModify = (function(){
 				order.prepare.commonTab(url,"order_tab_panel_offer");
 			}
 			else {
+				if(!order.cust.isSelfChannel()){
+					  $("#idCardNumber2").attr("readonly","readonly");
+						 $.alert("提示","请到电信自有营业厅办理业务");			
+			       }
+
 				$("#auth2").css('display','block'); 
 				//$("#iseditOperation").attr("style","");
 			}

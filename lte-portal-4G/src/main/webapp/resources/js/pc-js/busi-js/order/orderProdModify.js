@@ -3276,6 +3276,13 @@ order.prodModify = (function(){
 			}
 			//工号有跳过鉴权权限 
 			else if(iseditOperation=="0"){
+				if(OrderInfo.actionFlag==6){
+					//判断是否是自营渠道
+					if(!order.cust.isSelfChannel()){
+						 $("#idCardNumber2").attr("readonly","readonly");
+						 $.alert("提示","请到电信自有营业厅办理业务");
+					}
+				}
 				 easyDialog.open({
 				        container : 'auth2',
 				        overlay : false
@@ -3283,17 +3290,20 @@ order.prodModify = (function(){
 			}
 			
 			else{
+				if(OrderInfo.actionFlag==6){
+					//判断是否是自营渠道
+					if(!order.cust.isSelfChannel()){
+						 $("#idCardNumber2").attr("readonly","readonly");
+						 $.alert("提示","请到电信自有营业厅办理业务");
+					}
+				}
 				 easyDialog.open({
 				        container : 'auth2',
 				        overlay : false
 				    });
 			
 			}
-//			//判断是否是自营渠道
-//			if(!order.cust.isSelfChannel()){
-//				 $("#idCardNumber2").attr("readonly","readonly");
-//			     $.alert("提示","请到电信自有营业厅办理业务");
-//			}
+
 			
 		} 
 		
@@ -3346,23 +3356,27 @@ order.prodModify = (function(){
 				
 			}
 			else if (iseditOperation=="0"){
-				
+				//判断是否是自营渠道
+				if(!order.cust.isSelfChannel()){
+					 $("#idCardNumber2").attr("readonly","readonly");
+					 $.alert("提示","请到电信自有营业厅办理业务");
+				}
 				 easyDialog.open({
 				        container : 'auth2',
 				        overlay : false
 				    });
 			}
 			 else{
+					//判断是否是自营渠道
+					if(!order.cust.isSelfChannel()){
+						 $("#idCardNumber2").attr("readonly","readonly");
+						 $.alert("提示","请到电信自有营业厅办理业务");
+					}
 				 easyDialog.open({
 				        container : 'auth2',
 				        overlay : false
 				    });
 			 }
-			//判断是否是自营渠道
-			if(!order.cust.isSelfChannel()){
-				 $("#idCardNumber2").attr("readonly","readonly");
-				 $.alert("提示","请到电信自有营业厅办理业务");
-			}
 		}
 	};
 	

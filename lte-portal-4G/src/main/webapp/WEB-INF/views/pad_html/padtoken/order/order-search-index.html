@@ -5,7 +5,7 @@
 
 <!-- 这块js类似原来的busi-js-tpl.html后期优化20140731 lsd -->
 
-<#if COMPRESS_JS_LEVEL?? && COMPRESS_JS_LEVEL == "BUSI">
+<#if COMPRESS_JS_LEVEL?? && COMPRESS_JS_LEVEL == "BUSI" >
    <script src="${contextPath}/js/pad-js/op-js/order/order.js?${jsversion}" type="text/javascript"></script>
    <script src="${contextPath}/merge/js/busiPAD-1.0.0.min.js" type="text/javascript"></script>
 <#else>
@@ -82,6 +82,7 @@
 					operatorsId = '${Session["_ecs_login_session_key"].currentOperatorsId}' 
 					operatorsName = '${Session["_ecs_login_session_key"].currentOperatorsName}' 
 					operatorsNbr = '${Session["_ecs_login_session_key"].currentOperatorsNbr}' 
+					channelType = '${Session["_ecs_login_session_key"].currentChannelType}' 
 	               	 >
 	               	${Session["_ecs_login_session_key"].currentChannelName}
 	            </span>
@@ -200,6 +201,22 @@
 	}
 	
 	window.onload= function(){
+		OrderInfo.staff={
+				staffId : "${Session['_ecs_login_session_key'].staffId}",
+				staffName : "${Session['_ecs_login_session_key'].staffName}",
+				channelId : '${Session["_ecs_login_session_key"].currentChannelId}',
+				channelName : '${Session["_ecs_login_session_key"].currentChannelName}',
+				areaId : '${Session["_ecs_login_session_key"].currentAreaId}',
+				areaCode : '${Session["_ecs_login_session_key"].currentAreaCode}',
+				areaName : '${Session["_ecs_login_session_key"].currentAreaName}',
+				areaAllName : '${Session["_ecs_login_session_key"].currentAreaAllName}',
+				operatorsId:'${Session["_ecs_login_session_key"].operatorsId}',
+				operatorsName:'${Session["_ecs_login_session_key"].currentOperatorsName}',
+				operatorsNbr:'${Session["_ecs_login_session_key"].currentOperatorsNbr}',
+				soAreaId : '${Session["_ecs_login_session_key"].currentAreaId}',
+				soAreaCode : '${Session["_ecs_login_session_key"].currentAreaCode}',
+				channelType:'${Session["_ecs_login_session_key"].currentChannelType}'
+			};
 		//进行数据信息验证，是否是新装数据
 		if(OrderInfo.provinceInfo.reloadFlag=="N"){
 			var custOrderAttrs =OrderInfo.reloadOrderInfo.orderList.orderListInfo.custOrderAttrs;

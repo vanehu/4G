@@ -771,11 +771,7 @@ public class CustController extends BaseController {
 						jsonResponse = super.successed(map,ResultConstant.SUCCESS.getCode());
 					}
 					else{
-						map.put("code", "-1");
-						map.put("isValidate", "false");
-						map.put("message","证件号码错误");
-						
-						jsonResponse = super.failed(ErrorCode.QUERY_CUST, map, custParam);
+						jsonResponse = super.failed(ErrorCode.QUERY_CUST, "证件号码错误", custParam);
 					}
 					
 				}
