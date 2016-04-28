@@ -493,7 +493,7 @@ public class MktResBmoImpl implements MktResBmo {
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 
 		DataBus db = InterfaceClient.callService(map, 
-				PortalServiceCode.INTF_TERM_RECEIVE,
+				PortalServiceCode.INTF_TERM_VALIDATE,
 				optFlowNum, sessionStaff);
 		// 服务层调用与接口层调用都成功时，返回列表；否则返回空列表
 		if (ResultCode.R_SUCC.equals(db.getResultCode())) {
