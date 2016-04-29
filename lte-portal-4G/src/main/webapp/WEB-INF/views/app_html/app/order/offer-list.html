@@ -10,26 +10,24 @@
 	   <a href="#" class="list-group-item" onclick="javascript:order.service.choosedOffer('tcnum'+${item_index},${item.offerSpecId},'${(item.price)?default("")}','${subPage}','${item.offerSpecName}');">
 		<h5 class="list-group-item-heading">
 			${item.offerSpecName}
-			<span
-				class="glyphicon glyphicon-chevron-right pull-right"
-				aria-hidden="true"></span>
+			
 		</h5>
 		<div class="row">
-			<small class="col-xs-6">国内语音：<#if item.inVoice??>${item.inVoice}分钟<#else>无</#if></small> <small class="col-xs-6">国内流量：<#if item.inFlux??>${item.inFlux}<#else>无</#if></small>
+			<small class="col-xs-6">国内语音：<b class="cheng"><span class="big"><#if item.inVoice??>${item.inVoice}分钟</span><#else>无</#if></b></small> <small class="col-xs-6">国内流量：<b class="cheng"><span class="big"><#if item.inFlux??>${item.inFlux}</span><#else>无</#if></b></small>
 		</div>
+		<span class="dinggou">订购</span>
 	    </a>
 						
 	<#else>
 	<a href="#" class="list-group-item" onclick="order.service.buyService(${item.offerSpecId},'${(item.price)?default("")}')">
 		<h5 class="list-group-item-heading">
 			${item.offerSpecName}
-			<span
-				class="glyphicon glyphicon-chevron-right pull-right"
-				aria-hidden="true"></span>
+			
 		</h5>
 		<div class="row">
-			<small class="col-xs-6">国内语音：<#if item.inVoice??>${item.inVoice}分钟<#else>无</#if></small> <small class="col-xs-6">国内流量：<#if item.inFlux??>${item.inFlux}<#else>无</#if></small>
+			<small class="col-xs-6">国内语音：<b class="cheng"><span class="big"><#if item.inVoice??>${item.inVoice}分钟</span><#else>无</#if></b></small> <small class="col-xs-6">国内流量：<b class="cheng"><span class="big"><#if item.inFlux??>${item.inFlux}</span><#else>无</#if></b></small>
 		</div>
+		<span class="dinggou">订购</span>
 	</a>
 	</#if>
 	</#if>
@@ -37,7 +35,7 @@
 	</div>
 </@portal.scrollPagination>
 <#else>
-<@portal.scrollPagination "offer_list" "both" totalPage 90 0 "order.service.scroll">
+<@portal.scrollPagination "offer_list" "both" totalPage 56 0 "order.service.scroll">
 	<div id="div_offer_list">
 	<#list resultlst as item>
 	<#if item_index<10>
@@ -47,26 +45,24 @@
 	   <a href="#" class="list-group-item" onclick="javascript:order.service.choosedOffer('tcnum'+${item_index},${item.offerSpecId},'${(item.price)?default("")}','${subPage}','${item.offerSpecName}');">
 		<h5 class="list-group-item-heading">
 			${item.offerSpecName}
-			<span
-				class="glyphicon glyphicon-chevron-right pull-right"
-				aria-hidden="true"></span>
+
 		</h5>
 		<div class="row">
-			<small class="col-xs-6">国内语音：<#if item.inVoice??>${item.inVoice}分钟<#else>无</#if></small> <small class="col-xs-6">国内流量：<#if item.inFlux??>${item.inFlux}<#else>无</#if></small>
+			<small class="col-xs-6">国内语音：<b class="cheng"><span class="big"><#if item.inVoice??>${item.inVoice}</span>分钟<#else>无</#if></b></small> <small class="col-xs-6">国内流量：<b class="cheng"><span class="big"><#if item.inFlux??>${item.inFlux}</span><#else>无</#if></b></small>
 		</div>
+		<span class="dinggou">订购</span>
 	    </a>
 						
 	<#else>
 		<a href="#" class="list-group-item" onclick="order.service.buyService(${item.offerSpecId},'${(item.price)?default("")}')">
 			<h5 class="list-group-item-heading">
 				${item.offerSpecName}
-				<span
-					class="glyphicon glyphicon-chevron-right pull-right"
-					aria-hidden="true"></span>
+
 			</h5>
 			<div class="row">
-				<small class="col-xs-6">国内语音：<#if item.inVoice??>${item.inVoice}分钟<#else>无</#if></small> <small class="col-xs-6">国内流量：<#if item.inFlux??>${item.inFlux}<#else>无</#if></small>
+				<small class="col-xs-6">国内语音：<b class="cheng"><span class="big"><#if item.inVoice??>${item.inVoice}</span>分钟<#else>无</#if></b></small> <small class="col-xs-6">国内流量：<b class="cheng"><span class="big"><#if item.inFlux??>${item.inFlux}</span><#else>无</#if></b></small>
 			</div>
+			<span class="dinggou">订购</span>
 		</a>
 	</#if>
 	</#if>
@@ -82,26 +78,24 @@
 	   <a href="#" class="list-group-item" onclick="javascript:order.service.choosedOffer('tcnum'+${item_index},${item.offerSpecId},'${(item.price)?default("")}','${subPage}','${item.offerSpecName}');">
 		<h5 class="list-group-item-heading">
 			${item.offerSpecName}
-			<span
-				class="glyphicon glyphicon-chevron-right pull-right"
-				aria-hidden="true"></span>
+			
 		</h5>
 		<div class="row">
-			<small class="col-xs-6">国内语音：<#if item.inVoice??>${item.inVoice}分钟<#else>无</#if></small> <small class="col-xs-6">国内流量：<#if item.inFlux??>${item.inFlux}<#else>无</#if></small>
+			<small class="col-xs-6">国内语音：<b class="cheng"><span class="big"><#if item.inVoice??>${item.inVoice}分钟</span><#else>无</#if></b></small> <small class="col-xs-6">国内流量：<b class="cheng"><span class="big"><#if item.inFlux??>${item.inFlux}</span><#else>无</#if></b></small>
 		</div>
+		<span class="dinggou">订购</span>
 	    </a>
 						
 	<#else>
 		<a href="#" class="list-group-item" onclick="order.service.buyService(${item.offerSpecId},'${(item.price)?default("")}')">
 			<h5 class="list-group-item-heading">
 				${item.offerSpecName}
-				<span
-					class="glyphicon glyphicon-chevron-right pull-right"
-					aria-hidden="true"></span>
+				
 			</h5>
 			<div class="row">
-				<small class="col-xs-6">国内语音：<#if item.inVoice??>${item.inVoice}分钟<#else>无</#if></small> <small class="col-xs-6">国内流量：<#if item.inFlux??>${item.inFlux}<#else>无</#if></small>
+				<small class="col-xs-6">国内语音：<b class="cheng"><span class="big"><#if item.inVoice??>${item.inVoice}分钟</span><#else>无</#if></b></small> <small class="col-xs-6">国内流量：<b class="cheng"><span class="big"><#if item.inFlux??>${item.inFlux}</span><#else>无</#if></b></small>
 			</div>
+			<span class="dinggou">订购</span>
 		</a>
 	</#if>
 	</#if>

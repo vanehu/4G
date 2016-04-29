@@ -2,14 +2,14 @@
 	<form id="form_terminal_qry" data-ajax="false" method="post">
 	<div class="col-xs-10">
 		<div class="form-group has-feedback search-top">
-			<input type="text" id="input_phone_name" class="form-control" aria-describedby="inputSuccess2Status" placeholder="请输入手机名称">
+			<input type="text" style="width: 100%;" id="input_phone_name" class="form-control" aria-describedby="inputSuccess2Status" placeholder="请输入手机名称">
             <span class="glyphicon glyphicon-search form-control-feedback" aria-hidden="true"></span>
         </div>
     </div>
     </form>
     <div class="col-xs-2">
-         <button type="button" class="btn btn-default navbar-btn nav-justified no-mp" data-toggle="modal" data-target="#phoneModal"> <span class="glyphicon glyphicon-search" aria-hidden="true"></span><br>
-         	高级查询 </button>
+         <button type="button" class="btn btn-default navbar-btn nav-justified no-mp" data-toggle="modal" data-target="#phoneModal"> <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+         </button>
     </div>
 </div>
 <div id="phone-list">
@@ -24,8 +24,8 @@
           <div class="panel-body">
             <form>
             	<div class="form-group">
-                   	<label for="exampleInputEmail1">品牌</label>
-                   	<div class="input-group">
+                   	<label for="exampleInputEmail1" style="width: 100%; text-align: left;"><span class="title_lv"></span>品牌</label>
+                   	<div class="input-group w-100">
                     <select id="select_brand" class="selectpicker show-tick form-control" >
                     	<option value="">不限</option>
 	                </select>
@@ -33,7 +33,7 @@
 	         		</div>
                 </div>
   				<div class="form-group">
-    				<label for="exampleInputEmail1">价格区间<small>（元）</small></label>
+    				<label for="exampleInputEmail1"  style="width: 100%; text-align: left;"><span class="title_lv"></span>价格区间<small>（元）</small></label>
     				<input type="hidden" id="phonePrice_numd01">
     				<input type="hidden" id="phonePrice_numd02">
     				<!--
@@ -43,7 +43,7 @@
 				        <div class="col-xs-3"><input type="email" class="form-control" id="phonePrice_numd02" placeholder=""></div>
 				    </div>
 				    -->
-				    <div class="input-group">
+				    <div class="input-group w-100">
 	                    <select id="phonePrice" onchange="setPrice();"; class="selectpicker show-tick form-control" >
 	                    	<option id="0" value="0">不限</option>
 	                    	<option id="1" value="1">1-499</option>
@@ -57,8 +57,8 @@
 	         		</div>
   				</div>
   				<div class="form-group">
-                    <label for="exampleInputEmail1">手机分类</label>
-                    <div class="input-group">
+                    <label for="exampleInputEmail1"  style="width: 100%; text-align: left;"><span class="title_lv"></span>手机分类</label>
+                    <div class="input-group w-100">
                     <select id="select_phone_type" class="selectpicker show-tick form-control" >
                     	<option value="">不限</option>
                 	</select>

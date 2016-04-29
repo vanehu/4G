@@ -208,10 +208,13 @@ public class OrderController extends BaseController {
 	 */
 	@RequestMapping(value = "/prodoffer/prepare", method = RequestMethod.POST)
     @AuthorityValid(isCheck = false)
-    public String main(@RequestParam Map<String, Object> params, HttpServletRequest request,Model model,HttpSession session) throws AuthorityException {
+    public String main(@RequestBody Map<String, Object> params, HttpServletRequest request,Model model,HttpSession session) throws AuthorityException {
 		String prodOfferId = request.getParameter("prodOfferId") ;
 		String subPage= request.getParameter("subPage") ;
 		String numsubflag= request.getParameter("numsubflag") ;
+		if(params.get("enter")!=null){
+			model.addAttribute("enter",params.get("enter"));
+		}
 		if(prodOfferId!=null&&!prodOfferId.equals("")&&!prodOfferId.equals("null")){
 			model.addAttribute("prodOfferId",prodOfferId);
 		}

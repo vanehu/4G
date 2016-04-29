@@ -988,7 +988,7 @@ order.phoneNumber = (function(){
 		if (response.code==0) {
 			if(response.data){
 				var phoneNbrPoolList= response.data.phoneNbrPoolList;
-				var $div =$('<div class="input-group select-top"></div>');
+				var $div =$('<div class="input-group select-top" style="width: 100%;"></div>');
 				var $span=$('<span class="input-group-addon select-span"></span>');
 				var $sel = $('<select id="nbrPool" class="selectpicker show-tick form-control"></select>');  
 				var $defaultopt = $('<option value="" selected="selected">请选择号池</option>');

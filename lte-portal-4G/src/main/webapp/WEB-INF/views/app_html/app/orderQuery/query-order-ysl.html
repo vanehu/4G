@@ -48,7 +48,7 @@
 						</div>
 						<div class="form-group">
 							<label for="p_olNbr">预受理流水号</label>
-							<div class="input-group">
+							<div class="input-group" style="display: inline-block; width: 72%;">
 								<input type="text" class="form-control" id="olNbr" value="" name="p_olNbr">
 							</div>
 						</div>
@@ -62,18 +62,18 @@
 						<div class="form-group" style="display: none;">
 							<label for="p_channelId">渠道</label> 
                             <#if Session["_ecs_login_session_key"].currentChannelId ?? && (Session["_ecs_login_session_key"].currentChannelId!="")>
-                            <input type="hidden" id="p_channelId" value="${Session["_ecs_login_session_key"].currentChannelId}" areaid="${Session["_ecs_login_session_key"].currentAreaId}">
+                            <input type="hidden" id="p_channelId" value="${Session["_ecs_login_session_key"].currentChannelId}" areaid="${Session["_ecs_login_session_key"].currentAreaId}"  style="display: inline-block; width: 72%; vertical-align: middle;">
 							</#if>	
 						</div>
 						<div class="form-group">
 							<label for="custname">客户姓名</label>
-							<div class="input-group">
+							<div class="input-group" style="display: inline-block; width: 72%; vertical-align: middle;">
 								<input type="text" class="form-control" id="custname" value="" name="custname">
 							</div>
 						</div>
 						<div class="form-group">
 							<label for="CustIdCard">证件号码</label>
-							<div class="input-group">
+							<div class="input-group" style="display: inline-block; width: 72%; vertical-align: middle;">
 								<input type="text" class="form-control" id="CustIdCard" value="" name="CustIdCard">
 							</div>
 						</div>

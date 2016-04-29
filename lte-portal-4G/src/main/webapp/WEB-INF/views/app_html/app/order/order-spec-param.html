@@ -25,7 +25,7 @@
 	    </#if>
     </div>
 	<#elseif prodSpec.dataSourceTypeCd==4 >
-	<div class="input-group">
+	<div class="input-group" style=" width: 72%; display: inline-block;">
     <select class="selectpicker show-tick form-control" p id="${prodSpec.itemSpecId}_${prodId}" name="prodSpec_${prodId}" value="${prodSpec.value}" 
 		itemSpecId="${prodSpec.itemSpecId}" prodSpecItemId="${prodSpec.prodSpecParamId}" 
 		check_name="${prodSpec.name}" check_mask="${rule.mask}" check_mess="${rule.maskMsg}" 

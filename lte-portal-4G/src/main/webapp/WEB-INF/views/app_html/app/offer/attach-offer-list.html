@@ -7,11 +7,13 @@
 	<#list items as item>
 	<#if yslflag??>
 	<a class="list-group-item" onclick="order.ysl.confirmAttachOffer('${item.offerSpecName}','${item.offerSpecId}','1')" href="javascript:void(0);" id="str_${prodId}_${item.offerSpecId}">
-		<h5 class="list-group-item-heading">${item.offerSpecName}</h5>
+		<h5 class="list-group-item-heading" style="margin: 0;">${item.offerSpecName}</h5>
+		<span class="dinggou" style="bottom: 17px;">订购</span>
 	</a>
 	<#else>
 	<a class="list-group-item" onclick="AttachOffer.selectAttachOffer(${prodId},${item.offerSpecId})" href="javascript:void(0);" id="str_${prodId}_${item.offerSpecId}">
-		<h5 class="list-group-item-heading">${item.offerSpecName}</h5>
+		<h5 class="list-group-item-heading" style="margin: 0;">${item.offerSpecName}</h5>
+		<span class="dinggou" style="bottom: 17px;">订购</span>
 	</a>
 	</#if>
 	</#list>

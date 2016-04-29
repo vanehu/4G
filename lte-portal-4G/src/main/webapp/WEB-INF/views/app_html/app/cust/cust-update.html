@@ -5,10 +5,15 @@
 			<div class="col-xs-10 col-xs-offset-1 text-center">
 				<div class="btn-group btn-group-justified navbar-btn" role="group" aria-label="...">
 		          <div class="btn-group" role="group">
-		            <button type="button" class="btn btn-default" onClick="common.callGenerationRec('cust.getGenerationInfos')">
-		            	<span class="glyphicon glyphicon-screenshot" aria-hidden="true"></span> 蓝牙扫描
-		            </button>
-		          </div>
+			            <button type="button" class="btn btn-default" onClick="common.callGenerationRec('cust.getGenerationInfos')">
+			            	<span class="title_lv"></span>
+			            	 蓝牙扫描
+			            </button>
+			            <ul class="img_box">
+			            	<li><img style=" height: 20px; margin: 5px 0;" src="${contextPath}/image/app-image/tubiao-xxhdpi_06.png"/></li>
+			            	<li><img src="${contextPath}/image/app-image/tubiao-xxhdpi_03.png"/></li>
+			            </ul>
+			          </div>
 		          <div class="btn-group" role="group" style="display:none">
 		            <button type="button" class="btn btn-default" onClick="common.callPhotos('cust.getPicture')">
 		            	<span class="glyphicon glyphicon-camera" aria-hidden="true"></span> 拍照
