@@ -156,7 +156,7 @@ order.writeCard = (function(){
 		try{
 			iccidResult = ec.util.defaultStr(ocx.strGetICCID());
 		}catch(e){
-			$.alert("提示","加载读卡插件失败,请检查是否已正确安装插件!错误信息："+e.message,"error");
+			$.alert("提示","加载读卡插件失败,请检查是否已正确安装插件或浏览器正确设置!错误信息："+e.message,"error");
 			return false;
 		}
 		//alert("iccidResult:"+iccidResult);
@@ -479,7 +479,7 @@ order.writeCard = (function(){
 				$("#uim_check_btn_"+prodId).removeClass("purchase").addClass("disablepurchase");
 				return true;
 			} else {
-				$.alert("提示","写卡成功，但卡资源下发异常","error");
+				//$.alert("提示","写卡成功，但卡资源下发异常","error");
 				return false;
 			}
 		}
@@ -995,14 +995,17 @@ order.writeCard = (function(){
 				//alert(JSON.stringify(response));
 				
 				if (!response) {
-					$.alert("提示","<br/>调用卡资源回填到卡管系统异常,请稍后重试。");
+					$.alert("提示","<br/>卡资源回填到卡管系统异常,请稍后重试。");
 					return;
 				}
 				if(response.code == -2) {
-					$.alertM(response.data);
+					alertMM(response.data);
 					return;
 				} else if(response.code != 0) {
 					$.alert("提示","<br/>调用卡资源回填到卡管系统异常,请稍后重试。");
+					if(response.data !="" && response.data !=undefined){
+						alertMM(response.data);
+					}
 					return;
 				}
 				//var eventJson = response.data;
@@ -1232,6 +1235,48 @@ order.writeCard = (function(){
 			return false;
 		}
 		return false;
+	};
+	
+	var alertMM = function(err){//此方法仅针对写卡出错的弹出框。
+		var rand = ec.util.getNRandomCode(5);
+		var opId = "alertMoreOp" + rand;
+		var contId = "alertMoreContent" + rand;
+		var c  = '<div>';
+			c += '<div class="am_baseMsg">错误编码【'+ec.util.defaultStr(err.errCode, "未知") + '】' + ec.util.defaultStr(err.errMsg, "未知")+'</div>';
+		    c += '<div class="am_more"><a id="'+ opId +'" href="javascript:void(0);" onclick="">&nbsp;【更多】&nbsp;</a></div>';
+		    c += '<div id="'+ contId +'" class="am_moreMsg"><font>【详细信息】</font><br/>';
+		    c += '<font>异常信息：</font><br/><span>'+ec.util.encodeHtml(ec.util.defaultStr(err.errData, "未知"))+'</span><br/>';
+		    c += '<font>入参：</font><br/><span>'+ec.util.encodeHtml(ec.util.defaultStr(err.paramMap, "未知"))+'</span><br/>';
+		    if (err.resultMap) {
+		    	c += '<font>回参：</font><br/><span>'+ec.util.defaultStr(err.resultMap, "未知")+'</span><br/>';
+		    }
+		    c += '</div></div>';
+		
+		new $.Zebra_Dialog(c, {
+			'keyboard'	:true,
+        	'modal'		:true,
+        	'animation_speed':500,
+        	'overlay_close':false,
+        	'overlay_opacity':.5,
+            'type'		: "error",
+            'title'		: "异常信息",
+            'position' 	: ['left + 380', 'top + 100'],
+            'width'		: 430,
+            'buttons'	: ['确定']
+		});
+		
+		$("#"+contId).slideDown("normal");
+		
+		
+//		$("#alertMoreOp").off("click").on("click",function(){$("#alertMoreContent").slideDown("slow");});
+		$("#"+opId).off("click").toggle(
+			function(){
+				$("#"+contId).slideDown("normal");
+			},
+			function(){
+				$("#"+contId).slideUp("fast");
+			}
+		);
 	};
 	return {
 		writeReadCard : _writeReadCard,

@@ -1479,29 +1479,29 @@ public class MktResController extends BaseController {
 						SysConstant.SESSION_KEY_LOGIN_STAFF);
 		Map<String, Object> rMap = null;
 		JsonResponse jsonResponse = null;
-		String couponInstanceCode =  (String) (param.get("iccserial")==null?"":param.get("iccserial"));
-		String iccId = (String) (param.get("iccid")==null?"":param.get("iccid"));
-		int serviceCode = (Integer) (param.get("serviceCode")==null?"":param.get("serviceCode"));
-		String TransactionID = (String) (param.get("TransactionID")==null?"":param.get("TransactionID"));
-		String remark = (String) (param.get("remark")==null?"":param.get("remark"));
-		param.remove("serviceCode");
-		param.remove("TransactionID");
-		param.remove("remark");
-		String ip = ServletUtils.getIpAddr(request);
 		Map<String, Object> logparam =  new HashMap<String, Object>();
-		//入库成功后记录日志
-		logparam.put("channelId", sessionStaff.getCurrentChannelId());
-		logparam.put("staffId", sessionStaff.getStaffId());
-		logparam.put("couponInstanceCode",couponInstanceCode);
-		logparam.put("areaId", sessionStaff.getAreaId());
-		logparam.put("iccId",iccId);
-		logparam.put("serviceCode", serviceCode+"");
-		logparam.put("ip", ip);
-		logparam.put("cardSource", remark);
-		logparam.put("operateDate", new Date());
-		logparam.put("contactRecord", TransactionID);
-		logparam.put("methodName", "W");//写卡
 		try {
+			String couponInstanceCode =  (String) (param.get("iccserial")==null?"":param.get("iccserial"));
+			String iccId = (String) (param.get("iccid")==null?"":param.get("iccid"));
+			int serviceCode = (Integer) (param.get("serviceCode")==null?"":param.get("serviceCode"));
+			String TransactionID = (String) (param.get("TransactionID")==null?"":param.get("TransactionID"));
+			String remark = (String) (param.get("remark")==null?"":param.get("remark"));
+			param.remove("serviceCode");
+			param.remove("TransactionID");
+			param.remove("remark");
+			String ip = ServletUtils.getIpAddr(request);
+			//入库成功后记录日志
+			logparam.put("channelId", sessionStaff.getCurrentChannelId());
+			logparam.put("staffId", sessionStaff.getStaffId());
+			logparam.put("couponInstanceCode",couponInstanceCode);
+			logparam.put("areaId", sessionStaff.getAreaId());
+			logparam.put("iccId",iccId);
+			logparam.put("serviceCode", serviceCode+"");
+			logparam.put("ip", ip);
+			logparam.put("cardSource", remark);
+			logparam.put("operateDate", new Date());
+			logparam.put("contactRecord", TransactionID);
+			logparam.put("methodName", "W");//写卡
 			param.put("StaffId", sessionStaff.getStaffId());
 			rMap = mktResBmo.submitUimCardInfo(param, flowNum, sessionStaff);
 			if (rMap != null&& ResultCode.R_SUCC.equals(MapUtils.getString(rMap, "code"))) {
@@ -1535,6 +1535,7 @@ public class MktResController extends BaseController {
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+				return super.failed(ErrorCode.COMPLETE_WRITE_CARD, e, param);
 			}
 		}
 		return jsonResponse;
