@@ -147,7 +147,7 @@
 		<label><span class="pageUpGray">上一页</span></label>
 	</#if>
 	<#if (pageModel.pageNo>1)>
-		<label><span id="ec-page-prevs" class="pageUpOrange" page="${pageModel.pageNo-1}">上一页</span></label>
+		<label><span id="ec-page-prevs" class="pageUpOrange" page="${pageModel.pageNo-1}" callBackFunc="${callBackFunc}">上一页</span></label>
 	</#if>
 	<#if (pageBlockNum>0)>
 		<label>	
@@ -165,7 +165,7 @@
 			<#if (pageBlockNum*j+i)==pageModel.pageNo>
 				<a class="pagingSelect" href="javascript:void(0);">${pageBlockNum*j+i}</a>
 			<#else>
-				<a id="ec-page-${pageBlockNum*j+i}" class="fontBlueB" href="#loc-page" page="${pageBlockNum*j+i}">${pageBlockNum*j+i}</a>
+				<a id="ec-page-${pageBlockNum*j+i}" class="fontBlueB" href="#loc-page" page="${pageBlockNum*j+i}" callBackFunc="${callBackFunc}">${pageBlockNum*j+i}</a>
 			</#if>
 		</#list>
 		</label>
@@ -174,7 +174,7 @@
 		<label><span class="nextPageGray">下一页</span></label>
 	</#if>
 	<#if (pageModel.pageNo<pageModel.totalPages)>
-		<label><span id="ec-page-next" class="nextPageGrayOrange" page="${pageModel.pageNo+1}">下一页</span></label>
+		<label><span id="ec-page-next" class="nextPageGrayOrange" page="${pageModel.pageNo+1}" callBackFunc="${callBackFunc}">下一页</span></label>
 	</#if>
 	<label class="marginTop4" id="ec-total-page" page="${pageModel.totalPages}">共 ${pageModel.totalPages} 页</label>
 	<label class="marginTop4">跳转至</label>	<input id="ec-input-spec" type="text" class="inputW20H20" /><label class="marginTop4">页</label>

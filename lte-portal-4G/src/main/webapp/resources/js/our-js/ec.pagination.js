@@ -8,9 +8,15 @@
 CommonUtils.regNamespace("ec", "pagination");
 ec.pagination = (function(){
 	//回调提交事件入参为当前页码
-	var _gotoPage = function(curPage){
-		var _cb = $("#ec-pagination").attr("callBack");
-		var _backCallFunc = eval(_cb);
+	var _gotoPage = function(curPage, callBackFunction){		
+		var _backCallFunc;
+		if(null == callBackFunction || callBackFunction == "" || callBackFunction == "undefined"){
+			var _cb = $("#ec-pagination").attr("callBack");
+			_backCallFunc = eval(_cb);
+		} else{
+			_backCallFunc = eval(callBackFunction);
+		}
+		
 		if(typeof _backCallFunc !="undefined" && $.isFunction(_backCallFunc)){
 			if(_chkInParam(_backCallFunc)){
 				_backCallFunc.apply(this,[curPage]);
@@ -21,16 +27,18 @@ ec.pagination = (function(){
  			throw new Error("无效的分页回调函数");
  		}
 	};
+	
 	//判断入参个数与位置
 	var _chkInParam = function(func){
 		var fn = func.toString();
 		var args=fn.substring(fn.indexOf('(')+1,fn.indexOf(')')).split(',');
 		return (args.length>=1 && args[0]!="");
-	}
+	};
+	
 	//绑定事件
 	var _pageInit = function(){
 		$("a[id^='ec-page-'],span[id^='ec-page-']").each(function(){
-			$(this).off("click.page").on("click.page",function(){_gotoPage($(this).attr("page"))});
+			$(this).off("click.page").on("click.page",function(){_gotoPage($(this).attr("page"), $(this).attr("callBackFunc"))});
 		});
 		//上一页，下一页功能,暂时取消，影响input框输入
 		/**
@@ -71,7 +79,7 @@ ec.pagination = (function(){
 		gotoPage:_gotoPage,
 		pageInit:_pageInit
 	};
-})()
+})();
 $(function(){
 	ec.pagination.pageInit();
 });
