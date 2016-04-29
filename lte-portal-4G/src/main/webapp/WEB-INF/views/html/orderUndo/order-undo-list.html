@@ -139,8 +139,12 @@
                   								objId="${sub.objSpecId}" instId="${sub.objInstId}" boActionTypeCd="${sub.boActionTypeCd}" acctNbr="${sub.num}" custId="${order.partyId}" relaBoId="${sub.boId}" relatesBoId="${sub.relatesBoId}" areaId="${order.areaId}" queryAreaId ="${sub.areaId}" actionClassCd="${sub.actionClassCd}" is_new="${new_prod_num}" statusCd="${sub.statusCd}" cancelFlag="${order.cancelFlag}">撤单</a>
 		                  				</#if>
 		                  			<#elseif new_prod_num==1 > <!-- 单产品新装 -->
+		                  				<!-- 针对能力开放套餐变更，加载单个副卡，只撤单个副卡-->
+		                  				<#if sub.boActionTypeCd?? && sub.boActionTypeCd=="1" && sub.roleCd == "401">
+											<a class="purchase" href="javascript:order.undo.undoCheck('only','N','${order.olNbr}_${sub.objInstId}_${sub.boId}')" name="${order.olNbr}" id="${order.olNbr}_${sub.objInstId}_${sub.boId}" olId="${order.olId}" olNbr="${order.olNbr}" partyid="${order.partyId}" 
+                  								objId="${sub.objSpecId}" instId="${sub.objInstId}" boActionTypeCd="${sub.boActionTypeCd}" acctNbr="${sub.num}" custId="${order.partyId}" relaBoId="${sub.boId}" relatesBoId="${sub.relatesBoId}" areaId="${order.areaId}" queryAreaId ="${sub.areaId}" actionClassCd="${sub.actionClassCd}" is_new="${new_prod_num}" statusCd="${sub.statusCd}" cancelFlag="${order.cancelFlag}">撤单</a>
 		                  				<!-- 撤整个订单-->
-		                  				<#if sub.boActionTypeCd?? && sub.boActionTypeCd=="1" >
+		                  				<#elseif sub.boActionTypeCd?? && sub.boActionTypeCd=="1" >
                							    <a class="purchase" href="javascript:order.undo.undoCheck('main','Y','${order.olNbr}_${sub.objInstId}_${sub.boId}')" name="${order.olNbr}" id="${order.olNbr}_${sub.objInstId}_${sub.boId}" olId="${order.olId}" olNbr="${order.olNbr}" partyid="${order.partyId}" 
                   								objId="${sub.objSpecId}" instId="${sub.objInstId}" boActionTypeCd="${sub.boActionTypeCd}" acctNbr="${sub.num}" custId="${order.partyId}" relaBoId="${sub.boId}" relatesBoId="${sub.relatesBoId}" areaId="${order.areaId}" queryAreaId ="${sub.areaId}" actionClassCd="${sub.actionClassCd}" is_new="${new_prod_num}" statusCd="${sub.statusCd}" cancelFlag="${order.cancelFlag}">撤单</a>
 		                  				<#elseif sub.actionClassCd==1300>
