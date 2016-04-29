@@ -78,7 +78,7 @@ public class GetUimCardInfo extends Service {
 			
 			Map<String,Object> inMap = new HashMap<String,Object>();
 	    	inMap.put("in0", inXML);
-	    	String url = DataRepository.getInstence().getSysParamValue(LteConstants.CON_CSB_URL_KEY,SysConstant.CON_SYS_PARAM_GROUP_INTF_URL);
+	    	String url = DataRepository.getInstence().getSysParamValue(LteConstants.CN2_CON_CSB_URL_KEY,SysConstant.CON_SYS_PARAM_GROUP_INTF_URL);
 	    	WSConfig config = new WSConfig();	
 			config.setUrl(url);//接口地址
 			config.setMethodName("exchange"); //请求的接口名称
