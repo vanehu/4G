@@ -796,7 +796,7 @@ order.cust = (function(){
 					}
 				});
 			}else{
-				_realCheck(contextPath);
+				_realCheck(contextPath, scope);
 			}
 			if(order.cust.jumpAuthflag=="0"){
 				$("#auth3 #jumpAuth").show();
@@ -1934,9 +1934,15 @@ order.cust = (function(){
 	};
 
 	//实名制校验
-	var _realCheck = function (context) {
-		var canRealName = $('#custInfos').parent().children('[selected="selected"]').attr('canrealname');
-		if (ec.util.isObj(canRealName) && 1 != canRealName) {
+	var _realCheck = function (context, scope) {
+		var canRealName = "";
+		// 使用人实名制从#custInfos节点获取不准确
+		if (ec.util.isObj(scope)) {
+			canRealName = $(scope).attr('canrealname');
+		} else {
+			canRealName = $('#custInfos').parent().children('[selected="selected"]').attr('canrealname');
+		}
+		if (!ec.util.isObj(canRealName) || (ec.util.isObj(canRealName) && 1 != canRealName)) {
 			$.alert("提示", "当前为非实名制客户，请先沟通营业员进行资料补登。","confirmation", function () {
 				var url = window.location.protocol + '//' + window.location.host + context + "/main/home";
 				window.location = url;
