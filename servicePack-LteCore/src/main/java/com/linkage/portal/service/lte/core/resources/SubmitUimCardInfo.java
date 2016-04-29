@@ -83,7 +83,7 @@ public class SubmitUimCardInfo extends Service {
 			log.error("参数解析异常，请确认你的入参是否正确！");
 			return dataMap;
 		}
-    	String url = DataRepository.getInstence().getSysParamValue(LteConstants.CON_CSB_URL_KEY,SysConstant.CON_SYS_PARAM_GROUP_INTF_URL);
+    	String url = DataRepository.getInstence().getSysParamValue(LteConstants.CN2_CON_CSB_URL_KEY,SysConstant.CON_SYS_PARAM_GROUP_INTF_URL);
     	log.debug("url:"+url);
 		Map<String,Object> inMap = new HashMap<String,Object>();
     	inMap.put("in0", inXML);

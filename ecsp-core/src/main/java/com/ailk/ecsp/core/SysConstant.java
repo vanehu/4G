@@ -42,7 +42,7 @@ public class SysConstant {
 	/**系统参数 服务层详细日志开关*/
 	public static String CON_WRITE_LOG_DETAIL = "WRITE_LOG_DETAIL";
 	/**系统参数需要读取配置不读数据库的KEY*/
-	public static String CON_PROPERTIES_KEY = "WRITE_LOG_FLAG,WRITE_LOG_DETAIL,url.csbWS,DEFAULT_DATASOURCE";
+	public static String CON_PROPERTIES_KEY = "WRITE_LOG_FLAG,WRITE_LOG_DETAIL,url.csbWS,url.CN2csbWS,DEFAULT_DATASOURCE";
 	/**刷新缓存动作参数分组分隔符*/
 	public static String  CON_REF_PARAM_ACTION_GROUP = ",";
 }

@@ -4,6 +4,9 @@ package com.linkage.portal.service.lte;
 public class LteConstants {
 	/**(系统/平台)签名	默认：123（测试）、上线待定 */
 	public final static String CON_CSB_URL_KEY = "url.csbWS";
+	/**(系统/平台)签名
+	 * 容灾改造：通过CSB调外围接口，须使用CSB域名*/
+	public final static String CN2_CON_CSB_URL_KEY = "url.CN2csbWS";
 	/** 物联网CSB接口地址*/
 	public final static String IOT_CSB_URL_KEY = "url.IOTcsbWS";
 	/**(系统/平台)签名	默认：123（测试）、上线待定 */
