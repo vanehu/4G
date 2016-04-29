@@ -3276,7 +3276,7 @@ order.prodModify = (function(){
 			}
 			//工号有跳过鉴权权限 
 			else if(iseditOperation=="0"){
-				if(OrderInfo.actionFlag==6){
+				if(OrderInfo.actionFlag==6 || OrderInfo.actionFlag==1){
 					//判断是否是自营渠道
 					if(!order.cust.isSelfChannel()){
 						 $("#idCardNumber2").attr("readonly","readonly");
@@ -3290,7 +3290,7 @@ order.prodModify = (function(){
 			}
 			
 			else{
-				if(OrderInfo.actionFlag==6){
+				if(OrderInfo.actionFlag==6 || OrderInfo.actionFlag==1){
 					//判断是否是自营渠道
 					if(!order.cust.isSelfChannel()){
 						 $("#idCardNumber2").attr("readonly","readonly");
