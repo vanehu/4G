@@ -354,6 +354,8 @@ order.service = (function(){
 		if(OrderInfo.actionFlag == 1){
 			if(offerSpec.offerSpecParams && (offerSpec.offerSpecParams.length>0)){
 				$("#offerCanBtn").show();
+			}else{
+				$("#offerCanBtn").hide();
 			}
 		}
 		$("#max").text("0-"+max);
@@ -600,6 +602,8 @@ order.service = (function(){
 							if(OrderInfo.actionFlag == 1){
 								if(prodOfferSpec.offerSpecParams && (prodOfferSpec.offerSpecParams.length>0)){
 									$("#offerCanBtn").show();
+								}else{
+									$("#offerCanBtn").hide();
 								}
 							}
 						}else{
