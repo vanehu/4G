@@ -463,7 +463,9 @@ OrderInfo = (function() {
 			                value : this.setValue,
 			                state : "ADD"
 			            };
-						busiOrder.data.ooParams.push(ooParam);
+						if (ec.util.isObj(this.setValue)) {
+							busiOrder.data.ooParams.push(ooParam);
+						}
 					}
 				});		
 			}
