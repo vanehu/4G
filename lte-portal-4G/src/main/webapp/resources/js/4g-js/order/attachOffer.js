@@ -463,7 +463,7 @@ AttachOffer = (function() {
 			if(prodId==offerSpec.prodId){
 				for (var j = 0; j < offerSpec.offerRoles.length; j++) {
 					var offerRole = offerSpec.offerRoles[j];
-					if(offerRole.memberRoleCd==CONST.MEMBER_ROLE_CD.VICE_CARD){//主卡
+					if(offerRole.memberRoleCd==CONST.MEMBER_ROLE_CD.MAIN_CARD||offerRole.memberRoleCd==CONST.MEMBER_ROLE_CD.COMMON_MEMBER){//主卡或者普通套餐成员
 						for (var k = 0; k < offerRole.roleObjs.length; k++) {
 							var roleObj = offerRole.roleObjs[k];
 							if(roleObj.objType==CONST.OBJ_TYPE.SERV){
