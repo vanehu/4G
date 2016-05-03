@@ -741,3 +741,26 @@ li.form-group {
 .img_box li img{
 	height: 30px;
 }
+.btn{
+	padding: 8px 12px;
+}
+.form-group input,.form-group select{
+	height: 38px;
+	border-color: #999999;
+}
+.form-group input{
+	background: #fff;
+}
+.form-group select{
+	 background: #f4f4f4f;
+}
+.dingdan-list-box li{
+	margin-top: 0;
+	padding-top: 0;
+}
+
+@media screen and (max-height:400px){
+	.carousel-indicators{
+		display: none;
+	}
+}

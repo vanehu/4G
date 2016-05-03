@@ -8,7 +8,7 @@
 			<div class="item active" id="target_${k}">
 				<div class="panel panel-default panelcon" id="prodinfo_${prodId}">
 					<!-- Default panel contents -->
-				<div class="panel-heading" id=${offerRole.offerRoleId}>${prod.offerRoleName}</div>
+				<div class="panel-heading" id=${offerRole.offerRoleId}><span class="title_lv"></span>${prod.offerRoleName}</div>
 				<form>
 				<div class="panel-body" id="item_order_${prodId}">
 					<div class="form-group">
@@ -87,9 +87,9 @@
 				</div>
 				</form>
 				<button type="button" onClick="AttachOffer.show(${prodId})"
-					class="btn btn-default btn-block button-right" style="height: 60px;">
-					可选包/功能 <span class="glyphicon glyphicon-chevron-right"
-						aria-hidden="true"></span>
+					class="btn btn-default btn-block button-right" style="height: 60px; text-align:left;">
+					<span class="title_lv"></span>可选包/功能 <span class="glyphicon glyphicon-chevron-right"
+						aria-hidden="true" style="float: right;"></span>
 				</button>
 			</div>
 		</div>
@@ -141,9 +141,9 @@
 				</div>
 				</form>
 				<button type="button" onClick="AttachOffer.show(${prodId})"
-					class="btn btn-default btn-block button-right" style="height: 60px;">
-					可选包/功能 <span class="glyphicon glyphicon-chevron-right"
-						aria-hidden="true"></span>
+					class="btn btn-default btn-block button-right" style="height: 60px; text-align: left;">
+					<span class="title_lv"></span>可选包/功能 <span class="glyphicon glyphicon-chevron-right"
+						aria-hidden="true" style="float: right;"></span>
 				</button>
 				<br>
 				<br>
