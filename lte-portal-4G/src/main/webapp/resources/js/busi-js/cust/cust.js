@@ -759,6 +759,11 @@ order.cust = (function(){
 				$("#auth3 #idCardNumber2").removeAttr("disabled");
 			}
 			var canRealName = $(scope).attr('canrealname');
+			// 新疆-未实名号码查询定位异常 canRealName=""
+			if (!ec.util.isObj(canRealName)) {
+				$.alert("提示", "canRealName为空，当前为非实名制客户，请先沟通营业员进行资料补登。");
+				return;
+			}
 			var accessNumber=_choosedCustInfo.accNbr;
 			if(-1==$("#p_cust_identityCd").val()){
 				accessNumber=$.trim($("#p_cust_identityNum").val());
@@ -1942,7 +1947,7 @@ order.cust = (function(){
 		} else {
 			canRealName = $('#custInfos').parent().children('[selected="selected"]').attr('canrealname');
 		}
-		if (!ec.util.isObj(canRealName) || (ec.util.isObj(canRealName) && 1 != canRealName)) {
+		if (ec.util.isObj(canRealName) && 1 != canRealName) {
 			$.alert("提示", "当前为非实名制客户，请先沟通营业员进行资料补登。","confirmation", function () {
 				var url = window.location.protocol + '//' + window.location.host + context + "/main/home";
 				window.location = url;
