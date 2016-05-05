@@ -156,11 +156,12 @@ order.cust = (function(){
 	//判断是否是自营渠道
 	var _isSelfChannel=function(){
 		var is=false;
-		if(OrderInfo.staff.channelType==CONST.CHANNEL_TYPE_CD.ZQZXDL || OrderInfo.staff.channelType==CONST.CHANNEL_TYPE_CD.GZZXDL
-				|| OrderInfo.staff.channelType==CONST.CHANNEL_TYPE_CD.HYKHZXDL || OrderInfo.staff.channelType==CONST.CHANNEL_TYPE_CD.SYKHZXDL
-				|| OrderInfo.staff.channelType==CONST.CHANNEL_TYPE_CD.XYKHZXDL || OrderInfo.staff.channelType==CONST.CHANNEL_TYPE_CD.GZZXJL
-				|| OrderInfo.staff.channelType==CONST.CHANNEL_TYPE_CD.ZYOUT || OrderInfo.staff.channelType==CONST.CHANNEL_TYPE_CD.ZYINGT
-				|| OrderInfo.staff.channelType==CONST.CHANNEL_TYPE_CD.WBT){// || _partyTypeCd != "1" ){
+		var channelType=OrderInfo.rulesJson.channelType;
+		if(channelType==CONST.CHANNEL_TYPE_CD.ZQZXDL || channelType==CONST.CHANNEL_TYPE_CD.GZZXDL
+				|| channelType==CONST.CHANNEL_TYPE_CD.HYKHZXDL || channelType==CONST.CHANNEL_TYPE_CD.SYKHZXDL
+				|| channelType==CONST.CHANNEL_TYPE_CD.XYKHZXDL || channelType==CONST.CHANNEL_TYPE_CD.GZZXJL
+				|| channelType==CONST.CHANNEL_TYPE_CD.ZYOUT || channelType==CONST.CHANNEL_TYPE_CD.ZYINGT
+				|| channelType==CONST.CHANNEL_TYPE_CD.WBT){// || _partyTypeCd != "1" ){
 			is = true;
 		}
 		if(!is && OrderInfo.cust.identityCd==1){
@@ -611,7 +612,7 @@ order.cust = (function(){
 	};
 	//客户列表点击
 	var _showCustAuth = function(scope) {
-		_choosedCustInfo = {
+		_choosedCustInfo= {
 				custId : $(scope).attr("custId"), //$(scope).find("td:eq(3)").text(),
 				partyName : $(scope).attr("partyName"), //$(scope).find("td:eq(0)").text(),
 				CN : $(scope).attr("CN"),
@@ -1861,25 +1862,37 @@ order.cust = (function(){
 		}
 		}
 		var param = _choosedCustInfo;
+		var recordParam={};
 		param.validateType="1";
 		param.identityNum = base64encode($.trim($("#idCardNumber"+id).val()));
 		if(!ec.util.isObj(param.identityNum)){
 			$.alert("提示","证件号码不能为空！");
 			return;
 		}
-
+       if(id==2){
 		param.accessNumber=OrderInfo.acctNbr;
 		param.identityCd=OrderInfo.cust.identityCd;
 		param.areaId=OrderInfo.cust.areaId;
 		param.custId=OrderInfo.cust.custId;
 
-		var recordParam={};
-		recordParam.validateType="1";
-		recordParam.validateLevel="2";
 		recordParam.custId=OrderInfo.cust.custId;
 		recordParam.accessNbr=OrderInfo.acctNbr;
 		recordParam.certType=OrderInfo.cust.identityCd;
 		recordParam.certNumber=OrderInfo.cust.idCardNumber;
+       }
+       else if(id==5){
+    	param.accessNumber=_choosedCustInfo.accNbr;
+   		param.identityCd=_choosedCustInfo.identityCd;
+   		param.areaId=_choosedCustInfo.areaId;
+   		param.custId=_choosedCustInfo.custId;
+    	recordParam.custId=_choosedCustInfo.custId;
+  		recordParam.accessNbr=_choosedCustInfo.acctNbr;
+  		recordParam.certType=_choosedCustInfo.identityCd;
+  		recordParam.certNumber=_choosedCustInfo.idCardNumber;
+       }
+		
+		recordParam.validateType="1";
+		recordParam.validateLevel="2";
 		$.ecOverlay("<strong>正在校验中,请稍等...</strong>");
 		var response= $.callServiceAsJson(contextPath+"/token/pc/cust/custAuthSub",param);
 		$.unecOverlay();
@@ -1895,7 +1908,8 @@ order.cust = (function(){
 				_goService();
 			}
 			else if(id==5){
-				_jumpAuth();
+				//鉴权成功后显示选择使用人弹出框
+				order.main.showChooseUserDialog(_choosedCustInfo);
 			}
 			
 		}else{
@@ -1908,19 +1922,30 @@ order.cust = (function(){
 	var _productPwdAuth=function(id){
 
 		var param = _choosedCustInfo;
+		var recordParam={};
 		param.prodPwd = $.trim($("#authPassword"+id).val());
 		if(!ec.util.isObj(param.prodPwd)){
 			$.alert("提示","产品密码不能为空！");
 			return;
 		}
 		param.validateType = "3";
-		param.accessNumber=OrderInfo.acctNbr;
-		param.identityCd=OrderInfo.cust.identityCd;
-		param.idCardNumber=OrderInfo.cust.idCardNumber;
-		param.areaId=OrderInfo.cust.areaId;
-		param.custId=OrderInfo.cust.custId;
+		if(id==5){
+			param.accessNumber=_choosedCustInfo.accNbr;
+			param.identityCd=_choosedCustInfo.identityCd;
+			param.idCardNumber=_choosedCustInfo.idCardNumber;
+			param.areaId=_choosedCustInfo.areaId;
+			param.custId=_choosedCustInfo.custId;
+		}
+		else{
+			param.accessNumber=OrderInfo.acctNbr;
+			param.identityCd=OrderInfo.cust.identityCd;
+			param.idCardNumber=OrderInfo.cust.idCardNumber;
+			param.areaId=OrderInfo.cust.areaId;
+			param.custId=OrderInfo.cust.custId;
+		}
 		
-		var recordParam={};
+		
+		
 		recordParam.validateType="3";
 		recordParam.validateLevel="2";
 		recordParam.custId=OrderInfo.cust.custId;
@@ -1942,7 +1967,8 @@ order.cust = (function(){
 				_goService();
 			}
 			else{
-				_jumpAuth();
+				//鉴权成功后显示选择使用人弹出框
+				order.main.showChooseUserDialog(_choosedCustInfo);
 			}
 			
 			
@@ -2066,12 +2092,18 @@ order.cust = (function(){
 		return isGovCustFlag;
 	};
 	//短信发送
-	var _smsResend = function () {
+	var _smsResend = function (id) {
 		var param = {
 			"pageIndex": 1,
-			"pageSize": 10,
-			"phone":OrderInfo.acctNbr
+			"pageSize": 10
+			
 		};
+		if(id==5){
+             param.phone=_choosedCustInfo.accNbr;
+		}
+		else{
+			 param.phone=OrderInfo.acctNbr;
+		}
 		$.callServiceAsJson(contextPath + "/token/pad/staffMgr/reSendSub", param, {
 			"done": function (response) {
 				if (response.code == 0) {
@@ -2113,7 +2145,8 @@ order.cust = (function(){
 						_goService();
 					}
 					else{
-						_jumpAuth();
+						//鉴权成功后显示选择使用人弹出框
+						order.main.showChooseUserDialog(_choosedCustInfo);
 					}
 				}else{
 					$.alert("提示",response.data);
@@ -2257,6 +2290,7 @@ order.cust = (function(){
 		readCertWhenAuth2:_readCertWhenAuth2,
 		isSelfChannel:_isSelfChannel,
 		changeTabSub:_changeTabSub
+		
 	};
 })();
 $(function() {

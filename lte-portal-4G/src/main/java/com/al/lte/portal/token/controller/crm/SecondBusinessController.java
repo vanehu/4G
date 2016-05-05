@@ -84,6 +84,8 @@ public class SecondBusinessController extends BaseController {
             }
             //判断工号是否有跳过权限
             String  iseditOperation=staffBmo.checkOperatSpec(SysConstant.SECOND_JUMPSPECIAL,sessionStaff);
+            //渠道大类
+            String channelType=sessionStaff.getCurrentChannelType();
             //服务调用获取数据
             Map<String, Object> resMap = secondBusiness.querySecondBusinessMenuAuth(inParamMap, flowNum, sessionStaff);
             if (ResultCode.R_SUCC.equals(resMap.get("resultCode"))) {
@@ -95,6 +97,7 @@ public class SecondBusinessController extends BaseController {
                     	//1.证件鉴权 2.短信鉴权3.产品密码鉴权4.直接跳过
                        rules = authCompute(scenes,sessionStaff);
                        rules.put("iseditOperation", iseditOperation);
+                       rules.put("channelType",channelType);
                        String typeCd = MapUtils.getString(paramMap, "typeCd", "");
                        String rulesJson=JacksonUtil.objectToJson(rules);
                        model.addAttribute("rulesJson", rulesJson);
@@ -133,12 +136,15 @@ public class SecondBusinessController extends BaseController {
     	  try {
               //入参的封装
               SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
+            //渠道大类
+              String channelType=sessionStaff.getCurrentChannelType();
               String areaId = sessionStaff.getAreaId();
               Map<String, Object> rules = new HashMap<String, Object>();
               
               //判断工号是否有跳过权限
               String  iseditOperation=staffBmo.checkOperatSpec(SysConstant.SECOND_JUMPSPECIAL,sessionStaff);
               rules.put("iseditOperation", iseditOperation);
+              rules.put("channelType",channelType);
               String rulesJson=JacksonUtil.objectToJson(rules);
               model.addAttribute("rulesJson", rulesJson);
               String types=MapUtils.getString(paramMap, "types", "");
