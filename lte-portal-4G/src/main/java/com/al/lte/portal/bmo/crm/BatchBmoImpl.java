@@ -112,6 +112,7 @@ public class BatchBmoImpl implements BatchBmo {
 		Cell cell = null;//这也是一个单元格，用于获取单元格内容
 		int i = 1;
 		int k = 0;
+		int j = 0;
 		
 		/**
 		 * *******尽量不要将上面的变量定义到循环体里面，当Excel数据上W条时，会引起内存溢出同时也不便使用多线程************************
@@ -124,10 +125,12 @@ public class BatchBmoImpl implements BatchBmo {
 			// 得到当前表单的总行数
 			totalRows = sheet.getPhysicalNumberOfRows();
 			if (totalRows > 1) {//Excel第一行不读取
+				i = 1;
 				for (; i < totalRows; i++) {
 					row = sheet.getRow(i);//获取当前表单的一行
 					if (null != row) {
 						cellIsNull = true;
+						k = 0;
 						for (; k < columns; k++) {
 							cellTemp = row.getCell(k);
 							if (null != cellTemp) {
@@ -142,7 +145,8 @@ public class BatchBmoImpl implements BatchBmo {
 						}
 						
 						//开始循环遍历当前行的每一列数据
-						for(int j = 0; j < columns; j++){
+						j = 0;
+						for(; j < columns; j++){
 							cell = row.getCell(j);
 							if(j == 0 || j == 1 || j == 2 || j == 4){//第1列、第2列、第3列、第5列必填
 								if(cell != null){
@@ -255,8 +259,10 @@ public class BatchBmoImpl implements BatchBmo {
 		String cellValue = "";//单元格的值
 		Cell cellTemp = null;//这是一个单元格，用于跳过Excel没有数据的空行
 		Cell cell = null;//这是一个单元格
-		int sheetIndex = 0;//循环遍历表单
-
+		int i = 1;
+		int k = 0;
+		int j = 0;
+		
 		/**
 		 * *******尽量不要将上面的变量定义到循环体里面，当Excel数据上W条时，会引起内存溢出同时也不便使用多线程************************
 		 */
@@ -278,18 +284,20 @@ public class BatchBmoImpl implements BatchBmo {
 		
 
 		// 循环读取每个sheet中的数据放入list集合中
-		for (int i = 1; sheetIndex < workbook.getNumberOfSheets(); sheetIndex++) {
+		for (int sheetIndex = 0; sheetIndex < workbook.getNumberOfSheets(); sheetIndex++) {
 			// 得到当前页sheet
 			sheet = workbook.getSheetAt(sheetIndex);
 			// 得到Excel的行数
 			totalRows = sheet.getPhysicalNumberOfRows();
 			if (totalRows > 1) {
+				i = 1;
 				for (; i < totalRows; i++) {
 					log.debug("*************************read Excel for {} row...", i);
 					row = sheet.getRow(i);
 					if (null != row) {
 						cellIsNull = true;
-						for (int k = 0; k < columns; k++) {
+						k = 0;
+						for (; k < columns; k++) {
 							cellTemp = row.getCell(k);
 							if (null != cellTemp) {
 								cellValue = this.checkExcelCellValue(cellTemp);
@@ -303,7 +311,8 @@ public class BatchBmoImpl implements BatchBmo {
 						}
 						
 						//开始循环遍历当前行的每一列数据
-						for(int j = 0; j < columns; j++){
+						j = 0;
+						for(; j < columns; j++){
 							cell = row.getCell(j);
 							if(j == 0 || j == 1 || j == 2 || j == 3 || j == 5){//第1列、第2列、第3列、第4列、第6列必填
 								if(cell != null){
@@ -374,6 +383,9 @@ public class BatchBmoImpl implements BatchBmo {
 		Cell cellTemp = null;//一个单元格
 		Sheet sheet = null;//一个表单
 		int totalRows = 0;//Excel下一个表单的总行数
+		int i = 1;
+		int k = 0;
+		int j = 0;
 		
 		/**
 		 * *******尽量不要将上面的变量定义到循环体里面，当Excel数据上W条时，会引起内存溢出同时也不便使用多线程************************
@@ -394,12 +406,14 @@ public class BatchBmoImpl implements BatchBmo {
 			// 得到Excel的行数
 			totalRows = sheet.getPhysicalNumberOfRows();
 			if (totalRows > 1) {
-				for (int i = 1; i < totalRows; i++) {
+				i = 1;
+				for (; i < totalRows; i++) {
 					row = sheet.getRow(i);
 					if (null != row) {
 						//判断该行的每一列是否为空
 						cellIsNull = true;
-						for (int k = 0; k < columns; k++) {
+						k = 0;
+						for (; k < columns; k++) {
 							cellTemp = row.getCell(k);
 							if (null != cellTemp) {
 								cellValue = checkExcelCellValue(cellTemp);
@@ -414,7 +428,8 @@ public class BatchBmoImpl implements BatchBmo {
 						}
 						
 						//开始循环遍历当前行的每一列数据
-						for(int j = 0; j < columns; j++){
+						j = 0;
+						for(; j < columns; j++){
 							cell = row.getCell(j);
 							if (cell != null) {
 								cellValue = this.checkExcelCellValue(cell);
@@ -744,6 +759,7 @@ public class BatchBmoImpl implements BatchBmo {
 		String cellValue = "";//一个单元格值
 		Cell cellTemp = null;//一个单元格
 		Cell cell = null;//一个单元格
+		int k = 0;
 		
 		/**
 		 * *******尽量不要将上面的变量定义到循环体里面，当Excel数据上W条时，会引起内存溢出同时也不便使用多线程************************
@@ -761,7 +777,8 @@ public class BatchBmoImpl implements BatchBmo {
 					row = sheet.getRow(i);
 					if (row != null) {
 						cellIsNull = true;
-						for (int k = 0; k < columns; k++) {
+						k = 0;
+						for (; k < columns; k++) {
 							cellTemp = row.getCell(k);
 							if (null != cellTemp) {
 								cellValue = checkExcelCellValue(cellTemp);
