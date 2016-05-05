@@ -4257,7 +4257,10 @@ public class OrderController extends BaseController {
 			}
 		}
         try {
-            param.put("areaId", sessionStaff.getCurrentAreaId());
+        	String areaId = (String) session.getAttribute("pointareaId");
+    		if(!"".equals(areaId) && areaId !=null){
+    			param.put("areaId",areaId);
+    		}
             param.put("identityNum", sessionStaff.getCardNumber());
             param.put("queryType", sessionStaff.getCustType());
             param.put("accessNbr", sessionStaff.getInPhoneNum());
@@ -4466,7 +4469,10 @@ public class OrderController extends BaseController {
 			 Map<String, Object> paramMap = new HashMap<String, Object>();
 			 paramMap.put("accessNbr", sessionStaff.getInPhoneNum());
 			 paramMap.put("amount", "0");
-			 paramMap.put("areaId", sessionStaff.getCurrentAreaId());
+			 String areaId = (String) session.getAttribute("pointareaId");
+	    		if(!"".equals(areaId) && areaId !=null){
+	    			paramMap.put("areaId",areaId);
+	    		}
 			 paramMap.put("channelNbr", sessionStaff.getCurrentChannelId());
 			 paramMap.put("dealTime", dealTime);
 			 paramMap.put("createDt", dealTime);
