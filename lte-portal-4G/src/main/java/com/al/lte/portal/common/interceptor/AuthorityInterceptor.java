@@ -299,6 +299,7 @@ public class AuthorityInterceptor extends HandlerInterceptorAdapter {
 			sessionStaff.setCurrentAreaName(MapUtils.getString(chanelMap,"areaName", ""));
 			sessionStaff.setCurrentAreaAllName(MapUtils.getString(chanelMap,"areaAllName", ""));
 			sessionStaff.setOperatorsId(MapUtils.getString(chanelMap, "operatorsId", ""));
+			sessionStaff.setCurrentChannelType(MapUtils.getString(chanelMap, "type", ""));
 			// 存到session中
 			session.setAttribute(SysConstant.SESSION_KEY_LOGIN_STAFF, sessionStaff);
 			RedisUtil.set((String) session.getAttribute(SysConstant.SESSION_DATASOURCE_KEY),sessionStaff.getStaffId(),session.getId());
