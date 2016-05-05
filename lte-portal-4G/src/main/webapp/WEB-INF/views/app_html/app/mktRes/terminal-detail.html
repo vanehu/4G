@@ -41,11 +41,11 @@
 	   </div>
     </div>
 </div>
-<div class="container-fluid phone-info">
+<div class="container-fluid">
 	<form>
     <div class="form-group" id="fls_terminal_color">
 	<#if mktResList?? &&(mktResList?size>0)>
-            <label style="width: 100%; text-align: left;">颜色</label>
+            <label>颜色</label>
             <#assign count = 0>
             <#list mktResList as mkt>
 				<#assign contractFlag = mkt.contractFlag>
@@ -123,7 +123,7 @@
 		</#if>
 		</div>
 		<div class="form-group">
-            <label style="width: 100%; text-align: left;">购机方式</label>
+            <label>购机方式</label>
             <div class="btn-group btn-group-justified" data-toggle="buttons-radio" role="group" aria-label="..." id="buyTypeBtns">
             <#if contractFlag == '1' >
               <div class="btn-group" role="group"  onclick = "javascript:mktRes.terminal.hyClick($(this))">
@@ -136,7 +136,7 @@
             </div>
         </div>
          <div class="form-group"  style="display:none"  id ="phonenumberFie">
-         	<label style="width: 100%; text-align: left;">已选号码</label>
+         	<label>已选号码</label>
          	<div class="input-group">
          	<input type="text" class="form-control" placeholder="请选号"  id="choosedNumSpan" disabled="disabled">
            	<span class="input-group-btn">
@@ -145,7 +145,7 @@
             </div>
         </div>
         <div class="form-group" style="display:none" id="treaty">
-            <label style="width: 100%; text-align: left;">合约套餐</label>
+            <label>合约套餐</label>
             <div class="btn-group btn-group-justified" data-toggle="buttons-radio" role="group" aria-label="...">
               <div class="btn-group" role="group" onclick = "javascript:mktRes.terminal.selectHy(1,this)">
                 <button type="button" class="btn btn-default">存费送机</button>
@@ -162,7 +162,7 @@
            	</div>
         </div>		         		
         <div class="form-group">
-            <label style="width: 100%; text-align: left;" for="exampleInputPassword1">终端串号</label>
+            <label for="exampleInputPassword1">终端串号</label>
             <div class="input-group">
               <input type="text" class="form-control" placeholder="请先输入终端串号" id="tsn">
               <span class="input-group-btn">

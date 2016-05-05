@@ -67,7 +67,7 @@
 											<#assign z = z+1 />
 											<#if z==1>
 												<div class="item active" id="attach_tab_${prodId}">
-													<div class="panel-heading" style="color: #ff8202;"><span class="title_lv"></span>${item.roleName}:${item.accessNumber}</div>
+													<div class="panel-heading" style="color: #ff8202;">${item.roleName}:${item.accessNumber}</div>
 													<div class="panel panel-default">
 														<div id="item_order_${prodId}">
 														<div id="attach_${prodId}">
@@ -78,7 +78,7 @@
 												</div>
 												<#else>
 												<div class="item" id="attach_tab_${prodId}">
-													<div class="panel-heading" style="color: #ff8202;"><span class="title_lv"></span>${item.roleName}:${item.accessNumber}</div>
+													<div class="panel-heading" style="color: #ff8202;">${item.roleName}:${item.accessNumber}</div>
 													<div class="panel panel-default">
 														<div id="item_order_${prodId}">
 														<div id="attach_${prodId}">

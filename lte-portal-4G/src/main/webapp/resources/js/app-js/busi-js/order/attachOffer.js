@@ -206,7 +206,7 @@ AttachOffer = (function() {
 									var $li = $('<a id="li_'+prodId+'_'+servSpecId+'" class="list-group-item"></a>');
 									$li.append('<span id="span_'+prodId+'_'+servSpecId+'">'+spec.servSpecName+'</span>');
 									if(spec.ifParams){
-										$li.append('<span class="canshu btn-span"><button type="button" style="right:50px;width:48px;" class="btn btn-info" onclick="AttachOffer.showServParam('+prodId+','+servSpecId+');">参</button></span>');
+										$li.append('<span class="canshu btn-span"><button type="button" style="right:40px;width:48px;" class="btn btn-info" onclick="AttachOffer.showServParam('+prodId+','+servSpecId+');">参</button></span>');
 									}
 									if(roleObj.minQty==0){
 										$li.append('<span id="span_remove_'+prodId+'_'+servSpecId+'" class="glyphicon glyphicon-remove pull-right" aria-hidden="true" onclick="AttachOffer.closeServSpec('+prodId+','+servSpecId+',\''+spec.servSpecName+'\',\''+spec.ifParams+'\')"></span>');
@@ -1484,7 +1484,7 @@ AttachOffer = (function() {
 				for(var i=0;i<newSpec.agreementInfos.length;i++){
 					var agreementInfo=newSpec.agreementInfos[i];
 						var $ulGroups=$('<ul id="ul_'+objInstId+'" style="margin-left: -40px;"></ul>');
-						var $liGroups = $('<li class="form-group" style="list-style-type:none;"><label> 终端：</label></li>');
+						var $liGroups = $('<li class="form-group" style="display:none;"><label> 终端：</label></li>');
 						var $selTerms = $('<select style="display:none;" id="'+objInstId+'"></select>');
 						var $selTermGroups = $('<select style="display:none;" id="group_'+objInstId+'"></select>');
 						if(ec.util.isArray(agreementInfo.terminalGroups)){ //如果有配置终端组，则拼接终端组的规格ID和包含的终端规格ID
@@ -2345,7 +2345,7 @@ AttachOffer = (function() {
 							});
 							if(flag){
 			                  	html='<a class="list-group-item" href="javascript:AttachOffer.openServSpec('+prodId+','+this.servSpecId+',\''+this.servSpecName+'\',\''+this.ifParams+'\')" id="li_'+prodId+'_'+this.servSpecId+'">';
-			                  	html+='<h5 class="list-group-item-heading" style="margin: 0;">'+ this.servSpecName +'</h5><span class="dinggou" style="bottom: 17px;">订购</span>';
+								html+='<h5 class="list-group-item-heading">'+ this.servSpecName +'</h5>';
 								//'<span></span><span>';
 								//html+='<a href="javascript:AttachOffer.openServSpec('+prodId+','+this.servSpecId+',\''+this.servSpecName+'\',\''+this.ifParams+'\')" class="abtn03 icon-buy">&nbsp;</a></span>';
 								//html+='</span>';
@@ -2439,7 +2439,8 @@ AttachOffer = (function() {
 								if(flag){
 									html='<a class="list-group-item" href="javascript:AttachOffer.addOfferSpec('+prodId+','+this.offerSpecId+')" id="li_'+prodId+'_'+this.offerSpecId+'">';
 								//html+=this.offerSpecName+'<span></span><span>';
-									html+='<h5 class="list-group-item-heading" style="margin: 0;">'+ this.offerSpecName +'</h5><span class="dinggou" style="bottom: 17px;">订购</span>';
+									html+='<h5 class="list-group-item-heading">'+ this.offerSpecName +'</h5>';
+								//	html+='<a href="javascript:AttachOffer.addOfferSpec('+prodId+','+this.offerSpecId+')" class="abtn03 icon-buy">&nbsp;</a></span>';
 								//	html+='</span>';
 //									if(i%2==1){
 										html+='</a>';

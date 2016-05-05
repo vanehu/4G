@@ -29,10 +29,6 @@ common = (function($) {
 			"custInfos":custInfosParams,
 			"prodIdInfos":prodIdInfosParams
 		};
-		var enter = urlParams.enter;
-		if(enter != undefined){
-			param.enter = enter;
-		}
 		var method=urlParams.method;// /app/prodModify/custAuth
 		$.callServiceAsHtml(contextPath+method,param,{
 			"before":function(){
@@ -183,7 +179,6 @@ common = (function($) {
 	
 	//客户端调用此方法返回到上一页 1 为prepare页面  2为order-content（填单）页面 3为order-confirm（订单确认和收银台）页面 4为order-print（打印）页面
 	var _callReturnBack=function(){
-//		alert("OrderInfo.actionFlag="+OrderInfo.actionFlag+"---OrderInfo.order.step="+OrderInfo.order.step+"---OrderInfo.returnFlag="+OrderInfo.returnFlag);
 		$.unecOverlay();//网络出现故障或手机出现故障时按返回关闭“加载中”提示框
 		//如果收费成功  安卓手机返回按钮不可返回
 		if($("#toCharge").length>0){
@@ -221,28 +216,12 @@ common = (function($) {
 			order.main.lastStep(function(){
 				$("#order_prepare").show();
 				if(OrderInfo.actionFlag != 13 || OrderInfo.actionFlag != 14){
-					if(OrderInfo.actionFlag == 1 && "1"==$("#enter").val()){
-						order.service.init();
-						$("#pakeage").show();
-						$("#pakeage").attr("class","tab-pane fade in active");
-						$("#phone").attr("class","tab-pane fade medialist");
-						$("#number").attr("class","tab-pane fade");
-					}
-					if(OrderInfo.actionFlag == 1 && "3"==$("#enter").val()){
-						order.phoneNumber.initPhonenumber('number');
-						$("#pakeage").attr("class","tab-pane fade");
-						$("#phone").attr("class","tab-pane fade medialist");
-						$("#number").attr("class","tab-pane fade in active");
-					}
+					$("#pakeage").show();
 				}
 				if(OrderInfo.actionFlag == 13 || OrderInfo.actionFlag == 14){
-					mktRes.terminal.initPhone();
 					$("#phone").show();
 					$("#pakeage").hide();
 					$("#number").hide();
-					$("#pakeage").attr("class","tab-pane fade");
-					$("#phone").attr("class","tab-pane fade medialist in active");
-					$("#number").attr("class","tab-pane fade");
 				}
 				$("#order").hide();	
 				if(OrderInfo.actionFlag==1){//新装的头部 要发生变化

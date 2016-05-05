@@ -111,8 +111,6 @@ order.service = (function(){
 		var url = contextPath+"/app/order/offerSpecList";
 		$("#pakeage").show();
 		$("#pakeage").attr("class","tab-pane fade in active");
-		$("#phone").attr("class","tab-pane fade medialist");
-		$("#number").attr("class","tab-pane fade");
 		$.callServiceAsHtmlGet(url,params, {
 			"before":function(){
 				$.ecOverlay("<strong>正在查询中,请稍等...</strong>");
@@ -311,7 +309,7 @@ order.service = (function(){
 						}
 						max = this.maxQty<0?"不限制":this.maxQty;//主卡的最大数量
 						str+="<div class='form-group'>"
-							+"<label style='width: 100%; text-align: left;' for='"+objInstId+"'>副卡数量:"+this.minQty+"-"+max+"(张)</label>"
+							+"<label for='"+objInstId+"'>副卡数量:"+this.minQty+"-"+max+"(张)</label>"
 							+"<div class='input-group input-group-lg'>"
 							+"<span class='input-group-btn'>"
 							+"<button class='btn btn-default' type='button' onclick=order.service.subNum('"+objInstId+"',"+this.minQty+")> - </button>"
@@ -353,8 +351,6 @@ order.service = (function(){
 		if(OrderInfo.actionFlag == 1){
 			if(offerSpec.offerSpecParams && (offerSpec.offerSpecParams.length>0)){
 				$("#offerCanBtn").show();
-			}else{
-				$("#offerCanBtn").hide();
 			}
 		}
 	};
@@ -581,8 +577,6 @@ order.service = (function(){
 							if(OrderInfo.actionFlag == 1){
 								if(prodOfferSpec.offerSpecParams && (prodOfferSpec.offerSpecParams.length>0)){
 									$("#offerCanBtn").show();
-								}else{
-									$("#offerCanBtn").hide();
 								}
 							}
 						}else{

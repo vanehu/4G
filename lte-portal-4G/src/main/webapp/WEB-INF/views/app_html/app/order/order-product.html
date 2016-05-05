@@ -25,7 +25,7 @@
 								<#assign feeType_read = "1">
 							</#if>
 						</#if>
-						<div class="input-group select-box">
+						<div class="input-group">
 					    <select ss="${offerSpec.feeTypeMain}"  id="idtype" class="selectpicker show-tick form-control" prodId="${prodId}" name="pay_type_${prodId}" onchange="order.main.feeTypeCascadeChange(this,'${prodId}')" <#if feeType_read=="1">disabled="disabled"</#if>>
 			              	<#if offerSpec.feeType?? && offerSpec.feeType!="" >
 							<#if offerSpec.feeType=="1200" || offerSpec.feeType=="3100" || offerSpec.feeType=="3102" || offerSpec.feeType=="3103" >
@@ -46,7 +46,7 @@
 					</div>
 					<div class="form-group">
 						<label for="exampleInputPassword1">接入号码<span class="text-warning">*</span></label>
-						<div class="input-group select-box">
+						<div class="input-group">
 							<input type="text" id="nbr_btn_${prodId}" class="form-control" readonly="readonly"/> <span
 								class="input-group-btn">
 								<button class="btn btn-default"  onclick="order.phoneNumber.initPage(${prodId},'offer')" type="button">选号</button>
@@ -67,7 +67,7 @@
 					</div> -->
 					<div class="form-group">
 						<label for="exampleInputFile">UIM卡号<span class="text-warning">*</span></label>
-						<div class="input-group select-box">
+						<div class="input-group">
 					      <input type="tel" class="form-control" id="uim_txt_${prodId}">
 					      <div class="input-group-btn">
 					        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">操作 <span class="caret"></span></button>
@@ -87,7 +87,7 @@
 				</div>
 				</form>
 				<button type="button" onClick="AttachOffer.show(${prodId})"
-					class="btn btn-default btn-block button-right" style="height: 60px;">
+					class="btn btn-default btn-block button-right">
 					可选包/功能 <span class="glyphicon glyphicon-chevron-right"
 						aria-hidden="true"></span>
 				</button>
@@ -97,12 +97,12 @@
 		<div class="item" id="target_${k}">
 				<div class="panel panel-default panelcon" id="prodinfo_${prodId}">
 					<!-- Default panel contents -->
-				<div class="panel-heading" id=${offerRole.offerRoleId}><span class="title_lv"></span>${prod.offerRoleName}</div>
+				<div class="panel-heading" id=${offerRole.offerRoleId}>${prod.offerRoleName}</div>
 				<form>
 				<div class="panel-body" id="item_order_${prodId}">
 					<div class="form-group">
 						<label for="exampleInputPassword1">接入号码<span class="text-warning">*</span></label>
-						<div class="input-group select-box">
+						<div class="input-group">
 							<input type="text" id="nbr_btn_${prodId}" class="form-control" readonly="readonly"/> <span
 								class="input-group-btn">
 								<button class="btn btn-default"  onclick="order.phoneNumber.initPage(${prodId},'offer')"  type="button">选号</button>
@@ -123,7 +123,7 @@
 					</div> -->
 					<div class="form-group">
 						<label for="exampleInputFile">UIM卡号<span class="text-warning">*</span></label>
-						<div class="input-group select-box">
+						<div class="input-group">
 					      <input type="tel" class="form-control" id="uim_txt_${prodId}">
 					      <div class="input-group-btn">
 					        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">操作 <span class="caret"></span></button>
@@ -141,7 +141,7 @@
 				</div>
 				</form>
 				<button type="button" onClick="AttachOffer.show(${prodId})"
-					class="btn btn-default btn-block button-right" style="height: 60px;">
+					class="btn btn-default btn-block button-right">
 					可选包/功能 <span class="glyphicon glyphicon-chevron-right"
 						aria-hidden="true"></span>
 				</button>
