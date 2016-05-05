@@ -256,7 +256,6 @@ order.service = (function(){
 //	        }
 			}
 		}
-		if($("#enter").length > 0 && $("#enter").val() != "3") OrderInfo.returnFlag="";
 	};
 	
 	//获取销售品构成，并选择数量
@@ -498,7 +497,6 @@ order.service = (function(){
 					$.alert("提示","页面显示失败,稍后重试");
 					return;
 				}
-				if($("#enter").length > 0 && $("#enter").val() != "3") OrderInfo.returnFlag="tc";
 				$("#member_prepare").hide();
 				var content$=$("#offerspecContent");
 				content$.html(response.data).show();
@@ -580,7 +578,6 @@ order.service = (function(){
 							prodOfferSpec.accessnumber=accessnumber;
 							OrderInfo.viceOfferSpec.push(prodOfferSpec);
 							order.prodModify.chooseOfferForMember(specId,subpage,specName,offerRoleId);
-							if($("#enter").length > 0 && $("#enter").val() != "3") OrderInfo.returnFlag="";
 							if(OrderInfo.actionFlag == 1){
 								if(prodOfferSpec.offerSpecParams && (prodOfferSpec.offerSpecParams.length>0)){
 									$("#offerCanBtn").show();

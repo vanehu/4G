@@ -82,7 +82,7 @@ SoOrder = (function() {
 								$.alert("信息提示",data.resultMsg);
 							}
 						}else{
-							if(data.checkRule!=undefined){
+							if(data.checkRule!=undefined && data.checkRule!="notCheckRule"){
 								var provCheckResult = order.calcharge.tochargeSubmit(response.data);
 								if(provCheckResult.code==0){
 									var returnData = _gotosubmitOrder(response.data);
@@ -864,6 +864,10 @@ SoOrder = (function() {
 						if(response.data.resultCode==0){
 							$.alert("提示","购物车作废成功！");
 							OrderInfo.order.step=2;
+							//可选包变更订单报错返回修改页面步骤设为3
+							if(OrderInfo.actionFlag == 3){
+								OrderInfo.order.step = 3;
+							}
 						}
 					}else if (response.code==-2){
 						$.alertM(response.data.errData);

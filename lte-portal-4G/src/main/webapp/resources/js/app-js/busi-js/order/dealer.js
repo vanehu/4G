@@ -39,7 +39,7 @@ order.dealer = (function() {
 			$li.append("<p class='list-group-item-text'>"+OrderInfo.offerSpec.offerSpecName+"</p>");
 			var $p = $('<p> </p>');
 			var $div = $('<div class="row"> </div>');
-			var $div2 = $('<div class="col-xs-6" style="padding-right: 0;"> </div>');
+			var $div2 = $('<div class="col-xs-6"> </div>');
 						//var $field=$('<fieldset data-role="fieldcontain"></fieldset>');
 			var objId = objInstId+"_"+OrderInfo.SEQ.dealerSeq;
 			var $select = $('<select id="dealerType_'+objId+'" name="dealerType_'+objInstId+'"  class="selectpicker show-tick form-control" data-mini="true" data-native-menu="false" data-icon="select" onclick=a=this.value; onchange="order.dealer.changeDealer(this,\'dealerType_'+objInstId+'\',a)"></select>');

@@ -228,6 +228,47 @@ public class OrderController extends BaseController {
     }
 	
 	/**
+	 * 手机客户端-规则校验
+	 * @param params
+	 * @param model
+	 * @param optFlowNum
+	 * @param response
+	 * @param httpSession
+	 * @return
+	 * @throws BusinessException
+	 */
+	@RequestMapping(value = "/rulecheck", method = RequestMethod.POST)
+    @AuthorityValid(isCheck = false)
+    public String rulecheck(@RequestBody Map<String, Object> params, Model model, @LogOperatorAnn String optFlowNum, HttpSession httpSession) throws BusinessException {
+		String result = null;
+		Map<String, Object> param = new HashMap<String, Object>();
+		try {
+			String prodIdInfos=params.get("prodIdInfos").toString().replace("\\", "");
+			String custInfos=params.get("custInfos").toString().replace("\\", "");
+			String staffInfos=params.get("staffInfos").toString().replace("\\", "");
+			param=CommonMethods.getParams(prodIdInfos, custInfos, staffInfos, getRequest());
+			param.put("actionFlag", Const.OFFERCHANGE_FLAG);
+			Map<String, Object> validatoResutlMap=commonBmo.validatorRule(param, optFlowNum, super.getRequest());
+			if(!ResultCode.R_SUCCESS.equals(validatoResutlMap.get("code"))){
+				model.addAttribute("validatoResutlMap", validatoResutlMap);
+//				return "/app/rule/rulecheck";
+				result = "/app/rule/rulecheck";
+			}
+			model.addAttribute("flag", Const.OFFERCHANGE_FLAG);
+			model.addAttribute("soNbr", param.get("soNbr"));
+		} catch (BusinessException e) {
+			return super.failedStr(model, e);
+		} catch (InterfaceException ie) {
+        	return super.failedStr(model, ie, param, null);
+		} catch (Exception e) {
+			return super.failedStr(model, ErrorCode.LOAD_INST, e,
+					param);
+		}
+		
+		return result;
+    }
+	
+	/**
 	 * 手机客户端-套餐变更
 	 * @param params
 	 * @param model
@@ -242,30 +283,10 @@ public class OrderController extends BaseController {
     public String offerchangePre(@RequestBody Map<String, Object> params, Model model, @LogOperatorAnn String optFlowNum,
             HttpServletResponse response, HttpSession httpSession) throws BusinessException {
 
-		Map<String, Object> param = new HashMap<String, Object>();
-		try {
-			String prodIdInfos=params.get("prodIdInfos").toString().replace("\\", "");
-			String custInfos=params.get("custInfos").toString().replace("\\", "");
-			String staffInfos=params.get("staffInfos").toString().replace("\\", "");
-			param=CommonMethods.getParams(prodIdInfos, custInfos, staffInfos, getRequest());
-			param.put("actionFlag", Const.OFFERCHANGE_FLAG);
-			Map<String, Object> validatoResutlMap=commonBmo.validatorRule(param, optFlowNum, super.getRequest());
-			if(!ResultCode.R_SUCCESS.equals(validatoResutlMap.get("code"))){
-				model.addAttribute("validatoResutlMap", validatoResutlMap);
-				return "/app/rule/rulecheck";
-			}
-			model.addAttribute("flag", Const.OFFERCHANGE_FLAG);
-			model.addAttribute("soNbr", param.get("soNbr"));
-		} catch (BusinessException e) {
-			return super.failedStr(model, e);
-		} catch (InterfaceException ie) {
-        	return super.failedStr(model, ie, param, null);
-		} catch (Exception e) {
-			return super.failedStr(model, ErrorCode.LOAD_INST, e,
-					param);
-		}
-		
-		return "/app/order/order-offerchange-search";
+		String result = rulecheck(params,model,optFlowNum,httpSession);
+		if(result != null){
+			return result;
+		}else return "/app/order/order-offerchange-search";
     }
 	
 	/**
@@ -302,28 +323,10 @@ public class OrderController extends BaseController {
     public String memberchangePre(@RequestBody Map<String, Object> params, Model model, @LogOperatorAnn String optFlowNum,
             HttpServletResponse response, HttpSession httpSession) throws BusinessException {
 
-		Map<String, Object> param = new HashMap<String, Object>();
-		try {
-			String prodIdInfos=params.get("prodIdInfos").toString().replace("\\", "");
-			String custInfos=params.get("custInfos").toString().replace("\\", "");
-			String staffInfos=params.get("staffInfos").toString().replace("\\", "");
-			param=CommonMethods.getParams(prodIdInfos, custInfos, staffInfos, getRequest());
-			param.put("actionFlag", Const.OFFERCHANGE_FLAG);
-			Map<String, Object> validatoResutlMap=commonBmo.validatorRule(param, optFlowNum, super.getRequest());
-			if(!ResultCode.R_SUCCESS.equals(validatoResutlMap.get("code"))){
-				model.addAttribute("validatoResutlMap", validatoResutlMap);
-				return "/app/rule/rulecheck";
-			}
-			model.addAttribute("flag", Const.OFFERCHANGE_FLAG);
-			model.addAttribute("soNbr", param.get("soNbr"));
-		} catch (BusinessException e) {
-			return super.failedStr(model, e);
-		}  catch (Exception e) {
-			return super.failedStr(model, ErrorCode.CHECK_RULE, null,
-					param);
-		}
-		
-		return "/app/order/order-memberchange";
+		String result = rulecheck(params,model,optFlowNum,httpSession);
+		if(result != null){
+			return result;
+		}else return "/app/order/order-memberchange";
     }
 	/**
 	 * 手机客户端-套餐变更
@@ -377,31 +380,15 @@ public class OrderController extends BaseController {
 	 * @param session
 	 * @return
 	 * @throws AuthorityException
+	 * @throws BusinessException 
 	 */
 	@RequestMapping(value = "/attachoffer/prepare", method = RequestMethod.POST)
     @AuthorityValid(isCheck = false)
-    public String attachOfferChange(@RequestBody Map<String, Object> params, HttpServletRequest request,Model model, @LogOperatorAnn String optFlowNum,HttpSession session) throws AuthorityException {
-		Map<String, Object> param = new HashMap<String, Object>();
-		try {
-			String prodIdInfos=params.get("prodIdInfos").toString().replace("\\", "");
-			String custInfos=params.get("custInfos").toString().replace("\\", "");
-			String staffInfos=params.get("staffInfos").toString().replace("\\", "");
-			param=CommonMethods.getParams(prodIdInfos, custInfos, staffInfos, getRequest());
-			param.put("actionFlag", Const.OFFERCHANGE_FLAG);
-			Map<String, Object> validatoResutlMap=commonBmo.validatorRule(param, optFlowNum, super.getRequest());
-			if(!ResultCode.R_SUCCESS.equals(validatoResutlMap.get("code"))){
-				model.addAttribute("validatoResutlMap", validatoResutlMap);
-				return "/app/rule/rulecheck";
-			}
-			model.addAttribute("flag", Const.OFFERCHANGE_FLAG);
-			model.addAttribute("soNbr", param.get("soNbr"));
-		} catch (BusinessException e) {
-			return super.failedStr(model, e);
-		}  catch (Exception e) {
-			return super.failedStr(model, ErrorCode.CHECK_RULE, null,
-					param);
-		}
-		return "/app/order/order-attach-offer";
+    public String attachOfferChange(@RequestBody Map<String, Object> params, HttpServletRequest request,Model model, @LogOperatorAnn String optFlowNum,HttpSession session) throws BusinessException {
+		String result = rulecheck(params,model,optFlowNum,session);
+		if(result != null){
+			return result;
+		}else return "/app/order/order-attach-offer";
     }
 	
 	/**
@@ -821,10 +808,18 @@ public class OrderController extends BaseController {
         	prams.put("channelId", sessionStaff.getCurrentChannelId());
         	prams.put("areaId", sessionStaff.getCurrentAreaId());
         	prams.put("staffId", sessionStaff.getStaffId());
-        	prams.put("pageSize", 50);
+        	prams.put("pageSize", SysConstant.PAGE_SIZE);
         	int totalPage=0;
         	Map<String, Object> map = null;
    //          prams.put("qryStr", "乐享");
+        	Map<String, Object> map1 = new HashMap();
+        	map1.put("channelId", sessionStaff.getCurrentChannelId());
+        	map1.put("areaId", sessionStaff.getCurrentAreaId());
+        	map1.put("staffId", sessionStaff.getStaffId());
+        	map1.put("custId", prams.get("custId"));
+//        	DataBus db = InterfaceClient.callService(map1,
+//    				PortalServiceCode.QUERY_MAIN_OFFER_CATEGORY, null, sessionStaff);
+        	
         	map = orderBmo.queryMainOfferSpecList(prams,null, sessionStaff);
         	if(ResultCode.R_SUCCESS.equals(map.get("code"))){
         		//拼装前台显示的套餐详情
@@ -1251,6 +1246,17 @@ public class OrderController extends BaseController {
 	 		param.put("checkResult", list);
 		}
 			Map<String, Object> datamap = this.orderBmo.queryChargeList(param,flowNum, sessionStaff);
+//			Map<String, Object> paramMap = new HashMap<String, Object>();
+//			paramMap.put("areaId", sessionStaff.getCurrentAreaId());
+//			paramMap.put("channelId",sessionStaff.getCurrentChannelId());
+//			paramMap.put("distributorId", "");
+//			Map<String, Object> payMethodMap = this.orderBmo.queryAvilablePayMethodCdByChannelId(paramMap, flowNum, sessionStaff);
+//			if("0".equals(payMethodMap.get("resultCode"))){
+//				Map<String, Object> payMethodResult = (Map<String, Object>)payMethodMap.get("result");
+//				model.addAttribute("payMethodInfo",payMethodResult.get("payMethods"));
+//			}else{
+//				model.addAttribute("payMethodInfo",new ArrayList());
+//			}
 			if (datamap != null) {
 	 		String code = (String) datamap.get("code");
 				if (ResultCode.R_SUCCESS.equals(code)) {
@@ -2297,6 +2303,7 @@ public class OrderController extends BaseController {
 				String olId = (String)result.get("olId");
 				String soNbr = (String)orderListInfo.get("soNbr");
 				String olTypeCd = orderListInfo.get("olTypeCd").toString();
+				String actionFlag = orderListInfo.get("actionFlag") != null ? orderListInfo.get("actionFlag").toString() : "";
 				if(result.get("ruleInfos") == null){
 					resMap.put("rolId", olId);
 					resMap.put("rsoNbr", soNbr);
@@ -2318,9 +2325,9 @@ public class OrderController extends BaseController {
 						resMap.put("checkRule", "checkRule");
 					}
 				}
-				if(olTypeCd.equals("15")){
-					resMap.put("checkRule", "notCheckRule");
-				}
+				if (actionFlag.equals("37") || actionFlag.equals("38")) {
+	                resMap.put("checkRule", "notCheckRule");
+	            }
 				jsonResponse = super.successed(resMap,
 						ResultConstant.SUCCESS.getCode());
 				//custInfoMap = custBmo.queryCustInfo(reqMap, null, sessionStaff);

@@ -211,49 +211,6 @@ common = (function($) {
 			order.phoneNumber.back(); 
 			return;
 		}
-		if(OrderInfo.returnFlag=="tc"){ // 套餐 
-			if(OrderInfo.actionFlag==14 && OrderInfo.order.step<3){
-				$("#order-memeber").hide();
-				$("#phonenumberContent").hide();
-				$("#div_offer").hide();
-				$("#offer-prepare").hide();
-				$("#order").show();
-				$("#order-content").show();
-//				$("#terminalMain").show();
-				OrderInfo.returnFlag="";
-				return;
-			}
-			if(OrderInfo.actionFlag==1){
-				$("#order-memeber").hide();
-				$("#phonenumberContent").hide();
-				$("#offer-prepare").hide();
-				$("#order").show();
-				$("#order-content").show();
-				OrderInfo.returnFlag="";
-				return;
-			}
-		}
-		if(OrderInfo.returnFlag=="hm"){//号码
-			if(OrderInfo.actionFlag==14 && OrderInfo.order.step<3){
-				$("#order-memeber").hide();
-				$("#phonenumberContent").hide();
-				$("#offer-prepare").hide();
-				$("#order").show();
-				$("#order-content").show();
-//				$("#terminalMain").show();
-				OrderInfo.returnFlag="";
-				return;
-			}
-			if(OrderInfo.actionFlag==1){
-				$("#order-memeber").hide();
-				$("#phonenumberContent").hide();
-				$("#offer-prepare").hide();
-				$("#order").show();
-				$("#order-content").show();
-				OrderInfo.returnFlag="";
-				return;
-			}
-		}
 		if(OrderInfo.order.step==1){
 			_callCloseWebview();
 		}else if(OrderInfo.order.step==2){
@@ -265,7 +222,7 @@ common = (function($) {
 				$("#order_prepare").show();
 				if(OrderInfo.actionFlag != 13 || OrderInfo.actionFlag != 14){
 					if(OrderInfo.actionFlag == 1 && "1"==$("#enter").val()){
-						order.service.searchPack(1);
+						order.service.init();
 						$("#pakeage").show();
 						$("#pakeage").attr("class","tab-pane fade in active");
 						$("#phone").attr("class","tab-pane fade medialist");
@@ -279,7 +236,7 @@ common = (function($) {
 					}
 				}
 				if(OrderInfo.actionFlag == 13 || OrderInfo.actionFlag == 14){
-					mktRes.terminal.btnQueryTerminal(1);
+					mktRes.terminal.initPhone();
 					$("#phone").show();
 					$("#pakeage").hide();
 					$("#number").hide();
