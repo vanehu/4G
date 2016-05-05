@@ -840,9 +840,12 @@ order.batch = (function(){
 				if(!response||response.code != 0){
 					 response.data='查询失败,稍后重试';
 				}
-				var content$=$("#progressQuerylist");
-				content$.html(response.data);
-				
+				$("#progressQuerylist").html(response.data);				
+				var totalAmount = $("#totalAmount").val();
+				if(totalAmount > 0){
+//					$("[id='ec-total-page']").eq($("[id='ec-total-page']").length - 1).after("<label class='marginTop4'>共"+totalAmount+"条</label>");
+					$("[id='ec-total-page']").eq(1).after("<label class='marginTop4'>共"+totalAmount+"条</label>");
+				}		
 			},
 			fail:function(response){
 				$.unecOverlay();

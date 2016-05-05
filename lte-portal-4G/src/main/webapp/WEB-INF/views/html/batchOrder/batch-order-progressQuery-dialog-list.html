@@ -69,6 +69,7 @@
 		<!--页码-->
 		<@portal.modelPagination pageModel 5 "order.batch.batchProgressQueryList"/>
 		<!--页码 end-->
+		<input type="hidden" name="totalAmount" id="totalAmount" value="${totalAmount}"/>
 		
 		<script src="${contextPath}/js/our-js/ec.pagination.js?${jsversion}" type="text/javascript"></script>
 

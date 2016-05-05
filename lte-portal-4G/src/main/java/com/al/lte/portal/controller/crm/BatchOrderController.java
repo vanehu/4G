@@ -574,6 +574,7 @@ public class BatchOrderController  extends BaseController {
 					 PageModel<Map<String, Object>> pm = PageUtil.buildPageModel(MapUtils.getIntValue(param,
 		                     "pageIndex", 1), MapUtils.getIntValue(param,"pageSize",10), total, resultList);
 		             model.addAttribute("pageModel", pm);
+		             model.addAttribute("totalAmount", total);
 				}
 			}
 		} catch (BusinessException e) {
