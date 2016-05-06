@@ -726,6 +726,7 @@ public class BatchOrderControllerLatestVer  extends BaseController {
 		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);
 		param.putAll(getAreaInfos());
 		param.put("areaId", sessionStaff.getAreaId());
+		param.put("importMode", "file");
 		Map<String, Object> rMap = null;
 		JsonResponse jsonResponse = null;
 		try {
