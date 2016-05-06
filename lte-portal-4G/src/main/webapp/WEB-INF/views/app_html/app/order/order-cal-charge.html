@@ -6,6 +6,20 @@
 			<div class="panel-body">
 				<p>购物车流水：${olNbr}</p>
 			</div>
+			<div class="panel-body">
+			<div class="form-group">
+						<label for="exampleInputEmail1">付费方式</label>
+						<select id="idtype" class="selectpicker show-tick form-control shouyintai_payType">
+							<#if payMethodInfo??&&(payMethodInfo?size>0)>
+							        <#list payMethodInfo as payMethodInfoList>
+							          <option value="${payMethodInfoList.payMethodCd}">${payMethodInfoList.payMethodName}</option>
+							        </#list>
+						     <#else>
+							        <option value="100000">现金</option>
+							 </#if>
+						</select>
+			</div>
+			</div>
 			<div class="table-responsive">
 				<table class="table table-striped table-bordered tablecenter" id="calChangeTab">
 					<thead>
@@ -70,7 +84,7 @@
 							                        <!-- 费用名称 --><td>${itemList.acctItemTypeName}</td>
 							                        <!-- 应收费用 --><td>${((itemList.feeAmount)?number / 100)?string('0.00')}</td>
 							                        <!-- 实收费用 -->
-							                       <span id="payMethodText_${trid}" style="display:none">
+							                       <span id="payMethodText_${trid}" style="display: none;">
 							                        <#if (refundType??&&(refundType>0) || itemList.payMethodCd == '140000') && itemList.payMethodCd != '110102'>
 							                        	${itemList.payMethodName}
 							                        <#elseif  (isAddOperation?? && isAddOperation=="0") && (iseditOperation?? && iseditOperation=="0")>

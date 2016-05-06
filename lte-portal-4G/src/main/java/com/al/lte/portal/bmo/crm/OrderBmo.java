@@ -604,4 +604,10 @@ public interface OrderBmo {
 	 */
 	public Map<String, Object> queryBlackUserInfo(Map<String, Object> paramMap,String optFlowNum, 
 			SessionStaff sessionStaff) throws Exception;
+	/**
+     *渠道可支持的付费方式查询接口
+	 */
+	public Map<String, Object> queryAvilablePayMethodCdByChannelId(Map<String, Object> paramMap,String optFlowNum, 
+			SessionStaff sessionStaff) throws Exception;
+	
 }

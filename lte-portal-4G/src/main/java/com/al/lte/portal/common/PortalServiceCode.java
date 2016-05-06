@@ -985,4 +985,9 @@ public final class PortalServiceCode {
     public static final String ADD_BLACK_USERINFO = "bdw-service/intf.businessDispatchService/addBlackUserInfo";
     /**一卡双号黑名单查询*/
     public static final String QUERY_BLACK_USERINFO = "bdw-service/intf.businessDispatchService/queryBlackUserInfo";
+    
+    /*渠道可支持的付费方式查询接口*/
+    public static final String QUERY_AVILABLE_PAYMETHODCD = "biz-service/intf.chargeService/queryAvailablePayMethodCdByChannelId";
+
+    
 }

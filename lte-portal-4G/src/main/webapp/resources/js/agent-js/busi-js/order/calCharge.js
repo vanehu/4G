@@ -224,7 +224,7 @@ order.calcharge = (function(){
 				var objType=$("#objType_"+val).val();
 				var acctItemId=$("#acctItemId_"+val).val();
 				var boId=$("#boId_"+val).val();
-				var payMethodCd=$("#payMethodCd_"+val).val();
+				var payMethodCd=$(".shouyintai_payType").val();
 				var objInstId=$("#objInstId_"+val).val();
 				var prodId=$("#prodId_"+val).val();
 				var boActionType=$("#boActionType_"+val).val();
@@ -1104,9 +1104,10 @@ order.calcharge = (function(){
 				$("#cal_main_content").hide();
 				$("#edit_content").show();
 				$("#pnumber").text(accessNumber);
-				var html = "<select class='selectpicker show-tick form-control'>";
-				html =html+"<option value='100000'>现金</option></select>";
-				$("#payMethodDiv").html(html);
+//				var html = "<select class='selectpicker show-tick form-control'>";
+//				html =html+$(".shouyintai_payType").html();
+//				html+"</select>";
+//				$("#payMethodDiv").html(html);
 				$("#editBtnDiv").html($("#editBtn_"+trid).html());
 //				$("#realAmountDiv").html($("#realAmountText_"+trid).html());
 				$("#realAmount_"+trid).val($("#realhidden_"+trid).val());

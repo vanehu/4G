@@ -1457,6 +1457,17 @@ public class OrderController extends BaseController {
 	 		param.put("checkResult", list);
 		}
 			Map<String, Object> datamap = this.orderBmo.queryChargeList(param,flowNum, sessionStaff);
+			Map<String, Object> paramMap = new HashMap<String, Object>();
+			paramMap.put("areaId", sessionStaff.getCurrentAreaId());
+			paramMap.put("channelId",sessionStaff.getCurrentChannelId());
+			paramMap.put("distributorId", "");
+			Map<String, Object> payMethodMap = this.orderBmo.queryAvilablePayMethodCdByChannelId(paramMap, flowNum, sessionStaff);
+			if("0".equals(payMethodMap.get("resultCode"))){
+				Map<String, Object> payMethodResult = (Map<String, Object>)payMethodMap.get("result");
+				model.addAttribute("payMethodInfo",payMethodResult.get("payMethods"));
+			}else{
+				model.addAttribute("payMethodInfo",new ArrayList());
+			}
 			if (datamap != null) {
 	 		String code = (String) datamap.get("code");
 				if (ResultCode.R_SUCCESS.equals(code)) {
