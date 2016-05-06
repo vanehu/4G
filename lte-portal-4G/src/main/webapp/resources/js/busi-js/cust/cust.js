@@ -934,6 +934,8 @@ order.cust = (function(){
 							}else{
 								$(this).text("3G卡");
 							}
+						}else if(terminalInfo!=null&&terminalInfo.couponId==""){
+							$(this).text("非集约卡");
 						}else{
 							$(this).text("查询失败");
 						}
