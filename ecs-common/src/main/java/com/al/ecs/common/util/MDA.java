@@ -206,6 +206,55 @@ public class MDA {
 	 * 
 	 * */
 	public static final String COMPRESS_ALL_JS=new String ("");
+
+	/**
+     * POS支付开关  ON：开， OFF：关
+     */
+    public static final Map<String, String> POS_FLAG = new HashMap<String, String>();
+    
+    /**
+	 * 是否打开翼支付接口
+	 * */
+	public static final Map<String,String> BESTPAY_FLAG=new HashMap<String,String>();
+	/**
+	 * 记录客户定位数据是否记录到日志平台
+	 * */
+	public static final String CUSTLOGFLAG_WRITE_ASYNCHRONOUS_FLAG=new String ("");
+	
+	/**
+	 * 1. OFF：上传文件到单台FTP服务器；ON：上传文件到多台FTP服务器(默认为OFF，上传文件到单台FTP服务器)
+	 */
+	public static final String CLUSTERFLAG = new String ("");	
+	/**
+	 * 2. 访问FTP服务器路径
+	 */
+	public static final String FTPREMOTEPATH = new String ("");
+	/**
+	 * 2.1. 访问FTP服务器路径
+	 */
+	public static final String FTPBLACKLISTPATH = new String ("");
+	/**
+	 * 3. 单台FTP配置信息
+	 */
+	public static final String FTPSERVICECONFIG = new String ("");	
+	/**
+	 * 4. 上传失败后尝试连接FTP服务器次数
+	 */
+	public static final String RETRYTIMES = new String ("");
+	/**
+	 * 5. 3台FTP服务器配置信息
+	 */
+	public static final Map<String,String> FTPServiceConfigs = new HashMap<String,String>();
+	/**
+	 * 6. 全国32省(包含1个虚拟省)与3台FTP映射关系
+	 */
+	public static final Map<String,String> ProvincesFTPsMapping = new HashMap<String,String>();
+	/**
+	 * 7. 批量改造开关，默认为ON打开，走FTP模式；OFF关闭，走报文模式
+	 */
+	public static final String BATCHVERSIONFLAG = new String ("");
+	
+	
 	/**
 	 * 记录过频间隔
 	 * */
@@ -214,8 +263,33 @@ public class MDA {
 	 * 记录过频次数
 	 * */
 	public static final String OF_COUNT=new String ("");
+
 	/**
-	 * 记录客户定位数据是否记录到日志平台
-	 * */
-	public static final String CUSTLOGFLAG_WRITE_ASYNCHRONOUS_FLAG=new String ("");
+	 * 身份证云读卡配置：应用ID
+	 */
+	public static final String APP_ID = new String("");
+
+	/**
+     * 身份证云读卡配置：APP_ID对应的加密密钥
+     */
+	public static final String APP_SECRET = new String("");
+
+	/**
+     * 身份证云读卡配置：发起方系统编码
+     */
+	public static final String SRC_SYSTEM = new String("");
+
+	/**
+     * 身份证云读卡配置：3DES密钥
+     */
+    public static final String DES3_SECRET = new String("");
+	/**
+	 * 回执是否有服务协议和靓号协议ON-有，OFF-无 格式：服务协议开关，靓号协议开关
+	 */
+	public static final Map<String,String> PRINTFTL_FLAG=new HashMap<String,String>();
+
+    /**
+     * 身份证云读卡配置：日志开关
+     */
+    public static final String CLOUD_LOG_FLAG = new String("");
 }

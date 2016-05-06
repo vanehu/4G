@@ -20,6 +20,12 @@ public class AuthorityBmoImpl extends AbstractAuthorityInterceptor {
 	protected Log log = Log.getLog(AuthorityBmoImpl.class);
     @Override
     public int checkAuthorityByActionMethod(HttpServletRequest request, String authorityCode) {
+    	
+    	//暂时放开批量业务的校验
+    	if(authorityCode.indexOf("/order/batchOrder/") != -1){
+    		return SUCCESS;
+    	}
+    	
         this.log.debug(" checkAuthority begin result={}");
         boolean result = EhcacheUtil.pathIsInSession(request.getSession(true),authorityCode);
         this.log.debug(" checkAuthority end result={}", result);

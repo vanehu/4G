@@ -40,8 +40,8 @@
 	</mda>
 	<!-- 数据源配置end -->
 	<mda className="com.al.ecs.common.util" moduleName = "Lte4GManager">	   
-		<const type="String" name="CSB_WS_URL" value="http://10.1.5.111:9080/CRM-DEP/services/DEPService?wsdl" />
-		<const type="String" name="CSB_HTTP_URL" value="http://10.1.5.111:9080/CRM-DEP/HttpDEPService" />
+		<const type="String" name="CSB_WS_URL" value="http://10.128.90.194:10901/LTE-CSB/services/DEPService?wsdl" />
+		<const type="String" name="CSB_HTTP_URL" value="http://10.128.90.194:10901/LTE-CSB/HttpDEPService" />
 		<const type="String" name="CSB_FLAG" value="OFF" />
 		<const type="String" name="ASYNC_FLAG" value="OFF" />
 		<const type="String" name="DEF_HTTP_FLAG" value="ON" />
@@ -233,7 +233,7 @@
 			'YWTX-8230000':'ON'
 		}
 		</const>
-		<const type="String" name="INTERFACE_MERGE" value="8340000,8330000,8500000,8350000,8610000" description="能力开放(客户架构、全量查询)接口标识"/>
+		<const type="String" name="INTERFACE_MERGE" value="8540000,8630000,8150000,8230000,8450000,8500000,8610000,8420000,8350000,8320000,8460000,8640000,8140000,8530000,8360000,8370000,8110000,8430000,8510000,8440000,8310000,8120000,8130000,8410000,8210000,8220000,8340000,8330000,8520000,8620000,8650000" description="能力开放(客户架构、全量查询)接口标识"/>
  	    <const type="String" name="TOKENTIMES" value="7200" description="令牌失效时间"/>
  	    <const type="String" name="TOKENPROVINEKEY" value="PUBLIC_TOKEN_KEY" description="省份公钥密码 "/>
  	     <const type="String" name="TOKENKEY" value="TOKEN@GROUP%!" description="省份公钥密码 "/>
@@ -274,7 +274,7 @@
  	       'pc.uri.8360000':'111.75.216.36,localhost,127.0.0.1',
  	       'pc.uri.8440000':'132.121.91.216,132.121.91.217,10.18.160.214',
  	       'pc.uri.8640000':'135.161.224.74',
- 	       'pc.uri.8510000':'sccrmdev.sc.ctc.com',
+ 	       'pc.uri.8510000':'sccrmdev.sc.ctc.com,crmda1.sc.ctc.com,crmda.sc.ctc.com,crmdb.sc.ctc.com,crmdb1.sc.ctc.com',
  	       'pc.uri.8610000':'133.64.46.134,133.64.124.124,133.64.124.112,117.32.232.214,133.64.124.154,133.64.123.58,133.64.100.85,133.64.126.242',
  	       'pc.uri.8130000':'136.224.44.102',
  	       'pc.uri.8150000':'crm.nmtest.ctbss.net',
@@ -294,7 +294,7 @@
  	       'pc.uri.8450000':'134.192.114.41,134.192.37.189',
  	       'pc.uri.8140000':'137.64.43.76',
  	       'pc.uri.8460000':'172.16.255.61',
- 	       'pc.uri.8540000':'192.3.6.13,192.3.6.16,192.3.6.17,192.3.6.26,192.3.6.22,135.64.132.219,135.64.130.10'
+ 	       'pc.uri.8540000':'192.3.6.13,192.3.6.16,192.3.6.17,192.3.6.26,192.3.6.22,135.64.132.219,135.64.130.10,134.64.91.32,192.3.6.19,134.64.91.152'
  	      }
  	       </const>
  	        <const type="String" name="COMMON_PARAM_KEY" value="KEY@COMMON#$3YT" description="公共参数加密KEY "/>
@@ -310,7 +310,7 @@
  	       'app.uri.8360000':'111.75.216.36,localhost,127.0.0.1',
  	       'app.uri.8440000':'132.121.91.216,132.121.91.217,10.18.160.214',
  	       'app.uri.8640000':'135.161.224.74',
- 	       'app.uri.8510000':'sccrmdev.sc.ctc.com',
+ 	       'app.uri.8510000':'sccrmdev.sc.ctc.com,crmda1.sc.ctc.com,crmda.sc.ctc.com,crmdb.sc.ctc.com,crmdb1.sc.ctc.com',
  	       'app.uri.8610000':'133.64.46.134,133.64.124.124,133.64.124.112,117.32.232.214,133.64.124.154,133.64.123.58,133.64.100.85,133.64.126.242',
  	       'app.uri.8130000':'136.224.44.102',
  	       'app.uri.8150000':'crm.nmtest.ctbss.net',
@@ -330,7 +330,7 @@
  	       'app.uri.8450000':'134.192.114.41,134.192.37.189',
  	       'app.uri.8140000':'137.64.43.76',
  	       'app.uri.8460000':'172.16.255.61',
- 	       'app.uri.8540000':'192.3.6.13,192.3.6.16,192.3.6.17,192.3.6.26,192.3.6.22,135.64.132.219,135.64.130.10'
+ 	       'app.uri.8540000':'192.3.6.13,192.3.6.16,192.3.6.17,192.3.6.26,192.3.6.22,135.64.132.219,135.64.130.10,134.64.91.32,192.3.6.19,134.64.91.152,10.0.0.11,135.64.162.185'
  	      }
  	      </const>
  	         <const type="Map" name="PAD_URL_BACK" description="PAD版本省份回调地址">
@@ -345,7 +345,7 @@
  	       'pad.uri.8360000':'111.75.216.36,localhost,127.0.0.1',
  	       'pad.uri.8440000':'132.121.91.216,132.121.91.217,10.18.160.214',
  	       'pad.uri.8640000':'135.161.224.74',
- 	       'pad.uri.8510000':'sccrmdev.sc.ctc.com',
+ 	       'pad.uri.8510000':'sccrmdev.sc.ctc.com,crmda1.sc.ctc.com,crmda.sc.ctc.com,crmdb.sc.ctc.com,crmdb1.sc.ctc.com',
  	       'pad.uri.8610000':'133.64.46.134,133.64.124.124,133.64.124.112,117.32.232.214,133.64.124.154,133.64.123.58,133.64.100.85,133.64.126.242',
  	       'pad.uri.8130000':'136.224.44.102',
  	       'pad.uri.8150000':'crm.nmtest.ctbss.net',
@@ -365,7 +365,7 @@
  	       'pad.uri.8450000':'134.192.114.41,134.192.37.189',
  	       'pad.uri.8140000':'137.64.43.76',
  	       'pad.uri.8460000':'172.16.255.61',
- 	       'pad.uri.8540000':'192.3.6.13,192.3.6.16,192.3.6.17,192.3.6.26,192.3.6.22,135.64.132.219,135.64.130.10'
+ 	       'pad.uri.8540000':'192.3.6.13,192.3.6.16,192.3.6.17,192.3.6.26,192.3.6.22,135.64.132.219,135.64.130.10,134.64.91.32,192.3.6.19,134.64.91.152'
  	      }
  	     </const> 
  	      <const type="Map" name="TOKEN_JMPROVINCECODE_KEY" description="省份私钥">
@@ -416,8 +416,135 @@
  	     <const type="String" name="APPDESC" value="LTE" description="LTE 或 MVNO "/>
  	     <const type="String" name="FILE_PREFER_FLAG" value="ON" description="决定参数是先从以下配置中取，还是先从数据库参数表取 "/>
  	     <const type="String" name="ABS_DIRECTORY_KEY" value="/app/data/portal/invoiceTemplate/" description="如果启用绝对路径，则使用下面路径作为父级路径 "/>
- 	     <const type="String" name="OF_TIME" value="600000" description="过频操作时间段"/>
-         <const type="String" name="OF_COUNT" value="80" description="过频操作次数"/>      
-         <const type="String" name="CUSTLOGFLAG_WRITE_ASYNCHRONOUS_FLAG" value="ON" description="记录客户定位数据是否记录到日志平台(ON为记录到日志平台，OFF为记录到分库中)"/>
+ 		
+ 		  <!-- 批量业务FTP服务器配置  start-->
+ 	      <const type="Map" name="FTPServiceConfigs" description="批量业务上传Excel至FTP服务器配置(3台)">
+ 	      {
+ 	       'FTPSERVICECONFIG_1':'10.128.98.44,21,FTP_WAS,FTP_WAS!@#',<!-- 依次为FTP服务器IP、端口、用户名、密码 -->
+ 	       'FTPSERVICECONFIG_2':'10.128.98.45,21,FTP_WAS,FTP_WAS!@#',
+ 	       'FTPSERVICECONFIG_3':'10.128.98.46,21,FTP_WAS,FTP_WAS!@#'
+ 	      }
+ 	      </const>
+ 	      <const type="Map" name="ProvincesFTPsMapping" description="全国32省(包含1个虚拟省)与3台FTP映射关系">
+ 	      {
+ 	       'FTP_8540000':'FTPSERVICECONFIG_1',<!-- 西藏 -->
+ 	       'FTP_8630000':'FTPSERVICECONFIG_1',<!-- 青海 -->
+ 	       'FTP_8150000':'FTPSERVICECONFIG_1',<!-- 内蒙古 -->
+ 	       'FTP_8230000':'FTPSERVICECONFIG_1',<!-- 黑龙江 -->
+ 	       'FTP_8450000':'FTPSERVICECONFIG_1',<!-- 广西 -->
+ 	       'FTP_8500000':'FTPSERVICECONFIG_1',<!-- 重庆 -->
+ 	       'FTP_8610000':'FTPSERVICECONFIG_1',<!-- 陕西 -->
+ 	       'FTP_8420000':'FTPSERVICECONFIG_1',<!-- 湖北 -->
+ 	       'FTP_8350000':'FTPSERVICECONFIG_1',<!-- 福建 -->
+ 	       'FTP_8320000':'FTPSERVICECONFIG_1',<!-- 江苏 -->	       
+ 	       'FTP_8460000':'FTPSERVICECONFIG_2',<!-- 海南 -->
+ 	       'FTP_8640000':'FTPSERVICECONFIG_2',<!-- 宁夏 -->
+ 	       'FTP_8140000':'FTPSERVICECONFIG_2',<!-- 山西 -->
+ 	       'FTP_8530000':'FTPSERVICECONFIG_2',<!-- 云南 -->
+ 	       'FTP_8360000':'FTPSERVICECONFIG_2',<!-- 江西 -->
+ 	       'FTP_8370000':'FTPSERVICECONFIG_2',<!-- 山东 -->
+ 	       'FTP_8110000':'FTPSERVICECONFIG_2',<!-- 北京 -->
+ 	       'FTP_8430000':'FTPSERVICECONFIG_2',<!-- 湖南 -->
+ 	       'FTP_8510000':'FTPSERVICECONFIG_2',<!-- 四川 -->
+ 	       'FTP_8440000':'FTPSERVICECONFIG_2',<!-- 广东 -->
+ 	       'FTP_8310000':'FTPSERVICECONFIG_3',<!-- 上海 -->
+ 	       'FTP_8120000':'FTPSERVICECONFIG_3',<!-- 天津 -->
+ 	       'FTP_8130000':'FTPSERVICECONFIG_3',<!-- 河北 -->
+ 	       'FTP_8410000':'FTPSERVICECONFIG_3',<!-- 河南 -->
+ 	       'FTP_8210000':'FTPSERVICECONFIG_3',<!-- 辽宁 -->
+ 	       'FTP_8220000':'FTPSERVICECONFIG_3',<!-- 吉林 -->
+ 	       'FTP_8340000':'FTPSERVICECONFIG_3',<!-- 安徽 -->
+ 	       'FTP_8330000':'FTPSERVICECONFIG_3',<!-- 浙江 -->
+ 	       'FTP_8520000':'FTPSERVICECONFIG_3',<!-- 贵州 -->
+ 	       'FTP_8620000':'FTPSERVICECONFIG_3',<!-- 甘肃 -->
+ 	       'FTP_8650000':'FTPSERVICECONFIG_3',<!-- 新疆 -->
+ 	       'FTP_8990000':'FTPSERVICECONFIG_3'<!-- 虚拟省 -->
+ 	      }
+ 	      </const>
+ 	      <const type="String" name="CLUSTERFLAG" value="OFF" description="单台FTP与多台FTP开关：OFF：单台FTP；ON：多台FTP(默认为OFF)"/>
+ 	      <const type="String" name="RETRYTIMES" value="3" description="尝试连接FTP服务器次数"/>
+ 	      <const type="String" name="FTPREMOTEPATH" value="/app/4G/batch/upload/batchOrderFile/" description="访问FTP服务器路径"/>
+ 	      <const type="String" name="FTPBLACKLISTPATH" value="/app/4G/batch/upload/blackListEvidenceFile/" description="访问FTP服务器路径"/>
+ 	      <const type="String" name="FTPSERVICECONFIG" value="10.128.90.194,21,potoalBatch,potoalBatch" description="测试环境FTP服务器配置信息(单台FTP服务器)'FTP服务器IP,端口,用户名,密码'"/>
+ 	      <const type="String" name="BATCHVERSIONFLAG" value="OFF" description="批量改造开关，默认为ON打开，走FTP模式；OFF关闭，走报文模式"/>
+ 	      <!-- 批量业务FTP服务器配置  end-->
+ 	    <const type="Map" name="POS_FLAG" description="业务办理收费时POS支付开关  ON OFF">
+        {
+            'POS-8110000':'OFF',
+            'POS-8120000':'OFF',
+            'POS-8140000':'OFF',
+            'POS-8150000':'OFF',
+            'POS-8210000':'OFF',
+            'POS-8220000':'OFF',
+            'POS-8350000':'OFF',
+            'POS-8430000':'OFF',
+            'POS-8500000':'OFF',
+            'POS-8520000':'OFF',
+            'POS-8530000':'OFF',
+            'POS-8540000':'OFF',
+            'POS-8630000':'OFF',
+            'POS-8640000':'OFF',
+            'POS-8650000':'OFF',
+            'POS-8440000':'OFF',
+            'POS-8320000':'ON',
+            'POS-8510000':'OFF',
+            'POS-8330000':'OFF',
+            'POS-8340000':'OFF',
+            'POS-8610000':'OFF',
+            'POS-8420000':'OFF',
+            'POS-8310000':'OFF',
+            'POS-8130000':'OFF',
+            'POS-8370000':'OFF',
+            'POS-8450000':'OFF',
+            'POS-8410000':'OFF',
+            'POS-8620000':'OFF',
+            'POS-8360000':'OFF',
+            'POS-8460000':'OFF',
+            'POS-8230000':'OFF'
+        }
+        </const>
+        <const type="Map" name="BESTPAY_FLAG" description="翼支付接口开关  ON OFF">
+		 {
+			'BESTPAY-8110000':'OFF',
+			'BESTPAY-8120000':'OFF',
+			'BESTPAY-8140000':'OFF',
+			'BESTPAY-8150000':'OFF',
+			'BESTPAY-8210000':'OFF',
+			'BESTPAY-8220000':'OFF',
+			'BESTPAY-8350000':'OFF',
+			'BESTPAY-8430000':'OFF',
+			'BESTPAY-8500000':'OFF',
+			'BESTPAY-8520000':'OFF',
+			'BESTPAY-8530000':'OFF',
+			'BESTPAY-8540000':'OFF',
+			'BESTPAY-8630000':'OFF',
+			'BESTPAY-8640000':'OFF',
+			'BESTPAY-8650000':'OFF',
+			'BESTPAY-8440000':'OFF',
+			'BESTPAY-8320000':'ON',
+			'BESTPAY-8510000':'OFF',
+			'BESTPAY-8330000':'OFF',
+			'BESTPAY-8340000':'OFF',
+			'BESTPAY-8610000':'OFF',
+			'BESTPAY-8420000':'OFF',
+			'BESTPAY-8310000':'OFF',
+			'BESTPAY-8130000':'OFF',
+			'BESTPAY-8370000':'OFF',
+			'BESTPAY-8450000':'OFF',
+			'BESTPAY-8410000':'OFF',
+			'BESTPAY-8620000':'OFF',
+			'BESTPAY-8360000':'OFF',
+			'BESTPAY-8460000':'OFF',
+			'BESTPAY-8230000':'OFF'
+		}
+		</const>
+		<const type="String" name="CUSTLOGFLAG_WRITE_ASYNCHRONOUS_FLAG" value="ON" description="记录客户定位数据是否记录到日志平台(ON为记录到日志平台，OFF为记录到分库中)"/>	
+		<const type="String" name="OF_TIME" value="600000" description="过频操作时间段"/>
+		<const type="String" name="OF_COUNT" value="80" description="过频操作次数"/>
+ 	    <const type="String" name="APP_ID" value="1001" description="身份证云读卡配置：应用ID"/>
+        <const type="String" name="APP_SECRET" value="QPZmsj13630937bsTRCJ" description="身份证云读卡配置：APP_ID对应的加密密钥"/>
+        <const type="String" name="SRC_SYSTEM" value="1001" description="身份证云读卡配置：发起方系统编码"/>
+        <const type="String" name="DES3_SECRET" value="1EAA86638D60E1951EC51581F3AF3A151EAA86638D60E195" description="身份证云读卡配置：3DES密钥"/>
+        <const type="String" name="CLOUD_LOG_FLAG" value="ON" description="身份证云读卡配置：日志开关"/>
  	</mda>
 </mdas>
