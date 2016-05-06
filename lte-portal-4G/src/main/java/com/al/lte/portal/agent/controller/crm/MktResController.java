@@ -1095,6 +1095,7 @@ public class MktResController extends BaseController {
         param.put("mktResName", MapUtils.getString(param, "mktName", ""));
         param.put("salePrice", Integer.parseInt(mktPrice));
         param.put("mktPicA", MapUtils.getString(param, "mktPicA", ""));
+        model.addAttribute("currentCT", sessionStaff.getCurrentChannelType());
         model.addAttribute("mktRes", param);
         return "/agent/mktRes/t.phoneDetails";
     }

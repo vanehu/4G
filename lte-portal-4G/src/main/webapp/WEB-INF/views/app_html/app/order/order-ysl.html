@@ -8,18 +8,23 @@
 			    	<!-- 基本信息 -->
 			    	<div id="baseInfo">
 			    	   <div class="panel-heading">基本信息</div>
-	              	   <div class="panel-body">
-	             	   		<div class="container-fluid" id="geren">
+	              	   <div class="panel-body" style="background: #f6f6f6;">
+	             	   		<div class="container-fluid" id="geren" style="margin-bottom: 17px;">
 						        <div class="row">
-						        	<div class="col-xs-10 col-xs-offset-1 text-center">
+						        	<div class="col-xs-12 lanya">
 						            	<!--
 						            	<img src="${contextPath}/image/app-image/scanning.png"  onclick="common.callIDCardRec('cust.getIDCardInfos')" id="photos" alt="身份证" class="img-thumbnail img-responsive">
 										-->
 										<div class="btn-group btn-group-justified navbar-btn" role="group" aria-label="...">
 								          <div class="btn-group" role="group">
-								            <button type="button" class="btn btn-default" onClick="common.callGenerationRec('cust.getGenerationInfos')">
-								            	<span class="glyphicon glyphicon-screenshot" aria-hidden="true"></span> 蓝牙扫描
+								            <button type="button" class="btn btn-default">
+								            	<span class="title_lv"></span>
+								            	 证件扫描
 								            </button>
+								            <ul class="img_box">
+								            	<li><img onClick="common.callGenerationRec('cust.getGenerationInfos','1')" style=" height: 40px; margin-left: 50px; margin-top: -5px;"src="${contextPath}/image/app-image/shebeisaomiao-xxhdpi_03.png"/></li>
+								            	<li id="nfc"><img onClick="common.callGenerationRec('cust.getGenerationInfos','2')" style=" height: 40px; margin-left: 50px; margin-top: -5px;" src="${contextPath}/image/app-image/shebeisaomiao-xxhdpi_05.png"/></li>
+								            </ul>
 								          </div>
 								          <div class="btn-group" role="group" style="display:none">
 								            <button type="button" class="btn btn-default" onClick="common.callPhotos('cust.getPicture')">
@@ -31,11 +36,11 @@
 						        </div>
 						    </div>
 						    <hr>
-						    <form id="custFormdata" method="post" class="form-horizontal">
+						    <form id="custFormdata" method="post" class="form-horizontal" style="background: #fff; padding-top: 12px;">
 						    	<div class="container-fluid">
 						    	 <div class="form-group">
 									<label for="partyTypeCd">客户类型</label>
-									<div class="input-group">
+									<div class="input-group" style=" width: 72%; display: inline-block;">
 									<select id="partyTypeCd" class="selectpicker show-tick form-control" 
 										onchange="order.ysl.certTypeByPartyType();">
 									    <option value="1">个人</option>
@@ -50,7 +55,7 @@
 								  </div>
 								  <div class="form-group" id="zjlx">
 									<label for="identidiesTypeCd">证件类型</label>
-									<div class="input-group">
+									<div class="input-group" style=" width: 72%; display: inline-block;">
 										<select id="identidiesTypeCd" class="selectpicker show-tick form-control" 
 											onchange="order.ysl.identidiesTypeCdChoose(this);" >
 										</select>
@@ -76,7 +81,7 @@
 								 </div>
 								 <div class="form-group" id="ywlxc">
 									<label for="busitype">业务类型</label>
-									<div class="input-group">
+									<div class="input-group" style=" width: 72%; display: inline-block;">
 									<select id="busitype" class="selectpicker show-tick form-control" 
 										onchange="order.ysl.busiactiontypeChoose(this,'ysl')" >
 										<option value="">请选择</option>
@@ -86,7 +91,7 @@
 								  </div>
 								  <div class="form-group" id="ywdzc">
 									<label for="busiactiontype">业务动作</label>
-									<div class="input-group">
+									<div class="input-group" style=" width: 72%; display: inline-block;">
 									<select id="busiactiontype" class="selectpicker show-tick form-control">
 										<option value="">请选择</option>
 									</select>
@@ -165,9 +170,9 @@
 	              	    <div class="panel-body">
 	              	    	<div class="container-fluid">
 	              	    	   <button type="button" onClick="order.ysl.showKxb();"
-									class="btn btn-default btn-block button-right">
-									可选包/功能 <span class="glyphicon glyphicon-chevron-right"
-										aria-hidden="true"></span>
+									class="btn btn-default btn-block button-right" style="height: 60px; text-align: left;">
+					<span class="title_lv"></span>可选包/功能 <span class="glyphicon glyphicon-chevron-right"
+						aria-hidden="true" style="float: right;"></span>
 								</button>
 	              	    	</div>
 	              	    </div>

@@ -232,6 +232,7 @@ public class OrderController extends BaseController {
 		String channelCode =sessionStaff.getCurrentChannelCode();
 		model.addAttribute("channelCode", channelCode);
 		model.addAttribute("actionFlag",1);
+		model.addAttribute("currentCT", sessionStaff.getCurrentChannelType());
        return "/agent/order/order-main-template";
     }
 	/**

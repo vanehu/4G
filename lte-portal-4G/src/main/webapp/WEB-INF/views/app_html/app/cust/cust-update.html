@@ -5,10 +5,15 @@
 			<div class="col-xs-10 col-xs-offset-1 text-center">
 				<div class="btn-group btn-group-justified navbar-btn" role="group" aria-label="...">
 		          <div class="btn-group" role="group">
-		            <button type="button" class="btn btn-default" onClick="common.callGenerationRec('cust.getGenerationInfos')">
-		            	<span class="glyphicon glyphicon-screenshot" aria-hidden="true"></span> 蓝牙扫描
-		            </button>
-		          </div>
+			            <button type="button" class="btn btn-default">
+			            	<span class="title_lv"></span>
+			            	 证件扫描
+			            </button>
+			            <ul class="img_box">
+			            	<li><img onClick="common.callGenerationRec('cust.getGenerationInfos','1')" style=" height: 40px; margin-left: 50px; margin-top: -5px;"src="${contextPath}/image/app-image/shebeisaomiao-xxhdpi_03.png"/></li>
+			            	<li id="nfc"><img onClick="common.callGenerationRec('cust.getGenerationInfos','2')" style=" height: 40px; margin-left: 50px; margin-top: -5px;" src="${contextPath}/image/app-image/shebeisaomiao-xxhdpi_05.png"/></li>
+			            </ul>
+			          </div>
 		          <div class="btn-group" role="group" style="display:none">
 		            <button type="button" class="btn btn-default" onClick="common.callPhotos('cust.getPicture')">
 		            	<span class="glyphicon glyphicon-camera" aria-hidden="true"></span> 拍照
@@ -61,7 +66,7 @@
             	<input type="text" class="form-control" id="contactAddress" name="contactAddress" maxlength="200" placeholder="请输入联系人" <#if modPartyTypeCd.contactName??> value="${modPartyTypeCd.contactName}" </#if>>
 			</div>
 			<div class="form-group">
-	           <label for="mailAddressStr">联系人手机</label>
+	           <label for="mailAddressStr" style="vertical-align: middle;">联系人手机</label>
 	           <input type="text" class="form-control" id="mobilePhone" name="mobilePhone" maxlength="11" placeholder="请输入联系人手机" <#if modPartyTypeCd.mobilePhone??> value="${modPartyTypeCd.mobilePhone}" </#if>>
 	         </div>
 			<div class="form-group" >
