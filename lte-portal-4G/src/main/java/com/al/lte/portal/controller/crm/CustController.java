@@ -705,8 +705,8 @@ public class CustController extends BaseController {
 				listCustInfos.clear();
 			}
 		}
-		
-		if(SysConstant.ON.equals(sessionStaff.getPoingtType())){//星级服务开关打开
+		String custId = MapUtils.getString(param, "custId", "");
+		if(SysConstant.ON.equals(sessionStaff.getPoingtType()) && !StringUtil.isEmptyStr(custId)){//星级服务开关打开
 			Map<String, Object> paramMapXJ = new HashMap<String, Object>();
 			paramMapXJ.put("identityCd", sessionStaff.getCardType());
 			paramMapXJ.put("identityNum", sessionStaff.getCardNumber());
