@@ -932,12 +932,14 @@ order.cust = (function(){
 							if(terminalInfo.is4GCard =="Y"){
 								$(this).text("4G卡");
 							}else{
-								$(this).text("3G卡");
+								if(terminalInfo.is4GCard =="N"&&terminalInfo.couponId!= undefined){
+									$(this).text("3G卡");
+								}else{
+									$(this).text("非集约卡");
+								}
 							}
-						}else if(terminalInfo!=null&&terminalInfo.couponId==""){
-							$(this).text("非集约卡");
 						}else{
-							$(this).text("查询失败");
+							$(this).text(" ");
 						}
 				});
 			},
