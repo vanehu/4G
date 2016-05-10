@@ -217,6 +217,8 @@ SoOrder = (function() {
 			value : OrderInfo.busitypeflag
 		});
 		
+		OrderInfo.orderData.orderList.orderListInfo.custOrderType = OrderInfo.busitypeflag;
+		
 		if(ec.util.isObj(OrderInfo.order.soNbr)){
 			custOrderAttrs.push({
 				itemSpecId : CONST.BUSI_ORDER_ATTR.SO_NBR,//全量查询的soNbr

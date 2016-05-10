@@ -179,6 +179,9 @@ SoOrder = (function() {
 			itemSpecId : CONST.BUSI_ORDER_ATTR.BUSITYPE_FLAG,
 			value : OrderInfo.busitypeflag
 		});
+		
+		OrderInfo.orderData.orderList.orderListInfo.custOrderType = OrderInfo.busitypeflag;
+		
 		/*
 //		custOrderAttrs.push({
 //			itemSpecId : "111111113",
