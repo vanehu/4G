@@ -1864,7 +1864,8 @@ order.cust = (function(){
 		var param = _choosedCustInfo;
 		var recordParam={};
 		param.validateType="1";
-		param.identityNum = base64encode($.trim($("#idCardNumber"+id).val()));
+	    //param.identityNum = base64encode($.trim($("#idCardNumber"+id).val()));
+		param.identityNum = base64encode(utf16to8($.trim($("#idCardNumber"+id).val()))); 
 		if(!ec.util.isObj(param.identityNum)){
 			$.alert("提示","证件号码不能为空！");
 			return;
