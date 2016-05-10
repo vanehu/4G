@@ -344,8 +344,7 @@ AttachOffer = (function() {
 //		if(OrderInfo.actionFlag == 2){ //套餐变更		
 //			param.offerSpecIds=[OrderInfo.offerSpec.offerSpecId];
 //		}
-		if(OrderInfo.actionFlag == 2){ //套餐变更
-			param.offerSpecIds.push(OrderInfo.offerSpec.offerSpecId);
+		if(OrderInfo.actionFlag == 2){ //套餐变更		
 			$.each(OrderInfo.offerSpec.offerRoles,function(){
 				if(ec.util.isArray(this.prodInsts)){
 					$.each(this.prodInsts,function(){
@@ -358,27 +357,6 @@ AttachOffer = (function() {
 					});
 				}
 			});
-			
-			var prodInst = OrderInfo.getProdInst(prodId);
-			if(prodInst){
-				param.offerRoleId = prodInst.offerRoleId;
-			}
-			
-			for(var i=0;i<OrderInfo.oldprodInstInfos.length;i++){
-				if(prodId==OrderInfo.oldprodInstInfos[i].prodInstId){
-					param.acctNbr = OrderInfo.oldprodInstInfos[i].accNbr;
-					$.each(OrderInfo.oldofferSpec,function(){
-						if(this.accNbr==OrderInfo.oldprodInstInfos[i].accNbr){
-							param.offerSpecIds.push(this.offerSpec.offerSpecId);	
-							$.each(this.offerSpec.offerRoles,function(){
-								if(this.memberRoleCd==CONST.MEMBER_ROLE_CD.VICE_CARD || this.memberRoleCd==CONST.MEMBER_ROLE_CD.COMMON_MEMBER){
-									param.offerRoleId = this.offerRoleId;
-								}
-							});
-						}
-					});
-				}
-			}
 		}else if(OrderInfo.actionFlag == 3){  //可选包
 			var prodInfo = order.prodModify.choosedProdInfo; //获取产品信息
 			param.acctNbr = prodInfo.accNbr;
@@ -445,6 +423,18 @@ AttachOffer = (function() {
 			return;
 		}
 		param.offerSpecName = offerSepcName;
+		//获取已订购附属销售品，送到后端进行遍历过滤
+		var attachOffersOrdered = CacheData.getOfferList(prodId);
+		$.each(attachOffersOrdered,function(){
+			//summary和offerSpecName两个节点包含大量文字，且这里不需要该节点，故遍历去除，以减少报文大小
+			if(this.summary != null){
+				this.summary = "";
+			}
+			if(this.offerSpecName != null){
+				this.offerSpecName = "";
+			}
+		});
+		param.attachOfferOrderedList = attachOffersOrdered;
 		var data = query.offer.searchAttachOfferSpec(param);
 		if(data!=undefined){
 			$("#attach_div_"+prodId).html(data).show();
