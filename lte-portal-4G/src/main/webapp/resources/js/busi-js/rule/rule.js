@@ -46,7 +46,7 @@ rule.rule = (function(){
 		if(!query.offer.loadInst()){  //加载实例到缓存
 			return;
 		};
-		if(OrderInfo.actionFlag == 40 && (OrderInfo.creditLimitId ==null && OrderInfo.creditLimitId=="")){
+		if(OrderInfo.actionFlag == 40 && (OrderInfo.creditLimitId ==null || OrderInfo.creditLimitId=="")){
 			$.alert("提示","全量查询接口返回creditLimitId为空，不允许做紧急开机业务");
 			return;
 		}
