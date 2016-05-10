@@ -44,6 +44,7 @@ import com.al.ecs.spring.annotation.session.SessionValid;
 import com.al.ecs.spring.controller.BaseController;
 import com.al.lte.portal.bmo.crm.CommonBmo;
 import com.al.lte.portal.bmo.crm.CustBmo;
+import com.al.lte.portal.bmo.crm.MktResBmo;
 import com.al.lte.portal.bmo.staff.StaffBmo;
 import com.al.lte.portal.common.Base64;
 import com.al.lte.portal.common.CommonMethods;
@@ -70,7 +71,9 @@ public class CustController extends BaseController {
     @Autowired
     @Qualifier("com.al.lte.portal.bmo.staff.StaffBmo")
     private StaffBmo staffBmo;
-   
+	@Autowired
+    @Qualifier("com.al.lte.portal.bmo.crm.MktResBmo")
+    private MktResBmo mktResBmo;
   //产品密码鉴权
   	@RequestMapping(value = "/custAuthSub", method = { RequestMethod.POST })
   	public @ResponseBody JsonResponse custAuthSub(@RequestBody Map<String, Object> param, Model model,@LogOperatorAnn String flowNum, HttpServletResponse response,HttpSession httpSession) throws BusinessException {
@@ -92,41 +95,25 @@ public class CustController extends BaseController {
   			Map custParam = new HashMap();
   			try {
   				custParam.put("areaId", param.get("areaId"));
-  				custParam.put("identityCd", identityCd);
-  				custParam.put("identityNum",StringUtils.isNotBlank(MapUtils.getString(param,"identityNum"))?MapUtils.getString(param,"identityNum"):"");//证件号码
+  				custParam.put("idCardType", identityCd);
+  				custParam.put("idCardNumber",StringUtils.isNotBlank(MapUtils.getString(param,"identityNum"))?MapUtils.getString(param,"identityNum"):"");//证件号码
   				custParam.put("staffId", sessionStaff.getStaffId());
-  				//custParam.put("transactionId", param.get("transactionId"));
-  				
-  				resultMap = custBmo.queryCustInfo(custParam, flowNum, sessionStaff);
-  				boolean b=false;
-  				if (MapUtil.isNotEmpty(resultMap)) {
-  					List custInfos = (List<Map<String, Object>>) resultMap.get("custInfos");
-  					if (custInfos.size() > 0) {
-  						for (int i = 0; i < custInfos.size(); i++) {
-  							Map custInfoMap = (Map<String, Object>) custInfos.get(i);
-  							String queryCustId = MapUtils.getString(custInfoMap, "custId");
-  							String custId = MapUtils.getString(param,"custId");
-  							if (custId.equals(queryCustId)) {
-  								b=true;
-  								break;
-  							}
-  						}
-  						
-  					}
-  					if(b){
-  						map.put("code", "0");
-  						map.put("isValidate", "true");
-  						jsonResponse = super.successed(map,ResultConstant.SUCCESS.getCode());
-  					}
-  					else{
-  						map.put("code", "-1");
-  						map.put("isValidate", "false");
-  						map.put("message","证件号码错误");
-  						
-  						jsonResponse = super.failed(ErrorCode.QUERY_CUST, map, custParam);
-  					}
-  					
-  				}
+				custParam.put("custId", param.get("custId"));
+				Map<String, Object> datamap = mktResBmo.checkIdCardNumber(custParam,flowNum, sessionStaff);
+				if (datamap != null) {
+					String code = (String) datamap.get("code");
+					if (ResultCode.R_SUCC.equals(code)) {
+						map.put("code", "0");
+						map.put("isValidate", "true");
+						jsonResponse = super.successed(map,ResultConstant.SUCCESS.getCode());
+					}
+					else{
+						map.put("code", "-1");
+						map.put("isValidate", "false");
+						map.put("message","证件号码错误");
+						jsonResponse = super.failed(ErrorCode.QUERY_CUST, map, custParam);
+					}
+				}	
   			} catch (BusinessException be) {
   				return super.failed(be);
   			} catch (InterfaceException ie) {
