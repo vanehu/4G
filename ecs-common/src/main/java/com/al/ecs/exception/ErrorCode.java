@@ -1,4 +1,4 @@
-﻿package com.al.ecs.exception;
+package com.al.ecs.exception;
 
 import java.util.HashMap;
 import java.util.Map;
