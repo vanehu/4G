@@ -32,6 +32,8 @@ import org.springframework.stereotype.Service;
 
 import com.al.ec.serviceplatform.client.DataBus;
 import com.al.ec.serviceplatform.client.ResultCode;
+import com.al.ecs.common.util.PropertiesUtils;
+import com.al.ecs.common.web.SpringContextUtil;
 import com.al.ecs.exception.BusinessException;
 import com.al.ecs.exception.ErrorCode;
 import com.al.ecs.exception.InterfaceException;
@@ -51,6 +53,9 @@ import com.al.lte.portal.model.SessionStaff;
 public class BatchBmoImpl implements BatchBmo {
 
 	private static Log log = Log.getLog(BatchBmoImpl.class);
+	
+	/**中国电信手机号段正则表达式^(149|133|153|173|177|180|181|189)\\d{8}$*/
+	private final String ltePhoneHeadRegExp = ((PropertiesUtils) SpringContextUtil.getBean("propertiesUtils")).getMessage("LTEPHONEHEAD");
 
 	/**
 	 * 批量新装解析excle<br/>
@@ -61,7 +66,7 @@ public class BatchBmoImpl implements BatchBmo {
 	 * @param str
 	 * @return
 	 */
-	public Map<String, Object> readExcel4NewOrder(Workbook workbook, String batchType, String str, SessionStaff sessionStaff) {
+	public Map<String, Object> readExcel4NewOrder(final Workbook workbook, final String batchType, String str, final SessionStaff sessionStaff) {
 		
 		String message = "";
 		String code = "-1";
@@ -209,7 +214,7 @@ public class BatchBmoImpl implements BatchBmo {
 	 * 批开活卡解析Excel(多线程)
 	 * @author ZhangYu 2016-04-10
 	 */
-	public Map<String, Object> readExcel4HKUseThreads(Workbook workbook, String batchType) {
+	public Map<String, Object> readExcel4HKUseThreads(final Workbook workbook, final String batchType) {
 		
 		int threadNum = 1;//启用多线程的数量
 		CountDownLatch countDownLatch = new CountDownLatch(threadNum);//这个用作使线程同步执行，所有由自己发起的线程执行结束后才开始执行后面的任务
@@ -242,7 +247,7 @@ public class BatchBmoImpl implements BatchBmo {
 	 * 批开活卡解析Excel(单线程)
 	 * @author ZhangYu 2016-03-10
 	 */
-	public Map<String, Object> readExcel4HK(Workbook workbook, String batchType) {
+	public Map<String, Object> readExcel4HK(final Workbook workbook, final String batchType) {
 		
 		String message = "";
 		String code = "-1";
@@ -366,7 +371,7 @@ public class BatchBmoImpl implements BatchBmo {
 	 * @param workbook
 	 * @return
 	 */
-	public Map<String, Object> readExcel4Common(Workbook workbook) {
+	public Map<String, Object> readExcel4Common(final Workbook workbook) {
 		
 		String message = "";
 		String code = "-1";
@@ -477,7 +482,7 @@ public class BatchBmoImpl implements BatchBmo {
 	 * @param workbook
 	 * @return
 	 */
-	public Map<String, Object> readExcel4ExtendCust(Workbook workbook) {
+	public Map<String, Object> readExcel4ExtendCust(final Workbook workbook) {
 		String message="";
 		String code="-1";
 		Map<String,Object> returnMap=new HashMap<String,Object>();
@@ -741,7 +746,7 @@ public class BatchBmoImpl implements BatchBmo {
 	 * @return returnMap
 	 * @author ZhangYu 2016-03-31
 	 */
-	public Map<String, Object> readExcelBatchChange(Workbook workbook, String batchType) {
+	public Map<String, Object> readExcelBatchChange(final Workbook workbook, final String batchType) {
 		
 		String message = "";
 		String code = "-1";
@@ -854,6 +859,112 @@ public class BatchBmoImpl implements BatchBmo {
 		return returnMap;
 	}
 	
+	/* @see com.al.lte.portal.bmo.crm.BatchBmo#readExcel4EcsBatch(org.apache.poi.ss.usermodel.Workbook, java.lang.String)
+	 * 批量终端领用(16)、批量终端领用回退(17)、批量终端销售(18)Excel解析
+	 * @param workbook
+	 * @param batchType
+	 * @return returnMap
+	 * @author ZhangYu 2016-04-21
+	 */
+	public Map<String, Object> readExcel4EcsBatch(final Workbook workbook, final String batchType) {
+		
+		String message = "";
+		String code = "-1";
+		final int columns = 1;//在批量终端领用、批量终端领用回退、批量终端销售Excel中共有1列数据
+		
+		Map<String,Object> returnMap=new HashMap<String,Object>();
+		StringBuffer errorData = new StringBuffer();//封装错误信息
+		Set<Object> instCodeSets = new TreeSet<Object>();//终端串码集合，用于去重校验
+		
+		Cell cell = null;//这个一个单元格
+		String cellValue = "";//单元格的值
+		boolean cellIsNull = true;//用来跳过没有数据的空行
+		Row row = null;//这是Excel的一行
+		Cell cellTemp = null;//一个单元格
+		Sheet sheet = null;//一个表单
+		int totalRows = 0;//Excel下一个表单的总行数
+		int k = 0;
+		int j = 0;
+		
+		/**
+		 * *******尽量不要将上面的变量定义到循环体里面，当Excel数据上W条时，会引起内存溢出同时也不便使用多线程************************
+		 */
+		
+		// 封装Excel的列名称，用于返回错误提示信息时告知用户是哪一列
+		Map<Integer, Object> errorData2ShowUser = new HashMap<Integer, Object>() {
+			private static final long serialVersionUID = 1L;
+			{
+				put(0, "终端串码");
+			}
+		};
+		
+		for (int sheetIndex = 0; sheetIndex < workbook.getNumberOfSheets(); sheetIndex++) {
+			// 得到一个sheet
+			sheet = workbook.getSheetAt(sheetIndex);
+			// 得到Excel的行数
+			totalRows = sheet.getPhysicalNumberOfRows();
+			if (totalRows > 1) {
+				for (int i = 1; i < totalRows; i++) {
+					row = sheet.getRow(i);
+					if (null != row) {
+						//判断该行的每一列是否为空
+						cellIsNull = true;
+						k = 0;
+						for (; k < columns; k++) {
+							cellTemp = row.getCell(k);
+							if (null != cellTemp) {
+								cellValue = checkExcelCellValue(cellTemp);
+								if (cellValue != null && !cellValue.equals("") && !cellValue.equals("null")) {
+									cellIsNull = false;//如果当前行的每一列不为空，则遍历，否则跳过该行
+								}
+							}
+						}
+						//如果该行每列为空，则跳过该行
+						if (cellIsNull) {
+							continue;
+						}
+						
+						//开始循环遍历当前行的每一列数据
+						j = 0;
+						for(; j < columns; j++){
+							cell = row.getCell(j);
+							if (cell != null) {
+								cellValue = this.checkExcelCellValue(cell);
+								if (cellValue == null && "".equals(cellValue)) {
+									errorData.append("<br/>【第" + (i + 1) + "行,第" + (j + 1) + "列】" + errorData2ShowUser.get(j) + "单元格为空或单元格式不正确");
+									break;
+								} else {
+									if (!instCodeSets.add(cellValue)) {
+										errorData.append("<br/>" + errorData2ShowUser.get(j) + "【" + cellValue + "】重复，请检查");
+										break;
+									}
+								}
+							}else{
+								errorData.append("<br/>【第" + (i + 1) + "行,第" + (j + 1) + "列】" + errorData2ShowUser.get(j) + "单元格为空或单元格式不正确");
+								break;
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		if(instCodeSets.size() > 10000){
+			errorData.append("<br/>导入有效的总记录不能超过10000条（实际有效总记录数为" + instCodeSets.size() + "条）");
+		}
+		
+		if("".equals(errorData.toString())){
+			code = "0";
+		}
+		
+		returnMap.put("errorData", errorData.toString());
+		returnMap.put("code", code);
+		returnMap.put("message", message);
+		returnMap.put("totalDataSize", instCodeSets.size());
+		
+		return returnMap;
+	}
+
 	/**
 	 * 进度查询下的导入Excel方法<br/>
 	 * 该方法将查询该批次下的所有记录，并以Excel文件形式导出
@@ -963,15 +1074,150 @@ public class BatchBmoImpl implements BatchBmo {
 		}
 	}
 	
+	public void exportExcelEcs(String title, String[] headers, List<Map<String, Object>> dataList, OutputStream outputStream) throws BusinessException {
+		//定义工作簿
+		HSSFWorkbook workbook = new HSSFWorkbook();
+		//定义表单
+		HSSFSheet sheet = workbook.createSheet(title);
+		//设置表格默认列宽度
+		sheet.setDefaultColumnWidth(20);
+		//设置标题样式
+		HSSFCellStyle headersStyle = workbook.createCellStyle();
+		headersStyle.setFillForegroundColor(HSSFColor.SEA_GREEN.index);
+		headersStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+		headersStyle.setBorderBottom(HSSFCellStyle.BORDER_THIN);
+		headersStyle.setBorderLeft(HSSFCellStyle.BORDER_THIN);
+		headersStyle.setBorderRight(HSSFCellStyle.BORDER_THIN);
+		headersStyle.setBorderTop(HSSFCellStyle.BORDER_THIN);
+		headersStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+		//字体
+		HSSFFont headersFont = workbook.createFont();
+		headersFont.setColor(HSSFColor.BLACK.index);
+		headersFont.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
+		//把字体应用到当前的样式
+		headersStyle.setFont(headersFont);
+		//设置内容样式
+		HSSFCellStyle contentStyle = workbook.createCellStyle();
+		contentStyle.setFillForegroundColor(HSSFColor.LIGHT_YELLOW.index);
+		contentStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+		contentStyle.setBorderBottom(HSSFCellStyle.BORDER_THIN);
+		contentStyle.setBorderLeft(HSSFCellStyle.BORDER_THIN);
+		contentStyle.setBorderRight(HSSFCellStyle.BORDER_THIN);
+		contentStyle.setBorderTop(HSSFCellStyle.BORDER_THIN);
+		contentStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+		contentStyle.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);
+		//生成字体
+		HSSFFont contentFont = workbook.createFont();
+		contentFont.setBoldweight(HSSFFont.BOLDWEIGHT_NORMAL);
+		//把字体应用到当前的样式
+		contentStyle.setFont(contentFont);
+		//产生表格标题行
+		HSSFRow row = sheet.createRow(0);
+		for(int i = 0; i < headers.length; i++){
+			HSSFCell cell = row.createCell(i);
+			cell.setCellStyle(headersStyle);
+			cell.setCellValue(new HSSFRichTextString(headers[i]));
+		}
+		//填充表格数据内容
+		for (int i = 0; i < dataList.size(); i++) {
+			Map<String,Object> map = (Map<String, Object>) dataList.get(i);
+			row = sheet.createRow(i+1);
+			int j = 0;
+			row.createCell(j++).setCellValue(null == map.get("STORE_NAME") ? "" : map.get("STORE_NAME").toString());
+			row.createCell(j++).setCellValue(null == map.get("AREA_NAME") ? "" : map.get("AREA_NAME").toString());
+			row.createCell(j++).setCellValue(null == map.get("STATUS_NAME") ? "" : map.get("STATUS_NAME").toString());
+			row.createCell(j++).setCellValue(null == map.get("CREATE_DATE") ? "" : map.get("CREATE_DATE").toString());		
+			row.createCell(j++).setCellValue(map.get("UPDATE_DATE") == null ? "" : map.get("UPDATE_DATE").toString());
+			row.createCell(j++).setCellValue(map.get("LOG_DESC") == null ? "" : map.get("LOG_DESC").toString());
+			row.createCell(j++).setCellValue(map.get("REMARK") == null ? "" : map.get("REMARK").toString());
+		}
+			
+		try {
+			workbook.write(outputStream);
+		} catch (IOException e) {
+			throw new BusinessException(ErrorCode.BATCH_EXPORTEXCEL_ERROR, null, null, e);
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	public void exportExcelUtil(String title, String[] headers, List<Map<String, Object>> dataList, OutputStream outputStream, Map<Integer, Object> transferInfo) throws BusinessException {
+		//定义工作簿
+		HSSFWorkbook workbook = new HSSFWorkbook();
+		//定义表单
+		HSSFSheet sheet = workbook.createSheet(title);
+		//设置表格默认列宽度
+		sheet.setDefaultColumnWidth(20);
+		//设置标题样式
+		HSSFCellStyle headersStyle = workbook.createCellStyle();
+		headersStyle.setFillForegroundColor(HSSFColor.SEA_GREEN.index);
+		headersStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+		headersStyle.setBorderBottom(HSSFCellStyle.BORDER_THIN);
+		headersStyle.setBorderLeft(HSSFCellStyle.BORDER_THIN);
+		headersStyle.setBorderRight(HSSFCellStyle.BORDER_THIN);
+		headersStyle.setBorderTop(HSSFCellStyle.BORDER_THIN);
+		headersStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+		//字体
+		HSSFFont headersFont = workbook.createFont();
+		headersFont.setColor(HSSFColor.BLACK.index);
+		headersFont.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
+		//把字体应用到当前的样式
+		headersStyle.setFont(headersFont);
+		//设置内容样式
+		HSSFCellStyle contentStyle = workbook.createCellStyle();
+		contentStyle.setFillForegroundColor(HSSFColor.LIGHT_YELLOW.index);
+		contentStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+		contentStyle.setBorderBottom(HSSFCellStyle.BORDER_THIN);
+		contentStyle.setBorderLeft(HSSFCellStyle.BORDER_THIN);
+		contentStyle.setBorderRight(HSSFCellStyle.BORDER_THIN);
+		contentStyle.setBorderTop(HSSFCellStyle.BORDER_THIN);
+		contentStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+		contentStyle.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);
+		//生成字体
+		HSSFFont contentFont = workbook.createFont();
+		contentFont.setBoldweight(HSSFFont.BOLDWEIGHT_NORMAL);
+		//把字体应用到当前的样式
+		contentStyle.setFont(contentFont);
+		//产生表格标题行
+		HSSFRow rowOfExcel = sheet.createRow(0);
+		for(int i = 0; i < headers.length; i++){
+			HSSFCell cell = rowOfExcel.createCell(i);
+			cell.setCellStyle(headersStyle);
+			cell.setCellValue(new HSSFRichTextString(headers[i]));
+		}
+		//填充表格数据内容
+		
+		for (int i = 0; i < dataList.size(); i++) {
+			Map<String,Object> dataMap = (Map<String, Object>) dataList.get(i);
+			Set<String> keySet = dataMap.keySet();
+			rowOfExcel = sheet.createRow(i+1);
+			int k = 0;
+			for(String key : keySet){
+				if(transferInfo != null && transferInfo.containsKey(key)){
+					Map<String, Object> transferInfoMap = (Map<String, Object>) transferInfo.get(key);
+					String infoStr = transferInfoMap.get(dataMap.get(key)).toString();
+					rowOfExcel.createCell(k++).setCellValue(null == infoStr ? "" : infoStr);
+				} else{
+					rowOfExcel.createCell(k++).setCellValue(null == dataMap.get(key) ? "" : dataMap.get(key).toString());
+				}			
+			}		
+		}
+			
+		try {
+			workbook.write(outputStream);
+		} catch (IOException e) {
+			throw new BusinessException(ErrorCode.BATCH_EXPORTEXCEL_ERROR, null, null, e);
+		}
+	}
+	
 	/**
 	 * 文件上传成功通知服务<br/>
 	 * 批量导入的Excel文件上传成功后，调后台接口，完成两件事：1.通知后台(SO)文件上传完成；2.从后台获取批次号(groupId)
 	 * @param requestParamMap
-	 * @return
-	 * @author ZhangYu 2016-03-11
+	 * @return resultMap
 	 * @throws Exception 
 	 * @throws IOException 
-	 * @throws InterfaceException 
+	 * @throws InterfaceException
+	 * @author ZhangYu 2016-03-11
 	 */
 	@SuppressWarnings("unchecked")
 	public Map<String, Object> getGroupIDfromSOAfterUpload(Map<String, Object> requestParamMap, SessionStaff sessionStaff) throws BusinessException, InterfaceException, IOException, Exception{
@@ -993,7 +1239,55 @@ public class BatchBmoImpl implements BatchBmo {
 		}	
 		return resultMap;
 	}
+
+	/**
+	 * 文件上传成功通知服务<br/>
+	 * 批量导入的Excel文件上传成功后，调资源(ECS)接口，完成两件事：1.通知资源文件上传完成；2.从资源获取批次号(groupId)
+	 * @param requestParamMap
+	 * @return resultMap
+	 * @throws Exception 
+	 * @throws IOException 
+	 * @throws InterfaceException
+	 * @author ZhangYu 2016-04-21
+	 * @see com.al.lte.portal.bmo.crm.BatchBmo#getEcsNoticedAfterUpload(java.util.Map, java.lang.String, com.al.lte.portal.model.SessionStaff)
+	 */
+	public Map<String, Object> getEcsNoticedAfterUpload(Map<String, Object> requestParamMap, String batchType, SessionStaff sessionStaff) throws InterfaceException, IOException, Exception {
+		
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		String portalServiceCode = null;
+		
+		if(SysConstant.ECSBATCHRECEIVE.equals(batchType)){
+			//批量终端领用接口
+			portalServiceCode = PortalServiceCode.INTF_BATCH_ECSBATCHRECEIVE;
+		} else if(SysConstant.ECSBATCHBACK.equals(batchType)){
+			//批量终端领用回退接口
+			portalServiceCode = PortalServiceCode.INTF_BATCH_ECSBATCHBACK;
+		} else if(SysConstant.ECSBATCHSALE.equals(batchType)){
+			//批量终端销售接口
+			portalServiceCode = PortalServiceCode.INTF_BATCH_ECSBATCHSALE;
+		} else{
+			throw new Exception("批量业务受理类型错误[batchType="+batchType+"]");
+		}
+		
+		DataBus db = InterfaceClient.callService(requestParamMap, portalServiceCode, null, sessionStaff);
+
+		try{
+			if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db.getResultCode()))) {
+				resultMap = (Map<String, Object>)db.getReturnlmap();
+				resultMap.put("code", ResultCode.R_SUCCESS);
+			} else {
+				resultMap.put("code",  ResultCode.R_FAIL);
+				resultMap.put("msg", db.getResultMsg());
+			}
+		}catch(Exception e){
+			log.error("营销资源的" + portalServiceCode + "服务返回的数据异常", e);
+			throw new BusinessException(this.getErrorCode2Ecs(batchType), requestParamMap, db.getReturnlmap(), e);
+		}
+		
+		return resultMap;
+	}
 	
+
 	/**
 	 * 0--批开活卡<br/>
 	 * 1--批量新装<br/>
@@ -1141,8 +1435,8 @@ public class BatchBmoImpl implements BatchBmo {
 	 * @author ZhangYu
 	 */
 	protected boolean checkAccessNbrReg(String cellValue){
-//		return Pattern.matches("1\\d{10}", cellValue);
-		return Pattern.matches("^(149|133|153|173|177|180|181|189)\\d{8}$", cellValue);
+//		"^(149|133|153|173|177|180|181|189)\\d{8}$"
+		return Pattern.matches(this.ltePhoneHeadRegExp, cellValue);
 		
 	}
 	
@@ -1170,9 +1464,61 @@ public class BatchBmoImpl implements BatchBmo {
 			break;
 		}*/
 		return Pattern.matches("^[0-9]+(.[0-9]{1,2})?$", cellValue);
-		
 	}
 	
+	/**
+	 * 批量终端领用、批量终端领用回退、批量终端销售拼装参数
+	 * @param batchType
+	 * @param fromRepositoryID
+	 * @param destRepositoryID
+	 * @param destStatusCd
+	 * @return resultMap
+	 */
+	public Map<String, Object> getParam2Ecs(String batchType, String fromRepositoryID, String destRepositoryID, String destStatusCd){
+		
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		
+		if (SysConstant.ECSBATCHRECEIVE.equals(batchType)) {// 批量终端领用
+			if(!(destRepositoryID == null || "".equals(destRepositoryID))){
+				resultMap.put("toStoreId", destRepositoryID);
+			}
+		} else if(SysConstant.ECSBATCHBACK.equals(batchType)) {// 批量终端领用回退
+			if(!(fromRepositoryID == null || "".equals(fromRepositoryID))){
+				resultMap.put("fromStoreId", fromRepositoryID);
+			}
+		} else if(SysConstant.ECSBATCHSALE.equals(batchType)) {// 批量终端销售
+			if(fromRepositoryID == null || "".equals(fromRepositoryID)){
+			} else if(destStatusCd == null || "".equals(destStatusCd)){
+			} else{
+				resultMap.put("fromStoreId", fromRepositoryID);
+				resultMap.put("toStatusCd", destStatusCd);
+			}
+		}
+		
+		resultMap.put("batchType", batchType);
+		
+		return resultMap;
+	}
+	
+	/**
+	 * 批量终端领用、批量终端领用回退、批量终端销售获取错误编码ErrorCode
+	 * @param batchType
+	 * @return
+	 */
+	public ErrorCode getErrorCode2Ecs(String batchType){
+		
+		ErrorCode errorCode = null;		
+		
+		if (SysConstant.ECSBATCHRECEIVE.equals(batchType)) {// 批量终端领用
+			errorCode = ErrorCode.BATCH_ECS_RECEIVE;
+		} else if(SysConstant.ECSBATCHBACK.equals(batchType)) {// 批量终端领用回退
+			errorCode = ErrorCode.BATCH_ECS_BACK;
+		} else if(SysConstant.ECSBATCHSALE.equals(batchType)) {// 批量终端销售
+			errorCode = ErrorCode.BATCH_ECS_SALE;
+		}
+		
+		return errorCode;
+	}
 	
 	/**
 	 * 批量一卡双号Excel解析
@@ -1311,5 +1657,113 @@ public class BatchBmoImpl implements BatchBmo {
 		returnMap.put("totalDataSize", BlackList.size());
 		
 		return returnMap;
+	}
+
+	/* 批量终端领用、批量终端领用回退、批量终端销售批次查询
+	 * @see com.al.lte.portal.bmo.crm.BatchBmo#queryEcsBatchOrder(java.util.Map, java.lang.String, com.al.lte.portal.model.SessionStaff)
+	 */
+	@SuppressWarnings("unchecked")
+	public Map<String, Object> queryEcsBatchOrderList(Map<String, Object> qryParamMap, String optFlowNum, SessionStaff sessionStaff) throws InterfaceException, Exception {		
+		
+		if(qryParamMap.get("mktResBatchType") == null || "".equals(qryParamMap.get("mktResBatchType"))) {
+			//ErrorCode.PORTAL_INPARAM_ERROR
+			throw new IOException("入参中缺失mktResBatchType");
+		}
+		
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		DataBus db = InterfaceClient.callService(qryParamMap, PortalServiceCode.INTF_BATCH_QRYECSBATCHORDER, optFlowNum, sessionStaff);		
+		try{
+			if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db.getResultCode()))) {//调接口成功
+				Map<String, Object> returnData = db.getReturnlmap();
+				if(returnData != null && ResultCode.R_SUCC.equals(returnData.get("resultCode"))){//数据返回正常					
+					List<Map<String, Object>> resultList = null;
+					if(returnData.get("resultList") != null){
+						resultList = (List<Map<String, Object>>) returnData.get("resultList");
+					} else{
+						resultList = new ArrayList<Map<String, Object>>();
+					}
+					resultMap.put("resultList", resultList);
+					resultMap.put("totalResultNum", returnData.get("totalResultNum"));
+					resultMap.put("code", ResultCode.R_SUCCESS);
+				}
+			} else{
+				resultMap.put("code",  ResultCode.R_FAIL);
+				resultMap.put("msg", db.getResultMsg());
+			}
+		}catch(Exception e){
+			log.error("资源营销的SRHttpServiceWeb/service/EcsTerminalService/queryEcsBatchInfo服务返回数据异常", e);
+			throw new BusinessException(ErrorCode.BATCH_ECS_QUERY, qryParamMap, db.getReturnlmap(), e);
+		}	
+		return resultMap;
+	}
+
+	/*批量终端领用、批量终端领用回退、批量终端销售批次详情查询
+	 * @see com.al.lte.portal.bmo.crm.BatchBmo#queryEcsBatchOrderDetail(java.util.Map, java.lang.String, com.al.lte.portal.model.SessionStaff)
+	 */
+	@SuppressWarnings("unchecked")
+	public Map<String, Object> queryEcsBatchOrderDetailList(Map<String, Object> qryParamMap, String optFlowNum, SessionStaff sessionStaff) throws BusinessException, InterfaceException, Exception {
+		
+		if(qryParamMap.get("batchId") == null || "".equals(qryParamMap.get("batchId"))) {
+			//ErrorCode.PORTAL_INPARAM_ERROR
+			throw new IOException("入参中缺失batchId");
+		}
+		
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		DataBus db = InterfaceClient.callService(qryParamMap, PortalServiceCode.INTF_BATCH_QRYECSBATCHORDERDETAIL, optFlowNum, sessionStaff);		
+		try{
+			if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db.getResultCode()))) {//调接口成功
+				Map<String, Object> returnData = db.getReturnlmap();
+				if(returnData != null && ResultCode.R_SUCC.equals(returnData.get("resultCode"))){//数据返回正常					
+					List<Map<String, Object>> resultList = null;
+					if(returnData.get("resultList") != null){
+						resultList = (List<Map<String, Object>>) returnData.get("resultList");
+					} else{
+						resultList = new ArrayList<Map<String, Object>>();
+					}
+					resultMap.put("resultList", resultList);
+					resultMap.put("totalResultNum", returnData.get("totalResultNum"));
+					resultMap.put("code", ResultCode.R_SUCCESS);
+				}
+			} else{
+				resultMap.put("code",  ResultCode.R_EXCEPTION);
+				resultMap.put("msg", db.getResultMsg());
+			}
+		}catch(Exception e){
+			log.error("资源营销的SRHttpServiceWeb/service/EcsTerminalService/queryEcsBatchLogDetail服务返回数据异常", e);
+			throw new BusinessException(ErrorCode.BATCH_ECS_QUERYDETAIL, qryParamMap, db.getReturnlmap(), e);
+		}	
+		return resultMap;
+	}
+
+	/* 根据staffId向营销资源查询仓库列表
+	 * @see com.al.lte.portal.bmo.crm.BatchBmo#queryEcsRepositoryByStaffID(java.util.Map, java.lang.String, com.al.lte.portal.model.SessionStaff)
+	 */
+	@SuppressWarnings("unchecked")
+	public Map<String, Object> queryEcsRepositoryByStaffID(Map<String, Object> qryParamMap, String optFlowNum, SessionStaff sessionStaff) throws BusinessException, InterfaceException, Exception {
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		DataBus db = InterfaceClient.callService(qryParamMap, PortalServiceCode.INTF_BATCH_QRYECSBATCHREPOSITORY, optFlowNum, sessionStaff);		
+		try{
+			if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db.getResultCode()))) {//调接口成功
+				Map<String, Object> returnData = db.getReturnlmap();
+				if(returnData != null && ResultCode.R_SUCC.equals(returnData.get("resultCode"))){//数据返回正常					
+					List<Map<String, Object>> resultList = null;
+					if(returnData.get("resultList") != null){
+						resultList = (List<Map<String, Object>>) returnData.get("resultList");
+					} else{
+						resultList = new ArrayList<Map<String, Object>>();
+					}
+					resultMap.put("resultList", resultList);
+					resultMap.put("totalResultNum", returnData.get("totalResultNum"));
+					resultMap.put("code", ResultCode.R_SUCCESS);
+				}
+			} else{
+				resultMap.put("code",  ResultCode.R_FAIL);
+				resultMap.put("msg", db.getResultMsg());
+			}
+		}catch(Exception e){
+			log.error("资源营销的SRHttpServiceWeb/service/EcsTerminalService/queryEcsStoreByStaffId服务返回数据异常", e);
+			throw new BusinessException(ErrorCode.BATCH_ECS_REPOSITORY, qryParamMap, db.getReturnlmap(), e);
+		}	
+		return resultMap;
 	}
 }

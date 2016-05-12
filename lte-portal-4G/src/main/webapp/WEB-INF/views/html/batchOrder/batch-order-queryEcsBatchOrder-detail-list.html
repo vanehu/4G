@@ -1,0 +1,42 @@
+<#if (pageModel.list)?? &&((pageModel.list)?size>0)>
+	<table class="contract_list numberList">
+		<thead>
+			<tr>
+				<td width="15%">仓库名称</td>
+				<td width="10%">区域名称</td>
+				<td width="10%">终端状态</td>
+				<td width="10%">创建日期</td>
+				<td width="10%">更新日期</td>
+				<td width="10%">描 述</td>
+				<td width="11%">备 注</td>
+			</tr>
+		</thead>
+		<tbody>
+			<#list pageModel.list as childList>
+			<tr>
+				<td>${childList.STORE_NAME}</td>
+				<td>${childList.AREA_NAME}</td>
+				<td>${childList.STATUS_NAME}</td>
+				<td>${childList.CREATE_DATE}</td>
+				<td>${childList.UPDATE_DATE}</td>
+				<td>${childList.LOG_DESC}</td>
+				<td>${childList.REMARK}</td>
+			</tr>
+			</#list>
+		</tbody>
+	</table>
+	
+	<!--页码-->
+	<@portal.modelPagination pageModel 5 "order.batch.queryEcsBatchOrderDetailList"/>
+	<!--页码 end-->
+	
+	<script src="${contextPath}/js/our-js/ec.pagination.js?${jsversion}" type="text/javascript"></script>
+	
+<#else>
+	<div class="no_search">
+		<div class="h1">
+			<img style="vertical-align: middle"
+				src="${contextPath}/image/common/query_search.gif" />&nbsp;&nbsp;没有找到相关的记录，请尝试其他筛选条件。
+		</div>
+	</div>
+</#if>

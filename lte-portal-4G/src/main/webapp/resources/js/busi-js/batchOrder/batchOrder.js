@@ -5,105 +5,177 @@ order.batch = (function(){
 	};
 		
 	//导入excel
-	var _submit=function(){
-		var batchType=$("#batchType").val();
-		if(batchType==''){
+	var _submit = function(){		
+		var batchType = $("#batchType").val();		
+		if(batchType == ''){
 			$.alert("提示","种子订单受理类型不能为空!");
 			return;
+		}		
+		if(batchType == '10' || batchType == '11' || batchType == '12'|| batchType == '13' || batchType == '14'|| batchType == '15'){						
+			//批量订购裸终端、批量换档、批量换卡、批量在用拆机、批量未激活拆机
+			_submitFormAjax(batchType);
+		} else if(batchType == '16' || batchType == '17' || batchType == '18'){
+			//批量终端领用、回退、销售
+			_submitEcsBatchAjax(batchType);
+		}else{
+			//其他
+			_submitForm(batchType);
 		}
-		//批量订购裸终端、批量换档、批量换卡、批量在用拆机、批量未激活拆机
-		if(batchType == '10' || batchType == '11' || batchType == '12'|| batchType == '13' || batchType == '14'|| batchType == '15'){
-			var upFile = $.trim($("#upFile").val());
-			var reserveDt = $.trim($("#reserveDt").val());
-			if(reserveDt == ''){
-				$('#alertInfo').html("请选择预约时间!");
+	};
+	
+	//以ajax方式提交表单
+	var _submitFormAjax = function(batchType){
+		var upFile = $.trim($("#upFile").val());
+		if (upFile === "") {
+			$('#alertInfo').html("请导入Excel文件！");
+			return;
+		}
+		var reserveDt = $.trim($("#reserveDt").val());
+		if(reserveDt == ''){
+			$('#alertInfo').html("请选择预约时间!");
+			return;
+		}
+		if(batchType == '13'){
+			var evidenceFile = $.trim($("#evidenceFile").val());
+			if (evidenceFile === "") {
+				$('#alertInfo').html("请导入黑名单证据文件！");
 				return;
-			}
-			if(batchType == '13'){
-				var evidenceFile = $.trim($("#evidenceFile").val());
-				if (evidenceFile === "") {
-					$('#alertInfo').html("请导入黑名单证据文件！");
+			}else{
+				var suffix = evidenceFile.substr(evidenceFile.lastIndexOf(".") + 1);
+				//支持word、pdf、图片格式
+				if(suffix != "doc" && suffix != "docx" && suffix != "pdf" && suffix != "png" && suffix != "gif" && suffix != "jpeg" && suffix != "jpg"){
+					$('#alertInfo').html("导入黑名单证据文件类型错误，黑名单证据文件类型支持word，pdf,图片类型！");
 					return;
-				}else{
-					var suffix = evidenceFile.substr(evidenceFile.lastIndexOf(".") + 1);
-					//支持word、pdf、图片格式
-					if(suffix != "doc" && suffix != "docx" && suffix != "pdf" && suffix != "png" && suffix != "gif" && suffix != "jpeg" && suffix != "jpg"){
-						$('#alertInfo').html("导入黑名单证据文件类型错误，黑名单证据文件类型支持word，pdf,图片类型！");
-						return;
-					};
-				}
+				};
 			}
-			if (upFile === "") {
-				$('#alertInfo').html("请导入Excel文件！");
-				return;
+		}
+		file.suffix = upFile.substr(upFile.lastIndexOf(".") + 1);
+		if (file.suffix == "xls" || file.suffix == "xlsx") {
+			var options = {
+				type : 'post',
+				dataType : 'text',
+				url : 'importBatchData',
+				beforeSubmit : function() {
+					$.ecOverlay("<strong>正在上传文件,请稍等...</strong>");
+				},
+				success : function(data) {
+					$.unecOverlay();
+					$('#detailInfo').html(data);
+					$('#alertInfo').empty();// 提交成功后清空原有的提示信息
+					var file = $("#upFile");
+					file.after(file.clone().val(""));
+					file.remove();// 提交成功后清空文件
+					if (batchType == '13') {
+						var evidenceFile = $("#evidenceFile");
+						evidenceFile.after(evidenceFile.clone().val(""));
+						evidenceFile.remove();
+					}
+				},
+				error : function(data, status, e) {
+					$.unecOverlay();
+					$.alert("提示", "请求可能发生异常，请稍后再试！");
+				}
+			};
+			$('#batchOrderChangeForm').ajaxSubmit(options);
+		} else {
+			$('#alertInfo').html("导入文件类型错误！");
+			return;
+		}
+	};
+	//表单提交
+	var _submitForm = function(batchType){
+		var upFile = $.trim($("#upFile").val());
+		var olId = $.trim($("#olId").val());
+		var reserveDt = $.trim($("#reserveDt").val());
+		if (olId === "") {
+			$.alert("提示","购物车流水不能为空！");
+			return;
+		}
+		if(reserveDt==''){
+			$.alert("提示","请选择预约时间!");
+			return;
+		}
+		if (upFile === "") {
+			$.alert("提示","请选择要导入的Excel文件！");
+			return;
+		} else {
+			file.suffix = upFile.substr(upFile.lastIndexOf(".") + 1);
+			if (file.suffix == "xls" || file.suffix == "xlsx") {
+				$("#batchUimForm").submit();
 			} else {
-				file.suffix = upFile.substr(upFile.lastIndexOf(".") + 1);
-				if (file.suffix == "xls" || file.suffix == "xlsx") {
-					var options  = {
-						type	: 'post',
-			            dataType: 'text',
-			            url		: 'importBatchData',
-			            beforeSubmit:function(){
-								$.ecOverlay("<strong>正在提交,请稍等...</strong>");
-						},							
-			            success:function(data){
-							$.unecOverlay();
-							$('#detailInfo').html(data);
-							$('#alertInfo').empty();//提交成功后清空原有的提示信息
-							var file = $("#upFile");
-							file.after(file.clone().val(""));
-							file.remove();//提交成功后清空文件
-							if(batchType == '13'){
-							    var evidenceFile = $("#evidenceFile");
-							    evidenceFile.after(evidenceFile.clone().val(""));
-							    evidenceFile.remove();
-							}
-						},
-						error: function(data, status, e){
-							$.unecOverlay();
-							$.alert("提示","请求可能发生异常，请稍后再试！");
-						}
-					};
-					$('#batchOrderChangeForm').ajaxSubmit(options);
-				} else {
-					$('#alertInfo').html("导入文件类型错误！");
-					return;
-				}
-			}
-		} else{
-			var upFile = $.trim($("#upFile").val());
-			var olId = $.trim($("#olId").val());
-			var reserveDt = $.trim($("#reserveDt").val());
-			if (olId === "") {
-				$.alert("提示","购物车流水不能为空！");
+				$.alert("提示","导入文件类型错误！");
 				return;
-			}
-			if(reserveDt==''){
-				$.alert("提示","请选择预约时间!");
-				return;
-			}
-			if (upFile === "") {
-				$.alert("提示","请选择要导入的Excel文件！");
-				return;
-			} else {
-				file.suffix = upFile.substr(upFile.lastIndexOf(".") + 1);
-				if (file.suffix == "xls" || file.suffix == "xlsx") {
-					$("#batchUimForm").submit();
-				} else {
-					$.alert("提示","导入文件类型错误！");
-					return;
-				}
 			}
 		}
 	};
+	//以ajax方式提交表单
+	var _submitEcsBatchAjax =function(batchType){
+		var upFile = $.trim($("#upFile").val());
+		if (upFile === "") {
+			$('#alertInfo').html("请导入Excel文件！");
+			return;
+		}
+		if(batchType == '16'){//批量终端领用
+			var destRepositoryId = $("#destRepositoryId").val();
+			if(destRepositoryId == null || destRepositoryId == "" || destRepositoryId == "undefined"){
+				$('#alertInfo').html("目标仓库(destRepositoryID)为空，无法继续受理，请刷新页面或稍后重试！");
+				return;
+			}
+		}else if(batchType == '17'){//批量终端领用回退
+			var fromRepositoryId = $("#fromRepositoryId").val();
+			if(fromRepositoryId == null || fromRepositoryId == "" || fromRepositoryId == "undefined"){
+				$('#alertInfo').html("终端所在仓库(fromRepositoryId)为空，无法继续受理，请选择仓库后再进行受理！");
+				return;
+			}
+		}else if(batchType == '18'){//批量终端领用回退
+			var fromRepositoryId = $("#fromRepositoryId").val();	
+			var destStatusCd = $("#destStatusCd").val();
+			if(fromRepositoryId == null || fromRepositoryId == "" || fromRepositoryId == "undefined"){
+				$('#alertInfo').html("终端所在仓库(fromRepositoryId)为空，无法继续受理，请选择仓库后再进行受理！");
+				return;
+			}else if(destStatusCd == null || destStatusCd == "" || destStatusCd == "undefined"){
+				$('#alertInfo').html("销售状态(destStatusCd)为空，无法继续受理，请选择仓库后再进行受理！");
+				return;	
+			}
+		}
+		
+		file.suffix = upFile.substr(upFile.lastIndexOf(".") + 1);
+		if (file.suffix == "xls" || file.suffix == "xlsx") {
+			var options = {
+				type : 'post',
+				dataType : 'text',
+				url : 'ecsBatchfileImport',
+				beforeSubmit : function() {
+					$.ecOverlay("<strong>正在上传文件,请稍等...</strong>");
+				},
+				success : function(data) {
+					$.unecOverlay();
+					$('#detailInfo').html(data);
+					$('#alertInfo').empty();// 提交成功后清空原有的提示信息
+					var file = $("#upFile");
+					file.after(file.clone().val(""));
+					file.remove();// 提交成功后清空文件
+				},
+				error : function(data, status, e) {
+					$.unecOverlay();
+					$.alert("提示", "请求可能发生异常，请稍后再试！");
+				}
+			};
+			$('#batchEcsForm').ajaxSubmit(options);
+		} else {
+			$('#alertInfo').html("导入文件类型错误！");
+			return;
+		}
+	};
+	
 	//弹出导入窗口
 	var _barchImport=function(olId,olnumber,areaId){
 		if($("#h2_tit").attr("value") == 1){//批量新装,需要客户定位
-		var custId = OrderInfo.cust.custId;
-		if(OrderInfo.cust==undefined || custId==undefined || custId==""){
-			$.alert("提示","在导入Excel模板前请先进行客户定位！");
-			return;
-		}
+			var custId = OrderInfo.cust.custId;
+			if(OrderInfo.cust==undefined || custId==undefined || custId==""){
+				$.alert("提示","在导入Excel模板前请先进行客户定位！");
+				return;
+			}
 		}
 		var templateType=$("#templateType").val();
 		var html='<iframe src="'+contextPath+'/order/batchOrder/batchForm?olId='+olId+'&olseq='+olnumber+'&type='+templateType+'&areaId='+areaId+'" width="650" height="270" style="border:0px"></iframe>';
@@ -436,12 +508,16 @@ order.batch = (function(){
 	// 表单重置
 	var _reset=function(){
 		var batchType = $("#batchType").val();
-//		$("#upFile").val("");
+		$("#upFile").val("");
 		$("#upFile").empty();
-		if(batchType== "10" || batchType == "11" || batchType == "12" || batchType == "14" || batchType == "15"){
+
+		$('#alertInfo').empty();
+		$('#detailInfo').empty();
+
+		/*if(batchType== "10" || batchType == "11" || batchType == "12" || batchType == "14" || batchType == "15"){
 			$('#alertInfo').empty();
 			$('#detailInfo').empty();
-		}
+		}*/
 	};
 	
 	var _download=function(batType){
@@ -465,6 +541,8 @@ order.batch = (function(){
 			location.href=contextPath+"/file/BATCHCHANGEUIM.xls";
 		}else if(batType=='13'){//批量一卡双号黑名单
 			location.href=contextPath+"/file/BATCHBLACKLIST.xls";
+		}else if(batType=='16' || batType=='17' || batType=='18'){//批量终端领用、回退、销售
+			location.href=contextPath+"/file/BATCHECS.xls";
 		}else{
 			$.alert("提示","未找到批量类型所对应的模板文件，请检查！");
 			return;
@@ -561,23 +639,6 @@ order.batch = (function(){
 				}
 			}
 		});
-		//判断执行新旧代码--集约批量预开通优化
-		/*param = {"queryFlag":"batchOrderQry"};
-		$.callServiceAsJson(contextPath+"/order/batchOrder/batchOrderFlag",param,{
-			"done" : function(response){
-				if(response.code==0){
-					var batchOrderQry = response.data;
-					CONST.BATCHORDER_FLAG.BATCHORDER_QRY_FLAG = "Y";
-					
-				}else if(response.code==-2){
-					$.alertM(response.data);
-					return;
-				}else{
-					$.alert("提示","请求异常，请稍后再试！");
-					return;
-				}
-			}
-		});*/
 		//判断执行新旧代码--批量受理查询增加权限优化
 		param = {"queryFlag":"batchOrderAuth"};
 		$.callServiceAsJson(contextPath+"/order/batchOrder/batchOrderFlag",param,{
@@ -614,10 +675,7 @@ order.batch = (function(){
 		$(a).parent().find("p").slideToggle();
 	};
 	
-	/**
-	 * 批量受理结果查询，某一批次的具体处理状态："RC">资源返销 "F">建档算费失败 "X">生成购物车失败 "S">生成购物车成功 "C">建档算费成功 "Q">导入成功
-	 * @author ZhangYu
-	 */
+	//批量受理结果查询，某一批次的具体处理状态："RC">资源返销 "F">建档算费失败 "X">生成购物车失败 "S">生成购物车成功 "C">建档算费成功 "Q">导入成功
 	var _batchStatusQuery = function(groupId){
 		if(groupId == null || groupId == "" || groupId == undefined){
 			$.alert("提示","批次号为空，无法进行查询，请刷新页面或稍后再试！");
@@ -652,7 +710,6 @@ order.batch = (function(){
 	 * 批次信息查询下的“取消”
 	 * dealFlag:标志位，取值为“cancel（取消）”或"update（修改）"
 	 * 注意：groupStatusCd不可去掉，虽然入参中没有该字段，但由于旧有批次没有“批次状态”这一概念，且这样的批次不可取消，故需校验
-	 * @author ZhangYu
 	 */
 	var _batchCancel = function(groupId, groupStatusCd) {
 		if(groupStatusCd == null || groupStatusCd == "" || groupStatusCd == undefined){
@@ -701,7 +758,6 @@ order.batch = (function(){
 	 * 批次信息查询下的“修改”
 	 * dealFlag:标志位，取值为“cancel（取消）”或"update（修改）"
 	 * 注意：groupStatusCd不可去掉，虽然入参中没有该字段，但由于旧有批次没有“批次状态”这一概念，且这样的批次不可取消，故需校验
-	 * @author ZhangYu
 	 */
 	var _batchUpdateMain = function(groupId, reserveDt, groupStatusCd){
 		if(groupId == null || groupId == "" || groupId == undefined){
@@ -746,7 +802,6 @@ order.batch = (function(){
 	/**
 	 * 批次信息查询下的“修改”，其中“修改”仅限于修改时间。批次“未处理”时，才可以修改“预约处理时间”；其他情况，不允许修改。
 	 * dealFlag:标志位，取值为“cancel（取消）”或"update（修改）"
-	 * @author ZhangYu
 	 */
 	var _batchUpdateConfirm = function(){
 
@@ -796,7 +851,6 @@ order.batch = (function(){
 	/**
 	 * 批次进度查询(获取数据列表)，
 	 * @param statusCd:受理状态(可空); orderStatus:订单状态(可空); groupId:批次号(不可空); batchType:受理类型(不可空)
-	 * @author ZhangYu
 	 */
 	var _batchProgressQueryList = function(pageIndex){
 		var groupId = $("#groupId_dialog").val();
@@ -845,20 +899,17 @@ order.batch = (function(){
 				if(totalAmount > 0){
 //					$("[id='ec-total-page']").eq($("[id='ec-total-page']").length - 1).after("<label class='marginTop4'>共"+totalAmount+"条</label>");
 					$("[id='ec-total-page']").eq(1).after("<label class='marginTop4'>共"+totalAmount+"条</label>");
-				}		
+				}				
 			},
 			fail:function(response){
 				$.unecOverlay();
 				$.alert("提示","请求可能发生异常，请稍后再试！");
 			}
-		});	
-		
-		
+		});
 	};
 	
 	/**
 	 * 批次进度查询(获取弹窗页面)，查询某一批次的具体处理情况
-	 * @author ZhangYu
 	 */
 	var _batchProgressQuery = function(groupId,batchType,pageIndex){
 		
@@ -1052,7 +1103,7 @@ order.batch = (function(){
 															+"&pageSize="+pageSize;
 		
 		$("#processQuery_action").attr("action", url);
-		$("#processQuery_action").submit();			
+		$("#processQuery_action").submit();
 	};
 	
 	var _chooseArea = function(){
@@ -1072,10 +1123,10 @@ order.batch = (function(){
 	 */
 	var _batchReprocess = function(groupId, statusCd, batchId, flag){
 		var param = {
-				"groupId"	:groupId,
-				"statusCd"	:statusCd,
-				"batchId"	:batchId,
-				"flag"		:flag
+			"groupId"	:groupId,
+			"statusCd"	:statusCd,
+			"batchId"	:batchId,
+			"flag"		:flag
 		};
 		var alertMsg = flag == '1' ? "确定取消此条记录吗？" : "确定重发此条记录吗？";
 		$.confirm("信息确认",alertMsg,{
@@ -1122,6 +1173,195 @@ order.batch = (function(){
         $("#upload_file").submit();
 	};
 	
+	//批量终端领用、回退、销售：批次查询
+	var _queryEcsBatchOrderList = function(pageIndex){
+		var batchId = $.trim($("#batchId").val());//批次号
+		var mktResBatchType = $("#mktResBatchType").val();//受理类型
+		var beginDate = $("#startDt").val();
+		var endDate = $("#endDt").val();
+
+		if(mktResBatchType == '' || mktResBatchType == null){
+			$.alert("提示","种子订单受理类型不能为空!");
+			return;
+		}
+		
+		if(batchId != null && batchId != ""){
+			if(!/^[0-9]*$/.test(batchId)){
+				$.alert("提示","批次号格式错误");
+				return;
+			}
+		} else{
+			batchId = "";
+		}		
+		
+		var param={
+			"batchId":batchId,
+			"mktResBatchType":mktResBatchType,
+			"beginDate":beginDate,
+			"endDate":endDate,
+			"pageNo":pageIndex,
+			"pageSize":"10"
+		};
+
+		var url = contextPath+"/order/batchOrder/queryEcsBatchOrderList";
+		$.callServiceAsHtml(url, param, {
+			"before":function(){
+				$.ecOverlay("<strong>正在查询中,请稍等会儿....</strong>");
+			},
+			"always":function(){
+				$.unecOverlay();
+			},
+			"done" : function(response){
+				if(!response||response.code != 0){
+					 response.data='查询失败,稍后重试';
+				}
+				$("#ecsBatchOrderlist").html(response.data);
+			},
+			fail:function(response){
+				$.unecOverlay();
+				$.alert("提示","请求可能发生异常，请稍后再试！");
+			}
+		});
+	};
+	
+	var _queryEcsBatchOrderDetailList = function(pageIndex){
+		if( batchId == null || batchId == ""){
+			$.alert("提示","批次号batchId缺失，无法进行查询，请刷新页面或稍后重试");
+		}		
+		var param={
+				"batchId":$("#batchId_dialog").val(),
+				"pageNo":pageIndex,
+				"pageSize":"10"
+		};		
+		var url = contextPath+"/order/batchOrder/queryEcsBatchOrderDetailList";
+		$.callServiceAsHtml(url, param, {
+			"before":function(){
+				$.ecOverlay("<strong>正在查询中,请稍等会儿....</strong>");
+			},
+			"always":function(){
+				$.unecOverlay();
+			},
+			"done" : function(response){
+				if(!response||response.code != 0){
+					 response.data='查询失败,稍后重试';
+				}
+				$("#queryEcsBatchOrderDetailist").html(response.data);
+			},
+			fail:function(response){
+				$.unecOverlay();
+				$.alert("提示","请求可能发生异常，请稍后再试！");
+			}
+		});	
+	};
+	
+	//批量终端领用、回退、销售：批次详情查询
+	var _queryEcsBatchOrderDetail = function(batchId, pageIndex){
+		if( batchId == null || batchId == ""){
+			$.alert("提示","批次号batchId缺失，无法进行查询，请刷新页面或稍后重试");
+		}		
+		var param={"batchId" : batchId,};		
+		var url = contextPath+"/order/batchOrder/queryEcsBatchOrderDetail";
+		$.callServiceAsHtml(url, param, {
+			"before":function(){
+				$.ecOverlay("<strong>正在查询中,请稍等会儿....</strong>");
+			},
+			"always":function(){
+				$.unecOverlay();
+			},
+			"done" : function(response){
+				if(!response||response.code != 0){
+					 response.data='查询失败,稍后重试';
+				}
+				$("#queryEcsBatchOrderDetail_dialog").html(response.data);
+				_queryEcsBatchOrderDetailList(pageIndex);
+				easyDialog.open({
+					container : "queryEcsBatchOrderDetail_dialog"
+				});
+			},
+			fail:function(response){
+				$.unecOverlay();
+				$.alert("提示","请求可能发生异常，请稍后再试！");
+			}
+		});		
+	};
+	
+	//选择仓库，弹出搜索框同时加载查询列表
+	var _chooseRepository = function(){
+		var param = {
+			"batchType"	: $("#batchType").val()
+		};
+		var url = contextPath + "/order/batchOrder/queryEcsRepository";
+		$.callServiceAsHtml(url, param, {
+			"before":function(){
+				$.ecOverlay("<strong>正在查询仓库信息,请稍等....</strong>");
+			},
+			"always":function(){
+				$.unecOverlay();
+			},
+			"done" : function(response){
+				$("#queryEcsRepository_dialog").html(response.data);
+				_chooseRepositoryList('1', null);
+				easyDialog.open({
+					container : "queryEcsRepository_dialog"
+				});
+			},
+			fail:function(response){
+				$.unecOverlay();
+				$.alert("提示","请求可能发生异常，请稍后再试！");
+			}
+		});	
+	};
+	
+	//选择仓库，搜索仓库列表
+	var _chooseRepositoryList = function(pageIndex, repositoryId){
+		var repositoryName = $("#repositoryName").val();
+		var param = {			
+				"pageNo" 	: pageIndex,
+				"pageSize" 	: "10"
+		};
+		if(repositoryId != null && repositoryId != undefined && repositoryId != ""){
+			param["parentId"] = repositoryId;
+		}
+		if(repositoryName != null && repositoryName != undefined && repositoryName != ""){
+			param["eleName"] = repositoryName;
+		}
+		var url = contextPath + "/order/batchOrder/queryEcsRepositoryList";
+		$.callServiceAsHtml(url, param, {
+			"before":function(){
+				$.ecOverlay("<strong>正在查询仓库信息,请稍等....</strong>");
+			},
+			"always":function(){
+				$.unecOverlay();
+			},
+			"done" : function(response){
+				$("#queryRepositorylist").html(response.data);
+			},
+			fail:function(response){
+				$.unecOverlay();
+				$.alert("提示","请求可能发生异常，请稍后再试！");
+			}
+		});	
+	};
+	
+	//选择仓库，确认仓库
+	var _confirmRepository = function(repositoryId, repositoryName){
+		var batchType =  $("#batchType").val();
+		if(batchType == "16"){//批量终端领用
+			$("#destRepositoryId").val(repositoryId);
+			$("#repositoryId_val").val(repositoryName);
+		} else{
+			$("#fromRepositoryId").val(repositoryId);
+			$("#repositoryId_val").val(repositoryName);
+		}	
+		easyDialog.close();
+	};
+	
+	var _ecsBatchOrderExport = function(batchId){
+		var url = contextPath + "/order/batchOrder/ecsBatchOrderExport?batchId=" + batchId;
+		$("#ecsBatchOrderExportForm").attr("action", url);
+		$("#ecsBatchOrderExportForm").submit();
+	};
+	
 	return {
 		submit 			:_submit,
 		batchOrderList	:_batchOrderList,
@@ -1136,17 +1376,24 @@ order.batch = (function(){
 		initDic			:_initDic,
 		getMoreError	:_getMoreError,
 		slideFailInfo	:_slideFailInfo,
-		batchReprocess		:_batchReprocess,			//进度查询下的“取消”和“重发”
-		chooseArea			:_chooseArea,				//批次信息查询，权限优化，增加地区选择
-		batchStatusQuery	:_batchStatusQuery,			//批量受理结果查询
-		batchCancel			:_batchCancel,				//批次信息查询下的“删除”
-		batchUpdateMain		:_batchUpdateMain,			//批次信息查询下的“修改”(弹出框)
-		batchUpdateConfirm	:_batchUpdateConfirm,		//批次信息查询下的“修改”(确认按钮)
-		batchProgressQuery	:_batchProgressQuery,		//批次信息查询下的进度查询
-		batchProgressQueryList:_batchProgressQueryList,	//批次信息查询下的进度查询(分页)
-		batchOrderQueryList	:_batchOrderQueryList,		//批次信息查询
-		exportExcel			:_exportExcel,				//导出Excel
-		downloadFile        :_downloadFile              //下载文件
+		batchReprocess				:_batchReprocess,			//进度查询下的“取消”和“重发”
+		chooseArea					:_chooseArea,				//批次信息查询，权限优化，增加地区选择
+		batchStatusQuery			:_batchStatusQuery,			//批量受理结果查询
+		batchCancel					:_batchCancel,				//批次信息查询下的“删除”
+		batchUpdateMain				:_batchUpdateMain,			//批次信息查询下的“修改”(弹出框)
+		batchUpdateConfirm			:_batchUpdateConfirm,		//批次信息查询下的“修改”(确认按钮)
+		batchProgressQuery			:_batchProgressQuery,		//批次信息查询下的进度查询
+		batchProgressQueryList		:_batchProgressQueryList,	//批次信息查询下的进度查询(分页)
+		batchOrderQueryList			:_batchOrderQueryList,		//批次信息查询
+		exportExcel					:_exportExcel,				//导出Excel
+		downloadFile        		:_downloadFile,             //下载文件
+		queryEcsBatchOrderList		:_queryEcsBatchOrderList,	//批次信息查询(批量终端领用、回退、销售)
+		queryEcsBatchOrderDetail	:_queryEcsBatchOrderDetail,	//批次详情查询(批量终端领用、回退、销售)
+		queryEcsBatchOrderDetailList:_queryEcsBatchOrderDetailList,
+		chooseRepository			:_chooseRepository,			//选择仓库，用于弹出搜索框
+		chooseRepositoryList		:_chooseRepositoryList,		//选择仓库，用于搜索仓库列表
+		confirmRepository			:_confirmRepository,		//选择仓库，确定仓库
+		ecsBatchOrderExport			:_ecsBatchOrderExport
 	};
 })();
 //初始化
@@ -1208,5 +1455,4 @@ $(function(){
 	$("#upFile").change(function(){
 		$('#alertInfo').html("");
 	});
-
 });

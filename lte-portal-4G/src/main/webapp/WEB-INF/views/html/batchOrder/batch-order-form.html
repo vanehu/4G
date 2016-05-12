@@ -90,7 +90,6 @@
 						    <span style="color: #0000FF;font-weight: bold;">异常信息：</span><br/>
 						    <span> ${errorStack.data.errData} </span><br/> 
 						    </span>
-						 
 				 		</td>
 			 		</tr>
 			 </table>
@@ -148,28 +147,32 @@
 						 </td>
 						 <td>
 						 <#if batchType=="0"><!-- 调整描述:活卡批开客户列直接填-1,删除第二行. -->
-						 	<span style="line-height:25px;">(1)仅支持上传xls、xlsx，单元格格式请设置为文本。
+						 	<span style="line-height:25px;">(1)仅支持上传xls、xlsx，单元格格式请设置为文本
 							<br/>(2)新增虚拟客户时"客户"列填写格式：-1
 							<br/>(3)预约执行时间：例如：选择0点-->导入成功后0点执行；选择23点-->导入成功后23点执行
+							<br/>(4)批量处理可能需要持续一段时间，请耐心等待...
 							</span>
 						<#elseif batchType=="1"><!-- 新装 -->
-							<span style="line-height:25px;">(1)仅支持上传xls、xlsx，单元格格式请设置为文本。
+							<span style="line-height:25px;">(1)仅支持上传xls、xlsx，单元格格式请设置为文本
 							<br/>(2)新增真实客户时"客户"列填写格式：-1/姓名/证件号码/证件类型&nbsp;<a href="javascript:order.batch.downloadIdType()"><span style="color: #0000FF;font-weight: bold;">证件类型下载</span></a>
 							<br/>(3)新增虚拟客户时"客户"列填写格式：-1
 							<br/>(4)<strong>使用人</strong>一列只能填省内客户编码，公众证件类型新装时不填，政企证件类型客户新装时必填
 							<br/>(5)预约执行时间：例如：选择0点-->导入成功后0点执行；选择23点-->导入成功后23点执行
+							<br/>(6)批量处理可能需要持续一段时间，请耐心等待...
 							</span>
 						<#elseif batchType=="9">
-							<span style="line-height:25px;">(1)仅支持上传xls、xlsx，单元格格式请设置为文本。
+							<span style="line-height:25px;">(1)仅支持上传xls、xlsx，单元格格式请设置为文本
 							<br/>(2)"产品发展人"列填写格式：产品类型@产品规格Id@发展人类型@新发展人id
 							<br/>(3)"销售品发展人"列填写格式：产品类型@销售品规格id@发展人类型@新发展人id
 							<br/>(4)产品类型：1.功能类产品2.接入类产品3.销售品类
 							<br/>(5)发展人类型：40020005.第一发展人 40020006.第二发展人  40020007.第三发展人
 							<br/>(6)预约执行时间：例如：选择0点-->导入成功后0点执行；选择23点-->导入成功后23点执行
+							<br/>(7)批量处理可能需要持续一段时间，请耐心等待...
 							</span>
 						<#else>
 							<span style="line-height:25px;">(1)仅支持上传xls、xlsx，单元格格式请设置为文本。
 							<br/>(2)预约执行时间：例如：选择0点-->导入成功后0点执行；选择23点-->导入成功后23点执行
+							<br/>(3)批量处理可能需要持续一段时间，请耐心等待...
 							</span>
 						</#if>
 						 </td>

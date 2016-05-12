@@ -591,6 +591,18 @@ public final class PortalServiceCode {
     public static final String INTF_BATCH_ORDERQUERY="biz-service/intf.batchOrderService/queryBatchOrderTemplageList";
     
     public static final String INTF_BATCH_ORDERDEL="biz-service/intf.batchOrderService/updateOrderListForCustOrderDel";
+    /**批量终端销售*/
+    public static final String INTF_BATCH_ECSBATCHSALE="res-EcsTerminalService/ecsBatchSale"; 
+    /**批量终端领用回退*/
+    public static final String INTF_BATCH_ECSBATCHBACK="res-EcsTerminalService/ecsBatchBack"; 
+    /**批量终端领用*/
+    public static final String INTF_BATCH_ECSBATCHRECEIVE="res-EcsTerminalService/ecsBatchReceive"; 
+    /**批量终端领用、批量终端领用回退、批量终端销售批次查询*/
+    public static final String INTF_BATCH_QRYECSBATCHORDER="res-EcsTerminalService/queryEcsBatchInfo"; 
+    /**批量终端领用、批量终端领用回退、批量终端销售批次详情查询*/
+    public static final String INTF_BATCH_QRYECSBATCHORDERDETAIL="res-EcsTerminalService/queryEcsBatchLogDetail"; 
+    /**批量终端领用、批量终端领用回退、批量终端销售仓库查询*/
+    public static final String INTF_BATCH_QRYECSBATCHREPOSITORY="res-EcsTerminalService/queryEcsStoreByStaffId"; 
     
     public static final String INTF_PNUIMBATCHVAL_SERVICE="res-PnPiReserveService";
     

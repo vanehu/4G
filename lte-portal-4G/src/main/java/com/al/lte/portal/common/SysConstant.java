@@ -172,6 +172,12 @@ public final class SysConstant {
     public static String BATCHDISMANTLEINUSE = "14";
     /**批量未激活拆机-15*/
     public static String BATCHDISMANTLEINACTIVE = "15";
+    /**批量终端领用-16*/
+    public static String ECSBATCHRECEIVE = "16";
+    /**批量终端领用回退-17*/
+    public static String ECSBATCHBACK = "17";
+    /**批量终端销售-18*/
+    public static String ECSBATCHSALE = "18";
     
     //是否记录接口日志 ON OFF
     public static String WRITE_LOG_FLAG = "WRITE_LOG_FLAG";
@@ -656,6 +662,9 @@ public final class SysConstant {
 			put("13", "批量一卡双号黑名单");
 			put("14", "批量在用拆机");
 			put("15", "批量未激活拆机");
+			put("16", "批量终端领用");
+			put("17", "批量终端领用回退");
+			put("18", "批量终端销售");
 		}
 	};
 }

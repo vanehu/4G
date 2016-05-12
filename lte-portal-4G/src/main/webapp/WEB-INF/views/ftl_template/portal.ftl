@@ -90,7 +90,7 @@
 	<#if (pageModel.pageNo<=1)>
 	<label><span class="pageUpGray">上一页</span></label>
 	<#else>
-	<label><span id="ec-page-prevs" class="pageUpOrange" page="${pageModel.pageNo-1}">上一页</span></label>
+	<label><span id="ec-page-prevs" class="pageUpOrange" page="${pageModel.pageNo-1}" callBack="${callBackFunc}">上一页</span></label>
 	</#if>	
 	<label>
 		<a class="pagingSelect" href="javascript:void(0);">${pageModel.pageNo}</a>
@@ -98,7 +98,7 @@
 	<#if (pageModel.list?size<pageModel.pageSize)>
 	<label><span class="nextPageGray">下一页</span></label>
 	<#else>
-	<label><span id="ec-page-next" class="nextPageGrayOrange" page="${pageModel.pageNo+1}">下一页</span></label>
+	<label><span id="ec-page-next" class="nextPageGrayOrange" page="${pageModel.pageNo+1}" callBack="${callBackFunc}">下一页</span></label>
 	</#if>
 	<label class="marginTop4">跳转至</label>
 		<input id="ec-input-spec" type="text" class="inputW20H20" />

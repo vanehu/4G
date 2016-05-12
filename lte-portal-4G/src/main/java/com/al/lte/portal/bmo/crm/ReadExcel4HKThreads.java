@@ -41,7 +41,6 @@ public class ReadExcel4HKThreads implements Runnable {
 	volatile String cellValue = "";//单元格的值
 	volatile Cell cellTemp = null;//这是一个单元格，用于跳过Excel没有数据的空行
 	volatile Cell cell = null;//这是一个单元格
-	volatile int sheetIndex = 0;//循环遍历表单
 	volatile int i = 1;//循环遍历行
 	volatile int j = 0;
 	volatile int k = 0;
@@ -78,17 +77,19 @@ public class ReadExcel4HKThreads implements Runnable {
 	//synchronized
 	public synchronized void run() {
 		// 循环读取每个sheet中的数据放入list集合中
-		for (; sheetIndex < workbook.getNumberOfSheets(); sheetIndex++) {
+		for (int sheetIndex = 0; sheetIndex < workbook.getNumberOfSheets(); sheetIndex++) {
 			// 得到当前页sheet
 			sheet = workbook.getSheetAt(sheetIndex);
 			// 得到Excel的行数
 			totalRows = sheet.getPhysicalNumberOfRows();
 			if (totalRows > 1) {
+				i = 1;
 				for (; i < totalRows; i++) {
 					log.debug("*************************read Excel for {} row...", i);
 					row = sheet.getRow(i);
 					if (null != row) {
 						cellIsNull = true;
+						k = 0;
 						for (; k < columns; k++) {
 							cellTemp = row.getCell(k);
 							if (null != cellTemp) {
@@ -103,9 +104,10 @@ public class ReadExcel4HKThreads implements Runnable {
 						}
 						
 						//开始循环遍历当前行的每一列数据
+						j = 0;
 						for(; j < columns; j++){
 							cell = row.getCell(j);
-							if(j == 0 || j == 1 || j == 2 || j == 3 || j == 5){//第1列、第2列、第3列、第4列、第6列必填
+							if(j == 0 || j == 1 || j == 2 || j == 3|| j == 5){//第1列、第2列、第3列、第4列、第6列必填
 								if(cell != null){
 									cellValue = batchBmoImpl.checkExcelCellValue(cell);
 									if (cellValue == null || "".equals(cellValue)) {

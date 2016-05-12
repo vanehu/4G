@@ -194,7 +194,7 @@ public class BatchOrderControllerLatestVer  extends BaseController {
 						}
 					}else if(SysConstant.BATCHCHAIJI.equals(batchType)//批量拆机
 							||SysConstant.BATCHFUSHU.equals(batchType)//批量退订附属
-							||SysConstant.BATCHCHANGE.equals(batchType)){//批量在用拆机
+							||SysConstant.BATCHCHANGE.equals(batchType)){
 						checkResult = batchBmo.readExcel4Common(workbook);
 						if(checkResult.get("code") != null && "0".equals(checkResult.get("code"))){
 							checkResultFlag = true;
@@ -242,7 +242,7 @@ public class BatchOrderControllerLatestVer  extends BaseController {
 								ftpResultMap = ftpServiceUtils.fileUpload2FTP(file.getInputStream(), fileName, batchType);
 							} else{
 								//根据省份与多台FTP服务器的映射，上传文件到某台FTP服务器
-								ftpResultMap = ftpServiceUtils.fileUpload2FTP4Cluster(file.getInputStream(), fileName, batchType, sessionStaff.getProvinceCode());
+								ftpResultMap = ftpServiceUtils.fileUpload2FTP4Cluster(file.getInputStream(), fileName, batchType, sessionStaff.getCurrentAreaId());
 							}
 						} catch (Exception e) {
 							jsonResponse = super.failed(ErrorCode.FTP_UPLOAD_ERROR, e, busMap);
@@ -444,7 +444,7 @@ public class BatchOrderControllerLatestVer  extends BaseController {
 			param.putAll(getAreaInfos());
 		}
 		
-		//根据#52200：现去掉批量受理查询页面的“预约日期”搜索条件，但仍保留该字段，避免后台空指针，传值为空字符串"" By ZhangYu
+		//根据#52200：现去掉批量受理查询页面的“预约日期”搜索条件，但仍保留该字段，避免后台空指针，传值为空字符串""
 		param.put("reserveDt", "");
 		
 		try {
@@ -503,6 +503,20 @@ public class BatchOrderControllerLatestVer  extends BaseController {
 					resultList.add(tempMap);
 				}
 				if(resultList != null && resultList.size() > 0){
+					/*List<Map<String,Object>> convertIntoExcelList = new ArrayList<Map<String,Object>>();
+					Map<String,Object> tempMap = new HashMap<String,Object>();
+					for(Map<String,Object> mapOfList : resultList){
+						tempMap.put("groupId", mapOfList.get("groupId"));
+						tempMap.put("accessNumber", "".equals(mapOfList.get("boProdAn").toString()) ? mapOfList.get("accessNumber").toString() : mapOfList.get("boProdAn").toString());
+						tempMap.put("boProd2Td", mapOfList.get("boProd2Tds"));
+						tempMap.put("genOlDt", mapOfList.get("genOlDt"));
+						tempMap.put("statusCd", mapOfList.get("statusCd"));
+						tempMap.put("msgInfo", mapOfList.get("msgInfo"));
+						tempMap.put("orderStatusName", mapOfList.get("orderStatusName"));
+						tempMap.put("transactionId", mapOfList.get("transactionId"));
+						tempMap.put("custSoNumber", mapOfList.get("custSoNumber"));
+						convertIntoExcelList.add(tempMap);
+					}*/
 					//String excelTitle = "批次查询受理表单"+param.get("groupId");
 					String excelTitle = param.get("groupId").toString();
 					String[] headers = new String[]{"批次号","主接入号","UIM卡号","受理时间","受理状态","反馈信息","订单状态","下省流水","购物车流水"};
@@ -512,6 +526,7 @@ public class BatchOrderControllerLatestVer  extends BaseController {
 					 
 					ServletOutputStream  outputStream = response.getOutputStream();
 					batchBmo.exportExcel(excelTitle, headers, resultList, outputStream);
+//					batchBmo.exportExcelUtil(excelTitle, headers, convertIntoExcelList, outputStream, null);
 					outputStream.close();
 				}
 			}
@@ -571,8 +586,7 @@ public class BatchOrderControllerLatestVer  extends BaseController {
 					resultList.add(tempMap);
 				}
 				if(resultList != null && resultList.size() > 0){
-					 PageModel<Map<String, Object>> pm = PageUtil.buildPageModel(MapUtils.getIntValue(param,
-		                     "pageIndex", 1), MapUtils.getIntValue(param,"pageSize",10), total, resultList);
+					 PageModel<Map<String, Object>> pm = PageUtil.buildPageModel(MapUtils.getIntValue(param, "pageIndex", 1), MapUtils.getIntValue(param,"pageSize",10), total, resultList);
 		             model.addAttribute("pageModel", pm);
 		             model.addAttribute("totalAmount", total);
 				}
@@ -1189,10 +1203,10 @@ public class BatchOrderControllerLatestVer  extends BaseController {
 	@RequestMapping(value = "/importBatchData", method = RequestMethod.POST)
 	public String importBatchData(Model model, HttpServletRequest request,HttpServletResponse response,
 			@LogOperatorAnn String flowNum,
-			@RequestParam("upFile") MultipartFile file,
-			@RequestParam("evidenceFile") MultipartFile evidenceFile,
-			@RequestParam("batchType") String batchType,
-			@RequestParam("reserveDt") String reserveDt) {
+			@RequestParam(value="upFile", required=true) MultipartFile file,
+			@RequestParam(value="evidenceFile", required=false) MultipartFile evidenceFile,
+			@RequestParam(value="batchType", required=true) String batchType,
+			@RequestParam(value="reserveDt", required=true) String reserveDt) {
 		
 		String message = "";
 		String code = "-1";
@@ -1204,10 +1218,6 @@ public class BatchOrderControllerLatestVer  extends BaseController {
 			message = "订单受理类型为空！";
 			isError = true;
 		}
-		/*if(reserveDt==null||"".equals(reserveDt)){
-			message="预约时间为空！";
-			isError=true;
-		}*/
 		if (null != file) {
 			boolean oldVersion = true;
 			String fileName = file.getOriginalFilename();
@@ -1278,13 +1288,13 @@ public class BatchOrderControllerLatestVer  extends BaseController {
 								}
 							} else{
 								//根据省份与多台FTP服务器的映射，上传文件到某台FTP服务器
-								ftpResultMap = ftpServiceUtils.fileUpload2FTP4Cluster(file.getInputStream(), fileName, batchType, sessionStaff.getProvinceCode());
+								ftpResultMap = ftpServiceUtils.fileUpload2FTP4Cluster(file.getInputStream(), fileName, batchType, sessionStaff.getCurrentAreaId());
 								if(SysConstant.BATCHBLACKLIST.equals(batchType)){
-									ftpEvidenceFileResultMap = ftpServiceUtils.fileUpload2FTP4Cluster(evidenceFile.getInputStream(), evidenceFile.getOriginalFilename(), "evidenceFile", sessionStaff.getProvinceCode());
+									ftpEvidenceFileResultMap = ftpServiceUtils.fileUpload2FTP4Cluster(evidenceFile.getInputStream(), evidenceFile.getOriginalFilename(), "evidenceFile", sessionStaff.getCurrentAreaId());
 								}
 							}
 						} catch (Exception e) {
-							jsonResponse = super.failed(ErrorCode.FTP_UPLOAD_ERROR, e, busMap);
+							jsonResponse = super.failed(ErrorCode.FTP_UPLOAD_ERROR, e, ftpResultMap);
 						};
 
 						//若上传文件发生异常，则直接返回异常信息不再继续执行
@@ -1304,10 +1314,11 @@ public class BatchOrderControllerLatestVer  extends BaseController {
 									}
 									code = "0";
 					 			}else{
-					 				if(ftpResultMap == null || ftpResultMap.get("mess") == null)
-					 					message = "批量导入服务调用失败";
-					 				else
+					 				if(ftpResultMap == null || ftpResultMap.get("mess") == null){
+					 					message = "文件上传发生未知异常，请稍后重新尝试";
+					 				} else{
 					 					message = ftpResultMap.get("mess").toString();
+					 				}
 					 			}
 							} catch (BusinessException be) {
 								jsonResponse = super.failed(be);
@@ -1315,6 +1326,146 @@ public class BatchOrderControllerLatestVer  extends BaseController {
 								jsonResponse = super.failed(ie, busMap, ErrorCode.BATCH_FILEUPLOAD_NOTICE);
 							} catch (Exception e) {
 								jsonResponse = super.failed(ErrorCode.BATCH_FILEUPLOAD_NOTICE, e, busMap);
+							}
+						}
+					}
+				}
+			}
+		} else {
+			message="文件读取失败";
+		}
+
+		model.addAttribute("message", message);
+		model.addAttribute("code", code);
+		model.addAttribute("batchType", batchType);
+		if(jsonResponse != null){
+			model.addAttribute("errorStack",jsonResponse);
+		}
+		
+		return "/batchOrder/batch-order-change-list";
+	}
+	
+	/**
+	 * 批量终端领用、批量终端领用回退、批量终端销售Excel导入主页面
+	 * @param model
+	 * @param request
+	 * @param session
+	 * @return
+	 */
+	@RequestMapping(value = "/ecsBatchImport", method = RequestMethod.GET)
+	public String importEcs(Model model,HttpServletRequest request,HttpSession session) {
+		
+		String batchType = request.getParameter("batchType");
+		String batchTypeName  = batchBmo.getTypeNames(batchType);
+		
+		model.addAttribute("batchType", batchType);
+		model.addAttribute("batchTypeName", batchTypeName);
+		
+		return "/batchOrder/batch-order-ecsBatchImport";
+	}
+	
+	/**
+	 * 批量终端领用、批量终端领用回退、批量终端销售导入Excel文件并解析处理
+	 * @param model
+	 * @param request
+	 * @param response
+	 * @param flowNum
+	 * @param file
+	 * @param batchType
+	 * @param reserveDt
+	 * @return
+	 * @author ZhangYu 2016-04-21
+	 */
+	@RequestMapping(value = "/ecsBatchfileImport", method = RequestMethod.POST)
+	public String ecsBatchfileImport(Model model, 
+			HttpServletRequest request, 
+			HttpServletResponse response,
+			@LogOperatorAnn String flowNum,
+			@RequestParam(value="upFile", required=true) MultipartFile file,
+			@RequestParam(value="batchType", required=true) String batchType,
+			@RequestParam(value="fromRepositoryId", required=false) String fromRepositoryId,
+			@RequestParam(value="destRepositoryId", required=false) String destRepositoryId,
+			@RequestParam(value="destStatusCd", required=false) String destStatusCd) {
+		
+		String message = "";
+		String code = "-1";
+		boolean isError = false;
+		JsonResponse jsonResponse = null;		
+		PropertiesUtils propertiesUtils = (PropertiesUtils) SpringContextUtil.getBean("propertiesUtils");
+
+		if (null != file) {
+			boolean oldVersion = true;
+			String fileName = file.getOriginalFilename();
+			if (fileName.matches("^.+\\.(?i)(xls)$")) {
+				oldVersion = true;
+			} else if (fileName.matches("^.+\\.(?i)(xlsx)$")) {
+				oldVersion = false;
+			} else {
+				message="导入文件的类型错误，后缀必须为.xls或.xlsx的Excel文件 !";
+				isError = true;
+			}
+			if (!isError) {
+				Workbook workbook = null;
+				try {
+					if (oldVersion){// 2003版本Excel(.xls)
+						workbook = new HSSFWorkbook(file.getInputStream());
+					}else{// 2007版本Excel或更高版本(.xlsx)
+						workbook = new XSSFWorkbook(file.getInputStream());
+					}
+				} catch (Exception e) {
+					message = "文件读取异常，请检查文件后重新尝试 !";
+					isError = true;
+				}
+				if (!isError) {
+					Map<String,Object> checkResult = null;
+					boolean flag = false;
+					checkResult = batchBmo.readExcel4EcsBatch(workbook, batchType);
+					if(checkResult.get("code") != null && ResultCode.R_SUCC.equals(checkResult.get("code"))){//Excel校验成功
+						flag = true;
+					} else{
+						message = "批量校验出错:" + checkResult.get("errorData").toString();
+					}
+
+					if(flag){
+						SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);
+						Map<String, Object> ftpResultMap = null;						
+						try {
+							//上传文件
+							if(!"ON".equals(propertiesUtils.getMessage("CLUSTERFLAG"))){
+								//上传到单台FTP服务器
+								ftpResultMap = ftpServiceUtils.fileUpload2FTP(file.getInputStream(), fileName, batchType);
+							} else{
+								//根据省份与多台FTP服务器的映射，上传文件到某台FTP服务器
+								ftpResultMap = ftpServiceUtils.fileUpload2FTP4Cluster(file.getInputStream(), fileName, batchType, sessionStaff.getCurrentAreaId());
+							}
+						} catch (Exception e) {
+							jsonResponse = super.failed(ErrorCode.FTP_UPLOAD_ERROR, e, ftpResultMap);
+						};
+
+						//若上传文件发生异常，则直接返回异常信息不再继续执行
+						if(jsonResponse == null){
+							Map<String, Object> requestParamMap = batchBmo.getParam2Ecs(batchType, fromRepositoryId, destRepositoryId, destStatusCd);
+							try {
+								if (ftpResultMap != null && ResultCode.R_SUCCESS.equals(ftpResultMap.get("code").toString())) {
+									//上传成功后，入参中填充FTP信息
+									requestParamMap.put("ftpInfos", ftpResultMap.get("ftpInfos"));
+									requestParamMap.put("staffId", sessionStaff.getStaffId());
+									//调后台服务通知接口，通知后台上传文件完成同时获取批次号
+									Map<String, Object> returnMap = batchBmo.getEcsNoticedAfterUpload(requestParamMap, batchType, sessionStaff);
+									message = "批量导入成功，导入批次号：<strong>"+returnMap.get("batchId")+"</strong>，请到“批量受理查询”功能中查询受理结果";
+									code = "0";
+					 			}else{
+					 				if(ftpResultMap == null || ftpResultMap.get("mess") == null)
+					 					message = "文件上传发生未知异常，请稍后重新尝试";
+					 				else
+					 					message = ftpResultMap.get("mess").toString();
+					 			}
+							} catch (BusinessException be) {
+								jsonResponse = super.failed(be);
+							} catch (InterfaceException ie) {
+								jsonResponse = super.failed(ie, requestParamMap, batchBmo.getErrorCode2Ecs(batchType));
+							} catch (Exception e) {
+								jsonResponse = super.failed(batchBmo.getErrorCode2Ecs(batchType), e, requestParamMap);
 							}
 						}
 					}
@@ -1462,5 +1613,216 @@ public class BatchOrderControllerLatestVer  extends BaseController {
 			return super.failed("导出文件异常：<br/>" + e, ResultConstant.FAILD.getCode());
 		}
 		
+	}
+	
+	/**
+	 * 批量终端领用、批量终端领用回退、批量终端销售批次查询(展示查询主页面)
+	 * @param model
+	 * @param request
+	 * @param session
+	 * @return
+	 */
+	@RequestMapping(value = "/queryEcsBatchOrder", method = RequestMethod.GET)
+	public String queryEcsBatchOrder(Model model,HttpServletRequest request,HttpSession session) {
+		
+//		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);
+//		Map<String, Object> defaultAreaInfo = CommonMethods.getDefaultAreaInfo_MinimumC3(sessionStaff);
+		
+		model.addAttribute("current", EhcacheUtil.getCurrentPath(session,"order/batchOrder/queryEcsBatchOrder"));
+		Calendar calendar = Calendar.getInstance();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		String end = sdf.format(calendar.getTime());
+		calendar.add(Calendar.DATE, -1);
+		String start = sdf.format(calendar.getTime());
+		model.addAttribute("startDt", start);
+		model.addAttribute("endDt", end);
+
+		return "/batchOrder/batch-order-queryEcsBatchOrder";
+	}
+	
+	/**
+	 * 批量终端领用、批量终端领用回退、批量终端销售批次查询(查询数据列表)
+	 * @param qryParam
+	 * @param model
+	 * @return
+	 * @author ZhangYu 2016-05-04
+	 */
+	@SuppressWarnings("unchecked")
+	@RequestMapping(value = "/queryEcsBatchOrderList", method = {RequestMethod.POST})
+	public String queryEcsBatchOrderList(@RequestBody Map<String, Object> qryParam, Model model) {		
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);	
+		
+		//处理参数，时间格式要求为yyMMdd形式
+		String beginDate = qryParam.get("beginDate").toString();
+		String endDate = qryParam.get("endDate").toString();
+		beginDate = beginDate.replaceAll("-", "");
+		endDate = endDate.replaceAll("-", "");
+		qryParam.put("beginDate", beginDate);
+		qryParam.put("endDate", endDate);
+		qryParam.put("staffCode", sessionStaff.getStaffCode());
+		qryParam.putAll(this.getAreaInfos());
+		
+		try {
+			Map<String,Object> resultMap = batchBmo.queryEcsBatchOrderList(qryParam, null, sessionStaff);
+			if (resultMap != null && ResultCode.R_SUCCESS.equals(resultMap.get("code").toString())) {
+				int totalResultNum = MapUtils.getIntValue(resultMap, "totalResultNum", 0);
+				List<Map<String,Object>> resultList = (List<Map<String, Object>>) resultMap.get("resultList");
+				if(resultList!=null&&resultList.size()>0){
+					 PageModel<Map<String, Object>> pageModel = PageUtil.buildPageModel(MapUtils.getIntValue(qryParam, "pageIndex", 1), MapUtils.getIntValue(qryParam,"pageSize",10), totalResultNum, resultList);
+		             model.addAttribute("pageModel", pageModel);
+		             model.addAttribute("totalNum", totalResultNum);
+				}
+			}
+		} catch (Exception e) {
+			return super.failedStr(model, ErrorCode.BATCH_ECS_QUERY, e, qryParam);
+		}
+		return "/batchOrder/batch-order-queryEcsBatchOrder-list";
+	}
+	
+	/**
+	 * 批量终端领用、批量终端领用回退、批量终端销售批次详情查询<br/>
+	 * 目前该请求处理很简单，为后期增加查询条件做准备，类似与批量受理查询中的进度查询
+	 * @param qryParam
+	 * @param model
+	 * @return
+	 * @author ZhangYu 2016-05-04
+	 */
+	@RequestMapping(value = "/queryEcsBatchOrderDetail", method = {RequestMethod.POST})
+	public String queryEcsBatchOrderDetail(@RequestBody Map<String, Object> qryParam, Model model) {		
+//		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);		
+		model.addAttribute("batchId_dialog", qryParam.get("batchId"));
+		return "/batchOrder/batch-order-queryEcsBatchOrder-detail";
+	}
+	
+	/**
+	 * 批量终端领用、批量终端领用回退、批量终端销售批次详情查询，获取数据列表
+	 * @param qryParam
+	 * @param model
+	 * @return
+	 * @author ZhangYu 2016-05-04
+	 */
+	@SuppressWarnings("unchecked")
+	@RequestMapping(value = "/queryEcsBatchOrderDetailList", method = {RequestMethod.POST})
+	public String queryEcsBatchOrderDetailList(@RequestBody Map<String, Object> qryParam, Model model) {		
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);		
+		
+		//处理参数
+		qryParam.put("staffCode", sessionStaff.getStaffCode());
+		qryParam.putAll(this.getAreaInfos());
+		
+		try {
+			Map<String,Object> resultMap = batchBmo.queryEcsBatchOrderDetailList(qryParam, null, sessionStaff);
+			if (resultMap != null && ResultCode.R_SUCCESS.equals(resultMap.get("code").toString())) {
+				int totalResultNum = MapUtils.getIntValue(resultMap, "totalResultNum", 0);
+				List<Map<String,Object>> resultList = (List<Map<String, Object>>) resultMap.get("resultList");
+				if(resultList!=null&&resultList.size()>0){
+					 PageModel<Map<String, Object>> pageModel = PageUtil.buildPageModel(MapUtils.getIntValue(qryParam, "pageNo", 1), MapUtils.getIntValue(qryParam,"pageSize",10), totalResultNum, resultList);
+		             model.addAttribute("pageModel", pageModel);
+		             model.addAttribute("totalNum", totalResultNum);
+		             model.addAttribute("batchId_dialog", qryParam.get("batchId"));
+				}
+			} else{
+				model.addAttribute("code", resultMap.get("code"));
+				model.addAttribute("message", resultMap.get("msg"));
+			}
+		} catch (Exception e) {
+			return super.failedStr(model, ErrorCode.BATCH_ECS_QUERY, e, qryParam);
+		}			
+		return "/batchOrder/batch-order-queryEcsBatchOrder-detail-list";
+	}
+	
+	/**
+	 * 批量终端领用、批量终端领用回退、批量终端销售仓库查询
+	 * @param qryParam
+	 * @param model
+	 * @return
+	 * @author ZhangYu 2016-05-04
+	 */
+	@RequestMapping(value = "/queryEcsRepository", method = {RequestMethod.POST})
+	public String queryEcsRepository(@RequestBody Map<String, Object> qryParam, Model model) {
+		model.addAttribute("qryParam", qryParam);
+		model.addAttribute("batchTypeName", batchBmo.getTypeNames(qryParam.get("batchType").toString()));
+		return "/batchOrder/batch-order-queryRepository";
+	}
+	
+	/**
+	 * 批量终端领用、批量终端领用回退、批量终端销售仓库列表查询
+	 * @param qryParam
+	 * @param model
+	 * @return
+	 * @author ZhangYu 2016-05-04
+	 */
+	@SuppressWarnings("unchecked")
+	@RequestMapping(value = "/queryEcsRepositoryList", method = {RequestMethod.POST})
+	public String queryEcsRepositoryList(@RequestBody Map<String, Object> qryParam, Model model) {
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);
+		Map<String, Object> resultMap = null;
+		qryParam.putAll(this.getAreaInfos());
+		try {
+			resultMap = batchBmo.queryEcsRepositoryByStaffID(qryParam, null, sessionStaff);
+			if (resultMap != null && ResultCode.R_SUCCESS.equals(resultMap.get("code").toString())){
+				//该接口未返回总记录数，故改用简易分页组件
+				/*PageModel<Map<String, Object>> pageModel = PageUtil.buildPageModel(
+						MapUtils.getIntValue(qryParam, "pageIndex", 1),
+						MapUtils.getIntValue(qryParam,"pageSize",10), 
+						MapUtils.getIntValue(resultMap, "totalResultNum", 0), 
+						(List<Map<String, Object>>)resultMap.get("resultList"));*/
+				PageModel<Map<String, Object>> pageModel = PageUtil.buildPageModel(
+						MapUtils.getIntValue(qryParam, "pageIndex", 1), 
+						MapUtils.getIntValue(qryParam,"pageSize",10), 
+						(List<Map<String, Object>>)resultMap.get("resultList"));
+	             model.addAttribute("pageModel", pageModel);
+			} else{
+				return super.failedStr(model, ErrorCode.BATCH_ECS_REPOSITORY, "终端仓库查询接口返回数据异常", qryParam);
+			}
+		} catch (Exception e) {
+			return super.failedStr(model, ErrorCode.BATCH_ECS_REPOSITORY, e, qryParam);
+		}		
+		return "/batchOrder/batch-order-queryRepository-list";
+	}
+	
+	/**
+	 * 批量终端领用、回退、销售：批次详情导出Excel
+	 * @param param
+	 * @param model
+	 * @param response
+	 * @return 
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	@RequestMapping(value = "/ecsBatchOrderExport", method = {RequestMethod.POST})
+	@ResponseBody
+	public JsonResponse ecsBatchOrderExport(@RequestParam Map<String, Object> param, Model model, HttpServletResponse response) {
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);
+		
+		//处理参数，导出Excel需要全部数据，为了能使接口返回全部数据，分页参数特殊设置		
+		param.put("pageNo", "1");
+		param.put("pageSize", "99999");
+		param.put("staffCode", sessionStaff.getStaffCode());
+		param.putAll(this.getAreaInfos());
+						
+		try {
+			Map<String,Object> resultMap = batchBmo.queryEcsBatchOrderDetailList(param, null, sessionStaff);
+			if (resultMap != null && ResultCode.R_SUCCESS.equals(resultMap.get("code").toString())) {
+				List<Map<String,Object>> resultList = (List<Map<String, Object>>) resultMap.get("resultList");
+				if(resultList != null && resultList.size() > 0){
+//					int totalResultNum = MapUtils.getIntValue(resultMap, "totalResultNum", 0);
+					String excelTitle = "ecs_" + param.get("batchId").toString();
+					String[] headers = new String[]{"仓库名称","区域名称","终端状态","创建日期","更新日期","描 述","备 注"};
+					
+					response.addHeader("Content-Disposition", "attachment;filename="+new String( excelTitle.getBytes("gb2312"), "ISO8859-1" )+".xls");
+					response.setContentType("application/binary;charset=utf-8");
+					 
+					ServletOutputStream  outputStream = response.getOutputStream();
+//					batchBmo.exportExcel(excelTitle, headers, resultList, outputStream);
+					batchBmo.exportExcelEcs(excelTitle, headers, resultList, outputStream);
+					outputStream.close();
+				}
+			}
+		} catch (Exception e) {
+			return super.failed(ErrorCode.BATCH_ECS_QUERY, e.getStackTrace().toString(), param);
+		}
+		
+		return super.successed("导出成功！");
 	}
 }

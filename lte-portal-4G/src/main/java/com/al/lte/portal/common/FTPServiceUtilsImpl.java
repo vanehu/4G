@@ -31,7 +31,7 @@ public class FTPServiceUtilsImpl implements FTPServiceUtils {
 	final private int retryTimes = Integer.parseInt(propertiesUtils.getMessage("RETRYTIMES"));//当上传Excel文件失败后重试次数	
 	
 	/**
-	 * 上传文件到FTP服务器，单台服务器(测试环境或者多台FTP服务器不具备的情况下使用)
+	 * 上传文件到FTP服务器，单台服务器(194测试环境或者多台FTP服务器不具备的情况下使用)
 	 * @param fileInputStream
 	 * @param uploadFileName
 	 * @param batchType
@@ -91,11 +91,12 @@ public class FTPServiceUtilsImpl implements FTPServiceUtils {
 	}
 	
 	/**
-	 * 上传文件到FTP服务器，服务器集群，目前配置为6台翼销售服务器</br>
-	 * 按照5个省一台服务器规划，当一台服务器故障，则顺序读取下一台服务器上传文件，具体策略是：</br>
-	 * 当前FTP服务器上传文件失败，重新尝试多次(默认尝试3次)；</br>
-	 * 如果仍然上传文件失败，则根据各省与FTP服务器映射关系，上传到另一台FTP服务器；</br>
-	 * 如果另一台仍然上传失败，则重新尝试多次(默认尝试3次)；后续以此类推...直至上传文件成功或者所有配置的FTP服务器上传失败
+	 * 上传文件到FTP服务器，生产环境为多台FTP服务器<br/>
+	 * 目前生产环境配置为6台FTP服务器，其中3台面向全国受理批量业务的文件上传，另外3台分别备用FTP服务器。按照10省一台服务器规划，
+	 * 根据各省订单量大小，将全国32省(包含虚拟省)分为3组，分别对应3台FTP服务器。具体策略是：</br>
+	 * 1.FTP-1对应10省，FTP-2对应10省，FTP-3对应12省；<br/>
+	 * 2.如若当前FTP服务器上传文件失败，则重新尝试多次(默认尝试3次)；</br>
+	 * 3.如果仍然上传文件失败，则返回错误信息。</br>
 	 * @param fileInputStream
 	 * @param uploadFileName
 	 * @param batchType
@@ -108,11 +109,11 @@ public class FTPServiceUtilsImpl implements FTPServiceUtils {
 	public Map<String, Object> fileUpload2FTP4Cluster(InputStream fileInputStream, String uploadFileName, String batchType, String provinceCode) throws Exception{
 		
 		Map<String, Object> uploadResult = new HashMap<String, Object>();
-		String ftpMapping = null;
+//		String ftpMapping = null;
 		
 		//0.生成上传文件名
 		String suffix = uploadFileName.substring(uploadFileName.lastIndexOf("."));// 文件后缀名
-		String newUploadFileName = batchType + "_" + UIDGenerator.getRand() + suffix;
+		String newUploadFileName = provinceCode.substring(0, 3) + "_" + batchType + "_" + UIDGenerator.getRand() + suffix;
 
 		// 获取服务器配置信息
 		//1.访问FTP的路径
@@ -122,12 +123,12 @@ public class FTPServiceUtilsImpl implements FTPServiceUtils {
 		}
 		//2.根据省份编码provinceCode获取该省对应的服务器映射
 		provinceCode = provinceCode.substring(0, 3) + "0000";
-		ftpMapping = propertiesUtils.getMessage("FTP_" + provinceCode);
+		String ftpMapping = propertiesUtils.getMessage("FTP_" + provinceCode);
 		//3.根据服务器映射获取对应的FTP服务器配置信息
 		String ftpServiceConfig = propertiesUtils.getMessage(ftpMapping);
 		//4.如果连获取FTP配置信息都失败就不要再继续了
 		if (ftpRemotePath == null || ftpServiceConfig == null || ftpMapping == null) {
-			throw new Exception("FTP服务器配置信息获取失败，请检查配置文件");
+			throw new IOException("FTP服务器配置信息获取失败，请检查配置文件");
 		}
 		//5.获取FTP服务器的具体登录信息
 		String[] ftpServiceConfigs = ftpServiceConfig.split(",");
@@ -159,9 +160,9 @@ public class FTPServiceUtilsImpl implements FTPServiceUtils {
 		}
 		
 		//8.如果仍然失败，则开始循环遍历其他所有的FTP服务器，直至上传成功；若所有FTP服务器连接失败，则返回错误信息
-		if (!ResultCode.R_SUCCESS.equals(uploadResult.get("code"))) {
+		/*if (!ResultCode.R_SUCCESS.equals(uploadResult.get("code"))) {
 			uploadResult = this.switchFTPServerAfterFail(uploadParam, ftpServiceConfig);
-		}
+		}*/
 
 		return uploadResult;
 	}
@@ -174,7 +175,10 @@ public class FTPServiceUtilsImpl implements FTPServiceUtils {
 	 * @throws IOException
 	 * @throws Exception
 	 * @author ZhangYu 2016-03-18
+	 * @deprecated 因方案调整，该方法不再满足需求，不建议使用
 	 */
+	@SuppressWarnings("unused")
+	@Deprecated
 	private Map<String, Object> switchFTPServerAfterFail(Map<String, Object> uploadParam, String ftpServiceConfig) throws IOException, Exception{
 		
 		Map<String, Object> uploadResult = new HashMap<String, Object>();
@@ -199,7 +203,7 @@ public class FTPServiceUtilsImpl implements FTPServiceUtils {
 
 				log.debug("FTP服务器配置信息  = {}", remoteAddress + "," + remotePort + "," + userName + "," + password);
 				
-				//5.覆盖掉上一台无法连接的FTP服务器配置信息(文件名、输入流等仍可复用)
+				//5.覆盖掉上一台无法连接的FTP服务器配置信息(文件名、输入流等仍继续复用)
 				uploadParam.put("remoteAddress", remoteAddress);
 				uploadParam.put("remotePort", remotePort);
 				uploadParam.put("userName", userName);
@@ -225,7 +229,8 @@ public class FTPServiceUtilsImpl implements FTPServiceUtils {
 	}
 	
 	/**
-	 * 上传文件主方法
+	 * 上传文件主方法<br/>
+	 * 注：由于上传一次失败后，仍要继续尝试上传(默认最多3次)，如果失败一次即抛出异常，则不方便继续尝试上传，所以将异常信息进行封装，不会抛出
 	 * @param uploadParam
 	 * @return
 	 * @author ZhangYu 2016-03-17
@@ -249,6 +254,9 @@ public class FTPServiceUtilsImpl implements FTPServiceUtils {
 		
 		//2.连接FTP服务器
 		FtpUtils ftpUtils = new FtpUtils();
+		Map<String, Object> ftpInfos = new HashMap<String, Object>();
+		//FTP服务器信息字符串，用于发生异常时返回FTP信息，以便定位
+		String ftpInfosStr = "[" + remoteAddress+"," + remotePort+"," + userName+"," + password+"," + ftpRemotePath+"]";
 		boolean ftpConnectFlag = ftpUtils.connectFTPServer(remoteAddress, remotePort, userName, password);
 		if(ftpConnectFlag){
 			//3.改变FTP服务器路径
@@ -258,7 +266,6 @@ public class FTPServiceUtilsImpl implements FTPServiceUtils {
 				boolean uploadFileFlag = ftpUtils.uploadFileToFtpServer(newUploadFileName, fileInputStream);
 				if(uploadFileFlag){
 					//5.如果文件上传成功，此时封装FTP服务器信息返回给后台，后台据此获取Excel文件
-					Map<String, Object> ftpInfos = new HashMap<String, Object>();
 					ftpInfos.put("ftpServiceIp", remoteAddress);
 					ftpInfos.put("servicePort", remotePort);
 					ftpInfos.put("filePath", ftpRemotePath);
@@ -269,15 +276,15 @@ public class FTPServiceUtilsImpl implements FTPServiceUtils {
 					uploadResult.put("code", ResultCode.R_SUCCESS);
 				} else{
 					uploadResult.put("code", ResultCode.R_FAILURE);
-					uploadResult.put("mess", "文件上传失败");
+					uploadResult.put("mess", "文件上传失败：<br/>" + ftpInfosStr + ftpUtils.errMsgMap.get("uploadErrMsg"));
 				}
 			} else{
 				uploadResult.put("code", ResultCode.R_FAILURE);
-				uploadResult.put("mess", "FTP服务器路径切换失败");
+				uploadResult.put("mess", "FTP服务器路径切换失败：<br/>s" + ftpInfosStr + ftpUtils.errMsgMap.get("changeDirErrMsg"));
 			}
 		} else{
 			uploadResult.put("code", ResultCode.R_FAILURE);
-			uploadResult.put("mess", "FTP服务器连接失败");
+			uploadResult.put("mess", "FTP服务器连接失败：<br/>" + ftpInfosStr + ftpUtils.errMsgMap.get("connectErrMsg"));
 		}
 
 		//6.不管是否上传成功，关闭服务器连接
@@ -290,7 +297,9 @@ public class FTPServiceUtilsImpl implements FTPServiceUtils {
 	 * 循环遍历所有FTP服务器的配置信息
 	 * @return ftpServiceConfigLists 以 ArrayList返回所有FTP服务器的配置信息
 	 * @author ZhangYu 2016-03-17
+	 * @deprecated 因方案调整，该方法不再满足需求，不再适用
 	 */
+	@Deprecated
 	private List<String> getFTPServiceConfigList(){
 		int flag = 1;
 		List<String> ftpServiceConfigLists = new ArrayList<String>();

@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -155,8 +156,89 @@ public class BatchOrderController  extends BaseController {
 	}
 
 	@RequestMapping(value = "/batchOrderFlag", method = {RequestMethod.POST})
-	public void batchOrderFlag(HttpServletRequest request,HttpServletResponse response) {
+	public void batchOrderFlag(HttpServletRequest request, HttpServletResponse response) {
 		this.batchDispatcher(request, response);
+	}
+	
+	@RequestMapping(value = "/ecsBatchImport", method = RequestMethod.GET)
+	public void importEcs(HttpServletRequest request, HttpServletResponse response) {
+		try {
+			request.getRequestDispatcher("/order/batchOrder/latestVer/ecsBatchImport").forward(request,response);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@RequestMapping(value = "/queryEcsBatchOrder", method = {RequestMethod.POST, RequestMethod.GET})
+	public void queryEcsBatchOrder(HttpServletRequest request, HttpServletResponse response) {
+		try {
+			request.getRequestDispatcher("/order/batchOrder/latestVer/queryEcsBatchOrder").forward(request,response);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@RequestMapping(value = "/queryEcsBatchOrderList", method = {RequestMethod.POST, RequestMethod.GET})
+	public void queryEcsBatchOrderList(HttpServletRequest request, HttpServletResponse response) {
+		try {
+			request.getRequestDispatcher("/order/batchOrder/latestVer/queryEcsBatchOrderList").forward(request,response);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@RequestMapping(value = "/queryEcsBatchOrderDetail", method = {RequestMethod.POST, RequestMethod.GET})
+	public void queryEcsBatchOrderDetail(HttpServletRequest request, HttpServletResponse response) {
+		try {
+			request.getRequestDispatcher("/order/batchOrder/latestVer/queryEcsBatchOrderDetail").forward(request,response);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@RequestMapping(value = "/queryEcsBatchOrderDetailList", method = {RequestMethod.POST, RequestMethod.GET})
+	public void queryEcsBatchOrderDetailList(HttpServletRequest request, HttpServletResponse response) {	
+		try {
+			request.getRequestDispatcher("/order/batchOrder/latestVer/queryEcsBatchOrderDetailList").forward(request,response);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@RequestMapping(value = "/queryEcsRepository", method = {RequestMethod.POST, RequestMethod.GET})
+	public void queryEcsRepository(HttpServletRequest request, HttpServletResponse response) {
+		try {
+			request.getRequestDispatcher("/order/batchOrder/latestVer/queryEcsRepository").forward(request,response);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@RequestMapping(value = "/queryEcsRepositoryList", method = {RequestMethod.POST, RequestMethod.GET})
+	public void queryEcsRepositoryList(HttpServletRequest request, HttpServletResponse response) {
+		try {
+			request.getRequestDispatcher("/order/batchOrder/latestVer/queryEcsRepositoryList").forward(request,response);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@RequestMapping(value = "/ecsBatchfileImport", method = {RequestMethod.POST, RequestMethod.GET})
+	public void ecsBatchfileImport(HttpServletRequest request, HttpServletResponse response){
+		try {
+			request.getRequestDispatcher("/order/batchOrder/latestVer/ecsBatchfileImport").forward(request,response);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@RequestMapping(value = "/ecsBatchOrderExport", method = {RequestMethod.POST, RequestMethod.GET})
+	public void ecsBatchOrderExport(HttpServletRequest request, HttpServletResponse response){
+		try {
+			request.getRequestDispatcher("/order/batchOrder/latestVer/ecsBatchOrderExport").forward(request,response);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	/**
@@ -168,7 +250,7 @@ public class BatchOrderController  extends BaseController {
 	 * @author ZhangYu
 	 * @since 2016-05-02
 	 */
-	private void batchDispatcher(HttpServletRequest request,HttpServletResponse response){
+	private void batchDispatcher(HttpServletRequest request, HttpServletResponse response){
 		
 //		String contextPath = request.getContextPath();
 //		String path = urlPathHelper.getOriginatingRequestUri(request).substring(request.getContextPath().length());
