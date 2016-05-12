@@ -8,8 +8,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
@@ -37,6 +40,7 @@ public class FtpUtils {
 	
 		//ftp客户端
 		private FTPClient ftpClient;
+		public Map<String, Object> errMsgMap = new HashMap<String, Object>();
 		
 		/**
 		 * 连接服务器
@@ -74,6 +78,7 @@ public class FtpUtils {
 				ftpClient.setFileTransferMode(FTP.STREAM_TRANSFER_MODE);
 				ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
 			} catch (IOException e) {
+				errMsgMap.put("connectErrMsg",  ExceptionUtils.getFullStackTrace((Throwable) e));
 				flag = false;
 				LOG.error(" not login !!! flag = {}", flag);
 				LOG.error("connectServer IOException : {}", e);
@@ -95,6 +100,7 @@ public class FtpUtils {
 				flag = ftpClient.changeWorkingDirectory(remotePath);
 //				LOG.debug("set working directory successful !!! ");
 			} catch (IOException e) {
+				errMsgMap.put("changeDirErrMsg",  ExceptionUtils.getFullStackTrace((Throwable) e));
 				flag = false;
 				LOG.error("set working directory failed !!! flag = {}", flag);
 				LOG.error("changeWorkingDirectory IOException : {}", e);
@@ -110,7 +116,7 @@ public class FtpUtils {
 		 * @throws Exception 
 		 */
 		@SuppressWarnings({ "finally", "static-access" })
-		public boolean uploadFileToFtpServer(String fileName, InputStream is) throws IOException, Exception {
+		public boolean uploadFileToFtpServer(String fileName, InputStream is) throws Exception {
 //			InputStream is = null;
 			boolean flag = false;
 			try {
@@ -123,7 +129,8 @@ public class FtpUtils {
 				} else {
 //					LOG.debug("upload failed !!!");
 				}
-			} catch (IOException e) {
+			} catch (Exception e) {
+				errMsgMap.put("uploadErrMsg", ExceptionUtils.getFullStackTrace((Throwable) e));
 				flag = false;
 				LOG.error("not upload !!!");
 				LOG.error("uploadFileFrom IOException : {}", e);
