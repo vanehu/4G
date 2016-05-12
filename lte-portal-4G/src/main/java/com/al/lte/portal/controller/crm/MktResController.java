@@ -1535,7 +1535,6 @@ public class MktResController extends BaseController {
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-				return super.failed(ErrorCode.COMPLETE_WRITE_CARD, e, param);
 			}
 		}
 		return jsonResponse;
