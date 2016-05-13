@@ -64,15 +64,25 @@ SoOrder = (function() {
 					_getToken();
 					if (response.code == 0) {
 						var data = response.data;
-						if(data.result.ruleInfos!=undefined && data.result.ruleInfos.length > 0){
-							var ruleDesc = "";
-							$.each(data.result.ruleInfos, function(){
-								ruleDesc += this.ruleDesc+"<br/>";
-							});
-							$.alert("提示",ruleDesc);
-							OrderInfo.orderData.orderList.custOrderList[0].busiOrder = [];
-							OrderInfo.resetSeq(); //重置序列
-						}else if(data.checkRule!=undefined){
+//						ruleInfos=[{
+//							"ruleCode" :"LTESC920203",
+//							"ruleDesc":"【用户改套餐后其套餐资费低于靓号保底需保底补差】",
+//							"ruleLevel":"0"	
+//					}
+//					
+//					];
+//							data.result.ruleInfos=ruleInfos;				
+//						if(data.checkRule!=undefined && data.checkRule=="notCheckRule"){
+//							var ruleDesc = "";
+//							$.each(data.result.ruleInfos, function(){
+//								ruleDesc += this.ruleDesc+"<br/>";
+//							});
+//							$.alert("提示",ruleDesc);
+//							OrderInfo.orderData.orderList.custOrderList[0].busiOrder = [];
+//							OrderInfo.resetSeq(); //重置序列
+//						}
+						
+						if(data.checkRule!=undefined && data.checkRule!="notCheckRule"){
 							//新规则校验
 							var orderdata=response.data;
 							var checkParams={
@@ -93,11 +103,22 @@ SoOrder = (function() {
 								"done" : function(checkResponse){
 									//关闭弹出提示
 									$.unecOverlay();
-									
 									var provCheckResult;
-									
 									if (checkResponse.code == 0) {
 										var dataSub = checkResponse.data;
+										//存在可继续受理的省内校验错误，需要在前台进行提示
+										if(dataSub.returnCode!=null && dataSub.returnCode!="0000"){
+											dataSub.provCheckErrorCode = dataSub.data.returnCode;
+											dataSub.provCheckErrorMsg = "";
+											if(dataSub.returnCode!=undefined && dataSub.returnCode!=null){
+												response.datadataSub.provCheckErrorMsg +=  "【错误编码："+dataSub.returnCode+"】";
+											}
+											//省内校验欠费的编码和提示
+											if(dataSub.returnCode=="110019" || dataSub.returnCode=="110145"){
+												dataSub.provCheckErrorMsg += "该用户所在账户存在欠费，请提醒用户及时缴费，避免因欠费影响用户正常使用和业务办理，以及欠费滞纳金的产生。";
+											}
+										}
+										
 										if(dataSub.checkResult!=undefined){
 											OrderInfo.checkresult=dataSub.checkResult;		
 										}
@@ -713,6 +734,12 @@ SoOrder = (function() {
 			});
 		}
 		if(ruleFlag){
+			if(OrdeOrderInfo.orderResult.autoBoInfos!=undefined&&OrderInfo.orderResult.autoBoInfos.length>0){
+				$("#chooseTable").append($('<tr><th width="50%">业务提醒编码</th><th>业务提醒内容</th></tr>'));
+				$.each(OrderInfo.orderBusiHint,function(){
+					$("#chooseTable").append($('<tr><td width="50%">'+this.promptCode+'</td><td>'+this.promptDesc+'</td></tr>'));
+				});
+			}
 			if(OrderInfo.actionFlag==1 || OrderInfo.actionFlag==14 ){
 				_showOrderOffer(); //显示订购的销售品
 			}else if(OrderInfo.actionFlag==2){ //套餐变更 

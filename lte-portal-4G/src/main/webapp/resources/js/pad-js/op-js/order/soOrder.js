@@ -63,17 +63,20 @@ SoOrder = (function() {
 					_getToken();
 					if (response.code == 0) {
 						var data = response.data;
-						var ruleInfos=data.result.ruleInfos;
-						if(ruleInfos!=undefined && ruleInfos.length > 0){							var ruleDesc = "";
-							$.each(data.result.ruleInfos, function(){
-								ruleDesc += this.ruleDesc+"<br/>";
-							});
-							$.alert("提示",ruleDesc);
-							OrderInfo.orderData.orderList.custOrderList[0].busiOrder = [];
-							OrderInfo.resetSeq(); //重置序列
-						}else if(data.checkRule!=undefined){
+						
+
+//						if(ruleInfos!=undefined && ruleInfos.length > 0){							var ruleDesc = "";
+//							$.each(data.result.ruleInfos, function(){
+//								ruleDesc += this.ruleDesc+"<br/>";
+//							});
+//							$.alert("提示",ruleDesc);
+//							OrderInfo.orderData.orderList.custOrderList[0].busiOrder = [];
+//							OrderInfo.resetSeq(); //重置序列
+//						}else
+							if(data.checkRule!=undefined){
+					       
 							var provCheckResult = order.calcharge.tochargeSubmit(response.data);
-							//var provCheckResult = {code:0};
+							 var dataSub = OrderInfo.checkresult;
 							if(provCheckResult.code==0){
 								var returnData = _gotosubmitOrder(response.data);
 								_orderConfirm(returnData);

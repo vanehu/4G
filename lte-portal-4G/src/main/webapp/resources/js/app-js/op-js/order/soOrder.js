@@ -74,19 +74,28 @@ SoOrder = (function() {
 								$.alert("信息提示",data.resultMsg);
 							}
 						}else{
-							if(data.result.ruleInfos!=undefined && data.result.ruleInfos.length > 0){
-								var ruleDesc = "";
-								$.each(data.result.ruleInfos, function(){
-									ruleDesc += this.ruleDesc+"<br/>";
-								});
-								$.alert("提示",ruleDesc);
-								OrderInfo.orderData.orderList.custOrderList[0].busiOrder = [];
-								OrderInfo.resetSeq(); //重置序列
-							}else if(data.checkRule!=undefined){
+//							ruleInfos=[{
+//								"ruleCode" :"LTESC920203",
+//								"ruleDesc":"【用户改套餐后其套餐资费低于靓号保底需保底补差】",
+//								"ruleLevel":"0"	
+//						}
+//						
+//						];
+//								data.result.ruleInfos=ruleInfos;	
+//							if(data.result.ruleInfos!=undefined && data.result.ruleInfos.length > 0){
+//								var ruleDesc = "";
+//								$.each(data.result.ruleInfos, function(){
+//									ruleDesc += this.ruleDesc+"<br/>";
+//								});
+//								$.alert("提示",ruleDesc);
+//								OrderInfo.orderData.orderList.custOrderList[0].busiOrder = [];
+//								OrderInfo.resetSeq(); //重置序列
+//							}else 
+								
+								if(data.checkRule!=undefined && data.checkRule!="notCheckRule"){
 								var provCheckResult = order.calcharge.tochargeSubmit(response.data);
 								if(provCheckResult.code==0){
 									
-									///token/app/order/
 									var returnData = _gotosubmitOrder(response.data);
 									_orderConfirm(returnData);
 								}else{//下省校验失败也将转至订单确认页面，展示错误信息，只提供返回按钮
