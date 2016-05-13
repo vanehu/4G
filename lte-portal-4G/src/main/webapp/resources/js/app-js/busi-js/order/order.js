@@ -25,7 +25,7 @@ order.service = (function(){
 				if(obj==this){
 //					$("#qryStr").val($(this).attr("value"));//根据套餐名称模糊搜索套餐
 					$("#categoryNodeId").val($(this).attr("value"));//根据套餐目录ID搜索套餐
-					_searchPack();
+					_searchPack(1);
 					current=obj;
 					$(this).removeClass("btn btn-default");
 					$(this).removeClass("btn btn-default active");

@@ -1140,7 +1140,9 @@ order.phoneNumber = (function(){
 	//滚动页面入口
 	var _scroll = function(scrollObj){
 		if(scrollObj && scrollObj.page && scrollObj.page >= 1){
-			_initPhonenumber($("#subPage").val(),scrollObj.scroll);
+			var param = {};
+			order.phoneNumber.btnQueryPhoneNumber(param,scrollObj.scroll);
+//			_initPhonenumber($("#subPage").val(),scrollObj.scroll);
 		}
 	};
 	//返回按钮调用

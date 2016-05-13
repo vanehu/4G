@@ -45,6 +45,25 @@ SoOrder = (function() {
 	
 	//提交订单节点
 	var _submitOrder = function(data) {
+		if(OrderInfo.actionFlag==8){//新增客户
+			OrderInfo.busitypeflag = 25;
+		}else if(OrderInfo.actionFlag==13){//购裸机
+			OrderInfo.busitypeflag = 24;
+		}else if(OrderInfo.actionFlag==3){//可选包变更
+			OrderInfo.busitypeflag = 14;
+		}else if(OrderInfo.actionFlag==6){//主副卡成员变更
+			OrderInfo.busitypeflag = 3;
+		}else if(OrderInfo.actionFlag==2){//套餐变更
+			OrderInfo.busitypeflag = 2;
+		}else if(OrderInfo.actionFlag==9){//客户返档
+			OrderInfo.busitypeflag = 12;
+		}else if(OrderInfo.actionFlag==22){//补换卡
+			OrderInfo.busitypeflag = OrderInfo.uimtypeflag;
+		}else if(OrderInfo.actionFlag==23){//异地补换卡
+			OrderInfo.busitypeflag = 19;
+		}else if(OrderInfo.actionFlag==1 || OrderInfo.actionFlag==14){//新装
+			OrderInfo.busitypeflag = 1;
+		}
 		if(OrderInfo.actionFlag==14){
 			if (OrderInfo.cust.custId != undefined && OrderInfo.cust.custId != "") {
 				for(var i=0;i<OrderInfo.boProd2Tds.length;i++){
@@ -188,6 +207,7 @@ SoOrder = (function() {
 				});
 			}
 			OrderInfo.orderData.orderList.orderListInfo.custOrderAttrs = custOrderAttrs; //订单属性数组
+			OrderInfo.orderData.orderList.orderListInfo.custOrderType = OrderInfo.busitypeflag;
 			return true;
 		}
 		var busiOrders = [];  //存放订单项数组

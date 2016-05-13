@@ -27,6 +27,7 @@
 							<th>产品</th>
 							<th>费用名称</th>
 							<th>应收费用</th>
+							<th>实收费用</th>
 						</tr>
 					</thead>
 					<tbody class="form-inline">
@@ -76,14 +77,14 @@
 				                   				<#if busiList.objType=="7">
 				                   				 	<#assign boIds=boIds+"${busiList.boId}_"/>
 				                   				</#if>
-		                  					 	 <tr id="item_${trid}" onclick="order.calcharge.showEditPage('${prodInfoList.accessNumber}','${trid}','${((itemList.realAmount)?number / 100)?string('0.00')}')" <#if itemList.paymentAmount?? && (itemList.paymentAmount==0) >style="display:none"</#if> >
+		                  					 	 <tr id="item_${trid}" class="item_fee" onclick="order.calcharge.showEditPage('${prodInfoList.accessNumber}','${trid}','${((itemList.realAmount)?number / 100)?string('0.00')}')" <#if itemList.paymentAmount?? && (itemList.paymentAmount==0) >style="display:none"</#if> >
 							                       <#if prodInfoList.accessNumber??&&prodInfoList.accessNumber!="">
 						                				<td>${prodInfoList.accessNumber}</td>
 						                			</#if>
 							                        <!-- 产品信息 <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>${busiList.boActionTypeName}</strong>&nbsp;&nbsp;[${busiList.objName}]</td>-->
 							                        <!-- 费用名称 --><td>${itemList.acctItemTypeName}</td>
 							                        <!-- 应收费用 --><td>${((itemList.feeAmount)?number / 100)?string('0.00')}</td>
-							                        <!-- 实收费用 -->
+							                        <!-- 实收费用 --><td id="ssfy_${trid}">${((itemList.feeAmount)?number / 100)?string('0.00')}</td>
 							                       <span id="payMethodText_${trid}" style="display: none;">
 							                        <#if (refundType??&&(refundType>0) || itemList.payMethodCd == '140000') && itemList.payMethodCd != '110102'>
 							                        	${itemList.payMethodName}
@@ -145,10 +146,11 @@
 				<#elseif chargeItems??&&(chargeItems?size>0)>
 					<#list chargeItems as itemList>
 					<#assign trid="${itemList.boId}_${itemList.acctItemId}" />
-					<tr id="item_${trid}" onclick="order.calcharge.showEditPage('${itemList.accessNumber}','${trid}','${((itemList.realAmount)?number / 100)?string('0.00')}')" <#if itemList.paymentAmount?? && (itemList.paymentAmount==0) >style="display:none"</#if> >
+					<tr id="item_${trid}" class="item_fee" onclick="order.calcharge.showEditPage('${itemList.accessNumber}','${trid}','${((itemList.realAmount)?number / 100)?string('0.00')}')" <#if itemList.paymentAmount?? && (itemList.paymentAmount==0) >style="display:none"</#if> >
 						<td>${businessName}</td>
 						<td>${itemList.acctItemTypeName}</td>
 						<td>${((itemList.feeAmount)?number / 100)?string('0.00')}</td>
+						<td id="ssfy_${trid}">${((itemList.feeAmount)?number / 100)?string('0.00')}</td>
 						<span id="payMethodText_${trid}" style="display:none">
 	                        <#if (refundType??&&(refundType>0) || itemList.payMethodCd == '140000') && itemList.payMethodCd != '110102'>
 	                        	${itemList.payMethodName}

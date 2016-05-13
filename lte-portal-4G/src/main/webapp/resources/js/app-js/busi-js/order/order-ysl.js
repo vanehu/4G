@@ -115,10 +115,10 @@ order.ysl = (function(){
 	
 	var _busiactiontypeChoose = function(flag,fn){
 		if(fn=="ysl"){
-			$("#tcmc").html("套餐名称：");
+			$("#tcmc").html("套餐名称");
 			$("#tcuim").html("UIM卡号：");
 			$("#tcuim").removeAttr("style");
-			$("#tccphm").html("产品号码：");
+			$("#tccphm").html("产品号码");
 			$("#tcname").show();
 			$("#tcfflx").show();
 			$("#tcbm").show();
@@ -1278,10 +1278,10 @@ order.ysl = (function(){
 					$("#geren").hide();
 					$("#feiyongcontainer").hide();
 					$("#d_yslInfo").show();
-					$("#tcmc").html("套餐名称：");
+					$("#tcmc").html("套餐名称");
 					$("#tcuim").html("UIM卡号：");
 					$("#tcuim").removeAttr("style");
-					$("#tccphm").html("产品号码：");
+					$("#tccphm").html("产品号码");
 					$("#tcname").show();
 					$("#tcfflx").show();
 					$("#tcbm").show();

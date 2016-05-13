@@ -59,6 +59,7 @@
 							<th>产品</th>
 							<th>费用名称</th>
 							<th>应收费用</th>
+							<th>实收费用</th>
 						</tr>
 					</thead>
 					<tbody class="form-inline">
@@ -115,7 +116,7 @@
 							                        <!-- 产品信息 <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>${busiList.boActionTypeName}</strong>&nbsp;&nbsp;[${busiList.objName}]</td>-->
 							                        <!-- 费用名称 --><td>${itemList.acctItemTypeName}</td>
 							                        <!-- 应收费用 --><td>${((itemList.feeAmount)?number / 100)?string('0.00')}</td>
-							                        <!-- 实收费用 -->
+							                        <!-- 实收费用 --><td id="ssfy_${trid}">${((itemList.feeAmount)?number / 100)?string('0.00')}</td>
 							                       <span id="payMethodText_${trid}" style="display:none">
 							                        <#if (refundType??&&(refundType>0) || itemList.payMethodCd == '140000') && itemList.payMethodCd != '110102'>
 							                        	${itemList.payMethodName}
@@ -181,6 +182,7 @@
 						<td class="scroll-y">${businessName}</td>
 						<td>${itemList.acctItemTypeName}</td>
 						<td>${((itemList.feeAmount)?number / 100)?string('0.00')}</td>
+						<td id="ssfy_${trid}">${((itemList.feeAmount)?number / 100)?string('0.00')}</td>
 						<span id="payMethodText_${trid}" style="display:none">
 	                        <#if (refundType??&&(refundType>0) || itemList.payMethodCd == '140000') && itemList.payMethodCd != '110102'>
 	                        	${itemList.payMethodName}

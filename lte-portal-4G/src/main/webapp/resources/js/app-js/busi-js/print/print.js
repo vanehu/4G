@@ -176,6 +176,9 @@ common.print = (function($){
 			"done" : function(response){
 				$.unecOverlay();
 				if (response.code == 0) {
+					$(".item_fee").each(function(){
+                    	$(this).attr("onclick","");
+                    });
 					$("#order-confirm").show();
 					$("#order-print").hide();
 					$("#printVoucherA").attr("disabled","disabled");//回执保存成功后  回执按钮改为灰色不可操作

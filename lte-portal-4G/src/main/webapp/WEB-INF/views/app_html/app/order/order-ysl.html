@@ -109,17 +109,15 @@
 	              	    <div class="panel-body">
 	              	    	<div class="container-fluid">
 		              	    	<div class="form-group"  id="tcname">
-				                    <label id="tcmc">套餐名称<span class="text-warning">*</span></label>
-				                    <div class="input-group">
-				                      <input type="text" class="form-control" id="offer_spec_name" readOnly="readonly">
-				                      <span class="input-group-btn">
-				                      <a class="btn btn-default" id="addpro" onclick="order.ysl.showPack()">搜索 </a>
-				                      </span> 
+				                    <label id="tcmc">套餐名称</label>
+				                    <div class="input-group" style=" width: 72%; display: inline-block;">
+				                      <input type="text" style="width: 72%; display: inline-block;" class="form-control" id="offer_spec_name" readOnly="readonly">
+				                      <button class="btn btn-default" style="width: 24%;" id="addpro" onclick="order.ysl.showPack()">搜索 </button>
 				                     </div>
 				                 </div>
 				                 <div class="form-group" id="tcfflx">
 				                    <label for="payment_type_cd">付费类型</label>
-				                    <div class="input-group">
+				                    <div class="input-group" style="width: 72%; display: inline-block;">
 				                    <select id="payment_type_cd" class="selectpicker show-tick form-control">
 									  <option value="2100">预付费</option>
 								      <option value="1200">后付费</option>
@@ -135,11 +133,9 @@
 								 </div>
 								 <div class="form-group">
 									<label>产品号码<span class="text-warning">*</span></label>
-									<div class="input-group">
-										<input type="text" id="choosedNumSpan" class="form-control"> <span
-											class="input-group-btn">
-											<button class="btn btn-default"  id="tcxh" onclick="order.phoneNumber.initPage('-1','offer')" type="button">选号</button>
-										</span>
+									<div class="input-group" style="width: 72%; display: inline-block;">
+										<input type="text" id="choosedNumSpan" style="width: 72%; display: inline-block;" class="form-control">
+										<button class="btn btn-default" style="width: 24%;" id="tcxh" onclick="order.phoneNumber.initPage('-1','offer')" type="button">选号</button>
 									</div>
 								</div>
 								<div class="form-group"  id="tuim">
@@ -147,12 +143,12 @@
 					            	<input type="text" class="form-control"  id="uimcode">
 								</div>
 								<div class="form-group" id="tccpmm">
-									<label for="pwd">产品密码(默认自动生成6位密码)</label>
+									<label for="pwd">产品密码</label><!-- (默认自动生成6位密码) -->
 					            	<input type="password" class="form-control"  id="pwd" value="******">
 								</div>
 								<div class="form-group" id="tccpgg">
 				                    <label for="prodSpecId">产品规格</label>
-				                    <div class="input-group">
+				                    <div class="input-group" style="width: 72%; display: inline-block;">
 				                    <select id="prodSpecId" class="selectpicker show-tick form-control">
 									 	<option value="235010000">移动电话</option>
 		      							<option value="280000000">无线宽带</option>
@@ -205,27 +201,24 @@
 	              	    		<div class="form-group" id="feiyongitem">
 									<label>费用项</label>
 									<input type="text" class="form-control"  id="payitems" style="display:none">
-									<div class="input-group">
+									<div class="input-group" style="width: 72%; display: inline-block;">
 					            	<select id="selpayitems" class="selectpicker show-tick form-control">
 									</select> 
 						            <span class="input-group-addon select-span"></span>
 					         		</div>
 								</div>
 								<div class="form-group">
-									<label for="paymoney">金额（元）</label>
+									<label for="paymoney">金额(元)</label>
 					            	<input type="text" class="form-control"  id="paymoney" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')">
 								</div>
 								<div class="form-group">
 									<label>付费方式</label>
-									<div class="input-group">
-										<select id="paytype" class="selectpicker show-tick form-control">
+									<div class="input-group" style="width: 72%; display: inline-block;">
+										<select id="paytype" class="selectpicker show-tick form-control" style="width: 72%; display: inline-block;">
 											<option value="100000">现金</option>
 	       									<option value="110000">银行</option>
 										</select> 
-						            	<span class="input-group-addon select-span"></span>
-	    								<span class="input-group-btn">
-										<button class="btn btn-default" onclick="order.ysl.addpayinfo();" type="button">添加</button>
-										</span>
+										<button class="btn btn-default" style="width: 24%;" onclick="order.ysl.addpayinfo();" type="button">添加</button>
 									</div>
 								</div>
 	              	    	</div>

@@ -256,6 +256,9 @@ common = (function($) {
 			$("#order-content").show();
 			$("#order-confirm").hide();
 			$("#order-dealer").hide();
+			if(OrderInfo.actionFlag==13){
+				$("#terminalMain").show();
+			}
 			OrderInfo.order.step=2;
 		}else if(OrderInfo.order.step==4){
 			$("#order-confirm").show();

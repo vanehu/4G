@@ -457,7 +457,9 @@ order.calcharge = (function(){
 	    }
 		else{
 			cash = obj;
+			if(cash=='') cash = "0";
 			$("#realhidden_"+val).val(cash);
+			$("#ssfy_"+val).html(cash);
 		}
 		if(cash==''){
 			$(obj).val('0');
