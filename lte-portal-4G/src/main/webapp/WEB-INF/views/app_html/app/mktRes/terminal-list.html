@@ -34,14 +34,15 @@
 	           </a>
 	         </div>
 	         <div class="media-body">
-	           <h4 class="media-heading">${(mkt.mktResName)?default("--")} <span class="glyphicon glyphicon-chevron-right pull-right" aria-hidden="true"></span></h4>
+	           <h4 class="media-heading">${(mkt.mktResName)?default("--")}</h4>
 	           	 ￥<#if (mkt.salePrice)?default(0) != 0>${mkt.salePrice / 100}<#else>--</#if>元
 	      </div>
+	       <span class="dinggou">订购</span>
 	     </div>
 	</#list>
 <#else>
 	<#if (pageModel.list)?? &&((pageModel.list)?size>0)>
-		<@portal.scrollPagination "terminal_list" "both" pageModel.totalPages 90 0 "mktRes.terminal.scroll">
+		<@portal.scrollPagination "terminal_list" "both" pageModel.totalPages 60 0 "mktRes.terminal.scroll">
 			<#list pageModel.list as mkt>
 				<#assign intf_pic = false>
 				<#assign p_pic = ''>
@@ -77,10 +78,12 @@
 			            </a>
 			          </div>
 			          <div class="media-body" >
-			            <h4 class="media-heading">${(mkt.mktResName)?default("--")} <span class="glyphicon glyphicon-chevron-right pull-right" aria-hidden="true"></span></h4>
+			            <h4 class="media-heading">${(mkt.mktResName)?default("--")}</h4>
 				           	 ￥<#if (mkt.salePrice)?default(0) != 0>${mkt.salePrice / 100}<#else>--</#if>元
 				      </div>
+				      <span class="dinggou">订购</span>
 				     </div>
+				      
 			     </div>
 			</#list>
 		</@portal.scrollPagination>

@@ -163,6 +163,7 @@ order.phoneNumber = (function(){
 	};
 	//选择身份证预占的号码
 	var _btnToOffer=function(obj){
+		if($("#enter").length > 0 && $("#enter").val() != "3") OrderInfo.returnFlag="";
 		phoneNumberVal = $(obj).attr("numberVal"); 
 		var memberRoleCd=CONST.MEMBER_ROLE_CD.MAIN_CARD;
 		//选号类型：新装主卡选号、新装副卡选号 Y1、Y2
@@ -269,12 +270,12 @@ order.phoneNumber = (function(){
 				//_qryOfferInfoByPhoneNumFee();
 				OrderInfo.returnFlag=2;  // 临时处理
 				OrderInfo.order.step=2;
-				$("#tentrance").show();
-				$("#pentrance").hide();
-				$("#nentrance").hide();
+//				$("#tentrance").show();
+//				$("#pentrance").hide();
+//				$("#nentrance").hide();
 				$("#pakeage").show();
 				$("#pakeage").attr("class","tab-pane fade in active");
-				$("#tentrance").css("width","100%");
+//				$("#tentrance").css("width","100%");
 				$("#phone").hide();
 				$("#number").hide();
 			}else if(subPage=='terminal'){
@@ -446,6 +447,7 @@ order.phoneNumber = (function(){
 	
 	//号码预占
 	var _btnPurchase=function(obj,needPsw){
+		if($("#enter").length > 0 && $("#enter").val() != "3") OrderInfo.returnFlag="";
 		phoneNumberVal = $(obj).attr("numberVal"); 
 		var memberRoleCd=CONST.MEMBER_ROLE_CD.MAIN_CARD;
 		//选号类型：新装主卡选号、新装副卡选号 Y1、Y2
@@ -562,12 +564,13 @@ order.phoneNumber = (function(){
 							order.service.boProdAn = _boProdAn;
 							OrderInfo.returnFlag=2;  // 临时处理
 							OrderInfo.order.step=2;
-							$("#tentrance").show();
-							$("#pentrance").hide();
-							$("#nentrance").hide();
+//							$("#tentrance").show();
+//							$("#pentrance").hide();
+//							$("#nentrance").hide();
+							order.service.searchPack(1);
 							$("#pakeage").show();
 							$("#pakeage").attr("class","tab-pane fade in active");
-							$("#tentrance").css("width","100%");
+//							$("#tentrance").css("width","100%");
 							$("#phone").hide();
 							$("#number").hide();
 							//_qryOfferInfoByPhoneNumFee();
@@ -822,6 +825,7 @@ order.phoneNumber = (function(){
 					$.alert("提示","查询失败,稍后重试");
 					return;
 				}
+				if($("#enter").length > 0 && $("#enter").val() != "3") OrderInfo.returnFlag="hm";
 				$("#order").hide();
 				$("#order_prepare").hide();
 				var content$=$("#phonenumberContent");
@@ -988,9 +992,9 @@ order.phoneNumber = (function(){
 		if (response.code==0) {
 			if(response.data){
 				var phoneNbrPoolList= response.data.phoneNbrPoolList;
-				var $div =$('<div class="input-group select-top"></div>');
+				var $div =$('<div class="input-group select-top" style="width: 100%;"></div>');
 				var $span=$('<span class="input-group-addon select-span"></span>');
-				var $sel = $('<select id="nbrPool" class="selectpicker show-tick form-control"></select>');  
+				var $sel = $('<select id="nbrPool" class="selectpicker show-tick form-control" style=" border: none; height: 34px;"></select>');  
 				var $defaultopt = $('<option value="" selected="selected">请选择号池</option>');
 				$sel.append($defaultopt);
 				if(phoneNbrPoolList!=null){
@@ -1238,18 +1242,20 @@ order.phoneNumber = (function(){
 				}
 				//清除号码的缓存！
 				order.phoneNumber.resetBoProdAn();
-				$("#pakeage").hide();
-				$("#pakeage").attr("class","tab-pane fade in active");
-				$("#tentrance").show();
-				$("#phone").show();
+				order.phoneNumber.btnQueryPhoneNumber();
 				$("#number").show();
-				$("#pentrance").show();
-				$("#nentrance").show();
-				$("#tentrance").css("width","");
-				$("#nentrance").attr("class","");
+				$("#phonenumberContent").hide();
+				$("#subPage").val("number");
+				$("#pakeage").hide();
+				$("#phone").hide();
+				$("#pakeage").attr("class","tab-pane fade");
+				$("#phone").attr("class","tab-pane fade medialist");
+				$("#number").attr("class","tab-pane fade in active");
 				$("#div_content").html("");
 				$("#vice_modal").modal("hide");
 				$("#order_prepare").show();
+				$("#order-content").hide();
+				$("#order").hide();
 				OrderInfo.order.step=1;
 			},no:function(){
 				

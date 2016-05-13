@@ -1151,7 +1151,6 @@ offerChange = (function() {
 	var _getAttachOfferInfo=function(){
 		OrderInfo.getOrderData(); //获取订单提交节点	
 		OrderInfo.orderData.orderList.orderListInfo.partyId = OrderInfo.cust.custId;
-		OrderInfo.orderData.orderList.orderListInfo.areaId = OrderInfo.cust.areaId;
 		var busiOrders = OrderInfo.orderData.orderList.custOrderList[0].busiOrder;//获取业务对象数组
 		//遍历已开通附属销售品列表
 		for ( var i = 0; i < AttachOffer.openList.length; i++) {

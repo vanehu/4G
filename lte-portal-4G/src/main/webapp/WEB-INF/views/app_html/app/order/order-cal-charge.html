@@ -4,7 +4,7 @@
 			<!-- Default panel contents -->
 			<div class="panel-heading">收银台</div>
 			<div class="panel-body">
-				<p>购物车流水：${olNbr}</p>
+				<p style=" color: #000;">购物车流水：${olNbr}</p>
 			</div>
 			<div class="panel-body">
 			<div class="form-group">
@@ -204,8 +204,8 @@
 				</table>
 			</div>
 			<div class="panel-body">
-      	     <p class="col-xs-6" id="feeAmount">应收：${amount?string('0.00')}</p>
-      	     <p class="col-xs-6">实收：<span id="realMoney">${amount?string('0.00')}</span></p>
+      	     <p class="col-xs-6" style="color: #000;" id="feeAmount">应收：${amount?string('0.00')}</p>
+      	     <p class="col-xs-6" style="color: #000;">实收：<span id="realMoney">${amount?string('0.00')}</span></p>
       </div>
 		</div>
 	</div>

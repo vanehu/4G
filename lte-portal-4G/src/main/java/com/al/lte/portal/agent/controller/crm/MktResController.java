@@ -314,7 +314,7 @@ public class MktResController extends BaseController {
             Object obj = MapUtils.getObject(mktResMap, "mktResList");
             if (obj != null && obj instanceof List) {
                 List<Map<String, Object>> mktResList = (List<Map<String, Object>>) obj;
-                String mktResPicUrl =propertiesUtils.getMessage(SysConstant.MKT_RES_PIC_URL);
+                String mktResPicUrl = propertiesUtils.getMessage(SysConstant.MKT_RES_PIC_URL);
                 if (StringUtils.isNotEmpty(mktResPicUrl)) {
                     log.debug("mktResPicUrl:{}", mktResPicUrl);
                     model.addAttribute("mktResPicUrl", mktResPicUrl);
@@ -1068,7 +1068,7 @@ public class MktResController extends BaseController {
                 Object obj = MapUtils.getObject(mktResMap, "mktResList");
                 if (obj != null && obj instanceof List) {
                     List<Map<String, Object>> mktResList = (List<Map<String, Object>>) obj;
-                    String mktResPicUrl =propertiesUtils.getMessage(SysConstant.MKT_RES_PIC_URL);
+                    String mktResPicUrl = propertiesUtils.getMessage(SysConstant.MKT_RES_PIC_URL);
                     if (StringUtils.isNotEmpty(mktResPicUrl)) {
                         model.addAttribute("mktResPicUrl", mktResPicUrl);
                     }
@@ -1475,7 +1475,7 @@ public class MktResController extends BaseController {
         try {
             DataBus aDataBus = mktResBmo.qryPhoneNbrLevelInfoList(param, flowNum, sessionStaff);
             Map<String, Object> resMap = aDataBus.getReturnlmap();
-            String appDesc =propertiesUtils.getMessage(SysConstant.APPDESC);
+            String appDesc = propertiesUtils.getMessage(SysConstant.APPDESC);
             List PnLevelProdOfferlist = new ArrayList();
             if (sessionStaff != null && SysConstant.APPDESC_MVNO.equals(appDesc)) {
                 PnLevelProdOfferlist = (List) session.getAttribute(sessionStaff.getPartnerId() + "_"
@@ -1695,7 +1695,7 @@ public class MktResController extends BaseController {
             Object obj = MapUtils.getObject(mktResMap, "mktResList");
             if (obj != null && obj instanceof List) {
                 List<Map<String, Object>> mktResList = (List<Map<String, Object>>) obj;
-                String mktResPicUrl =propertiesUtils.getMessage(SysConstant.MKT_RES_PIC_URL);
+                String mktResPicUrl = propertiesUtils.getMessage(SysConstant.MKT_RES_PIC_URL);
                 if (StringUtils.isNotEmpty(mktResPicUrl)) {
                     log.debug("mktResPicUrl:{}", mktResPicUrl);
                     model.addAttribute("mktResPicUrl", mktResPicUrl);

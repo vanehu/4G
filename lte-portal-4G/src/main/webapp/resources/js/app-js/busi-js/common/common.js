@@ -29,6 +29,10 @@ common = (function($) {
 			"custInfos":custInfosParams,
 			"prodIdInfos":prodIdInfosParams
 		};
+		var enter = urlParams.enter;
+		if(enter != undefined){
+			param.enter = enter;
+		}
 		var method=urlParams.method;// /app/prodModify/custAuth
 		$.callServiceAsHtml(contextPath+method,param,{
 			"before":function(){
@@ -180,6 +184,7 @@ common = (function($) {
 	
 	//客户端调用此方法返回到上一页 1 为prepare页面  2为order-content（填单）页面 3为order-confirm（订单确认和收银台）页面 4为order-print（打印）页面
 	var _callReturnBack=function(){
+//		alert("OrderInfo.actionFlag="+OrderInfo.actionFlag+"---OrderInfo.order.step="+OrderInfo.order.step+"---OrderInfo.returnFlag="+OrderInfo.returnFlag);
 		$.unecOverlay();//网络出现故障或手机出现故障时按返回关闭“加载中”提示框
 		//如果收费成功  安卓手机返回按钮不可返回
 		if($("#toCharge").length>0){
@@ -207,6 +212,49 @@ common = (function($) {
 			order.phoneNumber.back(); 
 			return;
 		}
+		if(OrderInfo.returnFlag=="tc"){ // 套餐 
+			if(OrderInfo.actionFlag==14 && OrderInfo.order.step<3){
+				$("#order-memeber").hide();
+				$("#phonenumberContent").hide();
+				$("#div_offer").hide();
+				$("#offer-prepare").hide();
+				$("#order").show();
+				$("#order-content").show();
+//				$("#terminalMain").show();
+				OrderInfo.returnFlag="";
+				return;
+			}
+			if(OrderInfo.actionFlag==1){
+				$("#order-memeber").hide();
+				$("#phonenumberContent").hide();
+				$("#offer-prepare").hide();
+				$("#order").show();
+				$("#order-content").show();
+				OrderInfo.returnFlag="";
+				return;
+			}
+		}
+		if(OrderInfo.returnFlag=="hm"){//号码
+			if(OrderInfo.actionFlag==14 && OrderInfo.order.step<3){
+				$("#order-memeber").hide();
+				$("#phonenumberContent").hide();
+				$("#offer-prepare").hide();
+				$("#order").show();
+				$("#order-content").show();
+//				$("#terminalMain").show();
+				OrderInfo.returnFlag="";
+				return;
+			}
+			if(OrderInfo.actionFlag==1){
+				$("#order-memeber").hide();
+				$("#phonenumberContent").hide();
+				$("#offer-prepare").hide();
+				$("#order").show();
+				$("#order-content").show();
+				OrderInfo.returnFlag="";
+				return;
+			}
+		}
 		if(OrderInfo.order.step==1){
 			_callCloseWebview();
 		}else if(OrderInfo.order.step==2){
@@ -217,12 +265,28 @@ common = (function($) {
 			order.main.lastStep(function(){
 				$("#order_prepare").show();
 				if(OrderInfo.actionFlag != 13 || OrderInfo.actionFlag != 14){
-					$("#pakeage").show();
+					if(OrderInfo.actionFlag == 1 && "1"==$("#enter").val()){
+						order.service.searchPack(1);
+						$("#pakeage").show();
+						$("#pakeage").attr("class","tab-pane fade in active");
+						$("#phone").attr("class","tab-pane fade medialist");
+						$("#number").attr("class","tab-pane fade");
+					}
+					if(OrderInfo.actionFlag == 1 && "3"==$("#enter").val()){
+						order.phoneNumber.initPhonenumber('number');
+						$("#pakeage").attr("class","tab-pane fade");
+						$("#phone").attr("class","tab-pane fade medialist");
+						$("#number").attr("class","tab-pane fade in active");
+					}
 				}
 				if(OrderInfo.actionFlag == 13 || OrderInfo.actionFlag == 14){
+					mktRes.terminal.btnQueryTerminal(1);
 					$("#phone").show();
 					$("#pakeage").hide();
 					$("#number").hide();
+					$("#pakeage").attr("class","tab-pane fade");
+					$("#phone").attr("class","tab-pane fade medialist in active");
+					$("#number").attr("class","tab-pane fade");
 				}
 				$("#order").hide();	
 				if(OrderInfo.actionFlag==1){//新装的头部 要发生变化
@@ -280,7 +344,7 @@ common = (function($) {
 		);
 	};
 	//调用客户端 通知会话已经失效了
-	var _callSessionNotViald=function(){
+	var _callSessionNotViald=function(olId){
 		var arr=new Array(1);
 		MyPlugin.sessionValid(arr,
             function(result) {
@@ -289,7 +353,16 @@ common = (function($) {
             }
 		);
 	};
-	
+	var _callAgreePhoto=function(olId){
+		var arr=new Array(1);
+		arr[0]=olId;
+		MyPlugin.protocolPhone(arr,
+            function(result) {
+            },
+            function(error) {
+            }
+		);	
+	};
 	return {
 		relocationCust		:	_relocationCust,
 		setCalendar			:	_setCalendar,
@@ -305,6 +378,7 @@ common = (function($) {
 		callScanning		:	_callScanning,
 		callSessionNotViald	:	_callSessionNotViald,
 		callTitle			:	_callTitle,
-		saveCust			:	_saveCust
+		saveCust			:	_saveCust,
+		callAgreePhoto      :   _callAgreePhoto
 	};
 })(jQuery);

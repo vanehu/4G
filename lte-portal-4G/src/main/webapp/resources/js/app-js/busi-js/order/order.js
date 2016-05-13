@@ -111,6 +111,8 @@ order.service = (function(){
 		var url = contextPath+"/app/order/offerSpecList";
 		$("#pakeage").show();
 		$("#pakeage").attr("class","tab-pane fade in active");
+		$("#phone").attr("class","tab-pane fade medialist");
+		$("#number").attr("class","tab-pane fade");
 		$.callServiceAsHtmlGet(url,params, {
 			"before":function(){
 				$.ecOverlay("<strong>正在查询中,请稍等...</strong>");
@@ -254,6 +256,7 @@ order.service = (function(){
 //	        }
 			}
 		}
+		if($("#enter").length > 0 && $("#enter").val() != "3") OrderInfo.returnFlag="";
 	};
 	
 	//获取销售品构成，并选择数量
@@ -309,7 +312,7 @@ order.service = (function(){
 						}
 						max = this.maxQty<0?"不限制":this.maxQty;//主卡的最大数量
 						str+="<div class='form-group'>"
-							+"<label for='"+objInstId+"'>副卡数量:"+this.minQty+"-"+max+"(张)</label>"
+							+"<label style='width: 100%; text-align: left;' for='"+objInstId+"'>副卡数量:"+this.minQty+"-"+max+"(张)</label>"
 							+"<div class='input-group input-group-lg'>"
 							+"<span class='input-group-btn'>"
 							+"<button class='btn btn-default' type='button' onclick=order.service.subNum('"+objInstId+"',"+this.minQty+")> - </button>"
@@ -351,6 +354,8 @@ order.service = (function(){
 		if(OrderInfo.actionFlag == 1){
 			if(offerSpec.offerSpecParams && (offerSpec.offerSpecParams.length>0)){
 				$("#offerCanBtn").show();
+			}else{
+				$("#offerCanBtn").hide();
 			}
 		}
 	};
@@ -493,6 +498,7 @@ order.service = (function(){
 					$.alert("提示","页面显示失败,稍后重试");
 					return;
 				}
+				if($("#enter").length > 0 && $("#enter").val() != "3") OrderInfo.returnFlag="tc";
 				$("#member_prepare").hide();
 				var content$=$("#offerspecContent");
 				content$.html(response.data).show();
@@ -574,9 +580,12 @@ order.service = (function(){
 							prodOfferSpec.accessnumber=accessnumber;
 							OrderInfo.viceOfferSpec.push(prodOfferSpec);
 							order.prodModify.chooseOfferForMember(specId,subpage,specName,offerRoleId);
+							if($("#enter").length > 0 && $("#enter").val() != "3") OrderInfo.returnFlag="";
 							if(OrderInfo.actionFlag == 1){
 								if(prodOfferSpec.offerSpecParams && (prodOfferSpec.offerSpecParams.length>0)){
 									$("#offerCanBtn").show();
+								}else{
+									$("#offerCanBtn").hide();
 								}
 							}
 						}else{

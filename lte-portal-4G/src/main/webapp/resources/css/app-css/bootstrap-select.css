@@ -37,7 +37,7 @@
   border: none;
 }
 .bootstrap-select.form-control:not([class*="col-"]) {
-  width: 100%;
+  width: 72%;
 }
 .bootstrap-select.btn-group:not(.input-group-btn),
 .bootstrap-select.btn-group[class*="col-"] {

@@ -21,6 +21,8 @@ OrderInfo = (function() {
 	var _actionFlag = 0;
 	var _acctId = -1;
 	var _acctCd = -1;
+	//补卡换卡  22.补卡21.换卡
+	var _uimType="21";
 	/*购物车业务动作
 	1 新装
 	2  套餐变更
@@ -611,13 +613,8 @@ OrderInfo = (function() {
 					                state : "DEL"
 					            };
 								busiOrder.data.ooParams.push(delParam);
-						}
-						var feeType = $("select[name='pay_type_-1']").val();
-						if(feeType==undefined) feeType = order.prodModify.choosedProdInfo.feeType;
-						if(prodServ.servSpecId == CONST.YZFservSpecId && feeType == CONST.PAY_TYPE.AFTER_PAY){
-							this.setValue = "";
-						}
-						if(ec.util.isObj(this.setValue)){
+							}
+							if(ec.util.isObj(this.setValue)){
 								var addParam = {
 					                itemSpecId : this.itemSpecId,
 					                offerParamId : OrderInfo.SEQ.paramSeq--,
@@ -1499,6 +1496,7 @@ OrderInfo = (function() {
 		typeCd:_typeCd,
 		verifyLevel:_verifyLevel,
 		rulesJson:_rulesJson,
-		acctNbr:_acctNbr
+		acctNbr:_acctNbr,
+		uimType:_uimType
 	};
 })();

@@ -10,6 +10,7 @@ prod.uim = (function() {
 	
 	//uim卡号校验
 	var _checkUim = function(prodId){
+		OrderInfo.uimType=$("#uimType").val();
 		var phoneNumber = OrderInfo.getAccessNumber(prodId);
 		var offerId = "-1"; //新装默认，主销售品ID
 		if(OrderInfo.actionFlag==1||OrderInfo.actionFlag==6||OrderInfo.actionFlag==14||(OrderInfo.actionFlag==2&&offerChange.newMemberFlag)){ //新装需要选号

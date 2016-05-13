@@ -37,7 +37,7 @@
   		always:null,// 执行后回调函数
   		trim:true,//默认对参数所有值去掉半角和全角空格
   		cache:false,
-  		timeout:180000// 请求超时时限
+  		timeout:120000// 请求超时时限
   		};
 	  try{
 		  var token=getToken(); 

@@ -1169,4 +1169,111 @@ public class CustController extends BaseController {
         return jsonResponse;
     }
     
+    /**
+     * 客户证件鉴权-提供给手机客户端使用
+     * @param paramMap
+     * @param model
+     * @param flowNum
+     * @param response
+     * @param httpSession
+     * @return
+     */
+    @RequestMapping(value = "/custCertAuth", method = { RequestMethod.POST })
+    @ResponseBody
+    public JsonResponse custCertAuth(@RequestBody Map<String, Object> paramMap,HttpServletRequest request,
+            HttpServletResponse response,@LogOperatorAnn String flowNum) {
+        SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+                SysConstant.SESSION_KEY_LOGIN_STAFF);
+        Map<String, Object> resultMap = new HashMap<String, Object>();
+        JsonResponse jsonResponse = null;
+        //客户鉴权跳过 权限查询
+        String iseditOperation = (String) ServletUtils.getSessionAttribute(super.getRequest(),
+                SysConstant.SESSION_KEY_JUMPAUTH + "_" + sessionStaff.getStaffId());
+        try {
+            if (iseditOperation == null) {
+                iseditOperation = this.staffBmo.checkOperatSpec(SysConstant.JUMPAUTH_CODE, sessionStaff);
+                ServletUtils.setSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_JUMPAUTH + "_"
+                        + sessionStaff.getStaffId(), iseditOperation);
+            }
+        } catch (BusinessException e) {
+            iseditOperation = "1";
+        } catch (InterfaceException ie) {
+            iseditOperation = "1";
+        } catch (Exception e) {
+            iseditOperation = "1";
+        }
+        
+        //是否要脱敏 权限
+        String isViewOperation= (String)ServletUtils.getSessionAttribute(super.getRequest(),
+				SysConstant.SESSION_KEY_VIEWSENSI+"_"+sessionStaff.getStaffId());
+		try{
+ 			if(isViewOperation==null){
+ 				isViewOperation=staffBmo.checkOperatSpec(SysConstant.VIEWSENSI_CODE,sessionStaff);
+ 				ServletUtils.setSessionAttribute(super.getRequest(),
+ 						SysConstant.SESSION_KEY_VIEWSENSI+"_"+sessionStaff.getStaffId(), isViewOperation);
+ 			}
+			} catch (BusinessException e) {
+				isViewOperation="1";
+	 		} catch (InterfaceException ie) {
+	 			isViewOperation="1";
+			} catch (Exception e) {
+				isViewOperation="1";
+			}
+        
+        String areaId = (String) paramMap.get("areaId");
+        if (("").equals(areaId) || areaId == null) {
+            paramMap.put("areaId", sessionStaff.getCurrentAreaId());
+        }
+        paramMap.put("staffId", sessionStaff.getStaffId());
+       
+        String oldCustId = paramMap.get("oldCustId").toString();
+        paramMap.remove("oldCustId");
+
+        try {
+        	String an = paramMap.get("acctNbr").toString();
+        	String ic = paramMap.get("identityCd").toString();
+        	String in = paramMap.get("identityNum").toString();
+        	//接入号  或  证件类型、证件号码不为空时才调用客户资料查询接口
+        	if(an.length()>0 || (ic.length()>0 && in.length()>0)){
+	            resultMap = custBmo.queryCustInfo(paramMap, flowNum, sessionStaff);
+	            if (MapUtils.isNotEmpty(resultMap)) {
+	            	
+	        		//进行身份证脱敏
+					List<Map<String, Object>> custInfos = (List<Map<String, Object>>) resultMap.get("custInfos");
+					if (custInfos.size() > 0) {
+						Map<String, Object> custInfoMap = (Map<String, Object>) custInfos.get(0);
+						String custId = MapUtils.getString(custInfoMap, "custId");
+
+						if (custId.equals(oldCustId)){
+							jsonResponse=super.successed(MapUtils.getString(resultMap, "msg", "客户证件鉴权成功！"), ResultConstant.SUCCESS.getCode());
+						}
+						else{
+			            	jsonResponse=super.failed(MapUtils.getString(resultMap, "msg", "客户证件鉴权失败，客户不一致！"), ResultConstant.SERVICE_RESULT_FAILTURE
+			                        .getCode());
+						}
+
+					}
+					else{
+		            	jsonResponse=super.failed(MapUtils.getString(resultMap, "msg", "客户证件鉴权失败，无此证件用户！"), ResultConstant.SERVICE_RESULT_FAILTURE
+		                        .getCode());
+						
+					}
+	            }else{
+	            	jsonResponse=super.failed(MapUtils.getString(resultMap, "msg", "客户证件鉴权失败，没有此证件用户！"), ResultConstant.SERVICE_RESULT_FAILTURE
+	                        .getCode());
+	            }
+        	}else{
+        		jsonResponse=super.failed(MapUtils.getString(resultMap, "msg", "客户证件鉴权失败！"), ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+        	}
+            return jsonResponse;
+        } catch (BusinessException be) {
+            return super.failed(be);
+        } catch (InterfaceException ie) {
+            return super.failed(ie, paramMap, ErrorCode.QUERY_CUST);
+        } catch (Exception e) {
+            return super.failed(ErrorCode.QUERY_CUST, e, paramMap);
+        }
+
+    }      
+    
 }
