@@ -742,6 +742,10 @@ order.cust = (function(){
 			$.alert('提示','使用人必须是公众客户，请重新定位。');
 			return false;
 		}
+		var menuName = $("#menuName").attr("menuName");
+		if(ec.util.isObj(menuName)&&(CONST.MENU_FANDANG==menuName||CONST.MENU_CUSTFANDANG==menuName)){
+			authFlag = "1";
+		}
 		if(authFlag=="0"){
 			//TODO init view 
 			if(order.cust.authType == '00'){
@@ -792,8 +796,7 @@ order.cust = (function(){
 			$("#auth3 #authPassword2").val("");
 			$("#auth3 #idCardNumber2").val("");
 			$("#auth3 #smspwd2").val("");
-			var menuName = $("#menuName").attr("menuName");
-			if ((ec.util.isObj(canRealName) && 1 == canRealName)||(ec.util.isObj(menuName)&&(CONST.MENU_FANDANG==menuName||CONST.MENU_CUSTFANDANG==menuName))) {
+			if (ec.util.isObj(canRealName) && 1 == canRealName) {
 				easyDialog.open({
 					container: 'auth3',
 					callback: function () {
