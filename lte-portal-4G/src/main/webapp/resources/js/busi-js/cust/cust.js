@@ -1137,7 +1137,7 @@ order.cust = (function(){
 	};
 	//协销人地区
 	var _chooseStaffArea = function(){
-		order.area.chooseAreaTreeCurrent("p_staff_areaId_val","p_staff_areaId",3,"limitProvince",$("#p_staff_areaId").val().substring(0,3)+"0000");
+		order.area.chooseAreaTreeCurrent("p_staff_areaId_val","p_staff_areaId",3,"",$("#p_staff_areaId").val().substring(0,3)+"0000");
 	//	order.area.chooseAreaTreeAll("p_staff_areaId_val","p_staff_areaId",3,"limitProvince");
 	};
 	//新建客户选择地区

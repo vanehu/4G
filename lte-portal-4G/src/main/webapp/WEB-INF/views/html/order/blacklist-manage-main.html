@@ -62,8 +62,8 @@
                             <dl>
                                 <dt>选择地区：</dt>
                                 <dd>
-                                    <input type="text" class="numberTextBox width150" readonly="readonly" id="p_areaId_val" onclick="cart.main.chooseArea()" value="${p_areaId_val}" placeholder="请选择地区" />
-                                  	<input type="hidden" id="p_areaId" value="${p_areaId}">
+                                    <input type="text" class="numberTextBox width150" readonly="readonly" id="p_areaId_val" onclick="cart.main.chooseBlacklistArea('p_areaId_val','p_areaId')" value="${p_areaId_val}" placeholder="请选择地区" />
+                                  	<input type="hidden" name="p_areaId" id="p_areaId" value="${p_areaId}">
                                   	<label class="f_red">*</label>
                                 </dd>
                                 <dt style="width:100px">选择号码类型：&nbsp;</dt>

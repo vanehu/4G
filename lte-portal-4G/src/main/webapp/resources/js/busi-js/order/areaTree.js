@@ -145,7 +145,7 @@ order.area = (function(){
 		$.ligerDialog.open({
 			width:350,
 			height:350,
-			title:'请选择地区',
+			title:'请选择地区(*不可选)',
 			url:contextPath + '/orderQuery/areaTreeAll?areaLeve='+_areaLeve+"&areaLimit="+_areaLimit+"&areaId="+_currentAreaId,
 			buttons: [ { text: '确定', onclick: function (item, dialog) { 
 						if(!ztree) {
@@ -153,13 +153,13 @@ order.area = (function(){
 						}
 						var node=ztree.getSelected();
 						if(node){
-							if(node.data.isAllRegionFlag=="Y" || _areaId=="p_staff_areaId"){
+							if(node.data.isAllRegionFlag=="Y"){
 								$('#'+areaId).val(node.data.commonRegionId);
 								$('#'+areaId).attr("areaCode",node.data.regionCode);
 								$('#'+areaName).val(areaNameVal);
 								dialog.close();
 							}else{
-								
+								alert("当前地区不可选！");
 							}
 						}else{
 							

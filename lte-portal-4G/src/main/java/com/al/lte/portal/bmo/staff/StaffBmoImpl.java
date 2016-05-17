@@ -558,6 +558,7 @@ public class StaffBmoImpl implements StaffBmo {
 			throws Exception {
 		String areaLimit = dataBusMap.get("areaLimit")==null?"":dataBusMap.get("areaLimit").toString();
 		String areaLevel = dataBusMap.get("areaLevel")==null?"":dataBusMap.get("areaLevel").toString();
+		String ifQueryChilden = dataBusMap.get("ifQueryChilden")==null?"":dataBusMap.get("ifQueryChilden").toString();
 		List<Map<String, Object>> listTree = new ArrayList<Map<String, Object>>();
 		dataBusMap.remove("areaLimit");
 		DataBus db = ServiceClient.callService(dataBusMap, PortalServiceCode.SERVICE_QUERY_AREA_TREE_BY_PARENT_AREA_ID,optFlowNum, sessionStaff);
@@ -592,6 +593,13 @@ public class StaffBmoImpl implements StaffBmo {
 									}else{
 										row.put("isAllRegionFlag", "Y");
 									}
+									// 工号是本地网或者区县：只能选择到归属本地网
+									String areaRow = row.get("commonRegionId").toString().substring(0, 5);
+									String staffArea = sessionStaff.getAreaId().substring(0, 5);
+									if ("Y".equals(ifQueryChilden) && areaLimit != null && areaLimit.contains("limitStaffLocal") && !areaRow.equals(staffArea)) {
+										continue;
+									}
+									
 									row.put("areaLevel", leve);
 									
 									listTree.add(row);

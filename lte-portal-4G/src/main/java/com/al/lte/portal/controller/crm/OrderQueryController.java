@@ -328,6 +328,7 @@ public class OrderQueryController extends BaseController {
 		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
                 SysConstant.SESSION_KEY_LOGIN_STAFF);
 		try{
+			param.put("ifQueryChilden", "Y");
 			List<Map<String, Object>> list = staffBmo.areaTreeAllQuery(param,flowNum,sessionStaff);
 			return this.successed(list);
 		} catch (Exception e) {

@@ -34,7 +34,9 @@ import com.al.ecs.exception.ResultConstant;
 import com.al.ecs.spring.annotation.log.LogOperatorAnn;
 import com.al.ecs.spring.controller.BaseController;
 import com.al.lte.portal.bmo.crm.CommonBmo;
-import com.al.lte.portal.common.MySimulateData;
+import com.al.lte.portal.bmo.crm.CustBmo;
+import com.al.lte.portal.common.CommonMethods;
+import com.al.lte.portal.common.Const;
 import com.al.lte.portal.common.SysConstant;
 import com.al.lte.portal.model.SessionStaff;
 
@@ -152,5 +154,29 @@ public class CommonController extends BaseController {
 	    returnMap.put("resourceId", resourceId);
 	    returnMap.put("menuPath", menuPath);
 		return returnMap;
+	}
+
+	/**
+	 * 根据areaId查询区域类型
+	 * @param param
+	 * @param model
+	 * @param response
+	 * @param optFlowNum
+	 * @return
+	 */
+	@RequestMapping(value="/queryRegionType", method = RequestMethod.POST)
+	public @ResponseBody Map<String, Object> queryRegionType(@RequestBody Map<String, Object> param,
+			@LogOperatorAnn String flowNum) throws Exception{
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+                SysConstant.SESSION_KEY_LOGIN_STAFF);
+		String areaId = sessionStaff.getAreaId();
+		Map<String,Object> result = new HashMap<String,Object>();
+		Map<String, Object> areaInfo = CommonMethods.getAreaInfo(areaId);
+		String areaLevel = MapUtils.getString(areaInfo, "areaLevel");
+		
+		//1-集团,2-省,3-本地网,4-区县,5-乡镇
+		result.put("areaLevel",areaLevel);
+		result.put("areaId",areaId);
+		return result;
 	}
 }

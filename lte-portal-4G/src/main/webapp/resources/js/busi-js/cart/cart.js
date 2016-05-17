@@ -802,13 +802,15 @@ cart.main = (function(){
 	
 	var _qryVirtualNumber = function(){
 		var virtualAccNbr=$("#virtualNumber").val();
+		var choose_area_id = $("#p_disp_areaId").val();
 		if(virtualAccNbr==null || virtualAccNbr ==""){
 			$.alert("提示","请输入 '虚号接入号' 再查询");
 			return;
 		}
 		var param = {
 		    "virtualAccNbr":virtualAccNbr,
-		    "areaId":OrderInfo.staff.areaId
+		    //"areaId":OrderInfo.staff.areaId
+		    "areaId":choose_area_id
 		};
         
 		$.callServiceAsHtml(contextPath+"/report/queryMainInfo",param,{
@@ -898,6 +900,10 @@ cart.main = (function(){
 		if(!$("#p_areaId_val").val()||$("#p_areaId_val").val()==""){
 			$.alert("提示","请选择 '地区' 再查询");
 			return ;
+		}
+		if($("#p_areaId").val().indexOf("0000")>0){
+			$.alert("提示","选择地区为省级地区,请选择市级地区！");
+			return;
 		}
 		var accNbr=$("#accNbr").val();
 		var nbrType = $("#nbrType").val();
@@ -1030,6 +1036,28 @@ cart.main = (function(){
 		order.area.chooseAreaTreeAll(areaName,areaId,"3");
 	};
 	
+	var _chooseProAndLocalArea = function(){
+		var response = $.callServiceAsJson(contextPath+"/common/queryRegionType",{});
+		if(response.code != 0) {
+ 			$.alert("提示","查询工号归属地区失败！");
+			return false;
+		}
+		var staff_area_id = response.data.areaId;
+		var level = response.data.areaLevel;
+		switch(level) {
+			case '1': // 工号是全国
+				//order.area.chooseAreaTreeCurrent("p_disp_areaId_val","p_disp_areaId",3,"limitProvince");
+				order.area.chooseAreaTreeAll("p_disp_areaId_val","p_disp_areaId",3,"limitProvince");
+				break;
+			case '2': // 工号是省级：可以选择到该省下全部本地网
+				order.area.chooseAreaTreeCurrent("p_disp_areaId_val","p_disp_areaId",3,"limitProvince",staff_area_id);
+				break;
+			default:// 工号是本地网或者区县：只能选择到归属本地网
+				//order.area.chooseAreaTreeManger("report/unsubVirtualNumPrepare","p_disp_areaId_val","p_disp_areaId",3);
+				order.area.chooseAreaTreeCurrent("p_disp_areaId_val","p_disp_areaId",3,"limitProvince,limitStaffLocal",staff_area_id.substring(0,3)+"0000");
+		}
+	};
+	
 	return {
 		addStyle			:_addStyle,
 		removeStyle			:_removeStyle,
@@ -1056,7 +1084,8 @@ cart.main = (function(){
 		qryBlackUserInfo    :_qryBlackUserInfo,
 	 	showAddBlacklist    :_showAddBlacklist,
 	 	addBlacklistSubmit  :_addBlacklistSubmit,
-	 	chooseBlacklistArea :_chooseBlacklistArea
+	 	chooseBlacklistArea :_chooseBlacklistArea,
+	 	chooseProAndLocalArea:_chooseProAndLocalArea
 	};
 	
 })();

@@ -62,6 +62,12 @@
                 <div class="order_tab_panel" style="display:block;">
                         <div class="selectList">
                             <dl>
+                            	  <dt>选择地区：</dt>
+                                  <dd>
+                                  	<input type="text" class="numberTextBox width198" readonly="readonly" id="p_disp_areaId_val" onclick="cart.main.chooseProAndLocalArea()" value="${p_disp_areaId_val}" placeholder="请选择地区" />
+                                  	<input type="hidden" id="p_disp_areaId" value="${p_disp_areaId}">
+                                  	<label class="f_red">*</label>
+                                  </dd>
                             	  <dt>虚号接入号：</dt>
                                   <dd>
                                     <input type="text" class="numberTextBox width198" id="virtualNumber" value=""/>
