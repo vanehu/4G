@@ -42,7 +42,6 @@ cust.starQuery = (function(){
 	var _starQueryHisList = function starQueryHisList(acctNbr){
 		var param ={
 				"queryTypeValue":acctNbr,
-				"areaId":$("#p_areaId").val(),
 				"conditions" : [
 								{
 									  "condItemId" :"2",
