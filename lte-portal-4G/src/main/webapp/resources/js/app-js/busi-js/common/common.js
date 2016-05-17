@@ -212,6 +212,17 @@ common = (function($) {
 			order.phoneNumber.back(); 
 			return;
 		}
+		if(OrderInfo.actionFlag==-999){//处理预受理查询 返回
+			if(OrderInfo.order.step==2){
+				OrderInfo.order.step = 1;
+				$("#ysl_search").show();
+				$("#ysl_list").hide();
+			}
+			if(OrderInfo.order.step==1){
+				_callCloseWebview();
+			}
+			return;
+		}
 		if(OrderInfo.returnFlag=="tc"){ // 套餐 
 			if(OrderInfo.actionFlag==14 && OrderInfo.order.step<3){
 				$("#order-memeber").hide();

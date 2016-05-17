@@ -1171,6 +1171,7 @@ order.ysl = (function(){
 	};
     
     var _queryyslinfos = function(pageIndex,scroller){
+    	OrderInfo.order.step = 2;
     	var _beginDate = $("#p_startDt").val();
 		var _endDate = $("#p_endDt").val();
 		if(_beginDate==""||_endDate==""){
