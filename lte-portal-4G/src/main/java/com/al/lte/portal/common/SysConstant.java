@@ -123,6 +123,8 @@ public final class SysConstant {
     public static final String EDITTAXPAYER_CODE="EDITTAXPAYER";
     //客户鉴权跳过
     public static final String JUMPAUTH_CODE="JUMPAUTH";
+    //异常单释放查询同渠道权限
+    public static final String EXCEPTION_ORDER_CHANNEL_QUERY="BQDYCDSFQX";
     //受理订单页面查询渠道的权限控制,如果有权限，则查询某地区下的所有渠道；否则仅查询登录员工当前渠道
     public static final String QRYCHANNELAUTH_CODE="REGION_CHANNEL_SELECT";
     //查看身份证权限(无脱敏)

@@ -38,14 +38,17 @@ public class ReserveNumberDAOImpl implements ReserveNumberDAO {
         String interval = DataRepository.getInstence().getSysParamValue("sys.preNumberDate","1");
         if (interval == null) interval = "5";
 		StringBuffer sql = new StringBuffer();
-        sql.append(" (SELECT rownum RN, R.ACC_ID,R.ACC_NBR,R.ACC_NBR_TYPE,R.IS_RELEASE state,R.AREA_ID,CR.REGION_NAME AREA_NAME,to_char(R.CREATE_DATE,'YYYY-MM-DD HH24:MI:SS') as CREATE_DATE");
-        sql.append("  FROM RESERVE_NUMBER R  JOIN COMMON_REGION CR ON R.AREA_ID=CR.COMMON_REGION_ID ");
+        sql.append(" (SELECT rownum RN, R.ACC_ID,R.ACC_NBR,R.ACC_NBR_TYPE,R.IS_RELEASE state,R.AREA_ID,S.STAFF_NAME STAFF_NAME,CR.REGION_NAME AREA_NAME,to_char(R.CREATE_DATE,'YYYY-MM-DD HH24:MI:SS') as CREATE_DATE");
+        sql.append("  FROM RESERVE_NUMBER R  JOIN COMMON_REGION CR ON R.AREA_ID=CR.COMMON_REGION_ID JOIN STAFF S ON R.STAFF_ID = S.STAFF_ID");
         sql.append(" WHERE  (SYSDATE - R.CREATE_DATE) * 1440 >= '" +interval+"'"+
         		" AND R.IS_RELEASE='1' AND R.ACC_NBR_TYPE = '"+accNbrType+"'");
 		if(StringUtils.isNotBlank(MapUtils.getString(param, "accNbr", ""))){
 			sql.append(" AND R.ACC_NBR = '"+MapUtils.getString(param, "accNbr", "")+"'");
 		}
-		if(StringUtils.isNotBlank(MapUtils.getString(param, "staffId", ""))){
+		if(StringUtils.isNotBlank(MapUtils.getString(param, "channelId", ""))){
+			sql.append(" AND R.CHANNEL_ID = '"+MapUtils.getString(param, "channelId", "")+"'");
+		}
+		else if(StringUtils.isNotBlank(MapUtils.getString(param, "staffId", ""))){
 			sql.append(" AND R.STAFF_ID = '"+MapUtils.getString(param, "staffId", "")+"'");
 		}
 //		if(StringUtils.isNotBlank(MapUtils.getString(param, "areaId", ""))){

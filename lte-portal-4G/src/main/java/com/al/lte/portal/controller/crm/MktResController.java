@@ -777,6 +777,11 @@ public class MktResController extends BaseController {
 		param.put("areaId", MapUtils.getString(param,"areaId",sessionStaff.getCurrentAreaId()));
 
 		try{
+			//查询引工号异常单释放是否有查询并释放同一渠道下其它员工异常单权限
+			String hasChannelAuth=staffBmo.checkOperatSpec(SysConstant.EXCEPTION_ORDER_CHANNEL_QUERY,sessionStaff);
+			if(ResultCode.R_SUCC.equals(hasChannelAuth)){
+				param.put("channelId", MapUtils.getString(param,"channelId",sessionStaff.getCurrentChannelId()));
+			}
 			Map<String, Object> resultMap = mktResBmo.queryReleaseNum(param, flowNum, sessionStaff);
 			
 			if(resultMap!=null && resultMap.get("code")!=null){
