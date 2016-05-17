@@ -1,7 +1,6 @@
 package com.al.lte.portal.bmo.crm;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -82,23 +81,7 @@ public interface BatchBmo {
 	 * @author ZhangYu
 	 */
 	public Map<String, Object> readExcel4EcsBatch(Workbook workbook, String batchType);
-	
-	/**
-	 * 进度查询下的导入Excel方法</br>
-	 * 该方法将查询该批次下的所有记录，并以Excel文件形式导出
-	 * @param title
-	 * @param headers
-	 * @param dataList
-	 * @param out
-	 * @author ZhangYu
-	 * @throws BusinessException 
-	 */
-	public void exportExcel(String title, String[] headers, List<Map<String, Object>> dataList, OutputStream outputStream) throws BusinessException;
-	
-	public void exportExcelUtil(String title, String[] headers, List<Map<String, Object>> dataList, OutputStream outputStream, Map<Integer, Object> transferInfo) throws BusinessException;
-	
-	public void exportExcelEcs(String title, String[] headers, List<Map<String, Object>> dataList, OutputStream outputStream) throws BusinessException;
-	
+		
 	/**
 	 * 获取未来5天的时间列表，精确到“时”，以实现未来5天的预约时间。该方法目前用于批开活卡、批量新装、批量裸机销售等批量受理。
 	 * @return 时间列表

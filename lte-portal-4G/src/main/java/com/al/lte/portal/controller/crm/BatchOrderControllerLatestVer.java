@@ -51,6 +51,7 @@ import com.al.lte.portal.bmo.staff.StaffBmo;
 import com.al.lte.portal.bmo.crm.CustBmo;
 import com.al.lte.portal.common.CommonMethods;
 import com.al.lte.portal.common.EhcacheUtil;
+import com.al.lte.portal.common.ExcelUtil;
 import com.al.lte.portal.common.FTPServiceUtils;
 import com.al.lte.portal.common.SysConstant;
 import com.al.lte.portal.model.SessionStaff;
@@ -503,31 +504,28 @@ public class BatchOrderControllerLatestVer  extends BaseController {
 					resultList.add(tempMap);
 				}
 				if(resultList != null && resultList.size() > 0){
-					/*List<Map<String,Object>> convertIntoExcelList = new ArrayList<Map<String,Object>>();
-					Map<String,Object> tempMap = new HashMap<String,Object>();
-					for(Map<String,Object> mapOfList : resultList){
-						tempMap.put("groupId", mapOfList.get("groupId"));
-						tempMap.put("accessNumber", "".equals(mapOfList.get("boProdAn").toString()) ? mapOfList.get("accessNumber").toString() : mapOfList.get("boProdAn").toString());
-						tempMap.put("boProd2Td", mapOfList.get("boProd2Tds"));
-						tempMap.put("genOlDt", mapOfList.get("genOlDt"));
-						tempMap.put("statusCd", mapOfList.get("statusCd"));
-						tempMap.put("msgInfo", mapOfList.get("msgInfo"));
-						tempMap.put("orderStatusName", mapOfList.get("orderStatusName"));
-						tempMap.put("transactionId", mapOfList.get("transactionId"));
-						tempMap.put("custSoNumber", mapOfList.get("custSoNumber"));
-						convertIntoExcelList.add(tempMap);
-					}*/
-					//String excelTitle = "批次查询受理表单"+param.get("groupId");
 					String excelTitle = param.get("groupId").toString();
-					String[] headers = new String[]{"批次号","主接入号","UIM卡号","受理时间","受理状态","反馈信息","订单状态","下省流水","购物车流水"};
+					String[][] headers = {
+						{"groupId","accessNumber","boProd2Td","genOlDt","statusCd","msgInfo","orderStatusName","transactionId","custSoNumber"},
+						{"批次号","主接入号","UIM卡号","受理时间","受理状态","反馈信息","订单状态","下省流水","购物车流水"}
+					};
 					
-					response.addHeader("Content-Disposition", "attachment;filename="+new String( excelTitle.getBytes("gb2312"), "ISO8859-1" )+".xls");
-					response.setContentType("application/binary;charset=utf-8");
-					 
-					ServletOutputStream  outputStream = response.getOutputStream();
-					batchBmo.exportExcel(excelTitle, headers, resultList, outputStream);
-//					batchBmo.exportExcelUtil(excelTitle, headers, convertIntoExcelList, outputStream, null);
-					outputStream.close();
+					Map<String, Object> transferInfo = new HashMap<String, Object>();
+					Map<String, Object> paramNameMap = new HashMap<String, Object>();
+					paramNameMap.put("PC", "派发成功");
+					paramNameMap.put("PD", "派发失败");
+					paramNameMap.put("Q", "导入成功");
+					paramNameMap.put("S", "购物车生成成功");
+					paramNameMap.put("X", "购物车生成失败");
+					paramNameMap.put("PW", "正在派发中");
+					paramNameMap.put("C", "发送后端成功");
+					paramNameMap.put("PE", "等待重新派发");
+					paramNameMap.put("F", "发送后端失败");
+					paramNameMap.put("DL", "受理处理中");
+					paramNameMap.put("RC", "返销成功");
+					transferInfo.put("statusCd", paramNameMap);
+					ExcelUtil.exportExcelXls(excelTitle, headers, resultList, response, transferInfo);
+//					ExcelUtil.exportExcelXlsx(excelTitle, headers, resultList, response, transferInfo);
 				}
 			}
 		} catch (BusinessException be) {
@@ -536,13 +534,9 @@ public class BatchOrderControllerLatestVer  extends BaseController {
 		} catch (InterfaceException ie) {
 			return super.failed(ie, param, ErrorCode.BATCH_IMP_LIST);
 		} catch (Exception e) {
-			//return super.failedStr(model, ErrorCode.BATCH_IMP_LIST, e, param);
 			return super.failed(ErrorCode.BATCH_IMP_LIST, e.getStackTrace().toString(), param);
 		}
 		
-		//return "/batchOrder/batch-order-progressQuery-dialog";
-		//return jsonResponse = super.successed(rMap,ResultConstant.SUCCESS.getCode());
-		//return jsonResponse = super.successed("导出成功！");
 		return super.successed("导出成功！");
 	}
 
@@ -1268,8 +1262,8 @@ public class BatchOrderControllerLatestVer  extends BaseController {
 						Map<String, Object> ftpEvidenceFileResultMap = null;
 
 						param.put("custOrderId", "");//与后台协商，目前传""，但不可不传，避免空指针
-						param.put("custId", "");//与后台协商，目前传""，但不可不传，避免空指针
-						param.putAll(getAreaInfos());
+						param.put("custId", "");//同上
+						param.putAll(this.getAreaInfos());
 						param.put("commonRegionId",sessionStaff.getCurrentAreaId());
 						param.put("batchType", batchType);
 						param.put("reserveDt", reserveDt);
@@ -1808,15 +1802,12 @@ public class BatchOrderControllerLatestVer  extends BaseController {
 				if(resultList != null && resultList.size() > 0){
 //					int totalResultNum = MapUtils.getIntValue(resultMap, "totalResultNum", 0);
 					String excelTitle = "ecs_" + param.get("batchId").toString();
-					String[] headers = new String[]{"仓库名称","区域名称","终端状态","创建日期","更新日期","描 述","备 注"};
-					
-					response.addHeader("Content-Disposition", "attachment;filename="+new String( excelTitle.getBytes("gb2312"), "ISO8859-1" )+".xls");
-					response.setContentType("application/binary;charset=utf-8");
-					 
-					ServletOutputStream  outputStream = response.getOutputStream();
-//					batchBmo.exportExcel(excelTitle, headers, resultList, outputStream);
-					batchBmo.exportExcelEcs(excelTitle, headers, resultList, outputStream);
-					outputStream.close();
+					String[][] headers = {
+						{"STORE_NAME","AREA_NAME","STATUS_NAME","CREATE_DATE","UPDATE_DATE","LOG_DESC","REMARK"},
+						{"仓库名称","区域名称","终端状态","创建日期","更新日期","描 述","备 注"}
+					};
+					ExcelUtil.exportExcelXls(excelTitle, headers, resultList, response, null);
+//					ExcelUtil.exportExcelXlsx(excelTitle, headers, resultList, response, null);
 				}
 			}
 		} catch (Exception e) {
