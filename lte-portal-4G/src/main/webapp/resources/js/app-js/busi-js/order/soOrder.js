@@ -413,11 +413,11 @@ SoOrder = (function() {
 		SoOrder.delOrderBegin();
 		
 		if(OrderInfo.actionFlag==1 ||OrderInfo.actionFlag==14){ //新装
-			$("#orderTbody").append('<li class="list-group-item" id="offerSpecName"> <h4 class="list-group-item-heading"> 套餐名称</h4><p class="list-group-item-text">'+OrderInfo.offerSpec.offerSpecName+'</p></li>');
+			$("#orderTbody").append('<li class="list-group-item" id="offerSpecName"> <span class="title_lv"></span><h4 class="list-group-item-heading"> 套餐名称</h4><p class="list-group-item-text">'+OrderInfo.offerSpec.offerSpecName+'</p></li>');
 			$("#tital").html("<span>订购</span>"+OrderInfo.offerSpec.offerSpecName);
 			$.each(OrderInfo.offerSpec.offerRoles,function(){
 				$.each(this.prodInsts,function(){
-					$("#orderTbody").append('<li class="list-group-item" id="offerSpecName"> <h4 class="list-group-item-heading"> '+this.offerRoleName+'</h4><p class="list-group-item-text">'+OrderInfo.getProdAn(this.prodInstId).accessNumber+'</p></li>');
+					$("#orderTbody").append('<li class="list-group-item" id="offerSpecName"><span class="title_lv"></span> <h4 class="list-group-item-heading"> '+this.offerRoleName+'</h4><p class="list-group-item-text">'+OrderInfo.getProdAn(this.prodInstId).accessNumber+'</p></li>');
 				});
 			});
 		}else if(OrderInfo.actionFlag==13 || OrderInfo.actionFlag==17 || OrderInfo.actionFlag==18){ //裸机销售
@@ -466,16 +466,16 @@ SoOrder = (function() {
 			$("#tital").append($span);
 		}else{ //二次业务
 			var prod = order.prodModify.choosedProdInfo;
-			$("#orderTbody").append('<li class="list-group-item" id="offerSpecName"> <h4 class="list-group-item-heading"> 套餐名称</h4><p class="list-group-item-text">'+prod.prodOfferName+'</p></li>');
-			$("#orderTbody").append('<li class="list-group-item" id="accNbrTr"> <h4 class="list-group-item-heading"> 手机号码</h4><p class="list-group-item-text">'+prod.accNbr+'</p></li>');	
+			$("#orderTbody").append('<li class="list-group-item" id="offerSpecName"> <span class="title_lv"></span><h4 class="list-group-item-heading"> 套餐名称</h4><p class="list-group-item-text">'+prod.prodOfferName+'</p></li>');
+			$("#orderTbody").append('<li class="list-group-item" id="accNbrTr"> <span class="title_lv"></span><h4 class="list-group-item-heading"> 手机号码</h4><p class="list-group-item-text">'+prod.accNbr+'</p></li>');	
 			if(OrderInfo.actionFlag==2){ //套餐变更 
 				OrderInfo.actionTypeName = "套餐变更";
-				$("#orderTbody").append('<li class="list-group-item" id="accNbrTr"> <h4 class="list-group-item-heading">新套餐名称</h4><p class="list-group-item-text">'+OrderInfo.offerSpec.offerSpecName+'</p></li>');	
+				$("#orderTbody").append('<li class="list-group-item" id="accNbrTr"> <span class="title_lv"></span><h4 class="list-group-item-heading">新套餐名称</h4><p class="list-group-item-text">'+OrderInfo.offerSpec.offerSpecName+'</p></li>');	
 				$("#accNbrTr").hide();
 				for ( var i = 0; i < OrderInfo.offer.offerMemberInfos.length; i++) { //遍历主销售品构成
 					var offerMember = OrderInfo.offer.offerMemberInfos[i];
 					if(offerMember.objType==CONST.OBJ_TYPE.PROD){
-						$("#orderTbody").append('<li class="list-group-item" id="accNbrTr"> <h4 class="list-group-item-heading">'+offerMember.roleName+'号码</h4><p class="list-group-item-text">'+offerMember.accessNumber+'</p></li>');
+						$("#orderTbody").append('<li class="list-group-item" id="accNbrTr"> <span class="title_lv"></span><h4 class="list-group-item-heading">'+offerMember.roleName+'号码</h4><p class="list-group-item-text">'+offerMember.accessNumber+'</p></li>');
 					}
 				}
 			}else if(OrderInfo.actionFlag==3){ //可选包变更 
@@ -501,11 +501,11 @@ SoOrder = (function() {
 				$("#accNbrTr").hide();
 				$.each(OrderInfo.offer.offerMemberInfos,function(){ //遍历主销售品构成
 					if(this.objType==CONST.OBJ_TYPE.PROD){
-						$("#orderTbody").append('<li class="list-group-item" id="offerSpecName"> <h4 class="list-group-item-heading">'+this.roleName+'号码：</h4><p class="list-group-item-text">'+this.accessNumber+'</p></li>');
+						$("#orderTbody").append('<li class="list-group-item" id="offerSpecName"> <span class="title_lv"></span><h4 class="list-group-item-heading">'+this.roleName+'号码：</h4><p class="list-group-item-text">'+this.accessNumber+'</p></li>');
 					}
 				});
 				$.each(OrderInfo.boProdAns,function(){
-					$("#orderTbody").append('<li class="list-group-item" id="offerSpecName"> <h4 class="list-group-item-heading">纳入副卡号码：</h4><p class="list-group-item-text">'+this.accessNumber+'</p></li>');
+					$("#orderTbody").append('<li class="list-group-item" id="offerSpecName"> <span class="title_lv"></span><h4 class="list-group-item-heading">纳入副卡号码：</h4><p class="list-group-item-text">'+this.accessNumber+'</p></li>');
 				});
 				if(ec.util.isArray(OrderInfo.oldAddNumList)){
 					/*for(var i=0;i<OrderInfo.oldAddNumList.length;i++){
@@ -515,25 +515,25 @@ SoOrder = (function() {
 						for ( var i = 0; i < OrderInfo.oldoffer[j].offerMemberInfos.length; i++) {
 							var offerMember = OrderInfo.oldoffer[j].offerMemberInfos[i];
 							if(offerMember.objType==CONST.OBJ_TYPE.PROD){
-								$("#orderTbody").append('<li class="list-group-item" id="offerSpecName"> <h4 class="list-group-item-heading">纳入副卡号码：</h4><p class="list-group-item-text">'+offerMember.accessNumber+'</p></li>');
+								$("#orderTbody").append('<li class="list-group-item" id="offerSpecName"> <span class="title_lv"></span><h4 class="list-group-item-heading">纳入副卡号码：</h4><p class="list-group-item-text">'+offerMember.accessNumber+'</p></li>');
 							}
 						}
 					}
 				}
 				if(ec.util.isArray(OrderInfo.choosedNumList) && ec.util.isArray(OrderInfo.viceprodInstInfos) && OrderInfo.oldMvFlag){
 					for(var i=0;i<OrderInfo.choosedNumList.length;i++){
-						$("#orderTbody").append('<li class="list-group-item" id="offerSpecName"> <h4 class="list-group-item-heading">纳入副卡号码：</h4><p class="list-group-item-text">'+OrderInfo.choosedNumList[i].accNbr+'</p></li>');
+						$("#orderTbody").append('<li class="list-group-item" id="offerSpecName"> <span class="title_lv"></span><h4 class="list-group-item-heading">纳入副卡号码：</h4><p class="list-group-item-text">'+OrderInfo.choosedNumList[i].accNbr+'</p></li>');
 					}
 				}
 //				OrderInfo.actionTypeName = "主副卡成员变更";
 //				$("#accNbrTr").hide();
 //				$.each(OrderInfo.offer.offerMemberInfos,function(){ //遍历主销售品构成
 //					if(this.objType==CONST.OBJ_TYPE.PROD){  
-//						$("#orderTbody").append('<li class="list-group-item" id="offerSpecName"> <h4 class="list-group-item-heading">'+this.roleName+'号码：</h4><p class="list-group-item-text">'+this.accessNumber+'</p></li>');
+//						$("#orderTbody").append('<li class="list-group-item" id="offerSpecName"> <span class="title_lv"></span><h4 class="list-group-item-heading">'+this.roleName+'号码：</h4><p class="list-group-item-text">'+this.accessNumber+'</p></li>');
 //					}
 //				});
 //				$.each(OrderInfo.boProdAns,function(){
-//					$("#orderTbody").append('<li class="list-group-item" id="offerSpecName"> <h4 class="list-group-item-heading"> 纳入副卡号码'+'</h4><p class="list-group-item-text">'+this.accessNumber+'</p></li>');	
+//					$("#orderTbody").append('<li class="list-group-item" id="offerSpecName"> <span class="title_lv"></span><h4 class="list-group-item-heading"> 纳入副卡号码'+'</h4><p class="list-group-item-text">'+this.accessNumber+'</p></li>');	
 //				});
 				OrderInfo.actionTypeName = "主副卡成员变更";
 			}else if(OrderInfo.actionFlag==7){ //主副卡拆机保留副卡
@@ -562,7 +562,7 @@ SoOrder = (function() {
 			}else if(OrderInfo.actionFlag==21){ //主副卡成员变更
 				if(ec.util.isArray(OrderInfo.viceOfferSpec)){
 					$.each(OrderInfo.viceOfferSpec,function(){
-						$("#orderTbody").append('<li class="list-group-item" id="offerSpecName"> <h4 class="list-group-item-heading">新套餐名称：</h4><p class="list-group-item-text">'+this.offerSpecName+'</p></li>');
+						$("#orderTbody").append('<li class="list-group-item" id="offerSpecName"> <span class="title_lv"></span><h4 class="list-group-item-heading">新套餐名称：</h4><p class="list-group-item-text">'+this.offerSpecName+'</p></li>');
 					});
 				}
 				$("#accNbrTr").hide();
@@ -581,9 +581,9 @@ SoOrder = (function() {
 								}
 							});
 							if(knew=="Y"){  
-								$("#orderTbody").append('<li class="list-group-item" id="offerSpecName"> <h4 class="list-group-item-heading"> 订购'+this.roleName+'号码：</h4><p class="list-group-item-text">'+this.accessNumber+'</p></li>');
+								$("#orderTbody").append('<li class="list-group-item" id="offerSpecName"> <span class="title_lv"></span><h4 class="list-group-item-heading"> 订购'+this.roleName+'号码：</h4><p class="list-group-item-text">'+this.accessNumber+'</p></li>');
 							}else if(del=="Y"){
-								$("#orderTbody").append('<li class="list-group-item" id="offerSpecName"> <h4 class="list-group-item-heading"> 拆除'+this.roleName+'号码：</h4><p class="list-group-item-text">'+this.accessNumber+'</p></li>');	
+								$("#orderTbody").append('<li class="list-group-item" id="offerSpecName"> <span class="title_lv"></span><h4 class="list-group-item-heading"> 拆除'+this.roleName+'号码：</h4><p class="list-group-item-text">'+this.accessNumber+'</p></li>');	
 							}
 						}
 					}

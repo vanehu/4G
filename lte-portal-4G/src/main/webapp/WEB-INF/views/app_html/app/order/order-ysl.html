@@ -8,9 +8,9 @@
 			    	<!-- 基本信息 -->
 			    	<div id="baseInfo">
 			    	   <div class="panel-heading">基本信息</div>
-	              	   <div class="panel-body" style="background: #f6f6f6;">
+	              	   <div class="panel-body" style="background: #f6f6f6; padding-left: 0; padding-right: 0;">
 	             	   		<div class="container-fluid" id="geren" style="margin-bottom: 17px;">
-						        <div class="row">
+						        <div class="row"">
 						        	<div class="col-xs-12 lanya">
 						            	<!--
 						            	<img src="${contextPath}/image/app-image/scanning.png"  onclick="common.callIDCardRec('cust.getIDCardInfos')" id="photos" alt="身份证" class="img-thumbnail img-responsive">
@@ -22,8 +22,9 @@
 								            	 证件扫描
 								            </button>
 								            <ul class="img_box">
-								            	<li><img onClick="common.callGenerationRec('cust.getGenerationInfos','1')" style=" height: 40px; margin-left: 50px; margin-top: -5px;"src="${contextPath}/image/app-image/shebeisaomiao-xxhdpi_03.png"/></li>
-								            	<li id="nfc"><img onClick="common.callGenerationRec('cust.getGenerationInfos','2')" style=" height: 40px; margin-left: 50px; margin-top: -5px;" src="${contextPath}/image/app-image/shebeisaomiao-xxhdpi_05.png"/></li>
+								            	<li><img onClick="common.callGenerationRec('cust.getGenerationInfos','1')" style=" height: 40px; margin-left: 18px; margin-top: -5px;"src="${contextPath}/image/app-image/shebeisaomiao-xxhdpi_03.png"/></li>
+								            	<li id="nfc"><img onClick="common.callGenerationRec('cust.getGenerationInfos','2')" style=" height: 40px; margin-left: 18px; margin-top: -5px;" src="${contextPath}/image/app-image/shebeisaomiao-xxhdpi_05.png"/></li>
+								            	<li id="otg"><img onClick="common.callGenerationRec('cust.getGenerationInfos','3')" style=" height: 40px; margin-left: 18px; margin-top: -5px;" src="${contextPath}/image/app-image/otg@2x_03.png"/></li>
 								            </ul>
 								          </div>
 								          <div class="btn-group" role="group" style="display:none">
@@ -109,7 +110,7 @@
 	              	    <div class="panel-body">
 	              	    	<div class="container-fluid">
 		              	    	<div class="form-group"  id="tcname">
-				                    <label id="tcmc">套餐名称</label>
+				                    <label id="tcmc" >套餐名称</label>
 				                    <div class="input-group" style=" width: 72%; display: inline-block;">
 				                      <input type="text" style="width: 72%; display: inline-block;" class="form-control" id="offer_spec_name" readOnly="readonly">
 				                      <button class="btn btn-default" style="width: 24%;" id="addpro" onclick="order.ysl.showPack()">搜索 </button>
@@ -134,7 +135,7 @@
 								 <div class="form-group">
 									<label>产品号码<span class="text-warning">*</span></label>
 									<div class="input-group" style="width: 72%; display: inline-block;">
-										<input type="text" id="choosedNumSpan" style="width: 72%; display: inline-block;" class="form-control">
+										<input type="text" id="choosedNumSpan" style="width: 72%; display: inline-block; vertical-align: middle;" class="form-control">
 										<button class="btn btn-default" style="width: 24%;" id="tcxh" onclick="order.phoneNumber.initPage('-1','offer')" type="button">选号</button>
 									</div>
 								</div>
@@ -299,4 +300,14 @@
 	    order.ysl.genRandPass6Input();
 		order.ysl.querybusitype();
 	});
+	var ua = navigator.userAgent.toLowerCase();	
+	if (/iphone|ipad|ipod/.test(ua)) {
+		$("#nfc").hide();
+		$("#otg").hide();
+		    //alert("iphone");		
+	} else if (/android/.test(ua)) {
+		    //alert("android");	
+	}
+	$("#identidiesTypeCd option[value='1']").attr("selected",true);
+	order.ysl.identidiesTypeCdChoose($("#identidiesTypeCd"));
 </script>

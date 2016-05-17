@@ -4,9 +4,10 @@ order.service = (function(){
 	var _offerprice=""; 
 	var _subPage="";
 	var _tabChange_flag=0;
+	var lxStr = "";
 	//套餐入口-初始化
 	var _init=function(){  
-		
+		lxStr = "";
 		//定义 1 为prepare页面  2为order-content（填单）页面 3为order-confirm（订单确认和收银台）页面 4为order-print（打印）页面
 		OrderInfo.order.step=1;
 		OrderInfo.busitypeflag=1;
@@ -31,24 +32,25 @@ order.service = (function(){
 	var _searchPack = function(flag,scroller,subPage){
 		var custId = OrderInfo.cust.custId;
 		var qryStr=$("#qryStr").val();
+		lxStr = $("#offer_tab").val();
 		var categoryNodeId = "";//套餐目录
-		if(qryStr == "乐享") {
+		if(lxStr == "乐享") {
 			qryStr = "";
 			$("#qryStr").val("");
 			categoryNodeId = "90132141";
-		}else if(qryStr == "积木") {
+		}else if(lxStr == "积木") {
 			qryStr = "";
 			$("#qryStr").val("");
 			categoryNodeId = "90132143";
-		}else if(qryStr == "飞") {
+		}else if(lxStr == "飞") {
 			qryStr = "";
 			$("#qryStr").val("");
 			categoryNodeId = "90139849";
-		}else if(qryStr == "其他") {
+		}else if(lxStr == "其他") {
 			qryStr = "";
 			$("#qryStr").val("");
 			categoryNodeId = "-9999";
-		}else if(qryStr == "我的收藏") {
+		}else if(lxStr == "我的收藏") {
 			$("#qryStr").val("");
 		}
 //		var params={"qryStr":qryStr,"pnLevelId":"","custId":custId};
@@ -58,7 +60,7 @@ order.service = (function(){
 		}
 		if(flag){
 			order.service.tabChange_flag = 1;
-			$("#offer_tab option[value='']").attr("selected",true);
+			$("#offer_tab option[value='"+lxStr+"']").attr("selected",true);
 			var priceMinVal = $("#select_price_min").val();
 			var priceMaxVal = $("#select_price_max").val();
 			if(ec.util.isObj(priceMinVal) && $.isNumeric(priceMinVal)){
@@ -115,7 +117,7 @@ order.service = (function(){
 		}
 		params.prodId = flag;
 		if(OrderInfo.actionFlag == 1 || OrderInfo.actionFlag == 14){
-			if(params.qryStr == "我的收藏"){
+			if(params.qryStr == "我的收藏" || lxStr == "我的收藏"){
 				params.ifQueryFavorite = "Y";
 				params.qryStr = "";
 				$("#qryStr").val("");

@@ -77,8 +77,8 @@ $(function() {
       <div class="panel panel-default">
           <div class="panel-body">
             <form>
-            <div class="form-group">
-              <label style="width: 100%;"><span class="title_lv"></span>自定义号码</label>
+            <!--<div class="form-group">
+              <label>自定义号码</label>
               <div class="row">
               	<div id="pnHeadDiv" class="col-xs-4">
                 </div>
@@ -90,24 +90,50 @@ $(function() {
                 </div>
               </div>
             </div>
+            -->
+            <div class="form-group">
+              <label style=" width: 100%; text-align: left;"><span class="title_lv"></span>选择号段</label>
+              	<div id="pnHeadDiv" class="input-group w-100">
+                </div>
+            </div>
+            <div class="form-group">
+              <label style=" width: 100%; text-align: left;"><span class="title_lv"></span>最后四位</label>
+                <input type="text" id="pnEnd" class="form-control w-100" maxlength="4" onblur="javascript:if($(this).val()==''){$(this).val('最后四位');}" onfocus="javascript:if($(this).val()=='最后四位'){$(this).val('')}" aria-describedby="inputSuccess2Status" placeholder="最后四位">
+            </div>
+            <div class="form-group">
+              <label style=" width: 100%; text-align: left;"><span class="title_lv"></span>选择类型</label>
+                <div id="pnCharacterId_basicDiv" class="input-group w-100">
+                	
+                </div>
+            </div>
   <div class="form-group">
-    <label style="width: 100%;" for="exampleInputEmail1"><span class="title_lv"></span>预存话费<small>（元）</small></label>
-    <div  class="row">
-    	<div class="col-xs-3"><input  class="form-control" id="Greater" placeholder=""></div>
-        <div class="col-xs-6"><div class="noUiSlider noUiSlidere"></div></div>
-        <div class="col-xs-3"><input  class="form-control" id="Less" placeholder=""></div>
-    </div>
+    <label style=" width: 100%; text-align: left;" for="exampleInputEmail1"><span class="title_lv"></span>预存话费<small>(元)</small></label>
+    <input type="hidden" id="Greater">
+	<input type="hidden" id="Less">
+    <div class="input-group w-100">
+		<select id="numPrice" onchange="setnumPrice();"; class="selectpicker show-tick form-control" >
+			<option id="-1" value="-1">不限</option>
+           	<option id="0" value="0">0-100</option>
+           	<option id="100" value="100">100-300</option>
+           	<option id="300" value="300">300-500</option>
+           	<option id="500" value="500">500-1200</option>
+           	<option id="1200" value="1200">1200-15000</option>
+           	<option id="15000" value="15000">15000-30000</option>
+           	<option id="30000" value="30000">30000以上</option>
+       	</select>
+     	<span class="input-group-addon select-span"></span>
+	</div>
   </div>
   <div class="form-group">
-  	<label style="width: 100%;"><span class="title_lv"></span>查预约号码</label>
+  	<label style=" width: 100%; text-align: left;"><span class="title_lv"></span>查预约号码</label>
     <div class="row">
-    	<div class="col-xs-7">
+    	<div class="col-xs-8">
         	<div class="form-group has-feedback">
-              <input type="text"id="idCode" class="form-control" aria-describedby="inputSuccess2Status" placeholder="请输入预约号码">
-              <span class="glyphicon glyphicon-search form-control-feedback" aria-hidden="true"></span>
+              <input style="padding-right: 0; width: 100%;" type="text"id="idCode" class="form-control" aria-describedby="inputSuccess2Status" placeholder="请输入身份证号">
+           
             </div>
         </div>
-        <div class="col-xs-5">
+        <div class="col-xs-4">
 	        <input type="checkbox" id="query_flag_01" name="query_flag_01" data-toggle="toggle" data-on="密码预占" data-off="密码预占" data-width="100%">
 	        <script> 
 	           $(function() { $('#query_flag_01').bootstrapToggle(); }) 
@@ -119,12 +145,12 @@ $(function() {
   
 </form>
           </div>
-          <div class=" divfoot modal-footer">
-          	<div class="col-xs-10">
-          <button type="button" id="btnNumSearch1" class="btn btn-default"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> 确定</button>
+          <div class="divfoot modal-footer">
+          	<div class="col-xs-6">
+          <button type="button" style="height: 42px;font-size: 14px; width:100%;" id="btnNumSearch1" class="btn btn-default"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> 确定</button>
           </div>
-          <div class="col-xs-2">
-          		<button type="button"  style="height: 42px;font-size: 14px;" data-dismiss="modal" class="btn btn-default" data-toggle="modal" data-target="numberModal"> <span class="glyphicon" aria-hidden="true"></span>关闭</button> 
+          <div class="col-xs-6">
+          		<button type="button"  style="height: 42px;font-size: 14px; width:100%;" data-dismiss="modal" class="btn btn-default" data-toggle="modal" data-target="numberModal"> <span class="glyphicon" aria-hidden="true"></span>关闭</button> 
            </div>
           </div>
         </div>

@@ -1,11 +1,14 @@
 <div class="row divtab">
 	<form id="form_terminal_qry" data-ajax="false" method="post">
 	<div class="col-xs-10">
-		<div class="form-group has-feedback search-top">
-			<input type="text" style="width: 100%;" id="input_phone_name" class="form-control" aria-describedby="inputSuccess2Status" placeholder="请输入手机名称">
-            <span class="glyphicon glyphicon-search form-control-feedback" aria-hidden="true"></span>
-        </div>
+      <div class="form-group has-feedback search-top" style=" width: 100%; ">
+        <input type="text" id="input_phone_name" class="form-control" aria-describedby="inputSuccess2Status" placeholder="请输入手机名称"style=" width: 100%; ">
+      </div>
+      <div class="col-xs-3" style="height:42px; position: absolute; right: 0; top: 0;" onclick="mktRes.terminal.btnQueryTerminal(1);">
+	        <span class="glyphicon glyphicon-search form-control-feedback" aria-hidden="true" style=" padding: 10px;"></span>
+	  </div>
     </div>
+    
     </form>
     <div class="col-xs-2">
          <button type="button" class="btn btn-default navbar-btn nav-justified no-mp" data-toggle="modal" data-target="#phoneModal"> <span class="glyphicon glyphicon-search" aria-hidden="true"></span>

@@ -14,8 +14,9 @@
 			            	 证件扫描
 			            </button>
 			            <ul class="img_box">
-			            	<li><img onClick="common.callGenerationRec('cust.getGenerationInfos','1')" style=" height: 40px; margin-left: 50px; margin-top: -5px;"src="${contextPath}/image/app-image/shebeisaomiao-xxhdpi_03.png"/></li>
-			            	<li id="nfc"><img onClick="common.callGenerationRec('cust.getGenerationInfos','2')" style=" height: 40px; margin-left: 50px; margin-top: -5px;" src="${contextPath}/image/app-image/shebeisaomiao-xxhdpi_05.png"/></li>
+			            	<li><img onClick="common.callGenerationRec('cust.getGenerationInfos','1')" style=" height: 40px; margin-left: 18px; margin-top: -5px;"src="${contextPath}/image/app-image/shebeisaomiao-xxhdpi_03.png"/></li>
+			            	<li id="nfc"><img onClick="common.callGenerationRec('cust.getGenerationInfos','2')" style=" height: 40px; margin-left: 18px; margin-top: -5px;" src="${contextPath}/image/app-image/shebeisaomiao-xxhdpi_05.png"/></li>
+			            	<li id="otg"><img onClick="common.callGenerationRec('cust.getGenerationInfos','3')" style=" height: 40px; margin-left: 18px; margin-top: -5px;" src="${contextPath}/image/app-image/otg@2x_03.png"/></li>
 			            </ul>
 			          </div>
 			          <div class="btn-group" role="group" style="display:none">
@@ -132,4 +133,12 @@
 		cust.validatorForm();
 		cust.getIdentidiesTypeCd();//初始化证件类型
 		OrderInfo.busitypeflag=12;
+		var ua = navigator.userAgent.toLowerCase();	
+		if (/iphone|ipad|ipod/.test(ua)) {
+			$("#nfc").hide();
+			$("#otg").hide();
+		    //alert("iphone");		
+		} else if (/android/.test(ua)) {
+		    //alert("android");	
+		}
 	</script>
