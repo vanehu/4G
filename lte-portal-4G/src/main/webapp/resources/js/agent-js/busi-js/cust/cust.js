@@ -893,6 +893,10 @@ cust = (function(){
 //		}
 		//4G所有证件类型定位都需要客户鉴权
 		authFlag="0";
+		if( OrderInfo.actionFlag == "9" )
+		{
+			authFlag ="1";
+		}
 		if(identityCd==-1){
 			acctNbr=identityNum;
 			identityNum="";
@@ -1208,7 +1212,8 @@ cust = (function(){
 //				$("#authIDTD").val("");
 //			});
 		} else{
-			_custAuth(scope);
+			//_custAuth(scope);
+			_jumpAuth();
 		}
 	};
 	/**
@@ -1311,7 +1316,7 @@ cust = (function(){
 		});
 	};
 	var _jumpAuth = function() {
-		if(cust.jumpAuthflag!="0"){
+		if(authFlag=="0" && cust.jumpAuthflag!="0"){
 			$.alert("提示","没有跳过校验权限！");
 			return;
 		}
