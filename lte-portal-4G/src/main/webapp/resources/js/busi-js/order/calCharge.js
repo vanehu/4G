@@ -1170,13 +1170,23 @@ order.calcharge = (function(){
 					if(!_submitParam()){
 						return ;
 					}
-					var voucherInfo = {
-						"olId":_olId,
-						"soNbr":OrderInfo.order.soNbr,
-						"busiType":"1",
-						"chargeItems":_chargeItems,
-						"areaId":OrderInfo.getAreaId()
-					};
+					var voucherInfo = {};
+					if(OrderInfo.actionFlag==23){//针对异地补换卡，地区要和购物车areaId一致
+						voucherInfo = {
+								"olId":_olId,
+								"soNbr":OrderInfo.order.soNbr,
+								"busiType":"1",
+								"chargeItems":_chargeItems
+							};
+					}else{
+						voucherInfo = {
+								"olId":_olId,
+								"soNbr":OrderInfo.order.soNbr,
+								"busiType":"1",
+								"chargeItems":_chargeItems,
+								"areaId":OrderInfo.getAreaId()
+							};
+					}
 					if(_getCookie('_session_pad_flag')=='1'){
 						common.print.signVoucher(voucherInfo);
 					}else{
@@ -1193,13 +1203,23 @@ order.calcharge = (function(){
 					if(!_submitParam()){
 						return ;
 					}
-					var voucherInfo = {
-						"olId":_olId,
-						"soNbr":OrderInfo.order.soNbr,
-						"busiType":"1",
-						"chargeItems":_chargeItems,
-						"areaId":OrderInfo.getAreaId()
-					};
+					var voucherInfo = {};
+					if(OrderInfo.actionFlag==23){//针对异地补换卡，地区要和购物车areaId一致
+						voucherInfo = {
+								"olId":_olId,
+								"soNbr":OrderInfo.order.soNbr,
+								"busiType":"1",
+								"chargeItems":_chargeItems
+							};
+					}else{
+						voucherInfo = {
+								"olId":_olId,
+								"soNbr":OrderInfo.order.soNbr,
+								"busiType":"1",
+								"chargeItems":_chargeItems,
+								"areaId":OrderInfo.getAreaId()
+							};
+					}
 					common.print.printVoucher(voucherInfo);
 					_changeFeeDisabled($("#calTab"));
 				});
