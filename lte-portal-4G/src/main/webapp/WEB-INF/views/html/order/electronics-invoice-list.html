@@ -1,0 +1,29 @@
+<#if (pageModel.list)?? &&((pageModel.list)?size>0)>
+<table class="numberList" >
+    <thead>
+    <tr>
+        <td width="20%">发票Id</td>
+        <td width="30%">票据类型</td>
+        <td width="50%">PDF名称</td>
+    </tr>
+    </thead>
+    <tbody>
+      <#list pageModel.list as invoiceInfo>
+      <tr>
+          <td>${invoiceInfo.invoiceId}</td>
+          <td><#if invoiceInfo.invoiceType=="130">电子发票</#if></td>
+          <td><a href="${invoiceInfo.pdfUrl}" target="_blank">${invoiceInfo.pdfName}</a></td>
+      </tr>
+      </#list>
+    </tbody>
+</table>
+
+  <@portal.modelPagination pageModel 5 "common.print.queryElInvoice"/>
+<script src="${contextPath}/js/our-js/ec.pagination.js?${jsversion}" type="text/javascript"></script>
+<#else>
+<div class="no_search">
+    <div class="h1">
+        <img style="vertical-align:middle" src="${contextPath}/image/common/query_search.gif" />&nbsp;&nbsp;抱歉，没有找到相关的记录，请尝试其他筛选条件。
+    </div>
+</div>
+</#if>

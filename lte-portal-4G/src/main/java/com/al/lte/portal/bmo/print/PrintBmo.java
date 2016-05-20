@@ -46,6 +46,8 @@ public interface PrintBmo {
 			throws Exception;
 	Map<String, Object> getInvoiceInfo(Map<String, Object> paramMap, String optFlowNum,
 			SessionStaff sessionStaff) throws Exception;
+	Map<String, Object> getEInvoiceInfo(Map<String, Object> paramMap, String optFlowNum,
+			SessionStaff sessionStaff) throws Exception;
 	Map<String, Object> getEQCodeInfo(Map<String, Object> paramMap, String optFlowNum,
 			SessionStaff sessionStaff) throws Exception;
 	

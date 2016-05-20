@@ -652,6 +652,29 @@ public class ReportController extends BaseController {
     }
 
     /**
+     * 电子发票
+     * @param model
+     * @param session
+     * @return
+     * @throws AuthorityException
+     */
+    @RequestMapping(value = "/cartForReInvoiceEl", method = RequestMethod.GET)
+    @AuthorityValid(isCheck = true)
+    public String cartForReInvoiceEl(Model model, HttpSession session) throws AuthorityException {
+        model.addAttribute("current", EhcacheUtil.getCurrentPath(session, "report/preCartLink"));
+
+        SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+                SysConstant.SESSION_KEY_LOGIN_STAFF);
+
+        Map<String, Object> defaultAreaInfo = CommonMethods.getDefaultAreaInfo_MinimumC3(sessionStaff);
+
+        model.addAttribute("p_areaId", defaultAreaInfo.get("defaultAreaId"));
+        model.addAttribute("p_areaId_val", defaultAreaInfo.get("defaultAreaName"));
+
+        return "/order/electronics-invoice-query";
+    }
+
+    /**
      * 补打发票
      * @param model
      * @param session

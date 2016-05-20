@@ -213,6 +213,7 @@ public enum ErrorCode {
     QUERY_ORDERZDYY("预约订单查询","010161","01","010161","01"),
     CREATE_ORDERLONGER("订单时长","010131","01","010131","01"),
     NEW_WRITEOFFCASH_INVOICE_INFO("新票据打印查询","010134","01","010134","01"),
+    EL_INVOICE_INFO("电子发票查询","010156","01","010156","01"),
     INVOICENOTICE("新票据成功打印通知","010135","01","010135","01"),
     INVOICEREVERSE("新票据回收通知","010136","01","010136","01"),
     QUERY_NUMBYUIM("通过uim查询用户信息","010142","01","020142","02"),

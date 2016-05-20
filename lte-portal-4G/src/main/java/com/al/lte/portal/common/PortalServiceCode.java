@@ -710,6 +710,8 @@ public final class PortalServiceCode {
     public static final String INTF_GET_INVOICE_TEMPLATES = "com.linkage.portal.service.lte.core.resources.QueryInvoiceTemplate";
     //发票打印处理
     public static final String INTF_SAVE_INVOICE_INFO = "biz-service/intf.chargeService/saveInvoiceInfo";
+    //电子发票查询
+    public static final String INTF_QUERY_EL_INVOICE_INFO = "biz-service/intf.chargeService/getEInvoiceInfoFromProv";
     //首页推荐热卖产品
     public static final String MAIN_HOTPRODUCT = "hotProd";
     //产品实例所属群组产品信息查询

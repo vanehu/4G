@@ -515,16 +515,23 @@ common.print = (function($){
 				$("#tempDt").html("发票模板：");
 				$("#codeTitleDt").html("发票代码：");
 				$("#numTitleDt").html("发票号码：");
+				$("#tempDt").parent().show();
 				param.billType = 0;
 				getInvoiceNumber(100);
-			} else {
+			} else if ($("input[name=billType]:checked").val()=="1") {
 				$("#invoiceNbrNumDl").hide();
 				$("#titleDt").html("票据抬头：");
 				$("#tempDt").html("票据模板：");
 				$("#codeTitleDt").html("票据代码：");
 				$("#numTitleDt").html("票据号码：");
+				$("#tempDt").parent().show();
 				param.billType = 1;
 				getInvoiceNumber(200);
+			}else{
+				$("#invoiceNbrNumDl").hide();
+				$("#tempDt").parent().hide();
+				$("#titleDt").html("电子发票：");
+				param.billType = 2;
 			}
 		});
 		$("#invoiceItemsConfirm").off("click").on("click",function(event){
@@ -723,7 +730,7 @@ common.print = (function($){
 	var _chkInput=function(param){
 		try {
 			//发票的需要校验代码和号码
-			if (param.billType != 1) {
+			if (param.billType == 0) {
 				if ($("#invoiceNbrInp").val() == "") {
 					$.alert("提示","请输入发票代码");
 					return true;
@@ -873,8 +880,10 @@ common.print = (function($){
 		//设置发票类型
 		if (invoiceInfo.billType == '0') {
 			invoiceInfo.invoiceType = '100';
-		} else {
+		} else if (invoiceInfo.billType == '1') {
 			invoiceInfo.invoiceType = '200';
+		} else {
+			invoiceInfo.invoiceType = '130';
 		}
 		
 		
@@ -995,7 +1004,12 @@ common.print = (function($){
 			"payMethod" : result.payMethodName,
 			"invoiceInfos" : invoiceInfos
 		};
-		_printInvoice(invoiceParam);
+		//如果是电子发票不生成pdf
+		if (param.billType == 2) {
+			$.alert("提示","电子发票信息已经下发省份，请到营业受理>电子发票是查看！")
+		} else {
+			_printInvoice(invoiceParam);
+		}
 		//最终关闭窗口
 		if (OrderInfo.cust.norTaxPayer != "Y") {
 			common.print.closePrintDialog();
@@ -1101,9 +1115,50 @@ common.print = (function($){
 			type: "hidden",
 			value: JSON.stringify(params)
 		})).appendTo("body").submit();
-	}
-	
-	
+	};
+
+	var _queryElInvoice=function(pageIndex){
+		if (!$("#p_areaId_val").val() || $("#p_areaId_val").val() == "") {
+			$.alert("提示", "请选择'地区'再查询");
+			return;
+		}
+		var e_custOrderId = $.trim($("#e_custOrderId").val());
+		var e_custSoNbr = $.trim($("#e_custSoNbr").val());
+		if(!ec.util.isObj(e_custOrderId)&&!ec.util.isObj(e_custSoNbr)){
+			$.alert("提示","购物车ID和购物车流水不能同时为空，至少包含一个查询条件！");
+			return;
+		}
+		var areaId = $("#p_areaId").val();
+		var url = contextPath + "/print/getEInvoiceInfo";
+		var param = {
+			pageNo: pageIndex,
+			pageSize: 10,
+			areaId: areaId,
+			custOrderId:e_custOrderId,
+			custSoNbr:e_custSoNbr
+		};
+		$.callServiceAsHtml(url, param, {
+			"before": function () {
+				$.ecOverlay("<strong>正在查询中,请稍等会儿....</strong>");
+			},
+			"always": function () {
+				$.unecOverlay();
+			},
+			"done": function (response) {
+				if (!response || response.code != 0) {
+					response.data = '查询失败,稍后重试';
+				}
+				var content$ = $("#e_invoiceInfos");
+				content$.html(response.data);
+			},
+			fail: function (response) {
+				$.unecOverlay();
+				$.alert("提示", "请求可能发生异常，请稍后再试！");
+			}
+		});
+	};
+
+
 	return {
 		preVoucher:_preVoucher,
 		printVoucher:_printVoucher,
@@ -1117,7 +1172,8 @@ common.print = (function($){
 		preSign:_preSign,
 		signVoucher:_signVoucher,
 		printOld2new:_printOld2new,
-		STBReserveReceipt : _STBReserveReceipt
+		STBReserveReceipt : _STBReserveReceipt,
+		queryElInvoice:_queryElInvoice
 	};
 })(jQuery);
 

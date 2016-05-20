@@ -5800,6 +5800,35 @@ public class PrintBmoImpl implements PrintBmo {
 	}
 
 	/**
+	 * 获取电子发票信息
+	 * @param paramMap
+	 * @param optFlowNum
+	 * @param sessionStaff
+	 * @return
+	 * @throws Exception
+	 */
+	public Map<String, Object> getEInvoiceInfo(Map<String, Object> paramMap,
+			String optFlowNum, SessionStaff sessionStaff)
+			throws Exception {
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		DataBus db = InterfaceClient.callService(paramMap,
+				PortalServiceCode.INTF_QUERY_EL_INVOICE_INFO,
+				optFlowNum, sessionStaff);
+		if (ResultCode.R_SUCC.equals(db.getResultCode())) {
+			Map<String, Object> retMap = db.getReturnlmap();
+			if (null != retMap && retMap.containsKey("result")) {
+				Map<String, Object> result = MapUtils.getMap(retMap, "result");
+				if (null != result && result.containsKey("invoiceInfos")) {
+					resultMap.put("invoiceInfos", MapUtils.getObject(result, "invoiceInfos"));
+				}
+			}
+		}
+		resultMap.put("resultCode", db.getResultCode());
+		resultMap.put("resultMsg", db.getResultMsg());
+		return resultMap;
+	}
+
+	/**
 	 * 充值收据打印
 	 */
 	public Map<String, Object> printChargeReceipt(Map<String, Object> paramMap, String optFlowNum,

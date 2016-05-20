@@ -616,7 +616,44 @@ public class PrintController extends BaseController {
 			return super.failed(ErrorCode.GET_INVOICE_INFO, e, paramMap);
 		}
     }
-    
+
+	/**
+	 * 获取电子发票
+	 * @param paramMap
+	 * @param flowNum
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+    @RequestMapping(value = "/getEInvoiceInfo", method = RequestMethod.POST)
+	public String getEInvoiceInfo(@RequestBody Map<String, Object> paramMap,Model model,
+			@LogOperatorAnn String flowNum,
+			HttpServletRequest request, HttpServletResponse response) {
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils
+				.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
+		try {
+			paramMap.put("staffId", sessionStaff.getStaffId());
+			paramMap.put("invoiceType", "130");//电子发票：130
+			Integer pageNo = MapUtils.getInteger(paramMap, "pageNo", 1);
+			Integer pageSize = MapUtils.getInteger(paramMap, "pageSize", 10);
+			Map<String, Object> resultMap = printBmo.getEInvoiceInfo(paramMap, flowNum, sessionStaff);
+			if (resultMap != null && resultMap.containsKey("invoiceInfos")) {
+				ArrayList<Map<String,Object>> list = (ArrayList<Map<String, Object>>) resultMap.get("invoiceInfos");
+				PageModel<Map<String, Object>> pm = PageUtil.buildPageModel(pageNo, pageSize, list.size() < 1 ? 1 : list.size(), list);
+				model.addAttribute("pageModel", pm);
+			}
+		} catch (BusinessException be) {
+			this.log.error("门户/print/getEInvoiceInfo方法be异常", be);
+			return super.failedStr(model,be);
+		} catch (InterfaceException ie) {
+			return super.failedStr(model, ie, paramMap, ErrorCode.EL_INVOICE_INFO);
+		} catch (Exception e) {
+			log.error("门户/print/getEInvoiceInfo方法异常", e);
+			return super.failedStr(model, ErrorCode.EL_INVOICE_INFO, e, paramMap);
+		}
+		return "/order/electronics-invoice-list";
+	}
+
     @RequestMapping(value = "/queryConstConfig", method = RequestMethod.GET)
     @ResponseBody
 	public JsonResponse queryConstConfig(@RequestParam Map<String, Object> paramMap,Model model) {
