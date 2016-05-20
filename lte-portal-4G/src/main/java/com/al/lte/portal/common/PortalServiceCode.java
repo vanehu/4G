@@ -960,6 +960,8 @@ public final class PortalServiceCode {
 	public static final String QUERY_SERVDEPEND_FORCANCEL ="biz-service/intf.prodOfferService/queryOfferAndServDependForCancel";
 	/**客户证件校验接口*/
 	public static final String CHECK_IDCARDNUMBER = "biz-service/intf.custService/checkIdCardNumber";
+	/**记录页面操作的动作和页面需要记录的内容*/
+	public static final String PORTA_ACTION_LOG = "portal-potalActionLog";
 
 	/**
 	 * 查询二次业务菜单对应的鉴权权限
