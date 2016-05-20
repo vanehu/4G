@@ -76,6 +76,15 @@ public interface CustBmo {
 	 */
 	public Map<String, Object> queryCertType(Map<String, Object> dataBusMap, String optFlowNum,
             SessionStaff sessionStaff) throws Exception;
+
+	/**
+	 * 读卡身份证信息解密.
+	 * @param data 加密数据
+	 * @param secret 密钥
+	 * @return
+	 * @throws Exception
+	 */
+	Map<?, ?> decodeCert(String data, String secret) throws Exception;
 	
 	/**
 	 * 解密蓝牙读取用户加密信息

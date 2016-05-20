@@ -545,6 +545,18 @@ public class CustBmoImpl implements CustBmo {
 			throw new BusinessException(ErrorCode.ORDER_CTGMAINDATA, paramMap, db.getReturnlmap(), e);
 		}
 	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.al.lte.portal.bmo.crm.CustBmo
+	 * #decodeCert(java.lang.String, java.lang.String)
+	 */
+	public Map<?, ?> decodeCert(String data, String secret) throws Exception {
+	    String dataXml = Des33.decode1(data, secret);
+        XMLSerializer xmlSerializer = new XMLSerializer();
+        JSON json = xmlSerializer.read(dataXml);
+        return JsonUtil.toObject(json.toString(2), Map.class);
+	}
 	
 	public Map<String, Object> decodeUserInfo(Map<String, Object> dataBusMap,
 		String optFlowNum, SessionStaff sessionStaff,String dekeyWord,HttpServletRequest request) throws Exception {

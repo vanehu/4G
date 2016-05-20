@@ -1,18 +1,27 @@
 package com.al.lte.portal.bmo.crm;
+
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateFormatUtils;
+import org.apache.commons.lang3.RandomStringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.al.crm.log.sender.ILogSender;
 import com.al.ec.serviceplatform.client.DataBus;
 import com.al.ec.serviceplatform.client.ResultCode;
+import com.al.ecs.common.util.DateUtil;
 import com.al.ecs.common.web.ServletUtils;
 import com.al.ecs.exception.BusinessException;
 import com.al.ecs.exception.ErrorCode;
@@ -23,7 +32,6 @@ import com.al.lte.portal.common.PortalServiceCode;
 import com.al.lte.portal.common.ServiceClient;
 import com.al.lte.portal.common.SysConstant;
 import com.al.lte.portal.model.SessionStaff;
-
 
 /**
  * 公用业务操作类 .
@@ -37,8 +45,11 @@ import com.al.lte.portal.model.SessionStaff;
  */
 @Service("com.al.lte.portal.bmo.crm.CommonBmo")
 public class CommonBmoImpl implements CommonBmo {
-	
+
 	protected final Log log = Log.getLog(getClass());
+
+	@Autowired
+    private ILogSender logSender;
 
 	public boolean checkToken(HttpServletRequest request, String token){
 		try{
@@ -368,4 +379,125 @@ public class CommonBmoImpl implements CommonBmo {
 		}
 		return resultMap;
 	}
+	/**
+	 * 记录页面操作的动作和页面内容等，根据具体需要添加到入参字段
+	 * @param param
+	 * @param model
+	 * @param response
+	 * @param optFlowNum
+	 * @return
+	 */
+	public Map<String, Object> portalActonLog(Map<String, Object> dataBusMap,String flowNum,SessionStaff sessionStaff)
+	throws Exception{
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		try{
+			DataBus db = InterfaceClient.callService(dataBusMap, PortalServiceCode.PORTA_ACTION_LOG, flowNum, sessionStaff);
+		} catch (Exception e) {
+			log.error("门户页面记录操作：", dataBusMap);
+		}	
+		return resultMap;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.al.lte.portal.bmo.crm.CommonBmo
+	 * #signature(java.lang.String, java.lang.String, java.lang.String,
+	 * java.lang.String, java.lang.String, java.lang.String)
+	 */
+	public String signature(String partyName, String certNumber, String certAddress,
+        String identityPic, String nonce, String secret) throws Exception {
+	    Map<String, String> map = new HashMap<String, String>();
+        map.put("partyName", partyName.trim());
+        map.put("certNumber", certNumber.trim());
+        map.put("certAddress", certAddress.trim());
+        map.put("nonce", nonce.trim());
+        if (StringUtils.isNotBlank(identityPic)) {
+            map.put("identityPic", identityPic.trim());
+        }
+        String signature = signatureForSha(map, secret);
+        StringBuffer sbData = new StringBuffer();
+        sbData.append(nonce).append(signature);
+        return sbData.toString();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.al.lte.portal.bmo.crm.CommonBmo
+	 * #signatureForSha(java.util.Map, java.lang.String)
+	 */
+	public String signatureForSha(Map<String, String> map, String secret) throws Exception {
+	    if (null == map || map.isEmpty()) {
+	        return "";
+	    }
+	    MapUtils.safeAddToMap(map, "secret", secret);
+	    Map<?, ?> orderedMap = MapUtils.orderedMap(map);
+	    StringBuffer sbData = new StringBuffer();
+	    for (Entry<?, ?> entry : orderedMap.entrySet()) {
+	        sbData.append(entry.getValue());
+	    }
+	    return DigestUtils.shaHex(sbData.toString());
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.al.lte.portal.bmo.crm.CommonBmo
+	 * #sendLog(java.util.Map, javax.servlet.http.HttpServletRequest)
+	 */
+	public void sendLog(Map<String, Object> param, HttpServletRequest request) throws Exception {
+	    String flag = MapUtils.getString(param, "flag");
+        long startTime = MapUtils.getLongValue(param, "startTime");
+        long endTime = MapUtils.getLongValue(param, "endTime");
+        long useTime = endTime - startTime;
+        String inParams = MapUtils.getString(param, "inParams");
+        String outParams = MapUtils.getString(param, "outParams");
+        SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(request,
+                SysConstant.SESSION_KEY_LOGIN_STAFF);
+        String areaId = StringUtils.defaultIfBlank(sessionStaff.getCurrentAreaId(), "");
+        String staffId = StringUtils.defaultIfBlank(sessionStaff.getStaffId(), "");
+        String staffCode = StringUtils.defaultIfBlank(sessionStaff.getStaffCode(), "");
+        String channelName = StringUtils.defaultIfBlank(sessionStaff.getCurrentChannelName(), "");
+        String channelId = StringUtils.defaultIfBlank(sessionStaff.getCurrentChannelId(), "");
+        Map<String, Object> logObj = new HashMap<String, Object>();
+        logObj.put("SERVICE_CODE", "common/saveCloudLog");
+        logObj.put("PORTAL_CODE", "");
+        logObj.put("ROLE_CODE", "");
+        String serviceSerial = "SP" + DateFormatUtils.format(new Date(), "yyyyMMddHHmmssSSS") + RandomStringUtils.randomNumeric(4);
+        logObj.put("SERV_RUN_NBR", serviceSerial);
+        HttpSession session = ServletUtils.getSession(request);
+        String log_busi_run_nbr = (String) session.getAttribute(SysConstant.LOG_BUSI_RUN_NBR);
+        logObj.put("BUSI_RUN_NBR", log_busi_run_nbr);
+        String beginDate = DateFormatUtils.format(new Date(startTime), "yyyy/MM/dd HH:mm:ss");
+        String endDate = DateFormatUtils.format(new Date(endTime), "yyyy/MM/dd HH:mm:ss");
+        logObj.put("START_TIME", beginDate);
+        logObj.put("END_TIME", endDate);
+        logObj.put("USE_TIME", Long.toString(useTime));
+        logObj.put("RESULT_CODE", "0".equals(flag) ? "0" : "");
+        logObj.put("TRANS_ID", "");
+        logObj.put("AREA_ID", areaId);
+        logObj.put("REMOTE_ADDR", request.getRemoteAddr());
+        logObj.put("REMOTE_PORT", String.valueOf(request.getRemotePort()));
+        logObj.put("LOCAL_ADDR", request.getLocalAddr());
+        logObj.put("LOCAL_PORT", String.valueOf(request.getLocalPort()));
+        logObj.put("INTF_URL", "");
+        logObj.put("INTF_METHOD", "cloudReadCert");
+        logObj.put("STAFF_ID", staffId);
+        logObj.put("STAFF_NAME", staffCode);
+        logObj.put("CHANNEL_NAME", channelName);
+        logObj.put("CHANNEL_ID", channelId);
+        logObj.put("REMARK", "");
+        logObj.put("OL_ID", "");
+        logObj.put("SO_NBR", "");
+        logObj.put("BUSI_TYPE", "");
+        // 新增日志ID
+        logObj.put("LOG_SEQ_ID", "");
+        // 新增错误标识，0成功  1错误  2异常
+        logObj.put("ERROR_CODE", flag);
+
+        Map<String, Object> logClobObj = new HashMap<String, Object>();
+        logClobObj.put("IN_PARAM", inParams);                        
+        logClobObj.put("OUT_PARAM", outParams);
+
+        logSender.sendLog2DB("PORTAL_SERVICE_LOG", logObj, logClobObj);
+	}
+
 }

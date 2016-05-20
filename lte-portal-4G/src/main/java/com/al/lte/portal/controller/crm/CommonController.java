@@ -1,7 +1,7 @@
 package com.al.lte.portal.controller.crm;
 
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -11,7 +11,10 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
@@ -23,11 +26,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.al.ecs.common.entity.JsonResponse;
+import com.al.ecs.common.util.DateUtil;
 import com.al.ecs.common.util.JsonUtil;
 import com.al.ecs.common.util.PropertiesUtils;
 import com.al.ecs.common.util.UIDGenerator;
 import com.al.ecs.common.web.ServletUtils;
-import com.al.ecs.common.web.SpringContextUtil;
 import com.al.ecs.exception.BusinessException;
 import com.al.ecs.exception.InterfaceException;
 import com.al.ecs.exception.ResultConstant;
@@ -39,7 +42,6 @@ import com.al.lte.portal.common.CommonMethods;
 import com.al.lte.portal.common.Const;
 import com.al.lte.portal.common.SysConstant;
 import com.al.lte.portal.model.SessionStaff;
-
 
 /**
  * 公用模块控制层
@@ -57,6 +59,13 @@ public class CommonController extends BaseController {
 	@Autowired
 	@Qualifier("com.al.lte.portal.bmo.crm.CommonBmo")
 	private CommonBmo commonBmo;
+
+	@Autowired
+    @Qualifier("com.al.lte.portal.bmo.crm.CustBmo")
+    private CustBmo custBmo;
+
+	@Autowired
+    private PropertiesUtils propertiesUtils;
 
 	/**
 	 * 获取随机码
@@ -120,7 +129,6 @@ public class CommonController extends BaseController {
   			HttpServletResponse response,HttpServletRequest request) {
 		String propertiesKey = param.get("propertiesKey").toString();
 		//身份证类型开发
-		PropertiesUtils propertiesUtils = (PropertiesUtils) SpringContextUtil.getBean("propertiesUtils");
 		return propertiesUtils.getMessage(propertiesKey);
     }
 	
@@ -155,6 +163,134 @@ public class CommonController extends BaseController {
 	    returnMap.put("menuPath", menuPath);
 		return returnMap;
 	}
+	
+	/**
+	 * 记录页面操作的动作和页面内容等，根据具体需要添加到入参字段
+	 * @param param
+	 * @param model
+	 * @param response
+	 * @param optFlowNum
+	 * @return
+	 */
+	@RequestMapping(value="/portalActonLog", method = RequestMethod.POST)
+	public @ResponseBody Map<String, Object> portalActonLog(@RequestBody Map<String, Object> param,
+			@LogOperatorAnn String flowNum, HttpServletResponse response) throws Exception{
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+                SysConstant.SESSION_KEY_LOGIN_STAFF);
+		Map<String, Object> result = commonBmo.portalActonLog(param, null, sessionStaff);
+		return result;
+	}
+
+	/**
+	 * 生成云读卡入参.
+	 * @param param
+	 * @return
+	 * @throws Exception
+	 */
+	@ResponseBody
+	@RequestMapping(value="/getCloudParam", method = RequestMethod.POST)
+    public JsonResponse getCloudParam(@RequestBody Map<String, Object> param,
+        HttpServletRequest request) throws Exception {
+        String teminalType = MapUtils.getString(param, "teminalType");
+        if (StringUtils.isBlank(teminalType)) {
+            return super.failed("", ResultConstant.IN_PARAM_FAILTURE.getCode());
+        }
+        String osType = MapUtils.getString(param, "osType", "");
+        String browserModel = "";
+        String deviceModel = MapUtils.getString(param, "deviceModel", "");
+        String deviceSerial = MapUtils.getString(param, "deviceSerial", "");
+        if ("PC".equalsIgnoreCase(teminalType.trim())) {
+            browserModel = request.getHeader("User-Agent");
+        }
+        String busiSerial = RandomStringUtils.randomNumeric(20);
+        String ipAdd = ServletUtils.getIpAddr(request);
+        String appId = propertiesUtils.getMessage("APP_ID"); //应用ID
+        String appSecret = propertiesUtils.getMessage("APP_SECRET"); //appId对应的加密密钥
+        String srcSystem = propertiesUtils.getMessage("SRC_SYSTEM"); //发起方系统编码
+        SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+                SysConstant.SESSION_KEY_LOGIN_STAFF);
+        String timestamp = String.valueOf(DateUtil.dateToLong(new Date()));
+        String nonce = RandomStringUtils.randomAlphanumeric(32);
+        Map<String, String> businessExtMap = new HashMap<String, String>();
+        businessExtMap.put("busiSerial", busiSerial);
+        businessExtMap.put("staffCode", sessionStaff.getStaffCode());
+        businessExtMap.put("channelCode", sessionStaff.getCurrentChannelCode());
+        businessExtMap.put("areaCode", sessionStaff.getAreaCode());
+        businessExtMap.put("teminalType", teminalType.trim());
+        businessExtMap.put("srcSystem", srcSystem);
+        businessExtMap.put("osType", osType.trim());
+        businessExtMap.put("browserModel", browserModel.trim());
+        businessExtMap.put("clientIP", ipAdd);
+        businessExtMap.put("deviceModel", deviceModel.trim());
+        businessExtMap.put("deviceSerial", deviceSerial.trim());
+        String businessExt = JsonUtil.toString(businessExtMap);
+        StringBuffer sbData = new StringBuffer();
+        sbData.append(appId).append(appSecret).append(businessExt).append(nonce).append(timestamp);
+        String signature = DigestUtils.shaHex(sbData.toString());
+        Map<String, String> resultMap = new HashMap<String, String>();
+        resultMap.put("appId", appId);
+        resultMap.put("timestamp", timestamp);
+        resultMap.put("nonce", nonce);
+        resultMap.put("businessExt", businessExt);
+        resultMap.put("signature", signature);
+        return super.successed(resultMap);
+    }
+
+	@ResponseBody
+    @RequestMapping(value="/decodeCert", method = RequestMethod.POST)
+    public JsonResponse decodeCert(@RequestBody Map<String, Object> param,
+        HttpServletRequest request) throws Exception {
+	    String content = MapUtils.getString(param, "data");
+	    if (StringUtils.isBlank(content)) {
+	        return super.failed("", ResultConstant.IN_PARAM_FAILTURE.getCode());
+	    }
+	    String secret = propertiesUtils.getMessage("DES3_SECRET"); //3DES加密密钥
+	    Map<?, ?> resultMap = custBmo.decodeCert(content.trim(), secret);
+	    /*对下面的字段进行签名，可根据需要增加签名字段*/
+	    String partyName = MapUtils.getString(resultMap, "partyName"); //姓名
+	    String certAddress = MapUtils.getString(resultMap, "certAddress"); //地址
+	    String certNumber = MapUtils.getString(resultMap, "certNumber"); //身份证号码
+	    String identityPic = MapUtils.getString(resultMap, "identityPic"); //照片
+	    String nonce = RandomStringUtils.randomAlphanumeric(Const.RANDOM_STRING_LENGTH); //随机字符串
+	    String appSecret = propertiesUtils.getMessage("APP_SECRET"); //appId对应的加密密钥
+	    String signature = commonBmo.signature(partyName, certNumber, certAddress, identityPic, nonce, appSecret);
+	    MapUtils.safeAddToMap(resultMap, "signature", signature);
+	    return super.successed(resultMap);
+	}
+
+	@ResponseBody
+    @RequestMapping(value="/saveCloudLog", method = RequestMethod.POST)
+    public JsonResponse saveCloudLog(@RequestBody Map<String, Object> param,
+        HttpServletRequest request) throws Exception {
+	    String empty = null;
+        String flag = MapUtils.getString(param, "flag");
+        if (StringUtils.isBlank(flag)) {
+            return super.failed(empty, ResultConstant.IN_PARAM_FAILTURE.getCode());
+        }
+        String startTime = MapUtils.getString(param, "startTime");
+        if (StringUtils.isBlank(startTime)) {
+            return super.failed(empty, ResultConstant.IN_PARAM_FAILTURE.getCode());
+        }
+        String endTime = MapUtils.getString(param, "endTime");
+        if (StringUtils.isBlank(endTime)) {
+            return super.failed(empty, ResultConstant.IN_PARAM_FAILTURE.getCode());
+        }
+        String inParams = MapUtils.getString(param, "inParams");
+        if (StringUtils.isBlank(inParams)) {
+            return super.failed(empty, ResultConstant.IN_PARAM_FAILTURE.getCode());
+        }
+        String outParams = MapUtils.getString(param, "outParams");
+        if (StringUtils.isBlank(outParams)) {
+            return super.failed(empty, ResultConstant.IN_PARAM_FAILTURE.getCode());
+        }
+
+        String logFlag = propertiesUtils.getMessage("CLOUD_LOG_FLAG"); //日志开关
+        if (SysConstant.ON.equalsIgnoreCase(logFlag)) {
+            commonBmo.sendLog(param, request);
+        }
+
+        return super.successed(null);
+    }
 
 	/**
 	 * 根据areaId查询区域类型

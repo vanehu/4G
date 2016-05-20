@@ -5,8 +5,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.springframework.ui.Model;
-
 import com.al.ecs.exception.BusinessException;
 import com.al.lte.portal.model.SessionStaff;
 
@@ -68,12 +66,53 @@ public interface CommonBmo {
 	 * @return
 	 * @throws Exception
 	 */
-	public Map<String, Object> validatorRuleSub(Map<String, Object> param,String optFlowNum,HttpServletRequest request) throws Exception ;
+	public Map<String, Object> validatorRuleSub(Map<String, Object> param,String optFlowNum,HttpServletRequest request) throws Exception;
 	
 	/**
 	 * 离散值查询
 	 */
 	public Map<String, Object> querySpecListByAttrID(Map<String, Object> dataBusMap,String flowNum,SessionStaff sessionStaff)
 			throws Exception;
+
+	/**
+	 * 记录页面操作的动作和页面内容等，根据具体需要添加到入参字段
+	 * @param param
+	 * @param model
+	 * @param response
+	 * @param optFlowNum
+	 * @return
+	 */
+	public Map<String, Object> portalActonLog(Map<String, Object> dataBusMap,String flowNum,SessionStaff sessionStaff) throws Exception;
+
+	/**
+	 * 签名.
+	 * @param partyName 姓名
+	 * @param certNumber 证件号码
+	 * @param certAddress 地址
+	 * @param identityPic 照片
+	 * @param nonce 随机字符串
+	 * @param secret 密钥
+	 * @return
+	 * @throws Exception
+	 */
+	public String signature(String partyName, String certNumber, String certAddress,
+	    String identityPic, String nonce, String secret) throws Exception;
+
+	/**
+	 * SHA-1加密签名.
+	 * @param map 待加密字符串列表
+	 * @param secret 密钥
+	 * @return
+	 * @throws Exception
+	 */
+	public String signatureForSha(Map<String, String> map, String secret) throws Exception;
+
+	/**
+	 * 写入日志平台.
+	 * @param param
+	 * @param request
+	 * @throws Exception
+	 */
+	public void sendLog(Map<String, Object> param, HttpServletRequest request) throws Exception;
 
 }

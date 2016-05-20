@@ -35,5 +35,8 @@ public class Const {
 	
 	//证件类型
 	public static Object ID_CARD_TYPE=null;
-	
+
+	//20位长度的随机字符串
+	public static final int RANDOM_STRING_LENGTH = 20;
+
 }
