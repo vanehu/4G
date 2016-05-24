@@ -112,6 +112,9 @@ common.print = (function($){
 			},	
 			"done" : function(response){
 				if (response.code == 0) {
+					if(OrderInfo.actionFlag == 22){
+						$("#btn_next_checkUim").hide();
+					}
 					$("#order-confirm").hide();
 					$("#order-print").html(response.data).show();
 					OrderInfo.order.step=4;
@@ -121,12 +124,19 @@ common.print = (function($){
 					}
 					var printStatus = $("#printStatus").val();
 					if(printStatus!="0"){
-						$("#datasign").attr("src",decodeURIComponent($("#imgData").val()));
+						//$("#datasign").attr("src",decodeURIComponent($("#imgData").val()));
+						common.print.showDataSign($("#signinput").val());
 						$("#datasignBtn").attr("disabled","disabled");
+						$("#photoPrint").attr("disabled","disabled");
 						$("#print_ok").attr("disabled","disabled");
 					}
 					$("#datasignBtn").off("click").on("click",function(){
 						common.callDatasign("common.print.showDataSign");
+						/*var b=$("#signinput").val();
+						common.print.showDataSign(b);*/
+					});
+					$("#photoPrint").off("click").on("click",function(){
+						common.callAgreePhoto(params.olId);
 					});
 					$("#print_ok").off("click").on("click",function(){
 //						$("#order-confirm").show();
@@ -149,7 +159,6 @@ common.print = (function($){
 			}
 		});
 	};
-	
 	var _saveHtml2Pdf=function(){
 		
 //		$("#olId").val(OrderInfo.orderResult.olId);
@@ -159,11 +168,21 @@ common.print = (function($){
 //		var response = $.callServiceAsHtml(url,param);
 //		var height_=document.getElementById("order-print").offsetHeight;
 //		var imgHeigh_=document.getElementById("datasign").offsetHeight;
+		var accNbr="";
+		if (OrderInfo.actionFlag==2){ //套餐变更
+			var prod = order.prodModify.choosedProdInfo;
+			accNbr=prod.accNbr;
+		}
 		var params={
 			olId:OrderInfo.orderResult.olId,
 			signFlag:"5",
 			busiType:"9",
-			sign:_splitBaseforStr($("#signinput").val())
+			sign:_splitBaseforStr($("#signinput").val()),
+			"srcFlag":"APP",
+			"custName":OrderInfo.cust.partyName,
+			"certType":OrderInfo.boCustIdentities.identidiesTypeCd,
+			"certNumber":OrderInfo.boCustIdentities.identityNum,
+			accNbr:accNbr
 		};
 //		$.ecOverlay("<strong>正在保存回执,请稍等会儿...</strong>");
 		var url=contextPath+"/order/sign/saveSignPdfForApp";
@@ -190,8 +209,8 @@ common.print = (function($){
                     	$(this).attr("onclick","");
                     });
                     $("#printStatus").val("1");
-                    var imgData = encodeURIComponent($("#datasign").attr("src"));
-                    $("#imgData").val(imgData);
+                    //var imgData = encodeURIComponent($("#datasign").attr("src"));
+                    //$("#imgData").val(imgData);
 					$("#order-confirm").show();
 					$("#order-print").hide();
 					OrderInfo.order.step=3;
@@ -210,15 +229,49 @@ common.print = (function($){
 	};
 	var _splitBaseforStr = function(str){
 		var re=new RegExp("=","g");
-		str=str.replace(re,"<p/>");
+		str=str.replace(re,"(p/)");
 		return str;
 	};
 	//显示签名
 	var _showDataSign = function(datasignBase64){
-		$("#datasign").attr("src","data:image/jpg;base64,"+datasignBase64);
+		datasignBase64=datasignBase64.replace(/[\r\n]/g,"");
 		$("#signinput").val(datasignBase64);
+		$("#ywSign").css({ 
+		     "background":"url(data:image/jpg;base64,"+datasignBase64+") 120px -20px no-repeat", 
+		     "background-size": "250px 250px"
+		});
+		if($.trim($("#lhhtml").html())!=''){
+			$("#lhsign").css({ 
+			     "background":"url(data:image/jpg;base64,"+datasignBase64+") 50px -10px no-repeat", 
+			     "background-size": "120px 120px"
+			});
+		}
+		if($.trim($("#fwhtml").html())!=''){
+			$("#fwsign").css({ 
+			     "background":"url(data:image/jpg;base64,"+datasignBase64+") 50px -10px no-repeat", 
+			     "background-size": "120px 120px"
+			});
+		}
 	};
-	
+	var _changeAgree=function(flag,obj){
+		$("#changeAUI li").each(function(index){
+			$(this).removeClass("active");
+		});
+		$(obj).addClass("active");
+		if(flag=='1'){
+			$("#showFtlHtml").show();
+			$("#fwhtml").hide();
+			$("#lhhtml").hide();
+		}else if(flag=='2'){
+			$("#showFtlHtml").hide();
+			$("#fwhtml").show();
+			$("#lhhtml").hide();
+		}else if(flag=='3'){
+			$("#showFtlHtml").hide();
+			$("#fwhtml").hide();
+			$("#lhhtml").show();
+		}
+	};
 	//回执打印（重打）
 	var _preVoucher=function(olId, chargeItems){
 		if(!_voucherCommon(olId)){
@@ -1076,7 +1129,8 @@ common.print = (function($){
 		prepareInvoiceInfo:_prepareInvoiceInfo,
 		saveInvoiceInfo:_saveInvoiceInfo,
 		chkInput : _chkInput,
-		printInvoice : _printInvoice
+		printInvoice : _printInvoice,
+		changeAgree:_changeAgree
 	};
 })(jQuery);
 

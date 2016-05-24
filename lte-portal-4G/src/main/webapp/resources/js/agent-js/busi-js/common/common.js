@@ -346,6 +346,7 @@ common = (function($) {
 				$("#order-confirm").hide();
 				$("#order_fill_content").show();
 				$("#isCheck_Card").css("display","none");
+				$("#btn_next_checkUim").show();
 				OrderInfo.order.step = 1;
 				return;
 			}
