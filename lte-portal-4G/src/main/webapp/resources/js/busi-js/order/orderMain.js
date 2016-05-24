@@ -1667,6 +1667,13 @@ order.main = (function(){
 	//协销人-修改
 	function _setStaff(objInstId){			
 		var $staff = $("#staff_list_body .plan_select");
+		if(OrderInfo.staffInfoFlag == "ON"){//开关打开
+			var staffChannel = $staff.children().eq(6).html();  
+			if(staffChannel == "无渠道"){
+				$.alert("操作提示","您好，您选择的发展人没有归属渠道，请重新选择！");
+				return;
+			}
+		}
 		if($staff.length <= 0){
 			$.alert("操作提示","请选择 协销人！");
 			return;

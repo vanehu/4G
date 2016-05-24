@@ -669,4 +669,7 @@ public final class SysConstant {
 			put("18", "批量终端销售");
 		}
 	};
+	
+	/**渠道发展人归属渠道开关*/
+	public static final String STAFFINFOFLAG = "STAFFINFOFLAG";
 }

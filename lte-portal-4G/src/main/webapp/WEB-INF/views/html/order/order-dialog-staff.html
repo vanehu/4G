@@ -56,6 +56,7 @@
           </tr>
         </thead>
         <tbody id="staff_list_body">
+        <!-- 该td的数量在resources/js/busi-js/order/orderMain.js 的_setStaff方法中有个数量判断var staffChannel = $staff.children().eq(6).html();-->
         	<#if (pageModel.list)?? &&((pageModel.list)?size>0)>
         	<#list pageModel.list as staffInfo >
         	<tr staffId="${staffInfo.staffId}" staffCode="${staffInfo.staffCode}" staffName="${staffInfo.staffName}" >

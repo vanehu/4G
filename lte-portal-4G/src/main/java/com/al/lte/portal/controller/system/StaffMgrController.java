@@ -33,6 +33,7 @@ import com.al.ecs.common.util.PageUtil;
 import com.al.ecs.common.util.PropertiesUtils;
 import com.al.ecs.common.util.UIDGenerator;
 import com.al.ecs.common.web.ServletUtils;
+import com.al.ecs.common.web.SpringContextUtil;
 import com.al.ecs.exception.AuthorityException;
 import com.al.ecs.exception.BusinessException;
 import com.al.ecs.exception.ErrorCode;
@@ -671,4 +672,74 @@ public void toPraise(HttpServletRequest request,  HttpServletResponse response) 
 			}
 			return jsonResponse;
 	}
+	
+    @RequestMapping(value = "/queryStaffInfo", method = RequestMethod.POST)
+	@ResponseBody
+	public JsonResponse queryStaffInfo(HttpSession session,Model model ,@RequestBody Map<String, Object> param) {
+				JsonResponse jsonResponse = new JsonResponse();
+				SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+						SysConstant.SESSION_KEY_LOGIN_STAFF);
+				Integer totalSize = 1;
+		    	List list = new ArrayList();
+		    	String areaId = param.get("areaId")== null || param.get("areaId") == ""?sessionStaff.getAreaId():param.get("areaId").toString();
+		    	String areaName = param.get("currentAreaAllName")== null || param.get("currentAreaAllName") == ""?sessionStaff.getCurrentAreaAllName():param.get("currentAreaAllName").toString();
+		    	Integer iAreaId = areaId==null?0:Integer.parseInt(areaId);
+		    	String pageIndex = param.get("pageIndex")==null?"":param.get("pageIndex").toString();
+		    	String pageSize = param.get("pageSize")==null?"":param.get("pageSize").toString();
+		    	int iPage = 1;
+		    	int iPageSize = 10 ;
+		    	Map staffParm = new HashMap(param);
+		    	try{
+		    		iPage = Integer.parseInt(pageIndex);
+		    		iPageSize = Integer.parseInt(pageSize) ;
+		    		if(iPage>0){
+		    			staffParm.remove("dealerId");
+		        		staffParm.put("areaId", iAreaId);
+		        		staffParm.put("staffCode", sessionStaff.getStaffCode());
+		        		Map returnMap = staffBmo.queryStaffList(staffParm, null, sessionStaff);
+		            	if(returnMap.get("totalNum")!=null){
+		            		totalSize = Integer.parseInt(returnMap.get("totalNum").toString());
+		            		if(totalSize>0){
+		            			list = (List)returnMap.get("result");
+		            		}
+		            	}
+		    		}
+		    	}catch(BusinessException be){
+		    		return super.failed(be);
+				}catch(InterfaceException ie){
+					return super.failed(ie, staffParm, ErrorCode.QUERY_STAFF_INFO);
+				}catch(Exception e){
+					return super.failed(ErrorCode.QUERY_STAFF_INFO, e, staffParm);
+				}
+		    	PropertiesUtils propertiesUtils = (PropertiesUtils) SpringContextUtil.getBean("propertiesUtils");
+		    	String flag = propertiesUtils.getMessage(SysConstant.STAFFINFOFLAG+"-"+sessionStaff.getAreaId().substring(0,3)+"0000");
+		    	Map<String, Object> retMap = new HashMap<String, Object>();
+		    	retMap.put("flag", flag);
+		    	if(list.size()>0){
+		    		List listStaff = null;
+		    		Map datamap = (Map<String, Object>) list.get(0);
+		    		 if (datamap.get("chanInfos") != null) {
+                         Object obj = datamap.get("chanInfos");
+                         if (obj instanceof List) {
+                        	 listStaff = (List<Map<String, Object>>) obj;
+                         } else {
+                        	 listStaff = new ArrayList<Map<String, Object>>();
+                        	 listStaff.add((Map<String, Object>) obj);
+                         }
+                        retMap.put("list", listStaff);
+     		    		jsonResponse.setSuccessed(true);
+     		    		jsonResponse.setCode(0);
+     		    		jsonResponse.setData(retMap);
+                     }else{
+                    	 jsonResponse.setSuccessed(false);
+     		    		jsonResponse.setCode(-2);
+     		    		jsonResponse.setData(retMap); 
+                     }
+		    	}else{
+		    		jsonResponse.setSuccessed(false);
+		    		jsonResponse.setCode(-2);
+		    		jsonResponse.setData(retMap);
+		    	}
+				return jsonResponse;
+		}
 }

@@ -198,6 +198,7 @@ OrderInfo = (function() {
 	var _choosedUserInfos = []; //使用人信息
 	
 	var _checkUimData = []; //保存UIM校验后的返回数据
+	var _staffInfoFlag = "OFF";//渠道发展人归属渠道开关  默认关闭
 	//window.localStorage.clear();
 	//创建一个订单完整节点
 	var _getOrderData = function(){
@@ -1673,6 +1674,7 @@ OrderInfo = (function() {
 		custCreateToken         :_custCreateToken,
 		authRecord				:_authRecord,
 		cust_validateType		:_cust_validateType,
-		cust_validateNum		:_cust_validateNum
+		cust_validateNum		:_cust_validateNum,
+		staffInfoFlag : _staffInfoFlag
 	};
 })();

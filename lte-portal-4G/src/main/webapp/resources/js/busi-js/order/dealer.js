@@ -10,6 +10,7 @@ CommonUtils.regNamespace("order","dealer");
 order.dealer = (function() {
 	//初始化发展人
 	var _initDealer = function(prodInfo) {
+		var staffChannelName = "无渠道";
 		if(order.ysl!=undefined){
 			OrderInfo.order.dealerTypeList = [{"PARTYPRODUCTRELAROLECD":"40020005","NAME":"第一发展人"},{"PARTYPRODUCTRELAROLECD":"40020006","NAME":"第二发展人"},{"PARTYPRODUCTRELAROLECD":"40020007","NAME":"第三发展人"}];
 		}else{
@@ -30,6 +31,32 @@ order.dealer = (function() {
 			if(!ec.util.isArray(OrderInfo.channelList)||OrderInfo.channelList.length==0){
 				OrderInfo.getChannelList();
 			}
+		}
+		var currentAreaAllName = $("#p_staff_areaId_val").val();
+		if(currentAreaAllName!=undefined){
+			currentAreaAllName = currentAreaAllName.replace(/>/g,"-")
+		}
+		var param = {
+				"dealerId":$("#dealer_id").val(),
+				"areaId":$("#p_staff_areaId").val(),
+				"currentAreaAllName":currentAreaAllName,
+				"salesCode":"",
+				"pageIndex":1,
+				"objInstId":$("#objInstId").val(),
+				"pageSize":10
+		};
+		$.ecOverlay("<strong>正在查询发展人归属渠道,请稍后....</strong>");
+		var response = $.callServiceAsJson(contextPath+"/staffMgr/queryStaffInfo",param); //发展人类型查询
+		$.unecOverlay();
+		OrderInfo.staffInfoFlag = response.data.flag;
+		if(response.code==0){
+			OrderInfo.channelList = response.data.list;
+		}else if(response.code==-2){
+			staffChannelName = "无渠道";
+			return;
+		}else{
+			$.alert("信息提示",response.data);
+			return;
 		}
 		if(OrderInfo.actionFlag==1 || OrderInfo.actionFlag==2 || OrderInfo.actionFlag==14){ //新装业务，套餐变更需要主套餐发展人
 			var objInstId = OrderInfo.offerSpec.offerSpecId;
