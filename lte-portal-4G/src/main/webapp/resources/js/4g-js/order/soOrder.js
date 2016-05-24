@@ -1471,7 +1471,9 @@ SoOrder = (function() {
 		                value : param.setValue,
 		                state : "ADD"
 		            };
-					busiOrder2.data.ooParams.push(ooParam);
+					if (ec.util.isObj(param.setValue)) {
+						busiOrder2.data.ooParams.push(ooParam);
+					}
 				}				
 			}			
 			//发展人
