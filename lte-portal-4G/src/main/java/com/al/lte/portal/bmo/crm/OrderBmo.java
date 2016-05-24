@@ -610,4 +610,15 @@ public interface OrderBmo {
 	public Map<String, Object> queryAvilablePayMethodCdByChannelId(Map<String, Object> paramMap,String optFlowNum, 
 			SessionStaff sessionStaff) throws Exception;
 	
+	/**
+	 * 电子档案查询
+	 */
+	public Map<String,Object> queryElecRecordList(Map<String, Object> paramMap,String optFlowNum, 
+			SessionStaff sessionStaff) throws Exception;
+	
+	/**
+	 * 电子档案下载
+	 */
+	public Map<String,Object> downLoadElecRecordPdf(Map<String, Object> paramMap,String optFlowNum, 
+			SessionStaff sessionStaff) throws Exception;
 }

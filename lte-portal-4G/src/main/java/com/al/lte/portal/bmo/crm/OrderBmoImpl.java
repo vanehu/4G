@@ -2190,6 +2190,7 @@ public class OrderBmoImpl implements OrderBmo {
 		}
 		return resultMap;
 	}
+	
     /**
      * 渠道可支持的付费方式查询接口
      */
@@ -2209,6 +2210,50 @@ public class OrderBmoImpl implements OrderBmo {
 		} catch (Exception e) {
 			log.error("门户处理营业后台的一卡双号黑名单查询接口服务返回的数据异常", e);
 			throw new BusinessException(ErrorCode.QUERY_BLACK_USERINFO, paramMap, resultMap, e);
+		}
+		return resultMap;
+	}
+	
+	/**
+	 * 电子档案查询
+	 */
+	public Map<String, Object> queryElecRecordList(Map<String, Object> paramMap,String optFlowNum, 
+			SessionStaff sessionStaff)throws Exception {
+		DataBus db = InterfaceClient.callService(paramMap,
+				PortalServiceCode.QUERY_ELEC_RECORD_LIST, optFlowNum, sessionStaff);
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		try{
+			if (ResultCode.R_SUCC.equals(db.getResultCode())) {
+				resultMap = (Map<String, Object>) db.getReturnlmap().get("result");
+				resultMap.put("resultCode", ResultCode.R_SUCC);
+			} else {
+				resultMap.put("resultCode", ResultCode.R_FAILURE);
+				resultMap.put("resultMsg", db.getResultMsg());
+			}
+		} catch (Exception e) {
+			throw new BusinessException(ErrorCode.QUERY_ELEC_RECORD, paramMap, resultMap, e);
+		}
+		return resultMap;
+	}
+	
+	/**
+	 * 电子档案下载
+	 */
+	public Map<String, Object> downLoadElecRecordPdf(Map<String, Object> paramMap,String optFlowNum, 
+			SessionStaff sessionStaff)throws Exception {
+		DataBus db = InterfaceClient.callService(paramMap,
+				PortalServiceCode.DOWN_LOAD_ELEC_RECORD, optFlowNum, sessionStaff);
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		try{
+			if (ResultCode.R_SUCC.equals(db.getResultCode())) {
+				resultMap = (Map<String, Object>) db.getReturnlmap().get("result");
+				resultMap.put("resultCode", ResultCode.R_SUCC);
+			} else {
+				resultMap.put("resultCode", ResultCode.R_FAILURE);
+				resultMap.put("resultMsg", db.getResultMsg());
+			}
+		} catch (Exception e) {
+			throw new BusinessException(ErrorCode.DOWN_LOAD_ELEC_RECORD, paramMap, resultMap, e);
 		}
 		return resultMap;
 	}

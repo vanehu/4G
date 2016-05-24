@@ -1058,6 +1058,107 @@ cart.main = (function(){
 		}
 	};
 	
+	var _qryElecRecord = function(pageIndex){
+		
+		/*var isCanQueryElecRecoed = $("#isCanQueryElecRecoed").val();
+		if(isCanQueryElecRecoed != '0'){
+			$.alert("提示","对不起,您没有查询电子档案回执的权限,请找管理员申请!");
+			return ;
+		}*/
+		
+		var param = {};
+		
+		if($("#if_p_olNbr").attr("checked")){
+			if(!$("#p_olNbr").val()||$.trim($("#p_olNbr").val())==""){
+				$.alert("提示","请输入 '购物车流水' 再查询");
+				return ;
+			}
+			if(!$("#p_areaId_val").val()||$("#p_areaId_val").val()==""){
+					$.alert("提示","请选择 '地区' 再查询");
+					return ;
+			}
+			param = {			
+					"olNbr":$("#p_olNbr").val(),
+					"areaId":$("#p_areaId").val(),
+					"custName":'',//受理工号
+					"certType":'',//受理人
+					"certNumber":'',
+					"accNbr":'',
+					"startDt":'',
+					"endDt":'',
+					"pageSize":10,
+					"pageIndex":pageIndex
+			};
+		}else{
+			var accNbr = $.trim($("#p_qryNumber").val());
+			var certNumber = $.trim($("#p_certNumber").val());
+			
+			if("" ==accNbr && "" == certNumber){
+				$.alert("提示","接入号与证件号码必填写其中一项！");
+				return;
+			}
+			
+			var startDt = $("#p_startDt").val();
+			var endDt = $("#p_endDt").val();
+			if("" == startDt || "" == endDt){
+				$.alert("提示","时间范围必须填写!");
+				return;
+			}
+			param = {			
+					"olNbr":'',
+					"areaId":$("#p_areaId").val(),
+					"custName":encodeURI($("#p_custName").val()),//受理工号
+					"certType":'',//受理人
+					"certNumber":certNumber,
+					"accNbr":accNbr,
+					"startDt":startDt,
+					"endDt":endDt,
+					"pageSize":10,
+					"pageIndex":pageIndex
+				};
+		}
+			
+		$.callServiceAsHtmlGet(contextPath+"/report/queryElecRecodeList",param,{
+			"before":function(){
+				$.ecOverlay("电子档案查询中，请稍等...");
+			},
+			"always":function(){
+				$.unecOverlay();
+			},
+			"done" : function(response){
+				if(response && response.code == 0){
+					$("#cart_list").html(response.data).show();
+				}
+			},
+			fail:function(response){
+				$.unecOverlay();
+				$.alert("提示","请求可能发生异常，请稍后再试！");
+			}
+		});
+		
+	};
+	
+	var _downLoadElecRecord = function(olId){
+		var params = {
+				"areaId":$("#v_areaId").val(),
+				//"olId" :700001077084
+				"olId" : olId
+		};
+		$("<form>", {
+			id: "downElecRecodeFileForm",
+			style: "display:none;",
+			//target: "_blank",
+			method: "POST",
+			action: contextPath + "/report/downLoadElecRecord"
+		}).append($("<input>", {
+			id: "downElecRecodeFile",
+			name: "downElecRecodeFile",
+			type: "hidden",
+			value: JSON.stringify(params)
+		})).appendTo("body").submit();
+		
+	};
+	
 	return {
 		addStyle			:_addStyle,
 		removeStyle			:_removeStyle,
@@ -1085,95 +1186,123 @@ cart.main = (function(){
 	 	showAddBlacklist    :_showAddBlacklist,
 	 	addBlacklistSubmit  :_addBlacklistSubmit,
 	 	chooseBlacklistArea :_chooseBlacklistArea,
-	 	chooseProAndLocalArea:_chooseProAndLocalArea
+	 	chooseProAndLocalArea:_chooseProAndLocalArea,
+	 	qryElecRecord		:_qryElecRecord,
+	 	downLoadElecRecord :_downLoadElecRecord
 	};
 	
 })();
 //初始化
 $(function(){
 	
-	$("#bt_cartQry").off("click").on("click",function(){cart.main.queryCartList(1);});
-	$("#qry_virtualNumber").off("click").on("click",function(){cart.main.qryVirtualNumber();});
-	$("#qry_blackUserInfo").off("click").on("click",function(){cart.main.qryBlackUserInfo(1);});
 	$("#p_startDt").off("click").on("click",function(){
 		$.calendar({ format:'yyyy年MM月dd日 ',real:'#p_startDt',maxDate:$("#p_endDt").val() });
 	});
 	$("#p_endDt").off("click").on("click",function(){
 		$.calendar({ format:'yyyy年MM月dd日 ',real:'#p_endDt',minDate:$("#p_startDt").val(),maxDate:'%y-%M-%d' });	
 	});
-	$("#qureyChannelList").off("click").on("click",function(){//渠道查询	
-		cart.main.qureyStaffAndChl("queryChannel",0);
-	});
-	$("#qureyStaffCode").off("click").on("click",function(){//受理工号查询
-		cart.main.qureyStaffAndChl("queryStaff",0);
-	});
-	$("#bt_resetStaffCode").off("click").on("click",function(){//清空受理工号staffCode和staffId
-		$("#qureyStaffCode").val("");
-		$("#p_staffId").val("");
-	});
-	cart.main.initDic();
-	
-	$("#if_p_olNbr").change(function(){
-		if($("#if_p_olNbr").attr("checked")){
-			$("#p_olNbr").css("background-color","white").attr("disabled", false) ;
-			$("#p_startDt").css("background-color","#E8E8E8").attr("disabled", true) ;
-			$("#p_endDt").css("background-color","#E8E8E8").attr("disabled", true) ;
-			$("#p_qryNumber").css("background-color","#E8E8E8").attr("disabled", true) ;
-			$("#p_olStatusCd").css("background-color","#E8E8E8").attr("disabled", true) ;
-			$("#p_busiStatusCd").css("background-color","#E8E8E8").attr("disabled", true) ;
-			$("#qureyChannelList").css("background-color","#E8E8E8").attr("disabled", true);
-			$("#p_channelId").css("background-color","#E8E8E8").attr("disabled", true);
-			$("#p_couponNumber").css("background-color","#E8E8E8").attr("disabled", true);
-			$("#qureyStaffCode").css("background-color","#E8E8E8").attr("disabled", true);
-			$("#bt_resetStaffCode").attr("disabled", true);
-			if($("#pageType").val() == "link" && $("#permissionsType").val() == "monitor"){
-				$("#p_areaId_val").css("background-color","#E8E8E8").attr("disabled", true) ;
+	// 电子档案查询界面
+	if("Y" == $("#recodeFlag").val()){
+		$("#qry_elecrecord").off("click").on("click",function(){cart.main.qryElecRecord(1);});
+		
+		$("#if_p_olNbr").change(function(){
+			if($("#if_p_olNbr").attr("checked")){
+				$("#p_olNbr").css("background-color","white").attr("disabled", false) ;
+				$("#p_startDt").css("background-color","#E8E8E8").attr("disabled", true) ;
+				$("#p_endDt").css("background-color","#E8E8E8").attr("disabled", true) ;
+				$("#p_qryNumber").css("background-color","#E8E8E8").attr("disabled", true) ;
+				$("#p_custName").css("background-color","#E8E8E8").attr("disabled", true) ;
+				$("#p_certNumber").css("background-color","#E8E8E8").attr("disabled", true) ;
+			}else{
+				$("#p_olNbr").css("background-color","#E8E8E8").attr("disabled", true) ;
+				$("#p_startDt").css("background-color","white").attr("disabled", false) ;
+				$("#p_endDt").css("background-color","white").attr("disabled", false) ;
+				$("#p_qryNumber").css("background-color","white").attr("disabled", false) ;
+				$("#p_custName").css("background-color","white").attr("disabled", false) ;
+				$("#p_certNumber").css("background-color","white").attr("disabled", false) ;
+			}
+		});
+		
+	}else{
+		$("#bt_cartQry").off("click").on("click",function(){cart.main.queryCartList(1);});
+		$("#qry_virtualNumber").off("click").on("click",function(){cart.main.qryVirtualNumber();});
+		$("#qry_blackUserInfo").off("click").on("click",function(){cart.main.qryBlackUserInfo(1);});
+		
+		$("#qureyChannelList").off("click").on("click",function(){//渠道查询	
+			cart.main.qureyStaffAndChl("queryChannel",0);
+		});
+		$("#qureyStaffCode").off("click").on("click",function(){//受理工号查询
+			cart.main.qureyStaffAndChl("queryStaff",0);
+		});
+		$("#bt_resetStaffCode").off("click").on("click",function(){//清空受理工号staffCode和staffId
+			$("#qureyStaffCode").val("");
+			$("#p_staffId").val("");
+		});
+		
+		cart.main.initDic();
+		
+		$("#if_p_olNbr").change(function(){
+			if($("#if_p_olNbr").attr("checked")){
+				$("#p_olNbr").css("background-color","white").attr("disabled", false) ;
+				$("#p_startDt").css("background-color","#E8E8E8").attr("disabled", true) ;
+				$("#p_endDt").css("background-color","#E8E8E8").attr("disabled", true) ;
+				$("#p_qryNumber").css("background-color","#E8E8E8").attr("disabled", true) ;
+				$("#p_olStatusCd").css("background-color","#E8E8E8").attr("disabled", true) ;
+				$("#p_busiStatusCd").css("background-color","#E8E8E8").attr("disabled", true) ;
+				$("#qureyChannelList").css("background-color","#E8E8E8").attr("disabled", true);
+				$("#p_channelId").css("background-color","#E8E8E8").attr("disabled", true);
+				$("#p_couponNumber").css("background-color","#E8E8E8").attr("disabled", true);
+				$("#qureyStaffCode").css("background-color","#E8E8E8").attr("disabled", true);
+				$("#bt_resetStaffCode").attr("disabled", true);
+				if($("#pageType").val() == "link" && $("#permissionsType").val() == "monitor"){
+					$("#p_areaId_val").css("background-color","#E8E8E8").attr("disabled", true) ;
+					$("#qureyChannelList").css("background-color","white").attr("disabled", false) ;
+				}else{
+					$("#p_areaId_val").css("background-color","white").attr("disabled", false) ;
+					$("#qureyChannelList").css("background-color","#E8E8E8").attr("disabled", true) ;
+				}
+			}else{
+				$("#p_olNbr").css("background-color","#E8E8E8").attr("disabled", true) ;
+				$("#p_startDt").css("background-color","white").attr("disabled", false) ;
+				$("#p_endDt").css("background-color","white").attr("disabled", false) ;
+				$("#p_qryNumber").css("background-color","white").attr("disabled", false) ;
+				$("#p_olStatusCd").css("background-color","white").attr("disabled", false) ;
+				$("#p_busiStatusCd").css("background-color","white").attr("disabled", false) ;
 				$("#qureyChannelList").css("background-color","white").attr("disabled", false) ;
-			}else{
-				$("#p_areaId_val").css("background-color","white").attr("disabled", false) ;
-				$("#qureyChannelList").css("background-color","#E8E8E8").attr("disabled", true) ;
+				$("#p_channelId").css("background-color","white").attr("disabled", false);
+				$("#p_couponNumber").css("background-color","white").attr("disabled", false);
+				$("#bt_resetStaffCode").attr("disabled", false);
+				//if($("#p_QryChannelAuth").val() == 0)
+					$("#qureyStaffCode").css("background-color","white").attr("disabled", false);
+				//else
+					//$("#qureyStaffCode").css("background-color","#E8E8E8").attr("disabled", true);
+				if($("#p_channelId").val()!=""){
+					$("#p_areaId_val").css("background-color","#E8E8E8").attr("disabled", true) ;
+				}else{
+					$("#p_areaId_val").css("background-color","white").attr("disabled", false) ;
+				}
 			}
-		}else{
-			$("#p_olNbr").css("background-color","#E8E8E8").attr("disabled", true) ;
-			$("#p_startDt").css("background-color","white").attr("disabled", false) ;
-			$("#p_endDt").css("background-color","white").attr("disabled", false) ;
-			$("#p_qryNumber").css("background-color","white").attr("disabled", false) ;
-			$("#p_olStatusCd").css("background-color","white").attr("disabled", false) ;
-			$("#p_busiStatusCd").css("background-color","white").attr("disabled", false) ;
-			$("#qureyChannelList").css("background-color","white").attr("disabled", false) ;
-			$("#p_channelId").css("background-color","white").attr("disabled", false);
-			$("#p_couponNumber").css("background-color","white").attr("disabled", false);
-			$("#bt_resetStaffCode").attr("disabled", false);
-			//if($("#p_QryChannelAuth").val() == 0)
-				$("#qureyStaffCode").css("background-color","white").attr("disabled", false);
-			//else
-				//$("#qureyStaffCode").css("background-color","#E8E8E8").attr("disabled", true);
-			if($("#p_channelId").val()!=""){
-				$("#p_areaId_val").css("background-color","#E8E8E8").attr("disabled", true) ;
+		});
+		$("#qureyChannelList").change(function(){
+			if($(this).val()!=""){
+				//$("#p_areaId_val").css("background-color","#E8E8E8").attr("disabled", true) ;
 			}else{
 				$("#p_areaId_val").css("background-color","white").attr("disabled", false) ;
 			}
-		}
-	});
-	$("#qureyChannelList").change(function(){
-		if($(this).val()!=""){
-			//$("#p_areaId_val").css("background-color","#E8E8E8").attr("disabled", true) ;
-		}else{
-			$("#p_areaId_val").css("background-color","white").attr("disabled", false) ;
-		}
-	});
-//	$("#p_channelId").change(function(){//渠道信息发生改变，自动清空staffCode和staffId
-//		$("#qureyStaffCode").val("");
-//		$("#p_staffId").val("");
-//	});
-	$("#if_p_time").change(function(){
-		if($("#if_p_time").attr("checked")){
-			$("#p_startDt").css("background-color","white").attr("disabled", false) ;
-			$("#p_endDt").css("background-color","white").attr("disabled", false) ;
-		}else{
-			$("#p_startDt").css("background-color","#E8E8E8").attr("disabled", true) ;
-			$("#p_endDt").css("background-color","#E8E8E8").attr("disabled", true) ;
-		}
-	});
-	$("#bt_cardprogressQry").off("click").on("click",function(){cart.main.cardProgressQuery();});
+		});
+//		$("#p_channelId").change(function(){//渠道信息发生改变，自动清空staffCode和staffId
+//			$("#qureyStaffCode").val("");
+//			$("#p_staffId").val("");
+//		});
+		$("#if_p_time").change(function(){
+			if($("#if_p_time").attr("checked")){
+				$("#p_startDt").css("background-color","white").attr("disabled", false) ;
+				$("#p_endDt").css("background-color","white").attr("disabled", false) ;
+			}else{
+				$("#p_startDt").css("background-color","#E8E8E8").attr("disabled", true) ;
+				$("#p_endDt").css("background-color","#E8E8E8").attr("disabled", true) ;
+			}
+		});
+		$("#bt_cardprogressQry").off("click").on("click",function(){cart.main.cardProgressQuery();});
+	}
 });

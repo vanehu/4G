@@ -503,7 +503,7 @@ public final class PortalServiceCode {
 
     public static final String INIF_QUERY_ERCODE ="biz-service/intf.detailService/queryCustemerOrderDetailForCarrier";
     
-    public static final String seal_ca = "ca-ca/cert/sealPdf";
+    public static final String seal_ca = "ca-ca/cert/noSignSeal4Pdf";
     
     //主销售品目录查询
     public static final String QUERY_MAIN_OFFER_CATEGORY = "biz-service/intf.prodOfferService/queryOfferCategorys";
@@ -1001,9 +1001,13 @@ public final class PortalServiceCode {
     public static final String ADD_BLACK_USERINFO = "bdw-service/intf.businessDispatchService/addBlackUserInfo";
     /**一卡双号黑名单查询*/
     public static final String QUERY_BLACK_USERINFO = "bdw-service/intf.businessDispatchService/queryBlackUserInfo";
-    
+    /**靓号协议****/
+    public static final String QUERY_PRETTYNBR_INFO = "biz-service/intf.detailService/queryPrettyNbrInfosByOlId"; 
     /*渠道可支持的付费方式查询接口*/
     public static final String QUERY_AVILABLE_PAYMETHODCD = "biz-service/intf.chargeService/queryAvailablePayMethodCdByChannelId";
-
     
+    /***电子档案查询 ***/
+    public static final String QUERY_ELEC_RECORD_LIST = "biz-service/intf.fileOperateService/queryReceiptFileOrders";
+    /***电子档案下载 ***/
+    public static final String DOWN_LOAD_ELEC_RECORD = "biz-service/intf.fileOperateService/downLoadPrintFileFromFtp";
 }

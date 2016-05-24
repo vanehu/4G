@@ -1,6 +1,8 @@
 package com.al.lte.portal.controller.crm;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -8,10 +10,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -54,6 +59,8 @@ import com.al.lte.portal.bmo.crm.ReportBmo;
 import com.al.lte.portal.bmo.staff.StaffBmo;
 import com.al.lte.portal.bmo.staff.StaffChannelBmo;
 import com.al.lte.portal.common.CommonMethods;
+import com.al.lte.portal.common.CommonUtils;
+import com.al.lte.portal.common.DataSignTool;
 import com.al.lte.portal.common.EhcacheUtil;
 import com.al.lte.portal.common.FTPServiceUtils;
 import com.al.lte.portal.common.SysConstant;
@@ -1161,5 +1168,189 @@ public class ReportController extends BaseController {
 			model.addAttribute("errorStack",jsonResponse);
 		}
 		return "/cart/blacklist-add-confirm";
+    }
+    
+    /**
+     * 电子档案查询-主页面
+     * 
+     * @param model
+     * @param session
+     * @param flowNum
+     * @return
+     * @throws AuthorityException
+     */
+    @RequestMapping(value = "/queryElecRecodeMain", method = RequestMethod.GET)
+    @AuthorityValid(isCheck = true)
+    public String queryElecRecodeMain(Model model, HttpSession session) throws AuthorityException {
+    	model.addAttribute("current", EhcacheUtil.getCurrentPath(session, "report/queryElecRecodeMain"));
+        
+    	SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+                SysConstant.SESSION_KEY_LOGIN_STAFF);
+        
+    	//判别用户是否具有查询电子档案的权限
+        /*String isCanQueryElecRecoed = null;
+        try {
+            if (isCanQueryElecRecoed == null) {
+            	isCanQueryElecRecoed = staffBmo.checkOperatSpec(SysConstant.ELEC_RECODE_AUTH_CODE, sessionStaff);
+                //暂不将该权限写入session
+                //ServletUtils.setSessionAttribute(super.getRequest(),SysConstant.ELEC_RECODE_AUTH_CODE, isCanQueryElecRecoed);
+            }
+        } catch (Exception e) {
+        	isCanQueryElecRecoed = "1";
+        }*/
+
+        Map<String, Object> defaultAreaInfo = CommonMethods.getDefaultAreaInfo_MinimumC3(sessionStaff);
+        
+    	Calendar calendar = Calendar.getInstance();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		String end = sdf.format(calendar.getTime());
+		calendar.add(Calendar.DATE, -1);
+		String start = sdf.format(calendar.getTime());
+		model.addAttribute("startDt", start);
+		model.addAttribute("endDt", end);
+		model.addAttribute("recodeFlag","Y");
+		
+		model.addAttribute("p_areaId", defaultAreaInfo.get("defaultAreaId"));
+	    model.addAttribute("p_areaId_val", defaultAreaInfo.get("defaultAreaName"));
+		//model.addAttribute("isCanQueryElecRecoed", isCanQueryElecRecoed);
+		
+        return "/cart/elec_record_main";
+    }
+    
+    /**
+     * 电子档案查询-查询列表
+     * 
+     * @param model
+     * @param session
+     * @param flowNum
+     * @return
+     * @throws AuthorityException
+     * @throws UnsupportedEncodingException 
+     */
+    @RequestMapping(value = "/queryElecRecodeList", method = RequestMethod.GET)
+    public String queryElecRecodeList(HttpServletRequest request,Model model, HttpSession session) throws AuthorityException, UnsupportedEncodingException {
+    	model.addAttribute("current", EhcacheUtil.getCurrentPath(session, "report/queryEleRecodeList"));
+        
+    	SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+                SysConstant.SESSION_KEY_LOGIN_STAFF);
+    	
+    	Map<String,Object> inParam = new HashMap<String,Object>();
+    	String areaId = request.getParameter("areaId");
+    	String custName = request.getParameter("custName");
+    	
+    	inParam.put("areaId",areaId);
+    	inParam.put("olNbr",request.getParameter("olNbr"));
+    	//不传默认为WEB无纸化，翼销售需传 "APP"
+    	inParam.put("srcFlag", "APP");
+    	
+    	if(null != custName && !custName.equals("")){
+    		custName = EncodeUtils.urlDecode(custName);
+    		inParam.put("custName", EncodeUtils.urlDecode(custName));
+    	}
+    	
+    	inParam.put("certType", request.getParameter("certType"));
+    	inParam.put("certNumber", request.getParameter("certNumber"));
+    	inParam.put("accNbr",request.getParameter("accNbr"));
+    	inParam.put("startDt", request.getParameter("startDt"));
+    	inParam.put("endDt", request.getParameter("endDt"));
+    	
+    	int pageSize = Integer.parseInt(request.getParameter("pageSize"));
+    	int pageIndex = Integer.parseInt(request.getParameter("pageIndex"));
+    	int totalSize = 0;
+    	
+    	inParam.put("nowPage", pageIndex);
+    	inParam.put("pageSize", pageSize);
+        
+    	try{
+    		
+    		Map<String, Object> returnMap = orderBmo.queryElecRecordList(inParam, null, sessionStaff);
+    		List<Map<String,Object>> list = new ArrayList<Map<String,Object>>();
+    		if (returnMap != null && ResultCode.R_SUCC.equals(returnMap.get("resultCode"))) {
+    			list = (List<Map<String, Object>>) returnMap.get("receiptOrders");
+    			if(null != returnMap.get("totalCnt")){
+    				totalSize = MapUtils.getInteger(returnMap, "totalCnt");
+    			}
+            }
+    		PageModel<Map<String, Object>> pm = PageUtil.buildPageModel(pageIndex, pageSize, totalSize < 1 ? 1
+                    : totalSize, list);
+    		
+            model.addAttribute("pageModel", pm);
+            model.addAttribute("areaId", areaId);
+            model.addAttribute("code", returnMap.get("resultCode"));
+            model.addAttribute("mess", returnMap.get("resultMsg"));
+    	} catch (BusinessException be) {
+            return super.failedStr(model, be);
+        } catch (InterfaceException ie) {
+            return super.failedStr(model, ie, inParam, ErrorCode.QUERY_ELEC_RECORD);
+        } catch (Exception e) {
+            return super.failedStr(model, ErrorCode.QUERY_ELEC_RECORD, e, inParam);
+        }
+        return "/cart/elec_record_list";
+    }
+    
+    /**
+     * 电子档案查询-回执下载
+     * 
+     * @param model
+     * @param session
+     * @param flowNum
+     * @return
+     * @throws AuthorityException
+     */
+    @RequestMapping(value = "/downLoadElecRecord", method = RequestMethod.POST)
+    public void downLoadElecRecord(@RequestParam("downElecRecodeFile") String params,
+			@LogOperatorAnn String flowNum, 
+			HttpServletRequest request,
+			HttpServletResponse response, 
+			HttpSession session) throws AuthorityException {
+    	
+    	SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+                SysConstant.SESSION_KEY_LOGIN_STAFF);
+    	
+    	Map<String,Object> inParam = new HashMap<String,Object>();
+    	try{
+    		
+    		inParam = JsonUtil.toObject(params, Map.class);
+    		
+    		//不传默认为WEB无纸化，翼销售需传 "APP"
+        	inParam.put("srcFlag", "APP");
+    		
+    		Map<String, Object> resultMap = orderBmo.downLoadElecRecordPdf(inParam, null, sessionStaff);
+			if (resultMap!=null&& ResultCode.R_SUCC.equals(resultMap.get("resultCode").toString())) {
+				String fileName = System.currentTimeMillis()+"_"+inParam.get("olId");
+				CommonUtils.downLoadPdf(resultMap, fileName, response);
+			} else {
+				//试试转到错误页面
+				request.setAttribute("errorMsg", resultMap.get("resultMsg"));
+				request.getRequestDispatcher("/error/500.jsp").forward(request, response);
+			}
+    	} catch (BusinessException e) {
+			try {
+				request.getRequestDispatcher("/error/500.jsp").forward(request, response);
+			} catch (Exception e1) {
+			}
+		} catch (InterfaceException ie) {
+			JsonResponse jsonResponse = failed(ie, inParam, ErrorCode.DOWN_LOAD_ELEC_RECORD);
+			Map<String, Object> errorMap = new HashMap<String, Object>();
+			errorMap.put("code", "-2");
+			errorMap.put("data", jsonResponse.getData());
+			String errorJson = JsonUtil.toString(errorMap);
+			request.setAttribute("errorJson", errorJson);
+			try {
+				request.getRequestDispatcher("/error/500.jsp").forward(request, response);
+			} catch (Exception e) {
+			}
+		} catch (Exception e) {
+			JsonResponse jsonResponse = failed(ErrorCode.DOWN_LOAD_ELEC_RECORD, e, inParam);
+			Map<String, Object> errorMap = new HashMap<String, Object>();
+			errorMap.put("code", "-2");
+			errorMap.put("data", jsonResponse.getData());
+			String errorJson = JsonUtil.toString(errorMap);
+			request.setAttribute("errorJson", errorJson);
+			try {
+				request.getRequestDispatcher("/error/500.jsp").forward(request, response);
+			} catch (Exception e1) {
+			} 
+		}
     }
 }

@@ -138,6 +138,8 @@ public final class SysConstant {
     public static final String ADJUSTBANKPAYMENT_CODE = "BANKPAYMENT";
     //代理商保证金校验
     public static final String DEPOSIT_CODE="AGENT_DEPOSIT";
+    //电子档案查询权限
+    public static final String ELEC_RECODE_AUTH_CODE="DZDACXQX";
     /**默认皮肤*/
     public static final String THEME_DEFAULT = "default";
 
@@ -189,6 +191,8 @@ public final class SysConstant {
     public static String WRITE_ASYNCHRONOUS_FLAG = "WRITE_ASYNCHRONOUS_FLAG";
     //是否记录接口日志出入参，数据库字段类型为CLOB，N代表不记录，Y代表记录
     public static String WRITE_LOG_DETAIL = "WRITE_LOG_DETAIL";
+    //XSS过虑总开关  ON-开，OFF或者没有配置-关
+    public static String XSS_FILTER_FLAG = "XSS_FILTER_FLAG";
     public static String LOG_PS = "PS";
     public static String LOG_UNILOG = "UNILOG";
     public static String LOG_NONE = "NONE";
@@ -260,6 +264,7 @@ public final class SysConstant {
 	public final static String SAVE_PDF="2";
 	public final static String SAVE_NO_SIGN_PDF="3";
 	public final static String SAVE_SIGN_PDF_APP="5";
+	public final static String PREVIEW_SIGN_PDF="6";
 	//业务模板目录
 	public final static String P_MOD_BASE_DIR = "report/";
 	public final static String P_MOD_SUB_BASE_DIR = getSysConfDir() + P_MOD_BASE_DIR;
