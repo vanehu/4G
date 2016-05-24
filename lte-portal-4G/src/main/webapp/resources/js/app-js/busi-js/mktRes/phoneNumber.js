@@ -278,6 +278,9 @@ order.phoneNumber = (function(){
 //				$("#tentrance").css("width","100%");
 				$("#phone").hide();
 				$("#number").hide();
+				$("#order").show();
+				$("#phonenumberContent").hide();
+				order.service.searchPack(1);
 			}else if(subPage=='terminal'){
 				mktRes.terminal.setNumber(phoneNumber, plevel);
 				_boProdAn.accessNumber=phoneNumber;
@@ -356,6 +359,7 @@ order.phoneNumber = (function(){
 				if(subnum=='-1'){
 					OrderInfo.boCustInfos.telNumber=phoneNumber;
 				}
+				$("#order").show();
 				$("#order_content").show();
 				//$("#order_prepare").show();
 				$("#phonenumberContent").hide();

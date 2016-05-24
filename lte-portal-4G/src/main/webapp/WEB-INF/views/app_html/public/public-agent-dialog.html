@@ -61,15 +61,28 @@
     </div>
     <div role="tabpanel" class="tab-pane" id="content2">
     		<form class="form-list">
-				<div class="form-group">
+    			<div class="form-group">
+				<div style="display:inline;"><label id="idCardType2">证件类型：</label></div>
+				<div style="display:inline;" id="readCertBtnID2">
+					<ul style="list-style-type:none;display:inline;">
+		            	<li style="display:inline;"><img onClick="common.callGenerationRec('cust.getreadCertBtnID','1')" style=" height: 40px; margin-left: 15px;"src="${contextPath}/image/app-image/shebeisaomiao-xxhdpi_03.png"/></li>
+		            	<li id="nfc" style="display:inline;"><img onClick="common.callGenerationRec('cust.getreadCertBtnID','2')" style=" height: 40px; margin-left: 15px;" src="${contextPath}/image/app-image/shebeisaomiao-xxhdpi_05.png"/></li>
+		            	<li id="otg" style="display:inline;"><img onClick="common.callGenerationRec('cust.getreadCertBtnID','3')" style=" height: 40px; margin-left: 15px;" src="${contextPath}/image/app-image/otg@2x_03.png"/></li>
+		            </ul>
+				</div>
+				</div>
+				<!--<div class="form-group">
 				    <label id="idCardType2">证件类型：</label>
 				</div>
+				-->
 				<div class="form-group">
-				<div class="input-group">
+				<div class="form-group">
 					<input type="text" id="idCardNumber2" class="form-control" placeholder="输入证件号码">
-					<span style="display: table-cell; vertical-align: middle; width: 1%;">
+					<!--<span style="display: table-cell; vertical-align: middle; width: 1%;">
                       <button class="btn btn-info" id="readCertBtnID2" onclick="common.callGenerationRec('cust.getreadCertBtnID')"  type="button"> 读卡 </button>
-                      </span> </div>
+                      </span> 
+                 -->
+                 </div>
 			</div>
 			</form>
 		<div class="modal-footer">
@@ -154,3 +167,13 @@
     </div>
   </div>
 </div>  -->
+<script type="text/javascript">
+ 	var ua = navigator.userAgent.toLowerCase();	
+	if (/iphone|ipad|ipod/.test(ua)) {
+		$("#nfc").hide();
+		$("#otg").hide();
+		    //alert("iphone");		
+	} else if (/android/.test(ua)) {
+		    //alert("android");	
+	}
+</script>

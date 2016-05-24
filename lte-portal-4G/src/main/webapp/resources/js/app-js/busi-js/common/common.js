@@ -6,6 +6,9 @@ CommonUtils.regNamespace("common");
 common = (function($) { 
 	
 	var _callOrderServer=function(staffInfos,custInfos,prodIdInfos,url){
+//		var custInfosTemp = custInfos;
+//		custInfosTemp.identityPic = "";
+//		var custInfosParamsTemp=JSON.stringify(custInfosTemp);//客户定位信息
 		var staffInfosParams=JSON.stringify(staffInfos);//登录信息
 		var custInfosParams=JSON.stringify(custInfos);//客户定位信息
 		var prodIdInfosParams=JSON.stringify(prodIdInfos);//选中产品信息
@@ -24,9 +27,11 @@ common = (function($) {
 			   OrderInfo.boPartyContactInfo = $.parseJSON(custOther1);
 			}
 		}
+		var custParam = JSON.parse(custInfosParams);
+		custParam.identityPic = "";
 		var param={
 			"staffInfos":staffInfosParams,
-			"custInfos":custInfosParams,
+			"custInfos":JSON.stringify(custParam),
 			"prodIdInfos":prodIdInfosParams
 		};
 		var enter = urlParams.enter;

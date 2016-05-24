@@ -7,6 +7,16 @@
 				<div class="panel panel-default paneltop">
 					<div class="panel-heading">经办人信息</div>
 			<div class="panel-body">
+			<div class="form-group" id="jbrsfz">
+				<div style="display:inline;"><label for="username">证件扫描</label></div>
+				<div style="display:inline;">
+					<ul style="list-style-type:none;display:inline;">
+		            	<li style="display:inline;"><img onClick="common.callGenerationRec('cust.getjbrGenerationInfos','1')" style=" height: 40px; margin-left: 15px;"src="${contextPath}/image/app-image/shebeisaomiao-xxhdpi_03.png"/></li>
+		            	<li id="nfc" style="display:inline;"><img onClick="common.callGenerationRec('cust.getjbrGenerationInfos','2')" style=" height: 40px; margin-left: 15px;" src="${contextPath}/image/app-image/shebeisaomiao-xxhdpi_05.png"/></li>
+		            	<li id="otg" style="display:inline;"><img onClick="common.callGenerationRec('cust.getjbrGenerationInfos','3')" style=" height: 40px; margin-left: 15px;" src="${contextPath}/image/app-image/otg@2x_03.png"/></li>
+		            </ul>
+				</div>
+			</div>
 			<div class="form-group">
 				<label for="orderAttrName">经办人姓名<span class="text-warning"></span></label>
             	<input type="text" class="form-control" id="orderAttrName"  maxlength="100">
@@ -28,15 +38,16 @@
 	            </select>
          	</div>
 			<div class="form-group" id="jbrsfz">
-	            <div class="form-group feedback-btn1" style="width: 87%; display: block;float: left;" id="">
+	            <div class="form-group feedback-btn1" id="">
 					<label for="sfzorderAttrIdCard">证件号码<span class="text-warning"></span></label>
 		                <input type="text" class="form-control" id="sfzorderAttrIdCard" name="sfzorderAttrIdCard" maxlength="50" placeholder="">
 				</div>
-				<div class="form-group feedback-btn1" style="width:13%;margin-top: 25px;display: block;float: left;" id="">
+				<!--<div class="form-group feedback-btn1" style="width:13%;margin-top: 25px;display: block;float: left;" id="">
 				         <span class="input-group-btn">
 		                      <button class="btn btn-info" onClick="common.callGenerationRec('cust.getjbrGenerationInfos')" type="button"> 读卡 </button>
 		                 </span>
 				</div>
+				-->
 				<div style="clear:both"></div>
 			</div>
 			<div class="form-group" id="qtzj" style="display: none;">
@@ -64,3 +75,13 @@
 				</div>
 			</div>
 	 </nav>
+<script type="text/javascript">
+ 	var ua = navigator.userAgent.toLowerCase();	
+	if (/iphone|ipad|ipod/.test(ua)) {
+		$("#nfc").hide();
+		$("#otg").hide();
+		    //alert("iphone");		
+	} else if (/android/.test(ua)) {
+		    //alert("android");	
+	}
+</script>

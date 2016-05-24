@@ -2140,16 +2140,16 @@ mktRes.terminal = (function($){
 	
 	var _nextStep=function(){
 		if (!buyChk.tsnFlag) {
-				if($("#tsn").val().length>0){
-					$.alert("提示","<br/>请先校验终端串号。");
-					return;
-				}else{
-					if(isSelect=="N" && OrderInfo.actionFlag==14){
-						AttachOffer.phone_checkOfferExcludeDepend(-1,mktRes.terminal.hytcid,mktRes.terminal.hytcmc);
-						isSelect="Y";
-					}
-				}
+			if($("#tsn").val().length>0){
+				$.alert("提示","<br/>请先校验终端串号。");
+				return;
 			}
+		}
+		if(isSelect=="N" && OrderInfo.actionFlag==14){//带出预存话费
+			AttachOffer.phone_checkOfferExcludeDepend(-1,mktRes.terminal.hytcid,mktRes.terminal.hytcmc);
+			isSelect="Y";
+		}
+		
 		if ("lj"==buyChk.buyType) {
 			if (!buyChk.tsnFlag) {
 				if($("#tsn").val().length>0){
