@@ -532,7 +532,6 @@ common.print = (function($){
 				$("#tempDt").parent().hide();
 				$("#titleDt").html("电子发票：");
 				param.billType = 2;
-				param.printFlag = 3;
 			}
 		});
 		$("#invoiceItemsConfirm").off("click").on("click",function(event){
@@ -885,6 +884,7 @@ common.print = (function($){
 			invoiceInfo.invoiceType = '200';
 		} else {
 			invoiceInfo.invoiceType = '130';
+			invoiceInfo.printFlag = 3;
 		}
 		
 		
