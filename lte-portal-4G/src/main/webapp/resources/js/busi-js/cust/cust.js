@@ -122,21 +122,40 @@ order.cust = (function(){
 			});
 		}).ketchup({bindElement:"custAuthbtnID"});
 
-		$("#useraddclose").off("click").on("click",function(event){
-			easyDialog.close();
+		$("#useraddclose").off("click").on("click",function(event) {
+			try {
+				easyDialog.close();
+			} catch(e) {
+				$('#user_add').hide();
+				$('#overlay').hide();
+			}
 		});
 		$("#userinfoclose,#custsussbtn").off("click").on("click",function(event){
 			easyDialog.close();
 		});
 		//重置
-		$("#custresetBtn").off("click").on("click",function(event){
-			if($.ketchup)
+		$("#createcustresetBtn").off("click").on("click",function(event) {
+			if ($.ketchup) {
 				$.ketchup.hideAllErrorContainer($("#custCreateForm"));
-			$("#btncustreset").click();
-			
+			}
+			if ($.trim($("#identidiesTypeCd option:selected").val()) == "1" && $("#td_custIdCard").data("flag") == "1") {
+				$("#td_custIdCard").data("flag", "0");
+				_certInfo = {};
+				$("#td_custName").html("");
+				$("#td_custIdCard").html("");
+				$("#td_addressStr").html("");
+				var identityPic = $("#img_custPhoto").data("identityPic");
+				if (identityPic != undefined) {
+					$("#img_custPhoto").removeData("identityPic").attr("src", "");
+				}
+				$("#tr_custPhoto").hide();
+			}
+			$("#btncreatecustreset").click();
+			_setSelectVal("identidiesTypeCd", "1"); //默认证件类型使用“身份证”
 		});
-		
-		
+		$("#custresetBtn").off("click").on("click",function(event){
+			$("#btncustreset").click();
+		});
 	};
 	//客户类型选择事件
 	var _partyTypeCdChoose = function(scope,id) {
@@ -299,15 +318,14 @@ order.cust = (function(){
 				$("#td_custName").data("custName", $("#td_custName").html());
 				$("#td_custName").html("");
 				$("#td_custIdCard").data("custIdCard", $("#td_custIdCard").html());
-				$("#td_custIdCard").html("");
+				$("#td_custIdCard").html("").data("flag", "0");
 				$("#td_addressStr").data("addressStr", $("#td_addressStr").html());
 				$("#td_addressStr").html("");
-				var $custPhoto = $("#tr_custPhoto");
-				if ("none" != $custPhoto.css("display")) {
-					$custPhoto.hide();
+				_certInfo = {};
+				var identityPic = $("#img_custPhoto").data("identityPic");
+				if (identityPic != undefined) {
+					$("#img_custPhoto").removeData("identityPic").attr("src", "");
 				}
-				// 照片隐藏后再清除原来的src
-				$("#img_custPhoto").attr("src", "");
 			}
 			// 填单页面经办人读卡
 			if (id == "orderAttrIdCard") {
@@ -341,7 +359,7 @@ order.cust = (function(){
 					$("#td_addressStr").html($("#td_addressStr").data("addressStr"));
 					var identityPic = $("#img_custPhoto").data("identityPic");
 					if (identityPic != undefined) {
-						$("#img_custPhoto").removeData("identityPic");
+						$("#img_custPhoto").removeData("identityPic").attr("src", "");
 					}
 					$("#cCustName").focus();
 				}
@@ -490,7 +508,6 @@ order.cust = (function(){
 	//创建客户确认按钮
     var _custcreateButton = function() {
     	$('#custCreateForm').off().bind('formIsValid',function(event) {
-    		
     		if ($.trim($("#identidiesTypeCd option:selected").val()) == "1" && $('#td_custIdCard').data("flag") != "1"){
         		$.alert("提示","请先读卡");
         		return false;
@@ -847,8 +864,8 @@ order.cust = (function(){
 		_spec_parm_show();
 		$("#partyProfile").attr("style","display:none");
 		easyDialog.open({
-			container : 'user_add',
-			callback : _userAddClosed
+			container: 'user_add',
+			callback: _userAddClosed
 		});
 	};
 	var _setSelectVal = function(id,val){
@@ -1672,7 +1689,7 @@ order.cust = (function(){
 	var _showReadCert = function(man, id) {
 		$("#td_cust_name").text(man.resultContent.partyName);
 		$("#td_cust_idCard").text(man.resultContent.certNumber);
-		if (man.resultContent.identityPic !== undefined) {
+		if (man.resultContent.identityPic != undefined) {
 			$("#img_cust_photo").attr("src", "data:image/jpeg;base64," + man.resultContent.identityPic);
 			$("#tr_cust_photo").show();
 		}
@@ -1708,32 +1725,35 @@ order.cust = (function(){
 //		$("#usersearchbtn").click();
 	};
 	var _submitCertInfo = function(certInfo) {
-		var url = contextPath + "/order/certInfo";
-		var param = {
-			"custName" : certInfo.partyName,
-		    "custIdCard" : certInfo.certNumber,
-		    "addressStr" : certInfo.certAddress
-		};
-		var response = $.callServiceAsJson(url, param, {});
-		if (response.code == 0) {
-			_certInfo = {
-				custName : certInfo.partyName,
-				custIdCard : certInfo.certNumber,
-				addressStr : certInfo.certAddress,
-				token : response.data
-			};
+		if (undefined == certInfo.signature) {
+			var url = contextPath + "/order/certInfo";
+			var response = $.callServiceAsJson(url, JSON.stringify(certInfo));
+			if (response.code == 0) {
+				_certInfo = {
+					custName : certInfo.partyName,
+					custIdCard : certInfo.certNumber,
+					addressStr : certInfo.certAddress,
+					token : response.data
+				};
+			} else {
+				_certInfo = {
+					custName : certInfo.partyName,
+					custIdCard : certInfo.certNumber,
+					addressStr : certInfo.certAddress,
+					token : ""
+				};
+			}
 		} else {
 			_certInfo = {
 				custName : certInfo.partyName,
 				custIdCard : certInfo.certNumber,
 				addressStr : certInfo.certAddress,
-				token : ""
+				token : certInfo.signature
 			};
 		}
 	};
 	//新建客户时读卡
 	var _readCertWhenCreate = function() {
-		$('#td_custIdCard').data("flag", "1");
 		var man = cert.readCert();
 		if (man.resultFlag != 0){
 			$.alert("提示", man.errorMsg);
@@ -1743,15 +1763,16 @@ order.cust = (function(){
 		_partyTypeCdChoose($("#partyTypeCd option:selected"),"identidiesTypeCd");
 		$('#identidiesTypeCd').val(1);//身份证类型
 		_identidiesTypeCdChoose($("#identidiesTypeCd option:selected"),"cCustIdCard");
-		_submitCertInfo(man.resultContent);
+		$('#td_custIdCard').data("flag", "1");
 		$('#td_custName').text(man.resultContent.partyName);//姓名
 		$('#td_custIdCard').text(man.resultContent.certNumber);//设置身份证号
-		if (man.resultContent.identityPic !== undefined) {
+		if (undefined != man.resultContent.identityPic) {
 			$("#img_custPhoto").attr("src", "data:image/jpeg;base64," + man.resultContent.identityPic);
 			$("#img_custPhoto").data("identityPic", man.resultContent.identityPic);
 			$("#tr_custPhoto").show();
 		}
 		$('#td_addressStr').text(man.resultContent.certAddress);//地址
+		_submitCertInfo(man.resultContent);
 	};
 	//用户鉴权时读卡
 	var _readCertWhenAuth = function() {

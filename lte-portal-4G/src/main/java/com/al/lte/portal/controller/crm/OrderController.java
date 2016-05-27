@@ -62,6 +62,7 @@ import com.al.lte.portal.bmo.crm.ProdBmo;
 import com.al.lte.portal.bmo.print.PrintBmo;
 import com.al.lte.portal.bmo.staff.StaffBmo;
 import com.al.lte.portal.common.CommonMethods;
+import com.al.lte.portal.common.Const;
 import com.al.lte.portal.common.EhcacheUtil;
 import com.al.lte.portal.common.InterfaceClient;
 import com.al.lte.portal.common.MySimulateData;
@@ -82,6 +83,7 @@ import com.al.lte.portal.model.SessionStaff;
 @Controller("com.al.lte.portal.controller.crm.OrderController")
 @RequestMapping("/order/*")
 public class OrderController extends BaseController {
+
     @Autowired
     @Qualifier("com.al.lte.portal.bmo.crm.OrderBmo")
     private OrderBmo orderBmo;
@@ -2936,15 +2938,13 @@ public class OrderController extends BaseController {
      * @param request
      * @param param
      * @return
+     * @throws Exception
      */
     @SuppressWarnings("unchecked")
-    private boolean papersCheck(HttpServletRequest request, Map<String, Object> param) {
-        String custName = null;
-        String custIdCard = null;
-        String addressStr = null;
+    private boolean papersCheck(HttpServletRequest request, Map<String, Object> param) throws Exception {
         Map<String, Object> orderList = (Map<String, Object>) param.get("orderList");
         Map<String, Object> orderListInfo = (Map<String, Object>) orderList.get("orderListInfo");
-        String actionFlag = orderListInfo.get("actionFlag") + "";
+        String actionFlag = MapUtils.getString(orderListInfo, "actionFlag");
         if ("1".equals(actionFlag)) { //新装
             List<Map<String, Object>> custOrderList = (List<Map<String, Object>>) orderList.get("custOrderList");
             for (Map<String, Object> custOrder : custOrderList) {
@@ -2957,26 +2957,20 @@ public class OrderController extends BaseController {
                         Map<String, Object> identities = (Map<String, Object>) ((List<Map<String, Object>>) data.get("boCustIdentities")).get(0);
                         String identidiesTypeCd = MapUtils.getString(identities, "identidiesTypeCd");
                         if ("1".equals(identidiesTypeCd)) { //身份证
-                            String token = (String) param.get("token");
-                            if (StringUtils.isNotBlank(token)) {
-                                Object mapObject = ServletUtils.getSessionAttribute(request, "_certInfo");
-                                if (null == mapObject) {
-                                    return false;
+                            String token = MapUtils.getString(param, "token");
+                            if (StringUtils.isNotBlank(token) && token.trim().length() > Const.RANDOM_STRING_LENGTH) {
+                                Map<String, Object> custInfo = (Map<String, Object>) ((List<Map<String, Object>>) data.get("boCustInfos")).get(0);
+                                String partyName = MapUtils.getString(custInfo, "name");
+                                String certNumber = MapUtils.getString(identities, "identityNum");
+                                String certAddress = MapUtils.getString(custInfo, "addressStr");
+                                String identityPic = MapUtils.getString(identities, "identidiesPic");
+                                String appSecret = propertiesUtils.getMessage("APP_SECRET"); //appId对应的加密密钥
+                                String nonce = StringUtils.substring(token, 0, Const.RANDOM_STRING_LENGTH);
+                                String signature = commonBmo.signature(partyName, certNumber, certAddress, identityPic, nonce, appSecret);
+                                if (token.trim().equals(signature)) {
+                                    return true;
                                 } else {
-                                    Map<String, Object> map = (Map<String, Object>) mapObject;
-                                    String initToken = (String) map.get("token");
-                                    if (initToken.equals(token)) {
-                                        param.remove("token");
-                                        Map<String, Object> custInfos = (Map<String, Object>) ((List<Map<String, Object>>) data.get("boCustInfos")).get(0);
-                                        custName = (String) map.get("custName");
-                                        custIdCard = (String) map.get("custIdCard");
-                                        addressStr = (String) map.get("addressStr");
-                                        custInfos.put("name", custName);
-                                        identities.put("identityNum", custIdCard);
-                                        custInfos.put("addressStr", addressStr);
-                                    } else {
-                                        return false;
-                                    }
+                                    return false;
                                 }
                             } else {
                                 return false;
@@ -4183,23 +4177,30 @@ public class OrderController extends BaseController {
     @RequestMapping(value = "/certInfo", method = RequestMethod.POST)
     public JsonResponse cacheCertInfo(@RequestBody Map<String, Object> param,
             HttpServletRequest request) {
-        JsonResponse jsonResponse = null;
         try {
-            String custName = (String) param.get("custName");
-            String custIdCard = (String) param.get("custIdCard");
-            String addressStr = (String) param.get("addressStr");
-            if (StringUtils.isBlank(custName) || StringUtils.isBlank(custIdCard)
-                || StringUtils.isBlank(addressStr)) {
+            String partyName = MapUtils.getString(param, "partyName");
+            String gender = MapUtils.getString(param, "gender");
+            String nation = MapUtils.getString(param, "nation");
+            String bornDay = MapUtils.getString(param, "bornDay");
+            String certNumber = MapUtils.getString(param, "certNumber");
+            String certAddress = MapUtils.getString(param, "certAddress");
+            String certOrg = MapUtils.getString(param, "certOrg");
+            String effDate = MapUtils.getString(param, "effDate");
+            String expDate = MapUtils.getString(param, "expDate");
+            String identityPic = MapUtils.getString(param, "identityPic");
+            if (StringUtils.isBlank(partyName) || StringUtils.isBlank(gender)
+                || StringUtils.isBlank(nation) || StringUtils.isBlank(bornDay)
+                || StringUtils.isBlank(certNumber) || StringUtils.isBlank(certAddress)
+                || StringUtils.isBlank(certOrg) || StringUtils.isBlank(effDate)
+                || StringUtils.isBlank(expDate)) {
                 return super.failed("无效信息", 1);
             }
-            ServletUtils.removeSessionAttribute(request, "_certInfo");
-            String uidKey = UIDGenerator.generatorUID();
-            param.put("token", uidKey);
-            ServletUtils.setSessionAttribute(request, "_certInfo", param);
-            jsonResponse = super.successed(uidKey, ResultConstant.SUCCESS.getCode());
-            return jsonResponse;
+            String appSecret = propertiesUtils.getMessage("APP_SECRET"); //appId对应的加密密钥
+            String nonce = RandomStringUtils.randomAlphanumeric(Const.RANDOM_STRING_LENGTH); //随机字符串
+            String signature = commonBmo.signature(partyName, certNumber, certAddress, identityPic, nonce, appSecret);
+            return super.successed(signature, ResultConstant.SUCCESS.getCode());
         } catch (Exception e) {
-            return super.failed("缓存信息异常", -1);
+            return super.failed("信息异常", -1);
         }
     }
     
@@ -4527,8 +4528,8 @@ public class OrderController extends BaseController {
         try {
             Map<String, Object> resMap = orderBmo.queryBlackUserInfo(param, null, sessionStaff);
             if (ResultCode.R_SUCC.equals(resMap.get("resultCode")) && resMap.get("data")!=null) {
-            	list =  (List<Map<String, Object>>) resMap.get("data");
-            	totalSize = MapUtils.getInteger(resMap, "totalCnt", 1);
+                list =  (List<Map<String, Object>>) resMap.get("data");
+                totalSize = MapUtils.getInteger(resMap, "totalCnt", 1);
             }
             PageModel<Map<String, Object>> pm = PageUtil.buildPageModel(nowPage, pageSize, totalSize < 1 ? 1
                     : totalSize, list);
@@ -4574,4 +4575,5 @@ public class OrderController extends BaseController {
         }
         return jsonResponse;
     }
+
 }
