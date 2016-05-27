@@ -912,6 +912,10 @@ offerChange = (function() {
 			$("#title_"+prodId).show();
 			$("#uimDiv_"+prodId).show();
 		}
+		if(OrderInfo.actionFlag == 1 ){
+			$("#newProd_"+prodId).show();
+		}
+		
 		if(OrderInfo.actionFlag == 6 || OrderInfo.actionFlag == 2){
 			var viceChangeFlag = false;
 			if(OrderInfo.actionFlag == 6){

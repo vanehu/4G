@@ -76,7 +76,7 @@ order.cust = (function(){
 		$('#custAuthFormID').bind('formIsValid', function(event, form) {
 			var param = _choosedCustInfo;
             param.pCustIdentityCd =$("#p_cust_identityCd_choose").val();// $("#p_cust_identityCd").val();
-			param.identityNum =base64encode($.trim($("#authIDTD").val()));
+			param.identityNum =base64encode(utf16to8($.trim($("#authIDTD").val())));
 			param.custId = _choosedCustInfo.custId;
 			param.authFlag=authFlag;
 			$.callServiceAsHtml(contextPath+"/cust/custAuth",param,{
@@ -171,13 +171,8 @@ order.cust = (function(){
 	}
 	
 	//用户鉴权时读卡二次业务  /custAuthSub
-	var _readCertWhenAuth3 = function() {
-//		var man =_readCertSub();
-//		if (man.resultFlag != 0){
-//			$.alert("提示", man.errorMsg);
-//			return;
-//		}
-//		$('#idCardNumber2').val(man.resultContent.certNumber);
+	var _readCertWhenAuth3 = function(id) {
+		
 		 if (CertCtl == null || CertCtl == undefined) {
 		    	return {"resultFlag":-1,"errorMsg":"浏览器不支持读卡器"};
 		    }
@@ -192,7 +187,7 @@ order.cust = (function(){
 		        return conn;
 		    }
 		    if(conn.isCloud==1){
-		    	_readCertCloud();
+		    	_readCertCloud(id);
 		    }
 		    else{
 		    	  var  man = JSON.parse(CertCtl.readCert());
@@ -209,11 +204,26 @@ order.cust = (function(){
 		
 	};
 	
+	//flag  0:成功；1:错误；2:异常
+	
+	var _saveCloudLog = function(flag,beginTime,endTime,inParams,outParams){
+        var param={};
+        param.flag=flag;
+        param.startTime=beginTime;
+        param.endTime=endTime;
+        param.inParams=inParams;
+        param.outParams=outParams;
+		var resp = $.callServiceAsJson(contextPath+"/common/saveCloudLog", param);
+		};
+	
 	/**
 	 * 读取二代证云读卡
 	 */
 
-	function _readCertCloud(){
+	function _readCertCloud(id){
+		 //开始时间
+		var beginTime=new Date().getTime();
+		
 	    //云读卡
 	    	//获取协议
 	    	var param={};
@@ -228,29 +238,49 @@ order.cust = (function(){
 	    		
                 try{
                 	var jsonStr =CertCtl.cloudReadCert(appId,timestamp,nonce,businessExt,signature);
+                	jsonStr=eval("("+jsonStr+")");
+                	var inParams={
+          	    		  "appId":appId,
+          	    		  "timestamp":timestamp,
+          	    		  "nonce":nonce,
+          	    		  "businessExt":businessExt,
+          	    		  "signature":signature
+          	    		};
+                	outParams={
+                	  "resultFlag":jsonStr.resultFlag,
+                	  "errorMsg":jsonStr.errorMsg,
+                	  "resultContent":jsonStr.resultContent                			
+                	};
                 	//断开连接
                 	CertCtl.disconnect();
+                	//获取结束时间
+                	var endTime=new Date().getTime();
                 	if(jsonStr.resultFlag==0){
+                		//记录日志
+                		var flag=0;
+                		_saveCloudLog(flag,beginTime,endTime,inParams,outParams);
                 		var p={};
-                		p.cotent=jsonStr.resultContent;
-                		//解密
-                		var resp = $.callServiceAsJson(contextPath+"/common/getCloudParam",p );
+                		p.data=jsonStr.resultContent.certificate;
+                		//解密                  $.callServiceAsJson(contextPath+"/common/getCloudParam", param)
+                		var resp = $.callServiceAsJson(contextPath+"/common/decodeCert",JSON.stringify(p));
                 		if(resp.code==0){
                 			var certNumber=resp.data.certNumber;
-                			$('#idCardNumber2').val(certNumber);
+                			$('#idCardNumber'+id).val(certNumber);
                 		}
                 		else{
-                			alertM("数据解密异常");
+                			alertM("提示","数据解密异常");
                     		return ;
                 		}
                 	}
                 	else{
-                		alertM(jsonStr.errorMsg);
+                		var flag=1;
+                		_saveCloudLog(flag,beginTime,endTime,inParams,outParams);
+                		$.alert("提示",jsonStr.errorMsg);
                 		return ;
                 	}
                 }
                 catch(e){
-                	
+                	var a="";
                 }
 	    	}
 	    	else{
@@ -1982,18 +2012,43 @@ order.cust = (function(){
 	};
 	//用户鉴权时读卡二次业务  /custAuthSub
 	var _readCertWhenAuth2 = function(id) {
-		var man =_readCertSub();
-		if (man.resultFlag != 0){
-			$.alert("提示", man.errorMsg);
-			return;
-		}
-		$('#idCardNumber'+id).val(man.resultContent.certNumber);
+
+		if (CertCtl == null || CertCtl == undefined) {
+	    	return {"resultFlag":-1,"errorMsg":"浏览器不支持读卡器"};
+	    }
+	    var conn = null;
+	    try {
+	    	var ret = CertCtl.connect();
+	    	conn = JSON.parse(ret);
+	    } catch(e) {
+	    	conn = {"resultFlag":-1,"errorMsg":"连接读卡器失败，可能未安装驱动及控件"};
+	    	$.alert("提示",conn.errorMsg);
+	    	return ;
+	    }
+	    if (conn.resultFlag != 0) {
+	        return conn;
+	    }
+	    if(conn.isCloud==0)
+	    {
+	    	_readCertCloud(id);
+	    }
+	    else{
+	    	  var  man = JSON.parse(CertCtl.readCert());
+		  	    try {
+		  		    CertCtl.disconnect();
+		  	    } catch(e) {
+		  	    }
+		  	  if (man.resultFlag != 0){
+					$.alert("提示", man.errorMsg);
+					return;
+				}
+				$('#idCardNumber'+id).val(man.resultContent.certNumber);
+	    }
+	
 		
 	};
 	//跳过鉴权
 	var _jumpAuth2 = function() {
-//		easyDialog.close();
-		//$('#auth2').dialog('close');
 		if($.browser.msie) {
 		   $("#auth2").css('display','none');
             

@@ -220,11 +220,32 @@
 
 <!--订单准备 end-->
 <script type="text/javascript">
+window.onload=function(){
 	var p_cust_areaid = "";
 	var p_cust_areaname= "";
 	var nextFlag = false;
 	var mergeFlag = "${mergeFlag}";
 	var custInfos = ${custInfo};
+	$("#p_cust_areaId").val(p_cust_areaid);
+	var mainPhoneNum = $("#mainPhoneNum").val();
+	var newSubPhoneNum = $("#newSubPhoneNum").val();
+	if(mainPhoneNum!=undefined &&mainPhoneNum!=""){
+		OrderInfo.newOrderNumInfo.mainPhoneNum = mainPhoneNum;
+	}
+	if(newSubPhoneNum!=undefined&&newSubPhoneNum!=""){
+		OrderInfo.newOrderNumInfo.newSubPhoneNum = newSubPhoneNum;
+	}
+	if("${prodOfferId}"!=""){
+		OrderInfo.offid="${prodOfferId}";
+		//order.service.buyService('${prodOfferId}','${(price)?default("")}');
+	}
+	var terminalCode='${terminalCode}'; //终端串码
+	//终端串码
+	if(terminalCode!=null && terminalCode!="" && terminalCode!="null"){
+		OrderInfo.terminalCode=terminalCode;
+	}
+	OrderInfo.typeCd="${typeCd}";
+	OrderInfo.verifyLevel='${verifyLevel}';
 	if(mergeFlag=="0"){
 		$.each(custInfos.custInfos,function(index,custInfo){
 			var addressStr=custInfo.addressStr;
@@ -282,8 +303,9 @@
 		OrderInfo.acct={acctCd:'${acctCd}'};//账户合同号
 		order.prepare.createorderlonger();
 		OrderInfo.busitypeflag=1;
-
+		order.prodModify.querySecondBusinessAuthSub();
 	}
+}
 </script>
 	<!-- 选号界面需要获取的 areaId -->
 	<input type="hidden" id="p_cust_areaId" value="">
@@ -365,28 +387,9 @@
 <@extends name="/pcpublic/main-template.html"/>
 <script type="text/javascript">
 
-window.onload=function(){
-	$("#p_cust_areaId").val(p_cust_areaid);
-	var mainPhoneNum = $("#mainPhoneNum").val();
-	var newSubPhoneNum = $("#newSubPhoneNum").val();
-	if(mainPhoneNum!=undefined &&mainPhoneNum!=""){
-		OrderInfo.newOrderNumInfo.mainPhoneNum = mainPhoneNum;
-	}
-	if(newSubPhoneNum!=undefined&&newSubPhoneNum!=""){
-		OrderInfo.newOrderNumInfo.newSubPhoneNum = newSubPhoneNum;
-	}
-	if("${prodOfferId}"!=""){
-		OrderInfo.offid="${prodOfferId}";
-		//order.service.buyService('${prodOfferId}','${(price)?default("")}');
-	}
-	var terminalCode='${terminalCode}'; //终端串码
-	//终端串码
-	if(terminalCode!=null && terminalCode!="" && terminalCode!="null"){
-		OrderInfo.terminalCode=terminalCode;
-	}
-	OrderInfo.typeCd="${typeCd}";
-	OrderInfo.verifyLevel='${verifyLevel}';
-	order.prodModify.querySecondBusinessAuthSub();
-} 
+
+	
+	
+
 
 </script> 
