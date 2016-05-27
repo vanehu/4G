@@ -38,6 +38,7 @@
                        <dd>
                        	 <input type="hidden" id="phoneNum" class="numberTextBox width82" maxlength="4" value="任意四位" onblur="javascript:if($(this).val()==''){$(this).val('任意四位');}" onfocus="javascript:if($(this).val()=='任意四位'){$(this).val('')}"/>
                          <input type="text" id="pnEnd" class="numberTextBox width82" maxlength="4" value="最后四位" onblur="javascript:if($(this).val()==''){$(this).val('最后四位');}" onfocus="javascript:if($(this).val()=='最后四位'){$(this).val('')}"/>
+                         <input type="text" id="pnNotExitNum" class="numberTextBox width82" maxlength="1" value="后四位不含" onblur="javascript:if($(this).val()==''){$(this).val('后四位不含');}" onfocus="javascript:if($(this).val()=='后四位不含'){$(this).val('')}"/>
                          <input type="button" value="搜 索" class="numberSearch" id="btnNumSearch" />
                          <input type="button" value="换一组" class="numberSearch" id="btnSwitchNbr" style="margin-left:2px;"/>
                        </dd>
@@ -61,6 +62,7 @@
 	                       <a href="javascript:void(0);" val="460" onclick="order.phoneNumber.linkQueryPhoneNumber('#pncharacteristic a',this)">思念你（460）</a>
 	                       <a href="javascript:void(0);" val="530" onclick="order.phoneNumber.linkQueryPhoneNumber('#pncharacteristic a',this)">我想你（530）</a>
 	                       <a href="javascript:void(0);" val="1573" onclick="order.phoneNumber.linkQueryPhoneNumber('#pncharacteristic a',this)">一往情深（1573）</a>
+	                       <a href="javascript:void(0);" val="4" onclick="order.phoneNumber.linkQueryPhoneNumber('#pncharacteristic a',this)">后四位不含4</a>
                        </dd>
                  </dl>
                  <dl>
