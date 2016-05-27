@@ -42,6 +42,7 @@
 	<mda className="com.al.ecs.common.util" moduleName = "Lte4GManager">	   
 		<const type="String" name="CSB_WS_URL" value="http://10.128.90.194:10901/LTE-CSB/services/DEPService?wsdl" />
 		<const type="String" name="CSB_HTTP_URL" value="http://10.128.90.194:10901/LTE-CSB/HttpDEPService" />
+		<const type="String" name="CSB_HTTP_FORCA_URL" value="http://10.128.90.194:10901/LTE-CSB/HttpDEPService" />
 		<const type="String" name="CSB_FLAG" value="OFF" />
 		<const type="String" name="ASYNC_FLAG" value="OFF" />
 		<const type="String" name="DEF_HTTP_FLAG" value="ON" />
@@ -466,7 +467,7 @@
  	      <const type="String" name="FTPREMOTEPATH" value="/app/4G/batch/upload/batchOrderFile/" description="访问FTP服务器路径"/>
  	      <const type="String" name="FTPBLACKLISTPATH" value="/app/4G/batch/upload/blackListEvidenceFile/" description="访问FTP服务器路径"/>
  	      <const type="String" name="FTPSERVICECONFIG" value="10.128.90.194,21,potoalBatch,potoalBatch" description="测试环境FTP服务器配置信息(单台FTP服务器)'FTP服务器IP,端口,用户名,密码'"/>
- 	      <const type="String" name="BATCHVERSIONFLAG" value="OFF" description="批量改造开关，默认为ON打开，走FTP模式；OFF关闭，走报文模式"/>
+ 	      <const type="String" name="BATCHVERSIONFLAG" value="ON" description="批量改造开关，默认为ON打开，走FTP模式；OFF关闭，走报文模式"/>
  	      <!-- 批量业务FTP服务器配置  end-->
  	    <const type="Map" name="POS_FLAG" description="业务办理收费时POS支付开关  ON OFF">
         {
@@ -546,5 +547,78 @@
         <const type="String" name="SRC_SYSTEM" value="1001" description="身份证云读卡配置：发起方系统编码"/>
         <const type="String" name="DES3_SECRET" value="1EAA86638D60E1951EC51581F3AF3A151EAA86638D60E195" description="身份证云读卡配置：3DES密钥"/>
         <const type="String" name="CLOUD_LOG_FLAG" value="ON" description="身份证云读卡配置：日志开关"/>
+        <const type="Map" name="PRINTFTL_FLAG" description="无纸化服务协议和靓号协议的开关">
+		 {
+			'PRINTFTL-8110000':'OFF,OFF,0,0',
+			'PRINTFTL-8120000':'OFF,OFF,0,0',
+			'PRINTFTL-8140000':'OFF,OFF,0,0',
+			'PRINTFTL-8150000':'OFF,OFF,0,0',
+			'PRINTFTL-8210000':'OFF,OFF,0,0',
+			'PRINTFTL-8220000':'OFF,OFF,0,0',
+			'PRINTFTL-8350000':'OFF,OFF,0,0',
+			'PRINTFTL-8430000':'OFF,OFF,0,0',
+			'PRINTFTL-8500000':'OFF,OFF,0,0',
+			'PRINTFTL-8520000':'OFF,OFF,0,0',
+			'PRINTFTL-8530000':'OFF,OFF,0,0',
+			'PRINTFTL-8540000':'OFF,OFF,0,0',
+			'PRINTFTL-8630000':'OFF,OFF,0,0',
+			'PRINTFTL-8640000':'OFF,OFF,0,0',
+			'PRINTFTL-8650000':'OFF,OFF,0,0',
+			'PRINTFTL-8440000':'OFF,OFF,0,0',
+			'PRINTFTL-8320000':'OFF,OFF,0,0',
+			'PRINTFTL-8510000':'OFF,OFF,0,0',
+			'PRINTFTL-8330000':'OFF,OFF,0,0',
+			'PRINTFTL-8340000':'OFF,OFF,0,0',
+			'PRINTFTL-8610000':'OFF,OFF,0,0',
+			'PRINTFTL-8420000':'OFF,OFF,0,0',
+			'PRINTFTL-8310000':'OFF,OFF,0,0',
+			'PRINTFTL-8130000':'OFF,OFF,0,0',
+			'PRINTFTL-8370000':'OFF,OFF,0,0',
+			'PRINTFTL-8450000':'OFF,OFF,0,0',
+			'PRINTFTL-8410000':'OFF,OFF,0,0',
+			'PRINTFTL-8620000':'OFF,OFF,0,0',
+			'PRINTFTL-8360000':'OFF,OFF,0,0',
+			'PRINTFTL-8460000':'ON,ON,3,1,fw8460000,lh8460000',
+			'PRINTFTL-8230000':'OFF,OFF,0,0'
+		}
+		</const>
+		
+		      <!-- 能力开放政企客户鉴权-->
+ 	    <const type="Map" name="TOKEN_AUTHENTICATION" description="能力开放政企客户鉴权开关  ON OFF">
+        {
+            'Token_8110000':'ON',
+            'Token_8120000':'ON',
+            'Token_8140000':'ON',
+            'Token_8150000':'ON',
+            'Token_8210000':'ON',
+            'Token_8220000':'ON',
+            'Token_8350000':'ON',
+            'Token_8430000':'ON',
+            'Token_8500000':'ON',
+            'Token_8520000':'ON',
+            'Token_8530000':'ON',
+            'Token_8540000':'ON',
+            'Token_8630000':'ON',
+            'Token_8640000':'ON',
+            'Token_8650000':'ON',
+            'Token_8440000':'ON',
+            'Token_8320000':'ON',
+            'Token_8510000':'ON',
+            'Token_8330000':'ON',
+            'Token_8340000':'ON',
+            'Token_8610000':'ON',
+            'Token_8420000':'ON',
+            'Token_8310000':'ON',
+            'Token_8130000':'ON',
+            'Token_8370000':'ON',
+            'Token_8450000':'ON',
+            'Token_8410000':'ON',
+            'Token_8620000':'ON',
+            'Token_8360000':'ON',
+            'Token_8460000':'ON',
+            'Token_8230000':'ON'
+        }
+        </const>
+        <const type="String" name="APP_UPDATE_FLAG" value="0" description="APP自动更新配置：自动更新标识（0：不提示更新   1：强制更新   2：提示更新）"/>
  	</mda>
 </mdas>

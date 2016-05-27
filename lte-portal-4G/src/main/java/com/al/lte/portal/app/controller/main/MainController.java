@@ -25,6 +25,7 @@ import com.al.ec.entity.StaffInfo;
 import com.al.ecs.common.entity.JsonResponse;
 import com.al.ecs.common.entity.Switch;
 import com.al.ecs.common.util.JsonUtil;
+import com.al.ecs.common.util.MDA;
 import com.al.ecs.common.util.PropertiesUtils;
 import com.al.ecs.common.web.ServletUtils;
 import com.al.ecs.exception.BusinessException;
@@ -166,4 +167,25 @@ public class MainController extends BaseController {
 		}
 	}
 	
+	/**
+     * 获取APP自动更新标识（0：不提示更新   1：强制更新   2：提示更新）
+     * @param model
+     * @param flowNum
+     * @param sessionStaff
+     */
+	@RequestMapping(value = "/appUpdateFlag", method = { RequestMethod.POST })
+    @ResponseBody
+    @SessionValid(false)
+    public JsonResponse appUpdateFlag(@RequestBody Map<String, Object> param,HttpServletRequest request,
+            HttpServletResponse response) {
+        JsonResponse jsonResponse = null;
+        String appUpdateFlag = "0";
+        if(MDA.APP_UPDATE_FLAG.toString()!=null && MDA.APP_UPDATE_FLAG.toString().length()>0){
+        	appUpdateFlag = MDA.APP_UPDATE_FLAG.toString();
+        }
+        Map<String, Object> mapList=new HashMap<String, Object>();
+        mapList.put("appUpdateFlag", appUpdateFlag);
+        jsonResponse=super.successed(mapList, ResultConstant.SUCCESS.getCode());
+        return jsonResponse;
+    }
 }
