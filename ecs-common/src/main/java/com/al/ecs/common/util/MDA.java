@@ -6,6 +6,10 @@ import java.util.Map;
 @com.al.common.annotation.AppModule(moduleName = "Lte4GManager")
 public class MDA {
 	/**
+	 * 调用签章系统过csb的http地址
+	 */
+	public static final String CSB_HTTP_FORCA_URL=new String("");
+	/**
 	 * 调用接口过csb的webservice地址
 	 */
 	public static final String CSB_WS_URL=new String("");
@@ -292,4 +296,9 @@ public class MDA {
      * 身份证云读卡配置：日志开关
      */
     public static final String CLOUD_LOG_FLAG = new String("");
+    
+    /**
+     * APP自动更新配置：自动更新标识（0：不提示更新   1：强制更新   2：提示更新）
+     */
+    public static final String APP_UPDATE_FLAG = new String("");
 }
