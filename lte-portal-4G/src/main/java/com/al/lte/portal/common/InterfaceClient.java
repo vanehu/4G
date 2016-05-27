@@ -41,6 +41,7 @@ import com.al.ec.serviceplatform.client.DataBus;
 import com.al.ec.serviceplatform.client.ResultCode;
 import com.al.ec.serviceplatform.client.httpclient.MyHttpclient;
 import com.al.ecs.common.util.JsonUtil;
+import com.al.ecs.common.util.MDA;
 import com.al.ecs.common.util.PropertiesUtils;
 import com.al.ecs.common.util.UIDGenerator;
 import com.al.ecs.common.web.ServletUtils;
@@ -91,6 +92,7 @@ public class InterfaceClient {
 	private static final String CSB_HTTP = "csbHttp";
 	private static final String CSB_WS = "csbWS";
 	public static final String CHECK_LOGIN="pvc";
+	private static final String PORTAL="portal";
 	private static final String XML_CONTENT_TYPE = "text/xml";
 	private static final String JSON_CONTENT_TYPE = "application/json";
 	private static final String TEXT_CONTENT_TYPE = "application/x-www-form-urlencoded";
@@ -103,6 +105,8 @@ public class InterfaceClient {
 	private static ILogSender logSender = null;
 	
 	private static HttpServletRequest request = null;
+	
+	private static Map<String,String> areas=new HashMap<String,String>();
 	
 	/** 是否使用CDATA元素封装SVCCONT */
 	public static boolean cdataSvcCont = true;
@@ -122,6 +126,7 @@ public class InterfaceClient {
 	static {
 		getPropertiesUtils();
 		getLogSender();
+		setAreaJianp();
 	}
 	
 	/**
@@ -308,6 +313,12 @@ public class InterfaceClient {
 					paramString=sb.toString();
 					 contentType =TEXT_CONTENT_TYPE;
 					sys = "验证单点登录";
+				} else if (PORTAL.equals(prefix)) {
+					serviceCode = serviceCode.substring(7);
+					intfUrl += serviceCode;
+					sys = "门户操作动作记日志";
+					paramString = JsonUtil.toString(dataBusMap);
+					paramJson=paramString;
 				}
 				
 				String csbFlag = propertiesUtils.getMessage(SysConstant.CSB_FLAG);
@@ -328,7 +339,13 @@ public class InterfaceClient {
 						Object csbUrlObj = null;
 						csbUrlObj = propertiesUtils.getMessage(URL_KEY + "." + CSB_HTTP);
 						if (csbUrlObj != null){
-							intfUrl = (String)csbUrlObj;
+							if(CA_PREFIX.equals(prefix)){
+								csbUrlObj=MDA.CSB_HTTP_FORCA_URL;
+								intfUrl = (String)csbUrlObj+"?prov="+getAreaJianp(sessionStaff.getCurrentAreaId());
+								log.debug("intfUrl={}", intfUrl);
+							}else{
+								intfUrl = (String)csbUrlObj;
+							}
 						}
 					}
 				}
@@ -966,7 +983,12 @@ public class InterfaceClient {
 		cdm.setDstSysID(MapUtils.getString(csbMap, "DstSysID"));
 		cdm.setActionCode(SysConstant.CSB_ACTION_CODE);
 		cdm.setServiceLevel(SysConstant.CSB_SERVICE_LEVEL);
-		cdm.setSrcSysSign(SysConstant.CSB_SRC_SYS_SIGN);
+		String srcSysSign=MapUtils.getString(csbMap, "srcSysSign");
+		if(srcSysSign==null||"".equals(srcSysSign)){
+			cdm.setSrcSysSign(SysConstant.CSB_SRC_SYS_SIGN);
+		}else{
+			cdm.setSrcSysSign(srcSysSign);
+		}
 		cdm.setDstOrgID(SysConstant.CSB_ORG_ID_GROUP);
 		cdm.setSrcOrgID(SysConstant.CSB_ORG_ID_GROUP);
 		if (SysConstant.APPDESC_MVNO.equals(appDesc)) {
@@ -977,7 +999,11 @@ public class InterfaceClient {
 		HttpSession session = ServletUtils.getSession(request);
 		if (session != null && "1".equals(session.getAttribute(SysConstant.SESSION_KEY_APP_FLAG))) {
 			srcSysID = SysConstant.CSB_SRC_SYS_ID_APP;
-			cdm.setSrcSysSign(SysConstant.CSB_SRC_SYS_SIGN_YSX);
+			if(srcSysSign==null||"".equals(srcSysSign)){
+				cdm.setSrcSysSign(SysConstant.CSB_SRC_SYS_SIGN_YSX);
+			}else{
+				cdm.setSrcSysSign(srcSysSign);
+			}
 		}
 		cdm.setSrcSysID(srcSysID);
 		
@@ -1040,7 +1066,44 @@ public class InterfaceClient {
 		}
 		return logSender;
 	}
-	
+	private static void setAreaJianp(){
+		areas.put("811", "beijing");//北京
+		areas.put("812", "tianjing");//
+		areas.put("813", "hebei");
+		areas.put("814", "shxi");
+		areas.put("815", "neimenggu");
+		areas.put("821", "liaoning");
+		areas.put("822", "jilin");
+		areas.put("823", "heilongjiang");
+		areas.put("831", "shanghai");
+		areas.put("832", "jiangsu");
+		areas.put("833", "zhejiang");
+		areas.put("834", "anhui");
+		areas.put("835", "fujian");
+		areas.put("836", "jiangxi");
+		areas.put("837", "shandong");
+		areas.put("841", "henan");
+		areas.put("842", "hubei");
+		areas.put("843", "hunan");
+		areas.put("844", "guangdong");
+		areas.put("845", "guangxi");
+		areas.put("846", "hainan");
+		areas.put("850", "chongqing");
+		areas.put("851", "sichuang");
+		areas.put("852", "guizhou");
+		areas.put("853", "yunnan");
+		areas.put("854", "xizang");
+		areas.put("861", "shanxi");
+		areas.put("862", "gansu");
+		areas.put("863", "qinghai");
+		areas.put("864", "ningxia");
+		areas.put("865", "xinjiang");
+		areas.put("899", "xuni");//虚拟省
+	}
+	private static String getAreaJianp(String areaId){
+		String areaIdStr=StringUtils.substring(areaId, 0, 3);
+		return areas.get(areaIdStr);
+	}
 	public static void main(String[] args) throws Exception {
 
 		Map<String, Object> paramMap = new HashMap<String, Object>();

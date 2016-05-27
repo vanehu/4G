@@ -16,6 +16,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -36,6 +37,7 @@ import org.xhtmlrenderer.pdf.ITextRenderer;
 import com.al.ec.serviceplatform.client.DataBus;
 import com.al.ec.serviceplatform.client.ResultCode;
 import com.al.ecs.common.util.DateUtil;
+import com.al.ecs.common.util.JsonUtil;
 import com.al.ecs.common.util.NumUtil;
 import com.al.ecs.common.util.PropertiesUtils;
 import com.al.ecs.common.util.UIDGenerator;
@@ -50,6 +52,7 @@ import com.al.lte.portal.common.ServiceClient;
 import com.al.lte.portal.common.SysConstant;
 import com.al.lte.portal.common.print.ChsStringUtil;
 import com.al.lte.portal.common.print.PdfPrintHelper;
+import com.al.lte.portal.common.print.PdfUtils;
 import com.al.lte.portal.common.print.PrintHelperMgnt;
 import com.al.lte.portal.common.print.dto.AcceNbrBaseSet;
 import com.al.lte.portal.common.print.dto.AcceNbrNewSet;
@@ -101,7 +104,7 @@ import com.al.lte.portal.model.SessionStaff;
  * @copyRight 亚信联创电信CRM研发部
  */
 @Service("com.al.lte.portal.bmo.print.PrintBmo")
-public class PrintBmoImpl implements PrintBmo { 
+public class PrintBmoImpl implements PrintBmo {
 
 	private final Log log = Log.getLog(getClass());
 
@@ -170,7 +173,6 @@ public class PrintBmoImpl implements PrintBmo {
 			params.remove("signFlag");
 		}
 		Map<String, Object> printData = new HashMap<String, Object>();
-
 		if (SysConstant.BUSI_TYPE_CRM_COMMON.equals(busiType)) {
 			printData = getVoucherData(params, needAgreement, optFlowNum, request);
 
@@ -192,6 +194,11 @@ public class PrintBmoImpl implements PrintBmo {
 			return runVoucherPrint(printData, response, printType, needAgreement,signFlag);
 		}else if(signFlag.equals(SysConstant.PREVIEW_SIGN_HTML)){
 			return getVoucherDataForApp(params, needAgreement, optFlowNum, request);
+		}else if(signFlag.equals(SysConstant.PREVIEW_SIGN_PDF)){
+			SessionStaff sessionStaff = (SessionStaff) ServletUtils
+					.getSessionAttribute(request, SysConstant.SESSION_KEY_LOGIN_STAFF);
+			printData.put("areaName", "中国电信股份有限公司"+DataSignTool.getAreaName(sessionStaff.getCurrentAreaId(), sessionStaff)+"分公司业务登记单");
+			return runVoucherPrint(printData, response, printType, needAgreement,signFlag);
 		}else if(signFlag.equals(SysConstant.SAVE_PDF)){
 	    	SessionStaff sessionStaff = (SessionStaff) ServletUtils
 					.getSessionAttribute(request, SysConstant.SESSION_KEY_LOGIN_STAFF);
@@ -240,29 +247,43 @@ public class PrintBmoImpl implements PrintBmo {
 //			}
 //			printData.put("companyseal", is2);
 //			is2.close();
-	    	byte[] data=savePdfApp(Base64.decodeBase64(params.get("sign").toString()),params.get("orderInfo").toString(),request);
-	    	String orderInfo=Base64.encodeBase64String(data).replaceAll("\n|\r", "");
-//	    	int height =Integer.valueOf(params.get("height").toString());
-//	    	int imgHeigh =Integer.valueOf(params.get("imgHeigh").toString());
-
-//	    	Map<String, Object> retPdf=getGZPdf(orderInfo,sessionStaff.getOrgId(),"1",300,540,400,640,optFlowNum,sessionStaff);
-//	    	if(ResultCode.R_SUCCESS.equals(retPdf.get("code"))){
-//	    		orderInfo=retPdf.get("resultParam").toString();
-//	    	}else{
-//	    		return null;
-//	    	}
-	    	Map<String, Object> ret=new HashMap<String, Object>();
-//			Map<String, Object> ret=runVoucherPrint(printData, response, printType, needAgreement,signFlag);
-			ret.put("olId", params.get("olId"));
-			ret.put("areaId", sessionStaff.getAreaId());
-			ret.put("action", "ADD");
-			ret.put("orderInfo", orderInfo);
-			if(ret!=null&&ret.get("orderInfo")!=null){
-				Map<String,Object> obj= postPdfData(ret,optFlowNum,request);
-				return obj;
-			}else{
-				return null;
-			}
+	    	Map<String,Object> obj=savePdfApp(params,sessionStaff);
+	    	if(ResultCode.R_SUCCESS.equals(obj.get("code").toString())){
+		    	String orderInfo=obj.get("pdfStr").toString();
+	    	/*Map<String,Object> obj=new HashMap<String,Object>();
+	    	Map<String,Object> order=(Map<String,Object>)params.get("orderInfo");
+	    	String orderInfo=order.get("mgrPdf").toString();*/
+			//log.debug("yewPdf={}", orderInfo.get("mgrPdf").toString());
+			//PdfUtils.byte2File(Base64.decodeBase64(orderInfo.get("mgrPdf").toString().replaceAll("\n|\r", "")),"D:/temp/","test2.pdf");
+	//	    	int height =Integer.valueOf(params.get("height").toString());
+	//	    	int imgHeigh =Integer.valueOf(params.get("imgHeigh").toString());
+	
+	//	    	Map<String, Object> retPdf=getGZPdf(orderInfo,sessionStaff.getOrgId(),"1",300,540,400,640,optFlowNum,sessionStaff);
+	//	    	if(ResultCode.R_SUCCESS.equals(retPdf.get("code"))){
+	//	    		orderInfo=retPdf.get("resultParam").toString();
+	//	    	}else{
+	//	    		return null;
+	//	    	}
+		    	Map<String, Object> ret=new HashMap<String, Object>();
+	//			Map<String, Object> ret=runVoucherPrint(printData, response, printType, needAgreement,signFlag);
+				ret.put("olId", params.get("olId"));
+				ret.put("areaId", sessionStaff.getAreaId());
+				ret.put("action", "ADD");
+				ret.put("srcFlag", params.get("srcFlag"));
+				ret.put("custName", params.get("custName"));
+				ret.put("certType", params.get("certType"));
+				ret.put("certNumber", params.get("certNumber"));
+				ret.put("accNbr", params.get("accNbr"));
+				ret.put("orderInfo", orderInfo);
+				if(ret!=null&&ret.get("orderInfo")!=null){
+					obj= postPdfData(ret,optFlowNum,request);
+					return obj;
+				}else{
+					return null;
+				}
+	    	}else{
+	    		return obj;
+	    	}
 		}else if(signFlag.equals(SysConstant.SAVE_NO_SIGN_PDF)){
 	    	SessionStaff sessionStaff = (SessionStaff) ServletUtils
 					.getSessionAttribute(request, SysConstant.SESSION_KEY_LOGIN_STAFF);
@@ -287,6 +308,7 @@ public class PrintBmoImpl implements PrintBmo {
 		Map<String, Object> returnMap = new HashMap<String, Object>();
 		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(
 				request, SysConstant.SESSION_KEY_LOGIN_STAFF);
+		//log.error("paramMap={}", JsonUtil.toString(paramMap));
 		DataBus db = InterfaceClient.callService(paramMap,
 				PortalServiceCode.INTF_SAVE_PRINTFILE,
 				optFlowNum, sessionStaff);
@@ -5245,7 +5267,12 @@ public class PrintBmoImpl implements PrintBmo {
 			if(signflag.equals(SysConstant.PREVIEW_SIGN)){
 				return previewHtml(strJasperFileName, reportParams, inFields, 0, 0);
 			}else if(signflag.equals(SysConstant.SAVE_PDF)){
-				return savePdf(strJasperFileName, reportParams, inFields,0, 0,printData);
+				return savePdf(strJasperFileName, reportParams, inFields,0, 0);
+			}else if(signflag.equals(SysConstant.PREVIEW_SIGN_PDF)){
+				Map<String,Object> ret1=previewHtml(strJasperFileName, reportParams, inFields, 0, 0);
+				Map<String,Object> ret2=savePdf(strJasperFileName, reportParams, inFields, 0, 0);
+				ret1.putAll(ret2);
+				return ret1;
 			}else if(signflag.equals(SysConstant.SAVE_NO_SIGN_PDF)){
 				return saveNOSignPdf(strJasperFileName, reportParams, inFields,0, 0,printData);
 			}else{
@@ -5265,7 +5292,7 @@ public class PrintBmoImpl implements PrintBmo {
 		return null;
 	}
 	private Map<String,Object> savePdf(String strJasperFileName,Map<String, Object> hasParameters,
-			Collection<Map<String, Object>> lstFields, int pageWidth, int pageHeight,Map<String,Object> printData)
+			Collection<Map<String, Object>> lstFields, int pageWidth, int pageHeight)
 			throws Exception {
 		Map<String,Object> ret=new HashMap<String,Object>();
         //获取Jasper模板对应的printHelper
@@ -5693,7 +5720,7 @@ public class PrintBmoImpl implements PrintBmo {
 			printData.put("channelName", sessionStaff.getCurrentChannelName());
 			
 			String printTypeDir = SysConstant.P_MOD_SUB_BASE_DIR + SysConstant.P_MOD_SUB_STBRESERVE;
-            String strJasperFileName = SysConstant.P_MOD_BASE_DIR + SysConstant.P_MOD_SUB_STBRESERVE 
+            String strJasperFileName = SysConstant.P_MOD_BASE_DIR + SysConstant.P_MOD_SUB_STBRESERVE
             		+ SysConstant.P_MOD_FILE_STBRESERVE + SysConstant.P_MOD_FILE_SUBFIX;
 
             Collection<Map<String, Object>> inFields = new ArrayList<Map<String, Object>>();
@@ -5872,31 +5899,107 @@ public class PrintBmoImpl implements PrintBmo {
 		return returnMap;
 	}
 
-	private byte[] savePdfApp(byte[] data,String html,HttpServletRequest request){
-		try {
-			byte[] pdfByte=null;
-			String image=byte2image(data,request);
-			if(image!=null){
-				html = html.replace("</br>", "");
-				html=html.replace("XXXXXSIGN", image);
-				String pdf=convertHtmlToPdf(html,request);
-				String paths=request.getRealPath("/resources/image/gongz/");
-				String imagePath=paths+image;
-				File fileImg=new File(imagePath);
-				if(fileImg.exists())
-					fileImg.delete();
-
-				String pdfPath=paths+pdf;
-				pdfByte=File2byte(pdfPath);
-				File filePdf=new File(pdfPath);
-				if(filePdf.exists())
-					filePdf.delete();
-			}
-			return pdfByte;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
+	private Map<String,Object> savePdfApp(Map<String, Object> param,SessionStaff sessionStaff)throws Exception{
+		String pdfStr="";
+		Map<String,Object> paramMap=new HashMap<String,Object>();
+		Map<String,Object> returnMap=new HashMap<String,Object>();
+		DataBus db =null;
+		Map<String,Object> orderInfo=(Map<String,Object>)param.get("orderInfo");
+		//log.debug("yewPdf={}", orderInfo.get("mgrPdf").toString());
+		//PdfUtils.byte2File(Base64.decodeBase64(orderInfo.get("mgrPdf").toString().replaceAll("\n|\r", "")),"D:/temp/","test2.pdf");
+		paramMap.put("pdfFile",orderInfo.get("mgrPdf").toString());
+		paramMap.put("sig", param.get("sign").toString());
+		paramMap.put("orgId",sessionStaff.getOrgId());
+		paramMap.put("orgName",sessionStaff.getOrgName());
+		paramMap.put("orgCode", "");
+		paramMap.put("olId",param.get("olId"));
+		paramMap.put("staffName",sessionStaff.getStaffName());
+		paramMap.put("staffId",sessionStaff.getStaffId());
+		paramMap.put("staffCode", sessionStaff.getStaffCode());
+		paramMap.put("areaId", sessionStaff.getAreaId());
+		paramMap.put("areaCode",sessionStaff.getAreaCode());
+		paramMap.put("areaName","");
+		paramMap.put("fieldNameSign", "sign1");
+		List<Map<String,Object>> seals=new LinkedList<Map<String,Object>>();
+		List<Map<String,Object>> signs=new LinkedList<Map<String,Object>>();
+		Map<String,Object> go1=new HashMap<String,Object>();
+		go1.put("page", orderInfo.get("yewPage"));
+		go1.put("llx", 400);
+		go1.put("lly", 60);
+		//go1.put("urx", 0);
+		//go1.put("ury", 0);
+		seals.add(go1);
+		Map<String,Object> si1=new HashMap<String,Object>();
+		si1.put("pageSign", orderInfo.get("yewPage"));
+		si1.put("llxSign", 190);
+		si1.put("llySign", 100);
+		si1.put("urxSign", 190 + 89);
+		si1.put("urySign", 100 + 47);
+		si1.put("isSign", "1");
+		signs.add(si1);
+		if(orderInfo.get("fwPage")!=null){
+			Map<String,Object> go2=new HashMap<String,Object>();
+			go2.put("page", orderInfo.get("fwPage"));
+			go2.put("llx", 400);
+			go2.put("lly", 60);
+			//go2.put("urx", 0);
+			//go2.put("ury", 0);
+			seals.add(go2);
+			Map<String,Object> si2=new HashMap<String,Object>();
+			si2.put("pageSign", orderInfo.get("fwPage"));
+			si2.put("llxSign", 100);
+			si2.put("llySign", 70);
+			si2.put("urxSign", 100 + 109);
+			si2.put("urySign", 100 + 57);
+			si2.put("isSign", "0");
+			signs.add(si2);
 		}
+		if(orderInfo.get("lhPage")!=null){
+			Map<String,Object> go3=new HashMap<String,Object>();
+			go3.put("page", orderInfo.get("lhPage"));
+			go3.put("llx", 400);
+			go3.put("lly", 60);
+			//go3.put("urx", 0);
+			//go3.put("ury", 0);
+			seals.add(go3);
+			Map<String,Object> si3=new HashMap<String,Object>();
+			si3.put("pageSign", orderInfo.get("lhPage"));
+			si3.put("llxSign", 100);
+			si3.put("llySign", 70);
+			si3.put("urxSign", 100 + 109);
+			si3.put("urySign", 100 + 57);
+			si3.put("isSign", "0");
+			signs.add(si3);
+		}
+		paramMap.put("seals", seals);
+		paramMap.put("signs", signs);
+		Map<String, Object> dataBusMap = new HashMap<String, Object>();
+		dataBusMap.put("actionCode", "");
+		dataBusMap.put("key", "");
+		dataBusMap.put("param", paramMap);
+    	//log.error("dataBusMap={}", JsonUtil.toString(dataBusMap));
+		db = InterfaceClient.callService(dataBusMap,
+				PortalServiceCode.seal_ca,
+				null, sessionStaff);
+		try {
+			if (ResultCode.R_SUCC.equals(db.getResultCode())) {
+				pdfStr=db.getReturnlmap().get("result").toString();
+			}
+			if (ResultCode.R_SUCC.equals(db.getResultCode())) {
+				pdfStr=db.getReturnlmap().get("result").toString();
+				returnMap.put("pdfStr", pdfStr.replaceAll("\n|\r", ""));
+				returnMap.put("code", ResultCode.R_SUCCESS);
+			}else{
+				returnMap.put("code", ResultCode.R_FAIL);
+				returnMap.put("msg", db.getResultMsg()==null?"pdf签名盖章，集团签章系统未返回resultMsg【resultMsg=null】":db.getResultMsg());
+			}
+		} catch (Exception e) {
+			log.error("门户处理ca签章系统的ca/cert/signSeal4Pdf服务返回的数据异常", e);
+			throw new BusinessException(ErrorCode.SIGN_SEAL_PDF, paramMap, db.getReturnlmap(), e);
+		}
+		//log.debug("yewPdf={}", pdfStr.replaceAll("\n|\r", ""));
+		//PdfUtils.byte2File(Base64.decodeBase64(pdfStr.replaceAll("\n|\r", "")),"D:/temp/","test3.pdf");
+		return returnMap;
 	}
 
 	//将html保存成pdf
@@ -8016,21 +8119,23 @@ public class PrintBmoImpl implements PrintBmo {
 	    	}else{
 	    		login_area_id=sessionStaff.getAreaId();
 	    	}
-
-	    	byte[] data=savePdfApp(Base64.decodeBase64(params.get("sign").toString()),params.get("orderInfo").toString(),request);
-	    	String orderInfo=Base64.encodeBase64String(data).replaceAll("\n|\r", "");
-
-	    	Map<String, Object> ret=new HashMap<String, Object>();
-			ret.put("olId", params.get("olId"));
-			ret.put("areaId", sessionStaff.getAreaId());
-			ret.put("action", "ADD");
-			ret.put("orderInfo", orderInfo);
-			if(ret!=null&&ret.get("orderInfo")!=null){
-				Map<String,Object> obj= postPdfData(ret,optFlowNum,request);
-				return obj;
-			}else{
-				return null;
-			}
+	    	Map<String,Object> obj=savePdfApp(params,sessionStaff);
+	    	if(ResultCode.R_SUCCESS.equals(obj.get("code").toString())){
+		    	String orderInfo=obj.get("pdfStr").toString();
+		    	Map<String, Object> ret=new HashMap<String, Object>();
+				ret.put("olId", params.get("olId"));
+				ret.put("areaId", sessionStaff.getAreaId());
+				ret.put("action", "ADD");
+				ret.put("orderInfo", orderInfo);
+				if(ret!=null&&ret.get("orderInfo")!=null){
+					obj= postPdfData(ret,optFlowNum,request);
+					return obj;
+				}else{
+					return null;
+				}
+	    	}else{
+	    		return obj;
+	    	}
 		}else if(signFlag.equals(SysConstant.SAVE_NO_SIGN_PDF)){
 	    	SessionStaff sessionStaff = (SessionStaff) ServletUtils
 					.getSessionAttribute(request, SysConstant.SESSION_KEY_LOGIN_STAFF);

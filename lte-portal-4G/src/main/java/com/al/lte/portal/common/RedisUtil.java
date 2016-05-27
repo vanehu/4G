@@ -41,7 +41,16 @@ public class RedisUtil {
 		}
 		return null;
 	}
-
+	public static Object get(String key) {
+		if(getRedisInstance() != null){
+			try {
+				return redisCache.get(getPortalKey(key));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return null;
+	}
 	public static void set(String dbKeyWord,String key, String value) {
 		if(isEnable(dbKeyWord) && getRedisInstance() != null){
 			try {
@@ -51,7 +60,15 @@ public class RedisUtil {
 			}
 		}
 	}
-
+	public static void set(String key, Object value) {
+		if(getRedisInstance() != null){
+			try {
+				redisCache.put(getPortalKey(key), value, expireTime);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
 	public static boolean remove(String dbKeyWord,String key) {
 		if(isEnable(dbKeyWord) && getRedisInstance() != null){
 			try {
@@ -62,7 +79,16 @@ public class RedisUtil {
 		}
 		return false;
 	}
-
+	public static boolean remove(String key) {
+		if(getRedisInstance() != null){
+			try {
+				return redisCache.remove(getPortalKey(key));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return false;
+	}
 	/**
 	 * 获取含平台编码的key
 	 * 

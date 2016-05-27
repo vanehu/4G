@@ -995,7 +995,8 @@ order.calcharge = (function(){
 						"soNbr":OrderInfo.order.soNbr,
 						"busiType":"1",
 						"chargeItems":_chargeItems,
-						"areaId":OrderInfo.getAreaId()
+						"areaId":OrderInfo.getAreaId(),
+						"custName":OrderInfo.cust.partyName
 					};
 					common.print.signVoucher(voucherInfo);
 				});

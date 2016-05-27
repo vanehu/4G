@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="CtgPrintCommonMod" language="groovy" pageWidth="595" pageHeight="842" columnWidth="509" leftMargin="43" rightMargin="43" topMargin="128" bottomMargin="50">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="32"/>
+	<property name="ireport.y" value="39"/>
 	<style name="styleNorm" mode="Transparent" fill="Solid" fontName="宋体" fontSize="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Identity-H"/>
 	<style name="styleBold" fill="Solid" fontName="宋体" fontSize="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
 	<style name="styleBlackBold16" fontName="宋体" fontSize="16" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
@@ -31,6 +31,7 @@
 	<field name="isShowSign" class="java.lang.String"/>
 	<field name="companyseal" class="java.io.InputStream"/>
 	<field name="isShowReplaceStr" class="java.lang.String"/>
+	<field name="areaName" class="java.lang.String"/>
 	<group name="groupCustInfo">
 		<groupExpression><![CDATA[$F{custInfos}]]></groupExpression>
 		<groupHeader>
@@ -352,6 +353,13 @@
 				</reportElement>
 				<textElement/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{acceDay}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="styleBlackBold16" x="33" y="-48" width="447" height="20">
+					<printWhenExpression><![CDATA[$F{areaName}!=null]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{areaName}]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>
