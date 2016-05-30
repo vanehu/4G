@@ -1131,6 +1131,7 @@ order.writeCard = (function(){
  				}
  		}
  		if(oldCardis4GCard == "N" && coupon.cardTypeFlag==1){
+ 			var prodId = _rscJson.prodId;
  			$("#isShow_"+prodId).show();
  			var prodSpecId = OrderInfo.getProdSpecId(prodId);
  			var param = {
