@@ -1180,5 +1180,14 @@ common.print = (function($){
 
 //初始化
 $(function(){
-	
+	var response = $.callServiceAsJson(contextPath + "/properties/getValue", {"key": "EL_INVOICE_"+OrderInfo.staff.areaId.substr(0,3)});
+	if (response.code == "0") {
+		if("ON"==response.data){
+			$("#billTypeEl").show();
+			$("#lb_billTypeEl").show();
+		}else{
+			$("#billTypeEl").hide();
+			$("#lb_billTypeEl").hide();
+		}
+	}
 });
