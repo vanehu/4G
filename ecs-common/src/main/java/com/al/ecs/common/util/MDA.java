@@ -301,4 +301,10 @@ public class MDA {
      * APP自动更新配置：自动更新标识（0：不提示更新   1：强制更新   2：提示更新）
      */
     public static final String APP_UPDATE_FLAG = new String("");
+
+    /**
+     * 电子发票类型类型
+     */
+    public static final Map<String,String> EL_INVOICE = new HashMap<String,String>();
+
 }
