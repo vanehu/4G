@@ -637,7 +637,7 @@ public class PrintController extends BaseController {
 			Integer pageNo = MapUtils.getInteger(paramMap, "pageNo", 1);
 			Integer pageSize = MapUtils.getInteger(paramMap, "pageSize", 10);
 			Map<String, Object> resultMap = printBmo.getEInvoiceInfo(paramMap, flowNum, sessionStaff);
-			if (resultMap != null && ResultCode.R_SUCCESS.equals(MapUtils.getString(resultMap, "resultCode", ""))) {
+			if (resultMap != null && ResultCode.R_SUCC.equals(MapUtils.getString(resultMap, "resultCode", ""))) {
 				if (resultMap != null && resultMap.containsKey("invoiceInfos")) {
 					ArrayList<Map<String, Object>> list = (ArrayList<Map<String, Object>>) resultMap.get("invoiceInfos");
 					PageModel<Map<String, Object>> pm = PageUtil.buildPageModel(pageNo, pageSize, list.size() < 1 ? 1 : list.size(), list);
