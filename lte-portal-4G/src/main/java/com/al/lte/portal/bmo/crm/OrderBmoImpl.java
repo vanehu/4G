@@ -283,6 +283,9 @@ public class OrderBmoImpl implements OrderBmo {
 					.getResultCode()))) {
 				returnMap.put("code", ResultCode.R_SUCCESS);
 			} else {
+				if(db.getReturnlmap()!=null){
+					returnMap = db.getReturnlmap();
+				}
 				returnMap.put("code", ResultCode.R_FAIL);
 				returnMap.put("msg", db.getResultMsg()==null?"收费失败，集团营业后台未返回resultMsg【resultMsg=null】":db.getResultMsg());
 			}

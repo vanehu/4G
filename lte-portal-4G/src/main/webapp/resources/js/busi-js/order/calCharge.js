@@ -951,6 +951,30 @@ order.calcharge = (function(){
 			SoOrder.getToken();
 			inOpetate=false;
 			alertMM(response.data);
+			
+		}else if (response.code == 1) {
+			_conBtns();
+			SoOrder.getToken();
+			inOpetate=false;
+			if(response.data!=undefined){
+				var content = response.data;
+				$.confirm("信息提示",content,{
+					names:["是","否"],
+					yesdo:function(){
+						//作废订单
+						var param={
+								olId:_olId,
+								areaId : OrderInfo.getAreaId()
+						};
+						var result = $.callServiceAsJsonGet(contextPath+"/order/delOrder",param);
+						_backToEntr();
+					},
+					no:function(){
+					}
+				});
+			}else{
+				$.alert("提示","费用信息提交失败!");
+			}
 		}else{
 			_conBtns();
 			SoOrder.getToken();

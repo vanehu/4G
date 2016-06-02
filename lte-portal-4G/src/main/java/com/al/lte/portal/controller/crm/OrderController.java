@@ -1783,6 +1783,9 @@ public class OrderController extends BaseController {
                     jsonResponse = super.successed("收费成功", ResultConstant.SUCCESS.getCode());
                 } else {
                     jsonResponse = super.failed(rMap.get("msg"), ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+                    if(rMap.get("invalidOrder")!=null && rMap.get("invalidOrder").equals("Y")){
+                    	jsonResponse = super.failed(rMap.get("msg"), ResultConstant.FAILD.getCode());
+    				}
                 }
             } else {
                 jsonResponse = super.failed("订单已经建档成功,不能重复操作!", ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
