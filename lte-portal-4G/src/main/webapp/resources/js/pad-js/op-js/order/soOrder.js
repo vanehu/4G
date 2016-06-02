@@ -182,6 +182,10 @@ SoOrder = (function() {
 			itemSpecId : "30010050",
 			value : OrderInfo.custorderlonger
 		});	
+		custOrderAttrs.push({ //
+			itemSpecId : "800000064",
+			value :"Pad"
+		});	
 		
 		if(OrderInfo.zcd_privilege=='0'){
 			custOrderAttrs.push({
