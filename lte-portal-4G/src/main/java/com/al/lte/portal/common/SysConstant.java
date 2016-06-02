@@ -140,6 +140,8 @@ public final class SysConstant {
     public static final String DEPOSIT_CODE="AGENT_DEPOSIT";
     //电子档案查询权限
     public static final String ELEC_RECODE_AUTH_CODE="DZDACXQX";
+    //【黑名单失效】权限
+    public static final String IS_BLACKLIST_INVALID_AUTH="HMDSX";
     /**默认皮肤*/
     public static final String THEME_DEFAULT = "default";
 

@@ -627,4 +627,12 @@ public interface OrderBmo {
 	 */
 	public Map<String,Object> downLoadElecRecordPdf(Map<String, Object> paramMap,String optFlowNum, 
 			SessionStaff sessionStaff) throws Exception;
+	
+	
+	/**
+	 * 失效黑名单
+	 */
+	public Map<String, Object> blackListInvalid(Map<String, Object> dataBusMap, String optFlowNum, 
+			SessionStaff sessionStaff) throws Exception;
+	
 }

@@ -1010,4 +1010,7 @@ public final class PortalServiceCode {
     public static final String QUERY_ELEC_RECORD_LIST = "biz-service/intf.fileOperateService/queryReceiptFileOrders";
     /***电子档案下载 ***/
     public static final String DOWN_LOAD_ELEC_RECORD = "biz-service/intf.fileOperateService/downLoadPrintFileFromFtp";
+    
+    /***黑名单失效 ***/
+    public static final String BLACKLIST_INVALID = "bdw-service/intf.businessDispatchService/editBlackUserInfo";
 }

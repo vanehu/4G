@@ -2287,4 +2287,17 @@ public class OrderBmoImpl implements OrderBmo {
 				
 		return operatSpecList;
 	}
+	
+	/*
+	 * 失效黑名单
+	 */
+	public Map<String, Object> blackListInvalid(Map<String, Object> dataBusMap, String optFlowNum, SessionStaff sessionStaff) throws Exception{
+		
+		DataBus db = InterfaceClient.callService(dataBusMap, PortalServiceCode.BLACKLIST_INVALID, optFlowNum, sessionStaff);
+		try{
+			return db.getReturnlmap();
+		}catch(Exception e){
+			throw new BusinessException(ErrorCode.INVALID_BLACKLIST, dataBusMap, db.getReturnlmap(), e);
+		}
+	}
 }

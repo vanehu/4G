@@ -915,9 +915,15 @@ cart.main = (function(){
 		    "areaId":$("#p_areaId").val(),
 		    "nbrType":nbrType,
 		    "accNbr":accNbr,
+		    "state":"0",
 		    nowPage:curPage,
 			pageSize:10
 		};
+		
+		// 根据复选框选择：1：查询失效的黑名单列表 2:黑名单列表
+		if($("#if_query_log").attr("checked")){
+			param.state = "1";
+		}
         
 		$.callServiceAsHtml(contextPath+"/order/queryBlackUserInfo",param,{
 			"before":function(){
@@ -1141,7 +1147,7 @@ cart.main = (function(){
 	var _downLoadElecRecord = function(olId){
 		var params = {
 				"areaId":$("#v_areaId").val(),
-				//"olId" :700001077084
+				//"olId" :700000991869
 				"olId" : olId
 		};
 		$("<form>", {
@@ -1158,6 +1164,38 @@ cart.main = (function(){
 		})).appendTo("body").submit();
 		
 	};
+	
+	/**
+	 * 黑名单失效
+	 */
+	var _blackListInvalid = function(seqId,accNbr,areaId){
+		var param = {
+				seqId:seqId,
+				areaId:areaId,
+				mainAccNbr:accNbr,
+		};
+		$.callServiceAsJson(contextPath+"/order/blackListInvalid", param, {
+			"before" : function(){
+				$.ecOverlay("黑名单失效中，请稍等...");
+			},
+			"always" : function(){
+				$.unecOverlay();
+			},
+			"done" : function(response){
+				if(response.code==-2){
+					$.alertM(response.data);
+					return;
+				}
+				if(response.code==1){
+					$.alert("操作失败", response.data);
+					return;
+				}
+				$("#tab_blackList tr[id=" + seqId + "]").remove();
+				$.alert("提示", "黑名单失效成功，请选择【失效记录】再查看结果!");
+			}
+		});
+	};
+	
 	
 	return {
 		addStyle			:_addStyle,
@@ -1188,7 +1226,8 @@ cart.main = (function(){
 	 	chooseBlacklistArea :_chooseBlacklistArea,
 	 	chooseProAndLocalArea:_chooseProAndLocalArea,
 	 	qryElecRecord		:_qryElecRecord,
-	 	downLoadElecRecord :_downLoadElecRecord
+	 	downLoadElecRecord  :_downLoadElecRecord,
+	 	blackListInvalid   :_blackListInvalid
 	};
 	
 })();

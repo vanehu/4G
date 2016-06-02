@@ -4530,7 +4530,20 @@ public class OrderController extends BaseController {
         
         Integer nowPage = Integer.parseInt(param.get("nowPage").toString());
         Integer pageSize = Integer.parseInt(param.get("pageSize").toString());
+        String state = param.get("state").toString();
         try {
+        	//判别用户是否具有【黑名单失效】的权限
+            String isBlackInvalid = null;
+            if("0".equals(state)){
+	            try {
+	                if (isBlackInvalid == null) {
+	                	isBlackInvalid = staffBmo.checkOperatSpec(SysConstant.IS_BLACKLIST_INVALID_AUTH, sessionStaff);
+	                }
+	            } catch (Exception e) {
+	            	isBlackInvalid = "1";
+	            }
+            }
+        	
             Map<String, Object> resMap = orderBmo.queryBlackUserInfo(param, null, sessionStaff);
             if (ResultCode.R_SUCC.equals(resMap.get("resultCode")) && resMap.get("data")!=null) {
                 list =  (List<Map<String, Object>>) resMap.get("data");
@@ -4543,6 +4556,8 @@ public class OrderController extends BaseController {
             model.addAttribute("mess", resMap.get("resultMsg"));
             model.addAttribute("resMap", resMap);
             model.addAttribute("param", param);
+            model.addAttribute("state", state);
+            model.addAttribute("isBlackInvalid", isBlackInvalid);
             return "/order/blackList-list";
         } catch (BusinessException be) {
             return super.failedStr(model, be);
@@ -4580,5 +4595,37 @@ public class OrderController extends BaseController {
         }
         return jsonResponse;
     }
-
+    
+    /**
+     * 黑名单失效接口
+     * @param param
+     * @param flowNum
+     * @param response
+     * @return
+     */
+    @RequestMapping(value = "/blackListInvalid", method = RequestMethod.POST)
+    @ResponseBody
+    public JsonResponse blackListInvalid(@RequestBody Map<String, Object> param, @LogOperatorAnn String flowNum,
+            HttpServletResponse response) {
+        SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+                SysConstant.SESSION_KEY_LOGIN_STAFF);
+        Map<String, Object> rMap = null;
+        JsonResponse jsonResponse = null;
+        param.put("invalidStaffCode", sessionStaff.getStaffCode());
+        try {
+            rMap =  orderBmo.blackListInvalid(param, flowNum, sessionStaff);
+            if (rMap != null && ResultCode.R_SUCC.equals(rMap.get("resultCode"))) {
+                jsonResponse = super.successed(rMap, ResultConstant.SUCCESS.getCode());
+            } else {
+                jsonResponse = super.failed(rMap.get("resultMsg"), ResultConstant.FAILD.getCode());
+            }
+        } catch (BusinessException e) {
+            return super.failed(e);
+        } catch (InterfaceException ie) {
+            return super.failed(ie, param, ErrorCode.INVALID_BLACKLIST);
+        } catch (Exception e) {
+            return super.failed(ErrorCode.INVALID_BLACKLIST, e, param);
+        }
+        return jsonResponse;
+    }
 }
