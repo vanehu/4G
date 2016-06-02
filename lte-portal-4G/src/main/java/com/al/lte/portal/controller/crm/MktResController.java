@@ -1507,6 +1507,10 @@ public class MktResController extends BaseController {
 			logparam.put("operateDate", new Date());
 			logparam.put("contactRecord", TransactionID);
 			logparam.put("methodName", "W");//写卡
+			String extCustOrderId = (String) (param.get("extCustOrderId")==null?"":param.get("extCustOrderId"));
+			String accNbr = (String) (param.get("phoneNumber")==null?"":param.get("phoneNumber"));
+			logparam.put("extCustOrderId", extCustOrderId);
+			logparam.put("accNbr", accNbr);
 			param.put("StaffId", sessionStaff.getStaffId());
 			rMap = mktResBmo.submitUimCardInfo(param, flowNum, sessionStaff);
 			if (rMap != null&& ResultCode.R_SUCC.equals(MapUtils.getString(rMap, "code"))) {

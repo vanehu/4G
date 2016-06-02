@@ -17,7 +17,7 @@ OrderInfo = (function() {
 	 * 
 	 * 31改产品密码，32重置产品密码，,33改产品属性，34修改短号，35分段受理（订单确认及后续受理）,36一卡双号订购
 	 * 
-	 * 37终端预约，38取消终端预约，39改付费类型及信控属性，40紧急开机
+	 * 37终端预约，38取消终端预约，39改付费类型及信控属性，40紧急开机，41ESS远程写卡
 	 */
 	var _actionFlag = 0;
 	
@@ -196,6 +196,8 @@ OrderInfo = (function() {
 	var _prodInstAttrs = []; //保存查询产品实例属性时返回的信息
 	
 	var _choosedUserInfos = []; //使用人信息
+	
+	var _essOrderInfo = {}; //ESS订单信息
 	
 	var _checkUimData = []; //保存UIM校验后的返回数据
 	var _staffInfoFlag = "OFF";//渠道发展人归属渠道开关  默认关闭
@@ -1110,7 +1112,9 @@ OrderInfo = (function() {
 			}
 		} catch (e) {
 		}
-		
+		if(OrderInfo.actionFlag==41){//ess远程写卡
+			return OrderInfo.essOrderInfo.essOrder.commonRegionId;
+		}
 		if(prodId!=undefined && prodId>0){ //二次业务
 			var areaId = order.prodModify.choosedProdInfo.areaId;
 			if(ec.util.isArray(OrderInfo.oldprodInstInfos) && order.service.oldMemberFlag){
@@ -1344,6 +1348,8 @@ OrderInfo = (function() {
 			accessNumber = stepOrder.main.getAccessNumber(prodId);
 		} else if(prodId!=undefined && prodId>0){
 			accessNumber = order.prodModify.choosedProdInfo.accNbr;	
+		}else if(OrderInfo.actionFlag == 41) {//ess远程写卡
+			accessNumber = OrderInfo.essOrderInfo.essOrder.phoneNumber; 
 		}
 		return accessNumber;
 	};
@@ -1351,6 +1357,9 @@ OrderInfo = (function() {
 	//根据产品id获取地区编码
 	var _getAreaCode = function(prodId){
 		var areaCode = "";
+		if(OrderInfo.actionFlag==41){//ess远程写卡
+			return OrderInfo.essOrderInfo.essOrder.zoneNumber;
+		}
 		if(OrderInfo.actionFlag==1 || OrderInfo.actionFlag==6 || OrderInfo.actionFlag==14){
 			for (var i = 0; i < OrderInfo.boProdAns.length; i++) {
 				var an = OrderInfo.boProdAns[i];
@@ -1675,6 +1684,7 @@ OrderInfo = (function() {
 		authRecord				:_authRecord,
 		cust_validateType		:_cust_validateType,
 		cust_validateNum		:_cust_validateNum,
-		staffInfoFlag : _staffInfoFlag
+		staffInfoFlag : _staffInfoFlag,
+		essOrderInfo            :_essOrderInfo
 	};
 })();

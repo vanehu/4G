@@ -1,0 +1,112 @@
+<@override name="title">ESS远程写卡</@override> <@override name="header">
+<#include "/busi-js-tpl.html"/>
+<script src="${contextPath}/js/busi-js/ess/essWriteCard.js?${jsversion}"
+	type="text/javascript"></script>
+<script src="${contextPath}/js/4g-js/card/writeCard.js?${jsversion}"
+	type="text/javascript"></script>
+<style>
+.cartLink_fail:hover {
+	text-decoration: underline;
+	cursor: pointer;
+}
+</style>
+</@override> <@override name="content">
+<div class="main_div" id="d_query">
+	<div class="main_warp">
+		<!--订单准备-->
+		<h2 class="h2_title" id="pageType">
+			ESS远程写卡<span></span>
+		</h2>
+		<div class="order">
+			<div class="order_content" style="border: none; padding: 10px">
+				<div class="order_tab_panel" style="display: block;">
+					<div class="selectList">
+					    <dl>
+							<dt style="width: 100px">订单流水号：</dt>
+							<dd>
+								<input type="text" class="numberTextBox width198"
+									id="p_transactionId" value=""/>
+							   <label class="f_red">&nbsp;&nbsp;</label>
+							</dd>
+							<dt style="width: 100px">收货人：</dt>
+							<dd>
+								<input type="text" class="numberTextBox width198"
+									id="p_consignee" value=""/>
+							   <label class="f_red">&nbsp;&nbsp;</label>
+							</dd>
+							<dt style="width: 100px">手机号码：</dt>
+							<dd>
+								<input type="text" class="numberTextBox width198"
+									id="p_accNbr" value=""/>
+							   <label class="f_red">&nbsp;&nbsp;</label>
+							</dd>
+						</dl>
+						<dl>
+							<dt style="width: 100px">订单状态：</dt>
+							<dd>
+								<select id="p_orderStatus" class="width202" style="width: 160px">
+									<option value="">--请选择--</option>
+								</select>
+								<label class="f_red">&nbsp;&nbsp;</label>
+							</dd>
+							<dt style="width: 100px">开始时间：</dt>
+							<dd>
+								<input type="text" class="numberTextBox" style="width: 160px"
+									id="p_startDate" readonly="readonly" value="${p_startDt}"/>
+							</dd>
+							<dt style="width: 100px">结束时间：</dt>
+							<dd>
+							    <input type="text" class="numberTextBox" style="width: 160px"
+									id="p_endDate" readonly="readonly" value="${p_endDt}"/> 
+							</dd>
+							<dd>
+								<label class="f_red">&nbsp;&nbsp;</label> 
+								<input type="button" value="查 询" class="numberSearch" id="bt_orderListQry" />
+							</dd>
+						</dl>
+					</div>
+					<!--订单列表-->
+					<div class="phone_warp" id="cart_list">
+						<table class="numberList">
+							<thead>
+								<tr>
+									<td width="60">收货人</td>
+									<td width="120">订单流水号</td>
+									<td width="80">手机号码</td>
+									<td width="60">地区</td>
+									<td width="60">省份</td>
+									<td width="70">补贴类型</td>
+									<td width="70">终端类型</td>
+									<td width="80">终端规格</td>
+									<td width="80">规格描述</td>
+									<td width="120">终端实例编码</td>
+									<td width="80">终端实例状态</td>
+									<td width="80">主套餐</td>
+									<td width="60">状态</td>
+									<td width="80">状态时间</td>
+									<td width="80">操作</td>
+								</tr>
+							</thead>
+						</table>
+						<!--页码-->
+						<div class="paging">
+							<label><span class="pageUpGray">上一页</span></label>
+							<label id="pageNum"> <a class="pagingSelect" href="#">1</a></label>
+							<label><span class="pageUpGray">下一页</span></label>
+							<label class="marginTop4">跳转至</label>
+							<input type="text" class="inputW20H20" />
+							<label class="marginTop4">页</label>
+							<a href="javascript:void(0)" class="determineBtn">跳转</a>
+						</div>
+						<!--页码 end-->
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!--内容 end-->
+<div id="d_essOrderInfo" style="display: none" ></div>
+<div id="d_writeCard"></div>
+</@override>
+<@extends name="/content-template.html"/>

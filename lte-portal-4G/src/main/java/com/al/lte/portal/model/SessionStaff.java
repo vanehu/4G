@@ -147,6 +147,9 @@ public class SessionStaff implements Serializable {
 	/**记录service/intf.custService/queryCust中的CN节点*/
 	private String CN;
 	
+	/**ESS系统session*/
+	private Map<String, Object> essSession;
+	
 	public String getCustType() {
 		return custType;
 	}
@@ -814,6 +817,16 @@ public class SessionStaff implements Serializable {
 
 	public void setCN(String cN) {
 		CN = cN;
+	}
+
+
+	public void setEssSession(Map<String, Object> essSession) {
+		this.essSession = essSession;
+	}
+
+
+	public Map<String, Object> getEssSession() {
+		return essSession;
 	}	
 	
 }

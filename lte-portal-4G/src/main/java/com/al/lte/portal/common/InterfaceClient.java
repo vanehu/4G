@@ -96,6 +96,7 @@ public class InterfaceClient {
 	private static final String XML_CONTENT_TYPE = "text/xml";
 	private static final String JSON_CONTENT_TYPE = "application/json";
 	private static final String TEXT_CONTENT_TYPE = "application/x-www-form-urlencoded";
+	private static final String ESS_PREFIX = "ess";
 	
 	/** 数据路由关键字，根据此标识读取不同数据源的配置数据 */
 	public static final String DATABUS_DBKEYWORD = "dbKeyWord";
@@ -317,6 +318,13 @@ public class InterfaceClient {
 					serviceCode = serviceCode.substring(7);
 					intfUrl += serviceCode;
 					sys = "门户操作动作记日志";
+					paramString = JsonUtil.toString(dataBusMap);
+					paramJson=paramString;
+				}else if (ESS_PREFIX.equals(prefix)) {//ESS
+					serviceCode = serviceCode.substring(4);
+					intfUrl = getNeeded(dbKeyWord,URL_KEY, ESS_PREFIX);
+					intfUrl += serviceCode;
+					sys = "ESS系统";
 					paramString = JsonUtil.toString(dataBusMap);
 					paramJson=paramString;
 				}

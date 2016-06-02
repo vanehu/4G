@@ -80,12 +80,48 @@ order.writeCard = (function(){
 		"canWrite":"N"
 	};
 	var ocx;
+	var _essWriteCard = {};
+	
 	var _writeReadCard=function(prodId){
 		var phoneNumber = OrderInfo.getAccessNumber(prodId);
 		if (phoneNumber==""){
 			$.alert("提示",'请选择号码!','confirmation');
 			return;
 		}
+		_createDialog(prodId,phoneNumber);
+//		ec.form.dialog.createDialog({"id":"-card"+prodId,width:350,"initCallBack":function(){			
+//			$("#write_card_phone_number"+prodId).val(phoneNumber);
+//			//ActiveX 控件无法用JQUERY方法获取
+//			ocx = document.getElementById("ocx"+prodId);
+//			//绑定读卡按钮事件
+//			$("#btnReadCard"+prodId).click(function(){
+//				$("#btnReadCard"+prodId).attr("disabled","disabled");
+//				if (!order.writeCard.readCard(prodId)) {
+//					$("#serialNum"+prodId).val("");
+//					$("#cardTypeId"+prodId).val("");
+//				}else{
+//					$.alert("提示",'成功读卡!','confirmation');
+//				}
+//				$("#btnReadCard"+prodId).removeAttr("disabled");
+//			});
+//			$("#btnWriteCard"+prodId).click(function(){
+//				$("#btnWriteCard"+prodId).attr("disabled","disabled");
+//				var writeResultFlg=order.writeCard.writeCard(prodId);
+//				if (!writeResultFlg) {
+//					//$.alert("提示",'写卡失败!','error');
+//					return;
+//				}
+//				$("#btnWriteCard"+prodId).removeAttr("disabled");
+//				if (writeResultFlg){//写卡成功
+//					$.modal.close();
+//				}
+//
+//			});
+//		},"submitCallBack":function(dialogForm,dialog){}});
+
+	};
+	
+	var _createDialog = function(prodId,phoneNumber){
 		ec.form.dialog.createDialog({"id":"-card"+prodId,width:350,"initCallBack":function(){			
 			$("#write_card_phone_number"+prodId).val(phoneNumber);
 			//ActiveX 控件无法用JQUERY方法获取
@@ -474,7 +510,38 @@ order.writeCard = (function(){
 		} else {
 			//写卡成功
 			if (_completeWriteCard("00000000",writeCardResult)) {
-				$.alert("提示","恭喜，您已经成功写卡！");
+				if(OrderInfo.actionFlag == 41){
+					var url = contextPath + "/ess/order/writeCardMakeUp";
+					$.callServiceAsJson(url,_essWriteCard, {
+						"before" : function() {
+							$.ecOverlay("正在串码回填，请稍等...");
+						},
+						"always" : function() {
+							$.unecOverlay();
+						},
+						"done" : function(response) {
+							if (response.code == 0) {
+								$.alert("提示", "写卡成功,资源补录成功！");
+								return;
+							} else if (response.code == -2) {
+								$.alertM(response.data);
+								return;
+							} else if (response.code == 1002) {
+								$.alert("错误", response.data);
+								return;
+							} else {
+								$.alert("异常", "写卡成功,资源补录异常");
+								return;
+							}
+						},
+						fail : function(response) {
+							$.unecOverlay();
+							$.alert("提示", "请求可能发生异常，请稍后再试！");
+						}
+					});
+				}else{
+					$.alert("提示","恭喜，您已经成功写卡！");
+				}
 				$("#uim_check_btn_"+prodId).attr("disabled",true);
 				$("#uim_check_btn_"+prodId).removeClass("purchase").addClass("disablepurchase");
 				return true;
@@ -987,6 +1054,9 @@ order.writeCard = (function(){
 				remark:_cardDllInfoJson.remark,
 				"srInParam":srInParam
 			};
+			if(OrderInfo.actionFlag == 41){
+				param.extCustOrderId = OrderInfo.essOrderInfo.essOrder.extCustOrderId;
+			}
 			try {
 				
 				var eventJson;
@@ -1059,8 +1129,35 @@ order.writeCard = (function(){
 				return ;
 			}				
 		}
+		 if (OrderInfo.actionFlag == 41) {// ESS远程写卡
+			 _essWriteCard = {
+				extCustOrderId : OrderInfo.essOrderInfo.essOrder.extCustOrderId,
+			    commonRegionId : OrderInfo.essOrderInfo.essOrder.commonRegionId,
+				mktResInst :{
+					mktResCd : resp.data.mktResBaseInfo.mktResId,
+					mktResType : resp.data.mktResBaseInfo.mktResTypeCd,
+					mktResInstCode : resp.data.mktResBaseInfo.instCode,
+					mktResStoreId : resp.data.mktResBaseInfo.mktResStoreId,
+					quantity : "1",
+					salesPrice : "0",
+					attr :[{
+						attrId: "21011203",
+						attrVal: _rscJson.imsi
+					},{
+						attrId: "21011202",
+						attrVal: _rscJson.iccid
+					},{
+						attrId: "20002010",
+						attrVal: _rscJson.imsig
+					},{
+						attrId: "60020004",
+						attrVal: _rscJson.imsilte
+					}]
+				}
+			};
+		}
 		 var coupon= {
-					couponUsageTypeCd : "3", //物品使用类型
+					couponUsageTypeCd : "3", // 物品使用类型
 					inOutTypeId : "1",  //出入库类型
 					inOutReasonId : 0, //出入库原因
 					saleId : 1, //销售类型
@@ -1279,10 +1376,136 @@ order.writeCard = (function(){
 			}
 		);
 	};
+	
+	var _essWriteReadCard=function(phoneNumber,extCustOrderId,orderNeedAction,commonRegionId,zoneNumber){
+		OrderInfo.actionFlag = 41 ;
+		_essWriteCard = {};
+		var essOrder = {
+			phoneNumber : phoneNumber,
+			extCustOrderId : extCustOrderId,
+			commonRegionId : commonRegionId,
+			zoneNumber : zoneNumber
+		};
+		OrderInfo.essOrderInfo.essOrder = essOrder;
+		if(orderNeedAction!="onlyWriteCard"){
+			var param = {
+					extCustOrderId : extCustOrderId,
+					consignee : "",
+					accNbr : "",
+					orderStatus : "",
+					startDate : "",
+					endDate : "",
+					pageFlag : "",
+					nowPage:1,
+					pageSize:10
+				};
+				$.callServiceAsJson(contextPath + "/ess/order/orderQry", param, {
+					"before" : function() {
+					},
+					"always" : function() {
+						$.unecOverlay();
+					},
+					"done" : function(response) {
+						if (response.code == 0) {
+							var orderNeedActionFlag ="";
+							if(response.data.orderList[0]!=null){
+								orderNeedActionFlag =response.data.orderList[0].orderNeedAction;
+							}
+							if(orderNeedActionFlag!="onlyWriteCard"){
+								$.alert("提示","请先实名制认证后再写卡！");
+								return;
+							}else{
+								_essShowReadWirteCard(phoneNumber,extCustOrderId);
+							}
+						} else if (response.code == -2) {
+							$.alertM(response.data);
+							return;
+						} else if (response.code == 1002) {
+							$.alert("错误",response.data);
+							return;
+						} else {
+							$.alert("异常", "ESS订单查询接口查询异常");
+							return;
+						}
+					
+						
+					},
+					fail : function(response) {
+						$.unecOverlay();
+						$.alert("提示", "请求可能发生异常，请稍后再试！");
+					}
+				});
+		}else{
+			_essShowReadWirteCard(phoneNumber,extCustOrderId);
+		}
+	};
+	var _essShowReadWirteCard=function(phoneNumber,extCustOrderId){
+		$("#d_writeCard").html("");
+		var prodId = extCustOrderId; //没写错，只是作为标识
+		var html = "";
+		html += '<OBJECT id="ocx'+prodId+'" style="height: 0px;width: 0px;" Classid="clsid:5e497bde-0e29-4ac0-bfb1-4af7b7940277" codeBase="${contextPath}/card/common.ocx#version=1.0.0.1"></OBJECT>';
+		html += '<div style="display:none" id="ec-dialog-form-container-card'+prodId+'" class="ec-dialog-form-container">';
+		html += '<div class="ec-dialog-form-top">';
+		html += '<h1 class="ec-dialog-form-title" id="writeTitle">写卡</h1>';
+		html += '</div>';
+		html += '<div class="ec-dialog-form-content" id="rcard">';
+		html += '<div class="ec-dialog-form-loading" style="display:none"></div>';
+		html += '<div class="ec-dialog-form-message" style="display:none"></div>';
+		html += '<div class="ec-dialog-form-form" >';
+		html += '<form action="#" id="dialogForm">';
+		html += '<div>';
+		html += '<p class="pb" style="height: 30px;">';
+		html += '<label class="w1">手机号码:</label>';
+		html += '<input type="text"  id="write_card_phone_number'+prodId+'" class="txt2 inputDisabled" readonly="readonly" disabled="disabled" />';
+		html += '</p>';
+		html += '<p class="pb" id="dk_content">';
+		html += '<label class="w1">卡序列号:</label>';
+		html += '<input type="text" class="txt3" id="serialNum'+prodId+'"/>';
+		html += '</p>';
+		html += '</div>';
+		html += '<div align="left" style="margin-left: 60px;">';
+		html += '<a class="btna_o" href="javascript:void(0);" id="btnReadCard'+prodId+'"><span>读卡</span></a>&nbsp; <a class="btna_o" href="javascript:void(0);" id="btnWriteCard'+prodId+'"><span>写卡</span></a>';
+		html += '</div>';
+		html += '<input type="hidden" id="iccid" value=""/>';
+		html += '<input type="hidden" id="imsi" value=""/>';
+		html += '<a href = "/phoneimg/card/CardMan3x21_V1_1_1_0.exe">下载写卡器驱动</a>';
+		html += '</form>';
+		html += '</div>';
+		html += '</div>';
+		html += '<div class="ec-dialog-form-content" id="cardt" style="display:none">';
+		html += '<div class="ec-dialog-form-loading" style="display:none"></div>';
+		html += '<div class="ec-dialog-form-message" style="display:none"></div>';
+		html += '<div class="ec-dialog-form-form" >';
+		html += '<form action="#" id="dialogForm">';
+		html += '	<div>';
+		html += '		<p class="pb" style="font-weight:bold;height: 30px;top:40px;">';
+		html += '		           尊敬的用户，系统卡组件近期有更新，请您下载最新的卡组件<span style="color:#00F" id="dllName"></span>，把最新的卡组件保存到C:\\WINDOWS\\system32 目录下！';
+		html += '		</p>';
+		html += '	</div>';
+		html += '	<div style="height: 30px;"></div>';
+		html += '	<div align="left" style="font-weight:bold;margin-left: 5px;">';
+		html += '	     请点击下载<a id="cardupdate" href = "" style="color:#00F">最新的卡组件</a>';
+		html += '	</div>';
+		html += '</form>';
+		html += '</div>';
+		html += '</div>';
+		html += '<div class="ec-dialog-form-bottom"></div>';
+		html += '</div>';
+		$("#d_writeCard").append(html);
+		if (!ec.util.isObj(phoneNumber)){
+			$.alert("提示",'ESS订单查询接口返回接入号为空!','confirmation');
+			return;
+		}
+		order.writeCard.createDialog(prodId,phoneNumber);
+	};
+	
 	return {
 		writeReadCard : _writeReadCard,
 		readCard : _readCard,
 		writeCard : _writeCard,
-		getCardType : _getCardType
+		getCardType : _getCardType,
+		createDialog : _createDialog,
+		essShowReadWirteCard : _essShowReadWirteCard,
+		essWriteReadCard : _essWriteReadCard
 	};
 })();

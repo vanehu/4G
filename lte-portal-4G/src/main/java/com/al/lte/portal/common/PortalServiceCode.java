@@ -1005,12 +1005,26 @@ public final class PortalServiceCode {
     public static final String QUERY_PRETTYNBR_INFO = "biz-service/intf.detailService/queryPrettyNbrInfosByOlId"; 
     /*渠道可支持的付费方式查询接口*/
     public static final String QUERY_AVILABLE_PAYMETHODCD = "biz-service/intf.chargeService/queryAvailablePayMethodCdByChannelId";
-    
     /***电子档案查询 ***/
     public static final String QUERY_ELEC_RECORD_LIST = "biz-service/intf.fileOperateService/queryReceiptFileOrders";
     /***电子档案下载 ***/
     public static final String DOWN_LOAD_ELEC_RECORD = "biz-service/intf.fileOperateService/downLoadPrintFileFromFtp";
-    
     /***黑名单失效 ***/
     public static final String BLACKLIST_INVALID = "bdw-service/intf.businessDispatchService/editBlackUserInfo";
+
+    /*******************************ESS服务编码***************************************************************************************************/
+    /**ESS订单查询*/
+    public static final String ESS_QUERY_ORDER_LIST = "ess-orderListQry";
+    /**ESS资源补录*/
+    public static final String ESS_MKTRES_MAKEUP = "ess-mktResInstMakeUp";
+    //ess订单详情
+    public static final String QUERY_ORDER_DETAIL = "biz-service/intf.detailService/queryOrderDetailForEA";
+    /**ESS订单类型、订单状态*/
+    public static final String ESS_STATUS_TYPE_QUERY = "ess-orderStatusAndTypeQuery";
+    /**ESS订单下发*/
+    public static final String ESS_ORDER_REPEAL = "ess-orderRepeal";
+    /**ESS导出*/
+    public static final String ESS_ORDER_LIST_EXPORT = "ess-orderListExport";   
+    /*******************************ESS服务编码***************************************************************************************************/
 }
+
