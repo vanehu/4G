@@ -1241,16 +1241,24 @@ public class CustController extends BaseController {
 	        		//进行身份证脱敏
 					List<Map<String, Object>> custInfos = (List<Map<String, Object>>) resultMap.get("custInfos");
 					if (custInfos.size() > 0) {
-						Map<String, Object> custInfoMap = (Map<String, Object>) custInfos.get(0);
-						String custId = MapUtils.getString(custInfoMap, "custId");
-
-						if (custId.equals(oldCustId)){
+						boolean haveSome=false;
+						for(int iCust=0;iCust<=custInfos.size()-1;iCust++){
+							Map<String, Object> custInfoMap = (Map<String, Object>) custInfos.get(iCust);
+							String custId = MapUtils.getString(custInfoMap, "custId");	
+							if (custId.equals(oldCustId)){
+								haveSome=true;
+								break;
+							}
+						}
+						
+						if (haveSome){
 							jsonResponse=super.successed(MapUtils.getString(resultMap, "msg", "客户证件鉴权成功！"), ResultConstant.SUCCESS.getCode());
 						}
 						else{
 			            	jsonResponse=super.failed(MapUtils.getString(resultMap, "msg", "客户证件鉴权失败，客户不一致！"), ResultConstant.SERVICE_RESULT_FAILTURE
 			                        .getCode());
 						}
+
 
 					}
 					else{

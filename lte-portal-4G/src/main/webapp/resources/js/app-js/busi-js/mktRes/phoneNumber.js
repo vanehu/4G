@@ -1090,8 +1090,9 @@ order.phoneNumber = (function(){
 		if(ispurchased==1){
 			_btnToOffer(selectedObj);
 		}else{
-			var phoneNumberVal_06 = $(selectedObj).attr("numberVal").split("_")[7]; 
+			var phoneNumberVal_06 = $(selectedObj).attr("numberVal").split("_")[7];
 			if(phoneNumberVal_06=="1"){
+				$.unecOverlay();
 				$("#app_password_dialog").modal("show");
 			}else{
 				_btnPurchase(selectedObj);

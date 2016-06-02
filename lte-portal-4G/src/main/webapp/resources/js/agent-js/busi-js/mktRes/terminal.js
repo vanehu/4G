@@ -1877,6 +1877,7 @@ mktRes.terminal = (function($){
 		}else{
 			var phoneNumberVal_06 = $(selectedObj).attr("numberVal").split("_")[7]; 
 			if(phoneNumberVal_06=="1"){
+				$.unecOverlay();
 				$("#app_password_dialog").modal("show");
 			}else{
 				_btnPurchase(selectedObj,null,index);
