@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ailk.ecsp.mybatis.mapper.WechatTokenMapper" >
+  
+  <resultMap id="WechatTokenResultMap" type="com.ailk.ecsp.mybatis.model.WechatToken">
+    <id column="TOKEN_ID" jdbcType="DECIMAL" property="tokenId" />
+    <result column="ACCESS_TOKEN" jdbcType="VARCHAR" property="accessToken" />
+    <result column="USER_NBR" jdbcType="VARCHAR" property="userNbr" />
+    <result column="OPEN_ID" jdbcType="VARCHAR" property="openId" />
+    <result column="REQ_URL" jdbcType="VARCHAR" property="reqUrl" />
+    <result column="CHANNEL_ID" jdbcType="VARCHAR" property="channelId" />
+    <result column="TIMESTAMP" jdbcType="VARCHAR" property="timestamp" />
+    <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="IS_EXPIRED" jdbcType="CHAR" property="isExpired" />
+  </resultMap>
+   
+ <insert id="insertWechatToken" parameterType="com.ailk.ecsp.mybatis.model.WechatToken" >
+    insert into WECHAT_TOKEN  
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+        TOKEN_ID,
+      <if test="accessToken != null" >
+        ACCESS_TOKEN,
+      </if>
+      <if test="userNbr != null" >
+        USER_NBR,
+      </if>
+      <if test="openId != null" >
+        OPEN_ID,
+      </if>
+      <if test="reqUrl != null" >
+        REQ_URL,
+      </if>
+      <if test="channelId != null" >
+        CHANNEL_ID,
+      </if>
+      <if test="timestamp != null" >
+        TIMESTAMP
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+       wechat_token_seq.nextval,
+      <if test="accessToken != null" >
+        #{accessToken,jdbcType=VARCHAR},
+      </if>
+      <if test="userNbr != null" >
+        #{userNbr,jdbcType=VARCHAR},
+      </if>
+      <if test="openId != null" >
+        #{openId,jdbcType=VARCHAR},
+      </if>
+      <if test="reqUrl != null" >
+        #{reqUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="channelId != null" >
+        #{channelId,jdbcType=VARCHAR},
+      </if>
+       <if test="timestamp != null" >
+        #{timestamp,jdbcType=VARCHAR},
+      </if>
+      
+    </trim>
+  </insert>
+  
+</mapper>

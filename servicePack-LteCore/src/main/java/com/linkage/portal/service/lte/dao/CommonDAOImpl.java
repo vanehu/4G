@@ -956,4 +956,58 @@ public class CommonDAOImpl implements CommonDAO {
         
 		return jdbc.queryForMap(sql,sqlParamObj,sqlParamType);
 	}
+
+	public int insertPayOrder(Map<?, ?> paramMap) throws Exception {
+	    StringBuffer sbSql = new StringBuffer();
+	    sbSql.append("INSERT INTO PAY_ORDER(ORDER_ID,PAY_ORDER_ID,BUSI_ORDER_ID,");
+	    sbSql.append("AMOUNT,CREATE_DATE,PAY_STATUS,PAY_TYPE,BIND_ID,PLATFORM_ID,");
+	    sbSql.append("IP_ADDR,REMARK,PAY_RESULT,PAY_PLAT,ORDER_STATUS,MODIFY_DATE,");
+	    sbSql.append("PAY_BACK_ORDER_ID,TERMINAL_ID) VALUES(SEQ_PAY_ORDER.NEXTVAL,");
+	    sbSql.append("?,?,?,SYSDATE,?,?,?,?,?,?,?,?,?,to_date(?,'YYYYMMDDHH24MISS'),?,?)");
+
+	    Object[] params = new Object[] {
+	        paramMap.get("payOrderId"), paramMap.get("busiOrderId"), paramMap.get("amount"),
+	        paramMap.get("payStatus"), paramMap.get("payType"), paramMap.get("bindId"),
+	        paramMap.get("platformId"), paramMap.get("ipAddr"), paramMap.get("remark"),
+	        paramMap.get("payResult"), paramMap.get("payPlat"), "-1",
+	        paramMap.get("payDate"), paramMap.get("payBackOrderId"), paramMap.get("terminalId")
+	    };
+
+	    return jdbc.update(sbSql.toString(), params);
+	}
+
+	public List  queryWechatToken(Map<String, Object> paramMap) throws Exception {
+		 String accessToken = MapUtils.getString(paramMap, "accessToken", "");
+		 StringBuilder sbSql = new StringBuilder();
+	        sbSql.append("SELECT T.TOKEN_ID,T.ACCESS_TOKEN,T.USER_NBR,");
+	        sbSql.append("T.OPEN_ID,T.REQ_URL,T.CHANNEL_ID,T.TIMESTAMP,");
+	        sbSql.append("TO_CHAR(T.CREATE_TIME, 'YYYYMMDDHH24MISS') TOKEN_DATE ");
+	        sbSql.append("FROM WECHAT_TOKEN  T WHERE 1=1 and IS_EXPIRED = '1' ");
+	        if (StringUtils.isNotBlank(accessToken)) {
+	        	sbSql.append(" and T.ACCESS_TOKEN = '"+accessToken+"' ");
+	        }
+	        
+
+	        return jdbc.queryForList(sbSql.toString());
+	}
+	
+	 /* (non-Javadoc)
+     * @see com.linkage.portal.service.lte.dao.PayDao
+     * #updatePayStatus(java.util.Map)
+     */
+    public int updateWechatToken(Map<?, ?> paramMap) throws Exception {
+        StringBuilder sbSql = new StringBuilder();
+        sbSql.append("UPDATE WECHAT_TOKEN ");
+        sbSql.append("SET IS_EXPIRED='0' ");
+        sbSql.append("WHERE TOKEN_ID=? ");
+
+        String tokenId = MapUtils.getString(paramMap, "tokenId", "qwqwqwq");
+        
+        Object[] params = {
+        		tokenId
+        };
+
+        return jdbc.update(sbSql.toString(), params);
+    }
+
 }

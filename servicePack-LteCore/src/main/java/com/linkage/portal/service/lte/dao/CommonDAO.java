@@ -48,4 +48,11 @@ public interface CommonDAO{
 	//查询蓝牙密钥
 	public Map queryBlueToothKey(Map<String,Object> paramMap) throws Exception;
 
+	int insertPayOrder(Map<?, ?> paramMap) throws Exception;
+	
+	//查询认证借口
+    public List queryWechatToken(Map<String,Object> paramMap) throws Exception;
+    
+    public int updateWechatToken(Map<?, ?> paramMap) throws Exception ;
+
 }
