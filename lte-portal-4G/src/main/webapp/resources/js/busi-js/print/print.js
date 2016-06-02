@@ -720,7 +720,7 @@ common.print = (function($){
 	//校验费用项能否被打印，true-可以打印；false-不可打印
 	var _checkChargeItem=function(item){
 		var payMethodCd = item.payMethodCd;
-		if (payMethodCd == CONST.PAYMETHOD_CD.ZHANG_WU_DAI_SHOU) {
+		if (payMethodCd == CONST.PAYMETHOD_CD.ZHANG_WU_DAI_SHOU || item.limitPrint == "Y"||item.realAmount==0) {
 			return false;
 		}
 		return true;
