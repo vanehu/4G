@@ -28,7 +28,6 @@ import com.al.ec.serviceplatform.client.DataBus;
 import com.al.ec.serviceplatform.client.ResultCode;
 import com.al.ecs.common.util.DateUtil;
 import com.al.ecs.common.util.MapUtil;
-import com.al.ecs.common.web.ServletUtils;
 import com.al.ecs.exception.BusinessException;
 import com.al.ecs.exception.ErrorCode;
 import com.al.ecs.exception.InterfaceException;
@@ -41,7 +40,6 @@ import com.al.lte.portal.common.ServiceClient;
 import com.al.lte.portal.common.SysConstant;
 import com.al.lte.portal.core.DataEngine;
 import com.al.lte.portal.core.DataRepository;
-import com.al.lte.portal.core.DataSourceManager;
 import com.al.lte.portal.model.SessionStaff;
 
 /**
@@ -843,5 +841,34 @@ public class StaffBmoImpl implements StaffBmo {
 		// TODO Auto-generated method stub
 		dataBusMap.put("staffId", sessionStaff.getStaffId());
 		DataBus db = InterfaceClient.callService(dataBusMap, PortalServiceCode.LOCKUSER, null, sessionStaff);
+	}
+	
+	/**
+	 * 根据权限编码(opsManageCode)和员工ID(staffId)查询工号是否有权限
+	 * 该方法使用同：
+	 * {@link com.al.lte.portal.bmo.staff.StaffBmoImpl#checkOperatSpec(String operatSpecCd,SessionStaff sessionStaff)}
+	 * 由于checkOperatSpec不便捕获异常并提示异常信息(入参回参等)，这里重新封装并抛出BusinessException
+	 * @param operatSpecCd
+	 * @param sessionStaff
+	 * @return
+	 * @throws BusinessException
+	 */
+	public String checkOperatBySpecCd(String operatSpecCd, SessionStaff sessionStaff) throws BusinessException {
+		Map<String, Object> dataBusMap = new HashMap<String, Object>();
+		dataBusMap.put("opsManageCode", operatSpecCd);
+		dataBusMap.put("staffId", sessionStaff.getStaffId());
+		dataBusMap.put("areaId", sessionStaff.getCurrentAreaId());
+		DataBus db = null;
+		
+		try {		
+			db = InterfaceClient.callService(dataBusMap, PortalServiceCode.CHECK_OPERATSPEC, null, sessionStaff);
+			if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db.getResultCode()))) {				
+				return "0";
+			}
+		} catch (Exception e) {
+			throw new BusinessException(ErrorCode.CHECKOPERATSPEC, dataBusMap, db.getReturnlmap(), e);
+		}
+		
+		return "-1";
 	}
 }

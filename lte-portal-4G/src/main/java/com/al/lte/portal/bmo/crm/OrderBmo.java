@@ -1,5 +1,6 @@
 package com.al.lte.portal.bmo.crm;
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 import com.al.ecs.exception.BusinessException;
@@ -609,6 +610,11 @@ public interface OrderBmo {
 	 */
 	public Map<String, Object> queryAvilablePayMethodCdByChannelId(Map<String, Object> paramMap,String optFlowNum, 
 			SessionStaff sessionStaff) throws Exception;
+
+	/**
+	 * 根据员工信息返回一个支付方式的权限列表
+	 */
+	public List<Map<String, String>> getAvilablePayMethodCdList(SessionStaff sessionStaff) throws BusinessException;
 	
 	/**
 	 * 电子档案查询

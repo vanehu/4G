@@ -1614,20 +1614,25 @@ public class OrderController extends BaseController {
 
     @RequestMapping(value = "/queryPayMethodByItem", method = RequestMethod.POST)
     @ResponseBody
-    public JsonResponse queryPayMethodByItem(@RequestBody Map<String, Object> param, @LogOperatorAnn String flowNum,
-            HttpServletResponse response) {
-        SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
-                SysConstant.SESSION_KEY_LOGIN_STAFF);
+    public JsonResponse queryPayMethodByItem(@RequestBody Map<String, Object> param, @LogOperatorAnn String flowNum, HttpServletResponse response) {
+        SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
         Map<String, Object> rMap = null;
         JsonResponse jsonResponse = null;
+        
+        //查询工号具有的收费权限，并将权限编码拼装送与后台
         try {
-            param.put("areaId", sessionStaff.getCurrentAreaId());
+			param.put("rights", orderBmo.getAvilablePayMethodCdList(sessionStaff));
+		} catch (BusinessException be) {
+			return super.failed(be);
+		}
+        
+        try {
+            param.put("areaId", sessionStaff.getCurrentAreaId());           
             rMap = orderBmo.queryPayMethodByItem(param, flowNum, sessionStaff);
             if (rMap != null && ResultCode.R_SUCCESS.equals(rMap.get("code").toString())) {
                 jsonResponse = super.successed(rMap.get("list"), ResultConstant.SUCCESS.getCode());
             } else {
-                jsonResponse = super.failed(rMap.get("msg").toString(), ResultConstant.SERVICE_RESULT_FAILTURE
-                        .getCode());
+                jsonResponse = super.failed(rMap.get("msg").toString(), ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
             }
         } catch (BusinessException e) {
             return super.failed(e);

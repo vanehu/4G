@@ -3,6 +3,7 @@ package com.al.lte.portal.bmo.staff;
 import java.util.List;
 import java.util.Map;
 
+import com.al.ecs.exception.BusinessException;
 import com.al.lte.portal.model.SessionStaff;
 
 /**
@@ -57,5 +58,14 @@ public interface StaffBmo {
 	public Map<String, Object> checkIsAccessByStaffId(Map<String, Object> dataBusMap,SessionStaff sessionStaff) throws Exception;
 
 	public void lockUser(Map<String, Object> paramMap, String string,SessionStaff sessionStaff)throws Exception;
+	
+	/**
+	 * 根据权限编码(opsManageCode)和员工ID(staffId)查询工号是否有权限
+	 * @param operatSpecCd
+	 * @param sessionStaff
+	 * @return
+	 * @throws BusinessException
+	 */
+	public String checkOperatBySpecCd(String operatSpecCd, SessionStaff sessionStaff) throws BusinessException;
 	
 }

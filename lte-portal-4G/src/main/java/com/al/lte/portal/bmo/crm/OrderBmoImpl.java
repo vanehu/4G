@@ -19,6 +19,8 @@ import com.al.ecs.exception.BusinessException;
 import com.al.ecs.exception.ErrorCode;
 import com.al.ecs.exception.InterfaceException;
 import com.al.ecs.log.Log;
+import com.al.lte.portal.bmo.staff.StaffBmo;
+import com.al.lte.portal.bmo.staff.StaffBmoImpl;
 import com.al.lte.portal.common.Const;
 import com.al.lte.portal.common.InterfaceClient;
 import com.al.lte.portal.common.MySimulateData;
@@ -2258,4 +2260,31 @@ public class OrderBmoImpl implements OrderBmo {
 		return resultMap;
 	}
 	
+	/**
+	 * 根据员工信息返回一个支付方式的权限列表<br/>
+	 * 该方法主要根据sessionStaff从系管查询该员工是否具有“网银代收”和“账务托收”权限，
+	 * 如果具有对应的权限，则以ArrayList返回对应的权限编码送与后台
+	 * @param sessionStaff
+	 * @return operatSpecList
+	 * @throws BusinessException 
+	 * @throws Exception
+	 */
+	public List<Map<String, String>> getAvilablePayMethodCdList(SessionStaff sessionStaff) throws BusinessException {
+		Map<String, String> operatSpecMap = null;
+		List<Map<String, String>> operatSpecList = new ArrayList<Map<String, String>>();
+		StaffBmo staffBmo = new StaffBmoImpl();
+		
+		if("0".equals(staffBmo.checkOperatBySpecCd(SysConstant.OPERATSPEC_EBANK, sessionStaff))){
+			operatSpecMap = new HashMap<String, String>();
+			operatSpecMap.put("rightCode", SysConstant.OPERATSPEC_EBANK);
+			operatSpecList.add(operatSpecMap);
+		}
+		if("0".equals(staffBmo.checkOperatBySpecCd(SysConstant.OPERATSPEC_BILLACCT, sessionStaff))){
+			operatSpecMap = new HashMap<String, String>();
+			operatSpecMap.put("rightCode", SysConstant.OPERATSPEC_BILLACCT);
+			operatSpecList.add(operatSpecMap);
+		}
+				
+		return operatSpecList;
+	}
 }

@@ -677,4 +677,9 @@ public final class SysConstant {
 	
 	/**渠道发展人归属渠道开关*/
 	public static final String STAFFINFOFLAG = "STAFFINFOFLAG";
+	
+	/**网银代收权限编码*/
+	public static final String OPERATSPEC_EBANK = "WYDSQX";
+	/**账务托收权限编码*/
+	public static final String OPERATSPEC_BILLACCT = "ZWTSQX";
 }
