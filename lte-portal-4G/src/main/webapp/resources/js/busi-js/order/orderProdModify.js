@@ -2413,7 +2413,7 @@ order.prodModify = (function(){
 					},
 					"done":function(response){
 						if(!response){
-							 response.data='<div style="margin:2px 0 2px 0;width:100%,height:100%;text-align:center;"><strong>no data return,please try reload.</strong></div>';
+							 response.data='<div style="margin:2px 0 2px 0;width:100%;height:100%;text-align:center;"><strong>no data return,please try reload.</strong></div>';
 						}
 						if(response.code != 0) {
 							$.alert("提示","查询失败,请稍后重试");
@@ -2821,7 +2821,7 @@ order.prodModify = (function(){
 			},
 			"done" : function(response){
 				if(!response){
-					 response.data='<div style="margin:2px 0 2px 0;width:100%,height:100%;text-align:center;"><strong>not data return,please try reload again.</strong></div>';
+					 response.data='<div style="margin:2px 0 2px 0;width:100%;height:100%;text-align:center;"><strong>not data return,please try reload again.</strong></div>';
 				}
 				if(response.code == -2){
 					return;
@@ -3884,7 +3884,7 @@ order.prodModify = (function(){
 		};
 		var response= $.callServiceAsHtml(url,param);
 		$("#auth2").empty().append(response.data);
-		var authTypeStr=$("#auth2 #authTypeStr").html();
+		var authTypeStr=$("#auth2").find("#authTypeStr").html();
 		if (ec.util.isObj(OrderInfo.cust_validateType) && ec.util.isObj(OrderInfo.cust_validateNum) && ec.util.isObj(order.prodModify.choosedProdInfo.accNbr)) {
 			if ((OrderInfo.cust_validateType == "3" || OrderInfo.cust_validateType == "2") && OrderInfo.cust_validateNum == order.prodModify.choosedProdInfo.accNbr) {
 				if (authTypeStr.toString().indexOf(OrderInfo.cust_validateType) != -1 || authTypeStr.toString() == "4") {
@@ -3899,13 +3899,13 @@ order.prodModify = (function(){
 			return false;
 		}
 
-		$("#auth2 #idCardType2").text(OrderInfo.cust.identityName);
+		$("#auth2").find("#idCardType2").text(OrderInfo.cust.identityName);
 		if (OrderInfo.cust.identityCd == "1") {
-			$("#auth2 #readCertBtnID2").show();
-			$("#auth2 #idCardNumber2").attr("disabled", "disabled");
+			$("#auth2").find("#readCertBtnID2").show();
+			$("#auth2").find("#idCardNumber2").attr("disabled", "disabled");
 		} else {
-			$("#auth2 #readCertBtnID2").hide();
-			$("#auth2 #idCardNumber2").removeAttr("disabled");
+			$("#auth2").find("#readCertBtnID2").hide();
+			$("#auth2").find("#idCardNumber2").removeAttr("disabled");
 		}
 		if (response.code == 0) {
 			easyDialog.open({

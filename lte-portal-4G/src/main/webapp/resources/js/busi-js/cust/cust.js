@@ -618,7 +618,7 @@ order.cust = (function(){
 	 */
 	var _custAuth = function(scope) {
 		var param = _choosedCustInfo;
-		param.prodPwd = $.trim($("#auth3 #authPassword2").val());
+		param.prodPwd = $.trim($("#auth3").find("#authPassword2").val());
 		param.authFlag=authFlag;
 		$.callServiceAsHtml(contextPath+"/cust/custAuth",param,{
 			"before":function(){
@@ -771,13 +771,13 @@ order.cust = (function(){
 				$("#custAuthTypeName").html("产品密码：");
 			}
 			var pCustIdentityCd = $("#p_cust_identityCd").val();
-			$("#auth3 #idCardType2").text(_choosedCustInfo.identityName);
+			$("#auth3").find("#idCardType2").text(_choosedCustInfo.identityName);
 			if (_choosedCustInfo.identityCd == "1") {
-				$("#auth3 #readCertBtnID2").show();
-				$("#auth3 #idCardNumber2").attr("disabled", "disabled");
+				$("#auth3").find("#readCertBtnID2").show();
+				$("#auth3").find("#idCardNumber2").attr("disabled", "disabled");
 			} else {
-				$("#auth3 #readCertBtnID2").hide();
-				$("#auth3 #idCardNumber2").removeAttr("disabled");
+				$("#auth3").find("#readCertBtnID2").hide();
+				$("#auth3").find("#idCardNumber2").removeAttr("disabled");
 			}
 			var canRealName = $(scope).attr('canrealname');
 			// 新疆-未实名号码查询定位异常 canRealName=""
@@ -810,9 +810,9 @@ order.cust = (function(){
 				$("#content3").hide();
 			}
 			//初始化弹出窗口
-			$("#auth3 #authPassword2").val("");
-			$("#auth3 #idCardNumber2").val("");
-			$("#auth3 #smspwd2").val("");
+			$("#auth3").find("#authPassword2").val("");
+			$("#auth3").find("#idCardNumber2").val("");
+			$("#auth3").find("#smspwd2").val("");
 			if (ec.util.isObj(canRealName) && 1 == canRealName) {
 				easyDialog.open({
 					container: 'auth3',
@@ -824,13 +824,13 @@ order.cust = (function(){
 				_realCheck(contextPath, scope);
 			}
 			if(order.cust.jumpAuthflag=="0"){
-				$("#auth3 #jumpAuth").show();
+				$("#auth3").find("#jumpAuth").show();
 			}
 			$("#authClose").off("click").on("click",function(event){
 				easyDialog.close();
-				$("#auth3 #authPassword2").val("");
-				$("#auth3 #idCardNumber2").val("");
-				$("#auth3 #smspwd2").val("");
+				$("#auth3").find("#authPassword2").val("");
+				$("#auth3").find("#idCardNumber2").val("");
+				$("#auth3").find("#smspwd2").val("");
 			});
 		} else{
 			_custAuth(scope);
@@ -1301,7 +1301,7 @@ order.cust = (function(){
 					return;
 				}
 				if(!response){
-					response.data='<div style="margin:2px 0 2px 0;widht:100%,height:100%;text-align:center;"><strong>no data return,please try reload.</strong></div>';					
+					response.data='<div style="margin:2px 0 2px 0;width:100%;height:100%;text-align:center;"><strong>no data return,please try reload.</strong></div>';
 				}
 				if(response.data =="fail\r\n"){
 					$.alert("提示","查询失败，请稍后再试");
@@ -1339,7 +1339,7 @@ order.cust = (function(){
 					return;
 				}
 				if(!response){
-					response.data='<div style="margin:2px 0 2px 0;widht:100%,height:100%;text-align:center;"><strong>no data return,please try reload.</strong></div>';					
+					response.data='<div style="margin:2px 0 2px 0;width:100%;height:100%;text-align:center;"><strong>no data return,please try reload.</strong></div>';
 				}
 				if(response.data =="fail\r\n"){
 					$.alert("提示","查询失败，请稍后再试");
@@ -2042,13 +2042,13 @@ order.cust = (function(){
 	var _smsResend = function (level) {
 		var accNbr = "";
 		if (level == "1") {
-			$("#auth3 #smspwd2").val("");
+			$("#auth3").find("#smspwd2").val("");
 			accNbr = _choosedCustInfo.accNbr;
 			if(-1==$("#p_cust_identityCd").val()){
 				accNbr=$.trim($("#p_cust_identityNum").val());
 			}
 		} else if (level == "2") {
-			$("#auth2 #smspwd2").val("");
+			$("#auth2").find("#smspwd2").val("");
 			accNbr = order.prodModify.choosedProdInfo.accNbr;
 		}
 		if(!ec.util.isObj(accNbr)){
@@ -2078,9 +2078,9 @@ order.cust = (function(){
 	var _smsvalid=function(level){
 		var smspwd2 = "";
 		if (level == "1") {
-			smspwd2 = $("#auth3 #smspwd2").val();
+			smspwd2 = $("#auth3").find("#smspwd2").val();
 		} else if (level == "2") {
-			smspwd2 = $("#auth2 #smspwd2").val();
+			smspwd2 = $("#auth2").find("#smspwd2").val();
 		}
 		var params = "smspwd=" + smspwd2;
 		if (!ec.util.isObj(smspwd2)) {
@@ -2163,9 +2163,9 @@ order.cust = (function(){
 	var _productPwdAuth=function(level){
 		var authPassword2 = "";
 		if (level == "1") {
-			authPassword2 = $("#auth3 #authPassword2").val();
+			authPassword2 = $("#auth3").find("#authPassword2").val();
 		} else if (level == "2") {
-			authPassword2 = $("#auth2 #authPassword2").val();
+			authPassword2 = $("#auth2").find("#authPassword2").val();
 		}
 		var param = _choosedCustInfo;
 		param.prodPwd = $.trim(authPassword2);
@@ -2242,23 +2242,23 @@ order.cust = (function(){
 	var _identityTypeAuth=function(level){
 		var idCardNumber2 = "";
 		if (level == "1") {
-			idCardNumber2 = $("#auth3 #idCardNumber2").val();
+			idCardNumber2 = $("#auth3").find("#idCardNumber2").val();
 			if (_choosedCustInfo.identityCd != "1") {
 				if (_isSelfChannel()) {
-					$("#auth3 #idCardNumber2").removeAttr("disabled");
+					$("#auth3").find("#idCardNumber2").removeAttr("disabled");
 				} else {
-					$("#auth3 #idCardNumber2").attr("disabled", "disabled");
+					$("#auth3").find("#idCardNumber2").attr("disabled", "disabled");
 					$.alert("提示", "请到电信自有营业厅办理业务！");
 					return;
 				}
 			}
 		} else if (level == "2") {
-			idCardNumber2 = $("#auth2 #idCardNumber2").val();
+			idCardNumber2 = $("#auth2").find("#idCardNumber2").val();
 			if (_choosedCustInfo.identityCd != "1") {
 				if (_isSelfChannel()) {
-					$("#auth2 #idCardNumber2").removeAttr("disabled");
+					$("#auth2").find("#idCardNumber2").removeAttr("disabled");
 				} else {
-					$("#auth2 #idCardNumber2").attr("disabled", "disabled");
+					$("#auth2").find("#idCardNumber2").attr("disabled", "disabled");
 					$.alert("提示", "请到电信自有营业厅办理业务！");
 					return;
 				}
@@ -2271,7 +2271,6 @@ order.cust = (function(){
 			$.alert("提示","证件号码不能为空！");
 			return;
 		}
-		param.identityCd=param.identityCd;
 		param.accessNumber=_choosedCustInfo.accNbr;
 		param.authFlag=authFlag;
 
