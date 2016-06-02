@@ -1429,7 +1429,7 @@ order.main = (function(){
 		if($('#'+itemId).length > 0){
 			var isOptional = true;
 			if(OrderInfo.cust && OrderInfo.cust.custId && OrderInfo.cust.custId != '-1'){ //老客户
-				if(OrderInfo.cust.segmentId == '1000'){ //政企客户
+				if(_isCustomers(OrderInfo.cust.identityCd)){ //政企客户
 					isOptional = false;
 				}
 			} else { //新建客户
@@ -2518,6 +2518,15 @@ order.main = (function(){
 		}
 	};
 	
+	var _isCustomers=function(id){
+		  //政企客户
+		  if(id==6|| id==7 || id== 15|| id==34 || id==43){
+			  return true;
+		  }
+		  else{
+			  return false;
+		  }
+	  };
 	//发展人-查询
 	function _queryDealer(){
 		var param = {
