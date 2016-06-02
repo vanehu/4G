@@ -39,7 +39,7 @@ order.prodModify = (function(){
 			prodStateCd :prodInfoTr.attr("prodStateCd"),//产品状态CD
 			productId :prodInfoTr.attr("productId"),//产品规格ID
 			feeType :prodInfoTr.attr("feeType"),//付费方式id
-			prodClass :$(prodInfoTr).attr("prodClass"),//产品大类 4 表示4G；3表示3G
+			prodClass :$(prodInfoTr).attr("prodClass"),//产品大类 4 表示4G;3表示3G
 			stopRecordCd :prodInfoTr.attr("stopRecordCd"),//停机记录CD
 			stopRecordName :prodInfoTr.attr("stopRecordName"),//停机记录名称
 			prodOfferName :prodInfoChildTr.attr("prodOfferName"),//主套餐名称
@@ -80,7 +80,7 @@ order.prodModify = (function(){
 				orderList : {
 					orderListInfo : { 
 						isTemplateOrder : "N",   //是否批量
-						templateType : "1",  //模板类型: 1 新装；8 拆机；2 订购附属；3 组合产品纳入/退出
+						templateType : "1",  //模板类型: 1 新装;8 拆机;2 订购附属;3 组合产品纳入/退出
 						staffId : OrderInfo.staff.staffId,
 						channelId : OrderInfo.staff.channelId,  //受理渠道id
 						areaId : OrderInfo.staff.areaId,  //受理地区ID
@@ -700,6 +700,10 @@ order.prodModify = (function(){
         		$.alert("提示","请先读卡"); 
         		return false;
         	}
+			if(order.prodModify.accountInfo!=undefined&&$.trim($("#accountName").val())==""){
+				$.alert("提示","账户名称不能为空!"); 
+				return ;
+			}
 			var modifyCustInfo={};
 			modifyCustInfo = {
 					custName : $.trim($("#cmCustName").val()),
@@ -748,6 +752,38 @@ order.prodModify = (function(){
 					state : "DEL"
 				}, modifyCustIdentity];
 			}
+			//当有账户缓存且所填账户名称与账户缓存名称不一致时 accountChangeState为true 否则为false
+			var	accountChangeState=(order.prodModify.accountInfo!=undefined)&&($.trim($("#accountName").val())!=order.prodModify.accountInfo.name)?true:false;
+			//如果accountChangeState为ture ,拼接账户信息
+			if(accountChangeState){
+				accountInfoOld=order.prodModify.accountInfo;
+				var name=$.trim($("#accountName").val());
+				data.boAccountInfos=[];
+				var _boProdAcctInfosOld={
+                            acctCd: accountInfoOld.acctCd,
+                            acctId: accountInfoOld.acctId,
+                            acctName: accountInfoOld.name,
+                            CN:accountInfoOld.acctName==undefined?"":accountInfoOld.acctName,
+                            acctTypeCd: "1",
+                            partyId: accountInfoOld.custId,
+                            prodId: order.prodModify.choosedProdInfo.productId,
+                            state: "DEL"
+				};
+				var _boProdAcctInfos={
+						 	acctCd: accountInfoOld.acctCd,
+						 	acctId: accountInfoOld.acctId,
+						 	acctName: $.trim($("#accountName").val()),
+						 	acctTypeCd: "1",
+						 	partyId: accountInfoOld.custId,
+						 	prodId: order.prodModify.choosedProdInfo.productId,
+						 	state: "ADD"
+				};
+				data.boAccountInfos.push(_boProdAcctInfosOld);
+				data.boAccountInfos.push(_boProdAcctInfos);
+				
+			}
+			//清除账户信息缓存
+			order.prodModify.accountInfo=null;
 			data.boCustProfiles=[];
 			//客户属性信息
 			for ( var i = 0; i < order.prodModify.profiles.length; i++) {
@@ -3962,6 +3998,60 @@ order.prodModify = (function(){
 		}
 	};
 
+	// 账户信息 -账户修改按钮 
+	var _accountChange = function() {
+		//判断缓存
+		if(order.prodModify.accountInfo!=null&&order.prodModify.accountInfo!=""&&order.prodModify.accountInfo!=undefined){
+			$("#modAccountProfile").show();
+			$("#accountName").val(order.prodModify.accountInfo.name);
+			//页面滚动
+			$("html,body").animate({scrollTop: $("#modAccountProfile").offset().top}, 500);
+			return;
+		}
+			var url = contextPath + "/order/prodModify/queryAccountInfo";
+			var params={	
+	 				"prodId" :order.prodModify.choosedProdInfo.productId,
+	 				"acctNbr":order.prodModify.choosedProdInfo.accNbr,
+	 				"areaId" :order.prodModify.choosedProdInfo.areaId
+			};
+			var response = $.callServiceAsJson(url, params,{
+					"before":function(){
+						$.ecOverlay("<strong>查询中,请稍等...</strong>");
+					},
+					"always":function(){
+						$.unecOverlay();
+					},
+					"done" : function(response){
+								try {
+									if (response.code == "0") {
+										var prodAcctInfos = response.data.result.prodAcctInfos;
+										if (prodAcctInfos.length == 1) {
+											// 将账户信息放入缓存order.prodModify.accountInfo中
+											order.prodModify.accountInfo = prodAcctInfos[0];
+											var name = order.prodModify.accountInfo != null ? order.prodModify.accountInfo.name: "";
+											$.unecOverlay();
+											$("#modAccountProfile").show();
+											$("#accountName").val(name);
+											// 页面滚动到账户名称修改
+											$("html,body").animate({scrollTop : $(	"#modAccountProfile").offset().top}, 500);
+										} else if(prodAcctInfos.length >1){
+											$.alert("提示","查询有误!该产品对应"+prodAcctInfos.length+"个账户,请联系省份!流水号:"+transactionID);
+										}else{
+											$.alert("提示","查询有误!该产品下不存在账户!请联系省份!流水号:"+transactionID);
+										}
+									} else {
+										$.alert("提示","查询有误!错误信息："+ response.resultMsg != null ? response.resultMsg: "缺少resultMsg节点信息!请联系省份!流水号:"+transactionID);
+									}
+								}catch(e){
+											$.alert("提示","查询有误!错误信息："+e+"缺失该节点!");
+										}
+							},
+					fail:function(response){
+						$.unecOverlay();
+						$.alert("提示","系统繁忙，请稍后再试！");
+					}
+				});
+	}
 	return {
 		changeCard : _changeCard,
 		getChooseProdInfo : _getChooseProdInfo,
@@ -4054,6 +4144,7 @@ order.prodModify = (function(){
 		readCertWhenCreate : _readCertWhenCreate,
 		querySecondBusinessAuth:_querySecondBusinessAuth,
 		urgentOpen : _urgentOpen,
-		phoneOpen : _phoneOpen
+		phoneOpen : _phoneOpen,
+		accountChange:_accountChange
 	};
 })();

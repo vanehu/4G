@@ -36,7 +36,6 @@ import com.al.lte.portal.bmo.crm.CustBmo;
 import com.al.lte.portal.bmo.crm.OrderBmo;
 import com.al.lte.portal.bmo.crm.RuleBmo;
 import com.al.lte.portal.bmo.staff.StaffBmo;
-import com.al.lte.portal.common.PortalUtils;
 import com.al.lte.portal.common.SysConstant;
 import com.al.lte.portal.model.SessionStaff;
 
@@ -641,6 +640,46 @@ public class OrderProdModifyController extends BaseController {
         }
 		return jsonResponse;
     }
+    /**
+     * 账户查询
+     * @param param
+     * @param model
+     * @param optFlowNum
+     * @param response
+     * @return
+     */
+    @RequestMapping(value = "/queryAccountInfo", method = RequestMethod.POST)
+	@ResponseBody
+	public JsonResponse queryAccountInfo(@RequestBody Map<String, Object> param, Model model,
+			@LogOperatorAnn String optFlowNum, HttpServletResponse response) {
+
+    	SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+						SysConstant.SESSION_KEY_LOGIN_STAFF);
+		JsonResponse jsonResponse = null;
+	    Map<String, Object>  map=null;
+	    // 拼接入参
+	 		Map<String, Object> paramMap = new HashMap<String, Object>();
+	 		paramMap.put("prodId", param.get("prodId"));
+	 		paramMap.put("acctNbr", param.get("acctNbr"));
+	 		paramMap.put("areaId", param.get("areaId"));
+        try {
+        	map = this.orderBmo.queryProdAcctInfo(paramMap, optFlowNum, sessionStaff);
+			String resultCode = MapUtils.getString(map, "resultCode");
+			if (ResultCode.R_SUCC.equals(resultCode)){
+				jsonResponse = super.successed(map,ResultConstant.SUCCESS.getCode());
+			}else{
+				jsonResponse = super.failed(map,ResultConstant.FAILD.getCode());
+			}
+        }catch (BusinessException be) {
+        	return super.failed(be);
+        } catch (InterfaceException ie) {
+        	return super.failed(ie, paramMap, ErrorCode.QUERY_ACCT);
+		} catch (Exception e) {
+			return super.failed(ErrorCode.QUERY_ACCT, e, paramMap);
+		}
+		return jsonResponse;
+
+	}
 	//list去重
 	public static void removeDuplicate(List list) {
 		   for ( int i = 0 ; i < list.size() - 1 ; i ++ ) {
@@ -652,5 +691,4 @@ public class OrderProdModifyController extends BaseController {
 		    }
 		    //System.out.println(list);
 		}
- 
 }
