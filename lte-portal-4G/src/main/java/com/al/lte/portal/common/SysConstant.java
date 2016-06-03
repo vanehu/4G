@@ -684,4 +684,7 @@ public final class SysConstant {
 	public static final String OPERATSPEC_EBANK = "WYDSQX";
 	/**账务托收权限编码*/
 	public static final String OPERATSPEC_BILLACCT = "ZWTSQX";
+	
+	/**受理地区判断开关*/
+	public static final String CHECKAREAIDFLAG = "CHECKAREAIDFLAG";
 }

@@ -1026,5 +1026,8 @@ public final class PortalServiceCode {
     /**ESS导出*/
     public static final String ESS_ORDER_LIST_EXPORT = "ess-orderListExport";   
     /*******************************ESS服务编码***************************************************************************************************/
+   
+    /**判断受理地区合法性判断*/
+    public static final String CHECK_BYAREAID = "sys-checkByAreaId";
 }
 

@@ -871,4 +871,19 @@ public class StaffBmoImpl implements StaffBmo {
 		
 		return "-1";
 	}
+	
+	public String checkByAreaId(String areaId, SessionStaff sessionStaff)
+			throws Exception {
+		Map<String, Object> dataBusMap = new HashMap<String, Object>();
+		dataBusMap.put("checkAreaId", areaId);
+		dataBusMap.put("staffId", sessionStaff.getStaffId());
+		dataBusMap.put("areaId", sessionStaff.getCurrentAreaId());
+		DataBus db = InterfaceClient.callService(dataBusMap,
+				PortalServiceCode.CHECK_BYAREAID, null, sessionStaff);
+		if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db
+				.getResultCode()))) {
+			return "0";
+		}
+		return "-1";
+	}
 }

@@ -58,6 +58,8 @@ public interface StaffBmo {
 	public Map<String, Object> checkIsAccessByStaffId(Map<String, Object> dataBusMap,SessionStaff sessionStaff) throws Exception;
 
 	public void lockUser(Map<String, Object> paramMap, String string,SessionStaff sessionStaff)throws Exception;
+
+	public String checkByAreaId(String ydbhk, SessionStaff sessionStaff)throws Exception;
 	
 	/**
 	 * 根据权限编码(opsManageCode)和员工ID(staffId)查询工号是否有权限

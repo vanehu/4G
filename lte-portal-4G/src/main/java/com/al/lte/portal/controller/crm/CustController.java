@@ -127,6 +127,25 @@ public class CustController extends BaseController {
 		httpSession.setAttribute("ValidateAccNbr", null);
 		httpSession.setAttribute("ValidateProdPwd", null);
 		httpSession.setAttribute("queryCustAccNbr", paramMap.get("acctNbr"));
+		
+		String diffPlace=(String) paramMap.get("diffPlace");
+		String flag = propertiesUtils.getMessage(SysConstant.CHECKAREAIDFLAG);
+		if(SysConstant.ON.equals(flag)){
+			if(diffPlace.equals("local")){//如果是本地业务，判断传过来的地区是不是受理地区
+				String areaId = (String) paramMap.get("areaId");
+				try {
+					String isCheckFlag= staffBmo.checkByAreaId(areaId,sessionStaff);
+					if(!"0".equals(isCheckFlag)){
+						model.addAttribute("showDiffcode", "Y");
+						return "/cust/cust-list";
+					}
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+		
 		//判断是否只能进行本地定位
 /*		String diffPlace=(String) param.get("diffPlace");
 		if(diffPlace.equals("local")){
