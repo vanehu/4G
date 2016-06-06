@@ -109,5 +109,14 @@ public interface CustBmo {
 	 */
 	public Map<String, Object> queryCustCompreInfo(Map<String, Object> dataBusMap, String optFlowNum,
             SessionStaff sessionStaff) throws Exception;
-	
+	/**
+	 * 账户和使用人信息查询服务
+	 * @param dataBusMap
+	 * @param optFlowNum
+	 * @param sessionStaff
+	 * @return
+	 * @throws Exception
+	 */
+	public Map<String, Object> queryAccountAndUseCustInfo(Map<String, Object> dataBusMap, String optFlowNum,
+            SessionStaff sessionStaff) throws Exception;
 }

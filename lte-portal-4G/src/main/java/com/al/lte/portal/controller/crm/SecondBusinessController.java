@@ -66,6 +66,7 @@ public class SecondBusinessController extends BaseController {
             String menuId = MapUtils.getString(paramMap, "menuId", "");
             String menuName = MapUtils.getString(paramMap, "menuName", "");
             String isSimple = MapUtils.getString(paramMap, "isSimple", "");
+            String custType = MapUtils.getString(paramMap, "custType", "");
             String areaId = sessionStaff.getAreaId();
             Map<String, Object> inParamMap = new HashMap<String, Object>();
             if (StringUtils.isNotBlank(menuId)) {
@@ -79,6 +80,9 @@ public class SecondBusinessController extends BaseController {
             }
             if (StringUtils.isNotBlank(areaId)) {
                 inParamMap.put("areaId", areaId);
+            }
+            if (StringUtils.isNotBlank(custType)) {
+                inParamMap.put("custType", custType);
             }
 
             //服务调用获取数据
@@ -117,21 +121,25 @@ public class SecondBusinessController extends BaseController {
         try {
             //入参的封装
             SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
+            String custType = MapUtils.getString(paramMap, "custType", "");
             String menuId = MapUtils.getString(paramMap, "menuId", "");
             String menuName = MapUtils.getString(paramMap, "menuName", "");
             String isSimple = MapUtils.getString(paramMap, "isSimple", "");
             String areaId = sessionStaff.getAreaId();
             Map<String, Object> inParamMap = new HashMap<String, Object>();
+            if (StringUtils.isNotBlank(custType)) {
+                inParamMap.put("custType", custType);
+            }
             if (StringUtils.isNotBlank(menuId)) {
                 inParamMap.put("menuId", menuId);
             }
-            if (StringUtils.isNotBlank(menuId)) {
+            if (StringUtils.isNotBlank(menuName)) {
                 inParamMap.put("menuName", menuName);
             }
-            if (StringUtils.isNotBlank(menuId)) {
+            if (StringUtils.isNotBlank(isSimple)) {
                 inParamMap.put("isSimple", isSimple);
             }
-            if (StringUtils.isNotBlank(menuId)) {
+            if (StringUtils.isNotBlank(areaId)) {
                 inParamMap.put("areaId", areaId);
             }
 
@@ -202,7 +210,7 @@ public class SecondBusinessController extends BaseController {
         } catch (InterfaceException ie) {
             return super.failed(ie, paramMap, ErrorCode.ORDER_SUBMIT);
         } catch (Exception e) {
-            return super.failed(ErrorCode.QUERY_BIZ_SECONDBUSINESS_MENU_AUTH, e, paramMap);
+            return super.failed(ErrorCode.SAVE_BIZ_AUTH_RECORD, e, paramMap);
         }
 
 
@@ -243,6 +251,12 @@ public class SecondBusinessController extends BaseController {
             if (SysConstant.STR_Y.equals(MapUtils.getString(rulesMap,"rule6",""))) {
                 authTypeStr += "6";
             }
+            if (SysConstant.STR_Y.equals(MapUtils.getString(rulesMap,"rule7",""))) {
+                authTypeStr += "7";
+            }
+            if (SysConstant.STR_Y.equals(MapUtils.getString(rulesMap,"rule8",""))) {
+                authTypeStr += "8";
+            }
             rulesMap.put("authTypeStr", authTypeStr);
 
             return rulesMap;
@@ -255,6 +269,8 @@ public class SecondBusinessController extends BaseController {
             String rule4 = MapUtils.getString(MapUtils.getMap(scenes.get(0), "rules"), "rule4", SysConstant.STR_N);
             String rule5 = MapUtils.getString(MapUtils.getMap(scenes.get(0), "rules"), "rule5", SysConstant.STR_N);
             String rule6 = MapUtils.getString(MapUtils.getMap(scenes.get(0), "rules"), "rule6", SysConstant.STR_N);
+            String rule7 = MapUtils.getString(MapUtils.getMap(scenes.get(0), "rules"), "rule7", SysConstant.STR_N);
+            String rule8 = MapUtils.getString(MapUtils.getMap(scenes.get(0), "rules"), "rule8", SysConstant.STR_N);
 
             for (Map<String, Object> scene : scenes) {
                 Map<String, Object> rules = MapUtils.getMap(scene, "rules");
@@ -262,8 +278,10 @@ public class SecondBusinessController extends BaseController {
                 rule2 = or4String(rule2, MapUtils.getString(rules, "rule2", SysConstant.STR_N));//规则2：是/否（Y/N）短信鉴权
                 rule3 = or4String(rule3, MapUtils.getString(rules, "rule3", SysConstant.STR_N));//规则3：是/否（Y/N）产品密码鉴权
                 rule4 = or4String(rule4, MapUtils.getString(rules, "rule4", SysConstant.STR_N));//规则4：是/否（Y/N）无须出示有效证件，不需核验用户身份即可办理
-                rule5 = or4String(rule5, MapUtils.getString(rules, "rule5", SysConstant.STR_N));//规则5：预留字段
-                rule6 = or4String(rule6, MapUtils.getString(rules, "rule6", SysConstant.STR_N));//规则6：预留字段
+                rule5 = or4String(rule5, MapUtils.getString(rules, "rule5", SysConstant.STR_N));//规则5：是/否（Y/N）单位证件+使用人证件
+                rule6 = or4String(rule6, MapUtils.getString(rules, "rule6", SysConstant.STR_N));//规则6：是/否（Y/N）单位证件
+                rule7 = or4String(rule7, MapUtils.getString(rules, "rule7", SysConstant.STR_N));//规则7：是/否（Y/N）使用人证件鉴权时 当 使用人名称 与 账户名称 一致 时
+                rule8 = or4String(rule8, MapUtils.getString(rules, "rule8", SysConstant.STR_N));//规则8：是/否（Y/N）使用人证件鉴权时 当 使用人名称 与 账户名称 不一致 时
             }
             if (isSecondJump == "0") {
                 rule4 = "Y";
@@ -286,12 +304,20 @@ public class SecondBusinessController extends BaseController {
             if(SysConstant.STR_Y.equals(rule6)){
                 authTypeStr+="6";
             }
+            if(SysConstant.STR_Y.equals(rule7)){
+                authTypeStr+="7";
+            }
+            if(SysConstant.STR_Y.equals(rule8)){
+                authTypeStr+="8";
+            }
             resultMap.put("rule1", rule1);
             resultMap.put("rule2", rule2);
             resultMap.put("rule3", rule3);
             resultMap.put("rule4", rule4);
             resultMap.put("rule5", rule5);
             resultMap.put("rule6", rule6);
+            resultMap.put("rule7", rule7);
+            resultMap.put("rule8", rule8);
             resultMap.put("authTypeStr", authTypeStr);
 
             return resultMap;

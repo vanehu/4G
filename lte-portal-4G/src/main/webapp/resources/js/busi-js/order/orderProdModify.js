@@ -3880,8 +3880,18 @@ order.prodModify = (function(){
 		var url=contextPath+"/secondBusi/querySecondBusinessMenuAuth";
 		var param={
 			menuId:menuId,
-			isSimple:isSimple
+			isSimple:isSimple,
+			custType:1
 		};
+		//省份政企开关
+		var response = $.callServiceAsJson(contextPath + "/properties/getValue", {"key": "GOV_"+OrderInfo.cust.areaId.substr(0,3)});
+		var govSwitch = "OFF";
+		if(response.code=="0"){
+			govSwitch = response.data;
+		}
+		if(govSwitch=="ON"&&CacheData.isGov(OrderInfo.cust.identityCd)){
+			param.custType = 2;
+		}
 		var response= $.callServiceAsHtml(url,param);
 		$("#auth2").empty().append(response.data);
 		var authTypeStr=$("#auth2").find("#authTypeStr").html();
@@ -3898,15 +3908,46 @@ order.prodModify = (function(){
 		} else if (authTypeStr.toString().indexOf(OrderInfo.cust_validateType) != -1 || authTypeStr.toString() == "4") {
 			return false;
 		}
+		if(govSwitch=="ON"&&CacheData.isGov(OrderInfo.cust.identityCd)) {
+			//政企客户隐藏个人证件鉴权方式【2】
+			$("#auth2").find("#auth_tab2").hide();
+			$("#auth2").find("#content2").hide();
+			//设置单位证件+使用人证件【5】
+			$("#auth2").find("#idCardTypeUnit5").text(OrderInfo.cust.identityName);
+			$("#auth2").find("#idCardType5").text(OrderInfo.cust.userIdentityName);
+			if (OrderInfo.cust.userIdentityCd == "1") {
+				$("#auth2").find("#readCertBtnID5").show();
+				$("#auth2").find("#idCardNumber5").attr("disabled", "disabled");
+			} else {
+				$("#auth2").find("#readCertBtnID5").hide();
+				$("#auth2").find("#idCardNumber5").removeAttr("disabled");
+			}
 
-		$("#auth2").find("#idCardType2").text(OrderInfo.cust.identityName);
-		if (OrderInfo.cust.identityCd == "1") {
-			$("#auth2").find("#readCertBtnID2").show();
-			$("#auth2").find("#idCardNumber2").attr("disabled", "disabled");
-		} else {
-			$("#auth2").find("#readCertBtnID2").hide();
-			$("#auth2").find("#idCardNumber2").removeAttr("disabled");
+			//设置单位证件【6】
+			$("#auth2").find("#idCardType6").text(OrderInfo.cust.identityName);
+
+			//设置使用人【7】
+			$("#auth2").find("#idCardType7").text(OrderInfo.cust.userIdentityName);
+			$("#auth2").find("#auth7userName").text(OrderInfo.cust.userName);
+			$("#auth2").find("#auth7accountName").text(OrderInfo.cust.accountName);
+			if (OrderInfo.cust.userIdentityCd == "1") {
+				$("#auth2").find("#readCertBtnID7").show();
+				$("#auth2").find("#idCardNumber7").attr("disabled", "disabled");
+			} else {
+				$("#auth2").find("#readCertBtnID7").hide();
+				$("#auth2").find("#idCardNumber7").removeAttr("disabled");
+			}
+		}else{
+			$("#auth2").find("#idCardType2").text(OrderInfo.cust.identityName);
+			if (OrderInfo.cust.identityCd == "1") {
+				$("#auth2").find("#readCertBtnID2").show();
+				$("#auth2").find("#idCardNumber2").attr("disabled", "disabled");
+			} else {
+				$("#auth2").find("#readCertBtnID2").hide();
+				$("#auth2").find("#idCardNumber2").removeAttr("disabled");
+			}
 		}
+
 		if (response.code == 0) {
 			easyDialog.open({
 				container: 'auth2',
@@ -3956,11 +3997,8 @@ order.prodModify = (function(){
 	        var inprodStatusCd="";
 	        var intoprodStatusCd="";
 				BO_ACTION_TYPE=CONST.BO_ACTION_TYPE.URGENT_BOOT;
-				inprodStatusCd=_choosedProdInfo.prodStateCd;
-				intoprodStatusCd=CONST.PROD_STATUS_CD.STOP_PROD;
-				if(inprodStatusCd==""){
-					inprodStatusCd=CONST.PROD_STATUS_CD.NORMAL_PROD;
-				}
+				inprodStatusCd=CONST.PROD_STATUS_CD.STOP_PROD;
+				intoprodStatusCd=CONST.PROD_STATUS_CD.NORMAL_PROD;
 			var param = _getCallRuleParam(BO_ACTION_TYPE,_choosedProdInfo.prodInstId);
 			var callParam = {
 				boActionTypeCd : BO_ACTION_TYPE,

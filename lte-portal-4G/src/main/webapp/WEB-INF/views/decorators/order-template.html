@@ -164,14 +164,17 @@
 <#--<!--用户鉴权弹窗 end&ndash;&gt;-->
 
 <!--用户鉴权弹窗-->
-	<div class="easyDialogdiv" style="height:300px;display:none" id="auth3">
+	<div class="easyDialogdiv" style="height:320px;display:none" id="auth3">
     <div class="easyDialogclose" id="authClose" onclick="easyDialog.close()"></div>
     <h1 class="easyDialogTitle">客户身份鉴权</h1>
 <div class="infoBox">
 <ul class="pdcard">
     <li id="auth_tab1" onclick="order.cust.changeTab('auth3',1)" class="setcon">产品密码鉴权</li>
-    <li id="auth_tab2" onclick="order.cust.changeTab('auth3',2)">证件号码鉴权</li>
+    <li id="auth_tab2" onclick="order.cust.changeTab('auth3',2)">个人证件鉴权</li>
     <li id="auth_tab3" onclick="order.cust.changeTab('auth3',3)">短信鉴权</li>
+    <li id="auth_tab5" onclick="order.cust.changeTab('auth3',5)" style="display: none;">单位证件+使用人证件</li>
+    <li id="auth_tab6" onclick="order.cust.changeTab('auth3',6)" style="display: none;">单位证件</li>
+    <li id="auth_tab7" onclick="order.cust.changeTab('auth3',7)" style="display: none;">使用人证件</li>
 </ul>
     <div id="contents" style="float:left">
         <div id="content1">
@@ -203,8 +206,8 @@
                             <input id="idCardNumber2" type="password" placeHolder="请输入证件号码"
                                    data-validate="validate(required:密码证件号码, maxlength:密码长度最多为{arg1}(20)) on(blur)"
                                    class="inputWidth150px">
-                            <a class="purchase" id="custAuthbtn2"  onclick="order.cust.identityTypeAuth('1')" href="javascript:void(0)">校验</a>
-                            <a class="purchase" id="readCertBtnID2" onclick="order.cust.readCertWhenAuth2()"
+                            <a class="purchase" id="custAuthbtn2"  onclick="order.cust.identityTypeAuth('1','2')" href="javascript:void(0)">校验</a>
+                            <a class="purchase" id="readCertBtnID2" onclick="order.cust.readCertWhenAuth2('2')"
                                style="display: none">读卡</a>
                         </td>
                     </tr>
@@ -250,6 +253,79 @@
                             <p>- 如果您连续3次重试都没有成功收到短信验证码，建议您稍后再试。</p>
                         </td>
                     </tr>
+                </table>
+            </form>
+        </div>
+        <div id="content5" style="display: none">
+            <form id="custAuthFormM5">
+                <table class="network">
+                    <tbody>
+                    <tr>
+                        <td width="100"><label class="f_red">*</label><label id="idCardTypeUnit5">单位证件：</label>
+                        </td>
+                        <td width="300">
+                            <input id="idCardNumberUnit5" type="password" placeHolder="请输入证件号码"
+                                   data-validate="validate(required:单位证件号码, maxlength:密码长度最多为{arg1}(20)) on(blur)"
+                                   class="inputWidth150px">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="100"><label class="f_red">*</label><label id="idCardType5">使用人证件：</label>
+                        </td>
+                        <td width="300">
+                            <input id="idCardNumber5" type="password" placeHolder="请输入证件号码"
+                                   data-validate="validate(required:使用人证件号码, maxlength:密码长度最多为{arg1}(20)) on(blur)"
+                                   class="inputWidth150px">
+                            <a class="purchase" id="custAuthbtn5"  onclick="order.cust.multiIdentityTypeAuth('1','5')" href="javascript:void(0)">校验</a>
+                            <a class="purchase" id="readCertBtnID5" onclick="order.cust.readCertWhenAuth2('5')"
+                               style="display: none">读卡</a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </form>
+        </div>
+        <div id="content6" style="display: none">
+            <form id="custAuthFormM6">
+                <table class="network">
+                    <tbody>
+                    <tr>
+                        <td width="100"><label class="f_red">*</label><label id="idCardType6">单位证件：</label>
+                        </td>
+                        <td width="300">
+                            <input id="idCardNumber6" type="password" placeHolder="请输入证件号码"
+                                   data-validate="validate(required:单位证件号码, maxlength:密码长度最多为{arg1}(20)) on(blur)"
+                                   class="inputWidth150px">
+                            <a class="purchase" id="custAuthbtn6"  onclick="order.cust.identityTypeAuth('1','6')" href="javascript:void(0)">校验</a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </form>
+        </div>
+        <div id="content7" style="display: none">
+            <form id="custAuthFormM7">
+                <table class="network">
+                    <tbody>
+                    <tr>
+                        <td width="200"><label id="auth7userName_lb">使用人名称：</label><label id="auth7userName"></label>
+                        </td>
+                        <td width="200"><label id="auth7accName_lb">账户名称：</label><label id="auth7accountName"></label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="100"><label class="f_red">*</label><label id="idCardType7">使用人证件：</label>
+                        </td>
+                        <td width="300">
+                            <input id="idCardNumber7" type="password" placeHolder="请输入证件号码"
+                                   data-validate="validate(required:密码证件号码, maxlength:密码长度最多为{arg1}(20)) on(blur)"
+                                   class="inputWidth150px">
+                            <a class="purchase" id="custAuthbtn7"  onclick="order.cust.identityTypeAuth('1','7')" href="javascript:void(0)">校验</a>
+                            <a class="purchase" id="readCertBtnID7" onclick="order.cust.readCertWhenAuth2('7')"
+                               style="display: none">读卡</a>
+                        </td>
+                    </tr>
+                    </tbody>
                 </table>
             </form>
         </div>

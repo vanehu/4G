@@ -164,8 +164,8 @@ function createDialog(){
                                        <input id="idCardNumber2" type="password" placeHolder="请输入证件号码"
                                               data-validate="validate(required:密码证件号码, maxlength:密码长度最多为{arg1}(20)) on(blur)"
                                               class="inputWidth150px">
-                                       <a class="purchase" id="custAuthbtn2"  onclick="order.cust.identityTypeAuth('1')" href="javascript:void(0)">校验</a>
-                                       <a class="purchase" id="readCertBtnID2" onclick="order.cust.readCertWhenAuth2()"
+                                       <a class="purchase" id="custAuthbtn2"  onclick="order.cust.identityTypeAuth('1','2')" href="javascript:void(0)">校验</a>
+                                       <a class="purchase" id="readCertBtnID2" onclick="order.cust.readCertWhenAuth2('2')"
                                           style="display: none">读卡</a>
                                    </td>
                                </tr>

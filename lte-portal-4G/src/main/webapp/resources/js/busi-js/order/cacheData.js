@@ -1199,6 +1199,16 @@ CacheData = (function() {
 		}
 		return govCertTyteArr;
 	};
+
+	/**
+	 * 根据证件id判断是否是政企客户
+	 * @param certTypeId 证件id
+	 * @returns {*} 布尔值
+	 * @private
+	 */
+	var _isGov = function (certTypeId) {
+		return "-1"!=$.inArray(certTypeId, _getGovCertType());
+	};
 	//获取浏览器类型和版本
 	var _getBrowserTypeVersion =function(){
 		var userAgentStr = window.navigator.userAgent.toLowerCase();
@@ -1327,6 +1337,7 @@ CacheData = (function() {
 		setSearchs				: _setSearchs,
 		getSearchs				: _getSearchs,
 		getSearchName			: _getSearchName,
-		getSearchCode			: _getSearchCode
+		getSearchCode			: _getSearchCode,
+		isGov					: _isGov
 	};
 })();

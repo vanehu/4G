@@ -171,6 +171,7 @@ public class CustController extends BaseController {
 		model.addAttribute("jumpAuthflag", iseditOperation);
 
 		String qryAcctNbr=MapUtils.getString(paramMap,"acctNbr","");
+		String soNbr=MapUtils.getString(paramMap,"soNbr","");
 		String areaId=(String) paramMap.get("areaId");
 		if(("").equals(areaId)||areaId==null){
 			paramMap.put("areaId", sessionStaff.getCurrentAreaId());
@@ -299,11 +300,13 @@ public class CustController extends BaseController {
 										newCustInfoMap.put("accNbr", accNbr);
 										if(StringUtils.isNotBlank(qryAcctNbr)&&!qryAcctNbr.equals(accNbr))
 											continue;
+										addAccountAndCustInfo(flowNum, sessionStaff, areaId, custId, accNbr, soNbr, newCustInfoMap);
 										custInfosWithNbr.add(newCustInfoMap);
 									}
 									if (custInfosWithNbr.size()==0&&StringUtils.isNotBlank(qryAcctNbr)) {
 										Map newCustInfoMap = new HashMap(custInfoMap);
 										newCustInfoMap.put("accNbr", qryAcctNbr);
+										addAccountAndCustInfo(flowNum, sessionStaff, areaId, custId, qryAcctNbr, soNbr, newCustInfoMap);
 										custInfosWithNbr.add(newCustInfoMap);
 									}
 								} else {
@@ -361,7 +364,40 @@ public class CustController extends BaseController {
 			return super.failedStr(model, ErrorCode.QUERY_CUST, e, paramMap);
 		}
 	}
-	
+
+	/**
+	 * 添加账户信息和使用人信息
+	 * @param flowNum
+	 * @param sessionStaff
+	 * @param areaId
+	 * @param custId
+	 * @param accNbr
+	 * @param newCustInfoMap
+	 * @throws Exception
+	 */
+	private void addAccountAndCustInfo(String flowNum, SessionStaff sessionStaff, String areaId, String custId, String accNbr, String soNbr, Map newCustInfoMap) throws Exception {
+		//账户和使用人信息查询
+		Map<String, Object> auParam = new HashMap<String, Object>();
+		auParam.put("areaId", areaId);
+		auParam.put("acctNbr", accNbr);
+		auParam.put("custId", custId);
+		auParam.put("queryType", "1,2,3,4,5");
+		auParam.put("soNbr", soNbr);
+		auParam.put("type", "2");
+		Map<String, Object> auMap = custBmo.queryAccountAndUseCustInfo(auParam, flowNum, sessionStaff);
+		if (MapUtils.isNotEmpty(auMap)) {
+			Map<String, Object> aMap = MapUtils.getMap(auMap, "account");
+			Map<String, Object> iMap = MapUtils.getMap(auMap, "identity");
+			newCustInfoMap.put("userIdentityCd", MapUtils.getString(iMap, "identidyTypeCd"));
+			newCustInfoMap.put("userIdentityName", MapUtils.getString(iMap, "identityName"));
+			newCustInfoMap.put("userIdentityNum", MapUtils.getString(iMap, "identityNum"));
+			newCustInfoMap.put("accountName", MapUtils.getString(aMap, "accountName"));
+			newCustInfoMap.put("userName", MapUtils.getString(auMap, "useCustName"));
+			newCustInfoMap.put("userCustId", MapUtils.getString(auMap, "useCustId"));
+			newCustInfoMap.put("isSame", MapUtils.getString(auMap, "isSame"));
+		}
+	}
+
 	@RequestMapping(value = "/queryCustSub", method = { RequestMethod.POST })
     public String queryCustSub(@RequestBody Map<String, Object> paramMap, Model model,@LogOperatorAnn String flowNum,
             HttpServletResponse response,HttpSession httpSession,HttpServletRequest request) {
@@ -648,44 +684,29 @@ public class CustController extends BaseController {
 		Map<String, Map> listCustInfos = (Map<String, Map>) httpSession.getAttribute(SysConstant.SESSION_LIST_CUST_INFOS);
 		
 		if ("0".equals(authFlag)) {
-			if ("1".equals(validateType)) {//兼容客户定位省份证定位和二次业务证件类型定位
+			if ("15678".contains(validateType)) {//兼容客户定位省份证定位和二次业务证件类型定位
 				//用户信息查询
 				Map custParam = new HashMap();
 				try {
-					custParam.put("areaId", param.get("areaId"));
-					custParam.put("identityCd", identityCd);
-					custParam.put("identityNum", StringUtils.isNotBlank(identityNum)?Base64.eryDecoder(identityNum):"");
-					custParam.put("staffId", sessionStaff.getStaffId());
-					custParam.put("transactionId", param.get("transactionId"));
-					resultMap = custBmo.queryCustInfo(custParam, flowNum, sessionStaff);
-					if (MapUtil.isNotEmpty(resultMap)) {
-						List custInfos = (List<Map<String, Object>>) resultMap.get("custInfos");
-						if (custInfos.size() > 0) {
-							for (int i = 0; i < custInfos.size(); i++) {
-								Map custInfoMap = (Map<String, Object>) custInfos.get(i);
-								String queryCustId = MapUtils.getString(custInfoMap, "custId");
-								String custId = MapUtils.getString(param,"custId");
+					String custId = MapUtils.getString(param, "custId");
 
-								Map<String, Object> checkIdMap = new HashMap<String, Object>();
-								checkIdMap.put("areaId", MapUtils.getString(param,"areaId",""));
-								checkIdMap.put("custId", custId);
-								checkIdMap.put("idCardNumber",StringUtils.isNotBlank(identityNum)?Base64.eryDecoder(identityNum):"");
-								checkIdMap.put("idCardType",identityCd);
+					Map<String, Object> checkIdMap = new HashMap<String, Object>();
+					checkIdMap.put("areaId", MapUtils.getString(param, "areaId", ""));
+					checkIdMap.put("custId", custId);
+					checkIdMap.put("idCardNumber", StringUtils.isNotBlank(identityNum) ? Base64.eryDecoder(identityNum) : "");
+					checkIdMap.put("idCardType", identityCd);
 
-								Map<String, Object> datamap = mktResBmo.checkIdCardNumber(checkIdMap,
-										flowNum, sessionStaff);
-								if (datamap != null) {
-									String code = (String) datamap.get("code");
-									if (ResultCode.R_SUCC.equals(code)) {
-										map.put("isValidate", "true");
-										// 在session中保存当前客户信息
-										Map sessionCustInfo = MapUtils.getMap(listCustInfos, custId);
-										if (sessionCustInfo != null) {
-											httpSession.setAttribute(SysConstant.SESSION_CURRENT_CUST_INFO,sessionCustInfo);
-											listCustInfos.clear();
-										}
-									}
-								}
+					Map<String, Object> datamap = mktResBmo.checkIdCardNumber(checkIdMap,
+							flowNum, sessionStaff);
+					if (datamap != null) {
+						String code = (String) datamap.get("code");
+						if (ResultCode.R_SUCC.equals(code)) {
+							map.put("isValidate", "true");
+							// 在session中保存当前客户信息
+							Map sessionCustInfo = MapUtils.getMap(listCustInfos, custId);
+							if (sessionCustInfo != null) {
+								httpSession.setAttribute(SysConstant.SESSION_CURRENT_CUST_INFO, sessionCustInfo);
+								listCustInfos.clear();
 							}
 						}
 					}

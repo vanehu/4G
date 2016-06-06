@@ -168,6 +168,7 @@ public enum ErrorCode {
     CHANGEUIM_MSG_SEND("补换卡短信验证","010345","01","050106","05"),
     QUERY_CUST_COMPRE_INFO("客户架构信息查询","010346","01","020346","02"),
     QUERY_SERVDEPEND_FORCANCEL("查询被依赖的销售品或功能产品","010347","01","020131","02"),
+    QUERY_ACCOUNT_USE_CUSTINFO("账户和使用人信息查询","010348","01","020348","02"),
     QUERY_BIZ_SECONDBUSINESS_MENU_AUTH("查询二次业务菜单对应的鉴权权限","010200","01","020137","02"),
     SAVE_BIZ_AUTH_RECORD("鉴权日志记录接口","010201","01","020138","02"),
     QUERY_INTEGRAL("积分（权益）查询服务","010348","01","020140","02"),

@@ -7,19 +7,22 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.UUID;
+
 import javax.servlet.http.HttpServletRequest;
+
 import net.sf.json.JSON;
 import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
 import net.sf.json.xml.XMLSerializer;
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
+
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.springframework.stereotype.Service;
+
 import com.al.ec.serviceplatform.client.DataBus;
 import com.al.ec.serviceplatform.client.ResultCode;
 import com.al.ecs.common.util.JsonUtil;
@@ -34,7 +37,6 @@ import com.al.lte.portal.common.MySimulateData;
 import com.al.lte.portal.common.PortalServiceCode;
 import com.al.lte.portal.common.RunShellUtil;
 import com.al.lte.portal.common.ServiceClient;
-import com.al.lte.portal.common.SysConstant;
 import com.al.lte.portal.model.SessionStaff;
 
 @Service("com.al.lte.portal.bmo.crm.CustBmo")
@@ -676,6 +678,32 @@ public class CustBmoImpl implements CustBmo {
 		} catch (Exception e) {
 			log.error("能力开放平台的客户架构信息查询queryCustCompreInfo服务返回的数据异常", e);
 			throw new BusinessException(ErrorCode.QUERY_CUST_COMPRE_INFO, dataBusMap, db.getReturnlmap(), e);
+		}
+	}
+
+
+	/**
+	 * 账户和使用人信息查询服务
+	 * @param dataBusMap
+	 * @param optFlowNum
+	 * @param sessionStaff
+	 * @return
+	 * @throws Exception
+	 */
+	public Map<String, Object> queryAccountAndUseCustInfo(Map<String, Object> dataBusMap, String optFlowNum, SessionStaff sessionStaff) throws Exception {
+		Map<String, Object> retnMap = new HashMap<String, Object>();
+		DataBus db = InterfaceClient.callService(dataBusMap,
+				PortalServiceCode.QUERY_ACCOUNT_USE_CUSTINFO, optFlowNum, sessionStaff);
+		Map returnMap = db.getReturnlmap();
+		try {
+			String code = (String) returnMap.get("resultCode");
+			if (ResultCode.R_SUCC.equals(code)) {
+				retnMap = (HashMap) returnMap.get("result");
+			}
+			return retnMap;
+		} catch (Exception e) {
+			log.error("账户和使用人信息查询queryAccountAndUseCustInfo服务返回的数据异常", e);
+			throw new BusinessException(ErrorCode.QUERY_ACCOUNT_USE_CUSTINFO, dataBusMap, db.getReturnlmap(), e);
 		}
 	}
 }

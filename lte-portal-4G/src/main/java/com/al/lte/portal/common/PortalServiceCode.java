@@ -1029,5 +1029,7 @@ public final class PortalServiceCode {
    
     /**判断受理地区合法性判断*/
     public static final String CHECK_BYAREAID = "sys-checkByAreaId";
+	/** 账户和使用人信息查询服务 */
+	public static final String QUERY_ACCOUNT_USE_CUSTINFO = "biz-service/intf.pullingDataService/queryAccountAndUseCustInfo";
 }
 
