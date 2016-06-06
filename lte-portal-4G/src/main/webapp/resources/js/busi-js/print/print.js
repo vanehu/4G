@@ -482,9 +482,9 @@ common.print = (function($){
 			if (i == 0) {
 				$("#invoiceTitleInp").val(item.custName);
 			}
-			if (item.paymentAmount==0) {
-				continue;
-			}
+			//if (item.paymentAmount==0) {
+			//	continue;
+			//}
 			contHtml+="    <tr acctItemId="+item.acctItemId+" acctItemTypeId="+item.acctItemTypeId+" ";
 			contHtml+="        acctItemTypeName='"+item.acctItemTypeName+"' boActionType='"+item.boActionType+"' ";
 			contHtml+="        boActionType='"+item.boActionType+"' boId="+item.boId+" feeAmount="+item.feeAmount+" ";
