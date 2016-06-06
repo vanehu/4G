@@ -78,6 +78,7 @@ public class Config {
 		Properties p = new Properties();
 		try {
 			InputStream in = Config.class.getResourceAsStream("/portal/loginConfig.properties");
+//			InputStream in = Config.class.getResourceAsStream("/loginConfig.properties");
 		    if(in !=null){
 				p.load(in);
 				in.close();

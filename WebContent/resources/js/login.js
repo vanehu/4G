@@ -59,6 +59,10 @@ staff.login = (function($) {
 		    success: function (response) {
 		    	var provVersion = response.provVersion;
 		    	var provDomain =  response.provDomain;
+		    	if(provVersion == "9"){
+		    		alert("版本号获取失败[provVersion:"+provVersion+"]，请检查配置文件。");
+		    		return;
+		    	}
 		    	if(provDomain == null || provDomain == "")
 		    		provDomain = window.location.hostname;
 		    	if(provVersion!="9"){
