@@ -86,6 +86,9 @@
 			<#include "/pcpublic/main-header.html"/> 
 		</#if>
 		</div>
+		<!--弹出框-当客户定位，选择使用人，有多个客户要选择时-->
+<div id="choose_multiple_user_dialog" class="easyDialogdiv" style="width:700px;">
+</div>
 		<!--头部 end-->
 		<div class="navsortbg"></div>
 		<#if Session["_ecs_login_session_key"].currentChannelId ?? && (Session["_ecs_login_session_key"].currentChannelId!="") >

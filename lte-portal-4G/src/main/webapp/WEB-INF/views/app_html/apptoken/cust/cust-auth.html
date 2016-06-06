@@ -1,4 +1,5 @@
-
+<!-- Modal aria-hidden="true"-->
+<#if rules??> 
 <div class=" modal_search" id="UserCheck" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" >
 <h1 style="text-align: center;font-size: 20px">客户身份鉴权</h1>
 <div class="modal_top">
@@ -7,12 +8,36 @@
       <div class="panel panel-default">
           <div class="panel-body">
             <ul class="nav nav-tabs" id="ul1" role="tablist">
-                <li id="li1" role="presentation" class="active"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">证件</a></li>
-            </ul>
+            
+          <#if rules.rule3=="Y">
+                 <li id="li3" role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">产品密码</a></li>
+                
+        </#if>
+        
+         <#if rules.rule2=="Y">
+            <#if rules.rule3=="Y" >
+                <li id="li2" role="presentation" ><a href="#messages" aria-controls="messages" role="tab" data-toggle="tab">短信</a></li>
+              <#else>
+                <li id="li2"  role="presentation" class="active"><a href="#messages" aria-controls="messages" role="tab" data-toggle="tab">短信</a></li>
+            </#if>
+         </#if>    
+         <#if rules.rule1=="Y">
+                 <#if rules.rule3=="Y" || rules.rule2=="Y">
+                     <li id="li1" role="presentation" class=""><a  id="a1" onclick="fun()" href="javascript:void(0);" aria-controls="profile" role="tab" data-toggle="tab">证件</a></li>
+                      <#else>
+                      <li id="li1" role="presentation" class="active"><a id="a1" onclick="fun()" href="javascript:void(0);" aria-controls="profile" role="tab" data-toggle="tab">证件</a></li>
+                 </#if>
+                 
+          </#if>
+         
+   
+   </ul>
+ 
+      
 
   <!-- Tab panes -->
   <div class="tab-content">
-  <div role="tabpanel" class="tab-pane active" id="profile">
+  <div role="tabpanel" class="tab-pane " id="profile">
     		<form class="form-list">
 				<div class="form-group">
 				  <label id="custAuthType" class="show-tick form-control"></label>
@@ -27,8 +52,7 @@
 			</div>
 			</form>
     </div>
-   <!--  
-    <div role="tabpanel" class="tab-pane" id="home">
+    <div role="tabpanel" class="tab-pane " id="home">
     		<form class="form-list">
 				<div class="form-group">
 					<input id="authPassword2" data-validate="validate(required:密码不能为空, maxlength:密码长度最多为{arg1}(12)) on(blur)" type="password" class="form-control" id="userid" placeholder="请输入产品密码">
@@ -36,8 +60,8 @@
 				
 			</form>
     </div>
-  --> 
- <!-- 
+    
+    
     <div role="tabpanel" class="tab-pane" id="messages">
     	<form class="form-list">
     		<div class="form-group">
@@ -46,10 +70,9 @@
 					<span class="input-group-btn">
                       <button onclick="cust.smsResend();" class="btn btn-default" type="button"> 获取 </button>
                       </span> </div>
-            </div>
-	  </form>
+			</div>
+	</form>
     </div>
--->   
   </div>
           </div>
           <div class=" divfoot modal-footer">
@@ -59,7 +82,7 @@
 											<span class="glyphicon glyphicon glyphicon-screenshot" aria-hidden="true"></span> 校验
 										</button>
 									</div>
-									<div id="iseditOperation" class="btn-group" role="group">
+									<div id="iseditOperation"  class="btn-group" role="group">
 										<button onclick="cust.jumpAuth2();" type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#TipModal">
 											<span class="glyphicon glyphicon glyphicon glyphicon-arrow-right" aria-hidden="true"></span> 跳过
 										</button>
@@ -74,16 +97,42 @@
 </div>
 </div>
 
- <div id="authTypeStr" style="display: none"></div>
-
+ <div id="authTypeStr" style="display: none">${rules.authTypeStr}</div>
+<#else>
+查询失败
+</#if>
 <script type="text/javascript">
-  $("#order_prepare").css('display','none');
+
   var rulesJson='${rulesJson}';
   OrderInfo.rulesJson=eval("("+rulesJson+")");
-  $("#custAuthType").html(OrderInfo.cust.identityName);
-
 </script>
+<script type="text/javascript">	 
+	  var rules=OrderInfo.rulesJson;
+	  if(rules.rule1=="Y"){ 
+		  $("#custAuthType").html(OrderInfo.cust.identityName);
+	  }
+	  //产品密码
+	  if(OrderInfo.rulesJson.rule3=="Y"){
+		  $("#home").addClass("active"); 
+	  }
+	  else if(OrderInfo.rulesJson.rule2=="Y"){
+		  $("#messages").addClass("active");
 
+	  }
+	  else if(OrderInfo.rulesJson.rule1=="Y"){
+		  $("#profile").addClass("active");
+	  }
+	  
+	 
+	  if($("#li1").attr("class")=="active"){
+		  if(!cust.isSelfChannel()){
+				 $("#idCardNumber2").attr("readonly","readonly");
+				 $.alert("提示","请到电信自有营业厅办理业务");
+			}
+	  }
+	  
+	  
+</script>
 <script >
   function clecks(){
 	  var lis=$("#ul1 li");
@@ -95,11 +144,11 @@
 		    	//身份鉴权
 		    	if(id=="li1"){
 		    		if(!cust.isSelfChannel()){
-						 $("#idCardNumber2").attr("readonly","readonly");
-						 $.alert("提示","请到电信自有营业厅办理业务");
-						 return 
-					}
-		    		cust.identityTypeAuth();
+			   			 $("#idCardNumber2").attr("readonly","readonly");
+			   			 $.alert("提示","请到电信自有营业厅办理业务");
+			   			 return ;
+			   		}
+		    		cust.identityTypeAuth('idCardNumber2');
 		    	}
 		    	//短信
 		    	else if(id=="li2"){
@@ -112,6 +161,15 @@
 		    	
 		    }
 		});
+  }
+  function fun(){
+	 
+	//判断是否是自营渠道
+		if(!cust.isSelfChannel()){
+			 $("#idCardNumber2").attr("readonly","readonly");
+			 $.alert("提示","请到电信自有营业厅办理业务");
+		}
+	    document.getElementById("a1").href="#profile"; 
   }
   
 </script>

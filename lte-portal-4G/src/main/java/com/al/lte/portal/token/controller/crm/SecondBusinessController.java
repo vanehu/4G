@@ -3,17 +3,23 @@ import com.al.ec.toolkit.JacksonUtil;
 import com.al.ecs.common.entity.JsonResponse;
 import com.al.ec.serviceplatform.client.ResultCode;
 import com.al.ecs.common.util.DateUtil;
+import com.al.ecs.common.util.JsonUtil;
+import com.al.ecs.common.util.MDA;
+import com.al.ecs.common.util.UIDGenerator;
 import com.al.ecs.common.web.ServletUtils;
 import com.al.ecs.exception.BusinessException;
 import com.al.ecs.exception.ErrorCode;
 import com.al.ecs.exception.InterfaceException;
 import com.al.ecs.exception.ResultConstant;
 import com.al.ecs.spring.annotation.log.LogOperatorAnn;
+import com.al.ecs.spring.annotation.session.AuthorityValid;
 import com.al.ecs.spring.controller.BaseController;
 import com.al.lte.portal.bmo.crm.SecondBusiness;
 import com.al.lte.portal.bmo.staff.StaffBmo;
+import com.al.lte.portal.common.MySimulateData;
 import com.al.lte.portal.common.SysConstant;
 import com.al.lte.portal.model.SessionStaff;
+import com.al.lte.portal.bmo.crm.CustBmo;
 
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
@@ -27,8 +33,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -53,7 +65,37 @@ public class SecondBusinessController extends BaseController {
     @Autowired
     @Qualifier("com.al.lte.portal.bmo.staff.StaffBmo")
     private StaffBmo staffBmo;
+	@Autowired
+	@Qualifier("com.al.lte.portal.bmo.crm.CustBmo")
+	private CustBmo custBmo;
+    
+   
+    
+    /**
+     * 查询政企客户开关
+     * */
+    @RequestMapping(value = "/queryCustOnOffJson", method = {RequestMethod.POST})
+    @ResponseBody
+    public JsonResponse queryCustOnOffJson(@RequestBody Map<String, Object> paramMap, Model model, HttpServletResponse response, @LogOperatorAnn String flowNum) throws BusinessException {
 
+        JsonResponse jsonResponse = new JsonResponse();
+        try {
+        
+            //入参的封装
+            SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
+            //省份编码
+            String provinceCode=sessionStaff.getProvinceCode();
+            Map<String, Object> resMap =new HashMap<String,Object>();
+            //获取政企客户二次业务鉴权省份开关
+            String ONOFF = MDA.TOKEN_AUTHENTICATION.get("Token_"+provinceCode);
+            resMap.put("ONOFF", ONOFF);
+            jsonResponse= super.successed(resMap,ResultConstant.SUCCESS.getCode());
+        }
+         catch (Exception e) {
+            return super.failed(ErrorCode.QUERY_BIZ_SECONDBUSINESS_MENU_AUTH, e, paramMap);
+        }
+        return jsonResponse;
+    }     
 
     /**
      * 查询二次业务菜单对应的鉴权权限
@@ -68,52 +110,137 @@ public class SecondBusinessController extends BaseController {
             String menuId = MapUtils.getString(paramMap, "menuId", "");
             String menuName = MapUtils.getString(paramMap, "menuName", "");
             String isSimple = MapUtils.getString(paramMap, "isSimple", "");
+           // String typeCd = MapUtils.getString(paramMap, "typeCd", "");
             String areaId = sessionStaff.getAreaId();
+            //当前业务标识
+            int actionFlag=MapUtils.getInteger(paramMap, "actionFlag");
             Map<String, Object> inParamMap = new HashMap<String, Object>();
             if (StringUtils.isNotBlank(menuId)) {
                 inParamMap.put("menuId", menuId);
             }
-            if (StringUtils.isNotBlank(menuId)) {
+            if (StringUtils.isNotBlank(menuName)) {
                 inParamMap.put("menuName", menuName);
             }
-            if (StringUtils.isNotBlank(menuId)) {
+            if (StringUtils.isNotBlank(isSimple)) {
                 inParamMap.put("isSimple", isSimple);
             }
-            if (StringUtils.isNotBlank(menuId)) {
+            if (StringUtils.isNotBlank(areaId)) {
                 inParamMap.put("areaId", areaId);
             }
             //判断工号是否有跳过权限
             String  iseditOperation=staffBmo.checkOperatSpec(SysConstant.SECOND_JUMPSPECIAL,sessionStaff);
             //渠道大类
             String channelType=sessionStaff.getCurrentChannelType();
-            //服务调用获取数据
-            Map<String, Object> resMap = secondBusiness.querySecondBusinessMenuAuth(inParamMap, flowNum, sessionStaff);
-            if (ResultCode.R_SUCC.equals(resMap.get("resultCode"))) {
-                Map<String, Object> resultMap = MapUtils.getMap(resMap, "result");
-                Map<String, Object> rules = new HashMap<String, Object>();
-                if (resultMap != null) {
-                    List<Map<String, Object>> scenes = (List<Map<String, Object>>) MapUtils.getObject(resultMap, "scenes");
-                    if (scenes != null && scenes.size() > 0) {
-                    	//1.证件鉴权 2.短信鉴权3.产品密码鉴权4.直接跳过
-                       rules = authCompute(scenes,sessionStaff);
-                       rules.put("iseditOperation", iseditOperation);
-                       rules.put("channelType",channelType);
-                       String typeCd = MapUtils.getString(paramMap, "typeCd", "");
-                       String rulesJson=JacksonUtil.objectToJson(rules);
-                       model.addAttribute("rulesJson", rulesJson);
-                    }
-                }
-                model.addAttribute("rules", rules);
-            }
-            String types=MapUtils.getString(paramMap, "types", "");
-            if(types.equals("pc")){
-            	return "/pctoken/cust/cust-auth";
-            }
-            else if(types.equals("app")){
-            	return "/apptoken/cust/cust-authsub";
+           
+            int segmentId=MapUtils.getInteger(paramMap, "segmentId");
+             //新装写死
+            if(actionFlag==1){
+            	Map<String, Object> rules = new HashMap<String, Object>();
+            	//如果是政企客户
+            	//custType
+            	if(segmentId==1000){
+            		rules.put("rule6","Y");
+            	}
+            	else{
+            		rules.put("rule1","Y");
+            	}
+                 rules.put("iseditOperation", iseditOperation);
+                 rules.put("channelType",channelType);          
+                 String rulesJson=JacksonUtil.objectToJson(rules);
+                 model.addAttribute("rulesJson", rulesJson);
+                 model.addAttribute("rules", rules);
             }
             else{
-            	 return "/padtoken/cust/cust-authsub";
+            	Map<String, Object> resMap=null;
+                //服务调用获取数据
+            	if(segmentId==1000){
+            		inParamMap.put("custType",2);
+            	}
+            	else{
+            		inParamMap.put("custType",1);
+            	}
+
+                resMap = secondBusiness.querySecondBusinessMenuAuth(inParamMap, flowNum, sessionStaff);
+                if (ResultCode.R_SUCC.equals(resMap.get("resultCode"))) {
+                    Map<String, Object> resultMap = MapUtils.getMap(resMap, "result");
+                    Map<String, Object> rules = new HashMap<String, Object>();
+                    if (resultMap != null) {
+                        List<Map<String, Object>> scenes = (List<Map<String, Object>>) MapUtils.getObject(resultMap, "scenes");
+                        if (scenes != null && scenes.size() > 0) {
+                        	//1.证件鉴权 2.短信鉴权3.产品密码鉴权4.直接跳过
+                           rules = authCompute(scenes,sessionStaff);
+//                        	rules.put("rule1","Y");
+//                        	rules.put("rule2","Y");
+//                        	rules.put("rule3","Y");
+//                        	rules.put("rule4","Y");
+//                        	rules.put("rule5","Y");
+//                        	rules.put("rule6","Y");
+//                        	rules.put("rule7","Y");
+//                        	rules.put("rule8","Y");
+                           rules.put("iseditOperation", iseditOperation);
+                           rules.put("channelType",channelType);
+                          
+                           if(segmentId==1000){
+                        	 //账户和使用人信息查询服务
+                        	     paramMap.put("areaId",areaId);
+                        	     //固定传
+                        	     paramMap.put("queryType","1,2,3,4,5"); 
+                        	    // System.out.println(JsonUtil.toStringNonNull(paramMap));
+                       	          Map<String, Object> resultMap2 = custBmo.queryAccountAndUseCustInfo(paramMap,flowNum, sessionStaff);
+                        	     if (ResultCode.R_SUCC.equals(resultMap2.get("resultCode"))) {
+                        	    	 //成功
+                        	    	 Map<String, Object>map=MapUtils.getMap(resultMap2, "result");
+                        	    	Map<String,Object>accountMap=(HashMap<String, Object>)map.get("account");
+                        	    	//账户名称
+                        	    	String accountName=MapUtils.getString(accountMap, "accountName");
+                        	    	//使用人名称
+                        	    	String useCustName=MapUtils.getString(map, "useCustName");
+
+                        	    	rules.put("accountName", accountName);
+                        	    	rules.put("useCustId",MapUtils.getString(map, "useCustId"));
+                        	    	rules.put("useCustName", useCustName);
+                        	    	rules.put("isSame", MapUtils.getString(map, "isSame"));
+                        	    	Map<String,Object>identityMap=MapUtils.getMap(map,"identity");
+                        	    	rules.put("identidyTypeCd", MapUtils.getInteger(identityMap,"identityTypeCd"));
+                        	    	rules.put("identityName", MapUtils.getString(identityMap,"identityName"));
+                        	    	rules.put("identityNum",MapUtils.getString(identityMap,"identityNum"));
+             
+                        	     }
+                          }
+                           String rulesJson=JacksonUtil.objectToJson(rules);
+                           model.addAttribute("rulesJson", rulesJson);
+                        }
+                    }
+                    model.addAttribute("rules", rules);
+                }
+            }
+           
+            String types=MapUtils.getString(paramMap, "types", "");
+            if(types.equals("pc")){
+            	if(segmentId==1000){
+            		return "/pctoken/cust/cust-authsub";
+            	}
+            	else{
+            		return "/pctoken/cust/cust-auth";
+            	}
+            	
+            }
+            else if(types.equals("app")){
+            	if(segmentId==1000){
+            		return "/apptoken/cust/cust-authsub";
+            	}
+            	else{
+            		return "/apptoken/cust/cust-auth";
+            	}
+            	
+            }
+            else{
+            	if(segmentId==1000){
+            		 return "/padtoken/cust/cust-authsub";
+            	}
+            	else{
+            		 return "/padtoken/cust/cust-auth";
+            	}
             }	  
             
         } catch (BusinessException e) {
@@ -125,47 +252,7 @@ public class SecondBusinessController extends BaseController {
         }
     }
     
-    /**
-     * 查询二次业务菜单对应的鉴权权限
-     *
-     * @author wufeng
-     */
-    @RequestMapping(value = "/querySecondBusinessMenuAuthSub", method = {RequestMethod.POST})
-    public String querySecondBusinessMenuAuthSub(@RequestBody Map<String, Object> paramMap, Model model, HttpServletResponse response, @LogOperatorAnn String flowNum) throws BusinessException {
-        
-    	  try {
-              //入参的封装
-              SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
-            //渠道大类
-              String channelType=sessionStaff.getCurrentChannelType();
-              String areaId = sessionStaff.getAreaId();
-              Map<String, Object> rules = new HashMap<String, Object>();
-              
-              //判断工号是否有跳过权限
-              String  iseditOperation=staffBmo.checkOperatSpec(SysConstant.SECOND_JUMPSPECIAL,sessionStaff);
-              rules.put("iseditOperation", iseditOperation);
-              rules.put("channelType",channelType);
-              String rulesJson=JacksonUtil.objectToJson(rules);
-              model.addAttribute("rulesJson", rulesJson);
-              String types=MapUtils.getString(paramMap, "types", "");
-              if(types.equals("pc")){
-              	return "/pctoken/cust/cust-authsub";
-              }
-              else if(types.equals("app")){
-              	return "/apptoken/cust/cust-auth";
-              }
-              else{
-              	 return "/padtoken/cust/cust-auth";
-              }	  
-          } catch (BusinessException e) {
-              return super.failedStr(model, e);
-          } catch (InterfaceException ie) {
-              return super.failedStr(model, ie, paramMap, ErrorCode.ORDER_SUBMIT);
-          } catch (Exception e) {
-              return super.failedStr(model, ErrorCode.QUERY_BIZ_SECONDBUSINESS_MENU_AUTH, e, paramMap);
-          }
-    }
-    
+   
     /**
      * 查询二次业务菜单对应的鉴权权限(提供给手机客户端使用)
      *
@@ -231,7 +318,8 @@ public class SecondBusinessController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/saveAuthRecord", method = {RequestMethod.POST})
-    @ResponseBody
+    @AuthorityValid(isCheck = false)
+	@ResponseBody
     public JsonResponse saveAuthRecord(@RequestBody Map<String, Object> paramMap, Model model, HttpServletResponse response, @LogOperatorAnn String flowNum) throws BusinessException {
 
         JsonResponse jsonResponse = new JsonResponse();
@@ -393,4 +481,71 @@ public class SecondBusinessController extends BaseController {
             return SysConstant.STR_N;
         }
     }
+    
+   public static Map<String,Object> getMap(){
+
+	   Map<String, Object> resMap =new HashMap<String,Object>();
+	   Map<String, Object> identityMap =new HashMap<String,Object>();
+	   Map<String, Object> accountMap =new HashMap<String,Object>();
+
+	   resMap.put("isSame","Y");
+	   resMap.put("useCustId","140000888866");
+	   resMap.put("useCustName", "张三");
+	   identityMap.put("identidyTypeCd","1");
+	   identityMap.put("identityName","居民身份证");
+	   identityMap.put("identityNum","310230195609173994");
+	   accountMap.put("accountAreaGrade","12");
+	   accountMap.put("accountId","140001235297");
+	   accountMap.put("accountName", "苹果果Q");
+	   accountMap.put("accountNumber", "2711060201882");
+	   accountMap.put("custId", "140000893520");
+	   resMap.put("identity", identityMap);
+	   resMap.put("account", accountMap);
+	   return resMap;
+   }
+   
+    
+    /**
+     * 脱敏操作
+     * 
+     * */
+    private static int SIZE =3;
+    private static String SYMBOL = "*";
+    private static String toConceal(String str) {
+		if(null  == str || "".equals(str)) 
+			return str;
+		int l = str.length();
+		int a = l/2;
+		int b = a-1;
+		int c = l%2;
+		StringBuffer sb = new StringBuffer(l);
+		if(l <= 2) {
+			if(c==1)
+				return SYMBOL;
+			sb.append(SYMBOL);
+			sb.append(str.charAt(l-1));
+		}else {
+			if(b<=0) {
+				sb.append(str.substring(0, 1));
+				sb.append(SYMBOL);
+				sb.append(str.substring(l-1, l));
+			}else if(b>=SIZE/2 && SIZE+1!=l){
+				int e  = (l-SIZE)/2;
+				sb.append(str.substring(0, e));
+				for(int i  = 0;i<SIZE;i++)
+					sb.append(SYMBOL);
+				if((c==0&&SIZE%2==0)||(c!=0&&SIZE%2!=0)) 
+					sb.append(str.substring(l-e, l));
+				else 
+					sb.append(str.substring(l-(e+1), l)); 
+			}else {
+				int d  = l -2 ;
+				sb.append(str.substring(0, 1));
+				for(int i  = 0;i<d;i++)
+					sb.append(SYMBOL);
+				sb.append(str.substring(l-1, l)); 
+			}
+		}
+		return sb.toString();
+	}
 }

@@ -330,8 +330,33 @@ public class OrderController extends BaseController {
 	 */
 	@RequestMapping(value = "/attachoffer/prepare", method = RequestMethod.POST)
     @AuthorityValid(isCheck = false)
-    public String attachOfferChange(@RequestParam Map<String, Object> params, HttpServletRequest request,Model model,HttpSession session) throws AuthorityException {
-       return "/apptoken/order/order-attach-offer";
+    public String attachOfferChange(@RequestBody Map<String, Object> params, Model model, @LogOperatorAnn String optFlowNum,
+            HttpServletResponse response, HttpSession httpSession) throws BusinessException {
+        
+		Map<String, Object> param = new HashMap<String, Object>();
+		try {
+			String prodIdInfos=params.get("prodIdInfos").toString().replace("\\", "");
+			String custInfos=params.get("custInfos").toString().replace("\\", "");
+			String staffInfos=params.get("staffInfos").toString().replace("\\", "");
+			param=CommonMethods.getParams(prodIdInfos, custInfos, staffInfos, getRequest());
+			param.put("actionFlag", Const.OFFERCHANGE_FLAG);
+			Map<String, Object> validatoResutlMap=null;
+			    
+			validatoResutlMap=commonBmo.validatorRule(param, optFlowNum, super.getRequest());
+			if(!ResultCode.R_SUCCESS.equals(validatoResutlMap.get("code"))){				model.addAttribute("validatoResutlMap", validatoResutlMap);
+			return "/app/rule/rulecheck";
+			}
+			model.addAttribute("flag", Const.OFFERCHANGE_FLAG);
+			model.addAttribute("soNbr", param.get("soNbr"));
+		} catch (BusinessException e) {
+			return super.failedStr(model, e);
+		}  
+		catch (Exception e) {
+			return super.failedStr(model, ErrorCode.CHECK_RULE, null,
+					param);
+		}
+		
+		return "/apptoken/order/order-attach-offer";
     }
 	
 	@RequestMapping(value = "/preparedp", method = RequestMethod.GET)

@@ -1,3 +1,4 @@
+<script src="${contextPath}/js/busi-js/prod/changeUim.js?${jsversion}" type="text/javascript"></script>
 <style type="text/css">
 <!--
 .btn-group-active{
@@ -266,12 +267,6 @@ $(function(){
 	}
 	var prodOfferId = OrderInfo.provinceInfo.prodOfferId;
 	OrderInfo.actionFlag="1";
-	order.prodModify.querySecondBusinessAuthSub();
-	if(prodOfferId&&prodOfferId.length>0){
-		//order.service.buyService(prodOfferId,"");
-	}
-	else{
-		//order.service.init();
-	}
+	order.prodModify.querySecondBusinessAuth();
 });
 </script>

@@ -67,9 +67,10 @@ $(function(){
 			return;
 		}
 	}
-	
+	OrderInfo.order.soNbr='${soNbr}';
 	//设置可选包订单唯一标识
 	OrderInfo.busitypeflag="14";
+	
 	if(reloadFlag=="N"){
 		PackageAttachOffer.init();
 	}
