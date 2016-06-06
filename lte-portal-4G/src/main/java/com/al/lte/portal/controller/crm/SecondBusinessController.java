@@ -103,6 +103,65 @@ public class SecondBusinessController extends BaseController {
             return super.failedStr(model, ErrorCode.QUERY_BIZ_SECONDBUSINESS_MENU_AUTH, e, paramMap);
         }
     }
+    
+    /**
+     * 查询二次业务菜单对应的鉴权权限(提供给手机客户端使用)
+     *
+     * @return
+     */
+    @RequestMapping(value = "/querySecondBusinessMenuAuthJson", method = {RequestMethod.POST})
+    @ResponseBody
+    public JsonResponse querySecondBusinessMenuAuthJson(@RequestBody Map<String, Object> paramMap, Model model, HttpServletResponse response, @LogOperatorAnn String flowNum) throws BusinessException {
+
+        JsonResponse jsonResponse = new JsonResponse();
+        try {
+            //入参的封装
+            SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
+            String menuId = MapUtils.getString(paramMap, "menuId", "");
+            String menuName = MapUtils.getString(paramMap, "menuName", "");
+            String isSimple = MapUtils.getString(paramMap, "isSimple", "");
+            String areaId = sessionStaff.getAreaId();
+            Map<String, Object> inParamMap = new HashMap<String, Object>();
+            if (StringUtils.isNotBlank(menuId)) {
+                inParamMap.put("menuId", menuId);
+            }
+            if (StringUtils.isNotBlank(menuId)) {
+                inParamMap.put("menuName", menuName);
+            }
+            if (StringUtils.isNotBlank(menuId)) {
+                inParamMap.put("isSimple", isSimple);
+            }
+            if (StringUtils.isNotBlank(menuId)) {
+                inParamMap.put("areaId", areaId);
+            }
+
+            //服务调用获取数据
+            Map<String, Object> resMap = secondBusiness.querySecondBusinessMenuAuth(inParamMap, flowNum, sessionStaff);
+            if (ResultCode.R_SUCC.equals(resMap.get("resultCode"))) {
+                Map<String, Object> resultMap = MapUtils.getMap(resMap, "result");
+                Map<String, Object> rules = new HashMap<String, Object>();
+                if (resultMap != null) {
+                    List<Map<String, Object>> scenes = (List<Map<String, Object>>) MapUtils.getObject(resultMap, "scenes");
+                    if (scenes != null && scenes.size() > 0) {
+                        rules = authCompute(scenes,sessionStaff);
+                    }
+                }
+                jsonResponse = super.successed(rules, ResultConstant.SUCCESS.getCode());
+            }
+            else{
+            	jsonResponse = super.failed(resMap.get("resultMsg"), ResultConstant.SERVICE_RESULT_FAILTURE
+                        .getCode());
+            }
+            
+        } catch (BusinessException e) {
+        	return super.failed(e);
+        } catch (InterfaceException ie) {
+        	return super.failed(ie, paramMap, ErrorCode.ORDER_SUBMIT);
+        } catch (Exception e) {
+            return super.failed(ErrorCode.QUERY_BIZ_SECONDBUSINESS_MENU_AUTH, e, paramMap);
+        }
+        return jsonResponse;
+    }     
 
     /**
      * 保存鉴权日志调用记录到后台并由后台返回一个日志记录id
