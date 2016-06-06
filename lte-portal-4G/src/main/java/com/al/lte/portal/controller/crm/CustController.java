@@ -136,6 +136,27 @@ public class CustController extends BaseController {
 				try {
 					String isCheckFlag= staffBmo.checkByAreaId(areaId,sessionStaff);
 					if(!"0".equals(isCheckFlag)){
+						//记录日志
+						//记录表SP_BUSI_RUN_LOG
+						String custlogflag = MySimulateData.getInstance().getParam((String) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_DATASOURCE_KEY),"CUSTLOGFLAG");
+						if("ON".equals(custlogflag)){
+							Map<String, Object> logmap = new HashMap<String, Object>();
+							logmap.put("STAFF_CODE", sessionStaff.getStaffCode());
+							logmap.put("STAFF_ID", sessionStaff.getStaffId());
+							logmap.put("SALES_CODE", sessionStaff.getSalesCode());
+							logmap.put("HOST_IP", CommonUtils.getAllAddrPart());
+							logmap.put("SESSIONINFO", "");
+							logmap.put("STATUS_CD", "客户定位传入的areaID被篡改areaId+"+areaId);
+							logmap.put("INTF_URL", "service/intf.custService/queryCust");
+							logmap.put("IDENTIDIES_TYPE", paramMap.get("identidies_type").toString());
+							logmap.put("IDENTITY_NUM", (String) (paramMap.get("acctNbr")==""?paramMap.get("identityNum")==""?paramMap.get("queryTypeValue"):paramMap.get("identityNum"):paramMap.get("acctNbr")));
+							logmap.put("OPERATION_PLATFORM", SysConstant.APPDESC_LTE);
+							logmap.put("ACTION_IP", ServletUtils.getIpAddr(request));
+							logmap.put("CHANNEL_ID", sessionStaff.getCurrentChannelId());
+							logmap.put("OPERATORS_ID", sessionStaff.getOperatorsId());
+							logmap.put("IN_PARAM", JsonUtil.toString(paramMap));
+							staffBmo.insert_sp_busi_run_log(logmap,flowNum,sessionStaff);
+						}
 						model.addAttribute("showDiffcode", "Y");
 						return "/cust/cust-list";
 					}
