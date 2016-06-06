@@ -107,6 +107,7 @@ SoOrder = (function() {
 		try {
 			_getCheckOperatSpec();
 			if(_getOrderInfo(data)){
+				console.log(JSON.stringify(data));
 				//订单提交
 				var url = contextPath+"/order/orderSubmit";
 				if(OrderInfo.order.token!=""){
@@ -534,6 +535,7 @@ SoOrder = (function() {
 		}else{
 			OrderInfo.orderData.orderList.orderListInfo.olTypeCd = CONST.OL_TYPE_CD.FOUR_G;
 		}
+		console.log(OrderInfo.orderData);
 		return true;
 	};
 	
@@ -2239,6 +2241,26 @@ SoOrder = (function() {
 		}
 		];
 		busiOrders.push(busiOrderAdd);
+		if (data.boAccountInfos != undefined || data.boAccountInfos != null) {
+			// 新增帐户节点
+			var acctChangeNode = {
+				areaId : OrderInfo.getAreaId(),
+				busiOrderInfo : {
+					seq : OrderInfo.SEQ.seq--
+				},
+				
+				boActionType : {
+					actionClassCd : CONST.ACTION_CLASS_CD.ACCT_ACTION,
+					boActionTypeCd : CONST.BO_ACTION_TYPE.ACCT_INFO_MODIFY
+				},
+				busiObj : {
+					accessNumber : order.prodModify.choosedProdInfo.accNbr,
+					instId : data.boAccountInfos[0].acctId
+				},
+				data : {"boAccountInfos":data.boAccountInfos}
+			};
+			busiOrders.push(acctChangeNode);
+		}
 	};
 	//创建客户单独订单
 	var _createCustOrderOnly = function(busiOrders,data){
