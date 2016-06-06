@@ -363,6 +363,8 @@ common.print = (function($){
 		}
 	}
 	var _prepareInvoiceInfoCore=function(param){
+		//根据开关设置电子发票的显示
+		initEinvoice();
 		//可打印费用项查询
 		var qccResp = _queryComputeCharge(param);
 		if (!qccResp) {
@@ -1158,6 +1160,19 @@ common.print = (function($){
 			}
 		});
 	};
+	//根据开关初始化电子发票类型
+	function initEinvoice() {
+		var response = $.callServiceAsJson(contextPath + "/properties/getValue", {"key": "EL_INVOICE_" + OrderInfo.staff.areaId.substr(0, 3)});
+		if (response.code == "0") {
+			if ("ON" == response.data) {
+				$("#billTypeEl").show();
+				$("#lb_billTypeEl").show();
+			} else {
+				$("#billTypeEl").hide();
+				$("#lb_billTypeEl").hide();
+			}
+		}
+	};
 
 
 	return {
@@ -1180,14 +1195,4 @@ common.print = (function($){
 
 //初始化
 $(function(){
-	var response = $.callServiceAsJson(contextPath + "/properties/getValue", {"key": "EL_INVOICE_"+OrderInfo.staff.areaId.substr(0,3)});
-	if (response.code == "0") {
-		if("ON"==response.data){
-			$("#billTypeEl").show();
-			$("#lb_billTypeEl").show();
-		}else{
-			$("#billTypeEl").hide();
-			$("#lb_billTypeEl").hide();
-		}
-	}
 });
