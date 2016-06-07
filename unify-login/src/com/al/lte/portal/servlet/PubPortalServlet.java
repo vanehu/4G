@@ -32,7 +32,7 @@ public class PubPortalServlet extends HttpServlet {
         String url = "";
         String province = req.getParameter("prov");
         if (province != null) {
-            String Port = Config.getProvVersion(province);
+            String Port = Config.getProvVersion("PUB-"+province);
             String domain = Config.getIpconfig(req, province);
             String httpconfig = "";
             if ("81".equals(Port) || "82".equals(Port)) {
