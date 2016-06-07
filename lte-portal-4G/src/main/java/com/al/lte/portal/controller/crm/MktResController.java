@@ -2686,11 +2686,12 @@ public class MktResController extends BaseController {
 			resultMap = mktResBmo.terminalStatisticDetailQueryList(qryParam, null, sessionStaff);
 			if (resultMap != null && ResultCode.R_SUCC.equals(resultMap.get("code").toString())){		
 				PageModel<Map<String, Object>> pageModel = PageUtil.buildPageModel(
-						MapUtils.getIntValue(qryParam, "pageIndex", 1), 
-						MapUtils.getIntValue(qryParam,"pageSize",10), 
-						(ArrayList<Map<String, Object>>)resultMap.get("resultList"));
-	             model.addAttribute("pageModel", pageModel);
-	             model.addAttribute("qryType", qryParam.get("qryType"));
+					MapUtils.getIntValue(qryParam, "pageIndex", 1), 
+					MapUtils.getIntValue(qryParam,"pageSize",10), 
+					(ArrayList<Map<String, Object>>)resultMap.get("resultList")
+				);
+				model.addAttribute("pageModel", pageModel);
+				model.addAttribute("qryType", qryParam.get("qryType"));
 			} else{
 				model.addAttribute("code", resultMap.get("code"));
 				model.addAttribute("message", resultMap.get("message"));
