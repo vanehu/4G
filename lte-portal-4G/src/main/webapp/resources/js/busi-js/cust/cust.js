@@ -1995,7 +1995,7 @@ order.cust = (function(){
 				queryType=$("#p_cust_identityCd_choose").val();
 				queryTypeValue=$.trim($("#p_cust_identityNum_choose").val());
 			}
-			diffPlace=$("#DiffPlaceFlag_choose").val();
+			diffPlace=$("#diffPlaceFlag_choose").val();
 			areaId=$("#p_cust_areaId_choose").val();
 			//lte进行受理地区市级验证
 			if(CONST.getAppDesc()==0&&areaId.indexOf("0000")>0){

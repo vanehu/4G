@@ -131,7 +131,7 @@ public class CustController extends BaseController {
 		String diffPlace=MapUtils.getString(paramMap, "diffPlace","");
 		String flag = propertiesUtils.getMessage(SysConstant.CHECKAREAIDFLAG);
 		if(SysConstant.ON.equals(flag)){
-			if(diffPlace.equals("local")){//如果是本地业务，判断传过来的地区是不是受理地区
+			if("local".equals(diffPlace)){//如果是本地业务，判断传过来的地区是不是受理地区
 				String areaId = (String) paramMap.get("areaId");
 				try {
 					String isCheckFlag= staffBmo.checkByAreaId(areaId,sessionStaff);
