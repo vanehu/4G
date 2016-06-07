@@ -128,7 +128,7 @@ public class CustController extends BaseController {
 		httpSession.setAttribute("ValidateProdPwd", null);
 		httpSession.setAttribute("queryCustAccNbr", paramMap.get("acctNbr"));
 		
-		String diffPlace=(String) paramMap.get("diffPlace");
+		String diffPlace=MapUtils.getString(paramMap, "diffPlace","");
 		String flag = propertiesUtils.getMessage(SysConstant.CHECKAREAIDFLAG);
 		if(SysConstant.ON.equals(flag)){
 			if(diffPlace.equals("local")){//如果是本地业务，判断传过来的地区是不是受理地区
