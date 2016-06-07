@@ -284,7 +284,14 @@
 //	  else{
 //		  document.getElementById("a1").href="#profile"; 
 //	  }
-	  document.getElementById("a1").href="#profile"; 
+		if(idType=="" || idType==undefined || idType==null || _isCustomers(idType)==1000){
+			 $.alert("提示","使用人证件类型非个人证件类型，请选择其它鉴权方式");
+			 return ;
+		}
+		else{
+			 document.getElementById("a1").href="#profile"; 
+		}
+	 
   }
   
   

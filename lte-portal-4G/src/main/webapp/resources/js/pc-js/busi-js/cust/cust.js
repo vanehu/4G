@@ -2178,7 +2178,7 @@ order.cust = (function(){
 		if(_isCustomers(OrderInfo.cust.identityCd)==1000){
 	       //使用人证件类型非个人证件类型，请选择其它鉴权方式
 			var idType=OrderInfo.rulesJson.identidyTypeCd;
-			if(_isCustomers(idType)==1000){
+			if(idType=="" || idType==undefined || idType==null || _isCustomers(idType)==1000){
 				 $.alert("提示","使用人证件类型非个人证件类型，请选择其它鉴权方式");
 				 return ;
 			}
