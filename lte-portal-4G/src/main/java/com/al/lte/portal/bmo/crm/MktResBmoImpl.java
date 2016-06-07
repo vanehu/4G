@@ -1196,4 +1196,75 @@ public class MktResBmoImpl implements MktResBmo {
 				}
 				return resultMap;
 	}
+	
+	/**
+	 * 终端信息统计查询(精品渠道终端进销存汇总报表(实时数据))
+	 * @param requstParamMap
+	 * @param optFlowNum
+	 * @param sessionStaff
+	 * @return
+	 * @throws Exception 
+	 * @throws InterfaceException 
+	 * @throws Exception
+	 */
+	@SuppressWarnings("unchecked")
+	public Map<String, Object> terminalStatisticQueryList(Map<String, Object> requstParamMap, String optFlowNum, SessionStaff sessionStaff) throws InterfaceException, Exception {
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		Map<String, Object> returnData = null;
+		
+		DataBus db = InterfaceClient.callService(requstParamMap, PortalServiceCode.INTF_TERMSTATISIICSERVICE, optFlowNum, sessionStaff);
+		if (ResultCode.R_SUCC.equals(db.getResultCode())) {//接口调用成功
+			returnData = db.getReturnlmap();
+			if(returnData != null && ResultCode.R_SUCC.equals(returnData.get("resultCode"))){//返回数据成功
+				HashMap<String, Object> resultMap = (HashMap<String, Object>) returnData.get("result");				
+				ArrayList<Map<String, Object>> returnList = (ArrayList<Map<String, Object>>) resultMap.get("statisticsInfo");
+				returnMap.put("resultList", returnList);
+				returnMap.put("code", "0");
+			} else{
+				returnMap.put("code", "1");
+				returnMap.put("message", MapUtils.getString(returnData, "resultMsg", "营销资源MktResInstInfoQryService/termStatisticService服务异常"));
+			}
+		} else {
+			returnMap.put("code", "1");
+			returnMap.put("message", MapUtils.getString(returnData, "resultMsg", "营销资源MktResInstInfoQryService/termStatisticService服务异常"));
+		}
+		
+		return returnMap;
+	}
+	
+	/**
+	 * 终端销售信息明细统计查询: 精品渠道终端进销存明细报表(当日实时数据)和 精品渠道终端进销存(库存量)明细报表(当日实时数据)
+	 * @param requstParamMap
+	 * @param optFlowNum
+	 * @param sessionStaff
+	 * @return
+	 * @throws IOException 
+	 * @throws InterfaceException 
+	 * @throws Exception
+	 */
+	@SuppressWarnings("unchecked")
+	public Map<String, Object> terminalStatisticDetailQueryList(Map<String, Object> requstParamMap, String optFlowNum, SessionStaff sessionStaff) throws InterfaceException, IOException, Exception {
+		
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		Map<String, Object> returnData = null;
+		
+		DataBus db = InterfaceClient.callService(requstParamMap, PortalServiceCode.INTF_TERMDETAILSTATISTICSERVICE, optFlowNum, sessionStaff);
+		if (ResultCode.R_SUCC.equals(db.getResultCode())) {//接口调用成功
+			returnData = db.getReturnlmap();
+			if(returnData != null && ResultCode.R_SUCC.equals(returnData.get("resultCode"))){//返回数据成功
+				HashMap<String, Object> resultMap = (HashMap<String, Object>) returnData.get("result");
+				ArrayList<Map<String, Object>> returnStatisticInfoList = (ArrayList<Map<String, Object>>) resultMap.get("statisticsInfo");
+				returnMap.put("resultList", returnStatisticInfoList);
+				returnMap.put("code", "0");
+			} else{
+				returnMap.put("code", "1");
+				returnMap.put("message", MapUtils.getString(returnData, "resultMsg", "营销资源MktResInstInfoQryService/termStatisticService服务异常"));
+			}
+		} else {
+			returnMap.put("code", "1");
+			returnMap.put("message", MapUtils.getString(returnData, "resultMsg", "营销资源MktResInstInfoQryService/termDetailStatisticService服务异常"));
+		}
+		
+		return returnMap;
+	}
 }

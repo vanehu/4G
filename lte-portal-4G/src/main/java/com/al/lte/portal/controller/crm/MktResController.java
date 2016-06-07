@@ -53,6 +53,7 @@ import com.al.lte.portal.bmo.crm.CommonBmo;
 import com.al.lte.portal.bmo.crm.MktResBmo;
 import com.al.lte.portal.bmo.crm.OrderBmo;
 import com.al.lte.portal.bmo.staff.StaffBmo;
+import com.al.lte.portal.bmo.staff.StaffChannelBmo;
 import com.al.lte.portal.common.CommonMethods;
 import com.al.lte.portal.common.CommonUtils;
 import com.al.lte.portal.common.EhcacheUtil;
@@ -89,6 +90,10 @@ public class MktResController extends BaseController {
 	@Autowired
 	@Qualifier("com.al.lte.portal.bmo.crm.CommonBmo")
 	private CommonBmo commonBmo;
+	@Autowired
+	@Qualifier("com.al.lte.portal.bmo.staff.StaffChannelBmo")
+	private StaffChannelBmo staffChannelBmo;
+	
 	/**
 	 * 改号，跳转查询特面
 	 * @param model
@@ -2548,5 +2553,154 @@ public class MktResController extends BaseController {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+	}
+	
+	/**
+	 * 终端信息统计查询(精品渠道终端进销存汇总报表(实时数据))查询主页面
+	 * @param model
+	 * @param request
+	 * @param session
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	@RequestMapping(value = "/terminalStatisticQuery", method = {RequestMethod.GET})
+	public String terminalStatisticQuery(Model model,HttpServletRequest request,HttpSession session) {
+		
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);
+		Map<String, Object> qryParamMap = new HashMap<String, Object>();
+		String qryType = request.getParameter("qryType");
+		
+		//封装查询类型信息
+		model.addAttribute("qryType", qryType);	
+		if("0".equals(qryType)){
+			model.addAttribute("qryTypeName", "精品渠道进销存门店汇总报表");
+		}
+		
+		//封装渠道列表
+		try {
+			qryParamMap.put("staffId", sessionStaff.getStaffId());
+			qryParamMap.put("dbRouteLog", sessionStaff.getCurrentAreaId());
+			qryParamMap.put("relaType", "40");
+			Map<String, Object> resultMap = staffChannelBmo.queryAllChannelByStaffId(qryParamMap, null, sessionStaff);
+			if("0".equals(resultMap.get("code"))){
+				model.addAttribute("cahnnelList", (List<Map<String, Object>>) resultMap.get("resultList"));
+			} else{
+				return super.failedStr(model, ErrorCode.QUERY_CHANNEL, "终端信息统计接口返回数据异常", qryParamMap);
+			}
+		} catch (BusinessException be) {
+			return super.failedStr(model, be);
+		} catch (Exception e) {
+			return super.failedStr(model, ErrorCode.QUERY_CHANNEL, e, qryParamMap);
+		}
+				
+		return "/mktRes/terminal-statistic-query";
+	}
+	
+	/**
+	 * 终端信息统计查询(精品渠道终端进销存汇总报表(实时数据))
+	 * @param qryParam
+	 * @param model
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	@RequestMapping(value = "/terminalStatisticQueryList", method = {RequestMethod.POST})
+	public String terminalStatisticQueryList(@RequestBody Map<String, Object> qryParam, Model model) {
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);
+		Map<String, Object> resultMap = null;
+		try {
+			resultMap = mktResBmo.terminalStatisticQueryList(qryParam, null, sessionStaff);
+			if (resultMap != null && ResultCode.R_SUCC.equals(resultMap.get("code").toString())){		
+				PageModel<Map<String, Object>> pageModel = PageUtil.buildPageModel(
+						MapUtils.getIntValue(qryParam, "pageIndex", 1), 
+						MapUtils.getIntValue(qryParam,"pageSize",10), 
+						(ArrayList<Map<String, Object>>)resultMap.get("resultList"));
+	             model.addAttribute("pageModel", pageModel);
+			} else{
+				model.addAttribute("code", resultMap.get("code"));
+				model.addAttribute("message", resultMap.get("message"));
+			}
+		} catch (InterfaceException ie) {
+			return super.failedStr(model, ie, qryParam, ErrorCode.ECS_TERMSTATISIICSERVICE);
+		} catch (Exception e) {
+			return super.failedStr(model, ErrorCode.ECS_TERMSTATISIICSERVICE, e, qryParam);
+		}
+		
+		return "/mktRes/terminal-statistic-query-list";
+	}
+	
+	/**
+	 * 终端销售信息明细统计查询主页面
+	 * @param model
+	 * @param request
+	 * @param session
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	@RequestMapping(value = "/terminalStatisticDetailQuery", method = {RequestMethod.GET})
+	public String terminalStatisticDetailQuery(Model model,HttpServletRequest request,HttpSession session) {
+		
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);
+		Map<String, Object> qryParamMap = new HashMap<String, Object>();
+		String qryType = request.getParameter("qryType");
+		
+		//封装查询类型信息
+		model.addAttribute("qryType", qryType);	
+		if("0".equals(qryType)){
+			model.addAttribute("qryTypeName", "精品渠道终端进销存明细报表");
+		} else if("1".equals(qryType)){
+			model.addAttribute("qryTypeName", "精品渠道终端进销存(库存量)明细报表");
+		}
+		
+		//封装渠道信息
+		try {
+			qryParamMap.put("staffId", sessionStaff.getStaffId());
+			qryParamMap.put("dbRouteLog", sessionStaff.getCurrentAreaId());
+			qryParamMap.put("relaType", "40");
+			Map<String, Object> resultMap = staffChannelBmo.queryAllChannelByStaffId(qryParamMap, null, sessionStaff);
+			if("0".equals(resultMap.get("code"))){
+				model.addAttribute("cahnnelList", (List<Map<String, Object>>) resultMap.get("resultList"));
+			} else{
+				return super.failedStr(model, ErrorCode.QUERY_CHANNEL, "终端信息统计接口返回数据异常", qryParamMap);
+			}
+		} catch (BusinessException be) {
+			return super.failedStr(model, be);
+		} catch (Exception e) {
+			return super.failedStr(model, ErrorCode.QUERY_CHANNEL, e, qryParamMap);
+		}
+				
+		return "/mktRes/terminal-statistic-detail-query";
+	}
+	
+	/**
+	 * 终端销售信息明细统计查询: 精品渠道终端进销存明细报表(当日实时数据)和 精品渠道终端进销存(库存量)明细报表(当日实时数据)
+	 * @param qryParam
+	 * @param model
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	@RequestMapping(value = "/terminalStatisticDetailQueryList", method = {RequestMethod.POST})
+	public String terminalStatisticDetailQueryList(@RequestBody Map<String, Object> qryParam, Model model) {
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);
+		Map<String, Object> resultMap = null;		
+		try {
+			resultMap = mktResBmo.terminalStatisticDetailQueryList(qryParam, null, sessionStaff);
+			if (resultMap != null && ResultCode.R_SUCC.equals(resultMap.get("code").toString())){		
+				PageModel<Map<String, Object>> pageModel = PageUtil.buildPageModel(
+						MapUtils.getIntValue(qryParam, "pageIndex", 1), 
+						MapUtils.getIntValue(qryParam,"pageSize",10), 
+						(ArrayList<Map<String, Object>>)resultMap.get("resultList"));
+	             model.addAttribute("pageModel", pageModel);
+	             model.addAttribute("qryType", qryParam.get("qryType"));
+			} else{
+				model.addAttribute("code", resultMap.get("code"));
+				model.addAttribute("message", resultMap.get("message"));
+			}
+		} catch (InterfaceException ie) {
+			return super.failedStr(model, ie, qryParam, ErrorCode.ECS_TERMDETAILSTATISTICSERVICE);
+		} catch (Exception e) {
+			return super.failedStr(model, ErrorCode.ECS_TERMDETAILSTATISTICSERVICE, e, qryParam);
+		}
+		
+		return "/mktRes/terminal-statistic-detail-query-list";
 	}
 }

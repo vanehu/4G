@@ -1,0 +1,59 @@
+<#if (pageModel.list)?? &&((pageModel.list)?size>0)>
+<div class="phone_warp">
+	<table class="numberList">
+		<thead>
+			<#if qryTypeName == "0"> <!-- 精品渠道终端进销存明细报表 -->
+				<tr>
+					<td width="">品牌</td>
+					<td>机型颜色</td>
+					<td>串码</td>
+					<td>操作</td>
+					<td>操作时间</td>
+					<td>操作工号</td>
+				</tr>
+			<#else> <!-- 精品渠道终端进销存(库存量)明细报表 -->
+				<tr>
+					<td width="">品牌</td>
+					<td>机型颜色</td>
+					<td>串码</td>
+					<td>入库时间</td>
+					<td>是否注册激活</td>
+				</tr>
+			</#if>
+		</thead>
+		<tbody>
+			<#list pageModel.list as childList>
+			   	<#if qryTypeName == "0"> <!-- 精品渠道终端进销存明细报表 -->
+					<tr>
+					    <td>${childList.brand}</td>		<!-- 品牌 -->
+						<td>${childList.desc}</td>		<!-- 机型颜色 -->
+						<td>${childList.instCode}</td>	<!-- 串码 -->
+						<td>${childList.dealType}</td>	<!-- 操作 -->
+						<td>${childList.dealTime}</td>	<!-- 操作时间 -->
+						<td>${childList.staffCode}</td>	<!-- 操作工号 -->
+				   	</tr>
+				<#else> <!-- 精品渠道终端进销存(库存量)明细报表 -->
+					<tr>
+					    <td>${childList.brand}</td>		<!-- 品牌 -->
+						<td>${childList.desc}</td>		<!-- 机型颜色 -->
+						<td>${childList.instCode}</td>	<!-- 串码 -->
+						<td>${childList.dealType}</td>	<!-- 入库时间 -->
+						<td>${childList.isSelfRegister}</td>	<!-- 是否注册激活 -->
+				   	</tr>
+				</#if>
+		   	</#list>
+		</tbody>
+	</table>
+	
+	<!--页码-->
+	<@portal.terminalModelPagination pageModel 5 "mktRes.terminal.terminalStatisticDetailQuery"/>
+	<!--页码 end-->
+	<script src="${contextPath}/js/our-js/ec.pagination.js?${jsversion}" type="text/javascript"></script>
+</div>
+<#else>
+	<div class="no_search"> 
+		<div class="h1">
+			<img style="vertical-align:middle" src="${contextPath}/image/common/query_search.gif" />&nbsp;&nbsp;抱歉，没有找到相关的记录，请尝试其他筛选条件。
+		</div>
+	</div>
+</#if>

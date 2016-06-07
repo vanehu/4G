@@ -1,0 +1,97 @@
+<#if (pageModel.list)?? &&((pageModel.list)?size>0)>
+<div class="phone_warp">
+	<table class="numberList reportform" id="" >
+		<thead>
+			<tr>
+				<td colspan="2">机 型</td>
+				<td colspan="2">进货量</td>
+				<td colspan="3">核销量</td>
+				<td colspan="3">库存量</td>
+			</tr>
+				<tr>
+					<td width="">品牌</td>
+					<td>机型颜色</td>
+					<td>领用量</td>
+					<td>退回量</td>
+					<td>合约</td>
+					<td>裸机</td>
+					<td>合计</td>
+					<td>库存量</td>
+					<td>超期库存量</td>
+					<td>自注册激活量</td>
+				</tr>
+		</thead>
+		<tbody>
+			<#list pageModel.list as childList>
+			    <tr>
+				    <td>${childList.brand}</td>		<!-- 品牌 -->
+					<td>${childList.desc}</td>		<!-- 机型颜色 -->
+					<td>${childList.lyQty}</td>		<!-- 领用量 -->
+					<td>${childList.htQty}</td>		<!-- 退回量 -->
+					<td>${childList.hyxsQty}</td>	<!-- 合约 -->
+					<td>${childList.ljxsQty}</td>	<!-- 裸机 -->
+					<td>${childList.xsQty}</td>		<!-- 合计 -->
+					<td>${childList.kcQty}</td>		<!-- 库存量 -->
+					<td>${childList.cqkcQty}</td>	<!-- 超期库存量 -->
+					<td>${childList.zzcQty}</td>	<!-- 自注册激活量 -->
+			   	</tr>
+		   	</#list>
+		</tbody>
+	</table>
+	
+	<!--页码-->
+	<!-- <@portal.terminalModelPagination pageModel 5 "mktRes.terminal.terminalStatisticQuery"/> -->
+	<!--页码 end-->
+	<script src="${contextPath}/js/our-js/ec.pagination.js?${jsversion}" type="text/javascript"></script>
+	
+<!-- 
+	<table class="numberList" id="tab_orderList" >
+		<thead>
+			<tr>
+		        <td width="80">终端名称</td>
+		        <td width="130">终端类型</td>
+		        <td width="80">是否支持4G卡</td>
+		        <td width="80">是否支持NFC</td>
+			</tr>
+		</thead>
+                            <#list pageModel.list as mkt>
+                            <#assign isSupport4G = 1>
+                            <#assign isSupportNFC = 2>
+				<#if (mkt.attrList)??>
+					<#list mkt.attrList as attrList>
+						<#if (attrList.attrId)?? && (attrList.attrId) =='60010023'>
+							<#assign isSupport4G = attrList.attrValue>
+						</#if>
+						<#if (attrList.attrId)?? && (attrList.attrId) =='60010024'>
+							<#assign isSupportNFC = attrList.attrValue>
+						</#if>
+					</#list>
+				</#if>
+				<tbody>
+                 <tr>
+                 <td width="80">${mkt.mktResName}</td>
+                  <td width="130">${mkt.termType}</td>
+                  <#if isSupport4G =='2'>
+                  <td width="80">不兼容4G卡</td>
+                  <#else>
+                  <td width="80">兼容4G卡</td>
+                  </#if>
+                  <#if isSupportNFC =='1'>
+                  <td width="80">支持NFC</td>
+                  <#else>
+                  <td width="80">不支持NFC</td>
+                  </#if>
+               	 </tr> 
+              </tbody>
+			  </#list>
+             </table>
+ -->
+
+</div>
+<#else>
+	<div class="no_search"> 
+		<div class="h1">
+			<img style="vertical-align:middle" src="${contextPath}/image/common/query_search.gif" />&nbsp;&nbsp;抱歉，没有找到相关的记录，请尝试其他筛选条件。
+		</div>
+	</div>
+</#if>

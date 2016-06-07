@@ -1,6 +1,7 @@
 package com.al.lte.portal.bmo.staff;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 import com.al.ecs.exception.BusinessException;
@@ -36,5 +37,16 @@ public interface StaffChannelBmo {
 	 */
 	public Map<String, Object> qryChannelListByCond(Map dataBusMap, String optFlowNum, SessionStaff sessionStaff) throws InterfaceException, IOException, Exception;
 	
+	/**
+	 * 根据staffId向渠道查询：受理渠道、归属渠道、归属渠道的店中商渠道
+	 * @param qryParamMap
+	 * @param optFlowNum
+	 * @param sessionStaff
+	 * @return
+	 * @throws Exception 
+	 * @throws IOException 
+	 * @throws InterfaceException 
+	 */
+	public Map<String,Object> queryAllChannelByStaffId(Map<String,Object> qryParamMap, String optFlowNum, SessionStaff sessionStaff) throws BusinessException, InterfaceException, IOException, Exception;
 	
 }

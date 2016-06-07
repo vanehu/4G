@@ -405,4 +405,24 @@ public interface MktResBmo {
 	public Map<String, Object> checkTerminalCodeForAgent(Map<String, Object> map, String optFlowNum,SessionStaff sessionStaff) throws Exception ;
 	
 	public Map<String, Object> checkTermCompVal(Map<String, Object> map, String optFlowNum,SessionStaff sessionStaff) throws Exception ;
+	
+	/**
+	 * 终端信息统计查询(精品渠道终端进销存汇总报表(实时数据))
+	 * @param requstParamMap
+	 * @param optFlowNum
+	 * @param sessionStaff
+	 * @return
+	 * @throws Exception
+	 */
+	public Map<String, Object> terminalStatisticQueryList(Map<String, Object> requstParamMap, String optFlowNum, SessionStaff sessionStaff) throws InterfaceException, Exception;
+	
+	/**
+	 * 终端销售信息明细统计查询: 精品渠道终端进销存明细报表(当日实时数据)和 精品渠道终端进销存(库存量)明细报表(当日实时数据)
+	 * @param requstParamMap
+	 * @param optFlowNum
+	 * @param sessionStaff
+	 * @return
+	 * @throws Exception
+	 */
+	public Map<String, Object> terminalStatisticDetailQueryList(Map<String, Object> requstParamMap, String optFlowNum, SessionStaff sessionStaff) throws  InterfaceException, IOException, Exception;
  }

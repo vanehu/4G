@@ -1031,5 +1031,13 @@ public final class PortalServiceCode {
     public static final String CHECK_BYAREAID = "sys-checkByAreaId";
 	/** 账户和使用人信息查询服务 */
 	public static final String QUERY_ACCOUNT_USE_CUSTINFO = "biz-service/intf.pullingDataService/queryAccountAndUseCustInfo";
+	
+	 /**终端信息统计*/
+    public static final String INTF_TERMSTATISIICSERVICE="res-MktResInstInfoQryService/termStatisticService";
+    /**终端销售信息明细统计查询*/
+    public static final String INTF_TERMDETAILSTATISTICSERVICE="res-MktResInstInfoQryService/termDetailStatisticService";
+    
+    /**员工关联渠道查询：受理渠道、归属渠道、归属渠道的店中商渠道*/
+    public static final String INTF_QUERYALLCHANNELBYSTAFFID = "chan-service/interact/synStaffBean/qryChannelByStaff";
 }
 

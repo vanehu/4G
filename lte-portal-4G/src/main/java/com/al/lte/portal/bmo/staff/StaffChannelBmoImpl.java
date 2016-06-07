@@ -200,6 +200,46 @@ public class StaffChannelBmoImpl implements StaffChannelBmo {
 			resultMap.put("msg", "渠道查询接口调用失败 !");
 		}
 		
-		return resultMap ;
+		return resultMap;
+	}
+	
+	/**
+	 * 根据staffId向渠道查询：受理渠道、归属渠道、归属渠道的店中商渠道
+	 * @param qryParamMap
+	 * @param optFlowNum
+	 * @param sessionStaff
+	 * @return
+	 * @throws Exception 
+	 * @throws IOException 
+	 * @throws InterfaceException
+	 * @author ZhangYu 2016-06-02
+	 */
+	@SuppressWarnings("unchecked")
+	public Map<String, Object> queryAllChannelByStaffId(Map<String, Object> qryParamMap, String optFlowNum, SessionStaff sessionStaff) throws BusinessException, InterfaceException, IOException, Exception{
+		
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		Map<String, Object> resultData = null;
+		
+		DataBus db = InterfaceClient.callService(qryParamMap, PortalServiceCode.INTF_QUERYALLCHANNELBYSTAFFID, optFlowNum, sessionStaff);
+		if (ResultCode.R_SUCC.equals(db.getResultCode())) {//接口调用成功
+			resultData = db.getReturnlmap();
+			if(resultData != null && ResultCode.R_SUCC.equals(resultData.get("resultCode"))){//返回数据成功
+				Map<String, Object> resultMap = (Map<String, Object>) resultData.get("result");
+				if(resultMap != null && resultMap.get("rangeChannels") instanceof List){
+					returnMap.put("code", "0");
+					returnMap.put("resultList", (ArrayList<Map<String, Object>>) resultMap.get("rangeChannels"));
+				} else{
+					throw new BusinessException(ErrorCode.QUERY_CHANNEL, qryParamMap, resultData, new Exception("回参rangeChannels非List类型"));
+				}
+			} else{
+				returnMap.put("code", "1");
+				returnMap.put("message", MapUtils.getString(resultData, "resultMsg", "集团渠道channelService/service/interact/synStaffBean/qryChannelByStaff服务异常"));
+			}
+		} else {
+			returnMap.put("code", "1");
+			returnMap.put("message", MapUtils.getString(resultData, "errorStack", "集团渠道channelService/service/interact/synStaffBean/qryChannelByStaff服务异常"));
+		}
+		
+		return returnMap;
 	}
 }

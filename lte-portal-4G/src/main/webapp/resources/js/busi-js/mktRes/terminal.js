@@ -1698,22 +1698,113 @@ mktRes.terminal = (function($){
 		};
 	};
 	
+	/**
+	 * 终端信息统计查询(精品渠道终端进销存汇总报表(实时数据))查询
+	 */
+	var _terminalStatisticQuery = function(pageIndex) {
+		var param = {
+			"channelCode" 	: $('#channelInfo').find('option:selected').attr('channelCode'),
+			"channelName" 	: $('#channelInfo').find('option:selected').attr('channelName'),
+			"channelId" 	: $("#channelInfo").val()
+		};
+
+		var keysArray = new Array("channelCode", "channelName", "channelId");
+		if (this.checkParam(param, keysArray)) {
+			var url = contextPath + "/mktRes/terminalStatisticQueryList";
+			$.callServiceAsHtml(url, param, {
+				"before" : function() {
+					$.ecOverlay("<strong>正在查询中,请稍等会儿....</strong>");
+				},
+				"always" : function() {
+					$.unecOverlay();
+				},
+				"done" : function(response) {
+					if (!response || response.code != 0) {
+						response.data = '查询失败,稍后重试';
+					}
+					$("#terminalStatisticList").html(response.data);
+				},
+				fail : function(response) {
+					$.unecOverlay();
+					$.alert("提示", "请求可能发生异常，请稍后再试！");
+				}
+			});
+		}
+	};
+	
+	/**
+	 * 终端销售信息明细统计查询: 精品渠道终端进销存明细报表(当日实时数据)和 精品渠道终端进销存(库存量)明细报表(当日实时数据)
+	 */
+	var _terminalStatisticDetailQuery = function(pageIndex) {
+		var param = {
+			"channelCode"	: $('#channelInfo').find('option:selected').attr('channelCode'),
+			"channelName"	: $('#channelInfo').find('option:selected').attr('channelName'),
+			"channelId" 	: $("#channelInfo").val(),
+			"qryType" 		: $("#qryType").val(),
+			"pageIndex" 	: pageIndex,
+			"pageSize" 		: 10
+		};
+
+		var keysArray = new Array("channelCode", "channelName", "channelId", "qryType");
+		if (this.checkParam(param, keysArray)) {
+			var url = contextPath + "/mktRes/terminalStatisticDetailQueryList";
+			$.callServiceAsHtml(url, param, {
+				"before" : function() {
+					$.ecOverlay("<strong>正在查询中,请稍等会儿....</strong>");
+				},
+				"always" : function() {
+					$.unecOverlay();
+				},
+				"done" : function(response) {
+					if (!response || response.code != 0) {
+						response.data = '查询失败,稍后重试';
+					}
+					$("#terminalStatisticDetailList").html(response.data);
+				},
+				fail : function(response) {
+					$.unecOverlay();
+					$.alert("提示", "请求可能发生异常，请稍后再试！");
+				}
+			});
+		}
+	};
+	
+	/**
+	 * 校验入参中的某些参数是否为空
+	 * param为入参
+	 * keys不可为空必须进行校验的参数，以数组传入
+	 * 校验出错返回false，校验成功返回true
+	 */
+	var _checkParam = function(param, keys){
+		for(var index in keys){
+			var paramValue = param[keys[index]];
+			if(paramValue == null || paramValue == "" || paramValue == undefined){
+				$.alert("提示", keys[index] + "为空，无法继续受理，请尝试刷新页面或重新登录");
+				return false;
+			}
+		}
+		return true;
+	};
+	
 	return {
-		btnQueryTerminal:_btnQueryTerminal,
-		initInParam:_initInParam,
-		queryApConfig:_queryApConfig,
-		selectTerminal:_selectTerminal,
-		setNumber:_setNumber,
-		offerSpecId:_offerSpecId,
-		selectColor:_selectColor,
-		queryTerminalInfo:_queryTerminalInfo,
-		selectTerminalzdyy : _selectTerminalzdyy,
-		removeTerminal : _removeTerminal,
-		yyTypeChoose : _yyTypeChoose,
-		jumpBtnQueryTerminal : _jumpBtnQueryTerminal,
-		newnum:_newnum,
-		oldnum:_oldnum,
-		btnQueryTerminal : _btnQueryTerminal
+		btnQueryTerminal	:_btnQueryTerminal,
+		initInParam			:_initInParam,
+		queryApConfig		:_queryApConfig,
+		selectTerminal		:_selectTerminal,
+		setNumber			:_setNumber,
+		offerSpecId			:_offerSpecId,
+		selectColor			:_selectColor,
+		queryTerminalInfo	:_queryTerminalInfo,
+		selectTerminalzdyy	:_selectTerminalzdyy,
+		removeTerminal 		:_removeTerminal,
+		yyTypeChoose 		:_yyTypeChoose,
+		jumpBtnQueryTerminal:_jumpBtnQueryTerminal,
+		newnum				:_newnum,
+		oldnum				:_oldnum,
+		btnQueryTerminal 	:_btnQueryTerminal,
+		checkParam			:_checkParam,
+		terminalStatisticQuery		:_terminalStatisticQuery,
+		terminalStatisticDetailQuery:_terminalStatisticDetailQuery
 	};
 })(jQuery);
 
