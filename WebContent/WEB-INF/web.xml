@@ -97,4 +97,14 @@
     <servlet-name>ModePADServlet</servlet-name>
     <url-pattern>/mode/pad</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>PubPortalServlet</display-name>
+    <servlet-name>PubPortalServlet</servlet-name>
+    <servlet-class>com.al.lte.portal.servlet.PubPortalServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>PubPortalServlet</servlet-name>
+    <url-pattern>/pubPortal/*</url-pattern>
+  </servlet-mapping>
 </web-app>
