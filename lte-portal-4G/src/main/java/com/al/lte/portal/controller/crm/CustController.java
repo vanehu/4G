@@ -406,7 +406,7 @@ public class CustController extends BaseController {
 		auParam.put("soNbr", soNbr);
 		auParam.put("type", "2");
 		Map<String, Object> auMap = new HashMap<String, Object>();
-		if (SysConstant.ON == propertiesUtils.getMessage("GOV_" + areaId.substring(0, 3))) {
+		if (SysConstant.ON.equals(propertiesUtils.getMessage("GOV_" + areaId.substring(0, 3)))) {
 			auMap = custBmo.queryAccountAndUseCustInfo(auParam, flowNum, sessionStaff);
 		}
 		if (MapUtils.isNotEmpty(auMap)) {

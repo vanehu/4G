@@ -822,6 +822,10 @@ order.cust = (function(){
 			}
 
 			if (govSwitch == "ON" && isGovCust) {
+				if(!ec.util.isObj(_choosedCustInfo.userCustId)){
+					$.alert("提示","返回的使用人信息为空，请补全信息！");
+					return;
+				}
 				//政企客户隐藏个人证件鉴权方式【2】
 				$("#auth3").find("#auth_tab2").hide();
 				$("#auth3").find("#content2").hide();
