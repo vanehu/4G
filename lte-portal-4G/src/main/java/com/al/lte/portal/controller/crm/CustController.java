@@ -405,7 +405,10 @@ public class CustController extends BaseController {
 		auParam.put("queryType", "1,2,3,4,5");
 		auParam.put("soNbr", soNbr);
 		auParam.put("type", "2");
-		Map<String, Object> auMap = custBmo.queryAccountAndUseCustInfo(auParam, flowNum, sessionStaff);
+		Map<String, Object> auMap = new HashMap<String, Object>();
+		if (SysConstant.ON == propertiesUtils.getMessage("GOV_" + areaId.substring(0, 3))) {
+			auMap = custBmo.queryAccountAndUseCustInfo(auParam, flowNum, sessionStaff);
+		}
 		if (MapUtils.isNotEmpty(auMap)) {
 			Map<String, Object> aMap = MapUtils.getMap(auMap, "account");
 			Map<String, Object> iMap = MapUtils.getMap(auMap, "identity");
