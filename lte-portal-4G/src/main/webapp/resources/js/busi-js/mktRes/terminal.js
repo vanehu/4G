@@ -1776,14 +1776,17 @@ mktRes.terminal = (function($){
 	 * 校验出错返回false，校验成功返回true
 	 */
 	var _checkParam = function(param, keys){
+		var isNoErr = true;
 		for(var index in keys){
 			var paramValue = param[keys[index]];
 			if(paramValue == null || paramValue == "" || paramValue == undefined){
 				$.alert("提示", keys[index] + "为空，无法继续受理，请尝试刷新页面或重新登录");
-				return false;
+				isNoErr = false;
+				break;
 			}
 		}
-		return true;
+		
+		return isNoErr;
 	};
 	
 	return {

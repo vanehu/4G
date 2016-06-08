@@ -38,7 +38,14 @@
 					    <td>${childList.brand}</td>		<!-- 品牌 -->
 						<td>${childList.desc}</td>		<!-- 机型颜色 -->
 						<td>${childList.instCode}</td>	<!-- 串码 -->
-						<td>${childList.dealType}</td>	<!-- 操作 -->
+						<td>							<!-- 操作 -->
+							<#if childList.dealType == "0">领用
+				     	 	<#elseif childList.dealType == "1">回退
+				     	 	<#elseif childList.dealType == "2">裸机销售
+				     	 	<#elseif childList.dealType == "3">合约销售
+				     	 	<#else>未知状态
+				     	 	</#if>
+						</td>
 						<td>${childList.dealTime}</td>	<!-- 操作时间 -->
 						<td>${childList.staffCode}</td>	<!-- 操作工号 -->
 				   	</tr>
@@ -48,7 +55,12 @@
 						<td>${childList.desc}</td>			<!-- 机型颜色 -->
 						<td>${childList.instCode}</td>		<!-- 串码 -->
 						<td>${childList.dealType}</td>		<!-- 入库时间 -->
-						<td>${childList.isSelfRegister}</td><!-- 是否注册激活 -->
+						<td>								<!-- 是否注册激活 -->
+							<#if childList.isSelfRegister == "0">否
+				     	 	<#elseif childList.isSelfRegister == "1">是
+				     	 	<#else>未知状态
+				     	 	</#if>
+						</td>
 				   	</tr>
 				</#if>
 		   	</#list>
