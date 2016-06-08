@@ -107,7 +107,7 @@ SoOrder = (function() {
 		try {
 			_getCheckOperatSpec();
 			if(_getOrderInfo(data)){
-				console.log(JSON.stringify(data));
+				
 				//订单提交
 				var url = contextPath+"/order/orderSubmit";
 				if(OrderInfo.order.token!=""){
@@ -200,7 +200,7 @@ SoOrder = (function() {
 							}
 						} catch (e) {
 							try {
-				    			console.log(e);
+				    			
 					    	} catch (e2) {
 					    	}
 						}
@@ -535,7 +535,7 @@ SoOrder = (function() {
 		}else{
 			OrderInfo.orderData.orderList.orderListInfo.olTypeCd = CONST.OL_TYPE_CD.FOUR_G;
 		}
-		console.log(OrderInfo.orderData);
+	
 		return true;
 	};
 	
