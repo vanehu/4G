@@ -230,6 +230,13 @@ public class OrderController extends BaseController {
 		.getSessionAttribute(super.getRequest(),
 				SysConstant.SESSION_KEY_LOGIN_STAFF);
 		String channelCode =sessionStaff.getCurrentChannelCode();
+		Map<String, Object> custSessionMap =  (Map<String, Object>) session.getAttribute("custMp");
+    	//判断是否已经完成客户定位 是Y 否N
+		if(custSessionMap!=null){
+			model.addAttribute("haveCust", "Y");
+		}else{
+			model.addAttribute("haveCust", "N");
+		}
 		model.addAttribute("channelCode", channelCode);
 		model.addAttribute("actionFlag",1);
 		model.addAttribute("currentCT", sessionStaff.getCurrentChannelType());

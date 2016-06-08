@@ -1040,9 +1040,16 @@ public class MktResController extends BaseController {
     @SuppressWarnings("unchecked")
     @RequestMapping(value = "/terminal/detail", method = RequestMethod.POST)
     public String terminalDetail(@RequestBody Map<String, Object> param, Model model, @LogOperatorAnn String flowNum,
-            HttpServletResponse response) {
+            HttpServletResponse response,HttpSession session) {
         SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
                 SysConstant.SESSION_KEY_LOGIN_STAFF);
+        Map<String, Object> custSessionMap =  (Map<String, Object>) session.getAttribute("custMp");
+    	//判断是否已经完成客户定位 是Y 否N
+		if(custSessionMap!=null){
+			model.addAttribute("haveCust", "Y");
+		}else{
+			model.addAttribute("haveCust", "N");
+		}
         if (param.get("is4G") != null) {
             Map<String, Object> paramTemp = new HashMap<String, Object>();
             if (param.get("mktSpecCode") != null) {

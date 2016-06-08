@@ -25,6 +25,7 @@
 	<form class="form-list">
 		<input id="diffPlaceFlag" type="hidden" value="local">
 		<input id="defaultAreaName" type="hidden" value="">
+		<input id="haveCust" type="hidden" value="${haveCust}">
 		
 		<div class="form-group" id="div-readcmcustidcard">
 			<div style="display:inline;"><label for="username">证件扫描</label></div>
@@ -165,6 +166,10 @@
 			$(".input-group-btn").hide();
 			$("#isAppointNum").parents(".form-group").hide();
 			$("#div-readcmcustidcard").hide();
+		}
+		//如果已经定位了客户，展示客户列表页
+		if($("#haveCust").val()=="Y"){
+			cust.getSessionCust();
 		}
 		function init() {
 			// Select demo initialization

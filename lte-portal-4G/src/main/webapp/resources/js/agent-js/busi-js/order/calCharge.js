@@ -737,6 +737,21 @@ order.calcharge = (function(){
 		var response=$.callServiceAsJson(url, params, {});
 		var msg="";
 		if (response.code == 0) {
+			//删除session中的客户缓存信息
+			var param={
+			};
+			$.callServiceAsJson(contextPath+"/agent/cust/removeCustSession",param,{
+				"before":function(){
+	//				$.ecOverlay("<strong>正在查询中,请稍等...</strong>");
+				},"done" : function(res){
+	//				$.unecOverlay();
+				},fail:function(res){
+	//				$.unecOverlay();
+					$.alert("提示","查询失败，请稍后再试！");
+				},"always":function(){
+					$.unecOverlay();
+				}
+			});
 			//受理成功  受理完成按钮亮色
 			$("#slwc").css("color","#FC9C08");
 			submit_success=true;

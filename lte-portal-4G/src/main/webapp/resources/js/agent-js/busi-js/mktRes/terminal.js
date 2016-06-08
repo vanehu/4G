@@ -498,8 +498,22 @@ mktRes.terminal = (function($){
 	};
 	
 	var _newCClick=function(obj){
-		$("#newc").show();
-		$("#oldc").hide();
+		if($(obj).attr("id") == "gouhyj" && $("#newc").css("display") == "none"){
+			$.confirm("确认","确定要新建客户吗？",{
+					yes:function(){
+						cust.custReset();
+						$("#newc").show();
+						$("#oldc").hide();
+						return;
+					},no:function(){
+						$("#laokhdw").addClass("active");
+						$(obj).removeClass("active");
+					return;
+				}},"question");
+		}else{
+			$("#newc").show();
+			$("#oldc").hide();
+		}
 	};
 	var _oldCClick=function(obj){
 		$("#newc").hide();

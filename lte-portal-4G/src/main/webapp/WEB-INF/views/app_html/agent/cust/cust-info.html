@@ -1,7 +1,16 @@
 <#if error??>
 ${error}
 <#elseif custAuth.isValidate=="true" >
-
+<nav class="navbar navbar-default navbar-fixed-top">
+	<div class="container-fluid">
+		<div class="navbar-header">
+			<a id="query-cust-back-btn" class="navbar-brand" onclick="common.callReturnBack();"><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>返回</a>
+			<h4 class="header-title" onclick="cust.custReset();">重新定位</h4>
+		</div>
+		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+		</div>
+	</div>
+</nav>
 <div class="container-fluid form-list">
 	<ul class="list-group">
 		<li href="#" class="list-group-item">

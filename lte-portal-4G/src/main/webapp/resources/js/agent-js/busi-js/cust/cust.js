@@ -1370,7 +1370,7 @@ cust = (function(){
 		}
 		
 		// 改变返回按钮事件
-		$("#query-cust-back-btn").attr("onclick", "cust.custReset()");
+//		$("#query-cust-back-btn").attr("onclick", "cust.custReset()");
 		_queryCustNext();
 		
 		
@@ -1726,6 +1726,21 @@ cust = (function(){
 		OrderInfo.boCusts.partyProductRelaRoleCd="0";
 		OrderInfo.boCusts.state="ADD";
 		OrderInfo.cust = "";
+		//删除session中的客户缓存信息
+		var param={
+		};
+		$.callServiceAsJson(contextPath+"/agent/cust/removeCustSession",param,{
+			"before":function(){
+//				$.ecOverlay("<strong>正在查询中,请稍等...</strong>");
+			},"done" : function(response){
+//				$.unecOverlay();
+			},fail:function(response){
+//				$.unecOverlay();
+				$.alert("提示","查询失败，请稍后再试！");
+			},"always":function(){
+				$.unecOverlay();
+			}
+		});
 	};
 	// 查询卡类型
 	var _queryCardType = function(_prodId, _areaId, _acctNbr) {
@@ -2124,6 +2139,26 @@ cust = (function(){
 		return true;
 	};
 	
+	var _getSessionCust = function(){
+		var param={
+		};
+		$.callServiceAsHtml(contextPath+"/agent/cust/showCustList",param,{
+			"before":function(){
+				$.ecOverlay("<strong>正在查询中,请稍等...</strong>");
+			},"done" : function(response){
+				$.unecOverlay();
+				if (response.code == -2) {
+					return;
+				}
+				_queryCallBack(response);
+			},fail:function(response){
+				$.unecOverlay();
+				$.alert("提示","查询失败，请稍后再试！");
+			},"always":function(){
+				$.unecOverlay();
+			}
+		});
+	}
 	
 	return {
 		jbridentidiesTypeCdChoose 	: 		_jbridentidiesTypeCdChoose,
@@ -2170,6 +2205,7 @@ cust = (function(){
 		saveAuthRecordFail          :       _saveAuthRecordFail,
 		getreadCertBtnID            :       _getreadCertBtnID,
 		changeTab					:		_changeTab,
-		isSelfChannel				:		_isSelfChannel
+		isSelfChannel				:		_isSelfChannel,
+		getSessionCust				:		_getSessionCust
 	};	
 })();
