@@ -1429,8 +1429,8 @@ order.main = (function(){
 		if($('#'+itemId).length > 0){
 			var isOptional = true;
 			if(OrderInfo.cust && OrderInfo.cust.custId && OrderInfo.cust.custId != '-1'){ //老客户
-				if(true){
-				//if(_isCustomers(OrderInfo.cust.identityCd)){ //政企客户
+				
+				if(_isCustomers(OrderInfo.cust.identityCd)){ //政企客户
 					isOptional = false;
 				}
 			} else { //新建客户
