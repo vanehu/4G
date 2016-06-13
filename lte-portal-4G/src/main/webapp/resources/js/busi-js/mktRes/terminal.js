@@ -1709,7 +1709,7 @@ mktRes.terminal = (function($){
 		};
 
 		var keysArray = new Array("channelCode", "channelName", "channelId");
-		if (this.checkParam(param, keysArray)) {
+		if (_checkParam(param, keysArray)) {
 			var url = contextPath + "/mktRes/terminalStatisticQueryList";
 			$.callServiceAsHtml(url, param, {
 				"before" : function() {
@@ -1736,6 +1736,9 @@ mktRes.terminal = (function($){
 	 * 终端销售信息明细统计查询: 精品渠道终端进销存明细报表(当日实时数据)和 精品渠道终端进销存(库存量)明细报表(当日实时数据)
 	 */
 	var _terminalStatisticDetailQuery = function(pageIndex) {
+		if(Object.prototype.toString.call(pageIndex) == "[object String]"){
+			pageIndex = parseInt(pageIndex);
+		}
 		var param = {
 			"channelCode"	: $('#channelInfo').find('option:selected').attr('channelCode'),
 			"channelName"	: $('#channelInfo').find('option:selected').attr('channelName'),
@@ -1746,7 +1749,7 @@ mktRes.terminal = (function($){
 		};
 
 		var keysArray = new Array("channelCode", "channelName", "channelId", "qryType");
-		if (this.checkParam(param, keysArray)) {
+		if (_checkParam(param, keysArray)) {
 			var url = contextPath + "/mktRes/terminalStatisticDetailQueryList";
 			$.callServiceAsHtml(url, param, {
 				"before" : function() {
@@ -1805,7 +1808,6 @@ mktRes.terminal = (function($){
 		newnum				:_newnum,
 		oldnum				:_oldnum,
 		btnQueryTerminal 	:_btnQueryTerminal,
-		checkParam			:_checkParam,
 		terminalStatisticQuery		:_terminalStatisticQuery,
 		terminalStatisticDetailQuery:_terminalStatisticDetailQuery
 	};
