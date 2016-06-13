@@ -17,17 +17,21 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.al.ec.serviceplatform.client.ResultCode;
+import com.al.ecs.common.entity.JsonResponse;
 import com.al.ecs.common.web.ServletUtils;
 import com.al.ecs.exception.BusinessException;
 import com.al.ecs.exception.ErrorCode;
 import com.al.ecs.exception.InterfaceException;
+import com.al.ecs.exception.ResultConstant;
 import com.al.ecs.spring.annotation.log.LogOperatorAnn;
 import com.al.ecs.spring.annotation.session.AuthorityValid;
 import com.al.ecs.spring.controller.BaseController;
 import com.al.lte.portal.bmo.crm.CommonBmo;
 import com.al.lte.portal.bmo.crm.CustBmo;
+import com.al.lte.portal.bmo.crm.OrderBmo;
 import com.al.lte.portal.bmo.staff.StaffBmo;
 import com.al.lte.portal.common.CommonMethods;
 import com.al.lte.portal.common.Const;
@@ -58,6 +62,11 @@ public class OrderProdModifyController extends BaseController {
 	@Autowired
 	@Qualifier("com.al.lte.portal.bmo.crm.CommonBmo")
 	private CommonBmo commonBmo;
+	
+	@Autowired
+	@Qualifier("com.al.lte.portal.bmo.crm.OrderBmo")
+	private OrderBmo orderBmo;
+
 
 	
 	@RequestMapping(value = "/toCheckUimUI", method = {RequestMethod.POST})
@@ -176,4 +185,46 @@ public class OrderProdModifyController extends BaseController {
 
 		return "/agent/order/cust-activie-return";
 	}
+	
+	/**
+     * 账户查询
+     * @param param
+     * @param model
+     * @param optFlowNum
+     * @param response
+     * @return
+     */
+    @RequestMapping(value = "/queryAccountInfo", method = RequestMethod.POST)
+	@ResponseBody
+	public JsonResponse queryAccountInfo(@RequestBody Map<String, Object> param, Model model,
+			@LogOperatorAnn String optFlowNum, HttpServletResponse response) {
+
+    	SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+						SysConstant.SESSION_KEY_LOGIN_STAFF);
+		JsonResponse jsonResponse = null;
+	    Map<String, Object>  map=null;
+	    // 拼接入参
+	 		Map<String, Object> paramMap = new HashMap<String, Object>();
+	 		paramMap.put("prodId", param.get("prodId"));
+	 		paramMap.put("acctNbr", param.get("acctNbr"));
+	 		paramMap.put("areaId", param.get("areaId"));
+        try {
+        	map = this.orderBmo.queryProdAcctInfo(paramMap, optFlowNum, sessionStaff);
+			String resultCode = MapUtils.getString(map, "resultCode");
+			if (ResultCode.R_SUCC.equals(resultCode)){
+				jsonResponse = super.successed(map,ResultConstant.SUCCESS.getCode());
+			}else{
+				jsonResponse = super.failed(map,ResultConstant.FAILD.getCode());
+			}
+        }catch (BusinessException be) {
+        	return super.failed(be);
+        } catch (InterfaceException ie) {
+        	return super.failed(ie, paramMap, ErrorCode.QUERY_ACCT);
+		} catch (Exception e) {
+			return super.failed(ErrorCode.QUERY_ACCT, e, paramMap);
+		}
+		return jsonResponse;
+
+	}
+    
 }

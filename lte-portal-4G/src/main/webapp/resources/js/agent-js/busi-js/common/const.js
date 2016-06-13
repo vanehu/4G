@@ -164,7 +164,8 @@ CONST = (function(){
 	    BUY_BACK_CHANGE_CARD:"7040100001", //补换卡返销
 	    BUY_BACK_ORDER_CONTRACT:"3030200000", //订购合约返销
 	    TERMINAL_RESERVATION:"3010300000" ,//终端预约
-	    RETURN_TERMINAL : "3030400000" //终端预约取消
+	    RETURN_TERMINAL : "3030400000", //终端预约取消
+	    ACCT_INFO_MODIFY:"2020400000"	//账户修改(改客户资料返档)
 	};
 	
 	//业务动作小类对应的名称

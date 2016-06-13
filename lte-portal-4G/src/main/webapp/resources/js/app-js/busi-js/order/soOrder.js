@@ -1697,6 +1697,26 @@ SoOrder = (function() {
 		}
 		];
 		busiOrders.push(busiOrderAdd);
+		if (data.boAccountInfos != undefined || data.boAccountInfos != null) {
+			// 新增帐户节点
+			var acctChangeNode = {
+				areaId : OrderInfo.getAreaId(),
+				busiOrderInfo : {
+					seq : OrderInfo.SEQ.seq--
+				},
+				
+				boActionType : {
+					actionClassCd : CONST.ACTION_CLASS_CD.ACCT_ACTION,
+					boActionTypeCd : CONST.BO_ACTION_TYPE.ACCT_INFO_MODIFY
+				},
+				busiObj : {
+					accessNumber : order.prodModify.choosedProdInfo.accNbr,
+					instId : data.boAccountInfos[0].acctId
+				},
+				data : {"boAccountInfos":data.boAccountInfos}
+			};
+			busiOrders.push(acctChangeNode);
+		}
 	};
 	//创建客户单独订单
 	var _createCustOrderOnly = function(busiOrders,data){

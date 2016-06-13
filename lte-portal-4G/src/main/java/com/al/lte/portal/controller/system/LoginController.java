@@ -1168,6 +1168,7 @@ public class LoginController extends BaseController {
 	@LogOperatorAnn(desc = "客户鉴权短信校验码发送", code = "CHANGEUIM", level = LevelLog.DB)
 	@ResponseBody
 	public JsonResponse custAuthSmsSend(@RequestParam Map<String, Object> paramMap,HttpServletRequest request, @LogOperatorAnn String flowNum) {
+		Map ret = new HashMap();
 		try {
 			Long sessionTimeL = (Long) request.
 					getSession().getAttribute(SysConstant.SESSION_KEY_TEMP_CUSTAUTH_SMS_TIME);
@@ -1177,7 +1178,7 @@ public class LoginController extends BaseController {
 				long inteval = 28 * 1000;//比30秒提前2秒
 				String phoneNum = (String) paramMap.get("phoneNum");
 				if (nowTime - sessionTime > inteval) {					
-					custAuthSmsSendMsg(request, flowNum,phoneNum);				
+					ret = custAuthSmsSendMsg(request, flowNum,phoneNum);				
 				} else {
 					log.debug("time inteval:{}", nowTime - sessionTime);
 					return super.failed("短信验证码发送时间有误!请求太过频烦,请稍后再重发！", 
@@ -1185,7 +1186,7 @@ public class LoginController extends BaseController {
 				}
 			} else {
 				String phoneNum = (String) paramMap.get("phoneNum");
-				custAuthSmsSendMsg(request, flowNum,phoneNum);
+				ret = custAuthSmsSendMsg(request, flowNum,phoneNum);
 			}		
 		} catch (BusinessException be) {
 			this.log.error("错误信息:{}", be);
@@ -1194,10 +1195,15 @@ public class LoginController extends BaseController {
 			log.error("门户补换卡短信验证/staff/login/custAuthSMSSend方法异常", e);
 			return super.failed(ErrorCode.CHANGEUIM_MSG_SEND, e, new HashMap<String, Object>());
 		}
-		Map<String, Object> successedData = new HashMap<String, Object>();
-		successedData.put("data", "短信验证码发送成功!");
-		successedData.put("randomCode", ServletUtils.getSessionAttribute(request, SysConstant.SESSION_KEY_CUSTAUTH_RANDONCODE));
-		return super.successed(successedData, ResultConstant.SUCCESS.getCode());
+		if ("0".equals(ret.get("resultCode"))){
+			Map<String, Object> successedData = new HashMap<String, Object>();
+			successedData.put("data", "短信验证码发送成功!");
+			successedData.put("randomCode", ServletUtils.getSessionAttribute(request, SysConstant.SESSION_KEY_CUSTAUTH_RANDONCODE));
+			return super.successed(successedData, ResultConstant.SUCCESS.getCode());			
+		}else{
+			return super.failed(ErrorCode.CHANGEUIM_MSG_SEND, ret, new HashMap<String, Object>());	
+		}
+
 	}	
 	
 	// 用户短信鉴权
@@ -1234,7 +1240,7 @@ public class LoginController extends BaseController {
 				"CUSTAUTH_SMS_CODE_CONTENT", new Object[] { smsPwd }));
 			}
 
-
+			msgMap.put("areaId", sessionStaff.getAreaId());
 			msgMap.put(InterfaceClient.DATABUS_DBKEYWORD, (String) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_DATASOURCE_KEY));
 			retnMap = staffBmo.sendMsgInfo(msgMap, flowNum, sessionStaff);
 			request.getSession().removeAttribute(SysConstant.SESSION_KEY_CUSTAUTH_SMS);

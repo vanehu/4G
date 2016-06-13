@@ -229,6 +229,10 @@ cust = (function(){
 		$('#custInfoModifyBtn').off("click").on("click",function(event) {
 			$('#custFormdata').data('bootstrapValidator').validate();
 			if($('#custFormdata').data('bootstrapValidator').isValid()){
+				if(order.prodModify.accountInfo!=undefined&&$.trim($("#accountName").val())==""){
+					$.alert("提示","账户名称不能为空!"); 
+					return ;
+				}
 				var modifyCustInfo={};
 				modifyCustInfo = {
 						custName : $.trim($("#cmCustName").val()),
@@ -279,6 +283,37 @@ cust = (function(){
 						identidiesPic : identityPic
 					}];
 				}
+				//当有账户缓存且所填账户名称与账户缓存名称不一致时 accountChangeState为true 否则为false
+				var	accountChangeState=(order.prodModify.accountInfo!=undefined)&&($.trim($("#accountName").val())!=order.prodModify.accountInfo.name)?true:false;
+				//如果accountChangeState为ture ,拼接账户信息
+				if(accountChangeState){
+					accountInfoOld=order.prodModify.accountInfo;
+					var name=$.trim($("#accountName").val());
+					data.boAccountInfos=[];
+					var _boProdAcctInfosOld={
+	                            acctCd: accountInfoOld.acctCd,
+	                            acctId: accountInfoOld.acctId,
+	                            acctName: accountInfoOld.name,
+	                            CN:accountInfoOld.acctName==undefined?"":accountInfoOld.acctName,
+	                            acctTypeCd: "1",
+	                            partyId: accountInfoOld.custId,
+	                            prodId: order.prodModify.choosedProdInfo.productId,
+	                            state: "DEL"
+					};
+					var _boProdAcctInfos={
+							 	acctCd: accountInfoOld.acctCd,
+							 	acctId: accountInfoOld.acctId,
+							 	acctName: $.trim($("#accountName").val()),
+							 	acctTypeCd: "1",
+							 	partyId: accountInfoOld.custId,
+							 	prodId: order.prodModify.choosedProdInfo.productId,
+							 	state: "ADD"
+					};
+					data.boAccountInfos.push(_boProdAcctInfosOld);
+					data.boAccountInfos.push(_boProdAcctInfos);
+					
+				}
+				
 //				//客户联系人
 				data.boPartyContactInfo=[];
 				var _boPartyContactInfoOld = {
@@ -391,10 +426,12 @@ cust = (function(){
 //		}
 		if(identidiesTypeCd==1){
 			$("#jbrsfz").show();
+			$("#jbrsfz_i").show();
 			$("#qtzj").hide();
 //			$('#jbrFormdata').data('bootstrapValidator').enableFieldValidators("orderAttrIdCard",true,"sfzorderAttrIdCard");
 		}else{
 			$("#jbrsfz").hide();
+			$("#jbrsfz_i").hide();
 			$("#qtzj").show();
 //			$('#jbrFormdata').data('bootstrapValidator').enableFieldValidators("orderAttrIdCard",true,"orderAttrIdCard");
 		}

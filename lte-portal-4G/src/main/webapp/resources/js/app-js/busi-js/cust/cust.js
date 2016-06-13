@@ -225,6 +225,10 @@ cust = (function(){
 		$('#custInfoModifyBtn').off("click").on("click",function(event) {
 			$('#custFormdata').data('bootstrapValidator').validate();
 			if($('#custFormdata').data('bootstrapValidator').isValid()){
+				if(order.prodModify.accountInfo!=undefined&&$.trim($("#accountName").val())==""){
+					$.alert("提示","账户名称不能为空!"); 
+					return ;
+				}
 				var modifyCustInfo={};
 				modifyCustInfo = {
 						custName : $.trim($("#cmCustName").val()),
@@ -275,6 +279,39 @@ cust = (function(){
 						identidiesPic : identityPic
 					}];
 				}
+				//当有账户缓存且所填账户名称与账户缓存名称不一致时 accountChangeState为true 否则为false
+				var	accountChangeState=(order.prodModify.accountInfo!=undefined)&&($.trim($("#accountName").val())!=order.prodModify.accountInfo.name)?true:false;
+				//如果accountChangeState为ture ,拼接账户信息
+				if(accountChangeState){
+					accountInfoOld=order.prodModify.accountInfo;
+					var name=$.trim($("#accountName").val());
+					data.boAccountInfos=[];
+					var _boProdAcctInfosOld={
+	                            acctCd: accountInfoOld.acctCd,
+	                            acctId: accountInfoOld.acctId,
+	                            acctName: accountInfoOld.name,
+	                            CN:accountInfoOld.acctName==undefined?"":accountInfoOld.acctName,
+	                            acctTypeCd: "1",
+	                            partyId: accountInfoOld.custId,
+	                            prodId: order.prodModify.choosedProdInfo.productId,
+	                            state: "DEL"
+					};
+					var _boProdAcctInfos={
+							 	acctCd: accountInfoOld.acctCd,
+							 	acctId: accountInfoOld.acctId,
+							 	acctName: $.trim($("#accountName").val()),
+							 	acctTypeCd: "1",
+							 	partyId: accountInfoOld.custId,
+							 	prodId: order.prodModify.choosedProdInfo.productId,
+							 	state: "ADD"
+					};
+					data.boAccountInfos.push(_boProdAcctInfosOld);
+					data.boAccountInfos.push(_boProdAcctInfos);
+					
+				}
+				//清除账户信息缓存
+				order.prodModify.accountInfo=null;
+
 //				//客户联系人
 				data.boPartyContactInfo=[];
 				var _boPartyContactInfoOld = {
@@ -486,7 +523,14 @@ cust = (function(){
 		//根据客户类型查询证件类型
 		_partyTypeCdChoose("#cmPartyTypeCd");
 		//取客户证件类型
-		$("#cm_identidiesTypeCd option[value='"+$("#boCustIdentities").attr("identidiesTypeCd")+"']").attr("selected", true);
+		//$("#cm_identidiesTypeCd option[value='"+$("#boCustIdentities").attr("identidiesTypeCd")+"']").attr("selected", true);
+		var opts=document.getElementById("cm_identidiesTypeCd");
+		for(var i=0;i<opts.options.length;i++){
+	           if(1==opts.options[i].value){
+	               opts.options[i].selected =true;
+	               break;
+	           }
+	     }
 		//根据证件类型对行添加校验
 		_identidiesTypeCdChoose($("#cm_identidiesTypeCd option[selected='selected']"));
 	

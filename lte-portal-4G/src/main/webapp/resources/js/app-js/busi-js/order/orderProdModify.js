@@ -249,11 +249,63 @@ order.prodModify = (function(){
 		}
 	};
 	
+	// 账户信息 -账户修改按钮 
+	var _accountChange = function() {
+		//判断缓存
+		if(order.prodModify.accountInfo!=null&&order.prodModify.accountInfo!=""&&order.prodModify.accountInfo!=undefined){
+			$("#modAccountProfile").show();
+			$("#accountName").val(order.prodModify.accountInfo.name);
+			return;
+		}
+			var url = contextPath + "/app/prodModify/queryAccountInfo";
+			var params={	
+	 				"prodId" :order.prodModify.choosedProdInfo.productId,
+	 				"acctNbr":order.prodModify.choosedProdInfo.accNbr,
+	 				"areaId" :order.prodModify.choosedProdInfo.areaId
+			};
+			var response = $.callServiceAsJson(url, params,{
+					"before":function(){
+						$.ecOverlay("<strong>查询中,请稍等...</strong>");
+					},
+					"always":function(){
+						$.unecOverlay();
+					},
+					"done" : function(response){
+								try {
+									if (response.code == "0") {
+										var prodAcctInfos = response.data.result.prodAcctInfos;
+										if (prodAcctInfos.length == 1) {
+											// 将账户信息放入缓存order.prodModify.accountInfo中
+											order.prodModify.accountInfo = prodAcctInfos[0];
+											var name = order.prodModify.accountInfo != null ? order.prodModify.accountInfo.name: "";
+											$.unecOverlay();
+											$("#modAccountProfile").show();
+											$("#accountName").val(name);
+										} else if(prodAcctInfos.length >1){
+											$.alert("提示","查询有误!该产品对应"+prodAcctInfos.length+"个账户,请联系省份!流水号:"+transactionID);
+										}else{
+											$.alert("提示","查询有误!该产品下不存在账户!请联系省份!流水号:"+transactionID);
+										}
+									} else {
+										$.alert("提示","查询有误!错误信息："+ response.resultMsg != null ? response.resultMsg: "缺少resultMsg节点信息!请联系省份!流水号:"+transactionID);
+									}
+								}catch(e){
+											$.alert("提示","查询有误!错误信息："+e+"缺失该节点!");
+										}
+							},
+					fail:function(response){
+						$.unecOverlay();
+						$.alert("提示","系统繁忙，请稍后再试！");
+					}
+				});
+	}
+	
 
 	return {
 		choosedProdInfo				:		_choosedProdInfo,
 		chooseOfferForMember        :      _chooseOfferForMember,
 		querySecondBusinessAuth:_querySecondBusinessAuth,
-		isCustomers:_isCustomers
+		isCustomers:_isCustomers,
+		accountChange:_accountChange
 	};	
 })();
