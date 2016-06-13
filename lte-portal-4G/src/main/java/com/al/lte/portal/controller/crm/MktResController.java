@@ -2688,6 +2688,7 @@ public class MktResController extends BaseController {
 				PageModel<Map<String, Object>> pageModel = PageUtil.buildPageModel(
 					MapUtils.getIntValue(qryParam, "pageIndex", 1), 
 					MapUtils.getIntValue(qryParam,"pageSize",10), 
+					MapUtils.getIntValue(resultMap, "totalResultNum", 10),
 					(ArrayList<Map<String, Object>>)resultMap.get("resultList")
 				);
 				model.addAttribute("pageModel", pageModel);

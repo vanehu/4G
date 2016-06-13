@@ -1033,9 +1033,9 @@ public final class PortalServiceCode {
 	public static final String QUERY_ACCOUNT_USE_CUSTINFO = "biz-service/intf.pullingDataService/queryAccountAndUseCustInfo";
 	
 	 /**终端信息统计*/
-    public static final String INTF_TERMSTATISIICSERVICE="res-MktResInstInfoQryService/termStatisticService";
+    public static final String INTF_TERMSTATISIICSERVICE="res-TermStatisticService";
     /**终端销售信息明细统计查询*/
-    public static final String INTF_TERMDETAILSTATISTICSERVICE="res-MktResInstInfoQryService/termDetailStatisticService";
+    public static final String INTF_TERMDETAILSTATISTICSERVICE="res-TermDetailStatisticService";
     
     /**员工关联渠道查询：受理渠道、归属渠道、归属渠道的店中商渠道*/
     public static final String INTF_QUERYALLCHANNELBYSTAFFID = "chan-service/interact/synStaffBean/qryChannelByStaff";

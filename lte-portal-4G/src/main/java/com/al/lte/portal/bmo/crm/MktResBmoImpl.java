@@ -1252,9 +1252,21 @@ public class MktResBmoImpl implements MktResBmo {
 		if (ResultCode.R_SUCC.equals(db.getResultCode())) {//接口调用成功
 			returnData = db.getReturnlmap();
 			if(returnData != null && ResultCode.R_SUCC.equals(returnData.get("resultCode"))){//返回数据成功
+/*				//用于分页的总记录数于后期添加，防止出错，这里多做一些校验处理
+				String totalResultNum = null;
+				if(returnData.get("totalResultNum") != null){
+					totalResultNum = returnData.get("totalResultNum").toString();
+					if("".equals(totalResultNum)){
+						totalResultNum = "10";
+					}
+				} else{
+					totalResultNum = "10";
+				}*/
+				//封装数据列表
 				HashMap<String, Object> resultMap = (HashMap<String, Object>) returnData.get("result");
 				ArrayList<Map<String, Object>> returnStatisticInfoList = (ArrayList<Map<String, Object>>) resultMap.get("statisticsInfo");
 				returnMap.put("resultList", returnStatisticInfoList);
+				returnMap.put("totalResultNum", returnData.get("totalResultNum"));
 				returnMap.put("code", "0");
 			} else{
 				returnMap.put("code", "1");
