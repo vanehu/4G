@@ -687,4 +687,7 @@ public final class SysConstant {
 	
 	/**受理地区判断开关*/
 	public static final String CHECKAREAIDFLAG = "CHECKAREAIDFLAG";
+	
+	/***/
+	public static final String NUMBERLIST = "NUMBERLIST";
 }

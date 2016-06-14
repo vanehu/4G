@@ -772,7 +772,7 @@ public class MktResController extends BaseController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/phonenumber/queryReleaseNum", method = RequestMethod.GET)
 	public String queryReleaseNum(@RequestParam Map<String, Object> param, @LogOperatorAnn String flowNum, 
-			Model model, HttpServletResponse response)throws BusinessException{
+			Model model, HttpServletResponse response,HttpServletRequest request)throws BusinessException{
 		
 		SessionStaff sessionStaff = (SessionStaff) ServletUtils.
 			getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF); 
@@ -794,6 +794,8 @@ public class MktResController extends BaseController {
 					Map<String, Object> result = (Map<String, Object>)resultMap.get("result");
 					if(result!=null && result.get("numberList")!=null){
 						ArrayList<Map<String, Object>> numberList = (ArrayList<Map<String, Object>>)result.get("numberList");
+						HttpSession session = request.getSession();
+						session.setAttribute(SysConstant.NUMBERLIST, numberList);
 						if(numberList.size()>0){
 							if(result.get("totalNumber")!=null){
 								int pageNo = Integer.parseInt(param.get("pageIndex").toString());
@@ -845,7 +847,7 @@ public class MktResController extends BaseController {
 	@RequestMapping(value = "/phonenumber/releaseErrorNum", method = RequestMethod.POST)
 	@ResponseBody
 	public JsonResponse releaseUIM(@RequestBody Map<String, Object> param,
-			@LogOperatorAnn String flowNum, HttpServletResponse response) {
+			@LogOperatorAnn String flowNum, HttpServletResponse response,HttpServletRequest request) {
 		
 		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
 				SysConstant.SESSION_KEY_LOGIN_STAFF);
@@ -858,11 +860,33 @@ public class MktResController extends BaseController {
 		dataBusMap.put("actionType", "F");
 		dataBusMap.put("channelId", sessionStaff.getCurrentChannelId());
 		dataBusMap.put("staffId", sessionStaff.getStaffId());
-		
+		HttpSession session = request.getSession();
+		ArrayList<Map<String, Object>> numberList = (ArrayList<Map<String, Object>>)session.getAttribute(SysConstant.NUMBERLIST);
 		if(numType.equals("1")){
+			boolean falg = false;
+			for(Map<String, Object> map : numberList){
+				String nbr_type = (String) map.get("ACC_NBR_TYPE");
+				String acc_nbr = (String) map.get("ACC_NBR");
+				if("1".equals(nbr_type) && numValue.equals(acc_nbr)){
+					falg = true;
+				}
+			}
+			if(!falg){
+				return failed("号码参数有误", -1);
+			}
 			dataBusMap.put("phoneNumber", numValue);
-		}
-		else{
+		}else{
+			boolean falg = false;
+			for(Map<String, Object> map : numberList){
+				String nbr_type = (String) map.get("ACC_NBR_TYPE");
+				String acc_nbr = (String) map.get("ACC_NBR");
+				if(!"1".equals(nbr_type) && numValue.equals(acc_nbr)){
+					falg = true;
+				}
+			}
+			if(!falg){
+				return failed("UIM卡参数有误", -1);
+			}
 			dataBusMap.put("instCode", numValue);
 		}
 		if(param.get("areaId") != null){ //异常单释放取选择的地区，不传（填单释放号码时不传该值）则取当前渠道areaId
