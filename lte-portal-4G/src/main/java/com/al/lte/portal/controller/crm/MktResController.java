@@ -857,6 +857,8 @@ public class MktResController extends BaseController {
 		
 		Map<String, Object> dataBusMap = new HashMap<String, Object>();
 		
+		String type =  MapUtils.getString(param, "type", "");
+		param.remove("type");
 		dataBusMap.put("actionType", "F");
 		dataBusMap.put("channelId", sessionStaff.getCurrentChannelId());
 		dataBusMap.put("staffId", sessionStaff.getStaffId());
@@ -871,7 +873,7 @@ public class MktResController extends BaseController {
 					falg = true;
 				}
 			}
-			if(!falg){
+			if(!falg && !"".equals(type)){
 				return failed("号码参数有误", -1);
 			}
 			dataBusMap.put("phoneNumber", numValue);
@@ -884,7 +886,7 @@ public class MktResController extends BaseController {
 					falg = true;
 				}
 			}
-			if(!falg){
+			if(!falg && !"".equals(type)){
 				return failed("UIM卡参数有误", -1);
 			}
 			dataBusMap.put("instCode", numValue);

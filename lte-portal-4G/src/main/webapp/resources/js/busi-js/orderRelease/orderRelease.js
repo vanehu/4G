@@ -158,6 +158,7 @@ order.release = (function(){
 				numType : _numType,
 				selUimType:_numType,
 				serialNumberCode:serialNumberCode,
+				type : _numType,
 				numValue : _numValue,
 				areaId: _areaId
 		};
