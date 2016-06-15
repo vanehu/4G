@@ -688,12 +688,12 @@ order.phoneNumber = (function(){
 		if(pncharacteristic!=null && pncharacteristic!=""){		
 			if(pncharacteristic == '4'){
 				pnNotExitNum = pncharacteristic;
-				pnEnd='';
+//				pnEnd='';
 			} else{
 				pnEnd = pncharacteristic;
-				pnNotExitNum = '';
+//				pnNotExitNum = '';
 			}
-		}else{
+		} else{
 			if(pnEnd=='最后四位'){
 				pnEnd='';
 			}
