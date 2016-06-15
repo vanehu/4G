@@ -856,7 +856,7 @@ public class MktResController extends BaseController {
 		String numValue = param.get("numValue").toString();
 		
 		Map<String, Object> dataBusMap = new HashMap<String, Object>();
-		
+		String serialNumberCode = MapUtils.getString(param, "serialNumberCode", "");
 		String type =  MapUtils.getString(param, "type", "");
 		param.remove("type");
 		dataBusMap.put("actionType", "F");
@@ -882,7 +882,7 @@ public class MktResController extends BaseController {
 			for(Map<String, Object> map : numberList){
 				String nbr_type = (String) map.get("ACC_NBR_TYPE");
 				String acc_nbr = (String) map.get("ACC_NBR");
-				if(!"1".equals(nbr_type) && numValue.equals(acc_nbr)){
+				if(!"1".equals(nbr_type) && serialNumberCode.equals(acc_nbr)){
 					falg = true;
 				}
 			}
@@ -897,7 +897,6 @@ public class MktResController extends BaseController {
 		
 		JsonResponse jr = new JsonResponse();
 		String selUimType =  MapUtils.getString(param, "selUimType", "");
-		String serialNumberCode = MapUtils.getString(param, "serialNumberCode", "");
 		try{
 			Map<String, Object> resultMap = mktResBmo.releaseErrorNum(dataBusMap, flowNum, sessionStaff);
 			
