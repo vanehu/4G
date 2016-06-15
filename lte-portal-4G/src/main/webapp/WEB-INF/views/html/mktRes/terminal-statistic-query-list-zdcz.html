@@ -1,3 +1,4 @@
+<!-- 精品渠道终端(操作)汇总报表 -->
 <#if (pageModel.list)?? &&((pageModel.list)?size>0)>
 <style>
 	.reportform thead tr:nth-child(3) td {
@@ -16,19 +17,15 @@
 				<td colspan="2">机 型</td>
 				<td colspan="2">进货量</td>
 				<td colspan="3">核销量</td>
-				<td colspan="3">库存量</td>
 			</tr>
 				<tr>
-					<td width="8%">品牌</td>
-					<td width="20%">机型颜色</td>
-					<td width="9%">领用量</td>
-					<td width="9%">退回量</td>
-					<td width="9%">合约</td>
-					<td width="9%">裸机</td>
-					<td width="9%">合计</td>
-					<td width="9%">库存量</td>
-					<td width="9%">超期库存量</td>
-					<td width="9%">自注册激活量</td>
+					<td width="11%">品牌</td>
+					<td width="24%">机型颜色</td>
+					<td width="13%">领用量</td>
+					<td width="13%">退回量</td>
+					<td width="13%">合约</td>
+					<td width="13%">裸机</td>
+					<td width="13%">合计</td>
 				</tr>
 		</thead>
 		<tbody>
@@ -41,9 +38,6 @@
 					<td>${childList.hyxsQty}</td>	<!-- 合约 -->
 					<td>${childList.ljxsQty}</td>	<!-- 裸机 -->
 					<td>${childList.xsQty}</td>		<!-- 合计 -->
-					<td>${childList.kcQty}</td>		<!-- 库存量 -->
-					<td>${childList.cqkcQty}</td>	<!-- 超期库存量 -->
-					<td>${childList.zzcQty}</td>	<!-- 自注册激活量 -->
 			   	</tr>
 		   	</#list>
 		</tbody>

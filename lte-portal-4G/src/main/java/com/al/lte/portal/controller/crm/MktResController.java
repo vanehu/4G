@@ -2581,11 +2581,14 @@ public class MktResController extends BaseController {
 	}
 	
 	/**
-	 * 终端信息统计查询(精品渠道终端进销存汇总报表(实时数据))查询主页面
+	 * 终端信息统计查询查询主页面:
+	 * 精品渠道终端(操作)汇总报表
+	 * 精品渠道终端(库存)汇总报表
 	 * @param model
 	 * @param request
 	 * @param session
 	 * @return
+	 * @author ZhangYu 2016-06-15
 	 */
 	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/terminalStatisticQuery", method = {RequestMethod.GET})
@@ -2596,16 +2599,18 @@ public class MktResController extends BaseController {
 		String qryType = request.getParameter("qryType");
 		
 		//封装查询类型信息
-		model.addAttribute("qryType", qryType);	
 		if("0".equals(qryType)){
-			model.addAttribute("qryTypeName", "精品渠道进销存门店汇总报表");
+			model.addAttribute("qryTypeName", "精品渠道终端(操作)汇总报表");
+		} else if("1".equals(qryType)){
+			model.addAttribute("qryTypeName", "精品渠道终端(库存)汇总报表");
 		}
+		model.addAttribute("qryType", qryType);
 		
 		//封装渠道列表
 		try {
 			qryParamMap.put("staffId", sessionStaff.getStaffId());
 			qryParamMap.put("dbRouteLog", sessionStaff.getCurrentAreaId());
-			qryParamMap.put("relaType", "40");
+			qryParamMap.put("relaType", "40");//10:受理; 20:渠道经理; 30:归属; 40:受理+归属; null:查询所有
 			Map<String, Object> resultMap = staffChannelBmo.queryAllChannelByStaffId(qryParamMap, null, sessionStaff);
 			if("0".equals(resultMap.get("code"))){
 				model.addAttribute("cahnnelList", (List<Map<String, Object>>) resultMap.get("resultList"));
@@ -2622,7 +2627,9 @@ public class MktResController extends BaseController {
 	}
 	
 	/**
-	 * 终端信息统计查询(精品渠道终端进销存汇总报表(实时数据))
+	 * 终端信息统计查询查询主页面:
+	 * 精品渠道终端(操作)汇总报表
+	 * 精品渠道终端(库存)汇总报表
 	 * @param qryParam
 	 * @param model
 	 * @return
@@ -2632,6 +2639,9 @@ public class MktResController extends BaseController {
 	public String terminalStatisticQueryList(@RequestBody Map<String, Object> qryParam, Model model) {
 		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);
 		Map<String, Object> resultMap = null;
+		String qryType = MapUtils.getString(qryParam, "qryType", "0");
+		String returnString = null;
+		
 		try {
 			resultMap = mktResBmo.terminalStatisticQueryList(qryParam, null, sessionStaff);
 			if (resultMap != null && ResultCode.R_SUCC.equals(resultMap.get("code").toString())){		
@@ -2650,7 +2660,15 @@ public class MktResController extends BaseController {
 			return super.failedStr(model, ErrorCode.ECS_TERMSTATISIICSERVICE, e, qryParam);
 		}
 		
-		return "/mktRes/terminal-statistic-query-list";
+		if("1".equals(qryType)){
+			//精品渠道终端(库存)汇总报表
+			returnString = "/mktRes/terminal-statistic-query-list-zdkc";
+		} else{
+			//其他默认为：精品渠道终端(操作)汇总报表
+			returnString = "/mktRes/terminal-statistic-query-list-zdcz";
+		}
+		
+		return returnString;
 	}
 	
 	/**
@@ -2673,14 +2691,14 @@ public class MktResController extends BaseController {
 		if("0".equals(qryType)){
 			model.addAttribute("qryTypeName", "精品渠道终端进销存明细报表");
 		} else if("1".equals(qryType)){
-			model.addAttribute("qryTypeName", "精品渠道终端进销存(库存量)明细报表");
+			model.addAttribute("qryTypeName", "精品渠道终端进销存(库存)明细报表");
 		}
 		
 		//封装渠道信息
 		try {
 			qryParamMap.put("staffId", sessionStaff.getStaffId());
 			qryParamMap.put("dbRouteLog", sessionStaff.getCurrentAreaId());
-			qryParamMap.put("relaType", "40");
+			qryParamMap.put("relaType", "40");//10:受理; 20:渠道经理; 30:归属; 40:受理+归属; null:查询所有
 			Map<String, Object> resultMap = staffChannelBmo.queryAllChannelByStaffId(qryParamMap, null, sessionStaff);
 			if("0".equals(resultMap.get("code"))){
 				model.addAttribute("cahnnelList", (List<Map<String, Object>>) resultMap.get("resultList"));
