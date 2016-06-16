@@ -866,11 +866,13 @@ public class MktResController extends BaseController {
 		ArrayList<Map<String, Object>> numberList = (ArrayList<Map<String, Object>>)session.getAttribute(SysConstant.NUMBERLIST);
 		if(numType.equals("1")){
 			boolean falg = false;
-			for(Map<String, Object> map : numberList){
-				String nbr_type = (String) map.get("ACC_NBR_TYPE");
-				String acc_nbr = (String) map.get("ACC_NBR");
-				if("1".equals(nbr_type) && numValue.equals(acc_nbr)){
-					falg = true;
+			if(numberList != null){
+				for(Map<String, Object> map : numberList){
+					String nbr_type = (String) map.get("ACC_NBR_TYPE");
+					String acc_nbr = (String) map.get("ACC_NBR");
+					if("1".equals(nbr_type) && numValue.equals(acc_nbr)){
+						falg = true;
+					}
 				}
 			}
 			if(!falg && !"".equals(type)){
@@ -879,11 +881,13 @@ public class MktResController extends BaseController {
 			dataBusMap.put("phoneNumber", numValue);
 		}else{
 			boolean falg = false;
-			for(Map<String, Object> map : numberList){
-				String nbr_type = (String) map.get("ACC_NBR_TYPE");
-				String acc_nbr = (String) map.get("ACC_NBR");
-				if(!"1".equals(nbr_type) && serialNumberCode.equals(acc_nbr)){
-					falg = true;
+			if(numberList != null){
+				for(Map<String, Object> map : numberList){
+					String nbr_type = (String) map.get("ACC_NBR_TYPE");
+					String acc_nbr = (String) map.get("ACC_NBR");
+					if(!"1".equals(nbr_type) && serialNumberCode.equals(acc_nbr)){
+						falg = true;
+					}
 				}
 			}
 			if(!falg && !"".equals(type)){
