@@ -1833,6 +1833,7 @@ order.main = (function(){
 				if(boProd2Tds.length>0){
 					for(var n=0;n<boProd2Tds.length;n++){
 						var param = {
+								areaId:OrderInfo.getAreaId(),
 								numType : 2,
 								numValue : boProd2Tds[n].terminalCode
 						};
@@ -1880,6 +1881,7 @@ order.main = (function(){
 							continue;
 						}
 						var param = {
+								areaId:OrderInfo.getAreaId(),
 								numType : 1,
 								numValue : boProdAns[n].accessNumber
 						};
