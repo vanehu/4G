@@ -10,6 +10,9 @@ mktRes.terminal = (function($){
 	var _offerSpecId = ""; //保存合约附属ID，合约套餐使用
 	var pageSize = 10;
 	var termInfo = {};
+	var hytcmc = "";//合约名称
+	var hytcid = "";//合约id
+	var isSelect = "N";//是否已经选择合约依赖
 	/**
 	 * 校验是否可以进入下一步
 	 */
@@ -332,6 +335,7 @@ mktRes.terminal = (function($){
 	 * 选择立即订购终端
 	 */
 	var _selectTerminal=function(obj){
+		mktRes.terminal.isSelect = "N";
 		var param = {
 			mktResTypeCd 	: $(obj).attr("mktResTypeCd"),
 			mktResCd		: $(obj).attr("mktResCd"),
@@ -601,6 +605,8 @@ mktRes.terminal = (function($){
 			buyChk.hyFlag = true;
 			buyChk.hyOfferSpecId=offerSpec.attr("offerSpecId");
 			buyChk.hyOfferSpecName=offerSpec.attr("offerSpecName");
+			mktRes.terminal.hytcid = mktRes.terminal.offerSpecId;
+			mktRes.terminal.hytcmc = buyChk.hyOfferSpecName;
 			_chkState();
 			$("#agreementFie").show();
 			$("#choosedOfferPlan").html(offerSpec.attr("offerSpecName"));
@@ -852,6 +858,9 @@ mktRes.terminal = (function($){
 		_btnQueryTerminalSale(currentPage)
 	};
 	return {
+		isSelect			:isSelect,
+		hytcmc				:hytcmc,
+		hytcid				:hytcid,
 		btnQueryTerminal	:_btnQueryTerminal,
 		initPhone			:_initPhone,
 		queryApConfig		:_queryApConfig,

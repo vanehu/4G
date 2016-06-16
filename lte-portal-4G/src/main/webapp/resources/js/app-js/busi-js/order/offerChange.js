@@ -16,6 +16,9 @@ offerChange = (function() {
 		if(!query.offer.setOffer()){ //必须先保存销售品实例构成，加载实例到缓存要使用
 			return ;
 		}
+		if(!rule.rule.ruleCheck()){ //规则校验失败
+			return;
+		}
 		//获取初始化查询的条件
 		order.service.queryApConfig();
 		//初始化主套餐查询

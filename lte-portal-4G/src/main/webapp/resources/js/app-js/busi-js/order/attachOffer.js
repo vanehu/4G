@@ -764,6 +764,15 @@ AttachOffer = (function() {
 		}*/
 	};
 	
+	//购合约机选合约校验依赖
+	var _phone_checkOfferExcludeDepend = function(prodId,offerSpecId,offerSpecName){
+		var param = CacheData.getExcDepOfferParam(prodId,offerSpecId);
+		var data = query.offer.queryExcludeDepend(param);//查询规则校验
+		if(data!=undefined){
+			paserOfferData(data.result,prodId,offerSpecId,offerSpecName); //解析数据
+		}
+	};
+	
 	//校验服务的互斥依赖
 	var _checkServExcludeDepend = function(prodId,serv,flag){
 		var servSpecId = serv.servSpecId;
@@ -989,6 +998,10 @@ AttachOffer = (function() {
 			$.confirm("订购： " + specName,content,{ 
 				yes:function(){
 					CacheData.setOffer2ExcludeOfferSpec(param);
+					if(specName.indexOf("合约计划")>=0){
+						mktRes.terminal.hytcmc = specName;
+						mktRes.terminal.hytcid = offerSpecId;
+					}
 				},
 				yesdo:function(){
 					excludeAddattch(prodId,offerSpecId,param);
@@ -1568,6 +1581,12 @@ AttachOffer = (function() {
 							$("#terminalBtn_"+objInstId).hide();
 						}
 					}
+					setTimeout(function () { 
+        				if(mktRes.terminal.isSelect=="N" && OrderInfo.actionFlag==14){//带出预存话费
+							AttachOffer.phone_checkOfferExcludeDepend(-1,mktRes.terminal.hytcid,mktRes.terminal.hytcmc);
+							mktRes.terminal.isSelect="Y";
+						}
+    				}, 1000);
 				}
 			//}
 		}
@@ -3495,7 +3514,8 @@ AttachOffer = (function() {
 		show         : _show,
 		btnBack     : _btnBack,
 		queryCardAttachOfferAgent     : _queryCardAttachOfferAgent,
-		newViceParam:_newViceParam
+		newViceParam:_newViceParam,
+		phone_checkOfferExcludeDepend	: _phone_checkOfferExcludeDepend
 		
 	};
 })();

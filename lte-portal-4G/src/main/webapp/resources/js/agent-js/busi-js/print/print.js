@@ -169,19 +169,23 @@ common.print = (function($){
 //		var height_=document.getElementById("order-print").offsetHeight;
 //		var imgHeigh_=document.getElementById("datasign").offsetHeight;
 		var accNbr="";
-		if (OrderInfo.actionFlag==2){ //套餐变更
-			var prod = order.prodModify.choosedProdInfo;
-			accNbr=prod.accNbr;
+		if(OrderInfo.actionFlag==1 ||OrderInfo.actionFlag==14){ //新装
+			accNbr=OrderInfo.getAccessNumber(-1);
+		}else if(OrderInfo.actionFlag==13 || OrderInfo.actionFlag==17 || OrderInfo.actionFlag==18){ //裸机销售		
+		}else{//二次业务
+			accNbr=order.prodModify.choosedProdInfo.accNbr;
 		}
+		var certType=OrderInfo.cust.identityCd;
+		var certNumber=OrderInfo.cust.idCardNumber;
 		var params={
 			olId:OrderInfo.orderResult.olId,
 			signFlag:"5",
 			busiType:"9",
 			sign:_splitBaseforStr($("#signinput").val()),
-			"srcFlag":"APP",
-			"custName":OrderInfo.cust.partyName,
-			"certType":OrderInfo.boCustIdentities.identidiesTypeCd,
-			"certNumber":OrderInfo.boCustIdentities.identityNum,
+			srcFlag:"APP",
+			custName:OrderInfo.cust.partyName,
+			certType:certType,
+			certNumber:certNumber,
 			accNbr:accNbr
 		};
 //		$.ecOverlay("<strong>正在保存回执,请稍等会儿...</strong>");
