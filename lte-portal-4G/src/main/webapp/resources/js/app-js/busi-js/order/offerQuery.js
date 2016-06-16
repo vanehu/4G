@@ -906,6 +906,27 @@ query.offer = (function() {
 		}
 	};
 	
+	//补换卡专用
+	var _queryDefMustOfferSpecAndServApp = function(param) {
+		addParam(param);  //添加基本参数
+		var url = contextPath+"/offer/queryDefaultAndRequiredOfferSpecAndServ";
+		$.ecOverlay("<strong>查询默认必须可选包和功能产品中，请稍等...</strong>");
+		var response = $.callServiceAsJsonGet(url,param);	
+		$.unecOverlay();
+		if (response.code==0) {
+			OrderInfo.isSuccess = "Y";
+			if(response.data){
+				return response.data;
+			}
+		}else if (response.code==-2){
+			$.alertM(response.data);
+			return;
+		}else {
+			$.alert("提示","可订购可选包和功能产品失败,稍后重试");
+			return;
+		}
+	};
+	
 	return {
 		checkOperate			: _checkOperate,
 		loadInst				: _loadInst,
@@ -931,6 +952,7 @@ query.offer = (function() {
 		updateCheckByChange		: _updateCheckByChange,
 		queryProduct			: _queryProduct,
 		queryOpenedAttachAndServ: _queryOpenedAttachAndServ,
+		queryDefMustOfferSpecAndServApp:_queryDefMustOfferSpecAndServApp,
 		queryProdInstParam		: _queryProdInstParam
 		
 		

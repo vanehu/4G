@@ -955,6 +955,135 @@ CacheData = (function() {
 			}
 		}
 	};
+	
+	//二次业务把必须可选包改成不能删除(补换卡)
+	var _parseOfferApp = function(data,objInstId){
+		if(ec.util.isObj(data)){
+			if(ec.util.isArray(data.result.offerSpec)){
+				if(ec.util.isObj(objInstId)){
+					prodId=objInstId;
+				}
+				for (var i = 0; i < data.result.offerSpec.length; i++) {
+					var offerSpec = data.result.offerSpec[i];
+					if(offerSpec.ifDault==0 || offerSpec.ifCanCancelDoublePackage=="N"){
+						var offer = CacheData.getOfferBySpecId(prodId,offerSpec.offerSpecId); //已开通里面查找
+						if(ec.util.isObj(offer)){
+							var $dd = $("#del_"+prodId+"_"+offer.offerId);
+							if(ec.util.isObj($dd)){
+								$dd.removeClass("delete").addClass("mustchoose");
+								$dd.removeAttr("onclick");
+								offer.isdel = "N";
+							}
+							continue;
+						}	
+						var newSpec = CacheData.getOfferSpec(prodId,offerSpec.offerSpecId); //已开通里面查找
+						if(ec.util.isObj(newSpec)){
+							var $dd = $("#del_"+prodId+"_"+newSpec.offerSpecId);
+							if(ec.util.isObj($dd)){
+								$dd.removeClass("delete").addClass("mustchoose");
+								$dd.removeAttr("onclick");
+								newSpec.isdel = "N";
+							}
+						}else {
+							if(OrderInfo.actionFlag==2||OrderInfo.actionFlag==21 ||OrderInfo.actionFlag==22){
+								offerSpec.isdel = "C";
+								CacheData.setOfferSpec(prodId,offerSpec);
+								var param = CacheData.getExcDepOfferParam(prodId,offerSpec.offerSpecId);
+								AttachOffer.addOpenList(prodId,offerSpec.offerSpecId); 
+								if(param.orderedOfferSpecIds.length > 0 ){
+									var dataExcludeDepend = query.offer.queryExcludeDepend(param);//查询规则校验
+									if(dataExcludeDepend!=undefined && dataExcludeDepend.result!=undefined){
+										var excludes = dataExcludeDepend.result.offerSpec.exclude;
+										if(ec.util.isArray(excludes)){ //有互斥
+											//删除已开通
+											for (var i = 0; i < excludes.length; i++) {
+												var excludeSpecId = excludes[i];
+												var offer = CacheData.getOfferBySpecId(prodId,excludeSpecId);
+												if(offer!=undefined){
+													var $span = $("#li_"+prodId+"_"+offer.offerId).find("span");
+													$span.addClass("del");
+													offer.isdel = "Y";
+													var $dd = $("#del_"+prodId+"_"+offer.offerId);
+													if(ec.util.isObj($dd)){
+														$dd.removeClass("delete").addClass("mustchoose");
+														$dd.removeAttr("onclick");
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+					else if(OrderInfo.actionFlag==22){
+						offerSpec.isdel = "C";
+						CacheData.setOfferSpec(prodId,offerSpec);
+						AttachOffer.addOpenList(prodId,offerSpec.offerSpecId);
+					}
+				}
+			}
+		}
+	};
+	//
+	//二次业务把必须功能产品改成不能删除(补换卡)
+	var _parseServApp = function(data,objInstId){
+		if(ec.util.isObj(data)){
+			if(ec.util.isArray(data.result.servSpec)){
+				if(ec.util.isObj(objInstId)){
+					prodId=objInstId;
+				}
+				for (var i = 0; i < data.result.servSpec.length; i++) {
+					var servSpec = data.result.servSpec[i];
+					var serv = CacheData.getServBySpecId(prodId,servSpec.servSpecId); //已开通里面查找
+					var newSpec = CacheData.getServSpec(prodId,servSpec.servSpecId); //已选里面查找
+					if(servSpec.ifDault==0 || servSpec.ifCanCancelDoublePackage=="N"){
+						if(ec.util.isObj(serv)){
+							var $dd = $("#del_"+prodId+"_"+serv.servId);
+							if(ec.util.isObj($dd)){
+								$dd.removeClass("delete").addClass("mustchoose");
+								$dd.removeAttr("onclick");
+								serv.isdel = "N";
+							}
+						}	
+						else if(ec.util.isObj(newSpec)){
+							var $dd = $("#del_"+prodId+"_"+newSpec.servSpecId);
+							if(ec.util.isObj($dd)){
+								$dd.removeClass("delete").addClass("mustchoose");
+								$dd.removeAttr("onclick");
+								newSpec.isdel = "N";
+							}
+						}else {
+							if(OrderInfo.actionFlag==2){//套餐变更
+								servSpec.isdel = "C";
+								CacheData.setServSpec(prodId,servSpec);
+								AttachOffer.addOpenServList(prodId,servSpec.servSpecId,servSpec.servSpecName,servSpec.ifParams);
+								//AttachOffer.checkServExcludeDepend(prodId,servSpec);
+							}
+						}
+					}else if((OrderInfo.actionFlag==2||OrderInfo.actionFlag==21 ||OrderInfo.actionFlag==22 )&&servSpec.ifDault==1){//套餐变更需要展示默认的功能产品
+						if(ec.util.isObj(serv)){
+							var $dd = $("#del_"+prodId+"_"+serv.servId);
+							if(ec.util.isObj($dd)){
+								serv.isdel = "N";
+							}
+						}	
+						else if(ec.util.isObj(newSpec)){
+							var $dd = $("#del_"+prodId+"_"+newSpec.servSpecId);
+							if(ec.util.isObj($dd)){
+								newSpec.isdel = "N";
+							}
+						}else {
+							servSpec.isdel = "C";
+							CacheData.setServSpec(prodId,servSpec);
+							AttachOffer.addOpenServList(prodId,servSpec.servSpecId,servSpec.servSpecName,servSpec.ifParams);
+							//AttachOffer.checkServExcludeDepend(prodId,servSpec);
+						}
+					}
+				}
+			}
+		}
+	};
 	return {
 		setParam				: _setParam,
 		setServParam			: _setServParam,
@@ -989,6 +1118,8 @@ CacheData = (function() {
 		getOfferRoleId 			: _getOfferRoleId,
 		parseServ				: _parseServ,
 		parseOffer				: _parseOffer,
+		parseOfferApp         : _parseOfferApp,
+		parseServApp          : _parseServApp,
 		setRecordId:_setRecordId
 	};
 })();

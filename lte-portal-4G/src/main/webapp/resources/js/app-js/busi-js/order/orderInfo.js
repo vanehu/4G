@@ -45,6 +45,8 @@ OrderInfo = (function() {
 	
 	var _busitypeflag = 0;
 	
+	var _uimtypeflag = 0;
+	
 	var _orderlonger = "";
 	
 	var _custorderlonger = "";
@@ -1213,6 +1215,7 @@ OrderInfo = (function() {
 		checkresult				:_checkresult,
 		custorderlonger			:_custorderlonger,
 		prodAttrs				:_prodAttrs,
-		isGroupProSpecId        :_isGroupProSpecId
+		isGroupProSpecId        :_isGroupProSpecId,
+		uimtypeflag             :_uimtypeflag
 	};
 })();

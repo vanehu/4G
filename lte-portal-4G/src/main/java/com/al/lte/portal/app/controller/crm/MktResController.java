@@ -1386,4 +1386,63 @@ public class MktResController extends BaseController {
 			return super.failed(ErrorCode.CHECK_TERMINAL, e, mktInfo);
 		}
 	}
+	
+	@RequestMapping(value = "/uim/checkUim2", method = RequestMethod.POST)
+	@ResponseBody
+	public JsonResponse checkUim2(@RequestBody Map<String, Object> param,
+			@LogOperatorAnn String flowNum, HttpServletResponse response) {
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils
+				.getSessionAttribute(super.getRequest(),
+						SysConstant.SESSION_KEY_LOGIN_STAFF);
+		log.debug("session/uim/checkUim", sessionStaff);
+		log.debug("session/uim/checkUim", sessionStaff.getStaffId());
+		log.debug("session/uim/checkUim", sessionStaff.getCurrentChannelId());
+		Map<String, Object> rMap = null;
+		JsonResponse jsonResponse = null;
+		try {
+			if(sessionStaff != null && !"".equals(sessionStaff)){
+				if(sessionStaff.getStaffId()!=null && !"".equals(sessionStaff.getStaffId())){
+					param.put("staffId", sessionStaff.getStaffId());
+				}else{
+					param.put("staffId", param.get("staffId"));
+				}
+				if(sessionStaff.getCurrentChannelId()!=null && !"".equals(sessionStaff.getCurrentChannelId())){
+					param.put("channelId", sessionStaff.getCurrentChannelId());
+				}
+				else{
+					param.put("channelId", param.get("channelId"));
+				}
+				param.put("orderNo", "");
+				rMap = mktResBmo.uimCheck(param, flowNum, sessionStaff);
+				log.debug("rMap/uim/checkUim", rMap);
+				if (rMap != null&& ResultCode.R_SUCCESS.equals(rMap.get("code").toString())) {
+					jsonResponse=super.successed(rMap, ResultConstant.SUCCESS.getCode());
+				} else {
+					jsonResponse = super.failed(rMap,
+							ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+				}
+			}else{
+				log.debug("sessionStaff为空", sessionStaff);
+				log.debug("sessionStaff为空", sessionStaff.getStaffId());
+				log.debug("sessionStaff为空", sessionStaff.getCurrentChannelId());
+				Map<String, Object> failData = new HashMap<String, Object>();
+				String result = JsonUtil.toString(sessionStaff);
+				failData.put("msg", result);
+				jsonResponse = super.failed(failData, ResultConstant.DATA_NOT_VALID_FAILTURE.getCode());
+				return jsonResponse;
+			}
+		} catch (BusinessException e) {
+			this.log.error("uim卡校验预占服务出错", e);
+			jsonResponse = super.failed("uim卡校验预占服务出错",
+					ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+		}catch (InterfaceException ie) {
+			return super.failed(ie, param, ErrorCode.UIM_E_F);
+		} catch (Exception e) {
+			log.error("号码预占异常", e);
+			return super.failed(ErrorCode.UIM_E_F, e, param);
+		}
+		return jsonResponse;
+	}
+	
+	
 }

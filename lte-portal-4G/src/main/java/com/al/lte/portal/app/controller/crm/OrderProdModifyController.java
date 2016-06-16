@@ -172,6 +172,28 @@ public class OrderProdModifyController extends BaseController {
 
 		return "/app/order/cust-activie-return";
 	}
+
+	
+/**
+ * 补换卡选择完套餐后点击下一步（查询按钮变下一步按钮后第一次事件）
+ * @param params
+ * @param model
+ * @param optFlowNum
+ * @param response
+ * @param httpSession
+ * @return
+ */
+	@RequestMapping(value = "/toCheckUimUI", method = {RequestMethod.POST})
+	public String toCheckUimUI(@RequestBody Map<String, Object> params, Model model, @LogOperatorAnn String optFlowNum,
+            HttpServletResponse response, HttpSession httpSession) {
+		return "/app/changeCard/order-change-card";		
+	}
+	@RequestMapping(value = "/changeCard", method = RequestMethod.POST)
+	public String changeCard(@RequestBody Map<String, Object> param,Model model,HttpSession session,@LogOperatorAnn String flowNum) {
+		model.addAttribute("prodId",param.get("prodId"));
+		return "/app/changeCard/order-uim";		
+	}
+
 	
 	/**
      * 账户查询

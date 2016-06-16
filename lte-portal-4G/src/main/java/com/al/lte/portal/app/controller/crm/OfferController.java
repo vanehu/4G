@@ -549,4 +549,37 @@ public class OfferController extends BaseController {
 		}
 		return jsonResponse;
 	}
+	
+	/**
+	 * 获取附属销售品实例页面 (补换卡专用)
+	 * @param param
+	 * @param model
+	 * @param response
+	 * @return
+	 * @throws BusinessException
+	 */
+	@RequestMapping(value = "/queryAttachOffer2", method = RequestMethod.GET)
+	public String queryAttachOffer2(@RequestParam("strParam") String param,Model model,HttpServletResponse response){
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+				SysConstant.SESSION_KEY_LOGIN_STAFF);
+		Map<String, Object> paramMap =  null;	
+		try{	
+			paramMap =  JsonUtil.toObject(param, Map.class);
+			Map<String, Object> labelMap = offerBmo.queryLabel(paramMap,null,sessionStaff);	
+			model.addAttribute("labelMap",labelMap);
+			model.addAttribute("labelMapJson", JsonUtil.buildNormal().objectToJson(labelMap));
+			Map<String, Object> openMap = offerBmo.queryAttachOffer(paramMap,null,sessionStaff);
+			model.addAttribute("openMap",openMap);
+			model.addAttribute("openMapJson", JsonUtil.buildNormal().objectToJson(openMap));
+			model.addAttribute("prodId",paramMap.get("prodId"));
+			model.addAttribute("param",paramMap);
+		} catch (BusinessException be) {
+			return super.failedStr(model,be);
+		} catch (InterfaceException ie) {
+			return super.failedStr(model, ie, paramMap, ErrorCode.QUERY_ATTACH_OFFER);
+		} catch (Exception e) {
+			return super.failedStr(model, ErrorCode.QUERY_ATTACH_OFFER, e, paramMap);
+		}
+	 	return "/offer/card-attach-offer-change";
+	}
 }

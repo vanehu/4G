@@ -57,6 +57,10 @@ SoOrder = (function() {
 			OrderInfo.busitypeflag = 2;
 		}else if(OrderInfo.actionFlag==9){//客户返档
 			OrderInfo.busitypeflag = 12;
+		}else if(OrderInfo.actionFlag==22){//补换卡
+			OrderInfo.busitypeflag = OrderInfo.uimtypeflag;
+		}else if(OrderInfo.actionFlag==23){//异地补换卡
+			OrderInfo.busitypeflag = 19;
 		}else if(OrderInfo.actionFlag==1 || OrderInfo.actionFlag==14){//新装
 			OrderInfo.busitypeflag = 1;
 		}
@@ -694,7 +698,8 @@ SoOrder = (function() {
 		}else if(k==2){ //订单确认填写页面
 			$("#order-content").hide();
 			$("#order-dealer").hide();
-			$("#order-confirm").html(data).show();
+			$("#order_fill_content").hide();
+			$("#order-confirm").html(data).show();			
 			OrderInfo.order.step=3;
 		}
 		/*for (var i = 1; i < 4; i++) {
@@ -859,6 +864,11 @@ SoOrder = (function() {
 
 		$("#order-confirm").hide();
 		//SoOrder.showStep(1);
+		
+		if(OrderInfo.actionFlag==22&&OrderInfo.order.step==3){
+			$("#order_fill_content").show();
+			$("#selectOrderedOffer").css("display","block");
+		}
 		OrderInfo.orderData.orderList.custOrderList[0].busiOrder = [];
 		OrderInfo.resetSeq(); //重置序列
 		SoOrder.delOrder();

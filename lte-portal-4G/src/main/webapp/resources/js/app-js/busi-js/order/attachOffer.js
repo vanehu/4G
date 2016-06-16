@@ -3309,7 +3309,7 @@ AttachOffer = (function() {
 	};
 	//补换卡专用
 	//已订购的附属销售品查询
-	var _queryCardAttachOfferAgent = function(cardTypeFlag) {
+	var _queryCardAttachOfferApp = function(cardTypeFlag) {;
 		var prodInfo = order.prodModify.choosedProdInfo; //获取产品信息
 		var prodId = prodInfo.prodInstId;
 		var param = {
@@ -3332,9 +3332,9 @@ AttachOffer = (function() {
 				prodSpecId : prodInfo.productId
 			};
 			//默认必须可选包和功能产品
-			var data = query.offer.queryDefMustOfferSpecAndServAgent(temp);
-			CacheData.parseOfferAgent(data);
-			CacheData.parseServAgent(data);
+			var data = query.offer.queryDefMustOfferSpecAndServApp(temp);
+			CacheData.parseOfferApp(data);
+			CacheData.parseServApp(data);
 		//}
 		if(ec.util.isArray(OrderInfo.offerSpec.offerRoles)){ //主套餐下的成员判断
 			var member = CacheData.getOfferMember(prodId);
@@ -3513,7 +3513,7 @@ AttachOffer = (function() {
 		offerSpecDetail         : _offerSpecDetail,
 		show         : _show,
 		btnBack     : _btnBack,
-		queryCardAttachOfferAgent     : _queryCardAttachOfferAgent,
+		queryCardAttachOfferApp     : _queryCardAttachOfferApp,
 		newViceParam:_newViceParam,
 		phone_checkOfferExcludeDepend	: _phone_checkOfferExcludeDepend
 		

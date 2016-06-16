@@ -218,6 +218,78 @@ rule.rule = (function(){
 //		}
 	};
 	
+	//补换卡专用
+	var _prepareApp = function(param,callBackStr,callBackParam){
+		_init();
+		_callBackStr = callBackStr;
+		_callBackParam = callBackParam;
+		if(!query.offer.loadInst()){  //加载实例到缓存
+			return; 
+		};
+		var inParam ={
+			prodInfo : order.prodModify.choosedProdInfo,
+			areaId : param.areaId,
+			staffId : param.staffId, 
+			channelId : param.channelId,
+			custId : param.custId,
+			boInfos : param.boInfos,
+			soNbr : OrderInfo.order.soNbr 
+		};
+		//
+		$.callServiceAsHtml(contextPath+"/app/rule/prepare", inParam, {
+			"before":function(){
+				$.ecOverlay("<strong>客户级规则校验中，请稍等...</strong>");
+			},	
+			"done" : function(response){
+				setTimeout(function () { 
+					$.unecOverlay();
+					var checkData = response.data;
+					//有错误限制
+					if(checkData.trim() != ""){
+						$("#checkRuleDiv").css("display","block");
+						$("#checkRuleDiv").html(response.data).show();
+						$("#isOut").val("1");
+					}
+					OrderInfo.order.step=1;
+					_credit();	
+					SoOrder.initFillPage();	
+					if(typeof(callBack)=="function"){
+						callBack(checkData);
+					}
+			    }, 800);
+			}
+		});
+		//
+	/*	if (checkData.result && checkData.result.resultInfo) {
+			var checkRuleInfo = checkData.result.resultInfo;
+			if (checkRuleInfo != null && checkRuleInfo.length > 0) {
+				$("#order_fill_content").css("display","none");
+				$("#error_rule_div").css("display","block");
+				OrderInfo.order.step=1;
+				$.each(checkRuleInfo, function(i, ruleInfo) {
+					$("<tr>" +
+							"<td>"+ruleInfo.resultCode+"</td>" +
+							"<td>"+ruleInfo.ruleDesc+"</td>" +
+							"<td>"+_getRuleLevelName(ruleInfo.ruleLevel)+"</td>" +
+							"<td><div style='display:block;margin-left:30px;' class='"+_getRuleImgClass(ruleInfo.ruleLevel)+"'></div></td>" +
+					"</tr>").appendTo($("#accordion"));
+				});
+			} else {
+				_credit();	
+				SoOrder.initFillPage();		
+			}
+		} else {
+			_credit();
+			SoOrder.initFillPage();	
+		}
+		
+		if (checkData.resultCode != 0) {
+			$("#ruleSubmit").hide();
+		} else {
+			checkObj = param;
+			checkFlag = true;
+		}*/
+	};
 	return {
 		submit 			: _submit,
 		prepare 		: _prepare,
@@ -225,7 +297,8 @@ rule.rule = (function(){
 		ruleCheck		: _ruleCheck,
 		init			: _init,
 		getRuleLevelName: _getRuleLevelName,
-		getRuleImgClass : _getRuleImgClass
+		getRuleImgClass : _getRuleImgClass,
+		prepareApp      :_prepareApp
 	};
 })();
 $(function(){
