@@ -38,23 +38,24 @@ public class Config {
 	 * @return 如果是公网，则以字符串形式返回分省域名；若分省域名获取失败，则返回crm.189.cn，不会返回null或者""。
 	 */
 	public static String getIpconfig(HttpServletRequest req, String province){
+		String IP = "crm.189.cn";
 		String ipconfig = getProperties().getProperty("ipconfig");//0表示启用公网， 1表示启用http请求头的ip，2表示测试环境10101
 		if(ipconfig==null){
 			ipconfig = "0";
 			//默认设置为公网时，将ip改为分省域名
 			String domain = Config.getDomain(province);
-			ip = (null == domain || "".equals(domain)) ? ip : domain;
+			IP = (null == domain || "".equals(domain)) ? IP : domain;
 		}
 		if(!"0".equals(ipconfig)){
 			String header =req.getHeader("x-ip-config");
 			if(header!=null){
-				ip = header;
+				IP = header;
 			}
 		} else if("0".equals(ipconfig)){//如果是公网环境，将ip改为分省域名
 			String domain = Config.getDomain(province);
-			ip = (null == domain || "".equals(domain)) ? ip : domain;//若获取分省域名失败，则返回crm.189.cn
+			IP = (null == domain || "".equals(domain)) ? IP : domain;//若获取分省域名失败，则返回crm.189.cn
 		}
-		return ip;
+		return IP;
 	}
 	
 	/**
@@ -79,6 +80,8 @@ public class Config {
 		try {
 			InputStream in = Config.class.getResourceAsStream("/portal/loginConfig.properties");
 //			InputStream in = Config.class.getResourceAsStream("/loginConfig.properties");
+//			InputStream in = Config.class.getResource("/loginConfig.properties").openStream();
+//			p.load(new BufferedInputStream(new FileInputStream(Config.class.getClassLoader().getResource("/loginConfig.properties").getPath())));
 		    if(in !=null){
 				p.load(in);
 				in.close();
@@ -138,6 +141,7 @@ public class Config {
 	 * @return
 	 */
 	public static String getProvVersion(String province){
+//		System.out.println("**********************统一登录：开始读取配置文件[端口]");
 		String version = getProperties().getProperty(province+"Version");
 		if(!"81".equals(version) && 
 				!"82".equals(version) && 
@@ -147,7 +151,8 @@ public class Config {
 				!"94".equals(version)){
 			version = "9";//获取文件失败
 		}
-		System.out.println(province+"端口=============="+version);
+		System.out.println("**********************统一登录[端口版本号]:"+version);
+//		System.out.println(province+"端口=============="+version);
 		return version;
 	}
 	
@@ -235,12 +240,14 @@ public class Config {
 	 * @author ZhangYu
 	 */
 	public static String getDomain(String province){
+//		System.out.println("**********************统一登录：开始读取配置文件[域名]");
 		String domain = getProperties().getProperty(province+"Domain");
-		if((domain == null) ||  ("".equals(domain)))
-			return ip;
-		else
+		if((domain == null) ||  ("".equals(domain))){
+			System.out.println("**********************统一登录[域名] :"+domain);
+			return "crm.189.cn";
+		} else{
+			System.out.println("**********************统一登录[域名] :"+domain);
 			return domain;
-		
+		}
 	}
-
 }
