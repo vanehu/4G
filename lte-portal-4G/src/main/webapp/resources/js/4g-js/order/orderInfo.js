@@ -17,7 +17,7 @@ OrderInfo = (function() {
 	 * 
 	 * 31改产品密码，32重置产品密码，,33改产品属性，34修改短号，35分段受理（订单确认及后续受理）,36一卡双号订购
 	 * 
-	 * 37终端预约，38取消终端预约，39改付费类型及信控属性，40紧急开机，41ESS远程写卡
+	 * 37终端预约，38取消终端预约，39改付费类型及信控属性，40紧急开机，41ESS远程写卡，42ESS二次写卡
 	 */
 	var _actionFlag = 0;
 	
@@ -1112,7 +1112,7 @@ OrderInfo = (function() {
 			}
 		} catch (e) {
 		}
-		if(OrderInfo.actionFlag==41){//ess远程写卡
+		if(OrderInfo.actionFlag==41 || OrderInfo.actionFlag==42){//ess远程写卡、二次写卡
 			return OrderInfo.essOrderInfo.essOrder.commonRegionId;
 		}
 		if(prodId!=undefined && prodId>0){ //二次业务
@@ -1357,7 +1357,7 @@ OrderInfo = (function() {
 	//根据产品id获取地区编码
 	var _getAreaCode = function(prodId){
 		var areaCode = "";
-		if(OrderInfo.actionFlag==41){//ess远程写卡
+		if(OrderInfo.actionFlag==41 || OrderInfo.actionFlag==42){//ess远程写卡、二次写卡
 			return OrderInfo.essOrderInfo.essOrder.zoneNumber;
 		}
 		if(OrderInfo.actionFlag==1 || OrderInfo.actionFlag==6 || OrderInfo.actionFlag==14){

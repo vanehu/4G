@@ -425,4 +425,10 @@ public interface MktResBmo {
 	 * @throws Exception
 	 */
 	public Map<String, Object> terminalStatisticDetailQueryList(Map<String, Object> requstParamMap, String optFlowNum, SessionStaff sessionStaff) throws  InterfaceException, IOException, Exception;
+    /**
+     * 已使用卡资源查询
+	 */
+	public Map<String, Object> cardResourceQuery(Map<String, Object> param,
+			String optFlowNum, SessionStaff sessionStaff)
+			throws BusinessException;
  }

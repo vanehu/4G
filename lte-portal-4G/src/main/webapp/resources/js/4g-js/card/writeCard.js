@@ -139,7 +139,12 @@ order.writeCard = (function(){
 			});
 			$("#btnWriteCard"+prodId).click(function(){
 				$("#btnWriteCard"+prodId).attr("disabled","disabled");
-				var writeResultFlg=order.writeCard.writeCard(prodId);
+				var writeResultFlg;
+				if(OrderInfo.actionFlag!=null && OrderInfo.actionFlag == 42){
+					writeResultFlg=order.writeCard.essRepeatWriteCard(prodId);
+				}else{
+					writeResultFlg=order.writeCard.writeCard(prodId);
+				}
 				if (!writeResultFlg) {
 					//$.alert("提示",'写卡失败!','error');
 					return;
@@ -1498,7 +1503,248 @@ order.writeCard = (function(){
 		}
 		order.writeCard.createDialog(prodId,phoneNumber);
 	};
-	
+	var _essRepeatWriteReadCard=function(phoneNumber,extCustOrderId,orderNeedAction,commonRegionId,zoneNumber){
+		OrderInfo.actionFlag = 42 ;
+		_essWriteCard = {};
+		var iccId = $("#"+extCustOrderId).val();
+		if(!ec.util.isObj(iccId)){
+			$.alert("提示","ESS购物车列表查询接口返回iccId为空！");
+			return;
+		}
+		var essOrder = {
+			phoneNumber : phoneNumber,
+			extCustOrderId : extCustOrderId,
+			commonRegionId : commonRegionId,
+			zoneNumber : zoneNumber,
+			iccId : iccId
+		};
+		OrderInfo.essOrderInfo.essOrder = essOrder;
+		_essShowReadWirteCard(phoneNumber,extCustOrderId);
+	};
+	var _essRepeatWriteCard =function(prodId){
+		
+		_haveWriteCard = false;//false;
+		productId = prodId;
+		//写卡之前必须要先读卡
+		if (!_haveReadCard) {
+			$.alert("提示","请先读卡!","error");
+			return false;
+		}
+		//写卡之前再读卡
+		if (!_readCard()) {
+			$.alert("提示","写卡前验证读卡验证时读卡失败，请确认设备是否连接好!","error");
+			return false;
+		}
+		//如果是黑莓手机写卡一定要是支持EVDO的CG双模卡
+		var hmPesn = $("#pesn").val();
+		if (hmPesn != undefined && hmPesn != "" && hmPesn != null) {
+			cardType = _cardInfoJson.serialNumber.substr(6,2);
+			if (cardType != '10') {
+				$.alert("提示","黑莓手机终端配套的手机卡必须是支持EVDO的CG双模卡，请换支持EVDO的CG双模卡进行写卡!","error");
+				return false;
+			}
+		}
+		//加载动态链接库
+		if (!_updateCardDll()) { return false; }
+		//写卡之前必须调用DisConnectReader()函数断开写卡器，江苏恒宝的写卡方式
+		var dkResult = ocx.DisConnectReader();
+		if (dkResult != "0") {
+			$.alert("提示","写卡之前,断开写卡器失败!","error");
+			return false;
+		}
+		//客户端调用插件函数获取随机数
+		var getResult = ocx.GetRandNum();
+		//alert("随机数="+getResult);
+		
+		if (getResult.length != 16) {
+			$.alert("提示","写卡异常:获取随机数失败！" + result,"error");
+			return false;
+		}
+		var randomNum = getResult;
+		//判断是否为8字节长的随机数
+		if (randomNum.length != 16) {
+			//alert('判断8字节');
+			$.alert("提示","写卡异常:从卡商组件获取随机数不是8字节长的随机数！","error");
+			return false;
+		}
+		//判断密码是否为空
+		if (_cardDllInfoJson.dllPassword == "") {
+			//alert('密码'+_cardDllPassword);
+			$.alert("提示","写卡异常(组件鉴权密码不可为空)，请检查！","error");
+			return false;
+		}
+		/*-----------------------------用获取的随机数生成鉴权码 -------------------*/
+		var authCode = null;
+		serviceName = contextPath + "/mktRes/writeCard/authCode";
+		try {
+			var param = {
+				randomNum:randomNum,
+				dllPassword:_cardDllInfoJson.password,
+				factoryCode:_cardDllInfoJson.factoryCode,
+				authCodeType:_cardDllInfoJson.authcodeType
+			};
+
+			var response = $.callServiceAsJson(serviceName, param);
+			var authCodeJson;
+			if(response.code == 0){
+				authCodeJson = response.data;
+			}else{
+				$.alertM(response.data);
+				return false;
+			}
+			
+			var code = authCodeJson.code;
+			if (code != null && code == "POR-0000") {
+				authCode = authCodeJson.authCode;
+				//authCode ='B9488FBC60982B48';
+				//alert('鉴权码='+authCode);
+			} else {
+				$.alert("提示","用获取的随机数生成鉴权码失败！","error");
+				return false;
+			}
+		} catch(e) {
+			$.alert("提示","用获取的随机数生成鉴权码异常!" + e.message,"error");
+			return false;
+		}
+		//alert("用获取的随机数生成鉴权码authCode:" + authCode);
+		/*-----------------------------用获取的鉴权密钥和生产的随机数生产鉴权码完成 -----------------*/
+		//获得鉴权结果
+		var auResult = ocx.Authentication(authCode);
+		var opCode = auResult;
+		if (opCode != "0") {
+			$.alert("提示","鉴权失败！" + auResult,"error");
+			return false;
+		}
+		/*------------------------准备工作完成，开始调用Active控件写卡----------------------------------------*/
+		//查询卡资源数据
+		if (!_cardResourceQuery(prodId)) {
+			return false;
+		}
+		//alert("调用组件写卡函数进行写卡");
+		_haveWriteCard = true;
+		//申请资源成功，写卡过程已经开始
+		//调用组件写卡函数进行写卡，调用dep接口传入写卡数据。
+		//$.alert("提示","写入数据_rscJson.data="+_rscJson.data+"\n\n写卡结果;authCode:"+authCode+";writeCardResult="+writeCardResult,"error");
+		//alert("写入数据_rscJson.data="+_rscJson.data+"\n\n写卡结果;writeCardResult="+writeCardResult);
+		//return false;
+		//_rscJson.data = "89860311805101572698,460036700435919,8097808C,3760,9,FFFF,0bf0ad8280d2b0a0,1234,55900648,85232888,49600368,59EF72FB,460036700435919@mycdma.cn,75d6ecc6632fac57,460036700435919@mycdma.cn,30ffc6952e03ccd0;37623582e5265d5a;cdfd165333f66519,460036700435919@mycdma.cn,e43472656c30e82e;671ab8c55dbdb14f;16a7e838ae5db0fa,e51c11352e62e0ac;98e3ce89414d982a;cac02f2ef7d2544d,,,,";
+		//_rscJson.data = "89860313007580411850,460030252801743,805BA245,3619,3,FFFF,123013c243731bc8,1234,51154902,74059570,96831988,90892996,460030252801743@mycdma.cn,059f7bdf8e3f4e12,460030252801743@mycdma.cn,e99eeb2f8c1ddf16;a4316f058ba1aedb;54034ca47e67108c;edfa87035ebe8a18;90719b0fea72386f,460030252801743@mycdma.cn,9aebd4cdfeeccfcb;529995a75de27bf9;f868720e8cc7ee48;5ee4410b4ca89979;9666d03a637b22ee,2479e9c1334e9337;795e86be92e2a431;df518cdb3c732c8f;d6c98a059b44ff3c;edb8698d619dc2d1,204043153514753,3,19e7126871e1eb11a85a4ae90b8daa7c,+316540942000";
+		//_rscJson.data = "89860313900100000102,460036531190990,8000A876,13824,0,FFFF,a471b07640a45918,1234,66709721,78778797,85087049,B8C32115,460036531190990@mycdma.cn,63044385d047084c,460036531190990@mycdma.cn,c1d4f3f021172c63,460036531190990@mycdma.cn,5c3a505e7f018f7d,0dc6e3733d291f52,,,";
+		//alert("xj:"+_rscJson.data);
+		var writeCardResult = ocx.YXPersonalize(authCode,"",1,_rscJson.data,"");
+		//alert("writeCardResult:"+writeCardResult);
+		if (writeCardResult != "0") {
+			//客户端提示：写卡失败时各卡商返回各自定义的错误信息 
+			$.alert("提示","写卡失败，请将白卡取出！错误编码=" + writeCardResult+"详细错误请联系卡商["+_cardDllInfoJson.remark+"]确认","error");
+			return false;
+		} else {
+			//写卡成功
+			$.alert("提示","恭喜，您已经成功写卡！");
+		    return true;
+		}
+		return false;
+	};
+	_cardResourceQuery=function(prodId){
+		//先清空之前的资源数据
+			//写卡请求的参数： 手机号码，卡产品编号，归属地区号
+			//漫游地区号，登陆工号，工号名称，营业厅标识，营业厅名称
+			_rscJson = {
+				"iccid":"",
+				"imsi":"",
+				"data":"",
+				"dataLength":"0",
+				"state":"N",
+				"prodId":""
+			};//卡数据资源JSON state:N 为不可用来写卡 Y 为可以
+
+			//请求后返回给客户端的数据直接是可以写卡的暗文
+			var serviceName = contextPath + "/mktRes/writeCard/cardResourceQuery";
+						
+			try {
+				//alert(JSON.stringify(order.prodModify.choosedProdInfo));
+				// 提取卡商代码
+				var areaCode = OrderInfo.getAreaCode(prodId);
+				if (areaCode == undefined || areaCode ==""){
+					areaCode = OrderInfo.staff.areaCode;
+				}
+				var param = {
+					factoryCode:_cardDllInfoJson.factoryCode,
+					authCodeType:_cardDllInfoJson.authCodeType,
+					hmUimid:'',//黑莓
+					cardNo:_cardInfoJson.cardTypeId,
+					phoneNumber:OrderInfo.getAccessNumber(prodId),
+					areaId:OrderInfo.getProdAreaId(prodId),
+					areaCode:areaCode,//归属地区号
+					iccId:OrderInfo.essOrderInfo.essOrder.iccId,
+					fromAreaCode:OrderInfo.staff.areaCode//漫游地区号
+				};
+				var resourceDataJson;
+				var response = $.callServiceAsJson(serviceName, param);
+				if(response.code == 0){
+					resourceDataJson = response.data.cardInfo;
+					_TransactionID = response.data.TransactionID;
+				}else{
+					$.alertM(response.data);
+					return false;
+				}
+				//alert(JSON.stringify(response));
+				var flag = resourceDataJson.flag;
+				if (flag != undefined && flag == "0") {
+					_rscJson = {
+						"iccid":"",
+						"imsi":"",
+						"imsig":"",
+						"data":"",
+						"state":"Y",
+						"uimid":"",
+						"sid":"",
+						"accolc":"",
+						"nid":"",
+						"akey":"",
+						"pin1":"",
+						"pin2":"",
+						"puk1":"",
+						"puk2":"",
+						"imsilte":"",
+//						"adm":"",
+//						"hrpdupp":"",
+//						"hrpdss":"",
+//						"imsig":"",
+//						"acc":"",
+//						"smsp":"",
+						"prodId":""
+					};
+					_rscJson.iccid = resourceDataJson.iccid;
+					_rscJson.imsi = resourceDataJson.imsi;
+					_rscJson.imsig = resourceDataJson.imsig;
+					_rscJson.uimid = resourceDataJson.uimid;
+					_rscJson.sid = resourceDataJson.sid;
+					_rscJson.accolc = resourceDataJson.accolc;
+					_rscJson.nid = resourceDataJson.nid;
+					_rscJson.akey = resourceDataJson.akey;
+					_rscJson.pin2 = resourceDataJson.pin2;
+					_rscJson.pin1 = resourceDataJson.pin1;
+					_rscJson.puk1 = resourceDataJson.puk1;
+					_rscJson.puk2 = resourceDataJson.puk2;
+					_rscJson.imsilte = resourceDataJson.imsilte;
+					_rscJson.data = resourceDataJson.data;
+					_rscJson.dataLength = resourceDataJson.dataLength;
+					_rscJson.prodId = prodId;
+					return true;
+				} else {
+					var msg = resourceDataJson.msg;
+					if (msg != undefined) {
+						$.alert("提示","请求可写卡的资源数据失败:" + msg,"error");
+					} else {
+						$.alert("提示","请求可写卡的资源数据失败" ,"error");
+					}
+					return false;
+				}
+			} catch(e) {
+				$.alert("提示","请求可写卡的资源数据异常!" + e.message ,"error");
+				return false;
+			}
+		};
 	return {
 		writeReadCard : _writeReadCard,
 		readCard : _readCard,
@@ -1506,6 +1752,8 @@ order.writeCard = (function(){
 		getCardType : _getCardType,
 		createDialog : _createDialog,
 		essShowReadWirteCard : _essShowReadWirteCard,
-		essWriteReadCard : _essWriteReadCard
+		essWriteReadCard : _essWriteReadCard,
+		essRepeatWriteReadCard : _essRepeatWriteReadCard,
+		essRepeatWriteCard : _essRepeatWriteCard
 	};
 })();

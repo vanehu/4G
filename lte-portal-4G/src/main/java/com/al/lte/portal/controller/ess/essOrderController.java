@@ -130,6 +130,8 @@ public class essOrderController extends BaseController {
 				return "/ess/ess-invoice-print-list";
 			} else if (pageFlag.equals("partnerAssitPage")) {// 第三方辅助功能
 				return "/ess/ess-partner-assit-list";
+			} else if (pageFlag.equals("repeatWriteCardPage")) {// 二次写卡
+				return "/ess/ess-repeat-write-card-list";
 			} else {// 订单查询
 				return "/ess/ess-order-query-list";
 			}
@@ -722,6 +724,15 @@ public class essOrderController extends BaseController {
 			return super.failed(ErrorCode.ESS_QUERY_ORDER_LIST, e, param);
 		}
 		return jsonResponse;
+	}
+	
+	/**
+	 * 转至二次写卡页面
+	 */
+	@RequestMapping(value = "/repeatWriteCard", method = RequestMethod.GET)
+	public String repeatWriteCard(Model model, HttpServletRequest request,
+			HttpSession session) {
+		return "/ess/ess-repeat-writeCard-main";
 	}
 	
 }

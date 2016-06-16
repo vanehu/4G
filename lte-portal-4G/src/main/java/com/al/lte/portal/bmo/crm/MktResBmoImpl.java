@@ -1279,4 +1279,24 @@ public class MktResBmoImpl implements MktResBmo {
 		
 		return returnMap;
 	}
+	
+	@SuppressWarnings("unchecked")
+	public Map<String, Object> cardResourceQuery(Map<String, Object> param,
+			String optFlowNum, SessionStaff sessionStaff)
+			throws BusinessException {
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		param.put("mvnoCode", sessionStaff.getPartnerCode());
+		DataBus db = ServiceClient.callService(param, PortalServiceCode.CARD_RESOURCE_QUERY, optFlowNum, sessionStaff);
+		// 服务层调用与接口层调用都成功时，返回列表；否则返回空列表
+		if (ResultCode.R_SUCCESS.equals(StringUtils.defaultString(db.getResultCode()))) {
+			resultMap.putAll(db.getReturnlmap());
+			Map<String, Object> TcpCont = new HashMap<String, Object>();
+			TcpCont = (Map<String, Object>) db.getParammap().get("TcpCont");
+			resultMap.put("TransactionID",TcpCont.get("TransactionID"));
+		} else {
+			resultMap.put("code",  ResultCode.R_FAIL);
+			resultMap.put("message", db.getResultMsg());
+		}
+		return resultMap;
+	}
 }

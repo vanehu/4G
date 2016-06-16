@@ -2583,7 +2583,7 @@ public class MktResController extends BaseController {
 				e.printStackTrace();
 			}
 	}
-	
+
 	/**
 	 * 终端信息统计查询查询主页面:
 	 * 精品渠道终端(操作)汇总报表
@@ -2751,5 +2751,37 @@ public class MktResController extends BaseController {
 		}
 		
 		return "/mktRes/terminal-statistic-detail-query-list";
+	}
+	
+	@RequestMapping(value = "/writeCard/cardResourceQuery", method = RequestMethod.POST)
+	@ResponseBody
+	public JsonResponse cardResourceQuery(@RequestBody Map<String, Object> param,
+			@LogOperatorAnn String flowNum, HttpServletResponse response) {
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils
+				.getSessionAttribute(super.getRequest(),
+						SysConstant.SESSION_KEY_LOGIN_STAFF);
+		Map<String, Object> rMap = null;
+		JsonResponse jsonResponse = null;
+		try {
+			String areaId = (String)param.get("areaId");
+			
+			//redmine#10671,先判断common_region表中相关地址是否为本地网（region_type为1300），如是则直接透传处理，如否截取两位后补0
+			Map<String, Object> areaInfo = CommonMethods.getAreaInfo(areaId);
+			if("1300".equals(MapUtils.getString(areaInfo, "regionType"))){
+				param.put("areaId", areaId); 
+			} else {
+				param.put("areaId", areaId.substring(0, 5) + "00"); 
+			}
+			
+			rMap = mktResBmo.cardResourceQuery(param, flowNum, sessionStaff);
+			if (rMap != null&& ResultConstant.R_POR_SUCCESS.getCode().equals(MapUtils.getString(rMap, "code"))) {
+				jsonResponse=super.successed(rMap, ResultConstant.SUCCESS.getCode());
+			} else {
+				jsonResponse = super.failed(ErrorCode.CARD_RESOURCE_QUERY, rMap, param);
+			}
+		} catch(Exception e) {
+			return super.failed(ErrorCode.CARD_RESOURCE_QUERY, e, param);
+		}
+		return jsonResponse;
 	}
 }

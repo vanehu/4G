@@ -213,6 +213,7 @@ public enum ErrorCode {
     CASH_RECHARGE("现金充值","010111","01","010111","01"),
     QUERY_OVERDUE("欠费查询","010112","01","010112","01"),
     GET_CARD_INFO("卡资源申请","010113","01","010113","01"),
+    CARD_RESOURCE_QUERY("已使用卡资源查询","010146","01","150146","15"),
     COMPLETE_WRITE_CARD("写卡上报","010114","01","010114","01"),
     GET_AUTH_CODE("获取动态链接库密钥","010115","01","010115","01"),
     CARD_DLL_INFO("获取卡组件","010116","01","010116","01"),
@@ -303,5 +304,6 @@ public enum ErrorCode {
         SYS_MAP.put("12", "UAM");
         SYS_MAP.put("13", "物联网");
         SYS_MAP.put("14", "ESS");
+        SYS_MAP.put("15", "卡管");
     }
 }

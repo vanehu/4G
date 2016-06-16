@@ -1025,6 +1025,8 @@ public final class PortalServiceCode {
     public static final String ESS_ORDER_REPEAL = "ess-orderRepeal";
     /**ESS导出*/
     public static final String ESS_ORDER_LIST_EXPORT = "ess-orderListExport";   
+    /** 获取写卡数据 */
+    public static final String CARD_RESOURCE_QUERY = "com.linkage.portal.service.lte.core.resources.CardResourceQuery";
     /*******************************ESS服务编码***************************************************************************************************/
    
     /**判断受理地区合法性判断*/
