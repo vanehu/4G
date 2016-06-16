@@ -1,10 +1,15 @@
+<#if pageType?? && pageType=="cashier">
+	<#assign namespace = "cashier.main" > 
+<#else>
+	<#assign namespace = "${namespace}" >
+</#if>
 <div class="easyDialogclose" id="staff_dialog_close" onclick="easyDialog.close()"></div>
   <table class="contract_list">
             <thead>
                 <tr>
                     <td>受理工号查询</td>                   
                     <td align="right" style="width:230px" >
-					<input type="button" class="numberSearch" value="确 认" onclick="cart.main.setStaff()" >
+					<input type="button" class="numberSearch" value="确 认" onclick="${namespace}.setStaff()" >
 					<input type="button" class="numberSearch" value="取消" style="margin-right: 20px" onclick="easyDialog.close();" >
 					</td>
                 </tr>                                                    
@@ -20,7 +25,7 @@
         <dt>受理人：</dt>
         <dd>&nbsp;<input type="text" class="inputWidth150px" id="staffName_dialog" value=""><label class="f_red">&nbsp;&nbsp;</label></dd>
         <dd>
-          &nbsp;<input type="button" class="numberSearch" value="查 询" onclick="cart.main.qureyStaffAndChlPage(1)" >
+          &nbsp;<input type="button" class="numberSearch" value="查 询" onclick="${namespace}.qureyStaffAndChlPage(1)" >
           <input type="hidden" id="queryFlag_dialog" value="queryStaff"/>
         </dd>
       </dl>
@@ -52,7 +57,7 @@
       </table>
                        
             <!--页码-->
-			<@portal.modelPagination pageModel 5 "cart.main.qureyStaffAndChlPage"/>
+			<@portal.modelPagination pageModel 5 "${namespace}.qureyStaffAndChlPage"/>
 			<!--页码 end-->
 
 		<script src="${contextPath}/js/our-js/ec.pagination.js?${jsversion}" type="text/javascript"></script>

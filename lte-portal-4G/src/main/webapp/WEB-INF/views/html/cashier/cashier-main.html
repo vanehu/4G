@@ -5,7 +5,6 @@
 
 
 <script src="${contextPath}/js/busi-js/cashier/cashier.js?${jsversion}" type="text/javascript"></script>
-
 <style>
 .cartLink_fail:hover {
 	text-decoration : underline;
@@ -110,7 +109,24 @@
                                		</select>
                                		<label class="f_red">&nbsp;&nbsp;</label>
                                	</#if>                                
-                          		
+                          		<dt>受理工号：</dt>
+                          			<#if QryChannelAuth == "0">
+                          				<dd>
+		                          			<input id="qureyStaffCode" class="numberTextBox width100" type="text" readonly="readonly" value="" />
+		                          			<input id="bt_resetStaffCode" type="button" value="重 置" class="numberSearch" />
+		                          			<input id="p_staffId" class="numberTextBox width100" type="hidden" readonly="readonly" value="" />						
+		                                  	<input id="p_QryChannelAuth" type="hidden" readonly="readonly" value="${QryChannelAuth}" />
+		                                  	<label class="f_red">&nbsp;</label>
+	                          			</dd>
+                          			<#else>
+                          				<dd>
+		                          			<input id="qureyStaffCode" class="numberTextBox width100" type="text" readonly="readonly" value="${Session["_ecs_login_session_key"].staffCode}" />
+		                          			<input id="bt_resetStaffCode" type="button" value="重  置" class="numberSearch" />
+		                          			<input id="p_staffId" class="numberTextBox width100" type="hidden" readonly="readonly" value="${Session["_ecs_login_session_key"].staffId}" />						
+		                                  	<input id="p_QryChannelAuth" type="hidden" readonly="readonly" value="${QryChannelAuth}" />
+		                                  	<label class="f_red">&nbsp;</label>
+	                          			</dd>
+                          			</#if>
                           	</dl>     
                           	     
                   </div>
@@ -223,7 +239,9 @@
 		<div class="easyDialogclose" id="d_offer_close"></div>
 		<div id="d_offer_info" ></div>
 	</div>
-	
+	<!-- 工号查询弹出框 --start-->	 
+	<div id = "qureyByStaffCode_dialog" class="easyDialogdiv" style="width: 1080px; height: 460px; display: none; margin: 0px;"></div>	
+	<!-- 工号查询弹出框 --end-->
 	<!-- 渠道查询弹出框 --start-->	 
 	<div id="qureyByChannel_dialog" class="easyDialogdiv" style="width: 1080px; height: 460px; display: none; margin: 0px;"></div>	
 	<!-- 渠道查询弹出框 --end-->

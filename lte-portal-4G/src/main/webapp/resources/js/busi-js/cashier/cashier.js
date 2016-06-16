@@ -305,6 +305,7 @@ cashier.main = (function(){
 		$("#p_"+olId).removeAttr("style");
 	};
 	
+    
 	return {
 		removeStyle			:_removeStyle,
 		addStyle			:_addStyle,
@@ -335,5 +336,13 @@ $(function(){
 	});
 	
 	cashier.main.initDic();
+	
+	$("#bt_resetStaffCode").off("click").on("click",function(){//清空受理工号staffCode和staffId
+		$("#qureyStaffCode").val("");
+		$("#p_staffId").val("");
+	});
+	$("#qureyStaffCode").off("click").on("click",function(){//受理工号查询
+		cashier.main.qureyStaffAndChl("queryStaff",0);
+	});
 
 });
