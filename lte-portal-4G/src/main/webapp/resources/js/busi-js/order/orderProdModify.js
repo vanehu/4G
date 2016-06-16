@@ -3930,6 +3930,7 @@ order.prodModify = (function(){
 			$("#auth2").find("#idCardType7").text(OrderInfo.cust.userIdentityName);
 			$("#auth2").find("#auth7userName").text(OrderInfo.cust.userName);
 			$("#auth2").find("#auth7accountName").text(OrderInfo.cust.accountName);
+			$("#auth2").find("#auth7isSame").text(OrderInfo.cust.isSame == "Y" ? "是" : "否");
 			if (OrderInfo.cust.userIdentityCd == "1") {
 				$("#auth2").find("#readCertBtnID7").show();
 				$("#auth2").find("#idCardNumber7").attr("disabled", "disabled");

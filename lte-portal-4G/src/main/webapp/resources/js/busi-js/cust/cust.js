@@ -736,6 +736,7 @@ order.cust = (function(){
 		$("#auth3").find("#idCardNumber6").val("");
 		$("#auth3").find("#auth7userName").val("");
 		$("#auth3").find("#auth7accountName").val("");
+		$("#auth3").find("#auth7isSame").val("");
 		$("#auth3").find("#idCardNumber7").val("");
 	}
 
@@ -848,6 +849,7 @@ order.cust = (function(){
 				$("#auth3").find("#idCardType7").text(_choosedCustInfo.userIdentityName);
 				$("#auth3").find("#auth7userName").text(_choosedCustInfo.userName);
 				$("#auth3").find("#auth7accountName").text(_choosedCustInfo.accountName);
+				$("#auth3").find("#auth7isSame").text(_choosedCustInfo.isSame == "Y" ? "是" : "否");
 				if (_choosedCustInfo.userIdentityCd == "1") {
 					$("#auth3").find("#readCertBtnID7").show();
 					$("#auth3").find("#idCardNumber7").attr("disabled", "disabled");
