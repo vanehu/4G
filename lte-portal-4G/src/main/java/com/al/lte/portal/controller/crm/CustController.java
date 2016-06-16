@@ -412,7 +412,7 @@ public class CustController extends BaseController {
 		if (MapUtils.isNotEmpty(auMap)) {
 			Map<String, Object> aMap = MapUtils.getMap(auMap, "account");
 			Map<String, Object> iMap = MapUtils.getMap(auMap, "identity");
-			newCustInfoMap.put("userIdentityCd", MapUtils.getString(iMap, "identidyTypeCd"));
+			newCustInfoMap.put("userIdentityCd", MapUtils.getString(iMap, "identityTypeCd"));
 			newCustInfoMap.put("userIdentityName", MapUtils.getString(iMap, "identityName"));
 			newCustInfoMap.put("userIdentityNum", MapUtils.getString(iMap, "identityNum"));
 			newCustInfoMap.put("accountName", MapUtils.getString(aMap, "accountName"));
