@@ -1088,8 +1088,8 @@ public class OrderController extends BaseController {
             if (MapUtils.isNotEmpty(param)) {
                 model.addAttribute("main", param);
 
-                //功能开关，套餐变更时是否显示付费类型变更选项
-                String showChangeFeeTypeInput = propertiesUtils.getMessage(SysConstant.SHOW_CHANGE_FEETYPE_INPUT);
+                //功能开关，套餐变更时是否显示付费类型变更选项（分省开关改造，移至mda）
+                String showChangeFeeTypeInput = propertiesUtils.getMessage(SysConstant.SHOW_CHANGE_FEETYPE_INPUT + sessionStaff2.getAreaId().substring(0, 3));
                 model.addAttribute("showChangeFeeTypeInput", showChangeFeeTypeInput);
                 if (SysConstant.ON.equals(showChangeFeeTypeInput)) {
                     SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),

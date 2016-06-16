@@ -559,7 +559,7 @@ public final class SysConstant {
 	public static final String IS_XINKONG_SPEC_ID = "40010030";
 	
 	/** 套餐变更是否显示修改付费类型输入选项 */
-	public static final String SHOW_CHANGE_FEETYPE_INPUT = "showChangeFeeTypeInput";
+	public static final String SHOW_CHANGE_FEETYPE_INPUT = "FEETYPE_";
 	
 	/** 主套餐条目总数 */
 	public static final String PAGE_SIZE = "200";
