@@ -2848,28 +2848,31 @@ order.prodModify = (function(){
 	var _checkProPSW=function(psw){
 		$("#"+psw).blur();
 	};
-	//二次鉴权
-	var _querySecondBusinessAuth=function(menuId,isSimple){
+	
+	
+	var _governmentEnterpriseCustomers=function(menuId,isSimple,segmentId){
 		if(OrderInfo.acctNbr==undefined || OrderInfo.acctNbr==null || OrderInfo.acctNbr==""){
 			OrderInfo.acctNbr=OrderInfo.provinceInfo.mainPhoneNum;
 		}
 		var url=contextPath+"/token/secondBusi/querySecondBusinessMenuAuth";
 		var param={
-			menuId:menuId,
-			isSimple:isSimple,
-			types:"pad"
+				menuId:menuId,
+				isSimple:isSimple,
+				typeCd:OrderInfo.typeCd,   //鉴权类别
+				types:'pad',
+				segmentId:segmentId,
+				actionFlag:OrderInfo.actionFlag,
+				soNbr:OrderInfo.order.soNbr,
+				acctNbr:OrderInfo.acctNbr,
+				custId:OrderInfo.cust.custId,
+				type:2
 		}
+
 		var response= $.callServiceAsHtml(url,param);
+
 		$("#auth2").empty().append(response.data);
 		
 		var authTypeStr=$("#authTypeStr").html();
-		/*
-		if(authTypeStr.toString().indexOf(OrderInfo.cust_validateType)!=-1){
-			return;
-		}
-		*/
-        
-		
 		if (response.code == 0) {
 			var recordParam={};
 			recordParam.validateType="4";
@@ -2880,6 +2883,18 @@ order.prodModify = (function(){
 			recordParam.certNumber=OrderInfo.cust.idCardNumber;
 	
 			var rules=OrderInfo.rulesJson;
+			if(OrderInfo.typeCd==8){
+				OrderInfo.typeCd=5;
+			}
+			else if(OrderInfo.typeCd==5){
+				OrderInfo.typeCd=6;
+			}
+			else if(OrderInfo.typeCd==6){
+				OrderInfo.typeCd=7;
+			}
+			else if(OrderInfo.typeCd==7){
+				OrderInfo.typeCd=8;
+			}
 			//判断是否可以跳过鉴权
 			var rule="rule"+OrderInfo.typeCd;
 			//员工权限
@@ -2888,19 +2903,31 @@ order.prodModify = (function(){
 			var rule2="";
 			 for(var r in rules){ 
 				 if(r==rule){
-					   if(rule=="rule1"){
-						   rule2=rules.rule1;
-					   }
-					   else if(rule=="rule2"){
+					   //短信
+					   if(rule=="rule2"){
 						   rule2=rules.rule2;
 					   }
+					   //产品密码
 					   else if(rule=="rule3"){
 						   rule2=rules.rule3;
 					   }
-					   else if(rule=="rule4"){
-						   rule2=rules.rule4;
+					// 单位证件+使用人
+					   else if(rule=="rule5"){
+						   rule2=rules.rule5;
 					   }
-						
+					   //单位证件
+					   
+					   else if(rule=="rule6"){
+						   rule2=rules.rule6;
+					   }
+					  // 使用人证件鉴权    使用人名与账户一致
+					   else if(rule=="rule7"){
+						   rule2=rules.rule7;
+					   }
+					// 使用人证件鉴权    使用人名与账户一致
+					   else if(rule=="rule8"){
+						   rule2=rules.rule8;
+					   }
 					}
 			 }
                if(iseditOperation=="0"){
@@ -2914,36 +2941,20 @@ order.prodModify = (function(){
 				$("#tab-box").css('display','none'); 
 				//记录到日志里
 				order.cust.saveAuthRecordFail(recordParam);
-				//如果是套餐变更
-				if(OrderInfo.actionFlag==2){
-					if(OrderInfo.provinceInfo.prodOfferId!="" && OrderInfo.provinceInfo.prodOfferId!=null && OrderInfo.provinceInfo.prodOfferId!="null"){
-						order.uiCusts.offerinit(OrderInfo.provinceInfo.prodOfferId,null);
-					}
-					else{
-						order.uiCusts.initSub();	
-					}
-				}
-				//主副卡
-				else if(OrderInfo.actionFlag==6){
-					order.memberChange.showOfferCfgDialog();
-				}
-				//可选包
-				else if(OrderInfo.actionFlag==3){
-					order.prodModify.orderAttachOffer();
-				}
+				order.cust.goService();
 				OrderInfo.authRecord.resultCode = "";
 				OrderInfo.authRecord.validateType = "";
 			}
 			
 			//工号有跳过鉴权权限 
 			else {
-				if(OrderInfo.actionFlag==6)
-				 {
-					if(!order.cust.isSelfChannel()){
-						  $("#idCardNumber2").attr("readonly","readonly");
-							 $.alert("提示","请到电信自有营业厅办理业务");			
-				       }
-				}
+//				if(OrderInfo.actionFlag==6)
+//				 {
+//					if(!order.cust.isSelfChannel()){
+//						  $("#idCardNumber2").attr("readonly","readonly");
+//							 $.alert("提示","请到电信自有营业厅办理业务");			
+//				       }
+//				}
 				$("#auth2").css('display','block'); 
 			}
 		} 
@@ -2951,62 +2962,47 @@ order.prodModify = (function(){
 		else {
 			$.alertM(response.data);
 		}
-	};
+		
+		
+	}
+	
 	//二次鉴权
-	var _querySecondBusinessAuthSub=function(){
-		var url=contextPath+"/token/secondBusi/querySecondBusinessMenuAuthSub";
-		var param={
-			types:"pad"
-		}
-		var response= $.callServiceAsHtml(url,param);
-		$("#auth2").empty().append(response.data);
+	var _querySecondBusinessAuth=function(menuId,isSimple){
 		
-		var authTypeStr=$("#authTypeStr").html();
-
-		if (response.code == 0) {
-
-			var rules=OrderInfo.rulesJson;
-			//员工权限
-			var iseditOperation=rules.iseditOperation;
-			$("#auth2").css('display','block'); 
-			//工号有跳过鉴权权限 
-			 if(iseditOperation=="0"){
-                 $("#iseditOperation").show();
-             }
-             else{
-          	   $("#iseditOperation").hide();
-             }
-			if(OrderInfo.typeCd=="1" ||(iseditOperation=="0" && OrderInfo.typeCd=="4") ){
-				var recordParam={};
-				recordParam.validateType="1";
-				recordParam.validateLevel="1";
-				recordParam.custId=OrderInfo.cust.custId;
-				recordParam.accessNbr=OrderInfo.acctNbr;
-				recordParam.certType=OrderInfo.cust.identityCd;
-				recordParam.certNumber=OrderInfo.cust.idCardNumber;
-				//记录到日志里
-				order.cust.saveAuthRecordFail(recordParam);
-				url=contextPath+"/pad/order/prodoffer/prepare.html";
-				$("#auth2").css('display','none'); 
-				order.prepare.commonTab(url,"order_tab_panel_offer");
+		var p={};
+		var segmentId=_isCustomers(OrderInfo.cust.identityCd);
+		if(segmentId==1000){
+			//判断开关是否开启
+			var url=contextPath+"/token/secondBusi/queryCustOnOffJson";
+			var response= $.callServiceAsJson(url,p,{});
+			if(response.code == 0){
+				if(response.data.ONOFF=="ON"){
+					if(OrderInfo.order.soNbr==null || OrderInfo.order.soNbr==undefined || OrderInfo.order.soNbr==""){
+						OrderInfo.order.soNbr = UUID.getDataId();
+					}
+					//政企客户
+					_governmentEnterpriseCustomers(menuId,isSimple,segmentId);
+				}
+				else{
+					order.cust.goService();
+				}
 			}
-			else {
-				if(!order.cust.isSelfChannel()){
-					  $("#idCardNumber2").attr("readonly","readonly");
-						 $.alert("提示","请到电信自有营业厅办理业务");			
-			       }
-
-				$("#auth2").css('display','block'); 
-				//$("#iseditOperation").attr("style","");
-			}
-			
-		} 
-		
-		else {
-			$.alertM(response.data);
 		}
+		else{
+			_governmentEnterpriseCustomers(menuId,isSimple,segmentId);
+		}
+		
 	};
-
+	//判断是否是政企客户
+	  var _isCustomers=function(id){
+		  //政企客户
+		  if(id==6|| id==7 || id== 15|| id==34 || id==43){
+			  return 1000;
+		  }
+		  else{
+			  return 500;
+		  }
+	  };
 	return {
 		changeCard : _changeCard,
 		getChooseProdInfo : _getChooseProdInfo,
@@ -3083,7 +3079,7 @@ order.prodModify = (function(){
 		changeLabel : _changeLabel,
 		remark_prodPass :_remark_prodPass,
 		checkProPSW  :_checkProPSW,
-		querySecondBusinessAuth:_querySecondBusinessAuth,
-		querySecondBusinessAuthSub:_querySecondBusinessAuthSub
+		querySecondBusinessAuth:_querySecondBusinessAuth
+		
 	};
 })();

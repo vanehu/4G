@@ -1,4 +1,4 @@
-
+<#if rules??>
 <!DOCTYPE html>
 <html>
 <head>
@@ -38,11 +38,29 @@
 	</div>
 	<div id="tab-box" class="tab-box">
 		<ul class="tab">
-                <li id="1"  class="tab_1 li-active">证件号码鉴权</li>
+		
+		<#if rules.rule3=="Y">
+		   <li id="3" class="tab_3 li-active" >产品密码鉴权</li>
+		</#if>
+		<#if rules.rule2=="Y">
+		     <#if rules.rule3=="Y" >
+                <li id="2" class="tab_2">短信鉴权</li>
+              <#else>
+                <li id="2" class="tab_2 li-active" >短信鉴权</li>
+              </#if>
+         </#if>
+           <#if rules.rule1=="Y">
+                 <#if rules.rule3=="Y" || rules.rule2=="Y">
+                      <li id="1"  class="tab_1">证件号码鉴权</li>
+                      <#else>
+                      <li id="1"  class="tab_1 li-active">证件号码鉴权</li>
+                 </#if> 
+            </#if>
+		
 		</ul>
-		<div id="div1" name="box" class="box_1">
+		<div id="div1" name="box" class="box_1 dis_none">
 			<div class="info_box">
-				<p class="p_text">证件类型：<span id="custAuthType" class="span_text"></span></p>
+				<p class="p_text">证件类型：<span class="span_text" id="custAuthType"></span></p>
 			</div>
 			<div class="info_box">
 				<span class="span_text"><span class="red">*</span>证件号码</span>
@@ -50,8 +68,29 @@
 				<button onclick="order.cust.identityTypeAuth()" class="btn_jy">校验</button>
 			</div>
 		</div>
+		<div id="div2" name="box" class="box_2 dis_none">
+			<div class="info_box">
+				<h3 class="title_2">短信验证码</h3>
+			</div>
+			<p class="span_text">为确保您的个人信息安全，在办理该业务前，请输入随机短信验证码</p>
+			<span class="span_text">短息验证码：</span>
+			<input maxlength="6" id="smspwd2" type="text" class="input"  data-validate="validate(required:短信验证码不能为空) on(blur)">
+			<button class="btn_jy" id="custAuthbtn3" onclick="order.cust.smsvalid()">校验</button>
+			<button class="btn_jy w-180" id="smsSend" onclick="order.cust.smsResend()">发送短信</button>
+			<p class="p_text"> - 验证码在5分钟内有效，3次错误输入后失效。</p>
+			<p class="p_text"> - 如果您在30秒内仍未收到验证码，请点击上面短信发送重新获取。</p>
+			<p class="p_text"> - 如果您连续3次重试都没有成功收到短信验证码，建议您稍后再试。</p>
+		</div>
+		<div id="div3" name="box" class="box_2 dis_none">
+			<div class="info_box">
+				<span class="span_text"><span class="red">*</span>产品密码：</span>
+				<input id="authPassword2" type="text" data-validate="validate(required:密码不能为空, maxlength:密码长度最多为{arg1}(12)) on(blur)" placeholder="请输入密码" class="input">
+				<button id="custAuthbtn1" onclick="order.cust.productPwdAuth()"  class="btn_jy">校验</button>
+			</div>
+		</div>
 	</div>
 	<script type="text/javascript">
+	
 		$('.tab li').on('click',function(){
 			$('.li-active').removeClass('li-active');
 			$(this).addClass('li-active');
@@ -60,19 +99,37 @@
 			});
 			var id=$(this).attr("id");
 			$("#div"+id).removeClass("dis_none");
-			
-			
+			if(id=="1"){
+				if(!order.cust.isSelfChannel()){
+					  $("#idCardNumber2").attr("readonly","readonly");
+						 $.alert("提示","请到电信自有营业厅办理业务");			
+			       }
+			}
 		});
+		    rulesJson='${rulesJson}';
+	        OrderInfo.rulesJson=eval("("+rulesJson+")");
+	        $("#custAuthType").html(OrderInfo.cust.identityName);
+	        
+	        
+	        if($("#2").attr("class")=="tab_2 li-active"){
+	        	$("#div2").removeClass("dis_none");
+	        	
+	        }
+	        if($("#3").attr("class")=="tab_3 li-active"){
+	        	$("#div3").removeClass("dis_none");
+	        	
+	        }if($("#1").attr("class")=="tab_1 li-active"){
+	        	$("#div1").removeClass("dis_none");
+	        	
+	        }
+	       
+	       
+	        
+	        
 	</script>
-	<script type="text/javascript">
-	var rulesJson='${rulesJson}';
-	OrderInfo.rulesJson=eval("("+rulesJson+")");
-	//居民身份证要读卡
-	$("#custAuthType").html(OrderInfo.cust.identityName);
 	
-	
-	
-	
-	</script>
 </body>
 </html>
+<#else>
+查询失败
+</#if>

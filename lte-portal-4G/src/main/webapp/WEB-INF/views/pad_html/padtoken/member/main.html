@@ -242,6 +242,7 @@
 			nextFlag = order.cust.mgr.queryCustCompreInfo(mainPhoneNum,provCustAreaId,3,'');
 		}
 		if(nextFlag){
+			OrderInfo.acctNbr="${mainPhoneNum}";
 			OrderInfo.provinceInfo.provIsale = "${provIsale}";
 			OrderInfo.provinceInfo.redirectUri = "${redirectUri}";
 			OrderInfo.provinceInfo.isFee = "${isFee}";

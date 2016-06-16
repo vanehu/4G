@@ -696,6 +696,66 @@ order.cust = (function(){
 			OrderInfo.authRecord.validateType = "";
 		
 	};
+	//证件+使用人鉴权
+    var _identityTypeAuthSub=function(){
+    	//单位证件
+		var UnitCertificate=$("#idCardNumber5").val();
+		if(!ec.util.isObj(UnitCertificate)){
+			$.alert("提示","单位证件号码不能为空！");
+			return;
+		}
+		//使用人证件
+		var PersonCertificate=$("#idCardNumber7").val();
+		if(!ec.util.isObj(PersonCertificate)){
+			$.alert("提示","使用人证件号码不能为空！");
+			return;
+		}
+		var param = _choosedCustInfo;
+		var recordParam={};
+		recordParam.custId=OrderInfo.cust.custId;
+		recordParam.accessNbr=OrderInfo.acctNbr;
+		recordParam.certType=OrderInfo.cust.identityCd;
+		recordParam.certNumber=OrderInfo.cust.idCardNumber;
+		//校验单位
+		param.validateType="1";
+		param.accessNumber=OrderInfo.acctNbr;
+		param.identityCd=OrderInfo.cust.identityCd;
+		param.areaId=OrderInfo.cust.areaId;
+		param.custId=OrderInfo.cust.custId;
+		param.identityNum = UnitCertificate;
+		recordParam.validateType="1";
+		recordParam.validateLevel="2";
+		var response= $.callServiceAsJson(contextPath+"/token/app/cust/custAuthSub",param);
+		if(response.data.code=="0"){
+			//单位证件校验成功
+			var param2 ={};
+			param2.validateType="1";
+			param2.accessNumber=OrderInfo.acctNbr;
+			param2.identityCd=OrderInfo.rulesJson.identidyTypeCd;  //证件类型
+			param2.areaId=OrderInfo.cust.areaId;
+			param2.custId=OrderInfo.cust.custId;
+			param2.identityNum =PersonCertificate;
+			var response= $.callServiceAsJson(contextPath+"/token/app/cust/custAuthSub",param2);
+			if(response.data.code=="0"){
+				//单位证件和使用人证件都校验成功
+				OrderInfo.authRecord.validateType="3";
+				OrderInfo.authRecord.resultCode="0";
+				_saveAuthRecordSuccess(recordParam);
+				_goService();
+			}
+			else{
+				//错误
+				_saveAuthRecordFail(recordParam);
+				$.alertM(response.data);
+			}
+			
+		}
+		else{
+			//错误
+			_saveAuthRecordFail(recordParam);
+			$.alertM(response.data);
+		}
+    };
 	//鉴权方式日志记录
 	var _saveAuthRecord=function(param){
 		var url=contextPath+"/secondBusi/saveAuthRecord";
@@ -756,7 +816,10 @@ order.cust = (function(){
 		smsvalid:_smsvalid,
 		jumpAuth2:_jumpAuth2,
 		choosedCustInfo:_choosedCustInfo,
-		isSelfChannel:_isSelfChannel
+		isSelfChannel:_isSelfChannel,
+		goService:_goService,
+		identityTypeAuthSub:_identityTypeAuthSub
+		
 	};
 })();
 $(function() {

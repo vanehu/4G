@@ -187,9 +187,9 @@ public class SecondBusinessController extends BaseController {
                         	     paramMap.put("queryType","1,2,3,4,5"); 
                         	    // System.out.println(JsonUtil.toStringNonNull(paramMap));
                        	          Map<String, Object> resultMap2 = custBmo.queryAccountAndUseCustInfo(paramMap,flowNum, sessionStaff);
-                        	     if (ResultCode.R_SUCC.equals(resultMap2.get("resultCode"))) {
+                        	     if (resultMap2!=null && resultMap2.size()>0) {
                         	    	 //成功
-                        	    	 Map<String, Object>map=MapUtils.getMap(resultMap2, "result");
+                        	    	 Map<String, Object>map=resultMap2;
                         	    	Map<String,Object>accountMap=(HashMap<String, Object>)map.get("account");
                         	    	//账户名称
                         	    	String accountName=MapUtils.getString(accountMap, "accountName");
