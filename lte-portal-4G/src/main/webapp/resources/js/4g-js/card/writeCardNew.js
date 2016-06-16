@@ -741,7 +741,7 @@ order.writeCard = (function(){
 					hmUimid:'',//黑莓
 					cardNo:_cardInfoJson.cardTypeId,
 					phoneNumber:$("#phoneNumNew").val(),
-					areaId:$("#areaIdcard").val(),
+					areaId:$("#p_areaId").val(),
 					areaCode:$("#areaCodecard").val(),//归属地区号
 					fromAreaCode:$("#areaCodecard").val()//漫游地区号
 				};
@@ -815,7 +815,7 @@ order.writeCard = (function(){
 	_completeWriteCard=function(result,resultCode){
 			var serviceName = contextPath + "/mktRes/writeCard/completeWriteCard";
 			var srInParam = {
-				"areaId": $("#areaIdcard").val(),
+				"areaId": $("#p_areaId").val(),
 			    "InoutInfo": {
 			        "ApplyNo": "001",
 			        "InoutId": "",
@@ -825,7 +825,7 @@ order.writeCard = (function(){
 			        "OperationType": "1100",
 			        "MktResStoreId": "",
 			        "ChannelId": $("#channelIdcard").val(),
-			        "AreaId": $("#areaIdcard").val(),
+			        "AreaId": $("#p_areaId").val(),
 			        "StaffId": $("#staffId").val()
 			    },
 			    "MktResInstInfos": [
@@ -925,7 +925,7 @@ order.writeCard = (function(){
 								},
 								{
 								    "AttrId": "65010019",
-								    "AttrValue": $("#areaIdcard").val()
+								    "AttrValue": $("#p_areaId").val()
 								}
 			                ]
 			            }
@@ -942,7 +942,7 @@ order.writeCard = (function(){
 				phoneNumber:$("#phoneNumNew").val(),
 				cardType:_cardInfoJson.cardTypeId,
 				eventType:"2",
-				areaId:$("#areaIdcard").val(),
+				areaId:$("#p_areaId").val(),
 				serviceCode:20,//新增一个动作表示，用于记日志update by huangjj
 				TransactionID:_TransactionID,
 				remark:_cardDllInfoJson.remark,
@@ -1049,11 +1049,14 @@ order.writeCard = (function(){
 				"submitCallBack":function(dialogForm,dialog){}
 		});
 	};
-	
+	var _chooseArea = function(){
+		order.area.chooseAreaTreeManger("report/cartMain","p_areaId_val","p_areaId",3);
+	};
 	return {
 		writeReadCard : _writeReadCard,
 		readCard : _readCard,
 		writeCard : _writeCard,
+		chooseArea : _chooseArea,
 		getCardType : _getCardType,
 		phoneNumDialog:_phoneNumDialog
 	};

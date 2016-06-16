@@ -49,6 +49,7 @@ function getToken(){
 <script src="${contextPath}/js/busi-js/order/phoneNumber.js?${jsversion}" type="text/javascript"></script>
 <script src="${contextPath}/js/busi-js/common/const.js?${jsversion}" type="text/javascript"></script>
 <script src="${contextPath}/js/4g-js/order/soOrder.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/busi-js/order/areaTree.js?${jsversion}" type="text/javascript"></script>
 <input type="hidden" id="areaCodecard" value="${areaCode}"/>
 <input type="hidden" id="areaIdcard" value="${areaId}"/>
 <input type="hidden" id="channelIdcard" value="${channelId}"/>
@@ -68,7 +69,10 @@ function getToken(){
 					<div class="pdcardcon show">
 					  <ul id="item_order_${prodId}" class="fillin show" >
 							<li>
-								<label style="width:120px;">接入号码：</label>
+							      <label style="width:60px;">选择地区：</label>
+							      <input type="text" class="numberTextBox width198" readonly="readonly" id="p_areaId_val" onclick="order.writeCard.chooseArea()" value="${p_areaId_val}" placeholder="请选择地区" />
+							      <input type="hidden" id="p_areaId" value="${p_areaId}">
+								<label style="width:80px;">接入号码：</label>
 								<a class="selectBoxTwo selectNumbel" href="javascript:void(0);" id="nbr_btn_phoneNum" onclick="order.writeCard.phoneNumDialog('offer','Y2','${prodId}');" href="javascript:void(0);">选择号码<u></u></a>
 								<label class="f_red">*</label>
 							</li>

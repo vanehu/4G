@@ -2557,6 +2557,10 @@ public class MktResController extends BaseController {
 		    model.addAttribute("areaId",sessionStaff.getAreaId());
 		    model.addAttribute("channelId",sessionStaff.getCurrentChannelId());
 		    model.addAttribute("staffId",sessionStaff.getStaffId());
+		    Map<String, Object> defaultAreaInfo = CommonMethods.getDefaultAreaInfo_MinimumC3(sessionStaff);
+
+	        model.addAttribute("p_areaId", defaultAreaInfo.get("defaultAreaId"));
+	        model.addAttribute("p_areaId_val", defaultAreaInfo.get("defaultAreaName"));
 			return "/order/write-card-new";
 	}
 	

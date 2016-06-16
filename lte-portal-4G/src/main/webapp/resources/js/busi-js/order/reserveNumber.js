@@ -173,7 +173,7 @@ order.reserveNumber = (function(){
 	};
 	var _reserveNumInit=function(){
 		order.phoneNumber.queryApConfig();
-		order.phoneNumber.queryPhoneNbrPool();
+		order.phoneNumber.queryPhoneNbrPool('');
 		order.ysl=
 		order.phoneNumber.queryPnLevelProdOffer("reserve");
 		_queryFlag="1";

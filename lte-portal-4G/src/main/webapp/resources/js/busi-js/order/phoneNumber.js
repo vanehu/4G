@@ -829,10 +829,13 @@ order.phoneNumber = (function(){
 	};
 	var _initPhonenumber=function(){
 	    var phoneNumNewFlag = $("#phoneNumFlag").val();
+	    var p_areaId = $("#p_areaId").val();
 		if(phoneNumNewFlag=='new'){//只选号不预占，用于写卡申请传卡管做混配
 		   $("#psw_dt").hide();
 		   $("#psw_dd").hide();
+		   queryPhoneNbrPool(p_areaId);
 		}else{
+			queryPhoneNbrPool('');
 		  if(CONST.getAppDesc()==1){
 			$("#psw_dt").hide();
 			$("#psw_dd").hide();
@@ -843,7 +846,6 @@ order.phoneNumber = (function(){
 		ispurchased=0;
 		selectedLevel="";
 		order.phoneNumber.queryApConfig();
-		queryPhoneNbrPool();
 		queryPnLevelProdOffer();
 		var param={};
 		order.phoneNumber.btnQueryPhoneNumber(param);
@@ -955,9 +957,12 @@ order.phoneNumber = (function(){
 		}
 	};
 	//查询号池
-	var queryPhoneNbrPool = function(){
+	var queryPhoneNbrPool = function(p_areaId){
 		var url=contextPath+"/mktRes/phonenumber/queryPhoneNbrPool";
 		var param={};
+		if(p_areaId !=""){
+			param={"areaId":p_areaId};
+		}
 		var response = $.callServiceAsJson(url,param);
 		if (response.code==0) {
 			if(response.data){
