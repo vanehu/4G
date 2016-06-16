@@ -314,4 +314,12 @@ public class MDA {
      * 集团CRM-4G政企客户鉴权开关
      */
     public static final Map<String,String> GOV_AUTH = new HashMap<String,String>();
+	/**
+     * 新装、套餐变更纳入老用户作为副卡分省开关
+     */
+    public static final Map<String,String> OLDMEMBER_JOIN = new HashMap<String,String>();
+    /**
+     * 套餐变更是否修改付费类型及信控属性分省开关
+     */
+    public static final Map<String,String> SHOW_CHANGE_FEE_TYPE  = new HashMap<String,String>();
 }
