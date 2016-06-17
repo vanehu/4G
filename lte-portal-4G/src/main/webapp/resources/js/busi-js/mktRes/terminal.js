@@ -1705,7 +1705,8 @@ mktRes.terminal = (function($){
 		var param = {
 			"channelCode" 	: $('#channelInfo').find('option:selected').attr('channelCode'),
 			"channelName" 	: $('#channelInfo').find('option:selected').attr('channelName'),
-			"channelId" 	: $("#channelInfo").val()
+			"channelId" 	: $("#channelInfo").val(),
+			"qryType" 		: $("#qryType").val()
 		};
 
 		var keysArray = new Array("channelCode", "channelName", "channelId");
