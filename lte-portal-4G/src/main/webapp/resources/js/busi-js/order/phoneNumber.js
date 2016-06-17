@@ -693,7 +693,9 @@ order.phoneNumber = (function(){
 				}
 			} else{
 				pnEnd = pncharacteristic;
-//				pnNotExitNum = '';
+				if(pnNotExitNum == '后四位不含'){
+					pnNotExitNum = '';
+				}
 			}
 		} else{
 			if(pnEnd=='最后四位'){
