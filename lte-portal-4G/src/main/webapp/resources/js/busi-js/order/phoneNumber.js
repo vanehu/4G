@@ -724,7 +724,10 @@ order.phoneNumber = (function(){
 			pnCharacterId = $("#pnCharacterId_all a.selected").attr("val");
 		}
 		pnCharacterId = ec.util.defaultStr(pnCharacterId);
-		
+		var p_areaId = $("#p_areaId").val();
+		if(p_areaId !="" && p_areaId !=null){
+			areaId = p_areaId;
+		}
 		return {
 			"pnHead":pnHead, "pnEnd":pnEnd, "pnNotExitNum":pnNotExitNum, "goodNumFlag":pnCharacterId,
 			"maxPrePrice":Less, "minPrePrice":Greater, "pnLevelId":'', "pageSize":"15",
