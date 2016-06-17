@@ -112,6 +112,9 @@ common.print = (function($){
 			},	
 			"done" : function(response){
 				if (response.code == 0) {
+					if(OrderInfo.actionFlag == 22){
+						$("#btn_next_checkUim").hide();
+					}
 					$("#order-confirm").hide();
 					$("#order-print").html(response.data).show();
 					OrderInfo.order.step=4;

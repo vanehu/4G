@@ -328,7 +328,6 @@ public class PrintBmoImpl implements PrintBmo {
 	private Map<String, Object> getVoucherData(Map<String, Object> paramMap, boolean needAgreement, String optFlowNum, HttpServletRequest request)
 			throws Exception {
 		Map<String, Object> resultMap = null;
-		try{
 		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(
 				request, SysConstant.SESSION_KEY_LOGIN_STAFF);
 
@@ -339,16 +338,18 @@ public class PrintBmoImpl implements PrintBmo {
 			DataBus db = InterfaceClient.callService(paramMap,
 					PortalServiceCode.INTF_GET_VOUCHER_DATA,
 					optFlowNum, sessionStaff);
-			if (ResultCode.R_SUCC.equals(db.getResultCode())) {
-				resultMap = MapUtils.getMap(db.getReturnlmap(), "result");
-				if (resultMap != null) {
-					resultMap.put("chargeItems", paramMap.get("chargeItems"));
+			try{
+				if(ResultCode.R_SUCC.equals(db.getResultCode())) {
+					resultMap = MapUtils.getMap(db.getReturnlmap(), "result");
+					if (resultMap != null) {
+						resultMap.put("chargeItems", paramMap.get("chargeItems"));
+					}
+					resultMap = parseVoucherData(resultMap, needAgreement);
 				}
-				resultMap = parseVoucherData(resultMap, needAgreement);
+			} catch (Exception e) {
+				log.error("门户处理营业受理后台的service/intf.soService/queryOrderListInfoForPrint服务返回的数据异常", e);
+				throw new BusinessException(ErrorCode.SIGN_SEAL_PDF, paramMap, db.getReturnlmap(), e);
 			}
-		}
-		}catch(Exception e){
-			e.printStackTrace();
 		}
 		return resultMap;
 	}

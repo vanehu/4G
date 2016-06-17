@@ -89,7 +89,6 @@ prod.changeUim = (function() {
 		if(!prod.uim.setProdUim()){ //根据UIM类型，设置产品是3G还是4G，并且保存旧卡
 			return false;
 		}
-		alert(11);
 		var prodInfo = order.prodModify.choosedProdInfo;
 		$.callServiceAsHtml(contextPath+"/app/prodModify/changeCard", param, {
 			"before":function(){
