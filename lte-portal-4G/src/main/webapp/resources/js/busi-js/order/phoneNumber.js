@@ -688,7 +688,9 @@ order.phoneNumber = (function(){
 		if(pncharacteristic!=null && pncharacteristic!=""){		
 			if(pncharacteristic == '4'){
 				pnNotExitNum = pncharacteristic;
-//				pnEnd='';
+				if(pnEnd == '最后四位'){
+					pnEnd = '';
+				}
 			} else{
 				pnEnd = pncharacteristic;
 //				pnNotExitNum = '';
