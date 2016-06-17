@@ -215,7 +215,7 @@ public class CommonController extends BaseController {
         businessExtMap.put("busiSerial", busiSerial);
         businessExtMap.put("staffCode", sessionStaff.getStaffCode());
         businessExtMap.put("channelCode", sessionStaff.getCurrentChannelCode());
-        businessExtMap.put("areaCode", sessionStaff.getAreaCode());
+        businessExtMap.put("areaCode", sessionStaff.getAreaId());//原先为sessionStaff.getAreaCode()只有四位数字,但需求单要求六位编码，故修改，modify by yanghm
         businessExtMap.put("teminalType", teminalType.trim());
         businessExtMap.put("srcSystem", srcSystem);
         businessExtMap.put("osType", osType.trim());
