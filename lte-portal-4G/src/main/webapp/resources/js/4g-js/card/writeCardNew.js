@@ -735,6 +735,7 @@ order.writeCard = (function(){
 			try {
 				//alert(JSON.stringify(order.prodModify.choosedProdInfo));
 				// 提取卡商代码
+				var areaCode = OrderInfo.getAreaCode(prodId);
 				var param = {
 					factoryCode:_cardDllInfoJson.factoryCode,
 					authCodeType:_cardDllInfoJson.authCodeType,
@@ -742,7 +743,7 @@ order.writeCard = (function(){
 					cardNo:_cardInfoJson.cardTypeId,
 					phoneNumber:$("#phoneNumNew").val(),
 					areaId:$("#p_areaId").val(),
-					areaCode:$("#areaCodecard").val(),//归属地区号
+					areaCode:areaCode,//归属地区号
 					fromAreaCode:$("#areaCodecard").val()//漫游地区号
 				};
 				var resourceDataJson;
