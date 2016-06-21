@@ -314,7 +314,16 @@ public class MDA {
      * 集团CRM-4G政企客户鉴权开关
      */
     public static final Map<String,String> GOV_AUTH = new HashMap<String,String>();
-	/**
+   /**
+    * 身份证阅读器放置ftp路径
+    */
+    public static final String CARD_FILEPATH= new String("");
+    
+    /**
+     * 身份阅读器相关
+     */
+    public static final Map<String,Map<String,String>> USBVERSION_SIGNATURE = new HashMap <String,Map<String,String>>();
+    /**
      * 新装、套餐变更纳入老用户作为副卡分省开关
      */
     public static final Map<String,String> OLDMEMBER_JOIN = new HashMap<String,String>();
