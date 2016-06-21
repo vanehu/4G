@@ -735,4 +735,31 @@ public class essOrderController extends BaseController {
 		return "/ess/ess-repeat-writeCard-main";
 	}
 	
+	/**
+	 * 终端换货填串码
+	 */
+	@RequestMapping(value = "/showExchangeGoods", method = RequestMethod.POST)
+	@AuthorityValid(isCheck = false)
+	public String showExchangeGoods(@RequestBody Map<String, Object> param,
+			Model model) {
+		String extCustOrderId = (String) param.get("extCustOrderId");
+		String accNbr = (String) param.get("accNbr");
+		String mktResCdName = (String) param.get("mktResCdName");
+		String salesPrice = (String) param.get("salesPrice");
+		String mktResInstCode = (String) param.get("mktResInstCode");
+		String brand = (String) param.get("brand");
+		String modelStr = (String) param.get("model");
+		String color = (String) param.get("color");
+		model.addAttribute("extCustOrderId", extCustOrderId);
+		model.addAttribute("accNbr", accNbr);
+		model.addAttribute("mktResCdName", mktResCdName);
+		model.addAttribute("salesPrice", salesPrice);
+		model.addAttribute("mktResInstCode", mktResInstCode);
+		model.addAttribute("brand", brand);
+		model.addAttribute("modelStr", modelStr);
+		model.addAttribute("color", color);
+		return "/ess/ess-exchange-show";
+	}
+	
+	
 }

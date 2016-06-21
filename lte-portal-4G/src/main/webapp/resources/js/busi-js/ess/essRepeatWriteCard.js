@@ -10,7 +10,7 @@ ess.repeatWriteCard = (function() {
 		if (pageIndex > 0) {
 			curPage = pageIndex;
 		};
-		var transactionId = ec.util.defaultStr($("#p_transactionId").val());
+		var extCustOrderId = ec.util.defaultStr($("#p_extCustOrderId").val());
 		var accNbr = ec.util.defaultStr($("#p_accNbr").val());
 		var startDate = ec.util.defaultStr($("#p_startDate").val());
 		var endDate = ec.util.defaultStr($("#p_endDate").val());
@@ -19,7 +19,7 @@ ess.repeatWriteCard = (function() {
 			return;
 		}
 		var param = {
-			transactionId : transactionId,
+			extCustOrderId : extCustOrderId,
 			accNbr : accNbr,
 			startDate : startDate,
 			endDate : endDate,

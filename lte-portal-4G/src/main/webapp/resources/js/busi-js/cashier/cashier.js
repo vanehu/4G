@@ -56,6 +56,7 @@ cashier.main = (function(){
 				"olStatusCd":"100002",
 				"busiStatusCd":"100002",
 				"tSOrder":"Y",
+				"staffId":$("#p_staffId").val(),
 				nowPage:curPage,
 				pageSize:10,
 				pageType : pageType, //页面类型标志，控制购物车的操作按钮

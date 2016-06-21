@@ -8,7 +8,7 @@ essPartner.main = (function() {
 	var _initDic = function() {
 		//订单类型、订单状态
 		var contentFlaParam = {
-			" requestContentFlag ": [
+			"requestContentFlag": [
 				"orderType", "orderStatus"
 			]
 		};
@@ -62,7 +62,7 @@ essPartner.main = (function() {
 			extCustOrderId : extCustOrderId,
 			orderType : orderType,
 			commonRegionId : commonRegionId,
-			transactionId : transactionId,
+			essTransactionId : transactionId,
 			orderStatus : orderStatus,
 			channelId : channelId,
 			startDate : startDate,
@@ -127,18 +127,49 @@ essPartner.main = (function() {
 		_orderRepeal(param);
 	};
 	
-	var _exchangeGoods = function(extCustOrderId,lanId,accNbr,channelId) {
-		var param = {
-				custOrder : {
-					extCustOrderId : extCustOrderId,
-					channelId : channelId,
-					serviceOfferId : "4040800002",
-					serviceOfferName : "换货",
-					accNbr : accNbr,
-					lanId : lanId,
-				}
+	var _exchangeGoods = function(extCustOrderId,lanId,accNbr,channelId,isNeedNewMktCode) {
+		if(isNeedNewMktCode){
+			var color = $("#"+"color_"+extCustOrderId).val();
+			var model = $("#"+"model_"+extCustOrderId).val();
+			var brand = $("#"+"brand_"+extCustOrderId).val();
+			var mktResCdName = $("#"+"mktResCdName_"+extCustOrderId).val();
+			var salesPrice = $("#"+"salesPrice_"+extCustOrderId).val();
+			var mktResInstCode = $("#"+"mktResInstCode_"+extCustOrderId).val();
+			var exchangeGoodsInfo = {
+					custOrder : {
+						extCustOrderId : extCustOrderId,
+						channelId : channelId,
+						serviceOfferId : "4040800002",
+						serviceOfferName : "换货",
+						accNbr : accNbr,
+						lanId : lanId,
+					}
 			};
-		_orderRepeal(param);
+			OrderInfo.essOrderInfo.exchangeGoodsInfo = exchangeGoodsInfo;
+			var param = {
+					color : color,
+					model : model,
+					brand : brand,
+					mktResInstCode : mktResInstCode,
+					salesPrice : salesPrice,
+					mktResCdName : mktResCdName,
+					accNbr : accNbr,
+					extCustOrderId : extCustOrderId
+			};
+			_showExchangeGoods(param);
+		}else{
+			var param = {
+					custOrder : {
+						extCustOrderId : extCustOrderId,
+						channelId : channelId,
+						serviceOfferId : "4040800002",
+						serviceOfferName : "换货",
+						accNbr : accNbr,
+						lanId : lanId,
+					}
+				};
+			_orderRepeal(param);
+		}
 	};
 	
 	var _orderRepeal  = function(param) {
@@ -153,6 +184,7 @@ essPartner.main = (function() {
 				if (response.code == 0) {
 					var show = "'"+param.custOrder.serviceOfferName+"'操作成功";
 					$.alert("提示",show);
+					easyDialog.close();
 				} else if (response.code == -2) {
 					$.alertM(response.data);
 				} else if (response.code == 1002) {
@@ -168,6 +200,33 @@ essPartner.main = (function() {
 			}
 		});
 	};
+	
+	var _showExchangeGoods = function(param) {
+		$.callServiceAsHtml(contextPath + "/ess/order/showExchangeGoods",param,{
+			"before" : function() {
+				$.ecOverlay("<strong>正在查询中,请稍等会儿....</strong>");
+			},
+			"always" : function() {
+				$.unecOverlay();
+			},
+			"done" : function(response) {
+				if (!response) {
+					response.data = '';
+				}
+				$("#div_orderEvent_dialog").html(response.data);
+				easyDialog.open({
+					container : "div_orderEvent_dialog"
+				});
+				$("#chkTsnAForm").off('formIsValid').on('formIsValid',function(event,form){	
+					var inParam = {};
+					OrderInfo.essOrderInfo.exchangeGoodsInfo.custOrder.newMktResInstCode = $("#p_mktResInstCode").val();
+					inParam = OrderInfo.essOrderInfo.exchangeGoodsInfo;
+					_orderRepeal(inParam);
+				}).ketchup({bindElement:"bt_orderRepeal"});
+			}
+		});
+
+	};
 
 	return {
 		initDic : _initDic,
@@ -176,7 +235,8 @@ essPartner.main = (function() {
 		returnGoods : _returnGoods,
 		unOrder : _unOrder,
 		exchangeGoods : _exchangeGoods,
-		orderRepeal : _orderRepeal
+		orderRepeal : _orderRepeal,
+		showExchangeGoods : _showExchangeGoods
 	};
 
 })();

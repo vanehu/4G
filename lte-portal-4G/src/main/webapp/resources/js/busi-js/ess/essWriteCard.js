@@ -7,7 +7,7 @@ ess.writeCard = (function() {
 	var _initDic = function() {
 		//订单类型、订单状态
 		var contentFlaParam = {
-			" requestContentFlag ": [
+			"requestContentFlag": [
 				"orderType", "orderStatus"
 			]
 		};
@@ -45,14 +45,14 @@ ess.writeCard = (function() {
 		if (pageIndex > 0) {
 			curPage = pageIndex;
 		};
-		var transactionId = ec.util.defaultStr($("#p_transactionId").val());
+		var extCustOrderId = ec.util.defaultStr($("#p_extCustOrderId").val());
 		var consignee = ec.util.defaultStr($("#p_consignee").val());
 		var accNbr = ec.util.defaultStr($("#p_accNbr").val());
 		var orderStatus = ec.util.defaultStr($("#p_orderStatus").val());
 		var startDate = ec.util.defaultStr($("#p_startDate").val());
 		var endDate = ec.util.defaultStr($("#p_endDate").val());
 		var param = {
-			transactionId : transactionId,
+			extCustOrderId : extCustOrderId,
 			consignee : consignee,
 			accNbr : accNbr,
 			orderStatus : orderStatus,

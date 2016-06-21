@@ -24,7 +24,7 @@
 							<dt style="width: 100px">交易流水号：</dt>
 							<dd>
 								<input type="text" class="numberTextBox width198"
-									id="p_extCustOrderId" value=""/>
+									id="p_transactionId" value=""/>
 							   <label class="f_red">&nbsp;&nbsp;</label>
 							</dd>
 							<dt style="width: 100px">订单类型：</dt>
@@ -47,7 +47,7 @@
 							<dt style="width: 100px">订单流水号：</dt>
 							<dd>
 								<input type="text" class="numberTextBox width198"
-									id="p_transactionId" value=""/>
+									id="p_extCustOrderId" value=""/>
 							   <label class="f_red">&nbsp;&nbsp;</label>
 							</dd>
 							<dt style="width: 100px">订单状态：</dt>
@@ -59,10 +59,14 @@
 							</dd>
 							<dt style="width: 100px">渠道：</dt>
 							<dd>
-								<select id="p_channelId" class="width202" style="width: 160px">
-									<option value="">--请选择--</option>
+								<select id="p_channelId" class="width202">
+									<option value="">--选择渠道--</option> <#if
+									Session["_staff_channel"]?? &&
+									(Session["_staff_channel"]?size>0) > <#list
+									Session["_staff_channel"] as channel>
+									<option value="${channel.id}" areaid="${channel.areaId}">${channel.name}</option>
+									</#list> </#if>
 								</select>
-								<label class="f_red">&nbsp;&nbsp;</label>
 							</dd>
 						</dl>
 						<dl>

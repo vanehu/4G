@@ -70,7 +70,7 @@ essOrder.main = (function() {
 		});
 		//订单类型、订单状态
 		var contentFlaParam = {
-			" requestContentFlag ": [
+			"requestContentFlag": [
 				"orderType", "orderStatus"
 			]
 		};
@@ -133,7 +133,7 @@ essOrder.main = (function() {
 			extCustOrderId : extCustOrderId,
 			orderType : orderType,
 			commonRegionId : commonRegionId,
-			transactionId : transactionId,
+			essTransactionId : transactionId,
 			orderStatus : orderStatus,
 			channelId : channelId,
 			startDate : startDate,

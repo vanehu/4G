@@ -1,7 +1,7 @@
 CommonUtils.regNamespace("ess", "print");
 
 /*
- * 远程写卡
+ * 回执打印
  */
 ess.print = (function() {
 
@@ -11,13 +11,13 @@ ess.print = (function() {
 		if (pageIndex > 0) {
 			curPage = pageIndex;
 		};
-		var transactionId = ec.util.defaultStr($("#p_transactionId").val());
+		var extCustOrderId = ec.util.defaultStr($("#p_extCustOrderId").val());
 		var consignee = ec.util.defaultStr($("#p_consignee").val());
 		var accNbr = ec.util.defaultStr($("#p_accNbr").val());
 		var startDate = ec.util.defaultStr($("#p_startDate").val());
 		var endDate = ec.util.defaultStr($("#p_endDate").val());
 		var param = {
-			transactionId : transactionId,
+			extCustOrderId : extCustOrderId,
 			consignee : consignee,
 			accNbr : accNbr,
 			startDate : startDate,

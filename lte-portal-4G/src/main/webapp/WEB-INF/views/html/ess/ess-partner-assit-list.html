@@ -28,6 +28,31 @@
 			<td>${orderLists.regionName}</td>
 			<td>${orderLists.remark}</td>
 			<td>
+			    <#if (orderLists.mktResInst)?? &&((orderLists.mktResInst)?size>0)>
+			<#list orderLists.mktResInst as mktResInsts>
+			<#if mktResInsts.mktResType == '101001000'>
+			    <#list mktResInsts.attr as attrInfo>
+			    <#if attrInfo.attrId == '20004006'>
+                <input type="hidden" id="color_${orderLists.extCustOrderId}"  value=${attrInfo.attrVal}>
+                </#if>
+                <#if attrInfo.attrId == '20004005'>
+                <input type="hidden" id="model_${orderLists.extCustOrderId}"  value=${attrInfo.attrVal}>
+                </#if>
+                <#if attrInfo.attrId == '20004003'>
+                <input type="hidden" id="brand_${orderLists.extCustOrderId}"  value=${attrInfo.attrVal}>
+                </#if>
+                <#if attrInfo.attrId == '20004002'>
+                <input type="hidden" id="describe_${orderLists.extCustOrderId}"  value=${attrInfo.attrVal}>
+                </#if>
+                </#list>
+                <input type="hidden" id="salesPrice_${orderLists.extCustOrderId}"  value=${mktResInsts.salesPrice}>
+                <input type="hidden" id="mktResCdName_${orderLists.extCustOrderId}"  value=${mktResInsts.mktResCdName}>
+                <input type="hidden" id="mktResInstCode_${orderLists.extCustOrderId}"  value=${mktResInsts.mktResInstCode}>
+                
+                
+			</#if>
+			</#list>
+			</#if>
 			    <a class="purchase"
 				href="javascript:essPartner.main.returnGoods('${orderLists.extCustOrderId}','${orderLists.commonRegionId}','${orderLists.accNbr}','${orderLists.channelId}')"
 				type="main">退货</a>
@@ -35,7 +60,7 @@
 				href="javascript:essPartner.main.unOrder('${orderLists.extCustOrderId}','${orderLists.commonRegionId}','${orderLists.accNbr}','${orderLists.channelId}')"
 				type="main">撤单</a>
 				<a class="purchase"
-				href="javascript:essPartner.main.exchangeGoods('${orderLists.extCustOrderId}','${orderLists.commonRegionId}','${orderLists.accNbr}','${orderLists.channelId}')"
+				href="javascript:essPartner.main.exchangeGoods('${orderLists.extCustOrderId}','${orderLists.commonRegionId}','${orderLists.accNbr}','${orderLists.channelId}','${orderLists.isNeedNewMktCode}')"
 				type="main">换货</a>
 			</td>
 		</tr>
@@ -48,6 +73,8 @@
 	</tbody>
 </table>
 <@portal.simplifyModelPagination pageModel "essPartner.main.queryOrderList"/>
+<!--换货弹窗-->
+<div class="easyDialogdiv" style="width:500px;height:460px;" id="div_orderEvent_dialog">
 </div>
 <!--页码 end-->
 <script src="${contextPath}/js/our-js/ec.pagination.js?${jsversion}"
