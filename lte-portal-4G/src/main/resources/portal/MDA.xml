@@ -459,7 +459,8 @@
  	       'FTP_8520000':'FTPSERVICECONFIG_3',<!-- 贵州 -->
  	       'FTP_8620000':'FTPSERVICECONFIG_3',<!-- 甘肃 -->
  	       'FTP_8650000':'FTPSERVICECONFIG_3',<!-- 新疆 -->
- 	       'FTP_8990000':'FTPSERVICECONFIG_3'<!-- 虚拟省 -->
+ 	       'FTP_8990000':'FTPSERVICECONFIG_3',<!-- 虚拟省 -->
+ 	       'FTP_Default':'FTPSERVICECONFIG_2' <!-- 默认配置项，一般代理商使用，因为他们工号归属渠道为全国 -->
  	      }
  	      </const>
  	      <const type="String" name="CLUSTERFLAG" value="OFF" description="单台FTP与多台FTP开关：OFF：单台FTP；ON：多台FTP(默认为OFF)"/>
