@@ -159,7 +159,7 @@ public class SecondBusinessController extends BaseController {
             	else{
             		inParamMap.put("custType",1);
             	}
-
+                System.out.println(JsonUtil.toString(inParamMap));
                 resMap = secondBusiness.querySecondBusinessMenuAuth(inParamMap, flowNum, sessionStaff);
                 if (ResultCode.R_SUCC.equals(resMap.get("resultCode"))) {
                     Map<String, Object> resultMap = MapUtils.getMap(resMap, "result");
@@ -185,22 +185,22 @@ public class SecondBusinessController extends BaseController {
                         	     paramMap.put("areaId",areaId);
                         	     //固定传
                         	     paramMap.put("queryType","1,2,3,4,5"); 
-                        	    // System.out.println(JsonUtil.toStringNonNull(paramMap));
-                       	          Map<String, Object> resultMap2 = custBmo.queryAccountAndUseCustInfo(paramMap,flowNum, sessionStaff);
-                        	     if (resultMap2!=null && resultMap2.size()>0) {
+                       	         Map<String, Object> resultMap2 = custBmo.queryAccountAndUseCustInfo(paramMap,flowNum, sessionStaff);
+                       	       //  log.debug("************NLqueryAccountAndUseCustInfo**************", JsonUtil.toString(resultMap2));
+                       	          if (resultMap2!=null && resultMap2.size()>0) {
                         	    	 //成功
-                        	    	 Map<String, Object>map=resultMap2;
-                        	    	Map<String,Object>accountMap=(HashMap<String, Object>)map.get("account");
+                        	    	 Map<String,Object>accountMap=(Map<String, Object>)resultMap2.get("account");
+                        	         
                         	    	//账户名称
                         	    	String accountName=MapUtils.getString(accountMap, "accountName");
                         	    	//使用人名称
-                        	    	String useCustName=MapUtils.getString(map, "useCustName");
+                        	    	String useCustName=MapUtils.getString(resultMap2, "useCustName");
 
                         	    	rules.put("accountName", accountName);
-                        	    	rules.put("useCustId",MapUtils.getString(map, "useCustId"));
+                        	    	rules.put("useCustId",MapUtils.getString(resultMap2, "useCustId"));
                         	    	rules.put("useCustName", useCustName);
-                        	    	rules.put("isSame", MapUtils.getString(map, "isSame"));
-                        	    	Map<String,Object>identityMap=MapUtils.getMap(map,"identity");
+                        	    	rules.put("isSame", MapUtils.getString(resultMap2, "isSame"));
+                        	    	Map<String,Object>identityMap=MapUtils.getMap(resultMap2,"identity");
                         	    	rules.put("identidyTypeCd", MapUtils.getInteger(identityMap,"identityTypeCd"));
                         	    	rules.put("identityName", MapUtils.getString(identityMap,"identityName"));
                         	    	rules.put("identityNum",MapUtils.getString(identityMap,"identityNum"));
