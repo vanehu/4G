@@ -43,7 +43,7 @@
 		<const type="String" name="CSB_WS_URL" value="http://10.128.90.194:10901/LTE-CSB/services/DEPService?wsdl" />
 		<const type="String" name="CSB_HTTP_URL" value="http://10.128.90.194:10901/LTE-CSB/HttpDEPService" />
 		<const type="String" name="CSB_HTTP_FORCA_URL" value="http://10.128.90.194:10901/LTE-CSB/HttpDEPService" />
-		<const type="String" name="CSB_FLAG" value="OFF" />
+		<const type="String" name="CSB_FLAG" value="ON" />
 		<const type="String" name="ASYNC_FLAG" value="OFF" />
 		<const type="String" name="DEF_HTTP_FLAG" value="ON" />
 		<const type="Map" name="PROVORDERATTR_FLAG" description="是否显示省内订单属性 0-打开，1-关闭">
@@ -767,5 +767,22 @@
 			'FEETYPE_899':'OFF'<!-- 虚拟省 -->
 			}
 		</const>
+		<const type="String" name="CARD_FILEPATH" value="/app/ejbca/card/" description="身份证阅读器放置ftp路径"/>
+		<const type="Map" name="USBVERSION_SIGNATURE" description="接入集团规范的身份证阅读器厂商版本及密钥">
+        {
+            '10000':{'version':'1.0','appSecret':'<![CDATA[D%vd1#e9Y@d36cK&]]>','name':'华旭金卡','isOpen':'ON'},
+            '10001':{'version':'1.0','appSecret':'<![CDATA[p7z@d1%x3H4#29eV]]>','name':'深圳华视','isOpen':'ON'},
+            '10002':{'version':'1.0','appSecret':'<![CDATA[Py52H4#2Ut@d1%x7]]>','name':'山东卡尔','isOpen':'ON'},
+            '10003':{'version':'1.0','appSecret':'<![CDATA[d1%x7H4#2UtPy52@]]>','name':'山东信通','isOpen':'ON'},
+            '10004':{'version':'1.0','appSecret':'<![CDATA[ey@d391%xH74#2iB]]>','name':'长春鸿达','isOpen':'OFF'},
+            '10005':{'version':'1.0','appSecret':'<![CDATA[R9P&L7#2URePy18@]]>','name':'上海普天','isOpen':'OFF'},
+            '10006':{'version':'1.0','appSecret':'<![CDATA[3eRx18@5x3H4#5fY]]>','name':'因纳伟盛','isOpen':'ON'},
+            '10007':{'version':'1.0','appSecret':'<![CDATA[y52@d1%x8H4#2URt]]>','name':'山东神思','isOpen':'OFF'},
+            '10008':{'version':'1.0','appSecret':'<![CDATA[H4#29eV%xW74#2iB]]>','name':'精伦电子','isOpen':'ON'},
+            '10009':{'version':'1.0','appSecret':'<![CDATA[RxRe18g%xtPy52@Y]]>','name':'内蒙古银安科技','isOpen':'ON'},
+            '10010':{'version':'1.0','appSecret':'<![CDATA[&L7#2R9PURePy18@]]>','name':'南京亿数','isOpen':'OFF'},
+            '10011':{'version':'1.0','appSecret':'<![CDATA[18@5xT9UR%dY#d36]]>','name':'北冰洋','isOpen':'OFF'}
+        }
+        </const>
 	</mda>
 </mdas>

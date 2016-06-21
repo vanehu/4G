@@ -1870,37 +1870,18 @@ order.cust = (function(){
 //		$("#usersearchbtn").click();
 	};
 	var _submitCertInfo = function(certInfo) {
-		if (undefined == certInfo.signature) {
-			var url = contextPath + "/order/certInfo";
-			var response = $.callServiceAsJson(url, JSON.stringify(certInfo));
-			if (response.code == 0) {
-				_certInfo = {
-					custName : certInfo.partyName,
-					custIdCard : certInfo.certNumber,
-					addressStr : certInfo.certAddress,
-					token : response.data
-				};
-			} else {
-				_certInfo = {
-					custName : certInfo.partyName,
-					custIdCard : certInfo.certNumber,
-					addressStr : certInfo.certAddress,
-					token : ""
-				};
-			}
-		} else {
-			_certInfo = {
-				custName : certInfo.partyName,
-				custIdCard : certInfo.certNumber,
-				addressStr : certInfo.certAddress,
-				token : certInfo.signature
-			};
-		}
+		_certInfo = {
+			custName : certInfo.partyName,
+			custIdCard : certInfo.certNumber,
+			addressStr : certInfo.certAddress,
+			token : certInfo.signature
+		};
 	};
 	//新建客户时读卡
 	var _readCertWhenCreate = function() {
 		$('#td_custIdCard').data("flag", "1");
 		var man = cert.readCert();
+		//var man=cert.test();
 		if (man.resultFlag != 0){
 			$.alert("提示", man.errorMsg);
 			return;

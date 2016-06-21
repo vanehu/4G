@@ -1,5 +1,6 @@
 package com.al.lte.portal.controller.crm;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -12,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -39,12 +41,16 @@ import com.al.common.utils.StringUtil;
 import com.al.ec.serviceplatform.client.ResultCode;
 import com.al.ecs.common.entity.JsonResponse;
 import com.al.ecs.common.entity.PageModel;
+import com.al.ecs.common.util.DigestUtils;
 import com.al.ecs.common.util.EncodeUtils;
+import com.al.ecs.common.util.FtpUtils;
 import com.al.ecs.common.util.JsonUtil;
+import com.al.ecs.common.util.MDA;
 import com.al.ecs.common.util.PageUtil;
 import com.al.ecs.common.util.PropertiesUtils;
 import com.al.ecs.common.util.UIDGenerator;
 import com.al.ecs.common.web.ServletUtils;
+import com.al.ecs.common.web.SpringContextUtil;
 import com.al.ecs.exception.AuthorityException;
 import com.al.ecs.exception.BusinessException;
 import com.al.ecs.exception.ErrorCode;
@@ -4185,33 +4191,127 @@ public class OrderController extends BaseController {
     @RequestMapping(value = "/certInfo", method = RequestMethod.POST)
     public JsonResponse cacheCertInfo(@RequestBody Map<String, Object> param,
             HttpServletRequest request) {
-        try {
-            String partyName = MapUtils.getString(param, "partyName");
-            String gender = MapUtils.getString(param, "gender");
-            String nation = MapUtils.getString(param, "nation");
-            String bornDay = MapUtils.getString(param, "bornDay");
-            String certNumber = MapUtils.getString(param, "certNumber");
-            String certAddress = MapUtils.getString(param, "certAddress");
-            String certOrg = MapUtils.getString(param, "certOrg");
-            String effDate = MapUtils.getString(param, "effDate");
-            String expDate = MapUtils.getString(param, "expDate");
-            String identityPic = MapUtils.getString(param, "identityPic");
+    	JsonResponse jsonResponse = null;
+		try {
+			String venderId = MapUtils.getString(param, "venderId");// 厂商标识
+			String signature = MapUtils.getString(param, "signature");// 数字签名
+			String versionSerial = MapUtils.getString(param, "versionSerial");// 版本号
+			String partyName = MapUtils.getString(param, "partyName");// 姓名
+			String gender = MapUtils.getString(param, "gender");// 性别
+			String nation = MapUtils.getString(param, "nation");// 民族
+			String bornDay = MapUtils.getString(param, "bornDay");// 出生日期
+			String certAddress = MapUtils.getString(param, "certAddress");// 地址
+			String certNumber = MapUtils.getString(param, "certNumber");// 身份证号码
+			String certOrg = MapUtils.getString(param, "certOrg");// 签发机关
+			String effDate = MapUtils.getString(param, "effDate");// 起始有效期
+			String expDate = MapUtils.getString(param, "expDate");// 终止有效期
+			String identityPic = MapUtils.getString(param, "identityPic");// 照片
             if (StringUtils.isBlank(partyName) || StringUtils.isBlank(gender)
                 || StringUtils.isBlank(nation) || StringUtils.isBlank(bornDay)
                 || StringUtils.isBlank(certNumber) || StringUtils.isBlank(certAddress)
                 || StringUtils.isBlank(certOrg) || StringUtils.isBlank(effDate)
-                || StringUtils.isBlank(expDate)) {
-                return super.failed("无效信息", 1);
+                || StringUtils.isBlank(expDate)){
+                return super.failed("读卡失败信息有误", -1);
             }
-            String appSecret = propertiesUtils.getMessage("APP_SECRET"); //appId对应的加密密钥
+            if(!StringUtils.isBlank(venderId)){
+            	if(MDA.USBVERSION_SIGNATURE.get(venderId)==null){
+            		return super.failed("厂商标识信息有误", -1);
+            	}
+            	if(MDA.USBVERSION_SIGNATURE.get(venderId).get("isOpen").equals("ON")){//启用新规范控件校验
+	    			String mdaVersion = MDA.USBVERSION_SIGNATURE.get(venderId).get("version");
+	            	if(StringUtils.isBlank(signature)||StringUtils.isBlank(versionSerial)){
+		        		 return super.failed("读卡失败信息有误", -1);
+		        	}
+		            if(versionSerial.equals(mdaVersion)){//校验版本号
+		            	String appSecret=MDA.USBVERSION_SIGNATURE.get(venderId).get("appSecret");
+		            	String ss=partyName+gender+nation+bornDay+certAddress+certNumber+certOrg+effDate+expDate+identityPic+appSecret;
+		            	String sha1Str=DigestUtils.sha1ToHex(ss);
+		            	if(!signature.equals(sha1Str)){
+		            		jsonResponse = super.failed("证件信息被篡改", -2);//信息被篡改
+		            		return jsonResponse;
+		            	}
+		            }else{
+		            	param.put("signature", "");
+		            	Set<String> s = param.keySet();//获取KEY集合
+		            	for (String str : s) {
+		            		if(param.get(str)instanceof String){
+		            			param.put(str,"");
+		            		}else{
+		            			param.put(str,0);
+		            		}
+		            	}
+		            	String fileUrl="FTPSERVICECONFIG"+","+venderId+"_"+mdaVersion+".exe"+","+MDA.CARD_FILEPATH;
+		            	param.put("fileUrl", fileUrl);
+		            	param.put("fileName", MDA.USBVERSION_SIGNATURE.get(venderId).get("name")+".exe");
+		            	jsonResponse = super.failed(param, -3);//版本有误
+		            	return jsonResponse;
+		            }
+            	}
+            }
+            String appSecret1 = propertiesUtils.getMessage("APP_SECRET"); //appId对应的加密密钥
             String nonce = RandomStringUtils.randomAlphanumeric(Const.RANDOM_STRING_LENGTH); //随机字符串
-            String signature = commonBmo.signature(partyName, certNumber, certAddress, identityPic, nonce, appSecret);
-            return super.successed(signature, ResultConstant.SUCCESS.getCode());
+            String signature1 = commonBmo.signature(partyName, certNumber, certAddress, identityPic, nonce, appSecret1);
+            param.put("signature", signature1);
+    		jsonResponse = super.successed(param, ResultConstant.SUCCESS.getCode());//信息校验通过
+            return jsonResponse;
         } catch (Exception e) {
-            return super.failed("信息异常", -1);
+            return super.failed("读卡失败信息异常", -1);
         }
     }
-    
+    @ResponseBody
+    @AuthorityValid(isCheck = false)
+    @RequestMapping(value = "/isOpenNewCert", method = RequestMethod.POST)
+    public JsonResponse isOpenNewCert(@RequestBody Map<String, Object> param,
+            HttpServletRequest request) {
+    	JsonResponse jsonResponse = null;
+		try {
+			String venderId = MapUtils.getString(param, "venderId");// 厂商标识
+			String isopen = MDA.USBVERSION_SIGNATURE.get(venderId).get("isOpen");
+			jsonResponse = super.successed(isopen, ResultConstant.SUCCESS.getCode());//信息校验通过
+            return jsonResponse;
+        } catch (Exception e) {
+            return super.failed("读取身份证配置开关配置失败", -1);
+        }
+    }
+	@RequestMapping(value = "/downloadOCX", method = {RequestMethod.POST})
+	public void downloadFile(@RequestParam("fileUrl") String fileUrl, 
+			@RequestParam("fileName") String fileName,
+			HttpServletResponse response) throws IOException {		
+		ServletOutputStream  outputStream = response.getOutputStream();
+		try {
+			FtpUtils ftpUtils = new FtpUtils();
+//			String fileUrl = (String) param.get("fileUrl");
+//			String fileName = (String) param.get("fileName");
+			String[] fileUrls = fileUrl.split(",");
+			String ftpMapping = fileUrls[0];
+			String newFileName = fileUrls[1];
+			String filePath = fileUrls[2];
+			
+			//2.获取FTP服务器的具体登录信息
+			//3.根据服务器映射获取对应的FTP服务器配置信息
+			PropertiesUtils propertiesUtils = (PropertiesUtils) SpringContextUtil.getBean("propertiesUtils");
+			String ftpServiceConfig = propertiesUtils.getMessage(ftpMapping);
+			String[] ftpServiceConfigs = ftpServiceConfig.split(",");
+			String remoteAddress = ftpServiceConfigs[0];//FTP服务器地址(IP)
+			String remotePort = ftpServiceConfigs[1];//FTP服务器端口
+			String userName = ftpServiceConfigs[2];//FTP服务器用户名
+			String password = ftpServiceConfigs[3];//FTP服务器密码
+			response.setContentType("application/x-msdownload;");
+			response.addHeader("Content-Disposition", "attachment;filename="+new String(fileName.getBytes("gb2312"), "ISO8859-1"));
+			ftpUtils.connectFTPServer(remoteAddress,remotePort,userName,password);
+			boolean isFileExist = ftpUtils.isFileExist(newFileName,filePath);
+			if(isFileExist){
+				ftpUtils.changeWorkingDirectory(filePath);
+				boolean gg=ftpUtils.downloadFileByPath(newFileName, outputStream);
+			}
+		}catch (Exception e) {
+			e.printStackTrace();
+		}finally {
+			if (outputStream != null){
+				outputStream.close();
+			}
+		}	
+	}
     @RequestMapping(value = "/reducePoingts", method = RequestMethod.POST)
     @ResponseBody
     public JsonResponse reducePoingts(@RequestBody Map<String, Object> param, @LogOperatorAnn String flowNum,
