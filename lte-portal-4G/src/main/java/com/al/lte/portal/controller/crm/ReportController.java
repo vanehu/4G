@@ -1248,8 +1248,8 @@ public class ReportController extends BaseController {
     		inParam.put("custName", EncodeUtils.urlDecode(custName));
     	}
     	
-    	inParam.put("certType", request.getParameter("certType"));
-    	inParam.put("certNumber", request.getParameter("certNumber"));
+    	//inParam.put("certType", request.getParameter("certType"));
+    	//inParam.put("certNumber", request.getParameter("certNumber"));
     	inParam.put("accNbr",request.getParameter("accNbr"));
     	inParam.put("startDt", request.getParameter("startDt"));
     	inParam.put("endDt", request.getParameter("endDt"));

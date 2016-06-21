@@ -1097,10 +1097,10 @@ cart.main = (function(){
 			};
 		}else{
 			var accNbr = $.trim($("#p_qryNumber").val());
-			var certNumber = $.trim($("#p_certNumber").val());
+			//var certNumber = $.trim($("#p_certNumber").val());
 			
-			if("" ==accNbr && "" == certNumber){
-				$.alert("提示","接入号与证件号码必填写其中一项！");
+			if("" ==accNbr){
+				$.alert("提示","请填写接入号再查询！");
 				return;
 			}
 			
@@ -1114,8 +1114,8 @@ cart.main = (function(){
 					"olNbr":'',
 					"areaId":$("#p_areaId").val(),
 					"custName":encodeURI($("#p_custName").val()),//受理工号
-					"certType":'',//受理人
-					"certNumber":certNumber,
+					//"certType":'',//受理人
+					//"certNumber":certNumber,
 					"accNbr":accNbr,
 					"startDt":startDt,
 					"endDt":endDt,
@@ -1251,14 +1251,14 @@ $(function(){
 				$("#p_endDt").css("background-color","#E8E8E8").attr("disabled", true) ;
 				$("#p_qryNumber").css("background-color","#E8E8E8").attr("disabled", true) ;
 				$("#p_custName").css("background-color","#E8E8E8").attr("disabled", true) ;
-				$("#p_certNumber").css("background-color","#E8E8E8").attr("disabled", true) ;
+				//$("#p_certNumber").css("background-color","#E8E8E8").attr("disabled", true) ;
 			}else{
 				$("#p_olNbr").css("background-color","#E8E8E8").attr("disabled", true) ;
 				$("#p_startDt").css("background-color","white").attr("disabled", false) ;
 				$("#p_endDt").css("background-color","white").attr("disabled", false) ;
 				$("#p_qryNumber").css("background-color","white").attr("disabled", false) ;
 				$("#p_custName").css("background-color","white").attr("disabled", false) ;
-				$("#p_certNumber").css("background-color","white").attr("disabled", false) ;
+				//$("#p_certNumber").css("background-color","white").attr("disabled", false) ;
 			}
 		});
 		
