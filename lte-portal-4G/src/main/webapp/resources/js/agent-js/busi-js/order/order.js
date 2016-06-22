@@ -554,8 +554,12 @@ order.service = (function(){
 	
 	//扫描后填充
 	var _scaningCallBack=function(terInfo,prodId){
-		$("#uim_txt_"+prodId).val(terInfo);
-		$("#tip_"+prodId).text("");
+		if ("-999" == prodId) {//终端串号
+			$("#tsn").val(terInfo);
+		} else {//uim卡号
+			$("#uim_txt_" + prodId).val(terInfo);
+			$("#tip_" + prodId).text("");
+		}
 	};
 	
 	var _choosedOffer=function(id,specId,price,subpage,specName){

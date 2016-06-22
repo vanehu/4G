@@ -274,7 +274,43 @@ common = (function($) {
 			}
 		}
 		if(OrderInfo.order.step==1){
+			//补换卡返回释放uim卡
+			if(OrderInfo.actionFlag==22){
+				$.confirm("确认","确定要取消该订单吗？",{
+					yes:function(){
+						var boProd2Tds = OrderInfo.boProd2Tds;
+						//取消订单时，释放被预占的UIM卡
+						if(boProd2Tds.length>0){
+							for(var n=0;n<boProd2Tds.length;n++){
+								var param = {
+										numType : 2,
+										numValue : boProd2Tds[n].terminalCode
+								};
+								$.callServiceAsJson(contextPath+"/app/mktRes/phonenumber/releaseErrorNum", param, {
+									"before":function(){
+										$.ecOverlay("<strong>正在释放UIM卡,请稍等会儿....</strong>");
+									},
+									"always":function(){
+										$.unecOverlay();
+									},
+									fail:function(response){
+										$.unecOverlay();
+										$.alert("提示","请求可能发生异常，请稍后再试！");
+									},
+									"done" : function(){
+										//_callCloseWebview();
+									}
+								});
+							}
+						}
+						_callCloseWebview();
+						return;
+					},no:function(){
+					return;
+				}},"question");
+			}else{
 			_callCloseWebview();
+			}
 		}else if(OrderInfo.order.step==2){
 			if(OrderInfo.actionFlag==3||OrderInfo.actionFlag==9){
 				_callCloseWebview();
@@ -318,40 +354,78 @@ common = (function($) {
 		}else if(OrderInfo.order.step==3){
 			//补换卡
 			if(OrderInfo.actionFlag == 22){
-				$("#order-confirm").hide();
-				$("#order_fill_content").show();
-				$("#isCheck_Card").css("display","none");
-				$("#btn_next_checkUim").show();
-				OrderInfo.order.step = 1;
-				_callCloseWebview();
-				return;
-			}
-			//可选包变更订单页面返回 释放UIM卡
-			if(OrderInfo.actionFlag == 3){
-				var boProd2Tds = OrderInfo.boProd2Tds;
-				//取消订单时，释放被预占的UIM卡
-				if(boProd2Tds.length>0){
-					for(var n=0;n<boProd2Tds.length;n++){
-						var param = {
+				$.confirm("确认","确定要取消该订单吗？",{
+					yes:function(){
+						var boProd2Tds = OrderInfo.boProd2Tds;
+						//取消订单时，释放被预占的UIM卡
+						if(boProd2Tds.length>0){
+							for(var n=0;n<boProd2Tds.length;n++){
+								var param = {
+										numType : 2,
+										numValue : boProd2Tds[n].terminalCode
+								};
+								$.callServiceAsJson(contextPath+"/app/mktRes/phonenumber/releaseErrorNum", param, {
+									"before":function(){
+										$.ecOverlay("<strong>正在释放UIM卡,请稍等会儿....</strong>");
+									},
+									"always":function(){
+										$.unecOverlay();
+										
+									},
+									fail:function(response){
+										$.unecOverlay();
+										$.alert("提示","请求可能发生异常，请稍后再试！");
+									},
+									"done" : function(){
+										SoOrder.orderBack();
+									}
+								});
+							}
+						}
+						$("#order-confirm").hide();
+						$("#order_fill_content").show();
+						$("#isCheck_Card").css("display","none");
+						$("#btn_next_checkUim").show();
+						OrderInfo.order.step = 1;
+						_callCloseWebview();
+					},no:function(){
+					return;
+				}},"question");
+				//_callCloseWebview();
+				//return;
+			} else {
+				// 可选包变更订单页面返回 释放UIM卡
+				if (OrderInfo.actionFlag == 3) {
+					var boProd2Tds = OrderInfo.boProd2Tds;
+					// 取消订单时，释放被预占的UIM卡
+					if (boProd2Tds.length > 0) {
+						for (var n = 0; n < boProd2Tds.length; n++) {
+							var param = {
 								numType : 2,
 								numValue : boProd2Tds[n].terminalCode
-						};
-						$.callServiceAsJson(contextPath+"/app/mktRes/phonenumber/releaseErrorNum", param, {
-							"done" : function(){}
-						});
+							};
+							$
+									.callServiceAsJson(
+											contextPath
+													+ "/app/mktRes/phonenumber/releaseErrorNum",
+											param, {
+												"done" : function() {
+												}
+											});
+						}
 					}
+					_callCloseWebview();
+					return;
 				}
-				_callCloseWebview();
-				return;
+				SoOrder.orderBack();
+				$("#order-content").show();
+				$("#order-confirm").hide();
+				$("#order-dealer").hide();
+				if (OrderInfo.actionFlag == 13) {
+					$("#terminalMain").show();
+				}
+				OrderInfo.order.step = 2;
 			}
-			SoOrder.orderBack();
-			$("#order-content").show();
-			$("#order-confirm").hide();
-			$("#order-dealer").hide();
-			if(OrderInfo.actionFlag==13){
-				$("#terminalMain").show();
-			}
-			OrderInfo.order.step=2;
 		}else if(OrderInfo.order.step==4){
 			$("#order-confirm").show();
 			$("#order-print").hide();

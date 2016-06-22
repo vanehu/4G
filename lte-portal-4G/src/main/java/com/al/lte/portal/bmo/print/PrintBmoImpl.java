@@ -344,7 +344,9 @@ public class PrintBmoImpl implements PrintBmo {
 					if (resultMap != null) {
 						resultMap.put("chargeItems", paramMap.get("chargeItems"));
 					}
+					Map<String,Object> objCust=getCustNameAndIdCard(resultMap);
 					resultMap = parseVoucherData(resultMap, needAgreement);
+					resultMap.putAll(objCust);
 				}
 			} catch (Exception e) {
 				log.error("门户处理营业受理后台的service/intf.soService/queryOrderListInfoForPrint服务返回的数据异常", e);
@@ -373,7 +375,27 @@ public class PrintBmoImpl implements PrintBmo {
 		}
 		return resultParseMap;
 	}
-
+	private Map<String, Object> getCustNameAndIdCard(Map<String, Object> resultMap){
+		Map<String, Object> maps=new HashMap<String, Object>();
+		if(!resultMap.isEmpty()){
+			//客户资料
+			Map<String, Object> custInfoMap = MapUtils.getMap(resultMap, "custInfo");
+			if(MapUtils.isNotEmpty(custInfoMap)){
+				Object obj = MapUtils.getObject(custInfoMap, "norCustInfo");
+				if (obj != null && obj instanceof List) {
+					List<Map<String, Object>> tmpList = (List<Map<String, Object>>) obj;
+					for (Map<String, Object> map : tmpList) {
+						if((map.get("itemName").toString()).indexOf("客户名称")!=-1){
+							maps.put("custName", map.get("itemValue"));
+						}else if((map.get("itemName").toString()).indexOf("证件号码")!=-1){
+							maps.put("idCardNbr", map.get("itemValue"));
+						}
+					}
+				}
+			}
+		}
+		return maps;
+	}
 	private Map<String, Object> getData(Map<String, Object> resultMap){
 		Map<String, Object> maps=new HashMap<String, Object>();
 		if(!resultMap.isEmpty()){
@@ -5273,6 +5295,8 @@ public class PrintBmoImpl implements PrintBmo {
 				Map<String,Object> ret1=previewHtml(strJasperFileName, reportParams, inFields, 0, 0);
 				Map<String,Object> ret2=savePdf(strJasperFileName, reportParams, inFields, 0, 0);
 				ret1.putAll(ret2);
+				ret1.put("custName", printData.get("custName"));
+				ret1.put("idCardNbr", printData.get("idCardNbr"));
 				return ret1;
 			}else if(signflag.equals(SysConstant.SAVE_NO_SIGN_PDF)){
 				return saveNOSignPdf(strJasperFileName, reportParams, inFields,0, 0,printData);

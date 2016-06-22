@@ -158,7 +158,7 @@ public class SignBmoImpl implements SignBmo{
 			if(flags!=null&&!"".equals(flags)){
 				fwhtmlFlag=flags.split(",")[0];
 				Map<String,Object> param1=new HashMap<String,Object>();
-				param1.put("custName", paramMap.get("custName"));
+				param1.put("custName", resultMap.get("custName"));
 				param1.put("areaName",DataSignTool.getAreaName(sessionStaff.getCurrentAreaId(), sessionStaff));
 				param1.put("dateYear", DateUtil.nowYear());
 				param1.put("dateMonth", DateUtil.nowMonth());
