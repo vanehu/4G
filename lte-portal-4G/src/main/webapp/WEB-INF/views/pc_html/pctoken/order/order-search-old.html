@@ -226,7 +226,6 @@ window.onload=function(){
 	var nextFlag = false;
 	var mergeFlag = "${mergeFlag}";
 	var custInfos = ${custInfo};
-	$("#p_cust_areaId").val(p_cust_areaid);
 	var mainPhoneNum = $("#mainPhoneNum").val();
 	var newSubPhoneNum = $("#newSubPhoneNum").val();
 	if(mainPhoneNum!=undefined &&mainPhoneNum!=""){
@@ -275,6 +274,7 @@ window.onload=function(){
 		p_cust_areaid = OrderInfo.cust.areaId;
 		p_cust_areaname = OrderInfo.cust.areaName;
 	}
+	$("#p_cust_areaId").val(p_cust_areaid);
 	if(nextFlag){
 	    	
 		OrderInfo.provinceInfo.provIsale = '${provIsale}';
