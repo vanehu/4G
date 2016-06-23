@@ -221,13 +221,6 @@ SoOrder = (function() {
 			value : itemValue
 		});
 		
-		if (OrderInfo.uimtypeflag != 0) {
-			custOrderAttrs.push({ 
-				itemSpecId: "30010024",
-				value: OrderInfo.uimtypeflag
-			});
-		}
-		
 		custOrderAttrs.push({ //鉴权日志id
 			itemSpecId: "800000048",
 			value: CacheData.getRecordId()
