@@ -8,8 +8,10 @@ CommonUtils.regNamespace("order","dealer");
 
 /** 发展人对象*/
 order.dealer = (function() {
+	var staffChannelName = "无渠道";
 	//初始化发展人
 	var _initDealer = function(prodInfo) {
+		var staffChannelName = "无渠道";
 		if(order.ysl!=undefined){
 			OrderInfo.order.dealerTypeList = [{"PARTYPRODUCTRELAROLECD":"40020005","NAME":"第一发展人"},{"PARTYPRODUCTRELAROLECD":"40020006","NAME":"第二发展人"},{"PARTYPRODUCTRELAROLECD":"40020007","NAME":"第三发展人"}];
 		}else{
@@ -31,6 +33,34 @@ order.dealer = (function() {
 				OrderInfo.getChannelList();
 			}
 		}
+		
+		var currentAreaAllName = $("#p_staff_areaId_val").val();
+		if(currentAreaAllName!=undefined){
+			currentAreaAllName = currentAreaAllName.replace(/>/g,"-")
+		}
+		var param = {
+				"dealerId":$("#dealer_id").val(),
+				"areaId":$("#p_staff_areaId").val(),
+				"currentAreaAllName":currentAreaAllName,
+				"salesCode":"",
+				"pageIndex":1,
+				"objInstId":$("#objInstId").val(),
+				"pageSize":10
+		};
+		$.ecOverlay("<strong>正在查询发展人归属渠道,请稍后....</strong>");
+		var response = $.callServiceAsJson(contextPath+"/staffMgr/queryStaffInfo",param); //发展人类型查询
+		$.unecOverlay();
+		OrderInfo.staffInfoFlag = response.data.flag;
+		if(response.code==0){
+			OrderInfo.channelList = response.data.list;
+		}else if(response.code==-2){
+			staffChannelName = "无渠道";
+			return;
+		}else{
+			$.alert("信息提示",response.data);
+			return;
+		}
+		
 		if(OrderInfo.actionFlag==1 || OrderInfo.actionFlag==2 || OrderInfo.actionFlag==14){ //新装业务，套餐变更需要主套餐发展人
 			var objInstId = OrderInfo.offerSpec.offerSpecId;
 			var $tr = $("<tr id='tr_"+objInstId+"' name='tr_"+objInstId+"'></tr>");
@@ -62,6 +92,10 @@ order.dealer = (function() {
 			$tr.append($td);
 			var $tdChannel = $('<td></td>');
 			var $channelSelect = $('<select id="dealerChannel_'+objId+'" name="dealerChannel_'+objInstId+'" class="inputWidth183px" onclick=a=this.value;></select>');
+			if(OrderInfo.channelList.length==0){
+				$channelSelect.append("<option value='"+this.channelNbr+"' selected ='selected'>无渠道</option>");
+			}
+			
 			$.each(OrderInfo.channelList,function(){
 				if(this.isSelect==1)
 					$channelSelect.append("<option value='"+this.channelNbr+"' selected ='selected'>"+this.channelName+"</option>");

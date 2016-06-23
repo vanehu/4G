@@ -620,6 +620,44 @@
             'Token_8230000':'ON'
         }
         </const>
+        
+        <!-- 能力开放 销售员与渠道单元的关系开关-->
+ 	    <const type="Map" name="TOKEN_SALES_CHANNEL" description="能力开放 销售员与渠道单元的关系开关  ON OFF">
+        {
+            'Token_8110000':'OFF',
+            'Token_8120000':'OFF',
+            'Token_8140000':'OFF',
+            'Token_8150000':'OFF',
+            'Token_8210000':'OFF',
+            'Token_8220000':'OFF',
+            'Token_8350000':'OFF',
+            'Token_8430000':'OFF',
+            'Token_8500000':'OFF',
+            'Token_8520000':'OFF',
+            'Token_8530000':'OFF',
+            'Token_8540000':'OFF',
+            'Token_8630000':'OFF',
+            'Token_8640000':'OFF',
+            'Token_8650000':'OFF',
+            'Token_8440000':'OFF',
+            'Token_8320000':'OFF',
+            'Token_8510000':'OFF',
+            'Token_8330000':'OFF',
+            'Token_8340000':'OFF',
+            'Token_8610000':'OFF',
+            'Token_8420000':'OFF',
+            'Token_8310000':'OFF',
+            'Token_8130000':'OFF',
+            'Token_8370000':'OFF',
+            'Token_8450000':'OFF',
+            'Token_8410000':'OFF',
+            'Token_8620000':'OFF',
+            'Token_8360000':'OFF',
+            'Token_8460000':'OFF',
+            'Token_8230000':'OFF'
+        }
+        </const>
+        
         <const type="String" name="APP_UPDATE_FLAG" value="0" description="APP自动更新配置：自动更新标识（0：不提示更新   1：强制更新   2：提示更新）"/>
 		<const type="Map" name="EL_INVOICE" description="电子发票类型类型  ON OFF 默认关闭">
 			{

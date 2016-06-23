@@ -127,15 +127,20 @@ public class SecondBusinessController extends BaseController {
             if (StringUtils.isNotBlank(areaId)) {
                 inParamMap.put("areaId", areaId);
             }
+            //获取渠道开关
+            String channelOnOFF=MDA.TOKEN_SALES_CHANNEL.get("Token_"+sessionStaff.getProvinceCode());
             //判断工号是否有跳过权限
             String  iseditOperation=staffBmo.checkOperatSpec(SysConstant.SECOND_JUMPSPECIAL,sessionStaff);
             //渠道大类
             String channelType=sessionStaff.getCurrentChannelType();
            
             int segmentId=MapUtils.getInteger(paramMap, "segmentId");
+            //获取协销人开关
+            
              //新装写死
             if(actionFlag==1){
             	Map<String, Object> rules = new HashMap<String, Object>();
+            	rules.put("channelOnOFF",channelOnOFF);
             	//如果是政企客户
             	//custType
             	if(segmentId==1000){
@@ -159,34 +164,26 @@ public class SecondBusinessController extends BaseController {
             	else{
             		inParamMap.put("custType",1);
             	}
-                System.out.println(JsonUtil.toString(inParamMap));
                 resMap = secondBusiness.querySecondBusinessMenuAuth(inParamMap, flowNum, sessionStaff);
                 if (ResultCode.R_SUCC.equals(resMap.get("resultCode"))) {
                     Map<String, Object> resultMap = MapUtils.getMap(resMap, "result");
                     Map<String, Object> rules = new HashMap<String, Object>();
+
                     if (resultMap != null) {
                         List<Map<String, Object>> scenes = (List<Map<String, Object>>) MapUtils.getObject(resultMap, "scenes");
                         if (scenes != null && scenes.size() > 0) {
                         	//1.证件鉴权 2.短信鉴权3.产品密码鉴权4.直接跳过
                            rules = authCompute(scenes,sessionStaff);
-//                        	rules.put("rule1","Y");
-//                        	rules.put("rule2","Y");
-//                        	rules.put("rule3","Y");
-//                        	rules.put("rule4","Y");
-//                        	rules.put("rule5","Y");
-//                        	rules.put("rule6","Y");
-//                        	rules.put("rule7","Y");
-//                        	rules.put("rule8","Y");
                            rules.put("iseditOperation", iseditOperation);
                            rules.put("channelType",channelType);
-                          
+                           rules.put("channelOnOFF",channelOnOFF);
                            if(segmentId==1000){
                         	 //账户和使用人信息查询服务
                         	     paramMap.put("areaId",areaId);
                         	     //固定传
                         	     paramMap.put("queryType","1,2,3,4,5"); 
                        	         Map<String, Object> resultMap2 = custBmo.queryAccountAndUseCustInfo(paramMap,flowNum, sessionStaff);
-                       	       //  log.debug("************NLqueryAccountAndUseCustInfo**************", JsonUtil.toString(resultMap2));
+                       	        
                        	          if (resultMap2!=null && resultMap2.size()>0) {
                         	    	 //成功
                         	    	 Map<String,Object>accountMap=(Map<String, Object>)resultMap2.get("account");

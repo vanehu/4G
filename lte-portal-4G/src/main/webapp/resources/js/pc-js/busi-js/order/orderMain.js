@@ -1769,15 +1769,25 @@ order.main = (function(){
 			$.alert("操作提示","请选择 协销人！");
 			return;
 		}
+		//协销人开关
+		var channelOnOFF=OrderInfo.rulesJson.channelOnOFF;
+		if(channelOnOFF == "ON"){//开关打开如果无归属渠道则不允许选择
+			var staffChannel = $staff.children().eq(6).html();  
+			if(staffChannel == "无渠道"){
+				$.alert("操作提示","您好，您选择的发展人没有归属渠道，请重新选择！");
+				return;
+			}
+		}
 		$staff.each(function(){
 			var $channelList = $(this).find("td select[name='channel_list']");
 			$("#dealerChannel_"+objInstId).empty(); 
 			var $channelListOptions ="";
 			if($channelList.length <= 0){
-				$.each(OrderInfo.channelList,function(){
-					if(this.isSelect==1)
-						$channelListOptions += "<option value='"+this.channelNbr+"' selected ='selected'>"+this.channelName+"</option>";				
-				});
+//				$.each(OrderInfo.channelList,function(){
+//					if(this.isSelect==1)
+//						$channelListOptions += "<option value='"+this.channelNbr+"' selected ='selected'>"+this.channelName+"</option>";				
+//				});
+				$channelListOptions += "<option value='"+this.channelNbr+"' selected ='selected'>无渠道</option>";				
 			}else{			
 				$($channelList).find("option").each(function(){
 					var $channelListOptionVal  = $(this).val() ; 
