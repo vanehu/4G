@@ -331,4 +331,10 @@ public class MDA {
      * 套餐变更是否修改付费类型及信控属性分省开关
      */
     public static final Map<String,String> SHOW_CHANGE_FEE_TYPE  = new HashMap<String,String>();
+    
+    /**
+     * 能力开放 销售员与渠道单元的关系开关
+     * 如果开关打开选择无归属渠道的发展人不允许选择，如果关闭允许选择
+     * */
+    public static final Map<String,String> TOKEN_SALES_CHANNEL = new HashMap<String,String>();
 }
