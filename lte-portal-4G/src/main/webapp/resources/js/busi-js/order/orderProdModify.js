@@ -1617,14 +1617,17 @@ order.prodModify = (function(){
 	
 	//修改产品实例属性:修改使用人
 	var _spec_parm_user_change = function(){
-		if(OrderInfo.authRecord.resultCode!="0"){
-			if (_querySecondBusinessAuth("27", "Y", "spec_parm_user_change")) {
-				return;
+		var response = $.callServiceAsJson(contextPath + "/properties/getValue", {"key": "GOV_"+OrderInfo.cust.areaId.substr(0,3)});
+		if (CacheData.isGov(OrderInfo.cust.identityCd) && "ON" == response.data) {
+			if (OrderInfo.authRecord.resultCode != "0") {
+				if (_querySecondBusinessAuth("27", "Y", "spec_parm_user_change")) {
+					return;
+				}
 			}
 		}
 		var valid = false;
 		if(OrderInfo.cust && OrderInfo.cust.custId && OrderInfo.cust.custId != '-1'){ //老客户
-			valid = OrderInfo.cust.segmentId == '1000'; //政企客户
+			valid = CacheData.isGov(OrderInfo.cust.identityCd); //政企客户
 		}
 		if(!valid){
 			$.alert('提示', '非政企客户不能办理修改使用人业务');
