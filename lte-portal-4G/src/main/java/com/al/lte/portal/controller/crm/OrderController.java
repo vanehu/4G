@@ -2009,6 +2009,7 @@ public class OrderController extends BaseController {
         dataBusMap.put("prodId", MapUtils.getString(param, "prodId", ""));
         dataBusMap.put("acctNbr", MapUtils.getString(param, "acctNbr", ""));
         dataBusMap.put("areaId", MapUtils.getString(param, "areaId", ""));
+        dataBusMap.put("prodBigClass", MapUtils.getString(param, "prodBigClass", ""));
         JsonResponse jr = new JsonResponse();
         try {
             Map<String, Object> resultMap = orderBmo.queryOfferCouponById(dataBusMap, flowNum, sessionStaff);

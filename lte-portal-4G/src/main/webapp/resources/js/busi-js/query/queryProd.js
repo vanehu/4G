@@ -69,7 +69,8 @@ query.prod = (function() {
 		var params = {
 			prodId: prod.prodInstId,
 			areaId: OrderInfo.getProdAreaId(prod.prodInstId),
-			acctNbr: prod.accNbr
+			acctNbr: prod.accNbr,
+			prodBigClass : prod.prodBigClass
 		};
 		$.ecOverlay("<strong>正在查询产品下终端实例数据中,请稍后....</strong>");
 		var response = $.callServiceAsJson(contextPath+"/order/queryTerminalInfo", params, {});
@@ -95,7 +96,8 @@ query.prod = (function() {
 		var params = {
 			prodId: prod.prodInstId,
 			areaId: prod.areaId,
-			acctNbr: prod.acctNbr
+			acctNbr: prod.acctNbr,
+			prodBigClass:order.prodModify.choosedProdInfo.prodBigClass
 		};
 		var response = $.callServiceAsJson(contextPath+"/order/queryTerminalInfo", params, {});
 		if(response.code == 0){
