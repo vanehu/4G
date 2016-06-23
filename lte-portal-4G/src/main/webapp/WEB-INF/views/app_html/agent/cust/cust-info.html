@@ -4,8 +4,11 @@ ${error}
 <nav class="navbar navbar-default navbar-fixed-top">
 	<div class="container-fluid">
 		<div class="navbar-header">
+			<button onclick="cust.custReset(1);" type="button" class="navbar-toggle collapsed" style="border:none; padding:0;" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+				<img src="${contextPath}/image/agent-image/qs_user_icon.png" style="height:32px;"/>
+			</button>
 			<a id="query-cust-back-btn" class="navbar-brand" onclick="common.callReturnBack();"><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>返回</a>
-			<h4 class="header-title" onclick="cust.custReset();">重新定位</h4>
+			<h4 class="header-title">客户定位</h4>
 		</div>
 		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 		</div>

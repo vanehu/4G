@@ -1741,43 +1741,89 @@ cust = (function(){
 			}
 		});	
 	};
-	var _custReset = function() {
-		// 重置返回按钮
-		$("#query-cust-back-btn").attr("onclick", "common.callReturnBack()");
-		// 重置查询按钮
-		$("#query-cust-btn").prop("disabled", false);
-		$("#query-cust-btn").html('<span class="glyphicon glyphicon-search" aria-hidden="true"></span> 查询');
-		$("#query-cust-btn").off("click").bind("click", function () {
-			cust.queryCust();
-		});
-		$("#custInfo").hide();
-		$("#agent-cust-query").show();
-		$("#cust-query-list").html("");
-		$("#userid").val("");
-		$("#authPassword").val("");
-		authFlag="";
-		OrderInfo.boCusts.partyId="";
-		
-		OrderInfo.boCusts.prodId=-1;
-		OrderInfo.boCusts.partyId="";
-		OrderInfo.boCusts.partyProductRelaRoleCd="0";
-		OrderInfo.boCusts.state="ADD";
-		OrderInfo.cust = "";
-		//删除session中的客户缓存信息
-		var param={
-		};
-		$.callServiceAsJson(contextPath+"/agent/cust/removeCustSession",param,{
-			"before":function(){
-//				$.ecOverlay("<strong>正在查询中,请稍等...</strong>");
-			},"done" : function(response){
-//				$.unecOverlay();
-			},fail:function(response){
-//				$.unecOverlay();
-				$.alert("提示","查询失败，请稍后再试！");
-			},"always":function(){
-				$.unecOverlay();
-			}
-		});
+	var _custReset = function(flag) {
+		if(flag!=undefined && flag == 1){
+			$.confirm("确认","您确定要重新定位吗?",{
+				yes:function(){	
+					// 重置返回按钮
+					$("#query-cust-back-btn").attr("onclick", "common.callReturnBack()");
+					// 重置查询按钮
+					$("#query-cust-btn").prop("disabled", false);
+					$("#query-cust-btn").html('<span class="glyphicon glyphicon-search" aria-hidden="true"></span> 查询');
+					$("#query-cust-btn").off("click").bind("click", function () {
+						cust.queryCust();
+					});
+					$("#custInfo").hide();
+					$("#agent-cust-query").show();
+					$("#cust-query-list").html("");
+					$("#userid").val("");
+					$("#authPassword").val("");
+					authFlag="";
+					OrderInfo.boCusts.partyId="";
+					
+					OrderInfo.boCusts.prodId=-1;
+					OrderInfo.boCusts.partyId="";
+					OrderInfo.boCusts.partyProductRelaRoleCd="0";
+					OrderInfo.boCusts.state="ADD";
+					OrderInfo.cust = "";
+					//删除session中的客户缓存信息
+					var param={
+					};
+					$.callServiceAsJson(contextPath+"/agent/cust/removeCustSession",param,{
+						"before":function(){
+			//				$.ecOverlay("<strong>正在查询中,请稍等...</strong>");
+						},"done" : function(response){
+			//				$.unecOverlay();
+						},fail:function(response){
+			//				$.unecOverlay();
+							$.alert("提示","查询失败，请稍后再试！");
+						},"always":function(){
+							$.unecOverlay();
+						}
+					});
+				},
+				no:function(){
+					
+				}
+			});
+		}else{
+			// 重置返回按钮
+			$("#query-cust-back-btn").attr("onclick", "common.callReturnBack()");
+			// 重置查询按钮
+			$("#query-cust-btn").prop("disabled", false);
+			$("#query-cust-btn").html('<span class="glyphicon glyphicon-search" aria-hidden="true"></span> 查询');
+			$("#query-cust-btn").off("click").bind("click", function () {
+				cust.queryCust();
+			});
+			$("#custInfo").hide();
+			$("#agent-cust-query").show();
+			$("#cust-query-list").html("");
+			$("#userid").val("");
+			$("#authPassword").val("");
+			authFlag="";
+			OrderInfo.boCusts.partyId="";
+			
+			OrderInfo.boCusts.prodId=-1;
+			OrderInfo.boCusts.partyId="";
+			OrderInfo.boCusts.partyProductRelaRoleCd="0";
+			OrderInfo.boCusts.state="ADD";
+			OrderInfo.cust = "";
+			//删除session中的客户缓存信息
+			var param={
+			};
+			$.callServiceAsJson(contextPath+"/agent/cust/removeCustSession",param,{
+				"before":function(){
+	//				$.ecOverlay("<strong>正在查询中,请稍等...</strong>");
+				},"done" : function(response){
+	//				$.unecOverlay();
+				},fail:function(response){
+	//				$.unecOverlay();
+					$.alert("提示","查询失败，请稍后再试！");
+				},"always":function(){
+					$.unecOverlay();
+				}
+			});
+		}
 	};
 	// 查询卡类型
 	var _queryCardType = function(_prodId, _areaId, _acctNbr) {
