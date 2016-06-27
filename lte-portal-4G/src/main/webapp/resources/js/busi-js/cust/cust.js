@@ -2424,6 +2424,10 @@ order.cust = (function(){
 				//判断能否转为json，可以的话返回的就是错误信息
 				try {
 					var errorData = $.parseJSON(response.data);
+					if(ec.util.isObj(errorData.custAuthInfo)){
+						$.alert("提示",errorData.custAuthInfo);
+						return;
+					}
 					if (ec.util.isObj(errorData) && errorData == false) {
 						$.alert("提示", "鉴权失败！");
 					} else {

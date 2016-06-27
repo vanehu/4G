@@ -27,6 +27,8 @@ ${error}
   <h2 class="h2_title">产品详情</h2>
   <div id="prodDetail" style="margin:10px;"></div>
 </div>
+<#elseif custAuth.isChange=="Y">
+{"custAuthInfo":"${custAuth.custAuthInfo}"}
 <#else>
 false
 </#if>

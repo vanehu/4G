@@ -719,7 +719,17 @@ public class CustController extends BaseController {
 					checkIdMap.put("custId", custId);
 					checkIdMap.put("idCardNumber", StringUtils.isNotBlank(identityNum) ? Base64.eryDecoder(identityNum) : "");
 					checkIdMap.put("idCardType", identityCd);
-
+					if ("1".equals(identityCd)) {
+						String sessionCertNumber = (String) ServletUtils.getSessionAttribute(getRequest(), Const.CACHE_CERTINFO);
+						ServletUtils.removeSessionAttribute(getRequest(),Const.CACHE_CERTINFO);
+						String tmpIdCardNumber = MapUtils.getString(checkIdMap, "idCardNumber", "");
+						if(!tmpIdCardNumber.equals(sessionCertNumber)) {
+							map.put("isChange", SysConstant.STR_Y);
+							map.put("custAuthInfo", "非正常读卡数据，信息可能被窜改，此操作将被记录！");
+							model.addAttribute("custAuth", map);
+							return "/cust/cust-info";
+						}
+					}
 					Map<String, Object> datamap = mktResBmo.checkIdCardNumber(checkIdMap,
 							flowNum, sessionStaff);
 					if (datamap != null) {
