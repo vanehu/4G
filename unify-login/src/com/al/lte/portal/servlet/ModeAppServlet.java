@@ -75,15 +75,14 @@ public class ModeAppServlet extends HttpServlet {
 			String httpconfig = "";
 			if("81".equals(Port) || "82".equals(Port)){
 				httpconfig = "http";
-			}else if("83".equals(Port) || "84".equals(Port) || "85".equals(Port)){
+			}else if("83".equals(Port) || "84".equals(Port) || "85".equals(Port) || "93".equals(Port) || "94".equals(Port)){
 				httpconfig = "https";
 			}else{
 				httpconfig = "http";
 			}
 			String uri = request.getRequestURI().replaceAll("ltePortal", "provPortal");
-			String url = httpconfig + "://" + Config.getIpconfig(request) + ":"
-				+ Port + uri +"?"+ queryString.toString()
-				+ "&prov=" + province;
+//			String url = httpconfig + "://" + Config.getIpconfig(request) + ":" + Port + uri +"?"+ queryString.toString() + "&prov=" + province;
+			String url = httpconfig + "://" + Config.getIpconfig(request, province) + ":" + Port + uri +"?"+ queryString.toString() + "&prov=" + province;
 			response.sendRedirect(url);
 		} catch (IOException e) {
 			e.printStackTrace();

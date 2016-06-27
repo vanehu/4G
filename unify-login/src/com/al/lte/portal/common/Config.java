@@ -10,6 +10,10 @@ import javax.servlet.http.HttpServletResponse;
 
 public class Config {
 	
+	/**
+	 * @deprecated #59017容灾改造需求：当启用分省域名后，该全局变量可能会被置为分省域名(bj.crm.189.cn)，再使用该变量会出错，不建议使用。
+	 */
+	@Deprecated
 	public static String ip="crm.189.cn";
 	
 	/**
@@ -17,6 +21,7 @@ public class Config {
 	 * @return
 	 */
 	public static String getIpconfig(HttpServletRequest req){
+		String IP = "crm.189.cn";
 		String ipconfig = getProperties().getProperty("ipconfig");
 		if(ipconfig==null){ //获取文件失败
 			ipconfig = "0";
@@ -24,11 +29,11 @@ public class Config {
 		if(!"0".equals(ipconfig)){
 			String header =req.getHeader("x-ip-config");
 			if(header!=null){
-				ip = header;
+				IP = header;
 			}
-			//System.out.println("ip:"+ip);
+			//System.out.println("IP:"+IP);
 		}
-		return ip;
+		return IP;
 	}
 	
 	/**
@@ -61,7 +66,9 @@ public class Config {
 	/**
 	 * 获取密码
 	 * @return
+	 * @deprecated 安全需求：从首页面去掉忘记密码功能
 	 */
+	@Deprecated
 	public static String getForgetPasswordVersion(HttpServletRequest req){
 		String version = getProperties().getProperty("forgetPasswordVersion");
 		if(!"81".equals(version) && !"82".equals(version) && !"83".equals(version) && !"84".equals(version)){
@@ -78,10 +85,8 @@ public class Config {
 	public static Properties getProperties() {	
 		Properties p = new Properties();
 		try {
-			InputStream in = Config.class.getResourceAsStream("/portal/loginConfig.properties");
-//			InputStream in = Config.class.getResourceAsStream("/loginConfig.properties");
-//			InputStream in = Config.class.getResource("/loginConfig.properties").openStream();
-//			p.load(new BufferedInputStream(new FileInputStream(Config.class.getClassLoader().getResource("/loginConfig.properties").getPath())));
+			InputStream in = Config.class.getResourceAsStream("/portal/loginConfig.properties");//服务器环境使用
+//			InputStream in = Config.class.getResourceAsStream("/loginConfig.properties");//localhost使用
 		    if(in !=null){
 				p.load(in);
 				in.close();
@@ -141,7 +146,6 @@ public class Config {
 	 * @return
 	 */
 	public static String getProvVersion(String province){
-//		System.out.println("**********************统一登录：开始读取配置文件[端口]");
 		String version = getProperties().getProperty(province+"Version");
 		if(!"81".equals(version) && 
 				!"82".equals(version) && 
@@ -152,7 +156,6 @@ public class Config {
 			version = "9";//获取文件失败
 		}
 		System.out.println("**********************统一登录[端口版本号]:"+version);
-//		System.out.println(province+"端口=============="+version);
 		return version;
 	}
 	
@@ -240,7 +243,6 @@ public class Config {
 	 * @author ZhangYu
 	 */
 	public static String getDomain(String province){
-//		System.out.println("**********************统一登录：开始读取配置文件[域名]");
 		String domain = getProperties().getProperty(province+"Domain");
 		if((domain == null) ||  ("".equals(domain))){
 			System.out.println("**********************统一登录[域名] :"+domain);
