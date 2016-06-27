@@ -379,7 +379,7 @@ order.prodModify = (function(){
 	var _showAddComp = function(){
 		var compspecparam = {
 				"productId":_choosedProdInfo.productId
-		}
+		};
 		if(getCompInfo(compspecparam)==""){
 			return;
 		}
@@ -399,13 +399,13 @@ order.prodModify = (function(){
 				"productId" : _choosedProdInfo.productId
 		};
 		var checkRule = rule.rule.prepare(param,'order.prodModify.addComp',callParam);
-	}
+	};
 	
 	//退出群组规则校验
 	var _showRemoveComp = function(){
 		var compspecparam = {
 				"productId":_choosedProdInfo.productId
-		}
+		};
 		if(getCompInfo(compspecparam)==""){
 			return;
 		}
@@ -2197,7 +2197,7 @@ order.prodModify = (function(){
 	
 	var compspecGrps = "";
 	var getCompInfo = function(compspecparam){
-		var grprlue = ""
+		var grprlue = "";
 		var returndata = $.callServiceAsJson(contextPath+"/order/compPspecGrps", compspecparam, {});
 		if(returndata.code == 0){
 			if(returndata.data.length!=0){
@@ -2913,7 +2913,7 @@ order.prodModify = (function(){
 					var childrole = {
 						name:compPspecCompGrpRelasSpecs[i].compPspecCompGrpName,
 						children:childSpec
-					}
+					};
 					childmenber.push(childrole);
 				}
 				var setting = {	
@@ -4093,7 +4093,7 @@ order.prodModify = (function(){
 						$.alert("提示","系统繁忙，请稍后再试！");
 					}
 				});
-	}
+	};
 	return {
 		changeCard : _changeCard,
 		getChooseProdInfo : _getChooseProdInfo,
