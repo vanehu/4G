@@ -38,5 +38,7 @@ public class Const {
 
 	//20位长度的随机字符串
 	public static final int RANDOM_STRING_LENGTH = 20;
+	
+	public static final String CACHE_CERTINFO="CACHE_CERTINFO";
 
 }

@@ -4253,6 +4253,7 @@ public class OrderController extends BaseController {
             String nonce = RandomStringUtils.randomAlphanumeric(Const.RANDOM_STRING_LENGTH); //随机字符串
             String signature1 = commonBmo.signature(partyName, certNumber, certAddress, identityPic, nonce, appSecret1);
             param.put("signature", signature1);
+            request.getSession().setAttribute(Const.CACHE_CERTINFO, certNumber);
     		jsonResponse = super.successed(param, ResultConstant.SUCCESS.getCode());//信息校验通过
             return jsonResponse;
         } catch (Exception e) {
