@@ -201,10 +201,12 @@ order.prodModify = (function(){
 					$("#changeuimsmsresend").off("click").removeClass("cn").addClass("cf");
 					if(response.data.randomCode !=undefined||response.data.randomCode !=''){
 						$(".randomCode").show();
-						$("#num .txtnum").attr("value",response.data.randomCode);
+						//#544326 IE7不兼容$("#num .txtnum")语法
+//						$("#num .txtnum").attr("value",response.data.randomCode);
+						$("#changeUimSmsRandomNum").attr("value",response.data.randomCode);
 					}
-					
-					$("#checkNum .txtnum").attr("value",order.prodModify.choosedProdInfo.accNbr);
+//					$("#checkNum .txtnum").attr("value",order.prodModify.choosedProdInfo.accNbr);
+					$("#changeUimSmsCheckNum").attr("value",order.prodModify.choosedProdInfo.accNbr);
 					//重新发送验证码成功后,验证错误次数置0.
 					smsErrorCount=0;
 					//重新发送验证码成功后,验证码有效期初始化5分钟.
