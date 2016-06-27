@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.NoSuchMessageException;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 
@@ -121,8 +122,8 @@ public class PropertiesUtils {
 				break;
 			}
 		}
-		// 判断MDA中是否有配置该属性，如果有，直接读取MDA，如果没有则读取原来的配置
-		if (isHasProperty) {
+		// 判断MDA中是否有配置该属性，如果有，直接读取MDA，如果没有则读取原来的配置（注：应用启动时，MDA还未加载）
+		if (isHasProperty && StringUtils.isNotBlank(propertyValue)) {
 			return propertyValue;
 		} else {
 			try {
