@@ -20,7 +20,6 @@ public class MainServlet extends HttpServlet {
 		 if(areack!=null){
 			 String province = areack.getValue();
 			 String Port = Config.getProvVersion(province);
-			 //String domain = ("ON".equals(Config.getProperties().getProperty("DisasterTolerance"))) ? Config.getIpconfig(req, province) : Config.getIpconfig(req);
 			 String domain = Config.getIpconfig(req, province);
 			 String httpconfig = "";
 			 if("81".equals(Port) || "82".equals(Port)){

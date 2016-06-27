@@ -23,7 +23,6 @@ public class PrintServlet extends HttpServlet {
 		String areaId = req.getParameter("areaId");
 		String province = Config.getAreaName(areaId);
 		String Port = Config.getProvVersion(province);
-		//String domain = ("ON".equals(Config.getProperties().getProperty("DisasterTolerance"))) ? Config.getIpconfig(req, province) : Config.getIpconfig(req);
 		String domain = Config.getIpconfig(req, province);
 		String httpconfig = "";
 		 if("81".equals(Port) || "82".equals(Port)){
