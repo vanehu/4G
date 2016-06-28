@@ -52,10 +52,10 @@ order.undo = (function(){
 				return ;
 			}
 		}		
-		if(!$("#p_startTime").val()||$("#p_startTime").val()==""){
-			$.alert("提示","请选择'开始时间' 再查询");
-			return ;
-		}
+//		if(!$("#p_startTime").val()||$("#p_startTime").val()==""){
+//			$.alert("提示","请选择'开始时间' 再查询");
+//			return ;
+//		}
 
 		var curPage = 1 ;
 		if(pageIndex>0){
