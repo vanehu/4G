@@ -60,7 +60,7 @@ import com.al.lte.portal.bmo.staff.StaffBmo;
 import com.al.lte.portal.bmo.staff.StaffChannelBmo;
 import com.al.lte.portal.common.CommonMethods;
 import com.al.lte.portal.common.CommonUtils;
-import com.al.lte.portal.common.DataSignTool;
+import com.al.lte.portal.common.DataConcealUtil;
 import com.al.lte.portal.common.EhcacheUtil;
 import com.al.lte.portal.common.FTPServiceUtils;
 import com.al.lte.portal.common.SysConstant;
@@ -1267,6 +1267,23 @@ public class ReportController extends BaseController {
     		List<Map<String,Object>> list = new ArrayList<Map<String,Object>>();
     		if (returnMap != null && ResultCode.R_SUCC.equals(returnMap.get("resultCode"))) {
     			list = (List<Map<String, Object>>) returnMap.get("receiptOrders");
+    			if(list!=null && list.size()>0){
+    				for(int i=0;i<list.size();i++){
+    					Map<String,Object> receiptOrder = list.get(i);
+    					if(null!=receiptOrder.get("custName")){
+    						String custN = receiptOrder.get("custName").toString();
+    						if(!custN.equals("") && !custN.contains("*")){
+    							receiptOrder.put("custName",DataConcealUtil.toConceal(custN, "1"));
+    						}
+    					}
+    					if(null!=receiptOrder.get("certNumber")){
+    						String certN = receiptOrder.get("certNumber").toString();
+    						if(!certN.equals("") && !certN.contains("*")){
+    							receiptOrder.put("certNumber",DataConcealUtil.toConceal(certN, "2"));
+    						}
+    					}
+    				}
+    			}
     			if(null != returnMap.get("totalCnt")){
     				totalSize = MapUtils.getInteger(returnMap, "totalCnt");
     			}
