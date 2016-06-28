@@ -268,8 +268,8 @@ order.dealer = (function() {
 //			$.alert("操作提示","请输入工号或者姓名！");
 //			return;
 //		}
-		if($("#staffCode").val() == ""){
-			$.alert("操作提示","请输入工号！");
+		if($("#staffCode").val().trim() == "" && $("#salesCode").val().trim() == ""){
+			$.alert("操作提示","工号和销售员编码不能都为空！");
 			return;
 		}
 		var param = {
@@ -277,7 +277,8 @@ order.dealer = (function() {
 				"areaId":$("#diqu").val(),
 				//"currentAreaAllName":$("#p_staff_areaId_val").val(),
 				"name":$("#staffName").val(),
-				"code":$("#staffCode").val(),
+				"code":$("#staffCode").val().trim(),
+				"salesCode":$("#salesCode").val().trim(),//销售员编码
 				//"salesCode":$("#qrySalesCode").val(),
 				"pageIndex":1,
 				"objInstId":objInstId,

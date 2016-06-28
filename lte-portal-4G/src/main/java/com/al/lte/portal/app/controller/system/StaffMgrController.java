@@ -146,7 +146,12 @@ public class StaffMgrController extends com.al.lte.portal.controller.system.Staf
 			iPageSize = Integer.parseInt(pageSize);
 			if (iPage > 0) {
 				staffParm.put("staffName",param.get("name"));
-				staffParm.put("staffCode",param.get("code"));
+				if(param.get("salesCode")!=null){
+				  staffParm.put("staffCode",param.get("code"));
+				}
+				if(param.get("salesCode")!=null){
+				  staffParm.put("salesCode",param.get("salesCode"));//销售员编码，add by yanghm
+				}
 				staffParm.remove("dealerId");
 				staffParm.put("areaId", iAreaId);
 				if (staffParm.get("staffName") != null
@@ -156,6 +161,10 @@ public class StaffMgrController extends com.al.lte.portal.controller.system.Staf
 				if (staffParm.get("staffCode") != null
 						&& "".equals(staffParm.get("staffCode"))) {
 					staffParm.remove("staffCode");
+				}
+				if (staffParm.get("salesCode") != null
+						&& "".equals(staffParm.get("salesCode"))) {
+					staffParm.remove("salesCode");
 				}
 				Map<String, Object> returnMap = this.staffBmo.queryStaffList(
 						staffParm, null, sessionStaff);
@@ -282,5 +291,63 @@ public class StaffMgrController extends com.al.lte.portal.controller.system.Staf
 			log.error("门户/staffMgr/getCTGMainData方法异常", e);
 			return super.failed(ErrorCode.ORDER_CTGMAINDATA, e, param);
 		}
+	}
+	
+	/**
+	 * 客户二维码登录信息绑定（原生跳到翼销售第一次事件）
+	 * 
+	 * @param params
+	 * @param model
+	 * @param optFlowNum
+	 * @param response
+	 * @param httpSession
+	 * @return
+	 */
+	@RequestMapping(value = "/toBindQrCode", method = { RequestMethod.POST })
+	public String toBindQrCode(@RequestBody Map<String, Object> params,
+			Model model, @LogOperatorAnn String optFlowNum,
+			HttpServletResponse response, HttpSession httpSession) {
+		return "/app/qRCode/bind-qrcode";
+	}
+
+/**
+ * 翼销售二维码信息绑定
+ * @param param
+ * @param model
+ * @param session
+ * @param flowNum
+ * @return
+ */
+	@RequestMapping(value = "/bindQrCode", method = RequestMethod.POST)
+	@ResponseBody
+	public JsonResponse bindQrCode(@RequestBody Map<String, Object> param,
+			Model model, HttpSession session, @LogOperatorAnn String flowNum) {
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils
+				.getSessionAttribute(super.getRequest(),
+						SysConstant.SESSION_KEY_LOGIN_STAFF);
+        
+		Map<String, Object> rMap = null;
+		JsonResponse jsonResponse = null;
+		try{		
+ 			rMap = staffBmo.bindQrCode(param, flowNum, sessionStaff);
+ 			log.debug("return={}", JsonUtil.toString(rMap));
+ 			if (rMap != null&& "0".equals(rMap.get("resultCode").toString())) {
+ 				jsonResponse = super.successed(rMap.get("resultMsg"),
+ 						ResultConstant.SUCCESS.getCode());
+ 			} else {
+ 				jsonResponse = super.failed(rMap.get("resultMsg").toString(),
+ 						ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+ 			}	
+ 			return jsonResponse;
+		}catch(BusinessException be){
+			this.log.error("调用主数据接口失败", be);
+   			return super.failed(be);
+		} catch (InterfaceException ie) {
+			return super.failed(ie, param, ErrorCode.BIND_QR_CODE);
+		} catch (Exception e) {
+			log.error("门户/staffMgr/bindQrCode方法异常", e);
+			return super.failed(ErrorCode.BIND_QR_CODE, e, param);
+		}
+		
 	}
 }
