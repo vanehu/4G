@@ -67,6 +67,7 @@ import com.al.lte.portal.bmo.crm.OrderBmo;
 import com.al.lte.portal.bmo.crm.ProdBmo;
 import com.al.lte.portal.bmo.print.PrintBmo;
 import com.al.lte.portal.bmo.staff.StaffBmo;
+import com.al.lte.portal.common.AESUtils;
 import com.al.lte.portal.common.CommonMethods;
 import com.al.lte.portal.common.Const;
 import com.al.lte.portal.common.EhcacheUtil;
@@ -4652,6 +4653,12 @@ public class OrderController extends BaseController {
             Map<String, Object> resMap = orderBmo.queryBlackUserInfo(param, null, sessionStaff);
             if (ResultCode.R_SUCC.equals(resMap.get("resultCode")) && resMap.get("data")!=null) {
                 list =  (List<Map<String, Object>>) resMap.get("data");
+                // 对暴露的ftp下载地址进行加密
+                for (Map<String, Object> map : list) {
+					if (map.containsKey("fileUrl")) {
+						map.put("fileUrl", AESUtils.encryptToString(MapUtils.getString(map, "fileUrl", ""), SysConstant.BLACK_USER_URL_PWD));
+					}
+				}
                 totalSize = MapUtils.getInteger(resMap, "totalCnt", 1);
             }
             PageModel<Map<String, Object>> pm = PageUtil.buildPageModel(nowPage, pageSize, totalSize < 1 ? 1

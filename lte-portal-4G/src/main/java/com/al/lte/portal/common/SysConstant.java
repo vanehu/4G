@@ -690,4 +690,10 @@ public final class SysConstant {
 	
 	/***/
 	public static final String NUMBERLIST = "NUMBERLIST";
+	
+	 /** Session Key　验证码 */
+    public static final String SESSION_QRCODE_UUID = "session_qrcode_uuid";
+    
+    /**一卡双号黑名单管理证据文件url加密密码*/
+	public static final String BLACK_USER_URL_PWD = "32784wqreiyi$%^&*_";
 }

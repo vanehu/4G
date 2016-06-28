@@ -26,7 +26,9 @@ import com.al.ecs.common.web.SpringContextUtil;
 import com.al.ecs.exception.ResultConstant;
 import com.al.ecs.spring.controller.BaseController;
 import com.al.lte.portal.bmo.crm.BatchBmo;
+import com.al.lte.portal.common.AESUtils;
 import com.al.lte.portal.common.FTPServiceUtils;
+import com.al.lte.portal.common.SysConstant;
 
 @Controller("com.al.lte.portal.controller.crm.BatchOrderController")
 @RequestMapping("/order/batchOrder/*")
@@ -306,6 +308,8 @@ public class BatchOrderController  extends BaseController {
 			FtpUtils ftpUtils = new FtpUtils();
 //			String fileUrl = (String) param.get("fileUrl");
 //			String fileName = (String) param.get("fileName");
+			// 解密url
+			fileUrl = AESUtils.decryptToString(fileUrl, SysConstant.BLACK_USER_URL_PWD);
 			String[] fileUrls = fileUrl.split(",");
 			String ftpMapping = fileUrls[0];
 			String newFileName = fileUrls[1];
