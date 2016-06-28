@@ -121,6 +121,8 @@ public class SignController extends BaseController {
 				RedisUtil.set("mgrPdf_"+ paramMap.get("olId").toString(), reObject.get("pp"));	
 				reObject.remove("pp");
 				model.addAllAttributes(reObject);
+				model.addAttribute("custName", resultMap.get("custName"));
+				model.addAttribute("idCardNbr", resultMap.get("idCardNbr"));
 			}
 		}catch (BusinessException be) {
 			return super.failedStr(model, be);
@@ -151,6 +153,8 @@ public class SignController extends BaseController {
 				RedisUtil.set("mgrPdf_"+ paramMap.get("olId").toString(), reObject.get("pp"));	
 				reObject.remove("pp");
 				model.addAllAttributes(reObject);
+				model.addAttribute("custName", resultMap.get("custName"));
+				model.addAttribute("idCardNbr", resultMap.get("idCardNbr"));
 			}
 		}catch (BusinessException be) {
 			return super.failedStr(model, be);

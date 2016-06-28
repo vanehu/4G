@@ -176,16 +176,18 @@ common.print = (function($){
 			accNbr=order.prodModify.choosedProdInfo.accNbr;
 		}
 		var certType=OrderInfo.cust.identityCd;
-		var certNumber=OrderInfo.cust.idCardNumber;
+		if(certType==undefined||certType==null||certType==''){
+			certType=OrderInfo.boCustIdentities.identidiesTypeCd;
+		}
 		var params={
 			olId:OrderInfo.orderResult.olId,
 			signFlag:"5",
 			busiType:"9",
 			sign:_splitBaseforStr($("#signinput").val()),
 			srcFlag:"APP",
-			custName:OrderInfo.cust.partyName,
+			custName:OrderInfo.cust.printCustName,
 			certType:certType,
-			certNumber:certNumber,
+			certNumber:OrderInfo.cust.printIdCardNbr,
 			accNbr:accNbr
 		};
 //		$.ecOverlay("<strong>正在保存回执,请稍等会儿...</strong>");
