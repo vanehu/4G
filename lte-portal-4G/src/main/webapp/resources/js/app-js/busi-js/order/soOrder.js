@@ -240,7 +240,62 @@ SoOrder = (function() {
 				value : remark
 			});	
 		}
-		
+		if(OrderInfo.actionFlag==14 || OrderInfo.actionFlag==1){
+			//订单购物车属性(经办人)
+			if(CONST.getAppDesc()==0){
+				var orderAttrName = $.trim($("#orderAttrName").val()); //经办人姓名
+				var orderIdentidiesTypeCd = $("#orderIdentidiesTypeCd  option:selected").val(); //证件类型
+				var orderAttrIdCard = $.trim($("#orderAttrIdCard").val());; //证件号码
+				if("1"==orderIdentidiesTypeCd){
+					orderAttrIdCard =$.trim($("#sfzorderAttrIdCard").val()); //身份证号码
+				}
+				var orderAttrAddr = $.trim($("#orderAttrAddr").val()); //地址
+				var orderAttrPhoneNbr = $.trim($("#orderAttrPhoneNbr").val()); //联系人号码
+				if(ec.util.isObj(orderAttrName)&&ec.util.isObj(orderAttrIdCard)&&ec.util.isObj(orderAttrPhoneNbr)){
+					if(ec.util.isObj(orderAttrName)){
+						custOrderAttrs.push({
+							itemSpecId : CONST.BUSI_ORDER_ATTR.orderAttrName,
+							value : orderAttrName
+						});	
+					}
+					if(ec.util.isObj(orderAttrIdCard)){
+						custOrderAttrs.push({
+							itemSpecId : CONST.BUSI_ORDER_ATTR.orderIdentidiesTypeCd,
+							value : orderIdentidiesTypeCd
+						});	
+						custOrderAttrs.push({
+							itemSpecId : CONST.BUSI_ORDER_ATTR.orderAttrIdCard,
+							value : orderAttrIdCard
+						});	
+					}
+					if(ec.util.isObj(orderAttrPhoneNbr)){
+						custOrderAttrs.push({
+							itemSpecId : CONST.BUSI_ORDER_ATTR.orderAttrPhoneNbr,
+							value : orderAttrPhoneNbr
+						});	
+					}
+					if(ec.util.isObj(orderAttrAddr)){
+						custOrderAttrs.push({
+							itemSpecId : CONST.BUSI_ORDER_ATTR.orderAttrAddr,
+							value : orderAttrAddr
+						});	
+					}
+				}else if(ec.util.isObj(orderAttrName)||ec.util.isObj(orderAttrIdCard)||ec.util.isObj(orderAttrPhoneNbr)){
+					if(!ec.util.isObj(orderAttrName)){
+						$.alert("提示","经办人姓名为空，经办人姓名、经办人号码、证件号码必须同时为空或不为空，因此无法提交！");
+						return false;
+					}
+					if(!ec.util.isObj(orderAttrPhoneNbr)){
+						$.alert("提示","经办人号码为空，经办人姓名、经办人号码、证件号码必须同时为空或不为空，因此无法提交！");
+						return false;
+					}
+					if(!ec.util.isObj(orderAttrIdCard)){
+						$.alert("提示","证件号码为空，经办人姓名、经办人号码、证件号码必须同时为空或不为空，因此无法提交！");
+						return false;
+					}
+				}
+			}
+			}
 		if(OrderInfo.actionFlag==1 || OrderInfo.actionFlag==14){ //新装
 			_createOrder(busiOrders); //新装
 		}else if (OrderInfo.actionFlag==2){ //套餐变更

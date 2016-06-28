@@ -767,6 +767,10 @@ mktRes.terminal = (function($){
 		} else {
 			return;
 		}
+		//校验经办人
+		if(!checkJBR()){
+			return;
+		}
 		var coupon = {
 			couponUsageTypeCd 	: "5", //物品使用类型,1-其他，2-赠送，3-销售，4-活动，5-租机
 			inOutTypeId 		: "1",  //出入库类型
@@ -857,6 +861,48 @@ mktRes.terminal = (function($){
 		$("#currentPage").val(currentPage);
 		_btnQueryTerminalSale(currentPage)
 	};
+	
+	//显示经办人
+	var _showJBR=function(){
+		$("#order-content").hide();//办号卡
+		$("#terminalMain").hide();//购手机
+		$("#jbr").show();//显示经办人
+	}
+	//关闭经办人
+	var _closeJBR=function(){
+		$("#order-content").show();
+		$("#terminalMain").show();
+		$("#jbr").hide();
+	}
+	var checkJBR=function(){
+		if(ec.util.isObj($.trim($("#orderAttrName").val()))||ec.util.isObj($.trim($("#orderAttrIdCard").val()))||ec.util.isObj($.trim($("#sfzorderAttrIdCard").val()))||ec.util.isObj($.trim($("#orderAttrPhoneNbr").val()))){
+				if(!ec.util.isObj($.trim($("#orderIdentidiesTypeCd").val()))){
+					$.alert("提示","请选择证件类型！");
+					return false;
+				}
+				if(!ec.util.isObj($.trim($("#orderAttrName").val()))){
+					$.alert("提示","经办人姓名为空，经办人姓名、经办人号码、证件号码必须同时为空或不为空，因此无法提交！");
+					return false;
+				}
+				if(!ec.util.isObj($.trim($("#orderAttrPhoneNbr").val()))){
+					$.alert("提示","经办人号码为空，经办人姓名、经办人号码、证件号码必须同时为空或不为空，因此无法提交！");
+					return false;
+				}
+				if($.trim($("#orderIdentidiesTypeCd").val())==1){
+					if(!ec.util.isObj($.trim($("#sfzorderAttrIdCard").val()))){
+						$.alert("提示","证件号码为空，经办人姓名、经办人号码、证件号码必须同时为空或不为空，因此无法提交！");
+						return false;
+					}
+				}
+				if($.trim($("#orderIdentidiesTypeCd").val())!=1){
+					if(!ec.util.isObj($.trim($("#orderAttrIdCard").val()))){
+						$.alert("提示","证件号码为空，经办人姓名、经办人号码、证件号码必须同时为空或不为空，因此无法提交！");
+						return false;
+					}
+				}
+			}
+		return true;
+	}
 	return {
 		isSelect			:isSelect,
 		hytcmc				:hytcmc,
@@ -879,7 +925,9 @@ mktRes.terminal = (function($){
 		btnQueryTerminalSale:_btnQueryTerminalSale,
 		showNbr             :_showNbr,
 		upPage                 :           _upPage,
-		nextPage               :           _nextPage
+		nextPage               :           _nextPage,
+		closeJBR            :_closeJBR,
+		showJBR             :_showJBR
 	};
 })(jQuery);
 $(function() {

@@ -431,6 +431,148 @@ cust = (function(){
 		_form_custInfomodify_btn();
 	};
 	
+	//翼销售-经办人-客户类型选择事件
+	var _jbrpartyTypeCdChoose = function(scope,id) {
+		var partyTypeCd=$(scope).val();	
+		//客户类型关联证件类型下拉框
+		$("#"+id).empty();
+		_jbrcertTypeByPartyType(partyTypeCd,id);
+		//创建客户证件类型选择事件
+//		_jbridentidiesTypeCdChoose($("#"+id).children(":first-child"),"orderAttrIdCard");
+		//创建客户确认按钮
+		//_custcreateButton();
+
+	};
+	//翼销售-经办人-客户类型关联证件类型下拉框
+	var _jbrcertTypeByPartyType = function(_partyTypeCd,id){
+		var _obj = $("#"+id);
+		var params = {"partyTypeCd":_partyTypeCd} ;
+		var url=contextPath+"/app/cust/queryCertType";
+		var response = $.callServiceAsJson(url, params, {});
+       if (response.code == -2) {
+					$.alertM(response.data);
+				}
+	   if (response.code == 1002) {
+					$.alert("错误","根据员工类型查询员工证件类型无数据,请配置","information");
+					return;
+				}
+	   var currentCT = $("#currentCT").val();//渠道类型
+	   if(response.code==0){
+					var data = response.data ;
+					if(data!=undefined && data.length>0){
+						//去除重复的证件类型编码
+						var uniData = [];
+						for(var i=0;i<data.length;i++){
+							var unique = true;
+							var certTypeCd = data[i].certTypeCd;
+							for(var j=0;j<uniData.length;j++){
+								unique = unique && data[i].certTypeCd != uniData[j].certTypeCd;
+								if(!unique){
+									break;
+								}
+							}
+						    //只有定义的渠道类型新建客户的时候可以选择非身份证类型,其他的渠道类型只能选择身份证类型。
+							var isAllowChannelType = false;
+							if(currentCT==CONST.CHANNEL_TYPE_CD.ZQZXDL || currentCT==CONST.CHANNEL_TYPE_CD.GZZXDL
+									|| currentCT==CONST.CHANNEL_TYPE_CD.HYKHZXDL || currentCT==CONST.CHANNEL_TYPE_CD.SYKHZXDL
+									|| currentCT==CONST.CHANNEL_TYPE_CD.XYKHZXDL || currentCT==CONST.CHANNEL_TYPE_CD.GZZXJL
+									|| currentCT==CONST.CHANNEL_TYPE_CD.ZYOUT || currentCT==CONST.CHANNEL_TYPE_CD.ZYINGT
+									|| currentCT==CONST.CHANNEL_TYPE_CD.WBT || _partyTypeCd != "1" ){
+								isAllowChannelType = true;
+							}
+							if(!isAllowChannelType && certTypeCd == "1"){
+								isAllowChannelType= true;
+							}
+							if(unique && isAllowChannelType){
+								uniData.push(data[i]);
+							}
+						}
+						
+						for(var i=0;i<uniData.length;i++){
+							var certTypedate = uniData[i];
+							if(i==0){
+								_obj.append("<option value='"+certTypedate.certTypeCd+"' selected='selected'>"+certTypedate.name+"</option>");
+							}else _obj.append("<option value='"+certTypedate.certTypeCd+"' >"+certTypedate.name+"</option>");
+						}
+						//jquery mobile 需要刷新才能生效
+//						_obj.selectmenu().selectmenu('refresh');
+						if(id=='orderIdentidiesTypeCd'){
+							//创建经办人证件类型选择事件
+//							$("#orderIdentidiesTypeCd option[value='1'").attr("selected", true);
+							_jbridentidiesTypeCdChoose($("#"+id).children(":first-child"),"orderAttrIdCard");
+						}
+					}
+				}
+	};
+	
+	//证件类型选择事件
+	var _jbridentidiesTypeCdChoose = function(scope,id) {
+		var identidiesTypeCd=$(scope).val();
+//		if(identidiesTypeCd==undefined){
+//			identidiesTypeCd=$("#div_cm_identidiesType  option:selected").val();
+//		}
+		if(identidiesTypeCd==1){
+			$("#jbrsfz").show();
+			$("#jbrsfz_i").show();
+			$("#qtzj").hide();
+//			$('#jbrFormdata').data('bootstrapValidator').enableFieldValidators("orderAttrIdCard",true,"sfzorderAttrIdCard");
+		}else{
+			$("#jbrsfz").hide();
+			$("#jbrsfz_i").hide();
+			$("#qtzj").show();
+//			$('#jbrFormdata').data('bootstrapValidator').enableFieldValidators("orderAttrIdCard",true,"orderAttrIdCard");
+		}
+	};
+	
+	//读卡获取经办人信息
+	var _getjbrGenerationInfos=function(name,idcard,address,identityPic){
+		$("#orderAttrName").val(name);
+		$("#sfzorderAttrIdCard").val(idcard);
+		$("#orderAttrAddr").val(address);
+	};
+	//校验表单提交
+	var _jbrvalidatorForm=function(){
+		$('#jbrFormdata').bootstrapValidator({
+	        message: '无效值',
+	        feedbackIcons: {
+	            valid: 'glyphicon glyphicon-ok',
+	            invalid: 'glyphicon glyphicon-remove',
+	            validating: 'glyphicon glyphicon-refresh'
+	        },
+	        fields: {
+	        	sfzorderAttrIdCard: {
+	            	trigger: 'blur',
+	                validators: {
+	                    regexp: {
+	                        regexp: /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/,
+	                        //regexp: /^\d{6}(18|19|20)?\d{2}(0[1-9]|1[12])(0[1-9]|[12]\d|3[01])\d{3}(\d|X)$/,
+	                        message: '请输入合法身份证号码'
+	                    }
+	                }
+	            },
+	            orderAttrIdCard: {
+	            	trigger: 'blur',
+	                validators: {
+	                    regexp: {
+	                        regexp: /^[0-9a-zA-Z]*$/g,
+	                        message: '证件号码只能为数字或字母'
+	                    }
+	                }
+	            },
+	            orderAttrPhoneNbr: {
+	            	trigger: 'blur',
+	                validators: {
+	                    regexp: {
+	                        /*regexp: /(^\d{11}$)/,
+	                        message: '手机号码只能为11数字'*/
+	                    	regexp: /^1[34578]\d{9}$/,
+	                        message: '手机号码不合法'
+	                    }
+	                }
+	            }
+	        }
+	    });
+	};
 	//校验表单提交
 	var _validatorForm=function(){
 		$('#custFormdata').bootstrapValidator({
@@ -516,6 +658,7 @@ cust = (function(){
 		OrderInfo.initData(CONST.ACTION_CLASS_CD.CUST_ACTION,BO_ACTION_TYPE,9,CONST.getBoActionTypeName(BO_ACTION_TYPE),"");
 		SoOrder.initFillPage();
 	};
+	
 	
 	//初始化新增客户
 	var _initNewCust = function(){
@@ -1224,6 +1367,11 @@ cust = (function(){
 	};
 
 	return {
+		jbridentidiesTypeCdChoose 	: 		_jbridentidiesTypeCdChoose,
+		jbrvalidatorForm 			: 		_jbrvalidatorForm,
+		jbrpartyTypeCdChoose 		: 		_jbrpartyTypeCdChoose,
+		jbrcertTypeByPartyType 		: 		_jbrcertTypeByPartyType,
+		getjbrGenerationInfos		:		_getjbrGenerationInfos,
 		scroll 						: 		_scroll,
 		custQueryAddList 			: 		_custQueryAddList,
 		custQueryAdd 				: 		_custQueryAdd,
