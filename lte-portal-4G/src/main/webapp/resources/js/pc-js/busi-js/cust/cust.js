@@ -1874,7 +1874,7 @@ order.cust = (function(){
 		param.areaId=OrderInfo.cust.areaId;
 		param.custId=OrderInfo.cust.custId;
 		param.identityNum = base64encode(utf16to8($.trim($("#idCardNumber2").val())));
-		recordParam.validateType="1";
+		recordParam.validateType="5";
 		recordParam.validateLevel="2";
 		$.ecOverlay("<strong>正在校验中,请稍等...</strong>");
 		var response= $.callServiceAsJson(contextPath+"/token/pc/cust/custAuthSub",param);
@@ -1895,7 +1895,7 @@ order.cust = (function(){
 			if(response.data.code=="0"){
 				//使用人证件校验成功
 				//成功
-				OrderInfo.authRecord.validateType="3";
+				OrderInfo.authRecord.validateType="5";
 				OrderInfo.authRecord.resultCode="0";
 				_saveAuthRecordSuccess(recordParam);
 		         if($.browser.msie) {
@@ -1949,6 +1949,7 @@ order.cust = (function(){
 	  		recordParam.accessNbr=_choosedCustInfo.acctNbr;
 	  		recordParam.certType=_choosedCustInfo.identityCd;
 	  		recordParam.certNumber=_choosedCustInfo.idCardNumber;
+			recordParam.validateType="1";
 	   }
 	   else{
 		    //使用人证件鉴权
@@ -1963,14 +1964,14 @@ order.cust = (function(){
 		    param.accessNumber=OrderInfo.acctNbr;
 			param.areaId=OrderInfo.cust.areaId;
 			
-
+			recordParam.validateType=6;
 			recordParam.custId=OrderInfo.cust.custId;
 			recordParam.accessNbr=OrderInfo.acctNbr;
 			recordParam.certType=OrderInfo.cust.identityCd;
 			recordParam.certNumber=OrderInfo.cust.idCardNumber;
 	   }
       
-		recordParam.validateType="1";
+
 		recordParam.validateLevel="2";
 		$.ecOverlay("<strong>正在校验中,请稍等...</strong>");
 		var response= $.callServiceAsJson(contextPath+"/token/pc/cust/custAuthSub",param);
@@ -2345,11 +2346,12 @@ order.cust = (function(){
 	  };
 	//鉴权方式日志记录
 	var _saveAuthRecord=function(param){
-		var url=contextPath+"/secondBusi/saveAuthRecord";
+		var url=contextPath+"/token/secondBusi/saveAuthRecord";
 		var response= $.callServiceAsJson(url,param);
 		if(response.code==0){
 			var result=response.data.result;
-			CacheData.setRecordId(result.recordId);
+			//CacheData.setRecordId(result.recordId);
+			OrderInfo.recordId=result.recordId;
 		}else{
 			$.alertM(response.data);
 		}

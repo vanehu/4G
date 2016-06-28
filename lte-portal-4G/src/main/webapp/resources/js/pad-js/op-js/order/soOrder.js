@@ -186,7 +186,10 @@ SoOrder = (function() {
 			itemSpecId : "800000064",
 			value :"Pad"
 		});	
-		
+		custOrderAttrs.push({ //
+			itemSpecId : "800000048",
+			value :OrderInfo.recordId
+		});	
 		if(OrderInfo.zcd_privilege=='0'){
 			custOrderAttrs.push({
 				itemSpecId : CONST.BUSI_ORDER_ATTR.ZCD_ITEM,//是否是暂存单

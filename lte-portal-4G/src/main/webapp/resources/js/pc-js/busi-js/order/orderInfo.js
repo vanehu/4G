@@ -7,6 +7,8 @@ CommonUtils.regNamespace("OrderInfo");
 
 /** 订单信息对象*/
 OrderInfo = (function() {
+	//鉴权保存id
+	var _recordId="";
 	var _rulesJson="";
 	//终端串码
 	var _terminalCode="";
@@ -26,6 +28,8 @@ OrderInfo = (function() {
 	var data="";
 	//保存发展人
 	var dealers=new Array();
+	//补卡换卡  22.补卡21.换卡
+	var _uimType="";
 	/**
 	 * UI集成页面信息
 	 * provIsale 省份流水
@@ -653,11 +657,6 @@ OrderInfo = (function() {
 				                state : "DEL"
 				            };
 							busiOrder.data.boServItems.push(delParam);
-						}
-						var feeType = $("select[name='pay_type_-1']").val();
-						if(feeType==undefined) feeType = order.prodModify.choosedProdInfo.feeType;
-						if(prodServ.servSpecId == CONST.YZFservSpecId && feeType == CONST.PAY_TYPE.AFTER_PAY){
-							this.setValue = "";
 						}
 						if(ec.util.isObj(this.setValue)){
 							var addParam = {
@@ -1560,7 +1559,9 @@ OrderInfo = (function() {
 		typeCd:_typeCd,
 		verifyLevel:_verifyLevel,
 		rulesJson:_rulesJson,
-		acctNbr:_acctNbr
+		acctNbr:_acctNbr,
+		uimType:_uimType,
+		recordId:_recordId
 		
 	};
 })();

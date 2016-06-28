@@ -18,8 +18,12 @@ OrderInfo = (function() {
 	 * 31改产品密码，32重置产品密码，,33改产品属性，34修改短号，
 	 * 
 	 */
+	//鉴权保存id
+	var _recordId="";
 	var _actionFlag = 0;
 	var _rulesJson="";
+	//补卡换卡  22.补卡21.换卡
+	var _uimType="21";
 	//鉴权类别
 	var _typeCd="";
 	//传入的号码
@@ -1447,6 +1451,8 @@ OrderInfo = (function() {
 		typeCd:_typeCd,
 		verifyLevel:_verifyLevel,
 		rulesJson:_rulesJson,
-		acctNbr:_acctNbr
+		acctNbr:_acctNbr,
+		uimType:_uimType,
+		recordId:_recordId
 	};
 })();

@@ -875,7 +875,13 @@ cust = (function(){
 		param.custId=OrderInfo.cust.custId;
 
 		var recordParam={};
-		recordParam.validateType="1";
+		
+		if(id=="idCardNumberSub3"){
+			recordParam.validateType="6";
+		}
+		else{
+			recordParam.validateType="1";
+		}
 		recordParam.validateLevel="2";
 		recordParam.custId=OrderInfo.cust.custId;
 		recordParam.accessNbr=OrderInfo.acctNbr;
@@ -929,7 +935,7 @@ cust = (function(){
 		param.areaId=OrderInfo.cust.areaId;
 		param.custId=OrderInfo.cust.custId;
 		param.identityNum = UnitCertificate;
-		recordParam.validateType="1";
+		recordParam.validateType="5";
 		recordParam.validateLevel="2";
 		var response= $.callServiceAsJson(contextPath+"/token/app/cust/custAuthSub",param);
 		if(response.data.code=="0"){
@@ -1196,11 +1202,12 @@ cust = (function(){
 	};
 	//鉴权方式日志记录
 	var _saveAuthRecord=function(param){
-		var url=contextPath+"/secondBusi/saveAuthRecord";
+		var url=contextPath+"/token/secondBusi/saveAuthRecord";
 		var response= $.callServiceAsJson(url,param);
 		if(response.code==0){
 			var result=response.data.result;
-			CacheData.setRecordId(result.recordId);
+			//CacheData.setRecordId(result.recordId);
+			OrderInfo.recordId=result.recordId;
 		}else{
 			$.alertM(response.data);
 		}

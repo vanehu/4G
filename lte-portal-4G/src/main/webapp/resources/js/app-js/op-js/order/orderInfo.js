@@ -55,7 +55,8 @@ OrderInfo = (function() {
 	var _busitypeflag = 0;
 	
 	var _orderlonger = "";
-	
+	//鉴权后保存id
+    var _recordId="";
 	var _custorderlonger = "";
 	//保存uim参数
 	var _mktResInstCode="";
@@ -1497,6 +1498,7 @@ OrderInfo = (function() {
 		verifyLevel:_verifyLevel,
 		rulesJson:_rulesJson,
 		acctNbr:_acctNbr,
-		uimType:_uimType
+		uimType:_uimType,
+		recordId:_recordId
 	};
 })();

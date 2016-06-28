@@ -191,6 +191,10 @@ SoOrder = (function() {
 			itemSpecId : "800000064",
 			value :"App"
 		});	
+		custOrderAttrs.push({ //
+			itemSpecId : "800000048",
+			value :OrderInfo.recordId
+		});	
 //		custOrderAttrs.push({
 //			itemSpecId : "30010050",
 //			value : OrderInfo.custorderlonger
