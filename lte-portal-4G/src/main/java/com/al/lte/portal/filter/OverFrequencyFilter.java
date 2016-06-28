@@ -139,6 +139,7 @@ public class OverFrequencyFilter extends OncePerRequestFilter{
 							logmap.put("CHANNEL_ID", sessionStaff.getCurrentChannelId());
 							logmap.put("OPERATORS_ID", sessionStaff.getOperatorsId());
 							logmap.put("IN_PARAM", " ");
+							logmap.put("AREA_ID", sessionStaff.getCurrentAreaId());
 							staffBmo.insert_sp_busi_run_log(logmap,"",sessionStaff);
 							ServletUtils.removeSessionAttribute(request, SysConstant.SESSION_KEY_LOGIN_STAFF);
 						}

@@ -410,6 +410,7 @@ public class MktResController extends BaseController {
 				logmap.put("ACTION_IP", ServletUtils.getIpAddr(request));
 				logmap.put("CHANNEL_ID", sessionStaff.getCurrentChannelId());
 				logmap.put("OPERATORS_ID", sessionStaff.getOperatorsId());
+				logmap.put("AREA_ID", sessionStaff.getCurrentAreaId());
 				logmap.put("IN_PARAM", JsonUtil.toString(param));
 				staffBmo.insert_sp_busi_run_log(logmap,flowNum,sessionStaff);
 			}

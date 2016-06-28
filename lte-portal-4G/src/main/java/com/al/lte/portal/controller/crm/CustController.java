@@ -58,6 +58,7 @@ public class CustController extends BaseController {
 		if(sessionStaff == null){
 			return "/cust/cust-list";
 		}
+		String areaId = (String) paramMap.get("areaId");
 		try{
 			//记录表SP_BUSI_RUN_LOG
 			String custlogflag = MySimulateData.getInstance().getParam((String) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_DATASOURCE_KEY),"CUSTLOGFLAG");
@@ -76,6 +77,7 @@ public class CustController extends BaseController {
 				logmap.put("ACTION_IP", ServletUtils.getIpAddr(request));
 				logmap.put("CHANNEL_ID", sessionStaff.getCurrentChannelId());
 				logmap.put("OPERATORS_ID", sessionStaff.getOperatorsId());
+				logmap.put("AREA_ID", areaId);
 				logmap.put("IN_PARAM", JsonUtil.toString(paramMap));
 				staffBmo.insert_sp_busi_run_log(logmap,flowNum,sessionStaff);
 			}
@@ -132,7 +134,6 @@ public class CustController extends BaseController {
 		String flag = propertiesUtils.getMessage(SysConstant.CHECKAREAIDFLAG);
 		if(SysConstant.ON.equals(flag)){
 			if("local".equals(diffPlace)){//如果是本地业务，判断传过来的地区是不是受理地区
-				String areaId = (String) paramMap.get("areaId");
 				try {
 					String isCheckFlag= staffBmo.checkByAreaId(areaId,sessionStaff);
 					if(!"0".equals(isCheckFlag)){
@@ -154,6 +155,7 @@ public class CustController extends BaseController {
 							logmap.put("ACTION_IP", ServletUtils.getIpAddr(request));
 							logmap.put("CHANNEL_ID", sessionStaff.getCurrentChannelId());
 							logmap.put("OPERATORS_ID", sessionStaff.getOperatorsId());
+							logmap.put("AREA_ID", areaId);
 							logmap.put("IN_PARAM", JsonUtil.toString(paramMap));
 							staffBmo.insert_sp_busi_run_log(logmap,flowNum,sessionStaff);
 						}
@@ -193,7 +195,6 @@ public class CustController extends BaseController {
 
 		String qryAcctNbr=MapUtils.getString(paramMap,"acctNbr","");
 		String soNbr=MapUtils.getString(paramMap,"soNbr","");
-		String areaId=(String) paramMap.get("areaId");
 		if(("").equals(areaId)||areaId==null){
 			paramMap.put("areaId", sessionStaff.getCurrentAreaId());
 		}
@@ -445,6 +446,7 @@ public class CustController extends BaseController {
 				logmap.put("ACTION_IP", sessionStaff.getIp());
 				logmap.put("CHANNEL_ID", sessionStaff.getCurrentChannelId());
 				logmap.put("OPERATORS_ID", sessionStaff.getOperatorsId());
+				logmap.put("AREA_ID", sessionStaff.getCurrentAreaId());
 				logmap.put("IN_PARAM", JsonUtil.toString(paramMap));
 				staffBmo.insert_sp_busi_run_log(logmap,flowNum,sessionStaff);
 			}
