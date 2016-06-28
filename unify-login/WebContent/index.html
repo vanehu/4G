@@ -10,16 +10,23 @@
 <META name="description" content="电信集团">
 
 <link href="resources/css/base-1.0.0.min.css" rel="stylesheet" type="text/css" />
-<!-- js -->
-<script src="resources/js/third-js/jquery/jquery-1.7.2.min.js?201606141115"></script>
-<script src="resources/js/common.js?201606141115" type="text/javascript"></script>
-<script src="resources/js/third-js/validate/jquery.ketchup.js?201606141115" type="text/javascript"></script>
-<script src="resources/js/third-js/validate/jquery.ketchup.validations_zh.js?201606141115" type="text/javascript"></script>
-<script src="resources/js/third-js/validate/jquery.ketchup.helpers.js?201606141115" type="text/javascript"></script>
-<script src="resources/js/third-js/utils/md5.js?201606141115" type="text/javascript"></script>
-<script src="resources/js/area.js?201606141115" type="text/javascript"></script>
-<script src="resources/js/login.js?201606141115" type="text/javascript"></script>
-<!-- 如有修改 login.js，需修改下版本号-->
+<!-- 第三方js允许缓存 -->
+<script src="resources/js/third-js/jquery/jquery-1.7.2.min.js"></script>
+<script type="text/javascript">
+		// 异步无缓存获取js
+		$.getScript("resources/js/third-js/validate/jquery.ketchup.js");
+		$.getScript("resources/js/third-js/validate/jquery.ketchup.validations_zh.js");
+		$.getScript("resources/js/third-js/validate/jquery.ketchup.helpers.js");
+		$.getScript("resources/js/third-js/utils/md5.js");
+		$.getScript("resources/js/common.js");
+		$.getScript("resources/js/area.js");
+		$.getScript("resources/js/login.js");
+		// 标签页展示ip
+		$.get("getServerIp", function(data) {
+			// IE8及以下浏览器不支持html(),text(),append(),innerHTML设置<title>,故采用document.title
+			document.title = document.title + "[" + data.ip + "]";
+		});
+	</script>
 </head>
 <body style="padding:0px;">
 	<div class="login_top"></div>

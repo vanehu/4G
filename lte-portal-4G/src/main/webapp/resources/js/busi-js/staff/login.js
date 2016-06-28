@@ -361,19 +361,24 @@ staff.login = (function($) {
 			}
 		};
 		var browserVersion = validateBrowser();//判断浏览器
-		$.callServiceAsJsonGet(contextPath+"/staff/browserValid", {'browserVersion': browserVersion} ,{
-			"done": function (response) {
-				var browserLevel = response.data.level;
-				var recBroStr = response.data.recBroStr.replace(/,/g, "、");
-				if(browserLevel == 1) {
-					$('#loginForm').bind('formIsValid', _loginFormIsValid).ketchup({bindElement:"button"});
-				} else if (browserLevel == 2) {
-					$.alert("提示","您当前使用的浏览器为" + browserVersion + "，推荐使用下列浏览器" + recBroStr + "等，否则可能引起操作缓慢等性能隐患。");
-				} else if (browserLevel == 3) {
-					$.alert("提示","您当前使用的浏览器为" + browserVersion + "，不在允许使用的范围内，推荐使用下列浏览器" + recBroStr + "等。");
-				}
-			} 
-		});
+		/*
+		 * 问题：unifylogin首页点击登录之后，跳转至应用服务器上的登录首页，此时需要再点击登录才会出现短信框==>需优化成统一登录首页登录后即跳转并弹出短信框
+		 * 原因：原先采用异步验证浏览器，导致登录按钮事件绑定在登录按钮点击之后才生效，故未能自动跳转
+		 * 方案：异步调用改为同步
+		 */
+		var response = $.callServiceAsJsonGet(contextPath+"/staff/browserValid", {'browserVersion': browserVersion});
+		if (0 == response.code) {
+			var browserLevel = response.data.level;
+			var recBroStr = response.data.recBroStr.replace(/,/g, "、");
+			if(browserLevel == 1) {
+				$('#loginForm').bind('formIsValid', _loginFormIsValid).ketchup({bindElement:"button"});
+			} else if (browserLevel == 2) {
+				$.alert("提示","您当前使用的浏览器为" + browserVersion + "，推荐使用下列浏览器" + recBroStr + "等，否则可能引起操作缓慢等性能隐患。");
+			} else if (browserLevel == 3) {
+				$.alert("提示","您当前使用的浏览器为" + browserVersion + "，不在允许使用的范围内，推荐使用下列浏览器" + recBroStr + "等。");
+			}
+		}
+		
 		$("#resetBtn").click(function(){
 			if($.ketchup)
 				$.ketchup.hideAllErrorContainer($("#loginForm"));

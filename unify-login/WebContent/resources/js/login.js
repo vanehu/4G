@@ -126,7 +126,7 @@ staff.login = (function($) {
 		if(isAllowBrower){
 			$('#loginForm').bind('formIsValid', _loginFormIsValid).ketchup({bindElement:"button"});
 		}else{
-			$.alert("提示","由于您使用的浏览器版本不兼容，请使用以下浏览器版本：IE7,IE8,IE9,IE10;Firefox12.0+;Chrome21.0+，再重新登录系统。");
+			alert("由于您使用的浏览器版本不兼容，请使用以下浏览器版本：IE7,IE8,IE9,IE10;Firefox12.0+;Chrome21.0+，再重新登录系统。");
 		}
 		$("#resetBtn").click(function(){
 			if($.ketchup)
