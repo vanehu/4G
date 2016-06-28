@@ -582,4 +582,28 @@ public class OfferController extends BaseController {
 		}
 	 	return "/offer/card-attach-offer-change";
 	}
+	
+	@RequestMapping(value = "/queryOfferAndServDependForCancel", method = {RequestMethod.POST})
+	public @ResponseBody JsonResponse queryOfferAndServDependForCancel(@RequestBody Map<String, Object> paramMap) {
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+				SysConstant.SESSION_KEY_LOGIN_STAFF);
+		JsonResponse jsonResponse = null;
+		paramMap.put("operatorsId", sessionStaff.getOperatorsId()!=""?sessionStaff.getOperatorsId():"99999");
+		paramMap.put("channelId", sessionStaff.getCurrentChannelId());
+		paramMap.put("areaId", sessionStaff.getAreaId());
+		paramMap.put("staffId", sessionStaff.getStaffId());
+		
+        try {
+			//已订购附属销售品查询
+        	Map<String, Object> openMap = offerBmo.queryOfferAndServDependForCancel(paramMap,null,sessionStaff);
+        	jsonResponse = super.successed(openMap,ResultConstant.SUCCESS.getCode());
+        } catch (BusinessException be) {
+        	return super.failed(be);
+        } catch (InterfaceException ie) {
+        	return super.failed(ie, paramMap, ErrorCode.QUERY_SERVDEPEND_FORCANCEL);
+		} catch (Exception e) {
+			return super.failed(ErrorCode.QUERY_SERVDEPEND_FORCANCEL, e, paramMap);
+		}
+		return jsonResponse;
+	}
 }
