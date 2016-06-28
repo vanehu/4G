@@ -170,6 +170,7 @@ public enum ErrorCode {
     QUERY_SERVDEPEND_FORCANCEL("查询被依赖的销售品或功能产品","010347","01","020131","02"),
     QUERY_ACCOUNT_USE_CUSTINFO("账户和使用人信息查询","010348","01","020348","02"),
     QUERY_BIZ_SECONDBUSINESS_MENU_AUTH("查询二次业务菜单对应的鉴权权限","010200","01","020137","02"),
+    QUERY_BIZ_ACCOUNT_CUSTINFO("账户和使用人信息查询服务","010211","01","020237","02"),
     SAVE_BIZ_AUTH_RECORD("鉴权日志记录接口","010201","01","020138","02"),
     QUERY_INTEGRAL("积分（权益）查询服务","010348","01","020140","02"),
     REDUCE_POINGTS("积分（权益）扣减服务","010349","01","020139","02"),
@@ -244,7 +245,8 @@ public enum ErrorCode {
     QUERY_ORDERBUSIHINT("查询客户订单业务提示","010169","01","020146","02"),
     IOT_MKTRESCODE("物联网终端串码查询号码","011301","01","1300001","13"),
     IOT_PRODINFO("物联网产品资料查询","011302","01","1300002","13"),
-    IOT_TRANSFER_ARCHIVE("物联网过户返档","011303","01","1300003","13");
+    IOT_TRANSFER_ARCHIVE("物联网过户返档","011303","01","1300003","13"),
+	BIND_QR_CODE("二维码绑定","011308","01","1300005","13");
 
     String name;  
     String code;
