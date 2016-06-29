@@ -1252,20 +1252,9 @@ public class MktResBmoImpl implements MktResBmo {
 		if (ResultCode.R_SUCC.equals(db.getResultCode())) {//接口调用成功
 			returnData = db.getReturnlmap();
 			if(returnData != null && ResultCode.R_SUCC.equals(returnData.get("resultCode"))){//返回数据成功
-/*				//用于分页的总记录数于后期添加，防止出错，这里多做一些校验处理
-				String totalResultNum = null;
-				if(returnData.get("totalResultNum") != null){
-					totalResultNum = returnData.get("totalResultNum").toString();
-					if("".equals(totalResultNum)){
-						totalResultNum = "10";
-					}
-				} else{
-					totalResultNum = "10";
-				}*/
-				//封装数据列表
 				HashMap<String, Object> resultMap = (HashMap<String, Object>) returnData.get("result");
 				ArrayList<Map<String, Object>> returnStatisticInfoList = (ArrayList<Map<String, Object>>) resultMap.get("statisticsInfo");
-				returnMap.put("resultList", returnStatisticInfoList);
+				returnMap.put("resultList", this.getTimeFormatedResultList(returnStatisticInfoList));
 				returnMap.put("totalResultNum", returnData.get("totalResultNum"));
 				returnMap.put("code", "0");
 			} else{
@@ -1298,5 +1287,44 @@ public class MktResBmoImpl implements MktResBmo {
 			resultMap.put("message", db.getResultMsg());
 		}
 		return resultMap;
+	}
+	
+	/**
+	 * 终端销售信息明细统计查询：格式化回参中的时间</br>
+	 * 由于回参中时间格式为YYYYMMDDHHMMSS，需要格式化成YYYY-MM-DD HH:MM:SS
+	 * @param resultList
+	 * @return
+	 */
+	private ArrayList<Map<String, Object>> getTimeFormatedResultList(ArrayList<Map<String, Object>> resultList){
+		if(resultList.size() > 0){
+			for(int i = 0, length = resultList.size(); i < length; i++){
+				Map<String, Object> subResultMap = resultList.get(i);
+				String dealTime = MapUtils.getString(subResultMap, "dealTime", null);
+				if(dealTime != null && dealTime.length() == 14){
+					String formatString = this.formatTimeString(dealTime);
+					MapUtils.safeAddToMap(subResultMap, "dealTime", formatString);
+					resultList.set(i, subResultMap);
+				} else{
+					MapUtils.safeAddToMap(subResultMap, "dealTime", "资源接口未返回dealTime或时间长度非14位");
+					resultList.set(i, subResultMap);
+				}
+			}
+		}
+		return resultList;
+	}
+	
+	/**
+	 * 将YYYYMMDDHHMMSS格式的时间字符串格式化为YYYY-MM-DD HH:MM:SS</br>
+	 * <strong>时间字符串长度必须为14位，否则格式化出错</strong>
+	 * @param timeString
+	 * @return 格式化后的timeString
+	 */
+	private String formatTimeString (String timeString){
+        return String.format("%s-%s-%s %s:%s:%s", timeString.substring(0, 4), 
+        		timeString.substring(4, 6), 
+        		timeString.substring(6, 8), 
+        		timeString.substring(8, 10),
+        		timeString.substring(10, 12),
+        		timeString.substring(12, timeString.length()));
 	}
 }
