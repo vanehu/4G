@@ -2905,7 +2905,7 @@ order.prodModify = (function(){
 				 if(r==rule){
 					   //证件
 					 if(rule=="rule1"){
-						   rule2=rules.rule2;
+						   rule2=rules.rule1;
 					   }
 					   //短信
 					   else if(rule=="rule2"){

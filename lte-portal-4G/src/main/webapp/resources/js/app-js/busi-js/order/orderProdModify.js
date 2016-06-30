@@ -88,7 +88,10 @@ order.prodModify = (function(){
 			var rule2="";
 			 for(var r in rules){ 
 				 if(r==rule){
-					  //短信
+					 //证件鉴权
+					 if(rule=="rule1"){
+						   rule2=rules.rule1;
+					   }
 					   //短信
 					   if(rule=="rule2"){
 						   rule2=rules.rule2;
