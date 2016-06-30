@@ -56,6 +56,8 @@ public class RuleControler extends BaseController {
 		param.put("areaId", sessionStaff.getAreaId());
 		param.put("channelId", sessionStaff.getCurrentChannelId());
 		param.put("staffId", sessionStaff.getStaffId());
+		//#534272配合规则改造，因areaId不满足规则，这里增加checkAreaId，取当前受理渠道的地区ID
+		param.put("checkAreaId", sessionStaff.getCurrentAreaId());
 		
 		if (log.isDebugEnabled()){
 			log.debug("规则校验入参{}", JsonUtil.toString(param));
