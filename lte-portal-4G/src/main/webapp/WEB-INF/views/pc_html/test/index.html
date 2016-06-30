@@ -48,7 +48,8 @@
 				"termCode":$("#termCode").val(),
 				"salesCode":$("#salesCode").val(),
 				"typeCd":$("#typeCd").val(),
-				"verifyLevel":$("verifyLevel").val()
+				"verifyLevel":$("verifyLevel").val(),
+				"unifyLoginUri":$("#unifyLoginUri").val()
 				
 			};
 			var version = $("#version").val();			
@@ -257,6 +258,18 @@
 			<div id="outResult2" style="max-width:350px;min-width:350px; border-color: gray;min-height: 30px;overflow:auto"></div></br>
 			解密操作:<input type="button" class="inputWidth250px inputTest" style="cursor: pointer;" value="解密" onclick="decryptEncryption('2');"/><br/>
 		<br/>
+		</div>
+	</div>
+
+	<div style="float: right; width: 40%;">
+		<div class="divTest">
+			<span class="info_title" style="font-size: 20px; color: #71ab5a;">统一登录地址：</span><br />
+			统一登录地址:<input id="unifyLoginUri" class="inputWidth250px inputTest" value="" /><br />
+			<div class="divTest">
+				<span>例如：http://crm.189.cn/ltePortal</span><br/>
+				<span>或者：http://10.128.97.35:8100/ltePortal</span><br/>
+				<span>若直接跳转到单台应用，可使用：http://10.128.97.35:8102/provPortal</span><br/>
+			</div>
 		</div>
 	</div>
 

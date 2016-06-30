@@ -80,6 +80,12 @@ public class TestController extends BaseController {
 			String salesCode=String.valueOf(paramMap.get("salesCode"));
 			String typeCd=String.valueOf(paramMap.get("typeCd"));
 			String verifyLevel=String.valueOf(paramMap.get("verifyLevel"));
+			String unifyLoginUri=String.valueOf(paramMap.get("unifyLoginUri"));
+			
+			if(unifyLoginUri == null || "".equals(unifyLoginUri)){
+				unifyLoginUri = "http://crm.189.cn/ltePortal";
+			}
+			
 			Map<String,Object> map = new HashMap<String,Object>();
 			map.put("staffCode", staffCode);
 			map.put("staffName", unescape(staffName));
@@ -106,9 +112,9 @@ public class TestController extends BaseController {
 			String headPath = (new StringBuilder(String.valueOf(request.getScheme()))).append("://").append(request.getServerName()).append(":").append(request.getServerPort()).append(path).toString();	
 			String url =  headPath + "/accessToken";
 			
-			//String url =  "http://10.128.97.16:8101/provPortal" + "/accessToken";
+//			String url =  "http://10.128.97.16:8101/provPortal" + "/accessToken";
 //			String url =  "https://crm.189.cn/ltePortal" + "/accessToken";
-		//	String url =  "http://10.128.98.136:8101/provPortal" + "/accessToken";
+//			String url =  "http://10.128.98.136:8101/provPortal" + "/accessToken";
 //			String url =  "http://10.128.98.136:8102/provPortal" + "/accessToken";
 			
 			log.error("测试地址:"+url);
@@ -176,11 +182,11 @@ public class TestController extends BaseController {
 				String dbKeyWord = (String) request.getSession().getAttribute(SysConstant.SESSION_DATASOURCE_KEY);
 				String flag = MySimulateData.getInstance().getParam(dbKeyWord,"UNIFYLOGIN");
 				if ("ON".equals(flag)) {
-					reMap.put("toUrl", "https://crm.189.cn/ltePortal");
+//					reMap.put("toUrl", "https://crm.189.cn/ltePortal");
+					reMap.put("toUrl", unifyLoginUri);
 				} else {
 					reMap.put("toUrl", "1000");
 				}	
-				//reMap.put("toUrl", "http://10.128.97.16:8101/provPortal");
 				log.error("模拟单点页面加密参数:"+JacksonUtil.objectToJson(reMap));
 				jr = successed(reMap, 0);
 			}else{						
