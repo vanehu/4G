@@ -221,4 +221,109 @@ public class DataSourceRouter {
 		dataSourceKeyMap.put("9110000", "gangaotai");
 	}
 	
+	public static Map<String, String> dataKeyMap(){
+		Map<String, String> dataSourceKeyMap = new HashMap<String, String>();
+		dataSourceKeyMap.put("811", "beijing");
+		dataSourceKeyMap.put("812", "tianjing");
+		dataSourceKeyMap.put("814", "shxi");
+		dataSourceKeyMap.put("815", "neimenggu");
+		dataSourceKeyMap.put("821", "liaoning");
+		dataSourceKeyMap.put("822", "jilin");
+		dataSourceKeyMap.put("835", "fujian");
+		dataSourceKeyMap.put("843", "hunan");
+		dataSourceKeyMap.put("850", "chongqing");
+		dataSourceKeyMap.put("852", "guizhou");
+		dataSourceKeyMap.put("853", "yunnan");
+		dataSourceKeyMap.put("854", "xizang");
+		dataSourceKeyMap.put("863", "qinghai");
+		dataSourceKeyMap.put("864", "ningxia");
+		dataSourceKeyMap.put("865", "xinjiang");
+		dataSourceKeyMap.put("844", "guangdong");
+		dataSourceKeyMap.put("832", "jiangsu");
+		dataSourceKeyMap.put("851", "sichuang");
+		dataSourceKeyMap.put("833", "zhejiang");
+		dataSourceKeyMap.put("834", "anhui");
+		dataSourceKeyMap.put("861", "shanxi");
+		dataSourceKeyMap.put("842", "hubei");
+		dataSourceKeyMap.put("831", "shanghai");
+		dataSourceKeyMap.put("813", "hebei");
+		dataSourceKeyMap.put("837", "shandong");
+		dataSourceKeyMap.put("845", "guangxi");
+		dataSourceKeyMap.put("841", "henan");
+		dataSourceKeyMap.put("862", "gansu");
+		dataSourceKeyMap.put("836", "jiangxi");
+		dataSourceKeyMap.put("846", "hainan");
+		dataSourceKeyMap.put("823", "heilongjiang");
+		dataSourceKeyMap.put("899", "xuni");
+		return dataSourceKeyMap;
+	}
+	public static String dataKeyMap(String provinceName){
+		if("beijing".equalsIgnoreCase(provinceName)){
+			return "8110000";
+		} else if("tianjing".equalsIgnoreCase(provinceName)) {
+			return "8120000";
+		}else if("shxi".equalsIgnoreCase(provinceName)) {
+			return "8140000";
+		}else if("neimenggu".equalsIgnoreCase(provinceName)) {
+			return "8150000";
+		}else if("liaoning".equalsIgnoreCase(provinceName)) {
+			return "8210000";
+		}else if("jilin".equalsIgnoreCase(provinceName)) {
+			return "8220000";
+		}else if("fujian".equalsIgnoreCase(provinceName)) {
+			return "8350000";
+		}else if("hunan".equalsIgnoreCase(provinceName)) {
+			return "8430000";
+		}else if("chongqing".equalsIgnoreCase(provinceName)) {
+			return "8500000";
+		}else if("guizhou".equalsIgnoreCase(provinceName)) {
+			return "8520000";
+		}else if("yunnan".equalsIgnoreCase(provinceName)) {
+			return "8530000";
+		}else if("xizang".equalsIgnoreCase(provinceName)) {
+			return "8540000";
+		}else if("qinghai".equalsIgnoreCase(provinceName)) {
+			return "8630000";
+		}else if("ningxia".equalsIgnoreCase(provinceName)) {
+			return "8640000";
+		}else if("xinjiang".equalsIgnoreCase(provinceName)) {
+			return "8650000";
+		}else if("guangdong".equalsIgnoreCase(provinceName)) {
+			return "8440000";
+		}else if("jiangsu".equalsIgnoreCase(provinceName)) {
+			return "8320000";
+		}else if("sichuang".equalsIgnoreCase(provinceName)) {
+			return "8510000";
+		}else if("zhejiang".equalsIgnoreCase(provinceName)) {
+			return "8330000";
+		}else if("anhui".equalsIgnoreCase(provinceName)) {
+			return "8340000";
+		}else if("shanxi".equalsIgnoreCase(provinceName)) {
+			return "8610000";
+		}else if("hubei".equalsIgnoreCase(provinceName)) {
+			return "8420000";
+		}else if("shanghai".equalsIgnoreCase(provinceName)) {
+			return "8310000";
+		}else if("hebei".equalsIgnoreCase(provinceName)) {
+			return "8130000";
+		}else if("shandong".equalsIgnoreCase(provinceName)) {
+			return "8370000";
+		}else if("guangxi".equalsIgnoreCase(provinceName)) {
+			return "8450000";
+		}else if("henan".equalsIgnoreCase(provinceName)) {
+			return "8410000";
+		}else if("gansu".equalsIgnoreCase(provinceName)) {
+			return "8620000";
+		}else if("jiangxi".equalsIgnoreCase(provinceName)) {
+			return "8360000";
+		}else if("hainan".equalsIgnoreCase(provinceName)) {
+			return "8460000";
+		}else if("heilongjiang".equalsIgnoreCase(provinceName)) {
+			return "8230000";
+		}else if("xuni".equalsIgnoreCase(provinceName)) {
+			return "8990000";
+		}
+		return "";
+	}
+	
 }
