@@ -31,7 +31,8 @@ public class UpdateWechatToken extends Service {
 	        }*/
 
 	        Map<?, ?> paramMap = dataMap.getInParam();
-	        DataSourceRouter.setRouteFactor(MapUtils.getString(paramMap, "key", ""));
+	        String provinceName = MapUtils.getString(paramMap, "key", "");
+			DataSourceRouter.setRouteFactor(DataSourceRouter.dataKeyMap(provinceName));
 	        CommonDAO dao = new CommonDAOImpl();
 	        if (dao.updateWechatToken(paramMap) > 0) {
 	            dataMap.setResultCode(ResultConstant.R_POR_SUCCESS.getCode());

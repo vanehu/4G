@@ -23,7 +23,8 @@ public class QueryWechatToken extends Service {
 	public DataMap exec(DataMap dataMap, String serviceSerial) throws Exception {
 		Map<String,Object> rMap = new HashMap<String,Object>();
 		Map<String, Object> paramMap = dataMap.getInParam();
-		DataSourceRouter.setRouteFactor(MapUtils.getString(paramMap, "key", ""));
+		String provinceName = MapUtils.getString(paramMap, "key", "");
+		DataSourceRouter.setRouteFactor(DataSourceRouter.dataKeyMap(provinceName));
     	CommonDAO dao = new CommonDAOImpl();
     	List list;
 		try {
