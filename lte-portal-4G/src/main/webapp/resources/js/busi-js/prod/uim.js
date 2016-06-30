@@ -243,12 +243,14 @@ prod.uim = (function() {
 					var offerSpecName = this.offerSpecName;
 					var ifOrderAgain = this.ifOrderAgain;//是否可以重复订购
 					var ifDueOrderAgain = this.ifDueOrderAgain;//当月到期是否可以重复订购
+					var isOrdered = false;
 					
 					if(attachOfferList != undefined && attachOfferList.length > 0){
 						//循环遍历已订购附属销售品
 						$.each(attachOfferList,function(){
 							//如果可订购附属在已订购列表中
 							if(this.offerSpecId == offerSpecId && this.isDel != "C"){
+								isOrdered = true;
 								var expireDate = this.expDate;//已订购的附属销售品的失效时间
 								expireDate = expireDate.substring(4,6);//截取失效时间(20150201000000)的月份(02)
 								var currentMonth = new Date().getMonth() + 1;//获取当前月份(0-11,从0开始，如0为1月份，1为2月份)
@@ -262,11 +264,13 @@ prod.uim = (function() {
 										optionStr += '<option value="' + offerSpecId + '">' + offerSpecName + '</option>';
 									}
 								}
-							} else{
-								//如果该可订购附属没有在已订购列表中，则不过滤
-								optionStr += '<option value="' + offerSpecId + '">' + offerSpecName + '</option>';
 							}
 						});
+						//如果该可订购附属没有在已订购列表中，则不过滤
+						if(!isOrdered){
+							isOrdered = true;
+							optionStr += '<option value="' + offerSpecId + '">' + offerSpecName + '</option>';
+						}
 					} else{
 						//如果没有已订购附属，则不对可订购进行过滤，直接展示
 						optionStr += '<option value="' + offerSpecId + '">' + offerSpecName + '</option>';
