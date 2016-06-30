@@ -1956,15 +1956,17 @@ order.cust = (function(){
 		    if(id==11){
 		    	param.identityCd=OrderInfo.rulesJson.identidyTypeCd;  //证件类型
 		    	param.custId=OrderInfo.rulesJson.useCustId;
+		    	recordParam.validateType=6;
 		    }
 		    else{
+		    	recordParam.validateType=1;
 		    	param.identityCd=OrderInfo.cust.identityCd;
 		    	param.custId=OrderInfo.cust.custId;
 		    }
 		    param.accessNumber=OrderInfo.acctNbr;
 			param.areaId=OrderInfo.cust.areaId;
 			
-			recordParam.validateType=6;
+			
 			recordParam.custId=OrderInfo.cust.custId;
 			recordParam.accessNbr=OrderInfo.acctNbr;
 			recordParam.certType=OrderInfo.cust.identityCd;
@@ -1976,8 +1978,6 @@ order.cust = (function(){
 		$.ecOverlay("<strong>正在校验中,请稍等...</strong>");
 		var response= $.callServiceAsJson(contextPath+"/token/pc/cust/custAuthSub",param);
 		$.unecOverlay();
-		//_saveAuthRecordFail(recordParam);  错误
-		// _saveAuthRecordSuccess(recordParam);成功
 		
 		if(response.data.code=="0"){
 			//成功

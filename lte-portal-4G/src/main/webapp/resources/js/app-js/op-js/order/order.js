@@ -105,7 +105,7 @@ order.service = (function(){
 		}else if(CONST.getAppDesc()==0){
 			params.prodOfferFlag = "4G";
 		}
-		var url = contextPath+"/app/order/offerSpecList";
+		var url = contextPath+"/token/app/order/offerSpecList";
 		$.callServiceAsHtmlGet(url,params, {
 			"before":function(){
 				$.ecOverlay("<strong>正在查询中,请稍等...</strong>");

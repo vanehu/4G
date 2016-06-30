@@ -1,5 +1,6 @@
 package com.al.lte.portal.token.app.controller.crm;
 import net.sf.json.JSONArray;
+
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -910,26 +911,22 @@ public class OrderController extends BaseController {
 		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
                 SysConstant.SESSION_KEY_LOGIN_STAFF);	
         try {
+        	prams.put("ifQS", "Y");
         	prams.put("channelId", sessionStaff.getCurrentChannelId());
         	prams.put("areaId", sessionStaff.getCurrentAreaId());
         	prams.put("staffId", sessionStaff.getStaffId());
-        	prams.put("pageSize", 50);
-        	String qryStr=(String)prams.get("qryStr");
-        	if(qryStr!=null && qryStr.length()>0 ){
-        		if(qryStr.equals("1")){
-        			qryStr="乐享";
-        		}
-        		else if(qryStr.equals("2")){
-        			qryStr="积";
-        		}
-        		else{
-        			qryStr="飞";
-        		}
-        	}
-        	prams.put("qryStr",qryStr);
+        	prams.put("pageSize", SysConstant.PAGE_SIZE);
         	int totalPage=0;
         	Map<String, Object> map = null;
-            
+           // prams.put("qryStr", "乐");
+        	Map<String, Object> map1 = new HashMap();
+        	map1.put("channelId", sessionStaff.getCurrentChannelId());
+        	map1.put("areaId", sessionStaff.getCurrentAreaId());
+        	map1.put("staffId", sessionStaff.getStaffId());
+        	map1.put("custId", prams.get("custId"));
+//        	DataBus db = InterfaceClient.callService(map1,
+//    				PortalServiceCode.QUERY_MAIN_OFFER_CATEGORY, null, sessionStaff);
+        	
         	map = orderBmo.queryMainOfferSpecList(prams,null, sessionStaff);
         	if(ResultCode.R_SUCCESS.equals(map.get("code"))){
         		//拼装前台显示的套餐详情

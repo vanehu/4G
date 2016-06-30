@@ -2903,8 +2903,12 @@ order.prodModify = (function(){
 			var rule2="";
 			 for(var r in rules){ 
 				 if(r==rule){
+					   //证件
+					 if(rule=="rule1"){
+						   rule2=rules.rule2;
+					   }
 					   //短信
-					   if(rule=="rule2"){
+					   else if(rule=="rule2"){
 						   rule2=rules.rule2;
 					   }
 					   //产品密码
