@@ -138,7 +138,18 @@ public class BatchOrderController  extends BaseController {
 
 	@RequestMapping(value = "/batchOrderChange", method = RequestMethod.GET)
 	public void batchOrderChange(HttpServletRequest request,HttpServletResponse response) {
-		this.batchDispatcher(request, response);
+		String batchType = request.getParameter("batchType");
+		if("11".equals(batchType) || "12".equals(batchType)){
+			//如果是批量换挡、批量换卡老业务，则根据开关分发新老controller
+			this.batchDispatcher(request, response);
+		} else{
+			//其他新开发的业务场景，不受开关控制，直接转发新controller
+			try {
+				request.getRequestDispatcher("/order/batchOrder/latestVer/batchOrderChange").forward(request,response);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	@RequestMapping(value = "/batchOrderVerify", method = RequestMethod.POST)
@@ -153,7 +164,18 @@ public class BatchOrderController  extends BaseController {
 	
 	@RequestMapping(value = "/importBatchData", method = RequestMethod.POST)
 	public void importBatchData(HttpServletRequest request,HttpServletResponse response) {
-		this.batchDispatcher(request, response);
+		String batchType = request.getParameter("batchType");
+		if("11".equals(batchType) || "12".equals(batchType)){
+			//如果是批量换挡、批量换卡老业务，则根据开关分发新老controller
+			this.batchDispatcher(request, response);
+		} else{
+			//其他新开发的业务场景，不受开关控制，直接转发新controller
+			try {
+				request.getRequestDispatcher("/order/batchOrder/latestVer/importBatchData").forward(request,response);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	@RequestMapping(value = "/batchOrderFlag", method = {RequestMethod.POST})
