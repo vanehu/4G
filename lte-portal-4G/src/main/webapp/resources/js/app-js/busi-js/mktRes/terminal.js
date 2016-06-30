@@ -870,6 +870,29 @@ mktRes.terminal = (function($){
 	}
 	//关闭经办人
 	var _closeJBR=function(){
+		//先校验
+		var orderAttrName = $.trim($("#orderAttrName").val()); //经办人姓名
+		var orderIdentidiesTypeCd = $("#orderIdentidiesTypeCd  option:selected").val(); //证件类型
+		var orderAttrIdCard = $.trim($("#orderAttrIdCard").val());; //证件号码
+		if("1"==orderIdentidiesTypeCd){
+			orderAttrIdCard =$.trim($("#sfzorderAttrIdCard").val()); //身份证号码
+		}
+		var orderAttrAddr = $.trim($("#orderAttrAddr").val()); //地址
+		var orderAttrPhoneNbr = $.trim($("#orderAttrPhoneNbr").val()); //联系人号码
+		if(ec.util.isObj(orderAttrName)||ec.util.isObj(orderAttrIdCard)||ec.util.isObj(orderAttrPhoneNbr)){
+			if(!ec.util.isObj(orderAttrName)){
+				$.alert("提示","经办人姓名为空，经办人姓名、经办人号码、证件号码必须同时为空或不为空，因此无法提交！");
+				return false;
+			}
+			if(!ec.util.isObj(orderAttrPhoneNbr)){
+				$.alert("提示","经办人号码为空，经办人姓名、经办人号码、证件号码必须同时为空或不为空，因此无法提交！");
+				return false;
+			}
+			if(!ec.util.isObj(orderAttrIdCard)){
+				$.alert("提示","证件号码为空，经办人姓名、经办人号码、证件号码必须同时为空或不为空，因此无法提交！");
+				return false;
+			}
+		}
 		$("#order-content").show();
 		$("#terminalMain").show();
 		$("#jbr").hide();

@@ -27,6 +27,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -178,7 +180,7 @@ public class SecondBusinessController extends BaseController {
      */
     @RequestMapping(value = "/saveAuthRecord", method = {RequestMethod.POST})
     @ResponseBody
-    public JsonResponse saveAuthRecord(@RequestBody Map<String, Object> paramMap, Model model, HttpServletResponse response, @LogOperatorAnn String flowNum) throws BusinessException {
+    public JsonResponse saveAuthRecord(@RequestBody Map<String, Object> paramMap, Model model, HttpServletResponse response, @LogOperatorAnn String flowNum, HttpSession session) throws BusinessException {
 
         JsonResponse jsonResponse = new JsonResponse();
         try {
@@ -199,8 +201,12 @@ public class SecondBusinessController extends BaseController {
             //服务调用获取数据
             Map<String, Object> resMap = secondBusiness.saveAuthRecord(paramMap, flowNum, sessionStaff);
             if (ResultCode.R_SUCC.equals(resMap.get("resultCode"))) {
+            	Map a = (Map) resMap.get("result");
+            	String b = a.get("recordId").toString();
+            	session.setAttribute("appRecordId", b);
                 jsonResponse = super.successed(resMap, ResultConstant.SUCCESS.getCode());
             } else {
+            	session.removeAttribute("appRecordId");
                 jsonResponse = super.failed(resMap.get("resultMsg"), ResultConstant.SERVICE_RESULT_FAILTURE
                         .getCode());
             }

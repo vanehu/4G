@@ -866,7 +866,10 @@
                 if ($tabPane && (tabId = $tabPane.attr('id'))) {
                     $tab = $('a[href="#' + tabId + '"][data-toggle="tab"]').parent();
                 }
-
+                //非必填  空值  不显示校验正确按钮
+				if(status == this.STATUS_VALID && fields.length == 1 && fields.val().length == 0){
+					continue;
+				}
                 switch (status) {
                     case this.STATUS_VALIDATING:
                         isValidField = null;

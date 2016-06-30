@@ -1672,16 +1672,16 @@ AttachOffer = (function() {
 						return;
 					}
 					//一个终端对应一个ul
-					var $ul = $('<ul id="terminalUl_'+objInstId+'" class="fillin show"></ul>');
+					var $ul = $('<ul id="terminalUl_'+objInstId+'" class="fillin show" style="list-style-type: none; padding-left: 0px;"></ul>');
 					var $sel = $('<select id="terminalSel_'+objInstId+'"></select>');  
-					var $li1 = $('<li class="full"><label style="width:auto; margin:0px 10px;"><span style="color:#71AB5A;font-size:16px">'+newSpec.offerSpecName+'</span></label></li>');
+					var $li1 = $('<li class="full"><label style="width:auto; margin:0px 10px;"><span style="color:#71AB5A;font-size:15px; padding-bottom: 10px;">'+newSpec.offerSpecName+'</span></label></li>');
 					var $li2 = $('<li style="display:none;"><label> 可选终端规格：</label></li>'); //隐藏
 					$.each(newSpec.agreementInfos,function(){
 						var $option = $('<option value="'+this.terminalModels+'" price="'+this.agreementPrice+'">'+this.terminalName+'</option>');
 						$sel.append($option);
 					});
 					$li2.append($sel).append('<label class="f_red">*</label>');
-					var $li3 = $('<li><label>终端校验：</label><input id="terminalText_'+objInstId+'" type="text" class="inputWidth228px inputMargin0" data-validate="validate(terminalCodeCheck) on(keyup blur)" maxlength="50" placeholder="请先输入终端串号" />'
+					var $li3 = $('<li><label style="width:auto; margin:0px 10px;">终端校验：</label><input id="terminalText_'+objInstId+'" type="text" class="inputWidth228px inputMargin0" data-validate="validate(terminalCodeCheck) on(keyup blur)" maxlength="50" placeholder="请先输入终端串号" />'
 							+'<input id="terminalBtn_'+objInstId+'" type="button" onclick="AttachOffer.checkTerminalCode('+prodId+','+newSpec.offerSpecId+')" value="校验" class="purchase" style="float:left"></input></li>');	
 					/*var $li4 = $('<li id="terRes_'+objInstId+'" class="full" style="display: none;" >'
 							+'<label style="width:auto; margin:0px 10px;">终端名称：<span id="terName_'+objInstId+'" ></span></label>'

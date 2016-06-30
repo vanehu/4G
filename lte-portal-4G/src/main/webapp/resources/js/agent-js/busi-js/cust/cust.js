@@ -1360,12 +1360,20 @@ cust = (function(){
 		var param = _choosedCustInfo;
 		param.authFlag="1";
 		$('#auth3').modal('hide');
+		var recordParam={};
+		recordParam.validateType="4";
+		recordParam.validateLevel="1";
+		recordParam.custId=param.custId;
+		recordParam.accessNbr=_choosedCustInfo.accNbr;
+		recordParam.certType=param.identityCd;
+		recordParam.certNumber=param.idCardNumber;
 		$.callServiceAsHtml(contextPath+"/agent/cust/custAuth",param,{
 			"before":function(){
 				$.ecOverlay("<strong>正在查询中,请稍等...</strong>");
 			},"done" : function(response){
 				if(response.code != 0) {
 					$.alert("提示","客户鉴权失败,稍后重试");
+					_saveAuthRecordFail(recordParam);
 					return;
 				}
 				
@@ -1383,6 +1391,7 @@ cust = (function(){
 					//鉴权成功后显示选择使用人弹出框
 					order.main.showChooseUserDialog(param);
 				}
+				_saveAuthRecordSuccess(recordParam);
 			},"always":function(){
 				$.unecOverlay();
 			}

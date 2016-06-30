@@ -29,9 +29,11 @@ import com.al.ec.serviceplatform.client.DataBus;
 import com.al.ec.serviceplatform.client.ResultCode;
 import com.al.ecs.common.entity.JsonResponse;
 import com.al.ecs.common.entity.PageModel;
+import com.al.ecs.common.util.DateUtil;
 import com.al.ecs.common.util.JsonUtil;
 import com.al.ecs.common.util.MapUtil;
 import com.al.ecs.common.util.PageUtil;
+import com.al.ecs.common.util.PropertiesUtils;
 import com.al.ecs.common.web.ServletUtils;
 import com.al.ecs.exception.AuthorityException;
 import com.al.ecs.exception.BusinessException;
@@ -44,14 +46,18 @@ import com.al.ecs.spring.annotation.session.SessionValid;
 import com.al.ecs.spring.controller.BaseController;
 import com.al.lte.portal.bmo.crm.CommonBmo;
 import com.al.lte.portal.bmo.crm.CustBmo;
+import com.al.lte.portal.bmo.crm.MktResBmo;
+import com.al.lte.portal.bmo.crm.SecondBusiness;
 import com.al.lte.portal.bmo.staff.StaffBmo;
 import com.al.lte.portal.common.Base64;
 import com.al.lte.portal.common.CommonMethods;
+import com.al.lte.portal.common.Const;
 import com.al.lte.portal.common.EhcacheUtil;
 import com.al.lte.portal.common.InterfaceClient;
 import com.al.lte.portal.common.PortalServiceCode;
 import com.al.lte.portal.common.SysConstant;
 import com.al.lte.portal.model.SessionStaff;
+import com.sun.net.ssl.internal.ssl.Debug;
 
 /**
  */
@@ -60,6 +66,9 @@ import com.al.lte.portal.model.SessionStaff;
 @AuthorityValid(isCheck = false)
 public class CustController extends BaseController {
 
+	@Autowired
+	PropertiesUtils propertiesUtils;
+	
 	@Autowired
 	@Qualifier("com.al.lte.portal.bmo.crm.CommonBmo")
 	private CommonBmo commonBmo;
@@ -70,7 +79,11 @@ public class CustController extends BaseController {
     @Autowired
     @Qualifier("com.al.lte.portal.bmo.staff.StaffBmo")
     private StaffBmo staffBmo;
-
+    
+    @Autowired
+    @Qualifier("com.al.lte.portal.bmo.crm.MktResBmo")
+    private MktResBmo mktResBmo;
+    
     /**
 	 * 新增客户订单查询页面
 	 * @param model
@@ -984,6 +997,8 @@ public class CustController extends BaseController {
         httpSession.setAttribute("ValidateAccNbr", null);
         httpSession.setAttribute("ValidateProdPwd", null);
         httpSession.setAttribute("queryCustAccNbr", paramMap.get("acctNbr"));
+        String qryAcctNbr=MapUtils.getString(paramMap,"acctNbr","");
+        String soNbr=CommonMethods.getUUID();
         JsonResponse jsonResponse = null;
         //客户鉴权跳过 权限查询
         String iseditOperation = (String) ServletUtils.getSessionAttribute(super.getRequest(),
@@ -1029,6 +1044,31 @@ public class CustController extends BaseController {
         } else {
             httpSession.setAttribute("custQueryType", "");
         }
+      //政企客户证件类型查询,第一次查询完存入session以便后面再次使用
+        List zqList = new ArrayList();
+        if(httpSession.getAttribute("zqList")!=null){
+        	zqList = (List) httpSession.getAttribute("zqList");
+        }else{
+        	Map<String, Object> zqParam = new HashMap<String, Object>();;
+	        zqParam.put("partyTypeCd", 2);
+	        Map<String, Object> rMap = null;
+	        try {
+				rMap = this.custBmo.queryCertType(zqParam, flowNum, sessionStaff);
+				zqList = (List) rMap.get("result");
+				httpSession.setAttribute("zqList", zqList);
+	        }catch(BusinessException be){
+				this.log.error("调用根据员工类型查询员工证件类型失败", be);
+	   			return super.failed(be);
+			} catch (InterfaceException ie) {
+				return super.failed(ie, zqParam, ErrorCode.QUERY_CERTTYPE);
+			} catch (Exception e) {
+				log.error("门户/cust/queryCertType方法异常", e);
+				return super.failed(ErrorCode.QUERY_CERTTYPE, e, zqParam);
+			}
+        }
+        
+		
+        List custInfos = new ArrayList();
         try {
         	String an = paramMap.get("acctNbr").toString();
         	String ic = paramMap.get("identityCd").toString();
@@ -1041,26 +1081,122 @@ public class CustController extends BaseController {
 	            	if (paramMap.containsKey("query")) {
 	            		resultMap.put("query", paramMap.get("query")); //综合查询调用标志
 	            	}
-	        		//进行身份证脱敏
-					List<Map<String, Object>> custInfos = (List<Map<String, Object>>) resultMap.get("custInfos");
-					if (custInfos.size() > 0) {
-						Map<String, Object> custInfoMap = (Map<String, Object>) custInfos.get(0);
-						String idCardNumber = MapUtils.getString(custInfoMap, "idCardNumber");
-						Integer length=idCardNumber.length();
-						if(!isViewOperation.equals("0")&&length==18){
-							 String preStr = idCardNumber.substring(0,6);
-					    	 String subStr = idCardNumber.substring(14);
-					    	 idCardNumber=preStr+"********"+subStr;
-							
-						}else if(!isViewOperation.equals("0")&&length==15){
-							String preStr = idCardNumber.substring(0,5);
-					    	 String subStr = idCardNumber.substring(13);
-					    	 idCardNumber=preStr+"********"+subStr;
+	            	
+	            	custInfos=(List<Map<String, Object>>) resultMap.get("custInfos");
+	            	List<String> custIds = new ArrayList<String>();
+	            	//脱敏
+					for(int i = 0; i < custInfos.size(); i++){
+						Map tmpCustInfo =(Map)custInfos.get(i);
+//						listCustInfos.put(MapUtils.getString(tmpCustInfo,"custId",""), tmpCustInfo);
+						
+						String tmpIdCardNumber = (String) tmpCustInfo.get("idCardNumber");
+						tmpCustInfo.put("filterIdCardNumber", tmpIdCardNumber);
+						if (tmpIdCardNumber != null && tmpIdCardNumber.length() == 18) {
+							String preStr = tmpIdCardNumber.substring(0, 6);
+							String subStr = tmpIdCardNumber.substring(14);
+							tmpIdCardNumber = preStr + "********" + subStr;
+							tmpCustInfo.put("filterIdCardNumber", tmpIdCardNumber);
+						} else if (tmpIdCardNumber != null && tmpIdCardNumber.length() == 15) {
+							String preStr = tmpIdCardNumber.substring(0, 5);
+							String subStr = tmpIdCardNumber.substring(13);
+							tmpIdCardNumber = preStr + "********" + subStr;
+							tmpCustInfo.put("filterIdCardNumber", tmpIdCardNumber);
 						}
-						custInfoMap.put("idCardNumber", idCardNumber);
-						custInfos.remove(custInfoMap);
-						custInfos.add(custInfoMap);
-						resultMap.put("custInfos", custInfos);
+						custIds.add(MapUtils.getString(tmpCustInfo,"custId",""));
+					}
+					
+	        		//进行身份证脱敏
+//					List<Map<String, Object>> custInfos = (List<Map<String, Object>>) resultMap.get("custInfos");
+					if (custInfos.size() > 0) {
+//						Map<String, Object> custInfoMap = (Map<String, Object>) custInfos.get(0);
+//						String idCardNumber = MapUtils.getString(custInfoMap, "idCardNumber");
+//						Integer length=idCardNumber.length();
+//						if(!isViewOperation.equals("0")&&length==18){
+//							 String preStr = idCardNumber.substring(0,6);
+//					    	 String subStr = idCardNumber.substring(14);
+//					    	 idCardNumber=preStr+"********"+subStr;
+//							
+//						}else if(!isViewOperation.equals("0")&&length==15){
+//							String preStr = idCardNumber.substring(0,5);
+//					    	 String subStr = idCardNumber.substring(13);
+//					    	 idCardNumber=preStr+"********"+subStr;
+//						}
+						
+						//若省份只返回了一条客户信息，则与原有接口无差异。若省份返回了多条客户信息，则前台需要再次调用后台的新提供的接口，来查询客户下的接入号信息，并拼装报文，按客户ID和接入号逐条展示客户信息
+						if(custInfos.size() >= 1){
+							Map<String, Object> accNbrParamMap = new HashMap<String, Object>();
+							accNbrParamMap.put("areaId", paramMap.get("areaId"));
+							accNbrParamMap.put("custIds", custIds);
+							Map accNbrResultMap = custBmo.queryAccNbrByCust(accNbrParamMap, flowNum, sessionStaff);
+							
+							List custInfosWithNbr = null;
+							if (MapUtils.isNotEmpty(accNbrResultMap)) {
+								custInfosWithNbr = new ArrayList();
+								List<Map<String, Object>> accNbrCustInfos = (List<Map<String, Object>>) accNbrResultMap.get("custInfos");
+								for(Object tmpCustInfo : custInfos){
+									Map custInfoMap = (Map)tmpCustInfo;
+									String custId = MapUtils.getString(custInfoMap,"custId","");
+									
+									List<Map<String, Object>> accNbrs = null;
+									for(Map<String, Object> accNbrCustInfo : accNbrCustInfos){
+										if(custId.equals(MapUtils.getString(accNbrCustInfo,"custId",""))){
+											accNbrs = (List<Map<String, Object>>) accNbrCustInfo.get("accNbrInfos");
+											break;
+										}
+									}
+									
+									if(accNbrs != null && accNbrs.size() != 0){
+										for(Map<String, Object> accNbrMap : accNbrs){
+											String accNbr = MapUtils.getString(accNbrMap, "accNbr", "");
+											Map newCustInfoMap = new HashMap(custInfoMap);
+											newCustInfoMap.put("accNbr", accNbr);
+											if(StringUtils.isNotBlank(qryAcctNbr)&&!qryAcctNbr.equals(accNbr))
+												continue;
+											addAccountAndCustInfo(flowNum, sessionStaff, areaId, custId, accNbr, soNbr, newCustInfoMap);
+											custInfosWithNbr.add(newCustInfoMap);
+										}
+										if (custInfosWithNbr.size()==0&&StringUtils.isNotBlank(qryAcctNbr)) {
+											Map newCustInfoMap = new HashMap(custInfoMap);
+											newCustInfoMap.put("accNbr", qryAcctNbr);
+											addAccountAndCustInfo(flowNum, sessionStaff, areaId, custId, qryAcctNbr, soNbr, newCustInfoMap);
+											custInfosWithNbr.add(newCustInfoMap);
+										}
+									} else {
+										custInfosWithNbr.add(custInfoMap);
+									}
+								}
+							} else {
+								custInfosWithNbr = custInfos;
+							}
+//							resultMap.put("zqList", zqList);
+							String zqstr = "";
+							for(int jj=0;jj<zqList.size();jj++){
+								Map mm = (Map) zqList.get(jj);
+								zqstr = zqstr + mm.get("certTypeCd")+",";
+							}
+							for(int ii=0;ii<custInfosWithNbr.size();ii++){
+								Map mm = (Map) custInfosWithNbr.get(ii);
+								if(mm.get("identityCd")!=null && zqstr.contains(mm.get("identityCd").toString())){
+									mm.put("isGov", "Y");
+								}else{
+									mm.put("isGov", "N");
+								}
+							}
+							resultMap.put("custInfos", custInfosWithNbr);
+							resultMap.put("custInfoSize", custInfosWithNbr.size());
+//							model.addAttribute("query", paramMap.get("query"));  //综合查询调用标志
+//							if(custInfosWithNbr.size()>1){
+//								model.addAttribute("multiCust", "Y");  //多客户标识
+//							}
+
+//							PageModel<Map<String, Object>> pm = PageUtil.buildPageModel(1, 10, custInfosWithNbr.size(),custInfosWithNbr);
+//				    		model.addAttribute("pageModel", pm);
+						}
+						
+//						custInfoMap.put("idCardNumber", idCardNumber);
+//						custInfos.remove(custInfoMap);
+//						custInfos.add(custInfoMap);
+//						resultMap.put("custInfos", custInfos);
 					}
 	            	resultMap.put("jumpAuthflag", iseditOperation);
 	            	jsonResponse=super.successed(resultMap, ResultConstant.SUCCESS.getCode());
@@ -1071,6 +1207,7 @@ public class CustController extends BaseController {
         	}else{
         		jsonResponse=super.failed(MapUtils.getString(resultMap, "msg", "客户资料查询业务出错，接入号为空或证件类型和证件号码为空！"), ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
         	}
+        	System.out.println("+++++++++++++++++++++"+JsonUtil.toString(jsonResponse));
             return jsonResponse;
         } catch (BusinessException be) {
             return super.failed(be);
@@ -1205,14 +1342,18 @@ public class CustController extends BaseController {
         }
         
         //是否要脱敏 权限
-        String isViewOperation= (String)ServletUtils.getSessionAttribute(super.getRequest(),
-				SysConstant.SESSION_KEY_VIEWSENSI+"_"+sessionStaff.getStaffId());
-		try{
- 			if(isViewOperation==null){
- 				isViewOperation=staffBmo.checkOperatSpec(SysConstant.VIEWSENSI_CODE,sessionStaff);
- 				ServletUtils.setSessionAttribute(super.getRequest(),
- 						SysConstant.SESSION_KEY_VIEWSENSI+"_"+sessionStaff.getStaffId(), isViewOperation);
- 			}
+      //身份证脱敏操作
+		String identityCd=(String) paramMap.get("identityCd");
+		String idCardNumber=(String)paramMap.get("idCardNumber");
+        if(identityCd.equals("1")){
+	        String isViewOperation= (String)ServletUtils.getSessionAttribute(super.getRequest(),
+					SysConstant.SESSION_KEY_VIEWSENSI+"_"+sessionStaff.getStaffId());
+			try{
+				if(isViewOperation==null){
+					isViewOperation=staffBmo.checkOperatSpec(SysConstant.VIEWSENSI_CODE,sessionStaff);
+					ServletUtils.setSessionAttribute(super.getRequest(),
+ 					SysConstant.SESSION_KEY_VIEWSENSI+"_"+sessionStaff.getStaffId(), isViewOperation);
+				}
 			} catch (BusinessException e) {
 				isViewOperation="1";
 	 		} catch (InterfaceException ie) {
@@ -1220,7 +1361,7 @@ public class CustController extends BaseController {
 			} catch (Exception e) {
 				isViewOperation="1";
 			}
-        
+        }
         String areaId = (String) paramMap.get("areaId");
         if (("").equals(areaId) || areaId == null) {
             paramMap.put("areaId", sessionStaff.getCurrentAreaId());
@@ -1236,41 +1377,33 @@ public class CustController extends BaseController {
         	String in = paramMap.get("identityNum").toString();
         	//接入号  或  证件类型、证件号码不为空时才调用客户资料查询接口
         	if(an.length()>0 || (ic.length()>0 && in.length()>0)){
-	            resultMap = custBmo.queryCustInfo(paramMap, flowNum, sessionStaff);
-	            if (MapUtils.isNotEmpty(resultMap)) {
-	            	
-	        		//进行身份证脱敏
-					List<Map<String, Object>> custInfos = (List<Map<String, Object>>) resultMap.get("custInfos");
-					if (custInfos.size() > 0) {
-						boolean haveSome=false;
-						for(int iCust=0;iCust<=custInfos.size()-1;iCust++){
-							Map<String, Object> custInfoMap = (Map<String, Object>) custInfos.get(iCust);
-							String custId = MapUtils.getString(custInfoMap, "custId");	
-							if (custId.equals(oldCustId)){
-								haveSome=true;
-								break;
-							}
-						}
-						
-						if (haveSome){
-							jsonResponse=super.successed(MapUtils.getString(resultMap, "msg", "客户证件鉴权成功！"), ResultConstant.SUCCESS.getCode());
-						}
-						else{
-			            	jsonResponse=super.failed(MapUtils.getString(resultMap, "msg", "客户证件鉴权失败，客户不一致！"), ResultConstant.SERVICE_RESULT_FAILTURE
-			                        .getCode());
-						}
 
-
-					}
-					else{
-		            	jsonResponse=super.failed(MapUtils.getString(resultMap, "msg", "客户证件鉴权失败，无此证件用户！"), ResultConstant.SERVICE_RESULT_FAILTURE
+				Map<String, Object> checkIdMap = new HashMap<String, Object>();
+				checkIdMap.put("areaId", MapUtils.getString(paramMap, "areaId", ""));
+				checkIdMap.put("custId", oldCustId);
+				checkIdMap.put("idCardNumber", in);
+				checkIdMap.put("idCardType", ic);
+				if ("1".equals(identityCd)) {
+					String sessionCertNumber = (String) ServletUtils.getSessionAttribute(getRequest(), Const.CACHE_CERTINFO);
+					ServletUtils.removeSessionAttribute(getRequest(),Const.CACHE_CERTINFO);
+					String tmpIdCardNumber = MapUtils.getString(checkIdMap, "idCardNumber", "");
+					if(!tmpIdCardNumber.equals(sessionCertNumber)) {
+						Map map = new HashMap();
+						map.put("isChange", SysConstant.STR_Y);
+						map.put("custAuthInfo", "非正常读卡数据，信息可能被窜改，此操作将被记录！");
+						jsonResponse=super.failed(MapUtils.getString(map, "msg", "非正常读卡数据，信息可能被窜改，此操作将被记录！"), ResultConstant.SERVICE_RESULT_FAILTURE
 		                        .getCode());
-						
+						return jsonResponse;
 					}
-	            }else{
-	            	jsonResponse=super.failed(MapUtils.getString(resultMap, "msg", "客户证件鉴权失败，没有此证件用户！"), ResultConstant.SERVICE_RESULT_FAILTURE
+				}
+				resultMap = mktResBmo.checkIdCardNumber(checkIdMap,
+						flowNum, sessionStaff);
+				if("0".equals(resultMap.get("code").toString())){
+					jsonResponse=super.successed(MapUtils.getString(resultMap, "msg", resultMap.get("message").toString()), ResultConstant.SUCCESS.getCode());
+				}else{
+					jsonResponse=super.failed(MapUtils.getString(resultMap, "msg", resultMap.get("message").toString()), ResultConstant.SERVICE_RESULT_FAILTURE
 	                        .getCode());
-	            }
+				}
         	}else{
         		jsonResponse=super.failed(MapUtils.getString(resultMap, "msg", "客户证件鉴权失败！"), ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
         	}
@@ -1794,4 +1927,39 @@ public class CustController extends BaseController {
 		}
 	}
     
+    /**
+	 * 添加账户信息和使用人信息
+	 * @param flowNum
+	 * @param sessionStaff
+	 * @param areaId
+	 * @param custId
+	 * @param accNbr
+	 * @param newCustInfoMap
+	 * @throws Exception
+	 */
+	private void addAccountAndCustInfo(String flowNum, SessionStaff sessionStaff, String areaId, String custId, String accNbr, String soNbr, Map newCustInfoMap) throws Exception {
+		//账户和使用人信息查询
+		Map<String, Object> auParam = new HashMap<String, Object>();
+		auParam.put("areaId", areaId);
+		auParam.put("acctNbr", accNbr);
+		auParam.put("custId", custId);
+		auParam.put("queryType", "1,2,3,4,5");
+		auParam.put("soNbr", soNbr);
+		auParam.put("type", "2");
+		Map<String, Object> auMap = new HashMap<String, Object>();
+		if (SysConstant.ON.equals(propertiesUtils.getMessage("GOV_" + areaId.substring(0, 3)))) {
+			auMap = custBmo.queryAccountAndUseCustInfo(auParam, flowNum, sessionStaff);
+		}
+		if (MapUtils.isNotEmpty(auMap)) {
+			Map<String, Object> aMap = MapUtils.getMap(auMap, "account");
+			Map<String, Object> iMap = MapUtils.getMap(auMap, "identity");
+			newCustInfoMap.put("userIdentityCd", MapUtils.getString(iMap, "identityTypeCd"));
+			newCustInfoMap.put("userIdentityName", MapUtils.getString(iMap, "identityName"));
+			newCustInfoMap.put("userIdentityNum", MapUtils.getString(iMap, "identityNum"));
+			newCustInfoMap.put("accountName", MapUtils.getString(aMap, "accountName"));
+			newCustInfoMap.put("userName", MapUtils.getString(auMap, "useCustName"));
+			newCustInfoMap.put("userCustId", MapUtils.getString(auMap, "useCustId"));
+			newCustInfoMap.put("isSame", MapUtils.getString(auMap, "isSame"));
+		}
+	}
 }

@@ -2284,7 +2284,7 @@ public class OrderController extends BaseController {
 	@RequestMapping(value = "/orderSubmit", method = RequestMethod.POST)
     @ResponseBody
 	public JsonResponse orderSubmit(@RequestBody Map<String, Object> param,
-			HttpServletResponse response,HttpServletRequest request){
+			HttpServletResponse response,HttpServletRequest request,HttpSession session){
 		JsonResponse jsonResponse = null;
 		Map<String, Object> custInfoMap = new HashMap<String, Object>();
 		try {
@@ -2295,6 +2295,11 @@ public class OrderController extends BaseController {
 		Map orderList = (Map)param.get("orderList");
 		System.out.println("++++++++++++orderList="+orderList.toString());
 		Map orderListInfo = (Map)orderList.get("orderListInfo");
+		List custOrderAttrs = (List) orderListInfo.get("custOrderAttrs");
+		Map attr = new HashMap();
+		attr.put("itemSpecId", "800000048");
+		attr.put("value", session.getAttribute("appRecordId"));
+		custOrderAttrs.add(attr);
 		System.out.println("++++++++++++orderListInfo="+orderListInfo.toString());
 		if(commonBmo.checkToken(request, SysConstant.ORDER_SUBMIT_TOKEN)){
 			Map<String, Object> resMap = orderBmo.orderSubmit(param,null,sessionStaff);
