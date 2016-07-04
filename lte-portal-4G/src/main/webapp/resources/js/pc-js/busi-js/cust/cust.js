@@ -2176,7 +2176,7 @@ order.cust = (function(){
 	//多种鉴权方式的tab页切换
 	var _changeTab = function (tabId) {
 		//如果是政企客户
-		if(_isCustomers(OrderInfo.cust.identityCd)==1000){
+		if(_isCustomers(OrderInfo.cust.identityCd)==1000 && OrderInfo.rulesJson.channelOnOFF=="ON"){
 	       //使用人证件类型非个人证件类型，请选择其它鉴权方式
 			var idType=OrderInfo.rulesJson.identidyTypeCd;
 			if(idType=="" || idType==undefined || idType==null || _isCustomers(idType)==1000){

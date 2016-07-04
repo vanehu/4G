@@ -242,7 +242,8 @@ order.prodModify = (function(){
 					_governmentEnterpriseCustomers(menuId,isSimple,segmentId);
 				}
 				else{
-					order.cust.goService();
+					//cust.goService();
+					_domesticConsumer(menuId,isSimple,500);
 				}
 			}
 		}

@@ -2988,7 +2988,8 @@ order.prodModify = (function(){
 					_governmentEnterpriseCustomers(menuId,isSimple,segmentId);
 				}
 				else{
-					order.cust.goService();
+					//政企客户
+					_governmentEnterpriseCustomers(menuId,isSimple,500);
 				}
 			}
 		}
