@@ -556,7 +556,9 @@ order.service = (function(){
 	var _scaningCallBack=function(terInfo,prodId){
 		if ("-999" == prodId) {//终端串号
 			$("#tsn").val(terInfo);
-		} else {//uim卡号
+		}else if ("-888" == prodId) {//终端串号
+			$(".zdch").val(terInfo);
+		}else {//uim卡号
 			$("#uim_txt_" + prodId).val(terInfo);
 			$("#tip_" + prodId).text("");
 		}

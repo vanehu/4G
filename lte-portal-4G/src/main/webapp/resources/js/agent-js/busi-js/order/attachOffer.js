@@ -1640,7 +1640,7 @@ AttachOffer = (function() {
 				}
 				for(var i=0;i<newSpec.agreementInfos.length;i++){
 					var agreementInfo=newSpec.agreementInfos[i];
-						var $ulGroups=$('<ul id="ul_'+objInstId+'" style="margin-left: -40px;"></ul>');
+						var $ulGroups=$('<ul id="ul_'+objInstId+'"></ul>');
 						var $liGroups = $('<li class="form-group" style="display:none;"><label> 终端：</label></li>');
 						var $selTerms = $('<select style="display:none;" id="'+objInstId+'"></select>');
 						var $selTermGroups = $('<select style="display:none;" id="group_'+objInstId+'"></select>');
@@ -1671,8 +1671,8 @@ AttachOffer = (function() {
 						}
 						$ulGroups.append($liGroups);
 						for(var k=1;k<=minNum;k++){
-							var $liTerminal=$('<li class="form-group" style="list-style-type:none;"><label for="exampleInputPassword1">终端校验<span class="text-warning">*</span></label><div class="input-group"><input id="terminalText_'+objInstId+'_'+k+'" type="text" class="form-control tsn" maxlength="50" placeholder="请先输入终端串号" />'
-									+'<span class="input-group-btn"><button id="terminalBtn_'+objInstId+'_'+k+'" type="button" num="'+k+'" flag="'+isFastOffer+'" prodId="'+prodId+'" offerSpecId="'+newSpec.offerSpecId+'" onclick="AttachOffer.checkTerminalCode(this)" class="btn btn-info">校验</button></span></div></li>');
+							var $liTerminal=$('<li class="form-group" style="list-style-type:none;"><label for="exampleInputPassword1">终端校验<span class="text-warning">*</span></label><div class="input-group"><input id="terminalText_'+objInstId+'_'+k+'" type="text" class="form-control tsn zdch" maxlength="50" placeholder="请先输入终端串号" />'
+									+'<span class="input-group-btn"><button id="terminalBtn_'+objInstId+'_'+k+'" type="button" num="'+k+'" flag="'+isFastOffer+'" prodId="'+prodId+'" offerSpecId="'+newSpec.offerSpecId+'" onclick="AttachOffer.checkTerminalCode(this)" class="btn btn-info">校验</button><button class="btn btn-info" type="button" onclick="common.callScanning(\'order.service.scaningCallBack\',\'-888\')"> 扫描 </button></span></div></li>');
 							var	$li4 = $('<li id="terminalDesc_'+k+'" style="display:none;list-style-type:none;"><label></label><label class="guige" id="terminalName_'+k+'"></label></li>');
 							
 							$ulGroups.append($liTerminal).append($li4);
