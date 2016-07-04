@@ -8,6 +8,7 @@ CommonUtils.regNamespace("order", "prodModify");
  * 订单准备
  */
 order.prodModify = (function(){	
+	var _customersOnOff="";
 	var boActionTypeCd="";//业务动作小类
 	var authFlag="";
 	var _coupon="";
@@ -3420,6 +3421,7 @@ order.prodModify = (function(){
 			var url=contextPath+"/token/secondBusi/queryCustOnOffJson";
 			var response= $.callServiceAsJson(url,p,{});
 			if(response.code == 0){
+				order.prodModify.customersOnOff=response.data.ONOFF;
 				if(response.data.ONOFF=="ON"){
 					//政企客户
 			   	_governmentEnterpriseCustomers(menuId,isSimple,segmentId);
@@ -3578,7 +3580,8 @@ order.prodModify = (function(){
 		spec_parm_user_change : _spec_parm_user_change,
 		spec_parm_user_show : _spec_parm_user_show,
 		querySecondBusinessAuth:_querySecondBusinessAuth,
-		getsoNbr:_getsoNbr
+		getsoNbr:_getsoNbr,
+		customersOnOff:_customersOnOff
 		
 	};
 })();
