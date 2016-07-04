@@ -23,13 +23,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.context.request.WebRequest;
-
 import com.al.ec.serviceplatform.client.DataBus;
 import com.al.ec.serviceplatform.client.ResultCode;
 import com.al.ecs.common.entity.JsonResponse;
 import com.al.ecs.common.entity.PageModel;
-import com.al.ecs.common.util.DateUtil;
 import com.al.ecs.common.util.JsonUtil;
 import com.al.ecs.common.util.MapUtil;
 import com.al.ecs.common.util.PageUtil;
@@ -47,7 +44,6 @@ import com.al.ecs.spring.controller.BaseController;
 import com.al.lte.portal.bmo.crm.CommonBmo;
 import com.al.lte.portal.bmo.crm.CustBmo;
 import com.al.lte.portal.bmo.crm.MktResBmo;
-import com.al.lte.portal.bmo.crm.SecondBusiness;
 import com.al.lte.portal.bmo.staff.StaffBmo;
 import com.al.lte.portal.common.Base64;
 import com.al.lte.portal.common.CommonMethods;
@@ -1065,8 +1061,13 @@ public class CustController extends BaseController {
 				return super.failed(ErrorCode.QUERY_CERTTYPE, e, zqParam);
 			}
         }
+        //获取省份政企开关
+        String govSwitch = "OFF";
+        if (SysConstant.ON.equals(propertiesUtils.getMessage("GOV_" + paramMap.get("areaId").toString().substring(0, 3)))) {
+        	govSwitch = "ON";
+		}
+        resultMap.put("govSwitch", govSwitch);
         
-		
         List custInfos = new ArrayList();
         try {
         	String an = paramMap.get("acctNbr").toString();
@@ -1175,7 +1176,8 @@ public class CustController extends BaseController {
 							}
 							for(int ii=0;ii<custInfosWithNbr.size();ii++){
 								Map mm = (Map) custInfosWithNbr.get(ii);
-								if(mm.get("identityCd")!=null && zqstr.contains(mm.get("identityCd").toString())){
+								//省份政企开关打开，且客户为政企客户
+								if("ON".equals(govSwitch) && mm.get("identityCd")!=null && zqstr.contains(mm.get("identityCd").toString())){
 									mm.put("isGov", "Y");
 								}else{
 									mm.put("isGov", "N");
