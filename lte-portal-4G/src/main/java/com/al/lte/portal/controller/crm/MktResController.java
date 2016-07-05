@@ -1329,12 +1329,9 @@ public class MktResController extends BaseController {
 		this.log.debug("sort before={}", JsonUtil.toString(list));
 		Collections.sort(list, new Comparator<Map<String, Object>>() {
 			public int compare(Map<String, Object> e1, Map<String, Object> e2) {
-				if (NumberUtils.isNumber(String.valueOf((int)((Double)e1
-						.get("presentFeeRate")*100)))) {
-					long price1 = Long.parseLong(String.valueOf((int)((Double)e1
-							.get("presentFeeRate")*100)));
-					long price2 = Long.parseLong(String.valueOf((int)((Double)e2
-							.get("presentFeeRate")*100)));
+				if (NumberUtils.isNumber(String.valueOf(e1.get("presentFeeRate")))) {
+					Double price1 = Double.parseDouble(String.valueOf(e1.get("presentFeeRate")));
+					Double price2 = Double.parseDouble(String.valueOf(e2.get("presentFeeRate")));
 					if (price1 - price2 >= 0)
 						return 1;
 					else
@@ -1351,7 +1348,7 @@ public class MktResController extends BaseController {
 		int period = -1;
 		for (int i = 0, j = -1; i < list.size(); i++) {
 			Map<String, Object> agreementOfferMap = list.get(i);
-			int tmpPeriod = (int) ((Double) agreementOfferMap.get("presentFeeRate")*100);
+			int tmpPeriod =(int) (Double.parseDouble(String.valueOf(agreementOfferMap.get("presentFeeRate")))*100);
 //			int tmpPeriod = (Integer) agreementOfferMap.get("agreementPeriod");
 			Map<String, Object> tmpMap = new HashMap<String, Object>();
 			if (period == tmpPeriod) {
