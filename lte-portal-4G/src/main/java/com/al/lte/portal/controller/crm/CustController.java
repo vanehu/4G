@@ -404,6 +404,9 @@ public class CustController extends BaseController {
 		auParam.put("acctNbr", accNbr);
 		auParam.put("custId", custId);
 		auParam.put("queryType", "1,2,3,4,5");
+		if (StringUtils.isBlank(soNbr)) {
+			soNbr = System.currentTimeMillis() + String.format("%03d", (int) (Math.random() * 1000));
+		}
 		auParam.put("soNbr", soNbr);
 		auParam.put("type", "2");
 		Map<String, Object> auMap = new HashMap<String, Object>();
