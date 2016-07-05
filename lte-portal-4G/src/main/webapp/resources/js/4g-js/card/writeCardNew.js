@@ -1051,7 +1051,18 @@ order.writeCard = (function(){
 		});
 	};
 	var _chooseArea = function(){
-		order.area.chooseAreaTreeManger("report/cartMain","p_areaId_val","p_areaId",3);
+		order.area.chooseAreaTree("order/prepare","p_cust_areaId_val","p_cust_areaId",3,function(areaid,areaCode,areaName){
+			/*OrderInfo.staff.soAreaId =areaid;
+			OrderInfo.staff.soAreaName=areaName;
+			OrderInfo.staff.soAreaCode =areaCode;*/
+			//$("#order_prepare").show();
+			//$("#order_tab_panel_content").hide();
+			//$("#step1").hide();
+			$("#p_areaId_val").val(areaName);
+			$("#p_areaId").val(areaid);
+			
+		});
+		//order.area.chooseAreaTreeManger("report/cartMain","p_areaId_val","p_areaId",3);
 	};
 	return {
 		writeReadCard : _writeReadCard,
