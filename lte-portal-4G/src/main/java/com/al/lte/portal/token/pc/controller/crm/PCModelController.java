@@ -194,27 +194,37 @@ public class PCModelController extends BaseController {
 				model.addAttribute("errorMsg", "业务跳转地址为空");
 				return "/common/error";
 			}
+			
 			String commonParamKey = MySimulateData.getInstance().getParam("COMMON_PARAM_KEY",(String) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_DATASOURCE_KEY),"common.param.key");//公共参数加密KEY
 			log.error("公共参数加密KEY："+commonParamKey);
 			StringBuilder strb = new StringBuilder();
 			strb.append("?params="+ AESUtils.encryptToString(JsonUtil.toString(paramsMap), commonParamKey)).append("&accessToken="+accessToken);
 			modelUrl = (new StringBuilder(String.valueOf(modelUrl))).append(strb.toString()).toString();
 			log.error("回调地址："+modelUrl);
+			
 			String dbKeyWord = (String) request.getSession().getAttribute(SysConstant.SESSION_DATASOURCE_KEY);
 			String flag = MySimulateData.getInstance().getParam("UNIFYLOGIN",dbKeyWord,"UNIFYLOGIN");
 			//response.sendRedirect(modelUrl);
 //			return "redirect:"+modelUrl;
-//			int port = request.getServerPort();
+			int serverPort = request.getServerPort();
 			int port = request.getLocalPort();
-			log.warn("服务端口："+port);
-//			return super.redirect("https://crm.189.cn:85/provPortal"+modelUrl);
-			if((port==10101 || port==10102 || port==10103) && "ON".equals(flag)){
-				return super.redirect("https://crm.189.cn:83/provPortal"+modelUrl);
-			}else if((port==10151 || port==10152 || port==10153) && "ON".equals(flag)){
-				return super.redirect("https://crm.189.cn:84/provPortal"+modelUrl);
-			}else{
+			log.warn("服务端口[LocalPort]："+port);
+			log.warn("服务端口[ServerPort]："+serverPort);
+			
+			if(serverPort == 93 || serverPort == 94){
+				//#591478 若93、94端口，说明已启用分省域名，此时不应重定向到crm.189.cn，直接本地重定向，测试、生产环境都如此。
 				return super.redirect(modelUrl);
+			} else{
+				//若不是93、94端口，走原来的老逻辑
+				if((port==10101 || port==10102 || port==10103) && "ON".equals(flag)){
+					return super.redirect("https://crm.189.cn:83/provPortal"+modelUrl);
+				}else if((port==10151 || port==10152 || port==10153) && "ON".equals(flag)){
+					return super.redirect("https://crm.189.cn:84/provPortal"+modelUrl);
+				}else{
+					return super.redirect(modelUrl);
+				}	
 			}
+			
 		}catch(Exception ex){
 			log.error("PC单点页面集成接口异常:",ex);
 			model.addAttribute("errorMsg", "服务异常。");
