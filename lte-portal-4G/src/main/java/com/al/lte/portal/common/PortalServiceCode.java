@@ -1041,8 +1041,18 @@ public final class PortalServiceCode {
     
     /**员工关联渠道查询：受理渠道、归属渠道、归属渠道的店中商渠道*/
     public static final String INTF_QUERYALLCHANNELBYSTAFFID = "chan-service/interact/synStaffBean/qryChannelByStaff";
+
+    /** 支付--保存记录 **/
+    public static final String PAY_SERVICE_SAVE_RECORDS = "com.linkage.portal.service.lte.core.charge.SavePayRecords";
+
+    /** 支付--更新状态 **/
+    public static final String PAY_SERVICE_UPDATE_RECORDS = "com.linkage.portal.service.lte.core.charge.UpdatePayRecords";
+    
     /** 二维码扫描绑定验证 **/
     public static final String QRCODE_VALIDATE = "sys-staffLoginByRelationCode";
     
+    /** 二维码--绑定登录 **/
+    public static final String BIND_QR_CODE_RECORDS = "sys-relationCodeByStaff";
+
 }
 

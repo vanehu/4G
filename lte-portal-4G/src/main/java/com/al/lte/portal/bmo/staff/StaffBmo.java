@@ -61,8 +61,6 @@ public interface StaffBmo {
 
 	public String checkByAreaId(String ydbhk, SessionStaff sessionStaff)throws Exception;
 	
-	public Map<String, Object> qrLoginCheck(Map<String, Object> dataBusMap, String optFlowNum, SessionStaff sessionStaff) throws Exception;
-	
 	/**
 	 * 根据权限编码(opsManageCode)和员工ID(staffId)查询工号是否有权限
 	 * @param operatSpecCd
@@ -71,5 +69,16 @@ public interface StaffBmo {
 	 * @throws BusinessException
 	 */
 	public String checkOperatBySpecCd(String operatSpecCd, SessionStaff sessionStaff) throws BusinessException;
+	
+	public Map<String, Object> qrLoginCheck(Map<String, Object> dataBusMap, String optFlowNum, SessionStaff sessionStaff) throws Exception;
+	
+	/**
+	 * 二维码登录绑定
+	 * @param paramMap
+	 * @param string
+	 * @param sessionStaff
+	 * @throws Exception
+	 */
+	public Map<String, Object> bindQrCode(Map<String, Object> paramMap, String string,SessionStaff sessionStaff)throws Exception;
 	
 }
