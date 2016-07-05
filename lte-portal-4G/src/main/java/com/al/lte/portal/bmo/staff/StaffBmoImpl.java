@@ -886,4 +886,56 @@ public class StaffBmoImpl implements StaffBmo {
 		}
 		return "-1";
 	}
+	
+	/**
+	 * 二维码扫描验证
+	 */
+	@SuppressWarnings("unchecked")
+	public Map<String, Object> qrLoginCheck(Map<String, Object> dataBusMap,
+			String optFlowNum, SessionStaff sessionStaff) throws Exception {
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+
+		String dbKeyWord = (String) dataBusMap.get(InterfaceClient.DATABUS_DBKEYWORD);
+		Map<String, HashMap<String, String>> allCommonParam = DataRepository.getInstence().getAllCommonParam();
+		String bootFlag = DataRepository.getInstence().getCommonParam(dbKeyWord, "bootFlag");//MapUtils.getString(allCommonParam, "bootFlag");
+		if (bootFlag == null || "FALSE".equals(bootFlag)){
+			DataEngine.resetCommonParam(dbKeyWord);
+			//缓存为空或bootFlag为false
+			allCommonParam = DataRepository.getInstence().getAllCommonParam();
+			if (MapUtils.isEmpty(allCommonParam) || "FALSE".equals(DataRepository.getInstence().getCommonParam(dbKeyWord, "bootFlag"))) {
+				throw new InterfaceException(InterfaceException.ErrType.ECSP, "MySimulateData/getInstance/getNeeded", "无法从服务层获取缓存", "areaId:"+dbKeyWord);
+			}
+		}
+		
+		DataBus db = InterfaceClient.callService(dataBusMap, 
+				PortalServiceCode.QRCODE_VALIDATE, optFlowNum, sessionStaff);
+		try {
+			String resultCode = StringUtils.defaultString(db.getResultCode(), "1");
+			returnMap.put("resultCode", resultCode);
+			returnMap.put("resultMsg", MapUtils.getString(db.getReturnlmap(), "resultMsg", "无错误信息"));			
+			if (ResultCode.R_SUCC.equals(resultCode)) {
+				returnMap.putAll(MapUtils.getMap(db.getReturnlmap(), "result", new HashMap<String, Object>()));
+			} else {
+				returnMap.put("staffId", MapUtils.getString(db.getReturnlmap(), "staffId", ""));
+				returnMap.put("errorNum", MapUtils.getString(db.getReturnlmap(), "errorNum", "11"));
+			}
+			return returnMap;
+		} catch (Exception e) {
+			log.error("门户处理系统管理的staffLogin服务返回的数据异常", e);
+			throw new BusinessException(ErrorCode.STAFF_LOGIN, dataBusMap, db.getReturnlmap(), e);
+		}
+	}
+
+	public Map<String, Object> bindQrCode(Map<String, Object> paramMap,
+			String string, SessionStaff sessionStaff) throws Exception {
+		String code=paramMap.get("qrCodeId").toString();
+		Map<String, Object> dataBusMap = new HashMap<String, Object>();
+		dataBusMap.put("code", code);
+		dataBusMap.put("staffId", sessionStaff.getStaffId());
+		dataBusMap.put("areaId", sessionStaff.getAreaId());
+		dataBusMap.put("channelId", sessionStaff.getCurrentChannelId());
+		DataBus db = InterfaceClient.callService(dataBusMap,
+				PortalServiceCode.BIND_QR_CODE_RECORDS, null, sessionStaff);
+		return db.getReturnlmap();
+	}
 }

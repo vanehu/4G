@@ -509,3 +509,99 @@ table.SMScode td p {
 	width:220px;
 	height:36px;
 }
+
+/** 扫码登录  **/
+.div_loginQrcode{
+	margin-top: 50px;
+	display:none;
+}
+.mainQrcode {
+	position: relative;
+	height: 140px;
+}
+.qricon {
+	position: absolute;
+	line-height: 80px;
+	right: 120px;
+}
+.loginQrcode {
+	position: relative;
+	margin: 0px 0px 0px 110px;
+}
+.center_loginQrcode {
+	padding-top: 50px;
+}
+.errQrcode {
+	display:none;
+  	width: 140px;
+  	height: 140px;
+  	background: rgba(255,255,255,.95);
+  	position: absolute;
+  	left: 110px;
+  	top: 0;
+  	z-index: 9999;
+}
+.mainQrcode  h6 {
+	color: #3c3c3c;
+	margin-top: 38px;
+	margin-bottom: 8px;
+	text-align: center;
+	display: block;
+	font-size: 0.67em;
+	-webkit-margin-before: 2.33em;
+	-webkit-margin-after: 1.5em;
+	-webkit-margin-start: 0px;
+	-webkit-margin-end: 0px;
+	font-weight: bold;
+}
+.mainQrcode .errQrcode .refresh {
+	width: 100px;
+  	height: 36px;
+  	line-height: 36px;
+  	text-align: center;
+  	margin: 0 auto;
+  	background: #71ab5a;
+  	display: block;
+  	color: #fff;
+  	border-radius: 3px;
+}
+.footQrcode {
+	overflow: hidden;
+  	width: 200px;
+  	margin: 30px 0px 0px 100px;
+}
+.footQrcode .iconfont{
+	float: left;
+  	color: #f40;
+  	font-size: 34px;
+  	line-height: 36px;
+  	margin-right: 10px;
+}
+.footQrcode label {
+	color: #9c9c9c;
+}
+.download-tips {
+	border: 0px solid #A1C48E;
+	position: absolute;
+	right: -80px;
+	top: 320px;
+	display:none
+}
+
+.download:hover .download-tips {
+	display:block
+}
+.download-tips i {
+	  padding-left: 0px;
+	  font-size: 14px;
+}
+.successQrcode {
+	text-align: center;
+	padding-top: 50px;
+	display:none;
+}
+.successQrcode .link {
+  margin-top: 25px;
+  text-align: center;
+}
+/** 扫码登录 end **/

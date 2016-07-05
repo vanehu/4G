@@ -1041,5 +1041,8 @@ public final class PortalServiceCode {
     
     /**员工关联渠道查询：受理渠道、归属渠道、归属渠道的店中商渠道*/
     public static final String INTF_QUERYALLCHANNELBYSTAFFID = "chan-service/interact/synStaffBean/qryChannelByStaff";
+    /** 二维码扫描绑定验证 **/
+    public static final String QRCODE_VALIDATE = "sys-staffLoginByRelationCode";
+    
 }
 

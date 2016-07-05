@@ -1,32 +1,27 @@
 package com.al.lte.portal.controller.system;
 
-import com.al.common.utils.StringUtil;
-import com.al.ec.serviceplatform.client.DataBus;
-import com.al.ec.serviceplatform.client.ResultCode;
-import com.al.ec.sm.MDA;
-import com.al.ecs.common.entity.JsonResponse;
-import com.al.ecs.common.entity.LevelLog;
-import com.al.ecs.common.entity.Switch;
-import com.al.ecs.common.util.*;
-import com.al.ecs.common.web.ServletUtils;
-import com.al.ecs.exception.*;
-import com.al.ecs.log.Log;
-import com.al.ecs.spring.annotation.log.LogOperatorAnn;
-import com.al.ecs.spring.annotation.session.AuthorityValid;
-import com.al.ecs.spring.annotation.session.SessionValid;
-import com.al.ecs.spring.controller.BaseController;
-import com.al.ecs.spring.interceptor.SessionInterceptor;
-import com.al.lte.portal.bmo.crm.SignBmo;
-import com.al.lte.portal.bmo.staff.StaffBmo;
-import com.al.lte.portal.bmo.staff.StaffChannelBmo;
-import com.al.lte.portal.bmo.system.MenuBmo;
-import com.al.lte.portal.common.*;
-import com.al.lte.portal.common.print.PrintHelperMgnt;
-import com.al.lte.portal.core.DataEngine;
-import com.al.lte.portal.core.DataRepository;
-import com.al.lte.portal.filter.SingleSignListener;
-import com.al.lte.portal.model.SessionStaff;
-import com.al.lte.portal.model.Staff;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.InetAddress;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.UUID;
+
+import javax.annotation.Resource;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
+
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -37,21 +32,63 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ThemeResolver;
 
-import javax.annotation.Resource;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import javax.validation.Valid;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.InetAddress;
-import java.util.*;
+import com.al.common.utils.MD5Helper;
+import com.al.common.utils.StringUtil;
+import com.al.ec.serviceplatform.client.DataBus;
+import com.al.ec.serviceplatform.client.ResultCode;
+import com.al.ec.sm.MDA;
+import com.al.ecs.common.entity.JsonResponse;
+import com.al.ecs.common.entity.LevelLog;
+import com.al.ecs.common.entity.Switch;
+import com.al.ecs.common.util.CryptoUtils;
+import com.al.ecs.common.util.DateUtil;
+import com.al.ecs.common.util.JsonUtil;
+import com.al.ecs.common.util.PropertiesUtils;
+import com.al.ecs.common.util.UIDGenerator;
+import com.al.ecs.common.web.ServletUtils;
+import com.al.ecs.exception.AuthorityException;
+import com.al.ecs.exception.BusinessException;
+import com.al.ecs.exception.ErrorCode;
+import com.al.ecs.exception.InterfaceException;
+import com.al.ecs.exception.PortalCheckedException;
+import com.al.ecs.exception.ResultConstant;
+import com.al.ecs.log.Log;
+import com.al.ecs.qrcode.QrCodeImageGen;
+import com.al.ecs.spring.annotation.log.LogOperatorAnn;
+import com.al.ecs.spring.annotation.session.AuthorityValid;
+import com.al.ecs.spring.annotation.session.SessionValid;
+import com.al.ecs.spring.controller.BaseController;
+import com.al.ecs.spring.interceptor.SessionInterceptor;
+import com.al.lte.portal.bmo.crm.SignBmo;
+import com.al.lte.portal.bmo.staff.StaffBmo;
+import com.al.lte.portal.bmo.staff.StaffChannelBmo;
+import com.al.lte.portal.bmo.system.MenuBmo;
+import com.al.lte.portal.common.CommonMethods;
+import com.al.lte.portal.common.CommonUtils;
+import com.al.lte.portal.common.Const;
+import com.al.lte.portal.common.EhcacheUtil;
+import com.al.lte.portal.common.InterfaceClient;
+import com.al.lte.portal.common.MySessionInterceptor;
+import com.al.lte.portal.common.MySimulateData;
+import com.al.lte.portal.common.PortalServiceCode;
+import com.al.lte.portal.common.PortalUtils;
+import com.al.lte.portal.common.RedisUtil;
+import com.al.lte.portal.common.ServiceClient;
+import com.al.lte.portal.common.SysConstant;
+import com.al.lte.portal.common.print.PrintHelperMgnt;
+import com.al.lte.portal.core.DataEngine;
+import com.al.lte.portal.core.DataRepository;
+import com.al.lte.portal.filter.SingleSignListener;
+import com.al.lte.portal.model.QRCode;
+import com.al.lte.portal.model.SessionStaff;
+import com.al.lte.portal.model.Staff;
 
 
 /**
@@ -2321,5 +2358,220 @@ public class LoginController extends BaseController {
 				index2++;
 		  }
 	   }
+	}
+	
+	/**
+	 * 配置
+	 */
+	@RequestMapping(value = "/querySwithFromMDA", method ={ RequestMethod.POST, RequestMethod.GET})
+    public @ResponseBody String querySwithFromMDA(@RequestParam Map<String, Object> param) {
+		
+		String areaId = param.get("areaId").toString();
+		String key = param.get("key").toString();
+		
+		Map<String,Map<String,Object>> mapValue = com.al.ecs.common.util.MDA.PROV_AUTH_SWITH;
+		if(null != mapValue){
+			Map<String,Object> result = mapValue.get(areaId);
+			if(null != result && result.containsKey(key)){
+				return result.get(key).toString();
+			}
+		}
+		return "";
+    }
+	
+	/**
+	 * 二维码扫描登录-获取二维码信息
+	 * 唯一标识：UUID+当前时间戳
+	 * 
+	 * @param param
+	 * @param flowNum
+	 * @param response
+	 * @return
+	 * @throws Exception
+	 */
+    @RequestMapping(value = "/getRQCode", method = RequestMethod.POST)
+    @ResponseBody
+    public JsonResponse getRQCode(@RequestBody Map<String, Object> param,
+    		@LogOperatorAnn String flowNum,
+    		HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
+	    JsonResponse jsonResponse = null;
+	    String flag = param.get("flag").toString();
+	    String qrData = "";
+	    try {
+	    	if("login".equals(flag)){
+		    	// 二维码唯一标识 UUID+timestamp
+		    	String download_addr = com.al.ecs.common.util.MDA.DOWNLOAD_ADDR+"?id=";
+		    	StringBuffer sb_uuid =  new StringBuffer();
+				sb_uuid.append(UUID.randomUUID().toString().replace("-", ""));
+				sb_uuid.append(System.currentTimeMillis());
+				String qr_uuid = sb_uuid.toString();
+				qrData = download_addr+qr_uuid;
+				request.getSession().setAttribute(SysConstant.SESSION_QRCODE_UUID,qr_uuid);
+	    	}else if("bind".equals(flag)){
+	    		qrData = "123456";
+	    	}
+			String RQCode = "data:image/png;base64,"+new QrCodeImageGen().encoderQRCodeToBase64(qrData,"png",6);
+			jsonResponse = super.successed(RQCode, ResultConstant.SUCCESS.getCode());	
+		} catch (Exception e) {
+			Object qr_uuid = request.getSession().getAttribute(SysConstant.SESSION_QRCODE_UUID);
+			if(null !=qr_uuid &&  !qr_uuid.toString().equals("")){
+				request.getSession().removeAttribute(SysConstant.SESSION_QRCODE_UUID);
+			}
+			jsonResponse = super.failed("生成二维码失败", ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+		}
+        return jsonResponse;
+    }
+    
+    /**
+     * 二维码扫码-轮训请求
+     * @param flowNum
+     * @param response
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/loopGet", method = RequestMethod.POST)
+    @LogOperatorAnn(switchs = Switch.OFF)
+    @ResponseBody
+    public JsonResponse loop(@RequestBody Staff staff,
+    		@LogOperatorAnn String flowNum,
+    		HttpServletRequest request,
+            HttpServletResponse response,
+            String loginValid) throws Exception {
+    	JsonResponse jsonResponse = null;
+	    try {
+	    	String qr_uuid =  (String) request.getSession().getAttribute(SysConstant.SESSION_QRCODE_UUID);
+	    	/** session 中二维码标识不存在,则已经失效 **/
+	    	if(null == qr_uuid){
+	    		return super.successed(QRCode.INVALID.getMsg(), QRCode.INVALID.getCode());		
+	    	}else{
+	    		/** 超过指定时间,失效 **/
+	    		long createTime = Long.parseLong(qr_uuid.substring(32,qr_uuid.length()));
+	    		long invalidTime = 1;
+	    		try{
+	    			invalidTime = Long.parseLong(com.al.ecs.common.util.MDA.INVALID_TIME);
+	    		}catch(Exception e){
+	    			e.printStackTrace();
+	    			invalidTime = 30 * 1000;
+	    		}
+		    	if( System.currentTimeMillis() - createTime >= invalidTime ){
+		    		ServletUtils.removeSessionAttribute(request, SysConstant.SESSION_QRCODE_UUID);
+		    		return super.successed(QRCode.INVALID.getMsg(), QRCode.INVALID.getCode());	
+		    	}
+		    	/** 已扫描,调用系管通过,待手机端授权 ,暂去掉**/
+		    	/*if(true){
+		    		return super.successed(QRCode.STARTED.getMsg(), QRCode.STARTED.getCode());
+		    	}*/
+		    	
+		    	jsonResponse = qrLoginCheck(staff,request,flowNum,loginValid);
+		    	int code = jsonResponse.getCode();
+		    	switch(code){
+		    		case 0:
+		    			return super.successed(jsonResponse, QRCode.SUCCESS.getCode());
+					case 1:
+						ServletUtils.removeSessionAttribute(request, SysConstant.SESSION_QRCODE_UUID);
+			    		return super.successed(QRCode.INVALID.getMsg(), QRCode.INVALID.getCode());
+		    		case -1:
+		    			ServletUtils.removeSessionAttribute(request, SysConstant.SESSION_QRCODE_UUID);
+			    		return super.successed(QRCode.INVALID.getMsg(), QRCode.INVALID.getCode());
+		    		case -2:
+		    			ServletUtils.removeSessionAttribute(request, SysConstant.SESSION_QRCODE_UUID);
+			    		return super.successed(jsonResponse, QRCode.SUCCESS.getCode());
+		    		default:
+		    			return super.successed(QRCode.NOSTART.getMsg(), QRCode.NOSTART.getCode());
+		    	}
+		    	//return super.successed(QRCode.NOSTART.getMsg(), QRCode.NOSTART.getCode());
+	    	}
+		} catch (Exception e) {
+			return super.successed(QRCode.INVALID.getMsg(), QRCode.INVALID.getCode());
+		}
+    }
+    
+    private JsonResponse qrLoginCheck(Staff staff,
+			HttpServletRequest request, 
+			String flowNum,
+			String loginValid) throws PortalCheckedException {
+
+    	String qr_uuid = (String) ServletUtils.getSessionAttribute(request, SysConstant.SESSION_QRCODE_UUID);
+		String staffProvCode = staff.getStaffProvCode();
+		
+		Map<String, Object> dataBusMap = new HashMap<String, Object>();
+		dataBusMap.put("code",qr_uuid);
+		//dataBusMap.put("staffCode", "KFNJ30685");
+		//dataBusMap.put("password", MD5Helper.getMD5Str("123qwe"));
+		dataBusMap.put("areaId", staff.getStaffProvCode());
+		dataBusMap.put("platformCode", SysConstant.SM_PLATFORM_CODE);
+		
+		String ip = "";
+		try {
+			ip = ServletUtils.getIpAddr(request);
+			if (StringUtils.isNotEmpty(ip)) {
+				dataBusMap.put("wanIp", ip);
+			}
+		} catch (Exception e) {
+		}
+		
+		Map<String, Object> map = null;
+		try {
+			SessionStaff staffSession= new SessionStaff();
+			staffSession.setCurrentAreaId(staffProvCode);
+			dataBusMap.put(InterfaceClient.DATABUS_DBKEYWORD,(String) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_DATASOURCE_KEY));
+			map = staffBmo.qrLoginCheck(dataBusMap, flowNum, staffSession);
+			System.out.println(JsonUtil.toString(map));
+			// 调用返回服务调用结果code
+			String resultCode = MapUtils.getString(map, "resultCode");
+			if (ResultCode.R_SUCC.equals(resultCode)) {
+				if (StringUtils.isNotEmpty(ip)) {
+					map.put("ip", ip);
+				}
+				map.put("staffProvCode", staffProvCode);
+				map.put("connectiontime", staff.getconnectiontime());
+				map.put("sendtime", staff.getsendtime());
+				map.put("waitingtime", staff.getwaitingtime());
+				map.put("accepttime", staff.getaccepttime());
+				map.put("macStr", staff.getMacStr());
+				request.getSession().setAttribute(SESSION_KEY_TEMP_LOGIN_STAFF, map);
+				//判断是否需要发送短信校验码
+				String retnStr = null;
+				if ("N".equals(loginValid)) { 
+					retnStr = "登录成功!";
+				} else {
+					Map<String, Object> msgMap = sendMsg(request, flowNum); 
+					if (ResultCode.R_FAILURE.equals(msgMap.get("resultCode"))) {
+						//如果发送短信异常
+						return super.failed(msgMap.get("resultMsg"), 3);
+					}
+					retnStr = "短信校验码发送成功!";
+				}
+				//往数据中填充
+				String smsPassFlag = MapUtils.getString(map, "smsPassFlag", "Y");
+				String msgCodeFlag = MySimulateData.getInstance().getParam((String) request.getSession().getAttribute(SysConstant.SESSION_DATASOURCE_KEY),SysConstant.MSG_CODE_FLAG);
+				String msgnumber = MySimulateData.getInstance().getParam((String) request.getSession().getAttribute(SysConstant.SESSION_DATASOURCE_KEY),SysConstant.MSG_NUMBERS);
+				Map<String, Object> successedData = new HashMap<String, Object>();
+				//如果全局开关设定为不发送，或者员工信息表明不发送，或者当前是重新登录不发送短信
+				if ("1".equals(msgCodeFlag) || "N".equals(smsPassFlag) || "N".equals(loginValid)) {
+					successedData.put("data", "N");
+					successedData.put("hintCode", map.get("hintCode"));
+					return super.successed(successedData);
+				}
+				successedData.put("data", "Y");
+				successedData.put("randomCode", ServletUtils.getSessionAttribute(request, SysConstant.SESSION_KEY_LOGIN_RANDONCODE));
+				successedData.put("msgnumber", msgnumber);
+				return super.successed(successedData);
+			} else {
+				Map<String, Object> failData = new HashMap<String, Object>();
+				// 返回信息
+				failData.put("code", resultCode);
+				failData.put("message", MapUtils.getString(map, "resultMsg", "员工登录失败，未得到报错信息"));
+				JsonResponse jsonResponse = super.failed(failData, ResultConstant.DATA_NOT_VALID_FAILTURE.getCode());
+				return jsonResponse;
+			}
+		} catch (BusinessException be) {
+			return super.failed(be);
+		} catch (InterfaceException ie) {
+			return super.failed(ie, dataBusMap, ErrorCode.STAFF_LOGIN);
+		} catch (Exception e) {
+			return super.failed(ErrorCode.STAFF_LOGIN, e, dataBusMap);
+		}
 	}
 }

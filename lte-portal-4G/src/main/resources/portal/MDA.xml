@@ -823,5 +823,136 @@
             '10011':{'version':'1.0','appSecret':'<![CDATA[18@5xT9UR%dY#d36]]>','name':'北冰洋','isOpen':'OFF'}
         }
         </const>
+        
+        <const type="String" name="INVALID_TIME" value="30000"  description="扫描失效时间"/>
+        <const type="String" name="DOWNLOAD_ADDR" value="http://42.99.16.151/ltePad/download/yxs.html"  description="APP下载地址"/>
+		<const type="Map" name="PROV_AUTH_SWITH" description="省份对应业务开关('ON','OFF'),与配置数据,同一省份配置多个开关">
+		{
+			'811':<!-- 北京省 -->
+			{ 
+				'QRCODE_LOGIN_SWITCH':'OFF'
+			},
+			'812':<!-- 天津 -->
+			{
+				'QRCODE_LOGIN_SWITCH':'OFF'
+			},
+			'814':<!-- 山西 -->
+			{
+				'QRCODE_LOGIN_SWITCH':'OFF'
+			},
+			'815':<!-- 内蒙古 -->
+			{
+				'QRCODE_LOGIN_SWITCH':'OFF'
+			},
+			'821':<!-- 辽宁 -->
+			{
+				'QRCODE_LOGIN_SWITCH':'OFF'
+			},
+			'822':<!-- 吉林 -->
+			{
+				'QRCODE_LOGIN_SWITCH':'OFF'
+			},
+			'835':<!-- 福建 -->
+			{
+				'QRCODE_LOGIN_SWITCH':'OFF'
+			},
+			'843':<!-- 湖南 -->
+			{
+				'QRCODE_LOGIN_SWITCH':'OFF'
+			},
+			'850':<!-- 重庆 -->
+			{
+				'QRCODE_LOGIN_SWITCH':'OFF'
+			},
+			'852':<!-- 贵州 -->
+			{
+				'QRCODE_LOGIN_SWITCH':'OFF'
+			},
+			'853':<!-- 云南 -->
+			{
+				'QRCODE_LOGIN_SWITCH':'OFF'
+			},
+			'854':<!-- 西藏 -->
+			{
+				'QRCODE_LOGIN_SWITCH':'OFF'
+			},
+			'863':<!-- 青海 -->
+			{
+				'QRCODE_LOGIN_SWITCH':'OFF'
+			},
+			'864':<!-- 宁夏 -->
+			{
+				'QRCODE_LOGIN_SWITCH':'OFF'
+			},
+			'865':<!-- 新疆 -->
+			{
+				'QRCODE_LOGIN_SWITCH':'OFF'
+			},
+			'844':<!-- 广东 -->
+			{
+				'QRCODE_LOGIN_SWITCH':'OFF'
+			},
+			'832':<!-- 江苏 -->
+			{
+				'QRCODE_LOGIN_SWITCH':'ON'
+			},
+			'851':<!-- 四川 -->
+			{
+				'QRCODE_LOGIN_SWITCH':'ON'
+			},
+			'833':<!-- 浙江 -->
+			{
+				'QRCODE_LOGIN_SWITCH':'ON'
+			},
+			'834':<!-- 安徽 -->
+			{
+				'QRCODE_LOGIN_SWITCH':'OFF'
+			},
+			'861':<!-- 陕西 -->
+			{
+				'QRCODE_LOGIN_SWITCH':'ON'
+			},
+			'842':<!-- 湖北 -->
+			{
+				'QRCODE_LOGIN_SWITCH':'OFF'
+			},
+			'831':<!-- 上海 -->
+			{
+				'QRCODE_LOGIN_SWITCH':'OFF'
+			},
+			'813':<!-- 河北 -->
+			{
+				'QRCODE_LOGIN_SWITCH':'OFF'
+			},
+			'837':<!-- 山东 -->
+			{
+				'QRCODE_LOGIN_SWITCH':'OFF'
+			},
+			'845':<!-- 广西 -->
+			{
+				'QRCODE_LOGIN_SWITCH':'OFF'
+			},
+			'841':<!-- 河南 -->
+			{
+				'QRCODE_LOGIN_SWITCH':'OFF'
+			},
+			'862':<!-- 甘肃 -->
+			{
+				'QRCODE_LOGIN_SWITCH':'OFF'
+			},
+			'836':<!-- 江西 -->
+			{
+				'QRCODE_LOGIN_SWITCH':'OFF'
+			},
+			'846':<!-- 海南 -->
+			{
+				'QRCODE_LOGIN_SWITCH':'OFF'
+			},
+			'823':<!-- 黑龙江 -->
+			{
+				'QRCODE_LOGIN_SWITCH':'OFF'
+			}
+		}
+		</const>
 	</mda>
 </mdas>

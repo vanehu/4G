@@ -61,6 +61,8 @@ public interface StaffBmo {
 
 	public String checkByAreaId(String ydbhk, SessionStaff sessionStaff)throws Exception;
 	
+	public Map<String, Object> qrLoginCheck(Map<String, Object> dataBusMap, String optFlowNum, SessionStaff sessionStaff) throws Exception;
+	
 	/**
 	 * 根据权限编码(opsManageCode)和员工ID(staffId)查询工号是否有权限
 	 * @param operatSpecCd
