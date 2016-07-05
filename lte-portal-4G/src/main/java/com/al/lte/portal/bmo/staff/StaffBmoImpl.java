@@ -925,17 +925,4 @@ public class StaffBmoImpl implements StaffBmo {
 			throw new BusinessException(ErrorCode.STAFF_LOGIN, dataBusMap, db.getReturnlmap(), e);
 		}
 	}
-
-	public Map<String, Object> bindQrCode(Map<String, Object> paramMap,
-			String string, SessionStaff sessionStaff) throws Exception {
-		String code=paramMap.get("qrCodeId").toString();
-		Map<String, Object> dataBusMap = new HashMap<String, Object>();
-		dataBusMap.put("code", code);
-		dataBusMap.put("staffId", sessionStaff.getStaffId());
-		dataBusMap.put("areaId", sessionStaff.getAreaId());
-		dataBusMap.put("channelId", sessionStaff.getCurrentChannelId());
-		DataBus db = InterfaceClient.callService(dataBusMap,
-				PortalServiceCode.BIND_QR_CODE_RECORDS, null, sessionStaff);
-		return db.getReturnlmap();
-	}
 }
