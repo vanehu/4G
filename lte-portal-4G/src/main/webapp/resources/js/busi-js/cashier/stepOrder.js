@@ -1051,8 +1051,8 @@ stepOrder.main = (function(){
 		}
 		var param = {
 			instCode : instCode,
-			mktResId : resId
-			//termGroup : terminalGroupId update by huangjj3 #13336需求，资源要求这个参数要别传
+			mktResId : resId,
+			termGroup : terminalGroupId //update by huangjj3 #592606需求
 		};
 		var data = query.prod.checkTerminal(param);
 		if(data==undefined){

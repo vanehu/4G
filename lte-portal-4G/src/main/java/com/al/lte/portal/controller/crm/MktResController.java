@@ -1205,12 +1205,13 @@ public class MktResController extends BaseController {
 			mktInfo.put("receiveFlag","1");
 			mktInfo.put("staffId",sessionStaff.getStaffId());
 			mktInfo.put("channelName",sessionStaff.getCurrentChannelName());
-			String offerSpecName = MapUtils.getString(mktInfo, "offerSpecName")==null?" ":MapUtils.getString(mktInfo, "offerSpecName");
-			mktInfo.remove("offerSpecName");
+			/*String offerSpecName = MapUtils.getString(mktInfo, "offerSpecName")==null?" ":MapUtils.getString(mktInfo, "offerSpecName");
+			mktInfo.remove("offerSpecName");*/
 			Map<String, Object> mktRes = mktResBmo.checkTermCompVal(
 					mktInfo, flowNum, sessionStaff);
 			if (MapUtils.isNotEmpty(mktRes)) {
-				if(ResultCode.R_SUCC.equals(MapUtils.getString(mktRes, "code"))){
+				//redmine 592606 需求
+				/*if(ResultCode.R_SUCC.equals(MapUtils.getString(mktRes, "code"))){
 					//update by huangjj3 营销资源返回终端可用再调用后台终端规格校验接口
 					if(StringUtils.isNotEmpty(MapUtils.getString(mktInfo, "offerSpecId"))){
 						Map<String, Object> mktInfoBack = new HashMap<String, Object>();
@@ -1227,7 +1228,7 @@ public class MktResController extends BaseController {
 							}
 						}
 					}
-				}
+				}*/
 				ArrayList obj =  (ArrayList) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_TERMINAL+"_"+sessionStaff.getStaffId());		
 				if(obj == null || "null".equals(obj) || "".equals(obj)){
 					obj = new ArrayList();

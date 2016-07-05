@@ -2729,8 +2729,8 @@ AttachOffer = (function() {
 			flag : flag,
 			//mktResId : resId,
 			offerSpecId: offerSpecId,
-			offerSpecName:newSpec.offerSpecName
-			//termGroup : terminalGroupId  update by huangjj #13336需求资源要求这个参数不传
+			//offerSpecName:newSpec.offerSpecName,
+			termGroup : terminalGroupId  //update by huangjj #592606
 		};
 		var data = query.prod.checkTerminal(param);
 		if(data==undefined){
