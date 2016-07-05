@@ -271,8 +271,7 @@ order.service = (function(){
 
 		param.areaId = OrderInfo.cust.areaId;
 		var url= contextPath+"/app/offer/queryOfferSpec";
-			$.ecOverlay("<strong>正在查询销售品规格构成中,请稍后....</strong>");
-			var response = $.callServiceAsJsonGet(url,param,{
+			$.callServiceAsJsonGet(url,param,{
 				"before":function(){
 					$.ecOverlay("<strong>正在查询销售品规格构成中,请稍后....</strong>");
 				},
