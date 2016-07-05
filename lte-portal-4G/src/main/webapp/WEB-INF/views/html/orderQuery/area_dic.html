@@ -112,7 +112,9 @@ initTree = function(){
 					}
 				}
 			}else{
-				alert("接口异常，可能原因:"+response.mess);
+				if (response && response.data) {
+					alert("接口异常，可能原因："+ JSON.stringify(response.data));
+				}
 			}
 		},
 		fail:function(response){

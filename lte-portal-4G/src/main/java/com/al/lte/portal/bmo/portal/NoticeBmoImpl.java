@@ -34,8 +34,8 @@ public class NoticeBmoImpl implements NoticeBmo {
 	 */
 	public Map<String, Object> getNoticeList_WEB(Map<String, Object> dataBusMap, String optFlowNum, SessionStaff sessionStaff) throws Exception {
 		Map<String, Object> returnMap = new HashMap<String, Object>();
+		DataBus db = InterfaceClient.callService(dataBusMap, PortalServiceCode.NOTICE_QUERY, optFlowNum, sessionStaff);
         try{
-        	DataBus db = InterfaceClient.callService(dataBusMap, PortalServiceCode.NOTICE_QUERY, optFlowNum, sessionStaff);
         	returnMap = db.getReturnlmap();
         }catch(Exception e){
 			throw new BusinessException(ErrorCode.BULLET_IN_INFO, dataBusMap, returnMap, e);
