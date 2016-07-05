@@ -82,6 +82,7 @@ common.area = (function($){
 	        $("#"+idName).html(html.join(""));
 	        $("#"+idName).find("a").click(function(){
 	        	_onAreaClick(this);
+	        	s($(this).attr("data-value"));
 	        });
 		}
 	};
@@ -120,6 +121,7 @@ common.area = (function($){
 		        _getAreaList(provinceCityJson[fid]);
 		        var cookieVal = fid + "-" + provinceName + "-" + areaName;
 		        _setCookie("login_area_id", cookieVal, 30);
+		        s(fid);
 		        return ;
 			}
 			$("#store-selector").off("mouseout");
@@ -144,6 +146,10 @@ common.area = (function($){
 			//$("#store-selector").off("mouseout");
 		    _getAreaList(provinceCityJson[areaArr[0].substring(0,3)+"0000"]);
 		}
+	};
+	
+	var s = function (l) {
+		staff.qrlogin.loadEvent(l);
 	};
 	
 	return {
