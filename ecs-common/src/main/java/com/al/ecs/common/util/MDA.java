@@ -332,6 +332,15 @@ public class MDA {
      */
     public static final Map<String,String> SHOW_CHANGE_FEE_TYPE  = new HashMap<String,String>();
     
+    /** 二维码-失效时间  ,默认30秒 **/
+	public static final String INVALID_TIME = new String("30000");
+	
+    /** 扫码登录,地区选择时判断省份是否具有权限 **/
+	public static final Map<String,Map<String,Object>> PROV_AUTH_SWITH=new HashMap<String,Map<String,Object>>();
+	
+	/** 二维码-下载地址 **/
+	public static final String DOWNLOAD_ADDR = new String("");
+    
     /**
      * 能力开放 销售员与渠道单元的关系开关
      * 如果开关打开选择无归属渠道的发展人不允许选择，如果关闭允许选择
