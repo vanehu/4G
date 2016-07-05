@@ -134,8 +134,33 @@ staff.login = (function($) {
 			$("#staffCode").val("");
 			$("#password").val("");
 			$("#vali_code_input").val("");
-		});		
+		});
+		
+		/** 二维码扫码登录初始事件 **/
+		var p_areaId = _C($("#store-selector-text").attr("area-id"));
+		staff.qrlogin.loadEvent(p_areaId);
+		/**************** end *************/
+		
 		_getMac();
+	};
+	
+	/** 获取Cookie中AreaId,当加载首页时先取cookie中的地区 **/
+	var _C = function(areaId){
+		var i = _B("login_area_id");
+		if (!!i && i != "") {
+			i = i.split("-");
+			return i[0];
+		}
+		return areaId;
+	};
+	
+	/** 获取进入首页保存的地区cookie **/
+	var _B = function(cookieId){
+		var i = document.cookie.match(new RegExp("(^| )" + cookieId + "=([^;]*)(;|$)"));
+		if (i != null) {
+			return unescape(i[2]);
+		}
+		return null;
 	};
 	
 	var _getMac=function(){
@@ -214,7 +239,8 @@ staff.login = (function($) {
 	// 要暴露出的公共方法
 	return {
 		form_valid_init : _form_valid_init,
-		getPasswordUrl : _getPasswordUrl
+		getPasswordUrl	: _getPasswordUrl,
+		getAreaName		: _getAreaName
 	};
 })(jQuery);
 
