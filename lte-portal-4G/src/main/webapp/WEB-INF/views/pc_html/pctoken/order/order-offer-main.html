@@ -105,7 +105,7 @@ background-color: #FFF;
 		var provCustAreaId = "${custAreaId_}";
 		OrderInfo.typeCd="${typeCd}";
 		OrderInfo.verifyLevel='${verifyLevel}';
-		
+		$("#p_cust_areaId").val(provCustAreaId);
 		if(terminalCode!=null && terminalCode!="" && terminalCode!="null"){
 			OrderInfo.terminalCode=terminalCode;
 		}

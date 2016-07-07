@@ -33,6 +33,7 @@
 window.onload = function() { 
     OrderInfo.actionFlag=6;
     OrderInfo.typeCd='${typeCd}';
+    $("#p_cust_areaId").val("${provCustAreaId}");
 	OrderInfo.staff={
 		staffId : "${Session['_ecs_login_session_key'].staffId}",
 		channelId : '${Session["_ecs_login_session_key"].currentChannelId}',
