@@ -176,7 +176,8 @@ window.onload=function(){
 		order.service.searchPack();
 		order.phoneNumber.resetBoProdAn();
 		*/
-		$("#p_cust_areaId").val(p_cust_areaid);
+		var areaId = "${provCustAreaId}";
+		$("#p_cust_areaId").val(areaId);
 		OrderInfo.typeCd="${typeCd}";
 		OrderInfo.verifyLevel='${verifyLevel}';
 		order.prodModify.querySecondBusinessAuth();
