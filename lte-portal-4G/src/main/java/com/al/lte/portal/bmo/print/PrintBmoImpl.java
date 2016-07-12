@@ -350,7 +350,7 @@ public class PrintBmoImpl implements PrintBmo {
 				}
 			} catch (Exception e) {
 				log.error("门户处理营业受理后台的service/intf.soService/queryOrderListInfoForPrint服务返回的数据异常", e);
-				throw new BusinessException(ErrorCode.SIGN_SEAL_PDF, paramMap, db.getReturnlmap(), e);
+				throw new BusinessException(ErrorCode.PRINT_VOUCHER, paramMap, db.getReturnlmap(), e);
 			}
 		}
 		return resultMap;
@@ -6007,9 +6007,6 @@ public class PrintBmoImpl implements PrintBmo {
 				PortalServiceCode.seal_ca,
 				null, sessionStaff);
 		try {
-			if (ResultCode.R_SUCC.equals(db.getResultCode())) {
-				pdfStr=db.getReturnlmap().get("result").toString();
-			}
 			if (ResultCode.R_SUCC.equals(db.getResultCode())) {
 				pdfStr=db.getReturnlmap().get("result").toString();
 				returnMap.put("pdfStr", pdfStr.replaceAll("\n|\r", ""));

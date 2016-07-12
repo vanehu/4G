@@ -34,9 +34,9 @@
 			<span id="span_${prodId}_${item.servId}">${item.servSpecName}</span>
 		</a>
 		<#else>
-		<a href="javascript:void(0);" id="li_${prodId}_${item.servId}" onclick="AttachOffer.closeServ(${prodId},${item.servId})" class="list-group-item">
+		<a href="javascript:void(0);" id="li_${prodId}_${item.servId}" servSpecId="${item.servSpecId}" onclick="AttachOffer.closeServ(${prodId},${item.servId})" class="list-group-item">
 			<span id="span_${prodId}_${item.servId}">${item.servSpecName}</span>
-			<span id="span_remove_${prodId}_${item.servId}"
+			<span id="span_remove_${prodId}_${item.servId}" servSpecId="${item.servSpecId}"
 				class="glyphicon glyphicon-remove pull-right" aria-hidden="true"></span>
 		</a>
 		</#if>

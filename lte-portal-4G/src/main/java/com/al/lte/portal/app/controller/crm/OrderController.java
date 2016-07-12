@@ -2299,7 +2299,7 @@ public class OrderController extends BaseController {
 		Map attr = new HashMap();
 		attr.put("itemSpecId", "800000048");
 		attr.put("value", session.getAttribute("appRecordId"));
-		custOrderAttrs.add(attr);
+		if(custOrderAttrs!=null) custOrderAttrs.add(attr);
 		System.out.println("++++++++++++orderListInfo="+orderListInfo.toString());
 		if(commonBmo.checkToken(request, SysConstant.ORDER_SUBMIT_TOKEN)){
 			Map<String, Object> resMap = orderBmo.orderSubmit(param,null,sessionStaff);

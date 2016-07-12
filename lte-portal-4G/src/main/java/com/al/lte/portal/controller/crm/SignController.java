@@ -204,9 +204,9 @@ public class SignController extends BaseController {
 		} catch (BusinessException e) {
 			return jsonResponse=super.failed(e);
 		} catch (InterfaceException ie) {
-			return jsonResponse=super.failed(ie, paramMap, ErrorCode.FTP_UPLOAD_ERROR);
+			return jsonResponse=super.failed(ie, paramMap, ErrorCode.SAVE_SIGN_PDF);
 		} catch (Exception e) {
-			return jsonResponse=super.failed(ErrorCode.FTP_UPLOAD_ERROR, e, paramMap);
+			return jsonResponse=super.failed(ErrorCode.SAVE_SIGN_PDF, e, paramMap);
 		}
     }
     

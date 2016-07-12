@@ -1124,6 +1124,11 @@ public class CustController extends BaseController {
 						
 						//若省份只返回了一条客户信息，则与原有接口无差异。若省份返回了多条客户信息，则前台需要再次调用后台的新提供的接口，来查询客户下的接入号信息，并拼装报文，按客户ID和接入号逐条展示客户信息
 						if(custInfos.size() >= 1){
+							String zqstr = "";
+							for(int jj=0;jj<zqList.size();jj++){
+								Map mm = (Map) zqList.get(jj);
+								zqstr = zqstr + mm.get("certTypeCd")+",";
+							}
 							Map<String, Object> accNbrParamMap = new HashMap<String, Object>();
 							accNbrParamMap.put("areaId", paramMap.get("areaId"));
 							accNbrParamMap.put("custIds", custIds);
@@ -1152,13 +1157,19 @@ public class CustController extends BaseController {
 											newCustInfoMap.put("accNbr", accNbr);
 											if(StringUtils.isNotBlank(qryAcctNbr)&&!qryAcctNbr.equals(accNbr))
 												continue;
-											addAccountAndCustInfo(flowNum, sessionStaff, areaId, custId, accNbr, soNbr, newCustInfoMap);
+											if("ON".equals(govSwitch) && newCustInfoMap.get("identityCd")!=null && zqstr.contains(newCustInfoMap.get("identityCd").toString())){
+												//政企客户才去查询使用人信息
+												addAccountAndCustInfo(flowNum, sessionStaff, areaId, custId, accNbr, soNbr, newCustInfoMap);
+											}
 											custInfosWithNbr.add(newCustInfoMap);
 										}
 										if (custInfosWithNbr.size()==0&&StringUtils.isNotBlank(qryAcctNbr)) {
 											Map newCustInfoMap = new HashMap(custInfoMap);
 											newCustInfoMap.put("accNbr", qryAcctNbr);
-											addAccountAndCustInfo(flowNum, sessionStaff, areaId, custId, qryAcctNbr, soNbr, newCustInfoMap);
+											if("ON".equals(govSwitch) && newCustInfoMap.get("identityCd")!=null && zqstr.contains(newCustInfoMap.get("identityCd").toString())){
+												//政企客户才去查询使用人信息
+												addAccountAndCustInfo(flowNum, sessionStaff, areaId, custId, qryAcctNbr, soNbr, newCustInfoMap);
+											}
 											custInfosWithNbr.add(newCustInfoMap);
 										}
 									} else {
@@ -1169,11 +1180,6 @@ public class CustController extends BaseController {
 								custInfosWithNbr = custInfos;
 							}
 //							resultMap.put("zqList", zqList);
-							String zqstr = "";
-							for(int jj=0;jj<zqList.size();jj++){
-								Map mm = (Map) zqList.get(jj);
-								zqstr = zqstr + mm.get("certTypeCd")+",";
-							}
 							for(int ii=0;ii<custInfosWithNbr.size();ii++){
 								Map mm = (Map) custInfosWithNbr.get(ii);
 								//省份政企开关打开，且客户为政企客户
@@ -1293,6 +1299,10 @@ public class CustController extends BaseController {
     	try {
     		resMap = custBmo.decodeUserInfo(param, flowNum, sessionStaff,dekeyWord,request);  
     		if(Integer.valueOf(resMap.get("code").toString())==ResultConstant.SUCCESS.getCode()){
+    			//将读卡得到的身份证号码存入session，用于再次比对，防篡改
+    			Map<String, Object> data = (Map<String, Object>) resMap.get("data");
+    			Map<String, Object> userInfo = (Map<String, Object>) resMap.get("userInfo");
+    			request.getSession().setAttribute(Const.CACHE_CERTINFO, userInfo.get("certNumber"));
     			jsonResponse=super.successed(resMap, ResultConstant.SUCCESS.getCode());
     		}else{
     			jsonResponse=super.failed(MapUtils.getString(resMap, "msg", "抱歉,查询蓝牙密钥的decodeUserInfo服务解析异常！"), ResultConstant.SERVICE_RESULT_FAILTURE
@@ -1386,10 +1396,11 @@ public class CustController extends BaseController {
 				checkIdMap.put("idCardType", ic);
 				if ("1".equals(identityCd)) {
 					String sessionCertNumber = (String) ServletUtils.getSessionAttribute(getRequest(), Const.CACHE_CERTINFO);
-					ServletUtils.removeSessionAttribute(getRequest(),Const.CACHE_CERTINFO);
+//					ServletUtils.removeSessionAttribute(getRequest(),Const.CACHE_CERTINFO);
 					String tmpIdCardNumber = MapUtils.getString(checkIdMap, "idCardNumber", "");
 					if(!tmpIdCardNumber.equals(sessionCertNumber)) {
 						Map map = new HashMap();
+						map.put("code", "1");
 						map.put("isChange", SysConstant.STR_Y);
 						map.put("custAuthInfo", "非正常读卡数据，信息可能被窜改，此操作将被记录！");
 						jsonResponse=super.failed(MapUtils.getString(map, "msg", "非正常读卡数据，信息可能被窜改，此操作将被记录！"), ResultConstant.SERVICE_RESULT_FAILTURE

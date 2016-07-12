@@ -1067,42 +1067,43 @@ SoOrder = (function() {
 		});
 	};
 	var _delOrderSilent = function() {
-//		var olId = OrderInfo.orderResult.olId;
-		var olId = $.cookie(CONST.DEL_ORDER_FLAG.SILENT_OLID);
-		$.cookie(CONST.DEL_ORDER_FLAG.SILENT_OLID, null);
-		if(olId!=0&&olId!=undefined && olId != null){  //作废购物车
-			var param = {
-				olId : olId,
-				areaId : OrderInfo.getAreaId(),
-				flag: "U"
-			};
-			var result = $.callServiceAsJsonGet(contextPath+"/order/delOrder",param);
-			//自动撤单时后台会释放该单预占的号码，门户相应更新预占号码表状态（目前撤单不释放预占的UIM，这里也不更新UIM的状态）
-			var resources  = [];
-			for (var i = 0; i < OrderInfo.boProdAns.length; i++) {	
-				var res = {
-					accNbr :OrderInfo.boProdAns[i].accessNumber,
-					accNbrType : 1,  //号码类型（1手机号码2.UIM卡）
-					action : "UPDATE"
-				};
-				resources.push(res);
-			}
-			if(resources.length>0){
-				var url= contextPath+"/common/updateResState";	 
-				$.callServiceAsJsonGet(url,{strParam:JSON.stringify(resources)},{
-					"done" : function(response){
-						if (response.code==0) {
-							if(response.data){
-							}
-						}
-					}
-				});	
-			}
-			OrderInfo.orderData.orderList.custOrderList[0].busiOrder = [];
-			OrderInfo.resetSeq(); //重置序列
-			_getToken();
-			SoOrder.delOrderFin();
-		}
+		//该方法只适用于web浏览器关闭，强行中断订单流程时作废订单，app不调用该方法。
+////		var olId = OrderInfo.orderResult.olId;
+//		var olId = $.cookie(CONST.DEL_ORDER_FLAG.SILENT_OLID);
+//		$.cookie(CONST.DEL_ORDER_FLAG.SILENT_OLID, null);
+//		if(olId!=0&&olId!=undefined && olId != null){  //作废购物车
+//			var param = {
+//				olId : olId,
+//				areaId : OrderInfo.getAreaId(),
+//				flag: "U"
+//			};
+//			var result = $.callServiceAsJsonGet(contextPath+"/order/delOrder",param);
+//			//自动撤单时后台会释放该单预占的号码，门户相应更新预占号码表状态（目前撤单不释放预占的UIM，这里也不更新UIM的状态）
+//			var resources  = [];
+//			for (var i = 0; i < OrderInfo.boProdAns.length; i++) {	
+//				var res = {
+//					accNbr :OrderInfo.boProdAns[i].accessNumber,
+//					accNbrType : 1,  //号码类型（1手机号码2.UIM卡）
+//					action : "UPDATE"
+//				};
+//				resources.push(res);
+//			}
+//			if(resources.length>0){
+//				var url= contextPath+"/common/updateResState";	 
+//				$.callServiceAsJsonGet(url,{strParam:JSON.stringify(resources)},{
+//					"done" : function(response){
+//						if (response.code==0) {
+//							if(response.data){
+//							}
+//						}
+//					}
+//				});	
+//			}
+//			OrderInfo.orderData.orderList.custOrderList[0].busiOrder = [];
+//			OrderInfo.resetSeq(); //重置序列
+//			_getToken();
+//			SoOrder.delOrderFin();
+//		}
 	};
 	var _delOrderFin = function(){
 		$.cookie(CONST.DEL_ORDER_FLAG.SILENT_OLID, null);
