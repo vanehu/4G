@@ -4709,6 +4709,19 @@ public class OrderController extends BaseController {
     }
     
     /**
+     * 返档入口
+     */
+    @RequestMapping(value = "/preparReturnBlock", method = RequestMethod.GET)
+    @AuthorityValid(isCheck = true)
+    public String preparReturnBlock(@RequestParam Map<String, Object> mktRes, HttpServletRequest request, Model model,
+            HttpSession session) {
+        model.addAttribute("canOrder", EhcacheUtil.pathIsInSession(session, "order/prepare"));
+        model.addAttribute("menuName", SysConstant.FD);
+        model.addAttribute("DiffPlaceFlag", "local");
+        return "/order/order-prepare";
+    }
+
+    /**
      * 黑名单失效接口
      * @param param
      * @param flowNum

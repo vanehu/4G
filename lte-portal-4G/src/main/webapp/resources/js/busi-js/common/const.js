@@ -437,6 +437,7 @@ CONST = (function(){
 	};
 	var _MENU_CUSTFANDANG="GKHZLFD";//改客户资料返档
 	var _MENU_FANDANG="GHFD";//过户返档
+	var _MENU_RETURNFILE="FD";//返挡
 	
 	return {
 		//批量受理查询，是否执行改造后的新代码的开关标识，用于暂时记录是否执行新代码。Y执行改造后的新代码，N执行改造前的旧代码，默认为N。 By ZhangYu 2015-10-20
@@ -491,7 +492,8 @@ CONST = (function(){
 		UIMTYPE3G4G:_UIMTYPE3G4G,
 		PROD_ATTR_VALUE : _PROD_ATTR_VALUE,
 		MENU_FANDANG : _MENU_FANDANG,
-		MENU_CUSTFANDANG:_MENU_CUSTFANDANG
+		MENU_CUSTFANDANG:_MENU_CUSTFANDANG,
+		MENU_RETURNFILE : _MENU_RETURNFILE
 	};
 })();
 

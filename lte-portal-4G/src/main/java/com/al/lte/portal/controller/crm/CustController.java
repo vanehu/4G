@@ -1037,6 +1037,8 @@ public class CustController extends BaseController {
 					businessLink = EhcacheUtil.getBusinessMenuByName(session,SysConstant.GKHZLFD_NAME);
 				}else if(SysConstant.GHFD.equals(menuName)){
 					businessLink = EhcacheUtil.getBusinessMenuByName(session,SysConstant.GHFD_NAME);
+				}else if(SysConstant.FD.equals(menuName)){
+					businessLink = EhcacheUtil.getBusinessMenuByName(session,SysConstant.FD_NAME);
 				}
 				
 			}

@@ -346,4 +346,9 @@ public class MDA {
      * 如果开关打开选择无归属渠道的发展人不允许选择，如果关闭允许选择
      * */
     public static final Map<String,String> TOKEN_SALES_CHANNEL = new HashMap<String,String>();
+    /**
+     * 返档分省开关
+	 */
+	public static final Map<String,String> TRANSFER_RETURN = new HashMap<String,String>();
+
 }

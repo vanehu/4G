@@ -218,12 +218,45 @@ public class OrderProdModifyController extends BaseController {
      * @throws BusinessException 
      */
 	@RequestMapping(value = "/custTransfer", method = {RequestMethod.POST})
-	public String custTransfer(@RequestBody Map<String, Object> param, Model model, HttpServletResponse response) {
+	public String custTransfer(@RequestBody Map<String, Object> param, @LogOperatorAnn String optFlowNum,Model model, HttpServletResponse response) {
 		//TODO call general order rule
 		if (!MapUtils.isEmpty(param)) {
 			//添加一些属性
 			param.put("offerNum", 1);
 			model.addAttribute("orderProdInfo", param);
+		}
+		if(param.get("actionFlag")!=null && "43".equals(param.get("actionFlag").toString())){
+			SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+					SysConstant.SESSION_KEY_LOGIN_STAFF);
+			Map<String, Object> paramMap=new HashMap<String, Object>();
+	    	paramMap.put("partyId", param.get("custId"));
+	    	paramMap.put("areaId", param.get("areaId"));
+			Map<String, Object> datamap = new HashMap<String, Object>();
+			Map<String, Object> resultMap = new HashMap<String, Object>();
+			Map<String, Object> partyListMap = new HashMap<String, Object>();
+			List<Map<String, Object>> identitiesList = null;
+			try {
+				datamap = this.custBmo.queryCustDetail(paramMap, optFlowNum, sessionStaff);
+				log.debug("return={}", JsonUtil.toString(datamap));
+				String code = (String) datamap.get("resultCode");
+				if (ResultCode.R_SUCC.equals(code)) {
+					resultMap =MapUtils.getMap(datamap, "result");
+					partyListMap=MapUtils.getMap(resultMap, "partyList");
+					if (resultMap != null&&(partyListMap.size()>0)) {
+						identitiesList = (List<Map<String, Object>>)partyListMap.get("identities");
+					}
+				}
+			}catch (BusinessException be) {
+				return super.failedStr(model, be);
+			} catch (InterfaceException ie) {
+				return super.failedStr(model, ie, paramMap, ErrorCode.QUERY_CUST_EXINFO);
+			} catch (Exception e) {
+				
+				return super.failedStr(model, ErrorCode.QUERY_CUST_EXINFO, datamap, paramMap);
+			}
+			model.addAttribute("modPartyTypeCd", partyListMap);
+			model.addAttribute("identities", identitiesList);
+			return "/order/order-return-file";
 		}
 		return "/order/order-cust-transfer";
 	}

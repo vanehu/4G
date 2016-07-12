@@ -420,7 +420,7 @@ SoOrder = (function() {
 			_createCustOrderOnly(busiOrders,data);
 		}else if (OrderInfo.actionFlag==9){ //活卡销售返档
 			_ActiveReturnOrder(busiOrders,data); 
-		}else if (OrderInfo.actionFlag==10){ //传到节点busiOrder 
+		}else if (OrderInfo.actionFlag==10 || OrderInfo.actionFlag==43){ //传到节点busiOrder 
 			busiOrders = data;
 		}else if (OrderInfo.actionFlag==11){ //撤单,有做特殊处理
 			busiOrders = data;

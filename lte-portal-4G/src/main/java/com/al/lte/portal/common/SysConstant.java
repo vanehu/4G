@@ -645,6 +645,10 @@ public final class SysConstant {
 	public static final String GKHZLFD_NAME = "改客户资料返档";
 	/**过户返档菜单名*/
 	public static final String GHFD_NAME = "过户返档";
+	/**返档*/
+	public static final String  FD= "FD";
+	/**返档*/
+	public static final String FD_NAME = "返档";
 	
     /** 客户鉴权短信验证证随机二位序列号 */
     public static final String SESSION_KEY_CUSTAUTH_RANDONCODE = "_ecs_custauth_sms_session_code";

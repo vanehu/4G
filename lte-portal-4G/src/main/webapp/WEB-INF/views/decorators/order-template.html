@@ -36,11 +36,17 @@
 			<h2 style="margin: 4px 8px 0 5px;">客户定位</h2>
 		</li>
 		<li class="usersearch">
+		<#if menuName?? && menuName=="FD">
+		<select id="p_cust_identityCd" class="selectNumbertype" style="width:118px;"  disabled="disabled">
+            <option value="-1" >接入号码</option>
+        </select>
+		<#else>
 		<select onchange="order.cust.custidentidiesTypeCdChoose(this,'p_cust_identityNum')" id="p_cust_identityCd" class="selectNumbertype" style="width:118px;">
                                   	  	<option value="-1" >接入号码</option>
                                   	  	<option value="acctCd" >合同号</option>
                                   	  	<option value="custNumber" >客户编码</option>
         </select>
+        </#if>
         <select id="prodTypeCd" class="selectNumbertype">
         	<option value="12" selected>移动电话</option>
         	<option value="15">无线上网卡</option>
@@ -59,12 +65,14 @@
         </li>
         <li class="ubtn">
 		    <a class="btn_h30" id="usersearchbtn"  href="javascript:void(0)"  class="btn" style="margin-left:30px;"><span>查 询</span></a>
+		    <#if menuName?? && menuName=="FD">
+		    <#else>
 		    <a class="btn_h30" id="readCertBtn" onclick="javascript:order.cust.readCert()"><span>读 卡</span></a>
 		    <#if DiffPlaceFlag=="local">
 		    <a class="btn_h30" id="createUserbtn" onclick="javascript:order.cust.showCustCreate(this)"><span>新建客户</span></a>
 		     </#if>
+		    </#if>
 		</li>
-		
 		</ul>
 		</form>
 	</div>

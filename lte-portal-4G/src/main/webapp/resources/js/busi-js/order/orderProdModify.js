@@ -984,7 +984,7 @@ order.prodModify = (function(){
 					order.prodModify.cancel();
 				});
 				var menuName = $("#menuName").attr("menuName");
-				if((ec.util.isObj(menuName)&&(CONST.MENU_FANDANG==menuName||CONST.MENU_CUSTFANDANG==menuName))){
+				if((ec.util.isObj(menuName)&&(CONST.MENU_FANDANG==menuName||CONST.MENU_CUSTFANDANG==menuName||CONST.MENU_RETURNFILE==menuName))){
 					$("#fillLastStep").hide();
 					$("#order_quick_nav").hide();
 				}

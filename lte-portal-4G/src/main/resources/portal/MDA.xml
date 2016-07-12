@@ -43,7 +43,7 @@
 		<const type="String" name="CSB_WS_URL" value="http://10.128.90.194:10901/LTE-CSB/services/DEPService?wsdl" />
 		<const type="String" name="CSB_HTTP_URL" value="http://10.128.90.194:10901/LTE-CSB/HttpDEPService" />
 		<const type="String" name="CSB_HTTP_FORCA_URL" value="http://10.128.90.194:10901/LTE-CSB/HttpDEPService" />
-		<const type="String" name="CSB_FLAG" value="ON" />
+		<const type="String" name="CSB_FLAG" value="OFF" />
 		<const type="String" name="ASYNC_FLAG" value="OFF" />
 		<const type="String" name="DEF_HTTP_FLAG" value="ON" />
 		<const type="Map" name="PROVORDERATTR_FLAG" description="是否显示省内订单属性 0-打开，1-关闭">
@@ -953,6 +953,43 @@
 				'QRCODE_LOGIN_SWITCH':'OFF'
 			}
 		}
+		</const>
+		 <!-- 集团CRM-返档开关，返档页面证件类型和证件号码填写完毕后，触发下省查询服务，判断该证件对应客户是否存在，不存在时候根据该开关来判断ON过户返档 OFF改客户资料返档-->
+		<const type="Map" name="TRANSFER_RETURN" description="集团CRM-返档开关，档页面证件类型和证件号码填写完毕后，触发下省查询服务，判断该证件对应客户是否存在，不存在时候根据该开关来判断ON过户返档 OFF改客户资料返档">
+			{
+			'TRANSFERRETURN_854':'ON',<!-- 西藏 -->
+			'TRANSFERRETURN_863':'ON',<!-- 青海 -->
+			'TRANSFERRETURN_815':'ON',<!-- 内蒙古 -->
+			'TRANSFERRETURN_823':'ON',<!-- 黑龙江 -->
+			'TRANSFERRETURN_845':'ON',<!-- 广西 -->
+			'TRANSFERRETURN_850':'ON',<!-- 重庆 -->
+			'TRANSFERRETURN_861':'ON',<!-- 陕西 -->
+			'TRANSFERRETURN_842':'ON',<!-- 湖北 -->
+			'TRANSFERRETURN_835':'ON',<!-- 福建 -->
+			'TRANSFERRETURN_832':'OFF',<!-- 江苏 -->
+			'TRANSFERRETURN_846':'ON',<!-- 海南 -->
+			'TRANSFERRETURN_864':'ON',<!-- 宁夏 -->
+			'TRANSFERRETURN_814':'ON',<!-- 山西 -->
+			'TRANSFERRETURN_853':'ON',<!-- 云南 -->
+			'TRANSFERRETURN_836':'ON',<!-- 江西 -->
+			'TRANSFERRETURN_837':'ON',<!-- 山东 -->
+			'TRANSFERRETURN_811':'ON',<!-- 北京 -->
+			'TRANSFERRETURN_843':'ON',<!-- 湖南 -->
+			'TRANSFERRETURN_851':'ON',<!-- 四川 -->
+			'TRANSFERRETURN_844':'ON',<!-- 广东 -->
+			'TRANSFERRETURN_831':'ON',<!-- 上海 -->
+			'TRANSFERRETURN_812':'ON',<!-- 天津 -->
+			'TRANSFERRETURN_813':'ON',<!-- 河北 -->
+			'TRANSFERRETURN_841':'ON',<!-- 河南 -->
+			'TRANSFERRETURN_821':'ON',<!-- 辽宁 -->
+			'TRANSFERRETURN_822':'ON',<!-- 吉林 -->
+			'TRANSFERRETURN_834':'ON',<!-- 安徽 -->
+			'TRANSFERRETURN_833':'ON',<!-- 浙江 -->
+			'TRANSFERRETURN_852':'ON',<!-- 贵州 -->
+			'TRANSFERRETURN_862':'ON',<!-- 甘肃 -->
+			'TRANSFERRETURN_865':'ON',<!-- 新疆 -->
+			'TRANSFERRETURN_899':'ON'<!-- 虚拟省 -->
+			}
 		</const>
 	</mda>
 </mdas>
