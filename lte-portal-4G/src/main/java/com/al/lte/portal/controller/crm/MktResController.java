@@ -2600,7 +2600,10 @@ public class MktResController extends BaseController {
 		    param.put("areaId", sessionStaff.getAreaId());
 		    param.put("ip", ServletUtils.getIpAddr(request));
 		    param.put("operateDate", new Date());
-		    param.put("methodName", "U");//卡组件记录
+			String methodName = (String) (param.get("methodName")==null?"":param.get("methodName"));
+			if(methodName.equals("")){
+				param.put("methodName", "U");//卡组件记录
+			}
 			try {
 				mktResBmo.intcardNubInfoLog(param, flowNum, sessionStaff);
 			} catch (Exception e) {

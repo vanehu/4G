@@ -1143,6 +1143,7 @@ order.writeCard = (function(){
 					mktResType : resp.data.mktResBaseInfo.mktResTypeCd,
 					mktResInstCode : resp.data.mktResBaseInfo.instCode,
 					mktResStoreId : resp.data.mktResBaseInfo.mktResStoreId,
+					orderItemGroupId : OrderInfo.essOrderInfo.essOrder.orderItemGroupId,
 					quantity : "1",
 					salesPrice : "0",
 					attr :[{
@@ -1389,7 +1390,8 @@ order.writeCard = (function(){
 			phoneNumber : phoneNumber,
 			extCustOrderId : extCustOrderId,
 			commonRegionId : commonRegionId,
-			zoneNumber : zoneNumber
+			zoneNumber : zoneNumber,
+			orderItemGroupId : $("#extCustOrderId").val()
 		};
 		OrderInfo.essOrderInfo.essOrder = essOrder;
 		if(orderNeedAction!="onlyWriteCard"){
@@ -1516,7 +1518,8 @@ order.writeCard = (function(){
 			extCustOrderId : extCustOrderId,
 			commonRegionId : commonRegionId,
 			zoneNumber : zoneNumber,
-			iccId : iccId
+			iccId : iccId,
+			mktResInstCode : $("#"+extCustOrderId+"_mktResInstCode").val()
 		};
 		OrderInfo.essOrderInfo.essOrder = essOrder;
 		_essShowReadWirteCard(phoneNumber,extCustOrderId);
@@ -1634,11 +1637,39 @@ order.writeCard = (function(){
 		var writeCardResult = ocx.YXPersonalize(authCode,"",1,_rscJson.data,"");
 		//alert("writeCardResult:"+writeCardResult);
 		if (writeCardResult != "0") {
+			var serviceName = contextPath + "/mktRes/writeCard/writecardLog";
+			var param = {
+					couponInstanceCode:OrderInfo.essOrderInfo.essOrder.mktResInstCode,
+					iccId:OrderInfo.essOrderInfo.essOrder.iccId,
+					serviceCode:OrderInfo.busitypeflag+'',
+					cardSource:_cardDllInfoJson.remark,
+					methodName:"W",
+					errDesc:writeCardResult,
+					contactRecord:OrderInfo.essOrderInfo.essOrder.extCustOrderId,
+					result:writeCardResult,
+					extCustOrderId:OrderInfo.essOrderInfo.essOrder.extCustOrderId,
+					accNbr:OrderInfo.essOrderInfo.essOrder.phoneNumber
+				};
+			$.callServiceAsJson(serviceName, param);
 			//客户端提示：写卡失败时各卡商返回各自定义的错误信息 
 			$.alert("提示","写卡失败，请将白卡取出！错误编码=" + writeCardResult+"详细错误请联系卡商["+_cardDllInfoJson.remark+"]确认","error");
 			return false;
 		} else {
 			//写卡成功
+			var serviceName = contextPath + "/mktRes/writeCard/writecardLog";
+			var param = {
+					couponInstanceCode:OrderInfo.essOrderInfo.essOrder.mktResInstCode,
+					iccId:OrderInfo.essOrderInfo.essOrder.iccId,
+					serviceCode:OrderInfo.busitypeflag+'',
+					cardSource:_cardDllInfoJson.remark,
+					methodName:"W",
+					errDesc:"",
+					contactRecord:OrderInfo.essOrderInfo.essOrder.extCustOrderId,
+					result:"写卡成功",
+					extCustOrderId:OrderInfo.essOrderInfo.essOrder.extCustOrderId,
+					accNbr:OrderInfo.essOrderInfo.essOrder.phoneNumber
+				};
+			$.callServiceAsJson(serviceName, param);
 			$.alert("提示","恭喜，您已经成功写卡！");
 		    return true;
 		}

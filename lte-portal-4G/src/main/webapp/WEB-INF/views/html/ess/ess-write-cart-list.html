@@ -36,7 +36,9 @@
 			<td>${mktResInsts.mktResCd}</td>
 			<td> ${mktResInsts.mktResCdName}</td> 
 			<td>${mktResInsts.mktResInstCode}</td>
-			<td>${mktResInsts.statusCdName}</td>
+			<td>${mktResInsts.statusCdName}
+			     <input type="hidden" id="${orderLists.extCustOrderId}"  value=${mktResInsts.orderItemGroupId}>
+			</td>
 			</#if>
 			</#list>
 			<#else>

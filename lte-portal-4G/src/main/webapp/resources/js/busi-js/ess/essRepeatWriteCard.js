@@ -14,7 +14,7 @@ ess.repeatWriteCard = (function() {
 		var accNbr = ec.util.defaultStr($("#p_accNbr").val());
 		var startDate = ec.util.defaultStr($("#p_startDate").val());
 		var endDate = ec.util.defaultStr($("#p_endDate").val());
-		if(transactionId=="" && accNbr==""){
+		if(extCustOrderId=="" && accNbr==""){
 			$.alert("提示","'订单流水号'和'手机号码'必须输入一个条件！");
 			return;
 		}
