@@ -76,7 +76,16 @@
 				     </span>
 				     <div class="clear"></div>
 				 </dl> 
-                 <dl class="noBorder">
+				  <dl>
+                     <dt>保底消费：</dt>
+                        <dd style="width: 700px;" id="lowPrice">
+	                         <a href="javascript:void(0);" class="selected" val="" onclick="order.phoneNumber.linkQueryPhoneNumber('#lowPrice a',this)">不限</a>
+	                         <#list lowPriceList  as lowPrice>
+	                           <a href="javascript:void(0);" val="${lowPrice}" onclick="order.phoneNumber.linkQueryPhoneNumber('#lowPrice a',this)">${lowPrice}</a>
+	                         </#list>
+	                    </dd>
+                  </dl> 
+				 <dl class="noBorder">
                      <dt>预存话费：</dt>
                      <dd  id="preStore">
                      </dd>

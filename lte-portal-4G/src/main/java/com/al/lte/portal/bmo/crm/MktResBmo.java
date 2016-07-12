@@ -431,4 +431,8 @@ public interface MktResBmo {
 	public Map<String, Object> cardResourceQuery(Map<String, Object> param,
 			String optFlowNum, SessionStaff sessionStaff)
 			throws BusinessException;
+	
+	public Map<String, Object> pnLowAndPrePriceQry(Map<String, Object> dataBusMap,
+			String optFlowNum, SessionStaff sessionStaff) throws InterfaceException, IOException, Exception;
+			
  }

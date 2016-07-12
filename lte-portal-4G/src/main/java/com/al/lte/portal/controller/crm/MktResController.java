@@ -314,6 +314,27 @@ public class MktResController extends BaseController {
 		try {//选号页面，查询员工是否有修改号码等级的权限
             String res=staffBmo.checkOperatSpec("CHOOSE_PNLEVEL", sessionStaff);
             model.addAttribute("can_change_level", res);
+            List<Map<String, Object>> list = null;
+            try {
+            	param.put("staffId", sessionStaff.getStaffId());
+            	Map<String, Object> datamap = this.mktResBmo.pnLowAndPrePriceQry(param,
+	    				null, sessionStaff);
+	    		if (datamap != null) {
+	    			String code2= (String) datamap.get("code");
+	    			if (ResultCode.R_SUCCESS.equals(code2)) {
+	    				Object obj2 = datamap.get("lowPriceList");
+	    				if (obj2 instanceof List) {
+	    					list = (List<Map<String, Object>>) datamap.get("lowPriceList");
+	    				} if (list == null) {
+	    				    
+	    				} else {
+	                        model.addAttribute("lowPriceList", list);
+	    				}
+	    			}
+	    		}
+            } catch (Exception e) {
+                
+            }
         } catch (Exception e1) {
             e1.printStackTrace();
         }
@@ -410,7 +431,6 @@ public class MktResController extends BaseController {
 				logmap.put("ACTION_IP", ServletUtils.getIpAddr(request));
 				logmap.put("CHANNEL_ID", sessionStaff.getCurrentChannelId());
 				logmap.put("OPERATORS_ID", sessionStaff.getOperatorsId());
-				logmap.put("AREA_ID", sessionStaff.getCurrentAreaId());
 				logmap.put("IN_PARAM", JsonUtil.toString(param));
 				staffBmo.insert_sp_busi_run_log(logmap,flowNum,sessionStaff);
 			}
@@ -1205,13 +1225,12 @@ public class MktResController extends BaseController {
 			mktInfo.put("receiveFlag","1");
 			mktInfo.put("staffId",sessionStaff.getStaffId());
 			mktInfo.put("channelName",sessionStaff.getCurrentChannelName());
-			/*String offerSpecName = MapUtils.getString(mktInfo, "offerSpecName")==null?" ":MapUtils.getString(mktInfo, "offerSpecName");
-			mktInfo.remove("offerSpecName");*/
+			String offerSpecName = MapUtils.getString(mktInfo, "offerSpecName")==null?" ":MapUtils.getString(mktInfo, "offerSpecName");
+			mktInfo.remove("offerSpecName");
 			Map<String, Object> mktRes = mktResBmo.checkTermCompVal(
 					mktInfo, flowNum, sessionStaff);
 			if (MapUtils.isNotEmpty(mktRes)) {
-				//redmine 592606 需求
-				/*if(ResultCode.R_SUCC.equals(MapUtils.getString(mktRes, "code"))){
+				if(ResultCode.R_SUCC.equals(MapUtils.getString(mktRes, "code"))){
 					//update by huangjj3 营销资源返回终端可用再调用后台终端规格校验接口
 					if(StringUtils.isNotEmpty(MapUtils.getString(mktInfo, "offerSpecId"))){
 						Map<String, Object> mktInfoBack = new HashMap<String, Object>();
@@ -1228,7 +1247,7 @@ public class MktResController extends BaseController {
 							}
 						}
 					}
-				}*/
+				}
 				ArrayList obj =  (ArrayList) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_TERMINAL+"_"+sessionStaff.getStaffId());		
 				if(obj == null || "null".equals(obj) || "".equals(obj)){
 					obj = new ArrayList();
@@ -1330,9 +1349,12 @@ public class MktResController extends BaseController {
 		this.log.debug("sort before={}", JsonUtil.toString(list));
 		Collections.sort(list, new Comparator<Map<String, Object>>() {
 			public int compare(Map<String, Object> e1, Map<String, Object> e2) {
-				if (NumberUtils.isNumber(String.valueOf(e1.get("presentFeeRate")))) {
-					Double price1 = Double.parseDouble(String.valueOf(e1.get("presentFeeRate")));
-					Double price2 = Double.parseDouble(String.valueOf(e2.get("presentFeeRate")));
+				if (NumberUtils.isNumber(String.valueOf((int)((Double)e1
+						.get("presentFeeRate")*100)))) {
+					long price1 = Long.parseLong(String.valueOf((int)((Double)e1
+							.get("presentFeeRate")*100)));
+					long price2 = Long.parseLong(String.valueOf((int)((Double)e2
+							.get("presentFeeRate")*100)));
 					if (price1 - price2 >= 0)
 						return 1;
 					else
@@ -1349,7 +1371,7 @@ public class MktResController extends BaseController {
 		int period = -1;
 		for (int i = 0, j = -1; i < list.size(); i++) {
 			Map<String, Object> agreementOfferMap = list.get(i);
-			int tmpPeriod =(int) (Double.parseDouble(String.valueOf(agreementOfferMap.get("presentFeeRate")))*100);
+			int tmpPeriod = (int) ((Double) agreementOfferMap.get("presentFeeRate")*100);
 //			int tmpPeriod = (Integer) agreementOfferMap.get("agreementPeriod");
 			Map<String, Object> tmpMap = new HashMap<String, Object>();
 			if (period == tmpPeriod) {

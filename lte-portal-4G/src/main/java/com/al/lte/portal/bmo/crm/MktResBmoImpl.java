@@ -96,6 +96,38 @@ public class MktResBmoImpl implements MktResBmo {
 		}
 		return returnMap;
 	}
+	/**
+	 * 资源新增保底消费的搜索条件
+	 * @param dataBusMap
+	 * @param optFlowNum
+	 * @param sessionStaff
+	 * @return
+	 * @throws IOException 
+	 * @throws InterfaceException 
+	 * @throws Exception
+	 */
+	public Map<String, Object> pnLowAndPrePriceQry(Map<String, Object> dataBusMap,
+			String optFlowNum, SessionStaff sessionStaff) throws InterfaceException, IOException, Exception
+			 {
+		log.debug("dataBusMap={}",JsonUtil.toString(dataBusMap));
+		DataBus db = InterfaceClient
+				.callService(dataBusMap,
+						PortalServiceCode.QRY_PNLOWANDPREPRICE_SERVICE,
+						optFlowNum, sessionStaff);
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db
+				.getResultCode()))) {
+			Map<String, Object> resultMap = db.getReturnlmap();
+			Map<String, Object> datamap = (Map<String, Object>) resultMap
+					.get("result");
+			returnMap.put("code", ResultCode.R_SUCCESS);
+			returnMap.putAll(datamap);
+		} else {
+			returnMap.put("code", ResultCode.R_FAIL);
+			returnMap.put("msg", db.getResultMsg());
+		}
+		return returnMap;
+	}
 
 	/*
 	 * (non-Javadoc)

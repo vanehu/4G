@@ -912,7 +912,11 @@ public final class PortalServiceCode {
     
     /** 营销资源--号码查询*/
     public static final String PHONENUMINFOQRY_SERVICE="res-PhoneNumInfoQryService/phoneNumInfoQry";
-
+    
+   /** 营销资源--保底消费的搜索条件*/
+    public static final String QRY_PNLOWANDPREPRICE_SERVICE="res-PhoneNumberQryService/qryPnLowAndPrePrice";
+    
+   
     //终端预约码校验接口
     public static final String QUERY_COUPON_RESERVE_CODE_CHECK  = "biz-service/intf.soService/queryCouponReserveCodeCheck" ;
     

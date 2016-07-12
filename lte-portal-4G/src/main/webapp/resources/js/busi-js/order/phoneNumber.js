@@ -684,6 +684,7 @@ order.phoneNumber = (function(){
 		var pnHead = $("#pnHead").find("a.selected").attr("val");
 		var pnNotExitNum = $.trim($("#pnNotExitNum").val());
 		var pncharacteristic = $("#pncharacteristic").find("a.selected").attr("val");
+		var lowPrice = $("#lowPrice").find("a.selected").attr("val");
 		var pnEnd =$.trim($("#pnEnd").val());
 		if(pncharacteristic!=null && pncharacteristic!=""){		
 			if(pncharacteristic == '4'){
@@ -734,7 +735,7 @@ order.phoneNumber = (function(){
 		}
 		return {
 			"pnHead":pnHead, "pnEnd":pnEnd, "pnNotExitNum":pnNotExitNum, "goodNumFlag":pnCharacterId,
-			"maxPrePrice":Less, "minPrePrice":Greater, "pnLevelId":'', "pageSize":"15",
+			"maxPrePrice":Less, "minPrePrice":Greater, "pnLevelId":'', "pageSize":"15","minLowPrice":lowPrice, "maxLowPrice":lowPrice,
 			"phoneNum":phoneNum, "areaId":areaId, "poolId":poolId, "queryFlag":query_flag_01
 		};
 	};
