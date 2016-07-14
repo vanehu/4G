@@ -324,12 +324,28 @@ SoOrder = (function() {
 		}
 		//订单备注前置
 		var remark = $('#order_remark').val(); 
+		var  val = "";
+		var val2 = "";
 		if(ec.util.isObj(remark)){
+			if(OrderInfo.actionFlag == 23){
+			   val = $("#p_cust_areaId_val").val(); 
+			   val2 = val.substring(val.indexOf(" > ")+2,val.length); 
+			   remark = remark + "|"+ val.substring(0,val.indexOf(" > "))+val2.substring(0,val2.indexOf(" > ")) + " "+ OrderInfo.staff.channelId + " "+ OrderInfo.staff.staffId; 
+			}
+			 custOrderAttrs.push({
+				itemSpecId : CONST.BUSI_ORDER_ATTR.REMARK,
+				value : remark
+			});	
+		}else if(OrderInfo.actionFlag == 23){//异地补换卡
+			val = $("#p_cust_areaId_val").val(); 
+			val2 = val.substring(val.indexOf(" > ")+2,val.length); 
+			remark = "|"+ val.substring(0,val.indexOf(" > "))+val2.substring(0,val2.indexOf(" > ")) + " "+ OrderInfo.staff.channelId + " "+ OrderInfo.staff.staffId; 
 			custOrderAttrs.push({
 				itemSpecId : CONST.BUSI_ORDER_ATTR.REMARK,
 				value : remark
 			});	
 		}
+		
 		//订单购物车属性(经办人)
 		if(CONST.getAppDesc()==0){
 			var orderAttrName = $.trim($("#orderAttrName").val()); //经办人姓名
