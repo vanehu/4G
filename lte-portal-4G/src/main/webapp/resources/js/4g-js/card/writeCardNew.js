@@ -736,6 +736,9 @@ order.writeCard = (function(){
 				//alert(JSON.stringify(order.prodModify.choosedProdInfo));
 				// 提取卡商代码
 				var areaCode = OrderInfo.getAreaCode(prodId);
+				if (areaCode == undefined || areaCode ==""){
+					areaCode = '0';
+				}
 				var param = {
 					factoryCode:_cardDllInfoJson.factoryCode,
 					authCodeType:_cardDllInfoJson.authCodeType,
@@ -1052,17 +1055,27 @@ order.writeCard = (function(){
 	};
 	var _chooseArea = function(){
 		order.area.chooseAreaTree("order/prepare","p_cust_areaId_val","p_cust_areaId",3,function(areaid,areaCode,areaName){
-			/*OrderInfo.staff.soAreaId =areaid;
-			OrderInfo.staff.soAreaName=areaName;
-			OrderInfo.staff.soAreaCode =areaCode;*/
-			//$("#order_prepare").show();
-			//$("#order_tab_panel_content").hide();
-			//$("#step1").hide();
 			$("#p_areaId_val").val(areaName);
 			$("#p_areaId").val(areaid);
 			
 		});
-		//order.area.chooseAreaTreeManger("report/cartMain","p_areaId_val","p_areaId",3);
+	};
+	
+	/*号码选中*/
+	var _endSelectNumW=function(){
+		if(selectedObj==undefined||selectedObj==null){
+			$.alert("提示","请先选择号码！");
+			return;
+		}
+		var phoneNumberVal = $(selectedObj).attr("numberVal"); 
+		var phoneNumber=phoneNumberVal.split("_")[0];
+		$("#phoneNumNew").val(phoneNumber);
+		$("#uimNew").show();
+		$("#phoneNew").hide();
+	};
+	var _backSelectNumW=function(){
+		$("#uimNew").hide();
+		$("#phoneNew").show();
 	};
 	return {
 		writeReadCard : _writeReadCard,
@@ -1070,6 +1083,8 @@ order.writeCard = (function(){
 		writeCard : _writeCard,
 		chooseArea : _chooseArea,
 		getCardType : _getCardType,
-		phoneNumDialog:_phoneNumDialog
+		phoneNumDialog : _phoneNumDialog,
+		endSelectNumW : _endSelectNumW,
+		backSelectNumW : _backSelectNumW
 	};
 })();
