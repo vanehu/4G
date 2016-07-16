@@ -17,6 +17,9 @@ mktRes.terminal = (function($){
 	OrderInfo.termReserveFlag = "";
 	var _newnum = 0;
 	var _oldnum = 0;
+	//报表：用于保存筛选条件的两个数组
+	var terminalBrandsArray = new Array();
+	var terminalTypeArray = new Array();
 	/**
 	 * 校验是否可以进入下一步
 	 */
@@ -1699,18 +1702,22 @@ mktRes.terminal = (function($){
 	};
 	
 	/**
-	 * 终端信息统计查询(精品渠道终端进销存汇总报表(实时数据))查询
+	 * 终端信息统计查询(精品渠道终端进销存汇总报表(实时数据))
 	 */
-	var _terminalStatisticQuery = function(pageIndex) {
+	var _terminalStatisticQuery = function() {
 		var param = {
 			"channelCode" 	: $('#channelInfo').find('option:selected').attr('channelCode'),
 			"channelName" 	: $('#channelInfo').find('option:selected').attr('channelName'),
 			"channelId" 	: $("#channelInfo").val(),
-			"qryType" 		: $("#qryType").val()
+			"qryType" 		: $("#qryType").val(),
+			"startDate"		: $("#startDt").val(),
+			"endDate"		: $("#endDt").val(),
+			"bandList"		: terminalBrandsArray,
+			"typeList"		: terminalTypeArray
 		};
 
-		var keysArray = new Array("channelCode", "channelName", "channelId");
-		if (_checkParam(param, keysArray)) {
+		var keysArray = new Array("channelCode", "channelName", "channelId", "qryType");
+		if (ec.util.checkParam(param, keysArray)) {
 			var url = contextPath + "/mktRes/terminalStatisticQueryList";
 			$.callServiceAsHtml(url, param, {
 				"before" : function() {
@@ -1745,12 +1752,16 @@ mktRes.terminal = (function($){
 			"channelName"	: $('#channelInfo').find('option:selected').attr('channelName'),
 			"channelId" 	: $("#channelInfo").val(),
 			"qryType" 		: $("#qryType").val(),
+			"startDate"		: $("#startDt").val(),
+			"endDate"		: $("#endDt").val(),
 			"pageIndex" 	: pageIndex,
-			"pageSize" 		: 10
+			"pageSize" 		: 10,
+			"bandList"		: terminalBrandsArray,
+			"typeList"		: terminalTypeArray
 		};
 
 		var keysArray = new Array("channelCode", "channelName", "channelId", "qryType");
-		if (_checkParam(param, keysArray)) {
+		if (ec.util.checkParam(param, keysArray)) {
 			var url = contextPath + "/mktRes/terminalStatisticDetailQueryList";
 			$.callServiceAsHtml(url, param, {
 				"before" : function() {
@@ -1774,24 +1785,151 @@ mktRes.terminal = (function($){
 	};
 	
 	/**
-	 * 校验入参中的某些参数是否为空
-	 * param为入参
-	 * keys不可为空必须进行校验的参数，以数组传入
-	 * 校验出错返回false，校验成功返回true
+	 * 精品渠道终端(操作)汇总报表、精品渠道终端(库存)汇总报表 导出Excel，导出所有结果列表
 	 */
-	var _checkParam = function(param, keys){
-		var isNoErr = true;
-		for(var index in keys){
-			var paramValue = param[keys[index]];
-			if(paramValue == null || paramValue == "" || paramValue == undefined){
-				$.alert("提示", keys[index] + "为空，无法继续受理，请尝试刷新页面或重新登录");
-				isNoErr = false;
-				break;
-			}
-		}
+	var _terminalStatisticExport = function(){
+		//为返回所有数据，入参特殊处理
+		var channelCode = $('#channelInfo').find('option:selected').attr('channelCode');
+		var channelName = $('#channelInfo').find('option:selected').attr('channelName');
+		var channelId 	= $("#channelInfo").val();
+		var qryType 	= $("#qryType").val();
+		var startDate 	= "";
+		var endDate	 	= "";
+		var url = contextPath + "/mktRes/terminalStatisticExport?channelCode=" + channelCode
+			+ "&channelId="	+ channelId
+			+ "&startDate="	+ startDate
+			+ "&endDate="	+ endDate
+			+ "&qryType="	+ qryType;
 		
-		return isNoErr;
+		$("#terminalStatisticExport").attr("action", url);
+		$("#terminalStatisticExport").submit();
 	};
+	
+	/**
+	 * 精品渠道终端进销存明细报表、精品渠道终端进销存(库存)明细报表  导出Excel，导出所有数据列表
+	 */
+	var _terminalStatisticDetailExport = function(){
+		//为返回所有数据，入参特殊处理
+		var channelCode	= $('#channelInfo').find('option:selected').attr('channelCode');
+		var channelName	= $('#channelInfo').find('option:selected').attr('channelName');
+		var channelId	= $("#channelInfo").val();
+		var qryType		= $("#qryType").val();
+		var startDate	= "";
+		var endDate		= "";
+		var url = contextPath+"/mktRes/terminalStatisticDetailExport?channelCode=" + channelCode
+			+ "&channelId=" + channelId
+			+ "&qryType="	+ qryType
+			+ "&startDate="	+ startDate
+			+ "&endDate="	+ endDate;
+		
+		$("#terminalStatisticDetailExport").attr("action", url);
+		$("#terminalStatisticDetailExport").submit();
+	};
+
+	/**
+	 * 1.将选择的终端品牌添加到“已选条件”列表中；
+	 * 2.将选择的终端品牌添加到终端品牌数组terminalBrandsArray中；
+	 * 3.根据终端品牌查询终端型号；
+	 */
+	var _queryTerminalType = function(loc,selected){
+		var terminalBrand = $(selected).attr("value");
+		_exchangeSelected(loc,selected);
+		if(terminalBrand != "noFilter"){
+			if(!(terminalBrandsArray.indexOf(terminalBrand) >= 0)){
+				_addToTerminalBrandsSelected(selected);
+				_btnQueryTerminalType(selected);
+				terminalBrandsArray.push(terminalBrand);
+			}
+		} else{
+			_clearTerminalSelected();
+		}
+	};
+
+	/**
+	 * 点击前定位
+	 */
+	var _exchangeSelected = function(loc,selected){
+		$(loc).each(function(){$(this).removeClass("selected");});
+		$(selected).addClass("selected");
+	}; 
+	
+	/**
+	 * 将选择的终端品牌添加到“已选条件”类表
+	 */
+	var _addToTerminalBrandsSelected = function(selected){
+		var terminalBrand = $(selected).attr("value");
+		$("#TerminalBrandsSelected").append("<a href='javascript:void(0);' value="+terminalBrand+">"+terminalBrand+"</a>");
+	};
+	
+	/**
+	 * 将选择的终端型号添加到“已选条件”类表
+	 */
+	var _addToTerminalTypeSelected = function(selected){
+		var terminalType = $(selected).attr("value");
+		$("#TerminalTypeSelected").append("<a href='javascript:void(0);' value="+terminalType+">"+terminalType+"</a>");
+	};
+	
+	/**
+	 * 根据终端品牌查询终端型号列表
+	 */
+	var _btnQueryTerminalType = function(selected){
+		var url = contextPath + "/mktRes/termOrderQuery";
+		var params = {
+			"terminalBrand"	: $(selected).attr("value"),
+			"terminalType"	: "",
+			"terminalColor"	: ""
+		};		
+		var response = $.callServiceAsJson(url, params);
+		if(response.code == 0){
+			var terminalTypeInfos = response.data.terminalTypeInfo;
+			for(var index in terminalTypeInfos){
+				var terminalType = terminalTypeInfos[index].terminalType;
+				 var html = '<a href="javascript:void(0);" value="'+terminalType+'" onclick="mktRes.terminal.selectTerminalType(\'#selectType a\',this)">'+terminalType+'</a>';
+				$("#selectType").append(html);
+			}
+			$("#selectTerminalType").show();
+		}else if (response.code == -2) {
+			$.alertM(response.data);
+			return;
+		}else if (response.code == 1002) {
+			$.alertM(response.data);
+			return;
+		}
+	};
+	
+	/**
+	 * 1.将选择的终端型号添加到“已选条件”列表；
+	 * 2.将选择的终端型号添加到终端型号数组terminalTypeArray中。
+	 */
+	var _selectTerminalType = function(loc,selected){
+		var terminalType = $(selected).attr("value");
+		_exchangeSelected(loc,selected);
+		if(!(terminalTypeArray.indexOf(terminalType) >= 0)){
+			_addToTerminalTypeSelected(selected);
+			terminalTypeArray.push(terminalType);
+		}
+	};
+	
+	/**
+	 * 清空筛选条件
+	 */
+	var _clearTerminalSelected = function(){
+		//清空已选条件->品牌
+		$("#TerminalBrandsSelected").empty();
+		//清空已选条件->机型
+		$("#TerminalTypeSelected").empty();
+		//清空机型筛选
+		$("#selectType").empty();
+		//清空品牌和机型两个缓存数组
+		terminalBrandsArray.length = 0;
+		terminalTypeArray.length = 0;
+		//隐藏机型筛选
+		$("#selectTerminalType").hide();
+		//最后处理品牌筛选的样式
+		$("#selectBrands").children().each(function(){$(this).removeClass("selected");});
+		$("#selectBrands").children().eq(0).addClass("selected");
+	};
+	
 	
 	return {
 		btnQueryTerminal	:_btnQueryTerminal,
@@ -1809,11 +1947,23 @@ mktRes.terminal = (function($){
 		newnum				:_newnum,
 		oldnum				:_oldnum,
 		btnQueryTerminal 	:_btnQueryTerminal,
-		terminalStatisticQuery		:_terminalStatisticQuery,
-		terminalStatisticDetailQuery:_terminalStatisticDetailQuery
+		terminalStatisticQuery			:_terminalStatisticQuery,
+		terminalStatisticExport			:_terminalStatisticExport,
+		terminalStatisticDetailQuery	:_terminalStatisticDetailQuery,
+		terminalStatisticDetailExport	:_terminalStatisticDetailExport,
+		queryTerminalType				:_queryTerminalType,
+		clearTerminalSelected			:_clearTerminalSelected,
+		selectTerminalType				:_selectTerminalType
 	};
 })(jQuery);
 
 //初始化
 $(function(){
+	//时间段选择控件限制
+	$("#endDt").off("click").on("click",function(){
+		$.calendar({ format:'yyyy-MM-dd ',real:'#endDt',minDate:$("#startDt").val(),maxDate:'%y-%M-%d' });
+	});
+	$("#startDt").off("click").on("click",function(){
+		$.calendar({ format:'yyyy-MM-dd ',real:'#startDt',maxDate:$("#endDt").val() });
+	});
 });

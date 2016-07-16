@@ -517,6 +517,26 @@ ec.util=(function(){
 		    }
 		);
 	};
+	
+	/**
+	 * 校验入参中的某些参数是否为空
+	 * param为入参
+	 * keys不可为空必须进行校验的参数，以数组传入
+	 * 校验出错返回false，校验成功返回true
+	 */
+	var _checkParam = function(param, keys){
+		var isNoErr = true;
+		for(var index in keys){
+			var paramValue = param[keys[index]];
+			if(paramValue == null || paramValue == "" || paramValue == undefined){
+				$.alert("提示", "参数" + keys[index] + "为空，无法继续受理，请尝试刷新页面或稍后再试。");
+				isNoErr = false;
+				break;
+			}
+		}
+		
+		return isNoErr;
+	};
     
 	//要暴露出的公共方法
 	return {
@@ -543,6 +563,7 @@ ec.util=(function(){
 		encodeHtml			:_encodeHtml,
 		isObj				:_isObj,
 		isArray				:_isArray,
-		sort				:_sort
+		sort				:_sort,
+		checkParam			:_checkParam
 	};
 })();

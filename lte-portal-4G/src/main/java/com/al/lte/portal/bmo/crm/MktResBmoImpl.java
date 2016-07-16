@@ -1337,7 +1337,7 @@ public class MktResBmoImpl implements MktResBmo {
 					MapUtils.safeAddToMap(subResultMap, "dealTime", formatString);
 					resultList.set(i, subResultMap);
 				} else{
-					MapUtils.safeAddToMap(subResultMap, "dealTime", "资源接口未返回dealTime或时间长度非14位");
+					MapUtils.safeAddToMap(subResultMap, "dealTime", "资源接口未返回dealTime或时间长度非14位["+dealTime+"]");
 					resultList.set(i, subResultMap);
 				}
 			}

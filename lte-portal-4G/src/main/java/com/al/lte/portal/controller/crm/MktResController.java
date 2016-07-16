@@ -57,6 +57,7 @@ import com.al.lte.portal.bmo.staff.StaffChannelBmo;
 import com.al.lte.portal.common.CommonMethods;
 import com.al.lte.portal.common.CommonUtils;
 import com.al.lte.portal.common.EhcacheUtil;
+import com.al.lte.portal.common.ExcelUtil;
 import com.al.lte.portal.common.IDCard;
 import com.al.lte.portal.common.MySimulateData;
 import com.al.lte.portal.common.SysConstant;
@@ -2627,8 +2628,9 @@ public class MktResController extends BaseController {
 	public String terminalStatisticQuery(Model model,HttpServletRequest request,HttpSession session) {
 		
 		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);
-		Map<String, Object> qryParamMap = new HashMap<String, Object>();
 		String qryType = request.getParameter("qryType");
+		Map<String, Object> channelQryParamMap = null;
+		Map<String, Object> terminalTypeQryParamMap = null;
 		
 		//封装查询类型信息
 		if("0".equals(qryType)){
@@ -2640,28 +2642,50 @@ public class MktResController extends BaseController {
 		
 		//封装渠道列表
 		try {
-			qryParamMap.put("staffId", sessionStaff.getStaffId());
-			qryParamMap.put("dbRouteLog", sessionStaff.getCurrentAreaId());
-			qryParamMap.put("relaType", "40");//10:受理; 20:渠道经理; 30:归属; 40:受理+归属; null:查询所有
-			Map<String, Object> resultMap = staffChannelBmo.queryAllChannelByStaffId(qryParamMap, null, sessionStaff);
+			channelQryParamMap = new HashMap<String, Object>();
+			channelQryParamMap.put("staffId", sessionStaff.getStaffId());
+			channelQryParamMap.put("dbRouteLog", sessionStaff.getCurrentAreaId());
+			channelQryParamMap.put("relaType", "40");//10:受理; 20:渠道经理; 30:归属; 40:受理+归属; null:查询所有
+			Map<String, Object> resultMap = staffChannelBmo.queryAllChannelByStaffId(channelQryParamMap, null, sessionStaff);
 			if("0".equals(resultMap.get("code"))){
 				model.addAttribute("cahnnelList", (List<Map<String, Object>>) resultMap.get("resultList"));
 			} else{
-				return super.failedStr(model, ErrorCode.QUERY_CHANNEL, "终端信息统计接口返回数据异常", qryParamMap);
+				return super.failedStr(model, ErrorCode.QUERY_CHANNEL, "终端信息统计接口返回数据异常", channelQryParamMap);
 			}
 		} catch (BusinessException be) {
 			return super.failedStr(model, be);
 		} catch (Exception e) {
-			return super.failedStr(model, ErrorCode.QUERY_CHANNEL, e, qryParamMap);
+			return super.failedStr(model, ErrorCode.QUERY_CHANNEL, e, channelQryParamMap);
+		}
+		
+		//终端品牌列表
+		try {
+			terminalTypeQryParamMap = new HashMap<String, Object>();
+			terminalTypeQryParamMap.put("staffId", sessionStaff.getStaffId());
+			//当品牌机型颜色都不传入时，返回品牌的集合
+			terminalTypeQryParamMap.put("terminalBrand", "");
+			terminalTypeQryParamMap.put("terminalType", "");
+			terminalTypeQryParamMap.put("terminalColor", "");
+			Map<String, Object> resultMap = mktResBmo.termOrderQuery(terminalTypeQryParamMap, null, sessionStaff);
+			if(ResultCode.R_SUCCESS.equals(resultMap.get("code")) && resultMap.get("result") != null){
+				if(resultMap.get("result") != null){
+					HashMap<String, Object> subResultMap = (HashMap<String, Object>) resultMap.get("result");
+					model.addAttribute("brandList", (ArrayList<Map<String, Object>>) subResultMap.get("terminalBrandInfo"));
+				} else{
+					return super.failedStr(model, ErrorCode.TERM_ORDER_QUERY_SERVICE, "终端预约联动查询接口result节点未返回数据", terminalTypeQryParamMap);
+				}
+			} else{
+				return super.failedStr(model, ErrorCode.TERM_ORDER_QUERY_SERVICE, "终端预约联动查询接口返回数据异常", terminalTypeQryParamMap);
+			}
+		} catch (Exception e) {
+			return super.failedStr(model, ErrorCode.TERM_ORDER_QUERY_SERVICE, e, terminalTypeQryParamMap);
 		}
 				
 		return "/mktRes/terminal-statistic-query";
 	}
 	
 	/**
-	 * 终端信息统计查询查询主页面:
-	 * 精品渠道终端(操作)汇总报表
-	 * 精品渠道终端(库存)汇总报表
+	 * 精品渠道终端(操作)汇总报表、精品渠道终端(库存)汇总报表 查询数据列表
 	 * @param qryParam
 	 * @param model
 	 * @return
@@ -2704,7 +2728,7 @@ public class MktResController extends BaseController {
 	}
 	
 	/**
-	 * 终端销售信息明细统计查询主页面
+	 * 精品渠道终端进销存明细报表、精品渠道终端进销存(库存)明细报表 主页面
 	 * @param model
 	 * @param request
 	 * @param session
@@ -2717,6 +2741,7 @@ public class MktResController extends BaseController {
 		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);
 		Map<String, Object> qryParamMap = new HashMap<String, Object>();
 		String qryType = request.getParameter("qryType");
+		Map<String, Object> terminalTypeQryParamMap = null;
 		
 		//封装查询类型信息
 		model.addAttribute("qryType", qryType);	
@@ -2742,12 +2767,35 @@ public class MktResController extends BaseController {
 		} catch (Exception e) {
 			return super.failedStr(model, ErrorCode.QUERY_CHANNEL, e, qryParamMap);
 		}
+		
+		//终端品牌列表
+		try {
+			terminalTypeQryParamMap = new HashMap<String, Object>();
+			terminalTypeQryParamMap.put("staffId", sessionStaff.getStaffId());
+			//当品牌机型颜色都不传入时，返回品牌的集合
+			terminalTypeQryParamMap.put("terminalBrand", "");
+			terminalTypeQryParamMap.put("terminalType", "");
+			terminalTypeQryParamMap.put("terminalColor", "");
+			Map<String, Object> resultMap = mktResBmo.termOrderQuery(terminalTypeQryParamMap, null, sessionStaff);
+			if(ResultCode.R_SUCCESS.equals(resultMap.get("code")) && resultMap.get("result") != null){
+				if(resultMap.get("result") != null){
+					HashMap<String, Object> subResultMap = (HashMap<String, Object>) resultMap.get("result");
+					model.addAttribute("brandList", (ArrayList<Map<String, Object>>) subResultMap.get("terminalBrandInfo"));
+				} else{
+					return super.failedStr(model, ErrorCode.TERM_ORDER_QUERY_SERVICE, "终端预约联动查询接口result节点未返回数据", terminalTypeQryParamMap);
+				}
+			} else{
+				return super.failedStr(model, ErrorCode.TERM_ORDER_QUERY_SERVICE, "终端预约联动查询接口返回数据异常", terminalTypeQryParamMap);
+			}
+		} catch (Exception e) {
+			return super.failedStr(model, ErrorCode.TERM_ORDER_QUERY_SERVICE, e, terminalTypeQryParamMap);
+		}
 				
 		return "/mktRes/terminal-statistic-detail-query";
 	}
 	
 	/**
-	 * 终端销售信息明细统计查询: 精品渠道终端进销存明细报表(当日实时数据)和 精品渠道终端进销存(库存量)明细报表(当日实时数据)
+	 * 精品渠道终端进销存明细报表、精品渠道终端进销存(库存)明细报表 查询结果为当日实时数据
 	 * @param qryParam
 	 * @param model
 	 * @return
@@ -2756,7 +2804,7 @@ public class MktResController extends BaseController {
 	@RequestMapping(value = "/terminalStatisticDetailQueryList", method = {RequestMethod.POST})
 	public String terminalStatisticDetailQueryList(@RequestBody Map<String, Object> qryParam, Model model) {
 		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);
-		Map<String, Object> resultMap = null;		
+		Map<String, Object> resultMap = null;
 		try {
 			resultMap = mktResBmo.terminalStatisticDetailQueryList(qryParam, null, sessionStaff);
 			if (resultMap != null && ResultCode.R_SUCC.equals(resultMap.get("code").toString())){		
@@ -2779,6 +2827,166 @@ public class MktResController extends BaseController {
 		}
 		
 		return "/mktRes/terminal-statistic-detail-query-list";
+	}
+	
+	/**
+	 * 精品渠道终端(操作)汇总报表、精品渠道终端(库存)汇总报表 导出Excel，导出所有结果列表
+	 * @param qryParam
+	 * @param model
+	 * @param response
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	@RequestMapping(value = "/terminalStatisticExport", method = {RequestMethod.POST, RequestMethod.GET})
+	@ResponseBody
+	public JsonResponse terminalStatisticExport(@RequestParam Map<String, Object> qryParam, Model model, HttpServletResponse response) {
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);
+		Map<String, Object> resultMap = null;
+		String qryType = MapUtils.getString(qryParam, "qryType", "0");
+		String[][] headers = null;
+		boolean isParamError = false;
+		String errorMsg = null;
+
+		if(qryParam.get("qryType") != null && !"".equals(qryParam.get("qryType"))){
+			if("0".equals(qryType)){//精品渠道终端(操作)汇总报表
+				//封装表头信息
+				String[][] tempHeaders = {
+					{"brand","type","color","lyQty","htQty","lyhjQty","hyxsQty","ljxsQty","xsQty"},
+					{"品牌","机型","颜色","领用量","退回量","领用合计","合约","裸机","合计"}
+				};
+				headers = tempHeaders;
+			} else if("1".equals(qryType)){//精品渠道终端(库存)汇总报表
+				//封装表头信息
+				String[][] tempHeaders = {
+					{"brand","type","color","kcQty","cqkcQty","zzcQty"},
+					{"品牌","机型","颜色","库存量","超期库存量","自注册激活量"}
+				};
+				headers = tempHeaders;
+			} else{
+				isParamError = true;
+				errorMsg = "参数[qryType:"+qryType+"]非法值，请稍后刷新页面重新尝试。";
+			}
+		} else{
+			isParamError = true;
+			errorMsg = "参数[qryType]缺失，请稍后刷新页面重新尝试。";
+		}
+		
+		if(!isParamError){
+			try {
+				resultMap = mktResBmo.terminalStatisticQueryList(qryParam, null, sessionStaff);
+				if (resultMap != null && ResultCode.R_SUCC.equals(resultMap.get("code").toString())){
+					if(((ArrayList<Map<String, Object>>)resultMap.get("resultList")).size() > 0){
+						String excelTitle = "terminalStatistic_" + qryType;
+						ExcelUtil.exportExcelXlsx(excelTitle, headers, (ArrayList<Map<String, Object>>)resultMap.get("resultList"), response, null);
+					} else{
+						errorMsg = "没有查询到数据，请刷新页面或稍后再试。";
+						return super.successed(errorMsg);
+					}
+				} else{
+					errorMsg = resultMap.get("resultMsg").toString();
+					return super.failed(ErrorCode.ECS_TERMSTATISIICSERVICE, new Exception(errorMsg), qryParam);
+				}
+			} catch (InterfaceException ie) {
+				return super.failed(ie, qryParam, ErrorCode.ECS_TERMSTATISIICSERVICE);
+			} catch (Exception e) {
+				return super.failed(ErrorCode.ECS_TERMSTATISIICSERVICE, e, qryParam);
+			}
+		} else{
+			return super.failed(ErrorCode.PORTAL_INPARAM_ERROR, new Exception(errorMsg), qryParam);
+		}
+				
+		return super.successed("导出成功！");
+	}
+	
+	/**
+	 * 精品渠道终端进销存明细报表、精品渠道终端进销存(库存)明细报表  导出Excel，导出所有数据列表
+	 * @param qryParam
+	 * @param model
+	 * @param response
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	@RequestMapping(value = "/terminalStatisticDetailExport", method = {RequestMethod.POST})
+	@ResponseBody
+	public JsonResponse terminalStatisticDetailExport(@RequestParam Map<String, Object> qryParam, Model model, HttpServletResponse response) {
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);
+		
+		Map<String, Object> resultMap = null;
+		String qryType = null;
+		String[][] headers = null;
+		Map<String, Object> transferInfo = new HashMap<String, Object>();
+		boolean isParamError = false;
+		String errorMsg = null;
+		
+		MapUtils.safeAddToMap(qryParam, "pageIndex", (Integer)1);
+		MapUtils.safeAddToMap(qryParam, "pageSize", (Integer)9999);
+		
+		if(qryParam.get("qryType") != null && !"".equals(qryParam.get("qryType"))){
+			qryType = qryParam.get("qryType").toString();
+			if(qryType.equals("0")){//精品渠道终端进销存明细报表
+				//封装表头信息
+				String[][] tempHeaders = {
+					{"brand","type","color","instCode","dealType","dealTime","staffCode","staffName","storeName"},
+					{"品牌","机型","颜色","串码","操作","操作时间","操作工号","操作姓名","终端仓库"}
+				};
+				headers = tempHeaders;
+				//封装转义信息，dealType需要转义
+				Map<String, Object> paramNameMap = new HashMap<String, Object>();
+				paramNameMap.put("0", "领用");
+				paramNameMap.put("1", "回退");
+				paramNameMap.put("2", "裸机销售");
+				paramNameMap.put("3", "合约销售");
+				transferInfo.put("dealType", paramNameMap);
+			} else if(qryType.equals("1")){//精品渠道终端进销存(库存)明细报表
+				//封装表头信息
+				String[][] tempHeaders = {
+					{"brand","type","color","instCode","dealTime","isSelfRegister","storeName","overFlag"},
+					{"品牌","机型","颜色","串码","入库时间","是否注册激活","终端仓库","库存超期"}
+				};
+				headers = tempHeaders;
+				//封装转义信息，isSelfRegister、overFlag需要转义
+				Map<String, Object> paramNameMapIsSelfRegister = new HashMap<String, Object>();
+				Map<String, Object> paramNameMapOverFlag = new HashMap<String, Object>();
+				paramNameMapIsSelfRegister.put("0", "否");
+				paramNameMapIsSelfRegister.put("1", "是");
+				paramNameMapOverFlag.put("0", "是");
+				paramNameMapOverFlag.put("1", "否");
+				transferInfo.put("isSelfRegister", paramNameMapIsSelfRegister);
+				transferInfo.put("overFlag", paramNameMapOverFlag);
+			} else{
+				isParamError = true;
+				errorMsg = "参数[qryType:"+qryType+"]非法值，请稍后刷新页面重新尝试。";
+			}
+		} else{
+			isParamError = true;
+			errorMsg = "参数[qryType]缺失，请稍后刷新页面重新尝试。";
+		}
+		
+		if(!isParamError){
+			try {
+				resultMap = mktResBmo.terminalStatisticDetailQueryList(qryParam, null, sessionStaff);
+				if (resultMap != null && ResultCode.R_SUCC.equals(resultMap.get("code").toString())){
+					if(((ArrayList<Map<String, Object>>)resultMap.get("resultList")).size() > 0){
+						String excelTitle = "terminalDetailStatistic_" + qryType;
+						ExcelUtil.exportExcelXlsx(excelTitle, headers, (ArrayList<Map<String, Object>>)resultMap.get("resultList"), response, transferInfo);
+					} else{
+						errorMsg = "没有查询到数据，请刷新页面或稍后再试。";
+						return super.successed(errorMsg);
+					}
+				} else{
+					errorMsg = resultMap.get("resultMsg").toString();
+					return super.failed(ErrorCode.ECS_TERMDETAILSTATISTICSERVICE, new Exception(errorMsg), qryParam);
+				}	
+			} catch (InterfaceException ie) {
+				return super.failed(ie, qryParam, ErrorCode.ECS_TERMDETAILSTATISTICSERVICE);
+			} catch (Exception e) {
+				return super.failed(ErrorCode.ECS_TERMDETAILSTATISTICSERVICE, e.getStackTrace().toString(), qryParam);
+			}
+		} else{
+			return super.failed(ErrorCode.PORTAL_INPARAM_ERROR, new Exception(errorMsg), qryParam);
+		}
+				
+		return super.successed("导出成功！");
 	}
 	
 	@RequestMapping(value = "/writeCard/cardResourceQuery", method = RequestMethod.POST)

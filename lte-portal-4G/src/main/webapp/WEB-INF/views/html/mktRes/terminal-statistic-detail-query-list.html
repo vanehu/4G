@@ -14,20 +14,26 @@
 		<thead>
 			<#if qryType == "0"> <!-- 精品渠道终端进销存明细报表 -->
 				<tr>
-					<td width="11%">品牌</td>
-					<td width="21%">机型颜色</td>
-					<td width="17%">串码</td>
-					<td width="17%">操作</td>
-					<td width="17%">操作时间</td>
-					<td width="17%">操作工号</td>
+					<td width="8%">品牌</td>
+					<td width="13%">机型</td>
+					<td width="8%">颜色</td>
+					<td width="14%">串码</td>
+					<td width="9%">操作</td>
+					<td width="13%">操作时间</td>
+					<td width="10%">操作工号</td>
+					<td width="8%">操作姓名</td>
+					<td width="17%">终端仓库</td>
 				</tr>
 			<#else> <!-- 精品渠道终端进销存(库存量)明细报表 -->
 				<tr>
-					<td width="12%">品牌</td>
-					<td width="22%">机型颜色</td>
-					<td width="22%">串码</td>
-					<td width="22%">入库时间</td>
-					<td width="22%">是否注册激活</td>
+					<td width="9%">品牌</td>
+					<td width="13%">机型</td>
+					<td width="9%">颜色</td>
+					<td width="18%">串码</td>
+					<td width="18%">入库时间</td>
+					<td width="7%">是否注册激活</td>
+					<td width="19%">终端仓库</td>
+					<td width="7%">库存超期</td>
 				</tr>
 			</#if>
 		</thead>
@@ -36,7 +42,8 @@
 			   	<#if qryType == "0"> <!-- 精品渠道终端进销存明细报表 -->
 					<tr>
 					    <td>${childList.brand}</td>		<!-- 品牌 -->
-						<td>${childList.desc}</td>		<!-- 机型颜色 -->
+						<td>${childList.type}</td>		<!-- 机型 -->
+						<td>${childList.color}</td>		<!-- 颜色 -->
 						<td>${childList.instCode}</td>	<!-- 串码 -->
 						<td>							<!-- 操作 -->
 							<#if childList.dealType == "0">领用
@@ -48,11 +55,14 @@
 						</td>
 						<td>${childList.dealTime}</td>	<!-- 操作时间 -->
 						<td>${childList.staffCode}</td>	<!-- 操作工号 -->
+						<td>${childList.staffName}</td>	<!-- 操作姓名 -->
+						<td>${childList.storeName}</td>	<!-- 终端仓库 -->
 				   	</tr>
 				<#else> <!-- 精品渠道终端进销存(库存量)明细报表 -->
 					<tr>
 					    <td>${childList.brand}</td>			<!-- 品牌 -->
-						<td>${childList.desc}</td>			<!-- 机型颜色 -->
+						<td>${childList.type}</td>			<!-- 机型 -->
+						<td>${childList.color}</td>			<!-- 颜色 -->
 						<td>${childList.instCode}</td>		<!-- 串码 -->
 						<td>${childList.dealTime}</td>		<!-- 入库时间 -->
 						<td>								<!-- 是否注册激活 -->
@@ -61,6 +71,13 @@
 				     	 	<#else>未知状态
 				     	 	</#if>
 						</td>
+						<td>${childList.storeName}</td>	<!-- 终端仓库 -->
+						<td>							<!-- 库存超期 -->
+							<#if childList.overFlag == "0">是
+				     	 	<#elseif childList.overFlag == "1">否
+				     	 	<#else>未知状态
+				     	 	</#if>
+						</td>	
 				   	</tr>
 				</#if>
 		   	</#list>

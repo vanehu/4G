@@ -14,27 +14,31 @@
 	<table class="numberList reportform">
 		<thead>
 			<tr>
-				<td colspan="2">机 型</td>
-				<td colspan="2">进货量</td>
+				<td colspan="3">终端描述</td>
+				<td colspan="3">进货量</td>
 				<td colspan="3">核销量</td>
 			</tr>
 				<tr>
-					<td width="11%">品牌</td>
-					<td width="24%">机型颜色</td>
-					<td width="13%">领用量</td>
-					<td width="13%">退回量</td>
-					<td width="13%">合约</td>
-					<td width="13%">裸机</td>
-					<td width="13%">合计</td>
+					<td width="10%">品牌</td>
+					<td width="15%">机型</td>
+					<td width="15%">颜色</td>
+					<td width="10%">领用量</td>
+					<td width="10%">退回量</td>
+					<td width="10%">领用合计</td>
+					<td width="10%">合约</td>
+					<td width="10%">裸机</td>
+					<td width="10%">合计</td>
 				</tr>
 		</thead>
 		<tbody>
 			<#list pageModel.list as childList>
 			    <tr>
 				    <td>${childList.brand}</td>		<!-- 品牌 -->
-					<td>${childList.desc}</td>		<!-- 机型颜色 -->
+					<td>${childList.type}</td>		<!-- 机型 -->
+					<td>${childList.color}</td>		<!-- 颜色 -->
 					<td>${childList.lyQty}</td>		<!-- 领用量 -->
 					<td>${childList.htQty}</td>		<!-- 退回量 -->
+					<td>${childList.lyhjQty}</td>	<!-- 领用量合计 -->
 					<td>${childList.hyxsQty}</td>	<!-- 合约 -->
 					<td>${childList.ljxsQty}</td>	<!-- 裸机 -->
 					<td>${childList.xsQty}</td>		<!-- 合计 -->

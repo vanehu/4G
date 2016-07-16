@@ -14,12 +14,13 @@
 	<table class="numberList reportform">
 		<thead>
 			<tr>
-				<td colspan="2">机 型</td>
+				<td colspan="3">终端描述</td>
 				<td colspan="3">库存量</td>
 			</tr>
 				<tr>
 					<td width="17%">品牌</td>
-					<td width="29%">机型颜色</td>
+					<td width="15%">机型</td>
+					<td width="14%">颜色</td>
 					<td width="18%">库存量</td>
 					<td width="18%">超期库存量</td>
 					<td width="18%">自注册激活量</td>
@@ -29,7 +30,8 @@
 			<#list pageModel.list as childList>
 			    <tr>
 				    <td>${childList.brand}</td>		<!-- 品牌 -->
-					<td>${childList.desc}</td>		<!-- 机型颜色 -->
+					<td>${childList.type}</td>		<!-- 机型 -->
+					<td>${childList.color}</td>		<!-- 颜色 -->
 					<td>${childList.kcQty}</td>		<!-- 库存量 -->
 					<td>${childList.cqkcQty}</td>	<!-- 超期库存量 -->
 					<td>${childList.zzcQty}</td>	<!-- 自注册激活量 -->

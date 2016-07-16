@@ -1,5 +1,6 @@
 <@override name="title">${qryTypeName}</@override>
 <@override name="header">
+<script src="${contextPath}/js/third-js/jquery/jquery.form.js" type="text/javascript"></script>
 <script src="${contextPath}/js/4g-js/order/orderInfo.js?${jsversion}" type="text/javascript"></script>
 <script src="${contextPath}/js/busi-js/mktRes/terminal.js?${jsversion}" type="text/javascript"></script>
 <input type="hidden" name="qryType" id="qryType" value="${qryType}"/>
@@ -11,24 +12,61 @@
         <div class="order">
             <div class="order_content" style="border:none; padding:10px">
                 <div class="order_tab_panel" style="display:block;">
-                    <ul class="fillin show billSearch" style="height:80px">
-                        <li class="noBorder" style="width:33%">
-                            <label style="width: 65px;" for="instCode">选择渠道：</label>
-                            <select id="channelInfo" name="channelInfo" style="width:200px">
-								<#list cahnnelList as item>
-									<option value="${item.channelId}" channelCode="${item.channelNbr}" channelName="${item.channelName}">${item.channelName}</option>
+	                <div class="selectList">
+	                	<dl>
+							<dt>选择渠道：</dt>
+							<dd>
+								<select id="channelInfo" name="channelInfo" style="width:200px">
+									<#list cahnnelList as item>
+										<option value="${item.channelId}" channelCode="${item.channelNbr}" channelName="${item.channelName}">${item.channelName}</option>
+									</#list>
+								</select>
+							</dd>&nbsp;
+							<dt>开始时间：</dt>
+							<dd>
+								<input type="text" class="numberTextBox" style="width:160px" id="startDt" readonly="readonly" value="${startDt}"/>
+							</dd>&nbsp;
+							<dt>结束时间：</dt>
+							<dd>
+								<input type="text" class="numberTextBox" style="width:158px" id="endDt" readonly="readonly" value="${endDt}"/>
+							</dd>&nbsp;
+							<dd>
+								<input type="button" class="numberSearch" value="查 询" onclick="mktRes.terminal.terminalStatisticDetailQuery(1)" title=""/>
+								<input type="button" class="numberSearch" value="导出Excel" onclick="mktRes.terminal.terminalStatisticDetailExport()"/> 
+							</dd>&nbsp;
+						</dl>
+						<dl>
+							<dt>品牌筛选：</dt>
+							<dd style="" id="selectBrands">
+								<a href="javascript:void(0);" class="selected" value="noFilter" onclick="mktRes.terminal.queryTerminalType('#selectBrands a',this)">不限</a>
+								<#list brandList as item>
+									<a href="javascript:void(0);" value="${item.terminalBrand}" onclick="mktRes.terminal.queryTerminalType('#selectBrands a',this)">${item.terminalBrand}</a>
 								</#list>
-							</select>
-                            <a class="btn_h30" style="margin:-1px 0px 0px 37px;" onclick="mktRes.terminal.terminalStatisticDetailQuery(1)"><span>查询</span></a>
-                        </li>
-                    </ul>
+							</dd>
+						</dl>
+						<dl id="selectTerminalType" style="display:none">
+							<dt>机型筛选：</dt>
+							<dd style="" id="selectType">
+							<!-- 
+							<a href="javascript:void(0);" class="selected" value="" onclick="mktRes.terminal.queryTerminalType('#selectType a',this)">不限</a>
+							 -->
+							</dd>
+						</dl>
+						<dl id="" style="">
+							<dt>已选条件：</dt>
+							<dd style="" id="TerminalBrandsSelected"></dd>
+							<dd style="" id="TerminalTypeSelected"><dd>
+								<a href="javascript:void(0);" onclick="mktRes.terminal.clearTerminalSelected()">清空筛选</a>
+							</dd>
+						</dl>
+	                </div>
                 </div>
             </div>
+             <form method="post" id="terminalStatisticDetailExport"></form>
            	<div class="order_content" style="border:none; padding:10px" id="terminalStatisticDetailList"></div>
         </div>
     </div>
 </div>
-
 </@override>
 <#if Session["_session_portal_type"]?? && Session["_session_portal_type"]=="MVNO" >
 	<@extends name="/mvno-template.html"/>

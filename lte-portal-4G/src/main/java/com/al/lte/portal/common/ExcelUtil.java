@@ -146,7 +146,7 @@ public class ExcelUtil {
 		String paramNameHeaders[] = headers[1];
 		
 		response.addHeader("Content-Disposition", "attachment;filename="+new String( title.getBytes("gb2312"), "ISO8859-1" )+".xlsx");
-		response.setContentType("application/binary;charset=utf-8");					 
+		response.setContentType("application/binary;charset=utf-8");
 		ServletOutputStream  outputStream = response.getOutputStream();
 		
 		XSSFWorkbook workbook = new XSSFWorkbook();
@@ -193,10 +193,10 @@ public class ExcelUtil {
 				if(transferInfo != null && transferInfo.containsKey(key)){
 					Map<String, Object> transferInfoMap = (Map<String, Object>) transferInfo.get(key);
 					String infoStr = transferInfoMap.get(dataMap.get(key)).toString();
-					rowOfExcel.createCell(k++).setCellValue(null == infoStr ? "" : infoStr);
+					rowOfExcel.createCell(k++).setCellValue(null == infoStr ? "N/A" : infoStr);
 				} else{
-					rowOfExcel.createCell(k++).setCellValue(null == dataMap.get(key) ? "" : dataMap.get(key).toString());
-				}			
+					rowOfExcel.createCell(k++).setCellValue(null == dataMap.get(key) ? "N/A" : dataMap.get(key).toString());
+				}
 			}
 		}
 		
@@ -205,6 +205,7 @@ public class ExcelUtil {
 		} catch (IOException e) {
 			throw new BusinessException(ErrorCode.BATCH_EXPORTEXCEL_ERROR, null, null, e);
 		} finally{
+			outputStream.flush();
 			outputStream.close();
 		}
 	}
