@@ -1959,11 +1959,11 @@ mktRes.terminal = (function($){
 
 //初始化
 $(function(){
-	//时间段选择控件限制
+	//时间段选择控件
 	$("#endDt").off("click").on("click",function(){
 		$.calendar({ format:'yyyy-MM-dd ',real:'#endDt',minDate:$("#startDt").val(),maxDate:'%y-%M-%d' });
 	});
 	$("#startDt").off("click").on("click",function(){
-		$.calendar({ format:'yyyy-MM-dd ',real:'#startDt',maxDate:$("#endDt").val() });
+		$.calendar({ format:'yyyy-MM-dd ',real:'#startDt',maxDate:'%y-%M-%d' });
 	});
 });

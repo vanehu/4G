@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -2875,12 +2876,15 @@ public class MktResController extends BaseController {
 			try {
 				resultMap = mktResBmo.terminalStatisticQueryList(qryParam, null, sessionStaff);
 				if (resultMap != null && ResultCode.R_SUCC.equals(resultMap.get("code").toString())){
+					String excelTitle = "terminalStatistic_" + qryType;
 					if(((ArrayList<Map<String, Object>>)resultMap.get("resultList")).size() > 0){
-						String excelTitle = "terminalStatistic_" + qryType;
 						ExcelUtil.exportExcelXlsx(excelTitle, headers, (ArrayList<Map<String, Object>>)resultMap.get("resultList"), response, null);
 					} else{
-						errorMsg = "没有查询到数据，请刷新页面或稍后再试。";
-						return super.successed(errorMsg);
+						Map<String, Object> noticeUserNoData = new LinkedHashMap<String, Object>();
+						noticeUserNoData.put("brand", "没有查询到数据");
+						List<Map<String, Object>> dataList = new ArrayList<Map<String, Object>>();
+						dataList.add(noticeUserNoData);
+						ExcelUtil.exportExcelXlsx(excelTitle, headers, dataList, response, null);
 					}
 				} else{
 					errorMsg = resultMap.get("resultMsg").toString();
@@ -2966,12 +2970,15 @@ public class MktResController extends BaseController {
 			try {
 				resultMap = mktResBmo.terminalStatisticDetailQueryList(qryParam, null, sessionStaff);
 				if (resultMap != null && ResultCode.R_SUCC.equals(resultMap.get("code").toString())){
+					String excelTitle = "terminalDetailStatistic_" + qryType;
 					if(((ArrayList<Map<String, Object>>)resultMap.get("resultList")).size() > 0){
-						String excelTitle = "terminalDetailStatistic_" + qryType;
 						ExcelUtil.exportExcelXlsx(excelTitle, headers, (ArrayList<Map<String, Object>>)resultMap.get("resultList"), response, transferInfo);
 					} else{
-						errorMsg = "没有查询到数据，请刷新页面或稍后再试。";
-						return super.successed(errorMsg);
+						Map<String, Object> noticeUserNoData = new LinkedHashMap<String, Object>();
+						noticeUserNoData.put("brand", "没有查询到数据");
+						List<Map<String, Object>> dataList = new ArrayList<Map<String, Object>>();
+						dataList.add(noticeUserNoData);
+						ExcelUtil.exportExcelXlsx(excelTitle, headers, dataList, response, null);
 					}
 				} else{
 					errorMsg = resultMap.get("resultMsg").toString();
