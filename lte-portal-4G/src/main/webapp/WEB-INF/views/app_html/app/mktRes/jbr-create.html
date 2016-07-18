@@ -19,11 +19,11 @@
 			</div>
 			<div class="form-group">
 				<label for="orderAttrName">经办人姓名<span class="text-warning"></span></label>
-            	<input type="text" class="form-control" id="orderAttrName"  maxlength="100">
+            	<input type="text" class="form-control" id="orderAttrName"  maxlength="100" readonly="readonly">
 			</div>
 			<div class="form-group" id="div_cm_identidiesType">
 	            <label for="orderPartyTypeCd">客户类型</label>
-	            <select id="orderPartyTypeCd" class="myselect form-control" onchange="cust.jbrpartyTypeCdChoose(this,'orderIdentidiesTypeCd')">
+	            <select id="orderPartyTypeCd" class="myselect form-control" onchange="cust.jbrpartyTypeCdChoose(this,'orderIdentidiesTypeCd')" disabled="disabled">
 	            	<option value=1 >个人</option>
                     <option value=2>政企客户</option>
 	            </select>
@@ -56,7 +56,7 @@
 			</div>
 			<div class="form-group">
 				<label for="orderAttrAddr">证件地址<span class="text-warning"></span></label>
-            	<input type="text" class="form-control" id="orderAttrAddr" maxlength="200">
+            	<input type="text" class="form-control" id="orderAttrAddr" maxlength="200" readonly="readonly">
 			</div>
 		</div>
          </div>

@@ -273,7 +273,9 @@ offerChange = (function() {
 	                value : param.setValue,
 	                state : "ADD"
 	            };
-	            busiOrder.data.ooParams.push(ooParam);
+	            if (ec.util.isObj(param.setValue)) {
+					busiOrder.data.ooParams.push(ooParam);
+				}
 			}				
 		}
 		

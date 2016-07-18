@@ -1100,6 +1100,9 @@ public class OrderController extends BaseController {
     public String main(@RequestBody Map<String, Object> param, Model model,
 			@LogOperatorAnn String flowNum, HttpServletResponse response,HttpSession session) {
     	String forward = "" ;
+    	SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);
+    	String channelCode =sessionStaff.getCurrentChannelCode();
+    	model.addAttribute("channelCode", channelCode);
     	if("2".equals(String.valueOf(param.get("actionFlag")))){  //套餐变更
     		if (MapUtils.isNotEmpty(param)) {
         		model.addAttribute("main", param);

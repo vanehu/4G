@@ -1131,7 +1131,9 @@ SoOrder = (function() {
 		                value : param.setValue,
 		                state : "ADD"
 		            };
-					busiOrder2.data.ooParams.push(ooParam);
+					if (ec.util.isObj(param.setValue)) {
+						busiOrder2.data.ooParams.push(ooParam);
+					}
 				}				
 			}
 			busiOrders.push(busiOrder2);
@@ -1878,7 +1880,9 @@ SoOrder = (function() {
 	                value : param.setValue,
 	                state : "ADD"
 	            };
-	            busiOrder.data.ooParams.push(ooParam);
+	            if (ec.util.isObj(param.setValue)) {
+					busiOrder.data.ooParams.push(ooParam);
+				}
 			}				
 		}
 		
@@ -1902,13 +1906,14 @@ SoOrder = (function() {
 				var dealer = {
 					itemSpecId : CONST.BUSI_ORDER_ATTR.DEALER,
 					role : $(this).find("select").val(),
-					value : $(this).find("input").attr("staffid") 
+					value : $(this).find("input").attr("staffid")//,
+					//channelNbr : $("#cur_channelCode").val()
 				};
 				busiOrder.data.busiOrderAttrs.push(dealer);				
 				var dealer_name = {
 					itemSpecId : CONST.BUSI_ORDER_ATTR.DEALER_NAME,
 					role : $(this).find("select").val(),
-					value : $(this).find("input").attr("value") 
+					value : $(this).find("input").attr("value")
 				};
 				busiOrder.data.busiOrderAttrs.push(dealer_name);
 			});
@@ -2023,22 +2028,49 @@ SoOrder = (function() {
 			});
 		}
 		//发展人
-//		var $tr;
-//		if(OrderInfo.actionFlag==6){ //加装发展人根据产品
-//			$tr = $("li[name='tr_"+prodId+"']");
-//		}else{
-//			$tr = $("li[name='tr_"+OrderInfo.offerSpec.offerSpecId+"']");
-//		}
-//		if($tr!=undefined){
-//			$tr.each(function(){   //遍历产品有几个发展人
-//				var dealer = {
-//					itemSpecId : CONST.BUSI_ORDER_ATTR.DEALER,
-//					role : $(this).find("select").val(),
-//					value : $(this).find("input").attr("staffid") 
-//				};
-//				busiOrder.data.busiOrderAttrs.push(dealer);
-//			});
-//		}
+		var $tr;
+		if(OrderInfo.actionFlag==6){ //加装发展人根据产品
+			$tr = $("li[name='tr_"+prodId+"']");
+		}else{
+			$tr = $("li[name='tr_"+OrderInfo.offerSpec.offerSpecId+"']");
+		}
+		if(OrderInfo.actionFlag == 1 || OrderInfo.actionFlag == 14){
+			if($tr!=undefined){
+				$tr.each(function(){   //遍历产品有几个发展人
+					var dealer = {
+						itemSpecId : CONST.BUSI_ORDER_ATTR.DEALER,
+						role : $(this).find("select").val(),
+						value : $(this).find("input").attr("staffid")//, 
+						//channelNbr : $("#cur_channelCode").val()
+					};
+					busiOrder.data.busiOrderAttrs.push(dealer);
+					var dealer_name = {
+						itemSpecId : CONST.BUSI_ORDER_ATTR.DEALER_NAME,
+						role : $(this).find("select").val(),
+						value : $(this).find("input").attr("value") 
+					};
+					busiOrder.data.busiOrderAttrs.push(dealer_name);
+				});
+			}
+		}else{
+			if($tr!=undefined){
+				$tr.each(function(){   //遍历产品有几个发展人
+					var dealer = {
+						itemSpecId : CONST.BUSI_ORDER_ATTR.DEALER,
+						role : $(this).find("select").val(),
+						value : $(this).find("input").attr("staffid")//, 
+						//channelNbr : $("#cur_channelCode").val()
+					};
+					busiOrder.data.busiOrderAttrs.push(dealer);
+					var dealer_name = {
+						itemSpecId : CONST.BUSI_ORDER_ATTR.DEALER_NAME,
+						role : $(this).find("select").val(),
+						value : $(this).find("input").attr("value") 
+					};
+					busiOrder.data.busiOrderAttrs.push(dealer_name);
+				});
+			}
+		}
 		
 		var acctId= -1;
 		var acctCd=-1;

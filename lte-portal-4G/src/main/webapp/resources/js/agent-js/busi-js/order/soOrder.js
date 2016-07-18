@@ -1219,7 +1219,9 @@ SoOrder = (function() {
 		                value : param.setValue,
 		                state : "ADD"
 		            };
-					busiOrder2.data.ooParams.push(ooParam);
+					if (ec.util.isObj(param.setValue)) {
+						busiOrder2.data.ooParams.push(ooParam);
+					}
 				}				
 			}
 			busiOrders.push(busiOrder2);
@@ -1973,7 +1975,9 @@ SoOrder = (function() {
 	                value : param.setValue,
 	                state : "ADD"
 	            };
-	            busiOrder.data.ooParams.push(ooParam);
+	            if (ec.util.isObj(param.setValue)) {
+					busiOrder.data.ooParams.push(ooParam);
+				}
 			}				
 		}
 		

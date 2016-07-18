@@ -1039,7 +1039,7 @@ order.phoneNumber = (function(){
 				var phoneNbrPoolList= response.data.phoneNbrPoolList;
 //				var $div =$('<div class="input-group select-top"></div>');
 //				var $span=$('<span class="input-group-addon select-span"></span>');
-				var $sel = $('<select id="nbrPool" class="selectpicker show-tick form-control select-top"></select>');  
+				var $sel = $('<select id="nbrPool" class="selectpicker show-tick form-control select-top" onchange="order.phoneNumber.btnQueryPhoneNumber()"></select>');  
 				var $defaultopt = $('<option value="" selected="selected">请选择号池</option>');
 				$sel.append($defaultopt);
 				if(phoneNbrPoolList!=null){

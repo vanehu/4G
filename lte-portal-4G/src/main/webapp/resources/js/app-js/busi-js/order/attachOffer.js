@@ -1865,7 +1865,8 @@ AttachOffer = (function() {
 			instCode : instCode,
 			flag : flag,
 		//	mktResId : resId,
-			offerSpecId: offerSpecId
+			offerSpecId: offerSpecId,
+			termGroup : terminalGroupId //606920 销售品构成查询接口超时 update by yanghm
 			//termGroup : terminalGroupId  update by huangjj #13336需求资源要求这个参数不传
 		};
 		var data = query.prod.checkTerminal(param);
@@ -2066,7 +2067,14 @@ AttachOffer = (function() {
 					var isset = false;
 					$.each(offer.offerSpec.offerSpecParams,function(){
 						var itemInfo = CacheData.getOfferParam(prodId,offer.offerId,this.itemSpecId);
-						itemInfo.setValue = $("#"+prodId+"_"+this.itemSpecId).val();	
+						itemInfo.setValue = $("#"+prodId+"_"+this.itemSpecId).val();
+						if(itemInfo.itemSpecId == CONST.ITEM_SPEC.PROT_NUMBER){
+							itemInfo.setValue = $("#select1").val();
+						} else if (itemSpec.dateSourceTypeCd == "17") {//搜索框类型组件获取code属性中的值作为设置值
+							itemSpec.setValue = $.trim($("#" + prodId + "_" + this.itemSpecId).attr("code"));
+						} else {
+						    itemInfo.setValue = $("#"+prodId+"_"+this.itemSpecId).val();
+						}
 						if(itemInfo.value!=itemInfo.setValue){
 							itemInfo.isUpdate = "Y";
 							isset = true;
@@ -3992,6 +4000,55 @@ AttachOffer = (function() {
 		}
 	};
 	
+	//学校信息搜索
+	var _searchSchools = function (id) {
+		var keyword= $.trim($("#"+id).val());
+		if(!ec.util.isObj(keyword)){
+			$.alert("提示","输入学校名称不能为空！");
+			return;
+		}
+		var f=$("#paramForm");
+		$("#paramForm").children().css('display','none');//全部子节点
+		$(".modal-header").children().css('display','none');//全部子节点
+		$("#search_info_div").remove();//清除原有的追加节点信息
+		var schools = CacheData.getSearchs();
+		var schools_filter=[];
+		$.each(schools, function () {
+			var currentText=this.text;
+			if (currentText.indexOf(keyword) != -1) {
+				schools_filter.push(this);
+			}
+		});
+		var div_info='<div id="search_info_div" class="absolute_canshu" style="display: block;">';
+		var div_schools_info='<div id="schools_info_content_div" style="width:100%; height: 180px; overflow-y: scroll;">';
+		var table_info='<div id="search_info_div_close" class="userclose" onclick="AttachOffer.schoolClose()"></div><table class="contract_list" style="width:360px;"><thead><tr><td width="300">学校信息</td></tr></thead><tbody>';
+		var tr_td = "";
+		var tr_a="";
+		$.each(schools_filter,function(){
+			tr_a+='<a href="#" class="list-group-item school-list" onclick="AttachOffer.selectSearch(\''+id+'\',\''+this.value+'\',\''+this.text+'\')" id="'+this.value+'">'
+			+'<h5 class="list-group-item-heading">'+this.text+'</h5></a>'
+			tr_td += '<tr onclick="AttachOffer.selectSearch(\''+id+'\',\''+this.value+'\',\''+this.text+'\')" id="'+this.value+'"><td>'+this.text+'</td></tr>';
+		});
+		if(schools_filter.length>5){
+			div_schools_info='<div id="schools_info_content_div" style="overflow-x:hidden;overflow-y:auto;width:100%;height: 200px;">';
+		}
+		f.append(div_info+div_schools_info+tr_a+"</div></div>");
+		//$("#"+id).parent().append(div_info+div_schools_info+table_info+tr_td+"</tbody></table></div></div>");
+		return schools_filter;
+	};
+
+	//选择搜索结果集中的一条记录
+	var _searchSelect=function(id,code,name){
+		$("#paramForm").children().css('display','block');//全部子节点
+		$(".modal-header").children().css('display','block');//全部子节点
+		$("#"+id).val(name);
+		$("#"+id).attr("code",code);
+		$("#search_info_div").hide();
+	};
+	//关闭搜索结果集
+	var _searchClose=function(){
+		$("#search_info_div").hide();
+	};
 	//
 	return {
 		offer_showMainParam		: _offer_showMainParam,
@@ -4057,7 +4114,10 @@ AttachOffer = (function() {
 		newViceParam:_newViceParam,
 		queryOfferAndServDependForCancel : _queryOfferAndServDependForCancel,
 		delServSpec             : _delServSpec,
-		phone_checkOfferExcludeDepend	: _phone_checkOfferExcludeDepend
+		phone_checkOfferExcludeDepend	: _phone_checkOfferExcludeDepend,
+		searchSchools			: _searchSchools,
+		selectSearch			: _searchSelect,
+		schoolClose				: _searchClose
 		
 	};
 })();

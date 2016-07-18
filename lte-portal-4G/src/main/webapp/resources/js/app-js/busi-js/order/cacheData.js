@@ -85,7 +85,7 @@ CacheData = (function() {
 					if(param.value==undefined){
 						param.value = "";
 					}
-					content += _getStrByParam(prodId,param,param.itemSpecId,param.value);
+					content += _getStrByParam(prodId,param,spec.servSpecId,param.itemSpecId,param.value);
 				}
 			}
 		}else if(flag==3){ //功能产品实例参数
@@ -102,7 +102,7 @@ CacheData = (function() {
 					if(param.value==undefined){
 						param.value = "";
 					}
-					content += _getStrByParam(prodId,param,param.itemSpecId,param.value);
+					content += _getStrByParam(prodId,param,spec.servSpecId,param.itemSpecId,param.value);
 				}
 			}
 		} else if(flag==1){  //销售品实例参数
@@ -118,7 +118,7 @@ CacheData = (function() {
 								}
 							});
 						}
-						content += _getStrByParam(prodId,this,this.itemSpecId,this.value);
+						content += _getStrByParam(prodId,this,spec.servSpecId,this.itemSpecId,this.value);
 					});
 				}
 			}
@@ -126,7 +126,7 @@ CacheData = (function() {
 			if(ec.util.isArray(spec.offerSpecParams)){
 				var offerSpecParams = spec.offerSpecParams;
 				$.each(offerSpecParams,function(){
-					content += _getStrByParam(prodId,this,this.itemSpecId,this.value);
+					content += _getStrByParam(prodId,this,spec.servSpecId,this.itemSpecId,this.value);
 				});
 			}
 			/*if(spec.offerRoles!=undefined && spec.offerRoles.length>0){
@@ -168,14 +168,32 @@ CacheData = (function() {
 	};
 	
 	//根据参数获取字符串
-	var _getStrByParam = function(prodId,param){
+	var _getStrByParam = function(prodId,param,specId){
 		var itemSpecId = param.itemSpecId;
 		if(param.setValue==undefined){  //没有设置过参数
 			param.setValue = param.value; //赋值成默认值
 		}
 		var paramVal = param.setValue;
 		var selectStr = ""; //返回字符串
-		if(ec.util.isArray(param.valueRange)){ //下拉框
+		if (ec.util.isArray(param.valueRange) && param.dateSourceTypeCd == "17") {//带搜索功能输入组件
+			var id=prodId+'_'+itemSpecId;
+			if(ec.util.isObj(specId)){
+				id=prodId+'_'+specId+'_'+itemSpecId;
+			}
+			selectStr = selectStr + '<div class="form-group pack-pro-box"><label for="exampleInputPassword1">' + param.name + ': </label>';
+			CacheData.setSearchs(param.valueRange);
+			if(ec.util.isObj(paramVal)){
+				selectStr = selectStr + '<div class="input-group">'
+				+'<input id="'+id+'" code="'+paramVal+'" value="'+CacheData.getSearchName(paramVal)+'" placeholder="请输入学校名称" data-validate="validate(required,reg:()) on(blur)" class="inputWidth183px" type="text" />'
+				+'<span class="input-group-btn">'
+				+'<button class="btn btn-default"  onclick="AttachOffer.searchSchools(\''+id+'\');" type="button">搜索</button></span></div></div>'
+			}else{
+				selectStr = selectStr  + '<div class="input-group" style="width: 100%;">'
+				+ '<input id="'+id+'" placeholder="请输入学校名称" data-validate="validate(required,reg:()) on(blur)" class="inputWidth183px" type="text" />'
+				+'<span class="input-group-btn">'
+				+'<button class="btn btn-default"  onclick="AttachOffer.searchSchools(\''+id+'\');" type="button">搜索</button></span></div></div>'
+			}
+		} else if(ec.util.isArray(param.valueRange)){ //下拉框
 			var optionStr = "";
 			if(param.rule.isConstant=='Y'){ //不可修改
 				selectStr = param.name + ": <select class='inputWidth183px' id="+prodId+"_"+itemSpecId+" disabled='disabled'>"; 
@@ -210,8 +228,8 @@ CacheData = (function() {
 							selectStr += param.name + ' : <input id="'+prodId+'_'+itemSpecId  
 							+'" class="inputWidth183px" type="text" data-validate="validate(required,reg:'+param.rule.maskMsg+'('+param.rule.mask+')) on(blur)" value="'+paramVal+'" ><label class="f_red">*</label><br>'; 
 						}else{
-							selectStr += param.name + ' : <input id="'+prodId+'_'+itemSpecId  
-							+'" class="inputWidth183px" type="text" data-validate="validate(reg:'+param.rule.maskMsg+'('+param.rule.mask+')) on(blur)" value="'+paramVal+'" ><br>'; 
+							selectStr += '<div class="form-group pack-pro-box"><label for="exampleInputPassword1">'+param.name + ' : </label><input id="'+prodId+'_'+itemSpecId  
+							+'" class="inputWidth183px" type="text" data-validate="validate(reg:'+param.rule.maskMsg+'('+param.rule.mask+')) on(blur)" value="'+paramVal+'" ></div>'; 
 						}
 					}
 				}
@@ -1084,6 +1102,43 @@ CacheData = (function() {
 			}
 		}
 	};
+	
+	//获取搜索集信息
+	var searchs=[];
+	var _getSearchs=function(){
+		return searchs;
+	};
+	var _setSearchs=function(values){
+		searchs=values;
+	};
+	//通过学校编码获取学校名称
+	var _getSearchName=function(school_code){
+		var schools_name = "";
+		if(!ec.util.isObj(school_code)){
+			$.alert("提示","学校编码不能为空！");
+			return "";
+		}
+		$.each(searchs,function(){
+			if(this.value==school_code){
+				schools_name=this.text;
+			}
+		});
+		return schools_name;
+	};
+	//通过学校名称获取学校编码
+	var _getSearchCode=function(value){
+		var key = "";
+		if(!ec.util.isObj(value)){
+			$.alert("提示","学校名称不能为空！");
+			return "";
+		}
+		$.each(searchs,function(){
+			if(this.text==value){
+				key=this.value;
+			}
+		});
+		return key;
+	};
 	return {
 		setParam				: _setParam,
 		setServParam			: _setServParam,
@@ -1120,6 +1175,10 @@ CacheData = (function() {
 		parseOffer				: _parseOffer,
 		parseOfferApp         : _parseOfferApp,
 		parseServApp          : _parseServApp,
-		setRecordId:_setRecordId
+		setRecordId:_setRecordId,
+		setSearchs				: _setSearchs,
+		getSearchs				: _getSearchs,
+		getSearchName			: _getSearchName,
+		getSearchCode			: _getSearchCode
 	};
 })();

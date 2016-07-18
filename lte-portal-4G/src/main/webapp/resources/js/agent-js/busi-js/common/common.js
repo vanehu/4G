@@ -176,7 +176,7 @@ common = (function($) {
 	
 	//客户端调用此方法返回到上一页 1 为prepare页面  2为order-content（填单）页面 3为order-confirm（订单确认和收银台）页面 4为order-print（打印）页面
 	var _callReturnBack=function(){
-//		alert("OrderInfo.returnFlag="+OrderInfo.returnFlag+"——OrderInfo.actionFlag="+OrderInfo.actionFlag+"——OrderInfo.order.step="+OrderInfo.order.step+"");
+		//alert("OrderInfo.returnFlag="+OrderInfo.returnFlag+"——OrderInfo.actionFlag="+OrderInfo.actionFlag+"——OrderInfo.order.step="+OrderInfo.order.step+"");
 		$.unecOverlay();//网络出现故障或手机出现故障时按返回关闭“加载中”提示框
 		//如果收费成功  安卓手机返回按钮不可返回
 		if($("#toCharge").length>0){
@@ -304,19 +304,19 @@ common = (function($) {
 								});
 							}
 						}
+						_callCloseWebview();
 						return;
 					},no:function(){
 					return;
 				}},"question");
-			}
-			//
-			if(OrderInfo.actionFlag==1){
+			}else if(OrderInfo.actionFlag==1){
 				order.main.lastStep(function(){
 					_callCloseWebview();
 				});
 				return;
-			}
+			}else{
 			_callCloseWebview();
+			}
 		}else if(OrderInfo.order.step==2){
 			if(OrderInfo.actionFlag==3||OrderInfo.actionFlag==9){
 				_callCloseWebview();

@@ -1021,21 +1021,112 @@ AttachOffer = (function() {
 	
 	//订购附属销售品
 	var _addOfferSpec = function(prodId,offerSpecId){
-		var newSpec = _setSpec(prodId,offerSpecId);
+		var newSpec = CacheData.getOfferSpec(prodId,offerSpecId);  //没有在已选列表里面
 		if(newSpec==undefined){ //没有在已开通附属销售列表中
-			return;
+			//重新获取销售品构成
+			var param = {
+					offerSpecId:offerSpecId,
+					partyId : OrderInfo.cust.custId,
+					offerTypeCd:2	
+				};	
+				if(OrderInfo.actionFlag==1 || OrderInfo.actionFlag==2 || OrderInfo.actionFlag==6 || OrderInfo.actionFlag==14){//新装业务,添加主套餐id用于查询终端
+					param.mainOfferSpecId = OrderInfo.offerSpec.offerSpecId;
+				}
+				if(OrderInfo.actionFlag==3){//可选包
+					param.mainOfferSpecId = order.prodModify.choosedProdInfo.prodOfferId;
+				}
+				if(OrderInfo.actionFlag==21){//副卡换挡
+					if(ec.util.isArray(OrderInfo.viceOfferSpec)){
+						$.each(OrderInfo.viceOfferSpec,function(){
+							if(this.prodId==prodId){
+								param.mainOfferSpecId=this.offerSpecId;
+								return false;
+							}
+						});
+					}
+				}
+				param.areaId = OrderInfo.cust.areaId;
+				var url= contextPath+"/agent/offer/queryOfferSpec";
+				$.callServiceAsJsonGet(url,param,{
+					"before":function(){
+						$.ecOverlay("<strong>正在查询销售品规格构成中,请稍后....</strong>");
+					},
+					"done" : function(response){
+						$.unecOverlay();
+						if (response.code==0) {
+							if(response.data){								
+								offerSpec=response.data.offerSpec;
+								if(offerSpec ==undefined || offerSpec.offerRoles ==undefined){
+									$.alert("提示","返回的销售品规格构成结构不对！");
+									return false;
+								}
+								if(offerSpec.offerSpecId==undefined || offerSpec.offerSpecId==""){
+									$.alert("提示","销售品规格ID未返回，继续受理将出现异常！");
+									return false;
+								}
+								if(offerSpec.offerSpecName==undefined || offerSpec.offerSpecName==""){
+									$.alert("提示","销售品规格名称未返回，继续受理将出现异常！");
+									return false;
+								}
+								var offerRoles = []; //过滤角色
+								var prodSpecId = OrderInfo.getProdSpecId(prodId);
+								var flag = false;
+								$.each(offerSpec.offerRoles,function(){
+									$.each(this.roleObjs,function(){
+										if(this.objId==prodSpecId){
+											flag = true;
+											return false;
+										}
+									});
+									if(flag){
+										offerRoles.push(this);
+										return false;
+									}
+								});
+								offerSpec.offerRoles = offerRoles;
+								newSpec=offerSpec;
+								if(!newSpec){
+									return;
+								}
+								CacheData.setOfferSpec(prodId,newSpec);
+								if(newSpec==undefined){ //没有在已开通附属销售列表中
+									return;
+								}
+								var content = CacheData.getOfferProdStr(prodId,newSpec,0);
+								//$.unecOverlay();
+								$.confirm("信息确认",content,{ 
+									yes:function(){
+										CacheData.setServ2OfferSpec(prodId,newSpec);
+									},
+									yesdo:function(){
+										_checkOfferExcludeDepend(prodId,newSpec);
+									},
+									no:function(){
+									}
+								});
+							}
+						}else if (response.code==-2){
+							$.alertM(response.data);
+						}else {
+							$.alert("提示","查询销售品规格构成失败,稍后重试");
+						}
+					}
+				});
+		}else{
+			var content = CacheData.getOfferProdStr(prodId,newSpec,0);
+			//$.unecOverlay();
+			$.confirm("信息确认",content,{ 
+				yes:function(){
+					CacheData.setServ2OfferSpec(prodId,newSpec);
+				},
+				yesdo:function(){
+					_checkOfferExcludeDepend(prodId,newSpec);
+				},
+				no:function(){
+				}
+			});
 		}
-		var content = CacheData.getOfferProdStr(prodId,newSpec,0);
-		$.confirm("信息确认",content,{ 
-			yes:function(){
-				CacheData.setServ2OfferSpec(prodId,newSpec);
-			},
-			yesdo:function(){
-				_checkOfferExcludeDepend(prodId,newSpec);
-			},
-			no:function(){
-			}
-		});
+
 	};
 	
 	//根据预校验返回订购附属销售品
@@ -2082,7 +2173,14 @@ AttachOffer = (function() {
 					var isset = false;
 					$.each(offer.offerSpec.offerSpecParams,function(){
 						var itemInfo = CacheData.getOfferParam(prodId,offer.offerId,this.itemSpecId);
-						itemInfo.setValue = $("#"+prodId+"_"+this.itemSpecId).val();	
+						itemInfo.setValue = $("#"+prodId+"_"+this.itemSpecId).val();
+						if(itemInfo.itemSpecId == CONST.ITEM_SPEC.PROT_NUMBER){
+							itemInfo.setValue = $("#select1").val();
+						} else if (itemSpec.dateSourceTypeCd == "17") {//搜索框类型组件获取code属性中的值作为设置值
+							itemSpec.setValue = $.trim($("#" + prodId + "_" + this.itemSpecId).attr("code"));
+						} else {
+						    itemInfo.setValue = $("#"+prodId+"_"+this.itemSpecId).val();
+						}
 						if(itemInfo.value!=itemInfo.setValue){
 							itemInfo.isUpdate = "Y";
 							isset = true;
@@ -4249,6 +4347,55 @@ AttachOffer = (function() {
 		}
 	};
 	
+	//学校信息搜索
+	var _searchSchools = function (id) {
+		var keyword= $.trim($("#"+id).val());
+		if(!ec.util.isObj(keyword)){
+			$.alert("提示","输入学校名称不能为空！");
+			return;
+		}
+		var f=$("#paramForm");
+		$("#paramForm").children().css('display','none');//全部子节点
+		$(".modal-header").children().css('display','none');//全部子节点
+		$("#search_info_div").remove();//清除原有的追加节点信息
+		var schools = CacheData.getSearchs();
+		var schools_filter=[];
+		$.each(schools, function () {
+			var currentText=this.text;
+			if (currentText.indexOf(keyword) != -1) {
+				schools_filter.push(this);
+			}
+		});
+		var div_info='<div id="search_info_div" class="absolute_canshu" style="display: block;">';
+		var div_schools_info='<div id="schools_info_content_div" style="width:100%; height: 180px; overflow-y: scroll;">';
+		var table_info='<div id="search_info_div_close" class="userclose" onclick="AttachOffer.schoolClose()"></div><table class="contract_list" style="width:360px;"><thead><tr><td width="300">学校信息</td></tr></thead><tbody>';
+		var tr_td = "";
+		var tr_a="";
+		$.each(schools_filter,function(){
+			tr_a+='<a href="#" class="list-group-item school-list" onclick="AttachOffer.selectSearch(\''+id+'\',\''+this.value+'\',\''+this.text+'\')" id="'+this.value+'">'
+			+'<h5 class="list-group-item-heading">'+this.text+'</h5></a>'
+			tr_td += '<tr onclick="AttachOffer.selectSearch(\''+id+'\',\''+this.value+'\',\''+this.text+'\')" id="'+this.value+'"><td>'+this.text+'</td></tr>';
+		});
+		if(schools_filter.length>5){
+			div_schools_info='<div id="schools_info_content_div" style="overflow-x:hidden;overflow-y:auto;width:100%;height: 200px;">';
+		}
+		f.append(div_info+div_schools_info+tr_a+"</div></div>");
+		//$("#"+id).parent().append(div_info+div_schools_info+table_info+tr_td+"</tbody></table></div></div>");
+		return schools_filter;
+	};
+
+	//选择搜索结果集中的一条记录
+	var _searchSelect=function(id,code,name){
+		$("#paramForm").children().css('display','block');//全部子节点
+		$(".modal-header").children().css('display','block');//全部子节点
+		$("#"+id).val(name);
+		$("#"+id).attr("code",code);
+		$("#search_info_div").hide();
+	};
+	//关闭搜索结果集
+	var _searchClose=function(){
+		$("#search_info_div").hide();
+	};
 	return {
 		delMainfavoriteSpec		: _delMainfavoriteSpec,
 		addMainfavoriteSpec     : _addMainfavoriteSpec,
@@ -4321,7 +4468,10 @@ AttachOffer = (function() {
 		queryCardAttachOfferAgent     : _queryCardAttachOfferAgent,
 		queryOfferAndServDependForCancel : _queryOfferAndServDependForCancel,
 		delServSpec             : _delServSpec,
-		newViceParam:_newViceParam
+		newViceParam:_newViceParam,
+		searchSchools			: _searchSchools,
+		selectSearch			: _searchSelect,
+		schoolClose				: _searchClose
 		
 	};
 })();

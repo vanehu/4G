@@ -2,7 +2,6 @@ package com.al.lte.portal.app.controller.main;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -10,8 +9,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.collections.MapUtils;
-import org.apache.commons.io.filefilter.FalseFileFilter;
+import net.sf.json.JSONArray;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
@@ -20,11 +19,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import com.al.ec.entity.StaffInfo;
 import com.al.ecs.common.entity.JsonResponse;
 import com.al.ecs.common.entity.Switch;
-import com.al.ecs.common.util.JsonUtil;
 import com.al.ecs.common.util.MDA;
 import com.al.ecs.common.util.PropertiesUtils;
 import com.al.ecs.common.web.ServletUtils;
@@ -112,11 +108,32 @@ public class MainController extends BaseController {
             		 mapdetail.put("bulletinText", list.get(0).get("bulletinText"));
 	        		 if(list.get(0).get("attachs")!=null){
 	        			 List<Map<String, Object>> attachslist =  (List<Map<String, Object>>) list.get(0).get("attachs");
-	        			 mapdetail.put("name", attachslist.get(0).get("name"));
-	            		 String notice_url = propertiesUtils.getMessage(SysConstant.NOTICE_URL);
-	            		 notice_url = notice_url+attachslist.get(0).get("id");
-	            		 mapdetail.put("noticeurl", notice_url);
+	        			 List<Map<String, Object>> attchsList2=new ArrayList<Map<String, Object>>();
+	        			 List<Map<String, Object>> urlList=new ArrayList<Map<String, Object>>();
+	        			 Map<String, Object> nameMap=new HashMap<String, Object>();
+     				    Map<String, Object> urlMap=new HashMap<String, Object>();
+	        			 for(Map<String, Object> map2:attachslist){
+	        				    Map<String, Object> myMap=new HashMap<String, Object>();
+	        				    myMap.put("name", map2.get("name"));
+	        					 String id="";
+	        					 if(map2.get("id")!=null){
+	        					   id=(String) map2.get("id");
+	        					 }
+	    	            		 String notice_url = propertiesUtils.getMessage(SysConstant.NOTICE_URL);
+	    	            		 notice_url = notice_url+id;
+	    	            		 myMap.put("noticeurl", notice_url);
+	    	            		 attchsList2.add(myMap);
+	        			 }
+	        			 JSONArray attachsArray= JSONArray.fromObject(attchsList2);
+	        			 mapdetail.put("attachs", attachsArray);
 	        		 }
+//	        		 if(list.get(0).get("attachs")!=null){
+//	        			 List<Map<String, Object>> attachslist =  (List<Map<String, Object>>) list.get(0).get("attachs");
+//	        			 mapdetail.put("name", attachslist.get(0).get("name"));
+//	            		 String notice_url = propertiesUtils.getMessage(SysConstant.NOTICE_URL);
+//	            		 notice_url = notice_url+attachslist.get(0).get("id");
+//	            		 mapdetail.put("noticeurl", notice_url);
+//	        		 }
 	        		 jsonResponse=super.successed(mapdetail, ResultConstant.SUCCESS.getCode());
             		 return jsonResponse;
             	}
@@ -186,6 +203,58 @@ public class MainController extends BaseController {
         Map<String, Object> mapList=new HashMap<String, Object>();
         mapList.put("appUpdateFlag", appUpdateFlag);
         jsonResponse=super.successed(mapList, ResultConstant.SUCCESS.getCode());
+        return jsonResponse;
+    }
+	
+	 /**
+     * 根据id获取公告下载地址
+     * @param session
+     * @param model
+     * @param params
+     * @return
+     */
+	@SuppressWarnings({ "unchecked" })
+	@RequestMapping(value = "/getNoticeUrl", method = { RequestMethod.POST })
+    @ResponseBody
+    public JsonResponse getNoticeUrl(@RequestBody Map<String, Object> param,HttpServletRequest request,
+            HttpServletResponse response) {
+        SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+                SysConstant.SESSION_KEY_LOGIN_STAFF);
+        Map<String, Object> dataBusMap = new HashMap<String, Object>();
+        String   id = (String) param.get("id"); //公告id
+        dataBusMap.put("areaId", sessionStaff.getAreaId());
+        dataBusMap.put("pageIndex", 1);
+        dataBusMap.put("pageSize", 10);
+        List<Map<String, Object>> list = null;
+        JsonResponse jsonResponse = null;
+        try {
+            list = noticeBmo.getNoticeList(dataBusMap, null, sessionStaff);
+            if (list != null && list.size() > 0) {
+            	for(Map<String,Object> map:list){
+            		 Map<String, Object> mapdetail=new HashMap<String, Object>();
+	        		 if(map.get("attachs")!=null){
+	        			 List<Map<String, Object>> attachslist =  (List<Map<String, Object>>) map.get("attachs");
+	        			 for(Map<String, Object> map2:attachslist){
+	        				if(id.equals(map2.get("id"))){
+	        					 mapdetail.put("name", map2.get("name"));
+	    	            		 String notice_url = propertiesUtils.getMessage(SysConstant.NOTICE_URL);
+	    	            		 notice_url = notice_url+id;
+	    	            		 mapdetail.put("noticeurl", notice_url);
+	    	            		 break;
+	        				}
+	        			 }
+	        		 }
+	        		 jsonResponse=super.successed(mapdetail, ResultConstant.SUCCESS.getCode());
+            	}
+            	return jsonResponse;
+            }
+		}catch (BusinessException be) {
+            return super.failed(be);
+        } catch (InterfaceException ie) {
+            return super.failed(ie, param, ErrorCode.BULLET_IN_INFO);
+        } catch (Exception e) {
+            return super.failed(ErrorCode.BULLET_IN_INFO, e, param);
+        }
         return jsonResponse;
     }
 }

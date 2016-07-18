@@ -809,7 +809,7 @@ order.phoneNumber = (function(){
 
 	//选择地区
 	var _chooseArea = function(){
-		order.area.chooseAreaTree("order/prepare","p_phone_areaId_val","p_phone_areaId",3);
+		order.area.chooseAreaTree("order/prepare","p_phone_areaId_val","p_phone_areaId",3);	
 	};
 	var _initPage=function(subnum,subPage){
 		var url=contextPath+"/app/mktRes/phonenumber/prepare";
@@ -998,7 +998,7 @@ order.phoneNumber = (function(){
 				var phoneNbrPoolList= response.data.phoneNbrPoolList;
 				var $div =$('<div class="input-group select-top" style="width: 100%;"></div>');
 				var $span=$('<span class="input-group-addon select-span"></span>');
-				var $sel = $('<select id="nbrPool" class="selectpicker show-tick form-control" style=" border: none; height: 34px;"></select>');  
+				var $sel = $('<select id="nbrPool" class="selectpicker show-tick form-control" style=" border: none; height: 34px;" onchange="order.phoneNumber.btnQueryPhoneNumber()"></select>');  
 				var $defaultopt = $('<option value="" selected="selected">请选择号池</option>');
 				$sel.append($defaultopt);
 				if(phoneNbrPoolList!=null){

@@ -515,11 +515,15 @@ cust = (function(){
 			$("#jbrsfz").show();
 			$("#jbrsfz_i").show();
 			$("#qtzj").hide();
+			$("#orderAttrName").attr("readonly","readonly");
+			$("#orderAttrAddr").attr("readonly","readonly");
 //			$('#jbrFormdata').data('bootstrapValidator').enableFieldValidators("orderAttrIdCard",true,"sfzorderAttrIdCard");
 		}else{
 			$("#jbrsfz").hide();
 			$("#jbrsfz_i").hide();
 			$("#qtzj").show();
+			$("#orderAttrName").removeAttr("readonly");
+			$("#orderAttrAddr").removeAttr("readonly");
 //			$('#jbrFormdata').data('bootstrapValidator').enableFieldValidators("orderAttrIdCard",true,"orderAttrIdCard");
 		}
 	};
