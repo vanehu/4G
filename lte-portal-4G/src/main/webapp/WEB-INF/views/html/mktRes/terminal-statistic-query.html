@@ -37,12 +37,24 @@
 						</dl>
 						<dl>
 							<dt>品牌筛选：</dt>
-							<dd style="" id="selectBrands">
-								<a href="javascript:void(0);" class="selected" value="noFilter" onclick="mktRes.terminal.queryTerminalType('#selectBrands a',this)">不限</a>
+							<dd style="" id="selectBrands_showPart" >
+								<a href="javascript:void(0);" class="selected" value="noFilter" onclick="mktRes.terminal.queryTerminalType('#selectBrands_showPart a',this)">不限</a>
 								<#list brandList as item>
-									<a href="javascript:void(0);" value="${item.terminalBrand}" onclick="mktRes.terminal.queryTerminalType('#selectBrands a',this)">${item.terminalBrand}</a>
+									<a href="javascript:void(0);" value="${item.terminalBrand}" onclick="mktRes.terminal.queryTerminalType('#selectBrands_showPart a',this)">${item.terminalBrand}</a>
+									<#if item_index == 12>
+										<#break>
+									</#if>
 								</#list>
 							</dd>
+							<dd style="display: none;" id="selectBrands_showAll" >
+								<a href="javascript:void(0);" class="selected" value="noFilter" onclick="mktRes.terminal.queryTerminalType('#selectBrands_showAll a',this)">不限</a>
+								<#list brandList as item>
+									<a href="javascript:void(0);" value="${item.terminalBrand}" onclick="mktRes.terminal.queryTerminalType('#selectBrands_showAll a',this)">${item.terminalBrand}</a>
+								</#list>
+							</dd>
+							<span id="termManfId_more"> 
+									<a href="javascript:void(0);" val="更多" class="btn_more" onclick="mktRes.terminal.showMoreOrLess()">更多</a>
+							</span>
 						</dl>
 						<dl id="selectTerminalType" style="display:none">
 							<dt>机型筛选：</dt>

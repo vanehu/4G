@@ -2667,6 +2667,7 @@ public class MktResController extends BaseController {
 			terminalTypeQryParamMap.put("terminalBrand", "");
 			terminalTypeQryParamMap.put("terminalType", "");
 			terminalTypeQryParamMap.put("terminalColor", "");
+			terminalTypeQryParamMap.put("flag", "1");//资源要求：取值：1  报表查询标识（当报表查询时必传）
 			Map<String, Object> resultMap = mktResBmo.termOrderQuery(terminalTypeQryParamMap, null, sessionStaff);
 			if(ResultCode.R_SUCCESS.equals(resultMap.get("code")) && resultMap.get("result") != null){
 				if(resultMap.get("result") != null){
@@ -2777,6 +2778,7 @@ public class MktResController extends BaseController {
 			terminalTypeQryParamMap.put("terminalBrand", "");
 			terminalTypeQryParamMap.put("terminalType", "");
 			terminalTypeQryParamMap.put("terminalColor", "");
+			terminalTypeQryParamMap.put("flag", "1");//资源要求：取值：1  报表查询标识（当报表查询时必传）
 			Map<String, Object> resultMap = mktResBmo.termOrderQuery(terminalTypeQryParamMap, null, sessionStaff);
 			if(ResultCode.R_SUCCESS.equals(resultMap.get("code")) && resultMap.get("result") != null){
 				if(resultMap.get("result") != null){
@@ -2878,13 +2880,13 @@ public class MktResController extends BaseController {
 				if (resultMap != null && ResultCode.R_SUCC.equals(resultMap.get("code").toString())){
 					String excelTitle = "terminalStatistic_" + qryType;
 					if(((ArrayList<Map<String, Object>>)resultMap.get("resultList")).size() > 0){
-						ExcelUtil.exportExcelXlsx(excelTitle, headers, (ArrayList<Map<String, Object>>)resultMap.get("resultList"), response, null);
+						ExcelUtil.exportExcelXls(excelTitle, headers, (ArrayList<Map<String, Object>>)resultMap.get("resultList"), response, null);
 					} else{
 						Map<String, Object> noticeUserNoData = new LinkedHashMap<String, Object>();
 						noticeUserNoData.put("brand", "没有查询到数据");
 						List<Map<String, Object>> dataList = new ArrayList<Map<String, Object>>();
 						dataList.add(noticeUserNoData);
-						ExcelUtil.exportExcelXlsx(excelTitle, headers, dataList, response, null);
+						ExcelUtil.exportExcelXls(excelTitle, headers, dataList, response, null);
 					}
 				} else{
 					errorMsg = resultMap.get("resultMsg").toString();
@@ -2972,13 +2974,13 @@ public class MktResController extends BaseController {
 				if (resultMap != null && ResultCode.R_SUCC.equals(resultMap.get("code").toString())){
 					String excelTitle = "terminalDetailStatistic_" + qryType;
 					if(((ArrayList<Map<String, Object>>)resultMap.get("resultList")).size() > 0){
-						ExcelUtil.exportExcelXlsx(excelTitle, headers, (ArrayList<Map<String, Object>>)resultMap.get("resultList"), response, transferInfo);
+						ExcelUtil.exportExcelXls(excelTitle, headers, (ArrayList<Map<String, Object>>)resultMap.get("resultList"), response, transferInfo);
 					} else{
 						Map<String, Object> noticeUserNoData = new LinkedHashMap<String, Object>();
 						noticeUserNoData.put("brand", "没有查询到数据");
 						List<Map<String, Object>> dataList = new ArrayList<Map<String, Object>>();
 						dataList.add(noticeUserNoData);
-						ExcelUtil.exportExcelXlsx(excelTitle, headers, dataList, response, null);
+						ExcelUtil.exportExcelXls(excelTitle, headers, dataList, response, null);
 					}
 				} else{
 					errorMsg = resultMap.get("resultMsg").toString();

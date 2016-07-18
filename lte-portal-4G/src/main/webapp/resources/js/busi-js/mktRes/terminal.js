@@ -1877,10 +1877,12 @@ mktRes.terminal = (function($){
 		var params = {
 			"terminalBrand"	: $(selected).attr("value"),
 			"terminalType"	: "",
-			"terminalColor"	: ""
+			"terminalColor"	: "",
+			"flag"			: "1"//源要求：取值：1  报表查询标识（当报表查询时必传）
 		};		
 		var response = $.callServiceAsJson(url, params);
 		if(response.code == 0){
+			$("#selectType").empty();//清空已有的型号列表
 			var terminalTypeInfos = response.data.terminalTypeInfo;
 			for(var index in terminalTypeInfos){
 				var terminalType = terminalTypeInfos[index].terminalType;
@@ -1926,10 +1928,24 @@ mktRes.terminal = (function($){
 		//隐藏机型筛选
 		$("#selectTerminalType").hide();
 		//最后处理品牌筛选的样式
-		$("#selectBrands").children().each(function(){$(this).removeClass("selected");});
-		$("#selectBrands").children().eq(0).addClass("selected");
+		$("#selectBrands_showPart").children().each(function(){$(this).removeClass("selected");});
+		$("#selectBrands_showPart").children().eq(0).addClass("selected");
+		$("#selectBrands_showAll").children().each(function(){$(this).removeClass("selected");});
+		$("#selectBrands_showAll").children().eq(0).addClass("selected");
 	};
 	
+	var _showMoreOrLess = function(){
+		$("#termManfId_more").show();
+  		_viewSmallOrAll("#selectBrands_showAll", "#selectBrands_showPart");
+  		event.stopPropagation();		
+  		if($("#selectBrands_showPart").is(':hidden')){
+  			$("#termManfId_more a").addClass("btn_less");
+			$("#termManfId_more a").text("收起");
+		}else{
+			$("#termManfId_more a").removeClass("btn_less");
+			$("#termManfId_more a").text("展开");
+		}
+	};
 	
 	return {
 		btnQueryTerminal	:_btnQueryTerminal,
@@ -1953,7 +1969,8 @@ mktRes.terminal = (function($){
 		terminalStatisticDetailExport	:_terminalStatisticDetailExport,
 		queryTerminalType				:_queryTerminalType,
 		clearTerminalSelected			:_clearTerminalSelected,
-		selectTerminalType				:_selectTerminalType
+		selectTerminalType				:_selectTerminalType,
+		showMoreOrLess					:_showMoreOrLess
 	};
 })(jQuery);
 
