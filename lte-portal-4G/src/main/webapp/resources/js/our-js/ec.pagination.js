@@ -75,9 +75,32 @@ ec.pagination = (function(){
 			return (k>=48 && k<=57);
 		});
 	};
+	
+	/**
+	 * 批量业务查询页面专用分页组件(多重分页)
+	 */
+	var _batchPagination = function(callBackFuncion){
+		var maxPage = $("#ec-total-page-batch").val();
+		var curPage = $("#ec-input-spec-batch").val();
+		if(curPage == ""){
+			$.alert("提示信息","跳转页码不能为空，请输入。");
+			return false;
+		}
+		if(parseInt(curPage) > parseInt(maxPage)){
+			$.alert("提示信息", "已超出最大页码[" + maxPage + "]，请重新输入.");
+			return false;
+		}
+		if(!(/^[1-9]\d*$/.test(curPage))){
+			$.alert("提示信息","页码格式不正确，必须为有效数字。");
+			return false;
+		}
+		_gotoPage(curPage, callBackFuncion);
+	};
+	
 	return {
-		gotoPage:_gotoPage,
-		pageInit:_pageInit
+		gotoPage		:_gotoPage,
+		pageInit		:_pageInit,
+		batchPagination	:_batchPagination
 	};
 })();
 $(function(){

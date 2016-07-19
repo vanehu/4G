@@ -285,3 +285,50 @@
 <script type="text/javascript">$(function(){$.scrollInit('${nameSpace}');});</script>
 </#macro>
 <#-- 滚动分页功能  begin-->  
+
+<#-- 批量业务查询页面专用分页组件(多重分页)  -->
+<#macro modelPagination4Batch pageModel pageBlockNum callBackFunc>
+<#if (pageModel?? && pageBlockNum?? && callBackFunc??)>
+<div class="paging" id="ec-pagination" callBack="${callBackFunc}">
+	<#if (pageModel.pageNo<=1)>
+		<label><span class="pageUpGray">上一页</span></label>
+	</#if>
+	<#if (pageModel.pageNo>1)>
+		<label><span id="ec-page-prevs" class="pageUpOrange" page="${pageModel.pageNo-1}" callBackFunc="${callBackFunc}">上一页</span></label>
+	</#if>
+	<#if (pageBlockNum>0)>
+		<label>	
+		<#assign j=((pageModel.pageNo-1)/pageBlockNum)?int />
+		<#if (pageModel.totalPages<=pageBlockNum)>
+			<#assign k = pageModel.totalPages>
+		<#else>
+			<#if (( j * pageBlockNum+pageBlockNum)<= pageModel.totalPages) >
+				<#assign k = pageBlockNum>
+			<#else>
+				<#assign k = pageModel.totalPages- j*pageBlockNum>
+			</#if>	
+		</#if>
+		<#list 1..k as i>
+			<#if (pageBlockNum*j+i)==pageModel.pageNo>
+				<a class="pagingSelect" href="javascript:void(0);">${pageBlockNum*j+i}</a>
+			<#else>
+				<a id="ec-page-${pageBlockNum*j+i}" class="fontBlueB" href="#loc-page" page="${pageBlockNum*j+i}" callBackFunc="${callBackFunc}">${pageBlockNum*j+i}</a>
+			</#if>
+		</#list>
+		</label>
+	</#if>
+	<#if (pageModel.pageNo>=pageModel.totalPages)>
+		<label><span class="nextPageGray">下一页</span></label>
+	</#if>
+	<#if (pageModel.pageNo<pageModel.totalPages)>
+		<label><span id="ec-page-next" class="nextPageGrayOrange" page="${pageModel.pageNo+1}" callBackFunc="${callBackFunc}">下一页</span></label>
+	</#if>
+	<label class="marginTop4" id="ec-total-page" page="${pageModel.totalPages}">共 ${pageModel.totalPages} 页</label>
+	<input id="ec-total-page-batch" type="hidden" value="${pageModel.totalPages}"/>
+	<label class="marginTop4">跳转至</label>	<input id="ec-input-spec-batch" type="text" class="inputW20H20" /><label class="marginTop4">页</label>
+	<a id="ec-btn-jump-batch" href="#loc-page" class="determineBtn" onclick="ec.pagination.batchPagination(${callBackFunc})">跳转</a>
+</div>
+<#else>
+	<iuput type="hidden" value="simplePagination error pageModel or pageBlockNum or callBackFunc is undefined"/>
+</#if>
+</#macro>
