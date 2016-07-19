@@ -1,7 +1,7 @@
 CommonUtils.regNamespace("essMktRes", "terminal");
 
 /*
- * 远程写卡
+ * ESS终端回填
  */
 essMktRes.terminal = (function() {
 

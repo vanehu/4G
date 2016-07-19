@@ -1,6 +1,6 @@
 CommonUtils.regNamespace("ess", "repeatWriteCard");
 /*
- * 电渠终端管理
+ * ESS二次写卡
  */
 ess.repeatWriteCard = (function() {
 

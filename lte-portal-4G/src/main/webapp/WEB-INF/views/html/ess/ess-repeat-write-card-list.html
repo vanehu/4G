@@ -3,7 +3,7 @@
 	<thead>
 		<tr>
 			<td width="40">收货人</td>
-			<td width="70">订单流水号</td>
+			<td width="70">外部订单号</td>
 			<td width="60">手机号码</td>
 			<td width="40">地区</td>
 			<td width="40">省份</td>
@@ -24,7 +24,7 @@
 		<#list pageModel.list as orderLists >
 		<tr>
 			<td>${orderLists.consignee}</td>
-			<td>${orderLists.transactionId}</td>
+			<td>${orderLists.extCustOrderId}</td>
 			<td>${orderLists.accNbr}</td>
 			<td>${orderLists.regionName}</td>
 			<td>${orderLists.provinceName}</td>

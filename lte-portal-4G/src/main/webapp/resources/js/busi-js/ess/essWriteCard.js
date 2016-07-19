@@ -1,6 +1,6 @@
 CommonUtils.regNamespace("ess", "writeCard");
 /*
- * 电渠终端管理
+ * ess远程写卡
  */
 ess.writeCard = (function() {
 	
