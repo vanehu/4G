@@ -116,4 +116,21 @@ public class PortalUtils {
 	     else
 	         return "UNKNOW";
 	 }
+	 
+	 /**
+	 * 判断是否启用分省域名</br>
+	 * true:启用分省域名；false:为启用
+	 * @param headerHost http request header请求头里的Host
+	 * @return
+	 */
+	 public static boolean isSecondLevelDomain(String headerHost){
+		 boolean flag = false;
+			String port = headerHost.substring(headerHost.indexOf(":") + 1, headerHost.length());
+			
+			if(("93".equals(port) || "94".equals(port)) && (headerHost.indexOf("crm") > 0)){
+				flag = true;
+			}
+			
+			return flag;
+	 }
 }

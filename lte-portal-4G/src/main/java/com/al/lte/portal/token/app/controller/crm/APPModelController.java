@@ -19,7 +19,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -40,6 +39,7 @@ import com.al.lte.portal.common.AESUtils;
 import com.al.lte.portal.common.CommonUtils;
 import com.al.lte.portal.common.EhcacheUtil;
 import com.al.lte.portal.common.MySimulateData;
+import com.al.lte.portal.common.PortalUtils;
 import com.al.lte.portal.common.RedisUtil;
 import com.al.lte.portal.common.SysConstant;
 import com.al.lte.portal.model.SessionStaff;
@@ -202,15 +202,14 @@ public class APPModelController extends BaseController {
 			
 			String dbKeyWord = (String) request.getSession().getAttribute(SysConstant.SESSION_DATASOURCE_KEY);
 			String flag = MySimulateData.getInstance().getParam("UNIFYLOGIN",dbKeyWord,"UNIFYLOGIN");
-			//response.sendRedirect(modelUrl);
-			int serverPort = request.getServerPort();
+//			int serverPort = request.getServerPort();//获取到8101，不是83
 			int port = request.getLocalPort();
 			log.warn("服务端口[LocalPort]："+port);
-			log.warn("服务端口[ServerPort]："+serverPort);
+			String headerHost = request.getHeader("Host");// Host:crm.189.cn:83 Host:mo.crm.189.cn:93 Host:10.128.86.10:8101
 			
-			if(serverPort == 93 || serverPort == 94){
-				//#591478 若93、94端口，说明已启用分省域名，此时不应重定向到crm.189.cn，直接本地重定向，测试、生产环境都如此。
-				return super.redirect(modelUrl);
+			if(PortalUtils.isSecondLevelDomain(headerHost)){
+				//#591478 若已启用分省域名，此时不应重定向到crm.189.cn
+				return super.redirect("https://" + headerHost + "/provPortal" + modelUrl);
 			} else{
 				//若不是93、94端口，走原来的老逻辑
 				if((port==10101 || port==10102 || port==10103) && "ON".equals(flag)){
@@ -413,7 +412,6 @@ public class APPModelController extends BaseController {
 			URL newUrl = new URL(url);
 			return newUrl.getHost();		
 		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
 			log.error("域名解析异常",e);
 			return "";
 		} 
