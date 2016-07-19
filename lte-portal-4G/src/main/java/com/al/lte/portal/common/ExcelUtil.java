@@ -117,9 +117,9 @@ public class ExcelUtil {
 				if(transferInfo != null && transferInfo.containsKey(key)){
 					Map<String, Object> transferInfoMap = (Map<String, Object>) transferInfo.get(key);
 					String infoStr = transferInfoMap.get(dataMap.get(key)).toString();
-					rowOfExcel.createCell(k++).setCellValue(null == infoStr ? "" : infoStr);
+					rowOfExcel.createCell(k++).setCellValue(null == infoStr ? "N/A" : infoStr);
 				} else{
-					rowOfExcel.createCell(k++).setCellValue(null == dataMap.get(key) ? "" : dataMap.get(key).toString());
+					rowOfExcel.createCell(k++).setCellValue(null == dataMap.get(key) ? "N/A" : dataMap.get(key).toString());
 				}			
 			}
 		}
