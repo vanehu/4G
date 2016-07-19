@@ -264,6 +264,13 @@ order.memberChange = function(){
 						}
 					});
 				}
+				var $tipTr = $("<tr><td colspan='2' style='text-align:right;line-height:25px;'>" +
+						"<font style='color:red;'>拆副卡：</font><br/><font font style='color:red;'>保留>>选择新套餐：</font></td>" +
+						"<td colspan='2' style='text-align:left;line-height:25px;'>" +
+						"<font style='color:red;'>副卡直接拆除销号</font><br/><font font style='color:red;'>保留副卡，只是更换套餐</font>" +
+						"</td></tr>");
+				//$tr.after($tipTr);
+				var tipFlag = false;
 				//副卡成员
 				$.each(OrderInfo.offer.offerMemberInfos,function(){
 					var $Othertr = $("<tr></tr>");
@@ -298,6 +305,10 @@ order.memberChange = function(){
 							});	
 						}
 //						existViceCardNum++;
+						if(!tipFlag){
+							$tr.after($tipTr);
+							tipFlag = true;
+						}
 					}
 					$tr.after($Othertr);
 				});
