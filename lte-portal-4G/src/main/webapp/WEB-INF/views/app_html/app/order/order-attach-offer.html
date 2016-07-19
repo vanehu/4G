@@ -24,6 +24,7 @@ $(function(){
 </div>
 <!-- 协销人展示 -->
 <div id="order-dealer" style="display: none;">
+	<input type="hidden" id="cur_channelCode" value="${channelCode}"/>
 	<@block name="dealer">
 		<#include "/app/order/order-dealer.html" />
 	</@block>

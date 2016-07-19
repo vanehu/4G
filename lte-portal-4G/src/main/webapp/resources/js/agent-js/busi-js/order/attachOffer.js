@@ -4379,6 +4379,10 @@ AttachOffer = (function() {
 		if(schools_filter.length>5){
 			div_schools_info='<div id="schools_info_content_div" style="overflow-x:hidden;overflow-y:auto;width:100%;height: 200px;">';
 		}
+		if(schools_filter.length<1){
+			tr_a+='<a href="#" class="list-group-item school-list" onclick="AttachOffer.schoolClose()" id="'+this.value+'">'
+			+'<h5 class="list-group-item-heading">没有查询到记录，请点此返回</h5></a>'
+		}
 		f.append(div_info+div_schools_info+tr_a+"</div></div>");
 		//$("#"+id).parent().append(div_info+div_schools_info+table_info+tr_td+"</tbody></table></div></div>");
 		return schools_filter;
@@ -4394,6 +4398,8 @@ AttachOffer = (function() {
 	};
 	//关闭搜索结果集
 	var _searchClose=function(){
+		$("#paramForm").children().css('display','block');//全部子节点
+		$(".modal-header").children().css('display','block');//全部子节点
 		$("#search_info_div").hide();
 	};
 	return {

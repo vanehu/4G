@@ -181,14 +181,14 @@ CacheData = (function() {
 			CacheData.setSearchs(param.valueRange);
 			if(ec.util.isObj(paramVal)){
 				selectStr = selectStr + '<div class="input-group">'
-				+'<input id="'+id+'" code="'+paramVal+'" value="'+CacheData.getSearchName(paramVal)+'" placeholder="请输入学校名称" data-validate="validate(required,reg:()) on(blur)" class="inputWidth183px" type="text" />'
+				+'<input id="'+id+'" code="'+paramVal+'" value="'+CacheData.getSearchName(paramVal)+'" placeholder="请输入学校名称" data-validate="validate(required,reg:()) on(blur)" class="inputWidth183px form-control" type="text" />'
 				+'<span class="input-group-btn">'
-				+'<button class="btn btn-default"  onclick="AttachOffer.searchSchools(\''+id+'\');" type="button">搜索</button></span></div></div>'
+				+'<button class="btn btn-primary"  onclick="AttachOffer.searchSchools(\''+id+'\');" type="button">搜索</button></span></div></div>'
 			}else{
 				selectStr = selectStr  + '<div class="input-group" style="width: 100%;">'
-				+ '<input id="'+id+'" placeholder="请输入学校名称" data-validate="validate(required,reg:()) on(blur)" class="inputWidth183px" type="text" />'
+				+ '<input id="'+id+'" placeholder="请输入学校名称" data-validate="validate(required,reg:()) on(blur)" class="inputWidth183px form-control" type="text" />'
 				+'<span class="input-group-btn">'
-				+'<button class="btn btn-default"  onclick="AttachOffer.searchSchools(\''+id+'\');" type="button">搜索</button></span></div></div>'
+				+'<button class="btn btn-primary"  onclick="AttachOffer.searchSchools(\''+id+'\');" type="button">搜索</button></span></div></div>'
 			}
 		} else if(ec.util.isArray(param.valueRange)){ //下拉框
 			var optionStr = "";
@@ -226,7 +226,7 @@ CacheData = (function() {
 							+'" class="inputWidth183px" type="text" data-validate="validate(required,reg:'+param.rule.maskMsg+'('+param.rule.mask+')) on(blur)" value="'+paramVal+'" ><label class="f_red">*</label><br>'; 
 						}else{
 							selectStr += '<div class="form-group pack-pro-box"><label for="exampleInputPassword1">'+param.name + ' : </label><input id="'+prodId+'_'+itemSpecId  
-							+'" class="inputWidth183px" type="text" data-validate="validate(reg:'+param.rule.maskMsg+'('+param.rule.mask+')) on(blur)" value="'+paramVal+'" ></div>'; 
+							+'" class="inputWidth183px form-control" type="text" data-validate="validate(reg:'+param.rule.maskMsg+'('+param.rule.mask+')) on(blur)" value="'+paramVal+'" ></div>'; 
 						}
 					}
 				}

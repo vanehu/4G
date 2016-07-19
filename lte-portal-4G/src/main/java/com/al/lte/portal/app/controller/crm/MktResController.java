@@ -917,6 +917,13 @@ public class MktResController extends BaseController {
 			paramMap.put("mktResCd", mktResCd);
 			paramMap.put("agreementType", agreementType);
 			paramMap.put("areaId", sessionStaff.getCurrentAreaId());
+			//新接口改造，需要多传下面两个参数
+			paramMap.put("channelId", sessionStaff.getCurrentChannelId());
+			paramMap.put("staffId", sessionStaff.getStaffId());
+			//operatorsId不空则加入传参
+			if(sessionStaff.getOperatorsId()!=null && !"".equals(sessionStaff.getOperatorsId())){
+				paramMap.put("operatorsId", sessionStaff.getOperatorsId());
+			}
 			model.addAttribute("agreementType", agreementType);
 			
 			Map<String, Object> offerByMtkResCdMap = mktResBmo
@@ -1333,29 +1340,30 @@ public class MktResController extends BaseController {
 			mktInfo.put("receiveFlag","1");
 			mktInfo.put("staffId",sessionStaff.getStaffId());
 			mktInfo.put("channelName",sessionStaff.getCurrentChannelName());
-			String offerSpecName = MapUtils.getString(mktInfo, "offerSpecName")==null?" ":MapUtils.getString(mktInfo, "offerSpecName");
-			mktInfo.remove("offerSpecName");
+//			String offerSpecName = MapUtils.getString(mktInfo, "offerSpecName")==null?" ":MapUtils.getString(mktInfo, "offerSpecName");
+//			mktInfo.remove("offerSpecName");
 			Map<String, Object> mktRes = mktResBmo.checkTerminalCodeForAgent(
 					mktInfo, flowNum, sessionStaff);
 			if (MapUtils.isNotEmpty(mktRes)) {
-				if(ResultCode.R_SUCC.equals(MapUtils.getString(mktRes, "code"))){
+				//redmine 606920销售品构成查询优化
+//	             if(ResultCode.R_SUCC.equals(MapUtils.getString(mktRes, "code"))){
 					//update by huangjj3 营销资源返回终端可用再调用后台终端规格校验接口
-					if(StringUtils.isNotEmpty(MapUtils.getString(mktInfo, "offerSpecId"))){
-						Map<String, Object> mktInfoBack = new HashMap<String, Object>();
-						mktInfoBack.put("agreementOfferSpecID", MapUtils.getString(mktInfo, "offerSpecId"));
-						mktInfoBack.put("mktResCd", MapUtils.getString(mktRes, "mktResId"));
-						mktInfoBack.put("agreementName", offerSpecName);
-						mktInfoBack.put("mktResName",  MapUtils.getString(mktRes, "mktResName"));
-						Map<String, Object> mktResBack = mktResBmo.checkTerminalCodeBack(
-								mktInfoBack, flowNum, sessionStaff);
-						if(MapUtils.isNotEmpty(mktResBack)){
-							String resultCode = MapUtils.getString(mktResBack, "code");
-							if("1".equals(resultCode)){
-								return super.failed(MapUtils.getString(mktResBack, "message"), ResultConstant.FAILD.getCode());
-							}
-						}
-					}
-				}
+//					if(StringUtils.isNotEmpty(MapUtils.getString(mktInfo, "offerSpecId"))){
+//						Map<String, Object> mktInfoBack = new HashMap<String, Object>();
+//						mktInfoBack.put("agreementOfferSpecID", MapUtils.getString(mktInfo, "offerSpecId"));
+//						mktInfoBack.put("mktResCd", MapUtils.getString(mktRes, "mktResId"));
+//						mktInfoBack.put("agreementName", offerSpecName);
+//						mktInfoBack.put("mktResName",  MapUtils.getString(mktRes, "mktResName"));
+//						Map<String, Object> mktResBack = mktResBmo.checkTerminalCodeBack(
+//								mktInfoBack, flowNum, sessionStaff);
+//						if(MapUtils.isNotEmpty(mktResBack)){
+//							String resultCode = MapUtils.getString(mktResBack, "code");
+//							if("1".equals(resultCode)){
+//								return super.failed(MapUtils.getString(mktResBack, "message"), ResultConstant.FAILD.getCode());
+//							}
+//						}
+//					}
+//				}
 				ArrayList obj =  (ArrayList) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_TERMINAL+"_"+sessionStaff.getStaffId());		
 				if(obj == null || "null".equals(obj) || "".equals(obj)){
 					obj = new ArrayList();

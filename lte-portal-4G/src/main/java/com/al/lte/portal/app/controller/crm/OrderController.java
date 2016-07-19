@@ -386,6 +386,9 @@ public class OrderController extends BaseController {
     @AuthorityValid(isCheck = false)
     public String attachOfferChange(@RequestBody Map<String, Object> params, HttpServletRequest request,Model model, @LogOperatorAnn String optFlowNum,HttpSession session) throws BusinessException {
 		String result = rulecheck(params,model,optFlowNum,session);
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);
+    	String channelCode =sessionStaff.getCurrentChannelCode();
+    	model.addAttribute("channelCode", channelCode);
 		if(result != null){
 			return result;
 		}else return "/app/order/order-attach-offer";

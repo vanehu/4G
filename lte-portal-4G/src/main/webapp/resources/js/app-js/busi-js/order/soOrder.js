@@ -1906,8 +1906,8 @@ SoOrder = (function() {
 				var dealer = {
 					itemSpecId : CONST.BUSI_ORDER_ATTR.DEALER,
 					role : $(this).find("select").val(),
-					value : $(this).find("input").attr("staffid")//,
-					//channelNbr : $("#cur_channelCode").val()
+					value : $(this).find("input").attr("staffid"),
+					channelNbr : $("#cur_channelCode").val()
 				};
 				busiOrder.data.busiOrderAttrs.push(dealer);				
 				var dealer_name = {
@@ -2040,8 +2040,8 @@ SoOrder = (function() {
 					var dealer = {
 						itemSpecId : CONST.BUSI_ORDER_ATTR.DEALER,
 						role : $(this).find("select").val(),
-						value : $(this).find("input").attr("staffid")//, 
-						//channelNbr : $("#cur_channelCode").val()
+						value : $(this).find("input").attr("staffid"), 
+						channelNbr : $("#cur_channelCode").val()
 					};
 					busiOrder.data.busiOrderAttrs.push(dealer);
 					var dealer_name = {
@@ -2058,8 +2058,8 @@ SoOrder = (function() {
 					var dealer = {
 						itemSpecId : CONST.BUSI_ORDER_ATTR.DEALER,
 						role : $(this).find("select").val(),
-						value : $(this).find("input").attr("staffid")//, 
-						//channelNbr : $("#cur_channelCode").val()
+						value : $(this).find("input").attr("staffid"), 
+						channelNbr : $("#cur_channelCode").val()
 					};
 					busiOrder.data.busiOrderAttrs.push(dealer);
 					var dealer_name = {

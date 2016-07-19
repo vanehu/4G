@@ -22,7 +22,7 @@ order.service = (function(){
 	//列表导航切换
 	var _tabChange=function(obj){
 		if(order.service.tabChange_flag == 0){
-			$("#qryStr").val($(obj).val());
+//			$("#qryStr").val($(obj).val());
 			_searchPack();
 		}
 		
@@ -35,23 +35,23 @@ order.service = (function(){
 		lxStr = $("#offer_tab").val();
 		var categoryNodeId = "";//套餐目录
 		if(lxStr == "乐享") {
-			qryStr = "";
-			$("#qryStr").val("");
+//			qryStr = "";
+//			$("#qryStr").val("");
 			categoryNodeId = "90132141";
 		}else if(lxStr == "积木") {
-			qryStr = "";
-			$("#qryStr").val("");
+//			qryStr = "";
+//			$("#qryStr").val("");
 			categoryNodeId = "90132143";
 		}else if(lxStr == "飞") {
-			qryStr = "";
-			$("#qryStr").val("");
+//			qryStr = "";
+//			$("#qryStr").val("");
 			categoryNodeId = "90139849";
 		}else if(lxStr == "其他") {
-			qryStr = "";
-			$("#qryStr").val("");
+//			qryStr = "";
+//			$("#qryStr").val("");
 			categoryNodeId = "-9999";
 		}else if(lxStr == "我的收藏") {
-			$("#qryStr").val("");
+//			$("#qryStr").val("");
 		}
 //		var params={"qryStr":qryStr,"pnLevelId":"","custId":custId};
 		var params={"subPage":"","qryStr":qryStr,"pnLevelId":"","custId":custId,"PageSize":10};
@@ -61,6 +61,63 @@ order.service = (function(){
 		if(flag){
 			order.service.tabChange_flag = 1;
 			$("#offer_tab option[value='"+lxStr+"']").attr("selected",true);
+			var priceMinVal = $("#select_price_min").val();
+			var priceMaxVal = $("#select_price_max").val();
+			if(ec.util.isObj(priceMinVal) && $.isNumeric(priceMinVal)){
+				params.priceMin = priceMinVal;
+			}
+			if(ec.util.isObj(priceMaxVal) && $.isNumeric(priceMaxVal)){
+				params.priceMax = priceMaxVal;
+			}
+			
+			var influxMinVal = $("#select_influx_min").val();
+			var influxMaxVal = $("#select_influx_max").val();
+			if(ec.util.isObj(influxMinVal) && $.isNumeric(influxMinVal)){
+				params.INFLUXMin = influxMinVal*1024 ;
+			}
+			if(ec.util.isObj(influxMaxVal) && $.isNumeric(influxMaxVal)){
+				params.INFLUXMax = influxMaxVal*1024 ;
+			}
+			
+			var invoiceMinVal = $("#select_invoice_min").val();
+			var invoiceMaxVal = $("#select_invoice_max").val();
+			if(ec.util.isObj(invoiceMinVal) && $.isNumeric(invoiceMinVal)){
+				params.INVOICEMin = invoiceMinVal;
+			}
+			if(ec.util.isObj(invoiceMaxVal) && $.isNumeric(invoiceMaxVal)){
+				params.INVOICEMax = invoiceMaxVal;
+			}
+			order.service.tabChange_flag = 0;
+		}
+		_queryData(params,flag,scroller);
+		
+	};
+	
+	//主套餐高级查询
+	var _searchPack1 = function(flag,scroller,subPage){
+		var custId = OrderInfo.cust.custId;
+		var qryStr=$("#qryStr").val();
+		lxStr = "";
+		var categoryNodeId = "";//套餐目录
+//		if(lxStr == "乐享") {
+//			categoryNodeId = "90132141";
+//		}else if(lxStr == "积木") {
+//			categoryNodeId = "90132143";
+//		}else if(lxStr == "飞") {
+//			categoryNodeId = "90139849";
+//		}else if(lxStr == "其他") {
+//			categoryNodeId = "-9999";
+//		}else if(lxStr == "我的收藏") {
+//			$("#qryStr").val("");
+//		}
+//		var params={"qryStr":qryStr,"pnLevelId":"","custId":custId};
+		var params={"subPage":"","qryStr":qryStr,"pnLevelId":"","custId":custId,"PageSize":10};
+		if(categoryNodeId.length>0){
+			params.categoryNodeId = categoryNodeId;
+		}
+		if(flag){
+			order.service.tabChange_flag = 1;
+			$("#offer_tab option[value='']").attr("selected",true);
 			var priceMinVal = $("#select_price_min").val();
 			var priceMaxVal = $("#select_price_max").val();
 			if(ec.util.isObj(priceMinVal) && $.isNumeric(priceMinVal)){
@@ -119,8 +176,8 @@ order.service = (function(){
 		if(OrderInfo.actionFlag == 1 || OrderInfo.actionFlag == 14){
 			if(params.qryStr == "我的收藏" || lxStr == "我的收藏"){
 				params.ifQueryFavorite = "Y";
-				params.qryStr = "";
-				$("#qryStr").val("");
+//				params.qryStr = "";
+//				$("#qryStr").val("");
 			}
 		}
 		var url = contextPath+"/agent/order/offerSpecList";
@@ -641,6 +698,7 @@ order.service = (function(){
 		scaningCallBack			:			_scaningCallBack,
 		scroll					:			_scroll,
 		searchPack				:			_searchPack,
+		searchPack1				:			_searchPack1,
 		setOfferSpec			:			_setOfferSpec,
 		tabChange				:			_tabChange,
 		queryPackForTerm:_queryPackForTerm,
