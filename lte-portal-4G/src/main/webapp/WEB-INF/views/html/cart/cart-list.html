@@ -39,10 +39,14 @@
                     <#if pageType=="detail">
                     <a class="purchase" href="javascript:cart.main.queryCartInfo('${orderLists.olId}')" type="main" >详情</a>
                     <#elseif pageType=="voucher">
+                    
                     <#if cart.fileName??&&cart.fileName!="">
                     	<a olId="${orderLists.olId}" ifPrint="${orderLists.ifPrint}" class="purchase" href="javascript:common.print.preSign('${orderLists.olId}', '')" type="main" >查看</a>
-                    <#else>
-                    	<a olId="${orderLists.olId}" ifPrint="${orderLists.ifPrint}" class="purchase" href="javascript:common.print.preVoucher('${orderLists.olId}', '')" type="main" >重打回执</a>
+                    <!-- 门户无纸化开关 -->
+                    <#elseif paperlessSwitch=="true"&&Session["_loginUrl"]??>  <!-- 分省开关与无纸化省份配置  -->
+                    <a olId="${orderLists.olId}" ifPrint="${orderLists.ifPrint}" class="purchase" href="javascript:common.print.preVoucherLoc('${orderLists.olId}', '1')" type="main" >打印回执</a>	
+                   	<#else>
+					<a olId="${orderLists.olId}" ifPrint="${orderLists.ifPrint}" class="purchase" href="javascript:common.print.preVoucher('${orderLists.olId}', '')" type="main" >重打回执</a>
                     </#if>
                     <#elseif pageType=="reInvoice">
                     <a olId="${orderLists.olId}" ifInvoice="${orderLists.ifInvoice}" areaId="${cart.areaId}" class="purchase" href="javascript:common.print.preInvoice('${orderLists.olId}','${cart.olNbr}','1')" type="main" >重打发票</a>

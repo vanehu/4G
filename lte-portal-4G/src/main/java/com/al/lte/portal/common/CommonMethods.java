@@ -5,13 +5,13 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import com.al.common.utils.StringUtil;
 import com.al.ec.serviceplatform.client.DataBus;
 import com.al.ec.serviceplatform.client.ResultCode;
 import com.al.ecs.common.util.JsonUtil;
@@ -742,5 +742,19 @@ public class CommonMethods {
         	permissionsType = "monitor";
         }
         return permissionsType;
+	}
+	/**
+	 *  判断该地区对应的开关是否是 flag(开还是关)
+	 * @param swith  开关MAP
+	 * @param areaId  地区
+	 * @param length  开关中地区的位数
+	 * @return
+	 */
+	public static boolean areaIdMacthSwitch(Map<String,String> swith,String areaId,int length,String flag){
+		return StringUtil.isEmpty(areaId)?
+        		false:areaId.substring(0, length).length()!=length?
+        				false:swith.get(areaId.substring(0, length))==null?
+        						false:swith.get(areaId.substring(0, length)).equals(flag);
+		
 	}
 }

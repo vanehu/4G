@@ -2,7 +2,6 @@ package com.al.lte.portal.controller.crm;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -10,19 +9,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
@@ -34,13 +27,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.multipart.MultipartFile;
-
 import com.al.common.utils.DateUtil;
 import com.al.common.utils.EncodeUtils;
 import com.al.ec.serviceplatform.client.ResultCode;
 import com.al.ecs.common.entity.JsonResponse;
 import com.al.ecs.common.entity.PageModel;
 import com.al.ecs.common.util.JsonUtil;
+import com.al.ecs.common.util.MDA;
 import com.al.ecs.common.util.PageUtil;
 import com.al.ecs.common.util.PropertiesUtils;
 import com.al.ecs.common.web.ServletUtils;
@@ -465,6 +458,12 @@ public class ReportController extends BaseController {
             }
             model.addAttribute("fileAdminFlag", fileAdminFlag);
             String refundFlag = request.getParameter("refundFlag");
+            //无纸化分省开关 
+            String areaId=request.getParameter("areaId");
+            boolean paperlessSwitch=CommonMethods.areaIdMacthSwitch(MDA.RETURN_RECEIPT,areaId,3,"ON");
+            if(paperlessSwitch){
+		     model.addAttribute("paperlessSwitch",paperlessSwitch);
+            }
             if (refundFlag != null && "refund".equals(refundFlag)) {
                 return "/charge/order-refund-list";
             } else {

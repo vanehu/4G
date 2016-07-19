@@ -156,8 +156,42 @@ common.print = (function($){
 		};
 		common.print.printVoucher(voucherInfo);
 	};
+	var _preVoucherLoc=function(olId,flag){
+		if(!_voucherCommon(olId)){
+			return;
+		};
+		var voucherInfo = {};
+		if(OrderInfo.actionFlag==23){//针对异地补换卡，地区要和购物车areaId一致
+			voucherInfo = {
+					"olId":olId,
+					"soNbr":OrderInfo.order.soNbr,
+					"busiType":"1",
+					"chargeItems":"",
+					"flag":"1"   
+				};
+		}else{
+			voucherInfo = {
+					"olId":olId,
+					"soNbr":OrderInfo.order.soNbr,
+					"busiType":"1",
+					"chargeItems":"",
+					"areaId":OrderInfo.getAreaId(),
+					"flag":"1"   //后台接口标志 
+				};
+		}
+		if(_getCookie('_session_pad_flag')=='1'){
+			common.print.signVoucher(voucherInfo);
+		}else{
+			if(_queryConstConfig(voucherInfo,1)){
+				common.print.printVoucher(voucherInfo);
+			}else{
+				return;
+			}
+		}
+	}
+		
 	var _printVoucher=function(voucherInfo){
-		$("#voucherForm").remove();
+	 $("#voucherForm").remove();
 		if(_getCookie('_session_pad_flag')=='1'){
 			var arr=new Array(3);
 			if(ec.util.browser.versions.android){
@@ -1173,7 +1207,34 @@ common.print = (function($){
 			}
 		}
 	};
-
+	var _queryConstConfig=function(voucherInfo,typeClass){
+		var isProPrint=false;
+		var param={
+			typeClass:typeClass,
+			queryType:1
+		};
+		var url=contextPath+"/print/queryConstConfig";
+		$.ecOverlay("<strong>正在查询公共数据查询的服务中,请稍后....</strong>");
+		var response = $.callServiceAsJsonGet(url,param);	
+		$.unecOverlay();
+		if (response.code==0) {
+			if(response.data!=undefined){
+				if("Y"==response.data.value){
+					isProPrint=true;
+				}
+			}
+		}else if (response.code==-2){
+			$.alertM(response.data);
+			return false;
+		}else {
+			$.alert("提示","查询公共数据查询的服务失败,稍后重试");
+			return false;
+		}
+		if(isProPrint && voucherInfo!=null){//是否使用省里面打印
+			voucherInfo.signFlag=3;
+		}
+		return true;
+	};
 
 	return {
 		preVoucher:_preVoucher,
@@ -1189,7 +1250,9 @@ common.print = (function($){
 		signVoucher:_signVoucher,
 		printOld2new:_printOld2new,
 		STBReserveReceipt : _STBReserveReceipt,
-		queryElInvoice:_queryElInvoice
+		queryElInvoice:_queryElInvoice,
+		preVoucherLoc:_preVoucherLoc,
+		queryConstConfig:_queryConstConfig
 	};
 })(jQuery);
 

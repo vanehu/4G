@@ -1222,7 +1222,7 @@ order.calcharge = (function(){
 					}
 					_changeFeeDisabled($("#calTab"));
 				});
-				// 本地打印回执,只有配置无纸化省份才会提供
+				 //本地打印回执,只有配置无纸化省份才会提供
 				$("#printVoucherLoc").off("click").on("click", function(event){
 					if(!_submitParam()){
 						return ;
@@ -1244,7 +1244,7 @@ order.calcharge = (function(){
 								"areaId":OrderInfo.getAreaId()
 							};
 					}
-					common.print.printVoucher(voucherInfo);
+					 common.print.printVoucher(voucherInfo);
 					_changeFeeDisabled($("#calTab"));
 				});
 				//if(OrderInfo.actionFlag==37 || OrderInfo.actionFlag==38){ //终端预约暂时未提供模板，不打印回执

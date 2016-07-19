@@ -291,6 +291,10 @@ public class PrintBmoImpl implements PrintBmo {
 			ret.put("olId", params.get("olId"));
 			ret.put("areaId", sessionStaff.getAreaId());
 			ret.put("action", "ADD");
+			String flag = MapUtils.getString(paramMap, "flag");
+			if(flag.equals("1")){
+				ret.put("flag","1");
+			}
 			if(ret!=null&&ret.get("orderInfo")!=null){
 				Map<String,Object> obj= postPdfData(ret,optFlowNum,request);
 				return obj;
@@ -5373,7 +5377,6 @@ public class PrintBmoImpl implements PrintBmo {
 
             //生成pdf文件
             byte[] bytes = vPdfPrintHelper.getPdfStreamWithParametersAndFields(hasParameters, lstFields);
-
             //输出到response
             if(response != null){
             	writeToResponse(bytes, strJasperFileName, response);

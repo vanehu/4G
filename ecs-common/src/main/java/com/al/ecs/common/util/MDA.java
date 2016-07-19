@@ -350,5 +350,10 @@ public class MDA {
      * 返档分省开关
 	 */
 	public static final Map<String,String> TRANSFER_RETURN = new HashMap<String,String>();
+	/**
+	 * 回执重打分省开关 
+	 */
+	public static final Map<String,String> RETURN_RECEIPT = new HashMap<String,String>();
+
 
 }
