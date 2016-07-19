@@ -2786,8 +2786,8 @@ SoOrder = (function() {
 			//套餐变更,可选包变更，补换卡校验
 			if(CONST.getAppDesc()==0){
 				if(OrderInfo.actionFlag == 2 ){ //套餐变更补换卡校验
-					for ( var i = 0; i < OrderInfo.offer.offerMemberInfos.length; i++) {
-						var member = OrderInfo.offer.offerMemberInfos[i];
+					for ( var k = 0; k < OrderInfo.offer.offerMemberInfos.length; k++) {
+						var member = OrderInfo.offer.offerMemberInfos[k];
 						if(member.objType == CONST.OBJ_TYPE.PROD){  //接入产品
 							if(AttachOffer.isChangeUim(member.objInstId)){
 								var td = OrderInfo.getProdTd(member.objInstId);
@@ -2810,8 +2810,8 @@ SoOrder = (function() {
 						var flag=false;
 						$.each(OrderInfo.viceOfferSpec,function(){
 							var prodId=this.prodId;
-							for ( var i = 0; i < OrderInfo.offer.offerMemberInfos.length; i++) {
-								var member = OrderInfo.offer.offerMemberInfos[i];
+							for ( var k = 0; k < OrderInfo.offer.offerMemberInfos.length; k++) {
+								var member = OrderInfo.offer.offerMemberInfos[k];
 								if(prodId==member.objInstId&&member.objType == CONST.OBJ_TYPE.PROD){  //接入产品
 									if(AttachOffer.isChangeUim(member.objInstId)){
 										var td = OrderInfo.getProdTd(member.objInstId);
