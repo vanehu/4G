@@ -306,6 +306,8 @@ order.cust = (function(){
 	//创建客户证件类型选择事件
 	var _identidiesTypeCdChoose = function(scope,id) {
 		$("#"+id).val("");
+		$("#cCustName").val("");
+		$("#cAddressStr").val("");
 		$("#"+id).attr("onkeyup", "value=value.replace(/[^A-Za-z0-9]/ig,'')");
 		var identidiesTypeCd=$(scope).val();
 		$("#"+id).attr("maxlength", "100");
@@ -315,6 +317,7 @@ order.cust = (function(){
 			// 新建客户身份证读卡，隐藏表单
 			if (id == "cCustIdCard") {
 				$("#readCertBtnCreate").show();
+				$("#btn_readCert").show(); // 预受理
 				$("#td_custName").data("custName", $("#td_custName").html());
 				$("#td_custName").html("");
 				$("#td_custIdCard").data("custIdCard", $("#td_custIdCard").html());
@@ -351,6 +354,7 @@ order.cust = (function(){
 		} else {
 			// 新建客户非身份证，还原表单
 			if (id == "cCustIdCard") {
+				$("#btn_readCert").hide(); // 预受理
 				var $readCertBtn = $("#readCertBtnCreate");
 				if ("none" != $readCertBtn.css("display")) {
 					$readCertBtn.hide();
