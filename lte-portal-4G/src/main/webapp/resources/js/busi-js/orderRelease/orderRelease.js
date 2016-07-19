@@ -203,7 +203,7 @@ order.release = (function(){
 					if(response.code==-2){
 						$.alertM(response.data);
 					}
-					if(response.data!=""){
+					else if(response.data!=""){
 						$.alert("提示",response.data);
 					}
 					else{
