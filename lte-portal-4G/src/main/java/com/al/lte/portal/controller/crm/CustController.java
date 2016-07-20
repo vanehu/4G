@@ -730,7 +730,7 @@ public class CustController extends BaseController {
 						String tmpIdCardNumber = MapUtils.getString(checkIdMap, "idCardNumber", "");
 						if(!tmpIdCardNumber.equals(sessionCertNumber)) {
 							map.put("isChange", SysConstant.STR_Y);
-							map.put("custAuthInfo", "非正常读卡数据，信息可能被窜改，此操作将被记录！");
+							map.put("custAuthInfo", "非正常读卡数据，信息可能被篡改，此操作将被记录！");
 							model.addAttribute("custAuth", map);
 							return "/cust/cust-info";
 						}
