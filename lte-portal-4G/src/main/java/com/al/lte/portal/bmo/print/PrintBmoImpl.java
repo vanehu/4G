@@ -291,8 +291,7 @@ public class PrintBmoImpl implements PrintBmo {
 			ret.put("olId", params.get("olId"));
 			ret.put("areaId", sessionStaff.getAreaId());
 			ret.put("action", "ADD");
-			String flag = MapUtils.getString(paramMap, "flag");
-			if(flag.equals("1")){
+			if("1".equals(MapUtils.getString(paramMap, "flag"))){
 				ret.put("flag","1");
 			}
 			if(ret!=null&&ret.get("orderInfo")!=null){
