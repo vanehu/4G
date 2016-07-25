@@ -116,8 +116,9 @@ public class BatchOrderControllerLatestVer  extends BaseController {
 		String olseq = request.getParameter("olseq");
 		String batchType = request.getParameter("batchType");
 		String reserveDt = request.getParameter("reserveDt");
-		String areaId = request.getParameter("areaId");
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
 		PropertiesUtils propertiesUtils = (PropertiesUtils) SpringContextUtil.getBean("propertiesUtils");
+		String currentAreaId = sessionStaff.getCurrentAreaId();
 		
 		if (olId == null || "".equals(olId)) {
 			message = "购物id为空！";
@@ -129,10 +130,6 @@ public class BatchOrderControllerLatestVer  extends BaseController {
 		}
 		if (reserveDt == null || "".equals(reserveDt)) {
 			message = "预约时间为空！";
-			isError = true;
-		}
-		if (areaId == null || "".equals(areaId)) {
-			message = "种子订单的地区信息为空！";
 			isError = true;
 		}
 		
@@ -162,7 +159,6 @@ public class BatchOrderControllerLatestVer  extends BaseController {
 				if (!isError) {
 					Map<String,Object> checkResult=null;
 					boolean checkResultFlag = false;
-					SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);				
 					String custStr = sessionStaff.getCustId() +"/"+ sessionStaff.getPartyName() +"/" + sessionStaff.getCardNumber()+"/"+sessionStaff.getCardType();
 					String encryptCustName = "";//客户定位回参中的CN点
 										
@@ -179,7 +175,6 @@ public class BatchOrderControllerLatestVer  extends BaseController {
 							encryptCustName = sessionStaff.getCN();
 						}	
 						
-//						long startTime = System.currentTimeMillis();
 						checkResult =  batchBmo.readExcel4NewOrder(workbook, batchType, custStr, sessionStaff);
 						if(checkResult.get("code") != null && "0".equals(checkResult.get("code"))){
 							checkResultFlag = true;
@@ -228,12 +223,7 @@ public class BatchOrderControllerLatestVer  extends BaseController {
 						param.put("batchType", batchType);
 						param.put("reserveDt", reserveDt);
 						param.put("size", checkResult.get("totalDataSize").toString());
-						
-						if(SysConstant.BATCHFAZHANREN.equals(batchType)){
-							param.put("commonRegionId",sessionStaff.getCurrentAreaId());
-						}else{
-							param.put("commonRegionId",areaId);
-						}
+						param.put("commonRegionId",currentAreaId);
 						busMap.put("batchOrder", param);
 						
 						//Excel校验成功后上传Excel文件
@@ -284,7 +274,7 @@ public class BatchOrderControllerLatestVer  extends BaseController {
 		model.addAttribute("code", code);
 		model.addAttribute("olId", olId);
 		model.addAttribute("olseq", olseq);
-		model.addAttribute("areaId", areaId);
+		model.addAttribute("areaId", currentAreaId);
 		model.addAttribute("batchType", batchType);
 		if(jsonResponse!=null){
 			model.addAttribute("errorStack",jsonResponse);

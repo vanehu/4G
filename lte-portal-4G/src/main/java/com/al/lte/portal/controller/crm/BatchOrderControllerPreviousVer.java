@@ -209,7 +209,8 @@ public class BatchOrderControllerPreviousVer  extends BaseController {
 		String batchType=request.getParameter("batchType");
 		String reserveDt=request.getParameter("reserveDt");
 		log.debug("reserveDt={}", reserveDt);
-		String areaId=request.getParameter("areaId");
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
+		String areaId=sessionStaff.getCurrentAreaId();
 		if(olId==null||"".equals(olId)){
 			message="购物id为空！";
 			isError=true;
@@ -222,10 +223,7 @@ public class BatchOrderControllerPreviousVer  extends BaseController {
 			message="预约时间为空！";
 			isError=true;
 		}
-		if(areaId==null||"".equals(areaId)){
-			message="种子订单的地区信息为空！";
-			isError=true;
-		}
+
 		if (null != file) {
 			boolean oldVersion = true;
 			String fileName = file.getOriginalFilename();
@@ -255,8 +253,6 @@ public class BatchOrderControllerPreviousVer  extends BaseController {
 					//message="批量导入成功,导入批次号："+rMap.get("groupId");
 					Map<String,Object> checkResult=null;
 					boolean flag=false;
-					SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
-	 						SysConstant.SESSION_KEY_LOGIN_STAFF);
 					String str = sessionStaff.getCustId() +"/"+ sessionStaff.getPartyName() +"/" + sessionStaff.getCardNumber()+"/"+sessionStaff.getCardType();
 					String encryptCustName = "";//客户定位回参中的CN点
 					
@@ -273,10 +269,7 @@ public class BatchOrderControllerPreviousVer  extends BaseController {
 							} else{
 								encryptCustName = sessionStaff.getCN();
 							}
-//							long startTime = System.currentTimeMillis();
 							checkResult=readNewOrderExcelBatch(workbook,batchType,str);
-//							long endTime = System.currentTimeMillis();
-//							System.out.println("******************Excel解析******************共耗时/ms : " + (endTime - startTime));
 						}else{
 							checkResult=readNewOrderExcel(workbook,batchType);
 						}
@@ -331,11 +324,7 @@ public class BatchOrderControllerPreviousVer  extends BaseController {
 						param.put("custOrderId", olId);
 						param.put("encryptCustName", encryptCustName);
 						param.putAll(getAreaInfos());
-						if(SysConstant.BATCHFAZHANREN.equals(batchType)){
-							param.put("commonRegionId",sessionStaff.getCurrentAreaId());
-						}else{
-							param.put("commonRegionId",areaId);
-						}
+						param.put("commonRegionId",areaId);
 						param.put("batchType", batchType);
 						param.put("reserveDt", reserveDt);
 						param.put("resBatchId", (resBatchId != null) ? resBatchId : "");
@@ -2323,21 +2312,12 @@ public class BatchOrderControllerPreviousVer  extends BaseController {
 		String message = "";
 		String code = "-1";
 		boolean isError = false;
-		//Map<String,Object> errorStack=null;
 		JsonResponse jsonResponse = null;
-		//String olseq = request.getParameter("olseq");
-		//String batchType = request.getParameter("batchType");
-		//String reserveDt = request.getParameter("reserveDt");
 		log.debug("reserveDt={}", reserveDt);
-		//String areaId = request.getParameter("areaId");
 		if(batchType == null || "".equals(batchType)){
 			message = "订单受理类型为空！";
 			isError = true;
 		}
-		/*if(reserveDt==null||"".equals(reserveDt)){
-			message="预约时间为空！";
-			isError=true;
-		}*/
 		if (null != file) {
 			boolean oldVersion = true;
 			String fileName = file.getOriginalFilename();
