@@ -250,6 +250,7 @@ public class CommonController extends BaseController {
 	    String partyName = MapUtils.getString(resultMap, "partyName"); //姓名
 	    String certAddress = MapUtils.getString(resultMap, "certAddress"); //地址
 	    String certNumber = MapUtils.getString(resultMap, "certNumber"); //身份证号码
+		request.getSession().setAttribute(Const.CACHE_CERTINFO, certNumber);
 	    String identityPic = MapUtils.getString(resultMap, "identityPic"); //照片
 	    String nonce = RandomStringUtils.randomAlphanumeric(Const.RANDOM_STRING_LENGTH); //随机字符串
 	    String appSecret = propertiesUtils.getMessage("APP_SECRET"); //appId对应的加密密钥

@@ -13,6 +13,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -1124,7 +1125,7 @@ public class CustController extends BaseController {
 						
 						//若省份只返回了一条客户信息，则与原有接口无差异。若省份返回了多条客户信息，则前台需要再次调用后台的新提供的接口，来查询客户下的接入号信息，并拼装报文，按客户ID和接入号逐条展示客户信息
 						if(custInfos.size() >= 1){
-							String zqstr = "";
+							String zqstr = ",";
 							for(int jj=0;jj<zqList.size();jj++){
 								Map mm = (Map) zqList.get(jj);
 								zqstr = zqstr + mm.get("certTypeCd")+",";
@@ -1157,7 +1158,7 @@ public class CustController extends BaseController {
 											newCustInfoMap.put("accNbr", accNbr);
 											if(StringUtils.isNotBlank(qryAcctNbr)&&!qryAcctNbr.equals(accNbr))
 												continue;
-											if("ON".equals(govSwitch) && newCustInfoMap.get("identityCd")!=null && zqstr.contains(newCustInfoMap.get("identityCd").toString())){
+											if(newCustInfoMap.get("identityCd")!=null && zqstr.contains(","+newCustInfoMap.get("identityCd").toString()+",")){
 												//政企客户才去查询使用人信息
 												addAccountAndCustInfo(flowNum, sessionStaff, areaId, custId, accNbr, soNbr, newCustInfoMap);
 											}
@@ -1303,6 +1304,14 @@ public class CustController extends BaseController {
     			Map<String, Object> data = (Map<String, Object>) resMap.get("data");
     			Map<String, Object> userInfo = (Map<String, Object>) resMap.get("userInfo");
     			request.getSession().setAttribute(Const.CACHE_CERTINFO, userInfo.get("certNumber"));
+    			String partyName = userInfo.get("partyName").toString();
+            	String certNumber = userInfo.get("certNumber").toString();
+            	String certAddress = userInfo.get("certAddress").toString();
+            	String identityPic = userInfo.get("identityPic").toString();
+            	String appSecret = propertiesUtils.getMessage("APP_SECRET"); //appId对应的加密密钥
+            	String nonce = RandomStringUtils.randomAlphanumeric(Const.RANDOM_STRING_LENGTH); //随机字符串
+            	String signature = commonBmo.signature(partyName, certNumber, certAddress, identityPic, nonce, appSecret);
+            	resMap.put("signature", signature);
     			jsonResponse=super.successed(resMap, ResultConstant.SUCCESS.getCode());
     		}else{
     			jsonResponse=super.failed(MapUtils.getString(resMap, "msg", "抱歉,查询蓝牙密钥的decodeUserInfo服务解析异常！"), ResultConstant.SERVICE_RESULT_FAILTURE

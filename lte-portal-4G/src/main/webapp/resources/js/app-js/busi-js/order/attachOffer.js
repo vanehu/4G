@@ -4010,6 +4010,7 @@ AttachOffer = (function() {
 		var f=$("#paramForm");
 		$("#paramForm").children().css('display','none');//全部子节点
 		$(".modal-header").children().css('display','none');//全部子节点
+		$(".modal-footer").children().css('display','none');//全部子节点
 		$("#search_info_div").remove();//清除原有的追加节点信息
 		var schools = CacheData.getSearchs();
 		var schools_filter=[];
@@ -4033,9 +4034,11 @@ AttachOffer = (function() {
 			div_schools_info='<div id="schools_info_content_div" style="overflow-x:hidden;overflow-y:auto;width:100%;height: 200px;">';
 		}
 		if(schools_filter.length<1){
-			tr_a+='<a href="#" class="list-group-item school-list" onclick="AttachOffer.schoolClose()" id="'+this.value+'">'
-			+'<h5 class="list-group-item-heading">没有查询到记录，请点此返回</h5></a>'
+			tr_a+='<div class="h4" style="text-align:center">'
+			+'<img style="vertical-align:middle" src="'+contextPath+'/image/common/query_search.gif">&nbsp;&nbsp;抱歉,没有查询到相关记录!</h5></div>'			
 		}
+		tr_a+='<span class="input-group-btn">'
+			+'<button class="btn btn-primary btn-group-justified" style="width: 60%; margin: 80px auto 0px ! important; border-radius: 4px ! important;"  onclick="AttachOffer.schoolClose();" type="button">返回</button></span>'
 		f.append(div_info+div_schools_info+tr_a+"</div></div>");
 		//$("#"+id).parent().append(div_info+div_schools_info+table_info+tr_td+"</tbody></table></div></div>");
 		return schools_filter;
@@ -4045,6 +4048,7 @@ AttachOffer = (function() {
 	var _searchSelect=function(id,code,name){
 		$("#paramForm").children().css('display','block');//全部子节点
 		$(".modal-header").children().css('display','block');//全部子节点
+		$(".modal-footer").children().css('display','block');//全部子节点
 		$("#"+id).val(name);
 		$("#"+id).attr("code",code);
 		$("#search_info_div").hide();
@@ -4053,6 +4057,7 @@ AttachOffer = (function() {
 	var _searchClose=function(){
 		$("#paramForm").children().css('display','block');//全部子节点
 		$(".modal-header").children().css('display','block');//全部子节点
+		$(".modal-footer").children().css('display','block');//全部子节点
 		$("#search_info_div").hide();
 	};
 	//
