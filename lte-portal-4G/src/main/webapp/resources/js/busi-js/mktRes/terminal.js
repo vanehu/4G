@@ -1853,7 +1853,9 @@ mktRes.terminal = (function($){
 		var terminalBrand = $(selected).attr("value");
 		_exchangeSelected(loc,selected);
 		if(terminalBrand != "noFilter"){
-			if(!(terminalBrandsArray.indexOf(terminalBrand) >= 0)){
+			//兼容IE8，将array转为string
+			var terminalBrandsStr = terminalBrandsArray.toString();		
+			if(!(terminalBrandsStr.indexOf(terminalBrand) >= 0)){
 				_addToTerminalBrandsSelected(selected);
 				_btnQueryTerminalType(selected);
 				terminalBrandsArray.push(terminalBrand);
