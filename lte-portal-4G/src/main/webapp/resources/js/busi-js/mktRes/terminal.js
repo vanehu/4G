@@ -1788,13 +1788,6 @@ mktRes.terminal = (function($){
 	 * 精品渠道终端(操作)汇总报表、精品渠道终端(库存)汇总报表 导出Excel，导出所有结果列表
 	 */
 	var _terminalStatisticExport = function(){
-		var totalResultNum = $("#terminalStatisticTotalSize").val();
-		
-		if(totalResultNum == null || totalResultNum == "" || totalResultNum == undefined || totalResultNum <= 0){
-			$.alert("提示信息","没有数据可导出，请先查询符合条件的数据");
-			return ;
-		}
-		
 		//为返回所有数据，入参特殊处理
 		var channelCode = $('#channelInfo').find('option:selected').attr('channelCode');
 		var channelName = $('#channelInfo').find('option:selected').attr('channelName');
@@ -1816,32 +1809,21 @@ mktRes.terminal = (function($){
 	 * 精品渠道终端进销存明细报表、精品渠道终端进销存(库存)明细报表  导出Excel，导出所有数据列表
 	 */
 	var _terminalStatisticDetailExport = function(){
-		var totalResultNum = $("#terminalStatisticDetailTotalSize").val();
-
-		if(totalResultNum == null || totalResultNum == "" || totalResultNum == undefined || totalResultNum <= 0){
-			$.alert("提示信息","没有数据可导出，请先查询符合条件的数据");
-			return ;
-		}
-		if(totalResultNum > 10000){
-			$.alert("提示信息","查询数据总量大于1万条，无法导出Excel");
-			return ;
-		} else{
-			//为返回所有数据，入参特殊处理
-			var channelCode	= $('#channelInfo').find('option:selected').attr('channelCode');
-			var channelName	= $('#channelInfo').find('option:selected').attr('channelName');
-			var channelId	= $("#channelInfo").val();
-			var qryType		= $("#qryType").val();	
-			var startDate	= "";
-			var endDate		= "";
-			var url = contextPath+"/mktRes/terminalStatisticDetailExport?channelCode=" + channelCode
-				+ "&channelId=" + channelId
-				+ "&qryType="	+ qryType
-				+ "&startDate="	+ startDate
-				+ "&endDate="	+ endDate;
-			
-			$("#terminalStatisticDetailExport").attr("action", url);
-			$("#terminalStatisticDetailExport").submit();
-		}
+		//为返回所有数据，入参特殊处理
+		var channelCode	= $('#channelInfo').find('option:selected').attr('channelCode');
+		var channelName	= $('#channelInfo').find('option:selected').attr('channelName');
+		var channelId	= $("#channelInfo").val();
+		var qryType		= $("#qryType").val();
+		var startDate	= "";
+		var endDate		= "";
+		var url = contextPath+"/mktRes/terminalStatisticDetailExport?channelCode=" + channelCode
+			+ "&channelId=" + channelId
+			+ "&qryType="	+ qryType
+			+ "&startDate="	+ startDate
+			+ "&endDate="	+ endDate;
+		
+		$("#terminalStatisticDetailExport").attr("action", url);
+		$("#terminalStatisticDetailExport").submit();
 	};
 
 	/**
@@ -1957,7 +1939,7 @@ mktRes.terminal = (function($){
 	var _showMoreOrLess = function(){
 		$("#termManfId_more").show();
   		_viewSmallOrAll("#selectBrands_showAll", "#selectBrands_showPart");
-  		//event.stopPropagation();		
+  		event.stopPropagation();		
   		if($("#selectBrands_showPart").is(':hidden')){
   			$("#termManfId_more a").addClass("btn_less");
 			$("#termManfId_more a").text("收起");
