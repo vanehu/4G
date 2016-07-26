@@ -1857,6 +1857,8 @@ mktRes.terminal = (function($){
 				_addToTerminalBrandsSelected(selected);
 				_btnQueryTerminalType(selected);
 				terminalBrandsArray.push(terminalBrand);
+			} else{
+				_btnQueryTerminalType(selected);
 			}
 		} else{
 			_clearTerminalSelected();

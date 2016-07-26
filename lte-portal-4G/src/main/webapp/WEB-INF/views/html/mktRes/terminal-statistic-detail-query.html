@@ -39,6 +39,22 @@
 							<dt>品牌筛选：</dt>
 							<dd style="" id="selectBrands_showPart">
 								<a href="javascript:void(0);" class="selected" value="noFilter" onclick="mktRes.terminal.queryTerminalType('#selectBrands_showPart a',this)">不限</a>
+								<a href="javascript:void(0);" value="华为" onclick="mktRes.terminal.queryTerminalType('#selectBrands_showPart a',this)">华为</a>
+								<a href="javascript:void(0);" value="苹果" onclick="mktRes.terminal.queryTerminalType('#selectBrands_showPart a',this)">苹果</a>
+								<a href="javascript:void(0);" value="OPPO" onclick="mktRes.terminal.queryTerminalType('#selectBrands_showPart a',this)">OPPO</a>
+								<a href="javascript:void(0);" value="vivo" onclick="mktRes.terminal.queryTerminalType('#selectBrands_showPart a',this)">vivo</a>
+								<a href="javascript:void(0);" value="三星" onclick="mktRes.terminal.queryTerminalType('#selectBrands_showPart a',this)">三星</a>
+								<a href="javascript:void(0);" value="宇龙" onclick="mktRes.terminal.queryTerminalType('#selectBrands_showPart a',this)">宇龙</a>
+								<a href="javascript:void(0);" value="海信" onclick="mktRes.terminal.queryTerminalType('#selectBrands_showPart a',this)">海信</a>
+								<a href="javascript:void(0);" value="百合" onclick="mktRes.terminal.queryTerminalType('#selectBrands_showPart a',this)">百合</a>
+								<a href="javascript:void(0);" value="金立" onclick="mktRes.terminal.queryTerminalType('#selectBrands_showPart a',this)">金立</a>
+								<a href="javascript:void(0);" value="魅族" onclick="mktRes.terminal.queryTerminalType('#selectBrands_showPart a',this)">魅族</a>
+								<a href="javascript:void(0);" value="小米" onclick="mktRes.terminal.queryTerminalType('#selectBrands_showPart a',this)">小米</a>
+								<a href="javascript:void(0);" value="中兴" onclick="mktRes.terminal.queryTerminalType('#selectBrands_showPart a',this)">中兴</a>
+							</dd>
+							<!-- #677315需求临时屏蔽
+							<dd style="" id="selectBrands_showPart">
+								<a href="javascript:void(0);" class="selected" value="noFilter" onclick="mktRes.terminal.queryTerminalType('#selectBrands_showPart a',this)">不限</a>
 								<#list brandList as item>
 									<a href="javascript:void(0);" value="${item.terminalBrand}" onclick="mktRes.terminal.queryTerminalType('#selectBrands_showPart a',this)">${item.terminalBrand}</a>
 									<#if item_index == 12>
@@ -55,6 +71,7 @@
 							<span id="termManfId_more"> 
 									<a href="javascript:void(0);" val="更多" class="btn_more" onclick="mktRes.terminal.showMoreOrLess()">更多</a>
 							</span>
+							 -->
 						</dl>
 						<dl id="selectTerminalType" style="display:none">
 							<dt>机型筛选：</dt>

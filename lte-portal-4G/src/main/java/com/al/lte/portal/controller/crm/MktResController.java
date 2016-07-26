@@ -2627,6 +2627,14 @@ public class MktResController extends BaseController {
 	@RequestMapping(value = "/terminalStatisticQuery", method = {RequestMethod.GET})
 	public String terminalStatisticQuery(Model model,HttpServletRequest request,HttpSession session) {
 		
+		Calendar calendar = Calendar.getInstance();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		String end = sdf.format(calendar.getTime());
+		calendar.add(Calendar.DATE, -1);
+//		String start = sdf.format(calendar.getTime());
+		model.addAttribute("startDt", end);
+		model.addAttribute("endDt", end);
+		
 		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);
 		String qryType = request.getParameter("qryType");
 		Map<String, Object> channelQryParamMap = null;
@@ -2746,6 +2754,15 @@ public class MktResController extends BaseController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/terminalStatisticDetailQuery", method = {RequestMethod.GET})
 	public String terminalStatisticDetailQuery(Model model,HttpServletRequest request,HttpSession session) {
+		
+		//初始化时间
+		Calendar calendar = Calendar.getInstance();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		String end = sdf.format(calendar.getTime());
+		calendar.add(Calendar.DATE, -1);
+//		String start = sdf.format(calendar.getTime());
+		model.addAttribute("startDt", end);
+		model.addAttribute("endDt", end);
 		
 		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);
 		Map<String, Object> qryParamMap = new HashMap<String, Object>();
