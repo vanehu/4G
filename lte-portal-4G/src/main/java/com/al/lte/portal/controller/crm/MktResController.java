@@ -2704,8 +2704,13 @@ public class MktResController extends BaseController {
 	public String terminalStatisticQueryList(@RequestBody Map<String, Object> qryParam, Model model) {
 		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);
 		Map<String, Object> resultMap = null;
-		String qryType = MapUtils.getString(qryParam, "qryType", "0");
 		String returnString = null;
+		
+		if(qryParam.get("qryType") == null || "".equals(qryParam.get("qryType"))){
+			return super.failedStr(model, ErrorCode.PORTAL_INPARAM_ERROR, new Exception("参数[qryType]缺失或非法值，请稍后刷新页面重新尝试。"), qryParam);
+		}
+		
+		String qryType = MapUtils.getString(qryParam, "qryType", "0");
 		
 		try {
 			resultMap = mktResBmo.terminalStatisticQueryList(qryParam, null, sessionStaff);
@@ -2715,6 +2720,9 @@ public class MktResController extends BaseController {
 						MapUtils.getIntValue(qryParam,"pageSize",10), 
 						(ArrayList<Map<String, Object>>)resultMap.get("resultList"));
 	             model.addAttribute("pageModel", pageModel);
+	             model.addAttribute("totalResultNum", ((ArrayList<Map<String, Object>>)resultMap.get("resultList")).size());
+	             //查询成功后，缓存当前的qryParam，以便导出时查询所有数据
+	             mktResBmo.cacheParamsInSession(super.getRequest(), qryParam, SysConstant.TERMINAL_STATISTIC);
 			} else{
 				model.addAttribute("code", resultMap.get("code"));
 				model.addAttribute("message", resultMap.get("message"));
@@ -2809,7 +2817,7 @@ public class MktResController extends BaseController {
 		} catch (Exception e) {
 			return super.failedStr(model, ErrorCode.TERM_ORDER_QUERY_SERVICE, e, terminalTypeQryParamMap);
 		}
-				
+
 		return "/mktRes/terminal-statistic-detail-query";
 	}
 	
@@ -2824,9 +2832,14 @@ public class MktResController extends BaseController {
 	public String terminalStatisticDetailQueryList(@RequestBody Map<String, Object> qryParam, Model model) {
 		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);
 		Map<String, Object> resultMap = null;
+		
+		if(qryParam.get("qryType") == null || "".equals(qryParam.get("qryType"))){
+			return super.failedStr(model, ErrorCode.PORTAL_INPARAM_ERROR, new Exception("参数[qryType]缺失或非法值，请稍后刷新页面重新尝试。"), qryParam);
+		}
+
 		try {
 			resultMap = mktResBmo.terminalStatisticDetailQueryList(qryParam, null, sessionStaff);
-			if (resultMap != null && ResultCode.R_SUCC.equals(resultMap.get("code").toString())){		
+			if (resultMap != null && ResultCode.R_SUCC.equals(resultMap.get("code").toString())){	
 				PageModel<Map<String, Object>> pageModel = PageUtil.buildPageModel(
 					MapUtils.getIntValue(qryParam, "pageIndex", 1), 
 					MapUtils.getIntValue(qryParam,"pageSize",10), 
@@ -2835,6 +2848,9 @@ public class MktResController extends BaseController {
 				);
 				model.addAttribute("pageModel", pageModel);
 				model.addAttribute("qryType", qryParam.get("qryType"));
+				model.addAttribute("totalResultNum", MapUtils.getIntValue(resultMap, "totalResultNum", 10));
+				//查询成功后，缓存当前的qryParam，以便导出时查询所有数据
+				mktResBmo.cacheParamsInSession(super.getRequest(), qryParam, SysConstant.TERMINAL_STATISTIC_DETAIL);
 			} else{
 				model.addAttribute("code", resultMap.get("code"));
 				model.addAttribute("message", resultMap.get("message"));
@@ -2865,6 +2881,13 @@ public class MktResController extends BaseController {
 		String[][] headers = null;
 		boolean isParamError = false;
 		String errorMsg = null;
+		Map<String, Object> cachedParams = null;
+		
+		//从缓存中获取查询入参，如果获取失败，则使用现有的请求入参
+		cachedParams = mktResBmo.getCachedParamsInSession(super.getRequest(), qryParam, SysConstant.TERMINAL_STATISTIC);
+		if(cachedParams != null){
+			qryParam = cachedParams;
+		}
 
 		if(qryParam.get("qryType") != null && !"".equals(qryParam.get("qryType"))){
 			if("0".equals(qryType)){//精品渠道终端(操作)汇总报表
@@ -2939,6 +2962,13 @@ public class MktResController extends BaseController {
 		Map<String, Object> transferInfo = new HashMap<String, Object>();
 		boolean isParamError = false;
 		String errorMsg = null;
+		Map<String, Object> cachedParams = null;
+		
+		//从缓存中获取查询入参，如果获取失败，则使用现有的请求入参
+		cachedParams = mktResBmo.getCachedParamsInSession(super.getRequest(), qryParam, SysConstant.TERMINAL_STATISTIC_DETAIL);
+		if(cachedParams != null){
+			qryParam = cachedParams;
+		}
 		
 		MapUtils.safeAddToMap(qryParam, "pageIndex", (Integer)1);
 		MapUtils.safeAddToMap(qryParam, "pageSize", (Integer)9999);

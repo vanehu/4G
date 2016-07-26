@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.collections.MapUtils; 
 import org.apache.commons.lang.StringUtils;
 import org.dom4j.DocumentException;
@@ -15,6 +17,7 @@ import com.al.ec.serviceplatform.client.DataBus;
 import com.al.ec.serviceplatform.client.ResultCode;
 import com.al.ecs.common.util.JsonUtil;
 import com.al.ecs.common.util.PropertiesUtils;
+import com.al.ecs.common.web.ServletUtils;
 import com.al.ecs.exception.BusinessException;
 import com.al.ecs.exception.ErrorCode;
 import com.al.ecs.exception.InterfaceException;
@@ -1358,5 +1361,34 @@ public class MktResBmoImpl implements MktResBmo {
         		timeString.substring(8, 10),
         		timeString.substring(10, 12),
         		timeString.substring(12, timeString.length()));
+	}
+	
+	/**
+	 * 报表统计：将查询的入参缓存入session，以便导出Excel时从该参数获取所有数据
+	 */
+	@SuppressWarnings("unchecked")
+	public void cacheParamsInSession(HttpServletRequest request, Map<String, Object> qryParam, String businessFlag){
+		Map<String, Object> sessionParams = (HashMap<String, Object>) ServletUtils.getSessionAttribute(request, businessFlag);
+		
+		if(sessionParams == null){
+			sessionParams = new HashMap<String, Object>();
+			sessionParams.put(qryParam.get("qryType").toString(), qryParam);
+			ServletUtils.setSessionAttribute(request, businessFlag, sessionParams);
+		} else{
+			sessionParams.put(qryParam.get("qryType").toString(), qryParam);
+			ServletUtils.setSessionAttribute(request, businessFlag, sessionParams);
+		}
+	}
+	
+	/**
+	 * 报表统计：从session中获取缓存的入参，以便导出Excel时从该参数获取所有数据，session中没有则返回null
+	 */
+	@SuppressWarnings("unchecked")
+	public Map<String, Object> getCachedParamsInSession(HttpServletRequest request, Map<String, Object> qryParam, String businessFlag){		
+		Map<String, Object> sessionParams = (HashMap<String, Object>) ServletUtils.getSessionAttribute(request, businessFlag);
+		if(sessionParams == null){
+			return null;
+		}
+		return (Map<String, Object>) sessionParams.get(qryParam.get("qryType").toString());
 	}
 }

@@ -3,6 +3,8 @@ package com.al.lte.portal.bmo.crm;
 import java.io.IOException;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.dom4j.DocumentException;
 
 import com.al.ec.serviceplatform.client.DataBus;
@@ -434,5 +436,10 @@ public interface MktResBmo {
 	
 	public Map<String, Object> pnLowAndPrePriceQry(Map<String, Object> dataBusMap,
 			String optFlowNum, SessionStaff sessionStaff) throws InterfaceException, IOException, Exception;
-			
+	
+	public void cacheParamsInSession(HttpServletRequest request, Map<String, Object> qryParam, String businessFlag);
+	
+	public Map<String, Object> getCachedParamsInSession(HttpServletRequest request, Map<String, Object> qryParam, String businessFlag);
+	
+	
  }
