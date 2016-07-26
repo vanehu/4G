@@ -1928,7 +1928,9 @@ mktRes.terminal = (function($){
 	var _selectTerminalType = function(loc,selected){
 		var terminalType = $(selected).attr("value");
 		_exchangeSelected(loc,selected);
-		if(!(terminalTypeArray.indexOf(terminalType) >= 0)){
+		//兼容IE8，将array转为string
+		var terminalTypeStr = terminalTypeArray.toString();
+		if(!(terminalTypeStr.indexOf(terminalType) >= 0)){
 			_addToTerminalTypeSelected(selected);
 			terminalTypeArray.push(terminalType);
 		}
