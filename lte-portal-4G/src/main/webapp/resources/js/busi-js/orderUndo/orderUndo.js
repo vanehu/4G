@@ -69,6 +69,7 @@ order.undo = (function(){
 				"p_hm":$("#p_hm").val(),
 				"p_partyId":$("#custName").attr("name"),
 				"permissionsType": $("#permissionsType").val(),
+				"flag":"1",
 				curPage:curPage,
 				pageSize:10
 		};
@@ -115,7 +116,7 @@ order.undo = (function(){
 			$.alert("提示","该订单是电渠ESS订单，且未向ESS异常报竣，请先异常报竣后再撤单！");
 			return;
 		}
-		if(all_only=="all" && statusCd == '100002'){ // 状态
+		if(all_only=="all" && (statusCd == '100002' || statusCd == '100001')){ // 状态
 			var content = "是否作废购物车： " +$("#"+id).attr("olNbr");
 			$.confirm("信息确认",content,{ 
 				yes:function(){
@@ -556,7 +557,7 @@ order.undo = (function(){
 		
 		var param = null ;
 		var statusCd = $("#"+submit_id).attr("statusCd"); 
-		if(undo_type=="all" && statusCd == '100002'){ // 状态
+		if(undo_type=="all" && (statusCd == '100002'|| statusCd == '100001')){ // 状态
 			param = {
 					olId : $("#"+submit_id).attr("olId"),
 					areaId : $("#p_areaId").val()

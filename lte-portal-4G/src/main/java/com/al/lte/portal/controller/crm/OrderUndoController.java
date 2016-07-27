@@ -185,6 +185,7 @@ public class OrderUndoController extends BaseController {
         }
 
         dataBusMap.put("unComFlag", "Y");//Y未竣工
+        dataBusMap.put("flag", "1");
         Map map = null;
         try {
             curPage = Integer.parseInt(request.getParameter("curPage"));

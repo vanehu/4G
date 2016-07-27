@@ -67,7 +67,7 @@
                   	
                   	<#if undo_num?? && (undo_num>0)>
                   		<a class="purchase" href="javascript:order.undo.undoCheck('all','Y','${order.olNbr}')" id="${order.olNbr}" olId="${order.olId}" olNbr="${order.olNbr}" statusCd="${order.statusCd}" partyid="${order.partyId}" cancelFlag="${order.cancelFlag}">
-                  		 <#if order.statusCd == '100002'>
+                  		 <#if order.statusCd == '100002' || order.statusCd == '100001'>
                                                                                                  作废
                          <#else>
                                                                                                  撤单
@@ -77,7 +77,7 @@
                   		<a class="purchase2" href="javascript:void(0)" olId="${order.olId}" olNbr="${order.olNbr}" partyid="${order.partyId}" cancelFlag="${order.cancelFlag}">撤单</a>
                   	</#if>
                   <#else>
-                         <#if order.statusCd != '100002'>
+                         <#if order.statusCd != '100002' && order.statusCd != '100001'>
                   		    <a class="purchase2" href="javascript:void(0)" olId="${order.olId}" olNbr="${order.olNbr}" partyid="${order.partyId}" >无撤单项</a>
                   		 <#else>
                   		    <a class="purchase" href="javascript:order.undo.undoCheck('all','Y','${order.olNbr}')" id="${order.olNbr}" olId="${order.olId}" olNbr="${order.olNbr}" statusCd="${order.statusCd}" partyid="${order.partyId}">作废</a>
