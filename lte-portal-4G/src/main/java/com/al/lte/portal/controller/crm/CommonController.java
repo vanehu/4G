@@ -38,6 +38,7 @@ import com.al.ecs.spring.annotation.log.LogOperatorAnn;
 import com.al.ecs.spring.controller.BaseController;
 import com.al.lte.portal.bmo.crm.CommonBmo;
 import com.al.lte.portal.bmo.crm.CustBmo;
+import com.al.lte.portal.bmo.staff.StaffBmo;
 import com.al.lte.portal.common.CommonMethods;
 import com.al.lte.portal.common.Const;
 import com.al.lte.portal.common.SysConstant;
@@ -66,6 +67,11 @@ public class CommonController extends BaseController {
 
 	@Autowired
     private PropertiesUtils propertiesUtils;
+	
+	@Autowired
+    @Qualifier("com.al.lte.portal.bmo.staff.StaffBmo")
+    private StaffBmo staffBmo;
+
 
 	/**
 	 * 获取随机码
@@ -316,4 +322,28 @@ public class CommonController extends BaseController {
 		result.put("areaId",areaId);
 		return result;
 	}
+	
+    @RequestMapping(value = "/checkOperate", method = RequestMethod.POST)
+    public @ResponseBody
+    String checkOperate(@LogOperatorAnn String flowNum, @RequestBody Map<String, Object> param,HttpServletResponse response) {
+        SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+                SysConstant.SESSION_KEY_LOGIN_STAFF);
+        String operatSpecCd = (String) param.get("operatSpecCd");
+        String isAddOperation = (String) ServletUtils.getSessionAttribute(super.getRequest(), operatSpecCd
+                + "_" + sessionStaff.getStaffId());
+        try {
+            if (isAddOperation == null) {
+                isAddOperation = staffBmo.checkOperatSpec(operatSpecCd, sessionStaff);
+                ServletUtils.setSessionAttribute(super.getRequest(), operatSpecCd + "_"
+                        + sessionStaff.getStaffId(), isAddOperation);
+            }
+        } catch (BusinessException e) {
+            isAddOperation = "1";
+        } catch (InterfaceException ie) {
+            isAddOperation = "1";
+        } catch (Exception e) {
+            isAddOperation = "1";
+        }
+        return isAddOperation;
+    }
 }

@@ -388,6 +388,7 @@ CONST = (function(){
 	var _YZFitemSpecId1 = 10020034; //翼支付助手阀值级别属性编码
 	var _YZFitemSpecId2 = 10020035; //翼支付助手单次充值额度属性编码
 	var _YZFitemSpecId3 = 10020036; //翼支付助手是否需要代扣确认属性编码
+	var _YZFitemSpecId4 = 10020087; //翼支付助手翼支付托收
 	
 	//渠道大类
 	var _CHANNEL_TYPE_CD ={
@@ -493,7 +494,9 @@ CONST = (function(){
 		PROD_ATTR_VALUE : _PROD_ATTR_VALUE,
 		MENU_FANDANG : _MENU_FANDANG,
 		MENU_CUSTFANDANG:_MENU_CUSTFANDANG,
-		MENU_RETURNFILE : _MENU_RETURNFILE
+		MENU_RETURNFILE : _MENU_RETURNFILE,
+		PUSH_TYPE:_PUSH_TYPE,
+		YZFitemSpecId4 : _YZFitemSpecId4
 	};
 })();
 
