@@ -1132,8 +1132,8 @@ order.cust = (function(){
 						$.confirm("确认","你已重新选择号码，需跳转至上一步，是否确认?",{
 							yes:function(){
 								_cancel();
-								_linkQueryOffer(thisTr);
 								OrderInfo.order.step=0;
+								_linkQueryOffer(thisTr);
 							},
 							no:function(){
 								null;
@@ -1144,8 +1144,8 @@ order.cust = (function(){
 							yes:function(){
 								SoOrder.orderBack();
 								_cancel();
-								_linkQueryOffer(thisTr);
 								OrderInfo.order.step=0;
+								_linkQueryOffer(thisTr);
 							},
 							no:function(){
 								null;
@@ -1163,8 +1163,8 @@ order.cust = (function(){
 						$.confirm("确认","你已重新选择号码，需跳转至上一步，是否确认?",{
 							yes:function(){
 								_cancel();
-								order.cust.linkSelectPlan(this2Tr);event.stopPropagation();
 								OrderInfo.order.step=0;
+								order.cust.linkSelectPlan(this2Tr);event.stopPropagation();
 							},
 							no:function(){
 								null;
@@ -1175,8 +1175,8 @@ order.cust = (function(){
 							yes:function(){
 								SoOrder.orderBack();
 								_cancel();
-								order.cust.linkSelectPlan(this2Tr);event.stopPropagation();
 								OrderInfo.order.step=0;
+								order.cust.linkSelectPlan(this2Tr);event.stopPropagation();
 							},
 							no:function(){
 								null;
