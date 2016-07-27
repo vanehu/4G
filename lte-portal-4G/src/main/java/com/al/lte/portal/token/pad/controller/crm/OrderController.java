@@ -2387,5 +2387,76 @@ public class OrderController extends BaseController {
     	}
     	return forward;
     }
+    
+    @RequestMapping(value = "/chargeSubmit", method = RequestMethod.POST)
+    @ResponseBody
+    public JsonResponse chargeSubmit(@RequestBody Map<String, Object> param,
+			@LogOperatorAnn String flowNum,HttpServletResponse response,HttpServletRequest request){
+   	 SessionStaff sessionStaff = (SessionStaff) ServletUtils
+				.getSessionAttribute(super.getRequest(),
+						SysConstant.SESSION_KEY_LOGIN_STAFF);
+		Map<String, Object> rMap = null;
+		JsonResponse jsonResponse = null;
+		try {
+			if(commonBmo.checkToken(request, SysConstant.ORDER_SUBMIT_TOKEN)){
+//				if(param.get("FLAG")!=null && "pos".equals(param.get("FLAG"))){//在线pos回调收费
+//					Map<String,Object> posmap=new HashMap<String,Object>();
+//					posmap.put("olId", param.get("olId"));
+//					posmap.put("FLAG", "select");
+//					rMap = orderBmo.GetOLpos(posmap, flowNum, sessionStaff);
+//					List list = (List) rMap.get("result");
+//					Map aa = (Map)list.get(0);
+//					Object obj = (Object) aa.get("PARAM");
+//					param = JsonUtil.toObject((String)obj, Map.class);
+//				}
+	 			log.debug("param={}", JsonUtil.toString(param));
+	 			param.put("areaId", sessionStaff.getCurrentAreaId());
+	 			
+	 			//去除chargeItems中的重复项，根据acctItemId判断
+	 			List<Map<String, String>> chargeItems = (List<Map<String, String>>) param.get("chargeItems");
+	 			if(chargeItems != null && chargeItems.size() != 0){
+	 				List<Map<String, String>> checkedChargeItems = new ArrayList<Map<String,String>>();
+	 				for(Map<String, String> item : chargeItems){
+	 					if(item != null){
+	 						String acctItemId = item.get("acctItemId");
+	 						if(acctItemId != null){
+	 							boolean exist = false;
+	 							for(Map<String, String> checkedItem : checkedChargeItems){
+	 								if(acctItemId.equals(checkedItem.get("acctItemId"))){
+	 									exist = true;
+	 									break;
+	 								}
+	 							}
+	 							if(!exist){
+	 								checkedChargeItems.add(item);
+	 							}
+	 						}
+	 					}
+	 				}
+	 				param.put("chargeItems", checkedChargeItems);
+	 			}
+	 			
+	 			rMap = orderBmo.chargeSubmit(param, flowNum, sessionStaff);
+	 			log.debug("return={}", JsonUtil.toString(rMap));
+	 			if (rMap != null&& ResultCode.R_SUCCESS.equals(rMap.get("code").toString())) {
+	 				jsonResponse = super.successed("收费成功",
+	 						ResultConstant.SUCCESS.getCode());
+	 			} else {
+	 				jsonResponse = super.failed(rMap.get("msg"),
+	 						ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+	 			}
+			}else{
+				jsonResponse = super.failed("订单已经建档成功,不能重复操作!",
+						ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+			}
+		} catch (BusinessException e) {
+			return super.failed(e);
+		} catch (InterfaceException ie) {
+			return super.failed(ie, param, ErrorCode.CHARGE_SUBMIT);
+		} catch (Exception e) {
+			return super.failed(ErrorCode.CHARGE_SUBMIT, e, param);
+		}
+		return jsonResponse;
+    }
 
 }
