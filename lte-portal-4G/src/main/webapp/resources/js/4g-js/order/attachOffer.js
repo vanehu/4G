@@ -4891,11 +4891,20 @@ AttachOffer = (function() {
 			}
 		});
 		$('#paramForm').bind('formIsValid', function(event, form) {
-			var nums=$("#text_"+prodId+"_"+offerSpecId).val();
-			var reg = /^\+?[1-9][0-9]*$/;//正整数
-			if(!reg.test(nums)){
-				$.alert("信息提示","次数只能是正整数。");
-				return;
+			if(flag==1){
+				var nums=$("#text_"+prodId+"_"+offerSpecId).val();
+				var reg = /^\+?[0-9][0-9]*$/;//正整数
+				if(!reg.test(nums)){
+					$.alert("信息提示","次数输入有误。");
+					return;
+				}
+			}else{
+				var nums=$("#text_"+prodId+"_"+offerSpecId).val();
+				var reg = /^\+?[1-9][0-9]*$/;//正整数
+				if(!reg.test(nums)){
+					$.alert("信息提示","次数只能是正整数。");
+					return;
+				}
 			}
 //			if(flag==1&&offer.orderCount>nums){
 //				$.alert("信息提示","可选包【"+newSpec.offerSpecName+"】不允许退订！");
