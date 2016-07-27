@@ -840,7 +840,9 @@ OrderInfo = (function() {
 						var feeType = $("select[name='pay_type_-1']").val();
 						if(feeType==undefined) feeType = order.prodModify.choosedProdInfo.feeType;
 						if(prodServ.servSpecId == CONST.YZFservSpecId && feeType == CONST.PAY_TYPE.AFTER_PAY){
-							this.setValue = "";
+							if (this.itemSpecId == CONST.YZFitemSpecId1 || this.itemSpecId == CONST.YZFitemSpecId2) {
+								this.setValue = "";
+							}
 						}
 						if(ec.util.isObj(this.setValue)){
 							var addParam = {

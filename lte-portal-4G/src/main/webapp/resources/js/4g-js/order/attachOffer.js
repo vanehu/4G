@@ -1586,7 +1586,11 @@ AttachOffer = (function() {
 							if(feeType == CONST.PAY_TYPE.AFTER_PAY){
 								for ( var j = 0; j < newSpec.prodSpecParams.length; j++) {
 									var prodSpecParam = newSpec.prodSpecParams[j];
-									prodSpecParam.setValue = "";
+									if (prodSpecParam.itemSpecId == CONST.YZFitemSpecId1 || prodSpecParam.itemSpecId == CONST.YZFitemSpecId2) {
+										prodSpecParam.setValue = "";
+									} else {
+										prodSpecParam.setValue = prodSpecParam.value;
+									}
 								}																			
 							}else{
 								for ( var j = 0; j < newSpec.prodSpecParams.length; j++) {							

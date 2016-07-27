@@ -288,38 +288,37 @@ CacheData = (function() {
 			selectStr = selectStr + "<div id='div1' style='position: absolute;top:77px;'></div>";
 			return selectStr;
 		}
-		if(!!param.valueRange && (itemSpecId == CONST.YZFitemSpecId1||itemSpecId ==  CONST.YZFitemSpecId2||itemSpecId ==  CONST.YZFitemSpecId3)){ //可编辑下拉框（10020034,10020035,10020036 为翼支付交费助手的三属性）
+		if(!!param.valueRange && (itemSpecId == CONST.YZFitemSpecId1||itemSpecId ==  CONST.YZFitemSpecId2)){ //可编辑下拉框（10020034,10020035,10020036 为翼支付交费助手的三属性）需求（开发） #610119
 			//缴费助手的属性值,如果是预付费的，则属性中展示默认值，且必填，如果是后付费的，属性为空，且不可填
-		var feeType = $("select[name='pay_type_-1']").val();
-		if(feeType==undefined) feeType = order.prodModify.choosedProdInfo.feeType;
-		if(feeType == CONST.PAY_TYPE.BEFORE_PAY){
-			if(param.rule.isConstant=='Y'){ //不可修改
-				selectStr = selectStr+"<tr><td>"+param.name + ": </td><td><select class='inputWidth183px' id="+prodId+"_"+itemSpecId+" disabled='disabled'>"; 
-			}else {
-				if(param.rule.isOptional=="N") { //必填
-					selectStr = selectStr+"<tr><" +
-							"td>"+param.name + ": </td><td><select class='inputWidth183px' id="+prodId+"_"+itemSpecId+" data-validate='validate(required,reg:"
-							  + param.rule.maskMsg+"("+param.rule.mask+")) on(blur)'><label class='f_red'>*</label><br>"; 
-				}else{
-					selectStr = selectStr+"<tr><td>"+param.name + ": </td><td><select class='inputWidth183px' id="+prodId+"_"+itemSpecId+"><br>"; 
-				}
-			}
-			for ( var j = 0; j < param.valueRange.length; j++) {
-				var valueRange = param.valueRange[j];
-				if(valueRange.value== param.setValue){
-					optionStr +='<option value="'+valueRange.value+'" selected="selected" >'+valueRange.text+'</option>';
+			var feeType = $("select[name='pay_type_-1']").val();
+			if(feeType==undefined) feeType = order.prodModify.choosedProdInfo.feeType;
+			if(feeType == CONST.PAY_TYPE.BEFORE_PAY){
+				if(param.rule.isConstant=='Y'){ //不可修改
+					selectStr = selectStr+"<tr><td>"+param.name + ": </td><td><select class='inputWidth183px' id="+prodId+"_"+itemSpecId+" disabled='disabled'>"; 
 				}else {
-					optionStr +='<option value="'+valueRange.value+'">'+valueRange.text+'</option>';
+					if(param.rule.isOptional=="N") { //必填
+						selectStr = selectStr+"<tr><" +
+								"td>"+param.name + ": </td><td><select class='inputWidth183px' id="+prodId+"_"+itemSpecId+" data-validate='validate(required,reg:"
+								  + param.rule.maskMsg+"("+param.rule.mask+")) on(blur)'><label class='f_red'>*</label><br>"; 
+					}else{
+						selectStr = selectStr+"<tr><td>"+param.name + ": </td><td><select class='inputWidth183px' id="+prodId+"_"+itemSpecId+"><br>"; 
+					}
 				}
-			}
-			selectStr += optionStr + "</select></td></tr>"; 
-			return selectStr;
-		}
-			else if(feeType == CONST.PAY_TYPE.AFTER_PAY){
-				selectStr =selectStr+"<tr><td>"+ param.name + ":</td><td> <select class='inputWidth183px' id="+prodId+"_"+itemSpecId+" disabled='disabled'>";
-				optionStr +='<option value="" selected="selected">不可选</option>';
+				for ( var j = 0; j < param.valueRange.length; j++) {
+					var valueRange = param.valueRange[j];
+					if(valueRange.value== param.setValue){
+						optionStr +='<option value="'+valueRange.value+'" selected="selected" >'+valueRange.text+'</option>';
+					}else {
+						optionStr +='<option value="'+valueRange.value+'">'+valueRange.text+'</option>';
+					}
+				}
 				selectStr += optionStr + "</select></td></tr>"; 
 				return selectStr;
+			} else if(feeType == CONST.PAY_TYPE.AFTER_PAY){
+					selectStr =selectStr+"<tr style='display: none;'><td>"+ param.name + ":</td><td> <select class='inputWidth183px' id="+prodId+"_"+itemSpecId+" disabled='disabled'>";
+					optionStr +='<option value="" selected="selected">不可选</option>';
+					selectStr += optionStr + "</select></td></tr>"; 
+					return selectStr;
 			}
 		}
 		if (ec.util.isArray(param.valueRange) && param.dateSourceTypeCd == "17") {//带搜索功能输入组件
