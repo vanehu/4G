@@ -370,7 +370,7 @@ CacheData = (function() {
 				}
 				for ( var j = 0; j < param.valueRange.length; j++) {
 					var valueRange = param.valueRange[j];
-					if(isYZFTS == "0" && valueRange.value=="10"){
+					if(isYZFTS != "0" && valueRange.value=="10"){
 						continue;
 					}
 					if(valueRange.value== param.setValue){
