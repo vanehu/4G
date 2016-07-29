@@ -44,6 +44,7 @@
                     	<a olId="${orderLists.olId}" ifPrint="${orderLists.ifPrint}" class="purchase" href="javascript:common.print.preSign('${orderLists.olId}', '')" type="main" >查看</a>
                     <!-- 门户无纸化开关 -->
                     <#elseif paperlessSwitch=="true"&&Session["_loginUrl"]??>  <!-- 分省开关与无纸化省份配置  -->
+                    <a olId="${orderLists.olId}" ifPrint="${orderLists.ifPrint}" class="purchase" href="javascript:common.print.preVoucher('${orderLists.olId}', '')" type="main" >重打回执</a>
                     <a olId="${orderLists.olId}" ifPrint="${orderLists.ifPrint}" class="purchase" href="javascript:common.print.preVoucherLoc('${orderLists.olId}', '1')" type="main" >打印回执</a>	
                    	<#else>
 					<a olId="${orderLists.olId}" ifPrint="${orderLists.ifPrint}" class="purchase" href="javascript:common.print.preVoucher('${orderLists.olId}', '')" type="main" >重打回执</a>
