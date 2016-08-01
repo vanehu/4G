@@ -827,7 +827,7 @@ order.cust = (function(){
 			}
 
 			if (govSwitch == "ON" && isGovCust) {
-				if(!ec.util.isObj(_choosedCustInfo.userCustId)){
+				if(!ec.util.isObj(_choosedCustInfo.userCustId)&&ec.util.isObj(_choosedCustInfo.acctNbr)){
 					$.alert("提示","返回的使用人信息为空，请补全信息！");
 					return;
 				}
