@@ -3882,6 +3882,9 @@ order.prodModify = (function(){
 	};
 	//二次业务菜单鉴权方式查询
 	var _querySecondBusinessAuth=function(menuId,isSimple,callbackFunc){
+		if (CONST.USER_PRE_INSTALLED == $(window.parent.document).find("li.l-selected a").text()) {
+			return false;
+		}
 		var url=contextPath+"/secondBusi/querySecondBusinessMenuAuth";
 		var param={
 			menuId:menuId,

@@ -48,6 +48,7 @@ OrderInfo = (function() {
 	20 预写白卡
 	21 补卡
 	22 换卡
+	27 预装
 	*/
 	var _authRecord={
 		menuId:"",
@@ -269,6 +270,9 @@ OrderInfo = (function() {
 				OrderInfo.boPartyContactInfo.mobilePhone = accNbr;
 			}
 			busiOrder.data.boPartyContactInfo.push(OrderInfo.boPartyContactInfo);
+			if(order.prepare.isPreInstall()){
+				busiOrder.data.boPartyContactInfo=[];
+			}
 		}
 		if(OrderInfo.boCustProfiles!=undefined && OrderInfo.boCustProfiles!=""){
 			busiOrder.data.boCustProfiles = [];

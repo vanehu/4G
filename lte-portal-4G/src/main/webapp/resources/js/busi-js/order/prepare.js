@@ -1,6 +1,6 @@
 /**
  * 订单准备
- * 
+ *
  * @author tang
  */
 CommonUtils.regNamespace("order", "prepare");
@@ -156,7 +156,7 @@ order.prepare = (function(){
 					order.phoneNumber.resetBoProdAn();
 				}
 			}
-		});	
+		});
 	};
 	//弹出选择号码窗口
 	//subPage入口:终端入口，号码入口，订单填写入口:terminal\offer\number
@@ -199,7 +199,7 @@ order.prepare = (function(){
 							$("#subnum").val(subnum);
 							order.phoneNumber.initPhonenumber();
 						}
-					});	
+					});
 				 },
 				"submitCallBack":function(dialogForm,dialog){}
 		});
@@ -279,7 +279,7 @@ order.prepare = (function(){
 			}
 		});
 	};
-		
+
    var _checkIsable=function(subflag,subnum){
 	   if(subflag=="0"){
 		   if($("#uim_btn_"+subnum).attr('unable')=="true"){
@@ -292,7 +292,7 @@ order.prepare = (function(){
 			   return true;
 		   }else{
 			   return false;
-		   }  
+		   }
 	   }else{
 		   return true;
 	   }
@@ -333,7 +333,7 @@ order.prepare = (function(){
 		}
 		var prodId = -1;
 		var offerId = -1;
-		if(OrderInfo.actionFlag==3){ //可选包变更使用	
+		if(OrderInfo.actionFlag==3){ //可选包变更使用
 			var prodInfo = order.prodModify.choosedProdInfo;
 			phoneNumber = prodInfo.accNbr;
 			prodId = prodInfo.prodInstId;
@@ -414,7 +414,7 @@ order.prepare = (function(){
 						prodId :prodId, //产品ID
 						offerId : offerId, //销售品实例ID
 						state : "ADD", //动作
-						relaSeq : "" //关联序列	
+						relaSeq : "" //关联序列
 					};
 					for(var i=0;i<OrderInfo.bo2Coupons.length;i++){
 						var sonExist=false;
@@ -468,9 +468,9 @@ order.prepare = (function(){
 				$.unecOverlay();
 				$.alert("提示","请求可能发生异常，请稍后再试！");
 			}
-		});	
+		});
 	};
-	
+
 	var _step = function(num) {
 		//如果没传参数，默认显示第一步
 		if (num == undefined || !num) {
@@ -487,11 +487,11 @@ order.prepare = (function(){
 			}
 		});
 	};
-	
+
 	var _hideStep = function() {
 		$("div[id^=step]").hide();
 	};
-	
+
 	var _showOrderTitle = function(action, titleName, backwardFlag){
 //		var cont$ = $("<span id='orderTitleSpan'></span>").html(action);
 //		var back$ = '';
@@ -508,7 +508,7 @@ order.prepare = (function(){
 	var _backToInit=function(){
 		//若是购机或选号入口，在退出业务办理时将释放主卡预占的号码（过滤身份证预占的号码）
 		var boProdAn = order.service.boProdAn;
-		if(boProdAn.idFlag!=undefined&&boProdAn.idFlag=='0'){			
+		if(boProdAn.idFlag!=undefined&&boProdAn.idFlag=='0'){
 		}else if(boProdAn.accessNumber){
 			var param = {
 				numType : 1,
@@ -530,8 +530,11 @@ order.prepare = (function(){
 			$("#arroworder").removeClass();
 			$("#arroworder").addClass("arrowup");
 		}
+		if (CONST.USER_PRE_INSTALLED == $(window.parent.document).find("li.l-selected a").text()) {
+			_initPreInstall();//用户预装初始化
+		}
 	};
-	
+
 	//订单时长
 	var _createorderlonger = function(){
 		var url=contextPath+"/order/createorderlonger";
@@ -540,7 +543,51 @@ order.prepare = (function(){
 			OrderInfo.orderlonger=response.data;
 		}
 	};
-	
+
+    /**
+     * 用户预装初始化
+     */
+    var _initPreInstall = function () {
+        OrderInfo.cust = {};
+        OrderInfo.cust = {
+            custId: -1,
+            partyName: "虚拟客户",
+            areaId: $("#_session_staff_info").attr("areaId")
+        };
+        OrderInfo.boCustIdentities =
+        {
+            "identidiesTypeCd": "38",
+            "identityNum": "999999999",
+            "isDefault": "Y",
+            "state": "ADD"
+        };
+        OrderInfo.boCustInfos =
+        {
+            "addressStr": "虚拟地址",
+            "areaId": OrderInfo.cust.areaId,
+            "businessPassword": "",
+            "defaultIdType": "38",
+            "mailAddressStr": "6546546546546",
+            "name": "虚拟客户",
+            "partyTypeCd": "1",
+            "state": "ADD",
+            "telNumber": ""
+        };
+        OrderInfo.boCustProfiles = "";
+    };
+
+    /**
+     * 是否是用户预装
+     * @returns {boolean}
+     */
+    var _isPreInstall = function () {
+		if (CONST.USER_PRE_INSTALLED == $(window.parent.document).find("li.l-selected a").text()) {
+            return true;
+        } else {
+            return false;
+        }
+    };
+
 	return {
 		tabChange:_tabChange,
 		phoneNumDialog:_phoneNumDialog,
@@ -551,7 +598,9 @@ order.prepare = (function(){
 		hideOrderTitle : _hideOrderTitle,
 		backToInit:_backToInit,
 		releaseUIM:_releaseUIM,
-		createorderlonger:_createorderlonger
+		createorderlonger:_createorderlonger,
+		initPreInstall:_initPreInstall,
+        isPreInstall:_isPreInstall
 	};
 })();
 //初始化

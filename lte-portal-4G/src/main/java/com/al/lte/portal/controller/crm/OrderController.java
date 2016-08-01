@@ -315,6 +315,23 @@ public class OrderController extends BaseController {
         return "/order/order-prepare";
     }
 
+    /**
+     *
+     *
+     * @param param
+     * @param model
+     * @return
+     */
+    @RequestMapping(value = "/preInstalled", method = RequestMethod.GET)
+    @AuthorityValid(isCheck = true)
+    public String preInstall(@RequestParam Map<String, Object> param, HttpSession session, Model model) {
+        model.addAttribute("canOrder", EhcacheUtil.pathIsInSession(session, "order/preInstalled"));
+        log.debug("preInstall.param={}", param);
+        model.addAttribute("mktRes", param);
+        model.addAttribute("DiffPlaceFlag", "local");
+        return "/order/order-prepare-preinstall";
+    }
+
     @SuppressWarnings("unchecked")
     @RequestMapping(value = "/queryApConf", method = RequestMethod.GET)
     @ResponseBody

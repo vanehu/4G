@@ -286,7 +286,7 @@ SoOrder = (function() {
 		});
 		custOrderAttrs.push({ //业务类型
 			itemSpecId : CONST.BUSI_ORDER_ATTR.BUSITYPE_FLAG,
-			value : OrderInfo.busitypeflag
+			value : order.prepare.isPreInstall ? 27 : OrderInfo.busitypeflag
 		});
 		custOrderAttrs.push({ //定位客户时长
 			itemSpecId : "30010050",
@@ -551,7 +551,9 @@ SoOrder = (function() {
 		}else{
 			OrderInfo.orderData.orderList.orderListInfo.olTypeCd = CONST.OL_TYPE_CD.FOUR_G;
 		}
-	
+		if (order.prepare.isPreInstall()) {
+			OrderInfo.orderData.orderList.orderListInfo.custOrderType = 27;
+		}
 		return true;
 	};
 	
@@ -2545,6 +2547,8 @@ SoOrder = (function() {
 			if($("#templateOrderDiv").find("select").val()==0){ //批量开活卡
 				prodStatus = CONST.PROD_STATUS_CD.READY_PROD;	
 			}
+		} else if (order.prepare.isPreInstall()) {//用户预装
+			prodStatus = CONST.PROD_STATUS_CD.READY_PROD;
 		}
 		//封装产品状态节点
 		busiOrder.data.boProdStatuses.push({

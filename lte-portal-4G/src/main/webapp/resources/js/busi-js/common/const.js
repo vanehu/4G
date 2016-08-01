@@ -440,6 +440,13 @@ CONST = (function(){
 	var _MENU_FANDANG="GHFD";//过户返档
 	var _MENU_RETURNFILE="FD";//返挡
 	
+
+	/**
+	 * "用户预装"常量定义
+	 * @type {string}
+	 * @private
+	 */
+	var _USER_PRE_INSTALLED = "用户预装";
 	return {
 		//批量受理查询，是否执行改造后的新代码的开关标识，用于暂时记录是否执行新代码。Y执行改造后的新代码，N执行改造前的旧代码，默认为N。 By ZhangYu 2015-10-20
 		BATCHORDER_FLAG : _BATCHORDER_FLAG,
@@ -495,7 +502,8 @@ CONST = (function(){
 		MENU_FANDANG : _MENU_FANDANG,
 		MENU_CUSTFANDANG:_MENU_CUSTFANDANG,
 		MENU_RETURNFILE : _MENU_RETURNFILE,
-		YZFitemSpecId4 : _YZFitemSpecId4
+		YZFitemSpecId4 : _YZFitemSpecId4,
+		USER_PRE_INSTALLED:_USER_PRE_INSTALLED
 	};
 })();
 
