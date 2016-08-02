@@ -789,6 +789,7 @@ body .row .gwc-box h4{ display: inline-block; color:#4c4c4c;}
 		display: none;
 	}
 }
+/*
 .pack-pro-box label{
 	display: block;
 	width: 100%;
@@ -797,6 +798,7 @@ body .row .gwc-box h4{ display: inline-block; color:#4c4c4c;}
 .pack-pro-box .inputWidth183px {
 	width: 100%;
 }
+*/
 .school-list{
 	margin: 5px 0;
 	padding: 5px 10px;
@@ -806,4 +808,9 @@ body .row .gwc-box h4{ display: inline-block; color:#4c4c4c;}
 .school-list h5{
 	margin-bottom: 0px!important;
 	line-height: 24px;
+}
+
+.btn-default.active, .btn-default.focus, .btn-default:active, .btn-default:focus, .btn-default:hover, .open > .dropdown-toggle.btn-default{
+	background: #75d753;
+	color: #fff;
 }

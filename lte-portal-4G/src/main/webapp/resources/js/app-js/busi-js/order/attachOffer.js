@@ -1611,6 +1611,18 @@ AttachOffer = (function() {
 				if(newSpec==undefined){ //没有在已开通附属销售列表中
 					return;
 				}
+				if(ec.util.isObj(newSpec.ifOrderAgain)&&newSpec.ifOrderAgain=="Y"){
+					offer.counts++;
+					newSpec.counts=offer.counts;
+					if(_ifOrderAgain(newSpec)){
+						offer.counts--;
+						return;
+					}
+					if(offer.counts<=2){
+						var $li=$("#li_"+prodId+"_"+offer.offerId);
+						$li.append('<dd id="can_'+prodId+'_'+offerSpecId+'" class="canshu" onclick="AttachOffer.setParam('+prodId+','+offerSpecId+','+1+');"></dd>');
+					}
+				}
 			}else{
 				var $span = $("#li_"+prodId+"_"+offer.offerId).find("span");
 				$span.removeClass("del");
@@ -1639,6 +1651,8 @@ AttachOffer = (function() {
 					}else {
 						$li.append('<span id="can_'+prodId+'_'+offerSpecId+'" isset="Y"  class="abtn03 btn-span"><button type="button" class="btn btn-info" style="right:40px;width:48px;" data-toggle="modal" data-target="#setting" onclick="AttachOffer.showParam('+prodId+','+offerSpecId+');">参</button><span  class="glyphicon glyphicon-remove pull-right" aria-hidden="true" onclick="AttachOffer.delOfferSpec('+prodId+','+offerSpecId+')"></span></span>');
 					}
+				}else if(ec.util.isObj(newSpec.ifOrderAgain)&&newSpec.ifOrderAgain=="Y"){
+					$li.append('<span id="can_'+prodId+'_'+offerSpecId+'" isset="Y"  class="abtn03 btn-span"><button type="button" class="btn btn-info" style="right:40px;width:48px;" data-toggle="modal" data-target="#setting" onclick="AttachOffer.setParam('+prodId+','+offerSpecId+');">参</button><span  class="glyphicon glyphicon-remove pull-right" aria-hidden="true" onclick="AttachOffer.delOfferSpec('+prodId+','+offerSpecId+')"></span></span>');
 				}else{
 					$li.append('<span id="span_remove_'+prodId+'_'+offerSpecId+'" class="glyphicon glyphicon-remove pull-right" aria-hidden="true" onclick="AttachOffer.delOfferSpec('+prodId+','+offerSpecId+')"></span>');
 				}
@@ -1649,6 +1663,17 @@ AttachOffer = (function() {
 			var $span = $("#li_"+prodId+"_"+offerSpecId).find("span");
 			$span.removeClass("del");
 			newSpec.isdel = "N";
+			
+		}else if(ec.util.isObj(newSpec.ifOrderAgain)&&newSpec.ifOrderAgain=="Y"){
+			newSpec.counts++;
+			if(_ifOrderAgain(newSpec)){
+				newSpec.counts--;
+				return;
+			}
+//			if(newSpec.counts>=2){
+//				var $spec = $('#li_'+prodId+'_'+offerSpecId); //在已开通附属里面
+//				$spec.append('<dd id="can_'+prodId+'_'+offerSpecId+'" class="canshu" onclick="AttachOffer.setParam('+prodId+','+offerSpecId+');"></dd>');
+//			}
 			
 		}else {  //容错处理 //if((newSpec.isdel=="N")) 
 			var $spec = $('#li_'+prodId+'_'+offerSpecId); //在已开通附属里面
@@ -1667,6 +1692,15 @@ AttachOffer = (function() {
 				}else{
 					$li.append('<span id="span_remove_'+prodId+'_'+offerSpecId+'" class="glyphicon glyphicon-remove pull-right" aria-hidden="true" onclick="AttachOffer.delOfferSpec('+prodId+','+offerSpecId+')"></span>');
 				}
+			}
+			if(newSpec.ifShowTime=="Y"){
+				$li.append('<dd class="time" id="time_'+prodId+'_'+offerSpecId+'" onclick="AttachOffer.showTime('+prodId+','+offerSpecId+',\''+newSpec.offerSpecName+'\');"></dd>');
+			}
+			if(ec.util.isObj(newSpec.ifOrderAgain)&&newSpec.ifOrderAgain=="Y"){
+				if($li.find("dd.canshu").length + $li.find("dd.canshu2").length > 0)
+					$li.append('<dd id="can_'+prodId+'_'+offerSpecId+'" class="canshu2" style="top:20px;" onclick="AttachOffer.setParam('+prodId+','+offerSpecId+');"></dd>');
+				else
+					$li.append('<dd id="can_'+prodId+'_'+offerSpecId+'" class="canshu2" onclick="AttachOffer.setParam('+prodId+','+offerSpecId+');"></dd>');
 			}
 			$("#open_ul_"+prodId).append($li);
 		}
@@ -3361,54 +3395,107 @@ AttachOffer = (function() {
 			newSpec.counts=offer.counts;
 		}
 		var content = '<form id="paramForm">' ;
-		content += "次数" + ' : <input id="text_'+prodId+'_'+offerSpecId  
+		content += "重复订购次数" + ' : <input id="text_'+prodId+'_'+offerSpecId  
 		+'" class="inputWidth183px" type="text" value="'+newSpec.counts+'"><br>'; 
 		content +='</form>' ;
 		$.confirm("参数设置： ",content,{ 
 			yes:function(){
+				if(flag==1){
+					var nums=$("#text_"+prodId+"_"+offerSpecId).val();
+					var reg = /^\+?[0-9][0-9]*$/;//正整数
+					if(!reg.test(nums)){
+						$.alert("信息提示","次数输入有误。");
+						return;
+					}
+				}else{
+					var nums=$("#text_"+prodId+"_"+offerSpecId).val();
+					var reg = /^\+?[1-9][0-9]*$/;//正整数
+					if(!reg.test(nums)){
+						$.alert("信息提示","次数只能是正整数。");
+						return;
+					}
+				}
+	//			if(flag==1&&offer.orderCount>nums){
+	//				$.alert("信息提示","可选包【"+newSpec.offerSpecName+"】不允许退订！");
+	//				return;
+	//			}
+				if(parseInt(newSpec.orderCount)<nums){
+					$.alert("信息提示","可选包【"+newSpec.offerSpecName+"】至多只能订购"+newSpec.orderCount+"次");
+					return;
+				}
+				if(flag==1 && offer!=undefined){
+					if(offer.orderCount>nums){//退订附属销售品
+						if(!ec.util.isArray(offer.offerMemberInfos)){//销售品实例查询	
+							var param = {
+									prodId:prodId,
+									areaId: OrderInfo.getProdAreaId(prodId),
+									offerId:offer.offerId	
+							};
+							param.acctNbr = OrderInfo.getAccessNumber(prodId);
+							var data = query.offer.queryOfferInst(param);
+							if(data==undefined){
+								return;
+							}
+							offer.offerMemberInfos = data.offerMemberInfos;
+							offer.offerSpec = data.offerSpec;
+						}
+					}
+					offer.counts=nums;
+				}else{
+					newSpec.counts=nums;
+				}
 			},
 			no:function(){
 			}
 		});
-		$('#paramForm').bind('formIsValid', function(event, form) {
-			var nums=$("#text_"+prodId+"_"+offerSpecId).val();
-			var reg = /^\+?[1-9][0-9]*$/;//正整数
-			if(!reg.test(nums)){
-				$.alert("信息提示","次数只能是正整数。");
-				return;
-			}
-//			if(flag==1&&offer.orderCount>nums){
-//				$.alert("信息提示","可选包【"+newSpec.offerSpecName+"】不允许退订！");
+//		$('#paramForm').bind('formIsValid', function(event, form) {
+//			if(flag==1){
+//				var nums=$("#text_"+prodId+"_"+offerSpecId).val();
+//				var reg = /^\+?[0-9][0-9]*$/;//正整数
+//				if(!reg.test(nums)){
+//					$.alert("信息提示","次数输入有误。");
+//					return;
+//				}
+//			}else{
+//				var nums=$("#text_"+prodId+"_"+offerSpecId).val();
+//				var reg = /^\+?[1-9][0-9]*$/;//正整数
+//				if(!reg.test(nums)){
+//					$.alert("信息提示","次数只能是正整数。");
+//					return;
+//				}
+//			}
+////			if(flag==1&&offer.orderCount>nums){
+////				$.alert("信息提示","可选包【"+newSpec.offerSpecName+"】不允许退订！");
+////				return;
+////			}
+//			if(parseInt(newSpec.orderCount)<nums){
+//				$.alert("信息提示","可选包【"+newSpec.offerSpecName+"】至多只能订购"+newSpec.orderCount+"次");
 //				return;
 //			}
-			if(parseInt(newSpec.orderCount)<nums){
-				$.alert("信息提示","可选包【"+newSpec.offerSpecName+"】至多只能订购"+newSpec.orderCount+"次");
-				return;
-			}
-			if(flag==1 && offer!=undefined){
-				if(offer.orderCount>nums){//退订附属销售品
-					if(!ec.util.isArray(offer.offerMemberInfos)){//销售品实例查询	
-						var param = {
-								prodId:prodId,
-								areaId: OrderInfo.getProdAreaId(prodId),
-								offerId:offer.offerId	
-						};
-						param.acctNbr = OrderInfo.getAccessNumber(prodId);
-						var data = query.offer.queryOfferInst(param);
-						if(data==undefined){
-							return;
-						}
-						offer.offerMemberInfos = data.offerMemberInfos;
-						offer.offerSpec = data.offerSpec;
-					}
-				}
-				offer.counts=nums;
-			}else{
-				newSpec.counts=nums;
-			}
-			$(".ZebraDialog").remove();
-			$(".ZebraDialogOverlay").remove();
-		}).ketchup({bindElementByClass:"ZebraDialog_Button1"});	
+//			if(flag==1 && offer!=undefined){
+//				if(offer.orderCount>nums){//退订附属销售品
+//					if(!ec.util.isArray(offer.offerMemberInfos)){//销售品实例查询	
+//						var param = {
+//								prodId:prodId,
+//								areaId: OrderInfo.getProdAreaId(prodId),
+//								offerId:offer.offerId	
+//						};
+//						param.acctNbr = OrderInfo.getAccessNumber(prodId);
+//						var data = query.offer.queryOfferInst(param);
+//						if(data==undefined){
+//							return;
+//						}
+//						offer.offerMemberInfos = data.offerMemberInfos;
+//						offer.offerSpec = data.offerSpec;
+//					}
+//				}
+//				offer.counts=nums;
+//			}else{
+//				newSpec.counts=nums;
+//			}
+//			$(".ZebraDialog").remove();
+//			$(".ZebraDialogOverlay").remove();
+//		}).ketchup({bindElementByClass:"ZebraDialog_Button1"});	
 	};
 	
 	var _offerSpecDetail=function(prodId,offerSpecId){

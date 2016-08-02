@@ -15,6 +15,7 @@ CacheData = (function() {
 	//把销售品规格保存到开通列表里面
 	var _setOfferSpec = function(prodId,offerSpec){
 		offerSpec.isdel="C";
+		offerSpec.counts=1;
 		var flag = true ; 
 		for (var i = 0; i < AttachOffer.openList.length; i++) { //没有开通任何附属
 			var open = AttachOffer.openList[i];
@@ -183,13 +184,13 @@ CacheData = (function() {
 			selectStr = selectStr + '<div class="form-group pack-pro-box"><label for="exampleInputPassword1">' + param.name + ': </label>';
 			CacheData.setSearchs(param.valueRange);
 			if(ec.util.isObj(paramVal)){
-				selectStr = selectStr + '<div class="input-group">'
-				+'<input id="'+id+'" code="'+paramVal+'" value="'+CacheData.getSearchName(paramVal)+'" placeholder="请输入学校名称" data-validate="validate(required,reg:()) on(blur)" class="inputWidth183px" type="text" />'
+				selectStr = selectStr + '<div class="input-group" style="width: 100%;">'
+				+'<input id="'+id+'" code="'+paramVal+'" value="'+CacheData.getSearchName(paramVal)+'" placeholder="请输入学校名称" data-validate="validate(required,reg:()) on(blur)" class="inputWidth183px" style="width: 100%;" type="text" />'
 				+'<span class="input-group-btn">'
 				+'<button class="btn btn-default"  onclick="AttachOffer.searchSchools(\''+id+'\');" type="button">搜索</button></span></div></div>'
 			}else{
 				selectStr = selectStr  + '<div class="input-group" style="width: 100%;">'
-				+ '<input id="'+id+'" placeholder="请输入学校名称" data-validate="validate(required,reg:()) on(blur)" class="inputWidth183px" type="text" />'
+				+ '<input id="'+id+'" placeholder="请输入学校名称" data-validate="validate(required,reg:()) on(blur)" class="inputWidth183px" style="width: 100%;" type="text" />'
 				+'<span class="input-group-btn">'
 				+'<button class="btn btn-default"  onclick="AttachOffer.searchSchools(\''+id+'\');" type="button">搜索</button></span></div></div>'
 			}
@@ -226,10 +227,10 @@ CacheData = (function() {
 					}else {
 						if(param.rule.isOptional=="N") { //必填
 							selectStr += param.name + ' : <input id="'+prodId+'_'+itemSpecId  
-							+'" class="inputWidth183px" type="text" data-validate="validate(required,reg:'+param.rule.maskMsg+'('+param.rule.mask+')) on(blur)" value="'+paramVal+'" ><label class="f_red">*</label><br>'; 
+							+'" class="inputWidth183px" type="text" mask="'+param.rule.mask+'" maskmsg="'+param.rule.maskMsg+'" value="'+paramVal+'" ><label class="f_red">*</label><br>'; 
 						}else{
-							selectStr += '<div class="form-group pack-pro-box"><label for="exampleInputPassword1">'+param.name + ' : </label><input id="'+prodId+'_'+itemSpecId  
-							+'" class="inputWidth183px" type="text" data-validate="validate(reg:'+param.rule.maskMsg+'('+param.rule.mask+')) on(blur)" value="'+paramVal+'" ></div>'; 
+							selectStr += '<div class="form-group pack-pro-box"><label style="display: block;width: 100%;text-align: left;" for="exampleInputPassword1">'+param.name + ' : </label><input id="'+prodId+'_'+itemSpecId  
+							+'" class="inputWidth183px" style="width: 100%;" type="text" data-validate="validate(reg:'+param.rule.maskMsg+'('+param.rule.mask+')) on(blur)" value="'+paramVal+'" ></div>'; 
 						}
 					}
 				}

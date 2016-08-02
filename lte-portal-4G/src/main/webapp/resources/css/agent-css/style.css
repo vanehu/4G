@@ -756,7 +756,7 @@ table {
 @media (max-height: 569px){
 	.info_box{ height: 376px;}
 }
-
+/*
 .pack-pro-box label{
 	display: block;
 	width: 100%;
@@ -765,6 +765,7 @@ table {
 .pack-pro-box .inputWidth183px {
 	width: 100%;
 }
+*/
 .school-list{
 	margin: 5px 0;
 	padding: 5px 10px;

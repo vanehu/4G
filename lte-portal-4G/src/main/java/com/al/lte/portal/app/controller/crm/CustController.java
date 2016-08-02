@@ -1167,7 +1167,7 @@ public class CustController extends BaseController {
 										if (custInfosWithNbr.size()==0&&StringUtils.isNotBlank(qryAcctNbr)) {
 											Map newCustInfoMap = new HashMap(custInfoMap);
 											newCustInfoMap.put("accNbr", qryAcctNbr);
-											if("ON".equals(govSwitch) && newCustInfoMap.get("identityCd")!=null && zqstr.contains(newCustInfoMap.get("identityCd").toString())){
+											if("ON".equals(govSwitch) && newCustInfoMap.get("identityCd")!=null && zqstr.contains(","+newCustInfoMap.get("identityCd").toString()+",")){
 												//政企客户才去查询使用人信息
 												addAccountAndCustInfo(flowNum, sessionStaff, areaId, custId, qryAcctNbr, soNbr, newCustInfoMap);
 											}
@@ -1184,7 +1184,7 @@ public class CustController extends BaseController {
 							for(int ii=0;ii<custInfosWithNbr.size();ii++){
 								Map mm = (Map) custInfosWithNbr.get(ii);
 								//省份政企开关打开，且客户为政企客户
-								if("ON".equals(govSwitch) && mm.get("identityCd")!=null && zqstr.contains(mm.get("identityCd").toString())){
+								if("ON".equals(govSwitch) && mm.get("identityCd")!=null && zqstr.contains(","+mm.get("identityCd").toString()+",")){
 									mm.put("isGov", "Y");
 								}else{
 									mm.put("isGov", "N");
@@ -1304,10 +1304,10 @@ public class CustController extends BaseController {
     			Map<String, Object> data = (Map<String, Object>) resMap.get("data");
     			Map<String, Object> userInfo = (Map<String, Object>) resMap.get("userInfo");
     			request.getSession().setAttribute(Const.CACHE_CERTINFO, userInfo.get("certNumber"));
-    			String partyName = userInfo.get("partyName").toString();
-            	String certNumber = userInfo.get("certNumber").toString();
-            	String certAddress = userInfo.get("certAddress").toString();
-            	String identityPic = userInfo.get("identityPic").toString();
+    			String partyName = MapUtils.getString(userInfo,"partyName");
+            	String certNumber = MapUtils.getString(userInfo,"certNumber");
+            	String certAddress = MapUtils.getString(userInfo,"certAddress");
+            	String identityPic = MapUtils.getString(userInfo,"identityPic");
             	String appSecret = propertiesUtils.getMessage("APP_SECRET"); //appId对应的加密密钥
             	String nonce = RandomStringUtils.randomAlphanumeric(Const.RANDOM_STRING_LENGTH); //随机字符串
             	String signature = commonBmo.signature(partyName, certNumber, certAddress, identityPic, nonce, appSecret);

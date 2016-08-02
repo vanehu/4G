@@ -6,13 +6,25 @@
 	<div class="list-group order-list">
 		<#if openMap.result.offerLists?? &&(offerList?size>0)>	
 		<#list offerList as item>
-		<#if item.ifDault==0>
+		<#if item.ifDault==0 || (item.counts?? && (item.counts>1))>
 		<a href="javascript:void(0);" id="li_${prodId}_${item.offerId}" offerSpecId="${item.offerSpecId}" offerId="${item.offerId}" isdel='N' class="list-group-item">
 			<span id="span_${prodId}_${item.offerId}">${item.offerSpecName}</span>
+			<#if item.ifParams=="Y" && item.offerSpecId?? && item.offerSpecId!="">
+	        	<button type="button" class="btn btn-info" style="right:40px;width:48px;" data-toggle="modal" data-target="#setting" onclick="AttachOffer.setParam(${prodId},${item.offerSpecId},1);">参</button>
+	        </#if>
+	        <#if item.counts?? && (item.counts>1) >
+	        	<button type="button" class="btn btn-info" style="right:40px;width:48px;" data-toggle="modal" data-target="#setting" onclick="AttachOffer.setParam(${prodId},${item.offerSpecId},1);">参</button>
+	        </#if>
 		</a>
 		<#else>
 		<a href="javascript:void(0);" onclick="AttachOffer.delOffer(${prodId},${item.offerId})" id="li_${prodId}_${item.offerId}" offerSpecId="${item.offerSpecId}" offerId="${item.offerId}" isdel='N' class="list-group-item">
 			<span id="span_${prodId}_${item.offerId}">${item.offerSpecName}</span>
+			<#if item.ifParams=="Y" && item.offerSpecId?? && item.offerSpecId!="">
+	        	<button type="button" class="btn btn-info" style="right:40px;width:48px;" data-toggle="modal" data-target="#setting" onclick="AttachOffer.setParam(${prodId},${item.offerSpecId},1);">参</button>
+	        </#if>
+	        <#if item.counts?? && (item.counts>1) >
+	        	<button type="button" class="btn btn-info" style="right:40px;width:48px;" data-toggle="modal" data-target="#setting" onclick="AttachOffer.setParam(${prodId},${item.offerSpecId},1);">参</button>
+	        </#if>
 			<span id="span_remove_${prodId}_${item.offerId}"
 				class="glyphicon glyphicon-remove pull-right" aria-hidden="true"></span>
 		</a>

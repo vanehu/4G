@@ -10,6 +10,26 @@
 		        otherButtonStyles: ['btn-primary btn-lg', 'btn-info btn-lg'],
 		        clickButton: function (sender, modal, index) {
 		        	if(index==0){
+		        		//（销售品）参数输入校验（服务参数暂未使用）
+		        		var paramInputCheck = function(){
+		        			var pass = true;
+		        			$("#paramForm").find("input[type=text]").each(function(){
+		        				var mask = $(this).attr("mask");
+		        				var maskmsg = $(this).attr("maskmsg");
+		        				if(mask!=null && mask!="" && mask.substring(0,1)=="/" && mask.substring(mask.length-1,mask.length)=="/"){
+		        					if(!eval(mask).test($(this).val())){
+		        						$.alert("提示",maskmsg);
+		        						pass = false;
+		        						return false;
+		        					}
+		        				}
+		        			});
+		        			return pass;
+		        		};
+		        		//参数输入校验
+						if(!paramInputCheck()){
+							return;
+						}
 		        		if($.isFunction(options.yes)){
 		            		options.yes();
 		            	} 

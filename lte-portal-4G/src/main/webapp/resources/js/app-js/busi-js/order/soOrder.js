@@ -860,16 +860,34 @@ SoOrder = (function() {
 		if(offerSpecList!=undefined && offerSpecList.length>0){  
 			$.each(offerSpecList,function(){ //遍历当前产品下面的附属销售品
 				if(this.isdel != "Y" && this.isdel != "C"){  //订购的附属销售品
-					$("#chooseTable_"+prodId).append($('<tr><td>'+this.offerSpecName+'</td><td>'+CONST.EVENT.OFFER_BUY+'</td></tr>'));
+					if(ec.util.isObj(this.counts)){//组装重复订购的可选包
+						for(var i=0;i<this.counts;i++){
+							$("#chooseTable_"+prodId).append($('<tr><td>'+this.offerSpecName+'</td><td>'+CONST.EVENT.OFFER_BUY+'</td></tr>'));
+						}
+					}else{
+						$("#chooseTable_"+prodId).append($('<tr><td>'+this.offerSpecName+'</td><td>'+CONST.EVENT.OFFER_BUY+'</td></tr>'));
+					}
 				}
 			});
 		}
 		if(offerList!=undefined && offerList.length>0){
 			$.each(offerList,function(){ //遍历当前产品下面的附属销售品
 				if(this.isdel == "Y"){  //退订的附属销售品
-					$("#chooseTable_"+prodId).append($('<tr><td>'+this.offerSpecName+'</td><td>'+CONST.EVENT.OFFER_DEL+'</td></tr>'));
+					if(ec.util.isObj(this.counts)){//组装重复订购的可选包
+						for(var i=0;i<this.counts;i++){
+							$("#chooseTable_"+prodId).append($('<tr><td>'+this.offerSpecName+'</td><td>'+CONST.EVENT.OFFER_DEL+'</td></tr>'));
+						}
+					}else{
+						$("#chooseTable_"+prodId).append($('<tr><td>'+this.offerSpecName+'</td><td>'+CONST.EVENT.OFFER_DEL+'</td></tr>'));
+					}
 				}else if(this.update == "Y"){
 					$("#chooseTable_"+prodId).append($('<tr><td>'+this.offerSpecName+'</td><td>'+CONST.EVENT.OFFER_UPDATE+'</td></tr>'));
+				}else if(ec.util.isObj(this.orderCount)&&ec.util.isObj(this.counts)){
+					if(this.orderCount<this.counts){//订购附属销售品
+						for(var k=0;k<(this.counts-this.orderCount);k++){
+							$("#chooseTable_"+prodId).append($('<tr><td>'+this.offerSpecName+'</td><td>'+CONST.EVENT.OFFER_BUY+'</td></tr>'));
+						}
+					}
 				}
 			});
 		}
