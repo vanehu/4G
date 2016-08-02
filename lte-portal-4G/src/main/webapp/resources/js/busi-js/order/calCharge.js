@@ -1403,8 +1403,14 @@ order.calcharge = (function(){
 			}
 			//操作
 			var charge=$(this).children("td:eq(6)").children("a");
+			//星级服务
+			var poingtSer = $(this).children("td:eq(6)").find("[name='point']");
 			if(ec.util.isObj(charge)&&charge.length>0){
 				charge.remove();
+			}
+			
+			if(ec.util.isObj(poingtSer)&&poingtSer.length>0){
+				poingtSer.remove();
 			}
 		});
 	};
