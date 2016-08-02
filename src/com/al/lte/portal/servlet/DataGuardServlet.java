@@ -29,7 +29,7 @@ public class DataGuardServlet extends HttpServlet {
 
 	private final String[] switchs = { "beijing", "tianjing", "shxi", "neimenggu", "liaoning", "jilin",
 			"fujian", "hunan", "chongqing", "guizhou", "yunnan", "xizang", "qinghai", "ningxia", "xinjiang", "guangdong", "jiangsu",
-			"sichuang", "zhejiang", "anhui", "shanxi", "hubei", "shanghai", "813", "shandong", "guangxi", "henan", "gansu",
+			"sichuang", "zhejiang", "anhui", "shanxi", "hubei", "shanghai", "hebei", "shandong", "guangxi", "henan", "gansu",
 			"jiangxi", "hainan", "heilongjiang" };// 各省份容灾开关
 
 	@Override
