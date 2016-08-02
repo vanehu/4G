@@ -26,6 +26,14 @@
     <url-pattern>/qrlogin</url-pattern>
   </servlet-mapping>
   <servlet>
+    <servlet-name>DataGuardServlet</servlet-name>
+    <servlet-class>com.al.lte.portal.servlet.DataGuardServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>DataGuardServlet</servlet-name>
+    <url-pattern>/getDataGuardUrl</url-pattern>
+  </servlet-mapping>
+  <servlet>
     <servlet-name>PasswordServlet</servlet-name>
     <servlet-class>com.al.lte.portal.servlet.PasswordMgrServlet</servlet-class>
   </servlet>
