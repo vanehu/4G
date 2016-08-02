@@ -17,13 +17,7 @@
 					<#list pageModel.list as childList>
 	     	 		<tr>
 	     	 			<td>${childList.groupId}</td>
-	     	 			<td>
-			     	 		<#if childList.boProdAn=="">
-			     	 			${childList.accessNumber}
-			     	 		<#else>
-			     	 			${childList.boProdAn}
-			     	 		</#if>
-			     	 	</td>
+	     	 			<td>${childList.phoneNumber}</td>
 			     	 	<td>${childList.boProd2Td}</td>
 			     	 	<td>${childList.genOlDt}</td>
 			     	 	<td>

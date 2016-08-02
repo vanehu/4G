@@ -2607,12 +2607,10 @@ public class BatchOrderControllerPreviousVer  extends BaseController {
 			Map<String,Object> map = (Map<String, Object>) dataList.get(i);
 			row = sheet.createRow(i+1);
 			int j = 0;
-			Object value = null;
-			row.createCell(j++).setCellValue(null == map.get("groupId") ? "" : map.get("groupId").toString());
-			row.createCell(j++).setCellValue(
-					"".equals(map.get("boProdAn").toString()) ? map.get("accessNumber").toString() : map.get("boProdAn").toString());
-			row.createCell(j++).setCellValue(null == map.get("boProd2Td") ? "" : map.get("boProd2Td").toString());//uim卡号
-			row.createCell(j++).setCellValue(null == map.get("genOlDt") ? "" : map.get("genOlDt").toString());//受理时间
+			row.createCell(j++).setCellValue(null == map.get("groupId") ? "N/A" : map.get("groupId").toString());
+			row.createCell(j++).setCellValue(null == map.get("phoneNumber") ? "N/A" : map.get("phoneNumber").toString());//接入号
+			row.createCell(j++).setCellValue(null == map.get("boProd2Td") ? "N/A" : map.get("boProd2Td").toString());//uim卡号
+			row.createCell(j++).setCellValue(null == map.get("genOlDt") ? "N/A" : map.get("genOlDt").toString());//受理时间
 			String tempStr;
 			
 			if(null == map.get("statusCd")){
@@ -2642,13 +2640,13 @@ public class BatchOrderControllerPreviousVer  extends BaseController {
 				else if("RC".equals(statusCd))
 					tempStr = "返销成功";
 				else
-					tempStr = "";
+					tempStr = "N/A";
 			}
 			row.createCell(j++).setCellValue(tempStr);
-			row.createCell(j++).setCellValue(map.get("msgInfo") == null ? "" : map.get("msgInfo").toString());
-			row.createCell(j++).setCellValue(map.get("orderStatusName") == null ? "" : map.get("orderStatusName").toString());
-			row.createCell(j++).setCellValue(map.get("transactionId") == null ? "" : map.get("transactionId").toString());//下省流水
-			row.createCell(j++).setCellValue(map.get("custSoNumber") == null ? "" : map.get("custSoNumber").toString());//购物车流水
+			row.createCell(j++).setCellValue(map.get("msgInfo") == null ? "N/A" : map.get("msgInfo").toString());
+			row.createCell(j++).setCellValue(map.get("orderStatusName") == null ? "N/A" : map.get("orderStatusName").toString());
+			row.createCell(j++).setCellValue(map.get("transactionId") == null ? "N/A" : map.get("transactionId").toString());//下省流水
+			row.createCell(j++).setCellValue(map.get("custSoNumber") == null ? "N/A" : map.get("custSoNumber").toString());//购物车流水
 		}
 		try {
 			workbook.write(outputStream);

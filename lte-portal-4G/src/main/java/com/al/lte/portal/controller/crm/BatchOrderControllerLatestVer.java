@@ -496,7 +496,7 @@ public class BatchOrderControllerLatestVer  extends BaseController {
 				if(resultList != null && resultList.size() > 0){
 					String excelTitle = param.get("groupId").toString();
 					String[][] headers = {
-						{"groupId","accessNumber","boProd2Td","genOlDt","statusCd","msgInfo","orderStatusName","transactionId","custSoNumber"},
+						{"groupId","phoneNumber","boProd2Td","genOlDt","statusCd","msgInfo","orderStatusName","transactionId","custSoNumber"},
 						{"批次号","主接入号","UIM卡号","受理时间","受理状态","反馈信息","订单状态","下省流水","购物车流水"}
 					};
 					
