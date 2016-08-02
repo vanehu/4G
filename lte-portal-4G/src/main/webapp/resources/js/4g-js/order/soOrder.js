@@ -326,24 +326,33 @@ SoOrder = (function() {
 		var remark = $('#order_remark').val(); 
 		var  val = "";
 		var val2 = "";
-		if(ec.util.isObj(remark)){
-			if(OrderInfo.actionFlag == 23){
-			   val = $("#p_cust_areaId_val").val(); 
-			   val2 = val.substring(val.indexOf(" > ")+2,val.length); 
-			   remark = remark + "|"+ val.substring(0,val.indexOf(" > "))+val2.substring(0,val2.indexOf(" > ")) + " "+ OrderInfo.staff.channelId + " "+ OrderInfo.staff.staffId; 
+		if (ec.util.isObj(remark)) {
+			if (OrderInfo.actionFlag == 23) {
+				val = $("#p_cust_areaId_val").val();
+				val2 = val.substring(val.indexOf(" > ") + 2, val.length);
+				if (val2.indexOf(" > ") != -1) {
+					val2 = val2.substring(0, val2.indexOf(" > "));
+				}
+				remark = remark + "|" + val.substring(0, val.indexOf(" > "))
+						+ val2 + " " + OrderInfo.staff.channelId + " "
+						+ OrderInfo.staff.staffId;
 			}
-			 custOrderAttrs.push({
-				itemSpecId : CONST.BUSI_ORDER_ATTR.REMARK,
-				value : remark
-			});	
-		}else if(OrderInfo.actionFlag == 23){//异地补换卡
-			val = $("#p_cust_areaId_val").val(); 
-			val2 = val.substring(val.indexOf(" > ")+2,val.length); 
-			remark = "|"+ val.substring(0,val.indexOf(" > "))+val2.substring(0,val2.indexOf(" > ")) + " "+ OrderInfo.staff.channelId + " "+ OrderInfo.staff.staffId; 
 			custOrderAttrs.push({
 				itemSpecId : CONST.BUSI_ORDER_ATTR.REMARK,
 				value : remark
-			});	
+			});
+		} else if (OrderInfo.actionFlag == 23) {// 异地补换卡
+			val = $("#p_cust_areaId_val").val();
+			val2 = val.substring(val.indexOf(" > ") + 2, val.length);
+			if (val2.indexOf(" > ") != -1) {
+				val2 = val2.substring(0, val2.indexOf(" > "));
+			}
+			remark = "|" + val.substring(0, val.indexOf(" > ")) + val2 + " "
+					+ OrderInfo.staff.channelId + " " + OrderInfo.staff.staffId;
+			custOrderAttrs.push({
+				itemSpecId : CONST.BUSI_ORDER_ATTR.REMARK,
+				value : remark
+			});
 		}
 		
 		//订单购物车属性(经办人)
@@ -511,6 +520,14 @@ SoOrder = (function() {
 				};
 				custOrderAttrs.push(custOrderAttr6);
 			}
+			custOrderAttrs.push({
+				itemSpecId : CONST.BUSI_ORDER_ATTR.CHANGE_CARD_ORDER_TYPE,
+				value : "1"
+			});
+			custOrderAttrs.push({
+				itemSpecId : CONST.BUSI_ORDER_ATTR.CHANGE_CARD_AREA_ID,
+				value : $("#p_cust_areaId").val()
+			});
 		}else if(OrderInfo.actionFlag == 40){//紧急开机
 			_createUrgentBoot(busiOrders,data,"N");
 		}else{  //默认单个业务动作

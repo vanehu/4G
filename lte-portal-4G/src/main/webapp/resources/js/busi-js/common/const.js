@@ -241,8 +241,9 @@ CONST = (function(){
 		DELIVERY_TIME : "800000015" ,//提货时间
 		DELIVERY_ADDRESS : "800000016" ,//提货地址
 		DELIVERY_POLICY : "800000018", //预约政策
-		itemSpecID : "800000036" //客户等级属性标识ID
-		
+		itemSpecID : "800000036", //客户等级属性标识ID
+		CHANGE_CARD_ORDER_TYPE : "800000065", //异地补换卡订单类型
+		CHANGE_CARD_AREA_ID : "800000067" //异地补换卡漫游省地区id
 	};
 	
 	//属性规格
