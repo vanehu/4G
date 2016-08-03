@@ -447,7 +447,7 @@ CONST = (function(){
 	 * @type {string}
 	 * @private
 	 */
-	var _USER_PRE_INSTALLED = "用户预装";
+	var _USER_PRE_INSTALLED = "preInstall";
 	return {
 		//批量受理查询，是否执行改造后的新代码的开关标识，用于暂时记录是否执行新代码。Y执行改造后的新代码，N执行改造前的旧代码，默认为N。 By ZhangYu 2015-10-20
 		BATCHORDER_FLAG : _BATCHORDER_FLAG,

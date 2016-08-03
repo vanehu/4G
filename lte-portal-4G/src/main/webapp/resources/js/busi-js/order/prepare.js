@@ -530,7 +530,7 @@ order.prepare = (function(){
 			$("#arroworder").removeClass();
 			$("#arroworder").addClass("arrowup");
 		}
-		if (CONST.USER_PRE_INSTALLED == $(window.parent.document).find("li.l-selected a").text()) {
+		if (CONST.USER_PRE_INSTALLED == $("#iPreInstall").val()) {
 			_initPreInstall();//用户预装初始化
 		}
 	};
@@ -581,7 +581,7 @@ order.prepare = (function(){
      * @returns {boolean}
      */
     var _isPreInstall = function () {
-		if (CONST.USER_PRE_INSTALLED == $(window.parent.document).find("li.l-selected a").text()) {
+		if (CONST.USER_PRE_INSTALLED == $("#iPreInstall").val()) {
             return true;
         } else {
             return false;
