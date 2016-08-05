@@ -226,7 +226,7 @@ staff.qrlogin = (function($) {
 		    data: param,
 		    success: function (response) {
 		    	resultData = response;
-		    },
+		    }
 		});
 		
 		return resultData;
