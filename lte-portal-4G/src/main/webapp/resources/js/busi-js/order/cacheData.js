@@ -288,7 +288,7 @@ CacheData = (function() {
 			selectStr = selectStr + "<div id='div1' style='position: absolute;top:77px;'></div>";
 			return selectStr;
 		}
-		if(!!param.valueRange && (itemSpecId == CONST.YZFitemSpecId1||itemSpecId ==  CONST.YZFitemSpecId2)){ //可编辑下拉框（10020034,10020035,10020036 为翼支付交费助手的三属性）需求（开发） #610119
+		if(!!param.valueRange && (itemSpecId == CONST.YZFitemSpecId1||itemSpecId ==  CONST.YZFitemSpecId2 || itemSpecId ==  CONST.YZFitemSpecId3)){ //可编辑下拉框（10020034,10020035,10020036 为翼支付交费助手的三属性）需求（开发） #610119
 			//缴费助手的属性值,如果是预付费的，则属性中展示默认值，且必填，如果是后付费的，属性为空，且不可填
 			var feeType = $("select[name='pay_type_-1']").val();
 			if(feeType==undefined) feeType = order.prodModify.choosedProdInfo.feeType;
