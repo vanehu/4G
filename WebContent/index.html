@@ -13,20 +13,29 @@
 <!-- 第三方js允许缓存 -->
 <script src="resources/js/third-js/jquery/jquery-1.7.2.min.js"></script>
 <script type="text/javascript">
-		// 异步无缓存获取js
-		$.getScript("resources/js/third-js/validate/jquery.ketchup.js");
-		$.getScript("resources/js/third-js/validate/jquery.ketchup.validations_zh.js");
-		$.getScript("resources/js/third-js/validate/jquery.ketchup.helpers.js");
-		$.getScript("resources/js/third-js/utils/md5.js");
-		$.getScript("resources/js/common.js");
-		$.getScript("resources/js/area.js");
-		$.getScript("resources/js/qrLogin.js");
-		$.getScript("resources/js/login.js");
-		// 标签页展示ip
-		$.get("getServerIp", function(data) {
-			// IE8及以下浏览器不支持html(),text(),append(),innerHTML设置<title>,故采用document.title
-			document.title = document.title + "[" + data.ip + "]";
+	//同步无缓存加载js	
+	function loadNoCacheJs(url) {
+		$.ajax({
+			type: "GET",
+			url: url,
+			async: false,
+			dataType: "script"
 		});
+	}
+	// 按照依赖顺序加载js
+	loadNoCacheJs("resources/js/third-js/validate/jquery.ketchup.js");
+	loadNoCacheJs("resources/js/third-js/validate/jquery.ketchup.validations_zh.js");
+	loadNoCacheJs("resources/js/third-js/validate/jquery.ketchup.helpers.js");
+	loadNoCacheJs("resources/js/third-js/utils/md5.js");
+	loadNoCacheJs("resources/js/common.js");
+	loadNoCacheJs("resources/js/area.js");
+	loadNoCacheJs("resources/js/qrLogin.js");
+	loadNoCacheJs("resources/js/login.js");
+	// 标签页展示ip
+	$.get("getServerIp", function(data) {
+		// IE8及以下浏览器不支持html(),text(),append(),innerHTML设置<title>,故采用document.title
+		document.title = document.title + "[" + data.ip + "]";
+	});
 </script>
 </head>
 <body style="padding:0px;">
