@@ -196,16 +196,42 @@ CacheData = (function() {
 			}
 		} else if(ec.util.isArray(param.valueRange)){ //下拉框
 			var optionStr = "";
+			selectStr = selectStr+'<div class="form-group pack-pro-box"><label for="exampleInputPassword1">' + param.name + ': </label>';
 			if(param.rule.isConstant=='Y'){ //不可修改
-				selectStr = param.name + ": <select class='inputWidth183px' id="+prodId+"_"+itemSpecId+" disabled='disabled'>"; 
+				selectStr =selectStr+ "<select class='inputWidth183px' id="+prodId+"_"+itemSpecId+" disabled='disabled'>"; 
 			}else {
 				if(param.rule.isOptional=="N") { //必填
-					selectStr = param.name + ": <select class='inputWidth183px' id="+prodId+"_"+itemSpecId+" data-validate='validate(required,reg:"
+					selectStr =selectStr+ " <select class='inputWidth183px' id="+prodId+"_"+itemSpecId+" data-validate='validate(required,reg:"
 							  + param.rule.maskMsg+"("+param.rule.mask+")) on(blur)'><label class='f_red'>*</label><br>"; 
 				}else{
-					selectStr = param.name + ": <select class='inputWidth183px' id="+prodId+"_"+itemSpecId+"><br>"; 
+					selectStr =  selectStr+ "<select class='inputWidth183px' id="+prodId+"_"+itemSpecId+">"; 
 					optionStr +='<option value="" >请选择</option>';  //不是必填可以不选
 				}
+			}
+			if(itemSpecId == CONST.YZFitemSpecId4){//#658051 账户托收退订特殊权限的需求
+				var isYZFTS = "";
+				var url = contextPath+"/common/checkOperate";
+				var params = {
+					operatSpecCd : "ZHTS_TD_QS" //账户托收退订权限
+				};
+				var response = $.callServiceAsJson(url,params);
+				$.unecOverlay();
+				if(response.code == 0){
+					isYZFTS = response.data;
+				}
+				for ( var j = 0; j < param.valueRange.length; j++) {
+					var valueRange = param.valueRange[j];
+					if(isYZFTS != "0" && valueRange.value=="10"){
+						continue;
+					}
+					if(valueRange.value== param.setValue){
+					    optionStr +='<option value="'+valueRange.value+'" selected="selected" >'+valueRange.text+'</option>';
+					}else {
+						optionStr +='<option value="'+valueRange.value+'">'+valueRange.text+'</option>';
+					}
+				}
+				selectStr += optionStr + "</select>" + "</div>";
+				return selectStr;
 			}
 			for ( var j = 0; j < param.valueRange.length; j++) {
 				var valueRange = param.valueRange[j];
@@ -215,7 +241,7 @@ CacheData = (function() {
 					optionStr +='<option value="'+valueRange.value+'">'+valueRange.text+'</option>';
 				}
 			}
-			selectStr += optionStr + "</select><br>"; 
+			selectStr += optionStr + "</select></div>"; 
 		}else { 
 			 if(param.dataTypeCd==1){  //文本框
 				if(param.rule==undefined){

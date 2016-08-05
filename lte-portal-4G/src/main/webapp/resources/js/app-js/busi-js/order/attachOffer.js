@@ -2031,20 +2031,50 @@ AttachOffer = (function() {
 			CacheData.setServSpec(prodId,newSpec); //添加到已开通列表里
 			spec = newSpec;
 		} 
-		if(spec.isdel == "C"){  //没有订购过
+		if(spec.isdel == "C"){//没有订购过
 			$('#li_'+prodId+'_'+servSpecId).remove(); //删除可开通功能产品里面
-			var $li = $('<a id="li_'+prodId+'_'+servSpecId+'" onclick="AttachOffer.closeServSpec('+prodId+','+servSpecId+',\''+servSpecName+'\',\''+ifParams+'\')" class="list-group-item"></a>');
+			var $li = $('<a id="li_'+prodId+'_'+servSpecId+'"  class="list-group-item"></a>');
 			$li.append('<span id="span_'+prodId+'_'+servSpecId+'">'+spec.servSpecName+'</span>');
 			if(spec.ifDault==0){ //必须
 				$li.removeAttr("onclick");	
-			}else{
-				$li.append('<span id="span_remove_'+prodId+'_'+servSpecId+'" class="glyphicon glyphicon-remove pull-right" aria-hidden="true"></span>');
+			}else {
+				if(spec.ifParams=="Y"){ 
+					if(CacheData.setParam(prodId,spec)){ 
+						$li.append('<span id="can_'+prodId+'_'+servSpecId+'"  isset="N"  class="abtn01 btn-span"><button type="button" class="btn btn-info" style="right:40px;width:48px;" data-toggle="modal" data-target="#setting" onclick="AttachOffer.showServParam('+prodId+','+servSpecId+');"><span style="color:red;">参<span></button><span  class="glyphicon glyphicon-remove pull-right" aria-hidden="true" onclick="AttachOffer.closeServSpec('+prodId+','+servSpecId+',\''+servSpecName+'\',\''+ifParams+'\')"></span></span>');
+					}else {
+						$li.append('<span id="can_'+prodId+'_'+servSpecId+'" isset="Y"  class="abtn03 btn-span"><button type="button" class="btn btn-info" style="right:40px;width:48px;" data-toggle="modal" data-target="#setting" onclick="AttachOffer.showServParam('+prodId+','+servSpecId+');">参</button><span  class="glyphicon glyphicon-remove pull-right" aria-hidden="true" onclick="AttachOffer.closeServSpec('+prodId+','+servSpecId+',\''+servSpecName+'\',\''+ifParams+'\')"></span></span>');
+					}
+				}else{
+					$li.append('<span id="span_remove_'+prodId+'_'+servSpecId+'" class="glyphicon glyphicon-remove pull-right" aria-hidden="true" onclick="AttachOffer.closeServSpec('+prodId+','+servSpecId+',\''+servSpecName+'\',\''+ifParams+'\')"></span>');
+				}
 			}
 			$("#open_serv_ul_"+prodId).append($li);
-		}else {
-		    $("#li_"+prodId+"_"+servSpecId).find("span").removeClass("del");
+			spec.isdel = "N";
+		}else if((spec.isdel=="Y")) { 
+			var $span = $("#li_"+prodId+"_"+servSpecId).find("span");
+			$span.removeClass("del");
+			spec.isdel = "N";
+			
+		}else {  //容错处理 //if((newSpec.isdel=="N")) 
+			var $spec = $('#li_'+prodId+'_'+servSpecId); //在已开通附属里面
+			$spec.remove();
+			var $li = $('<a class="list-group-item"></a>');
+			$li.append('<span id="span_'+prodId+'_'+servSpecId+'">'+spec.servSpecName+'</span>');
+			if(newSpec.ifDault==0){ //必须
+				$li.removeAttr("onclick");	
+			}else{	
+				if(spec.ifParams=="Y"){ 
+					if(CacheData.setParam(prodId,spec)){ 
+						$li.append('<span id="can_'+prodId+'_'+servSpecId+'"  isset="N"  class="abtn01 btn-span"><button type="button" class="btn btn-info" style="right:40px;width:48px;" data-toggle="modal" data-target="#setting" onclick="AttachOffer.showServParam('+prodId+','+servSpecId+');"><span style="color:red;">参<span></button><span  class="glyphicon glyphicon-remove pull-right" aria-hidden="true" onclick="AttachOffer.closeServSpec('+prodId+','+servSpecId+',\''+servSpecName+'\',\''+ifParams+'\')"></span></span>');
+					}else {
+						$li.append('<span id="can_'+prodId+'_'+servSpecId+'" isset="Y"  class="abtn03 btn-span"><button type="button" class="btn btn-info" style="right:40px;width:48px;" data-toggle="modal" data-target="#setting" onclick="AttachOffer.showServParam('+prodId+','+servSpecId+');">参</button><span  class="glyphicon glyphicon-remove pull-right" aria-hidden="true" onclick="AttachOffer.closeServSpec('+prodId+','+servSpecId+',\''+servSpecName+'\',\''+ifParams+'\')"></span></span>');
+					}
+				}else{
+					$li.append('<span id="span_remove_'+prodId+'_'+servSpecId+'" class="glyphicon glyphicon-remove pull-right" aria-hidden="true" onclick="AttachOffer.closeServSpec('+prodId+','+servSpecId+',\''+servSpecName+'\',\''+ifParams+'\')"></span>');
+				}
+			}
+			$("#open_ul_"+prodId).append($li);
 		}
-		spec.isdel = "N";
 		_showHideUim(0,prodId,servSpecId);//显示或者隐藏补换卡
 	};
 	
@@ -2227,34 +2257,51 @@ AttachOffer = (function() {
 			var content = CacheData.getParamContent(prodId,serv,3);
 			$.confirm("参数设置： ",content,{ 
 				yes:function(){	
-					
+					var isset = false;
+					$.each(serv.prodSpecParams,function(){
+						var prodItem = CacheData.getServInstParam(prodId,serv.servId,this.itemSpecId);
+						prodItem.setValue = $("#"+prodId+"_"+this.itemSpecId).val();	
+						if(prodItem.value!=prodItem.setValue){
+							prodItem.isUpdate = "Y";
+							isset = true;
+						}
+					});
+					if(isset){
+						$("#can_"+prodId+"_"+serv.servId).removeClass("canshu").addClass("canshu2");
+						serv.isset = "Y";
+						serv.update = "Y";
+					}else{
+						$("#can_"+prodId+"_"+serv.servId).removeClass("canshu2").addClass("canshu");
+						serv.isset = "N";
+						serv.update = "N";
+					}
 				},
 				no:function(){
 					
 				}
 			});
-			$('#paramForm').bind('formIsValid', function(event, form) {
-				var isset = false;
-				$.each(serv.prodSpecParams,function(){
-					var prodItem = CacheData.getServInstParam(prodId,serv.servId,this.itemSpecId);
-					prodItem.setValue = $("#"+prodId+"_"+this.itemSpecId).val();	
-					if(prodItem.value!=prodItem.setValue){
-						prodItem.isUpdate = "Y";
-						isset = true;
-					}
-				});
-				if(isset){
-					$("#can_"+prodId+"_"+serv.servId).removeClass("canshu").addClass("canshu2");
-					serv.isset = "Y";
-					serv.update = "Y";
-				}else{
-					$("#can_"+prodId+"_"+serv.servId).removeClass("canshu2").addClass("canshu");
-					serv.isset = "N";
-					serv.update = "N";
-				}
-				$(".ZebraDialog").remove();
-                $(".ZebraDialogOverlay").remove();
-			}).ketchup({bindElementByClass:"ZebraDialog_Button1"});
+//			$('#paramForm').bind('formIsValid', function(event, form) {
+//				var isset = false;
+//				$.each(serv.prodSpecParams,function(){
+//					var prodItem = CacheData.getServInstParam(prodId,serv.servId,this.itemSpecId);
+//					prodItem.setValue = $("#"+prodId+"_"+this.itemSpecId).val();	
+//					if(prodItem.value!=prodItem.setValue){
+//						prodItem.isUpdate = "Y";
+//						isset = true;
+//					}
+//				});
+//				if(isset){
+//					$("#can_"+prodId+"_"+serv.servId).removeClass("canshu").addClass("canshu2");
+//					serv.isset = "Y";
+//					serv.update = "Y";
+//				}else{
+//					$("#can_"+prodId+"_"+serv.servId).removeClass("canshu2").addClass("canshu");
+//					serv.isset = "N";
+//					serv.update = "N";
+//				}
+//				$(".ZebraDialog").remove();
+//                $(".ZebraDialogOverlay").remove();
+//			}).ketchup({bindElementByClass:"ZebraDialog_Button1"});
 		
 		}else {
 			var spec = CacheData.getServSpec(prodId,servSpecId);
@@ -2264,24 +2311,34 @@ AttachOffer = (function() {
 			var content = CacheData.getParamContent(prodId,spec,2);	
 			$.confirm("参数设置： ",content,{ 
 				yes:function(){
+					if(!!spec.prodSpecParams){
+						for (var i = 0; i < spec.prodSpecParams.length; i++) {
+							var param = spec.prodSpecParams[i];
+							var itemSpec = CacheData.getServSpecParam(prodId,servSpecId,param.itemSpecId);
+							itemSpec.setValue = $("#"+prodId+"_"+param.itemSpecId).val();
+						}
+					}
+					$("#can_"+prodId+"_"+servSpecId).removeClass("canshu").addClass("canshu2");
+					var attchSpec = CacheData.getServSpec(prodId,servSpecId);
+					attchSpec.isset = "Y";
 				},
 				no:function(){	
 				}
 			});
-			$('#paramForm').bind('formIsValid', function(event, form){
-				if(!!spec.prodSpecParams){
-					for (var i = 0; i < spec.prodSpecParams.length; i++) {
-						var param = spec.prodSpecParams[i];
-						var itemSpec = CacheData.getServSpecParam(prodId,servSpecId,param.itemSpecId);
-						itemSpec.setValue = $("#"+prodId+"_"+param.itemSpecId).val();
-					}
-				}
-				$("#can_"+prodId+"_"+servSpecId).removeClass("canshu").addClass("canshu2");
-				var attchSpec = CacheData.getServSpec(prodId,servSpecId);
-				attchSpec.isset = "Y";
-				$(".ZebraDialog").remove();
-                $(".ZebraDialogOverlay").remove();
-			}).ketchup({bindElementByClass:"ZebraDialog_Button1"});
+//			$('#paramForm').bind('formIsValid', function(event, form){
+//				if(!!spec.prodSpecParams){
+//					for (var i = 0; i < spec.prodSpecParams.length; i++) {
+//						var param = spec.prodSpecParams[i];
+//						var itemSpec = CacheData.getServSpecParam(prodId,servSpecId,param.itemSpecId);
+//						itemSpec.setValue = $("#"+prodId+"_"+param.itemSpecId).val();
+//					}
+//				}
+//				$("#can_"+prodId+"_"+servSpecId).removeClass("canshu").addClass("canshu2");
+//				var attchSpec = CacheData.getServSpec(prodId,servSpecId);
+//				attchSpec.isset = "Y";
+//				$(".ZebraDialog").remove();
+//                $(".ZebraDialogOverlay").remove();
+//			}).ketchup({bindElementByClass:"ZebraDialog_Button1"});
 		}
 	};
 	
