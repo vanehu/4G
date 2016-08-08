@@ -289,7 +289,6 @@ CacheData = (function() {
 			return selectStr;
 		}
 		if(!!param.valueRange && (itemSpecId == CONST.YZFitemSpecId1||itemSpecId ==  CONST.YZFitemSpecId2 || itemSpecId ==  CONST.YZFitemSpecId3)){ //可编辑下拉框（10020034,10020035,10020036 为翼支付交费助手的三属性）需求（开发） #610119
-			//缴费助手的属性值,如果是预付费的，则属性中展示默认值，且必填，如果是后付费的，属性为空，且不可填
 			var feeType = $("select[name='pay_type_-1']").val();
 			if(feeType==undefined) feeType = order.prodModify.choosedProdInfo.feeType;
 			if(feeType == CONST.PAY_TYPE.BEFORE_PAY){
@@ -315,11 +314,11 @@ CacheData = (function() {
 				selectStr += optionStr + "</select></td></tr>"; 
 				return selectStr;
 			} else if(feeType == CONST.PAY_TYPE.AFTER_PAY){
-					selectStr =selectStr+"<tr style='display: none;'><td>"+ param.name + ":</td><td> <select class='inputWidth183px' id="+prodId+"_"+itemSpecId+" disabled='disabled'>";
-					optionStr +='<option value="" selected="selected">不可选</option>';
-					selectStr += optionStr + "</select></td></tr>"; 
-					return selectStr;
-			}
+				selectStr =selectStr+"<tr><td>"+ param.name + ":</td><td> <select class='inputWidth183px' id="+prodId+"_"+itemSpecId+" disabled='disabled'>";
+				optionStr +='<option value="" selected="selected">不可选</option>';
+				selectStr += optionStr + "</select></td></tr>"; 
+				return selectStr;
+			} 
 		}
 		if (ec.util.isArray(param.valueRange) && param.dateSourceTypeCd == "17") {//带搜索功能输入组件
 			var id=prodId+'_'+itemSpecId;
@@ -334,6 +333,9 @@ CacheData = (function() {
 				selectStr = selectStr + '<td id="td_schools"><input id="'+id+'" placeholder="请输入学校名称" data-validate="validate(required,reg:()) on(blur)" class="inputWidth183px" type="text" /><input type="button" onclick="AttachOffer.searchSchools(\''+id+'\');" class="purchase" value="搜索"/></td></tr>';
 			}
 		} else if (ec.util.isArray(param.valueRange)) { //下拉框
+			if (itemSpecId ==  CONST.YZFitemSpecId4 && "ON" != offerChange.queryPortalProperties("AGENT_" + OrderInfo.staff.soAreaId.substring(0,3))) {
+				return selectStr;
+			}
 			if(param.rule.isConstant=='Y'){ //不可修改
 				selectStr = selectStr+"<tr><td>"+param.name + ": </td><td><select class='inputWidth183px' id="+prodId+"_"+itemSpecId+" disabled='disabled'>"; 
 			}else {

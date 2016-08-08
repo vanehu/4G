@@ -355,5 +355,8 @@ public class MDA {
 	 */
 	public static final Map<String,String> RETURN_RECEIPT = new HashMap<String,String>();
 
-
+	/**
+	 * 翼支付托收的属性分省开关
+	 */
+	public static final Map<String,String> AGENT_PARAM  = new HashMap<String,String>();
 }

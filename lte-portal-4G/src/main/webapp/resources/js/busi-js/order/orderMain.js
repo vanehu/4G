@@ -2051,7 +2051,9 @@ order.main = (function(){
 					&&CacheData.getServSpec(-1,381000960)!=null){
 				var yiPaySpec = CacheData.getServSpec(-1,381000960);
 				if(yiPaySpec.isdel==undefined||yiPaySpec.isdel!="Y"){
-					$.confirm("信息确认","您已选择开通【翼支付交费助手】功能产品，如果修改付费类型为后付费，只可变更“是否需要代扣确认”和“翼支付托收”，且其属性将赋为默认值！",{ 
+					// #610119需求增加：托收的属性需要分省下发。
+					var agentFlag = offerChange.queryPortalProperties("AGENT_" + OrderInfo.staff.soAreaId.substring(0,3));
+					$.confirm("信息确认","您已选择开通【翼支付交费助手】功能产品，如果修改付费类型为后付费，" + ("ON" == agentFlag ? "只可变更“翼支付托收”。" : "属性不可变更。"),{ 
 						yesdo:function(){
 							for ( var j = 0; j < yiPaySpec.prodSpecParams.length; j++) {							
 								var prodSpecParam = yiPaySpec.prodSpecParams[j];
