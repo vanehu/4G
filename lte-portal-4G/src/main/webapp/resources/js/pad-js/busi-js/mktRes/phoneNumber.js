@@ -609,9 +609,14 @@ mktRes.phoneNbr = (function(){
 		}
 		var pnHead = $.trim($("#pnHead option:selected").val());
 		var pnEnd =$.trim($("#pnEnd").val());
+		var pnNotExitNum = $.trim($("#pnNotExitNum").val());
 		if(pnEnd=='最后四位'){
 			pnEnd='';
 		}
+		if(pnNotExitNum == '后四位不含'){
+			pnNotExitNum = '';
+		}
+		pnNotExitNum = (pnNotExitNum == '') ? pnNotExitNum : "[^" + pnNotExitNum + "]{4}$";
 		var phoneNum='';
 		var Greater  = "";
 		var Less  ="";
@@ -627,7 +632,7 @@ mktRes.phoneNbr = (function(){
 		}
 		var poolId = $.trim($("#nbrPool option:selected").val());	
 		var pnCharacterId=$.trim($("#pnCharacterId option:selected").val());	
-		return {"pnHead":pnHead,"pnEnd":pnEnd,"goodNumFlag":pnCharacterId,"maxPrePrice":Less,
+		return {"pnHead":pnHead,"pnEnd":pnEnd,"pnNotExitNum":pnNotExitNum,"goodNumFlag":pnCharacterId,"maxPrePrice":Less,
 			"minPrePrice":Greater,"pnLevelId":'',"pageSize":"16","phoneNum":phoneNum,"areaId":areaId,"poolId":poolId,
 			"queryFlag":query_flag_01
 		};
@@ -741,6 +746,12 @@ mktRes.phoneNbr = (function(){
 			}
 		});
 		$("#pnEnd").off("keydown").on("keydown", function(e){
+			var ev = document.all ? window.event : e; 
+			if(ev.keyCode==13) {
+				_btnQueryPhoneNumber(param);
+			}
+		});
+		$("#pnNotExitNum").off("keydown").on("keydown", function(e){
 			var ev = document.all ? window.event : e; 
 			if(ev.keyCode==13) {
 				_btnQueryPhoneNumber(param);

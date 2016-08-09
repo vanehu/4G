@@ -98,6 +98,10 @@ $(function() {
               <label style=" width: 100%; text-align: left;"><span class="title_lv"></span>最后四位</label>
                 <input type="text" id="pnEnd" class="form-control w-100" maxlength="4" onblur="javascript:if($(this).val()==''){$(this).val('最后四位');}" onfocus="javascript:if($(this).val()=='最后四位'){$(this).val('')}" aria-describedby="inputSuccess2Status" placeholder="最后四位">
             </div>
+             <div class="form-group">
+              <label style=" width: 100%; text-align: left;"><span class="title_lv"></span>后四位不含</label>
+                <input type="text" id="pnNotExitNum" class="form-control w-100" maxlength="4" onblur="javascript:if($(this).val()==''){$(this).val('后四位不含');}" onfocus="javascript:if($(this).val()=='后四位不含'){$(this).val('')}" aria-describedby="inputSuccess2Status" placeholder="后四位不含">
+            </div>
             <div class="form-group">
               <label style=" width: 100%; text-align: left;"><span class="title_lv"></span>选择类型</label>
                 <div id="pnCharacterId_basicDiv" class="input-group w-100">

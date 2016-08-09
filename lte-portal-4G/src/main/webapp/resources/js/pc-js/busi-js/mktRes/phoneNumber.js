@@ -635,15 +635,31 @@ order.phoneNumber = (function(){
 			areaId=OrderInfo.getAreaId();
 		}
 		var pnHead = $("#pnHead").find("a.selected").attr("val");
+		var pnNotExitNum = $.trim($("#pnNotExitNum").val());
 		var pncharacteristic = $("#pncharacteristic").find("a.selected").attr("val");
+		var lowPrice = $("#lowPrice").find("a.selected").attr("val");
 		var pnEnd =$.trim($("#pnEnd").val());
-		if(pncharacteristic!=null && pncharacteristic!=""){
-			pnEnd = pncharacteristic;
-		}else{
+		if(pncharacteristic!=null && pncharacteristic!=""){		
+			if(pncharacteristic == '4'){
+				pnNotExitNum = pncharacteristic;
+				if(pnEnd == '最后四位'){
+					pnEnd = '';
+				}
+			} else{
+				pnEnd = pncharacteristic;
+				if(pnNotExitNum == '后四位不含'){
+					pnNotExitNum = '';
+				}
+			}
+		} else{
 			if(pnEnd=='最后四位'){
 				pnEnd='';
 			}
+			if(pnNotExitNum == '后四位不含'){
+				pnNotExitNum = '';
+			}
 		}
+		pnNotExitNum = (pnNotExitNum == '') ? pnNotExitNum : "[^" + pnNotExitNum + "]{4}$";
 		var phoneNum=$.trim($("#phoneNum").val());
 		if(phoneNum=="任意四位"){
 			phoneNum='';
@@ -666,7 +682,7 @@ order.phoneNumber = (function(){
 			pnCharacterId = $("#pnCharacterId_all a.selected").attr("val");
 		}
 		pnCharacterId = ec.util.defaultStr(pnCharacterId);
-		return {"pnHead":pnHead,"pnEnd":pnEnd,"goodNumFlag":pnCharacterId,"maxPrePrice":Less,
+		return {"pnHead":pnHead,"pnEnd":pnEnd,"pnNotExitNum":pnNotExitNum, "goodNumFlag":pnCharacterId,"maxPrePrice":Less,
 			"minPrePrice":Greater,"pnLevelId":'',"pageSize":"15","phoneNum":phoneNum,"areaId":areaId,"poolId":poolId,
 			"queryFlag":query_flag_01
 		};
