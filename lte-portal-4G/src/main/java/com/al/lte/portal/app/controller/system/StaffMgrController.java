@@ -146,7 +146,7 @@ public class StaffMgrController extends com.al.lte.portal.controller.system.Staf
 			iPageSize = Integer.parseInt(pageSize);
 			if (iPage > 0) {
 				staffParm.put("staffName",param.get("name"));
-				if(param.get("salesCode")!=null){
+				if(param.get("code")!=null){
 				  staffParm.put("staffCode",param.get("code"));
 				}
 				if(param.get("salesCode")!=null){
