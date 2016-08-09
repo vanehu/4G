@@ -80,7 +80,7 @@ query.prod = (function() {
 		}else if (response.code == -2) {
 			$.alertM(response.data);
 		}else{
-			$.alert("错误提示","接口未返回号码["+params.acctNbr+"]产品原UIM卡数据，无法继续受理！");
+			$.alert("错误提示","接口未返回号码["+params.acctNbr+"]产品原UIM卡数据，无法继续受理！【"+response.data+"】");
 		}
 	};
 	

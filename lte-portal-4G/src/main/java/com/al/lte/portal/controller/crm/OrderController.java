@@ -2032,14 +2032,14 @@ public class OrderController extends BaseController {
         try {
             Map<String, Object> resultMap = orderBmo.queryOfferCouponById(dataBusMap, flowNum, sessionStaff);
             String couponTypeCd = MySimulateData.getInstance().getParam(
-                    (String) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_DATASOURCE_KEY),
-                    "couponTypeCd");
+                    (String) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_DATASOURCE_KEY), "couponTypeCd");
+            String transactionID = MapUtils.getString(resultMap, "transactionID", "未获取到流水号transactionID");
             if (resultMap != null && ResultCode.R_SUCCESS.equals(resultMap.get("code").toString())) {
                 Map<String, Object> result = (Map<String, Object>) resultMap.get("result");
                 List<Map<String, Object>> offerCoupon = (List<Map<String, Object>>) result.get("offerCoupon");
                 Map returnMap = new HashMap();
                 if (offerCoupon.isEmpty()) {
-                    jr = super.failed("未查询到旧卡物品信息", ResultConstant.FAILD.getCode());
+                    jr = super.failed("未查询到旧卡物品信息(流水号："+transactionID+")", ResultConstant.FAILD.getCode());
                 } else {
                     for (int i = 0; i < offerCoupon.size(); i++) {
                         String currentCouponTypeCd = offerCoupon.get(i).get("couponTypeCd").toString();
@@ -2048,13 +2048,13 @@ public class OrderController extends BaseController {
                         }
                     }
                     if (returnMap.isEmpty()) {
-                        jr = super.failed("旧卡物品信息未找到匹配的UIM类型数据", ResultConstant.FAILD.getCode());
+                        jr = super.failed("旧卡物品信息未找到匹配的UIM类型数据(流水号："+transactionID+")", ResultConstant.FAILD.getCode());
                     } else {
                         jr = super.successed(returnMap, ResultConstant.SUCCESS.getCode());
                     }
                 }
             } else {
-                jr = super.failed(resultMap.get("msg").toString(), ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+                jr = super.failed(resultMap.get("msg").toString()+"(流水号“"+transactionID+")", ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
             }
             return jr;
         } catch (BusinessException be) {
