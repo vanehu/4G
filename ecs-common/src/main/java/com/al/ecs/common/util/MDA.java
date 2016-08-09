@@ -291,6 +291,10 @@ public class MDA {
 	 * 回执是否有服务协议和靓号协议ON-有，OFF-无 格式：服务协议开关，靓号协议开关
 	 */
 	public static final Map<String,String> PRINTFTL_FLAG=new HashMap<String,String>();
+	/**
+	 * 翼支付商户配置
+	 */
+	public static final Map<String,String> EPAY_MERCHANT=new HashMap<String,String>();
 
     /**
      * 身份证云读卡配置：日志开关
@@ -317,7 +321,11 @@ public class MDA {
    /**
     * 身份证阅读器放置ftp路径
     */
-    public static final String CARD_FILEPATH= new String("");
+    public static final String CARD_FILEPATH = new String("");
+    /**
+     * 身份证阅读器放置ftp服务器配置
+     */
+    public static final String CARD_FTPCONFIG = new String("");
     
     /**
      * 身份阅读器相关
@@ -359,4 +367,8 @@ public class MDA {
 	 * 翼支付托收的属性分省开关
 	 */
 	public static final Map<String,String> AGENT_PARAM  = new HashMap<String,String>();
+	/**
+	 * 无纸化公章分省开关
+	 */
+	public static final Map<String,String> SEALINFO = new HashMap<String,String>();
 }
