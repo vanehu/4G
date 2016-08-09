@@ -52,7 +52,8 @@ rule.rule = (function(){
 			channelId : param.channelId,
 			custId : param.custId,
 			boInfos : param.boInfos,
-			soNbr : OrderInfo.order.soNbr
+			soNbr : OrderInfo.order.soNbr,
+			olTypeCd : CONST.OL_TYPE_CD.UI_LTE
 		};
 		$.ecOverlay("<strong>客户级规则校验中，请稍等...</strong>");
 		var response = $.callServiceAsJson(contextPath+"/rule/prepare",inParam); //调用规则校验
@@ -184,7 +185,8 @@ rule.rule = (function(){
 			custId : OrderInfo.cust.custId,
 			soNbr : OrderInfo.order.soNbr,
 			boInfos : boInfos,
-			prodInfo : order.prodModify.choosedProdInfo	
+			prodInfo : order.prodModify.choosedProdInfo,
+			olTypeCd : CONST.OL_TYPE_CD.UI_LTE
 		};
 		
 		$.callServiceAsHtml(contextPath+"/app/rule/prepare", inParam, {
@@ -233,7 +235,8 @@ rule.rule = (function(){
 			channelId : param.channelId,
 			custId : param.custId,
 			boInfos : param.boInfos,
-			soNbr : OrderInfo.order.soNbr 
+			soNbr : OrderInfo.order.soNbr,
+			olTypeCd : CONST.OL_TYPE_CD.UI_LTE
 		};
 		//
 		$.callServiceAsHtml(contextPath+"/app/rule/prepare", inParam, {
