@@ -183,6 +183,11 @@ cust = (function(){
 			cIdentidiesTypeCd : $.trim($("#cm_identidiesTypeCd").val()),
 			cAddressStr :$.trim($("#cmAddressStr").val())
 		};
+		if(createCustInfo.cIdentidiesTypeCd==1){
+			createCustInfo.cCustIdCard = $('#cmCustIdCard').val();//证件号码
+		}else{
+			createCustInfo.cCustIdCard = $('#cmCustIdCardOther').val();//证件号码
+		}
 		diffPlace=$("#DiffPlaceFlag").val();
 		var params = {
 			"acctNbr":"",

@@ -51,7 +51,8 @@
 				}
 				switch(menu){
 				case 1 :
-					params.method = "/app/cust/create"; //实名制客户新增
+					params.method = "/agent/cust/realCustCreate"; //实名制客户新增
+					params.actionFlag = 8;
 					break;
 				case 9 :
 					params.method = "/app/cust/realCreate"; //客户新增

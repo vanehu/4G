@@ -897,6 +897,21 @@ public class CustController extends BaseController {
     }
     
     /**
+     * 客户创建入口-实名制客户创建入口
+     * @return
+     * @throws BusinessException
+     */
+    @RequestMapping(value = "/realCustCreate", method = { RequestMethod.POST })
+    public String agentCustCreate(HttpServletRequest request,Model model) throws BusinessException {
+    	SessionStaff sessionStaff = (SessionStaff) ServletUtils
+				.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);
+    	model.addAttribute("sessionStaff",JsonUtil.buildNormal().objectToJson(sessionStaff));
+    	model.addAttribute("flag", "real");
+    	model.addAttribute("currentCT", sessionStaff.getCurrentChannelType());
+        return "/agent/cust/real-cust-create";
+    }
+    
+    /**
      * 客户创建入口
      * @return
      * @throws BusinessException
