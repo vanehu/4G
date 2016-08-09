@@ -319,6 +319,14 @@ order.memberChange = function(){
 						$tr.after(olmv);
 					}
 				}
+				var $tipTr = $("<tr><td colspan='2' style='text-align:right;line-height:25px;'>" +
+						"<font style='color:red;'>拆副卡：</font><br/><font font style='color:red;'>保留>>选择新套餐：</font></td>" +
+						"<td colspan='2' style='text-align:left;line-height:25px;'>" +
+						"<font style='color:red;'>副卡直接拆除销号</font><br/><font font style='color:red;'>保留副卡，只是更换套餐</font>" +
+						"</td></tr>");
+				//$tr.after($tipTr);
+				var tipFlag = false;
+
 				//副卡成员
 				//$Othertr.after($tr);
 				$.each(OrderInfo.offer.offerMemberInfos,function(){
@@ -358,6 +366,10 @@ order.memberChange = function(){
 			
 						$div2.append($span).appendTo($div);
 						existViceCardNum++;
+						if(!tipFlag){
+							$("#form").after($tipTr);
+							tipFlag = true;
+						}
 
 					}
 					$div2.appendTo($div);

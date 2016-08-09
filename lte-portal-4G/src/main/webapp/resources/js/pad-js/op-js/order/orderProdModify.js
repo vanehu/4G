@@ -2883,18 +2883,18 @@ order.prodModify = (function(){
 			recordParam.certNumber=OrderInfo.cust.idCardNumber;
 	
 			var rules=OrderInfo.rulesJson;
-			if(OrderInfo.typeCd==8){
-				OrderInfo.typeCd=5;
-			}
-			else if(OrderInfo.typeCd==5){
-				OrderInfo.typeCd=6;
-			}
-			else if(OrderInfo.typeCd==6){
-				OrderInfo.typeCd=7;
-			}
-			else if(OrderInfo.typeCd==7){
-				OrderInfo.typeCd=8;
-			}
+//			if(OrderInfo.typeCd==8){
+//				OrderInfo.typeCd=5;
+//			}
+//			else if(OrderInfo.typeCd==5){
+//				OrderInfo.typeCd=6;
+//			}
+//			else if(OrderInfo.typeCd==6){
+//				OrderInfo.typeCd=7;
+//			}
+//			else if(OrderInfo.typeCd==7){
+//				OrderInfo.typeCd=8;
+//			}
 			//判断是否可以跳过鉴权
 			var rule="rule"+OrderInfo.typeCd;
 			//员工权限
