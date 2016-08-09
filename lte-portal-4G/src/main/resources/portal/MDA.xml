@@ -524,10 +524,10 @@
 			'BESTPAY-8650000':'OFF',
 			'BESTPAY-8440000':'OFF',
 			'BESTPAY-8320000':'ON',
-			'BESTPAY-8510000':'OFF',
+			'BESTPAY-8510000':'ON',
 			'BESTPAY-8330000':'OFF',
 			'BESTPAY-8340000':'OFF',
-			'BESTPAY-8610000':'OFF',
+			'BESTPAY-8610000':'ON',
 			'BESTPAY-8420000':'OFF',
 			'BESTPAY-8310000':'OFF',
 			'BESTPAY-8130000':'OFF',
@@ -730,8 +730,26 @@
 			'GOV_862':'OFF',<!-- 甘肃 -->
 			'GOV_865':'OFF',<!-- 新疆 -->
 			'GOV_899':'OFF'<!-- 虚拟省 -->
-        }
-        </const>
+			}
+		</const>
+		<const type="String" name="CARD_FTPCONFIG" value="FTPSERVICECONFIG_3" description="身份证阅读器放置ftp服务器"/>
+		<const type="String" name="CARD_FILEPATH" value="/app/ejbca/card/" description="身份证阅读器放置ftp路径"/>
+		<const type="Map" name="USBVERSION_SIGNATURE" description="接入集团规范的身份证阅读器厂商版本及密钥">
+		 {
+		     '10000':{'version':'1.0.3.1','appSecret':'<![CDATA[D%vd1#e9Y@d36cK&]]>','name':'华旭金卡','isOpen':'OFF'},
+		     '10001':{'version':'1.2.0.3','appSecret':'<![CDATA[p7z@d1%x3H4#29eV]]>','name':'深圳华视','isOpen':'OFF'},
+		     '10002':{'version':'2.5.8.1','appSecret':'<![CDATA[Py52H4#2Ut@d1%x7]]>','name':'山东卡尔','isOpen':'OFF'},
+		     '10003':{'version':'1.0','appSecret':'<![CDATA[d1%x7H4#2UtPy52@]]>','name':'山东信通','isOpen':'OFF'},
+		     '10004':{'version':'1.0','appSecret':'<![CDATA[ey@d391%xH74#2iB]]>','name':'长春鸿达','isOpen':'OFF'},
+		     '10005':{'version':'2.2.1','appSecret':'<![CDATA[R9P&L7#2URePy18@]]>','name':'上海普天','isOpen':'OFF'},
+		     '10006':{'version':'2.22','appSecret':'<![CDATA[3eRx18@5x3H4#5fY]]>','name':'因纳伟盛','isOpen':'OFF'},
+		     '10007':{'version':'1.0.0.3','appSecret':'<![CDATA[y52@d1%x8H4#2URt]]>','name':'山东神思','isOpen':'OFF'},
+		     '10008':{'version':'1.0','appSecret':'<![CDATA[H4#29eV%xW74#2iB]]>','name':'精伦电子','isOpen':'OFF'},
+		     '10009':{'version':'2.2','appSecret':'<![CDATA[RxRe18g%xtPy52@Y]]>','name':'内蒙古银安科技','isOpen':'OFF'},
+		     '10010':{'version':'1.0','appSecret':'<![CDATA[&L7#2R9PURePy18@]]>','name':'南京亿数','isOpen':'OFF'},
+		     '10011':{'version':'1.0','appSecret':'<![CDATA[18@5xT9UR%dY#d36]]>','name':'北冰洋','isOpen':'OFF'}
+		 }
+		</const>	
         <!-- 集团CRM-4G新装、套餐变更纳入老用户作为副卡开关  ON OFF 默认关闭 -->
         <const type="Map" name="OLDMEMBER_JOIN" description="集团CRM-4G新装、套餐变更纳入老用户作为副卡开关  ON OFF 默认关闭">
 			{
@@ -744,7 +762,7 @@
 			'OLDMEMBER_861':'OFF',<!-- 陕西 -->
 			'OLDMEMBER_842':'OFF',<!-- 湖北 -->
 			'OLDMEMBER_835':'OFF',<!-- 福建 -->
-			'OLDMEMBER_832':'OFF',<!-- 江苏 -->
+			'OLDMEMBER_832':'ON',<!-- 江苏 -->
 			'OLDMEMBER_846':'OFF',<!-- 海南 -->
 			'OLDMEMBER_864':'OFF',<!-- 宁夏 -->
 			'OLDMEMBER_814':'OFF',<!-- 山西 -->
@@ -753,7 +771,7 @@
 			'OLDMEMBER_837':'OFF',<!-- 山东 -->
 			'OLDMEMBER_811':'OFF',<!-- 北京 -->
 			'OLDMEMBER_843':'OFF',<!-- 湖南 -->
-			'OLDMEMBER_851':'OFF',<!-- 四川 -->
+			'OLDMEMBER_851':'ON',<!-- 四川 -->
 			'OLDMEMBER_844':'OFF',<!-- 广东 -->
 			'OLDMEMBER_831':'OFF',<!-- 上海 -->
 			'OLDMEMBER_812':'OFF',<!-- 天津 -->
@@ -762,7 +780,7 @@
 			'OLDMEMBER_821':'OFF',<!-- 辽宁 -->
 			'OLDMEMBER_822':'OFF',<!-- 吉林 -->
 			'OLDMEMBER_834':'OFF',<!-- 安徽 -->
-			'OLDMEMBER_833':'OFF',<!-- 浙江 -->
+			'OLDMEMBER_833':'ON',<!-- 浙江 -->
 			'OLDMEMBER_852':'OFF',<!-- 贵州 -->
 			'OLDMEMBER_862':'OFF',<!-- 甘肃 -->
 			'OLDMEMBER_865':'OFF',<!-- 新疆 -->
@@ -790,7 +808,7 @@
 			'FEETYPE_837':'OFF',<!-- 山东 -->
 			'FEETYPE_811':'OFF',<!-- 北京 -->
 			'FEETYPE_843':'OFF',<!-- 湖南 -->
-			'FEETYPE_851':'OFF',<!-- 四川 -->
+			'FEETYPE_851':'ON',<!-- 四川 -->
 			'FEETYPE_844':'OFF',<!-- 广东 -->
 			'FEETYPE_831':'OFF',<!-- 上海 -->
 			'FEETYPE_812':'OFF',<!-- 天津 -->
@@ -799,7 +817,7 @@
 			'FEETYPE_821':'OFF',<!-- 辽宁 -->
 			'FEETYPE_822':'OFF',<!-- 吉林 -->
 			'FEETYPE_834':'OFF',<!-- 安徽 -->
-			'FEETYPE_833':'OFF',<!-- 浙江 -->
+			'FEETYPE_833':'ON',<!-- 浙江 -->
 			'FEETYPE_852':'OFF',<!-- 贵州 -->
 			'FEETYPE_862':'OFF',<!-- 甘肃 -->
 			'FEETYPE_865':'OFF',<!-- 新疆 -->
@@ -843,21 +861,41 @@
 			'AGENT_899':'OFF'<!-- 虚拟省 -->
 			}
 		</const>
-		<const type="String" name="CARD_FILEPATH" value="/app/ejbca/card/" description="身份证阅读器放置ftp路径"/>
-		<const type="Map" name="USBVERSION_SIGNATURE" description="接入集团规范的身份证阅读器厂商版本及密钥">
+		<!-- 翼支付商户配置-->
+ 	    <const type="Map" name="EPAY_MERCHANT" description="翼支付商户配置">
         {
-            '10000':{'version':'1.0','appSecret':'<![CDATA[D%vd1#e9Y@d36cK&]]>','name':'华旭金卡','isOpen':'ON'},
-            '10001':{'version':'1.0','appSecret':'<![CDATA[p7z@d1%x3H4#29eV]]>','name':'深圳华视','isOpen':'ON'},
-            '10002':{'version':'1.0','appSecret':'<![CDATA[Py52H4#2Ut@d1%x7]]>','name':'山东卡尔','isOpen':'ON'},
-            '10003':{'version':'1.0','appSecret':'<![CDATA[d1%x7H4#2UtPy52@]]>','name':'山东信通','isOpen':'ON'},
-            '10004':{'version':'1.0','appSecret':'<![CDATA[ey@d391%xH74#2iB]]>','name':'长春鸿达','isOpen':'OFF'},
-            '10005':{'version':'1.0','appSecret':'<![CDATA[R9P&L7#2URePy18@]]>','name':'上海普天','isOpen':'OFF'},
-            '10006':{'version':'1.0','appSecret':'<![CDATA[3eRx18@5x3H4#5fY]]>','name':'因纳伟盛','isOpen':'ON'},
-            '10007':{'version':'1.0','appSecret':'<![CDATA[y52@d1%x8H4#2URt]]>','name':'山东神思','isOpen':'OFF'},
-            '10008':{'version':'1.0','appSecret':'<![CDATA[H4#29eV%xW74#2iB]]>','name':'精伦电子','isOpen':'ON'},
-            '10009':{'version':'1.0','appSecret':'<![CDATA[RxRe18g%xtPy52@Y]]>','name':'内蒙古银安科技','isOpen':'ON'},
-            '10010':{'version':'1.0','appSecret':'<![CDATA[&L7#2R9PURePy18@]]>','name':'南京亿数','isOpen':'OFF'},
-            '10011':{'version':'1.0','appSecret':'<![CDATA[18@5xT9UR%dY#d36]]>','name':'北冰洋','isOpen':'OFF'}
+           'EPAYMER_8540000':'01440109025345000,23CB477D755315A3AE8D5E5559A41CAD93D85C807D295351,453383',<!-- 西藏 -->
+ 	       'EPAYMER_8630000':'01440109025345000,23CB477D755315A3AE8D5E5559A41CAD93D85C807D295351,453383',<!-- 青海 -->
+ 	       'EPAYMER_8150000':'01440109025345000,23CB477D755315A3AE8D5E5559A41CAD93D85C807D295351,453383',<!-- 内蒙古 -->
+ 	       'EPAYMER_8230000':'01440109025345000,23CB477D755315A3AE8D5E5559A41CAD93D85C807D295351,453383',<!-- 黑龙江 -->
+ 	       'EPAYMER_8450000':'01440109025345000,23CB477D755315A3AE8D5E5559A41CAD93D85C807D295351,453383',<!-- 广西 -->
+ 	       'EPAYMER_8500000':'01440109025345000,23CB477D755315A3AE8D5E5559A41CAD93D85C807D295351,453383',<!-- 重庆 -->
+ 	       'EPAYMER_8610000':'01440109025345000,23CB477D755315A3AE8D5E5559A41CAD93D85C807D295351,453383',<!-- 陕西 -->
+ 	       'EPAYMER_8420000':'01440109025345000,23CB477D755315A3AE8D5E5559A41CAD93D85C807D295351,453383',<!-- 湖北 -->
+ 	       'EPAYMER_8350000':'01440109025345000,23CB477D755315A3AE8D5E5559A41CAD93D85C807D295351,453383',<!-- 福建 -->
+ 	       'EPAYMER_8320000':'01440109025345000,23CB477D755315A3AE8D5E5559A41CAD93D85C807D295351,453383',<!-- 江苏 -->	       
+ 	       'EPAYMER_8460000':'01440109025345000,23CB477D755315A3AE8D5E5559A41CAD93D85C807D295351,453383',<!-- 海南 -->
+ 	       'EPAYMER_8640000':'01440109025345000,23CB477D755315A3AE8D5E5559A41CAD93D85C807D295351,453383',<!-- 宁夏 -->
+ 	       'EPAYMER_8140000':'01440109025345000,23CB477D755315A3AE8D5E5559A41CAD93D85C807D295351,453383',<!-- 山西 -->
+ 	       'EPAYMER_8530000':'01440109025345000,23CB477D755315A3AE8D5E5559A41CAD93D85C807D295351,453383',<!-- 云南 -->
+ 	       'EPAYMER_8360000':'01440109025345000,23CB477D755315A3AE8D5E5559A41CAD93D85C807D295351,453383',<!-- 江西 -->
+ 	       'EPAYMER_8370000':'01440109025345000,23CB477D755315A3AE8D5E5559A41CAD93D85C807D295351,453383',<!-- 山东 -->
+ 	       'EPAYMER_8110000':'01440109025345000,23CB477D755315A3AE8D5E5559A41CAD93D85C807D295351,453383',<!-- 北京 -->
+ 	       'EPAYMER_8430000':'01440109025345000,23CB477D755315A3AE8D5E5559A41CAD93D85C807D295351,453383',<!-- 湖南 -->
+ 	       'EPAYMER_8510000':'01440109025345000,23CB477D755315A3AE8D5E5559A41CAD93D85C807D295351,453383',<!-- 四川 -->
+ 	       'EPAYMER_8440000':'01440109025345000,23CB477D755315A3AE8D5E5559A41CAD93D85C807D295351,453383',<!-- 广东 -->
+ 	       'EPAYMER_8310000':'01440109025345000,23CB477D755315A3AE8D5E5559A41CAD93D85C807D295351,453383',<!-- 上海 -->
+ 	       'EPAYMER_8120000':'01440109025345000,23CB477D755315A3AE8D5E5559A41CAD93D85C807D295351,453383',<!-- 天津 -->
+ 	       'EPAYMER_8130000':'01440109025345000,23CB477D755315A3AE8D5E5559A41CAD93D85C807D295351,453383',<!-- 河北 -->
+ 	       'EPAYMER_8410000':'01440109025345000,23CB477D755315A3AE8D5E5559A41CAD93D85C807D295351,453383',<!-- 河南 -->
+ 	       'EPAYMER_8210000':'01440109025345000,23CB477D755315A3AE8D5E5559A41CAD93D85C807D295351,453383',<!-- 辽宁 -->
+ 	       'EPAYMER_8220000':'01440109025345000,23CB477D755315A3AE8D5E5559A41CAD93D85C807D295351,453383',<!-- 吉林 -->
+ 	       'EPAYMER_8340000':'01440109025345000,23CB477D755315A3AE8D5E5559A41CAD93D85C807D295351,453383',<!-- 安徽 -->
+ 	       'EPAYMER_8330000':'01440109025345000,23CB477D755315A3AE8D5E5559A41CAD93D85C807D295351,453383',<!-- 浙江 -->
+ 	       'EPAYMER_8520000':'01440109025345000,23CB477D755315A3AE8D5E5559A41CAD93D85C807D295351,453383',<!-- 贵州 -->
+ 	       'EPAYMER_8620000':'01440109025345000,23CB477D755315A3AE8D5E5559A41CAD93D85C807D295351,453383',<!-- 甘肃 -->
+ 	       'EPAYMER_8650000':'01440109025345000,23CB477D755315A3AE8D5E5559A41CAD93D85C807D295351,453383',<!-- 新疆 -->
+ 	       'EPAYMER_8990000':'01440109025345000,23CB477D755315A3AE8D5E5559A41CAD93D85C807D295351,453383'<!-- 虚拟省 -->
         }
         </const>
         
@@ -1065,6 +1103,42 @@
 			'899':'OFF'<!-- 虚拟省 -->
 			}
 		</const>
+		<const type="Map" name="SEALINFO" description="SEAL公章的省份OR本地网读取开关 ON：读取本地网公章  OFF读取省份开关">
+	      {
+	       'SEAL_8540000':'OFF',<!-- 西藏 -->
+	       'SEAL_8630000':'OFF',<!-- 青海 -->
+	       'SEAL_8150000':'OFF',<!-- 内蒙古 -->
+	       'SEAL_8230000':'OFF',<!-- 黑龙江 -->
+	       'SEAL_8450000':'OFF',<!-- 广西 -->
+	       'SEAL_8500000':'OFF',<!-- 重庆 -->
+	       'SEAL_8610000':'OFF',<!-- 陕西 -->
+	       'SEAL_8420000':'OFF',<!-- 湖北 -->
+	       'SEAL_8350000':'OFF',<!-- 福建 -->
+	       'SEAL_8320000':'OFF',<!-- 江苏 -->	       
+	       'SEAL_8460000':'OFF',<!-- 海南 -->
+	       'SEAL_8640000':'OFF',<!-- 宁夏 -->
+	       'SEAL_8140000':'OFF',<!-- 山西 -->
+	       'SEAL_8530000':'OFF',<!-- 云南 -->
+	       'SEAL_8360000':'OFF',<!-- 江西 -->
+	       'SEAL_8370000':'OFF',<!-- 山东 -->
+	       'SEAL_8110000':'OFF',<!-- 北京 -->
+	       'SEAL_8430000':'OFF',<!-- 湖南 -->
+	       'SEAL_8510000':'OFF',<!-- 四川 -->
+	       'SEAL_8440000':'OFF',<!-- 广东 -->
+	       'SEAL_8310000':'OFF',<!-- 上海 -->
+	       'SEAL_8120000':'OFF',<!-- 天津 -->
+	       'SEAL_8130000':'OFF',<!-- 河北 -->
+	       'SEAL_8410000':'OFF',<!-- 河南 -->
+	       'SEAL_8210000':'OFF',<!-- 辽宁 -->
+	       'SEAL_8220000':'ON',<!-- 吉林 -->
+	       'SEAL_8340000':'OFF',<!-- 安徽 -->
+	       'SEAL_8330000':'OFF',<!-- 浙江 -->
+	       'SEAL_8520000':'OFF',<!-- 贵州 -->
+	       'SEAL_8620000':'OFF',<!-- 甘肃 -->
+	       'SEAL_8650000':'OFF',<!-- 新疆 -->
+	       'SEAL_8990000':'OFF'<!-- 虚拟省 -->
+	      }
+    	</const>
 		
 	</mda>    
 </mdas>

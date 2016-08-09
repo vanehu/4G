@@ -9,6 +9,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -26,6 +27,8 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import net.sf.jasperreports.engine.util.BigDecimalUtils;
+
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
@@ -37,7 +40,7 @@ import org.xhtmlrenderer.pdf.ITextRenderer;
 import com.al.ec.serviceplatform.client.DataBus;
 import com.al.ec.serviceplatform.client.ResultCode;
 import com.al.ecs.common.util.DateUtil;
-import com.al.ecs.common.util.JsonUtil;
+import com.al.ecs.common.util.MDA;
 import com.al.ecs.common.util.NumUtil;
 import com.al.ecs.common.util.PropertiesUtils;
 import com.al.ecs.common.util.UIDGenerator;
@@ -52,7 +55,6 @@ import com.al.lte.portal.common.ServiceClient;
 import com.al.lte.portal.common.SysConstant;
 import com.al.lte.portal.common.print.ChsStringUtil;
 import com.al.lte.portal.common.print.PdfPrintHelper;
-import com.al.lte.portal.common.print.PdfUtils;
 import com.al.lte.portal.common.print.PrintHelperMgnt;
 import com.al.lte.portal.common.print.dto.AcceNbrBaseSet;
 import com.al.lte.portal.common.print.dto.AcceNbrNewSet;
@@ -4464,29 +4466,39 @@ public class PrintBmoImpl implements PrintBmo {
 		List<FeeInfoSet> feeInfoList = new ArrayList<FeeInfoSet>();
 		FeeInfoSet feeInfoSet = new FeeInfoSet();
 		List<FeeInfoTitleSet> feeInfoTitles = new ArrayList<FeeInfoTitleSet>();
-		int amount = 0;
-		int realAmount = 0;
+		//int amount = 0;
+		BigDecimal amount = new  BigDecimal(0);
+		//int realAmount = 0;
+		BigDecimal realAmount = new  BigDecimal(0);
 		String payMethodName = "";
 		// 需要对chargeItems做处理
 		for (int i = 0; i < feeInfos.size(); i++) {
 			Map<String, Object> feeInfoMap = feeInfos.get(i);
+			BigDecimal feeAmount = new BigDecimal(0);
 			int paymentAmount = MapUtils.getIntValue(feeInfoMap, "paymentAmount", 0);
 			//pass when paymentAmount == 0
 			if (paymentAmount == 0) {
 				continue;
 			}
 			if (fromFlag == 1) {
-				amount += MapUtils.getIntValue(feeInfoMap, "feeAmount", 0);
+				feeAmount = new BigDecimal(MapUtils.getString(feeInfoMap, "feeAmount", "0"));
+				amount = amount.add(feeAmount);
+				//amount += MapUtils.getIntValue(feeInfoMap, "feeAmount", 0);
 			} else if (fromFlag == 2) {
-				amount += MapUtils.getIntValue(feeInfoMap, "amount", 0);
+				feeAmount = new BigDecimal(MapUtils.getString(feeInfoMap, "amount", "0"));
+				amount = amount.add(feeAmount);
+				//amount += MapUtils.getIntValue(feeInfoMap, "amount", 0);
 			}
-			realAmount += MapUtils.getIntValue(feeInfoMap, "realAmount", 0);
+			feeAmount = new BigDecimal(MapUtils.getString(feeInfoMap, "realAmount", "0"));
+			realAmount = realAmount.add(feeAmount);
+			//realAmount += MapUtils.getIntValue(feeInfoMap, "realAmount", 0);
 			payMethodName = MapUtils.getString(feeInfoMap, "payMethodName", "");
 		}
 		FeeInfoTitleSet feeInfoTitleSet = new FeeInfoTitleSet();
 		String feeInfoTitle = (++orderSeqInt) + "、本次订单费用： ";
 		feeInfoTitleSet.setFeeInfoTitle(feeInfoTitle);
-		String feeInfoCont = "应收"+ amount/100 +"元"+SysConstant.STR_SPI+"实收"+realAmount/100+"元";
+		//String feeInfoCont = "应收"+ amount/100 +"元"+SysConstant.STR_SPI+"实收"+realAmount/100+"元";
+		String feeInfoCont = "应收"+ amount.divide(new BigDecimal("100"), 2, BigDecimal.ROUND_HALF_UP) +"元"+SysConstant.STR_SPI+"实收"+ realAmount.divide(new BigDecimal("100"), 2, BigDecimal.ROUND_HALF_UP)+"元";
 		if (StringUtils.isNotEmpty(payMethodName)) {
 			feeInfoCont += " （"+payMethodName+"）";
 		}
@@ -5943,7 +5955,6 @@ public class PrintBmoImpl implements PrintBmo {
 		paramMap.put("staffName",sessionStaff.getStaffName());
 		paramMap.put("staffId",sessionStaff.getStaffId());
 		paramMap.put("staffCode", sessionStaff.getStaffCode());
-		paramMap.put("areaId", sessionStaff.getAreaId());
 		paramMap.put("areaCode",sessionStaff.getAreaCode());
 		paramMap.put("areaName","");
 		paramMap.put("fieldNameSign", "sign1");
@@ -6001,8 +6012,13 @@ public class PrintBmoImpl implements PrintBmo {
 		paramMap.put("seals", seals);
 		paramMap.put("signs", signs);
 		Map<String, Object> dataBusMap = new HashMap<String, Object>();
+		String key="0";
+		Long areaId = Long.valueOf(StringUtils.substring(sessionStaff.getCurrentAreaId(), 0, 3)+ "0000");
+		if("ON".equals(MDA.SEALINFO.get("SEAL_"+areaId))){//读取本地网公章
+			key="1";
+		}
 		dataBusMap.put("actionCode", "");
-		dataBusMap.put("key", "");
+		dataBusMap.put("key", key);
 		dataBusMap.put("param", paramMap);
     	//log.error("dataBusMap={}", JsonUtil.toString(dataBusMap));
 		db = InterfaceClient.callService(dataBusMap,
@@ -7723,7 +7739,32 @@ public class PrintBmoImpl implements PrintBmo {
 						if (null != bizReportDetailItemDto && bizReportDetailItemDto.size() > 0) {
 							Map<String, Object> itemMap = bizReportDetailItemDto.get(0);
 							String oldAcceNbr = getItem(itemMap);
-							itemMap.put("itemValue", oldAcceNbr + SysConstant.STR_PAU + currAcceNbr);
+							/**
+							 * #683928 关于优化可重复订购销售品的业务登记单打印
+							 * 展示形式：
+							 * 1)手机号码：
+							 * 17714015083、17714015997（2个）、17768366004（3个）
+							 */
+							String itemValueStr = "";
+							String [] acceNbrArray = oldAcceNbr.split(SysConstant.STR_PAU);
+							boolean ifContains = false;
+							for (int i = 0; i < acceNbrArray.length; i++) {
+								if (acceNbrArray[i].contains(currAcceNbr)) {
+									if (acceNbrArray[i].length() > currAcceNbr.length() && acceNbrArray[i].matches("\\d{11}（\\d+个）")) {
+										acceNbrArray[i] = currAcceNbr + "（" + (1 + Integer.parseInt(acceNbrArray[i].substring(acceNbrArray[i].indexOf("（") + 1, acceNbrArray[i].lastIndexOf("个")))) + "个）";
+									} else {
+										acceNbrArray[i] = currAcceNbr + "（2个）";
+									}
+									ifContains = true;
+								}
+							}
+							for (int i = 0; i < acceNbrArray.length; i++) {
+								itemValueStr += acceNbrArray[i] + SysConstant.STR_PAU;
+							}
+							if (!ifContains) {
+								itemValueStr += currAcceNbr + SysConstant.STR_PAU;
+							}
+							itemMap.put("itemValue", itemValueStr.substring(0, itemValueStr.lastIndexOf(SysConstant.STR_PAU)));
 						}
 					}
 				}else {
