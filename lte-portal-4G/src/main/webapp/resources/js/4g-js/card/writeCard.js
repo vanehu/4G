@@ -803,7 +803,7 @@ order.writeCard = (function(){
 		//装载组件
 		var loaddll = ocx.TransferDll(_cardDllInfoJson.dllName + ".DLL");
 		if (loaddll != '0') {
-			$.alert("提示","您插入白卡的卡商写卡组件不存在，请将组件下载保存到C:\\WINDOWS\\system32 目录下！","error");
+			$.alert("提示","您插入白卡的卡商写卡组件不存在，请将组件下载保存到以下目录：<br/>32位系统 C:\\Windows\\System32<br/>64位系统 C:\\Windows\\SysWOW64<br/>","error");
 			var url = contextPath + "/card/"+ _cardDllInfoJson.dllName + ".DLL";
 			location.href = url;
 			return false;
@@ -1486,7 +1486,8 @@ order.writeCard = (function(){
 		html += '<form action="#" id="dialogForm">';
 		html += '	<div>';
 		html += '		<p class="pb" style="font-weight:bold;height: 30px;top:40px;">';
-		html += '		           尊敬的用户，系统卡组件近期有更新，请您下载最新的卡组件<span style="color:#00F" id="dllName"></span>，把最新的卡组件保存到C:\\WINDOWS\\system32 目录下！';
+		html += '		           尊敬的用户，系统卡组件近期有更新，请您下载最新的卡组件<span style="color:#00F" id="dllName"></span>，把最新的卡组件保存到以下目录：<br/>32位系统 C:\\Windows\\System32<br/>64位系统 C:\\Windows\\SysWOW64<br/>';
+		
 		html += '		</p>';
 		html += '	</div>';
 		html += '	<div style="height: 30px;"></div>';
