@@ -171,7 +171,18 @@ public interface MktResBmo {
     
     public Map<String, Object> queryOfferByMtkResCd(Map<String, Object> map, String optFlowNum, SessionStaff sessionStaff)
     		throws Exception;
-    
+
+    /**
+	 * 卡应用信息查询
+	 * @param map 入参
+	 * @param optFlowNum 操作流水
+	 * @param sessionStaff 会话对象
+	 * @return 查询结果List
+	 * @throws Exception
+     */
+    public Map<String, Object> queryNfcAppInfos(Map<String, Object> map, String optFlowNum, SessionStaff sessionStaff)
+    		throws Exception;
+
     /**
 	 * 获取卡组件信息
 	 * @param param

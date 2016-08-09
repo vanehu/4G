@@ -1348,6 +1348,53 @@ public class MktResController extends BaseController {
 	}
 
 	
+	/**
+	 * 卡应用信息查询
+	 * @param flowNum
+	 * @param InstCodeList
+	 * @param model
+	 * @return 卡应用信息List
+	 */
+	@RequestMapping(value = "/uim/nfcAppInfos", method = RequestMethod.POST)
+	public String nfcAppInfos(@RequestBody Map<String, Object> InstCodeList, Model model,
+			@LogOperatorAnn String flowNum, HttpServletResponse response) {
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils
+				.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
+		Map<String, Object> paramMap = new HashMap<String, Object>();
+		try {
+			paramMap.put("mktResInstCodeList", MapUtils.getObject(InstCodeList,"mktResInstCodeList",null));
+			paramMap.put("areaId", sessionStaff.getCurrentAreaId());
+
+			Map<String, Object> resultMap = mktResBmo.queryNfcAppInfos(paramMap, flowNum, sessionStaff);
+
+
+			if (MapUtils.isNotEmpty(resultMap)) {
+				Map<String, Object> instNfcAppInfoMap =MapUtils.getMap(resultMap,"instNfcAppInfoList",null);
+
+				// 列表为空，则应返回结果为空
+				if (instNfcAppInfoMap == null || instNfcAppInfoMap.size() == 0) {
+					super.addHeadCode(response, ResultConstant.SERVICE_RESULT_EMPTY);
+				}
+				model.addAttribute("instNfcAppInfoMap", instNfcAppInfoMap);
+			} else {
+				String msg = "查询不到卡应用信息！";
+				super.addHeadCode(response, new Result(ResultConstant.SERVICE_RESULT_FAILTURE.getCode(), msg));
+			}
+		} catch (BusinessException be) {
+			this.log.error("门户/mktRes/terminal/nfcAppInfos服务异常", be);
+			return super.failedStr(model, be);
+		} catch (InterfaceException ie) {
+
+			return super.failedStr(model, ie, paramMap, ErrorCode.QUERY_NFC_APP_INFO);
+		} catch (Exception e) {
+			this.log.error("门户/mktRes/terminal/nfcAppInfos服务异常", e);
+			return super.failedStr(model, ErrorCode.QUERY_NFC_APP_INFO, e, paramMap);
+		}
+
+		return "/mktRes/terminal-nfcAppInfos";
+	}
+
+
 	private List<Map<String, Object>> sortOfferList(
 			List<Map<String, Object>> list) {
 		this.log.debug("sort before={}", JsonUtil.toString(list));

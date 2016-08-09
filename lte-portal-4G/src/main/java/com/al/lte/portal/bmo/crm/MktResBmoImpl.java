@@ -597,8 +597,27 @@ public class MktResBmoImpl implements MktResBmo {
 		}
 		return rMap;
 	}
-	
-	
+	/**
+	 * 卡应用信息查询
+	 * @param dataBusMap 入参
+	 * @param optFlowNum 操作流水
+	 * @param sessionStaff 会话对象
+	 * @return 查询结果List
+	 * @throws Exception
+	 */
+	public Map<String, Object> queryNfcAppInfos(Map<String, Object> dataBusMap, String optFlowNum, SessionStaff sessionStaff) throws Exception {
+		Map<String, Object> rMap = null;
+		DataBus db = InterfaceClient.callService(dataBusMap,
+				PortalServiceCode.TERM_NFCAPPINFO_QUERY_SERVICE, optFlowNum,
+				sessionStaff);
+		if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db
+				.getResultCode()))) {
+			rMap = db.getReturnlmap();
+		}
+		return rMap;
+	}
+
+
 	@SuppressWarnings("unchecked")
 	public Map<String, Object> getCardDllInfoJson(Map<String, Object> param,
 			String optFlowNum, SessionStaff sessionStaff)

@@ -541,12 +541,97 @@ prod.uim = (function() {
 			return "";
 		}
 	};
+
+	/**
+	 * 卡应用信息查询
+	 * @param mktResInstCodeList
+	 * @private
+     */
+	_queryUimAppInfo = function (mktResInstCode,prodId) {
+		if (!ec.util.isObj(mktResInstCode)) {
+			$.alert("提示", "UIM卡号不能为空！");
+			return;
+		}
+		var idPre = "ec-dialog-form-container";
+		var uimAppInfoDialog = "-nfc-app-infos" + prodId;
+		ec.form.dialog.createDialog({
+			"id": uimAppInfoDialog,
+			"width": 1000,
+			"height": 500,
+			"initCallBack": function (dialogForm, dialog) {
+				var param = {
+					"mktResInstCodeList": [mktResInstCode]
+				};
+				if (OrderInfo.busitypeflag == 13 || OrderInfo.busitypeflag == 21 || OrderInfo.busitypeflag == 22) {//补换卡业务添加旧卡信息
+					if (ec.util.isObj(OrderInfo.boProd2OldTds) && ec.util.isObj(OrderInfo.boProd2OldTds[0].terminalCode)) {
+						param.mktResInstCodeList.push(OrderInfo.boProd2OldTds[0].terminalCode);
+					}
+				}
+				var url = contextPath + "/mktRes/uim/nfcAppInfos";
+				$.callServiceAsHtml(url, param, {
+					"before": function () {
+						$.ecOverlay("<strong>正在查询中,请稍等会儿....</strong>");
+					},
+					"always": function () {
+						$.unecOverlay();
+					},
+					"done": function (response) {
+						prod.uim.dialogForm = dialogForm;
+						prod.uim.dialog = dialog;
+						if (!response) {
+							$.alert("提示", "<br/>处理失败，请稍后重试！");
+							return;
+						}
+						if (response.code != 0) {
+							if (prod.uim.dialogForm != undefined && prod.uim.dialog != undefined) {
+								prod.uim.dialogForm.close(prod.uim.dialog);
+							}
+							if (response.code == 1006) {
+								$.alert("提示", "未查询到相关数据！");
+							}
+							return;
+						}
+						$("#"+idPre+uimAppInfoDialog).find("#nfcAppContent").html(response.data);
+						//显示第一个tab的div
+						$("#tab_content_0").show();
+						//绑定切换合约页click事件
+						$("#contract_nav_nfc_app_tab li").off("click").on("click", function (event) {
+							_setNfcAppTab(this, $(this).attr("itemIndex"));
+						});
+						//绑定确定按钮click事件
+						$("#"+idPre+uimAppInfoDialog).find("#nfc_app_nav_confirm_a").off("click").on("click", function (event) {
+							prod.uim.dialogForm.close(prod.uim.dialog);
+						});
+					}
+				});
+			},
+			"submitCallBack": function (dialogForm, dialog) {
+			},
+			"closeCallBack": function (dialogForm, dialog) {
+				$("#"+idPre+uimAppInfoDialog).find("#nfcAppContent").html('');
+			}
+		});
+		/**
+		 * 切换卡应用信息标签页
+		 */
+		var _setNfcAppTab = function (selected, id) {
+			if ($(selected).hasClass("current")) {
+				return;
+			}
+			$("#contract_nav_nfc_app_tab li").removeClass("current");
+			$("#tab_" + id).addClass("current");
+			$(".contract_tab_content_nfc_app").hide();
+			$("#tab_content_" + id).show();
+		};
+
+	};
 	return {
 		checkUim				: _checkUim,
 		releaseUim 				: _releaseUim,
 		setProdUim				: _setProdUim,
 		setOldUim				: _setOldUim,
 		getCardType				: _getCardType,
-		getMktResCd				: _getMktResCd
+		getMktResCd				: _getMktResCd,
+		queryUimAppInfo			: _queryUimAppInfo
 	};
 })();

@@ -836,6 +836,9 @@ public final class PortalServiceCode {
     //终端预约联动查询接口
     public static final String TERM_ORDER_QUERY_SERVICE="res-TermQueryService/termOrderQueryService";
 
+    //NFC应用信息查询
+    public static final String TERM_NFCAPPINFO_QUERY_SERVICE="res-TermQueryService/qryNfcAppInfoService";
+
     //终端信息查询接口
     public static final String TERM_INFO_QUERY_SERVICE="res-MktResInstInfoQryService/mktResInstInfoQry";
 
