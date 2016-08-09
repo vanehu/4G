@@ -419,7 +419,15 @@ order.main = (function(){
 				if(feeType == CONST.PAY_TYPE.AFTER_PAY){
 					for ( var j = 0; j < newSpec.prodSpecParams.length; j++) {
 						var prodSpecParam = newSpec.prodSpecParams[j];
-						prodSpecParam.setValue = "";
+						if (CONST.YZFitemSpecId4 == prodSpecParam.itemSpecId && "ON" == offerChange.queryPortalProperties("AGENT_" + OrderInfo.staff.soAreaId.substring(0,3))) {
+							if (prodSpecParam.value!="") {
+								prodSpecParam.setValue = prodSpecParam.value;
+							} else if (!!prodSpecParam.valueRange[0]&&prodSpecParam.valueRange[0].value!="")
+								//默认值为空则取第一个
+								prodSpecParam.setValue = prodSpecParam.valueRange[0].value;
+						} else {
+							prodSpecParam.setValue = "";
+						}	
 					}																			
 				}else{
 					for ( var j = 0; j < newSpec.prodSpecParams.length; j++) {							
@@ -2057,11 +2065,15 @@ order.main = (function(){
 						yesdo:function(){
 							for ( var j = 0; j < yiPaySpec.prodSpecParams.length; j++) {							
 								var prodSpecParam = yiPaySpec.prodSpecParams[j];
-								if (prodSpecParam.itemSpecId == CONST.YZFitemSpecId1 || prodSpecParam.itemSpecId == CONST.YZFitemSpecId2) {
-									prodSpecParam.setValue = "";
+								if (CONST.YZFitemSpecId4 == prodSpecParam.itemSpecId && "ON" == offerChange.queryPortalProperties("AGENT_" + OrderInfo.staff.soAreaId.substring(0,3))) {
+									if (prodSpecParam.value!="") {
+										prodSpecParam.setValue = prodSpecParam.value;
+									} else if (!!prodSpecParam.valueRange[0]&&prodSpecParam.valueRange[0].value!="")
+										//默认值为空则取第一个
+										prodSpecParam.setValue = prodSpecParam.valueRange[0].value;
 								} else {
-									prodSpecParam.setValue = prodSpecParam.value;
-								}
+									prodSpecParam.setValue = "";
+								}	
 							}
 						},
 						no:function(){
