@@ -297,8 +297,12 @@ public class CustController extends BaseController {
 						Map<String, Object> accNbrParamMap = new HashMap<String, Object>();
 						accNbrParamMap.put("areaId", paramMap.get("areaId"));
 						accNbrParamMap.put("custIds", custIds);
-						Map accNbrResultMap = custBmo.queryAccNbrByCust(accNbrParamMap, flowNum, sessionStaff);
-						
+						Map accNbrResultMap = new HashMap();
+						//如果使用接入号定位客户，不需求去调用根据客户查询接入号接口
+						if (!(custInfos.size() == 1 && StringUtils.isBlank(identityCd) && StringUtils.isNotBlank(qryAcctNbr))) {
+							accNbrResultMap = custBmo.queryAccNbrByCust(accNbrParamMap, flowNum, sessionStaff);
+						}
+
 						List custInfosWithNbr = null;
 						if (MapUtils.isNotEmpty(accNbrResultMap)) {
 							custInfosWithNbr = new ArrayList();
@@ -335,8 +339,16 @@ public class CustController extends BaseController {
 									custInfosWithNbr.add(custInfoMap);
 								}
 							}
-						} else {
-							custInfosWithNbr = custInfos;
+						} else {//调用后台service/intf.custService/queryAccNbrByCust接口未返回接入号的情况
+							custInfosWithNbr = new ArrayList();
+							for (Object info : custInfos) {
+								Map custInfoMap = (Map) info;
+								Map newCustInfoMap = new HashMap(custInfoMap);
+								newCustInfoMap.put("accNbr", qryAcctNbr);
+								String custId = MapUtils.getString(custInfoMap, "custId", "");
+								addAccountAndCustInfo(flowNum, sessionStaff, areaId, custId, qryAcctNbr, soNbr, newCustInfoMap);
+								custInfosWithNbr.add(newCustInfoMap);
+							}
 						}
 						resultMap.put("custInfos", custInfosWithNbr);
 						model.addAttribute("custInfoSize", custInfosWithNbr.size());
@@ -398,32 +410,62 @@ public class CustController extends BaseController {
 	 * @throws Exception
 	 */
 	private void addAccountAndCustInfo(String flowNum, SessionStaff sessionStaff, String areaId, String custId, String accNbr, String soNbr, Map newCustInfoMap) throws Exception {
-		//账户和使用人信息查询
-		Map<String, Object> auParam = new HashMap<String, Object>();
-		auParam.put("areaId", areaId);
-		auParam.put("acctNbr", accNbr);
-		auParam.put("custId", custId);
-		auParam.put("queryType", "1,2,3,4,5");
-		if (StringUtils.isBlank(soNbr)) {
-			soNbr = System.currentTimeMillis() + String.format("%03d", (int) (Math.random() * 1000));
+		if (isGovCust(flowNum,newCustInfoMap, sessionStaff)) {
+			//账户和使用人信息查询
+			Map<String, Object> auParam = new HashMap<String, Object>();
+			auParam.put("areaId", areaId);
+			auParam.put("acctNbr", accNbr);
+			auParam.put("custId", custId);
+			auParam.put("queryType", "1,2,3,4,5");
+			if (StringUtils.isBlank(soNbr)) {
+				soNbr = System.currentTimeMillis() + String.format("%03d", (int) (Math.random() * 1000));
+			}
+			auParam.put("soNbr", soNbr);
+			auParam.put("type", "2");
+			Map<String, Object> auMap = new HashMap<String, Object>();
+			if (SysConstant.ON.equals(propertiesUtils.getMessage("GOV_" + areaId.substring(0, 3)))) {
+				auMap = custBmo.queryAccountAndUseCustInfo(auParam, flowNum, sessionStaff);
+			}
+			if (MapUtils.isNotEmpty(auMap)) {
+				Map<String, Object> aMap = MapUtils.getMap(auMap, "account");
+				Map<String, Object> iMap = MapUtils.getMap(auMap, "identity");
+				newCustInfoMap.put("userIdentityCd", MapUtils.getString(iMap, "identityTypeCd"));
+				newCustInfoMap.put("userIdentityName", MapUtils.getString(iMap, "identityName"));
+				newCustInfoMap.put("userIdentityNum", MapUtils.getString(iMap, "identityNum"));
+				newCustInfoMap.put("accountName", MapUtils.getString(aMap, "accountName"));
+				newCustInfoMap.put("userName", MapUtils.getString(auMap, "useCustName"));
+				newCustInfoMap.put("userCustId", MapUtils.getString(auMap, "useCustId"));
+				newCustInfoMap.put("isSame", MapUtils.getString(auMap, "isSame"));
+			}
 		}
-		auParam.put("soNbr", soNbr);
-		auParam.put("type", "2");
-		Map<String, Object> auMap = new HashMap<String, Object>();
-		if (SysConstant.ON.equals(propertiesUtils.getMessage("GOV_" + areaId.substring(0, 3)))) {
-			auMap = custBmo.queryAccountAndUseCustInfo(auParam, flowNum, sessionStaff);
+
+	}
+
+	/**
+	 * 判断客户是否是政企客户
+	 * @param flowNum
+	 * @param newCustInfoMap
+	 * @param sessionStaff
+     * @return
+     */
+	private boolean isGovCust(String flowNum, Map newCustInfoMap, SessionStaff sessionStaff) {
+		boolean isGov = false;
+		Map<String, Object> param = new HashMap<String, Object>();
+		param.put("partyTypeCd", 2);
+		Map<String, Object> rMap;
+		String identityCd = MapUtils.getString(newCustInfoMap, "identityCd", "");
+		try {
+			rMap = this.custBmo.queryCertType(param, flowNum, sessionStaff);
+			List<Map<String, Object>> govMap = (List<Map<String, Object>>) rMap.get("result");
+			for (Map<String, Object> map : govMap) {
+				if (identityCd.equals(MapUtils.getString(map, "certTypeCd", ""))) {
+					isGov = true;
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
-		if (MapUtils.isNotEmpty(auMap)) {
-			Map<String, Object> aMap = MapUtils.getMap(auMap, "account");
-			Map<String, Object> iMap = MapUtils.getMap(auMap, "identity");
-			newCustInfoMap.put("userIdentityCd", MapUtils.getString(iMap, "identityTypeCd"));
-			newCustInfoMap.put("userIdentityName", MapUtils.getString(iMap, "identityName"));
-			newCustInfoMap.put("userIdentityNum", MapUtils.getString(iMap, "identityNum"));
-			newCustInfoMap.put("accountName", MapUtils.getString(aMap, "accountName"));
-			newCustInfoMap.put("userName", MapUtils.getString(auMap, "useCustName"));
-			newCustInfoMap.put("userCustId", MapUtils.getString(auMap, "useCustId"));
-			newCustInfoMap.put("isSame", MapUtils.getString(auMap, "isSame"));
-		}
+		return isGov;
 	}
 
 	@RequestMapping(value = "/queryCustSub", method = { RequestMethod.POST })
