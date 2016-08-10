@@ -514,8 +514,11 @@ stepOrder.main = (function(){
 			};
 			_terminalInfosToCheck.push(_terminalInfo);
 		}
-		
-		if(_mainOfferBusiOrder&&_busitypeflag != "1"&& (_busitypeflag != "3" || ( _busitypeflag == "3" && ec.util.isArray(_prodBusiOrder)))){
+
+		//新装、主副卡成员变更副卡新装(主副卡变更且有产品节点)、预开卡，不查询主销售品实例构成
+		if((_mainOfferBusiOrder && _busitypeflag != "1") 
+				&& (_busitypeflag != "3" || ( _busitypeflag == "3" && ec.util.isArray(_prodBusiOrder))) 
+				&& _busitypeflag != "27"){
 			//查询主销售品实例构成，获取成员接入号
 			var _param = {
 				acctNbr : _mainOfferBusiOrder.busiObj.accessNumber,
@@ -597,19 +600,17 @@ stepOrder.main = (function(){
 			$("#chooseTable").append($('<tr><th width="50%">业务名称</th><th>业务动作</th></tr>'));
 			_showMemberBusiItems();
 		}
-		
 
-		//不是【新装 或 主副卡成员变更副卡新装(主副卡变更且有产品节点)】 的话全量查询
-		if(_busitypeflag && !(_busitypeflag == "1" || (_busitypeflag == "3" && ec.util.isArray(_prodBusiOrder)))){
-			
+		//不是【新装 或 主副卡成员变更副卡新装(主副卡变更且有产品节点)】 的话全量查询，预开卡(27)不查全量
+		if(_busitypeflag && !(_busitypeflag == "1" || (_busitypeflag == "3" && ec.util.isArray(_prodBusiOrder))) && _busitypeflag != "27"){
 			var vFlag = true;
 			var param = {
-					areaId : stepOrder.main.orderParam.areaId,
-					acctNbr : stepOrder.main.orderParam.acctNbr,
-					custId : stepOrder.main.orderParam.custId,
-					soNbr : stepOrder.main.orderParam.soNbr,
-					instId : stepOrder.main.orderParam.instId,
-					type : "2"
+				areaId : stepOrder.main.orderParam.areaId,
+				acctNbr : stepOrder.main.orderParam.acctNbr,
+				custId : stepOrder.main.orderParam.custId,
+				soNbr : stepOrder.main.orderParam.soNbr,
+				instId : stepOrder.main.orderParam.instId,
+				type : "2"
 			};
 			//如果有主销售品实例构成,则取实例中成员分别查询全量
 			if(_offer){
