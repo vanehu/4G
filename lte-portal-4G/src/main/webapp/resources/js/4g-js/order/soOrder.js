@@ -286,7 +286,7 @@ SoOrder = (function() {
 		});
 		custOrderAttrs.push({ //业务类型
 			itemSpecId : CONST.BUSI_ORDER_ATTR.BUSITYPE_FLAG,
-			value : order.prepare.isPreInstall ? 27 : OrderInfo.busitypeflag
+			value : order.prepare.isPreInstall() ? 27 : OrderInfo.busitypeflag
 		});
 		custOrderAttrs.push({ //定位客户时长
 			itemSpecId : "30010050",
