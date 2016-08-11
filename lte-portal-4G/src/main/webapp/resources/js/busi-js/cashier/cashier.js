@@ -18,6 +18,9 @@ cashier.main = (function(){
 		var startDt = $("#p_startDt").val().replace(/-/g,'');
 		var endDt = $("#p_endDt").val().replace(/-/g,'');
 		var temp = $("#p_channelId").val();
+		var qureyStaffCode = $.trim($("#qureyStaffCode").val());
+		
+		
 		var channelId = "";
 		
 		if(temp == null || temp == "" || temp == undefined){
@@ -42,7 +45,7 @@ cashier.main = (function(){
 		if(channelId==null ||channelId==""||channelId==undefined){
 			$.alert("提示","渠道Id为空");
 			return ;
-		} else if((qryNumber==null ||qryNumber==""||qryNumber==undefined) && (p_olNbr==null ||p_olNbr==""||p_olNbr==undefined)){
+		} else if((qryNumber==null ||qryNumber==""||qryNumber==undefined) && (p_olNbr==null ||p_olNbr==""||p_olNbr==undefined) && qureyStaffCode==""){
 			$.alert("提示","请输入接入号或购物车流水 !");
 			return ;
 		}
