@@ -736,20 +736,56 @@
 		<const type="String" name="CARD_FILEPATH" value="/app/ejbca/card/" description="身份证阅读器放置ftp路径"/>
 		<const type="Map" name="USBVERSION_SIGNATURE" description="接入集团规范的身份证阅读器厂商版本及密钥">
 		 {
-		     '10000':{'version':'1.0.3.1','appSecret':'<![CDATA[D%vd1#e9Y@d36cK&]]>','name':'华旭金卡','isOpen':'OFF'},
-		     '10001':{'version':'1.2.0.3','appSecret':'<![CDATA[p7z@d1%x3H4#29eV]]>','name':'深圳华视','isOpen':'OFF'},
-		     '10002':{'version':'2.5.8.1','appSecret':'<![CDATA[Py52H4#2Ut@d1%x7]]>','name':'山东卡尔','isOpen':'OFF'},
-		     '10003':{'version':'1.0','appSecret':'<![CDATA[d1%x7H4#2UtPy52@]]>','name':'山东信通','isOpen':'OFF'},
-		     '10004':{'version':'1.0','appSecret':'<![CDATA[ey@d391%xH74#2iB]]>','name':'长春鸿达','isOpen':'OFF'},
-		     '10005':{'version':'2.2.1','appSecret':'<![CDATA[R9P&L7#2URePy18@]]>','name':'上海普天','isOpen':'OFF'},
-		     '10006':{'version':'2.22','appSecret':'<![CDATA[3eRx18@5x3H4#5fY]]>','name':'因纳伟盛','isOpen':'OFF'},
-		     '10007':{'version':'1.0.0.3','appSecret':'<![CDATA[y52@d1%x8H4#2URt]]>','name':'山东神思','isOpen':'OFF'},
-		     '10008':{'version':'1.0','appSecret':'<![CDATA[H4#29eV%xW74#2iB]]>','name':'精伦电子','isOpen':'OFF'},
-		     '10009':{'version':'2.2','appSecret':'<![CDATA[RxRe18g%xtPy52@Y]]>','name':'内蒙古银安科技','isOpen':'OFF'},
-		     '10010':{'version':'1.0','appSecret':'<![CDATA[&L7#2R9PURePy18@]]>','name':'南京亿数','isOpen':'OFF'},
-		     '10011':{'version':'1.0','appSecret':'<![CDATA[18@5xT9UR%dY#d36]]>','name':'北冰洋','isOpen':'OFF'}
+		    '10000':{'version':'1.0.3.1','appSecret':'<![CDATA[D%vd1#e9Y@d36cK&]]>','name':'华旭金卡','isOpen':'ON'},
+			'10001':{'version':'1.2.0.3','appSecret':'<![CDATA[p7z@d1%x3H4#29eV]]>','name':'深圳华视','isOpen':'ON'},
+			'10002':{'version':'2.5.8.1','appSecret':'<![CDATA[Py52H4#2Ut@d1%x7]]>','name':'山东卡尔','isOpen':'ON'},
+			'10003':{'version':'2.2.1','appSecret':'<![CDATA[d1%x7H4#2UtPy52@]]>','name':'山东信通','isOpen':'ON'},
+			'10004':{'version':'1.0','appSecret':'<![CDATA[ey@d391%xH74#2iB]]>','name':'长春鸿达','isOpen':'ON'},
+			'10005':{'version':'2.2.1','appSecret':'<![CDATA[R9P&L7#2URePy18@]]>','name':'上海普天','isOpen':'ON'},
+			'10006':{'version':'2.22','appSecret':'<![CDATA[3eRx18@5x3H4#5fY]]>','name':'因纳伟盛','isOpen':'ON'},
+			'10007':{'version':'1.0.0.3','appSecret':'<![CDATA[y52@d1%x8H4#2URt]]>','name':'山东神思','isOpen':'ON'},
+			'10008':{'version':'1.0','appSecret':'<![CDATA[H4#29eV%xW74#2iB]]>','name':'精伦电子','isOpen':'OFF'},
+			'10009':{'version':'2.2','appSecret':'<![CDATA[RxRe18g%xtPy52@Y]]>','name':'内蒙古银安科技','isOpen':'ON'},
+			'10010':{'version':'1.0','appSecret':'<![CDATA[&L7#2R9PURePy18@]]>','name':'南京亿数','isOpen':'OFF'},
+			'10011':{'version':'1.0','appSecret':'<![CDATA[18@5xT9UR%dY#d36]]>','name':'北冰洋','isOpen':'OFF'}
 		 }
 		</const>	
+		<const type="Map" name="USBSIGNATURE" description="身份证阅读器省份开关 ON：开启校验  OFF不校验">
+	      {
+	       'SIGNATURE_8540000':'OFF',<!-- 西藏 -->
+	       'SIGNATURE_8630000':'OFF',<!-- 青海 -->
+	       'SIGNATURE_8150000':'OFF',<!-- 内蒙古 -->
+	       'SIGNATURE_8230000':'OFF',<!-- 黑龙江 -->
+	       'SIGNATURE_8450000':'OFF',<!-- 广西 -->
+	       'SIGNATURE_8500000':'OFF',<!-- 重庆 -->
+	       'SIGNATURE_8610000':'OFF',<!-- 陕西 -->
+	       'SIGNATURE_8420000':'OFF',<!-- 湖北 -->
+	       'SIGNATURE_8350000':'OFF',<!-- 福建 -->
+	       'SIGNATURE_8320000':'OFF',<!-- 江苏 -->	       
+	       'SIGNATURE_8460000':'OFF',<!-- 海南 -->
+	       'SIGNATURE_8640000':'OFF',<!-- 宁夏 -->
+	       'SIGNATURE_8140000':'OFF',<!-- 山西 -->
+	       'SIGNATURE_8530000':'OFF',<!-- 云南 -->
+	       'SIGNATURE_8360000':'OFF',<!-- 江西 -->
+	       'SIGNATURE_8370000':'OFF',<!-- 山东 -->
+	       'SIGNATURE_8110000':'OFF',<!-- 北京 -->
+	       'SIGNATURE_8430000':'OFF',<!-- 湖南 -->
+	       'SIGNATURE_8510000':'OFF',<!-- 四川 -->
+	       'SIGNATURE_8440000':'OFF',<!-- 广东 -->
+	       'SIGNATURE_8310000':'OFF',<!-- 上海 -->
+	       'SIGNATURE_8120000':'OFF',<!-- 天津 -->
+	       'SIGNATURE_8130000':'OFF',<!-- 河北 -->
+	       'SIGNATURE_8410000':'OFF',<!-- 河南 -->
+	       'SIGNATURE_8210000':'OFF',<!-- 辽宁 -->
+	       'SIGNATURE_8220000':'OFF',<!-- 吉林 -->
+	       'SIGNATURE_8340000':'OFF',<!-- 安徽 -->
+	       'SIGNATURE_8330000':'OFF',<!-- 浙江 -->
+	       'SIGNATURE_8520000':'OFF',<!-- 贵州 -->
+	       'SIGNATURE_8620000':'OFF',<!-- 甘肃 -->
+	       'SIGNATURE_8650000':'OFF',<!-- 新疆 -->
+	       'SIGNATURE_8990000':'OFF'<!-- 虚拟省 -->
+	      }
+    	</const>
         <!-- 集团CRM-4G新装、套餐变更纳入老用户作为副卡开关  ON OFF 默认关闭 -->
         <const type="Map" name="OLDMEMBER_JOIN" description="集团CRM-4G新装、套餐变更纳入老用户作为副卡开关  ON OFF 默认关闭">
 			{

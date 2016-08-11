@@ -328,9 +328,13 @@ public class MDA {
     public static final String CARD_FTPCONFIG = new String("");
     
     /**
-     * 身份阅读器相关
+     * 身份阅读器厂商配置信息相关
      */
     public static final Map<String,Map<String,String>> USBVERSION_SIGNATURE = new HashMap <String,Map<String,String>>();
+    /**
+     * 身份证阅读器分省开关
+     */
+    public static final Map<String,String> USBSIGNATURE= new HashMap<String,String>();
     /**
      * 新装、套餐变更纳入老用户作为副卡分省开关
      */

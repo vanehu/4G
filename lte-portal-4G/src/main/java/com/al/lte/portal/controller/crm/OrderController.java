@@ -4283,14 +4283,16 @@ public class OrderController extends BaseController {
     @RequestMapping(value = "/isOpenNewCert", method = RequestMethod.POST)
     public JsonResponse isOpenNewCert(@RequestBody Map<String, Object> param,
             HttpServletRequest request) {
+    	SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(
+				request, SysConstant.SESSION_KEY_LOGIN_STAFF);
     	JsonResponse jsonResponse = null;
 		try {
-			String venderId = MapUtils.getString(param, "venderId");// 厂商标识
-			String isopen = MDA.USBVERSION_SIGNATURE.get(venderId).get("isOpen");
+			Long areaId = Long.valueOf(StringUtils.substring(sessionStaff.getCurrentAreaId(), 0, 3)+ "0000");
+			String isopen = MDA.USBSIGNATURE.get("SIGNATURE_"+areaId);
 			jsonResponse = super.successed(isopen, ResultConstant.SUCCESS.getCode());//信息校验通过
             return jsonResponse;
         } catch (Exception e) {
-            return super.failed("读取身份证配置开关配置失败", -1);
+            return super.failed("读取身份证省份配置开关失败", -1);
         }
     }
 	@RequestMapping(value = "/downloadOCX", method = {RequestMethod.POST})

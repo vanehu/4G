@@ -33,23 +33,31 @@ cert = (function() {
 	    	man = JSON.parse(CertCtl.readCert());
 	    	if(man.resultFlag != 0){
 	    		return man;
-	    	}else{
+	    	}else{	    		
 	    		var certInfo=man.resultContent;
-	    		if(man.venderId!=undefined&&man.venderId!=""){
-		    		var param={"venderId":man.venderId};
-		    		var url = contextPath + "/order/isOpenNewCert";
-					var response = $.callServiceAsJson(url,JSON.stringify(param));
-					var ver="";
-					if (response.code == 0&&response.data=='ON') {
-						ver = JSON.parse(CertCtl.getVersion());
+		    	var param={};
+		    	var url = contextPath + "/order/isOpenNewCert";
+				var response = $.callServiceAsJson(url,JSON.stringify(param));
+				var ver="";
+				if (response.code == 0&&response.data=='ON') {
+					if(man.venderId==undefined||man.signature==undefined){
+						man = {"resultFlag": -1, "errorMsg": "读取设备厂家标识/签名信息错误,请安装新的驱动及控件"};
+						return man;
+					}else{
+						try{
+							ver = JSON.parse(CertCtl.getVersion());
+						}catch(e){
+							man = {"resultFlag": -1, "errorMsg": "读取设备版本号错误,请安装新的驱动及控件"};
+							return man;
+						}
 			    		if(ver.resultFlag!=0){//版本读取错误
 			    			return ver;
 			    		}
 			    		certInfo.signature=man.signature;
 			    		certInfo.versionSerial=ver.versionSerial;
-					} 
-		    		certInfo.venderId=man.venderId;
-		    	}
+				    	certInfo.venderId=man.venderId;
+					}
+				}
 	    		url = contextPath + "/order/certInfo";
 				var response = $.callServiceAsJson(url,JSON.stringify(certInfo));
 				if (response.code == 0) {
@@ -97,25 +105,34 @@ cert = (function() {
 	    return man;
 	};
 	/*var _test=function(){
-		var verStr="{\"resultFlag\":0,\"versionSerial\":\"2.0\"}";
-		var readCert="{\"resultFlag\":0,\"venderId\":\"10001\",\"signature\":\"05bcd7e6db0f317fd594f1477a37774aab77ecf4\",\"resultContent\":{\"partyName\":\"测试\",\"gender\":0,\"nation\":\"汉\",\"bornDay\":\"19850320\",\"certAddress\":\"测试地址\",\"certNumber\":\"350181198503202166\",\"certOrg\":\"123\",\"effDate\":\"20010102\",\"expDate\":\"20100102\",\"identityPic\":\"\"}}";
+		var verStr="{\"resultFlag\":0,\"versionSerial\":\"1.0.3.1\"}";
+		var readCert="{\"resultFlag\":0,\"venderId\":\"10000\",\"signature\":\"12312\",\"resultContent\":{\"partyName\":\"测试\",\"gender\":0,\"nation\":\"汉\",\"bornDay\":\"19850320\",\"certAddress\":\"测试地址\",\"certNumber\":\"350181198503202166\",\"certOrg\":\"123\",\"effDate\":\"20010102\",\"expDate\":\"20100102\",\"identityPic\":\"\"}}";
 		var man = JSON.parse(readCert);
 		var certInfo=man.resultContent;
-		if(man.venderId!=undefined&&man.venderId!=""){
-    		var param={"venderId":man.venderId};
-    		var url = contextPath + "/order/isOpenNewCert";
-			var response = $.callServiceAsJson(url,JSON.stringify(param));
-			var ver="";
-			if (response.code == 0&&response.data=='ON') {
+		var param={};
+		var url = contextPath + "/order/isOpenNewCert";
+		var response = $.callServiceAsJson(url,JSON.stringify(param));
+		var ver="";
+		if (response.code == 0&&response.data=='ON') {
+			if(man.venderId==undefined||man.signature==undefined||man.venderId==''||man.signature==''){
+				man = {"resultFlag": -1, "errorMsg": "读取设备厂家标识/签名信息错误,请安装新的驱动及控件"};
+				return man;
+			}else{
+				try{
+					ver = JSON.parse(CertCtl.getVersion());
+				}catch(e){
+					man = {"resultFlag": -1, "errorMsg": "读取设备版本号错误,请安装新的驱动及控件"};
+					return man;
+				}
 				ver = JSON.parse(verStr);
 	    		if(ver.resultFlag!=0){//版本读取错误
 	    			return ver;
 	    		}
 	    		certInfo.signature=man.signature;
 	    		certInfo.versionSerial=ver.versionSerial;
-			} 
-    		certInfo.venderId=man.venderId;
-    	};
+		    	certInfo.venderId=man.venderId;
+			}
+		}
 		url = contextPath + "/order/certInfo";
 		var response = $.callServiceAsJson(url,JSON.stringify(certInfo));
 		if (response.code == 0) {
