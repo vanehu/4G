@@ -328,7 +328,7 @@ SoOrder = (function() {
 		var val2 = "";
 		if (ec.util.isObj(remark)) {
 			if (OrderInfo.actionFlag == 23) {
-				val = $("#p_cust_areaId_val").val();
+				val = $("#_session_staff_info").attr("areaAllName");
 				val2 = val.substring(val.indexOf(" > ") + 2, val.length);
 				if (val2.indexOf(" > ") != -1) {
 					val2 = val2.substring(0, val2.indexOf(" > "));
@@ -342,7 +342,7 @@ SoOrder = (function() {
 				value : remark
 			});
 		} else if (OrderInfo.actionFlag == 23) {// 异地补换卡
-			val = $("#p_cust_areaId_val").val();
+			val = $("#_session_staff_info").attr("areaAllName");
 			val2 = val.substring(val.indexOf(" > ") + 2, val.length);
 			if (val2.indexOf(" > ") != -1) {
 				val2 = val2.substring(0, val2.indexOf(" > "));
