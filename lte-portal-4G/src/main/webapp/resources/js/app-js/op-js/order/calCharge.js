@@ -1039,6 +1039,9 @@ order.calcharge = (function(){
 					}else{
 						_conBtns();
 					}
+				}else{
+					$.alert("提示","省份收费标识传错，传的值为："+OrderInfo.provinceInfo.isFee);
+					return;
 				}
 				
 			},
