@@ -175,9 +175,9 @@ public class essOrderController extends BaseController {
 	/**
 	 * 订单详情查询
 	 */
-	@RequestMapping(value = "/queryOrderInfo", method = RequestMethod.GET)
+	@RequestMapping(value = "/queryOrderInfo", method = RequestMethod.POST)
 	public String orderDetail(WebRequest request, Model model,
-			HttpSession session, @RequestParam Map<String, Object> paramMap)
+			HttpSession session, @RequestBody Map<String, Object> paramMap)
 			throws BusinessException {
 		SessionStaff sessionStaff = (SessionStaff) ServletUtils
 				.getSessionAttribute(super.getRequest(),

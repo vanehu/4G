@@ -14,6 +14,7 @@
 						<thead>
 							<tr>
 								<td width="50">序号</td>
+								<td width="100">事件名称</td>
 								<td width="100">状态</td>
 								<td width="100">状态时间</td>
 							</tr>
@@ -23,6 +24,7 @@
 							<#list orderInfo.orderEvent as orderEvents >
 							<tr>
 								<td>${orderEvents.sequence}</td>
+								<td>${orderEvents.eventReason}</td>
 								<td>${orderEvents.stateName}</td>
 								<td>${orderEvents.createDt}</td>
 							</tr>

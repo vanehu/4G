@@ -200,12 +200,17 @@ essOrder.main = (function() {
 	};
  
 	var _queryOrderInfo = function(olId,splitOrderOlId,commonRegionId) {
+		var olIds;
+		if(splitOrderOlId!=null && splitOrderOlId !=""){
+			olIds = [olId,splitOrderOlId];
+		}else{
+			olIds = [olId];
+		}
 		var param = {
-		    "olId":"700001090685",
-		    "splitOrderOlId":splitOrderOlId,
+		    "olIds":olIds,
 		    areaId : commonRegionId
 		};
-		$.callServiceAsHtmlGet(contextPath+"/ess/order/queryOrderInfo",param,{
+		$.callServiceAsHtml(contextPath+"/ess/order/queryOrderInfo",param,{
 			"before":function(){
 				$.ecOverlay("详情查询中，请稍等...");
 			},
