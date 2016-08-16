@@ -2388,14 +2388,15 @@ AttachOffer = (function() {
 			}
 		}*/
 	};
-	
-	//添加到开通列表
+
+	//添加到开通列表(添加到已选择)
 	var _addOpenList = function(prodId,offerSpecId){
 		if(!_manyPhoneFilter(prodId,offerSpecId)){
 			return;
 		}
 		var offer = CacheData.getOfferBySpecId(prodId,offerSpecId); //从已订购数据中找
-		if(offer != undefined){ //在已开通中，需要取消退订
+		//在已开通中，需要取消退订。ifDueOrderAgain表示两次含义：1.表示合约；2.在6个月的有效期之内是否可重复订购(续约)
+		if(offer != undefined && offer.ifDueOrderAgain != "Y"){//如果是合约，则跳过，执行下面代码
 			if(offer.isdel!="Y"){
 				var newSpec = _setSpec(prodId,offerSpecId);
 				if(newSpec==undefined){ //没有在已开通附属销售列表中
@@ -4062,6 +4063,7 @@ AttachOffer = (function() {
 						param.offerRoleId = prodInst.offerRoleId;
 					}
 				}
+				//处理合约的重复订购(续约)
 				query.offer.queryCanBuyAttachSpec(param,function(data){
 					var $ul = $('<ul id="ul_'+prodId+'_'+labelId+'"></ul>');
 					if(data!=undefined && data.resultCode == "0"){
@@ -4079,31 +4081,29 @@ AttachOffer = (function() {
 									if(this.offerSpecId==offerSpecId&&this.isDel!="C"){
 										//1.如果可订购附属销售品在已订购列表
 										var expireDate = this.expDate;//已订购的附属销售品的失效时间
-										expireDate = expireDate.substring(4,6);//截取失效时间20150201000000的月份02
-										var currentMonth = new Date().getMonth() + 1;//获取当前月份(0-11,从0开始，如0为1月份，1为2月份)
-										if(currentMonth < 10){
-											//1.1如果月份为个位数，则补充"0"于首位
-											currentMonth = "0" + currentMonth;
-										}
-										if(expireDate == currentMonth){
-											//2.如果该附属销售品当月到期
-											if(ifOrderAgain != "Y" && ifDueOrderAgain != "Y"){
-												//2.1如果ifOrderAgain和ifDueOrderAgain这两个节点有一个值为Y，则不过滤，展示于页面可订购
-												//2.2否则过滤该销售品，不展示于页面
+										if(!(expireDate == null || expireDate == undefined || expireDate == "")){
+											//1.1只有返回expireDate，则进行比对；否则不进行比对
+											expireDate = parseInt(expireDate.substring(4,6));//截取失效时间20150201000000的月份02
+											var currentMonth = new Date().getMonth() + 1;//获取当前月份(0-11,从0开始，如0为1月份，1为2月份)
+											if((currentMonth <= expireDate) && (currentMonth >= expireDate - 5)){
+												//2.如果该附属销售品在6个月到期范围之内
+												if(ifDueOrderAgain != "Y"){
+													//2.1如果ifDueOrderAgain值为Y，表示可重复订购，则不过滤，展示于页面的可订购列表
+													//2.2否则过滤该销售品，不展示于页面
+													flag = false;
+													return false;
+												}
+											} else{
+												//3.如果不在到期前的6个月范围之内，直接过滤
 												flag = false;
 												return false;
 											}
-										} else{
-											//3.如果不是当月到期，且不可重复订购，则过滤不展示页面
-											if(ifOrderAgain != "Y"){
-												flag = false;
-												return false;
-											} 
 										}
 									}
 								});
 								//从可订购中过滤掉已选择的且不可重复订购的附属销售品
 								$.each(offerSpecList,function(){
+									//不可重复订购的过滤掉
 									if(this.offerSpecId==offerSpecId&&ifOrderAgain!="Y"){
 										flag = false;
 										return false;

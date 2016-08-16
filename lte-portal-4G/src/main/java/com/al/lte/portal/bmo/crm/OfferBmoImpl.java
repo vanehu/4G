@@ -55,10 +55,7 @@ public class OfferBmoImpl implements OfferBmo {
 	
 	/**
 	 * 从查询可订购附属销售品的回参中，去除当月到期且到期不可重复订购的附属销售品<br/>
-	 * 分别循环遍历可订购附属列表和已订购附属列表，其中已订购列表拼装在查询入参中。该方法目前用户可订购附属销售品的搜索框。
-	 * @param paramMap
-	 * @param resultMap
-	 * @return resultMap
+	 * 分别循环遍历可订购附属列表和已订购附属列表，其中已订购列表拼装在查询入参中。该方法目前用于可订购附属销售品的搜索框。
 	 * @author ZhangYu 2016-03-27
 	 */
 	@SuppressWarnings("unchecked")
@@ -77,48 +74,47 @@ public class OfferBmoImpl implements OfferBmo {
 			offerSpecCanBuyList = (List<Map<String, Object>>) offerSpecMap.get("offerSpecList");
 		}
 		
-		if(attachOfferOrderedList.size() > 0 && offerSpecCanBuyList.size() > 0){			
+		if(attachOfferOrderedList.size() > 0 && offerSpecCanBuyList.size() > 0){
+			//获取当前月份(0-11,从0开始，如0为1月份，1为2月份)
+			Calendar calendar = Calendar.getInstance();
+			int currentMonth = calendar.get(Calendar.MONTH) + 1;
 			//循环遍历可订购附属销售品
-			for(int i = 0; i < offerSpecCanBuyList.size(); i++){				
+			for(int i = 0, len = offerSpecCanBuyList.size(); i < len; i++){				
 				Map<String, Object> offerSpecCanBuy = offerSpecCanBuyList.get(i);				
-				String offerSpecId = offerSpecCanBuy.get("offerSpecId").toString();
-				String ifOrderAgain = offerSpecCanBuy.get("ifOrderAgain").toString();//是否可重复订购
-				String ifDueOrderAgain = offerSpecCanBuy.get("ifDueOrderAgain").toString();//当月到期是否可重复订购
+				String offerSpecId = MapUtils.getString(offerSpecCanBuy, "offerSpecId", "N/A");
+				//是否可重复订购
+//				String ifOrderAgain = MapUtils.getString(offerSpecCanBuy, "ifOrderAgain", "N/A");
+				//两层含义：1. 表示合约；2. 6个月之内的有效期是否可重复订购(续约)
+				String ifDueOrderAgain = MapUtils.getString(offerSpecCanBuy, "ifDueOrderAgain", "N/A");
 				
 				//循环遍历已订购附属销售品
-				for(int j = 0; j < attachOfferOrderedList.size(); j++){
+				for(int j = 0, length = attachOfferOrderedList.size(); j < length; j++){
 					Map<String, Object> attachOfferOrdered = attachOfferOrderedList.get(j);
 					//如果已订购附属在可订购附属列表中
-					if(offerSpecId.equals(attachOfferOrdered.get("offerSpecId").toString())){
+					if(offerSpecId.equals(attachOfferOrdered.get("offerSpecId"))){
 						//获取已订购的附属销售品的失效时间
-						String expireDate = attachOfferOrdered.get("expDate").toString();
-						//截取失效时间(20150201000000)的月份(02)
-						expireDate = expireDate.substring(4,6);
-						////获取当前月份(0-11,从0开始，如0为1月份，1为2月份)
-						Calendar calendar = Calendar.getInstance();
-						int month = calendar.get(Calendar.MONTH) + 1; 
-						String currentMonthStr = null;
-						//如果月份为个位数，则补充"0"于首位
-						if(month < 10){
-							currentMonthStr = String.valueOf(month);
-							currentMonthStr = "0" + currentMonthStr;
+						String expireDateStr = MapUtils.getString(attachOfferOrdered, "expDate", "N/A");
+						if("N/A".equals(expireDateStr)){
+							continue;
 						} else{
-							currentMonthStr = String.valueOf(month);
-						}
-						//如果已订购是当月到期
-						if(currentMonthStr.equals(expireDate)){
-							//如果该附属可重复订购或到期当月可重复订购，则不过滤；否则过滤给可订购附属销售品
-							if((!"Y".equals(ifOrderAgain)) && (!"Y".equals(ifDueOrderAgain))){
+							//截取失效时间(20150201000000)的月份(02)
+							int expireDate = Integer.parseInt(expireDateStr.substring(4,6));
+							//如果已订购在6个月之内的有效期
+							if((currentMonth <= expireDate) && (currentMonth >= expireDate - 5)){
+								//如果ifDueOrderAgain为Y，则可以重复订购(续约)；否则过滤该可订购附属销售品
+								if(!"Y".equals(ifDueOrderAgain)){
+									offerSpecCanBuyList.remove(i);
+								}
+							} else{
 								offerSpecCanBuyList.remove(i);
 							}
 						}
-						
 					}
 				}
 			}
 		}
 		
-		//去除当月到期且当月到期不可重复订购的附属销售品之后，返回新的resultMap
+		//返回新的resultMap
 		offerSpecMap.put("offerSpecList", offerSpecCanBuyList);
 		resultMap.put("result", offerSpecMap);
 		
@@ -186,7 +182,7 @@ public class OfferBmoImpl implements OfferBmo {
 		try{
 			if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db.getResultCode()))) {
 				resultMap = db.getReturnlmap();
-				filterRepeat(resultMap);
+				this.filterRepeat(resultMap);
 			} else {
 				resultMap.put("code", ResultCode.R_FAIL);
 				resultMap.put("msg", db.getResultMsg());
@@ -198,6 +194,10 @@ public class OfferBmoImpl implements OfferBmo {
 		return resultMap;
 	}
 	
+	/**
+	 * 将报文的重复的销售品合并为一个节点
+	 */
+	@SuppressWarnings("unchecked")
 	private void filterRepeat(Map<String, Object> resultMap){
 		Map<String, Object> result=(Map<String, Object>)resultMap.get("result");
 		Object offerLists=result.get("offerLists");
