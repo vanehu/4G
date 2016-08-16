@@ -536,9 +536,9 @@ public class essOrderController extends BaseController {
 		inParam.put("staffId", sessionStaff.getStaffId());
 		try {
 			Map<String, Object> mktResInst = new HashMap<String, Object>();
-			mktResInst.put("mktResCd", rMap.get("mktResId"));
+			mktResInst.put("mktResCd", rMap.get("mktResId").toString());
 			mktResInst.put("mktResInstCode", param.get("instCode"));
-			mktResInst.put("mktResStoreId", rMap.get("mktResStoreId"));
+			mktResInst.put("mktResStoreId", rMap.get("mktResStoreId").toString());
 			mktResInst.put("mktResType", rMap.get("mktResTypeCd"));
 			List<Map<String, Object>> attrs = new ArrayList<Map<String, Object>>();
 			Map<String, Object> attr = new HashMap<String, Object>();
