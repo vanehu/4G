@@ -1153,7 +1153,7 @@ order.calcharge = (function(){
 						
 					});
 				}else{
-					$.alert("提示","省份收费标识传错，传的值为："+OrderInfo.provinceInfo.isFee);
+					$.alert("提示","省份上传收费标识异常，应为1或2，实际传值为："+OrderInfo.provinceInfo.isFee);
 					return;
 				}			
 				$("#printVoucherA").off("click").on("click", function(event){
