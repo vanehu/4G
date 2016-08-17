@@ -891,7 +891,8 @@ public class LoginController extends BaseController {
 			retnMap = staffBmo.sendMsgInfo(msgMap, flowNum, sessionStaff);
 			request.getSession().removeAttribute(SysConstant.SESSION_KEY_CHANGEUIM_SMS);
 			request.getSession().setAttribute(SysConstant.SESSION_KEY_CHANGEUIM_SMS, smsPwd);
-			request.getSession().setAttribute(SysConstant.SESSION_KEY_CHANGEUIM_RANDONCODE, randomCode);				
+			request.getSession().setAttribute(SESSION_CUSTAUTH_SMS_MUNBER, munber);
+			request.getSession().setAttribute(SysConstant.SESSION_KEY_CHANGEUIM_RANDONCODE, randomCode);
 			//短信发送时间间隔
 			request.getSession().removeAttribute(SysConstant.SESSION_KEY_TEMP_CHANGEUIM_SMS_TIME);
 			request.getSession().setAttribute(SysConstant.SESSION_KEY_TEMP_CHANGEUIM_SMS_TIME, (new Date()).getTime());
@@ -904,17 +905,20 @@ public class LoginController extends BaseController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/login/changeUimSmsValid", method = RequestMethod.POST)
 	@ResponseBody
-	public JsonResponse changeUimSmsValidate(@RequestParam("smspwd") String smsPwd,
+	public JsonResponse changeUimSmsValidate(@RequestParam("smspwd") String smsPwd,@RequestParam("number") String number,
 			HttpServletRequest request ,HttpServletResponse response) throws Exception {
 		this.log.debug("changeUimsmsPwd={}", smsPwd);
 		// 验证码内容
 		String smsPwdSession = (String) ServletUtils.getSessionAttribute(
 				request, SysConstant.SESSION_KEY_CHANGEUIM_SMS);
+		// 对应的手机号
+		String numberSession = (String) ServletUtils.getSessionAttribute(
+				request, SESSION_CUSTAUTH_SMS_MUNBER);
 		//如果不需要发送短信，验证码就为空，不提示短信过期失效
 		if(StringUtil.isEmpty(smsPwdSession)){
 			return super.failed("短信过期失效，请重新发送!", ResultConstant.FAILD.getCode());
 		}
-		if (smsPwdSession.equals(smsPwd)) {
+		if (smsPwdSession.equals(smsPwd)&&numberSession.equals(number)) {
 			Map<String,Object> resData=new HashMap<String,Object>();
 			resData.put("msg", "短信验证成功.");
 			return super.successed(resData);

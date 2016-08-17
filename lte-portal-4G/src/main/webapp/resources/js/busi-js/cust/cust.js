@@ -2212,7 +2212,7 @@ order.cust = (function(){
 		} else if (level == "2") {
 			smspwd2 = $("#auth2").find("#smspwd2").val();
 		}
-		var params = "smspwd=" + smspwd2;
+		var params = "smspwd=" + smspwd2+"&number="+_choosedCustInfo.accNbr;
 		if (!ec.util.isObj(smspwd2)) {
 			$.alert("提示","验证码不能为空！");
 			return;
