@@ -1076,9 +1076,58 @@ order.main = (function(){
 		var xkDom = $("#"+CONST.PROD_ATTR.IS_XINKONG+"_"+prodId);
 		//“是否信控”产品属性，预付费时默认为“是”且不可编辑，其他默认为“是”但可编辑
 		if(feeType == CONST.PAY_TYPE.BEFORE_PAY){
+			//增加付费方式对翼支付助手功能产品的限制
+			if((OrderInfo.actionFlag==1||OrderInfo.actionFlag==3||OrderInfo.actionFlag==6||OrderInfo.actionFlag==14)
+					&&CacheData.getServSpec(-1,381000960)!=null){
+				var yiPaySpec = CacheData.getServSpec(-1,381000960);
+				if(yiPaySpec.isdel==undefined||yiPaySpec.isdel!="Y"){
+					$.confirm("信息确认","您已选择开通【翼支付交费助手】功能产品，如果修改付费类型为预付费，其属性将赋为默认值！",{ 
+						yesdo:function(){
+							for ( var j = 0; j < yiPaySpec.prodSpecParams.length; j++) {							
+								var prodSpecParam = yiPaySpec.prodSpecParams[j];
+								prodSpecParam.setValue = prodSpecParam.value;
+//								if (!!prodSpecParam.valueRange[0]) 
+//									prodSpecParam.setValue = prodSpecParam.valueRange[0].value;
+								}
+						},
+						no:function(){
+							$(dom).find("option[value='1200']").attr("selected",true);
+							$("#"+CONST.PROD_ATTR.IS_XINKONG+"_"+prodId).val("20").removeAttr("disabled");
+						}
+					});
+				}				
+			}
 			$(xkDom).val("20");
 			$(xkDom).attr("disabled", true);
 		} else {
+			if((OrderInfo.actionFlag==1||OrderInfo.actionFlag==3||OrderInfo.actionFlag==6||OrderInfo.actionFlag==14)
+					&&CacheData.getServSpec(-1,381000960)!=null){
+				var yiPaySpec = CacheData.getServSpec(-1,381000960);
+				if(yiPaySpec.isdel==undefined||yiPaySpec.isdel!="Y"){
+					// #610119需求增加：托收的属性需要分省下发。
+					var agentFlag = offerChange.queryPortalProperties("AGENT_" + OrderInfo.staff.soAreaId.substring(0,3));
+					$.confirm("信息确认","您已选择开通【翼支付交费助手】功能产品，如果修改付费类型为后付费，" + ("ON" == agentFlag ? "只可变更“翼支付托收”。" : "属性不可变更。"),{ 
+						yesdo:function(){
+							for ( var j = 0; j < yiPaySpec.prodSpecParams.length; j++) {							
+								var prodSpecParam = yiPaySpec.prodSpecParams[j];
+								if (CONST.YZFitemSpecId4 == prodSpecParam.itemSpecId && "ON" == offerChange.queryPortalProperties("AGENT_" + OrderInfo.staff.soAreaId.substring(0,3))) {
+									if (prodSpecParam.value!="") {
+										prodSpecParam.setValue = prodSpecParam.value;
+									} else if (!!prodSpecParam.valueRange[0]&&prodSpecParam.valueRange[0].value!="")
+										//默认值为空则取第一个
+										prodSpecParam.setValue = prodSpecParam.valueRange[0].value;
+								} else {
+									prodSpecParam.setValue = "";
+								}	
+							}
+						},
+						no:function(){
+							$(dom).find("option[value='2100']").attr("selected",true);
+							$("#"+CONST.PROD_ATTR.IS_XINKONG+"_"+prodId).val("20").attr("disabled","disabled");
+						}
+					});
+				}				
+			}
 			$(xkDom).attr("disabled", false);
 		}
 		$(xkDom).addClass("styled-select");

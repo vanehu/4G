@@ -100,14 +100,21 @@
 			<#if openServList?? &&(openServList?size>0)>	
 				<#list openServList as item>
 				  <#if item.ifDault==0 >
-	      				 <a href="javascript:void(0);" id="li_${prodId}_${item.servSpecId}" offerSpecId="${item.servSpecId}" isdel='N' class="list-group-item" class="abtn03 icon-nodel">&nbsp;
-	      				    <span id="span_${prodId}_${item.servSpecId}">${item.servSpecName}</span
-	      				 ></a>
+				  <a href="javascript:void(0);" id="li_${prodId}_${item.servSpecId}" class="list-group-item" isdel='N'>
+			      <span id="span_${prodId}_${item.servSpecId}">${item.servSpecName}</span>
+			       <#if item.ifParams =="Y" && item.servSpecId?? && item.servSpecId!="">
+		            <p id="can_${prodId}_${item.servSpecId}"  isset="N"  class="abtn01 btn-span" style="display: inline"><button type="button" class="btn btn-info" style="right:40px;width:48px;top:13px;" data-toggle="modal" data-target="#setting" onclick="AttachOffer.showServParam(${prodId},${item.servSpecId});">参</button></p>
+		          </a>
+		          </#if>
 	      		  <#else>
-			             <a href="javascript:void(0);"  onclick="AttachOffer.closeServSpec(${prodId},${item.servSpecId},'${item.servSpecName}','${item.ifParams}')" id="li_${prodId}_${item.servSpecId}" offerSpecId="${item.servSpecId}" isdel='N' class="list-group-item abtn02 icon-del">
-			          <span id="span_${prodId}_${item.servSpecId}">${item.servSpecName}</span>
-			          <span id="span_remove_${prodId}_${item.servSpecId}" class="glyphicon glyphicon-remove pull-right" aria-hidden="true"></span>
-			         </a>
+	      		  <a href="javascript:void(0);" id="li_${prodId}_${item.servSpecId}" servSpecId="${item.servSpecId}" isdel='N' class="list-group-item">
+			      <span id="span_${prodId}_${item.servSpecId}">${item.servSpecName}</span>
+			      <span id="span_remove_${prodId}_${item.servSpecId}" servSpecId="${item.servSpecId}"
+				     class="glyphicon glyphicon-remove pull-right" aria-hidden="true" onclick="AttachOffer.closeServSpec(${prodId},${item.servSpecId},'${item.servSpecName}','${item.ifParams}')"></span>
+			      <#if item.ifParams =="Y" && item.servSpecId?? && item.servSpecId!="">
+		          <p id="can_${prodId}_${item.servSpecId}"  isset="N"  class="abtn01 btn-span" style="display: inline"><button type="button" class="btn btn-info" style="right:40px;width:48px;top:13px;" data-toggle="modal" data-target="#setting" onclick="AttachOffer.showServParam(${prodId},${item.servSpecId});">参</button></p>
+	              </#if>
+		          </a>
 			        </#if> 
                 </#list>
 		    </#if>

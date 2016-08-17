@@ -176,6 +176,41 @@ CacheData = (function() {
 		}
 		var paramVal = param.setValue;
 		var selectStr = ""; //返回字符串
+		var optionStr = "";
+		if(!!param.valueRange && (itemSpecId == CONST.YZFitemSpecId1||itemSpecId ==  CONST.YZFitemSpecId2 || itemSpecId ==  CONST.YZFitemSpecId3)){ //可编辑下拉框（10020034,10020035,10020036 为翼支付交费助手的三属性）需求（开发） #610119
+			var feeType = $("select[name='pay_type_-1']").val();
+			if(feeType==undefined) feeType = order.prodModify.choosedProdInfo.feeType;
+			if(feeType == CONST.PAY_TYPE.BEFORE_PAY){
+				selectStr = selectStr+'<div class="form-group pack-pro-box"><label for="exampleInputPassword1">' + param.name + ': </label>';
+				if(param.rule.isConstant=='Y'){ //不可修改
+					selectStr =selectStr+ "<select class='inputWidth183px' id="+prodId+"_"+itemSpecId+" disabled='disabled'>"; 
+				}else {
+					if(param.rule.isOptional=="N") { //必填
+						selectStr =selectStr+ " <select class='inputWidth183px' id="+prodId+"_"+itemSpecId+" data-validate='validate(required,reg:"
+						  + param.rule.maskMsg+"("+param.rule.mask+")) on(blur)'><label class='f_red'>*</label><br>";
+					}else{
+						selectStr =  selectStr+ "<select class='inputWidth183px' id="+prodId+"_"+itemSpecId+">"; 
+						optionStr +='<option value="" >请选择</option>';  //不是必填可以不选 
+					}
+				}
+				for ( var j = 0; j < param.valueRange.length; j++) {
+					var valueRange = param.valueRange[j];
+					if(valueRange.value== param.setValue){
+						optionStr +='<option value="'+valueRange.value+'" selected="selected" >'+valueRange.text+'</option>';
+					}else {
+						optionStr +='<option value="'+valueRange.value+'">'+valueRange.text+'</option>';
+					}
+				}
+				selectStr += optionStr + "</select></td></tr>"; 
+				return selectStr;
+			} else if(feeType == CONST.PAY_TYPE.AFTER_PAY){
+				selectStr = selectStr+'<div class="form-group pack-pro-box"><label for="exampleInputPassword1">' + param.name + ': </label>';
+				selectStr =selectStr+ "<select class='inputWidth183px' id="+prodId+"_"+itemSpecId+" disabled='disabled'>"; 
+				optionStr +='<option value="" selected="selected">不可选</option>';
+				selectStr += optionStr + "</select></div>"; 
+				return selectStr;
+			} 
+		}
 		if (ec.util.isArray(param.valueRange) && param.dateSourceTypeCd == "17") {//带搜索功能输入组件
 			var id=prodId+'_'+itemSpecId;
 			if(ec.util.isObj(specId)){
@@ -195,7 +230,10 @@ CacheData = (function() {
 				+'<button class="btn btn-default"  onclick="AttachOffer.searchSchools(\''+id+'\');" type="button">搜索</button></span></div></div>'
 			}
 		} else if(ec.util.isArray(param.valueRange)){ //下拉框
-			var optionStr = "";
+			var flag=offerChange.queryPortalProperties("AGENT_" + OrderInfo.staff.soAreaId.substring(0,3));
+			if (itemSpecId ==  CONST.YZFitemSpecId4 && "ON" != flag) {
+				return selectStr;
+			}
 			selectStr = selectStr+'<div class="form-group pack-pro-box"><label for="exampleInputPassword1">' + param.name + ': </label>';
 			if(param.rule.isConstant=='Y'){ //不可修改
 				selectStr =selectStr+ "<select class='inputWidth183px' id="+prodId+"_"+itemSpecId+" disabled='disabled'>"; 

@@ -46,8 +46,8 @@
 			<span id="span_${prodId}_${item.servId}">${item.servSpecName}</span>
 			<#if item.ifParams =="Y" && item.servSpecId?? && item.servSpecId!="">
 		<p id="can_${prodId}_${item.servSpecId}"  isset="N"  class="abtn01 btn-span" style="display: inline"><button type="button" class="btn btn-info" style="right:40px;width:48px;top:13px;" data-toggle="modal" data-target="#setting" onclick="AttachOffer.showServParam(${prodId},${item.servSpecId},1);">参</button></p>
-	    </#if>
 		</a>
+	    </#if>	
 		<#else>
 		<a href="javascript:void(0);" id="li_${prodId}_${item.servId}" servSpecId="${item.servSpecId}"  class="list-group-item">
 			<span id="span_${prodId}_${item.servId}">${item.servSpecName}</span>

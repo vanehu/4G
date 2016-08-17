@@ -414,8 +414,8 @@ common = (function($) {
 											});
 						}
 					}
-					_callCloseWebview();
-					return;
+//					_callCloseWebview();   2016年8月12日熊公正提出可选包订单确认返回同新装一样，退回 上一步
+//					return;
 				}
 				SoOrder.orderBack();
 				$("#order-content").show();
@@ -436,6 +436,7 @@ common = (function($) {
 	};
 	//调用客户端 改变头部的状态
 	var _callTitle=function(str){
+
 		var arr=new Array(1);
 		arr[0]=str;
 		MyPlugin.changeTitle(arr,
@@ -465,6 +466,18 @@ common = (function($) {
             }
 		);	
 	};
+	
+	//调用客户端打开支付页面
+	var _callOpenPay=function(payUrl){
+		var arr=new Array(1);
+		arr[0]=payUrl;
+		MyPlugin.openPayWeb(arr,
+            function(result) {
+            },
+            function(error) {
+            }
+		);
+	};
 	return {
 		relocationCust		:	_relocationCust,
 		setCalendar			:	_setCalendar,
@@ -481,6 +494,7 @@ common = (function($) {
 		callSessionNotViald	:	_callSessionNotViald,
 		callTitle			:	_callTitle,
 		saveCust			:	_saveCust,
-		callAgreePhoto      :   _callAgreePhoto
+		callAgreePhoto      :   _callAgreePhoto,
+		callOpenPay         :   _callOpenPay
 	};
 })(jQuery);

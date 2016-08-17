@@ -2157,7 +2157,7 @@ SoOrder = (function() {
 		//var paytype=$('select[name="pay_type_-1"]').val();  //先写死
 		//if(paytype!= undefined){
 			busiOrder.data.boProdFeeTypes.push({
-				feeType : 1200,
+				feeType : OrderInfo.offerSpec.feeType,
 				state : "ADD"
 			});
 		//}
