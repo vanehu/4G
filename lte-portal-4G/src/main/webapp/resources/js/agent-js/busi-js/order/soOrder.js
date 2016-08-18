@@ -2156,8 +2156,18 @@ SoOrder = (function() {
 		//var paytype=$('select[name="pay_type_'+prodId+'"]').val(); 
 		//var paytype=$('select[name="pay_type_-1"]').val();  //先写死
 		//if(paytype!= undefined){
+		var paytype= 1200;
+		if(OrderInfo.offerSpec.feeType=="1201" || OrderInfo.offerSpec.feeType=="3101" || OrderInfo.offerSpec.feeType=="3102" || OrderInfo.offerSpec.feeType=="3103"){
+			paytype = 1201;
+		}
+		if(OrderInfo.offerSpec.feeType=="2100" || OrderInfo.offerSpec.feeType=="3100" || OrderInfo.offerSpec.feeType=="3101" || OrderInfo.offerSpec.feeType=="3103"){
+			paytype = 2100;
+		}
+		if(OrderInfo.offerSpec.feeType=="1200" || OrderInfo.offerSpec.feeType=="3100" || OrderInfo.offerSpec.feeType=="3102" || OrderInfo.offerSpec.feeType=="3103"){
+			paytype = 1200;
+		}
 			busiOrder.data.boProdFeeTypes.push({
-				feeType : OrderInfo.offerSpec.feeType,
+				feeType : paytype,
 				state : "ADD"
 			});
 		//}
