@@ -711,7 +711,13 @@ prod.telnum = (function(){
 					$sel.append($defaultopt);
 					if(phoneNbrPoolList!=null){
 						$.each(phoneNbrPoolList,function(){
-							var $option = $('<option value="'+this.poolId+'">'+this.poolName+'</option>');
+							var  $option = "";
+							if(this.localPool == 1){
+								$option = $('<option value="'+this.poolId+'" selected="selected">'+this.poolName+'</option>');
+							}
+							else{
+								$option = $('<option value="'+this.poolId+'">'+this.poolName+'</option>');
+							}
 							$sel.append($option);
 						});
 					}
