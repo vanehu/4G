@@ -398,7 +398,7 @@ common.print = (function($){
 	}
 	var _prepareInvoiceInfoCore=function(param){
 		//根据开关设置普通发票的显示
-		initNinvoice();
+		var onoff = initNinvoice();
 		//根据开关设置电子发票的显示
 		initEinvoice();
 		//可打印费用项查询
@@ -572,6 +572,11 @@ common.print = (function($){
 				param.billType = 2;
 			}
 		});
+		if ("OFF" == onoff) {
+			$("#billTypeVo").click();
+		}else{
+			$("#billTypeIn").click();
+		}
 		$("#invoiceItemsConfirm").off("click").on("click",function(event){
 			if (common.print.oldInvoiceFlag != '0') {
 				$.alert("信息", "存在未作废发票，请先确定作废发票");
@@ -1223,6 +1228,7 @@ common.print = (function($){
 				$("#lb_billTypeIn").hide();
 			}
 		}
+		return response.data;
 	}
 	var _queryConstConfig=function(voucherInfo,typeClass){
 		var isProPrint=false;
