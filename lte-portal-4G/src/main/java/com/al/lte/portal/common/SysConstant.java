@@ -705,4 +705,7 @@ public final class SysConstant {
 	public static final String TERMINAL_STATISTIC_DETAIL = "terminalStatisticDetail";
 	/**汇总报表*/
 	public static final String TERMINAL_STATISTIC = "terminalStatistic";
+	
+	/**从http请求头中获取X-Forwarded-Host属性*/
+	public static final String HTTP_REQUEST_HEADER_HOST = "X-Forwarded-Host";
 }

@@ -79,7 +79,7 @@ public class PCModelController extends BaseController {
 		try{			
 			SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);
 			String accessToken = request.getParameter("accessToken");//获取到的凭证		
-			String params = request.getParameter("params");//json参数集合	
+			String params = request.getParameter("params");//json参数集合
 			log.error("获取的令牌："+accessToken);
 			log.error("获取的参数集："+params);
 			if(StringUtil.isEmptyStr(accessToken)){					
@@ -203,17 +203,16 @@ public class PCModelController extends BaseController {
 			
 			String dbKeyWord = (String) request.getSession().getAttribute(SysConstant.SESSION_DATASOURCE_KEY);
 			String flag = MySimulateData.getInstance().getParam("UNIFYLOGIN",dbKeyWord,"UNIFYLOGIN");
-//			int serverPort = request.getServerPort();//获取到8101，不是83
-			
 			int port = request.getLocalPort();
 			log.warn("服务端口[LocalPort]："+port);
-			String headerHost = request.getHeader("Host");// Host:crm.189.cn:83 Host:mo.crm.189.cn:93 Host:10.128.86.10:8101
-					
+			// Host:crm.189.cn:83 Host:mo.crm.189.cn:93 Host:10.128.86.10:8101
+			String headerHost = request.getHeader(SysConstant.HTTP_REQUEST_HEADER_HOST);
+
 			if(PortalUtils.isSecondLevelDomain(headerHost)){
-				//#591478 若已启用分省域名，此时不应重定向到crm.189.cn
+				//#591478 若启用分省域名，应重定向到*.crm.189.cn:port
 				return super.redirect("https://" + headerHost + "/provPortal" + modelUrl);
 			} else{
-				//若不是93、94端口，走原来的老逻辑
+				//否则，走原来的老逻辑
 				if((port==10101 || port==10102 || port==10103) && "ON".equals(flag)){
 					return super.redirect("https://crm.189.cn:83/provPortal"+modelUrl);
 				}else if((port==10151 || port==10152 || port==10153) && "ON".equals(flag)){

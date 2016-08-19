@@ -123,14 +123,19 @@ public class PortalUtils {
 	 * @param headerHost http request header请求头里的Host
 	 * @return
 	 */
-	 public static boolean isSecondLevelDomain(String headerHost){
-		 boolean flag = false;
-			String port = headerHost.substring(headerHost.indexOf(":") + 1, headerHost.length());
-			
-			if(("93".equals(port) || "94".equals(port)) && (headerHost.indexOf("crm") > 0)){
-				flag = true;
+	public static boolean isSecondLevelDomain(String headerHost) {
+		boolean flag = false;
+		if (headerHost != null) {
+			try {
+				String port = headerHost.substring(headerHost.indexOf(":") + 1, headerHost.length());
+				if (("93".equals(port) || "94".equals(port)) && (headerHost.indexOf("crm") > 0)) {
+					flag = true;
+				}
+			} catch (IndexOutOfBoundsException e) {
+				log.error("isSecondLevelDomain判断二级域名发生异常[headerHost : " + headerHost + "]", e);
+				flag = false;
 			}
-			
-			return flag;
-	 }
+		}
+		return flag;
+	}
 }
