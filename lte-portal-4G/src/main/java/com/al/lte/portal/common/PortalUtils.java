@@ -119,9 +119,10 @@ public class PortalUtils {
 	 
 	 /**
 	 * 判断是否启用分省域名</br>
-	 * true:启用分省域名；false:为启用
-	 * @param headerHost http request header请求头里的Host
-	 * @return
+	 * @author ZhangYu
+	 * @param headerHost http request header请求头里的域名属性，测试或本地可以使用HOST属性，生产建议使用X-Forwarded-Host属性
+	 * @return <strong>true</strong>:分省域名(二级域名*.crm.189.cn:93/94)<br/>
+	 * 		   <strong>false</strong>:非二级域名形式
 	 */
 	public static boolean isSecondLevelDomain(String headerHost) {
 		boolean flag = false;
