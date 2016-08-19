@@ -311,6 +311,10 @@ public class MDA {
      */
     public static final Map<String,String> EL_INVOICE = new HashMap<String,String>();
     /**
+     * 普通发票类型类型
+     */
+    public static final Map<String,String> NORMAL_INVOICE = new HashMap<String,String>();
+    /**
      * 能力开放政企客户二次业务鉴权开关
      * */
     public static final Map<String,String> TOKEN_AUTHENTICATION = new HashMap<String,String>();

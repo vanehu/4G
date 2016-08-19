@@ -695,6 +695,42 @@
 			'EL_INVOICE_899':'OFF'<!-- 虚拟省 -->
 			}
 		</const>
+		<const type="Map" name="NORMAL_INVOICE" description="普通发票类型类型  ON OFF 默认关闭">
+			{
+			'NORMAL_INVOICE_854':'ON',<!-- 西藏 -->
+			'NORMAL_INVOICE_863':'ON',<!-- 青海 -->
+			'NORMAL_INVOICE_815':'ON',<!-- 内蒙古 -->
+			'NORMAL_INVOICE_823':'ON',<!-- 黑龙江 -->
+			'NORMAL_INVOICE_845':'ON',<!-- 广西 -->
+			'NORMAL_INVOICE_850':'ON',<!-- 重庆 -->
+			'NORMAL_INVOICE_861':'ON',<!-- 陕西 -->
+			'NORMAL_INVOICE_842':'ON',<!-- 湖北 -->
+			'NORMAL_INVOICE_835':'ON',<!-- 福建 -->
+			'NORMAL_INVOICE_832':'ON',<!-- 江苏 -->
+			'NORMAL_INVOICE_846':'ON',<!-- 海南 -->
+			'NORMAL_INVOICE_864':'ON',<!-- 宁夏 -->
+			'NORMAL_INVOICE_814':'ON',<!-- 山西 -->
+			'NORMAL_INVOICE_853':'ON',<!-- 云南 -->
+			'NORMAL_INVOICE_836':'ON',<!-- 江西 -->
+			'NORMAL_INVOICE_837':'ON',<!-- 山东 -->
+			'NORMAL_INVOICE_811':'ON',<!-- 北京 -->
+			'NORMAL_INVOICE_843':'ON',<!-- 湖南 -->
+			'NORMAL_INVOICE_851':'ON',<!-- 四川 -->
+			'NORMAL_INVOICE_844':'ON',<!-- 广东 -->
+			'NORMAL_INVOICE_831':'ON',<!-- 上海 -->
+			'NORMAL_INVOICE_812':'ON',<!-- 天津 -->
+			'NORMAL_INVOICE_813':'ON',<!-- 河北 -->
+			'NORMAL_INVOICE_841':'ON',<!-- 河南 -->
+			'NORMAL_INVOICE_821':'ON',<!-- 辽宁 -->
+			'NORMAL_INVOICE_822':'ON',<!-- 吉林 -->
+			'NORMAL_INVOICE_834':'ON',<!-- 安徽 -->
+			'NORMAL_INVOICE_833':'ON',<!-- 浙江 -->
+			'NORMAL_INVOICE_852':'ON',<!-- 贵州 -->
+			'NORMAL_INVOICE_862':'ON',<!-- 甘肃 -->
+			'NORMAL_INVOICE_865':'ON',<!-- 新疆 -->
+			'NORMAL_INVOICE_899':'ON'<!-- 虚拟省 -->
+			}
+		</const>
 		<!-- 集团CRM-4G政企客户鉴权开关-->
 		<const type="Map" name="GOV_AUTH" description="集团CRM-4G政企客户鉴权开关  ON OFF 默认关闭">
 			{

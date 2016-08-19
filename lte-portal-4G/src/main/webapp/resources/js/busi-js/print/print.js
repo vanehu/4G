@@ -397,6 +397,8 @@ common.print = (function($){
 		}
 	}
 	var _prepareInvoiceInfoCore=function(param){
+		//根据开关设置普通发票的显示
+		initNinvoice();
 		//根据开关设置电子发票的显示
 		initEinvoice();
 		//可打印费用项查询
@@ -1207,6 +1209,21 @@ common.print = (function($){
 			}
 		}
 	};
+	//根据开关初始化普通发票类型
+	function initNinvoice() {
+		var response = $.callServiceAsJson(contextPath + "/properties/getValue", {"key": "NORMAL_INVOICE_" + OrderInfo.staff.areaId.substr(0, 3)});
+		if (response.code == "0") {
+			if ("ON" == response.data) {
+				$("#billTypeIn").show();
+				$("#billTypeIn").attr("checked", true);
+				$("#lb_billTypeIn").show();
+			} else {
+				$("#billTypeIn").hide();
+				$("#billTypeVo").attr("checked", true);
+				$("#lb_billTypeIn").hide();
+			}
+		}
+	}
 	var _queryConstConfig=function(voucherInfo,typeClass){
 		var isProPrint=false;
 		var param={
