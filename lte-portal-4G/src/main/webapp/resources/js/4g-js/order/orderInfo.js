@@ -1352,10 +1352,10 @@ OrderInfo = (function() {
 			}
 		} else if(OrderInfo.actionFlag == 35){ //分段受理
 			accessNumber = stepOrder.main.getAccessNumber(prodId);
+		} else if(OrderInfo.actionFlag == 41) {//ess远程写卡
+			accessNumber = OrderInfo.essOrderInfo.essOrder.phoneNumber; 
 		} else if(prodId!=undefined && prodId>0){
 			accessNumber = order.prodModify.choosedProdInfo.accNbr;	
-		}else if(OrderInfo.actionFlag == 41) {//ess远程写卡
-			accessNumber = OrderInfo.essOrderInfo.essOrder.phoneNumber; 
 		}
 		return accessNumber;
 	};
