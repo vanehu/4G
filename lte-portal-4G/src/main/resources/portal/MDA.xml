@@ -734,7 +734,7 @@
 		<!-- 集团CRM-4G政企客户鉴权开关-->
 		<const type="Map" name="GOV_AUTH" description="集团CRM-4G政企客户鉴权开关  ON OFF 默认关闭">
 			{
-			'GOV_854':'OFF',<!-- 西藏 -->
+			'GOV_854':'ON',<!-- 西藏 -->
 			'GOV_863':'OFF',<!-- 青海 -->
 			'GOV_815':'OFF',<!-- 内蒙古 -->
 			'GOV_823':'OFF',<!-- 黑龙江 -->
@@ -749,8 +749,8 @@
 			'GOV_814':'OFF',<!-- 山西 -->
 			'GOV_853':'OFF',<!-- 云南 -->
 			'GOV_836':'OFF',<!-- 江西 -->
-			'GOV_837':'OFF',<!-- 山东 -->
-			'GOV_811':'OFF',<!-- 北京 -->
+			'GOV_837':'ON',<!-- 山东 -->
+			'GOV_811':'ON',<!-- 北京 -->
 			'GOV_843':'OFF',<!-- 湖南 -->
 			'GOV_851':'OFF',<!-- 四川 -->
 			'GOV_844':'OFF',<!-- 广东 -->
@@ -1211,6 +1211,43 @@
 	       'SEAL_8990000':'OFF'<!-- 虚拟省 -->
 	      }
     	</const>
+		
+		<const type="Map" name="PRECHECKFLAG" description="在新建客户和二次业务增加前置检验开关">
+		{
+			'PRECHECKFLAG_854':'OFF',<!-- 西藏 -->
+			'PRECHECKFLAG_863':'OFF',<!-- 青海 -->
+			'PRECHECKFLAG_815':'OFF',<!-- 内蒙古 -->
+			'PRECHECKFLAG_823':'OFF',<!-- 黑龙江 -->
+			'PRECHECKFLAG_845':'OFF',<!-- 广西 -->
+			'PRECHECKFLAG_850':'OFF',<!-- 重庆 -->
+			'PRECHECKFLAG_861':'OFF',<!-- 陕西 -->
+			'PRECHECKFLAG_842':'OFF',<!-- 湖北 -->
+			'PRECHECKFLAG_835':'OFF',<!-- 福建 -->
+			'PRECHECKFLAG_832':'ON',<!-- 江苏 -->
+			'PRECHECKFLAG_846':'OFF',<!-- 海南 -->
+			'PRECHECKFLAG_864':'OFF',<!-- 宁夏 -->
+			'PRECHECKFLAG_814':'OFF',<!-- 山西 -->
+			'PRECHECKFLAG_853':'OFF',<!-- 云南 -->
+			'PRECHECKFLAG_836':'OFF',<!-- 江西 -->
+			'PRECHECKFLAG_837':'OFF',<!-- 山东 -->
+			'PRECHECKFLAG_811':'OFF',<!-- 北京 -->
+			'PRECHECKFLAG_843':'OFF',<!-- 湖南 -->
+			'PRECHECKFLAG_851':'OFF',<!-- 四川 -->
+			'PRECHECKFLAG_844':'OFF',<!-- 广东 -->
+			'PRECHECKFLAG_831':'OFF',<!-- 上海 -->
+			'PRECHECKFLAG_812':'OFF',<!-- 天津 -->
+			'PRECHECKFLAG_813':'OFF',<!-- 河北 -->
+			'PRECHECKFLAG_841':'OFF',<!-- 河南 -->
+			'PRECHECKFLAG_821':'OFF',<!-- 辽宁 -->
+			'PRECHECKFLAG_822':'ON',<!-- 吉林 -->
+			'PRECHECKFLAG_834':'OFF',<!-- 安徽 -->
+			'PRECHECKFLAG_833':'OFF',<!-- 浙江 -->
+			'PRECHECKFLAG_852':'OFF',<!-- 贵州 -->
+			'PRECHECKFLAG_862':'OFF',<!-- 甘肃 -->
+			'PRECHECKFLAG_865':'OFF',<!-- 新疆 -->
+			'PRECHECKFLAG_899':'OFF'<!-- 虚拟省 -->
+			}
+		</const>
 		
 	</mda>    
 </mdas>

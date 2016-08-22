@@ -56,6 +56,9 @@ OrderInfo = (function() {
 		resultCode:""
 	};//保存鉴权临时结果
 
+	var _preBefore ={
+			prcFlag : ""	
+	};//保存前置检验的结果
 	var _cust_validateType = "";//客户鉴权方式
 
 	var _cust_validateNum = "";//客户鉴权号码
@@ -1691,6 +1694,7 @@ OrderInfo = (function() {
 		cust_validateType		:_cust_validateType,
 		cust_validateNum		:_cust_validateNum,
 		staffInfoFlag : _staffInfoFlag,
-		essOrderInfo            :_essOrderInfo
+		essOrderInfo            :_essOrderInfo,
+		preBefore : _preBefore
 	};
 })();

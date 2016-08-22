@@ -6,6 +6,9 @@ CommonUtils.regNamespace("order", "cust");
 order.cust = (function(){
 	
 	var _choosedCustInfo = {};
+	var _checkUserInfo = {
+		 accNbr: ""
+	};
 	var createCustInfo = {};
 	var custInfo = null;
 	var authFlag = null;
@@ -792,6 +795,8 @@ order.cust = (function(){
 			isSame:$(scope).attr("isSame")//使用人名称与账户名称是否一致
 			};
 		//设置被选择标识
+		_checkUserInfo.accNbr = "";
+		_checkUserInfo.accNbr = $(scope).attr("accNbr");
 		$(scope).attr("selected","selected");
 		$(scope).siblings().each(function () {
 				$(this).removeAttr("selected");
@@ -2723,7 +2728,8 @@ order.cust = (function(){
 		identityTypeAuth:_identityTypeAuth,
 		multiIdentityTypeAuth:_multiIdentityTypeAuth,
 		showReadCert:_showReadCert,
-		isSelfChannel:_isSelfChannel
+		isSelfChannel:_isSelfChannel,
+		checkUserInfo : _checkUserInfo
 	};
 })();
 $(function() {

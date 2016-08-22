@@ -2303,4 +2303,26 @@ public class OrderBmoImpl implements OrderBmo {
 			throw new BusinessException(ErrorCode.INVALID_BLACKLIST, dataBusMap, db.getReturnlmap(), e);
 		}
 	}
+	
+	public Map<String, Object> preCheckBeforeOrde(Map<String, Object> paramMap,
+			String flowNum, SessionStaff sessionStaff) throws Exception {
+		// TODO Auto-generated method stub
+		DataBus db = InterfaceClient.callService(paramMap,
+				PortalServiceCode.PRE_CHECK_ORDER, flowNum, sessionStaff);
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		try{
+			// 服务层调用与接口层调用都成功时，返回列表；否则返回空列表
+			if (ResultCode.R_SUCC.equals(db.getResultCode())) {
+				resultMap = db.getReturnlmap();
+				resultMap.put("resultCode", ResultCode.R_SUCC);
+			} else {
+				resultMap.put("resultCode", ResultCode.R_FAILURE);
+				resultMap.put("resultMsg", db.getResultMsg());
+			}
+		} catch (Exception e) {
+			log.error("门户处理营业后台的前置校验接口服务返回的数据异常", e);
+			throw new BusinessException(ErrorCode.PRE_CHECK_ORDER, paramMap, resultMap, e);
+		}
+		return resultMap;
+	}
 }

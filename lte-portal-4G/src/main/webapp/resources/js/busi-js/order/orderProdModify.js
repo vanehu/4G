@@ -168,7 +168,7 @@ order.prodModify = (function(){
 			addOrChange=22;
 		}
 
-		if(OrderInfo.authRecord.resultCode!="0"){
+		if(OrderInfo.authRecord.resultCode!="0"  && OrderInfo.preBefore.prcFlag != "Y"){
 			if (_querySecondBusinessAuth(addChange, "N", "showChangeCard")) {
 				return;
 			}
@@ -183,7 +183,18 @@ order.prodModify = (function(){
 			$.alert("提示","当前产品为省内新装且状态为【未激活】,不允许受理该业务！");
 			return;
 		}
-		//补换卡需要短信验证--redmine27429		
+		//查分省前置校验开关
+        var propertiesKey = "PRECHECKFLAG_"+OrderInfo.staff.soAreaId.substring(0,3);
+        var isPCF = offerChange.queryPortalProperties(propertiesKey);
+        if(isPCF == "ON"){
+        	if(OrderInfo.preBefore.prcFlag != "Y"){
+        		if(!_preCheckBeforeOrder(addChange,"showChangeCard")){
+            		return ;
+            	}
+        	}
+        }
+        OrderInfo.preBefore.prcFlag = "";
+      //补换卡需要短信验证--redmine27429		
 		var param = {'munber':order.prodModify.choosedProdInfo.accNbr,areaId:order.prodModify.choosedProdInfo.areaId};
 		$.callServiceAsJsonGet(contextPath+"/staff/login/changeUimCheck", param , {
 			"before" : function(){
@@ -237,7 +248,7 @@ order.prodModify = (function(){
 			"fail" : function(response){
 				$.alert("提示","请求可能发生异常，请稍候");
 			}
-		});
+		});	
 	};
 	//补卡规则校验
 	var _showChangeCard4Add = function () {
@@ -451,11 +462,23 @@ order.prodModify = (function(){
 	
 	//挂失解挂准备
 	var _showLossRepProd = function () {
-		if(OrderInfo.authRecord.resultCode!="0"){
+		if(OrderInfo.authRecord.resultCode!="0" && OrderInfo.preBefore.prcFlag != "Y"){
 			if(_querySecondBusinessAuth("18","Y","showLossRepProd")){
 				return;
 			}
 		}
+		//查分省前置校验开关
+        var propertiesKey = "PRECHECKFLAG_"+OrderInfo.staff.soAreaId.substring(0,3);
+        var isPCF = offerChange.queryPortalProperties(propertiesKey);
+        if(isPCF == "ON"){
+        	if(OrderInfo.preBefore.prcFlag != "Y"){
+        		if(!_preCheckBeforeOrder("18","showLossRepProd")){
+            		return ;
+            	}
+        	}
+        }
+        OrderInfo.preBefore.prcFlag = "";
+        
 		OrderInfo.busitypeflag=5;
 		var submitState="";
         var BO_ACTION_TYPE="";
@@ -483,11 +506,23 @@ order.prodModify = (function(){
 	};
 	//解挂准备
 	var _showLossRepProdReg = function () {
-		if(OrderInfo.authRecord.resultCode!="0"){
+		if(OrderInfo.authRecord.resultCode!="0" && OrderInfo.preBefore.prcFlag != "Y"){
 			if (_querySecondBusinessAuth("19", "Y", "showLossRepProdReg")) {
 				return;
 			}
 		}
+		//查分省前置校验开关
+        var propertiesKey = "PRECHECKFLAG_"+OrderInfo.staff.soAreaId.substring(0,3);
+        var isPCF = offerChange.queryPortalProperties(propertiesKey);
+        if(isPCF == "ON"){
+        	if(OrderInfo.preBefore.prcFlag != "Y"){
+        		if(!_preCheckBeforeOrder("19","showLossRepProdReg")){
+            		return ;
+            	}
+        	}
+        }
+        OrderInfo.preBefore.prcFlag = "";
+        
 		OrderInfo.busitypeflag=5;
 		var submitState="";
         var BO_ACTION_TYPE="";
@@ -512,11 +547,24 @@ order.prodModify = (function(){
 	};
 	//停机保号/取消停机保号准备
 	var _showStopKeepNumProd = function () {
-		if(OrderInfo.authRecord.resultCode!="0"){
+		if(OrderInfo.authRecord.resultCode!="0" && OrderInfo.preBefore.prcFlag != "Y"){
 			if (_querySecondBusinessAuth("20", "Y", "showStopKeepNumProd")) {
 				return;
 			}
 		}
+		
+		//查分省前置校验开关
+        var propertiesKey = "PRECHECKFLAG_"+OrderInfo.staff.soAreaId.substring(0,3);
+        var isPCF = offerChange.queryPortalProperties(propertiesKey);
+        if(isPCF == "ON"){
+        	if(OrderInfo.preBefore.prcFlag != "Y"){
+        		if(!_preCheckBeforeOrder("20","showStopKeepNumProd")){
+            		return ;
+            	}
+        	}
+        }
+        OrderInfo.preBefore.prcFlag = "";
+        
 		OrderInfo.busitypeflag=6;
 		var submitState="";
         var BO_ACTION_TYPE="";
@@ -544,11 +592,24 @@ order.prodModify = (function(){
 	};
 	//停机保号/取消停机保号准备
 	var _showStopKeepNumProdReg = function () {
-		if(OrderInfo.authRecord.resultCode!="0"){
+		if(OrderInfo.authRecord.resultCode!="0" && OrderInfo.preBefore.prcFlag != "Y"){
 			if (_querySecondBusinessAuth("21", "Y", "showStopKeepNumProdReg")) {
 				return;
 			}
 		}
+		
+		//查分省前置校验开关
+        var propertiesKey = "PRECHECKFLAG_"+OrderInfo.staff.soAreaId.substring(0,3);
+        var isPCF = offerChange.queryPortalProperties(propertiesKey);
+        if(isPCF == "ON"){
+        	if(OrderInfo.preBefore.prcFlag != "Y"){
+        		if(!_preCheckBeforeOrder("21","showStopKeepNumProdReg")){
+            		return ;
+            	}
+        	}
+        }
+        OrderInfo.preBefore.prcFlag = "";
+        
 		OrderInfo.busitypeflag=6;
 		var submitState="";
         var BO_ACTION_TYPE="";
@@ -647,15 +708,28 @@ order.prodModify = (function(){
 	};
 	//改客户资料返档
 	var _showActiveReturn = function () {
-		if(OrderInfo.authRecord.resultCode!="0"){
+		if(OrderInfo.authRecord.resultCode!="0" && OrderInfo.preBefore.prcFlag != "Y"){
 			if (_querySecondBusinessAuth("12", "Y", "showActiveReturn")) {
 				return;
 			}
 		}
+		
 		if(order.prodModify.choosedProdInfo.prodStateCd==CONST.PROD_STATUS_CD.STOP_PROD){
 			$.alert("提示","停机产品不允许受理！");
 			return;
 		}
+		//查分省前置校验开关
+        var propertiesKey = "PRECHECKFLAG_"+OrderInfo.staff.soAreaId.substring(0,3);
+        var isPCF = offerChange.queryPortalProperties(propertiesKey);
+        if(isPCF == "ON"){
+        	if(OrderInfo.preBefore.prcFlag != "Y"){
+        		if(!_preCheckBeforeOrder("12","showActiveReturn")){
+            		return ;
+            	}
+        	}
+        }
+        OrderInfo.preBefore.prcFlag = "";
+        
 		OrderInfo.busitypeflag=12;
 		/*if(_choosedProdInfo.prodStateCd!=CONST.PROD_STATUS_CD.READY_PROD){
 			$.alert("提示","产品必须为预开通时才能进行改客户资料返档","information");
@@ -1191,11 +1265,24 @@ order.prodModify = (function(){
 	};
 	//欠费拆机
 	var _showOweRemoveProd = function () {
-		if(OrderInfo.authRecord.resultCode!="0"){
+		if(OrderInfo.authRecord.resultCode!="0" && OrderInfo.preBefore.prcFlag != "Y"){
 			if (_querySecondBusinessAuth("10", "Y", "showOweRemoveProd")) {
 				return;
 			}
 		}
+		
+		//查分省前置校验开关
+        var propertiesKey = "PRECHECKFLAG_"+OrderInfo.staff.soAreaId.substring(0,3);
+        var isPCF = offerChange.queryPortalProperties(propertiesKey);
+        if(isPCF == "ON"){
+        	if(OrderInfo.preBefore.prcFlag != "Y"){
+        		if(!_preCheckBeforeOrder("10","showOweRemoveProd")){
+            		return ;
+            	}
+        	}
+        }
+        OrderInfo.preBefore.prcFlag = "";
+        
 		OrderInfo.busitypeflag=11;
 		/*
 		 * 规则后移
@@ -1229,11 +1316,24 @@ order.prodModify = (function(){
 	
 	//拆机
 	var _showRemoveProd = function () {
-		if(OrderInfo.authRecord.resultCode!="0"){
+		if(OrderInfo.authRecord.resultCode!="0" && OrderInfo.preBefore.prcFlag != "Y"){
 			if (_querySecondBusinessAuth("7", "Y", "showRemoveProd")) {
 				return;
 			}
 		}
+		
+		//查分省前置校验开关
+        var propertiesKey = "PRECHECKFLAG_"+OrderInfo.staff.soAreaId.substring(0,3);
+        var isPCF = offerChange.queryPortalProperties(propertiesKey);
+        if(isPCF == "ON"){
+        	if(OrderInfo.preBefore.prcFlag != "Y"){
+        		if(!_preCheckBeforeOrder("7","showRemoveProd")){
+            		return ;
+            	}
+        	}
+        }
+        OrderInfo.preBefore.prcFlag = "";
+		
 		/*if(order.prodModify.choosedProdInfo.prodStateCd!=CONST.PROD_STATUS_CD.NORMAL_PROD){
 			$.alert("提示","当前产品状态不是【在用】,不允许受理该业务！");
 			return;
@@ -1264,11 +1364,24 @@ order.prodModify = (function(){
 	
 	//预拆机
 	var _showOrderRemoveProd = function() {
-		if(OrderInfo.authRecord.resultCode!="0"){
+		if(OrderInfo.authRecord.resultCode!="0" && OrderInfo.preBefore.prcFlag != "Y"){
 			if (_querySecondBusinessAuth("5", "Y", "showOrderRemoveProd")) {
 				return;
 			}
 		}
+		
+		//查分省前置校验开关
+        var propertiesKey = "PRECHECKFLAG_"+OrderInfo.staff.soAreaId.substring(0,3);
+        var isPCF = offerChange.queryPortalProperties(propertiesKey);
+        if(isPCF == "ON"){
+        	if(OrderInfo.preBefore.prcFlag != "Y"){
+        		if(!_preCheckBeforeOrder("5","showOrderRemoveProd")){
+            		return ;
+            	}
+        	}
+        }
+        OrderInfo.preBefore.prcFlag = "";
+        
 		/*if(order.prodModify.choosedProdInfo.prodStateCd!=CONST.PROD_STATUS_CD.NORMAL_PROD){
 			$.alert("提示","当前产品状态不是【在用】,不允许受理该业务！");
 			return;
@@ -1299,11 +1412,24 @@ order.prodModify = (function(){
 	
 	//预拆机复机
 	var _showCoverOrderRemoveProd = function() {
-		if(OrderInfo.authRecord.resultCode!="0"){
+		if(OrderInfo.authRecord.resultCode!="0" && OrderInfo.preBefore.prcFlag != "Y"){
 			if (_querySecondBusinessAuth("6", "Y", "showCoverOrderRemoveProd")) {
 				return;
 			}
 		}
+		
+		//查分省前置校验开关
+        var propertiesKey = "PRECHECKFLAG_"+OrderInfo.staff.soAreaId.substring(0,3);
+        var isPCF = offerChange.queryPortalProperties(propertiesKey);
+        if(isPCF == "ON"){
+        	if(OrderInfo.preBefore.prcFlag != "Y"){
+        		if(!_preCheckBeforeOrder("6","showCoverOrderRemoveProd")){
+            		return ;
+            	}
+        	}
+        }
+        OrderInfo.preBefore.prcFlag = "";
+        
 		OrderInfo.busitypeflag=0;
 		/*
 		 * 规则后移
@@ -1338,11 +1464,24 @@ order.prodModify = (function(){
 	
 	//违章拆机
 	var _showBreakRuleRemoveProd = function() {
-		if(OrderInfo.authRecord.resultCode!="0"){
+		if(OrderInfo.authRecord.resultCode!="0" && OrderInfo.preBefore.prcFlag != "Y"){
 			if (_querySecondBusinessAuth("8", "Y", "showBreakRuleRemoveProd")) {
 				return;
 			}
 		}
+		
+		//查分省前置校验开关
+        var propertiesKey = "PRECHECKFLAG_"+OrderInfo.staff.soAreaId.substring(0,3);
+        var isPCF = offerChange.queryPortalProperties(propertiesKey);
+        if(isPCF == "ON"){
+        	if(OrderInfo.preBefore.prcFlag != "Y"){
+        		if(!_preCheckBeforeOrder("8","showBreakRuleRemoveProd")){
+            		return ;
+            	}
+        	}
+        }
+        OrderInfo.preBefore.prcFlag = "";
+        
 		OrderInfo.busitypeflag=9;
 		/*
 		 * 规则后移
@@ -1375,11 +1514,24 @@ order.prodModify = (function(){
 	};
 	//未激活拆机
 	var _showNoActiveRemoveProd = function() {
-		if(OrderInfo.authRecord.resultCode!="0"){
+		if(OrderInfo.authRecord.resultCode!="0" && OrderInfo.preBefore.prcFlag != "Y"){
 			if (_querySecondBusinessAuth("9", "Y", "showNoActiveRemoveProd")) {
 				return;
 			}
 		}
+		
+		//查分省前置校验开关
+        var propertiesKey = "PRECHECKFLAG_"+OrderInfo.staff.soAreaId.substring(0,3);
+        var isPCF = offerChange.queryPortalProperties(propertiesKey);
+        if(isPCF == "ON"){
+        	if(OrderInfo.preBefore.prcFlag != "Y"){
+        		if(!_preCheckBeforeOrder("9","showNoActiveRemoveProd")){
+            		return ;
+            	}
+        	}
+        }
+        OrderInfo.preBefore.prcFlag = "";
+        
 		OrderInfo.busitypeflag=10;
 		/*if(_choosedProdInfo.prodStateCd!=CONST.PROD_STATUS_CD.READY_PROD){
 			$.alert("提示","产品状态为未激活(预开通)时才能拆机","information");
@@ -1621,7 +1773,7 @@ order.prodModify = (function(){
 	var _spec_parm_user_change = function(){
 		var response = $.callServiceAsJson(contextPath + "/properties/getValue", {"key": "GOV_"+OrderInfo.cust.areaId.substr(0,3)});
 		if (CacheData.isGov(OrderInfo.cust.identityCd) && "ON" == response.data) {
-			if (OrderInfo.authRecord.resultCode != "0") {
+			if (OrderInfo.authRecord.resultCode != "0" && OrderInfo.preBefore.prcFlag != "Y") {
 				if (_querySecondBusinessAuth("27", "Y", "spec_parm_user_change")) {
 					return;
 				}
@@ -1636,6 +1788,18 @@ order.prodModify = (function(){
 			return;
 		}
 		
+		//查分省前置校验开关
+        var propertiesKey = "PRECHECKFLAG_"+OrderInfo.staff.soAreaId.substring(0,3);
+        var isPCF = offerChange.queryPortalProperties(propertiesKey);
+        if(isPCF == "ON"){
+        	if(OrderInfo.preBefore.prcFlag != "Y"){
+        		if(!_preCheckBeforeOrder("27","spec_parm_user_change")){
+            		return ;
+            	}
+        	}
+        }
+        OrderInfo.preBefore.prcFlag = "";
+        
 		OrderInfo.busitypeflag=4;
 		OrderInfo.initData(CONST.ACTION_CLASS_CD.PROD_ACTION,CONST.BO_ACTION_TYPE.PRODUCT_INFOS,0,CONST.getBoActionTypeName(CONST.BO_ACTION_TYPE.PRODUCT_INFOS),"");
 		var param = _getCallRuleParam(CONST.BO_ACTION_TYPE.PRODUCT_INFOS,_choosedProdInfo.prodInstId);
@@ -1688,15 +1852,29 @@ order.prodModify = (function(){
 	
 	//修改付费类型:修改付费类型、是否信控 --入口
 	var _spec_parm_fee_type_change = function(){
-		if(OrderInfo.authRecord.resultCode!="0"){
+		if(OrderInfo.authRecord.resultCode!="0" && OrderInfo.preBefore.prcFlag != "Y"){
 			if (_querySecondBusinessAuth("2", "N", "spec_parm_fee_type_change")) {
 				return;
 			}
 		}
+		
 		if(order.prodModify.choosedProdInfo.is3G == 'Y'){ //限制3G套餐不能修改付费类型、信控属性
 			$.alert('提示', '3G套餐不能修改付费类型或信控属性');
 			return;
 		}
+		
+		//查分省前置校验开关
+        var propertiesKey = "PRECHECKFLAG_"+OrderInfo.staff.soAreaId.substring(0,3);
+        var isPCF = offerChange.queryPortalProperties(propertiesKey);
+        if(isPCF == "ON"){
+        	if(OrderInfo.preBefore.prcFlag != "Y"){
+        		if(!_preCheckBeforeOrder("2","spec_parm_fee_type_change")){
+            		return ;
+            	}
+        	}
+        }
+        OrderInfo.preBefore.prcFlag = "";
+        
 		OrderInfo.busitypeflag=4;
 		OrderInfo.initData(CONST.ACTION_CLASS_CD.PROD_ACTION,CONST.BO_ACTION_TYPE.CHANGE_FEE_TYPE,0,CONST.getBoActionTypeName(CONST.BO_ACTION_TYPE.CHANGE_FEE_TYPE),"");
 		var param = _getCallRuleParam(CONST.BO_ACTION_TYPE.CHANGE_FEE_TYPE,_choosedProdInfo.prodInstId);
@@ -1781,11 +1959,24 @@ order.prodModify = (function(){
 	
 	//修改产品实例属性
 	var _spec_parm_change= function(){
-		if(OrderInfo.authRecord.resultCode!="0"){
+		if(OrderInfo.authRecord.resultCode!="0" && OrderInfo.preBefore.prcFlag != "Y"){
 			if (_querySecondBusinessAuth("16", "Y", "spec_parm_change")) {
 				return;
 			}
 		}
+		
+		//查分省前置校验开关
+        var propertiesKey = "PRECHECKFLAG_"+OrderInfo.staff.soAreaId.substring(0,3);
+        var isPCF = offerChange.queryPortalProperties(propertiesKey);
+        if(isPCF == "ON"){
+        	if(OrderInfo.preBefore.prcFlag != "Y"){
+        		if(!_preCheckBeforeOrder("16","spec_parm_change")){
+            		return ;
+            	}
+        	}
+        }
+        OrderInfo.preBefore.prcFlag = "";
+        
 		OrderInfo.busitypeflag=4;
 		OrderInfo.initData(CONST.ACTION_CLASS_CD.PROD_ACTION,CONST.BO_ACTION_TYPE.PRODUCT_PARMS,0,CONST.getBoActionTypeName(CONST.BO_ACTION_TYPE.PRODUCT_PARMS),"");
 		var param = _getCallRuleParam(CONST.BO_ACTION_TYPE.PRODUCT_PARMS,_choosedProdInfo.prodInstId);
@@ -1838,11 +2029,24 @@ order.prodModify = (function(){
 	
 	//修改产品密码 
 	var _showPasswordChange = function () {
-		if(OrderInfo.authRecord.resultCode!="0"){
+		if(OrderInfo.authRecord.resultCode!="0" && OrderInfo.preBefore.prcFlag != "Y"){
 			if (_querySecondBusinessAuth("14", "Y", "showPasswordChange")) {
 				return;
 			}
 		}
+		
+		//查分省前置校验开关
+        var propertiesKey = "PRECHECKFLAG_"+OrderInfo.staff.soAreaId.substring(0,3);
+        var isPCF = offerChange.queryPortalProperties(propertiesKey);
+        if(isPCF == "ON"){
+        	if(OrderInfo.preBefore.prcFlag != "Y"){
+        		if(!_preCheckBeforeOrder("14","showPasswordChange")){
+            		return ;
+            	}
+        	}
+        }
+        OrderInfo.preBefore.prcFlag = "";
+        
 		OrderInfo.busitypeflag=17;
 		OrderInfo.initData(CONST.ACTION_CLASS_CD.PROD_ACTION,CONST.BO_ACTION_TYPE.PRODUCT_PASSWORD,0,CONST.getBoActionTypeName(CONST.BO_ACTION_TYPE.PRODUCT_PASSWORD),"");
 		var param = _getCallRuleParam(CONST.BO_ACTION_TYPE.PRODUCT_PASSWORD,_choosedProdInfo.prodInstId);
@@ -1946,11 +2150,24 @@ order.prodModify = (function(){
 	
 	//密码重置 校验
 	var _showPasswordReset = function () {
-		if(OrderInfo.authRecord.resultCode!="0"){
+		if(OrderInfo.authRecord.resultCode!="0" && OrderInfo.preBefore.prcFlag != "Y"){
 			if (_querySecondBusinessAuth("15", "Y", "showPasswordReset")) {
 				return;
 			}
 		}
+		
+		//查分省前置校验开关
+        var propertiesKey = "PRECHECKFLAG_"+OrderInfo.staff.soAreaId.substring(0,3);
+        var isPCF = offerChange.queryPortalProperties(propertiesKey);
+        if(isPCF == "ON"){
+        	if(OrderInfo.preBefore.prcFlag != "Y"){
+        		if(!_preCheckBeforeOrder("15","showPasswordReset")){
+            		return ;
+            	}
+        	}
+        }
+        OrderInfo.preBefore.prcFlag = "";
+        
 		OrderInfo.busitypeflag=0;
 		OrderInfo.initData(CONST.ACTION_CLASS_CD.PROD_ACTION,CONST.BO_ACTION_TYPE.PRODUCT_PASSWORD,0,CONST.getBoActionTypeName(CONST.BO_ACTION_TYPE.PRODUCT_PASSWORD),"");
 		var param = _getCallRuleParam(CONST.BO_ACTION_TYPE.PRODUCT_PASSWORD,_choosedProdInfo.prodInstId);
@@ -2324,26 +2541,50 @@ order.prodModify = (function(){
 	
 	//可选包订购退订
 	var _orderAttachOffer = function () {
-		if(OrderInfo.authRecord.resultCode!="0"){
+		if(OrderInfo.authRecord.resultCode!="0" && OrderInfo.preBefore.prcFlag != "Y"){
 			if (_querySecondBusinessAuth("3", "N", "orderAttachOffer")) {
 				return;
 
 			}
 		}
-		OrderInfo.busitypeflag=14;
+		//查分省前置校验开关
+        var propertiesKey = "PRECHECKFLAG_"+OrderInfo.staff.soAreaId.substring(0,3);
+        var isPCF = offerChange.queryPortalProperties(propertiesKey);
+        if(isPCF == "ON"){
+        	if(OrderInfo.preBefore.prcFlag != "Y"){
+        		if(!_preCheckBeforeOrder("3","orderAttachOffer")){
+            		return ;
+            	}
+        	}
+        }
+        OrderInfo.preBefore.prcFlag = "";
+        
+        OrderInfo.busitypeflag=14;
 		AttachOffer.init();
 		$("#title_"+prodId).show();
 		$("#uimDiv_"+prodId).show();
-		$("#isMust_"+prodId).hide();
+		$("#isMust_"+prodId).hide();	
 	};
 	
 	//套餐变更
 	var _changeOffer = function () {
-		if(OrderInfo.authRecord.resultCode!="0"){
+		if(OrderInfo.authRecord.resultCode!="0" && OrderInfo.preBefore.prcFlag != "Y"){
 			if(_querySecondBusinessAuth("1","N","changeOffer")){
 				return;
 			}
 		}
+		//查分省前置校验开关
+        var propertiesKey = "PRECHECKFLAG_"+OrderInfo.staff.soAreaId.substring(0,3);
+        var isPCF = offerChange.queryPortalProperties(propertiesKey);
+        if(isPCF == "ON"){
+        	if(OrderInfo.preBefore.prcFlag != "Y"){
+        		if(!_preCheckBeforeOrder("1","changeOffer")){
+            		return ;
+            	}
+        	}
+        }
+        OrderInfo.preBefore.prcFlag = "";
+        
 		OrderInfo.busitypeflag=2;
 		OrderInfo.oldprodInstInfos = [];
 		OrderInfo.oldofferSpec = [];
@@ -3384,15 +3625,29 @@ order.prodModify = (function(){
 
 	//返销
 	var _showBuyBack = function () {
-		if(OrderInfo.authRecord.resultCode!="0"){
+		if(OrderInfo.authRecord.resultCode!="0" && OrderInfo.preBefore.prcFlag != "Y"){
 			if (_querySecondBusinessAuth("22", "Y", "showBuyBack")) {
 				return;
 			}
 		}
+		
 		if(order.prodModify.choosedProdInfo.prodStateCd==CONST.PROD_STATUS_CD.STOP_PROD){
 			$.alert("提示","停机产品不允许受理！");
 			return;
 		}
+		
+		//查分省前置校验开关
+        var propertiesKey = "PRECHECKFLAG_"+OrderInfo.staff.soAreaId.substring(0,3);
+        var isPCF = offerChange.queryPortalProperties(propertiesKey);
+        if(isPCF == "ON"){
+        	if(OrderInfo.preBefore.prcFlag != "Y"){
+        		if(!_preCheckBeforeOrder("22","showBuyBack")){
+            		return ;
+            	}
+        	}
+        }
+        OrderInfo.preBefore.prcFlag = "";
+        
 		OrderInfo.busitypeflag=0;
 		var queryParam = {
 				objInstId : _choosedProdInfo.prodInstId,
@@ -3551,7 +3806,7 @@ order.prodModify = (function(){
 	
 	//一卡双号订购显示
 	var _showNumberOrder = function () {
-		if(OrderInfo.authRecord.resultCode!="0"){
+		if(OrderInfo.authRecord.resultCode!="0" && OrderInfo.preBefore.prcFlag != "Y"){
 			if (_querySecondBusinessAuth("23", "Y", "showNumberOrder")) {
 				return;
 			}
@@ -3564,6 +3819,19 @@ order.prodModify = (function(){
 			$.alert("提示","当前产品状态不是【在用】,不允许受理该业务！");
 			return;
 		}
+		
+		//查分省前置校验开关
+        var propertiesKey = "PRECHECKFLAG_"+OrderInfo.staff.soAreaId.substring(0,3);
+        var isPCF = offerChange.queryPortalProperties(propertiesKey);
+        if(isPCF == "ON"){
+        	if(OrderInfo.preBefore.prcFlag != "Y"){
+        		if(!_preCheckBeforeOrder("23","showNumberOrder")){
+            		return ;
+            	}
+        	}
+        }
+        OrderInfo.preBefore.prcFlag = "";
+        
 		var param = {
 			mainAccNbr : _choosedProdInfo.accNbr,
 			areaId : _choosedProdInfo.areaId
@@ -3719,7 +3987,7 @@ order.prodModify = (function(){
 	
 	//一卡双号退订显示
 	var _showNumberUnOrder = function () {
-		if(OrderInfo.authRecord.resultCode!="0"){
+		if(OrderInfo.authRecord.resultCode!="0" && OrderInfo.preBefore.prcFlag != "Y"){
 			if (_querySecondBusinessAuth("24", "Y", "showNumberUnOrder")) {
 				return;
 			}
@@ -3732,6 +4000,19 @@ order.prodModify = (function(){
 			$.alert("提示","当前产品状态不是【在用】,不允许受理该业务！");
 			return;
 		}
+		
+		//查分省前置校验开关
+        var propertiesKey = "PRECHECKFLAG_"+OrderInfo.staff.soAreaId.substring(0,3);
+        var isPCF = offerChange.queryPortalProperties(propertiesKey);
+        if(isPCF == "ON"){
+        	if(OrderInfo.preBefore.prcFlag != "Y"){
+        		if(!_preCheckBeforeOrder("24","showNumberUnOrder")){
+            		return ;
+            	}
+        	}
+        }
+        OrderInfo.preBefore.prcFlag = "";
+        
 		var param = {
 			mainAccNbr : _choosedProdInfo.accNbr,
 			areaId : _choosedProdInfo.areaId
@@ -3985,7 +4266,7 @@ order.prodModify = (function(){
 	};
 
 	var _urgentOpen = function(){
-		if(OrderInfo.authRecord.resultCode!="0"){
+		if(OrderInfo.authRecord.resultCode!="0" && OrderInfo.preBefore.prcFlag != "Y"){
 			if (_querySecondBusinessAuth("20", "Y", "urgentOpen")) {//鉴权方式同停机保号
 				return;
 			}
@@ -3994,6 +4275,19 @@ order.prodModify = (function(){
 			$.alert("提示","产品状态为'在用'不需要紧急开机！");
 			return;
 		}
+		
+		//查分省前置校验开关
+        var propertiesKey = "PRECHECKFLAG_"+OrderInfo.staff.soAreaId.substring(0,3);
+        var isPCF = offerChange.queryPortalProperties(propertiesKey);
+        if(isPCF == "ON"){
+        	if(OrderInfo.preBefore.prcFlag != "Y"){
+        		if(!_preCheckBeforeOrder("20","urgentOpen")){
+            		return ;
+            	}
+        	}
+        }
+        OrderInfo.preBefore.prcFlag = "";
+        
 		OrderInfo.creditLimitId ="";
 		//查询权益项是否有紧急开机权益
 		var param={"accNbr":_choosedProdInfo.accNbr};
@@ -4099,6 +4393,55 @@ order.prodModify = (function(){
 					}
 				});
 	};
+	
+	var _preCheckBeforeOrder = function (serviceType,callbackFunc){
+		var accNbr = "";
+		if(serviceType=="28" || serviceType =="29" || serviceType =="30"){
+			accNbr = order.cust.checkUserInfo.accNbr;
+		}else{
+			var prod = order.prodModify.choosedProdInfo ; 
+			accNbr = prod.accNbr;
+		}
+		var params={
+				"serviceType" : serviceType,
+				"accNbr" : accNbr
+		};
+		var response = $.callServiceAsJson(contextPath + "/order/prodModify/preCheckBeforeOrde", params);
+		if(response.data.checkLevel == 0){
+			return true;
+		}else if(response.data.checkLevel == 10){
+			var content = response.data.checkInfo;
+			$.confirm("提示",content,{ 
+				yes:function(){
+				},
+				yesdo:function(){
+					OrderInfo.preBefore.prcFlag = "Y";
+					if (ec.util.isObj(callbackFunc)) {
+						if (typeof callbackFunc == "string") {
+							if (callbackFunc.indexOf(".") != -1) {
+								eval(callbackFunc + "()");
+							} else {
+								eval("order.prodModify." + callbackFunc + "()");
+							}
+						}else if(typeof callbackFunc == "function"){
+							callbackFunc();
+						}
+					}
+					OrderInfo.preBefore.prcFlag = "";
+				},
+				no:function(){
+				}
+			});
+			return false;
+		}else if(response.data.checkLevel == 20){
+			$.alert("前置校验限制",response.data.checkInfo);
+			return false;
+		}else{
+			$.alertM(response.data);
+			return false;
+		}
+	};
+	
 	return {
 		changeCard : _changeCard,
 		getChooseProdInfo : _getChooseProdInfo,
@@ -4192,6 +4535,7 @@ order.prodModify = (function(){
 		querySecondBusinessAuth:_querySecondBusinessAuth,
 		urgentOpen : _urgentOpen,
 		phoneOpen : _phoneOpen,
-		accountChange:_accountChange
+		accountChange:_accountChange,
+		preCheckBeforeOrder : _preCheckBeforeOrder
 	};
 })();

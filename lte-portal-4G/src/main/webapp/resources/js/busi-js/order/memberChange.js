@@ -36,6 +36,19 @@ order.memberChange = function(){
 			$.alert("提示","当前产品状态不是【在用】,不允许受理该业务！");
 			return;
 		}
+		
+		//查分省前置校验开关
+        var propertiesKey = "PRECHECKFLAG_"+OrderInfo.staff.soAreaId.substring(0,3);
+        var isPCF = offerChange.queryPortalProperties(propertiesKey);
+        if(isPCF == "ON"){
+        	if(OrderInfo.preBefore.prcFlag != "Y"){
+        		if(!order.prodModify.preCheckBeforeOrder("4","order.memberChange.showOfferCfgDialog")){
+            		return ;
+            	}
+        	}
+        }
+        OrderInfo.preBefore.prcFlag = "";
+        
 		_memberAddList=[];
 		idnum = 1;
 		OrderInfo.busitypeflag=3;

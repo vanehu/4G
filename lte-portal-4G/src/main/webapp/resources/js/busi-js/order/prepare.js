@@ -22,10 +22,50 @@ order.prepare = (function(){
 						return;
 					}
 					var authResult = order.prodModify.querySecondBusinessAuth("30", "Y", function () {
-						callback(event, url, forTab);
+						if(custId !="-1"){
+							//查分省前置校验开关
+					        var propertiesKey = "PRECHECKFLAG_"+OrderInfo.staff.soAreaId.substring(0,3);
+					        var isPCF = offerChange.queryPortalProperties(propertiesKey);
+					        if(isPCF == "ON"){
+					        	if(OrderInfo.preBefore.prcFlag != "Y"){
+					        		var checkPre = order.prodModify.preCheckBeforeOrder("30",function () {
+					        			callback(event, url, forTab);
+					        		});
+					                if(checkPre){
+					                	callback(event, url, forTab);
+					                }
+					        	}
+					        }else{
+					        	callback(event, url, forTab);
+					        }
+					        OrderInfo.preBefore.prcFlag = "";
+						}else{
+							callback(event, url, forTab);
+						}
+						
 					});
 					if (!authResult) {
-						callback(event, url, forTab);
+						if(custId !="-1"){
+							//查分省前置校验开关
+					        var propertiesKey = "PRECHECKFLAG_"+OrderInfo.staff.soAreaId.substring(0,3);
+					        var isPCF = offerChange.queryPortalProperties(propertiesKey);
+					        if(isPCF == "ON"){
+					        	if(OrderInfo.preBefore.prcFlag != "Y"){
+					        		var checkPre = order.prodModify.preCheckBeforeOrder("30",function () {
+					        			callback(event, url, forTab);
+					        		});
+					        		if(checkPre){
+					                	callback(event, url, forTab);
+					                }
+					        	}
+					        }else{
+					        	callback(event, url, forTab);
+					        }
+					        OrderInfo.preBefore.prcFlag = "";
+						}else{
+							callback(event, url, forTab);
+						}
+						
 					}
 				} else {
 					callback(event, url, forTab);
@@ -44,10 +84,42 @@ order.prepare = (function(){
 						return;
 					}
 					var authResult = order.prodModify.querySecondBusinessAuth("30", "Y", function () {
-						callback(event, url, forTab);
+						//查分省前置校验开关
+				        var propertiesKey = "PRECHECKFLAG_"+OrderInfo.staff.soAreaId.substring(0,3);
+				        var isPCF = offerChange.queryPortalProperties(propertiesKey);
+				        if(isPCF == "ON"){
+				        	if(OrderInfo.preBefore.prcFlag != "Y"){
+				        		var checkPre = order.prodModify.preCheckBeforeOrder("30",function () {
+				        			callback(event, url, forTab);
+				        		});
+				        		if(checkPre){
+				        			callback(event, url, forTab);
+				        		}
+				        	}
+				        }else{
+				        	callback(event, url, forTab);
+				        }
+				        OrderInfo.preBefore.prcFlag = "";
+				        
 					});
 					if (!authResult) {
-						callback(event, url, forTab);
+						//查分省前置校验开关
+				        var propertiesKey = "PRECHECKFLAG_"+OrderInfo.staff.soAreaId.substring(0,3);
+				        var isPCF = offerChange.queryPortalProperties(propertiesKey);
+				        if(isPCF == "ON"){
+				        	if(OrderInfo.preBefore.prcFlag != "Y"){
+				        		var checkPre = order.prodModify.preCheckBeforeOrder("30",function () {
+				        			callback(event, url, forTab);
+				        		});
+				        		if(checkPre){
+				        			callback(event, url, forTab);
+				        		}
+				        	}
+				        }else{
+				        	callback(event, url, forTab);
+				        }
+				        OrderInfo.preBefore.prcFlag = "";
+				        
 					}
 				} else {
 					callback(event, url, forTab);

@@ -557,7 +557,7 @@ prod.telnum = (function(){
 		
 		//规则校验
 		var _initPage = function(){
-			if(OrderInfo.authRecord.resultCode!="0"){
+			if(OrderInfo.authRecord.resultCode!="0" && OrderInfo.preBefore.prcFlag != "Y"){
 				if (order.prodModify.querySecondBusinessAuth("17", "Y", "prod.telnum.initPage")) {
 					return;
 				}
@@ -566,6 +566,19 @@ prod.telnum = (function(){
 				$.alert("提示","当前产品状态不是【在用】,不允许受理该业务！");
 				return;
 			}
+			
+			//查分省前置校验开关
+	        var propertiesKey = "PRECHECKFLAG_"+OrderInfo.staff.soAreaId.substring(0,3);
+	        var isPCF = offerChange.queryPortalProperties(propertiesKey);
+	        if(isPCF == "ON"){
+	        	if(OrderInfo.preBefore.prcFlag != "Y"){
+	        		if(!order.prodModify.preCheckBeforeOrder("17","prod.telnum.initPage")){
+	            		return ;
+	            	}
+	        	}
+	        }
+	        OrderInfo.preBefore.prcFlag = "";
+	        
 			OrderInfo.busitypeflag=0;
 			var param = order.prodModify.getCallRuleParam(CONST.BO_ACTION_TYPE.UPDATE_ACCNBR,order.prodModify.choosedProdInfo.prodInstId);
 			var callParam = {

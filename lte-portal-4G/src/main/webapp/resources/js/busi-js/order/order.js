@@ -163,41 +163,85 @@ order.service = (function(){
 	
 	//订购销售品
 	var _buyService = function(id,specId,price) {
-		var custId = OrderInfo.cust.custId;
-		offerprice = price;
-		if (OrderInfo.cust == undefined || custId == undefined || custId == "") {
-			$.alert("提示", "在订购套餐之前请先进行客户定位！");
-			return;
-		}
-		var callback = function () {
-			var param = {
-				"price": price,
-				"id": id,
-				"specId": specId,
-				"custId": OrderInfo.cust.custId,
-				"areaId": OrderInfo.staff.soAreaId
-			};
-			if (OrderInfo.actionFlag == 2) {  //套餐变更不做校验
-				order.service.opeSer(param);
-			} else {  //新装
-				var boInfos = [{
-					boActionTypeCd: "S1",//动作类型
-					instId: "",
-					specId: specId //产品（销售品）规格ID
-				}];
-				if (rule.rule.ruleCheck(boInfos)) {  //业务规则校验通过
+		if(OrderInfo.preBefore.prcFlag != "Y"){
+			var custId = OrderInfo.cust.custId;
+			offerprice = price;
+			if (OrderInfo.cust == undefined || custId == undefined || custId == "") {
+				$.alert("提示", "在订购套餐之前请先进行客户定位！");
+				return;
+			}
+			var callback = function () {
+				var param = {
+					"price": price,
+					"id": id,
+					"specId": specId,
+					"custId": OrderInfo.cust.custId,
+					"areaId": OrderInfo.staff.soAreaId
+				};
+				if (OrderInfo.actionFlag == 2) {  //套餐变更不做校验
 					order.service.opeSer(param);
+				} else {  //新装
+					var boInfos = [{
+						boActionTypeCd: "S1",//动作类型
+						instId: "",
+						specId: specId //产品（销售品）规格ID
+					}];
+					if (rule.rule.ruleCheck(boInfos)) {  //业务规则校验通过
+						order.service.opeSer(param);
+					}
+				}
+			};
+			if (OrderInfo.busitypeflag == 2) {
+				callback();
+			} else {
+				var authResult = order.prodModify.querySecondBusinessAuth("29", "Y", function () {
+					if(custId !="-1" ){
+						//查分省前置校验开关
+				        var propertiesKey = "PRECHECKFLAG_"+OrderInfo.staff.soAreaId.substring(0,3);
+				        var isPCF = offerChange.queryPortalProperties(propertiesKey);
+				        if(isPCF == "ON"){
+				        	if(OrderInfo.preBefore.prcFlag != "Y"){
+				        		var checkPre = order.prodModify.preCheckBeforeOrder("29",function () {
+				        			callback();
+				        		});
+				        		if(checkPre){
+				        			callback();
+				        		}
+				        	}
+				        }else{
+				        	callback();
+				        }
+				        OrderInfo.preBefore.prcFlag = "";
+					}else{
+						callback();
+					}
+					
+				});
+				if (!authResult) {
+					if(custId !="-1" ){
+						//查分省前置校验开关
+				        var propertiesKey = "PRECHECKFLAG_"+OrderInfo.staff.soAreaId.substring(0,3);
+				        var isPCF = offerChange.queryPortalProperties(propertiesKey);
+				        if(isPCF == "ON"){
+				        	if(OrderInfo.preBefore.prcFlag != "Y"){
+				        		var checkPre = order.prodModify.preCheckBeforeOrder("29",function () {
+				        			callback();
+				        		});
+				        		if(checkPre){
+				        			callback();
+				        		}
+				        	}
+				        }else{
+				        	callback();
+				        }
+				        OrderInfo.preBefore.prcFlag = "";
+					}else{
+						callback();
+					}
 				}
 			}
-		};
-		if (OrderInfo.busitypeflag == 2) {
-			callback();
-		} else {
-			var authResult = order.prodModify.querySecondBusinessAuth("29", "Y", callback);
-			if (!authResult) {
-				callback();
-			}
 		}
+		
 	};
 	
 	//获取销售品构成，并选择数量

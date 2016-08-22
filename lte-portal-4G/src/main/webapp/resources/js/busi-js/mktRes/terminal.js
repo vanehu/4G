@@ -477,10 +477,50 @@ mktRes.terminal = (function($){
 						_chkState();
 						order.prepare.phoneNumDialog('terminal', 'Y1', '01');
 					};
-					var authResult = order.prodModify.querySecondBusinessAuth("28", "Y", callback);
+					var authResult = order.prodModify.querySecondBusinessAuth("28", "Y",  function () {
+						if(custId !="-1"){
+							//查分省前置校验开关
+					        var propertiesKey = "PRECHECKFLAG_"+OrderInfo.staff.soAreaId.substring(0,3);
+					        var isPCF = offerChange.queryPortalProperties(propertiesKey);
+					        if(isPCF == "ON"){
+					        	if(OrderInfo.preBefore.prcFlag != "Y"){
+					        		var checkPre = order.prodModify.preCheckBeforeOrder("28",function () {
+					        			callback();
+					        		});
+					        		if(checkPre){
+					                	callback();
+					                }
+					        	}
+					        }else{
+					        	callback();
+					        }
+						}else{
+							callback();
+						}
+						
+					});
 					if (!authResult) {
-						callback();
+						if(custId !="-1"){
+							//查分省前置校验开关
+					        var propertiesKey = "PRECHECKFLAG_"+OrderInfo.staff.soAreaId.substring(0,3);
+					        var isPCF = offerChange.queryPortalProperties(propertiesKey);
+					        if(isPCF == "ON"){
+					        	if(OrderInfo.preBefore.prcFlag != "Y"){
+					        		var checkPre = order.prodModify.preCheckBeforeOrder("28",function () {
+					        			callback();
+					        		});
+					        		if(checkPre){
+					                	callback();
+					                }
+					        	}
+					        }else{
+					        	callback();
+					        }
+						}else{
+							callback();
+						}
 					}
+					OrderInfo.preBefore.prcFlag = "";
 				});
 				$("#cfsjA").click(function(){
 					_selectHy(1);

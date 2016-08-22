@@ -635,4 +635,7 @@ public interface OrderBmo {
 	public Map<String, Object> blackListInvalid(Map<String, Object> dataBusMap, String optFlowNum, 
 			SessionStaff sessionStaff) throws Exception;
 	
+	public Map<String, Object> preCheckBeforeOrde(Map<String, Object> paramMap,
+			String flowNum, SessionStaff sessionStaff)throws Exception;
+	
 }

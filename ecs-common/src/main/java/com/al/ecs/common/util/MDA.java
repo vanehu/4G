@@ -370,6 +370,11 @@ public class MDA {
 	 * 回执重打分省开关 
 	 */
 	public static final Map<String,String> RETURN_RECEIPT = new HashMap<String,String>();
+	
+	/**
+	 * 前置校验分省开关 
+	 */
+	public static final Map<String,String> PRECHECKFLAG = new HashMap<String,String>();
 
 	/**
 	 * 翼支付托收的属性分省开关

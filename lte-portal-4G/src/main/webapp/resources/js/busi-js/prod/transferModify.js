@@ -46,6 +46,19 @@ prod.transferModify = (function(){
 			$.alert("提示","当前产品状态不是【在用】,不允许受理该业务！");
 			return;
 		}
+		
+		//查分省前置校验开关
+        var propertiesKey = "PRECHECKFLAG_"+OrderInfo.staff.soAreaId.substring(0,3);
+        var isPCF = offerChange.queryPortalProperties(propertiesKey);
+        if(isPCF == "ON"){
+        	if(OrderInfo.preBefore.prcFlag != "Y"){
+        		if(!order.prodModify.preCheckBeforeOrder("11","prod.transferModify.showCustTransferReturn")){
+            		return ;
+            	}
+        	}
+        }
+        OrderInfo.preBefore.prcFlag = "";
+        
 		OrderInfo.busitypeflag=0;
 		/*	if(order.prodModify.choosedProdInfo.prodStateCd!="100000"||order.prodModify.choosedProdInfo.prodStateCd!="140000"){
 					$.alert("提示","产品状态为\"在用\"才能进行过户","information");

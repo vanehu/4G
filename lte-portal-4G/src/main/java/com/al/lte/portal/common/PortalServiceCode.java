@@ -1060,6 +1060,9 @@ public final class PortalServiceCode {
     
     /** 二维码--绑定登录 **/
     public static final String BIND_QR_CODE_RECORDS = "sys-relationCodeByStaff";
+    
+    /**前置校验接口*/
+    public static final String PRE_CHECK_ORDER = "biz-service/intf.soService/preCheckBeforeOrder";
 
 }
 
