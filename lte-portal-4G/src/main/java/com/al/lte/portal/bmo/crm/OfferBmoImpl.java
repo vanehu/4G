@@ -78,6 +78,7 @@ public class OfferBmoImpl implements OfferBmo {
 			//获取当前月份(0-11,从0开始，如0为1月份，1为2月份)
 			Calendar calendar = Calendar.getInstance();
 			int currentMonth = calendar.get(Calendar.MONTH) + 1;
+			int currentYear = calendar.get(Calendar.YEAR);
 			//循环遍历可订购附属销售品
 			for(int i = 0, len = offerSpecCanBuyList.size(); i < len; i++){				
 				Map<String, Object> offerSpecCanBuy = offerSpecCanBuyList.get(i);				
@@ -97,10 +98,11 @@ public class OfferBmoImpl implements OfferBmo {
 						if("N/A".equals(expireDateStr)){
 							continue;
 						} else{
-							//截取失效时间(20150201000000)的月份(02)
-							int expireDate = Integer.parseInt(expireDateStr.substring(4,6));
+							//截取失效时间(20150201000000)的年份和月份
+							int expireDateYear = Integer.parseInt(expireDateStr.substring(0,4));
+							int expireDateMonth = Integer.parseInt(expireDateStr.substring(4,6));
 							//如果已订购在6个月之内的有效期
-							if((currentMonth <= expireDate) && (currentMonth >= expireDate - 5)){
+							if((currentMonth <= expireDateMonth) && (currentMonth >= expireDateMonth - 5) && (currentYear == expireDateYear)){
 								//如果ifDueOrderAgain为Y，则可以重复订购(续约)；否则过滤该可订购附属销售品
 								if(!"Y".equals(ifDueOrderAgain)){
 									offerSpecCanBuyList.remove(i);

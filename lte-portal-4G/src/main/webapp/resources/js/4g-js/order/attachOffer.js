@@ -4083,9 +4083,11 @@ AttachOffer = (function() {
 										var expireDate = this.expDate;//已订购的附属销售品的失效时间
 										if(!(expireDate == null || expireDate == undefined || expireDate == "")){
 											//1.1只有返回expireDate，则进行比对；否则不进行比对
-											expireDate = parseInt(expireDate.substring(4,6));//截取失效时间20150201000000的月份02
-											var currentMonth = new Date().getMonth() + 1;//获取当前月份(0-11,从0开始，如0为1月份，1为2月份)
-											if((currentMonth <= expireDate) && (currentMonth >= expireDate - 5)){
+											var expireDateYear = parseInt(expireDate.substring(0,4));//截取失效时间的年份
+											var expireDateMonth = parseInt(expireDate.substring(4,6));//截取失效时间20150201000000的月份02
+											var currentMonth = new Date().getMonth() + 1;//获取当前月份
+											var currentYear = new Date().getFullYear();//获取当前年份
+											if((currentMonth <= expireDateMonth) && (currentMonth >= expireDateMonth - 5) && (currentYear == expireDateYear)){
 												//2.如果该附属销售品在6个月到期范围之内
 												if(ifDueOrderAgain != "Y"){
 													//2.1如果ifDueOrderAgain值为Y，表示可重复订购，则不过滤，展示于页面的可订购列表
