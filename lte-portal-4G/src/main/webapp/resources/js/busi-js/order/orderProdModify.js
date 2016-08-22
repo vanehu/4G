@@ -336,7 +336,7 @@ order.prodModify = (function(){
 		if (smspwd=="") {
 			smspwd="N";
 		}
-		var params="smspwd=" + smspwd;
+		var params = "smspwd=" + smspwd + "&number=" + order.prodModify.choosedProdInfo.accNbr;
 		_setDisable("#changeuimsmsbutton", "#changeUimSmsForm");
 		$.callServiceAsJson(contextPath+"/staff/login/changeUimSmsValid", params, {
 			"before":function(){
