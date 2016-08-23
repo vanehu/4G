@@ -2013,7 +2013,7 @@ AttachOffer = (function() {
 		}else{	
 			content = "<div style='max-height:300px;overflow:auto;'>" + content + "</div>";
 			$.confirm("订购： " + specName,content,{ 
-				yes:function(){
+				yestocheck:function(){
 					CacheData.setOffer2ExcludeOfferSpec(prodId,param);
 					excludeAddattch(prodId,offerSpecId,param);
 					excludeAddServ(prodId,"",paramObj);

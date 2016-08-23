@@ -51,6 +51,10 @@ var getAlertTimeStamp = function(){
                     		options.yesdo();
                     		return;
                     	} 
+                    	if($.isFunction(options.yestocheck)){
+                    		options.yestocheck();
+                    		return;
+                    	} 
                     }else{
                     	if($.isFunction(options.no)){
                     		options.no();
