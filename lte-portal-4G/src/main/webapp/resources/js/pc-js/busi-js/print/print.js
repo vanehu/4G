@@ -1010,10 +1010,15 @@ common.print = (function($){
 			$.alertM(response.data);
 			return false;
 		} else if(response.code != 0 || response.data.resultCode != "0") {
-			$.alert("提示", _getPrintState(printFlag) + "调用集团发票打印处理接口失败，请稍后重试");
-			return false;
+			if(ec.util.isObj(response.data.resultMsg)){
+				$.alert("信息提示","打印失败,失败原因："+response.data.resultMsg);
+				return false;
+			}else{
+			    $.alert("提示", _getPrintState(printFlag) + "调用集团发票打印处理接口失败，请稍后重试");
+			    return false;
+			}
 		}
-		return response;
+	    return response;
 	};
 	var _setInvoiceId=function(invoiceInfos, invoiceIds, printFlag) {
 		for(var i=0;i<invoiceInfos.length;i++){
