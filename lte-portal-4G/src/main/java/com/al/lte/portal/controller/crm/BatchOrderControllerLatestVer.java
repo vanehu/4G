@@ -1793,11 +1793,10 @@ public class BatchOrderControllerLatestVer  extends BaseController {
 //					int totalResultNum = MapUtils.getIntValue(resultMap, "totalResultNum", 0);
 					String excelTitle = "ecs_" + param.get("batchId").toString();
 					String[][] headers = {
-						{"STORE_NAME","AREA_NAME","STATUS_NAME","CREATE_DATE","UPDATE_DATE","LOG_DESC","REMARK"},
-						{"仓库名称","区域名称","终端状态","创建日期","更新日期","描 述","备 注"}
+						{"STORE_NAME","AREA_NAME","INST_CODE","STATUS_NAME","CREATE_DATE","UPDATE_DATE","LOG_DESC","REMARK"},
+						{"仓库名称","区域名称","终端串码","终端状态","创建日期","更新日期","描 述","备 注"}
 					};
 					ExcelUtil.exportExcelXls(excelTitle, headers, resultList, response, null);
-//					ExcelUtil.exportExcelXlsx(excelTitle, headers, resultList, response, null);
 				}
 			}
 		} catch (Exception e) {
