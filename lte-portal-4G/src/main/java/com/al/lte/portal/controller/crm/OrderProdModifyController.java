@@ -37,6 +37,7 @@ import com.al.lte.portal.bmo.crm.CustBmo;
 import com.al.lte.portal.bmo.crm.OrderBmo;
 import com.al.lte.portal.bmo.crm.RuleBmo;
 import com.al.lte.portal.bmo.staff.StaffBmo;
+import com.al.lte.portal.common.Const;
 import com.al.lte.portal.common.SysConstant;
 import com.al.lte.portal.model.SessionStaff;
 
@@ -449,6 +450,25 @@ public class OrderProdModifyController extends BaseController {
             HttpServletResponse response,HttpSession httpSession) {
 		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
                 SysConstant.SESSION_KEY_LOGIN_STAFF);
+		String identityCd = MapUtils.getString(param, "identityCd","");
+		String identityNum = MapUtils.getString(param, "identityNum","");
+		String busiFlag = MapUtils.getString(param, "busiFlag","");
+		if(identityCd.equals("1")){
+			if("FD".equals(busiFlag)){
+				if(null != httpSession.getAttribute(Const.CACHE_CERTINFO)){
+					String certNum = (String)httpSession.getAttribute(Const.CACHE_CERTINFO);
+					if(!certNum.equals(identityNum)){
+						model.addAttribute("busiFlag", busiFlag);
+						model.addAttribute("message", "证件信息与读卡信息不吻合,请重新读卡.");
+						return "/cust/cust-transfer-list";
+					}
+				}else{
+					model.addAttribute("busiFlag", busiFlag);
+					model.addAttribute("message", "证件为身份证,请用读卡进行证件扫描.");
+					return "/cust/cust-transfer-list";
+				}
+			}
+		}
 		Map resultMap =new HashMap();
 		httpSession.setAttribute("transferCustAccNbr", param.get("acctNbr"));
 		param.put("areaId", sessionStaff.getCurrentAreaId());

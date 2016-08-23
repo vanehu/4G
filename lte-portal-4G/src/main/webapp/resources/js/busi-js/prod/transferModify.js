@@ -522,6 +522,9 @@ prod.transferModify = (function(){
 					"partyName":"",
 					"custQueryType":$("#custQueryType").val()
 			};
+			if(OrderInfo.actionFlag==43){
+				param.busiFlag = 'FD';
+			}
 			OrderInfo.ReturnFileParam = param;
 			$.callServiceAsHtml(contextPath+"/order/prodModify/transferQueryCust",param,{
 				"before":function(){
@@ -674,7 +677,11 @@ prod.transferModify = (function(){
 	};
 	//过户客户定位查询列表
 	var _queryCallBack = function(response) {
-		if(response.data.indexOf("false") >=0) {
+		if(response.data.indexOf("FD_") >=0){
+			var message = response.data.split("_");
+			$.alert("提示",message[1]);
+			return;
+		}else if(response.data.indexOf("false") >=0) {
 			if(OrderInfo.actionFlag==43){
 				$("#addCust").show();
 			}
@@ -705,19 +712,22 @@ prod.transferModify = (function(){
 		_BO_ACTION_TYPE = CONST.BO_ACTION_TYPE.TRANSFERRETURN;
 		if($("#TransferNum").val().length<14){
 			//TODO init view 
-			easyDialog.open({
-				container : 'Transferauth'
-			});
-			$("#transAuthClose").off("click").on("click",function(event){
-				easyDialog.close();
-				authFlag="";
-				$("#transAuthPassword").val("");
-			});
-			}
-			else{
+			if(OrderInfo.actionFlag == 43){
+				authFlag = '1';
 				_custAuth(scope);
+			}else{
+				easyDialog.open({
+					container : 'Transferauth'
+				});
+				$("#transAuthClose").off("click").on("click",function(event){
+					easyDialog.close();
+					authFlag="";
+					$("#transAuthPassword").val("");
+				});
 			}
-
+		}else{
+			_custAuth(scope);
+		}
 	};
 	/**
 	 * 客户鉴权
@@ -936,7 +946,9 @@ prod.transferModify = (function(){
 						for(var i=0;i<data.length;i++){
 							var busiStatus = data[i];
 							$("#p_cust_tra_identityCd").append("<option value='"+busiStatus.attrValueCode+"' >"+busiStatus.attrValueName+"</option>");
-							
+						}
+						if(OrderInfo.actionFlag == 43){
+							order.cust.custidentidiesTypeCdChoose($("#p_cust_tra_identityCd"),'TransferNum');
 						}
 					}
 				}else if(response.code==-2){

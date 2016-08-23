@@ -279,6 +279,14 @@ order.cust = (function(){
 			$("#"+id).attr("placeHolder","请输入证件号码");
 			$("#"+id).attr("data-validate","validate(required:请准确填写证件号码) on(keyup)");
 		}
+		
+		// 反档处理
+		if(OrderInfo.actionFlag == 43){
+			var isID = identidiesTypeCd==1;
+			var isIdTypeOff = OrderInfo.staff.idType=="OFF";
+			$("#"+id).attr("disabled",isID&&(!isIdTypeOff));
+		}
+		
 		if(identidiesTypeCd!=-1){
 			$("#isAppointNum").attr("checked",false);
 		}
