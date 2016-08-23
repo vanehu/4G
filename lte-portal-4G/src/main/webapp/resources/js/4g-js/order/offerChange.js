@@ -1083,6 +1083,7 @@ offerChange = (function() {
 		
 		//可选包
 		var offers = offerChange.resultOffer.prodOfferInfos;
+		AttachOffer.updateCheckList = [];
 		if(ec.util.isArray(offers)){
 			if(ec.util.isArray(OrderInfo.offer.offerMemberInfos)){//多产品套餐
 				$.each(OrderInfo.offer.offerMemberInfos,function(){
@@ -1128,14 +1129,20 @@ offerChange = (function() {
 									$("#del_"+prodId+"_"+this.prodOfferId).hide();
 								}else {
 									if(ec.util.isObj(this.prodOfferId) && this.prodOfferId!=OrderInfo.offerSpec.offerSpecId){
+										var updateCheck = {
+												prodId: prodId,
+												prodOfferId: this.prodOfferId
+										};
+										AttachOffer.updateCheckList.push(updateCheck);
 										//AttachOffer.addOpenList(prodId,this.prodOfferId);			
-										AttachOffer.addOfferSpecByCheck(prodId,this.prodOfferId);
+										//AttachOffer.addOfferSpecByCheck(prodId,this.prodOfferId);
 									}
 								}
 							}
 						}
 					});
 				});
+				AttachOffer.addOfferSpecByCheckForUpdate(AttachOffer.updateCheckList);
 			}
 		}
 	};

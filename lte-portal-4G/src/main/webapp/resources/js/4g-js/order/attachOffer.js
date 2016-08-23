@@ -25,6 +25,8 @@ AttachOffer = (function() {
 	
 	var _labelList = []; //标签列表
 	
+	var _updateCheckList = [];//预检验省份返回
+	
 //	var _terminalGroups=[];//终端组
 	var totalNums=0;//记录总共添加了多少个终端输入框
 	
@@ -1807,6 +1809,44 @@ AttachOffer = (function() {
 			},
 			yesdo:function(){
 				_checkOfferExcludeDepend(prodId,newSpec);
+			}
+		});
+	};
+	
+	//根据预校验返回订购附属销售品
+	var _addOfferSpecByCheckForUpdate = function(checkList){
+		var content = "";
+		$.each(checkList,function(){
+			var prodId = this.prodId;
+			var offerSpecId = this.prodOfferId;
+			var newSpec = _setSpec(prodId,offerSpecId);
+			if(newSpec==undefined){ //没有在已开通附属销售列表中
+				return;
+			}
+			content =content + CacheData.getOfferProdStr(prodId,newSpec,0) +"<br/>";
+		});
+		$.confirm("信息确认",content,{ 
+			yes:function(){
+				$.each(checkList,function(){
+					var prodId = this.prodId;
+					var offerSpecId = this.prodOfferId;
+					var newSpec = _setSpec(prodId,offerSpecId);
+					if(newSpec==undefined){ //没有在已开通附属销售列表中
+						return;
+					}
+					CacheData.setServ2OfferSpec(prodId,newSpec);
+				});
+			},
+			yesdo:function(){
+				$.each(checkList,function(){
+					var prodId = this.prodId;
+					var offerSpecId = this.prodOfferId;
+					var newSpec = _setSpec(prodId,offerSpecId);
+					if(newSpec==undefined){ //没有在已开通附属销售列表中
+						return;
+					}
+					_checkOfferExcludeDepend(prodId,newSpec);
+				});
 			}
 		});
 	};
@@ -5815,6 +5855,8 @@ AttachOffer = (function() {
 		queryOfferAndServDependForCancel : _queryOfferAndServDependForCancel,
 		searchSchools			: _searchSchools,
 		selectSearch			: _searchSelect,
-		schoolClose				: _searchClose
+		schoolClose				: _searchClose,
+		updateCheckList : _updateCheckList,
+		addOfferSpecByCheckForUpdate : _addOfferSpecByCheckForUpdate
 	};
 })();
