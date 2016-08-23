@@ -80,7 +80,7 @@ public class OfferBmoImpl implements OfferBmo {
 			int currentMonth = calendar.get(Calendar.MONTH) + 1;
 			int currentYear = calendar.get(Calendar.YEAR);
 			//循环遍历可订购附属销售品
-			for(int i = 0, len = offerSpecCanBuyList.size(); i < len; i++){				
+			for(int i = 0; i < offerSpecCanBuyList.size(); i++){				
 				Map<String, Object> offerSpecCanBuy = offerSpecCanBuyList.get(i);				
 				String offerSpecId = MapUtils.getString(offerSpecCanBuy, "offerSpecId", "N/A");
 				//是否可重复订购
@@ -92,7 +92,7 @@ public class OfferBmoImpl implements OfferBmo {
 				for(int j = 0, length = attachOfferOrderedList.size(); j < length; j++){
 					Map<String, Object> attachOfferOrdered = attachOfferOrderedList.get(j);
 					//如果已订购附属在可订购附属列表中
-					if(offerSpecId.equals(attachOfferOrdered.get("offerSpecId"))){
+					if(offerSpecId.equals(attachOfferOrdered.get("offerSpecId").toString())){
 						//获取已订购的附属销售品的失效时间
 						String expireDateStr = MapUtils.getString(attachOfferOrdered, "expDate", "N/A");
 						if("N/A".equals(expireDateStr)){
