@@ -1311,7 +1311,7 @@ public class CustController extends BaseController {
             	String appSecret = propertiesUtils.getMessage("APP_SECRET"); //appId对应的加密密钥
             	String nonce = RandomStringUtils.randomAlphanumeric(Const.RANDOM_STRING_LENGTH); //随机字符串
             	String signature = commonBmo.signature(partyName, certNumber, certAddress, identityPic, nonce, appSecret);
-            	resMap.put("signature", signature);
+            	userInfo.put("signature", signature);
     			jsonResponse=super.successed(resMap, ResultConstant.SUCCESS.getCode());
     		}else{
     			jsonResponse=super.failed(MapUtils.getString(resMap, "msg", "抱歉,查询蓝牙密钥的decodeUserInfo服务解析异常！"), ResultConstant.SERVICE_RESULT_FAILTURE

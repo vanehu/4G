@@ -231,9 +231,9 @@ mktRes.terminal = (function($){
 		}
 		var areaId="";
 		if(OrderInfo.cust==undefined || OrderInfo.cust.custId==undefined || OrderInfo.cust.custId==""){
-			areaId=$("#p_cust_areaId").val();
+			areaId=OrderInfo.staff.soAreaId;
 		}else{
-			areaId=OrderInfo.getAreaId();
+			areaId=OrderInfo.staff.soAreaId;
 		}
 		var pnHead = $("#pnHead").val(); 
 		var pncharacteristic = $("#pncharacteristic").find("a.selected").attr("val");
@@ -3263,8 +3263,34 @@ mktRes.terminal = (function($){
 	var _searchPack = function(flag,scroller,subPage){
 		var custId = OrderInfo.cust.custId;
 		var qryStr=$("#qryStr").val();
+		lxStr = $("#offer_tab").val();
+		var categoryNodeId = "";//套餐目录
+		if(lxStr == "乐享") {
+//			qryStr = "";
+//			$("#qryStr").val("");
+			categoryNodeId = "90132141";
+		}else if(lxStr == "积木") {
+//			qryStr = "";
+//			$("#qryStr").val("");
+			categoryNodeId = "90132143";
+		}else if(lxStr == "飞") {
+//			qryStr = "";
+//			$("#qryStr").val("");
+			categoryNodeId = "90139849";
+		}else if(lxStr == "其他") {
+//			qryStr = "";
+//			$("#qryStr").val("");
+			categoryNodeId = "-9999";
+		}else if(lxStr == "我的收藏") {
+//			$("#qryStr").val("");
+		}
 		var params={"subPage":"","qryStr":qryStr,"pnLevelId":"","custId":custId,"PageSize":10};
+		if(categoryNodeId.length>0){
+			params.categoryNodeId = categoryNodeId;
+		}
 		if(flag){
+			order.service.tabChange_flag = 1;
+			$("#offer_tab option[value='"+lxStr+"']").attr("selected",true);
 			var priceMinVal = $("#select_price_min").val();
 			var priceMaxVal = $("#select_price_max").val();
 			if(ec.util.isObj(priceMinVal) && $.isNumeric(priceMinVal)){
@@ -3291,6 +3317,7 @@ mktRes.terminal = (function($){
 			if(ec.util.isObj(invoiceMaxVal) && $.isNumeric(invoiceMaxVal)){
 				params.INVOICEMax = invoiceMaxVal;
 			}
+			order.service.tabChange_flag = 0;
 		}
 		_queryData(params,flag,scroller);
 		
@@ -3301,9 +3328,9 @@ mktRes.terminal = (function($){
 		}
 		params.prodId = flag;
 		if(OrderInfo.actionFlag == 1 || OrderInfo.actionFlag == 14){
-			if(params.qryStr == "我的收藏"){
+			if(params.qryStr == "我的收藏" || lxStr == "我的收藏"){
 				params.ifQueryFavorite = "Y";
-				params.qryStr = "";
+//				params.qryStr = "";
 			}
 		}
 		var url = contextPath+"/agent/order/phone_offerSpecList";

@@ -698,9 +698,9 @@ order.phoneNumber = (function(){
 		}
 		var areaId="";
 		if(OrderInfo.cust==undefined || OrderInfo.cust.custId==undefined || OrderInfo.cust.custId==""){
-			areaId=$("#p_cust_areaId").val();
+			areaId=OrderInfo.staff.soAreaId;
 		}else{
-			areaId=OrderInfo.getAreaId();
+			areaId=OrderInfo.staff.soAreaId;
 		}
 		var pnHead = $("#pnHead").val(); 
 		var pncharacteristic = $("#pncharacteristic").find("a.selected").attr("val");
@@ -1018,7 +1018,13 @@ order.phoneNumber = (function(){
 				$sel.append($defaultopt);
 				if(phoneNbrPoolList!=null){
 					$.each(phoneNbrPoolList,function(){
-						var $option = $('<option value="'+this.poolId+'">'+this.poolName+'</option>');
+						var $option = "";
+						if(this.localPool == 1){
+							$option = $('<option value="'+this.poolId+'" selected="selected">'+this.poolName+'</option>');
+						}
+						else{
+						    $option = $('<option value="'+this.poolId+'">'+this.poolName+'</option>');
+						}
 						$sel.append($option);
 					});
 				}
