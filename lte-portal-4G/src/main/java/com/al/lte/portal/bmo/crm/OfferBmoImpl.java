@@ -1,6 +1,8 @@
 package com.al.lte.portal.bmo.crm;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,6 +11,7 @@ import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 
+import com.al.common.utils.DateUtil;
 import com.al.ec.serviceplatform.client.DataBus;
 import com.al.ec.serviceplatform.client.ResultCode;
 import com.al.ecs.exception.BusinessException;
@@ -57,9 +60,10 @@ public class OfferBmoImpl implements OfferBmo {
 	 * 从查询可订购附属销售品的回参中，去除当月到期且到期不可重复订购的附属销售品<br/>
 	 * 分别循环遍历可订购附属列表和已订购附属列表，其中已订购列表拼装在查询入参中。该方法目前用于可订购附属销售品的搜索框。
 	 * @author ZhangYu 2016-03-27
+	 * @throws ParseException
 	 */
-	@SuppressWarnings("unchecked")
-	public Map<String, Object> removeAttachOfferExpired(Map<String, Object> paramMap, Map<String, Object> resultMap){
+	@SuppressWarnings({ "unchecked"})
+	public Map<String, Object> removeAttachOfferExpired(Map<String, Object> paramMap, Map<String, Object> resultMap) throws ParseException{
 		
 		//已订购附属销售品
 		List<Map<String, Object>> attachOfferOrderedList = new ArrayList<Map<String, Object>>();
@@ -75,10 +79,9 @@ public class OfferBmoImpl implements OfferBmo {
 		}
 		
 		if(attachOfferOrderedList.size() > 0 && offerSpecCanBuyList.size() > 0){
-			//获取当前月份(0-11,从0开始，如0为1月份，1为2月份)
-			Calendar calendar = Calendar.getInstance();
-			int currentMonth = calendar.get(Calendar.MONTH) + 1;
-			int currentYear = calendar.get(Calendar.YEAR);
+			//获取两个Calendar实例，一个表示当前时间，一个表示到期时间
+			Calendar NowCalendar = Calendar.getInstance();
+			Calendar expireCalendar = Calendar.getInstance();
 			//循环遍历可订购附属销售品
 			for(int i = 0; i < offerSpecCanBuyList.size(); i++){				
 				Map<String, Object> offerSpecCanBuy = offerSpecCanBuyList.get(i);				
@@ -87,24 +90,28 @@ public class OfferBmoImpl implements OfferBmo {
 //				String ifOrderAgain = MapUtils.getString(offerSpecCanBuy, "ifOrderAgain", "N/A");
 				//两层含义：1. 表示合约；2. 6个月之内的有效期是否可重复订购(续约)
 				String ifDueOrderAgain = MapUtils.getString(offerSpecCanBuy, "ifDueOrderAgain", "N/A");
-				
 				//循环遍历已订购附属销售品
 				for(int j = 0, length = attachOfferOrderedList.size(); j < length; j++){
 					Map<String, Object> attachOfferOrdered = attachOfferOrderedList.get(j);
 					//如果已订购附属在可订购附属列表中
 					if(offerSpecId.equals(attachOfferOrdered.get("offerSpecId").toString())){
 						//获取已订购的附属销售品的失效时间
-						String expireDateStr = MapUtils.getString(attachOfferOrdered, "expDate", "N/A");
-						if("N/A".equals(expireDateStr)){
+						String expireDateStr = MapUtils.getString(attachOfferOrdered, "expDate", "iamnotabug");
+						if("iamnotabug".equals(expireDateStr)){
+							//没有返回expDate则不进行操作
 							continue;
 						} else{
-							//截取失效时间(20150201000000)的年份和月份
-							int expireDateYear = Integer.parseInt(expireDateStr.substring(0,4));
-							int expireDateMonth = Integer.parseInt(expireDateStr.substring(4,6));
-							//如果已订购在6个月之内的有效期
-							if((currentMonth <= expireDateMonth) && (currentMonth >= expireDateMonth - 5) && (currentYear == expireDateYear)){
-								//如果ifDueOrderAgain为Y，则可以重复订购(续约)；否则过滤该可订购附属销售品
-								if(!"Y".equals(ifDueOrderAgain)){
+							//如果expireDateStr不是yyyyMMddHHmmss14位会ParseException抛异常
+							Date expireDate = DateUtil.getDateFromString(expireDateStr, DateUtil.DATE_FORMATE_STRING_DEFAULT);
+							expireCalendar.setTime(expireDate);
+							if(NowCalendar.compareTo(expireCalendar) < 0){
+								//如果当前时间在到期前
+								expireCalendar.add(Calendar.MONTH, -6);
+								if(NowCalendar.compareTo(expireCalendar) > 0 && !"Y".equals(ifDueOrderAgain)){
+									//如果当前时间在到期前的6个月之内
+									//且ifDueOrderAgain为Y，则可续约；否则过滤
+									offerSpecCanBuyList.remove(i);
+								} else{
 									offerSpecCanBuyList.remove(i);
 								}
 							} else{

@@ -1,5 +1,6 @@
 package com.al.lte.portal.bmo.crm;
 
+import java.text.ParseException;
 import java.util.Map;
 
 import com.al.lte.portal.model.SessionStaff;
@@ -205,7 +206,8 @@ public interface OfferBmo {
 	 * @param resultMap
 	 * @return resultMap
 	 * @author ZhangYu 2016-03-27
+	 * @throws ParseException 
 	 */
-	public Map<String, Object> removeAttachOfferExpired(Map<String, Object> paramMap, Map<String, Object> offerMap);
+	public Map<String, Object> removeAttachOfferExpired(Map<String, Object> paramMap, Map<String, Object> offerMap) throws ParseException;
 
 }

@@ -4110,33 +4110,40 @@ AttachOffer = (function() {
 						if(ec.util.isArray(data.result.offerSpecList)){
 							var offerList = CacheData.getOfferList(prodId); //过滤已订购
 							var offerSpecList = CacheData.getOfferSpecList(prodId);//过滤已选择
+							var currentDate = new Date();
 							$.each(data.result.offerSpecList,function(){
 								AttachOffer.allOfferList.push(this);
 								var offerSpecId = this.offerSpecId;
 								var flag = true;
 								var ifOrderAgain = this.ifOrderAgain;//是否可以重复订购
-								var ifDueOrderAgain = this.ifDueOrderAgain;//当月到期是否可以重复订购
+								var ifDueOrderAgain = this.ifDueOrderAgain;//到期前6个月是否可以重复订购，即是否可续约(针对合约和存折)
 								//从可订购中过滤掉已订购的且不可重复订购的附属销售品
 								$.each(offerList,function(){
 									if(this.offerSpecId==offerSpecId&&this.isDel!="C"){
 										//1.如果可订购附属销售品在已订购列表
 										var expireDate = this.expDate;//已订购的附属销售品的失效时间
 										if(!(expireDate == null || expireDate == undefined || expireDate == "")){
-											//1.1只有返回expireDate，则进行比对；否则不进行比对
-											var expireDateYear = parseInt(expireDate.substring(0,4));//截取失效时间的年份
-											var expireDateMonth = parseInt(expireDate.substring(4,6));//截取失效时间20150201000000的月份02
-											var currentMonth = new Date().getMonth() + 1;//获取当前月份
-											var currentYear = new Date().getFullYear();//获取当前年份
-											if((currentMonth <= expireDateMonth) && (currentMonth >= expireDateMonth - 5) && (currentYear == expireDateYear)){
-												//2.如果该附属销售品在6个月到期范围之内
-												if(ifDueOrderAgain != "Y"){
-													//2.1如果ifDueOrderAgain值为Y，表示可重复订购，则不过滤，展示于页面的可订购列表
-													//2.2否则过滤该销售品，不展示于页面
+											//2只有返回expireDate，则进行比对；否则不进行比对
+											var expireDateYear = expireDate.substring(0,4);//截取失效时间的年份
+											var expireDateMonth = expireDate.substring(4,6);//截取失效时间20150201000000的月份02
+											var expireDateDay = expireDate.substring(6, 8);//截取失效时间20150201000000的day
+											expireDate = new Date(expireDateYear+"/"+expireDateMonth+"/"+expireDateDay);
+											if(currentDate < expireDate){
+												//3.如果该附属销售品还未到期
+												expireDate.setMonth(expireDate.getMonth() - 6);
+												if(currentDate > expireDate){
+													//4.如果在到期前的6个月之内
+													if(ifDueOrderAgain != "Y"){
+														//5.1如果ifDueOrderAgain值为Y，表示可重复订购，则不过滤，展示于页面的可订购列表
+														//2.2否则过滤该销售品，不展示于页面
+														flag = false;
+														return false;
+													}
+												} else{
 													flag = false;
 													return false;
 												}
 											} else{
-												//3.如果不在到期前的6个月范围之内，直接过滤
 												flag = false;
 												return false;
 											}
