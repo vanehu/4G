@@ -567,7 +567,7 @@ order.cust = (function(){
 			$.alert("提示","抱歉，该工号没有异地业务的权限！");
 			return;
 		}
-		if(response.data.indexOf("false") >=0) {
+		if(response.data.indexOf("false") ==0) {
 			$.alert("提示","抱歉，没有定位到客户，请尝试其他客户。");
 			return;
 		}
@@ -2032,7 +2032,7 @@ order.cust = (function(){
 					if (response.code == -2) {
 						return;
 					}
-					if(response.data.indexOf("false") >=0) {
+					if(response.data.indexOf("false") ==0) {
 						$.alert("提示","抱歉，没有定位到客户，请尝试其他客户。");
 						return;
 					}
