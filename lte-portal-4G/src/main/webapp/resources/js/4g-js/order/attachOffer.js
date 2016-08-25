@@ -964,7 +964,7 @@ AttachOffer = (function() {
 					});
 				}
 				if(contentAppend !=""){
-					content = content + "此可选包<br>"+contentAppend+"相依赖，系统会自动退订已订购的相关的依赖销售品。"
+					content = content + "此可选包<br>"+contentAppend+"相依赖，系统会自动退订已订购的相关的依赖销售品。";
 				}
 				$.confirm("信息确认",content,{ 
 					yes:function(){
@@ -3189,7 +3189,7 @@ AttachOffer = (function() {
 						}
 					}
 				}
-				spec.isset ="Y"
+				spec.isset ="Y";
 				$("#mainOffer_"+accessNumber).removeClass("canshu").addClass("canshu2");
 				$(".ZebraDialog").remove();
 	            $(".ZebraDialogOverlay").remove();
@@ -3228,7 +3228,7 @@ AttachOffer = (function() {
 						}
 					}
 				}
-				spec.isset ="Y"
+				spec.isset ="Y";
 				$("#mainOffer").removeClass("canshu").addClass("canshu2");
 				$(".ZebraDialog").remove();
 	            $(".ZebraDialogOverlay").remove();
