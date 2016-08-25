@@ -747,7 +747,7 @@ prod.transferModify = (function(){
 					$.alert("提示","客户鉴权失败,稍后重试");
 					return;
 				}
-				custInfo = param;
+				//custInfo = param;
 				_custAuthCallBack(response);
 			},"always":function(){
 				$.unecOverlay();
