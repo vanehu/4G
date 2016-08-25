@@ -1815,40 +1815,42 @@ AttachOffer = (function() {
 	
 	//根据预校验返回订购附属销售品
 	var _addOfferSpecByCheckForUpdate = function(checkList){
-		var content = "";
-		$.each(checkList,function(){
-			var prodId = this.prodId;
-			var offerSpecId = this.prodOfferId;
-			var newSpec = _setSpec(prodId,offerSpecId);
-			if(newSpec==undefined){ //没有在已开通附属销售列表中
-				return;
-			}
-			content =content + CacheData.getOfferProdStr(prodId,newSpec,0) +"<br/>";
-		});
-		$.confirm("信息确认",content,{ 
-			yes:function(){
-				$.each(checkList,function(){
-					var prodId = this.prodId;
-					var offerSpecId = this.prodOfferId;
-					var newSpec = _setSpec(prodId,offerSpecId);
-					if(newSpec==undefined){ //没有在已开通附属销售列表中
-						return;
-					}
-					CacheData.setServ2OfferSpec(prodId,newSpec);
-				});
-			},
-			yesdo:function(){
-				$.each(checkList,function(){
-					var prodId = this.prodId;
-					var offerSpecId = this.prodOfferId;
-					var newSpec = _setSpec(prodId,offerSpecId);
-					if(newSpec==undefined){ //没有在已开通附属销售列表中
-						return;
-					}
-					_checkOfferExcludeDepend(prodId,newSpec);
-				});
-			}
-		});
+		if(checkList!=null && checkList.prodId !=null && checkList.prodId !=undefined){
+			var content = "";
+			$.each(checkList,function(){
+				var prodId = this.prodId;
+				var offerSpecId = this.prodOfferId;
+				var newSpec = _setSpec(prodId,offerSpecId);
+				if(newSpec==undefined){ //没有在已开通附属销售列表中
+					return;
+				}
+				content =content + CacheData.getOfferProdStr(prodId,newSpec,0) +"<br/>";
+			});
+			$.confirm("信息确认",content,{ 
+				yes:function(){
+					$.each(checkList,function(){
+						var prodId = this.prodId;
+						var offerSpecId = this.prodOfferId;
+						var newSpec = _setSpec(prodId,offerSpecId);
+						if(newSpec==undefined){ //没有在已开通附属销售列表中
+							return;
+						}
+						CacheData.setServ2OfferSpec(prodId,newSpec);
+					});
+				},
+				yesdo:function(){
+					$.each(checkList,function(){
+						var prodId = this.prodId;
+						var offerSpecId = this.prodOfferId;
+						var newSpec = _setSpec(prodId,offerSpecId);
+						if(newSpec==undefined){ //没有在已开通附属销售列表中
+							return;
+						}
+						_checkOfferExcludeDepend(prodId,newSpec);
+					});
+				}
+			});
+		}
 	};
 	
 	//删除附属销售品带出删除功能产品
