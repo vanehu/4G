@@ -698,9 +698,9 @@ order.phoneNumber = (function(){
 		}
 		var areaId="";
 		if(OrderInfo.cust==undefined || OrderInfo.cust.custId==undefined || OrderInfo.cust.custId==""){
-			areaId=OrderInfo.staff.soAreaId;
+			areaId=OrderInfo.staff.soAreaId+"";
 		}else{
-			areaId=OrderInfo.staff.soAreaId;
+			areaId=OrderInfo.staff.soAreaId+"";
 		}
 		var pnHead = $("#pnHead").val(); 
 		var pncharacteristic = $("#pncharacteristic").find("a.selected").attr("val");

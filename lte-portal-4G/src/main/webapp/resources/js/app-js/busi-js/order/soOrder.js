@@ -968,9 +968,10 @@ SoOrder = (function() {
 							$.alert("提示","购物车作废成功！");
 							OrderInfo.order.step=2;
 							//可选包变更订单报错返回修改页面步骤设为3
-							if(OrderInfo.actionFlag == 3){
-								OrderInfo.order.step = 3;
-							}
+//	2016年8月12日熊公正提出可选包订单确认返回同新装一样，退回 上一步，再退回上一步不能后退
+//							if(OrderInfo.actionFlag == 3){
+//								OrderInfo.order.step = 3;
+//							}
 						}
 					}else if (response.code==-2){
 						$.alertM(response.data.errData);

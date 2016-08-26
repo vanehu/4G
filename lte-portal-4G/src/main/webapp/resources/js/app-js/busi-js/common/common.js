@@ -100,6 +100,21 @@ common = (function($) {
 		);
 	};
 	
+	//读取身份证后直接返回结果（用于和PC双屏互动）
+	var _getGenerationInfos=function(name,idcard,address,identityPic,signature){
+		$("#custname").val(""); //姓名
+		$("#idcard").val("");//身份证号码
+		$("#address").val("");//地址
+		$("#identityPic").val("");//证件照片
+		$("#signature").val("");//证件照片
+		$("#custname").val(name); //姓名
+		$("#idcard").val(idcard);//身份证号码
+		$("#address").val(address);//地址
+		$("#identityPic").val(identityPic);//证件照片
+		$("#signature").val(signature);//信息签名
+		$("#readCard").click();
+	};
+	
 	var _saveCust = function(){
 		var arr=new Array(1);
 		arr[0]=JSON.stringify(OrderInfo.cust);
@@ -166,6 +181,20 @@ common = (function($) {
             function(error) {
             }
 		);
+	};
+	
+	//扫描后直接返回结果（用于和PC双屏互动）
+	var _scaningCallBack=function(terInfo,prodId){
+		$("#channelId").val("");
+		$("#number").val("");
+		if(prodId=="-999"){
+			$("#channelId").val(terInfo);
+			$("#goRoom").click()
+		}else if(prodId=="-888"){
+			$("#number").val(terInfo);
+			$("#senNum").click()
+		}
+//		return terInfo;
 	};
 	
 	//调用客户端的日历
@@ -486,11 +515,13 @@ common = (function($) {
 		callCustInfo		:	_callCustInfo,
 		callDatasign		:	_callDatasign,
 		callGenerationRec	:	_callGenerationRec,
+		getGenerationInfos	:	_getGenerationInfos,
 		callIDCardRec		:	_callIDCardRec,
 		callOrderServer		:	_callOrderServer,
 		callPhotos			:	_callPhotos,
 		callReturnBack		: 	_callReturnBack,
 		callScanning		:	_callScanning,
+		scaningCallBack		:	_scaningCallBack,
 		callSessionNotViald	:	_callSessionNotViald,
 		callTitle			:	_callTitle,
 		saveCust			:	_saveCust,
