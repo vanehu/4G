@@ -1948,6 +1948,12 @@ AttachOffer = (function() {
 									flag = false;
 									break;
 								}
+							} else{
+								if((offerList[j].offerSpecId == exclude[i].offerSpecId) && (offerList[j].ifDueOrderAgain == "Y")){
+									//(1)如果已订购销售品在被包含在互斥组里面，(2)该销售品为合约，(3)可以续约，则允许订购，虽然互斥
+									flag = false;
+									break;
+								}
 							}
 						}
 					}
