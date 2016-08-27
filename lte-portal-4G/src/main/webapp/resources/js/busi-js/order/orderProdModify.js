@@ -27,7 +27,9 @@ order.prodModify = (function(){
 		if(prodInfoTr.attr("accNbr")==undefined){
 			prodInfoTr=$("#phoneNumListtbody tr[class='bg plan_select']").find("td:eq(0)");
 		}
-		var prodInfoChildTr=$("#subphoneNumListtbody tr[class='plan_select2']").find("td:eq(0)");
+		
+//		var prodInfoChildTr=$("#subphoneNumListtbody tr[class='plan_select2']").find("td:eq(0)");
+		var prodInfoChildTr=$("tbody[id='subphoneNumListtbody'] tr[class='plan_select2']").find("td:eq(0)");
 		_choosedProdInfo  = {
 			accNbr :prodInfoTr.attr("accNbr"),//产品接入号
 			productName :prodInfoTr.attr("productName"),//产品规格名称

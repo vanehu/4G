@@ -1170,7 +1170,9 @@ order.cust = (function(){
 					
 					});
 				
-				$("#plan2ndDiv tbody tr").each(function(){$(this).off("click").on("click",function(event){
+				
+//				$("#plan2ndDiv tbody tr").each(function(){$(this).off("click").on("click",function(event){
+				$("div[id='plan2ndDiv'] tbody tr").each(function(){$(this).off("click").on("click",function(event){
 					var this2Tr=this;
 					if(1==OrderInfo.order.step&&(!$(this2Tr).hasClass("plan_select2"))){
 						$.confirm("确认","你已重新选择号码，需跳转至上一步，是否确认?",{
