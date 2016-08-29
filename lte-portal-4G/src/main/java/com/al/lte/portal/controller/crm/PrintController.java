@@ -344,7 +344,7 @@ public class PrintController extends BaseController {
 			if (MapUtils.isNotEmpty(resultMap)) {
 				return super.successed(resultMap);
 			} else {
-				return super.failed("发票打印处理失败", ResultConstant.FAILD.getCode());
+				return super.failed("后台发票打印处理接口未返回结果集，入参："+JsonUtil.toString(paramMap), ResultConstant.FAILD.getCode());
 			}
 		} catch (BusinessException be) {
 			this.log.error("门户/print/saveInvoiceInfo方法be异常", be);

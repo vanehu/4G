@@ -1068,7 +1068,7 @@ common.print = (function($){
 			$.alertM(response.data);
 			return false;
 		} else if(response.code != 0 || response.data.resultCode != "0") {
-			$.alert("提示", _getPrintState(printFlag) + "调用集团发票打印处理接口失败，请稍后重试");
+			$.alert("提示", _getPrintState(printFlag) + "：调用集团发票打印处理接口失败，"+response.data.resultMsg);
 			return false;
 		}
 		return response;
