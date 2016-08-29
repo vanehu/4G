@@ -149,41 +149,6 @@ public final class SysConstant {
     
     public static String MAIN_OFFER_ROLE_TYPE = "400";
     public static String VICE_OFFER_ROLE_TYPE = "401";
-		
-    /**批开活卡-0*/
-    public static String BATCHHUOKA="0";
-    /**批量新装-2*/
-    public static String BATCHNEWORDER="1";
-    /**批量订购/退订附属-2*/
-    public static String BATCHFUSHU="2";
-    /**组合产品纳入退出-3*/
-    public static String BATCHZUHE="3";
-    /**批量修改产品属性-4*/
-    public static String BATCHEDITATTR="4";
-    /**批量换档(在完成“需求（开发） #18397”时，遇到5和11均表示“批量换档”的问题，经与后台沟通，仍使用11，5不会影响)*/
-    public static String BATCHCHANGE="5";
-    /**批量拆机*/
-    public static String BATCHCHAIJI="8";
-    /**批量修改发展人-9*/
-    public static String BATCHFAZHANREN="9";
-    /**批量订购裸终端-10*/
-    public static String BATCHORDERTERMINAL="10";
-    /**批量换档-11*/
-    public static String BATCHCHANGEFEETYPE = "11";
-    /**批量换卡-12*/
-    public static String BATCHCHANGEUIM = "12";
-    /**批量一卡双号黑名单-13*/
-    public static String BATCHBLACKLIST = "13";
-    /**批量在用拆机-14*/
-    public static String BATCHDISMANTLEINUSE = "14";
-    /**批量未激活拆机-15*/
-    public static String BATCHDISMANTLEINACTIVE = "15";
-    /**批量终端领用-16*/
-    public static String ECSBATCHRECEIVE = "16";
-    /**批量终端领用回退-17*/
-    public static String ECSBATCHBACK = "17";
-    /**批量终端销售-18*/
-    public static String ECSBATCHSALE = "18";
     
     //是否记录接口日志 ON OFF
     public static String WRITE_LOG_FLAG = "WRITE_LOG_FLAG";
@@ -661,23 +626,23 @@ public final class SysConstant {
     public static final Map<String, String> templateTypeMap = new HashMap<String, String>() {
 		private static final long serialVersionUID = 1L;
 		{
-			put("0", "批开活卡");
-			put("1", "批量新装");
-			put("2", "批量订购/退订附属");
-			put("3", "组合产品纳入退出");
-			put("4", "批量修改产品属性");
-			put("5", "批量换档");//在完成#18397时，遇到5和11均表示“批量换档”的问题，经与后台沟通，仍使用11，5不会影响。
-			put("8", "批量欠费拆机");
-			put("9", "批量修改发展人");
-			put("10", "批量订购裸终端");
-			put("11", "批量换档");
-			put("12", "批量换卡");
-			put("13", "批量一卡双号黑名单");
-			put("14", "批量在用拆机");
-			put("15", "批量未激活拆机");
-			put("16", "批量终端领用");
-			put("17", "批量终端领用回退");
-			put("18", "批量终端销售");
+			put(BATCH_TYPE.HUO_KA, 				"批开活卡");
+			put(BATCH_TYPE.NEW_ORDER, 			"批量新装");
+			put(BATCH_TYPE.ATTACH_OFFER_ORDER, 	"批量订购/退订附属");
+			put(BATCH_TYPE.ZU_HE, 				"组合产品纳入退出");
+			put(BATCH_TYPE.EDIT_ATTR, 			"批量修改产品属性");
+			put(BATCH_TYPE.CHANGE, 				"批量换档");//在完成#18397时，遇到5和11均表示“批量换档”的问题，经与后台沟通，仍使用11，5不会影响。
+			put(BATCH_TYPE.CHAI_JI, 			"批量欠费拆机");
+			put(BATCH_TYPE.FA_ZHAN_REN, 		"批量修改发展人");
+			put(BATCH_TYPE.ORDER_TERMINAL, 		"批量订购裸终端");
+			put(BATCH_TYPE.CHANGE_FEETYPE, 		"批量换档");
+			put(BATCH_TYPE.CHANGE_UIM, 			"批量换卡");
+			put(BATCH_TYPE.BLACKLIST, 			"批量一卡双号黑名单");
+			put(BATCH_TYPE.DISMANTLE_IN_USE, 	"批量在用拆机");
+			put(BATCH_TYPE.DISMANTLE_INACTIVE, 	"批量未激活拆机");
+			put(BATCH_TYPE.ECS_RECEIVE, 		"批量终端领用");
+			put(BATCH_TYPE.ECS_BACK, 			"批量终端领用回退");
+			put(BATCH_TYPE.ECS_SALE, 			"批量终端销售");
 		}
 	};
 	
@@ -708,4 +673,42 @@ public final class SysConstant {
 	
 	/**从http请求头中获取X-Forwarded-Host属性*/
 	public static final String HTTP_REQUEST_HEADER_HOST = "X-Forwarded-Host";
+	
+	/**批量业务受理类型*/
+	public class BATCH_TYPE {
+		/**批开活卡-0*/
+		public static final String HUO_KA = "0";
+		/**批量新装-1*/
+		public static final String NEW_ORDER = "1";
+		/**批量订购/退订附属-2*/
+		public static final String ATTACH_OFFER_ORDER = "2";
+	    /**组合产品纳入退出-3*/
+	    public static final String ZU_HE = "3";
+	    /**批量修改产品属性-4*/
+	    public static final String EDIT_ATTR = "4";
+	    /**批量换档(在完成“需求（开发） #18397”时，遇到5和11均表示“批量换档”的问题，经与后台沟通，仍使用11，5不会影响)*/
+	    public static final String CHANGE = "5";
+	    /**批量拆机-8*/
+	    public static final String CHAI_JI = "8";
+	    /**批量修改发展人-9*/
+	    public static final String FA_ZHAN_REN = "9";
+	    /**批量订购裸终端-10*/
+	    public static final String ORDER_TERMINAL = "10";
+	    /**批量换档-11*/
+	    public static final String CHANGE_FEETYPE = "11";
+	    /**批量换卡-12*/
+	    public static final String CHANGE_UIM = "12";
+	    /**批量一卡双号黑名单-13*/
+	    public static final String BLACKLIST = "13";
+	    /**批量在用拆机-14*/
+	    public static final String DISMANTLE_IN_USE = "14";
+	    /**批量未激活拆机-15*/
+	    public static final String DISMANTLE_INACTIVE = "15";
+	    /**批量终端领用-16*/
+	    public static final String ECS_RECEIVE = "16";
+	    /**批量终端领用回退-17*/
+	    public static final String ECS_BACK = "17";
+	    /**批量终端销售-18*/
+	    public static final String ECS_SALE = "18";
+	}
 }

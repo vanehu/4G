@@ -29,6 +29,7 @@ import com.al.ecs.exception.BusinessException;
 import com.al.ecs.exception.ErrorCode;
 import com.al.ecs.exception.InterfaceException;
 import com.al.ecs.log.Log;
+import com.al.lte.portal.common.CommonUtils;
 import com.al.lte.portal.common.InterfaceClient;
 import com.al.lte.portal.common.PortalServiceCode;
 import com.al.lte.portal.common.SysConstant;
@@ -47,7 +48,91 @@ public class BatchBmoImpl implements BatchBmo {
 	
 	/**中国电信手机号段正则表达式^(149|133|153|173|177|180|181|189)\\d{8}$*/
 	private final String ltePhoneHeadRegExp = ((PropertiesUtils) SpringContextUtil.getBean("propertiesUtils")).getMessage("LTEPHONEHEAD");
+	
+	public Map<String, Object> readExcel(final Workbook workbook, final String batchType, final SessionStaff sessionStaff){
+		String message = "";
+		String code = "-1";
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		StringBuffer errorData = new StringBuffer();
+		boolean ifExcelHasData = false;
+		
+		for (int sheetIndex = 0; sheetIndex < workbook.getNumberOfSheets(); sheetIndex ++) {
+			// 得到当前页sheet
+			Sheet sheet = workbook.getSheetAt(sheetIndex);
+			// 得到当前表单的总行数
+			int totalRows = sheet.getPhysicalNumberOfRows();
+			if (totalRows > 1) {
+				if(SysConstant.BATCH_TYPE.NEW_ORDER.equals(batchType)){
+					returnMap = this.readExcel4NewOrder(workbook, batchType, sessionStaff);
+				} else if(SysConstant.BATCH_TYPE.HUO_KA.equals(batchType)){
+					returnMap = this.readExcel4HK(workbook, batchType);
+				} else if(SysConstant.BATCH_TYPE.ATTACH_OFFER_ORDER.equals(batchType) || 
+						SysConstant.BATCH_TYPE.CHAI_JI.equals(batchType) ||
+						SysConstant.BATCH_TYPE.CHANGE.equals(batchType) ||
+						SysConstant.BATCH_TYPE.DISMANTLE_IN_USE.equals(batchType) || 
+						SysConstant.BATCH_TYPE.DISMANTLE_INACTIVE.equals(batchType)){
+					returnMap = this.readExcel4Common(workbook);
+				} else if(SysConstant.BATCH_TYPE.ZU_HE.equals(batchType) || SysConstant.BATCH_TYPE.EDIT_ATTR.equals(batchType)){
+					//我也不知道为啥...
+				} else if(SysConstant.BATCH_TYPE.FA_ZHAN_REN.equals(batchType)){
+					returnMap = this.readExcel4ExtendCust(workbook);
+				} else if(SysConstant.BATCH_TYPE.CHANGE_FEETYPE.equals(batchType) ||
+						SysConstant.BATCH_TYPE.CHANGE_UIM.equals(batchType)){
+					returnMap = this.readExcelBatchChange(workbook, batchType);
+				} else if(SysConstant.BATCH_TYPE.ORDER_TERMINAL.equals(batchType)){
+					returnMap = this.readOrderTerminalExcel(workbook);
+				} else if(SysConstant.BATCH_TYPE.BLACKLIST.equals(batchType)){
+					returnMap = this.readBlacklistTerminalExcel(workbook);
+				} else if(SysConstant.BATCH_TYPE.ECS_BACK.equals(batchType) ||
+						SysConstant.BATCH_TYPE.ECS_RECEIVE.equals(batchType) ||
+						SysConstant.BATCH_TYPE.ECS_SALE.equals(batchType)){
+					returnMap = this.readExcel4EcsBatch(workbook, batchType);
+				} else{
+					message = "批量导入出错：<br/>没有匹配到您提交的批量业务受理类型[batchType:"+batchType+"]，无法继续受理，请尝试清空浏览器缓存后刷新页面重新受理。";
+					errorData.setLength(0);
+					errorData.append(message);
+					returnMap.put("errorData", errorData.toString());
+					returnMap.put("code", code);
+					returnMap.put("message", message);
+				}
+				
+				if(returnMap.get("totalDataSize") != null && ((Integer)returnMap.get("totalDataSize") <= 0)){
+					if(returnMap.get("errorData") != null && (returnMap.get("errorData").toString()).length() <= 0){
+						break;
+					} else{
+						ifExcelHasData = true;
+						break;
+					}
+				} else{
+					ifExcelHasData = true;
+					break;
+				}			
+			}
+		}
+		
+		if(!ifExcelHasData){
+			message = "批量导入出错：<br/>导入数据为空，没有解析到有效数据，您可能导入了空Excel。";
+			errorData.setLength(0);
+			errorData.append(message);
+			returnMap.put("errorData", errorData.toString());
+			returnMap.put("code", code);
+			returnMap.put("message", message);
+		}
 
+		return returnMap;
+	}
+	
+	/**
+	 * 根据证件类型判断是否政企客户
+	 * @return ture: 政企客户<br/>
+	 * 			false:公众客户(非政企客户)
+	 */
+	private boolean custJudging(final SessionStaff sessionStaff){
+		Map<String, Object> newCustInfoMap = new HashMap<String, Object>();
+		newCustInfoMap.put("identityCd", sessionStaff.getCardType());
+		return CommonUtils.isGovCust(null, newCustInfoMap, sessionStaff);
+	}
+	
 	/**
 	 * 批量新装解析excle<br/>
 	 * #13802，批量新装的时候门户批量新装的模版去掉客户列，调用服务传的custID为定位的客户信息<br/>
@@ -57,29 +142,13 @@ public class BatchBmoImpl implements BatchBmo {
 	 * @param str
 	 * @return
 	 */
-	public Map<String, Object> readExcel4NewOrder(final Workbook workbook, final String batchType, String str, final SessionStaff sessionStaff) {
+	public Map<String, Object> readExcel4NewOrder(final Workbook workbook, final String batchType, final SessionStaff sessionStaff) {
 		
 		String message = "";
 		String code = "-1";
 		Map<String, Object> returnMap = new HashMap<String, Object>();
 		StringBuffer errorData = new StringBuffer();//封装错误提示信息
-		boolean custFlag;//政企客户(政企证件)：false；个人账户(公众证件)：true	
-		
-		String segmentId = sessionStaff.getCustSegmentId();
-		if("1000".equals(segmentId))//政企客户
-			custFlag = false;
-		else if("1100".equals(segmentId))//公众客户
-			custFlag = true;
-		else{
-			code = "-1";
-			message = "无法获取客户定位的客户分群标识segmentId("+ segmentId +")";
-			errorData.append(message);
-			returnMap.put("errorData", errorData.toString());
-			returnMap.put("code", code);
-			returnMap.put("message", message);
-
-			return returnMap;
-		}
+		boolean custFlag = !this.custJudging(sessionStaff);//政企客户(政企证件)：false；个人账户(公众证件)：true	
 
 		// 封装Excel的列名称，用于返回错误提示信息时告知用户是哪一列
 		Map<Integer, Object> errorData2ShowUser = new HashMap<Integer, Object>() {
@@ -184,8 +253,6 @@ public class BatchBmoImpl implements BatchBmo {
 						}
 					}
 				}
-			} else {
-				message = "批量导入出错:导入数据为空";
 			}
 		}
 		
@@ -340,8 +407,6 @@ public class BatchBmoImpl implements BatchBmo {
 						}
 					}
 				}
-			} else {
-				message = "批量导入出错:导入数据为空";
 			}
 		}
 		
@@ -476,131 +541,133 @@ public class BatchBmoImpl implements BatchBmo {
 	public Map<String, Object> readExcel4ExtendCust(final Workbook workbook) {
 		String message="";
 		String code="-1";
+		StringBuffer errorData = new StringBuffer();
+		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+		Map<String, Object> item = null;
 		Map<String,Object> returnMap=new HashMap<String,Object>();
 		// 得到第一个sheet
 		Sheet sheet = workbook.getSheetAt(0);
 		// 得到Excel的行数
 		int totalRows = sheet.getPhysicalNumberOfRows();
-		StringBuffer errorData = new StringBuffer();
-		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
-		Map<String, Object> item = null;
-		for (int i = 1; i < totalRows; i++) {
-			item = new HashMap<String, Object>();
-			Row row = sheet.getRow(i);
-			if (null != row) {
-				Cell cell = row.getCell(0);
-				if (null != cell) {
-					String cellValue = checkExcelCellValue(cell);
-					if (cellValue == null) {
-						errorData.append("<br/>【第" + (i + 1) + "行,第1列】单元格格式不正确");
-						break;
-					} else if (!"".equals(cellValue)) {
-						item.put("accessNumber", cellValue);
-					}else{
-						errorData.append("<br/>【第" + (i + 1) + "行,第1列】主接入号不能为空");
-						break;
-					}
-				}else{
-					errorData.append("<br/>【第" + (i + 1) + "行,第1列】数据读取异常");
-					break;
-				}
-				cell = row.getCell(1);
-				if (null != cell) {
-					String cellValue = checkExcelCellValue(cell);
-					if (cellValue == null) {
-						errorData.append("<br/>【第" + (i + 1) + "行,第2列】单元格格式不正确");
-						break;
-					} else if (!"".equals(cellValue)) {
-						item.put("zoneNumber", cellValue);
-					}else{
-						errorData.append("<br/>【第" + (i + 1) + "行,第2列】区号不能为空");
-						break;
-					}
-				}else{
-					errorData.append("<br/>【第" + (i + 1) + "行,第2列】数据读取异常");
-					break;
-				}
-				String maindata="";
-				cell = row.getCell(2);
-				if (null != cell) {
-					String cellValue = checkExcelCellValue(cell);
-					if (cellValue == null) {
-						errorData.append("<br/>【第" + (i + 1) + "行,第3列】单元格格式不对");
-						break;
-					} else if (!"".equals(cellValue)) {
-						String maindata1="";
-						maindata1=cellValue;
-						String[] data1=maindata1.split("@");
-						if(data1.length!=4){
-							errorData.append("<br/>【第" + (i + 1) + "行,第3列】产品发展人数据格式应为:1@111@222@333");
+		if (totalRows > 1) {
+			for (int i = 1; i < totalRows; i++) {
+				item = new HashMap<String, Object>();
+				Row row = sheet.getRow(i);
+				if (null != row) {
+					Cell cell = row.getCell(0);
+					if (null != cell) {
+						String cellValue = checkExcelCellValue(cell);
+						if (cellValue == null) {
+							errorData.append("<br/>【第" + (i + 1) + "行,第1列】单元格格式不正确");
 							break;
+						} else if (!"".equals(cellValue)) {
+							item.put("accessNumber", cellValue);
 						}else{
-							boolean ff=false;
-							for(int ii=0;ii<data1.length;ii++){
-								if("".equals(data1[ii])){
-									ff=true;
-									errorData.append("<br/>【第" + (i + 1) + "行,第4列】产品发展人数据格式应为:1@111@222@333");
-									break;
-								}
-							}
-							if(ff){
-								break;
-							}
-							maindata=maindata1;
+							errorData.append("<br/>【第" + (i + 1) + "行,第1列】主接入号不能为空");
+							break;
 						}
-					}
-				}else{
-					errorData.append("<br/>【第" + (i + 1) + "行,第3列】数据读取异常");
-					break;
-				}
-				cell = row.getCell(3);
-				if (null != cell) {
-					String cellValue = checkExcelCellValue(cell);
-					if (cellValue == null) {
-						errorData.append("<br/>【第" + (i + 1) + "行,第4列】单元格格式不对");
+					}else{
+						errorData.append("<br/>【第" + (i + 1) + "行,第1列】数据读取异常");
 						break;
-					} else if (!"".equals(cellValue)) {
-						String maindata2="";
-						maindata2=cellValue;
-						String[] data2=maindata2.split("@");
-						if(data2.length!=4){
-							errorData.append("<br/>【第" + (i + 1) + "行,第4列】销售品发展人数据格式应为:2@111@222@333");
+					}
+					cell = row.getCell(1);
+					if (null != cell) {
+						String cellValue = checkExcelCellValue(cell);
+						if (cellValue == null) {
+							errorData.append("<br/>【第" + (i + 1) + "行,第2列】单元格格式不正确");
 							break;
+						} else if (!"".equals(cellValue)) {
+							item.put("zoneNumber", cellValue);
 						}else{
-							boolean ff = false;
-							for(int ii = 0; ii < data2.length; ii++){
-								if("".equals(data2[ii])){
-									ff = true;
-									errorData.append("<br/>【第" + (i + 1) + "行,第4列】销售品发展人数据格式应为:2@111@222@333");
-									break;
-								}
-							}
-							if(ff){
+							errorData.append("<br/>【第" + (i + 1) + "行,第2列】区号不能为空");
+							break;
+						}
+					}else{
+						errorData.append("<br/>【第" + (i + 1) + "行,第2列】数据读取异常");
+						break;
+					}
+					String maindata="";
+					cell = row.getCell(2);
+					if (null != cell) {
+						String cellValue = checkExcelCellValue(cell);
+						if (cellValue == null) {
+							errorData.append("<br/>【第" + (i + 1) + "行,第3列】单元格格式不对");
+							break;
+						} else if (!"".equals(cellValue)) {
+							String maindata1="";
+							maindata1=cellValue;
+							String[] data1=maindata1.split("@");
+							if(data1.length!=4){
+								errorData.append("<br/>【第" + (i + 1) + "行,第3列】产品发展人数据格式应为:1@111@222@333");
 								break;
-							}
-							if("".equals(maindata)){
-								maindata=maindata2;
 							}else{
-								maindata=maindata+","+maindata2;
+								boolean ff=false;
+								for(int ii=0;ii<data1.length;ii++){
+									if("".equals(data1[ii])){
+										ff=true;
+										errorData.append("<br/>【第" + (i + 1) + "行,第4列】产品发展人数据格式应为:1@111@222@333");
+										break;
+									}
+								}
+								if(ff){
+									break;
+								}
+								maindata=maindata1;
 							}
 						}
+					}else{
+						errorData.append("<br/>【第" + (i + 1) + "行,第3列】数据读取异常");
+						break;
 					}
-				}else{
-					errorData.append("<br/>【第" + (i + 1) + "行,第4列】数据读取异常");
-					break;
+					cell = row.getCell(3);
+					if (null != cell) {
+						String cellValue = checkExcelCellValue(cell);
+						if (cellValue == null) {
+							errorData.append("<br/>【第" + (i + 1) + "行,第4列】单元格格式不对");
+							break;
+						} else if (!"".equals(cellValue)) {
+							String maindata2="";
+							maindata2=cellValue;
+							String[] data2=maindata2.split("@");
+							if(data2.length!=4){
+								errorData.append("<br/>【第" + (i + 1) + "行,第4列】销售品发展人数据格式应为:2@111@222@333");
+								break;
+							}else{
+								boolean ff = false;
+								for(int ii = 0; ii < data2.length; ii++){
+									if("".equals(data2[ii])){
+										ff = true;
+										errorData.append("<br/>【第" + (i + 1) + "行,第4列】销售品发展人数据格式应为:2@111@222@333");
+										break;
+									}
+								}
+								if(ff){
+									break;
+								}
+								if("".equals(maindata)){
+									maindata=maindata2;
+								}else{
+									maindata=maindata+","+maindata2;
+								}
+							}
+						}
+					}else{
+						errorData.append("<br/>【第" + (i + 1) + "行,第4列】数据读取异常");
+						break;
+					}
+					if("".equals(maindata)){
+						errorData.append("<br/>【第" + (i + 1) + "行】,产品发展人和销售品发展人信息不能同时为空");
+						break;
+					}else{
+						item.put("attr", maindata);
+					}
 				}
-				if("".equals(maindata)){
-					errorData.append("<br/>【第" + (i + 1) + "行】,产品发展人和销售品发展人信息不能同时为空");
-					break;
-				}else{
-					item.put("attr", maindata);
+				if (item.size() > 0) {
+					list.add(item);
 				}
-			}
-			if (item.size() > 0) {
-				list.add(item);
 			}
 		}
-		
+
 		if("".equals(errorData.toString())){
 			code="0";
 		}
@@ -811,13 +878,13 @@ public class BatchBmoImpl implements BatchBmo {
 						if(cell != null){
 							cellValue = checkExcelCellValue(cell);
 							if (cellValue == null || "".equals(cellValue)) {
-								if (SysConstant.BATCHCHANGEFEETYPE.equals(batchType))
+								if (SysConstant.BATCH_TYPE.CHANGE_FEETYPE.equals(batchType))
 									errorData.append("<br/>【第" + (i + 1) + "行】【第2列】换档套餐规格ID为空或格式不正确");
-								if (SysConstant.BATCHCHANGEUIM.equals(batchType))
+								if (SysConstant.BATCH_TYPE.CHANGE_UIM.equals(batchType))
 									errorData.append("<br/>【第" + (i + 1) + "行】【第2列】UIM卡号为空或格式不正确");
 								break;
 							} else {
-								if (SysConstant.BATCHCHANGEUIM.equals(batchType)) {
+								if (SysConstant.BATCH_TYPE.CHANGE_UIM.equals(batchType)) {
 									if (!UIMSets.add(cellValue)) {
 										errorData.append("<br/>UIM卡号【" + cellValue + "】重复，请检查 !");
 										break;
@@ -825,16 +892,14 @@ public class BatchBmoImpl implements BatchBmo {
 								}
 							}
 						} else{
-							if (SysConstant.BATCHCHANGEFEETYPE.equals(batchType))
+							if (SysConstant.BATCH_TYPE.CHANGE_FEETYPE.equals(batchType))
 								errorData.append("<br/>【第" + (i + 1) + "行】【第2列】换档套餐规格ID为空或格式不正确");
-							if (SysConstant.BATCHCHANGEUIM.equals(batchType))
+							if (SysConstant.BATCH_TYPE.CHANGE_UIM.equals(batchType))
 								errorData.append("<br/>【第" + (i + 1) + "行】【第2列】UIM卡号为空或格式不正确");
 							break;
 						}
 					}
 				}
-			} else {
-				message = "批量导入异常:导入数据为空 !";
 			}
 		}// 循环读取每个sheet中的数据--end
 
@@ -1003,13 +1068,13 @@ public class BatchBmoImpl implements BatchBmo {
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		String portalServiceCode = null;
 		
-		if(SysConstant.ECSBATCHRECEIVE.equals(batchType)){
+		if(SysConstant.BATCH_TYPE.ECS_RECEIVE.equals(batchType)){
 			//批量终端领用接口
 			portalServiceCode = PortalServiceCode.INTF_BATCH_ECSBATCHRECEIVE;
-		} else if(SysConstant.ECSBATCHBACK.equals(batchType)){
+		} else if(SysConstant.BATCH_TYPE.ECS_BACK.equals(batchType)){
 			//批量终端领用回退接口
 			portalServiceCode = PortalServiceCode.INTF_BATCH_ECSBATCHBACK;
-		} else if(SysConstant.ECSBATCHSALE.equals(batchType)){
+		} else if(SysConstant.BATCH_TYPE.ECS_SALE.equals(batchType)){
 			//批量终端销售接口
 			portalServiceCode = PortalServiceCode.INTF_BATCH_ECSBATCHSALE;
 		} else{
@@ -1225,15 +1290,15 @@ public class BatchBmoImpl implements BatchBmo {
 		
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		
-		if (SysConstant.ECSBATCHRECEIVE.equals(batchType)) {// 批量终端领用
+		if (SysConstant.BATCH_TYPE.ECS_RECEIVE.equals(batchType)) {// 批量终端领用
 			if(!(destRepositoryID == null || "".equals(destRepositoryID))){
 				resultMap.put("toStoreId", destRepositoryID);
 			}
-		} else if(SysConstant.ECSBATCHBACK.equals(batchType)) {// 批量终端领用回退
+		} else if(SysConstant.BATCH_TYPE.ECS_BACK.equals(batchType)) {// 批量终端领用回退
 			if(!(fromRepositoryID == null || "".equals(fromRepositoryID))){
 				resultMap.put("fromStoreId", fromRepositoryID);
 			}
-		} else if(SysConstant.ECSBATCHSALE.equals(batchType)) {// 批量终端销售
+		} else if(SysConstant.BATCH_TYPE.ECS_SALE.equals(batchType)) {// 批量终端销售
 			if(fromRepositoryID == null || "".equals(fromRepositoryID)){
 			} else if(destStatusCd == null || "".equals(destStatusCd)){
 			} else{
@@ -1256,11 +1321,11 @@ public class BatchBmoImpl implements BatchBmo {
 		
 		ErrorCode errorCode = null;		
 		
-		if (SysConstant.ECSBATCHRECEIVE.equals(batchType)) {// 批量终端领用
+		if (SysConstant.BATCH_TYPE.ECS_RECEIVE.equals(batchType)) {// 批量终端领用
 			errorCode = ErrorCode.BATCH_ECS_RECEIVE;
-		} else if(SysConstant.ECSBATCHBACK.equals(batchType)) {// 批量终端领用回退
+		} else if(SysConstant.BATCH_TYPE.ECS_BACK.equals(batchType)) {// 批量终端领用回退
 			errorCode = ErrorCode.BATCH_ECS_BACK;
-		} else if(SysConstant.ECSBATCHSALE.equals(batchType)) {// 批量终端销售
+		} else if(SysConstant.BATCH_TYPE.ECS_SALE.equals(batchType)) {// 批量终端销售
 			errorCode = ErrorCode.BATCH_ECS_SALE;
 		}
 		

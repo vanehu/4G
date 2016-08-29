@@ -1,16 +1,22 @@
 package com.al.lte.portal.common;
 
 import java.net.InetAddress;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.collections.MapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.al.ecs.exception.BusinessException;
+import com.al.lte.portal.bmo.crm.CustBmo;
+import com.al.lte.portal.bmo.crm.CustBmoImpl;
+import com.al.lte.portal.model.SessionStaff;
 
 public class CommonUtils {
 	
@@ -81,5 +87,32 @@ public class CommonUtils {
 		} else {
 			throw new Exception("对不起，解析电子订单数据异常！");
 		}
+	}
+	
+	/**
+	 * 判断客户是否是政企客户
+     * @return ture: 政企客户<br/>
+     * 			false: 非政企客户(公众客户)
+     */
+	@SuppressWarnings("unchecked")
+	public static boolean isGovCust(String flowNum, Map<String, Object> newCustInfoMap, SessionStaff sessionStaff) {
+		CustBmo custBmo = new CustBmoImpl();
+		boolean isGov = false;
+		Map<String, Object> param = new HashMap<String, Object>();
+		param.put("partyTypeCd", 2);
+		Map<String, Object> rMap;
+		String identityCd = MapUtils.getString(newCustInfoMap, "identityCd", "");
+		try {
+			rMap = custBmo.queryCertType(param, flowNum, sessionStaff);
+			List<Map<String, Object>> govMap = (List<Map<String, Object>>) rMap.get("result");
+			for (Map<String, Object> map : govMap) {
+				if (identityCd.equals(MapUtils.getString(map, "certTypeCd", ""))) {
+					isGov = true;
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return isGov;
 	}
 }

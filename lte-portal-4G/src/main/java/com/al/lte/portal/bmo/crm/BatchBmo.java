@@ -17,6 +17,15 @@ import com.al.lte.portal.model.SessionStaff;
  *
  */
 public interface BatchBmo {
+	
+	/**
+	 * 批量业务解析Excel统一入口
+	 * @param workbook
+	 * @param batchType
+	 * @param sessionStaff
+	 * @return
+	 */
+	public Map<String, Object> readExcel(final Workbook workbook, final String batchType, final SessionStaff sessionStaff);
 
 	/**
 	 * 批量新装(1)解析Excel
@@ -25,7 +34,7 @@ public interface BatchBmo {
 	 * @param str
 	 * @return
 	 */
-	public Map<String, Object> readExcel4NewOrder(Workbook workbook, String batchType, String str, SessionStaff sessionStaff);
+	public Map<String, Object> readExcel4NewOrder(Workbook workbook, String batchType, SessionStaff sessionStaff);
 	
 	/**
 	 * 批开活卡解析Excel(多线程)

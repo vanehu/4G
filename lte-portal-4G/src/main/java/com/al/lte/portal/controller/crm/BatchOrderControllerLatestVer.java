@@ -161,9 +161,9 @@ public class BatchOrderControllerLatestVer  extends BaseController {
 					boolean checkResultFlag = false;
 					String custStr = sessionStaff.getCustId() +"/"+ sessionStaff.getPartyName() +"/" + sessionStaff.getCardNumber()+"/"+sessionStaff.getCardType();
 					String encryptCustName = "";//客户定位回参中的CN点
-										
-					if(SysConstant.BATCHNEWORDER.equals(batchType)){//批量新装						
-						//针对批量新装的客户定位，由于脱敏原因，在入参中增加CN节点用于解密，CN即为客户定位回参中的CN节点
+					
+					//针对批量新装的客户定位，由于脱敏原因，在入参中增加CN节点用于解密，CN即为客户定位回参中的CN节点
+					if(SysConstant.BATCH_TYPE.NEW_ORDER.equals(batchType)){						
 						Map<String, Object> sessionCustInfo = (Map<String, Object>) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_CURRENT_CUST_INFO);
 						if(sessionCustInfo != null){
 							if(sessionCustInfo.get("CN") != null){
@@ -174,40 +174,13 @@ public class BatchOrderControllerLatestVer  extends BaseController {
 						} else{
 							encryptCustName = sessionStaff.getCN();
 						}	
-						
-						checkResult =  batchBmo.readExcel4NewOrder(workbook, batchType, custStr, sessionStaff);
-						if(checkResult.get("code") != null && "0".equals(checkResult.get("code"))){
-							checkResultFlag = true;
-						}else{
-							message = "批量导入出错:<br/>" + (String)checkResult.get("errorData");
-						}
-					}else if(SysConstant.BATCHHUOKA.equals(batchType)){//批开活卡
-						checkResult = batchBmo.readExcel4HKUseThreads(workbook, batchType);
-						if(checkResult.get("code") != null && "0".equals(checkResult.get("code"))){
-							checkResultFlag = true;
-						}else{
-							message = "批量导入出错:<br/>" + (String) checkResult.get("errorData");
-						}
-					}else if(SysConstant.BATCHCHAIJI.equals(batchType)//批量拆机
-							||SysConstant.BATCHFUSHU.equals(batchType)//批量退订附属
-							||SysConstant.BATCHCHANGE.equals(batchType)){
-						checkResult = batchBmo.readExcel4Common(workbook);
-						if(checkResult.get("code") != null && "0".equals(checkResult.get("code"))){
-							checkResultFlag = true;
-						}else{
-							message = "批量导入出错:<br/>" + (String) checkResult.get("errorData");
-						}
-					}else if(SysConstant.BATCHZUHE.equals(batchType) || SysConstant.BATCHEDITATTR.equals(batchType)){//组合产品纳入退出;批量修改产品属性
-						
-					}else if(SysConstant.BATCHFAZHANREN.equals(batchType)){//批量修改发展人
-						checkResult = batchBmo.readExcel4ExtendCust(workbook);
-						if(checkResult.get("code") != null && "0".equals(checkResult.get("code"))){
-							checkResultFlag = true;
-						}else{
-							message = "批量导入出错:<br/>" + (String) checkResult.get("errorData");
-						}
+					}
+					
+					checkResult =  batchBmo.readExcel(workbook, batchType, sessionStaff);
+					if(checkResult.get("code") != null && "0".equals(checkResult.get("code"))){
+						checkResultFlag = true;
 					} else{
-						message = "批量导入出错：<br/>没有查找到您提交的批量业务受理类型["+batchType+"]，无法继续受理，请稍后刷新页面重新尝试。";
+						message = "批量校验<br/>" + (String)checkResult.get("errorData");
 					}
 					
 					//Excel校验是否成功
@@ -790,7 +763,7 @@ public class BatchOrderControllerLatestVer  extends BaseController {
 			batchTypeName = batchBmo.getTypeNames(batchType);
 		} else {
 			//如果非 拆机，就默认是新装
-			batchType = SysConstant.BATCHNEWORDER;
+			batchType = SysConstant.BATCH_TYPE.NEW_ORDER;
 			batchTypeName = batchBmo.getTypeNames(batchType);
 		}
 		
@@ -813,9 +786,9 @@ public class BatchOrderControllerLatestVer  extends BaseController {
 	@AuthorityValid(isCheck = true)
 	public String batchOrderEditParty(Model model,HttpServletRequest request,HttpSession session) {
 
-		String batchTypeName =  batchBmo.getTypeNames(SysConstant.BATCHFAZHANREN);
+		String batchTypeName =  batchBmo.getTypeNames(SysConstant.BATCH_TYPE.FA_ZHAN_REN);
 		
-		model.addAttribute("templateType", SysConstant.BATCHFAZHANREN);
+		model.addAttribute("templateType", SysConstant.BATCH_TYPE.FA_ZHAN_REN);
 		model.addAttribute("batchTypeName", batchTypeName);
 		model.addAttribute("current", EhcacheUtil.getCurrentPath(session,"order/batchOrder/batchEditParty"));
 
@@ -1230,20 +1203,11 @@ public class BatchOrderControllerLatestVer  extends BaseController {
 					boolean flag = false;
 					SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);
 					
-					if(SysConstant.BATCHCHANGEFEETYPE.equals(batchType) || SysConstant.BATCHCHANGEUIM.equals(batchType)){
-						checkResult = batchBmo.readExcelBatchChange(workbook, batchType);
-					} else if(SysConstant.BATCHORDERTERMINAL.equals(batchType)){
-						checkResult = batchBmo.readOrderTerminalExcel(workbook);
-					}else if(SysConstant.BATCHBLACKLIST.equals(batchType)){
-						checkResult = batchBmo.readBlacklistTerminalExcel(workbook);
-					} else if(SysConstant.BATCHDISMANTLEINUSE.equals(batchType) || SysConstant.BATCHDISMANTLEINACTIVE.equals(batchType)){
-						checkResult = batchBmo.readExcel4Common(workbook);
-					}
-					
+					checkResult = batchBmo.readExcel(workbook, batchType, sessionStaff);
 					if(checkResult.get("code") != null && ResultCode.R_SUCC.equals(checkResult.get("code"))){//Excel校验成功
 						flag = true;
 					} else{
-						message = "批量导入出错:" + (String)checkResult.get("errorData");
+						message = "批量校验<br/>" + (String)checkResult.get("errorData");
 					}
 
 					if(flag){
@@ -1267,13 +1231,13 @@ public class BatchOrderControllerLatestVer  extends BaseController {
 							if(!"ON".equals(propertiesUtils.getMessage("CLUSTERFLAG"))){
 								//上传到单台FTP服务器
 								ftpResultMap = ftpServiceUtils.fileUpload2FTP(file.getInputStream(), fileName, batchType);
-								if(SysConstant.BATCHBLACKLIST.equals(batchType)){
+								if(SysConstant.BATCH_TYPE.BLACKLIST.equals(batchType)){
 									ftpEvidenceFileResultMap = ftpServiceUtils.fileUpload2FTP(evidenceFile.getInputStream(), evidenceFile.getOriginalFilename(), "evidenceFile");
 								}
 							} else{
 								//根据省份与多台FTP服务器的映射，上传文件到某台FTP服务器
 								ftpResultMap = ftpServiceUtils.fileUpload2FTP4Cluster(file.getInputStream(), fileName, batchType, sessionStaff.getCurrentAreaId());
-								if(SysConstant.BATCHBLACKLIST.equals(batchType)){
+								if(SysConstant.BATCH_TYPE.BLACKLIST.equals(batchType)){
 									ftpEvidenceFileResultMap = ftpServiceUtils.fileUpload2FTP4Cluster(evidenceFile.getInputStream(), evidenceFile.getOriginalFilename(), "evidenceFile", sessionStaff.getCurrentAreaId());
 								}
 							}
@@ -1287,13 +1251,13 @@ public class BatchOrderControllerLatestVer  extends BaseController {
 								if (ftpResultMap != null && ResultCode.R_SUCCESS.equals(ftpResultMap.get("code").toString())) {
 									//上传成功后，入参中填充FTP信息
 									param.put("ftpInfos", ftpResultMap.get("ftpInfos"));
-									if(SysConstant.BATCHBLACKLIST.equals(batchType)){
+									if(SysConstant.BATCH_TYPE.BLACKLIST.equals(batchType)){
 										param.put("fileUrl",ftpEvidenceFileResultMap.get("ftpInfos"));
 									}
 									//调后台服务通知接口，通知后台上传文件完成同时获取批次号
 									Map<String, Object> returnMap = batchBmo.getGroupIDfromSOAfterUpload(busMap, sessionStaff);
 									message = "批量导入成功，导入批次号：<strong>"+returnMap.get("groupId")+"</strong>，请到“批量受理查询”功能中查询受理结果";
-									if(SysConstant.BATCHBLACKLIST.equals(batchType)){
+									if(SysConstant.BATCH_TYPE.BLACKLIST.equals(batchType)){
 										message = "批量导入成功，导入批次号：<strong>"+returnMap.get("groupId")+"</strong>";
 									}
 									code = "0";
@@ -1403,15 +1367,16 @@ public class BatchOrderControllerLatestVer  extends BaseController {
 				if (!isError) {
 					Map<String,Object> checkResult = null;
 					boolean flag = false;
-					checkResult = batchBmo.readExcel4EcsBatch(workbook, batchType);
-					if(checkResult.get("code") != null && ResultCode.R_SUCC.equals(checkResult.get("code"))){//Excel校验成功
+					SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);
+					
+					checkResult = batchBmo.readExcel(workbook, batchType, sessionStaff);
+					if(checkResult.get("code") != null && ResultCode.R_SUCC.equals(checkResult.get("code"))){
 						flag = true;
 					} else{
-						message = "批量校验出错:" + checkResult.get("errorData").toString();
+						message = "批量校验<br/>" + checkResult.get("errorData").toString();
 					}
 
 					if(flag){
-						SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);
 						Map<String, Object> ftpResultMap = null;						
 						try {
 							//上传文件
