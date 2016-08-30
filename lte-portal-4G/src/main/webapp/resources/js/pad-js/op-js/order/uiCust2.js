@@ -480,7 +480,7 @@ order.uiCusts = (function(){
 	//客户类型关联证件类型下拉框     ok
 	var _certTypeByPartyType = function(_partyTypeCd,id){
 		var _obj = $("#"+id);
-		$.callServiceAsJson(contextPath+"/cust/queryCertType", {"partyTypeCd":_partyTypeCd}, {
+		$.callServiceAsJson(contextPath+"/token/pad/cust/queryCertType", {"partyTypeCd":_partyTypeCd}, {
 			"before":function(){
 			},"done" : function(response){
 				if (response.code == -2) {

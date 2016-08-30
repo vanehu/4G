@@ -1059,11 +1059,19 @@ public class CustController extends BaseController {
 		Map<String, Object> rMap = null;
 		JsonResponse jsonResponse = null;
 		String resultList= null;
+		HttpSession session = request.getSession();
+		String partyTypeCd = MapUtils.getString(param,"partyTypeCd");
 		try{		
- 			rMap = this.custBmo.queryCertType(param, flowNum, sessionStaff);
- 			log.debug("return={}", JsonUtil.toString(rMap));
+			Map<String, Object> srMap = (Map<String, Object>) session.getAttribute("pcQueryCertType"+partyTypeCd);
+	        if(srMap != null){
+	        	rMap = (Map<String, Object>) session.getAttribute("pcQueryCertType"+partyTypeCd);
+	        }else{
+	        	rMap = this.custBmo.queryCertType(param, flowNum, sessionStaff);
+	            log.debug("return={}", JsonUtil.toString(rMap));
+	        }
  			resultList =rMap.get("result").toString();
  			if (rMap != null&& ResultCode.R_SUCCESS.equals(rMap.get("code").toString())&&!"[]".equals(resultList)) {
+ 				session.setAttribute("pcQueryCertType"+partyTypeCd, rMap);
  				jsonResponse = super.successed(rMap.get("result"),
  						ResultConstant.SUCCESS.getCode());
  			}else if("[]".equals(resultList)) {

@@ -579,7 +579,7 @@ order.prodModify = (function(){
 	//客户类型关联证件类型下拉框
 	var _certTypeByPartyType = function(_partyTypeCd){
 		var params = {"partyTypeCd":_partyTypeCd} ;
-		var url=contextPath+"/cust/queryCertType";
+		var url=contextPath+"/token/pc/cust/queryCertType";
 		var response = $.callServiceAsJson(url, params, {});
        if (response.code == -2) {
 					$.alertM(response.data);

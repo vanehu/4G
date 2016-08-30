@@ -46,7 +46,7 @@ order.cust = (function(){
 	var _certTypeByPartyType = function(_partyTypeCd,id){
 		var _obj = $("#"+id);
 		var params = {"partyTypeCd":_partyTypeCd} ;
-		var url=contextPath+"/cust/queryCertType";
+		var url=contextPath+"/token/pad/cust/queryCertType";
 		var response = $.callServiceAsJson(url, params, {});
        if (response.code == -2) {
 					$.alertM(response.data);
