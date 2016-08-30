@@ -375,6 +375,7 @@ staff.login = (function($) {
 			if(browserLevel == 1) {
 				$('#loginForm').bind('formIsValid', _loginFormIsValid).ketchup({bindElement:"button"});
 			} else if (browserLevel == 2) {
+				$('#loginForm').bind('formIsValid', _loginFormIsValid).ketchup({bindElement:"button"});
 				$.alert("提示","您当前使用的浏览器为" + browserVersion + "，推荐使用下列浏览器" + recBroStr + "等，否则可能引起操作缓慢等性能隐患。");
 			} else if (browserLevel == 3) {
 				$.alert("提示","您当前使用的浏览器为" + browserVersion + "，不在允许使用的范围内，推荐使用下列浏览器" + recBroStr + "等。");
