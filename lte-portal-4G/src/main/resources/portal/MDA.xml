@@ -1248,6 +1248,42 @@
 			'PRECHECKFLAG_899':'OFF'<!-- 虚拟省 -->
 			}
 		</const>
++		<const type="Map" name="ISCALLBACK" description="能力开放回调地址校验开关">
++		{
++			'ISCALLBACK_854':'ON',<!-- 西藏 -->
++			'ISCALLBACK_863':'ON',<!-- 青海 -->
++			'ISCALLBACK_815':'ON',<!-- 内蒙古 -->
++			'ISCALLBACK_823':'ON',<!-- 黑龙江 -->
++			'ISCALLBACK_845':'ON',<!-- 广西 -->
++			'ISCALLBACK_850':'ON',<!-- 重庆 -->
++			'ISCALLBACK_861':'ON',<!-- 陕西 -->
++			'ISCALLBACK_842':'ON',<!-- 湖北 -->
++			'ISCALLBACK_835':'ON',<!-- 福建 -->
++			'ISCALLBACK_832':'ON',<!-- 江苏 -->
++			'ISCALLBACK_846':'ON',<!-- 海南 -->
++			'ISCALLBACK_864':'ON',<!-- 宁夏 -->
++			'ISCALLBACK_814':'ON',<!-- 山西 -->
++			'ISCALLBACK_853':'ON',<!-- 云南 -->
++			'ISCALLBACK_836':'ON',<!-- 江西 -->
++			'ISCALLBACK_837':'ON',<!-- 山东 -->
++			'ISCALLBACK_811':'ON',<!-- 北京 -->
++			'ISCALLBACK_843':'ON',<!-- 湖南 -->
++			'ISCALLBACK_851':'ON',<!-- 四川 -->
++			'ISCALLBACK_844':'ON',<!-- 广东 -->
++			'ISCALLBACK_831':'ON',<!-- 上海 -->
++			'ISCALLBACK_812':'ON',<!-- 天津 -->
++			'ISCALLBACK_813':'ON',<!-- 河北 -->
++			'ISCALLBACK_841':'ON',<!-- 河南 -->
++			'ISCALLBACK_821':'ON',<!-- 辽宁 -->
++			'ISCALLBACK_822':'ON',<!-- 吉林 -->
++			'ISCALLBACK_834':'ON',<!-- 安徽 -->
++			'ISCALLBACK_833':'ON',<!-- 浙江 -->
++			'ISCALLBACK_852':'ON',<!-- 贵州 -->
++			'ISCALLBACK_862':'ON',<!-- 甘肃 -->
++			'ISCALLBACK_865':'ON',<!-- 新疆 -->
++			'ISCALLBACK_899':'ON'<!-- 虚拟省 -->
++			}
++		</const>
 		
 	</mda>    
 </mdas>

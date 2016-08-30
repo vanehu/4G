@@ -321,13 +321,18 @@ public class APPModelController extends BaseController {
 				boolean isRight=false;
 				
 				if(urls!=null && urls.length>0){
-					if(urls.length==1){
-						isRight=urls[0].equals(domainName);
-					}else{
-						for(String url:urls){
-							if(url.equals(domainName)){
-								isRight=true;
-								break;
+					if(sessionStaff.getCurrentAreaId() !=null && 
+							!SysConstant.ON.equals(propertiesUtils.getMessage("ISCALLBACK"+sessionStaff.getCurrentAreaId().substring(0, 3)))){
+						isRight=true;
+					}else {
+						if(urls.length==1){
+							isRight=urls[0].equals(domainName);
+						}else{
+							for(String url:urls){
+								if(url.equals(domainName)){
+									isRight=true;
+									break;
+								}
 							}
 						}
 					}
