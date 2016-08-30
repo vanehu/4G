@@ -303,10 +303,12 @@ order.prodModify = (function(){
 					}
 				});
 	};
+	//前置校验，能力开放
 	var _preCheckBeforeOrder = function (serviceType,callbackFunc){
 		var params={
 				"serviceType" : serviceType
 		};
+		
 		var response = $.callServiceAsJson(contextPath + "/token/secondBusi/preCheckBeforeOrde", params);
 		if(response.data.checkLevel == 0){
 			return true;
@@ -341,8 +343,53 @@ order.prodModify = (function(){
 			$.alert("错误",response.data);
 			return false;
 		}else{
+			
 			$.alertM(response.data);
 		}
+	};
+	
+//前置校验，app
+	var _preCheckBeforeOrder2 = function (serviceType,callbackFunc){
+//		var accNbr = "";
+//		if(serviceType=="28" || serviceType =="29" || serviceType =="30"){
+//			accNbr = cust.checkUserInfo.accNbr;
+//		}else{
+//			var prod = order.prodModify.choosedProdInfo ; 
+//			accNbr = prod.accNbr;
+//		}
+		var url=contextPath + "/app/prodModify/preCheckBeforeOrde";
+		var params={
+				"serviceType" : serviceType,
+		};
+		var response = $.callServiceAsJson(url, params,{
+			"before":function(){
+				$.ecOverlay("<strong>客户前置校验中,请稍等...</strong>");
+			},
+			"always":function(){
+				$.unecOverlay();
+			},
+			"done" : function(response){
+				if(response.data.checkLevel == 0){
+					return true;
+				}else if(response.data.checkLevel == 10){
+					$.unecOverlay();
+					callbackFunc();
+					return false;
+				}else if(response.data.checkLevel == 20){
+					$.alert("前置校验限制",response.data.checkInfo);
+					return false;
+				}else if(response.code == 1){
+					$.alert("错误",response.data);
+					return false;
+				}else{
+					$.alertM(response.data);
+				}
+			},
+			fail:function(response){
+				$.unecOverlay();
+				$.alert("提示","系统繁忙，请稍后再试！");
+			}
+		});
 	};
 	
 
@@ -352,6 +399,7 @@ order.prodModify = (function(){
 		querySecondBusinessAuth:_querySecondBusinessAuth,
 		isCustomers:_isCustomers,
 		accountChange:_accountChange,
-		preCheckBeforeOrder : _preCheckBeforeOrder
+		preCheckBeforeOrder : _preCheckBeforeOrder,
+		preCheckBeforeOrder2 : _preCheckBeforeOrder2
 	};	
 })();

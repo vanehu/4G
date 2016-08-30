@@ -43,6 +43,9 @@ OrderInfo = (function() {
 	16 改账务定制关系
 	17 改产品密码*/
 	
+	var _preBefore ={
+			prcFlag : ""	
+	};//保存前置检验的结果
 	var _busitypeflag = 0;
 	
 	var _uimtypeflag = 0;
@@ -546,7 +549,6 @@ OrderInfo = (function() {
 		if(ec.util.isObj(accNbr)){ //接入号码
 			busiOrder.busiObj.accessNumber = accNbr;
 		}
-		
 		if(prodServ.boActionTypeCd == CONST.BO_ACTION_TYPE.PRODUCT_PARMS){ //改产品属性
 			if(ec.util.isArray(prodServ.prodSpecParams)){
 				busiOrder.data.boServOrders = [];
@@ -612,7 +614,7 @@ OrderInfo = (function() {
 						var feeType = $("select[name='pay_type_-1']").val();
 						if(feeType==undefined) feeType = order.prodModify.choosedProdInfo.feeType;
 						if(prodServ.servSpecId == CONST.YZFservSpecId && feeType == CONST.PAY_TYPE.AFTER_PAY){
-							if (this.itemSpecId == CONST.YZFitemSpecId1 || this.itemSpecId == CONST.YZFitemSpecId2 || this.itemSpecId == CONST.YZFitemSpecId3 || (this.itemSpecId == CONST.YZFitemSpecId4 && "ON" != offerChange.queryPortalProperties("AGENT_" + OrderInfo.staff.soAreaId.substring(0,3))) ) {
+							if (this.itemSpecId == CONST.YZFitemSpecId1 || this.itemSpecId == CONST.YZFitemSpecId2 || this.itemSpecId == CONST.YZFitemSpecId3 || (this.itemSpecId == CONST.YZFitemSpecId4 && "ON" != offerChange.queryPortalProperties("AGENT_" + (OrderInfo.staff.soAreaId+"").substring(0,3))) ) {
 								this.setValue = "";
 							}
 						}
@@ -1223,6 +1225,7 @@ OrderInfo = (function() {
 		custorderlonger			:_custorderlonger,
 		prodAttrs				:_prodAttrs,
 		isGroupProSpecId        :_isGroupProSpecId,
-		uimtypeflag             :_uimtypeflag
+		uimtypeflag             :_uimtypeflag,
+		preBefore:             _preBefore
 	};
 })();

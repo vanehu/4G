@@ -230,7 +230,7 @@ CacheData = (function() {
 				+'<button class="btn btn-default"  onclick="AttachOffer.searchSchools(\''+id+'\');" type="button">搜索</button></span></div></div>'
 			}
 		} else if(ec.util.isArray(param.valueRange)){ //下拉框
-			var flag=offerChange.queryPortalProperties("AGENT_" + OrderInfo.staff.soAreaId.substring(0,3));
+			var flag=offerChange.queryPortalProperties("AGENT_" + (OrderInfo.staff.soAreaId+"").substring(0,3));
 			if (itemSpecId ==  CONST.YZFitemSpecId4 && "ON" != flag) {
 				return selectStr;
 			}

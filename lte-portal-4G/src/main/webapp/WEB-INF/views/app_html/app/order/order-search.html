@@ -319,6 +319,40 @@
 <script>
 //初始化
 $(function(){
+	//前置校验，不符合直接提示
+	//老客户新装才进行前置校验
+	var serviceType="";
+	if(${enter}=="1"){
+		serviceType="29"; //选套餐
+	}else if(${enter}=="2"){
+		serviceType="28";  //购手机
+	}else {
+		serviceType="30"; //选号码
+	}
+	var custId = OrderInfo.cust.custId;
+	if(custId !="-1" ){
+		//查分省前置校验开关
+        var propertiesKey = "PRECHECKFLAG_"+(OrderInfo.staff.soAreaId+"").substring(0,3);
+        var isPCF = offerChange.queryPortalProperties(propertiesKey);
+        if(isPCF == "ON"){
+        	if(OrderInfo.preBefore.prcFlag != "Y"){
+        		var checkPre = order.prodModify.preCheckBeforeOrder2(serviceType,function () {
+        			callback();
+        		});
+        		if(checkPre){
+        			callback();
+        		}
+        	}
+        }else{
+        	callback();
+        }
+        OrderInfo.preBefore.prcFlag = "";
+	} else{
+		callback();
+	}
+});
+
+function callback(){
 	if(${enter}=="1"){
 		$("#mima").empty();
 		order.service.init();
@@ -339,7 +373,8 @@ $(function(){
 		$("#phone").attr("class","tab-pane fade medialist");
 		$("#number").attr("class","tab-pane fade in active");
 	}
-});
+	
+}
 function setnumPrice(){
 			var price = $("#numPrice").val();
 			if(price=="-1"){

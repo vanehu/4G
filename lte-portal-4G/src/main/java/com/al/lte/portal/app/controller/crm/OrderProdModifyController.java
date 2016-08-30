@@ -1,9 +1,11 @@
 package com.al.lte.portal.app.controller.crm;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
@@ -235,4 +237,98 @@ public class OrderProdModifyController extends BaseController {
 		return jsonResponse;
 
 	}
+    
+    /**
+     * 前置校验接口
+     * @param param
+     * @param flowNum
+     * @param response
+     * @return
+     */
+    @RequestMapping(value = "/preCheckBeforeOrde", method = RequestMethod.POST)
+    @ResponseBody
+    public JsonResponse preCheckBeforeOrde(@RequestBody Map<String, Object> paramMap,
+			@LogOperatorAnn String flowNum,HttpServletResponse response,HttpServletRequest request){
+    	SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+				SysConstant.SESSION_KEY_LOGIN_STAFF);
+		JsonResponse jsonResponse = null;
+		Map<String, Object>  map=null;
+		//参数拼接
+		paramMap.put("channelId", sessionStaff.getCurrentChannelId());
+		paramMap.put("channelNbr", sessionStaff.getCurrentChannelCode());
+		paramMap.put("salesCode", sessionStaff.getSalesCode());
+		paramMap.put("staffCode", sessionStaff.getStaffCode());
+		HttpSession session = request.getSession();
+		String areaId = (String) session.getAttribute("preAreaID");
+		String PCCustId = (String) session.getAttribute("preCustId");
+		String PCAccNbr = (String) session.getAttribute("preAccNbr");
+		if ("".equals(PCCustId) || PCCustId == null || PCAccNbr == null
+				|| "".equals(PCAccNbr)) {
+			return super.failed("前置校验参数有误！", ResultConstant.FAILD.getCode());
+		}
+		paramMap.put("custId", PCCustId);
+		paramMap.put("accNbr", PCAccNbr);
+		if (!"".equals(areaId) && areaId != null) {
+			paramMap.put("areaId", areaId.substring(0, 5) + "00");
+		} else {
+			areaId = sessionStaff.getAreaId();
+			paramMap.put("areaId", areaId.substring(0, 5) + "00");
+		}
+		try {
+        	map = this.orderBmo.preCheckBeforeOrde(paramMap, flowNum, sessionStaff);
+        	Map<String, Object>  retMap = new HashMap<String, Object>();
+			String resultCode = MapUtils.getString(map, "resultCode");
+			if (ResultCode.R_SUCC.equals(resultCode)){
+				Map<String, Object> datamap = (Map<String, Object>) map.get("result");
+				if(datamap !=null){
+					boolean flag = false;
+					String type = "0";
+					StringBuffer sbcheck = new StringBuffer("");
+					StringBuffer sbXZ = new StringBuffer("");
+					List<Map<String, Object>> checkResultList = null;
+                     if (datamap.get("checkResult") != null) {
+                         Object obj = datamap.get("checkResult");
+                         if (obj instanceof List) {
+                        	 checkResultList = (List<Map<String, Object>>) obj;
+                         } else {
+                        	 checkResultList = new ArrayList<Map<String, Object>>();
+                        	 checkResultList.add((Map<String, Object>) obj);
+                         }
+                         for(Map<String, Object> checkResult : checkResultList){
+     						String checkLevel = (String) checkResult.get("checkLevel");
+     						String checkInfo = (String) checkResult.get("checkInfo");
+     						if("10".equals(checkLevel)){
+     							sbcheck.append(checkInfo).append(",");
+     							type = "10";
+     						}else if("20".equals(checkLevel)){
+     							sbXZ.append(checkInfo).append(",");
+     							flag = true;
+     						}
+     					}
+                    }
+					if(flag){
+						retMap.put("checkLevel", "20");
+						retMap.put("checkInfo", sbXZ);
+					}else if(type.equals("10")){
+						retMap.put("checkLevel", "10");
+						retMap.put("checkInfo", sbcheck);
+					}else{
+						retMap.put("checkLevel", "0");
+					}
+				}else{
+					retMap.put("checkLevel", "0");
+				}
+				jsonResponse = super.successed(retMap,ResultConstant.SUCCESS.getCode());
+			}else{
+				jsonResponse = super.failed(map,ResultConstant.FAILD.getCode());
+			}
+        }catch (BusinessException be) {
+        	return super.failed(be);
+        } catch (InterfaceException ie) {
+        	return super.failed(ie, paramMap, ErrorCode.PRE_CHECK_ORDER);
+		} catch (Exception e) {
+			return super.failed(ErrorCode.PRE_CHECK_ORDER, e, paramMap);
+		}
+		return jsonResponse;
+    }
 }

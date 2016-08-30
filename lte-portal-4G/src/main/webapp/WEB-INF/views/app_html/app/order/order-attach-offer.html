@@ -12,9 +12,36 @@
 </div>
 <script type="text/javascript">
 //初始化
-$(function(){
-	AttachOffer.init();
-});
+
+	$(function() {
+		//前置校验
+		var custId = OrderInfo.cust.custId;
+		if (custId != "-1") {
+			//查分省前置校验开关
+			var propertiesKey = "PRECHECKFLAG_"
+					+ (OrderInfo.staff.soAreaId + "").substring(0, 3);
+			var isPCF = offerChange.queryPortalProperties(propertiesKey);
+			if (isPCF == "ON") {
+				if (OrderInfo.preBefore.prcFlag != "Y") {
+					var checkPre = order.prodModify.preCheckBeforeOrder2("3",
+							function() {
+								callback();
+							});
+					if (checkPre) {
+						callback();
+					}
+				}
+			} else {
+				callback();
+			}
+			OrderInfo.preBefore.prcFlag = "";
+		} else {
+			callback();
+		}
+	});
+	function callback() {
+		AttachOffer.init();
+	}
 </script>
 <!-- 订单确认页面、收银台页面 -->
 <div id="order-confirm" style="display: none;">

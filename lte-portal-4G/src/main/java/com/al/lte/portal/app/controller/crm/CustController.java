@@ -203,6 +203,12 @@ public class CustController extends BaseController {
             if (MapUtils.isNotEmpty(resultMap)) {
                 List<Map<String, Object>> custInfos = new ArrayList<Map<String, Object>>();
                 custInfos = (List<Map<String, Object>>) resultMap.get("custInfos");
+				if (custInfos.size() > 0) {//客户信息存入session,供前置校验接口调用
+					Map custInfo = (Map) custInfos.get(0);
+					httpSession.setAttribute("preCustId",(String) custInfo.get("custId"));
+					httpSession.setAttribute("preAreaID",(String) paramMap.get("areaId"));
+					httpSession.setAttribute("preAccNbr",(String) paramMap.get("acctNbr"));
+				}
                 model.addAttribute("custInfoSize", custInfos.size());
                 model.addAttribute("cust", resultMap);
             }
@@ -1084,6 +1090,14 @@ public class CustController extends BaseController {
 	            	}
 	            	
 	            	custInfos=(List<Map<String, Object>>) resultMap.get("custInfos");
+	            	//前置校验设置session值
+	            	if(custInfos.size()>0){
+						Map custInfo =(Map)custInfos.get(0);
+						HttpSession session = request.getSession(false);
+						session.setAttribute("preCustId", String.valueOf(custInfo.get("custId")));
+						session.setAttribute("preAreaID", (String) paramMap.get("areaId"));
+						session.setAttribute("preAccNbr", String.valueOf(paramMap.get("acctNbr")));
+					}
 	            	List<String> custIds = new ArrayList<String>();
 	            	//脱敏
 					for(int i = 0; i < custInfos.size(); i++){

@@ -1105,12 +1105,12 @@ order.main = (function(){
 				var yiPaySpec = CacheData.getServSpec(-1,381000960);
 				if(yiPaySpec.isdel==undefined||yiPaySpec.isdel!="Y"){
 					// #610119需求增加：托收的属性需要分省下发。
-					var agentFlag = offerChange.queryPortalProperties("AGENT_" + OrderInfo.staff.soAreaId.substring(0,3));
+					var agentFlag = offerChange.queryPortalProperties("AGENT_" + (OrderInfo.staff.soAreaId+"").substring(0,3));
 					$.confirm("信息确认","您已选择开通【翼支付交费助手】功能产品，如果修改付费类型为后付费，" + ("ON" == agentFlag ? "只可变更“翼支付托收”。" : "属性不可变更。"),{ 
 						yesdo:function(){
 							for ( var j = 0; j < yiPaySpec.prodSpecParams.length; j++) {							
 								var prodSpecParam = yiPaySpec.prodSpecParams[j];
-								if (CONST.YZFitemSpecId4 == prodSpecParam.itemSpecId && "ON" == offerChange.queryPortalProperties("AGENT_" + OrderInfo.staff.soAreaId.substring(0,3))) {
+								if (CONST.YZFitemSpecId4 == prodSpecParam.itemSpecId && "ON" == offerChange.queryPortalProperties("AGENT_" + (OrderInfo.staff.soAreaId+"").substring(0,3))) {
 									if (prodSpecParam.value!="") {
 										prodSpecParam.setValue = prodSpecParam.value;
 									} else if (!!prodSpecParam.valueRange[0]&&prodSpecParam.valueRange[0].value!="")

@@ -20,60 +20,90 @@
 }
 		</style>
 		<script>
+			
 			$(function() {
-				OrderInfo.order.step=1;
+				//前置校验
+				var custId = OrderInfo.cust.custId;
+				if (custId != "-1") {
+					//查分省前置校验开关
+					var propertiesKey = "PRECHECKFLAG_"
+							+ (OrderInfo.staff.soAreaId + "").substring(0, 3);
+					var isPCF = offerChange
+							.queryPortalProperties(propertiesKey);
+					if (isPCF == "ON") {
+						if (OrderInfo.preBefore.prcFlag != "Y") {
+							var checkPre = order.prodModify
+									.preCheckBeforeOrder2("13",
+											function() {
+												callback();
+											});
+							if (checkPre) {
+								callback();
+							}
+						}
+					} else {
+						callback();
+					}
+					OrderInfo.preBefore.prcFlag = "";
+				} else {
+					callback();
+				}
+
+			});
+			function callback() {
+				OrderInfo.order.step = 1;
 				prod.changeUim.initApp();
 				$(".noUiSlidera").noUiSlider({
-					range: [0, 500],
-					start: [0, 500],
-					step: 10,
-					slide: function() {
+					range : [ 0, 500 ],
+					start : [ 0, 500 ],
+					step : 10,
+					slide : function() {
 						var values = $(this).val();
 						$("#numa01").val(values[0]);
 						$("#numa02").val(values[1]);
 					}
 				});
 				$(".noUiSliderb").noUiSlider({
-					range: [0, 500],
-					start: [0, 500],
-					step: 10,
-					slide: function() {
+					range : [ 0, 500 ],
+					start : [ 0, 500 ],
+					step : 10,
+					slide : function() {
 						var values = $(this).val();
 						$("#numb01").val(values[0]);
 						$("#numb02").val(values[1]);
 					}
 				});
 				$(".noUiSliderc").noUiSlider({
-					range: [0, 500],
-					start: [0, 500],
-					step: 10,
-					slide: function() {
+					range : [ 0, 500 ],
+					start : [ 0, 500 ],
+					step : 10,
+					slide : function() {
 						var values = $(this).val();
 						$("#numc01").val(values[0]);
 						$("#numc02").val(values[1]);
 					}
 				});
 				$(".noUiSliderd").noUiSlider({
-					range: [0, 500],
-					start: [0, 500],
-					step: 10,
-					slide: function() {
+					range : [ 0, 500 ],
+					start : [ 0, 500 ],
+					step : 10,
+					slide : function() {
 						var values = $(this).val();
 						$("#numd01").val(values[0]);
 						$("#numd02").val(values[1]);
 					}
 				});
 				$(".noUiSlidere").noUiSlider({
-					range: [0, 500],
-					start: [0, 500],
-					step: 10,
-					slide: function() {
+					range : [ 0, 500 ],
+					start : [ 0, 500 ],
+					step : 10,
+					slide : function() {
 						var values = $(this).val();
 						$("#nume01").val(values[0]);
 						$("#nume02").val(values[1]);
 					}
 				});
-			});
+			}
 		</script>
 	</head>
 
