@@ -1410,4 +1410,11 @@ public class MktResBmoImpl implements MktResBmo {
 		}
 		return (Map<String, Object>) sessionParams.get(qryParam.get("qryType").toString());
 	}
+
+	public void writeCardLogInfo(String string, Map<String, Object> param, String flowNum,
+			SessionStaff sessionStaff) throws Exception {
+		// TODO Auto-generated method stub
+		InterfaceClient.callLogSerTOLogDB(string ,param, flowNum, sessionStaff);
+	}
+	}
 }

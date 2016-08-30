@@ -509,6 +509,15 @@ order.writeCard = (function(){
 		//alert("writeCardResult:"+writeCardResult);
 		if (writeCardResult != "0") {
 			//客户端提示：写卡失败时各卡商返回各自定义的错误信息 
+			var paramLog = {
+					mkt_res_inst_code : $("#resultCardNo").val(),
+					iccid : $("#resultCardNo").val(),
+					card_source : cardDllInfoJson.dllName,
+					err_desc :"写卡失败，请将白卡取出！错误编码=" + writeCardResult+"详细错误请联系卡商["+_cardDllInfoJson.remark+"]确认",
+					acc_nbr : '',
+					contact_record : ''
+			};
+			_writeCardLogInfo(paramLog);
 			$.alert("提示","写卡失败，请将白卡取出！错误编码=" + writeCardResult+"详细错误请联系卡商["+_cardDllInfoJson.remark+"]确认","error");
 			_completeWriteCard("1",writeCardResult);//写卡失败回填
 			return false;
@@ -721,6 +730,15 @@ order.writeCard = (function(){
 					//alert("cardDllInfoJson:"+JSON.stringify(cardDllInfoJson));
 					var dllId = cardDllInfoJson.dllId;
 					if (dllId == undefined || dllId == null || dllId == "") {
+						var paramLog = {
+								mkt_res_inst_code : $("#resultCardNo").val(),
+								iccid : $("#resultCardNo").val(),
+								card_source : cardDllInfoJson.dllName,
+								err_desc : "卡商(编码=" + factoryCode + ")获取不到对应的组件信息！",
+								acc_nbr : '',
+								contact_record : ''
+						};
+						_writeCardLogInfo(paramLog);
 						$.alert("提示","卡商(编码=" + factoryCode + ")获取不到对应的组件信息！","error");
 						return false;
 					}
@@ -744,6 +762,15 @@ order.writeCard = (function(){
 					//alert("cardDllInfoJson:"+JSON.stringify(cardDllInfoJson));
 					var dllId = cardDllInfoJson.dllId;
 					if (dllId == undefined || dllId == null || dllId == "") {
+						var paramLog = {
+								mkt_res_inst_code : $("#resultCardNo").val(),
+								iccid : $("#resultCardNo").val(),
+								card_source : cardDllInfoJson.dllName,
+								err_desc : "卡商(编码=" + factoryCode + ")获取不到对应的组件信息！",
+								acc_nbr : '',
+								contact_record : ''
+						};
+						_writeCardLogInfo(paramLog);
 						$.alert("提示","卡商(编码=" + factoryCode + ")获取不到对应的组件信息！","error");
 						return false;
 					}
@@ -757,6 +784,15 @@ order.writeCard = (function(){
 			}
 		} catch(e) {
 			$.alert("提示","获取卡商组件信息时异常!" + e.message,"error");
+			var paramLog = {
+					mkt_res_inst_code : $("#resultCardNo").val(),
+					iccid : $("#resultCardNo").val(),
+					card_source : '',
+					err_desc : "获取卡商组件信息时异常!" + e.message,
+					acc_nbr : '',
+					contact_record : ''
+			};
+			_writeCardLogInfo(paramLog);
 			return false;
 		}
 	};
@@ -797,6 +833,15 @@ order.writeCard = (function(){
 			//$.alert("提示","您当前使用的卡组件的版本已更新，请下载更新至最新的版本[" + _cardDllInfoJson.dllVersion + "]后重新写卡。");
 			//var url = contextPath + "/card/"+ _cardDllInfoJson.dllName+".DLL";
 			//location.href = url;
+			var paramLog = {
+					mkt_res_inst_code : $("#resultCardNo").val(),
+					iccid : $("#resultCardNo").val(),
+					card_source : _cardDllInfoJson.dllName,
+					err_desc : '写卡组件未更新',
+					acc_nbr : '',
+					contact_record : ''
+			};
+			_writeCardLogInfo(paramLog);
 			return false;
 		}
 		//alert("fso=="+fso);
@@ -862,6 +907,15 @@ order.writeCard = (function(){
 					resourceDataJson = response.data.cardInfo;
 					_TransactionID = response.data.TransactionID;
 				}else{
+					var paramLog = {
+							mkt_res_inst_code : $("#resultCardNo").val(),
+							iccid : $("#resultCardNo").val(),
+							card_source : _cardDllInfoJson.dllName,
+							err_desc : response.data.errMsg,
+							acc_nbr : OrderInfo.getAccessNumber(prodId),
+							contact_record : ''
+					};
+					_writeCardLogInfo(paramLog);
 					$.alertM(response.data);
 					return false;
 				}
@@ -911,6 +965,15 @@ order.writeCard = (function(){
 					return true;
 				} else {
 					var msg = resourceDataJson.msg;
+					var paramLog = {
+							mkt_res_inst_code : $("#resultCardNo").val(),
+							iccid : $("#resultCardNo").val(),
+							card_source : _cardDllInfoJson.dllName,
+							err_desc : "请求可写卡的资源数据失败:" + msg,
+							acc_nbr : OrderInfo.getAccessNumber(prodId),
+							contact_record : _TransactionID
+					};
+					_writeCardLogInfo(paramLog);
 					if (msg != undefined) {
 						$.alert("提示","请求可写卡的资源数据失败:" + msg,"error");
 					} else {
@@ -1071,16 +1134,31 @@ order.writeCard = (function(){
 				
 				if (!response) {
 					$.alert("提示","<br/>卡资源回填到卡管系统异常,请稍后重试。");
+					var paramLog = {
+							mkt_res_inst_code : $("#resultCardNo").val(),
+							iccid : _rscJson.iccid,
+							card_source : _cardDllInfoJson.dllName,
+							err_desc : "卡资源回填到卡管系统异常,请稍后重试。",
+							acc_nbr : OrderInfo.getAccessNumber(_rscJson.prodId),
+							contact_record : _TransactionID
+					};
+					_writeCardLogInfo(paramLog);
 					return;
 				}
-				if(response.code == -2) {
-					alertMM(response.data);
-					return;
-				} else if(response.code != 0) {
+			   if(response.code != 0) {
 					$.alert("提示","<br/>调用卡资源回填到卡管系统异常,请稍后重试。");
 					if(response.data !="" && response.data !=undefined){
 						alertMM(response.data);
 					}
+					var paramLog = {
+							mkt_res_inst_code : $("#resultCardNo").val(),
+							iccid : _rscJson.iccid,
+							card_source : _cardDllInfoJson.dllName,
+							err_desc : "卡资源回填到卡管系统异常,请稍后重试。"+response.data.errMsg,
+							acc_nbr : OrderInfo.getAccessNumber(_rscJson.prodId),
+							contact_record : _TransactionID
+					};
+					_writeCardLogInfo(paramLog);
 					return;
 				}
 				//var eventJson = response.data;
@@ -1113,6 +1191,15 @@ order.writeCard = (function(){
 				return true;
 			} catch(e) {
 				$.alert("提示","调用卡资源回填到卡管系统异常！" + e.message,"error");
+				var paramLog = {
+						mkt_res_inst_code : $("#resultCardNo").val(),
+						iccid :_rscJson.iccid,
+						card_source : _cardDllInfoJson.dllName,
+						err_desc : "调用卡资源回填到卡管系统异常！" + e.message,
+						acc_nbr : OrderInfo.getAccessNumber(_rscJson.prodId),
+						contact_record : _TransactionID
+				};
+				_writeCardLogInfo(paramLog);
 				return false;
 			}
 	};
@@ -1777,6 +1864,12 @@ order.writeCard = (function(){
 				return false;
 			}
 		};
+	var _writeCardLogInfo = function(param){
+		//请求后返回给客户端的数据直接是可以写卡的暗文
+		var serviceName = contextPath + "/mktRes/writeCard/writeCardLogInfo";
+		$.callServiceAsJson(serviceName, param);
+	};
+		
 	return {
 		writeReadCard : _writeReadCard,
 		readCard : _readCard,
@@ -1786,6 +1879,7 @@ order.writeCard = (function(){
 		essShowReadWirteCard : _essShowReadWirteCard,
 		essWriteReadCard : _essWriteReadCard,
 		essRepeatWriteReadCard : _essRepeatWriteReadCard,
-		essRepeatWriteCard : _essRepeatWriteCard
+		essRepeatWriteCard : _essRepeatWriteCard,
+		writeCardLogInfo  : _writeCardLogInfo
 	};
 })();

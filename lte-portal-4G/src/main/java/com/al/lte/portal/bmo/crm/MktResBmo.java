@@ -452,5 +452,8 @@ public interface MktResBmo {
 	
 	public Map<String, Object> getCachedParamsInSession(HttpServletRequest request, Map<String, Object> qryParam, String businessFlag);
 	
+	/**写卡错误信息记录日志平台*/
+	public void writeCardLogInfo(String string, Map<String, Object> param, String flowNum,
+			SessionStaff sessionStaff)throws Exception;
 	
  }

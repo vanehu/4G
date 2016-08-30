@@ -1202,5 +1202,26 @@ public class InterfaceClient {
 		} catch (Exception e) {
 			log.error("日志记录异常", e);
 		}
+	}	
+	
+	/**
+	 * 调用日志平台记录tableName日志
+	 * @param logmap
+	 *            日志报文
+	 * @param flowNum
+	 *            流水号
+	 * @param optFlowNum
+	 *            门户层操作流水号
+	 * @param sessionStaff
+	 *            sessionStaff
+	 */
+	public static void callLogSerTOLogDB(String tableName,Map<String, Object> logmap,String flowNum,SessionStaff sessionStaff) {
+		try {
+//			log.debug("日志平台调用前入参为：" + JsonUtil.buildNormal().objectToJson(logmap));
+			logSender.sendLog2DB(tableName, logmap,null);
+//			log.debug("日志平台调用成功！入参为：" + JsonUtil.buildNormal().objectToJson(logmap));
+		} catch (Exception e) {
+			log.error("日志记录异常", e);
+		}
 	}
 }

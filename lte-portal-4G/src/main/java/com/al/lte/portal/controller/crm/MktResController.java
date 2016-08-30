@@ -3122,4 +3122,26 @@ public class MktResController extends BaseController {
 		}
 		return jsonResponse;
 	}
+	
+	@RequestMapping(value = "/writeCard/writeCardLogInfo", method = RequestMethod.POST)
+	@ResponseBody
+	public void writeCardLogInfo(@RequestBody Map<String, Object> param,HttpServletRequest request,
+			@LogOperatorAnn String flowNum) {
+		    SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+					SysConstant.SESSION_KEY_LOGIN_STAFF);
+		    param.put("channel_id", sessionStaff.getCurrentChannelId());
+		    param.put("staff_id", sessionStaff.getStaffId());
+		    param.put("area_id", sessionStaff.getAreaId());
+		    param.put("ip", ServletUtils.getIpAddr(request));
+		    param.put("create_date", new Date());
+		    param.put("handle_date", new Date());
+			param.put("method_name", "");//卡组件记录
+			param.put("IN_PARAM", JsonUtil.toString(param));
+			try {
+				mktResBmo.writeCardLogInfo("WRITE_CARD_LOG_W",param, flowNum, sessionStaff);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	}
 }
