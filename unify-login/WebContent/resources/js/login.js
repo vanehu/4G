@@ -122,12 +122,25 @@ staff.login = (function($) {
 				return false;
 			}
 		};
-		var isAllowBrower = validateBrowser();//判断浏览器
-		if(isAllowBrower){
-			$('#loginForm').bind('formIsValid', _loginFormIsValid).ketchup({bindElement:"button"});
-		}else{
-			alert("由于您使用的浏览器版本不兼容，请使用以下浏览器版本：IE7,IE8,IE9,IE10;Firefox12.0+;Chrome21.0+，再重新登录系统。");
-		}
+		var browserVersion = validateBrowser();//判断浏览器
+		var response = $.ajax({
+			type: "get",
+			dataType: "json",
+			url: "version",
+			data: {"browserVersion": browserVersion},
+			success: function (response) {
+				var browserLevel = response.level;
+				var recBroStr = response.recBroStr.replace(/,/g, "、");
+				if (browserLevel == 1) {
+					$('#loginForm').bind('formIsValid', _loginFormIsValid).ketchup({bindElement: "button"});
+				} else if (browserLevel == 2) {
+					$('#loginForm').bind('formIsValid', _loginFormIsValid).ketchup({bindElement: "button"});
+					$.alert("提示", "您当前使用的浏览器为" + browserVersion + "，推荐使用下列浏览器" + recBroStr + "等，否则可能引起操作缓慢等性能隐患。");
+				} else if (browserLevel == 3) {
+					$.alert("提示", "您当前使用的浏览器为" + browserVersion + "，不在允许使用的范围内，推荐使用下列浏览器" + recBroStr + "等。");
+				}
+			}
+		});
 		$("#resetBtn").click(function(){
 			if($.ketchup)
 				$.ketchup.hideAllErrorContainer($("#loginForm"));
@@ -170,32 +183,35 @@ staff.login = (function($) {
 			 window.location.href=contextPath+"/file/telcom.exe";
 		}
 	};
-	
-	//判断浏览器版本
-	var validateBrowser=function(){
-		var allowflag = false;
+	//判断是否是ie浏览器
+	var isIE = function () {
+		if (!!window.ActiveXObject || "ActiveXObject" in window)
+			return true;
+		else
+			return false;
+	};
+	//获取浏览器版本
+	var validateBrowser = function() {
+		var browserVersion = "";
+//		var version = $.browser.version.substring(0, $.browser.version.indexOf("."));
 		var version = $.browser.version;
-		if ($.browser.msie) {
-			if(version>=7)
-				allowflag = true;
+		if (isIE()) {
+			browserVersion = "IE" + version;
 		}else if ($.browser.mozilla) {
-			if(version>=12)
-				allowflag = true;
-		}else if($.browser.safari){
-			var agent = navigator.userAgent.toLowerCase() ;
-			var regStr_chrome = /(?:chrome|crios|crmo)\/([0-9.]+)/gi ;
+			browserVersion = "Firefox" + version;
+		}else if($.browser.safari) {
+			var agent = navigator.userAgent.toLowerCase();
+			var regStr_chrome = /(?:chrome|crios|crmo)\/([0-9.]+)/gi;
 			var chromeVer = agent.match(regStr_chrome);
 			if(chromeVer){
 				var verArr = chromeVer[0].split("/");
 				var chrome_version = verArr[1].split(".");
-				if(chrome_version[0]>=21){
-					allowflag = true;
-				}
+				browserVersion = "Chrome" + chrome_version[0];
 			}
 		}
-		return allowflag;
+		return browserVersion;
 	};
-	
+
 	//获取地区名称
 	_getAreaName = function(areaId){
 		areaId = areaId.substring(0, 3);

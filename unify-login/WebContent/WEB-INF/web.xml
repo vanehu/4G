@@ -18,6 +18,14 @@
     <url-pattern>/login</url-pattern>
   </servlet-mapping>
   <servlet>
+    <servlet-name>VersionServlet</servlet-name>
+    <servlet-class>com.al.lte.portal.servlet.VersionServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>VersionServlet</servlet-name>
+    <url-pattern>/version</url-pattern>
+  </servlet-mapping>
+  <servlet>
     <servlet-name>QRLoginServlet</servlet-name>
     <servlet-class>com.al.lte.portal.servlet.QRLoginServlet</servlet-class>
   </servlet>
