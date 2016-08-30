@@ -453,7 +453,7 @@ public class OrderProdModifyController extends BaseController {
 		String identityCd = MapUtils.getString(param, "identityCd","");
 		String identityNum = MapUtils.getString(param, "identityNum","");
 		String busiFlag = MapUtils.getString(param, "busiFlag","");
-		if(identityCd.equals("1")){
+		if(identityCd.equals("1") && null !=sessionStaff.getIdType() && "ON".equals(sessionStaff.getIdType())){
 			if("FD".equals(busiFlag)){
 				if(null != httpSession.getAttribute(Const.CACHE_CERTINFO)){
 					String certNum = (String)httpSession.getAttribute(Const.CACHE_CERTINFO);

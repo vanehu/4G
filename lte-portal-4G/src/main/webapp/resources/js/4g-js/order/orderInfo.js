@@ -1164,7 +1164,7 @@ OrderInfo = (function() {
 		//默认使用受理地区
 		var areaId = OrderInfo.staff.soAreaId;		
 		//裸机销售，终端退换货，分段受理订单还原 不需要定位客户，使用默认的受理地区
-		if(OrderInfo.actionFlag==13 || OrderInfo.actionFlag==17 || OrderInfo.actionFlag==18 || OrderInfo.actionFlag==35){			
+		if(OrderInfo.actionFlag==13 || OrderInfo.actionFlag==17 || OrderInfo.actionFlag==18 || OrderInfo.actionFlag==35 || OrderInfo.actionFlag==23){			
 		}
 		//新装，合约机新装，客户资料修改，使用客户归属地区
 		else if(OrderInfo.actionFlag==1 || OrderInfo.actionFlag==14 || OrderInfo.actionFlag==4 || OrderInfo.actionFlag==9 || OrderInfo.actionFlag==37){
