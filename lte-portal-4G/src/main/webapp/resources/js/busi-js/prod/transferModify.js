@@ -118,6 +118,8 @@ prod.transferModify = (function(){
 			acctCd = $("#acctSelect").find("option:selected").attr("acctcd"); //要更换的帐户合同号
 		}
 		SoOrder.builder();
+		//返档要求partyId取返档后客户ID，做特殊处理redmine 794183
+		OrderInfo.orderData.orderList.orderListInfo.partyId = _toCustId;
 		//查询产品下帐户信息
 		var param = {
 				prodId : order.prodModify.choosedProdInfo.prodInstId,
@@ -251,7 +253,7 @@ prod.transferModify = (function(){
 			}
 			//新建帐户节点
 			if($("#acctSelect").val()==-1){
-				OrderInfo.createAcct(busiOrder, -1);
+				OrderInfo.createAcct(busiOrder, -1,_toCustId);
 			}
 			//更换帐户节点
 			if(changeAcct){
