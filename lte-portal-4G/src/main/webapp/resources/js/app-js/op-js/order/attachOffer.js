@@ -1712,7 +1712,7 @@ AttachOffer = (function() {
 					var $span = $("#li_"+prodId+"_"+excludeSpecId).find("span");
 					$span.addClass("del");
 					spec.isdel = "Y";
-//					$("#terminalUl_"+prodId+"_"+excludeSpecId).remove();
+					$("#terminalUl_"+prodId+"_"+excludeSpecId).remove();
 				}
 				var offer = CacheData.getOfferBySpecId(prodId,excludeSpecId);
 				if(offer!=undefined){
