@@ -1202,7 +1202,7 @@
 	       'SEAL_8130000':'OFF',<!-- 河北 -->
 	       'SEAL_8410000':'OFF',<!-- 河南 -->
 	       'SEAL_8210000':'OFF',<!-- 辽宁 -->
-	       'SEAL_8220000':'ON',<!-- 吉林 -->
+	       'SEAL_8220000':'OFF',<!-- 吉林 -->
 	       'SEAL_8340000':'OFF',<!-- 安徽 -->
 	       'SEAL_8330000':'OFF',<!-- 浙江 -->
 	       'SEAL_8520000':'OFF',<!-- 贵州 -->
@@ -1223,7 +1223,7 @@
 			'PRECHECKFLAG_861':'OFF',<!-- 陕西 -->
 			'PRECHECKFLAG_842':'OFF',<!-- 湖北 -->
 			'PRECHECKFLAG_835':'OFF',<!-- 福建 -->
-			'PRECHECKFLAG_832':'ON',<!-- 江苏 -->
+			'PRECHECKFLAG_832':'OFF',<!-- 江苏 -->
 			'PRECHECKFLAG_846':'OFF',<!-- 海南 -->
 			'PRECHECKFLAG_864':'OFF',<!-- 宁夏 -->
 			'PRECHECKFLAG_814':'OFF',<!-- 山西 -->
@@ -1239,7 +1239,7 @@
 			'PRECHECKFLAG_813':'OFF',<!-- 河北 -->
 			'PRECHECKFLAG_841':'OFF',<!-- 河南 -->
 			'PRECHECKFLAG_821':'OFF',<!-- 辽宁 -->
-			'PRECHECKFLAG_822':'ON',<!-- 吉林 -->
+			'PRECHECKFLAG_822':'OFF',<!-- 吉林 -->
 			'PRECHECKFLAG_834':'OFF',<!-- 安徽 -->
 			'PRECHECKFLAG_833':'OFF',<!-- 浙江 -->
 			'PRECHECKFLAG_852':'OFF',<!-- 贵州 -->
@@ -1248,42 +1248,78 @@
 			'PRECHECKFLAG_899':'OFF'<!-- 虚拟省 -->
 			}
 		</const>
-+		<const type="Map" name="ISCALLBACK" description="能力开放回调地址校验开关">
-+		{
-+			'ISCALLBACK_854':'ON',<!-- 西藏 -->
-+			'ISCALLBACK_863':'ON',<!-- 青海 -->
-+			'ISCALLBACK_815':'ON',<!-- 内蒙古 -->
-+			'ISCALLBACK_823':'ON',<!-- 黑龙江 -->
-+			'ISCALLBACK_845':'ON',<!-- 广西 -->
-+			'ISCALLBACK_850':'ON',<!-- 重庆 -->
-+			'ISCALLBACK_861':'ON',<!-- 陕西 -->
-+			'ISCALLBACK_842':'ON',<!-- 湖北 -->
-+			'ISCALLBACK_835':'ON',<!-- 福建 -->
-+			'ISCALLBACK_832':'ON',<!-- 江苏 -->
-+			'ISCALLBACK_846':'ON',<!-- 海南 -->
-+			'ISCALLBACK_864':'ON',<!-- 宁夏 -->
-+			'ISCALLBACK_814':'ON',<!-- 山西 -->
-+			'ISCALLBACK_853':'ON',<!-- 云南 -->
-+			'ISCALLBACK_836':'ON',<!-- 江西 -->
-+			'ISCALLBACK_837':'ON',<!-- 山东 -->
-+			'ISCALLBACK_811':'ON',<!-- 北京 -->
-+			'ISCALLBACK_843':'ON',<!-- 湖南 -->
-+			'ISCALLBACK_851':'ON',<!-- 四川 -->
-+			'ISCALLBACK_844':'ON',<!-- 广东 -->
-+			'ISCALLBACK_831':'ON',<!-- 上海 -->
-+			'ISCALLBACK_812':'ON',<!-- 天津 -->
-+			'ISCALLBACK_813':'ON',<!-- 河北 -->
-+			'ISCALLBACK_841':'ON',<!-- 河南 -->
-+			'ISCALLBACK_821':'ON',<!-- 辽宁 -->
-+			'ISCALLBACK_822':'ON',<!-- 吉林 -->
-+			'ISCALLBACK_834':'ON',<!-- 安徽 -->
-+			'ISCALLBACK_833':'ON',<!-- 浙江 -->
-+			'ISCALLBACK_852':'ON',<!-- 贵州 -->
-+			'ISCALLBACK_862':'ON',<!-- 甘肃 -->
-+			'ISCALLBACK_865':'ON',<!-- 新疆 -->
-+			'ISCALLBACK_899':'ON'<!-- 虚拟省 -->
-+			}
-+		</const>
+		<const type="Map" name="ISCALLBACK" description="能力开放回调地址校验开关">
+		{
+			'ISCALLBACK_854':'ON',<!-- 西藏 -->
+			'ISCALLBACK_863':'ON',<!-- 青海 -->
+			'ISCALLBACK_815':'ON',<!-- 内蒙古 -->
+			'ISCALLBACK_823':'ON',<!-- 黑龙江 -->
+			'ISCALLBACK_845':'ON',<!-- 广西 -->
+			'ISCALLBACK_850':'ON',<!-- 重庆 -->
+			'ISCALLBACK_861':'ON',<!-- 陕西 -->
+			'ISCALLBACK_842':'ON',<!-- 湖北 -->
+			'ISCALLBACK_835':'ON',<!-- 福建 -->
+			'ISCALLBACK_832':'ON',<!-- 江苏 -->
+			'ISCALLBACK_846':'ON',<!-- 海南 -->
+			'ISCALLBACK_864':'ON',<!-- 宁夏 -->
+			'ISCALLBACK_814':'ON',<!-- 山西 -->
+			'ISCALLBACK_853':'ON',<!-- 云南 -->
+			'ISCALLBACK_836':'ON',<!-- 江西 -->
+			'ISCALLBACK_837':'ON',<!-- 山东 -->
+			'ISCALLBACK_811':'ON',<!-- 北京 -->
+			'ISCALLBACK_843':'ON',<!-- 湖南 -->
+			'ISCALLBACK_851':'ON',<!-- 四川 -->
+			'ISCALLBACK_844':'ON',<!-- 广东 -->
+			'ISCALLBACK_831':'ON',<!-- 上海 -->
+			'ISCALLBACK_812':'ON',<!-- 天津 -->
+			'ISCALLBACK_813':'ON',<!-- 河北 -->
+			'ISCALLBACK_841':'ON',<!-- 河南 -->
+			'ISCALLBACK_821':'ON',<!-- 辽宁 -->
+			'ISCALLBACK_822':'ON',<!-- 吉林 -->
+			'ISCALLBACK_834':'ON',<!-- 安徽 -->
+			'ISCALLBACK_833':'ON',<!-- 浙江 -->
+			'ISCALLBACK_852':'ON',<!-- 贵州 -->
+			'ISCALLBACK_862':'ON',<!-- 甘肃 -->
+			'ISCALLBACK_865':'ON',<!-- 新疆 -->
+			'ISCALLBACK_899':'ON'<!-- 虚拟省 -->
+			}
+		</const>
+		<const type="Map" name="TOKENPRECHECKFLAG" description="在新建客户和二次业务增加前置检验开关">
+		{
+			'TOKENPRECHECKFLAG_854':'OFF',<!-- 西藏 -->
+			'TOKENPRECHECKFLAG_863':'OFF',<!-- 青海 -->
+			'TOKENPRECHECKFLAG_815':'OFF',<!-- 内蒙古 -->
+			'TOKENPRECHECKFLAG_823':'OFF',<!-- 黑龙江 -->
+			'TOKENPRECHECKFLAG_845':'OFF',<!-- 广西 -->
+			'TOKENPRECHECKFLAG_850':'OFF',<!-- 重庆 -->
+			'TOKENPRECHECKFLAG_861':'OFF',<!-- 陕西 -->
+			'TOKENPRECHECKFLAG_842':'OFF',<!-- 湖北 -->
+			'TOKENPRECHECKFLAG_835':'OFF',<!-- 福建 -->
+			'TOKENPRECHECKFLAG_832':'OFF',<!-- 江苏 -->
+			'TOKENPRECHECKFLAG_846':'OFF',<!-- 海南 -->
+			'TOKENPRECHECKFLAG_864':'OFF',<!-- 宁夏 -->
+			'TOKENPRECHECKFLAG_814':'OFF',<!-- 山西 -->
+			'TOKENPRECHECKFLAG_853':'OFF',<!-- 云南 -->
+			'TOKENPRECHECKFLAG_836':'OFF',<!-- 江西 -->
+			'TOKENPRECHECKFLAG_837':'OFF',<!-- 山东 -->
+			'TOKENPRECHECKFLAG_811':'OFF',<!-- 北京 -->
+			'TOKENPRECHECKFLAG_843':'OFF',<!-- 湖南 -->
+			'TOKENPRECHECKFLAG_851':'OFF',<!-- 四川 -->
+			'TOKENPRECHECKFLAG_844':'OFF',<!-- 广东 -->
+			'TOKENPRECHECKFLAG_831':'OFF',<!-- 上海 -->
+			'TOKENPRECHECKFLAG_812':'OFF',<!-- 天津 -->
+			'TOKENPRECHECKFLAG_813':'OFF',<!-- 河北 -->
+			'TOKENPRECHECKFLAG_841':'OFF',<!-- 河南 -->
+			'TOKENPRECHECKFLAG_821':'OFF',<!-- 辽宁 -->
+			'TOKENPRECHECKFLAG_822':'OFF',<!-- 吉林 -->
+			'TOKENPRECHECKFLAG_834':'OFF',<!-- 安徽 -->
+			'TOKENPRECHECKFLAG_833':'OFF',<!-- 浙江 -->
+			'TOKENPRECHECKFLAG_852':'OFF',<!-- 贵州 -->
+			'TOKENPRECHECKFLAG_862':'OFF',<!-- 甘肃 -->
+			'TOKENPRECHECKFLAG_865':'OFF',<!-- 新疆 -->
+			'TOKENPRECHECKFLAG_899':'OFF'<!-- 虚拟省 -->
+			}
+		</const>
 		
 	</mda>    
 </mdas>

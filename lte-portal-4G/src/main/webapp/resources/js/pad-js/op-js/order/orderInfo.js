@@ -35,6 +35,10 @@ OrderInfo = (function() {
 			validateType:"",
 			resultCode:""
 		};//保存鉴权临时结果
+	
+	var _preBefore ={
+			prcFlag : ""	
+	};//保存前置检验的结果
 	/*购物车业务动作
 	1 新装
 	2  套餐变更
@@ -1453,6 +1457,7 @@ OrderInfo = (function() {
 		rulesJson:_rulesJson,
 		acctNbr:_acctNbr,
 		uimType:_uimType,
-		recordId:_recordId
+		recordId:_recordId,
+		preBefore:_preBefore
 	};
 })();

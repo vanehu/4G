@@ -1604,6 +1604,24 @@ offerChange = (function() {
 		
 		return content;
 	};
+	
+	/**
+	 * 查询portal.properties配置 省份配置
+	 */
+	var _queryPortalProperties = function(propertiesKey){
+		var url= contextPath+"/common/queryPortalProperties";
+		var propertiesParam={
+			propertiesKey : propertiesKey
+		};
+		var response = $.callServiceAsJson(url,propertiesParam);	
+		$.unecOverlay();
+		if (response.code==0) {
+			return response.data;
+		}else {
+			return "";
+		}
+	
+	};
 	return {
 		init 					: 				_init,
 		offerChangeView			:				_offerChangeView,
@@ -1615,6 +1633,7 @@ offerChange = (function() {
 		checkOfferProd			: _checkOfferProd,
 		getChangeInfo			: _getChangeInfo,
 		setChangeOfferSpec		: _setChangeOfferSpec,
-		addNum					: _addNum
+		addNum					: _addNum,
+		queryPortalProperties    :_queryPortalProperties
 	};
 })();

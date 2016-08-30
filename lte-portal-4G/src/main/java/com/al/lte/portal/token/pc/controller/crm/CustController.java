@@ -1350,14 +1350,25 @@ public class CustController extends BaseController {
 	@RequestMapping(value = "/queryCustCompreInfo", method = RequestMethod.POST)
     @ResponseBody
     public JsonResponse queryCustCompreInfo(@RequestBody Map<String, Object> paramMap,
-			@LogOperatorAnn String flowNum,HttpServletResponse response){
+			@LogOperatorAnn String flowNum,HttpServletRequest request,HttpServletResponse response){
 		Map<String, Object> resultMap = null;
 		JsonResponse jsonResponse = null;
 		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
                 SysConstant.SESSION_KEY_LOGIN_STAFF);
+		List custInfos = new ArrayList();
 		try {
 			resultMap = custBmo.queryCustCompreInfo(paramMap,
 					flowNum, sessionStaff);
+			if (MapUtils.isNotEmpty(resultMap)) {
+				custInfos=(List<Map<String, Object>>) resultMap.get("custInfos");
+				if(custInfos.size()>0){
+					Map custInfo =(Map)custInfos.get(0);
+					HttpSession session = request.getSession(false);
+					session.setAttribute("preCustId", String.valueOf(custInfo.get("custId")));
+					session.setAttribute("preAreaID", (String) paramMap.get("areaId"));
+					session.setAttribute("preAccNbr", String.valueOf(paramMap.get("acctNbr")));
+				}
+			}
 //			if (MapUtils.isNotEmpty(resultMap)) {
 				jsonResponse = super.successed(resultMap,ResultConstant.SUCCESS.getCode());
 //			}

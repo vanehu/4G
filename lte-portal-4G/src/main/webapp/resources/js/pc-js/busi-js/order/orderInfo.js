@@ -136,6 +136,10 @@ OrderInfo = (function() {
 		custFlag :"1100"//1000：红客户，1100：白客户，1200：黑客户
 	}; 
 	
+	var _preBefore ={
+			prcFlag : ""	
+	};//保存前置检验的结果
+	
 	var _staff = { //员工登陆信息
 		staffId : 0,  //员工id
 		channelId : 0,   //受理渠道id
@@ -1561,7 +1565,8 @@ OrderInfo = (function() {
 		rulesJson:_rulesJson,
 		acctNbr:_acctNbr,
 		uimType:_uimType,
-		recordId:_recordId
+		recordId:_recordId,
+		preBefore:_preBefore
 		
 	};
 })();

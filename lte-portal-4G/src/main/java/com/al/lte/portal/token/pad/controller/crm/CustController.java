@@ -103,6 +103,14 @@ public class CustController extends BaseController {
             if (MapUtils.isNotEmpty(resultMap)) {
                 List<Map<String, Object>> custInfos = new ArrayList<Map<String, Object>>();
                 custInfos = (List<Map<String, Object>>) resultMap.get("custInfos");
+                
+                if(custInfos.size()>0){
+					Map custInfo =(Map)custInfos.get(0);
+					httpSession.setAttribute("preCustId",  String.valueOf(custInfo.get("custId")));
+					httpSession.setAttribute("preAreaID", (String) paramMap.get("areaId"));
+					httpSession.setAttribute("preAccNbr", (String)paramMap.get("acctNbr"));
+				}
+                
                 model.addAttribute("custInfoSize", custInfos.size());
                 model.addAttribute("cust", resultMap);
             }

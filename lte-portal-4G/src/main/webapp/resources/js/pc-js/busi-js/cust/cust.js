@@ -2111,13 +2111,36 @@ order.cust = (function(){
 	};
 	//跳过鉴权
 	var _jumpAuth2 = function() {
-		if($.browser.msie) {
-		   $("#auth2").css('display','none');
-            
-		} else {
-			easyDialog.close();
+		var checkType  = "";
+		if(OrderInfo.actionFlag==2){//套餐变更
+			checkType = "1";
+		}else if(OrderInfo.actionFlag==6){//主副卡成员变更
+			checkType = "4";
+		}else if(OrderInfo.actionFlag==3){//可选包变更
+			checkType = "3";
 		}
-		var recordParam={};
+		
+		if(checkType !=""){
+			//查分省前置校验开关
+	        var propertiesKey = "TOKENPRECHECKFLAG_"+OrderInfo.staff.soAreaId.substring(0,3);
+	        var isPCF = offerChange.queryPortalProperties(propertiesKey);
+	        if(isPCF == "ON"){
+	        	if(OrderInfo.preBefore.prcFlag != "Y"){
+	        		if(!order.prodModify.preCheckBeforeOrder(checkType,"order.cust.jumpAuth2")){
+	            		return ;
+	            	}
+	        	}
+	        }
+	        OrderInfo.preBefore.prcFlag = "";
+		}
+		
+        if($.browser.msie) {
+ 		   $("#auth2").css('display','none');
+             
+ 		} else {
+ 			easyDialog.close();
+ 		}
+        var recordParam={};
 		recordParam.validateType="4";
 		recordParam.validateLevel="2";
 		recordParam.custId=OrderInfo.cust.custId;
@@ -2295,7 +2318,30 @@ order.cust = (function(){
 		});
 	};
 	var _goService=function (){
-	
+		
+		var checkType  = "";
+		if(OrderInfo.actionFlag==2){//套餐变更
+			checkType = "1";
+		}else if(OrderInfo.actionFlag==6){//主副卡成员变更
+			checkType = "4";
+		}else if(OrderInfo.actionFlag==3){//可选包变更
+			checkType = "3";
+		}
+		
+		if(checkType !=""){
+			//查分省前置校验开关
+	        var propertiesKey = "TOKENPRECHECKFLAG_"+OrderInfo.staff.soAreaId.substring(0,3);
+		    var isPCF = offerChange.queryPortalProperties(propertiesKey);
+		    if(isPCF == "ON"){
+	        	if(OrderInfo.preBefore.prcFlag != "Y"){
+	        		if(!order.prodModify.preCheckBeforeOrder(checkType,"order.cust.goService")){
+	            		return ;
+	            	}
+	        	}
+	        }
+	        OrderInfo.preBefore.prcFlag = "";   
+		}
+		
 			//如果是套餐变更
 			if(OrderInfo.actionFlag==2){
 				if(OrderInfo.offid!="" && OrderInfo.offid!=null && OrderInfo.offid!="null"){

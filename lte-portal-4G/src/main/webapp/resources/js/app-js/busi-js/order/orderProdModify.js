@@ -302,7 +302,48 @@ order.prodModify = (function(){
 						$.alert("提示","系统繁忙，请稍后再试！");
 					}
 				});
-	}
+	};
+	var _preCheckBeforeOrder = function (serviceType,callbackFunc){
+		var params={
+				"serviceType" : serviceType
+		};
+		var response = $.callServiceAsJson(contextPath + "/token/secondBusi/preCheckBeforeOrde", params);
+		if(response.data.checkLevel == 0){
+			return true;
+		}else if(response.data.checkLevel == 10){
+			var content = response.data.checkInfo;
+			$.confirm("提示",content,{ 
+				yes:function(){
+				},
+				yesdo:function(){
+					OrderInfo.preBefore.prcFlag = "Y";
+					if (ec.util.isObj(callbackFunc)) {
+						if (typeof callbackFunc == "string") {
+							if (callbackFunc.indexOf(".") != -1) {
+								eval(callbackFunc + "()");
+							} else {
+								eval("order.prodModify." + callbackFunc + "()");
+							}
+						}else if(typeof callbackFunc == "function"){
+							callbackFunc();
+						}
+					}
+					OrderInfo.preBefore.prcFlag = "";
+				},
+				no:function(){
+				}
+			});
+			return false;
+		}else if(response.data.checkLevel == 20){
+			$.alert("前置校验限制",response.data.checkInfo);
+			return false;
+		}else if(response.code == 1){
+			$.alert("错误",response.data);
+			return false;
+		}else{
+			$.alertM(response.data);
+		}
+	};
 	
 
 	return {
@@ -310,6 +351,7 @@ order.prodModify = (function(){
 		chooseOfferForMember        :      _chooseOfferForMember,
 		querySecondBusinessAuth:_querySecondBusinessAuth,
 		isCustomers:_isCustomers,
-		accountChange:_accountChange
+		accountChange:_accountChange,
+		preCheckBeforeOrder : _preCheckBeforeOrder
 	};	
 })();

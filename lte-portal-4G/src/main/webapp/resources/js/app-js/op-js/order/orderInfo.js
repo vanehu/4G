@@ -157,6 +157,10 @@ OrderInfo = (function() {
 		param3:"",
 		param7:"" //账单内容
 	};
+	
+	var _preBefore ={
+			prcFlag : ""	
+	};//保存前置检验的结果
 		
 	var _offerSpec = {}; //主销售品构成
 	
@@ -1499,6 +1503,7 @@ OrderInfo = (function() {
 		rulesJson:_rulesJson,
 		acctNbr:_acctNbr,
 		uimType:_uimType,
-		recordId:_recordId
+		recordId:_recordId,
+		preBefore:_preBefore
 	};
 })();
