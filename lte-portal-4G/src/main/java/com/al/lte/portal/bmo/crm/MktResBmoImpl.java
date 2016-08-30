@@ -1416,5 +1416,4 @@ public class MktResBmoImpl implements MktResBmo {
 		// TODO Auto-generated method stub
 		InterfaceClient.callLogSerTOLogDB(string ,param, flowNum, sessionStaff);
 	}
-	}
 }
