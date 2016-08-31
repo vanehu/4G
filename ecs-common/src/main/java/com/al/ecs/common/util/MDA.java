@@ -375,10 +375,6 @@ public class MDA {
 	 * 前置校验分省开关 
 	 */
 	public static final Map<String,String> PRECHECKFLAG = new HashMap<String,String>();
-	
-	/**能力开放回调地址校验开关*/
-	public static final Map<String,String> ISCALLBACK = new HashMap<String,String>();
-	
 
 	/**
 	 * 翼支付托收的属性分省开关
@@ -388,4 +384,13 @@ public class MDA {
 	 * 无纸化公章分省开关
 	 */
 	public static final Map<String,String> SEALINFO = new HashMap<String,String>();
+	
+	/**
+	 * 能力前置校验分省开关 
+	 */
+	public static final Map<String,String> TOKENPRECHECKFLAG = new HashMap<String,String>();
+	
+	/**能力开放回调地址校验开关*/
+	public static final Map<String,String> ISCALLBACK = new HashMap<String,String>();
+	
 }
