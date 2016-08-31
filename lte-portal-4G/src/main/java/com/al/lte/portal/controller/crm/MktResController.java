@@ -3133,8 +3133,6 @@ public class MktResController extends BaseController {
 		    param.put("staff_id", sessionStaff.getStaffId());
 		    param.put("area_id", sessionStaff.getAreaId());
 		    param.put("ip", ServletUtils.getIpAddr(request));
-		    param.put("create_date", new Date());
-		    param.put("handle_date", new Date());
 			param.put("method_name", "");//卡组件记录
 			param.put("IN_PARAM", JsonUtil.toString(param));
 			try {
