@@ -324,7 +324,7 @@ public class PCModelController extends BaseController {
 				
 				if(urls!=null && urls.length>0){
 					if(sessionStaff.getCurrentAreaId() !=null && 
-							!SysConstant.ON.equals(propertiesUtils.getMessage("ISCALLBACK"+sessionStaff.getCurrentAreaId().substring(0, 3)))){
+							!SysConstant.ON.equals(propertiesUtils.getMessage("ISCALLBACK_"+sessionStaff.getCurrentAreaId().substring(0, 3)))){
 						isRight=true;
 					}else {
 						if(urls.length==1){
