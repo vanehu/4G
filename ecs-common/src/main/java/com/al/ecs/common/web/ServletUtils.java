@@ -560,36 +560,40 @@ public class ServletUtils {
     public static String getIpAddr(HttpServletRequest request) {
     	//20140715 先取x-forwarded-forout，再取x-forwarded-for
     	String ip = request.getHeader("x-forwarded-forout");
+    	
     	if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
     		ip = request.getHeader("x-forwarded-for");
+			if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+				ip = request.getHeader("Proxy-Client-IP");
+				if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+					ip = request.getHeader("X-Real-IP");
+				}
+				if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+					ip = request.getHeader("WL-Proxy-Client-IP");
+				}
+				if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+					ip = request.getRemoteAddr();
+				}
+			} else {
+				ip = "i:" + ip;
+			}	
         } else {
         	ip = "o:" + ip;
-        	return ip;
         }
-        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getHeader("Proxy-Client-IP");
-        } else {
-        	ip = "i:" + ip;
-        	return ip;
-        }
-        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getHeader("X-Real-IP");
-        }
-        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getHeader("WL-Proxy-Client-IP");
-        }
-        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getRemoteAddr();
-        }
+    	
         if (ip != null) {
             String[] ips = ip.split(",");
             for (String ipp : ips) {
                 if (!"unknown".equalsIgnoreCase(ipp)) {
-                    return ipp;
+                	ip = ipp;
+                	break;
                 }
             }
+        } else{
+        	ip = "N/A";
         }
-        return null;
+        
+        return ip;
     }
 
     /**
