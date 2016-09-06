@@ -1815,7 +1815,7 @@ AttachOffer = (function() {
 	
 	//根据预校验返回订购附属销售品
 	var _addOfferSpecByCheckForUpdate = function(checkList){
-		if(checkList!=null && checkList.prodId !=null && checkList.prodId !=undefined){
+		if(checkList!=null && checkList !=undefined && checkList.length>0){
 			var content = "";
 			$.each(checkList,function(){
 				var prodId = this.prodId;
