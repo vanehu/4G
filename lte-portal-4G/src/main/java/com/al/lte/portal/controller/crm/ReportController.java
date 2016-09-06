@@ -1212,7 +1212,8 @@ public class ReportController extends BaseController {
 		model.addAttribute("p_areaId", defaultAreaInfo.get("defaultAreaId"));
 	    model.addAttribute("p_areaId_val", defaultAreaInfo.get("defaultAreaName"));
 		//model.addAttribute("isCanQueryElecRecoed", isCanQueryElecRecoed);
-		
+	    List<Map<String,String>> p_srcFlagList = MDA.PSRCFLAGLIST;
+	    model.addAttribute("p_srcFlagList", p_srcFlagList );
         return "/cart/elec_record_main";
     }
     
@@ -1239,8 +1240,8 @@ public class ReportController extends BaseController {
     	
     	inParam.put("areaId",areaId);
     	inParam.put("olNbr",request.getParameter("olNbr"));
-    	//不传默认为WEB无纸化，翼销售需传 "APP"
-    	inParam.put("srcFlag", "APP");
+    	//不传默认为WEB无纸化，翼销售需传 "APP",苹果直营店传"APPLE"
+    	inParam.put("srcFlag",request.getParameter("srcFlag"));
     	
     	if(null != custName && !custName.equals("")){
     		custName = EncodeUtils.urlDecode(custName);
@@ -1328,8 +1329,8 @@ public class ReportController extends BaseController {
     		
     		inParam = JsonUtil.toObject(params, Map.class);
     		
-    		//不传默认为WEB无纸化，翼销售需传 "APP"
-        	inParam.put("srcFlag", "APP");
+//    		//不传默认为WEB无纸化，翼销售需传 "APP"
+//        	inParam.put("srcFlag", "APP");
     		
     		Map<String, Object> resultMap = orderBmo.downLoadElecRecordPdf(inParam, null, sessionStaff);
 			if (resultMap!=null&& ResultCode.R_SUCC.equals(resultMap.get("resultCode").toString())) {

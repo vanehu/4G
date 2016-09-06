@@ -1088,6 +1088,7 @@ cart.main = (function(){
 					"areaId":$("#p_areaId").val(),
 					"custName":'',//受理工号
 					"certType":'',//受理人
+					"srcFlag":$("#p_srcFlag option:selected").val(),
 					"certNumber":'',
 					"accNbr":'',
 					"startDt":'',
@@ -1116,6 +1117,7 @@ cart.main = (function(){
 					"custName":encodeURI($("#p_custName").val()),//受理工号
 					//"certType":'',//受理人
 					//"certNumber":certNumber,
+					"srcFlag":$("#p_srcFlag option:selected").val(),
 					"accNbr":accNbr,
 					"startDt":startDt,
 					"endDt":endDt,
@@ -1147,7 +1149,7 @@ cart.main = (function(){
 	var _downLoadElecRecord = function(olId){
 		var params = {
 				"areaId":$("#v_areaId").val(),
-				//"olId" :700000991869
+				"srcFlag":$("#p_srcFlag option:selected").val(),
 				"olId" : olId
 		};
 		$("<form>", {

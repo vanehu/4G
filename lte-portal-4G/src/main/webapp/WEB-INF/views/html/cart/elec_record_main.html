@@ -46,6 +46,16 @@
                             <dd>
                              <input type="text" class="numberTextBox width198" id="p_olNbr" value="" disabled="disabled" style="width:160px;background-color: #E8E8E8;" />
                             </dd>
+                            <dt style="width:100px">系统来源：</dt>
+                            <dd>
+                             	<select id="p_srcFlag" class="width202">
+                             		<#if (p_srcFlagList)?? &&((p_srcFlagList)?size>0)>
+										<#list p_srcFlagList as srcFlag >
+		                                 	<option value="${srcFlag.value}" >${srcFlag.name}</option>
+		                                 </#list>
+		                             </#if>
+                               	</select>
+                             </dd>
 						</dl>
 						<dl class="noBorder">
 							<dt>

@@ -1320,6 +1320,11 @@
 			'TOKENPRECHECKFLAG_899':'OFF'<!-- 虚拟省 -->
 			}
 		</const>
-		
+		<const type="List" name="PSRCFLAGLIST" description="电子档案查询系统标识LIST">
+			[
+				{'name':'翼销售','value':'APP'},
+				{'name':'集团实体渠道销售门户系统','value':'APPLE'}
+			]
+		</const>
 	</mda>    
 </mdas>

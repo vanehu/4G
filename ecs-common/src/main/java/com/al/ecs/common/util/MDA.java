@@ -1,6 +1,8 @@
 package com.al.ecs.common.util;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @com.al.common.annotation.AppModule(moduleName = "Lte4GManager")
@@ -392,5 +394,8 @@ public class MDA {
 	
 	/**能力开放回调地址校验开关*/
 	public static final Map<String,String> ISCALLBACK = new HashMap<String,String>();
-	
+	/**
+	 * 电子档案查询系统标识LIST
+	 */
+	public static final List<Map<String,String>> PSRCFLAGLIST = new ArrayList<Map<String,String>>();
 }
