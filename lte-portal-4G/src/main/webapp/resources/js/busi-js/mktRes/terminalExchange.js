@@ -153,6 +153,8 @@ mktRes.terminal.exchange = (function($){
 						//返回新的终端信息
 						return response.data;
 						
+					} else if(response.data.statusCd==CONST.MKTRES_STATUS.HAVESALE) {
+						$.alert("提示", '当前串码为非1001（已领用可销售）状态，无法进行业务受理。');
 					}else{
 						$.alert("提示",response.data.message);
 					}
