@@ -267,7 +267,8 @@ OrderInfo = (function() {
 					areaId : OrderInfo.staff.soAreaId,
 					partyId : -1,  //新装默认-1
 					distributorId : OrderInfo.staff.distributorId, //转售商标识
-					olTypeCd : CONST.OL_TYPE_CD.UI_LTE  //UI能力开放标志
+					olTypeCd : CONST.OL_TYPE_CD.UI_LTE,  //UI能力开放标志
+					custOrderAttrs: []
 				},
 				custOrderList :[{busiOrder : []}]   //客户订购列表节点
 			}

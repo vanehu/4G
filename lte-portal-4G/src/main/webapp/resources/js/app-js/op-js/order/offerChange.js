@@ -1132,6 +1132,16 @@ offerChange = (function() {
 		}else{
 			_getChangeInfo();
 		}
+		//查预校验加省份流水开关
+        var propertiesKey = "TOKORDERINFOFORCHECKFLAG_"+OrderInfo.staff.soAreaId.substring(0,3);
+        var isPCF = offerChange.queryPortalProperties(propertiesKey);
+        if(isPCF == "ON"){
+        	var custOrderAttrs =[{
+        		"itemSpecId": "40010029",
+        		 "value": OrderInfo.provinceInfo.provIsale
+        	}];
+        	OrderInfo.orderData.orderList.orderListInfo.custOrderAttrs = custOrderAttrs;
+        }
 		var data = query.offer.updateCheckByChange(JSON.stringify(OrderInfo.orderData));
 		OrderInfo.orderData.orderList.custOrderList[0].busiOrder = []; //校验完清空	
 		if(data==undefined){

@@ -1665,6 +1665,16 @@ order.memberChange = function(){
 		var busiOrders = OrderInfo.orderData.orderList.custOrderList[0].busiOrder;//获取业务对象数组
 		_createDelOffer(busiOrders,oldoffer,prodInfo.prodInstId); //退订主销售品
 		_createMainOffer(busiOrders,oldoffer,prodInfo); //订购主销售品	
+		//查预校验加省份流水开关
+        var propertiesKey = "TOKORDERINFOFORCHECKFLAG_"+OrderInfo.staff.soAreaId.substring(0,3);
+        var isPCF = offerChange.queryPortalProperties(propertiesKey);
+        if(isPCF == "ON"){
+        	var custOrderAttrs =[{
+        		"itemSpecId": "40010029",
+        		 "value": OrderInfo.provinceInfo.provIsale
+        	}];
+        	OrderInfo.orderData.orderList.orderListInfo.custOrderAttrs = custOrderAttrs;
+        }
 		var data = query.offer.updateCheckByChange(JSON.stringify(OrderInfo.orderData));
 		OrderInfo.orderData.orderList.custOrderList[0].busiOrder = []; //校验完清空
 		if(data==undefined){
