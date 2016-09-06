@@ -394,6 +394,8 @@ public class MDA {
 	
 	/**能力开放回调地址校验开关*/
 	public static final Map<String,String> ISCALLBACK = new HashMap<String,String>();
+	/**能力开放预校验加省份流水开关*/
+	public static final Map<String,String> TOKORDERINFOFORCHECKFLAG = new HashMap<String,String>();
 	/**
 	 * 电子档案查询系统标识LIST
 	 */
