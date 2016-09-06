@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="CtgPrintCommonMod" language="groovy" pageWidth="595" pageHeight="842" columnWidth="509" leftMargin="43" rightMargin="43" topMargin="128" bottomMargin="50">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="CtgPrintCommonMod" language="groovy" pageWidth="595" pageHeight="842" columnWidth="509" leftMargin="43" rightMargin="43" topMargin="113" bottomMargin="96">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="39"/>
+	<property name="ireport.y" value="235"/>
 	<style name="styleNorm" mode="Transparent" fill="Solid" fontName="宋体" fontSize="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Identity-H"/>
 	<style name="styleBold" fill="Solid" fontName="宋体" fontSize="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
 	<style name="styleBlackBold16" fontName="宋体" fontSize="16" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
