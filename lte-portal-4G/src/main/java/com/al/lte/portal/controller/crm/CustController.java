@@ -714,6 +714,7 @@ public class CustController extends BaseController {
 		String authFlag=(String) param.get("authFlag");
 		String identityNum=(String) param.get("identityNum");
 		String validateType=(String) param.get("validateType");
+		String ifOrgUseCust = MapUtils.getString(param, "ifOrgUseCust", "");//是否是政企客户
 		areaName = (String) param.get("areaName");
 		if(areaName==null){
 			areaName=sessionStaff.getCurrentAreaAllName();	
@@ -766,6 +767,9 @@ public class CustController extends BaseController {
 					checkIdMap.put("custId", custId);
 					checkIdMap.put("idCardNumber", StringUtils.isNotBlank(identityNum) ? Base64.eryDecoder(identityNum) : "");
 					checkIdMap.put("idCardType", identityCd);
+					if (SysConstant.STR_Y.equals(ifOrgUseCust)) {
+						checkIdMap.put("ifOrgUseCust", SysConstant.STR_Y);
+					}
 					if ("1".equals(identityCd)) {
 						String sessionCertNumber = (String) ServletUtils.getSessionAttribute(getRequest(), Const.CACHE_CERTINFO);
 						ServletUtils.removeSessionAttribute(getRequest(),Const.CACHE_CERTINFO);
@@ -1266,7 +1270,7 @@ public class CustController extends BaseController {
         					Integer partyProfileCatgTypeCd=Integer.valueOf(partyProfileCatgTypeCdStr);
                 			if((iseditOperation!="0"&&partyProfileCatgTypeCd!=2)||iseditOperation=="0"){
                 				temList.add(list.get(i));
-                             }; 
+                             }
         				}
             			  
             		}

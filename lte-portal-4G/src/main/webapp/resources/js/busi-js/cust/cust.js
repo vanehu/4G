@@ -2410,6 +2410,9 @@ order.cust = (function(){
 			}
 		}
 		var param = $.extend(true, {}, _choosedCustInfo);
+		if(CacheData.isGov(_choosedCustInfo.identityCd)){
+			param.ifOrgUseCust = "Y";
+		}
 		param.validateType = getAuthType(id, param.isSame);
 		param.identityNum = base64encode(utf16to8(idCardNumber));
 		if (!ec.util.isObj(param.identityNum)) {
@@ -2527,7 +2530,10 @@ order.cust = (function(){
 				return;
 			}
 		}
-		var param1 = _choosedCustInfo;
+		var param1 = $.extend(true, {}, _choosedCustInfo);
+		if (CacheData.isGov(_choosedCustInfo.identityCd)) {
+			param1.ifOrgUseCust = "Y";
+		}
 		param1.validateType = getAuthType(id, param1.isSame);
 		param1.identityNum = base64encode(utf16to8(idCardNumberUnit5));//首先进行单位证件鉴权
 
@@ -2572,6 +2578,9 @@ order.cust = (function(){
 		});
 
 		var param2 = $.extend(true, {}, _choosedCustInfo);
+		if (CacheData.isGov(_choosedCustInfo.identityCd)) {
+			param2.ifOrgUseCust = "Y";
+		}
 		param2.validateType = getAuthType(id, param2.isSame);
 		param2.identityNum = base64encode(utf16to8(idCardNumber));//单位证件鉴权成功后再进行使用人证件鉴权
 		param2.accessNumber=_choosedCustInfo.accNbr;
