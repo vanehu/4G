@@ -285,7 +285,7 @@ OrderInfo = (function() {
 	};
 	
 	//创建帐户节点
-	var _createAcct = function(busiOrders,acctId,toCustId) {
+	var _createAcct = function(busiOrders,acctId,toCustId,nameCN) {
 		var acctName = $("#acctName").val();
 		var paymentType = $("#paymentType").val();  //100000现金，110000银行
 		var bankId = "";
@@ -338,6 +338,10 @@ OrderInfo = (function() {
 		//返档要求partyId取返档后客户ID，做特殊处理redmine 794183
 		if(OrderInfo.actionFlag=='43'){
 			busiOrder.data.boAccountInfos[0].partyId = toCustId;
+			// 如果账号名称默认取客户名称，则送后台加密后的客户名称（客户信息脱敏后，导致后台下省也脱敏）
+			if (nameCN!=undefined&&nameCN!="") {
+				busiOrder.data.boAccountInfos[0].CN = nameCN;
+			}
 		}	
 		// 如果账号名称默认取客户名称，则送后台加密后的客户名称（客户信息脱敏后，导致后台下省也脱敏）
 		if (acctName == OrderInfo.cust.partyName) {

@@ -89,6 +89,7 @@ prod.transferModify = (function(){
 		}
 		var toCustName = $("#litransCustId").attr("transCustName");
 		var toAddressStr = $("#litransCustId").attr("transAddressStr");
+		var nameCN = $("#litransCustId").attr("CN");
 		var toIdentidiesTypeCd = $("#div_tra_identidiesTypeCd option:selected").val();
 		var toIdCardNumber = $("#litransidCardNumber").attr("transidCardNumber");
 		
@@ -253,7 +254,12 @@ prod.transferModify = (function(){
 			}
 			//新建帐户节点
 			if($("#acctSelect").val()==-1){
-				OrderInfo.createAcct(busiOrder, -1,_toCustId);
+				var acctName = $("#acctName").val();
+				if(acctName==toCustName){
+					OrderInfo.createAcct(busiOrder, -1,_toCustId,nameCN);
+				}else{
+					OrderInfo.createAcct(busiOrder, -1,_toCustId);
+				}
 			}
 			//更换帐户节点
 			if(changeAcct){
@@ -709,7 +715,8 @@ prod.transferModify = (function(){
 			partyName : $(scope).find("td:eq(0)").text(),
 			idCardNumber : $(scope).attr("idCardNumber"),
 			identityName : $(scope).attr("identityName"),
-			areaName : $(scope).attr("areaName")
+			areaName : $(scope).attr("areaName"),
+			CN : $(scope).attr("CN")
 		};
 		_BO_ACTION_TYPE = CONST.BO_ACTION_TYPE.TRANSFERRETURN;
 		if($("#TransferNum").val().length<14){
@@ -843,6 +850,8 @@ prod.transferModify = (function(){
 	
 	//每次定位客户后，初始化帐户展示
 	var _initAcct = function() {
+		$("#acctSelect").empty();
+		$("#account").find("a:gt(0)").show();
 		//新建客户自动新建帐户
 		if ($("#litransCustId").attr("transCustId")=="") {
 			_whetherCreateAcct();

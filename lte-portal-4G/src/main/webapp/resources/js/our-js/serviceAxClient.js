@@ -82,7 +82,7 @@
 					}catch(e){isJsonObjet=false;}
 
 					if(params) {
-						if(/^.*\/cust\/custAuth.*$/.test(servName)){ //修复客户跳过鉴权400错误，临时方法，待修改
+						if(/^.*ustAuth.*$/.test(servName)){ //修复客户跳过鉴权400错误，临时方法，待修改
 							isForm=false;
 						} else if(paramOptions.type==="GET"){
 							isForm=true;

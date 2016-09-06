@@ -1767,7 +1767,12 @@ order.main = (function(){
 	var _createAcct = function() {
 		$("#acctSelect").append("<option value='-1' style='color:red'>[新增] "+OrderInfo.cust.partyName+"</option>");
 		$("#acctSelect").find("option[value='-1']").attr("selected","selected");
-		$("#acctName").val(OrderInfo.cust.partyName);//默认帐户名称为客户名称
+		//返档要求账户名为目标账户名，做特殊处理redmine 795561
+		if(OrderInfo.actionFlag=='43'){
+			$("#acctName").val($("#litransCustId").attr("transcustname"));
+		}else{
+			$("#acctName").val(OrderInfo.cust.partyName);//默认帐户名称为客户名称
+		}
 		//新增帐户自定义支付属性
 		$("#defineNewAcct").show();
 		//隐藏帐户信息的按钮
