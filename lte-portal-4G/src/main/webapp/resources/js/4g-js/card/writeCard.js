@@ -1226,10 +1226,10 @@ order.writeCard = (function(){
 				extCustOrderId : OrderInfo.essOrderInfo.essOrder.extCustOrderId,
 			    commonRegionId : OrderInfo.essOrderInfo.essOrder.commonRegionId,
 				mktResInst :{
-					mktResCd : resp.data.mktResBaseInfo.mktResId,
+					mktResCd : resp.data.mktResBaseInfo.mktResCd+"",
 					mktResType : resp.data.mktResBaseInfo.mktResTypeCd,
 					mktResInstCode : resp.data.mktResBaseInfo.instCode,
-					mktResStoreId : resp.data.mktResBaseInfo.mktResStoreId,
+					mktResStoreId : resp.data.mktResBaseInfo.mktResStoreId+"",
 					orderItemGroupId : OrderInfo.essOrderInfo.essOrder.orderItemGroupId,
 					quantity : "1",
 					salesPrice : "0",
@@ -1473,12 +1473,13 @@ order.writeCard = (function(){
 	var _essWriteReadCard=function(phoneNumber,extCustOrderId,orderNeedAction,commonRegionId,zoneNumber){
 		OrderInfo.actionFlag = 41 ;
 		_essWriteCard = {};
+		var orderItemGroupId = $("#"+extCustOrderId).val();
 		var essOrder = {
 			phoneNumber : phoneNumber,
 			extCustOrderId : extCustOrderId,
 			commonRegionId : commonRegionId,
 			zoneNumber : zoneNumber,
-			orderItemGroupId : $("#extCustOrderId").val()
+			orderItemGroupId : orderItemGroupId
 		};
 		OrderInfo.essOrderInfo.essOrder = essOrder;
 		if(orderNeedAction!="onlyWriteCard"){

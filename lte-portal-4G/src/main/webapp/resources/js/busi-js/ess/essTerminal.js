@@ -118,10 +118,10 @@ essMktRes.terminal = (function() {
 	
 
 	var _mktResInstMakeUp = function() {
-		var extCustOrderId = $("#p_extCustOrderId").val();
-		var areaId = $("#p_commonRegionId").val();
-		var channelId = $("#p_channelId").val();
-		var mktResInstCode = $("#p_mktResInstCode").val();
+		var extCustOrderId = $("#s_extCustOrderId").val();
+		var areaId = $("#s_commonRegionId").val();
+		var channelId = $("#s_channelId").val();
+		var mktResInstCode = $("#s_mktResInstCode").val();
 		if(!ec.util.isObj(mktResInstCode)){
 			$.alert("提示", "请输入终端串号！");
 			return;

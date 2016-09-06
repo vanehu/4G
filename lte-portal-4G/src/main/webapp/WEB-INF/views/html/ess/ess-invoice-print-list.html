@@ -4,7 +4,7 @@
 		<tr>
 			<td width="80">地区</td>
 			<td width="120">客户</td>
-			<td width="120">订单号</td>
+			<td width="120">外部订单号</td>
 			<td width="70">购物车状态</td>
 			<td width="70">费用</td>
 			<td width="70">操作</td>
@@ -16,11 +16,11 @@
 		<tr>
 		    <td>${orderLists.regionName}</td>
 			<td>${orderLists.consignee}</td>
-			<td>${orderLists.transactionId}</td>
+			<td>${orderLists.extCustOrderId}</td>
 			<td>${orderLists.statusCdName}</td>
 			<td>费用</td>
 			<td><a class="purchase"
-				href="javascript:ess.print.preVoucher('${orderLists.transactionId}','${orderLists.commonRegionId}','${orderLists.accNbr}')"
+				href="javascript:ess.print.preVoucher('${orderLists.olId}','${orderLists.commonRegionId}','${orderLists.accNbr}')"
 				type="main">打印回执</a></td>
 		</tr>
 		</#list>
