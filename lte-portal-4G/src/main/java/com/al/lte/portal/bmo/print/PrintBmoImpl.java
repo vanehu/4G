@@ -259,7 +259,7 @@ public class PrintBmoImpl implements PrintBmo {
 			//PdfUtils.byte2File(Base64.decodeBase64(orderInfo.get("mgrPdf").toString().replaceAll("\n|\r", "")),"D:/temp/","test2.pdf");
 	//	    	int height =Integer.valueOf(params.get("height").toString());
 	//	    	int imgHeigh =Integer.valueOf(params.get("imgHeigh").toString());
-	
+
 	//	    	Map<String, Object> retPdf=getGZPdf(orderInfo,sessionStaff.getOrgId(),"1",300,540,400,640,optFlowNum,sessionStaff);
 	//	    	if(ResultCode.R_SUCCESS.equals(retPdf.get("code"))){
 	//	    		orderInfo=retPdf.get("resultParam").toString();
@@ -457,7 +457,7 @@ public class PrintBmoImpl implements PrintBmo {
 											}
 										}
 									}
-									
+
 									String offerInfoStrs = "";
 									for(int i=0; i<offerInfos.size(); i++){
 										String offerInfoStr = "";
@@ -641,7 +641,7 @@ public class PrintBmoImpl implements PrintBmo {
 								}
 							}
 						}
-						
+
 						/************************************begin************************************/
 						//新旧uim卡
 //						Object terminalInfosMap = MapUtils.getObject(resultMap, "terminalInfos");
@@ -657,7 +657,7 @@ public class PrintBmoImpl implements PrintBmo {
 										}
 										if("Y".equals(item.get("isNew"))){
 											maps.put("newUimCard", item.get("tiRemark"));
-											
+
 										}
 									}
 								}
@@ -680,7 +680,7 @@ public class PrintBmoImpl implements PrintBmo {
 				}else{
 					maps.put("annumber", sbNub.toString());
 				}
-				
+
 			}
 			//购手机
 			if (terminalInfosMap != null && terminalInfosMap instanceof List ){
@@ -4499,10 +4499,16 @@ public class PrintBmoImpl implements PrintBmo {
 		feeInfoTitleSet.setFeeInfoTitle(feeInfoTitle);
 		//String feeInfoCont = "应收"+ amount/100 +"元"+SysConstant.STR_SPI+"实收"+realAmount/100+"元";
 		String feeInfoCont = "应收"+ amount.divide(new BigDecimal("100"), 2, BigDecimal.ROUND_HALF_UP) +"元"+SysConstant.STR_SPI+"实收"+ realAmount.divide(new BigDecimal("100"), 2, BigDecimal.ROUND_HALF_UP)+"元";
+		String feeInfoContds = "应收0元；实收0元。";
 		if (StringUtils.isNotEmpty(payMethodName)) {
-			feeInfoCont += " （"+payMethodName+"）";
+			if (!"帐务代收类".equals(payMethodName)) {
+				feeInfoCont += " （" + payMethodName + "）";
+			}
 		}
 		feeInfoCont += "。";
+		if ("帐务代收类".equals(payMethodName)) {
+            feeInfoCont += feeInfoContds;
+        }
 		feeInfoTitleSet.setFeeInfoCont(feeInfoCont);
 		feeInfoTitles.add(feeInfoTitleSet);
 		feeInfoSet.setFeeInfoTitles(feeInfoTitles);
@@ -5703,19 +5709,19 @@ public class PrintBmoImpl implements PrintBmo {
 
 		return resultMap;
 	}
-	
+
 	/**
 	 * 打印天翼预约单回执
 	 */
 	public String printSTBReserveReceipt(Map<String, Object> dataBusMap, String optFlowNum, SessionStaff sessionStaff, HttpServletResponse response) throws Exception {
-		
+
 		DataBus db = InterfaceClient.callService(dataBusMap, PortalServiceCode.QUERY_STB_RESERVE_INFO_FOR_PRINT, optFlowNum, sessionStaff);
-		
+
 		String resultCode = ResultCode.R_FAILURE;
 		if(ResultCode.R_SUCC.equals(db.getResultCode())){
-			
+
 			Map<String, Object> result = MapUtils.getMap(db.getReturnlmap(), "result");
-			
+
 			ArrayList<Map<String, Object>> attrList = (ArrayList<Map<String, Object>>) result.get("attrList");
 			ArrayList<Map<String, Object>> reserveCustInfo = new ArrayList<Map<String, Object>>();
 			ArrayList<Map<String, Object>> reserveTerminalInfo = new ArrayList<Map<String, Object>>();
@@ -5734,40 +5740,40 @@ public class PrintBmoImpl implements PrintBmo {
 					pickUpInfo.add(attrItem);
 				}
 			}
-			
+
 			Map<String, Object> printData = new HashMap<String, Object>();
-			
+
 			printData.put("areaName", MapUtils.getString(result, "areaName"));
 			printData.put("reserveDate", MapUtils.getString(result, "createDt"));
-			
+
 			printData.put("custName", MapUtils.getString(result, "custName"));
 			printData.put("certName", MapUtils.getString(result, "certName"));
 			printData.put("identityNum", MapUtils.getString(result, "identityNum"));
 			printData.put("phoneNumber", MapUtils.getString(result, "phoneNumber"));
 			printData.put("reserveCustInfo", reserveCustInfo);
-			
+
 			printData.put("reserveId", MapUtils.getString(result, "reserveId"));
 			printData.put("reserveNumber", MapUtils.getString(result, "reserveNumber"));
 			printData.put("reserveTerminalInfo", reserveTerminalInfo);
-			
+
 			printData.put("pickUpInfo", pickUpInfo);
-			
+
 			ArrayList<Map<String, Object>> remarkList = (ArrayList<Map<String, Object>>) result.get("remarkInfos");
 			printData.put("remarkList", remarkList);
-			
+
 			printData.put("staffCode", sessionStaff.getStaffCode());
 			printData.put("channelName", sessionStaff.getCurrentChannelName());
-			
+
 			String printTypeDir = SysConstant.P_MOD_SUB_BASE_DIR + SysConstant.P_MOD_SUB_STBRESERVE;
             String strJasperFileName = SysConstant.P_MOD_BASE_DIR + SysConstant.P_MOD_SUB_STBRESERVE
             		+ SysConstant.P_MOD_FILE_STBRESERVE + SysConstant.P_MOD_FILE_SUBFIX;
 
             Collection<Map<String, Object>> inFields = new ArrayList<Map<String, Object>>();
             inFields.add(printData);
-            
+
             Map<String, Object> reportParams = new HashMap<String, Object>();
             reportParams.put("SUBREPORT_DIR", printTypeDir);
-            
+
             //输出打印内容
             if(SysConstant.PRINT_TYPE_HTML.equals(MapUtils.getString(dataBusMap, "printType"))){
             	commonHtmlPrint(strJasperFileName, reportParams, inFields, response, 0, 0);
@@ -5780,7 +5786,7 @@ public class PrintBmoImpl implements PrintBmo {
 		}
 		return resultCode;
 	}
-	
+
 	protected Map<String, Object> runInvoicePrint(Map<String, Object> printData,
 			HttpServletResponse response, String printType,
 			Map<String, Object> templateInfoMap) throws Exception {
@@ -8218,7 +8224,7 @@ public class PrintBmoImpl implements PrintBmo {
 			// 3. 数据驱动模板、展示打印页面
 			runVoucherPrint(printData, response, printType, needAgreement,signFlag);
 			return printData;
-		}	
+		}
 	}
 	private Map<String, Object> getVoucherDataForAgentApp(Map<String, Object> paramMap, boolean needAgreement, String optFlowNum, HttpServletRequest request)throws Exception {
 		Map<String, Object> resultMap = null;
@@ -8323,8 +8329,8 @@ public class PrintBmoImpl implements PrintBmo {
 		html.append("<p class=\"list-group-item-text\">"+result.get("receiptInfo")+"</p>");
 		html.append("</li>");
 		html.append("<li class=\"list-group-item active\">");
-		html.append("</li>");	
-		html.append("</ul>");	
+		html.append("</li>");
+		html.append("</ul>");
 		html.append("<table class=\"table\">");
 		html.append("<tbody>");
 		html.append("<tr>");
@@ -8334,13 +8340,13 @@ public class PrintBmoImpl implements PrintBmo {
 		html.append("<tr>");
 		html.append("<th class=\"col-xs-6\">申请人/办理人签字</th>");
 		html.append("<td class=\"col-xs-8\"><img id=\"datasign\" width=\"100%\" src=\"XXXXXSIGN\"></img></td>");
-		html.append("</tr>");  			
+		html.append("</tr>");
 		html.append("</tbody>");
-		html.append("</table>");     
+		html.append("</table>");
 		html.append("</div>");
 		html.append("</div>");
 		html.append("</div>");
-		
+
 		return html.toString();
 	}
 }

@@ -19,6 +19,12 @@ order.calcharge = (function(){
 	var inOpetate=false;
 	var olpos = false;
 	var _posPayMethodIofo = []; //记录使用 离线pos支付方式 的费用项trid
+	var _posObj = {
+		posCtl: null,
+		posKey: "pos_day",
+		partnerNbr: "",
+		terminalNbr: ""
+	};
 	var ranNum = 1;//随机数，用于积分扣减生成不同的订单号
 	var _addbusiOrder=function(proId,obj){
 		var html=$("#pro_"+proId).html();
@@ -119,10 +125,12 @@ order.calcharge = (function(){
 		_chargeItems=[];
 		_prints=[];
 		var realAmount=0;
+		var feeAmount=0;
 		$("#calTab tbody tr").each(function() {
 			var val = $(this).attr("id");
 			if(val!=undefined&&val!=''){
 				val=val.substr(5,val.length);
+				feeAmount += $(this).find("td:eq(2)").text();
 				if($("#paymentAmount_"+val) && $("#paymentAmount_"+val).val()*1==0){
 					
 				}else{
@@ -140,6 +148,7 @@ order.calcharge = (function(){
 			$("#calTab tbody tr").each(function() {
 				var val = $(this).attr("id");
 				if(val!=undefined&&val!=''){
+					feeAmount += $(this).find("td:eq(2)").text();
 					if($("#paymentAmount_"+val) && $("#paymentAmount_"+val).val()*1==0){
 						
 					}else{
@@ -153,6 +162,7 @@ order.calcharge = (function(){
 		}
 		//alert(JSON.stringify(_prints));
 		$('#realmoney').val(Number(realAmount).toFixed(2));
+		$('#feeAmount').val(Number(feeAmount).toFixed(2));
 		if(OrderInfo.actionFlag==15){
 			order.refund.conBtns();
 		}else{
@@ -283,9 +293,31 @@ order.calcharge = (function(){
 			}
 		});
 	};
-	var _selectChangePayMethodCd=function(trid){
-		var methodCd=$("#changeMethod_"+trid).val();
-		$("#payMethodCd_"+trid).val(methodCd);
+	var _selectChangePayMethodCd = function (trid) {
+		var methodCd = $("#changeMethod_" + trid).val();
+		var methodName = $("#changeMethod_" + trid).find("option:selected").text();
+		$("#payMethodCd_" + trid).val(methodCd);
+		if (CONST.PAYMETHOD_CD.ZHANG_WU_DAI_SHOU == methodCd) {//账务代收设置金额为0.00
+			if (!ec.util.isObj($("#realAmount_" + trid).attr("oldValue"))) {
+				$("#realAmount_" + trid).attr("oldValue", $("#realAmount_" + trid).val());
+				$("#feeAmount_" + trid).attr("oldValue", $("#feeAmount_" + trid).val());
+			}
+			$("#item_" + trid).find("td:eq(2)").text("0.00");
+			$("#feeAmount_" + trid).val("0");
+			$("#realAmount_" + trid).click();
+			$("#realAmount_" + trid).val("0.00");
+			$("#realAmount_" + trid).blur();
+		} else {//不是账务代收还原金额设置
+			var oldValueR = $("#realAmount_" + trid).attr("oldValue");
+			var oldValueF = $("#feeAmount_" + trid).attr("oldValue");
+			if (ec.util.isObj(oldValueR) && ec.util.isObj(oldValueF)) {
+				$("#item_" + trid).find("td:eq(2)").text(oldValueR);
+				$("#feeAmount_" + trid).val(oldValueF);
+				$("#realAmount_" + trid).click();
+				$("#realAmount_" + trid).val(oldValueR);
+				$("#realAmount_" + trid).blur();
+			}
+		}
 	};
 	//调用接口，判断用户是否可以修改金额，并加载付费类型
 	var _queryPayMethodByItem = function(itemTypeId,trid,defmethod){
@@ -445,7 +477,7 @@ order.calcharge = (function(){
 			$.alert("提示","权限数据范围查询失败!");
 			return false ;
 		}
-	}
+	};
 	
 	var _commitParam=function(val){
 		var realmoney=($("#realAmount_"+val).val())*100+'';
@@ -569,8 +601,216 @@ order.calcharge = (function(){
 		$("#toCharge").off("click");
 		$("#orderSave").off("click");
 	};*/
+	var _pay_method = function() {
+		var bestPaySum = 0;
+		var posPaySum = 0;
+		var paySum = 0;
+		$("#calTab tbody tr").each(function() {
+			var val = $(this).attr("id");
+			if (val != undefined && val != '') {
+				val = val.substr(5, val.length);
+				var payMethodCd = $("#payMethodCd_" + val).val();
+				if ("110100" == payMethodCd) {
+					posPaySum++;
+				}
+				if ("120100" == payMethodCd) {
+					bestPaySum++;
+				}
+				paySum++;
+			}
+		});
+		if (11 == OrderInfo.actionFlag || 19 == OrderInfo.actionFlag || 20 == OrderInfo.actionFlag) {
+			if (bestPaySum > 0) {
+				if (bestPaySum == paySum) {
+					var transAmt = $("#realmoney").val() * 100;
+					return _bestPayRefund(transAmt);
+				} else {
+					$.alert("提示信息", "暂不支持混合付费方式，请重新选择！");
+					return false;
+				}
+			} else {
+				return true;
+			}
+		}
+		if (posPaySum > 0) {
+			if (posPaySum == paySum) {
+				return _pos_pay();
+			} else {
+				$.alert("提示信息", "暂不支持混合付费方式，请重新选择！");
+				return false;
+			}
+		}
+
+		return true;
+	};
+	var _toObject = function(str) {
+		return (new Function("return" + str))();
+	};
+	var _is_pos_sign_in = function() {
+		var posDay = "";
+		var arras = document.cookie.split(";");
+		for (var i = 0; i < arras.length; i++) {
+			var keyValue = arras[i].split("=");
+			if (_posObj.posKey == $.trim(keyValue[0])) {
+				posDay = keyValue[1];
+				break;
+			}
+		}
+		if ("" == posDay) {
+			return false;
+		}
+		var date = new Date();
+		return posDay == date.getDate();
+	};
+	var _pos_sign_in = function(params) {
+		params.tradeType = "91";
+		if (_pos_trade(params)) {
+			var date = new Date();
+			var day = date.getDate();
+			date.setTime(date.getTime() + 24 * 60 * 60 * 1000);
+			var cookieValue = _posObj.posKey + "=" + day;
+			cookieValue += ";path=/;expires=" + date.toUTCString();
+			document.cookie = cookieValue;
+			return true;
+		} else {
+			return false;
+		}
+	};
+	var _getPosId = function() {
+		var date = new Date();
+		var year = "" + date.getFullYear();
+		var month = date.getMonth() + 1;
+		if (10 > month) {
+			month = "0" + month;
+		}
+		var day = date.getDate();
+		if (10 > day) {
+			day = "0" + day;
+		}
+		var hour = date.getHours();
+		if (10 > hour) {
+			hour = "0" + hour;
+		}
+		var minute = date.getMinutes();
+		if (10 > minute) {
+			minute = "0" + minute;
+		}
+		var second = date.getSeconds();
+		if (10 > second) {
+			second = "0" + second;
+		}
+		var millisecond = "" + date.getMilliseconds();
+		if (1 === millisecond.length) {
+			millisecond = "00" + millisecond;
+		}
+		if (2 === millisecond.length) {
+			millisecond = "0" + millisecond;
+		}
+		return year + month + day + hour + minute + second + "000" + millisecond;
+	};
+	var _pos_pay = function() {
+		$("#posPayDiv").show();
+		if ($.browser.mozilla) { //Firefox
+			$("#PosCtl_ie").hide();
+			_posObj.posCtl = document.getElementById("PosCtl_ff");
+		} else {
+			if (!!window.ActiveXObject || "ActiveXObject" in window) { //IE
+				$("#PosCtl_ff").hide();
+				_posObj.posCtl = document.getElementById("PosCtl_ie");
+			} else {
+				$.alert("提示", "对不起，POS方式目前仅支持IE及Firefox浏览器！");
+				return false;
+			}
+		}
+		if (null == _posObj.posCtl || undefined == _posObj.posCtl) {
+			$.alert("提示", "对不起，获取POS控件对象失败，请联系管理员！");
+			return false;
+		}
+		var realmoney = $("#realmoney").val();
+		var params = {
+				requestSerial: _getPosId(),
+				operateType: "A0",
+				tradeType: "20",
+				payType: "01",
+				operateStaff: OrderInfo.staff.staffCode,
+				channelCode: OrderInfo.staff.channelId,
+				paySerial: "",
+				systemSerial: "",
+				payMoney: realmoney,
+				extField: ""
+		};
+		if (_is_pos_sign_in()) {
+			return _pos_trade(params);
+		} else {
+			if (_pos_sign_in(params)) {
+				params.tradeType = "20";
+				return _pos_trade(params);
+			} else {
+				return false;
+			}
+		}
+	};
+	var _pos_trade = function(params) {
+		$.ecOverlay("<strong>正在处理中,请稍等会儿....</strong>");
+		var tradeResult = "";
+		try {
+			tradeResult = _posObj.posCtl.posTrade(params);
+		} catch(e) {
+			$.unecOverlay();
+			$.alert("提示", "POS连机异常，请检查控件或连接！");
+			return false;
+		}
+		var result = _toObject(tradeResult);
+		$.unecOverlay();
+		if (result) {
+			var resultFlag = result.resultFlag;
+			if ("00" == resultFlag) {
+				_posObj.partnerNbr = result.resultContent.partnerNbr;
+				_posObj.terminalNbr = result.resultContent.terminalNbr;
+				return true;
+			} else {
+				if ("16" == resultFlag) {
+					$.alert("提示", "POS连机失败，请检查连接！");
+					return false;
+				} else {
+					$.alert("提示", result.errorMsg);
+					return false;
+				}
+			}
+		} else {
+			$.alert("提示", "POS连机失败，请检查连接！");
+			return false;
+		}
+	};
+	var _bestPayRefund = function(transAmt) {
+		var oldOrderNo = OrderInfo.orderResult.oldOlNbr;
+		var oldOrderReqNo = OrderInfo.orderResult.oldOlNbr;
+
+		var params = {
+			orderId: OrderInfo.orderResult.olNbr,
+			oldOrderNo: oldOrderNo,
+			oldOrderReqNo: oldOrderReqNo,
+			transAmt: transAmt
+		};
+		var url = contextPath + "/bestpay/commonRefund";
+
+		$.ecOverlay("<strong>正在退款，请稍等....</strong>");
+		var response = $.callServiceAsJson(url, params);
+		$.unecOverlay();
+		if (response.code != 0) {
+			$.alert("提示", "退款失败，稍后重试！");
+			return false;
+		}
+		if ("true" == response.data.success) {
+			//$.alert("提示", "退款成功！");
+			return true;
+		} else {
+			$.alert("提示", response.data.errorMsg);
+			return false;
+		}
+	};
 	var _conBtns=function(){
-		ranNum = 1;//随机数重新赋值
+		
 		$("#orderCancel").removeClass("btna_g").addClass("btna_o");
 		var val=($('#realmoney').val())*1;
 		if(OrderInfo.actionFlag==11){
@@ -601,6 +841,63 @@ order.calcharge = (function(){
 						_chargeSave('1');
 						return;
 					}
+					var payMethodCd ="";
+					var payMethodCdTemp ="";
+					var ispayMethod="";
+					$("#calTab tbody tr").each(function() {
+						var val = $(this).attr("id");
+						if(val!=undefined&&val!=''){
+							val=val.substr(5,val.length);
+							if(payMethodCd == "" ) {
+								payMethodCd = $("#payMethodCd_"+val).val();
+							 }
+							payMethodCdTemp = $("#payMethodCd_"+val).val();
+							 if(payMethodCd != payMethodCdTemp) {
+								 ispayMethod = "no";
+							 }
+						}
+					});
+					if(ispayMethod == "no") {
+						$.alert("提示信息", "暂不支持混合付费方式，请重新选择！");
+						return;
+					}
+					var propertiesKey = "BESTPAY-"+OrderInfo.staff.soAreaId.substring(0,3) + "0000";
+					var bestpayFlag = offerChange.queryPortalProperties(propertiesKey);
+					
+					if("120100" == payMethodCd && OrderInfo.actionFlag==1){   //如果是翼支付
+						if(bestpayFlag == "OFF") {
+							$.alert("提示信息", "翼支付功能暂未开放，请联系管理员！");
+							return;
+						}
+						
+						_bestpayGetBarcode();
+						
+						$("#bestpay_d_bt").off("click").on("click",function(event){
+							var barcode = $.trim($("#bestpay_d_txt").val());
+							if(barcode==""){
+								$("#bestpay_d_txt").focus();
+								return;
+							}
+							easyDialog.close();
+							_bestpayPlaceOrder(barcode)
+						});
+						
+						$("#bestpay_d_txt").off("keypress").on("keypress",function(event){
+							if(event.keyCode == 13){
+								var barcode = $.trim($("#bestpay_d_txt").val());
+								if(barcode==""){
+									$("#bestpay_d_txt").focus();
+									return;
+								}
+								easyDialog.close();
+								_bestpayPlaceOrder(barcode);
+							}
+						});	
+						
+						return;
+					}
+					
+
 					_updateChargeInfoForCheck('1');
 				});
 				$("#toComplate").off("click");
@@ -667,6 +964,10 @@ order.calcharge = (function(){
 		}
 		if(!_submitParam()){
 			$.alert("提示","订单数据异常，请核对数据!");
+			_conBtns();
+			return ;
+		}
+		if (!_pay_method()) {
 			_conBtns();
 			return ;
 		}
@@ -1415,6 +1716,174 @@ order.calcharge = (function(){
 		});
 	};
 	
+	var _bestpayOrderResult = null;
+	var _bestpayRetryCount = 0;
+	var _bestpayGetBarcode = function(){
+		easyDialog.open({
+			container : 'bestpay_d_main'
+		});
+		$("#bestpay_d_close").off("click").on("click",function(event){
+			easyDialog.close();
+		});
+		/*$("#bestpay_d_bt").off("click").on("click",function(event){
+			var barcode = $.trim($("#bestpay_d_txt").val());
+			if(barcode==""){
+				$("#bestpay_d_txt").focus();
+				return;
+			}
+			easyDialog.close();
+			_bestpayPlaceOrder(barcode);
+		});*/
+		$("#bestpay_d_no").off("click").on("click",function(event){
+			easyDialog.close();
+		});	
+		/*$("#bestpay_d_txt").off("keypress").on("keypress",function(event){
+			if(event.keyCode == 13){
+				var barcode = $.trim($("#bestpay_d_txt").val());
+				if(barcode==""){
+					$("#bestpay_d_txt").focus();
+					return;
+				}
+				easyDialog.close();
+				_bestpayPlaceOrder(barcode);
+			}
+		});	*/
+		$("#bestpay_d_txt").val("");
+		$("#bestpay_d_txt").focus();
+	};
+	
+	var _bestpayPlaceOrder = function(barcode){
+		var orderNo = OrderInfo.orderResult.olNbr;//_olId;
+		var orderReqNo = OrderInfo.orderResult.olNbr;
+		/*var orderId = _bestpayOrderResult.result.orderId;
+		if(orderId == undefined) {
+			orderId = "";
+		}*/
+		var productAmt = ($('#realmoney').val())*100;
+		//productAmt = 1;//使用1分进行测试
+		
+		var params = {"barcode":barcode,"orderNo":orderNo,"orderReqNo":orderReqNo,"orderAmt":productAmt,"productAmt":productAmt,"attachAmt":0};
+		var url = contextPath + "/bestpay/placeOrder";
+		_bestpayRetryCount = 10; // 最多轮询10次
+		$.ecOverlay("<strong>正在下单支付，请稍等....</strong>");
+		$.callServiceAsJson(url, params, {
+			"done" : function(response){
+				if(response.code != 0) {
+					$.alert("提示","支付失败,稍后重试");
+					return;
+				}
+				
+				_bestpayCheckResult(response.data);
+			},
+			"fail":function(response){
+				$.unecOverlay();
+				$.alert("提示","请求可能发生异常，请稍后再试！");
+			}
+		});
+	};
+	
+
+	
+	var _bestpayQueryOrder = function(){
+		if(!_bestpayOrderResult || !_bestpayOrderResult.result ){
+			return;
+		}
+		var oldOrderNo = _bestpayOrderResult.result.orderNo;
+		var oldOrderReqNo = _bestpayOrderResult.result.orderReqNo;
+		
+		var params = {"orderNo":orderNo,"orderReqNo":orderReqNo};
+		var url = contextPath + "/bestpay/queryOrder";
+		
+		$.callServiceAsJson(url, params, {
+			"done" : function(response){
+				if(response.code != 0) {
+					$.alert("提示","支付失败,稍后重试");
+					return;
+				}
+				//alert(response.data.isSuccess);
+				_bestpayCheckResult(response.data);
+			},
+			"fail":function(response){
+				$.unecOverlay();
+				$.alert("提示","请求可能发生异常，请稍后再试！");
+			}
+		});
+	};
+	var _bestpayReverse = function(){
+		if(!_bestpayOrderResult  || !_bestpayOrderResult.result ){
+			return;
+		}
+		var oldOrderNo = _bestpayOrderResult.result.orderNo;
+		var oldOrderReqNo = _bestpayOrderResult.result.orderReqNo;
+		var transAmt = _bestpayOrderResult.result.transAmt;
+		
+		var params = {"oldOrderNo":oldOrderNo,"oldOrderReqNo":oldOrderReqNo,"transAmt":transAmt};
+		var url = contextPath + "/bestpay/reverse";
+		
+		$.callServiceAsJson(url, params, {
+			"before":function(){
+				$.ecOverlay("<strong>正在冲正，请稍等....</strong>");
+			},
+			"always":function(){
+				$.unecOverlay();
+			},
+			"done" : function(response){
+				if(response.code != 0) {
+					$.alert("提示","冲正失败,稍后重试");
+					return;
+				}
+				if(typeof(response.data)!="undefined"){
+					if(!response.data.success) {
+						$.alert("提示",response.data.errorMsg);
+						return;
+					}
+				}
+			},
+			"fail":function(response){
+				$.unecOverlay();
+				$.alert("提示","请求可能发生异常，请稍后再试！");
+			}
+		});
+	};
+	var _bestpayCheckResult = function(data){
+		_bestpayOrderResult = data;
+		if(data == undefined) {
+			$.alert("提示","支付结果不明确！");
+		}
+		//支付或查询成功，根据订单状态执行不同的操作
+		if("false" !=_bestpayOrderResult.success){
+			if(_bestpayOrderResult.result.transStatus == 'A'){
+				_bestpayRetryCount--;
+				if(_bestpayRetryCount>0){
+					_bestpayQueryOrder();
+				}else{
+					$.unecOverlay();
+					$.alert("提示","支付超时！");
+					_bestpayReverse();
+				}
+			}else if(_bestpayOrderResult.result.transStatus == 'B'){
+				$.unecOverlay();
+				var oldOrderNo = _bestpayOrderResult.result.orderNo;
+				var oldOrderReqNo = _bestpayOrderResult.result.orderReqNo;
+				var transAmt = _bestpayOrderResult.result.transAmt;
+				//$.alert("提示","支付成功<br/>支付流水号："+oldOrderReqNo+"<br/>订单号："+oldOrderNo+"<br/>金额："+transAmt);
+				_updateChargeInfoForCheck('1');
+			}else if(_bestpayOrderResult.result.transStatus == 'C'){
+				var msg = _bestpayOrderResult.result.respDesc;
+				if(!msg){
+					msg = "支付失败！";
+				}
+				$.unecOverlay();
+				$.alert("提示",msg);
+				_bestpayReverse();
+			}
+		}else{
+			//失败，调用冲正接口
+			$.unecOverlay();
+			$.alert("提示",_bestpayOrderResult.errorMsg);
+			_bestpayReverse();
+		}
+	};
 	
 	var _changePoingts = function(itemTypeId,trid,acctItemId,serviceCodeB,acctItemName,obj){
 		var state = "";
@@ -1533,7 +2002,6 @@ order.calcharge = (function(){
 		);
 	};
 
-	
 	return {
 		addItems:_addItems,
 		delItems:_delItems,
@@ -1555,7 +2023,8 @@ order.calcharge = (function(){
 		tochargeSubmit:_tochargeSubmit,
 		backToEntr:_backToEntr,
 		changeFeeDisabled:_changeFeeDisabled,
-		changePoingts:_changePoingts
+		changePoingts:_changePoingts,
+		bestPayRefund:_bestPayRefund
 	};
 })();
 
