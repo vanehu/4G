@@ -1,13 +1,10 @@
 package com.al.lte.portal.controller.crm;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
@@ -26,7 +23,6 @@ import com.al.ecs.exception.InterfaceException;
 import com.al.ecs.exception.ResultConstant;
 import com.al.ecs.spring.annotation.log.LogOperatorAnn;
 import com.al.ecs.spring.annotation.session.AuthorityValid;
-import com.al.ecs.spring.annotation.session.SessionValid;
 import com.al.ecs.spring.controller.BaseController;
 import com.al.lte.portal.bmo.crm.OrderBmo;
 import com.al.lte.portal.bmo.crm.RuleBmo;
@@ -46,31 +42,30 @@ public class RuleControler extends BaseController {
 	@Qualifier("com.al.lte.portal.bmo.crm.OrderBmo")
 	private OrderBmo orderBmo;
 	
-	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/prepare", method = { RequestMethod.POST })
 	@ResponseBody
 	public JsonResponse checkRulePrepare(@RequestBody Map<String, Object> param, Model model, HttpServletResponse response,@LogOperatorAnn String flowNum) throws BusinessException{
 		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
 				SysConstant.SESSION_KEY_LOGIN_STAFF);
+		
+		//#799964 取实际受理地区的地区ID，即从页面上传过来的areaId
+		param.put("dealAreaId", param.get("areaId"));
+		//#534272 配合规则改造，因areaId不满足规则，这里增加checkAreaId，取当前受理渠道的地区ID
+		param.put("checkAreaId", sessionStaff.getCurrentAreaId());
 		//填充areaId、channelId、staffId，redmine 24000
 		param.put("areaId", sessionStaff.getAreaId());
 		param.put("channelId", sessionStaff.getCurrentChannelId());
 		param.put("staffId", sessionStaff.getStaffId());
-		//#534272配合规则改造，因areaId不满足规则，这里增加checkAreaId，取当前受理渠道的地区ID
-		param.put("checkAreaId", sessionStaff.getCurrentAreaId());
+		
 		
 		if (log.isDebugEnabled()){
 			log.debug("规则校验入参{}", JsonUtil.toString(param));
 		}
 		
 		Map<String, Object> resultMap = new HashMap<String, Object>();
-    	Map<String, Object> prodMap = new HashMap<String, Object>();
-    	Map<String, Object> ruleMap = new HashMap<String, Object>();
-    	Object boInfosObj = null;
 		JsonResponse jsonResponse = null;
 		
 		try {
-			String boActionTypeCd = "";
 			resultMap = ruleBmo.checkRulePrepare(param, flowNum, sessionStaff);
 			/*prodMap = MapUtils.getMap(param, "prodInfo");
 			if (MapUtils.isNotEmpty(prodMap)){
