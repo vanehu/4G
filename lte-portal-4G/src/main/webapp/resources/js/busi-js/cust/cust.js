@@ -1850,7 +1850,7 @@ order.cust = (function(){
 		$("#acctDetail").hide();
 		$("#acctList").show();
 	};
-	var _showReadCert = function(man, id) {
+	var _showReadCert = function (man, id, parentId) {
 		$("#td_cust_name").text(man.resultContent.partyName);
 		$("#td_cust_idCard").text(man.resultContent.certNumber);
 		if (man.resultContent.identityPic != undefined) {
@@ -1870,7 +1870,11 @@ order.cust = (function(){
 		//	}
 		//});
 		$.alertW("身份证信息展示",$("#user_info2").html(),"",function(){
-			$("#" + id).click();
+			if (ec.util.isObj(parentId)) {
+				$(parentId).find("#" + id).click();
+			} else {
+				$("#" + id).click();
+			}
 		},400);
 	};
 	//定位客户时读卡
@@ -1934,14 +1938,20 @@ order.cust = (function(){
 	};
 
 	//用户鉴权时读卡二次业务
-	var _readCertWhenAuth2 = function(id) {
+	var _readCertWhenAuth2 = function (level, id) {
+		var parentId = "";
+		if (level == "1") {
+			parentId = "#auth3";//客户定位鉴权弹出窗口id
+		} else if (level == "2") {
+			parentId = "#auth2";//二次业务鉴权弹出窗口id
+		}
 		var man = cert.readCert();
 		if (man.resultFlag != 0){
 			$.alert("提示", man.errorMsg);
 			return;
 		}
-		$("#idCardNumber"+id).val(man.resultContent.certNumber);
-		_showReadCert(man, "custAuthbtn"+id);
+		$(parentId).find("#idCardNumber"+id).val(man.resultContent.certNumber);
+		_showReadCert(man, "custAuthbtn" + id, parentId);
 	};
 
 	// 填单页面经办人读卡
