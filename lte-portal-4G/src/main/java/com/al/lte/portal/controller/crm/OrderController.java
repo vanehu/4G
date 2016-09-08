@@ -3036,12 +3036,11 @@ public class OrderController extends BaseController {
                 //过滤订单属性
                 List<Map> custOrderAttrs = (List<Map>) orderListInfo.get("custOrderAttrs");
 
-                //添加客户端IP地址到订单属性 By zhangyu
+                //添加客户端IP地址到订单属性
                 Map<String, String> IPMap = new HashMap<String, String>();
-                String IP = sessionStaff.getIp();
-                IP = (IP == null || "".equals(IP)) ? ServletUtils.getIpAddr(request) : IP;
+                String clientIp = ServletUtils.getIpAddr(request);
                 IPMap.put("itemSpecId", "800000039");
-                IPMap.put("value", (IP == null || "".equals(IP)) ? "NoIP" : IP);
+                IPMap.put("value", (clientIp == null || "".equals(clientIp)) ? "N/A" : clientIp);
                 if (custOrderAttrs == null)
                     custOrderAttrs = new ArrayList<Map>();
                 custOrderAttrs.add(IPMap);
