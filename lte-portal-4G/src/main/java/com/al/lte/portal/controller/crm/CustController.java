@@ -821,7 +821,15 @@ public class CustController extends BaseController {
 				}
 			}
 		} else {
-			map.put("isValidate", "true");
+			String canJump = (String) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_JUMPAUTH + "_" + sessionStaff.getStaffId());
+			if (canJump.equals("10")) {
+				map.put("isValidate", "true");
+			} else {
+				map.put("isValidate", "false");
+				map.put("authJumpInfo", "无跳过权限！");
+				model.addAttribute("custAuth", map);
+				return "/cust/cust-info";
+			}
 			//在session中保存当前客户信息
 			String custId = MapUtils.getString(param, "custId", "");
 			Map sessionCustInfo = MapUtils.getMap(listCustInfos, custId);  

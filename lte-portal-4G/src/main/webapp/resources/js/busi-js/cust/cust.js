@@ -689,7 +689,16 @@ order.cust = (function(){
 					_saveAuthRecordFail(recordParam);
 					return;
 				}
-				
+				//判断能否转为json，可以的话返回的就是错误信息
+				try {
+					var errorData = $.parseJSON(response.data);
+					if (ec.util.isObj(errorData.custAuthInfo)) {
+						$.alert("提示", errorData.custAuthInfo);
+						_saveAuthRecordFail(recordParam);
+						return;
+					}
+				} catch (e) {
+				}
 				//window.localStorage.setItem("OrderInfo.cust",JSON.stringify(OrderInfo.cust));
 				if(!order.cust.queryForChooseUser){
 					custInfo = param;
