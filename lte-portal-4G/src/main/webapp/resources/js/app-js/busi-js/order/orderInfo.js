@@ -46,6 +46,7 @@ OrderInfo = (function() {
 	var _preBefore ={
 			prcFlag : ""	
 	};//保存前置检验的结果
+	var _cust_validateType = "";//客户鉴权方式
 	var _busitypeflag = 0;
 	
 	var _uimtypeflag = 0;
@@ -53,6 +54,8 @@ OrderInfo = (function() {
 	var _orderlonger = "";
 	
 	var _custorderlonger = "";
+	
+	var _choosedUserInfos = []; //使用人信息
 
 	var _cust = { //保存客户信息
 		custId : "",
@@ -1159,6 +1162,43 @@ OrderInfo = (function() {
 		}
 		return false;
 	};
+	
+	var _updateChooseUserInfos = function(prodId, custInfo){
+		if(!OrderInfo.choosedUserInfos){
+			OrderInfo.choosedUserInfos = [];
+		}
+		var index = -1;
+		for(var i=0; i<OrderInfo.choosedUserInfos.length; i++){
+			if(OrderInfo.choosedUserInfos[i].prodId == prodId){
+				index = i;
+				break;
+			}
+		}
+		if(index == -1){
+			OrderInfo.choosedUserInfos.push({
+				prodId : prodId,
+				custInfo : custInfo
+			});
+		} else {
+			OrderInfo.choosedUserInfos[index].custInfo = custInfo; 
+		}
+	};
+	var _getChooseUserInfo = function(prodId){
+		if(!!OrderInfo.choosedUserInfos && OrderInfo.choosedUserInfos.length){
+			for(var i=0; i<OrderInfo.choosedUserInfos.length; i++){
+				if(OrderInfo.choosedUserInfos[i].prodId == prodId){
+					return OrderInfo.choosedUserInfos[i].custInfo;
+				}
+			}
+		}
+		return null;
+	};
+	
+	var _resetChooseUserInfo = function(){
+		order.cust.queryForChooseUser = false; //重置选择使用人标识
+		order.cust.tmpChooseUserInfo = {};
+		OrderInfo.choosedUserInfos = [];
+	};
 	return {
 		order					: _order,
 		acctId                  : _acctId,
@@ -1226,6 +1266,12 @@ OrderInfo = (function() {
 		prodAttrs				:_prodAttrs,
 		isGroupProSpecId        :_isGroupProSpecId,
 		uimtypeflag             :_uimtypeflag,
-		preBefore:             _preBefore
+		preBefore               :_preBefore,
+		cust_validateType       :_cust_validateType,
+		updateChooseUserInfos   :_updateChooseUserInfos,
+		choosedUserInfos        :_choosedUserInfos,
+		getChooseUserInfo      :_getChooseUserInfo,
+		resetChooseUserInfo    :_resetChooseUserInfo
+		
 	};
 })();

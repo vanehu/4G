@@ -1037,6 +1037,21 @@ CacheData = (function() {
 				}
 			}
 		}
+		/**
+		 * 	可选依赖包遍历optDependOffer
+		 * 	defaultOffer	默认，默认打钩，钩可以去掉，
+		 *	dependOffer 	依赖，默认打钩，钩不能去掉，
+		 *	excludeOffer	互斥，用来和已订购的销售品对比，如果有互斥中的，就退订，
+		 *	optDependOffer	可选依赖
+		 */
+		if(param.optDependOffer.length > 0){
+			var optDependOffers = param.optDependOffer;
+			for (var i = 0; i < optDependOffers.length; i++) {
+				if($("#"+optDependOffers[i]).is(':checked') == true){
+					AttachOffer.addOpenList(prodId,optDependOffers[i]);
+				}
+			}
+		}
 	};
 	
 	//二次业务把必须可选包改成不能删除(补换卡)
@@ -1204,6 +1219,32 @@ CacheData = (function() {
 		});
 		return key;
 	};
+	
+	// 获取政企客户证件类型
+	var govCertTyteArr = [];
+	var _getGovCertType = function() {
+		if (govCertTyteArr.length == 0) {
+			var params = {"partyTypeCd": 2} ;
+			var url=contextPath+"/cust/queryCertType";
+			var response = $.callServiceAsJson(url, params, {});
+			if (response.code == -2) {
+				$.alertM(response.data);
+			}
+			if (response.code == 1002) {
+				$.alert("错误","根据员工类型查询员工证件类型无数据,请配置","information");
+				return;
+			}
+			if(response.code==0){
+				var data = response.data ;
+				if(data!=undefined && data.length>0){
+					for (var i=0; i<data.length; i++) {
+						govCertTyteArr[i] = data[i].certTypeCd;
+					}
+				}
+			}
+		}
+		return govCertTyteArr;
+	};
 	return {
 		setParam				: _setParam,
 		setServParam			: _setServParam,
@@ -1244,6 +1285,7 @@ CacheData = (function() {
 		setSearchs				: _setSearchs,
 		getSearchs				: _getSearchs,
 		getSearchName			: _getSearchName,
-		getSearchCode			: _getSearchCode
+		getSearchCode			: _getSearchCode,
+		getGovCertType         : _getGovCertType
 	};
 })();

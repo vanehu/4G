@@ -35,6 +35,8 @@ AttachOffer = (function() {
 	
 	var _offerSpecs = [];
 	
+	var _broadFlag=false; //是否宽带续约标志
+	
 	//初始化附属销售页面
 	var _init = function(){
 		var prodInfo = order.prodModify.choosedProdInfo;
@@ -65,8 +67,12 @@ AttachOffer = (function() {
 					return;	
 				}
 			}
-			AttachOffer.queryAttachOffer();
-			
+			if(AttachOffer.broadFlag){//宽带续约包分支
+				AttachOffer.queryAttachOffer2();
+				//_changeLabel(prodInfo.prodInstId,prodInfo.productId,1);
+			}else{//可选包变更，保持不变
+				AttachOffer.queryAttachOffer();
+			}		
 			_orderedOfferSpecIds = [];//已订购销售品规格
 		
 		 	_servSpecIds = [];//已订购功能产品规格
@@ -87,7 +93,7 @@ AttachOffer = (function() {
 			if (data) {
 				$("#attach_"+param.prodId).html(data);
 				_showMainRoleProd(param.prodId); //通过主套餐成员显示角字
-				AttachOffer.changeLabel(param.prodId,param.prodSpecId,"10001"); //初始化第一个标签附属
+				  AttachOffer.changeLabel(param.prodId,param.prodSpecId,"10001"); //初始化第一个标签附属
 				if(param.prodId==-1 && OrderInfo.actionFlag==14){ //合约计划特殊处理
 					AttachOffer.addOpenList(param.prodId,mktRes.terminal.offerSpecId);
 				}
@@ -1140,12 +1146,14 @@ AttachOffer = (function() {
 				dependOffer : {  //存放互斥依赖列表
 					dependOffers : [],
 					offerGrpInfos : []
-				}
+				},
+				optDependOffer : []
 		};
 		if(result!=""){
 			var exclude = result.offerSpec.exclude;
 			var depend = result.offerSpec.depend;
 			var defaultOffer=result.offerSpec.defaultList;
+			var optDependOffer = result.offerSpec.optDependList;
 			//解析可选包互斥依赖组
 			if(ec.util.isArray(exclude)){
 				for (var i = 0; i < exclude.length; i++) {
@@ -1210,6 +1218,12 @@ AttachOffer = (function() {
 					content += "需要开通： " + defaultOffer[i].offerSpecName + "<br>";
 					param.defaultOffer.push(defaultOffer[i].offerSpecId);
 				}	
+			}
+			if (optDependOffer != undefined && ec.util.isArray(optDependOffer)) {
+				for (var i = 0; i < optDependOffer.length; i++) {
+					content += "可选订购：" + '<input id="'+optDependOffer[i].offerSpecId+'" type="checkbox" value="'+optDependOffer[i].offerSpecId+'"/>' + optDependOffer[i].offerSpecName + "<br>";
+					param.optDependOffer.push(optDependOffer[i].offerSpecId);
+				}
 			}
 		}
 		var serContent=_servExDepReByRoleObjs(prodId,offerSpecId);//查询销售品构成成员的依赖互斥以及连带
@@ -2872,6 +2886,7 @@ AttachOffer = (function() {
 	
 	//获取附属销售品节点
 	var _setAttachBusiOrder = function(busiOrders){
+		
 		//遍历已选功能产品列表
 		$.each(AttachOffer.openServList,function(){
 			var prodId = this.prodId;
@@ -2949,7 +2964,6 @@ AttachOffer = (function() {
 				}
 			}
 		}
-		
 		//遍历已选增值业务
 		$.each(AttachOffer.openAppList,function(){
 			var prodId = this.prodId;
@@ -4214,7 +4228,72 @@ AttachOffer = (function() {
 		$(".modal-footer").children().css('display','block');//全部子节点
 		$("#search_info_div").hide();
 	};
-	//
+	
+	//宽带续约界面展示
+	var _queryAttachOffer2 = function() {
+		var prodInfo = order.prodModify.choosedProdInfo; //获取产品信息
+		var prodId = prodInfo.prodInstId;
+		var prodSpecId=prodInfo.productId;
+		var param = {
+				prodSpecId : prodSpecId,
+				offerSpecIds : [],
+				queryType : "",
+				prodId : prodId,
+				partyId : OrderInfo.cust.custId,
+				labelId : 1,
+				ifCommonUse : ""			
+		};
+		param.acctNbr = prodInfo.accNbr;
+		if(!ec.util.isObj(prodInfo.prodOfferId)){
+			prodInfo.prodOfferId = "";
+		}
+		var offerRoleId = CacheData.getOfferMember(prodInfo.prodInstId).offerRoleId;
+		if(offerRoleId==undefined){
+			offerRoleId = "";
+		}
+		param.offerRoleId = offerRoleId;
+		param.offerSpecIds.push(prodInfo.prodOfferId);
+		query.offer.queryCanAttachBroadHtml(param,function(data){
+			SoOrder.initFillPage();
+			$("#order-content").html(data).show();
+			$("#fillNextStep").off("click").on("click",function(){
+				if(!SoOrder.checkData()){ //校验通过
+					return false;
+				}
+				$("#order-content").hide();
+				$("#order-dealer").show();
+				order.dealer.initDealer();
+			});
+
+//			AttachOffer.changeLabel(prodId, prodInfo.productId,""); //初始化第一个标签附属
+			order.dealer.initDealer();
+		});
+	};
+	
+	//订购宽带续约包
+	var _addBroadOffer = function(prodId,offerSpecId){
+		var newSpec = _setSpec(prodId,offerSpecId);
+		if(newSpec==undefined){ //没有在已开通附属销售列表中
+			return;
+		}
+		var content = CacheData.getOfferProdStr(prodId,newSpec,0);
+		$.confirm("信息确认",content,{ 
+			yes:function(){
+				CacheData.setServ2OfferSpec(prodId,newSpec);
+			},
+			yesdo:function(){
+				_checkOfferExcludeDepend(prodId,newSpec);
+					if (!SoOrder.checkData()) { // 校验通过
+						return false;
+					}
+					$("#order-content").hide();
+					$("#order-dealer").show();
+					order.dealer.initDealer();
+			},
+			no:function(){
+			}
+		});
+	};
 	return {
 		offer_showMainParam		: _offer_showMainParam,
 		addOffer 				: _addOffer,
@@ -4243,6 +4322,7 @@ AttachOffer = (function() {
 		openServSpec			: _openServSpec,
 		openAppList				: _openAppList,
 		queryAttachOffer 		: _queryAttachOffer,
+		queryAttachOffer2 		: _queryAttachOffer2,
 		queryAttachOfferSpec 	: _queryAttachOfferSpec,
 		queryCardAttachOffer    : _queryCardAttachOffer,
 		showParam 				: _showParam,
@@ -4282,7 +4362,9 @@ AttachOffer = (function() {
 		phone_checkOfferExcludeDepend	: _phone_checkOfferExcludeDepend,
 		searchSchools			: _searchSchools,
 		selectSearch			: _searchSelect,
-		schoolClose				: _searchClose
+		schoolClose				: _searchClose,
+		broadFlag:_broadFlag,
+		addBroadOffer:_addBroadOffer
 		
 	};
 })();

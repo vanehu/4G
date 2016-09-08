@@ -4,7 +4,7 @@
 <div class="form-group">
 	<label for="exampleInputEmail1">${prodSpec.name}</label>
 	<#if prodSpec.itemSpecId=="800000011" > 
-	<div class="input-group">
+	<div class="input-group select-box" >
 		<input type="hidden"
 		id="${prodSpec.itemSpecId}_${prodId}" name="prodSpec_${prodId}" value="${prodSpec.value}" 
 		itemSpecId="${prodSpec.itemSpecId}" prodSpecItemId="${prodSpec.prodSpecParamId}" 
@@ -12,10 +12,10 @@
 		check_len="${rule.attrLen}" check_option="${rule.isOptional}" 
 		dataType="${prodSpec.dataTypeCd}" oldValue="${prodSpec.value}" 
 		check_type="check"/>
-		<input type="text" id="${prodSpec.itemSpecId}_${prodId}_name" readonly="readonly" disabled="disabled" class="form-control">
+		<input type="text" id="${prodSpec.itemSpecId}_${prodId}_name" readonly="readonly" disabled="disabled"  class="form-control">
 	    <#if prodSpec.itemSpecId=="800000011" >
 		<span class="input-group-btn">
-			<button class="btn btn-default" id="choose_user_btn_${prodId}" type="button">选择使用人</button>
+			<button class="btn btn-default" id="choose_user_btn_${prodId}" type="button" onclick="order.main.showUser()">选择使用人</button>
 		</span>
 	    </#if>
 		<#if rule.isOptional=="N" >

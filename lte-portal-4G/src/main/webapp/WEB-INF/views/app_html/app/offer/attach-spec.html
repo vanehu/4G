@@ -74,15 +74,14 @@
 			        <#if item.ifDault==0 >
 		   				<span class="mustchoose"></span>
 		   			<#else>
-		   		     <a href="javascript:void(0);" onclick="AttachOffer.delOfferSpec(${prodId},${item.offerSpecId})" id="li_${param.prodId}_${item.offerSpecId}" offerSpecId="${item.offerSpecId}" isdel='N' class="list-group-item">
+		   		     <a href="javascript:void(0);"  id="li_${param.prodId}_${item.offerSpecId}" offerSpecId="${item.offerSpecId}" isdel='N' class="list-group-item">
 			          <span id="span_${prodId}_${item.offerSpecId}">${item.offerSpecName}</span>
-			          <span id="span_remove_${prodId}_${item.offerSpecId}" class="glyphicon glyphicon-remove pull-right" aria-hidden="true"></span>
-			         </a>
+			          <span onclick="AttachOffer.delOfferSpec(${prodId},${item.offerSpecId})" id="span_remove_${prodId}_${item.offerSpecId}" class="glyphicon glyphicon-remove pull-right" aria-hidden="true"></span>
 		   			</#if>
 			        <#if item.ifParams >
-			        	<a id="li_${param.prodId}_${item.offerSpecId}" offerSpecId="${item.offerSpecId}" isdel='N' class="list-group-item" class="abtn03 icon-nodel">&nbsp;<span id="span_${prodId}_${item.offerSpecId}" >${item.offerSpecName}</span><span class="abtn03 btn-span"><button type="button" class="btn btn-info" style="right:40px;width:48px;" data-toggle="modal" data-target="#setting" onclick="AttachOffer.showParam(${prodId},${item.offerSpecId},0);">参</button></span></a>
+                        <span class="abtn03 btn-span"><button type="button" class="btn btn-info" style="right:50px;width:48px;top:13px;" data-toggle="modal" data-target="#setting" onclick="AttachOffer.showParam(${prodId},${item.offerSpecId},0);">参</button></span></a>
 			        	<#else>
-			        		<a href="javascript:void(0);" id="li_${param.prodId}_${item.offerSpecId}" offerSpecId="${item.offerSpecId}" isdel='N' class="list-group-item" class="abtn03 icon-nodel">&nbsp;<span id="span_${prodId}_${item.offerSpecId}">${item.offerSpecName}</span></a>
+			        	 </a>
 			        </#if>
 			        <#if item.ifShowTime=="Y">
 			        	<a class="time" id="time_${prodId}_${item.offerSpecId}" isset="N" ><button type="button" class="btn btn-info" style="right:40px;width:48px;" data-toggle="modal" data-target="#setting" onclick="AttachOffer.showTime(${prodId},${item.offerSpecId},'${item.offerSpecName}');" >时</button></a>

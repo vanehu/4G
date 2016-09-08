@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
 import com.al.ec.serviceplatform.client.DataBus;
 import com.al.ec.serviceplatform.client.ResultCode;
 import com.al.ecs.common.entity.JsonResponse;
@@ -1997,4 +1998,84 @@ public class CustController extends BaseController {
 			newCustInfoMap.put("isSame", MapUtils.getString(auMap, "isSame"));
 		}
 	}
+	
+	//使用人产品密码鉴权和证件鉴权
+  	@RequestMapping(value = "/custAuthSub", method = { RequestMethod.POST })
+  	public @ResponseBody JsonResponse custAuthSub(@RequestBody Map<String, Object> param, Model model,@LogOperatorAnn String flowNum, HttpServletResponse response,HttpSession httpSession) throws BusinessException {
+  		SessionStaff sessionStaff = (SessionStaff) ServletUtils
+  				.getSessionAttribute(super.getRequest(),
+  						SysConstant.SESSION_KEY_LOGIN_STAFF);
+  		JsonResponse jsonResponse = null;
+  		Map map = new HashMap();
+  		Map resultMap = new HashMap();
+  		//证件类型
+  		String identityCd=MapUtils.getString(param,"identityCd");
+        String pCustIdentityCd=MapUtils.getString(param,"pCustIdentityCd");
+  		//鉴权类别
+  		String validateType=MapUtils.getString(param,"validateType");
+  		
+  		//如果是证件鉴权
+  		if(validateType.equals("1")){
+  			//用户信息查询
+  			Map custParam = new HashMap();
+  			try {
+  				custParam.put("areaId", param.get("areaId"));
+  				custParam.put("idCardType", identityCd);
+  				custParam.put("idCardNumber",StringUtils.isNotBlank(MapUtils.getString(param,"identityNum"))?MapUtils.getString(param,"identityNum"):"");//证件号码
+  				custParam.put("staffId", sessionStaff.getStaffId());
+				custParam.put("custId", param.get("custId"));
+				Map<String, Object> datamap = mktResBmo.checkIdCardNumber(custParam,flowNum, sessionStaff);
+				if (datamap != null) {
+					String code = (String) datamap.get("code");
+					if (ResultCode.R_SUCC.equals(code)) {
+						map.put("code", "0");
+						map.put("isValidate", "true");
+						jsonResponse = super.successed(map,ResultConstant.SUCCESS.getCode());
+					}
+					else{
+						map.put("code", "-1");
+						map.put("isValidate", "false");
+						map.put("message","证件号码错误");
+						jsonResponse = super.failed(ErrorCode.QUERY_CUST, map, custParam);
+					}
+				}	
+  			} catch (BusinessException be) {
+  				return super.failed(be);
+  			} catch (InterfaceException ie) {
+  				return super.failed(ie, custParam, ErrorCode.QUERY_CUST);
+  			} catch (Exception e) {
+  				return super.failed(ErrorCode.QUERY_CUST, e, custParam);
+  			}
+  		}
+  		else if(validateType.equals("3")){
+  			try {
+  				Map paramMap = new HashMap();
+  				paramMap.put("accessNumber", param.get("accessNumber"));
+  				paramMap.put("prodPwd", param.get("prodPwd"));
+  				paramMap.put("areaId",param.get("areaId"));
+  				map=new HashMap();	
+  				map = custBmo.custAuth(paramMap,flowNum, sessionStaff);
+  				String resultCode = MapUtils.getString(map, "code");
+  				String isValidateStr = MapUtils.getString(map, "isValidate");
+  				if ("true".equals(isValidateStr)) {
+  					jsonResponse = super.successed(map,ResultConstant.SUCCESS.getCode());
+  				}
+  				else{
+  					map.put("code", "-1");
+  					map.put("isValidate", "false");
+  					map.put("message","产品密码错误");
+  					jsonResponse = super.failed(ErrorCode.CUST_AUTH, map, paramMap);
+  				}
+  			} catch (BusinessException be) {
+  				return super.failed(be);
+  			} catch (InterfaceException ie) {
+  				return super.failed(ie, map, ErrorCode.CUST_AUTH);
+  			} 
+  		     catch (Exception e) {
+  				return super.failed(ErrorCode.CUST_AUTH, e, map);
+  			}
+  		}
+
+  		return jsonResponse;
+  	}
 }

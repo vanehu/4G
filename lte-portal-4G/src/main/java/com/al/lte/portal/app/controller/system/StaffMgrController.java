@@ -26,6 +26,8 @@ import com.al.ecs.common.entity.PageModel;
 import com.al.ecs.common.util.JsonUtil;
 import com.al.ecs.common.util.MapUtil;
 import com.al.ecs.common.util.PageUtil;
+import com.al.ecs.common.util.PropertiesUtils;
+import com.al.ecs.common.util.UIDGenerator;
 import com.al.ecs.common.web.ServletUtils;
 import com.al.ecs.exception.AuthorityException;
 import com.al.ecs.exception.BusinessException;
@@ -50,6 +52,9 @@ public class StaffMgrController extends com.al.lte.portal.controller.system.Staf
     @Autowired
     @Qualifier("com.al.lte.portal.bmo.staff.StaffBmo")
     private StaffBmo staffBmo;
+    
+    @Autowired
+    private PropertiesUtils propertiesUtils;
 	//跳转至重置密码页面
     @RequestMapping(value = "/resetPwd", method = RequestMethod.GET)
     @AuthorityValid(isCheck = false)
@@ -350,4 +355,45 @@ public class StaffMgrController extends com.al.lte.portal.controller.system.Staf
 		}
 		
 	}
+	
+	//发送校验码
+	@RequestMapping(value = "/reSendSub", method = RequestMethod.POST)
+	@ResponseBody
+	public JsonResponse reSendSub(HttpSession session,Model model ,@RequestBody Map<String, Object> param) {
+			JsonResponse jsonResponse = new JsonResponse();
+			SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+					SysConstant.SESSION_KEY_LOGIN_STAFF);
+			String phone=(String)param.get("phone");
+			try{
+				jsonResponse.setCode(0);
+	        	jsonResponse.setSuccessed(true);
+				sendMsg(session,phone,sessionStaff.getAreaId());
+			}catch(Exception e){
+				super.failed(ErrorCode.QUERY_STAFF_INFO, e, null);
+			}
+			return jsonResponse;
+	}
+	
+	// 短信发送
+		public Map<String, Object> sendMsg(HttpSession session,String phoneNumber, String areaId)
+				throws Exception {
+			Map<String, Object> retnMap = new HashMap<String, Object>();
+			String smsPwd = UIDGenerator.generateDigitNonce(6);
+			this.log.debug("短信验证码：{}", smsPwd);
+			Map<String, Object> msgMap = new HashMap<String, Object>();
+			msgMap.put("MsgNumber", SysConstant.MSG_NUMBER); //6位
+			msgMap.put("phoneNumber", phoneNumber);
+			msgMap.put("key", smsPwd);
+			msgMap.put("message", propertiesUtils.getMessage("SMS_CODE_CONTENT",
+					new Object[] { smsPwd }));
+
+			if (!"00".equals(areaId.substring(5))) {
+				areaId = areaId.substring(0, 5) + "00";
+			}
+			msgMap.put("areaId", areaId);
+			retnMap = staffBmo.sendMsgInfo(msgMap, null, null);
+			session.removeAttribute(SysConstant.SESSION_KEY_LOGIN_SMS);
+			session.setAttribute(SysConstant.SESSION_KEY_LOGIN_SMS, smsPwd);
+			return retnMap;
+		}
 }
