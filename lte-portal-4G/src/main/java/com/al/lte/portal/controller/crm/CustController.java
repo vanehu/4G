@@ -822,7 +822,7 @@ public class CustController extends BaseController {
 			}
 		} else {
 			String canJump = (String) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_JUMPAUTH + "_" + sessionStaff.getStaffId());
-			if (canJump.equals("0")) {
+			if ("0".equals(canJump)) {
 				map.put("isValidate", "true");
 			} else {
 				map.put("isValidate", "false");
