@@ -2274,7 +2274,10 @@ order.cust = (function(){
 						param.authFlag="1";
 						OrderInfo.cust_validateType = "2";//保存鉴权方式
 						OrderInfo.cust_validateNum = _choosedCustInfo.accNbr;//保存鉴权号码
-						$.callServiceAsHtml(contextPath+"/cust/custAuth",param,{
+                        var paramsms = $.extend(true, {}, param);
+                        paramsms.smspwd = smspwd2;
+                        paramsms.number = _choosedCustInfo.accNbr;
+						$.callServiceAsHtml(contextPath+"/cust/custAuth",paramsms,{
 							"before":function(){
 								$.ecOverlay("<strong>正在查询中,请稍等...</strong>");
 							},"done" : function(response){

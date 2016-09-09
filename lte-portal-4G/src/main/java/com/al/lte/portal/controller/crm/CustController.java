@@ -822,7 +822,17 @@ public class CustController extends BaseController {
 			}
 		} else {
 			String canJump = (String) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_JUMPAUTH + "_" + sessionStaff.getStaffId());
-            if (canJump == null || "0".equals(canJump)) {
+			String custId = MapUtils.getString(param, "custId", "");
+			boolean isSms = false;
+			String smspwd = MapUtils.getString(param, "smspwd", "");
+			String number = MapUtils.getString(param, "number", "");
+			String smsPwdSession = (String) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_CHANGEUIM_SMS);
+			String numberSession = (String) ServletUtils.getSessionAttribute(super.getRequest(), "_custauth_sms_munber");// 客户鉴权短信验证号码
+			if (smsPwdSession.equals(smspwd) && numberSession.equals(number)) {
+				isSms = true;
+			}
+
+			if (canJump == null || StringUtils.isBlank(custId) || isSms || "0".equals(canJump)) {
 				map.put("isValidate", "true");
 			} else {
 				map.put("isValidate", "false");
@@ -831,8 +841,7 @@ public class CustController extends BaseController {
 				return "/cust/cust-info";
 			}
 			//在session中保存当前客户信息
-			String custId = MapUtils.getString(param, "custId", "");
-			Map sessionCustInfo = MapUtils.getMap(listCustInfos, custId);  
+			Map sessionCustInfo = MapUtils.getMap(listCustInfos, custId);
 			if(sessionCustInfo != null){
 				httpSession.setAttribute(SysConstant.SESSION_CURRENT_CUST_INFO, sessionCustInfo);
 				listCustInfos.clear();
