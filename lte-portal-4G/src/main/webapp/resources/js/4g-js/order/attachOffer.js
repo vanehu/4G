@@ -4115,10 +4115,10 @@ AttachOffer = (function() {
 				query.offer.queryCanBuyAttachSpec(param,function(data){
 					var $ul = $('<ul id="ul_'+prodId+'_'+labelId+'"></ul>');
 					if(data!=undefined && data.resultCode == "0"){
+						var currentDate = new Date();
 						if(ec.util.isArray(data.result.offerSpecList)){
 							var offerList = CacheData.getOfferList(prodId); //过滤已订购
 							var offerSpecList = CacheData.getOfferSpecList(prodId);//过滤已选择
-							var currentDate = new Date();
 							$.each(data.result.offerSpecList,function(){
 								AttachOffer.allOfferList.push(this);
 								var offerSpecId = this.offerSpecId;
@@ -4130,25 +4130,17 @@ AttachOffer = (function() {
 									if(this.offerSpecId==offerSpecId&&this.isDel!="C"){
 										//1.如果可订购附属销售品在已订购列表
 										var expireDate = this.expDate;//已订购的附属销售品的失效时间
-										if(!(expireDate == null || expireDate == undefined || expireDate == "" ||
-												ifDueOrderAgain == null || ifDueOrderAgain == undefined || ifDueOrderAgain == "")){
-											//2只有返回expireDate，ifDueOrderAgain则进行比对；否则不进行比对
+										if(expireDate != null && expireDate != undefined && expireDate != "" && ifDueOrderAgain == "Y"){
+											//2只有返回expireDate，且 ifDueOrderAgain为Y(可以续约)则进行比对；否则不进行比对
 											var expireDateYear = expireDate.substring(0,4);//截取失效时间的年份
 											var expireDateMonth = expireDate.substring(4,6);//截取失效时间20150201000000的月份02
 											var expireDateDay = expireDate.substring(6, 8);//截取失效时间20150201000000的day
-											expireDate = new Date(expireDateYear+"/"+expireDateMonth+"/"+expireDateDay);
+											expireDate = new Date(expireDateYear + "/" + expireDateMonth + "/" + expireDateDay);
 											if(currentDate < expireDate){
-												//3.如果该附属销售品还未到期
+												//3.如果该附属销售品还未到期，再判断是否到期前6个月
 												expireDate.setMonth(expireDate.getMonth() - 6);
-												if(currentDate > expireDate){
-													//4.如果在到期前的6个月之内
-													if(ifDueOrderAgain != "Y"){
-														//5.1如果ifDueOrderAgain值为Y，表示可重复订购，则不过滤，展示于页面的可订购列表
-														//2.2否则过滤该销售品，不展示于页面
-														flag = false;
-														return false;
-													}
-												} else{
+												if(currentDate < expireDate){
+													//4.如果不在到期前的6个月之内，过滤不展示页面
 													flag = false;
 													return false;
 												}
