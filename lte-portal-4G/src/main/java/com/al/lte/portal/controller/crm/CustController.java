@@ -828,7 +828,7 @@ public class CustController extends BaseController {
 			String number = MapUtils.getString(param, "number", "");
 			String smsPwdSession = (String) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_CHANGEUIM_SMS);
 			String numberSession = (String) ServletUtils.getSessionAttribute(super.getRequest(), "_custauth_sms_munber");// 客户鉴权短信验证号码
-			if (smsPwdSession.equals(smspwd) && numberSession.equals(number)) {
+			if (smspwd.equals(smsPwdSession) && number.equals(numberSession)) {
 				isSms = true;
 			}
 
