@@ -97,21 +97,17 @@ public class OfferBmoImpl implements OfferBmo {
 					if(offerSpecId.equals(attachOfferOrdered.get("offerSpecId").toString())){
 						//获取已订购的附属销售品的失效时间
 						String expireDateStr = MapUtils.getString(attachOfferOrdered, "expDate", "iamnotabug");
-						if("iamnotabug".equals(expireDateStr)){
-							//没有返回expDate则不进行操作
-							continue;
-						} else{
+						if(!"iamnotabug".equals(expireDateStr) && !"N/A".equals(ifDueOrderAgain)){
+							//没有返回expDate、ifDueOrderAgain则不进行操作
 							//如果expireDateStr不是yyyyMMddHHmmss14位会ParseException抛异常
 							Date expireDate = DateUtil.getDateFromString(expireDateStr, DateUtil.DATE_FORMATE_STRING_DEFAULT);
 							expireCalendar.setTime(expireDate);
 							if(NowCalendar.compareTo(expireCalendar) < 0){
 								//如果当前时间在到期前
 								expireCalendar.add(Calendar.MONTH, -6);
-								if(NowCalendar.compareTo(expireCalendar) > 0 && !"Y".equals(ifDueOrderAgain)){
+								if(NowCalendar.compareTo(expireCalendar) < 0 || !"Y".equals(ifDueOrderAgain)){
 									//如果当前时间在到期前的6个月之内
 									//且ifDueOrderAgain为Y，则可续约；否则过滤
-									offerSpecCanBuyList.remove(i);
-								} else{
 									offerSpecCanBuyList.remove(i);
 								}
 							} else{

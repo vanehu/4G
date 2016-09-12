@@ -4130,8 +4130,9 @@ AttachOffer = (function() {
 									if(this.offerSpecId==offerSpecId&&this.isDel!="C"){
 										//1.如果可订购附属销售品在已订购列表
 										var expireDate = this.expDate;//已订购的附属销售品的失效时间
-										if(!(expireDate == null || expireDate == undefined || expireDate == "")){
-											//2只有返回expireDate，则进行比对；否则不进行比对
+										if(!(expireDate == null || expireDate == undefined || expireDate == "" ||
+												ifDueOrderAgain == null || ifDueOrderAgain == undefined || ifDueOrderAgain == "")){
+											//2只有返回expireDate，ifDueOrderAgain则进行比对；否则不进行比对
 											var expireDateYear = expireDate.substring(0,4);//截取失效时间的年份
 											var expireDateMonth = expireDate.substring(4,6);//截取失效时间20150201000000的月份02
 											var expireDateDay = expireDate.substring(6, 8);//截取失效时间20150201000000的day
