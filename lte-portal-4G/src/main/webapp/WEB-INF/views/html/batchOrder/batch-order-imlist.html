@@ -7,8 +7,6 @@
 	       <td width="15%">批次号</td>
 	       <td width="10%">受理工号</td>
 	       <td width="14%">受理时间</td>
-	       <!--<td width="10%">区号</td> -->
-	       <!--<td width="15%">创建时间</td>  -->
 	       <td width="10%">预约日期</td>
 	       <td width="10%">批次状态</td>
 	       <td width="6%">受理类型</td>
@@ -21,8 +19,6 @@
 	     	 <tr>
 	     	 	<td>${childList.groupId}</td>
 	     	 	<td>${childList.staffCode}</td>
-	     	 	<!--  <td>${childList.boProd2Td}</td>-->
-	     	 	<!-- <td>${childList.zoneNumber}</td> -->
 	     	 	<td>${childList.createDt}</td>
 	     	 	<td>
 	     	 		<#if childList.reserveDt== "-1">立即执行
@@ -31,31 +27,18 @@
 	     	 	</td>
 	     	 	<td>
 	     	 		<#if (childList.groupStatusCd)?? >
-			     	 	<#if childList.groupStatusCd=="D">未处理
-			     	 	<#elseif childList.groupStatusCd=="T">处理中
-			     	 	<#elseif childList.groupStatusCd=="C">已处理
+			     	 	<#if childList.groupStatusCd=="D">订单未处理
+			     	 	<#elseif childList.groupStatusCd=="T">订单处理中
+			     	 	<#elseif childList.groupStatusCd=="C">订单已处理
 			     	 	<#elseif childList.groupStatusCd=="AC">全部取消
 			     	 	<#elseif childList.groupStatusCd=="PC">部分取消
+			     	 	<#elseif childList.groupStatusCd=="UD">批次未处理
+			     	 	<#elseif childList.groupStatusCd=="DF">批次处理失败
 			     	 	</#if>
 			     	 <#else>
 			     	 	<!-- 旧有的批次不具备“批次状态groupStatusCd” -->
 			     	 </#if>
-		     	 	<!-- 
-		     	 	<#if childList.statusCd=="PC">派发成功
-		     	 	<#elseif childList.statusCd=="PD">派发失败
-		     	 	<#elseif childList.statusCd=="Q">导入成功
-		     	 	<#elseif childList.statusCd=="S">购物车生成成功
-		     	 	<#elseif childList.statusCd=="X">购物车生成失败
-		     	 	<#elseif childList.statusCd=="PW">正在派发中
-		     	 	<#elseif childList.statusCd=="C">发送后端成功
-		     	 	<#elseif childList.statusCd=="PE">等待重新派发
-		     	 	<#elseif childList.statusCd=="F">发送后端失败
-		     	 	<#elseif childList.statusCd=="DL">受理处理中
-		     	 	<#elseif childList.statusCd=="RC">返销成功
-		     	 	</#if>
-		     	 	 -->
 	     	 	</td>
-	     	 	<!-- <td>${childList.msgInfo}</td> -->
 	     	 	<td>
 		     	 	<#if childList.batchType=="0">批开活卡
 		     	 	<#elseif childList.batchType=="1">批量新装
@@ -71,14 +54,30 @@
 		     	 	<#elseif childList.batchType=="11">批量换档
 		     	 	</#if>
 				</td>
-	     	 	<td>
-		     	 	<i id="plan_detail" onclick="order.batch.batchCancel('${childList.groupId}','${childList.groupStatusCd}')">取消</i>&nbsp;
-		     	 	<i id="plan_detail" onclick="order.batch.batchUpdateMain('${childList.groupId}','${childList.reserveDt}','${childList.groupStatusCd}')">修改</i>&nbsp;
-	     	 	</td>
-	     	 	<td>
-		     	 	<i id="plan_detail" onclick="order.batch.batchProgressQuery('${childList.groupId}','${childList.batchType}',1)">进度查询</i>
-		     	 	<i id="plan_detail" onclick="order.batch.batchStatusQuery('${childList.groupId}')">批次查询</i>
-	     	 	</td>
+				<#if (childList.groupStatusCd)?? && (childList.groupStatusCd=="UD" || childList.groupStatusCd=="DF")>
+     	 			<#if (childList.msgInfo)?? >
+     	 				<#assign alertInfo = "${childList.msgInfo}"/>
+     	 			<#else>
+     	 				<#assign alertInfo = "批次未处理或批次处理失败的订单不可操作"/>
+	     	 		</#if>
+	     	 			<td>
+		     	 			<i title="${alertInfo}">取消</i>&nbsp;
+		     	 			<i title="${alertInfo}">修改</i>&nbsp;
+     	 				</td>
+		     	 		<td>
+				     	 	<i title="${alertInfo}">进度查询</i>&nbsp;
+				     	 	<i title="${alertInfo}">批次查询</i>
+		     	 		</td>
+		     	<#else>
+		     	 	<td>
+			     	 	<i id="plan_detail" onclick="order.batch.batchCancel('${childList.groupId}','${childList.groupStatusCd}')">取消</i>&nbsp;
+			     	 	<i id="plan_detail" onclick="order.batch.batchUpdateMain('${childList.groupId}','${childList.reserveDt}','${childList.groupStatusCd}')">修改</i>&nbsp;
+	     	 		</td>
+	     	 		<td>
+			     	 	<i id="plan_detail" onclick="order.batch.batchProgressQuery('${childList.groupId}','${childList.batchType}',1)">进度查询</i>&nbsp;
+			     	 	<i id="plan_detail" onclick="order.batch.batchStatusQuery('${childList.groupId}')">批次查询</i>
+	     	 		</td>
+		     	</#if>
 	     	 </tr>
 	     </#list>
 	   </tbody>

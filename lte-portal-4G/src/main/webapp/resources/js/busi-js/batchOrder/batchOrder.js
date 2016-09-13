@@ -510,14 +510,8 @@ order.batch = (function(){
 		var batchType = $("#batchType").val();
 		$("#upFile").val("");
 		$("#upFile").empty();
-
 		$('#alertInfo').empty();
 		$('#detailInfo').empty();
-
-		/*if(batchType== "10" || batchType == "11" || batchType == "12" || batchType == "14" || batchType == "15"){
-			$('#alertInfo').empty();
-			$('#detailInfo').empty();
-		}*/
 	};
 	
 	var _download=function(batType){
@@ -1259,7 +1253,7 @@ order.batch = (function(){
 		if( batchId == null || batchId == ""){
 			$.alert("提示","批次号batchId缺失，无法进行查询，请刷新页面或稍后重试");
 		}		
-		var param={"batchId" : batchId,};		
+		var param={"batchId" : batchId};		
 		var url = contextPath+"/order/batchOrder/queryEcsBatchOrderDetail";
 		$.callServiceAsHtml(url, param, {
 			"before":function(){
