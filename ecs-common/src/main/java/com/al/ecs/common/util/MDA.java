@@ -391,7 +391,19 @@ public class MDA {
 	 * 能力前置校验分省开关 
 	 */
 	public static final Map<String,String> TOKENPRECHECKFLAG = new HashMap<String,String>();
-	
+	/**
+	 * 日志分级-永久保存
+	 */
+	public static final String PORTAL_SERVICE_LOG_P = new String("");
+	/**
+	 * 日志分级-保存一年
+	 */
+	public static final String PORTAL_SERVICE_LOG_Y = new String("");
+	/**
+	 * 日志分级-保存一击
+	 */
+	public static final String PORTAL_SERVICE_LOG_W = new String("");
+
 	/**能力开放回调地址校验开关*/
 	public static final Map<String,String> ISCALLBACK = new HashMap<String,String>();
 	/**能力开放预校验加省份流水开关*/
