@@ -165,7 +165,15 @@ public final class SysConstant {
     public static String LOG_NONE = "NONE";
     //对应统一日志平台的门户日志类型
     public static String LOG_TYPE = "PortalTransLog";
-    
+    //对应统一日志平台的门户日志默认表名
+    public static String PORTAL_SERVICE_LOG = "PORTAL_SERVICE_LOG";
+    //对应统一日志平台的门户日志永久保存表名
+    public static String PORTAL_SERVICE_LOG_P = "PORTAL_SERVICE_LOG_P";
+    //对应统一日志平台的门户日志保存一年表名
+    public static String PORTAL_SERVICE_LOG_Y = "PORTAL_SERVICE_LOG_Y";
+    //对应统一日志平台的门户日志保存一周表名
+    public static String PORTAL_SERVICE_LOG_W = "PORTAL_SERVICE_LOG_W";
+
     /**刷新缓存动作参数分组分隔符*/
     public final static String CON_REF_PARAM_ACTION_GROUP = ",";
 

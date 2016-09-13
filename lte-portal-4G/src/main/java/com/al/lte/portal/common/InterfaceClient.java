@@ -636,8 +636,22 @@ public class InterfaceClient {
 				Map<String, Object> logClobObj = new HashMap<String, Object>();
 				logClobObj.put("IN_PARAM", paramString);						
 				logClobObj.put("OUT_PARAM", rawRetn);
-				
-				logSender.sendLog2DB("PORTAL_SERVICE_LOG", logObj,logClobObj);
+
+				boolean isDefaultLog = true;
+				if (propertiesUtils.getMessage(SysConstant.PORTAL_SERVICE_LOG_P).contains(serviceCode)) {
+					isDefaultLog = false;
+					logSender.sendLog2DB(SysConstant.PORTAL_SERVICE_LOG_P, logObj, logClobObj);
+				}
+				if (propertiesUtils.getMessage(dbKeyWord, SysConstant.PORTAL_SERVICE_LOG_Y).contains(serviceCode)) {
+					isDefaultLog = false;
+					logSender.sendLog2DB(SysConstant.PORTAL_SERVICE_LOG_Y, logObj, logClobObj);
+				}
+				if (propertiesUtils.getMessage(dbKeyWord, SysConstant.PORTAL_SERVICE_LOG_W).contains(serviceCode)) {
+					isDefaultLog = false;
+					logSender.sendLog2DB(SysConstant.PORTAL_SERVICE_LOG_W, logObj, logClobObj);
+				}
+				if (isDefaultLog)
+					logSender.sendLog2DB(SysConstant.PORTAL_SERVICE_LOG, logObj, logClobObj);
 			}
 			String writelogFlag = MySimulateData.getInstance().getParam(dbKeyWord,SysConstant.WRITE_LOG_FLAG);
 			if (SysConstant.OFF.equals(writelogFlag)) {
