@@ -386,6 +386,7 @@ public final class SysConstant {
     /** csb发起方编码-翼销售*/
     public static final String CSB_SRC_SYS_ID_APP = "1000000244";
     
+    /**短信验证码是否发送标识*/
     public static final String MSG_CODE_FLAG = "msgCodeFlag";
     
     public static final String IS_DEFAULT_TEMPLATE = "0";

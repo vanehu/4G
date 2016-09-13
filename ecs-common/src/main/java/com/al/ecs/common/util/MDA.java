@@ -412,4 +412,9 @@ public class MDA {
 	 * 电子档案查询系统标识LIST
 	 */
 	public static final List<Map<String,String>> PSRCFLAGLIST = new ArrayList<Map<String,String>>();
+	
+	/**
+	 * 短信验证码是否发送标识(从sp_sys_param表迁移到MDA，故沿用表中的命名)
+	 */
+	public static final String msgCodeFlag = new String("");
 }
