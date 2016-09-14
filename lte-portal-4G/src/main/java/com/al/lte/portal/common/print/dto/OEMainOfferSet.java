@@ -18,6 +18,7 @@ public class OEMainOfferSet {
 	private List<OSOtherInfoSet> osOtherInfoList;
 	private List<OSPrompInfoSet> osPrompInfoList;
 	private List<OSAttachOfferSet> osAttachOfferList;
+	private List<OOParamSet> ooParamList;
 	public List<StringBeanSet> getMainOfferTitle() {
 		return mainOfferTitle;
 	}
@@ -77,5 +78,11 @@ public class OEMainOfferSet {
 	}
 	public void setOsAttachOfferList(List<OSAttachOfferSet> osAttachOfferList) {
 		this.osAttachOfferList = osAttachOfferList;
+	}
+	public void setOoParamList(List<OOParamSet> ooParamList) {
+		this.ooParamList = ooParamList;
+	}
+	public List<OOParamSet> getOoParamList() {
+		return ooParamList;
 	}
 }

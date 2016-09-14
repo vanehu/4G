@@ -21,7 +21,7 @@ essOrder.main = (function() {
 			"done" : function(response) {
 				if (response.code == 0) {
 					$.each(response.data,function(){
-					    $("#p_accNbrSellChannel").append("<option value='"+this.dataDimensionId+"' >"+this.dataDimensionName+"</option>");
+					    $("#p_accNbrSellChannel").append("<option value='"+this.dimensionValue+"' >"+this.dataDimensionName+"</option>");
 					});
 				} else if (response.code == -2) {
 					$.alertM(response.data);
@@ -52,7 +52,7 @@ essOrder.main = (function() {
 			"done" : function(response) {
 				if (response.code == 0) {
 					$.each(response.data,function(){
-					    $("#p_termSellChannel").append("<option value='"+this.dataDimensionId+"' >"+this.dataDimensionName+"</option>");
+					    $("#p_termSellChannel").append("<option value='"+this.dimensionValue+"' >"+this.dataDimensionName+"</option>");
 					});
 				} else if (response.code == -2) {
 					$.alertM(response.data);

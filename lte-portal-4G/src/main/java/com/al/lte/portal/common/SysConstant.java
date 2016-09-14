@@ -303,6 +303,15 @@ public final class SysConstant {
 	public final static String STR_RB_BRE = "】";
 	public final static String STR_MINUS = "-"; 
 	public final static String STR_POINT = ".";
+	public final static String STR_UNDERLINE = "______";
+	//套餐费
+	public final static String PACKAGE_TITLE = "20020047";
+	//流量
+	public final static String FLOW_TITLE = "20020045";
+	//语音
+	public final static String VOCIE_TITLE = "20020044";
+	//短信
+	public final static String MESSAGE_TITLE = "20020046";
 
 	//打印节点结构控制-客户信息类型
 	public final static int CUST_TYPE_NOR = INT_1;

@@ -79,6 +79,7 @@ import com.al.lte.portal.common.print.dto.OEPackageTitleTitleContent;
 import com.al.lte.portal.common.print.dto.OEProdChangeSet;
 import com.al.lte.portal.common.print.dto.OETermOfferSet;
 import com.al.lte.portal.common.print.dto.OETitleContent;
+import com.al.lte.portal.common.print.dto.OOParamSet;
 import com.al.lte.portal.common.print.dto.OSAttachOfferSet;
 import com.al.lte.portal.common.print.dto.OSBaseInfoSet;
 import com.al.lte.portal.common.print.dto.OSNormOfferSet;
@@ -6781,6 +6782,17 @@ public class PrintBmoImpl implements PrintBmo {
 				}
 
 			}
+			// 设置业务信息_主销售品_个人定制套餐详情
+			List<OOParamSet> ooParamList = new ArrayList<OOParamSet>();
+			if (contMap != null && contMap.containsKey("ooParam")) {
+				List<Map<String, Object>> ooParam = (List<Map<String, Object>>) contMap.get("ooParam");
+				OOParamSet ooParamSet = buildOE_1_OOParam(busiOrderSeq, ooParam);
+				if(null != ooParamSet){
+					busiOrderSeq ++;
+					ooParamList.add(ooParamSet);
+					oeMainOfferSet.setOoParamList(ooParamList);
+				}
+			}
 			//如果是积木套餐，则显示语音模块和流量模块
 			if (blockFlag) {
 				List<Map<String, Object>> blockOffers = (List<Map<String, Object>>) finalAttachMap.get("blockOffers");
@@ -8348,5 +8360,50 @@ public class PrintBmoImpl implements PrintBmo {
 		html.append("</div>");
 
 		return html.toString();
+	}
+	
+	private OOParamSet buildOE_1_OOParam(int orderSeq, List<Map<String, Object>> paramList) {
+		if (paramList == null) {
+			return null;
+		}
+		OOParamSet newSet = new OOParamSet();
+		int ooParamTitle = 0;
+		int flowTitle = 0;
+		int voiceTitle = 0;
+		int messageTitle = 0;
+		for(int i=0;i<paramList.size();i++){
+			Map<String, Object> paramMap = new HashMap<String, Object>();
+			paramMap = paramList.get(i);
+			if(SysConstant.PACKAGE_TITLE.equals(paramMap.get("itemSpecId"))){
+				ooParamTitle = Integer.parseInt((String) paramMap.get("value"))/100;
+			}else if(SysConstant.FLOW_TITLE.equals(paramMap.get("itemSpecId"))){
+				flowTitle = Integer.parseInt((String) paramMap.get("value"))/1024;
+			}else if(SysConstant.VOCIE_TITLE.equals(paramMap.get("itemSpecId"))){
+				voiceTitle = Integer.parseInt((String) paramMap.get("value"))/60;
+			}else if(SysConstant.MESSAGE_TITLE.equals(paramMap.get("itemSpecId"))){
+				messageTitle = Integer.parseInt((String) paramMap.get("value"));
+			}
+		}
+		// 设置标题
+		List<StringBeanSet> ooParamTitleList = new ArrayList<StringBeanSet>();
+		StringBeanSet ooParamTitleBean = new StringBeanSet(orderSeq + SysConstant.STR_PAU + "套餐月基本费用合计"+ooParamTitle+"元"+ SysConstant.STR_COM +"其中"+SysConstant.STR_SEP);
+		ooParamTitleList.add(ooParamTitleBean);
+		newSet.setOoParamTitle(ooParamTitleList);
+		//设置流量
+		List<StringBeanSet> flowTitleList = new ArrayList<StringBeanSet>();
+		StringBeanSet flowTitleBean = new StringBeanSet("流量模块"+ SysConstant.STR_COM +"月订购量"+SysConstant.STR_SEP+flowTitle+"MB"+ SysConstant.STR_COM +"月基本费"+SysConstant.STR_UNDERLINE+"元"+SysConstant.STR_COM+"套餐内阶梯资费"+SysConstant.STR_SEP);
+		flowTitleList.add(flowTitleBean);
+		newSet.setFlowTitle(flowTitleList);
+		//设置语音
+		List<StringBeanSet> voiceTitleList = new ArrayList<StringBeanSet>();
+		StringBeanSet voiceTitleBean = new StringBeanSet("语音模块"+ SysConstant.STR_COM +"月订购量"+SysConstant.STR_SEP+voiceTitle+"分钟"+ SysConstant.STR_COM +"月基本费"+SysConstant.STR_UNDERLINE+"元"+SysConstant.STR_COM+"套餐内阶梯资费"+SysConstant.STR_SEP);
+		voiceTitleList.add(voiceTitleBean);
+		newSet.setVoiceTitle(voiceTitleList);
+		//设置短信
+		List<StringBeanSet> messageTitleList = new ArrayList<StringBeanSet>();
+		StringBeanSet messageTitleBean = new StringBeanSet("短信模块"+ SysConstant.STR_COM +"月订购量"+SysConstant.STR_SEP+messageTitle+"条"+ SysConstant.STR_COM +"月基本费"+SysConstant.STR_UNDERLINE+"元"+SysConstant.STR_COM+"套餐内阶梯资费"+SysConstant.STR_SEP);
+		messageTitleList.add(messageTitleBean);
+		newSet.setMessageTitle(messageTitleList);
+		return newSet;
 	}
 }
