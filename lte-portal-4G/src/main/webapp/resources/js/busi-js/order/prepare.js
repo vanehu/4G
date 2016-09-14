@@ -241,7 +241,7 @@ order.prepare = (function(){
 		}
 		ec.form.dialog.createDialog({
 				"id":"-phonenumber",
-				"width":970,
+				"width":990,
 				"height":440,
 				"position":position,
 				"initCallBack":function(dialogForm,dialog){

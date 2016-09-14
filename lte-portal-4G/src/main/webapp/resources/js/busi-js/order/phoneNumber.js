@@ -111,6 +111,12 @@ order.phoneNumber = (function(){
 		selectedObj=null;//初始化原先选中的号码
 		//收集参数
 		param = _buildInParam(param);
+		if (param == false) {
+			$.alert("提示", "请正确输入已经“靓号预占”的11位号码", "information", function() {
+				$("#phoneNum").focus();
+			});
+			return;
+		}
 		param.isReserveFlag=_queryFlag;
 		if(_queryFlag=='1'){//预约选号
 			param.queryFlag="3";
@@ -677,6 +683,16 @@ order.phoneNumber = (function(){
 		_exchangeSelected(loc,selected);
 		_btnQueryPhoneNumber();
 	};
+	// 密码预占查询如果选择“是”，则需要展示提示信息并填写全位号码
+	var _pswChange = function(flag) {
+		if (flag) {
+			$("#pswInfo").show(); 
+			$("#phoneNum").show();
+		} else {
+			$("#pswInfo").hide();
+			$("#phoneNum").hide();
+		}
+	}
 	//构造查询条件 
 	var _buildInParam = function(param){
 		var query_flag_01= $('input:radio[name="query_flag_01"]:checked').val();
@@ -708,8 +724,13 @@ order.phoneNumber = (function(){
 		}
 		pnNotExitNum = (pnNotExitNum == '') ? pnNotExitNum : "[^" + pnNotExitNum + "]{4}$";
 		var phoneNum=$.trim($("#phoneNum").val());
-		if(phoneNum=="任意四位"){
-			phoneNum='';
+		if(query_flag_01 == 1){
+			phoneNum = '';
+		} else if (query_flag_01 == 2) {
+			// 密码预占查询选择“是”，全位号码必填
+			if (!ec.util.isObj(phoneNum) || !/^(180|189|133|134|153|181|108|170|173|177)\d{8}$/.test(phoneNum)) {
+				return false;
+			}
 		}
 		var pnCharacterId="";
 		var Greater  = "";
@@ -1150,6 +1171,7 @@ order.phoneNumber = (function(){
 		queryFlag:_queryFlag,
 		queryPnLevelProdOffer:queryPnLevelProdOffer,
 		nbrtime:_nbrtime,
-		nbrcount:_nbrcount
+		nbrcount:_nbrcount,
+		pswChange: _pswChange
 	};
 })();
