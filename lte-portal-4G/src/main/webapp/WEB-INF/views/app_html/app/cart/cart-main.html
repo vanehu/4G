@@ -34,7 +34,7 @@
 						<div class="form-group">
 							<label for="p_qryNumber">接入号</label> 
 							<input type="text"
-								class="form-control" id="p_qryNumber" placeholder="" name="p_qryNumber">
+								class="form-control" id="p_qryNumber" onkeyup="this.value=this.value.replace(/\D/g,'')" placeholder="" name="p_qryNumber">
 						</div>
 						<div class="form-group" style="display: none;">
 							<label for="p_olNbr">购物车流水</label>

@@ -42,7 +42,7 @@ cart.main = (function(){
 		}else{
 			param = {
 					"startDt":($("#p_startDt").val()).replace(/-/g,''),
-					"endDt":($("#p_endDt").val()).replace(/-/g,''),
+					"endDt":($("#p_startDt").val()).replace(/-/g,''),
 					"qryNumber":qryNumber,
 					"olStatusCd":$("#p_olStatusCd").val(),
 					"busiStatusCd":$("#p_busiStatusCd").val(),

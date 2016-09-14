@@ -379,6 +379,7 @@ prod.uim = (function() {
 		$("#uim_check_btn_"+prodId).attr("disabled",false);
 		//$("#uim_check_btn_"+prodId).removeClass("disablepurchase").addClass("purchase");
 		$("#uim_release_btn_"+prodId).attr("disabled",true);
+		$("#uim_scann_btn_"+prodId).attr("disabled",false);
 		//$("#uim_release_btn_"+prodId).removeClass("purchase").addClass("disablepurchase");
 		if($("#sm_"+prodId).length>0){
 			$("#sm_"+prodId).attr("disabled",false);
