@@ -236,9 +236,15 @@
 		</const>
 		<const type="String" name="INTERFACE_MERGE" value="8540000,8630000,8150000,8230000,8450000,8500000,8610000,8420000,8350000,8320000,8460000,8640000,8140000,8530000,8360000,8370000,8110000,8430000,8510000,8440000,8310000,8120000,8130000,8410000,8210000,8220000,8340000,8330000,8520000,8620000,8650000" description="能力开放(客户架构、全量查询)接口标识"/>
  	    <const type="String" name="TOKENTIMES" value="7200" description="令牌失效时间"/>
- 	    <const type="String" name="TOKENPROVINEKEY" value="PUBLIC_TOKEN_KEY" description="省份公钥密码 "/>
- 	     <const type="String" name="TOKENKEY" value="TOKEN@GROUP%!" description="省份公钥密码 "/>
- 	     <const type="Map" name="PC_URL" description="pc版本业务跳转地址">
+ 	    <!-- 
+ 	    <const type="String" name="TOKENPROVINEKEY" value="PUBLIC_TOKEN_KEY" description="省份公钥密码(测试环境) "/>
+ 	    -->
+ 	    <const type="String" name="TOKENPROVINEKEY" value="#public@2015$KEY" description="省份公钥密码(生产环境) "/>
+ 	    <!-- 
+ 	    <const type="String" name="TOKENKEY" value="TOKEN@GROUP%!" description="令牌key(测试环境)"/>
+ 	    -->
+ 	    <const type="String" name="TOKENKEY" value="$token@KEY!2015" description="令牌key(生产环境)"/>
+ 	    <const type="Map" name="PC_URL" description="pc版本业务跳转地址">
  	     {
  	       'pc.1.url':'/token/pc/order/prodoffer/prepare',
  	       'pc.2.url':'/token/pc/order/changeoffer',
@@ -368,8 +374,45 @@
  	       'pad.uri.8460000':'172.16.255.61',
  	       'pad.uri.8540000':'192.3.6.13,192.3.6.16,192.3.6.17,192.3.6.26,192.3.6.22,135.64.132.219,135.64.130.10,134.64.91.32,192.3.6.19,134.64.91.152'
  	      }
- 	     </const> 
- 	      <const type="Map" name="TOKEN_JMPROVINCECODE_KEY" description="省份私钥">
+ 	     </const>
+ 	     <const type="Map" name="TOKEN_JMPROVINCECODE_KEY" description="省份私钥(生产环境)">
+ 	      {
+ 	       'token.8320000.key':'*%JS@2015!plm',   <!-- 江苏 -->
+ 	       'token.8330000.key':'*2015!ZHEJ!qaz@#',   <!-- 浙江 -->
+ 	       'token.8340000.key':'AH!2015#qwert$',   <!-- 安徽 -->
+ 	       'token.8350000.key':'fz#FJ*0591@',   <!-- 福建 -->
+ 	       'token.8430000.key':'#HuNan!8430@',   <!-- 湖南 -->
+ 	       'token.8420000.key':'#!1357*#HBei',   <!-- 湖北 -->
+ 	       'token.8310000.key':'@#Shang!Hai$29',   <!-- 上海 -->
+ 	       'token.8360000.key':'ap%#09@JianXi',   <!-- 江西 -->
+ 	       'token.8440000.key':'023@#_GuangDong',   <!-- 广东 -->
+ 	       'token.8640000.key':'Ningxia@864!#$',   <!-- 宁夏 -->
+ 	       'token.8510000.key':'*309@Si#chuan%',   <!-- 四川 -->
+ 	       'token.8610000.key':'shanXI#92l!ae%',   <!-- 陕西 -->
+ 	       'token.8130000.key':'*HeBei@16#al$',   <!-- 河北 -->
+ 	       'token.8150000.key':'NMG$#09!dld',   <!-- 内蒙古 -->
+ 	       'token.8210000.key':'23%Liao@Ning!',   <!-- 辽宁 -->
+ 	       'token.8520000.key':'qz@GuiZhou852#',   <!-- 贵州 -->
+ 	       'token.8370000.key':'837@shan!dong%',   <!-- 山东 -->
+ 	       'token.8500000.key':'*ChongQ@850!pz',   <!-- 重庆 -->
+ 	       'token.8650000.key':'Xin!8650@jiang',   <!-- 新疆 -->
+ 	       'token.8110000.key':'#010@BEIJing*',   <!-- 北京 -->
+ 	       'token.8120000.key':'@TianJ!02180%',   <!-- 天津 -->
+ 	       'token.8630000.key':'0368@QingHai!',   <!-- 青海 -->
+ 	       'token.8620000.key':'GS%1qaz@wsx!',   <!-- 甘肃 -->
+ 	       'token.8220000.key':'@JieLin!e5cp*',   <!-- 吉林 -->
+ 	       'token.8410000.key':'@%HeNan*k1z23',   <!-- 河南 -->
+ 	       'token.8230000.key':'1k@2n#HLongJ',   <!-- 黑龙江 -->
+ 	       'token.8530000.key':'YN@LiJiang!2c',   <!-- 云南 -->
+ 	       'token.8450000.key':'548!GX@guizhou',   <!-- 广西 -->
+ 	       'token.8140000.key':'ShanXi%mz418@',   <!-- 山西 -->
+ 	       'token.8460000.key':'haiNan@qzhx46#',   <!-- 海南 -->
+ 	       'token.8540000.key':'548@XZ!budalg',   <!-- 西藏 -->
+ 	       'token.8990000.key':'*26@Shang#hai%'  <!-- 上海虚拟 -->
+ 	      }
+ 	      </const>
+ 	      <!-- 
+ 	      <const type="Map" name="TOKEN_JMPROVINCECODE_KEY" description="省份私钥(测试环境)">
  	      {
  	       'token.8320000.key':'TOKEN_8110000_KEY',
  	       'token.8330000.key':'TOKEN_8110000_KEY',
@@ -405,6 +448,7 @@
  	       'token.8990000.key':'*26@Shang#hai%'
  	      }
  	      </const>
+ 	       -->
  	      
  	      <const type="String" name="COMPRESS_ALL_JS" value="OFF" description=""/>
  	      <const type="String" name="WRITE_LOG_FLAG" value="ON" description="是否记录接口日志"/>
