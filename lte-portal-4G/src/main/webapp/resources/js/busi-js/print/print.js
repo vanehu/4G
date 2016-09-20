@@ -1258,6 +1258,35 @@ common.print = (function($){
 		}
 		return true;
 	};
+	/**
+	 * 打开电子回执PDF文件
+	 * @param url 电子回执系统地址
+	 */
+	var _openELPDF = function (url) {
+		var response = $.callServiceAsHtml(contextPath + "/print/voucherEL", "voucherUrl=" + url);
+		if (response.code == 0) {
+			try {
+				var jsonResponse = $.parseJSON(response.data);
+				if (jsonResponse.code == 1) {
+					$.alert("提示", jsonResponse.data);
+					return false;
+				}
+			} catch (e) {
+			}
+			$("<form>", {
+				id: "voucherForm",
+				style: "display:none;",
+				target: "_blank",
+				method: "POST",
+				action: contextPath + "/print/voucherEL"
+			}).append($("<input>", {
+				id: "voucherUrl",
+				name: "voucherUrl",
+				type: "hidden",
+				value: url
+			})).appendTo("body").submit();
+		}
+	};
 
 	return {
 		preVoucher:_preVoucher,
@@ -1275,7 +1304,8 @@ common.print = (function($){
 		STBReserveReceipt : _STBReserveReceipt,
 		queryElInvoice:_queryElInvoice,
 		preVoucherLoc:_preVoucherLoc,
-		queryConstConfig:_queryConstConfig
+		queryConstConfig:_queryConstConfig,
+		openELPDF:_openELPDF
 	};
 })(jQuery);
 

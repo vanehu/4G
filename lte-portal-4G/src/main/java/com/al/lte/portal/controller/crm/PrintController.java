@@ -1,15 +1,19 @@
 package com.al.lte.portal.controller.crm;
 
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
 import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -199,8 +203,46 @@ public class PrintController extends BaseController {
 			}
 		}
 	}
-    
-    
+
+
+	@RequestMapping(value = "/voucherEL", method = RequestMethod.POST)
+	@ResponseBody
+	public JsonResponse printVoucherEL(@RequestParam("voucherUrl") String voucherUrl, @LogOperatorAnn String flowNum,
+							   HttpServletRequest request, HttpServletResponse response) {
+			HashMap<String, Object> paramMap = new HashMap<String, Object>();
+			paramMap.put("voucherUrl", voucherUrl);
+		try {
+			URL pdfUrl = new URL(voucherUrl);
+			URLConnection connection = pdfUrl.openConnection();
+			InputStream inputStream = connection.getInputStream();
+			byte[] buffer = new byte[4096];
+			int len = 0;
+			ByteArrayOutputStream bos = new ByteArrayOutputStream();
+			while ((len = inputStream.read(buffer)) != -1) {
+				bos.write(buffer, 0, len);
+			}
+			inputStream.close();
+			bos.close();
+			byte[] bytes = bos.toByteArray();
+			if (bytes != null && bytes.length > 0) {
+				response.reset();
+				response.setContentType("application/pdf;charset=UTF-8");
+				response.setContentLength(bytes.length);
+				ServletOutputStream os = response.getOutputStream();
+				os.write(bytes, 0, bytes.length);
+				os.flush();
+				os.close();
+				return super.successed(new HashMap<String, Object>());
+			} else {
+				return super.failed("根据url【" + voucherUrl + "】没有获取到pdf文件！", ResultConstant.FAILD.getCode());
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return super.failed("根据url【" + voucherUrl + "】没有获取到pdf文件！", ResultConstant.FAILD.getCode());
+		}
+	}
+
+
 //    @RequestMapping(value = "/reprint", method = RequestMethod.GET)
     @AuthorityValid(isCheck = false)
     public String reprint(String paramString, Model model,
