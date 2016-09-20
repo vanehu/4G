@@ -78,7 +78,7 @@ CacheData = (function() {
 	};
 	
 	//把选中的销售品保存到依赖或互斥的销售品规格中
-	var _setOffer2ExcludeOfferSpec = function(param){
+	var _setOffer2ExcludeOfferSpec = function(prodId,param){
 		if(param.dependOffer.offerGrpInfos.length>0){  // 依赖组
 			var dependOffer=param.dependOffer;
 			for (var i = 0; i < dependOffer.offerGrpInfos.length; i++) {
@@ -103,7 +103,7 @@ CacheData = (function() {
 		 *	excludeOffer	互斥，用来和已订购的销售品对比，如果有互斥中的，就退订，
 		 *	optDependOffer	可选依赖
 		 */
-		if(param.optDependOffer.length > 0){
+		if(param.optDependOffer &&  param.optDependOffer.length > 0){
 			var optDependOffers = param.optDependOffer;
 			for (var i = 0; i < optDependOffers.length; i++) {
 				if($("#"+optDependOffers[i]+"").attr("checked") == "checked"){

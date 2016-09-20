@@ -1461,7 +1461,7 @@ AttachOffer = (function() {
 			content = "<div style='max-height:300px;overflow:auto;'>" + content + "</div>";
 			$.confirm("订购： " + specName,content,{ 
 				yes:function(){
-					CacheData.setOffer2ExcludeOfferSpec(param);
+					CacheData.setOffer2ExcludeOfferSpec(prodId,param);
 				},
 				yesdo:function(){
 					excludeAddattch(prodId,offerSpecId,param);
