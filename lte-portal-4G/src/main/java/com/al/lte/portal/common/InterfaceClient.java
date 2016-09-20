@@ -642,11 +642,11 @@ public class InterfaceClient {
 					isDefaultLog = false;
 					logSender.sendLog2DB(SysConstant.PORTAL_SERVICE_LOG_P, logObj, logClobObj);
 				}
-				if (propertiesUtils.getMessage(dbKeyWord, SysConstant.PORTAL_SERVICE_LOG_Y).contains(serviceCode)) {
+				if (propertiesUtils.getMessage(SysConstant.PORTAL_SERVICE_LOG_Y).contains(serviceCode)) {
 					isDefaultLog = false;
 					logSender.sendLog2DB(SysConstant.PORTAL_SERVICE_LOG_Y, logObj, logClobObj);
 				}
-				if (propertiesUtils.getMessage(dbKeyWord, SysConstant.PORTAL_SERVICE_LOG_W).contains(serviceCode)) {
+				if (propertiesUtils.getMessage(SysConstant.PORTAL_SERVICE_LOG_W).contains(serviceCode)) {
 					isDefaultLog = false;
 					logSender.sendLog2DB(SysConstant.PORTAL_SERVICE_LOG_W, logObj, logClobObj);
 				}
