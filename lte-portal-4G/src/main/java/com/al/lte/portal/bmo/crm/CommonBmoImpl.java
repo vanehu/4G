@@ -219,6 +219,10 @@ public class CommonBmoImpl implements CommonBmo {
 		/**业务规则校验------------------------------开始**/
         Map<String, Object> ruleParam=new HashMap<String, Object>();
         ruleParam.put("areaId", sessionStaff.getCurrentAreaId());
+        if("20".equals(sessionStaff.getIsStrBusi())){
+        	ruleParam.put("olTypeCd", "16");
+        }
+        else ruleParam.put("olTypeCd", "15");
         ruleParam.put("staffId", sessionStaff.getStaffId());
         ruleParam.put("channelId", sessionStaff.getCurrentChannelId());
         ruleParam.put("custId", custInfoMap.get("custId"));
