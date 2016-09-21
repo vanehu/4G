@@ -67,6 +67,7 @@ ess.print = (function() {
 			"olId":olId,
 			"soNbr": soNbr,
 			"busiType":"1",
+			areaId : areaId,
 			"chargeItems":""
 		};
 		common.print.printVoucher(voucherInfo);
