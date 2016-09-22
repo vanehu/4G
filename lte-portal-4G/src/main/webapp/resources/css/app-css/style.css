@@ -290,7 +290,7 @@ table.tablecenter>tbody>tr>td .btn {
 	margin:0;
 }
 .btn-group-noborder {
-	padding:5px 0;
+	padding:5px 3px;
 }
 .divtab .col-xs-10, .divtab .col-xs-2 {
 	padding:0;
@@ -301,6 +301,8 @@ table.tablecenter>tbody>tr>td .btn {
 .btn-group-noborder .btn-group button{
 	border:none;
 	background: none;
+	text-align:center;
+	padding: 8px 0;
 	color:#3b994a;
 }
 
@@ -466,8 +468,10 @@ table.tablecenter>tbody>tr>td .btn {
 .btn-group .btn-default.active {
 	color:#fff;
 	box-shadow:none;
+	text-align:center;
 	border-bottom:3px solid #fff;
 }
+
 
 .row.contract {
 	padding-top:5px;
@@ -525,8 +529,8 @@ p {
 	color:#fff;
 }
 a.list-group-item .list-group-item-heading {
-	color:4c4c4c;
-	margin-bottom: 21px;
+	color:#4c4c4c;
+	font-weight: normal;
 }
 a.list-group-item small {
 	color:8b8b8b;
@@ -543,6 +547,7 @@ a.list-group-item small {
 }
 
 .order-list .list-group-item {
+	
 }
 .btn-span .btn {
 	border-radius:1.5em;
@@ -821,4 +826,22 @@ body .row .gwc-box h4{ display: inline-block; color:#4c4c4c;}
     height: 24px;
     line-height: 24px;
     margin-left: 3px;
+}
+
+
+.icon-star {
+	position: absolute;
+	top: 18px;
+	left: 10px;
+	font-size: 30px;
+	color: #fac126;
+	!important
+}
+.nostar {
+	position: absolute;
+	top: 18px;
+	left: 10px;
+	font-size: 30px;
+	color: #e5e5e5;
+	!important
 }

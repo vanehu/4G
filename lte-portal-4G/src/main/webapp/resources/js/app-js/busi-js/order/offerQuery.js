@@ -269,6 +269,7 @@ query.offer = (function() {
 				return;
 			}
 		}		
+		
 	};
 	
 	/**
@@ -305,6 +306,7 @@ query.offer = (function() {
 				"done" : function(response){
 					$.unecOverlay();
 					if (response.code==0) {
+						
 						if(response.data){
 							callBackFun(response.data);
 						}
@@ -926,8 +928,69 @@ query.offer = (function() {
 			return;
 		}
 	};
-	
+	//查询我的收藏
+		var _queryMyfavorite = function(param) {
+			addParam(param);  //添加基本参数
+			var url = contextPath+"/app/offer/queryMyfavorite";
+			$.ecOverlay("<strong>查询收藏功能产品中，请稍等...</strong>");
+			var response = $.callServiceAsJsonGet(url,{strParam:JSON.stringify(param)});	
+			$.unecOverlay();
+			if (response.code==0) {
+				if(response.data){
+					return response.data;
+				}
+			}else if (response.code==-2){
+				$.alertM(response.data);
+				return;
+			}else {
+				$.alert("提示","查询我的收藏失败,稍后重试");
+				return;
+			}
+		};
+		//添加销售品
+		var _addMyfavorite = function (param){
+			addParam(param);  //添加基本参数
+			var url = contextPath+"/app/offer/addMyfavorite";
+			$.ecOverlay("<strong>收藏功能产品中，请稍等...</strong>");
+			var response = $.callServiceAsJsonGet(url,param);	
+			$.unecOverlay();
+			if (response.code==0) {
+				if(response.data){
+					return response.data;
+				}
+			}else if (response.code==1){
+				$.alert("提示",response.data);
+				return;
+			}else {
+				$.alert("提示","收藏功能产品失败,稍后重试");
+				return;
+			}
+		};
+		//取消收藏销售品
+		var _delMyfavorite = function (param){
+			addParam(param);  //添加基本参数
+			var url = contextPath+"/app/offer/delMyfavorite";
+			$.ecOverlay("<strong>取消收藏功能产品中，请稍等...</strong>");
+			var response = $.callServiceAsJsonGet(url,param);	
+			$.unecOverlay();
+			if (response.code==0) {
+				if(response.data){
+					return response.data;
+				}
+			}else if (response.code==-2){
+				$.alertM(response.data);
+				return;
+			}else {
+				$.alert("提示","取消收藏功能产品失败,稍后重试");
+				return;
+			}
+		};
+		
+		
 	return {
+		queryMyfavorite         : _queryMyfavorite,
+		addMyfavorite           : _addMyfavorite,
+		delMyfavorite           : _delMyfavorite,
 		checkOperate			: _checkOperate,
 		loadInst				: _loadInst,
 		invokeLoadInst			: _invokeLoadInst,

@@ -51,7 +51,6 @@ order.service = (function(){
 		}
 		
 		if(flag){
-			
 			var priceVal = $("#select_price").val();
 			if(ec.util.isObj(priceVal)){
 				var priceArr = priceVal.split("-");
@@ -108,6 +107,11 @@ order.service = (function(){
 		}else if(CONST.getAppDesc()==0){
 			params.prodOfferFlag = "4G";
 		}
+		if(OrderInfo.actionFlag == 1 || OrderInfo.actionFlag == 14){
+			if(params.categoryNodeId == ""){
+				params.ifQueryFavorite = "Y";
+			}
+		}
 		var url = contextPath+"/app/order/offerSpecList";
 		$("#pakeage").show();
 		$("#pakeage").attr("class","tab-pane fade in active");
@@ -129,6 +133,9 @@ order.service = (function(){
 				}
 				var content$ = $("#offer-list");
 				content$.html(response.data);
+				if(params.ifQueryFavorite && params.ifQueryFavorite == "Y"){
+					AttachOffer.myFavoriteOfferList = response.data.resultlst;
+				}
 				if(scroller && $.isFunction(scroller)) scroller.apply(this,[]);
 //				$.refresh(content$);
 			},

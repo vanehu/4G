@@ -803,10 +803,11 @@ public class OrderController extends BaseController {
         return jsonResponse;
     }
     @RequestMapping(value = "/offerSpecList", method = RequestMethod.GET, produces = "text/html;charset=UTF-8")
-    public String getOfferSpecList(@RequestParam Map<String, Object> prams,Model model,HttpServletResponse response){
+    public String getOfferSpecList(@RequestParam Map<String, Object> prams,Model model,HttpServletResponse response,HttpSession httpSession){
 		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
                 SysConstant.SESSION_KEY_LOGIN_STAFF);	
         try {
+        	String OfferIds = "";
         	prams.put("ifQS", "Y");
         	prams.put("channelId", sessionStaff.getCurrentChannelId());
         	prams.put("areaId", sessionStaff.getCurrentAreaId());
@@ -866,6 +867,20 @@ public class OrderController extends BaseController {
         					}
         					prodOfferInfosList.get(i).put("inFlux", influx_str);
         				}
+        				if("Y".equals(prams.get("ifQueryFavorite"))){
+    						prodOfferInfosList.get(i).put("ifQueryFavorite", "Y");
+    						OfferIds += prodOfferInfosList.get(i).get("offerSpecId").toString()+",";//存储已收藏套餐的ＩＤ
+    					}
+    					if(httpSession.getAttribute("OfferIds")!=null){
+    						String ids = httpSession.getAttribute("OfferIds").toString();
+    						if(ids.indexOf(prodOfferInfosList.get(i).get("offerSpecId").toString())>=0){
+    							prodOfferInfosList.get(i).put("ifQueryFavorite", "Y");//已收藏的套餐打上收藏标识
+    						}
+    					}
+        			}
+        			if("Y".equals(prams.get("ifQueryFavorite")) && httpSession.getAttribute("OfferIds")==null){
+        				httpSession.setAttribute("OfferIds", OfferIds);
+					
         			}
         		}
         		model.addAttribute("resultlst", map.get("prodOfferInfos"));
