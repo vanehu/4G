@@ -724,7 +724,7 @@ order.phoneNumber = (function(){
 		}
 		pnNotExitNum = (pnNotExitNum == '') ? pnNotExitNum : "[^" + pnNotExitNum + "]{4}$";
 		var phoneNum=$.trim($("#phoneNum").val());
-		if(query_flag_01 == 1){
+		if(phoneNum == "任意四位" || query_flag_01 == 1){
 			phoneNum = '';
 		} else if (query_flag_01 == 2) {
 			// 密码预占查询选择“是”，全位号码必填
