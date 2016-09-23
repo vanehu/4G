@@ -1052,7 +1052,6 @@ AttachOffer = (function() {
 			},
 			yesdo:function(){
 				_checkOfferExcludeDepend(prodId,newSpec);
-				_changeLabel(prodId,AttachOffer.prodSpecId,AttachOffer.labelId);
 			},
 			no:function(){
 			}
