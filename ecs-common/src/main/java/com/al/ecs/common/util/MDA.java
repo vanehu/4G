@@ -404,8 +404,10 @@ public class MDA {
 	 */
 	public static final String PORTAL_SERVICE_LOG_W = new String("");
 
+
 	/**能力开放回调地址校验开关*/
 	public static final Map<String,String> ISCALLBACK = new HashMap<String,String>();
+
 	/**能力开放预校验加省份流水开关*/
 	public static final Map<String,String> TOKORDERINFOFORCHECKFLAG = new HashMap<String,String>();
 	/**
@@ -417,4 +419,9 @@ public class MDA {
 	 * 短信验证码是否发送标识(从sp_sys_param表迁移到MDA，故沿用表中的命名)
 	 */
 	public static final String msgCodeFlag = new String("");
+	
+	/**
+	 * 统一登录地址(一般生产使用)
+	 */
+	public static final String UNIFY_LOGIN_URI = new String("");
 }

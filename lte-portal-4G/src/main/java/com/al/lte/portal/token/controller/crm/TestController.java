@@ -82,10 +82,6 @@ public class TestController extends BaseController {
 			String verifyLevel=String.valueOf(paramMap.get("verifyLevel"));
 			String unifyLoginUri=String.valueOf(paramMap.get("unifyLoginUri"));
 			
-			if(unifyLoginUri == null || "".equals(unifyLoginUri)){
-				unifyLoginUri = "http://crm.189.cn/ltePortal";
-			}
-			
 			Map<String,Object> map = new HashMap<String,Object>();
 			map.put("staffCode", staffCode);
 			map.put("staffName", unescape(staffName));
@@ -104,21 +100,27 @@ public class TestController extends BaseController {
 			map.put("verifyLevel",verifyLevel);
 			log.error("生成令牌参数:"+JacksonUtil.objectToJson(map));
 			log.error("省份私钥:"+privateKey);
-			
-			//生成加密串
-			String jmParams = AESUtils.encryptToString(JacksonUtil.objectToJson(map), privateKey);
-			
+
+			String dbKeyWord = (String) request.getSession().getAttribute(SysConstant.SESSION_DATASOURCE_KEY);
+			if(unifyLoginUri == null || "".equals(unifyLoginUri)){
+				unifyLoginUri = MySimulateData.getInstance().getParam("UNIFY_LOGIN_URI", dbKeyWord, "UNIFY_LOGIN_URI");
+			}
+
 			String path = request.getContextPath();
-			String headPath = (new StringBuilder(String.valueOf(request.getScheme()))).append("://").append(request.getServerName()).append(":").append(request.getServerPort()).append(path).toString();	
+			String unifyLoginFlag = MySimulateData.getInstance().getParam("UNIFYLOGIN", dbKeyWord, "UNIFYLOGIN");
+			String headPath = null;
+			if("ON".equals(unifyLoginFlag)){
+				headPath = unifyLoginUri;
+			} else{
+				headPath = (new StringBuilder(String.valueOf(request.getScheme()))).append("://").append(request.getServerName()).append(":").append(request.getServerPort()).append(path).toString();
+			}
+			
 			String url =  headPath + "/accessToken";
-			
-//			String url =  "http://10.128.97.16:8101/provPortal" + "/accessToken";
-//			String url =  "https://crm.189.cn/ltePortal" + "/accessToken";
-//			String url =  "http://10.128.98.136:8101/provPortal" + "/accessToken";
-//			String url =  "http://10.128.98.136:8102/provPortal" + "/accessToken";
-			
 			log.error("测试地址:"+url);
+			
 			HttpPost httpost = new HttpPost(url);
+			//生成加密串
+			String jmParams = AESUtils.encryptToString(JacksonUtil.objectToJson(map), privateKey);	
 			List<NameValuePair> params = new ArrayList<NameValuePair>();
 			params.add(new BasicNameValuePair("provinceCode", AESUtils.encryptToString(provinceCode, publicKey)));
 			params.add(new BasicNameValuePair("params", jmParams));
@@ -174,15 +176,12 @@ public class TestController extends BaseController {
 				map.put("typeCd",typeCd);
 				map.put("verifyLevel",verifyLevel);
 				log.error("模拟单点页面参数:"+JacksonUtil.objectToJson(map));
+				
 				jmParams = AESUtils.encryptToString(JacksonUtil.objectToJson(map), privateKey);						
-
 				Map<String,Object> reMap = new HashMap<String,Object>();
 				reMap.put("params", jmParams);
 				reMap.put("accessToken", accessToken);
-				String dbKeyWord = (String) request.getSession().getAttribute(SysConstant.SESSION_DATASOURCE_KEY);
-				String flag = MySimulateData.getInstance().getParam(dbKeyWord,"UNIFYLOGIN");
-				if ("ON".equals(flag)) {
-//					reMap.put("toUrl", "https://crm.189.cn/ltePortal");
+				if ("ON".equals(unifyLoginFlag)) {
 					reMap.put("toUrl", unifyLoginUri);
 				} else {
 					reMap.put("toUrl", "1000");
