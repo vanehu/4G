@@ -633,9 +633,10 @@ order.cust = (function(){
 	 * 客户鉴权
 	 */
 	var _custAuth = function(scope) {
-		var param = _choosedCustInfo;
+		var param = $.extend(true, {}, _choosedCustInfo);
 		param.prodPwd = $.trim($("#auth3").find("#authPassword2").val());
 		param.authFlag=authFlag;
+		param.menuName = $("#menuName").attr("menuName");
 		$.callServiceAsHtml(contextPath+"/cust/custAuth",param,{
 			"before":function(){
 				$.ecOverlay("<strong>正在查询中,请稍等...</strong>");

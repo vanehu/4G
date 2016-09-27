@@ -831,8 +831,10 @@ public class CustController extends BaseController {
 			if (smspwd.equals(smsPwdSession) && number.equals(numberSession)) {
 				isSms = true;
 			}
-
-			if (canJump == null || StringUtils.isBlank(custId) || isSms || "0".equals(canJump)) {
+			String menuName = MapUtils.getString(param, "menuName", "");//当前所在菜单
+			if(SysConstant.FD.equals(menuName)||SysConstant.GHFD.equals(menuName)||SysConstant.GKHZLFD.equals(menuName)){
+				map.put("isValidate", "true");
+			}else if (canJump == null || StringUtils.isBlank(custId) || isSms || "0".equals(canJump)) {
 				map.put("isValidate", "true");
 			} else {
 				map.put("isValidate", "false");
