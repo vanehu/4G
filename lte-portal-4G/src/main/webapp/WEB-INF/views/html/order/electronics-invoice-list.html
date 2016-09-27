@@ -12,7 +12,7 @@
       <tr>
           <td>${invoiceInfo.invoiceId}</td>
           <td><#if invoiceInfo.invoiceType=="130">电子发票</#if></td>
-          <td><a href="javascript:common.print.openELPDF('${invoiceInfo.pdfUrl}')" target="_blank">${invoiceInfo.pdfName}</a></td>
+          <td><a href="javascript:void(0)" onclick="javascript:common.print.openELPDF('${invoiceInfo.pdfUrl}')">${invoiceInfo.pdfName}</a></td>
       </tr>
       </#list>
     </tbody>
