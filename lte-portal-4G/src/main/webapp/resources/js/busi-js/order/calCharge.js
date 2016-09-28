@@ -119,10 +119,12 @@ order.calcharge = (function(){
 		_chargeItems=[];
 		_prints=[];
 		var realAmount=0;
+		var feeAmount=0;
 		$("#calTab tbody tr").each(function() {
 			var val = $(this).attr("id");
 			if(val!=undefined&&val!=''){
 				val=val.substr(5,val.length);
+				feeAmount += $(this).find("td:eq(2)").text();
 				if($("#paymentAmount_"+val) && $("#paymentAmount_"+val).val()*1==0){
 					
 				}else{
@@ -140,6 +142,7 @@ order.calcharge = (function(){
 			$("#calTab tbody tr").each(function() {
 				var val = $(this).attr("id");
 				if(val!=undefined&&val!=''){
+					feeAmount += $(this).find("td:eq(2)").text();
 					if($("#paymentAmount_"+val) && $("#paymentAmount_"+val).val()*1==0){
 						
 					}else{
@@ -153,6 +156,7 @@ order.calcharge = (function(){
 		}
 		//alert(JSON.stringify(_prints));
 		$('#realmoney').val(Number(realAmount).toFixed(2));
+		$('#feeAmount').val(Number(feeAmount).toFixed(2));
 		if(OrderInfo.actionFlag==15){
 			order.refund.conBtns();
 		}else{
@@ -283,9 +287,31 @@ order.calcharge = (function(){
 			}
 		});
 	};
-	var _selectChangePayMethodCd=function(trid){
-		var methodCd=$("#changeMethod_"+trid).val();
-		$("#payMethodCd_"+trid).val(methodCd);
+	var _selectChangePayMethodCd = function (trid) {
+		var methodCd = $("#changeMethod_" + trid).val();
+		var methodName = $("#changeMethod_" + trid).find("option:selected").text();
+		$("#payMethodCd_" + trid).val(methodCd);
+		if (CONST.PAYMETHOD_CD.ZHANG_WU_DAI_SHOU == methodCd) {//账务代收设置金额为0.00
+			if (!ec.util.isObj($("#realAmount_" + trid).attr("oldValue"))) {
+				$("#realAmount_" + trid).attr("oldValue", $("#realAmount_" + trid).val());
+				$("#feeAmount_" + trid).attr("oldValue", $("#feeAmount_" + trid).val());
+			}
+			$("#item_" + trid).find("td:eq(2)").text("0.00");
+			$("#feeAmount_" + trid).val("0");
+			$("#realAmount_" + trid).click();
+			$("#realAmount_" + trid).val("0.00");
+			$("#realAmount_" + trid).blur();
+		} else {//不是账务代收还原金额设置
+			var oldValueR = $("#realAmount_" + trid).attr("oldValue");
+			var oldValueF = $("#feeAmount_" + trid).attr("oldValue");
+			if (ec.util.isObj(oldValueR) && ec.util.isObj(oldValueF)) {
+				$("#item_" + trid).find("td:eq(2)").text(oldValueR);
+				$("#feeAmount_" + trid).val(oldValueF);
+				$("#realAmount_" + trid).click();
+				$("#realAmount_" + trid).val(oldValueR);
+				$("#realAmount_" + trid).blur();
+			}
+		}
 	};
 	//调用接口，判断用户是否可以修改金额，并加载付费类型
 	var _queryPayMethodByItem = function(itemTypeId,trid,defmethod){
@@ -445,7 +471,7 @@ order.calcharge = (function(){
 			$.alert("提示","权限数据范围查询失败!");
 			return false ;
 		}
-	}
+	};
 	
 	var _commitParam=function(val){
 		var realmoney=($("#realAmount_"+val).val())*100+'';
