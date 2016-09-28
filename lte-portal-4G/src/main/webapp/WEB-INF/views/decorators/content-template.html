@@ -18,6 +18,7 @@
 					staffId : $("#_session_staff_info").attr("staffId"),
 					staffCode : $("#_session_staff_info").attr("staffCode"),
 					staffName : $("#_session_staff_info").attr("staffName"),
+					channelCode: $("#_session_staff_info").attr("channelCode"), 
 					channelId : $("#_session_staff_info").attr("channelId"),
 					channelName : $("#_session_staff_info").attr("channelName"),
 					areaId : $("#_session_staff_info").attr("areaId"),
@@ -45,6 +46,7 @@
              	<input type="hidden" id="_session_staff_info"
 					staffId="${Session["_ecs_login_session_key"].staffId}" 
 					staffCode="${Session["_ecs_login_session_key"].staffCode}" 
+					channelCode="${Session["_ecs_login_session_key"].currentChannelCode}" 
 					staffName="${Session["_ecs_login_session_key"].staffName}" 
 					channelId='${Session["_ecs_login_session_key"].currentChannelId}' 
 					channelName='${Session["_ecs_login_session_key"].currentChannelName}' 

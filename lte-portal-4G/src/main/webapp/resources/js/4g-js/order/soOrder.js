@@ -334,8 +334,8 @@ SoOrder = (function() {
 					val2 = val2.substring(0, val2.indexOf(" > "));
 				}
 				remark = remark + "|" + val.substring(0, val.indexOf(" > "))
-						+ val2 + " " + OrderInfo.staff.channelId + " "
-						+ OrderInfo.staff.staffId;
+						+ val2 + " " + OrderInfo.staff.channelCode + " "
+						+ OrderInfo.staff.staffCode;
 			}
 			custOrderAttrs.push({
 				itemSpecId : CONST.BUSI_ORDER_ATTR.REMARK,
@@ -348,7 +348,7 @@ SoOrder = (function() {
 				val2 = val2.substring(0, val2.indexOf(" > "));
 			}
 			remark = "|" + val.substring(0, val.indexOf(" > ")) + val2 + " "
-					+ OrderInfo.staff.channelId + " " + OrderInfo.staff.staffId;
+					+ OrderInfo.staff.channelCode + " " + OrderInfo.staff.staffCode;
 			custOrderAttrs.push({
 				itemSpecId : CONST.BUSI_ORDER_ATTR.REMARK,
 				value : remark

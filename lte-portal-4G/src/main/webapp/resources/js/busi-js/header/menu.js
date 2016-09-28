@@ -68,9 +68,11 @@ header.menu = (function(){
 				$("#_session_staff_info").attr("operatorsNbr",channelData.operatorsNbr);
 				$("#_session_staff_info").attr("channelType",channelData.Type);
 				$("#_session_staff_info").attr("idType",channelData.idType);
+				$("#_session_staff_info").attr("channelCode",channelData.idType);
 				OrderInfo.staff={
 						staffId : $("#_session_staff_info").attr("staffId"),
 						channelId : channelData.id,
+						channelCode : channelData.currentChannelCode,
 						channelName : channelData.name,
 						areaId : channelData.areaId,
 						areaCode : channelData.zoneNumber,
@@ -155,7 +157,7 @@ $(function(){
 			soAreaCode : $("#_session_staff_info").attr("areaCode"),
 			soAreaName : $("#_session_staff_info").attr("areaName"),
 			soAreaAllName : $("#_session_staff_info").attr("areaAllName"),
-			channelType:$("#_session_staff_info").attr("channelType"),
+			channelCode: $("#_session_staff_info").attr("channelCode"), 
 			idType:$("#_session_staff_info").attr("idType")
 	};
 //	window.localStorage.setItem("OrderInfo.staff",JSON.stringify(OrderInfo.staff));
