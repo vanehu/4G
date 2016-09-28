@@ -1044,7 +1044,7 @@ CacheData = (function() {
 		 *	excludeOffer	互斥，用来和已订购的销售品对比，如果有互斥中的，就退订，
 		 *	optDependOffer	可选依赖
 		 */
-		if(param.optDependOffer.length > 0){
+		if(param.optDependOffer && param.optDependOffer.length > 0){
 			var optDependOffers = param.optDependOffer;
 			for (var i = 0; i < optDependOffers.length; i++) {
 				if($("#"+optDependOffers[i]).is(':checked') == true){
