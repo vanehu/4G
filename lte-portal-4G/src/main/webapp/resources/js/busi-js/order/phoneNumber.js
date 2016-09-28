@@ -1104,12 +1104,18 @@ order.phoneNumber = (function(){
 					_btnPurchase(selectedObj);
 				}
 			}
-			$("#uim_check_btn_"+prodId).attr("disabled",false);
-			$("#uim_check_btn_"+prodId).removeClass("disablepurchase").addClass("purchase");
-			$("#uim_release_btn_"+prodId).attr("disabled",true);
-			$("#uim_release_btn_"+prodId).removeClass("purchase").addClass("disablepurchase");
-			$("#uim_txt_"+prodId).attr("disabled",false);
-			$("#uim_txt_"+prodId).val("");
+			var prodId = $("#subnum").val();
+			if (ec.util.isObj(prodId)) {
+				$("#uim_check_btn_"+prodId).attr("disabled",false);
+				$("#uim_check_btn_"+prodId).removeClass("disablepurchase").addClass("purchase");
+				$("#uim_release_btn_"+prodId).attr("disabled",true);
+				$("#uim_release_btn_"+prodId).removeClass("purchase").addClass("disablepurchase");
+				$("#uim_txt_"+prodId).attr("disabled",false);
+				$("#uim_txt_"+prodId).val("");
+				// 再次选号后，清空原来的UIM卡缓存，否则uim卡为空不会被拦截
+				OrderInfo.clearCheckUimData(prodId);
+				OrderInfo.clearProdUim(prodId);
+			}
 		}
 	};
 	/**
