@@ -124,7 +124,7 @@ order.calcharge = (function(){
 			var val = $(this).attr("id");
 			if(val!=undefined&&val!=''){
 				val=val.substr(5,val.length);
-				feeAmount += $(this).find("td:eq(2)").text();
+				feeAmount += parseInt($(this).find("td:eq(2)").text());
 				if($("#paymentAmount_"+val) && $("#paymentAmount_"+val).val()*1==0){
 					
 				}else{
@@ -142,7 +142,7 @@ order.calcharge = (function(){
 			$("#calTab tbody tr").each(function() {
 				var val = $(this).attr("id");
 				if(val!=undefined&&val!=''){
-					feeAmount += $(this).find("td:eq(2)").text();
+					feeAmount += parseInt($(this).find("td:eq(2)").text());
 					if($("#paymentAmount_"+val) && $("#paymentAmount_"+val).val()*1==0){
 						
 					}else{
