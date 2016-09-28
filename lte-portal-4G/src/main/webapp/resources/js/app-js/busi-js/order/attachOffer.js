@@ -35,6 +35,8 @@ AttachOffer = (function() {
 	
 	var _offerSpecs = [];
 	
+	var _offerSpecIds=[];//保存已选择可选包id
+	
 	var prodSpecId = "";
 	var labelId = "";
 	var _broadFlag=false; //是否宽带续约标志
@@ -416,6 +418,7 @@ AttachOffer = (function() {
 			return;
 		}
 		param.offerSpecName = offerSepcName;
+		param.specIds=_offerSpecIds;
 		query.offer.searchAttachOfferSpec(param,function(data){
 			if(data!=undefined){
 				$("#attach_div_"+prodId).html(data).show();
@@ -1084,7 +1087,7 @@ AttachOffer = (function() {
 					var spec = CacheData.getServSpec(prodId,servSpecId);
 					if(ec.util.isObj(spec)){
 						spec.isdel = "Y";
-					//	var $li = $("#li_"+prodId+"_"+servSpecId);
+						var $li = $("#li_"+prodId+"_"+servSpecId);
 					//	$li.remove();
 					//	$li.removeClass("canshu").addClass("canshu2");
 						$li.find("span").addClass("del"); //定位删除的附属
@@ -1638,6 +1641,7 @@ AttachOffer = (function() {
 	
 	//添加到开通列表
 	var _addOpenList = function(prodId,offerSpecId){
+		_offerSpecIds.push(offerSpecId);//加入已选择缓存，用于过滤搜索
 		if(!_manyPhoneFilter(prodId,offerSpecId)){
 			return;
 		}
@@ -2038,6 +2042,7 @@ AttachOffer = (function() {
 	
 	//添加到开通列表
 	var _addOpenServList = function(prodId,servSpecId,servSpecName,ifParams){
+		_offerSpecIds.push(servSpecId);//加入已选择缓存，用于过滤搜索
 		//从已开通功能产品中找
 		var serv = CacheData.getServBySpecId(prodId,servSpecId); 
 		if(serv != undefined){
@@ -4681,6 +4686,7 @@ AttachOffer = (function() {
 		schoolClose				: _searchClose,
 		queryAttachOffer2 		: _queryAttachOffer2,
 		broadFlag:_broadFlag,
-		addBroadOffer:_addBroadOffer
+		addBroadOffer:_addBroadOffer,
+		offerSpecIds:_offerSpecIds
 	};
 })();

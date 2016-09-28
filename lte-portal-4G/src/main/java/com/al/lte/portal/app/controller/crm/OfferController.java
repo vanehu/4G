@@ -1,7 +1,9 @@
 package com.al.lte.portal.app.controller.crm;
 
 import java.net.URLDecoder;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
@@ -488,6 +490,7 @@ public class OfferController extends BaseController {
 	 * @return
 	 * @throws BusinessException
 	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@RequestMapping(value = "/searchAttachOfferSpec", method = RequestMethod.GET)
 	public String searchAttachOfferSpec(@RequestParam("strParam") String param,Model model,HttpServletResponse response){
 		Map<String, Object> paramMap = new HashMap();
@@ -500,13 +503,57 @@ public class OfferController extends BaseController {
         	//搜索可订购销售品
         	paramMap.put("operatorsId", sessionStaff.getOperatorsId()!=""?sessionStaff.getOperatorsId():"99999");
     		Map<String, Object> offerMap = offerBmo.queryCanBuyAttachSpec(paramMap,null,sessionStaff);
-    		model.addAttribute("offerMap",offerMap);
-    		
+    		List<Integer> specIds=new ArrayList<Integer>(); //存放已选择可选包或功能id
+    		if(paramMap.get("specIds")!=null){
+    			specIds=(List) paramMap.get("specIds");
+    		}
+			if (offerMap != null) {
+				Map result = (Map) offerMap.get("result");
+				if (result != null) {
+					List<Map> offerSpecList = (List<Map>) result.get("offerSpecList");
+					List<Map> offerSpecList2 = new ArrayList<Map>();
+					for (Map offerSpec : offerSpecList) {
+						boolean flag=true;//未在已选择列表标志
+						for (int id : specIds) {
+							if ((id+"").equals(offerSpec.get("offerSpecId").toString())) {
+								flag=false;
+								break;
+							}
+						}
+						if (flag) {
+							offerSpecList2.add(offerSpec);
+						}
+					}
+					result.put("offerSpecList", offerSpecList2);
+					offerMap.put("result", result);
+				}
+				model.addAttribute("offerMap", offerMap);
+			}
         	//搜索可订购功能产品
     		paramMap.put("matchString", paramMap.get("offerSpecName"));
     		Map<String, Object> servMap = offerBmo.queryCanBuyServ(paramMap,null,sessionStaff);
-    		model.addAttribute("servMap",servMap);
-    		
+			if (servMap != null) {
+				Map result = (Map) servMap.get("result");
+				if (result != null) {
+					List<Map> serverSpecList = (List<Map>) result.get("servSpec");
+					List<Map> serverSpecList2 = new ArrayList<Map>();
+					for (Map serverSpec : serverSpecList) {
+						boolean flag=true;//未在已选择列表标志
+						for (int id : specIds) {
+							if ((id+"").equals(serverSpec.get("servSpecId").toString())) {
+								flag=false;
+								break;
+							}
+						}
+						if (flag) {
+							serverSpecList2.add(serverSpec);
+						}
+					}
+					result.put("servSpec", serverSpecList2);
+					servMap.put("result", result);
+				}
+				model.addAttribute("servMap", servMap);
+			}		
         	model.addAttribute("param",paramMap);
     		model.addAttribute("prodId",paramMap.get("prodId"));
     		if(paramMap.get("yslflag")!=null){
@@ -522,6 +569,7 @@ public class OfferController extends BaseController {
 		return "/app/offer/attach-offer-list";
 	}
 	
+
 	/**
 	 * 加载实例
 	 * @param param
@@ -608,6 +656,36 @@ public class OfferController extends BaseController {
 		}
 		return jsonResponse;
 	}
+
+	
+	/**
+	 * 查询宽带续约可订购包
+	 * @param param
+	 * @param model
+	 * @return
+	 * @throws BusinessException
+	 */
+	@RequestMapping(value = "/queryCanBuyAttachBroad", method = {RequestMethod.GET})
+	public String queryCanBuyAttachBroad(@RequestParam("strParam") String param,Model model) {
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+				SysConstant.SESSION_KEY_LOGIN_STAFF);
+		Map<String, Object> paramMap = null;
+        try {
+        	paramMap =  JsonUtil.toObject(param, Map.class);
+        	Map<String, Object> resMap = offerBmo.queryCanBuyAttachSpec(paramMap,null,sessionStaff);
+        	model.addAttribute("param",paramMap);
+        	model.addAttribute("canMap",resMap);
+        	model.addAttribute("prodId",paramMap.get("prodId"));
+        } catch (BusinessException be) {
+			return super.failedStr(model,be);
+		} catch (InterfaceException ie) {
+			return super.failedStr(model, ie, paramMap, ErrorCode.ATTACH_OFFER);
+		} catch (Exception e) {
+			return super.failedStr(model, ErrorCode.ATTACH_OFFER, e, paramMap);
+		}
+	 	return "/app/offer/attach-broad-change";
+	}
+
 	/**
 	 * 收藏销售品
 	 * @param param
@@ -701,5 +779,6 @@ public class OfferController extends BaseController {
 		}
 		return jsonResponse;
 	}
+
 
 }
