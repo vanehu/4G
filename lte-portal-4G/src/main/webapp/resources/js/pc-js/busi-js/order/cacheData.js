@@ -1104,7 +1104,7 @@ CacheData = (function() {
 	var _getGovCertType = function() {
 		if (govCertTyteArr.length == 0) {
 			var params = {"partyTypeCd": 2} ;
-			var url=contextPath+"/token/pc/queryCertType";
+			var url=contextPath+"/token/pc/cust/queryCertType";
 			var response = $.callServiceAsJson(url, params, {});
 			if (response.code == -2) {
 				$.alertM(response.data);
