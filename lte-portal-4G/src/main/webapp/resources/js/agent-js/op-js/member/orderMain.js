@@ -1683,14 +1683,14 @@ order.main = (function(){
 	};
 	
 	var _checkIncreace6 = function(str){
-		var rownum = 0 ;
+		var newStr = "";
 		if(str && str.length==6){
-			for(var i=0;i<5;i++){
+			var int0 = str[0];
+			for(var i=0;i<str.length;i++){
 				var int1 = parseInt(str.substring(i,i+1));
-				var int2 = parseInt(str.substring(i+1,i+2));
-				rownum = rownum + (int1-int2);
+				newStr += Math.abs(int1-int0);
 			}
-			if(rownum==5||rownum==-5){
+			if("012345"==newStr||"543210"==newStr){
 				return true ;
 			}else{
 				return false ;
