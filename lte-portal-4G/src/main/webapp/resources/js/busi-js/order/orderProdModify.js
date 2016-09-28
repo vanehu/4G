@@ -3669,6 +3669,10 @@ order.prodModify = (function(){
 					 response.data='查询失败,稍后重试';
 				}
 				var objList =  eval('('+response.data+')');
+				if(objList.code != 0){
+					$.alert("提示",objList.data);
+					return;
+				}
 				if(objList.data ==null){
 					$.alert("提示","无法返销，不符合可以返销的规则，上一次购物车操作不是新装、订购合约或者补换卡中的一种。");
 					return;
