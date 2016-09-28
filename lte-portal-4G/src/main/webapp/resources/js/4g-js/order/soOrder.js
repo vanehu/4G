@@ -1641,7 +1641,9 @@ SoOrder = (function() {
 									actionClassCd : CONST.ACTION_CLASS_CD.OFFER_ACTION,
 									boActionTypeCd : CONST.BO_ACTION_TYPE.ADDOREXIT_COMP
 								}, 
-								data:{}
+								data:{
+									ooRoles : []
+								}
 							};
 						$.each(OrderInfo.offer.offerMemberInfos,function(){
 							var ooRole = {
@@ -1655,6 +1657,9 @@ SoOrder = (function() {
 								ooRoles.prodId = this.objInstId;
 								ooRoles.objInstId = this.objInstId;
 								offerBusiOrder.data.ooRoles.push(ooRole);
+								if(boActionTypeCd==CONST.BO_ACTION_TYPE.BUY_BACK_ORDER_CONTRACT){
+									delete  offerBusiOrder.data.ooRoles;
+								};
 							}
 						});
 						delFlag = true;
@@ -1697,6 +1702,9 @@ SoOrder = (function() {
 										state : "DEL"
 									};
 								offerBusiOrder.data.ooRoles.push(ooRole);
+								if(boActionTypeCd==CONST.BO_ACTION_TYPE.BUY_BACK_ORDER_CONTRACT){
+									delete  offerBusiOrder.data.ooRoles;
+								};
 							}
 						});
 					}
