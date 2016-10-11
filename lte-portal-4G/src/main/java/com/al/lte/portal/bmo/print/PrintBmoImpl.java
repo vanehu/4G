@@ -7834,8 +7834,8 @@ public class PrintBmoImpl implements PrintBmo {
 		boolean hasSeq=false;
 		List<Map<String,Object>> userAcceNbrsStrList= (List<Map<String, Object>>) MapUtils.getObject(orderEventCont,"userAcceNbrs");
 		List<Map<String,Object>> osBaseInfoList= (List<Map<String, Object>>) MapUtils.getObject(orderEventCont,"osBaseInfo");
-		List<Map<String,Object>> osOtherInfoList= (List<Map<String, Object>>) MapUtils.getObject(orderEventCont,"osOtherInfo");
 		List<Map<String,Object>> osPrompInfo= (List<Map<String, Object>>) MapUtils.getObject(orderEventCont,"osPrompInfo");
+		List<Map<String,Object>> osOtherInfoList= (List<Map<String, Object>>) MapUtils.getObject(orderEventCont,"osOtherInfo");
 		if(orderEventCont.size()>0){
 			if(orderEventCont.size()>1){hasSeq=true;}
 			if(null!=userAcceNbrsStrList&&userAcceNbrsStrList.size()>0) {
@@ -7846,12 +7846,12 @@ public class PrintBmoImpl implements PrintBmo {
 				OETitleContent oeTitleContent = buildOETitleContent_V2(hasSeq?index++:0,SysConstant.STR_RL_BRE, osBaseInfoList.get(0));
 				retList.add(oeTitleContent);
 			}
-			if(null!=osOtherInfoList&&osOtherInfoList.size()>0) {
-				OETitleContent oeTitleContent = buildOETitleContent_V2(hasSeq?index++:0,SysConstant.STR_RL_BRE, osOtherInfoList.get(0));
-				retList.add(oeTitleContent);
-			}
 			if(null!=osPrompInfo&&osPrompInfo.size()>0) {
 				OETitleContent oeTitleContent = buildOETitleContent_V2(hasSeq?index++:0,SysConstant.STR_RL_BRE, osPrompInfo.get(0));
+				retList.add(oeTitleContent);
+			}
+			if(null!=osOtherInfoList&&osOtherInfoList.size()>0) {
+				OETitleContent oeTitleContent = buildOETitleContent_V2(hasSeq?index++:0,SysConstant.STR_RL_BRE, osOtherInfoList.get(0));
 				retList.add(oeTitleContent);
 			}
 		}
