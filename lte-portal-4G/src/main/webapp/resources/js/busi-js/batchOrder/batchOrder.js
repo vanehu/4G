@@ -849,7 +849,7 @@ order.batch = (function(){
 	var _batchProgressQueryList = function(pageIndex){
 		var groupId = $("#groupId_dialog").val();
 		var batchType = $("#batchType_dialog").val();
-		var phoneNumber = $.trim($("#phoneNumber").val());
+		var phoneNumber = $("#phoneNumber").val();
 		
 		if(groupId == null || groupId == "" || groupId == undefined){
 			$.alert("提示","批次号为空，无法进行查询，请刷新页面或稍后再试！");
@@ -862,19 +862,26 @@ order.batch = (function(){
 		
 		var statusCd = $("#statusCd_dialog").val();//受理状态
 		var orderStatus = $("#orderStatus_dialog").val();//订单状态
-		if(statusCd == null || statusCd == undefined)
+		var isTrans = $("#isTrans_" + groupId).val();//转储订单标识，Y转储，N未转储
+		if(statusCd == null || statusCd == undefined){
 			statusCd = "";
-		if(orderStatus == null || orderStatus == undefined)
+		}
+		if(orderStatus == null || orderStatus == undefined){
 			orderStatus = "";
+		}
+		if(isTrans == null || isTrans == undefined){
+			isTrans = "";
+		}
 		
 		var param = {
-				"groupId":groupId,//批次号
-				"batchType":batchType,//受理类型
-				"statusCd":statusCd,//受理状态
-				"orderStatus":orderStatus,//订单状态
-				"phoneNumber":phoneNumber,
-				"pageIndex":pageIndex,
-				"pageSize":"10"
+			"isTrans"		:isTrans,//判断是否转储订单，Y转储，N未转储
+			"groupId"		:groupId,//批次号
+			"batchType"		:batchType,//受理类型
+			"statusCd"		:statusCd,//受理状态
+			"orderStatus"	:orderStatus,//订单状态
+			"phoneNumber"	:phoneNumber,
+			"pageIndex"		:pageIndex,
+			"pageSize"		:"10"
 		};
 		var url=contextPath+"/order/batchOrder/batchProgressQueryList";
 		$.callServiceAsHtml(url,param,{
@@ -905,7 +912,7 @@ order.batch = (function(){
 	/**
 	 * 批次进度查询(获取弹窗页面)，查询某一批次的具体处理情况
 	 */
-	var _batchProgressQuery = function(groupId,batchType,pageIndex){
+	var _batchProgressQuery = function(groupId, batchType, pageIndex){
 		
 		if(groupId == null || groupId == "" || groupId == undefined){
 			$.alert("提示","批次号为空，无法进行查询，请刷新页面或稍后再试！");
@@ -917,8 +924,8 @@ order.batch = (function(){
 		}
 		
 		var param = {
-				"groupId":groupId,//批次号
-				"batchType":batchType//受理类型
+			"groupId"	:groupId,//批次号
+			"batchType"	:batchType//受理类型
 		};
 		var url=contextPath+"/order/batchOrder/batchProgressQuery";
 		$.callServiceAsHtml(url,param,{
@@ -989,7 +996,7 @@ order.batch = (function(){
 	 * 批次信息查询
 	 */
 	var _batchOrderQueryList = function(pageIndex){
-		var groupId = $.trim($("#groupId").val());//批次号
+		var groupId = $("#groupId").val();//批次号
 		var batchStatusCd = $("#batchStatusCd").val();//批次处理状态
 		var templateType = $("#templateType").val();//受理类型
 		var startDt = $("#startDt").val();
@@ -998,11 +1005,11 @@ order.batch = (function(){
 		var groupStatusCd = $("#groupStatusCd").val();//批次状态
 
 		if(templateType == '' || templateType == null){
-			$.alert("提示","种子订单受理类型不能为空!");
+			$.alert("提示","种子订单受理类型不能为空！");
 			return;
 		}
 		if(!/^[0-9]*$/.test(groupId)){
-			$.alert("提示","批次号格式错误");
+			$.alert("提示","批次号格式错误，不可包含除数字之外的字符！");
 			return;
 		}
 		

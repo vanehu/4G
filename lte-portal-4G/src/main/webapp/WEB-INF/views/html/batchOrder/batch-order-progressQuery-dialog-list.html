@@ -46,12 +46,20 @@
 			     	 		${childList.orderStatusName}
 			     	 	</td>
 			     	 	<td>
-			     	 		<#if childList.statusCd=="X">
-			     	 			<i id="plan_detail" onclick="order.batch.batchReprocess('${childList.groupId}','${childList.statusCd}','${childList.batchId}','1')">取消</i>&nbsp;
-		     	 				<i id="plan_detail" onclick="order.batch.batchReprocess('${childList.groupId}','${childList.statusCd}','${childList.batchId}','2')">重发</i>
-			     	 		<#elseif childList.statusCd=="F">
-			     	 			<i id="plan_detail" onclick="order.batch.batchReprocess('${childList.groupId}','${childList.statusCd}','${childList.batchId}','2')">重发</i>
+			     	 		<#if (param.isTrans)?? && (param.isTrans == "Y")>
+			     	 			<!-- 该订单为已转储订单，不允许取消、重发等操作 -->
+			     	 			<i title="已转储订单不可操作">取消</i>&nbsp;
+		     	 				<i title="已转储订单不可操作">重发</i>
 			     	 		<#else>
+			     	 			<#if childList.statusCd=="X">
+				     	 			<i id="plan_detail" onclick="order.batch.batchReprocess('${childList.groupId}','${childList.statusCd}','${childList.batchId}','1')">取消</i>&nbsp;
+			     	 				<i id="plan_detail" onclick="order.batch.batchReprocess('${childList.groupId}','${childList.statusCd}','${childList.batchId}','2')">重发</i>
+				     	 		<#elseif childList.statusCd=="F">
+				     	 			<i id="plan_detail" onclick="order.batch.batchReprocess('${childList.groupId}','${childList.statusCd}','${childList.batchId}','2')">重发</i>
+				     	 		<#else>
+				     	 			<i title="该订单状态不可操作，仅限购物车生成失败订单">取消</i>&nbsp;
+		     	 					<i title="该订单状态不可操作，仅限购物车生成失败和发送后端失败订单">重发</i>
+				     	 		</#if>
 			     	 		</#if>
 	     	 			</td>
 	     	 		</tr>

@@ -54,8 +54,9 @@
 		     	 	<#elseif childList.batchType=="11">批量换档
 		     	 	</#if>
 				</td>
-				<#if (childList.groupStatusCd)?? && (childList.groupStatusCd=="UD" || childList.groupStatusCd=="DF")>
-     	 			<#if (childList.msgInfo)?? >
+				<#if (childList.groupStatusCd)?? && (childList.groupStatusCd == "UD" || childList.groupStatusCd == "DF")>
+					<!-- 批次未处理或批次处理失败的订单未落表或落表失败，不可操作 -->
+     	 			<#if (childList.msgInfo)?? && (childList.msgInfo != "")>
      	 				<#assign alertInfo = "${childList.msgInfo}"/>
      	 			<#else>
      	 				<#assign alertInfo = "批次未处理或批次处理失败的订单不可操作"/>
@@ -68,6 +69,18 @@
 				     	 	<i title="${alertInfo}">进度查询</i>&nbsp;
 				     	 	<i title="${alertInfo}">批次查询</i>
 		     	 		</td>
+		     	<#elseif (childList.isTrans)?? && (childList.isTrans=="Y")>
+		     		<!-- 该订单为已转储订单，不允许取消、重发等操作，仅查询 -->
+		     		<#assign alertInfo = "已转储订单不可操作"/>
+		     		<td>
+		     	 		<i title="${alertInfo}">取消</i>&nbsp;
+		     	 		<i title="${alertInfo}">修改</i>&nbsp;
+     	 			</td>
+		     	 	<td>
+			     	 	<i id="plan_detail" onclick="order.batch.batchProgressQuery('${childList.groupId}','${childList.batchType}',1)">进度查询</i>&nbsp;
+			     	 	<i id="plan_detail" onclick="order.batch.batchStatusQuery('${childList.groupId}')">批次查询</i>
+			     	 	<input type="hidden" id="isTrans_${childList.groupId}" value="${childList.isTrans}"/>
+	     	 		</td>
 		     	<#else>
 		     	 	<td>
 			     	 	<i id="plan_detail" onclick="order.batch.batchCancel('${childList.groupId}','${childList.groupStatusCd}')">取消</i>&nbsp;

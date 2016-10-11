@@ -223,10 +223,11 @@ public class BatchOrderControllerLatestVer  extends BaseController {
 									message = "批量导入成功，导入批次号：<strong>"+returnMap.get("groupId")+"</strong>，请到“批量受理查询”功能中查询受理结果";
 									code = "0";
 					 			}else{
-					 				if(ftpResultMap == null || ftpResultMap.get("mess") == null)
+					 				if(ftpResultMap == null || ftpResultMap.get("mess") == null){
 					 					message = "批量导入服务调用失败";
-					 				else
+					 				} else{
 					 					message = ftpResultMap.get("mess").toString();
+					 				}
 					 			}
 							} catch (InterfaceException ie) {
 								jsonResponse = super.failed(ie, busMap, ErrorCode.BATCH_FILEUPLOAD_NOTICE);
@@ -256,7 +257,7 @@ public class BatchOrderControllerLatestVer  extends BaseController {
 	}
 	
 	/**
-	 * 批量新装、批开活卡两业务，原号码预占业务逻辑转为后台进行，前台不再进行号码和卡号的预占 ZhangYu 2016-03-10
+	 * 批量新装、批开活卡两业务，原号码预占业务逻辑转为后台进行，前台不再进行号码和卡号的预占  2016-03-10
 	 */
 	@Deprecated
 	@SuppressWarnings({ "unchecked", "unused" })
@@ -320,9 +321,7 @@ public class BatchOrderControllerLatestVer  extends BaseController {
 		model.addAttribute("startDt", start);
 		model.addAttribute("endDt", end);
 
-		//根据配置文件portal.properties里的开关，判断执行新旧代码，N执行旧代码，Y执行新代码 By ZhangYu 2015-10
-		//JsonResponse jsonResponse = this.batchOrderFlag("batchOrderQry");
-		//model.addAttribute("batchOrderFlag", jsonResponse.getData().toString());
+		//根据配置文件portal.properties里的开关，判断执行新旧代码，N执行旧代码，Y执行新代码 By  2015-10
 		if("Y".equals(this.batchOrderFlag("batchOrderQry").getData().toString())){
 			//获取员工权限
 			String permissionsType = CommonMethods.checkBatchQryOperatSpec(staffBmo,super.getRequest(),sessionStaff);
@@ -331,8 +330,9 @@ public class BatchOrderControllerLatestVer  extends BaseController {
 			model.addAttribute("p_areaId_val", defaultAreaInfo.get("defaultAreaName"));
 			
 			return "/batchOrder/batch-order-imQuery-new";
-		}else
+		}else{
 			return "/batchOrder/batch-order-imQuery";
+		}
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -366,7 +366,6 @@ public class BatchOrderControllerLatestVer  extends BaseController {
 			return super.failedStr(model, ErrorCode.BATCH_IMP_LIST, e, param);
 		}
 		return "/batchOrder/batch-order-imlist";
-		//return "/batchOrder/batch-order-progressQuery";
 	}
 
 	/**
@@ -375,7 +374,6 @@ public class BatchOrderControllerLatestVer  extends BaseController {
 	 * @param model
 	 * @param response
 	 * @return
-	 * @author ZhangYu 
 	 */
 	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/batchOrderQueryList", method = {RequestMethod.POST})
@@ -566,7 +564,7 @@ public class BatchOrderControllerLatestVer  extends BaseController {
 	 * @param param
 	 * @param flowNum
 	 * @return
-	 * @author ZhangYu
+	 * @author 
 	 */
 	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/batchStatusQuery", method = RequestMethod.GET)
@@ -619,7 +617,7 @@ public class BatchOrderControllerLatestVer  extends BaseController {
 	 * @param model
 	 * @param flowNum
 	 * @return {"resultCode":"0或者1""resultMsg":"重发成功/取消成功"}
-	 * @author ZhangYu
+	 * @author 
 	 */
 	@RequestMapping(value = "/batchReprocess", method = {RequestMethod.POST})
 	@ResponseBody
@@ -657,7 +655,6 @@ public class BatchOrderControllerLatestVer  extends BaseController {
 	 * @param param
 	 * @param flowNum
 	 * @return
-	 * @author ZhangYu
 	 */
 	@RequestMapping(value = "/batchOperate", method = {RequestMethod.POST})
 	@ResponseBody
@@ -690,7 +687,7 @@ public class BatchOrderControllerLatestVer  extends BaseController {
 	 * @param model
 	 * @param flowNum
 	 * @return
-	 * @author ZhangYu
+	 * @author 
 	 */
 	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/batchOperateCancle", method = {RequestMethod.POST})
@@ -740,7 +737,7 @@ public class BatchOrderControllerLatestVer  extends BaseController {
 	 * @param request
 	 * @param session
 	 * @return
-	 * @author ZhangYu
+	 * @author 
 	 */
 	@RequestMapping(value = "/batchUpdateMain", method = {RequestMethod.POST})
 	public String batchUpdateMain(@RequestBody Map<String, Object> param,Model model,HttpServletRequest request,HttpSession session) {
@@ -907,7 +904,7 @@ public class BatchOrderControllerLatestVer  extends BaseController {
 		/**
 		 * 为了将批量订购裸终端、批量换档、批量换卡整合(三者业务逻辑相同)同时开发#88538批量业务逻辑调整，所以这里将跳转到批量换档页面，
 		 * 不再使用原有的batch-order-terminal页面。
-		 * ZhangYu 2016-03-14
+		 *  2016-03-14
 		 */
 		List<Map<String, Object>> timeList = batchBmo.getTimeListIn5Days();
 		String batchType = "10";//批量订购裸终端batchType=10
@@ -927,7 +924,7 @@ public class BatchOrderControllerLatestVer  extends BaseController {
 	 * @param session
 	 * @param model
 	 * @return
-	 * @author ZhangYu
+	 * @author 
 	 */
 	@RequestMapping(value = "/batchOrderChange", method = RequestMethod.GET)
 	public String batchOrderChange(Model model,HttpServletRequest request,HttpSession session) {
@@ -946,7 +943,7 @@ public class BatchOrderControllerLatestVer  extends BaseController {
 	/**
 	 * 批量订购裸终端 - 文件校验</br>
 	 * @deprecated #88538：前台将不在进行号码预占等业务操作，非空、去重校验成功后直接上传Excel至FTP服务器，所以此方法目前不再使用
-	 * updated by ZhangYu 2016-03-20
+	 * updated by  2016-03-20
 	 */
 	@Deprecated
 	@SuppressWarnings("unchecked")
@@ -1099,7 +1096,7 @@ public class BatchOrderControllerLatestVer  extends BaseController {
 	/**
 	 * 批量订购裸终端 - 文件提交
 	 * @deprecated #88538：前台将不在进行号码预占等业务操作，非空、去重校验成功后直接上传Excel至FTP服务器，所以此方法目前不再使用
-	 * updated by ZhangYu 2016-03-20
+	 * updated by  2016-03-20
 	 */
 	@Deprecated
 	@SuppressWarnings("unchecked")
@@ -1155,7 +1152,7 @@ public class BatchOrderControllerLatestVer  extends BaseController {
 	 * @param file
 	 * @param olId
 	 * @return
-	 * @author ZhangYu
+	 * @author 
 	 */
 	@RequestMapping(value = "/importBatchData", method = RequestMethod.POST)
 	public String importBatchData(Model model, HttpServletRequest request,HttpServletResponse response,
@@ -1322,7 +1319,7 @@ public class BatchOrderControllerLatestVer  extends BaseController {
 	 * @param batchType
 	 * @param reserveDt
 	 * @return
-	 * @author ZhangYu 2016-04-21
+	 * @author  2016-04-21
 	 */
 	@RequestMapping(value = "/ecsBatchfileImport", method = RequestMethod.POST)
 	public String ecsBatchfileImport(Model model, 
@@ -1404,10 +1401,11 @@ public class BatchOrderControllerLatestVer  extends BaseController {
 									message = "批量导入成功，导入批次号：<strong>"+returnMap.get("batchId")+"</strong>，请到“批量受理查询”功能中查询受理结果";
 									code = "0";
 					 			}else{
-					 				if(ftpResultMap == null || ftpResultMap.get("mess") == null)
+					 				if(ftpResultMap == null || ftpResultMap.get("mess") == null){
 					 					message = "文件上传发生未知异常，请稍后重新尝试";
-					 				else
+					 				} else{
 					 					message = ftpResultMap.get("mess").toString();
+					 				}
 					 			}
 							} catch (BusinessException be) {
 								jsonResponse = super.failed(be);
@@ -1457,7 +1455,7 @@ public class BatchOrderControllerLatestVer  extends BaseController {
 	 * #“# #26339批量订单查询权限控制优化”开关，ON：改造之后；OFF：改造之前</br>
 	 * BATCHORDER_AUTH_FLAG</br>
 	 * @return 
-	 * @author ZhangYu
+	 * @author 
 	 * 			
 	 */
 	@RequestMapping(value = "/batchOrderFlag", method = {RequestMethod.POST})
@@ -1472,7 +1470,7 @@ public class BatchOrderControllerLatestVer  extends BaseController {
 	 * 根据配置文件portal.properties里的开关，判断执行新旧代码，N执行旧代码，Y执行新代码
 	 * @param queryFlag	入参为字符串"batchOrderQry"(判断批量预开通优化是否执行新代码)或者"batchOrderAuth"(判断是否增加权限优化)
 	 * @return	返回字符串"N"(执行旧代码)或者"Y"(执行新代码)
-	 * @author ZhangYu 2015-10-19
+	 * @author  2015-10-19
 	 */
 	private JsonResponse batchOrderFlag(String queryFlag){
 		
@@ -1594,7 +1592,7 @@ public class BatchOrderControllerLatestVer  extends BaseController {
 	 * @param qryParam
 	 * @param model
 	 * @return
-	 * @author ZhangYu 2016-05-04
+	 * @author  2016-05-04
 	 */
 	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/queryEcsBatchOrderList", method = {RequestMethod.POST})
@@ -1634,7 +1632,7 @@ public class BatchOrderControllerLatestVer  extends BaseController {
 	 * @param qryParam
 	 * @param model
 	 * @return
-	 * @author ZhangYu 2016-05-04
+	 * @author  2016-05-04
 	 */
 	@RequestMapping(value = "/queryEcsBatchOrderDetail", method = {RequestMethod.POST})
 	public String queryEcsBatchOrderDetail(@RequestBody Map<String, Object> qryParam, Model model) {		
@@ -1648,7 +1646,7 @@ public class BatchOrderControllerLatestVer  extends BaseController {
 	 * @param qryParam
 	 * @param model
 	 * @return
-	 * @author ZhangYu 2016-05-04
+	 * @author  2016-05-04
 	 */
 	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/queryEcsBatchOrderDetailList", method = {RequestMethod.POST})
@@ -1685,7 +1683,7 @@ public class BatchOrderControllerLatestVer  extends BaseController {
 	 * @param qryParam
 	 * @param model
 	 * @return
-	 * @author ZhangYu 2016-05-04
+	 * @author  2016-05-04
 	 */
 	@RequestMapping(value = "/queryEcsRepository", method = {RequestMethod.POST})
 	public String queryEcsRepository(@RequestBody Map<String, Object> qryParam, Model model) {
@@ -1699,7 +1697,7 @@ public class BatchOrderControllerLatestVer  extends BaseController {
 	 * @param qryParam
 	 * @param model
 	 * @return
-	 * @author ZhangYu 2016-05-04
+	 * @author  2016-05-04
 	 */
 	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/queryEcsRepositoryList", method = {RequestMethod.POST})
@@ -1755,7 +1753,6 @@ public class BatchOrderControllerLatestVer  extends BaseController {
 			if (resultMap != null && ResultCode.R_SUCCESS.equals(resultMap.get("code").toString())) {
 				List<Map<String,Object>> resultList = (List<Map<String, Object>>) resultMap.get("resultList");
 				if(resultList != null && resultList.size() > 0){
-//					int totalResultNum = MapUtils.getIntValue(resultMap, "totalResultNum", 0);
 					String excelTitle = "ecs_" + param.get("batchId").toString();
 					String[][] headers = {
 						{"STORE_NAME","AREA_NAME","INST_CODE","STATUS_NAME","CREATE_DATE","UPDATE_DATE","LOG_DESC","REMARK"},

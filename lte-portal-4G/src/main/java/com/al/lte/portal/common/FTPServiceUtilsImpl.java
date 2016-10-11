@@ -40,7 +40,7 @@ public class FTPServiceUtilsImpl implements FTPServiceUtils {
 	 * @throws IOException 
 	 * @throws Exception 
 	 */
-	public Map<String, Object> fileUpload2FTP(InputStream fileInputStream, String uploadFileName, String batchType) throws IOException, Exception{
+	public Map<String, Object> fileUpload2FTP(InputStream fileInputStream, String uploadFileName, String batchType) throws IOException{
 		
 		Map<String, Object> uploadResult = new HashMap<String, Object>();
 
@@ -107,17 +107,17 @@ public class FTPServiceUtilsImpl implements FTPServiceUtils {
 	 * @throws IOException
 	 * @throws Exception 
 	 */
-	public Map<String, Object> fileUpload2FTP4Cluster(InputStream fileInputStream, String uploadFileName, String batchType, String provinceCode) throws Exception{
+	public Map<String, Object> fileUpload2FTP4Cluster(InputStream fileInputStream, String uploadFileName, String batchType, String provinceCode) throws IOException{
 		
 		Map<String, Object> uploadResult = new HashMap<String, Object>();
 		
 		//0.生成上传文件名
+		provinceCode = provinceCode.substring(0, 3) + "0000";
 		String suffix = uploadFileName.substring(uploadFileName.lastIndexOf("."));// 文件后缀名
-		String newUploadFileName = provinceCode.substring(0, 3) + "_" + batchType + "_" + UIDGenerator.getRand() + suffix;
+		String newUploadFileName = provinceCode + "_" + batchType + "_" + UIDGenerator.getRand() + suffix;
 
 		// 获取服务器配置信息
 		//1.根据省份编码provinceCode获取该省对应的服务器映射
-		provinceCode = provinceCode.substring(0, 3) + "0000";
 		String ftpMapping = propertiesUtils.getMessage("FTP_" + provinceCode);
 		if(ftpMapping == null){
 			//如果对应省份的FTP映射获取失败，则获取默认配置项
@@ -250,7 +250,7 @@ public class FTPServiceUtilsImpl implements FTPServiceUtils {
 	 * @throws IOException 
 	 * @throws Exception 
 	 */
-	private Map<String, Object> fileUploadMethod(Map<String, Object> uploadParam) throws IOException, Exception{
+	private Map<String, Object> fileUploadMethod(Map<String, Object> uploadParam) {
 		
 		Map<String, Object> uploadResult = new HashMap<String, Object>();
 
@@ -267,47 +267,38 @@ public class FTPServiceUtilsImpl implements FTPServiceUtils {
 		
 		FtpUtils ftpUtils = new FtpUtils();
 		
-		try{
-			//2.连接FTP服务器
-			Map<String, Object> ftpInfos = new HashMap<String, Object>();
-			//FTP服务器信息字符串，用于发生异常时返回FTP信息，以便定位
-			String ftpInfosStr = "[" + remoteAddress+"," + remotePort+"," + userName+"," + password+"," + ftpRemotePath+"]";
-			boolean ftpConnectFlag = ftpUtils.connectFTPServer(remoteAddress, remotePort, userName, password);
-			if(ftpConnectFlag){
-				//3.切换FTP服务器路径
-				boolean changePathFlag = ftpUtils.changeWorkingDirectory(ftpRemotePath);
-				if(changePathFlag){
-					//4.上传文件
-					boolean uploadFileFlag = ftpUtils.uploadFileToFtpServer(newUploadFileName, fileInputStream);
-					if(uploadFileFlag){
-						//5.如果文件上传成功，此时封装FTP服务器信息返回给后台，后台据此获取Excel文件
-						ftpInfos.put("ftpServiceIp", remoteAddress);
-						ftpInfos.put("servicePort", remotePort);
-						ftpInfos.put("filePath", ftpRemotePath);
-						ftpInfos.put("fileName", newUploadFileName);
-						ftpInfos.put("oldUploadFileName", oldUploadFileName);
-						ftpInfos.put("ftpConfigFlag", ftpConfigFlag);
-						uploadResult.put("ftpInfos", ftpInfos);
-						uploadResult.put("code", ResultCode.R_SUCCESS);
-					} else{
-						uploadResult.put("code", ResultCode.R_FAILURE);
-						uploadResult.put("mess", "文件上传失败：<br/>" + ftpInfosStr + ftpUtils.errMsgMap.get("uploadErrMsg"));
-					}
+		//2.连接FTP服务器
+		Map<String, Object> ftpInfos = new HashMap<String, Object>();
+		//FTP服务器信息字符串，用于发生异常时返回FTP信息，以便定位
+		String ftpInfosStr = "[" + remoteAddress + "," + remotePort + "," + userName + "," + ftpRemotePath + "]";
+		boolean ftpConnectFlag = ftpUtils.connectFTPServer(remoteAddress, remotePort, userName, password);
+		if(ftpConnectFlag){
+			//3.切换FTP服务器路径
+			boolean changePathFlag = ftpUtils.changeWorkingDirectory(ftpRemotePath);
+			if(changePathFlag){
+				//4.上传文件
+				boolean uploadFileFlag = ftpUtils.uploadFileToFtpServer(newUploadFileName, fileInputStream);
+				if(uploadFileFlag){
+					//5.如果文件上传成功，此时封装FTP服务器信息返回给后台，后台据此获取Excel文件
+					ftpInfos.put("ftpServiceIp", remoteAddress);
+					ftpInfos.put("servicePort", remotePort);
+					ftpInfos.put("filePath", ftpRemotePath);
+					ftpInfos.put("fileName", newUploadFileName);
+					ftpInfos.put("oldUploadFileName", oldUploadFileName);
+					ftpInfos.put("ftpConfigFlag", ftpConfigFlag);
+					uploadResult.put("ftpInfos", ftpInfos);
+					uploadResult.put("code", ResultCode.R_SUCCESS);
 				} else{
 					uploadResult.put("code", ResultCode.R_FAILURE);
-					uploadResult.put("mess", "FTP服务器路径切换失败：<br/>s" + ftpInfosStr + ftpUtils.errMsgMap.get("changeDirErrMsg"));
+					uploadResult.put("mess", "文件上传失败：<br/>" + ftpInfosStr + ftpUtils.errMsgMap.get("uploadErrMsg"));
 				}
 			} else{
 				uploadResult.put("code", ResultCode.R_FAILURE);
-				uploadResult.put("mess", "FTP服务器连接失败：<br/>" + ftpInfosStr + ftpUtils.errMsgMap.get("connectErrMsg"));
+				uploadResult.put("mess", "FTP服务器路径切换失败：<br/>s" + ftpInfosStr + ftpUtils.errMsgMap.get("changeDirErrMsg"));
 			}
-		} catch(IOException ie){
-			throw ie;
-		} catch(Exception e){
-			throw e;
-		} finally{
-			//6.不管是否上传成功，关闭服务器连接
-			ftpUtils.closeFTPServerConnect();
+		} else{
+			uploadResult.put("code", ResultCode.R_FAILURE);
+			uploadResult.put("mess", "FTP服务器连接失败：<br/>" + ftpInfosStr + ftpUtils.errMsgMap.get("connectErrMsg"));
 		}
 
 		return uploadResult;

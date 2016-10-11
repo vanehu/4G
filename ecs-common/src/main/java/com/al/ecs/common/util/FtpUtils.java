@@ -48,7 +48,7 @@ public class FtpUtils {
 		 * @param remotePath
 		 */
 		@SuppressWarnings("finally")
-		public boolean connectFTPServer(String remoteAddress, String remotePort, String userName, String password) throws IOException {
+		public boolean connectFTPServer(String remoteAddress, String remotePort, String userName, String password) {
 			boolean flag = false;
 			try {
 				ftpClient = new FTPClient();
@@ -77,7 +77,7 @@ public class FtpUtils {
 				ftpClient.enterLocalPassiveMode();
 				ftpClient.setFileTransferMode(FTP.STREAM_TRANSFER_MODE);
 				ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
-			} catch (IOException e) {
+			} catch (Exception e) {
 				errMsgMap.put("connectErrMsg",  ExceptionUtils.getFullStackTrace((Throwable) e));
 				flag = false;
 				LOG.error(" not login !!! flag = {}", flag);
@@ -94,7 +94,7 @@ public class FtpUtils {
 		 * @return
 		 */
 		@SuppressWarnings("finally")
-		public boolean changeWorkingDirectory(String remotePath) throws IOException {
+		public boolean changeWorkingDirectory(String remotePath) {
 			boolean flag = false;
 			try {
 				flag = ftpClient.changeWorkingDirectory(remotePath);
@@ -116,7 +116,7 @@ public class FtpUtils {
 		 * @throws Exception 
 		 */
 		@SuppressWarnings({ "finally", "static-access" })
-		public boolean uploadFileToFtpServer(String fileName, InputStream is) throws Exception {
+		public boolean uploadFileToFtpServer(String fileName, InputStream is) {
 //			InputStream is = null;
 			boolean flag = false;
 			try {
@@ -129,13 +129,13 @@ public class FtpUtils {
 				} else {
 //					LOG.debug("upload failed !!!");
 				}
+				this.closeFTPServerConnect();
 			} catch (Exception e) {
 				errMsgMap.put("uploadErrMsg", ExceptionUtils.getFullStackTrace((Throwable) e));
 				flag = false;
 				LOG.error("not upload !!!");
 				LOG.error("uploadFileFrom IOException : {}", e);
 			} finally {
-				this.closeFTPServerConnect();
 				return flag;
 			}
 		}
@@ -229,6 +229,7 @@ public class FtpUtils {
 			} catch (Exception e) {
 				LOG.error("not disconnect !!! ");
 				LOG.error("closeFTPServerConnect IOException : {}", e);
+				throw e;
 			} finally {
 				ftpClient = null;
 			}
