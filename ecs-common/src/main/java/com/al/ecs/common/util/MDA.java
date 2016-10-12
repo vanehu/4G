@@ -426,6 +426,11 @@ public class MDA {
 	public static final String UNIFY_LOGIN_URI = new String("");
 
 	/**
+	 * 双屏互动服务端请求地址端口
+	 */
+	public static final String PUSH_HOST_PORT = new String("");
+	
+	/**
 	 * 号码资源状态前置校验分省开关
 	 */
 	public static final Map<String,String> NUMBER_CHECK_FLAG  = new HashMap<String,String>();
