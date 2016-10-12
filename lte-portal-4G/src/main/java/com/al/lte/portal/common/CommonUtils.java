@@ -70,23 +70,6 @@ public class CommonUtils {
             response.setHeader("Content-Language", "GB18030");
             response.setHeader("encoding", "GB18030");
             response.getWriter().write(exp.getMessage());
-	}
-	
-	/**
-	 * 从MDA中获取开关
-	 * @param areaId 省份开头3位
-	 * @param key
-	 * @return
-	 */
-	public static String getSwithFromMDA(String areaId,String key){
-		Map<String,Map<String,Object>> mapValue = com.al.ecs.common.util.MDA.PROV_AUTH_SWITH;
-		if(null != mapValue){
-			Map<String,Object> result = mapValue.get(areaId);
-			if(null != result && result.containsKey(key)){
-				return result.get(key).toString();
-			}
-		}
-		return "";
         }
 	}
 	private static void GenerateFile(String str, String fileName, HttpServletResponse response)
@@ -104,6 +87,23 @@ public class CommonUtils {
 		} else {
 			throw new Exception("对不起，解析电子订单数据异常！");
 		}
+	}
+	
+	/**
+	 * 从MDA中获取开关
+	 * @param areaId 省份开头3位
+	 * @param key
+	 * @return
+	 */
+	public static String getSwithFromMDA(String areaId,String key){
+		Map<String,Map<String,Object>> mapValue = com.al.ecs.common.util.MDA.PROV_AUTH_SWITH;
+		if(null != mapValue){
+			Map<String,Object> result = mapValue.get(areaId);
+			if(null != result && result.containsKey(key)){
+				return result.get(key).toString();
+			}
+		}
+		return "";
 	}
 	
 	/**
@@ -131,5 +131,6 @@ public class CommonUtils {
 			e.printStackTrace();
 		}
 		return isGov;
-	}
+	} 
+	
 }
