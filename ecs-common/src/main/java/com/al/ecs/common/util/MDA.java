@@ -424,4 +424,9 @@ public class MDA {
 	 * 统一登录地址(一般生产使用)
 	 */
 	public static final String UNIFY_LOGIN_URI = new String("");
+	
+	/**
+	 * 安全办公业务是否启用开关
+	 */
+	public static final String SECURITY_OFFICE_FLAG = new String("");
 }
