@@ -195,7 +195,7 @@
         </table>
 </div>
 <!--弹出层 end-->
-<div class="easyDialogdiv" id="PWC" style="width:300px;height:340px;">
+<div class="easyDialogdiv" id="PWC" style="width:600px;height:340px;">
   <div class="easyDialogclose" id="PWC_div"></div>
 	<table class="contract_list">
             <thead>
@@ -204,9 +204,9 @@
                 </tr>                                                    
             </thead>
         </table>
-      <table width="100%" border="0" cellspacing="0" cellpadding="0" class="SMScode">
+      <!-- <table width="100%" border="0" cellspacing="0" cellpadding="0" class="SMScode">
           <tr>
-            <td><span style="font-size:15px;line-height:22px">&nbsp;&nbsp;&nbsp;&nbsp;您的密码为初始密码，为了您的帐号安全，必须修改才能登录。请您修改密码！</span></td>
+            <td><span style="font-size:15px;line-height:22px" id="tipMessage">&nbsp;&nbsp;&nbsp;&nbsp;您的密码为初始密码，为了您的帐号安全，必须修改才能登录。请您修改密码！</span></td>
           </tr>
            <form id="PWCForm" > 
             <tr>  
@@ -227,7 +227,32 @@
 			</td>
 			</tr>     
 		</form>
-	     </table>
+	     </table> -->
+	      <form id="PWCForm" > 
+	     <table class="network">
+						<tbody>
+							<tr>
+								<td align="right"><label class="f_red">*</label>新密码</td>
+								<td>
+									<input type="password" id="newPassword" placeholder="请输入新密码"  data-validate="validate(required:密码不能为空,minlength:口令长度至少8位(8),isNewRegex,isContinue) on(blur)" class="inputWidth228px" maxlength="20" />
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<label class="f_red">*</label>确认新密码
+								</td>
+								<td>
+									<input type="password" id="confirm_password" placeholder="请输入确认密码"  data-validate="validate(depEq:两次密码必须一致(newPassword)) on(blur)" class="inputWidth228px"/>
+								</td>
+							</tr>
+							<tr><td><img width="20" height="20" style="margin-left:30px;"src="${contextPath}/image/icon/tip.png"></td><td id="tipMessage">抱歉，为了您的帐号安全，必须修改才能登录。请您修改密码！</td></tr>
+							<tr>
+								<td align="right"></td>
+      							<td><a href="#"  class="btna_o" id="pwcbutton"><span>确认</span></a></td> 
+      						</tr>
+						</tbody>
+					</table>
+	     </form>
 	 <object id="locator" classid="CLSID:76A64158-CB41-11D1-8B02-00600806D9B6" VIEWASTEXT></object> 
      <object id="foo" classid="CLSID:75718C9A-F029-11d1-A1AC-00C04FB6C223"></object> 
      <input type="hidden" id="txtMac"/>

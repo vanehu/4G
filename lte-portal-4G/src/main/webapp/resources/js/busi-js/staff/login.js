@@ -98,11 +98,14 @@ staff.login = (function($) {
 			//短信发送异常
 			$.alert("提示",response.data,"error",staff.login.goback);
 		//密码为初始密码，必须修改才能登录
-		} else if(response.code == 14) {
-			  staffId = response.data.staffId;
-				easyDialog.open({
-					container : 'PWC'
-				});		
+		} else if(response.code == 14 || response.code == 11) {
+			staffId = response.data.staffId;
+			$("#tipMessage").text(response.data.tipMessage);
+			$("#newPassword").val("");
+			$("#confirm_password").val("");
+			easyDialog.open({
+				container : 'PWC'
+			});		
 		}else{
 			if(response.errorsList&& response.errorsList.length>0 ){
 				$.alert("提示",response.errorsList[0].message,"error",staff.login.goback);
@@ -228,19 +231,24 @@ staff.login = (function($) {
 	var _pwcFormIsValid = function(event, form) {
 		var newPassword = $.trim($("#newPassword").val());
 		var confirm_password = $.trim($("#confirm_password").val());
+		var staffCode = $.trim($("#staffCode").val());
 		var password = $.trim($("#password").val());
 		var staffProvCode = $("#store-selector-text").attr("area-id");
-		var pattern = /(^[a-zA-Z]+\d+)|(^\d+[a-zA-Z]+)/;
+		//var pattern = /(^[a-zA-Z]+\d+)|(^\d+[a-zA-Z]+)/;
 		if (newPassword==""){
 			$.alert("提示","密码不能为空，请重新输入！");
 			return;
 		}
-		if (newPassword.length!=6|!pattern.test(newPassword)) {
+		if(newPassword.indexOf(staffCode) >= 0){
+			$.alert("提示","口令不能包含用户名.");
+			return;
+		}
+		/*if (newPassword.length!=6|!pattern.test(newPassword)) {
 			$.alert("提示","您输入的密码不符合密码规范！请确认您的密码：     1.必须为6位；      2.不含有空格及特殊字符；     3.至少包含一位字母和数字。");
 			$("#newPassword").val("");
 			$("#confirm_password").val("");
 			return;
-		}
+		}*/
 		if (confirm_password=="") {
 			$.alert("提示","确认密码为空，请输入确认密码！");
 			return;

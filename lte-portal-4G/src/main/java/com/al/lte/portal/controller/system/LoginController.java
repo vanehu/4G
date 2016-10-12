@@ -639,7 +639,13 @@ public class LoginController extends BaseController {
 				successedData.put("randomCode", ServletUtils.getSessionAttribute(request, SysConstant.SESSION_KEY_LOGIN_RANDONCODE));
 				successedData.put("msgnumber", msgnumber);
 				return super.successed(successedData);
-			}  else if(SysConstant.R_PW_SIMLE.equals(resultCode)){
+			}  else if(SysConstant.R_PW_SIMLE.equals(resultCode)||SysConstant.R_PW_UPDATE.equals(resultCode)){
+				String tipMessage = "";
+				if(SysConstant.R_PW_UPDATE.equals(resultCode)){
+					tipMessage = "您已超过90天未修改密码，帐号已锁，请修改密码后解锁才能登录。";
+				}else{
+					tipMessage = "您的密码为初始密码，为了您的帐号安全，必须修改才能登录。请您修改密码！";
+				}
 				Map<String, Object> failData = new HashMap<String, Object>();
 				String imageCode = (String) ServletUtils.getSessionAttribute(request, SysConstant.SESSION_KEY_IMAGE_CODE);
 				// 用户登录失败次数
@@ -657,6 +663,7 @@ public class LoginController extends BaseController {
 				// 返回信息
 				failData.put("staffId", MapUtils.getString(map, "staffId", ""));
 				failData.put("message", MapUtils.getString(map, "resultMsg", "员工登录失败，未得到报错信息"));
+				failData.put("tipMessage",tipMessage);
 				JsonResponse jsonResponse = super.failed(failData, Integer.parseInt(resultCode));
 				return jsonResponse;
 				

@@ -148,6 +148,7 @@ public class MainController extends BaseController {
         model.addAttribute("hotMap", mapHotProd);
         model.addAttribute("DiffPlaceFlag", "local");
         model.addAttribute("writeCardNewDLL", CARD_NEW_DLL);
+        model.addAttribute("hintCode",sessionStaff.getHintCode());
         return "/main/main";
     }
     

@@ -109,6 +109,10 @@
 <#include "/validate-window.html"/>
 <input type="hidden" id="writeCardNewDLL" value="${writeCardNewDLL}"/>
 <script>
+	var hintCode = ${hintCode};
+	if(hintCode == "4"){
+		$.alert("提示","您超过60天未修改密码，请移步【密码修改】界面修改密码.");
+	}
     $(".allsort").addClass("showme");
     var obj=$("#p_cust_areaId_val").val();
     $(document).ready(function(e) {

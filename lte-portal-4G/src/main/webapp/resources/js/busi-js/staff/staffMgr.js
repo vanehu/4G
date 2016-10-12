@@ -56,13 +56,13 @@ staff.info = (function(){
 			var _oldPwd = $("#password").val();
 			_oldPwd = MD5(_oldPwd);		
 			var _newPwd =  $.trim($("#newPassword").val());
-			var pattern = /^(?=.*?[a-z])(?=.*?[A-Z])(?=.*?\d)(?=.*?[!$%#@*&.]).*$/;
+			/*var pattern = /^(?=.*?[a-z])(?=.*?[A-Z])(?=.*?\d)(?=.*?[!$%#@*&.]).*$/;
 			if (_newPwd.length<8|!pattern.test(_newPwd)) {
 				$.alert("提示","您输入的密码不符合密码规范！请确认您的密码：     1.必须不小于8位；      2.大写字母(A-Z)、小写字母(a-z)、数字(0-9)和特殊字符(!$%#@*&.)，每类字符至少包含一个。");
 				$("#newPassword").val("");
 				$("#confirm_password").val("");
 				return;
-			}
+			}*/
 			var smspwd = $("#smspwd").val();
 			var regex = /^[0-9]*$/;
 			if(smspwd.length<4 | !regex.test(smspwd)){

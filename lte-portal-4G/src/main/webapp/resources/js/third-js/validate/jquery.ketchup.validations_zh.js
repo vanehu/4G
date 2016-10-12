@@ -339,6 +339,59 @@ jQuery.ketchup
 		return false;
 	}
 	return true;
-});
+})
 
+.validation('isHasString', '口令不能包含用户名.', function(form, el,value,code) {
+	if (value.indexOf(code) >= 0) {
+		return false;
+	}
+	return true;
+})
+
+.validation('isNewRegex', '口令需包含字母大小写、数字、特殊符号(@#$)四种字符中至少3种', function(form, el,value) {
+	var reg = new RegExp('(?=.*[0-9])');
+	var a=0;
+	if(reg.test(value)){
+		a++;
+	}
+	var reg = new RegExp('(?=.*[a-z])');
+	if(reg.test(value)){
+		a++;
+	}
+	var reg = new RegExp('(?=.*[A-Z])');
+	if (reg.test(value)) {
+		a++;
+	}
+	var reg = new RegExp('(?=.*[@#$])');
+	if(reg.test(value)){
+		a++;
+	}
+	if (a < 3) {
+		return false;
+	}
+	return true;
+})
+
+.validation('isContinue', '不能出现超过三位的连续数字或者字母', function(form, el,value) {
+	
+	var flag = true;
+	for (var i=0;i<value.length-1;i++){ 
+		var iN0 = value.charCodeAt(i);
+		var iN1 = value.charCodeAt(i+1);
+		var iN2 = value.charCodeAt(i+2);
+		if ((iN0>=48 && iN0 <=57)&&(iN1>=48 && iN1 <=57)&&(iN2>=48 && iN2 <=57)){			//数字
+			if(((iN1 - iN0 == 1) && (iN2 - iN1 == 1)) || ((iN1 - iN0 == -1) && (iN2 - iN1 == -1)))
+				flag = false;
+		}else if((iN0>=65 && iN0 <=90)&&(iN1>=65 && iN1 <=90)&&(iN2>=65 && iN2 <=90)){ 		//大写字母
+			if(((iN1 - iN0 == 1) && (iN2 - iN1 == 1)) || ((iN1 - iN0 == -1) && (iN2 - iN1 == -1)))
+				flag = false;
+		}else if((iN0>=97 && iN0 <=122)&&(iN1>=97 && iN1 <=122)&&(iN2>=97 && iN2 <=122)){	//小写字母
+			if(((iN1 - iN0 == 1) && (iN2 - iN1 == 1)) || ((iN1 - iN0 == -1) && (iN2 - iN1 == -1)))
+				flag = false;
+		}else{
+			continue;
+		}
+	}
+	return flag ;
+});
 
