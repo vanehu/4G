@@ -322,8 +322,6 @@ order.cust = (function(){
 	//创建客户证件类型选择事件
 	var _identidiesTypeCdChoose = function(scope,id) {
 		$("#"+id).val("");
-		$("#cCustName").val("");
-		$("#cAddressStr").val("");
 		$("#"+id).attr("onkeyup", "value=value.replace(/[^A-Za-z0-9]/ig,'')");
 		var identidiesTypeCd=$(scope).val();
 		$("#"+id).attr("maxlength", "100");
@@ -453,9 +451,13 @@ order.cust = (function(){
 		//如果是身份证，则禁止输入，否则启用输入控件
 		var isID = identidiesTypeCd==1;
 		var isIdTypeOff = OrderInfo.staff.idType=="OFF";
-		$('#cCustIdCard').attr("disabled",isID&&(!isIdTypeOff));
-		$('#cCustName').attr("disabled",isID&&(!isIdTypeOff));
-		$('#cAddressStr').attr("disabled",isID&&(!isIdTypeOff));
+		if (id == "cCustIdCard") {
+			$("#cCustName").val("");
+			$("#cAddressStr").val("");
+			$('#cCustIdCard').attr("disabled",isID&&(!isIdTypeOff));
+			$('#cCustName').attr("disabled",isID&&(!isIdTypeOff));
+			$('#cAddressStr').attr("disabled",isID&&(!isIdTypeOff));
+		}
 	};
 	 var _custLookforButton = function() {
 	//客户定位查询按钮
