@@ -85,8 +85,7 @@ public class Config {
 	public static Properties getProperties() {	
 		Properties p = new Properties();
 		try {
-			InputStream in = Config.class.getResourceAsStream("/portal/loginConfig.properties");//服务器环境使用
-//			InputStream in = Config.class.getResourceAsStream("/loginConfig.properties");//localhost使用
+			InputStream in = Config.class.getResourceAsStream("/portal/loginConfig.properties");
 		    if(in !=null){
 				p.load(in);
 				in.close();
