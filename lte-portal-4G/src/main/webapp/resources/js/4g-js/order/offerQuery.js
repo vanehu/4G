@@ -109,10 +109,16 @@ query.offer = (function() {
 		var param = {
 			offerId : prod.prodOfferInstId,
 			offerSpecId : prod.prodOfferId,
-			acctNbr : prod.accNbr,
 			areaId : prod.areaId,
 			distributorId : ""
 		};
+		// 安全办公销售品构成查询兼容根据bizId查询
+		if ("bizId" == order.cust.custQueryParam.queryType) {
+			param.BIZID = prod.accNbr;
+			param.flag = "all";
+		} else {
+			param.acctNbr = prod.accNbr;
+		}
 		var data = query.offer.queryOfferInst(param); //查询销售品实例构成
 		if(data&&data.code == CONST.CODE.SUCC_CODE){
 			var flag = true;
@@ -714,6 +720,10 @@ query.offer = (function() {
 			instId : prod.prodInstId,
 			type : "2"
 		};
+		// 安全办公接入产品做拆机需要传入prodBigClass为17
+		if (prod.productId == CONST.SECURITY_OFFICE_PROD_ID) {
+			param.prodBigClass = 17;
+		}
 		if(ec.util.isArray(OrderInfo.offer.offerMemberInfos)){ //遍历主销售品构成
 			var flag = true;
 			$.each(OrderInfo.offer.offerMemberInfos,function(){

@@ -29,6 +29,8 @@ order.cust = (function(){
 		return custInfo;
 	};
 	var _orderBtnflag="";
+	// 安全办公开关
+	var _securityOfficeFlag = "";
 	var _form_valid_init = function() {
 		 //客户鉴权
 		$('#custAuthForm').bind('formIsValid', function(event, form) {
@@ -275,6 +277,9 @@ order.cust = (function(){
 			$("#"+id).attr("data-validate","validate(required:请准确填写证件号码) on(keyup)");
 			$("#"+id).attr("maxlength","20");
 			
+		}else if (identidiesTypeCd="bizId") {
+			$("#"+id).attr("placeHolder","请输入计费标识");
+			$("#"+id).attr("data-validate","validate(required:请准确填写计费标识) on(keyup)");
 		}else{
 			$("#"+id).attr("placeHolder","请输入证件号码");
 			$("#"+id).attr("data-validate","validate(required:请准确填写证件号码) on(keyup)");
@@ -469,7 +474,7 @@ order.cust = (function(){
 			acctNbr=identityNum;
 			identityNum="";
 			identityCd="";
-		}else if(identityCd=="acctCd"||identityCd=="custNumber"){
+		}else if(identityCd=="acctCd"||identityCd=="custNumber"||identityCd=="bizId"){
 			acctNbr="";
 			identityNum="";
 			identityCd="";
@@ -1105,6 +1110,14 @@ order.cust = (function(){
 			$.alert("提示","无法查询已订购产品");
 			return;
 		}
+		// 通过BIZID定位的客户，已订购查询需要增加入参调另一个接口
+		if ("bizId" == order.cust.custQueryParam.queryType) {
+			param.lanId = OrderInfo.getAreaId();
+			param.extCustId = "";
+			param.BIZID = order.cust.custQueryParam.queryTypeValue;
+			param.areaNbr = "";
+			param.flag = "all";
+		}
 		//请求地址
 		var url = contextPath+"/cust/orderprod";
 		$.callServiceAsHtmlGet(url,param,{
@@ -1147,6 +1160,10 @@ order.cust = (function(){
 				}
 				var content$=$("#orderedprod");
 				content$.html(response.data);
+				// 安全办公群组拆机菜单开关
+				if ("ON" != _securityOfficeFlag) {
+					$("#orderedprod a:contains('群组拆机')").hide();
+		        }
 				//_linkSelectPlan("#phoneNumListtbody tr",$("#phoneNumListtbody").children(":first-child"));
 				//绑定每行合约click事件
 				$("#phoneNumListtbody>tr:even").off("click").on("click",function(event){
@@ -1374,6 +1391,12 @@ order.cust = (function(){
 			$("#readCertBtn").hide();
 			$("#readCertBtnID").hide();
 		}
+		// 安全办公开关
+		var flagQueryRes = $.callServiceAsJson(contextPath + "/common/queryPortalProperties", {"propertiesKey": "SECURITY_OFFICE_FLAG"});	
+        _securityOfficeFlag = flagQueryRes.code == 0 ? flagQueryRes.data : "";
+        if ("ON" != _securityOfficeFlag) {
+        	$("#p_cust_identityCd option[value='bizId']").hide();
+        }
 	};
 	//使用带入的客户信息自动定位客户
 	var _checkAutoCustQry = function(){

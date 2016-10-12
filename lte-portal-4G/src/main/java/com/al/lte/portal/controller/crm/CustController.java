@@ -1053,6 +1053,12 @@ public class CustController extends BaseController {
         	pageSize="5";
         }
         paramMap.put("pageSize", pageSize);
+        // 通过BIZID定位的客户，已订购查询需要增加入参调另一个接口
+        paramMap.put("lanId", MapUtils.getString(param, "lanId", ""));
+        paramMap.put("extCustId", MapUtils.getString(param, "extCustId", ""));
+        paramMap.put("BIZID", MapUtils.getString(param, "BIZID", ""));
+        paramMap.put("areaNbr", MapUtils.getString(param, "areaNbr", ""));
+        paramMap.put("flag", MapUtils.getString(param, "flag", ""));
 		log.debug("param={}", JsonUtil.toString(paramMap));
 		try {
 			Map<String, Object> datamap = this.custBmo.queryCustProd(paramMap,

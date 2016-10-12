@@ -156,8 +156,13 @@ public class CustBmoImpl implements CustBmo {
 	@SuppressWarnings("unchecked")
 	public Map<String, Object> queryCustProd(Map<String, Object> dataBusMap,
 			String optFlowNum, SessionStaff sessionStaff)
-			throws Exception {		
-		DataBus db = InterfaceClient.callService(dataBusMap, PortalServiceCode.INTF_QUERY_PROD,
+			throws Exception {	
+		String serviceCode = PortalServiceCode.INTF_QUERY_PROD;
+		// 通过BIZID定位的客户，已订购查询调另一个接口
+		if (StringUtils.isNotBlank(MapUtils.getString(dataBusMap, "BIZID", ""))) {
+			serviceCode = PortalServiceCode.QUERY_BIZ_CUSTINFO_FROM_PROV;
+		}
+		DataBus db = InterfaceClient.callService(dataBusMap, serviceCode,
 				optFlowNum, sessionStaff);
 		List<Map<String, Object>> list = null;
 		List<Map<String, Object>> temlist = null;
@@ -174,13 +179,13 @@ public class CustBmoImpl implements CustBmo {
 			Map<String, Object> pageMap=(Map) getResultMap.get("page");
 			if(getResultMap.get("prodInstInfos")==null){
 				returnMap.put("code", ResultCode.R_FAIL);
-				//returnMap.put("msg", "后台服务:产品信息查询(queryProdAndOfferByConditions)返回报文:result-->prodInstInfos节点不存在,请与省份确认！");
+				//returnMap.put("msg", "后台服务:产品信息查询返回报文:result-->prodInstInfos节点不存在,请与省份确认！");
 				returnMap.put("msg", "客户下没有可以办理业务的移动用户");
 				return returnMap;
 			}
 			if(getResultMap.get("page")==null){
 				returnMap.put("code", ResultCode.R_FAIL);
-				returnMap.put("msg", "后台服务:产品信息查询(queryProdAndOfferByConditions)返回报文:result-->page节点不存在,请与省份确认！");
+				returnMap.put("msg", "后台服务:产品信息查询返回报文:result-->page节点不存在,请与省份确认！");
 				return returnMap;
 			}
 			List<Map<String, Object>> prodInstInfos=new ArrayList();
@@ -197,7 +202,7 @@ public class CustBmoImpl implements CustBmo {
 					datamaptemp.put("prodOfferInstId", temlist.get(0).get("prodOfferInstId"));
 				}else{
 						returnMap.put("code", ResultCode.R_FAIL);
-						returnMap.put("msg", "后台服务:产品信息查询(queryProdAndOfferByConditions)返回报文:result-->prodInstInfos-->mainProdOfferInstInfos无数据,请与省份确认！");
+						returnMap.put("msg", "后台服务:产品信息查询返回报文:result-->prodInstInfos-->mainProdOfferInstInfos无数据,请与省份确认！");
 						return returnMap;
 					//datamaptemp.put("prodOfferInstId", 0);
 				}

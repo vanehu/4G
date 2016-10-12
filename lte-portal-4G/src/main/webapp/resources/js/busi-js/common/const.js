@@ -132,6 +132,7 @@ CONST = (function(){
 		NEW_PROD : "1",//新装
 		UPDATE_ACCNBR : "2",//改号
 		REMOVE_PROD : "3",//拆机和预拆机
+		GROUP_PREMOVE_PROD: "4020100001", // 安全办公群组产品拆机
 		PREMOVE_PROD :"4020200000",//预拆机
 		SERV_OPEN : "7", //服务开通
 		PREMOVE_BACK_PROD :"4070100003",//预拆机复机
@@ -174,6 +175,7 @@ CONST = (function(){
 		"S1" : "订购",
 		"1" : "新装",
 		"3" : "拆机",
+		"4020100001": "安全办公群组产品拆机",
 		"4020300002" : "违章拆机",
 		"66" : "欠费拆机",
 		"4020400000":"未激活拆机",
@@ -448,6 +450,8 @@ CONST = (function(){
 	 * @private
 	 */
 	var _USER_PRE_INSTALLED = "preInstall";
+	// 安全办公套餐productid
+	var _SECURITY_OFFICE_PROD_ID = 13409900;
 	return {
 		//批量受理查询，是否执行改造后的新代码的开关标识，用于暂时记录是否执行新代码。Y执行改造后的新代码，N执行改造前的旧代码，默认为N。 By ZhangYu 2015-10-20
 		BATCHORDER_FLAG : _BATCHORDER_FLAG,
@@ -504,7 +508,8 @@ CONST = (function(){
 		MENU_CUSTFANDANG:_MENU_CUSTFANDANG,
 		MENU_RETURNFILE : _MENU_RETURNFILE,
 		YZFitemSpecId4 : _YZFitemSpecId4,
-		USER_PRE_INSTALLED:_USER_PRE_INSTALLED
+		USER_PRE_INSTALLED:_USER_PRE_INSTALLED,
+		SECURITY_OFFICE_PROD_ID: _SECURITY_OFFICE_PROD_ID
 	};
 })();
 

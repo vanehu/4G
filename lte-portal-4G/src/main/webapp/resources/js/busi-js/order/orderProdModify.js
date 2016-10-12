@@ -1570,6 +1570,34 @@ order.prodModify = (function(){
 		//SoOrder.builder();
 		
 	};
+	// 安全办公群组产品拆机
+	var _showGroupRemoveProd = function() {
+		// 只允许安全办公产品做拆机
+		if (_choosedProdInfo.productId != CONST.SECURITY_OFFICE_PROD_ID) {
+			$.alert("提示", "非安全办公套餐不能进行群组拆机");
+			return;
+		}
+		if(OrderInfo.authRecord.resultCode!="0"){
+			if (_querySecondBusinessAuth("31", "Y", "showGroupRemoveProd")) {
+				return;
+			}
+		}
+		//查分省前置校验开关
+        var propertiesKey = "PRECHECKFLAG_"+OrderInfo.staff.soAreaId.substring(0,3);
+        var isPCF = offerChange.queryPortalProperties(propertiesKey);
+        if(isPCF == "ON"){
+        	if(OrderInfo.preBefore.prcFlag != "Y"){
+        		if(!_preCheckBeforeOrder("31","showGroupRemoveProd")){
+            		return ;
+            	}
+        	}
+        }
+		OrderInfo.busitypeflag = 26;
+		if(!query.offer.setOffer()){
+			return;
+		}
+		_removeCommit(CONST.PROD_STATUS_CD.REMOVE_PROD, CONST.BO_ACTION_TYPE.GROUP_PREMOVE_PROD, 1);
+	};
 	
 	//只有订单信息的变更页面公共方法
 	var _commonPrepare = function(param) {
@@ -4542,6 +4570,7 @@ order.prodModify = (function(){
 		urgentOpen : _urgentOpen,
 		phoneOpen : _phoneOpen,
 		accountChange:_accountChange,
+		showGroupRemoveProd: _showGroupRemoveProd,
 		preCheckBeforeOrder : _preCheckBeforeOrder
 	};
 })();
