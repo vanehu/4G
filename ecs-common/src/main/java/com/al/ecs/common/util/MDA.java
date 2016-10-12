@@ -424,6 +424,11 @@ public class MDA {
 	 * 统一登录地址(一般生产使用)
 	 */
 	public static final String UNIFY_LOGIN_URI = new String("");
+
+	/**
+	 * 号码资源状态前置校验分省开关
+	 */
+	public static final Map<String,String> NUMBER_CHECK_FLAG  = new HashMap<String,String>();
 	
 	/**
 	 * 安全办公业务是否启用开关

@@ -1400,7 +1400,42 @@
 			'TOKORDERINFOFORCHECKFLAG_899':'OFF'<!-- 虚拟省 -->
 			}
 		</const>
-
+		<const type="Map" name="NUMBER_CHECK_FLAG" description="号码资源状态前置校验开关">
+			{
+			'NUMBER_CHECK_854':'OFF',<!-- 西藏 -->
+			'NUMBER_CHECK_863':'OFF',<!-- 青海 -->
+			'NUMBER_CHECK_815':'OFF',<!-- 内蒙古 -->
+			'NUMBER_CHECK_823':'OFF',<!-- 黑龙江 -->
+			'NUMBER_CHECK_845':'OFF',<!-- 广西 -->
+			'NUMBER_CHECK_850':'OFF',<!-- 重庆 -->
+			'NUMBER_CHECK_861':'OFF',<!-- 陕西 -->
+			'NUMBER_CHECK_842':'OFF',<!-- 湖北 -->
+			'NUMBER_CHECK_835':'OFF',<!-- 福建 -->
+			'NUMBER_CHECK_832':'OFF',<!-- 江苏 -->
+			'NUMBER_CHECK_846':'OFF',<!-- 海南 -->
+			'NUMBER_CHECK_864':'OFF',<!-- 宁夏 -->
+			'NUMBER_CHECK_814':'OFF',<!-- 山西 -->
+			'NUMBER_CHECK_853':'OFF',<!-- 云南 -->
+			'NUMBER_CHECK_836':'OFF',<!-- 江西 -->
+			'NUMBER_CHECK_837':'OFF',<!-- 山东 -->
+			'NUMBER_CHECK_811':'OFF',<!-- 北京 -->
+			'NUMBER_CHECK_843':'OFF',<!-- 湖南 -->
+			'NUMBER_CHECK_851':'OFF',<!-- 四川 -->
+			'NUMBER_CHECK_844':'OFF',<!-- 广东 -->
+			'NUMBER_CHECK_831':'OFF',<!-- 上海 -->
+			'NUMBER_CHECK_812':'OFF',<!-- 天津 -->
+			'NUMBER_CHECK_813':'OFF',<!-- 河北 -->
+			'NUMBER_CHECK_841':'OFF',<!-- 河南 -->
+			'NUMBER_CHECK_821':'OFF',<!-- 辽宁 -->
+			'NUMBER_CHECK_822':'OFF',<!-- 吉林 -->
+			'NUMBER_CHECK_834':'OFF',<!-- 安徽 -->
+			'NUMBER_CHECK_833':'OFF',<!-- 浙江 -->
+			'NUMBER_CHECK_852':'OFF',<!-- 贵州 -->
+			'NUMBER_CHECK_862':'OFF',<!-- 甘肃 -->
+			'NUMBER_CHECK_865':'OFF',<!-- 新疆 -->
+			'NUMBER_CHECK_899':'OFF'<!-- 虚拟省 -->
+			}
+		</const>
 		<const type="List" name="PSRCFLAGLIST" description="电子档案查询系统标识LIST">
 		[
 			{'name':'翼销售','value':'APP'},
