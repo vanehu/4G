@@ -68,7 +68,11 @@ staff.qrlogin = (function($) {
 	 * 跳转到单台扫码登录界面
 	 */
 	var _jumpLogin = function(areaId){
+		var param = staff.login.getAreaAndProvName(areaId);
+		var areaName = param.areaName;
+		var provinceName = param.provinceName;
 		var province = staff.login.getAreaName(areaId);
+		
 		$('#switchLogin').off("click").on("click",function(event){
 			var date = new Date();
 			var time = date.getFullYear()+""+(Number(date.getMonth())+1)+""+date.getDate()+""+date.getHours()+""+date.getMinutes()+""+date.getSeconds();
@@ -96,8 +100,8 @@ staff.qrlogin = (function($) {
 			    		}else if(version=="93" || version=="94"){
 			    			httpconfig = "https";
 			    		}
-			    		var url = httpconfig+"://"+provDomain+":"+version+"/provPortal/staff/login/page?areaId="+areaId+"&isQrFlag=Y&prov="+province;
-			    		//var url = "http://127.0.0.1:8086/ltePortal/staff/login/page?areaId="+areaId+"&isQrFlag=Y&prov="+province; 
+			    		var url = httpconfig+"://"+provDomain+":"+version+"/provPortal/staff/login/page?areaId="+areaId+"&isQrFlag=Y&prov="+province+"&areaName="+areaName+"&provinceName="+provinceName;
+			    		//var url = "http://127.0.0.1:8086/ltePortal/staff/login/page?areaId="+areaId+"&isQrFlag=Y&prov="+province+"&areaName="+areaName+"&provinceName="+provinceName; 
 			    		window.location = url;
 			    	}
 			    }
