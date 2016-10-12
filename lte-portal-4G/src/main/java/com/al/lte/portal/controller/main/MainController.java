@@ -38,6 +38,7 @@ import com.al.ecs.spring.annotation.session.AuthorityValid;
 import com.al.ecs.spring.controller.BaseController;
 import com.al.lte.portal.bmo.crm.OrderBmo;
 import com.al.lte.portal.bmo.portal.NoticeBmo;
+import com.al.lte.portal.common.CommonUtils;
 import com.al.lte.portal.common.EhcacheUtil;
 import com.al.lte.portal.common.SysConstant;
 import com.al.lte.portal.model.SessionStaff;
@@ -143,6 +144,8 @@ public class MainController extends BaseController {
 //			
 //		}
 //		model.addAttribute("total",total);
+        ServletUtils.setSessionAttribute(request, SysConstant.QRCODE_SWITH, CommonUtils.getSwithFromMDA(sessionStaff.getAreaId().substring(0,3), "QRCODE_LOGIN_SWITCH"));
+        ServletUtils.setSessionAttribute(request, SysConstant.BIND_STATUS, "N");
         String CARD_NEW_DLL = propertiesUtils.getMessage(SysConstant.CARD_NEW_DLL);
 		model.addAttribute("canOrder", EhcacheUtil.pathIsInSession(session,"order/prepare"));
         model.addAttribute("hotMap", mapHotProd);

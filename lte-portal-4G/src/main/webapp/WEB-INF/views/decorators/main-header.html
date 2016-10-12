@@ -1,4 +1,22 @@
 <script src="${contextPath}/js/busi-js/main/main.js?${jsversion}" type="text/javascript"></script>
+<style type="text/css">
+#bindClick span {
+	background-color: #d3d8d0;
+	-webkit-border-radius: 5px;
+	height: 26px;
+	margin-top: 1px;
+	font-size: 14px;
+	width: 54px;
+	line-height: 26px;
+	text-align: center;
+	display: inline-block
+}
+
+#bindClick:hover span
+{ 
+	background-color:#16C413;
+}
+</style>
 <div style="height=35px;" >
 	<div class='allsort'>
 
@@ -213,11 +231,17 @@
            		</span>
             </#if>
             <#if Session["_logoutUrl"] ??&&Session["_logoutUrl"]!="" >
-            <a href="#" onclick="sigleSignLogout('${Session['_logoutUrl']}')"><img src="${contextPath}/image/home/zhuxiao.png" /></a>
+            	<#if Session["QRCODE_SWITH"]?? && Session["QRCODE_SWITH"] == "ON">
+	            <a href="#" id="bindClick"><span>绑定</span></a>
+	            </#if>
+            	<a href="#" onclick="sigleSignLogout('${Session['_logoutUrl']}')"><img src="${contextPath}/image/home/zhuxiao.png" /></a>
             <#else>
 	            <#if Session["_session_pad_flag"]??&&Session["_session_pad_flag"]=="1">
 	            	<a href="javascript:window.lte.exitSystem();"><img src="${contextPath}/image/home/zhuxiao.png" /></a>
 	            <#else>
+	            	 <#if Session["QRCODE_SWITH"]?? && Session["QRCODE_SWITH"] == "ON">
+	            	 <a href="#" id="bindClick"><span>绑定</span></a>
+	            	 </#if>
 		             <a href="${contextPath}/staff/login/logout"><img src="${contextPath}/image/home/zhuxiao.png" /></a>
 	             </#if>
             </#if>
@@ -284,6 +308,23 @@
         </table>
     </div>
 <!--渠道选择弹窗结束-->
+<!--绑定二维码弹出框-->
+<div class="easyDialogdiv" style="width:300px; max-height: 380px;min-height: 200px" id="qrCodeDialog">
+	<div class="easyDialogclose" id="qrCodeclose"></div>
+	<div style="text-align:center;margin-top:20px;">
+		<!--
+		<div>
+			<span>频道名称：</span>
+			<span></span>
+		</div>
+		-->
+		<a id="qgcode" href="javascript:void(0);"></a>
+		<div>
+			<span>注：请使用翼销售客户端APP进行扫描</span>
+		</div>
+	</div>
+</div>
+
 </div>
 <!-- 置顶公告&弹窗公告&公告详情 -->
 <div class="news" style="float:right;width:100%;">

@@ -33,8 +33,8 @@ staff.login = (function($) {
 	var macAddress="";
 	var macFlag=false;
 	var isUnifyLogin = false; //是否统一登陆
-	var isQRLogin = false; //是否二维码扫描登录
-	var qrLoginParam = {};
+	//var isQRLogin = false; //是否二维码扫描登录
+	//var qrLoginParam = {};
 	var unifyLoginUrl = "http://"+window.location.hostname+":80/ltePortal/" ; //"http://crm.189.cn/ltePortal/"; //统一登陆地址
 	//工号密码校验成功回调函数
 	var callBack_success_login=function(response){
@@ -648,10 +648,10 @@ staff.login = (function($) {
 		isUnifyLogin = true;
 	};
 	
-	var _unifyQrLogin = function(data){
+	var _unifyQrLogin = function(){
 		$("#switchLogin").click();
-		isQRLogin = true;
-		qrLoginParam = data;
+		//isQRLogin = true;
+		//qrLoginParam = data;
 	};
 	
 	//返回登陆页面

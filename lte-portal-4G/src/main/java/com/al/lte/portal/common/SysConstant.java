@@ -687,6 +687,11 @@ public final class SysConstant {
     /**一卡双号黑名单管理证据文件url加密密码*/
 	public static final String BLACK_USER_URL_PWD = "32784wqreiyi$%^&*_";
 	
+	/** 二维码与双屏互动开关 **/
+	public static final String QRCODE_SWITH = "QRCODE_SWITH";
+	/** 绑定状态 **/
+	public static final String BIND_STATUS = "BIND_STATUS";
+	
 	/**明细报表*/
 	public static final String TERMINAL_STATISTIC_DETAIL = "terminalStatisticDetail";
 	/**汇总报表*/

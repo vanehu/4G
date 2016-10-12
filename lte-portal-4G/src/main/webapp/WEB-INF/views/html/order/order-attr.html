@@ -25,6 +25,11 @@
         </select>
         <label class="f_red">*</label>
         <a class="btn_h30" id="orderAttrReadCertBtn" onclick="javascript:order.cust.readCertWhenOrder()" style="margin-top: 0px; display: none;"><span>读 卡</span></a>
+        <#if Session["BIND_STATUS"]?? && Session["BIND_STATUS"] == "Y">
+        <a class="btn_h30" id="discernBtn_4" onclick="javascript:push.busi.reqDispatch(1,4)" ><span>识别</span></a>
+        <#else>
+        <a class="btn_h30" id="discernBtn_4" onclick="javascript:push.busi.reqDispatch(1,4)" style="display:none;"><span>识别</span></a>
+        </#if>
 	</li>
 	<li class="full" id="li_order_remark2">
 		<label>证件号码：</label> 

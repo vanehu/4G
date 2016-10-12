@@ -2377,17 +2377,7 @@ public class LoginController extends BaseController {
 	@RequestMapping(value = "/querySwithFromMDA", method ={ RequestMethod.POST, RequestMethod.GET})
     public @ResponseBody String querySwithFromMDA(@RequestParam Map<String, Object> param) {
 		
-		String areaId = param.get("areaId").toString();
-		String key = param.get("key").toString();
-		
-		Map<String,Map<String,Object>> mapValue = com.al.ecs.common.util.MDA.PROV_AUTH_SWITH;
-		if(null != mapValue){
-			Map<String,Object> result = mapValue.get(areaId);
-			if(null != result && result.containsKey(key)){
-				return result.get(key).toString();
-			}
-		}
-		return "";
+		return CommonUtils.getSwithFromMDA(param.get("areaId").toString(),param.get("key").toString());
     }
 	
 	/**
@@ -2420,7 +2410,12 @@ public class LoginController extends BaseController {
 				qrData = download_addr+qr_uuid;
 				request.getSession().setAttribute(SysConstant.SESSION_QRCODE_UUID,qr_uuid);
 	    	}else if("bind".equals(flag)){
-	    		qrData = "123456";
+	    		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+	    				SysConstant.SESSION_KEY_LOGIN_STAFF);
+	    		if(null == sessionStaff){
+	    			return super.failed("生成二维码失败,员工已退出", ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+	    		}
+	    		qrData = sessionStaff.getStaffId()+sessionStaff.getCurrentChannelId();
 	    	}
 			String RQCode = "data:image/png;base64,"+new QrCodeImageGen().encoderQRCodeToBase64(qrData,"png",6);
 			jsonResponse = super.successed(RQCode, ResultConstant.SUCCESS.getCode());	

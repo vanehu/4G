@@ -244,9 +244,22 @@ AttachOffer = (function() {
 //							terminalMinNum=minNum;
 //						}
 						for(var k=1;k<=minNum;k++){
-							var $liTerminal=$('<li style="width:700px" name="terminalCodeCheckValidLi"><form name="terminalCodeCheckValidForm"><label>终端校验：</label><input id="terminalText_'+objInstId+'_'+k+'" type="text" class="inputWidth228px inputMargin0" data-validate="validate(terminalCodeCheck) on(keyup blur)" maxlength="50" placeholder="请先输入终端串号" />'
+							/*var $liTerminal=$('<li style="width:700px" name="terminalCodeCheckValidLi"><form name="terminalCodeCheckValidForm"><label>终端校验：</label><input id="terminalText_'+objInstId+'_'+k+'" type="text" class="inputWidth228px inputMargin0" data-validate="validate(terminalCodeCheck) on(keyup blur)" maxlength="50" placeholder="请先输入终端串号" />'
 									+'<input type="checkbox" id="if_p_reserveCode"><label>使用预约码：</label><input type="text" class="inputWidth228px inputMargin0" id="reserveCode" value="" disabled="disabled" maxlength="20" placeholder="请输入预约码" style="width:160px;background-color: #E8E8E8;" />'
-									+'<input id="terminalBtn_'+objInstId+'_'+k+'"name= "terminalCodeCheckValidBtn" type="button" num="'+k+'" flag="'+isFastOffer+'" prodId="'+prodId+'" offerSpecId="'+newSpec.offerSpecId+'" onclick="" value="校验" class="purchase" style="float:left"></input></form></li>');
+									+'<input id="terminalBtn_'+objInstId+'_'+k+'"name= "terminalCodeCheckValidBtn" type="button" num="'+k+'" flag="'+isFastOffer+'" prodId="'+prodId+'" offerSpecId="'+newSpec.offerSpecId+'" onclick="" value="校验" class="purchase" style="float:left"></input></form></li>');*/
+							
+							var $terminal1 = '<li style="width:700px" name="terminalCodeCheckValidLi"><form name="terminalCodeCheckValidForm"><label>终端校验：</label><input id="terminalText_'+objInstId+'_'+k+'" type="text" class="inputWidth228px inputMargin0" data-validate="validate(terminalCodeCheck) on(keyup blur)" maxlength="50" placeholder="请先输入终端串号" />'
+							+'<input type="checkbox" id="if_p_reserveCode"><label>使用预约码：</label><input type="text" class="inputWidth228px inputMargin0" id="reserveCode" value="" disabled="disabled" maxlength="20" placeholder="请输入预约码" style="width:160px;background-color: #E8E8E8;" />'
+							+'<input id="terminalBtn_'+objInstId+'_'+k+'"name= "terminalCodeCheckValidBtn" type="button" num="'+k+'" flag="'+isFastOffer+'" prodId="'+prodId+'" offerSpecId="'+newSpec.offerSpecId+'" onclick="" value="校验" class="purchase" style="float:left"></input>';
+							
+							var $discernBtn_32 = '';
+							if(typeof(parent.bindStatus) != "undefined" && parent.bindStatus){
+								$discernBtn_32 = '<input id="discernBtn_32" type="button" onclick="javascript:push.busi.reqDispatch(3,2,\''+objInstId+'_'+k+'\');" value="识别" class="purchase" type="button" style="float:left"></input>';
+							}else{
+								$discernBtn_32 = '<input id="discernBtn_32" type="button" onclick="javascript:push.busi.reqDispatch(3,2,\''+objInstId+'_'+k+'\');" value="识别" class="purchase" type="button" style="float:left;display:none;"></input>';
+							}
+							var $terminal2 ='</form></li>';
+							var $liTerminal =$($terminal1+$discernBtn_32+$terminal2);
 							var	$li4 = $('<li id="terminalDesc_'+k+'" style="white-space:nowrap;"><label></label><label id="terminalName_'+k+'"></label></li>');
 							
 							$ulGroups.append($liTerminal).append($li4);
@@ -2640,9 +2653,23 @@ AttachOffer = (function() {
 //							terminalMinNum=minNum;
 //						}
 						for(var k=1;k<=minNum;k++){
-							var $liTerminal=$('<li style="width:700px" name="terminalCodeCheckValidLi"><form name="terminalCodeCheckValidForm"><label>终端校验：</label><input id="terminalText_'+objInstId+'_'+k+'" type="text" class="inputWidth228px inputMargin0" data-validate="validate(terminalCodeCheck) on(keyup blur)" maxlength="50" placeholder="请先输入终端串号" />'
+							/*var $liTerminal=$('<li style="width:700px" name="terminalCodeCheckValidLi"><form name="terminalCodeCheckValidForm"><label>终端校验：</label><input id="terminalText_'+objInstId+'_'+k+'" type="text" class="inputWidth228px inputMargin0" data-validate="validate(terminalCodeCheck) on(keyup blur)" maxlength="50" placeholder="请先输入终端串号" />'
 									+'<input type="checkbox" id="if_p_reserveCode"><label>使用预约码：</label><input type="text" class="inputWidth228px inputMargin0" id="reserveCode" value="" disabled="disabled" maxlength="20" placeholder="请输入预约码" style="width:160px;background-color: #E8E8E8;" />'
-									+'<input id="terminalBtn_'+objInstId+'_'+k+'"name= "terminalCodeCheckValidBtn" type="button" num="'+k+'" flag="'+isFastOffer+'" prodId="'+prodId+'" offerSpecId="'+newSpec.offerSpecId+'" onclick="" value="校验" class="purchase" style="float:left"></input></form></li>');
+									+'<input id="terminalBtn_'+objInstId+'_'+k+'"name= "terminalCodeCheckValidBtn" type="button" num="'+k+'" flag="'+isFastOffer+'" prodId="'+prodId+'" offerSpecId="'+newSpec.offerSpecId+'" onclick="" value="校验" class="purchase" style="float:left"></input></form></li>');*/
+							
+							var $terminal1 = '<li class="full" name="terminalCodeCheckValidLi"><form name="terminalCodeCheckValidForm"><label>终端校验：</label><input id="terminalText_'+objInstId+'_'+k+'" type="text" class="inputWidth228px inputMargin0" data-validate="validate(terminalCodeCheck) on(keyup blur)" maxlength="50" placeholder="请先输入终端串号" />'
+							+'<input type="checkbox" id="if_p_reserveCode"><label>使用预约码：</label><input type="text" class="inputWidth228px inputMargin0" id="reserveCode" value="" disabled="disabled" maxlength="20" placeholder="请输入预约码" style="width:160px;background-color: #E8E8E8;" />'
+							+'<input id="terminalBtn_'+objInstId+'_'+k+'"name= "terminalCodeCheckValidBtn" type="button" num="'+k+'" flag="'+isFastOffer+'" prodId="'+prodId+'" offerSpecId="'+newSpec.offerSpecId+'" onclick="" value="校验" class="purchase" style="float:left"></input>';
+							
+							var $discernBtn_32 = '';
+							if(typeof(parent.bindStatus) != "undefined" && parent.bindStatus){
+								$discernBtn_32 = '<input id="discernBtn_32" type="button" onclick="javascript:push.busi.reqDispatch(3,2,\''+objInstId+'_'+k+'\');" value="识别" class="purchase" type="button" style="float:left"></input>';
+							}else{
+								$discernBtn_32 = '<input id="discernBtn_32" type="button" onclick="javascript:push.busi.reqDispatch(3,2,\''+objInstId+'_'+k+'\');" value="识别" class="purchase" type="button" style="float:left;display:none;"></input>';
+							}
+							var $terminal2 ='</form></li>';
+							var $liTerminal =$($terminal1+$discernBtn_32+$terminal2);
+							
 							var	$li4 = $('<li id="terminalDesc_'+k+'" style="white-space:nowrap;"><label></label><label id="terminalName_'+k+'"></label></li>');
 							
 							$ulGroups.append($liTerminal).append($li4);

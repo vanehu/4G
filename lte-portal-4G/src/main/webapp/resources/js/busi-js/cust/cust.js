@@ -333,6 +333,10 @@ order.cust = (function(){
 			// 新建客户身份证读卡，隐藏表单
 			if (id == "cCustIdCard") {
 				$("#readCertBtnCreate").show();
+				// 获取pushBusi.js里绑定状态
+				if(typeof(parent.bindStatus) != "undefined" && parent.bindStatus){
+					$("#discernBtn_2").show();
+				}
 				$("#btn_readCert").show(); // 预受理
 				$("#td_custName").data("custName", $("#td_custName").html());
 				$("#td_custName").html("");
@@ -349,6 +353,9 @@ order.cust = (function(){
 			// 填单页面经办人读卡
 			if (id == "orderAttrIdCard") {
 				$("#orderAttrReadCertBtn").show();
+				if(typeof(parent.bindStatus) != "undefined" && parent.bindStatus){
+					$("#discernBtn_4").show();
+				}
 				$("#orderAttrName").hide();
 				$("#orderAttrIdCard").hide();
 				$("#orderAttrAddr").hide();
@@ -359,6 +366,9 @@ order.cust = (function(){
 			// 新建客户经办人读卡
 			if (id == "custCAttrIdCard") {
 				$("#custCAttrReadCertBtn").show();
+				if(typeof(parent.bindStatus) != "undefined" && parent.bindStatus){
+					$("#discernBtn_3").show();
+				}
 				// 元素id由后台传来，这边读卡隐藏输入框，只能先写死
 				$("#" + CONST.BUSI_ORDER_ATTR.orderAttrName).hide();
 				$("#" + CONST.BUSI_ORDER_ATTR.orderAttrIdCard).hide();
@@ -372,8 +382,10 @@ order.cust = (function(){
 			if (id == "cCustIdCard") {
 				$("#btn_readCert").hide(); // 预受理
 				var $readCertBtn = $("#readCertBtnCreate");
+				var $discernBtn = $("#discernBtn_2");
 				if ("none" != $readCertBtn.css("display")) {
 					$readCertBtn.hide();
+					$discernBtn.hide();
 					$("#td_custName").html($("#td_custName").data("custName"));
 					$("#td_custIdCard").html($("#td_custIdCard").data("custIdCard"));
 					$("#td_addressStr").html($("#td_addressStr").data("addressStr"));
@@ -387,6 +399,7 @@ order.cust = (function(){
 			// 填单页面经办人非身份证
 			if (id == "orderAttrIdCard") {
 				$("#orderAttrReadCertBtn").hide();
+				$("#discernBtn_4").hide();
 				$("#orderAttrName").show();
 				$("#orderAttrName").val("");
 				$("#orderAttrIdCard").show();
@@ -404,6 +417,7 @@ order.cust = (function(){
 			// 新建客户经办人非身份证
 			if (id == "custCAttrIdCard") {
 				$("#custCAttrReadCertBtn").hide();
+				$("#discernBtn_3").hide();
 				$("#" + CONST.BUSI_ORDER_ATTR.orderAttrName).show();
 				$("#" + CONST.BUSI_ORDER_ATTR.orderAttrName).val("");
 				$("#" + CONST.BUSI_ORDER_ATTR.orderAttrIdCard).show();
@@ -947,9 +961,13 @@ order.cust = (function(){
 				$("#auth3").find("#idCardType2").text(_choosedCustInfo.identityName);
 				if (_choosedCustInfo.identityCd == "1") {
 					$("#auth3").find("#readCertBtnID2").show();
+					if(typeof(parent.bindStatus) != "undefined" && parent.bindStatus){
+						$("#auth3").find("#discernBtn_5").show();
+					}
 					$("#auth3").find("#idCardNumber2").attr("disabled", "disabled");
 				} else {
 					$("#auth3").find("#readCertBtnID2").hide();
+					$("#auth3").find("#discernBtn_5").hide();
 					$("#auth3").find("#idCardNumber2").removeAttr("disabled");
 				}
 				var canRealName = $(scope).attr('canrealname');
@@ -1942,21 +1960,27 @@ order.cust = (function(){
 			$.alert("提示", man.errorMsg);
 			return;
 		}
+		
+		_setValueForNewCust(man.resultContent);
+	};
+	
+	var _setValueForNewCust = function(data){
 		$('#partyTypeCd').val(1);//个人
 		_partyTypeCdChoose($("#partyTypeCd option:selected"),"identidiesTypeCd");
 		$('#identidiesTypeCd').val(1);//身份证类型
 		_identidiesTypeCdChoose($("#identidiesTypeCd option:selected"),"cCustIdCard");
 		$('#td_custIdCard').data("flag", "1");
-		$('#td_custName').text(man.resultContent.partyName);//姓名
-		$('#td_custIdCard').text(man.resultContent.certNumber);//设置身份证号
-		if (undefined != man.resultContent.identityPic) {
-			$("#img_custPhoto").attr("src", "data:image/jpeg;base64," + man.resultContent.identityPic);
-			$("#img_custPhoto").data("identityPic", man.resultContent.identityPic);
+		$('#td_custName').text(data.partyName);//姓名
+		$('#td_custIdCard').text(data.certNumber);//设置身份证号
+		if (undefined != data.identityPic) {
+			$("#img_custPhoto").attr("src", "data:image/jpeg;base64," + data.identityPic);
+			$("#img_custPhoto").data("identityPic", data.identityPic);
 			$("#tr_custPhoto").show();
 		}
-		$('#td_addressStr').text(man.resultContent.certAddress);//地址
-		_submitCertInfo(man.resultContent);
+		$('#td_addressStr').text(data.certAddress);//地址
+		_submitCertInfo(data);
 	};
+	
 	//用户鉴权时读卡
 	var _readCertWhenAuth = function() {
 		var man = cert.readCert();
@@ -1994,14 +2018,19 @@ order.cust = (function(){
 			$.alert("提示", man.errorMsg);
 			return;
 		}
+		
+		_setValueForAgentOrderSpan(man.resultContent);
+	};
+	
+	var _setValueForAgentOrderSpan = function(data){
 		// 设置隐藏域的表单数据
-		$('#orderAttrName').val(man.resultContent.partyName);//姓名
-		$('#orderAttrIdCard').val(man.resultContent.certNumber);//设置身份证号
-		$('#orderAttrAddr').val(man.resultContent.certAddress);//地址
+		$('#orderAttrName').val(data.partyName);//姓名
+		$('#orderAttrIdCard').val(data.certNumber);//设置身份证号
+		$('#orderAttrAddr').val(data.certAddress);//地址
 		// 设置文本显示
-		$("#li_order_attr span").text(man.resultContent.partyName);
-		$("#li_order_remark2 span").text(man.resultContent.certNumber);
-		$("#li_order_remark3 span").text(man.resultContent.certAddress);
+		$("#li_order_attr span").text(data.partyName);
+		$("#li_order_remark2 span").text(data.certNumber);
+		$("#li_order_remark3 span").text(data.certAddress);
 	};
 
 	// 新建客户经办人读卡
@@ -2011,15 +2040,22 @@ order.cust = (function(){
 			$.alert("提示", man.errorMsg);
 			return;
 		}
-		// 设置隐藏域的表单数据
-		$('#' + CONST.BUSI_ORDER_ATTR.orderAttrName).val(man.resultContent.partyName);//姓名
-		$('#' + CONST.BUSI_ORDER_ATTR.orderAttrIdCard).val(man.resultContent.certNumber);//设置身份证号
-		$('#' + CONST.BUSI_ORDER_ATTR.orderAttrAddr).val(man.resultContent.certAddress);//地址
-		// 设置文本显示
-		$("span[name='" + CONST.BUSI_ORDER_ATTR.orderAttrName + "']").text(man.resultContent.partyName);
-		$("span[name='" + CONST.BUSI_ORDER_ATTR.orderAttrIdCard + "']").text(man.resultContent.certNumber);
-		$("span[name='" + CONST.BUSI_ORDER_ATTR.orderAttrAddr + "']").text(man.resultContent.certAddress);
+		_setValueForAgentSpan(man.resultContent);
 	};
+	
+	// 设置经办人隐藏、展示域
+	var _setValueForAgentSpan = function(data){
+		
+		// 设置隐藏域的表单数据
+		$('#' + CONST.BUSI_ORDER_ATTR.orderAttrName).val(data.partyName);//姓名
+		$('#' + CONST.BUSI_ORDER_ATTR.orderAttrIdCard).val(data.certNumber);//设置身份证号
+		$('#' + CONST.BUSI_ORDER_ATTR.orderAttrAddr).val(data.certAddress);//地址
+		// 设置文本显示
+		$("span[name='" + CONST.BUSI_ORDER_ATTR.orderAttrName + "']").text(data.partyName);
+		$("span[name='" + CONST.BUSI_ORDER_ATTR.orderAttrIdCard + "']").text(data.certNumber);
+		$("span[name='" + CONST.BUSI_ORDER_ATTR.orderAttrAddr + "']").text(data.certAddress);
+	};
+	
 	//绑定客户选择查询事件，使用人
 	var _bindCustQueryForChoose = function(){
 		$('#custQueryForChooseForm').off().bind('formIsValid', function(event, form) {
@@ -2768,6 +2804,7 @@ order.cust = (function(){
 		back :_back,
 		readCert : _readCert,
 		readCertWhenCreate : _readCertWhenCreate,
+		setValueForNewCust:_setValueForNewCust,
 		readCertWhenAuth : _readCertWhenAuth,
 		readCertWhenAuth2 : _readCertWhenAuth2,
 		fromProvFlag : _fromProvFlag,
@@ -2781,7 +2818,9 @@ order.cust = (function(){
 		realCheck:_realCheck,
 		iotCustidentidiesTypeCdChoose:_iotCustidentidiesTypeCdChoose,
 		readCertWhenOrder:_readCertWhenOrder,
+		setValueForAgentOrderSpan:_setValueForAgentOrderSpan,
 		readCertWhenCustCAttr:_readCertWhenCustCAttr,
+		setValueForAgentSpan:_setValueForAgentSpan,
 		isCovCust: _isCovCust,
 		changeTab:_changeTab,
 		saveAuthRecord:_saveAuthRecord,

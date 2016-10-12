@@ -71,7 +71,12 @@
 		    <a class="btn_h30" id="readCertBtn" onclick="javascript:order.cust.readCert()"><span>读 卡</span></a>
 		    <#if DiffPlaceFlag=="local">
 		    <a class="btn_h30" id="createUserbtn" onclick="javascript:order.cust.showCustCreate(this)"><span>新建客户</span></a>
-		     </#if>
+		    </#if>
+		    <#if Session["BIND_STATUS"]?? && Session["BIND_STATUS"] == "Y">
+		    <a class="btn_h30" id="discernBtn_1" onclick="javascript:push.busi.reqDispatch(1,1)"><span>识别</span></a>
+		    <#else>
+		    <a class="btn_h30" id="discernBtn_1" onclick="javascript:push.busi.reqDispatch(1,1)" style="display:none;"><span>识别</span></a>
+		    </#if>
 		    </#if>
 		</li>
 		</ul>
@@ -218,6 +223,11 @@
                             <a class="purchase" id="custAuthbtn2"  onclick="order.cust.identityTypeAuth('1','2')" href="javascript:void(0)">校验</a>
                             <a class="purchase" id="readCertBtnID2" onclick="order.cust.readCertWhenAuth2('1','2')"
                                style="display: none">读卡</a>
+                            <#if Session["BIND_STATUS"]?? && Session["BIND_STATUS"] == "Y">
+                            <a class="purchase" id="discernBtn_5" onclick="javascript:push.busi.reqDispatch(1,5)">识别</a>
+                            <#else>
+                            <a class="purchase" id="discernBtn_5" onclick="javascript:push.busi.reqDispatch(1,5)" style="display:none;">识别</a>
+                            </#if>
                         </td>
                     </tr>
                     </tbody>
@@ -414,6 +424,11 @@
                                 	<select id="identidiesTypeCd" onchange="order.cust.identidiesTypeCdChoose(this,'cCustIdCard')"></select>
                                     <label class="f_red">*</label>
                                     <a class="btn_h30" id="readCertBtnCreate" onclick="javascript:order.cust.readCertWhenCreate()" style="margin-top:0px;display:none"><span>读 卡</span></a>
+                                    <#if Session["BIND_STATUS"]?? && Session["BIND_STATUS"] == "Y">
+                                    <a class="btn_h30" id="discernBtn_2" onclick="javascript:push.busi.reqDispatch(1,2)" ><span>识别</span></a>
+                                    <#else>
+                                    <a class="btn_h30" id="discernBtn_2" onclick="javascript:push.busi.reqDispatch(1,2)" style="display:none;"><span>识别</span></a>
+                                    </#if>
                                     </div>
                                 </td>
                           </tr>

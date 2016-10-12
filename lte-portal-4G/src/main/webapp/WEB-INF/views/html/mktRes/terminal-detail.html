@@ -130,6 +130,11 @@
 						</dd>
 						<dd>
 							<a id="chkTsnA" class="purchase kh_btn" style="margin: 3px 0 0 5px;">校验</a>
+							<#if Session["BIND_STATUS"]?? && Session["BIND_STATUS"] == "Y">
+							<a id="discernBtn_31"class="purchase kh_btn" style="margin: 3px 0 0 5px;" onclick="javascript:push.busi.reqDispatch(3,1)" >识别</a>
+							<#else>
+							<a id="discernBtn_31"class="purchase kh_btn" style="margin: 3px 0 0 5px;" onclick="javascript:push.busi.reqDispatch(3,1)" style="display:none;">识别</a>
+							</#if>
 						</dd>
 					</dl>
 				    </form>

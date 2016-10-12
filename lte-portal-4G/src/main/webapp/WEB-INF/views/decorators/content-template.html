@@ -95,4 +95,7 @@
 			</div>
 			<!--登录弹出框结束-->
 	</body>
+	<#if Session["QRCODE_SWITH"]?? && Session["QRCODE_SWITH"] == "ON">
+		<script src="${contextPath}/js/busi-js/push/pushBusi.js?${jsversion}"></script>
+	</#if>
 </html>

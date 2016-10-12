@@ -29,22 +29,33 @@ staff.login = (function($) {
 	var login_flg=false; //是否出于登录状态
 	
 	//登录表单验证通过事件
-	var _loginFormIsValid = function(event, form) {		
+	var _loginFormIsValid = function(event, form) {
 		var fid = $("#store-selector-text").attr("area-id");
+		var param = _getAreaAndProvName(fid);
+		var province = _getAreaName(fid); //省份拼音
+		_getVersion(province,param.areaName,param.provinceName,fid);
+	};
+	
+	var _getAreaAndProvName = function(fid){
+		var param = {};
+		
 		var reg = /^[0-9]+$/;
 		if(!reg.test(fid)){
 			$.alert("提示","请先选择省份。");
 			_setEnable("#button", "#loginForm");
 			return;
 		}
+		
 		var areaName = "";
 		if( fid== "8110000" || fid == "8310000" || fid == "8120000" || fid == "8500000") {//直辖市地区为空			
 		}else{
 			areaName = $("#stock_city_item ul li a[data-value="+fid+"]").text();
 		}
 		var provinceName = $("#stock_province_item ul li a[data-value^="+fid.substring(0, 3)+"]").text();
-		var province = _getAreaName(fid); //省份拼音
-		_getVersion(province,areaName,provinceName,fid);
+		param.areaName = areaName;
+		param.provinceName = provinceName;
+		
+		return param;
 	};
 	
 	//获取版本
@@ -256,7 +267,8 @@ staff.login = (function($) {
 	return {
 		form_valid_init : _form_valid_init,
 		getPasswordUrl	: _getPasswordUrl,
-		getAreaName		: _getAreaName
+		getAreaName		: _getAreaName,
+		getAreaAndProvName:_getAreaAndProvName
 	};
 })(jQuery);
 

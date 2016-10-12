@@ -74,6 +74,7 @@ prod.changeUim = (function() {
 				$("#order_prepare").hide();
 //				alert($("#DiffPlaceFlag").val());
 				if($("#DiffPlaceFlag").val() == 'diff'){
+					$("#discernBtn_uim").hide();
 					$("#uim_txt_" + prodInfo.prodInstId).css("display","none");
 					$("#uim_check_btn_" + prodInfo.prodInstId).css("display","none");
 					$("#uim_release_btn_" + prodInfo.prodInstId).css("display","none");

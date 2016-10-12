@@ -690,6 +690,39 @@ public class CustController extends BaseController {
 		}
 		return jsonResponse;
     }
+	
+	/**
+	 * 双屏互动-二次鉴权身份证扫码,增加session标识,以供校验
+	 * 
+	 * @param param
+	 * @param model
+	 * @param httpSession
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/addSessionFlag", method = RequestMethod.POST)
+	public void addSessionFlag(@RequestBody Map<String, Object> param, Model model,HttpSession httpSession){
+		try{
+			String flag = MapUtils.getString(param, "flag","");
+			if("cust".equals(flag)){
+				String certNumber = MapUtils.getString(param, "certNumber","");
+				String sessionCertNumber = (String) ServletUtils.getSessionAttribute(getRequest(), Const.CACHE_CERTINFO);
+				if(null == sessionCertNumber && !"".equals(certNumber)){
+					ServletUtils.setSessionAttribute(getRequest(), Const.CACHE_CERTINFO,certNumber);
+				}
+			}else if("status".equals(flag)){
+				String status = MapUtils.getString(param, "Status","");
+				if("Y".equals(status)){
+					ServletUtils.setSessionAttribute(getRequest(), SysConstant.BIND_STATUS,status);
+				}else{
+					ServletUtils.setSessionAttribute(getRequest(), SysConstant.BIND_STATUS,status);
+				}
+			}
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+	
 	@RequestMapping(value = "/custAuth", method = { RequestMethod.POST })
 	public String custAuth(@RequestBody Map<String, Object> param, Model model,@LogOperatorAnn String flowNum, HttpServletResponse response,HttpSession httpSession) throws BusinessException {
 		SessionStaff sessionStaff = (SessionStaff) ServletUtils

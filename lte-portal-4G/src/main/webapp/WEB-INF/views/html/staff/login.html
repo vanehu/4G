@@ -10,6 +10,17 @@
 <META name="description" content="电信集团">
 <#include "/common-css-tpl.html"/>
 <#include "/common-js-tpl.html"/>
+<script type="text/javascript">
+	var isQRLogin = false; 
+	var qrLoginParam = {};
+	var userMap = ${userJson};
+	if(ec.util.isObj(userMap.areaId)){
+		if(userMap.isQrFlag){
+			isQRLogin = true;
+			qrLoginParam = userMap;
+		}
+	}
+</script>
 <script src="${contextPath}/js/busi-js/staff/qrLogin.js?${jsversion}" type="text/javascript"></script>
 <script src="${contextPath}/js/busi-js/staff/login.js?${jsversion}" type="text/javascript"></script>
 <script src="${contextPath}/js/busi-js/staff/fingerprint.js?${jsversion}" type="text/javascript"></script>
@@ -263,18 +274,18 @@
 	var _submit = function() {
 		var userMap = ${userJson};
 		if(ec.util.isObj(userMap.areaId)){
-			if(userMap.isQrFlag){
-				staff.login.unifyQrLogin(userMap);
+			$("#store-selector-text").attr("area-id", userMap.areaId);
+			if (ec.util.isObj(userMap.provinceName) && ec.util.isObj(userMap.areaName)) {
+				$("#store-selector-text").text(userMap.provinceName + userMap.areaName);
+			}
+			if(isQRLogin){
+				staff.login.unifyQrLogin();
 			}else{
 				/*
 				 * 问题：10.128.86.10/lteportal 选择北京登录后，正常；再用上海登录，工号不存在；再用北京登录，也报工号不存在
 				 * 原因：地区默认取cookie，如果没有cookie,则默认是北京
 				 * 方案：取统一登录传过来的地区名称和地区id
 				 */
-				$("#store-selector-text").attr("area-id", userMap.areaId);
-				if (ec.util.isObj(userMap.provinceName) && ec.util.isObj(userMap.areaName)) {
-					$("#store-selector-text").text(userMap.provinceName + userMap.areaName);
-				}
 				staff.login.unifyLogin();
 			}
 		}

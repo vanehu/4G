@@ -141,6 +141,11 @@
 			  			<select id="custCAttrIdentidiesTypeCd" style="width: 188px; margin-left: 3px;" onchange="order.cust.identidiesTypeCdChoose(this,'custCAttrIdCard')">
 				        </select>
 				        <a class="btn_h30" id="custCAttrReadCertBtn" onclick="javascript:order.cust.readCertWhenCustCAttr()" style="margin-top: 0px; display: none;"><span>读 卡</span></a>
+				        <#if Session["BIND_STATUS"]?? && Session["BIND_STATUS"] == "Y">
+				        <a class="btn_h30" id="discernBtn_3" onclick="javascript:push.busi.reqDispatch(1,3)"><span>识别</span></a>
+				        <#else>
+				        <a class="btn_h30" id="discernBtn_3" onclick="javascript:push.busi.reqDispatch(1,3)" style="display:none;"><span>识别</span></a>
+				        </#if>
 			  		</td>
 			  	</tr>
 		  	</#if>
