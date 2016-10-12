@@ -1055,6 +1055,24 @@ order.phoneNumber = (function(){
 	 * ispurchased是否身份预占号码。1：是,0否。不是身份预占的号码需要调用预占方法。
 	 */
 	var _selectNum=function(obj,purchas){
+		// 号码资源状态前置校验
+		var flagQueryRes = $.callServiceAsJson(contextPath + "/common/queryPortalProperties", {"propertiesKey": "NUMBER_CHECK_" + OrderInfo.staff.soAreaId.substring(0,3)});	
+        var numberCheckFlag = flagQueryRes.code == 0 ? flagQueryRes.data : "";
+		if ("ON" == numberCheckFlag) {
+			var accNbr = $(obj).attr("numberVal").split("_")[0];
+			var response = $.callServiceAsJson(contextPath + "/token/secondBusi/preCheckBeforeOrde", {"serviceType": 38, "accNbr": accNbr});
+			if(response.code == 1){
+				$.alert("错误", response.data);
+				return;
+			}
+			if (response.code != 0) {
+				$.alertM(response.data);
+				return;
+			} else if (response.data.checkLevel != 0) {
+				$.alert("提示", accNbr + "不可放号" + ec.util.isObj(response.data.checkInfo) ? "，具体原因：" + response.data.checkInfo : "");
+				return;
+			}
+		}
 		if(selectedObj==obj){//老点同一个号？
 			return;
 		}

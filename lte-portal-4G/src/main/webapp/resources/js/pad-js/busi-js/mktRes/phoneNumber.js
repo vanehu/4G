@@ -65,6 +65,24 @@ mktRes.phoneNbr = (function(){
 				$("#btnSwitchNbr").off("tap").on("tap",function(){_btnQueryPhoneNumber({});});
 				$(".numberlist .ui-grid-b").on("tap",function(){
 					var obj=$(this);
+					// 号码资源状态前置校验
+					var flagQueryRes = $.callServiceAsJson(contextPath + "/common/queryPortalProperties", {"propertiesKey": "NUMBER_CHECK_" + OrderInfo.staff.soAreaId.substring(0,3)});	
+			        var numberCheckFlag = flagQueryRes.code == 0 ? flagQueryRes.data : "";
+					if ("ON" == numberCheckFlag) {
+						var accNbr = $(obj).attr("numberVal").split("_")[0];
+						var response = $.callServiceAsJson(contextPath + "/token/secondBusi/preCheckBeforeOrde", {"serviceType": 38, "accNbr": accNbr});
+						if(response.code == 1){
+							$.alert("错误", response.data);
+							return;
+						}
+						if (response.code != 0) {
+							$.alertM(response.data);
+							return;
+						} else if (response.data.checkLevel != 0) {
+							$.alert("提示", accNbr + "不可放号" + ec.util.isObj(response.data.checkInfo) ? "，具体原因：" + response.data.checkInfo : "");
+							return;
+						}
+					}
 					obj.addClass("numlistbg").siblings().removeClass("numlistbg").parents().siblings().find(".ui-grid-b").removeClass("numlistbg");
 					if(selectedObj==obj){//老点同一个号？
 						return;

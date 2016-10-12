@@ -574,11 +574,14 @@ public class SecondBusinessController extends BaseController {
 		String areaId = (String) session.getAttribute("preAreaID");
 		String PCCustId = (String) session.getAttribute("preCustId");
 		String PCAccNbr = (String) session.getAttribute("preAccNbr");
-		if("".equals(PCCustId) || PCCustId ==null || PCAccNbr==null || "".equals(PCAccNbr)){
-			return super.failed("前置校验参数有误！", ResultConstant.FAILD.getCode());
+		// 针对选号前置校验，选号校验会传接入号
+		if (StringUtils.isBlank((String) paramMap.get("accNbr"))) {
+			if("".equals(PCCustId) || PCCustId ==null || PCAccNbr==null || "".equals(PCAccNbr)){
+				return super.failed("前置校验参数有误！", ResultConstant.FAILD.getCode());
+			}
+			paramMap.put("accNbr", PCAccNbr);
+			paramMap.put("custId", PCCustId);
 		}
-		paramMap.put("custId", PCCustId);
-		paramMap.put("accNbr", PCAccNbr);
 		if(!"".equals(areaId) && areaId !=null){
 			paramMap.put("areaId", areaId.substring(0, 5) + "00");
 		}else{
