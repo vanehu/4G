@@ -79,6 +79,21 @@ public class Compressor {
 		}
 		return -1;
 	}
+	
+	public static int compressThirdPCJs(String version) {
+		String inputFileListName = "resources/merge/js/thirdPCJsList.txt";
+		String outputFilename = "resources/merge/js/thirdPC";
+		if (StringUtils.isEmpty(version)) {
+			outputFilename += "-1.0.0.all.js";
+		} else {
+			outputFilename += "-" + version + ".all.js";
+		}
+		int combineResult = combine(inputFileListName, outputFilename);
+		if (combineResult == 0) {
+			return compress(outputFilename, DEF_TYPE_JS);
+		}
+		return -1;
+	}
 
 	public static int compressBaseJs(String version) {
 		String inputFileListName = "resources/merge/js/baseJsList.txt";
@@ -631,4 +646,5 @@ public class Compressor {
 			log.error(e);
 		}
 	}
+
 }

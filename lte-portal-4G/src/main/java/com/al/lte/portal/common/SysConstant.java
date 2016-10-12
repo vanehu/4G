@@ -184,6 +184,7 @@ public final class SysConstant {
     public static String ABS_DIRECTORY_FLAG = "ABS_DIRECTORY_FLAG";
     public static String ABS_DIRECTORY_KEY = "ABS_DIRECTORY_KEY";
     public static String COMPRESS_JS_LEVEL = "COMPRESS_JS_LEVEL";
+    public static String TOKENCOMPRESS_JS_LEVEL = "TOKENCOMPRESS_JS_LEVEL";
     public static String COMPRESS_JS_LOGIN_LEVEL = "COMPRESS_JS_LOGIN_LEVEL";
     public static String LEVEL_NONE = "NONE";
     public static String LEVEL_BASE = "BASE";

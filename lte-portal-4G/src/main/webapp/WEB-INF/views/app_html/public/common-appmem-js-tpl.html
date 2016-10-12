@@ -3,7 +3,7 @@
 	var globalAppDesc = "${APPDESC}";
 </script>
 
-<#if COMPRESS_JS_LEVEL?? && COMPRESS_JS_LEVEL == "BUSI">
+<#if TOKENCOMPRESS_JS_LEVEL?? && TOKENCOMPRESS_JS_LEVEL == "BUSI">
 <script src="${contextPath}/merge/js/busiAppMem-${BASE_VERSION}.min.js?${jsversion}" type="text/javascript"></script>
 <#else>
 <script src="${contextPath}/js/busi-js/common/const.js?${jsversion}" type="text/javascript"></script>
