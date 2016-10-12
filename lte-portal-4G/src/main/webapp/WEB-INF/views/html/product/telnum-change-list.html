@@ -8,7 +8,7 @@
 	 	<#assign phonehead="${(item.phoneNumber)?substring(0,3)}" />
 	 	<#assign phonemiddle="${(item.phoneNumber)?substring(3,7)}" />
 	 	<#assign phoneend="${(item.phoneNumber)?substring(7,(item.phoneNumber)?length)}" />	
-	 	<li onclick="prod.telnum.selectNum(this,${ispurchased!'0'});" class="select_nbr_li"  numberVal="${item.phoneNumber}_${item.prePrice}_${item.pnPrice}_${item.anTypeCd}_${item.pnCharacterId}_${item.pnLevelId}_${item.phoneNumId}">
+	 	<li onclick="prod.telnum.selectNum(this,${ispurchased!'0'});" class="select_nbr_li" phoneNumber="${item.phoneNumber}" pnLevelCd = "${item.pnLevelCd}"  numberVal="${item.phoneNumber}_${item.prePrice}_${item.pnPrice}_${item.anTypeCd}_${item.pnCharacterId}_${item.pnLevelId}_${item.phoneNumId}">
 			<br/>
 			<p>${phonehead}&nbsp;${phonemiddle}&nbsp;${phoneend}</p>
 			<div>

@@ -34,6 +34,9 @@ prod.telnum = (function(){
 		var _btnQueryPhoneNumber=function(param){
 			//收集参数
 			param = _buildInParam(param);
+			if (param == false) {
+				return;
+			}
 			$.callServiceAsHtmlGet(url,param,{
 				"before":function(){
 					$.ecOverlay("<strong>正在查询中,请稍等会儿....</strong>");
@@ -45,9 +48,11 @@ prod.telnum = (function(){
 					if(!response||response.code != 0){
 						 response.data='查询失败,稍后重试';
 					}
-					var content$=$("#order_phonenumber .phone_warp");
+					var content$=$("#change_order_phonenumber .phone_warp");
 					content$.html(response.data);
-					$("#btnSwitchNbr").off("click").on("click",function(){prod.telnum.btnQueryPhoneNumber({});});
+					// 请求返回号码后按照当前所选排序选项进行页面DOM排序
+					$("#change_pnOrder .selected").removeClass().click();
+					$("#change_btnSwitchNbr").off("click").on("click",function(){prod.telnum.btnQueryPhoneNumber({});});
 				},
 				fail:function(response){
 					$.unecOverlay();
@@ -80,8 +85,10 @@ prod.telnum = (function(){
 					}else if(response.code ==-2){
 						return;
 					}
-					var content$=$("#order_phonenumber .phone_warp");
+					var content$=$("#change_order_phonenumber .phone_warp");
 					content$.html(response.data);
+					// 请求返回号码后按照当前所选排序选项进行页面DOM排序
+					$("#change_pnOrder .selected").removeClass().click();
 				},
 				fail:function(response){
 					$.unecOverlay();
@@ -335,8 +342,17 @@ prod.telnum = (function(){
 		//构造查询条件 
 		var _buildInParam = function(param){
 			var areaId=order.prodModify.choosedProdInfo.areaId;
-			var pnHead = $("#pnHead").find("a.selected").attr("val");
-			var pnEnd =$.trim($("#pnEnd").val());
+			var pnHead = $("#change_pnHead").find("a.selected").attr("val");
+			var pnEnd =$.trim($("#change_pnEnd").val());
+			var pnFour = $.trim($("#change_pnFour").val());
+			var pnFive = $.trim($("#change_pnFive").val());
+			var pnSix = $.trim($("#change_pnSix").val());
+			var pnSeven = $.trim($("#change_pnSeven").val());
+			var middleRegExp = ''; // 中间四位正则匹配
+			var pnNotExitNum = $.trim($("#change_pnNotExitNum").val());
+			if(pnNotExitNum == '后四位不含'){
+				pnNotExitNum = '';
+			}
 			if(pnEnd=='最后四位'){
 				pnEnd='';
 			}
@@ -344,23 +360,56 @@ prod.telnum = (function(){
 			if(phoneNum=="任意四位"){
 				phoneNum='';
 			}
+			
+			pnNotExitNum = (pnNotExitNum == '') ? pnNotExitNum : "[^" + pnNotExitNum + "]{4}$";
+			// 校验中间四位是否是数字
+			var singleNum = /^\d?$/;
+			if (!singleNum.test(pnFour) || !singleNum.test(pnFive) || !singleNum.test(pnSix) || !singleNum.test(pnSeven)) {
+				$.alert("提示", "请正确输入中间4位号码");
+				return false;
+			}
+			// 组合正则（中间四位+后四位不含）
+			if (ec.util.isObj(pnFour) || ec.util.isObj(pnFive) || ec.util.isObj(pnSix) || ec.util.isObj(pnSeven)) {
+				if (ec.util.isObj(pnFour)) {
+					middleRegExp += pnFour;
+				} else {
+					middleRegExp += '\\d';
+				}
+				if (ec.util.isObj(pnFive)) {
+					middleRegExp += pnFive;
+				} else {
+					middleRegExp += '\\d';
+				}
+				if (ec.util.isObj(pnSix)) {
+					middleRegExp += pnSix;
+				} else {
+					middleRegExp += '\\d';
+				}
+				if (ec.util.isObj(pnSeven)) {
+					middleRegExp += pnSeven;
+				} else {
+					middleRegExp += '\\d';
+				}
+				pnNotExitNum = !ec.util.isObj(pnNotExitNum) ? middleRegExp + "\\d{4}$" : middleRegExp + pnNotExitNum;
+			}
+			
 			var pnCharacterId;
 			var Greater  = "";
 			var Less  ="";
-			var poolId = $("#nbrPool option:selected").val();	
-			var preStore$=$("#preStore").find("a.selected");
+			var poolId = $("#change_nbrPool option:selected").val();	
+			var preStore$=$("#change_preStore").find("a.selected");
 			if(preStore$.length>0){
 				Greater= preStore$.attr("Greater");
 				Less=preStore$.attr("Less");
 			}
-			if($("#pnCharacterId_basic").css("display") != "none"){
-				pnCharacterId = $("#pnCharacterId_basic a.selected").attr("val");
+			if($("#change_pnCharacterId_basic").css("display") != "none"){
+				pnCharacterId = $("#change_pnCharacterId_basic a.selected").attr("val");
 			}
-			if($("#pnCharacterId_all").css("display") != "none"){
-				pnCharacterId = $("#pnCharacterId_all a.selected").attr("val");
+			if($("#change_pnCharacterId_all").css("display") != "none"){
+				pnCharacterId = $("#change_pnCharacterId_all a.selected").attr("val");
 			}
 			pnCharacterId = ec.util.defaultStr(pnCharacterId);
-			return {"pnHead":pnHead,"pnEnd":pnEnd,"pnCharacterId":pnCharacterId,"maxPrePrice":Less,
+			return {"pnHead":pnHead,"pnEnd":pnEnd,"pnNotExitNum":pnNotExitNum,"pnCharacterId":pnCharacterId,"maxPrePrice":Less,
 				"minPrePrice":Greater,"pnLevelId":'',"pageSize":"20","phoneNum":phoneNum,"areaId":areaId,"poolId":poolId
 			};
 		};
@@ -465,7 +514,7 @@ prod.telnum = (function(){
 				  			preStore=preStore.replace(/\"/g, "");
 					  		phoneNumberPreStoreHtml=phoneNumberPreStoreHtml+"<a href=\"javascript:void(0);\" Greater="+greater+" Less="+less+">"+preStore+"</a>";
 					  	}
-					  	$("#preStore").html(phoneNumberPreStoreHtml);
+					  	$("#change_preStore").html(phoneNumberPreStoreHtml);
 						continue;
 					}
 				};
@@ -478,7 +527,7 @@ prod.telnum = (function(){
 					  		numberStart=numberStart.replace(/\"/g, "");
 					  		phoneNumStartHtml=phoneNumStartHtml+"<a href=\"javascript:void(0);\" val="+numberStart+">"+numberStart+"</a>";
 					  	}
-					  	$("#pnHead").html(phoneNumStartHtml);
+					  	$("#change_pnHead").html(phoneNumStartHtml);
 						continue;
 					}
 				};
@@ -503,30 +552,30 @@ prod.telnum = (function(){
 					  			var numberFeatureVal=(PHONE_NUMBER_FEATURE[n].COLUMN_VALUE).replace(/\"/g, "");
 					  			phoneNumberFeatureMoreHtml=phoneNumberFeatureMoreHtml+"<a href=\"javascript:void(0);\" val="+numberFeatureVal+">"+numberFeature+"</a>";
 					  		}
-					  		$("#pnCharacterId_more").show();
-					  		$("#pnCharacterId_more").off("click").on("click",function(event){_view_phonenumber_feature();event.stopPropagation();});
+					  		$("#change_pnCharacterId_more").show();
+					  		$("#change_pnCharacterId_more").off("click").on("click",function(event){_view_phonenumber_feature();event.stopPropagation();});
 					  	}
-					  	$("#pnCharacterId_basic").html(phoneNumberFeatureLessHtml);
-					  	$("#pnCharacterId_all").html(phoneNumberFeatureMoreHtml);
+					  	$("#change_pnCharacterId_basic").html(phoneNumberFeatureLessHtml);
+					  	$("#change_pnCharacterId_all").html(phoneNumberFeatureMoreHtml);
 						continue;
 					}
 				};
 			}
-			$("#pnCharacterId_basic a").each(function(){$(this).off("click").on("click",function(event){prod.telnum.linkQueryPhoneNumber("#pnCharacterId_basic a",this);event.stopPropagation();});});
-			$("#pnCharacterId_all a").each(function(){$(this).off("click").on("click",function(event){prod.telnum.linkQueryPhoneNumber("#pnCharacterId_all a",this);event.stopPropagation();});});
-			$("#pnHead a").each(function(){$(this).off("click");$(this).on("click",function(event){prod.telnum.linkQueryPhoneNumber("#pnHead a",this);event.stopPropagation();});});
-			$("#preStore a").each(function(){$(this).off("click");$(this).on("click",function(event){prod.telnum.linkQueryPhoneNumber("#preStore a",this);event.stopPropagation();});});
+			$("#change_pnCharacterId_basic a").each(function(){$(this).off("click").on("click",function(event){prod.telnum.linkQueryPhoneNumber("#change_pnCharacterId_basic a",this);event.stopPropagation();});});
+			$("#change_pnCharacterId_all a").each(function(){$(this).off("click").on("click",function(event){prod.telnum.linkQueryPhoneNumber("#change_pnCharacterId_all a",this);event.stopPropagation();});});
+			$("#change_pnHead a").each(function(){$(this).off("click");$(this).on("click",function(event){prod.telnum.linkQueryPhoneNumber("#change_pnHead a",this);event.stopPropagation();});});
+			$("#change_preStore a").each(function(){$(this).off("click");$(this).on("click",function(event){prod.telnum.linkQueryPhoneNumber("#change_preStore a",this);event.stopPropagation();});});
 		};
 		//号码类型全部展示与部分展示
 		var _view_phonenumber_feature = function(){
-			if($('#pnCharacterId_basic').is(':hidden')){
-				$("#pnCharacterId_basic").css("display","");
-				$("#pnCharacterId_all").css("display","none");
-				$("#pnCharacterId_all").parent("dl").css("overflow","inherit");
+			if($('#change_pnCharacterId_basic').is(':hidden')){
+				$("#change_pnCharacterId_basic").css("display","");
+				$("#change_pnCharacterId_all").css("display","none");
+				$("#change_pnCharacterId_all").parent("dl").css("overflow","inherit");
 			}else{
-				$("#pnCharacterId_basic").css("display","none");
-				$("#pnCharacterId_all").css("display","");
-				$("#pnCharacterId_all").parent("dl").css("overflow","hidden");
+				$("#change_pnCharacterId_basic").css("display","none");
+				$("#change_pnCharacterId_all").css("display","");
+				$("#change_pnCharacterId_all").parent("dl").css("overflow","hidden");
 			}
 		};
 		
@@ -539,8 +588,8 @@ prod.telnum = (function(){
 			queryPhoneNbrPool();
 			queryPnLevelProdOffer();
 			prod.telnum.btnQueryPhoneNumber(param);
-			$("#btnNumSearch").off("click").on("click",function(){prod.telnum.btnQueryPhoneNumber(param);});
-			$("#btnNumExistSearch").off("click").on("click",function(event){prod.telnum.btnIBydentityQuery(param);event.stopPropagation();});
+			$("#change_btnNumSearch").off("click").on("click",function(){prod.telnum.btnQueryPhoneNumber(param);});
+			$("#change_btnNumExistSearch").off("click").on("click",function(event){prod.telnum.btnIBydentityQuery(param);event.stopPropagation();});
 		};
 		//靓号预存和保底金额查询
 		var queryPnLevelProdOffer = function(){
@@ -733,7 +782,7 @@ prod.telnum = (function(){
 							$sel.append($option);
 						});
 					}
-					$("#nbrPool").append($sel);
+					$("#change_nbrPool").append($sel);
 				}
 			}else if(response.code == -2){
 				$.alertM(response.data);

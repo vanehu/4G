@@ -112,9 +112,6 @@ order.phoneNumber = (function(){
 		//收集参数
 		param = _buildInParam(param);
 		if (param == false) {
-			$.alert("提示", "请正确输入已经“靓号预占”的11位号码", "information", function() {
-				$("#phoneNum").focus();
-			});
 			return;
 		}
 		param.isReserveFlag=_queryFlag;
@@ -142,6 +139,8 @@ order.phoneNumber = (function(){
 				}
 				var content$=$("#order_phonenumber .phone_warp");
 				content$.html(response.data);
+				// 请求返回号码后按照当前所选排序选项进行页面DOM排序
+				$("#pnOrder .selected").removeClass().click();
 				$("#btnSwitchNbr").off("click").on("click",function(){order.phoneNumber.btnQueryPhoneNumber({});});
 			},
 			fail:function(response){
@@ -688,9 +687,29 @@ order.phoneNumber = (function(){
 		if (flag) {
 			$("#pswInfo").show(); 
 			$("#phoneNum").show();
+			$("#pnFour").val("");
+			$("#pnFour").prop("disabled", true);
+			$("#pnFive").val("");
+			$("#pnFive").prop("disabled", true);
+			$("#pnSix").val("");
+			$("#pnSix").prop("disabled", true);
+			$("#pnSeven").val("");
+			$("#pnSeven").prop("disabled", true);
+			$("#pnEnd").val("");
+			$("#pnEnd").prop("disabled", true);
+			$("#pnNotExitNum").val("");
+			$("#pnNotExitNum").prop("disabled", true);
 		} else {
 			$("#pswInfo").hide();
 			$("#phoneNum").hide();
+			$("#pnFour").prop("disabled", false);
+			$("#pnFive").prop("disabled", false);
+			$("#pnSix").prop("disabled", false);
+			$("#pnSeven").prop("disabled", false);
+			$("#pnEnd").prop("disabled", false);
+			$("#pnEnd").val("最后四位");
+			$("#pnNotExitNum").prop("disabled", false);
+			$("#pnNotExitNum").val("后四位不含");
 		}
 	}
 	//构造查询条件 
@@ -702,6 +721,11 @@ order.phoneNumber = (function(){
 		var pncharacteristic = $("#pncharacteristic").find("a.selected").attr("val");
 		var lowPrice = $("#lowPrice").find("a.selected").attr("val");
 		var pnEnd =$.trim($("#pnEnd").val());
+		var pnFour = $.trim($("#pnFour").val());
+		var pnFive = $.trim($("#pnFive").val());
+		var pnSix = $.trim($("#pnSix").val());
+		var pnSeven = $.trim($("#pnSeven").val());
+		var middleRegExp = ''; // 中间四位正则匹配
 		if(pncharacteristic!=null && pncharacteristic!=""){		
 			if(pncharacteristic == '4'){
 				pnNotExitNum = pncharacteristic;
@@ -723,12 +747,45 @@ order.phoneNumber = (function(){
 			}
 		}
 		pnNotExitNum = (pnNotExitNum == '') ? pnNotExitNum : "[^" + pnNotExitNum + "]{4}$";
+		// 校验中间四位是否是数字
+		var singleNum = /^\d?$/;
+		if (!singleNum.test(pnFour) || !singleNum.test(pnFive) || !singleNum.test(pnSix) || !singleNum.test(pnSeven)) {
+			$.alert("提示", "请正确输入中间4位号码");
+			return false;
+		}
+		// 组合正则（中间四位+后四位不含）
+		if (ec.util.isObj(pnFour) || ec.util.isObj(pnFive) || ec.util.isObj(pnSix) || ec.util.isObj(pnSeven)) {
+			if (ec.util.isObj(pnFour)) {
+				middleRegExp += pnFour;
+			} else {
+				middleRegExp += '\\d';
+			}
+			if (ec.util.isObj(pnFive)) {
+				middleRegExp += pnFive;
+			} else {
+				middleRegExp += '\\d';
+			}
+			if (ec.util.isObj(pnSix)) {
+				middleRegExp += pnSix;
+			} else {
+				middleRegExp += '\\d';
+			}
+			if (ec.util.isObj(pnSeven)) {
+				middleRegExp += pnSeven;
+			} else {
+				middleRegExp += '\\d';
+			}
+			pnNotExitNum = !ec.util.isObj(pnNotExitNum) ? middleRegExp + "\\d{4}$" : middleRegExp + pnNotExitNum;
+		}
 		var phoneNum=$.trim($("#phoneNum").val());
 		if(phoneNum == "任意四位" || query_flag_01 == 1){
 			phoneNum = '';
 		} else if (query_flag_01 == 2) {
 			// 密码预占查询选择“是”，全位号码必填
 			if (!ec.util.isObj(phoneNum) || !/^(180|189|133|134|153|181|108|170|173|177)\d{8}$/.test(phoneNum)) {
+				$.alert("提示", "请正确输入已经“靓号预占”的11位号码", "information", function() {
+					$("#phoneNum").focus();
+				});
 				return false;
 			}
 		}
@@ -756,7 +813,7 @@ order.phoneNumber = (function(){
 		}
 		return {
 			"pnHead":pnHead, "pnEnd":pnEnd, "pnNotExitNum":pnNotExitNum, "goodNumFlag":pnCharacterId,
-			"maxPrePrice":Less, "minPrePrice":Greater, "pnLevelId":'', "pageSize":"15","minLowPrice":lowPrice, "maxLowPrice":lowPrice,
+			"maxPrePrice":Less, "minPrePrice":Greater, "pnLevelId":'', "pageSize":"20","minLowPrice":lowPrice, "maxLowPrice":lowPrice,
 			"phoneNum":phoneNum, "areaId":areaId, "poolId":poolId, "queryFlag":query_flag_01
 		};
 	};
@@ -1154,7 +1211,43 @@ order.phoneNumber = (function(){
 			_btnPurchase(selectedObj,pree_password_text);
 		}
 	};
-	
+	/**
+	 * 号码排序（选号，改号公用）
+	 * sortFlag 1为升序，-1为降序
+	 * sortKey value为号码顺序排序,level为号码等级排序
+	 */
+	var _numOrder = function(loc, selected, sortFlag, sortKey) {
+		var numberList = "#order_phonenumber .numberlist ";
+		// 改号id
+		if ("#change_pnOrder a" == loc) {
+			numberList = "#change_order_phonenumber .numberlist ";
+		}
+		if (!$(selected).hasClass("selected")) {
+			_exchangeSelected(loc, selected);
+			if ("value" == sortKey) {
+				$(numberList).append($(numberList + "li").toArray().sort(_valueSort));
+				function _valueSort(a, b) {
+					return ($(a).attr("phoneNumber") - $(b).attr("phoneNumber"))*sortFlag;
+				}
+			} else if ("level" == sortKey) {
+				// 当等级一致时，不进行排序操作
+				var sameLevel = true;
+				var firstLevel = $(numberList + "li:first").attr("pnLevelCd");
+				$(numberList + "li:gt(0)").each(function() {
+					if (firstLevel != $(this).attr("pnLevelCd")) {
+						sameLevel = false;
+						return;
+					}
+				});
+				if (!sameLevel) {
+					$(numberList).append($(numberList + "li").toArray().sort(_levelSort));
+					function _levelSort(a,b) {
+						return ($(a).attr("pnLevelCd") - $(b).attr("pnLevelCd"))*sortFlag;
+					}
+				}
+			}
+		}
+	};
 	return {
 		qryPhoneNbrLevelInfoList:_qryPhoneNbrLevelInfoList,
 		selectNum:_selectNum,
@@ -1178,6 +1271,7 @@ order.phoneNumber = (function(){
 		queryPnLevelProdOffer:queryPnLevelProdOffer,
 		nbrtime:_nbrtime,
 		nbrcount:_nbrcount,
-		pswChange: _pswChange
+		pswChange: _pswChange,
+		numOrder: _numOrder
 	};
 })();
