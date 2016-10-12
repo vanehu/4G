@@ -294,6 +294,27 @@ public class MktResController extends BaseController {
 		try {//选号页面，查询员工是否有修改号码等级的权限
             String res=staffBmo.checkOperatSpec("CHOOSE_PNLEVEL", sessionStaff);
             model.addAttribute("can_change_level", res);
+            List<Map<String, Object>> list = null;
+            try {
+            	param.put("staffId", sessionStaff.getStaffId());
+            	Map<String, Object> datamap = this.mktResBmo.pnLowAndPrePriceQry(param,
+	    				null, sessionStaff);
+	    		if (datamap != null) {
+	    			String code2= (String) datamap.get("code");
+	    			if (ResultCode.R_SUCCESS.equals(code2)) {
+	    				Object obj2 = datamap.get("lowPriceList");
+	    				if (obj2 instanceof List) {
+	    					list = (List<Map<String, Object>>) datamap.get("lowPriceList");
+	    				} if (list == null) {
+	    				    
+	    				} else {
+	                        model.addAttribute("lowPriceList", list);
+	    				}
+	    			}
+	    		}
+            } catch (Exception e) {
+                
+            }
         } catch (Exception e1) {
             e1.printStackTrace();
         }

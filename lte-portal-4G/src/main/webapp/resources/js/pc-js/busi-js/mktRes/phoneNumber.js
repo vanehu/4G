@@ -639,6 +639,11 @@ order.phoneNumber = (function(){
 		var pncharacteristic = $("#pncharacteristic").find("a.selected").attr("val");
 		var lowPrice = $("#lowPrice").find("a.selected").attr("val");
 		var pnEnd =$.trim($("#pnEnd").val());
+		var pnFour = $.trim($("#pnFour").val());
+		var pnFive = $.trim($("#pnFive").val());
+		var pnSix = $.trim($("#pnSix").val());
+		var pnSeven = $.trim($("#pnSeven").val());
+		var middleRegExp = ''; // 中间四位正则匹配
 		if(pncharacteristic!=null && pncharacteristic!=""){		
 			if(pncharacteristic == '4'){
 				pnNotExitNum = pncharacteristic;
@@ -660,6 +665,36 @@ order.phoneNumber = (function(){
 			}
 		}
 		pnNotExitNum = (pnNotExitNum == '') ? pnNotExitNum : "[^" + pnNotExitNum + "]{4}$";
+		// 校验中间四位是否是数字
+		var singleNum = /^\d?$/;
+		if (!singleNum.test(pnFour) || !singleNum.test(pnFive) || !singleNum.test(pnSix) || !singleNum.test(pnSeven)) {
+			$.alert("提示", "请正确输入中间4位号码");
+			return false;
+		}
+		// 组合正则（中间四位+后四位不含）
+		if (ec.util.isObj(pnFour) || ec.util.isObj(pnFive) || ec.util.isObj(pnSix) || ec.util.isObj(pnSeven)) {
+			if (ec.util.isObj(pnFour)) {
+				middleRegExp += pnFour;
+			} else {
+				middleRegExp += '\\d';
+			}
+			if (ec.util.isObj(pnFive)) {
+				middleRegExp += pnFive;
+			} else {
+				middleRegExp += '\\d';
+			}
+			if (ec.util.isObj(pnSix)) {
+				middleRegExp += pnSix;
+			} else {
+				middleRegExp += '\\d';
+			}
+			if (ec.util.isObj(pnSeven)) {
+				middleRegExp += pnSeven;
+			} else {
+				middleRegExp += '\\d';
+			}
+			pnNotExitNum = !ec.util.isObj(pnNotExitNum) ? middleRegExp + "\\d{4}$" : middleRegExp + pnNotExitNum;
+		}
 		var phoneNum=$.trim($("#phoneNum").val());
 		if(phoneNum=="任意四位"){
 			phoneNum='';
@@ -683,7 +718,7 @@ order.phoneNumber = (function(){
 		}
 		pnCharacterId = ec.util.defaultStr(pnCharacterId);
 		return {"pnHead":pnHead,"pnEnd":pnEnd,"pnNotExitNum":pnNotExitNum, "goodNumFlag":pnCharacterId,"maxPrePrice":Less,
-			"minPrePrice":Greater,"pnLevelId":'',"pageSize":"15","phoneNum":phoneNum,"areaId":areaId,"poolId":poolId,
+			"minPrePrice":Greater,"pnLevelId":'',"pageSize":"20","phoneNum":phoneNum,"areaId":areaId,"poolId":poolId,"minLowPrice":lowPrice, "maxLowPrice":lowPrice,
 			"queryFlag":query_flag_01
 		};
 	};
@@ -1052,6 +1087,44 @@ order.phoneNumber = (function(){
 		}
 	};
 	
+	/**
+	 * 号码排序
+	 * sortFlag 1为升序，-1为降序
+	 * sortKey value为号码顺序排序,level为号码等级排序
+	 */
+	var _numOrder = function(loc, selected, sortFlag, sortKey) {
+		var numberList = "#order_phonenumber .numberlist ";
+		// 改号id
+		if ("#change_pnOrder a" == loc) {
+			numberList = "#change_order_phonenumber .numberlist ";
+		}
+		if (!$(selected).hasClass("selected")) {
+			_exchangeSelected(loc, selected);
+			if ("value" == sortKey) {
+				$(numberList).append($(numberList + "li").toArray().sort(_valueSort));
+				function _valueSort(a, b) {
+					return ($(a).attr("phoneNumber") - $(b).attr("phoneNumber"))*sortFlag;
+				}
+			} else if ("level" == sortKey) {
+				// 当等级一致时，不进行排序操作
+				var sameLevel = true;
+				var firstLevel = $(numberList + "li:first").attr("pnLevelCd");
+				$(numberList + "li:gt(0)").each(function() {
+					if (firstLevel != $(this).attr("pnLevelCd")) {
+						sameLevel = false;
+						return;
+					}
+				});
+				if (!sameLevel) {
+					$(numberList).append($(numberList + "li").toArray().sort(_levelSort));
+					function _levelSort(a,b) {
+						return ($(a).attr("pnLevelCd") - $(b).attr("pnLevelCd"))*sortFlag;
+					}
+				}
+			}
+		}
+	};
+	
 	return {
 		qryPhoneNbrLevelInfoList:_qryPhoneNbrLevelInfoList,
 		selectNum:_selectNum,
@@ -1073,6 +1146,7 @@ order.phoneNumber = (function(){
 		queryPhoneNbrPool:queryPhoneNbrPool,
 		queryFlag:_queryFlag,
 		queryPnLevelProdOffer:queryPnLevelProdOffer,
-		queryPhoneNumber    :_queryPhoneNumber
+		queryPhoneNumber    :_queryPhoneNumber,
+		numOrder: _numOrder
 	};
 })();

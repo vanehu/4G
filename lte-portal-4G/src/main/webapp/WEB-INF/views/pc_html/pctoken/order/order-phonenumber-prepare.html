@@ -36,6 +36,10 @@
                        <dd id="pnHead">
                        </dd>
                        <dd>
+                         <input type="text" id = "pnFour" class="numberTextBox width82 input-box" maxlength="1" placeholder="四" title = "中间四位"/>
+                       	 <input type="text" id = "pnFive" class="numberTextBox width82 input-box" maxlength="1" placeholder="五" title = "中间四位"/>
+                       	 <input type="text" id = "pnSix" class="numberTextBox width82 input-box" maxlength="1" placeholder="六" title = "中间四位"/>
+                       	 <input type="text" id = "pnSeven" class="numberTextBox width82 input-box" maxlength="1" placeholder="七" title = "中间四位"/>
                        	 <input type="hidden" id="phoneNum" class="numberTextBox width82" maxlength="4" value="任意四位" onblur="javascript:if($(this).val()==''){$(this).val('任意四位');}" onfocus="javascript:if($(this).val()=='任意四位'){$(this).val('')}"/>
                          <input type="text" id="pnEnd" class="numberTextBox width82" maxlength="4" value="最后四位" onblur="javascript:if($(this).val()==''){$(this).val('最后四位');}" onfocus="javascript:if($(this).val()=='最后四位'){$(this).val('')}"/>
                          <input type="text" id="pnNotExitNum" class="numberTextBox width82" maxlength="4" value="后四位不含" onblur="javascript:if($(this).val()==''){$(this).val('后四位不含');}" onfocus="javascript:if($(this).val()=='后四位不含'){$(this).val('')}"/>
@@ -75,12 +79,30 @@
 				     <a href="javascript:void(0);" val="更多" class="btn_more" style="margin-right:-4px;">展开</a>
 				     </span>
 				     <div class="clear"></div>
-				 </dl> 
+				 </dl>
+				 <dl>
+                     <dt>保底消费：</dt>
+                        <dd style="width: 700px;" id="lowPrice">
+	                         <a href="javascript:void(0);" class="selected" val="" onclick="order.phoneNumber.linkQueryPhoneNumber('#lowPrice a',this)">不限</a>
+	                         <#list lowPriceList  as lowPrice>
+	                           <a href="javascript:void(0);" val="${lowPrice}" onclick="order.phoneNumber.linkQueryPhoneNumber('#lowPrice a',this)">${lowPrice}</a>
+	                         </#list>
+	                    </dd>
+                  </dl>  
                  <dl class="noBorder">
                      <dt>预存话费：</dt>
                      <dd  id="preStore">
                      </dd>
-                 </dl>                        
+                 </dl>  
+                 <dl class="noBorder">
+                     <dt>号码排序：</dt>
+                     <dd id="pnOrder">
+                     	<a href="javascript:void(0);" class="selected" onclick="order.phoneNumber.numOrder('#pnOrder a', this, 1, 'value')">顺序升序</a>
+                     	<a href="javascript:void(0);" onclick="order.phoneNumber.numOrder('#pnOrder a', this, -1, 'value')">顺序降序</a>
+                     	<a href="javascript:void(0);" onclick="order.phoneNumber.numOrder('#pnOrder a', this, 1, 'level')">等级升序</a>
+                     	<a href="javascript:void(0);" onclick="order.phoneNumber.numOrder('#pnOrder a', this, -1, 'level')">等级降序</a>
+                     </dd>
+                 </dl>                          
              </div>
              <!--号码列表-->      
             <div class="phone_warp"> 
