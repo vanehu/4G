@@ -72,6 +72,8 @@ order.phoneNumber = (function(){
 				}
 				var content$=$("#order_phonenumber .phone_warp");
 				content$.html(response.data);
+				// 请求返回号码后按照当前所选排序选项进行页面DOM排序
+				$("#pnOrder .selected").removeClass().click();
 				$("#btnSwitchNbr").off("click").on("click",function(){order.phoneNumber.btnQueryPhoneNumber({});});
 			},
 			fail:function(response){
