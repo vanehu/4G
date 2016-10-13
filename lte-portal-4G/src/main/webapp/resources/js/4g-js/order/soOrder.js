@@ -530,6 +530,8 @@ SoOrder = (function() {
 			});
 		}else if(OrderInfo.actionFlag == 40){//紧急开机
 			_createUrgentBoot(busiOrders,data,"N");
+		}else if(OrderInfo.actionFlag == 44){//主副卡成员角色互换
+			_buildBusiOrders(data, busiOrders);
 		}else{  //默认单个业务动作
 			_fillBusiOrder(busiOrders,data,"N"); //填充业务对象节点
 		}
@@ -923,6 +925,8 @@ SoOrder = (function() {
 				OrderInfo.actionTypeName = "拆机";
 			} else if (OrderInfo.actionFlag==39){ //改付费类型
 				OrderInfo.actionTypeName = "修改付费类型";
+			} else if (OrderInfo.actionFlag==44){ //主副卡角色互换
+				OrderInfo.actionTypeName = "主副卡角色互换";
 			}
 			var $span = $("<span>"+OrderInfo.actionTypeName+"</span>");
 			$("#tital").append($span);
@@ -3660,7 +3664,103 @@ SoOrder = (function() {
 		busiOrder.data =data;
 		busiOrders.push(busiOrder);
 		
-	};	
+	};
+	
+	/**
+	 * 主副卡互换，填充业务动作节点
+	 */
+	var _buildBusiOrders = function(param, busiOrders){
+		var prodInfo = order.prodModify.choosedProdInfo;
+		//创建业务主节点
+		var busiOrder = {
+			areaId : prodInfo.areaId,  //受理地区ID
+			busiOrderInfo : {
+				seq : OrderInfo.SEQ.seq--
+			}, 
+			busiObj : { //业务对象节点
+				objId		: prodInfo.prodOfferId,  //业务规格ID
+				instId		: prodInfo.prodOfferInstId, //业务对象实例ID
+				accessNumber: prodInfo.accNbr, //业务号码
+				isComp		: "Y", //是否组合
+				offerTypeCd : "1" //1主销售品
+			},  
+			boActionType : {
+				actionClassCd	: CONST.ACTION_CLASS_CD.OFFER_ACTION,
+				boActionTypeCd	: CONST.BO_ACTION_TYPE.ADDOREXIT_COMP
+			}, 
+			data:{
+				ooRoles			:[],
+				busiOrderAttrs	:[]
+			}
+		};
+
+		var sub_ooRole = null;//副卡的ooRole
+		var main_ooRole = null;//主卡的ooRole
+		//循环遍历，确定需要互换的两个主副卡节点信息
+		for(var i = 0; i < OrderInfo.offer.offerMemberInfos.length; i++) {
+			var offerMemberInfo = OrderInfo.offer.offerMemberInfos[i];
+			//确定副卡并且与所选择的副卡号码相等，将其退订
+			if((offerMemberInfo.roleCd == CONST.MEMBER_ROLE_CD.VICE_CARD) && offerMemberInfo.accessNumber == param.subAcctNbr){
+				sub_ooRole = {
+					objId 		 : offerMemberInfo.objId,//产品规格ID
+					objInstId	 : offerMemberInfo.objInstId,//产品实例ID
+					objType 	 : offerMemberInfo.objType,//产品接入类型，2接入类产品，4功能类产品
+					offerMemberId: offerMemberInfo.offerMemberId,//成员的实例ID
+					offerRoleId	 : offerMemberInfo.offerRoleId,//成员角色ID，表示主副卡
+					state 		 : "DEL"
+				};
+			}
+			//确定主卡并且与所选择的主卡号码相等，将其退订
+			if(offerMemberInfo.roleCd == CONST.MEMBER_ROLE_CD.MAIN_CARD && offerMemberInfo.accessNumber == param.mainAcctNbr){
+				main_ooRole = {
+					objId 		 : offerMemberInfo.objId,//产品规格ID
+					objInstId	 : offerMemberInfo.objInstId,//产品实例ID
+					objType 	 : offerMemberInfo.objType,//产品接入类型，2接入类产品，4功能类产品
+					offerMemberId: offerMemberInfo.offerMemberId,//成员的实例ID
+					offerRoleId	 : offerMemberInfo.offerRoleId,//成员角色ID，表示主副卡：30045主卡，30046副卡
+					state 		 : "DEL"
+				};
+			}
+		}
+
+		var tempOfferRoleId = sub_ooRole.offerRoleId;//临时变量，副卡offerRoleId
+
+		//1.退订副卡
+		busiOrder.data.ooRoles.push(sub_ooRole);
+		//2.退订主卡
+		busiOrder.data.ooRoles.push(main_ooRole);
+		//3.将原副卡订购为主卡
+		var sub_ooRole_copy = $.extend( true, {}, sub_ooRole); 
+		sub_ooRole_copy.offerRoleId = main_ooRole.offerRoleId;
+		sub_ooRole_copy.state = "ADD";
+		busiOrder.data.ooRoles.push(sub_ooRole_copy);
+		//4.将原主卡订购为副卡
+		var main_ooRole_copy = $.extend( true, {}, main_ooRole); 
+		main_ooRole_copy.offerRoleId = tempOfferRoleId;
+		main_ooRole_copy.state = "ADD";
+		busiOrder.data.ooRoles.push(main_ooRole_copy);
+		
+		//添加发展人
+		var $tr = $("#dealerTbody tr[name='tr_"+OrderInfo.offerSpec.offerSpecId+"']");
+		if($tr != undefined){
+			$tr.each(function(){//遍历发展人
+				var dealer = {
+					itemSpecId	: CONST.BUSI_ORDER_ATTR.DEALER,
+					role		: $(this).find("select[name='dealerType_"+OrderInfo.offerSpec.offerSpecId+"']").val(),
+					value		: $(this).find("input").attr("staffid"),
+					channelNbr	: $(this).find("select[name ='dealerChannel_"+OrderInfo.offerSpec.offerSpecId+"']").val()
+				};
+				busiOrder.data.busiOrderAttrs.push(dealer);
+				var dealerName = { 
+					itemSpecId	: CONST.BUSI_ORDER_ATTR.DEALER_NAME,
+					role		: $(this).find("select[name='dealerType_"+OrderInfo.offerSpec.offerSpecId+"']").val(),
+					value		: $(this).find("input").attr("value") 
+				};
+				busiOrder.data.busiOrderAttrs.push(dealerName);
+			});
+		}
+		busiOrders.push(busiOrder);
+	};
 	
 	return {
 		builder 				: _builder,
@@ -3670,7 +3770,7 @@ SoOrder = (function() {
 		delAndNew				: _delAndNew,
 		getOrderInfo 			: _getOrderInfo,
 		getToken				: _getToken,
-		getTokenSynchronize : _getTokenSynchronize,
+		getTokenSynchronize 	: _getTokenSynchronize,
 		initFillPage			: _initFillPage,
 		initOrderData			: _initOrderData,
 		orderBack				: _orderBack,

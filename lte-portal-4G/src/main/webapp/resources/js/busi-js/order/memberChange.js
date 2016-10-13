@@ -277,12 +277,15 @@ order.memberChange = function(){
 						}
 					});
 				}
-				var $tipTr = $("<tr><td colspan='2' style='text-align:right;line-height:25px;'>" +
-						"<font style='color:red;'>拆副卡：</font><br/><font font style='color:red;'>保留>>选择新套餐：</font></td>" +
-						"<td colspan='2' style='text-align:left;line-height:25px;'>" +
-						"<font style='color:red;'>副卡直接拆除销号</font><br/><font font style='color:red;'>保留副卡，只是更换套餐</font>" +
-						"</td></tr>");
-				//$tr.after($tipTr);
+				var $tipTr = $(
+					"<tr>"+
+						"<td colspan='4' style='text-align:center;line-height:25px;'>"+
+							"<font style='color:red;'>拆副卡：副卡直接拆除销号</font><br>"+
+							"<font style='color:red;'>保留>>选择新套餐：保留副卡，只更换套餐</font><br>"+
+							"<font style='color:red;'>主副卡互换：主副卡成员角色互换</font>"+
+						"</td>"+
+					"</tr>"
+				);
 				var tipFlag = false;
 				//副卡成员
 				$.each(OrderInfo.offer.offerMemberInfos,function(){
@@ -295,7 +298,7 @@ order.memberChange = function(){
 						var accessNumber = this.accessNumber;
 						eleI.click(function(){
 							if (($(this).parent().attr("del") == "N")) {
-								$.confirm("信息确认","是否将副卡"+accessNumber+"拆机，如只是更换副卡，办理其他套餐，请单击“保留”按钮",{ 
+								$.confirm("信息确认","是否将副卡"+accessNumber+"拆机，如只是更换副卡，办理其他套餐，请点击“确定”按钮",{ 
 									yesdo:function(){
 										eleI.parent().css("text-decoration","line-through").attr("del","Y").attr("knew","N");
 								        eleI.find("a").text("不 拆");	
@@ -314,8 +317,19 @@ order.memberChange = function(){
 							var eleR = $("<i id='plan_no_remain'><a id='' accNbr='"+this.accessNumber+"' class='purchase' href='javascript:void(0)'>保留>>选择新套餐</a></i>").appendTo(li);
 							eleR.click(function(){
 								order.service.offerDialog('viceCard_new_'+$(this).find("a").attr("accNbr"));
-	//							$($("#plan_no")).parent().css("text-decoration","line-through").attr("del","Y");
+								$($("#plan_no")).parent().css("text-decoration","line-through").attr("del","Y");
 							});	
+						}
+						if(true){//后期可能有限制条件，预留
+							var eleR = $("<i id='plan_no'><a id='' accNbr='"+this.accessNumber+"' class='purchase' href='javascript:void(0)'>主副卡互换</a></i>").appendTo(li);
+							eleR.click(function(){
+								$.confirm("信息确认","主副卡成员角色互换：原主卡将成为副卡，原副卡将成为主卡，原套餐及产品等信息不变，请确认是否受理？",{ 
+									yesdo:function(){
+										order.memberChange.roleExchange(accessNumber);
+									},
+									no:function(){}
+								});
+							});
 						}
 //						existViceCardNum++;
 						if(!tipFlag){
@@ -745,7 +759,7 @@ order.memberChange = function(){
 				if(this.prodId==prodId){
 					$(this).remove();
 				}
-			})
+			});
 		}
 		var oldUim={
 			couponUsageTypeCd : "3", //物品使用类型
@@ -1548,6 +1562,53 @@ order.memberChange = function(){
 		}
 	};
 	
+	/**
+	 * 主副卡角色互换，主套餐等均不变，仅主卡->副卡、副卡->主卡
+	 * 入参subAccessNumber为页面选中的副卡号码
+	 */
+	var _roleExchange = function(subAccessNumber){
+		_closeDialog();
+		if(_invokeLoadInst()){//主副卡成员的全量全部加载成功后进行业务受理
+			OrderInfo.busitypeflag = 1;
+			OrderInfo.initData(CONST.ACTION_CLASS_CD.PROD_ACTION,CONST.BO_ACTION_TYPE.ADDOREXIT_COMP,44,CONST.getBoActionTypeName(CONST.BO_ACTION_TYPE.PRODUCT_PARMS),"");
+			var choosedProdInfo = order.prodModify.choosedProdInfo;
+			var param = order.prodModify.getCallRuleParam(CONST.BO_ACTION_TYPE.ADDOREXIT_COMP,choosedProdInfo.prodInstId);
+			var callParam = {
+				boActionTypeName: CONST.getBoActionTypeName(CONST.BO_ACTION_TYPE.ADDOREXIT_COMP),//S3动作
+				mainAcctNbr		: choosedProdInfo.accNbr,//页面选中的主卡号码
+				subAcctNbr		: subAccessNumber//页面选中的副卡号码
+			};
+			var checkRule = rule.rule.prepare(param,'order.prodModify.roleExchange',callParam);
+		}
+	};
+	
+	/**
+	 * 遍历每个主副卡成员并且加载全量，全部加载成功返回true，否则返回false
+	 */
+	var _invokeLoadInst = function(){
+		var returnFlag = true;
+		if(OrderInfo.order.soNbr == null || OrderInfo.order.soNbr == undefined || OrderInfo.order.soNbr == ""){
+			OrderInfo.order.soNbr = UUID.getDataId();
+		}
+		for(var i = 0; i < OrderInfo.offer.offerMemberInfos.length; i++){
+			var offerMemberInfo = OrderInfo.offer.offerMemberInfos[i];
+			var param = {
+				areaId	: OrderInfo.cust.areaId,
+				acctNbr : offerMemberInfo.accessNumber,
+				custId	: OrderInfo.cust.custId,
+				soNbr	: OrderInfo.order.soNbr,//无法确定
+				instId  : offerMemberInfo.objInstId,
+				type 	: "2"
+			};
+			if(!query.offer.invokeLoadInst(param)){
+				returnFlag = false;
+				break;
+			}
+		}
+		return returnFlag;
+	};
+	
+	
 	return {
 		showOfferCfgDialog : _showOfferCfgDialog,
 		closeDialog : _closeDialog,
@@ -1572,7 +1633,8 @@ order.memberChange = function(){
 		changemembers:_changemembers,
 		rejson:_rejson,
 		areaidJurisdiction:_areaidJurisdiction,
-		viceCartNum:_viceCartNum
+		viceCartNum:_viceCartNum,
+		roleExchange:_roleExchange//主副卡角色互换
 	};
 }();
 $(function(){

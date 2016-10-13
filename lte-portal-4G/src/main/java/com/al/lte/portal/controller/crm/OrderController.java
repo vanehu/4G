@@ -2246,8 +2246,16 @@ public class OrderController extends BaseController {
         } catch (Exception e) {
             log.error("门户/order/checkGroupShortNum方法异常", e);
             return super.failed(ErrorCode.SHORT_NUM_CHECK, e, param);
-        }
+    }
 
+    /**
+	 * 主副卡角色互换：主套餐及产品等信息不变，仅主副卡角色发生变化
+	 */
+    @RequestMapping(value = "/roleExchange", method = { RequestMethod.POST })
+    public String roleExchange(@RequestBody Map<String, Object> param, Model model, HttpServletResponse response) {
+    	model.addAttribute("param", param);
+        return "/order/order-modify-roleExchange";
+    }
     }
 
     /*bxw短号修改：校验*/

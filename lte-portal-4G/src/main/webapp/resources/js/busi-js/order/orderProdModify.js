@@ -1797,7 +1797,7 @@ order.prodModify = (function(){
 		});
 		*/
 		
-	}
+	}	
 	
 	//修改产品实例属性:修改使用人
 	var _spec_parm_user_change = function(){
@@ -1852,7 +1852,7 @@ order.prodModify = (function(){
 				acctNbr:_choosedProdInfo.accNbr,
 				areaId:_choosedProdInfo.areaId
 		};
-		$.callServiceAsHtmlGet(contextPath + "/order/orderSpecParamUserChange",param, {
+		$.callServiceAsHtml(contextPath + "/order/orderSpecParamUserChange",param, {
 			"before":function(){
 				$.ecOverlay("<strong>正在查询中,请稍等会儿....</strong>");
 			},
@@ -4476,6 +4476,56 @@ order.prodModify = (function(){
 		}
 	};
 	
+	/**
+	 * 主副卡角色互换，套餐及产品等信息不变
+	 */
+	var _roleExchange = function(param){
+		$.callServiceAsHtml(contextPath + "/order/roleExchange",param, {
+			"before":function(){
+				$.ecOverlay("<strong>正在查询中,请稍等会儿....</strong>");
+			},
+			"always":function(){
+				$.unecOverlay();
+			},
+			"done" : function(response){
+				if(response && response.code == -2){
+					$.alertM(response.data);
+					return;
+				}
+				if(response && response.data){
+					_gotoOrderModify4RoleExchange(param, response);//针对主副卡互换加载填单页面
+					order.dealer.initDealer();//加载填单页面后初始化发展人
+				}else{
+					$.alert("错误","加载填单页面请求发生未知异常，请稍后重新尝试！");
+				}
+			}
+		});	
+	};
+	
+	/**
+	 * 加载填单页面
+	 */
+	var _gotoOrderModify4RoleExchange = function (param, response){
+		var content$ = $("#order_fill_content");
+		content$.html(response.data).show();
+		$(".main_div .h2_title").append(_choosedProdInfo.productName+"-"+_choosedProdInfo.accNbr);
+		$("#ordercon").show();
+		$("#ordertabcon").show();
+		order.prepare.step(1);
+		$("#orderedprod").hide();
+		$("#order_prepare").hide();
+		$(".ordercon a:first span").text("取 消");
+		$(".main_body").css("height","150px");
+		$(".main_body").css("min-height","150px");
+		$("#order_confirm").empty();
+		$("#fillLastStep").click(function(){
+			order.prodModify.cancel();
+		});
+		$("#fillNextStep").unbind("click").bind("click",function(){
+			SoOrder.submitOrder(param);
+		});
+	};
+	
 	return {
 		changeCard : _changeCard,
 		getChooseProdInfo : _getChooseProdInfo,
@@ -4570,7 +4620,9 @@ order.prodModify = (function(){
 		urgentOpen : _urgentOpen,
 		phoneOpen : _phoneOpen,
 		accountChange:_accountChange,
+		preCheckBeforeOrder : _preCheckBeforeOrder,
 		showGroupRemoveProd: _showGroupRemoveProd,
-		preCheckBeforeOrder : _preCheckBeforeOrder
+		preCheckBeforeOrder : _preCheckBeforeOrder,
+		roleExchange:_roleExchange
 	};
 })();
