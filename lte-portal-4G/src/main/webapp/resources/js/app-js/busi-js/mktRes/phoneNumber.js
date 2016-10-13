@@ -1115,7 +1115,7 @@ order.phoneNumber = (function(){
 				$.alertM(response.data);
 				return;
 			} else if (response.data.checkLevel != 0) {
-				$.alert("提示", accNbr + "不可放号" + ec.util.isObj(response.data.checkInfo) ? "，具体原因：" + response.data.checkInfo : "");
+				$.alert("提示", accNbr + "不可放号" + (ec.util.isObj(response.data.checkInfo) ? "，具体原因：" + response.data.checkInfo : ""));
 				return;
 			}
 		}
