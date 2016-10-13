@@ -188,7 +188,7 @@ order.prodModify = (function(){
 		//查分省前置校验开关
         var propertiesKey = "PRECHECKFLAG_"+OrderInfo.staff.soAreaId.substring(0,3);
         var isPCF = offerChange.queryPortalProperties(propertiesKey);
-        if(isPCF == "ON"){
+        if(isPCF == "ON" && addChange != "13"){//异地补换卡不前置校验 #930184 
         	if(OrderInfo.preBefore.prcFlag != "Y"){
         		if(!_preCheckBeforeOrder(addChange,"showChangeCard")){
             		return ;
