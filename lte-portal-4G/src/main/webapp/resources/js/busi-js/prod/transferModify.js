@@ -825,7 +825,7 @@ prod.transferModify = (function(){
 			_toCustName=$("#litransCustId").attr("transcustname");
 		}
 		_initAcct();
-		if(_BO_ACTION_TYPE == CONST.BO_ACTION_TYPE.ACTIVERETURN){
+		if(_BO_ACTION_TYPE == CONST.BO_ACTION_TYPE.ACTIVERETURN&&OrderInfo.actionFlag!=43){
 			$("#accountDiv").hide();
 			$("#modAccountProfile").show();
 			$('#choose_user_btn_-1').off('click').on('click',function(){
