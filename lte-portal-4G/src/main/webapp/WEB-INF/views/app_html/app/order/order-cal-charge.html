@@ -7,7 +7,7 @@
 				<p style=" color: #000;">购物车流水：${olNbr}</p>
 			</div>
 			<div class="panel-body">
-			<div class="form-group">
+			<div class="form-group" id="payTypeDiv">
 						<label for="exampleInputEmail1">付费方式</label>
 						<select id="idtype" class="selectpicker show-tick form-control shouyintai_payType">
 							<#if payMethodInfo??&&(payMethodInfo?size>0)>
@@ -16,7 +16,7 @@
 							        </#list>
 						     <#else>
 							        <option value="100000">现金</option>
-							 </#if>
+							 </#if>                          
 						</select>
 			</div>
 			</div>
@@ -207,6 +207,11 @@
       	     <p class="col-xs-6" style="color: #000;" id="feeAmount">应收：${amount?string('0.00')}</p>
       	     <p class="col-xs-6" style="color: #000;">实收：<span id="realMoney">${amount?string('0.00')}</span></p>
       </div>
+      
+      	<div id="showPdf" class="form-group" style="text-align:center; display:none;">
+                <button type="button" onclick = "javascript:common.print.preSign();" class="btn btn-default  active">回执预览</button>
+        </div>
+        
 		</div>
 	</div>
 </div>
@@ -225,4 +230,39 @@
   </div>
 </nav>
 <div id="edit_content" style="display:none"></div>
+
+<script>
+$(function() {
+	//查分省支付开关
+    var propertiesKey = "NEWPAYFLAG_"+(OrderInfo.staff.soAreaId+"").substring(0,3);
+    var isNewPay = offerChange.queryPortalProperties(propertiesKey);
+    if(isNewPay == "ON"){//开关打开收费方式隐藏，点收费跳转支付平台，否则默认调用原收费方式
+			order.calcharge.myFlag=true;
+//		    $("#idtype").empty();
+//			    $("#idtype").append("<option value='100000'>现金</option>");
+//			    $("#idtype").append("<option value='120100'>翼支付</option>");
+//			    $("#idtype").append("<option value='120200'>支付宝</option>");
+//			    $("#idtype").append("<option value='120400'>微信</option>");
+            $("#payTypeDiv").css("display","none");
+		}		
+	//特殊权限工号
+	var staffId=OrderInfo.staff.staffId;
+	var staffIds=["5244776","30035134709","30035134730","5176843","3053296","30035026690","30035163588","30035179425","30035179437","30035179443","30035179458","30033905872"];//工号id,配置的工号只展示现金和支付宝、微信、翼支付等支付方式
+	for(var i in staffIds){
+		if(staffId==staffIds[i]){
+			order.calcharge.myFlag=true;
+//		    $("#idtype").empty();
+//			    $("#idtype").append("<option value='100000'>现金</option>");
+//			    $("#idtype").append("<option value='120100'>翼支付</option>");
+//			    $("#idtype").append("<option value='120200'>支付宝</option>");
+//			    $("#idtype").append("<option value='120400'>微信</option>");
+            $("#payTypeDiv").css("display","none");
+			break;
+		}		
+	}
+});
+
+
+
+</script>
 

@@ -1,17 +1,17 @@
 package com.al.lte.portal.bmo.crm;
 
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 
-import com.al.ec.entity.StaffInfo;
 import com.al.ec.serviceplatform.client.DataBus;
 import com.al.ec.serviceplatform.client.ResultCode;
 import com.al.ecs.common.util.JsonUtil;
@@ -21,6 +21,7 @@ import com.al.ecs.exception.InterfaceException;
 import com.al.ecs.log.Log;
 import com.al.lte.portal.bmo.staff.StaffBmo;
 import com.al.lte.portal.bmo.staff.StaffBmoImpl;
+import com.al.lte.portal.common.AESUtils;
 import com.al.lte.portal.common.Const;
 import com.al.lte.portal.common.InterfaceClient;
 import com.al.lte.portal.common.MySimulateData;
@@ -2199,26 +2200,62 @@ public class OrderBmoImpl implements OrderBmo {
     /**
      * 渠道可支持的付费方式查询接口
      */
-	public Map<String, Object> queryAvilablePayMethodCdByChannelId(Map<String, Object> paramMap, String optFlowNum,SessionStaff sessionStaff) throws Exception {
-		DataBus db = InterfaceClient.callService(paramMap,
-				PortalServiceCode.QUERY_AVILABLE_PAYMETHODCD, optFlowNum, sessionStaff);
-		Map<String, Object> resultMap = new HashMap<String, Object>();
-		try{
-			// 服务层调用与接口层调用都成功时，返回列表；否则返回空列表
-			if (ResultCode.R_SUCC.equals(db.getResultCode())) {
-				resultMap = db.getReturnlmap();
-				resultMap.put("resultCode", ResultCode.R_SUCC);
-			} else {
-				resultMap.put("resultCode", ResultCode.R_FAILURE);
-				resultMap.put("resultMsg", db.getResultMsg());
-			}
-		} catch (Exception e) {
-			log.error("门户处理营业后台的一卡双号黑名单查询接口服务返回的数据异常", e);
-			throw new BusinessException(ErrorCode.QUERY_BLACK_USERINFO, paramMap, resultMap, e);
-		}
-		return resultMap;
-	}
-	
+    public Map<String, Object> queryAvilablePayMethodCdByChannelId(Map<String, Object> paramMap, String optFlowNum,SessionStaff sessionStaff) throws Exception {
+        DataBus db = InterfaceClient.callService(paramMap,
+                PortalServiceCode.QUERY_AVILABLE_PAYMETHODCD, optFlowNum, sessionStaff);
+        Map<String, Object> resultMap = new HashMap<String, Object>();
+        try{
+            // 服务层调用与接口层调用都成功时，返回列表；否则返回空列表
+            if (ResultCode.R_SUCC.equals(db.getResultCode())) {
+                resultMap = db.getReturnlmap();
+                resultMap.put("resultCode", ResultCode.R_SUCC);
+            } else {
+                resultMap.put("resultCode", ResultCode.R_FAILURE);
+                resultMap.put("resultMsg", db.getResultMsg());
+            }
+        } catch (Exception e) {
+            log.error("门户处理营业后台的一卡双号黑名单查询接口服务返回的数据异常", e);
+            throw new BusinessException(ErrorCode.QUERY_BLACK_USERINFO, paramMap, resultMap, e);
+        }
+        return resultMap;
+    }
+
+	public Map<String, Object> savePayRecords(Map<String, Object> dataBusMap, String optFlowNum,
+            SessionStaff sessionStaff) throws Exception {
+        Map<String, Object> returnMap = new HashMap<String, Object>();
+        DataBus db = ServiceClient.callService(dataBusMap,
+                PortalServiceCode.PAY_SERVICE_SAVE_RECORDS, optFlowNum, sessionStaff);
+        String resultCode = StringUtils.defaultString(db.getResultCode());
+        if (ResultCode.R_SUCCESS.equals(resultCode)) {
+            returnMap.put("code", ResultCode.R_SUCC);
+            returnMap.put("result", db.getReturnlmap());
+        } else {
+            if (ResultCode.R_ERROR_PARAM.equals(resultCode)) {
+                returnMap.put("code", ResultCode.R_EXCEPTION);
+            } else {
+                returnMap.put("code", ResultCode.R_FAILURE);
+            }
+        }
+        returnMap.put("msg", db.getResultMsg());
+
+        return returnMap;
+    }
+
+    public Map<String, Object> updatePayRecords(Map<String, Object> dataBusMap, String optFlowNum,
+            SessionStaff sessionStaff) throws Exception {
+        Map<String, Object> returnMap = new HashMap<String, Object>();
+        DataBus db = ServiceClient.callService(dataBusMap,
+                PortalServiceCode.PAY_SERVICE_UPDATE_RECORDS, optFlowNum, sessionStaff);
+        if (ResultCode.R_SUCCESS.equals(StringUtils.defaultString(db.getResultCode()))) {
+            returnMap.put("code", ResultCode.R_SUCC);
+        } else {
+            returnMap.put("code", ResultCode.R_FAILURE);
+        }
+        returnMap.put("msg", db.getResultMsg());
+
+        return returnMap;
+    }
+
 	/**
 	 * 电子档案查询
 	 */
@@ -2303,6 +2340,92 @@ public class OrderBmoImpl implements OrderBmo {
 			throw new BusinessException(ErrorCode.INVALID_BLACKLIST, dataBusMap, db.getReturnlmap(), e);
 		}
 	}
+
+	public Map<String, Object> queryPayTocken(Map<String, Object> paramMap,
+			String optFlowNum, SessionStaff sessionStaff) throws Exception {
+		Map<String, Object> paramMap2 = new HashMap<String, Object>();
+		Random rand = new Random();
+		int k = rand.nextInt(89999)+10000;//支付流水随机码
+		String reqPlatForm="1000000244";
+//		String provinceCode="8310000";
+//		String cityCode = "8310001";
+//		String channelId = "1001";
+		String provinceCode="";
+		String cityCode = sessionStaff.getCurrentAreaId();
+		if(cityCode!=null && !cityCode.equals("")){
+			provinceCode=cityCode.substring(0,3)+"0000";
+		}
+		String channelId=sessionStaff.getCurrentChannelId();
+		String reqNo = paramMap.get("olId").toString()+k;//业务流水号
+		String detail = URLEncoder.encode("翼销售支付", "utf-8");   
+		String customerId = "";
+		String customerName="";
+		String olNbr = paramMap.get("olId").toString();
+		String olNumber = sessionStaff.getStaffId();
+		paramMap2.put("olNbr",  olNbr);//业务订单
+		paramMap2.put("reqNo", reqNo);//传给支付平台的业务流水号要保证不同
+		String payAmount = paramMap.get("chargeItems").toString(); 
+		String busiUpType=paramMap.get("busiUpType").toString();//业务类型，默认1手机业务
+//		try {
+//			List<Map<String, Object>> chargeItems = new ArrayList<Map<String, Object>>();
+//			chargeItems = (List<Map<String, Object>>) paramMap
+//					.get("chargeItems");
+//			for (Map<String, Object> chargeItem : chargeItems) {
+//				payAmount += Long.parseLong(chargeItem.get("realAmount")
+//						.toString());
+//			}
+//		} catch (Exception e) {
+//			payAmount = 0;
+//		}
+		paramMap2.put("provinceCode", provinceCode);
+		paramMap2.put("cityCode", cityCode);//areaId
+		paramMap2.put("channelId", channelId);//areaId
+		paramMap2.put("payAmount", payAmount);// 金额，单位分
+		paramMap2.put("olNumber", olNumber);// 工号
+		paramMap2.put("customerId", customerId);// 
+		paramMap2.put("customerName", customerName);
+		paramMap2.put("detail", detail);// 详情描述
+		paramMap2.put("busiUpType", busiUpType);// 业务类型：1，手机业务2宽带甩单。
+		String paramStr = "provinceCode=" + provinceCode + "&cityCode=" + cityCode + "&channelId=" + channelId + 
+				"&reqNo=" + reqNo + "&payAmount=" + payAmount +"&detail="+detail+"&olNbr="+olNbr+"&olNumber="+olNumber+"&busiUpType="+busiUpType;
+		String sign = AESUtils.encryptToString(paramStr, "YXS_KEY_2016");
+		paramMap2.put("sign", sign);
+		Map<String, Object> dataBusMap = new HashMap<String, Object>();
+		dataBusMap.put("reqPlatForm", reqPlatForm);//请求平台
+		dataBusMap.put("params", paramMap2);
+		Map<String, Object> dataBusMap2 = new HashMap<String, Object>();
+		dataBusMap2.put("proot", dataBusMap);
+		DataBus db = InterfaceClient.callService(dataBusMap2,
+				PortalServiceCode.PAY_TOCKEN, null, sessionStaff);
+		return db.getReturnlmap();
+	}
+
+	public Map<String, Object> queryPayOrderStatus(Map<String, Object> paramMap,
+			String optFlowNum, SessionStaff sessionStaff) throws Exception {
+		Map<String, Object> paramMap2 = new HashMap<String, Object>();
+		String reqPlatForm="1000000244";
+		String provinceCode="";
+		String cityCode = sessionStaff.getCurrentAreaId();
+		if(cityCode!=null && !cityCode.equals("")){
+			provinceCode=cityCode.substring(0,3)+"0000";
+		}
+		String olNbr = paramMap.get("olId").toString();//业务订单号
+		String reqPayType = "1";//支付
+		String paramStr = "provinceCode=" + provinceCode + "&olNbr=" + olNbr+"&reqPayType="+reqPayType;
+		String sign = AESUtils.encryptToString(paramStr, "YXS_KEY_2016");
+		paramMap2.put("provinceCode", provinceCode);
+		paramMap2.put("olNbr", olNbr);
+		paramMap2.put("reqPayType", reqPayType);
+		paramMap2.put("sign", sign);
+		Map<String, Object> dataBusMap = new HashMap<String, Object>();
+		Map<String, Object> dataBusMap2 = new HashMap<String, Object>();
+		dataBusMap.put("reqPlatForm", reqPlatForm);//请求平台
+		dataBusMap.put("params", paramMap2);
+		dataBusMap2.put("proot", dataBusMap);
+		DataBus db = InterfaceClient.callService(dataBusMap2,
+				PortalServiceCode.PAY_QUERY, null, sessionStaff);
+		return db.getReturnlmap();
+	}
 	
 	public Map<String, Object> preCheckBeforeOrde(Map<String, Object> paramMap,
 			String flowNum, SessionStaff sessionStaff) throws Exception {
@@ -2324,5 +2447,167 @@ public class OrderBmoImpl implements OrderBmo {
 			throw new BusinessException(ErrorCode.PRE_CHECK_ORDER, paramMap, resultMap, e);
 		}
 		return resultMap;
+	}
+
+	public Map<String, Object> unityOrderUnder(Map<String, Object> param,
+			String optFlowNum, SessionStaff sessionStaff) throws Exception {
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		DataBus db = InterfaceClient.callServiceMiddleSys(param, 
+				PortalServiceCode.BORAD_BAND_UNITY_ORDER,
+				optFlowNum, sessionStaff);
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db
+				.getResultCode()))) {
+			resultMap = db.getReturnlmap();
+			Map<String, Object> datamap = resultMap;
+			returnMap.put("code", ResultCode.R_SUCCESS);
+			returnMap.put("reult",datamap);
+		} else {
+			returnMap.put("code", ResultCode.R_FAIL);
+			returnMap.put("msg", "商机单下发接口调用失败");
+		}
+		return returnMap;				
+	}
+
+	public Map<String, Object> salesOrderUnder(Map<String, Object> param,
+			String optFlowNum, SessionStaff sessionStaff) throws Exception {
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		DataBus db = InterfaceClient.callServiceMiddleSys(param, 
+				PortalServiceCode.BORAD_BAND_SALES_ORDER,
+				optFlowNum, sessionStaff);
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db
+				.getResultCode()))) {
+			resultMap = db.getReturnlmap();
+			Map<String, Object> datamap = resultMap;
+			returnMap.put("code", ResultCode.R_SUCCESS);
+			returnMap.put("reult",datamap);
+		} else {
+			returnMap.put("code", ResultCode.R_FAIL);
+			returnMap.put("msg", "销售单下发接口调用失败");
+		}
+		return returnMap;				
+	}
+
+	public Map<String, Object> queryInstallTime(Map<String, Object> param,
+			String optFlowNum, SessionStaff sessionStaff) throws Exception {
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		DataBus db = InterfaceClient.callServiceMiddleSys(param, 
+				PortalServiceCode.BORAD_BAND_TIME_QRY,
+				optFlowNum, sessionStaff);
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db
+				.getResultCode()))) {
+			resultMap = db.getReturnlmap();
+			Map<String, Object> datamap = resultMap;
+			returnMap.put("code", ResultCode.R_SUCCESS);
+			returnMap.put("reult",datamap);
+		} else {
+			returnMap.put("code", ResultCode.R_FAIL);
+			returnMap.put("msg", "预约装机时间查询接口调用失败");
+		}
+		return returnMap;				
+	}
+
+	public Map<String, Object> queryOrderDetail(Map<String, Object> param,
+			String optFlowNum, SessionStaff sessionStaff) throws Exception {
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		DataBus db = InterfaceClient.callServiceMiddleSys(param, 
+				PortalServiceCode.BORAD_BAND_ORDER_DETAIL,
+				optFlowNum, sessionStaff);
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db
+				.getResultCode()))) {
+			resultMap = db.getReturnlmap();
+			Map<String, Object> datamap = resultMap;
+			returnMap.put("code", ResultCode.R_SUCCESS);
+			returnMap.put("reult",datamap);
+		} else {
+			returnMap.put("code", ResultCode.R_FAIL);
+			returnMap.put("msg", "订单详情查询接口调用失败");
+		}
+		return returnMap;				
+	}
+	
+	public Map<String, Object> queryChannelByCoords(Map<String, Object> param,
+			String optFlowNum, SessionStaff sessionStaff) throws Exception {
+		String serviceCode=PortalServiceCode.BORAD_BAND_QUERYCHANNEL_BYCOORDS;
+    	DataBus db = InterfaceClient.callService(param,serviceCode,optFlowNum, sessionStaff);
+    	Map<String, Object> returnMap = new HashMap<String, Object>();
+		if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db.getResultCode()))) {
+			returnMap.put("code", ResultCode.R_SUCCESS);
+			returnMap.putAll(db.getReturnlmap());
+		} else {
+			returnMap.put("code", ResultCode.R_FAIL);
+			returnMap.put("msg", db.getResultMsg());
+		}
+		return returnMap;
+	}
+	
+	public Map<String, Object> queryChannel(Map<String, Object> param,
+			String optFlowNum, SessionStaff sessionStaff) throws Exception {
+		String serviceCode=PortalServiceCode.BORAD_BAND_QUERYCHANNEL;
+    	DataBus db = InterfaceClient.callService(param,serviceCode,optFlowNum, sessionStaff);
+    	Map<String, Object> returnMap = new HashMap<String, Object>();
+		if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db
+				.getResultCode()))) {
+			returnMap.put("code", ResultCode.R_SUCCESS);
+			returnMap.putAll(db.getReturnlmap());
+		} else {
+			returnMap.put("code", ResultCode.R_FAIL);
+			returnMap.put("msg", db.getResultMsg());
+		}
+		return returnMap;
+	}
+	
+	public Map<String, Object> queryChannelListById(Map<String, Object> param,
+			String optFlowNum, SessionStaff sessionStaff) throws Exception {
+		String serviceCode=PortalServiceCode.BORAD_BAND_QUERYCHANNEL_LISTBYID;
+    	DataBus db = InterfaceClient.callService(param,serviceCode,optFlowNum, sessionStaff);
+    	Map<String, Object> returnMap = new HashMap<String, Object>();
+		if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db
+				.getResultCode()))) {
+			returnMap.put("code", ResultCode.R_SUCCESS);
+			returnMap.putAll(db.getReturnlmap());
+		} else {
+			returnMap.put("code", ResultCode.R_FAIL);
+			returnMap.put("msg", db.getResultMsg());
+		}
+		return returnMap;
+	}
+	
+	public Map<String, Object> saleOrderCommit(Map<String, Object> param,
+			String optFlowNum, SessionStaff sessionStaff) throws Exception {
+		String serviceCode=PortalServiceCode.BORAD_BAND_SALES_ORDER;
+    	DataBus db = InterfaceClient.callServiceMiddleSys(param,serviceCode,optFlowNum, sessionStaff);
+    	Map<String, Object> returnMap = new HashMap<String, Object>();
+    	
+		if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db
+				.getResultCode()))) {
+			returnMap = db.getReturnlmap();
+			returnMap.put("code", ResultCode.R_SUCCESS);
+			returnMap.putAll(returnMap);
+		} else {
+			returnMap.put("code", ResultCode.R_FAIL);
+			returnMap.put("msg", db.getResultMsg());
+			returnMap.put("flowId", db.getBusiFlowId());
+		}
+		return returnMap;
+	}
+	
+	public Map<String, Object> queryChargeConfig(Map<String, Object> param,
+			String optFlowNum, SessionStaff sessionStaff) throws Exception {
+		String serviceCode=PortalServiceCode.BORAD_BAND_QUERYCHARGECONFIG;
+    	DataBus db = InterfaceClient.callService(param,serviceCode,optFlowNum, sessionStaff);
+    	Map<String, Object> returnMap = new HashMap<String, Object>();
+		if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db
+				.getResultCode()))) {
+			returnMap.put("code", ResultCode.R_SUCCESS);
+			returnMap.putAll(db.getReturnlmap());
+		} else {
+			returnMap.put("code", ResultCode.R_FAIL);
+			returnMap.put("msg", db.getResultMsg());
+		}
+		return returnMap;
 	}
 }

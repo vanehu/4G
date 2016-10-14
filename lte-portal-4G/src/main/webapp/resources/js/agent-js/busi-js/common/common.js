@@ -472,6 +472,17 @@ common = (function($) {
 		);	
 	};
 	
+	//调用客户端打开支付页面
+	var _callOpenPay=function(payUrl){
+		var arr=new Array(1);
+		arr[0]=payUrl;
+		MyPlugin.openPayWeb(arr,
+            function(result) {
+            },
+            function(error) {
+            }
+		);
+	};
 	return {
 		relocationCust		:	_relocationCust,
 		setCalendar			:	_setCalendar,
@@ -489,6 +500,7 @@ common = (function($) {
 		callTitle			:	_callTitle,
 		saveCust			:	_saveCust,
 		printEQCode         :   _printEQCode,
-		callAgreePhoto      :   _callAgreePhoto
+		callAgreePhoto      :   _callAgreePhoto,
+		callOpenPay         :   _callOpenPay
 	};
 })(jQuery);

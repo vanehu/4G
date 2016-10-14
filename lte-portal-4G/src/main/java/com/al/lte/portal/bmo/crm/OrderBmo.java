@@ -627,15 +627,132 @@ public interface OrderBmo {
 	 */
 	public Map<String,Object> downLoadElecRecordPdf(Map<String, Object> paramMap,String optFlowNum, 
 			SessionStaff sessionStaff) throws Exception;
-	
-	
+
 	/**
 	 * 失效黑名单
 	 */
 	public Map<String, Object> blackListInvalid(Map<String, Object> dataBusMap, String optFlowNum, 
 			SessionStaff sessionStaff) throws Exception;
+
+	Map<String, Object> savePayRecords(Map<String, Object> dataBusMap, String optFlowNum,
+            SessionStaff sessionStaff) throws Exception;
+
+    Map<String, Object> updatePayRecords(Map<String, Object> dataBusMap, String optFlowNum,
+            SessionStaff sessionStaff) throws Exception;
+    
+	/**
+	 * 支付页面tocken查询
+	 */
+	public Map<String,Object> queryPayTocken(Map<String, Object> paramMap,String optFlowNum, 
+			SessionStaff sessionStaff) throws Exception;
+	
+	/**
+	 * 支付页面订单状态查询
+	 */
+	public Map<String,Object> queryPayOrderStatus(Map<String, Object> paramMap,String optFlowNum, 
+			SessionStaff sessionStaff) throws Exception;
 	
 	public Map<String, Object> preCheckBeforeOrde(Map<String, Object> paramMap,
 			String flowNum, SessionStaff sessionStaff)throws Exception;
+	
+	/**
+	 * 宽带融合，商机单下发
+	 * @param param
+	 * @param optFlowNum
+	 * @param sessionStaff
+	 * @return
+	 * @throws Exception
+	 */
+	public Map<String, Object> unityOrderUnder(Map<String, Object> param,
+			String optFlowNum, SessionStaff sessionStaff) throws Exception;
+	
+	/**
+	 * 宽带融合，销售单下发
+	 * @param param
+	 * @param optFlowNum
+	 * @param sessionStaff
+	 * @return
+	 * @throws Exception
+	 */
+	public Map<String, Object> salesOrderUnder(Map<String, Object> param,
+			String optFlowNum, SessionStaff sessionStaff) throws Exception;
+	
+	
+	/**
+	 * 宽带融合，预约装机时间查询
+	 * @param param
+	 * @param optFlowNum
+	 * @param sessionStaff
+	 * @return
+	 * @throws Exception
+	 */
+	public Map<String, Object> queryInstallTime(Map<String, Object> param,
+			String optFlowNum, SessionStaff sessionStaff) throws Exception;
+	
+	/**
+	 * 宽带融合，订单详情查询
+	 * @param param
+	 * @param optFlowNum
+	 * @param sessionStaff
+	 * @return
+	 * @throws Exception
+	 */
+	public Map<String, Object> queryOrderDetail(Map<String, Object> param,
+			String optFlowNum, SessionStaff sessionStaff) throws Exception;
+	
+	/**
+	 * 宽带融合，根据坐标查询门店
+	 * @param param
+	 * @param optFlowNum
+	 * @param sessionStaff
+	 * @return
+	 * @throws Exception
+	 */
+	public Map<String, Object> queryChannelByCoords(Map<String, Object> param,
+			String optFlowNum, SessionStaff sessionStaff) throws Exception;
+	
+	/**
+	 * 宽带融合，根据门店名称模糊搜索门店
+	 * @param param
+	 * @param optFlowNum
+	 * @param sessionStaff
+	 * @return
+	 * @throws Exception
+	 */
+	public Map<String, Object> queryChannel(Map<String, Object> param,
+			String optFlowNum, SessionStaff sessionStaff) throws Exception;
+	
+	/**
+	 * 宽带融合，根据当前渠道搜索附近门店
+	 * @param param
+	 * @param optFlowNum
+	 * @param sessionStaff
+	 * @return
+	 * @throws Exception
+	 */
+	public Map<String, Object> queryChannelListById(Map<String, Object> param,
+			String optFlowNum, SessionStaff sessionStaff) throws Exception;
+	
+	/**
+	 * 宽带融合，根据当前渠道搜索附近门店
+	 * @param param
+	 * @param optFlowNum
+	 * @param sessionStaff
+	 * @return
+	 * @throws Exception
+	 */
+	public Map<String, Object> saleOrderCommit(Map<String, Object> param,
+			String optFlowNum, SessionStaff sessionStaff) throws Exception;
+	
+	/**
+	 * 宽带融合，查询费用信息
+	 * @param param
+	 * @param optFlowNum
+	 * @param sessionStaff
+	 * @return
+	 * @throws Exception
+	 */
+	public Map<String, Object> queryChargeConfig(Map<String, Object> param,
+			String optFlowNum, SessionStaff sessionStaff) throws Exception;
 	
 }

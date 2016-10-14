@@ -1102,7 +1102,7 @@ order.phoneNumber = (function(){
 	//结束选号，不通的模块要做的动作不相同
 	var _endSelectNum=function(obj,purchas){
 		// 号码资源状态前置校验
-		var flagQueryRes = $.callServiceAsJson(contextPath + "/common/queryPortalProperties", {"propertiesKey": "NUMBER_CHECK_" + OrderInfo.staff.soAreaId.substring(0,3)});	
+		var flagQueryRes = $.callServiceAsJson(contextPath + "/common/queryPortalProperties", {"propertiesKey": "NUMBER_CHECK_" + (OrderInfo.staff.soAreaId+"").substring(0,3)});	
         var numberCheckFlag = flagQueryRes.code == 0 ? flagQueryRes.data : "";
 		if ("ON" == numberCheckFlag) {
 			var accNbr = $(obj).attr("numberVal").split("_")[0];

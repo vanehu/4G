@@ -8,6 +8,10 @@ import java.util.Map;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
+import net.sf.json.JSON;
+import net.sf.json.JSONSerializer;
+import net.sf.json.xml.XMLSerializer;
+
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.MapUtils;
 import org.slf4j.Logger;
@@ -133,4 +137,14 @@ public class CommonUtils {
 		return isGov;
 	} 
 	
+	public static String jsontoXml(String json) {  
+        try {  
+            XMLSerializer serializer = new XMLSerializer();  
+            JSON jsonObject = JSONSerializer.toJSON(json);  
+            return serializer.write(jsonObject);  
+        } catch (Exception e) {  
+            e.printStackTrace();  
+        }  
+        return null;  
+    }
 }

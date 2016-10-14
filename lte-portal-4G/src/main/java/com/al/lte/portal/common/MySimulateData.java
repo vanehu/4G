@@ -1,5 +1,7 @@
 package com.al.lte.portal.common;
 
+import java.io.BufferedInputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -9,6 +11,8 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
@@ -20,7 +24,6 @@ import com.al.ecs.exception.InterfaceException;
 import com.al.ecs.log.Log;
 import com.al.lte.portal.core.DataEngine;
 import com.al.lte.portal.core.DataRepository;
-import com.al.lte.portal.core.DataSourceManager;
 
 public class MySimulateData {
 
@@ -32,13 +35,22 @@ public class MySimulateData {
 	private static String resource = "/properties/simulate.properties";
 	private static String portalResource = "/portal/portal.properties";
 	private static String appDesc = "";
-	
+	private static Timer timer = null;
+
 //	private static String absResource = "file:///D:/work/simulate.properties";
 
 	public static MySimulateData getInstance() {
 		synchronized (pLock) {
 			if (mySimulateData == null) {
 				mySimulateData = new MySimulateData();
+				timer = new Timer();
+				timer.schedule(new TimerTask() {
+					@Override
+					public void run() {
+						mySimulateData = new MySimulateData();
+						log.debug("simulate.properties updating");
+					}
+				}, 0, 5000);
 			}
 		}
 		return mySimulateData;
@@ -82,6 +94,29 @@ public class MySimulateData {
 		}
 		return returnStr;
 	}
+	public String getJson(String serviceCode,String filePath) {
+		String returnStr = "";
+		try {
+			Properties propertiesMid = getProperties(filePath);
+			//相对地址变换获得路径
+//			properties = getProperties(resource);
+			//URI定义路径
+//			properties = getPropertiesByAbs(absResource);
+			//key指json回参编号
+			String key = propertiesMid.getProperty(serviceCode + ".num");
+			returnStr = propertiesMid.getProperty(serviceCode + "." + key);
+			returnStr = new String(returnStr.getBytes("ISO-8859-1"), "UTF-8");
+		} catch (Exception e) {
+			// 取值异常
+			// NullPointerException - if key is null
+			// MissingResourceException - if no object for the given key can be
+			// found
+			// ClassCastException - if the object found for the given key is not
+			// a string
+			returnStr = "";
+		}
+		return returnStr;
+	}	
 
 	public String getInvokeWay(String serviceCode) {
 		String returnStr = "";
@@ -227,7 +262,7 @@ public class MySimulateData {
 	public static Properties getProperties(String resource) {
 		Properties properties = new Properties();
 		try {
-			properties.load(getStream(resource));
+			properties.load(new BufferedInputStream(new FileInputStream(getClassLoader().getResource(resource).getPath())));
 		} catch (IOException e) {
 			throw new RuntimeException("couldn't load properties file '"
 					+ resource + "'", e);

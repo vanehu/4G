@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.net.SocketTimeoutException;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -12,6 +13,8 @@ import java.util.Random;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+
+import net.sf.json.xml.XMLSerializer;
 
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
@@ -53,6 +56,8 @@ import com.al.ecs.log.Log;
 import com.al.lte.portal.bmo.log.LogContainer;
 import com.al.lte.portal.core.DataRepository;
 import com.al.lte.portal.model.SessionStaff;
+
+
 
 /**
  * 调用服务层服务的封装类
@@ -97,6 +102,12 @@ public class InterfaceClient {
 	private static final String JSON_CONTENT_TYPE = "application/json";
 	private static final String TEXT_CONTENT_TYPE = "application/x-www-form-urlencoded";
 	private static final String ESS_PREFIX = "ess";
+
+	private static final String YIM_PREFIX = "yim";
+	private static final String XSD_PREFIX = "xsd";//宽带融合（翼销售）销售单下发
+
+	private static final String PAY_PREFIX = "pay";//支付平台
+
 	
 	/** 数据路由关键字，根据此标识读取不同数据源的配置数据 */
 	public static final String DATABUS_DBKEYWORD = "dbKeyWord";
@@ -327,6 +338,64 @@ public class InterfaceClient {
 					sys = "ESS系统";
 					paramString = JsonUtil.toString(dataBusMap);
 					paramJson=paramString;
+
+				}else if (YIM_PREFIX.equals(prefix)) {
+					serviceCode = serviceCode.substring(4);
+//					intfUrl = getNeeded(dbKeyWord,URL_KEY, YIM_PREFIX);
+					intfUrl = MDA.CSB_HTTP_QUERCHEN_URL.toString();
+					intfUrl += serviceCode;
+					sys = "翼管店系统";
+					paramString = JsonUtil.toString(dataBusMap);
+					paramJson=paramString;
+				}else if (XSD_PREFIX.equals(prefix)) {
+					serviceCode = serviceCode.substring(4);
+					intfUrl = getNeeded(dbKeyWord,URL_KEY, XSD_PREFIX);
+					intfUrl += serviceCode;
+					sys = "翼管店系统";
+					paramString = JsonUtil.toString(dataBusMap);
+					paramJson=paramString;
+
+				}else if(PAY_PREFIX.equals(prefix)){
+					serviceCode = serviceCode.substring(4);
+					intfUrl =MDA.PAY_TOKEN_URL.toString();
+					intfUrl += serviceCode;
+					sys = "pay";//支付平台标志
+					if (!dataBusMap.containsKey("areaId")) {
+						if(sessionStaff != null){
+							if (StringUtils.isBlank(sessionStaff.getCurrentAreaId())){
+								dataBusMap.put("areaId", sessionStaff.getAreaId());
+							}else{
+								dataBusMap.put("areaId", sessionStaff.getCurrentAreaId());
+							}
+						}
+					}
+//					String reqPlatForm=dataBusMap.get("reqPlatForm").toString();
+//					Map<String, Object> paramMap2 = (Map<String, Object>) dataBusMap.get("params");
+//					StringBuffer xml = new StringBuffer();
+//					xml.append("<proot>");
+//					xml.append("<reqPlatForm>"+reqPlatForm+"</reqPlatForm>");
+//					xml.append("<params>");
+//					xml.append("<provinceCode>"+paramMap2.get("provinceCode").toString()+"</provinceCode>");
+//					xml.append("<cityCode>"+paramMap2.get("cityCode").toString()+"</cityCode>");
+//					xml.append("<channelId>"+paramMap2.get("channelId").toString()+"</channelId>");
+//					xml.append("<payAmount>"+paramMap2.get("payAmount").toString()+"</payAmount>");		
+//					xml.append("<detail>"+paramMap2.get("detail").toString()+"</detail>");
+//					xml.append("<olNbr>"+paramMap2.get("olNbr").toString()+"</olNbr>");
+//					xml.append("<reqNo>"+paramMap2.get("reqNo").toString()+"</reqNo>");
+//					xml.append("<olNumber>"+paramMap2.get("olNumber").toString()+"</olNumber>");
+//					xml.append("<customerId>"+paramMap2.get("customerId").toString()+"</customerId>");
+//					xml.append("<customerName>"+paramMap2.get("customerName").toString()+"</customerName>");
+//					xml.append("<sign>"+paramMap2.get("sign").toString()+"</sign>");
+//					xml.append("</params>");
+//					xml.append("</proot>");		
+//					paramString=xml.toString();
+//					paramJson=paramString;
+					String s2 = JsonUtil.toString(dataBusMap);
+					String xml2 = CommonUtils.jsontoXml(s2);
+					paramString = xml2.substring(xml2.indexOf("<proot"),
+							xml2.indexOf("<transactionId"));
+					paramJson = paramString;
+					
 				}
 				
 				String csbFlag = propertiesUtils.getMessage(SysConstant.CSB_FLAG);
@@ -343,7 +412,13 @@ public class InterfaceClient {
 					//如果找不到CSB配置，就按默认方式HTTP调用
 					if (serviceCodeObj != null) {
 						Map<String, Object> map = JsonUtil.toObject((String)serviceCodeObj, Map.class);
-						paramString = addCsbInfo(map, paramString, appDesc,sessionStaff);
+						if (PAY_PREFIX.equals(prefix)) {// 支付平台接口封装信息全为xml
+							paramString = addCsbInfo2(map, paramString, appDesc,
+									sessionStaff);
+						} else {
+							paramString = addCsbInfo(map, paramString, appDesc,
+									sessionStaff);
+						}
 						Object csbUrlObj = null;
 						csbUrlObj = propertiesUtils.getMessage(URL_KEY + "." + CSB_HTTP);
 						if (csbUrlObj != null){
@@ -376,16 +451,31 @@ public class InterfaceClient {
 				}
 	
 				if (SysConstant.ON.equals(csbFlag) && serviceCodeObj != null){
-					
 					Node svcCont = checkCSBXml(serviceCode, rawRetn, paramString);
-					retnJson = svcCont.getText();
+					if (PAY_PREFIX.equals(prefix)) {// 支付平台
+						retnJson = svcCont.asXML();
+						XMLSerializer xmlSerializer = new XMLSerializer();
+						retnJson = xmlSerializer.read(retnJson).toString();
+						retnJson=retnJson.substring(1,retnJson.length()-1);
+					} else {
+						retnJson = svcCont.getText();
+					}
 					
+				}				
+				Map<String, Object> rootMap = JsonUtil.toObject(retnJson, Map.class);
+				//销售单下发接口回参修改
+				if(serviceCode.equals("intf.saleOrder/saleOrderCommit")){
+					Map<String,Object> ContractRoot = (Map<String, Object>) rootMap.get("ContractRoot");
+					Map<String,Object> SvcCont = (Map<String, Object>) ContractRoot.get("SvcCont");
+					Map<String,Object> Result = (Map<String, Object>) SvcCont.get("Result");
+					rootMap.put("resultCode", Result.get("ResultCode"));
+					rootMap.put("resultMsg", Result.get("ResultMsg"));
+//					Result.remove("ResultCode");
+//					Result.remove("ResultMsg");
 				}
 				
-				Map<String, Object> rootMap = JsonUtil.toObject(retnJson, Map.class);
-				
 				if (MapUtils.isEmpty(rootMap) || !rootMap.containsKey("resultCode")) {
-					if (rootMap == null || (!rootMap.containsKey("rspCode")&&!rootMap.containsKey("code"))) {
+					if (rootMap == null || (!rootMap.containsKey("rspCode")&&!rootMap.containsKey("code")&&!rootMap.containsKey("respCode"))) {
 						//异常判断：返回不是个JSON对象或没有包含resultCode
 						throw new InterfaceException(ErrType.OPPOSITE, serviceCode, retnJson, paramString, logSeqId);
 					}else if(rootMap.containsKey("code")){
@@ -398,7 +488,18 @@ public class InterfaceClient {
 						}
 						
 						db.setReturnlmap(rootMap);
-					}else{
+					}else if(rootMap.containsKey("respCode")){
+						resultCode = MapUtils.getString(rootMap, "respCode");
+						resultMsg = MapUtils.getString(rootMap, "message");
+						if (ResultCode.R_EXCEPTION.equals(resultCode) || ResultCode.R_RULE_EXCEPTION.equals(resultCode)) {
+							
+							checkError(rootMap, sys, serviceCode, resultCode, resultMsg, retnJson, paramString, logSeqId);
+							
+						}
+						
+						db.setReturnlmap(rootMap);
+					}
+					else {
 						resultCode = MapUtils.getString(rootMap, "rspCode");
 						resultMsg = MapUtils.getString(rootMap, "rspDesc");
 						if (ResultCode.R_EXCEPTION.equals(resultCode) || ResultCode.R_RULE_EXCEPTION.equals(resultCode)) {
@@ -509,6 +610,7 @@ public class InterfaceClient {
 	    }     
 	    return sb.toString();     
 	 }    
+	
 	/**
 	 * 调用服务层日志记录
 	 * @param dbKeyWord2 
@@ -761,13 +863,22 @@ public class InterfaceClient {
 			log.debug("reqUrl:{}", reqUrl);
 			log.debug("serviceCode:{},paramString:{}", serviceCode, paramString);
 			post = new HttpPost(reqUrl);
-			post.addHeader("Content-Type", contentType);
+			if("pay".equals(sys)){//支付平台只支持xml
+			   post.addHeader("Content-Type", "application/xml;charset=gbk");
+			}else{
+			   post.addHeader("Content-Type", contentType);
+			}
 			entity = new StringEntity(paramString, ENCODING);
 			post.setEntity(entity);
 			HttpResponse httpresponse = MyHttpclient.getInstance()
 					.getHttpclient().execute(post);
 			entity = httpresponse.getEntity();
 			retnJson = EntityUtils.toString(entity, ENCODING);
+			String csbFlag = propertiesUtils.getMessage(SysConstant.CSB_FLAG);
+			if(!SysConstant.ON.equals(csbFlag) && "pay".equals(sys)){
+				XMLSerializer xmlSerializer = new XMLSerializer();				
+				retnJson=xmlSerializer.read(retnJson).toString();
+			}
 			log.debug("serviceCode:{},retnJson:{}", serviceCode, retnJson);
 			// 返回成功
 			if (httpresponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
@@ -1041,6 +1152,33 @@ public class InterfaceClient {
 		
 		return cdm.getXml();
 	}
+	
+	private static String addCsbInfo2(Map<String, Object> csbMap,
+			String paramString, String appDesc,SessionStaff sessionStaff) throws IOException,Exception {
+		String tranid = "";
+		Map tranMap = new HashMap();
+		Map dataBusMap = new HashMap();
+		DataBus db = null;
+		try{
+			db = ServiceClient.callService(dataBusMap, PortalServiceCode.SERVICE_GET_TRANID, null, sessionStaff);
+			if("POR-0000".equals(db.getResultCode().toString())){
+				tranMap = db.getReturnlmap();
+				tranid = (String.valueOf(tranMap.get("TranId")));
+			}else{
+				throw new InterfaceException(ErrType.ECSP, PortalServiceCode.SERVICE_GET_TRANID, String.valueOf(db.getResultMsg()), JsonUtil.toString(dataBusMap));
+			}
+		}catch (Exception e) {
+			throw new InterfaceException(ErrType.ECSP, PortalServiceCode.SERVICE_GET_TRANID, String.valueOf(db.getResultMsg()), JsonUtil.toString(dataBusMap));
+        }
+		StringBuffer inXml = new StringBuffer();
+		inXml.append("<SvcCont>");
+		inXml.append(paramString);		
+		inXml.append("</SvcCont>");	
+		String paramStr = "";//入参
+		String srcTransactionNbr=tranid;
+		paramStr = "<ContractRoot>" + getTcpCont(csbMap,srcTransactionNbr,appDesc) + inXml.toString() + "</ContractRoot>";//请求报文
+        return paramStr;
+	}
 
 	private static String getInvokeWay(String serviceCode) {
 		return MySimulateData.getInstance().getInvokeWay(serviceCode);
@@ -1216,6 +1354,215 @@ public class InterfaceClient {
 		} catch (Exception e) {
 			log.error("日志记录异常", e);
 		}
+	}
+	/**
+	 * 调用中台接口
+	 * 
+	 * @param dataBusMap
+	 *            入参
+	 * @param serviceCode
+	 *            　服务层的服务编码
+	 * @param optFlowNum
+	 *            平台编码，用于记录日志
+	 * @param sessionStaff
+	 *            员工Session对象
+	 * @return DataBus 返回
+	 * @throws IOException 
+	 * @throws DocumentException 
+	 * @throws Exception
+	 */
+	public static DataBus callServiceMiddleSys(Map<String, Object> dataBusMap,
+			String serviceCode, String optFlowNum, SessionStaff sessionStaff)
+			throws InterfaceException, IOException, Exception {
+		/*
+		 * 1、数据路由关键字，根据此标识读取不同数据源的配置数据，为空则读取默认数据源的配置数据；
+		 * 2、优先读取sessionStaff中的路由参数,如果为空则从入参dataBusMap中读取；
+		 */
+		
+		String dbKeyWord = sessionStaff == null ? null : sessionStaff.getDbKeyWord();
+		if(StringUtils.isBlank(dbKeyWord)){
+			dbKeyWord = MapUtils.getString(dataBusMap, DATABUS_DBKEYWORD,"");
+			dataBusMap.remove(DATABUS_DBKEYWORD);
+		}
+		
+		Map<String,Object> ContractRoot = (Map<String, Object>) dataBusMap.get("ContractRoot");
+		Map<String,Object> TcpCont = (Map<String, Object>) ContractRoot.get("TcpCont");
+		String AppKey = SysConstant.CSB_SRC_SYS_ID_APP;
+		String TransactionID = "";
+		if("order.prod.salesorder".equals(serviceCode)){
+			TransactionID = (String) dataBusMap.get("TransactionID");
+		}else{
+			String ymdStr = DateFormatUtils.format(new Date(), "yyyyMMdd");
+			String str10 = "";
+			String nonce = RandomStringUtils.randomNumeric(5); //随机字符串
+			DataBus _db = null;
+			_db = ServiceClient.callService(new HashMap(), PortalServiceCode.SERVICE_GET_LOG_SEQUENCE, null, sessionStaff);
+			str10 = nonce + String.format("%05d", _db.getReturnlmap().get("logSeq"));
+			TransactionID = AppKey+ymdStr+str10;
+		}
+		TcpCont.put("TransactionID", TransactionID);
+		String ReqTime = DateFormatUtils.format(new Date(), "yyyyMMddHHmmss");
+		TcpCont.put("AppKey", AppKey);
+		TcpCont.put("ReqTime", ReqTime);
+		//开始拼接签名sign
+		Map<String,Object> svcCont = (Map<String, Object>) ContractRoot.get("SvcCont");
+		String svcString=JsonUtil.toString(svcCont);
+		String signKey=TransactionID+"\"SvcCont\":"+svcString+MDA.SecretKey.toString();
+		String sign=AESUtils.getMD5Str(signKey);
+		TcpCont.put("Sign", sign);
+		//签名串结束
+		DataBus db = new DataBus();
+		db = ServiceClient.initDataBus(sessionStaff);
+		long beginTime = System.currentTimeMillis();
+//		String appDesc = propertiesUtils.getMessage(SysConstant.APPDESC);
+//		if (sessionStaff != null && SysConstant.APPDESC_MVNO.equals(appDesc)) {
+//			dataBusMap.put("distributorId", sessionStaff.getPartnerId());
+//		}
+//		String transactionId = UIDGenerator.getRand();
+//		dataBusMap.put("transactionId", transactionId);
+//		if (StringUtils.isEmpty(optFlowNum)) {
+//			optFlowNum = transactionId;
+//		}
+		// 开始调用
+		request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
+		String paramString = "";
+		paramString = JsonUtil.toString(dataBusMap);
+		System.out.println("++++++++++++中台接口入参paramString="+paramString);
+		String paramJson="";
+		String retnJson = "";
+		String rawRetn = "";
+		String intfUrl = "";
+        if(MDA.CSB_HTTP_MIDDLE_URL.toString()!=null && MDA.CSB_HTTP_MIDDLE_URL.toString().length()>0){
+        	intfUrl = MDA.CSB_HTTP_MIDDLE_URL.toString();
+        }
+        String method = serviceCode;
+        serviceCode = intfUrl;
+		String resultCode = "";
+		String resultMsg = "";
+//		String errCode = "";
+//		String errorStack = "";
+		String prefix = "";
+		String logSeqId = "";
+		String invokeWay = "SIMULATE";
+		Map<String, Object> rootMap =  new HashMap();
+		try {
+		
+			if (HTTP_WAY.equals(invokeWay)) {
+				//预留
+			} else if (WS_WAY.equals(invokeWay)) {
+	
+			} else if (SIMULATE_WAY.equals(invokeWay)) {
+				String sys = "翼管店系统";
+				String contentType = JSON_CONTENT_TYPE;
+				db = httpCall(sys, serviceCode, paramString, intfUrl, contentType, optFlowNum, sessionStaff, beginTime, logSeqId);
+				System.out.println("++++++++++++中台接口回参="+JsonUtil.toString(db));
+				rawRetn = db.getResultMsg();
+//				Node svcCont = checkCSBXml(serviceCode, rawRetn, paramString);
+//				retnJson = svcCont.getText();
+				retnJson = rawRetn;
+				log.debug("retnJson:{}", retnJson.length() > 3000 ? retnJson.substring(0, 3000) : retnJson);
+				
+				if (StringUtils.isBlank(retnJson)) {
+					db.setResultCode(ResultCode.R_INTERFACE_EXCEPTION);
+					db.setResultMsg("接口返回为空");
+					return db;
+				}
+	
+				rootMap = JsonUtil.toObject(retnJson, Map.class);
+				rootMap.put("logSeqId", logSeqId);
+				Object obj = MapUtils.getObject(rootMap, "ContractRoot", null);
+				if (obj != null) {
+					rootMap = (Map<String, Object>) obj;
+					Map<String, Object> tcpContMap = (Map<String, Object>) rootMap.get("TcpCont");
+					Map<String, Object> svcContMap = (Map<String, Object>) rootMap.get("SvcCont");
+					if(!"order.prod.salesorder".equals(method)){
+						Map respMap=(Map) tcpContMap.get("Response");
+						String respCode=(String) respMap.get("RspCode");
+						if(ResultCode.RES_SUCCESS.equals(respCode)){
+							resultCode = "0";
+							resultMsg = (String)respMap.get("RspDesc");
+							db.setResultCode(ResultCode.R_SUCC);
+							db.setReturnlmap(svcContMap);
+						}else{
+							resultCode = respCode;
+							resultMsg = (String)respMap.get("RspDesc");
+							db.setResultCode(ResultCode.R_FAIL);
+//						resultMsg = (String) respMap.get("RspDesc");
+						}
+					}
+					
+					if (MapUtils.isNotEmpty(svcContMap)) {
+						if("order.prod.salesorder".equals(method)){
+							Map<String, Object> resultMap = (Map<String, Object>) svcContMap.get("ResultObj");
+							resultCode = (String)resultMap.get("ResultCode");
+							resultMsg = (String)resultMap.get("ResultMsg");
+							db.setResultCode(resultCode);
+							db.setResultMsg(resultMsg);
+							db.setReturnlmap(svcContMap);
+						}else{
+							Map<String, Object> resultMap = (Map<String, Object>) svcContMap.get("Result");
+							if (MapUtils.isNotEmpty(svcContMap)) {
+								resultCode = (String) resultMap.get("ResultCode");
+								resultMsg = (String) resultMap.get("ResultMsg");
+								db.setResultCode(resultCode);
+								db.setResultMsg(resultMsg);
+								db.setReturnlmap(svcContMap);
+							}
+						}
+					} else {//有的接口不返回svccont,但是成功
+						if("order.prod.salesorder".equals(method)){
+							Map respMap=(Map) tcpContMap.get("Response");
+							String respCode=(String) respMap.get("RspCode");
+							if(ResultCode.RES_SUCCESS.equals(respCode)){
+								resultCode = "0";
+								resultMsg = (String)respMap.get("RspDesc");
+								db.setResultCode(ResultCode.R_SUCC);
+								db.setReturnlmap(tcpContMap);
+							}else{
+								resultCode = respCode;
+								resultMsg = (String)respMap.get("RspDesc");
+								db.setResultCode(ResultCode.R_FAIL);
+//							resultMsg = (String) respMap.get("RspDesc");
+							}
+						}
+//						Map respMap=(Map) tcpContMap.get("Response");
+//						String respCode=(String) respMap.get("RspCode");
+//						if(ResultCode.RES_SUCCESS.equals(respCode)){
+//							resultCode = "0";
+//							db.setResultCode(ResultCode.R_SUCC);
+//						}else{						
+//						db.setResultCode(ResultCode.R_INTERFACE_PARAM_MISS);
+//						resultMsg = (String) respMap.get("RspDesc");
+//						}
+					}
+				} else {
+					resultCode = (String) rootMap.get("resultCode");
+					resultMsg = (String) rootMap.get("resultMsg");
+					db.setResultCode(resultCode);
+					db.setResultMsg(resultMsg);
+					db.setReturnlmap(rootMap);
+				}
+				log.debug("调用回参:{}", retnJson);
+	
+			} else {
+	
+			}
+		}catch (Exception e) {
+			
+		} finally {
+			db.setResultCode(resultCode);
+			db.setResultMsg(resultMsg);
+			db.setParammap(dataBusMap);
+//			db.setReturnlmap(rootMap);
+			if (sessionStaff != null) {
+				callServiceLog(logSeqId, dbKeyWord, db, optFlowNum, serviceCode, intfUrl, sessionStaff, paramString, rawRetn, beginTime, System.currentTimeMillis(),retnJson,paramJson,prefix);
+			}
+		}
+		db.setBusiFlowId(TransactionID);
+		return db;
+	}	
+	private static String getRetnJson(String serviceCode,String filePath) {
+		return MySimulateData.getInstance().getJson(serviceCode,filePath);
 	}	
 	
 	/**
@@ -1237,5 +1584,52 @@ public class InterfaceClient {
 		} catch (Exception e) {
 			log.error("日志记录异常", e);
 		}
+	}
+	
+	public static String getTcpCont(Map<String,Object> csbMap,String srcTransactionNbr,String appDesc) {
+		StringBuffer respXml = new StringBuffer();
+		String srcSysID = SysConstant.CSB_SRC_SYS_ID_LTE;
+		String srcSysSign=MapUtils.getString(csbMap, "srcSysSign");
+		String srcSysSign2=srcSysSign;
+		if(srcSysSign==null||"".equals(srcSysSign)){
+			srcSysSign2=SysConstant.CSB_SRC_SYS_SIGN;
+		}
+		if (SysConstant.APPDESC_MVNO.equals(appDesc)) {
+			srcSysID = SysConstant.CSB_SRC_SYS_ID_MVNO;
+		} else if (SysConstant.APPDESC_LTE.equals(appDesc)) {
+			srcSysID = SysConstant.CSB_SRC_SYS_ID_LTE;
+		}
+		HttpSession session = ServletUtils.getSession(request);
+		if (session != null && "1".equals(session.getAttribute(SysConstant.SESSION_KEY_APP_FLAG))) {
+			srcSysID = SysConstant.CSB_SRC_SYS_ID_APP;
+			if(srcSysSign==null||"".equals(srcSysSign)){
+				srcSysSign2=SysConstant.CSB_SRC_SYS_SIGN_YSX;
+			}
+		}
+		respXml.append("<TcpCont>");
+		respXml.append("<BusCode>"+MapUtils.getString(csbMap, "BusCode")+"</BusCode>");
+		respXml.append("<ServiceCode>" + MapUtils.getString(csbMap, "ServiceCode") + "</ServiceCode>");
+		respXml.append("<ServiceContractVer>" + MapUtils.getString(csbMap, "ServiceContractVer") + "</ServiceContractVer>");
+		respXml.append("<ActionCode>"+SysConstant.CSB_ACTION_CODE+"</ActionCode>");
+		respXml.append("<TransactionID>" +getTranID(srcSysID)+srcTransactionNbr + "</TransactionID>");	
+		respXml.append("<ServiceLevel>"+SysConstant.CSB_SERVICE_LEVEL+"</ServiceLevel>");
+		respXml.append("<SrcOrgID>"+SysConstant.CSB_ORG_ID_GROUP+"</SrcOrgID>");
+		respXml.append("<SrcSysID>"+srcSysID+"</SrcSysID>");
+		respXml.append("<SrcSysSign>"+srcSysSign2+"</SrcSysSign>");
+		respXml.append("<DstOrgID>"+SysConstant.CSB_ORG_ID_GROUP+"</DstOrgID>");
+		respXml.append("<DstSysID>"+ MapUtils.getString(csbMap, "DstSysID") +"</DstSysID>");
+		respXml.append("<ReqTime>" + DateFormatUtils.format(new Date(), "yyyyMMddHHmmss") + "</ReqTime>");
+		respXml.append("</TcpCont>");		
+		return respXml.toString();
+	}
+	
+	private static String getTranID(String id) {
+		// 【10位系统/平台编码代码】+【8位日期编码YYYYMMDD】＋【10位流水号】
+		StringBuffer sb = new StringBuffer();
+		sb.append(id).append(DateFormatUtils.format(new Date(), "yyyyMMdd"));
+//				.append(getHourInMillis())
+//				.append(RandomStringUtils.randomNumeric(2));
+		Calendar.getInstance().getTimeInMillis();
+		return sb.toString();
 	}
 }

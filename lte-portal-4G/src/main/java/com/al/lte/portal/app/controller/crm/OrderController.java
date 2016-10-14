@@ -1,5 +1,6 @@
 package com.al.lte.portal.app.controller.crm;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -39,7 +40,10 @@ import com.al.ecs.common.entity.JsonResponse;
 import com.al.ecs.common.entity.PageModel;
 import com.al.ecs.common.util.EncodeUtils;
 import com.al.ecs.common.util.JsonUtil;
+import com.al.ecs.common.util.MDA;
 import com.al.ecs.common.util.PageUtil;
+import com.al.ecs.common.util.PropertiesUtils;
+import com.al.ecs.common.util.UIDGenerator;
 import com.al.ecs.common.web.ServletUtils;
 import com.al.ecs.exception.AuthorityException;
 import com.al.ecs.exception.BusinessException;
@@ -62,6 +66,7 @@ import com.al.lte.portal.common.EhcacheUtil;
 import com.al.lte.portal.common.InterfaceClient;
 import com.al.lte.portal.common.MySimulateData;
 import com.al.lte.portal.common.PortalServiceCode;
+import com.al.lte.portal.common.ServiceClient;
 import com.al.lte.portal.common.SysConstant;
 import com.al.lte.portal.core.DataRepository;
 import com.al.lte.portal.model.SessionStaff;
@@ -102,6 +107,9 @@ public class OrderController extends BaseController {
 	@Autowired
 	@Qualifier("com.al.lte.portal.bmo.crm.MktResBmo")
 	private MktResBmo MktResBmo;
+	
+	@Autowired
+	PropertiesUtils propertiesUtils;
 	
 	@RequestMapping(value = "/orderSubmitComplete", method = RequestMethod.POST)
 	public @ResponseBody JsonResponse orderSubmitComplete(@RequestBody Map<String, Object> reqMap, String optFlowNum,
@@ -248,6 +256,7 @@ public class OrderController extends BaseController {
 			String staffInfos=params.get("staffInfos").toString().replace("\\", "");
 			param=CommonMethods.getParams(prodIdInfos, custInfos, staffInfos, getRequest());
 			param.put("actionFlag", Const.OFFERCHANGE_FLAG);
+			param.put("olTypeCd", "15");
 			Map<String, Object> validatoResutlMap=commonBmo.validatorRule(param, optFlowNum, super.getRequest());
 			if(!ResultCode.R_SUCCESS.equals(validatoResutlMap.get("code"))){
 				model.addAttribute("validatoResutlMap", validatoResutlMap);
@@ -1124,6 +1133,7 @@ public class OrderController extends BaseController {
     	if("2".equals(String.valueOf(param.get("actionFlag")))){  //套餐变更
     		if (MapUtils.isNotEmpty(param)) {
         		model.addAttribute("main", param);
+        		System.out.println("++++++++++++reqMap="+JsonUtil.toString(param));
         	}
     		forward = "/app/offer/offer-change";
     	}else if("21".equals(String.valueOf(param.get("actionFlag")))){  //套餐变更
@@ -1436,6 +1446,12 @@ public class OrderController extends BaseController {
  			@LogOperatorAnn String flowNum,HttpServletResponse response){
     	 model.addAttribute("trid", param.get("trid"));
 		return "/app/order/order-cal-edit-item";
+     }
+     @RequestMapping(value = "/broadbandgetEditPage", method = RequestMethod.GET)
+     public String broadbandgetEditPage(@RequestParam Map<String, Object> param, Model model,
+ 			@LogOperatorAnn String flowNum,HttpServletResponse response){
+    	 model.addAttribute("trid", param.get("trid"));
+		return "/app/order/order-broadband-cal-edit-item";
      }
      /**
       * 帐户资料查询（新装与改帐务定制关系时查询已有帐户）
@@ -2707,4 +2723,659 @@ public class OrderController extends BaseController {
 		}
 		return flag;
 	}
+	
+	/**
+	 * 翼销售获取支付页面（url+tocken）
+	 * 
+	 * @param param
+	 * @param model
+	 * @param session
+	 * @param flowNum
+	 * @return
+	 */
+	@RequestMapping(value = "/getPayOrdStatus", method = RequestMethod.POST)
+	@ResponseBody
+	public JsonResponse getPayOrdStatus(@RequestBody Map<String, Object> param,
+			Model model, HttpSession session, @LogOperatorAnn String flowNum) {
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+						SysConstant.SESSION_KEY_LOGIN_STAFF);
+		Map<String, Object> rMap = null;
+		JsonResponse jsonResponse = null;
+		try {
+			rMap = orderBmo.queryPayOrderStatus(param, flowNum, sessionStaff);
+			log.debug("return={}", JsonUtil.toString(rMap));
+			if (rMap != null && "POR-0000".equals(rMap.get("respCode").toString())) {
+				jsonResponse = super.successed(rMap.get("respCode"),
+						ResultConstant.SUCCESS.getCode());
+			} else {
+				jsonResponse = super.failed(rMap.get("respMsg").toString(),
+						ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+			}
+			return jsonResponse;
+		} catch (BusinessException be) {
+			this.log.error("调用主数据接口失败", be);
+			return super.failed(be);
+		} catch (InterfaceException ie) {
+			return super.failed(ie, param, ErrorCode.PAY_TOCKEN);
+		} catch (Exception e) {
+			log.error("支付平台/tocken方法异常", e);
+			return super.failed(ErrorCode.PAY_TOCKEN, e, param);
+		}
+
+	}
+	
+	/**
+	 * 翼销售获取订单支付状态
+	 * 
+	 * @param param
+	 * @param model
+	 * @param session
+	 * @param flowNum
+	 * @return
+	 */
+	@RequestMapping(value = "/getPayUrl", method = RequestMethod.POST)
+	@ResponseBody
+	public JsonResponse getPayUrl(@RequestBody Map<String, Object> param,
+			Model model, HttpSession session, @LogOperatorAnn String flowNum) {
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+						SysConstant.SESSION_KEY_LOGIN_STAFF);
+		Map<String, Object> rMap = null;
+		JsonResponse jsonResponse = null;
+		String dbKeyWord = sessionStaff == null ? null : sessionStaff.getDbKeyWord();
+		if(StringUtils.isBlank(dbKeyWord)){
+			dbKeyWord = "";
+		}
+		try {
+			String url=MySimulateData.getInstance().getNeeded(dbKeyWord, "url", "pay");//支付页面url
+			rMap = orderBmo.queryPayTocken(param, flowNum, sessionStaff);
+			log.debug("return={}", JsonUtil.toString(rMap));
+			if (rMap != null && "POR-0000".equals(rMap.get("respCode").toString())) {
+				jsonResponse = super.successed(MDA.PAY_URL.toString()+"payToken="+rMap.get("payToken"),
+						ResultConstant.SUCCESS.getCode());
+			} else {
+				jsonResponse = super.failed(rMap.get("respMsg").toString(),
+						ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+			}
+			return jsonResponse;
+		} catch (BusinessException be) {
+			this.log.error("调用主数据接口失败", be);
+			return super.failed(be);
+		} catch (InterfaceException ie) {
+			return super.failed(ie, param, ErrorCode.PAY_TOCKEN);
+		} catch (Exception e) {
+			log.error("支付平台/tocken方法异常", e);
+			return super.failed(ErrorCode.PAY_TOCKEN, e, param);
+		}
+
+	}
+	
+	/**
+	 * 宽带融合-商机单下发
+	 * @param param
+	 * @param flowNum
+	 * @param response
+	 * @return
+	 */
+	@RequestMapping(value = "/opportunityorder", method = RequestMethod.POST)
+	@ResponseBody
+	public JsonResponse unityOrderUnder(@RequestBody Map<String, Object> param,
+			@LogOperatorAnn String flowNum, HttpServletResponse response) {
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils
+				.getSessionAttribute(super.getRequest(),
+						SysConstant.SESSION_KEY_LOGIN_STAFF);
+        Map<String, Object> rMap = null;
+        JsonResponse jsonResponse = null;
+        try {
+            rMap = orderBmo.unityOrderUnder(param, flowNum, sessionStaff);
+            if (rMap != null && ResultCode.R_SUCCESS.equals(MapUtils.getString(rMap, "code"))) {
+                jsonResponse = super.successed(rMap, ResultConstant.SUCCESS.getCode());
+            } else {
+                jsonResponse = super.failed(ErrorCode.UNITY_ORDER, rMap, param);
+            }
+        } catch (Exception e) {
+            jsonResponse = super.failed(ErrorCode.UNITY_ORDER, e, param);
+        }
+        return jsonResponse;
+	}
+	
+	/**
+	 * 宽带融合-销售单下发
+	 * @param param
+	 * @param flowNum
+	 * @param response
+	 * @return
+	 */
+	@RequestMapping(value = "/salesorder", method = RequestMethod.POST)
+	@ResponseBody
+	public JsonResponse salesOrderUnder(@RequestBody Map<String, Object> param,
+			@LogOperatorAnn String flowNum, HttpServletResponse response) {
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils
+				.getSessionAttribute(super.getRequest(),
+						SysConstant.SESSION_KEY_LOGIN_STAFF);
+        Map<String, Object> rMap = null;
+        JsonResponse jsonResponse = null;
+        try {
+            rMap = orderBmo.salesOrderUnder(param, flowNum, sessionStaff);
+            if (rMap != null && ResultCode.R_SUCCESS.equals(MapUtils.getString(rMap, "code"))) {
+                jsonResponse = super.successed(rMap, ResultConstant.SUCCESS.getCode());
+            } else {
+                jsonResponse = super.failed(ErrorCode.SALES_ORDER, rMap, param);
+            }
+        } catch (Exception e) {
+            jsonResponse = super.failed(ErrorCode.SALES_ORDER, e, param);
+        }
+        return jsonResponse;
+	}
+	
+	/**
+	 * 宽带融合-预约装机时间查询
+	 * @param param
+	 * @param flowNum
+	 * @param response
+	 * @return
+	 */
+	@RequestMapping(value = "/manhour", method = RequestMethod.POST)
+	@ResponseBody
+	public JsonResponse queryInstallTime(@RequestBody Map<String, Object> param,
+			@LogOperatorAnn String flowNum, HttpServletResponse response) {
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils
+				.getSessionAttribute(super.getRequest(),
+						SysConstant.SESSION_KEY_LOGIN_STAFF);
+        Map<String, Object> rMap = null;
+        JsonResponse jsonResponse = null;
+        try {
+            rMap = orderBmo.queryInstallTime(param, flowNum, sessionStaff);
+            if (rMap != null && ResultCode.R_SUCCESS.equals(MapUtils.getString(rMap, "code"))) {
+                jsonResponse = super.successed(rMap, ResultConstant.SUCCESS.getCode());
+            } else {
+                jsonResponse = super.failed(ErrorCode.MAN_HOUR, rMap, param);
+            }
+        } catch (Exception e) {
+            jsonResponse = super.failed(ErrorCode.MAN_HOUR, e, param);
+        }
+        return jsonResponse;
+	}
+	
+	/**
+	 * 宽带融合-订单详情查询
+	 * @param param
+	 * @param flowNum
+	 * @param response
+	 * @return
+	 */
+	@RequestMapping(value = "/orderdetail", method = RequestMethod.POST)
+	@ResponseBody
+	public JsonResponse queryOrderDetail(@RequestBody Map<String, Object> param,
+			@LogOperatorAnn String flowNum, HttpServletResponse response) {
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils
+				.getSessionAttribute(super.getRequest(),
+						SysConstant.SESSION_KEY_LOGIN_STAFF);
+        Map<String, Object> rMap = null;
+        JsonResponse jsonResponse = null;
+        try {
+            rMap = orderBmo.queryOrderDetail(param, flowNum, sessionStaff);
+            if (rMap != null && ResultCode.R_SUCCESS.equals(MapUtils.getString(rMap, "code"))) {
+                jsonResponse = super.successed(rMap, ResultConstant.SUCCESS.getCode());
+            } else {
+//                jsonResponse = super.failed(ErrorCode.ORDER_DETAIL, rMap, param);
+            }
+        } catch (Exception e) {
+//            jsonResponse = super.failed(ErrorCode.ORDER_DETAIL, e, param);
+        }
+        return jsonResponse;
+	}
+	
+	/**
+	 * 手机客户端-宽带甩单入口
+	 * @param params
+	 * @param request
+	 * @param model
+	 * @param session
+	 * @return
+	 * @throws AuthorityException
+	 */
+	@RequestMapping(value = "/broadband/prepare", method = RequestMethod.POST)
+    @AuthorityValid(isCheck = false)
+    public String broadband_enter(@RequestBody Map<String, Object> params, HttpServletRequest request,Model model,HttpSession session) throws AuthorityException {
+       return "/app/order/order-broadband-address";
+    }
+	
+	/**
+	 * 手机客户端-宽带甩单资源查询
+	 * @param params
+	 * @param request
+	 * @param model
+	 * @param session
+	 * @return
+	 * @throws AuthorityException
+	 */
+	@RequestMapping(value = "/broadband/searchADD", method = RequestMethod.POST)
+    @AuthorityValid(isCheck = false)
+    public String broadband_searchADD(@RequestBody Map<String, Object> params, HttpServletRequest request,Model model,HttpSession session) throws AuthorityException {
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);
+		String areaLimit = params.get("areaLimit")==null?"":params.get("areaLimit").toString();
+		String urlType = "/app/order/prodoffer/prepare";
+		String cityid = sessionStaff.getAreaId();//市
+		cityid = cityid.substring(0, 5) + "00";//市
+		String proid = cityid.substring(0, 3) + "0000";//省
+		String areaid = sessionStaff.getCurrentAreaId();//区
+		params.put("leve", 2);
+		params.put("parentAreaId", "");//8100000
+		params.put("areaLimit", areaLimit);
+		params.put("channelAreaId", areaid);
+		params.put("APPDESC", propertiesUtils.getMessage(SysConstant.APPDESC));
+		try{
+			
+			params.put("dataDimensionCd", MySimulateData.getInstance().getParam((String) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_DATASOURCE_KEY),SysConstant.AREA_DIMENSION_CD));
+			String operateSpecInfo = EhcacheUtil.getOperateSpecInfo(session, urlType);
+			List<Map<String, Object>> list = CommonMethods.getAreaRangeList(sessionStaff, params, operateSpecInfo);
+			model.addAttribute("province", list);
+			model.addAttribute("proid", proid);
+			
+			Map<String,Object> paramCity = new HashMap<String,Object>();
+			paramCity.put("leve", "3");
+			paramCity.put("parentAreaId", proid);
+			paramCity.put("isChannelArea", "N");
+			paramCity.put("APPDESC", propertiesUtils.getMessage(SysConstant.APPDESC));
+			paramCity.put("dataDimensionCd", MySimulateData.getInstance().getParam((String) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_DATASOURCE_KEY),SysConstant.AREA_DIMENSION_CD));
+			String cityoperateSpecInfo = EhcacheUtil.getOperateSpecInfo(session, urlType);
+			List<Map<String, Object>> citylist = CommonMethods.getAreaRangeList(sessionStaff, paramCity, cityoperateSpecInfo);
+			model.addAttribute("citylist", citylist);
+			model.addAttribute("cityid", cityid);
+			
+			Map<String,Object> paramChild = new HashMap<String,Object>();
+			paramChild.put("leve", "4");
+			paramChild.put("parentAreaId", cityid);
+			paramChild.put("isChannelArea", "N");
+			paramChild.put("APPDESC", propertiesUtils.getMessage(SysConstant.APPDESC));
+			paramChild.put("dataDimensionCd", MySimulateData.getInstance().getParam((String) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_DATASOURCE_KEY),SysConstant.AREA_DIMENSION_CD));
+			String childoperateSpecInfo = EhcacheUtil.getOperateSpecInfo(session, urlType);
+			List<Map<String, Object>> childlist = CommonMethods.getAreaRangeList(sessionStaff, paramChild, childoperateSpecInfo);
+			model.addAttribute("childlist", childlist);
+			model.addAttribute("areaid", areaid);
+			
+		} catch (BusinessException be) {
+
+			return super.failedStr(model, be);
+		} catch (InterfaceException ie) {
+
+			return super.failedStr(model, ie, params, ErrorCode.OPERAT_AREA_RANGE);
+		} catch (Exception e) {
+			log.error("加载地区方法异常", e);
+			return super.failedStr(model, ErrorCode.OPERAT_AREA_RANGE, e, params);
+		}
+       return "/app/order/order-broadband-searchADD";
+    }
+	
+	/**
+	 * 手机客户端-新装入口
+	 * @param params
+	 * @param request
+	 * @param model
+	 * @param session
+	 * @return
+	 * @throws AuthorityException
+	 */
+	@RequestMapping(value = "/broadband/searchProd", method = RequestMethod.POST)
+    @AuthorityValid(isCheck = false)
+    public String searchProd(@RequestBody Map<String, Object> params, HttpServletRequest request,Model model,HttpSession session) throws AuthorityException {
+		String prodOfferId = request.getParameter("prodOfferId") ;
+		String subPage= request.getParameter("subPage") ;
+		String numsubflag= request.getParameter("numsubflag") ;
+		if(params.get("enter")!=null){
+			model.addAttribute("enter",params.get("enter"));
+		}
+		if(prodOfferId!=null&&!prodOfferId.equals("")&&!prodOfferId.equals("null")){
+			model.addAttribute("prodOfferId",prodOfferId);
+		}
+		if(subPage!=null&&!subPage.equals("")&&!subPage.equals("null")){
+			model.addAttribute("subPage",subPage);
+		}
+		if(numsubflag!=null&&!numsubflag.equals("")&&!numsubflag.equals("null")){
+			model.addAttribute("numsubflag",numsubflag);
+		}
+       return "/app/order/order-broadband-searchProd";
+    }
+	
+	@RequestMapping(value = "/broadband/offerSpecList", method = RequestMethod.GET, produces = "text/html;charset=UTF-8")
+    public String getbroadbandOfferSpecList(@RequestParam Map<String, Object> prams,Model model,HttpServletResponse response){
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+                SysConstant.SESSION_KEY_LOGIN_STAFF);	
+        try {
+//        	prams.put("ifQS", "Y");
+        	prams.put("channelId", sessionStaff.getCurrentChannelId());
+        	prams.put("areaId", sessionStaff.getCurrentAreaId());
+//        	prams.put("areaId", "8410000");
+//        	prams.put("channelId", "106691905");
+        	prams.put("sysFlag", "10004");//系统标识
+        	String downRate = (String) prams.get("downRate");
+        	downRate = downRate.replace("M", "");
+        	prams.put("downRate", downRate);//最大速率
+//        	prams.put("downRate", "1011");//最大速率
+        	prams.put("prodSpecId", "235022324");//集团产品规格ID（product.product_id）有调整，宽带-有线由13409262调整为235022324
+//        	prams.put("staffId", sessionStaff.getStaffId());
+        	prams.put("pageSize", SysConstant.PAGE_SIZE);
+        	int totalPage=0;
+        	Map<String, Object> map = null;
+   //          prams.put("qryStr", "乐享");
+        	Map<String, Object> map1 = new HashMap();
+        	map1.put("channelId", sessionStaff.getCurrentChannelId());
+        	map1.put("areaId", sessionStaff.getCurrentAreaId());
+        	map1.put("staffId", sessionStaff.getStaffId());
+        	map1.put("custId", prams.get("custId"));
+//        	DataBus db = InterfaceClient.callService(map1,
+//    				PortalServiceCode.QUERY_MAIN_OFFER_CATEGORY, null, sessionStaff);
+        	
+        	map = orderBmo.queryMainOfferSpecList(prams,null, sessionStaff);
+        	if(ResultCode.R_SUCCESS.equals(map.get("code"))){
+        		//拼装前台显示的套餐详情
+        		if(!map.isEmpty()){
+        			List<Map<String,Object>> prodOfferInfosList = (List<Map<String,Object>>) map.get("prodOfferInfos");
+        			if(prodOfferInfosList.size()%10>0){
+        				totalPage=prodOfferInfosList.size()/10+1;
+        			}else{
+        				totalPage=prodOfferInfosList.size()/10;
+        			}
+        			for(int i=0;i<prodOfferInfosList.size();i++){
+        				Map<String,Object> exitParam = new HashMap<String,Object>();
+        				exitParam = (Map<String,Object>) prodOfferInfosList.get(i);
+        				if(exitParam.containsKey("objIdList")){
+        					List<Map<String,Object>> objIdList = (List<Map<String,Object>>) exitParam.get("objIdList");
+        					if(objIdList.size()>0){
+        						Map<String,Object> obj = objIdList.get(0);
+        						prodOfferInfosList.get(i).put("compTypeCd", obj.get("compTypeCd"));
+        						prodOfferInfosList.get(i).put("objId", obj.get("objId"));
+        						prodOfferInfosList.get(i).put("roleCd", obj.get("roleCd"));
+        						prodOfferInfosList.get(i).put("prodNbr", obj.get("prodNbr"));
+        					}
+        				}
+        			}
+        		}
+        		model.addAttribute("resultlst", map.get("prodOfferInfos"));
+        		model.addAttribute("totalPage",totalPage);
+        	}
+        	//model.addAttribute("pnLevelId", prams.get("pnLevelId"));
+        	if(!"".equals(prams.get("subPage"))){
+        		model.addAttribute("subPage", prams.get("subPage"));
+        	}
+        	if(null!=(prams.get("orderflag"))){
+        		model.addAttribute("orderflag", prams.get("orderflag"));
+        	}
+        	if(null!=(prams.get("actionFlag"))){
+        		model.addAttribute("actionFlag", prams.get("actionFlag"));
+        	}
+        } catch (BusinessException be) {
+			this.log.error("查询号码信息失败", be);
+			return super.failedStr(model, be);
+		} catch (InterfaceException ie) {
+			return super.failedStr(model, ie, prams, ErrorCode.QUERY_MAIN_OFFER);
+		} catch (Exception e) {
+			return super.failedStr(model, ErrorCode.QUERY_MAIN_OFFER, e, prams);
+		}
+        return "/app/order/order-broadband-offerList";
+    }
+	
+	/**
+	 * 手机客户端-百度地图搜索门店
+	 * @param params
+	 * @param request
+	 * @param model
+	 * @param session
+	 * @return
+	 * @throws AuthorityException
+	 */
+	@RequestMapping(value = "/broadband/baiduMap", method = RequestMethod.POST)
+    @AuthorityValid(isCheck = false)
+    public String baiduMap(@RequestBody Map<String, Object> params, String optFlowNum, HttpServletRequest request,Model model,HttpSession session) throws AuthorityException {
+		String enter = params.get("enter").toString();
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+                SysConstant.SESSION_KEY_LOGIN_STAFF);
+		Map<String, Object> rMap = null;
+		try {
+			if("1".equals(enter)){
+				List channelList = new ArrayList();
+				rMap = orderBmo.queryChannelByCoords(params,optFlowNum, sessionStaff);
+				if("0".equals(rMap.get("resultCode"))){
+					channelList = (List) rMap.get("channelList");
+//					System.out.println("++++++++++++orderList="+db.getReturnlmap().toString());
+				}
+				model.addAttribute("channelList",JsonUtil.buildNormal().objectToJson(channelList));
+			}else if("2".equals(enter)){
+				String channelId = sessionStaff.getCurrentChannelId();
+				params.put("channelId", channelId);
+				List channelList = new ArrayList();
+				rMap = orderBmo.queryChannelListById(params,optFlowNum, sessionStaff);
+				if("0".equals(rMap.get("resultCode"))){
+					channelList = (List) rMap.get("channelList");
+//					System.out.println("++++++++++++orderList="+db.getReturnlmap().toString());
+				}
+				model.addAttribute("channelList",JsonUtil.buildNormal().objectToJson(channelList));
+//				model.addAttribute("MDList",channelList);
+			}else if("3".equals(enter)){
+				String cityid = sessionStaff.getCurrentAreaId();//市
+				String proid = cityid.substring(0, 3) + "0000";//省
+				params.put("region", proid);
+				List channelList = new ArrayList();
+				rMap = orderBmo.queryChannel(params,optFlowNum, sessionStaff);
+				if("0".equals(rMap.get("resultCode"))){
+					channelList = (List) rMap.get("channelList");
+//					System.out.println("++++++++++++orderList="+db.getReturnlmap().toString());
+				}
+//				model.addAttribute("channelList",JsonUtil.buildNormal().objectToJson(channelList));
+				model.addAttribute("MDList",channelList);
+			}
+			}catch (BusinessException be) {
+
+			return super.failedStr(model, be);
+		} catch (InterfaceException ie) {
+
+			return super.failedStr(model, ie, params, ErrorCode.CUST_ORDER);
+		} catch (Exception e) {
+			log.error("渠道查询查询/order/broadband/baiduMap方法异常", e);
+			return super.failedStr(model, ErrorCode.QUERY_CHANNEL, e, params);
+		}
+		model.addAttribute("params",params);
+		return "/app/order/order-broadband-map";
+    }
+	
+	/**
+	 * 手机客户端-百度地图搜索门店
+	 * @param params
+	 * @param request
+	 * @param model
+	 * @param session
+	 * @return
+	 * @throws AuthorityException
+	 */
+	@RequestMapping(value = "/broadband/selectYYT", method = RequestMethod.POST)
+    @AuthorityValid(isCheck = false)
+    public String selectYYT(@RequestBody Map<String, Object> params, String optFlowNum, HttpServletRequest request,Model model,HttpSession session) throws AuthorityException {
+		return "/app/order/order-broadband-selectYYT";
+    }
+	
+	/**
+	 * 手机客户端-宽带甩单-订单提交
+	 * @param params
+	 * @param request
+	 * @param model
+	 * @param session
+	 * @return
+	 * @throws AuthorityException
+	 */
+	@RequestMapping(value = "/broadband/orderSubmit", method = RequestMethod.POST)
+	public @ResponseBody JsonResponse broadbandOrderSubmit(@RequestBody Map<String, Object> reqMap, String optFlowNum,
+			HttpServletResponse response,HttpServletRequest request){
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+                SysConstant.SESSION_KEY_LOGIN_STAFF);
+		Map<String, Object> rMap = null;
+		JsonResponse jsonResponse = null;
+		String ReqTime = DateFormatUtils.format(new Date(), "yyyyMMddHHmmssSSS");
+		String dateStr = DateFormatUtils.format(new Date(), "yyyyMMddHHmmss");
+		String ymdStr = DateFormatUtils.format(new Date(), "yyyyMMdd");
+		String areaid = sessionStaff.getAreaId();//区
+		String AppKey = SysConstant.CSB_SRC_SYS_ID_APP;
+		Map<String,Object> ContractRoot = (Map<String, Object>) reqMap.get("ContractRoot");
+		Map<String,Object> SvcCont = (Map<String, Object>) ContractRoot.get("SvcCont");
+		Map<String,Object> TcpCont = (Map<String, Object>) ContractRoot.get("TcpCont");
+		Map<String,Object> CustOrderInfo = (Map<String, Object>) SvcCont.get("CustOrderInfo");
+		CustOrderInfo.put("AcceptDate", dateStr);
+		CustOrderInfo.put("AcceptRegionId", areaid);
+//		CustOrderInfo.put("AcceptRegionId", "8450101");//广西
+//		CustOrderInfo.put("AcceptRegionId", "8410101");//河南
+//		CustOrderInfo.put("AcceptRegionId", "8210101");//辽宁
+		CustOrderInfo.put("ChannelNbr", sessionStaff.getCurrentChannelCode());
+		CustOrderInfo.put("StaffCode", sessionStaff.getStaffCode());
+		TcpCont.put("AppKey", AppKey);
+		TcpCont.put("ReqTime", ReqTime);
+//		if(commonBmo.checkToken(request, SysConstant.ORDER_SUBMIT_TOKEN)){
+			try {
+				CustOrderInfo.put("CustOrderId", reqMap.get("TransactionID"));
+				System.out.println("++++++++++++reqMap="+JsonUtil.toString(reqMap));
+				rMap = orderBmo.saleOrderCommit(reqMap, optFlowNum, sessionStaff);
+//	 			log.debug("return={}", JsonUtil.toString(rMap));
+	 			if (rMap != null&& ResultCode.R_SUCCESS.equals(rMap.get("code").toString())) {
+	 				jsonResponse = super.successed(rMap,ResultConstant.SUCCESS.getCode());
+	 			}else{
+	 				jsonResponse = super.failed(ErrorCode.ORDER_SUBMIT, rMap, reqMap);
+				}
+	        }catch (Exception e) {
+				log.error("订单一点提交失败方法异常", e);
+				return super.failed(ErrorCode.ORDER_SUBMIT, e, reqMap);
+			}
+			return jsonResponse;
+//		}else {
+//			log.error("订单提交失败");
+//            return jsonResponse;
+//		}
+	}
+	
+	/**
+	 * 手机客户端-订单确认页面
+	 * @param params
+	 * @param request
+	 * @param model
+	 * @param session
+	 * @return
+	 * @throws AuthorityException
+	 */
+	@RequestMapping(value = "/broadband/confirm", method = RequestMethod.POST)
+    @AuthorityValid(isCheck = false)
+    public String broadbandConfirm(@RequestBody Map<String, Object> params, String optFlowNum, HttpServletRequest request,Model model,HttpSession session) throws AuthorityException {
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);
+		Map<String, Object> rMap = null;
+		try {
+			String AppKey = SysConstant.CSB_SRC_SYS_ID_APP;
+			String ymdStr = DateFormatUtils.format(new Date(), "yyyyMMdd");
+			String str10 = "";
+			String nonce = RandomStringUtils.randomNumeric(5); //随机字符串
+			DataBus _db = null;
+			_db = ServiceClient.callService(new HashMap(), PortalServiceCode.SERVICE_GET_LOG_SEQUENCE, null, sessionStaff);
+			str10 = nonce + String.format("%05d", _db.getReturnlmap().get("logSeq"));
+			String TransactionID = AppKey+ymdStr+str10;
+			model.addAttribute("TransactionID",TransactionID);
+				String cityid = sessionStaff.getCurrentAreaId();//市
+				params.put("areaId", cityid);
+//				params.put("areaId", "8410100");
+				List feelList = new ArrayList();
+				rMap = orderBmo.queryChargeConfig(params,optFlowNum, sessionStaff);
+				if("0".equals(rMap.get("resultCode"))){
+					feelList = (List) rMap.get("result");
+//					System.out.println("++++++++++++orderList="+db.getReturnlmap().toString());
+				}
+				model.addAttribute("feelList",feelList);
+				model.addAttribute("fee_list",JsonUtil.buildNormal().objectToJson(feelList));
+			}
+		catch (BusinessException be) {
+
+			return super.failedStr(model, be);
+		} catch (InterfaceException ie) {
+
+			return super.failedStr(model, ie, params, ErrorCode.CHARGE_ADDITEM);
+		} 
+		catch (Exception e) {
+			log.error("渠道查询查询/order/broadband/comfirm方法异常", e);
+			return super.failedStr(model, ErrorCode.CHARGE_ADDITEM, e, params);
+		}
+		model.addAttribute("params",params);
+		return "/app/order/order-broadband-comfirm";
+    }
+	
+	/**
+	 * 手机客户端-宽带甩单-费用信息查询
+	 * @param params
+	 * @param request
+	 * @param model
+	 * @param session
+	 * @return
+	 * @throws AuthorityException
+	 */
+	@RequestMapping(value = "/broadband/queryChargeConfig", method = RequestMethod.POST)
+	public @ResponseBody JsonResponse broadbandOrderqueryChargeConfig(@RequestBody Map<String, Object> reqMap, String optFlowNum,
+			HttpServletResponse response,HttpServletRequest request){
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+                SysConstant.SESSION_KEY_LOGIN_STAFF);
+		JsonResponse jsonResponse = null;
+		Map<String, Object> rMap = null;
+		String areaid = sessionStaff.getAreaId();//区
+			try {
+//				System.out.println("++++++++++++reqMap="+JsonUtil.toString(reqMap));
+				rMap = orderBmo.queryChargeConfig(reqMap, optFlowNum, sessionStaff);
+//	 			log.debug("return={}", JsonUtil.toString(rMap));
+	 			if (rMap != null&& ResultCode.R_SUCCESS.equals(rMap.get("code").toString())) {
+	 				jsonResponse = super.successed("查询成功",
+	 						ResultConstant.SUCCESS.getCode());
+	 			} else {
+	 				jsonResponse = super.failed(rMap.get("msg"),
+	 						ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+	 			}
+//				DataBus db = InterfaceClient.callService(reqMap, PortalServiceCode.BORAD_BAND_QUERYCHARGECONFIG,optFlowNum, sessionStaff);
+	        }  catch (BusinessException be) {
+				this.log.error("费用信息查询失败", be);
+				return super.failed(be);
+			} catch (InterfaceException ie) {
+				return super.failed(ie, reqMap, ErrorCode.CHARGE_LIST);
+			} catch (Exception e) {
+				log.error("费用信息查询方法异常", e);
+				return super.failed(ErrorCode.CHARGE_LIST, e, reqMap);
+			}
+			return jsonResponse;
+	}
+	
+	
+	/**
+	 * 手机客户端-天翼高清入口
+	 * @param params
+	 * @param request
+	 * @param model
+	 * @param session
+	 * @return
+	 * @throws AuthorityException
+	 */
+	@RequestMapping(value = "/ehd/prepare", method = RequestMethod.POST)
+    @AuthorityValid(isCheck = false)
+    public String ehd_enter(@RequestBody Map<String, Object> params, HttpServletRequest request,Model model,HttpSession session) throws AuthorityException {
+       return "/app/order/order-broadband-address";
+    }
+	
+	/**
+	 * 手机客户端-宽带续约入口
+	 * @param params
+	 * @param request
+	 * @param model
+	 * @param session
+	 * @return
+	 * @throws AuthorityException
+	 * @throws BusinessException 
+	 */
+	@RequestMapping(value = "/attachBroadband/prepare", method = RequestMethod.POST)
+    @AuthorityValid(isCheck = false)
+    public String attachBroadband(@RequestBody Map<String, Object> params, HttpServletRequest request,Model model, @LogOperatorAnn String optFlowNum,HttpSession session) throws BusinessException {
+		String result = rulecheck(params,model,optFlowNum,session);
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);
+    	String channelCode =sessionStaff.getCurrentChannelCode();
+    	model.addAttribute("channelCode", channelCode);
+		if(result != null){
+			return result;
+		}else return "/app/order/order-attach-broad";
+    }
 }

@@ -1063,6 +1063,58 @@ public final class PortalServiceCode {
     
     /**前置校验接口*/
     public static final String PRE_CHECK_ORDER = "biz-service/intf.soService/preCheckBeforeOrder";
+    
+    /** 宽带融合--标准地址查询 **/
+    public static final String BORAD_BAND_ADDRESS_QRY = "qry.res.standaddress";
+    
+    /** 宽带融合--资源预判接口**/
+    public static final String BORAD_BAND_RESOURCE_QRY = "qry.res.rescapability";
+    
+    /** 宽带融合--终端预判接口 **/
+    public static final String BORAD_BAND_TERM_TYPE = "qry.res.terminaltype";
+    
+    /** 宽带融合--号码资源查询**/
+    public static final String BORAD_BAND_NUMBER_QRY = "qry.res.number";
+    
+    /** 宽带融合--号码资源预占/释放 **/
+    public static final String BORAD_BAND_NUMBER_REQUEST = "order.res.numberrequest";
+    
+    /** 宽带融合--帐号&接入号&密码生成（宽带/天翼高清） **/
+    public static final String BORAD_BAND_ACCOUNT_REQUEST = "order.res.accountrequest";
+    
+    /** 宽带融合--预约装机时间查询 **/
+    public static final String BORAD_BAND_TIME_QRY = "qry.oporder.manhour";
+    
+    /** 宽带融合--商机单下发 **/
+    public static final String BORAD_BAND_UNITY_ORDER = "order.prod.opportunityorder";
+    
+    /** 宽带融合--销售单下发 **/
+    public static final String BORAD_BAND_SALES_ORDER = "order.prod.salesorder";
+    
+    /** 宽带融合--订单详情查询 **/
+    public static final String BORAD_BAND_ORDER_DETAIL = "qry.order.orderdetail";
+    
+    /** 宽带融合--根据坐标查询门店 **/
+    public static final String BORAD_BAND_QUERYCHANNEL_BYCOORDS = "yim-locationService/queryChannelByCoords";
+    
+    /** 宽带融合--根据门店名称模糊搜索门店 **/
+    public static final String BORAD_BAND_QUERYCHANNEL = "yim-locationService/queryChannel";
+    
+    /** 宽带融合--根据当前渠道搜索附近门店 **/
+    public static final String BORAD_BAND_QUERYCHANNEL_LISTBYID = "yim-locationService/queryChannelListById";
+    
+    /** 宽带融合--查询费用信息 **/
+    public static final String BORAD_BAND_QUERYCHARGECONFIG = "biz-service/intf.chargeService/queryChargeConfig";
+    
+    /** 宽带融合--查询回执信息**/
+    public static final String BORAD_BAND_QUERORDERFORPRT = "biz-service/intf.soService/queryOrderListInfoForPrintZT";
+    
+    /**支付平台获取tocken*/
+    public static final String PAY_TOCKEN = "pay-token";
+    
+    /**支付平台查询订单*/
+    public static final String PAY_QUERY = "pay-qryRepayTrans";
+    
 
 }
 
