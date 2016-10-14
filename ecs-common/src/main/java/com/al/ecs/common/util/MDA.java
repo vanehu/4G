@@ -8,6 +8,14 @@ import java.util.Map;
 @com.al.common.annotation.AppModule(moduleName = "Lte4GManager")
 public class MDA {
 	/**
+	 * 宽带甩单定位门店接口地址
+	 */
+	public static final String CSB_HTTP_QUERCHEN_URL=new String("");
+	/**
+	 * 宽带甩单过csb的http地址
+	 */
+	public static final String CSB_HTTP_MIDDLE_URL=new String("");
+	/**
 	 * 调用签章系统过csb的http地址
 	 */
 	public static final String CSB_HTTP_FORCA_URL=new String("");
@@ -421,14 +429,34 @@ public class MDA {
 	public static final String msgCodeFlag = new String("");
 	
 	/**
+	 * 翼支付收费调用支付平台分省开关 
+	 */
+	public static final Map<String,String> NEWPAYFLAG = new HashMap<String,String>();
+	
+	/**
 	 * 统一登录地址(一般生产使用)
 	 */
 	public static final String UNIFY_LOGIN_URI = new String("");
-
+	
 	/**
 	 * 双屏互动服务端请求地址端口
 	 */
 	public static final String PUSH_HOST_PORT = new String("");
+	
+	/**
+	 * 调用支付平台接口地址
+	 */
+	public static final String PAY_TOKEN_URL=new String("");
+	
+	/**
+	 * 跳转支付平台地址
+	 */
+	public static final String PAY_URL=new String("");
+	
+	/**
+	 * 中台密钥串
+	 */
+	public static final String SecretKey=new String("");
 	
 	/**
 	 * 号码资源状态前置校验分省开关
