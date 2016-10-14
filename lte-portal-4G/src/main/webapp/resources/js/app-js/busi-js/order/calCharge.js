@@ -20,6 +20,10 @@ order.calcharge = (function(){
 	var payMethod = '';//付费方式
 	var reason = '';//修改原因
 	var remark = '';//备注
+	var payUrl;
+	var _myFlag=false;//是否开启调用支付平台
+	var _busiUpType;//业务类型，1表示手机业务2表示宽带甩单
+	var payType;
 	//弹出业务对象窗口
 	var _addbusiOrder=function(proId,obj){
 		if($("#div_payitem_"+proId)!=undefined&&$("#div_payitem_"+proId).html()!=undefined){
@@ -252,7 +256,9 @@ order.calcharge = (function(){
 					 terminalNumber=$("#terminalNumber").val();
 					 serialNumber=$("#serialNumber").val();
 				}
-				
+				if(order.calcharge.myFlag){//开启调用支付平台
+					payMethodCd=payType;
+				}
 				var param={"realAmount":realmoney,
 						"feeAmount":feeAmount,
 						"paymentAmount":paymentAmount,
@@ -632,6 +638,10 @@ order.calcharge = (function(){
 		if(inOpetate){
 			return;
 		}
+		if(order.calcharge.myFlag){
+			 _getPayTocken();
+			 return;
+			}
 		if(!_submitParam()){
 			_conBtns();
 			return ;
@@ -987,9 +997,9 @@ order.calcharge = (function(){
 					
 				});
 				$("#printVoucherA").off("click").on("click", function(event){
-					if(!_submitParam()){
+					 if(!_submitParam()){
 						return ;
-					}
+					 }
 					var voucherInfo = {
 						"olId":_olId,
 						"soNbr":OrderInfo.order.soNbr,
@@ -1189,6 +1199,338 @@ order.calcharge = (function(){
 		$("#currentPage").val(currentPage);
 		_btnQueryfee(currentPage)
 	};
+
+	/**
+	 * 获取支付平台支付页面
+	 */
+	var _getPayTocken = function(){	
+		var chargeItems=_buildChargeItems2();
+		var busiUpType="1";
+		order.calcharge.busiUpType="1";
+		var params={
+				"olId":OrderInfo.orderResult.olId,
+				"soNbr":OrderInfo.order.soNbr,
+				"busiUpType":busiUpType,
+				"chargeItems":chargeItems
+		};
+		var url = contextPath+"/app/order/getPayUrl";
+		var response = $.callServiceAsJson(url, params);
+		if(response.code==0){
+			payUrl=response.data;
+			//var payUrl2="http://192.168.4.137:7001/pay_web/platpay/index?payToken="+payUrl.split("=")[1];
+   		  // payUrl2="https://crm.189.cn:86/upay/platpay/index?payToken=5D0CB495B3DD59CAEC106F93EEBD13952F62C58C4A13445FB8AC378A32038E99";
+			common.callOpenPay(payUrl);//打开支付页面
+		}else if(response.code==1002){
+			$.alert("提示",response.data);
+		}
+		else{
+			$.alertM(response.data);
+		}
+	};
+
+	/**
+	 * 获取支付平台返回订单状态并进行下一步操作
+	 */
+	var _queryPayOrdStatus= function(soNbr, status,type) {
+		if(order.calcharge.busiUpType=="1"){
+			//实时受理收费走计费接口
+			_queryPayOrdStatus1(soNbr, status,type);
+		}else{//宽带甩单收费完直接订单提交
+			order.broadband.queryPayOrdStatus(soNbr, status,type);
+		}
+	};
+	
+	/**
+	 * 获取支付平台返回订单状态
+	 */
+	var _queryPayOrdStatus1 = function(soNbr, status,type) {
+		if ("1" == status) { // 原生返回成功，调用支付平台查询订单状态接口，再次确定是否成功，如果成功则调用收费接口
+			var params = {
+				"olId" : soNbr
+				
+			};
+			var url = contextPath + "/app/order/getPayOrdStatus";
+			var response = $.callServiceAsJson(url, params);
+			if (response.code == 0) {//支付成功，调用收费接口
+				payType=type;
+				_chargeItems=[];
+				_buildChargeItems();//根据支付平台返回支付方式重新生成费用项
+				inOpetate=true;
+				var url=contextPath+"/app/order/updateChargeInfoForCheck";
+				var params={
+						"olId":_olId,
+						"soNbr":OrderInfo.order.soNbr,
+						"areaId" : OrderInfo.staff.areaId,
+						"chargeItems":_chargeItems,
+						"custId":OrderInfo.cust.custId
+				};
+				$.callServiceAsJson(url,params, {
+					"before":function(){
+						$.ecOverlay("<strong>正在处理中,请稍等会儿....</strong>");
+					},	
+					"done" : function(response){
+						$.unecOverlay();
+						if (response.code == 0) {
+                            var flag=1;
+							var isparam=true;
+							//_chargeSave(flag,true);
+							order.phoneNumber.resetBoProdAn();//清楚预占号码缓存  IOS重新进入受理不会显示上次预占的号码
+//							if(!isparam){
+//								_disableButton();
+//								if(submit_success){
+//									$.alert("提示","订单已经建档成功,不能重复操作!");
+//									return;
+//								}
+//								if(inOpetate){
+//									return;
+//								}
+//								if(!_submitParam()){
+//									_conBtns();
+//									return ;
+//								}
+//								inOpetate=true;
+//							}
+							var realmoney = $("#realmoney").val();
+							if(realmoney == "0.00"){
+								if(!_submitParam()){
+									return ;
+								}
+						    }
+							var params={
+									"olId":OrderInfo.orderResult.olId,
+									"soNbr":OrderInfo.order.soNbr,
+									"areaId" : OrderInfo.staff.areaId,
+									"chargeItems":_chargeItems
+							};
+							var url=contextPath+"/app/order/chargeSubmit?token="+OrderInfo.order.token;
+							var response=$.callServiceAsJson(url, params, {});
+							var msg="";
+							if (response.code == 0) {
+								submit_success=true;
+								//受理成功，不再取消订单
+//								SoOrder.delOrderFin();
+								
+								if(OrderInfo.actionFlag==31){//改产品密码，则将session中密码重置，用户需要重新输入密码
+									var url=contextPath+"/cust/passwordReset";
+									var response2 = $.callServiceAsJson(url, null, {});
+								}
+								if(flag=='1'){
+									if(OrderInfo.actionFlag==11){
+										msg="退费成功";
+									}else{
+										msg="收费成功";
+									}
+								}else{
+									msg="受理成功";
+								}
+								$("#toCharge").attr("disabled","disabled");
+								$("#toComplate").removeAttr("disabled");
+								$("#orderCancel").removeAttr("disabled");
+								$("#printVoucherA").attr("disabled","disabled");
+								//移除费用新增、费用修改按钮
+//								$(".ui-icon-plus").remove();
+//								$(".ui-icon-gear").remove();
+//								$(".ui-icon-delete").remove();
+								$("#calChangeTab tr").each(function() {
+									var trid = $(this).attr("id");
+									if(trid!=undefined&&trid!=''){
+										trid=trid.substr(5,trid.length);
+										$("#backAmount_"+trid).attr("disabled","disabled");
+										$("#upate").attr("disabled","disabled");
+										
+//										if(OrderInfo.actionFlag==11||OrderInfo.actionFlag==19||OrderInfo.actionFlag==20||OrderInfo.actionFlag==15){//撤单，返销，补退费
+//											$("#backAmount_"+trid).attr("disabled","disabled");
+//											$("#backAmount_"+trid).parent().addClass("ui-state-disabled");
+//										}else{
+//											$("#realAmount_"+trid).attr("disabled","disabled");
+//											$("#realAmount_"+trid).parent().addClass("ui-state-disabled");
+//										}
+										
+									}
+								});
+								if(OrderInfo.actionFlag==11){
+									$("#orderCancel").html("<span>返回首页</span>");
+									$("#orderCancel").off("onclick").on("onclick",function(event){
+										order.undo.toUndoMain(1);
+									});
+								}else{
+									$("#orderCancel").html("继续受理");
+									$("#orderCancel").off("onclick").on("onclick",function(event){
+										_backToEntr();
+									});
+								}
+//								SoOrder.updateResState(); //修改UIM，号码状态
+								//金额不为零，提示收费成功
+								if(flag=='1'){
+									var realmoney=($('#realMoney').html())*1;
+									//realmoney=0;
+									//费用大于0，才可以打印发票
+//									if (realmoney > 0) {
+//										//收费成功，先调初始化发票信息
+//										var param={
+//											"soNbr":OrderInfo.order.soNbr,
+//											"billType" : 0,
+//											"olId" : _olId,
+//											"printFlag" : -1,
+//											"areaId" : OrderInfo.staff.areaId,
+//											"acctItemIds":[]
+//										};
+//										var initResult = common.print.initPrintInfo(param);
+//										if(!initResult) {
+//											return;
+//										}
+//										//然后提示是否打印发票
+//										$.confirm("信息提示","收费成功，是否打印发票?",{
+//											names:["是","否"],
+//											yesdo:function(){
+//												var param={
+//													"soNbr":OrderInfo.order.soNbr,
+//													"billType" : 0,
+//													"olId" : _olId,
+//													"printFlag" : 0,
+//													"areaId" : OrderInfo.staff.areaId,
+//													"acctItemIds":[]
+//												};
+//												common.print.prepareInvoiceInfo(param);
+//												return;
+//											},
+//											no:function(){
+//											}
+//										});
+//									} else {
+//										//提示收费成功
+										_showFinDialog(flag, msg);
+//									}
+								} else {
+									//提示受理完成
+									_showFinDialog(flag, msg);
+								}
+								return;
+								
+							}else if (response.code == -2) {
+								_conBtns();
+								SoOrder.getToken();
+								inOpetate=false;
+								$.alertM(response.data);
+								//SoOrder.showAlertDialog(response.data);
+							}else{
+								_conBtns();
+								SoOrder.getToken();
+								inOpetate=false;
+								if(response.data!=undefined){
+									alert(response.data);
+									//$.alert("提示",response.data);
+								}else{
+									$.alert("提示","费用信息提交失败!");
+								}
+							}
+							$("#toCharge").attr("disabled","disabled");
+						}else if (response.code == -2) {
+							_showFinDialog(flag, "收费成功");
+//							_conBtns();
+//							inOpetate=false;
+//							$.alertM(response.data);
+						}else{
+							_showFinDialog(flag, "收费成功");
+//							_conBtns();
+//							inOpetate=false;
+//							if(response.data!=undefined){
+//								$.alert("提示",response.data);
+//							}else{
+//								$.alert("提示","代理商保证金校验失败!");
+//							}
+						}
+					}
+				});
+			} else if (response.status == 1002) {
+				$.alert("提示",response.data); // 支付失败
+			} else {
+				$.alertM(response.data);// 调用接口异常
+			}
+		}
+	};
+	
+	//费用项封装
+	var _buildChargeItems2 = function(){
+		var realFee=0;
+		var chargeItems2=[];
+		$("#calChangeTab tr").each(function() {
+			var val = $(this).attr("id");
+			if(val!=undefined&&val!=''){
+				val=val.substr(5,val.length);
+				var realmoney=($("#realhidden_"+val).val())*100+'';
+				var amount=$("#feeAmount_"+val).val();
+				var feeAmount="";
+				if(amount!=undefined&&amount!=''){
+					feeAmount=amount+'';
+				}else{
+					feeAmount=realmoney;
+				}
+				if(OrderInfo.actionFlag==11||OrderInfo.actionFlag==19||OrderInfo.actionFlag==20){
+					feeAmount = $("#feeAmount_"+val).val()*1+'';
+					realmoney = (0-($("#backAmount_"+val).val())*100)+'';
+					//realmoney = (parseInt(feeAmount) + parseInt(realmoney))+'';
+					//alert("feeAmount="+feeAmount+"||realmoney="+realmoney);
+				}
+				var acctItemTypeId=$("#acctItemTypeId_"+val).val();
+				var objId=$("#objId_"+val).val();
+				var objType=$("#objType_"+val).val();
+				var acctItemId=$("#acctItemId_"+val).val();
+				var boId=$("#boId_"+val).val();
+				var payMethodCd=$(".shouyintai_payType").val();
+				var objInstId=$("#objInstId_"+val).val();
+				var prodId=$("#prodId_"+val).val();
+				var boActionType=$("#boActionType_"+val).val();
+				var paymentAmount = $("#paymentAmount_"+val).val();
+				var chargeModifyReasonCd = 1 ;
+				var remark="";
+				//if($("#chargeModifyReasonCd_"+val).parent(".ui-select").parent().is(":hidden")){
+				if($("#chargeModifyReasonCd_"+val).is(":hidden")){
+					if(feeAmount!=realmoney){
+						remark="其他";
+					}
+				}else{
+					chargeModifyReasonCd = $("#chargeModifyReasonCd_"+val).val();
+					remark=$('#chargeModifyReasonCd_'+val).find("option:selected").text();
+					if(chargeModifyReasonCd=="1"){
+						remark = $("#remark_"+val).val();
+					}
+				}
+				if(feeAmount!=realmoney&&remark==""){
+					remark="其他";
+				}
+				var terminalNumber = "";
+				var serialNumber = "";
+				if(payMethodCd == '110101'){
+					 terminalNumber=$("#terminalNumber").val();
+					 serialNumber=$("#serialNumber").val();
+				}
+				if(order.calcharge.myFlag){//开启调用支付平台
+					//payMethodCd=payType;
+				}
+				realFee=Number(realFee)+Number(realmoney);
+				var param={"realAmount":1,
+						"feeAmount":1,
+						"paymentAmount":paymentAmount,
+						"acctItemTypeId":acctItemTypeId,
+						"objId":objId,
+						"objType":objType,
+						"acctItemId":acctItemId,
+						"boId":boId,
+						"prodId":prodId,
+						"objInstId":objInstId,
+						"payMethodCd":payMethodCd,
+						"terminalNo":terminalNumber,
+						"posSeriaNbr":serialNumber,
+						"chargeModifyReasonCd":chargeModifyReasonCd,
+						"remark":remark,
+						"boActionType":boActionType
+				};
+				chargeItems2.push(param);				
+			}
+		});
+		return realFee;
+	};
 	return {
 		addItems:_addItems,
 		delItems:_delItems,
@@ -1215,6 +1557,12 @@ order.calcharge = (function(){
 		back :_back,
 		upPage                 :           _upPage,
 		nextPage               :           _nextPage,
+		getPayTocken           :           _getPayTocken,
+		queryPayOrdStatus           :      _queryPayOrdStatus,
+		queryPayOrdStatus1          :      _queryPayOrdStatus1,
+		myFlag:_myFlag,
+		buildChargeItems2:_buildChargeItems2,
+		busiUpType:_busiUpType
 	};
 })();
 $(function() {
