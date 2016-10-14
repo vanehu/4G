@@ -112,7 +112,8 @@ prod.transferModify = (function(){
 				return;
 			}
 		}
-		
+		//订单备注信息
+		OrderInfo.orderDataRemark =$("#order_remark").val();
 		var acctId = $("#acctSelect").val(); //要更换的帐户ID
 		var acctCd = -1;
 		if(acctId>0){
@@ -215,10 +216,6 @@ prod.transferModify = (function(){
 			                partyId : _toCustId,
 			                partyProductRelaRoleCd : 0,
 			                state : "ADD"
-			            }],
-			            busiOrderAttrs : [{			            				    				
-			            	itemSpecId : "111111118",	    				
-			            	value : $("#order_remark").val() //订单备注		    			
 			            }]
 					}
 			};
@@ -253,17 +250,62 @@ prod.transferModify = (function(){
 				
 			}
 			//新建帐户节点
-			if($("#acctSelect").val()==-1){
+			/*if($("#acctSelect").val()==-1){
 				var acctName = $("#acctName").val();
 				if(acctName==toCustName){
 					OrderInfo.createAcct(busiOrder, -1,_toCustId,nameCN);
 				}else{
 					OrderInfo.createAcct(busiOrder, -1,_toCustId);
 				}
+			}*/
+			
+			if(true){
+				var boAccountInfoAdd={
+					areaId : order.prodModify.choosedProdInfo.areaId,  //受理地区ID		
+					busiOrderInfo : {
+						seq : OrderInfo.SEQ.seq--
+					}, 
+					busiObj : { //业务对象节点
+						accessNumber: order.prodModify.choosedProdInfo.accNbr,
+						instId : order.prodModify.choosedProdInfo.prodInstId, //业务对象实例ID
+						objId :order.prodModify.choosedProdInfo.productId
+					},  
+					boActionType : {
+						actionClassCd: CONST.ACTION_CLASS_CD.ACCT_ACTION,
+	                    boActionTypeCd: CONST.BO_ACTION_TYPE.ACCT_INFO_MODIFY
+					}, 
+					data:{}
+				};
+				//创建账户变更节点
+				boAccountInfoAdd.data.boAccountInfos=[];
+				var _boProdAcctInfosOld={
+                        acctCd: origAcct.acctCd,
+                        acctId: origAcct.acctId,
+                        acctName: origAcct.name,
+                        CN:origAcct.acctName==undefined?"":origAcct.acctName,
+                        acctTypeCd: "1",
+                        partyId: origAcct.custId,
+                        prodId: order.prodModify.choosedProdInfo.productId,
+                        state: "DEL"
+				};
+				var _boProdAcctInfos={
+					 	acctCd: origAcct.acctCd,
+					 	acctId: origAcct.acctId,
+					 	acctName: $.trim($("#acctName").val()),
+					 	acctTypeCd: "1",
+					 	//这里取新客户ID
+					 	partyId: _toCustId,
+					 	prodId: order.prodModify.choosedProdInfo.productId,
+					 	state: "ADD"
+				};
+				boAccountInfoAdd.data.boAccountInfos.push(_boProdAcctInfosOld);
+				boAccountInfoAdd.data.boAccountInfos.push(_boProdAcctInfos);
+				
+				busiOrder.push(boAccountInfoAdd);
 			}
 			//更换帐户节点
 			if(changeAcct){
-				var transferAcct = {
+			/*	var transferAcct = {
 						areaId : order.prodModify.choosedProdInfo.areaId,
 						boActionType : {
 							actionClassCd : CONST.ACTION_CLASS_CD.PROD_ACTION, //动作大类：产品动作
@@ -302,7 +344,7 @@ prod.transferModify = (function(){
 							}]							                
 						}
 				};
-				busiOrder.push(transferAcct);
+				busiOrder.push(transferAcct);*/
 		        if(OrderInfo.actionFlag==43 && CacheData.isGov(toIdentidiesTypeCd)){
 		        	var govUser = {
 		        			areaId : order.prodModify.choosedProdInfo.areaId,  //受理地区ID
@@ -880,6 +922,8 @@ prod.transferModify = (function(){
 							$("#acctSelect").find("option[value="+accountInfo.acctId+"]").attr("selected","selected");							
 						});
 						$("#defineNewAcct").hide();
+						//默认账户名称为第一个账户的名称
+						$("#acctName").attr("value",returnMap.accountInfos[0].name);
 					} 
 					else{
 						_whetherCreateAcct();
@@ -892,6 +936,20 @@ prod.transferModify = (function(){
 			else{
 				$.alert("提示",response.data);
 			}
+		}
+		//判断是否是 "返档" 
+		if(OrderInfo.actionFlag==43){
+			//隐藏所有功能键
+			$("#defineNewAcct").hide();
+			//隐藏账户其它除名称外属性
+			$("#defineNewAcct").find("li").hide();
+			//失效账户选择
+			$("#acctSelect").attr("disabled","disabled");
+			$("#account").find("a").hide();
+			//显示账户名称修改按钮
+			$("#account").find("a:eq(2)").show();
+			//显示账户名称
+			$("#defineNewAcct").find("li:eq(0)").show();
 		}
 	};
 	
@@ -1274,7 +1332,13 @@ prod.transferModify = (function(){
         }
 		SoOrder.submitOrder(busiOrder);
 	};
-
+	var _showCustUpdate=function(){
+		//显示
+	 	$("#defineNewAcct").show();
+	 	$("#postType").attr("disabled","disabled");
+	 	$("#paymentType").attr("disabled","disabled");
+	 	
+	}
 	return {
 		showCustTransfer : _showCustTransfer,
 		custTransfer : _custTransfer,
@@ -1293,7 +1357,8 @@ prod.transferModify = (function(){
 		certTypeByPartyType:_certTypeByPartyType,
 		showReturnFile : _showReturnFile,
 		returnFile_Submit : _returnFile_Submit,
-		changeDataReturn_Submit : _changeDataReturn_Submit
+		changeDataReturn_Submit : _changeDataReturn_Submit,
+		showCustUpdate:_showCustUpdate
 	};
 })();
 $(function(){

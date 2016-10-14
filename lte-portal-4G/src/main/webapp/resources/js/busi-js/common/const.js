@@ -167,7 +167,7 @@ CONST = (function(){
 	    RETURN_TERMINAL : "3030400000", //终端预约取消
 	    URGENT_BOOT : "4070500000", // 紧急开机
 	    TEMPORARY_CREDIT:"4110300000",//临时授信
-	    ACCT_INFO_MODIFY:"2020400000"	//账户修改(改客户资料返档)
+	    ACCT_INFO_MODIFY:"2020400000"	//账户修改(改客户资料返档、返档)
 	};
 	
 	//业务动作小类对应的名称

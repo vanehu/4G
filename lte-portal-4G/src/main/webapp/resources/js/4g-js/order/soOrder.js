@@ -257,6 +257,13 @@ SoOrder = (function() {
 		if(_setOfferType()){
 			itemValue="Y";
 		}
+		//返档订单备注信息
+		if(OrderInfo.actionFlag==43){
+			custOrderAttrs.push({
+				itemSpecId : CONST.BUSI_ORDER_ATTR.REMARK,	    				
+	            value : OrderInfo.orderDataRemark//订单备注
+			}) ;
+		}
 		//可选包变更,提交订单时将客户等级信息拼装到订单属性
 		if(OrderInfo.actionFlag==3){
 			custOrderAttrs.push({
