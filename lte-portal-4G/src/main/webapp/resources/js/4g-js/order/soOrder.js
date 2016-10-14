@@ -537,7 +537,7 @@ SoOrder = (function() {
 			});
 		}else if(OrderInfo.actionFlag == 40){//紧急开机
 			_createUrgentBoot(busiOrders,data,"N");
-		}else if(OrderInfo.actionFlag == 44){//主副卡成员角色互换
+		}else if(OrderInfo.actionFlag == 28){//主副卡成员角色互换
 			_buildBusiOrders(data, busiOrders);
 		}else{  //默认单个业务动作
 			_fillBusiOrder(busiOrders,data,"N"); //填充业务对象节点
@@ -579,6 +579,10 @@ SoOrder = (function() {
 		}
 		if (order.prepare.isPreInstall()) {
 			OrderInfo.orderData.orderList.orderListInfo.custOrderType = 27;
+		}
+		if (OrderInfo.actionFlag == 28) {
+			//主副卡互换拼装custOrderType节点，表示业务类型，用于后台落表，与属性CONST.BUSI_ORDER_ATTR.BUSITYPE_FLAG一样
+			OrderInfo.orderData.orderList.orderListInfo.custOrderType = OrderInfo.actionFlag;//或OrderInfo.busitypeflag
 		}
 		return true;
 	};
@@ -932,7 +936,7 @@ SoOrder = (function() {
 				OrderInfo.actionTypeName = "拆机";
 			} else if (OrderInfo.actionFlag==39){ //改付费类型
 				OrderInfo.actionTypeName = "修改付费类型";
-			} else if (OrderInfo.actionFlag==44){ //主副卡角色互换
+			} else if (OrderInfo.actionFlag==28){ //主副卡角色互换
 				OrderInfo.actionTypeName = "主副卡角色互换";
 			}
 			var $span = $("<span>"+OrderInfo.actionTypeName+"</span>");
@@ -3596,7 +3600,7 @@ SoOrder = (function() {
 					"value":"0"
 				}],
 				"olId":OrderInfo.orderResult.olId
-				}
+				};
 		$.callServiceAsJson(contextPath+"/order/saveOrderAttrs",JSON.stringify(params), {
 			"before":function(){
 				$.ecOverlay("<strong>订单暂存中，请稍等...</strong>");

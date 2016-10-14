@@ -34,7 +34,7 @@ order.dealer = (function() {
 		}
 		var currentAreaAllName = $("#p_staff_areaId_val").val();
 		if(currentAreaAllName!=undefined){
-			currentAreaAllName = currentAreaAllName.replace(/>/g,"-")
+			currentAreaAllName = currentAreaAllName.replace(/>/g,"-");
 		}
 		var param = {
 				"dealerId":$("#dealer_id").val(),
@@ -58,7 +58,7 @@ order.dealer = (function() {
 			$.alert("信息提示",response.data);
 			return;
 		}
-		if(OrderInfo.actionFlag==1 || OrderInfo.actionFlag==2 || OrderInfo.actionFlag==14 || OrderInfo.actionFlag==44){ //新装业务，套餐变更需要主套餐发展人
+		if(OrderInfo.actionFlag==1 || OrderInfo.actionFlag==2 || OrderInfo.actionFlag==14 || OrderInfo.actionFlag==28){ //新装业务、套餐变更、主副卡互换需要主套餐发展人
 			var objInstId = OrderInfo.offerSpec.offerSpecId;
 			var $tr = $("<tr id='tr_"+objInstId+"' name='tr_"+objInstId+"'></tr>");
 			var $tdType = $('<td></td>');

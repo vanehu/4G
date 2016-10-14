@@ -23,6 +23,7 @@ order.memberChange = function(){
 	
 	//点击主副卡成员变更跳出一个div
 	var _showOfferCfgDialog=function(){
+		var mainAccessNumber = "";//主副卡成员角色互换，记录主卡号码
 		if(OrderInfo.authRecord.resultCode!="0"){
 			if (order.prodModify.querySecondBusinessAuth("4", "N", "order.memberChange.showOfferCfgDialog")) {
 				return;
@@ -205,6 +206,7 @@ order.memberChange = function(){
 					if(this.offerRoleId==offerRole.offerRoleId && this.objType==CONST.OBJ_TYPE.PROD){
 						$tr.append("<td align='left' colspan='1' class='borderLTB' style='font-size:14px; padding:0px 0px 0px 12px'><span style='color:#518652; font-size:14px;'>"
 						+this.accessNumber+"</span>&nbsp;&nbsp;</td>");
+						mainAccessNumber = this.accessNumber;//记录主卡号码，便于主副卡成员角色互换业务使用
 						return;
 					}
 				});
@@ -325,7 +327,7 @@ order.memberChange = function(){
 							eleR.click(function(){
 								$.confirm("信息确认","主副卡成员角色互换：原主卡将成为副卡，原副卡将成为主卡，原套餐及产品等信息不变，请确认是否受理？",{ 
 									yesdo:function(){
-										order.memberChange.roleExchange(accessNumber);
+										order.memberChange.roleExchange(mainAccessNumber, accessNumber);
 									},
 									no:function(){}
 								});
@@ -1563,19 +1565,19 @@ order.memberChange = function(){
 	};
 	
 	/**
-	 * 主副卡角色互换，主套餐等均不变，仅主卡->副卡、副卡->主卡
-	 * 入参subAccessNumber为页面选中的副卡号码
+	 * 主副卡角色互换，主套餐及产品等均不变，仅角色互换
+	 * 入参mainAccessNumber为主卡号码，subAccessNumber为页面选中的副卡号码
 	 */
-	var _roleExchange = function(subAccessNumber){
+	var _roleExchange = function(mainAccessNumber, subAccessNumber){
 		_closeDialog();
 		if(_invokeLoadInst()){//主副卡成员的全量全部加载成功后进行业务受理
-			OrderInfo.busitypeflag = 1;
-			OrderInfo.initData(CONST.ACTION_CLASS_CD.PROD_ACTION,CONST.BO_ACTION_TYPE.ADDOREXIT_COMP,44,CONST.getBoActionTypeName(CONST.BO_ACTION_TYPE.PRODUCT_PARMS),"");
+			OrderInfo.busitypeflag = 28;
+			OrderInfo.initData(CONST.ACTION_CLASS_CD.PROD_ACTION,CONST.BO_ACTION_TYPE.ADDOREXIT_COMP,28,CONST.getBoActionTypeName(CONST.BO_ACTION_TYPE.PRODUCT_PARMS),"");
 			var choosedProdInfo = order.prodModify.choosedProdInfo;
 			var param = order.prodModify.getCallRuleParam(CONST.BO_ACTION_TYPE.ADDOREXIT_COMP,choosedProdInfo.prodInstId);
 			var callParam = {
 				boActionTypeName: CONST.getBoActionTypeName(CONST.BO_ACTION_TYPE.ADDOREXIT_COMP),//S3动作
-				mainAcctNbr		: choosedProdInfo.accNbr,//页面选中的主卡号码
+				mainAcctNbr		: mainAccessNumber,//主卡号码
 				subAcctNbr		: subAccessNumber//页面选中的副卡号码
 			};
 			var checkRule = rule.rule.prepare(param,'order.prodModify.roleExchange',callParam);
