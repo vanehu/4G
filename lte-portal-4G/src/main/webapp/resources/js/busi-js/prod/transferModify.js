@@ -892,16 +892,24 @@ prod.transferModify = (function(){
 	
 	//每次定位客户后，初始化帐户展示
 	var _initAcct = function() {
+		//返档标识  真为返档  否为改客户资料返档
+		var  acctReturn_Mark=OrderInfo.actionFlag==43;
 		$("#acctSelect").empty();
 		$("#account").find("a:gt(0)").show();
-		//新建客户自动新建帐户
-		if ($("#litransCustId").attr("transCustId")=="") {
+		//客户资料返档时 新建客户自动新建帐户
+		if ($("#litransCustId").attr("transCustId")==""&&!acctReturn_Mark) {
 			_whetherCreateAcct();
 		} 
 		//老客户默认查询使用其已有帐户，若没有老帐户则使用新建帐户
 		else {
+			var	custId="";
+			if(acctReturn_Mark){
+				custId = $("#custInfos").attr("custid");
+			}else{
+				custId=  $("#litransCustId").attr("transCustId");
+			}
 			var param = {
-				custId : $("#litransCustId").attr("transCustId")
+				"custId" : custId
 			};
 			var response = order.prodModify.returnAccount(param);
 			if(response.code==0){
