@@ -258,11 +258,14 @@ SoOrder = (function() {
 			itemValue="Y";
 		}
 		//返档订单备注信息
-		if(OrderInfo.actionFlag==43){
-			custOrderAttrs.push({
-				itemSpecId : CONST.BUSI_ORDER_ATTR.REMARK,	    				
-	            value : OrderInfo.orderDataRemark//订单备注
-			}) ;
+		var response = $.callServiceAsJson(contextPath+"/common/queryPortalProperties",{propertiesKey : "RETURN_ACCOUNT_FLAG"});
+		if(OrderInfo.actionFlag==43&&response!=undefined&&response.data!=undefined){
+			if(response.data=="ON"&&OrderInfo.orderDataRemark!=undefined&&OrderInfo.orderDataRemark!=""){
+					custOrderAttrs.push({
+						itemSpecId : CONST.BUSI_ORDER_ATTR.REMARK,	    				
+			            value : $.trim(OrderInfo.orderDataRemark)//订单备注
+					}) ;
+			}
 		}
 		//可选包变更,提交订单时将客户等级信息拼装到订单属性
 		if(OrderInfo.actionFlag==3){
