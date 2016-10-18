@@ -467,4 +467,8 @@ public class MDA {
 	 * 安全办公业务是否启用开关
 	 */
 	public static final String SECURITY_OFFICE_FLAG = new String("");
+	/**
+	 * 返档改造生效开关
+	 */
+	public static final String RETURN_ACCOUNT_FLAG=new String("");
 }
