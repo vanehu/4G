@@ -40,7 +40,7 @@
 		</#if>
 			<tr <#if parm_row%2==1 >  class="bg"</#if>>
 			    <td prodBigClass="${item.prodBigClass}" areaId="${item.areaId}" accNbr="${item.accNbr}" productName="${item.productName}" prodStateName="${item.prodStateName}" feeType="${item.feeType.feeType}" feeTypeName="${item.feeType.feeTypeName}" 
-			    prodInstId="${item.prodInstId}" extProdInstId="${item.extProdInstId}" corProdInstId="${item.corProdInstId}" prodStateCd="${item.prodStateCd}" productId="${item.productId}" prodClass="${item.prodClass}" stopRecordCd="${item.stopRecordCd}" stopRecordName="${item.stopRecordName}" zoneNumber="${item.zoneNumber}" ifLteNewInstall="${item.ifLteNewInstall}" style="text-align:center"></td>
+			    prodInstId="${item.prodInstId}" extProdInstId="${item.extProdInstId}" corProdInstId="${item.corProdInstId}" prodStateCd="${item.prodStateCd}" productId="${item.productId}" prodClass="${item.prodClass}" stopRecordCd="${item.stopRecordCd}" stopRecordName="${item.stopRecordName}" zoneNumber="${item.zoneNumber}" ifLteNewInstall="${item.ifLteNewInstall}"  roleCd="${item.roleCd}"style="text-align:center"></td>
 			    <td><i class="${item.treeFlag} floatright"></i></td>
 				<td>${item.roleName} ${item.accNbr}</td>
 				<td><#if item.prodOfferName!="">${item.prodOfferName} <#if item.startDt!="">${item.startDt}生效</#if><#else>更多>></#if></td>

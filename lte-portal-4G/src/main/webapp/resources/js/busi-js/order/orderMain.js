@@ -1340,8 +1340,10 @@ order.main = (function(){
 				// 根据证件类型来判断
 				if(order.cust.isCovCust(OrderInfo.cust.identityCd)){ //政企客户
 					isOptional = false;
+				}else if(OrderInfo.actionFlag =='6'){//主副卡加装副卡
+					isOptional = false;
 				}
-			} else { //新建客户
+			}else { //新建客户
 				if(OrderInfo.boCustInfos && OrderInfo.boCustInfos.partyTypeCd == '2'){ //政企客户
 					isOptional = false;
 				}

@@ -1214,7 +1214,7 @@ order.cust = (function(){
 					}else{
 						_linkQueryOffer(this);
 					}
-					
+					OrderInfo.roleCd = $(thisTr).find("td:eq(0)").attr('roleCd');
 					});
 				
 				

@@ -59,6 +59,8 @@ OrderInfo = (function() {
 	var _preBefore ={
 			prcFlag : ""	
 	};//保存前置检验的结果
+	
+	var _roleCd="";//用户区分当前选择的产品是否是副卡
 	var _cust_validateType = "";//客户鉴权方式
 
 	var _cust_validateNum = "";//客户鉴权号码
@@ -1703,6 +1705,7 @@ OrderInfo = (function() {
 		cust_validateNum		:_cust_validateNum,
 		staffInfoFlag : _staffInfoFlag,
 		essOrderInfo            :_essOrderInfo,
-		preBefore : _preBefore
+		preBefore : _preBefore,
+		roleCd   : _roleCd
 	};
 })();

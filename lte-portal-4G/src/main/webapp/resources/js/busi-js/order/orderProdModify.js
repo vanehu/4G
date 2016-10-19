@@ -1818,7 +1818,7 @@ order.prodModify = (function(){
 		if(OrderInfo.cust && OrderInfo.cust.custId && OrderInfo.cust.custId != '-1'){ //老客户
 			valid = CacheData.isGov(OrderInfo.cust.identityCd); //政企客户
 		}
-		if(!valid){
+		if(!valid && OrderInfo.roleCd !='20100002'){
 			$.alert('提示', '非政企客户不能办理修改使用人业务');
 			return;
 		}
