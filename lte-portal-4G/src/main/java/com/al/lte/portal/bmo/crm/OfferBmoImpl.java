@@ -88,8 +88,8 @@ public class OfferBmoImpl implements OfferBmo {
 				String offerSpecId = MapUtils.getString(offerSpecCanBuy, "offerSpecId", "N/A");
 				//是否可重复订购
 //				String ifOrderAgain = MapUtils.getString(offerSpecCanBuy, "ifOrderAgain", "N/A");
-				//两层含义：1. 表示合约；2. 6个月之内的有效期是否可重复订购(续约)
-				String ifDueOrderAgain = MapUtils.getString(offerSpecCanBuy, "ifDueOrderAgain", "N/A");
+				//两层含义：1. 表示合约；2. 6个月之内的有效期是否可重复订购(即续约标识)，Y为可续约，其他不可续约或非合约
+				String ifDueOrderAgain = MapUtils.getString(offerSpecCanBuy, "ifDueOrderAgain", "iamabug");
 				//循环遍历已订购附属销售品
 				for(int j = 0, length = attachOfferOrderedList.size(); j < length; j++){
 					Map<String, Object> attachOfferOrdered = attachOfferOrderedList.get(j);
@@ -97,19 +97,24 @@ public class OfferBmoImpl implements OfferBmo {
 					if(offerSpecId.equals(attachOfferOrdered.get("offerSpecId").toString())){
 						//获取已订购的附属销售品的失效时间
 						String expireDateStr = MapUtils.getString(attachOfferOrdered, "expDate", "iamnotabug");
-						if(!"iamnotabug".equals(expireDateStr) && "Y".equals(ifDueOrderAgain)){
-							//没有返回expDate、且ifDueOrderAgain不为Y，则不进行操作
-							//如果expireDateStr不是yyyyMMddHHmmss14位会ParseException抛异常
-							Date expireDate = DateUtil.getDateFromString(expireDateStr, DateUtil.DATE_FORMATE_STRING_DEFAULT);
-							expireCalendar.setTime(expireDate);
-							if(NowCalendar.compareTo(expireCalendar) < 0){
-								//如果当前时间在到期前
-								expireCalendar.add(Calendar.MONTH, -6);
+						//先确定是合约
+						if("Y".equals(ifDueOrderAgain)){
+							if(!("iamnotabug".equals(expireDateStr) || "".equals(expireDateStr))){
+								//如果expireDateStr不是yyyyMMddHHmmss14位会ParseException抛异常
+								Date expireDate = DateUtil.getDateFromString(expireDateStr, DateUtil.DATE_FORMATE_STRING_DEFAULT);
+								expireCalendar.setTime(expireDate);
 								if(NowCalendar.compareTo(expireCalendar) < 0){
-									//如果当前时间在到期前的6个月之内
+									//如果当前时间在到期前
+									expireCalendar.add(Calendar.MONTH, -6);
+									if(NowCalendar.compareTo(expireCalendar) < 0){
+										//如果当前时间在到期前的6个月之内
+										offerSpecCanBuyList.remove(i);
+									}
+								} else{
 									offerSpecCanBuyList.remove(i);
 								}
 							} else{
+								//如果是合约，但失效时间未返回，则过滤
 								offerSpecCanBuyList.remove(i);
 							}
 						}

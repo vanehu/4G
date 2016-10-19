@@ -4157,20 +4157,27 @@ AttachOffer = (function() {
 									if(this.offerSpecId==offerSpecId&&this.isDel!="C"){
 										//1.如果可订购附属销售品在已订购列表
 										var expireDate = this.expDate;//已订购的附属销售品的失效时间
-										if(expireDate != null && expireDate != undefined && expireDate != "" && ifDueOrderAgain == "Y"){
-											//2只有返回expireDate，且 ifDueOrderAgain为Y(可以续约)则进行比对；否则不进行比对
-											var expireDateYear = expireDate.substring(0,4);//截取失效时间的年份
-											var expireDateMonth = expireDate.substring(4,6);//截取失效时间20150201000000的月份02
-											var expireDateDay = expireDate.substring(6, 8);//截取失效时间20150201000000的day
-											expireDate = new Date(expireDateYear + "/" + expireDateMonth + "/" + expireDateDay);
-											if(currentDate < expireDate){
-												//3.如果该附属销售品还未到期，再判断是否到期前6个月
-												expireDate.setMonth(expireDate.getMonth() - 6);
+										//判断是否合约，是合约则判断失效时间，否则不过滤
+										if(ifDueOrderAgain == "Y"){
+											//是合约，若失效时间不正确或未返回，则过滤，否则不过滤
+											if(expireDate != null && expireDate != undefined && expireDate != ""){
+												//2只有返回expireDate，且 ifDueOrderAgain为Y(可以续约)则进行比对；否则不进行比对
+												var expireDateYear = expireDate.substring(0,4);//截取失效时间的年份
+												var expireDateMonth = expireDate.substring(4,6);//截取失效时间20150201000000的月份02
+												var expireDateDay = expireDate.substring(6, 8);//截取失效时间20150201000000的day
+												expireDate = new Date(expireDateYear + "/" + expireDateMonth + "/" + expireDateDay);
 												if(currentDate < expireDate){
-													//4.如果不在到期前的6个月之内，过滤不展示页面
+													//3.如果该附属销售品还未到期，再判断是否到期前6个月
+													expireDate.setMonth(expireDate.getMonth() - 6);
+													if(currentDate < expireDate){
+														//4.如果不在到期前的6个月之内，过滤不展示页面
+														flag = false;
+														return false;
+													}
+												} else{
 													flag = false;
 													return false;
-												}
+												}												
 											} else{
 												flag = false;
 												return false;
