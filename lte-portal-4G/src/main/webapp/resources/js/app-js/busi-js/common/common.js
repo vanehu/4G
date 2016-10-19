@@ -228,6 +228,15 @@ common = (function($) {
 				return;
 			}
 		}
+		if(OrderInfo.actionFlag==1){
+			if(OrderInfo.order.step==3){
+				if(OrderInfo.returnFlag=="xgfy"){
+					order.calcharge.close();
+					OrderInfo.returnFlag="";
+					return;
+				}
+			}
+		}
 		if(OrderInfo.actionFlag==4||OrderInfo.actionFlag==8){//客户新增和修改
 			_callCloseWebview();
 			return;

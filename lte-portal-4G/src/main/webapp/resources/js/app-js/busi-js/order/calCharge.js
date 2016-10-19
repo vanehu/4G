@@ -1065,6 +1065,7 @@ order.calcharge = (function(){
 			},
 			"done" : function(response){
 				$.unecOverlay();
+				OrderInfo.returnFlag = "xgfy";
 				$("#cal_main_content").hide();
 				var content$ = $("#edit_content");
 				content$.html(response.data).show();
