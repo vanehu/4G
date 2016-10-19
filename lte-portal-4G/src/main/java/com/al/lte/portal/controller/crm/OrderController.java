@@ -4738,6 +4738,18 @@ public class OrderController extends BaseController {
         model.addAttribute("DiffPlaceFlag", "local");
         return "/order/order-prepare";
     }
+    
+    /**
+     * 未激活拆机
+     */
+    @RequestMapping(value="/prepareRemoveProd", method = RequestMethod.GET)
+    @AuthorityValid(isCheck = false)
+    public String prepareRemoveProd(HttpServletRequest request,Model model,HttpSession session){
+    	 model.addAttribute("canOrder", EhcacheUtil.pathIsInSession(session, "order/prepare"));
+         model.addAttribute("menuName", SysConstant.WJHCJ);
+         model.addAttribute("DiffPlaceFlag", "local");
+    	return "/order/order-prepare";
+    }
 
     /**
      * 黑名单失效接口

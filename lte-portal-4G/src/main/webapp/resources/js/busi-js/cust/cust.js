@@ -859,7 +859,7 @@ order.cust = (function(){
 			return false;
 		}
 		var menuName = $("#menuName").attr("menuName");
-		if(ec.util.isObj(menuName)&&(CONST.MENU_FANDANG==menuName||CONST.MENU_CUSTFANDANG==menuName||CONST.MENU_RETURNFILE==menuName)){
+		if(ec.util.isObj(menuName)&&(CONST.MENU_FANDANG==menuName||CONST.MENU_CUSTFANDANG==menuName||CONST.MENU_RETURNFILE==menuName||CONST.MENU_REMOVEPROD==menuName)){
 			authFlag = "1";
 		}
 		if(authFlag=="0"){

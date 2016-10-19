@@ -1060,7 +1060,7 @@ order.prodModify = (function(){
 					order.prodModify.cancel();
 				});
 				var menuName = $("#menuName").attr("menuName");
-				if((ec.util.isObj(menuName)&&(CONST.MENU_FANDANG==menuName||CONST.MENU_CUSTFANDANG==menuName||CONST.MENU_RETURNFILE==menuName))){
+				if((ec.util.isObj(menuName)&&(CONST.MENU_FANDANG==menuName||CONST.MENU_CUSTFANDANG==menuName||CONST.MENU_RETURNFILE==menuName||CONST.MENU_REMOVEPROD==menuName))){
 					$("#fillLastStep").hide();
 					$("#order_quick_nav").hide();
 				}
@@ -1620,6 +1620,11 @@ order.prodModify = (function(){
 				$("#fillLastStep").click(function(){
 					order.prodModify.cancel();
 				});
+				var menuName = $("#menuName").attr("menuName");
+				if((ec.util.isObj(menuName)&&(CONST.MENU_REMOVEPROD==menuName))){
+					$("#fillLastStep").hide();
+					$("#order_quick_nav").hide();
+				}
 				if(lteFlag){
 					_remark_prodPass();//二次业务产品密码鉴权配置 
 					if(OrderInfo.password_remark!=null){

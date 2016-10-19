@@ -635,6 +635,9 @@ public final class SysConstant {
 	public static final String  FD= "FD";
 	/**返档*/
 	public static final String FD_NAME = "返档";
+	/** 未激活拆机 **/
+	public static final String WJHCJ = "WJHCJ";
+	public static final String WJHCJ_NAME = "未激活拆机";
 	
     /** 客户鉴权短信验证证随机二位序列号 */
     public static final String SESSION_KEY_CUSTAUTH_RANDONCODE = "_ecs_custauth_sms_session_code";
