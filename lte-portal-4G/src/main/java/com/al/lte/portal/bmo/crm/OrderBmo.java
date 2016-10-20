@@ -755,4 +755,16 @@ public interface OrderBmo {
 	public Map<String, Object> queryChargeConfig(Map<String, Object> param,
 			String optFlowNum, SessionStaff sessionStaff) throws Exception;
 	
+	
+	/**
+	/**
+	 * 读身份证插入日志
+	 * @param param
+	 * @param optFlowNum
+	 * @param sessionStaff
+	 * @return
+	 * @throws Exception
+	 */
+	public Map<String, Object> insertCertInfo(Map<String, Object> param, 
+			String flowNum,SessionStaff sessionStaff) throws Exception;
 }

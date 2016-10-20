@@ -4231,7 +4231,35 @@ public class OrderController extends BaseController {
                 || StringUtils.isBlank(expDate)){
                 return super.failed("读卡失败信息有误", -1);
             }
-            if(!StringUtils.isBlank(venderId)){
+            
+//			param.put("venderId", "11");
+//			param.put("signature", "11");
+//			param.put("versionSerial", "11");
+//			param.put("partyName", "11");
+//			param.put("gender", "11");
+//			param.put("nation", "11");
+//			param.put("bornDay", "11");
+//			param.put("certAddress", "11");
+//			param.put("certNumber", "11");
+//			param.put("certOrg", "11");
+//			param.put("effDate", "11");
+//			param.put("expDate", "11");
+//			param.put("identityPic", "11");
+			SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+                    SysConstant.SESSION_KEY_LOGIN_STAFF);
+            Map<String, Object> rMap = null;
+            param.put("readCertFlag", "readCert");
+            try {
+                 orderBmo.insertCertInfo(param, null, sessionStaff);
+            } catch (BusinessException e) {
+               // return super.failed(e);
+            } catch (InterfaceException ie) {
+               // return super.failed(ie, param, ErrorCode.INSERT_CARD_INFO);
+            } catch (Exception e) {
+               // return super.failed(ErrorCode.INSERT_CARD_INFO, e, param);
+            }
+            
+           if(!StringUtils.isBlank(venderId)){
             	if(MDA.USBVERSION_SIGNATURE.get(venderId)==null){
             		return super.failed("厂商标识信息有误", -1);
             	}
