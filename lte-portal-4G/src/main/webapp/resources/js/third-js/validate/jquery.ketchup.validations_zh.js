@@ -348,7 +348,7 @@ jQuery.ketchup
 	return true;
 })
 
-.validation('isNewRegex', '口令需包含字母大小写、数字、特殊符号(@#$)四种字符中至少3种', function(form, el,value) {
+.validation('isNewRegex', '口令需包含字母大小写、数字、特殊符号@#$四种字符中至少3种', function(form, el,value) {
 	var reg = new RegExp('(?=.*[0-9])');
 	var a=0;
 	if(reg.test(value)){
