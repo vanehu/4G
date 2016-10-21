@@ -98,6 +98,7 @@ OrderInfo = (function() {
 	 * 
 	 */
 	var _actionFlag = 0;
+	var _roleType = "";//区分副卡新装    Y表示副卡新装
 	
 	var _isSuccess = "N";  // 补换卡  加载 可选包 是否成功 
 	
@@ -1567,7 +1568,8 @@ OrderInfo = (function() {
 		acctNbr:_acctNbr,
 		uimType:_uimType,
 		recordId:_recordId,
-		preBefore:_preBefore
+		preBefore:_preBefore,
+		roleType : _roleType
 		
 	};
 })();

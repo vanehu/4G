@@ -1350,6 +1350,9 @@ order.main = (function(){
 				}else if(OrderInfo.actionFlag ==2 && prodId<0 && isFlag=="ON"){
 					isOptional = false;
 					OrderInfo.roleType = "Y";
+				}else if(OrderInfo.actionFlag ==1 && prodId<-1 && isFlag=="ON"){//老客户新装加装副卡
+					isOptional = false;
+					OrderInfo.roleType = "Y";
 				}
 			}else { //新建客户
 				if(OrderInfo.boCustInfos && OrderInfo.boCustInfos.partyTypeCd == '2'){ //政企客户
