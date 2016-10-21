@@ -332,7 +332,8 @@ order.cust = (function(){
 			if (id == "cCustIdCard") {
 				$("#readCertBtnCreate").show();
 				// 获取pushBusi.js里绑定状态
-				if(typeof(parent.bindStatus) != "undefined" && parent.bindStatus){
+				//if(typeof(parent.bindStatus) != "undefined" && parent.bindStatus){
+				if(false){
 					$("#discernBtn_2").show();
 				}
 				$("#btn_readCert").show(); // 预受理
@@ -351,7 +352,8 @@ order.cust = (function(){
 			// 填单页面经办人读卡
 			if (id == "orderAttrIdCard") {
 				$("#orderAttrReadCertBtn").show();
-				if(typeof(parent.bindStatus) != "undefined" && parent.bindStatus){
+				//if(typeof(parent.bindStatus) != "undefined" && parent.bindStatus){
+				if(false){
 					$("#discernBtn_4").show();
 				}
 				$("#orderAttrName").hide();
@@ -364,7 +366,8 @@ order.cust = (function(){
 			// 新建客户经办人读卡
 			if (id == "custCAttrIdCard") {
 				$("#custCAttrReadCertBtn").show();
-				if(typeof(parent.bindStatus) != "undefined" && parent.bindStatus){
+				//if(typeof(parent.bindStatus) != "undefined" && parent.bindStatus){
+				if(false){
 					$("#discernBtn_3").show();
 				}
 				// 元素id由后台传来，这边读卡隐藏输入框，只能先写死
@@ -963,7 +966,8 @@ order.cust = (function(){
 				$("#auth3").find("#idCardType2").text(_choosedCustInfo.identityName);
 				if (_choosedCustInfo.identityCd == "1") {
 					$("#auth3").find("#readCertBtnID2").show();
-					if(typeof(parent.bindStatus) != "undefined" && parent.bindStatus){
+					//if(typeof(parent.bindStatus) != "undefined" && parent.bindStatus){
+					if(false){
 						$("#auth3").find("#discernBtn_5").show();
 					}
 					$("#auth3").find("#idCardNumber2").attr("disabled", "disabled");

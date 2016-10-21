@@ -450,7 +450,8 @@ mktRes.terminal = (function($){
 				$("#order_term_list").hide();
 				termDetail$.show();
 				termDetail$.html(response.data).fadeIn();
-				if(typeof(parent.bindStatus) != "undefined" && !parent.bindStatus){
+				//if(typeof(parent.bindStatus) != "undefined" && !parent.bindStatus){
+				if(false){
 					$("#discernBtn_31").hide();
 				}
 				_initBuyChk();
