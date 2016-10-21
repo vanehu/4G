@@ -1,7 +1,6 @@
 package com.al.lte.portal.bmo.crm;
 
 import java.io.IOException;
-import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Date;
@@ -13,8 +12,6 @@ import java.util.Random;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import net.sf.json.JSONObject;
-
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
@@ -23,12 +20,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import com.al.common.json.JacksonUtil;
 import com.al.crm.log.sender.ILogSender;
 import com.al.ec.serviceplatform.client.DataBus;
 import com.al.ec.serviceplatform.client.ResultCode;
 import com.al.ecs.common.util.JsonUtil;
-import com.al.ecs.common.util.UIDGenerator;
 import com.al.ecs.common.web.ServletUtils;
 import com.al.ecs.exception.BusinessException;
 import com.al.ecs.exception.ErrorCode;
@@ -39,14 +34,12 @@ import com.al.lte.portal.bmo.staff.StaffBmo;
 import com.al.lte.portal.bmo.staff.StaffBmoImpl;
 import com.al.lte.portal.common.AESUtils;
 import com.al.lte.portal.common.Const;
-import com.al.lte.portal.common.HTTPUtil;
 import com.al.lte.portal.common.InterfaceClient;
 import com.al.lte.portal.common.MySimulateData;
 import com.al.lte.portal.common.PortalServiceCode;
 import com.al.lte.portal.common.ServiceClient;
 import com.al.lte.portal.common.SysConstant;
 import com.al.lte.portal.model.SessionStaff;
-import com.al.ecs.common.util.PropertiesUtils;
 
 /**
  * 订单管理业务实现
