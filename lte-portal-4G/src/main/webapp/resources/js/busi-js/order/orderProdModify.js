@@ -1857,7 +1857,7 @@ order.prodModify = (function(){
 				acctNbr:_choosedProdInfo.accNbr,
 				areaId:_choosedProdInfo.areaId
 		};
-		$.callServiceAsHtml(contextPath + "/order/orderSpecParamUserChange",param, {
+		$.callServiceAsHtmlGet(contextPath + "/order/orderSpecParamUserChange",param, {
 			"before":function(){
 				$.ecOverlay("<strong>正在查询中,请稍等会儿....</strong>");
 			},
