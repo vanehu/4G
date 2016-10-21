@@ -1240,10 +1240,10 @@ order.phoneNumber = (function(){
 		if (!$(selected).hasClass("selected")) {
 			_exchangeSelected(loc, selected);
 			if ("value" == sortKey) {
-				$(numberList).append($(numberList + "li").toArray().sort(_valueSort));
 				function _valueSort(a, b) {
 					return ($(a).attr("phoneNumber") - $(b).attr("phoneNumber"))*sortFlag;
 				}
+				$(numberList).append($(numberList + "li").toArray().sort(_valueSort));
 			} else if ("level" == sortKey) {
 				// 当等级一致时，不进行排序操作
 				var sameLevel = true;
@@ -1255,10 +1255,10 @@ order.phoneNumber = (function(){
 					}
 				});
 				if (!sameLevel) {
-					$(numberList).append($(numberList + "li").toArray().sort(_levelSort));
 					function _levelSort(a,b) {
 						return ($(a).attr("pnLevelCd") - $(b).attr("pnLevelCd"))*sortFlag;
 					}
+					$(numberList).append($(numberList + "li").toArray().sort(_levelSort));
 				}
 			}
 		}
