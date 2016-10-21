@@ -236,14 +236,10 @@
 		</const>
 		<const type="String" name="INTERFACE_MERGE" value="8540000,8630000,8150000,8230000,8450000,8500000,8610000,8420000,8350000,8320000,8460000,8640000,8140000,8530000,8360000,8370000,8110000,8430000,8510000,8440000,8310000,8120000,8130000,8410000,8210000,8220000,8340000,8330000,8520000,8620000,8650000" description="能力开放(客户架构、全量查询)接口标识"/>
  	    <const type="String" name="TOKENTIMES" value="7200" description="令牌失效时间"/>
- 	    <!-- 
  	    <const type="String" name="TOKENPROVINEKEY" value="PUBLIC_TOKEN_KEY" description="省份公钥密码(测试环境) "/>
- 	    -->
- 	    <const type="String" name="TOKENPROVINEKEY" value="#public@2015$KEY" description="省份公钥密码(生产环境) "/>
- 	    <!-- 
+ 	   <!--  <const type="String" name="TOKENPROVINEKEY" value="#public@2015$KEY" description="省份公钥密码(生产环境) "/> -->
  	    <const type="String" name="TOKENKEY" value="TOKEN@GROUP%!" description="令牌key(测试环境)"/>
- 	    -->
- 	    <const type="String" name="TOKENKEY" value="$token@KEY!2015" description="令牌key(生产环境)"/>
+ 	    <!-- <const type="String" name="TOKENKEY" value="$token@KEY!2015" description="令牌key(生产环境)"/> -->
  	    <const type="Map" name="PC_URL" description="pc版本业务跳转地址">
  	     {
  	       'pc.1.url':'/token/pc/order/prodoffer/prepare',
@@ -375,43 +371,42 @@
  	       'pad.uri.8540000':'192.3.6.13,192.3.6.16,192.3.6.17,192.3.6.26,192.3.6.22,135.64.132.219,135.64.130.10,134.64.91.32,192.3.6.19,134.64.91.152'
  	      }
  	     </const>
- 	     <const type="Map" name="TOKEN_JMPROVINCECODE_KEY" description="省份私钥(生产环境)">
+ 	  <!--    <const type="Map" name="TOKEN_JMPROVINCECODE_KEY" description="省份私钥(生产环境)">
  	      {
- 	       'token.8320000.key':'*%JS@2015!plm',   <!-- 江苏 -->
- 	       'token.8330000.key':'*2015!ZHEJ!qaz@#',   <!-- 浙江 -->
- 	       'token.8340000.key':'AH!2015#qwert$',   <!-- 安徽 -->
- 	       'token.8350000.key':'fz#FJ*0591@',   <!-- 福建 -->
- 	       'token.8430000.key':'#HuNan!8430@',   <!-- 湖南 -->
- 	       'token.8420000.key':'#!1357*#HBei',   <!-- 湖北 -->
- 	       'token.8310000.key':'@#Shang!Hai$29',   <!-- 上海 -->
- 	       'token.8360000.key':'ap%#09@JianXi',   <!-- 江西 -->
- 	       'token.8440000.key':'023@#_GuangDong',   <!-- 广东 -->
- 	       'token.8640000.key':'Ningxia@864!#$',   <!-- 宁夏 -->
- 	       'token.8510000.key':'*309@Si#chuan%',   <!-- 四川 -->
- 	       'token.8610000.key':'shanXI#92l!ae%',   <!-- 陕西 -->
- 	       'token.8130000.key':'*HeBei@16#al$',   <!-- 河北 -->
- 	       'token.8150000.key':'NMG$#09!dld',   <!-- 内蒙古 -->
- 	       'token.8210000.key':'23%Liao@Ning!',   <!-- 辽宁 -->
- 	       'token.8520000.key':'qz@GuiZhou852#',   <!-- 贵州 -->
- 	       'token.8370000.key':'837@shan!dong%',   <!-- 山东 -->
- 	       'token.8500000.key':'*ChongQ@850!pz',   <!-- 重庆 -->
- 	       'token.8650000.key':'Xin!8650@jiang',   <!-- 新疆 -->
- 	       'token.8110000.key':'#010@BEIJing*',   <!-- 北京 -->
- 	       'token.8120000.key':'@TianJ!02180%',   <!-- 天津 -->
- 	       'token.8630000.key':'0368@QingHai!',   <!-- 青海 -->
- 	       'token.8620000.key':'GS%1qaz@wsx!',   <!-- 甘肃 -->
- 	       'token.8220000.key':'@JieLin!e5cp*',   <!-- 吉林 -->
- 	       'token.8410000.key':'@%HeNan*k1z23',   <!-- 河南 -->
- 	       'token.8230000.key':'1k@2n#HLongJ',   <!-- 黑龙江 -->
- 	       'token.8530000.key':'YN@LiJiang!2c',   <!-- 云南 -->
- 	       'token.8450000.key':'548!GX@guizhou',   <!-- 广西 -->
- 	       'token.8140000.key':'ShanXi%mz418@',   <!-- 山西 -->
- 	       'token.8460000.key':'haiNan@qzhx46#',   <!-- 海南 -->
- 	       'token.8540000.key':'548@XZ!budalg',   <!-- 西藏 -->
- 	       'token.8990000.key':'*26@Shang#hai%'  <!-- 上海虚拟 -->
+ 	       'token.8320000.key':'*%JS@2015!plm',   江苏
+ 	       'token.8330000.key':'*2015!ZHEJ!qaz@#',   浙江
+ 	       'token.8340000.key':'AH!2015#qwert$',   安徽
+ 	       'token.8350000.key':'fz#FJ*0591@',   福建
+ 	       'token.8430000.key':'#HuNan!8430@',   湖南
+ 	       'token.8420000.key':'#!1357*#HBei',   湖北
+ 	       'token.8310000.key':'@#Shang!Hai$29',   上海
+ 	       'token.8360000.key':'ap%#09@JianXi',   江西
+ 	       'token.8440000.key':'023@#_GuangDong',   广东
+ 	       'token.8640000.key':'Ningxia@864!#$',   宁夏
+ 	       'token.8510000.key':'*309@Si#chuan%',   四川
+ 	       'token.8610000.key':'shanXI#92l!ae%',   陕西
+ 	       'token.8130000.key':'*HeBei@16#al$',   河北
+ 	       'token.8150000.key':'NMG$#09!dld',   内蒙古
+ 	       'token.8210000.key':'23%Liao@Ning!',   辽宁
+ 	       'token.8520000.key':'qz@GuiZhou852#',   贵州
+ 	       'token.8370000.key':'837@shan!dong%',   山东
+ 	       'token.8500000.key':'*ChongQ@850!pz',   重庆
+ 	       'token.8650000.key':'Xin!8650@jiang',   新疆
+ 	       'token.8110000.key':'#010@BEIJing*',   北京
+ 	       'token.8120000.key':'@TianJ!02180%',   天津
+ 	       'token.8630000.key':'0368@QingHai!',   青海
+ 	       'token.8620000.key':'GS%1qaz@wsx!',   甘肃
+ 	       'token.8220000.key':'@JieLin!e5cp*',   吉林
+ 	       'token.8410000.key':'@%HeNan*k1z23',   河南
+ 	       'token.8230000.key':'1k@2n#HLongJ',   黑龙江
+ 	       'token.8530000.key':'YN@LiJiang!2c',   云南
+ 	       'token.8450000.key':'548!GX@guizhou',   广西
+ 	       'token.8140000.key':'ShanXi%mz418@',   山西
+ 	       'token.8460000.key':'haiNan@qzhx46#',   海南
+ 	       'token.8540000.key':'548@XZ!budalg',   西藏
+ 	       'token.8990000.key':'*26@Shang#hai%'  上海虚拟
  	      }
- 	      </const>
- 	      <!-- 
+ 	      </const> -->
  	      <const type="Map" name="TOKEN_JMPROVINCECODE_KEY" description="省份私钥(测试环境)">
  	      {
  	       'token.8320000.key':'TOKEN_8110000_KEY',
@@ -448,7 +443,6 @@
  	       'token.8990000.key':'*26@Shang#hai%'
  	      }
  	      </const>
- 	       -->
  	      
  	      <const type="String" name="COMPRESS_ALL_JS" value="OFF" description=""/>
  	      <const type="String" name="WRITE_LOG_FLAG" value="ON" description="是否记录接口日志"/>
@@ -457,7 +451,7 @@
  	       <const type="String" name="RECOMMEND_BROWSERS" value="" description="推荐浏览器"/>
  	       <const type="String" name="BUSI_VERSION" value="1.0.0" description="busi 版本 "/>
  	      <const type="String" name="BASE_VERSION" value="1.0.0" description="base 版本 "/>
- 	     <const type="String" name="COMPRESS_JS_LEVEL" value="BASE" description="NONE - 不压缩 # BASE - 第三方和基础JS压缩为一个JS # BUSI - 第三方和基础JS压缩为一个JS，业务类JS压缩为一个JS "/>
+ 	     <const type="String" name="COMPRESS_JS_LEVEL" value="BUSI" description="NONE - 不压缩 # BASE - 第三方和基础JS压缩为一个JS # BUSI - 第三方和基础JS压缩为一个JS，业务类JS压缩为一个JS "/>
  	     <const type="String" name="APPDESC" value="LTE" description="LTE 或 MVNO "/>
  	     <const type="String" name="FILE_PREFER_FLAG" value="ON" description="决定参数是先从以下配置中取，还是先从数据库参数表取 "/>
  	     <const type="String" name="ABS_DIRECTORY_KEY" value="/app/data/portal/invoiceTemplate/" description="如果启用绝对路径，则使用下面路径作为父级路径 "/>
@@ -933,7 +927,7 @@
 			'FEETYPE_821':'OFF',<!-- 辽宁 -->
 			'FEETYPE_822':'OFF',<!-- 吉林 -->
 			'FEETYPE_834':'OFF',<!-- 安徽 -->
-			'FEETYPE_833':'ON',<!-- 浙江 -->
+			'FEETYPE_833':'OFF',<!-- 浙江 -->
 			'FEETYPE_852':'OFF',<!-- 贵州 -->
 			'FEETYPE_862':'OFF',<!-- 甘肃 -->
 			'FEETYPE_865':'OFF',<!-- 新疆 -->
@@ -1267,7 +1261,7 @@
 			'PRECHECKFLAG_861':'OFF',<!-- 陕西 -->
 			'PRECHECKFLAG_842':'OFF',<!-- 湖北 -->
 			'PRECHECKFLAG_835':'OFF',<!-- 福建 -->
-			'PRECHECKFLAG_832':'OFF',<!-- 江苏 -->
+			'PRECHECKFLAG_832':'ON',<!-- 江苏 -->
 			'PRECHECKFLAG_846':'OFF',<!-- 海南 -->
 			'PRECHECKFLAG_864':'OFF',<!-- 宁夏 -->
 			'PRECHECKFLAG_814':'OFF',<!-- 山西 -->
@@ -1434,6 +1428,42 @@
 			'NUMBER_CHECK_862':'OFF',<!-- 甘肃 -->
 			'NUMBER_CHECK_865':'OFF',<!-- 新疆 -->
 			'NUMBER_CHECK_899':'OFF'<!-- 虚拟省 -->
+			}
+		</const>
+		<const type="Map" name="FUKA_SHIYR_FLAG" description="副卡使用人分省开关">
+			{
+			'FUKA_SHIYR_854':'OFF',<!-- 西藏 -->
+			'FUKA_SHIYR_863':'OFF',<!-- 青海 -->
+			'FUKA_SHIYR_815':'OFF',<!-- 内蒙古 -->
+			'FUKA_SHIYR_823':'OFF',<!-- 黑龙江 -->
+			'FUKA_SHIYR_845':'OFF',<!-- 广西 -->
+			'FUKA_SHIYR_850':'OFF',<!-- 重庆 -->
+			'FUKA_SHIYR_861':'OFF',<!-- 陕西 -->
+			'FUKA_SHIYR_842':'OFF',<!-- 湖北 -->
+			'FUKA_SHIYR_835':'OFF',<!-- 福建 -->
+			'FUKA_SHIYR_832':'OFF',<!-- 江苏 -->
+			'FUKA_SHIYR_846':'OFF',<!-- 海南 -->
+			'FUKA_SHIYR_864':'OFF',<!-- 宁夏 -->
+			'FUKA_SHIYR_814':'OFF',<!-- 山西 -->
+			'FUKA_SHIYR_853':'OFF',<!-- 云南 -->
+			'FUKA_SHIYR_836':'OFF',<!-- 江西 -->
+			'FUKA_SHIYR_837':'OFF',<!-- 山东 -->
+			'FUKA_SHIYR_811':'OFF',<!-- 北京 -->
+			'FUKA_SHIYR_843':'OFF',<!-- 湖南 -->
+			'FUKA_SHIYR_851':'OFF',<!-- 四川 -->
+			'FUKA_SHIYR_844':'OFF',<!-- 广东 -->
+			'FUKA_SHIYR_831':'OFF',<!-- 上海 -->
+			'FUKA_SHIYR_812':'OFF',<!-- 天津 -->
+			'FUKA_SHIYR_813':'OFF',<!-- 河北 -->
+			'FUKA_SHIYR_841':'OFF',<!-- 河南 -->
+			'FUKA_SHIYR_821':'OFF',<!-- 辽宁 -->
+			'FUKA_SHIYR_822':'OFF',<!-- 吉林 -->
+			'FUKA_SHIYR_834':'OFF',<!-- 安徽 -->
+			'FUKA_SHIYR_833':'OFF',<!-- 浙江 -->
+			'FUKA_SHIYR_852':'OFF',<!-- 贵州 -->
+			'FUKA_SHIYR_862':'OFF',<!-- 甘肃 -->
+			'FUKA_SHIYR_865':'OFF',<!-- 新疆 -->
+			'FUKA_SHIYR_899':'OFF'<!-- 虚拟省 -->
 			}
 		</const>
 		<const type="List" name="PSRCFLAGLIST" description="电子档案查询系统标识LIST">

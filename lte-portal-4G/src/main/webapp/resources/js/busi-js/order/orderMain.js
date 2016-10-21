@@ -1335,16 +1335,27 @@ order.main = (function(){
 		//2）老客户新装，根据客户查询判断是政企客户（segmentId=1000）时，填单必须填写使用人；
 		var itemId = CONST.PROD_ATTR.PROD_USER + '_' + prodId;
 		if($('#'+itemId).length > 0){
+			OrderInfo.roleType = "";
+			//查分省前置校验开关
+	        var propertiesKey = "FUKA_SHIYR_"+OrderInfo.staff.soAreaId.substring(0,3);
+	        var isFlag = offerChange.queryPortalProperties(propertiesKey);
 			var isOptional = true;
 			if(OrderInfo.cust && OrderInfo.cust.custId && OrderInfo.cust.custId != '-1'){ //老客户
 				// 根据证件类型来判断
 				if(order.cust.isCovCust(OrderInfo.cust.identityCd)){ //政企客户
 					isOptional = false;
-				}else if(OrderInfo.actionFlag =='6'){//主副卡加装副卡
+				}else if(OrderInfo.actionFlag =='6' && isFlag=="ON"){//主副卡加装副卡
 					isOptional = false;
+					OrderInfo.roleType = "Y";
+				}else if(OrderInfo.actionFlag ==2 && prodId<0 && isFlag=="ON"){
+					isOptional = false;
+					OrderInfo.roleType = "Y";
 				}
 			}else { //新建客户
 				if(OrderInfo.boCustInfos && OrderInfo.boCustInfos.partyTypeCd == '2'){ //政企客户
+					isOptional = false;
+				}else if(prodId !=-1 && isFlag=="ON"){//新装prodId不为-1表示有副卡新装
+					OrderInfo.roleType = "Y";
 					isOptional = false;
 				}
 			}
