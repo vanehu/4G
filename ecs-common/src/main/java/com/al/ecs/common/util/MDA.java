@@ -471,4 +471,9 @@ public class MDA {
 	 * 返档改造生效开关
 	 */
 	public static final String RETURN_ACCOUNT_FLAG=new String("");
+	
+	/**
+	 * 副卡使用人分省开关
+	 */
+	public static final Map<String,String> FUKA_SHIYR_FLAG  = new HashMap<String,String>();
 }
