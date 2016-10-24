@@ -12,6 +12,8 @@ import java.util.Random;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import net.sf.json.JSONObject;
+
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
@@ -25,6 +27,7 @@ import com.al.ec.serviceplatform.client.DataBus;
 import com.al.ec.serviceplatform.client.ResultCode;
 import com.al.ecs.common.util.JsonUtil;
 import com.al.ecs.common.web.ServletUtils;
+import com.al.ecs.common.web.SpringContextUtil;
 import com.al.ecs.exception.BusinessException;
 import com.al.ecs.exception.ErrorCode;
 import com.al.ecs.exception.InterfaceException;
@@ -55,7 +58,7 @@ import com.al.lte.portal.model.SessionStaff;
 public class OrderBmoImpl implements OrderBmo {
 	protected final static Log log = Log.getLog(OrderBmoImpl.class);	
 	
-	private static ILogSender logSender = null;
+	private static ILogSender logSender = (ILogSender) SpringContextUtil.getBean("defaultLogSender");
 	
 	private static HttpServletRequest request = null;
 	
@@ -2778,7 +2781,10 @@ public class OrderBmoImpl implements OrderBmo {
 				Map<String, Object> logClobObj = new HashMap<String, Object>();
 				logClobObj.put("IN_PARAM", paramString);						
 				logClobObj.put("OUT_PARAM", rawRetn);
+				log.error("身份证读卡日志记录，主表入参：={}", JSONObject.fromObject(logObj));
+                log.error("身份证读卡日志记录，副表入参：={}", JSONObject.fromObject(logClobObj));
                 logSender.sendLog2DB(SysConstant.PORTAL_SERVICE_LOG_Y, logObj, logClobObj);
+                log.error("身份证读卡日志记录，PORTAL_SERVICE_LOG_Y表已记录日志(sendLog2DB)");
 //		    }
 			String writelogFlag = MySimulateData.getInstance().getParam(dbKeyWord,SysConstant.WRITE_LOG_FLAG);
 			if (SysConstant.OFF.equals(writelogFlag)) {
