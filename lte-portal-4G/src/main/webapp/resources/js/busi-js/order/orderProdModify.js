@@ -1818,11 +1818,20 @@ order.prodModify = (function(){
 		if(OrderInfo.cust && OrderInfo.cust.custId && OrderInfo.cust.custId != '-1'){ //老客户
 			valid = CacheData.isGov(OrderInfo.cust.identityCd); //政企客户
 		}
-		if(!valid && OrderInfo.roleCd !='20100002'){
-			$.alert('提示', '非政企客户或非副卡用户不能办理修改使用人业务');
-			return;
-		}
-		
+		//查分省开关
+        var propertiesKey = "FUKA_SHIYR_"+OrderInfo.staff.soAreaId.substring(0,3);
+        var isFlag = offerChange.queryPortalProperties(propertiesKey);
+        if(isFlag == "ON"){
+        	if(!valid && OrderInfo.roleCd !='20100002'){
+    			$.alert('提示', '非政企客户或非副卡用户不能办理修改使用人业务');
+    			return;
+    		}
+        }else{
+        	if(!valid){
+    			$.alert('提示', '非政企客户不能办理修改使用人业务');
+    			return;
+    		}
+        }
 		//查分省前置校验开关
         var propertiesKey = "PRECHECKFLAG_"+OrderInfo.staff.soAreaId.substring(0,3);
         var isPCF = offerChange.queryPortalProperties(propertiesKey);

@@ -1336,7 +1336,7 @@ order.main = (function(){
 		var itemId = CONST.PROD_ATTR.PROD_USER + '_' + prodId;
 		if($('#'+itemId).length > 0){
 			OrderInfo.roleType = "";
-			//查分省前置校验开关
+			//查分省开关
 	        var propertiesKey = "FUKA_SHIYR_"+OrderInfo.staff.soAreaId.substring(0,3);
 	        var isFlag = offerChange.queryPortalProperties(propertiesKey);
 			var isOptional = true;
@@ -1473,6 +1473,15 @@ order.main = (function(){
 										"prodSpecItemId":$(this).attr("prodSpecItemId"),
 										"state":"DEL",
 										"value":$(this).attr("oldValue")
+								};
+								boProdItems.push(row2);
+								chang_row++;
+							}else{
+								var row2 = {
+										"itemSpecId":$(this).attr("itemSpecId"),
+										"prodSpecItemId":$(this).attr("prodSpecItemId"),
+										"state":"DEL",
+										"value":"0"
 								};
 								boProdItems.push(row2);
 								chang_row++;
