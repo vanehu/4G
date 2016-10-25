@@ -95,6 +95,7 @@ import com.al.lte.portal.common.print.dto.StringTwoSet;
 import com.al.lte.portal.common.print.dto.TerminalInfoSet;
 import com.al.lte.portal.core.DataRepository;
 import com.al.lte.portal.model.SessionStaff;
+import javax.servlet.http.HttpSession;
 
 /**
  * 业务接口 .
@@ -241,7 +242,16 @@ public class PrintBmoImpl implements PrintBmo {
 	    	if(area!=null&&!area.equals("")){
 	    		login_area_id=area.toString();
 	    	}else{
-	    		login_area_id=sessionStaff.getAreaId();
+	    		HttpSession session = request.getSession();
+	    		List<Map> channelList = (List<Map>)session.getAttribute(SysConstant.SESSION_KEY_STAFF_CHANNEL);
+	    		for(int i=0;i<channelList.size();i++){
+	    			Map cl = channelList.get(i);
+	    			System.out.println(cl.get("id"));
+	    			if(sessionStaff.getCurrentChannelId().equals(cl.get("id").toString())){
+	    				login_area_id = cl.get("areaId").toString();
+	    			}
+	    		}
+//	    		login_area_id=sessionStaff.getAreaId();
 	    	}
 //			InputStream is2 =request.getSession().getServletContext().getResourceAsStream("/resources/image/gongz/"+login_area_id+".png");
 //			if(is2==null){

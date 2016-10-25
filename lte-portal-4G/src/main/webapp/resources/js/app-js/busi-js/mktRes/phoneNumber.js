@@ -1106,7 +1106,7 @@ order.phoneNumber = (function(){
         var numberCheckFlag = flagQueryRes.code == 0 ? flagQueryRes.data : "";
 		if ("ON" == numberCheckFlag) {
 			var accNbr = $(obj).attr("numberVal").split("_")[0];
-			var response = $.callServiceAsJson(contextPath + "/token/secondBusi/preCheckBeforeOrde", {"serviceType": 38, "accNbr": accNbr});
+			var response = $.callServiceAsJson(contextPath + "/app/prodModify/preCheckBeforeOrde", {"serviceType": 38, "accNbr": accNbr});
 			if(response.code == 1){
 				$.alert("错误", response.data);
 				return;
