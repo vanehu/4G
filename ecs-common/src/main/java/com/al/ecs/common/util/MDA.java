@@ -471,6 +471,10 @@ public class MDA {
 	 * 返档改造生效开关
 	 */
 	public static final String RETURN_ACCOUNT_FLAG=new String("");
+	/**
+	 * #896069受理地区为省级地区(二级地区)时，是否加载为登录地区(三级地区),OFF:否；ON:是(默认)
+	 */
+	public static final String AREA_CTRL_FLAG = new String("");
 	
 	/**
 	 * 副卡使用人分省开关
