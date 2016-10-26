@@ -276,7 +276,7 @@ push.busi = (function($) {
 	var _reqDispatch = function(pushType,busiType,prodId){
 		
 		/** 处于Iframe中,调用父类JS **/
-		if(top.location != self.location){
+		if(!isParentFrame && (top.location != self.location)){
 			rid = parent.rid;
 			username = parent.username;
 			target = parent.target;
@@ -403,7 +403,7 @@ push.busi = (function($) {
 		if($if.length > 0){
 			iframeFlag = true;
 		}
-		if(top.location != self.location){
+		if(!isParentFrame && (top.location != self.location)){
 			bindStatus = parent.bindStatus;
 		}
 		
@@ -527,7 +527,7 @@ $(function(){
 	});
 	
 	/** 处于Iframe中,调用父类JS **/
-	if(top.location != self.location){
+	if(!isParentFrame && (top.location != self.location)){
 		pomelo = parent.pomelo;
 	}
 	// wait message from the server.

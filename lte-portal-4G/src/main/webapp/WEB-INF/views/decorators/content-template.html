@@ -13,6 +13,7 @@
 		<#include "/common-js-tpl.html"/>
 		<script src="${contextPath}/js/busi-js/common/const.js?${jsversion}" type="text/javascript"></script>
 	     <script>
+			 var isParentFrame = false;
 			$(function() {
 				OrderInfo.staff = {
 					staffId : $("#_session_staff_info").attr("staffId"),

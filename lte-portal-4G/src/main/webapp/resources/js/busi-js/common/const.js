@@ -459,6 +459,19 @@ CONST = (function(){
 	var _USER_PRE_INSTALLED = "preInstall";
 	// 安全办公套餐productid
 	var _SECURITY_OFFICE_PROD_ID = 13409900;
+
+	var _GET_BIND_STATUS = function(){
+		var statusFlag = false;
+		if(isParentFrame){
+			if(typeof(bindStatus) != "undefined" && bindStatus)
+				statusFlag = true;
+		}else{
+			if(typeof(parent.bindStatus) != "undefined" && parent.bindStatus)
+				statusFlag = true;
+		}
+		return statusFlag;
+	};
+
 	return {
 		//批量受理查询，是否执行改造后的新代码的开关标识，用于暂时记录是否执行新代码。Y执行改造后的新代码，N执行改造前的旧代码，默认为N。 By ZhangYu 2015-10-20
 		BATCHORDER_FLAG : _BATCHORDER_FLAG,
@@ -518,7 +531,8 @@ CONST = (function(){
 		PUSH_TYPE:_PUSH_TYPE,
 		YZFitemSpecId4 : _YZFitemSpecId4,
 		USER_PRE_INSTALLED:_USER_PRE_INSTALLED,
-		SECURITY_OFFICE_PROD_ID: _SECURITY_OFFICE_PROD_ID
+		SECURITY_OFFICE_PROD_ID: _SECURITY_OFFICE_PROD_ID,
+		GET_BIND_STATUS:_GET_BIND_STATUS
 	};
 })();
 

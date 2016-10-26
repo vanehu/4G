@@ -253,8 +253,7 @@ AttachOffer = (function() {
 							+'<input id="terminalBtn_'+objInstId+'_'+k+'"name= "terminalCodeCheckValidBtn" type="button" num="'+k+'" flag="'+isFastOffer+'" prodId="'+prodId+'" offerSpecId="'+newSpec.offerSpecId+'" onclick="" value="校验" class="purchase" style="float:left"></input>';
 							
 							var $discernBtn_32 = '';
-							//if(typeof(parent.bindStatus) != "undefined" && parent.bindStatus){
-							if(false){
+							if(CONST.GET_BIND_STATUS()){
 								$discernBtn_32 = '<input id="discernBtn_32" type="button" onclick="javascript:push.busi.reqDispatch(3,2,\''+objInstId+'_'+k+'\');" value="识别" class="purchase" type="button" style="float:left"></input>';
 							}else{
 								$discernBtn_32 = '<input id="discernBtn_32" type="button" onclick="javascript:push.busi.reqDispatch(3,2,\''+objInstId+'_'+k+'\');" value="识别" class="purchase" type="button" style="float:left;display:none;"></input>';
@@ -2663,8 +2662,7 @@ AttachOffer = (function() {
 							+'<input id="terminalBtn_'+objInstId+'_'+k+'"name= "terminalCodeCheckValidBtn" type="button" num="'+k+'" flag="'+isFastOffer+'" prodId="'+prodId+'" offerSpecId="'+newSpec.offerSpecId+'" onclick="" value="校验" class="purchase" style="float:left"></input>';
 							
 							var $discernBtn_32 = '';
-							//if(typeof(parent.bindStatus) != "undefined" && parent.bindStatus){
-							if(false){
+							if(CONST.GET_BIND_STATUS()){
 								$discernBtn_32 = '<input id="discernBtn_32" type="button" onclick="javascript:push.busi.reqDispatch(3,2,\''+objInstId+'_'+k+'\');" value="识别" class="purchase" type="button" style="float:left"></input>';
 							}else{
 								$discernBtn_32 = '<input id="discernBtn_32" type="button" onclick="javascript:push.busi.reqDispatch(3,2,\''+objInstId+'_'+k+'\');" value="识别" class="purchase" type="button" style="float:left;display:none;"></input>';
