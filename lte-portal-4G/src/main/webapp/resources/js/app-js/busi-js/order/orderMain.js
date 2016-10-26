@@ -1141,15 +1141,26 @@ order.main = (function(){
 		var itemId = CONST.PROD_ATTR.PROD_USER + '_' + prodId;
 		
 		if($('#'+itemId).length > 0){
-			var isOptional = true;
+			 var propertiesKey = "FUKA_SHIYR_"+OrderInfo.staff.soAreaId.substring(0,3);
+		     var isFlag = offerChange.queryPortalProperties(propertiesKey);
+		     var isOptional = true;
 			if(OrderInfo.cust && OrderInfo.cust.custId && OrderInfo.cust.custId != '-1'){ //老客户
 				// 根据证件类型来判断
 				if(cust.isCovCust(OrderInfo.cust.identityCd)){
 					//政企客户
 					isOptional = false;
+				}else if(OrderInfo.actionFlag =='6' && isFlag=="ON"){//主副卡加装副卡
+					isOptional = false;
+					OrderInfo.roleType = "Y";
+				}else if(OrderInfo.actionFlag ==1 && prodId < -1 && isFlag=="ON"){
+					isOptional = false;
+					OrderInfo.roleType = "Y";
 				}
 			} else { //新建客户
 				if(OrderInfo.boCustInfos && OrderInfo.boCustInfos.partyTypeCd == '2'){ //政企客户
+					isOptional = false;
+				}else if(prodId !=-1 && isFlag=="ON"){//新装prodId不为-1表示有副卡新装
+					OrderInfo.roleType = "Y";
 					isOptional = false;
 				}
 			}
@@ -1169,7 +1180,7 @@ order.main = (function(){
 	};
 
 //打开使用人弹出框
-function _showUser(){		
+function _showUser(prodId){		
 		var ad = ""+OrderInfo.staff.areaId;
 		var areaId = ad.substring(0,3)+'0000';
 		 _queryChildNode(areaId);
@@ -1177,7 +1188,7 @@ function _showUser(){
 			_queryUser();
 		});
 		$('#chooseUserBtn').off('click').on('click',function(){
-			var prodId=$('#prodId').val();
+//			var prodId=$('#prodId').val();
 			if(!!cust.tmpChooseUserInfo && cust.tmpChooseUserInfo.custId){
 				//保存并显示使用人信息，清空弹出框的客户信息、临时保存的客户信息，关闭弹出框
 				OrderInfo.updateChooseUserInfos(prodId, cust.tmpChooseUserInfo);

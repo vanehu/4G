@@ -15,7 +15,7 @@
 		<input type="text" id="${prodSpec.itemSpecId}_${prodId}_name" readonly="readonly" disabled="disabled"  class="form-control">
 	    <#if prodSpec.itemSpecId=="800000011" >
 		<span class="input-group-btn">
-			<button class="btn btn-default" id="choose_user_btn_${prodId}" type="button" onclick="order.main.showUser()">选择使用人</button>
+			<button class="btn btn-default" id="choose_user_btn_${prodId}" type="button" onclick="order.main.showUser(${prodId})">选择使用人</button>
 		</span>
 	    </#if>
 		<#if rule.isOptional=="N" >
