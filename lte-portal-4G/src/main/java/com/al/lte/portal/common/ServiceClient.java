@@ -98,7 +98,7 @@ public class ServiceClient {
 		db.setBusiFlowId(busiFlowNum);
 		db.setParammap(dataBusMap);
 		try {
-			System.out.println(JsonUtil.toString(dataBusMap));
+			log.info(JsonUtil.toString(dataBusMap));
 			if (!PortalServiceCode.WRITE_INTF_LOG.equals(serviceCode) && !PortalServiceCode.GET_SYS_PARAM.equals(serviceCode)) {
 				log.debug("服务层入参:{}", JsonUtil.toString(dataBusMap));
 			}
