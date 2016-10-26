@@ -171,6 +171,37 @@ public class FtpUtils {
 			}
 	    }
 	    
+		 /**
+	     * 检查远程是否存在文件  
+	     * @param remoteFileName 远程路径文件名(文件名已经编码)
+	     * @return
+	     * @throws IOException
+	     * boolean
+	     */
+	    @SuppressWarnings({ "static-access", "finally" })
+		public boolean isFileExist(String remoteFileName){
+	     boolean isFileExist = false;     
+		 FTPFile[] files = null;
+		 try {
+				 if(!StringUtils.isEmpty(remoteFileName)){
+					ftpClient.enterLocalPassiveMode();
+					//检查远程是否存在文件  
+					files = ftpClient.listFiles(remoteFileName);
+					if(files != null && files.length >= 1){  
+				        isFileExist = true;
+				     }
+				 }
+			} catch (UnsupportedEncodingException e) {
+				isFileExist = false;      
+				LOG.error("isFileExist UnsupportedEncodingException : {}",e);
+			} catch (IOException e) {
+				isFileExist = false;      
+				LOG.error("isFileExist IOException : {}", e);
+			} finally {
+			     return isFileExist;
+			}
+	    }
+	    
 	    /**
 		 * 下载单个文件
 		 * @param fileName   文件名
@@ -202,6 +233,31 @@ public class FtpUtils {
 //				} finally {
 //					os = null;
 //				}
+				return flag;
+			}
+		}
+		
+	    /**
+		 * 下载单个文件
+		 * @param fileName   文件名
+		 * @param localPath  文件路径
+		 * 区别于上方法，编码不取GBK，取默认编码
+		 */
+		@SuppressWarnings({ "static-access", "finally" })
+		public boolean downloadFileByPath( OutputStream os,String fileName) {
+			boolean flag = false;
+			try {
+				flag = ftpClient.retrieveFile(new String(fileName.getBytes(), ftpClient.DEFAULT_CONTROL_ENCODING), os);
+				if (flag) {
+				} else {
+					LOG.debug("download failed !!! ");
+				}
+			} catch (IOException e) {
+				flag = false;
+				LOG.error("not download !!! ");
+				LOG.error("downloadFileByPath IOException : {}", e);
+			} finally {
+
 				return flag;
 			}
 		}

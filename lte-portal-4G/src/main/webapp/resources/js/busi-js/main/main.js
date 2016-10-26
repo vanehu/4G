@@ -134,6 +134,11 @@ main.home = (function(){
 		});
 	};
 	
+	//首页置顶公告或公告详情
+	var _downLoadNoticeAttach = function(){
+        $("#noticeAttacheDownLoad").submit();
+	};
+	
 	//隐藏弹窗公告
 	var _hidePopNotice = function(){
 		$("#popNotice").css("height", "0px");
@@ -662,7 +667,8 @@ main.home = (function(){
 	return {
 		tabManager				:_tabManager,
 		queryNotice				:_queryNotice,
-		hidePopNotice          : _hidePopNotice,
+		downLoadNoticeAttach	:_downLoadNoticeAttach,
+		hidePopNotice           : _hidePopNotice,
 		queryMainShortcut		:_queryMainShortcut,
 		getMyList				:_getMyList,
 		getLv1					:_getLv1,

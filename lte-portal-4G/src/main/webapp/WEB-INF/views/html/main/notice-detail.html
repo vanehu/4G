@@ -26,7 +26,10 @@
 				</dl>
 				<dl class="width120">
 					<dt>附件下载：</dt>
-					<dd><a href="${noticeurl}" >${name}</a></dd>
+					<dd><a href="javaScript:main.home.downLoadNoticeAttach();" >${name}</a></dd>
+					<form id ="noticeAttacheDownLoad" action="${contextPath}/main/downloadNoticeAttach" method="post" enctype="multipart/form-data" target="_black"">
+						<input type="hidden" name = "param "value="${noticeurl}">
+					</form>
 				</dl>
 			</div>
 			<div class="ec_dialog_form_btn_div bottom20px">

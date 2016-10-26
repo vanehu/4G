@@ -1486,5 +1486,9 @@
 		<const type="String" name="SECURITY_OFFICE_FLAG" value="OFF" description="安全办公业务是否启用开关"/>
 		<const type="String" name="RETURN_ACCOUNT_FLAG" value="OFF" description="返档改造生效开关"/>
 		<const type="String" name="AREA_CTRL_FLAG" value="ON" description="受理地区为省级地区(二级地区)时是否加载为登录地区(三级地区),OFF:否；ON:是(默认)"/>
+		<!-- 
+		<const type="String" name="NOTICE_FTP_SERVICE_CONFIGS" description="公告附件下载FTP服务器配置(生产)，依次为FTP服务器IP、端口、用户名、密码 ">10.128.98.45,21,sm,sm</const>
+		 -->
+		<const type="String" name="NOTICE_FTP_SERVICE_CONFIGS" description="公告附件下载FTP服务器配置(测试)，依次为FTP服务器IP、端口、用户名、密码 ">10.128.90.2,2121,CRM4GBUS6003420150911,CRM4GBUS60034WJSC</const>
 	</mda>
 </mdas>
