@@ -376,6 +376,9 @@ public class MySessionInterceptor implements ISessionInterceptor {
 		PropertiesUtils propertiesUtils = (PropertiesUtils) SpringContextUtil.getBean("propertiesUtils");
 		sessionStaff.setIdType(propertiesUtils.getMessage(SysConstant.IDTYPE+"-"+MapUtils.getString(chanel_map, "areaId","").substring(0,3)+"0000"));
 		sessionStaff.setPoingtType(propertiesUtils.getMessage(SysConstant.POINGTTYPE+"-"+MapUtils.getString(chanel_map, "areaId","").substring(0,3)+"0000"));
+		
+		CommonMethods.setloginArea2BusinessArea(sessionStaff, null, true);
+		
 		// 存到session中
 		session.setAttribute(SysConstant.SESSION_KEY_LOGIN_STAFF, sessionStaff);
 		RedisUtil.set((String) session.getAttribute(SysConstant.SESSION_DATASOURCE_KEY),sessionStaff.getStaffId(),session.getId());

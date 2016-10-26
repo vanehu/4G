@@ -8,6 +8,8 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import net.sf.json.JSONObject;
+
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -15,6 +17,7 @@ import com.al.common.utils.StringUtil;
 import com.al.ec.serviceplatform.client.DataBus;
 import com.al.ec.serviceplatform.client.ResultCode;
 import com.al.ecs.common.util.JsonUtil;
+import com.al.ecs.common.util.MDA;
 import com.al.ecs.common.web.ServletUtils;
 import com.al.ecs.common.web.SpringContextUtil;
 import com.al.ecs.exception.BusinessException;
@@ -756,5 +759,44 @@ public class CommonMethods {
         				false:swith.get(areaId.substring(0, length))==null?
         						false:swith.get(areaId.substring(0, length)).equals(flag);
 		
+	}
+	
+	
+	/**
+	 * #896069对于省级工号只配置了一个省级渠道的情况，将页面登录地区加载到受理地区(三级地区)；<br/>
+	 * 若页面登录地区为直辖市，则将其地区ID降级为三级地区ID，再加载到受理地区；<br/>
+	 * 若单点登录，无法像页面获取登录地区信息，则只要是省级地区，全部降级到省会地级市的地区ID
+	 */
+	public static void setloginArea2BusinessArea(SessionStaff sessionStaff, Map<String, Object> mapSession, boolean singleSignFlag) {
+		if("ON".equals(MDA.AREA_CTRL_FLAG)){
+			String currentAreaId = sessionStaff.getCurrentAreaId();
+			if(mapSession != null && !singleSignFlag){//页面登录
+				if(currentAreaId != null && currentAreaId.matches(Const.AREA_ID_REGEX_Z)){//省级地区(直辖市)
+					//封装转义的地区ID和地区名称，用以加载到首页受理地区
+					String[] areaInfo = (String[]) Const.loginArea2BusinessArea.get(currentAreaId);
+					sessionStaff.setCurrentAreaId(areaInfo[0].toString());
+					sessionStaff.setCurrentAreaAllName(areaInfo[1].toString());
+				} else if(currentAreaId != null && currentAreaId.matches(Const.AREA_ID_REGEX_C)){//省级地区(非直辖市)
+					//封装登录地区ID和地区名称，用以加载到首页受理地区
+					sessionStaff.setCurrentAreaId(mapSession.get("staffProvCode").toString());
+					sessionStaff.setCurrentAreaAllName(mapSession.get("loginAreaName").toString());
+				} else{
+					log.error("页面登录currentAreaId正则匹配失败sessionStaff:={}, mapSession:={}", 
+							JSONObject.fromObject(sessionStaff).toString(), JSONObject.fromObject(mapSession).toString());
+				}
+			} else if(singleSignFlag){//单点登录
+				if(currentAreaId != null && currentAreaId.matches(Const.AREA_ID_REGEX_A)){//省级地区(全国32省)
+					//封装转义的地区ID和地区名称，用以加载到首页受理地区
+					String[] areaInfo = (String[]) Const.loginArea2BusinessArea.get(currentAreaId);
+					sessionStaff.setCurrentAreaId(areaInfo[0].toString());
+					sessionStaff.setCurrentAreaAllName(areaInfo[1].toString());
+				} else{
+					log.error("单点登录currentAreaId正则匹配失败sessionStaff: ={}", JSONObject.fromObject(sessionStaff).toString());
+				}
+			} else{
+				log.error("非页面登录、单点登录sessionStaff:={}, mapSession:={}", 
+							JSONObject.fromObject(sessionStaff).toString(), JSONObject.fromObject(mapSession).toString());
+			}
+		}
 	}
 }

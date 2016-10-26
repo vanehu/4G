@@ -123,7 +123,7 @@ public class StaffMgrController extends BaseController {
 						}
 						channelRow.put("areaAllName", areaAllName);
         				
-        				SessionStaff.setCurrentChannelInfoFromMap(sessionStaff, channelRow);
+        				SessionStaff.setCurrentChannelInfoFromMap(sessionStaff, channelRow, null);
         				if(sessionStaff.getIdType() != null){
         				  channelRow.put("idType", sessionStaff.getIdType().toString());
         				}

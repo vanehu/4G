@@ -500,6 +500,7 @@ staff.login = (function($) {
 		var staffCode = $("#staffCode").val();
 		var password = $("#password").val();
 		var staffProvCode = $("#store-selector-text").attr("area-id");
+		var loginAreaName = $("#store-selector-text").text();
 		macAddress = document.getElementById('txtMac').value;
 //		var expires = new Date();
 //		var hours = 2;
@@ -544,16 +545,17 @@ staff.login = (function($) {
 		
 		}
 		return {
-			"staffCode":staffCode,
-			"password":password,
-			"staffProvCode":staffProvCode,
-			"lanIp":lanIp,
+			"staffCode"		:staffCode,
+			"password"		:password,
+			"staffProvCode"	:staffProvCode,
+			"lanIp"			:lanIp,
 			"connectiontime":connectiontime,
-			"sendtime":sendtime,
-			"waitingtime":waitingtime,
-			"accepttime":accepttime,
-			"macStr":macAddress,
-			"fingerprint":fingerprint
+			"sendtime"		:sendtime,
+			"waitingtime"	:waitingtime,
+			"accepttime"	:accepttime,
+			"macStr"		:macAddress,
+			"fingerprint"	:fingerprint,
+			"loginAreaName"	:loginAreaName
 		};
 	};
 	//验证码重发成功回调函数

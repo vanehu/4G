@@ -291,7 +291,7 @@ public class LoginController extends BaseController {
 				if (mapSession != null) {
 					sessionStaff = SessionStaff.setStaffInfoFromMap(mapSession);
 					
-					JsonResponse channelResp = queryChannel(sessionStaff, currentChannelId);
+					JsonResponse channelResp = queryChannel(sessionStaff, currentChannelId, mapSession);
 					//如果查询渠道失败
 					if (!channelResp.isSuccessed()) {
 						return channelResp;
@@ -519,7 +519,6 @@ public class LoginController extends BaseController {
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/login/logindo", method = RequestMethod.POST)
 	// @LogOperatorAnn(desc = "员工登录校验", code = "LOGIN", level = LevelLog.DB)
 	@LogOperatorAnn(switchs = Switch.OFF)
@@ -533,10 +532,9 @@ public class LoginController extends BaseController {
 		String staffCode = staff.getStaffCode();
 		String password = staff.getPassword();
 		String staffProvCode = staff.getStaffProvCode();
+		String loginAreaName = staff.getLoginAreaName();
 		//update by huangjj3 为了防止同一个浏览器登录了不同工号
-		SessionStaff sessionStaff = (SessionStaff) ServletUtils
-				.getSessionAttribute(super.getRequest(),
-						SysConstant.SESSION_KEY_LOGIN_STAFF);
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
 		if (staffCode !=null && sessionStaff !=null && sessionStaff.getStaffCode()!=null &&  !staffCode.toUpperCase().equals(sessionStaff.getStaffCode().toUpperCase())) {
 			Map<String, Object> failData = new HashMap<String, Object>();
 			failData.put("message", "您好，您已登录了工号"+sessionStaff.getStaffCode()+"，请先登出工号"+sessionStaff.getStaffCode()+"再登录，谢谢！");
@@ -548,6 +546,7 @@ public class LoginController extends BaseController {
 		dataBusMap.put("staffCode", staffCode);
 		dataBusMap.put("password", password);
 		dataBusMap.put("staffProvCode", staffProvCode);
+		dataBusMap.put("loginAreaName", loginAreaName);
 		dataBusMap.put("platformCode", SysConstant.SM_PLATFORM_CODE);
 		String ip = "";
 		try {
@@ -577,6 +576,7 @@ public class LoginController extends BaseController {
 				}
 				map.put("password", password); 
 				map.put("staffProvCode", staffProvCode);
+				map.put("loginAreaName", loginAreaName);
 				map.put("connectiontime", staff.getconnectiontime());
 				map.put("sendtime", staff.getsendtime());
 				map.put("waitingtime", staff.getwaitingtime());
@@ -596,8 +596,7 @@ public class LoginController extends BaseController {
 			   if(dbKeyWord !=null || !"".equals(dbKeyWord)){
 			    	request.getSession().setAttribute(SysConstant.SESSION_DATASOURCE_KEY, dbKeyWord);
 			    }
-				request.getSession().setAttribute(
-						SESSION_KEY_TEMP_LOGIN_STAFF, map);
+				request.getSession().setAttribute(SESSION_KEY_TEMP_LOGIN_STAFF, map);
 				//存入并取出session中的TEMP_LOGIN_STAFF
 //				Map<String, Object> mapSession = (Map<String, Object>) request
 //						.getSession().getAttribute(SESSION_KEY_TEMP_LOGIN_STAFF);
@@ -610,16 +609,16 @@ public class LoginController extends BaseController {
 //					return super.failed("该工号绑定手机号码有误", ResultConstant.FAILD.getCode());
 //				}
 				//判断是否需要发送短信校验码
-				String retnStr = null;
+//				String retnStr = null;
 				if ("N".equals(loginValid)) { 
-					retnStr = "登录成功!";
+//					retnStr = "登录成功!";
 				} else {
 					Map<String, Object> msgMap = sendMsg(request, flowNum); 
 					if (ResultCode.R_FAILURE.equals(msgMap.get("resultCode"))) {
 						//如果发送短信异常
 						return super.failed(msgMap.get("resultMsg"), 3);
 					}
-					retnStr = "短信校验码发送成功!";
+//					retnStr = "短信校验码发送成功!";
 				}
 				//获取渠道信息
 //				ServletUtils.addCookie(response, "/", ServletUtils.ONE_WEEK_SECONDS, "login_area_id", staffProvCode);
@@ -1013,13 +1012,11 @@ public class LoginController extends BaseController {
 		// 系统参数表中的是否发送校验短信标识，1不发送不验证， 其他发送并验证
 		String msgCodeFlag = MySimulateData.getInstance().getParam((String) request.getSession().getAttribute(SysConstant.SESSION_DATASOURCE_KEY),SysConstant.MSG_CODE_FLAG);
 		// 登陆后，服务层返回的认证后用户信息
-		Map<String, Object> mapSession = (Map<String, Object>) ServletUtils
-				.getSessionAttribute(request, SESSION_KEY_TEMP_LOGIN_STAFF);
+		Map<String, Object> mapSession = (Map<String, Object>) ServletUtils.getSessionAttribute(request, SESSION_KEY_TEMP_LOGIN_STAFF);
 		String smsPassFlag = MapUtils.getString(mapSession, "smsPassFlag", "Y");
 		long l_start = Calendar.getInstance().getTimeInMillis();	
 		// 验证码内容
-		String smsPwdSession = (String) ServletUtils.getSessionAttribute(
-				request, SysConstant.SESSION_KEY_LOGIN_SMS);
+		String smsPwdSession = (String) ServletUtils.getSessionAttribute(request, SysConstant.SESSION_KEY_LOGIN_SMS);
 		//如果不需要发送短信，验证码就为空，不提示短信过期失效
 		if(!("1".equals(msgCodeFlag) || "N".equals(smsPassFlag)) && StringUtil.isEmpty(smsPwdSession)){
 			return super.failed("短信过期失效，请重新发送!", ResultConstant.FAILD.getCode());
@@ -1028,7 +1025,7 @@ public class LoginController extends BaseController {
 		if ("1".equals(msgCodeFlag) || "N".equals(smsPassFlag) || smsPwdSession.equals(smsPwd)) {
 			SessionStaff sessionStaff = SessionStaff.setStaffInfoFromMap(mapSession);
 			
-			JsonResponse channelResp = queryChannel(sessionStaff, "");
+			JsonResponse channelResp = queryChannel(sessionStaff, "", mapSession);
 			//如果查询渠道失败
 			if (!channelResp.isSuccessed()) {
 				return channelResp;
@@ -1744,7 +1741,7 @@ public class LoginController extends BaseController {
 	}
 	
 	
-	private JsonResponse queryChannel(SessionStaff sessionStaff, String currentChannelId) {
+	private JsonResponse queryChannel(SessionStaff sessionStaff, String currentChannelId, Map<String, Object> mapSession) {
 		Map<String, Object> channelResultMap = new HashMap<String, Object>();
 		Map<String, Object> channelParamMap = new HashMap<String, Object>();
 		channelParamMap.put("staffId", sessionStaff.getStaffId());
@@ -1759,7 +1756,7 @@ public class LoginController extends BaseController {
 		try{
 			channelResultMap = staffChannelBmo.qryCurrentChannelByStaff(sessionStaff, currentChannelId);
 			if(channelResultMap != null && ResultCode.R_SUCC.equals(channelResultMap.get("code"))){
-				SessionStaff.setChannelInfoFromMap(sessionStaff, channelResultMap);
+				SessionStaff.setChannelInfoFromMap(sessionStaff, channelResultMap, mapSession);
 				String isStrBusi = "";
 				if(channelResultMap.get("isStrBusi")!=null && channelResultMap.get("isStrBusi").toString()!=""){
 					isStrBusi = channelResultMap.get("isStrBusi").toString();

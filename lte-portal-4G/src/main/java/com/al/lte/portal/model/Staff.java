@@ -37,6 +37,8 @@ public class Staff {
 	
 	private String fingerprint;
 	
+	private String loginAreaName;
+	
 	public String getStaffCode() {
 		return staffCode;
 	}
@@ -101,5 +103,11 @@ public class Staff {
 	}
 	public void setFingerprint(String fingerprint) {
 		this.fingerprint = fingerprint;
+	}
+	public String getLoginAreaName() {
+		return loginAreaName;
+	}
+	public void setLoginAreaName(String loginAreaName) {
+		this.loginAreaName = loginAreaName;
 	}
 }

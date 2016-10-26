@@ -232,7 +232,7 @@ public class StaffMgrController extends com.al.lte.portal.controller.system.Staf
 						}
 						channelRow.put("areaAllName", areaAllName);
         				
-        				SessionStaff.setChannelInfoFromMap(sessionStaff, channelRow);
+        				SessionStaff.setChannelInfoFromMap(sessionStaff, channelRow, null);
         				String isStrBusi = "";
         				if(channelRow.get("isStrBusi")!=null && channelRow.get("isStrBusi").toString()!=""){
         					isStrBusi = channelRow.get("isStrBusi").toString();

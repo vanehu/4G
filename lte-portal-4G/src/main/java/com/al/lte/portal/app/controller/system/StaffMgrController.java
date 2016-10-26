@@ -241,7 +241,7 @@ public class StaffMgrController extends com.al.lte.portal.controller.system.Staf
 						}
 						channelRow.put("areaAllName", areaAllName);
         				
-        				SessionStaff.setChannelInfoFromMap(sessionStaff, channelRow);
+        				SessionStaff.setChannelInfoFromMap(sessionStaff, channelRow, null);
     					
     			    	ServletUtils.setSessionAttribute(super.getRequest(), 
     			    			SysConstant.SESSION_KEY_LOGIN_STAFF, sessionStaff);

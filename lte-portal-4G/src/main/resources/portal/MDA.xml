@@ -1483,6 +1483,6 @@
 		<const type="String" name="PUSH_HOST_PORT" value="allen1707.xicp.net:80" description="双屏互动服务端地址端口"/>
 		<const type="String" name="SECURITY_OFFICE_FLAG" value="OFF" description="安全办公业务是否启用开关"/>
 		<const type="String" name="RETURN_ACCOUNT_FLAG" value="OFF" description="返档改造生效开关"/>
-		
+		<const type="String" name="AREA_CTRL_FLAG" value="ON" description="受理地区为省级地区(二级地区)时是否加载为登录地区(三级地区),OFF:否；ON:是(默认)"/>
 	</mda>
 </mdas>

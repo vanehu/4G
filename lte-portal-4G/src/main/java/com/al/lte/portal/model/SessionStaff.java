@@ -8,6 +8,7 @@ import org.apache.commons.collections.MapUtils;
 
 import com.al.ecs.common.util.PropertiesUtils;
 import com.al.ecs.common.web.SpringContextUtil;
+import com.al.lte.portal.common.CommonMethods;
 import com.al.lte.portal.common.SysConstant;
 
 /**
@@ -140,15 +141,14 @@ public class SessionStaff implements Serializable {
 	private String poingtType;
 	/**证件类型编码*/
 	private String custType;
-	
 	/**客户编码*/
 	private String custCode;
-	
 	/**记录service/intf.custService/queryCust中的CN节点*/
 	private String CN;
-	
 	/**ESS系统session*/
 	private Map<String, Object> essSession;
+	/**登录地区名*/
+	private String loginAreaName;
 	
 	public String getCustType() {
 		return custType;
@@ -615,7 +615,7 @@ public class SessionStaff implements Serializable {
 		return sessionStaff;
 	}
 	
-	public static SessionStaff setChannelInfoFromMap(SessionStaff sessionStaff, Map<String, Object> paramMap) {
+	public static SessionStaff setChannelInfoFromMap(SessionStaff sessionStaff, Map<String, Object> paramMap, Map<String, Object> mapSession) {
 		sessionStaff.setCurrentChannelId(MapUtils.getString(paramMap, "id", ""));
 		sessionStaff.setCurrentChannelName(MapUtils.getString(paramMap, "name", ""));
 		sessionStaff.setCurrentChannelCode(MapUtils.getString(paramMap, "chnNbr", ""));
@@ -632,10 +632,12 @@ public class SessionStaff implements Serializable {
 			idTypeAreaId = MapUtils.getString(paramMap, "areaId", "").substring(0,3);
 		}
 		sessionStaff.setIdType(propertiesUtils.getMessage(SysConstant.IDTYPE+"-"+idTypeAreaId+"0000"));
+		CommonMethods.setloginArea2BusinessArea(sessionStaff, mapSession, false);
+		
 		return sessionStaff;
 	}
 	
-	public static SessionStaff setCurrentChannelInfoFromMap(SessionStaff sessionStaff, Map<String, Object> paramMap) {
+	public static SessionStaff setCurrentChannelInfoFromMap(SessionStaff sessionStaff, Map<String, Object> paramMap, Map<String, Object> mapSession) {
 		sessionStaff.setCurrentChannelId(MapUtils.getString(paramMap, "id", ""));
 		sessionStaff.setCurrentChannelName(MapUtils.getString(paramMap, "name", ""));
 		sessionStaff.setCurrentChannelCode(MapUtils.getString(paramMap, "chnNbr", ""));
@@ -647,11 +649,13 @@ public class SessionStaff implements Serializable {
 		//身份证类型开发
 		PropertiesUtils propertiesUtils = (PropertiesUtils) SpringContextUtil.getBean("propertiesUtils");
 		sessionStaff.setIdType(propertiesUtils.getMessage(SysConstant.IDTYPE+"-"+MapUtils.getString(paramMap, "areaId", "").substring(0,3)+"0000"));
+		CommonMethods.setloginArea2BusinessArea(sessionStaff, mapSession, false);
+		
 		return sessionStaff;
 	}
 	
-
-
+	
+	
 	public String getCurrentAreaAllName() {
 		return currentAreaAllName;
 	}
@@ -827,6 +831,16 @@ public class SessionStaff implements Serializable {
 
 	public Map<String, Object> getEssSession() {
 		return essSession;
+	}
+
+
+	public String getLoginAreaName() {
+		return loginAreaName;
+	}
+
+
+	public void setLoginAreaName(String loginAreaName) {
+		this.loginAreaName = loginAreaName;
 	}	
 	
 }
