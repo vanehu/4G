@@ -471,7 +471,6 @@ public class MDA {
 	 * 返档改造生效开关
 	 */
 	public static final String RETURN_ACCOUNT_FLAG=new String("");
-
 	/**
 	 * ess访问FTP服务器路径，快销卡打印回执pdf文件上传
 	 */
@@ -480,7 +479,6 @@ public class MDA {
 	 * ess快销卡打印回执pdf文件上传FTP服务器配置信息(单台FTP服务器)'FTP服务器IP,端口,用户名,密码'
 	 */
 	public static final String ESSFTPSERVICECONFIG = new String ("");	
-	
 	/**
 	 * #896069受理地区为省级地区(二级地区)时，是否加载为登录地区(三级地区),OFF:否；ON:是(默认)
 	 */
@@ -490,4 +488,7 @@ public class MDA {
 	 * 副卡使用人分省开关
 	 */
 	public static final Map<String,String> FUKA_SHIYR_FLAG  = new HashMap<String,String>();
+	
+	/**公告附件下载FTP服务器配置*/
+	public static final String NOTICE_FTP_SERVICE_CONFIGS = new String("");
 }
