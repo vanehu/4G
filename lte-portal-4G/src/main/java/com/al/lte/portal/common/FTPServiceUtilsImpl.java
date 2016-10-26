@@ -326,4 +326,50 @@ public class FTPServiceUtilsImpl implements FTPServiceUtils {
 		
 		return ftpServiceConfigLists;
 	}
+	
+	/**
+	 * 快销卡上传pdf文件
+	 */
+	public Map<String, Object> pdfFileFTP(InputStream fileInputStream, String uploadFileName) throws IOException{
+		
+		Map<String, Object> uploadResult = new HashMap<String, Object>();		
+		//1.从配置文件获取服务器配置信息
+		String ftpRemotePath = propertiesUtils.getMessage("ESSFTPREMOTEPATH");//访问FTP的路径
+		String ftpServiceConfig = propertiesUtils.getMessage("ESSFTPSERVICECONFIG");
+		if(ftpRemotePath == null || ftpServiceConfig == null){
+			throw new IOException("FTP服务器配置信息获取失败，请检查配置文件");
+		}
+		
+		//2.获取FTP服务器的具体登录信息
+		String[] ftpServiceConfigs = ftpServiceConfig.split(",");
+		String remoteAddress = ftpServiceConfigs[0];//FTP服务器地址(IP)
+		String remotePort = ftpServiceConfigs[1];//FTP服务器端口
+		String userName = ftpServiceConfigs[2];//FTP服务器用户名
+		String password = ftpServiceConfigs[3];//FTP服务器密码
+		
+		log.debug("FTP服务器配置信息  = {}", remoteAddress+","+remotePort+","+userName+","+password);
+		
+		//3.封装参数
+		Map<String, Object> uploadParam = new HashMap<String, Object>();
+		uploadParam.put("remoteAddress", remoteAddress);
+		uploadParam.put("remotePort", remotePort);
+		uploadParam.put("userName", userName);
+		uploadParam.put("password", password);
+		uploadParam.put("ftpRemotePath", ftpRemotePath);
+		uploadParam.put("fileInputStream", fileInputStream);
+		uploadParam.put("newUploadFileName", uploadFileName);
+		uploadParam.put("oldUploadFileName", uploadFileName);
+		uploadParam.put("ftpConfigFlag", "FTPSERVICECONFIG");
+		
+		//4.上传文件，如果不成功则重新尝试上传
+		for(int i = retryTimes + 1; i > 0; i--){
+			if (!ResultCode.R_SUCCESS.equals(uploadResult.get("code"))) {
+				uploadResult = this.fileUploadMethod(uploadParam);
+			} else if(ResultCode.R_SUCCESS.equals(uploadResult.get("code"))){
+				break;
+			}
+		}
+
+		return uploadResult;
+	}
 }

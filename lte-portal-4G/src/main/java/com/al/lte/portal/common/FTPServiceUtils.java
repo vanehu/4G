@@ -32,4 +32,9 @@ public interface FTPServiceUtils {
 	 * @author ZhangYu
 	 */
 	public Map<String, Object> fileUpload2FTP4Cluster(InputStream fileInputStream, String uploadFileName, String batchType, String provinceCode) throws Exception;
+	
+	/**
+	 *快销卡上传打印回执pdf文件到服务器
+	 */
+	public Map<String, Object> pdfFileFTP(InputStream fileInputStream, String uploadFileName) throws IOException;
 }

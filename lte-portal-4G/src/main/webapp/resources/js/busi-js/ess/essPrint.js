@@ -50,7 +50,7 @@ ess.print = (function() {
 		});
 	};
 	
-	var _preVoucher=function(olId,areaId,accNbr){
+	var _preVoucher=function(olId,areaId,accNbr,orderType,extCustOrderId,extSystem){
 		var soNbr = UUID.getDataId();
 		var param = {
 				areaId : areaId,
@@ -68,6 +68,9 @@ ess.print = (function() {
 			"soNbr": soNbr,
 			"busiType":"1",
 			areaId : areaId,
+			orderType : orderType,
+			"extCustOrderId":extCustOrderId,
+			"extSystem":extSystem,
 			"chargeItems":""
 		};
 		common.print.printVoucher(voucherInfo);

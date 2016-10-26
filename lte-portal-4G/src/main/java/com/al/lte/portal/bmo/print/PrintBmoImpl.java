@@ -33,6 +33,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.xhtmlrenderer.pdf.ITextFontResolver;
 import org.xhtmlrenderer.pdf.ITextRenderer;
@@ -49,6 +50,7 @@ import com.al.ecs.exception.BusinessException;
 import com.al.ecs.exception.ErrorCode;
 import com.al.ecs.log.Log;
 import com.al.lte.portal.common.DataSignTool;
+import com.al.lte.portal.common.FTPServiceUtils;
 import com.al.lte.portal.common.InterfaceClient;
 import com.al.lte.portal.common.PortalServiceCode;
 import com.al.lte.portal.common.ServiceClient;
@@ -70,6 +72,7 @@ import com.al.lte.portal.common.print.dto.FeeInfoBankSet;
 import com.al.lte.portal.common.print.dto.FeeInfoRANSet;
 import com.al.lte.portal.common.print.dto.FeeInfoSet;
 import com.al.lte.portal.common.print.dto.FeeInfoTitleSet;
+import com.al.lte.portal.common.print.dto.ICardPlaceInfoSet;
 import com.al.lte.portal.common.print.dto.ItemInfoSet;
 import com.al.lte.portal.common.print.dto.ItemInfoTwoNewSet;
 import com.al.lte.portal.common.print.dto.ItemInfoTwoSet;
@@ -114,6 +117,10 @@ public class PrintBmoImpl implements PrintBmo {
 
 	@Autowired
 	PropertiesUtils propertiesUtils;
+	
+	@Autowired
+	@Qualifier("com.al.lte.portal.common.FTPServiceUtils")
+	private FTPServiceUtils ftpServiceUtils;
 
 	String comment = "";
 	int count = 0;
@@ -359,9 +366,21 @@ public class PrintBmoImpl implements PrintBmo {
 					resultMap = MapUtils.getMap(db.getReturnlmap(), "result");
 					if (resultMap != null) {
 						resultMap.put("chargeItems", paramMap.get("chargeItems"));
+						if(paramMap.get("orderType")!=null && paramMap.get("orderType").equals("preInstall")){
+							resultMap.put("orderType", paramMap.get("orderType"));
+							String extCustOrderId = (String) paramMap.get("extCustOrderId");
+							resultMap.put("extCustOrderId",extCustOrderId);
+						}
 					}
 					Map<String,Object> objCust=getCustNameAndIdCard(resultMap);
 					resultMap = parseVoucherData(resultMap, needAgreement);
+					if(paramMap.get("orderType")!=null && paramMap.get("orderType").equals("preInstall")){
+						resultMap.put("orderType", paramMap.get("orderType"));
+						String extCustOrderId = (String) paramMap.get("extCustOrderId");
+						resultMap.put("extCustOrderId",extCustOrderId);
+						String extSystem = (String) paramMap.get("extSystem");
+						resultMap.put("extSystem",extSystem);
+					}
 					resultMap.putAll(objCust);
 				}
 			} catch (Exception e) {
@@ -824,7 +843,13 @@ public class PrintBmoImpl implements PrintBmo {
 				retnMap.put("remarkInfos",parseRemarkInfosTemp());
 			}
 		}
-
+		//快销卡身份证放置
+		if(dataMap.get("orderType")!=null && dataMap.get("orderType").equals("preInstall")){
+			retnMap.put("iCardPlace", parseICardPlaceInfos(dataMap, speCustInfoLen));
+		}else{
+			List<ICardPlaceInfoSet>  ICardPlaceInfoSet = new ArrayList<ICardPlaceInfoSet>();
+			retnMap.put("iCardPlace",ICardPlaceInfoSet);
+		}
 		return retnMap;
 	}
 
@@ -5405,6 +5430,20 @@ public class PrintBmoImpl implements PrintBmo {
 
             //生成pdf文件
             byte[] bytes = vPdfPrintHelper.getPdfStreamWithParametersAndFields(hasParameters, lstFields);
+            //快销卡需要上传PDF文件
+            Map<String, Object> printData  = new HashMap<String, Object>();
+            Iterator it =lstFields.iterator();
+            while(it.hasNext()) {
+            	printData = (Map<String, Object>) it.next();
+            }
+            if(printData.get("orderType")!=null && printData.get("orderType").equals("preInstall")){
+				String extCustOrderId = (String) printData.get("extCustOrderId");
+				String extSystem = (String) printData.get("extSystem");
+				InputStream fileInputStream = new ByteArrayInputStream(bytes); 
+				String uploadFileName = extCustOrderId+extSystem+".pdf";
+				Map<String, Object> ftpEvidenceFileResultMap  = ftpServiceUtils.pdfFileFTP(fileInputStream,uploadFileName);
+			}
+            
             //输出到response
             if(response != null){
             	writeToResponse(bytes, strJasperFileName, response);
@@ -8415,5 +8454,20 @@ public class PrintBmoImpl implements PrintBmo {
 		messageTitleList.add(messageTitleBean);
 		newSet.setMessageTitle(messageTitleList);
 		return newSet;
+	}
+	
+	private List<ICardPlaceInfoSet> parseICardPlaceInfos(Map<String, Object> dataMap, int speCustInfoLen) {
+		List<ICardPlaceInfoSet> iCardPlaceInfos = new ArrayList<ICardPlaceInfoSet>();
+		
+		ICardPlaceInfoSet iCardPlaceInfoSet = new ICardPlaceInfoSet();
+		
+		List<StringBeanSet> extCustOrderIdTitle = new ArrayList<StringBeanSet>();
+		String extCustOrderId = (String) dataMap.get("extCustOrderId");
+		StringBeanSet extCustOrderIdTitleBean = new StringBeanSet(extCustOrderId.substring(extCustOrderId.length()-6));
+		extCustOrderIdTitle.add(extCustOrderIdTitleBean);
+		iCardPlaceInfoSet.setExtCustOrderIdTitle(extCustOrderIdTitle);
+		
+		iCardPlaceInfos.add(iCardPlaceInfoSet);
+		return iCardPlaceInfos;
 	}
 }

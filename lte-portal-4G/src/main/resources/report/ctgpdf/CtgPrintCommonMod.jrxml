@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="CtgPrintCommonMod" language="groovy" pageWidth="595" pageHeight="842" columnWidth="509" leftMargin="43" rightMargin="43" topMargin="113" bottomMargin="96">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="235"/>
+	<property name="ireport.y" value="195"/>
 	<style name="styleNorm" mode="Transparent" fill="Solid" fontName="宋体" fontSize="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Identity-H"/>
 	<style name="styleBold" fill="Solid" fontName="宋体" fontSize="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
 	<style name="styleBlackBold16" fontName="宋体" fontSize="16" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
@@ -27,6 +27,7 @@
 	<field name="terminalInfos" class="java.util.List"/>
 	<field name="remarkInfos" class="java.util.List"/>
 	<field name="advtInfos" class="java.util.List"/>
+	<field name="iCardPlace" class="java.util.List"/>
 	<field name="signPic" class="java.io.InputStream"/>
 	<field name="isShowSign" class="java.lang.String"/>
 	<field name="companyseal" class="java.io.InputStream"/>
@@ -252,6 +253,31 @@
 					<textElement/>
 					<text><![CDATA[温馨提示：]]></text>
 				</staticText>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<group name="groupICardPlacet">
+		<groupExpression><![CDATA[$F{iCardPlace}]]></groupExpression>
+		<groupHeader>
+			<band height="21">
+				<printWhenExpression><![CDATA[$F{iCardPlace}!=null]]></printWhenExpression>
+				<subreport>
+					<reportElement x="0" y="6" width="500" height="15" isRemoveLineWhenBlank="true"/>
+					<subreportParameter name="SUBREPORT_DIR">
+						<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+					</subreportParameter>
+					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{iCardPlace})]]></dataSourceExpression>
+					<subreportExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "CtgPrintICardPlace.jasper"]]></subreportExpression>
+				</subreport>
+				<line>
+					<reportElement x="0" y="3" width="500" height="1"/>
+					<graphicElement>
+						<pen lineStyle="Solid"/>
+					</graphicElement>
+				</line>
 			</band>
 		</groupHeader>
 		<groupFooter>

@@ -507,6 +507,8 @@
  	      <const type="String" name="FTPBLACKLISTPATH" value="/app/4G/batch/upload/blackListEvidenceFile/" description="访问FTP服务器路径"/>
  	      <const type="String" name="FTPSERVICECONFIG" value="10.128.90.194,21,potoalBatch,potoalBatch" description="测试环境FTP服务器配置信息(单台FTP服务器)'FTP服务器IP,端口,用户名,密码'"/>
  	      <const type="String" name="BATCHVERSIONFLAG" value="ON" description="批量改造开关，默认为ON打开，走FTP模式；OFF关闭，走报文模式"/>
+ 	      <const type="String" name="ESSFTPREMOTEPATH" value="/app/data/ess/pdf_file/1000000083/download/" description="ess访问FTP服务器路径，快销卡打印回执pdf文件上传"/>
+ 	      <const type="String" name="ESSFTPSERVICECONFIG" value="10.128.98.24,21,ess,ess" description="ess快销卡打印回执pdf文件上传FTP服务器配置信息(单台FTP服务器)'FTP服务器IP,端口,用户名,密码'"/>
  	      <!-- 批量业务FTP服务器配置  end-->
  	    <const type="Map" name="POS_FLAG" description="业务办理收费时POS支付开关  ON OFF">
         {
