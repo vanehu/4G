@@ -488,7 +488,14 @@ public class MDA {
 	 * 副卡使用人分省开关
 	 */
 	public static final Map<String,String> FUKA_SHIYR_FLAG  = new HashMap<String,String>();
+
+	/**
+	 * 证件号码长度校验开关
+	 */
+	public static final String CMADDRESS_CHECK_FLAG  = new String("");
+
 	
 	/**公告附件下载FTP服务器配置*/
 	public static final String NOTICE_FTP_SERVICE_CONFIGS = new String("");
+
 }
