@@ -544,8 +544,25 @@ order.cust = (function(){
 	 };
 	//创建客户确认按钮
     var _custcreateButton = function() {
-    	$('#custCreateForm').off().bind('formIsValid',function(event) {
-    		if ($.trim($("#identidiesTypeCd option:selected").val()) == "1" && $('#td_custIdCard').data("flag") != "1"){
+            $('#custCreateForm').off().bind('formIsValid',function(event) {
+    		 var val = $("#cAddressStr").val();
+    		 var len = 0;
+             for (var i = 0; i < val.length; i++) {
+                  var a = val.charAt(i);
+                  if (a.match(/[^\x00-\xff]/ig) != null) 
+                 {
+                     len += 2;
+                 }
+                 else
+                 {
+                     len += 1;
+                 }
+             }
+            if ($.trim(len) < 12){
+	        	$.alert("提示","客户地址必须大于等于12个字符!");
+	        	return false;
+	        }
+		    if ($.trim($("#identidiesTypeCd option:selected").val()) == "1" && $('#td_custIdCard').data("flag") != "1"){
         		$.alert("提示","请先读卡");
         		return false;
         	}
