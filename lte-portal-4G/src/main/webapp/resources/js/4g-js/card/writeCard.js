@@ -535,7 +535,14 @@ order.writeCard = (function(){
 						},
 						"done" : function(response) {
 							if (response.code == 0) {
-								$.alert("提示", "写卡成功,资源补录成功！");
+								$.confirm("提示","写卡成功,资源补录成功！",{ 
+									yes:function(){
+										window.location.href = contextPath+"/ess/order/remoteWriteCard";
+									},
+									no:function(){
+										window.location.href = contextPath+"/ess/order/remoteWriteCard";
+									}
+								});
 								return;
 							} else if (response.code == -2) {
 								$.alertM(response.data);
@@ -1759,7 +1766,15 @@ order.writeCard = (function(){
 					accNbr:OrderInfo.essOrderInfo.essOrder.phoneNumber
 				};
 			$.callServiceAsJson(serviceName, param);
-			$.alert("提示","恭喜，您已经成功写卡！");
+			$.confirm("提示","恭喜，您已经成功写卡！",{ 
+				yes:function(){
+					window.location.href = contextPath+"/ess/order/repeatWriteCard";
+				},
+				no:function(){
+					window.location.href = contextPath+"/ess/order/repeatWriteCard";
+				}
+			});
+			return;
 		    return true;
 		}
 		return false;

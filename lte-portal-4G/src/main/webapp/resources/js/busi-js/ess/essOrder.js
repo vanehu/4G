@@ -23,18 +23,12 @@ essOrder.main = (function() {
 					$.each(response.data,function(){
 					    $("#p_accNbrSellChannel").append("<option value='"+this.dimensionValue+"' >"+this.dataDimensionName+"</option>");
 					});
-				} else if (response.code == -2) {
-					$.alertM(response.data);
-				} else if (response.code == 1002) {
-					$.alert("错误",response.data);
-				} else {
-					$.alert("异常", "号卡发货渠道查询异常");
+				}else {
 					return;
 				}
 			},
 			fail : function(response) {
 				$.unecOverlay();
-				$.alert("提示", "请求可能发生异常，请稍后再试！");
 			}
 		});
 		//终端发货渠道
@@ -54,18 +48,12 @@ essOrder.main = (function() {
 					$.each(response.data,function(){
 					    $("#p_termSellChannel").append("<option value='"+this.dimensionValue+"' >"+this.dataDimensionName+"</option>");
 					});
-				} else if (response.code == -2) {
-					$.alertM(response.data);
-				} else if (response.code == 1002) {
-					$.alert("错误",response.data);
 				} else {
-					$.alert("异常", "终端发货渠道查询异常");
 					return;
 				}
 			},
 			fail : function(response) {
 				$.unecOverlay();
-				$.alert("提示", "请求可能发生异常，请稍后再试！");
 			}
 		});
 		//订单类型、订单状态
@@ -89,18 +77,12 @@ essOrder.main = (function() {
 					$.each(response.data.orderTypeList,function(){
 					    $("#p_orderType").append("<option value='"+this.orderType+"' >"+this.orderTypeName+"</option>");
 					});
-				} else if (response.code == -2) {
-					$.alertM(response.data);
-				} else if (response.code == 1002) {
-					$.alert("错误",response.data);
-				} else {
-					$.alert("异常", "ESS订单相关常量查询接口查询异常");
+				}else {
 					return;
 				}
 			},
 			fail : function(response) {
 				$.unecOverlay();
-				$.alert("提示", "请求可能发生异常，请稍后再试！");
 			}
 		});
 	};

@@ -27,17 +27,11 @@ essPartner.main = (function() {
 					$.each(response.data.orderTypeList,function(){
 					    $("#p_orderType").append("<option value='"+this.orderType+"' >"+this.orderTypeName+"</option>");
 					});
-				} else if (response.code == -2) {
-					$.alertM(response.data);
-				} else if (response.code == 1002) {
-					$.alert("错误",response.data);
 				} else {
-					$.alert("异常", "ESS订单相关常量查询接口查询异常");
 					return;
 				}
 			},
 			fail : function(response) {
-				$.unecOverlay();
 				$.alert("提示", "请求可能发生异常，请稍后再试！");
 			}
 		});

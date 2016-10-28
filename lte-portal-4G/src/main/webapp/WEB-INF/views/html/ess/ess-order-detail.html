@@ -98,7 +98,7 @@
 						</li>
 						<li><font>账户地区级别：</font><span>${acctInfo.acctAreaRegion}</span>
 						</li>
-						<li><font>地区：</font><span>${acctInfo.commonRegionId}</span>
+						<li><font>地区：</font><span>${acctInfo.commonRegionName}</span>
 						</li>
 					</ul>
 					<div class="height18"></div>
@@ -124,13 +124,13 @@
 									orderRow.actionClass =="1100" >
 									${orderRow.boActionTypeName}-${orderRow.prodSpecName} <#elseif
 									orderRow.actionClass =="1200" >
-									${orderRow.boActionTypeName}-${orderRow.offerSpecName} <#elseif
+									${orderRow.boActionTypeName}-${orderRow.objName} <#elseif
 									orderRow.actionClass =="1300" > <#if orderRow.boActionTypeCd
 									=="7" > ${orderRow.boActionTypeName}- <#if orderRow.state
 									=="ADD" > 开通&nbsp; <#elseif orderRow.state =="DEL" > 关闭&nbsp;
 									<#elseif orderRow.state =="KIP" > 变更&nbsp; <#else> </#if>
-									${orderRow.offerSpecName} <#else>
-									${orderRow.boActionTypeName}-${orderRow.prodSpecName} </#if>
+									${orderRow.servSpecName} <#else>
+									${orderRow.boActionTypeName}-${orderRow.objName} </#if>
 									<#elseif orderRow.actionClass =="1400" >
 									${orderRow.boActionTypeName}-${orderRow.prodSpecName} <#elseif
 									orderRow.actionClass =="1500" >
