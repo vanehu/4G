@@ -2379,9 +2379,11 @@ public class OrderBmoImpl implements OrderBmo {
 		String detail = URLEncoder.encode("翼销售支付", "utf-8");   
 		String customerId = "";
 		String customerName="";
-		String olNbr = paramMap.get("olId").toString();
+		String olId = paramMap.get("olId").toString();
+		String olNbr = paramMap.get("soNbr").toString();
 		String olNumber = sessionStaff.getStaffId();
-		paramMap2.put("olNbr",  olNbr);//业务订单
+		paramMap2.put("olId",  olId);//购物车id
+		paramMap2.put("olNbr",  olNbr);//购物车流水
 		paramMap2.put("reqNo", reqNo);//传给支付平台的业务流水号要保证不同
 		String payAmount = paramMap.get("chargeItems").toString(); 
 		String busiUpType=paramMap.get("busiUpType").toString();//业务类型，默认1手机业务
@@ -2406,7 +2408,7 @@ public class OrderBmoImpl implements OrderBmo {
 		paramMap2.put("detail", detail);// 详情描述
 		paramMap2.put("busiUpType", busiUpType);// 业务类型：1，手机业务2宽带甩单。
 		String paramStr = "provinceCode=" + provinceCode + "&cityCode=" + cityCode + "&channelId=" + channelId + 
-				"&reqNo=" + reqNo + "&payAmount=" + payAmount +"&detail="+detail+"&olNbr="+olNbr+"&olNumber="+olNumber+"&busiUpType="+busiUpType;
+				"&reqNo=" + reqNo + "&payAmount=" + payAmount +"&detail="+detail+"&olId="+olId+"&olNumber="+olNumber+"&busiUpType="+busiUpType;
 		String sign = AESUtils.encryptToString(paramStr, "YXS_KEY_2016");
 		paramMap2.put("sign", sign);
 		Map<String, Object> dataBusMap = new HashMap<String, Object>();
@@ -2428,12 +2430,12 @@ public class OrderBmoImpl implements OrderBmo {
 		if(cityCode!=null && !cityCode.equals("")){
 			provinceCode=cityCode.substring(0,3)+"0000";
 		}
-		String olNbr = paramMap.get("olId").toString();//业务订单号
+		String olId = paramMap.get("olId").toString();//业务订单号
 		String reqPayType = "1";//支付
-		String paramStr = "provinceCode=" + provinceCode + "&olNbr=" + olNbr+"&reqPayType="+reqPayType;
+		String paramStr = "provinceCode=" + provinceCode + "&olId=" + olId+"&reqPayType="+reqPayType;
 		String sign = AESUtils.encryptToString(paramStr, "YXS_KEY_2016");
 		paramMap2.put("provinceCode", provinceCode);
-		paramMap2.put("olNbr", olNbr);
+		paramMap2.put("olId", olId);
 		paramMap2.put("reqPayType", reqPayType);
 		paramMap2.put("sign", sign);
 		Map<String, Object> dataBusMap = new HashMap<String, Object>();
@@ -2533,6 +2535,46 @@ public class OrderBmoImpl implements OrderBmo {
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		DataBus db = InterfaceClient.callServiceMiddleSys(param, 
 				PortalServiceCode.BORAD_BAND_ORDER_DETAIL,
+				optFlowNum, sessionStaff);
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db
+				.getResultCode()))) {
+			resultMap = db.getReturnlmap();
+			Map<String, Object> datamap = resultMap;
+			returnMap.put("code", ResultCode.R_SUCCESS);
+			returnMap.put("reult",datamap);
+		} else {
+			returnMap.put("code", ResultCode.R_FAIL);
+			returnMap.put("msg", "订单列表查询接口调用失败");
+		}
+		return returnMap;				
+	}
+	
+	public Map<String, Object> querySaleOrderList(Map<String, Object> param,
+			String optFlowNum, SessionStaff sessionStaff) throws Exception {
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		DataBus db = InterfaceClient.callServiceMiddleSys(param, 
+				PortalServiceCode.QUERY_SALES_ORDER_LIST,
+				optFlowNum, sessionStaff);
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db
+				.getResultCode()))) {
+			resultMap = db.getReturnlmap();
+			Map<String, Object> datamap = resultMap;
+			returnMap.put("code", ResultCode.R_SUCCESS);
+			returnMap.put("reult",datamap);
+		} else {
+			returnMap.put("code", ResultCode.R_FAIL);
+			returnMap.put("msg", "订单详情查询接口调用失败");
+		}
+		return returnMap;				
+	}
+	
+	public Map<String, Object> querySaleOrderDetail(Map<String, Object> param,
+			String optFlowNum, SessionStaff sessionStaff) throws Exception {
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		DataBus db = InterfaceClient.callServiceMiddleSys(param, 
+				PortalServiceCode.QUERY_SALES_ORDER_DETAIL,
 				optFlowNum, sessionStaff);
 		Map<String, Object> returnMap = new HashMap<String, Object>();
 		if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db

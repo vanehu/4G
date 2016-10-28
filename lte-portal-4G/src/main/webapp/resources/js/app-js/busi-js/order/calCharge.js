@@ -24,6 +24,7 @@ order.calcharge = (function(){
 	var _myFlag=false;//是否开启调用支付平台
 	var _busiUpType;//业务类型，1表示手机业务2表示宽带甩单
 	var payType;
+	var _returnFlag=true;//支付平台返回成功后，返回按钮提示不让进行
 	//弹出业务对象窗口
 	var _addbusiOrder=function(proId,obj){
 		if($("#div_payitem_"+proId)!=undefined&&$("#div_payitem_"+proId).html()!=undefined){
@@ -109,6 +110,7 @@ order.calcharge = (function(){
 	};
 	//动态刷新页面信息
 	var _reflashTotal=function(){
+		OrderInfo.returnFlag="";
 		_chargeItems=[];
 		_prints=[];
 		var realAmount=0;
@@ -498,6 +500,7 @@ order.calcharge = (function(){
 		  			if(typeof obj !="object"){
 						$("#cal_main_content").show();
 						$("#edit_content").hide();
+						OrderInfo.returnFlag = "";
 					}
 					_reflashTotal();
 				}else{
@@ -535,6 +538,7 @@ order.calcharge = (function(){
 					if(typeof obj !="object"){
 						$("#cal_main_content").show();
 						$("#edit_content").hide();
+						OrderInfo.returnFlag = "";
 					}
 					_reflashTotal();
 				}else{
@@ -556,6 +560,7 @@ order.calcharge = (function(){
 					if(typeof obj !="object"){
 						$("#cal_main_content").show();
 						$("#edit_content").hide();
+						OrderInfo.returnFlag = "";
 					}
 					_reflashTotal();
 				}
@@ -638,10 +643,21 @@ order.calcharge = (function(){
 		if(inOpetate){
 			return;
 		}
-		if(order.calcharge.myFlag){
-			 _getPayTocken();
-			 return;
+		if (order.calcharge.myFlag) {
+			var checkUrl = contextPath + "/app/order/getPayOrdStatus";
+			var checkParams = {
+					"olId" : OrderInfo.orderResult.olId
+					
+			};
+			var response = $.callServiceAsJson(checkUrl, checkParams);
+			if (response.code != 0) {// 支付平台购物车id查询未支付成功才打开支付页面，否则直接下计费接口
+				_getPayTocken();
+				return;
+			}else{//获取支付方式
+				payType=response.data;
 			}
+
+		}
 		if(!_submitParam()){
 			_conBtns();
 			return ;
@@ -1101,6 +1117,7 @@ order.calcharge = (function(){
 		_editMoney($("#realAmount_"+trid).val(),trid,'old');
 	};
 	var _close = function(accessNumber,trid,realAmount){
+		OrderInfo.returnFlag="";
 		$("#cal_main_content").show();
 		$("#edit_content").hide();
 	};
@@ -1210,7 +1227,7 @@ order.calcharge = (function(){
 		order.calcharge.busiUpType="1";
 		var params={
 				"olId":OrderInfo.orderResult.olId,
-				"soNbr":OrderInfo.order.soNbr,
+				"soNbr":OrderInfo.orderResult.olNbr,
 				"busiUpType":busiUpType,
 				"chargeItems":chargeItems
 		};
@@ -1246,6 +1263,8 @@ order.calcharge = (function(){
 	 */
 	var _queryPayOrdStatus1 = function(soNbr, status,type) {
 		if ("1" == status) { // 原生返回成功，调用支付平台查询订单状态接口，再次确定是否成功，如果成功则调用收费接口
+			$.ecOverlay("<strong>正在处理中,请稍等会儿....</strong>");
+			_returnFlag=false;//禁止返回
 			var params = {
 				"olId" : soNbr
 				
@@ -1267,7 +1286,6 @@ order.calcharge = (function(){
 				};
 				$.callServiceAsJson(url,params, {
 					"before":function(){
-						$.ecOverlay("<strong>正在处理中,请稍等会儿....</strong>");
 					},	
 					"done" : function(response){
 						$.unecOverlay();
@@ -1563,7 +1581,8 @@ order.calcharge = (function(){
 		queryPayOrdStatus1          :      _queryPayOrdStatus1,
 		myFlag:_myFlag,
 		buildChargeItems2:_buildChargeItems2,
-		busiUpType:_busiUpType
+		busiUpType:_busiUpType,
+		returnFlag:_returnFlag
 	};
 })();
 $(function() {

@@ -44,15 +44,28 @@ cust = (function(){
 	//客户新增提交
 	var _newCustSubmit = function(){
 		$('#custFormdata').data('bootstrapValidator').validate();
-		if($('#custFormdata').data('bootstrapValidator').isValid()){
-			/*var url=contextPath+"/order/createorderlonger";
-			var response = $.callServiceAsJson(url, {});
-			if(response.code==0){
-				OrderInfo.custorderlonger=response.data;
-			}*/
-			_checkIdentity();
+		var propertiesKey = "CMADDRESS_CHECK_FLAG";
+	    var isFlag = offerChange.queryPortalProperties(propertiesKey);
+	    if(!isFlag){
+	    	isFlag="OFF";
+	    }
+	    
+	    var cmAddressStr = document.getElementById("cmAddressStr").value;
+		if(cmAddressStr.replace(/[^\x00-\xff]/g,"aa").length<12 && isFlag=="ON"){
+			$.alert("提示","证件地址长度不得少于6个汉字");
+		}else {
+			if($('#custFormdata').data('bootstrapValidator').isValid()){
+				/*var url=contextPath+"/order/createorderlonger";
+				var response = $.callServiceAsJson(url, {});
+				if(response.code==0){
+					OrderInfo.custorderlonger=response.data;
+				}*/
+				
+				_checkIdentity();
 
+			}
 		}
+		
 	};
 	
 	
@@ -65,6 +78,10 @@ cust = (function(){
 		OrderInfo.cust.addressStr = $('#cmAddressStr').val();//客户地址
 		OrderInfo.cust.mailAddressStr = $('#mailAddressStr').val();//通信地址
 		OrderInfo.cust.identityCd = $('#cm_identidiesTypeCd').val();//证件类型
+		OrderInfo.cust.contactName = $.trim($('#contactName').val());//联系人
+		OrderInfo.cust.mobilePhone = $.trim($('#mobilePhone').val());//联系人手机
+		OrderInfo.cust.contactAddress = $.trim($('#contactAddress').val());//联系人地址
+		
 		//联系人不为空时才封装联系人信息上传
 		if($.trim($('#contactName').val()).length>0){
 			OrderInfo.boPartyContactInfo.contactName = $.trim($('#contactName').val());//联系人
@@ -637,6 +654,11 @@ cust = (function(){
 	                    notEmpty: {
 	                        message: '证件地址不能为空'
 	                    }
+//	            ,
+//	                    regexp: {
+//	                        regexp: /[\u4e00-\u9fa5]{6}|^.{12}/,
+//	                        message: '证件地址长度不得少于6个汉字'
+//	                    }
 	                }
 	            },
 	            mobilePhone: {
@@ -692,7 +714,7 @@ cust = (function(){
 	     }
 		//根据证件类型对行添加校验
 		_identidiesTypeCdChoose($("#cm_identidiesTypeCd option[selected='selected']"));
-	
+		
 		$('#newCustBtn').off("click").on("click",_newCustSubmit);
 		var BO_ACTION_TYPE=CONST.BO_ACTION_TYPE.CUST_CREATE;
 		OrderInfo.initData(CONST.ACTION_CLASS_CD.CUST_ACTION,BO_ACTION_TYPE,8,CONST.getBoActionTypeName(BO_ACTION_TYPE),"");

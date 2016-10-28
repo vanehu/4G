@@ -169,42 +169,59 @@ public class OrderController extends BaseController {
 		return jsonResponse;
 	}
 	
-    @RequestMapping(value = "/chargeSubmit", method = RequestMethod.POST)
-    @ResponseBody
-    public JsonResponse chargeSubmit(@RequestBody Map<String, Object> param,
-			@LogOperatorAnn String flowNum,HttpServletResponse response,HttpServletRequest request){
-   	 SessionStaff sessionStaff = (SessionStaff) ServletUtils
-				.getSessionAttribute(super.getRequest(),
+	@RequestMapping(value = "/chargeSubmit", method = RequestMethod.POST)
+	@ResponseBody
+	public JsonResponse chargeSubmit(@RequestBody Map<String, Object> param,
+			@LogOperatorAnn String flowNum, HttpServletResponse response,
+			HttpServletRequest request) {
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
 						SysConstant.SESSION_KEY_LOGIN_STAFF);
 		Map<String, Object> rMap = null;
 		JsonResponse jsonResponse = null;
-		try {
-			if(commonBmo.checkToken(request, SysConstant.ORDER_SUBMIT_TOKEN)){
-	 			log.debug("param={}", JsonUtil.toString(param));
-	 			param.put("areaId", sessionStaff.getCurrentAreaId());
-	 			rMap = orderBmo.chargeSubmit(param, flowNum, sessionStaff);
-	 			log.debug("return={}", JsonUtil.toString(rMap));
-	 			if (rMap != null&& ResultCode.R_SUCCESS.equals(rMap.get("code").toString())) {
-	 				jsonResponse = super.successed("收费成功",
-	 						ResultConstant.SUCCESS.getCode());
-	 			} else {
-	 				jsonResponse = super.failed(rMap.get("msg"),
-	 						ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
-	 			}
-			}else{
-				jsonResponse = super.failed("订单已经建档成功,不能重复操作!",
-						ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+		String propertiesKey = "NEWPAYFLAG_"+ (sessionStaff.getCurrentAreaId() + "").substring(0, 3);
+		// 支付开关
+		String payFlag = propertiesUtils.getMessage(propertiesKey);
+		boolean chargeFlag = true;// 默认允许调用收费接口
+		if ("ON".equals(payFlag)) {
+			HttpSession session = request.getSession();
+			String key = param.get("olId").toString() + "_payCode";// 支付成功唯一标志
+			if (session.getAttribute(key) != null) {
+				chargeFlag = true;
+			} else {
+				chargeFlag = false;// 信息可能被篡改，不允许调用收费接口
 			}
-		} catch (BusinessException e) {
-			return super.failed(e);
-		} catch (InterfaceException ie) {
-			return super.failed(ie, param, ErrorCode.CHARGE_SUBMIT);
-		} catch (Exception e) {
-			return super.failed(ErrorCode.CHARGE_SUBMIT, e, param);
+		}
+		if (chargeFlag) {//调用收费接口
+			try {
+				if (commonBmo.checkToken(request,SysConstant.ORDER_SUBMIT_TOKEN)) {
+					log.debug("param={}", JsonUtil.toString(param));
+					param.put("areaId", sessionStaff.getCurrentAreaId());
+					rMap = orderBmo.chargeSubmit(param, flowNum, sessionStaff);
+					log.debug("return={}", JsonUtil.toString(rMap));
+					if (rMap != null && ResultCode.R_SUCCESS.equals(rMap.get("code").toString())) {
+						jsonResponse = super.successed("收费成功",
+								ResultConstant.SUCCESS.getCode());
+					} else {
+						jsonResponse = super.failed(rMap.get("msg"),
+								ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+					}
+				} else {
+					jsonResponse = super.failed("订单已经建档成功,不能重复操作!",
+							ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+				}
+			} catch (BusinessException e) {
+				return super.failed(e);
+			} catch (InterfaceException ie) {
+				return super.failed(ie, param, ErrorCode.CHARGE_SUBMIT);
+			} catch (Exception e) {
+				return super.failed(ErrorCode.CHARGE_SUBMIT, e, param);
+			}
+		} else {
+			jsonResponse = super.failed("收费信息可能被篡改,请退出重新操作!",
+					ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
 		}
 		return jsonResponse;
-    }
-
+	}
 	/**
 	 * 手机客户端-新装入口
 	 * @param params
@@ -2724,8 +2741,9 @@ public class OrderController extends BaseController {
 		return flag;
 	}
 	
+
 	/**
-	 * 翼销售获取支付页面（url+tocken）
+	 * 翼销售获取订单支付状态
 	 * 
 	 * @param param
 	 * @param model
@@ -2737,16 +2755,24 @@ public class OrderController extends BaseController {
 	@ResponseBody
 	public JsonResponse getPayOrdStatus(@RequestBody Map<String, Object> param,
 			Model model, HttpSession session, @LogOperatorAnn String flowNum) {
-		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils
+				.getSessionAttribute(super.getRequest(),
 						SysConstant.SESSION_KEY_LOGIN_STAFF);
 		Map<String, Object> rMap = null;
 		JsonResponse jsonResponse = null;
+		String olId=param.get("olId").toString();
 		try {
 			rMap = orderBmo.queryPayOrderStatus(param, flowNum, sessionStaff);
 			log.debug("return={}", JsonUtil.toString(rMap));
-			if (rMap != null && "POR-0000".equals(rMap.get("respCode").toString())) {
-				jsonResponse = super.successed(rMap.get("respCode"),
-						ResultConstant.SUCCESS.getCode());
+			if (rMap != null
+					&& "POR-0000".equals(rMap.get("respCode").toString())) {
+				String payCode="";
+				//查询成功，接口同时返回支付方式编码，存入session，用于下计费时校验
+				if(rMap.get("payCode")!=null){
+				   payCode=rMap.get("payCode").toString();
+				   jsonResponse = super.successed(payCode,ResultConstant.SUCCESS.getCode());
+				   session.setAttribute(olId+"_payCode", payCode);
+				}
 			} else {
 				jsonResponse = super.failed(rMap.get("respMsg").toString(),
 						ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
@@ -2764,8 +2790,9 @@ public class OrderController extends BaseController {
 
 	}
 	
+
 	/**
-	 * 翼销售获取订单支付状态
+	 * 翼销售获取支付页面（url+tocken）
 	 * 
 	 * @param param
 	 * @param model
@@ -2956,9 +2983,9 @@ public class OrderController extends BaseController {
 		String areaLimit = params.get("areaLimit")==null?"":params.get("areaLimit").toString();
 		String urlType = "/app/order/prodoffer/prepare";
 		String cityid = sessionStaff.getAreaId();//市
-		cityid = cityid.substring(0, 5) + "00";//市
 		String proid = cityid.substring(0, 3) + "0000";//省
 		String areaid = sessionStaff.getCurrentAreaId();//区
+		cityid = areaid.substring(0, 5) + "00";//市
 		params.put("leve", 2);
 		params.put("parentAreaId", "");//8100000
 		params.put("areaLimit", areaLimit);
@@ -3067,6 +3094,7 @@ public class OrderController extends BaseController {
 //    				PortalServiceCode.QUERY_MAIN_OFFER_CATEGORY, null, sessionStaff);
         	
         	map = orderBmo.queryMainOfferSpecList(prams,null, sessionStaff);
+        	List alldownRateList = new ArrayList();
         	if(ResultCode.R_SUCCESS.equals(map.get("code"))){
         		//拼装前台显示的套餐详情
         		if(!map.isEmpty()){
@@ -3077,6 +3105,8 @@ public class OrderController extends BaseController {
         				totalPage=prodOfferInfosList.size()/10;
         			}
         			for(int i=0;i<prodOfferInfosList.size();i++){
+        				prodOfferInfosList.get(i).put("index", i);
+        				List<Map<String,Object>> downRateList = new ArrayList();
         				Map<String,Object> exitParam = new HashMap<String,Object>();
         				exitParam = (Map<String,Object>) prodOfferInfosList.get(i);
         				if(exitParam.containsKey("objIdList")){
@@ -3089,8 +3119,14 @@ public class OrderController extends BaseController {
         						prodOfferInfosList.get(i).put("prodNbr", obj.get("prodNbr"));
         					}
         				}
+        				
+        				if(exitParam.containsKey("downRateList")){
+        					downRateList = (List<Map<String,Object>>) exitParam.get("downRateList");
+        				}
+        				alldownRateList.add(downRateList);
         			}
         		}
+        		model.addAttribute("alldownRateList", JsonUtil.buildNormal().objectToJson(alldownRateList));
         		model.addAttribute("resultlst", map.get("prodOfferInfos"));
         		model.addAttribute("totalPage",totalPage);
         	}
@@ -3168,8 +3204,7 @@ public class OrderController extends BaseController {
 
 			return super.failedStr(model, be);
 		} catch (InterfaceException ie) {
-
-			return super.failedStr(model, ie, params, ErrorCode.CUST_ORDER);
+			return super.failedStr(model, ie, params, ErrorCode.QUERY_CHANNEL);
 		} catch (Exception e) {
 			log.error("渠道查询查询/order/broadband/baiduMap方法异常", e);
 			return super.failedStr(model, ErrorCode.QUERY_CHANNEL, e, params);

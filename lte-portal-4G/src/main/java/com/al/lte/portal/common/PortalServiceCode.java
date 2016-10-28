@@ -1115,6 +1115,11 @@ public final class PortalServiceCode {
     /**支付平台查询订单*/
     public static final String PAY_QUERY = "pay-qryRepayTrans";
     
+    /** 宽带甩单－－销售品单列表查询*/
+    public static final String QUERY_SALES_ORDER_LIST = "qry.order.saleorderlist";
+    
+    /** 宽带甩单－－销售品详情查询*/
+    public static final String QUERY_SALES_ORDER_DETAIL = "qry.order.orderdetail";
 
 }
 

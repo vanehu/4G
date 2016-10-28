@@ -57,9 +57,31 @@ common = (function($) {
 	
 	//客户定位后，回传客户信息
 	var _callCustInfo = function(custInfos){
-		var custInfosParams=JSON.stringify(custInfos);//客户定位信息
-		if(ec.util.isObj(custInfos)){
-			OrderInfo.cust=$.parseJSON(custInfosParams);
+		var ua = navigator.userAgent.toLowerCase();	
+		if (/iphone|ipad|ipod/.test(ua)) {
+			//alert("iphone");
+			if(custInfos.indexOf("custOther1")>=0 && custInfos.indexOf("custOther3")>=0){
+				var star = custInfos.indexOf("custOther1")+12;
+				var end = custInfos.indexOf("custOther3")-2;
+				if(end-star>10){
+					custInfos = custInfos.substring(0,star) + custInfos.substring(star+1,end-1) + custInfos.substring(end,custInfos.length);
+				}
+			}
+			OrderInfo.cust=$.parseJSON(custInfos);
+		}else if (/android/.test(ua)) {
+			    //alert("android");	
+			var custInfosParams=JSON.stringify(custInfos);//客户定位信息
+			if(ec.util.isObj(custInfos)){
+				OrderInfo.cust=$.parseJSON(custInfosParams);
+				if(OrderInfo.cust.custOther1.length != 0){
+					var custOther1 = JSON.stringify(OrderInfo.cust.custOther1)
+					custOther1=custOther1.substring(1,custOther1.length-1).replace(/\\/g,"");
+					OrderInfo.cust.custOther1 = $.parseJSON(custOther1);
+				}
+			}
+		}
+		if(OrderInfo.actionFlag==111){
+			order.broadband.showCust();
 		}
 	};
 	
@@ -218,12 +240,21 @@ common = (function($) {
 	
 	//客户端调用此方法返回到上一页 1 为prepare页面  2为order-content（填单）页面 3为order-confirm（订单确认和收银台）页面 4为order-print（打印）页面
 	var _callReturnBack=function(){
-		//alert("OrderInfo.actionFlag="+OrderInfo.actionFlag+"---OrderInfo.order.step="+OrderInfo.order.step+"---OrderInfo.returnFlag="+OrderInfo.returnFlag);
+		if(order.calcharge.returnFlag==false){//支付成功，禁止返回
+			return;
+		}
+//		alert("OrderInfo.actionFlag="+OrderInfo.actionFlag+"---OrderInfo.order.step="+OrderInfo.order.step+"---OrderInfo.returnFlag="+OrderInfo.returnFlag);
 		if($(".modal-backdrop").length>0 && $("#overlay-modal").length>0){
 			$.unecOverlay();//网络出现故障或手机出现故障时按返回关闭“加载中”提示框
 		}
 		//如果收费成功  安卓手机返回按钮不可返回
 		if($("#toCharge").length>0){
+			if(OrderInfo.order.step==4 && OrderInfo.actionFlag==111){
+				$("#confirm").show();
+				$("#print").hide();
+				OrderInfo.order.step = 3;
+				return;
+			}
 			if("disabled"==$("#toCharge").attr("disabled")){
 				return;
 			}
@@ -235,6 +266,64 @@ common = (function($) {
 					OrderInfo.returnFlag="";
 					return;
 				}
+			}
+		}
+		
+		if(OrderInfo.actionFlag==111){//宽带甩单返回处理
+			if(OrderInfo.order.step==1){
+				if(OrderInfo.returnFlag=="add"){
+					$("#searchADD").hide();
+					$("#orderContent").show();
+					OrderInfo.returnFlag="";
+					return;
+				}else if(OrderInfo.returnFlag=="tc"){
+					$("#searchProd").hide();
+					$("#orderContent").show();
+					OrderInfo.returnFlag="";
+					return;
+				}
+				_callCloseWebview();
+				return;
+			}else if(OrderInfo.order.step==2){
+				$("#orderContent").show();
+				$("#cust").hide();
+				OrderInfo.order.step = 1;
+				$("#kh").removeClass("active");
+				$("#kh_1").addClass("dis-none");
+				$("#zy").addClass("active");
+				$("#zy_1").removeClass("dis-none");
+				return;
+			}else if(OrderInfo.order.step==3){
+				if(OrderInfo.returnFlag=="yyt"){
+					$("#selectYYT").hide();
+					$("#confirm").show();
+					OrderInfo.returnFlag="";
+					return;
+				}
+				if(OrderInfo.returnFlag=="xgfy"){
+					$("#calEdit").hide();
+					$("#confirm").show();
+					OrderInfo.returnFlag="";
+					return;
+				}
+				$("#cust").show();
+				$("#confirm").hide();
+				OrderInfo.order.step = 2;
+				$("#jd").removeClass("active");
+				$("#jd_1").addClass("dis-none");
+				$("#kh").addClass("active");
+				$("#kh_1").removeClass("dis-none");
+				return;
+			}else if(OrderInfo.order.step==4){
+				if(OrderInfo.returnFlag=="map"){
+					$("#map").hide();
+					$("#confirm").show();
+					return;
+				}
+				$("#confirm").show();
+				$("#print").hide();
+				OrderInfo.order.step = 3;
+				return;
 			}
 		}
 		if(OrderInfo.actionFlag==4||OrderInfo.actionFlag==8){//客户新增和修改
@@ -290,6 +379,7 @@ common = (function($) {
 				return;
 			}
 		}
+		
 		if(OrderInfo.returnFlag=="hm"){//号码
 			if(OrderInfo.actionFlag==14 && OrderInfo.order.step<3){
 				$("#order-memeber").hide();
@@ -516,6 +606,26 @@ common = (function($) {
             }
 		);
 	};
+	
+	//调用客户定位页面
+	var _callCustLocation=function(method){
+//		if(OrderInfo.actionFlag==111){
+			//已完成客户定位
+//			if(OrderInfo.cust.custId != undefined && OrderInfo.cust.custId != ""){
+//				order.broadband.confirm();
+//				return;
+//			}
+//		}
+		var arr=new Array(1);
+		arr[0]=method;
+		MyPlugin.custLocation(arr,
+            function(result) {
+            },
+            function(error) {
+            }
+		);
+	};
+	
 	return {
 		relocationCust		:	_relocationCust,
 		setCalendar			:	_setCalendar,
@@ -535,6 +645,7 @@ common = (function($) {
 		callTitle			:	_callTitle,
 		saveCust			:	_saveCust,
 		callAgreePhoto      :   _callAgreePhoto,
-		callOpenPay         :   _callOpenPay
+		callOpenPay         :   _callOpenPay,
+		callCustLocation	:	_callCustLocation
 	};
 })(jQuery);
