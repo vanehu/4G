@@ -546,6 +546,9 @@ order.cust = (function(){
     var _custcreateButton = function() {
             $('#custCreateForm').off().bind('formIsValid',function(event) {
     		 var val = $("#cAddressStr").val();
+    		 if(val ==  undefined){
+    			 val = $("#td_addressStr").html();
+    		 }
     		 var len = 0;
              for (var i = 0; i < val.length; i++) {
                   var a = val.charAt(i);
