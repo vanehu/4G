@@ -4,13 +4,27 @@
 	<ul class="pdcard" >
 	    <li id="myfavorites_${prodId}" onclick="AttachOffer.initMyfavoriteSpec(${prodId},'${param.prodSpecId}')">我的收藏</li>
 		<li id="tab_${prodId}_10000" onclick="AttachOffer.changeLabel(${prodId},'${param.prodSpecId}',10000)">功能产品</li>
-		<#if labelMap.result?? &&(labelMap.result?size>1)>
+		<#if labelMap.result?? && (labelMap.result?size>1)>
 			<#list labelMap.result as item>
-				<li id="tab_${prodId}_${item.label}" onclick="AttachOffer.changeLabel(${prodId},'${param.prodSpecId}',${item.label})">${item.value}</li>
+				<#if item.parentLabel?trim == "" || !newLabelMap??>
+					<li id="tab_${prodId}_${item.label}" onclick="AttachOffer.changeLabel(${prodId},'${param.prodSpecId}',${item.label})">${item.value}</li>
+				</#if>
 			</#list>
 		</#if>
 	</ul>
 	<div class="clear"></div>
+	<#if newLabelMap?? && newLabelMap.result?? && (newLabelMap.result?size>0)>
+		<#list newLabelMap.result as item>
+			<#if item.subLabel?? && (item.subLabel?size>0)>
+				<ul class="pdcard" id="parentLabel_${prodId}_${item.label}" style="display: none;">
+					<#list item.subLabel as subItem>
+						<li id="tab_${prodId}_${subItem.label}" onclick="AttachOffer.changeLabel(${prodId},'${param.prodSpecId}',${subItem.label}, 1)">${subItem.value}</li>
+					</#list>
+				</ul>
+				<div class="clear"></div>
+			</#if>
+		</#list>
+	</#if>
 </div>
 
 <div id="div_${param.prodId}" class="fs_tab"></div>
