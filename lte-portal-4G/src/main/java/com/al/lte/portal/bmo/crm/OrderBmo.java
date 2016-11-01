@@ -767,4 +767,16 @@ public interface OrderBmo {
 	 */
 	public Map<String, Object> insertCertInfo(Map<String, Object> param, 
 			String flowNum,SessionStaff sessionStaff) throws Exception;
+	
+	/**
+	 * 判断是否集团新装业务
+	 * @param paramMap
+	 * @param optFlowNum
+	 * @param sessionStaff
+	 * @return
+	 * @throws Exception
+	 */
+	public Map<String, Object> queryIfLteNewInstall(
+			Map<String, Object> paramMap, String optFlowNum,
+			SessionStaff sessionStaff) throws Exception;
 }

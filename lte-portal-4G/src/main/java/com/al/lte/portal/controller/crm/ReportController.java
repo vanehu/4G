@@ -8,6 +8,8 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -328,6 +330,18 @@ public class ReportController extends BaseController {
         String startDt = request.getParameter("startDt");
         String endDt = request.getParameter("endDt");
         String channelId = request.getParameter("channelId");
+        
+        // 因后台需要根据时间判断是否在转储库查询，因此通过购物车流水查询时，截取购物车时间
+        String olNbr = request.getParameter("olNbr");
+        if (StringUtils.isBlank(startDt) && StringUtils.isBlank(endDt) && StringUtils.isNotBlank(olNbr)) {
+        	String dataPattern = "^\\d+?(20\\d{6})\\d+$";
+        	Pattern r = Pattern.compile(dataPattern);
+        	Matcher m = r.matcher(olNbr);
+        	if (m.find()) {
+        		startDt = m.group(1);
+        		endDt = startDt;
+        	}
+        }
         try {
 
             //add by liusd 20151103 防止SQL injection 

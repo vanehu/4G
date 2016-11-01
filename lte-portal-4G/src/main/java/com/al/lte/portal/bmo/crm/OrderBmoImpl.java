@@ -2923,4 +2923,26 @@ public class OrderBmoImpl implements OrderBmo {
 			log.error("日志记录异常", e);
 		}
 	}
+	
+	public Map<String, Object> queryIfLteNewInstall(
+			Map<String, Object> paramMap, String optFlowNum,
+			SessionStaff sessionStaff) throws Exception {
+		DataBus db = InterfaceClient.callService(paramMap,
+				PortalServiceCode.QUERY_IF_LTE_NEW_INSTALL, optFlowNum, sessionStaff);
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		try{
+			// 服务层调用与接口层调用都成功时，返回列表；否则返回空列表
+			if (ResultCode.R_SUCC.equals(db.getResultCode())) {
+				resultMap = db.getReturnlmap();
+				resultMap.put("resultCode", ResultCode.R_SUCC);
+			} else {
+				resultMap.put("resultCode", ResultCode.R_FAILURE);
+				resultMap.put("resultMsg", db.getResultMsg());
+			}
+		} catch (Exception e) {
+			log.error("门户处理营业后台的判断是否集团新装业务接口服务返回的数据异常", e);
+			throw new BusinessException(ErrorCode.QUERY_LTE_NEW_INSTALL, paramMap, resultMap, e);
+		}
+		return resultMap;
+	}
 }

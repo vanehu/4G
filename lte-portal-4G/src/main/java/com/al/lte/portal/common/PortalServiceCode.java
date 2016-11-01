@@ -1120,6 +1120,9 @@ public final class PortalServiceCode {
     
     /** 宽带甩单－－销售品详情查询*/
     public static final String QUERY_SALES_ORDER_DETAIL = "qry.order.orderdetail";
+    
+    /** 判断是否集团新装业务 */
+    public static final String QUERY_IF_LTE_NEW_INSTALL = "biz-service/intf.pullingDataService/queryIfLteNewInstall";
 
 }
 

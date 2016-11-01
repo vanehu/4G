@@ -56,7 +56,6 @@ order.prodModify = (function(){
 			areaId : prodInfoTr.attr("areaId"),//产品地区id
 			prodBigClass : prodInfoTr.attr("prodBigClass")//产品大类
 		};
-		OrderInfo.ifLteNewInstall = prodInfoTr.attr("ifLteNewInstall");
 		order.prodModify.choosedProdInfo=_choosedProdInfo;
 		window.localStorage.setItem("order.prodModify.choosedProdInfo",JSON.stringify(order.prodModify.choosedProdInfo));
 	};
@@ -179,6 +178,22 @@ order.prodModify = (function(){
 			$.alert("提示","停机产品不允许受理！");
 			return;
 		}*/
+		var response = $.callServiceAsJsonGet(contextPath + "/order/prodModify/queryIfLteNewInstall", {"prodInstId": order.prodModify.choosedProdInfo.prodInstId, "areaId": order.prodModify.choosedProdInfo.areaId});
+		var data = response.data;
+		if (response.code == 0) {
+			if (ec.util.isObj(data.result) && ec.util.isObj(data.result.ifLteNewInstall)) {
+				OrderInfo.ifLteNewInstall = data.result.ifLteNewInstall;
+			} else {
+				$.alert("提示", "ifLteNewInstall返回为空");
+				return;
+			}
+		} else if (response.code == 1) {
+			$.alert("提示", data.resultMsg, "error");
+			return;
+		} else {
+			$.alertM(data);
+			return;
+		}
 		//省内新装
 		if((order.prodModify.choosedProdInfo.prodStateCd==CONST.PROD_STATUS_CD.DONE_PROD||
 				order.prodModify.choosedProdInfo.prodStateCd==CONST.PROD_STATUS_CD.READY_PROD) && OrderInfo.ifLteNewInstall == 'N'){

@@ -21,6 +21,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.al.ec.serviceplatform.client.ResultCode;
@@ -832,5 +833,35 @@ public class OrderProdModifyController extends BaseController {
 		      }
 		    }
 		    //System.out.println(list);
+		}
+	
+	 @RequestMapping(value = "/queryIfLteNewInstall", method = RequestMethod.GET)
+		@ResponseBody
+		public JsonResponse queryIfLteNewInstall(@RequestParam Map<String, Object> param, Model model,
+				@LogOperatorAnn String optFlowNum, HttpServletResponse response) {
+	    	SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+							SysConstant.SESSION_KEY_LOGIN_STAFF);
+			JsonResponse jsonResponse = null;
+		    Map<String, Object> map = null;
+		    // 拼接入参
+	 		Map<String, Object> paramMap = new HashMap<String, Object>();
+	 		paramMap.put("prodInstId", param.get("prodInstId"));
+	 		paramMap.put("areaId", param.get("areaId"));
+	        try {
+	        	map = this.orderBmo.queryIfLteNewInstall(paramMap, optFlowNum, sessionStaff);
+				String resultCode = MapUtils.getString(map, "resultCode");
+				if (ResultCode.R_SUCC.equals(resultCode)){
+					jsonResponse = super.successed(map, ResultConstant.SUCCESS.getCode());
+				}else{
+					jsonResponse = super.failed(map, ResultConstant.FAILD.getCode());
+				}
+	        }catch (BusinessException be) {
+	        	return super.failed(be);
+	        } catch (InterfaceException ie) {
+	        	return super.failed(ie, paramMap, ErrorCode.QUERY_LTE_NEW_INSTALL);
+			} catch (Exception e) {
+				return super.failed(ErrorCode.QUERY_LTE_NEW_INSTALL, e, paramMap);
+			}
+			return jsonResponse;
 		}
 }
