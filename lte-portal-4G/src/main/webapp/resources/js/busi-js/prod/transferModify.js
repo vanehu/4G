@@ -1550,12 +1550,14 @@ prod.transferModify = (function(){
 					 	acctId: origAcct.acctId,
 					 	acctName: $.trim($("#acctName").val()),
 					 	acctTypeCd: "1",
-					 	CN:origAcct.acctName==undefined?"":origAcct.acctName,
 					 	//这里取新客户ID
 					 	partyId: _toCustId,
 					 	prodId: order.prodModify.choosedProdInfo.productId,
 					 	state: "ADD"
 				};
+				if(_boProdAcctInfos.acctName==origAcct.name){
+					_boProdAcctInfos.CN=acctName==undefined?"":origAcct.acctName;
+				}
 				boAccountInfoAdd.data.boAccountInfos.push(_boProdAcctInfosOld);
 				boAccountInfoAdd.data.boAccountInfos.push(_boProdAcctInfos);
 				
