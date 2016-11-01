@@ -862,6 +862,9 @@ OrderInfo = (function() {
 								this.setValue = "";
 							}
 						}
+						if (this.itemSpecId == CONST.YZFitemSpecId4 && "ON" != offerChange.queryPortalProperties("AGENT_" + OrderInfo.staff.soAreaId.substring(0,3))) {
+							this.setValue = "";
+						}
 						if(ec.util.isObj(this.setValue)){
 							var addParam = {
 				                itemSpecId : this.itemSpecId,

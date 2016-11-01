@@ -3473,6 +3473,9 @@ AttachOffer = (function() {
 				for(var i = 0;i<serv.prodSpecParams.length;i++){
 //				$.each(serv.prodSpecParams,function(){
 					var prodItem = CacheData.getServInstParam(prodId,serv.servId,serv.prodSpecParams[i].itemSpecId);
+					if (prodItem.itemSpecId == CONST.YZFitemSpecId4 && "ON" != offerChange.queryPortalProperties("AGENT_" + OrderInfo.staff.soAreaId.substring(0,3))) {
+						continue;
+					}
 					var thisValue = $("#"+prodId+"_"+serv.prodSpecParams[i].itemSpecId).val();
 					//十个亲情号码的属性ID进行输入校验
 					/*

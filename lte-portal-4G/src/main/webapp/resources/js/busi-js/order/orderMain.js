@@ -2083,7 +2083,11 @@ order.main = (function(){
 								$.each(obj.servSpecList, function(index, obj) {
 									if (obj.servSpecId == CONST.YZFservSpecId) {
 										$.each(obj.prodSpecParams, function(index, obj) {
-											obj.setValue = obj.value;
+											if (CONST.YZFitemSpecId4 == obj.itemSpecId && "ON" != offerChange.queryPortalProperties("AGENT_" + OrderInfo.staff.soAreaId.substring(0,3))) {
+												obj.setValue = "";
+											} else {
+												obj.setValue = obj.value;
+											}
 										});
 									}
 								});
