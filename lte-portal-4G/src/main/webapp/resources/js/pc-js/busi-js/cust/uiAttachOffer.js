@@ -3336,26 +3336,36 @@ uiAttachOffer = (function() {
 		return yyyy+"-"+MM+"-"+dd; 
 	};*/
 	
-	//切换标签
-	var _changeLabel = function(prodId,prodSpecId,labelId){
+	//切换标签 增加入参flag，当点击子标签时，不对tap隐藏
+	var _changeLabel = function(prodId,prodSpecId,labelId,flag){
 		$.each(AttachOffer.labelList,function(){ //附属标签显示隐藏
 			if(this.prodId==prodId){
 				$.each(this.labels,function(){
 					if(labelId==""){
 						labelId = this.label;
 						$("#tab_"+prodId+"_"+this.label).addClass("setcon");
+						$("#parentLabel_" + prodId + "_" + this.label).show();
 					}else{
 						if(labelId == this.label){
 							$("#tab_"+prodId+"_"+this.label).addClass("setcon");
 							$("#ul_"+prodId+"_"+this.label).show();
+							$("#parentLabel_" + prodId + "_" + this.label).show();
 						}else{
 							$("#tab_"+prodId+"_"+this.label).removeClass("setcon");
 							$("#ul_"+prodId+"_"+this.label).hide();
+							if (1 != flag) {
+								$("#parentLabel_" + prodId + "_" + this.label).hide();
+							}
 						}
 					}
 				});
 			}
 		});
+		// 选择流量包时，默认显示第一个子标签的内容，加return是为了避免递归循环
+		if(labelId == 100) {
+ 			$("#parentLabel_" + prodId + "_" + labelId + " li:first").click();
+			return;
+ 		}
 		var $ul = $("#ul_"+prodId+"_"+labelId); //创建ul
 		if($ul[0]==undefined){ //没有加载过，重新加载  
 			var queryType = "3";

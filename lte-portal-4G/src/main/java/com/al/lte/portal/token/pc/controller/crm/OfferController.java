@@ -4,6 +4,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
@@ -12,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
@@ -214,9 +216,7 @@ public class OfferController extends BaseController {
 		Map<String, Object> paramMap =  null;	
 		try{	
 			paramMap =  JsonUtil.toObject(param, Map.class);
-			Map<String, Object> labelMap = offerBmo.queryLabel(paramMap,null,sessionStaff);	
-			model.addAttribute("labelMap",labelMap);
-			model.addAttribute("labelMapJson", JsonUtil.buildNormal().objectToJson(labelMap));
+			queryLabel(model, paramMap, sessionStaff);
 			Map<String, Object> openMap = offerBmo.queryAttachOffer(paramMap,null,sessionStaff);
 			model.addAttribute("openMap",openMap);
 			model.addAttribute("openMapJson", JsonUtil.buildNormal().objectToJson(openMap));
@@ -278,10 +278,7 @@ public class OfferController extends BaseController {
 			model.addAttribute("openMapJson", JsonUtil.buildNormal().objectToJson(openMap));
 			String a=JsonUtil.buildNormal().objectToJson(openMap);
 			//可订购附属标签查询
-			Map<String, Object> labelMap = offerBmo.queryLabel(paramMap,null,sessionStaff);	
-			model.addAttribute("labelMap",labelMap);
-			model.addAttribute("labelMapJson", JsonUtil.buildNormal().objectToJson(labelMap));
-			String b=JsonUtil.buildNormal().objectToJson(labelMap);
+			queryLabel(model, paramMap, sessionStaff);
 			model.addAttribute("prodId",paramMap.get("prodId"));
 			model.addAttribute("param",paramMap);
 		} catch (BusinessException e) {
@@ -323,9 +320,7 @@ public class OfferController extends BaseController {
 			model.addAttribute("openMapJson", JsonUtil.buildNormal().objectToJson(openMap));
 			
 			//可订购附属标签查询
-			Map<String, Object> labelMap = offerBmo.queryLabel(paramMap,null,sessionStaff);	
-			model.addAttribute("labelMap",labelMap);
-			model.addAttribute("labelMapJson", JsonUtil.buildNormal().objectToJson(labelMap));
+			queryLabel(model, paramMap, sessionStaff);
 			
 			model.addAttribute("prodId",paramMap.get("prodId"));	
 			model.addAttribute("param",paramMap);
@@ -521,9 +516,7 @@ public class OfferController extends BaseController {
 		Map<String, Object> paramMap =  null;	
 		try{	
 			paramMap =  JsonUtil.toObject(param, Map.class);
-			Map<String, Object> labelMap = offerBmo.queryLabel(paramMap,null,sessionStaff);	
-			model.addAttribute("labelMap",labelMap);
-			model.addAttribute("labelMapJson", JsonUtil.buildNormal().objectToJson(labelMap));
+			queryLabel(model, paramMap, sessionStaff);
 			Map<String, Object> openMap = offerBmo.queryAttachOffer(paramMap,null,sessionStaff);
 			model.addAttribute("openMap",openMap);
 			model.addAttribute("openMapJson", JsonUtil.buildNormal().objectToJson(openMap));
@@ -890,9 +883,7 @@ public class OfferController extends BaseController {
 		Map<String, Object> paramMap =  null;	
 		try{	
 			paramMap =  JsonUtil.toObject(param, Map.class);
-			Map<String, Object> labelMap = offerBmo.queryLabel(paramMap,null,sessionStaff);	
-			model.addAttribute("labelMap",labelMap);
-			model.addAttribute("labelMapJson", JsonUtil.buildNormal().objectToJson(labelMap));
+			queryLabel(model, paramMap, sessionStaff);
 			Map<String, Object> openMap = offerBmo.queryAttachOffer(paramMap,null,sessionStaff);
 			model.addAttribute("openMap",openMap);
 			model.addAttribute("openMapJson", JsonUtil.buildNormal().objectToJson(openMap));
@@ -906,6 +897,46 @@ public class OfferController extends BaseController {
 			return super.failedStr(model, ErrorCode.QUERY_ATTACH_OFFER, e, paramMap);
 		}
 	 	return "/pctoken/order/order-package-change";
+	}
+	
+	/**
+	 * 涉及到父子标签展示，将可订购附属标签查询封装为一个统一方法
+	 * @param model
+	 * @param paramMap
+	 * @param sessionStaff
+	 * @throws Exception
+	 */
+	private void queryLabel(Model model, Map<String, Object> paramMap,
+			SessionStaff sessionStaff) throws Exception {
+		//可订购附属标签查询
+		Map<String, Object> labelMap = offerBmo.queryLabel(paramMap,null,sessionStaff);	
+		// 通过json转换方式，深拷贝map，然后合并父子节点
+		Map<String, Object> newLabelMap = JsonUtil.buildNormal().jsonToObject(JsonUtil.buildNormal().objectToJson(labelMap), Map.class);
+		List<Map<String, Object>> labelList = (List<Map<String, Object>>) newLabelMap.get("result");
+		List<Map<String, Object>> subLabelList;
+		// 合并父子节点（目前只支持二级）
+		for (Map<String, Object> rootMap : labelList) {
+			subLabelList = new ArrayList<Map<String,Object>>();
+			if (StringUtils.isBlank((String) rootMap.get("parentLabel"))) {
+				for (Map<String, Object> subMap : labelList) {
+					if (rootMap.get("label").equals(subMap.get("parentLabel"))) {
+						subLabelList.add(subMap);
+					}
+				}
+				rootMap.put("subLabel", subLabelList);
+			}
+		}
+		// 删除子节点
+		for (Iterator<Map<String, Object>> iterator = labelList.iterator(); iterator.hasNext();) {
+			Map<String, Object> map = (Map<String, Object>) iterator.next();
+			if (StringUtils.isNotBlank((String) map.get("parentLabel"))) {
+				iterator.remove();	
+			}
+		}
+		model.addAttribute("labelMap",labelMap);
+		model.addAttribute("labelMapJson", JsonUtil.buildNormal().objectToJson(labelMap));
+		
+		model.addAttribute("newLabelMap",newLabelMap);
 	}
 	
 	/**
