@@ -946,6 +946,9 @@ order.broadband = (function(){
 					if(response.data.result.result.aliasName!=undefined){
 						voucherInfo.result.orderEvent[0].orderEventTitle.prodSpecName = response.data.result.result.aliasName;
 					}
+					if($("#prodName").val().length==0){
+						voucherInfo.result.orderEvent[0].orderEventTitle = {};
+					}
 					_signVoucher(voucherInfo);
 					
 				}else{
@@ -1279,18 +1282,11 @@ var _saveHtml2Pdf=function(){
 			$.alert("提示","请填写联系电话！");
 			return;
 		}
-//		if($("#printVoucherA").attr("disabled") == undefined || "disabled" != $("#printVoucherA").attr("disabled")){
-//			$.alert("提示","请先打印回执！");
-//			return;
-//		}
-//		if(!_submitParam()){
-//			return ;
-//		}
 		var busiUpType="2";
 		order.calcharge.busiUpType="2";
 		var params={
-				"olId":parseInt($("#TransactionID").val()),
-				"soNbr":parseInt($("#TransactionID").val()),
+				"olId":$("#TransactionID").val(),
+				"soNbr":$("#TransactionID").val(),
 				"busiUpType":busiUpType,
 				"chargeItems":ssfy*100+""//"1"
 		};

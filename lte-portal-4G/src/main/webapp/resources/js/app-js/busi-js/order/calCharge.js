@@ -607,24 +607,10 @@ order.calcharge = (function(){
 				//$("#toCharge").parent().removeClass("ui-state-disabled");
 				$("#toComplate").attr("disabled","disabled");
 				$("#toCharge").off("onclick").on("onclick",function(event){
-					_updateChargeInfoForCheck('1');
+					_updateChargeInfoForCheck();
 				});
 				$("#toComplate").off("onclick");
-				$("#toCharge").show();
-				$("#toCharge_2").hide();
 			}else{
-				//alert("dd");
-				//$("#toCharge").attr("disabled","disabled");
-				//$("#toComplate").removeAttr("disabled");
-				//\$("#toCharge").removeAttr("onclick");
-//				$("#toCharge").attr("onclick",_chargeSave('0',false));
-//				
-//				
-//				$("#toCharge").off("onclick").on("onclick",function(event){
-//					_chargeSave('0',false);
-//				});
-				$("#toCharge").hide();
-				$("#toCharge_2").show();
 			}
 		}else{
 			$("#toCharge").removeAttr("disabled");
@@ -634,7 +620,7 @@ order.calcharge = (function(){
 		}
 	};
 	
-	var _updateChargeInfoForCheck=function(flag){
+	var _updateChargeInfoForCheck=function(){
 		_disableButton();
 		if(submit_success){
 			$.alert("提示","订单已经建档成功,不能重复操作!");
@@ -654,7 +640,7 @@ order.calcharge = (function(){
 				_getPayTocken();
 				return;
 			}else{//获取支付方式
-				payType=response.data;
+				payType=response.data.split("_")[0];
 			}
 
 		}
@@ -662,38 +648,44 @@ order.calcharge = (function(){
 			_conBtns();
 			return ;
 		}
-		inOpetate=true;
-		var url=contextPath+"/app/order/updateChargeInfoForCheck";
-		var params={
-				"olId":_olId,
-				"soNbr":OrderInfo.order.soNbr,
-				"areaId" : OrderInfo.staff.areaId,
-				"chargeItems":_chargeItems,
-				"custId":OrderInfo.cust.custId
-		};
-		$.callServiceAsJson(url,params, {
-			"before":function(){
-				$.ecOverlay("<strong>正在处理中,请稍等会儿....</strong>");
-			},	
-			"done" : function(response){
-				$.unecOverlay();
-				if (response.code == 0) {
-					_chargeSave(flag,true);
-				}else if (response.code == -2) {
-					_conBtns();
-					inOpetate=false;
-					$.alertM(response.data);
-				}else{
-					_conBtns();
-					inOpetate=false;
-					if(response.data!=undefined){
-						$.alert("提示",response.data);
+		var val=$.trim($('#realMoney').html())*1;
+		if(val!=0){//费用不为0
+			inOpetate=true;
+			var url=contextPath+"/app/order/updateChargeInfoForCheck";
+			var params={
+					"olId":_olId,
+					"soNbr":OrderInfo.order.soNbr,
+					"areaId" : OrderInfo.staff.areaId,
+					"chargeItems":_chargeItems,
+					"custId":OrderInfo.cust.custId
+			};
+			$.callServiceAsJson(url,params, {
+				"before":function(){
+					$.ecOverlay("<strong>正在处理中,请稍等会儿....</strong>");
+				},	
+				"done" : function(response){
+					$.unecOverlay();
+					if (response.code == 0) {
+						_chargeSave(1);
+					}else if (response.code == -2) {
+						_conBtns();
+						inOpetate=false;
+						$.alertM(response.data);
 					}else{
-						$.alert("提示","代理商保证金校验失败!");
+						_conBtns();
+						inOpetate=false;
+						if(response.data!=undefined){
+							$.alert("提示",response.data);
+						}else{
+							$.alert("提示","代理商保证金校验失败!");
+						}
 					}
 				}
-			}
-		});
+			});
+		}else{//直接走计费接口
+			_chargeSave(0);
+		}
+		
 	};
 	
 	var _tochargeSubmit=function(orderdata){	
@@ -724,23 +716,8 @@ order.calcharge = (function(){
 		}
 		return provCheckResult;
 	};
-	var _chargeSave = function(flag,isparam){
+	var _chargeSave = function(flag){
 		order.phoneNumber.resetBoProdAn();//清楚预占号码缓存  IOS重新进入受理不会显示上次预占的号码
-//		if(!isparam){
-//			_disableButton();
-//			if(submit_success){
-//				$.alert("提示","订单已经建档成功,不能重复操作!");
-//				return;
-//			}
-//			if(inOpetate){
-//				return;
-//			}
-//			if(!_submitParam()){
-//				_conBtns();
-//				return ;
-//			}
-//			inOpetate=true;
-//		}
 		var realmoney = $("#realmoney").val();
 		if(realmoney == "0.00"){
 			if(!_submitParam()){
@@ -765,7 +742,7 @@ order.calcharge = (function(){
 				var url=contextPath+"/cust/passwordReset";
 				var response2 = $.callServiceAsJson(url, null, {});
 			}
-			if(flag=='1'){
+			if(flag==1){
 				if(OrderInfo.actionFlag==11){
 					msg="退费成功";
 				}else{
@@ -1222,14 +1199,14 @@ order.calcharge = (function(){
 	 * 获取支付平台支付页面
 	 */
 	var _getPayTocken = function(){	
-		var chargeItems=_buildChargeItems2();
+		var charge=_getCharge();//支付金额
 		var busiUpType="1";
 		order.calcharge.busiUpType="1";
 		var params={
 				"olId":OrderInfo.orderResult.olId,
 				"soNbr":OrderInfo.orderResult.olNbr,
 				"busiUpType":busiUpType,
-				"chargeItems":chargeItems
+				"chargeItems":charge
 		};
 		var url = contextPath+"/app/order/getPayUrl";
 		var response = $.callServiceAsJson(url, params);
@@ -1271,196 +1248,53 @@ order.calcharge = (function(){
 			};
 			var url = contextPath + "/app/order/getPayOrdStatus";
 			var response = $.callServiceAsJson(url, params);
+			$.unecOverlay();
 			if (response.code == 0) {//支付成功，调用收费接口
+				var val=$.trim($('#realMoney').html())*1;
+				var payMoney=response.data.split("_")[1];
+				if(val!=payMoney){
+					$.alert("提示","金额可能被篡改，为了您的安全，请重新下单");
+				}
 				payType=type;
 				_chargeItems=[];
 				_buildChargeItems();//根据支付平台返回支付方式重新生成费用项
-				inOpetate=true;
-				var url=contextPath+"/app/order/updateChargeInfoForCheck";
-				var params={
-						"olId":_olId,
-						"soNbr":OrderInfo.order.soNbr,
-						"areaId" : OrderInfo.staff.areaId,
-						"chargeItems":_chargeItems,
-						"custId":OrderInfo.cust.custId
-				};
-				$.callServiceAsJson(url,params, {
-					"before":function(){
-					},	
-					"done" : function(response){
-						$.unecOverlay();
-						if (response.code == 0) {
-                            var flag=1;
-							var isparam=true;
-							//_chargeSave(flag,true);
-							order.phoneNumber.resetBoProdAn();//清楚预占号码缓存  IOS重新进入受理不会显示上次预占的号码
-//							if(!isparam){
-//								_disableButton();
-//								if(submit_success){
-//									$.alert("提示","订单已经建档成功,不能重复操作!");
-//									return;
-//								}
-//								if(inOpetate){
-//									return;
-//								}
-//								if(!_submitParam()){
-//									_conBtns();
-//									return ;
-//								}
-//								inOpetate=true;
-//							}
-							var realmoney = $("#realmoney").val();
-							if(realmoney == "0.00"){
-								if(!_submitParam()){
-									return ;
-								}
-						    }
-							var params={
-									"olId":OrderInfo.orderResult.olId,
-									"soNbr":OrderInfo.order.soNbr,
-									"areaId" : OrderInfo.staff.areaId,
-									"chargeItems":_chargeItems
-							};
-							var url=contextPath+"/app/order/chargeSubmit?token="+OrderInfo.order.token;
-							var response=$.callServiceAsJson(url, params, {});
-							var msg="";
+				if(val!=0){//费用不为0
+					inOpetate=true;
+					var url=contextPath+"/app/order/updateChargeInfoForCheck";
+					var params={
+							"olId":_olId,
+							"soNbr":OrderInfo.order.soNbr,
+							"areaId" : OrderInfo.staff.areaId,
+							"chargeItems":_chargeItems,
+							"custId":OrderInfo.cust.custId
+					};
+					$.callServiceAsJson(url,params, {
+						"before":function(){
+							$.ecOverlay("<strong>正在处理中,请稍等会儿....</strong>");
+						},	
+						"done" : function(response){
+							$.unecOverlay();
 							if (response.code == 0) {
-								submit_success=true;
-								//受理成功，不再取消订单
-//								SoOrder.delOrderFin();
-								
-								if(OrderInfo.actionFlag==31){//改产品密码，则将session中密码重置，用户需要重新输入密码
-									var url=contextPath+"/cust/passwordReset";
-									var response2 = $.callServiceAsJson(url, null, {});
-								}
-								if(flag=='1'){
-									if(OrderInfo.actionFlag==11){
-										msg="退费成功";
-									}else{
-										msg="收费成功";
-									}
-								}else{
-									msg="受理成功";
-								}
-								$("#toCharge").attr("disabled","disabled");
-								$("#toComplate").removeAttr("disabled");
-								$("#orderCancel").removeAttr("disabled");
-								$("#printVoucherA").attr("disabled","disabled");
-								//移除费用新增、费用修改按钮
-//								$(".ui-icon-plus").remove();
-//								$(".ui-icon-gear").remove();
-//								$(".ui-icon-delete").remove();
-								$("#calChangeTab tr").each(function() {
-									var trid = $(this).attr("id");
-									if(trid!=undefined&&trid!=''){
-										trid=trid.substr(5,trid.length);
-										$("#backAmount_"+trid).attr("disabled","disabled");
-										$("#upate").attr("disabled","disabled");
-										
-//										if(OrderInfo.actionFlag==11||OrderInfo.actionFlag==19||OrderInfo.actionFlag==20||OrderInfo.actionFlag==15){//撤单，返销，补退费
-//											$("#backAmount_"+trid).attr("disabled","disabled");
-//											$("#backAmount_"+trid).parent().addClass("ui-state-disabled");
-//										}else{
-//											$("#realAmount_"+trid).attr("disabled","disabled");
-//											$("#realAmount_"+trid).parent().addClass("ui-state-disabled");
-//										}
-										
-									}
-								});
-								if(OrderInfo.actionFlag==11){
-									$("#orderCancel").html("<span>返回首页</span>");
-									$("#orderCancel").off("onclick").on("onclick",function(event){
-										order.undo.toUndoMain(1);
-									});
-								}else{
-									$("#orderCancel").html("继续受理");
-									$("#orderCancel").off("onclick").on("onclick",function(event){
-										_backToEntr();
-									});
-								}
-//								SoOrder.updateResState(); //修改UIM，号码状态
-								//金额不为零，提示收费成功
-								if(flag=='1'){
-									var realmoney=($('#realMoney').html())*1;
-									//realmoney=0;
-									//费用大于0，才可以打印发票
-//									if (realmoney > 0) {
-//										//收费成功，先调初始化发票信息
-//										var param={
-//											"soNbr":OrderInfo.order.soNbr,
-//											"billType" : 0,
-//											"olId" : _olId,
-//											"printFlag" : -1,
-//											"areaId" : OrderInfo.staff.areaId,
-//											"acctItemIds":[]
-//										};
-//										var initResult = common.print.initPrintInfo(param);
-//										if(!initResult) {
-//											return;
-//										}
-//										//然后提示是否打印发票
-//										$.confirm("信息提示","收费成功，是否打印发票?",{
-//											names:["是","否"],
-//											yesdo:function(){
-//												var param={
-//													"soNbr":OrderInfo.order.soNbr,
-//													"billType" : 0,
-//													"olId" : _olId,
-//													"printFlag" : 0,
-//													"areaId" : OrderInfo.staff.areaId,
-//													"acctItemIds":[]
-//												};
-//												common.print.prepareInvoiceInfo(param);
-//												return;
-//											},
-//											no:function(){
-//											}
-//										});
-//									} else {
-//										//提示收费成功
-										_showFinDialog(flag, msg);
-//									}
-								} else {
-									//提示受理完成
-									_showFinDialog(flag, msg);
-								}
-								return;
-								
+								_chargeSave(1);
 							}else if (response.code == -2) {
 								_conBtns();
-								SoOrder.getToken();
 								inOpetate=false;
 								$.alertM(response.data);
-								//SoOrder.showAlertDialog(response.data);
 							}else{
 								_conBtns();
-								SoOrder.getToken();
 								inOpetate=false;
 								if(response.data!=undefined){
-									alert(response.data);
-									//$.alert("提示",response.data);
+									$.alert("提示",response.data);
 								}else{
-									$.alert("提示","费用信息提交失败!");
+									$.alert("提示","代理商保证金校验失败!");
 								}
 							}
-							$("#toCharge").attr("disabled","disabled");
-						}else if (response.code == -2) {
-							_showFinDialog(flag, "收费成功");
-//							_conBtns();
-//							inOpetate=false;
-//							$.alertM(response.data);
-						}else{
-							_showFinDialog(flag, "收费成功");
-//							_conBtns();
-//							inOpetate=false;
-//							if(response.data!=undefined){
-//								$.alert("提示",response.data);
-//							}else{
-//								$.alert("提示","代理商保证金校验失败!");
-//							}
 						}
-					}
-				});
+					});
+				}else{
+					_chargeSave(0);
+				}			
+				
 			} else if (response.status == 1002) {
 				$.alert("提示",response.data); // 支付失败
 			} else {
@@ -1469,8 +1303,8 @@ order.calcharge = (function(){
 		}
 	};
 	
-	//费用项封装
-	var _buildChargeItems2 = function(){
+	//获取费用
+	var _getCharge = function(){
 		var realFee=0;
 		var chargeItems2=[];
 		$("#calChangeTab tr").each(function() {
@@ -1580,7 +1414,7 @@ order.calcharge = (function(){
 		queryPayOrdStatus           :      _queryPayOrdStatus,
 		queryPayOrdStatus1          :      _queryPayOrdStatus1,
 		myFlag:_myFlag,
-		buildChargeItems2:_buildChargeItems2,
+		getCharge:_getCharge,
 		busiUpType:_busiUpType,
 		returnFlag:_returnFlag
 	};

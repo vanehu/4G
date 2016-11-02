@@ -1141,7 +1141,7 @@ order.main = (function(){
 		var itemId = CONST.PROD_ATTR.PROD_USER + '_' + prodId;
 		
 		if($('#'+itemId).length > 0){
-			 var propertiesKey = "FUKA_SHIYR_"+OrderInfo.staff.soAreaId.substring(0,3);
+			 var propertiesKey = "FUKA_SHIYR_"+(OrderInfo.staff.soAreaId+"").substring(0,3);
 		     var isFlag = offerChange.queryPortalProperties(propertiesKey);
 		     var isOptional = true;
 			if(OrderInfo.cust && OrderInfo.cust.custId && OrderInfo.cust.custId != '-1'){ //老客户

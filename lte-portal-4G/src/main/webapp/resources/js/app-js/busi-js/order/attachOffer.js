@@ -2689,10 +2689,10 @@ AttachOffer = (function() {
 		$("#attach_div_"+prodId).hide();
 		$("#btn_hide_"+prodId).hide();
 		$("#attachSearch_div_"+prodId+" div").each(function(){
-			$(this).hide();
+			$(this).remove();
 		});
 		$("#attach_div_"+prodId).attr("value",labelId);
-		var $ul = $("#ul_"+prodId+"_"+labelId); //创建ul
+//		var $ul = $("#ul_"+prodId+"_"+labelId); //创建ul
 //		if($ul[0]==undefined){ //没有加载过，重新加载  
 			var queryType = "3";
 			if(prodId>0){
@@ -4325,7 +4325,7 @@ AttachOffer = (function() {
 //		var $ul = $('<div id="ul_'+prodId+'_'+labelId+'"></div>');
 		var $ul = $('<div id="tab_myfavorites_'+prodId+'"></div>');
 		if(data!=undefined && data.resultCode == "0"){
-		
+			var html = '';
 			var i = 0;
 			if(ec.util.isArray(data.result.offerSpecList)){
 				var isFavorite = true;
@@ -4333,7 +4333,7 @@ AttachOffer = (function() {
 				var offerList = CacheData.getOfferList(prodId); //过滤已订购
 				var offerSpecList = CacheData.getOfferSpecList(prodId);//过滤已选择
 				$.each(data.result.offerSpecList,function(){
-					var html = '';
+					
 					CacheData.setMyfavoriteSpec(prodId,this);//把我的收藏放在缓存里
 					var offerSpecId = this.offerSpecId;
 					var flag = true;

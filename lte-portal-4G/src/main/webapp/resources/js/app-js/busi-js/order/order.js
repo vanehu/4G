@@ -113,6 +113,10 @@ order.service = (function(){
 			}
 		}
 		var url = contextPath+"/app/order/offerSpecList";
+		if(OrderInfo.actionFlag==111)  {
+			params.downRate = $("#MaxRate").val();
+			url = contextPath+"/app/order/broadband/offerSpecList";
+		}
 		$("#pakeage").show();
 		$("#pakeage").attr("class","tab-pane fade in active");
 		$("#phone").attr("class","tab-pane fade medialist");
@@ -591,7 +595,15 @@ order.service = (function(){
 	//扫描后填充
 	var _scaningCallBack=function(terInfo,prodId){
 		if("-998"==prodId){//扫码绑定
-			var code=terInfo.split("=")[1];//二维码下载地址和code二合一，要获取唯一编号要通过哦截取
+			var areaId=OrderInfo.staff.soAreaId;
+			var areaCode=(areaId+"").substring(0,3);
+			var code=terInfo.split("=")[1].split("&")[0];//二维码下载地址和code二合一，要获取唯一编号要通过哦截取,同时areaid也跟在id后面
+			var codeAreaId=terInfo.split("=")[2];
+			var codeAreaCode=(codeAreaId+"").substring(0,3);
+			if(areaCode!=codeAreaCode){//二维码所属地区和app当前登录工号地区不一致，不予绑定
+				$.alert("提示","扫描的二维码地区不正确,请重新选择");
+				return;
+			}
 			$("#qrCode").val(code);
 		}else{
 			$("#uim_txt_"+prodId).val(terInfo);

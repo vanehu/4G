@@ -2767,12 +2767,16 @@ public class OrderController extends BaseController {
 			if (rMap != null
 					&& "POR-0000".equals(rMap.get("respCode").toString())) {
 				String payCode="";
+				String payAmount="";
 				//查询成功，接口同时返回支付方式编码，存入session，用于下计费时校验
 				if(rMap.get("payCode")!=null){
 				   payCode=rMap.get("payCode").toString();
-				   jsonResponse = super.successed(payCode,ResultConstant.SUCCESS.getCode());
 				   session.setAttribute(olId+"_payCode", payCode);
 				}
+				if(rMap.get("payAmount")!=null){
+					 payAmount=rMap.get("payAmount").toString();//用于金额校验
+				}
+				 jsonResponse = super.successed(payCode+"_"+payAmount,ResultConstant.SUCCESS.getCode());
 			} else {
 				jsonResponse = super.failed(rMap.get("respMsg").toString(),
 						ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
@@ -3112,11 +3116,15 @@ public class OrderController extends BaseController {
         				if(exitParam.containsKey("objIdList")){
         					List<Map<String,Object>> objIdList = (List<Map<String,Object>>) exitParam.get("objIdList");
         					if(objIdList.size()>0){
-        						Map<String,Object> obj = objIdList.get(0);
-        						prodOfferInfosList.get(i).put("compTypeCd", obj.get("compTypeCd"));
-        						prodOfferInfosList.get(i).put("objId", obj.get("objId"));
-        						prodOfferInfosList.get(i).put("roleCd", obj.get("roleCd"));
-        						prodOfferInfosList.get(i).put("prodNbr", obj.get("prodNbr"));
+        						for(int q=0;q<objIdList.size();q++){
+        							Map<String,Object> obj = objIdList.get(q);
+        							if("10200001".equals(obj.get("compTypeCd"))){
+        								prodOfferInfosList.get(i).put("compTypeCd", obj.get("compTypeCd"));
+                						prodOfferInfosList.get(i).put("objId", obj.get("objId"));
+                						prodOfferInfosList.get(i).put("roleCd", obj.get("roleCd"));
+                						prodOfferInfosList.get(i).put("prodNbr", obj.get("prodNbr"));
+        							}
+        						}
         					}
         				}
         				
