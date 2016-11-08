@@ -115,17 +115,17 @@ public class MainController extends BaseController {
     		dataBusMap.put("areaId", sessionStaff.getAreaId());
             dataBusMap.put("channelId", sessionStaff.getChannelId());
     	}
-    	Map<String, Object> mapHotProd = new HashMap<String, Object>();
-       
-        try {
-        	mapHotProd = noticeBmo.getHotProd(dataBusMap, null, sessionStaff);
-        } catch (BusinessException e) {
-            this.log.error("加载热卖失败", e);
-        } catch (InterfaceException ie) {
-			
-		} catch (Exception e) {
-			
-		}
+//    	Map<String, Object> mapHotProd = new HashMap<String, Object>();
+//
+//        try {
+//        	mapHotProd = noticeBmo.getHotProd(dataBusMap, null, sessionStaff);
+//        } catch (BusinessException e) {
+//            this.log.error("加载热卖失败", e);
+//        } catch (InterfaceException ie) {
+//
+//		} catch (Exception e) {
+//
+//		}
         Map<String, Object> param = new HashMap<String, Object>();
         Map<String, Object> rMap = new HashMap<String, Object>();
         param.put("areaId", sessionStaff.getCurrentAreaId());
@@ -154,7 +154,7 @@ public class MainController extends BaseController {
         ServletUtils.setSessionAttribute(request, SysConstant.BIND_STATUS, "N");
         String CARD_NEW_DLL = propertiesUtils.getMessage(SysConstant.CARD_NEW_DLL);
 		model.addAttribute("canOrder", EhcacheUtil.pathIsInSession(session,"order/prepare"));
-        model.addAttribute("hotMap", mapHotProd);
+//        model.addAttribute("hotMap", mapHotProd);
         model.addAttribute("DiffPlaceFlag", "local");
         model.addAttribute("writeCardNewDLL", CARD_NEW_DLL);
 		if(null == sessionStaff.getHintCode() || "".equals(sessionStaff.getHintCode())){
