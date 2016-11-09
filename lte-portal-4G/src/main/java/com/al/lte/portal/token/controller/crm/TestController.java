@@ -22,7 +22,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -56,9 +58,9 @@ public class TestController extends BaseController {
 
  
 	@SuppressWarnings("unchecked")
-	@RequestMapping("/getModelUrl")
+	@RequestMapping(value = "/getModelUrl",method = RequestMethod.POST)
 	@ResponseBody
-	public JsonResponse getModelUrl(HttpServletRequest request,HttpServletResponse response,@RequestParam Map<String, Object> paramMap, Model model) {		
+	public JsonResponse getModelUrl(HttpServletRequest request,HttpServletResponse response,@RequestBody Map<String, Object> paramMap, Model model) {		
 		JsonResponse jr = new JsonResponse();
 		try{		
 			String staffCode = String.valueOf(paramMap.get("staffCodeFF"));		
@@ -175,19 +177,23 @@ public class TestController extends BaseController {
 				map.put("salesCode", salesCode);
 				map.put("typeCd",typeCd);
 				map.put("verifyLevel",verifyLevel);
+				
+				map.put("attrInfos", paramMap.get("attrInfos"));
+				
 				log.error("模拟单点页面参数:"+JacksonUtil.objectToJson(map));
 				
 				jmParams = AESUtils.encryptToString(JacksonUtil.objectToJson(map), privateKey);						
 				Map<String,Object> reMap = new HashMap<String,Object>();
 				reMap.put("params", jmParams);
 				reMap.put("accessToken", accessToken);
+				reMap.put("code", "0");
 				if ("ON".equals(unifyLoginFlag)) {
 					reMap.put("toUrl", unifyLoginUri);
 				} else {
 					reMap.put("toUrl", "1000");
 				}	
 				log.error("模拟单点页面加密参数:"+JacksonUtil.objectToJson(reMap));
-				jr = successed(reMap, 0);
+				jr = successed(JacksonUtil.objectToJson(reMap), 0);
 			}else{						
 				jr = failed(String.valueOf(resultMap.get("resultMsg")), 1);		
 			}			

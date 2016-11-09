@@ -2822,7 +2822,16 @@ public class OrderController extends BaseController {
 						orderListInfo.put("custOrderAttrs", filterCustOrderAttrs);
 					}
 				}
-				
+				//获取客户端编码redmine979958,添加客户端编码属性
+				HttpSession session = request.getSession();
+				if((String) session.getAttribute(SysConstant.SESSION_CLIENTCODE+"_PC") !=null){
+					custOrderAttrs = (List<Map>)orderListInfo.get("custOrderAttrs");
+					Map attrMap = new HashMap();
+					attrMap.put("itemSpecId", SysConstant.CLIENTCODE);
+					attrMap.put("value", (String) session.getAttribute(SysConstant.SESSION_CLIENTCODE+"_PC"));
+					custOrderAttrs.add(attrMap);
+					orderListInfo.put("custOrderAttrs", custOrderAttrs);
+				}
 				Map<String, Object> resMap = orderBmo.orderSubmit(param,null,sessionStaff);
 				if(ResultCode.R_SUCC.equals(resMap.get("resultCode"))){
 					Map result = (Map)resMap.get("result");

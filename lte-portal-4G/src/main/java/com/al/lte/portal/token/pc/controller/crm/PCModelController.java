@@ -2,6 +2,7 @@ package com.al.lte.portal.token.pc.controller.crm;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -187,6 +188,24 @@ public class PCModelController extends BaseController {
 				request.getSession().setAttribute("PC.BACKURI"+provIsale,redirectUri);
 			}		
 			
+			//获取客户端编码redmine979958
+			HttpSession session = request.getSession();
+			session.setAttribute(SysConstant.SESSION_CLIENTCODE+"_PC", null);//清空session中该节点
+			List<Map<String, Object>> attrList = new ArrayList<Map<String, Object>>();
+			if(paramsMap.get("attrInfos")!=null){
+				 Object obj = paramsMap.get("attrInfos");
+                 if (obj instanceof List) {
+                	 attrList = (List<Map<String, Object>>) obj;
+                 } else {
+                	 attrList = new ArrayList<Map<String, Object>>();
+                	 attrList.add((Map<String, Object>) obj);
+                 }
+                 for(Map<String, Object> mapAttr : attrList){
+                	 if(SysConstant.CLIENTCODE.equals(String.valueOf(mapAttr.get("attrSpecId"))) && !StringUtil.isEmptyStr(String.valueOf(mapAttr.get("attrValue")))){
+                		 session.setAttribute(SysConstant.SESSION_CLIENTCODE+"_PC", String.valueOf(mapAttr.get("attrValue")));
+                	 }
+                 }
+			}
 			String modelUrl = MySimulateData.getInstance().getParam("pc."+actionFlag+".url",(String) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_DATASOURCE_KEY),"pc."+actionFlag+".url");//业务跳转地址
 			log.error("业务跳转地址："+modelUrl);
 			if(StringUtil.isEmptyStr(modelUrl)){	

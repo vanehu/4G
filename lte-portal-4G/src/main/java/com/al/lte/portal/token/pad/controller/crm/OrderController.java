@@ -2309,13 +2309,25 @@ public class OrderController extends BaseController {
 			try {
 				SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
 	                    SysConstant.SESSION_KEY_LOGIN_STAFF);
+				//获取客户端编码redmine979958,添加客户端编码属性
+				Map orderList = (Map)param.get("orderList");
+				Map orderListInfo = (Map)orderList.get("orderListInfo");
+				//过滤订单属性
+				List<Map> custOrderAttrs = (List<Map>)orderListInfo.get("custOrderAttrs");
+				HttpSession session = request.getSession();
+				if((String) session.getAttribute(SysConstant.SESSION_CLIENTCODE+"_PAD") !=null){
+					custOrderAttrs = (List<Map>)orderListInfo.get("custOrderAttrs");
+					Map attrMap = new HashMap();
+					attrMap.put("itemSpecId", SysConstant.CLIENTCODE);
+					attrMap.put("value", (String) session.getAttribute(SysConstant.SESSION_CLIENTCODE+"_PAD"));
+					custOrderAttrs.add(attrMap);
+					orderListInfo.put("custOrderAttrs", custOrderAttrs);
+				}
 				Map<String, Object> resMap = orderBmo.orderSubmit(param,null,sessionStaff);
 				if(ResultCode.R_SUCC.equals(resMap.get("resultCode"))){
 					Map result = (Map)resMap.get("result");
 					if(result.get("ruleInfos") == null){
 							String olId = (String)result.get("olId");
-							Map orderList = (Map)param.get("orderList");
-							Map orderListInfo = (Map)orderList.get("orderListInfo");
 							String soNbr = (String)orderListInfo.get("soNbr");
 							resMap.put("rolId", olId);
 							resMap.put("rsoNbr", soNbr);

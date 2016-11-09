@@ -49,11 +49,26 @@
 				"salesCode":$("#salesCode").val(),
 				"typeCd":$("#typeCd").val(),
 				"verifyLevel":$("verifyLevel").val(),
-				"unifyLoginUri":$("#unifyLoginUri").val()
-				
+				"unifyLoginUri":$("#unifyLoginUri").val(),
+				"attrInfos":[]
 			};
+			var attrSpecStr = $("#attrSpecId").val();
+			var attrValueStr = $("#attrValue").val();
+			var attrSpecArr = attrSpecStr.split(";");
+			var attrValueArr = attrValueStr.split(";");
+			for(var i =0;i<attrSpecArr.length;i++){
+				for(var j=0;j<attrValueArr.length;j++){
+					if(i==j){
+						var  attrInfo = {
+								"attrSpecId":attrSpecArr[i],
+								 "attrValue":attrValueArr[j]		
+						     }
+						reParams.attrInfos.push(attrInfo);
+					     }
+				}
+			}
 			var version = $("#version").val();			
-			$.callServiceAsHtmlGet(contextPath+"/test/getModelUrl",reParams,{
+			$.callServiceAsJson(contextPath+"/test/getModelUrl",reParams,{
 				"before":function(){
 					$.ecOverlay("<strong>正在处理中,请稍等会儿....</strong>");
 				},
@@ -64,9 +79,9 @@
 					if(response.code==0){								
 						var data = $.parseJSON(response.data) ;
 						if(data.code==0){				
-							var params = data.data.params;
-							var accessToken = data.data.accessToken;
-							var toUrl=data.data.toUrl;
+							var params = data.params;
+							var accessToken = data.accessToken;
+							var toUrl=data.toUrl;
 							var url="";
 							if(toUrl=="1000"){
 								url = contextPath + "/mode/"+version+"?params="+params+"&accessToken="+accessToken;
@@ -226,6 +241,8 @@
 			发展人工号:<input id="salesCode" class="inputWidth250px inputTest" value=""/><br/> 
 			鉴权方式:<input id="typeCd" class="inputWidth250px inputTest" value="4"/><br/>
 			鉴权级别:<input id="verifyLevel" class="inputWidth250px inputTest" value="2"/><br/>
+			属性编码:<input id="attrSpecId" class="inputWidth250px inputTest" value="40010033"/>(订单编码和属性值一一对应用逗号";"分割，如：40010033;40010034)<br/>
+			属性值:<input id="attrValue" class="inputWidth250px inputTest" value="SH01"/>(属性值对应关系如：SH01;SH02)<br/>
 			
 		</div>
 		
