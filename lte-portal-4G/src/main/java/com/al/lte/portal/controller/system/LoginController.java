@@ -2398,13 +2398,14 @@ public class LoginController extends BaseController {
 	    String qrData = "";
 	    try {
 	    	if("login".equals(flag)){
+				String areaId = param.get("areaId").toString();
 		    	// 二维码唯一标识 UUID+timestamp
 		    	String download_addr = com.al.ecs.common.util.MDA.DOWNLOAD_ADDR+"?id=";
 		    	StringBuffer sb_uuid =  new StringBuffer();
 				sb_uuid.append(UUID.randomUUID().toString().replace("-", ""));
 				sb_uuid.append(System.currentTimeMillis());
 				String qr_uuid = sb_uuid.toString();
-				qrData = download_addr+qr_uuid;
+				qrData = download_addr+qr_uuid+"&areaId="+areaId;
 				request.getSession().setAttribute(SysConstant.SESSION_QRCODE_UUID,qr_uuid);
 	    	}else if("bind".equals(flag)){
 	    		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),

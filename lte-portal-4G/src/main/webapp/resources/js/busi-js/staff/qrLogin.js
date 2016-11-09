@@ -164,7 +164,7 @@ staff.qrlogin = (function($) {
 	 * 获取二维码
 	 */
 	var _getQRCode = function(){
-		$.callServiceAsJson(contextPath+"/staff/getRQCode",{flag:"login"}, {
+		$.callServiceAsJson(contextPath+"/staff/getRQCode",{flag:"login",areaId:qr_areaId}, {
 			"done" : function(response){
 				if (response.code == 0) {
 					//$("#qrcode").css("display","block");
