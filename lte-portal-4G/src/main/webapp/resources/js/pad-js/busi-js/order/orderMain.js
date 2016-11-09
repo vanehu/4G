@@ -1825,7 +1825,7 @@ order.main = (function(){
 //				uimDivShow=true;
 			
 			//老用户加入副卡需要预校验,主卡是4G，加入的老用户为3G
-			if(order.prodModify.choosedProdInfo.is3G== "N" && prodInfo.mainProdOfferInstInfos[0].is3G =="Y"){
+			if((order.prodModify.choosedProdInfo.is3G== "N" && prodInfo.mainProdOfferInstInfos[0].is3G =="Y") || "ON" == offerChange.queryPortalProperties("YJY-" + OrderInfo.staff.soAreaId.substring(0,3) + "0000")){
 				if(!order.memberChange.checkOrder(prodInfo,oldoffer)){ //省内校验单
 					return;
 				}
