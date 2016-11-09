@@ -20,6 +20,7 @@ import com.ailk.ecsp.util.DateUtil;
 import com.ailk.ecsp.util.IConstant;
 import com.ailk.ecsp.util.SoapUtil;
 import com.al.ec.serviceplatform.client.DataMap;
+import com.al.ecs.common.util.JsonUtil;
 import com.al.ecs.exception.ResultConstant;
 import com.linkage.json.JacksonUtil;
 import com.linkage.portal.service.lte.DataMapUtil;
@@ -38,6 +39,9 @@ public class SendMsgInfo extends Service {
     @Override
 	public DataMap exec(DataMap dataMap, String serviceSerial) throws Exception {
 		try{
+			if(dataMap !=null && dataMap.getInParam() !=null){
+				System.out.println(JsonUtil.toString(dataMap.getInParam()));
+			}
 			String[] params = { "phoneNumber", "message", "key","areaId"};
 			if (StringUtils.isNotBlank(dataMap.getAreaId())){
 				dataMap.addInParam("areaId", dataMap.getAreaId());	
