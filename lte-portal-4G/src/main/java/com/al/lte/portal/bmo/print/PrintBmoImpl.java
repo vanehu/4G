@@ -4512,8 +4512,9 @@ public class PrintBmoImpl implements PrintBmo {
 			Map<String, Object> feeInfoMap = feeInfos.get(i);
 			BigDecimal feeAmount = new BigDecimal(0);
 			int paymentAmount = MapUtils.getIntValue(feeInfoMap, "paymentAmount", 0);
+			int realA = MapUtils.getIntValue(feeInfoMap, "realAmount", 0);
 			//pass when paymentAmount == 0
-			if (paymentAmount == 0) {
+			if (paymentAmount == 0 && realA == 0) {
 				continue;
 			}
 			if (fromFlag == 1) {
