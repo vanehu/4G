@@ -1105,8 +1105,12 @@ order.phoneNumber = (function(){
 		var flagQueryRes = $.callServiceAsJson(contextPath + "/common/queryPortalProperties", {"propertiesKey": "NUMBER_CHECK_" + (OrderInfo.staff.soAreaId+"").substring(0,3)});	
         var numberCheckFlag = flagQueryRes.code == 0 ? flagQueryRes.data : "";
 		if ("ON" == numberCheckFlag) {
+			var url = contextPath + "/app/prodModify/preCheckBeforeOrde"; // 翼销售app
+			if (OrderInfo.getOrderData().orderList.orderListInfo.olTypeCd == CONST.OL_TYPE_CD.UI_LTE) {
+				url = contextPath + "/token/secondBusi/preCheckBeforeOrde"; // 能力开放app
+			}
 			var accNbr = $(obj).attr("numberVal").split("_")[0];
-			var response = $.callServiceAsJson(contextPath + "/app/prodModify/preCheckBeforeOrde", {"serviceType": 38, "accNbr": accNbr});
+			var response = $.callServiceAsJson(url, {"serviceType": 38, "accNbr": accNbr});
 			if(response.code == 1){
 				$.alert("错误", response.data);
 				return;
