@@ -425,6 +425,7 @@ order.prepare = (function(){
 		if(hisCardNo!=""){
 			param = {"oldInstCode":hisCardNo,"phoneNum":phoneNumber,"newInstCode":cardNo};
 		}
+		param.olTypeCd = CONST.OL_TYPE_CD.FOUR_G;//增加门户标识
 		var url = contextPath+"/mktRes/uim/checkUim";
 		$.callServiceAsJson(url,param,{
 			"before":function(){

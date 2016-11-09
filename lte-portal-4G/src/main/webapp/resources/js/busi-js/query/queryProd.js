@@ -172,6 +172,7 @@ query.prod = (function() {
 	
 	//校验UIM卡
 	var _checkUim=function(param){
+		param.olTypeCd = CONST.OL_TYPE_CD.FOUR_G;//增加门户标识
 		var url = contextPath+"/mktRes/uim/checkUim";
 		$.ecOverlay("<strong>UIM卡校验中,请稍等...</strong>");
 		var response = $.callServiceAsJson(url,param);
