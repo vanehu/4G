@@ -1032,6 +1032,7 @@ order.calcharge = (function(){
 		html+='</table>';
 		html+='</div>';
 		easyDialog.open({
+			lock : 'false',
 			container : 'successTip_dialog'
 		});
 		$("#successTipContent").html('');
