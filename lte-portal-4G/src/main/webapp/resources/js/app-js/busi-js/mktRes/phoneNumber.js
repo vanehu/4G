@@ -1106,7 +1106,7 @@ order.phoneNumber = (function(){
         var numberCheckFlag = flagQueryRes.code == 0 ? flagQueryRes.data : "";
 		if ("ON" == numberCheckFlag) {
 			var url = contextPath + "/app/prodModify/preCheckBeforeOrde"; // 翼销售app
-			if (OrderInfo.getOrderData().orderList.orderListInfo.olTypeCd == CONST.OL_TYPE_CD.UI_LTE) {
+			if (OrderInfo.orderData.orderList.orderListInfo.olTypeCd == CONST.OL_TYPE_CD.UI_LTE) {
 				url = contextPath + "/token/secondBusi/preCheckBeforeOrde"; // 能力开放app
 			}
 			var accNbr = $(obj).attr("numberVal").split("_")[0];
