@@ -861,6 +861,8 @@ order.calcharge = (function(){
 		var response=$.callServiceAsJson(url, params, {});
 		var msg="";
 		if (response.code == 0) {
+			//取消已定购业务点击事件，防止收费建档后再次办理业务，实例缓存不正确
+			$("#orderbutton").removeAttr("onclick");
 			submit_success=true;
 			//受理成功，不再取消订单
 			SoOrder.delOrderFin();
