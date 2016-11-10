@@ -705,6 +705,7 @@ order.calcharge = (function(){
 		$("#toComplate").off("click");
 		$("#toCharge").off("click");
 		$("#orderSave").off("click");
+		$("#orderSave").removeAttr("onclick");
 		
 		inOpetate=true;
 		var url=contextPath+"/order/updateChargeInfoForCheck";
