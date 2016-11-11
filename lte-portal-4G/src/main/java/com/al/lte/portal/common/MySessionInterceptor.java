@@ -372,6 +372,7 @@ public class MySessionInterceptor implements ISessionInterceptor {
 		sessionStaff.setCurrentAreaAllName(MapUtils.getString(chanel_map,"areaAllName", ""));
 		sessionStaff.setOperatorsId(MapUtils.getString(chanel_map, "operatorsId", ""));
 		sessionStaff.setCurrentChannelType(MapUtils.getString(chanel_map, "type", ""));
+		sessionStaff.setCurrentChannelCode(MapUtils.getString(chanel_map, "chnNbr", ""));
 		//身份证类型开发
 		PropertiesUtils propertiesUtils = (PropertiesUtils) SpringContextUtil.getBean("propertiesUtils");
 		sessionStaff.setIdType(propertiesUtils.getMessage(SysConstant.IDTYPE+"-"+MapUtils.getString(chanel_map, "areaId","").substring(0,3)+"0000"));
