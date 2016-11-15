@@ -162,6 +162,8 @@ public class MainController extends BaseController {
 		}else {
 			model.addAttribute("hintCode", sessionStaff.getHintCode());
 		}
+		String currentAreaId = sessionStaff.getCurrentAreaId();
+		model.addAttribute("XUA", propertiesUtils.getMessage("XUA_" + ((currentAreaId != null && currentAreaId.length() == 7) ? currentAreaId.substring(0, 3) : "")));
         return "/main/main";
     }
     

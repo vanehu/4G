@@ -497,5 +497,9 @@ public class MDA {
 	
 	/**公告附件下载FTP服务器配置*/
 	public static final String NOTICE_FTP_SERVICE_CONFIGS = new String("");
+	/**
+	 * 集团CRM-4G IE兼容性开关
+	 */
+	public static final Map<String,String> IE_XUA = new HashMap<String,String>();
 
 }

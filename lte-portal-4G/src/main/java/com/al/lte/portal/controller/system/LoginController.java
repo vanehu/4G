@@ -210,6 +210,8 @@ public class LoginController extends BaseController {
 			}
 			model.addAttribute("user", userMap);
 			model.addAttribute("userJson", JsonUtil.buildNormal().objectToJson(userMap));
+			String currentAreaId = MapUtils.getString(userMap, "areaId", "");
+			model.addAttribute("XUA", propertiesUtils.getMessage("XUA_" + ((currentAreaId != null && currentAreaId.length() == 7) ? currentAreaId.substring(0, 3) : "")));
 			return "/staff/login";
 		}
 	}
