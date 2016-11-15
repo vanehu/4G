@@ -3362,7 +3362,7 @@ uiAttachOffer = (function() {
 			}
 		});
 		// 选择流量包时，默认显示第一个子标签的内容，加return是为了避免递归循环
-		if(labelId == 100) {
+		if(labelId == 100 && "ON" == offerChange.queryPortalProperties("NEW_LABEL_FLAG")) {
  			$("#parentLabel_" + prodId + "_" + labelId + " li:first").click();
 			return;
  		}

@@ -1527,5 +1527,6 @@
 			'XUA_899':''<!-- 虚拟省 -->
 			}
 		</const>
+		<const type="String" name="NEW_LABEL_FLAG" value="ON" description="流量包父子关系开关"/>
 	</mda>
 </mdas>

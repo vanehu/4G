@@ -502,4 +502,8 @@ public class MDA {
 	 */
 	public static final Map<String,String> IE_XUA = new HashMap<String,String>();
 
+	/**
+	 * 流量包父子关系开关
+	 */
+	public static final String NEW_LABEL_FLAG  = new String("");
 }

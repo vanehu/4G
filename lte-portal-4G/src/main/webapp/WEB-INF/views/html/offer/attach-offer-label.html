@@ -1,32 +1,48 @@
 <#include "/offer/attach-search.html" />
-
-<div id="div_label_${prodId}" class="cardtab" style="padding:0px">
-	<ul class="pdcard" >
-	    <li id="myfavorites_${prodId}" onclick="AttachOffer.initMyfavoriteSpec(${prodId},'${param.prodSpecId}')">我的收藏</li>
-		<li id="tab_${prodId}_10000" onclick="AttachOffer.changeLabel(${prodId},'${param.prodSpecId}',10000)">功能产品</li>
-		<#if labelMap.result?? && (labelMap.result?size>1)>
-			<#list labelMap.result as item>
-				<#if item.parentLabel?trim == "" || !newLabelMap??>
+<#-- 不含有父子关系的流量包标签 -->
+<div id="old_label_${prodId}">
+	<div id="div_label_${prodId}" class="cardtab" style="padding:0px">
+		<ul class="pdcard" >
+		    <li id="myfavorites_${prodId}" onclick="AttachOffer.initMyfavoriteSpec(${prodId},'${param.prodSpecId}')">我的收藏</li>
+			<li id="tab_${prodId}_10000" onclick="AttachOffer.changeLabel(${prodId},'${param.prodSpecId}',10000)">功能产品</li>
+			<#if labelMap.result?? && (labelMap.result?size>1)>
+				<#list labelMap.result as item>
 					<li id="tab_${prodId}_${item.label}" onclick="AttachOffer.changeLabel(${prodId},'${param.prodSpecId}',${item.label})">${item.value}</li>
+				</#list>
+			</#if>
+		</ul>
+		<div class="clear"></div>
+	</div>
+</div>
+<#-- 含有父子关系的流量包标签 -->
+<div id="new_label_${prodId}">
+	<div id="div_label_${prodId}" class="cardtab" style="padding:0px">
+		<ul class="pdcard" >
+		    <li id="myfavorites_${prodId}" onclick="AttachOffer.initMyfavoriteSpec(${prodId},'${param.prodSpecId}')">我的收藏</li>
+			<li id="tab_${prodId}_10000" onclick="AttachOffer.changeLabel(${prodId},'${param.prodSpecId}',10000)">功能产品</li>
+			<#if labelMap.result?? && (labelMap.result?size>1)>
+				<#list labelMap.result as item>
+					<#if item.parentLabel?trim == "" || !newLabelMap??>
+						<li id="tab_${prodId}_${item.label}" onclick="AttachOffer.changeLabel(${prodId},'${param.prodSpecId}',${item.label})">${item.value}</li>
+					</#if>
+				</#list>
+			</#if>
+		</ul>
+		<div class="clear"></div>
+		<#if newLabelMap?? && newLabelMap.result?? && (newLabelMap.result?size>0)>
+			<#list newLabelMap.result as item>
+				<#if item.subLabel?? && (item.subLabel?size>0)>
+					<ul class="pdcard" id="parentLabel_${prodId}_${item.label}" style="display: none;">
+						<#list item.subLabel as subItem>
+							<li id="tab_${prodId}_${subItem.label}" onclick="AttachOffer.changeLabel(${prodId},'${param.prodSpecId}',${subItem.label}, 1)">${subItem.value}</li>
+						</#list>
+					</ul>
+					<div class="clear"></div>
 				</#if>
 			</#list>
 		</#if>
-	</ul>
-	<div class="clear"></div>
-	<#if newLabelMap?? && newLabelMap.result?? && (newLabelMap.result?size>0)>
-		<#list newLabelMap.result as item>
-			<#if item.subLabel?? && (item.subLabel?size>0)>
-				<ul class="pdcard" id="parentLabel_${prodId}_${item.label}" style="display: none;">
-					<#list item.subLabel as subItem>
-						<li id="tab_${prodId}_${subItem.label}" onclick="AttachOffer.changeLabel(${prodId},'${param.prodSpecId}',${subItem.label}, 1)">${subItem.value}</li>
-					</#list>
-				</ul>
-				<div class="clear"></div>
-			</#if>
-		</#list>
-	</#if>
+	</div>
 </div>
-
 <div id="div_${param.prodId}" class="fs_tab"></div>
 
 <div id="terminalDiv_${prodId}" style="display: none;">
@@ -34,6 +50,14 @@
 </div>
 <div class="height18"></div>
 <script>
+	// 流量包父子关系开关控制
+	if ("ON" == offerChange.queryPortalProperties("NEW_LABEL_FLAG")) {
+		$("#old_label_${prodId}").empty();
+		$("#old_label_${prodId}").hide();
+	} else {
+		$("#new_label_${prodId}").empty();
+		$("#new_label_${prodId}").hide();
+	}
 	var labelMap=${labelMapJson};
 	var prodId= ${prodId};
 	var label = {
