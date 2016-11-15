@@ -1118,7 +1118,7 @@ order.phoneNumber = (function(){
 			if (response.code != 0) {
 				$.alertM(response.data);
 				return;
-			} else if (response.data.checkLevel != 0) {
+			} else if (response.data.checkLevel == 20) {
 				$.alert("提示", accNbr + "不可放号" + (ec.util.isObj(response.data.checkInfo) ? "，具体原因：" + response.data.checkInfo : ""));
 				return;
 			}
