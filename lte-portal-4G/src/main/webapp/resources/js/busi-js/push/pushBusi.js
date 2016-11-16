@@ -411,6 +411,7 @@ push.busi = (function($) {
 				break;
 			case 2: // 新建客户
 				order.cust.setValueForNewCust(data);
+				saveSession({flag:'signature',signature:data.signature});
 				break;
 			case 3: // 新建客户-经办人
 				order.cust.setValueForAgentSpan(data);

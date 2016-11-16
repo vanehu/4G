@@ -43,6 +43,7 @@ public class Const {
 	public static final int RANDOM_STRING_LENGTH = 20;
 	
 	public static final String CACHE_CERTINFO="CACHE_CERTINFO";
+	public static final String SESSION_SIGNATURE="SESSION_SIGNATURE";
 	
 	/**
 	 * #896069对于省级工号只配置了一个省级渠道的情况，将登录地区加载到受理地区(三级地区)；若登录地区为直辖市

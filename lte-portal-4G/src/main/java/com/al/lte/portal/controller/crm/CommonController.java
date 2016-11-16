@@ -247,6 +247,7 @@ public class CommonController extends BaseController {
     public JsonResponse decodeCert(@RequestBody Map<String, Object> param,
         HttpServletRequest request) throws Exception {
 	    String content = MapUtils.getString(param, "data");
+        String createFlag = MapUtils.getString(param, "createFlag");
 	    if (StringUtils.isBlank(content)) {
 	        return super.failed("", ResultConstant.IN_PARAM_FAILTURE.getCode());
 	    }
@@ -261,6 +262,9 @@ public class CommonController extends BaseController {
 	    String nonce = RandomStringUtils.randomAlphanumeric(Const.RANDOM_STRING_LENGTH); //随机字符串
 	    String appSecret = propertiesUtils.getMessage("APP_SECRET"); //appId对应的加密密钥
 	    String signature = commonBmo.signature(partyName, certNumber, certAddress, identityPic, nonce, appSecret);
+        if("1".equals(createFlag)){
+            request.getSession().setAttribute(Const.SESSION_SIGNATURE, signature);
+        }
 	    MapUtils.safeAddToMap(resultMap, "signature", signature);
 	    return super.successed(resultMap);
 	}

@@ -2990,7 +2990,12 @@ public class OrderController extends BaseController {
                         Map<String, Object> identities = (Map<String, Object>) ((List<Map<String, Object>>) data.get("boCustIdentities")).get(0);
                         String identidiesTypeCd = MapUtils.getString(identities, "identidiesTypeCd");
                         if ("1".equals(identidiesTypeCd)) { //身份证
-                            String token = MapUtils.getString(param, "token");
+                            //String token = MapUtils.getString(param, "token");
+                            Object s_sig =  request.getSession().getAttribute(Const.SESSION_SIGNATURE);
+                            if(null == s_sig){
+                                return false;
+                            }
+                            String token = s_sig.toString();
                             if (StringUtils.isNotBlank(token) && token.trim().length() > Const.RANDOM_STRING_LENGTH) {
                                 Map<String, Object> custInfo = (Map<String, Object>) ((List<Map<String, Object>>) data.get("boCustInfos")).get(0);
                                 String partyName = MapUtils.getString(custInfo, "name");
@@ -4231,6 +4236,7 @@ public class OrderController extends BaseController {
                 || StringUtils.isBlank(expDate)){
                 return super.failed("读卡失败信息有误", -1);
             }
+            String createFlag = MapUtils.getString(param, "createFlag");
             
 //			param.put("venderId", "11");
 //			param.put("signature", "11");
@@ -4298,6 +4304,9 @@ public class OrderController extends BaseController {
             String nonce = RandomStringUtils.randomAlphanumeric(Const.RANDOM_STRING_LENGTH); //随机字符串
             String signature1 = commonBmo.signature(partyName, certNumber, certAddress, identityPic, nonce, appSecret1);
             param.put("signature", signature1);
+            if("1".equals(createFlag)){
+                request.getSession().setAttribute(Const.SESSION_SIGNATURE, signature1);
+            }
             request.getSession().setAttribute(Const.CACHE_CERTINFO, certNumber);
     		jsonResponse = super.successed(param, ResultConstant.SUCCESS.getCode());//信息校验通过
             return jsonResponse;

@@ -717,6 +717,11 @@ public class CustController extends BaseController {
 				}else{
 					ServletUtils.setSessionAttribute(getRequest(), SysConstant.BIND_STATUS,status);
 				}
+			}else if ("signature".equals(flag)){
+				String signature = MapUtils.getString(param, "signature","");
+				if(null == signature && !"".equals(signature)){
+					ServletUtils.setSessionAttribute(getRequest(), Const.SESSION_SIGNATURE,signature);
+				}
 			}
 		}catch(Exception e){
 			e.printStackTrace();

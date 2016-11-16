@@ -331,6 +331,7 @@ order.cust = (function(){
 			// 新建客户身份证读卡，隐藏表单
 			if (id == "cCustIdCard") {
 				$("#readCertBtnCreate").show();
+				$('#td_custIdCard').removeData("flag");
 				// 获取pushBusi.js里绑定状态
 				if(CONST.GET_BIND_STATUS()){
 					$("#discernBtn_2").show();
@@ -1976,7 +1977,10 @@ order.cust = (function(){
 	//新建客户时读卡
 	var _readCertWhenCreate = function() {
 		$('#td_custIdCard').data("flag", "1");
+		$inputFlag = $("<input type='hidden' id='createFlag' value='1'/>");
+		$("#createUserbtn").append($inputFlag);
 		var man = cert.readCert();
+		$("#createFlag").remove();
 		//var man=cert.test();
 		if (man.resultFlag != 0){
 			$.alert("提示", man.errorMsg);

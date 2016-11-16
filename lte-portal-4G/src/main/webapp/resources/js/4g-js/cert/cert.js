@@ -1,6 +1,8 @@
 CommonUtils.regNamespace("cert");
 
 cert = (function() {
+
+	var createFlag = '';
 	/**
 	 * 读取二代证
 	 */
@@ -58,6 +60,8 @@ cert = (function() {
 				    	certInfo.venderId=man.venderId;
 					}
 				}
+				createFlag = $('#createFlag').val();
+				certInfo.createFlag = createFlag;
 	    		url = contextPath + "/order/certInfo";
 				var response = $.callServiceAsJson(url,JSON.stringify(certInfo));
 				if (response.code == 0) {
@@ -178,6 +182,7 @@ cert = (function() {
 		var url = contextPath + "/common/getCloudParam";
     	var params = {
     		teminalType: "PC"
+
     	};
     	$.ecOverlay("<strong>读卡中，请稍等...</strong>");
 		var response = $.callServiceAsJson(url, params);
@@ -189,7 +194,8 @@ cert = (function() {
 			if (0 == man.resultFlag) {
 				url = contextPath + "/common/decodeCert";
 				params = {
-					data: man.resultContent.certificate
+					data: man.resultContent.certificate,
+					createFlag:createFlag
 				}
 				response = $.callServiceAsJson(url, JSON.stringify(params));
 				if (0 == response.code) {
