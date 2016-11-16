@@ -193,8 +193,11 @@ public class APPModelController extends BaseController {
 			HttpSession session = request.getSession();
 			session.setAttribute(SysConstant.SESSION_CLIENTCODE+"_APP", null);//清空session中该节点
 			List<Map<String, Object>> attrList = new ArrayList<Map<String, Object>>();
-			if(paramsMap.get("attrInfos")!=null){
+			if(paramsMap.get("attrInfos")!=null || paramsMap.get("AttrInfos")!=null){
 				 Object obj = paramsMap.get("attrInfos");
+				 if(obj ==null){
+					 obj = paramsMap.get("AttrInfos");
+				 }
                  if (obj instanceof List) {
                 	 attrList = (List<Map<String, Object>>) obj;
                  } else {
