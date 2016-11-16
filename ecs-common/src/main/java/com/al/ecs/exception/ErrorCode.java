@@ -153,6 +153,7 @@ public enum ErrorCode {
     FORBIDDEN_REQUEST("访问被拒绝，包含被屏蔽的关键字","010250","01","010250","01"),
     QUERY_ORDERINFOS("查询暂存单","010251","01","020251","02"),
     QUERY_COUPON_RESERVE("终端预约记录查询","010252","01","020252","02"),
+    QUERY_COUPON_ROAD_RESERVE("终端预约在途单校验","010254","01","010254","02"),
     CONFIG_DATA_QUERY("查询配置数据","010261","01","020116","02"),
     QUERY_COUPON_ATTR_VALUE("以旧换新查询终端属性配置","010271","01","020117","02"),
     QUERY_OLD_COUPON_DISCOUNT_PRICE("以旧换新回购价格查询","010281","01","020306","02"),
