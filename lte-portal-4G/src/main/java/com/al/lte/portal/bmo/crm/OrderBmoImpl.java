@@ -1625,6 +1625,31 @@ public class OrderBmoImpl implements OrderBmo {
 			throw new BusinessException(ErrorCode.QUERY_COUPON_RESERVE,dataBusMap,db.getReturnlmap(), e);
 		}
 	}
+	/*
+	 * 终端预约在途单查询
+	 */
+	 
+	public Map<String, Object> queryCouponRoadReserve(Map<String, Object> dataBusMap, 
+			String optFlowNum,SessionStaff sessionStaff) throws Exception {
+			Map<String, Object> result = new HashMap<String, Object>();
+			DataBus db = InterfaceClient.callService(dataBusMap,PortalServiceCode.QUERY_COUPON_ROAD_RESERVR, optFlowNum, sessionStaff);
+			try{
+				result.put("code", ResultCode.R_EXCEPTION);
+				result.put("mess", db.getResultMsg());
+				if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db.getResultCode()))) {
+					Map returnMap = db.getReturnlmap() ;
+					result.put("code", ResultCode.R_FAILURE);
+					result.put("mess", returnMap.get("resultMsg"));
+					if(ResultCode.R_SUCC.equals(returnMap.get("resultCode"))){
+						result = (Map)returnMap.get("result");
+						result.put("code", ResultCode.R_SUCC);
+					}
+				}
+				return result ;
+			}catch(Exception e){
+				throw new BusinessException(ErrorCode.QUERY_COUPON_ROAD_RESERVE,dataBusMap,db.getReturnlmap(), e);
+			}
+		}
 	
 	public Map<String, Object> queryConfigData(Map<String, Object> param,
 			String optFlowNum, SessionStaff sessionStaff) throws Exception {

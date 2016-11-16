@@ -315,6 +315,10 @@ order.zdyy = (function(){
     };
     
     var _zdyyUnsubscribe = function(id){
+    	//终端预约前置调用后台校验
+    	if(!_terminalCancelRoadCheck(id)){
+    		return ;
+    	}
 		OrderInfo.actionTypeName = "终端取消预约";
 		OrderInfo.businessName = $("#"+id).attr("couponName");
 		OrderInfo.actionFlag = 38; // 终端退货
@@ -363,7 +367,39 @@ order.zdyy = (function(){
 		//订单提交
 		SoOrder.submitOrder(data);
 	};
-	
+	//终端预约取消-在途校验  
+	var  _terminalCancelRoadCheck =function(id){
+		var areaId=$.trim($("#p_areaId").val());
+		var sourceId =$.trim(id);
+	     if(""==sourceId){
+	    	 $.alert("提示", "终端预约号不能为空！");
+	    	 return false;
+	     }
+		var param={
+				"areaId":areaId,
+				"sourceId":sourceId
+		}							
+		var url=contextPath+"/order/terminalCancelRoadCheck";
+		var response=$.callServiceAsJson(url, param);
+		if(response.code == 0){
+			if(response.data!=null&&response.data.cnt=="0"){
+				return true;
+			}else {
+				$.alert("提示", "当前终端预约取消存在在途单，请不要重复提交 ！");
+				return false;
+			}
+		}
+		else if (response.code == -2) {
+				$.alertM(response.data);
+				return false;
+		} else if (response.code == 1002) {
+				$.alert("错误", response.data);
+				return false;
+		}else{
+				$.alert("错误", "服务异常！");
+				return false;
+		}
+	}
 	return {
 		queryzdyyinfos:_queryzdyyinfos,
 		chooseArea:_chooseArea,
@@ -375,7 +411,8 @@ order.zdyy = (function(){
 		init : _init,
 		suborderzdyy : _suborderzdyy,
 		queryCouponReserve : _queryCouponReserve,
-		zdyyUnsubscribe : _zdyyUnsubscribe
+		zdyyUnsubscribe : _zdyyUnsubscribe,
+		terminalCancelRoadCheck:_terminalCancelRoadCheck
 	};
 })();
 $(function() {

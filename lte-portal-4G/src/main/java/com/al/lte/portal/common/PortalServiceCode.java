@@ -894,6 +894,9 @@ public final class PortalServiceCode {
     
     //终端预约记录查询
     public static final String QUERY_COUPON_RESERVE  = "biz-service/intf.soService/queryCouponReserveLog" ;
+    
+    /**终端预约在途查询*/											
+    public static final String QUERY_COUPON_ROAD_RESERVR = "biz-service/intf.detailService/checkTerminalReverationZT";
 
     /** 配置数据查询 */
     public static final String CONFIG_DATA_QUERY = "biz-service/intf.soService/querySpecListByAttrID";

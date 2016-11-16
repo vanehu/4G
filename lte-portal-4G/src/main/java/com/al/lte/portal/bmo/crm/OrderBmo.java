@@ -535,6 +535,11 @@ public interface OrderBmo {
 	public Map<String, Object> queryCouponReserve(Map<String, Object> dataBusMap,String optFlowNum, SessionStaff sessionStaff) throws Exception;
 	
 	/**
+	 *  终端预约在途记录查询
+	 */
+	public Map<String, Object> queryCouponRoadReserve(Map<String, Object> dataBusMap,String optFlowNum, SessionStaff sessionStaff) throws Exception;
+
+	/**
 	 * 配置数据查询
 	 */
 	public Map<String, Object> queryConfigData(Map<String, Object> param, String optFlowNum, SessionStaff sessionStaff)

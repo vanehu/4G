@@ -4410,8 +4410,36 @@ public class OrderController extends BaseController {
 			}else if("100800".equals(acctItemId)){//国漫
 				if(!"true".equals(gm)){
 					jsonResponse = super.failed("非法请求", ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
-					return jsonResponse;
-				}
+        return jsonResponse;
+    }
+    /**
+     * 终端预约在途单校验
+     */
+    @ResponseBody
+    @RequestMapping(value = "/terminalCancelRoadCheck", method = { RequestMethod.POST })
+    public JsonResponse terminalCancelRoadCheck(@RequestBody Map<String, Object> paramMap,@LogOperatorAnn String flowNum){
+        JsonResponse jsonResponse = null;
+        try {
+            log.debug("param={}", JsonUtil.toString(paramMap));
+            SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+                    SysConstant.SESSION_KEY_LOGIN_STAFF);
+            Map<String, Object> resultMap = orderBmo.queryCouponRoadReserve(paramMap, flowNum, sessionStaff);
+            log.debug("return={}", JsonUtil.toString(resultMap));
+            if (null != resultMap && ResultCode.R_SUCC.equals(resultMap.get("code").toString())) {
+                jsonResponse = super.successed(resultMap, ResultConstant.SUCCESS.getCode());
+            } else {
+                jsonResponse = super.failed(resultMap.get("msg"), ResultConstant.FAILD.getCode());
+            }
+        } catch (BusinessException e) {
+            return super.failed(e);
+        } catch (InterfaceException ie) {
+            return super.failed(ie, paramMap, ErrorCode.QUERY_COUPON_ROAD_RESERVE);
+        } catch (Exception e) {
+            return super.failed(ErrorCode.QUERY_COUPON_ROAD_RESERVE, e, paramMap);
+        }
+        
+        return jsonResponse;
+    }
 			}
 		}
         try {
