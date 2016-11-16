@@ -7,6 +7,11 @@ import java.util.Map;
 
 @com.al.common.annotation.AppModule(moduleName = "Lte4GManager")
 public class MDA {
+	
+	/**
+	 * 各省CRM平台系统编码
+	 */
+	public static final Map<String,String> PROV_CRM_SYS_CODE=new HashMap<String,String>();
 	/**
 	 * 宽带甩单定位门店接口地址
 	 */
