@@ -57,31 +57,38 @@ common = (function($) {
 	
 	//客户定位后，回传客户信息
 	var _callCustInfo = function(custInfos){
-		var ua = navigator.userAgent.toLowerCase();	
-		if (/iphone|ipad|ipod/.test(ua)) {
-			//alert("iphone");
-			if(custInfos.indexOf("custOther1")>=0 && custInfos.indexOf("custOther3")>=0){
-				var star = custInfos.indexOf("custOther1")+12;
-				var end = custInfos.indexOf("custOther3")-2;
-				if(end-star>10){
-					custInfos = custInfos.substring(0,star) + custInfos.substring(star+1,end-1) + custInfos.substring(end,custInfos.length);
-				}
-			}
-			OrderInfo.cust=$.parseJSON(custInfos);
-		}else if (/android/.test(ua)) {
-			    //alert("android");	
+		if(OrderInfo.actionFlag!=111){
 			var custInfosParams=JSON.stringify(custInfos);//客户定位信息
 			if(ec.util.isObj(custInfos)){
 				OrderInfo.cust=$.parseJSON(custInfosParams);
-				if(OrderInfo.cust.custOther1.length != 0){
-					var custOther1 = JSON.stringify(OrderInfo.cust.custOther1)
-					custOther1=custOther1.substring(1,custOther1.length-1).replace(/\\/g,"");
-					OrderInfo.cust.custOther1 = $.parseJSON(custOther1);
+			}
+		}else{
+			var ua = navigator.userAgent.toLowerCase();	
+			if (/iphone|ipad|ipod/.test(ua)) {
+				//alert("iphone");
+				if(custInfos.indexOf("custOther1")>=0 && custInfos.indexOf("custOther3")>=0){
+					var star = custInfos.indexOf("custOther1")+12;
+					var end = custInfos.indexOf("custOther3")-2;
+					if(end-star>10){
+						custInfos = custInfos.substring(0,star) + custInfos.substring(star+1,end-1) + custInfos.substring(end,custInfos.length);
+					}
+				}
+				OrderInfo.cust=$.parseJSON(custInfos);
+			}else if (/android/.test(ua)) {
+				    //alert("android");	
+				var custInfosParams=JSON.stringify(custInfos);//客户定位信息
+				if(ec.util.isObj(custInfos)){
+					OrderInfo.cust=$.parseJSON(custInfosParams);
+					if(OrderInfo.cust.custOther1.length != 0){
+						var custOther1 = JSON.stringify(OrderInfo.cust.custOther1)
+						custOther1=custOther1.substring(1,custOther1.length-1).replace(/\\/g,"");
+						OrderInfo.cust.custOther1 = $.parseJSON(custOther1);
+					}
 				}
 			}
-		}
-		if(OrderInfo.actionFlag==111){
-			order.broadband.showCust();
+			if(OrderInfo.actionFlag==111){
+				order.broadband.showCust();
+			}
 		}
 	};
 	
@@ -99,9 +106,25 @@ common = (function($) {
 	
 	//调用客户端的拍照方法       method：表示回调js方法 如：order.prodModify.getIDCardInfos
 	var _callPhotos=function(method){
+		_getMobileIp("cust.getIp");
+		cust.jbrSubmit();
 		var arr=new Array(1);
+//		var str = "{\"picturesInfo\":[{\"orderInfo\":\"XXXXXXXXX\",\"picFlag\":\"A\",\"custName\":\"hiuu\",\"certType\":\"身份证\",\"certNumber\":\"902222222\",\"accNbr\":\"123456666\"},{\"orderInfo\":\"XXXXXXXXX\",\"picFlag\":\"B\",\"custName\":\"hiuu\",\"certType\":\"身份证\",\"certNumber\":\"902222222\",\"accNbr\":\"123456666\"},{\"orderInfo\":\"XXXXXXXXX\",\"picFlag\":\"C\",\"custName\":\"hiuu\",\"certType\":\"身份证\",\"certNumber\":\"902222222\",\"accNbr\":\"123456666\"},{\"orderInfo\":\"\",\"picFlag\":\"D\",\"custName\":\"hiuu\",\"certType\":\"身份证\",\"certNumber\":\"902222222\",\"accNbr\":\"123456666\"}]}";
+		var json = "{\"picturesInfo\":[";
+		if(!OrderInfo.cust.identityPic && OrderInfo.cust.identityPic!=undefined && OrderInfo.cust.identityPic.length != 0){
+			json = json + "{\"orderInfo\":" + OrderInfo.cust.identityPic + ",\"picFlag\":\"A\",\"custName\":" + OrderInfo.boCustInfos.name + ",\"certType\":" + OrderInfo.boCustIdentities.identidiesTypeCd + ",\"certNumber\":" + OrderInfo.boCustIdentities.identityNum + ",\"accNbr\":" + OrderInfo.boCustInfos.telNumber +"},";
+		}
+		if(!OrderInfo.user.identityPic && OrderInfo.user.identityPic!=undefined && OrderInfo.user.identityPic.length != 0){
+			json = json + "{\"orderInfo\":" + OrderInfo.user.identityPic + ",\"picFlag\":\"B\",\"custName\":" + OrderInfo.boUserInfos.name + ",\"certType\":" + OrderInfo.boUserIdentities.identidiesTypeCd + ",\"certNumber\":" + OrderInfo.boUserIdentities.identityNum + ",\"accNbr\":" + OrderInfo.boUserInfos.telNumber +"},";
+		}
+		if(!OrderInfo.jbr.identityPic && OrderInfo.jbr.identityPic!=undefined && OrderInfo.jbr.identityPic.length != 0){
+			json = json + "{\"orderInfo\":" + OrderInfo.jbr.identityPic + ",\"picFlag\":\"C\",\"custName\":" + OrderInfo.boJbrInfos.name + ",\"certType\":" + OrderInfo.boJbrIdentities.identidiesTypeCd + ",\"certNumber\":" + OrderInfo.boJbrIdentities.identityNum + ",\"accNbr\":" + OrderInfo.boJbrInfos.telNumber +"},";
+		}
+		json = json + "{\"orderInfo\":\"\",\"picFlag\":\"D\",\"custName\":\"" + OrderInfo.boJbrInfos.name + "\",\"certType\":\"" + OrderInfo.boJbrIdentities.identidiesTypeCd + "\",\"certNumber\":\"" + OrderInfo.boJbrIdentities.identityNum + "\",\"accNbr\":\"" + OrderInfo.boJbrInfos.telNumber +"\"}";
+		json = json+"]}";
 		arr[0]=method;
-		MyPlugin.takePhotos(arr,
+		arr[1]=json;
+		MyPlugin.photoProcess(arr,
             function(result) {
             },
             function(error) {
@@ -325,6 +348,54 @@ common = (function($) {
 				OrderInfo.order.step = 3;
 				return;
 			}
+		}
+		if(OrderInfo.actionFlag==110){//双屏互动
+			$("#disConnect").click();
+			_callCloseWebview();
+			return;
+		}
+		if(OrderInfo.actionFlag==112){//融合新装
+//			$.confirm("确认","确定要取消该订单吗？",{
+//				yes:function(){
+					//TODO　may initialize something;				
+					var boProdAns = OrderInfo.boProdAns;
+					var boProd2Tds = OrderInfo.boProd2Tds;
+					//取消订单时，释放被预占的UIM卡
+					if(boProd2Tds.length>0){
+						for(var n=0;n<boProd2Tds.length;n++){
+							var param = {
+									numType : 2,
+									numValue : boProd2Tds[n].terminalCode
+							};
+							$.callServiceAsJson(contextPath+"/app/mktRes/phonenumber/releaseErrorNum", param, {
+								"done" : function(){}
+							});
+						}
+					}
+					//释放预占的号码
+					if(boProdAns.length>0){
+						for(var n=0;n<boProdAns.length;n++){
+							if(boProdAns[n].idFlag){
+								continue;
+							}
+							var param = {
+									numType : 1,
+									numValue : boProdAns[n].accessNumber
+							};
+							$.callServiceAsJson(contextPath+"/app/mktRes/phonenumber/releaseErrorNum", param, {
+								"done" : function(){
+								}
+							});
+						}
+					}
+					//清除号码的缓存！
+//					order.phoneNumber.resetBoProdAn();
+//				},no:function(){
+//					
+//				}},"question");
+					setTimeout(function() {//延迟加载使目标地点居中
+						_callCloseWebview();
+					}, 800);
 		}
 		if(OrderInfo.actionFlag==4||OrderInfo.actionFlag==8){//客户新增和修改
 			_callCloseWebview();
@@ -626,6 +697,17 @@ common = (function($) {
 		);
 	};
 	
+	var _getMobileIp=function(method){
+		var arr=new Array(1);
+		arr[0]=method;
+		MyPlugin.getMobileIp(arr,
+            function(result) {
+            },
+            function(error) {
+            }
+		);
+	}
+	
 	return {
 		relocationCust		:	_relocationCust,
 		setCalendar			:	_setCalendar,
@@ -646,6 +728,7 @@ common = (function($) {
 		saveCust			:	_saveCust,
 		callAgreePhoto      :   _callAgreePhoto,
 		callOpenPay         :   _callOpenPay,
-		callCustLocation	:	_callCustLocation
+		callCustLocation	:	_callCustLocation,
+		getMobileIp			: 	_getMobileIp
 	};
 })(jQuery);

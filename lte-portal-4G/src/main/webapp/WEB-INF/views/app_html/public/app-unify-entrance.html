@@ -24,6 +24,7 @@
 		<script src="${contextPath}/js/app-js/busi-js/order/offerQuery.js?${jsversion}" type="text/javascript"></script>
 		<script src="${contextPath}/js/app-js/busi-js/order/offerChange.js?${jsversion}" type="text/javascript"></script>
 		<script src="${contextPath}/js/app-js/busi-js/order/cacheData.js?${jsversion}" type="text/javascript"></script>
+		<script src="${contextPath}/js/app-js/busi-js/order/broadband.js?${jsversion}" type="text/javascript"></script>
 		<script src="${contextPath}/js/app-js/busi-js/cust/custMgr.js?${jsversion}" type="text/javascript"></script>
 		<script src="${contextPath}/js/app-js/busi-js/cust/cust.js?${jsversion}" type="text/javascript"></script>
 		<script src="${contextPath}/js/app-js/busi-js/cart/cart.js?${jsversion}" type="text/javascript"></script>
@@ -38,6 +39,9 @@
 		<script src="${contextPath}/js/app-js/busi-js/order/memberChange.js?${jsversion}" type="text/javascript"></script>
 		<script src="${contextPath}/js/app-js/busi-js/prod/changeUim.js?${jsversion}" type="text/javascript"></script>
 		<script src="${contextPath}/js/app-js/busi-js/prod/qRCode.js?${jsversion}" type="text/javascript"></script>
+		<script src="${contextPath}/js/busi-js/push/build.js" type="text/javascript"></script>
+		<script src="${contextPath}/js/app-js/busi-js/saleorder/saleOrderQuery.js?${jsversion}" type="text/javascript"></script>
+		<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=EB49416c882464f8194d4631923ee221"></script>
 		<script>
 		window.onload= function() 
 		{  
@@ -77,7 +81,16 @@
 					break;
 				case 8 :
 					params.method = "/app/order/attachoffer/prepare"; //可选包功能产品
-					break;	
+					break;
+				case 10 :
+					params.method = "/app/push/enter"; //双屏推送
+					break;
+				case 11 :
+					params.method = "/app/order/broadband/prepare"; //宽带甩单
+					break;
+				case 12 :
+					params.method = "/app/saleorder/queryorderlist"; //销售单列表查询
+					break;
 				}  
 				var custInfos=$.parseJSON(window.localStorage.getItem("OrderInfo.cust"));
 				var staffInfos=$.parseJSON(window.localStorage.getItem("OrderInfo.staff"));
