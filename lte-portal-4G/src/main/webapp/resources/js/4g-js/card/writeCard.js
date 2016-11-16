@@ -63,6 +63,15 @@ order.writeCard = (function(){
 			"state":"N",
 			"prodId":""
 		};
+		var _rscJsonMN = {
+				"iccid":"",
+				"imsi":"",
+				"imsig":"",
+				"data":"",
+				"dataLength":"0",
+				"state":"N",
+				"prodId":""
+		};
 	//卡数据资源JSON state:N 为不可用来写卡 Y 为可以
 	this._cardDllInfoJson = {
 		"dllId":"",
@@ -1885,7 +1894,479 @@ order.writeCard = (function(){
 		var serviceName = contextPath + "/mktRes/writeCard/writeCardLogInfo";
 		$.callServiceAsJson(serviceName, param);
 	};
-		
+	
+	var _essMNWriteCard=function(phoneNumber,extCustOrderId,orderNeedAction,commonRegionId,zoneNumber){
+		var orderItemGroupId = $("#"+extCustOrderId).val();
+		var essOrder = {
+				phoneNumber : phoneNumber,
+				extCustOrderId : extCustOrderId,
+				commonRegionId : commonRegionId,
+				zoneNumber : zoneNumber,
+				orderItemGroupId : orderItemGroupId
+			};
+		OrderInfo.essOrderInfo.essOrder = essOrder;
+		if(orderNeedAction!="onlyWriteCard"){
+			var param = {
+					extCustOrderId : extCustOrderId,
+					consignee : "",
+					accNbr : "",
+					orderStatus : "",
+					startDate : "",
+					endDate : "",
+					pageFlag : "",
+					nowPage:1,
+					pageSize:10
+				};
+				$.callServiceAsJson(contextPath + "/ess/order/orderQry", param, {
+					"before" : function() {
+					},
+					"always" : function() {
+						$.unecOverlay();
+					},
+					"done" : function(response) {
+						if (response.code == 0) {
+							var orderNeedActionFlag ="";
+							if(response.data.orderList[0]!=null){
+								orderNeedActionFlag =response.data.orderList[0].orderNeedAction;
+							}
+							if(orderNeedActionFlag!="onlyWriteCard"){
+								$.alert("提示","请先实名制认证后再写卡！");
+								return;
+							}else{
+								_mnWriteCard(extCustOrderId,phoneNumber);
+							}
+						} else if (response.code == -2) {
+							$.alertM(response.data);
+							return;
+						} else if (response.code == 1002) {
+							$.alert("错误",response.data);
+							return;
+						} else {
+							$.alert("异常", "ESS订单查询接口查询异常");
+							return;
+						}
+					
+						
+					},
+					fail : function(response) {
+						$.unecOverlay();
+						$.alert("提示", "请求可能发生异常，请稍后再试！");
+					}
+				});
+		}else{
+			_mnWriteCard(extCustOrderId,phoneNumber);
+		}
+	};
+	var _essMNRepeatWritCard=function(phoneNumber,extCustOrderId,orderNeedAction,commonRegionId,zoneNumber){
+		OrderInfo.actionFlag = 42 ;
+		_essWriteCard = {};
+		var iccId = $("#"+extCustOrderId).val();
+		if(!ec.util.isObj(iccId)){
+			$.alert("提示","ESS购物车列表查询接口返回iccId为空！");
+			return;
+		}
+		var essOrder = {
+			phoneNumber : phoneNumber,
+			extCustOrderId : extCustOrderId,
+			commonRegionId : commonRegionId,
+			zoneNumber : zoneNumber,
+			iccId : iccId,
+			mktResInstCode : $("#"+extCustOrderId+"_mktResInstCode").val()
+		};
+		OrderInfo.essOrderInfo.essOrder = essOrder;
+		_mnWriteCard(extCustOrderId,phoneNumber);
+	};
+	var _mnWriteCard = function(extCustOrderId,phoneNumber){
+		$("#d_writeCard").html("");
+		var randStr = "898600031705101572698";
+		var areaIdMN = "8320400";
+		var prodId = extCustOrderId; //没写错，只是作为标识
+		var html = "";
+		html += '<OBJECT id="ocx'+prodId+'" style="height: 0px;width: 0px;" Classid="clsid:5e497bde-0e29-4ac0-bfb1-4af7b7940277" codeBase="${contextPath}/card/common.ocx#version=1.0.0.1"></OBJECT>';
+		html += '<div style="display:none" id="ec-dialog-form-container-card'+prodId+'" class="ec-dialog-form-container">';
+		html += '<div class="ec-dialog-form-top">';
+		html += '<h1 class="ec-dialog-form-title" id="writeTitle">模拟写卡</h1>';
+		html += '</div>';
+		html += '<div class="ec-dialog-form-content" id="rcard">';
+		html += '<div class="ec-dialog-form-loading" style="display:none"></div>';
+		html += '<div class="ec-dialog-form-message" style="display:none"></div>';
+		html += '<div class="ec-dialog-form-form" >';
+		html += '<form action="#" id="dialogForm">';
+		html += '<div>';
+		html += '<p class="pb" style="height: 30px;">';
+		html += '<label class="w1">手机号码:</label>';
+		html += '<input type="text"  id="write_card_phone_number'+prodId+'" class="txt2 inputDisabled" readonly="readonly" disabled="disabled" />';
+		html += '</p>';
+		html += '<p class="pb" id="dk_content">';
+		html += '<label class="w1">参数卡号:</label>';
+		html += '<input type="text" value ='+randStr+'  id="serialNum'+prodId+'"/>';
+		html += '</p>';
+		html += '<p class="pb" id="dk_content">';
+		html += '<label class="w1">参数地区:</label>';
+		html += '<input type="text" value ='+areaIdMN+'  id="areaIdMN'+prodId+'"/>';
+		html += '</p>';
+		html += '</div>';
+		html += '<div align="left" style="margin-left: 60px;">';
+		html += '<a class="btna_o" href="javascript:void(0);" id="btnReadCard'+prodId+'"><span>模拟写卡</span></a>';
+		html += '</div>';
+		html += '<input type="hidden" id="iccid" value=""/>';
+		html += '<input type="hidden" id="imsi" value=""/>';
+		html += '<a href = "/phoneimg/card/CardMan3x21_V1_1_1_0.exe">下载写卡器驱动</a>';
+		html += '</form>';
+		html += '</div>';
+		html += '</div>';
+		html += '<div class="ec-dialog-form-content" id="cardt" style="display:none">';
+		html += '<div class="ec-dialog-form-loading" style="display:none"></div>';
+		html += '<div class="ec-dialog-form-message" style="display:none"></div>';
+		html += '<div class="ec-dialog-form-form" >';
+		html += '<form action="#" id="dialogForm">';
+		html += '	<div>';
+		html += '		<p class="pb" style="font-weight:bold;height: 30px;top:40px;">';
+		html += '		           尊敬的用户，系统卡组件近期有更新，请您下载最新的卡组件<span style="color:#00F" id="dllName"></span>，把最新的卡组件保存到以下目录：<br/>32位系统 C:\\Windows\\System32<br/>64位系统 C:\\Windows\\SysWOW64<br/>';	
+		html += '		</p>';
+		html += '	</div>';
+		html += '	<div style="height: 30px;"></div>';
+		html += '	<div align="left" style="font-weight:bold;margin-left: 5px;">';
+		html += '	     请点击下载<a id="cardupdate" href = "" style="color:#00F">最新的卡组件</a>';
+		html += '	</div>';
+		html += '</form>';
+		html += '</div>';
+		html += '</div>';
+		html += '<div class="ec-dialog-form-bottom"></div>';
+		html += '</div>';
+		$("#d_writeCard").append(html);
+		if (!ec.util.isObj(phoneNumber)){
+			$.alert("提示",'ESS订单查询接口返回接入号为空!','confirmation');
+			return;
+		}
+		_createDialogMN(prodId,phoneNumber);
+	}
+	var _createDialogMN = function(prodId,phoneNumber){
+		ec.form.dialog.createDialog({"id":"-card"+prodId,width:350,"initCallBack":function(){			
+			$("#write_card_phone_number"+prodId).val(phoneNumber);
+			//ActiveX 控件无法用JQUERY方法获取
+			ocx = document.getElementById("ocx"+prodId);
+			//绑定读卡按钮事件
+			$("#btnReadCard"+prodId).click(function(){
+				_applyDataMN(prodId);
+			});
+			$("#btnWriteCard"+prodId).click(function(){
+				_compDataMN(prodId);
+			});
+			
+		},"submitCallBack":function(dialogForm,dialog){}});
+
+	};
+	_applyDataMN=function(prodId){
+		_rscJsonMN = {
+				"iccid":"",
+				"imsi":"",
+				"data":"",
+				"dataLength":"0",
+				"state":"N",
+				"prodId":""
+			};
+			var serviceName = contextPath + "/mktRes/writeCard/cardInfo";
+			try {
+				var param = {
+					factoryCode:'58',
+					authCodeType:'58',
+					hmUimid:'',//黑莓
+					cardNo: $("#serialNum"+prodId).val().substr(5,5),
+					phoneNumber:$("#write_card_phone_number"+prodId).val(),
+					areaId:$("#areaIdMN"+prodId).val(),
+					areaCode:'0731',//归属地区号
+					fromAreaCode:'0731'//漫游地区号
+				};
+				var resourceDataJson;
+				var response = $.callServiceAsJson(serviceName, param);
+				if(response.code == 0){
+					resourceDataJson = response.data.cardInfo;
+					_TransactionID = response.data.TransactionID;
+				}else{
+					if(response.data !="" && response.data !=undefined){
+						alertMM(response.data);
+					}
+					return;
+				}
+				var flag = resourceDataJson.flag;
+				if (flag != undefined && flag == "0") {
+					_rscJsonMN = {
+						"iccid":"",
+						"imsi":"",
+						"imsig":"",
+						"data":"",
+						"state":"Y",
+						"uimid":"",
+						"sid":"",
+						"accolc":"",
+						"nid":"",
+						"akey":"",
+						"pin1":"",
+						"pin2":"",
+						"puk1":"",
+						"puk2":"",
+						"imsilte":"",
+						"prodId":""
+					};
+					_rscJsonMN.iccid = resourceDataJson.iccid;
+					_rscJsonMN.imsi = resourceDataJson.imsi;
+					_rscJsonMN.imsig = resourceDataJson.imsig;
+					_rscJsonMN.uimid = resourceDataJson.uimid;
+					_rscJsonMN.sid = resourceDataJson.sid;
+					_rscJsonMN.accolc = resourceDataJson.accolc;
+					_rscJsonMN.nid = resourceDataJson.nid;
+					_rscJsonMN.akey = resourceDataJson.akey;
+					_rscJsonMN.pin2 = resourceDataJson.pin2;
+					_rscJsonMN.pin1 = resourceDataJson.pin1;
+					_rscJsonMN.puk1 = resourceDataJson.puk1;
+					_rscJsonMN.puk2 = resourceDataJson.puk2;
+					_rscJsonMN.imsilte = resourceDataJson.imsilte;
+					_rscJsonMN.data = resourceDataJson.data;
+					_rscJsonMN.dataLength = resourceDataJson.dataLength;
+					_rscJsonMN.prodId = prodId;
+					_compDataMN(prodId);
+					return true;
+				} else {
+					var msg = resourceDataJson.msg;
+					if (msg != undefined) {
+						$.alert("提示","请求可写卡的资源数据失败:" + msg,"error");
+					} else {
+						$.alert("提示","请求可写卡的资源数据失败" ,"error");
+					}
+					return false;
+				}
+			} catch(e) {
+				$.alert("提示","请求可写卡的资源数据异常!" + e.message ,"error");
+				return false;
+			}
+		};
+		_compDataMN=function(prodId){
+				var serviceName = contextPath + "/mktRes/writeCard/completeWriteCard";
+				var srInParam = {
+					"areaId": $("#areaIdMN"+prodId).val(),
+				    "InoutInfo": {
+				        "ApplyNo": "001",
+				        "InoutId": "",
+				        "BillType": "2",
+				        "SaleNo": "",
+				        "BatchId": "",
+				        "OperationType": "1100",
+				        "MktResStoreId": "",
+				        "ChannelId": OrderInfo.staff.channelId,
+				        "AreaId": $("#areaIdMN"+prodId).val(),
+				        "StaffId": OrderInfo.staff.staffId
+				    },
+				    "MktResInstInfos": [
+				        {
+				            "MktResInstInfo": {
+				                "BaseInfo": {
+				                    "MktResTypeCd": "",
+				                    "StatusCd" : "2",
+				                    "MktResId": "",
+				                    "MktResCd": $("#serialNum"+prodId).val().substr(5,5),
+				                    "MktResInstCode": $("#serialNum"+prodId).val(),    //_rscJson.iccid,
+				                    "SalesPrice": "0",
+				                    "CostPrice": "0",
+				                    "Quantity": "1",
+				                    "Unit": "101"
+				                },
+				              "AttrList": [
+				                             
+									{
+									    "AttrId": "60020005",
+									    "AttrValue": _rscJsonMN.iccid
+									},
+									{
+									    "AttrId": "60020002",
+									    "AttrValue": _rscJsonMN.imsi
+									},
+									{
+									    "AttrId": "60020003",
+									    "AttrValue":  _rscJsonMN.imsig
+									},
+									{
+									    "AttrId": "60020004",
+									    "AttrValue": _rscJsonMN.imsilte
+									},
+									{
+									    "AttrId": "65010026",
+									    "AttrValue": _rscJsonMN.pin1
+									},
+									{
+									    "AttrId": "65010027",
+									    "AttrValue": _rscJsonMN.pin2
+									},
+									{
+									    "AttrId": "65010028",
+									    "AttrValue": _rscJsonMN.puk1
+									},
+									{
+									    "AttrId": "65010029",
+									    "AttrValue": _rscJsonMN.puk2
+									},
+									{
+									    "AttrId": "65010030",
+									    "AttrValue": _rscJsonMN.adm
+									},
+									{
+									    "AttrId": "65010033",
+									    "AttrValue":  _rscJsonMN.uimid
+									},
+									{
+									    "AttrId": "65010035",
+									    "AttrValue": _rscJsonMN.akey
+									},  
+									{
+									    "AttrId": "65010037",
+									    "AttrValue": _rscJsonMN.nid
+									},
+									{
+									    "AttrId": "65010038",
+									    "AttrValue": _rscJsonMN.accolc
+									},
+									{
+									    "AttrId": "60029003",
+									    "AttrValue": OrderInfo.staff.channelId
+									},
+									{
+									    "AttrId": "60029004",
+									    "AttrValue": "测试"
+									},
+									{
+									    "AttrId": "60029005",
+									    "AttrValue": "11111"
+									},
+									{
+									    "AttrId": "65010019",
+									    "AttrValue": "21212"
+									}
+				                ]
+				            }
+				        }
+				    ]
+						
+				};
+				var param = {
+					imsi:_rscJsonMN.imsi,     
+					iccserial: $("#serialNum"+prodId).val(),     
+					iccid:_rscJsonMN.iccid,  
+					resultCode:'00000000',
+					resultMessage:"写卡器返回结果编码",
+					phoneNumber:$("#write_card_phone_number"+prodId).val(),
+					cardType:$("#serialNum"+prodId).val().substr(5,5),
+					eventType:"2",
+					areaId:$("#areaIdMN"+prodId).val(),
+					serviceCode:12,//新增一个动作表示，用于记日志update by huangjj
+					TransactionID:_TransactionID,
+					remark:"测试",
+					"srInParam":srInParam
+				};
+				try {
+					
+					var eventJson;
+					var response = $.callServiceAsJson(serviceName, param);
+					eventJson = response.data;
+					//alert(JSON.stringify(response));
+					
+					if (!response) {
+						$.alert("提示","<br/>卡资源回填到卡管系统异常,请稍后重试。");
+						return;
+					}
+				   if(response.code != 0) {
+					   $.alert("提示","<br/>调用卡资源回填到卡管系统异常,请稍后重试。");
+						if(response.data !="" && response.data !=undefined){
+							alertMM(response.data);
+						}
+						return;
+					}
+					//var eventJson = response.data;
+					if (eventJson.code != 0) {
+						$.alert("提示","调用卡资源回填到卡管系统异常！" + eventJson.message,"error");
+						return;
+					}
+
+					if(response.code == 0) {
+						var resp = $.callServiceAsJson(contextPath+"/mktRes/terminal/infoQueryByCode", {instCode:$("#serialNum"+prodId).val(),"areaId":$("#areaIdMN"+prodId).val()});//mark 根据串码获取卡类型，异地补换卡，获取产品的地区
+						if(resp.code ==0&&ec.util.isObj(resp.data.mktResBaseInfo)&&ec.util.isObj(resp.data.mktResBaseInfo.mktResId)){
+						}else{
+							if(ec.util.isObj(resp.data.resultMsg)){
+								$.alert("信息提示","根据串码："+$("#serialNum"+prodId).val()+"获取卡类型失败！失败原因："+resp.data.resultMsg);
+								return ;
+							}else{
+								$.alert("信息提示","根据串码："+$("#serialNum"+prodId).val()+"获取卡类型失败！失败原因未返回！");
+								return ;
+							}				
+						}
+						 _essWriteCard = {};
+						 _essWriteCard = {
+									extCustOrderId : OrderInfo.essOrderInfo.essOrder.extCustOrderId,
+								    commonRegionId : OrderInfo.essOrderInfo.essOrder.commonRegionId,
+									mktResInst :{
+										mktResCd : resp.data.mktResBaseInfo.mktResCd+"",
+										mktResType : resp.data.mktResBaseInfo.mktResTypeCd,
+										mktResInstCode : resp.data.mktResBaseInfo.instCode,
+										mktResStoreId : resp.data.mktResBaseInfo.mktResStoreId+"",
+										orderItemGroupId : OrderInfo.essOrderInfo.essOrder.orderItemGroupId,
+										quantity : "1",
+										salesPrice : "0",
+										attr :[{
+											attrId: "21011203",
+											attrVal: _rscJsonMN.imsi
+										},{
+											attrId: "21011202",
+											attrVal: _rscJsonMN.iccid
+										},{
+											attrId: "20002010",
+											attrVal: _rscJson.imsig
+										},{
+											attrId: "60020004",
+											attrVal: _rscJsonMN.imsilte
+										}]
+									}
+								};
+						var url = contextPath + "/ess/order/writeCardMakeUp";
+						$.callServiceAsJson(url,_essWriteCard, {
+							"before" : function() {
+								$.ecOverlay("正在串码回填，请稍等...");
+							},
+							"always" : function() {
+								$.unecOverlay();
+							},
+							"done" : function(response) {
+								if (response.code == 0) {
+									$.confirm("提示","写卡成功,资源补录成功！",{ 
+										yes:function(){
+											window.location.href = contextPath+"/ess/order/remoteWriteCard";
+										},
+										no:function(){
+											window.location.href = contextPath+"/ess/order/remoteWriteCard";
+										}
+									});
+									return;
+								} else if (response.code == -2) {
+									$.alertM(response.data);
+									return;
+								} else if (response.code == 1002) {
+									$.alert("错误", response.data);
+									return;
+								} else {
+									$.alert("异常", "写卡成功,资源补录异常");
+									return;
+								}
+							},
+							fail : function(response) {
+								$.unecOverlay();
+								$.alert("提示", "请求可能发生异常，请稍后再试！");
+							}
+						});
+					}
+					return true;
+				} catch(e) {
+					$.alert("提示","调用卡资源回填到卡管系统异常！" + e.message,"error");
+					return false;
+				}
+		};
 	return {
 		writeReadCard : _writeReadCard,
 		readCard : _readCard,
@@ -1896,6 +2377,8 @@ order.writeCard = (function(){
 		essWriteReadCard : _essWriteReadCard,
 		essRepeatWriteReadCard : _essRepeatWriteReadCard,
 		essRepeatWriteCard : _essRepeatWriteCard,
-		writeCardLogInfo  : _writeCardLogInfo
+		writeCardLogInfo  : _writeCardLogInfo,
+		essMNWriteCard : _essMNWriteCard,
+		essMNRepeatWritCard : _essMNRepeatWritCard
 	};
 })();

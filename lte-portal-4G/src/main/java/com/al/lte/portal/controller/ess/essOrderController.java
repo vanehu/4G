@@ -53,6 +53,7 @@ import com.al.ecs.spring.controller.BaseController;
 import com.al.lte.portal.bmo.crm.MktResBmo;
 import com.al.lte.portal.bmo.crm.OrderBmo;
 import com.al.lte.portal.bmo.ess.EssOrderBmo;
+import com.al.lte.portal.bmo.staff.StaffBmo;
 import com.al.lte.portal.common.AESSecurity;
 import com.al.lte.portal.common.MySimulateData;
 import com.al.lte.portal.common.SysConstant;
@@ -76,6 +77,9 @@ public class essOrderController extends BaseController {
 	@Autowired
 	@Qualifier("com.al.lte.portal.bmo.crm.OrderBmo")
 	private OrderBmo orderBmo;
+	@Autowired
+    @Qualifier("com.al.lte.portal.bmo.staff.StaffBmo")
+    private StaffBmo staffBmo;
 
 	/**
 	 * 转至ESS订单查询页面
@@ -122,6 +126,16 @@ public class essOrderController extends BaseController {
 			model.addAttribute("mess", resMap.get("resultMsg"));
 			model.addAttribute("resMap", resMap);
 			model.addAttribute("param", param);
+			String iseditOperation = "-1";
+			try {
+				SessionStaff sessionStaffBack = sessionStaff;
+				sessionStaffBack.setCurrentAreaId(sessionStaff.getAreaId());
+				iseditOperation = this.staffBmo.checkOperatSpec(SysConstant.WRITECARD_TEST, sessionStaffBack);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	        model.addAttribute("writeCard_test", iseditOperation);
 			if (pageFlag.equals("terminalInfoPage")) {// 终端回填
 				return "/ess/ess-terminal-info-list";
 			} else if (pageFlag.equals("writeCardPage")) {// 远程写卡

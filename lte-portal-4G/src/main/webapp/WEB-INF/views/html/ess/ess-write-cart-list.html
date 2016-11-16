@@ -59,6 +59,11 @@
 			    <a class="purchase"
 				href="javascript:order.writeCard.essWriteReadCard('${orderLists.accNbr}','${orderLists.extCustOrderId}','${orderLists.orderNeedAction}','${orderLists.commonRegionId}','${orderLists.zoneNumber}')"
 				type="main">写卡</a>
+				<#if writeCard_test =="0">
+				<a class="purchase"
+				href="javascript:order.writeCard.essMNWriteCard('${orderLists.accNbr}','${orderLists.extCustOrderId}','${orderLists.orderNeedAction}','${orderLists.commonRegionId}','${orderLists.zoneNumber}')"
+				type="main">模拟写卡</a>
+				</#if>
 			</td>
 		</tr>
 		</#list>

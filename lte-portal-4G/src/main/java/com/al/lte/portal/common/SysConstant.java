@@ -706,6 +706,9 @@ public final class SysConstant {
     public static final String CLIENTCODE = "40010033";
     /**Session缓存客户端属性编码*/
     public static final String SESSION_CLIENTCODE = "SESSION_CLIENTCODE";
+
+    /**ess模拟写卡权限编码*/
+	public static final String WRITECARD_TEST = "WRITECARD_TEST";
 	
 	/**批量业务受理类型*/
 	public class BATCH_TYPE {
