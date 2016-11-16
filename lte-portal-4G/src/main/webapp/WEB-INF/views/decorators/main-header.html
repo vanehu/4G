@@ -1,6 +1,6 @@
 <script src="${contextPath}/js/busi-js/main/main.js?${jsversion}" type="text/javascript"></script>
 <style type="text/css">
-#bindClick span {
+.bindStyle span {
 	background-color: #d3d8d0;
 	-webkit-border-radius: 5px;
 	height: 26px;
@@ -12,7 +12,7 @@
 	display: inline-block
 }
 
-#bindClick:hover span
+.bindStyle:hover span
 { 
 	background-color:#16C413;
 }
@@ -232,7 +232,8 @@
             </#if>
             <#if Session["_logoutUrl"] ??&&Session["_logoutUrl"]!="" >
             	<#if Session["QRCODE_SWITH"]?? && Session["QRCODE_SWITH"] == "ON">
-	            <a href="#" id="bindClick"><span>绑定</span></a>
+	            <a href="#" id="bindClick" class="bindStyle"><span>绑定</span></a>
+				<a href="#" id="bindCancel" class="bindStyle"><span>取绑</span></a>
 	            </#if>
             	<a href="#" onclick="sigleSignLogout('${Session['_logoutUrl']}')"><img src="${contextPath}/image/home/zhuxiao.png" /></a>
             <#else>
@@ -240,7 +241,8 @@
 	            	<a href="javascript:window.lte.exitSystem();"><img src="${contextPath}/image/home/zhuxiao.png" /></a>
 	            <#else>
 	            	 <#if Session["QRCODE_SWITH"]?? && Session["QRCODE_SWITH"] == "ON">
-	            	 <a href="#" id="bindClick"><span>绑定</span></a>
+	            	 <a href="#" id="bindClick" class="bindStyle"><span>绑定</span></a>
+					 <a href="#" id="bindCancel" class="bindStyle"><span>取绑</span></a>
 	            	 </#if>
 		             <a href="${contextPath}/staff/login/logout"><img src="${contextPath}/image/home/zhuxiao.png" /></a>
 	             </#if>
