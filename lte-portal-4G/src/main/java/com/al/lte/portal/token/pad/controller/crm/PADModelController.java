@@ -204,6 +204,8 @@ public class PADModelController extends BaseController {
                  for(Map<String, Object> mapAttr : attrList){
                 	 if(SysConstant.CLIENTCODE.equals(String.valueOf(mapAttr.get("attrSpecId"))) && !StringUtil.isEmptyStr(String.valueOf(mapAttr.get("attrValue")))){
                 		 session.setAttribute(SysConstant.SESSION_CLIENTCODE+"_PAD", String.valueOf(mapAttr.get("attrValue")));
+                	 }else if(SysConstant.CLIENTCODE.equals(String.valueOf(mapAttr.get("AttrSpecId"))) && !StringUtil.isEmptyStr(String.valueOf(mapAttr.get("AttrValue")))){
+                		 session.setAttribute(SysConstant.SESSION_CLIENTCODE+"_PAD", String.valueOf(mapAttr.get("AttrValue")));//兼顾省份传大写
                 	 }
                  }
 			}
