@@ -2252,7 +2252,7 @@ SoOrder = (function() {
 			});
 		}
 		
-		var acctId=-1;
+		/*var acctId=-1;
 		if(OrderInfo.acct!=undefined&&OrderInfo.acct.acctId!=undefined&&OrderInfo.acct.acctId!=null&&OrderInfo.acct.acctId!=""){//新装传帐户id
 			acctId=OrderInfo.acct.acctId;
 		}
@@ -2264,6 +2264,17 @@ SoOrder = (function() {
 			acctCd = acctId;
 		}else{
 			acctCd = OrderInfo.acct.acctcd;
+		}*/
+		var $option = $("#acctSelect").find("option:selected");
+		var acctId = $option.attr("value");
+		var acctCd = -1;
+		if(acctId==undefined){
+			acctId = -1;
+			acctCd = -1;
+		}else if(acctId<0 ){ //新增
+			acctCd = acctId;
+		}else{
+			acctCd = $option.attr("acctcd");
 		}
 		var boAccountRela = {
 			acctId : acctId,
