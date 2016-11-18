@@ -3770,25 +3770,9 @@ SoOrder = (function() {
 			}
 		};
 		//经办人信息节点
-		busiOrder.data.boCustInfos.push({
-			name			: OrderInfo.bojbrCustInfos.name,//客户名称
-			state			: "ADD",//状态
-			areaId			: OrderInfo.getAreaId(),
-			telNumber 		: "",//联系电话
-			addressStr		: OrderInfo.bojbrCustInfos.addressStr,//客户地址
-			partyTypeCd		: 1,//客户类型
-			defaultIdType	: OrderInfo.bojbrCustInfos.defaultIdTycre,//证件类型
-			mailAddressStr	: OrderInfo.bojbrCustInfos.mailAddressStr,//通信地址
-			businessPassword: ""//客户密码
-		});
+		busiOrder.data.boCustInfos.push(OrderInfo.bojbrCustInfos);
 		//客户证件节点
-		busiOrder.data.boCustIdentities.push({
-			state			: "ADD",//状态
-			isDefault		: "Y",//是否首选
-			identityNum		: OrderInfo.bojbrCustIdentities.identityNum,//证件号码
-			identidiesPic	: "",//二进制证件照片
-			identidiesTypeCd: OrderInfo.bojbrCustIdentities.identidiesTypeCd//证件类型
-		});
+		busiOrder.data.boCustIdentities.push(OrderInfo.bojbrCustIdentities);
 		busiOrders.push(busiOrder);
 	};
 	

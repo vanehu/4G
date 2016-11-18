@@ -2685,6 +2685,7 @@ order.cust = (function(){
         	OrderInfo.subHandleInfo.orderAttrName = orderAttrName;
         	OrderInfo.subHandleInfo.orderAttrAddr = orderAttrAddr;
         	OrderInfo.subHandleInfo.orderAttrPhoneNbr = orderAttrPhoneNbr;
+        	OrderInfo.subHandleInfo.imageInfo = OrderInfo.handleInfo.imageInfo;
         }
 		OrderInfo.subHandleInfo.orderAttrFlag = OrderInfo.orderAttrFlag;
 		var uploadCustCertificate = $.callServiceAsJson(contextPath+"/token/pc/cust/uploadCustCertificate",param);

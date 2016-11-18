@@ -3157,7 +3157,7 @@ SoOrder = (function() {
 			state			: "ADD",//状态
 			isDefault		: "Y",//是否首选
 			identityNum		: OrderInfo.subHandleInfo.identityNum,//证件号码
-			identidiesPic	: "",//二进制证件照片
+			identidiesPic	: OrderInfo.subHandleInfo.imageInfo,//二进制证件照片
 			identidiesTypeCd: OrderInfo.subHandleInfo.identidiesTypeCd//证件类型
 		});
 		busiOrders.push(busiOrder);

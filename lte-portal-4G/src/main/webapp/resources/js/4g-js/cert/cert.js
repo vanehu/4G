@@ -329,8 +329,10 @@ cert = (function() {
 				    	certInfo.venderId=man.venderId;
 					}
 				}
-				createFlag = $('#createFlag').val();
-				certInfo.createFlag = createFlag;
+
+				//经办人新建
+				certInfo.createFlag = $('#createFlag').val();
+				certInfo.jbrFlag = OrderInfo.bojbrCustInfos.jbrFlag;//添加经办人读卡标识
 	    		url = contextPath + "/order/certInfo";
 				var response = $.callServiceAsJson(url,JSON.stringify(certInfo));
 				if (response.code == 0) {

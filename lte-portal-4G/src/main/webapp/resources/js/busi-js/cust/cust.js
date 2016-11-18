@@ -358,6 +358,7 @@ order.cust = (function(){
 				$("#orderAttrName").hide();
 				$("#orderAttrIdCard").hide();
 				$("#orderAttrAddr").hide();
+				$("#orderAttrQueryCertBtn").hide();
 				$("#li_order_attr span").show();
 				$("#li_order_remark2 span").show();
 				$("#li_order_remark3 span").show();
@@ -377,6 +378,7 @@ order.cust = (function(){
 				$("span[name='" + CONST.BUSI_ORDER_ATTR.orderAttrAddr + "']").show();
 			}
 		} else {
+			$("#orderAttrQueryCertBtn").show();
 			// 新建客户非身份证，还原表单
 			if (id == "cCustIdCard") {
 				$("#btn_readCert").hide(); // 预受理
@@ -2801,7 +2803,7 @@ order.cust = (function(){
 		_setValueForAgentOrderSpan(man.resultContent);
 	    if (undefined != man.resultContent.identityPic) {
 	      		$("#img_Cert").attr("src", "data:image/jpeg;base64," + man.resultContent.identityPic);
-			    $("#img_Cert").data("identityPic", man.resultContent.identityPic);
+	      		OrderInfo.bojbrCustIdentities.identidiesPic = man.resultContent.identityPic;
 		      _showCertPicture();
 		}
 	};
@@ -2939,31 +2941,27 @@ order.cust = (function(){
 	};
 	// 创建视频
 	var _createVideo = function() {
-		$("#tips").html();
+		$("#tips").empty();
 		try{
 			cert.closeVideo();
-		}catch(e){
-			
-		}
+		}catch(e){}
+		
 		$('#img').hide();
 		$('#capture').show();
 		
 		$("#takePhotos").removeClass("btna_g").addClass("btna_o").off("click").on("click",function(event) {
-	        	_createImage();
+	        _createImage();
 		});
 		
-		 
 		var json = cert.createVideo();
 		if (json && json.resultFlag != 0){
 			$("#tips").html("提示："+ json.errorMsg);
 			return false;
 		}
-		
-       
 	};
 	// 拍照
 	var _createImage = function(scope) {
-		$("#tips").html();
+		$("#tips").empty();
 		if(!$('#img_Photo').is(":hidden")){
 			//$.alert("提示", "已拍过照片 ，如需重新拍摄，请点击【重新拍照】");
 			//return;
@@ -2996,7 +2994,7 @@ order.cust = (function(){
 	};
 	// 关闭视频
 	var _closeVideo = function() {	
-		$("#tips").html();
+		$("#tips").empty();
 		var obj = cert.closeVideo();
 		var json = JSON.parse(obj);
 		if (json && json.resultFlag != 0){
@@ -3006,7 +3004,7 @@ order.cust = (function(){
 	};
 	// 上传照片
 	var _uploadImage = function() {
-		$("#tips").html();
+		$("#tips").empty();
 		if($('#img_Photo').is(":hidden")){
 			$("#tips").html("提示："+ "请先拍照");
 			return false;
@@ -3016,7 +3014,7 @@ order.cust = (function(){
 			&& OrderInfo.bojbrCustInfos.identityNum!= $.trim($("#orderIdentidiesTypeCd").val()) ){
 			pictures.push(
 				{
-		            "photograph": encodeURIComponent($("#img_Cert").data("identityPic")),
+		            "photograph": encodeURIComponent(OrderInfo.bojbrCustIdentities.identidiesPic),
 		            "flag": "C", 
 		            "signature" :""
 		        }
@@ -3063,14 +3061,6 @@ order.cust = (function(){
 				OrderInfo.bojbrCustInfos.mailAddressStr=$.trim($("#orderAttrAddr").val());;//通信地址
 				OrderInfo.bojbrCustIdentities.identidiesTypeCd=$.trim($("#orderIdentidiesTypeCd").val());//证件类型
 				OrderInfo.bojbrCustIdentities.identityNum=$.trim($("#orderAttrIdCard").val());//证件号码
-				if ("1" == _choosedCustInfo.identityCd) {
-					var identityPic = $("#img_Photo").data("identityPic");
-					if (identityPic != undefined) {
-						OrderInfo.bojbrCustIdentities.identidiesPic=identityPic;
-					}
-				} else {
-					OrderInfo.bojbrCustIdentities.identidiesPic="";
-				}
 			}
 			_close();
 			//查到了，查不到新建 没有身份证！！！

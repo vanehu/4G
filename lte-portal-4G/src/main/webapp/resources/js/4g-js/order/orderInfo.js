@@ -1040,8 +1040,7 @@ OrderInfo = (function() {
 		telNumber : "",  //联系电话
 		addressStr:"",//客户地址
 		mailAddressStr:"",//通信地址
-		//picturesInfo: [],
-		//srcFlag: "REAL"
+		jbrFlag:"Y"
 	};
 	
 	//客户联系人节点

@@ -2975,6 +2975,7 @@ public class OrderController extends BaseController {
      */
     @SuppressWarnings("unchecked")
     private boolean papersCheck(HttpServletRequest request, Map<String, Object> param) throws Exception {
+    	boolean isSuccessed = true;
         Map<String, Object> orderList = (Map<String, Object>) param.get("orderList");
         Map<String, Object> orderListInfo = (Map<String, Object>) orderList.get("orderListInfo");
         String actionFlag = MapUtils.getString(orderListInfo, "actionFlag");
@@ -2985,18 +2986,20 @@ public class OrderController extends BaseController {
                 for (Map<String, Object> busiOrder : busiOrderList) {
                     Map<String, Object> boActionType = (Map<String, Object>) busiOrder.get("boActionType");
                     String boActionTypeCd = (String) boActionType.get("boActionTypeCd");
-                    if ("C1".equalsIgnoreCase(boActionTypeCd)) { //新建客户
+                    if ("C1".equalsIgnoreCase(boActionTypeCd) && isSuccessed) { //新建客户
                         Map<String, Object> data = (Map<String, Object>) busiOrder.get("data");
                         Map<String, Object> identities = (Map<String, Object>) ((List<Map<String, Object>>) data.get("boCustIdentities")).get(0);
                         String identidiesTypeCd = MapUtils.getString(identities, "identidiesTypeCd");
-                        if ("1".equals(identidiesTypeCd)) { //身份证
+                        if ("1".equals(identidiesTypeCd) ) { //身份证
                             //String token = MapUtils.getString(param, "token");
                             Object s_sig =  request.getSession().getAttribute(Const.SESSION_SIGNATURE);
-                            if(null == s_sig){
+                            Object s_sig_j =  request.getSession().getAttribute(Const.SESSION_SIGNATURE_J);
+                            if(null == s_sig && s_sig_j == null){
                                 return false;
                             }
-                            String token = s_sig.toString();
-                            if (StringUtils.isNotBlank(token) && token.trim().length() > Const.RANDOM_STRING_LENGTH) {
+                            String token = null == s_sig ? s_sig_j.toString() :s_sig.toString();
+                            
+                            if ((StringUtils.isNotBlank(token) && token.trim().length() > Const.RANDOM_STRING_LENGTH)) {
                                 Map<String, Object> custInfo = (Map<String, Object>) ((List<Map<String, Object>>) data.get("boCustInfos")).get(0);
                                 String partyName = MapUtils.getString(custInfo, "name");
                                 String certNumber = MapUtils.getString(identities, "identityNum");
@@ -3005,10 +3008,8 @@ public class OrderController extends BaseController {
                                 String appSecret = propertiesUtils.getMessage("APP_SECRET"); //appId对应的加密密钥
                                 String nonce = StringUtils.substring(token, 0, Const.RANDOM_STRING_LENGTH);
                                 String signature = commonBmo.signature(partyName, certNumber, certAddress, identityPic, nonce, appSecret);
-                                if (token.trim().equals(signature)) {
-                                    return true;
-                                } else {
-                                    return false;
+                                if (!token.trim().equals(signature)) {
+                                	isSuccessed = false;
                                 }
                             } else {
                                 return false;
@@ -3018,7 +3019,7 @@ public class OrderController extends BaseController {
                 }
             }
         }
-        return true;
+        return isSuccessed;
     }
 
     /**
@@ -4309,7 +4310,10 @@ public class OrderController extends BaseController {
             param.put("signature", signature1);
             if("1".equals(createFlag)){
                 request.getSession().setAttribute(Const.SESSION_SIGNATURE, signature1);
+            } else if("Y".equals(MapUtils.getString(param, "jbrFlag"))){
+            	request.getSession().setAttribute(Const.SESSION_SIGNATURE_J, signature1);
             }
+            
             request.getSession().setAttribute(Const.CACHE_CERTINFO, certNumber);
     		jsonResponse = super.successed(param, ResultConstant.SUCCESS.getCode());//信息校验通过
             return jsonResponse;
