@@ -129,7 +129,7 @@ public class EncodeUtils {
 		try {
 			return URLDecoder.decode(input, encoding);
 		} catch (UnsupportedEncodingException e) {
-			throw new IllegalArgumentException("Unsupported Encoding Exception", e);
+			throw new IllegalArgumentException("Error : urlDecode Exception", e);
 		}
 	}
 

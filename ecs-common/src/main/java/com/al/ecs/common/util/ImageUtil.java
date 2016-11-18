@@ -1,7 +1,9 @@
 package com.al.ecs.common.util;
 
+import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -10,12 +12,16 @@ import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.awt.image.ConvolveOp;
 import java.awt.image.Kernel;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -271,16 +277,129 @@ public class ImageUtil {
             throw new IllegalArgumentException("createThumbnail failed :" + e.getMessage());
         }
     }
-    /*
-    public static void main(String[] args) {
-        File originalFile = new File("d:\\dd\\aa.jpg");
-        File resizedFile = new File("d:\\dd\\a1.png");
+
+    /**
+     * 添加文字水印
+     * @param text 水印内容
+     * @param srcImage 原图
+     * @param imgType 图片的后缀名
+     * @return 以byte数组返回加水印后的图片
+     * @throws IOException
+     */
+	public static byte[] addTextWatermark(String context, byte[] srcImage, String imgType) throws IOException {
+        OutputStream os = null;
+        InputStream bis = null;
         try {
-            // resize(originalFile, resizedFile, 200, "jpg");
-            createThumbnail("d:\\html\\Vista_green_1019.jpg", "D:\\html\\310-310.jpg", 310, 310);
-        } catch (Exception e) {
-            e.printStackTrace();
+            bis = new ByteArrayInputStream(srcImage);
+//            ImageInputStream iis = ImageIO.createImageInputStream(bis);
+            BufferedImage sourceImage = ImageIO.read(bis);
+            Graphics2D g2d = (Graphics2D) sourceImage.getGraphics();
+
+            // initializes necessary graphic properties
+            AlphaComposite alphaChannel = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3f);//0.4
+            g2d.setComposite(alphaChannel);
+            g2d.setColor(Color.BLUE);
+
+            //原图长宽
+            int srcImageWidth = sourceImage.getWidth();
+            int srcImageHeight = sourceImage.getHeight();
+
+            //按比率设置字体与水印间隔
+            int fontSize = srcImageWidth / 20;//24
+            int pos = srcImageHeight / 2;//10
+            g2d.setFont(new Font("黑体", Font.BOLD, fontSize));
+            //2400 102 300
+            //2000 76 200
+            //水印旋转 弧度
+            double degree = -35;
+            g2d.rotate(Math.toRadians(degree), (double) sourceImage.getWidth() / 2, (double) sourceImage.getHeight() / 2);
+            // calculates the coordinate where the String is painted
+            int widthT = fontSize * getTextLength(context);
+            int heightT = fontSize;
+
+            //从图片外面开始设置，， 这里是先把图片旋转了，不是直接旋转文字
+            int x = -srcImageWidth / 8;//2
+            int y = -srcImageHeight / 8;//2
+            //固定打水印 起始的范围 从左上角开始
+            while (x < srcImageWidth * 1.5) {//1.5
+                y = -srcImageHeight / 8;//2
+                int k = 0;
+                while (y < srcImageHeight * 1.5) {
+                    if (k % 2 == 0){
+                    	g2d.drawString(context, x, y);
+                    } else{
+                    	g2d.drawString(context, x + pos / 2, y);
+                    }
+                    y += heightT + pos;
+                    k++;
+                }
+                x += widthT + pos * 1.5;
+            }
+
+            os = new ByteArrayOutputStream();
+            ImageIO.write(sourceImage, imgType, os);
+            byte[] b = ((ByteArrayOutputStream) os).toByteArray();
+            g2d.dispose();
+            os.flush();
+            return b;
+        } catch (IOException ex) {
+            throw ex;
+        } finally {
+            if (os != null)
+                os.close();
+            if (bis != null)
+                bis.close();
         }
     }
-    */
+	
+	/**
+	 * 从Base64ImageStr中获取图片格式(后缀名)
+	 * @param base64ImageStr
+	 * @return image format (like jpg or png...)，<strong>null</strong> is returned if there's no head infos in base64ImageStr
+	 */
+	public static String getImageFormat(String base64ImageStr) {
+		if(base64ImageStr != null){
+			Pattern pattern = Pattern.compile("data:image/(.*);base64,");
+	        Matcher matcher = pattern.matcher(base64ImageStr);
+	        if (matcher.find()) {
+	            return matcher.group(1);
+	        }
+	        return null;
+		} else{
+			return null;
+		}
+    }
+    
+	/**
+	 * 过滤base64图片字符串的头信息,返回base64的图片内容
+	 * @param base64ImageStr
+	 * @param imageFormat
+	 * @return replace head infos in base64ImageStr with "", if there's head infos , the param base64ImageStr is returned.
+	 */
+	public static String filterBase64ImageStr(String base64ImageStr, String imageFormat) {
+		if(imageFormat != null && !"".equals(imageFormat)){
+			return base64ImageStr.replace("data:image/" + imageFormat + ";base64,", "");
+		} else{
+			return base64ImageStr;
+		}
+    }
+	
+	/**
+	 * 获取水印文字内容的长度
+	 * @param text
+	 * @return
+	 */
+	private static int getTextLength(String text) {
+        //计算文本内容的长度，中文占两个字节，英文要再加1
+        int length = text.length();
+        for (int i = 0; i < text.length(); i++) {
+            String s = String.valueOf(text.charAt(i));
+            if (s.getBytes().length > 1) {
+                length++;
+            }
+        }
+        length = length % 2 == 0 ? length / 2 : length / 2 + 1;
+        return length;
+    }
+
 }

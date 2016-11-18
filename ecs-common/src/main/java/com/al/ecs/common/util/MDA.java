@@ -502,6 +502,12 @@ public class MDA {
 	
 	/**公告附件下载FTP服务器配置*/
 	public static final String NOTICE_FTP_SERVICE_CONFIGS = new String("");
+
+	/**实名制:证件照片校验签名密钥*/
+    public static final Map<String,Map<String,String>> VENDER_SIGNATURE = new HashMap <String,Map<String,String>>();
+    /**实名制:证件照片水印内容*/
+    public static final String WARTER_MARKER_CONEXT = new String("");
+
 	/**
 	 * 集团CRM-4G IE兼容性开关
 	 */
