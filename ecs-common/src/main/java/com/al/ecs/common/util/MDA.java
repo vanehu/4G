@@ -517,4 +517,9 @@ public class MDA {
 	 * 流量包父子关系开关
 	 */
 	public static final String NEW_LABEL_FLAG  = new String("");
+	
+	/**
+	 * 实名制拍照分省开关
+	 */
+	public static final Map<String,String> REAL_NAME_PHOTO_FLAG  = new HashMap<String,String>();
 }
