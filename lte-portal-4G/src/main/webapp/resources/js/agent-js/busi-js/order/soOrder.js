@@ -216,6 +216,17 @@ SoOrder = (function() {
 		if(_setOfferType()){
 			itemValue="Y";
 		}
+		if(OrderInfo.preBefore.idPicFlag == "ON"){
+			custOrderAttrs.push({
+				itemSpecId : CONST.BUSI_ORDER_ATTR.VIROLID,//3转4标志
+				value : OrderInfo.virOlId
+			});
+			custOrderAttrs.push({ //业务类型
+				itemSpecId : CONST.BUSI_ORDER_ATTR.CURIP,
+				value : OrderInfo.curIp
+			});
+			
+		} else {
 		custOrderAttrs.push({
 			itemSpecId : CONST.BUSI_ORDER_ATTR.THRETOFOUR_ITEM,//3转4标志
 			value : itemValue
@@ -229,6 +240,7 @@ SoOrder = (function() {
 			itemSpecId : CONST.BUSI_ORDER_ATTR.BUSITYPE_FLAG,
 			value : OrderInfo.busitypeflag
 		});
+		}
 		
 		OrderInfo.orderData.orderList.orderListInfo.custOrderType = OrderInfo.busitypeflag;
 		
@@ -287,6 +299,7 @@ SoOrder = (function() {
 			var orderAttrAddr = $.trim($("#orderAttrAddr").val()); //地址
 			var orderAttrPhoneNbr = $.trim($("#orderAttrPhoneNbr").val()); //联系人号码
 			if(ec.util.isObj(orderAttrName)&&ec.util.isObj(orderAttrIdCard)&&ec.util.isObj(orderAttrPhoneNbr)){
+				if(OrderInfo.preBefore.idPicFlag != "ON"){
 				if(ec.util.isObj(orderAttrName)){
 					custOrderAttrs.push({
 						itemSpecId : CONST.BUSI_ORDER_ATTR.orderAttrName,
@@ -314,6 +327,7 @@ SoOrder = (function() {
 						itemSpecId : CONST.BUSI_ORDER_ATTR.orderAttrAddr,
 						value : orderAttrAddr
 					});	
+				}
 				}
 			}else if(ec.util.isObj(orderAttrName)||ec.util.isObj(orderAttrIdCard)||ec.util.isObj(orderAttrPhoneNbr)){
 				if(!ec.util.isObj(orderAttrName)){
@@ -1322,6 +1336,10 @@ SoOrder = (function() {
 		if(OrderInfo.cust.custId == -1){
 			OrderInfo.createCust(busiOrders);	
 		}
+		if(OrderInfo.preBefore.idPicFlag == "ON"){
+			OrderInfo.createJbr(busiOrders);	
+			OrderInfo.orderData.orderList.orderListInfo.handleCustId = OrderInfo.jbr.custId;
+		}
 		var acctId = -1; //先写死
 //		var acctId =$("#acctSelect").val();
 		if(acctId < 0 && acctId!=undefined ){
@@ -2136,21 +2154,56 @@ SoOrder = (function() {
 			state : "ADD"  //动作
 		};
 		busiOrder.data.boProdPasswords.push(boProdPassword);
-		
-		//封装产品属性
-		$("[name=prodSpec_"+prodId+"]").each(function(){
-			var itemSpecId=$(this).attr("id").split("_")[0];
-			var val=$.trim($(this).val());
-			if(val!=""&&val!=undefined){
-				var prodSpecItem = {
-					itemSpecId : itemSpecId,  //属性规格ID
-					prodSpecItemId : OrderInfo.SEQ.itemSeq--, //产品属性实例ID
-					state : "ADD", //动作
-					value : val//属性值	
-				};
-				busiOrder.data.boProdItems.push(prodSpecItem);
+		if(OrderInfo.preBefore.idPicFlag == "ON"){
+			if(prodId<-1){
+				//封装产品属性
+				$("[id=800000011_"+prodId+"_name]").each(function(){
+					var itemSpecId = "800000011";
+//					var val=$.trim($(this).val());
+					var val = OrderInfo.getChooseUserInfo(prodId).custId;
+					if(val!=""&&val!=undefined){
+						var prodSpecItem = {
+							itemSpecId : itemSpecId,  //属性规格ID
+							prodSpecItemId : OrderInfo.SEQ.itemSeq--, //产品属性实例ID
+							state : "ADD", //动作
+							value : val//属性值	
+						};
+						busiOrder.data.boProdItems.push(prodSpecItem);
+					}
+				});
+			} else {
+				//封装产品属性
+				$("[name=prodSpec_"+prodId+"]").each(function(){
+					var itemSpecId=$(this).attr("id").split("_")[0];
+					var val=$.trim($(this).val());
+					if(val!=""&&val!=undefined){
+						var prodSpecItem = {
+							itemSpecId : itemSpecId,  //属性规格ID
+							prodSpecItemId : OrderInfo.SEQ.itemSeq--, //产品属性实例ID
+							state : "ADD", //动作
+							value : val//属性值	
+						};
+						busiOrder.data.boProdItems.push(prodSpecItem);
+					}
+				});
 			}
-		});
+			} else {
+				//封装产品属性
+				$("[name=prodSpec_"+prodId+"]").each(function(){
+					var itemSpecId=$(this).attr("id").split("_")[0];
+					var val=$.trim($(this).val());
+					if(val!=""&&val!=undefined){
+						var prodSpecItem = {
+							itemSpecId : itemSpecId,  //属性规格ID
+							prodSpecItemId : OrderInfo.SEQ.itemSeq--, //产品属性实例ID
+							state : "ADD", //动作
+							value : val//属性值	
+						};
+						busiOrder.data.boProdItems.push(prodSpecItem);
+					}
+				});
+			}
+			
 		
 		//封装付费方式
 		//var paytype=$('select[name="pay_type_'+prodId+'"]').val(); 

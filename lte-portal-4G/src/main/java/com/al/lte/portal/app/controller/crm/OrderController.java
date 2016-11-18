@@ -1191,6 +1191,7 @@ public class OrderController extends BaseController {
         		if (!param.containsKey("offerNum")||param.get("offerNum")==null) {
         			param.put("offerNum", 1);
         		}
+        		model.addAttribute("currentCT", sessionStaff.getCurrentChannelType());
         		model.addAttribute("main", param);
         	}
     		forward = "/app/order/order-main-template";

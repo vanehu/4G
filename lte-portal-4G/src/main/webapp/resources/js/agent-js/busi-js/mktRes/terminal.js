@@ -2989,6 +2989,7 @@ mktRes.terminal = (function($){
 	}
 	//关闭经办人
 	var _closeJBR=function(){
+		cust.jbrSubmit();
 		$("#order-content").show();
 		$("#terminalMain").show();
 		$("#jbr").hide();

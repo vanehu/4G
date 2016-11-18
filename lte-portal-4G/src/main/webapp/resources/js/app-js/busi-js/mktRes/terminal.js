@@ -870,6 +870,10 @@ mktRes.terminal = (function($){
 	}
 	//关闭经办人
 	var _closeJBR=function(){
+		if(!OrderInfo.virOlId){
+			$.alert("提示","请进行经办人头像拍照！");
+			return;
+		}
 		//先校验
 		var orderAttrName = $.trim($("#orderAttrName").val()); //经办人姓名
 		var orderIdentidiesTypeCd = $("#orderIdentidiesTypeCd  option:selected").val(); //证件类型
@@ -879,25 +883,67 @@ mktRes.terminal = (function($){
 		}
 		var orderAttrAddr = $.trim($("#orderAttrAddr").val()); //地址
 		var orderAttrPhoneNbr = $.trim($("#orderAttrPhoneNbr").val()); //联系人号码
-		if(ec.util.isObj(orderAttrName)||ec.util.isObj(orderAttrIdCard)||ec.util.isObj(orderAttrPhoneNbr)){
-			if(!ec.util.isObj(orderAttrName)){
-				$.alert("提示","经办人姓名为空，经办人姓名、经办人号码、证件号码必须同时为空或不为空，因此无法提交！");
-				return false;
-			}
-			if(!ec.util.isObj(orderAttrPhoneNbr)){
-				$.alert("提示","经办人号码为空，经办人姓名、经办人号码、证件号码必须同时为空或不为空，因此无法提交！");
-				return false;
-			}
-			if(!ec.util.isObj(orderAttrIdCard)){
-				$.alert("提示","证件号码为空，经办人姓名、经办人号码、证件号码必须同时为空或不为空，因此无法提交！");
-				return false;
-			}
-		}
+		
+//		if(ec.util.isObj(orderAttrName)||ec.util.isObj(orderAttrIdCard)||ec.util.isObj(orderAttrPhoneNbr)){
+//			if(!ec.util.isObj(orderAttrName)){
+//				$.alert("提示","经办人姓名为空，经办人姓名、经办人号码、证件号码必须同时为空或不为空，因此无法提交！");
+//				return false;
+//			}
+//			if(!ec.util.isObj(orderAttrPhoneNbr)){
+//				$.alert("提示","经办人号码为空，经办人姓名、经办人号码、证件号码必须同时为空或不为空，因此无法提交！");
+//				return false;
+//			}
+//			if(!ec.util.isObj(orderAttrIdCard)){
+//				$.alert("提示","证件号码为空，经办人姓名、经办人号码、证件号码必须同时为空或不为空，因此无法提交！");
+//				return false;
+//			}
+//		}
+//		if("1"==orderIdentidiesTypeCd && ($("#orderAttrName").val() != OrderInfo.cust.partyName)){
+//			order.main.queryJbr();
+//		}
 		$("#order-content").show();
 		$("#terminalMain").show();
 		$("#jbr").hide();
 	}
-	var checkJBR=function(){
+	
+	//关闭经办人
+	var _closeUSER=function(){
+		//先校验
+		var orderAttrName = $.trim($("#userOrderAttrName").val()); //使用人人姓名
+		var orderIdentidiesTypeCd = $("#userOrderIdentidiesTypeCd  option:selected").val(); //证件类型
+		var orderAttrIdCard = $.trim($("#userOrderAttrIdCard").val());; //证件号码
+		if("1"==orderIdentidiesTypeCd){
+			orderAttrIdCard =$.trim($("#usersfzorderAttrIdCard").val()); //身份证号码
+		}
+		var orderAttrAddr = $.trim($("#userOrderAttrAddr").val()); //地址
+		var orderAttrPhoneNbr = $.trim($("#userOrderAttrPhoneNbr").val()); //联系人号码
+		
+		if(ec.util.isObj(orderAttrName)||ec.util.isObj(orderAttrIdCard)||ec.util.isObj(orderAttrPhoneNbr)){
+			if(!ec.util.isObj(orderAttrName)){
+				$.alert("提示","使用人姓名为空，使用人姓名、经办人号码、证件号码必须同时为空或不为空，因此无法提交！");
+				return false;
+			}
+			if(!ec.util.isObj(orderAttrPhoneNbr)){
+				$.alert("提示","使用人号码为空，使用人姓名、经办人号码、证件号码必须同时为空或不为空，因此无法提交！");
+				return false;
+			}
+			if(!ec.util.isObj(orderAttrIdCard)){
+				$.alert("提示","使用人号码为空，使用人姓名、经办人号码、证件号码必须同时为空或不为空，因此无法提交！");
+				return false;
+			}
+		}
+		
+		OrderInfo.updateChooseUserInfos(prodId, cust.tmpChooseUserInfo);
+		$('#'+CONST.PROD_ATTR.PROD_USER+'_'+prodId+'_name').val($("#userOrderAttrName").val());
+//		$('#'+CONST.PROD_ATTR.PROD_USER+'_'+prodId).val(cust.tmpChooseUserInfo.custId);
+		
+		cust.userSubmit();
+		$("#order-content").show();
+		$("#terminalMain").show();
+		$("#user").hide();
+	}
+	
+	var _checkJBR=function(){
 		if(ec.util.isObj($.trim($("#orderAttrName").val()))||ec.util.isObj($.trim($("#orderAttrIdCard").val()))||ec.util.isObj($.trim($("#sfzorderAttrIdCard").val()))||ec.util.isObj($.trim($("#orderAttrPhoneNbr").val()))){
 				if(!ec.util.isObj($.trim($("#orderIdentidiesTypeCd").val()))){
 					$.alert("提示","请选择证件类型！");
@@ -950,7 +996,9 @@ mktRes.terminal = (function($){
 		upPage                 :           _upPage,
 		nextPage               :           _nextPage,
 		closeJBR            :_closeJBR,
-		showJBR             :_showJBR
+		showJBR             :_showJBR,
+		closeUSER			:_closeUSER,
+		checkJBR			:_checkJBR
 	};
 })(jQuery);
 $(function() {

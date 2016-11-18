@@ -472,6 +472,44 @@ common = (function($) {
 		);	
 	};
 	
+	//调用客户端的拍照方法       method：表示回调js方法 如：order.prodModify.getIDCardInfos
+	var _callPhotos=function(method){
+		_getMobileIp("cust.getIp");
+		cust.jbrSubmit();
+		var arr=new Array(1);
+//		var str = "{\"picturesInfo\":[{\"orderInfo\":\"XXXXXXXXX\",\"picFlag\":\"A\",\"custName\":\"hiuu\",\"certType\":\"身份证\",\"certNumber\":\"902222222\",\"accNbr\":\"123456666\"},{\"orderInfo\":\"XXXXXXXXX\",\"picFlag\":\"B\",\"custName\":\"hiuu\",\"certType\":\"身份证\",\"certNumber\":\"902222222\",\"accNbr\":\"123456666\"},{\"orderInfo\":\"XXXXXXXXX\",\"picFlag\":\"C\",\"custName\":\"hiuu\",\"certType\":\"身份证\",\"certNumber\":\"902222222\",\"accNbr\":\"123456666\"},{\"orderInfo\":\"\",\"picFlag\":\"D\",\"custName\":\"hiuu\",\"certType\":\"身份证\",\"certNumber\":\"902222222\",\"accNbr\":\"123456666\"}]}";
+		var json = "{\"picturesInfo\":[";
+		if(!OrderInfo.cust.identityPic && OrderInfo.cust.identityPic!=undefined && OrderInfo.cust.identityPic.length != 0){
+			json = json + "{\"orderInfo\":" + OrderInfo.cust.identityPic + ",\"picFlag\":\"A\",\"custName\":" + OrderInfo.boCustInfos.name + ",\"certType\":" + OrderInfo.boCustIdentities.identidiesTypeCd + ",\"certNumber\":" + OrderInfo.boCustIdentities.identityNum + ",\"accNbr\":" + OrderInfo.boCustInfos.telNumber +"},";
+		}
+		if(!OrderInfo.user.identityPic && OrderInfo.user.identityPic!=undefined && OrderInfo.user.identityPic.length != 0){
+			json = json + "{\"orderInfo\":" + OrderInfo.user.identityPic + ",\"picFlag\":\"B\",\"custName\":" + OrderInfo.boUserInfos.name + ",\"certType\":" + OrderInfo.boUserIdentities.identidiesTypeCd + ",\"certNumber\":" + OrderInfo.boUserIdentities.identityNum + ",\"accNbr\":" + OrderInfo.boUserInfos.telNumber +"},";
+		}
+		if(!OrderInfo.jbr.identityPic && OrderInfo.jbr.identityPic!=undefined && OrderInfo.jbr.identityPic.length != 0){
+			json = json + "{\"orderInfo\":" + OrderInfo.jbr.identityPic + ",\"picFlag\":\"C\",\"custName\":" + OrderInfo.boJbrInfos.name + ",\"certType\":" + OrderInfo.boJbrIdentities.identidiesTypeCd + ",\"certNumber\":" + OrderInfo.boJbrIdentities.identityNum + ",\"accNbr\":" + OrderInfo.boJbrInfos.telNumber +"},";
+		}
+		json = json + "{\"orderInfo\":\"\",\"picFlag\":\"D\",\"custName\":\"" + OrderInfo.boJbrInfos.name + "\",\"certType\":\"" + OrderInfo.boJbrIdentities.identidiesTypeCd + "\",\"certNumber\":\"" + OrderInfo.boJbrIdentities.identityNum + "\",\"accNbr\":\"" + OrderInfo.boJbrInfos.telNumber +"\"}";
+		json = json+"]}";
+		arr[0]=method;
+		arr[1]=json;
+		MyPlugin.photoProcess(arr,
+            function(result) {
+            },
+            function(error) {
+            }
+		);
+	};
+	var _getMobileIp=function(method){
+		var arr=new Array(1);
+		arr[0]=method;
+		MyPlugin.getMobileIp(arr,
+            function(result) {
+            },
+            function(error) {
+            }
+		);
+	}
+	
 	//调用客户端打开支付页面
 	var _callOpenPay=function(payUrl){
 		var arr=new Array(1);
@@ -501,6 +539,8 @@ common = (function($) {
 		saveCust			:	_saveCust,
 		printEQCode         :   _printEQCode,
 		callAgreePhoto      :   _callAgreePhoto,
-		callOpenPay         :   _callOpenPay
+		callOpenPay         :   _callOpenPay,
+		callPhotos			:	_callPhotos,
+		getMobileIp			:	_getMobileIp
 	};
 })(jQuery);

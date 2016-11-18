@@ -1,6 +1,7 @@
 
+  
 <meta charset="utf-8">
-
+<input type="hidden" id="currentCT" value="${currentCT}"/><!-- 渠道类型 -->
     <form id="jbrFormdata" method="post" >
    		<div class="container-fluid">
    			<div class="row">
@@ -8,6 +9,7 @@
 					<div class="panel-heading">经办人信息</div>
 			<div class="panel-body">
 			<div class="form-group" id="jbrsfz">
+			
 				<div style="display:inline;"><label for="username">证件扫描</label></div>
 				<div style="display:inline;">
 					<ul style="list-style-type:none;display:inline;">
@@ -17,21 +19,27 @@
 		            </ul>
 				</div>
 			</div>
+			<div class="form-group" id="photo" style="display:none;">
+			<div style="display:inline;"><label for="username">拍照</label></div>
+			<div class="btn-group" role="group" >
+			            <button type="button" class="btn btn-default" onClick="common.callPhotos('cust.getPicture')">
+			            	<span class="glyphicon glyphicon-camera" aria-hidden="true"></span> 拍照
+			            </button>
+			          </div>
+			  </div>
 			<div class="form-group">
+			
 				<label for="orderAttrName">经办人姓名<span class="text-warning"></span></label>
             	<input type="text" class="form-control" id="orderAttrName"  maxlength="100" readonly="readonly">
 			</div>
-			<div class="form-group" id="div_cm_identidiesType">
+			<div class="form-group" id="div_cm_identidiesType" style="display:none">
 	            <label for="orderPartyTypeCd">客户类型</label>
 	            <select id="orderPartyTypeCd" class="myselect form-control" onchange="cust.jbrpartyTypeCdChoose(this,'orderIdentidiesTypeCd')" disabled="disabled">
 	            	<option value=1 >个人</option>
                     <option value=2>政企客户</option>
 	            </select>
          	</div>
-         	<div class="form-group">
-				<label for="orderAttrPhoneNbr">经办人号码<span class="text-warning"></span></label>
-            	<input type="text" class="form-control" id="orderAttrPhoneNbr"  maxlength="11" name="orderAttrPhoneNbr">
-			</div>
+         	
 			<div class="form-group" id="">
 	            <label for="orderIdentidiesTypeCd">证件类型</label>
 	            <select id="orderIdentidiesTypeCd" class="myselect form-control" onchange="cust.jbridentidiesTypeCdChoose(this,'sfzorderAttrIdCard')"><!-- onchange="cust.identidiesTypeCdChoose(this,'orderAttrIdCard')" -->
@@ -57,6 +65,10 @@
 			<div class="form-group">
 				<label for="orderAttrAddr">证件地址<span class="text-warning"></span></label>
             	<input type="text" class="form-control" id="orderAttrAddr" maxlength="200" readonly="readonly">
+			</div>
+			<div class="form-group">
+				<label for="orderAttrPhoneNbr">联系号码<span class="text-warning"></span></label>
+            	<input type="text" class="form-control" id="orderAttrPhoneNbr"  maxlength="11" name="orderAttrPhoneNbr">
 			</div>
 		</div>
          </div>

@@ -14,6 +14,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import net.sf.json.JSONArray;
+
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
@@ -1455,5 +1457,54 @@ public class MktResController extends BaseController {
 		return jsonResponse;
 	}
 	
+	/**
+     * 客户端前台拍照上传服务
+     * @param paramMap
+     * @param flowNum
+     * @param request
+     * @param response
+     * @return
+     */
+	@ResponseBody
+    @RequestMapping(value = "/upLoadPicturesFileToFtp", method = RequestMethod.POST)
+	public JsonResponse upLoadPicturesFileToFtp(@RequestBody Map<String, Object> param,@LogOperatorAnn String flowNum,
+	        HttpServletRequest request) {
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+                SysConstant.SESSION_KEY_LOGIN_STAFF);
+		log.debug("param={}", JsonUtil.toString(param));
+		String picturesInfo = (String) param.get("picturesInfo");
+		JSONArray arr = JSONArray.fromObject(picturesInfo);
+		param.put("picturesInfo",arr);
+		param.put("areaId", sessionStaff.getCurrentAreaId());
+		param.put("srcFlag", "REAL");
+		param.put("accNbr", sessionStaff.getInPhoneNum());
+		param.put("certType", sessionStaff.getCardType());
+		param.put("certNumber", sessionStaff.getCardNumber());
+//		param.put("olId","1111");
+    	Map<String, Object> rMap = null;
+    	JsonResponse jsonResponse=null;
+//    	if(StringUtil.isEmptyStr(orderInfo)){
+//    		rMap.put("errData", "图片未获取到，请确认！");
+//    		return super.failed(ErrorCode.ACCOUNT_REQUEST, rMap, param);
+//    	}
+//    	Map<String, Object> virMap = new HashMap<String, Object>();
+//    	virMap.put("virOlId", "201611031000000001");
+    	try {
+            rMap = mktResBmo.upLoadPicturesFileToFtp(param, flowNum, sessionStaff);
+//            rMap = new HashMap<String, Object>();
+//    		rMap.put("result", virMap);
+//    		rMap.put("code", "POR-0000");
+//    		rMap.put("resultMsg", "成功！");
+            if (rMap != null && ResultCode.R_SUCCESS.equals(MapUtils.getString(rMap, "code"))) {
+                jsonResponse = super.successed(rMap, ResultConstant.SUCCESS.getCode());
+            } else {
+                jsonResponse = super.failed(ErrorCode.ACCOUNT_REQUEST, rMap, param);
+            }
+        } catch (Exception e) {
+            jsonResponse = super.failed(ErrorCode.ACCOUNT_REQUEST, e, param);
+        }
+    	
+    	return jsonResponse;
+	}
 	
 }

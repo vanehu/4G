@@ -188,6 +188,9 @@ order.main = (function(){
 			$("#order-content").hide();
 			$("#order-dealer").show();
 			order.dealer.initDealer();
+			if(OrderInfo.preBefore.idPicFlag == "ON"){
+				common.callPhotos('cust.getPicture');
+			}
 		});
 		if (param.memberChange) {
 			$("#orderedprod").hide();

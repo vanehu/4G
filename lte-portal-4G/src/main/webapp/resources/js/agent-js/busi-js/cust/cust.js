@@ -167,6 +167,49 @@ cust = (function(){
 		}
 	};
 	
+	var _jbrSubmit = function(){
+//		OrderInfo.jbr.custId = -3;//客户地区
+		OrderInfo.jbr.partyName = $('#orderAttrName').val();//经办人名称
+		OrderInfo.jbr.areaId = OrderInfo.staff.areaId;//经办人地区
+		OrderInfo.jbr.telNumber = $('#orderAttrPhoneNbr').val();//联系电话
+		OrderInfo.jbr.addressStr = $('#orderAttrAddr').val();//经办人地址
+		OrderInfo.jbr.identityCd = $('#orderIdentidiesTypeCd').val();//证件类型
+		if(OrderInfo.jbr.identityCd==1){
+			OrderInfo.jbr.identityNum = $('#sfzorderAttrIdCard').val();//证件号码
+		}else{
+			OrderInfo.jbr.identityNum = $('#orderAttrIdCard').val();//证件号码
+		}
+		var data = {
+				boCustInfos : [],
+				boCustIdentities : [],	
+				boPartyContactInfo : []
+			};
+			_getJbrInfo();
+			data.boCustInfos.push(OrderInfo.boJbrInfos);
+			data.boCustIdentities.push(OrderInfo.boJbrIdentities);
+//			if($.trim($('#contactName').val()).length>0){
+//				data.boPartyContactInfo.push(OrderInfo.boPartyContactInfo);
+//			}
+	}
+	
+	//拼接经办人信息跟经办人属性从jbr节点解析到boJbrInfos，boJbrIdentities
+	var _getJbrInfo = function(){
+		OrderInfo.boJbrInfos.name = OrderInfo.jbr.partyName;//客户名称
+		OrderInfo.boJbrInfos.areaId = OrderInfo.staff.areaId;//客户地区
+		OrderInfo.boJbrInfos.partyTypeCd = 1 ;//客户类型
+		OrderInfo.boJbrInfos.defaultIdType = 1 ;//证件类型
+		OrderInfo.boJbrInfos.addressStr= OrderInfo.jbr.addressStr;//客户地址
+		OrderInfo.boJbrInfos.telNumber = OrderInfo.jbr.telNumber;//联系电话
+		OrderInfo.boJbrInfos.mailAddressStr = OrderInfo.jbr.mailAddressStr;//通信地址
+		OrderInfo.boJbrInfos.state = "ADD";
+		
+		OrderInfo.boJbrIdentities.identidiesTypeCd = OrderInfo.jbr.identityCd;//证件类型
+		OrderInfo.boJbrIdentities.identityNum = OrderInfo.jbr.identityNum;//证件号码
+		OrderInfo.boJbrIdentities.identidiesPic = OrderInfo.jbr.identityPic;//证件照片
+		OrderInfo.boJbrIdentities.isDefault = "Y";
+		OrderInfo.boJbrIdentities.state = "ADD";
+	};
+	
 	//拼接客户信息跟客户属性从cust节点解析到boCustInfos，boCustIdentities
 	var _getCustInfo = function(){
 		OrderInfo.boCustInfos.name = OrderInfo.cust.partyName;//客户名称
@@ -184,7 +227,49 @@ cust = (function(){
 		OrderInfo.boCustIdentities.isDefault = "Y";
 		OrderInfo.boCustIdentities.state = "ADD";
 	};
+	var _userSubmit = function(i){
+//		OrderInfo.user.custId = choosedCustInfo.custId;//客户地区
+//		OrderInfo.user.partyName = choosedCustInfo.partyName;//经办人名称
+//		OrderInfo.user.areaId = choosedCustInfo.areaId;//经办人地区
+//		OrderInfo.user.telNumber = choosedCustInfo.accNbr;//联系电话
+//		OrderInfo.user.addressStr = choosedCustInfo.addressStr;//经办人地址
+//		OrderInfo.user.identityCd = addressStr.identityCd;//证件类型
+//		OrderInfo.user.identityNum = addressStr.idCardNumber;//证件号码
+		var data = {
+				boCustInfos : [],
+				boCustIdentities : [],	
+				boPartyContactInfo : []
+			};
+//			_getUserInfo(choosedCustInfo);
+			data.boCustInfos.push(OrderInfo.boUserInfosArr[i]);
+			
+//			if($.trim($('#contactName').val()).length>0){
+//				data.boPartyContactInfo.push(OrderInfo.boPartyContactInfo);
+//			}
+			data.boCustIdentities.push(OrderInfo.boUserIdentitiesArr[i]);
+	}
 	
+	//拼接经办人信息跟经办人属性从jbr节点解析到boJbrInfos，boJbrIdentities
+	var _getUserInfo = function(choosedCustInfo){
+		OrderInfo.user.custId = choosedCustInfo.custId;
+		OrderInfo.boUserInfos.custId = choosedCustInfo.custId;
+		OrderInfo.boUserInfos.name = choosedCustInfo.partyName;//客户名称
+		OrderInfo.boUserInfos.areaId = choosedCustInfo.areaId;//客户地区
+		OrderInfo.boUserInfos.partyTypeCd = 1 ;//客户类型
+		OrderInfo.boUserInfos.defaultIdType = 1 ;//证件类型
+		OrderInfo.boUserInfos.addressStr= choosedCustInfo.addressStr;//客户地址
+		OrderInfo.boUserInfos.telNumber = choosedCustInfo.accNbr;//联系电话
+		OrderInfo.boUserInfos.mailAddressStr = choosedCustInfo.mailAddressStr;//通信地址
+		OrderInfo.boUserInfos.state = "ADD";
+		OrderInfo.boUserInfosArr.push(OrderInfo.boUserInfos);
+		
+		OrderInfo.boUserIdentities.identidiesTypeCd = choosedCustInfo.identityCd;//证件类型
+		OrderInfo.boUserIdentities.identityNum = choosedCustInfo.idCardNumber;//证件号码
+		OrderInfo.boUserIdentities.identidiesPic = OrderInfo.user.identityPic;//证件照片
+		OrderInfo.boUserIdentities.isDefault = "Y";
+		OrderInfo.boUserIdentities.state = "ADD";
+		OrderInfo.boUserIdentitiesArr.push(OrderInfo.boUserIdentities);
+	};
 	
 	//客户修改提交
 	var _updateCustSubmit = function(){
@@ -495,6 +580,8 @@ cust = (function(){
 					return;
 				}
 	   var currentCT = $("#currentCT").val();//渠道类型
+	   var haveCust = $("#haveCust").val();
+	   
 	   if(response.code==0){
 					var data = response.data ;
 					if(data!=undefined && data.length>0){
@@ -523,6 +610,40 @@ cust = (function(){
 							}
 							if(unique && isAllowChannelType){
 								uniData.push(data[i]);
+							}
+						}
+						var propertiesKey = "REAL_NAME_PHOTO_"+(OrderInfo.staff.soAreaId+"").substring(0,3);
+					    var isFlag = offerChange.queryPortalProperties(propertiesKey);
+					    OrderInfo.preBefore.idPicFlag = isFlag;
+						if(haveCust != "N"){
+							var cardNumber ="";
+							if(OrderInfo.cust.custId == "-1"){
+								cardNumber = OrderInfo.cust.identityNum;
+							} else {
+								cardNumber = OrderInfo.cust.idCardNumber;
+							}
+							if(_partyTypeCd==1){//公众客户 经办人默认为本人
+								if(cardType==1){
+									$("#jbrsfz").show();
+									$("#jbrsfz_i").show();
+									$("#qtzj").hide();
+									$("#orderAttrName").attr("readonly","readonly");
+									$("#orderAttrAddr").attr("readonly","readonly");
+									$("#sfzorderAttrIdCard").val(cardNumber);
+//									$('#jbrFormdata').data('bootstrapValidator').enableFieldValidators("orderAttrIdCard",true,"sfzorderAttrIdCard");
+								}else{
+									$("#jbrsfz").hide();
+									$("#jbrsfz_i").hide();
+									$("#qtzj").show();
+									$("#orderAttrName").removeAttr("readonly");
+									$("#orderAttrAddr").removeAttr("readonly");
+									$("#orderAttrIdCard").val(cardNumber);
+//									$('#jbrFormdata').data('bootstrapValidator').enableFieldValidators("orderAttrIdCard",true,"orderAttrIdCard");
+								}
+								$("#orderAttrAddr").val(OrderInfo.cust.addressStr);
+								$("#orderAttrName").val(OrderInfo.cust.partyName);
+								
+								
 							}
 						}
 						
@@ -2448,6 +2569,10 @@ cust = (function(){
 		isSelfChannel				:		_isSelfChannel,
 		getSessionCust				:		_getSessionCust,
 		agentNewCustSubmit			:		_agentNewCustSubmit,
-		agentInitNewCust			:		_agentInitNewCust
+		agentInitNewCust			:		_agentInitNewCust,
+		userSubmit					:		_userSubmit,
+		getUserInfo					:		_getUserInfo,
+		jbrSubmit					:		_jbrSubmit,
+		getJbrInfo					:		_getJbrInfo,
 	};	
 })();

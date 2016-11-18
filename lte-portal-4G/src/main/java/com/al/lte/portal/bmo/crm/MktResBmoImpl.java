@@ -1410,10 +1410,147 @@ public class MktResBmoImpl implements MktResBmo {
 		}
 		return (Map<String, Object>) sessionParams.get(qryParam.get("qryType").toString());
 	}
+	
+	public Map<String, Object> queryStandaddress(Map<String, Object> param,
+			String optFlowNum, SessionStaff sessionStaff) throws Exception{
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		DataBus db = InterfaceClient.callServiceMiddleSys(param, "ServiceCode", optFlowNum, sessionStaff);
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db
+				.getResultCode()))) {
+			resultMap = db.getReturnlmap();
+			Map<String, Object> datamap = resultMap;
+			returnMap.put("code", ResultCode.R_SUCCESS);
+			returnMap.put("result",datamap);
+		} else {
+			returnMap.put("code", ResultCode.R_FAIL);
+			returnMap.put("msg", db.getResultMsg());
+		}
+		return returnMap;				
+	}
+
+	public Map<String, Object> queryRescapability(Map<String, Object> param,
+			String optFlowNum, SessionStaff sessionStaff) throws Exception {
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		DataBus db = InterfaceClient.callServiceMiddleSys(param,"ServiceCode",optFlowNum, sessionStaff);
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db
+				.getResultCode()))) {
+			resultMap = db.getReturnlmap();
+			Map<String, Object> datamap = resultMap;
+			returnMap.put("code", ResultCode.R_SUCCESS);
+			returnMap.put("result",datamap);
+		} else {
+			returnMap.put("code", ResultCode.R_FAIL);
+			returnMap.put("msg", db.getResultMsg());
+		}
+		return returnMap;				
+	}
+
+	public Map<String, Object> queryTerminaltype(Map<String, Object> param,
+			String optFlowNum, SessionStaff sessionStaff) throws Exception {
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		DataBus db = InterfaceClient.callServiceMiddleSys(param, 
+				PortalServiceCode.BORAD_BAND_TERM_TYPE,
+				optFlowNum, sessionStaff);
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db
+				.getResultCode()))) {
+			resultMap = db.getReturnlmap();
+			Map<String, Object> datamap = resultMap;
+			returnMap.put("code", ResultCode.R_SUCCESS);
+			returnMap.put("reult",datamap);
+		} else {
+			returnMap.put("code", ResultCode.R_FAIL);
+			returnMap.put("msg", "终端预判接口调用失败");
+		}
+		return returnMap;				
+	}
+
+	public Map<String, Object> queryNumber(Map<String, Object> param,
+			String optFlowNum, SessionStaff sessionStaff) throws Exception {
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		DataBus db = InterfaceClient.callServiceMiddleSys(param, 
+				PortalServiceCode.BORAD_BAND_NUMBER_QRY,
+				optFlowNum, sessionStaff);
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db
+				.getResultCode()))) {
+			resultMap = db.getReturnlmap();
+			Map<String, Object> datamap = resultMap;
+			returnMap.put("code", ResultCode.R_SUCCESS);
+			returnMap.put("reult",datamap);
+		} else {
+			returnMap.put("code", ResultCode.R_FAIL);
+			returnMap.put("msg", "号码查询接口调用失败");
+		}
+		return returnMap;				
+	}
+
+	public Map<String, Object> numberRequest(Map<String, Object> param,
+			String optFlowNum, SessionStaff sessionStaff) throws Exception {
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		DataBus db = InterfaceClient.callServiceMiddleSys(param, 
+				PortalServiceCode.BORAD_BAND_NUMBER_REQUEST,
+				optFlowNum, sessionStaff);
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db
+				.getResultCode()))) {
+			resultMap = db.getReturnlmap();
+			Map<String, Object> datamap = resultMap;
+			returnMap.put("code", ResultCode.R_SUCCESS);
+			returnMap.put("reult",datamap);
+		} else {
+			returnMap.put("code", ResultCode.R_FAIL);
+			returnMap.put("msg", "号码资源预占/释放失败");
+		}
+		return returnMap;				
+	}
+
+	public Map<String, Object> upLoadPicturesFileToFtp(Map<String, Object> param,
+			String optFlowNum, SessionStaff sessionStaff) throws Exception {
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		DataBus db = InterfaceClient.callService(param, 
+				PortalServiceCode.UPLOAD_PICTURES_FILE_TO_FTP,
+				optFlowNum, sessionStaff);
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db
+				.getResultCode()))) {
+			resultMap = db.getReturnlmap();
+			Map<String, Object> datamap = resultMap;
+			returnMap.put("code", ResultCode.R_SUCCESS);
+			returnMap.put("reult",datamap);
+		} else {
+			returnMap.put("code", ResultCode.R_FAIL);
+			returnMap.put("msg", "图片批量上传接口调用失败");
+		}
+		return returnMap;				
+	}
 
 	public void writeCardLogInfo(String string, Map<String, Object> param, String flowNum,
 			SessionStaff sessionStaff) throws Exception {
 		// TODO Auto-generated method stub
 		InterfaceClient.callLogSerTOLogDB(string ,param, flowNum, sessionStaff);
 	}
+	public Map<String, Object> accountRequest(Map<String, Object> param,
+			String optFlowNum, SessionStaff sessionStaff) throws Exception {
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		DataBus db = InterfaceClient.callServiceMiddleSys(param, 
+				PortalServiceCode.BORAD_BAND_ACCOUNT_REQUEST,
+				optFlowNum, sessionStaff);
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db
+				.getResultCode()))) {
+			resultMap = db.getReturnlmap();
+			Map<String, Object> datamap = resultMap;
+			returnMap.put("code", ResultCode.R_SUCCESS);
+			returnMap.put("reult",datamap);
+		} else {
+			returnMap.put("code", ResultCode.R_FAIL);
+			returnMap.put("msg", "帐号&接入号&密码生成接口调用失败");
+		}
+		return returnMap;				
+	}
+	
+
 }

@@ -894,9 +894,11 @@ public final class PortalServiceCode {
     
     //终端预约记录查询
     public static final String QUERY_COUPON_RESERVE  = "biz-service/intf.soService/queryCouponReserveLog" ;
+
     
     /**终端预约在途查询*/											
     public static final String QUERY_COUPON_ROAD_RESERVR = "biz-service/intf.detailService/checkTerminalReverationZT";
+
 
     /** 配置数据查询 */
     public static final String CONFIG_DATA_QUERY = "biz-service/intf.soService/querySpecListByAttrID";
@@ -1126,10 +1128,16 @@ public final class PortalServiceCode {
     
     /** 判断是否集团新装业务 */
     public static final String QUERY_IF_LTE_NEW_INSTALL = "biz-service/intf.pullingDataService/queryIfLteNewInstall";
-
-    //实名制证件上传
+   
+  //实名制证件上传
     public static final String INTF_UPLOAD_IMAGE = "biz-service/intf.fileOperateService/upLoadPicturesFileToFtp";
     //实名制证件下载
     public static final String INTF_DOWNLOAD_IMAGE = "biz-service/intf.fileOperateService/downLoadPicturesFileFromFtp";
+
+    
+    /** 宽带融合--查询费用信息 **/
+    public static final String UPLOAD_PICTURES_FILE_TO_FTP = "biz-service/intf.fileOperateService/upLoadPicturesFileToFtp";
+    
+
 }
 

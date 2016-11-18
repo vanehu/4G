@@ -137,6 +137,9 @@ order.main = (function(){
 			$("#order-content").hide();
 			$("#order-dealer").show();
 			order.dealer.initDealer();
+			if(OrderInfo.preBefore.idPicFlag == "ON"){
+				common.callPhotos('cust.getPicture');
+			}
 		});
 		if (param.memberChange) {
 			$("#orderedprod").hide();
@@ -1178,14 +1181,66 @@ order.main = (function(){
 			}
 		}
 	};
+	
+	
+	//客户类型关联证件类型下拉框
+	var _certTypeByPartyType = function(_partyTypeCd){
+		var params = {"partyTypeCd":_partyTypeCd} ;
+		var url=contextPath+"/cust/queryCertType";
+		var response = $.callServiceAsJson(url, params, {});
+       if (response.code == -2) {
+					$.alertM(response.data);
+				}
+	   if (response.code == 1002) {
+		   			$.alert("错误","根据员工类型查询员工证件类型无数据,请配置");
+					return;
+				}
+	   if(response.code==0){
+					var data = response.data ;
+					var currentCT = $("#currentCT").val();//渠道类型
+					//只有定义的渠道类型新建客户的时候可以选择非身份证类型,其他的渠道类型只能选择身份证类型。
+					var isAllowChannelType = false;
+					if (currentCT == CONST.CHANNEL_TYPE_CD.ZQZXDL || currentCT == CONST.CHANNEL_TYPE_CD.GZZXDL
+						|| currentCT == CONST.CHANNEL_TYPE_CD.HYKHZXDL || currentCT == CONST.CHANNEL_TYPE_CD.SYKHZXDL
+						|| currentCT == CONST.CHANNEL_TYPE_CD.XYKHZXDL || currentCT == CONST.CHANNEL_TYPE_CD.GZZXJL
+						|| currentCT == CONST.CHANNEL_TYPE_CD.ZYOUT || currentCT == CONST.CHANNEL_TYPE_CD.ZYINGT
+						|| currentCT == CONST.CHANNEL_TYPE_CD.WBT) { // || _partyTypeCd != "1" //新建政企客户时同样有这个限制
+						isAllowChannelType = true;
+					}
+					if(data!=undefined && data.length>0){
+						OrderInfo.certTypedates = data;
+						for(var i=0;i<OrderInfo.certTypedates.length;i++){
+							var certTypedate = OrderInfo.certTypedates[i];
+							
+							if (certTypedate.certTypeCd == "1") {//身份证
+								$("#p_cust_identityCd_choose").append("<option value='"+certTypedate.certTypeCd+"' >"+certTypedate.name+"</option>");
+							}else  if(isAllowChannelType){//如果自有渠道，开放所有
+								$("#p_cust_identityCd_choose").append("<option value='"+certTypedate.certTypeCd+"' >"+certTypedate.name+"</option>");
+							}
+						}
+					}
+				}
+	};	
+	
+	
 
 //打开使用人弹出框
 function _showUser(prodId){		
 		var ad = ""+OrderInfo.staff.areaId;
 		var areaId = ad.substring(0,3)+'0000';
+		$("#p_cust_identityCd_choose").empty();
+		if(cust.isCovCust(OrderInfo.cust.identityCd)){
+			$("#p_cust_identityCd_choose").append("<option value=\"-1\">接入号码</option><option value=\"acctCd\">合同号</option><option value=\"custNumber\">客户编码</option>")
+			
+		}else {
+			$("#p_cust_identityCd_choose").append("<option value=\"-1\">接入号码</option>")
+			_certTypeByPartyType(1);
+		}
 		 _queryChildNode(areaId);
 		$("#queryUser").off("click").on("click",function(){
 			_queryUser();
+			
+			
 		});
 		$('#chooseUserBtn').off('click').on('click',function(){
 //			var prodId=$('#prodId').val();
@@ -1243,6 +1298,7 @@ function _queryChildNode(upRegionId) {
 
 // 使用人-查询
 function _queryUser(){
+	cust.jbrvalidatorForm();
 	if($("#p_cust_identityNum_choose").val().trim() == ""){
 		$.alert("操作提示","查询号码不能为空！");
 		return;
@@ -1299,7 +1355,14 @@ function _queryUser(){
 			}
 			if(response.data.indexOf("false") ==0) {
 				$.unecOverlay();
-				$.alert("提示","抱歉，没有定位到客户，请尝试其他客户。");
+//				$.alert("提示","抱歉，没有定位到客户，请尝试其他客户。");
+				$("#order-content").hide();//办号卡
+				$("#terminalMain").hide();//购手机
+				$('#choose_multiple_user_dialog').hide();
+				$('#overlay').hide();
+				$("#userModal").modal("hide");
+				$("#user").show();//显示经办人
+				$("#orderAttrPhoneNbr").val(identityNum);
 				 return;
 			}else{
 			$.unecOverlay();
@@ -1307,8 +1370,8 @@ function _queryUser(){
 			var custInfoSize = $(response.data).find('#custInfoSize').val();
 			// 使用人定位时，存在多客户的情况
 			if (custInfoSize == 1) {
-				cust.showCustAuth($(response.data).find('#custInfos'));
-			} 
+				cust.showCustAuth($(response.data).find('#custInfos'),"user");
+			}
 //			else if (custInfoSize > 1) {
 //				$("#choose_multiple_user_dialog").html(response.data);
 //				easyDialog.open({
@@ -1360,6 +1423,163 @@ function _showChooseUserTable(custInfo){
 	}
 };
 
+/*
+ * 经办人人填充返回信息
+ */
+function _showJbrInfo(custInfo){
+	if(custInfo != null && custInfo.custId){
+		//将客户信息作为使用人tmpChooseUserInfo，确认后保存到OrderInfo.choosedUserInfos
+		cust.tmpJbrInfo = custInfo;
+		OrderInfo.jbr.custId = custInfo.custId;
+//		order.cust.tmpChooseUserInfo.prodId = '';
+		$('#orderAttrName').val(custInfo.partyName);
+		$('#orderAttrAddr').val(custInfo.areaName);
+		$('#orderAttrPhoneNbr').val(custInfo.accNbr);
+		$.alert("提示","经办人信息查询成功！\n请对经办人进行拍照");
+	} 
+};
+
+
+//经办人-查询
+function _queryJbr(){
+	
+	var identityCd="";
+	var idcard="";
+	var diffPlace="";
+	var acctNbr="";
+	var identityNum="";
+	var queryType="";
+	var queryTypeValue="";
+	identityCd=$("#orderIdentidiesTypeCd  option:selected").val();;
+	if(identityCd==1){
+		var identityNum = $('#sfzorderAttrIdCard').val();//证件号码
+	}else{
+		var identityNum = $('#orderAttrIdCard').val();//证件号码
+	}
+	
+	if(ec.util.isObj($.trim($("#orderIdentidiesTypeCd").val()))||ec.util.isObj($.trim($("#sfzorderAttrIdCard").val()))||ec.util.isObj($.trim($("#orderAttrIdCard").val()))){
+		if(!ec.util.isObj($.trim($("#orderIdentidiesTypeCd").val()))){
+			$.alert("提示","请选择证件类型！");
+			return false;
+		}
+		if($.trim($("#orderIdentidiesTypeCd").val())==1){
+			if(!ec.util.isObj($.trim($("#sfzorderAttrIdCard").val()))){
+				$.alert("提示","证件号码为空，无法进行查询！");
+				return false;
+			}
+		}
+		if($.trim($("#orderIdentidiesTypeCd").val())!=1){
+			if(!ec.util.isObj($.trim($("#orderAttrIdCard").val()))){
+				$.alert("提示","证件号码为空，无法进行查询！");
+				return false;
+			}
+		}
+	}
+
+	authFlag="0"; // 需要鉴权
+	if(identityCd==-1){
+		
+		acctNbr=$("#orderAttrPhoneNbr").val();
+		identityNum="";
+		identityCd="";
+	}
+	diffPlace="local";
+	areaId=OrderInfo.staff.areaId;
+	// lte进行受理地区市级验证
+	if(CONST.getAppDesc()==0&&areaId.indexOf("0000")>0){
+		$.alert("提示","省级地区无法进行定位客户,请选择市级地区！");
+		return;
+	}
+	var param = {
+			"acctNbr":acctNbr,
+			"identityCd":identityCd,
+			"identityNum":identityNum,
+			"partyName":"",
+			"custQueryType":$("#custQueryType_choose").val(),
+			"diffPlace":diffPlace,
+			"areaId" : areaId,
+			"queryType" :queryType,
+			"queryTypeValue":queryTypeValue,
+			"identidies_type":$("#orderIdentidiesTypeCd  option:selected").text()
+	};
+	$.callServiceAsHtml(contextPath+"/cust/queryCust",param, {
+		"before":function(){
+			$.ecOverlay("<strong>正在查询中，请稍等...</strong>");
+		},"always":function(){
+			//$.unecOverlay();
+		},	
+		"done" : function(response){
+			if (response.code == -2) {
+				return;
+			}
+			if(response.data.indexOf("false") ==0) {
+				$.unecOverlay();
+//				$.alert("提示","抱歉，没有定位到客户，请尝试其他客户。");
+				
+				if(ec.util.isObj($.trim($("#orderAttrName").val()))||ec.util.isObj($.trim($("#orderAttrPhoneNbr").val()))||ec.util.isObj($.trim($("#orderAttrAddr").val()))){
+					if(!ec.util.isObj($.trim($("#orderAttrName").val()))){
+						$.alert("提示","抱歉，未查询到经办人信息！请完善经办人信息！");
+						return false;
+					}
+					if(!ec.util.isObj($.trim($("#orderAttrPhoneNbr").val()))){
+						$.alert("提示","抱歉，未查询到经办人信息！请完善经办人信息！");
+						return false;
+					}
+					if(!ec.util.isObj($.trim($("#orderAttrAddr").val()))){
+						$.alert("提示","抱歉，未查询到经办人信息！请完善经办人信息！");
+						return false;
+					}
+					
+					
+				} 
+				
+					$.alert("提示","抱歉，未查询到经办人信息！\n提交经办人信息成功,请对经办人进行拍照");
+					cust.jbrSubmit();
+				
+				
+				 return;
+			}else{
+			$.unecOverlay();
+			cust.jumpAuthflag = $(response.data).find('#jumpAuthflag').val();
+			var custInfoSize = $(response.data).find('#custInfoSize').val();
+			var custInfos = $(response.data).find('#custInfos');
+//			$.alert("dd","custInfos -- " + JSON.stringify(custInfos));
+			var custInfo = custInfos[0];
+			// 使用人定位时，存在多客户的情况
+			if (custInfoSize == 1) {
+				cust.showCustAuth($(response.data).find('#custInfos'),"jbr");
+				
+			} 
+			
+			else if (custInfoSize > 1) {
+				cust.showCustAuth(custInfos,"jbr");
+			} else {
+				$.alert("提示","抱歉，未查询到经办人信息！\n提交经办人信息成功。");
+				cust.jbrSubmit();
+			}
+//			$(".userclose").off("click").on("click",function(event) {
+//				try {
+//					easyDialog.close();
+//				} catch (e) {
+//					$('#choose_multiple_user_dialog').hide();
+//					$('#overlay').hide();
+//				}
+//				authFlag="";
+//				$(".usersearchcon").hide();
+//			});
+//			if($("#custListTable").attr("custInfoSize")=="1"){
+//				$(".usersearchcon").hide();
+//			}
+		}
+		},
+		"fail":function(response){
+			$.unecOverlay();
+			$.alert("提示","查询失败，请稍后再试！");
+		}
+	});
+
+};
+
 
 	return {
 		buildMainView 				:				 _buildMainView,
@@ -1392,7 +1612,9 @@ function _showChooseUserTable(custInfo){
 		showUser            :_showUser,
 		queryChildNode      :_queryChildNode,
 		queryUser          :_queryUser,
-		showChooseUserTable:_showChooseUserTable
+		showChooseUserTable:_showChooseUserTable,
+		queryJbr			:_queryJbr,
+		showJbrInfo 		:_showJbrInfo
 	};
 })();
 

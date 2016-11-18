@@ -239,8 +239,9 @@ CONST = (function(){
 		DELIVERY_TIME : "800000015" ,//提货时间
 		DELIVERY_ADDRESS : "800000016" ,//提货地址
 		DELIVERY_POLICY : "800000018", //预约政策
-		itemSpecID : "800000036" //客户等级属性标识ID
-		
+		itemSpecID : "800000036", //客户等级属性标识ID
+		VIROLID : "810000000",//虚拟订单ID属性待定，先用-1代替
+		CURIP :"40010038"//业务办理ip
 	};
 	
 	//属性规格

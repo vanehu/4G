@@ -452,8 +452,78 @@ public interface MktResBmo {
 	
 	public Map<String, Object> getCachedParamsInSession(HttpServletRequest request, Map<String, Object> qryParam, String businessFlag);
 	
+	
+	public Map<String, Object> queryStandaddress(Map<String, Object> param,
+			String optFlowNum, SessionStaff sessionStaff) throws Exception;
+	
+	/**
+	 * 宽带融合，资源预判接口
+	 * @param param
+	 * @param optFlowNum
+	 * @param sessionStaff
+	 * @return
+	 * @throws Exception
+	 */
+	public Map<String, Object> queryRescapability(Map<String, Object> param,
+			String optFlowNum, SessionStaff sessionStaff) throws Exception;
+	
+	/**
+	 * 宽带融合，终端预判接口
+	 * @param param
+	 * @param optFlowNum
+	 * @param sessionStaff
+	 * @return
+	 * @throws Exception
+	 */
+	public Map<String, Object> queryTerminaltype(Map<String, Object> param,
+			String optFlowNum, SessionStaff sessionStaff) throws Exception;
+	
+	
+	/**
+	 * 宽带融合，号码资源查询
+	 * @param param
+	 * @param optFlowNum
+	 * @param sessionStaff
+	 * @return
+	 * @throws Exception
+	 */
+	public Map<String, Object> queryNumber(Map<String, Object> param,
+			String optFlowNum, SessionStaff sessionStaff) throws Exception;
+	
+	/**
+	 * 宽带融合，号码资源预占/释放
+	 * @param param
+	 * @param optFlowNum
+	 * @param sessionStaff
+	 * @return
+	 * @throws Exception
+	 */
+	public Map<String, Object> numberRequest(Map<String, Object> param,
+			String optFlowNum, SessionStaff sessionStaff) throws Exception;
+	
+	/**
+	 * 宽带融合，帐号&接入号&密码生成（宽带/天翼高清）
+	 * @param param
+	 * @param optFlowNum
+	 * @param sessionStaff
+	 * @return
+	 * @throws Exception
+	 */
+	public Map<String, Object> accountRequest(Map<String, Object> param,
+			String optFlowNum, SessionStaff sessionStaff) throws Exception;
 	/**写卡错误信息记录日志平台*/
 	public void writeCardLogInfo(String string, Map<String, Object> param, String flowNum,
 			SessionStaff sessionStaff)throws Exception;
+	/**
+	 * 门户调用的图片批量上传（基于订单）接口
+	 * @param param
+	 * @param optFlowNum
+	 * @param sessionStaff
+	 * @return
+	 * @throws Exception
+	 */
+	public Map<String, Object> upLoadPicturesFileToFtp(Map<String, Object> param,
+			String optFlowNum, SessionStaff sessionStaff) throws Exception;
 	
+		
  }
