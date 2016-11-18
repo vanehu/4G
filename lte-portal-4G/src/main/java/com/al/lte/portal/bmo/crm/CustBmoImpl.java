@@ -1,9 +1,13 @@
 package com.al.lte.portal.bmo.crm;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,7 +29,10 @@ import org.springframework.stereotype.Service;
 
 import com.al.ec.serviceplatform.client.DataBus;
 import com.al.ec.serviceplatform.client.ResultCode;
+import com.al.ecs.common.util.DateUtil;
+import com.al.ecs.common.util.EncodeUtils;
 import com.al.ecs.common.util.JsonUtil;
+import com.al.ecs.common.util.MDA;
 import com.al.ecs.exception.BusinessException;
 import com.al.ecs.exception.ErrorCode;
 import com.al.ecs.exception.ResultConstant;
@@ -37,6 +44,7 @@ import com.al.lte.portal.common.MySimulateData;
 import com.al.lte.portal.common.PortalServiceCode;
 import com.al.lte.portal.common.RunShellUtil;
 import com.al.lte.portal.common.ServiceClient;
+import com.al.lte.portal.model.Photograph;
 import com.al.lte.portal.model.SessionStaff;
 
 @Service("com.al.lte.portal.bmo.crm.CustBmo")
@@ -710,5 +718,164 @@ public class CustBmoImpl implements CustBmo {
 			log.error("账户和使用人信息查询queryAccountAndUseCustInfo服务返回的数据异常", e);
 			throw new BusinessException(ErrorCode.QUERY_ACCOUNT_USE_CUSTINFO, dataBusMap, db.getReturnlmap(), e);
 		}
+	}
+	
+	/**
+	 * 实名制证件照片上传
+	 * @throws BusinessException 
+	 */
+	@SuppressWarnings("unchecked")
+	public Map<String, Object> uploadCustCertificate(Map<String, Object> param, SessionStaff sessionStaff) throws BusinessException{
+		List<Map<String, String>> photographs = (List<Map<String, String>>) param.get("photographs");
+		Map<String, Object> result = new HashMap<String, Object>();
+		
+		//1.urlDecode解码
+		if(this.urlDecode(photographs)){
+			int count = 0;
+			for(int i = 0; i < photographs.size(); i++){
+				Map<String, String> photograph = photographs.get(i);
+				//目前仅对拍照的照片进行签名校验和水印处理(即flag为D)
+				if("D".equals(photograph.get("flag"))){
+					String venderId = param.get("venderId").toString();
+					//2.签名校验
+					if(this.verifySignature(photograph, venderId)){
+						//3.添加水印
+						try {
+							this.addTextWatermark(photograph, venderId);
+						} catch (IOException ioe) {
+							log.error("拍照证件添加水印发生异常={}", ioe);
+							throw new BusinessException(ErrorCode.PRE_HANDLE_CUST_CERTIFICATE, param, null, ioe);
+						}
+						//4.图片压缩
+						//到底要不要压缩( ˇˍˇ )
+					} else{
+						result.put("code", ResultCode.R_FAIL);
+						result.put("msg", "证件签名校验失败，原因可能是请求入参中的数据已被篡改或存在冲突，请不要试图进行非法操作、重复操作或在多个浏览器窗口同时提交业务。");
+						return result;
+					}
+				} else{
+					count++;
+				}
+			}
+			
+			//5.证件上传
+			if(count == photographs.size()){
+				result.put("code", ResultCode.R_FAIL);
+				result.put("msg", "请求入参中未获取到有效的实名拍照信息，原因可能是请求入参中的数据已被篡改或丢失，请不要试图进行非法操作、重复操作或在多个浏览器窗口同时提交业务。");
+			} else{
+				result = this.uploadCustCertificateMethod(param, sessionStaff);
+			}
+		} else{
+			result.put("code", ResultCode.R_FAIL);
+			result.put("msg", "入参解码异常，原因可能是请求入参中的数据已被篡改或丢失，请不要试图进行非法操作、重复操作或在多个浏览器窗口同时提交业务。");
+		}
+
+		return result;
+	}
+	
+	/**
+	 * 校验签名
+	 * @param photographs base64照片字符串
+	 * @param venderId 厂商ID
+	 * @return true：校验成功；false：校验失败
+	 */
+	private boolean verifySignature(Map<String, String> image, String venderId){
+		boolean resultFlag = false;
+		
+		Photograph photograph = Photograph.getInstanceSync();
+		photograph.setPhotograph(image.get("photograph").toString());
+		photograph.setSignature(image.get("signature").toString());
+		resultFlag = photograph.verifySignature(venderId);
+		
+		return resultFlag;
+	}
+	
+	/**
+	 * 证件照片添加水印
+	 * @param photographs base64照片字符串
+	 * @param venderId 厂商ID
+	 * @return 所有证件照片一次性添加水印，并以List返回
+	 * @throws IOException
+	 */
+	public Map<String, String> addTextWatermark(Map<String, String> image, String venderId) throws IOException{
+		Photograph photograph = Photograph.getInstanceSync();
+		
+		photograph.setPhotograph(image.get("photograph"));
+		image.put("photograph", photograph.addTextWatermarkMethod(venderId));
+		
+		return image;
+	}
+	
+	/**
+	 * 证件照片上传
+	 * @param param
+	 * @param sessionStaff
+	 * @return
+	 * @throws BusinessException
+	 */
+	@SuppressWarnings("unchecked")
+	public Map<String, Object> uploadCustCertificateMethod(Map<String, Object> param, SessionStaff sessionStaff) throws BusinessException{
+		List<Map<String, String>> photographs = (List<Map<String, String>>) param.get("photographs");		
+		
+		//重新封装，去掉协议之外的无用的节点
+		for(int i = 0; i < photographs.size(); i++){
+			Map<String, String> photograph = photographs.get(i);
+			photograph.put("orderInfo", photograph.get("photograph"));
+			photograph.put("picFlag", photograph.get("flag"));
+			photograph.remove("photograph");
+			photograph.remove("flag");
+			photograph.remove("signature");
+		}
+		param.put("picturesInfo", photographs);
+		param.remove("photographs");
+		
+		return Photograph.getInstanceSync().uploadCustCertificate(param, sessionStaff);
+	}
+	
+	/**
+	 * 实名制照片添加水印
+	 * @param param
+	 * @return
+	 * @throws IOException 
+	 */
+	public Map<String, Object> preHandleCustCertificate(String base64ImageStr, String venderId) throws IOException{
+		Map<String, Object> result = new HashMap<String, Object>();
+		String imageStr = EncodeUtils.urlDecode(base64ImageStr);
+		
+		if(imageStr != null){
+			Photograph photograph = Photograph.getInstanceSync();
+			photograph.setPhotograph(imageStr);
+			result.put("photograph", photograph.addTextWatermarkMethod(venderId));
+			result.put("code", ResultCode.R_SUCCESS);
+		} else{
+			result.put("code",  ResultCode.R_FAIL);
+			result.put("msg", "入参解码异常，可能入参为空或编码不合法");
+			log.error("入参解码异常，无法使用URLEncode解码为base64字符串=preHandleCustCertificate");
+		}
+		
+		return result;
+	}
+	
+	/**
+	 * urlDecode解码，入参中所有base64都经过URLEncode编码，这里全部解码为base64字符串
+	 * @param photographs
+	 * @return true:全部解码成功; fasle:解码失败
+	 */
+	private boolean urlDecode(List<Map<String, String>> photographs){
+		boolean resultFlag = true;
+		
+		for(int i = 0; i < photographs.size(); i++){
+			Map<String, String> photograph = photographs.get(i);
+			String base64ImageStr = EncodeUtils.urlDecode(photograph.get("photograph"));
+			if(base64ImageStr != null){
+				photograph.put("photograph", base64ImageStr);
+			} else{
+				log.error("入参解码异常，无法使用URLEncode解码为base64字符串=uploadCustCertificate");
+				resultFlag = false;
+				break;
+			}
+		}
+		
+		return resultFlag;
 	}
 }

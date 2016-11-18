@@ -14,6 +14,7 @@ import javax.servlet.http.HttpSession;
 
 import net.sf.json.JSONObject;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
@@ -2969,5 +2970,47 @@ public class OrderBmoImpl implements OrderBmo {
 			throw new BusinessException(ErrorCode.QUERY_LTE_NEW_INSTALL, paramMap, resultMap, e);
 		}
 		return resultMap;
+	}
+	
+	/**
+	 * 调后台接口下载拍照证件
+	 */
+	@SuppressWarnings("unchecked")
+	public Map<String, Object> downloadCustCertificate(Map<String, Object> param, SessionStaff sessionStaff) throws BusinessException{	
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		DataBus db = new DataBus();
+		try{
+			db = InterfaceClient.callService(param, PortalServiceCode.INTF_DOWNLOAD_IMAGE, null, sessionStaff);
+			if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db.getResultCode()))) {
+				resultMap = (Map<String, Object>)db.getReturnlmap();
+				ArrayList<HashMap<String, Object>> photographs = (ArrayList<HashMap<String, Object>>) resultMap.get("picturesInfo");
+				for(int i = 0; i < photographs.size(); i++){
+					HashMap<String, Object> photographsMap = photographs.get(i);
+					photographsMap.remove("orderInfo");
+					photographsMap.put("photograph", photographsMap.get("orderInfo").toString());
+					photographs.add(i, photographsMap);
+				}
+				resultMap.put("photographs", photographs);
+				resultMap.put("code", ResultCode.R_SUCCESS);
+			} else {
+				resultMap.put("code",  ResultCode.R_FAIL);
+				resultMap.put("msg", db.getResultMsg());
+			}
+		}catch(Exception e){
+			log.error("门户处理营业受理后台的service/intf.fileOperateService/downLoadPicturesFileFromFtp服务返回的数据异常", e);
+			throw new BusinessException(ErrorCode.DOWNLOAD_CUST_CERTIFICATE, param, db.getReturnlmap(), e);
+		}	
+		return resultMap;
+	}
+	
+	/**
+	 * 实名制拍照，入参防篡改校验(暂时跳过)
+	 * @param param 订单提交入参
+	 * @param request 
+	 * @return true:校验成功; false:校验失败
+	 */
+	public boolean verifyCustCertificate(Map<String, Object> param, HttpServletRequest request){
+//		boolean resultFlag = false;
+		return true;
 	}
 }

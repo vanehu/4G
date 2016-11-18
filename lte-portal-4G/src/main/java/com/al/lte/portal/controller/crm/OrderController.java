@@ -3021,6 +3021,9 @@ public class OrderController extends BaseController {
         return true;
     }
 
+    /**
+     * 4GWEB订单提交
+     */
     @RequestMapping(value = "/orderSubmit", method = RequestMethod.POST)
     @ResponseBody
     public JsonResponse orderSubmit(@RequestBody Map<String, Object> param, HttpServletResponse response,
@@ -3034,30 +3037,29 @@ public class OrderController extends BaseController {
                 if (!papersCheck(request, param)) {
                     return super.failed(ErrorCode.ORDER_SUBMIT, "您当前的证件信息非通过正常渠道录入，请核对！", param);
                 }
-                Map orderList = (Map) param.get("orderList");
-                Map orderListInfo = (Map) orderList.get("orderListInfo");
+                Map<String, Object> orderList = (Map<String, Object>) param.get("orderList");
+                Map<String, Object> orderListInfo = (Map<String, Object>) orderList.get("orderListInfo");
                 orderListInfo.put("staffId", sessionStaff.getStaffId()); //防止前台修改
                 orderListInfo.put("channelId", sessionStaff.getCurrentChannelId()); //防止前台修改
+                
                 //过滤订单属性
-                List<Map> custOrderAttrs = (List<Map>) orderListInfo.get("custOrderAttrs");
-
+                List<Map<String, Object>> custOrderAttrs = (List<Map<String, Object>>) orderListInfo.get("custOrderAttrs");
                 //添加客户端IP地址到订单属性
-                Map<String, String> IPMap = new HashMap<String, String>();
-                String clientIp = ServletUtils.getIpAddr(request);
-                IPMap.put("itemSpecId", "800000039");
-                IPMap.put("value", (clientIp == null || "".equals(clientIp)) ? "N/A" : clientIp);
-                if (custOrderAttrs == null)
-                    custOrderAttrs = new ArrayList<Map>();
+                Map<String, Object> IPMap = new HashMap<String, Object>();
+                IPMap.put("itemSpecId", SysConstant.ORDER_ATTRS_IP);
+                IPMap.put("value", ServletUtils.getIpAddr(request));
+                if (custOrderAttrs == null){
+                	custOrderAttrs = new ArrayList<Map<String, Object>>();
+                }
                 custOrderAttrs.add(IPMap);
                 orderListInfo.put("custOrderAttrs", custOrderAttrs);
 
-                String isAddOperation = (String) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.FDSL
-                        + "_" + sessionStaff.getStaffId());
+                String isAddOperation = (String) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.FDSL + "_" + sessionStaff.getStaffId());
                 //没有暂存单权限的员工不能添加暂存单订单属性
                 if (!"0".equals(isAddOperation)) {
                     if (custOrderAttrs != null && custOrderAttrs.size() != 0) {
-                        List<Map> filterCustOrderAttrs = new ArrayList<Map>();
-                        for (Map custOrderAttr : custOrderAttrs) {
+                        List<Map<String, Object>> filterCustOrderAttrs = new ArrayList<Map<String, Object>>();
+                        for (Map<String, Object> custOrderAttr : custOrderAttrs) {
                             if (custOrderAttr != null
                                     && !SysConstant.FDSL_ORDER_ATTR_SPECID.equals(custOrderAttr.get("itemSpecId"))) {
                                 filterCustOrderAttrs.add(custOrderAttr);
@@ -3066,44 +3068,45 @@ public class OrderController extends BaseController {
                         orderListInfo.put("custOrderAttrs", filterCustOrderAttrs);
                     }
                 }
-
-                Map<String, Object> resMap = orderBmo.orderSubmit(param, null, sessionStaff);
-                if (ResultCode.R_SUCC.equals(resMap.get("resultCode"))) {
-                    Map result = (Map) resMap.get("result");
-                    String olId = (String) result.get("olId");
-                    String soNbr = (String) orderListInfo.get("soNbr");
-                    String olTypeCd = orderListInfo.get("olTypeCd").toString();
-                    String actionFlag = orderListInfo.get("actionFlag") != null ? orderListInfo.get("actionFlag")
-                            .toString() : "";
-                    if (result.get("ruleInfos") == null) {
-                        resMap.put("rolId", olId);
-                        resMap.put("rsoNbr", soNbr);
-                        resMap.put("checkRule", "checkRule");
-                    } else {
-                        boolean ruleflag = false;
-                        List rulelist = (List) result.get("ruleInfos");
-                        for (int i = 0; i < rulelist.size(); i++) {
-                            Map rulemap = (Map) rulelist.get(i);
-                            String ruleLevel = rulemap.get("ruleLevel").toString();
-                            if ("4".equals(ruleLevel)) {
-                                ruleflag = true;
-                                sessionStaff.setOrderData(resMap);
-                                break;
-                            }
-                        }
-                        if (!ruleflag) {
+                if(orderBmo.verifyCustCertificate(param, request)){
+                    Map<String, Object> resMap = orderBmo.orderSubmit(param, null, sessionStaff);
+                    if (ResultCode.R_SUCC.equals(resMap.get("resultCode"))) {
+                        Map<String, Object> result = (Map<String, Object>) resMap.get("result");
+                        String olId = (String) result.get("olId");
+                        String soNbr = (String) orderListInfo.get("soNbr");
+//                        String olTypeCd = orderListInfo.get("olTypeCd").toString();
+                        String actionFlag = orderListInfo.get("actionFlag") != null ? orderListInfo.get("actionFlag").toString() : "";
+                        if (result.get("ruleInfos") == null) {
                             resMap.put("rolId", olId);
                             resMap.put("rsoNbr", soNbr);
                             resMap.put("checkRule", "checkRule");
+                        } else {
+                            boolean ruleflag = false;
+                            List rulelist = (List) result.get("ruleInfos");
+                            for (int i = 0; i < rulelist.size(); i++) {
+                                Map rulemap = (Map) rulelist.get(i);
+                                String ruleLevel = rulemap.get("ruleLevel").toString();
+                                if ("4".equals(ruleLevel)) {
+                                    ruleflag = true;
+                                    sessionStaff.setOrderData(resMap);
+                                    break;
+                                }
+                            }
+                            if (!ruleflag) {
+                                resMap.put("rolId", olId);
+                                resMap.put("rsoNbr", soNbr);
+                                resMap.put("checkRule", "checkRule");
+                            }
                         }
+                        if (actionFlag.equals("37") || actionFlag.equals("38")) {
+                            resMap.put("checkRule", "notCheckRule");
+                        }
+                        jsonResponse = super.successed(resMap, ResultConstant.SUCCESS.getCode());
+                    } else {
+                        jsonResponse = super.failed(resMap.get("resultMsg"), ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
                     }
-                    if (actionFlag.equals("37") || actionFlag.equals("38")) {
-                        resMap.put("checkRule", "notCheckRule");
-                    }
-                    jsonResponse = super.successed(resMap, ResultConstant.SUCCESS.getCode());
-                } else {
-                    jsonResponse = super.failed(resMap.get("resultMsg"), ResultConstant.SERVICE_RESULT_FAILTURE
-                            .getCode());
+                } else{
+                	return super.failed(ErrorCode.PORTAL_INPARAM_ERROR, "订单提交入参校验失败，数据可能被篡改", param);
                 }
             } catch (BusinessException e) {
                 return super.failed(e);
@@ -4858,6 +4861,28 @@ public class OrderController extends BaseController {
             return super.failed(ErrorCode.QUERY_COUPON_ROAD_RESERVE, e, paramMap);
         }
         
+        return jsonResponse;
+    }
+    
+    /**
+     * 实名制客户身份证件下载
+     */
+    @RequestMapping(value = "/downloadCustCertificate", method = RequestMethod.POST)
+    @ResponseBody
+    public JsonResponse downloadCustCertificate(@RequestBody Map<String, Object> param, @LogOperatorAnn String flowNum, HttpServletResponse response) {
+        SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
+        Map<String, Object> result = null;
+        JsonResponse jsonResponse = null;
+        try {
+        	result = orderBmo.downloadCustCertificate(param, sessionStaff);
+            if (result != null && ResultCode.R_SUCCESS.equals(result.get("code").toString())) {
+                jsonResponse = super.successed(result, ResultConstant.SUCCESS.getCode());
+            } else {
+                jsonResponse = super.failed(result.get("msg").toString(), ResultConstant.FAILD.getCode());
+            }
+        } catch (BusinessException be) {
+            return super.failed(be);
+        }
         return jsonResponse;
     }
 }

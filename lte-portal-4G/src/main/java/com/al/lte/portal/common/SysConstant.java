@@ -706,10 +706,17 @@ public final class SysConstant {
     public static final String CLIENTCODE = "40010033";
     /**Session缓存客户端属性编码*/
     public static final String SESSION_CLIENTCODE = "SESSION_CLIENTCODE";
-
+   
+    /**经办人是否已经拍照的订单属性标识*/
+    public static final String ISPHOTOGRAPH = "40010040";
+    /**Session缓存经办人是否已经拍照的订单属性标识*/
+    public static final String SESSION_ISPHOTOGRAPH = "SESSION_ISPHOTOGRAPH";
+    /**Session缓存经办人客户编码和客户所属地区*/
+    public static final String SESSION_HANDLECUSTNUMBER = "SESSION_HANDLECUSTNUMBER";
+    public static final String SESSION_HANDLEPROVCUSTAREAID = "SESSION_HANDLEPROVCUSTAREAID";
     /**ess模拟写卡权限编码*/
 	public static final String WRITECARD_TEST = "WRITECARD_TEST";
-	
+
 	/**批量业务受理类型*/
 	public class BATCH_TYPE {
 		/**批开活卡-0*/
@@ -748,4 +755,10 @@ public final class SysConstant {
 	    public static final String ECS_SALE = "18";
 	    
 	}
+	
+	/**Session缓存上传成功的实名制照片的virOlId*/
+    public static final String SESSION_VIR_OLID = "SESSION_VIR_OLID";
+    
+    /**订单属性记录客户端IP*/
+  	public final static String ORDER_ATTRS_IP = "40010038";
 }

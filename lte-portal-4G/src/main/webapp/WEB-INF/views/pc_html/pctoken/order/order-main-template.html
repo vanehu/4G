@@ -182,10 +182,10 @@
 					<#include "/order/order-remark.html" />
 				</@block>
 			</div>
-            <!--购物车订单属性展示-->
-			<div id="orderAttrDiv"  style="display: none;">
+            <!--经办人展示-->
+			<div id="orderAttrDiv">
 				<@block name="orderAttr">
-					<#include "/order/order-attr.html" />
+					<#include "/pctoken/order/order-attr.html" />
 				</@block>
 			</div>
 			<!--省内订单属性展示-->
@@ -197,6 +197,8 @@
 		</div>
 	</div>
 	</#list>
+<input type="hidden" id="orderAttrFlag" value="${orderAttrFlag}">
+<input type="hidden" id="orderAttrCustId" value="${orderAttrCustId}">
 	<div align="right" style="margin: 20px auto; padding:0 20px;">
 		<a id="fillLastStep" href="javascript:void(0)" class="btna_o" style="display:none"><span>上一步</span></a> 
 		<a id="fillNextStep" href="javascript:void(0)" class="btna_o" style=" margin-left:20px;"><span>下一步</span></a>

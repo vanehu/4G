@@ -225,9 +225,9 @@
 				</@block>
 			</div>
 			<!--经办人-->
-			<div id="orderAttrDiv"  style="display: none;">
+			<div id="orderAttrDiv">
 				<@block name="orderAttr">
-					<#include "/order/order-attr.html" />
+					<#include "/pctoken/order/order-attr.html" />
 				</@block>
 			</div>
 			<!--省内订单属性展示-->
@@ -239,6 +239,8 @@
 			
 		</div>
 	</div>
+	<input type="hidden" id="orderAttrFlag" value="${orderAttrFlag}">
+<input type="hidden" id="orderAttrCustId" value="${orderAttrCustId}">
 	<div  id="div1" align="right" style="margin: 20px auto; padding:0 20px;display: none;">
 	    
 

@@ -96,12 +96,18 @@ order.main = (function(){
 		_initOrderLabel();//初始化订单标签
 		_initOfferLabel();//初始化主副卡标签
 		_initFeeType(param);//初始化付费方式
-		_initOrderProvAttr();//初始化省内订单属性
+		_initOrderProvAttr();//初始化省内订单属性		
 		if(CONST.getAppDesc()==0){
-			$("#orderAttrDiv").show();
-			_initOrderAttr();//初始化4G经办人	
+				$("#orderAttrDiv").show();
+				_initOrderAttr();//经办人
 		}
-
+		var orderAttrFlag = ec.util.defaultStr($("#orderAttrFlag").val());
+		var orderAttrCustId = ec.util.defaultStr($("#orderAttrCustId").val());
+		OrderInfo.orderAttrFlag = orderAttrFlag;
+		OrderInfo.subHandleInfo.orderAttrCustId = orderAttrCustId;
+		if(orderAttrFlag=="N"){//订单提交报文中经办人下省用
+			$("#orderAttrDiv").hide();
+		}
 		if(param.actionFlag==''){
 			OrderInfo.actionFlag = 1;
 		}
@@ -2630,7 +2636,8 @@ order.main = (function(){
 		showChooseUserDialog : _showChooseUserDialog,
 		reload:_reload,
 		initAcct:_initAcct,
-		queryDealer:_queryDealer
+		queryDealer:_queryDealer,
+		initOrderAttr:_initOrderAttr
 	};
 })();
 

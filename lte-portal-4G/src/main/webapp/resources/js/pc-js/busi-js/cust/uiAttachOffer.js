@@ -98,14 +98,20 @@ uiAttachOffer = (function() {
 		
 		//调用control，加载订单填写页面new
 		var data = uiOfferQuery.queryAttachOfferHtml(param);
-		
 		//初始化填单页面new
 		SoOrder.initFillPage();
-		
 		$("#order_fill_content").html(data).show();
-		
+		order.main.initOrderAttr();//初始化经办人
+		var orderAttrFlag = ec.util.defaultStr($("#orderAttrFlag").val());
+		var orderAttrCustId = ec.util.defaultStr($("#orderAttrCustId").val());
+		OrderInfo.orderAttrFlag = orderAttrFlag;
+		OrderInfo.subHandleInfo.orderAttrCustId = orderAttrCustId;
+		if(orderAttrFlag=="N"){//订单提交报文中经办人下省用
+			$("#orderAttrDiv").hide();
+		}
 		//在初始化填单页面后，一些信息是不需要的，暂时隐藏new
 		$("#step1").hide();
+		
 		
 		var member = CacheData.getOfferMember(prodId);
 		//如果objId，objType，objType不为空才可以查询默认必须

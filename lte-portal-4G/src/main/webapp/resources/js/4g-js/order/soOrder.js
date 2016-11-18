@@ -365,68 +365,6 @@ SoOrder = (function() {
 			});
 		}
 		
-		//订单购物车属性(经办人)
-		if(CONST.getAppDesc()==0){
-			var orderAttrName = $.trim($("#orderAttrName").val()); //经办人姓名
-			var orderIdentidiesTypeCd = $("#orderIdentidiesTypeCd  option:selected").val(); //证件类型
-			var orderAttrIdCard =$.trim($("#orderAttrIdCard").val()); //证件号码
-			var orderAttrAddr = $.trim($("#orderAttrAddr").val()); //地址
-			var orderAttrPhoneNbr = $.trim($("#orderAttrPhoneNbr").val()); //联系人号码
-			// 新建客户或二次业务，政企客户，经办人必填 （2016-3-17回退）
-			/*if (OrderInfo.boCustInfos.partyTypeCd == '2' || order.cust.isCovCust(OrderInfo.cust.identityCd)) {
-				if (!(ec.util.isObj(orderAttrName) && ec.util.isObj(orderAttrIdCard) && ec.util.isObj(orderAttrAddr) && ec.util.isObj(orderAttrPhoneNbr))) {
-					$.alert("提示", "政企单位用户经办人为必填项！");
-					return false;
-				}
-			}*/
-			if(ec.util.isObj(orderAttrName)&&ec.util.isObj(orderAttrIdCard)&&ec.util.isObj(orderAttrPhoneNbr)&&ec.util.isObj(orderAttrAddr)){
-				if(ec.util.isObj(orderAttrName)){
-					custOrderAttrs.push({
-						itemSpecId : CONST.BUSI_ORDER_ATTR.orderAttrName,
-						value : orderAttrName
-					});	
-				}
-				if(ec.util.isObj(orderAttrIdCard)){
-					custOrderAttrs.push({
-						itemSpecId : CONST.BUSI_ORDER_ATTR.orderIdentidiesTypeCd,
-						value : orderIdentidiesTypeCd
-					});	
-					custOrderAttrs.push({
-						itemSpecId : CONST.BUSI_ORDER_ATTR.orderAttrIdCard,
-						value : orderAttrIdCard
-					});	
-				}
-				if(ec.util.isObj(orderAttrPhoneNbr)){
-					custOrderAttrs.push({
-						itemSpecId : CONST.BUSI_ORDER_ATTR.orderAttrPhoneNbr,
-						value : orderAttrPhoneNbr
-					});	
-				}
-				if(ec.util.isObj(orderAttrAddr)){
-					custOrderAttrs.push({
-						itemSpecId : CONST.BUSI_ORDER_ATTR.orderAttrAddr,
-						value : orderAttrAddr
-					});	
-				}
-			}else if(ec.util.isObj(orderAttrName)||ec.util.isObj(orderAttrIdCard)||ec.util.isObj(orderAttrPhoneNbr)||ec.util.isObj(orderAttrAddr)){
-				if(!ec.util.isObj(orderAttrName)){
-					$.alert("提示","经办人姓名为空，经办人姓名、联系人号码、证件号码、证件地址必须同时为空或不为空，因此无法提交！");
-					return false;
-				}
-				if(!ec.util.isObj(orderAttrPhoneNbr)){
-					$.alert("提示","联系人号码为空，经办人姓名、联系人号码、证件号码、证件地址必须同时为空或不为空，因此无法提交！");
-					return false;
-				}
-				if(!ec.util.isObj(orderAttrIdCard)){
-					$.alert("提示","证件号码为空，经办人姓名、联系人号码、证件号码、证件地址必须同时为空或不为空，因此无法提交！");
-					return false;
-				}
-				if(!ec.util.isObj(orderAttrAddr)){
-					$.alert("提示","证件地址为空，经办人姓名、联系人号码、证件号码、证件地址必须同时为空或不为空，因此无法提交！");
-					return false;
-				}
-			}
-		}
 		if(OrderInfo.saveOrder.olId!=""){
 			custOrderAttrs.push({
 				itemSpecId : "800000035",
@@ -545,6 +483,10 @@ SoOrder = (function() {
 		}else{  //默认单个业务动作
 			_fillBusiOrder(busiOrders,data,"N"); //填充业务对象节点
 		}
+		
+		//订单填充经办人信息
+		_addHandleInfo(busiOrders, custOrderAttrs);
+		
 		OrderInfo.orderData.orderList.orderListInfo.custOrderAttrs = custOrderAttrs; //订单属性数组
 		OrderInfo.orderData.orderList.custOrderList[0].busiOrder = busiOrders; //订单项数组
 		if($("#isTemplateOrder").attr("checked")=="checked"){ //批量订单
@@ -1740,6 +1682,7 @@ SoOrder = (function() {
 		if(OrderInfo.cust.custId == -1){
 			OrderInfo.createCust(busiOrders);	
 		}
+
 		var acctId = $("#acctSelect").find("option:selected").attr("value"); //先写死
 		if(acctId < 0 && acctId!=undefined ){
 			OrderInfo.createAcct(busiOrders,acctId);	//添加帐户节点
@@ -2839,11 +2782,18 @@ SoOrder = (function() {
 	
 	//订单数据校验
 	var _checkData = function() {	
+//		if(ec.util.isObj($("#jbrForm").html()) && ec.util.isObj(OrderInfo.bojbrCustIdentities.identityNum)){
+		if(!ec.util.isObj($("#jbrForm").html())){
+			$.alert("提示","经办人拍照信息不能为空！请确认页面是否已点击【读卡】或者【拍照】按钮，并且拍照和人脸相符已成功操作！");
+			return false ; 
+		}
+		
 		if(OrderInfo.actionFlag == 1 || OrderInfo.actionFlag == 6 || OrderInfo.actionFlag == 14 || (OrderInfo.actionFlag==2&&offerChange.newMemberFlag)){ //新装
 			if(OrderInfo.cust.custId==""){
 				$.alert("提示","客户信息不能为空！");
 				return false ; 
 			}
+			
 			//遍历主销售品构成
 			if(OrderInfo.order.dealerTypeList==undefined ||OrderInfo.order.dealerTypeList.length == 0 ){
 				$.alert("提示","发展人类型不能为空！");
@@ -3777,6 +3727,68 @@ SoOrder = (function() {
 				busiOrder.data.busiOrderAttrs.push(dealerName);
 			});
 		}
+		busiOrders.push(busiOrder);
+	};
+	
+	//填充订单经办人信息
+	var _addHandleInfo = function(busiOrders, custOrderAttrs){
+		if(OrderInfo.handleCustId == "" || OrderInfo.handleCustId == null || OrderInfo.handleCustId == undefined){//新建客户
+			OrderInfo.orderData.orderList.orderListInfo.handleCustId = -3;//新建经办人，handleCustId与partyId一致
+			OrderInfo.orderData.orderList.orderListInfo.partyId = -3;//-3经办人客户，-2使用人客户，-1产权客户
+			_createHandleCust(busiOrders);
+		} else{//已有客户
+			OrderInfo.orderData.orderList.orderListInfo.partyId = OrderInfo.cust.custId;//门户主页客户定位的客户ID
+			OrderInfo.orderData.orderList.orderListInfo.handleCustId = OrderInfo.handleCustId;//经办人查询出的客户ID
+		}
+		
+		//添加虚拟订单ID属性
+		custOrderAttrs.push({
+			itemSpecId : CONST.BUSI_ORDER_ATTR.VIROLID,
+			value : OrderInfo.virOlId//即照片上传时后台返回的18位的虚拟订单ID:virOlId
+		});
+	};
+	
+	//创建经办人节点
+	var _createHandleCust = function(busiOrders) {
+		var busiOrder = {
+			areaId	: OrderInfo.getAreaId(),//受理地区ID
+			busiOrderInfo : {
+				seq : OrderInfo.SEQ.seq--
+			}, 
+			busiObj : { //业务对象节点
+				instId		: -3,//-3经办人客户，-2使用人客户，-1产权客户
+				accessNumber: OrderInfo.getAccessNumber(-1)
+			},  
+			boActionType : {
+				actionClassCd	: CONST.ACTION_CLASS_CD.CUST_ACTION,
+				boActionTypeCd	: CONST.BO_ACTION_TYPE.CUST_CREATE
+			}, 
+			data : {
+				boCustInfos 		: [],
+				boCustIdentities	: [],
+				boPartyContactInfo	: []
+			}
+		};
+		//经办人信息节点
+		busiOrder.data.boCustInfos.push({
+			name			: OrderInfo.bojbrCustInfos.name,//客户名称
+			state			: "ADD",//状态
+			areaId			: OrderInfo.getAreaId(),
+			telNumber 		: "",//联系电话
+			addressStr		: OrderInfo.bojbrCustInfos.addressStr,//客户地址
+			partyTypeCd		: 1,//客户类型
+			defaultIdType	: OrderInfo.bojbrCustInfos.defaultIdTycre,//证件类型
+			mailAddressStr	: OrderInfo.bojbrCustInfos.mailAddressStr,//通信地址
+			businessPassword: ""//客户密码
+		});
+		//客户证件节点
+		busiOrder.data.boCustIdentities.push({
+			state			: "ADD",//状态
+			isDefault		: "Y",//是否首选
+			identityNum		: OrderInfo.bojbrCustIdentities.identityNum,//证件号码
+			identidiesPic	: "",//二进制证件照片
+			identidiesTypeCd: OrderInfo.bojbrCustIdentities.identidiesTypeCd//证件类型
+		});
 		busiOrders.push(busiOrder);
 	};
 	

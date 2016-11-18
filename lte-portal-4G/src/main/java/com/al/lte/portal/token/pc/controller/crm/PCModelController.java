@@ -208,8 +208,19 @@ public class PCModelController extends BaseController {
                 		 session.setAttribute(SysConstant.SESSION_CLIENTCODE+"_PC", String.valueOf(mapAttr.get("attrValue")));
                 	 }else if(SysConstant.CLIENTCODE.equals(String.valueOf(mapAttr.get("AttrSpecId"))) && !StringUtil.isEmptyStr(String.valueOf(mapAttr.get("AttrValue")))){
                 		 session.setAttribute(SysConstant.SESSION_CLIENTCODE+"_PC", String.valueOf(mapAttr.get("AttrValue")));//兼顾省份传大写
+                	 }else if(SysConstant.ISPHOTOGRAPH.equals(String.valueOf(mapAttr.get("attrSpecId"))) && !StringUtil.isEmptyStr(String.valueOf(mapAttr.get("attrValue")))){
+                		 session.setAttribute(SysConstant.SESSION_ISPHOTOGRAPH+"_PC", String.valueOf(mapAttr.get("attrValue")));
+                	 }else if(SysConstant.ISPHOTOGRAPH.equals(String.valueOf(mapAttr.get("AttrSpecId"))) && !StringUtil.isEmptyStr(String.valueOf(mapAttr.get("AttrValue")))){
+                		 session.setAttribute(SysConstant.SESSION_ISPHOTOGRAPH+"_PC", String.valueOf(mapAttr.get("AttrValue")));
                 	 }
                  }
+			}
+			//获取经办人客户编码和地区
+			String handlecustNumber = String.valueOf(paramsMap.get("handlecustNumber"));
+			String handleprovCustAreaId = String.valueOf(paramsMap.get("handleprovCustAreaId"));
+			if(!StringUtil.isEmptyStr(handlecustNumber) && !StringUtil.isEmptyStr(handleprovCustAreaId)){
+				session.setAttribute(SysConstant.SESSION_HANDLECUSTNUMBER+"_PC", handlecustNumber);
+				session.setAttribute(SysConstant.SESSION_HANDLEPROVCUSTAREAID+"_PC", handleprovCustAreaId);
 			}
 			String modelUrl = MySimulateData.getInstance().getParam("pc."+actionFlag+".url",(String) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_DATASOURCE_KEY),"pc."+actionFlag+".url");//业务跳转地址
 			log.error("业务跳转地址："+modelUrl);

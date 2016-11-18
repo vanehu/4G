@@ -1,5 +1,7 @@
 package com.al.lte.portal.token.pc.controller.crm;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -1428,5 +1430,91 @@ public class CustController extends BaseController {
 			return super.failed(ErrorCode.QUERY_STAFF_INFO, e, staffParm);
 		}
     	return jsonResponse;
+    }
+    
+    /**
+     * 实名制客户身份证件上传FTP
+     */
+    @RequestMapping(value = "/uploadCustCertificate", method = RequestMethod.POST)
+    @ResponseBody
+    public JsonResponse uploadCustCertificate(@RequestBody Map<String, Object> param, @LogOperatorAnn String flowNum, HttpServletResponse response) {
+        SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
+        Map<String, Object> result = null;
+        JsonResponse jsonResponse = null;
+        try {
+        	result = custBmo.uploadCustCertificate(param, sessionStaff);
+            if (result != null && ResultCode.R_SUCCESS.equals(result.get("code").toString())) {
+            	ServletUtils.setSessionAttribute(super.getRequest(), SysConstant.SESSION_VIR_OLID, ((Map<String, String>)result.get("result")).get("virOlId"));
+                jsonResponse = super.successed(result.get("result"), ResultConstant.SUCCESS.getCode());
+            } else {
+                jsonResponse = super.failed(result.get("msg").toString(), ResultConstant.FAILD.getCode());
+            }
+        } catch (BusinessException be) {
+            return super.failed(be);	
+        }
+        return jsonResponse;
+    }
+    
+    /**
+     * 实名制客户身份证件照片添加水印
+     */
+    @RequestMapping(value = "/preHandleCustCertificate", method = RequestMethod.POST)
+    @ResponseBody
+    public JsonResponse preHandleCustCertificate(@RequestBody Map<String, Object> param, @LogOperatorAnn String flowNum, HttpServletResponse response) {
+        SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
+        Map<String, Object> result = null;
+        JsonResponse jsonResponse = null;
+        OutputStream outputStream = null;
+        
+        if(param.get("photograph") != null && param.get("venderId") != null && !"".equals(param.get("photograph").toString()) && !"".equals(param.get("venderId").toString())){
+    		try {
+    			Map<String, Object> resultImage = custBmo.preHandleCustCertificate(param.get("photograph").toString(), param.get("venderId").toString());
+            	if(ResultCode.R_SUCCESS.equals(resultImage.get("code"))){
+            		jsonResponse = super.successed(resultImage, ResultConstant.SUCCESS.getCode());
+            	} else{
+            		jsonResponse = super.failed(ErrorCode.PORTAL_INPARAM_ERROR, resultImage.get("msg"), param);
+            	}
+            } catch (IOException ie) {
+           	 	log.error("实名制证件添加水印发生异常=", ie);
+                return super.failed(ErrorCode.PRE_HANDLE_CUST_CERTIFICATE, ie, param);
+            }
+        } else{
+        	jsonResponse = super.failed(ErrorCode.PORTAL_INPARAM_ERROR, "未获取到有效入参,可能入参为空", param);
+        }
+        return jsonResponse;
+    }
+    
+    /**
+     * 经办人查询（客户定位）
+     */
+    @RequestMapping(value = "/queryCustInfo", method = RequestMethod.POST)
+    @ResponseBody
+    public JsonResponse queryCustInfo(@RequestBody Map<String, Object> param, @LogOperatorAnn String flowNum, HttpServletResponse response,Model model) {
+        SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
+        Map<String, Object> resultMap = new HashMap<String, Object>();
+        JsonResponse jsonResponse = null;
+        param.put("areaId", sessionStaff.getCurrentAreaId());
+        try {
+        	resultMap = custBmo.queryCustInfo(param,null,sessionStaff);
+			List custInfos = new ArrayList();
+			if (resultMap!=null&&resultMap.size()>0) {
+				custInfos=(List<Map<String, Object>>) resultMap.get("custInfos");
+				if(custInfos==null||custInfos.size()<=0){//未定位到客户
+	                jsonResponse = super.failed(resultMap, ResultConstant.FAILD.getCode());
+				}else{
+					jsonResponse = super.successed(resultMap, ResultConstant.SUCCESS.getCode());
+				}
+			}else{//未定位到客户
+				jsonResponse = super.failed(resultMap, ResultConstant.FAILD.getCode());
+			}
+        	
+        } catch (BusinessException be) {
+            return super.failed(be);	
+        } catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return super.failed(resultMap, ResultConstant.FAILD.getCode());
+		}
+        return jsonResponse;
     }
 }

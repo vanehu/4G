@@ -346,22 +346,60 @@ order.cust = (function(){
 		if(identidiesTypeCd==1){
 			$("#"+id).attr("placeHolder","请输入合法身份证号码");
 			$("#"+id).attr("data-validate","validate(idCardCheck18:请输入合法身份证号码) on(blur)");
-		}else if(identidiesTypeCd==2){
-			$("#"+id).attr("placeHolder","请输入合法军官证");
-			$("#"+id).attr("data-validate","validate(required:请准确填写军官证) on(blur)");
-		}else if(identidiesTypeCd==3){
-			$("#"+id).attr("placeHolder","请输入合法护照");
-			$("#"+id).attr("data-validate","validate(required:请准确填写护照) on(blur)");
+			// 填单页面经办人读卡
+			if (id == "orderAttrIdCard") {
+				$("#orderAttrReadCertBtn").show();
+				$("#orderAttrName").hide();
+				$("#orderAttrIdCard").hide();
+				$("#orderAttrAddr").hide();
+				$("#li_order_attr span").show();
+				$("#li_order_remark2 span").show();
+				$("#li_order_remark3 span").show();
+				$("#orderAttrQryBtn").hide();
+			}
 		}else{
-			$("#"+id).attr("placeHolder","请输入合法证件号码");
-			$("#"+id).attr("data-validate","validate(required:请准确填写证件号码) on(blur)");
-		}
-		_custcreateButton();
+			// 填单页面经办人非身份证
+			if (id == "orderAttrIdCard") {
+				$("#orderAttrReadCertBtn").hide();
+				$("#discernBtn_4").hide();
+				$("#orderAttrName").show();
+				$("#orderAttrName").val("");
+				$("#orderAttrIdCard").show();
+				$("#orderAttrIdCard").val("");
+				$("#orderAttrAddr").show();
+				$("#orderAttrAddr").val("");
+
+				$("#li_order_attr span").hide();
+				$("#li_order_attr span").text("");
+				$("#li_order_remark2 span").hide();
+				$("#li_order_remark2 span").text("");
+				$("#li_order_remark3 span").hide();
+				$("#li_order_remark3 span").text("");
+				$("#orderAttrQryBtn").show();
+			};
+			if(identidiesTypeCd==2){
+				$("#"+id).attr("placeHolder","请输入合法军官证");
+				$("#"+id).attr("data-validate","validate(required:请准确填写军官证) on(blur)");
+			}else if(identidiesTypeCd==3){
+				$("#"+id).attr("placeHolder","请输入合法护照");
+				$("#"+id).attr("data-validate","validate(required:请准确填写护照) on(blur)");
+			}else{
+				$("#"+id).attr("placeHolder","请输入合法证件号码");
+				$("#"+id).attr("data-validate","validate(required:请准确填写证件号码) on(blur)");
+			};
+		};
 		
-		//启用读卡时禁用的控件
-		$('#cCustIdCard').attr("disabled",false);
-		$('#cCustName').attr("disabled",false);
-		$('#cAddressStr').attr("disabled",false);
+		_custcreateButton();
+		//如果是身份证，则禁止输入，否则启用输入控件
+		var isID = identidiesTypeCd==1;
+		var isIdTypeOff = OrderInfo.staff.idType=="OFF";
+		if (id == "cCustIdCard") {
+			$("#cCustName").val("");
+			$("#cAddressStr").val("");
+			$('#cCustIdCard').attr("disabled",isID&&(!isIdTypeOff));
+			$('#cCustName').attr("disabled",isID&&(!isIdTypeOff));
+			$('#cAddressStr').attr("disabled",isID&&(!isIdTypeOff));
+		}
 	};
 	 var _custLookforButton = function() {
 	//客户定位查询按钮
@@ -2412,6 +2450,276 @@ order.cust = (function(){
 		param.resultCode = "1";
 		_saveAuthRecord(param);
 	};
+	// 填单页面经办人读卡
+	var _readCertWhenOrder = function() {
+		var man = cert.readCert();
+		if (man.resultFlag != 0){
+			$.alert("提示", man.errorMsg);
+			return;
+		}
+		_setValueForAgentOrderSpan(man.resultContent);
+		//弹出拍照弹框
+		_showPhotoGraph(man.resultContent);
+	};
+	var _setValueForAgentOrderSpan = function(data){
+		// 设置隐藏域的表单数据
+		$('#orderAttrName').val(data.partyName);//姓名
+		$('#orderAttrIdCard').val(data.certNumber);//设置身份证号
+		$('#orderAttrAddr').val(data.certAddress);//地址
+		// 设置文本显示
+		$("#li_order_attr span").text(data.partyName);
+		$("#li_order_remark2 span").text(data.certNumber);
+		$("#li_order_remark3 span").text(data.certAddress);
+	};
+	
+	var _showPhotoGraph = function(resultContent){
+		easyDialog.open({
+			container : "ec-dialog-photo-graph"
+		});
+		easyDialog.close();
+		easyDialog.open({
+			container : "ec-dialog-photo-graph"
+		});
+		//显示身份证照片
+		$("#show")[0].src="data:;base64,"+resultContent.identityPic;
+		OrderInfo.handleInfo.identityPic = resultContent.identityPic;
+		$("#show")[0].height=258;
+		$("#show")[0].width=200;
+		//初始化页面
+		$("#cameraList").empty(); 
+		$("#startPhotos").show();
+		$("#startPhotos").off("click").on("click",function(){order.cust.startPhotos();});
+		$("#tips").html("");
+		$("#creatPic")[0].src="";
+		$("#creatPic")[0].height=0;
+		$("#creatPic")[0].width=0;
+		//按钮灰话，不绑定事件
+		$("#takePhotos").removeClass("btna_o").addClass("btna_g");
+		$("#rePhotos").removeClass("btna_o").addClass("btna_g");
+		$("#confirmAgree").removeClass("btna_o").addClass("btna_g");
+		$("#takePhotos").off("click");
+		$("#rePhotos").off("click");
+		$("#confirmAgree").off("click");
+		_getCameraInfo();
+	};
+	var _qryCustInfo = function(resultContent){
+		var  orderIdentidiesTypeCd = ec.util.defaultStr($("#orderIdentidiesTypeCd").val());
+		var  identityNum = ec.util.defaultStr($("#orderAttrIdCard").val());
+		var  orderAttrName = ec.util.defaultStr($("#orderAttrName").val());
+		var  orderAttrAddr = ec.util.defaultStr($("#orderAttrAddr").val());
+		if(orderIdentidiesTypeCd=="" || identityNum =="" || orderAttrName==""|| orderAttrAddr==""){
+			$.alert("提示","经办人信息不完整，请重新填写完整！");
+			return;
+		}
+		easyDialog.open({
+			container : "ec-dialog-photo-graph"
+		});
+		easyDialog.close();
+		easyDialog.open({
+			container : "ec-dialog-photo-graph"
+		});
+		//初始化页面
+		//显示默认头像
+		$("#show")[0].src=contextPath+"/image/id_card.jpg";
+		$("#cameraList").empty(); 
+		$("#startPhotos").show();
+		$("#tips").html("");
+		$("#creatPic")[0].src="";
+		$("#creatPic")[0].height=0;
+		$("#creatPic")[0].width=0;
+		//按钮灰话，不绑定事件
+		$("#takePhotos").removeClass("btna_o").addClass("btna_g");
+		$("#rePhotos").removeClass("btna_o").addClass("btna_g");
+		$("#confirmAgree").removeClass("btna_o").addClass("btna_g");
+		$("#startPhotos").off("click");
+		$("#takePhotos").off("click");
+		$("#rePhotos").off("click");
+		$("#confirmAgree").off("click");
+		_getCameraInfo();
+	};
+	
+	var _getCameraInfo = function(){
+		//获取摄像头信息
+		var device = capture.getDevices();
+	    device = JSON.parse(device);
+		if (device == null || device == undefined) {
+			$("#tips").html("提示：请检查是否正确安装插件");
+			return;
+	    }
+		if(device.resultFlag == 0){
+			$.each(device.devices,function(){
+			    $("#cameraList").append("<option value='"+this.device+"' >"+this.name+"</option>");
+			});
+			$("#startPhotos").off("click").on("click",function(){order.cust.startPhotos();});
+		}else{
+			$("#tips").html("提示："+device.errorMsg);
+			return;
+		}
+	};
+	var _startPhotos = function(){
+		//创建视频
+		var device = $("#cameraList").val();
+		if(device!=null && device != ""){
+			var createVideo = JSON.parse(capture.createVideo(device,1280,720));
+			if(createVideo.resultFlag == 0){
+				$("#startPhotos").hide();
+				OrderInfo.isCreateVideo = "Y";
+				$("#capture")[0].style.visibility = 'visible';
+				$("#takePhotos").removeClass("btna_g").addClass("btna_o");
+				$("#takePhotos").off("click").on("click",function(){order.cust.takePhotos();});
+			}else{
+				$("#tips").html("提示："+createVideo.errorMsg);
+				return;
+			}
+		}else{
+			$("#startPhotos").show();
+			$("#tips").html("提示：请选择一个摄像头"); 
+			return;
+		}
+	};
+	var _takePhotos = function(resultContent){
+		var device = $("#cameraList").val();
+		var str=capture.createImage(device);
+		var json = JSON.parse(str);
+		if (json.resultFlag == 0) {
+			var browserType = CacheData.getBrowserTypeVersion();
+			var imageBase64 = json.image;
+			if(browserType == "IE:8"){
+				imageBase64 = json.compImage;
+			};
+			OrderInfo.handleInfo.imageInfo = imageBase64;
+			OrderInfo.handleInfo.venderId = json.venderId;
+			OrderInfo.handleInfo.signature = json.signature;
+			var param = {
+					photograph : encodeURIComponent(imageBase64),
+					venderId :json.venderId
+			};
+			var resp = $.callServiceAsJson(contextPath+"/token/pc/cust/preHandleCustCertificate", param);
+			if(resp.code==0){
+				var picShow = resp.data.photograph;
+				var a = $("#creatPic");
+				var imgshow = a[0];
+				imgshow.src="data:;base64,"+picShow;
+				imgshow.height=360;
+				imgshow.width=640;
+				//拍照后置灰按钮，取消绑定事件
+				$("#takePhotos").off("click");
+				$("#takePhotos").removeClass("btna_o").addClass("btna_g");
+				$("#rePhotos").removeClass("btna_g").addClass("btna_o");
+				$("#rePhotos").off("click").on("click",function(){order.cust.rePhotos();});
+				$("#confirmAgree").removeClass("btna_g").addClass("btna_o");
+				$("#confirmAgree").off("click").on("click",function(){order.cust.confirmAgree();});
+			}else{
+				$("#tips").html("提示："+resp.data);
+				return;
+			}
+		} else {
+			$("#tips").html("提示："+json.errorMsg);
+			return;
+		}
+	};
+	var _rePhotos = function(resultContent){
+		//初始化页面
+		$("#tips").html("");
+		$("#creatPic")[0].src="";
+		$("#creatPic")[0].height=0;
+		$("#creatPic")[0].width=0;
+		//拍照后置灰按钮，取消绑定事件
+		$("#rePhotos").off("click");
+		$("#rePhotos").removeClass("btna_o").addClass("btna_g");
+		$("#confirmAgree").removeClass("btna_o").addClass("btna_g");
+		$("#confirmAgree").off("click");
+		$("#takePhotos").off("click").on("click",function(){order.cust.takePhotos();});
+		$("#takePhotos").removeClass("btna_g").addClass("btna_o");
+		_startPhotos();
+	};
+	var _confirmAgree = function(resultContent){
+		$("#confirmAgree").removeClass("btna_o").addClass("btna_g");
+		$("#confirmAgree").off("click");
+		//客户定位
+		var  orderIdentidiesTypeCd = ec.util.defaultStr($("#orderIdentidiesTypeCd").val());
+		var  identityNum = ec.util.defaultStr($("#orderAttrIdCard").val());
+		var  orderAttrName = ec.util.defaultStr($("#orderAttrName").val());
+		var  orderAttrAddr = ec.util.defaultStr($("#orderAttrAddr").val());
+		var  orderAttrPhoneNbr = ec.util.defaultStr($("#orderAttrPhoneNbr").val());
+		var custParam = {
+				"identityCd":orderIdentidiesTypeCd,
+				"identityNum":identityNum,
+				"partyName":"",
+				"queryType" :""
+		};
+		var queryCustInfo = $.callServiceAsJson(contextPath+"/token/pc/cust/queryCustInfo", custParam);
+        var param;
+		if(queryCustInfo.code == 0){//定位到客户，照片不下省
+			param = {
+			    photographs: [{
+				    photograph: encodeURIComponent(OrderInfo.handleInfo.imageInfo),
+				    flag: "D",//*经办人头像照片
+				    signature:OrderInfo.handleInfo.signature
+				}],
+			    venderId  : OrderInfo.handleInfo.venderId,//*厂商ID
+				srcFlag   : "REAL"//*来源标识(实名制拍照留存需传REAL)
+			};
+			OrderInfo.subHandleInfo.handleExist = "Y";
+			OrderInfo.subHandleInfo.handleCustId = queryCustInfo.data.custInfos[0].custId;
+        }else{//定位不到客户，用身份证，身份证的照片二进制下省
+        	if($("#orderIdentidiesTypeCd").val() == 1){
+        		param = {
+        			    photographs: [
+        			        {
+        				        photograph: encodeURIComponent(OrderInfo.handleInfo.imageInfo),
+        				        flag: "D",//*经办人头像照片
+        				        signature:OrderInfo.handleInfo.signature},
+        				    {
+            				    photograph: encodeURIComponent(OrderInfo.handleInfo.identityPic),
+            				    flag: "C"//*经办人身份证照片
+            				}
+        			    ],
+        			    venderId  : OrderInfo.handleInfo.venderId,//*厂商ID
+        				srcFlag   : "REAL"//*来源标识(实名制拍照留存需传REAL)
+        			};
+        	}
+        	OrderInfo.subHandleInfo.handleExist = "N";
+        	OrderInfo.subHandleInfo.identidiesTypeCd = orderIdentidiesTypeCd;
+        	OrderInfo.subHandleInfo.identityNum = identityNum;
+        	OrderInfo.subHandleInfo.orderAttrName = orderAttrName;
+        	OrderInfo.subHandleInfo.orderAttrAddr = orderAttrAddr;
+        	OrderInfo.subHandleInfo.orderAttrPhoneNbr = orderAttrPhoneNbr;
+        }
+		OrderInfo.subHandleInfo.orderAttrFlag = OrderInfo.orderAttrFlag;
+		var uploadCustCertificate = $.callServiceAsJson(contextPath+"/token/pc/cust/uploadCustCertificate",param);
+		if(uploadCustCertificate.code == 0){
+			OrderInfo.subHandleInfo.authFlag = "Y";
+			OrderInfo.subHandleInfo.virOlId = uploadCustCertificate.data.virOlId;
+			_closeShowPhoto();
+		}else{
+			OrderInfo.subHandleInfo.authFlag = "F";
+			$("#confirmAgree").removeClass("btna_g").addClass("btna_o");
+			$("#confirmAgree").off("click").on("click",function(){order.cust.confirmAgree();});
+			if(uploadCustCertificate.code == 1){
+				$("#tips").html("提示："+uploadCustCertificate.data+"请稍后再试。");
+				return;
+			}
+			$("#tips").html("FTP上传失败，错误原因："+uploadCustCertificate.errCode+"-"+uploadCustCertificate.errMsg+"请稍后再试。");
+			return;
+		}
+	};
+	//关闭弹框
+    var _closeShowPhoto = function(){
+    	capture.closeVideo();
+    	easyDialog.close();
+	};
+    document.onkeydown=function(event){
+    	if(OrderInfo.isCreateVideo == "Y"){
+    		var e = event || window.event || arguments.callee.caller.arguments[0];
+        	if(e && e.keyCode==27){ // 按 Esc 
+        		//关闭摄像头
+        		capture.closeVideo();
+        		return;
+        	}
+    	}
+    }; 
+    
 	return {
 		saveAuthRecordFail:_saveAuthRecordFail,
 		saveAuthRecordSuccess:_saveAuthRecordSuccess,
@@ -2471,8 +2779,14 @@ order.cust = (function(){
 		isSelfChannel:_isSelfChannel,
 		changeTabSub:_changeTabSub,
 		goService:_goService,
-		identityTypeAuthSub:_identityTypeAuthSub
-		
+		identityTypeAuthSub:_identityTypeAuthSub,
+		readCertWhenOrder:_readCertWhenOrder,
+		qryCustInfo:_qryCustInfo,
+		startPhotos:_startPhotos,
+		takePhotos:_takePhotos,
+		rePhotos:_rePhotos,
+		confirmAgree:_confirmAgree,
+		closeShowPhoto:_closeShowPhoto
 	};
 })();
 $(function() {

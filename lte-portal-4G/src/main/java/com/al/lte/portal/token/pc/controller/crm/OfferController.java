@@ -40,6 +40,7 @@ import com.al.lte.portal.bmo.crm.CustBmo;
 import com.al.lte.portal.bmo.crm.OfferBmo;
 import com.al.lte.portal.common.AESUtils;
 import com.al.lte.portal.common.MySimulateData;
+import com.al.lte.portal.common.StringUtil;
 import com.al.lte.portal.common.SysConstant;
 import com.al.lte.portal.model.SessionStaff;
 
@@ -877,7 +878,7 @@ public class OfferController extends BaseController {
 	 */
 	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/queryAttachOfferSub", method = RequestMethod.GET)
-	public String queryAttachOfferSub(@RequestParam("strParam") String param,Model model,HttpServletResponse response){
+	public String queryAttachOfferSub(@RequestParam("strParam") String param,Model model,HttpServletResponse response,HttpSession session){
 		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
 				SysConstant.SESSION_KEY_LOGIN_STAFF);
 		Map<String, Object> paramMap =  null;	
@@ -889,6 +890,44 @@ public class OfferController extends BaseController {
 			model.addAttribute("openMapJson", JsonUtil.buildNormal().objectToJson(openMap));
 			model.addAttribute("prodId",paramMap.get("prodId"));
 			model.addAttribute("param",paramMap);
+			//经办人信息
+			String isPhotoGraph = (String) session.getAttribute(SysConstant.SESSION_ISPHOTOGRAPH+"_PC");
+			String handlecustNumber = (String) session.getAttribute(SysConstant.SESSION_HANDLECUSTNUMBER+"_PC");
+			String handleprovCustAreaId = (String) session.getAttribute(SysConstant.SESSION_HANDLEPROVCUSTAREAID+"_PC");
+			if("Y".equals(isPhotoGraph)){//Y已拍照，如果不传默认为N：未拍照
+				if(!StringUtil.isEmptyStr(handlecustNumber) && !StringUtil.isEmptyStr(handleprovCustAreaId)){//传经办人信息
+					//定位客户接口 queryCust
+					Map<String, Object> custMap = new HashMap<String, Object>();
+					custMap.put("acctNbr", "");
+					custMap.put("areaId", handleprovCustAreaId);
+					custMap.put("diffPlace", "local");
+					custMap.put("identidies_type", "客户编码");
+					custMap.put("identityCd", "");
+					custMap.put("identityNum", "");
+					custMap.put("partyName", "");
+					custMap.put("queryType", "custNumber");
+					custMap.put("queryTypeValue", handlecustNumber);
+					Map<String,Object> resultMap = custBmo.queryCustInfo(custMap,null,sessionStaff);
+					List custInfos = new ArrayList();
+					if (resultMap!=null&&resultMap.size()>0) {
+						custInfos=(List<Map<String, Object>>) resultMap.get("custInfos");
+						if(custInfos==null||custInfos.size()<=0){//未定位到客户
+							model.addAttribute("orderAttrFlag","C");//C非必填
+						}else{
+							model.addAttribute("orderAttrFlag","N");//N不允许填，需要把经办人信息下省
+							Map<String, Object> custInfo = (Map<String, Object>) custInfos.get(0);
+							model.addAttribute("orderAttrCustId",custInfo.get("custId"));
+						}
+					}else{//未定位到客户
+						model.addAttribute("orderAttrFlag","C");//C非必填
+					}
+				}else{//未传经办人信息
+					model.addAttribute("orderAttrFlag","C");//C非必填
+				}
+			}else{//未拍照
+				model.addAttribute("orderAttrFlag","Y");//Y必填
+			}
+			
 		} catch (BusinessException be) {
 			return super.failedStr(model,be);
 		} catch (InterfaceException ie) {

@@ -1,56 +1,113 @@
 <h5 class="s_title">经办人</h5>
-<ul class="fillin">
-	<li class="full" id="li_order_attr">
-		<label>经办人姓名：</label> 
-		<input id="orderAttrName" class="inputWidth250px" maxlength="16" type="text" style="width:280px;">
-		<span style="line-height: 28px; float:left;"></span>
-		<label class="f_red">*</label>
+<form id="jbrForm">
+<ul class="fillin show" style="overflow: hidden;">
+   <li  style="padding-right: 50%;" id="li_order_remark1">
+		<label>证件类型：</label>
+        <select id="orderIdentidiesTypeCd" onchange="order.cust.identidiesTypeCdChoose(this,'orderAttrIdCard')">
+        </select>
+        <label class="f_red">*</label>
+        <a class="btn_h30"   id="orderAttrReadCertBtn" onclick="javascript:order.cust.readCertWhenOrder()" style="margin-top: 0px; display: none;"><span>读 卡</span></a>
+        <a class="btn_h30"   id="orderAttrQueryCertBtn"><span>查询</span></a>
+         <!-- <#if Session["BIND_STATUS"]?? && Session["BIND_STATUS"] == "Y">
+        <a class="btn_h30"   id="discernBtn_4" onclick="javascript:push.busi.reqDispatch(1,4)" ><span>识别</span></a>
+        <#else>
+        <a class="btn_h30"   id="discernBtn_4" onclick="javascript:push.busi.reqDispatch(1,4)" style="display:none;"><span>识别</span></a>
+        </#if> -->
 	</li>
 	<!-- 经办人为个人用户，证件类型只显示个人证件类型，隐藏客户类型 -->
-	<li class="full" id="li_order_remark" style="display: none;">
+	<li  id="li_order_remark" style="display: none;">
 		<label>客户类型：</label> 
 		<select id="orderPartyTypeCd" onchange="order.cust.partyTypeCdChoose(this,'orderIdentidiesTypeCd')">
                                         <option value="1" >个人</option>
         </select>
         <label class="f_red">*</label>
 	</li>
-	<li class="full" id="li_order_remark4">
-		<label>联系人号码：</label> 
-		<input id="orderAttrPhoneNbr" class="inputWidth250px" type="text" maxlength="16"style="width:280px;">
+	<li  id="li_order_attr">
+		<label>经办人姓名：</label> 
+		<input id="orderAttrName" placeHolder="请输入经办人姓名"  class="inputWidth250px" maxlength="16" type="text" style="width:280px;">
+		<span style="line-height: 28px; float:left;"></span>
 		<label class="f_red">*</label>
 	</li>
-	<li class="full" id="li_order_remark1">
-		<label>证件类型：</label>
-        <select id="orderIdentidiesTypeCd" onchange="order.cust.identidiesTypeCdChoose(this,'orderAttrIdCard')">
-        </select>
-        <label class="f_red">*</label>
-        <a class="btn_h30" id="orderAttrReadCertBtn" onclick="javascript:order.cust.readCertWhenOrder()" style="margin-top: 0px; display: none;"><span>读 卡</span></a>
-        <!--<#if Session["BIND_STATUS"]?? && Session["BIND_STATUS"] == "Y">
-        <a class="btn_h30" id="discernBtn_4" onclick="javascript:push.busi.reqDispatch(1,4)" ><span>识别</span></a>
-        <#else>
-        <a class="btn_h30" id="discernBtn_4" onclick="javascript:push.busi.reqDispatch(1,4)" style="display:none;"><span>识别</span></a>
-        </#if>-->
-	</li>
-	<li class="full" id="li_order_remark2">
+	<li  id="li_order_remark2">
 		<label>证件号码：</label> 
-		<input id="orderAttrIdCard" class="inputWidth250px"maxlength="50"type="text" style="width:280px;">
+		<input id="orderAttrIdCard" placeHolder="请输入证件号码"  class="inputWidth250px"maxlength="50"type="text" style="width:280px;">
 		<span style="line-height: 28px; float:left;"></span>
 		<label class="f_red">*</label>
 	</li>
-	<li class="full" id="li_order_remark3">
+	<li  id="li_order_remark3">
 		<label>证件地址：</label> 
-		<input id="orderAttrAddr" class="inputWidth250px" maxlength="125"type="text" style="width:280px;">
+		<input id="orderAttrAddr" placeHolder="请输入证件地址"  class="inputWidth250px" maxlength="125"type="text" style="width:280px;">
 		<span style="line-height: 28px; float:left;"></span>
+		<label class="f_red">*</label>
+	</li>
+	<li  id="li_order_remark4">
+		<label>联系人号码：</label> 
+		<input id="orderAttrPhoneNbr" placeHolder="请输入联系人号码"  class="inputWidth250px" type="text" maxlength="16"style="width:280px;">
 		<label class="f_red">*</label>
 	</li>
 </ul>
+</form>
+<!--认证相符拍照弹框-->
+<div style="display:none;background:#fff;" id="picture" class="ec-dialog-form-container">
+  <div class="easyDialogclose"   onclick="order.cust.close()"></div>
+  <div class="ec-dialog-form-top">
+    <h1 class="ec-dialog-form-title">人证相符-拍照</h1>
+  </div>
+  <div class="order">
+            <div class="order_nav_new">
+                <!-- <div class="tips">注：请按照你的需求选择最便捷的入口办理业务</div> -->
+                <div class="order-camera-box" >
+                  <ul class="fillin show" style="overflow: hidden;">
+                    <li style="width: 80%;">
+                      <label>选择设备：</label>
+                      <select id="device" name ="device" class="inputWidth183px" >
+                      </select>
+                      <a  class="purchase" href="/phoneimg/camera/DoccameraOcx.exe">下载控件</a>
+                      <span id="tips" style="color:#F00; font-weight:bold;font-size:16px;margin-left:10%;"></span>
+                    </li>
+                  </ul>
+                  <div class="camera-box" style="position: relative;">
+                      <div style="overflow: hidden;"id="div_jbr">
+                        <a  style="display:inline-block; width: 200px; height: 258px; margin: 54px 50px 0 50px; overflow: hidden;"><img src="" id="img_Cert"  class=""></a>
+                        <a id="img" style="display:inline-block; float: right;"><img width="640" height="360"  id="img_Photo"  class="" /></a>
+                      </div>
+                  </div>
+                </div>
+            </div>
+        </div>
+     <div align="center" style="margin:30px auto;">
+      <a class="btna_o" id="takePhotos"><span >确认拍照</span></a>
+      <a  style=" margin-left:20px;" id="rePhotos" class="btna_o" onclick="order.cust.createVideo()"><span>重新拍照</span></a>
+      <a  style=" margin-left:20px;" id="confirmAgree" class="btna_o"  onclick="order.cust.uploadImage()"><span>人证相符</span></a>
+     </div> 
+  </div>
+
+<!--认证相符拍照弹框 End-->
+
 <div class="height18"></div>
 <script>
 	//新建客户或老客户，如果是政企客户，经办人必填（2016-3-17回退）
 	/* if(OrderInfo.boCustInfos.partyTypeCd != '2' && !order.cust.isCovCust(OrderInfo.cust.identityCd)){ 
 		$("#orderAttrDiv .f_red").hide();
 	} */
-	$("#orderAttrDiv .f_red").hide();
+	//$("#orderAttrDiv .f_red").hide();
 	// 证件类型初始化（不加不会加载证件）
 	$("#orderPartyTypeCd").change();
+	if($("#orderIdentidiesTypeCd").val() !="1"){
+		$("#orderAttrQueryCertBtn").show(); 
+	}
+	$("#jbrForm").off('formIsValid').bind("formIsValid", function(event, form){			
+		order.cust.showCertPicture();
+		var src = contextPath+"/image/id_card.jpg";
+		$("#img_Cert").attr("src", src);
+	}).ketchup({bindElement:"orderAttrQueryCertBtn"});	
+	//清空
+	if($("#capture")){
+		$("#capture").remove();
+	}
+	if(cert.getBrowser()=='FF') {
+		$("#div_jbr").append("<object type='application/x-itst-activex' clsid='{454C18E2-8B7D-43C6-8C17-B1825B49D7DE}' id='capture' width='640' height='360' ></object>");
+	}else{
+		//$("#div_jbr").append("<object classid='clsid:454C18E2-8B7D-43C6-8C17-B1825B49D7DE' id='capture'  width='640' height='360' ></object>");
+	}
 </script>

@@ -62,6 +62,7 @@ import com.al.lte.portal.common.EhcacheUtil;
 import com.al.lte.portal.common.InterfaceClient;
 import com.al.lte.portal.common.MySimulateData;
 import com.al.lte.portal.common.PortalServiceCode;
+import com.al.lte.portal.common.StringUtil;
 import com.al.lte.portal.common.SysConstant;
 import com.al.lte.portal.core.DataRepository;
 import com.al.lte.portal.model.SessionStaff;
@@ -1277,8 +1278,53 @@ public class OrderController extends BaseController {
     }
     
     @RequestMapping(value = "/main", method = RequestMethod.POST)
-    public String main(@RequestBody Map<String, Object> param, Model model,  HttpServletResponse response) {
+    public String main(@RequestBody Map<String, Object> param, Model model, HttpServletResponse response,HttpSession session) {
     	String forward = "" ;
+    	SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+				SysConstant.SESSION_KEY_LOGIN_STAFF);
+    	//经办人信息
+		String isPhotoGraph = (String) session.getAttribute(SysConstant.SESSION_ISPHOTOGRAPH+"_PC");
+		String handlecustNumber = (String) session.getAttribute(SysConstant.SESSION_HANDLECUSTNUMBER+"_PC");
+		String handleprovCustAreaId = (String) session.getAttribute(SysConstant.SESSION_HANDLEPROVCUSTAREAID+"_PC");
+		if("Y".equals(isPhotoGraph)){//Y已拍照，如果不传默认为N：未拍照
+			if(!StringUtil.isEmptyStr(handlecustNumber) && !StringUtil.isEmptyStr(handleprovCustAreaId)){//传经办人信息
+				//定位客户接口 queryCust
+				Map<String, Object> custMap = new HashMap<String, Object>();
+				custMap.put("acctNbr", "");
+				custMap.put("areaId", handleprovCustAreaId);
+				custMap.put("diffPlace", "local");
+				custMap.put("identidies_type", "客户编码");
+				custMap.put("identityCd", "");
+				custMap.put("identityNum", "");
+				custMap.put("partyName", "");
+				custMap.put("queryType", "custNumber");
+				custMap.put("queryTypeValue", handlecustNumber);
+				try {
+					Map<String, Object> resultMap = custBmo.queryCustInfo(custMap,null,sessionStaff);
+					List custInfos = new ArrayList();
+					if (resultMap!=null&&resultMap.size()>0) {
+						custInfos=(List<Map<String, Object>>) resultMap.get("custInfos");
+						if(custInfos==null||custInfos.size()<=0){//未定位到客户
+							model.addAttribute("orderAttrFlag","C");//C非必填
+						}else{
+							model.addAttribute("orderAttrFlag","N");//N不允许填，需要把经办人信息下省
+							Map<String, Object> custInfo = (Map<String, Object>) custInfos.get(0);
+							model.addAttribute("orderAttrCustId",custInfo.get("custId"));
+						}
+					}else{//未定位到客户
+						model.addAttribute("orderAttrFlag","C");//C非必填
+					}
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					model.addAttribute("orderAttrFlag","C");//C非必填
+				}
+			}else{//未传经办人信息
+				model.addAttribute("orderAttrFlag","C");//C非必填
+			}
+		}else{//未拍照
+			model.addAttribute("orderAttrFlag","Y");//Y必填
+		}
     	if("2".equals(String.valueOf(param.get("actionFlag")))){  //套餐变更
     		if (MapUtils.isNotEmpty(param)) {
         		model.addAttribute("main", param);
@@ -2803,12 +2849,22 @@ public class OrderController extends BaseController {
 		if(commonBmo.checkToken(request, SysConstant.ORDER_SUBMIT_TOKEN)){
 			try {
 				SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);
-				Map orderList = (Map)param.get("orderList");
-				Map orderListInfo = (Map)orderList.get("orderListInfo");
+				Map<String, Object> orderList = (Map<String, Object>)param.get("orderList");
+				Map<String, Object> orderListInfo = (Map<String, Object>)orderList.get("orderListInfo");
 				orderListInfo.put("staffId", sessionStaff.getStaffId()); //防止前台修改
 				
 				//过滤订单属性
-				List<Map> custOrderAttrs = (List<Map>)orderListInfo.get("custOrderAttrs");
+				List<Map<String, Object>> custOrderAttrs = (List<Map<String, Object>>)orderListInfo.get("custOrderAttrs");
+				//添加客户端IP地址到订单属性
+                Map<String, Object> IPMap = new HashMap<String, Object>();
+                IPMap.put("itemSpecId", SysConstant.ORDER_ATTRS_IP);
+                IPMap.put("value", ServletUtils.getIpAddr(request));
+                if (custOrderAttrs == null){
+                	custOrderAttrs = new ArrayList<Map<String, Object>>();
+                }
+                custOrderAttrs.add(IPMap);
+                orderListInfo.put("custOrderAttrs", custOrderAttrs);               
+                
 				String isAddOperation= (String)ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.FDSL+"_"+sessionStaff.getStaffId());
 				//没有暂存单权限的员工不能添加暂存单订单属性
 				if(!"0".equals(isAddOperation)){
@@ -2825,16 +2881,17 @@ public class OrderController extends BaseController {
 				//获取客户端编码redmine979958,添加客户端编码属性
 				HttpSession session = request.getSession();
 				if((String) session.getAttribute(SysConstant.SESSION_CLIENTCODE+"_PC") !=null){
-					custOrderAttrs = (List<Map>)orderListInfo.get("custOrderAttrs");
-					Map attrMap = new HashMap();
+					custOrderAttrs = (List<Map<String, Object>>)orderListInfo.get("custOrderAttrs");
+					Map<String, Object> attrMap = new HashMap<String, Object>();
 					attrMap.put("itemSpecId", SysConstant.CLIENTCODE);
 					attrMap.put("value", (String) session.getAttribute(SysConstant.SESSION_CLIENTCODE+"_PC"));
 					custOrderAttrs.add(attrMap);
 					orderListInfo.put("custOrderAttrs", custOrderAttrs);
 				}
+
 				Map<String, Object> resMap = orderBmo.orderSubmit(param,null,sessionStaff);
 				if(ResultCode.R_SUCC.equals(resMap.get("resultCode"))){
-					Map result = (Map)resMap.get("result");
+					Map<String, Object> result = (Map<String, Object>)resMap.get("result");
 					String olId = (String)result.get("olId");
 					String soNbr = (String)orderListInfo.get("soNbr");
 					if(result.get("ruleInfos") == null){
@@ -2843,9 +2900,9 @@ public class OrderController extends BaseController {
 						resMap.put("checkRule", "checkRule");
 					}else{
 						boolean ruleflag = false;
-						List rulelist = (List)result.get("ruleInfos");
+						List<Map<String, Object>> rulelist = (List<Map<String, Object>>)result.get("ruleInfos");
 						for(int i=0;i<rulelist.size();i++){
-							Map rulemap = (Map)rulelist.get(i);
+							Map<String, Object> rulemap = (Map<String, Object>)rulelist.get(i);
 							String ruleLevel = rulemap.get("ruleLevel").toString();
 							if("4".equals(ruleLevel)){
 								ruleflag = true;

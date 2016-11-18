@@ -261,57 +261,6 @@ SoOrder = (function() {
 				value : remark
 			});	
 		}
-		//订单购物车属性(经办人)
-		if(CONST.getAppDesc()==0){
-			var orderAttrName = $.trim($("#orderAttrName").val()); //经办人姓名
-			var orderIdentidiesTypeCd = $("#orderIdentidiesTypeCd  option:selected").val(); //证件类型
-			var orderAttrIdCard =$.trim($("#orderAttrIdCard").val()); //证件号码
-			var orderAttrAddr = $.trim($("#orderAttrAddr").val()); //地址
-			var orderAttrPhoneNbr = $.trim($("#orderAttrPhoneNbr").val()); //联系人号码
-			if(ec.util.isObj(orderAttrName)&&ec.util.isObj(orderAttrIdCard)&&ec.util.isObj(orderAttrPhoneNbr)){
-				if(ec.util.isObj(orderAttrName)){
-					custOrderAttrs.push({
-						itemSpecId : CONST.BUSI_ORDER_ATTR.orderAttrName,
-						value : orderAttrName
-					});	
-				}
-				if(ec.util.isObj(orderAttrIdCard)){
-					custOrderAttrs.push({
-						itemSpecId : CONST.BUSI_ORDER_ATTR.orderIdentidiesTypeCd,
-						value : orderIdentidiesTypeCd
-					});	
-					custOrderAttrs.push({
-						itemSpecId : CONST.BUSI_ORDER_ATTR.orderAttrIdCard,
-						value : orderAttrIdCard
-					});	
-				}
-				if(ec.util.isObj(orderAttrPhoneNbr)){
-					custOrderAttrs.push({
-						itemSpecId : CONST.BUSI_ORDER_ATTR.orderAttrPhoneNbr,
-						value : orderAttrPhoneNbr
-					});	
-				}
-				if(ec.util.isObj(orderAttrAddr)){
-					custOrderAttrs.push({
-						itemSpecId : CONST.BUSI_ORDER_ATTR.orderAttrAddr,
-						value : orderAttrAddr
-					});	
-				}
-			}else if(ec.util.isObj(orderAttrName)||ec.util.isObj(orderAttrIdCard)||ec.util.isObj(orderAttrPhoneNbr)){
-				if(!ec.util.isObj(orderAttrName)){
-					$.alert("提示","经办人姓名为空，经办人姓名、联系人号码、证件号码必须同时为空或不为空，因此无法提交！");
-					return false;
-				}
-				if(!ec.util.isObj(orderAttrPhoneNbr)){
-					$.alert("提示","联系人号码为空，经办人姓名、联系人号码、证件号码必须同时为空或不为空，因此无法提交！");
-					return false;
-				}
-				if(!ec.util.isObj(orderAttrIdCard)){
-					$.alert("提示","证件号码为空，经办人姓名、联系人号码、证件号码必须同时为空或不为空，因此无法提交！");
-					return false;
-				}
-			}
-		}
 		
 		if(OrderInfo.actionFlag==1 || OrderInfo.actionFlag==14){ //新装
 			_createOrder(busiOrders); //新装
@@ -413,6 +362,10 @@ SoOrder = (function() {
 		}else{  //默认单个业务动作
 			_fillBusiOrder(busiOrders,data,"N"); //填充业务对象节点
 		}
+		
+		//订单填充经办人信息
+		_addHandleInfo(busiOrders, custOrderAttrs);
+		
 		OrderInfo.orderData.orderList.orderListInfo.custOrderAttrs = custOrderAttrs; //订单属性数组
 		OrderInfo.orderData.orderList.orderListInfo.extCustOrderId = OrderInfo.provinceInfo.provIsale; //省份流水
 		OrderInfo.orderData.orderList.custOrderList[0].busiOrder = busiOrders; //订单项数组
@@ -432,6 +385,7 @@ SoOrder = (function() {
 		if(OrderInfo.order.soNbr!=undefined && OrderInfo.order.soNbr != ""){  //缓存流水号
 			OrderInfo.orderData.orderList.orderListInfo.soNbr = OrderInfo.order.soNbr;
 		}
+		
 		return true;
 	};
 	
@@ -2906,76 +2860,26 @@ SoOrder = (function() {
 								return false;
 							}
 						}
-					}else{//没有开通4G功能产品 就判断UIM卡和终端的类型要一致，4G终端匹配4GUIM卡 3G终端匹配3GUIM卡
-						//if(OrderInfo.actionFlag == 1 || OrderInfo.actionFlag == 6 || OrderInfo.actionFlag == 14){ //新装
-							//if(isTerminal){
-							//	var uim = OrderInfo.getProdUim(prodId);
-							//	var threeOrFour=false;
-							//	if(ec.util.isObj(uim) && ec.util.isObj(uim.cardTypeFlag)){
-							//		$.each(termTypeFlags,function(){
-							//			if(this.termTypeFlag!=uim.cardTypeFlag){
-							//				var uimtype=uim.cardTypeFlag=="1"?"4G卡":"3G卡";
-							//				var termtype=this.termTypeFlag=="1"?"4G机型":"3G机型";
-							//				$.alert("信息提示",roleName+"中UIM卡是"+uimtype+" 终端是"+termtype+"，无法提交");
-							//				threeOrFour=true;
-							//				return false;
-							//			}
-							//		});
-							//	}
-							//	if(threeOrFour){ //终端和卡不匹配
-							//		return false;
-							//	}
-							//}
-						//}else if(OrderInfo.actionFlag == 2 || OrderInfo.actionFlag == 3 || OrderInfo.actionFlag == 21){
-							//if(isTerminal){
-								//var currentUimCoupon = OrderInfo.getProdUim(prodId); //当前uim卡物品信息，做套餐变更或可选包变更时可能带出补换卡业务，提交时使用新的uim检验终端
-								//if(ec.util.isObj(currentUimCoupon) && ec.util.isObj(currentUimCoupon.cardTypeFlag)){ //补换卡
-								//	var fourTerminal=false;
-								//	$.each(termTypeFlags,function(){
-								//		if(this.termTypeFlag=="1"){
-								//			fourTerminal=true;
-								//			return false;
-								//		}
-								//	});
-									//if(currentUimCoupon.cardTypeFlag=="2" && fourTerminal){
-									//	$.alert("信息提示",roleName+"中UIM卡是3G卡 终端是4G机型，无法提交");
-									//	return false;
-									//}
-									//if(currentUimCoupon.cardTypeFlag=="1" && _isThreeTerminal(termTypeFlags,isTerminal)){
-									//	$.alert("信息提示",roleName+"中UIM卡是4G卡 终端是3G机型，无法提交");
-									//	return false;
-									//}
-								//} else {  //未做补换卡
-									//var oldUim = OrderInfo.getProdOldUim(prodId);
-									//if(ec.util.isObj(oldUim.is4GCard)){
-									//	if(oldUim.is4GCard!="Y"){//旧卡不是4G卡
-									//		var fourTerminal=false;
-									//		$.each(termTypeFlags,function(){
-									//			if(this.termTypeFlag=="1"){
-									//				fourTerminal=true;
-									//				return false;
-									//			}
-									//		});
-									//		if(fourTerminal){
-									//			$.alert("信息提示",roleName+"中UIM卡是3G卡 终端是4G机型，无法提交");
-									//			return false;
-									//		}
-									//	}else{
-									//		if(_isThreeTerminal(termTypeFlags,isTerminal)){
-									//			$.alert("信息提示",roleName+"中UIM卡是4G卡 终端是3G机型，无法提交");
-									//			return false;
-									//		}
-									//	}
-									//}
-								//}
-							//
-							//}
-						//}
 					}
 				}
 			} //TODO tmp for Mantis 0042657
 		}
 		}
+		
+		//实名制拍照：经办人校验
+		if(OrderInfo.subHandleInfo.orderAttrFlag == "Y"){
+			//经办人必填进行校验，否则不校验
+			if(OrderInfo.subHandleInfo.authFlag != "Y"){
+				if(OrderInfo.subHandleInfo.authFlag == "F"){
+					$.alert("经办人拍照留存上传失败，请重新拍照认证！");
+					return false;
+				} else{
+					$.alert("经办人信息未通过人证相符认证，请您先对经办人拍照认证！");
+					return false;
+				}
+			}
+		}
+		
 		return true; 
 	};
 	//判断是否包含有3G的机型
@@ -3185,6 +3089,80 @@ SoOrder = (function() {
 		}
 		return false;
 	};
+	
+	//填充订单经办人信息
+	var _addHandleInfo = function(busiOrders, custOrderAttrs){
+		if(OrderInfo.subHandleInfo.orderAttrFlag == "Y"){
+			//经办人必填时进行经办人填充
+			if(OrderInfo.subHandleInfo.authFlag == "Y"){
+				//人证相符
+				if(OrderInfo.subHandleInfo.handleExist == "Y"){
+					//如果是老客户
+					OrderInfo.orderData.orderList.orderListInfo.partyId = OrderInfo.cust.custId;//门户主页客户定位的客户ID
+					OrderInfo.orderData.orderList.orderListInfo.handleCustId = OrderInfo.subHandleInfo.handleCustId;//经办人查询出的客户ID
+				} else if(OrderInfo.subHandleInfo.handleExist == "N"){
+					//如果是新客户
+					OrderInfo.orderData.orderList.orderListInfo.handleCustId = -3;//新建经办人，handleCustId与partyId一致
+					OrderInfo.orderData.orderList.orderListInfo.partyId = -3;//-3经办人客户，-2使用人客户，-1产权客户
+					_createHandleCust(busiOrders);
+				} else{
+					$.alert("经办人信息发生未知异常，可能重复操作或多窗口操作，请刷新页面清空浏览器缓存后重新尝试！");
+					return false;
+				}
+			}
+		}
+		
+		//添加虚拟订单ID属性
+		custOrderAttrs.push({
+			itemSpecId : CONST.BUSI_ORDER_ATTR.VIROLID,
+			value : OrderInfo.subHandleInfo.virOlId//即照片上传时后台返回的18位的虚拟订单ID:virOlId
+		});
+	};
+	
+	//创建经办人节点
+	var _createHandleCust = function(busiOrders) {
+		var busiOrder = {
+			areaId	: OrderInfo.getAreaId(),//受理地区ID
+			busiOrderInfo : {
+				seq : OrderInfo.SEQ.seq--
+			}, 
+			busiObj : { //业务对象节点
+				instId		: -3,//-3经办人客户，-2使用人客户，-1产权客户
+				accessNumber: OrderInfo.getAccessNumber(-1)
+			},  
+			boActionType : {
+				actionClassCd	: CONST.ACTION_CLASS_CD.CUST_ACTION,
+				boActionTypeCd	: CONST.BO_ACTION_TYPE.CUST_CREATE
+			}, 
+			data : {
+				boCustInfos 		: [],
+				boCustIdentities	: [],
+				boPartyContactInfo	: []
+			}
+		};
+		//经办人信息节点
+		busiOrder.data.boCustInfos.push({
+			name			: OrderInfo.subHandleInfo.orderAttrName,//客户名称
+			state			: "ADD",//状态
+			areaId			: OrderInfo.getAreaId(),
+			telNumber 		: OrderInfo.subHandleInfo.orderAttrPhoneNbr,//联系电话
+			addressStr		: OrderInfo.subHandleInfo.orderAttrAddr,//客户地址
+			partyTypeCd		: 1,//客户类型
+			defaultIdType	: OrderInfo.subHandleInfo.identidiesTypeCd,//证件类型
+			mailAddressStr	: OrderInfo.subHandleInfo.orderAttrAddr,//通信地址
+			businessPassword: ""//客户密码
+		});
+		//客户证件节点
+		busiOrder.data.boCustIdentities.push({
+			state			: "ADD",//状态
+			isDefault		: "Y",//是否首选
+			identityNum		: OrderInfo.subHandleInfo.identityNum,//证件号码
+			identidiesPic	: "",//二进制证件照片
+			identidiesTypeCd: OrderInfo.subHandleInfo.identidiesTypeCd//证件类型
+		});
+		busiOrders.push(busiOrder);
+	};	
+	
 	return {
 		builder 				: _builder,
 		createAttOffer  		: _createAttOffer,
@@ -3193,7 +3171,7 @@ SoOrder = (function() {
 		delAndNew				: _delAndNew,
 		getOrderInfo 			: _getOrderInfo,
 		getToken				: _getToken,
-		getTokenSynchronize : _getTokenSynchronize,
+		getTokenSynchronize 	: _getTokenSynchronize,
 		initFillPage			: _initFillPage,
 		initOrderData			: _initOrderData,
 		orderBack				: _orderBack,

@@ -1127,5 +1127,9 @@ public final class PortalServiceCode {
     /** 判断是否集团新装业务 */
     public static final String QUERY_IF_LTE_NEW_INSTALL = "biz-service/intf.pullingDataService/queryIfLteNewInstall";
 
+    //实名制证件上传
+    public static final String INTF_UPLOAD_IMAGE = "biz-service/intf.fileOperateService/upLoadPicturesFileToFtp";
+    //实名制证件下载
+    public static final String INTF_DOWNLOAD_IMAGE = "biz-service/intf.fileOperateService/downLoadPicturesFileFromFtp";
 }
 

@@ -3,6 +3,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import com.al.ecs.exception.BusinessException;
 import com.al.ecs.exception.InterfaceException;
 import com.al.lte.portal.model.SessionStaff;
@@ -784,4 +786,17 @@ public interface OrderBmo {
 	public Map<String, Object> queryIfLteNewInstall(
 			Map<String, Object> paramMap, String optFlowNum,
 			SessionStaff sessionStaff) throws Exception;
+	
+	/**
+	 * 调后台接口下载实名制拍照证件
+	 */
+	public Map<String, Object> downloadCustCertificate(Map<String, Object> param, SessionStaff sessionStaff) throws BusinessException;
+	
+	/**
+	 * 实名制拍照，入参防篡改校验
+	 * @param param 订单提交入参
+	 * @param request 
+	 * @return true:校验成功; false:校验失败
+	 */
+	public boolean verifyCustCertificate(Map<String, Object> param, HttpServletRequest request);
 }

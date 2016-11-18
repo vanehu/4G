@@ -25,6 +25,11 @@ OrderInfo = (function() {
 	
 	var _isSuccess = "N";  // 补换卡  加载 可选包 是否成功 
 	
+	var _virOlId="";
+	
+	var _handleCustId="";
+	
+	
 	/*购物车业务动作
 	1 新装
 	2  套餐变更
@@ -1014,7 +1019,31 @@ OrderInfo = (function() {
 		state : "ADD",  //状态
 		identidiesPic : "" //证件照片
 	};
+	
+	//客户证件节点
+	var _bojbrCustIdentities = {
+		identidiesTypeCd : "1", //证件类型
+		identityNum : "", //证件号码
+		isDefault : "Y", //是否首选
+		state : "ADD",  //状态
+		identidiesPic : "" //证件照片
+	};
 
+	//经办人信息节点
+	var _bojbrCustInfos = {
+		areaId : 0,
+		defaultIdType:"1",//证件类型
+		businessPassword : "", //客户密码
+		name : "", //	客户名称
+		partyTypeCd : 1,//客户类型
+		state : "ADD", //状态
+		telNumber : "",  //联系电话
+		addressStr:"",//客户地址
+		mailAddressStr:"",//通信地址
+		//picturesInfo: [],
+		//srcFlag: "REAL"
+	};
+	
 	//客户联系人节点
 	var _boPartyContactInfo = {
 		contactAddress : "",//参与人的联系地址
@@ -1711,6 +1740,10 @@ OrderInfo = (function() {
 		essOrderInfo            :_essOrderInfo,
 		preBefore : _preBefore,
 		roleCd   : _roleCd,
-		roleType : _roleType
+		roleType : _roleType,
+		bojbrCustInfos          : _bojbrCustInfos,
+		bojbrCustIdentities     : _bojbrCustIdentities,
+		virOlId : _virOlId,
+		handleCustId : _handleCustId
 	};
 })();

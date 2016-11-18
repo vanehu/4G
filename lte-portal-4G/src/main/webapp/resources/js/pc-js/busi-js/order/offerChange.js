@@ -275,6 +275,14 @@ offerChange = (function() {
 	var _fillOfferChange = function(response, param) {
 		SoOrder.initFillPage(); //并且初始化订单数据
 		$("#order_fill_content").html(response.data);
+		order.main.initOrderAttr();//初始化经办人
+		var orderAttrFlag = ec.util.defaultStr($("#orderAttrFlag").val());
+		var orderAttrCustId = ec.util.defaultStr($("#orderAttrCustId").val());
+		OrderInfo.orderAttrFlag = orderAttrFlag;
+		OrderInfo.subHandleInfo.orderAttrCustId = orderAttrCustId;
+		if(orderAttrFlag=="N"){//订单提交报文中经办人下省用
+			$("#orderAttrDiv").hide();
+		}
 		$("#fillNextStep").off("click").on("click",function(){
 			SoOrder.submitOrder();
 		});

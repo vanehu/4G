@@ -30,6 +30,9 @@ OrderInfo = (function() {
 	var dealers=new Array();
 	//补卡换卡  22.补卡21.换卡
 	var _uimType="";
+	
+	var _handleInfo = {};
+	var _subHandleInfo = {};
 	/**
 	 * UI集成页面信息
 	 * provIsale 省份流水
@@ -1569,7 +1572,9 @@ OrderInfo = (function() {
 		uimType:_uimType,
 		recordId:_recordId,
 		preBefore:_preBefore,
-		roleType : _roleType
+		roleType : _roleType,
+		handleInfo:_handleInfo,
+		subHandleInfo:_subHandleInfo
 		
 	};
 })();

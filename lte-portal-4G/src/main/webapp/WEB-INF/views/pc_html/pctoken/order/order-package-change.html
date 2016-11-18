@@ -37,9 +37,16 @@
 				<#include "/order/order-remark.html" />
 			</@block>
 		</div>
+        <!--经办人展示-->
+	    <div id="orderAttrDiv">
+		    <@block name="orderAttr">
+			    <#include "/pctoken/order/order-attr.html" />
+			</@block>
+		</div>		
 	</div>
 </div>
-
+<input type="hidden" id="orderAttrFlag" value="${orderAttrFlag}">
+<input type="hidden" id="orderAttrCustId" value="${orderAttrCustId}">
 <div align="right" style="margin: 20px auto; padding:0 20px;">
 <!-- 	<a id="fillLastStep" href="javascript:order.prodModify.cancel();" class="btna_o"><span>取消222</span></a>  -->
 	<a href="javascript:SoOrder.submitOrder()" class="btna_o" style=" margin-left:20px;"><span>下一步</span></a>

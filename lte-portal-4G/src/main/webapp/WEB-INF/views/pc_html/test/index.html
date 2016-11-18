@@ -50,7 +50,9 @@
 				"typeCd":$("#typeCd").val(),
 				"verifyLevel":$("verifyLevel").val(),
 				"unifyLoginUri":$("#unifyLoginUri").val(),
-				"attrInfos":[]
+				"attrInfos":[],
+				"handlecustNumber":$("#handlecustNumber").val(),	
+				"handleprovCustAreaId":$("#handleprovCustAreaId").val(),
 			};
 			var attrSpecStr = $("#attrSpecId").val();
 			var attrValueStr = $("#attrValue").val();
@@ -241,8 +243,10 @@
 			发展人工号:<input id="salesCode" class="inputWidth250px inputTest" value=""/><br/> 
 			鉴权方式:<input id="typeCd" class="inputWidth250px inputTest" value="4"/><br/>
 			鉴权级别:<input id="verifyLevel" class="inputWidth250px inputTest" value="2"/><br/>
-			属性编码:<input id="attrSpecId" class="inputWidth250px inputTest" value="40010033"/>(订单编码和属性值一一对应用逗号";"分割，如：40010033;40010034)<br/>
-			属性值:<input id="attrValue" class="inputWidth250px inputTest" value="SH01"/>(属性值对应关系如：SH01;SH02)<br/>
+			属性编码:<input id="attrSpecId" class="inputWidth250px inputTest" value="40010040"/>(订单编码和属性值一一对应用逗号";"分割，如：40010040;40010033;40010034)<br/>
+			属性值:<input id="attrValue" class="inputWidth250px inputTest" value="N"/>(属性值对应关系如：SH01;SH02)<br/>
+			经办人客户编码：<input id="handlecustNumber" class="inputWidth250px inputTest" value="171100052872830"/><br/>
+			经办人客户所属区域编码：<input id="handleprovCustAreaId" class="inputWidth250px inputTest" value="8330100"/><br/>
 			
 		</div>
 		

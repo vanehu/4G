@@ -1,9 +1,11 @@
 package com.al.lte.portal.bmo.crm;
 
+import java.io.IOException;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.al.ecs.exception.BusinessException;
 import com.al.lte.portal.model.SessionStaff;
 
 public interface CustBmo {
@@ -119,4 +121,14 @@ public interface CustBmo {
 	 */
 	public Map<String, Object> queryAccountAndUseCustInfo(Map<String, Object> dataBusMap, String optFlowNum,
             SessionStaff sessionStaff) throws Exception;
+	
+	/**
+	 * 实名制证件上传
+	 * @throws IOException 
+	 */
+	public Map<String, Object> uploadCustCertificate(Map<String, Object> param, SessionStaff sessionStaff) throws BusinessException;
+	/**
+	 * 实名制证件图片添加水印
+	 */
+	public Map<String, Object> preHandleCustCertificate(String base64ImageStr, String venderId) throws IOException;
 }
