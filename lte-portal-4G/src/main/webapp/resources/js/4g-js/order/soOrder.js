@@ -476,6 +476,8 @@ SoOrder = (function() {
 				itemSpecId : CONST.BUSI_ORDER_ATTR.CHANGE_CARD_AREA_ID,
 				value : $("#p_cust_areaId").val()
 			});
+		}else if(OrderInfo.actionFlag == 39){//改付费类型
+			_changeFeeType(busiOrders,data,"N");
 		}else if(OrderInfo.actionFlag == 40){//紧急开机
 			_createUrgentBoot(busiOrders,data,"N");
 		}else if(OrderInfo.actionFlag == 28){//主副卡成员角色互换
@@ -3729,7 +3731,40 @@ SoOrder = (function() {
 		}
 		busiOrders.push(busiOrder);
 	};
-	
+	var _changeFeeType=function (busiOrders,feedata,isComp) {
+		var prod = order.prodModify.choosedProdInfo;
+		var param = {
+			offerId: prod.prodOfferInstId,
+			offerSpecId: prod.prodOfferId,
+			areaId: prod.areaId,
+			distributorId: "",
+			acctNbr: prod.accNbr
+		};
+		var data = query.offer.queryOfferInst(param); //查询销售品实例构成
+
+		$.each(data.offerMemberInfos, function () {
+			//创建业务节点
+			var busiOrder = {
+				areaId: OrderInfo.getProdAreaId(prod.prodInstId),  //受理地区ID
+				busiOrderInfo: {
+					seq: OrderInfo.SEQ.seq--
+				},
+				busiObj: { //业务对象节点
+					objId: this.objId,//prodInfo.productId, //业务对象规格ID
+					instId: this.objInstId, //业务对象实例ID
+					isComp: isComp, //是否组合
+					accessNumber: this.accessNumber,   //业务号码
+					offerTypeCd: "1"  //1主销售品
+				},
+				boActionType: {
+					actionClassCd: OrderInfo.actionClassCd,
+					boActionTypeCd: OrderInfo.boActionTypeCd
+				},
+				data: feedata
+			};
+			busiOrders.push(busiOrder);
+		});
+	};
 	//填充订单经办人信息
 	var _addHandleInfo = function(busiOrders, custOrderAttrs){
 		if(OrderInfo.handleCustId == "" || OrderInfo.handleCustId == null || OrderInfo.handleCustId == undefined){//新建客户
@@ -3804,6 +3839,7 @@ SoOrder = (function() {
 		getCheckOperatSpec		: _getCheckOperatSpec,
 		saveOrderSubmit			: _saveOrderSubmit,
 		createProd				: _createProd,
-		inSubmit				: _inSubmit
+		inSubmit				: _inSubmit,
+		changeFeeType			:_changeFeeType
 	};
 })();
