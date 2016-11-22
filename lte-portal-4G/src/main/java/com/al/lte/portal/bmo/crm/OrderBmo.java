@@ -793,10 +793,9 @@ public interface OrderBmo {
 	public Map<String, Object> downloadCustCertificate(Map<String, Object> param, SessionStaff sessionStaff) throws BusinessException;
 	
 	/**
-	 * 实名制拍照，入参防篡改校验
-	 * @param param 订单提交入参
-	 * @param request 
+	 * 订单提交校验客户身份证信息
 	 * @return true:校验成功; false:校验失败
+	 * @throws Exception 
 	 */
-	public boolean verifyCustCertificate(Map<String, Object> param, HttpServletRequest request);
+	public boolean verifyCustCertificate(Map<String, Object> param, HttpServletRequest request) throws Exception;
 }

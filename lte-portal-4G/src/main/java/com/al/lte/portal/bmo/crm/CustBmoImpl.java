@@ -824,7 +824,7 @@ public class CustBmoImpl implements CustBmo {
 			photograph.put("picFlag", photograph.get("flag"));
 			photograph.remove("photograph");
 			photograph.remove("flag");
-			photograph.remove("signature");
+			photograph.remove("signature");//签名不在协议之内，去除
 		}
 		param.put("picturesInfo", photographs);
 		param.remove("photographs");

@@ -2430,7 +2430,15 @@ SoOrder = (function() {
 	};	
 	
 	//订单数据校验
-	var _checkData = function() {	
+	var _checkData = function() {
+		var orderAttrName = OrderInfo.subHandleInfo.orderAttrName;
+		var orderAttrAddr = OrderInfo.subHandleInfo.orderAttrAddr;
+		var identityNum = OrderInfo.subHandleInfo.identityNum;
+		if(orderAttrName == null || orderAttrName == "" || orderAttrAddr == null || orderAttrAddr == "" || identityNum == null || identityNum == ""){
+			$.alert("提示","经办人信息不完整，请点击经办人的“读卡”或“查询”按钮完善经办人信息。");
+			return false ;
+		}
+
 		if(OrderInfo.actionFlag == 1 || OrderInfo.actionFlag == 6 || OrderInfo.actionFlag == 14 || (OrderInfo.actionFlag==2&&offerChange.newMemberFlag)){ //新装
 			if(OrderInfo.cust.custId==""){
 				$.alert("提示","客户信息不能为空！");
@@ -3113,10 +3121,13 @@ SoOrder = (function() {
 		}
 		
 		//添加虚拟订单ID属性
-		custOrderAttrs.push({
-			itemSpecId : CONST.BUSI_ORDER_ATTR.VIROLID,
-			value : OrderInfo.subHandleInfo.virOlId//即照片上传时后台返回的18位的虚拟订单ID:virOlId
-		});
+		if(OrderInfo.subHandleInfo.virOlId != null && OrderInfo.subHandleInfo.virOlId != undefined && OrderInfo.subHandleInfo.virOlId != ""){
+			//添加虚拟订单ID属性
+			custOrderAttrs.push({
+				itemSpecId : CONST.BUSI_ORDER_ATTR.VIROLID,
+				value : OrderInfo.subHandleInfo.virOlId//即照片上传时后台返回的18位的虚拟订单ID:virOlId
+			});
+		}
 	};
 	
 	//创建经办人节点

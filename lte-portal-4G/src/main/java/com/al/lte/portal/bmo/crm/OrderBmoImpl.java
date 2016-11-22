@@ -19,6 +19,8 @@ import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -27,6 +29,7 @@ import com.al.crm.log.sender.ILogSender;
 import com.al.ec.serviceplatform.client.DataBus;
 import com.al.ec.serviceplatform.client.ResultCode;
 import com.al.ecs.common.util.JsonUtil;
+import com.al.ecs.common.util.PropertiesUtils;
 import com.al.ecs.common.web.ServletUtils;
 import com.al.ecs.common.web.SpringContextUtil;
 import com.al.ecs.exception.BusinessException;
@@ -57,13 +60,20 @@ import com.al.lte.portal.model.SessionStaff;
  */
 @Service("com.al.lte.portal.bmo.crm.OrderBmo")
 public class OrderBmoImpl implements OrderBmo {
+
+	@Autowired
+    @Qualifier("com.al.lte.portal.bmo.crm.CommonBmo")
+    private CommonBmo commonBmo;
+	
+	@Autowired
+    PropertiesUtils propertiesUtils;
+	
 	protected final static Log log = Log.getLog(OrderBmoImpl.class);	
 	
 	private static ILogSender logSender = (ILogSender) SpringContextUtil.getBean("defaultLogSender");
 	
 	private static HttpServletRequest request = null;
 	
-
 	/*
 	 * 销售品查询 (non-Javadoc)
 	 */
@@ -3004,13 +3014,126 @@ public class OrderBmoImpl implements OrderBmo {
 	}
 	
 	/**
-	 * 实名制拍照，入参防篡改校验(暂时跳过)
-	 * @param param 订单提交入参
-	 * @param request 
+	 * 订单提交校验客户身份证信息
 	 * @return true:校验成功; false:校验失败
+	 * @throws Exception 
 	 */
-	public boolean verifyCustCertificate(Map<String, Object> param, HttpServletRequest request){
-//		boolean resultFlag = false;
-		return true;
+	@SuppressWarnings("unchecked")
+	public boolean verifyCustCertificate(Map<String, Object> param, HttpServletRequest request) throws Exception{
+    	boolean isSuccessed = true;
+        Map<String, Object> orderList = (Map<String, Object>) param.get("orderList");
+        Map<String, Object> orderListInfo = (Map<String, Object>) orderList.get("orderListInfo");
+        List<Map<String, Object>> custOrderList = (List<Map<String, Object>>) orderList.get("custOrderList");
+        String actionFlag = MapUtils.getString(orderListInfo, "actionFlag");
+        List<Map<String, String>> custOrderAttrs = (List<Map<String, String>>) orderListInfo.get("custOrderAttrs");
+        String virOlId = null;//订单提交报文中的virOlId
+        for (Map<String, String> custOrderAttr : custOrderAttrs) {
+        	if("810000000".equals(custOrderAttr.get("itemSpecId").toString())){
+        		virOlId = custOrderAttr.get("value");
+        	}
+        }
+        
+        //先判断经办人证件、拍照是否上传成功，再进行身份证读卡信息校验
+        Object sessionKey = ServletUtils.getSessionAttribute(request, virOlId + "upload"); 
+        boolean isHandleCustCertificateUpload = sessionKey == null ? false : (Boolean) sessionKey;
+        if(!isHandleCustCertificateUpload){
+        	return false;
+        }
+        
+        if ("1".equals(actionFlag)) { //新装
+        	int C1Count = 0;//所有C1动作、且证件类型为身份证的节点数
+            int successCount = 0;//所有C1动作、证件类型为身份证、且身份证校验成功数
+            for (Map<String, Object> custOrder : custOrderList) {
+                List<Map<String, Object>> busiOrderList = (List<Map<String, Object>>) custOrder.get("busiOrder");
+                for (Map<String, Object> busiOrder : busiOrderList) {
+                    Map<String, Object> boActionType = (Map<String, Object>) busiOrder.get("boActionType");
+                    String boActionTypeCd = (String) boActionType.get("boActionTypeCd");
+                    if ("C1".equalsIgnoreCase(boActionTypeCd)) { //新建客户
+                        Map<String, Object> data = (Map<String, Object>) busiOrder.get("data");
+                        Map<String, Object> identities = (Map<String, Object>) ((List<Map<String, Object>>) data.get("boCustIdentities")).get(0);
+                        String identidiesTypeCd = MapUtils.getString(identities, "identidiesTypeCd");
+                        if ("1".equals(identidiesTypeCd) ) { //身份证
+                        	C1Count++;
+                        	Map<String, Object> custInfo = (Map<String, Object>) ((List<Map<String, Object>>) data.get("boCustInfos")).get(0);
+                        	Object s_sig =  null;
+                        	if("Y".equals(MapUtils.getString(custInfo, "jbrFlag"))){//若该C1动作节点是新建经办人
+                        		s_sig =  ServletUtils.getSessionAttribute(request, Const.SESSION_SIGNATURE_HANDLE_CUST);
+                        	} else{
+                        		s_sig =  ServletUtils.getSessionAttribute(request, Const.SESSION_SIGNATURE);
+                        	}
+                            if(null == s_sig){
+                                return false;
+                            }
+                            String token = s_sig.toString();
+                            if ((StringUtils.isNotBlank(token) && token.trim().length() > Const.RANDOM_STRING_LENGTH)) {
+                                String partyName = MapUtils.getString(custInfo, "name");
+                                String certNumber = MapUtils.getString(identities, "identityNum");
+                                String certAddress = MapUtils.getString(custInfo, "addressStr");
+                                String identityPic = MapUtils.getString(identities, "identidiesPic");
+                                String appSecret = propertiesUtils.getMessage("APP_SECRET"); //appId对应的加密密钥
+                                String nonce = StringUtils.substring(token, 0, Const.RANDOM_STRING_LENGTH);
+                                String signature = commonBmo.signature(partyName, certNumber, certAddress, identityPic, nonce, appSecret);
+                                if (!token.trim().equals(signature)) {
+                                	isSuccessed = false;
+                                } else{
+                                	successCount++;
+                                }
+                            } else {
+                                return false;
+                            }
+                        }
+                    }
+                }
+            }
+            //循环遍历完所有busiOrder下的C1动作节点，校验C1Count是否与successCount相等，否则即为校验失败
+            if(C1Count == successCount){
+            	isSuccessed = true;
+            } else{
+            	isSuccessed = false;
+            }
+        } else{//非新装业务，遍历经办人进行校验
+        	//针对每笔订单的virOlId，判断经办人是否老客户，virOlId在session封装为true表示老客户，否则新客户
+        	sessionKey = ServletUtils.getSessionAttribute(request, virOlId  + "qryCust"); 
+            boolean isExitHandleCust = sessionKey == null ? false : (Boolean) sessionKey;
+        	if(isExitHandleCust){//经办人是老客户
+        		//无法校验：1.无法判断经办人证件类型；2.若老客户，无法获取姓名、地址等用于签名校验的数据
+//        		sessionKey = ServletUtils.getSessionAttribute(request, Const.SESSION_SIGNATURE_HANDLE_CUST);
+        	} else{//经办人是新客户，需要新建客户，遍历报文的C1动作节点
+        		for (Map<String, Object> custOrder : custOrderList) {
+                    List<Map<String, Object>> busiOrderList = (List<Map<String, Object>>) custOrder.get("busiOrder");
+                    for (Map<String, Object> busiOrder : busiOrderList) {
+                        Map<String, Object> boActionType = (Map<String, Object>) busiOrder.get("boActionType");
+                        if ("C1".equalsIgnoreCase(boActionType.get("boActionTypeCd").toString())) {//新建经办人
+                            Map<String, Object> data = (Map<String, Object>) busiOrder.get("data");
+                            Map<String, Object> identities = (Map<String, Object>) ((List<Map<String, Object>>) data.get("boCustIdentities")).get(0);
+                            if ("1".equals(MapUtils.getString(identities, "identidiesTypeCd")) ) { //身份证
+                                Object s_sig = ServletUtils.getSessionAttribute(request, Const.SESSION_SIGNATURE_HANDLE_CUST);
+                                if(null == s_sig){
+                                    return false;
+                                }
+                                String token = s_sig.toString();
+                                
+                                if ((StringUtils.isNotBlank(token) && token.trim().length() > Const.RANDOM_STRING_LENGTH)) {
+                                    Map<String, Object> custInfo = (Map<String, Object>) ((List<Map<String, Object>>) data.get("boCustInfos")).get(0);
+                                    String partyName = MapUtils.getString(custInfo, "name");
+                                    String certNumber = MapUtils.getString(identities, "identityNum");
+                                    String certAddress = MapUtils.getString(custInfo, "addressStr");
+                                    String identityPic = MapUtils.getString(identities, "identidiesPic");
+                                    String appSecret = propertiesUtils.getMessage("APP_SECRET"); //appId对应的加密密钥
+                                    String nonce = StringUtils.substring(token, 0, Const.RANDOM_STRING_LENGTH);
+                                    String signature = commonBmo.signature(partyName, certNumber, certAddress, identityPic, nonce, appSecret);
+                                    if (!token.trim().equals(signature)) {
+                                    	return false;
+                                    }
+                                } else {
+                                    return false;
+                                }
+                            }
+                        }
+                    }
+                }
+        	}
+        }
+        return isSuccessed;
 	}
 }

@@ -2783,9 +2783,11 @@ SoOrder = (function() {
 	};	
 	
 	//订单数据校验
-	var _checkData = function() {	
-//		if(ec.util.isObj($("#jbrForm").html()) && ec.util.isObj(OrderInfo.bojbrCustIdentities.identityNum)){
-		if(!ec.util.isObj($("#jbrForm").html())){
+	var _checkData = function() {
+		var jbrIdentityNum = OrderInfo.bojbrCustIdentities.identityNum;
+		var jbrName = OrderInfo.bojbrCustInfos.name;
+		var jbrAddressStr = OrderInfo.bojbrCustInfos.addressStr;
+		if(!ec.util.isObj($("#jbrForm").html()) || jbrIdentityNum == "" || jbrName == "" || jbrAddressStr == ""){
 			$.alert("提示","经办人拍照信息不能为空！请确认页面是否已点击【读卡】或者【拍照】按钮，并且拍照和人脸相符已成功操作！");
 			return false ; 
 		}
@@ -3777,10 +3779,12 @@ SoOrder = (function() {
 		}
 		
 		//添加虚拟订单ID属性
-		custOrderAttrs.push({
-			itemSpecId : CONST.BUSI_ORDER_ATTR.VIROLID,
-			value : OrderInfo.virOlId//即照片上传时后台返回的18位的虚拟订单ID:virOlId
-		});
+		if(OrderInfo.virOlId != null && OrderInfo.virOlId != undefined && OrderInfo.virOlId != ""){
+			custOrderAttrs.push({
+				itemSpecId : CONST.BUSI_ORDER_ATTR.VIROLID,
+				value : OrderInfo.virOlId//即照片上传时后台返回的18位的虚拟订单ID:virOlId
+			});
+		}
 	};
 	
 	//创建经办人节点

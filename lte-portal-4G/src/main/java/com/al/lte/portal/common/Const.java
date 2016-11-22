@@ -44,7 +44,8 @@ public class Const {
 	
 	public static final String CACHE_CERTINFO="CACHE_CERTINFO";
 	public static final String SESSION_SIGNATURE="SESSION_SIGNATURE";
-	public static final String SESSION_SIGNATURE_J="SESSION_SIGNATURE_J";
+	/**经办人身份证读卡session校验*/
+	public static final String SESSION_SIGNATURE_HANDLE_CUST="SESSION_SIGNATURE_HANDLE_CUST";
 	
 	/**
 	 * #896069对于省级工号只配置了一个省级渠道的情况，将登录地区加载到受理地区(三级地区)；若登录地区为直辖市

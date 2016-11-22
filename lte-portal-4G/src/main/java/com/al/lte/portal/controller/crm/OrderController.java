@@ -2967,62 +2967,6 @@ public class OrderController extends BaseController {
     }
 
     /**
-     * 身份证信息验证.
-     * @param request
-     * @param param
-     * @return
-     * @throws Exception
-     */
-    @SuppressWarnings("unchecked")
-    private boolean papersCheck(HttpServletRequest request, Map<String, Object> param) throws Exception {
-    	boolean isSuccessed = true;
-        Map<String, Object> orderList = (Map<String, Object>) param.get("orderList");
-        Map<String, Object> orderListInfo = (Map<String, Object>) orderList.get("orderListInfo");
-        String actionFlag = MapUtils.getString(orderListInfo, "actionFlag");
-        if ("1".equals(actionFlag)) { //新装
-            List<Map<String, Object>> custOrderList = (List<Map<String, Object>>) orderList.get("custOrderList");
-            for (Map<String, Object> custOrder : custOrderList) {
-                List<Map<String, Object>> busiOrderList = (List<Map<String, Object>>) custOrder.get("busiOrder");
-                for (Map<String, Object> busiOrder : busiOrderList) {
-                    Map<String, Object> boActionType = (Map<String, Object>) busiOrder.get("boActionType");
-                    String boActionTypeCd = (String) boActionType.get("boActionTypeCd");
-                    if ("C1".equalsIgnoreCase(boActionTypeCd) && isSuccessed) { //新建客户
-                        Map<String, Object> data = (Map<String, Object>) busiOrder.get("data");
-                        Map<String, Object> identities = (Map<String, Object>) ((List<Map<String, Object>>) data.get("boCustIdentities")).get(0);
-                        String identidiesTypeCd = MapUtils.getString(identities, "identidiesTypeCd");
-                        if ("1".equals(identidiesTypeCd) ) { //身份证
-                            //String token = MapUtils.getString(param, "token");
-                            Object s_sig =  request.getSession().getAttribute(Const.SESSION_SIGNATURE);
-                            Object s_sig_j =  request.getSession().getAttribute(Const.SESSION_SIGNATURE_J);
-                            if(null == s_sig && s_sig_j == null){
-                                return false;
-                            }
-                            String token = null == s_sig ? s_sig_j.toString() :s_sig.toString();
-                            
-                            if ((StringUtils.isNotBlank(token) && token.trim().length() > Const.RANDOM_STRING_LENGTH)) {
-                                Map<String, Object> custInfo = (Map<String, Object>) ((List<Map<String, Object>>) data.get("boCustInfos")).get(0);
-                                String partyName = MapUtils.getString(custInfo, "name");
-                                String certNumber = MapUtils.getString(identities, "identityNum");
-                                String certAddress = MapUtils.getString(custInfo, "addressStr");
-                                String identityPic = MapUtils.getString(identities, "identidiesPic");
-                                String appSecret = propertiesUtils.getMessage("APP_SECRET"); //appId对应的加密密钥
-                                String nonce = StringUtils.substring(token, 0, Const.RANDOM_STRING_LENGTH);
-                                String signature = commonBmo.signature(partyName, certNumber, certAddress, identityPic, nonce, appSecret);
-                                if (!token.trim().equals(signature)) {
-                                	isSuccessed = false;
-                                }
-                            } else {
-                                return false;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        return isSuccessed;
-    }
-
-    /**
      * 4GWEB订单提交
      */
     @RequestMapping(value = "/orderSubmit", method = RequestMethod.POST)
@@ -3032,44 +2976,41 @@ public class OrderController extends BaseController {
         JsonResponse jsonResponse = null;
         if (commonBmo.checkToken(request, SysConstant.ORDER_SUBMIT_TOKEN)) {
             try {
-                SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
-                        SysConstant.SESSION_KEY_LOGIN_STAFF);
-                //Add by chenhr at 2016-01-07
-                if (!papersCheck(request, param)) {
-                    return super.failed(ErrorCode.ORDER_SUBMIT, "您当前的证件信息非通过正常渠道录入，请核对！", param);
-                }
-                Map<String, Object> orderList = (Map<String, Object>) param.get("orderList");
-                Map<String, Object> orderListInfo = (Map<String, Object>) orderList.get("orderListInfo");
-                orderListInfo.put("staffId", sessionStaff.getStaffId()); //防止前台修改
-                orderListInfo.put("channelId", sessionStaff.getCurrentChannelId()); //防止前台修改
-                
-                //过滤订单属性
-                List<Map<String, Object>> custOrderAttrs = (List<Map<String, Object>>) orderListInfo.get("custOrderAttrs");
-                //添加客户端IP地址到订单属性
-                Map<String, Object> IPMap = new HashMap<String, Object>();
-                IPMap.put("itemSpecId", SysConstant.ORDER_ATTRS_IP);
-                IPMap.put("value", ServletUtils.getIpAddr(request));
-                if (custOrderAttrs == null){
-                	custOrderAttrs = new ArrayList<Map<String, Object>>();
-                }
-                custOrderAttrs.add(IPMap);
-                orderListInfo.put("custOrderAttrs", custOrderAttrs);
+                SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
 
-                String isAddOperation = (String) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.FDSL + "_" + sessionStaff.getStaffId());
-                //没有暂存单权限的员工不能添加暂存单订单属性
-                if (!"0".equals(isAddOperation)) {
-                    if (custOrderAttrs != null && custOrderAttrs.size() != 0) {
-                        List<Map<String, Object>> filterCustOrderAttrs = new ArrayList<Map<String, Object>>();
-                        for (Map<String, Object> custOrderAttr : custOrderAttrs) {
-                            if (custOrderAttr != null
-                                    && !SysConstant.FDSL_ORDER_ATTR_SPECID.equals(custOrderAttr.get("itemSpecId"))) {
-                                filterCustOrderAttrs.add(custOrderAttr);
-                            }
-                        }
-                        orderListInfo.put("custOrderAttrs", filterCustOrderAttrs);
-                    }
-                }
                 if(orderBmo.verifyCustCertificate(param, request)){
+                    Map<String, Object> orderList = (Map<String, Object>) param.get("orderList");
+                    Map<String, Object> orderListInfo = (Map<String, Object>) orderList.get("orderListInfo");
+                    orderListInfo.put("staffId", sessionStaff.getStaffId()); //防止前台修改
+                    orderListInfo.put("channelId", sessionStaff.getCurrentChannelId()); //防止前台修改
+                    
+                    //过滤订单属性
+                    List<Map<String, Object>> custOrderAttrs = (List<Map<String, Object>>) orderListInfo.get("custOrderAttrs");
+                    //添加客户端IP地址到订单属性
+                    Map<String, Object> IPMap = new HashMap<String, Object>();
+                    IPMap.put("itemSpecId", SysConstant.ORDER_ATTRS_IP);
+                    IPMap.put("value", ServletUtils.getIpAddr(request));
+                    if (custOrderAttrs == null){
+                    	custOrderAttrs = new ArrayList<Map<String, Object>>();
+                    }
+                    custOrderAttrs.add(IPMap);
+                    orderListInfo.put("custOrderAttrs", custOrderAttrs);
+
+                    String isAddOperation = (String) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.FDSL + "_" + sessionStaff.getStaffId());
+                    //没有暂存单权限的员工不能添加暂存单订单属性
+                    if (!"0".equals(isAddOperation)) {
+                        if (custOrderAttrs != null && custOrderAttrs.size() != 0) {
+                            List<Map<String, Object>> filterCustOrderAttrs = new ArrayList<Map<String, Object>>();
+                            for (Map<String, Object> custOrderAttr : custOrderAttrs) {
+                                if (custOrderAttr != null
+                                        && !SysConstant.FDSL_ORDER_ATTR_SPECID.equals(custOrderAttr.get("itemSpecId"))) {
+                                    filterCustOrderAttrs.add(custOrderAttr);
+                                }
+                            }
+                            orderListInfo.put("custOrderAttrs", filterCustOrderAttrs);
+                        }
+                    }
+                    
                     Map<String, Object> resMap = orderBmo.orderSubmit(param, null, sessionStaff);
                     if (ResultCode.R_SUCC.equals(resMap.get("resultCode"))) {
                         Map<String, Object> result = (Map<String, Object>) resMap.get("result");
@@ -3107,7 +3048,7 @@ public class OrderController extends BaseController {
                         jsonResponse = super.failed(resMap.get("resultMsg"), ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
                     }
                 } else{
-                	return super.failed(ErrorCode.PORTAL_INPARAM_ERROR, "订单提交入参校验失败，数据可能被篡改", param);
+                	return super.failed(ErrorCode.PORTAL_INPARAM_ERROR, "订单提交时客户证件数据校验失败，经办人必须拍照，政企客户使用人必填，请不要进行非法提交、多窗口同时提交受理业务。", param);
                 }
             } catch (BusinessException e) {
                 return super.failed(e);
@@ -4311,7 +4252,8 @@ public class OrderController extends BaseController {
             if("1".equals(createFlag)){
                 request.getSession().setAttribute(Const.SESSION_SIGNATURE, signature1);
             } else if("Y".equals(MapUtils.getString(param, "jbrFlag"))){
-            	request.getSession().setAttribute(Const.SESSION_SIGNATURE_J, signature1);
+            	//经办人跟随主卡，即使加装副卡，一个单子只有一个经办人
+            	request.getSession().setAttribute(Const.SESSION_SIGNATURE_HANDLE_CUST, signature1);
             }
             
             request.getSession().setAttribute(Const.CACHE_CERTINFO, certNumber);

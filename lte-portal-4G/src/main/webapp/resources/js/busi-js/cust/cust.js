@@ -2873,7 +2873,8 @@ order.cust = (function(){
 				"areaId" : areaId,
 				"queryType" :queryType,
 				"queryTypeValue":queryTypeValue,
-				"identidies_type":$("#orderIdentidiesTypeCd  option:selected").text()
+				"identidies_type":$("#orderIdentidiesTypeCd  option:selected").text(),
+				"virOlId":OrderInfo.virOlId
 		};
 		$.callServiceAsHtml(contextPath+"/cust/queryCust",param, {
 			"before":function(){
