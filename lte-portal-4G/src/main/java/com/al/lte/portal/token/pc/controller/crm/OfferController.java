@@ -28,6 +28,7 @@ import com.al.ec.serviceplatform.client.ResultCode;
 import com.al.ec.toolkit.JacksonUtil;
 import com.al.ecs.common.entity.JsonResponse;
 import com.al.ecs.common.util.JsonUtil;
+import com.al.ecs.common.util.PropertiesUtils;
 import com.al.ecs.common.web.ServletUtils;
 import com.al.ecs.exception.AuthorityException;
 import com.al.ecs.exception.BusinessException;
@@ -61,6 +62,9 @@ public class OfferController extends BaseController {
 	@Autowired
 	@Qualifier("com.al.lte.portal.bmo.crm.CustBmo")
 	private CustBmo custBmo;
+	
+	@Autowired
+	PropertiesUtils propertiesUtils;
 	
 	/**
 	 * 获取销售品规格构成
@@ -926,6 +930,12 @@ public class OfferController extends BaseController {
 				}
 			}else{//未拍照
 				model.addAttribute("orderAttrFlag","Y");//Y必填
+			}
+			//判断经办人是否必填开关
+			String propertiesKey =  "AGENT_"+sessionStaff.getCurrentAreaId().substring(0,3);
+			String  userFlag = propertiesUtils.getMessage(propertiesKey);
+			if(userFlag!=null && userFlag.equals("OFF")){
+				model.addAttribute("orderAttrFlag","C");//C非必填
 			}
 			
 		} catch (BusinessException be) {

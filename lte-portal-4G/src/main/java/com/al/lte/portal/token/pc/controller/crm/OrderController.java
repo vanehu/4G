@@ -1325,6 +1325,12 @@ public class OrderController extends BaseController {
 		}else{//未拍照
 			model.addAttribute("orderAttrFlag","Y");//Y必填
 		}
+		//判断经办人是否必填开关
+		String propertiesKey =  "AGENT_"+sessionStaff.getCurrentAreaId().substring(0,3);
+		String  userFlag = propertiesUtils.getMessage(propertiesKey);
+		if(userFlag!=null && userFlag.equals("OFF")){
+			model.addAttribute("orderAttrFlag","C");//C非必填
+		}
     	if("2".equals(String.valueOf(param.get("actionFlag")))){  //套餐变更
     		if (MapUtils.isNotEmpty(param)) {
         		model.addAttribute("main", param);

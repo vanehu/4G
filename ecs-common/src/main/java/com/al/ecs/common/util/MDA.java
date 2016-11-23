@@ -522,4 +522,10 @@ public class MDA {
 	 * 实名制拍照分省开关
 	 */
 	public static final Map<String,String> REAL_NAME_PHOTO_FLAG  = new HashMap<String,String>();
+	
+	/**
+	 * 经办人否必填开关,ON：必填；OFF：非必填
+	 */
+	public static final Map<String,String> AGENT_FLAG  = new HashMap<String,String>();
+	
 }
