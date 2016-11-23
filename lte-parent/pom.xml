@@ -26,7 +26,7 @@
 	</properties>
 	<modules>
 		<module>../ecs-common</module>
-		<module>../lte-portal</module>
+		<module>../lte-portal-4G</module>
 	</modules>
 	<dependencyManagement>
 		<dependencies>
