@@ -495,6 +495,12 @@ SoOrder = (function() {
 		//订单填充经办人信息
 		_addHandleInfo(busiOrders, custOrderAttrs);
 		
+		if(ec.util.isArray(OrderInfo.boUserCustInfos)){
+			OrderInfo.orderData.orderList.orderListInfo.partyId = -2;//-3经办人客户，-2使用人客户，-1产权客户
+			//订单填充使用人信息
+			_createUserCust(busiOrders, custOrderAttrs);
+		}
+		
 		OrderInfo.orderData.orderList.orderListInfo.custOrderAttrs = custOrderAttrs; //订单属性数组
 		OrderInfo.orderData.orderList.custOrderList[0].busiOrder = busiOrders; //订单项数组
 		if($("#isTemplateOrder").attr("checked")=="checked"){ //批量订单
@@ -3829,6 +3835,38 @@ SoOrder = (function() {
 		busiOrders.push(busiOrder);
 	};
 	
+	//创建使用人节点
+	var _createUserCust = function(busiOrders) {
+		var busiOrder = {
+			areaId	: OrderInfo.getAreaId(),//受理地区ID
+			busiOrderInfo : {
+				seq : OrderInfo.SEQ.seq--
+			}, 
+			busiObj : { //业务对象节点
+				instId		: -2,//-3经办人客户，-2使用人客户，-1产权客户
+				accessNumber: OrderInfo.getAccessNumber(-1)
+			},  
+			boActionType : {
+				actionClassCd	: CONST.ACTION_CLASS_CD.CUST_ACTION,
+				boActionTypeCd	: CONST.BO_ACTION_TYPE.CUST_CREATE
+			}, 
+			data : {
+				boCustInfos 		: [],
+				boCustIdentities	: [],
+				boPartyContactInfo	: []
+			}
+		};
+		
+		//使用人信息节点
+		for(var i=0;i<OrderInfo.boUserCustInfos.length;i++){
+			busiOrder.data.boCustInfos.push(OrderInfo.boUserCustInfos[i]);
+		}
+		for(var j=0;j<OrderInfo.boUserCustIdentities.length;j++){
+			//客户证件节点
+			busiOrder.data.boCustIdentities.push(OrderInfo.boUserCustIdentities[j]);
+		}
+		busiOrders.push(busiOrder);
+	};
 	return {
 		builder 				: _builder,
 		createAttOffer  		: _createAttOffer,

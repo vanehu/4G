@@ -363,6 +363,17 @@ order.cust = (function(){
 				$("#li_order_remark2 span").show();
 				$("#li_order_remark3 span").show();
 			}
+			// 填单页面使用人读卡
+			if (id == "orderUserAttrIdCard") {
+				$("#orderUserAttrReadCertBtn").show();
+				$("#orderUserAttrName").hide();
+				$("#orderUserAttrIdCard").hide();
+				$("#orderUserAttrAddr").hide();
+				$("#orderUserAttrQueryCertBtn").hide();
+				$("#li_order_name span").show();
+				$("#li_order_cert span").show();
+				$("#li_order_nbr span").show();
+			}
 			// 新建客户经办人读卡
 			if (id == "custCAttrIdCard") {
 				$("#custCAttrReadCertBtn").show();
@@ -415,6 +426,23 @@ order.cust = (function(){
 				$("#li_order_remark3 span").hide();
 				$("#li_order_remark3 span").text("");
 			}
+			// 填单页面使用人非身份证
+			if (id == "orderUserAttrIdCard") {
+				$("#orderUserAttrReadCertBtn").hide();
+				$("#orderUserAttrName").show();
+				$("#orderUserAttrName").val("");
+				$("#orderUserAttrIdCard").show();
+				$("#orderUserAttrIdCard").val("");
+				$("#orderUserAttrAddr").show();
+				$("#orderUserAttrAddr").val("");
+
+				$("#li_order_name span").hide();
+				$("#li_order_name span").text("");
+				$("#li_order_card span").hide();
+				$("#li_order_card span").text("");
+				$("#li_order_addr span").hide();
+				$("#li_order_addr span").text("");
+			}
 			// 新建客户经办人非身份证
 			if (id == "custCAttrIdCard") {
 				$("#custCAttrReadCertBtn").hide();
@@ -435,7 +463,7 @@ order.cust = (function(){
 			if(identidiesTypeCd==2){
 				$("#"+id).attr("onkeyup", "value=value.replace(/[^A-Za-z0-9\u4e00-\u9fa5]/ig,'')");
 				$("#"+id).attr("placeHolder","请输入合法军官证");
-				$("#"+id).attr("data-validate","validate(required:请准确填写军官证) on(blur)");
+        		$("#"+id).attr("data-validate","validate(required:请准确填写军官证) on(blur)");
 			}else if(identidiesTypeCd==3){
 				$("#"+id).attr("placeHolder","请输入合法护照");
 				$("#"+id).attr("data-validate","validate(required:请准确填写护照) on(blur)");
@@ -2040,16 +2068,16 @@ order.cust = (function(){
 		_showReadCert(man, "custAuthbtn" + id, parentId);
 	};
 
-	// 填单页面经办人读卡
-	var _readCertWhenOrder = function() {
-		var man = cert.readCert();
-		if (man.resultFlag != 0){
-			$.alert("提示", man.errorMsg);
-			return;
-		}
-		
-		_setValueForAgentOrderSpan(man.resultContent);
-	};
+//	// 填单页面经办人读卡
+//	var _readCertWhenOrder = function() {
+//		var man = cert.readCert();
+//		if (man.resultFlag != 0){
+//			$.alert("提示", man.errorMsg);
+//			return;
+//		}
+//		
+//		_setValueForAgentOrderSpan(man.resultContent);
+//	};
 	
 	var _setValueForAgentOrderSpan = function(data){
 		// 设置隐藏域的表单数据
@@ -2800,6 +2828,7 @@ order.cust = (function(){
 		man = cert.readCert();
 		if (man.resultFlag != 0){
 			$.alert("提示", man.errorMsg);
+			return;
 		}
 		_setValueForAgentOrderSpan(man.resultContent);
 	    if (undefined != man.resultContent.identityPic) {
@@ -2810,6 +2839,7 @@ order.cust = (function(){
 	};
 	
 	function _showCertPicture(){
+		$("#new").hide();
 		easyDialog.open({
 			container : "picture"
 		});
@@ -3065,6 +3095,7 @@ order.cust = (function(){
 				OrderInfo.bojbrCustIdentities.identityNum=$.trim($("#orderAttrIdCard").val());//证件号码
 			}
 			_close();
+			$("#new").show();
 			//查到了，查不到新建 没有身份证！！！
 		}else if(response.code==1){
 			$("#tips").html("提示："+ response.data);

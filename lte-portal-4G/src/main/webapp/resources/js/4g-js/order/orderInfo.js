@@ -1026,6 +1026,14 @@ OrderInfo = (function() {
 		identidiesPic : "" //证件照片
 	};
 	
+	// 使用使用人证件节点
+	var _boUserCustIdentities = []; 
+	
+	// 使用使用人证件节点
+	var _boUserCustInfos = []; 
+	
+	
+	
 	//客户证件节点
 	var _bojbrCustIdentities = {
 		identidiesTypeCd : "1", //证件类型
@@ -1090,6 +1098,10 @@ OrderInfo = (function() {
 	
 	//初始化数据
 	var _resetData = function(){
+		
+		OrderInfo.boUserCustInfos = []; 
+		OrderInfo.boUserCustIdentities = []; 
+		
 		OrderInfo.boProdAns = [];  
 		OrderInfo.boProd2Tds = []; 
 		//OrderInfo.boProd2OldTds = []; 
@@ -1749,6 +1761,8 @@ OrderInfo = (function() {
 		bojbrCustInfos          : _bojbrCustInfos,
 		bojbrCustIdentities     : _bojbrCustIdentities,
 		virOlId : _virOlId,
-		handleCustId : _handleCustId
+		handleCustId : _handleCustId,
+		boUserCustIdentities : _boUserCustIdentities,
+		boUserCustInfos : _boUserCustInfos
 	};
 })();
