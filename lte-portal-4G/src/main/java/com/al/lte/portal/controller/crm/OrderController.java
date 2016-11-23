@@ -391,10 +391,10 @@ public class OrderController extends BaseController {
                 body.put("accountNumber", MapUtils.getString(param, "number", ""));
                 body.put("acceptAreaCode", (StringUtils.isNotBlank(areaId) && areaId.length() == 7) ? MapUtils.getString(param, "areaId", "").substring(1, 3) + "0000" : "");
                 body.put("acceptCityCode", (StringUtils.isNotBlank(areaId) && areaId.length() == 7) ? MapUtils.getString(param, "areaId", "").substring(1) : "");
+                body.put("superMerchantCode", MapUtils.getString(param, "channelCode", ""));
+                body.put("superMerchantName", MapUtils.getString(param, "channelName", ""));
 
                 hrnParam.put("body", body);
-                hrnParam.put("superMerchantCode", MapUtils.getString(param, "channelCode", ""));
-                hrnParam.put("superMerchantName", MapUtils.getString(param, "channelName", ""));
 
                 Map<String, Object> returnMap = orderBmo.highRealNameAuthenticate(hrnParam, optFlowNum, sessionStaff);
                 if (null != returnMap) {
@@ -430,6 +430,8 @@ public class OrderController extends BaseController {
             Map<String, Object> body = new HashedMap();
             body.put("mobilePhone", MapUtils.getString(param, "mobilePhone", ""));
             body.put("busiType", "2");//1：冻结业务2：预冻结撤销
+            body.put("superMerchantCode", MapUtils.getString(param, "channelCode", ""));
+            body.put("superMerchantName", MapUtils.getString(param, "channelName", ""));
 
             Map<String, Object> rnParam = new HashedMap();
             rnParam.put("body", body);

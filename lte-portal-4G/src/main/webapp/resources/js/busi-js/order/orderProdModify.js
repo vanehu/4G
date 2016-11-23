@@ -4569,7 +4569,9 @@ order.prodModify = (function(){
 	 */
 	var _revokeAuthentication = function () {
 		var param = {
-			"mobilePhone": _choosedProdInfo.accNbr
+			"mobilePhone": _choosedProdInfo.accNbr,
+			"channelCode": OrderInfo.staff.channelCode,
+			"channelName": OrderInfo.staff.channelName
 		};
 
 		var url = contextPath + "/order/revokeAuthentication";
