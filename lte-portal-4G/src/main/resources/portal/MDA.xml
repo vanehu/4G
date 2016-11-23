@@ -812,19 +812,19 @@
 		<const type="String" name="CARD_FILEPATH" value="/app/ejbca/card/" description="身份证阅读器放置ftp路径"/>
 		<const type="Map" name="USBVERSION_SIGNATURE" description="接入集团规范的身份证阅读器厂商版本及密钥">
 		 {
-		    '10000':{'version':'1.0.3.1','appSecret':'<![CDATA[D%vd1#e9Y@d36cK&]]>','name':'华旭金卡','isOpen':'ON'},
-			'10001':{'version':'1.2.0.3','appSecret':'<![CDATA[p7z@d1%x3H4#29eV]]>','name':'深圳华视','isOpen':'ON'},
-			'10002':{'version':'2.5.8.1','appSecret':'<![CDATA[Py52H4#2Ut@d1%x7]]>','name':'山东卡尔','isOpen':'ON'},
-			'10003':{'version':'2.2.1','appSecret':'<![CDATA[d1%x7H4#2UtPy52@]]>','name':'山东信通','isOpen':'ON'},
-			'10004':{'version':'1.0','appSecret':'<![CDATA[ey@d391%xH74#2iB]]>','name':'长春鸿达','isOpen':'ON'},
-			'10005':{'version':'2.2.1','appSecret':'<![CDATA[R9P&L7#2URePy18@]]>','name':'上海普天','isOpen':'ON'},
-			'10006':{'version':'2.22','appSecret':'<![CDATA[3eRx18@5x3H4#5fY]]>','name':'因纳伟盛','isOpen':'ON'},
-			'10007':{'version':'1.0.0.3','appSecret':'<![CDATA[y52@d1%x8H4#2URt]]>','name':'山东神思','isOpen':'ON'},
-			'10008':{'version':'1.0','appSecret':'<![CDATA[H4#29eV%xW74#2iB]]>','name':'精伦电子','isOpen':'OFF'},
-			'10009':{'version':'2.2','appSecret':'<![CDATA[RxRe18g%xtPy52@Y]]>','name':'内蒙古银安科技','isOpen':'ON'},
-			'10010':{'version':'1.0','appSecret':'<![CDATA[&L7#2R9PURePy18@]]>','name':'南京亿数','isOpen':'OFF'},
-			'10011':{'version':'1.0','appSecret':'<![CDATA[18@5xT9UR%dY#d36]]>','name':'北冰洋','isOpen':'OFF'}
-		 }
+            '10000':{'version':'2.3.2','appSecret':'<![CDATA[5xRx9H4#5fY3e28@]]>','name':'华旭金卡','isOpen':'ON'},
+            '10001':{'version':'1.2.0.4','appSecret':'<![CDATA[1%x7H4#2UtPy52@d]]>','name':'深圳华视','isOpen':'ON'},
+            '10002':{'version':'2.6.5','appSecret':'<![CDATA[4#5fY18@3eRx5x3H]]>','name':'山东卡尔','isOpen':'ON'},
+            '10003':{'version':'2.2.2','appSecret':'<![CDATA[R%dY#d3618@5xT9U]]>','name':'山东信通','isOpen':'ON'},
+            '10004':{'version':'1.1','appSecret':'<![CDATA[9PURePy&L7#2R18@]]>','name':'长春鸿达','isOpen':'ON'},
+            '10005':{'version':'2.2.2','appSecret':'<![CDATA[8g%xtPy52@YRxRe6]]>','name':'上海普天','isOpen':'ON'},
+            '10006':{'version':'2.24','appSecret':'<![CDATA[74#2iBN4#29eV%xW]]>','name':'因纳伟盛','isOpen':'ON'},
+            '10007':{'version':'1.0.0.5','appSecret':'<![CDATA[Hty52@d1Xp$4#2tt]]>','name':'山东神思','isOpen':'ON'},
+            '10008':{'version':'1.1','appSecret':'<![CDATA[x3H4#5fYx18@53e&]]>','name':'精伦电子','isOpen':'OFF'},
+            '10009':{'version':'2.2.2','appSecret':'<![CDATA[vePy18@R9P&L7#3E]]>','name':'内蒙古银安科技','isOpen':'ON'},
+            '10010':{'version':'1.0','appSecret':'<![CDATA[&L7#2R9PURePy18@]]>','name':'南京亿数','isOpen':'OFF'},
+            '10011':{'version':'1.0','appSecret':'<![CDATA[18@5xT9UR%dY#d36]]>','name':'北冰洋','isOpen':'OFF'}
+         }	
 		</const>	
 		<const type="Map" name="USBSIGNATURE" description="身份证阅读器省份开关 ON：开启校验  OFF不校验">
 	      {
