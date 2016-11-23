@@ -246,7 +246,7 @@ CONST = (function(){
 		itemSpecID : "800000036", //客户等级属性标识ID
 		CHANGE_CARD_ORDER_TYPE : "800000065", //异地补换卡订单类型
 		CHANGE_CARD_AREA_ID : "800000067", //异地补换卡漫游省地区id
-		VIROLID : "810000000"//虚拟订单ID属性
+		VIROLID : "810000000",//虚拟订单ID属性
 		CURIP :"40010038"//业务办理ip
 	};
 	
