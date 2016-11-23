@@ -1439,6 +1439,7 @@ order.cust = (function(){
         _securityOfficeFlag = flagQueryRes.code == 0 ? flagQueryRes.data : "";
         if ("ON" != _securityOfficeFlag) {
         	$("#p_cust_identityCd option[value='bizId']").hide();
+        	$("#p_cust_identityCd option[value='bizId']").remove(); // 兼容ie下option隐藏无效
         }
 	};
 	//使用带入的客户信息自动定位客户
