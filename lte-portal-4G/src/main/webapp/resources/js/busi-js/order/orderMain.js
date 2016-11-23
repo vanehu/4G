@@ -1671,7 +1671,7 @@ order.main = (function(){
 		var opts=document.getElementById("orderIdentidiesTypeCd");
 		for(var i=0;i<opts.options.length;i++){
 			$("#orderUserIdentidiesTypeCd").append("<option value='"+opts.options[i].value+"' >"+opts.options[i].text+"</option>");
-			$("#orderUserIdentidiesTypeCd").append("<option value='"+2+"' >"+ 2 +"</option>");
+		//	$("#orderUserIdentidiesTypeCd").append("<option value='"+2+"' >"+ 2 +"</option>");
 		}
 		
 		if($.ketchup){
