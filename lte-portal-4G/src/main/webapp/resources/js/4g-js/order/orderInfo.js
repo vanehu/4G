@@ -28,7 +28,8 @@ OrderInfo = (function() {
 	var _virOlId="";
 	
 	var _handleCustId="";
-	
+
+	var isExistCFQ = false;//是否是橙分期业务
 	
 	/*购物车业务动作
 	1 新装
@@ -695,6 +696,11 @@ OrderInfo = (function() {
 					});
 				});
 			}
+			//销售品属性
+			busiOrder.data.busiOrderAttrs = [{
+				"itemSpecId": "800000071",		//主套餐销售品ID
+				"value": String(OrderInfo.offerSpec.offerSpecId)
+			}];
 			busiOrders.push(busiOrder);
 		}else if(offer.boActionTypeCd == CONST.BO_ACTION_TYPE.DEL_OFFER){ //退订销售品
 			busiOrder.data.ooOwners = [];

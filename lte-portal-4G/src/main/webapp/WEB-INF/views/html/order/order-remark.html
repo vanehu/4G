@@ -4,6 +4,11 @@
 		<label>订单备注：</label> 
 		<textarea rows="4" class="order-remark" id="order_remark" name="beizhu"></textarea>
 	</li>
+    <li class="full" id="li_order_sms" style="display: none;">
+        <label style="width: 120px;">橙分期短信验证码：</label>
+        <input id="cfqSMSCode" type="text" class="inputWidth183px" placeholder="请输入短信验证码">
+        <label class="f_red">*</label>
+    </li>
 	<li class="full" id="li_is_activation" style="display: none;">
 		<label>首话单激活：</label>
 		<input type="checkbox" onclick="SoOrder.showActivation()" id="isActivation" style="margin-left: 0px; margin-top:7px">

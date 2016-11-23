@@ -1689,7 +1689,13 @@ order.prodModify = (function(){
 						});
 					}
 				}
-			},"always":function(){
+				if ((OrderInfo.actionFlag == 19 || OrderInfo.actionFlag == 20) && OrderInfo.isExistCFQ) {
+					$("#li_order_sms").show();
+				} else {
+					OrderInfo.isExistCFQ = false;
+					$("#li_order_sms").hide();
+				}
+				},"always":function(){
 				$.unecOverlay();
 			}
 		});
@@ -3746,6 +3752,7 @@ order.prodModify = (function(){
 						OrderInfo.buyBack_orderItemObjId = objList.data[i].orderItemObjId;
 						OrderInfo.buyBack_orderItemObjInstId = objList.data[i].orderItemObjInstId;
 						OrderInfo.orderResult.oldOlNbr = objList.data[i].olNbr;
+						_checkCFQ(objList.data[i]);//如果返销中存在橙分期业务要发送短信
 						break;
 					}
 				}
@@ -3761,6 +3768,7 @@ order.prodModify = (function(){
 						    OrderInfo.buyBack_orderItemObjId = objList.data[i].orderItemObjId;
 						    OrderInfo.buyBack_orderItemObjInstId = objList.data[i].orderItemObjInstId;
 						    OrderInfo.orderResult.oldOlNbr = objList.data[i].olNbr;
+							_checkCFQ(objList.data[i]);//如果返销中存在橙分期业务要发送短信
 						    break;
 					    }else if(objList.data[i].boActionTypeCd == CONST.BO_ACTION_TYPE.CHANGE_CARD){
 						    boActionTypeCd = CONST.BO_ACTION_TYPE.BUY_BACK_CHANGE_CARD;
@@ -3772,6 +3780,7 @@ order.prodModify = (function(){
 						    OrderInfo.buyBack_orderItemObjId = objList.data[i].orderItemObjId;
 						    OrderInfo.buyBack_orderItemObjInstId = objList.data[i].orderItemObjInstId;
 						    OrderInfo.orderResult.oldOlNbr = objList.data[i].olNbr;
+							_checkCFQ(objList.data[i]);//如果返销中存在橙分期业务要发送短信
 					    }else {
 						    $.alert("提示","当前业务动作类型【"+objList.data[i].boActionTypeCd +"】不能返销！");
 						    return;
@@ -4554,7 +4563,72 @@ order.prodModify = (function(){
 			SoOrder.submitOrder(param);
 		});
 	};
-	
+	/**
+	 * 撤销鉴权
+	 * @private
+	 */
+	var _revokeAuthentication = function () {
+		var param = {
+			"mobilePhone": _choosedProdInfo.accNbr
+		};
+
+		var url = contextPath + "/order/revokeAuthentication";
+		$.callServiceAsJson(url, param, {
+			"before": function () {
+				$.ecOverlay("<strong>撤销鉴权短信发送中,请稍等...</strong>");
+			},
+			"always": function () {
+				$.unecOverlay();
+			},
+			"done": function (response) {
+				if (response.code == 0) {
+					$.alert("信息提示", response.data.rspInfo);
+				} else if(response.code == -2){
+					$.alert("信息提示", "撤销鉴权短信发送失败！");
+				} else {
+					$.alertM(response.data);
+				}
+			},
+			fail: function () {
+				$.unecOverlay();
+				$.alert("提示", "请求可能发生异常，请稍后再试！");
+			}
+		});
+	};
+
+	/**
+	 * 判断合约类型标识是否是橙分期合约
+	 * @param flag 待判断合约标识符
+	 * @returns {boolean}
+	 * @private
+	 */
+	var _isCFQ = function (flag) {
+		if (ec.util.isObj(flag)) {
+			if (flag == 3 || flag == 4 || flag == 5 || flag == 6) {
+				return true;
+			} else {
+				return false;
+			}
+		} else {
+			return false;
+		}
+	};
+
+	/**
+	 * 如果返销退订中存在橙分期业务要发送短信
+	 * @param offer 订单项销售品对象
+	 * @private
+	 */
+	var _checkCFQ = function (offer) {
+		//如果返销退订中存在橙分期业务要发送短信
+		if(ec.util.isObj(offer.agreementType)){
+			if(_isCFQ(offer.agreementType)){
+				OrderInfo.isExistCFQ=true;
+				_revokeAuthentication();
+			}
+		}
+	};
+
 	return {
 		changeCard : _changeCard,
 		getChooseProdInfo : _getChooseProdInfo,
@@ -4652,6 +4726,9 @@ order.prodModify = (function(){
 		preCheckBeforeOrder : _preCheckBeforeOrder,
 		showGroupRemoveProd: _showGroupRemoveProd,
 		preCheckBeforeOrder : _preCheckBeforeOrder,
-		roleExchange:_roleExchange
+		roleExchange:_roleExchange,
+		revokeAuthentication:_revokeAuthentication,
+		isCFQ:_isCFQ,
+		checkCFQ:_checkCFQ
 	};
 })();

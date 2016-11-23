@@ -294,6 +294,12 @@ SoOrder = (function() {
 			itemSpecId: "800000048",
 			value: CacheData.getRecordId()
 		});
+		if (OrderInfo.isExistCFQ) {
+			custOrderAttrs.push({ //橙分期短信验证码
+				itemSpecId: "800000070",
+				value: $.trim($("#cfqSMSCode").val())
+			})
+		}
 		custOrderAttrs.push({ //业务类型
 			itemSpecId : CONST.BUSI_ORDER_ATTR.BUSITYPE_FLAG,
 			value : order.prepare.isPreInstall() ? 27 : OrderInfo.busitypeflag
@@ -2994,7 +3000,15 @@ SoOrder = (function() {
 			    return false ; 
 		    }
 		}
-		
+
+		//退订返销校验
+		if (OrderInfo.actionFlag == 3 ||OrderInfo.actionFlag == 19 || OrderInfo.actionFlag == 20) {
+			if (OrderInfo.isExistCFQ && !ec.util.isObj($.trim($("#cfqSMSCode").val()))) {
+				$.alert("提示", "橙分期短信验证码不能为空！");
+				return false;
+			}
+		}
+
 		//销售品更功能产品参数校验
 		if(OrderInfo.actionFlag == 1||OrderInfo.actionFlag == 2||OrderInfo.actionFlag == 3
 				|| OrderInfo.actionFlag == 6||OrderInfo.actionFlag == 14||OrderInfo.actionFlag ==21 || OrderInfo.actionFlag ==22){

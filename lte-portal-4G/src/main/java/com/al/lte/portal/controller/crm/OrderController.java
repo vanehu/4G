@@ -22,6 +22,7 @@ import net.sf.json.JSONObject;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -313,6 +314,141 @@ public class OrderController extends BaseController {
         //			model.addAttribute("flowStepParam", "");
         //		}
         return "/order/order-prepare";
+    }
+
+    /**
+     * 与翼支付消费金融平台--高级实名认证
+     * @param session
+     * @param model
+     * @return 高级实名认证页面
+     */
+    @RequestMapping(value = "/highRealName", method = RequestMethod.GET)
+    @AuthorityValid(isCheck = true)
+    public String highRealName(HttpSession session, Model model) {
+        SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+                SysConstant.SESSION_KEY_LOGIN_STAFF);
+
+        Map<String, Object> defaultAreaInfo = CommonMethods.getDefaultAreaInfo_MinimumC3(sessionStaff);
+
+        model.addAttribute("canOrder", EhcacheUtil.pathIsInSession(session, "/order/highRealName"));
+        model.addAttribute("p_areaId", defaultAreaInfo.get("defaultAreaId"));
+        model.addAttribute("p_areaId_val", defaultAreaInfo.get("defaultAreaName"));
+
+         return "/order/high-real-name-authenticate";
+    }
+
+    /**
+     * 与翼支付消费金融平台--高级实名认证
+     * @param session
+     * @return 高级实名认证结果
+     */
+    @RequestMapping(value = "/highRealNameAuthenticate", method = RequestMethod.POST)
+    @ResponseBody
+    public JsonResponse highRealNameAuthenticate(@RequestBody Map<String, Object> param, @LogOperatorAnn String optFlowNum, HttpSession session) {
+        SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
+
+        Map<String, Object> retMap=new HashedMap();
+        Map<String, Object> custInfo;
+        Map<String, Object> paramMap = new HashedMap();
+        try {
+            String sessionCertNumber = (String) ServletUtils.getSessionAttribute(getRequest(), Const.CACHE_CERTINFO);
+            ServletUtils.removeSessionAttribute(getRequest(),Const.CACHE_CERTINFO);
+            String tmpIdCardNumber = MapUtils.getString(param, "certNumber", "");
+            if(!tmpIdCardNumber.equals(sessionCertNumber)) {
+                retMap.put("certCheckInfo", "非正常读卡数据，信息可能被窜改，此操作将被记录！");
+                return super.failed(retMap, ResultConstant.FAILD.getCode());
+            }
+
+
+            paramMap.put("identityCd", "");
+            paramMap.put("areaId", MapUtils.getString(param, "areaId", ""));
+            paramMap.put("acctNbr", MapUtils.getString(param, "number", ""));
+            paramMap.put("soNbr", MapUtils.getString(param, "soNbr", ""));
+            paramMap.put("staffId", sessionStaff.getStaffId());
+            boolean isCertUser = false;
+            custInfo = custBmo.queryCustInfo(paramMap,
+                    optFlowNum, sessionStaff);
+            if(null!=custInfo){
+                List<Map<String, Object>> custInfos = (List<Map<String, Object>>) MapUtils.getObject(custInfo, "custInfos", null);
+                if(null!=custInfos&&custInfos.size()==1){
+                    Map<String, Object> cust = custInfos.get(0);
+                    if(null!=cust){
+                        String identityCd = MapUtils.getString(cust, "identityCd", "");
+                        if("1".equals(identityCd)){
+                            isCertUser = true;
+                        }
+                    }
+                }
+            }
+            if (isCertUser) {
+                String areaId = MapUtils.getString(param, "areaId", "");
+                Map<String, Object> hrnParam = new HashedMap();
+
+                Map<String, Object> body = new HashedMap();
+                body.put("userName", MapUtils.getString(param, "userName", ""));
+                body.put("idType", MapUtils.getString(param, "idType", ""));
+                body.put("idNumber", MapUtils.getString(param, "certNumber", ""));
+                body.put("accountNumber", MapUtils.getString(param, "number", ""));
+                body.put("acceptAreaCode", (StringUtils.isNotBlank(areaId) && areaId.length() == 7) ? MapUtils.getString(param, "areaId", "").substring(1, 3) + "0000" : "");
+                body.put("acceptCityCode", (StringUtils.isNotBlank(areaId) && areaId.length() == 7) ? MapUtils.getString(param, "areaId", "").substring(1) : "");
+
+                hrnParam.put("body", body);
+                hrnParam.put("superMerchantCode", MapUtils.getString(param, "channelCode", ""));
+                hrnParam.put("superMerchantName", MapUtils.getString(param, "channelName", ""));
+
+                Map<String, Object> returnMap = orderBmo.highRealNameAuthenticate(hrnParam, optFlowNum, sessionStaff);
+                if (null != returnMap) {
+                    retMap = MapUtils.getMap(returnMap, "result");
+                }
+            } else {
+                retMap.put("resultCode", ResultCode.R_RULE_EXCEPTION);
+            }
+        } catch (BusinessException be) {
+            return super.failed(be);
+        } catch (InterfaceException ie) {
+            return super.failed(ie, param, ErrorCode.HIGH_REAL_NAME_AUTHENTICATE);
+        } catch (Exception e) {
+            log.error("门户调用后台高级实名制认证接口service/intf.acctService/highRealNameAuthenticate方法异常", e);
+            return super.failed(ErrorCode.HIGH_REAL_NAME_AUTHENTICATE, e, param);
+        }
+        return super.successed(retMap);
+    }
+
+   /**
+     * 与翼支付消费金融平台--撤销鉴权
+     * @param session
+     * @return 高级实名认证结果
+     */
+    @RequestMapping(value = "/revokeAuthentication", method = RequestMethod.POST)
+    @ResponseBody
+    public JsonResponse revokeAuthentication(@RequestBody Map<String, Object> param, @LogOperatorAnn String optFlowNum, HttpSession session) {
+        SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
+
+        Map<String, Object> retMap = new HashedMap();
+        try {
+
+            Map<String, Object> body = new HashedMap();
+            body.put("mobilePhone", MapUtils.getString(param, "mobilePhone", ""));
+            body.put("busiType", "2");//1：冻结业务2：预冻结撤销
+
+            Map<String, Object> rnParam = new HashedMap();
+            rnParam.put("body", body);
+
+            Map<String, Object> returnMap = orderBmo.revokeAuthentication(rnParam, optFlowNum, sessionStaff);
+            if (null != returnMap) {
+                retMap = MapUtils.getMap(returnMap, "result");
+            } else {
+                retMap.put("resultCode", ResultCode.R_RULE_EXCEPTION);
+            }
+        } catch (BusinessException be) {
+            return super.failed(be);
+        } catch (InterfaceException ie) {
+            return super.failed(ie, param, ErrorCode.HIGH_REAL_NAME_AUTHENTICATE);
+        } catch (Exception e) {
+            log.error("门户调用后台撤销鉴权接口service/intf.acctService/highRealNameAuthenticate方法异常", e);
+            return super.failed(ErrorCode.HIGH_REAL_NAME_AUTHENTICATE, e, param);
+        }
+        return super.successed(retMap);
     }
 
     /**

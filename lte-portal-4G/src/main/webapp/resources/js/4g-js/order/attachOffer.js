@@ -984,7 +984,14 @@ AttachOffer = (function() {
 						offer.isdel = "Y";
 						$span.addClass("del");
 						delServByOffer(prodId,offer);
-						
+						order.prodModify.checkCFQ(offer);//橙分期合约判断
+						if (OrderInfo.isExistCFQ) {
+							$("#li_order_sms").show();
+						} else {
+							OrderInfo.isExistCFQ = false;
+							$("#li_order_sms").hide();
+						}
+
 						//增加退订的依赖销售品
 						if(respnose !="" && respnose.data.resultCode == "0" && respnose.data.result.servSpec!=undefined && respnose.data.result.offerSpec!=undefined ){
 							_addOfferAndServDepend(respnose.data.result.servSpec,respnose.data.result.offerSpec,$("#del_"+prodId+"_"+offerId).attr("offerSpecId"),prodId);

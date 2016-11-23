@@ -786,16 +786,36 @@ public interface OrderBmo {
 	public Map<String, Object> queryIfLteNewInstall(
 			Map<String, Object> paramMap, String optFlowNum,
 			SessionStaff sessionStaff) throws Exception;
-	
+
 	/**
 	 * 调后台接口下载实名制拍照证件
 	 */
 	public Map<String, Object> downloadCustCertificate(Map<String, Object> param, SessionStaff sessionStaff) throws BusinessException;
-	
+
 	/**
 	 * 订单提交校验客户身份证信息
 	 * @return true:校验成功; false:校验失败
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public boolean verifyCustCertificate(Map<String, Object> param, HttpServletRequest request) throws Exception;
+
+	/**
+	 * 与翼支付消费金融平台--高级实名认证
+	 * @param paramMap
+	 * @param optFlowNum
+	 * @param sessionStaff
+	 * @return
+	 * @throws Exception
+	 */
+	public Map<String, Object> highRealNameAuthenticate(Map<String, Object> paramMap, String optFlowNum,SessionStaff sessionStaff) throws Exception;
+
+	/**
+	 * 与翼支付消费金融平台--撤销鉴权
+	 * @param paramMap
+	 * @param optFlowNum
+	 * @param sessionStaff
+	 * @return
+	 * @throws Exception
+	 */
+	public Map<String, Object> revokeAuthentication(Map<String, Object> paramMap, String optFlowNum,SessionStaff sessionStaff) throws Exception;
 }

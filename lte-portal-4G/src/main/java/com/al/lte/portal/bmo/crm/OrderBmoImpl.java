@@ -64,16 +64,16 @@ public class OrderBmoImpl implements OrderBmo {
 	@Autowired
     @Qualifier("com.al.lte.portal.bmo.crm.CommonBmo")
     private CommonBmo commonBmo;
-	
+
 	@Autowired
     PropertiesUtils propertiesUtils;
-	
-	protected final static Log log = Log.getLog(OrderBmoImpl.class);	
+
+	protected final static Log log = Log.getLog(OrderBmoImpl.class);
 	
 	private static ILogSender logSender = (ILogSender) SpringContextUtil.getBean("defaultLogSender");
 	
 	private static HttpServletRequest request = null;
-	
+
 	/*
 	 * 销售品查询 (non-Javadoc)
 	 */
@@ -1639,8 +1639,8 @@ public class OrderBmoImpl implements OrderBmo {
 	/*
 	 * 终端预约在途单查询
 	 */
-	 
-	public Map<String, Object> queryCouponRoadReserve(Map<String, Object> dataBusMap, 
+
+	public Map<String, Object> queryCouponRoadReserve(Map<String, Object> dataBusMap,
 			String optFlowNum,SessionStaff sessionStaff) throws Exception {
 			Map<String, Object> result = new HashMap<String, Object>();
 			DataBus db = InterfaceClient.callService(dataBusMap,PortalServiceCode.QUERY_COUPON_ROAD_RESERVR, optFlowNum, sessionStaff);
@@ -1661,7 +1661,7 @@ public class OrderBmoImpl implements OrderBmo {
 				throw new BusinessException(ErrorCode.QUERY_COUPON_ROAD_RESERVE,dataBusMap,db.getReturnlmap(), e);
 			}
 		}
-	
+
 	public Map<String, Object> queryConfigData(Map<String, Object> param,
 			String optFlowNum, SessionStaff sessionStaff) throws Exception {
 		Map<String, Object> resultMap = new HashMap<String, Object>();
@@ -3009,14 +3009,14 @@ public class OrderBmoImpl implements OrderBmo {
 		}catch(Exception e){
 			log.error("门户处理营业受理后台的service/intf.fileOperateService/downLoadPicturesFileFromFtp服务返回的数据异常", e);
 			throw new BusinessException(ErrorCode.DOWNLOAD_CUST_CERTIFICATE, param, db.getReturnlmap(), e);
-		}	
+		}
 		return resultMap;
 	}
-	
+
 	/**
 	 * 订单提交校验客户身份证信息
 	 * @return true:校验成功; false:校验失败
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
 	public boolean verifyCustCertificate(Map<String, Object> param, HttpServletRequest request) throws Exception{
@@ -3032,14 +3032,14 @@ public class OrderBmoImpl implements OrderBmo {
         		virOlId = custOrderAttr.get("value");
         	}
         }
-        
+
         //先判断经办人证件、拍照是否上传成功，再进行身份证读卡信息校验
-        Object sessionKey = ServletUtils.getSessionAttribute(request, virOlId + "upload"); 
+        Object sessionKey = ServletUtils.getSessionAttribute(request, virOlId + "upload");
         boolean isHandleCustCertificateUpload = sessionKey == null ? false : (Boolean) sessionKey;
         if(!isHandleCustCertificateUpload){
         	return false;
         }
-        
+
         if ("1".equals(actionFlag)) { //新装
         	int C1Count = 0;//所有C1动作、且证件类型为身份证的节点数
             int successCount = 0;//所有C1动作、证件类型为身份证、且身份证校验成功数
@@ -3093,7 +3093,7 @@ public class OrderBmoImpl implements OrderBmo {
             }
         } else{//非新装业务，遍历经办人进行校验
         	//针对每笔订单的virOlId，判断经办人是否老客户，virOlId在session封装为true表示老客户，否则新客户
-        	sessionKey = ServletUtils.getSessionAttribute(request, virOlId  + "qryCust"); 
+        	sessionKey = ServletUtils.getSessionAttribute(request, virOlId  + "qryCust");
             boolean isExitHandleCust = sessionKey == null ? false : (Boolean) sessionKey;
         	if(isExitHandleCust){//经办人是老客户
         		//无法校验：1.无法判断经办人证件类型；2.若老客户，无法获取姓名、地址等用于签名校验的数据
@@ -3112,7 +3112,7 @@ public class OrderBmoImpl implements OrderBmo {
                                     return false;
                                 }
                                 String token = s_sig.toString();
-                                
+
                                 if ((StringUtils.isNotBlank(token) && token.trim().length() > Const.RANDOM_STRING_LENGTH)) {
                                     Map<String, Object> custInfo = (Map<String, Object>) ((List<Map<String, Object>>) data.get("boCustInfos")).get(0);
                                     String partyName = MapUtils.getString(custInfo, "name");
@@ -3135,5 +3135,61 @@ public class OrderBmoImpl implements OrderBmo {
         	}
         }
         return isSuccessed;
+	}
+	/**
+	 * 与翼支付消费金融平台--高级实名认证
+	 * @param paramMap
+	 * @param optFlowNum
+	 * @param sessionStaff
+	 * @return
+	 * @throws Exception
+	 */
+	public Map<String, Object> highRealNameAuthenticate(
+			Map<String, Object> paramMap, String optFlowNum,
+			SessionStaff sessionStaff) throws Exception {
+		DataBus db = InterfaceClient.callService(paramMap,
+				PortalServiceCode.HIGH_REAL_NAME_AUTHENTICATE, optFlowNum, sessionStaff);
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		try {
+			if (ResultCode.R_SUCC.equals(db.getResultCode())) {
+				resultMap = db.getReturnlmap();
+				resultMap.put("resultCode", ResultCode.R_SUCC);
+			} else {
+				resultMap.put("resultCode", ResultCode.R_FAILURE);
+				resultMap.put("resultMsg", db.getResultMsg());
+			}
+		} catch (Exception e) {
+			log.error("门户处理营业后台的高级实名认证接口服务返回的数据异常", e);
+			throw new BusinessException(ErrorCode.HIGH_REAL_NAME_AUTHENTICATE, paramMap, resultMap, e);
+		}
+		return resultMap;
+	}
+	/**
+	 * 与翼支付消费金融平台--撤销鉴权
+	 * @param paramMap
+	 * @param optFlowNum
+	 * @param sessionStaff
+	 * @return
+	 * @throws Exception
+	 */
+	public Map<String, Object> revokeAuthentication(
+			Map<String, Object> paramMap, String optFlowNum,
+			SessionStaff sessionStaff) throws Exception {
+		DataBus db = InterfaceClient.callService(paramMap,
+				PortalServiceCode.REVOKE_AUTHENTICATION, optFlowNum, sessionStaff);
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		try {
+			if (ResultCode.R_SUCC.equals(db.getResultCode())) {
+				resultMap = db.getReturnlmap();
+				resultMap.put("resultCode", ResultCode.R_SUCC);
+			} else {
+				resultMap.put("resultCode", ResultCode.R_FAILURE);
+				resultMap.put("resultMsg", db.getResultMsg());
+			}
+		} catch (Exception e) {
+			log.error("门户处理营业后台的撤销鉴权接口服务返回的数据异常", e);
+			throw new BusinessException(ErrorCode.REVOKE_AUTHENTICATION, paramMap, resultMap, e);
+		}
+		return resultMap;
 	}
 }
