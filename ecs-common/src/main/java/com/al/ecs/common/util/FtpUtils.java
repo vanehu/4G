@@ -539,5 +539,41 @@ public class FtpUtils {
 		    LOG.error(SourceFileName + "; download failure!!! " + e.getMessage(), e);
 		}
 	}
+	
+	/**
+	 * 从ftp服务器获取指定路径的文件流输出
+	 * 
+	 * @param fileName
+	 *            文件名
+	 * @param localPath
+	 *            文件路径 区别于上方法，编码不取GBK，取默认编码
+	 */
+	@SuppressWarnings({ "static-access", "finally" })
+	public void getFileInputStreamByPath(OutputStream os, String fileName) {
+		try {
+			// os = new BufferedOutputStream(new FileOutputStream(localPath +
+			// tempFileName));
+			// 从FTPServer上下载文件
+			InputStream in = ftpClient.retrieveFileStream((new String(fileName.getBytes("GBK"), ftpClient.DEFAULT_CONTROL_ENCODING)));
+			int len = 0;
+			byte[] bt = new byte[1024];
+			while ((len = in.read(bt)) > 0) {
+				os.write(bt, 0, len); // outputStream.flush();
+			}
+			os.flush();
+			in.close();
+			os.close();
+		} catch (IOException e) {
+			LOG.error("not download !!! ");
+			LOG.error("downloadFileByPath IOException : {}", e);
+		} finally {
+			try {
+				ftpClient.disconnect();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+
+	}
 
 }
