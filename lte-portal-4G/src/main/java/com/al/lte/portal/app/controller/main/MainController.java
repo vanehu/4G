@@ -1,16 +1,19 @@
 package com.al.lte.portal.app.controller.main;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import net.sf.json.JSONArray;
 
+import org.apache.commons.net.ftp.FTPClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
@@ -18,9 +21,12 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
 import com.al.ecs.common.entity.JsonResponse;
 import com.al.ecs.common.entity.Switch;
+import com.al.ecs.common.util.FtpUtils;
 import com.al.ecs.common.util.MDA;
 import com.al.ecs.common.util.PropertiesUtils;
 import com.al.ecs.common.web.ServletUtils;
@@ -34,6 +40,7 @@ import com.al.ecs.spring.annotation.session.SessionValid;
 import com.al.ecs.spring.controller.BaseController;
 import com.al.lte.portal.bmo.crm.OrderBmo;
 import com.al.lte.portal.bmo.portal.NoticeBmo;
+import com.al.lte.portal.common.AESUtils;
 import com.al.lte.portal.common.SysConstant;
 import com.al.lte.portal.core.DataRepository;
 import com.al.lte.portal.model.SessionStaff;
@@ -150,6 +157,54 @@ public class MainController extends BaseController {
         }
         return jsonResponse;
     }
+	
+	   /**
+     * 公告附件下载
+     * @param response
+     * @param model
+     * @param params
+     * @return
+     */
+	@RequestMapping(value = "/downloadNoticeAttach", method = {RequestMethod.POST})
+	@ResponseBody
+	public JsonResponse downloadFile(Model model,@RequestParam("fileUrl") String fileUrl,
+			HttpServletResponse response) throws IOException {
+		try {
+			FtpUtils ftpUtils = new FtpUtils();
+			// 解密url
+			fileUrl = AESUtils.decryptToString(fileUrl, SysConstant.BLACK_USER_URL_PWD);
+			String[] fileUrls = fileUrl.split(",");
+			String filePath = fileUrls[0];
+			String fileName =  filePath.substring(filePath.lastIndexOf("/") + 1);
+			filePath = filePath.substring(0,filePath.lastIndexOf("/") + 1);
+			
+			String downName = fileUrls[1];
+			
+			//2.获取FTP服务器的具体登录信息
+			//3.根据服务器映射获取对应的FTP服务器配置信息
+			String ftpServiceConfig = MDA.NOTICE_FTP_SERVICE_CONFIGS;
+			String[] ftpServiceConfigs = ftpServiceConfig.split(",");
+			String remoteAddress = ftpServiceConfigs[0];//FTP服务器地址(IP)
+			String remotePort = ftpServiceConfigs[1];//FTP服务器端口
+			String userName = ftpServiceConfigs[2];//FTP服务器用户名
+			String password = ftpServiceConfigs[3];//FTP服务器密码
+			
+			ftpUtils.connectFTPServer(remoteAddress,remotePort,userName,password);
+			String path = filePath + new String(fileName.getBytes(), FTPClient.DEFAULT_CONTROL_ENCODING);
+			boolean isFileExist = ftpUtils.isFileExist(path);
+			if(isFileExist){
+				ServletOutputStream  outputStream = response.getOutputStream();
+				response.addHeader("Content-Disposition", "attachment;filename="+new String(downName.getBytes("gb2312"), "ISO8859-1"));
+				response.setContentType("application/octet-stream;charset=utf-8");
+				ftpUtils.getFileInputStreamByPath(outputStream ,filePath+fileName);
+				return super.successed("下载成功！");
+			}else{
+				return super.failed("下载文件不存在，请联系管理员。", ResultConstant.FAILD.getCode());
+			}
+		} catch (Exception e) {
+			return super.failed("下载文件异常：<br/>" + e, ResultConstant.FAILD.getCode());
+		}		
+	}
 	
 	/**
      * 取得滚动时间
