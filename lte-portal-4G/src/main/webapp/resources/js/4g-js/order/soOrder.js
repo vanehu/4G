@@ -2800,7 +2800,7 @@ SoOrder = (function() {
 		var jbrName = OrderInfo.bojbrCustInfos.name;
 		var jbrAddressStr = OrderInfo.bojbrCustInfos.addressStr;
 		
-		var response = $.callServiceAsJson(contextPath + "/properties/getValue", {"key": "JBR_" + OrderInfo.staff.areaId.substr(0, 3)});
+		var response = $.callServiceAsJson(contextPath + "/properties/getValue", {"key": "REAL_NAME_PHOTO_" + OrderInfo.staff.areaId.substr(0, 3)});
 		if (response.code == "0") {
 			if ("ON" == response.data) {
 				if(!ec.util.isObj($("#jbrForm").html()) || jbrIdentityNum == "" || jbrName == "" || jbrAddressStr == ""){

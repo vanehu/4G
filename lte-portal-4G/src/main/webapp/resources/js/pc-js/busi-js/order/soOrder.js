@@ -2434,7 +2434,7 @@ SoOrder = (function() {
 		var orderAttrName = OrderInfo.subHandleInfo.orderAttrName;
 		var orderAttrAddr = OrderInfo.subHandleInfo.orderAttrAddr;
 		var identityNum = OrderInfo.subHandleInfo.identityNum;
-		var response = $.callServiceAsJson(contextPath + "/properties/getValue", {"key": "JBR_" + OrderInfo.staff.areaId.substr(0, 3)});
+		var response = $.callServiceAsJson(contextPath + "/properties/getValue", {"key": "REAL_NAME_PHOTO_" + OrderInfo.staff.areaId.substr(0, 3)});
 		if (response.code == "0") {
 			if (response.data == "ON" && OrderInfo.subHandleInfo.orderAttrFlag == "Y") {
 				if(orderAttrName == null || orderAttrName == "" || orderAttrAddr == null || orderAttrAddr == "" || identityNum == null || identityNum == ""){

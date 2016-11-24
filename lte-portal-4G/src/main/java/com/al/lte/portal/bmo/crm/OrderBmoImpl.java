@@ -3020,7 +3020,7 @@ public class OrderBmoImpl implements OrderBmo {
 	 * @throws Exception
 	 */
 	public boolean verifyCustCertificate(Map<String, Object> param, HttpServletRequest request, SessionStaff sessionStaff) throws Exception{
-		Object realNameFlag =  MDA.AGENT_FLAG.get("JBR_"+sessionStaff.getCurrentAreaId().substring(0, 3));
+		Object realNameFlag =  MDA.REAL_NAME_PHOTO_FLAG.get("REAL_NAME_PHOTO_"+sessionStaff.getCurrentAreaId().substring(0, 3));
     	boolean isrealNameFlagOn  = realNameFlag == null ? false : "ON".equals(realNameFlag.toString()) ? true : false;//经办人开关是否打开
     	boolean resultFlag = false;
     	
