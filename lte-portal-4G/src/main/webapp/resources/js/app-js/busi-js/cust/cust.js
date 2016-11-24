@@ -2382,7 +2382,41 @@ cust = (function(){
 		
 	};
 	
+ //宽带甩单经办人拍照完回调方法
+	var _getPicture2=function(olId,pictures){
+		var picturesJson=$.parseJSON(pictures);
+		var picturesInfo=picturesJson.picturesInfo;
+		for(var i=0;i<picturesInfo.length;i++){//原生返回照片列表
+			if(picturesJson.picturesInfo[i].picFlag=="D"){//经办人拍照照片
+				order.broadband.jbrPictureName=picturesJson.picturesInfo[i].fileName;
+			}
+		}	
+		OrderInfo.virOlId = olId;
+	};
 	
+	//宽带甩单读卡获取经办人信息
+	var _getjbrGenerationInfos2=function(name,idcard,address,identityPic){
+		$("#orderAttrName").val(name);
+		$("#sfzorderAttrIdCard").val(idcard);
+		$("#orderAttrAddr").val(address);
+		OrderInfo.jbr.identityPic = identityPic;//证件照片
+		var custIdentidiesTypeCd=OrderInfo.cust.identityCd;//客户证件类型
+		var custNumber=OrderInfo.cust.idCardNumber;//客户证件号码
+		var jbrIdentidiesTypeCd=$("#orderIdentidiesTypeCd  option:selected").val();//经办人证件类型
+		var jbrIdentityNum;
+		if(jbrIdentidiesTypeCd==1){
+			jbrIdentityNum = $('#sfzorderAttrIdCard').val();//证件号码
+		}else{
+			jbrIdentityNum = $('#orderAttrIdCard').val();//证件号码
+		}
+		if(custIdentidiesTypeCd==jbrIdentidiesTypeCd && custNumber==jbrIdentityNum){//经办人为本人,无需查询
+			order.broadband.isSameOne=true;
+			return;
+		}
+		order.broadband.isSameOne=false;
+		order.main.queryJbr();
+
+	};
 	return {
 		jbridentidiesTypeCdChoose 	: 		_jbridentidiesTypeCdChoose,
 		jbrvalidatorForm 			: 		_jbrvalidatorForm,
@@ -2444,8 +2478,9 @@ cust = (function(){
 		userpartyTypeCdChoose 		: 		_userpartyTypeCdChoose,
 		usercertTypeByPartyType 	: 		_usercertTypeByPartyType,
 		getUserGenerationInfos		:		_getUserGenerationInfos,
-		clearJbrForm				:		_clearJbrForm
-		
+		clearJbrForm				:		_clearJbrForm,
+		getPicture2                 :       _getPicture2,
+		getjbrGenerationInfos2      :       _getjbrGenerationInfos2
 	};	
 })();
 // OrderInfo.boCustInfos.partyTypeCd = 1 ;//客户类型

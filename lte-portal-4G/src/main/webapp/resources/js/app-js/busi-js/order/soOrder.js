@@ -2245,7 +2245,7 @@ SoOrder = (function() {
 	};	
 	
 	//订单数据校验
-	var _checkData = function() {	
+	var _checkData = function() {
 		if(OrderInfo.actionFlag == 1 || OrderInfo.actionFlag == 6 || OrderInfo.actionFlag == 14){ //新装
 			if(OrderInfo.cust.custId==""){
 				$.alert("提示","客户信息不能为空！");

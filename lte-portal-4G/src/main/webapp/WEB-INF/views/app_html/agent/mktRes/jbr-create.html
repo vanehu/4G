@@ -1,6 +1,7 @@
 
 <meta charset="utf-8">
-
+<input type="hidden" id="currentCT" value="${currentCT}"/><!-- 渠道类型 -->
+<input type="hidden" id="haveCust" value="${haveCust}"/>
     <form id="jbrFormdata" method="post" >
    		<div class="container-fluid">
    			<div class="row">
@@ -76,6 +77,8 @@
 			</div>
 	 </nav>
 <script type="text/javascript">
+cust.jbrvalidatorForm();
+cust.jbrpartyTypeCdChoose($("#orderPartyTypeCd").children(":first-child"),"orderIdentidiesTypeCd");
  	var ua = navigator.userAgent.toLowerCase();	
 	if (/iphone|ipad|ipod/.test(ua)) {
 		$("#nfc").hide();

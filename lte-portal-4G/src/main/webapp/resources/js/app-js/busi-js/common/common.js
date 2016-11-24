@@ -19,7 +19,7 @@ common = (function($) {
 			  myCust1.CN="";
 			  myCust1.certNum="";
 			  myCust1.address="";			  
-			  myCust=JSON.stringify(myCust1);//四个加密字段可能值不合法，传入后台会报400错误，故去掉该值。
+			  var myCust=JSON.stringify(myCust1);//四个加密字段可能值不合法，传入后台会报400错误，故去掉该值。
 			  custInfosParams=myCust;
 		}		
 		if(ec.util.isObj(prodIdInfos)){
@@ -73,15 +73,16 @@ common = (function($) {
 		}else{
 			var ua = navigator.userAgent.toLowerCase();	
 			if (/iphone|ipad|ipod/.test(ua)) {
-				//alert("iphone");
-				if(custInfos.indexOf("custOther1")>=0 && custInfos.indexOf("custOther3")>=0){
-					var star = custInfos.indexOf("custOther1")+12;
-					var end = custInfos.indexOf("custOther3")-2;
-					if(end-star>10){
-						custInfos = custInfos.substring(0,star) + custInfos.substring(star+1,end-1) + custInfos.substring(end,custInfos.length);
-					}
+				if(custInfos.indexOf('\"custOther1\":\"{')>=0){//联系人不为空
+					var start=custInfos.indexOf('\"custOther1\":\"{');
+					var end=custInfos.indexOf('\"partyName');
+					var custInfos2=custInfos.substring(0,start)+custInfos.substring(end,custInfos.length);
+					var custOther1=custInfos.substring(start+14,end-2);
+					OrderInfo.cust=$.parseJSON(custInfos2);
+					OrderInfo.cust.custOther1 = $.parseJSON(custOther1);
+				}else{
+					OrderInfo.cust=$.parseJSON(custInfos);
 				}
-				OrderInfo.cust=$.parseJSON(custInfos);
 			}else if (/android/.test(ua)) {
 				    //alert("android");	
 				var custInfosParams=JSON.stringify(custInfos);//客户定位信息
@@ -154,10 +155,6 @@ common = (function($) {
 		json = json+"]}";
 		arr[0]=method;
 		arr[1]=json;
-		var olId=$("#TransactionID").val();
-		if(olId!=undefined && olId!=""){//宽带甩单经办人拍照
-			arr[2]=olId;
-		}		
 		MyPlugin.photoProcess(arr,
             function(result) {
             },
@@ -741,6 +738,58 @@ common = (function($) {
             }
 		);
 	}
+	//宽带甩单经办调用摄像头拍照
+	var _callPhotos2=function(method){
+		var custIdentidiesTypeCd=OrderInfo.cust.identityCd;//客户证件类型
+		var custNumber=OrderInfo.cust.idCardNumber;//客户证件号码
+		var partyName = $('#orderAttrName').val();//经办人名称
+		var areaId = OrderInfo.staff.areaId;//经办人地区
+		var telNumber = $('#orderAttrPhoneNbr').val();//联系电话
+		var addressStr = $('#orderAttrAddr').val();//经办人地址
+		var identityCd = $('#orderIdentidiesTypeCd').val();//证件类型
+		if(identityCd==1){
+			var identityNum = $('#sfzorderAttrIdCard').val();//证件号码
+		}else{
+			var identityNum = $('#orderAttrIdCard').val();//证件号码
+		}
+		if(custIdentidiesTypeCd==identityCd && custNumber==identityNum){//经办人为本人,无需查询
+			order.broadband.isSameOne=true;
+			order.broadband.canCallPhote=true;
+		}
+		if(!order.broadband.canCallPhote){
+			$.alert("提示","请先进行经办人查询！");
+		}
+		
+		var arr=new Array(1);
+		var custIdentityPic = OrderInfo.cust.identityPic;
+		var userIdentityPic = OrderInfo.user.identityPic;
+		var jbrIdentityPic = OrderInfo.jbr.identityPic;
+//		var str = "{\"picturesInfo\":[{\"orderInfo\":\"XXXXXXXXX\",\"picFlag\":\"A\",\"custName\":\"hiuu\",\"certType\":\"身份证\",\"certNumber\":\"902222222\",\"accNbr\":\"123456666\"},{\"orderInfo\":\"XXXXXXXXX\",\"picFlag\":\"B\",\"custName\":\"hiuu\",\"certType\":\"身份证\",\"certNumber\":\"902222222\",\"accNbr\":\"123456666\"},{\"orderInfo\":\"XXXXXXXXX\",\"picFlag\":\"C\",\"custName\":\"hiuu\",\"certType\":\"身份证\",\"certNumber\":\"902222222\",\"accNbr\":\"123456666\"},{\"orderInfo\":\"\",\"picFlag\":\"D\",\"custName\":\"hiuu\",\"certType\":\"身份证\",\"certNumber\":\"902222222\",\"accNbr\":\"123456666\"}]}";
+		var json = "{\"picturesInfo\":[";
+		if(custIdentityPic != undefined){
+			json = json + "{\"orderInfo\":\"" + OrderInfo.cust.identityPic + "\",\"picFlag\":\"A\",\"custName\":\"" + OrderInfo.cust.partyName + "\",\"certType\":\"" + OrderInfo.cust.identityCd + "\",\"certNumber\":\"" + OrderInfo.cust.identityNum + "\",\"accNbr\":\"" + OrderInfo.cust.telNumber +"\"},";
+		}
+		if(userIdentityPic != undefined){
+			json = json + "{\"orderInfo\":\"" + OrderInfo.user.identityPic + "\",\"picFlag\":\"B\",\"custName\":\"" + OrderInfo.user.partyName + "\",\"certType\":\"" + OrderInfo.user.identityCd + "\",\"certNumber\":\"" + OrderInfo.user.identityNum + "\",\"accNbr\":\"" + OrderInfo.user.telNumber +"\"},";
+		}
+		if(jbrIdentityPic != undefined){
+			json = json + "{\"orderInfo\":\"" + OrderInfo.jbr.identityPic + "\",\"picFlag\":\"C\",\"custName\":\"" + partyName + "\",\"certType\":\"" + identityCd + "\",\"certNumber\":\"" + identityNum + "\",\"accNbr\":\"" + telNumber +"\"},";
+		}
+		json = json + "{\"orderInfo\":\"\",\"picFlag\":\"D\",\"custName\":\"" + partyName + "\",\"certType\":\"" + identityCd + "\",\"certNumber\":\"" + identityNum + "\",\"accNbr\":\"" + telNumber +"\"}";
+		json = json+"]}";
+		arr[0]=method;
+		arr[1]=json;
+		var olId=$("#TransactionID").val();
+		if(olId!=undefined && olId!=""){//宽带甩单经办人拍照
+			arr[2]=olId;
+		}		
+		MyPlugin.photoProcess(arr,
+            function(result) {
+            },
+            function(error) {
+            }
+		);
+	};
 	
 	return {
 		relocationCust		:	_relocationCust,
@@ -763,6 +812,7 @@ common = (function($) {
 		callAgreePhoto      :   _callAgreePhoto,
 		callOpenPay         :   _callOpenPay,
 		callCustLocation	:	_callCustLocation,
-		getMobileIp			: 	_getMobileIp
+		getMobileIp			: 	_getMobileIp,
+		callPhotos2         :   _callPhotos2
 	};
 })(jQuery);
