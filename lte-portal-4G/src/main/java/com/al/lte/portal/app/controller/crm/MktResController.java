@@ -53,6 +53,7 @@ import com.al.lte.portal.bmo.crm.OrderBmo;
 import com.al.lte.portal.bmo.staff.StaffBmo;
 import com.al.lte.portal.common.EhcacheUtil;
 import com.al.lte.portal.common.MySimulateData;
+import com.al.lte.portal.common.StringUtil;
 import com.al.lte.portal.common.SysConstant;
 import com.al.lte.portal.model.SessionStaff;
 
@@ -1472,29 +1473,28 @@ public class MktResController extends BaseController {
 		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
                 SysConstant.SESSION_KEY_LOGIN_STAFF);
 		log.debug("param={}", JsonUtil.toString(param));
-		String picturesInfo = (String) param.get("picturesInfo");
+//		String picturesInfo = param.get("picturesInfo").toString();
+//		JSONArray arr = JSONArray.fromObject(picturesInfo);
+//		String olId=MapUtil.asStr(param, "olId");
+//		List<Map<String, Object>> picturesInfo = new ArrayList<Map<String, Object>>();
+//		picturesInfo = (List<Map<String, Object>>) param.get("picturesInfo");
+		
+		String picturesInfo = param.get("picturesInfo").toString();
 		JSONArray arr = JSONArray.fromObject(picturesInfo);
+		String olId=MapUtil.asStr(param, "olId");
 		param.put("picturesInfo",arr);
 		param.put("areaId", sessionStaff.getCurrentAreaId());
 		param.put("srcFlag", "REAL");
 		param.put("accNbr", sessionStaff.getInPhoneNum());
 		param.put("certType", sessionStaff.getCardType());
 		param.put("certNumber", sessionStaff.getCardNumber());
-//		param.put("olId","1111");
+		if(!StringUtil.isEmptyStr(olId)){
+			param.put("olId",olId);
+		}
     	Map<String, Object> rMap = null;
     	JsonResponse jsonResponse=null;
-//    	if(StringUtil.isEmptyStr(orderInfo)){
-//    		rMap.put("errData", "图片未获取到，请确认！");
-//    		return super.failed(ErrorCode.ACCOUNT_REQUEST, rMap, param);
-//    	}
-//    	Map<String, Object> virMap = new HashMap<String, Object>();
-//    	virMap.put("virOlId", "201611031000000001");
     	try {
             rMap = mktResBmo.upLoadPicturesFileToFtp(param, flowNum, sessionStaff);
-//            rMap = new HashMap<String, Object>();
-//    		rMap.put("result", virMap);
-//    		rMap.put("code", "POR-0000");
-//    		rMap.put("resultMsg", "成功！");
             if (rMap != null && ResultCode.R_SUCCESS.equals(MapUtils.getString(rMap, "code"))) {
                 jsonResponse = super.successed(rMap, ResultConstant.SUCCESS.getCode());
             } else {
@@ -1506,5 +1506,4 @@ public class MktResController extends BaseController {
     	
     	return jsonResponse;
 	}
-	
 }

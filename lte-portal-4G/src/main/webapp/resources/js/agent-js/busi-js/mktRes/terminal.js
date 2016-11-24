@@ -2989,7 +2989,23 @@ mktRes.terminal = (function($){
 	}
 	//关闭经办人
 	var _closeJBR=function(){
-		cust.jbrSubmit();
+		
+		var orderIdentidiesTypeCd = $("#orderIdentidiesTypeCd  option:selected").val(); //证件类型
+		var orderAttrIdCard = $.trim($("#orderAttrIdCard").val());; //证件号码
+		if("1"==orderIdentidiesTypeCd){
+			orderAttrIdCard =$.trim($("#sfzorderAttrIdCard").val()); //身份证号码
+		}
+		if(ec.util.isObj($.trim($("#sfzorderAttrIdCard").val())) || ec.util.isObj($.trim($("#orderAttrIdCard").val()))){
+			if(!ec.util.isObj(OrderInfo.jbr.custId)){
+				$.alert("提示","请先进行经办人查询！");
+				return;
+			} else if(OrderInfo.jbr.identityCd != orderIdentidiesTypeCd || OrderInfo.jbr.identityNum != orderAttrIdCard){
+				$.alert("提示","经办人信息更改，请进行经办人查询");
+				return;
+			}
+			
+		}
+		
 		$("#order-content").show();
 		$("#terminalMain").show();
 		$("#jbr").hide();

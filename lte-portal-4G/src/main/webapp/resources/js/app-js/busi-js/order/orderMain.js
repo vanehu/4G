@@ -137,9 +137,6 @@ order.main = (function(){
 			$("#order-content").hide();
 			$("#order-dealer").show();
 			order.dealer.initDealer();
-			if(OrderInfo.preBefore.idPicFlag == "ON"){
-				common.callPhotos('cust.getPicture');
-			}
 		});
 		if (param.memberChange) {
 			$("#orderedprod").hide();
@@ -1213,7 +1210,7 @@ order.main = (function(){
 							var certTypedate = OrderInfo.certTypedates[i];
 							
 							if (certTypedate.certTypeCd == "1") {//身份证
-								$("#p_cust_identityCd_choose").append("<option value='"+certTypedate.certTypeCd+"' >"+certTypedate.name+"</option>");
+								$("#p_cust_identityCd_choose").append("<option value='"+certTypedate.certTypeCd+"' selected='selected'>"+certTypedate.name+"</option>");
 							}else  if(isAllowChannelType){//如果自有渠道，开放所有
 								$("#p_cust_identityCd_choose").append("<option value='"+certTypedate.certTypeCd+"' >"+certTypedate.name+"</option>");
 							}
@@ -1238,7 +1235,7 @@ function _showUser(prodId){
 		}
 		 _queryChildNode(areaId);
 		$("#queryUser").off("click").on("click",function(){
-			_queryUser();
+			_queryUser(prodId);
 			
 			
 		});
@@ -1296,9 +1293,16 @@ function _queryChildNode(upRegionId) {
 			});
 };
 
+function _showUserCreate(prodId){
+	$("#closeUSER").off("click").on("click",function(){
+		mktRes.terminal.closeUSER(prodId)
+	});
+	$("#user").show();
+}
+
+
 // 使用人-查询
-function _queryUser(){
-	cust.jbrvalidatorForm();
+function _queryUser(prodId){
 	if($("#p_cust_identityNum_choose").val().trim() == ""){
 		$.alert("操作提示","查询号码不能为空！");
 		return;
@@ -1355,23 +1359,24 @@ function _queryUser(){
 			}
 			if(response.data.indexOf("false") ==0) {
 				$.unecOverlay();
-//				$.alert("提示","抱歉，没有定位到客户，请尝试其他客户。");
 				$("#order-content").hide();//办号卡
 				$("#terminalMain").hide();//购手机
 				$('#choose_multiple_user_dialog').hide();
 				$('#overlay').hide();
 				$("#userModal").modal("hide");
+				_showUserCreate(prodId);
 				$("#user").show();//显示经办人
-				$("#orderAttrPhoneNbr").val(identityNum);
+				cust.clearUserForm();
+				$.alert("提示","抱歉，没有定位到当前客户，请新建使用人。");
 				 return;
 			}else{
 			$.unecOverlay();
 			cust.jumpAuthflag = $(response.data).find('#jumpAuthflag').val();
 			var custInfoSize = $(response.data).find('#custInfoSize').val();
 			// 使用人定位时，存在多客户的情况
-			if (custInfoSize == 1) {
+//			if (custInfoSize == 1) {
 				cust.showCustAuth($(response.data).find('#custInfos'),"user");
-			}
+//			}
 //			else if (custInfoSize > 1) {
 //				$("#choose_multiple_user_dialog").html(response.data);
 //				easyDialog.open({
@@ -1431,6 +1436,11 @@ function _showJbrInfo(custInfo){
 		//将客户信息作为使用人tmpChooseUserInfo，确认后保存到OrderInfo.choosedUserInfos
 		cust.tmpJbrInfo = custInfo;
 		OrderInfo.jbr.custId = custInfo.custId;
+		if(OrderInfo.jbr.identityCd != custInfo.identityCd || OrderInfo.jbr.identityNum != custInfo.idCardNumber){
+			OrderInfo.jbr.identityCd = custInfo.identityCd;
+			OrderInfo.jbr.identityNum = custInfo.idCardNumber;
+			OrderInfo.virOlId = "";
+		}
 //		order.cust.tmpChooseUserInfo.prodId = '';
 		$('#orderAttrName').val(custInfo.partyName);
 		$('#orderAttrAddr').val(custInfo.areaName);
@@ -1442,7 +1452,10 @@ function _showJbrInfo(custInfo){
 
 //经办人-查询
 function _queryJbr(){
-	
+	$('#jbrFormdata').data('bootstrapValidator').validate();
+	if(!$('#jbrFormdata').data('bootstrapValidator').isValid()){
+		return;
+	}
 	var identityCd="";
 	var idcard="";
 	var diffPlace="";
@@ -1476,7 +1489,7 @@ function _queryJbr(){
 		}
 	}
 
-	authFlag="0"; // 需要鉴权
+	authFlag="1"; // 不需要鉴权
 	if(identityCd==-1){
 		
 		acctNbr=$("#orderAttrPhoneNbr").val();
@@ -1516,35 +1529,34 @@ function _queryJbr(){
 				$.unecOverlay();
 //				$.alert("提示","抱歉，没有定位到客户，请尝试其他客户。");
 				
-				if(ec.util.isObj($.trim($("#orderAttrName").val()))||ec.util.isObj($.trim($("#orderAttrPhoneNbr").val()))||ec.util.isObj($.trim($("#orderAttrAddr").val()))){
+				if(!ec.util.isObj($.trim($("#orderAttrName").val()))||!ec.util.isObj($.trim($("#orderAttrAddr").val()))){
 					if(!ec.util.isObj($.trim($("#orderAttrName").val()))){
-						$.alert("提示","抱歉，未查询到经办人信息！请完善经办人信息！");
-						return false;
-					}
-					if(!ec.util.isObj($.trim($("#orderAttrPhoneNbr").val()))){
-						$.alert("提示","抱歉，未查询到经办人信息！请完善经办人信息！");
+						$.alert("提示","抱歉，未查询到经办人信息！经办人姓名为空，请完善经办人信息！");
 						return false;
 					}
 					if(!ec.util.isObj($.trim($("#orderAttrAddr").val()))){
-						$.alert("提示","抱歉，未查询到经办人信息！请完善经办人信息！");
+						$.alert("提示","抱歉，未查询到经办人信息！证件地址为空，请完善经办人信息！");
 						return false;
 					}
-					
-					
 				} 
 				
+					
+					if(OrderInfo.cust.custId == -1 && OrderInfo.cust.identityCd == identityCd 
+							&& OrderInfo.cust.identityNum == identityNum){
+						$.alert("提示","抱歉，未查询到经办人信息！\n 当前经办人为用户本人，请对经办人进行拍照！");
+						OrderInfo.jbr.custId = OrderInfo.cust.custId;
+						OrderInfo.jbr.identityNum = identityNum;
+						OrderInfo.jbr.identityCd = identityCd;
+						return;
+					}
 					$.alert("提示","抱歉，未查询到经办人信息！\n提交经办人信息成功,请对经办人进行拍照");
 					cust.jbrSubmit();
-				
-				
 				 return;
 			}else{
 			$.unecOverlay();
 			cust.jumpAuthflag = $(response.data).find('#jumpAuthflag').val();
 			var custInfoSize = $(response.data).find('#custInfoSize').val();
 			var custInfos = $(response.data).find('#custInfos');
-//			$.alert("dd","custInfos -- " + JSON.stringify(custInfos));
-			var custInfo = custInfos[0];
 			// 使用人定位时，存在多客户的情况
 			if (custInfoSize == 1) {
 				cust.showCustAuth($(response.data).find('#custInfos'),"jbr");

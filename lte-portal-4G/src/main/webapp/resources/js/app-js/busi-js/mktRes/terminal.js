@@ -870,10 +870,6 @@ mktRes.terminal = (function($){
 	}
 	//关闭经办人
 	var _closeJBR=function(){
-		if(!OrderInfo.virOlId){
-			$.alert("提示","请进行经办人头像拍照！");
-			return;
-		}
 		//先校验
 		var orderAttrName = $.trim($("#orderAttrName").val()); //经办人姓名
 		var orderIdentidiesTypeCd = $("#orderIdentidiesTypeCd  option:selected").val(); //证件类型
@@ -883,7 +879,18 @@ mktRes.terminal = (function($){
 		}
 		var orderAttrAddr = $.trim($("#orderAttrAddr").val()); //地址
 		var orderAttrPhoneNbr = $.trim($("#orderAttrPhoneNbr").val()); //联系人号码
+		if("1"!=orderIdentidiesTypeCd){
+			if(OrderInfo.jbr.identityCd != orderIdentidiesTypeCd || OrderInfo.jbr.identityNum != orderAttrIdCard){
+				OrderInfo.virOlId = "";
+				$.alert("提示","证件信息更改，请重新查询经办人信息！");
+				return;
+			}
+		}
 		
+		if(!OrderInfo.virOlId){
+			$.alert("提示","请进行经办人头像拍照！");
+			return;
+		}
 //		if(ec.util.isObj(orderAttrName)||ec.util.isObj(orderAttrIdCard)||ec.util.isObj(orderAttrPhoneNbr)){
 //			if(!ec.util.isObj(orderAttrName)){
 //				$.alert("提示","经办人姓名为空，经办人姓名、经办人号码、证件号码必须同时为空或不为空，因此无法提交！");
@@ -907,7 +914,11 @@ mktRes.terminal = (function($){
 	}
 	
 	//关闭经办人
-	var _closeUSER=function(){
+	var _closeUSER=function(prodId){
+		$('#userFormdata').data('bootstrapValidator').validate();
+		if(!$('#userFormdata').data('bootstrapValidator').isValid()){
+			return;
+		}
 		//先校验
 		var orderAttrName = $.trim($("#userOrderAttrName").val()); //使用人人姓名
 		var orderIdentidiesTypeCd = $("#userOrderIdentidiesTypeCd  option:selected").val(); //证件类型
@@ -918,29 +929,39 @@ mktRes.terminal = (function($){
 		var orderAttrAddr = $.trim($("#userOrderAttrAddr").val()); //地址
 		var orderAttrPhoneNbr = $.trim($("#userOrderAttrPhoneNbr").val()); //联系人号码
 		
-		if(ec.util.isObj(orderAttrName)||ec.util.isObj(orderAttrIdCard)||ec.util.isObj(orderAttrPhoneNbr)){
+		if(ec.util.isObj(orderAttrName)||ec.util.isObj(orderAttrIdCard)||ec.util.isObj(orderAttrAddr)){
 			if(!ec.util.isObj(orderAttrName)){
-				$.alert("提示","使用人姓名为空，使用人姓名、经办人号码、证件号码必须同时为空或不为空，因此无法提交！");
-				return false;
-			}
-			if(!ec.util.isObj(orderAttrPhoneNbr)){
-				$.alert("提示","使用人号码为空，使用人姓名、经办人号码、证件号码必须同时为空或不为空，因此无法提交！");
+				$.alert("提示","使用人姓名为空，使用人姓名、使用人证件地址、证件号码必须同时为空或不为空，因此无法提交！");
 				return false;
 			}
 			if(!ec.util.isObj(orderAttrIdCard)){
-				$.alert("提示","使用人号码为空，使用人姓名、经办人号码、证件号码必须同时为空或不为空，因此无法提交！");
+				$.alert("提示","使用人证件号码为空，使用人姓名、使用人证件地址、证件号码必须同时为空或不为空，因此无法提交！");
+				return false;
+			}
+			if(!ec.util.isObj(orderAttrAddr)){
+				$.alert("提示","使用人证件地址为空，使用人姓名、使用人证件地址、证件号码必须同时为空或不为空，因此无法提交！");
 				return false;
 			}
 		}
-		
+//		var prodId = $("#prodId").val()
+		cust.tmpChooseUserInfo.custId = OrderInfo.SEQ.instSeq--;
+		cust.tmpChooseUserInfo.partyName = orderAttrName;
+		cust.tmpChooseUserInfo.identityCd = orderIdentidiesTypeCd;
+		cust.tmpChooseUserInfo.idCardNumber = orderAttrIdCard;
+		cust.tmpChooseUserInfo.addressStr = orderAttrAddr;
+		cust.tmpChooseUserInfo.accNbr = orderAttrPhoneNbr;
 		OrderInfo.updateChooseUserInfos(prodId, cust.tmpChooseUserInfo);
 		$('#'+CONST.PROD_ATTR.PROD_USER+'_'+prodId+'_name').val($("#userOrderAttrName").val());
-//		$('#'+CONST.PROD_ATTR.PROD_USER+'_'+prodId).val(cust.tmpChooseUserInfo.custId);
-		
-		cust.userSubmit();
+		$('#'+CONST.PROD_ATTR.PROD_USER+'_'+prodId).val(cust.tmpChooseUserInfo.custId);
+		cust.tmpChooseUserInfo = {};
 		$("#order-content").show();
 		$("#terminalMain").show();
 		$("#user").hide();
+//		if(cust.tmpChooseUserInfo.identityCd = OrderInfo.cust.identityCd && cust.tmpChooseUserInfo.idCardNumber == OrderInfo.cust.identityNum){
+//			return;
+//		}
+//		cust.userSubmit();
+		
 	}
 	
 	var _checkJBR=function(){

@@ -115,8 +115,7 @@ common = (function($) {
 	
 	//调用客户端的拍照方法       method：表示回调js方法 如：order.prodModify.getIDCardInfos
 	var _callPhotos=function(method){
-//		_getMobileIp("cust.getIp");
-//		cust.jbrSubmit();
+		_getMobileIp("cust.getIp");
 		var partyName = $('#orderAttrName').val();//经办人名称
 		var areaId = OrderInfo.staff.areaId;//经办人地区
 		var telNumber = $('#orderAttrPhoneNbr').val();//联系电话
@@ -128,19 +127,17 @@ common = (function($) {
 			var identityNum = $('#orderAttrIdCard').val();//证件号码
 		}
 		
-		if(!OrderInfo.jbr.custId) {
-			if(identityCd==1){
-				order.main.queryJbr();
+		if(!OrderInfo.jbr.custId || !identityNum || identityNum != OrderInfo.jbr.identityNum) {
+			if(identityCd!=1){
+				OrderInfo.virOlId = "";
+				$.alert("提示","请先进行经办人信息查询！");
 				return;
 			} 
-			$.alert("提示","请先进行经办人信息查询！");
-			return;
 		}
 		var arr=new Array(1);
 		var custIdentityPic = OrderInfo.cust.identityPic;
 		var userIdentityPic = OrderInfo.user.identityPic;
 		var jbrIdentityPic = OrderInfo.jbr.identityPic;
-//		var str = "{\"picturesInfo\":[{\"orderInfo\":\"XXXXXXXXX\",\"picFlag\":\"A\",\"custName\":\"hiuu\",\"certType\":\"身份证\",\"certNumber\":\"902222222\",\"accNbr\":\"123456666\"},{\"orderInfo\":\"XXXXXXXXX\",\"picFlag\":\"B\",\"custName\":\"hiuu\",\"certType\":\"身份证\",\"certNumber\":\"902222222\",\"accNbr\":\"123456666\"},{\"orderInfo\":\"XXXXXXXXX\",\"picFlag\":\"C\",\"custName\":\"hiuu\",\"certType\":\"身份证\",\"certNumber\":\"902222222\",\"accNbr\":\"123456666\"},{\"orderInfo\":\"\",\"picFlag\":\"D\",\"custName\":\"hiuu\",\"certType\":\"身份证\",\"certNumber\":\"902222222\",\"accNbr\":\"123456666\"}]}";
 		var json = "{\"picturesInfo\":[";
 		if(custIdentityPic != undefined){
 			json = json + "{\"orderInfo\":\"" + OrderInfo.cust.identityPic + "\",\"picFlag\":\"A\",\"custName\":\"" + OrderInfo.cust.partyName + "\",\"certType\":\"" + OrderInfo.cust.identityCd + "\",\"certNumber\":\"" + OrderInfo.cust.identityNum + "\",\"accNbr\":\"" + OrderInfo.cust.telNumber +"\"},";
@@ -790,7 +787,6 @@ common = (function($) {
             }
 		);
 	};
-	
 	return {
 		relocationCust		:	_relocationCust,
 		setCalendar			:	_setCalendar,

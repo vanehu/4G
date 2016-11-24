@@ -168,7 +168,7 @@ cust = (function(){
 	};
 	
 	var _jbrSubmit = function(){
-//		OrderInfo.jbr.custId = -3;//客户地区
+		OrderInfo.jbr.custId = -2;//客户地区
 		OrderInfo.jbr.partyName = $('#orderAttrName').val();//经办人名称
 		OrderInfo.jbr.areaId = OrderInfo.staff.areaId;//经办人地区
 		OrderInfo.jbr.telNumber = $('#orderAttrPhoneNbr').val();//联系电话
@@ -615,41 +615,22 @@ cust = (function(){
 						var propertiesKey = "REAL_NAME_PHOTO_"+(OrderInfo.staff.soAreaId+"").substring(0,3);
 					    var isFlag = offerChange.queryPortalProperties(propertiesKey);
 					    OrderInfo.preBefore.idPicFlag = isFlag;
-						if(haveCust != "N"){
-							var cardNumber ="";
-							if(OrderInfo.cust.custId == "-1"){
-								cardNumber = OrderInfo.cust.identityNum;
-							} else {
-								cardNumber = OrderInfo.cust.idCardNumber;
-							}
-							if(_partyTypeCd==1){//公众客户 经办人默认为本人
-								if(cardType==1){
-									$("#jbrsfz").show();
-									$("#jbrsfz_i").show();
-									$("#qtzj").hide();
-									$("#orderAttrName").attr("readonly","readonly");
-									$("#orderAttrAddr").attr("readonly","readonly");
-									$("#sfzorderAttrIdCard").val(cardNumber);
-//									$('#jbrFormdata').data('bootstrapValidator').enableFieldValidators("orderAttrIdCard",true,"sfzorderAttrIdCard");
-								}else{
-									$("#jbrsfz").hide();
-									$("#jbrsfz_i").hide();
-									$("#qtzj").show();
-									$("#orderAttrName").removeAttr("readonly");
-									$("#orderAttrAddr").removeAttr("readonly");
-									$("#orderAttrIdCard").val(cardNumber);
-//									$('#jbrFormdata').data('bootstrapValidator').enableFieldValidators("orderAttrIdCard",true,"orderAttrIdCard");
-								}
-								$("#orderAttrAddr").val(OrderInfo.cust.addressStr);
-								$("#orderAttrName").val(OrderInfo.cust.partyName);
-								
-								
-							}
-						}
+					    if(isFlag == "ON"){
+					    	if(haveCust != "N"){
+					    		OrderInfo.jbr.custId = OrderInfo.cust.custId;
+								OrderInfo.jbr.partyName = OrderInfo.cust.partyName;
+								OrderInfo.jbr.telNumber = OrderInfo.cust.telNumber;
+								OrderInfo.jbr.addressStr = OrderInfo.cust.addressStr;
+								OrderInfo.jbr.identityCd = OrderInfo.cust.identityCd;
+								OrderInfo.jbr.mailAddressStr = OrderInfo.cust.mailAddressStr;
+								OrderInfo.jbr.identityPic = OrderInfo.cust.identityPic;
+								OrderInfo.jbr.identityNum = cardNumber;
+					    	}
+					    }
 						
 						for(var i=0;i<uniData.length;i++){
 							var certTypedate = uniData[i];
-							if(i==0){
+							if(certTypedate.certTypeCd=="1"){
 								_obj.append("<option value='"+certTypedate.certTypeCd+"' selected='selected'>"+certTypedate.name+"</option>");
 							}else _obj.append("<option value='"+certTypedate.certTypeCd+"' >"+certTypedate.name+"</option>");
 						}
@@ -658,7 +639,7 @@ cust = (function(){
 						if(id=='orderIdentidiesTypeCd'){
 							//创建经办人证件类型选择事件
 //							$("#orderIdentidiesTypeCd option[value='1'").attr("selected", true);
-							_jbridentidiesTypeCdChoose($("#"+id).children(":first-child"),"orderAttrIdCard");
+							_jbridentidiesTypeCdChoose(($("#" + id + " option[selected='selected']")),"orderAttrIdCard");
 						}
 					}
 				}
@@ -1059,8 +1040,9 @@ cust = (function(){
 		$("#photos").attr("src","data:image/jpg;base64,"+photosBase64);
 	};
 	
-	var _getPicture=function(photosBase64){
+	var _getPicture=function(olId,photosBase64){
 		$("#photos").attr("src","data:image/jpg;base64,"+photosBase64);
+		OrderInfo.virOlId = olId;
 	};
 	
 	var _getGenerationInfos=function(name,idcard,address,identityPic){
@@ -1069,6 +1051,9 @@ cust = (function(){
 		$("#cm_identidiesTypeCd").change();
 		$("#cmCustIdCard").val(idcard);
 		$("#cmAddressStr").val(address);
+		if(OrderInfo.preBefore.idPicFlag == "ON"){
+			OrderInfo.virOlId ="";
+		}
 		OrderInfo.cust.identityPic = identityPic;//证件照片
 	};
 	//读卡获取经办人信息
@@ -1076,6 +1061,10 @@ cust = (function(){
 		$("#orderAttrName").val(name);
 		$("#sfzorderAttrIdCard").val(idcard);
 		$("#orderAttrAddr").val(address);
+		if(OrderInfo.preBefore.idPicFlag == "ON"){
+			OrderInfo.virOlId ="";
+		}
+		OrderInfo.jbr.identityPic = identityPic;//证件照片
 	};
 	
 	// 客户定位读取身份证号码
@@ -2521,6 +2510,10 @@ cust = (function(){
 		});
 	}
 	
+	var _getIp=function(Ip){
+		OrderInfo.curIp = Ip;
+	}
+	
 	return {
 		jbridentidiesTypeCdChoose 	: 		_jbridentidiesTypeCdChoose,
 		jbrvalidatorForm 			: 		_jbrvalidatorForm,
@@ -2574,5 +2567,6 @@ cust = (function(){
 		getUserInfo					:		_getUserInfo,
 		jbrSubmit					:		_jbrSubmit,
 		getJbrInfo					:		_getJbrInfo,
+		getIp						:		_getIp
 	};	
 })();

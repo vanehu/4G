@@ -242,8 +242,8 @@ OrderInfo = (function() {
 	};
 	//创建经办人节点
 	var _createJbr = function(busiOrders) {
-		var accNbr = _getAccessNumber(-1);
-		OrderInfo.jbr.custId = OrderInfo.SEQ.instSeq--;
+//		var accNbr = _getAccessNumber(-1);
+//		OrderInfo.jbr.custId = OrderInfo.SEQ.instSeq--;
 		var busiOrder = {
 			areaId : OrderInfo.getAreaId(),  //受理地区ID
 			busiOrderInfo : {
@@ -262,9 +262,9 @@ OrderInfo = (function() {
 				boPartyContactInfo : []
 			}
 		};
-		if(ec.util.isObj(accNbr)){ //接入号
-			busiOrder.busiObj.accessNumber = accNbr;
-		}
+//		if(ec.util.isObj(accNbr)){ //接入号
+//			busiOrder.busiObj.accessNumber = accNbr;
+//		}
 		cust.getJbrInfo();
 		busiOrder.data.boCustInfos.push(OrderInfo.boJbrInfos);
 		busiOrder.data.boCustIdentities.push(OrderInfo.boJbrIdentities);

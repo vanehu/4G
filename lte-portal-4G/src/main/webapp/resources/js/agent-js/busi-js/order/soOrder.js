@@ -43,8 +43,22 @@ SoOrder = (function() {
 		OrderInfo.orderData.orderList.orderListInfo.areaId = OrderInfo.getAreaId();
 	};
 	
+	var _checkOlId = function(){
+		if(OrderInfo.preBefore.idPicFlag == "ON"){
+			if(!OrderInfo.virOlId){
+				return false;
+			}
+			return true;
+		}
+	}
+	
 	//提交订单节点
 	var _submitOrder = function(data) {
+		if(!_checkOlId()){
+			common.callPhotos('cust.getPicture');
+			return;
+		}
+		
 		if(OrderInfo.actionFlag==8){//新增客户
 			OrderInfo.busitypeflag = 25;
 		}else if(OrderInfo.actionFlag==13){//购裸机
@@ -240,8 +254,6 @@ SoOrder = (function() {
 			itemSpecId : CONST.BUSI_ORDER_ATTR.BUSITYPE_FLAG,
 			value : OrderInfo.busitypeflag
 		});
-		}
-		
 		OrderInfo.orderData.orderList.orderListInfo.custOrderType = OrderInfo.busitypeflag;
 		
 		if(ec.util.isObj(OrderInfo.order.soNbr)){
@@ -250,6 +262,9 @@ SoOrder = (function() {
 				value : OrderInfo.order.soNbr
 			});
 		}
+		}
+		
+		
 		/*
 //		custOrderAttrs.push({
 //			itemSpecId : "111111113",
@@ -332,10 +347,6 @@ SoOrder = (function() {
 			}else if(ec.util.isObj(orderAttrName)||ec.util.isObj(orderAttrIdCard)||ec.util.isObj(orderAttrPhoneNbr)){
 				if(!ec.util.isObj(orderAttrName)){
 					$.alert("提示","经办人姓名为空，经办人姓名、经办人号码、证件号码必须同时为空或不为空，因此无法提交！");
-					return false;
-				}
-				if(!ec.util.isObj(orderAttrPhoneNbr)){
-					$.alert("提示","经办人号码为空，经办人姓名、经办人号码、证件号码必须同时为空或不为空，因此无法提交！");
 					return false;
 				}
 				if(!ec.util.isObj(orderAttrIdCard)){
@@ -1337,7 +1348,12 @@ SoOrder = (function() {
 			OrderInfo.createCust(busiOrders);	
 		}
 		if(OrderInfo.preBefore.idPicFlag == "ON"){
-			OrderInfo.createJbr(busiOrders);	
+			if(OrderInfo.jbr.custId && OrderInfo.jbr.custId != OrderInfo.cust.custId){
+				OrderInfo.createJbr(busiOrders);
+			} else {
+				OrderInfo.jbr.custId = OrderInfo.cust.custId;
+			}
+			
 			OrderInfo.orderData.orderList.orderListInfo.handleCustId = OrderInfo.jbr.custId;
 		}
 		var acctId = -1; //先写死

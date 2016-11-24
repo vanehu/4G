@@ -188,9 +188,6 @@ order.main = (function(){
 			$("#order-content").hide();
 			$("#order-dealer").show();
 			order.dealer.initDealer();
-			if(OrderInfo.preBefore.idPicFlag == "ON"){
-				common.callPhotos('cust.getPicture');
-			}
 		});
 		if (param.memberChange) {
 			$("#orderedprod").hide();
@@ -1703,6 +1700,200 @@ order.main = (function(){
 		}
 	};
 	
+	
+	//经办人-查询
+	function _queryJbr(){
+		$('#jbrFormdata').data('bootstrapValidator').validate();
+		if(!$('#jbrFormdata').data('bootstrapValidator').isValid()){
+			return;
+		}
+		var identityCd="";
+		var idcard="";
+		var diffPlace="";
+		var acctNbr="";
+		var identityNum="";
+		var queryType="";
+		var queryTypeValue="";
+		identityCd=$("#orderIdentidiesTypeCd  option:selected").val();;
+		if(identityCd==1){
+			var identityNum = $('#sfzorderAttrIdCard').val();//证件号码
+		}else{
+			var identityNum = $('#orderAttrIdCard').val();//证件号码
+		}
+		
+		if(ec.util.isObj($.trim($("#orderIdentidiesTypeCd").val()))||ec.util.isObj($.trim($("#sfzorderAttrIdCard").val()))||ec.util.isObj($.trim($("#orderAttrIdCard").val()))){
+			if(!ec.util.isObj($.trim($("#orderIdentidiesTypeCd").val()))){
+				$.alert("提示","请选择证件类型！");
+				return false;
+			}
+			if($.trim($("#orderIdentidiesTypeCd").val())==1){
+				if(!ec.util.isObj($.trim($("#sfzorderAttrIdCard").val()))){
+					$.alert("提示","证件号码为空，无法进行查询！");
+					return false;
+				}
+			}
+			if($.trim($("#orderIdentidiesTypeCd").val())!=1){
+				if(!ec.util.isObj($.trim($("#orderAttrIdCard").val()))){
+					$.alert("提示","证件号码为空，无法进行查询！");
+					return false;
+				}
+			}
+		}
+
+		authFlag="0"; // 需要鉴权
+		if(identityCd==-1){
+			
+			acctNbr=$("#orderAttrPhoneNbr").val();
+			identityNum="";
+			identityCd="";
+		}
+		diffPlace="local";
+		areaId=OrderInfo.staff.areaId;
+		// lte进行受理地区市级验证
+		if(CONST.getAppDesc()==0&&areaId.indexOf("0000")>0){
+			$.alert("提示","省级地区无法进行定位客户,请选择市级地区！");
+			return;
+		}
+		var param = {
+				"acctNbr":acctNbr,
+				"identityCd":identityCd,
+				"identityNum":identityNum,
+				"partyName":"",
+				"custQueryType":$("#custQueryType_choose").val(),
+				"diffPlace":diffPlace,
+				"areaId" : areaId,
+				"queryType" :queryType,
+				"queryTypeValue":queryTypeValue,
+				"identidies_type":$("#orderIdentidiesTypeCd  option:selected").text()
+		};
+		$.callServiceAsHtml(contextPath+"/cust/queryCust",param, {
+			"before":function(){
+				$.ecOverlay("<strong>正在查询中，请稍等...</strong>");
+			},"always":function(){
+				//$.unecOverlay();
+			},	
+			"done" : function(response){
+				if (response.code == -2) {
+					return;
+				}
+				if(response.data.indexOf("false") ==0) {
+					$.unecOverlay();
+//					$.alert("提示","抱歉，没有定位到客户，请尝试其他客户。");
+					
+					if(!ec.util.isObj($.trim($("#orderAttrName").val()))||!ec.util.isObj($.trim($("#orderAttrAddr").val()))){
+						if(!ec.util.isObj($.trim($("#orderAttrName").val()))){
+							$.alert("提示","抱歉，未查询到经办人信息！经办人姓名为空，请完善经办人信息！");
+							return false;
+						}
+						if(!ec.util.isObj($.trim($("#orderAttrAddr").val()))){
+							$.alert("提示","抱歉，未查询到经办人信息！证件地址为空，请完善经办人信息！");
+							return false;
+						}
+					} 
+					
+						
+						if(OrderInfo.cust.custId == -1 && OrderInfo.cust.identityCd == identityCd 
+								&& OrderInfo.cust.identityNum == identityNum){
+							$.alert("提示","抱歉，未查询到经办人信息！\n 当前经办人为用户本人，请对经办人进行拍照！");
+							OrderInfo.jbr.custId = OrderInfo.cust.custId;
+							OrderInfo.jbr.identityNum = identityNum;
+							OrderInfo.jbr.identityCd = identityCd;
+							return;
+						}
+						$.alert("提示","抱歉，未查询到经办人信息！\n提交经办人信息成功。");
+						cust.jbrSubmit();
+					 return;
+				}else{
+				$.unecOverlay();
+				cust.jumpAuthflag = $(response.data).find('#jumpAuthflag').val();
+				var custInfoSize = $(response.data).find('#custInfoSize').val();
+				var custInfos = $(response.data).find('#custInfos');
+				// 使用人定位时，存在多客户的情况
+				if (custInfoSize == 1) {
+					_showJbrInfo($(response.data).find('#custInfos'));
+					
+				} 
+				
+				else if (custInfoSize > 1) {
+					_showJbrInfo(custInfos);
+				} else {
+					$.alert("提示","抱歉，未查询到经办人信息！\n提交经办人信息成功。");
+					cust.jbrSubmit();
+				}
+//				$(".userclose").off("click").on("click",function(event) {
+//					try {
+//						easyDialog.close();
+//					} catch (e) {
+//						$('#choose_multiple_user_dialog').hide();
+//						$('#overlay').hide();
+//					}
+//					authFlag="";
+//					$(".usersearchcon").hide();
+//				});
+//				if($("#custListTable").attr("custInfoSize")=="1"){
+//					$(".usersearchcon").hide();
+//				}
+			}
+			},
+			"fail":function(response){
+				$.unecOverlay();
+				$.alert("提示","查询失败，请稍后再试！");
+			}
+		});
+
+	};
+	
+	/*
+	 * 经办人人填充返回信息
+	 */
+	function _showJbrInfo(scope){
+		_choosedCustInfo = {
+				custId : $(scope).attr("custId"), //$(scope).find("td:eq(3)").text(),
+				partyName : $(scope).attr("partyName"), //$(scope).find("td:eq(0)").text(),
+				CN : $(scope).attr("CN"),
+				idCardNumber : $(scope).attr("idCardNumber"), //$(scope).find("td:eq(4)").text(),
+				identityName : $(scope).attr("identityName"),
+				areaName : $(scope).attr("areaName"),
+				areaId : $(scope).attr("areaId"),
+				identityCd :$(scope).attr("identityCd"),
+				addressStr :$(scope).attr("addressStr"),
+				norTaxPayer :$(scope).attr("norTaxPayer"),
+				segmentId :$(scope).attr("segmentId"),
+				segmentName :$(scope).attr("segmentName"),
+				custFlag :$(scope).attr("custFlag"),
+				vipLevel :$(scope).attr("vipLevel"),
+				vipLevelName :$(scope).attr("vipLevelName"),
+				accNbr:$(scope).attr("accNbr"),
+				userIdentityCd:$(scope).attr("userIdentityCd"),//使用人证件类型
+				userIdentityName:$(scope).attr("userIdentityName"),//使用人证件名称
+				userIdentityNum:$(scope).attr("userIdentityNum"),//使用人证件号码
+				accountName:$(scope).attr("accountName"),//账户名
+				userName:$(scope).attr("userName"),//使用人名
+				userCustId:$(scope).attr("userCustId"),//使用人客户id
+				isSame:$(scope).attr("isSame")//使用人名称与账户名称是否一致
+				};
+			//设置被选择标识
+			_checkUserInfo.accNbr = "";
+			_checkUserInfo.accNbr = $(scope).attr("accNbr");
+		if(_choosedCustInfo != null && _choosedCustInfo.custId){
+			var custInfo = _choosedCustInfo;
+			//将客户信息作为使用人tmpChooseUserInfo，确认后保存到OrderInfo.choosedUserInfos
+			cust.tmpJbrInfo = custInfo;
+			OrderInfo.jbr.custId = custInfo.custId;
+			if(OrderInfo.jbr.identityCd != custInfo.identityCd || OrderInfo.jbr.identityNum != custInfo.idCardNumber){
+				OrderInfo.jbr.identityCd = custInfo.identityCd;
+				OrderInfo.jbr.identityNum = custInfo.idCardNumber;
+				OrderInfo.virOlId = "";
+			}
+//			order.cust.tmpChooseUserInfo.prodId = '';
+			$('#orderAttrName').val(custInfo.partyName);
+			$('#orderAttrAddr').val(custInfo.areaName);
+			$('#orderAttrPhoneNbr').val(custInfo.accNbr);
+			$.alert("提示","经办人信息查询成功！\n请对经办人进行拍照");
+		} 
+	};
+
+	
 	return {
 		zjfk				: _zjfk,
 		viewZjfk            :_viewZjfk,
@@ -1742,7 +1933,9 @@ order.main = (function(){
 		addMember		    :_addMember,
 		removeMember		:_removeMember,
 		showMember		    :_showMember,
-		nextStep		    :_nextStep
+		nextStep		    :_nextStep,
+		queryJbr			:_queryJbr,
+		showJbrInfo			:_showJbrInfo
 	};
 })();
 

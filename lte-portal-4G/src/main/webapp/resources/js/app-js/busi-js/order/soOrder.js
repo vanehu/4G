@@ -46,7 +46,7 @@ SoOrder = (function() {
 	//提交订单节点
 	var _submitOrder = function(data) {
 		if(OrderInfo.preBefore.idPicFlag == "ON" && !OrderInfo.virOlId){
-			common.callPhotos('cust.getPicture');
+			$.alert("提示","请前往经办人页面进行实名拍照！");
 			return;
 		}
 		if(OrderInfo.actionFlag==8){//新增客户
@@ -302,18 +302,18 @@ SoOrder = (function() {
 					}
 					
 				}else if(ec.util.isObj(orderAttrName)||ec.util.isObj(orderAttrIdCard)||ec.util.isObj(orderAttrPhoneNbr)){
-					if(!ec.util.isObj(orderAttrName)){
-						$.alert("提示","经办人姓名为空，经办人姓名、经办人号码、证件号码必须同时为空或不为空，因此无法提交！");
-						return false;
-					}
-					if(!ec.util.isObj(orderAttrPhoneNbr)){
-						$.alert("提示","经办人号码为空，经办人姓名、经办人号码、证件号码必须同时为空或不为空，因此无法提交！");
-						return false;
-					}
-					if(!ec.util.isObj(orderAttrIdCard)){
-						$.alert("提示","证件号码为空，经办人姓名、经办人号码、证件号码必须同时为空或不为空，因此无法提交！");
-						return false;
-					}
+//					if(!ec.util.isObj(orderAttrName)){
+//						$.alert("提示","经办人姓名为空，经办人姓名、经办人号码、证件号码必须同时为空或不为空，因此无法提交！");
+//						return false;
+//					}
+//					if(!ec.util.isObj(orderAttrPhoneNbr)){
+//						$.alert("提示","经办人号码为空，经办人姓名、经办人号码、证件号码必须同时为空或不为空，因此无法提交！");
+//						return false;
+//					}
+//					if(!ec.util.isObj(orderAttrIdCard)){
+//						$.alert("提示","证件号码为空，经办人姓名、经办人号码、证件号码必须同时为空或不为空，因此无法提交！");
+//						return false;
+//					}
 				}
 			}
 			}
@@ -1257,19 +1257,31 @@ SoOrder = (function() {
 			OrderInfo.createCust(busiOrders);	
 		}
 		if(OrderInfo.preBefore.idPicFlag=="ON"){
-			//相同的使用人只需传同一个
-			for(var i=0;i<OrderInfo.boUserInfosArr.length;i++){
-				if(OrderInfo.boUserInfosArr[i].custId || OrderInfo.boUserInfosArr[i].custId == undefined){
-					OrderInfo.createUser(busiOrders,i);
+			if(OrderInfo.jbr.custId < -1){
+				OrderInfo.createJbr(busiOrders);
+			}
+			$(OrderInfo.choosedUserInfos).each(function(){
+				var prodId = this.prodId;
+				var custInfo = OrderInfo.getChooseUserInfo(prodId);
+				if(custInfo.custId != OrderInfo.cust.custId){
+					$(OrderInfo.choosedUserInfos).each(function(){
+						var prodId1 = this.prodId;
+						var custInfo1 = OrderInfo.getChooseUserInfo(prodId1);
+						if(custInfo1.custId == custInfo.custId){
+							return;
+						}
+						OrderInfo.createUser(busiOrders,custInfo);
+					});
+					
 				}
-				
-			}
-			
-			if(!OrderInfo.boJbrInfos){
-				$.alert("提示","经办人不能为空，请完善经办人信息！");
-				return;
-			}
-			OrderInfo.createJbr(busiOrders);
+			});
+//			for(var i=0; i<OrderInfo.choosedUserInfos.length; i++){
+//					var prodId = OrderInfo.choosedUserInfos[e].prodId;
+//					var custInfo = OrderInfo.getChooseUserInfo(prodId);
+//					if(custInfo.custId != OrderInfo.cust.custId){
+//						OrderInfo.createUser(busiOrders,i);
+//					}
+//			}
 			OrderInfo.orderData.orderList.orderListInfo.handleCustId = OrderInfo.jbr.custId;
 		}
 		
@@ -2066,6 +2078,9 @@ SoOrder = (function() {
 				$("[id=800000011_"+prodId+"_name]").each(function(){
 					var itemSpecId = "800000011";
 //					var val=$.trim($(this).val());
+					if(!OrderInfo.getChooseUserInfo(prodId)){
+						return;
+					}
 					var val = OrderInfo.getChooseUserInfo(prodId).custId;
 					if(val!=""&&val!=undefined){
 						var prodSpecItem = {
@@ -2245,7 +2260,7 @@ SoOrder = (function() {
 	};	
 	
 	//订单数据校验
-	var _checkData = function() {
+	var _checkData = function() {	
 		if(OrderInfo.actionFlag == 1 || OrderInfo.actionFlag == 6 || OrderInfo.actionFlag == 14){ //新装
 			if(OrderInfo.cust.custId==""){
 				$.alert("提示","客户信息不能为空！");
@@ -2298,6 +2313,9 @@ SoOrder = (function() {
 						var isOptional = this.isOptional;
 						var id = this.id;
 						if(isOptional == "N" && id){
+							if(OrderInfo.roleType == "Y"){
+								return;
+							}
 							var val=$.trim($("#"+id).val());
 							if(val == "" || val == undefined){
 								checkName = this.name;

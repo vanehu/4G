@@ -1,17 +1,18 @@
 
   
 <meta charset="utf-8">
+<div id="order-content">
 <input type="hidden" id="currentCT" value="${currentCT}"/><!-- 渠道类型 -->
     <form id="jbrFormdata" method="post" >
    		<div class="container-fluid">
    			<div class="row">
 				<div class="panel panel-default paneltop">
 					<div class="panel-heading">经办人信息</div>
-			<div class="panel-body">
-			<div class="form-group" id="jbrsfz">
+					<div class="panel-body">
+					<div class="form-group" id="jbrsfz">
 			
-				<div style="display:inline;"><label for="username">证件扫描</label></div>
-				<div style="display:inline;">
+					<div style="display:inline;"><label for="username">证件扫描</label></div>
+					<div style="display:inline;">
 					<ul style="list-style-type:none;display:inline;">
 		            	<li style="display:inline;"><img onClick="common.callGenerationRec('cust.getjbrGenerationInfos','1')" style=" height: 40px; margin-left: 15px;"src="${contextPath}/image/app-image/shebeisaomiao-xxhdpi_03.png"/></li>
 		            	<li id="nfc" style="display:inline;"><img onClick="common.callGenerationRec('cust.getjbrGenerationInfos','2')" style=" height: 40px; margin-left: 15px;" src="${contextPath}/image/app-image/shebeisaomiao-xxhdpi_05.png"/></li>
@@ -74,9 +75,9 @@
          </div>
          </div>
          </div>
+         
        </form>
-    
-    <nav class="navbar navbar-default navbar-fixed-bottom">
+        <nav class="navbar navbar-default navbar-fixed-bottom">
 			<div class="container-fluid">
 				<div class="btn-group btn-group-justified navbar-btn" role="group" aria-label="...">
 				<div class="btn-group" role="group" id="queryJbr">
@@ -92,6 +93,8 @@
 				</div>
 			</div>
 	 </nav>
+    </div>
+   
 <script type="text/javascript">
 //初始化经办人客户类型,证件类型
 cust.jbrvalidatorForm();
