@@ -348,7 +348,7 @@ order.prodModify = (function(){
 		}
 	};
 	
-//前置校验，app
+	//前置校验，app
 	var _preCheckBeforeOrder2 = function (serviceType,callbackFunc){
 //		var accNbr = "";
 //		if(serviceType=="28" || serviceType =="29" || serviceType =="30"){
@@ -370,14 +370,11 @@ order.prodModify = (function(){
 			},
 			"done" : function(response){
 				if(response.data.checkLevel == 0){
-					return true;
-				}else if(response.data.checkLevel == 10){
-					$.unecOverlay();
 					callbackFunc();
-					return false;
+				}else if(response.data.checkLevel == 10){
+					callbackFunc();
 				}else if(response.data.checkLevel == 20){
 					$.alert("前置校验限制",response.data.checkInfo);
-					return false;
 				}else if(response.code == 1){
 					$.alert("错误",response.data);
 					return false;
