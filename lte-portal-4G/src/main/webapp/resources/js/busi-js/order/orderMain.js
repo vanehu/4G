@@ -1669,11 +1669,12 @@ order.main = (function(){
 		
 		$("#orderUserIdentidiesTypeCd").empty();
 		var opts=document.getElementById("orderIdentidiesTypeCd");
-		for(var i=0;i<opts.options.length;i++){
-			$("#orderUserIdentidiesTypeCd").append("<option value='"+opts.options[i].value+"' >"+opts.options[i].text+"</option>");
-		//	$("#orderUserIdentidiesTypeCd").append("<option value='"+2+"' >"+ 2 +"</option>");
+		if(opts.options !=null){
+			for(var i=0;i<opts.options.length;i++){
+				$("#orderUserIdentidiesTypeCd").append("<option value='"+opts.options[i].value+"' >"+opts.options[i].text+"</option>");
+			//	$("#orderUserIdentidiesTypeCd").append("<option value='"+2+"' >"+ 2 +"</option>");
+			}
 		}
-		
 		if($.ketchup){
 			$.ketchup.hideAllErrorContainer($("#userForm"));
 		}
