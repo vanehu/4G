@@ -3116,7 +3116,7 @@ public class OrderController extends BaseController {
             try {
                 SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
 
-                if(orderBmo.verifyCustCertificate(param, request)){
+                if(orderBmo.verifyCustCertificate(param, request ,sessionStaff)){
                     Map<String, Object> orderList = (Map<String, Object>) param.get("orderList");
                     Map<String, Object> orderListInfo = (Map<String, Object>) orderList.get("orderListInfo");
                     orderListInfo.put("staffId", sessionStaff.getStaffId()); //防止前台修改

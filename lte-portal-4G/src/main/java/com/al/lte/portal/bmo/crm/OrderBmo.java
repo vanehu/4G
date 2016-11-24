@@ -794,10 +794,11 @@ public interface OrderBmo {
 
 	/**
 	 * 订单提交校验客户身份证信息
+	 * @param sessionStaff 
 	 * @return true:校验成功; false:校验失败
 	 * @throws Exception
 	 */
-	public boolean verifyCustCertificate(Map<String, Object> param, HttpServletRequest request) throws Exception;
+	public boolean verifyCustCertificate(Map<String, Object> param, HttpServletRequest request, SessionStaff sessionStaff) throws Exception;
 
 	/**
 	 * 与翼支付消费金融平台--高级实名认证

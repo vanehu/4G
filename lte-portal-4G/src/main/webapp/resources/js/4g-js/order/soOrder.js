@@ -3865,6 +3865,7 @@ SoOrder = (function() {
 		
 		//使用人信息节点
 		for(var i=0;i<OrderInfo.boUserCustInfos.length;i++){
+			OrderInfo.boUserCustInfos[i].userCustFlag = "Y";
 			busiOrder.data.boCustInfos.push(OrderInfo.boUserCustInfos[i]);
 		}
 		for(var j=0;j<OrderInfo.boUserCustIdentities.length;j++){

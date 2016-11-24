@@ -2434,9 +2434,14 @@ SoOrder = (function() {
 		var orderAttrName = OrderInfo.subHandleInfo.orderAttrName;
 		var orderAttrAddr = OrderInfo.subHandleInfo.orderAttrAddr;
 		var identityNum = OrderInfo.subHandleInfo.identityNum;
-		if(orderAttrName == null || orderAttrName == "" || orderAttrAddr == null || orderAttrAddr == "" || identityNum == null || identityNum == ""){
-			$.alert("提示","经办人信息不完整，请点击经办人的“读卡”或“查询”按钮完善经办人信息。");
-			return false ;
+		var response = $.callServiceAsJson(contextPath + "/properties/getValue", {"key": "JBR_" + OrderInfo.staff.areaId.substr(0, 3)});
+		if (response.code == "0") {
+			if (response.data == "ON" && OrderInfo.subHandleInfo.orderAttrFlag == "Y") {
+				if(orderAttrName == null || orderAttrName == "" || orderAttrAddr == null || orderAttrAddr == "" || identityNum == null || identityNum == ""){
+					$.alert("提示","经办人信息不完整，请点击经办人的“读卡”或“查询”按钮完善经办人信息。");
+					return false ;
+				}
+			}
 		}
 
 		if(OrderInfo.actionFlag == 1 || OrderInfo.actionFlag == 6 || OrderInfo.actionFlag == 14 || (OrderInfo.actionFlag==2&&offerChange.newMemberFlag)){ //新装
