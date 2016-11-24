@@ -346,8 +346,7 @@ order.cust = (function(){
 		if(identidiesTypeCd==1){
 			$("#"+id).attr("placeHolder","请输入合法身份证号码");
 			$("#"+id).attr("data-validate","validate(idCardCheck18:请输入合法身份证号码) on(blur)");
-			// 填单页面经办人读卡
-			if (id == "orderAttrIdCard") {
+			if (id == "orderAttrIdCard") {// 填单页面经办人读卡
 				$("#orderAttrReadCertBtn").show();
 				$("#orderAttrName").hide();
 				$("#orderAttrIdCard").hide();
@@ -356,7 +355,16 @@ order.cust = (function(){
 				$("#li_order_remark2 span").show();
 				$("#li_order_remark3 span").show();
 				$("#orderAttrQryBtn").hide();
-			}
+			}else if(id == "orderUserIdCard"){//使用人
+				$("#orderUserQryBtn").hide();
+				$("#orderUserReadCertBtn").show();
+				$("#orderUserName").hide();
+				$("#orderUserIdCard").hide();
+				$("#orderUserAddr").hide();
+				$("#li_order_user span").show();
+				$("#li_order_user2 span").show();
+				$("#li_order_user3 span").show();
+			};
 		}else{
 			// 填单页面经办人非身份证
 			if (id == "orderAttrIdCard") {
@@ -376,6 +384,22 @@ order.cust = (function(){
 				$("#li_order_remark3 span").hide();
 				$("#li_order_remark3 span").text("");
 				$("#orderAttrQryBtn").show();
+			}else if(id == "orderUserIdCard"){//使用人
+				$("#orderUserReadCertBtn").hide();
+				$("#orderUserName").show();
+				$("#orderUserName").val("");
+				$("#orderUserIdCard").show();
+				$("#orderUserIdCard").val("");
+				$("#orderUserAddr").show();
+				$("#orderUserAddr").val("");
+
+				$("#li_order_User span").hide();
+				$("#li_order_User span").text("");
+				$("#li_order_User2 span").hide();
+				$("#li_order_User2 span").text("");
+				$("#li_order_User3 span").hide();
+				$("#li_order_User3 span").text("");
+				$("#orderUserQryBtn").show();
 			};
 			if(identidiesTypeCd==2){
 				$("#"+id).attr("placeHolder","请输入合法军官证");
@@ -2674,6 +2698,17 @@ order.cust = (function(){
             				    photograph: encodeURIComponent(OrderInfo.handleInfo.identityPic),
             				    flag: "C"//*经办人身份证照片
             				}
+        			    ],
+        			    venderId  : OrderInfo.handleInfo.venderId,//*厂商ID
+        				srcFlag   : "REAL"//*来源标识(实名制拍照留存需传REAL)
+        			};
+        	}else{
+        		param = {
+        			    photographs: [
+        			        {
+        				        photograph: encodeURIComponent(OrderInfo.handleInfo.imageInfo),
+        				        flag: "D",//*经办人头像照片
+        				        signature:OrderInfo.handleInfo.signature}
         			    ],
         			    venderId  : OrderInfo.handleInfo.venderId,//*厂商ID
         				srcFlag   : "REAL"//*来源标识(实名制拍照留存需传REAL)

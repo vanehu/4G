@@ -53,7 +53,6 @@ import com.al.lte.portal.model.SessionStaff;
 public class OfferController extends BaseController {
 
 	@Autowired
-	@Qualifier("com.al.lte.portal.bmo.crm.OfferBmo")
 	private OfferBmo offerBmo;
 	
 	@Autowired
@@ -932,7 +931,7 @@ public class OfferController extends BaseController {
 				model.addAttribute("orderAttrFlag","Y");//Y必填
 			}
 			//判断经办人是否必填开关
-			String propertiesKey =  "AGENT_"+sessionStaff.getCurrentAreaId().substring(0,3);
+			String propertiesKey =  "JBR_"+sessionStaff.getCurrentAreaId().substring(0,3);
 			String  userFlag = propertiesUtils.getMessage(propertiesKey);
 			if(userFlag!=null && userFlag.equals("OFF")){
 				model.addAttribute("orderAttrFlag","C");//C非必填

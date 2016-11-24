@@ -3102,7 +3102,7 @@ SoOrder = (function() {
 	var _addHandleInfo = function(busiOrders, custOrderAttrs){
 		if(OrderInfo.subHandleInfo.orderAttrFlag == "Y"){
 			//经办人必填时进行经办人填充
-			if(OrderInfo.subHandleInfo.authFlag == "Y"){
+			if(OrderInfo.subHandleInfo.authFlag == "Y" || OrderInfo.subHandleInfo.orderAttrFlag == "C"){
 				//人证相符
 				if(OrderInfo.subHandleInfo.handleExist == "Y"){
 					//如果是老客户
