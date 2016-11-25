@@ -1215,11 +1215,30 @@ order.main = (function(){
 								$("#p_cust_identityCd_choose").append("<option value='"+certTypedate.certTypeCd+"' >"+certTypedate.name+"</option>");
 							}
 						}
+						_useridentidiesTypeCdChoose(($("#p_cust_identityCd_choose option[selected='selected']")),"p_cust_identityNum_choose");
+//						if(id=='p_cust_identityCd_choose'){
+//							//创建经办人证件类型选择事件
+////							$("#orderIdentidiesTypeCd option[value='1'").attr("selected", true);
+//							_useridentidiesTypeCdChoose(($("#p_cust_identityCd_choose option[selected='selected']")),"p_cust_identityNum_choose");
+//						}
 					}
+
+					
 				}
 	};	
 	
-	
+	//证件类型选择事件
+	var _useridentidiesTypeCdChoose = function(scope) {
+		var identidiesTypeCd=$(scope).val();
+//		if(identidiesTypeCd==undefined){
+//			identidiesTypeCd=$("#div_cm_identidiesType  option:selected").val();
+//		}
+		if(identidiesTypeCd==-1){
+			$("#cust_identityNum_choose_label").html("电话号码"); 
+		} else {
+			$("#cust_identityNum_choose_label").html("证件号码"); 
+		}
+	}
 
 //打开使用人弹出框
 function _showUser(prodId){		
@@ -1626,7 +1645,8 @@ function _queryJbr(){
 		queryUser          :_queryUser,
 		showChooseUserTable:_showChooseUserTable,
 		queryJbr			:_queryJbr,
-		showJbrInfo 		:_showJbrInfo
+		showJbrInfo 		:_showJbrInfo,
+		useridentidiesTypeCdChoose	:_useridentidiesTypeCdChoose
 	};
 })();
 

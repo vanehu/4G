@@ -13,8 +13,9 @@
 			
 					<div style="display:inline;"><label for="username">证件扫描</label></div>
 					<div style="display:inline;">
-					<ul style="list-style-type:none;display:inline;">
-		            	<li style="display:inline;"><img onClick="common.callGenerationRec('cust.getjbrGenerationInfos','1')" style=" height: 40px; margin-left: 15px;"src="${contextPath}/image/app-image/shebeisaomiao-xxhdpi_03.png"/></li>
+					 <ul style="list-style-type:none;display:inline;padding-left: 0;">
+					
+		            	<li style="display:inline;"><img onClick="common.callGenerationRec('cust.getjbrGenerationInfos','1')" style=" height: 40px; "src="${contextPath}/image/app-image/shebeisaomiao-xxhdpi_03.png"/></li>
 		            	<li id="nfc" style="display:inline;"><img onClick="common.callGenerationRec('cust.getjbrGenerationInfos','2')" style=" height: 40px; margin-left: 15px;" src="${contextPath}/image/app-image/shebeisaomiao-xxhdpi_05.png"/></li>
 		            	<li id="otg" style="display:inline;"><img onClick="common.callGenerationRec('cust.getjbrGenerationInfos','3')" style=" height: 40px; margin-left: 15px;" src="${contextPath}/image/app-image/otg@2x_03.png"/></li>
 		            </ul>
@@ -80,7 +81,7 @@
         <nav class="navbar navbar-default navbar-fixed-bottom">
 			<div class="container-fluid">
 				<div class="btn-group btn-group-justified navbar-btn" role="group" aria-label="...">
-				<div class="btn-group" role="group" id="queryJbr">
+				<div class="btn-group" role="group" id="queryJbr" style="display:none;">
 						<button type="button" class="btn btn-primary btn-lg" onClick="order.main.queryJbr()">
 							<span class="glyphicon glyphicon-search" aria-hidden="true"></span> 查询
 						</button>

@@ -14,14 +14,13 @@ common = (function($) {
 		var prodIdInfosParams=JSON.stringify(prodIdInfos);//选中产品信息
 		var urlParams=$.parseJSON(JSON.stringify(url));//地址
 		OrderInfo.actionFlag=urlParams.actionFlag;
-		if(OrderInfo.actionFlag!=111 && OrderInfo.actionFlag!=112){//非宽带融合和宽带甩单去除四个可能带等号的加密字段
-			var myCust1=$.parseJSON(custInfosParams);
-			  myCust1.CN="";
-			  myCust1.certNum="";
-			  myCust1.address="";			  
-			  var myCust=JSON.stringify(myCust1);//四个加密字段可能值不合法，传入后台会报400错误，故去掉该值。
-			  custInfosParams=myCust;
-		}		
+        //去除四个可能带等号的加密字段
+	    var myCust1=$.parseJSON(custInfosParams);
+		myCust1.CN="";
+		myCust1.certNum="";
+		myCust1.address="";			  
+		var myCust=JSON.stringify(myCust1);//四个加密字段可能值不合法，传入后台会报400错误，故去掉该值。
+		custInfosParams=myCust;	
 		if(ec.util.isObj(prodIdInfos)){
 			order.prodModify.choosedProdInfo=$.parseJSON(prodIdInfosParams);
 		}
@@ -65,7 +64,7 @@ common = (function($) {
 	
 	//客户定位后，回传客户信息
 	var _callCustInfo = function(custInfos){
-		if(OrderInfo.actionFlag!=111){
+		if(OrderInfo.actionFlag!=111 && OrderInfo.actionFlag!=112){
 			var custInfosParams=JSON.stringify(custInfos);//客户定位信息
 			if(ec.util.isObj(custInfos)){
 				OrderInfo.cust=$.parseJSON(custInfosParams);
@@ -126,25 +125,33 @@ common = (function($) {
 		}else{
 			var identityNum = $('#orderAttrIdCard').val();//证件号码
 		}
-		
-		if(!OrderInfo.jbr.custId || !identityNum || identityNum != OrderInfo.jbr.identityNum) {
-			if(identityCd!=1){
-				OrderInfo.virOlId = "";
-				$.alert("提示","请先进行经办人信息查询！");
-				return;
-			} 
+		if(!OrderInfo.jbr.custId) {
+			OrderInfo.virOlId = "";
+			$.alert("提示","请先进行经办人信息查询！");
+			return;
+		}
+		if(ec.util.isObj(identityNum) && identityNum != OrderInfo.jbr.identityNum){
+			OrderInfo.virOlId = "";
+			$.alert("提示","经办人信息更改，请先进行经办人信息查询！");
+			return;
 		}
 		var arr=new Array(1);
 		var custIdentityPic = OrderInfo.cust.identityPic;
-		var userIdentityPic = OrderInfo.user.identityPic;
+		
 		var jbrIdentityPic = OrderInfo.jbr.identityPic;
 		var json = "{\"picturesInfo\":[";
 		if(custIdentityPic != undefined){
 			json = json + "{\"orderInfo\":\"" + OrderInfo.cust.identityPic + "\",\"picFlag\":\"A\",\"custName\":\"" + OrderInfo.cust.partyName + "\",\"certType\":\"" + OrderInfo.cust.identityCd + "\",\"certNumber\":\"" + OrderInfo.cust.identityNum + "\",\"accNbr\":\"" + OrderInfo.cust.telNumber +"\"},";
 		}
-		if(userIdentityPic != undefined){
-			json = json + "{\"orderInfo\":\"" + OrderInfo.user.identityPic + "\",\"picFlag\":\"B\",\"custName\":\"" + OrderInfo.user.partyName + "\",\"certType\":\"" + OrderInfo.user.identityCd + "\",\"certNumber\":\"" + OrderInfo.user.identityNum + "\",\"accNbr\":\"" + OrderInfo.user.telNumber +"\"},";
+		for(var i=0; i<OrderInfo.choosedUserInfos.length; i++){
+			var prodId = OrderInfo.choosedUserInfos[i].prodId;
+			var custInfo = OrderInfo.getChooseUserInfo(prodId);
+			var userIdentityPic = custInfo.identityPic;
+			if(userIdentityPic != undefined){
+				json = json + "{\"orderInfo\":\"" + userIdentityPic + "\",\"picFlag\":\"B\",\"custName\":\"" + custInfo.partyName + "\",\"certType\":\"" + custInfo.identityCd + "\",\"certNumber\":\"" + custInfo.identityNum + "\",\"accNbr\":\"" + custInfo.telNumber +"\"},";
+			}
 		}
+	
 		if(jbrIdentityPic != undefined){
 			json = json + "{\"orderInfo\":\"" + OrderInfo.jbr.identityPic + "\",\"picFlag\":\"C\",\"custName\":\"" + partyName + "\",\"certType\":\"" + identityCd + "\",\"certNumber\":\"" + identityNum + "\",\"accNbr\":\"" + telNumber +"\"},";
 		}
@@ -294,6 +301,7 @@ common = (function($) {
 		if(order.calcharge.returnFlag==false){//支付成功，禁止返回
 			return;
 		}
+		
 //		alert("OrderInfo.actionFlag="+OrderInfo.actionFlag+"---OrderInfo.order.step="+OrderInfo.order.step+"---OrderInfo.returnFlag="+OrderInfo.returnFlag);
 		if($(".modal-backdrop").length>0 && $("#overlay-modal").length>0){
 			$.unecOverlay();//网络出现故障或手机出现故障时按返回关闭“加载中”提示框
@@ -309,6 +317,13 @@ common = (function($) {
 			if("disabled"==$("#toCharge").attr("disabled")){
 				return;
 			}
+		}
+		if(OrderInfo.jbrPageFlag == "Y"){
+			OrderInfo.jbrPageFlag = "N";
+			$("#order-content").show();
+			$("#terminalMain").show();
+			$("#jbr").hide();
+			return;
 		}
 		if(OrderInfo.actionFlag==1){
 			if(OrderInfo.order.step==3){
@@ -383,6 +398,119 @@ common = (function($) {
 			return;
 		}
 		if(OrderInfo.actionFlag==112){//融合新装
+			if(OrderInfo.order.step==1){
+				_callCloseWebview();
+				return;
+			}else if(OrderInfo.order.step==2){
+				if(OrderInfo.returnFlag=="add"){
+					$("#all_prod").show();
+					$("#page_kd").hide();
+					$("#page_gh").hide();
+					$("#page_gc").hide();
+					OrderInfo.returnFlag="";
+					return;
+				}else if(OrderInfo.returnFlag=="kd" || OrderInfo.returnFlag=="gh" || OrderInfo.returnFlag=="gc"){
+					$("#page-add_"+OrderInfo.returnFlag).show();
+					$("#searchProd"+"_"+OrderInfo.returnFlag).hide();
+					OrderInfo.returnFlag="add";
+					return;
+				}else if(OrderInfo.returnFlag=="_kd" || OrderInfo.returnFlag=="_gh" || OrderInfo.returnFlag=="_gc"){
+					$("#page-add"+OrderInfo.returnFlag).show();
+					$("#searchADD"+OrderInfo.returnFlag).hide();
+					OrderInfo.returnFlag="add";
+					return;
+				}
+				var boProdAns = OrderInfo.boProdAns;
+				//释放预占的号码
+				if(boProdAns.length>0){
+					for(var n=0;n<boProdAns.length;n++){
+						if(boProdAns[n].idFlag){
+							continue;
+						}
+						var param = {
+								numType : 1,
+								numValue : boProdAns[n].accessNumber
+						};
+						$.callServiceAsJson(contextPath+"/app/mktRes/phonenumber/releaseErrorNum", param, {
+							"done" : function(){
+							}
+						});
+					}
+				}
+				$("#addSecondaryCard").removeClass("font-secondary").addClass("font-default");
+				$("#addSecondaryCard").attr("onclick","order.phoneNumber.showSecondaryCardModalData()");
+				$(".PhoneNumLi").remove();
+				$("#page_kd").empty();
+				$("#page_gh").empty();
+				$("#page_gc").empty();
+				$("#nav-tab-2").removeClass("active in");
+		    	$("#nav-tab-1").addClass("active in");
+		    	$("#tab2_li").removeClass("active");
+		    	$("#tab1_li").addClass("active");
+		    	$("#fk").removeClass("active");
+				$("#tc").addClass("active");
+				OrderInfo.order.step=1;
+				$("#phonenumber-list").empty();
+				$("#offer").show();
+				order.amalgamation.searchPack("all","","1000");
+				return;
+			}else if(OrderInfo.order.step==3){
+				$("#nav-tab-3").removeClass("active in");
+		    	$("#nav-tab-2").addClass("active in");
+		    	$("#tab3_li").removeClass("active");
+		    	$("#tab2_li").addClass("active");
+		    	$("#cx").removeClass("active");
+				$("#fk").addClass("active");
+				OrderInfo.order.step=2;
+				return;
+			}else if(OrderInfo.order.step==4){
+				var boProd2Tds = OrderInfo.boProd2Tds;
+				//取消订单时，释放被预占的UIM卡
+				if(boProd2Tds.length>0){
+					for(var n=0;n<boProd2Tds.length;n++){
+						var param = {
+								numType : 2,
+								numValue : boProd2Tds[n].terminalCode
+						};
+						$.callServiceAsJson(contextPath+"/app/mktRes/phonenumber/releaseErrorNum", param, {
+							"done" : function(){}
+						});
+					}
+				}
+				$("#nav-tab-4").removeClass("active in");
+		    	$("#nav-tab-3").addClass("active in");
+		    	$("#tab4_li").removeClass("active");
+		    	$("#tab3_li").addClass("active");
+		    	$("#qt").removeClass("active");
+				$("#cx").addClass("active");
+				OrderInfo.order.step=3;
+				return;
+			}else if(OrderInfo.order.step==5){
+				$("#nav-tab-5").removeClass("active in");
+		    	$("#nav-tab-4").addClass("active in");
+		    	$("#tab5_li").removeClass("active");
+		    	$("#tab4_li").addClass("active");
+		    	$("#jd").removeClass("active");
+				$("#qt").addClass("active");
+				OrderInfo.order.step=4;
+				$("#orderContentDiv").show();
+				$("#orderConfirmDiv").hide();
+				OrderInfo.orderData.orderList.custOrderList[0].busiOrder = [];
+				OrderInfo.resetSeq(); //重置序列
+				SoOrder.delOrder();
+				return;
+			}else if(OrderInfo.order.step==6){
+				if(OrderInfo.returnFlag=="hz"){
+					$("#order-print").hide();
+					$("#nav-tab-6").addClass("active in");
+					OrderInfo.returnFlag="";
+					return;
+				}
+				$("#nav-tab-6").removeClass("active in");
+		    	$("#nav-tab-5").addClass("active in");
+				OrderInfo.order.step=5;
+				return;
+			}
 //			$.confirm("确认","确定要取消该订单吗？",{
 //				yes:function(){
 					//TODO　may initialize something;				

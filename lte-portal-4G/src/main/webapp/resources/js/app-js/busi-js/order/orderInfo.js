@@ -65,6 +65,8 @@ OrderInfo = (function() {
 	
 	var _certTypedates = new Array();
 	
+	var _jbrPageFlag = "N";//经办人页面标识 Y为经办人页面 N为其它页面
+	
 	var _cust = { //保存客户信息
 		custId : "",
 		partyName : "",
@@ -336,14 +338,14 @@ OrderInfo = (function() {
 		//使用人证件节点
 		var syrzj = {
 			identidiesTypeCd : custInfo.identityCd, //证件类型
-			identityNum : custInfo.identityNum, //证件号码
+			identityNum : custInfo.idCardNumber, //证件号码
 			isDefault : "Y", //是否首选
 			state : "ADD",  //状态
-//			identidiesPic : "" //证件照片	
+			identidiesPic : custInfo.identityPic //证件照片	
 		};
-		if(!custInfo.identityPic){
-			syrzj.identidiesPic = custInfo.identityPic;
-		}
+//		if(!custInfo.identityPic){
+//			syrzj.identidiesPic = custInfo.identityPic;
+//		}
 		busiOrder.data.boCustInfos.push(syr);
 		busiOrder.data.boCustIdentities.push(syrzj);
 		busiOrders.push(busiOrder);
@@ -1445,6 +1447,7 @@ OrderInfo = (function() {
 		boUserIdentitiesArr 	: _boUserIdentitiesArr,
 		createUser			   :_createUser,
 		certTypedates			:_certTypedates,
-		user					:_user
+		user					:_user,
+		jbrPageFlag				:_jbrPageFlag
 	};
 })();

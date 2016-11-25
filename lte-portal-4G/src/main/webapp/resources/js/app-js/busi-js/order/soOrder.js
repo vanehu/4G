@@ -1260,28 +1260,55 @@ SoOrder = (function() {
 			if(OrderInfo.jbr.custId < -1){
 				OrderInfo.createJbr(busiOrders);
 			}
-			$(OrderInfo.choosedUserInfos).each(function(){
-				var prodId = this.prodId;
-				var custInfo = OrderInfo.getChooseUserInfo(prodId);
-				if(custInfo.custId != OrderInfo.cust.custId){
-					$(OrderInfo.choosedUserInfos).each(function(){
-						var prodId1 = this.prodId;
-						var custInfo1 = OrderInfo.getChooseUserInfo(prodId1);
-						if(custInfo1.custId == custInfo.custId){
-							return;
+//			$(OrderInfo.choosedUserInfos).each(function(){
+//				var prodId = this.prodId;
+//				var custInfo = OrderInfo.getChooseUserInfo(prodId);
+//				if(custInfo.custId != OrderInfo.cust.custId){
+//					$(OrderInfo.choosedUserInfos).each(function(){
+//						var prodId1 = this.prodId;
+//						var custInfo1 = OrderInfo.getChooseUserInfo(prodId1);
+//						if(custInfo1.custId == custInfo.custId){
+//							return;
+//						}
+//						if(custInfo1.identityCd == custInfo.identityCd && custInfo1.identityNum == custInfo.identityNum){
+//							return;
+//						}
+//					});
+//					OrderInfo.createUser(busiOrders,custInfo);
+//				}
+//			});
+			var isNeedCreate = false;
+			for(var i=0; i<OrderInfo.choosedUserInfos.length; i++){
+					var prodId = OrderInfo.choosedUserInfos[i].prodId;
+					var custInfo = OrderInfo.getChooseUserInfo(prodId);
+					if(custInfo.custId != OrderInfo.cust.custId){
+						isNeedCreate = true;
+						for(var j=0; j<OrderInfo.choosedUserInfos.length; j++){
+							if(i==j){
+								continue;
+							}
+							var prodId1 = OrderInfo.choosedUserInfos[j].prodId;
+							var custInfo1 = OrderInfo.getChooseUserInfo(prodId1);
+							if(custInfo1.custId == custInfo.custId){
+								isNeedCreate = false;
+								break;
+							}
+							if(custInfo1.identityCd == custInfo.identityCd && custInfo1.identityNum == custInfo.identityNum){
+								isNeedCreate = false;
+								custInfo1.custId = custInfo.custId
+								OrderInfo.updateChooseUserInfos(prodId1, custInfo1);
+								break;
+							}
+							
 						}
-						OrderInfo.createUser(busiOrders,custInfo);
-					});
+						if(isNeedCreate || i==0){
+//							custInfo.custId = OrderInfo.SEQ.instSeq--;
+//							OrderInfo.updateChooseUserInfos(prodId, custInfo);
+							OrderInfo.createUser(busiOrders,custInfo);
+						}
+					}
 					
-				}
-			});
-//			for(var i=0; i<OrderInfo.choosedUserInfos.length; i++){
-//					var prodId = OrderInfo.choosedUserInfos[e].prodId;
-//					var custInfo = OrderInfo.getChooseUserInfo(prodId);
-//					if(custInfo.custId != OrderInfo.cust.custId){
-//						OrderInfo.createUser(busiOrders,i);
-//					}
-//			}
+			}
 			OrderInfo.orderData.orderList.orderListInfo.handleCustId = OrderInfo.jbr.custId;
 		}
 		

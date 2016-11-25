@@ -614,14 +614,27 @@ cust = (function(){
 								_obj.append("<option value='"+certTypedate.certTypeCd+"' >"+certTypedate.name+"</option>");
 							}
 						}
+						if(OrderInfo.preBefore.idPicFlag=="ON"){//实名拍照省份开关为开
+							$("#photo").show();
+							$("#queryJbr").show();
+							OrderInfo.jbr.custId = OrderInfo.cust.custId;
+							OrderInfo.jbr.partyName = OrderInfo.cust.partyName;
+							OrderInfo.jbr.telNumber = OrderInfo.cust.telNumber;
+							OrderInfo.jbr.addressStr = OrderInfo.cust.addressStr;
+							OrderInfo.jbr.identityCd = OrderInfo.cust.identityCd;
+							OrderInfo.jbr.mailAddressStr = OrderInfo.cust.mailAddressStr;
+							OrderInfo.jbr.identityPic = OrderInfo.cust.identityPic;
+							OrderInfo.jbr.identityNum = OrderInfo.cust.identityNum;
+								
+						}
 						//jquery mobile 需要刷新才能生效
 //						_obj.selectmenu().selectmenu('refresh');
-						if(id=='orderIdentidiesTypeCd'){
-							//创建经办人证件类型选择事件
-//							$("#orderIdentidiesTypeCd option[value='1'").attr("selected", true);
-//							_jbridentidiesTypeCdChoose($("#"+id).children(":first-child"),"orderAttrIdCard");
-							_jbridentidiesTypeCdChoose(($("#" + id + " option[selected='selected']")),"orderAttrIdCard",_partyTypeCd);
-						}
+//						if(id=='orderIdentidiesTypeCd'){
+//							//创建经办人证件类型选择事件
+////							$("#orderIdentidiesTypeCd option[value='1'").attr("selected", true);
+////							_jbridentidiesTypeCdChoose($("#"+id).children(":first-child"),"orderAttrIdCard");
+//							_jbridentidiesTypeCdChoose(($("#" + id + " option[selected='selected']")),"orderAttrIdCard",_partyTypeCd);
+//						}
 					}
 				}
 	};
@@ -643,8 +656,11 @@ cust = (function(){
 //				OrderInfo.jbr.identityPic = OrderInfo.cust.identityPic;
 //				OrderInfo.jbr.custId = OrderInfo.cust.custId;
 //			}
+			OrderInfo.virOlId = "";
+			OrderInfo.jbr.custId ="";
 			cust.clearJbrForm();
 			OrderInfo.virOlId = "";
+			OrderInfo.jbr.identityPic = undefined;
 //			$('#jbrFormdata').data('bootstrapValidator').enableFieldValidators("orderAttrIdCard",true,"sfzorderAttrIdCard");
 		}else{
 			$("#jbrsfz").hide();
@@ -658,41 +674,7 @@ cust = (function(){
 			OrderInfo.jbr.identityPic = undefined;
 //			$('#jbrFormdata').data('bootstrapValidator').enableFieldValidators("orderAttrIdCard",true,"orderAttrIdCard");
 		}
-		if(OrderInfo.preBefore.idPicFlag=="ON"){//实名拍照省份开关为开
-			$("#photo").show();
-			var cardNumber ="";
-			OrderInfo.jbr.custId = OrderInfo.cust.custId;
-			OrderInfo.jbr.partyName = OrderInfo.cust.partyName;
-			OrderInfo.jbr.telNumber = OrderInfo.cust.telNumber;
-			OrderInfo.jbr.addressStr = OrderInfo.cust.addressStr;
-			OrderInfo.jbr.identityCd = OrderInfo.cust.identityCd;
-			OrderInfo.jbr.mailAddressStr = OrderInfo.cust.mailAddressStr;
-			OrderInfo.jbr.identityPic = OrderInfo.cust.identityPic;
-			OrderInfo.jbr.identityNum = cardNumber;
-//			if(partyTypeCd==1){//公众客户 经办人默认为本人
-//				if(OrderInfo.cust.custId == "-1"){
-//					cardNumber = OrderInfo.cust.identityNum;
-//				} else {
-//					cardNumber = OrderInfo.cust.idCardNumber;
-//					
-//				}
-//				if(OrderInfo.cust.identityCd==1){
-//					$("#sfzorderAttrIdCard").val(cardNumber);
-//					OrderInfo.jbr.identityPic = OrderInfo.cust.identityPic;
-//					
-////					$('#jbrFormdata').data('bootstrapValidator').enableFieldValidators("orderAttrIdCard",true,"sfzorderAttrIdCard");
-//				}else{
-//					$("#orderAttrIdCard").val(cardNumber);
-//					
-////					$('#jbrFormdata').data('bootstrapValidator').enableFieldValidators("orderAttrIdCard",true,"orderAttrIdCard");
-//				}
-//				$("#orderAttrAddr").val(OrderInfo.cust.addressStr);
-//				$("#orderAttrName").val(OrderInfo.cust.partyName);
-//				$("#orderAttrPhoneNbr").val(OrderInfo.cust.accNbr);
-				
-				
-//			}
-		}
+		
 	};
 	
 	//翼销售-使用人-客户类型选择事件
@@ -1054,6 +1036,7 @@ cust = (function(){
 	var _getPicture=function(olId,photosBase64){
 		$("#photos").attr("src","data:image/jpg;base64,"+photosBase64);
 		OrderInfo.virOlId = olId;
+		mktRes.terminal.closeJBR();
 	};
 	
 	var _getGenerationInfos=function(name,idcard,address,identityPic){
@@ -2396,6 +2379,7 @@ cust = (function(){
 				order.broadband.jbrPictureName=picturesJson.picturesInfo[i].fileName;
 			}
 		}	
+		order.broadband.haveCallPhote=true;
 		OrderInfo.virOlId = olId;
 	};
 	

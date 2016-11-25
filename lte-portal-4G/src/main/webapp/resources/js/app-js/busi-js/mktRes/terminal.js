@@ -864,6 +864,7 @@ mktRes.terminal = (function($){
 	
 	//显示经办人
 	var _showJBR=function(){
+		OrderInfo.jbrPageFlag = "Y";
 		$("#order-content").hide();//办号卡
 		$("#terminalMain").hide();//购手机
 		$("#jbr").show();//显示经办人
@@ -879,17 +880,19 @@ mktRes.terminal = (function($){
 		}
 		var orderAttrAddr = $.trim($("#orderAttrAddr").val()); //地址
 		var orderAttrPhoneNbr = $.trim($("#orderAttrPhoneNbr").val()); //联系人号码
-		if("1"!=orderIdentidiesTypeCd){
-			if(OrderInfo.jbr.identityCd != orderIdentidiesTypeCd || OrderInfo.jbr.identityNum != orderAttrIdCard){
-				OrderInfo.virOlId = "";
-				$.alert("提示","证件信息更改，请重新查询经办人信息！");
+		if(OrderInfo.preBefore.idPicFlag=="ON"){
+			if("1"!=orderIdentidiesTypeCd){
+				if(OrderInfo.jbr.identityCd != orderIdentidiesTypeCd || OrderInfo.jbr.identityNum != orderAttrIdCard){
+					OrderInfo.virOlId = "";
+					$.alert("提示","证件信息更改，请重新查询经办人信息！");
+					return;
+				}
+			}
+			
+			if(!OrderInfo.virOlId){
+				$.alert("提示","请进行经办人头像拍照！");
 				return;
 			}
-		}
-		
-		if(!OrderInfo.virOlId){
-			$.alert("提示","请进行经办人头像拍照！");
-			return;
 		}
 //		if(ec.util.isObj(orderAttrName)||ec.util.isObj(orderAttrIdCard)||ec.util.isObj(orderAttrPhoneNbr)){
 //			if(!ec.util.isObj(orderAttrName)){
@@ -908,6 +911,7 @@ mktRes.terminal = (function($){
 //		if("1"==orderIdentidiesTypeCd && ($("#orderAttrName").val() != OrderInfo.cust.partyName)){
 //			order.main.queryJbr();
 //		}
+		OrderInfo.jbrPageFlag = "N";
 		$("#order-content").show();
 		$("#terminalMain").show();
 		$("#jbr").hide();
