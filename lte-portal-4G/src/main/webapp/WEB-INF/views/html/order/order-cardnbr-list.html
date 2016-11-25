@@ -35,7 +35,7 @@
     <tbody id="dTbody">
     </tbody>
 </table>
-<!-- 备注-->
+<!-- 备注
 <div id="beizhu">
 <div class="height18"></div>
 <h5 class="s_title">订单备注</h5>
@@ -46,6 +46,16 @@
   </li>
 </ul>
 </div>
+-->
+
+<!--购物车订单备注展示-->
+<div class="height18"></div>
+<div id="orderRemarkDiv">
+	<@block name="remark">
+		<#include "/order/order-remark.html" /> 
+	</@block>
+</div>
+
 <!--购物车订单属性展示-->
 <div id="orderAttrDiv">
 	<@block name="orderAttr">
