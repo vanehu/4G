@@ -14,8 +14,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import net.sf.json.JSONArray;
-
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
@@ -56,6 +54,8 @@ import com.al.lte.portal.common.MySimulateData;
 import com.al.lte.portal.common.StringUtil;
 import com.al.lte.portal.common.SysConstant;
 import com.al.lte.portal.model.SessionStaff;
+
+import net.sf.json.JSONArray;
 
 /**
  * 营销资源控制层
@@ -439,10 +439,13 @@ public class MktResController extends BaseController {
 			return super.failedStr(model, ErrorCode.PHONENUM_LIST, e, param);
 		}
 		model.addAllAttributes(param);
+		if(param.get("enter")!=null){
+			return "/app/order_new/phonenumber-list";//号卡新装
+		}
 		//if(queryFlag.equals("1")){
 		//	return "/order/reserve-phonenumber-list";
 		//}else{
-			return "/app/mktRes/phonenumber-list";
+			return "/app/mktRes/phonenumber-list";//购手机
 	//	}
 	}
 	
@@ -1458,6 +1461,179 @@ public class MktResController extends BaseController {
 		return jsonResponse;
 	}
 	
+	/**
+	 * 翼销售宽带融合-标准地址查询
+	 * @param param
+	 * @param flowNum
+	 * @param response
+	 * @return
+	 */
+	@RequestMapping(value = "/standaddress", method = RequestMethod.POST)
+	@ResponseBody
+	public JsonResponse queryStandaddress(@RequestBody Map<String, Object> param,
+			@LogOperatorAnn String flowNum, HttpServletResponse response) {
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils
+				.getSessionAttribute(super.getRequest(),
+						SysConstant.SESSION_KEY_LOGIN_STAFF);
+        Map<String, Object> rMap = null;
+        JsonResponse jsonResponse = null;
+        try {
+            rMap = mktResBmo.queryStandaddress(param, flowNum, sessionStaff);
+            if (rMap != null && ResultCode.R_SUCCESS.equals(MapUtils.getString(rMap, "code"))) {
+                jsonResponse = super.successed(rMap, ResultConstant.SUCCESS.getCode());
+            } else {
+                jsonResponse = super.failed(ErrorCode.STAND_ADDRESS, rMap, param);
+            }
+        } catch (Exception e) {
+            jsonResponse = super.failed(ErrorCode.STAND_ADDRESS, e, param);
+        }
+        return jsonResponse;
+	}
+	
+	/**
+	 * 宽带融合查询资源预占
+	 * @param param
+	 * @param flowNum
+	 * @param response
+	 * @return
+	 */
+	@RequestMapping(value = "/rescapability", method = RequestMethod.POST)
+	@ResponseBody
+	public JsonResponse queryRescapability(@RequestBody Map<String, Object> param,
+			@LogOperatorAnn String flowNum, HttpServletResponse response) {
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils
+				.getSessionAttribute(super.getRequest(),
+						SysConstant.SESSION_KEY_LOGIN_STAFF);
+        Map<String, Object> rMap = null;
+        JsonResponse jsonResponse = null;
+        try {
+            rMap = mktResBmo.queryRescapability(param, flowNum, sessionStaff);
+            if (rMap != null && ResultCode.R_SUCCESS.equals(MapUtils.getString(rMap, "code"))) {
+                jsonResponse = super.successed(rMap, ResultConstant.SUCCESS.getCode());
+            } else {
+                jsonResponse = super.failed(ErrorCode.RESOURCE_ABILITY, rMap, param);
+            }
+        } catch (Exception e) {
+            jsonResponse = super.failed(ErrorCode.RESOURCE_ABILITY, e, param);
+        }
+        return jsonResponse;
+	}	
+	
+	/**
+	 * 宽带融合-终端预判
+	 * @param param
+	 * @param flowNum
+	 * @param response
+	 * @return
+	 */
+	@RequestMapping(value = "/terminaltype", method = RequestMethod.POST)
+	@ResponseBody
+	public JsonResponse queryTerminaltype(@RequestBody Map<String, Object> param,
+			@LogOperatorAnn String flowNum, HttpServletResponse response) {
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils
+				.getSessionAttribute(super.getRequest(),
+						SysConstant.SESSION_KEY_LOGIN_STAFF);
+        Map<String, Object> rMap = null;
+        JsonResponse jsonResponse = null;
+        try {
+            rMap = mktResBmo.queryTerminaltype(param, flowNum, sessionStaff);
+            if (rMap != null && ResultCode.R_SUCCESS.equals(MapUtils.getString(rMap, "code"))) {
+                jsonResponse = super.successed(rMap, ResultConstant.SUCCESS.getCode());
+            } else {
+                jsonResponse = super.failed(ErrorCode.TERMINAL_TYPE, rMap, param);
+            }
+        } catch (Exception e) {
+            jsonResponse = super.failed(ErrorCode.TERMINAL_TYPE, e, param);
+        }
+        return jsonResponse;
+	}	
+	
+	/**
+	 * 宽带融合-号码资源查询
+	 * @param param
+	 * @param flowNum
+	 * @param response
+	 * @return
+	 */
+	@RequestMapping(value = "/number", method = RequestMethod.POST)
+	@ResponseBody
+	public JsonResponse queryNumber(@RequestBody Map<String, Object> param,
+			@LogOperatorAnn String flowNum, HttpServletResponse response) {
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils
+				.getSessionAttribute(super.getRequest(),
+						SysConstant.SESSION_KEY_LOGIN_STAFF);
+        Map<String, Object> rMap = null;
+        JsonResponse jsonResponse = null;
+        try {
+            rMap = mktResBmo.queryNumber(param, flowNum, sessionStaff);
+            if (rMap != null && ResultCode.R_SUCCESS.equals(MapUtils.getString(rMap, "code"))) {
+                jsonResponse = super.successed(rMap, ResultConstant.SUCCESS.getCode());
+            } else {
+                jsonResponse = super.failed(ErrorCode.QUERY_NUMBER, rMap, param);
+            }
+        } catch (Exception e) {
+            jsonResponse = super.failed(ErrorCode.QUERY_NUMBER, e, param);
+        }
+        return jsonResponse;
+	}	
+	
+	/**
+	 * 宽带融合-号码资源预占、释放
+	 * @param param
+	 * @param flowNum
+	 * @param response
+	 * @return
+	 */
+	@RequestMapping(value = "/numberrequest", method = RequestMethod.POST)
+	@ResponseBody
+	public JsonResponse numberRequest(@RequestBody Map<String, Object> param,
+			@LogOperatorAnn String flowNum, HttpServletResponse response) {
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils
+				.getSessionAttribute(super.getRequest(),
+						SysConstant.SESSION_KEY_LOGIN_STAFF);
+        Map<String, Object> rMap = null;
+        JsonResponse jsonResponse = null;
+        try {
+            rMap = mktResBmo.numberRequest(param, flowNum, sessionStaff);
+            if (rMap != null && ResultCode.R_SUCCESS.equals(MapUtils.getString(rMap, "code"))) {
+                jsonResponse = super.successed(rMap, ResultConstant.SUCCESS.getCode());
+            } else {
+                jsonResponse = super.failed(ErrorCode.NUMBER_REQUEST, rMap, param);
+            }
+        } catch (Exception e) {
+            jsonResponse = super.failed(ErrorCode.NUMBER_REQUEST, e, param);
+        }
+        return jsonResponse;
+	}
+	
+	/**
+	 * 宽带融合-账号-接入号-密码生成
+	 * @param param
+	 * @param flowNum
+	 * @param response
+	 * @return
+	 */
+	@RequestMapping(value = "/accountrequest", method = RequestMethod.POST)
+	@ResponseBody
+	public JsonResponse accountRequest(@RequestBody Map<String, Object> param,
+			@LogOperatorAnn String flowNum, HttpServletResponse response) {
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils
+				.getSessionAttribute(super.getRequest(),
+						SysConstant.SESSION_KEY_LOGIN_STAFF);
+        Map<String, Object> rMap = null;
+        JsonResponse jsonResponse = null;
+        try {
+            rMap = mktResBmo.accountRequest(param, flowNum, sessionStaff);
+            if (rMap != null && ResultCode.R_SUCCESS.equals(MapUtils.getString(rMap, "code"))) {
+                jsonResponse = super.successed(rMap, ResultConstant.SUCCESS.getCode());
+            } else {
+                jsonResponse = super.failed(ErrorCode.ACCOUNT_REQUEST, rMap, param);
+            }
+        } catch (Exception e) {
+            jsonResponse = super.failed(ErrorCode.ACCOUNT_REQUEST, e, param);
+        }
+        return jsonResponse;
+	}
 	/**
      * 客户端前台拍照上传服务
      * @param paramMap
