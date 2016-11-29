@@ -220,7 +220,7 @@ SoOrder = (function() {
 		if(_setOfferType()){
 			itemValue="Y";
 		}
-		if(OrderInfo.preBefore.idPicFlag == "ON"){
+//		if(OrderInfo.preBefore.idPicFlag == "ON"){
 			custOrderAttrs.push({
 				itemSpecId : CONST.BUSI_ORDER_ATTR.VIROLID,//虚拟订单号
 				value : OrderInfo.virOlId
@@ -230,26 +230,27 @@ SoOrder = (function() {
 				value : OrderInfo.curIp
 			});
 			
-		} else {
-			if(ec.util.isObj(OrderInfo.virOlId)){
-				custOrderAttrs.push({
-					itemSpecId : CONST.BUSI_ORDER_ATTR.VIROLID,//虚拟订单号
-					value : OrderInfo.virOlId
-				});
-				custOrderAttrs.push({ //业务类型
-					itemSpecId : CONST.BUSI_ORDER_ATTR.CURIP,
-					value : OrderInfo.curIp
-				});
-			}
-			custOrderAttrs.push({
-				itemSpecId : CONST.BUSI_ORDER_ATTR.THRETOFOUR_ITEM,//3转4标志
-				value : itemValue
-			});
-			custOrderAttrs.push({ //业务类型
-				itemSpecId : CONST.BUSI_ORDER_ATTR.BUSITYPE_FLAG,
-				value : OrderInfo.busitypeflag
-			});
-		}
+//		} 
+//		else {
+//			if(ec.util.isObj(OrderInfo.virOlId)){
+//				custOrderAttrs.push({
+//					itemSpecId : CONST.BUSI_ORDER_ATTR.VIROLID,//虚拟订单号
+//					value : OrderInfo.virOlId
+//				});
+//				custOrderAttrs.push({ //业务类型
+//					itemSpecId : CONST.BUSI_ORDER_ATTR.CURIP,
+//					value : OrderInfo.curIp
+//				});
+//			}
+//			custOrderAttrs.push({
+//				itemSpecId : CONST.BUSI_ORDER_ATTR.THRETOFOUR_ITEM,//3转4标志
+//				value : itemValue
+//			});
+//			custOrderAttrs.push({ //业务类型
+//				itemSpecId : CONST.BUSI_ORDER_ATTR.BUSITYPE_FLAG,
+//				value : OrderInfo.busitypeflag
+//			});
+//		}
 		
 		
 		OrderInfo.orderData.orderList.orderListInfo.custOrderType = OrderInfo.busitypeflag;
@@ -305,34 +306,35 @@ SoOrder = (function() {
 				var orderAttrPhoneNbr = $.trim($("#orderAttrPhoneNbr").val()); //联系人号码
 				if(ec.util.isObj(orderAttrName)&&ec.util.isObj(orderAttrIdCard)&&ec.util.isObj(orderAttrPhoneNbr)){
 					if(OrderInfo.preBefore.idPicFlag != "ON"){
-						if(ec.util.isObj(orderAttrName)){
-							custOrderAttrs.push({
-								itemSpecId : CONST.BUSI_ORDER_ATTR.orderAttrName,
-								value : orderAttrName
-							});	
-						}
-						if(ec.util.isObj(orderAttrIdCard)){
-							custOrderAttrs.push({
-								itemSpecId : CONST.BUSI_ORDER_ATTR.orderIdentidiesTypeCd,
-								value : orderIdentidiesTypeCd
-							});	
-							custOrderAttrs.push({
-								itemSpecId : CONST.BUSI_ORDER_ATTR.orderAttrIdCard,
-								value : orderAttrIdCard
-							});	
-						}
-						if(ec.util.isObj(orderAttrPhoneNbr)){
-							custOrderAttrs.push({
-								itemSpecId : CONST.BUSI_ORDER_ATTR.orderAttrPhoneNbr,
-								value : orderAttrPhoneNbr
-							});	
-						}
-						if(ec.util.isObj(orderAttrAddr)){
-							custOrderAttrs.push({
-								itemSpecId : CONST.BUSI_ORDER_ATTR.orderAttrAddr,
-								value : orderAttrAddr
-							});	
-						}
+						
+//						if(ec.util.isObj(orderAttrName)){
+//							custOrderAttrs.push({
+//								itemSpecId : CONST.BUSI_ORDER_ATTR.orderAttrName,
+//								value : orderAttrName
+//							});	
+//						}
+//						if(ec.util.isObj(orderAttrIdCard)){
+//							custOrderAttrs.push({
+//								itemSpecId : CONST.BUSI_ORDER_ATTR.orderIdentidiesTypeCd,
+//								value : orderIdentidiesTypeCd
+//							});	
+//							custOrderAttrs.push({
+//								itemSpecId : CONST.BUSI_ORDER_ATTR.orderAttrIdCard,
+//								value : orderAttrIdCard
+//							});	
+//						}
+//						if(ec.util.isObj(orderAttrPhoneNbr)){
+//							custOrderAttrs.push({
+//								itemSpecId : CONST.BUSI_ORDER_ATTR.orderAttrPhoneNbr,
+//								value : orderAttrPhoneNbr
+//							});	
+//						}
+//						if(ec.util.isObj(orderAttrAddr)){
+//							custOrderAttrs.push({
+//								itemSpecId : CONST.BUSI_ORDER_ATTR.orderAttrAddr,
+//								value : orderAttrAddr
+//							});	
+//						}
 					}
 					
 				}else if(ec.util.isObj(orderAttrName)||ec.util.isObj(orderAttrIdCard)||ec.util.isObj(orderAttrPhoneNbr)){
@@ -351,6 +353,9 @@ SoOrder = (function() {
 				}
 			}
 			}
+		if(OrderInfo.preBefore.idPicFlag != "ON" && !ec.util.isObj(OrderInfo.jbr.custId)) {
+			OrderInfo.jbr.custId = OrderInfo.cust.custId;
+		}
 		if(OrderInfo.actionFlag==1 || OrderInfo.actionFlag==14){ //新装
 			_createOrder(busiOrders); //新装
 		}else if (OrderInfo.actionFlag==2){ //套餐变更

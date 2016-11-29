@@ -135,7 +135,7 @@ common = (function($) {
 		if(ec.util.isObj(identityNum) && identityNum != OrderInfo.jbr.identityNum){
 			
 			OrderInfo.virOlId = "";
-			$.alert("提示","经办人信息更改，请先进行经办人信息查询！1");
+			$.alert("提示","经办人信息更改，请先进行经办人信息查询！");
 			return;
 		}
 		var arr=new Array(1);
@@ -912,7 +912,6 @@ common = (function($) {
 		}
 		json = json + "{\"orderInfo\":\"\",\"picFlag\":\"D\",\"custName\":\"" + partyName + "\",\"certType\":\"" + identityCd + "\",\"certNumber\":\"" + identityNum + "\",\"accNbr\":\"" + telNumber +"\"}";
 		json = json+"]}";
-		alert(json);
 		arr[0]=method;
 		arr[1]=json;
 		var olId=$("#TransactionID").val();

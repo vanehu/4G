@@ -877,6 +877,7 @@ mktRes.terminal = (function($){
 		var orderAttrIdCard = $.trim($("#orderAttrIdCard").val());; //证件号码
 		if("1"==orderIdentidiesTypeCd){
 			orderAttrIdCard =$.trim($("#sfzorderAttrIdCard").val()); //身份证号码
+			OrderInfo.jbr.identityNum = orderAttrIdCard;
 		}
 		var orderAttrAddr = $.trim($("#orderAttrAddr").val()); //地址
 		var orderAttrPhoneNbr = $.trim($("#orderAttrPhoneNbr").val()); //联系人号码

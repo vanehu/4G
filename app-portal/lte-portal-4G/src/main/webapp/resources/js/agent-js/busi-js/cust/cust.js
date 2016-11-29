@@ -593,6 +593,9 @@ cust = (function(){
 //				OrderInfo.jbr.identityNum = cardNumber;
 //	    	}
 //	    }
+		if(!ec.util.isObj(OrderInfo.curIp)){
+			common.getMobileIp("cust.getIp");
+		}
 		var params = {"partyTypeCd":_partyTypeCd} ;
 		var url=contextPath+"/agent/cust/queryCertType";
 		var response = $.callServiceAsJson(url, params, {});
@@ -2534,7 +2537,9 @@ cust = (function(){
 	}
 	
 	var _getIp=function(Ip){
+		
 		OrderInfo.curIp = Ip;
+		
 	}
 	
 	return {

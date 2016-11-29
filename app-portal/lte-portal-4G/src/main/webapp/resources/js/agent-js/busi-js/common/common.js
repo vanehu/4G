@@ -11,6 +11,13 @@ common = (function($) {
 		var prodIdInfosParams=JSON.stringify(prodIdInfos);//选中产品信息
 		var urlParams=$.parseJSON(JSON.stringify(url));//地址
 		OrderInfo.actionFlag=urlParams.actionFlag;
+		//去除四个可能带等号的加密字段
+	    var myCust1=$.parseJSON(custInfosParams);
+		myCust1.CN="";
+		myCust1.certNum="";
+		myCust1.address="";			  
+		var myCust=JSON.stringify(myCust1);//四个加密字段可能值不合法，传入后台会报400错误，故去掉该值。
+		custInfosParams=myCust;	
 		if(ec.util.isObj(prodIdInfos)){
 			order.prodModify.choosedProdInfo=$.parseJSON(prodIdInfosParams);
 		}

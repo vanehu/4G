@@ -3004,11 +3004,6 @@ mktRes.terminal = (function($){
 				return;
 			}
 			}
-			if(!OrderInfo.virOlId){
-				$.alert("提示","请进行经办人头像拍照！");
-				return;
-			}
-			
 		}
 		
 		

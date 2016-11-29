@@ -565,6 +565,9 @@ cust = (function(){
 	//翼销售-经办人-客户类型关联证件类型下拉框
 	var _jbrcertTypeByPartyType = function(_partyTypeCd,id){
 		var _obj = $("#"+id);
+		if(!ec.util.isObj(OrderInfo.curIp)){
+			common.getMobileIp("cust.getIp");
+		}
 		var params = {"partyTypeCd":_partyTypeCd} ;
 		var url=contextPath+"/app/cust/queryCertType";
 		var response = $.callServiceAsJson(url, params, {});
@@ -616,13 +619,16 @@ cust = (function(){
 //							if(certTypedate.certTypeCd == cardType && _partyTypeCd==1 && isFlag=="ON"){
 							if(certTypedate.certTypeCd == 1){
 								_obj.append("<option value='"+certTypedate.certTypeCd+"' selected='selected'>"+certTypedate.name+"</option>");
-							}else {
+							}else if(isAllowChannelType){
 								_obj.append("<option value='"+certTypedate.certTypeCd+"' >"+certTypedate.name+"</option>");
 							}
 						}
 						$("#queryJbr").show();
 						$("#photo").show();
 						OrderInfo.virOlId = "";
+						if(OrderInfo.jbr.identityPic){
+							OrderInfo.jbr.identityPic = undefined;
+						}
 						if(OrderInfo.preBefore.idPicFlag=="ON"){//实名拍照省份开关为开
 //							$("#photo").show();
 //							$("#queryJbr").show();
@@ -634,7 +640,6 @@ cust = (function(){
 							OrderInfo.jbr.mailAddressStr = OrderInfo.cust.mailAddressStr;
 							OrderInfo.jbr.identityPic = OrderInfo.cust.identityPic;
 							OrderInfo.jbr.identityNum = OrderInfo.cust.identityNum;
-								
 						}
 						//jquery mobile 需要刷新才能生效
 //						_obj.selectmenu().selectmenu('refresh');
