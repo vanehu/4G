@@ -2431,19 +2431,6 @@ SoOrder = (function() {
 	
 	//订单数据校验
 	var _checkData = function() {
-		var orderAttrName = OrderInfo.subHandleInfo.orderAttrName;
-		var orderAttrAddr = OrderInfo.subHandleInfo.orderAttrAddr;
-		var identityNum = OrderInfo.subHandleInfo.identityNum;
-		var response = $.callServiceAsJson(contextPath + "/properties/getValue", {"key": "REAL_NAME_PHOTO_" + OrderInfo.staff.areaId.substr(0, 3)});
-		if (response.code == "0") {
-			if (response.data == "ON" && OrderInfo.subHandleInfo.orderAttrFlag == "Y") {
-				if(orderAttrName == null || orderAttrName == "" || orderAttrAddr == null || orderAttrAddr == "" || identityNum == null || identityNum == ""){
-					$.alert("提示","经办人信息不完整，请点击经办人的“读卡”或“查询”按钮完善经办人信息。");
-					return false ;
-				}
-			}
-		}
-
 		if(OrderInfo.actionFlag == 1 || OrderInfo.actionFlag == 6 || OrderInfo.actionFlag == 14 || (OrderInfo.actionFlag==2&&offerChange.newMemberFlag)){ //新装
 			if(OrderInfo.cust.custId==""){
 				$.alert("提示","客户信息不能为空！");
@@ -2879,16 +2866,23 @@ SoOrder = (function() {
 		}
 		}
 		
-		//实名制拍照：经办人校验
-		if(OrderInfo.orderAttrFlag == "Y"){
-			//经办人必填进行校验，否则不校验
-			if(OrderInfo.subHandleInfo.authFlag != "Y"){
-				if(OrderInfo.subHandleInfo.authFlag == "F"){
-					$.alert("提示","经办人拍照留存上传失败，请重新拍照认证！");
-					return false;
-				} else{
-					$.alert("提示","经办人信息未通过人证相符认证，请您先对经办人拍照认证！");
-					return false;
+		//根据开关判断是否进行经办人校验
+		var response = $.callServiceAsJson(contextPath + "/properties/getValue", {"key": "REAL_NAME_PHOTO_" + OrderInfo.staff.areaId.substr(0, 3)});
+		if (response.code == "0") {
+			OrderInfo.realNamePhotoFlag = response.data;
+			if ("ON" == response.data) {
+				//实名制拍照：经办人校验
+				if(OrderInfo.orderAttrFlag == "Y"){
+					//经办人必填进行校验，否则不校验
+					if(OrderInfo.subHandleInfo.authFlag != "Y"){
+						if(OrderInfo.subHandleInfo.authFlag == "F"){
+							$.alert("提示","经办人拍照留存上传失败，请重新拍照认证！");
+							return false;
+						} else{
+							$.alert("提示","经办人信息未通过人证相符认证，请您先对经办人拍照认证！");
+							return false;
+						}
+					}
 				}
 			}
 		}
@@ -3105,22 +3099,39 @@ SoOrder = (function() {
 	
 	//填充订单经办人信息
 	var _addHandleInfo = function(busiOrders, custOrderAttrs){
-		if(OrderInfo.subHandleInfo.orderAttrFlag == "Y"){
-			//经办人必填时进行经办人填充
-			if(OrderInfo.subHandleInfo.authFlag == "Y" || OrderInfo.subHandleInfo.orderAttrFlag == "C"){
-				//人证相符
-				if(OrderInfo.subHandleInfo.handleExist == "Y"){
-					//如果是老客户
-					OrderInfo.orderData.orderList.orderListInfo.partyId = OrderInfo.cust.custId;//门户主页客户定位的客户ID
-					OrderInfo.orderData.orderList.orderListInfo.handleCustId = OrderInfo.subHandleInfo.handleCustId;//经办人查询出的客户ID
-				} else if(OrderInfo.subHandleInfo.handleExist == "N"){
-					//如果是新客户
+		if(OrderInfo.realNamePhotoFlag == "ON"){//开关打开
+			if(OrderInfo.subHandleInfo.orderAttrFlag == "Y" || OrderInfo.subHandleInfo.orderAttrFlag == "C"){
+				//经办人必填时进行经办人填充
+				if(OrderInfo.subHandleInfo.authFlag == "Y"){
+					//人证相符
+					if(OrderInfo.subHandleInfo.handleExist == "Y"){
+						//如果是老客户
+						OrderInfo.orderData.orderList.orderListInfo.partyId = OrderInfo.cust.custId;//门户主页客户定位的客户ID
+						OrderInfo.orderData.orderList.orderListInfo.handleCustId = OrderInfo.subHandleInfo.handleCustId;//经办人查询出的客户ID
+					} else if(OrderInfo.subHandleInfo.handleExist == "N"){
+						//如果是新客户
+						OrderInfo.orderData.orderList.orderListInfo.handleCustId = -3;//新建经办人，handleCustId与partyId一致
+						OrderInfo.orderData.orderList.orderListInfo.partyId = OrderInfo.cust.custId;//-3经办人客户，-2使用人客户，-1产权客户
+						_createHandleCust(busiOrders);
+					} else{
+						$.alert("提示","经办人信息发生未知异常，可能重复操作或多窗口操作，请刷新页面清空浏览器缓存后重新尝试！");
+						return false;
+					}
+				}
+			}
+		} else{//开关关闭
+			if(OrderInfo.subHandleInfo.handleExist == "Y"){
+				//如果是老客户
+				OrderInfo.orderData.orderList.orderListInfo.partyId = OrderInfo.cust.custId;//门户主页客户定位的客户ID
+				OrderInfo.orderData.orderList.orderListInfo.handleCustId = OrderInfo.subHandleInfo.handleCustId;//经办人查询出的客户ID
+			} else if(OrderInfo.subHandleInfo.handleExist == "N"){
+				//如果是新客户
+				OrderInfo.orderData.orderList.orderListInfo.partyId = OrderInfo.cust.custId;//-3经办人客户，-2使用人客户，-1产权客户
+				if(OrderInfo.subHandleInfo.orderAttrName != null && OrderInfo.subHandleInfo.orderAttrName != "" 
+						&& OrderInfo.subHandleInfo.orderAttrAddr != null && OrderInfo.subHandleInfo.orderAttrAddr != ""
+						&& OrderInfo.subHandleInfo.identityNum != null && OrderInfo.subHandleInfo.identityNum != ""){//如果用户填经办人
 					OrderInfo.orderData.orderList.orderListInfo.handleCustId = -3;//新建经办人，handleCustId与partyId一致
-					OrderInfo.orderData.orderList.orderListInfo.partyId = OrderInfo.cust.custId;//-3经办人客户，-2使用人客户，-1产权客户
 					_createHandleCust(busiOrders);
-				} else{
-					$.alert("提示","经办人信息发生未知异常，可能重复操作或多窗口操作，请刷新页面清空浏览器缓存后重新尝试！");
-					return false;
 				}
 			}
 		}
