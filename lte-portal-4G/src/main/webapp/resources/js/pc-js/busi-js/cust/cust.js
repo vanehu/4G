@@ -2682,8 +2682,14 @@ order.cust = (function(){
 				    flag: "D",//*经办人头像照片
 				    signature:OrderInfo.handleInfo.signature
 				}],
-			    venderId  : OrderInfo.handleInfo.venderId,//*厂商ID
-				srcFlag   : "REAL"//*来源标识(实名制拍照留存需传REAL)
+			    venderId  	: OrderInfo.handleInfo.venderId,//*厂商ID
+				srcFlag   	: "REAL",//*来源标识(实名制拍照留存需传REAL)
+				accNbr		: orderAttrPhoneNbr,
+				areaId		: OrderInfo.getAreaId(),
+				certNumber	: identityNum,
+				certType 	: orderIdentidiesTypeCd,
+				custName 	: orderAttrName,
+				extSystem	: "1000000206"
 			};
 			OrderInfo.subHandleInfo.handleExist = "Y";
 			OrderInfo.subHandleInfo.handleCustId = queryCustInfo.data.custInfos[0].custId;
@@ -2700,8 +2706,14 @@ order.cust = (function(){
             				    flag: "C"//*经办人身份证照片
             				}
         			    ],
-        			    venderId  : OrderInfo.handleInfo.venderId,//*厂商ID
-        				srcFlag   : "REAL"//*来源标识(实名制拍照留存需传REAL)
+        			    venderId  	: OrderInfo.handleInfo.venderId,//*厂商ID
+        				srcFlag   	: "REAL",//*来源标识(实名制拍照留存需传REAL)
+    					accNbr		: orderAttrPhoneNbr,
+        				areaId		: OrderInfo.getAreaId(),
+        				certNumber	: identityNum,
+        				certType 	: orderIdentidiesTypeCd,
+        				custName 	: orderAttrName,
+        				extSystem	: "1000000206"
         			};
         	}else{
         		param = {
@@ -2711,8 +2723,14 @@ order.cust = (function(){
         				        flag: "D",//*经办人头像照片
         				        signature:OrderInfo.handleInfo.signature}
         			    ],
-        			    venderId  : OrderInfo.handleInfo.venderId,//*厂商ID
-        				srcFlag   : "REAL"//*来源标识(实名制拍照留存需传REAL)
+        			    venderId  	: OrderInfo.handleInfo.venderId,//*厂商ID
+        				srcFlag   	: "REAL",//*来源标识(实名制拍照留存需传REAL)
+        				accNbr		: orderAttrPhoneNbr,
+        				areaId		: OrderInfo.getAreaId(),
+        				certNumber	: identityNum,
+        				certType 	: orderIdentidiesTypeCd,
+        				custName 	: orderAttrName,
+        				extSystem	: "1000000206"
         			};
         	}
         	OrderInfo.subHandleInfo.handleExist = "N";
