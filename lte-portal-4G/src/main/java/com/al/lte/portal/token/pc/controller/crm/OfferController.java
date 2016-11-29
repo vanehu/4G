@@ -916,22 +916,22 @@ public class OfferController extends BaseController {
 						if (resultMap!=null&&resultMap.size()>0) {
 							custInfos=(List<Map<String, Object>>) resultMap.get("custInfos");
 							if(custInfos==null||custInfos.size()<=0){//未定位到客户
-								model.addAttribute("orderAttrFlag","C");//C非必填
+								model.addAttribute("orderAttrFlag","Y");//Y必填
 							}else{
 								model.addAttribute("orderAttrFlag","N");//N不允许填，需要把经办人信息下省
 								Map<String, Object> custInfo = (Map<String, Object>) custInfos.get(0);
 								model.addAttribute("orderAttrCustId",custInfo.get("custId"));
 							}
 						}else{//未定位到客户
-							model.addAttribute("orderAttrFlag","C");//C非必填
+							model.addAttribute("orderAttrFlag","Y");//Y必填
 						}
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
-						model.addAttribute("orderAttrFlag","C");//C非必填
+						model.addAttribute("orderAttrFlag","Y");//Y必填
 					}
 				}else{//未传经办人信息
-					model.addAttribute("orderAttrFlag","C");//C非必填
+					model.addAttribute("orderAttrFlag","Y");//Y必填
 				}
 			}else{//未拍照
 				model.addAttribute("orderAttrFlag","Y");//Y必填
