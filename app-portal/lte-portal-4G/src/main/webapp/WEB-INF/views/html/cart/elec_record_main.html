@@ -1,0 +1,119 @@
+<@override name="title">电子档案查询</@override>
+
+<@override name="header">
+<#include "/busi-js-tpl.html"/>
+<script src="${contextPath}/js/busi-js/cart/cart.js?${jsversion}" type="text/javascript"></script>
+</@override>
+
+<@override name="content">
+<input type="hidden" id="recodeFlag" value="${recodeFlag}">
+<div class="main_div" id="d_query" >
+	<div class="main_warp" >
+		<!--订单准备-->
+		<h2 class="h2_title" id="pageType" name="${pageType}"> 电子档案查询 <span></span><!-- <a href="业务办理_客户定位完成.html" class="numberSearch back3"><span>返回</span></a> --></h2>
+		<div class="order">
+			<div class="order_content" style="border:none; padding:10px">
+				<!--挑靓号-->
+				<div class="order_tab_panel" style="display:block;">
+					<div class="selectList">
+						<dl>
+							<dt>
+								选择地区：
+							</dt>
+							<dd>
+								<input type="text" class="numberTextBox width198" readonly="readonly" id="p_areaId_val" onclick="cart.main.chooseArea()" value="${p_areaId_val}" placeholder="请选择地区" />
+								<input type="hidden" id="p_areaId" value="${p_areaId}">
+							</dd>
+							<dt>
+								<label>受理时间：</label> 
+							</dt>
+                            <dd>
+                                <input type="text" class="numberTextBox" style="width:158px" id="p_startDt" readonly="readonly" value="${startDt}"/>
+                            </dd>
+                            <dt>
+                            	--->&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            </dt>
+                            <dd>
+                                <input type="text" class="numberTextBox" style="width:158px" id="p_endDt" readonly="readonly" value="${endDt}"/>
+                            </dd>
+						</dl>
+						<dl>
+							<dt>接入号：</dt>
+                            <dd>
+                              <input type="text" class="numberTextBox width198" id="p_qryNumber" value=""/>
+                            </dd>
+                     	    <dt style="width:100px"><input type="checkbox" id="if_p_olNbr" >购物车流水：</dt>
+                            <dd>
+                             <input type="text" class="numberTextBox width198" id="p_olNbr" value="" disabled="disabled" style="width:160px;background-color: #E8E8E8;" />
+                            </dd>
+                            <dt style="width:100px">系统来源：</dt>
+                            <dd>
+                             	<select id="p_srcFlag" class="width202">
+                             		<#if (p_srcFlagList)?? &&((p_srcFlagList)?size>0)>
+										<#list p_srcFlagList as srcFlag >
+		                                 	<option value="${srcFlag.value}" >${srcFlag.name}</option>
+		                                 </#list>
+		                             </#if>
+                               	</select>
+                             </dd>
+						</dl>
+						<dl class="noBorder">
+							<dt>
+								客户名称：
+							</dt>
+							<dd>
+								<input type="text" class="numberTextBox width198" id="p_custName" value=""/>
+							</dd>
+							<!--
+							<dt>
+								证件号码：
+							</dt>
+							<dd>
+								<input type="text" class="numberTextBox width198" id="p_certNumber" value=""/>
+							</dd>
+							-->
+							<input type="button" value="搜 索" class="numberSearch" id="qry_elecrecord" />
+						</dl>
+					</div>
+					<!--号码列表-->
+					<div class="phone_warp" id="cart_list" >
+						<table class="numberList">
+							<thead>
+								<tr>
+									<td width="25%">购物车流水号</td>
+									<td width="15%">接入号码</td>
+									<td width="10%">客户名称</td>
+									<td width="20%">受理时间</td>
+									<td width="20%">证件号</td>
+									<td width="10%">电子档案下载</td>
+								</tr>
+							</thead>
+							<tbody></tbody>
+						</table>
+						<!--页码-->
+						<div class="paging">
+							<label><span class="pageUpGray">上一页</span></label>
+							<label id="pageNum"> <a class="pagingSelect" href="#">1</a> </label>
+							<label><span class="pageUpGray">下一页</span></label>
+							<label class="marginTop4">共0 页</label>
+							<label class="marginTop4">跳转至</label>
+							<input type="text" class="inputW20H20" />
+							<label class="marginTop4">页</label>
+							<a href="javascript:void(0)" class="determineBtn">跳转</a>
+						</div>
+						<!--页码 end-->
+					</div>
+				</div>
+			</div>
+		</div>
+		<!--订单准备 end-->
+	</div>
+</div>
+<!--内容 end-->
+</@override>
+
+<#if Session["_session_portal_type"]?? && Session["_session_portal_type"]=="MVNO" >
+<@extends name="/mvno-template.html"/>
+<#else>
+<@extends name="/content-template.html"/>
+</#if>

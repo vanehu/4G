@@ -1,0 +1,19 @@
+<div id="Verificationcode_div" class="easyDialogdiv" style="width:400px;height:200px;">
+    <div class="easyDialogclose" id="Verificationcode_close" onclick="easyDialog.close()"></div>
+    <table style="width:400px;text-align:center">
+        <tr style="height:50px;">
+            <td style="color:red;display: inline-block;font-size: 16px;line-height: 32px;;margin-top:5px;">您的操作频繁，请输入验证码</td>
+        </tr>
+        <tr>
+            <td><span style="color: #75ac5f;display: inline-block;font-size: 16px;line-height: 32px;">验证码</span><input type='text' id='vali_code_input' name='validatecode' class="login_input code" placeholder="请输入验证码" maxlength="6"/>
+                <a id="vali_code_a" title="看不清楚，换一张" onclick="main.home.refreshValidateCodeImg()">
+                    <img id="validatecodeImg" src="" class="codeimg"/>
+                </a>
+            </td>
+        </tr>
+        <tr style="height:100px">
+            <td><a class="btna_o" href="javascript:void(0)" onclick="main.home.closeVerificationcode()"><span>确认</span></a></td>
+        </tr>
+    </table>
+</div>
+</div>

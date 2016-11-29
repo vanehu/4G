@@ -1,0 +1,356 @@
+<@override name="title">中国电信4G营业受理</@override> 
+<@override name="header">
+<#include "/pcpublic/busi-js-tpl.html"/>
+</@override>
+<@override name="content">
+<h2 class="h2_title" id="deal_package" >
+	<span>办套餐</span>
+	<!--  <a href="javascript:order.phoneNumber.initPage();" class="numberSearch back3"><span>返回</span></a>-->
+	<!-- <#if subPage??>
+	<#else>
+	<a href="javascript:order.prepare.backToInit();" class="numberSearch back3" id="backbtn"><span>返回</span></a>
+	</#if> -->
+</h2>
+<div class="order" id="order_prod_list" >
+	<div class="order_content" style="border: none; padding: 10px">
+		<!--选套餐-->
+		<div class="order_tab_panel" style="display: block">
+			<div class="selectList">
+				<dl>
+					<dt>
+						选择套餐：
+					</dt>
+					<dd>
+						<input type="text" id="searchtext" class="numberTextBox width330" maxlength="11" value="请输入您要搜索的套餐名称或首字母简拼"
+							onblur="javascript:if($(this).val()==''){$(this).val('请输入您要搜索的套餐名称或首字母简拼');}" 
+							onfocus="javascript:if($(this).val()=='请输入您要搜索的套餐名称或首字母简拼'){$(this).val('')}"/>
+						<input type="hidden" id="subpageFlag" value="${subPage?default("")}">
+						<input type="hidden" id="numsubflag" value="${numsubflag?default("")}">
+						<input type="button" id="search" value="搜&nbsp;索" class="numberSearch" />
+					</dd>
+				</dl>
+                <dl>
+                     <dt>价格范围：</dt>
+                     <dd id="price_basic" style="width: 700px;">
+					 </dd>
+					 <dd id="price_all" style="display: none;width: 700px;" >
+				     </dd>
+				     <span id="price_more" style="display: none;">
+				     <a href="javascript:void(0);" val="更多" class="btn_price_more" style="display: none;">展开</a>
+				     </span>
+				     <div class="clear"></div>
+                 </dl>
+                 <dl>
+                     <dt>流量范围：</dt>
+                     <dd id="influx_basic" style="width: 700px;">
+					 </dd>
+					 <dd id="influx_all" style="display: none;width: 700px;" >
+				     </dd>
+				     <span id="influx_more" style="display: none;">
+				     <a href="javascript:void(0);" val="更多" class="btn_influx_more" style="display: none;">展开</a>
+				     </span>
+				     <div class="clear"></div>
+                 </dl>
+				 <dl class="noBorder">
+                     <dt>语音分钟数：</dt>
+                     <dd id="invoice_basic" style="width: 700px;">
+					 </dd>
+					 <dd id="invoice_all" style="display: none;width: 700px;" >
+				     </dd>
+				     <span id="invoice_more" style="display: none;">
+				     <a href="javascript:void(0);" val="更多" class="btn_invoice_more" style="display: none;">展开</a>
+				     </span>
+				     <div class="clear"></div>
+                 </dl>
+				
+				
+			</div>
+			<!-- 主套餐内容 -->
+			<div class="contract_tab_panel" style="display: block;" id="service_detial">
+			</div>
+			<!--上下步按钮-->
+			<div align="right" style="margin: 20px auto;">
+			</div>
+			<!--上下步按钮 end-->
+		</div>
+		<!--选套餐 end-->
+	</div>
+</div>
+<!-- 销售品构成-->  
+<div id="div_member_dialog" class="easyDialogdiv" style="width:650px;height:420px;z-index: 1" id="yilai_dialog" >
+	<div class="easyDialogclose" onclick="easyDialog.close()"></div>
+  	<table class="contract_list rule">
+    	<thead>
+       		<tr>
+                <td colspan="2" id="memberName"></td>
+            </tr>                                                    
+         </thead>
+  	</table>	          	
+  	<br/>
+  	<div id="main_member_div" class="fs_choosed">
+		
+	</div>
+  	
+  	<div align="center" style="margin: 20px auto;">
+		<a class="btna_o" href="javascript:void(0)"><span id="memberSpan">确认</span></a>
+		<a class="btna_o" href="javascript:void(0)" style=" margin-left:20px;" onclick="easyDialog.close()"><span>取消</span></a>
+	</div>
+</div>
+<!--弹出框的内容-->
+<div class="easyDialogdiv" style="width:700px;height:450px;" id="member_dialog" >
+	<div class="easyDialogclose" onclick="easyDialog.close()"></div>
+  	<table class="contract_list rule">
+        <thead>
+            <tr>
+                <td colspan="2" id="main_title"></td>
+            </tr>                                                    
+        </thead>
+  	</table>
+  	<br/>
+  	<div class="form-content">
+	    <div class="phone_warp" style="margin:0px 10px;">
+	    	<table class="numberList">
+	        	<tbody id="member_tbody">	
+	        	</tbody>
+	      	</table>
+	      	<div align="center" style="margin: 20px auto;">
+	      		<a href="javascript:void(0)" id="member_btn" class="btna_o"><span>确认</span></a>
+	      		<a id="custresetBtn" href="javascript:easyDialog.close();" class="btna_o" style=" margin-left:20px;"><span>取消</span></a>
+	      	</div>
+	    </div>
+  	</div>
+</div>
+
+<!--订单准备 end-->
+<script type="text/javascript">
+window.onload=function(){
+	var p_cust_areaid = "";
+	var nextFlag = false;
+	var mergeFlag = "${mergeFlag}";
+	var custInfos = ${custInfo};
+	if(mergeFlag=="0"){
+		$.each(custInfos.custInfos,function(index,custInfo){
+			var addressStr=custInfo.addressStr;
+			var areaId=custInfo.areaId;
+			p_cust_areaid = areaId;
+			var areaName=custInfo.areaName;
+			var authFlag="1";
+			var custFlag=custInfo.custFlag;
+			var custId=custInfo.custId;
+			var idCardNumber=custInfo.idCardNumber;
+			var identityCd=custInfo.identityCd;
+			var identityName=custInfo.identityName;
+			var norTaxPayer="";
+			var partyName=custInfo.partyName;
+			var segmentId=custInfo.segmentId;
+			var segmentName=custInfo.segmentName;
+			var vipLevel=custInfo.vipLevel;
+			var vipLevelName=custInfo.vipLevelName;
+			OrderInfo.cust={addressStr: addressStr,areaId: areaId,areaName: areaName,authFlag: "1",custFlag: custFlag,custId: custId,idCardNumber: idCardNumber,identityCd: identityCd,identityName: identityName,norTaxPayer: "",partyName: partyName,segmentId: segmentId,segmentName: segmentName,vipLevel: vipLevel,vipLevelName: vipLevelName};
+			nextFlag = true;		
+		});
+	}else{
+		var custNumber = "${custNumber}";
+		var provCustAreaId = "${provCustAreaId}";
+		nextFlag = order.cust.queryCustCompreInfo(custNumber,provCustAreaId,1,'');
+	}
+	if(nextFlag){
+		var mainPhoneNum = "${mainPhoneNum}";
+		if(mainPhoneNum!=undefined &&mainPhoneNum!=""){
+			OrderInfo.newOrderNumInfo.mainPhoneNum = mainPhoneNum;
+		}
+		OrderInfo.actionFlag=1;
+		OrderInfo.newOrderInfo.isLastFlag="true";
+		OrderInfo.provinceInfo.provIsale = '${provIsale}';
+		OrderInfo.provinceInfo.redirectUri = '${redirectUri}';
+		OrderInfo.provinceInfo.isFee = '${isFee}';
+		OrderInfo.provinceInfo.mergeFlag = "${mergeFlag}";
+		OrderInfo.provinceInfo.salesCode = "${salesCode}";
+		OrderInfo.newOrderNumInfo.mktResInstCode = '${mktResInstCode}';
+		OrderInfo.acct={acctCd:'${acctCd}'};//账户合同号
+		OrderInfo.busitypeflag=1;
+		/*
+		order.prepare.createorderlonger();
+		order.service.initSpec();
+		order.prodOffer.init();
+		order.service.searchPack();
+		order.phoneNumber.resetBoProdAn();
+		*/
+		var areaId = "${provCustAreaId}";
+		$("#p_cust_areaId").val(areaId);
+		OrderInfo.typeCd="${typeCd}";
+		OrderInfo.verifyLevel='${verifyLevel}';
+		order.prodModify.querySecondBusinessAuth();
+	}
+}
+</script>
+	<!-- 选号界面需要获取的 areaId -->
+	<input type="hidden" id="p_cust_areaId" value="">
+  	<div class="main_warp" id="order_tab_panel_content" style="display:none">
+    </div>
+    <!-- 填单页面用 -->
+    <div class="main_warp" id="order_fill_content" style="display:none">
+    
+    </div>
+    <!-- 订单确认页面-->
+    <div class="main_warp" id="order_confirm" style="display:none"></div>
+    
+    <!-- 订单确认页面（分段受理专用）-->
+    <div class="main_warp" id="step_order_confirm" style="display:none"></div>
+    
+    <!--弹出款-选择号码的内容-->
+	<div style="display:none" id="ec-dialog-form-container-phonenumber" class="ec-dialog-form-container">
+	  <div class="ec-dialog-form-top">
+	    <h1 class="ec-dialog-form-title">选择号码</h1>
+	  </div>
+	  <div class="ec-dialog-form-content">
+	    <div class="ec-dialog-form-loading" style="display:none"></div>
+	    <div class="ec-dialog-form-message" style="display:none"></div>
+	    <div class="ec-dialog-form-form" >
+	      <form action="#" style="" id="dialogForm">
+	        <div class="form-content" id="phonenumberContent" style="min-height:200px">      
+	        </div>
+	      </form>
+	    </div>
+	  </div>
+	  <div class="ec-dialog-form-bottom"></div>
+	</div>
+	<!-- 选择号码弹出框结束 -->
+	<!--帐户选择弹窗-->
+	<div class="easyDialogdiv" style="width:1080px;height:460px;" id="div_staff_dialog">
+	
+	</div>
+	<!-- 发展人管理弹窗 -->  
+	<div id="div_attach_dialog" class="easyDialogdiv" style="width:980px;height:460px;">
+		<div class="easyDialogclose" id="staff_dialog_close" onclick="easyDialog.close()"></div>
+		<table class="contract_list">
+			<thead>
+				<tr><td><input type="checkbox" name="attach_dealer_check_all" onclick="order.dealer.checkAllAttach(this)">操作</td><td>号码</td><td>发展业务</td></tr>
+			</thead>
+			<tbody id="attach_tbody">
+			</tbody>
+		</table>
+		<div align="center" style="margin: 20px auto;">
+			<a class="btna_o" href="javascript:void(0)" onclick="order.dealer.addAttachDealer()"><span>确认</span></a>
+			<a class="btna_o" href="javascript:void(0)" onclick="easyDialog.close()" style=" margin-left:20px;"><span>取消</span></a>
+		</div>
+	</div>
+	
+	<!-- 功能产品销售品详情弹窗 -->
+	<div id="div_detail_dialog" class="easyDialogdiv" style="width:980px;height:460px;">
+		<div class="easyDialogclose" id="staff_dialog_close" onclick="easyDialog.close()"></div>
+		<table class="contract_list">
+			<thead>
+				<tr><td>产品名称</td><td>描述</td></tr>
+			</thead>
+			<tbody id="detail_tbody">
+			</tbody>
+		</table>
+		<div align="center" style="margin: 20px auto;">
+			<a class="btna_o" href="javascript:void(0)" onclick="easyDialog.close()" style=" margin-left:20px;"><span>返回</span></a>
+		</div>
+	</div> 
+	
+	<!--弹出款-客户定位，选择使用人-->
+<div id="choose_user_dialog" class="easyDialogdiv" style="width:700px;height:250px;">
+<div class="easyDialogclose" id="chooseUserClose" onclick="easyDialog.close()"></div>
+    	<table class="contract_list">
+            <thead>
+                <tr>
+                    <td>选择使用人</td>
+                </tr>                                                    
+            </thead>
+        </table>
+        <div id="chooseUserDiv" class="main_div location main_warp">
+		<form id="custQueryForChooseForm">
+	    <ul class="usercon">
+	    <li class="ulocation" >
+		<h2 style="margin: 4px 8px 0 5px;">受理地区</h2>
+		</li>
+		<li class="usersearch">
+		   <input id="diffPlaceFlag_choose" type="hidden" value="${DiffPlaceFlag}"> 
+			<#if Session["_ecs_login_session_key"].currentChannelId ?? && (Session["_ecs_login_session_key"].currentChannelId!="") >
+			  <input type="text" class="numberTextBox" style="margin-left:5px; width:100px" readonly="readonly" id="p_cust_areaId_val_choose" <#if DiffPlaceFlag=="local">onclick="order.cust.chooseAreaForChooseUser();"</#if> value="${Session["_ecs_login_session_key"].currentAreaAllName}" placeholder="请选择地区"  />
+	          <input type="hidden" id="p_cust_areaId_choose" value="${Session["_ecs_login_session_key"].currentAreaId}" />
+	          <input type="hidden" DiffPlaceFlag="${DiffPlaceFlag}" />
+	         </#if>
+        </li>
+		<li class="ulocation">
+			<h2 style="margin: 4px 8px 0 5px;">客户定位</h2>
+		</li>
+		<li class="usersearch">
+		<select onchange="order.cust.custidentidiesTypeCdChoose(this,'p_cust_identityNum_choose')" id="p_cust_identityCd_choose" class="selectNumbertype" style="width:118px;">
+                                  	  	<option value="-1" >接入号码</option>
+                                  	  	<option value="acctCd" >合同号</option>
+                                  	  	<option value="custNumber" >客户编码</option>
+        </select>
+        <div id="custList" class="usersearchcon" ></div>
+        </li>
+		<li class="usersearch">
+			<input name="" type="text" class="numberTextBox" id="p_cust_identityNum_choose" onkeyup="value=value.replace(/[^\w]|_/ig,'')" 
+				placeHolder="请输入接入号码" data-validate="validate(isTelecomOridCardCheck:请输入合法接入号码) on(blur)" style="width:158px;"/>
+		</li>
+		<!-- 
+        <li>
+        <input id="isAppointNum" type="checkbox" checked="true" style="margin: 15px 5px 0px 5px;float:left" onclick="order.cust.isAppointNum('p_cust_identityCd_choose')">
+        <label style="float:left; margin:10px 5px 0px 0px">指定号码</label>
+        </li>
+		 -->
+        <li class="ubtn">
+		    <a id="userSearchForChooseBtn" href="javascript:void(0)"  class="btn_h30 btn" style="margin-left:30px;" onclick=""><span>查 询</span></a>
+		</li>
+		
+		</ul>
+		</form>
+		
+		<table class="contract_list" id="chooseUserList" style="display: none;">
+		<thead>
+			<tr>
+				<td width="100">姓名</td>
+				<td width="350">证件号码</td>
+				<td width="100">地区</td>
+			</tr>
+		</thead>
+		<tbody>
+			<tr id="chooseUserInfo">
+				<td id="chooseUserInfoName"></td>
+				<td id="chooseUserInfoNum"></td>
+				<td id="chooseUserInfoAreaName"></td>
+			</tr>
+		</tbody>
+	</table>
+	
+	
+	</div>
+  	<div align="center" style="margin: 20px auto;">
+        <a id="chooseUserBtn" class="btna_o" href="javascript:void(0)"><span >确认</span></a>
+        <a id="cancelChooseUserBtn" class="btna_o" href="javascript:void(0)" style=" margin-left:20px;" onclick="easyDialog.close()"><span>取消</span></a>
+    </div>
+</div>
+	<!--用户鉴权弹窗-->
+<div style="height:300px;display:none;background:#fff; -webkit-border-radius:5px; -moz-border-radius:5px; border-radius:5px;-webkit-box-shadow:0 8px 8px rgba(0,0,0,0.4);-moz-box-shadow:0 8px 8px rgba(0,0,0,0.4);box-shadow:0 8px 8px rgba(0,0,0,0.4); border:5px solid #cbced0;
+	display:none;
+	overflow-y:auto;" id="auth2">
+</div>
+<!--用户鉴权弹窗-->
+	<div class="easyDialogdiv" style="height:300px;display:none" id="auth">
+	<div class="easyDialogclose" id="authClose"></div>
+	<form id="custAuthForm">
+	<h1 class="easyDialogTitle">客户身份鉴权</h1>
+	<div class="infoBox">
+		<table class="network">
+                          <tbody>
+                          <tr>
+                                <td width="100"><label class="f_red">*</label><label id="custAuthTypeName">产品密码：</label></td>
+                                <td width="300"><input id="authPassword" type="password" placeHolder="请输入密码" data-validate="validate(required:密码不能为空, maxlength:密码长度最多为{arg1}(12)) on(blur)" class="inputWidth150px"><a  class="purchase" id="custAuthbtn" href="javascript:void(0)">校验</a><a class="purchase" id="jumpAuth" style="display:none" onclick="order.cust.jumpAuth()">跳过校验</a>
+                                </td>
+                          </tr>   
+
+                        </tbody>
+         </table>
+    </div>
+    </form>
+	</div>
+<!--用户鉴权弹窗 end-->
+</@override>
+<@extends name="/pcpublic/main-template.html"/>

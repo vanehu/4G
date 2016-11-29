@@ -1,0 +1,154 @@
+<@override name="title">终端预约查询</@override> 
+<@override name="header">
+<#include "/busi-js-tpl.html"/>
+<script src="${contextPath}/js/busi-js/order/order-zdyy.js?${jsversion}" type="text/javascript"></script>
+</@override> 
+<@override name="content">
+<!--内容-->
+<div class="main_div" id="d_query">
+    <div class="main_warp">
+        <!--订单准备-->
+        <h2 class="h2_title">终端预约查询</h2>
+        <div class="order">
+            <div class="order_content" style="border:none; padding:10px">
+                
+                <!--终端预约查询-->
+                <div class="order_tab_panel" id="zdyyquery" style="display:block;">
+                        <div class="selectList">
+                            <dl>
+                            	<dt>选择地区：</dt>
+                                  <dd>
+                                  	<input type="text" class="numberTextBox width198" readonly="readonly" id="p_areaId_val" onclick="order.zdyy.chooseArea()" value="${p_areaId_val}" placeholder="请选择地区" />
+                                  	<input type="hidden" id="p_areaId" value="${p_areaId}">
+                                  	<label class="f_red">*</label>
+                                  </dd>
+                                <dt>渠道：</dt>
+                                <dd>
+                                  	<select id="channelId" class="width202" >
+                                  	<option value="" >--选择渠道--</option>
+                                	<#if Session["_staff_channel"]?? && (Session["_staff_channel"]?size>0) >
+										<#list Session["_staff_channel"] as channel>
+		                                 	<option value="${channel.id}" areaid="${channel.areaId}" >${channel.name}</option>
+		                                </#list>
+									</#if>	
+                                	</select>
+                                  	<label class="f_red">*</label>
+                                 </dd>
+                                  <!--  
+                                  <dt style="width:100px">开始时间：</dt>
+                                  <dd>
+                                    <input type="text" class="numberTextBox" style="width:160px" id="p_startDt" readonly="readonly" value="${p_startDt}"  />
+                                    <label class="f_red">*</label>
+                                  </dd>
+                                  <dt style="width:122px">结束时间：</dt>
+                                  <dd>
+                                    <input type="text" class="numberTextBox" style="width:160px" id="p_endDt" readonly="readonly" value="${p_endDt}" />
+                                    <label class="f_red">*</label>
+                                  </dd>
+                                  -->
+                            </dl>
+                            <dl>
+                                  <dt>证件类型：</dt>
+                                  <dd> <select id="identityCd" style="width:100px;margin-left:3px"></select>
+                                  </dd>
+                                  <dt style="width:100px">证件号码：</dt>
+                                  <dd><input type="text" class="numberTextBox width198" id="identityNum"/></dd>
+                                  <dt style="width:100px">终端预约号：</dt>
+                                  <dd><input type="text" class="numberTextBox width198" id="reserveCode"/></dd>
+                                  <dd><input type="button" value="搜 索" class="numberSearch" onclick="order.zdyy.queryCouponReserve(1)"/></dd>
+                          </dl>
+                          <!--  
+                            <dl>
+                            	  <dt>渠道：</dt>
+                                  <dd>
+                                  	<select id="p_channelId" class="width202" >
+                                  	<option value="" >--选择渠道--</option>
+                                	<#if Session["_staff_channel"]?? && (Session["_staff_channel"]?size>0) >
+										<#list Session["_staff_channel"] as channel>
+		                                 	<option value="${channel.id}" areaid="${channel.areaId}" >${channel.name}</option>
+		                                </#list>
+									</#if>	
+                                	</select>
+                                  	<label class="f_red">&nbsp;&nbsp;</label>
+                                  </dd>
+                            	  <dt style="width:100px">客户姓名：</dt>
+                                  <dd><input type="text" class="numberTextBox width198" id="custname"/></dd>
+                                  <dt style="width:100px">证件号码：</dt>
+                                  <dd><input type="text" class="numberTextBox width198" id="CustIdCard"/></dd>
+                                  <dd><input type="button" value="搜 索" class="numberSearch" onclick="order.zdyy.queryzdyyinfos(1)"/></dd>
+                            </dl>
+                             -->   
+                  </div>
+                    <!--号码列表-->
+                    <div class="phone_warp" id="zdyy_list">
+                        <table class="numberList">
+                          <thead>
+                          	<tr>
+                          	<td width="130">预约购物车流水</td>
+                          	<td width="130">终端名称</td>
+                  <td width="80">终端价格</td>
+                  <td width="130">预约时间</td>
+                  <td width="130">预约政策</td>
+                  <td width="150">订单项ID</td>
+                  <td width="80">预约码状态</td>
+                  <td width="150">业务受理购物车流水</td>
+                  <td width="80">操作</td>
+                            </tr>
+                          </thead>
+                          <!-- <tbody>
+                            <tr>
+                              <td></td>
+                              <td align="left">1029324124</td>
+                              <td>张贤东</td>
+                              <td>XLD09302</td>
+                              <td>北京</td>
+                              <td>西城区营业厅</td>
+                              <td><a type="main" href="#" class="purchase">取消</a> <a type="main" href="#" class="purchase">修改</a></td>
+                            </tr>
+                          </tbody> -->
+                        </table>
+                        <!--页码-->
+                        <div class="paging">
+                            <label><span class="pageUpGray">上一页</span></label>
+                            <label id="pageNum">
+                            	<a class="pagingSelect" href="#">1</a>
+                            </label> 
+                            <label><span class="pageUpGray">下一页</span></label>
+                            <label class="marginTop4">共0 页</label>
+                            <label class="marginTop4">跳转至</label>
+                            <input type="text" class="inputW20H20" />
+                            <label class="marginTop4">页</label>
+                            <a href="javascript:void(0)" class="determineBtn">跳转</a>
+                        </div>                             
+                        <!--页码 end-->
+                    
+                  </div>
+                    <!--号码列表 end--> 
+                                       
+                                       
+                </div>
+                <!--终端预约查询 end-->
+                                        
+            </div>
+        </div>
+        <!--订单准备 end-->
+    </div>
+<input type="hidden" id="qzdyy" value="qzdyy">
+</div>
+<!--内容 end-->
+<!-- 订单确认页面-->
+<div class="main_warp" id="order_confirm" style="display:none"></div>
+<div id="d_zdyyInfo" style="display: none" >
+<#include "/orderQuery/order-zdyy-info.html"/>
+</div>
+
+<script type="text/javascript"> 
+$(".allsort").hoverForIE6({current:"allsorthover",delay:0});
+$(".allsort .item").hoverForIE6({delay:0});
+</script>
+</@override>
+<#if Session["_session_portal_type"]?? && Session["_session_portal_type"]=="LTE" >
+<@extends name="/content-template.html"/>
+<#else>
+<@extends name="/mvno-template.html"/>
+</#if>

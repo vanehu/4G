@@ -1,0 +1,138 @@
+<@override name="title">${batchTypeName}</@override>
+<@override name="header">
+<script>
+	$.extend($, {
+		httpData : function(xhr, type, s) {
+			var ct = xhr.getResponseHeader("content-type"), xml = type == "xml" || !type && ct && ct.indexOf("xml") >= 0, data = xml ? xhr.responseXML : xhr.responseText;
+
+			if (xml && data.documentElement.tagName == "parsererror")
+				throw "parsererror";
+			if (s && s.dataFilter)
+				data = s.dataFilter(data, type);
+			if ( typeof data === "string") {
+				if (type == "script")
+					jQuery.globalEval(data);
+				if (type == "json")
+					data = window["eval"]("(" + data + ")");
+			}
+			return data;
+		},
+		handleError : function(s, xhr, status, e) {
+			if (s.error)
+				s.error(xhr, status, e);
+			else if (xhr.responseText)
+				console.log(xhr.responseText);
+		}
+	});
+</script>
+<script src="${contextPath}/js/third-js/jquery/jquery.form.js" type="text/javascript"></script>
+<script src="${contextPath}/js/4g-js/order/orderInfo.js" type="text/javascript"></script>
+<script src="${contextPath}/js/busi-js/batchOrder/batchOrder.js?${jsversion}" type="text/javascript"></script>
+<style>
+	.fillin label {
+		height: 28px;
+		text-align: left;
+		width: 90px;
+	}
+
+	.selectList dl dt {
+		float: left;
+		width: 75px;
+		height: 34px;
+		font-weight: bold;
+		text-align: left;
+	}
+</style>
+</@override>
+<@override name="content">
+<div class="main_div">
+	<div class="main_warp" id="d_query">
+		<h2 class="h2_title">${batchTypeName}</h2>
+		<div class="order">
+			<div class="order_content" style="border:none; padding:10px">
+				<div class="order_tab_panel" style="display:block;">
+					<div class="selectList">
+						<form method="post" id="batchEcsForm" enctype="multipart/form-data">
+							<dl>
+								<#if batchType == "16">
+									<dt>目标仓库&nbsp;:</dt>
+									<dd>
+										<input type="text" class="numberTextBox width198" readonly="readonly" id="repositoryId_val" onclick="order.batch.chooseRepository();" value="" placeholder="请选择终端仓库" />
+										<input type="hidden" name="destRepositoryId" id="destRepositoryId" value=""/>									
+									</dd>
+								</#if>
+								<#if batchType == "17">
+									<dt>终端所在仓库:</dt>
+									<dd>
+										<input type="text" class="numberTextBox width198" readonly="readonly" id="repositoryId_val" onclick="order.batch.chooseRepository();" value="" placeholder="请选择终端仓库" />
+										<input type="hidden" name="fromRepositoryId" id="fromRepositoryId" value=""/>									
+									</dd>
+								</#if>
+								<#if batchType == "18">
+									<dt>终端所在仓库:</dt>
+									<dd>
+										<input type="text" class="numberTextBox width198" readonly="readonly" id="repositoryId_val" onclick="order.batch.chooseRepository();" value="" placeholder="请选择终端仓库" />
+										<input type="hidden" name="fromRepositoryId" id="fromRepositoryId" value=""/>									
+									</dd>
+									<dt>&nbsp;销售状态:</dt>
+									<dd>
+										<select id="destStatusCd" name="destStatusCd" style="width:150px">
+											<option value="1108">已销售已补贴</option>
+											<option value="1115">已销售未补贴</option>
+										</select>									
+									</dd>
+								</#if>
+							</dl>
+							<dl>
+								<dt>
+									EXCEL文件&nbsp;:
+								</dt>
+								<dd>
+									<input type="hidden" name="batchType" id="batchType" value="${batchType}"/>
+									<input type="file"  name="upFile" id="upFile" style="text-indent: 0px"/>
+									<!-- 
+									<input type="hidden" name="destRepositoryId" id="destRepositoryId" value="123"/>					
+									<input type="hidden" name="destStatusCd" id="destStatusCd" value="123"/>
+									 -->
+								</dd>
+								<dd>
+									<a class="purchase" href="javascript:void(0)" onclick="order.batch.submit();">导 入</a>
+									<a class="purchase" href="javascript:void(0)" onclick="order.batch.download('${batchType}');">模板下载</a>
+									<a class="purchase" href="javascript:void(0)" onclick="order.batch.reset();">重 置</a>
+								</dd>
+							</dl>
+							<li style=" border-bottom: 0px;"  class="full">
+								<table width="100%" border="0" cellspacing="0" cellpadding="0">
+									<tr>
+										<td><i class="rule_icon_notice"></i></td>
+										<td>
+											<span style="line-height:25px;"> 
+											(1) ${batchTypeName}EXCEL文件：仅支持上传xls、xlsx文件，单元格格式请设置为文本
+											<br/>(2) 导入之前请先选择仓库
+											<br/>(3) 单次导入Excel总记录数不能超过10000条
+											<br/>(4) 批量处理可能需要持续一段时间，请耐心等待... 
+											</span>
+										</td>
+									</tr>
+								</table>
+							</li>
+						</form>
+					</div>
+					<div id="alertInfo"  class="phone_warp" style="color:#F00; font-weight:bold"></div>
+					<div id="detailInfo"  class="phone_warp"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- 仓库查询弹出框 --start-->	 
+<div id = "queryEcsRepository_dialog" class="easyDialogdiv" style="width: 800px; height: 400px; display: none; margin: 0px;"></div>	
+<!-- 仓库查询弹出框 --end-->
+
+</@override>
+<#if Session["_session_portal_type"]?? && Session["_session_portal_type"]=="MVNO" >
+<@extends name="/mvno-template.html"/>
+<#else>
+<@extends name="/content-template.html"/>
+</#if>

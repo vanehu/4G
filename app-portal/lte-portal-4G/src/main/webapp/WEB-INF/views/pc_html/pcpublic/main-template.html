@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8"/>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<title><@block name="title"></@block><#if Session["_server_ip"]?? >[${Session["_server_ip"]}]</#if></title>
+		<META HTTP-EQUIV="Pragma" CONTENT="no-cache"> 
+		<META HTTP-EQUIV="Cache-Control" CONTENT="no-store,no-cache,must-revalidate"> 
+		<META HTTP-EQUIV="Expires" CONTENT="0">
+		<META name="keywords" content="电信集团">
+		<META name="description" content="电信集团">
+		<#include "/common-css-tpl.html"/>
+		<#include "/pcpublic/common-js-tpl.html"/>
+		<script src="${contextPath}/js/busi-js/common/const.js?${jsversion}" type="text/javascript"></script>
+		<script>
+			$(function() {
+				OrderInfo.staff = {
+					staffId : $("#_session_staff_info").attr("staffId"),
+					staffCode : $("#_session_staff_info").attr("staffCode"),
+					staffName : $("#_session_staff_info").attr("staffName"),
+					channelId : $("#_session_staff_info").attr("channelId"),
+					channelName : $("#_session_staff_info").attr("channelName"),
+					areaId : $("#_session_staff_info").attr("areaId"),
+					areaCode : $("#_session_staff_info").attr("areaCode"),
+					areaName : $("#_session_staff_info").attr("areaName"),
+					areaAllName : $("#_session_staff_info").attr("areaAllName"),
+					orgId : $("#_session_staff_info").attr("orgId"),
+					distributorId : $("#_session_staff_info").attr("partnerId"),
+					operatorsId : $("#_session_staff_info").attr("operatorsId"),
+					operatorsName : $("#_session_staff_info").attr("operatorsName"),
+					operatorsNbr : $("#_session_staff_info").attr("operatorsNbr"),
+					soAreaId : $("#_session_staff_info").attr("areaId"),
+					soAreaCode : $("#_session_staff_info").attr("areaCode"),
+					soAreaName : $("#_session_staff_info").attr("areaName"),
+					soAreaAllName : $("#_session_staff_info").attr("areaAllName"),
+					channelType:$("#_session_staff_info").attr("channelType"),
+					idType :$("#_session_staff_info").attr("idType")
+				};
+			});
+	     </script>
+		<@block name="header"></@block>
+		<style type="text/css">
+           .cssINPUT
+         {
+             height: 19PX;
+             padding: 3PX;
+             padding-left: 3px;
+             padding-right: 0px;
+             margin: 0PX;
+             border: 1PX SOLID #C0C0C0;
+             font-family: 宋体,arial;
+             font-size: 9pt;
+         }
+         .select_div_list
+         {
+             border: 1px solid black;
+             background-color: White;
+             overflow: hidden;
+             overflow-y: auto;
+         }
+         .select_div_list_ul
+         {
+             margin: 0px;
+             padding: 0px;
+             list-style-type: none;
+         }
+         .select_div_list_ul li
+         {
+             cursor: pointer;
+             padding-left: 3px;
+             font-family: 宋体,arial;
+             font-size: 9pt; *padding:0px;*height:20px;_height:14px;_margin:0px;_height:14px;*margin:0px;line-height:14px;}
+         .selectSPAN
+         {
+             background-color: Yellow;
+         }
+     </style>
+	</head>
+	<body style="padding: 0px;">
+
+		<!-- 头部 -->
+		<div class="navsort" style="display: none;">
+		<#if Session["_session_pad_flag"]??&&Session["_session_pad_flag"]=="1">
+			<#include "/pad-header.html"/> 
+		<#else>
+			<#include "/pcpublic/main-header.html"/> 
+		</#if>
+		</div>
+		<!--弹出框-当客户定位，选择使用人，有多个客户要选择时-->
+<div id="choose_multiple_user_dialog" class="easyDialogdiv" style="width:700px;">
+</div>
+		<!--头部 end-->
+		<div class="navsortbg"></div>
+		<#if Session["_ecs_login_session_key"].currentChannelId ?? && (Session["_ecs_login_session_key"].currentChannelId!="") >
+             	<input type="hidden" id="_session_staff_info"
+					staffId="${Session["_ecs_login_session_key"].staffId}" 
+					staffCode="${Session["_ecs_login_session_key"].staffCode}" 
+					staffName="${Session["_ecs_login_session_key"].staffName}" 
+					channelId='${Session["_ecs_login_session_key"].currentChannelId}' 
+					channelName='${Session["_ecs_login_session_key"].currentChannelName}' 
+					areaId='${Session["_ecs_login_session_key"].currentAreaId}'
+					areaCode='${Session["_ecs_login_session_key"].currentAreaCode}'
+					areaName='${Session["_ecs_login_session_key"].currentAreaName}'
+					areaAllName='${Session["_ecs_login_session_key"].currentAreaAllName}'
+					orgId='${Session["_ecs_login_session_key"].orgId}' 
+					operatorsId = '${Session["_ecs_login_session_key"].currentOperatorsId}' 
+					operatorsName = '${Session["_ecs_login_session_key"].currentOperatorsName}' 
+					operatorsNbr = '${Session["_ecs_login_session_key"].currentOperatorsNbr}'
+					channelType = '${Session["_ecs_login_session_key"].currentChannelType}' 
+					idType = '${Session["_ecs_login_session_key"].idType}'
+                	/>
+                </a>
+            	</span>
+             <#else>
+            	<input type="hidden" id="_session_staff_info"
+					staffId="${Session["_ecs_login_session_key"].staffId}" 
+					staffCode="${Session["_ecs_login_session_key"].staffCode}" 
+					staffName="${Session["_ecs_login_session_key"].staffName}" 
+					channelId='' 
+					channelName='' 
+					areaId=''
+					areaCode=''
+					areaName=''
+					orgId='${Session["_ecs_login_session_key"].orgId}' 
+					operatorsId = '' 
+					operatorsName = '' 
+					operatorsNbr = ''  />
+           		</span>
+            </#if>
+		<!--内容 start-->
+		<!--  <div class="main_div">-->
+			<!-- 内容菜单-->
+			<@block name="content">
+			<#include "/main-content.html"/>
+			</@block>
+		<!-- </div>-->
+		<!--内容 end-->
+		<!--底部 start-->
+		<div class="footer" style="display: none;">
+			<!-- 底部菜单-->
+			<#include "/main-footer.html"/>
+		</div>
+		<!--底部 end-->
+		<!--登录弹出框-->
+			<div>
+				<#include "/login-window.html"/>
+			</div>
+			<!--登录弹出框结束-->
+			<div style="display: none;visibility: hidden;" id="portaltop" class="navdefault" >
+			</div>
+			<!-- 读卡 -->
+			<object id="CertCtl" type="application/cert-reader" width="0" height="0"></object>
+	</body>
+</html>
+ <!--用户鉴权弹窗-->
+       <div class="easyDialogdiv" style="height:300px;display:none" id="auth5">
+           <div class="easyDialogclose" id="authClose" onclick="easyDialog.close()"></div>
+           <h1 class="easyDialogTitle">客户身份鉴权</h1>
+           <div class="infoBox">
+               <ul class="pdcard">
+                   <li id="auth_tab7" onclick="order.cust.changeTabSub('auth5',7)" class="setcon">产品密码鉴权</li>
+                   <li id="auth_tab8" onclick="order.cust.changeTabSub('auth5',8)">证件号码鉴权</li>
+                   <li id="auth_tab9" onclick="order.cust.changeTabSub('auth5',9)">短信鉴权</li>
+               </ul>
+               <div id="contents">
+                   <div id="content7">
+                       <form id="custAuthFormM1">
+                           <table class="network">
+                               <tbody>
+                               <tr>
+                                   <td width="100"><label class="f_red">*</label><label id="custAuthTypeName5">产品密码：</label>
+                                   </td>
+                                   <td width="300">
+                                       <input id="authPassword5" type="password" placeHolder="请输入密码"
+                                              data-validate="validate(required:密码不能为空, maxlength:密码长度最多为{arg1}(12)) on(blur)"
+                                              class="inputWidth150px">
+                                       <a class="purchase" id="custAuthbtn5"  onclick="order.cust.productPwdAuth('5')" href="javascript:void(0)">校验</a>
+                                   </td>
+                               </tr>
+                               </tbody>
+                           </table>
+                       </form>
+                   </div>
+                   <div id="content8" style="display: none">
+                       <form id="custAuthFormM2">
+                           <table class="network">
+                               <tbody>
+                               <tr>
+                                   <td width="100"><label class="f_red">*</label><label id="idCardType2">证件类型：</label>
+                                   </td>
+                                   <td width="300">
+                                       <input id="idCardNumber5" type="password" placeHolder="请输入证件号码"
+                                              data-validate="validate(required:密码证件号码, maxlength:密码长度最多为{arg1}(20)) on(blur)"
+                                              class="inputWidth150px">
+                                       <a class="purchase" id="custAuthbtn5"  onclick="order.cust.identityTypeAuth(5)" href="javascript:void(0)">校验</a>
+                                       <a class="purchase" id="readCertBtnID5" onclick="order.cust.readCertWhenAuth2(5)"
+                                          style="display: none">读卡</a>
+                                   </td>
+                               </tr>
+                               </tbody>
+                           </table>
+                       </form>
+                   </div>
+                   <div id="content9" style="display: none">
+                       <form id="custAuthForm3">
+                           <table width="400px" border="0" cellspacing="0" cellpadding="0" class="SMScode">
+                               <tr>
+                                   <td><p>为确保您的个人信息安全，在办理该业务前，请输入随机短信验证码</p></td>
+                               </tr>
+                               <tr>
+                                   <td>
+                                       <span style="float:left; margin-top:5px">短信验证码</span>
+
+                                       <form id="loginSmsForm">
+                                           <input type="text" class="txt2 inputWidth183px" style="float:left; margin:0px 5px;"
+                                                  name="smspwd" id="smspwd5"
+                                                  data-validate="validate(required:短信验证码不能为空) on(blur)"
+                                                  placeholder="请输入您手机收到的验证码" maxlength="6"/>
+                                           <a class="purchase" id="custAuthbtn3" onclick="order.cust.smsvalid('5')" href="javascript:void(0)">校验</a><a
+                                               class="purchase" id="smsSend" onclick="order.cust.smsResend('5')"
+                                               href="javascript:void(0)">短信发送</a>
+                                       </form>
+                                   </td>
+                               </tr>
+                               <tr class="randomCode">
+                                   <td>
+                                       <span style="float:left; margin-top:5px">随机序列号</span>
+                                       <form id="num">
+                                           <input class="txtnum" disabled='disabled'  style="float:left; margin:0px 5px;height:24px" />
+                                       </form>
+                                   </td>
+                               </tr>
+                               <tr>
+                                   <td>
+                                       <p>- 验证码在5分钟内有效，3次错误输入后失效。</p>
+
+                                       <p>- 如您在30秒内仍未收到验证码，请点击上面短信发送重新获取。</p>
+
+                                       <p>- 如果您连续3次重试都没有成功收到短信验证码，建议您稍后再试。</p>
+                                   </td>
+                               </tr>
+                           </table>
+                       </form>
+                   </div>
+               </div>
+               <div style="text-align: center"><a class="purchase" id="jumpAuth"  style="display:none"
+                                                  onclick="order.cust.jumpAuth()">跳过校验</a></div>
+           </div>
+
+       </div>
+       <!--用户鉴权弹窗 end-->
+ 

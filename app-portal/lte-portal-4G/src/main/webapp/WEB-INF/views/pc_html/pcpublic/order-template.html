@@ -1,0 +1,564 @@
+
+<div class="main_div" id="orderContent">
+<!--内容-->
+    <div id="nothreelinks" class="main_warp main_index" style="height:300px; display:none;"></div>
+    <div id="orderTitleDiv" class="main_order_title main_warp">
+	    <h2 class="h2_title">
+	    	<span id="orderTitleSpan"></span>
+		</h2>
+    </div>
+    <div class="main_warp" id="order_tab_panel_content" style="display:none">
+        
+    </div>
+    <!-- 填单页面用 -->
+    <div class="main_warp" id="order_fill_content" style="display:none;margin-top:70px;">
+    
+    </div>
+    <!-- 订单确认页面-->
+    <div class="main_warp" id="order_confirm" style="display:none;margin-top:70px;"></div>
+    
+    <!-- 订单确认页面（分段受理专用）-->
+    <div class="main_warp" id="step_order_confirm" style="display:none"></div>
+<!--内容 end-->
+</div>
+<!--弹出款-选择号码的内容-->
+<div style="display:none" id="ec-dialog-form-container-phonenumber" class="ec-dialog-form-container">
+  <div class="ec-dialog-form-top">
+    <h1 class="ec-dialog-form-title">选择号码</h1>
+  </div>
+  <div class="ec-dialog-form-content">
+    <div class="ec-dialog-form-loading" style="display:none"></div>
+    <div class="ec-dialog-form-message" style="display:none"></div>
+    <div class="ec-dialog-form-form" >
+      <form action="#" style="" id="dialogForm">
+        <div class="form-content" id="phonenumberContent" style="min-height:200px">      
+        </div>
+      </form>
+    </div>
+  </div>
+  <div class="ec-dialog-form-bottom"></div>
+</div>
+<!--弹出款的内容-->
+<!--帐户选择弹窗-->
+<div class="easyDialogdiv" style="width:1080px;height:460px;" id="div_staff_dialog">
+
+  </div>
+<!--用户鉴权弹窗-->
+<div style="height:300px;display:none;background:#fff; -webkit-border-radius:5px; -moz-border-radius:5px; border-radius:5px;-webkit-box-shadow:0 8px 8px rgba(0,0,0,0.4);-moz-box-shadow:0 8px 8px rgba(0,0,0,0.4);box-shadow:0 8px 8px rgba(0,0,0,0.4); border:5px solid #cbced0;
+	display:none;
+	overflow-y:auto;" id="auth2">
+</div>
+<!-- 发展人管理弹窗 -->  
+<div id="div_attach_dialog" class="easyDialogdiv" style="width:980px;height:460px;">
+	<div class="easyDialogclose" id="staff_dialog_close" onclick="easyDialog.close()"></div>
+	<table class="contract_list">
+		<thead>
+			<tr><td><input type="checkbox" name="attach_dealer_check_all" onclick="order.dealer.checkAllAttach(this)">操作</td><td>号码</td><td>发展业务</td></tr>
+		</thead>
+		<tbody id="attach_tbody">
+		</tbody>
+	</table>
+	<div align="center" style="margin: 20px auto;">
+		<a class="btna_o" href="javascript:void(0)" onclick="order.dealer.addAttachDealer()"><span>确认</span></a>
+		<a class="btna_o" href="javascript:void(0)" onclick="easyDialog.close()" style=" margin-left:20px;"><span>取消</span></a>
+	</div>
+</div>
+
+<!-- 功能产品销售品详情弹窗 -->
+<div id="div_detail_dialog" class="easyDialogdiv" style="width:980px;height:460px;">
+	<div class="easyDialogclose" id="staff_dialog_close" onclick="easyDialog.close()"></div>
+	<table class="contract_list">
+		<thead>
+			<tr><td>产品名称</td><td>描述</td></tr>
+		</thead>
+		<tbody id="detail_tbody">
+		</tbody>
+	</table>
+	<div align="center" style="margin: 20px auto;">
+		<a class="btna_o" href="javascript:void(0)" onclick="easyDialog.close()" style=" margin-left:20px;"><span>返回</span></a>
+	</div>
+</div> 
+
+<!-- 销售品时间设置弹窗-->  
+<div id="div_time_dialog" class="easyDialogdiv" style="width:650px;height:420px;z-index: 1" id="yilai_dialog" >
+	<div class="easyDialogclose" onclick="easyDialog.close()"></div>
+  	<table class="contract_list rule">
+    	<thead>
+       		<tr>
+                <td colspan="2" id="attachName"></td>
+            </tr>                                                    
+         </thead>
+  	</table>
+  	<br/>
+  	<div class="form-content">
+    	<div class="phone_warp" style="margin:0px 10px;">
+	    	<table class="numberList">
+		        <tbody>
+		          	<tr>
+			            <td class="borderLTB" align="left" style="font-size:14px; padding:12px" colspan="5">
+			            	<span style="color:#518652; font-size:14px;">生效方式：</span>
+			            </td>
+		          	</tr>
+		          	<tr>
+			          	<td align="left" width="25px"></td>
+			            <td align="left" width="100px"><input type="radio" checked="checked" value="1" name="startTimeType">默认生效</td>
+			            <td align="left" width="100px"><input type="radio" value="2" name="startTimeType">立即生效</td>
+			            <td align="left" colspan="2"><input type="radio" value="3" name="startTimeType">次月生效</td>  
+		          	</tr>
+		          	<tr id="startTimeTr">
+		          		<td align="left"></td>
+		            	<td align="left"><input type="radio" value="4" name="startTimeType"><label>指定时间生效</label> 
+		            	<td align="left" colspan="3">
+		            		<input id="startDt" placeholder="请选择指定的时间" class="numberTextBox" type="text" 
+		            			style="width:160px" onclick="AttachOffer.showStartTime()" readonly="readonly" >
+		          		</td>
+		          	</tr>
+		          	<tr>
+		           		<td class="borderLTB" align="left" style="font-size:14px; padding:12px" colspan="5">
+		            		<span style="color:#518652; font-size:14px;">失效方式：</span>
+		            	</td>
+		          	</tr>
+		          	<tr>
+		          		<td align="left" width="25px"></td>
+		            	<td align="left"><input type="radio" checked="checked" value="1" name="endTimeType">默认失效</td>
+		            	<td align="left" colspan="3">
+		            		<input type="radio" value="5" name="endTimeType"><label>有效时长</label>
+		            		<input type="number" id="endTime" class="inputWidth40px">
+		            		<select id="endTimeUnit">
+		            			<option value="1">天</option>
+		            			<option value="2">周</option>
+		            			<option value="3" selected="selected">月</option>
+		            			<option value="4">季度</option>
+		            			<option value="5">半年</option>
+		            			<option value="6">年</option>
+		            			<option value="7">月初失效</option>
+		            		</select>
+		            	</td>
+		          	</tr>
+		          	<tr id="endTimeTr">
+		          		<td align="left"></td>
+		            	<td><input type="radio" value="4" name="endTimeType"><label>指定时间失效</label></td>
+		            	<td align="left" colspan="3">
+		            		<input id="endDt" class="numberTextBox" type="text" placeholder="请选择指定的时间"  style="width:160px"
+		            		onclick="AttachOffer.showEndTime();" readonly="readonly"  >
+		            	</td>
+		          	</tr>
+		        </tbody>
+	      	</table>
+    	</div>
+  	</div>
+  	
+  	<div align="center" style="margin: 20px auto;">
+  		<a class="btna_o" href="javascript:void(0)" style=" margin-left:20px;" id="timeSpan"><span>确认</span></a>
+		<a class="btna_o" href="javascript:void(0)" style=" margin-left:20px;" onclick="easyDialog.close()"><span>取消</span></a>
+	</div>
+</div>
+
+<!-- 销售品构成-->  
+<div id="div_member_dialog" class="easyDialogdiv" style="width:650px;height:420px;z-index: 1" id="yilai_dialog" >
+	<div class="easyDialogclose" onclick="easyDialog.close()"></div>
+  	<table class="contract_list rule">
+    	<thead>
+       		<tr>
+                <td colspan="2" id="memberName"></td>
+            </tr>                                                    
+         </thead>
+  	</table>	          	
+  	<br/>
+  	<div id="main_member_div" class="fs_choosed">
+		
+	</div>
+  	
+  	<div align="center" style="margin: 20px auto;">
+		<a class="btna_o" href="javascript:void(0)"><span id="memberSpan">确认</span></a>
+		<a class="btna_o" href="javascript:void(0)" style=" margin-left:20px;" onclick="easyDialog.close()"><span>取消</span></a>
+	</div>
+</div>
+
+<!--弹出框的内容-->
+<div class="easyDialogdiv" style="width:700px;height:450px;" id="member_dialog" >
+	<div class="easyDialogclose" onclick="easyDialog.close()"></div>
+  	<table class="contract_list rule">
+        <thead>
+            <tr>
+                <td colspan="2" id="main_title"></td>
+            </tr>                                                    
+        </thead>
+  	</table>
+  	<br/>
+  	<div class="form-content">
+	    <div class="phone_warp" style="margin:0px 10px;">
+	    	<table class="numberList">
+	        	<tbody id="member_tbody">	
+	        	</tbody>
+	      	</table>
+	      	<div align="center" style="margin: 20px auto;">
+	      		<a href="javascript:void(0)" id="member_btn" class="btna_o"><span>确认</span></a>
+	      			<button style="display:none" id="btncustreset" type="reset">ssss</button>
+	        	<a id="custresetBtn" href="javascript:easyDialog.close();" class="btna_o" style=" margin-left:20px;"><span>取消</span></a>
+	      	</div>
+	    </div>
+  	</div>
+</div>
+<!--用户鉴权弹窗-->
+	<div class="easyDialogdiv" style="height:300px;display:none" id="auth">
+		<div class="easyDialogclose" id="authClose"></div>
+		<form id="custAuthForm">
+		<h1 class="easyDialogTitle">客户身份鉴权</h1>
+		<div class="infoBox">
+			<table class="network">
+				<tbody>
+					<tr>
+						<td width="100"><label class="f_red">*</label><label id="custAuthTypeName">产品密码：</label></td>
+						<td width="300">
+							<input id="authPassword" type="password" placeHolder="请输入密码" data-validate="validate(required:密码不能为空, maxlength:密码长度最多为{arg1}(12)) on(blur)" class="inputWidth150px">
+							<a class="purchase" id="custAuthbtn" href="javascript:void(0)">校验</a><a class="purchase" id="jumpAuth" style="display:none" onclick="order.cust.jumpAuth()">跳过校验</a>
+						</td>
+					</tr>   
+				</tbody>
+	         </table>
+	    </div>
+	    </form>
+	</div>
+	
+	<!--用户鉴权弹窗 end-->
+	
+	<!--用户鉴权弹窗-身份证号-->
+	<div class="easyDialogdiv" style="height:2px;display:none" id="authID">
+		<div class="easyDialogclose" id="authIDClose"></div>
+		<form id="custAuthFormID">
+		<h1 class="easyDialogTitle">客户身份鉴权</h1>
+		<div class="infoBox">
+			<table class="network">
+				<tbody>
+					<tr>
+						<td width="100">
+					    	<label class="f_red">*</label>
+					    	<label id="custAuthTypeNameID">身份证号：</label>
+						</td>
+					    <td width="300">
+					    	<input id="authIDTD" type="password" placeHolder="请输入身份证号" data-validate="validate(required:身份证不能为空,idCardCheck:请准确填写身份证号码) on(blur)" class="inputWidth150px">
+					    	<a class="purchase" id="readCertBtnID" onclick="order.cust.readCertWhenAuth()">读卡</a>
+							<a  class="purchase" id="custAuthbtnID" href="javascript:void(0)">校验</a>
+							<a class="purchase" id="jumpAuthID" style="display:none" onclick="order.cust.jumpAuth()">跳过校验</a>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+	    </div>
+	    </form>
+	</div>
+	
+	<!--用户鉴权弹窗-身份证号 end-->
+<!-- 规则弹窗 -->  
+<div id="ruleDiv" style="width: 650px; height: 400px; display: none; margin: 0px;" class="easyDialogdiv" >
+  <div id="ruleclose" class="easyDialogclose"></div>
+  <table class="contract_list rule">
+            <thead>
+                <tr>
+                    <td colspan="2">业务规则提示</td>
+                </tr>                                                    
+            </thead>
+        </table>
+  		<div id="rules_div">
+        	<table width="100%" cellspacing="0" cellpadding="0" border="0">
+              <tbody><tr>
+                <td align="right" style="width:45%"><i class="rule_icon_wrong"></i></td>
+                <td><span class="rule_font">规则校验未通过！</span></td>
+              </tr>
+            </tbody></table>
+        </div>
+  <div class="form-content">
+    <div style="margin:0px 10px;" class="phone_warp">
+      <table class="numberList">
+        <thead>
+          <tr>
+            <td style="width:24%" class="borderLTB">规则编码</td>
+            <td style="width:44%" class="borderLTB">规则名称</td>
+            <td style="width:18%" class="borderLTB">规则等级</td>
+            <td style="width:14%" class="borderLTB">校验结果</td>
+          </tr>
+        </thead>
+        <tbody id="ruleBody">
+          
+        </tbody>
+      </table>
+    </div>
+    <div style="margin:0px 10px;border:none;" class="selectList">
+      <dl style="border:none;text-align:center;">
+        <dd style="float:none;">
+          <!--  <input type="text" style="margin-left:108px;" value="" class="numberTextBox inputWidth183px">
+          <input type="button" id="credit" value="授 信" class="numberSearch">-->
+          <input type="button" id="closedialog" value="确 定" class="numberSearch">
+          <!--<input type="button" value="取 消" class="numberSearch"> -->
+        </dd>
+      </dl>
+    </div>
+  </div>
+</div>
+<!--主副卡变更弹窗-->
+<div style="display:none" style="width:1100px;" id="ec-dialog-form-container-memeberChange" class="ec-dialog-form-container">
+  <div class="ec-dialog-form-top">
+    <h1 class="ec-dialog-form-title" id="memeberChangeTitle">主副卡成员变更</h1>
+  </div>
+  <div class="ec-dialog-form-content" style="height: 350px;width:560px;">
+    <div class="ec-dialog-form-loading" style="display:none"></div>
+    <div class="ec-dialog-form-message" style="display:none"></div>
+    <div class="ec-dialog-form-form" >
+      <form action="#" style="" id="dialogForm">
+        <div class="form-content"  id="memeberChange">  
+          <table class="numberList">
+	        	<tbody id="maincard_member_tbody">	
+	        	</tbody>
+	      	</table>
+		
+		  <!--上下步按钮-->
+		  <div align="center" style="margin: 20px auto;">
+		      <a class="btna_o" href="javascript:void(0)"><span >确认</span></a>
+		      <a style="display:none; margin-left:20px;" class="btna_o" href="javascript:void(0)"><span>取消</span></a>
+		  </div>     
+        </div>
+      </form>
+    </div>
+  </div>
+  <div class="ec-dialog-form-bottom"></div>
+</div>
+<!--弹出款-选择套餐的内容-->
+<div style="display:none" id="ec-dialog-form-container-delephone" class="ec-dialog-form-container">
+  <div class="ec-dialog-form-top">
+    <h1 class="ec-dialog-form-title" id="delPhoneTitle">欠费拆机-是否保留副卡</h1>
+  </div>
+  <div class="ec-dialog-form-content">
+    <div class="ec-dialog-form-loading" style="display:none"></div>
+    <div class="ec-dialog-form-message" style="display:none"></div>
+    <div class="ec-dialog-form-form" >
+      <form action="#" style="" id="dialogForm">
+        <div class="form-content" style="min-height:200px" id="delPhoneNumber">  
+          <ul class="fillin show">
+		  	<h5 class="s_title">主卡</h5>
+		    <li>
+		      <!--a id="" class="purchase" href="#">选择</a-->
+		    </li>
+		    <div class="clear"></div>
+		  </ul>
+		  
+		  <div class="height18"></div>
+		  <ul class="fillin show" style='height:160px'>
+		  <h5 class="s_title">副卡</h5>
+		
+		    <div class="clear"></div>
+		  </ul>
+		
+		  <!--上下步按钮-->
+		  <div align="center" style="margin: 20px auto;">
+		      <a class="btna_o" href="javascript:void(0)"><span >确认</span></a>
+		      <a style=" margin-left:20px;" class="btna_o" href="javascript:void(0)"><span>取消</span></a>
+		  </div>     
+        </div>
+      </form>
+    </div>
+  </div>
+  <div class="ec-dialog-form-bottom"></div>
+</div>
+<!--弹出款的内容-->
+<!--拆机弹窗-->
+<div class="easyDialogdiv" style="width:1100px;height:450px;" id="chooseofferspec">
+  <div class="easyDialogclose" id="chooseofferspecclose"></div>
+  <table class="contract_list">
+            <thead>
+                <tr>
+                    <td id="chooseofferspecTitle">选择套餐</td>
+                </tr>                                                    
+            </thead>
+        </table>
+   <div class="height18"></div>    
+  <div id="offerspecContent" style="min-height:200px">      
+  </div>
+</div>
+<!--主副卡成员变更-->
+<div class="easyDialogdiv" style="width:1100px;height:450px;" id="choosechofferspec">
+  <div class="easyDialogclose" id="choosechofferspecclose"></div>
+  <table class="contract_list">
+            <thead>
+                <tr>
+                    <td id="chooseofferspecTitle">选择套餐</td>
+                </tr>                                                    
+            </thead>
+        </table>
+   <div class="height18"></div>    
+  <div id="chofferspecContent" style="min-height:200px">      
+  </div>
+</div>
+
+<!-- 群号弹出框-->  
+<div style="display:none" id="ec-dialog-form-container-group" class="ec-dialog-form-container">
+  <div class="ec-dialog-form-top">
+    <h1 class="ec-dialog-form-title" align="center">参数设置</h1>
+  </div>
+  <div class="ec-dialog-form-content">
+    <div class="ec-dialog-form-loading" style="display:none"></div>
+    <div class="ec-dialog-form-message" style="display:none"></div>
+    <div class="ec-dialog-form-form">
+		<form action="#" style="text-align:center;" id="dialogForm1">
+			<div class="form-content" id="groupContent">
+				<div id="div_group">
+		    	</div>
+		      	<div id="div_group_btn" align="left" style="margin-top: 20px;margin-left: 70px;">
+		      	</div>
+			</div>
+		</form>
+	</div>
+  </div>
+</div>
+
+<!--渠道选择弹窗-->
+<div class="easyDialogdiv" style="width:450px; max-height: 380px;min-height: 250px" id="qudao">
+    	<div class="easyDialogclose" id="qudaoclose"></div>
+    	<table class="contract_list">
+            <thead>
+                <tr>
+                    <td>选择渠道</td>
+                    <td>省份</td>
+                    <td>地区</td>
+               </tr>                                                    
+            </thead>
+            <tbody>
+            	<#if Session["_staff_channel"]?? && (Session["_ecs_login_session_key"].currentChannelId!="") >
+				<#list Session["_staff_channel"] as channel>				
+				<tr <#if channel_index%2="1" >class="bg"</#if> >
+					<td class="channel_sel" onclick="header.menu.chooseChannel('${channel.id}')" >
+                  		<dd>
+                  		<i name= "channel_iofo_i" channel_Id ="${channel.id}" channel_Name = "${channel.name}" channel_Nbr = "${channel.chnNbr}" 
+                  		<#if channel.id=Session["_ecs_login_session_key"].currentChannelId >class="select"</#if> ></i>
+			      			${channel.name}
+			    		</dd>
+			    	</td>
+			    	<td class="channel_sel" onclick="header.menu.chooseChannel('${channel.id}')" >
+                  		<dd>
+			      			${channel.cityName}
+			    		</dd>
+			    	</td>
+			    	<td class="channel_sel" onclick="header.menu.chooseChannel('${channel.id}')" >
+                  		<dd>
+			      			${channel.areaName}
+			    		</dd>
+			    	</td>
+				</tr>
+				
+                <!-- 
+                <tr <#if channel_index%2="1" >class="bg"</#if> >
+                  <td class="channel_sel" 
+                  	channelname="${channel.name}" channelid="${channel.id}" agenttypecd="${channel.type}" 
+                  	areaid="${channel.areaId}" areacode="${channel.areaCode}" areaName="${channel.areaName}" 
+                  	onclick="header.menu.chooseChannel(this)" >${channel.name}</td>
+                </tr>
+                <tr class="bg">
+                  <td>XX营业厅</td>
+                </tr>
+                <tr>
+                  <td>XX营业厅</td>
+                </tr>
+                 -->
+                 
+                </#list>
+				</#if>
+            </tbody>
+        </table>
+    </div>
+<!--渠道选择弹窗结束-->
+
+
+<!--用户鉴权弹窗-->
+	<div class="easyDialogdiv" style="height:300px;display:none" id="auth">
+	<div class="easyDialogclose" id="authClose"></div>
+	<form id="custAuthForm">
+	<h1 class="easyDialogTitle">客户身份鉴权</h1>
+	<div class="infoBox">
+		<table class="network">
+                          <tbody>
+                          <tr>
+                                <td width="100"><label class="f_red">*</label><label id="custAuthTypeName">产品密码：</label></td>
+                                <td width="300"><input id="authPassword" type="password" placeHolder="请输入密码" data-validate="validate(required:密码不能为空, maxlength:密码长度最多为{arg1}(12)) on(blur)" class="inputWidth150px"><a  class="purchase" id="custAuthbtn" href="javascript:void(0)">校验</a><a class="purchase" id="jumpAuth" style="display:none" onclick="order.cust.jumpAuth()">跳过校验</a>
+                                </td>
+                          </tr>   
+
+                        </tbody>
+         </table>
+    </div>
+    </form>
+	</div>
+<!--用户鉴权弹窗 end-->
+<!--弹出款-客户定位，选择使用人-->
+<div id="choose_user_dialog" class="easyDialogdiv" style="width:700px;height:250px;">
+<div class="easyDialogclose" id="chooseUserClose" onclick="easyDialog.close()"></div>
+    	<table class="contract_list">
+            <thead>
+                <tr>
+                    <td>选择使用人</td>
+                </tr>                                                    
+            </thead>
+        </table>
+        <div id="chooseUserDiv" class="main_div location main_warp">
+		<form id="custQueryForChooseForm">
+	    <ul class="usercon">
+	    <li class="ulocation" >
+		<h2 style="margin: 4px 8px 0 5px;">受理地区</h2>
+		</li>
+		<li class="usersearch">
+		   <input id="diffPlaceFlag_choose" type="hidden" value="${DiffPlaceFlag}"> 
+			<#if Session["_ecs_login_session_key"].currentChannelId ?? && (Session["_ecs_login_session_key"].currentChannelId!="") >
+			  <input type="text" class="numberTextBox" style="margin-left:5px; width:100px" readonly id="p_cust_areaId_val_choose" onclick="order.cust.<#if DiffPlaceFlag=="local">chooseAreaForChooseUser<#else></#if>()" value="${Session["_ecs_login_session_key"].currentAreaAllName}" placeholder="请选择地区" readonly />
+	          <input type="hidden" id="p_cust_areaId_choose" value="${Session["_ecs_login_session_key"].currentAreaId}">
+	          <input type="hidden" DiffPlaceFlag="${DiffPlaceFlag}">
+	           <input type="hidden" id="p_cust_areaId" value="${Session["_ecs_login_session_key"].currentAreaId}">
+	         </#if>
+        </li>
+		<li class="ulocation">
+			<h2 style="margin: 4px 8px 0 5px;">客户定位</h2>
+		</li>
+		<li class="usersearch">
+		<select onchange="order.cust.custidentidiesTypeCdChoose(this,'p_cust_identityNum_choose')" id="p_cust_identityCd_choose" class="selectNumbertype" style="width:118px;">
+                                  	  	<option value="-1" >接入号码</option>
+                                  	  	<option value="acctCd" >合同号</option>
+                                  	  	<option value="custNumber" >客户编码</option>
+        </select>
+        <div id="custList" class="usersearchcon" ></div>
+        </li>
+		<li class="usersearch">
+			<input name="" type="text" class="numberTextBox" id="p_cust_identityNum_choose" onkeyup="value=value.replace(/[^\w]|_/ig,'')" 
+				placeHolder="请输入接入号码" data-validate="validate(isTelecomOridCardCheck:请输入合法接入号码) on(blur)" style="width:158px;"/>
+		</li>
+
+        <li class="ubtn">
+		    <a id="userSearchForChooseBtn" href="javascript:void(0)"  class="btn_h30 btn" style="margin-left:30px;" onclick=""><span>查 询</span></a>
+		</li>
+		
+		</ul>
+		</form>
+		
+		<table class="contract_list" id="chooseUserList" style="display: none;">
+		<thead>
+			<tr>
+				<td width="100">姓名</td>
+				<td width="350">证件号码</td>
+				<td width="100">地区</td>
+			</tr>
+		</thead>
+		<tbody>
+			<tr id="chooseUserInfo">
+				<td id="chooseUserInfoName"></td>
+				<td id="chooseUserInfoNum"></td>
+				<td id="chooseUserInfoAreaName"></td>
+			</tr>
+		</tbody>
+	</table>
+	
+	
+	</div>
+  	<div align="center" style="margin: 20px auto;">
+        <a id="chooseUserBtn" class="btna_o" href="javascript:void(0)"><span >确认</span></a>
+        <a id="cancelChooseUserBtn" class="btna_o" href="javascript:void(0)" style=" margin-left:20px;" onclick="easyDialog.close()"><span>取消</span></a>
+    </div>
+</div>
+
+

@@ -1,0 +1,21 @@
+<div class="form-group" id="uimDiv_${prodId}" style="display: none;"> 
+	<label for="exampleInputFile">UIM卡号<span class="text-warning">*</span>&nbsp;&nbsp;&nbsp;&nbsp;<span id="tip_${prodId}" class="text-warning"></span></label>
+	<div class="input-group">
+      <input type="tel" class="form-control" id="uim_txt_${prodId}" onkeyup="this.value=this.value.replace(/\D/gi,'')">
+      <div class="input-group-btn">
+        <button type="button" class="btn btn-primary dropdown-toggle" style="border: 0;" id= "uim_check_btn_${prodId}" onclick="prod.uim.checkUim(${prodId});"><span style="float:left;">校验</span></button>
+        <button type="button" class="btn btn-primary dropdown-toggle" style="border: 0;" data-toggle="dropdown" aria-expanded="false"> <span class="caret"></span></button>
+        <ul class="dropdown-menu dropdown-menu-right" role="menu">
+          <li><button class="btn btn-uim" type="button" onclick="common.callScanning('order.service.scaningCallBack',${prodId})"> <span style="float:left;">扫描 </span></button></li>
+          <li class="divider"></li>
+          <li>
+          	  <button class="btn btn-uim" id="uim_release_btn_${prodId}" onclick="prod.uim.releaseUim(${prodId});"  type="button" disabled="disabled">
+				<span style="float:left;">释放</span>
+			  </button>
+		  </li>
+        </ul>
+      </div><!-- /btn-group -->
+    </div><!-- /input-group -->
+</div>
+<div id="terminalDiv_${prodId}" style="display: none;">
+</div>

@@ -1,0 +1,53 @@
+<!-- 主副卡角色互换 -->
+<div class="order_confirmation ordertabcon" style="display: none" id="ordertabcon">
+	<h2 class="h2_title">
+		<span> ${param.boActionTypeName} </span>
+		<span class="showhide"></span>
+	</h2>
+	
+	<div class="main_body">
+		<!--购物车订单信息展示123456789-->
+		<div class="height18"></div>
+		<div id="orderInfoDetail">
+			<h5 class="s_title">变更信息</h5>
+			<ul class="fillin">
+				<li class="full" id="li_order_remark">
+					<label>原主卡：</label> 
+					<span style="line-height: 28px; float:left;">${param.mainAcctNbr} 将成为副卡</span>
+				</li>
+				<li class="full" id="li_order_remark">
+					<label>所选副卡：</label> 
+					<span style="line-height: 28px; float:left;">${param.subAcctNbr} 将成为主卡</span>
+				</li>
+			</ul>
+		</div>
+		
+		<!-- 发展人123456789 -->
+		<div class="height18"></div>
+		<div id="dealerAidDiv" >
+			<@block name="dealer">
+				<#include "/order/order-dealer.html" />
+			</@block>
+		</div>
+			
+		<!--购物车订单备注展示123456789-->
+		<div class="height18"></div>
+		<div id="orderRemarkDiv">
+			<@block name="remark"> 
+				<#include "/order/order-remark.html" /> 
+			</@block>
+		</div>
+		
+		<!--购物车订单属性展示123456789-->
+		<div class="height18"></div>
+		<div id="orderAttrDiv">
+			<@block name="orderAttr"> 
+				<#include "/order/order-attr.html" /> 
+			</@block>
+		</div>
+	</div>
+</div>
+<div align="right" style="margin: 20px auto; padding: 0 20px;">
+	<a id="fillLastStep" href="javascript:void(0)" class="btna_o"><span>取消</span></a> 
+	<a id="fillNextStep" href="javascript:void(0)" class="btna_o" style="margin-left: 20px;"><span>下一步</span></a>
+</div>

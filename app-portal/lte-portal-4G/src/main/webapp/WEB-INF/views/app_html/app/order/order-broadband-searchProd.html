@@ -1,0 +1,179 @@
+<style type="text/css">
+<!--
+.btn-group-active{
+	background:#fff;
+	color:#ff8202;
+	box-shadow:none;
+	border:1px solid #ff8202;
+} 
+-->
+</style>
+<div id="order_prepare">
+<input type="hidden" id="subPage" value="${subPage}" />
+<input type="hidden" id="enter" value="${enter}" />
+<div class="main-box">
+<div class="container-fluid">
+	<div class="row">
+		<div id="myTabContent" class="tab-content no-body">
+			<!-- 套餐入口 -->
+			<div class="tab-pane fade in" id="pakeage">
+				<div class="row divtab">
+					<div class="col-xs-10">
+						<!--
+						<input type="hidden" id="qryStr" value="乐享"/>
+						-->
+						<!-- <input type="hidden" id="categoryNodeId" value="90132141"/> -->
+						<div class="btn-group btn-group-justified btn-group-noborder"
+							data-toggle="buttons-radio" role="group" aria-label="...">
+							<div class="btn-group" role="group">
+								<button type="button" class="btn btn-default active" value="90132141" >宽带套餐</button>
+								<!-- <button type="button" class="btn btn-default active" value="90132141" onclick="order.service.tabChange(this)">宽带套餐</button> -->
+							</div>
+							<!-- <div class="btn-group" role="group">
+								<button type="button" class="btn btn-default" value="90132143" onclick="order.service.tabChange(this)">积木</button>
+							</div>
+							<div class="btn-group" role="group">
+								<button type="button" class="btn btn-default" value="90139849" onclick="order.service.tabChange(this)">飞Young</button>
+							</div>
+							<div class="btn-group" role="group">
+								<button type="button" class="btn btn-default" value="-9999" onclick="order.service.tabChange(this)">其他</button>
+							</div> -->
+						</div>
+					</div>
+					<div class="col-xs-2">
+			            <button type="button" class="btn btn-default navbar-btn nav-justified no-mp" data-toggle="modal" data-target="#search-modal"> <span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
+			          </div>
+				</div>
+				<div id="offer-list" style="margin: 10px; margin-top:0px;">
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+</div>
+<!-- Modal -->
+<div class="modal fade modal_search" id="search-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal_top">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="panel panel-default">
+          <div class="panel-body">
+            <form>
+            <div class="form-group has-feedback">
+              <input type="text" class="form-control w-100" id="qryStr" aria-describedby="inputSuccess2Status" placeholder="请输入套餐名称">
+            </div>
+            	<div class="form-group">
+                  	<label for="exampleInputEmail1" class="w-100">价格区间（元）</label>
+                  	<div class="input-group w-100">
+                   	<select id="select_price" class="selectpicker show-tick form-control" >
+                   		<option value="">不限</option>
+                	</select>
+		            <span class="input-group-addon select-span"></span>
+	         		</div>
+               </div>
+               <div class="form-group">
+                  	<label for="exampleInputEmail1" class="w-100">语音时长（分钟）</label>
+                  	<div class="input-group w-100">
+                   	<select id="select_invoice" class="selectpicker show-tick form-control" >
+                   		<option value="">不限</option>
+                	</select>
+		            <span class="input-group-addon select-span"></span>
+	         		</div>
+               </div>
+               <div class="form-group">
+                  	<label for="exampleInputEmail1" class="w-100">流量（G）</label>
+                  	<div class="input-group w-100">
+                   	<select id="select_influx" class="selectpicker show-tick form-control" >
+                   		<option value="">不限</option>
+                	</select>
+                	 <span class="input-group-addon select-span"></span>
+	         		</div>
+               </div>
+  
+			</form>
+          </div>
+          <div class="modal-footer">
+          	<div class="col-xs-6">
+          		<button type="button" style="height: 42px;font-size: 14px; width:100%; border-right: 1px solid #d6d6d6;" onclick="order.service.searchPack(1);" class="btn btn-default" style="border-right: 1px solid #;"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> 确定</button>
+          	</div>
+          	<div class="col-xs-6">
+          		<button type="button"  style="height: 42px;font-size: 14px; width:100%;" class="btn btn-default" data-toggle="modal" data-target="#search-modal"> <span class="glyphicon" aria-hidden="true"></span>关闭</button> 
+           	</div>
+          </div>
+        </div>
+    </div>
+  </div>
+</div>
+</div>
+</div>
+<!-- 副卡弹出框 -->
+<div class="modal fade" id="vice_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal_wrapper">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="panel panel-default" style="margin-bottom: 0;">
+          <div class="panel-body">
+            <form>
+            	<div id="div_content">
+                </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+          	<div class="col-xs-6">
+          		<button type="button" style="height: 42px;font-size: 14px; width:100%;" id="btn_modal" class="btn btn-default"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> 确定</button>
+          	</div>
+          	<div class="col-xs-6">
+          		<button type="button"  style="height: 42px;font-size: 14px; width:100%;" class="btn btn-default" data-toggle="modal" data-target="#vice_modal"> <span class="glyphicon" aria-hidden="true" style="display: none;"></span>关闭</button> 
+           	</div>
+          </div>
+        </div>
+    </div>
+  </div>
+</div>
+</div>
+<div id="order" style="display: none;">
+</div>
+<!-- 选号页面用 -->
+<div class="item" id="phonenumberContent" style="display:none">
+ 
+</div>
+<script>
+//初始化
+$(function(){
+	if(${enter}=="1"){
+		$("#mima").empty();
+		order.broadband.initProd();
+		$("#pakeage").attr("class","tab-pane fade in active");
+		$("#phone").attr("class","tab-pane fade medialist");
+		$("#number").attr("class","tab-pane fade");
+	}
+});
+function setnumPrice(){
+			var price = $("#numPrice").val();
+			if(price=="-1"){
+				$("#Less").val("");
+				$("#Greater").val("");
+			}else if(price=="0"){
+				$("#Less").val("100");
+				$("#Greater").val("0");
+			}else if(price=="100"){
+				$("#Less").val("300");
+				$("#Greater").val("100");
+			}else if(price=="300"){
+				$("#Less").val("500");
+				$("#Greater").val("300");
+			}else if(price=="500"){
+				$("#Less").val("1200");
+				$("#Greater").val("500");
+			}else if(price=="1200"){
+				$("#Less").val("15000");
+				$("#Greater").val("1200");
+			}else if(price=="15000"){
+				$("#Less").val("30000");
+				$("#Greater").val("15000");
+			}else if(price=="30000"){
+				$("#Less").val("");
+				$("#Greater").val("30000");
+			}
+		}
+</script>

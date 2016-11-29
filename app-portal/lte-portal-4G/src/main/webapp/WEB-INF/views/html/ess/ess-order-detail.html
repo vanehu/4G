@@ -1,0 +1,230 @@
+<#if code?? && (code>=0) >
+<div class="main_div">
+	<div class=" main_warp">
+		<div class="ordercon">
+			<div class="order_confirmation ordertabcon" style="display: block">
+				<h2 class="h2_title">
+					ESS订单详情<span class="showhide"></span>
+				</h2>
+				<div class="main_body">
+					<#if cart.orderListInfo?? >
+					<#assign orderListInfo = cart.orderListInfo>
+					<h5 class="s_title">订单信息</h5>
+					<ul class="fillin">
+						<li><font>外部订单号：</font><span>${orderListInfo.extCustOrderId}</span>
+						</li>
+						<li><font>受理人：</font><span>${orderListInfo.staffName}</span>
+						</li>
+						<li><font>受理地区：</font><span>${orderListInfo.areaName}</span>
+						</li>
+						<li><font>受理渠道：</font><span>${orderListInfo.channelName}</span>
+						</li>
+						<li><font>状态：</font><span>${orderListInfo.olStatusName}</span></li>
+						<li><font>创建时间：</font><span>${orderListInfo.soDate}</span></li>
+					</ul>
+					<div class="height18"></div>
+					</#if>
+					<#if (cart.custInfo)?? &&((cart.custInfo)?size>0)>
+					<#list cart.custInfo as custInfo >
+					<#if custInfo.state == 'ADD'>
+					<h5 class="s_title">客户基本信息</h5>
+					<ul class="fillin">
+						<li><font>客户信息：</font><span>${custInfo.custName}</span>
+						</li>
+						<li><font>客户编码：</font><span>${custInfo.custNum}</span>
+						</li>
+						<li><font>集团客户序号：</font><span>${custInfo.custSeq}</span>
+						</li>
+						<li><font>客户类型：</font><span>${custInfo.custType}</span>
+						</li>
+						<li><font>客户地址：</font><span>${custInfo.custAddr}</span></li>
+						<li><font>地区：</font><span>${custInfo.custArea}</span>
+						</li>
+					</ul>
+					<div class="height18"></div>
+					</#if>
+					</#list>
+					</#if>
+					<#if (cart.custCert)?? &&((cart.custCert)?size>0)>
+					<#list cart.custCert as custCert >
+					<#if custCert.state == 'ADD'>
+					<h5 class="s_title">客户证件信息</h5>
+					<ul class="fillin">
+						<li><font>证件类型：</font><span>${custCert.certTypeName}</span>
+						</li>
+						<li><font>证件号码：</font><span>${custCert.certNumber}</span>
+						</li>
+						<li><font>证件地址：</font><span>${custCert.certAddr}</span>
+						</li>
+					</ul>
+					<div class="height18"></div>
+					</#if>
+					</#list>
+					</#if>
+					<#if (cart.custContactInfo)?? &&((cart.custContactInfo)?size>0)>
+					<#list cart.custContactInfo as custContactInfo >
+					<#if custContactInfo.state == 'ADD'>
+					<h5 class="s_title">客户联系人信息</h5>
+					<ul class="fillin">
+						<li><font>联系人：</font><span>${custContactInfo.contactName}</span>
+						</li>
+						<li><font>联系地址：</font><span>${custContactInfo.contactAddr}</span>
+						</li>
+						<li><font>家庭电话：</font><span>${custContactInfo.homePhone}</span>
+						</li>
+						<li><font>公司电话：</font><span>${custContactInfo.officePhone}</span>
+						</li>
+						<li><font>移动电话：</font><span>${custContactInfo.mobilePhone}</span>
+						</li>
+						<li><font>EMAIL：</font><span>${custContactInfo.eMail}</span>
+						</li>
+						<li><font>邮编：</font><span>${custContactInfo.postCode}</span>
+						</li>
+						<li><font>邮寄地址：</font><span>${custContactInfo.postAddress}</span>
+						</li>
+						<li><font>传真：</font><span>${custContactInfo.fax}</span>
+						</li>
+					</ul>
+					<div class="height18"></div>
+					</#if>
+					</#list>
+					</#if>
+					<#if (cart.acctInfo)?? &&((cart.acctInfo)?size>0)>
+					<#list cart.acctInfo as acctInfo >
+					<#if acctInfo.state == 'ADD'>
+					<h5 class="s_title">账户基本信息</h5>
+					<ul class="fillin">
+						<li><font>账户名称：</font><span>${acctInfo.acctName}</span>
+						</li>
+						<li><font>账户地区级别：</font><span>${acctInfo.acctAreaRegion}</span>
+						</li>
+						<li><font>地区：</font><span>${acctInfo.commonRegionName}</span>
+						</li>
+					</ul>
+					<div class="height18"></div>
+					</#if>
+					</#list>
+					</#if>
+					<h2 class="s_title">受理单信息</h2>
+					<table class="com_table cashier_table">
+						<tbody>
+							<tr>
+								<th width="20%">业务类型</th>
+								<th width="11%">受理时间</th>
+								<th width="6%">订单状态</th>
+								<th width="12%">退单原因</th>
+								<th width="10%">异常信息</th>
+								<!-- 当订单状态为“后端错误”、“前端错误”、“异常” 时，展示异常信息 -->
+							</tr>
+					        <#if (cart.custOrderList)?? &&((cart.custOrderList)?size>0)>
+					        <#list cart.custOrderList as orderRow >
+							<tr class="cashier_tr">
+								<td class="cashier_td"><#if orderRow.actionClass =="1000" >
+									${orderRow.boActionTypeName}-${orderRow.partyName} <#elseif
+									orderRow.actionClass =="1100" >
+									${orderRow.boActionTypeName}-${orderRow.prodSpecName} <#elseif
+									orderRow.actionClass =="1200" >
+									${orderRow.boActionTypeName}-${orderRow.objName} <#elseif
+									orderRow.actionClass =="1300" > <#if orderRow.boActionTypeCd
+									=="7" > ${orderRow.boActionTypeName}- <#if orderRow.state
+									=="ADD" > 开通&nbsp; <#elseif orderRow.state =="DEL" > 关闭&nbsp;
+									<#elseif orderRow.state =="KIP" > 变更&nbsp; <#else> </#if>
+									${orderRow.servSpecName} <#else>
+									${orderRow.boActionTypeName}-${orderRow.objName} </#if>
+									<#elseif orderRow.actionClass =="1400" >
+									${orderRow.boActionTypeName}-${orderRow.prodSpecName} <#elseif
+									orderRow.actionClass =="1500" >
+									${orderRow.boActionTypeName}-${orderRow.prodSpecName} <#elseif
+									orderRow.actionClass =="1600" >
+									${orderRow.boActionTypeName}-${orderRow.couponName} <#else>
+									${orderRow.boActionTypeName}-${orderRow.prodSpecName} </#if>
+									<#if orderRow.offerTypeCd?? && (orderRow.offerTypeCd =="10" ||
+									orderRow.offerTypeCd =="11") > <#else> <#if
+									orderRow.accessNumber?? && orderRow.accessNumber!="" >
+									&nbsp;&nbsp;[${orderRow.accessNumber}] </#if> </#if></td>
+								<td>${orderRow.soDate}</td>
+								<td>${orderRow.statusName}</td>
+								<td>${orderRow.remark}</td>
+								<td>
+									<!-- 当订单状态为“后端错误”、“前端错误”、“异常” 时，展示异常信息 --> <#if
+									orderRow.statusCd =="400000"> ${orderRow.reason} <#elseif
+									orderRow.statusCd =="401100"> ${orderRow.reason} <#elseif
+									orderRow.statusCd =="401200"> ${orderRow.reason} <#else> </#if>
+								</td>
+							</tr>
+							</#list>
+					        </#if>
+						</tbody>
+					</table>
+					<div class="height18"></div>
+					<h5 class="s_title">物品信息</h5>
+					<table width="100%" border="0" cellspacing="0" cellpadding="0" class="orderdetail_fs">
+						<thead>
+							<tr>
+								<td>物品类型</td>
+								<td>物品串码</td>
+								<td>备注信息</td>
+							</tr>
+						</thead>
+						<tbody>
+							<#if (cart.couponInfo)?? &&((cart.couponInfo)?size>0)>
+							<!-- 如果没有就不传 -->
+							<#assign couponInfoList = cart.couponInfo > <#list couponInfoList
+							as couponInfo >
+							<tr>
+								<#if couponInfo.flag =="1" >
+								<td>UIM卡</td> <#else>
+								<td>终端</td> </#if>
+								<td>${couponInfo.coupInstNbr}</td>
+								<td>${couponInfo.remark}</td>
+							</tr>
+							</#list> </#if>
+						</tbody>
+					</table>
+					<div class="height18"></div>
+					<h5 class="s_title">费用信息</h5>
+					<table width="100%" border="0" cellspacing="0" cellpadding="0"
+						class="orderdetail_fs">
+						<thead>
+							<tr>
+								<td>消费项目</td>
+								<td>费用类型</td>
+								<td>应收金额（元）</td>
+								<td>实收金额（元）</td>
+								<td>支付类型</td>
+								<td>付费备注</td>
+								<td>状态</td>
+							</tr>
+						</thead>
+						<tbody>
+							<#if (cart.chargeInfo)?? &&((cart.chargeInfo)?size>0)> <#assign
+							chargeInfoList = cart.chargeInfo > <#list chargeInfoList as
+							chargeInfo >
+
+							<tr>
+								<td>${chargeInfo.boActionTypeName}</td>
+								<td>${chargeInfo.acctItemTypeName}</td>
+								<td><span style="color: #feb161">${chargeInfo.amount?number/100}</span>
+								</td>
+								<td><span style="color: #feb161">${chargeInfo.realAmount?number/100}</span>
+								</td>
+								<td>${chargeInfo.payMethodName}</td>
+								<td>${chargeInfo.perferReason}</td>
+								<td>${chargeInfo.statusCd}</td>
+							</tr>
+							</#list> </#if>
+						</tbody>
+					</table>
+				</div>
+				<!--订单填写 end-->
+
+			<div align="right" style="margin: 20px auto; padding: 0 20px;">
+				<a style="margin-left: 20px;" class="btna_o"
+					href="javascript:essOrder.main.showMain()"><span>返回</span> </a>
+			</div>
+
+		</div>
+	</div>
+	<!--内容 end-->
+</div>
+<#else> ${mess} </#if>

@@ -1,0 +1,39 @@
+# 按行读取待合并的文件名称
+# 只读取后缀为js或css的文件
+# 以#号开始的行会被视作注释
+# 路径从WEB-INF的上级目录作为基础目录
+#resources/js/busi-js/common/const.js
+resources/js/4g-js/card/writeCard.js
+resources/js/4g-js/order/attachOffer.js
+resources/js/4g-js/order/offerChange.js
+resources/js/4g-js/order/offerQuery.js
+resources/js/4g-js/order/orderInfo.js
+resources/js/4g-js/order/soOrder.js
+resources/js/busi-js/acct/acctModify.js
+resources/js/busi-js/acct/accountQuery.js
+resources/js/busi-js/cust/cust.js
+resources/js/busi-js/main/main.js
+resources/js/busi-js/mktRes/terminal.js
+resources/js/busi-js/mktRes/terminalExchange.js
+resources/js/busi-js/order/areaTree.js
+resources/js/busi-js/order/cacheData.js
+resources/js/busi-js/order/calCharge.js
+resources/js/busi-js/order/dealer.js
+resources/js/busi-js/order/memberChange.js
+resources/js/busi-js/order/order.js
+resources/js/busi-js/order/orderMain.js
+resources/js/busi-js/order/orderProdModify.js
+resources/js/busi-js/order/phoneNumber.js
+resources/js/busi-js/order/prepare.js
+resources/js/busi-js/order/prodOffer.js
+resources/js/busi-js/order/refundCharge.js
+resources/js/busi-js/print/print.js
+resources/js/busi-js/prod/changeUim.js
+resources/js/busi-js/prod/telnumChange.js
+resources/js/busi-js/prod/transferModify.js
+resources/js/busi-js/prod/uim.js
+resources/js/busi-js/query/queryProd.js
+resources/js/busi-js/rule/rule.js
+resources/js/busi-js/orderRelease/orderRelease.js
+resources/js/busi-js/order/protocolNbrSel.js
+resources/js/4g-js/cert/cert.js

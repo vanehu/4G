@@ -1,0 +1,173 @@
+<ul id="myTab" class="nav nav-tabs nav-justified tabsa">
+      <li class="dropdown active" style="width:50%;"> <a id="myTabDrop1_${prodId}" href="#" class="dropdown-toggle" data-toggle="dropdown">可订购 <b class="caret"></b> </a>
+        <ul class="dropdown-menu" role="menu" aria-labelledby="myTabDrop1_${prodId}">
+         <#if labelMap.result?? &&(labelMap.result?size>1)>
+         			<li id="tab_${prodId}_99999"> <a href="#orderno_${prodId}" onclick="AttachOffer.changeLabel(${param.prodId},${param.prodSpecId},99999)" tabindex="-1" data-toggle="tab">我的收藏</a></li>
+					<#list labelMap.result as item>
+					    <li id="tab_${prodId}_${item.label}"><a href="#orderno_${prodId}" onclick="AttachOffer.changeLabel(${param.prodId},${param.prodSpecId},${item.label})" tabindex="-1" data-toggle="tab">${item.value}</a></li>
+		            </#list>
+		            <li id="tab_${prodId}_10000"> <a href="#orderno_${prodId}" onclick="AttachOffer.changeLabel(${param.prodId},${param.prodSpecId},10000)" tabindex="-1" data-toggle="tab">功能产品</a></li>
+	   	  </#if>
+        </ul>
+      </li>
+      <#assign prodId="${param.prodId}"/>
+     
+      <li class="dropdown" style="width:50%;"> <a id="myTabDrop2_${prodId}" href="#" class="dropdown-toggle" data-toggle="dropdown">已选择 <b class="caret"></b> </a>
+        <ul class="dropdown-menu" role="menu" aria-labelledby="myTabDrop2_${prodId}">
+          <li><a href="#offer_${prodId}" tabindex="-1" data-toggle="tab">可选包</a></li>
+          <li><a href="#prod_${prodId}" tabindex="-1"  data-toggle="tab">功能产品</a></li>
+        </ul>
+      </li>
+    </ul>
+    
+  <div id="myTabContent" class="tab-content">
+      <div class="tab-pane fade in active" id="orderno_${prodId}">
+      	<div class="panel-body">
+       
+            <div class="form-group has-feedback">
+             <div class="input-group">
+              <input type="text" class="form-control"id="search_text_${param.prodId}" name="search_text_${param.prodId}"  aria-describedby="inputSuccess2Status" placeholder="请输入可选包名称">
+              <span class="input-group-btn">
+                      <button class="btn btn-default" onclick='AttachOffer.searchAttachOfferSpec(${param.prodId},${param.offerSpecId},${param.prodSpecId})' type="button"> 搜索 </button>
+                      <button class="btn btn-default" onclick="AttachOffer.closeAttachSearch(${prodId})" type="button"> 隐藏 </button>
+               </span> 
+               </div>
+            </div>
+        <div id="attach_div_${param.prodId}" class="list-group"></div>
+              
+        </div>
+        <div class="list-group" id="attachSearch_div_${param.prodId}"  style="min-height:300px;"> 
+          
+        <!-- <a href="#" class="list-group-item" data-toggle="modal" data-target="#setting">
+          <h5 class="list-group-item-heading">流量包（半年包）测试版测试版测试版--60元600M</h5>
+          <div class="row">
+            <div class="col-xs-6 pull-right">
+              <div class="btn-group btn-group-justified" role="group" aria-label="...">
+                <div class="btn-group" role="group">
+                  <button type="button" class="btn btn-default">详请</button>
+                </div>
+                <div class="btn-group" role="group">
+                  <button type="button" class="btn btn-default">订购</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          </a>  -->
+          </div>
+      </div>
+      
+      <div class="tab-pane fade" id="offer_${prodId}" style="min-height:300px;">
+        <div class="list-group" id="open_ul_${param.prodId}" style="min-height: 200px;"> 
+        <#if openMap.result??>
+			<#assign openSpecList=openMap.result.offerSpec />
+			<#if openSpecList?? &&(openSpecList?size>0)>	
+				<#list openSpecList as item>
+				<!-- 
+				<#if item.ifDault==0>
+	      			<a href="javascript:void(0);" id="li_${param.prodId}_${item.offerSpecId}" offerSpecId="${item.offerSpecId}" isdel='N' class="list-group-item" class="abtn03 icon-nodel">&nbsp;<span id="span_${prodId}_${item.offerSpecId}">${item.offerSpecName}</span></a>
+	      		 <#else>
+	      			 <a href="javascript:void(0);" onclick="AttachOffer.delOfferSpec(${prodId},${item.offerSpecId})" id="li_${param.prodId}_${item.offerSpecId}" offerSpecId="${item.offerSpecId}" isdel='N' class="list-group-item">
+			          <span id="span_${prodId}_${item.offerSpecId}">${item.offerSpecName}</span>
+			          <span id="span_remove_${prodId}_${item.offerSpecId}" class="glyphicon glyphicon-remove pull-right" aria-hidden="true"></span>
+			         </a> 
+			         </#if>
+			         - -->
+			        <#if item.ifDault==0 >
+		   				<span class="mustchoose"></span>
+		   			<#else>
+		   		    <a href="javascript:void(0);"  id="li_${param.prodId}_${item.offerSpecId}" offerSpecId="${item.offerSpecId}" isdel='N' class="list-group-item">
+			          <span id="span_${prodId}_${item.offerSpecId}">${item.offerSpecName}</span>
+			          <span onclick="AttachOffer.delOfferSpec(${prodId},${item.offerSpecId})" id="span_remove_${prodId}_${item.offerSpecId}" class="glyphicon glyphicon-remove pull-right" aria-hidden="true"></span>
+		   			</#if>
+			        <#if item.ifParams >
+                        <span class="abtn03 btn-span"><button type="button" class="btn btn-info" style="right:50px;width:48px;top:13px;" data-toggle="modal" data-target="#setting" onclick="AttachOffer.showParam(${prodId},${item.offerSpecId},0);">参</button></span></a>
+			        	<#else>
+			        	 </a>
+			        </#if>
+			        <#if item.ifShowTime=="Y">
+			        	<a class="time" id="time_${prodId}_${item.offerSpecId}" isset="N" ><button type="button" class="btn btn-info" style="right:40px;width:48px;" data-toggle="modal" data-target="#setting" onclick="AttachOffer.showTime(${prodId},${item.offerSpecId},'${item.offerSpecName}');" >时</button></a>
+			     	</#if>
+                </#list>
+		    </#if>
+	    </#if>
+        </div>
+        </div>
+        
+        <div class="tab-pane fade" id="prod_${prodId}" style="min-height:300px;">
+        <div class="list-group" id="open_serv_ul_${param.prodId}" style="min-height: 200px;"> 
+        <#if openServMap.result.servSpec??>
+			<#assign openServList=openServMap.result.servSpec />
+			<#if openServList?? &&(openServList?size>0)>	
+				<#list openServList as item>
+				  <#if item.ifDault==0 >
+				  <a href="javascript:void(0);" id="li_${prodId}_${item.servSpecId}" class="list-group-item" isdel='N'>
+			      <span id="span_${prodId}_${item.servSpecId}">${item.servSpecName}</span>
+			       <#if item.ifParams =="Y" && item.servSpecId?? && item.servSpecId!="">
+		            <p id="can_${prodId}_${item.servSpecId}"  isset="N"  class="abtn01 btn-span" style="display: inline"><button type="button" class="btn btn-info" style="right:40px;width:48px;top:13px;" data-toggle="modal" data-target="#setting" onclick="AttachOffer.showServParam(${prodId},${item.servSpecId});">参</button></p>
+		          </a>
+		          </#if>
+	      		  <#else>
+	      		  <a href="javascript:void(0);" id="li_${prodId}_${item.servSpecId}" servSpecId="${item.servSpecId}" isdel='N' class="list-group-item">
+			      <span id="span_${prodId}_${item.servSpecId}">${item.servSpecName}</span>
+			      <span id="span_remove_${prodId}_${item.servSpecId}" servSpecId="${item.servSpecId}"
+				     class="glyphicon glyphicon-remove pull-right" aria-hidden="true" onclick="AttachOffer.closeServSpec(${prodId},${item.servSpecId},'${item.servSpecName}','${item.ifParams}')"></span>
+			      <#if item.ifParams =="Y" && item.servSpecId?? && item.servSpecId!="">
+		          <p id="can_${prodId}_${item.servSpecId}"  isset="N"  class="abtn01 btn-span" style="display: inline"><button type="button" class="btn btn-info" style="right:40px;width:48px;top:13px;" data-toggle="modal" data-target="#setting" onclick="AttachOffer.showServParam(${prodId},${item.servSpecId});">参</button></p>
+	              </#if>
+		          </a>
+			        </#if> 
+                </#list>
+		    </#if>
+	    </#if>
+        </div>
+      </div>
+    </div>
+
+<nav class="navbar navbar-default navbar-fixed-bottom">
+  <div class="container-fluid">
+    <div class="btn-group btn-group-justified navbar-btn" role="group" aria-label="...">
+      <div class="btn-group" role="group">
+        <button type="button" class="btn btn-primary btn-lg" onclick="AttachOffer.btnBack(${prodId})"> <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> 返回 </button>
+      </div>
+     </div>
+  </div>
+  
+</nav>
+<script>
+	var openMap=${openMapJson};
+	var prodId= ${prodId};
+	var open = {
+		prodId : prodId,
+		specList : []
+	};
+	if(openMap!=undefined && openMap.result!=undefined){
+		open.specList = openMap.result.offerSpec;
+		AttachOffer.openList.push(open);
+		//$.each(openMap.result.offerSpec,function(){
+		//	if(this.ifParams){
+		//		var flag = CacheData.setParam(prodId,this);
+		//		if(flag){
+		//			$("#can_"+prodId+'_'+this.offerSpecId).removeClass("canshu").addClass("canshu2");
+		//		}
+		//	}
+	//	});
+	}
+	
+	var openServMap=${openServMapJson};
+	var openServ = {
+		prodId : prodId,
+		servSpecList : []
+	};
+	if(openServMap!=undefined && openServMap.result!=undefined){
+		openServ.servSpecList = openServMap.result.servSpec;
+		AttachOffer.openServList.push(openServ);
+		//$.each(openServMap.result.servSpec,function(){
+		//	if(this.ifParams){
+		//		var flag = CacheData.setServParam(prodId,this);
+		//		if(flag){
+		//			$("#can_"+prodId+'_'+this.servSpecId).removeClass("canshu").addClass("canshu2");
+		//		}
+		//	}
+		//});
+	}
+</script>
