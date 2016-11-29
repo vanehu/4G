@@ -816,19 +816,24 @@ public class CustBmoImpl implements CustBmo {
 	@SuppressWarnings("unchecked")
 	public Map<String, Object> uploadCustCertificateMethod(Map<String, Object> param, SessionStaff sessionStaff) throws BusinessException{
 		List<Map<String, String>> photographs = (List<Map<String, String>>) param.get("photographs");		
-		
+
 		//重新封装，去掉协议之外的无用的节点
 		for(int i = 0; i < photographs.size(); i++){
 			Map<String, String> photograph = photographs.get(i);
-			photograph.put("orderInfo", photograph.get("photograph"));
-			photograph.put("picFlag", photograph.get("flag"));
-			photograph.remove("photograph");
-			photograph.remove("flag");
-			photograph.remove("signature");//签名不在协议之内，去除
+			if(photograph.get("photograph").isEmpty()){//没有证件照片，则不上传，去除该节点
+				photographs.remove(i);
+				i--;
+			} else{
+				photograph.put("orderInfo", photograph.get("photograph"));
+				photograph.put("picFlag", photograph.get("flag"));
+				photograph.remove("photograph");
+				photograph.remove("flag");
+				photograph.remove("signature");//签名不在协议之内，去除
+			}
 		}
 		param.put("picturesInfo", photographs);
 		param.remove("photographs");
-		
+
 		return Photograph.getInstanceSync().uploadCustCertificate(param, sessionStaff);
 	}
 	

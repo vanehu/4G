@@ -1848,7 +1848,9 @@ public class CustController extends BaseController {
             if (result != null && ResultCode.R_SUCCESS.equals(result.get("code").toString())) {
             	//拍照校验、上传成功后写入session标识
             	String sessionKey = ((Map<String, String>)result.get("result")).get("virOlId") + "upload";
-            	ServletUtils.setSessionAttribute(super.getRequest(), sessionKey, true);
+            	Map<String, Object> sessionVirOlId = new HashMap<String, Object>();
+            	sessionVirOlId.put(sessionKey, true);
+            	ServletUtils.setSessionAttribute(super.getRequest(),Const.SESSION_UPLOAD_VIR_OLID, sessionVirOlId);
                 jsonResponse = super.successed(result.get("result"), ResultConstant.SUCCESS.getCode());
             } else {
                 jsonResponse = super.failed(result.get("msg").toString(), ResultConstant.FAILD.getCode());

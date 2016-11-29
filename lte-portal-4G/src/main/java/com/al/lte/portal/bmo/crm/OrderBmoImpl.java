@@ -3111,7 +3111,8 @@ public class OrderBmoImpl implements OrderBmo {
         }
 
         //先判断经办人证件、拍照是否上传成功，再进行身份证读卡信息校验
-        Object sessionKey = ServletUtils.getSessionAttribute(request, virOlId + "upload");
+        Map<String, Object> sessionVirOlId = (Map<String, Object>) ServletUtils.getSessionAttribute(request, Const.SESSION_UPLOAD_VIR_OLID);
+        Object sessionKey = sessionVirOlId.get(virOlId + "upload");
         boolean isHandleCustCertificateUpload = sessionKey == null ? false : (Boolean) sessionKey;
         if(!isHandleCustCertificateUpload){
         	return false;

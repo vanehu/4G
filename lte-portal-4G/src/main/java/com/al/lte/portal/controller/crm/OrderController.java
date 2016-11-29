@@ -1942,6 +1942,8 @@ public class OrderController extends BaseController {
                 rMap = orderBmo.chargeSubmit(param, flowNum, sessionStaff);
                 log.debug("return={}", JsonUtil.toString(rMap));
                 if (rMap != null && ResultCode.R_SUCCESS.equals(rMap.get("code").toString())) {
+                	//受理成功清空session中的虚拟购物车ID(virOlId)
+                	ServletUtils.removeSessionAttribute(super.getRequest(), Const.SESSION_UPLOAD_VIR_OLID);
                     jsonResponse = super.successed("收费成功", ResultConstant.SUCCESS.getCode());
                 } else {
                     jsonResponse = super.failed(rMap.get("msg"), ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
@@ -4093,6 +4095,8 @@ public class OrderController extends BaseController {
         try {
             rMap = orderBmo.saveOrderAttrs(param, flowNum, sessionStaff);
             if (rMap != null && ResultCode.R_SUCCESS.equals(rMap.get("code").toString())) {
+            	//暂存成功清空session中的虚拟购物车ID(virOlId)
+            	ServletUtils.removeSessionAttribute(super.getRequest(), Const.SESSION_UPLOAD_VIR_OLID);
                 jsonResponse = super.successed("", ResultConstant.SUCCESS.getCode());
             } else {
                 jsonResponse = super.failed(rMap.get("msg").toString(), ResultConstant.SERVICE_RESULT_FAILTURE

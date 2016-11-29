@@ -3163,15 +3163,24 @@ order.cust = (function(){
 		 }
 		}
 	};
-	// 
+	
+	//关闭拍照弹框，关闭视频
 	var _close = function() {
 		easyDialog.close();
 		try{
 			  cert.closeVideo();
-		}catch(e) {
-		    	
-		}
+		}catch(e) {}
     };
+    
+    //捕获ESC动作
+    document.onkeydown=function(event){
+		var e = event || window.event || arguments.callee.caller.arguments[0];
+    	if(e && e.keyCode==27){//按 Esc 
+    		_close();//关闭摄像头
+    		return;
+    	}
+    };
+    
 	return {
 		form_valid_init : _form_valid_init,
 		showCustAuth : _showCustAuth,
