@@ -176,6 +176,9 @@ common = (function($) {
 	
 	//客户端调用此方法返回到上一页 1 为prepare页面  2为order-content（填单）页面 3为order-confirm（订单确认和收银台）页面 4为order-print（打印）页面
 	var _callReturnBack=function(){
+		if(order.calcharge.returnFlag==false){//支付成功，禁止返回
+			return;
+		}
 		//alert("OrderInfo.returnFlag="+OrderInfo.returnFlag+"——OrderInfo.actionFlag="+OrderInfo.actionFlag+"——OrderInfo.order.step="+OrderInfo.order.step+"");
 		$.unecOverlay();//网络出现故障或手机出现故障时按返回关闭“加载中”提示框
 		//如果收费成功  安卓手机返回按钮不可返回
@@ -489,27 +492,25 @@ common = (function($) {
 		var identityCd = $('#orderIdentidiesTypeCd').val();//证件类型
 		if(identityCd==1){
 			var identityNum = $('#sfzorderAttrIdCard').val();//证件号码
+			OrderInfo.jbr.identityNum = identityNum;
 		}else{
 			var identityNum = $('#orderAttrIdCard').val();//证件号码
 		}
-		
-		if(!OrderInfo.jbr.custId || !identityNum || identityNum != OrderInfo.jbr.identityNum) {
-			if(identityCd!=1){
-				OrderInfo.virOlId = "";
-				$.alert("提示","请先进行经办人信息查询！");
-				return;
-			} 
+		if(!OrderInfo.jbr.custId) {
+			OrderInfo.jbr.custId = OrderInfo.cust.custId;
+			OrderInfo.jbr.identityPic = OrderInfo.cust.identityPic;
+		}
+		if(ec.util.isObj(identityNum) && identityNum != OrderInfo.jbr.identityNum){
+			OrderInfo.virOlId = "";
+			$.alert("提示","经办人信息更改，请先进行经办人信息查询！");
+			return;
 		}
 		var arr=new Array(1);
 		var custIdentityPic = OrderInfo.cust.identityPic;
-		var userIdentityPic = OrderInfo.user.identityPic;
 		var jbrIdentityPic = OrderInfo.jbr.identityPic;
 		var json = "{\"picturesInfo\":[";
 		if(custIdentityPic != undefined){
 			json = json + "{\"orderInfo\":\"" + OrderInfo.cust.identityPic + "\",\"picFlag\":\"A\",\"custName\":\"" + OrderInfo.cust.partyName + "\",\"certType\":\"" + OrderInfo.cust.identityCd + "\",\"certNumber\":\"" + OrderInfo.cust.identityNum + "\",\"accNbr\":\"" + OrderInfo.cust.telNumber +"\"},";
-		}
-		if(userIdentityPic != undefined){
-			json = json + "{\"orderInfo\":\"" + OrderInfo.user.identityPic + "\",\"picFlag\":\"B\",\"custName\":\"" + OrderInfo.user.partyName + "\",\"certType\":\"" + OrderInfo.user.identityCd + "\",\"certNumber\":\"" + OrderInfo.user.identityNum + "\",\"accNbr\":\"" + OrderInfo.user.telNumber +"\"},";
 		}
 		if(jbrIdentityPic != undefined){
 			json = json + "{\"orderInfo\":\"" + OrderInfo.jbr.identityPic + "\",\"picFlag\":\"C\",\"custName\":\"" + partyName + "\",\"certType\":\"" + identityCd + "\",\"certNumber\":\"" + identityNum + "\",\"accNbr\":\"" + telNumber +"\"},";

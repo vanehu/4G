@@ -2117,6 +2117,12 @@ var _getJbrInfo=function(custId){
 		OrderInfo.jbr.identityNum = $('#orderAttrIdCard').val();//证件号码
 	}
 };
+
+//改变证件号码重设未拍照
+var _setNoPhoto=function(){
+	order.broadband.canCallPhote=false;
+	order.broadband.haveCallPhote=flase;
+}
 //经办人信息校验
 	var _checkJbrParam=function(){
 		var orderAttrName = $.trim($("#orderAttrName").val()); //经办人姓名
@@ -2234,6 +2240,7 @@ var _getJbrInfo=function(custId){
 		getJbrInfo      :_getJbrInfo,
 		haveCallPhote   :_haveCallPhote,
 		jbrInfoFillIn   :_jbrInfoFillIn,
-		isOldCust       :_isOldCust
+		isOldCust       :_isOldCust,
+		setNoPhoto      :_setNoPhoto
 	}
 })()

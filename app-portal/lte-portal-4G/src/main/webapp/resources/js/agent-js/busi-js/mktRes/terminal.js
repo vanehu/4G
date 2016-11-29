@@ -2998,14 +2998,17 @@ mktRes.terminal = (function($){
 		}
 		if(OrderInfo.preBefore.idPicFlag=="ON"){
 			if(ec.util.isObj($.trim($("#sfzorderAttrIdCard").val())) || ec.util.isObj($.trim($("#orderAttrIdCard").val()))){
-				if(!ec.util.isObj(OrderInfo.jbr.custId)){
-					$.alert("提示","请先进行经办人查询！");
-					return;
-				} else if(OrderInfo.jbr.identityCd != orderIdentidiesTypeCd || OrderInfo.jbr.identityNum != orderAttrIdCard){
-					$.alert("提示","经办人信息更改，请进行经办人查询");
-					return;
-				}
+			if(OrderInfo.jbr.identityCd != orderIdentidiesTypeCd || OrderInfo.jbr.identityNum != orderAttrIdCard){
+				OrderInfo.virOlId = "";
+				$.alert("提示","证件信息更改，请重新查询经办人信息！");
+				return;
 			}
+			}
+			if(!OrderInfo.virOlId){
+				$.alert("提示","请进行经办人头像拍照！");
+				return;
+			}
+			
 		}
 		
 		

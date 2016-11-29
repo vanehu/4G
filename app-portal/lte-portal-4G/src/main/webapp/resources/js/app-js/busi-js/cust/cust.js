@@ -99,7 +99,7 @@ cust = (function(){
 		OrderInfo.cust.contactName = $.trim($('#contactName').val());//联系人
 		OrderInfo.cust.mobilePhone = $.trim($('#mobilePhone').val());//联系人手机
 		OrderInfo.cust.contactAddress = $.trim($('#contactAddress').val());//联系人地址
-         
+        
 		//联系人不为空时才封装联系人信息上传
 		if($.trim($('#contactName').val()).length>0){
 			OrderInfo.boPartyContactInfo.contactName = $.trim($('#contactName').val());//联系人
@@ -551,6 +551,7 @@ cust = (function(){
 	
 	//翼销售-经办人-客户类型选择事件
 	var _jbrpartyTypeCdChoose = function(scope,id) {
+		order.broadband.canCallPhote=false;
 		var partyTypeCd=$(scope).val();	
 		//客户类型关联证件类型下拉框
 		$("#"+id).empty();
@@ -620,8 +621,10 @@ cust = (function(){
 							}
 						}
 						$("#queryJbr").show();
+						$("#photo").show();
+						OrderInfo.virOlId = "";
 						if(OrderInfo.preBefore.idPicFlag=="ON"){//实名拍照省份开关为开
-							$("#photo").show();
+//							$("#photo").show();
 //							$("#queryJbr").show();
 							OrderInfo.jbr.custId = OrderInfo.cust.custId;
 							OrderInfo.jbr.partyName = OrderInfo.cust.partyName;
@@ -662,7 +665,6 @@ cust = (function(){
 //				OrderInfo.jbr.identityPic = OrderInfo.cust.identityPic;
 //				OrderInfo.jbr.custId = OrderInfo.cust.custId;
 //			}
-			OrderInfo.virOlId = "";
 			OrderInfo.jbr.custId ="";
 			cust.clearJbrForm();
 			OrderInfo.virOlId = "";
@@ -793,10 +795,8 @@ cust = (function(){
 		$("#sfzorderAttrIdCard").val(idcard);
 		$("#orderAttrAddr").val(address);
 		OrderInfo.jbr.identityPic = identityPic;//证件照片
-		if(OrderInfo.preBefore.idPicFlag == "ON"){
-			OrderInfo.virOlId = "";
-			order.main.queryJbr();
-		}
+		OrderInfo.virOlId = "";
+		order.main.queryJbr();
 	};
 	//校验表单提交
 	var _jbrvalidatorForm=function(){
@@ -1060,9 +1060,7 @@ cust = (function(){
 		$("#userOrderIdentidiesTypeCd").change();
 		$("#usersfzorderAttrIdCard").val(idcard);
 		$("#userOrderAttrAddr").val(address);
-		if(OrderInfo.preBefore.idPicFlag == "ON"){
-			OrderInfo.virOlId = "";
-		}
+		OrderInfo.virOlId = "";
 		cust.tmpChooseUserInfo.identityPic = identityPic;//证件照片
 	};
 	
@@ -2409,7 +2407,7 @@ cust = (function(){
 			return;
 		}
 		order.broadband.isSameOne=false;
-		order.main.queryJbr();
+		order.broadband.queryJbr();
 
 	};
 	

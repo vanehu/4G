@@ -313,22 +313,7 @@
 //				    $("#idtype").append("<option value='120100'>翼支付</option>");
 //				    $("#idtype").append("<option value='120200'>支付宝</option>");
 //				    $("#idtype").append("<option value='120400'>微信</option>");
-	            $("#payTypeDiv").css("display","none");
-			}		
-		//特殊权限工号
-		var staffId=OrderInfo.staff.staffId;
-		var staffIds=["5244776","30035134709","30035134730","5176843","3053296","30035026690","30035163588","30035179425","30035179437","30035179443","30035179458","30033905872"];//工号id,配置的工号只展示现金和支付宝、微信、翼支付等支付方式
-		for(var i in staffIds){
-			if(staffId==staffIds[i]){
-				order.calcharge.myFlag=true;
-//			    $("#idtype").empty();
-//				    $("#idtype").append("<option value='100000'>现金</option>");
-//				    $("#idtype").append("<option value='120100'>翼支付</option>");
-//				    $("#idtype").append("<option value='120200'>支付宝</option>");
-//				    $("#idtype").append("<option value='120400'>微信</option>");
-	            $("#payTypeDiv").css("display","none");
-				break;
-			}		
+	            $("#payTypeDiv").css("display","none");	
 		}
 	});
 </script>

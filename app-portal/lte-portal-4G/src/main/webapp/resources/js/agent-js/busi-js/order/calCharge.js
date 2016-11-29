@@ -24,6 +24,7 @@ order.calcharge = (function(){
 	var _myFlag=false;//是否开启调用支付平台
 	var _busiUpType;//业务类型，1表示手机业务2表示宽带甩单
 	var payType;
+	var _returnFlag=true;//支付平台返回成功后，返回按钮提示不让进行
 	//弹出业务对象窗口
 	var _addbusiOrder=function(proId,obj){
 		if($("#div_payitem_"+proId)!=undefined&&$("#div_payitem_"+proId).html()!=undefined){
@@ -643,10 +644,21 @@ order.calcharge = (function(){
 		if(inOpetate){
 			return;
 		}
-		if(order.calcharge.myFlag){
-			 _getPayTocken();
-			 return;
+		if (order.calcharge.myFlag) {
+			var checkUrl = contextPath + "/app/order/getPayOrdStatus";
+			var checkParams = {
+					"olId" : OrderInfo.orderResult.olId
+					
+			};
+			var response = $.callServiceAsJson(checkUrl, checkParams);
+			if (response.code != 0) {// 支付平台购物车id查询未支付成功才打开支付页面，否则直接下计费接口
+				_getPayTocken();
+				return;
+			}else{//获取支付方式
+				payType=response.data.split("_")[0];
 			}
+
+		}
 		if(!_submitParam()){
 			_conBtns();
 			return ;
@@ -1268,14 +1280,14 @@ order.calcharge = (function(){
 	 * 获取支付平台支付页面
 	 */
 	var _getPayTocken = function(){	
-		var chargeItems=_buildChargeItems2();
+		var charge=_getCharge();//支付金额
 		var busiUpType="1";
 		order.calcharge.busiUpType="1";
 		var params={
 				"olId":OrderInfo.orderResult.olId,
 				"soNbr":OrderInfo.order.soNbr,
 				"busiUpType":busiUpType,
-				"chargeItems":chargeItems
+				"chargeItems":charge
 		};
 		var url = contextPath+"/app/order/getPayUrl";
 		var response = $.callServiceAsJson(url, params);
@@ -1309,6 +1321,8 @@ order.calcharge = (function(){
 	 */
 	var _queryPayOrdStatus1 = function(soNbr, status,type) {
 		if ("1" == status) { // 原生返回成功，调用支付平台查询订单状态接口，再次确定是否成功，如果成功则调用收费接口
+			$.ecOverlay("<strong>正在处理中,请稍等会儿....</strong>");
+			_returnFlag=false;//禁止返回
 			var params = {
 				"olId" : soNbr
 				
@@ -1316,6 +1330,12 @@ order.calcharge = (function(){
 			var url = contextPath + "/app/order/getPayOrdStatus";
 			var response = $.callServiceAsJson(url, params);
 			if (response.code == 0) {//支付成功，调用收费接口
+				var val=$.trim($('#realMoney').html())*100;
+				var payMoney=response.data.split("_")[1];
+				if(val!=payMoney){
+					$.alert("提示","金额可能被篡改，为了您的安全，请重新下单");
+					return;
+				}
 				payType=type;
 				_chargeItems=[];
 				_buildChargeItems();//根据支付平台返回支付方式重新生成费用项
@@ -1537,8 +1557,8 @@ order.calcharge = (function(){
 		}
 	};
 	
-	//获取真实费用，单位分
-	var _buildChargeItems2 = function(){
+	//获取费用
+	var _getCharge = function(){
 		var realFee=0;
 		var chargeItems2=[];
 		$("#calChangeTab tr").each(function() {
@@ -1596,8 +1616,8 @@ order.calcharge = (function(){
 					//payMethodCd=payType;
 				}
 				realFee=Number(realFee)+Number(realmoney);
-				var param={"realAmount":realmoney,
-						"feeAmount":feeAmount,
+				var param={"realAmount":1,
+						"feeAmount":1,
 						"paymentAmount":paymentAmount,
 						"acctItemTypeId":acctItemTypeId,
 						"objId":objId,
@@ -1613,7 +1633,7 @@ order.calcharge = (function(){
 						"remark":remark,
 						"boActionType":boActionType
 				};
-				_chargeItems.push(param);
+				chargeItems2.push(param);				
 			}
 		});
 		return realFee;
@@ -1648,8 +1668,9 @@ order.calcharge = (function(){
 		queryPayOrdStatus           :      _queryPayOrdStatus,
 		queryPayOrdStatus1          :      _queryPayOrdStatus1,
 		myFlag:_myFlag,
-		buildChargeItems2:_buildChargeItems2,
-		busiUpType:_busiUpType
+		getCharge:_getCharge,
+		busiUpType:_busiUpType,
+		returnFlag:_returnFlag
 	};
 })();
 $(function() {

@@ -38,7 +38,7 @@
          	</div>
          	<div class="form-group">
 				<label for="orderAttrPhoneNbr">经办人号码<span class="text-warning"></span></label>
-            	<input type="text" class="form-control" id="orderAttrPhoneNbr"  maxlength="11" name="orderAttrPhoneNbr">
+            	<input type="text" class="form-control" id="orderAttrPhoneNbr"  maxlength="11" name="orderAttrPhoneNbr" >
 			</div>
 			<div class="form-group" id="">
 	            <label for="orderIdentidiesTypeCd">证件类型</label>
@@ -48,7 +48,7 @@
 			<div class="form-group" id="jbrsfz_i">
 	            <div class="form-group feedback-btn1" id="">
 					<label for="sfzorderAttrIdCard">证件号码<span class="text-warning"></span></label>
-		                <input type="text" class="form-control" id="sfzorderAttrIdCard" name="sfzorderAttrIdCard" maxlength="50" placeholder="" readonly="readonly">
+		                <input type="text" class="form-control" id="sfzorderAttrIdCard" name="sfzorderAttrIdCard" maxlength="50" placeholder="" readonly="readonly" >
 				</div>
 				<!--<div class="form-group feedback-btn1" style="width:13%;margin-top: 25px;display: block;float: left;" id="">
 				         <span class="input-group-btn">
@@ -60,7 +60,7 @@
 			</div>
 			<div class="form-group" id="qtzj" style="display: none;">
 				<label for="orderAttrIdCard">证件号码<span class="text-warning"></span></label>
-            	<input type="text" class="form-control" id="orderAttrIdCard" name="orderAttrIdCard" maxlength="50">
+            	<input type="text" class="form-control" id="orderAttrIdCard" name="orderAttrIdCard" maxlength="50" onchange="order.broadband.setNoPhoto()">
 			</div>
 			<div class="form-group">
 				<label for="orderAttrAddr">证件地址<span class="text-warning"></span></label>

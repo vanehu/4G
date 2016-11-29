@@ -1,6 +1,7 @@
 package com.al.lte.portal.controller.crm;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -11,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang.time.DateFormatUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,12 +27,14 @@ import com.al.ecs.common.util.JsonUtil;
 import com.al.ecs.common.util.MapUtil;
 import com.al.ecs.common.util.StringUtil;
 import com.al.ecs.common.web.ServletUtils;
+import com.al.ecs.exception.AuthorityException;
 import com.al.ecs.exception.BusinessException;
 import com.al.ecs.exception.ErrorCode;
 import com.al.ecs.exception.InterfaceException;
 import com.al.ecs.exception.ResultConstant;
 import com.al.ecs.log.Log;
 import com.al.ecs.spring.annotation.log.LogOperatorAnn;
+import com.al.ecs.spring.annotation.session.AuthorityValid;
 import com.al.ecs.spring.controller.BaseController;
 import com.al.lte.portal.bmo.crm.OrderBmo;
 import com.al.lte.portal.bmo.crm.SignBmo;
@@ -135,6 +139,82 @@ public class SignController extends BaseController {
     }
     
     /**
+	 * 手机客户端-宽带甩单-回执信息
+	 * @param params
+	 * @param request
+	 * @param model
+	 * @param session
+	 * @return
+	 * @throws AuthorityException
+	 */
+	@RequestMapping(value = "/broadband_prodInfoForSign", method = RequestMethod.POST)
+	public @ResponseBody JsonResponse broadbandprodInfoForSign(@RequestBody Map<String, Object> reqMap, String optFlowNum,
+			HttpServletResponse response,HttpServletRequest request){
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+                SysConstant.SESSION_KEY_LOGIN_STAFF);
+		String cityid = sessionStaff.getAreaId();//市
+		cityid = cityid.substring(0, 5) + "00";//市
+		reqMap.put("areaId", cityid);
+		JsonResponse jsonResponse = null;
+			try {
+				Map<String, Object> prtMap = printBmo.queryOrderListInfoForPrintZT(reqMap, optFlowNum,super.getRequest(), response);
+	 			if (prtMap != null&& ResultCode.R_SUCCESS.equals(prtMap.get("code").toString())) {
+	 				jsonResponse = super.successed(prtMap,ResultConstant.SUCCESS.getCode());
+	 			}else{
+	 				jsonResponse = super.failed(ErrorCode.ORDER_SUBMIT, prtMap, reqMap);
+				}
+	        }catch (Exception e) {
+				return super.failed(ErrorCode.ORDER_SUBMIT, e, reqMap);
+			}
+			return jsonResponse;
+	}
+	
+    /**
+     * 返回根据模板生成预览的html_宽带甩单
+     * @param paramMap
+     * @param flowNum
+     * @param response
+     * @return
+     */
+    @RequestMapping(value = "/broadband_previewHtmlForSign", method = RequestMethod.POST)
+	public String broadbandPreviewHtmlForSign(@RequestBody Map<String, Object> paramMap,Model model,
+			@LogOperatorAnn String flowNum, HttpServletResponse response) {
+    	SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+                SysConstant.SESSION_KEY_LOGIN_STAFF);
+    	paramMap.put("signFlag", SysConstant.PREVIEW_SIGN_PDF);
+		try {
+			Map<String,Object> result = (Map<String, Object>) paramMap.get("result");
+			Map<String,Object> orderListInfo = (Map<String, Object>) result.get("orderListInfo");
+			orderListInfo.put("areaId", sessionStaff.getCurrentAreaId());
+			orderListInfo.put("areaName", sessionStaff.getCurrentAreaName());
+			orderListInfo.put("channelId", sessionStaff.getCurrentChannelId());
+			orderListInfo.put("channelName", sessionStaff.getCurrentChannelName());
+			orderListInfo.put("soDate", DateFormatUtils.format(new Date(), "yyyy-MM-dd"));
+			orderListInfo.put("staffId", sessionStaff.getStaffId());
+			orderListInfo.put("staffName", sessionStaff.getStaffName());
+			orderListInfo.put("staffNumber", sessionStaff.getStaffCode());
+			Map<String, Object> resultMap = printBmo.printVoucher(paramMap, flowNum,super.getRequest(), response);
+			System.out.println("+++++++++++++++++++"+JsonUtil.toString(resultMap));
+			if (MapUtils.isNotEmpty(resultMap)) {
+				Map<String,Object> reObject=signBmo.setPrintInfos(resultMap,super.getRequest(),paramMap);
+				RedisUtil.set("mgrPdf_"+ paramMap.get("olId").toString(), reObject.get("pp"));	
+				reObject.remove("pp");
+				model.addAllAttributes(reObject);
+				System.out.println("--------------------"+JsonUtil.toString(reObject));
+				model.addAttribute("custName", resultMap.get("custName"));
+				model.addAttribute("idCardNbr", resultMap.get("idCardNbr"));
+			}
+		}catch (BusinessException be) {
+			return super.failedStr(model, be);
+		} catch (InterfaceException ie) {
+			return super.failedStr(model, ie, paramMap, ErrorCode.PRINT_VOUCHER);
+		} catch (Exception e) {
+			return super.failedStr(model,ErrorCode.PRINT_VOUCHER, e, paramMap);
+		}
+    	return "/app/print/broadband-printVoucher";
+    }
+    
+    /**
      * 返回根据模板生成预览的html
      * @param paramMap
      * @param flowNum
@@ -166,6 +246,7 @@ public class SignController extends BaseController {
     	return "/agent/print/printVoucher";
     }
     @RequestMapping(value = "/saveSignPdfForApp", method = RequestMethod.POST)
+    @AuthorityValid(isCheck = false)
 	public @ResponseBody JsonResponse saveSignPdfForAppTemp(@RequestBody Map<String, Object> paramMap,
 			@LogOperatorAnn String flowNum, 
 			HttpServletRequest request, HttpServletResponse response) {

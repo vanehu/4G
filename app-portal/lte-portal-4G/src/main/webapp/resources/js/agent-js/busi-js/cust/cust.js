@@ -572,6 +572,27 @@ cust = (function(){
 	//强商-经办人-客户类型关联证件类型下拉框
 	var _jbrcertTypeByPartyType = function(_partyTypeCd,id){
 		var _obj = $("#"+id);
+		
+//		$("#" + id).append('<option value="1" >居民身份证</option>');
+//		$("#userid").attr("placeholder", "请输入身份证号码");
+//		$("#isAppointNum").parents(".form-group").hide();
+//		$("#userid").next("span").find("button").prop("disabled", false);
+//		var propertiesKey = "REAL_NAME_PHOTO_"+(OrderInfo.staff.soAreaId+"").substring(0,3);
+//	    var isFlag = offerChange.queryPortalProperties(propertiesKey);
+//	    OrderInfo.preBefore.idPicFlag = isFlag;
+//	    $("#queryJbr").show();
+//	    if(isFlag == "ON"){
+//	    	if(haveCust != "N"){
+//	    		OrderInfo.jbr.custId = OrderInfo.cust.custId;
+//				OrderInfo.jbr.partyName = OrderInfo.cust.partyName;
+//				OrderInfo.jbr.telNumber = OrderInfo.cust.telNumber;
+//				OrderInfo.jbr.addressStr = OrderInfo.cust.addressStr;
+//				OrderInfo.jbr.identityCd = OrderInfo.cust.identityCd;
+//				OrderInfo.jbr.mailAddressStr = OrderInfo.cust.mailAddressStr;
+//				OrderInfo.jbr.identityPic = OrderInfo.cust.identityPic;
+//				OrderInfo.jbr.identityNum = cardNumber;
+//	    	}
+//	    }
 		var params = {"partyTypeCd":_partyTypeCd} ;
 		var url=contextPath+"/agent/cust/queryCertType";
 		var response = $.callServiceAsJson(url, params, {});
@@ -1056,9 +1077,7 @@ cust = (function(){
 		$("#cm_identidiesTypeCd").change();
 		$("#cmCustIdCard").val(idcard);
 		$("#cmAddressStr").val(address);
-		if(OrderInfo.preBefore.idPicFlag == "ON"){
-			OrderInfo.virOlId ="";
-		}
+		OrderInfo.virOlId ="";
 		OrderInfo.cust.identityPic = identityPic;//证件照片
 	};
 	//读卡获取经办人信息
@@ -1066,9 +1085,8 @@ cust = (function(){
 		$("#orderAttrName").val(name);
 		$("#sfzorderAttrIdCard").val(idcard);
 		$("#orderAttrAddr").val(address);
-		if(OrderInfo.preBefore.idPicFlag == "ON"){
-			OrderInfo.virOlId ="";
-		}
+		OrderInfo.virOlId ="";
+		order.main.queryJbr();
 		OrderInfo.jbr.identityPic = identityPic;//证件照片
 	};
 	

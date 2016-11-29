@@ -50,10 +50,6 @@ SoOrder = (function() {
 		OrderInfo.preBefore.idPicFlag = isFlag;
 		
 		if(OrderInfo.actionFlag==8){//新增客户
-			if(OrderInfo.preBefore.idPicFlag == "ON" && !OrderInfo.virOlId){
-				$.alert("提示","请前往经办人页面进行实名拍照！");
-				return;
-			}
 			OrderInfo.busitypeflag = 25;
 		}else if(OrderInfo.actionFlag==13){//购裸机
 			OrderInfo.busitypeflag = 24;
@@ -226,7 +222,7 @@ SoOrder = (function() {
 		}
 		if(OrderInfo.preBefore.idPicFlag == "ON"){
 			custOrderAttrs.push({
-				itemSpecId : CONST.BUSI_ORDER_ATTR.VIROLID,//3转4标志
+				itemSpecId : CONST.BUSI_ORDER_ATTR.VIROLID,//虚拟订单号
 				value : OrderInfo.virOlId
 			});
 			custOrderAttrs.push({ //业务类型
@@ -235,6 +231,16 @@ SoOrder = (function() {
 			});
 			
 		} else {
+			if(ec.util.isObj(OrderInfo.virOlId)){
+				custOrderAttrs.push({
+					itemSpecId : CONST.BUSI_ORDER_ATTR.VIROLID,//虚拟订单号
+					value : OrderInfo.virOlId
+				});
+				custOrderAttrs.push({ //业务类型
+					itemSpecId : CONST.BUSI_ORDER_ATTR.CURIP,
+					value : OrderInfo.curIp
+				});
+			}
 			custOrderAttrs.push({
 				itemSpecId : CONST.BUSI_ORDER_ATTR.THRETOFOUR_ITEM,//3转4标志
 				value : itemValue
@@ -355,12 +361,10 @@ SoOrder = (function() {
 				$.alert("提示","没有做任何业务，无法提交");
 				return false;
 			}
-			if(OrderInfo.preBefore.idPicFlag=="ON"){
 				if(OrderInfo.jbr.custId < -1){
 					OrderInfo.createJbr(busiOrders);
 				}
 				OrderInfo.orderData.orderList.orderListInfo.handleCustId = OrderInfo.jbr.custId;
-			}
 		}else if (OrderInfo.actionFlag==4){ //客户资料变更
 			_createCustOrder(busiOrders,data); //附属销售品变更
 		}else if (OrderInfo.actionFlag==5){//销售品成员变更拆副卡
@@ -402,19 +406,15 @@ SoOrder = (function() {
 			_delViceCardAndNew(busiOrders,params);
 		}else if(OrderInfo.actionFlag== 22 ){ //补换卡
 			busiOrders = data;
-			if(OrderInfo.preBefore.idPicFlag=="ON"){
 				if(OrderInfo.jbr.custId < -1){
 					OrderInfo.createJbr(busiOrders);
 				}
 				OrderInfo.orderData.orderList.orderListInfo.handleCustId = OrderInfo.jbr.custId;
-			}
 		}else if(OrderInfo.actionFlag == 23){//异地补换卡
-			if(OrderInfo.preBefore.idPicFlag=="ON"){
 				if(OrderInfo.jbr.custId < -1){
 					OrderInfo.createJbr(busiOrders);
 				}
 				OrderInfo.orderData.orderList.orderListInfo.handleCustId = OrderInfo.jbr.custId;
-			}
 			busiOrders = data;
 			//异地补换卡的订单地区为受理工号当前的受理地区而不是定位客户的受理地区
 			OrderInfo.orderData.orderList.orderListInfo.areaId = OrderInfo.staff.areaId;
@@ -1302,27 +1302,12 @@ SoOrder = (function() {
 		if(OrderInfo.cust.custId == -1){
 			OrderInfo.createCust(busiOrders);	
 		}
+		if(OrderInfo.jbr.custId < -1){
+			OrderInfo.createJbr(busiOrders);
+		}
+		OrderInfo.orderData.orderList.orderListInfo.handleCustId = OrderInfo.jbr.custId;
 		if(OrderInfo.preBefore.idPicFlag=="ON"){
-			if(OrderInfo.jbr.custId < -1){
-				OrderInfo.createJbr(busiOrders);
-			}
-//			$(OrderInfo.choosedUserInfos).each(function(){
-//				var prodId = this.prodId;
-//				var custInfo = OrderInfo.getChooseUserInfo(prodId);
-//				if(custInfo.custId != OrderInfo.cust.custId){
-//					$(OrderInfo.choosedUserInfos).each(function(){
-//						var prodId1 = this.prodId;
-//						var custInfo1 = OrderInfo.getChooseUserInfo(prodId1);
-//						if(custInfo1.custId == custInfo.custId){
-//							return;
-//						}
-//						if(custInfo1.identityCd == custInfo.identityCd && custInfo1.identityNum == custInfo.identityNum){
-//							return;
-//						}
-//					});
-//					OrderInfo.createUser(busiOrders,custInfo);
-//				}
-//			});
+			
 			var isNeedCreate = false;
 			for(var i=0; i<OrderInfo.choosedUserInfos.length; i++){
 					var prodId = OrderInfo.choosedUserInfos[i].prodId;
@@ -1355,7 +1340,7 @@ SoOrder = (function() {
 					}
 					
 			}
-			OrderInfo.orderData.orderList.orderListInfo.handleCustId = OrderInfo.jbr.custId;
+			
 		}
 		
 		var acctId = -1; //先写死
@@ -1927,12 +1912,10 @@ SoOrder = (function() {
 			};
 			busiOrders.push(acctChangeNode);
 		}
-		if(OrderInfo.preBefore.idPicFlag=="ON"){
 			if(OrderInfo.jbr.custId < -1){
 				OrderInfo.createJbr(busiOrders);
 			}
 			OrderInfo.orderData.orderList.orderListInfo.handleCustId = OrderInfo.jbr.custId;
-		}
 	};
 	//创建客户单独订单
 	var _createCustOrderOnly = function(busiOrders,data){
