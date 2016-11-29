@@ -49,42 +49,40 @@
 </form>
 <!--认证相符拍照弹框-->
 <div style="display:none;background:#fff;" id="picture" class="ec-dialog-form-container">
-  <div class="easyDialogclose"   onclick="order.cust.close();$('#new').show();"></div>
+  <div class="easyDialogclose"  onclick="order.cust.close();"></div>
   <div class="ec-dialog-form-top">
     <h1 class="ec-dialog-form-title">人证相符-拍照</h1>
   </div>
-  <div class="order">
-            <div class="order_nav_new">
-                <!-- <div class="tips">注：请按照你的需求选择最便捷的入口办理业务</div> -->
-                <div class="order-camera-box" >
-                  <ul class="fillin show" style="overflow: hidden;">
-                    <li style="width: 80%;">
-                      <label>选择设备：</label>
-                      <select id="device" name ="device" class="inputWidth183px" >
-                      </select>
-                      <a  class="purchase" href="https://crm.189.cn/portalstatic/assets/camera/DoccameraOcx.exe">下载控件</a>
-                      <span id="tips" style="color:#F00; font-weight:bold;font-size:16px;margin-left:10%;"></span>
-                    </li>
-                  </ul>
-                  <div class="camera-box" style="position: relative;">
-                      <div style="overflow: hidden;"id="div_jbr">
-                        <a  style="display:inline-block; width: 200px; height: 258px; margin: 54px 50px 0 50px; overflow: hidden;">
-                        	<img src="" id="img_Cert"  class="">
-                        </a>
-                        <a id="img" style="display:inline-block; float: right;"><img width="640" height="360"  id="img_Photo"  class="" /></a>
-                      </div>
-                  </div>
-                </div>
+  <div class="order"> 
+    <div class="order_nav_new">
+      <div class="order-camera-box" >
+          <ul class="fillin show" style="overflow: hidden;">
+              <li style="width: 80%;">
+                  <label>选择设备：</label>
+                  <select class="inputWidth183px" id="device" name ="device">
+                  </select>
+                  <a href="https://crm.189.cn/portalstatic/assets/camera/DoccameraOcx.exe" class="purchase" id="" >下载控件</a>
+                  <span id="tips" style="color:#F00; font-weight:bold;font-size:14px;margin-left:10%;"></span>
+              </li>
+          </ul>
+          <div class="camera-box">
+            <div style="overflow: hidden;">
+                <a  style="display:inline-block; width: 200px; height: 258px; margin: 54px 50px 0 50px; overflow: hidden;"><img id="img_Cert" src="${contextPath}/image/id_card.jpg" class=""></a>
+                <a id="div_jbr" style="display:inline-block; width: 640px; height: 360px; margin-right: 50px; vertical-align: top;">
+                    <img id = "startPhotos" src="${contextPath}/image/start_photo.jpg"/>
+                    <img id="img_Photo">
+                </a>
             </div>
-        </div>
-     <div align="center" style="margin:30px auto;">
-      <a class="btna_o" id="takePhotos"><span >确认拍照</span></a>
-      <a  style=" margin-left:20px;" id="rePhotos" class="btna_o" onclick="order.cust.createVideo()"><span>重新拍照</span></a>
-      <a  style=" margin-left:20px;" id="confirmAgree" class="btna_o"  onclick="order.cust.uploadImage()"><span>人证相符</span></a>
-     </div> 
+          </div>
+      </div>                   
+      <div align="center" style="margin:30px auto;">
+          <a class="btna_o" id="takePhotos"><span >确认拍照</span></a>
+          <a style=" margin-left:20px;" class="btna_o" id="rePhotos"  onclick="order.cust.createVideo()" ><span>重新拍照</span></a>
+          <a style=" margin-left:20px;" class="btna_o" id="confirmAgree" onclick="order.cust.uploadImage()"><span>人证相符</span></a>
+      </div> 
   </div>
+</div>
 
-<!--认证相符拍照弹框 End-->
 
 <div class="height18"></div>
 <script>
@@ -108,8 +106,8 @@
 		$("#capture").remove();
 	}
 	if(cert.getBrowser()=='FF') {
-		$("#div_jbr").append("<object type='application/x-itst-activex' clsid='{454C18E2-8B7D-43C6-8C17-B1825B49D7DE}' id='capture' width='640' height='360' ></object>");
+		$("#div_jbr").append("<object type='application/x-itst-activex' clsid='{454C18E2-8B7D-43C6-8C17-B1825B49D7DE}' id='capture'  width='640' height='360'  style='float: right; margin-right: 10px;'></object>");
 	}else{
-		//$("#div_jbr").append("<object classid='clsid:454C18E2-8B7D-43C6-8C17-B1825B49D7DE' id='capture'  width='640' height='360' ></object>");
+		$("#div_jbr").append("<object classid='clsid:454C18E2-8B7D-43C6-8C17-B1825B49D7DE' id='capture'  width='640' height='360'  style='float: right; margin-right: 10px;'></object>");
 	}
 </script>

@@ -496,7 +496,7 @@ SoOrder = (function() {
 		_addHandleInfo(busiOrders, custOrderAttrs);
 		
 		if(ec.util.isArray(OrderInfo.boUserCustInfos)){
-			OrderInfo.orderData.orderList.orderListInfo.partyId = -2;//-3经办人客户，-2使用人客户，-1产权客户
+			OrderInfo.orderData.orderList.orderListInfo.partyId = OrderInfo.cust.custId;//-3经办人客户，-2使用人客户，-1产权客户
 			//订单填充使用人信息
 			_createUserCust(busiOrders, custOrderAttrs);
 		}
@@ -3797,7 +3797,7 @@ SoOrder = (function() {
 	var _addHandleInfo = function(busiOrders, custOrderAttrs){
 		if(OrderInfo.handleCustId == "" || OrderInfo.handleCustId == null || OrderInfo.handleCustId == undefined){//新建客户
 			OrderInfo.orderData.orderList.orderListInfo.handleCustId = -3;//新建经办人，handleCustId与partyId一致
-			OrderInfo.orderData.orderList.orderListInfo.partyId = -3;//-3经办人客户，-2使用人客户，-1产权客户
+			OrderInfo.orderData.orderList.orderListInfo.partyId = OrderInfo.cust.custId;//-3经办人客户，-2使用人客户，-1产权客户
 			_createHandleCust(busiOrders);
 		} else{//已有客户
 			OrderInfo.orderData.orderList.orderListInfo.partyId = OrderInfo.cust.custId;//门户主页客户定位的客户ID
