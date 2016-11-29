@@ -2880,18 +2880,6 @@ order.cust = (function(){
 		var queryTypeValue="";
 		identityCd=$("#orderIdentidiesTypeCd").val();
 		identityNum=$.trim($("#orderAttrIdCard").val());
-//		authFlag="0"; // 需要鉴权
-//		if(identityCd==-1){
-//			acctNbr=identityNum;
-//			identityNum="";
-//			identityCd="";
-//		}else if(identityCd=="acctCd"||identityCd=="custNumber"){
-//			acctNbr="";
-//			identityNum="";
-//			identityCd="";
-//			queryType=$("#orderIdentidiesTypeCd").val();
-//			queryTypeValue=$.trim($("#orderAttrIdCard").val());
-//		}
 		diffPlace="local";
 		areaId="";
 		var param = {
@@ -2907,68 +2895,23 @@ order.cust = (function(){
 				"identidies_type":$("#orderIdentidiesTypeCd  option:selected").text(),
 				"virOlId":OrderInfo.virOlId
 		};
-		$.callServiceAsHtml(contextPath+"/cust/queryCust",param, {
-			"before":function(){
-				$.ecOverlay("<strong>正在查询中，请稍等...</strong>");
-			},"always":function(){
-				$.unecOverlay();
-			},	
-			"done" : function(response){
-				$.unecOverlay();
-				if (response.code == -2) {
-					$.alertM(response.data);
-					return;
-				}
-				//新建
-				if(response.data.indexOf("false") ==0) {
-//					$.unecOverlay();
-//					$.alert("提示","抱歉，没有定位到客户，请尝试其他客户。");
-//					 return;
-				
-				}else{
-					$.unecOverlay();
-					var custInfoSize = $(response.data).find('#custInfoSize').val();
-					// 存在多客户的情况
-					if (custInfoSize == 1) {
-						var scope = $(response.data).find('#custInfos');
-						_choosedCustInfo = {
-								custId : $(scope).attr("custId"), //$(scope).find("td:eq(3)").text(),
-								partyName : $(scope).attr("partyName"), //$(scope).find("td:eq(0)").text(),
-								CN : $(scope).attr("CN"),
-								idCardNumber : $(scope).attr("idCardNumber"), //$(scope).find("td:eq(4)").text(),
-								identityName : $(scope).attr("identityName"),
-								areaName : $(scope).attr("areaName"),
-								areaId : $(scope).attr("areaId"),
-								identityCd :$(scope).attr("identityCd"),
-								addressStr :$(scope).attr("addressStr"),
-								norTaxPayer :$(scope).attr("norTaxPayer"),
-								segmentId :$(scope).attr("segmentId"),
-								segmentName :$(scope).attr("segmentName"),
-								custFlag :$(scope).attr("custFlag"),
-								vipLevel :$(scope).attr("vipLevel"),
-								vipLevelName :$(scope).attr("vipLevelName"),
-								accNbr:$(scope).attr("accNbr"),
-								userIdentityCd:$(scope).attr("userIdentityCd"),//使用人证件类型
-								userIdentityName:$(scope).attr("userIdentityName"),//使用人证件名称
-								userIdentityNum:$(scope).attr("userIdentityNum"),//使用人证件号码
-								accountName:$(scope).attr("accountName"),//账户名
-								userName:$(scope).attr("userName"),//使用人名
-								userCustId:$(scope).attr("userCustId"),//使用人客户id
-								isSame:$(scope).attr("isSame")//使用人名称与账户名称是否一致
-						};
-						$("#orderAttrName").val(_choosedCustInfo.partyName);
-						$("#orderAttrAddr").val(_choosedCustInfo.addressStr);
-						$("#orderAttrIdCard").val(_choosedCustInfo.idCardNumber);
-						$("#orderIdentidiesTypeCd").val(_choosedCustInfo.identityCd);
-						isExists = true;
-					}
-				 }
-			},
-			"fail":function(response){
-				$.unecOverlay();
-				$.alert("提示","查询失败，请稍后再试！");
+		var response = $.callServiceAsHtml(contextPath+"/cust/queryCust",param);
+		var custInfoSize = $(response.data).find('#custInfoSize').val();
+			if (parseInt(custInfoSize) >= 1) {
+				var scope = $(response.data).find('#custInfos').eq(0);
+				$("#orderAttrName").val($(scope).attr("partyName"));
+				$("#orderAttrAddr").val($(scope).attr("addressStr"));
+				$("#orderAttrIdCard").val($(scope).attr("idCardNumber"));
+				$("#orderIdentidiesTypeCd").val($(scope).attr("identityCd"));
+				OrderInfo.handleCustId = $(scope).attr("custId");//经办人客户ID
+				// _choosedCustInfo.handleCustId = $(scope).attr("custId");//经办人客户ID
+				OrderInfo.bojbrCustIdentities.identityNum = $(scope).attr("idCardNumber");
+				OrderInfo.bojbrCustInfos.name = $(scope).attr("partyName");
+				OrderInfo.bojbrCustInfos.addressStr = $(scope).attr("addressStr");
+				isExists = true;
+			} else{
+				OrderInfo.handleCustId = "";
 			}
-		});
 		return isExists;
 	};
 	// 创建视频(重新拍照)
@@ -3082,9 +3025,9 @@ order.cust = (function(){
 		if(response.code==0 && response.data){
 			isUploadImageSuccess = true;
 			OrderInfo.virOlId = response.data.virOlId;
-			if (_queryUser()) {
-				OrderInfo.handleCustId = _choosedCustInfo.custId;
-			}else{
+			// if (_queryUser()) {
+			// 	OrderInfo.handleCustId = _choosedCustInfo.handleCustId;
+			if (!_queryUser()) {
 				OrderInfo.bojbrCustInfos.name=$.trim($("#orderAttrName").val())  ;//客户名称
 				OrderInfo.bojbrCustInfos.areaId=OrderInfo.getAreaId();//客户地区
 				OrderInfo.bojbrCustInfos.partyTypeCd=$("#orderPartyTypeCd").val();//客户类型---
