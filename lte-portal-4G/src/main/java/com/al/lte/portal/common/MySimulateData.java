@@ -48,7 +48,7 @@ public class MySimulateData {
 					@Override
 					public void run() {
 						mySimulateData = new MySimulateData();
-						log.debug("simulate.properties updating");
+//						log.debug("simulate.properties updating");
 					}
 				}, 0, 5000);
 			}

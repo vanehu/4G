@@ -2839,33 +2839,10 @@ order.cust = (function(){
 	};
 	
 	function _showCertPicture(){
+		$("#new").hide();
 		easyDialog.open({
 			container : "picture"
 		});
-		easyDialog.close();
-		easyDialog.open({
-			container : "picture"
-		});
-		
-		
-		$("#tips").empty();
-		
-		
-		$("#img_Photo")[0].src="";
-		$("#img_Photo")[0].height=0;
-		$("#img_Photo")[0].width=0;
-		
-		$("#startPhotos").show();
-		
-		//按钮灰话，不绑定事件
-		$("#takePhotos").removeClass("btna_o").addClass("btna_g");
-		$("#rePhotos").removeClass("btna_o").addClass("btna_g");
-		$("#confirmAgree").removeClass("btna_o").addClass("btna_g");
-		$("#takePhotos").off("click");
-		$("#rePhotos").off("click");
-		$("#confirmAgree").off("click");
-		
-		
 //		$("#picture").css("padding-top","200px");
 	//	$("#picture").css("margin-top","200px");
 //		$("#picture").css("margin-right","50px");
@@ -2873,46 +2850,25 @@ order.cust = (function(){
 //		$(".easyDialogclose").css("margin-top","200px");
 //		$("#capture").show();
 		//清空
-//		if($("#capture")){
-//			$("#capture").remove();
-//		}
-//		if(cert.getBrowser()=='FF') {
-//			$("#div_jbr").append("<object type='application/x-itst-activex' clsid='{454C18E2-8B7D-43C6-8C17-B1825B49D7DE}' id='capture'  width='640' height='360'  style='float: right; margin-right: 10px;'></object>");
-//			//$("#div_jbr").append("<object type='application/x-itst-activex' clsid='{454C18E2-8B7D-43C6-8C17-B1825B49D7DE}' id='capture' width='640' height='360' ></object>");
-//		}else{
-//			$("#div_jbr").append("<object classid='clsid:454C18E2-8B7D-43C6-8C17-B1825B49D7DE' id='capture'  width='640' height='360' ></object>");
-//		}
-//		var ret = cert.load();
-//		if(ret && ret.resultFlag && ret.resultFlag!= 0){
-//			if(ret.errorMsg){
-//				alert(ret.errorMsg);
-//				return;
-//			}
-//		}
-//		$("#startPhotos").off("click").on("click",function(){_createVideo();});
-		_getCameraInfo();
-      //  _createVideo();
-	}
-	
-	var _getCameraInfo = function(){
-		//获取摄像头信息
-		var device = capture.getDevices();
-	    device = JSON.parse(device);
-		if (device == null || device == undefined) {
-			$("#tips").html("提示：请检查是否正确安装插件");
-			return;
-	    }
-		if(device.resultFlag == 0){
-			$.each(device.devices,function(){
-				$("#device").html("");
-			    $("#device").append("<option value='"+this.device+"' >"+this.name+"</option>");
-			});
-			$("#startPhotos").off("click").on("click",function(){_createVideo();});
-		}else{
-			$("#tips").html("提示："+device.errorMsg);
-			return;
+		if($("#capture")){
+			$("#capture").remove();
 		}
+		if(cert.getBrowser()=='FF') {
+			$("#div_jbr").append("<object type='application/x-itst-activex' clsid='{454C18E2-8B7D-43C6-8C17-B1825B49D7DE}' id='capture'  width='640' height='360'  style='float: right; margin-right: 10px;'></object>");
+			//$("#div_jbr").append("<object type='application/x-itst-activex' clsid='{454C18E2-8B7D-43C6-8C17-B1825B49D7DE}' id='capture' width='640' height='360' ></object>");
+		}else{
+			$("#div_jbr").append("<object classid='clsid:454C18E2-8B7D-43C6-8C17-B1825B49D7DE' id='capture'  width='640' height='360' ></object>");
+		}
+		 var ret = cert.load();
+		if(ret && ret.resultFlag && ret.resultFlag!= 0){
+			if(ret.errorMsg){
+				$.alert(ret.errorMsg);
+				return;
+			}
+		}
+        _createVideo();
 	};
+	
 	// 使用人/政企-查询
 	function _queryUser(){
 		var isExists =false;
@@ -3015,16 +2971,12 @@ order.cust = (function(){
 		});
 		return isExists;
 	};
-	// 创建视频
+	// 创建视频(重新拍照)
 	var _createVideo = function() {
 		$("#tips").empty();
-		$("#img_Photo")[0].src="";
-		$("#img_Photo")[0].height=0;
-		$("#img_Photo")[0].width=0;
-		
-//		try{
-//			cert.closeVideo();
-//		}catch(e){}
+		try{
+			cert.closeVideo();
+		}catch(e){}
 		
 		$('#img').hide();
 		$('#capture').show();
@@ -3032,19 +2984,14 @@ order.cust = (function(){
 		$("#takePhotos").removeClass("btna_g").addClass("btna_o").off("click").on("click",function(event) {
 	        _createImage();
 		});
-		var device = $("#device").val();
-		if(device!=null && device != ""){
-			var json = cert.createVideo();
-			if (json && json.resultFlag != 0){
-				$("#tips").html("提示："+ json.errorMsg);
-				return false;
-			}
-			$("#startPhotos").hide();
-			$("#capture")[0].style.visibility = 'visible';
+		
+		var json = cert.createVideo();
+		if (json && json.resultFlag != 0){
+			$("#tips").html("提示："+ json.errorMsg);
+			return false;
 		}
 	};
-	
-	// 拍照
+	// 拍照(确认拍照)
 	var _createImage = function(scope) {
 		$("#tips").empty();
 		if(!$('#img_Photo').is(":hidden")){
@@ -3072,10 +3019,6 @@ order.cust = (function(){
 			$('#capture').hide();
 			$("#takePhotos").removeClass("btna_o").addClass("btna_g").off("click");
 			$("#img_Photo").attr("src", "data:image/jpeg;base64," + response.data.photograph);
-			$("#img_Photo").attr("width", 640);
-			$("#img_Photo").attr("height", 360);
-			
-			
 			$("#img_Photo").data("identityPic", createImage.image);
 			$("#img_Photo").data("signature", createImage.signature);
 			$("#img_Photo").data("venderId", createImage.venderId);
@@ -3158,8 +3101,9 @@ order.cust = (function(){
 			$("#tips").html("提示："+ response.data);
 		//	$.alert("提示", response.data);
 		}else{
-			$("#tips").html("提示："+ response.data);
+//			$("#tips").html("提示："+ response.data);
 			//$.alertM(response.data);
+			$("#tips").html("FTP上传失败，错误原因："+response.errCode+"-"+response.errMsg+"请稍后再试。");
 		 }
 		}
 	};

@@ -498,9 +498,11 @@ SoOrder = (function() {
 		if(ec.util.isArray(OrderInfo.boUserCustInfos)){
 			OrderInfo.orderData.orderList.orderListInfo.partyId = OrderInfo.cust.custId;//-3经办人客户，-2使用人客户，-1产权客户
 			//订单填充使用人信息
-			_createUserCust(busiOrders, custOrderAttrs);
+			if(OrderInfo.realNamePhotoFlag == "ON"){//开关ON状态
+				_createUserCust(busiOrders, custOrderAttrs);
+			}
 		}
-		
+
 		OrderInfo.orderData.orderList.orderListInfo.custOrderAttrs = custOrderAttrs; //订单属性数组
 		OrderInfo.orderData.orderList.custOrderList[0].busiOrder = busiOrders; //订单项数组
 		if($("#isTemplateOrder").attr("checked")=="checked"){ //批量订单
@@ -2802,6 +2804,7 @@ SoOrder = (function() {
 		
 		var response = $.callServiceAsJson(contextPath + "/properties/getValue", {"key": "REAL_NAME_PHOTO_" + OrderInfo.staff.areaId.substr(0, 3)});
 		if (response.code == "0") {
+			OrderInfo.realNamePhotoFlag = response.data;
 			if ("ON" == response.data) {
 				if(!ec.util.isObj($("#jbrForm").html()) || jbrIdentityNum == "" || jbrName == "" || jbrAddressStr == ""){
 					$.alert("提示","经办人拍照信息不能为空！请确认页面是否已点击【读卡】或者【拍照】按钮，并且拍照和人脸相符已成功操作！");
@@ -3795,14 +3798,30 @@ SoOrder = (function() {
 	};
 	//填充订单经办人信息
 	var _addHandleInfo = function(busiOrders, custOrderAttrs){
-		if(OrderInfo.handleCustId == "" || OrderInfo.handleCustId == null || OrderInfo.handleCustId == undefined){//新建客户
-			OrderInfo.orderData.orderList.orderListInfo.handleCustId = -3;//新建经办人，handleCustId与partyId一致
-			OrderInfo.orderData.orderList.orderListInfo.partyId = OrderInfo.cust.custId;//-3经办人客户，-2使用人客户，-1产权客户
-			_createHandleCust(busiOrders);
-		} else{//已有客户
-			OrderInfo.orderData.orderList.orderListInfo.partyId = OrderInfo.cust.custId;//门户主页客户定位的客户ID
-			OrderInfo.orderData.orderList.orderListInfo.handleCustId = OrderInfo.handleCustId;//经办人查询出的客户ID
-		}
+		if(OrderInfo.realNamePhotoFlag == "ON"){//开关ON状态
+			if(OrderInfo.handleCustId == "" || OrderInfo.handleCustId == null || OrderInfo.handleCustId == undefined){//新建客户
+				OrderInfo.orderData.orderList.orderListInfo.partyId = OrderInfo.cust.custId;//-3经办人客户，-2使用人客户，-1产权客户
+				OrderInfo.orderData.orderList.orderListInfo.handleCustId = -3;//新建客户同时新建经办人，handleCustId与partyId一致
+				_createHandleCust(busiOrders);
+			} else{//已有客户
+				OrderInfo.orderData.orderList.orderListInfo.partyId = OrderInfo.cust.custId;//门户主页客户定位的客户ID
+				OrderInfo.orderData.orderList.orderListInfo.handleCustId = OrderInfo.handleCustId;//经办人查询出的客户ID
+			}
+		} else{//开关OFF状态
+			if(OrderInfo.handleCustId == "" || OrderInfo.handleCustId == null || OrderInfo.handleCustId == undefined){//新建客户
+				OrderInfo.orderData.orderList.orderListInfo.partyId = OrderInfo.cust.custId;//-3经办人客户，-2使用人客户，-1产权客户
+				if(OrderInfo.bojbrCustInfos.name != null && OrderInfo.bojbrCustInfos.name != "" 
+					&& OrderInfo.bojbrCustInfos.addressStr != null && OrderInfo.bojbrCustInfos.addressStr != ""
+					&& OrderInfo.bojbrCustInfos.mailAddressStr != null && OrderInfo.bojbrCustInfos.mailAddressStr != ""
+					&& OrderInfo.bojbrCustIdentities.identityNum != null && OrderInfo.bojbrCustIdentities.identityNum != ""){//如果用户没有填写经办人
+					OrderInfo.orderData.orderList.orderListInfo.handleCustId = -3;//新建客户同时新建经办人，handleCustId与partyId一致
+					_createHandleCust(busiOrders);
+				}
+			} else{//已有客户
+				OrderInfo.orderData.orderList.orderListInfo.partyId = OrderInfo.cust.custId;//门户主页客户定位的客户ID
+				OrderInfo.orderData.orderList.orderListInfo.handleCustId = OrderInfo.handleCustId;//经办人查询出的客户ID
+			}
+		}	
 		
 		//添加虚拟订单ID属性
 		if(OrderInfo.virOlId != null && OrderInfo.virOlId != undefined && OrderInfo.virOlId != ""){

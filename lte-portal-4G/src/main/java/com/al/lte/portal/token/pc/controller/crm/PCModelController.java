@@ -190,7 +190,11 @@ public class PCModelController extends BaseController {
 			
 			//获取客户端编码redmine979958
 			HttpSession session = request.getSession();
-			session.setAttribute(SysConstant.SESSION_CLIENTCODE+"_PC", null);//清空session中该节点
+			session.removeAttribute(SysConstant.SESSION_CLIENTCODE+"_PC");//清空session中该节点
+			session.removeAttribute(SysConstant.SESSION_ISPHOTOGRAPH+"_PC");
+			session.removeAttribute(SysConstant.SESSION_HANDLECUSTNUMBER+"_PC");
+			session.removeAttribute(SysConstant.SESSION_HANDLEPROVCUSTAREAID+"_PC");
+
 			session.setAttribute(SysConstant.SESSION_ISPHOTOGRAPH+"_PC", null);//清空session中该节点
 			session.setAttribute(SysConstant.SESSION_HANDLECUSTNUMBER+"_PC", null);//清空session中该节点
 			session.setAttribute(SysConstant.SESSION_HANDLEPROVCUSTAREAID+"_PC", null);//清空session中该节点

@@ -4392,9 +4392,11 @@ public class OrderController extends BaseController {
             String signature1 = commonBmo.signature(partyName, certNumber, certAddress, identityPic, nonce, appSecret1);
             param.put("signature", signature1);
             if("1".equals(createFlag)){
+            	request.getSession().removeAttribute(Const.SESSION_SIGNATURE);
                 request.getSession().setAttribute(Const.SESSION_SIGNATURE, signature1);
             } else if("Y".equals(MapUtils.getString(param, "jbrFlag"))){
             	//经办人跟随主卡，即使加装副卡，一个单子只有一个经办人
+            	request.getSession().removeAttribute(Const.SESSION_SIGNATURE_HANDLE_CUST);
             	request.getSession().setAttribute(Const.SESSION_SIGNATURE_HANDLE_CUST, signature1);
             }
             

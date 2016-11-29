@@ -3021,7 +3021,7 @@ public class OrderBmoImpl implements OrderBmo {
 	 */
 	public boolean verifyCustCertificate(Map<String, Object> param, HttpServletRequest request, SessionStaff sessionStaff) throws Exception{
 		Object realNameFlag =  MDA.REAL_NAME_PHOTO_FLAG.get("REAL_NAME_PHOTO_"+sessionStaff.getCurrentAreaId().substring(0, 3));
-    	boolean isrealNameFlagOn  = realNameFlag == null ? false : "ON".equals(realNameFlag.toString()) ? true : false;//经办人开关是否打开
+    	boolean isrealNameFlagOn  = realNameFlag == null ? false : "ON".equals(realNameFlag.toString()) ? true : false;//实名制拍照开关是否打开
     	boolean resultFlag = false;
     	
     	if(isrealNameFlagOn){
@@ -3090,7 +3090,7 @@ public class OrderBmoImpl implements OrderBmo {
 	}
 	
 	/**
-	 * 所有业务，证件类型为身份证时，校验是否读卡(例如新建客户、新建使用人、新建经办人)
+	 * 所有业务，证件类型为身份证时，校验是否读卡(例如新建客户、新建使用人、新建经办人等)
 	 * @throws Exception 
 	 */
 	@SuppressWarnings("unchecked")
@@ -3104,6 +3104,7 @@ public class OrderBmoImpl implements OrderBmo {
         int C1Count = 0;//所有C1动作、且证件类型为身份证的节点数
         int successCount = 0;//所有C1动作、证件类型为身份证、且身份证校验成功数
         
+        //循环找出每次订单提交的virOlId
         for (Map<String, String> custOrderAttr : custOrderAttrs) {
         	if("810000000".equals(custOrderAttr.get("itemSpecId").toString())){
         		virOlId = custOrderAttr.get("value");

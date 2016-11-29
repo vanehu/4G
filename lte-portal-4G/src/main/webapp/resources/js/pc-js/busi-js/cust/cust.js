@@ -2660,6 +2660,7 @@ order.cust = (function(){
 	var _confirmAgree = function(resultContent){
 		$("#confirmAgree").removeClass("btna_o").addClass("btna_g");
 		$("#confirmAgree").off("click");
+		OrderInfo.subHandleInfo = {};//清空经办人缓存
 		//客户定位
 		var  orderIdentidiesTypeCd = ec.util.defaultStr($("#orderIdentidiesTypeCd").val());
 		var  identityNum = ec.util.defaultStr($("#orderAttrIdCard").val());

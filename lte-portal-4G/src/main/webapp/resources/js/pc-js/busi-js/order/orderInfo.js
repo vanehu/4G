@@ -1475,6 +1475,8 @@ OrderInfo = (function() {
 		}
 		return OrderInfo.channelList;
 	};
+	
+	var _realNamePhotoFlag = "OFF";
 				
 	return {
 		terminalCode:_terminalCode,
