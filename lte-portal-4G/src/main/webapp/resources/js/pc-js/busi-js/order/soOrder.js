@@ -2880,14 +2880,14 @@ SoOrder = (function() {
 		}
 		
 		//实名制拍照：经办人校验
-		if(OrderInfo.subHandleInfo.orderAttrFlag == "Y"){
+		if(OrderInfo.orderAttrFlag == "Y"){
 			//经办人必填进行校验，否则不校验
 			if(OrderInfo.subHandleInfo.authFlag != "Y"){
 				if(OrderInfo.subHandleInfo.authFlag == "F"){
-					$.alert("经办人拍照留存上传失败，请重新拍照认证！");
+					$.alert("提示","经办人拍照留存上传失败，请重新拍照认证！");
 					return false;
 				} else{
-					$.alert("经办人信息未通过人证相符认证，请您先对经办人拍照认证！");
+					$.alert("提示","经办人信息未通过人证相符认证，请您先对经办人拍照认证！");
 					return false;
 				}
 			}
@@ -3116,10 +3116,10 @@ SoOrder = (function() {
 				} else if(OrderInfo.subHandleInfo.handleExist == "N"){
 					//如果是新客户
 					OrderInfo.orderData.orderList.orderListInfo.handleCustId = -3;//新建经办人，handleCustId与partyId一致
-					OrderInfo.orderData.orderList.orderListInfo.partyId = -3;//-3经办人客户，-2使用人客户，-1产权客户
+					OrderInfo.orderData.orderList.orderListInfo.partyId = OrderInfo.cust.custId;//-3经办人客户，-2使用人客户，-1产权客户
 					_createHandleCust(busiOrders);
 				} else{
-					$.alert("经办人信息发生未知异常，可能重复操作或多窗口操作，请刷新页面清空浏览器缓存后重新尝试！");
+					$.alert("提示","经办人信息发生未知异常，可能重复操作或多窗口操作，请刷新页面清空浏览器缓存后重新尝试！");
 					return false;
 				}
 			}

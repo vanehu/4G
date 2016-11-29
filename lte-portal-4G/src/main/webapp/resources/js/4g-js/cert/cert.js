@@ -332,7 +332,7 @@ cert = (function() {
 
 				//经办人新建
 				certInfo.createFlag = $('#createFlag').val();
-				certInfo.jbrFlag = OrderInfo.bojbrCustInfos.jbrFlag;//添加经办人读卡标识
+				certInfo.jbrFlag = "Y";//添加经办人读卡标识
 	    		url = contextPath + "/order/certInfo";
 				var response = $.callServiceAsJson(url,JSON.stringify(certInfo));
 				if (response.code == 0) {

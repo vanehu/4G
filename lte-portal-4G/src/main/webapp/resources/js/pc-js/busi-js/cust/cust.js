@@ -2720,7 +2720,7 @@ order.cust = (function(){
         	OrderInfo.subHandleInfo.orderAttrName = orderAttrName;
         	OrderInfo.subHandleInfo.orderAttrAddr = orderAttrAddr;
         	OrderInfo.subHandleInfo.orderAttrPhoneNbr = orderAttrPhoneNbr;
-        	OrderInfo.subHandleInfo.imageInfo = OrderInfo.handleInfo.imageInfo;
+        	OrderInfo.subHandleInfo.imageInfo = OrderInfo.handleInfo.identityPic;
         }
 		OrderInfo.subHandleInfo.orderAttrFlag = OrderInfo.orderAttrFlag;
 		var uploadCustCertificate = $.callServiceAsJson(contextPath+"/token/pc/cust/uploadCustCertificate",param);
@@ -2755,6 +2755,72 @@ order.cust = (function(){
         	}
     	}
     }; 
+    
+    
+    // 使用人读卡
+	var _readCertWhenUser = function() {
+		var man = cert.readCert();
+		if (man.resultFlag != 0){
+			$.alert("提示", man.errorMsg);
+			return;
+		}
+		// 设置隐藏域的表单数据
+		$('#orderUserName').val(man.resultContent.partyName);//姓名
+		$('#orderUserIdCard').val(man.resultContent.certNumber);//设置身份证号
+		$('#orderUserAddr').val(man.resultContent.certAddress);//地址
+		// 设置文本显示
+		$("#li_order_user span").text(man.resultContent.partyName);
+		$("#li_order_user2 span").text(man.resultContent.certNumber);
+		$("#li_order_user3 span").text(man.resultContent.certAddress);
+		_qryUserCustInfo(man.resultContent);
+	};
+    
+	var _qryUserCustInfo = function(data) {
+		//客户定位
+		var  orderIdentidiesTypeCd = ec.util.defaultStr($("#orderIdentidiesTypeCd").val());
+		var  identityNum = ec.util.defaultStr($("#orderAttrIdCard").val());
+		var  orderAttrName = ec.util.defaultStr($("#orderAttrName").val());
+		var  orderAttrAddr = ec.util.defaultStr($("#orderAttrAddr").val());
+		var  orderAttrPhoneNbr = ec.util.defaultStr($("#orderAttrPhoneNbr").val());
+		var  user_prodId = ec.util.defaultStr($("#user_prodId").val());
+		if(identityNum=="" || orderAttrName=="" || orderAttrAddr==""){
+			$.alert("提示","使用人信息不完整，请重新填写完整！。");
+			return;
+		}
+		var custParam = {
+				"identityCd":orderIdentidiesTypeCd,
+				"identityNum":identityNum,
+				"partyName":"",
+				"queryType" :""
+		};
+		var queryCustInfo = $.callServiceAsJson(contextPath+"/token/pc/cust/queryCustInfo", custParam);
+		if(queryCustInfo.code == 0){//定位到客户,传客户ID
+			var userSubInfo = {
+				prodId : user_prodId,
+				custId : queryCustInfo.data.custInfos[0].custId,
+				isOldCust : "Y"
+			};
+			OrderInfo.userSubInfos.push(userSubInfo);
+        }else{//定位不到客户C1
+        	var userSubInfo = {
+    			prodId : user_prodId,
+    			orderIdentidiesTypeCd : orderIdentidiesTypeCd,
+    			identityNum : identityNum,
+    			orderAttrName : orderAttrName,
+    			orderAttrAddr : orderAttrAddr,
+    			orderAttrPhoneNbr : orderAttrPhoneNbr,
+    			isOldCust : "N"
+    		};
+        	if(orderIdentidiesTypeCd == 1){
+        		userSubInfo.identityPic = data.identityPic;
+        	}
+    		OrderInfo.userSubInfos.push(userSubInfo);
+        }
+	}; 
+    
+	
+    
+    
     
 	return {
 		saveAuthRecordFail:_saveAuthRecordFail,
@@ -2822,7 +2888,9 @@ order.cust = (function(){
 		takePhotos:_takePhotos,
 		rePhotos:_rePhotos,
 		confirmAgree:_confirmAgree,
-		closeShowPhoto:_closeShowPhoto
+		closeShowPhoto:_closeShowPhoto,
+		readCertWhenUser:_readCertWhenUser,
+		qryUserCustInfo:_qryUserCustInfo
 	};
 })();
 $(function() {
