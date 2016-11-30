@@ -2839,36 +2839,59 @@ order.cust = (function(){
 	};
 	
 	function _showCertPicture(){
-		$("#new").hide();
+//		var  orderIdentidiesTypeCd = ec.util.defaultStr($("#orderIdentidiesTypeCd").val());
+//		var  identityNum = ec.util.defaultStr($("#orderAttrIdCard").val());
+//		var  orderAttrName = ec.util.defaultStr($("#orderAttrName").val());
+//		var  orderAttrAddr = ec.util.defaultStr($("#orderAttrAddr").val());
+//		if(orderIdentidiesTypeCd=="" || identityNum =="" || orderAttrName==""|| orderAttrAddr==""){
+//			$.alert("提示","经办人信息不完整，请重新填写完整！");
+//			return;
+//		}
 		easyDialog.open({
-			container : "picture"
+			container : "ec-dialog-photo-graph"
 		});
-//		$("#picture").css("padding-top","200px");
-	//	$("#picture").css("margin-top","200px");
-//		$("#picture").css("margin-right","50px");
-//		$("#easyDialogBox").css("padding-top","200px");
-//		$(".easyDialogclose").css("margin-top","200px");
-//		$("#capture").show();
-		//清空
-		if($("#capture")){
-			$("#capture").remove();
-		}
-		if(cert.getBrowser()=='FF') {
-			$("#div_jbr").append("<object type='application/x-itst-activex' clsid='{454C18E2-8B7D-43C6-8C17-B1825B49D7DE}' id='capture'  width='640' height='360'  style='float: right; margin-right: 10px;'></object>");
-			//$("#div_jbr").append("<object type='application/x-itst-activex' clsid='{454C18E2-8B7D-43C6-8C17-B1825B49D7DE}' id='capture' width='640' height='360' ></object>");
-		}else{
-			$("#div_jbr").append("<object classid='clsid:454C18E2-8B7D-43C6-8C17-B1825B49D7DE' id='capture'  width='640' height='360' ></object>");
-		}
-		 var ret = cert.load();
-		if(ret && ret.resultFlag && ret.resultFlag!= 0){
-			if(ret.errorMsg){
-				$.alert(ret.errorMsg);
-				return;
-			}
-		}
-        _createVideo();
-	};
+		easyDialog.close();
+		easyDialog.open({
+			container : "ec-dialog-photo-graph"
+		});
+		$("#img_Cert")[0].height=258;
+		$("#img_Cert")[0].width=200;
+		//初始化页面
+		$("#device").empty(); 
+		$("#startPhotos").show();
+		$("#startPhotos").off("click").on("click",function(){_createVideo();});
+		$("#tips").html("");
+		$("#img_Photo")[0].src="";
+		$("#img_Photo")[0].height=0;
+		$("#img_Photo")[0].width=0;
+		//按钮灰话，不绑定事件
+		$("#takePhotos").removeClass("btna_o").addClass("btna_g");
+		$("#rePhotos").removeClass("btna_o").addClass("btna_g");
+		$("#confirmAgree").removeClass("btna_o").addClass("btna_g");
+		$("#takePhotos").off("click");
+		$("#rePhotos").off("click");
+		$("#confirmAgree").off("click");
+		_getCameraInfo();
+	}
 	
+	var _getCameraInfo = function(){
+		//获取摄像头信息
+		var device = capture.getDevices();
+	    device = JSON.parse(device);
+		if (device == null || device == undefined) {
+			$("#tips").html("提示：请检查是否正确安装插件");
+			return;
+	    }
+		if(device.resultFlag == 0){
+			$.each(device.devices,function(){
+			    $("#device").append("<option value='"+this.device+"' >"+this.name+"</option>");
+			});
+			$("#startPhotos").off("click").on("click",function(){_createVideo();});
+		}else{
+			$("#tips").html("提示："+device.errorMsg);
+			return;
+		}
+	};
 	// 使用人/政企-查询
 	function _queryUser(){
 		var isExists =false;
@@ -2914,27 +2937,29 @@ order.cust = (function(){
 			}
 		return isExists;
 	};
-	// 创建视频(重新拍照)
+	// 创建视频
 	var _createVideo = function() {
-		$("#tips").empty();
-		try{
-			cert.closeVideo();
-		}catch(e){}
-		
-		$('#img').hide();
-		$('#capture').show();
-		
-		$("#takePhotos").removeClass("btna_g").addClass("btna_o").off("click").on("click",function(event) {
-	        _createImage();
-		});
-		
-		var json = cert.createVideo();
-		if (json && json.resultFlag != 0){
-			$("#tips").html("提示："+ json.errorMsg);
-			return false;
+		//创建视频
+		var device = $("#device").val();
+		if(device!=null && device != ""){
+			var createVideo = JSON.parse(capture.createVideo(device,1280,720));
+			if(createVideo.resultFlag == 0){
+				$("#startPhotos").hide();
+				OrderInfo.isCreateVideo = "Y";
+				$("#capture")[0].style.visibility = 'visible';
+				$("#takePhotos").removeClass("btna_g").addClass("btna_o");
+				$("#takePhotos").off("click").on("click",function(){_createImage();});
+			}else{
+				$("#tips").html("提示："+createVideo.errorMsg);
+				return;
+			}
+		}else{
+			$("#startPhotos").show();
+			$("#tips").html("提示：请选择一个摄像头"); 
+			return;
 		}
 	};
-	// 拍照(确认拍照)
+	// 拍照
 	var _createImage = function(scope) {
 		$("#tips").empty();
 		if(!$('#img_Photo').is(":hidden")){
@@ -2958,14 +2983,46 @@ order.cust = (function(){
 		$.unecOverlay();
 		var response= $.callServiceAsJson(url,{"photograph":encodeURIComponent(createImage.image),"venderId":createImage.venderId});
 		if(response.code==0 && response.data){
-			$("#img").show();
-			$('#capture').hide();
+//			$("#img").show();
+//			$('#capture').hide();
 			$("#takePhotos").removeClass("btna_o").addClass("btna_g").off("click");
 			$("#img_Photo").attr("src", "data:image/jpeg;base64," + response.data.photograph);
+			$("#img_Photo").attr("width", 640);
+			$("#img_Photo").attr("height", 360);
+			
+			
 			$("#img_Photo").data("identityPic", createImage.image);
 			$("#img_Photo").data("signature", createImage.signature);
 			$("#img_Photo").data("venderId", createImage.venderId);
+			//拍照后置灰按钮，取消绑定事件
+			$("#takePhotos").off("click");
+			$("#takePhotos").removeClass("btna_o").addClass("btna_g");
+			$("#rePhotos").removeClass("btna_g").addClass("btna_o");
+			$("#rePhotos").off("click").on("click",function(){_rePhotos();});
+			$("#confirmAgree").removeClass("btna_g").addClass("btna_o");
+			$("#confirmAgree").off("click").on("click",function(){_uploadImage();});
+		}else{
+			$("#tips").html("提示："+response.data);
+			return;
 		}
+		
+	};
+	
+	
+	var _rePhotos = function(resultContent){
+		//初始化页面
+		$("#tips").html("");
+		$("#img_Photo")[0].src="";
+		$("#img_Photo")[0].height=0;
+		$("#img_Photo")[0].width=0;
+		//拍照后置灰按钮，取消绑定事件
+		$("#rePhotos").off("click");
+		$("#rePhotos").removeClass("btna_o").addClass("btna_g");
+		$("#confirmAgree").removeClass("btna_o").addClass("btna_g");
+		$("#confirmAgree").off("click");
+		$("#takePhotos").off("click").on("click",function(){_createImage();});
+		$("#takePhotos").removeClass("btna_g").addClass("btna_o");
+		_createVideo();
 	};
 	// 关闭视频
 	var _closeVideo = function() {	
@@ -2979,11 +3036,13 @@ order.cust = (function(){
 	};
 	// 上传照片
 	var _uploadImage = function() {
+		$("#confirmAgree").removeClass("btna_o").addClass("btna_g");
+		$("#confirmAgree").off("click");
 		$("#tips").empty();
-		if($('#img_Photo').is(":hidden")){
-			$("#tips").html("提示："+ "请先拍照");
-			return false;
-		}
+//		if($('#img_Photo').is(":hidden")){
+//			$("#tips").html("提示："+ "请先拍照");
+//			return false;
+//		}
 	    var pictures = [];
 		if(!!OrderInfo.bojbrCustInfos && OrderInfo.bojbrCustInfos.identidiesTypeCd !=  $.trim($("#orderIdentidiesTypeCd").val())
 			&& OrderInfo.bojbrCustInfos.identityNum!= $.trim($("#orderIdentidiesTypeCd").val()) ){
@@ -3038,19 +3097,16 @@ order.cust = (function(){
 				OrderInfo.bojbrCustIdentities.identityNum=$.trim($("#orderAttrIdCard").val());//证件号码
 			}
 			_close();
-			$("#new").show();
 			//查到了，查不到新建 没有身份证！！！
 		}else if(response.code==1){
-			$("#tips").html("提示："+ response.data);
+			$("#tips").html("提示：FTP上传失败，错误原因："+ response.data);
 		//	$.alert("提示", response.data);
 		}else{
-//			$("#tips").html("提示："+ response.data);
+			$("#tips").html("提示：FTP上传失败，错误原因："+ response.data);
 			//$.alertM(response.data);
-			$("#tips").html("FTP上传失败，错误原因："+response.errCode+"-"+response.errMsg+"请稍后再试。");
 		 }
 		}
 	};
-	
 	//关闭拍照弹框，关闭视频
 	var _close = function() {
 		easyDialog.close();
@@ -3058,7 +3114,6 @@ order.cust = (function(){
 			  cert.closeVideo();
 		}catch(e) {}
     };
-    
     //捕获ESC动作
     document.onkeydown=function(event){
 		var e = event || window.event || arguments.callee.caller.arguments[0];
@@ -3067,7 +3122,6 @@ order.cust = (function(){
     		return;
     	}
     };
-    
 	return {
 		form_valid_init : _form_valid_init,
 		showCustAuth : _showCustAuth,
