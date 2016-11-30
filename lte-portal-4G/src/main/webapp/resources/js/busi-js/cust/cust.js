@@ -2921,7 +2921,7 @@ order.cust = (function(){
 		var response = $.callServiceAsHtml(contextPath+"/cust/queryCust",param);
 		var custInfoSize = $(response.data).find('#custInfoSize').val();
 			if (parseInt(custInfoSize) >= 1) {
-				var scope = $(response.data).find('#custInfos').eq(0);
+				var scope = $(response.data).find('#custInfos').eq(0);//默认取第一个节点
 				$("#orderAttrName").val($(scope).attr("partyName"));
 				$("#orderAttrAddr").val($(scope).attr("addressStr"));
 				$("#orderAttrIdCard").val($(scope).attr("idCardNumber"));
@@ -2937,7 +2937,7 @@ order.cust = (function(){
 			}
 		return isExists;
 	};
-	// 创建视频
+	// 创建视频(重新拍照)
 	var _createVideo = function() {
 		//创建视频
 		var device = $("#device").val();
@@ -2959,7 +2959,7 @@ order.cust = (function(){
 			return;
 		}
 	};
-	// 拍照
+	// 拍照(确认拍照)
 	var _createImage = function(scope) {
 		$("#tips").empty();
 		if(!$('#img_Photo').is(":hidden")){
@@ -3084,8 +3084,6 @@ order.cust = (function(){
 		if(response.code==0 && response.data){
 			isUploadImageSuccess = true;
 			OrderInfo.virOlId = response.data.virOlId;
-			// if (_queryUser()) {
-			// 	OrderInfo.handleCustId = _choosedCustInfo.handleCustId;
 			if (!_queryUser()) {
 				OrderInfo.bojbrCustInfos.name=$.trim($("#orderAttrName").val())  ;//客户名称
 				OrderInfo.bojbrCustInfos.areaId=OrderInfo.getAreaId();//客户地区

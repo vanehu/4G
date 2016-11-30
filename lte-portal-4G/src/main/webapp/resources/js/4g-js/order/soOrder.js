@@ -498,9 +498,7 @@ SoOrder = (function() {
 		if(ec.util.isArray(OrderInfo.boUserCustInfos)){
 			OrderInfo.orderData.orderList.orderListInfo.partyId = OrderInfo.cust.custId;//-3经办人客户，-2使用人客户，-1产权客户
 			//订单填充使用人信息
-			if(OrderInfo.realNamePhotoFlag == "ON"){//开关ON状态
-				_createUserCust(busiOrders, custOrderAttrs);
-			}
+			_createUserCust(busiOrders, custOrderAttrs);
 		}
 
 		OrderInfo.orderData.orderList.orderListInfo.custOrderAttrs = custOrderAttrs; //订单属性数组

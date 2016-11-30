@@ -1600,6 +1600,7 @@ OrderInfo = (function() {
 		order.cust.queryForChooseUser = false; //重置选择使用人标识
 		order.cust.tmpChooseUserInfo = {};
 		OrderInfo.choosedUserInfos = [];
+		_resetOrderInfoCache();//填单页面返回“上一步”或“取消”时清空经办人、使用人缓存
 	};
 				
 	_newofferSpecName = "";
@@ -1655,7 +1656,39 @@ OrderInfo = (function() {
 		  param7:"", //账单内容
 		  isLastFlag:""//判断是否需要上一步功能
 	};
-				
+	
+	var _realNamePhotoFlag = "OFF";
+
+	/**
+	 * 填单页面返回“上一步”或“取消”时清空经办人、使用人缓存
+	 */
+	var _resetOrderInfoCache = function() {
+		OrderInfo.virOlId				= "";
+		OrderInfo.handleCustId 			= "";
+		OrderInfo.boUserCustIdentities	= [];
+		OrderInfo.boUserCustInfos 		= [];
+		OrderInfo.realNamePhotoFlag 	= "OFF";
+		OrderInfo.bojbrCustInfos = {
+			name			: "", 	//客户名称
+			state 			: "ADD",//状态
+			areaId			: 0,	//地区
+			telNumber 		: "", 	//联系电话
+			addressStr 		: "",	//客户地址
+			partyTypeCd 	: 1,	//客户类型
+			defaultIdType	: "1",	//证件类型
+			mailAddressStr 	: "",	//通信地址
+			businessPassword: "",	//客户密码
+			jbrFlag 		: "Y"
+		};
+		OrderInfo.bojbrCustIdentities = {
+			state 			: "ADD",//状态
+			isDefault 		: "Y", 	//是否首选
+			identityNum 	: "", 	//证件号码
+			identidiesPic 	: "" ,	//证件照片
+			identidiesTypeCd: "1" 	//证件类型
+		};
+	};
+	
 	return {	
 		order					: _order,
 		SEQ						: _SEQ,
@@ -1763,6 +1796,7 @@ OrderInfo = (function() {
 		virOlId : _virOlId,
 		handleCustId : _handleCustId,
 		boUserCustIdentities : _boUserCustIdentities,
-		boUserCustInfos : _boUserCustInfos
+		boUserCustInfos : _boUserCustInfos,
+		realNamePhotoFlag:_realNamePhotoFlag
 	};
 })();

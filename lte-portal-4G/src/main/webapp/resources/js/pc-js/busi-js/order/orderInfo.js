@@ -1435,6 +1435,7 @@ OrderInfo = (function() {
 		order.cust.queryForChooseUser = false; //重置选择使用人标识
 		order.cust.tmpChooseUserInfo = {};
 		OrderInfo.choosedUserInfos = [];
+		OrderInfo.subHandleInfo = {};//填单页面返回“上一步”或“取消”时清空经办人、使用人缓存
 	};
 				
 	_newofferSpecName = "";
