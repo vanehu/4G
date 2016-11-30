@@ -1250,10 +1250,11 @@ order.calcharge = (function(){
 			var response = $.callServiceAsJson(url, params);
 			$.unecOverlay();
 			if (response.code == 0) {//支付成功，调用收费接口
-				var val=$.trim($('#realMoney').html())*1;
+				var val=$.trim($('#realMoney').html())*100;
 				var payMoney=response.data.split("_")[1];
 				if(val!=payMoney){
 					$.alert("提示","金额可能被篡改，为了您的安全，请重新下单");
+					return;
 				}
 				payType=type;
 				_chargeItems=[];
