@@ -3800,24 +3800,51 @@ SoOrder = (function() {
 	var _addHandleInfo = function(busiOrders, custOrderAttrs){
 		if(OrderInfo.realNamePhotoFlag == "ON"){//开关ON状态
 			if(OrderInfo.handleCustId == "" || OrderInfo.handleCustId == null || OrderInfo.handleCustId == undefined){//新建客户
-				OrderInfo.orderData.orderList.orderListInfo.partyId = OrderInfo.cust.custId;//-3经办人客户，-2使用人客户，-1产权客户
-				OrderInfo.orderData.orderList.orderListInfo.handleCustId = -3;//新建客户同时新建经办人，handleCustId与partyId一致
-				_createHandleCust(busiOrders);
+				if(OrderInfo.cust.custId == -1){//新建客户
+					if(OrderInfo.boCustIdentities.identityNum == OrderInfo.bojbrCustIdentities.identityNum && 
+							OrderInfo.boCustIdentities.identidiesTypeCd == OrderInfo.bojbrCustIdentities.identidiesTypeCd){//同一个人新建客户和新建经办人
+						OrderInfo.orderData.orderList.orderListInfo.partyId = -1;//-3经办人客户，-2使用人客户，-1产权客户
+						OrderInfo.orderData.orderList.orderListInfo.handleCustId = -1;//新建客户同时新建经办人，handleCustId与partyId一致
+					} else{//新建客户与新建经办人不同
+						OrderInfo.orderData.orderList.orderListInfo.partyId = OrderInfo.cust.custId;
+						OrderInfo.orderData.orderList.orderListInfo.handleCustId = -3;
+						_createHandleCust(busiOrders);
+					}
+				} else{
+					OrderInfo.orderData.orderList.orderListInfo.partyId = OrderInfo.cust.custId;
+					OrderInfo.orderData.orderList.orderListInfo.handleCustId = -3;
+					_createHandleCust(busiOrders);
+				}
 			} else{//已有客户
 				OrderInfo.orderData.orderList.orderListInfo.partyId = OrderInfo.cust.custId;//门户主页客户定位的客户ID
 				OrderInfo.orderData.orderList.orderListInfo.handleCustId = OrderInfo.handleCustId;//经办人查询出的客户ID
 			}
 		} else{//开关OFF状态
-			if(OrderInfo.handleCustId == "" || OrderInfo.handleCustId == null || OrderInfo.handleCustId == undefined){//新建客户
-				OrderInfo.orderData.orderList.orderListInfo.partyId = OrderInfo.cust.custId;//-3经办人客户，-2使用人客户，-1产权客户
+			if(OrderInfo.handleCustId == "" || OrderInfo.handleCustId == null || OrderInfo.handleCustId == undefined){//新建经办人
+				OrderInfo.orderData.orderList.orderListInfo.partyId = OrderInfo.cust.custId;
 				if(OrderInfo.bojbrCustInfos.name != null && OrderInfo.bojbrCustInfos.name != "" 
 					&& OrderInfo.bojbrCustInfos.addressStr != null && OrderInfo.bojbrCustInfos.addressStr != ""
 					&& OrderInfo.bojbrCustInfos.mailAddressStr != null && OrderInfo.bojbrCustInfos.mailAddressStr != ""
-					&& OrderInfo.bojbrCustIdentities.identityNum != null && OrderInfo.bojbrCustIdentities.identityNum != ""){//如果用户没有填写经办人
-					OrderInfo.orderData.orderList.orderListInfo.handleCustId = -3;//新建客户同时新建经办人，handleCustId与partyId一致
-					_createHandleCust(busiOrders);
+					&& OrderInfo.bojbrCustIdentities.identityNum != null && OrderInfo.bojbrCustIdentities.identityNum != ""){//填写了经办人
+//					OrderInfo.orderData.orderList.orderListInfo.handleCustId = -3;
+//					_createHandleCust(busiOrders);
+					if(OrderInfo.cust.custId == -1){//判断是否同时新建客户
+						if(OrderInfo.boCustIdentities.identityNum == OrderInfo.bojbrCustIdentities.identityNum && 
+								OrderInfo.boCustIdentities.identidiesTypeCd == OrderInfo.bojbrCustIdentities.identidiesTypeCd){//同一个人新建客户和新建经办人
+							OrderInfo.orderData.orderList.orderListInfo.partyId = -1;//-3经办人客户，-2使用人客户，-1产权客户
+							OrderInfo.orderData.orderList.orderListInfo.handleCustId = -1;//新建客户同时新建经办人，handleCustId与partyId一致
+						} else{//新建客户与新建经办人不同
+							OrderInfo.orderData.orderList.orderListInfo.partyId = OrderInfo.cust.custId;
+							OrderInfo.orderData.orderList.orderListInfo.handleCustId = -3;
+							_createHandleCust(busiOrders);
+						}
+					} else{
+						OrderInfo.orderData.orderList.orderListInfo.partyId = OrderInfo.cust.custId;
+						OrderInfo.orderData.orderList.orderListInfo.handleCustId = -3;
+						_createHandleCust(busiOrders);
+					}
 				}
-			} else{//已有客户
+			} else{//已有经办人
 				OrderInfo.orderData.orderList.orderListInfo.partyId = OrderInfo.cust.custId;//门户主页客户定位的客户ID
 				OrderInfo.orderData.orderList.orderListInfo.handleCustId = OrderInfo.handleCustId;//经办人查询出的客户ID
 			}
