@@ -1241,7 +1241,7 @@ order.calcharge = (function(){
 	var _queryPayOrdStatus1 = function(soNbr, status,type) {
 		if ("1" == status) { // 原生返回成功，调用支付平台查询订单状态接口，再次确定是否成功，如果成功则调用收费接口
 			$.ecOverlay("<strong>正在处理中,请稍等会儿....</strong>");
-			_returnFlag=false;//禁止返回
+			order.calcharge.returnFlag=false;//禁止返回
 			var params = {
 				"olId" : soNbr
 				
