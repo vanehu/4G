@@ -137,6 +137,7 @@ cart.main = (function(){
 			curPage = pageIndex ;
 		}
 		var pageType=$("#pageType").val();
+		var pageType4EC = $("#pageType4EC").val();
 		var qryNumber=$("#p_qryNumber").val();
 		var permissionsType = $("#permissionsType").val();
 		var param = {};
@@ -256,14 +257,25 @@ cart.main = (function(){
 					return ;
 				}
 				param["channelId"] = channelId;
+				if (pageType4EC == "link4EC" && !ec.util.isObj($("#p_busiStatusCd").val())) {
+					$.alert("提示","渠道、订单状态必填！");
+					return;
+				}
 			}else{
 				if(pageType=="detail" || (pageType=="link" && permissionsType!="admin")){
-					if(qryNumber==null ||qryNumber==""||qryNumber==undefined){
-						var couponNumber = $("#p_couponNumber").val();
-						if(couponNumber == null || couponNumber == "" || couponNumber == undefined){
-							$.alert("提示","请至少输入接入号码、购物车流水、渠道或终端串码中的一个！");
-							return ;
-						}	
+					if (pageType4EC == "link4EC") {
+						if (!ec.util.isObj($("#p_channelId").val()) || !ec.util.isObj($("#p_busiStatusCd").val())) {
+							$.alert("提示","渠道、订单状态必填！");
+							return;
+						}
+					} else {
+						if(qryNumber==null ||qryNumber==""||qryNumber==undefined){
+							var couponNumber = $("#p_couponNumber").val();
+							if(couponNumber == null || couponNumber == "" || couponNumber == undefined){
+								$.alert("提示","请至少输入接入号码、购物车流水、渠道或终端串码中的一个！");
+								return ;
+							}	
+						}
 					}
 				}
 				areaId = $("#p_areaId").val();
@@ -294,6 +306,11 @@ cart.main = (function(){
 		param.pageType = $("#pageType").val();
 		if(pageType=="link"){
 			param.permissionsType = $("#permissionsType").val();
+			if (pageType4EC == "link4EC") {
+				// 外部订单号
+				param.extCustOrderId = $("#p_extCustOrderId").val();
+				param.pageType4EC = pageType4EC;
+			}
 		}
 		$.callServiceAsHtmlGet(contextPath+"/report/cartList",param,{
 			"before":function(){
@@ -542,8 +559,8 @@ cart.main = (function(){
 		});
 	};
 	
-	var _chooseArea = function(){
-		order.area.chooseAreaTreeManger("report/cartMain","p_areaId_val","p_areaId",3);
+	var _chooseArea = function(url){
+		order.area.chooseAreaTreeManger(ec.util.isObj(url) ? url : "report/cartMain","p_areaId_val","p_areaId",3);
 	};
 	
 	var _cardProgressQuery = function(){

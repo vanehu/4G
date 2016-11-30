@@ -18,6 +18,7 @@
 <input type="hidden" id="pageType" value="${pageType}">
 <#if pageType=="link">
 <input type="hidden" id="permissionsType" value="${permissionsType}"/>
+<input type="hidden" id="pageType4EC" value="${pageType4EC}">
 </#if>
 <div class="main_div" id="d_query" >
 
@@ -35,7 +36,11 @@
                             <dl>
                                   <dt>选择地区：</dt>
                                   <dd>
-                                  	<input type="text" class="numberTextBox width198" readonly="readonly" id="p_areaId_val" onclick="cart.main.chooseArea()" value="${p_areaId_val}" placeholder="请选择地区" />
+                                  	<#if pageType4EC=="link4EC">
+	                                  	<input type="text" class="numberTextBox width198" readonly="readonly" id="p_areaId_val" onclick="cart.main.chooseArea('report/preCartLink4EC')" value="${p_areaId_val}" placeholder="请选择地区" />
+                                  	<#else>
+                                  		<input type="text" class="numberTextBox width198" readonly="readonly" id="p_areaId_val" onclick="cart.main.chooseArea()" value="${p_areaId_val}" placeholder="请选择地区" />
+                                  	</#if>
                                   	<input type="hidden" id="p_areaId" value="${p_areaId}">
                                   	<label class="f_red">*</label>
                                   </dd>
@@ -98,6 +103,13 @@
                                     <input type="text" class="numberTextBox width198" id="p_olNbr" value="" disabled="disabled" style="width:160px;background-color: #E8E8E8;" />
                                   	<label class="f_red" >&nbsp;&nbsp;</label>
                                   </dd>
+                                  <#if pageType4EC=="link4EC">
+                                  	  <dt>外部订单号：</dt>
+	                                  <dd>
+	                                    <input type="text" class="numberTextBox width198" id="p_extCustOrderId" value=""/>
+	                                    <label class="f_red">&nbsp;</label>
+	                                  </dd>
+                                  </#if>
                                   <#if pageType=="detail">
                           			<dt>受理工号：</dt>
                           			<#if QryChannelAuth == "0">

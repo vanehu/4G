@@ -281,6 +281,7 @@ public class ReportController extends BaseController {
         Integer totalSize = 0;
         //重打回执，发票重打、发票补打，需要传送工号；暂存单查询需要传tSOrder；
         String pageType = request.getParameter("pageType");
+        String pageType4EC = request.getParameter("pageType4EC"); // 工单查询（电渠）
         String permissionsType = request.getParameter("permissionsType");
         //个人权限需要传工号
         if (StringUtils.isNotBlank(permissionsType) && permissionsType.equals("personal")) {
@@ -296,6 +297,8 @@ public class ReportController extends BaseController {
                 if (request.getParameter("partyId") != null) {
                     param.put("partyId", request.getParameter("partyId"));
                 }
+            } else if ("link".equals(pageType) && "link4EC".equals(pageType4EC)) {
+            	param.put("extCustOrderId", request.getParameter("extCustOrderId"));
             }
         }
         
@@ -611,6 +614,43 @@ public class ReportController extends BaseController {
         return "/cart/cart-main";
     }
 
+    @RequestMapping(value = "/preCartLink4EC", method = RequestMethod.GET)
+    @AuthorityValid(isCheck = false)
+    public String preCartLink4EC(Model model, HttpSession session) throws AuthorityException {
+        model.addAttribute("current", EhcacheUtil.getCurrentPath(session, "report/preCartLink4EC"));
+
+        SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+                SysConstant.SESSION_KEY_LOGIN_STAFF);
+
+        Calendar c = Calendar.getInstance();
+        SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd");
+        String endTime = f.format(c.getTime());
+        String startTime = f.format(c.getTime());
+        Map<String, Object> defaultAreaInfo = CommonMethods.getDefaultAreaInfo_MinimumC3(sessionStaff);
+
+        model.addAttribute("p_startDt", startTime);
+        model.addAttribute("p_endDt", endTime);
+        model.addAttribute("p_areaId", defaultAreaInfo.get("defaultAreaId"));
+        model.addAttribute("p_areaId_val", defaultAreaInfo.get("defaultAreaName"));
+        model.addAttribute("pageType", "link");
+        model.addAttribute("pageType4EC", "link4EC");
+
+        //获取员工权限 personal admin monitor
+        String permissionsType = CommonMethods.checkPreLinkOperatSpec(staffBmo, super.getRequest(), sessionStaff);
+        model.addAttribute("permissionsType", permissionsType);
+        
+        //判别用户是否具有查询某地区下的所有渠道的权限
+        /*String iseditOperation = null;
+        try {
+            if (iseditOperation == null) {
+                iseditOperation = staffBmo.checkOperatSpec(SysConstant.QRYCHANNELAUTH_CODE, sessionStaff);
+            }
+        } catch (Exception e) {
+            iseditOperation = "1";
+        }
+        model.addAttribute("QryChannelAuth", iseditOperation);*/
+        return "/cart/cart-main";
+    }
     /**
      * 转至回执打印页面
      * @param model
