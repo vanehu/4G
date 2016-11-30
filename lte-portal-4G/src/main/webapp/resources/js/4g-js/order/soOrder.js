@@ -1317,7 +1317,7 @@ SoOrder = (function() {
 			data : data.ooRoles
 		};
 		$.each(OrderInfo.offer.offerMemberInfos,function(i){
-			if(this.roleCd==CONST.MEMBER_ROLE_CD.MAIN_CARD){
+			if(this.roleCd==CONST.MEMBER_ROLE_CD.MAIN_CARD && this.objType == CONST.OBJ_TYPE.PROD){
 				objInstId = this.objInstId;
 				return false;
 			}
