@@ -1576,68 +1576,23 @@ order.main = (function(){
 				"queryTypeValue":queryTypeValue,
 				"identidies_type":$("#orderUserIdentidiesTypeCd  option:selected").text()
 		};
-		$.callServiceAsHtml(contextPath+"/cust/queryCust",param, {
-			"before":function(){
-				$.ecOverlay("<strong>正在查询中，请稍等...</strong>");
-			},"always":function(){
-				$.unecOverlay();
-			},	
-			"done" : function(response){
-				$.unecOverlay();
-				if (response.code == -2) {
-					$.alertM(response.data);
-					return;
-				}
-				//新建
-				if(response.data.indexOf("false") ==0) {
-//					$.unecOverlay();
-//					$.alert("提示","抱歉，没有定位到客户，请尝试其他客户。");
-//					 return;
-				}else{
-					$.unecOverlay();
-					var custInfoSize = $(response.data).find('#custInfoSize').val();
-					// 存在多客户的情况
-					if (custInfoSize == 1) {
-						var scope = $(response.data).find('#custInfos');
-						_choosedCustInfo = {
-								custId : $(scope).attr("custId"), //$(scope).find("td:eq(3)").text(),
-								partyName : $(scope).attr("partyName"), //$(scope).find("td:eq(0)").text(),
-								CN : $(scope).attr("CN"),
-								idCardNumber : $(scope).attr("idCardNumber"), //$(scope).find("td:eq(4)").text(),
-								identityName : $(scope).attr("identityName"),
-								areaName : $(scope).attr("areaName"),
-								areaId : $(scope).attr("areaId"),
-								identityCd :$(scope).attr("identityCd"),
-								addressStr :$(scope).attr("addressStr"),
-								norTaxPayer :$(scope).attr("norTaxPayer"),
-								segmentId :$(scope).attr("segmentId"),
-								segmentName :$(scope).attr("segmentName"),
-								custFlag :$(scope).attr("custFlag"),
-								vipLevel :$(scope).attr("vipLevel"),
-								vipLevelName :$(scope).attr("vipLevelName"),
-								accNbr:$(scope).attr("accNbr"),
-								userIdentityCd:$(scope).attr("userIdentityCd"),//使用人证件类型
-								userIdentityName:$(scope).attr("userIdentityName"),//使用人证件名称
-								userIdentityNum:$(scope).attr("userIdentityNum"),//使用人证件号码
-								accountName:$(scope).attr("accountName"),//账户名
-								userName:$(scope).attr("userName"),//使用人名
-								userCustId:$(scope).attr("userCustId"),//使用人客户id
-								isSame:$(scope).attr("isSame")//使用人名称与账户名称是否一致
-						};
-						$("#orderUserAttrName").val(_choosedCustInfo.partyName);
-						$("#orderUserAttrAddr").val(_choosedCustInfo.addressStr);
-						$("#orderUserAttrIdCard").val(_choosedCustInfo.idCardNumber);
-						$("#orderUserIdentidiesTypeCd").val(_choosedCustInfo.identityCd);
-						isExists = true;
-					}
-				 }
-			},
-			"fail":function(response){
-				$.unecOverlay();
-				//$.alert("提示","查询失败，请稍后再试！");
-			}
-		});
-		return isExists;
+		
+		var response = $.callServiceAsHtml(contextPath+"/cust/queryCust",param);
+		var custInfoSize = $(response.data).find('#custInfoSize').val();
+			if (parseInt(custInfoSize) >= 1) {
+				var scope = $(response.data).find('#custInfos').eq(0);
+				$("#orderUserAttrName").val($(scope).attr("partyName"));
+				$("#orderUserAttrAddr").val($(scope).attr("addressStr"));
+				$("#orderUserAttrIdCard").val($(scope).attr("idCardNumber"));
+				$("#orderUserIdentidiesTypeCd").val($(scope).attr("identityCd"));
+				//OrderInfo.handleCustId = $(scope).attr("custId");//经办人客户ID
+				// _choosedCustInfo.handleCustId = $(scope).attr("custId");//经办人客户ID
+				OrderInfo.boUserCustIdentities.identityNum = $(scope).attr("idCardNumber");
+				OrderInfo.boUserCustInfos.name = $(scope).attr("partyName");
+				OrderInfo.boUserCustInfos.addressStr = $(scope).attr("addressStr");
+				isExists = true;
+			} 
+		 return isExists;
 	};
 	
 	/*
