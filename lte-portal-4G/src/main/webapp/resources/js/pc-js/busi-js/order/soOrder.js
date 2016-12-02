@@ -365,6 +365,8 @@ SoOrder = (function() {
 		
 		//订单填充经办人信息
 		_addHandleInfo(busiOrders, custOrderAttrs);
+		//使用人节点
+		_createCustInfo(busiOrders);
 		
 		OrderInfo.orderData.orderList.orderListInfo.custOrderAttrs = custOrderAttrs; //订单属性数组
 		OrderInfo.orderData.orderList.orderListInfo.extCustOrderId = OrderInfo.provinceInfo.provIsale; //省份流水
@@ -3110,7 +3112,9 @@ SoOrder = (function() {
 						OrderInfo.orderData.orderList.orderListInfo.handleCustId = OrderInfo.subHandleInfo.handleCustId;//经办人查询出的客户ID
 					} else if(OrderInfo.subHandleInfo.handleExist == "N"){
 						//如果是新客户
-						OrderInfo.orderData.orderList.orderListInfo.handleCustId = -3;//新建经办人，handleCustId与partyId一致
+						var handleCustInstId = OrderInfo.SEQ.offerSeq--;
+						OrderInfo.HandleCustInstId = handleCustInstId;
+						OrderInfo.orderData.orderList.orderListInfo.handleCustId = handleCustInstId;//新建经办人，handleCustId与partyId一致
 						OrderInfo.orderData.orderList.orderListInfo.partyId = OrderInfo.cust.custId;//-3经办人客户，-2使用人客户，-1产权客户
 						_createHandleCust(busiOrders);
 					} else{
@@ -3130,7 +3134,9 @@ SoOrder = (function() {
 				if(OrderInfo.subHandleInfo.orderAttrName != null && OrderInfo.subHandleInfo.orderAttrName != "" 
 						&& OrderInfo.subHandleInfo.orderAttrAddr != null && OrderInfo.subHandleInfo.orderAttrAddr != ""
 						&& OrderInfo.subHandleInfo.identityNum != null && OrderInfo.subHandleInfo.identityNum != ""){//如果用户填经办人
-					OrderInfo.orderData.orderList.orderListInfo.handleCustId = -3;//新建经办人，handleCustId与partyId一致
+					var handleCustInstId = OrderInfo.SEQ.offerSeq--;
+					OrderInfo.HandleCustInstId = handleCustInstId;
+					OrderInfo.orderData.orderList.orderListInfo.handleCustId = handleCustInstId;//新建经办人，handleCustId与partyId一致
 					_createHandleCust(busiOrders);
 				}
 			}
@@ -3154,7 +3160,7 @@ SoOrder = (function() {
 				seq : OrderInfo.SEQ.seq--
 			}, 
 			busiObj : { //业务对象节点
-				instId		: -3,//-3经办人客户，-2使用人客户，-1产权客户
+				instId		: OrderInfo.HandleCustInstId,
 				accessNumber: OrderInfo.getAccessNumber(-1)
 			},  
 			boActionType : {
@@ -3188,6 +3194,55 @@ SoOrder = (function() {
 			identidiesTypeCd: OrderInfo.subHandleInfo.identidiesTypeCd//证件类型
 		});
 		busiOrders.push(busiOrder);
+	};	
+	
+	//使用人
+	var _createCustInfo = function(busiOrders) {
+		for(var i=0;i<OrderInfo.subUserInfos.length;i++){
+			var subUserInfo = OrderInfo.subUserInfos[i];
+			if(subUserInfo.isOldCust == "N"){
+				var busiOrder = {
+						areaId	: OrderInfo.getAreaId(),//受理地区ID
+						busiOrderInfo : {
+							seq : OrderInfo.SEQ.seq--
+						}, 
+						busiObj : { //业务对象节点
+							instId		: subUserInfo.instId,
+							accessNumber: OrderInfo.getAccessNumber(subUserInfo.prodId)
+						},  
+						boActionType : {
+							actionClassCd	: CONST.ACTION_CLASS_CD.CUST_ACTION,
+							boActionTypeCd	: CONST.BO_ACTION_TYPE.CUST_CREATE
+						}, 
+						data : {
+							boCustInfos 		: [],
+							boCustIdentities	: [],
+							boPartyContactInfo	: []
+						}
+					};
+					//经办人信息节点
+					busiOrder.data.boCustInfos.push({
+						name			: subUserInfo.orderAttrName,//客户名称
+						state			: "ADD",//状态
+						areaId			: OrderInfo.getAreaId(),
+						telNumber 		: subUserInfo.orderAttrPhoneNbr,//联系电话
+						addressStr		: subUserInfo.orderAttrAddr,//客户地址
+						partyTypeCd		: 1,//客户类型
+						defaultIdType	: subUserInfo.orderIdentidiesTypeCd,//证件类型
+						mailAddressStr	: subUserInfo.orderAttrAddr,//通信地址
+						businessPassword: ""//客户密码
+					});
+					//客户证件节点
+					busiOrder.data.boCustIdentities.push({
+						state			: "ADD",//状态
+						isDefault		: "Y",//是否首选
+						identityNum		: subUserInfo.identityNum,//证件号码
+						identidiesPic	: subUserInfo.identityPic,//二进制证件照片
+						identidiesTypeCd: subUserInfo.orderIdentidiesTypeCd//证件类型
+					});
+					busiOrders.push(busiOrder);
+			    }
+			}
 	};	
 	
 	return {

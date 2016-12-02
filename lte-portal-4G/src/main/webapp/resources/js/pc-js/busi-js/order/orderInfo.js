@@ -33,6 +33,7 @@ OrderInfo = (function() {
 	
 	var _handleInfo = {};
 	var _subHandleInfo = {};
+	var _subUserInfos = [];
 	/**
 	 * UI集成页面信息
 	 * provIsale 省份流水
@@ -1577,7 +1578,7 @@ OrderInfo = (function() {
 		preBefore:_preBefore,
 		roleType : _roleType,
 		handleInfo:_handleInfo,
-		subHandleInfo:_subHandleInfo
-		
+		subHandleInfo:_subHandleInfo,
+		subUserInfos:_subUserInfos
 	};
 })();

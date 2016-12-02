@@ -1101,7 +1101,9 @@ order.main = (function(){
 		//客户类型,证件类型
 		order.cust.partyTypeCdChoose($("#orderPartyTypeCd").children(":first-child"),"orderIdentidiesTypeCd");
 		order.cust.identidiesTypeCdChoose($("#orderIdentidiesTypeCd").children(":first-child"),"orderAttrIdCard");
-		
+		//初始化使用人
+		order.cust.partyTypeCdChoose($("#orderPartyTypeCdB").children(":first-child"),"orderIdentidiesTypeCdB");
+		order.cust.identidiesTypeCdChoose($("#orderIdentidiesTypeCdB").children(":first-child"),"orderUserIdCard");
 	};
 	
 	//初始化省内订单属性
@@ -1483,26 +1485,32 @@ order.main = (function(){
 	
 	//显示客户定位弹出框
 	function _toChooseUser(prodId){
-		order.cust.queryForChooseUser = true; //标识客户定位是为了选择使用人
-		order.cust.bindCustQueryForChoose(); //客户定位查询按钮
-		$('#chooseUserBtn').off('click').on('click',function(){
-			if(!!order.cust.tmpChooseUserInfo && order.cust.tmpChooseUserInfo.custId){
-				//保存并显示使用人信息，清空弹出框的客户信息、临时保存的客户信息，关闭弹出框
-				OrderInfo.updateChooseUserInfos(prodId, order.cust.tmpChooseUserInfo);
-				$('#'+CONST.PROD_ATTR.PROD_USER+'_'+prodId+'_name').val(order.cust.tmpChooseUserInfo.partyName);
-				$('#'+CONST.PROD_ATTR.PROD_USER+'_'+prodId).val(order.cust.tmpChooseUserInfo.custId);
-				order.cust.tmpChooseUserInfo = {};
-				
-				easyDialog.close();
-//				$('#p_cust_identityNum_choose').val('');
-//				$('#chooseUserInfo td').html('');
-				$('#chooseUserList').hide();
-			} else {
-				$.alert("提示","请定位客户作为使用人");
-				return false;
-			}
+		//#989739 使用人采用新的页面 
+//		order.cust.queryForChooseUser = true; //标识客户定位是为了选择使用人
+//		order.cust.bindCustQueryForChoose(); //客户定位查询按钮
+//		$('#chooseUserBtn').off('click').on('click',function(){
+//			if(!!order.cust.tmpChooseUserInfo && order.cust.tmpChooseUserInfo.custId){
+//				//保存并显示使用人信息，清空弹出框的客户信息、临时保存的客户信息，关闭弹出框
+//				OrderInfo.updateChooseUserInfos(prodId, order.cust.tmpChooseUserInfo);
+//				$('#'+CONST.PROD_ATTR.PROD_USER+'_'+prodId+'_name').val(order.cust.tmpChooseUserInfo.partyName);
+//				$('#'+CONST.PROD_ATTR.PROD_USER+'_'+prodId).val(order.cust.tmpChooseUserInfo.custId);
+//				order.cust.tmpChooseUserInfo = {};
+//				
+//				easyDialog.close();
+////				$('#p_cust_identityNum_choose').val('');
+////				$('#chooseUserInfo td').html('');
+//				$('#chooseUserList').hide();
+//			} else {
+//				$.alert("提示","请定位客户作为使用人");
+//				return false;
+//			}
+//		});
+		easyDialog.open({
+			container : "choose_user_dialog"
 		});
-		_showChooseUserDialog(null, prodId);
+		$("#user_prodId").val(prodId);
+		$("#chooseUserBt").removeClass("btna_o").addClass("btna_g");
+		$('#chooseUserBt').off('click');
 	};
 	
 	/*

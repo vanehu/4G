@@ -609,84 +609,65 @@ var iacc_nbr="${acrNum}";
   <div id="chofferspecContent" style="min-height:200px">      
   </div>
 </div>
-<!--弹出款-客户定位，选择使用人-->
+<!--弹出款-使用人-->
 <div id="choose_user_dialog" class="easyDialogdiv" style="width:700px;height:250px;">
-<div class="easyDialogclose" id="chooseUserClose" onclick="easyDialog.close()"></div>
-    	<table class="contract_list">
-            <thead>
-                <tr>
-                    <td>选择使用人</td>
-                </tr>                                                    
-            </thead>
-        </table>
-        <div id="chooseUserDiv" class="main_div location main_warp">
-		<form id="custQueryForChooseForm">
-	    <ul class="usercon">
-	    <li class="ulocation" >
-		<h2 style="margin: 4px 8px 0 5px;">受理地区</h2>
-		</li>
-		<li class="usersearch">
-		   <input id="diffPlaceFlag_choose" type="hidden" value="${DiffPlaceFlag}"> 
-			<#if Session["_ecs_login_session_key"].currentChannelId ?? && (Session["_ecs_login_session_key"].currentChannelId!="") >
-			  <input type="text" class="numberTextBox" style="margin-left:5px; width:100px" readonly="readonly" id="p_cust_areaId_val_choose" <#if DiffPlaceFlag=="local">onclick="order.cust.chooseAreaForChooseUser();"</#if> value="${Session["_ecs_login_session_key"].currentAreaAllName}" placeholder="请选择地区" />
-	          <input type="hidden" id="p_cust_areaId_choose" value="${Session["_ecs_login_session_key"].currentAreaId}" />
-	          <input type="hidden" DiffPlaceFlag="${DiffPlaceFlag}" />
-	         </#if>
-        </li>
-		<li class="ulocation">
-			<h2 style="margin: 4px 8px 0 5px;">客户定位</h2>
-		</li>
-		<li class="usersearch">
-		<select onchange="order.cust.custidentidiesTypeCdChoose(this,'p_cust_identityNum_choose')" id="p_cust_identityCd_choose" class="selectNumbertype" style="width:118px;">
-                                  	  	<option value="-1" >接入号码</option>
-                                  	  	<option value="acctCd" >合同号</option>
-                                  	  	<option value="custNumber" >客户编码</option>
+    <div class="easyDialogclose" id="chooseUserClose" onclick="easyDialog.close()"></div>
+    <table class="contract_list">
+        <thead>
+        <tr>
+            <td>选择使用人2</td>
+        </tr>                                                    
+        </thead>
+    </table>
+    <div class="main_div location main_warp">
+        <ul class="fillin show" style="overflow: hidden;">
+    <li style="padding-right: 50%;">
+		<label>证件类型：</label>
+        <select id="orderIdentidiesTypeCdB" onchange="order.cust.identidiesTypeCdChoose(this,'orderUserIdCard')">
         </select>
-        <div id="custList" class="usersearchcon" >
-        	
-        </div>
-        </li>
-		<li class="usersearch">
-			<input name="" type="text" class="numberTextBox" id="p_cust_identityNum_choose" onkeyup="value=value.replace(/[^\w]|_/ig,'')" 
-				value="${acrNum}" data-validate="validate(isTelecomOridCardCheck:请输入合法接入号码) on(blur)" style="width:158px;"/>
-		</li>
-		<!-- 
-        <li>
-        <input id="isAppointNum" type="checkbox" checked="true" style="margin: 15px 5px 0px 5px;float:left" onclick="order.cust.isAppointNum('p_cust_identityCd_choose')">
-        <label style="float:left; margin:10px 5px 0px 0px">指定号码</label>
-        </li>
-		 -->
-        <li class="ubtn">
-		    <a id="userSearchForChooseBtn" href="javascript:void(0)"  class="btn_h30 btn" style="margin-left:30px;" onclick=""><span>查 询</span></a>
-		</li>
-		
-		</ul>
-		</form>
-		
-		<table class="contract_list" id="chooseUserList" style="display: none;">
-		<thead>
-			<tr>
-				<td width="100">姓名</td>
-				<td width="350">证件号码</td>
-				<td width="100">地区</td>
-			</tr>
-		</thead>
-		<tbody>
-			<tr id="chooseUserInfo">
-				<td id="chooseUserInfoName"></td>
-				<td id="chooseUserInfoNum"></td>
-				<td id="chooseUserInfoAreaName"></td>
-			</tr>
-		</tbody>
-	</table>
-	
-	
+        <label class="f_red">*</label>
+        <a class="btn_h30" id="orderUserReadCertBtn" onclick="javascript:order.cust.readCertWhenUser()" style="margin-top: 0px; display: none;"><span>读 卡</span></a>
+        <a class="btn_h30" id="orderUserQryBtn" onclick="javascript:order.cust.qryUserCustInfo()" style="margin-top: 0px; display: none;"><span>查询</span></a>
+	</li>
+	<!-- 经办人为个人用户，证件类型只显示个人证件类型，隐藏客户类型 -->
+	<li id="li_order_remark" style="display: none;">
+		<label>客户类型：</label> 
+		<select id="orderPartyTypeCdB" onchange="order.cust.partyTypeCdChoose(this,'orderIdentidiesTypeCd')">
+                                        <option value="1" >个人</option>
+        </select>
+        <label class="f_red">*</label>
+	</li>
+	<li id="li_order_user">
+		<label>使用人姓名：</label> 
+		<input id="orderUserName" class="inputWidth183px" maxlength="16" type="text" style="width:183px;">
+		<span style="line-height: 28px; float:left;"></span>
+		<label class="f_red">*</label>
+	</li>
+	<li id="li_order_user2">
+		<label>证件号码：</label> 
+		<input id="orderUserIdCard" class="inputWidth183px"maxlength="50"type="text" style="width:183px;">
+		<span style="line-height: 28px; float:left;"></span>
+		<label class="f_red">*</label>
+	</li>
+	<li id="li_order_user3">
+		<label>证件地址：</label> 
+		<input id="orderUserAddr" class="inputWidth183px" maxlength="125"type="text" style="width:183px;">
+		<span style="line-height: 28px; float:left;"></span>
+		<label class="f_red">*</label>
+	</li>
+	<li>
+		<label>联系人号码：</label> 
+		<input id="orderUserPhoneNbr" class="inputWidth183px" type="text" maxlength="16"style="width:183px;">
+	</li>
+</ul>
+   <input id="user_prodId" type="hidden" value="">
 	</div>
   	<div align="center" style="margin: 20px auto;">
-        <a id="chooseUserBtn" class="btna_o" href="javascript:void(0)"><span >确认</span></a>
+        <a id="chooseUserBt" class="btna_o" ><span >确认</span></a>
         <a id="cancelChooseUserBtn" class="btna_o" href="javascript:void(0)" style=" margin-left:20px;" onclick="easyDialog.close()"><span>取消</span></a>
     </div>
 </div>
+<!--弹出款-使用人 end-->
 
 <!--渠道选择弹窗-->
 <div class="easyDialogdiv" style="width:450px; max-height: 380px;min-height: 250px" id="qudao">

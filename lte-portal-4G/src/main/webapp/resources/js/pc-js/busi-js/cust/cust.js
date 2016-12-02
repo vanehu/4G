@@ -298,7 +298,11 @@ order.cust = (function(){
 						
 						for(var i=0;i<uniData.length;i++){
 							var certTypedate = uniData[i];
-							$("#"+id).append("<option value='"+certTypedate.certTypeCd+"' >"+certTypedate.name+"</option>");
+							if(certTypedate.isDefault == "Y"){
+								$("#"+id).append("<option selected='selected' value='"+certTypedate.certTypeCd+"' >"+certTypedate.name+"</option>");
+							}else{
+								$("#"+id).append("<option value='"+certTypedate.certTypeCd+"' >"+certTypedate.name+"</option>");
+							}
 						}
 						//屏蔽身份证
 						if(id=="identidiesTypeCd" && OrderInfo.staff.idType=="OFF")
@@ -364,6 +368,8 @@ order.cust = (function(){
 				$("#li_order_user span").show();
 				$("#li_order_user2 span").show();
 				$("#li_order_user3 span").show();
+				$("#chooseUserBt").removeClass("btna_o").addClass("btna_g");
+				$('#chooseUserBt').off('click');
 			};
 		}else{
 			// 填单页面经办人非身份证
@@ -386,20 +392,21 @@ order.cust = (function(){
 				$("#orderAttrQryBtn").show();
 			}else if(id == "orderUserIdCard"){//使用人
 				$("#orderUserReadCertBtn").hide();
+				$("#li_order_user span").text("");
+				$("#li_order_user span").hide();
+				$("#li_order_user2 span").text("");
+				$("#li_order_user2 span").hide();
+				$("#li_order_user3 span").text("");
+				$("#li_order_user3 span").hide();
 				$("#orderUserName").show();
 				$("#orderUserName").val("");
 				$("#orderUserIdCard").show();
 				$("#orderUserIdCard").val("");
 				$("#orderUserAddr").show();
 				$("#orderUserAddr").val("");
-
-				$("#li_order_User span").hide();
-				$("#li_order_User span").text("");
-				$("#li_order_User2 span").hide();
-				$("#li_order_User2 span").text("");
-				$("#li_order_User3 span").hide();
-				$("#li_order_User3 span").text("");
 				$("#orderUserQryBtn").show();
+				$("#chooseUserBt").removeClass("btna_o").addClass("btna_g");
+				$('#chooseUserBt').off('click');
 			};
 			if(identidiesTypeCd==2){
 				$("#"+id).attr("placeHolder","请输入合法军官证");
@@ -2660,7 +2667,7 @@ order.cust = (function(){
 	var _confirmAgree = function(resultContent){
 		$("#confirmAgree").removeClass("btna_o").addClass("btna_g");
 		$("#confirmAgree").off("click");
-		OrderInfo.subHandleInfo = {};//清空经办人缓存
+		OrderInfo.subHandleInfo = {};
 		//客户定位
 		var  orderIdentidiesTypeCd = ec.util.defaultStr($("#orderIdentidiesTypeCd").val());
 		var  identityNum = ec.util.defaultStr($("#orderAttrIdCard").val());
@@ -2796,11 +2803,11 @@ order.cust = (function(){
     
 	var _qryUserCustInfo = function(data) {
 		//客户定位
-		var  orderIdentidiesTypeCd = ec.util.defaultStr($("#orderIdentidiesTypeCd").val());
-		var  identityNum = ec.util.defaultStr($("#orderAttrIdCard").val());
-		var  orderAttrName = ec.util.defaultStr($("#orderAttrName").val());
-		var  orderAttrAddr = ec.util.defaultStr($("#orderAttrAddr").val());
-		var  orderAttrPhoneNbr = ec.util.defaultStr($("#orderAttrPhoneNbr").val());
+		var  orderIdentidiesTypeCd = ec.util.defaultStr($("#orderIdentidiesTypeCdB").val());
+		var  identityNum = ec.util.defaultStr($("#orderUserIdCard").val());
+		var  orderAttrName = ec.util.defaultStr($("#orderUserName").val());
+		var  orderAttrAddr = ec.util.defaultStr($("#orderUserAddr").val());
+		var  orderAttrPhoneNbr = ec.util.defaultStr($("#orderUserPhoneNbr").val());
 		var  user_prodId = ec.util.defaultStr($("#user_prodId").val());
 		if(identityNum=="" || orderAttrName=="" || orderAttrAddr==""){
 			$.alert("提示","使用人信息不完整，请重新填写完整！。");
@@ -2813,15 +2820,15 @@ order.cust = (function(){
 				"queryType" :""
 		};
 		var queryCustInfo = $.callServiceAsJson(contextPath+"/token/pc/cust/queryCustInfo", custParam);
+		var userSubInfo = {};
 		if(queryCustInfo.code == 0){//定位到客户,传客户ID
-			var userSubInfo = {
+			userSubInfo = {
 				prodId : user_prodId,
 				custId : queryCustInfo.data.custInfos[0].custId,
 				isOldCust : "Y"
 			};
-			OrderInfo.userSubInfos.push(userSubInfo);
         }else{//定位不到客户C1
-        	var userSubInfo = {
+        	userSubInfo = {
     			prodId : user_prodId,
     			orderIdentidiesTypeCd : orderIdentidiesTypeCd,
     			identityNum : identityNum,
@@ -2833,11 +2840,29 @@ order.cust = (function(){
         	if(orderIdentidiesTypeCd == 1){
         		userSubInfo.identityPic = data.identityPic;
         	}
-    		OrderInfo.userSubInfos.push(userSubInfo);
         }
+		$("#chooseUserBt").removeClass("btna_g").addClass("btna_o");
+		$('#chooseUserBt').off('click').on('click',function(){
+			_commitUser(userSubInfo);
+		});
 	}; 
-    
 	
+    // 使用人
+	var _commitUser = function(userSubInfo) {
+		var prodId = $("#user_prodId").val();
+		var orderUserName = $("#orderUserName").val();
+		if(userSubInfo.isOldCust == "Y"){
+			$('#'+CONST.PROD_ATTR.PROD_USER+'_'+prodId+'_name').val(orderUserName);
+			$('#'+CONST.PROD_ATTR.PROD_USER+'_'+prodId).val(userSubInfo.custId);
+		}else if(userSubInfo.isOldCust == "N"){
+			var instId = OrderInfo.SEQ.offerSeq--;
+			userSubInfo.instId = instId;
+			$('#'+CONST.PROD_ATTR.PROD_USER+'_'+prodId+'_name').val("[新增]"+orderUserName);
+			$('#'+CONST.PROD_ATTR.PROD_USER+'_'+prodId).val(instId);
+		};
+		OrderInfo.subUserInfos.push(userSubInfo);
+		easyDialog.close();
+	};
     
     
     
@@ -2909,7 +2934,8 @@ order.cust = (function(){
 		confirmAgree:_confirmAgree,
 		closeShowPhoto:_closeShowPhoto,
 		readCertWhenUser:_readCertWhenUser,
-		qryUserCustInfo:_qryUserCustInfo
+		qryUserCustInfo:_qryUserCustInfo,
+		commitUser:_commitUser
 	};
 })();
 $(function() {

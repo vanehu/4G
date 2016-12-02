@@ -753,7 +753,6 @@ public final class SysConstant {
 	    public static final String ECS_BACK = "17";
 	    /**批量终端销售-18*/
 	    public static final String ECS_SALE = "18";
-	    
 	}
 	
 	/**Session缓存上传成功的实名制照片的virOlId*/
@@ -761,4 +760,9 @@ public final class SysConstant {
     
     /**订单属性记录客户端IP*/
   	public final static String ORDER_ATTRS_IP = "40010038";
+  	
+    //跳过经办人必填权限
+    public static final String TGJBRBTQX = "TGJBRBTQX";
+    //常量字符定义
+	public final static String STRING_0 = "0";
 }

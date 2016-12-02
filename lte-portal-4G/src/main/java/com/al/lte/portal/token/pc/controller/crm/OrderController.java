@@ -1286,6 +1286,7 @@ public class OrderController extends BaseController {
 		String isPhotoGraph = (String) session.getAttribute(SysConstant.SESSION_ISPHOTOGRAPH+"_PC");
 		String handlecustNumber = (String) session.getAttribute(SysConstant.SESSION_HANDLECUSTNUMBER+"_PC");
 		String handleprovCustAreaId = (String) session.getAttribute(SysConstant.SESSION_HANDLEPROVCUSTAREAID+"_PC");
+		String orderAttrFlag = "Y";//经办人必填
 		if("Y".equals(isPhotoGraph)){//Y已拍照，如果不传默认为N：未拍照
 			if(!StringUtil.isEmptyStr(handlecustNumber) && !StringUtil.isEmptyStr(handleprovCustAreaId)){//传经办人信息
 				//定位客户接口 queryCust
@@ -1308,6 +1309,7 @@ public class OrderController extends BaseController {
 							model.addAttribute("orderAttrFlag","Y");//Y必填
 						}else{
 							model.addAttribute("orderAttrFlag","N");//N不允许填，需要把经办人信息下省
+							orderAttrFlag = "N";
 							Map<String, Object> custInfo = (Map<String, Object>) custInfos.get(0);
 							model.addAttribute("orderAttrCustId",custInfo.get("custId"));
 						}
@@ -1328,7 +1330,18 @@ public class OrderController extends BaseController {
 		//判断经办人是否必填开关
 		String propertiesKey =  "REAL_NAME_PHOTO_"+sessionStaff.getCurrentAreaId().substring(0,3);
 		String  userFlag = propertiesUtils.getMessage(propertiesKey);
-		if(userFlag!=null && userFlag.equals("OFF")){
+		if(userFlag!=null && userFlag.equals("OFF") && orderAttrFlag.equals("Y")){
+			model.addAttribute("orderAttrFlag","C");//C非必填
+		}
+		//跳过拍照权限
+		String isSkipPhoto = "-1";
+		try {
+			isSkipPhoto = staffBmo.checkOperatSpec(SysConstant.TGJBRBTQX, sessionStaff);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		if(isSkipPhoto.equals(SysConstant.STRING_0)&& orderAttrFlag.equals("Y")){
 			model.addAttribute("orderAttrFlag","C");//C非必填
 		}
     	if("2".equals(String.valueOf(param.get("actionFlag")))){  //套餐变更
