@@ -34,27 +34,6 @@ query.common = (function() {
 		}
 	};
 	
-	/**
-	 * 根据权限编码查询工号的权限，入参key为权限编码，以boolean返回，有权限返回false；无权限或其他情况返回true
-	 */
-	var _checkOperateSpec = function(key){
-		
-		var resultFlag = true;
-		
-		if(key == null || key == undefined || key == ""){
-			$.alert("提示","入参为空");
-		} else{
-			var response = $.callServiceAsJson(contextPath + "/common/checkOperateSpec", {"key": key});
-			if (response.code == "0") {
-				resultFlag = response.data;
-			} else if (response.code == "1"){
-				$.alert("提示","Error: 权限查询失败");
-			}
-		}
-		
-		return resultFlag;
-	};
-	
 	/*
 	 * 查询开关配置，返回boolean，开关为ON，返回true；开关查询失败或关闭，返回false
 	 * 注：使用此函数查询开关配置，其开关必须为ON或者OFF状态，其他状态不支持使用此函数，建议使用_queryPropertiesValue
@@ -98,10 +77,32 @@ query.common = (function() {
 		
 		return resultFlag;
 	};
+	
+	/**
+	 * 根据权限编码查询工号的权限，入参key为权限编码，以boolean返回，有权限返回false；无权限或其他情况返回true
+	 */
+	var _checkOperateSpec = function(key){
+		
+		var resultFlag = true;
+		
+		if(key == null || key == undefined || key == ""){
+//			$.alert("提示","入参为空");
+		} else{
+			var response = $.callServiceAsJson(contextPath + "/common/checkOperateSpec", {"key": key});
+			if (response.code == "0") {
+				resultFlag = response.data;
+			} else if (response.code == "1"){
+//				$.alert("提示","Error: 权限查询失败");
+			}
+		}
+		
+		return resultFlag;
+	};
 
 	return {
 		queryApConfig			: _queryApConfig,
 		queryPropertiesValue	: _queryPropertiesValue,
-		queryPropertiesStatus	: _queryPropertiesStatus
+		queryPropertiesStatus	: _queryPropertiesStatus,
+		checkOperateSpec		: _checkOperateSpec
 	};
 })();
