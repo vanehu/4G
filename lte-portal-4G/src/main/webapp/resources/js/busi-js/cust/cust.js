@@ -236,7 +236,11 @@ order.cust = (function(){
 						
 						for(var i=0;i<uniData.length;i++){
 							var certTypedate = uniData[i];
-							$("#"+id).append("<option value='"+certTypedate.certTypeCd+"' >"+certTypedate.name+"</option>");
+							if(certTypedate.isDefault == "Y"){
+								$("#"+id).append("<option value='"+certTypedate.certTypeCd+"' selected='selected'>"+certTypedate.name+"</option>");
+							}else{
+								$("#"+id).append("<option value='"+certTypedate.certTypeCd+"' >"+certTypedate.name+"</option>");
+							}
 						}
 						//屏蔽身份证
 						/*if(id=="identidiesTypeCd" && OrderInfo.staff.idType=="OFF")

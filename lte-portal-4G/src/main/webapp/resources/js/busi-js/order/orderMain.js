@@ -1468,6 +1468,7 @@ order.main = (function(){
 				$("#userTips").html("提示："+ "请先读卡");
 		    	return false;
 	    	}
+			$('#'+CONST.PROD_ATTR.PROD_USER+'_'+prodId).val(prodId); 
 			$('#'+CONST.PROD_ATTR.PROD_USER+'_'+prodId).val($.trim($("#orderUserAttrName").val())); 
 			easyDialog.close();
 		});
@@ -1479,16 +1480,15 @@ order.main = (function(){
 			//保存并显示使用人信息，清空弹出框的客户信息、临时保存的客户信息，关闭弹出框
 		//	OrderInfo.updateChooseUserInfos(prodId, order.cust.tmpChooseUserInfo);
 			
-			if (_queryUser()) {
-				order.cust.tmpChooseUserInfo.custId = _choosedCustInfo.custId;
-				$('#'+CONST.PROD_ATTR.PROD_USER+'_'+prodId).val(order.cust.tmpChooseUserInfo.custId); 
-			}else{
+			if (!_queryUser()) {
 				var isExists=false;
 				var isExists2=false;
 				if(OrderInfo.boUserCustInfos.length>0){
 					for(var i=0;i<OrderInfo.boUserCustInfos.length;i++){
 						if(OrderInfo.boUserCustInfos[i].prodId==prodId){
 							OrderInfo.boUserCustInfos[i].prodId = prodId;
+							OrderInfo.boUserCustIdentities[i].state = "ADD";
+							OrderInfo.boUserCustInfos[i].state = "ADD";
 							OrderInfo.boUserCustInfos[i].name=$.trim($("#orderUserAttrName").val())  ;//客户名称
 							OrderInfo.boUserCustInfos[i].areaId=OrderInfo.getAreaId();//客户地区
 							OrderInfo.boUserCustInfos[i].partyTypeCd=$("#orderUserPartyTypeCd").val();//客户类型---
@@ -1509,6 +1509,7 @@ order.main = (function(){
 					json.defaultIdTycre=$.trim($("#orderUserIdentidiesTypeCd").val());//证件类型
 					json.addressStr=$.trim($("#orderUserAttrAddr").val());//客户地址
 					json.mailAddressStr=$.trim($("#orderUserAttrAddr").val());;//通信地址
+					json.state = "ADD";
 					OrderInfo.boUserCustInfos.push(json);
 					
 				}
@@ -1516,7 +1517,8 @@ order.main = (function(){
 					for(var i=0;i<OrderInfo.boUserCustIdentities.length;i++){
 						if(OrderInfo.boUserCustIdentities[i].prodId==prodId){
 							OrderInfo.boUserCustIdentities[i].prodId = prodId;
-							OrderInfo.boUserCustIdentities[i].identidiesTypeCd=$.trim($("#orderUserIdentidiesTypeCd").val());;
+							OrderInfo.boUserCustIdentities[i].identidiesTypeCd=$.trim($("#orderUserIdentidiesTypeCd").val());
+							OrderInfo.boUserCustIdentities[i].state = "ADD";
 							OrderInfo.boUserCustIdentities[i].identityNum=$.trim($("#orderUserAttrIdCard").val());//证件号码;
 							isExists2=true;
 							break;
@@ -1528,12 +1530,13 @@ order.main = (function(){
 					json2.prodId = prodId;
 					json2.identidiesTypeCd=$.trim($("#orderUserIdentidiesTypeCd").val());//证件类型
 					json2.identityNum=$.trim($("#orderUserAttrIdCard").val());//证件号码
+					json2.state = "ADD";
 					OrderInfo.boUserCustIdentities.push(json2);
 				}
 				
 			}
-			
-			$('#'+CONST.PROD_ATTR.PROD_USER+'_'+prodId+'_name').val($.trim($("#orderUserAttrName").val())	);
+			$('#'+CONST.PROD_ATTR.PROD_USER+'_'+prodId).val(prodId); 
+			$('#'+CONST.PROD_ATTR.PROD_USER+'_'+prodId+'_name').val($.trim($("#orderUserAttrName").val()));
 			
 			order.cust.tmpChooseUserInfo = {};
 			
@@ -1587,9 +1590,12 @@ order.main = (function(){
 				$("#orderUserIdentidiesTypeCd").val($(scope).attr("identityCd"));
 				//OrderInfo.handleCustId = $(scope).attr("custId");//经办人客户ID
 				// _choosedCustInfo.handleCustId = $(scope).attr("custId");//经办人客户ID
+				OrderInfo.boUserCustIdentities.state = "ADD";
 				OrderInfo.boUserCustIdentities.identityNum = $(scope).attr("idCardNumber");
 				OrderInfo.boUserCustInfos.name = $(scope).attr("partyName");
 				OrderInfo.boUserCustInfos.addressStr = $(scope).attr("addressStr");
+				OrderInfo.boUserCustInfos.state = "ADD";
+				$('#'+CONST.PROD_ATTR.PROD_USER+'_'+prodId).val($(scope).attr("custId")); 
 				isExists = true;
 			} 
 		 return isExists;
@@ -1600,6 +1606,10 @@ order.main = (function(){
 	 */
 	function _showChooseUserDialog(custInfo, prodId){
 		$("#userTips").empty();
+		$("#orderUserAttrName").val("");//客户名称
+		$("#orderUserAttrAddr").val("");//客户地址
+		$("#orderUserAttrIdCard").val("");//证件号码;
+		$("#orderUserAttrPhoneNbr").val("");//联系人号码;
 		//改造
 		custInfo = custInfo || OrderInfo.getChooseUserInfo(prodId);
 		if(custInfo != null && custInfo.custId){
