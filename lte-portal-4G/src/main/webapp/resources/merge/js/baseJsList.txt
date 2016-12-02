@@ -42,3 +42,4 @@ resources/js/4g-js/easydialog.min.js
 resources/js/4g-js/other.js
 resources/js/busi-js/common/page.js
 resources/js/busi-js/common/arrayPage.js
+resources/js/busi-js/query/common.js

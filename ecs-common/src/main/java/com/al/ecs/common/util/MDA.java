@@ -523,4 +523,9 @@ public class MDA {
 	 */
 	public static final Map<String,String> REAL_NAME_PHOTO_FLAG  = new HashMap<String,String>();
 	
+	/**
+	 * 主副卡角色互换分省开关
+	 */
+	public static final Map<String,String> MEMBER_ROLE_EXCHANGE_FLAG  = new HashMap<String,String>();
+	
 }

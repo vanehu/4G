@@ -279,15 +279,31 @@ order.memberChange = function(){
 						}
 					});
 				}
-				var $tipTr = $(
-					"<tr>"+
-						"<td colspan='4' style='text-align:center;line-height:25px;'>"+
-							"<font style='color:red;'>拆副卡：副卡直接拆除销号</font><br>"+
-							"<font style='color:red;'>保留>>选择新套餐：保留副卡，只更换套餐</font><br>"+
-//							"<font style='color:red;'>主副卡互换：主副卡成员角色互换</font>"+
-						"</td>"+
-					"</tr>"
-				);
+				
+				var $tipTr = null;
+				//主副卡互换开关
+				var memberChangeFlag =  query.common.queryPropertiesStatus("MEMBER_ROLE_EXCHANGE_" + OrderInfo.staff.areaId.substr(0, 3));
+				if(memberChangeFlag){//主副卡互换开关为ON 
+					$tipTr = $(
+						"<tr>"+
+							"<td colspan='4' style='text-align:center;line-height:25px;'>"+
+								"<font style='color:red;'>拆副卡：副卡直接拆除销号</font><br>"+
+								"<font style='color:red;'>保留>>选择新套餐：保留副卡，只更换套餐</font><br>"+
+								"<font style='color:red;'>主副卡互换：主副卡成员角色互换</font>"+
+							"</td>"+
+						"</tr>"
+					);
+				} else{//主副卡互换开关为OFF
+					$tipTr = $(
+						"<tr>"+
+							"<td colspan='4' style='text-align:center;line-height:25px;'>"+
+								"<font style='color:red;'>拆副卡：副卡直接拆除销号</font><br>"+
+								"<font style='color:red;'>保留>>选择新套餐：保留副卡，只更换套餐</font><br>"+
+							"</td>"+
+						"</tr>"
+					);
+				}
+				
 				var tipFlag = false;
 				//副卡成员
 				$.each(OrderInfo.offer.offerMemberInfos,function(){
@@ -322,8 +338,8 @@ order.memberChange = function(){
 								$($("#plan_no")).parent().css("text-decoration","line-through").attr("del","Y");
 							});	
 						}
-						//2016-10-18临时屏蔽，下个版本
-						if(false){//后期可能有限制条件，预留
+						//主副卡成员互换入口
+						if(memberChangeFlag){
 							var eleR = $("<i id='plan_no'><a id='' accNbr='"+this.accessNumber+"' class='purchase' href='javascript:void(0)'>主副卡互换</a></i>").appendTo(li);
 							eleR.click(function(){
 								$.confirm("信息确认","主副卡成员角色互换：原主卡将成为副卡，原副卡将成为主卡，原套餐及产品等信息不变，请确认是否受理？",{ 

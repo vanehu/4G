@@ -1572,5 +1572,41 @@
 				'REAL_NAME_PHOTO_899':'OFF'<!-- 虚拟省 -->
 			}
 		</const>
+		<const type="Map" name="MEMBER_ROLE_EXCHANGE_FLAG" description="主副卡角色互换分省开关，默认OFF">
+			{
+				'MEMBER_ROLE_EXCHANGE_854':'OFF',<!-- 西藏 -->
+				'MEMBER_ROLE_EXCHANGE_863':'OFF',<!-- 青海 -->
+				'MEMBER_ROLE_EXCHANGE_815':'OFF',<!-- 内蒙古 -->
+				'MEMBER_ROLE_EXCHANGE_823':'OFF',<!-- 黑龙江 -->
+				'MEMBER_ROLE_EXCHANGE_845':'OFF',<!-- 广西 -->
+				'MEMBER_ROLE_EXCHANGE_850':'OFF',<!-- 重庆 -->
+				'MEMBER_ROLE_EXCHANGE_861':'OFF',<!-- 陕西 -->
+				'MEMBER_ROLE_EXCHANGE_842':'OFF',<!-- 湖北 -->
+				'MEMBER_ROLE_EXCHANGE_835':'OFF',<!-- 福建 -->
+				'MEMBER_ROLE_EXCHANGE_832':'OFF',<!-- 江苏 -->
+				'MEMBER_ROLE_EXCHANGE_846':'OFF',<!-- 海南 -->
+				'MEMBER_ROLE_EXCHANGE_864':'OFF',<!-- 宁夏 -->
+				'MEMBER_ROLE_EXCHANGE_814':'OFF',<!-- 山西 -->
+				'MEMBER_ROLE_EXCHANGE_853':'OFF',<!-- 云南 -->
+				'MEMBER_ROLE_EXCHANGE_836':'OFF',<!-- 江西 -->
+				'MEMBER_ROLE_EXCHANGE_837':'OFF',<!-- 山东 -->
+				'MEMBER_ROLE_EXCHANGE_811':'OFF',<!-- 北京 -->
+				'MEMBER_ROLE_EXCHANGE_843':'OFF',<!-- 湖南 -->
+				'MEMBER_ROLE_EXCHANGE_851':'OFF',<!-- 四川 -->
+				'MEMBER_ROLE_EXCHANGE_844':'OFF',<!-- 广东 -->
+				'MEMBER_ROLE_EXCHANGE_831':'OFF',<!-- 上海 -->
+				'MEMBER_ROLE_EXCHANGE_812':'OFF',<!-- 天津 -->
+				'MEMBER_ROLE_EXCHANGE_813':'OFF',<!-- 河北 -->
+				'MEMBER_ROLE_EXCHANGE_841':'OFF',<!-- 河南 -->
+				'MEMBER_ROLE_EXCHANGE_821':'OFF',<!-- 辽宁 -->
+				'MEMBER_ROLE_EXCHANGE_822':'OFF',<!-- 吉林 -->
+				'MEMBER_ROLE_EXCHANGE_834':'OFF',<!-- 安徽 -->
+				'MEMBER_ROLE_EXCHANGE_833':'OFF',<!-- 浙江 -->
+				'MEMBER_ROLE_EXCHANGE_852':'OFF',<!-- 贵州 -->
+				'MEMBER_ROLE_EXCHANGE_862':'OFF',<!-- 甘肃 -->
+				'MEMBER_ROLE_EXCHANGE_865':'OFF',<!-- 新疆 -->
+				'MEMBER_ROLE_EXCHANGE_899':'OFF'<!-- 虚拟省 -->
+			}
+		</const>
 	</mda>
 </mdas>
