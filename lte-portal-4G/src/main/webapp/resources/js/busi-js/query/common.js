@@ -33,6 +33,27 @@ query.common = (function() {
 			});
 		}
 	};
+	
+	/**
+	 * 根据权限编码查询工号的权限，入参key为权限编码，以boolean返回，有权限返回false；无权限或其他情况返回true
+	 */
+	var _checkOperateSpec = function(key){
+		
+		var resultFlag = true;
+		
+		if(key == null || key == undefined || key == ""){
+			$.alert("提示","入参为空");
+		} else{
+			var response = $.callServiceAsJson(contextPath + "/common/checkOperateSpec", {"key": key});
+			if (response.code == "0") {
+				resultFlag = response.data;
+			} else if (response.code == "1"){
+				$.alert("提示","Error: 权限查询失败");
+			}
+		}
+		
+		return resultFlag;
+	};
 
 	return {
 		queryApConfig			: _queryApConfig

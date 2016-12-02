@@ -1,3 +1,7 @@
+<#if Session["_ecs_login_session_key"].currentChannelId ?? && (Session["_ecs_login_session_key"].currentChannelId!="") >
+	<input type="hidden" value="${Session['TGJBRBTQX']}">
+<#else>
+</#if>
 <h5 class="s_title">经办人</h5>
 <form id="jbrForm">
 <ul class="fillin show" style="overflow: hidden;">
@@ -18,31 +22,33 @@
 	<li  id="li_order_remark" style="display: none;">
 		<label>客户类型：</label> 
 		<select id="orderPartyTypeCd" onchange="order.cust.partyTypeCdChoose(this,'orderIdentidiesTypeCd')">
-                                        <option value="1" >个人</option>
+        	<option value="1" >个人</option>
         </select>
         <label class="f_red">*</label>
 	</li>
 	<li  id="li_order_attr">
-		<label>经办人姓名：</label> 
-		<input id="orderAttrName" placeHolder="请输入经办人姓名"  class="inputWidth250px" maxlength="16" type="text" style="width:280px;">
+		<label>经办人姓名：</label>
+		<input id="orderAttrName" onkeyup="" placeHolder="请输入经办人姓名" data-validate="validate(required:请准确填写经办人姓名) on(blur)" class="inputWidth250px" maxlength="16" type="text">
 		<span style="line-height: 28px; float:left;"></span>
 		<label class="f_red">*</label>
 	</li>
 	<li  id="li_order_remark2">
 		<label>证件号码：</label> 
-		<input id="orderAttrIdCard" placeHolder="请输入证件号码"  class="inputWidth250px"maxlength="50"type="text" style="width:280px;">
+		<input id="orderAttrIdCard" placeHolder="请输入证件号码"  class="inputWidth250px"maxlength="50"type="text">
 		<span style="line-height: 28px; float:left;"></span>
 		<label class="f_red">*</label>
 	</li>
+</ul>
+<ul class="fillin show" style="overflow: hidden;">
 	<li  id="li_order_remark3">
-		<label>证件地址：</label> 
-		<input id="orderAttrAddr" placeHolder="请输入证件地址"  class="inputWidth250px" maxlength="125"type="text" style="width:280px;">
+		<label>证件地址：</label> 		
+		<input id="orderAttrAddr" onkeyup="" placeHolder="请输入证件地址" data-validate="validate(required:请准确填写证件地址) on(blur)"  class="inputWidth250px" maxlength="125"type="text">
 		<span style="line-height: 28px; float:left;"></span>
 		<label class="f_red">*</label>
 	</li>
 	<li  id="li_order_remark4">
 		<label>联系人号码：</label> 
-		<input id="orderAttrPhoneNbr" placeHolder="请输入联系人号码"  class="inputWidth250px" type="text" maxlength="16"style="width:280px;">
+		<input id="orderAttrPhoneNbr" placeHolder="请输入联系人号码"  class="inputWidth250px" type="text" maxlength="16">
 		<label class="f_red"></label>
 	</li>
 </ul>
@@ -96,6 +102,7 @@
 	if($("#orderIdentidiesTypeCd").val() !="1"){
 		$("#orderAttrQueryCertBtn").show(); 
 	}
+	
 	$("#jbrForm").off('formIsValid').bind("formIsValid", function(event, form){			
 		order.cust.showCertPicture();
 		var src = contextPath+"/image/id_card.jpg";

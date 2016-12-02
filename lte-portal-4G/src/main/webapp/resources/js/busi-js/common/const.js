@@ -473,6 +473,9 @@ CONST = (function(){
 		}
 		return statusFlag;
 	};
+	
+	var TGJBRBTQX = "TGJBRBTQX";//是否具有跳过经办人必填的权限
+	var isHandleCustNeeded = true;//false：有权限；true：无权限
 
 	return {
 		//批量受理查询，是否执行改造后的新代码的开关标识，用于暂时记录是否执行新代码。Y执行改造后的新代码，N执行改造前的旧代码，默认为N。 By ZhangYu 2015-10-20
@@ -534,7 +537,9 @@ CONST = (function(){
 		YZFitemSpecId4 : _YZFitemSpecId4,
 		USER_PRE_INSTALLED:_USER_PRE_INSTALLED,
 		SECURITY_OFFICE_PROD_ID: _SECURITY_OFFICE_PROD_ID,
-		GET_BIND_STATUS:_GET_BIND_STATUS
+		GET_BIND_STATUS:_GET_BIND_STATUS,
+		TGJBRBTQX :_TGJBRBTQX,
+		isHandleCustNeeded :_isHandleCustNeeded
 	};
 })();
 
@@ -550,4 +555,5 @@ $(function(){
 		}
 	}
 
+	CONST.isHandleCustNeeded = query.common.checkOperateSpec(CONST.TGJBRBTQX);
 });

@@ -761,7 +761,7 @@ public final class SysConstant {
     /**订单属性记录客户端IP*/
   	public final static String ORDER_ATTRS_IP = "40010038";
   	
-    //跳过经办人必填权限
+    /**跳过经办人必填权限*/
     public static final String TGJBRBTQX = "TGJBRBTQX";
     //常量字符定义
 	public final static String STRING_0 = "0";

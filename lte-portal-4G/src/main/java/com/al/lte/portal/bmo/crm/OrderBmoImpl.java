@@ -3021,10 +3021,12 @@ public class OrderBmoImpl implements OrderBmo {
 	 */
 	public boolean verifyCustCertificate(Map<String, Object> param, HttpServletRequest request, SessionStaff sessionStaff) throws Exception{
 		Object realNameFlag =  MDA.REAL_NAME_PHOTO_FLAG.get("REAL_NAME_PHOTO_"+sessionStaff.getCurrentAreaId().substring(0, 3));
-    	boolean isrealNameFlagOn  = realNameFlag == null ? false : "ON".equals(realNameFlag.toString()) ? true : false;//实名制拍照开关是否打开
+    	boolean isRealNameFlagOn  = realNameFlag == null ? false : "ON".equals(realNameFlag.toString()) ? true : false;//实名制拍照开关是否打开
     	boolean resultFlag = false;
+    	Object sessionHandleCustFlag = ServletUtils.getSessionAttribute(request, SysConstant.TGJBRBTQX + "_" + sessionStaff.getStaffId());
+    	boolean isHandleCustNeeded = sessionHandleCustFlag == null ? false : (Boolean) sessionHandleCustFlag;
     	
-    	if(isrealNameFlagOn){
+    	if(isRealNameFlagOn && !isHandleCustNeeded){
     		resultFlag = this.checkCustCertificateComprehensive(param, request);
     	} else{
     		resultFlag = this.checkCustCertificate(param, request);

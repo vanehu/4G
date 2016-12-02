@@ -350,4 +350,38 @@ public class CommonController extends BaseController {
         }
         return isAddOperation;
     }
+    
+    /**
+     * 根据权限编码查询工号是否具有该权限，以boolean返回，有权限返回false；无权限或其他情况返回true
+     * @param param
+     * @return
+     */
+    @RequestMapping(value = "/checkOperateSpec", method = RequestMethod.POST)
+    @ResponseBody
+    public JsonResponse checkOperateSpec(@RequestBody Map<String, String> param) {
+        JsonResponse jsonResponse;
+        String operateSpec = MapUtils.getString(param, "key", "");
+        if("".equals(operateSpec)){
+        	return super.failed(false, ResultConstant.FAILD.getCode());
+        } else{
+        	boolean isNeeded = false;
+        	SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
+        	String sessionKey = operateSpec + "_" + sessionStaff.getStaffId();
+        	Object operateSpecInSession = ServletUtils.getSessionAttribute(super.getRequest(), sessionKey);
+        	
+        	if(operateSpecInSession == null){
+               	try {
+               		isNeeded = "0".equals(staffBmo.checkOperatBySpecCd(operateSpec, sessionStaff)) ? false : true;
+         			ServletUtils.setSessionAttribute(super.getRequest(), sessionKey, isNeeded);
+               	} catch (Exception e) {
+                     return super.failed(false, ResultConstant.FAILD.getCode());
+                 }
+        	} else{
+        		isNeeded = (Boolean) operateSpecInSession;
+        	}
+ 			jsonResponse = super.successed(isNeeded, ResultConstant.SUCCESS.getCode());
+        }
+        
+        return jsonResponse;
+    }
 }
