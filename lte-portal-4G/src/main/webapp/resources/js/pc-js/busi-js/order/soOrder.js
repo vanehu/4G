@@ -2555,7 +2555,7 @@ SoOrder = (function() {
 							}
 						});
 						//加载副卡使用人可以为空 redmine926542
-						if(prodAttrEmptyCheckName =='使用人' && (OrderInfo.actionFlag =='6' || OrderInfo.roleType=="Y")){
+						if(prodAttrEmptyCheckName =='使用人' &&  OrderInfo.roleType=="Y"){
 							prodAttrEmptyFlag = false;
 						}
 						if(prodAttrEmptyFlag){
