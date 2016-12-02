@@ -2803,9 +2803,9 @@ SoOrder = (function() {
 		var response = $.callServiceAsJson(contextPath + "/properties/getValue", {"key": "REAL_NAME_PHOTO_" + OrderInfo.staff.areaId.substr(0, 3)});
 		if (response.code == "0") {
 			OrderInfo.realNamePhotoFlag = response.data;
-			if ("ON" == response.data) {
+			if ("ON" == response.data && (OrderInfo。actionFlag == 1 || OrderInfo。actionFlag == 6 || OrderInfo。actionFlag == 20 || OrderInfo.busitypeflag == 21)) {
 				if(!ec.util.isObj($("#jbrForm").html()) || jbrIdentityNum == "" || jbrName == "" || jbrAddressStr == ""){
-					$.alert("提示","经办人拍照信息不能为空！请确认页面是否已点击【读卡】或者【拍照】按钮，并且拍照和人脸相符已成功操作！");
+					$.alert("提示","经办人拍照信息不能为空！请确认页面是否已点击【读卡】或者【拍照】按钮，并且拍照和人证相符已成功操作！");
 					return false ; 
 				}
 			}
