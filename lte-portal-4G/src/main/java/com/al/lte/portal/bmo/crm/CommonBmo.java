@@ -115,4 +115,12 @@ public interface CommonBmo {
 	 */
 	public void sendLog(Map<String, Object> param, HttpServletRequest request) throws Exception;
 
+	/**
+	 * 订单提交报文过滤多余的节点<br/>
+	 * (1)由于同一个客户办理业务时可能同时使用人新建、经办人新建、客户新建等，在此过滤掉重复的C1节点，同一个客户新建应当只有一个C1节点<br/>
+	 * (2)后期可能添加其他过滤，暂留
+	 * @param param 订单提交入参
+	 * @return true：过滤成功；false：过滤失败
+	 */
+	public boolean orderSubmitFilter(Map<String, Object> param) throws Exception;
 }

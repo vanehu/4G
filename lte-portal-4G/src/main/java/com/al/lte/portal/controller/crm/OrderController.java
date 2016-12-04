@@ -3111,82 +3111,84 @@ public class OrderController extends BaseController {
      */
     @RequestMapping(value = "/orderSubmit", method = RequestMethod.POST)
     @ResponseBody
-    public JsonResponse orderSubmit(@RequestBody Map<String, Object> param, HttpServletResponse response,
-            HttpServletRequest request) throws Exception {
+    public JsonResponse orderSubmit(@RequestBody Map<String, Object> param, HttpServletResponse response, HttpServletRequest request) throws Exception {
         JsonResponse jsonResponse = null;
         if (commonBmo.checkToken(request, SysConstant.ORDER_SUBMIT_TOKEN)) {
             try {
                 SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
-
                 if(orderBmo.verifyCustCertificate(param, request ,sessionStaff)){
-                    Map<String, Object> orderList = (Map<String, Object>) param.get("orderList");
-                    Map<String, Object> orderListInfo = (Map<String, Object>) orderList.get("orderListInfo");
-                    orderListInfo.put("staffId", sessionStaff.getStaffId()); //防止前台修改
-                    orderListInfo.put("channelId", sessionStaff.getCurrentChannelId()); //防止前台修改
-                    
-                    //过滤订单属性
-                    List<Map<String, Object>> custOrderAttrs = (List<Map<String, Object>>) orderListInfo.get("custOrderAttrs");
-                    //添加客户端IP地址到订单属性
-                    Map<String, Object> IPMap = new HashMap<String, Object>();
-                    IPMap.put("itemSpecId", SysConstant.ORDER_ATTRS_IP);
-                    IPMap.put("value", ServletUtils.getIpAddr(request));
-                    if (custOrderAttrs == null){
-                    	custOrderAttrs = new ArrayList<Map<String, Object>>();
-                    }
-                    custOrderAttrs.add(IPMap);
-                    orderListInfo.put("custOrderAttrs", custOrderAttrs);
-
-                    String isAddOperation = (String) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.FDSL + "_" + sessionStaff.getStaffId());
-                    //没有暂存单权限的员工不能添加暂存单订单属性
-                    if (!"0".equals(isAddOperation)) {
-                        if (custOrderAttrs != null && custOrderAttrs.size() != 0) {
-                            List<Map<String, Object>> filterCustOrderAttrs = new ArrayList<Map<String, Object>>();
-                            for (Map<String, Object> custOrderAttr : custOrderAttrs) {
-                                if (custOrderAttr != null
-                                        && !SysConstant.FDSL_ORDER_ATTR_SPECID.equals(custOrderAttr.get("itemSpecId"))) {
-                                    filterCustOrderAttrs.add(custOrderAttr);
-                                }
-                            }
-                            orderListInfo.put("custOrderAttrs", filterCustOrderAttrs);
+                	if(commonBmo.orderSubmitFilter(param)){
+                        Map<String, Object> orderList = (Map<String, Object>) param.get("orderList");
+                        Map<String, Object> orderListInfo = (Map<String, Object>) orderList.get("orderListInfo");
+                        orderListInfo.put("staffId", sessionStaff.getStaffId()); //防止前台修改
+                        orderListInfo.put("channelId", sessionStaff.getCurrentChannelId()); //防止前台修改
+                        
+                        //过滤订单属性
+                        List<Map<String, Object>> custOrderAttrs = (List<Map<String, Object>>) orderListInfo.get("custOrderAttrs");
+                        //添加客户端IP地址到订单属性
+                        Map<String, Object> IPMap = new HashMap<String, Object>();
+                        IPMap.put("itemSpecId", SysConstant.ORDER_ATTRS_IP);
+                        IPMap.put("value", ServletUtils.getIpAddr(request));
+                        if (custOrderAttrs == null){
+                        	custOrderAttrs = new ArrayList<Map<String, Object>>();
                         }
-                    }
-                    
-                    Map<String, Object> resMap = orderBmo.orderSubmit(param, null, sessionStaff);
-                    if (ResultCode.R_SUCC.equals(resMap.get("resultCode"))) {
-                        Map<String, Object> result = (Map<String, Object>) resMap.get("result");
-                        String olId = (String) result.get("olId");
-                        String soNbr = (String) orderListInfo.get("soNbr");
-//                        String olTypeCd = orderListInfo.get("olTypeCd").toString();
-                        String actionFlag = orderListInfo.get("actionFlag") != null ? orderListInfo.get("actionFlag").toString() : "";
-                        if (result.get("ruleInfos") == null) {
-                            resMap.put("rolId", olId);
-                            resMap.put("rsoNbr", soNbr);
-                            resMap.put("checkRule", "checkRule");
-                        } else {
-                            boolean ruleflag = false;
-                            List rulelist = (List) result.get("ruleInfos");
-                            for (int i = 0; i < rulelist.size(); i++) {
-                                Map rulemap = (Map) rulelist.get(i);
-                                String ruleLevel = rulemap.get("ruleLevel").toString();
-                                if ("4".equals(ruleLevel)) {
-                                    ruleflag = true;
-                                    sessionStaff.setOrderData(resMap);
-                                    break;
+                        custOrderAttrs.add(IPMap);
+                        orderListInfo.put("custOrderAttrs", custOrderAttrs);
+
+                        String isAddOperation = (String) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.FDSL + "_" + sessionStaff.getStaffId());
+                        //没有暂存单权限的员工不能添加暂存单订单属性
+                        if (!"0".equals(isAddOperation)) {
+                            if (custOrderAttrs != null && custOrderAttrs.size() != 0) {
+                                List<Map<String, Object>> filterCustOrderAttrs = new ArrayList<Map<String, Object>>();
+                                for (Map<String, Object> custOrderAttr : custOrderAttrs) {
+                                    if (custOrderAttr != null
+                                            && !SysConstant.FDSL_ORDER_ATTR_SPECID.equals(custOrderAttr.get("itemSpecId"))) {
+                                        filterCustOrderAttrs.add(custOrderAttr);
+                                    }
                                 }
+                                orderListInfo.put("custOrderAttrs", filterCustOrderAttrs);
                             }
-                            if (!ruleflag) {
+                        }
+                        
+                        Map<String, Object> resMap = orderBmo.orderSubmit(param, null, sessionStaff);
+                        if (ResultCode.R_SUCC.equals(resMap.get("resultCode"))) {
+                            Map<String, Object> result = (Map<String, Object>) resMap.get("result");
+                            String olId = (String) result.get("olId");
+                            String soNbr = (String) orderListInfo.get("soNbr");
+//                            String olTypeCd = orderListInfo.get("olTypeCd").toString();
+                            String actionFlag = orderListInfo.get("actionFlag") != null ? orderListInfo.get("actionFlag").toString() : "";
+                            if (result.get("ruleInfos") == null) {
                                 resMap.put("rolId", olId);
                                 resMap.put("rsoNbr", soNbr);
                                 resMap.put("checkRule", "checkRule");
+                            } else {
+                                boolean ruleflag = false;
+                                List rulelist = (List) result.get("ruleInfos");
+                                for (int i = 0; i < rulelist.size(); i++) {
+                                    Map rulemap = (Map) rulelist.get(i);
+                                    String ruleLevel = rulemap.get("ruleLevel").toString();
+                                    if ("4".equals(ruleLevel)) {
+                                        ruleflag = true;
+                                        sessionStaff.setOrderData(resMap);
+                                        break;
+                                    }
+                                }
+                                if (!ruleflag) {
+                                    resMap.put("rolId", olId);
+                                    resMap.put("rsoNbr", soNbr);
+                                    resMap.put("checkRule", "checkRule");
+                                }
                             }
+                            if (actionFlag.equals("37") || actionFlag.equals("38")) {
+                                resMap.put("checkRule", "notCheckRule");
+                            }
+                            jsonResponse = super.successed(resMap, ResultConstant.SUCCESS.getCode());
+                        } else {
+                            jsonResponse = super.failed(resMap.get("resultMsg"), ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
                         }
-                        if (actionFlag.equals("37") || actionFlag.equals("38")) {
-                            resMap.put("checkRule", "notCheckRule");
-                        }
-                        jsonResponse = super.successed(resMap, ResultConstant.SUCCESS.getCode());
-                    } else {
-                        jsonResponse = super.failed(resMap.get("resultMsg"), ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
-                    }
+                	} else{
+                    	return super.failed(ErrorCode.PORTAL_INPARAM_ERROR, "订单提交入参重复节点过滤发生异常，可能存在异常数据，请清空浏览器缓存后重新尝试，请不要进行非法提交、多窗口同时提交受理业务。", param);
+                	}
                 } else{
                 	return super.failed(ErrorCode.PORTAL_INPARAM_ERROR, "订单提交时客户证件数据校验失败，经办人必须拍照，政企客户使用人必填，请不要进行非法提交、多窗口同时提交受理业务。", param);
                 }

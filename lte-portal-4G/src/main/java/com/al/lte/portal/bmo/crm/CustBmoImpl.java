@@ -821,8 +821,7 @@ public class CustBmoImpl implements CustBmo {
 		for(int i = 0; i < photographs.size(); i++){
 			Map<String, String> photograph = photographs.get(i);
 			if(photograph.get("photograph").isEmpty()){//没有证件照片，则不上传，去除该节点
-				photographs.remove(i);
-				i--;
+				photographs.remove(i--);
 			} else{
 				photograph.put("orderInfo", photograph.get("photograph"));
 				photograph.put("picFlag", photograph.get("flag"));
