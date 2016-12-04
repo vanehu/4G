@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.al.ecs.common.entity.JsonResponse;
 import com.al.ecs.common.util.DateUtil;
 import com.al.ecs.common.util.JsonUtil;
+import com.al.ecs.common.util.MDA;
 import com.al.ecs.common.util.PropertiesUtils;
 import com.al.ecs.common.util.UIDGenerator;
 import com.al.ecs.common.web.ServletUtils;
@@ -380,6 +381,40 @@ public class CommonController extends BaseController {
         		isNeeded = (Boolean) operateSpecInSession;
         	}
  			jsonResponse = super.successed(isNeeded, ResultConstant.SUCCESS.getCode());
+        }
+        
+        return jsonResponse;
+    }
+    
+    /**
+     * 检查拍照仪驱动版本，如果有版本更新，则返回最新版本号
+     * @param param
+     * @return
+     */
+    @RequestMapping(value = "/checkCameraDriverVersion", method = RequestMethod.POST)
+    @ResponseBody
+    public JsonResponse checkCameraDriverVersion(@RequestBody Map<String, String> param) {
+        JsonResponse jsonResponse = null;
+        String versionSerial = MapUtils.getString(param, "versionSerial", "");//版本号
+        String venderId = MapUtils.getString(param, "venderId", "");//厂商ID
+        
+        if("".equals(versionSerial) || "".equals(venderId)){
+        	return super.failed("拍照仪驱动版本号更新失败：查询参数为空！", ResultConstant.FAILD.getCode());
+        } else{
+        	Map<String,String> cameraDriverInfo = MDA.VENDER_SIGNATURE.get(venderId);
+        	if(cameraDriverInfo != null){
+        		Map<String,Object> newCameraDriverVersion = new HashMap<String, Object>();
+        		if(versionSerial.equals(cameraDriverInfo.get("version"))){//校验成功，没有版本更新，与客户端版本一致
+        			newCameraDriverVersion.put("update", false);
+        			jsonResponse = super.successed(newCameraDriverVersion, ResultConstant.SUCCESS.getCode());
+            	} else{//校验成功，有控件版本更新
+            		newCameraDriverVersion.put("update", true);
+        			newCameraDriverVersion.put("versionSerial", cameraDriverInfo.get("version"));
+        			jsonResponse = super.successed(newCameraDriverVersion, ResultConstant.SUCCESS.getCode());
+            	}
+        	} else{
+        		return super.failed("拍照仪驱动版本号更新失败：未知拍照仪厂商ID["+venderId+"]。", ResultConstant.FAILD.getCode());
+        	}
         }
         
         return jsonResponse;

@@ -556,4 +556,10 @@ $(function(){
 	}
 
 	CONST.isHandleCustNeeded = query.common.checkOperateSpec(CONST.TGJBRBTQX);
+	
+//	var param = {
+//		"versionSerial"	:"1.0.1",//*控件版本号
+//		"venderId"		:"10000"//*厂商ID
+//	};
+//	query.common.checkCameraDriverVersion(param);
 });

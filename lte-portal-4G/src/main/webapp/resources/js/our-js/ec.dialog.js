@@ -276,6 +276,45 @@ var getAlertTimeStamp = function(){
 		},
 		unmask : function() {
 			$.unblockUI();
+		},
+		downLoadConfirm : function(title,content,options,type) {
+			var confirmTitle = title + alertIP + getAlertTimeStamp();
+			var buttons= ['下载', '取消'];
+			if(!$.isFunction(options.no)){
+//				buttons= ['下载'];
+			}
+			new $.Zebra_Dialog(content,{
+				'keyboard':false,
+            	'modal':true,
+            	'overlay_close':false,
+            	'overlay_opacity':.5,
+                'type':    !!type?type:'confirmation',
+                'title':    confirmTitle,
+                'buttons':  buttons,
+                'onClose':  function(caption) {
+                    if(caption == '下载'){
+                    	if($.isFunction(options.yes)){
+                    		options.yes();
+                    	} 
+                    	if($.isFunction(options.yesdo)){
+                    		$(".ZebraDialog").remove();
+                			$(".ZebraDialogOverlay").remove();
+                    		options.yesdo();
+                    		return;
+                    	} 
+                    	if($.isFunction(options.yestocheck)){
+                    		options.yestocheck();
+                    		return;
+                    	}
+                    	$(".ZebraDialog").remove();
+                    	$(".ZebraDialogOverlay").remove();
+                    }else{
+                    	if($.isFunction(options.no)){
+                    		options.no();
+                    	}
+                    }
+                }
+			});
 		}
 	});
 })(jQuery);
