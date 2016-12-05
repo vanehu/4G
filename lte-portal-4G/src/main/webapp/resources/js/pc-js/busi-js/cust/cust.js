@@ -2488,6 +2488,10 @@ order.cust = (function(){
 			$.alert("提示", man.errorMsg);
 			return;
 		}
+		if(man.resultContent.identityPic == null || man.resultContent.identityPic == undefined || man.resultContent.identityPic == ""){
+			$.alert("提示", "当前经办人身份证照片为空，请确认");
+			return;
+		}
 		_setValueForAgentOrderSpan(man.resultContent);
 		//弹出拍照弹框
 		_showPhotoGraph(man.resultContent);
@@ -2519,7 +2523,6 @@ order.cust = (function(){
 		//初始化页面
 		$("#cameraList").empty(); 
 		$("#startPhotos").show();
-		$("#startPhotos").off("click").on("click",function(){order.cust.startPhotos();});
 		$("#tips").html("");
 		$("#creatPic")[0].src="";
 		$("#creatPic")[0].height=0;
@@ -2531,6 +2534,10 @@ order.cust = (function(){
 		$("#takePhotos").off("click");
 		$("#rePhotos").off("click");
 		$("#confirmAgree").off("click");
+		var checkCameraDriverVersionFlag = _checkCameraDriverVersion();
+		if(checkCameraDriverVersionFlag){
+			return;
+		};
 		_getCameraInfo();
 	};
 	var _qryCustInfo = function(resultContent){
@@ -2566,6 +2573,10 @@ order.cust = (function(){
 		$("#takePhotos").off("click");
 		$("#rePhotos").off("click");
 		$("#confirmAgree").off("click");
+		var checkCameraDriverVersionFlag = _checkCameraDriverVersion();
+		if(checkCameraDriverVersionFlag){
+			return;
+		};
 		_getCameraInfo();
 	};
 	
@@ -2864,8 +2875,47 @@ order.cust = (function(){
 		easyDialog.close();
 	};
     
-    
-    
+	 //检查版本是否需要更新
+	var _checkCameraDriverVersion = function() {
+		var camVer = JSON.parse(capture.getVersion());
+		var param = null;
+		var resultFlag = false;
+		if(camVer != null){
+			if(camVer.resultFlag == 0){
+				param = {
+					"versionSerial"	:camVer.versionSerial,//*控件版本号
+					"venderId"		:camVer.venderId//*厂商ID
+				};
+			}
+		}
+		if(param != null){
+			var versionSerial = param.versionSerial;
+			var venderId = param.venderId;
+			if(versionSerial == null || versionSerial == undefined || versionSerial == "" || venderId == null || venderId == undefined || venderId == ""){
+				resultFlag = true;
+				$("#tips").html("错误："+"拍照仪驱动版本更新校验失败：入参为空！");
+			} else{
+				var response = $.callServiceAsJson(contextPath + "/common/checkCameraDriverVersion", param);
+				if (response.code == 0) {
+					var cameraDriverInfo = response.data;
+					if(cameraDriverInfo.update){//需要更新驱动
+						resultFlag = true;
+						var alertMsg = "请点击“下载控件”更新驱动，更新后需清除缓存、重启浏览器。";
+						$("#tips").html("提示："+alertMsg);
+					}
+				} else if (response.code == 1){
+					resultFlag = true;
+					$("#tips").html("错误："+response.data);
+
+				}
+			}
+		} else{
+			resultFlag = true;
+			$("#tips").html("错误："+"拍照仪驱动版本更新校验失败：入参为空！");
+		}
+		return resultFlag;
+	};
+	
 	return {
 		saveAuthRecordFail:_saveAuthRecordFail,
 		saveAuthRecordSuccess:_saveAuthRecordSuccess,
