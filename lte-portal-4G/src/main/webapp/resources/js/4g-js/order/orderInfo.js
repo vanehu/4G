@@ -1657,7 +1657,7 @@ OrderInfo = (function() {
 		  isLastFlag:""//判断是否需要上一步功能
 	};
 	
-	var _realNamePhotoFlag = "OFF";
+	var _realNamePhotoFlag = "OFF";//实名制拍照开关
 
 	/**
 	 * 填单页面返回“上一步”或“取消”时清空经办人、使用人缓存

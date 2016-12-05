@@ -2835,10 +2835,13 @@ order.cust = (function(){
 			return;
 		}
 		_setValueForAgentOrderSpan(man.resultContent);
-	    if (undefined != man.resultContent.identityPic) {
+	    if (undefined != man.resultContent.identityPic && null != man.resultContent.identityPic && "" != man.resultContent.identityPic) {
 	      		$("#img_Cert").attr("src", "data:image/jpeg;base64," + man.resultContent.identityPic);
 	      		OrderInfo.bojbrCustIdentities.identidiesPic = man.resultContent.identityPic;
 		      _showCertPicture();
+		} else{
+			$.alert("错误", "当前经办人身份证照片为空，无法继续受理，请确认。");
+			return;
 		}
 	};
 	

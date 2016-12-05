@@ -2809,6 +2809,18 @@ SoOrder = (function() {
 		var realNamePhotoFlag = query.common.queryPropertiesValue("REAL_NAME_PHOTO_" + OrderInfo.staff.areaId.substr(0, 3));
 		OrderInfo.realNamePhotoFlag = realNamePhotoFlag;
 		
+		var orderAttrName = $.trim($("#orderAttrName").val()); //经办人姓名
+		var orderAttrIdCard = $.trim($("#orderAttrIdCard").val()); //证件号码
+		var orderAttrAddr = $.trim($("#orderAttrAddr").val()); //地址
+		
+		//若!页!面!上填写了经办人信息，但没有进行拍照，则拦截提示；
+		if(ec.util.isObj(orderAttrName) || ec.util.isObj(orderAttrIdCard) || ec.util.isObj(orderAttrAddr)){
+			if(OrderInfo.virOlId == ""){
+				$.alert("提示","您填写了经办人信息，在订单提交之前，请进行拍照以确认是否“人证相符”。");
+				return false;
+			}
+		}
+		
 		if (CONST.isHandleCustNeeded && realNamePhotoFlag == "ON" && (OrderInfo.actionFlag == 1 || OrderInfo.actionFlag == 6 || OrderInfo.actionFlag == 20 || OrderInfo.busitypeflag == 21)) {
 			if(!ec.util.isObj($("#jbrForm").html()) || jbrIdentityNum == "" || jbrName == "" || jbrAddressStr == ""){
 				$.alert("提示","经办人拍照信息不能为空！请确认页面是否已点击【读卡】或者【拍照】按钮，并且拍照和人证相符已成功操作！");
@@ -3813,7 +3825,8 @@ SoOrder = (function() {
 	};
 	//填充订单经办人信息
 	var _addHandleInfo = function(busiOrders, custOrderAttrs){
-		if(OrderInfo.realNamePhotoFlag == "ON"){//开关ON状态
+		//开关ON状态，且经过拍照
+		if(OrderInfo.realNamePhotoFlag == "ON" && OrderInfo.virOlId != null && OrderInfo.virOlId != undefined && OrderInfo.virOlId != ""){
 			if(OrderInfo.handleCustId == "" || OrderInfo.handleCustId == null || OrderInfo.handleCustId == undefined){//新建客户
 				if(OrderInfo.cust.custId == -1){//新建客户
 					if(OrderInfo.boCustIdentities.identityNum == OrderInfo.bojbrCustIdentities.identityNum && 
@@ -3834,7 +3847,8 @@ SoOrder = (function() {
 				OrderInfo.orderData.orderList.orderListInfo.partyId = OrderInfo.cust.custId;//门户主页客户定位的客户ID
 				OrderInfo.orderData.orderList.orderListInfo.handleCustId = OrderInfo.handleCustId;//经办人查询出的客户ID
 			}
-		} else{//开关OFF状态
+		} else if(OrderInfo.virOlId != null && OrderInfo.virOlId != undefined && OrderInfo.virOlId != ""){
+			//开关OFF状态，且经过拍照
 			if(OrderInfo.handleCustId == "" || OrderInfo.handleCustId == null || OrderInfo.handleCustId == undefined){//新建经办人
 				OrderInfo.orderData.orderList.orderListInfo.partyId = OrderInfo.cust.custId;
 				if(OrderInfo.bojbrCustInfos.name != null && OrderInfo.bojbrCustInfos.name != "" 
