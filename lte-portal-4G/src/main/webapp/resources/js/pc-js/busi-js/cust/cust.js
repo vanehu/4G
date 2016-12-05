@@ -2188,7 +2188,7 @@ order.cust = (function(){
 		}else if(OrderInfo.actionFlag==3){//可选包变更
 			checkType = "3";
 		}
-		
+		OrderInfo.prodAttrs = [];
 		if(checkType !=""){
 			//查分省前置校验开关
 	        var propertiesKey = "TOKENPRECHECKFLAG_"+OrderInfo.staff.soAreaId.substring(0,3);

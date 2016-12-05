@@ -23,6 +23,7 @@ order.memberChange = function(){
 	
 	//点击主副卡成员变更跳出一个div
 	var _showOfferCfgDialog=function(){
+		OrderInfo.prodAttrs = [];
 		var mainAccessNumber = "";//主副卡成员角色互换，记录主卡号码
 		if(OrderInfo.authRecord.resultCode!="0" && OrderInfo.preBefore.prcFlag != "Y"){
 			if (order.prodModify.querySecondBusinessAuth("4", "N", "order.memberChange.showOfferCfgDialog")) {

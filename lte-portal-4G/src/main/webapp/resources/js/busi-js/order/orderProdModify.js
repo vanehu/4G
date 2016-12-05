@@ -2633,6 +2633,7 @@ order.prodModify = (function(){
 	
 	//套餐变更
 	var _changeOffer = function () {
+		OrderInfo.prodAttrs = [];
 		if(OrderInfo.authRecord.resultCode!="0" && OrderInfo.preBefore.prcFlag != "Y"){
 			if(_querySecondBusinessAuth("1","N","changeOffer")){
 				return;

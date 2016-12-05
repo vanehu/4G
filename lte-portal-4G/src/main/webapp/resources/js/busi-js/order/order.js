@@ -163,6 +163,7 @@ order.service = (function(){
 	
 	//订购销售品
 	var _buyService = function(id,specId,price) {
+		OrderInfo.prodAttrs = [];
 		if(OrderInfo.preBefore.prcFlag != "Y"){
 			var custId = OrderInfo.cust.custId;
 			offerprice = price;

@@ -10,6 +10,7 @@ CommonUtils.regNamespace("order", "prepare");
 order.prepare = (function(){
 	//三个入口选择
 	var _tabChange= function() {
+		OrderInfo.prodAttrs = [];
 		$("#order_quick_nav li").each(function () {
 			$(this).off("click").on("click", function (event) {
 				OrderInfo.actionFlag = 1;

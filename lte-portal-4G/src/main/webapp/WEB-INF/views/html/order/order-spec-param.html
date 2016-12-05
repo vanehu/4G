@@ -82,7 +82,6 @@
 		<li><label> </label></li>
   	</#if>
 <script type="text/javascript" charset="utf-8">
-	var prodAttrs = [];
 	<#list prodSpecParams as prodSpec>
 		<#if prodSpec.dataSourceTypeCd==4 >
 		var valueRange = [];
@@ -102,7 +101,7 @@
 		    	"itemRelation" : itemRelation
 		    });
 		</#list>
-		    prodAttrs.push({
+		OrderInfo.prodAttrs.push({
 			    "isOptional" : "${prodSpec.rule.isOptional}",
 			    "name" : "${prodSpec.name}",
 			    "value" : "${prodSpec.value}",
@@ -110,7 +109,7 @@
 			    "valueRange" : valueRange
 		    });
 		<#else>
-		    prodAttrs.push({
+		OrderInfo.prodAttrs.push({
 			    "isOptional" : "${prodSpec.rule.isOptional}",
 			    "name" : "${prodSpec.name}",
 			    "value" : "${prodSpec.value}",
@@ -118,7 +117,6 @@
 		    });
 		</#if>
 	</#list>
-	OrderInfo.prodAttrs = prodAttrs;
 </script>  	
 <#else>
 0
