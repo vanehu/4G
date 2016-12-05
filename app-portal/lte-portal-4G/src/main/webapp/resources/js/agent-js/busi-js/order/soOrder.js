@@ -67,19 +67,10 @@ SoOrder = (function() {
 		}else if(OrderInfo.actionFlag==13){//购裸机
 			OrderInfo.busitypeflag = 24;
 		}else if(OrderInfo.actionFlag==3){//可选包变更
-			if(!_checkOlId()){
-				common.callPhotos('cust.getPicture');
-				return;
-			}
 			OrderInfo.busitypeflag = 14;
 		}else if(OrderInfo.actionFlag==6){//主副卡成员变更
 			OrderInfo.busitypeflag = 3;
 		}else if(OrderInfo.actionFlag==2){//套餐变更
-			
-			if(!_checkOlId()){
-				common.callPhotos('cust.getPicture');
-				return;
-			}
 			OrderInfo.busitypeflag = 2;
 		}else if(OrderInfo.actionFlag==9){//客户返档
 			if(!_checkOlId()){
@@ -395,20 +386,12 @@ SoOrder = (function() {
 			}
 		}
 		}
-		if(OrderInfo.preBefore.idPicFlag != "ON" && !ec.util.isObj(OrderInfo.jbr.custId)) {
-			OrderInfo.jbr.custId = OrderInfo.cust.custId;
-		}
 		if(OrderInfo.actionFlag==1 || OrderInfo.actionFlag==14){ //新装
 			if (OrderInfo.cust.custId != undefined && OrderInfo.cust.custId != "") {
 				OrderInfo.orderData.orderList.orderListInfo.partyId = OrderInfo.cust.custId;
 			}
 			_createOrder(busiOrders); //新装
 		}else if (OrderInfo.actionFlag==2){ //套餐变更
-			if(OrderInfo.jbr.custId < -1 && OrderInfo.jbr.custId != OrderInfo.cust.custId){
-				OrderInfo.createJbr(busiOrders);
-			} 
-				
-			OrderInfo.orderData.orderList.orderListInfo.handleCustId = OrderInfo.jbr.custId;
 			offerChange.changeOffer(busiOrders);	
 		}else if (OrderInfo.actionFlag==3){ //可选包变更		
 			_createAttOrder(busiOrders); //附属销售品变更
@@ -416,11 +399,6 @@ SoOrder = (function() {
 				$.alert("提示","没有做任何业务，无法提交");
 				return false;
 			}
-				if(OrderInfo.jbr.custId < -1 && OrderInfo.jbr.custId != OrderInfo.cust.custId){
-					OrderInfo.createJbr(busiOrders);
-				} 
-				
-				OrderInfo.orderData.orderList.orderListInfo.handleCustId = OrderInfo.jbr.custId;
 		}else if (OrderInfo.actionFlag==4){ //客户资料变更
 			_createCustOrder(busiOrders,data); //附属销售品变更
 		}else if (OrderInfo.actionFlag==5){//销售品成员变更拆副卡
@@ -439,11 +417,12 @@ SoOrder = (function() {
 			_createCustOrderOnly(busiOrders,data);
 		}else if (OrderInfo.actionFlag==9){ //活卡销售返档
 			_ActiveReturnOrder(busiOrders,data); 
-				if(OrderInfo.jbr.custId < -1 && OrderInfo.jbr.custId != OrderInfo.cust.custId){
-					OrderInfo.createJbr(busiOrders);
-				} 
-				
+			if(OrderInfo.jbr.custId){
 				OrderInfo.orderData.orderList.orderListInfo.handleCustId = OrderInfo.jbr.custId;
+				if(OrderInfo.jbr.custId < -1){
+					OrderInfo.createJbr(busiOrders);
+				}
+			}
 		}else if (OrderInfo.actionFlag==10){ //传到节点busiOrder 
 			busiOrders = data;
 		}else if (OrderInfo.actionFlag==11){ //撤单,有做特殊处理
@@ -467,18 +446,20 @@ SoOrder = (function() {
 			_delViceCardAndNew(busiOrders,params);
 		}else if(OrderInfo.actionFlag== 22 ){ //补换卡
 			busiOrders = data;
-				if(OrderInfo.jbr.custId < -1 && OrderInfo.jbr.custId != OrderInfo.cust.custId){
-					OrderInfo.createJbr(busiOrders);
-				} 
-				
+			if(OrderInfo.jbr.custId){
 				OrderInfo.orderData.orderList.orderListInfo.handleCustId = OrderInfo.jbr.custId;
+				if(OrderInfo.jbr.custId < -1){
+					OrderInfo.createJbr(busiOrders);
+				}
+			}
 		}else if(OrderInfo.actionFlag == 23){//异地补换卡
 			busiOrders = data;
-				if(OrderInfo.jbr.custId < -1 && OrderInfo.jbr.custId != OrderInfo.cust.custId){
-					OrderInfo.createJbr(busiOrders);
-				} 
-				
+			if(OrderInfo.jbr.custId){
 				OrderInfo.orderData.orderList.orderListInfo.handleCustId = OrderInfo.jbr.custId;
+				if(OrderInfo.jbr.custId < -1){
+					OrderInfo.createJbr(busiOrders);
+				}
+			}
 			//异地补换卡的订单地区为受理工号当前的受理地区而不是定位客户的受理地区
 			OrderInfo.orderData.orderList.orderListInfo.areaId = OrderInfo.staff.areaId;
 			//外部客户ID
@@ -1416,11 +1397,12 @@ SoOrder = (function() {
 //		if(OrderInfo.preBefore.idPicFlag == "ON"){
 //			
 //		}
-		if(OrderInfo.jbr.custId < -1 && OrderInfo.jbr.custId != OrderInfo.cust.custId){
-			OrderInfo.createJbr(busiOrders);
-		} 
-		
-		OrderInfo.orderData.orderList.orderListInfo.handleCustId = OrderInfo.jbr.custId;
+		if(OrderInfo.jbr.custId){
+			OrderInfo.orderData.orderList.orderListInfo.handleCustId = OrderInfo.jbr.custId;
+			if(OrderInfo.jbr.custId < -1){
+				OrderInfo.createJbr(busiOrders);
+			}
+		}
 		var acctId = -1; //先写死
 //		var acctId =$("#acctSelect").val();
 		if(acctId < 0 && acctId!=undefined ){

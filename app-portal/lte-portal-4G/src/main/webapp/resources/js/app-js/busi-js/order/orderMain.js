@@ -1209,7 +1209,7 @@ order.main = (function(){
 						for(var i=0;i<OrderInfo.certTypedates.length;i++){
 							var certTypedate = OrderInfo.certTypedates[i];
 							
-							if (certTypedate.certTypeCd == "1") {//身份证
+							if(certTypedate.certTypeCd == 1){//身份证
 								$("#p_cust_identityCd_choose").append("<option value='"+certTypedate.certTypeCd+"' selected='selected'>"+certTypedate.name+"</option>");
 							}else  if(isAllowChannelType){//如果自有渠道，开放所有
 								$("#p_cust_identityCd_choose").append("<option value='"+certTypedate.certTypeCd+"' >"+certTypedate.name+"</option>");
@@ -1458,7 +1458,11 @@ function _showJbrInfo(custInfo){
 		OrderInfo.jbr.custId = custInfo.custId;
 		if(OrderInfo.jbr.identityCd != custInfo.identityCd || OrderInfo.jbr.identityNum != custInfo.idCardNumber){
 			OrderInfo.jbr.identityCd = custInfo.identityCd;
-			OrderInfo.jbr.identityNum = custInfo.idCardNumber;
+			if(OrderInfo.jbr.identityCd==1){
+				OrderInfo.jbr.identityNum = $('#sfzorderAttrIdCard').val();//证件号码
+			}else{
+				OrderInfo.jbr.identityNum = $('#orderAttrIdCard').val();//证件号码
+			}
 			OrderInfo.virOlId = "";
 		}
 //		order.cust.tmpChooseUserInfo.prodId = '';

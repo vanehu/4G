@@ -10,7 +10,7 @@ CommonUtils.regNamespace("order", "amalgamation");
 order.amalgamation = (function(){
 	var ot = "";
 	var _page_type = "";
-	var _cot = "1000";
+	var _cot = "2000";
 	var _allObjIdList = [];//套餐成员
 	var main_upRange = []//上行速率
 	var main_dwRange = [];//下行速率
@@ -24,9 +24,9 @@ order.amalgamation = (function(){
 //		OrderInfo.order.step=1;
 //		OrderInfo.busitypeflag=1;
 		//获取初始化查询的条件
-//		order.service.queryApConfig();
+		order.service.queryApConfig();
 		//初始化主套餐查询 
-		_searchPack("all","","1000");
+		_searchPack("all","","2000");
 		kd_flag = false;//完成宽带新装信息填写
 		gh_flag = false;//完成固话新装信息填写
 		gc_flag = false;//完成高清新装信息填写
@@ -34,52 +34,55 @@ order.amalgamation = (function(){
 	
 	//主套餐查询
 	var _searchPack = function(offerType,scroller,compOfferType){
-		ot = offerType;
+		$('#offer_search_model').modal('hide');
+		if(offerType!=undefined && offerType.length>0){
+			ot = offerType;
+		}
 		if(compOfferType!=undefined && compOfferType.length>0){
 			order.amalgamation.cot = compOfferType;
 //			order.amalgamation.cot = "2000";
 		}else compOfferType = order.amalgamation.cot;
 //		var custId = OrderInfo.cust.custId;
-//		var qryStr=$("#qryStr").val();
+		var qryStr=$("#offerName").val();
 //		var params={"qryStr":qryStr,"pnLevelId":"","custId":custId};
-		var params={"offerType":offerType,"subPage":"","qryStr":"","pnLevelId":"","custId":"","compOfferType":compOfferType,"downRate":"","PageSize":10};
+		var params={"offerType":offerType,"subPage":"","qryStr":qryStr,"pnLevelId":"","custId":"","compOfferType":compOfferType,"downRate":"","PageSize":10};
 //		if($("#categoryNodeId").length>0){
 //			var categoryNodeId=$("#categoryNodeId").val();
 //			params.categoryNodeId = categoryNodeId;
 //		}
 		
-//		if(flag){
-//			var priceVal = $("#select_price").val();
-//			if(ec.util.isObj(priceVal)){
-//				var priceArr = priceVal.split("-");
-//				if(priceArr[0]!=null&&priceArr[0]!=""){
-//					params.priceMin = priceArr[0] ;
-//				}
-//				if(priceArr[1]!=null&&priceArr[1]!=""){
-//					params.priceMax = priceArr[1] ;
-//				}
-//			}
-//			var influxVal = $("#select_influx").val();
-//			if(ec.util.isObj(influxVal)){
-//				var influxArr = influxVal.split("-");
-//				if(influxArr[0]!=null&&influxArr[0]!=""){
-//					params.INFLUXMin = influxArr[0]*1024 ;
-//				}
-//				if(influxArr[1]!=null&&influxArr[1]!=""){
-//					params.INFLUXMax = influxArr[1]*1024 ;
-//				}
-//			}
-//			var invoiceVal = $("#select_invoice").val();
-//			if(ec.util.isObj(invoiceVal)){
-//				var invoiceArr = invoiceVal.split("-");
-//				if(invoiceArr[0]!=null&&invoiceArr[0]!=""){
-//					params.INVOICEMin = invoiceArr[0] ;
-//				}
-//				if(invoiceArr[1]!=null&&invoiceArr[1]!=""){
-//					params.INVOICEMax = invoiceArr[1] ;
-//				}
-//			}
-//		}
+		if(1==2){
+			var priceVal = $("#select_price").val();
+			if(ec.util.isObj(priceVal)){
+				var priceArr = priceVal.split("-");
+				if(priceArr[0]!=null&&priceArr[0]!=""){
+					params.priceMin = priceArr[0] ;
+				}
+				if(priceArr[1]!=null&&priceArr[1]!=""){
+					params.priceMax = priceArr[1] ;
+				}
+			}
+			var influxVal = $("#select_influx").val();
+			if(ec.util.isObj(influxVal)){
+				var influxArr = influxVal.split("-");
+				if(influxArr[0]!=null&&influxArr[0]!=""){
+					params.INFLUXMin = influxArr[0]*1024 ;
+				}
+				if(influxArr[1]!=null&&influxArr[1]!=""){
+					params.INFLUXMax = influxArr[1]*1024 ;
+				}
+			}
+			var invoiceVal = $("#select_invoice").val();
+			if(ec.util.isObj(invoiceVal)){
+				var invoiceArr = invoiceVal.split("-");
+				if(invoiceArr[0]!=null&&invoiceArr[0]!=""){
+					params.INVOICEMin = invoiceArr[0] ;
+				}
+				if(invoiceArr[1]!=null&&invoiceArr[1]!=""){
+					params.INVOICEMax = invoiceArr[1] ;
+				}
+			}
+		}
 		_queryData(params,offerType,scroller);
 		
 	};
@@ -175,6 +178,7 @@ order.amalgamation = (function(){
 				}
 			}
 			$("#main_index").val($(obj).attr("index"));
+			$("#main_price").val(price);
 			$("#main_prodName").val($(obj).attr("name"));
 //			$("#main_objId").val($(obj).attr("objId"));
 			$("#main_prodId").val($(obj).attr("id"));
@@ -208,7 +212,7 @@ order.amalgamation = (function(){
 //			$("#prodNbr"+offerType).val($(obj).attr("prodNbr"));
 //			$("#RoleCd"+offerType).val($(obj).attr("RoleCd"));
 //			$("#compTypeCd"+offerType).val($(obj).attr("compTypeCd"));
-//			$("#price").val(price);
+			$("#price"+offerType).val(price);
 			order.amalgamation.prodSpecParamQuery($(obj).attr("offerType"));
 		}
 	}
@@ -422,7 +426,7 @@ order.amalgamation = (function(){
 			gc_flag = true;//完成高清新装信息填写
 		}
 		type = "_"+type;
-		if(order.amalgamation.cot == "1000"){
+		if(order.amalgamation.cot == "2000"){
 			pi = $("#main_prodId").val();
 			if(order.amalgamation.allObjIdList[$("#main_index").val()]!=undefined){
 				var obj_list = order.amalgamation.allObjIdList[$("#main_index").val()];
@@ -482,7 +486,7 @@ order.amalgamation = (function(){
 					if(response.data.result.prodSpecParams!=undefined){
 						$("#upslList"+type).empty();
 						for(var k=0;k<response.data.result.prodSpecParams.length;k++){
-							if(response.data.result.prodSpecParams[k].itemSpecId==10010161){
+							if(response.data.result.prodSpecParams[k].itemSpecId==10010131){//配置组确认修改2016/12/02
 								upRange = response.data.result.prodSpecParams[k].valueRange
 							}else if(response.data.result.prodSpecParams[k].itemSpecId==10010162){
 								dwRange = response.data.result.prodSpecParams[k].valueRange
@@ -494,7 +498,7 @@ order.amalgamation = (function(){
 						order.broadband.init_select();
 						
 						$("#dwslList"+type).empty();
-						if(order.amalgamation.cot == "1000"){
+						if(order.amalgamation.cot == "2000"){
 							for(var i=0;i<dwRange.length;i++){
 //								var rlist = order.broadband.alldownRateList[$("#main_index").val()];
 //								for(var j=0;j<rlist.length;j++){
@@ -554,8 +558,9 @@ order.amalgamation = (function(){
 					OrderInfo.returnFlag = "add";
 					$("#all_prod").hide();
 					$("#page"+pt).html(response.data).show();
-					if(order.amalgamation.cot=="1000"){
+					if(order.amalgamation.cot=="2000"){
 						$("#prodName"+pt).val($("#main_prodName").val());
+						$("#price"+pt).val($("#main_price").val());
 //						$("#objId"+pt).val($("#main_objId").val());
 						$("#prodId"+pt).val($("#main_prodId").val());
 						$("#offerNbr"+pt).val($("#main_offerNbr").val());
@@ -693,7 +698,7 @@ order.amalgamation = (function(){
 	}
 	
 	var _prt = function(params){
-//		var voucherInfo = {
+//		params = {
 //				"olId":"700000995719",
 //				"soNbr":"1472177241927685",
 //				"busiType":"1",
@@ -705,7 +710,10 @@ order.amalgamation = (function(){
 //			return;
 			var PcFlag="1";
 			params.PcFlag=PcFlag;
-			var url=contextPath+"/order/sign/previewHtmlForSign";
+			params.busiType = "1";
+//			params.olId = "700000995719";
+//			var url=contextPath+"/order/sign/previewHtmlForSign";
+			var url=contextPath+"/order/sign/broadband_previewHtmlForSign";
 			$.callServiceAsHtml(url, params, {
 				"before":function(){
 					$.ecOverlay("<strong>生成回执预览的html,请稍等会儿....</strong>");
@@ -714,19 +722,19 @@ order.amalgamation = (function(){
 				},	
 				"done" : function(response){
 					if (response.code == 0) {
-						$("#nav-tab-6").hide();
+						$("#nav-tab-6").removeClass("active in");
 						$("#order-print").html(response.data).show();
 						OrderInfo.returnFlag = "hz";
-						$("#datasignBtn").off("click").on("click",function(){
+						$("#broadband_datasignBtn").off("click").on("click",function(){
 							common.callDatasign("common.print.showDataSign");
 							/*var b=$("#signinput").val();
 							common.print.showDataSign(b);*/
 						});
-						$("#photoPrint").off("click").on("click",function(){
+						$("#broadband_photoPrint").off("click").on("click",function(){
 							common.callAgreePhoto(params.olId);
 						});
 					
-						$("#print_ok").off("click").on("click",function(){
+						$("#broadband_print_ok").off("click").on("click",function(){
 							if(!ec.util.isObj($("#signinput").val())){
 								$.alert("提示","请先进行签名，然后再保存！");
 							}else{
@@ -747,14 +755,14 @@ order.amalgamation = (function(){
 	}
 	
 	var _getPrtInfo = function(voucherInfo){
-		var voucherInfo = {
-		"olId":"700000995719",
-		"soNbr":"1472177241927685",
-		"busiType":"1",
-		"chargeItems":[{"realAmount":"3000","feeAmount":"3000","paymentAmount":"3000","acctItemTypeId":"2014000","objId":"235010000","objType":"2","acctItemId":"700000567982","boId":"700007289964","prodId":"700019420660","objInstId":"700019420660","terminalNo":"","posSeriaNbr":"","remark":"","boActionType":"1"}],
-		"areaId":"8510101",
-		"custName":"张强富"
-	};
+//		var voucherInfo = {
+//		"olId":"700000995719",
+//		"soNbr":"1472177241927685",
+//		"busiType":"1",
+//		"chargeItems":[{"realAmount":"3000","feeAmount":"3000","paymentAmount":"3000","acctItemTypeId":"2014000","objId":"235010000","objType":"2","acctItemId":"700000567982","boId":"700007289964","prodId":"700019420660","objInstId":"700019420660","terminalNo":"","posSeriaNbr":"","remark":"","boActionType":"1"}],
+//		"areaId":"8510101",
+//		"custName":"张强富"
+//	};
 		var PcFlag="1";
 		voucherInfo.PcFlag=PcFlag;
 		var url=contextPath+"/app/amalgamation/getVoucherData";
@@ -765,41 +773,287 @@ order.amalgamation = (function(){
 			"done" : function(response){
 				if (response.code == 0) {
 					$.unecOverlay();
+					var result = {"result":response.data.result};
 //					alert(JSON.stringify(response.data.result));
-//					if(response.data.result.result.advInfos!=undefined){
-//						voucherInfo.result.advInfos = response.data.result.result.advInfos;
-//					}
-//					if(response.data.result.result.bizReportDetail!=undefined){
-//						for(var n=0;n<response.data.result.result.bizReportDetail.length;n++){
-//							if(response.data.result.result.bizReportDetail[n].detailCd == 110101){
-//								if(response.data.result.result.bizReportDetail[n].bizReportDetailItemDto!=undefined && response.data.result.result.bizReportDetail[n].bizReportDetailItemDto.length>0){
-//									var dowslstr = response.data.result.result.bizReportDetail[n].bizReportDetailItemDto[0].itemValue;
-//									dowslstr = dowslstr.replace("${accountNo}","*").replace("${accessNo}","*").replace("${accountStatus}","*");
-//									response.data.result.result.bizReportDetail[n].bizReportDetailItemDto[0].itemValue = dowslstr;
-//								}
-//								voucherInfo.result.orderEvent[0].orderEventCont.userAcceNbrs[0] = response.data.result.result.bizReportDetail[n];
-//							}
-//							else if(response.data.result.result.bizReportDetail[n].detailCd == 110102){
-//								voucherInfo.result.orderEvent[0].orderEventCont.osBaseInfo[0] = response.data.result.result.bizReportDetail[n];
-//							}
-//							else if(response.data.result.result.bizReportDetail[n].detailCd == 110104){
-//								voucherInfo.result.orderEvent[0].orderEventCont.osOrderInfo[0] = response.data.result.result.bizReportDetail[n];
-//							}
-//							else if(response.data.result.result.bizReportDetail[n].detailCd == 110105){
-//								voucherInfo.result.orderEvent[0].orderEventCont.osOtherInfo[0] = response.data.result.result.bizReportDetail[n];
-//							}
-//						}
-//					}
-//					if(response.data.result.result.effectRule!=undefined){
-//						voucherInfo.result.orderEvent[0].orderEventTitle.effectRule = response.data.result.result.effectRule;
-//					}
-//					if(response.data.result.result.aliasName!=undefined){
-//						voucherInfo.result.orderEvent[0].orderEventTitle.prodSpecName = response.data.result.result.aliasName;
-//					}
-//					if($("#prodName").val().length==0){
-//						voucherInfo.result.orderEvent[0].orderEventTitle = {};
-//					}
-//					order.amalgamation.prt(response.data);
+					//宽带回执信息
+					var kd_info = {
+								"orderEventCont":{
+									"userAcceNbrs":[{
+										"bizReportDetailDescDto":[],
+										"bizReportDetailItemDto":[{
+											"bizReportDetailDescDto":[],
+											"isNewline":"Y",
+											"itemName":"",
+											"itemValue":"******(新开户)",
+											"remark":"",
+											"seqId":1,
+											"statusCd":1000
+										}],
+										"detailName":"天翼宽带账号",
+										"detailValue":"",
+										"isNewline":"N",
+										"remark":"",
+										"seqId":1,
+										"statusCd":1000
+									}],
+									"osBaseInfo":[{
+										"bizReportDetailDescDto":[{
+											"isNewline":"Y",
+											"itemName":"",
+											"itemValue":"有线宽带包月不限时，下行速率："+$("#dwslList_kd").val()+"，上行速率："+$("#upslList_kd").val()+"。",
+											"levelFlag":"2",
+											"objType":"0",
+											"remark":"",
+											"seqId":1,
+											"statusCd":1000
+										}],
+										"bizReportDetailItemDto":[],
+										"detailName":"套餐月基本费："+$("#price_kd").val()+"元，包含",
+										"detailValue":"",
+										"isNewline":"N",
+										"remark":"",
+										"seqId":2,
+										"statusCd":1000
+									}],
+									"osOrderInfo":[{
+										"bizReportDetailDescDto":[{
+											"isNewline":"Y",
+											"itemName":"",
+											"itemValue":"安装完成当月基本费按照宽带安装完成当日至月末的天数折算收取，费用四舍五入到分。",
+											"levelFlag":"2",
+											"objType":"0",
+											"remark":"",
+											"seqId":3,
+											"statusCd":1000
+										}],
+										"bizReportDetailItemDto":[],
+										"detailName":"安装完成当月资费",
+										"detailValue":"",
+										"isNewline":"N",
+										"remark":"",
+										"seqId":4,
+										"statusCd":1000
+									}],
+									"osOtherInfo":[{
+										"bizReportDetailDescDto":[
+																	{
+																		"isNewline":"Y",
+																		"itemName":"",
+																		"itemValue":"套餐资费的有效期24个月，到期时中国电信可调整相关资费内容，如双方无异议自动续订24个月。",
+																		"levelFlag":"2",
+																		"objType":"0",
+																		"remark":"",
+																		"seqId":1,
+																		"statusCd":1000
+																	}
+																],
+																"bizReportDetailItemDto":[],
+																"detailName":"其他说明",
+																"detailValue":"",
+																"isNewline":"N",
+																"remark":"",
+																"seqId":5,
+																"statusCd":1000
+															}]
+								},
+								"orderEventTitle":{
+									"attachOfferPkg":"Y",
+									"boActionTypeCd":"S1",
+									"boActionTypeName":"订购",
+									"effectRule":"安装完成次月生效",
+									"offerTypeName":"套餐",
+									"price":null,
+									"prodSpecName":$("#prodName_kd").val(),
+									"summary":""
+								},
+								"orderEventType":1,
+								"seq":4
+					};
+					//固话回执信息
+					var gh_info = {
+							"orderEventCont":{
+								"userAcceNbrs":[{
+									"bizReportDetailDescDto":[],
+									"bizReportDetailItemDto":[{
+										"bizReportDetailDescDto":[],
+										"isNewline":"Y",
+										"itemName":"",
+										"itemValue":"******(新开户)",
+										"remark":"",
+										"seqId":1,
+										"statusCd":1000
+									}],
+									"detailName":"产品帐号",
+									"detailValue":"",
+									"isNewline":"N",
+									"remark":"",
+									"seqId":1,
+									"statusCd":1000
+								}],
+								"osBaseInfo":[{
+									"bizReportDetailDescDto":[],
+									"bizReportDetailItemDto":[],
+									"detailName":"套餐月基本费："+$("#price_gh").val()+"元",
+									"detailValue":"",
+									"isNewline":"N",
+									"remark":"",
+									"seqId":2,
+									"statusCd":1000
+								}],
+								"osOrderInfo":[{
+									"bizReportDetailDescDto":[{
+										"isNewline":"Y",
+										"itemName":"",
+										"itemValue":"安装完成当月基本费按照业务安装完成当日至月末的天数折算收取，费用四舍五入到分。",
+										"levelFlag":"2",
+										"objType":"0",
+										"remark":"",
+										"seqId":3,
+										"statusCd":1000
+									}],
+									"bizReportDetailItemDto":[],
+									"detailName":"安装完成当月生效",
+									"detailValue":"",
+									"isNewline":"N",
+									"remark":"",
+									"seqId":4,
+									"statusCd":1000
+								}],
+								"osOtherInfo":[{
+									"bizReportDetailDescDto":[
+																{
+																	"isNewline":"Y",
+																	"itemName":"",
+																	"itemValue":"套餐资费的有效期24个月，到期时中国电信可调整相关资费内容，如双方无异议自动续订24个月。",
+																	"levelFlag":"2",
+																	"objType":"0",
+																	"remark":"",
+																	"seqId":1,
+																	"statusCd":1000
+																}
+															],
+															"bizReportDetailItemDto":[],
+															"detailName":"其他说明",
+															"detailValue":"",
+															"isNewline":"N",
+															"remark":"",
+															"seqId":5,
+															"statusCd":1000
+														}]
+							},
+							"orderEventTitle":{
+								"attachOfferPkg":"Y",
+								"boActionTypeCd":"S1",
+								"boActionTypeName":"订购",
+								"effectRule":"安装完成当月生效",
+								"offerTypeName":"套餐",
+								"price":null,
+								"prodSpecName":$("#prodName_gh").val(),
+								"summary":""
+							},
+							"orderEventType":1,
+							"seq":5
+				};
+					//高清回执信息
+					var gc_info = {
+							"orderEventCont":{
+								"userAcceNbrs":[{
+									"bizReportDetailDescDto":[],
+									"bizReportDetailItemDto":[{
+										"bizReportDetailDescDto":[],
+										"isNewline":"Y",
+										"itemName":"",
+										"itemValue":"******(新开户)",
+										"remark":"",
+										"seqId":1,
+										"statusCd":1000
+									}],
+									"detailName":"产品帐号",
+									"detailValue":"",
+									"isNewline":"N",
+									"remark":"",
+									"seqId":1,
+									"statusCd":1000
+								}],
+								"osBaseInfo":[{
+									"bizReportDetailDescDto":[],
+									"bizReportDetailItemDto":[],
+									"detailName":"套餐月基本费："+$("#price_gc").val()+"元",
+									"detailValue":"",
+									"isNewline":"N",
+									"remark":"",
+									"seqId":2,
+									"statusCd":1000
+								}],
+								"osOrderInfo":[{
+									"bizReportDetailDescDto":[{
+										"isNewline":"Y",
+										"itemName":"",
+										"itemValue":"安装完成当月基本费按照业务安装完成当日至月末的天数折算收取，费用四舍五入到分。",
+										"levelFlag":"2",
+										"objType":"0",
+										"remark":"",
+										"seqId":3,
+										"statusCd":1000
+									}],
+									"bizReportDetailItemDto":[],
+									"detailName":"安装完成当月资费",
+									"detailValue":"",
+									"isNewline":"N",
+									"remark":"",
+									"seqId":4,
+									"statusCd":1000
+								}],
+								"osOtherInfo":[{
+									"bizReportDetailDescDto":[
+																{
+																	"isNewline":"Y",
+																	"itemName":"",
+																	"itemValue":"用户需自购天翼高清智能机顶盒。",
+																	"levelFlag":"2",
+																	"objType":"0",
+																	"remark":"",
+																	"seqId":1,
+																	"statusCd":1000
+																},{
+																	"isNewline":"Y",
+																	"itemName":"",
+																	"itemValue":"套餐资费的有效期24个月，到期时中国电信可调整相关资费内容，如双方无异议自动续订24个月。",
+																	"levelFlag":"2",
+																	"objType":"0",
+																	"remark":"",
+																	"seqId":2,
+																	"statusCd":1000
+																}
+															],
+															"bizReportDetailItemDto":[],
+															"detailName":"其他说明",
+															"detailValue":"",
+															"isNewline":"N",
+															"remark":"",
+															"seqId":5,
+															"statusCd":1000
+														}]
+							},
+							"orderEventTitle":{
+								"attachOfferPkg":"Y",
+								"boActionTypeCd":"S1",
+								"boActionTypeName":"订购",
+								"effectRule":"安装完成次月生效",
+								"offerTypeName":"套餐",
+								"price":null,
+								"prodSpecName":$("#prodName_gc").val(),
+								"summary":""
+							},
+							"orderEventType":1,
+							"seq":6
+				};
+					result.result.orderEvent.push(kd_info);
+					result.result.orderEvent.push(gh_info);
+					result.result.orderEvent.push(gc_info);
+					result.PcFlag = voucherInfo.PcFlag;
+					result.olId = voucherInfo.olId;
+					order.amalgamation.prt(result);
 					
 				}else{
 					$.unecOverlay();
@@ -824,11 +1078,14 @@ var _saveHtml2Pdf=function(){
 		if(certType==undefined||certType==null||certType==''){
 			certType=OrderInfo.boCustIdentities.identidiesTypeCd;
 		}
+		var re=new RegExp("=","g");
+		var str = $("#signinput").val();
+		str=str.replace(re,"(p/)");
 		var params={
 			olId:OrderInfo.orderResult.olId,
 			signFlag:"5",
 			busiType:"9",
-			sign:_splitBaseforStr($("#signinput").val()),
+			sign:str,
 			srcFlag:"APP",
 			custName:OrderInfo.cust.printCustName,
 			certType:certType,
@@ -847,11 +1104,11 @@ var _saveHtml2Pdf=function(){
                     	$(this).attr("onclick","");
                     });
 					OrderInfo.returnFlag = "";
-					$("#nav-tab-6").show();
+					$("#nav-tab-6").addClass("active in");
 					$("#order-print").hide();
 					$("#printVoucherA").attr("disabled","disabled");//回执保存成功后  回执按钮改为灰色不可操作
 //					$("#showPdf").show();
-					OrderInfo.order.step=3;
+//					OrderInfo.order.step=3;
 				}else if (response.code == -2) {
 					$.alertM(response.data);
 				}else{

@@ -54,18 +54,10 @@ SoOrder = (function() {
 		}else if(OrderInfo.actionFlag==13){//购裸机
 			OrderInfo.busitypeflag = 24;
 		}else if(OrderInfo.actionFlag==3){//可选包变更
-			if(OrderInfo.preBefore.idPicFlag == "ON" && !OrderInfo.virOlId){
-				$.alert("提示","请前往经办人页面进行实名拍照！");
-				return;
-			}
 			OrderInfo.busitypeflag = 14;
 		}else if(OrderInfo.actionFlag==6){//主副卡成员变更
 			OrderInfo.busitypeflag = 3;
 		}else if(OrderInfo.actionFlag==2){//套餐变更
-			if(OrderInfo.preBefore.idPicFlag == "ON" && !OrderInfo.virOlId){
-				$.alert("提示","请前往经办人页面进行实名拍照！");
-				return;
-			}
 			OrderInfo.busitypeflag = 2;
 		}else if(OrderInfo.actionFlag==9){//客户返档
 			if(OrderInfo.preBefore.idPicFlag == "ON" && !OrderInfo.virOlId){
@@ -353,9 +345,6 @@ SoOrder = (function() {
 				}
 			}
 			}
-		if(OrderInfo.preBefore.idPicFlag != "ON" && !ec.util.isObj(OrderInfo.jbr.custId)) {
-			OrderInfo.jbr.custId = OrderInfo.cust.custId;
-		}
 		if(OrderInfo.actionFlag==1 || OrderInfo.actionFlag==14){ //新装
 			_createOrder(busiOrders); //新装
 		}else if (OrderInfo.actionFlag==2){ //套餐变更
@@ -366,10 +355,6 @@ SoOrder = (function() {
 				$.alert("提示","没有做任何业务，无法提交");
 				return false;
 			}
-				if(OrderInfo.jbr.custId < -1){
-					OrderInfo.createJbr(busiOrders);
-				}
-				OrderInfo.orderData.orderList.orderListInfo.handleCustId = OrderInfo.jbr.custId;
 		}else if (OrderInfo.actionFlag==4){ //客户资料变更
 			_createCustOrder(busiOrders,data); //附属销售品变更
 		}else if (OrderInfo.actionFlag==5){//销售品成员变更拆副卡
@@ -411,15 +396,19 @@ SoOrder = (function() {
 			_delViceCardAndNew(busiOrders,params);
 		}else if(OrderInfo.actionFlag== 22 ){ //补换卡
 			busiOrders = data;
+			if(OrderInfo.jbr.custId){
+				OrderInfo.orderData.orderList.orderListInfo.handleCustId = OrderInfo.jbr.custId;
 				if(OrderInfo.jbr.custId < -1){
 					OrderInfo.createJbr(busiOrders);
 				}
-				OrderInfo.orderData.orderList.orderListInfo.handleCustId = OrderInfo.jbr.custId;
+			}
 		}else if(OrderInfo.actionFlag == 23){//异地补换卡
+			if(OrderInfo.jbr.custId){
+				OrderInfo.orderData.orderList.orderListInfo.handleCustId = OrderInfo.jbr.custId;
 				if(OrderInfo.jbr.custId < -1){
 					OrderInfo.createJbr(busiOrders);
 				}
-				OrderInfo.orderData.orderList.orderListInfo.handleCustId = OrderInfo.jbr.custId;
+			}
 			busiOrders = data;
 			//异地补换卡的订单地区为受理工号当前的受理地区而不是定位客户的受理地区
 			OrderInfo.orderData.orderList.orderListInfo.areaId = OrderInfo.staff.areaId;
@@ -1307,10 +1296,13 @@ SoOrder = (function() {
 		if(OrderInfo.cust.custId == -1){
 			OrderInfo.createCust(busiOrders);	
 		}
-		if(OrderInfo.jbr.custId < -1){
-			OrderInfo.createJbr(busiOrders);
+		if(OrderInfo.jbr.custId){
+			OrderInfo.orderData.orderList.orderListInfo.handleCustId = OrderInfo.jbr.custId;
+			if(OrderInfo.jbr.custId < -1){
+				OrderInfo.createJbr(busiOrders);
+			}
 		}
-		OrderInfo.orderData.orderList.orderListInfo.handleCustId = OrderInfo.jbr.custId;
+		
 		if(OrderInfo.preBefore.idPicFlag=="ON"){
 			
 			var isNeedCreate = false;
@@ -1329,19 +1321,12 @@ SoOrder = (function() {
 								isNeedCreate = false;
 								break;
 							}
-							if(custInfo1.identityCd == custInfo.identityCd && custInfo1.identityNum == custInfo.identityNum){
-								isNeedCreate = false;
-								custInfo1.custId = custInfo.custId
-								OrderInfo.updateChooseUserInfos(prodId1, custInfo1);
-								break;
-							}
-							
 						}
-						if(isNeedCreate || i==0){
+						if(isNeedCreate){
 //							custInfo.custId = OrderInfo.SEQ.instSeq--;
 //							OrderInfo.updateChooseUserInfos(prodId, custInfo);
 							OrderInfo.createUser(busiOrders,custInfo);
-						}
+						} 
 					}
 					
 			}
@@ -1917,10 +1902,12 @@ SoOrder = (function() {
 			};
 			busiOrders.push(acctChangeNode);
 		}
+		if(OrderInfo.jbr.custId){
+			OrderInfo.orderData.orderList.orderListInfo.handleCustId = OrderInfo.jbr.custId;
 			if(OrderInfo.jbr.custId < -1){
 				OrderInfo.createJbr(busiOrders);
 			}
-			OrderInfo.orderData.orderList.orderListInfo.handleCustId = OrderInfo.jbr.custId;
+		}
 	};
 	//创建客户单独订单
 	var _createCustOrderOnly = function(busiOrders,data){

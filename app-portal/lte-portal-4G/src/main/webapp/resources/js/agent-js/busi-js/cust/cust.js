@@ -562,7 +562,16 @@ cust = (function(){
 		var partyTypeCd=$(scope).val();	
 		//客户类型关联证件类型下拉框
 		$("#"+id).empty();
-		_jbrcertTypeByPartyType(partyTypeCd,id);
+		try{
+			if(!ec.util.isObj(OrderInfo.curIp)){
+				common.getMobileIp("cust.getIp");
+			}
+		}catch(err){
+			
+		}finally{
+			_jbrcertTypeByPartyType(partyTypeCd,id);
+		}
+		
 		//创建客户证件类型选择事件
 //		_jbridentidiesTypeCdChoose($("#"+id).children(":first-child"),"orderAttrIdCard");
 		//创建客户确认按钮
@@ -593,9 +602,6 @@ cust = (function(){
 //				OrderInfo.jbr.identityNum = cardNumber;
 //	    	}
 //	    }
-		if(!ec.util.isObj(OrderInfo.curIp)){
-			common.getMobileIp("cust.getIp");
-		}
 		var params = {"partyTypeCd":_partyTypeCd} ;
 		var url=contextPath+"/agent/cust/queryCertType";
 		var response = $.callServiceAsJson(url, params, {});
@@ -659,9 +665,9 @@ cust = (function(){
 						
 						for(var i=0;i<uniData.length;i++){
 							var certTypedate = uniData[i];
-							if(certTypedate.certTypeCd=="1"){
+							if(certTypedate.isDefault == "Y"){
 								_obj.append("<option value='"+certTypedate.certTypeCd+"' selected='selected'>"+certTypedate.name+"</option>");
-							}else _obj.append("<option value='"+certTypedate.certTypeCd+"' >"+certTypedate.name+"</option>");
+							}else{ _obj.append("<option value='"+certTypedate.certTypeCd+"' >"+certTypedate.name+"</option>");}
 						}
 						//jquery mobile 需要刷新才能生效
 //						_obj.selectmenu().selectmenu('refresh');
@@ -737,7 +743,7 @@ cust = (function(){
 					if(data!=undefined && data.length>0){
 						for(var i=0;i<data.length;i++){
 							var certTypedate = data[i];
-							if (certTypedate.certTypeCd == "1") {//身份证
+							if(certTypedate.certTypeCd == 1){
 									$("#cm_identidiesTypeCd").append("<option value='"+certTypedate.certTypeCd+"' >"+certTypedate.name+"</option>");
 								}else if(isAllowChannelType){//如果自有渠道，开放所有
 									$("#cm_identidiesTypeCd").append("<option value='"+certTypedate.certTypeCd+"' >"+certTypedate.name+"</option>");

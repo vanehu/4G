@@ -1236,12 +1236,12 @@ var _saveHtml2Pdf=function(){
 		var CustOrderInfo = {};
 		var AttrInfos=[];
 		if(OrderInfo.actionFlag == 112){
-			var AttrInfos = [];
-			AttrInfos[0] = {
+//			var AttrInfos = [];
+			var AttrInfos_rh = {
 					"AttrSpecId":"40010037",
 					"AttrValue":$("#TransactionID").val()
 			};
-			CustOrderInfo.AttrInfos = AttrInfos;
+			AttrInfos.push(AttrInfos_rh);
 		}
 		CustOrderInfo.FeeInfos = _chargeItems;
 //		[
@@ -1273,10 +1273,11 @@ var _saveHtml2Pdf=function(){
         	if(!order.broadband.isSameOne){//非本人需要添加经办人HandleCustId节点
         			CustOrderInfo.HandleCustId=OrderInfo.jbr.custId+"";
         	}      	
-        	AttrInfos[0] = {
+        	var AttrInfos_jbr = {
     				"AttrSpecId":"40010039",
     				"AttrValue":order.broadband.jbrPictureName
     		};
+        	AttrInfos.push(AttrInfos_jbr);
         }
         CustOrderInfo.AttrInfos = AttrInfos;
 //		CustOrderInfo.StaffCode = "1001";
@@ -1351,7 +1352,7 @@ var _saveHtml2Pdf=function(){
 						}
 					];
 		}
-		var AttrInfos = new Array();
+		var AttrInfos_prod = new Array();
 		if(OrderInfo.actionFlag == 112){
 			if($("#prodName_kd").val().length>0){
 				if($("#upslList_kd").val()!="" && $("#upslList_kd").val()!=null){
@@ -1359,14 +1360,14 @@ var _saveHtml2Pdf=function(){
 							"AttrSpecId":"10010130",
 							"AttrValue":$("#upslList_kd").val()
 						};
-					AttrInfos.push(up);
+					AttrInfos_prod.push(up);
 				}
 				if($("#dwslList_kd").val()!="" && $("#dwslList_kd").val()!=null){
 					var dw = {
 							"AttrSpecId":"10010131",
 							"AttrValue":$("#dwslList_kd").val()
 						};
-					AttrInfos.push(dw);
+					AttrInfos_prod.push(dw);
 				}
 			}
 			if($("#prodName_gh").val().length>0){
@@ -1375,14 +1376,14 @@ var _saveHtml2Pdf=function(){
 							"AttrSpecId":"10010130",
 							"AttrValue":$("#upslList_gh").val()
 						};
-					AttrInfos.push(up);
+					AttrInfos_prod.push(up);
 				}
 				if($("#dwslList_gh").val()!="" && $("#dwslList_gh").val()!=null){
 					var dw = {
 							"AttrSpecId":"10010131",
 							"AttrValue":$("#dwslList_gh").val()
 						};
-					AttrInfos.push(dw);
+					AttrInfos_prod.push(dw);
 				}
 			}
 			if($("#prodName_gc").val().length>0){
@@ -1391,14 +1392,14 @@ var _saveHtml2Pdf=function(){
 							"AttrSpecId":"10010130",
 							"AttrValue":$("#upslList_gc").val()
 						};
-					AttrInfos.push(up);
+					AttrInfos_prod.push(up);
 				}
 				if($("#dwslList_gc").val()!="" && $("#dwslList_gc").val()!=null){
 					var dw = {
 							"AttrSpecId":"10010131",
 							"AttrValue":$("#dwslList_gc").val()
 						};
-					AttrInfos.push(dw);
+					AttrInfos_prod.push(dw);
 				}
 			}
 		}else if($("#prodName").val().length>0){
@@ -1407,18 +1408,18 @@ var _saveHtml2Pdf=function(){
 						"AttrSpecId":"10010130",
 						"AttrValue":$("#upslList").val()
 					};
-				AttrInfos.push(up);
+				AttrInfos_prod.push(up);
 			}
 			if($("#dwslList").val()!="" && $("#dwslList").val()!=null){
 				var dw = {
 						"AttrSpecId":"10010131",
 						"AttrValue":$("#dwslList").val()
 					};
-				AttrInfos.push(dw);
+				AttrInfos_prod.push(dw);
 			}
 		}
-		if(AttrInfos.length>0){
-			ProdInfo[0].AttrInfos = AttrInfos;
+		if(ProdInfo.length>0 && AttrInfos_prod.length>0){
+			ProdInfo[0].AttrInfos = AttrInfos_prod;
 		}
 		SvcCont.ProdInfo = ProdInfo;
 		
@@ -1940,22 +1941,28 @@ var _saveHtml2Pdf=function(){
 
 //显示经办人窗口
 	var _showJbr = function(){
+		//先清空
+		$('#orderAttrName').val("");
+		$('#orderAttrPhoneNbr').val("");
+		$('#orderAttrAddr').val("");
+		$('#sfzorderAttrIdCard').val("");
+		$('#orderAttrIdCard').val("");//证件号码
 		OrderInfo.returnFlag="jbr";
 		$("#confirm").hide();
 		$("#jbr").show();
 		if(!order.broadband.haveCallPhote){//未拍过照片，默认本人
 			order.broadband.jbrInfoFillIn();//经办人信息默认本人
 			//经办人信息回填，确保信息正确
-			var custIdentidiesTypeCd=OrderInfo.cust.identityCd;//客户证件类型
-			var custNumber=OrderInfo.cust.idCardNumber;//客户证件号码
-			if(custIdentidiesTypeCd==1){//身份证
-				$('#sfzorderAttrIdCard').val(custNumber);//证件号码
-			}else{
-				$('#orderAttrIdCard').val(custNumber);//证件号码
-			}
-			$('#orderAttrName').val(OrderInfo.cust.partyName);
-			$('#orderAttrPhoneNbr').val(OrderInfo.cust.accNbr);
-			$('#orderAttrAddr').val(OrderInfo.cust.addressStr);
+//			var custIdentidiesTypeCd=OrderInfo.cust.identityCd;//客户证件类型
+//			var custNumber=OrderInfo.cust.idCardNumber;//客户证件号码
+//			if(custIdentidiesTypeCd==1){//身份证
+//				$('#sfzorderAttrIdCard').val(custNumber);//证件号码
+//			}else{
+//				$('#orderAttrIdCard').val(custNumber);//证件号码
+//			}
+//			$('#orderAttrName').val(OrderInfo.cust.partyName);
+//			$('#orderAttrPhoneNbr').val(OrderInfo.cust.accNbr);
+//			$('#orderAttrAddr').val(OrderInfo.cust.addressStr);
 	  }
 	};
 	
@@ -1967,6 +1974,9 @@ var _saveHtml2Pdf=function(){
 	   $("#confirm").show();
 	   $("#jbr").hide();
 	   var jbrName=$("#orderAttrName").val();
+	   if(order.broadband.isSameOne){
+		   jbrName=OrderInfo.cust.partyName;
+	   }
 	   $("#jbrName").val(jbrName);
    };
 
@@ -1990,11 +2000,6 @@ var _queryJbr=function(){
 	if(custIdentidiesTypeCd==jbrIdentidiesTypeCd && custNumber==jbrIdentityNum){//经办人为本人,无需查询
 		order.broadband.isSameOne=true;
 		$.alert("提示","客户和经办人相同，无需查询！");
-		return;
-	}
-	var phoneNum=$('#orderAttrPhoneNbr').val();
-	if(phoneNum==""){
-		$.alert("提示","请填写经办人联系方式！");
 		return;
 	}
 	order.broadband.isSameOne=false;
@@ -2051,24 +2056,19 @@ function _searchJbr(){
 				$.unecOverlay();
 //				$.alert("提示","抱歉，没有定位到客户，请尝试其他客户。");
 				
-				if(ec.util.isObj($.trim($("#orderAttrName").val()))||ec.util.isObj($.trim($("#orderAttrPhoneNbr").val()))||ec.util.isObj($.trim($("#orderAttrAddr").val()))){
-					if(!ec.util.isObj($.trim($("#orderAttrName").val()))){
-						$.alert("提示","抱歉，未查询到经办人信息！请完善经办人信息！");
+				if($.trim($("#orderAttrName").val())==""){
+						$.alert("提示","抱歉，未查询到经办人信息！经办人姓名为空，请完善经办人信息！");
 						return false;
-					}
-					if(!ec.util.isObj($.trim($("#orderAttrPhoneNbr").val()))){
-						$.alert("提示","抱歉，未查询到经办人信息！请完善经办人信息！");
-						return false;
-					}
-					if(!ec.util.isObj($.trim($("#orderAttrAddr").val()))){
-						$.alert("提示","抱歉，未查询到经办人信息！请完善经办人信息！");
-						return false;
-					}				
-				} 				
-					$.alert("提示","未查询到经办人信息！\n经办人信息完整,请对经办人进行拍照");
-					order.broadband.canCallPhote=true;
-					order.broadband.isOldCust=false;
-					_getJbrInfo(OrderInfo.SEQ.instSeq--);
+				}
+				if($.trim($("#orderAttrAddr").val())==""){
+					$.alert("提示","抱歉，未查询到经办人信息！证件地址为空，请完善经办人信息！");
+					return false;
+				}		
+				$.alert("提示","未查询到经办人信息！\n提交经办人信息成功,请对经办人进行拍照");
+				order.broadband.canCallPhote=true;
+				order.broadband.isOldCust=false;
+				_getJbrInfo(OrderInfo.SEQ.instSeq--);							
+					
 			}else{
 			order.broadband.canCallPhote=true;
 			$.unecOverlay();
@@ -2091,7 +2091,7 @@ function _searchJbr(){
 				_getJbrInfo(extCustId);
 			} else {
 				order.broadband.isOldCust=false;
-				$.alert("提示","未查询到经办人信息！\n经办人信息完整,请对经办人进行拍照。");
+				$.alert("提示","未查询到经办人信息！\n提交经办人信息成功,请对经办人进行拍照。");
 				_getJbrInfo(OrderInfo.SEQ.instSeq--);
 			}
 		}
@@ -2120,8 +2120,8 @@ var _getJbrInfo=function(custId){
 
 //改变证件号码重设未拍照
 var _setNoPhoto=function(){
-	order.broadband.canCallPhote=false;
-	order.broadband.haveCallPhote=flase;
+	order.broadband.isSameOne=false;
+	order.broadband.haveCallPhote=false;
 }
 //经办人信息校验
 	var _checkJbrParam=function(){
@@ -2137,9 +2137,10 @@ var _setNoPhoto=function(){
 	
 	//翼销售-经办人-客户证件类型和其他信息填充
 	var _jbrInfoFillIn = function(){
+		 $("#myType").empty();
 		var _obj = $("#orderIdentidiesTypeCd");
 		_obj.empty();
-		var partyTypeCd= $("#orderPartyTypeCd  option:selected").val();
+		var partyTypeCd= "1";//个人
 		var custCertTypeCd=OrderInfo.cust.identityCd;//客户证件类型
 		var params = {"partyTypeCd":partyTypeCd} ;
 		var url=contextPath+"/app/cust/queryCertType";
@@ -2153,6 +2154,8 @@ var _setNoPhoto=function(){
 				}
 	   var currentCT = $("#currentCT").val();//渠道类型
 	   if(response.code==0){
+		           var $label =$('<label for="orderIdentidiesTypeCd">证件类型</label>');
+		           var $sel = $('<select id="orderIdentidiesTypeCd" class="myselect form-control" onchange="cust.jbridentidiesTypeCdChoose(this,sfzorderAttrIdCard)"></select>');
 					var data = response.data ;
 					if(data!=undefined && data.length>0){
 						//去除重复的证件类型编码
@@ -2185,13 +2188,43 @@ var _setNoPhoto=function(){
 						}					
 						for(var i=0;i<uniData.length;i++){
 							var certTypedate = uniData[i];
+							var $option = "";
 							if(custCertTypeCd==certTypedate.certTypeCd){
-								_obj.append("<option value='"+certTypedate.certTypeCd+"' selected='selected'>"+certTypedate.name+"</option>");
-							}else {
-								
-								_obj.append("<option value='"+certTypedate.certTypeCd+"' >"+certTypedate.name+"</option>");
+								$option = $('<option value="'+certTypedate.certTypeCd+'" selected="selected">'+certTypedate.name+'</option>');
+							}else{
+							    $option = $('<option value="'+certTypedate.certTypeCd+'">'+certTypedate.name+'</option>');
 							}
+							$sel.append($option);
 						}
+					}
+					$("#myType").append($label).append($sel);
+					if(custCertTypeCd==1){
+						$("#jbrsfz").show();
+						$("#jbrsfz_i").show();
+						$("#qtzj").hide();
+						$("#orderAttrName").attr("readonly","readonly");
+						$("#orderAttrAddr").attr("readonly","readonly");
+//						if((OrderInfo.cust.identityCd == 1) && ($("#sfzorderAttrIdCard").val() == OrderInfo.cust.idCardNumber)){
+//							OrderInfo.jbr.identityPic = OrderInfo.cust.identityPic;
+//							OrderInfo.jbr.custId = OrderInfo.cust.custId;
+//						}
+						OrderInfo.jbr.custId ="";
+						cust.clearJbrForm();
+						OrderInfo.virOlId = "";
+						OrderInfo.jbr.identityPic = undefined;
+//						$('#jbrFormdata').data('bootstrapValidator').enableFieldValidators("orderAttrIdCard",true,"sfzorderAttrIdCard");
+					}else{
+						$("#jbrsfz").hide();
+						$("#jbrsfz_i").hide();
+						$("#qtzj").show();
+						$("#orderAttrName").removeAttr("readonly");
+						$("#orderAttrAddr").removeAttr("readonly");
+						$("#orderAttrIdCard").removeAttr("readonly");
+						OrderInfo.virOlId = "";
+						OrderInfo.jbr.custId ="";
+						cust.clearJbrForm();
+						OrderInfo.jbr.identityPic = undefined;
+//						$('#jbrFormdata').data('bootstrapValidator').enableFieldValidators("orderAttrIdCard",true,"orderAttrIdCard");
 					}
 				}
 	};

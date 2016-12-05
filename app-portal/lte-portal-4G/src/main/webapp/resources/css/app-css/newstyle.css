@@ -2580,3 +2580,13 @@ input:-ms-input-placeholder, textarea:-ms-input-placeholder {
 .dis-none{
 	display: none;
 }
+.form-group2 label {
+    color: #696969;
+    width: 22%;
+    text-align: right;
+    margin-right: 4%;
+    font-weight: norma;
+    border-left: 4px solid #67d242;
+	padding-left: 10px;
+	margin-bottom: 10px;
+}

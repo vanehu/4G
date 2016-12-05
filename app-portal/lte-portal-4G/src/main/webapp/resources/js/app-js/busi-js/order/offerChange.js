@@ -180,10 +180,6 @@ offerChange = (function() {
 	
 	//套餐变更提交组织报文
 	var _changeOffer = function(busiOrders){
-			if(OrderInfo.jbr.custId < -1){
-				OrderInfo.createJbr(busiOrders);
-			}
-			OrderInfo.orderData.orderList.orderListInfo.handleCustId = OrderInfo.jbr.custId;
 		_createDelOffer(busiOrders,OrderInfo.offer); //退订主销售品
 		_createMainOffer(busiOrders,OrderInfo.offer); //订购主销售品	
 		AttachOffer.setAttachBusiOrder(busiOrders);  //订购退订附属销售品

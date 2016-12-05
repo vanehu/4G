@@ -7,11 +7,11 @@
 				<div class="panel panel-default paneltop">
 					<div class="panel-heading">经办人信息</div>
 			<div class="panel-body">
-			<div class="form-group" id="jbrsfz">
+			<div class="form-group2" id="jbrsfz">
 				<div style="display:inline;"><label for="username">证件扫描</label></div>
 				<div style="display:inline;">
-					<ul style="list-style-type:none;display:inline;">
-		            	<li style="display:inline;"><img onClick="common.callGenerationRec('cust.getjbrGenerationInfos2','1')" style=" height: 40px; margin-left: 15px;"src="${contextPath}/image/app-image/shebeisaomiao-xxhdpi_03.png"/></li>
+					<ul style="list-style-type:none;display:inline;padding-left: 0;">
+		            	<li style="display:inline;"><img onClick="common.callGenerationRec('cust.getjbrGenerationInfos2','1')" style=" height: 40px;"src="${contextPath}/image/app-image/shebeisaomiao-xxhdpi_03.png"/></li>
 		            	<li id="nfc" style="display:inline;"><img onClick="common.callGenerationRec('cust.getjbrGenerationInfos2','2')" style=" height: 40px; margin-left: 15px;" src="${contextPath}/image/app-image/shebeisaomiao-xxhdpi_05.png"/></li>
 		            	<li id="otg" style="display:inline;"><img onClick="common.callGenerationRec('cust.getjbrGenerationInfos2','3')" style=" height: 40px; margin-left: 15px;" src="${contextPath}/image/app-image/otg@2x_03.png"/></li>
 		            </ul>
@@ -27,20 +27,13 @@
 			 </div>
 			<div class="form-group">
 				<label for="orderAttrName">经办人姓名<span class="text-warning"></span></label>
-            	<input type="text" class="form-control" id="orderAttrName"  maxlength="100" readonly="readonly">
+            	<input type="text" class="form-control" id="orderAttrName"  maxlength="100"  readonly="readonly">
 			</div>
-			<div class="form-group" id="div_cm_identidiesType">
-	            <label for="orderPartyTypeCd">客户类型</label>
-	            <select id="orderPartyTypeCd" class="myselect form-control" onchange="cust.jbrpartyTypeCdChoose(this,'orderIdentidiesTypeCd')" disabled="disabled">
-	            	<option value=1 >个人</option>
-                    <option value=2>政企客户</option>
-	            </select>
-         	</div>
          	<div class="form-group">
-				<label for="orderAttrPhoneNbr">经办人号码<span class="text-warning"></span></label>
-            	<input type="text" class="form-control" id="orderAttrPhoneNbr"  maxlength="11" name="orderAttrPhoneNbr" >
+				<label for="orderAttrPhoneNbr">联系方式<span class="text-warning"></span></label>
+            	<input type="text" class="form-control" id="orderAttrPhoneNbr"  maxlength="11" name="orderAttrPhoneNbr">
 			</div>
-			<div class="form-group" id="">
+			<div class="form-group" id="myType">
 	            <label for="orderIdentidiesTypeCd">证件类型</label>
 	            <select id="orderIdentidiesTypeCd" class="myselect form-control" onchange="cust.jbridentidiesTypeCdChoose(this,'sfzorderAttrIdCard')"><!-- onchange="cust.identidiesTypeCdChoose(this,'orderAttrIdCard')" -->
 	            </select>
@@ -60,11 +53,11 @@
 			</div>
 			<div class="form-group" id="qtzj" style="display: none;">
 				<label for="orderAttrIdCard">证件号码<span class="text-warning"></span></label>
-            	<input type="text" class="form-control" id="orderAttrIdCard" name="orderAttrIdCard" maxlength="50" onchange="order.broadband.setNoPhoto()">
+            	<input type="text" class="form-control" id="orderAttrIdCard" name="orderAttrIdCard" maxlength="50" readonly="readonly">
 			</div>
 			<div class="form-group">
 				<label for="orderAttrAddr">证件地址<span class="text-warning"></span></label>
-            	<input type="text" class="form-control" id="orderAttrAddr" maxlength="200" readonly="readonly">
+            	<input type="text" class="form-control" id="orderAttrAddr" maxlength="200" readonly="readonly" >
 			</div>
 		</div>
          </div>

@@ -551,11 +551,19 @@ cust = (function(){
 	
 	//翼销售-经办人-客户类型选择事件
 	var _jbrpartyTypeCdChoose = function(scope,id) {
-		order.broadband.canCallPhote=false;
 		var partyTypeCd=$(scope).val();	
 		//客户类型关联证件类型下拉框
 		$("#"+id).empty();
-		_jbrcertTypeByPartyType(partyTypeCd,id);
+		try{
+			if(!ec.util.isObj(OrderInfo.curIp)){
+				common.getMobileIp("cust.getIp");
+			}
+		}catch(err){
+			
+		}finally{
+			_jbrcertTypeByPartyType(partyTypeCd,id);
+		}
+		
 		//创建客户证件类型选择事件
 //		_jbridentidiesTypeCdChoose($("#"+id).children(":first-child"),"orderAttrIdCard");
 		//创建客户确认按钮
@@ -565,9 +573,6 @@ cust = (function(){
 	//翼销售-经办人-客户类型关联证件类型下拉框
 	var _jbrcertTypeByPartyType = function(_partyTypeCd,id){
 		var _obj = $("#"+id);
-		if(!ec.util.isObj(OrderInfo.curIp)){
-			common.getMobileIp("cust.getIp");
-		}
 		var params = {"partyTypeCd":_partyTypeCd} ;
 		var url=contextPath+"/app/cust/queryCertType";
 		var response = $.callServiceAsJson(url, params, {});
@@ -617,11 +622,25 @@ cust = (function(){
 						for(var i=0;i<uniData.length;i++){
 							var certTypedate = uniData[i];
 //							if(certTypedate.certTypeCd == cardType && _partyTypeCd==1 && isFlag=="ON"){
-							if(certTypedate.certTypeCd == 1){
+							if(certTypedate.isDefault == "Y"){
 								_obj.append("<option value='"+certTypedate.certTypeCd+"' selected='selected'>"+certTypedate.name+"</option>");
-							}else if(isAllowChannelType){
+							}else{
 								_obj.append("<option value='"+certTypedate.certTypeCd+"' >"+certTypedate.name+"</option>");
 							}
+						}
+					    var identidiesTypeCd=OrderInfo.cust.identityCd;
+						if(identidiesTypeCd==1){
+							$("#jbrsfz").show();
+							$("#jbrsfz_i").show();
+							$("#qtzj").hide();
+							$("#orderAttrName").attr("readonly","readonly");
+							$("#orderAttrAddr").attr("readonly","readonly");
+						}else{
+							$("#jbrsfz").hide();
+							$("#jbrsfz_i").hide();
+							$("#qtzj").show();
+							$("#orderAttrName").removeAttr("readonly");
+							$("#orderAttrAddr").removeAttr("readonly");
 						}
 						$("#queryJbr").show();
 						$("#photo").show();
@@ -655,6 +674,8 @@ cust = (function(){
 	
 	//证件类型选择事件
 	var _jbridentidiesTypeCdChoose = function(scope,id,partyTypeCd) {
+		order.broadband.isSameOne=false;
+		order.broadband.canCallPhote=false;
 		var identidiesTypeCd=$(scope).val();
 //		if(identidiesTypeCd==undefined){
 //			identidiesTypeCd=$("#div_cm_identidiesType  option:selected").val();
@@ -681,6 +702,7 @@ cust = (function(){
 			$("#qtzj").show();
 			$("#orderAttrName").removeAttr("readonly");
 			$("#orderAttrAddr").removeAttr("readonly");
+			$("#orderAttrIdCard").removeAttr("readonly");
 			OrderInfo.virOlId = "";
 			OrderInfo.jbr.custId ="";
 			cust.clearJbrForm();
@@ -748,7 +770,7 @@ cust = (function(){
 						
 						for(var i=0;i<uniData.length;i++){
 							var certTypedate = uniData[i];
-							if(1==certTypedate.certTypeCd){
+							if(certTypedate.certTypeCd == 1){
 								_obj.append("<option value='"+certTypedate.certTypeCd+"' selected='selected'>"+certTypedate.name+"</option>");
 							}else {
 								_obj.append("<option value='"+certTypedate.certTypeCd+"' >"+certTypedate.name+"</option>");

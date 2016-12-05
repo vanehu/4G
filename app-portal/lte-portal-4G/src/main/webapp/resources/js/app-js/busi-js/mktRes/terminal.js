@@ -951,6 +951,18 @@ mktRes.terminal = (function($){
 		}
 //		var prodId = $("#prodId").val()
 		cust.tmpChooseUserInfo.custId = OrderInfo.SEQ.instSeq--;
+		if(orderIdentidiesTypeCd == OrderInfo.cust.identityCd && orderAttrIdCard == OrderInfo.cust.identityNum){
+			cust.tmpChooseUserInfo.custId = OrderInfo.cust.custId;
+		} else {
+			for(var i=0; i<OrderInfo.choosedUserInfos.length; i++){
+				var prodId = OrderInfo.choosedUserInfos[i].prodId;
+				var custInfo = OrderInfo.getChooseUserInfo(prodId);
+				if(orderIdentidiesTypeCd == custInfo.identityCd && orderAttrIdCard == custInfo.idCardNumber){
+					cust.tmpChooseUserInfo.custId == custInfo.custId;
+				}
+			}
+			
+		}
 		cust.tmpChooseUserInfo.partyName = orderAttrName;
 		cust.tmpChooseUserInfo.identityCd = orderIdentidiesTypeCd;
 		cust.tmpChooseUserInfo.idCardNumber = orderAttrIdCard;

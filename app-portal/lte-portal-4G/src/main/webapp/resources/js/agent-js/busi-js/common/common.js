@@ -491,7 +491,6 @@ common = (function($) {
 	
 	//调用客户端的拍照方法       method：表示回调js方法 如：order.prodModify.getIDCardInfos
 	var _callPhotos=function(method){
-		_getMobileIp("cust.getIp");
 		var partyName = $('#orderAttrName').val();//经办人名称
 		var areaId = OrderInfo.staff.areaId;//经办人地区
 		var telNumber = $('#orderAttrPhoneNbr').val();//联系电话

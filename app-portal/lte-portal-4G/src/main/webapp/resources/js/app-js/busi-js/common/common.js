@@ -114,7 +114,6 @@ common = (function($) {
 	
 	//调用客户端的拍照方法       method：表示回调js方法 如：order.prodModify.getIDCardInfos
 	var _callPhotos=function(method){
-		_getMobileIp("cust.getIp");
 		var partyName = $('#orderAttrName').val();//经办人名称
 		var areaId = OrderInfo.staff.areaId;//经办人地区
 		var telNumber = $('#orderAttrPhoneNbr').val();//联系电话
@@ -494,7 +493,14 @@ common = (function($) {
 				$("#cx").addClass("active");
 				OrderInfo.order.step=3;
 				return;
-			}else if(OrderInfo.order.step==5){
+			}else if(OrderInfo.order.step==5 || OrderInfo.order.step==6){
+				if(OrderInfo.returnFlag=="hz"){
+					$("#order-print").hide();
+					$("#nav-tab-6").addClass("active in");
+					OrderInfo.returnFlag="";
+					return;
+				}
+				$("#nav-tab-6").removeClass("active in");
 				$("#nav-tab-5").removeClass("active in");
 		    	$("#nav-tab-4").addClass("active in");
 		    	$("#tab5_li").removeClass("active");
@@ -508,59 +514,7 @@ common = (function($) {
 				OrderInfo.resetSeq(); //重置序列
 				SoOrder.delOrder();
 				return;
-			}else if(OrderInfo.order.step==6){
-				if(OrderInfo.returnFlag=="hz"){
-					$("#order-print").hide();
-					$("#nav-tab-6").addClass("active in");
-					OrderInfo.returnFlag="";
-					return;
-				}
-				$("#nav-tab-6").removeClass("active in");
-		    	$("#nav-tab-5").addClass("active in");
-				OrderInfo.order.step=5;
-				return;
 			}
-//			$.confirm("确认","确定要取消该订单吗？",{
-//				yes:function(){
-					//TODO　may initialize something;				
-					var boProdAns = OrderInfo.boProdAns;
-					var boProd2Tds = OrderInfo.boProd2Tds;
-					//取消订单时，释放被预占的UIM卡
-					if(boProd2Tds.length>0){
-						for(var n=0;n<boProd2Tds.length;n++){
-							var param = {
-									numType : 2,
-									numValue : boProd2Tds[n].terminalCode
-							};
-							$.callServiceAsJson(contextPath+"/app/mktRes/phonenumber/releaseErrorNum", param, {
-								"done" : function(){}
-							});
-						}
-					}
-					//释放预占的号码
-					if(boProdAns.length>0){
-						for(var n=0;n<boProdAns.length;n++){
-							if(boProdAns[n].idFlag){
-								continue;
-							}
-							var param = {
-									numType : 1,
-									numValue : boProdAns[n].accessNumber
-							};
-							$.callServiceAsJson(contextPath+"/app/mktRes/phonenumber/releaseErrorNum", param, {
-								"done" : function(){
-								}
-							});
-						}
-					}
-					//清除号码的缓存！
-//					order.phoneNumber.resetBoProdAn();
-//				},no:function(){
-//					
-//				}},"question");
-					setTimeout(function() {//延迟加载使目标地点居中
-						_callCloseWebview();
-					}, 800);
 		}
 		if(OrderInfo.actionFlag==4||OrderInfo.actionFlag==8){//客户新增和修改
 			_callCloseWebview();
@@ -886,8 +840,10 @@ common = (function($) {
 		}else{
 			var identityNum = $('#orderAttrIdCard').val();//证件号码
 		}
-		if(custIdentidiesTypeCd==identityCd && custNumber==identityNum){//经办人为本人,无需查询
+		if(custIdentidiesTypeCd==identityCd && custNumber==identityNum){
 			order.broadband.isSameOne=true;
+		}
+		if(order.broadband.isSameOne){//经办人为本人,无需查询
 			order.broadband.canCallPhote=true;
 		}
 		if(!order.broadband.canCallPhote){

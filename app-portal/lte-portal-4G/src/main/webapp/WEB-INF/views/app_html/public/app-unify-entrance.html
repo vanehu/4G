@@ -12,7 +12,7 @@
 		<META name="description" content="电信集团">
 		<#include "/public/common-app-css-tpl.html"/>
 		<#include "/public/common-app-js-tpl.html"/>
-		<script src="${contextPath}/js/busi-js/common/const.js?${jsversion}" type="text/javascript"></script>
+		<script src="${contextPath}/js/app-js/busi-js/common/const.js?${jsversion}" type="text/javascript"></script>
 		<script src="${contextPath}/js/app-js/busi-js/common/common.js?${jsversion}" type="text/javascript"></script>
 		<script src="${contextPath}/js/app-js/busi-js/order/orderProdModify.js?${jsversion}" type="text/javascript"></script>
 		<script src="${contextPath}/js/app-js/busi-js/order/orderInfo.js?${jsversion}" type="text/javascript"></script>
@@ -25,6 +25,7 @@
 		<script src="${contextPath}/js/app-js/busi-js/order/offerChange.js?${jsversion}" type="text/javascript"></script>
 		<script src="${contextPath}/js/app-js/busi-js/order/cacheData.js?${jsversion}" type="text/javascript"></script>
 		<script src="${contextPath}/js/app-js/busi-js/order/broadband.js?${jsversion}" type="text/javascript"></script>
+		<script src="${contextPath}/js/app-js/busi-js/amalgamation/amalgamation.js?${jsversion}" type="text/javascript"></script>
 		<script src="${contextPath}/js/app-js/busi-js/cust/custMgr.js?${jsversion}" type="text/javascript"></script>
 		<script src="${contextPath}/js/app-js/busi-js/cust/cust.js?${jsversion}" type="text/javascript"></script>
 		<script src="${contextPath}/js/app-js/busi-js/cart/cart.js?${jsversion}" type="text/javascript"></script>
@@ -45,8 +46,18 @@
 		<script>
 		window.onload= function() 
 		{  
+			var webSwitch="true";
+			var myCust=window.localStorage.getItem("OrderInfo.cust");
+			if("true"==webSwitch && myCust!=null){
+			  var myCust1=$.parseJSON(myCust);
+			  myCust1.CN="";
+			  
+			  myCust=JSON.stringify(myCust1);//CN值不合法，传入后台会报400错误，故去掉该值。
+			  window.localStorage.setItem("OrderInfo.cust", myCust);
+			}
 			var app_flag="${app_flag}";//1表示来至手机端，空值表示来至浏览器
 			if(!app_flag){//方便浏览器开发
+				
 				var params={};
 				var menu = ${menu}; //菜单测试
 				if(!menu){
@@ -85,7 +96,25 @@
 				case 10 :
 					params.method = "/app/push/enter"; //双屏推送
 					break;
+				case 51 :
+					params.method = "/app/order/prodoffer/prepare"; //选套餐
+					params.enter=1;
+					break;
+				case 52 :
+					params.method = "/app/order/prodoffer/prepare"; //购手机
+					params.enter=2;
+					break;
+				case 53 :
+					params.method = "/app/order/prodoffer/prepare"; //选号码
+					params.enter=3;
+					break;
 				case 11 :
+					params.method = "/app/prodModify/toCheckUimUI"; //补换卡
+					break;
+				case 18 :
+					params.method = "/app/order/attachBroadband/prepare"; //宽带续约
+					break;
+				case 111 :
 					params.method = "/app/order/broadband/prepare"; //宽带甩单
 					break;
 				case 12 :
@@ -93,9 +122,10 @@
 					break;
 				}  
 				var custInfos=$.parseJSON(window.localStorage.getItem("OrderInfo.cust"));
-				var staffInfos=$.parseJSON(window.localStorage.getItem("OrderInfo.staff"));
-				var prodIdInfos=$.parseJSON(window.localStorage.getItem("order.prodModify.choosedProdInfo"));
-				common.callOrderServer(staffInfos,custInfos,prodIdInfos,params);
+				//if (window.localStorage.getItem("OrderInfo.staff") != null){
+					var staffInfos=$.parseJSON(window.localStorage.getItem("OrderInfo.staff").replace(/>/g, "&gt;"));
+					var prodIdInfos=$.parseJSON(window.localStorage.getItem("order.prodModify.choosedProdInfo"));
+					common.callOrderServer(staffInfos,custInfos,prodIdInfos,params);
 			}
 		}
 		</script>

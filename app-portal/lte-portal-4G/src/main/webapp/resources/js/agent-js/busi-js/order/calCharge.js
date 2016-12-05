@@ -25,6 +25,7 @@ order.calcharge = (function(){
 	var _busiUpType;//业务类型，1表示手机业务2表示宽带甩单
 	var payType;
 	var _returnFlag=true;//支付平台返回成功后，返回按钮提示不让进行
+	var _haveCharge=false;//是否已经下过计费接口
 	//弹出业务对象窗口
 	var _addbusiOrder=function(proId,obj){
 		if($("#div_payitem_"+proId)!=undefined&&$("#div_payitem_"+proId).html()!=undefined){
@@ -758,6 +759,7 @@ order.calcharge = (function(){
 		var url=contextPath+"/app/order/chargeSubmit?token="+OrderInfo.order.token;
 		var response=$.callServiceAsJson(url, params, {});
 		var msg="";
+		order.calcharge.haveCharge=true;//已经下过收费接口，定时下计费接口任务取消
 		if (response.code == 0) {
 			//删除session中的客户缓存信息
 			var param={
@@ -1295,6 +1297,7 @@ order.calcharge = (function(){
 			payUrl=response.data;
 			//var payUrl2="http://192.168.4.137:7001/pay_web/platpay/index?payToken="+payUrl.split("=")[1];
    		  // payUrl2="https://crm.189.cn:86/upay/platpay/index?payToken=5D0CB495B3DD59CAEC106F93EEBD13952F62C58C4A13445FB8AC378A32038E99";
+			$.ecOverlay("<strong>支付处理中,请稍等会儿....</strong>");
 			common.callOpenPay(payUrl);//打开支付页面
 		}else if(response.code==1002){
 			$.alert("提示",response.data);
@@ -1320,6 +1323,9 @@ order.calcharge = (function(){
 	 * 获取支付平台返回订单状态
 	 */
 	var _queryPayOrdStatus1 = function(soNbr, status,type) {
+		if(order.calcharge.haveCharge){//已下过收费接口，不再处理
+			return;
+		}
 		if ("1" == status) { // 原生返回成功，调用支付平台查询订单状态接口，再次确定是否成功，如果成功则调用收费接口
 			$.ecOverlay("<strong>正在处理中,请稍等会儿....</strong>");
 			_returnFlag=false;//禁止返回
@@ -1638,6 +1644,23 @@ order.calcharge = (function(){
 		});
 		return realFee;
 	};
+
+	//收费界面定时任务入口
+	var _timeToFee=function(){
+		var checkUrl = contextPath + "/app/order/getPayOrdStatus";
+		var checkParams = {
+				"olId" : OrderInfo.orderResult.olId
+				
+		};
+		var response = $.callServiceAsJson(checkUrl, checkParams);
+		if (response.code == 0) {// 支付平台购物车id查询支付成功才进入定时任务
+			payType=response.data.split("_")[0];
+			$("#toCharge").attr("disabled","disabled");
+			_queryPayOrdStatus1(OrderInfo.orderResult.olId,"1",payType);
+		}else{
+			$.unecOverlay();//去遮罩
+		}
+	};
 	return {
 		addItems:_addItems,
 		delItems:_delItems,
@@ -1670,7 +1693,9 @@ order.calcharge = (function(){
 		myFlag:_myFlag,
 		getCharge:_getCharge,
 		busiUpType:_busiUpType,
-		returnFlag:_returnFlag
+		returnFlag:_returnFlag,
+		haveCharge:_haveCharge,
+		timeToFee:_timeToFee
 	};
 })();
 $(function() {

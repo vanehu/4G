@@ -1106,9 +1106,11 @@ order.phoneNumber = (function(){
         var numberCheckFlag = flagQueryRes.code == 0 ? flagQueryRes.data : "";
 		if ("ON" == numberCheckFlag) {
 			var url = contextPath + "/app/prodModify/preCheckBeforeOrde"; // 翼销售app
-			if (OrderInfo.orderData.orderList.orderListInfo.olTypeCd == CONST.OL_TYPE_CD.UI_LTE) {
-				url = contextPath + "/token/secondBusi/preCheckBeforeOrde"; // 能力开放app
+			if(OrderInfo.orderData.orderList != undefined && OrderInfo.orderData.orderList.orderListInfo.olTypeCd == CONST.OL_TYPE_CD.UI_LTE) {
+					url = contextPath + "/token/secondBusi/preCheckBeforeOrde"; // 能力开放app
+				
 			}
+			
 			var accNbr = $(obj).attr("numberVal").split("_")[0];
 			var response = $.callServiceAsJson(url, {"serviceType": 38, "accNbr": accNbr});
 			if(response.code == 1){
