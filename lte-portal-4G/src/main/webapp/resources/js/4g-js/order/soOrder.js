@@ -3776,7 +3776,19 @@ SoOrder = (function() {
 		};
 		var data = query.offer.queryOfferInst(param); //查询销售品实例构成
 
+
+
 		$.each(data.offerMemberInfos, function () {
+			//加载副卡全量信息
+            var param = {
+                areaId : OrderInfo.getProdAreaId(prod.prodInstId),
+                acctNbr : this.accessNumber,
+                custId : OrderInfo.cust.custId,
+                soNbr : OrderInfo.order.soNbr,
+                instId : this.objInstId,
+                type : "2"
+            };
+            query.offer.invokeLoadInst(param);
 			//创建业务节点
 			var busiOrder = {
 				areaId: OrderInfo.getProdAreaId(prod.prodInstId),  //受理地区ID
