@@ -3834,13 +3834,15 @@ SoOrder = (function() {
 						OrderInfo.orderData.orderList.orderListInfo.partyId = -1;//-3经办人客户，-2使用人客户，-1产权客户
 						OrderInfo.orderData.orderList.orderListInfo.handleCustId = -1;//新建客户同时新建经办人，handleCustId与partyId一致
 					} else{//新建客户与新建经办人不同
+						OrderInfo.handleCustId = OrderInfo.SEQ.offerSeq--;
 						OrderInfo.orderData.orderList.orderListInfo.partyId = OrderInfo.cust.custId;
-						OrderInfo.orderData.orderList.orderListInfo.handleCustId = -3;
+						OrderInfo.orderData.orderList.orderListInfo.handleCustId = OrderInfo.handleCustId;
 						_createHandleCust(busiOrders);
 					}
 				} else{
+					OrderInfo.handleCustId = OrderInfo.SEQ.offerSeq--;
 					OrderInfo.orderData.orderList.orderListInfo.partyId = OrderInfo.cust.custId;
-					OrderInfo.orderData.orderList.orderListInfo.handleCustId = -3;
+					OrderInfo.orderData.orderList.orderListInfo.handleCustId = OrderInfo.handleCustId;
 					_createHandleCust(busiOrders);
 				}
 			} else{//已有客户
@@ -3863,13 +3865,15 @@ SoOrder = (function() {
 							OrderInfo.orderData.orderList.orderListInfo.partyId = -1;//-3经办人客户，-2使用人客户，-1产权客户
 							OrderInfo.orderData.orderList.orderListInfo.handleCustId = -1;//新建客户同时新建经办人，handleCustId与partyId一致
 						} else{//新建客户与新建经办人不同
+							OrderInfo.handleCustId = OrderInfo.SEQ.offerSeq--;
 							OrderInfo.orderData.orderList.orderListInfo.partyId = OrderInfo.cust.custId;
-							OrderInfo.orderData.orderList.orderListInfo.handleCustId = -3;
+							OrderInfo.orderData.orderList.orderListInfo.handleCustId = OrderInfo.handleCustId;
 							_createHandleCust(busiOrders);
 						}
 					} else{
+						OrderInfo.handleCustId = OrderInfo.SEQ.offerSeq--;
 						OrderInfo.orderData.orderList.orderListInfo.partyId = OrderInfo.cust.custId;
-						OrderInfo.orderData.orderList.orderListInfo.handleCustId = -3;
+						OrderInfo.orderData.orderList.orderListInfo.handleCustId = OrderInfo.handleCustId;
 						_createHandleCust(busiOrders);
 					}
 				}
@@ -3896,7 +3900,7 @@ SoOrder = (function() {
 				seq : OrderInfo.SEQ.seq--
 			}, 
 			busiObj : { //业务对象节点
-				instId		: -3,//-3经办人客户，-2使用人客户，-1产权客户
+				instId		: OrderInfo.handleCustId,//-3经办人客户，-2使用人客户，-1产权客户
 				accessNumber: OrderInfo.getAccessNumber(-1)
 			},  
 			boActionType : {
