@@ -830,10 +830,10 @@ common = (function($) {
 	var _callPhotos2=function(method){
 		var custIdentidiesTypeCd=OrderInfo.cust.identityCd;//客户证件类型
 		var custNumber=OrderInfo.cust.idCardNumber;//客户证件号码
-		var partyName = $('#orderAttrName').val();//经办人名称
+		var partyName = $('#orderAttrName').val().trim();//经办人名称
 		var areaId = OrderInfo.staff.areaId;//经办人地区
 		var telNumber = $('#orderAttrPhoneNbr').val();//联系电话
-		var addressStr = $('#orderAttrAddr').val();//经办人地址
+		var addressStr = $('#orderAttrAddr').val().trim();//经办人地址
 		var identityCd = $('#orderIdentidiesTypeCd').val();//证件类型
 		if(identityCd==1){
 			var identityNum = $('#sfzorderAttrIdCard').val();//证件号码

@@ -27,7 +27,7 @@
 			 </div>
 			<div class="form-group">
 				<label for="orderAttrName">经办人姓名<span class="text-warning"></span></label>
-            	<input type="text" class="form-control" id="orderAttrName"  maxlength="100"  readonly="readonly">
+            	<input type="text" class="form-control" id="orderAttrName"  maxlength="100"  readonly="readonly" onblur="order.broadband.setNoPhoto()">
 			</div>
          	<div class="form-group">
 				<label for="orderAttrPhoneNbr">联系方式<span class="text-warning"></span></label>
@@ -53,11 +53,11 @@
 			</div>
 			<div class="form-group" id="qtzj" style="display: none;">
 				<label for="orderAttrIdCard">证件号码<span class="text-warning"></span></label>
-            	<input type="text" class="form-control" id="orderAttrIdCard" name="orderAttrIdCard" maxlength="50" readonly="readonly">
+            	<input type="text" class="form-control" id="orderAttrIdCard" name="orderAttrIdCard" maxlength="50" readonly="readonly" onblur="order.broadband.setNoPhoto()">
 			</div>
 			<div class="form-group">
 				<label for="orderAttrAddr">证件地址<span class="text-warning"></span></label>
-            	<input type="text" class="form-control" id="orderAttrAddr" maxlength="200" readonly="readonly" >
+            	<input type="text" class="form-control" id="orderAttrAddr" maxlength="200" readonly="readonly" onblur="order.broadband.setNoPhoto()">
 			</div>
 		</div>
          </div>

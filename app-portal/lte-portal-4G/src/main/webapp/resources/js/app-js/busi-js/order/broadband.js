@@ -1952,6 +1952,7 @@ var _saveHtml2Pdf=function(){
 		$("#jbr").show();
 		if(!order.broadband.haveCallPhote){//未拍过照片，默认本人
 			order.broadband.jbrInfoFillIn();//经办人信息默认本人
+			order.broadband.isSameOne=true;
 			//经办人信息回填，确保信息正确
 //			var custIdentidiesTypeCd=OrderInfo.cust.identityCd;//客户证件类型
 //			var custNumber=OrderInfo.cust.idCardNumber;//客户证件号码
@@ -2063,7 +2064,11 @@ function _searchJbr(){
 				if($.trim($("#orderAttrAddr").val())==""){
 					$.alert("提示","抱歉，未查询到经办人信息！证件地址为空，请完善经办人信息！");
 					return false;
-				}		
+				}
+				if($.trim($("#orderAttrPhoneNbr").val())==""){
+					$.alert("提示","抱歉，未查询到经办人信息！经办人联系方式为空，请完善经办人信息！");
+					return false;
+			    }
 				$.alert("提示","未查询到经办人信息！\n提交经办人信息成功,请对经办人进行拍照");
 				order.broadband.canCallPhote=true;
 				order.broadband.isOldCust=false;
@@ -2120,9 +2125,15 @@ var _getJbrInfo=function(custId){
 
 //改变证件号码重设未拍照
 var _setNoPhoto=function(){
-	order.broadband.isSameOne=false;
-	order.broadband.haveCallPhote=false;
-}
+	var partyName = $('#orderAttrName').val().trim();//经办人名称
+	var addressStr = $('#orderAttrAddr').val().trim();//经办人地址
+	var identityNum = $('#orderAttrIdCard').val();//非身份证证件号码
+	if(partyName!="" || addressStr!="" || identityNum！=""){
+		order.broadband.isSameOne=false;
+		order.broadband.canCallPhote=false;
+		order.broadband.haveCallPhote=false;
+	}	
+};
 //经办人信息校验
 	var _checkJbrParam=function(){
 		var orderAttrName = $.trim($("#orderAttrName").val()); //经办人姓名
