@@ -1460,21 +1460,20 @@ order.main = (function(){
 		order.cust.queryForChooseUser = true; //标识客户定位是为了选择使用人
 		//order.cust.bindCustQueryForChoose(); //客户定位查询按钮
 		//封装用户信息
-		
-		
 		$('#chooseUserBtn').off('click').on('click',function(){
+			$("#userTips").empty();
 			if ($.trim($("#orderUserIdentidiesTypeCd option:selected").val()) == "1" && !ec.util.isObj($('#orderUserAttrIdCard').val())){
-		    	$("#userTips").empty();
-				$("#userTips").html("提示："+ "请先读卡");
+		    	$("#userTips").html("提示："+ "请先读卡");
 		    	return false;
 	    	}
-			$('#'+CONST.PROD_ATTR.PROD_USER+'_'+prodId).val(prodId); 
-			$('#'+CONST.PROD_ATTR.PROD_USER+'_'+prodId).val($.trim($("#orderUserAttrName").val())); 
+			if (!_queryUser()) {
+				$('#'+CONST.PROD_ATTR.PROD_USER+'_'+prodId).val(prodId); 
+			}
+			$('#'+CONST.PROD_ATTR.PROD_USER+'_'+prodId).val($.trim($("#orderUserAttrName").val()));
 			easyDialog.close();
 		});
 		
-		
-        $("#userForm").off().bind("formIsValid", function(event){	
+		$("#userForm").off().bind("formIsValid", function(event){	
         	$("#userTips").empty();
     	 // if(!!order.cust.tmpChooseUserInfo && order.cust.tmpChooseUserInfo.custId){
 			//保存并显示使用人信息，清空弹出框的客户信息、临时保存的客户信息，关闭弹出框
@@ -1533,9 +1532,8 @@ order.main = (function(){
 					json2.state = "ADD";
 					OrderInfo.boUserCustIdentities.push(json2);
 				}
-				
+				$('#'+CONST.PROD_ATTR.PROD_USER+'_'+prodId).val(prodId); 
 			}
-			$('#'+CONST.PROD_ATTR.PROD_USER+'_'+prodId).val(prodId); 
 			$('#'+CONST.PROD_ATTR.PROD_USER+'_'+prodId+'_name').val($.trim($("#orderUserAttrName").val()));
 			
 			order.cust.tmpChooseUserInfo = {};
@@ -1590,11 +1588,11 @@ order.main = (function(){
 				$("#orderUserIdentidiesTypeCd").val($(scope).attr("identityCd"));
 				//OrderInfo.handleCustId = $(scope).attr("custId");//经办人客户ID
 				// _choosedCustInfo.handleCustId = $(scope).attr("custId");//经办人客户ID
-				OrderInfo.boUserCustIdentities.state = "ADD";
-				OrderInfo.boUserCustIdentities.identityNum = $(scope).attr("idCardNumber");
-				OrderInfo.boUserCustInfos.name = $(scope).attr("partyName");
-				OrderInfo.boUserCustInfos.addressStr = $(scope).attr("addressStr");
-				OrderInfo.boUserCustInfos.state = "ADD";
+//				OrderInfo.boUserCustIdentities.state = "ADD";
+//				OrderInfo.boUserCustIdentities.identityNum = $(scope).attr("idCardNumber");
+//				OrderInfo.boUserCustInfos.name = $(scope).attr("partyName");
+//				OrderInfo.boUserCustInfos.addressStr = $(scope).attr("addressStr");
+//				OrderInfo.boUserCustInfos.state = "ADD";
 				$('#'+CONST.PROD_ATTR.PROD_USER+'_'+prodId).val($(scope).attr("custId")); 
 				isExists = true;
 			} 

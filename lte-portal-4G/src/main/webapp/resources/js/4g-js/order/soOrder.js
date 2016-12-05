@@ -498,7 +498,14 @@ SoOrder = (function() {
 		if(ec.util.isArray(OrderInfo.boUserCustInfos)){
 			OrderInfo.orderData.orderList.orderListInfo.partyId = OrderInfo.cust.custId;//-3经办人客户，-2使用人客户，-1产权客户
 			//订单填充使用人信息
-			_createUserCust(busiOrders, custOrderAttrs);
+			//使用人信息节点
+			for(var i=0;i<OrderInfo.boUserCustInfos.length;i++){
+				OrderInfo.boUserCustInfos[i].userCustFlag = "Y";
+				var busiOrder = _createUserCust(busiOrders, custOrderAttrs);
+				busiOrder.data.boCustInfos.push(OrderInfo.boUserCustInfos[i]);
+				busiOrder.data.boCustIdentities.push(OrderInfo.boUserCustIdentities[i]);
+				busiOrders.push(busiOrder);
+			}
 		}
 
 		OrderInfo.orderData.orderList.orderListInfo.custOrderAttrs = custOrderAttrs; //订单属性数组
@@ -3904,17 +3911,7 @@ SoOrder = (function() {
 				boPartyContactInfo	: []
 			}
 		};
-		
-		//使用人信息节点
-		for(var i=0;i<OrderInfo.boUserCustInfos.length;i++){
-			OrderInfo.boUserCustInfos[i].userCustFlag = "Y";
-			busiOrder.data.boCustInfos.push(OrderInfo.boUserCustInfos[i]);
-		}
-		for(var j=0;j<OrderInfo.boUserCustIdentities.length;j++){
-			//客户证件节点
-			busiOrder.data.boCustIdentities.push(OrderInfo.boUserCustIdentities[j]);
-		}
-		busiOrders.push(busiOrder);
+		return busiOrder;
 	};
 	return {
 		builder 				: _builder,
