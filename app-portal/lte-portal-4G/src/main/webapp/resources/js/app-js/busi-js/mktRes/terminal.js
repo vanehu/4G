@@ -768,7 +768,7 @@ mktRes.terminal = (function($){
 			return;
 		}
 		//校验经办人
-		if(!checkJBR()){
+		if(!_checkJBR()){
 			return;
 		}
 		var coupon = {

@@ -1266,9 +1266,9 @@ var _saveHtml2Pdf=function(){
 		CustOrderInfo.SendChannelAddress = $('#MDadd').val();//甩单地址
         if(order.broadband.isNeedJbr){//需要经办人
         	if(OrderInfo.cust.custId == -1){
-        		CustOrderInfo.custId=OrderInfo.cust.custId+"";
+        		CustOrderInfo.CustId=OrderInfo.cust.custId+"";
 			}else{
-				CustOrderInfo.custId=OrderInfo.cust.extCustId+"";
+				CustOrderInfo.CustId=OrderInfo.cust.extCustId+"";
 			}
         	if(!order.broadband.isSameOne){//非本人需要添加经办人HandleCustId节点
         			CustOrderInfo.HandleCustId=OrderInfo.jbr.custId+"";
@@ -2128,7 +2128,7 @@ var _setNoPhoto=function(){
 	var partyName = $('#orderAttrName').val().trim();//经办人名称
 	var addressStr = $('#orderAttrAddr').val().trim();//经办人地址
 	var identityNum = $('#orderAttrIdCard').val();//非身份证证件号码
-	if(partyName!="" || addressStr!="" || identityNum！=""){
+	if(partyName!="" || addressStr!="" || identityNum!=""){
 		order.broadband.isSameOne=false;
 		order.broadband.canCallPhote=false;
 		order.broadband.haveCallPhote=false;

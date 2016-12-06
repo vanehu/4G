@@ -628,7 +628,7 @@ cust = (function(){
 								_obj.append("<option value='"+certTypedate.certTypeCd+"' >"+certTypedate.name+"</option>");
 							}
 						}
-					    var identidiesTypeCd=OrderInfo.cust.identityCd;
+					    var identidiesTypeCd=$("#" + id + " option[selected='selected']").val();
 						if(identidiesTypeCd==1){
 							$("#jbrsfz").show();
 							$("#jbrsfz_i").show();
@@ -645,9 +645,19 @@ cust = (function(){
 						$("#queryJbr").show();
 						$("#photo").show();
 						OrderInfo.virOlId = "";
-						if(OrderInfo.jbr.identityPic){
+						if(OrderInfo.jbr){
+							OrderInfo.jbr.custId = undefined;
+							OrderInfo.jbr.partyName = undefined;
+							OrderInfo.jbr.telNumber = undefined;
+							OrderInfo.jbr.addressStr = undefined;
+							OrderInfo.jbr.identityCd = undefined;
+							OrderInfo.jbr.mailAddressStr = undefined;
 							OrderInfo.jbr.identityPic = undefined;
+							OrderInfo.jbr.identityNum = undefined;
 						}
+//						if(OrderInfo.jbr.identityPic){
+//							OrderInfo.jbr.identityPic = undefined;
+//						}
 						if(OrderInfo.preBefore.idPicFlag=="ON"){//实名拍照省份开关为开
 //							$("#photo").show();
 //							$("#queryJbr").show();
