@@ -15,11 +15,20 @@ common = (function($) {
 		var urlParams=$.parseJSON(JSON.stringify(url));//地址
 		OrderInfo.actionFlag=urlParams.actionFlag;
         //去除四个可能带等号的加密字段
-	    var myCust1=$.parseJSON(custInfosParams);
-		myCust1.CN="";
-		myCust1.certNum="";
-		myCust1.address="";			  
-		var myCust=JSON.stringify(myCust1);//四个加密字段可能值不合法，传入后台会报400错误，故去掉该值。
+	    var myCust1=$.parseJSON(custInfosParams);//四个加密字段可能值不合法，传入后台会报400错误，故转换该值。
+	    var CN=myCust1.CN;
+	    var address=myCust1.address;
+	    var certNum=myCust1.certNum;
+	    if(CN!=undefined){
+	    	myCust1.CN=CN.replace(/=/g,"&#61");
+	    }
+	    if(certNum!=undefined){
+	    	myCust1.address=address.replace(/=/g,"&#61");
+	    }
+	    if(address!=undefined){
+	    	myCust1.certNum=certNum.replace(/=/g,"&#61");
+	    }	
+		var myCust=JSON.stringify(myCust1);
 		custInfosParams=myCust;	
 		if(ec.util.isObj(prodIdInfos)){
 			order.prodModify.choosedProdInfo=$.parseJSON(prodIdInfosParams);
