@@ -4356,7 +4356,7 @@ public class OrderController extends BaseController {
             
            if(!StringUtils.isBlank(venderId)){
             	if(MDA.USBVERSION_SIGNATURE.get(venderId)==null){
-            		return super.failed("厂商标识信息有误", -1);
+            		return super.failed("身份证阅读器设备未在集约CRM系统授权范围内，不允许接入", -1);
             	}
             	if(MDA.USBVERSION_SIGNATURE.get(venderId).get("isOpen").equals("ON")){//启用新规范控件校验
 	    			String mdaVersion = MDA.USBVERSION_SIGNATURE.get(venderId).get("version");
@@ -4387,6 +4387,9 @@ public class OrderController extends BaseController {
 		            	jsonResponse = super.failed(param, -3);//版本有误
 		            	return jsonResponse;
 		            }
+            	}
+            	else{
+            		return super.failed("身份证阅读器设备未在集约CRM系统授权范围内，不允许接入", -1);
             	}
             }
             String appSecret1 = propertiesUtils.getMessage("APP_SECRET"); //appId对应的加密密钥
