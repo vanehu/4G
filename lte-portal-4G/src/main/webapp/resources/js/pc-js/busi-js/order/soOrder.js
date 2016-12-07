@@ -2869,26 +2869,40 @@ SoOrder = (function() {
 		}
 		
 		//根据开关判断是否进行经办人校验
-		var response = $.callServiceAsJson(contextPath + "/properties/getValue", {"key": "REAL_NAME_PHOTO_" + OrderInfo.staff.areaId.substr(0, 3)});
-		if (response.code == "0") {
-			OrderInfo.realNamePhotoFlag = response.data;
-			if ("ON" == response.data) {
-				//实名制拍照：经办人校验
-				if(OrderInfo.orderAttrFlag == "Y"){
-					//经办人必填进行校验，否则不校验
-					if(OrderInfo.subHandleInfo.authFlag != "Y"){
-						if(OrderInfo.subHandleInfo.authFlag == "F"){
-							$.alert("提示","经办人拍照留存上传失败，请重新拍照认证！");
-							return false;
-						} else{
-							$.alert("提示","经办人信息未通过人证相符认证，请您先对经办人拍照认证！");
-							return false;
-						}
+		if (OrderInfo.realNamePhotoFlag == "ON") {
+			//实名制拍照：经办人校验
+			if(OrderInfo.orderAttrFlag == "Y"){
+				//经办人必填进行校验，否则不校验
+				if(OrderInfo.subHandleInfo.authFlag != "Y"){
+					if(OrderInfo.subHandleInfo.authFlag == "F"){
+						$.alert("提示","经办人拍照留存上传失败，请重新拍照认证！");
+						return false;
+					} else{
+						$.alert("提示","经办人信息未通过人证相符认证，请您先对经办人拍照认证！");
+						return false;
 					}
 				}
 			}
+		}else{//开关关闭,订单购物车属性(经办人)老模式
+			var orderAttrName = $.trim($("#orderAttrName").val()); //经办人姓名
+			var orderAttrIdCard =$.trim($("#orderAttrIdCard").val()); //证件号码
+			var orderAttrPhoneNbr = $.trim($("#orderAttrPhoneNbr").val()); //联系人号码
+			if(ec.util.isObj(orderAttrName)&&ec.util.isObj(orderAttrIdCard)&&ec.util.isObj(orderAttrPhoneNbr)){
+			}else {
+				if(!ec.util.isObj(orderAttrName)){
+					$.alert("提示","经办人姓名为空，经办人姓名、联系人号码、证件号码必须同时为空或不为空，因此无法提交！");
+					return false;
+				}
+				if(!ec.util.isObj(orderAttrPhoneNbr)){
+					$.alert("提示","联系人号码为空，经办人姓名、联系人号码、证件号码必须同时为空或不为空，因此无法提交！");
+					return false;
+				}
+				if(!ec.util.isObj(orderAttrIdCard)){
+					$.alert("提示","证件号码为空，经办人姓名、联系人号码、证件号码必须同时为空或不为空，因此无法提交！");
+					return false;
+				}
+			}
 		}
-		
 		return true; 
 	};
 	//判断是否包含有3G的机型
@@ -3123,32 +3137,65 @@ SoOrder = (function() {
 					}
 				}
 			}
+			
+			//添加虚拟订单ID属性
+			if(OrderInfo.subHandleInfo.virOlId != null && OrderInfo.subHandleInfo.virOlId != undefined && OrderInfo.subHandleInfo.virOlId != ""){
+				//添加虚拟订单ID属性
+				custOrderAttrs.push({
+					itemSpecId : CONST.BUSI_ORDER_ATTR.VIROLID,
+					value : OrderInfo.subHandleInfo.virOlId//即照片上传时后台返回的18位的虚拟订单ID:virOlId
+				});
+			}
 		} else{//开关关闭
-			if(OrderInfo.subHandleInfo.handleExist == "Y"){
-				//如果是老客户
-				OrderInfo.orderData.orderList.orderListInfo.partyId = OrderInfo.cust.custId;//门户主页客户定位的客户ID
-				OrderInfo.orderData.orderList.orderListInfo.handleCustId = OrderInfo.subHandleInfo.handleCustId;//经办人查询出的客户ID
-			} else if(OrderInfo.subHandleInfo.handleExist == "N"){
-				//如果是新客户
-				OrderInfo.orderData.orderList.orderListInfo.partyId = OrderInfo.cust.custId;//-3经办人客户，-2使用人客户，-1产权客户
-				if(OrderInfo.subHandleInfo.orderAttrName != null && OrderInfo.subHandleInfo.orderAttrName != "" 
-						&& OrderInfo.subHandleInfo.orderAttrAddr != null && OrderInfo.subHandleInfo.orderAttrAddr != ""
-						&& OrderInfo.subHandleInfo.identityNum != null && OrderInfo.subHandleInfo.identityNum != ""){//如果用户填经办人
-					var handleCustInstId = OrderInfo.SEQ.offerSeq--;
-					OrderInfo.HandleCustInstId = handleCustInstId;
-					OrderInfo.orderData.orderList.orderListInfo.handleCustId = handleCustInstId;//新建经办人，handleCustId与partyId一致
-					_createHandleCust(busiOrders);
+			//订单购物车属性(经办人) 老模式
+			var orderAttrName = $.trim($("#orderAttrName").val()); //经办人姓名
+			var orderIdentidiesTypeCd = $("#orderIdentidiesTypeCd  option:selected").val(); //证件类型
+			var orderAttrIdCard =$.trim($("#orderAttrIdCard").val()); //证件号码
+			var orderAttrAddr = $.trim($("#orderAttrAddr").val()); //地址
+			var orderAttrPhoneNbr = $.trim($("#orderAttrPhoneNbr").val()); //联系人号码
+			if(ec.util.isObj(orderAttrName)&&ec.util.isObj(orderAttrIdCard)&&ec.util.isObj(orderAttrPhoneNbr)){
+				if(ec.util.isObj(orderAttrName)){
+					custOrderAttrs.push({
+						itemSpecId : CONST.BUSI_ORDER_ATTR.orderAttrName,
+						value : orderAttrName
+					});	
+				}
+				if(ec.util.isObj(orderAttrIdCard)){
+					custOrderAttrs.push({
+						itemSpecId : CONST.BUSI_ORDER_ATTR.orderIdentidiesTypeCd,
+						value : orderIdentidiesTypeCd
+					});	
+					custOrderAttrs.push({
+						itemSpecId : CONST.BUSI_ORDER_ATTR.orderAttrIdCard,
+						value : orderAttrIdCard
+					});	
+				}
+				if(ec.util.isObj(orderAttrPhoneNbr)){
+					custOrderAttrs.push({
+						itemSpecId : CONST.BUSI_ORDER_ATTR.orderAttrPhoneNbr,
+						value : orderAttrPhoneNbr
+					});	
+				}
+				if(ec.util.isObj(orderAttrAddr)){
+					custOrderAttrs.push({
+						itemSpecId : CONST.BUSI_ORDER_ATTR.orderAttrAddr,
+						value : orderAttrAddr
+					});	
+				}
+			}else {
+				if(!ec.util.isObj(orderAttrName)){
+					$.alert("提示","经办人姓名为空，经办人姓名、联系人号码、证件号码必须同时为空或不为空，因此无法提交！");
+					return false;
+				}
+				if(!ec.util.isObj(orderAttrPhoneNbr)){
+					$.alert("提示","联系人号码为空，经办人姓名、联系人号码、证件号码必须同时为空或不为空，因此无法提交！");
+					return false;
+				}
+				if(!ec.util.isObj(orderAttrIdCard)){
+					$.alert("提示","证件号码为空，经办人姓名、联系人号码、证件号码必须同时为空或不为空，因此无法提交！");
+					return false;
 				}
 			}
-		}
-		
-		//添加虚拟订单ID属性
-		if(OrderInfo.subHandleInfo.virOlId != null && OrderInfo.subHandleInfo.virOlId != undefined && OrderInfo.subHandleInfo.virOlId != ""){
-			//添加虚拟订单ID属性
-			custOrderAttrs.push({
-				itemSpecId : CONST.BUSI_ORDER_ATTR.VIROLID,
-				value : OrderInfo.subHandleInfo.virOlId//即照片上传时后台返回的18位的虚拟订单ID:virOlId
-			});
 		}
 	};
 	

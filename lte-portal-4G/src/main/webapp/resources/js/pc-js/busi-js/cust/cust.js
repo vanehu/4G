@@ -389,7 +389,9 @@ order.cust = (function(){
 				$("#li_order_remark2 span").text("");
 				$("#li_order_remark3 span").hide();
 				$("#li_order_remark3 span").text("");
-				$("#orderAttrQryBtn").show();
+				if(OrderInfo.realNamePhotoFlag == "ON"){//开关打开
+					$("#orderAttrQryBtn").show();
+				}
 			}else if(id == "orderUserIdCard"){//使用人
 				$("#orderUserReadCertBtn").hide();
 				$("#li_order_user span").text("");
@@ -1109,6 +1111,11 @@ order.cust = (function(){
 		_certTypeByPartyType("-1","p_cust_identityCd_choose"); //初始化证件类型，p_cust_identityCd=-1表示查询所有已关联的证件类型
 		_custidentidiesTypeCdChoose($("#p_cust_identityCd").children(":first-child"),"p_cust_identityNum");
 		_checkAutoCustQry(); //省份甩单，自动定位客户
+		//根据开关判断是否进行经办人校验
+		var response = $.callServiceAsJson(contextPath + "/properties/getValue", {"key": "REAL_NAME_PHOTO_" + OrderInfo.staff.areaId.substr(0, 3)});
+		if (response.code == "0") {
+			OrderInfo.realNamePhotoFlag = response.data;
+		}
 	};
 	//使用带入的客户信息自动定位客户
 	var _checkAutoCustQry = function(){
@@ -2488,13 +2495,18 @@ order.cust = (function(){
 			$.alert("提示", man.errorMsg);
 			return;
 		}
-		if(man.resultContent.identityPic == null || man.resultContent.identityPic == undefined || man.resultContent.identityPic == ""){
-			$.alert("提示", "当前经办人身份证照片为空，请确认");
-			return;
+		if (OrderInfo.realNamePhotoFlag == "ON") {//新模式
+			if(man.resultContent.identityPic == null || man.resultContent.identityPic == undefined || man.resultContent.identityPic == ""){
+				$.alert("提示", "当前经办人身份证照片为空，请确认");
+				return;
+			}
+			_setValueForAgentOrderSpan(man.resultContent);
+			//弹出拍照弹框
+			_showPhotoGraph(man.resultContent);
+		}else{//老模式
+			_setValueForAgentOrderSpan(man.resultContent);
 		}
-		_setValueForAgentOrderSpan(man.resultContent);
-		//弹出拍照弹框
-		_showPhotoGraph(man.resultContent);
+		
 	};
 	var _setValueForAgentOrderSpan = function(data){
 		// 设置隐藏域的表单数据
