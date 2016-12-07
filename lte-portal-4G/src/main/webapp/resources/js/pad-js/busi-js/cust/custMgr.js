@@ -1097,10 +1097,6 @@ order.cust.mgr = (function(){
 							$.alert("提示",mainPhoneNum+"不是在用产品！");
 							return false;
 						}
-						if(OrderInfo.actionFlag!=1 && prodInstInfos.feeType.feeType!=order.prodModify.choosedProdInfo.feeType){
-							$.alert("提示",mainPhoneNum+"和主卡的付费类型不一致！");
-							return false;
-						}
 						if(prodInstInfos.productId=="280000000"){
 							$.alert("提示",mainPhoneNum+"是无线宽带，不能纳入！");
 							return false;

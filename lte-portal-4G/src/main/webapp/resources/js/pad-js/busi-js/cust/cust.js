@@ -835,6 +835,103 @@ order.cust = (function(){
 		param.resultCode = "1";
 		_saveAuthRecord(param);
 	};
+	
+	//绑定客户选择查询事件，使用人
+	var _bindCustQueryForChoose = function(){
+		$('#custQueryForChooseForm').off().bind('formIsValid', function(event, form) {
+			var identityCd="";
+			var idcard="";
+			var diffPlace="";
+			var acctNbr="";
+			var identityNum="";
+			var queryType="";
+			var queryTypeValue="";
+			identityCd=$("#p_cust_identityCd_choose").val();
+			identityNum=$.trim($("#p_cust_identityNum_choose").val());
+			authFlag="0"; //需要鉴权
+			if(identityCd==-1){
+				acctNbr=identityNum;
+				identityNum="";
+				identityCd="";
+			}else if(identityCd=="acctCd"||identityCd=="custNumber"){
+				acctNbr="";
+				identityNum="";
+				identityCd="";
+				queryType=$("#p_cust_identityCd_choose").val();
+				queryTypeValue=$.trim($("#p_cust_identityNum_choose").val());
+			}
+			diffPlace=$("#diffPlaceFlag_choose").val();
+			areaId=$("#p_cust_areaId_choose").val();
+			//lte进行受理地区市级验证
+			if(CONST.getAppDesc()==0&&areaId.indexOf("0000")>0){
+				$.alert("提示","省级地区无法进行定位客户,请选择市级地区！");
+				return;
+			}
+			var param = {
+					"acctNbr":acctNbr,
+					"identityCd":identityCd,
+					"identityNum":identityNum,
+					"partyName":"",
+					"custQueryType":$("#custQueryType_choose").val(),
+					"diffPlace":diffPlace,
+					"areaId" : areaId,
+					"queryType" :queryType,
+					"queryTypeValue":queryTypeValue,
+					"identidies_type":$("#p_cust_identityCd_choose  option:selected").text()
+			};
+			
+			
+			//JSON.stringify(param)
+			//TODO 
+			$.callServiceAsHtml(contextPath+"/cust/queryCust",param, {
+				"before":function(){
+					$.ecOverlay("<strong>正在查询中，请稍等...</strong>");
+				},"always":function(){
+					$.unecOverlay();
+				},	
+				"done" : function(response){
+					if (response.code == -2) {
+						return;
+					}
+					if(response.data.indexOf("false") ==0) {
+						$.alert("提示","抱歉，没有定位到客户，请尝试其他客户。");
+						return;
+					}
+					
+					order.cust.jumpAuthflag = $(response.data).find('#jumpAuthflag').val();
+					var custInfoSize = $(response.data).find('#custInfoSize').val();
+					// 使用人定位时，存在多客户的情况
+					if (custInfoSize == 1) {
+						order.cust.showCustAuth($(response.data).find('#custInfos'));
+					} else if (custInfoSize > 1) {
+						$("#choose_multiple_user_dialog").html(response.data);
+						easyDialog.open({
+							container: 'choose_multiple_user_dialog',
+							callback: function () {
+							}
+						});
+					}
+					$(".userclose").off("click").on("click",function(event) {
+						try {
+							easyDialog.close();
+						} catch (e) {
+							$('#choose_multiple_user_dialog').hide();
+							$('#overlay').hide();
+						}
+						authFlag="";
+						$(".usersearchcon").hide();
+					});
+					if($("#custListTable").attr("custInfoSize")=="1"){
+						$(".usersearchcon").hide();
+					}
+				},
+				"fail":function(response){
+					$.unecOverlay();
+					$.alert("提示","查询失败，请稍后再试！");
+				}
+			});
+		}).ketchup({bindElement:"userSearchForChooseBtn"});
+	};
 
 	return {	
 		identidiesTypeCdChoose :_identidiesTypeCdChoose,
@@ -860,7 +957,8 @@ order.cust = (function(){
 		choosedCustInfo:_choosedCustInfo,
 		isSelfChannel:_isSelfChannel,
 		goService:_goService,
-		identityTypeAuthSub:_identityTypeAuthSub
+		identityTypeAuthSub:_identityTypeAuthSub,
+		bindCustQueryForChoose : _bindCustQueryForChoose
 		
 	};
 })();

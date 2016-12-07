@@ -745,11 +745,6 @@ order.memberChange = function(){
 									$.alert("提示",OrderInfo.choosedNumList[k].accNbr+"不是在用产品！");
 									return;
 								}
-								if(prodInfo.feeType.feeType!=order.prodModify.choosedProdInfo.feeType){
-									orderflag = false;
-									$.alert("提示",OrderInfo.choosedNumList[k].accNbr+"和主卡的付费类型不一致！");
-									return;
-								}
 								if(prodInfo.productId==CONST.PROD_SPEC.DATA_CARD){
 									$.alert("提示",OrderInfo.choosedNumList[k].accNbr+"是无线宽带，不能纳入！");
 									return false;
@@ -801,12 +796,12 @@ order.memberChange = function(){
 							return false;
 						}
 						
-						if(OrderInfo.actionFlag!=1 && prodInstInfos.feeType.feeType!=order.prodModify.choosedProdInfo.feeType){
+						/*if(OrderInfo.actionFlag!=1 && prodInstInfos.feeType.feeType!=order.prodModify.choosedProdInfo.feeType){
 							orderflag = false;
 							$.alert("提示",custinfolist[i].accNbr+"和主卡的付费类型不一致！");
 							return false;
 						}
-						
+						*/
 						if(prodInstInfos.productId=="280000000"){
 							$.alert("提示",custinfolist[i].accNbr+"是无线宽带，不能纳入！");
 							return false;

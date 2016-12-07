@@ -2151,7 +2151,7 @@ order.prodModify = (function(){
 					$.callServiceAsJson(contextPath+"/mktRes/phonenumber/releaseErrorNum", param);
 				}
 				order.service.boProdAn = {};
-				order.phoneNumber.resetBoProdAn();
+				mktRes.phoneNumber.resetBoProdAn();
 			}			
 			//页面变动
 			$("#order_fill_content").empty();

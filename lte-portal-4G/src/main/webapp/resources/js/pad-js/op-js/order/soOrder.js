@@ -2375,7 +2375,7 @@ SoOrder = (function() {
 			
 			//新装纳入老用户
 			
-			if(offerChange.oldMemberFlag){
+			/*if(offerChange.oldMemberFlag){
 				var paytype=$('select[name="pay_type_-1"]').val();
 				$.each(OrderInfo.oldprodInstInfos,function(){
 					if(this.feeType.feeType!=paytype){
@@ -2383,7 +2383,7 @@ SoOrder = (function() {
 						return false ; 
 					}
 				});
-			}
+			}*/
 			
 			//校验号码跟UIM卡
 			if(!ec.util.isArray(OrderInfo.oldprodInstInfos)){

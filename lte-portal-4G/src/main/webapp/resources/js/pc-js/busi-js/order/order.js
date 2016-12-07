@@ -222,29 +222,6 @@ order.service = (function(){
 			return;
 		}
 		if(OrderInfo.actionFlag == 2){ //套餐变更			
-			var url=contextPath+"/token/pc/order/queryFeeType";
-			$.ecOverlay("<strong>正在查询是否判断付费类型的服务中,请稍后....</strong>");
-			var response = $.callServiceAsJsonGet(url,param);	
-			$.unecOverlay();
-			if (response.code==0) {			
-				if(response.data!=undefined){
-					if("0"==response.data){			
-						var is_same_feeType=false;
-						if(order.prodModify.choosedProdInfo.feeType=="2100" && (offerSpec.feeType=="2100"||offerSpec.feeType=="3100"||offerSpec.feeType=="3101"||offerSpec.feeType=="3103"||offerSpec.feeType=="1202"||offerSpec.feeType=="2101")){
-							is_same_feeType=true;//预付费
-						}else if(order.prodModify.choosedProdInfo.feeType=="1200" && (offerSpec.feeType=="1200"||offerSpec.feeType=="3100"||offerSpec.feeType=="3102"||offerSpec.feeType=="3103"||offerSpec.feeType=="1202"||offerSpec.feeType=="2101")){
-							is_same_feeType=true;//后付费
-						}else if(order.prodModify.choosedProdInfo.feeType=="1201" && (offerSpec.feeType=="1201"||offerSpec.feeType=="3101"||offerSpec.feeType=="3102"||offerSpec.feeType=="3103")){
-							is_same_feeType=true;//准实时预付费
-						}
-						if(!is_same_feeType){
-							$.alert("提示","付费类型不一致,无法进行套餐变更。");
-							return;
-						}
-					}
-				}
-			}
-			
 //			if(OrderInfo.offid!=null && OrderInfo.offid!=""){
 //				 $("#offer_title").text("订购新套餐："+OrderInfo.offerSpec.offerSpecName);
 //				//弹出套餐确认
@@ -766,7 +743,7 @@ order.service = (function(){
 			return;
 		}
 		if(OrderInfo.actionFlag == 2){ //套餐变更			
-			var url=contextPath+"/token/pc/order/queryFeeType";
+			/*var url=contextPath+"/token/pc/order/queryFeeType";
 			$.ecOverlay("<strong>正在查询是否判断付费类型的服务中,请稍后....</strong>");
 			var response = $.callServiceAsJsonGet(url,param);	
 			$.unecOverlay();
@@ -787,7 +764,7 @@ order.service = (function(){
 						}
 					}
 				}
-			}
+			}*/
 			offerChange.offerChangeView();
 			return;
 		}

@@ -45,7 +45,7 @@ order.main = (function(){
 		}
 		
 		if(order.memberChange.newMemberFlag && OrderInfo.actionFlag == 6){//主副卡成员变更 付费类型判断 如果一致才可以进行加装
-			var is_same_feeType=false;//
+			/*var is_same_feeType=false;//
 			if(param.feeTypeMain=="2100" && (param.offerSpec.feeType=="2100"||param.offerSpec.feeType=="3100"||param.offerSpec.feeType=="3101"||param.offerSpec.feeType=="3103")){
 				is_same_feeType=true;
 			}else if(param.feeTypeMain=="1200" && (param.offerSpec.feeType=="1200"||param.offerSpec.feeType=="3100"||param.offerSpec.feeType=="3102"||param.offerSpec.feeType=="3103")){
@@ -56,7 +56,7 @@ order.main = (function(){
 			if(!is_same_feeType){
 				$.alert("提示","主副卡付费类型不一致，无法进行主副卡成员变更。");
 				return;
-			}
+			}*/
 		}
 		$.callServiceAsHtml(contextPath+"/token/pad/order/main",param,{
 			"before":function(){
@@ -3978,9 +3978,6 @@ order.main = (function(){
 
 			}
 			
-			if(OrderInfo.actionFlag == 6){//主副卡成员变更
-				$('#MEMBERDIV_'+prodId).hide();					
-			}
 		}
 	};
 	
