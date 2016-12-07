@@ -554,6 +554,4 @@ $(function(){
 			CONST.LTE_PHONE_HEAD = reg;
 		}
 	}
-
-	CONST.isHandleCustNeeded = query.common.checkOperateSpec(CONST.TGJBRBTQX);
 });

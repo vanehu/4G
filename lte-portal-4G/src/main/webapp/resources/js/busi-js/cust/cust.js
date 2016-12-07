@@ -3205,4 +3205,5 @@ order.cust = (function(){
 $(function() {
    order.cust.form_valid_init();
    order.cust.initDic();
+   CONST.isHandleCustNeeded = query.common.checkOperateSpec(CONST.TGJBRBTQX);
 });
