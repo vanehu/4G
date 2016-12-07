@@ -409,6 +409,7 @@ mktRes.terminal = (function($){
 	 * 选择立即订购终端
 	 */
 	var _selectTerminal=function(obj){
+		OrderInfo.prodAttrs = [];
 		//mktResTypeCd="${mkt.mktResTypeCd}" mktResCd="${mkt.mktResCd}" brand="${brand}" phoneType="${phoneType}" 
 		//phoneColor="${phoneColor}" mktName="${mkt.mktResName}" mktPrice="${(mkt.salePrice)}" mktPicA="${p_pic}" 
 		var param = {

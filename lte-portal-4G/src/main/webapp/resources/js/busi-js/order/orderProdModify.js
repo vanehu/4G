@@ -160,6 +160,7 @@ order.prodModify = (function(){
 	var leftInvalidTime=300;
 	//补换卡规则校验
 	var _showChangeCard = function (addChange) {
+		OrderInfo.prodAttrs = [];
 		if (!ec.util.isObj(addChange)) {
 			addChange = "13";
 		}
@@ -479,6 +480,7 @@ order.prodModify = (function(){
 	
 	//挂失解挂准备
 	var _showLossRepProd = function () {
+		OrderInfo.prodAttrs = [];
 		if(OrderInfo.authRecord.resultCode!="0" && OrderInfo.preBefore.prcFlag != "Y"){
 			if(_querySecondBusinessAuth("18","Y","showLossRepProd")){
 				return;
@@ -523,6 +525,7 @@ order.prodModify = (function(){
 	};
 	//解挂准备
 	var _showLossRepProdReg = function () {
+		OrderInfo.prodAttrs = [];
 		if(OrderInfo.authRecord.resultCode!="0" && OrderInfo.preBefore.prcFlag != "Y"){
 			if (_querySecondBusinessAuth("19", "Y", "showLossRepProdReg")) {
 				return;
@@ -564,6 +567,7 @@ order.prodModify = (function(){
 	};
 	//停机保号/取消停机保号准备
 	var _showStopKeepNumProd = function () {
+		OrderInfo.prodAttrs = [];
 		if(OrderInfo.authRecord.resultCode!="0" && OrderInfo.preBefore.prcFlag != "Y"){
 			if (_querySecondBusinessAuth("20", "Y", "showStopKeepNumProd")) {
 				return;
@@ -609,6 +613,7 @@ order.prodModify = (function(){
 	};
 	//停机保号/取消停机保号准备
 	var _showStopKeepNumProdReg = function () {
+		OrderInfo.prodAttrs = [];
 		if(OrderInfo.authRecord.resultCode!="0" && OrderInfo.preBefore.prcFlag != "Y"){
 			if (_querySecondBusinessAuth("21", "Y", "showStopKeepNumProdReg")) {
 				return;
@@ -725,6 +730,7 @@ order.prodModify = (function(){
 	};
 	//改客户资料返档
 	var _showActiveReturn = function () {
+		OrderInfo.prodAttrs = [];
 		if(OrderInfo.authRecord.resultCode!="0" && OrderInfo.preBefore.prcFlag != "Y"){
 			if (_querySecondBusinessAuth("12", "Y", "showActiveReturn")) {
 				return;
@@ -1282,6 +1288,7 @@ order.prodModify = (function(){
 	};
 	//欠费拆机
 	var _showOweRemoveProd = function () {
+		OrderInfo.prodAttrs = [];
 		if(OrderInfo.authRecord.resultCode!="0" && OrderInfo.preBefore.prcFlag != "Y"){
 			if (_querySecondBusinessAuth("10", "Y", "showOweRemoveProd")) {
 				return;
@@ -1333,6 +1340,7 @@ order.prodModify = (function(){
 	
 	//拆机
 	var _showRemoveProd = function () {
+		OrderInfo.prodAttrs = [];
 		if(OrderInfo.authRecord.resultCode!="0" && OrderInfo.preBefore.prcFlag != "Y"){
 			if (_querySecondBusinessAuth("7", "Y", "showRemoveProd")) {
 				return;
@@ -1381,6 +1389,7 @@ order.prodModify = (function(){
 	
 	//预拆机
 	var _showOrderRemoveProd = function() {
+		OrderInfo.prodAttrs = [];
 		if(OrderInfo.authRecord.resultCode!="0" && OrderInfo.preBefore.prcFlag != "Y"){
 			if (_querySecondBusinessAuth("5", "Y", "showOrderRemoveProd")) {
 				return;
@@ -1429,6 +1438,7 @@ order.prodModify = (function(){
 	
 	//预拆机复机
 	var _showCoverOrderRemoveProd = function() {
+		OrderInfo.prodAttrs = [];
 		if(OrderInfo.authRecord.resultCode!="0" && OrderInfo.preBefore.prcFlag != "Y"){
 			if (_querySecondBusinessAuth("6", "Y", "showCoverOrderRemoveProd")) {
 				return;
@@ -1481,6 +1491,7 @@ order.prodModify = (function(){
 	
 	//违章拆机
 	var _showBreakRuleRemoveProd = function() {
+		OrderInfo.prodAttrs = [];
 		if(OrderInfo.authRecord.resultCode!="0" && OrderInfo.preBefore.prcFlag != "Y"){
 			if (_querySecondBusinessAuth("8", "Y", "showBreakRuleRemoveProd")) {
 				return;
@@ -1531,6 +1542,7 @@ order.prodModify = (function(){
 	};
 	//未激活拆机
 	var _showNoActiveRemoveProd = function() {
+		OrderInfo.prodAttrs = [];
 		if(OrderInfo.authRecord.resultCode!="0" && OrderInfo.preBefore.prcFlag != "Y"){
 			if (_querySecondBusinessAuth("9", "Y", "showNoActiveRemoveProd")) {
 				return;
@@ -1587,6 +1599,7 @@ order.prodModify = (function(){
 	};
 	// 安全办公群组产品拆机
 	var _showGroupRemoveProd = function() {
+		OrderInfo.prodAttrs = [];
 		// 只允许安全办公产品做拆机
 		if (_choosedProdInfo.productId != CONST.SECURITY_OFFICE_PROD_ID) {
 			$.alert("提示", "非安全办公套餐不能进行群组拆机");
@@ -1827,6 +1840,7 @@ order.prodModify = (function(){
 	
 	//修改产品实例属性:修改使用人
 	var _spec_parm_user_change = function(){
+		OrderInfo.prodAttrs = [];
 		var response = $.callServiceAsJson(contextPath + "/properties/getValue", {"key": "GOV_"+OrderInfo.cust.areaId.substr(0,3)});
 		if (CacheData.isGov(OrderInfo.cust.identityCd) && "ON" == response.data) {
 			if (OrderInfo.authRecord.resultCode != "0" && OrderInfo.preBefore.prcFlag != "Y") {
@@ -1917,6 +1931,7 @@ order.prodModify = (function(){
 	
 	//修改付费类型:修改付费类型、是否信控 --入口
 	var _spec_parm_fee_type_change = function(){
+		OrderInfo.prodAttrs = [];
 		if(OrderInfo.authRecord.resultCode!="0" && OrderInfo.preBefore.prcFlag != "Y"){
 			if (_querySecondBusinessAuth("2", "N", "spec_parm_fee_type_change")) {
 				return;
@@ -2024,6 +2039,7 @@ order.prodModify = (function(){
 	
 	//修改产品实例属性
 	var _spec_parm_change= function(){
+		OrderInfo.prodAttrs = [];
 		if(OrderInfo.authRecord.resultCode!="0" && OrderInfo.preBefore.prcFlag != "Y"){
 			if (_querySecondBusinessAuth("16", "Y", "spec_parm_change")) {
 				return;
@@ -2094,6 +2110,7 @@ order.prodModify = (function(){
 	
 	//修改产品密码 
 	var _showPasswordChange = function () {
+		OrderInfo.prodAttrs = [];
 		if(OrderInfo.authRecord.resultCode!="0" && OrderInfo.preBefore.prcFlag != "Y"){
 			if (_querySecondBusinessAuth("14", "Y", "showPasswordChange")) {
 				return;
@@ -2215,6 +2232,7 @@ order.prodModify = (function(){
 	
 	//密码重置 校验
 	var _showPasswordReset = function () {
+		OrderInfo.prodAttrs = [];
 		if(OrderInfo.authRecord.resultCode!="0" && OrderInfo.preBefore.prcFlag != "Y"){
 			if (_querySecondBusinessAuth("15", "Y", "showPasswordReset")) {
 				return;
@@ -2606,6 +2624,7 @@ order.prodModify = (function(){
 	
 	//可选包订购退订
 	var _orderAttachOffer = function () {
+		OrderInfo.prodAttrs = [];
 		if(OrderInfo.authRecord.resultCode!="0" && OrderInfo.preBefore.prcFlag != "Y"){
 			if (_querySecondBusinessAuth("3", "N", "orderAttachOffer")) {
 				return;
@@ -3691,6 +3710,7 @@ order.prodModify = (function(){
 
 	//返销
 	var _showBuyBack = function () {
+		OrderInfo.prodAttrs = [];
 		if(OrderInfo.authRecord.resultCode!="0" && OrderInfo.preBefore.prcFlag != "Y"){
 			if (_querySecondBusinessAuth("22", "Y", "showBuyBack")) {
 				return;
@@ -3879,6 +3899,7 @@ order.prodModify = (function(){
 	
 	//一卡双号订购显示
 	var _showNumberOrder = function () {
+		OrderInfo.prodAttrs = [];
 		if(OrderInfo.authRecord.resultCode!="0" && OrderInfo.preBefore.prcFlag != "Y"){
 			if (_querySecondBusinessAuth("23", "Y", "showNumberOrder")) {
 				return;
@@ -4060,6 +4081,7 @@ order.prodModify = (function(){
 	
 	//一卡双号退订显示
 	var _showNumberUnOrder = function () {
+		OrderInfo.prodAttrs = [];
 		if(OrderInfo.authRecord.resultCode!="0" && OrderInfo.preBefore.prcFlag != "Y"){
 			if (_querySecondBusinessAuth("24", "Y", "showNumberUnOrder")) {
 				return;
@@ -4339,6 +4361,7 @@ order.prodModify = (function(){
 	};
 
 	var _urgentOpen = function(){
+		OrderInfo.prodAttrs = [];
 		if(OrderInfo.authRecord.resultCode!="0" && OrderInfo.preBefore.prcFlag != "Y"){
 			if (_querySecondBusinessAuth("20", "Y", "urgentOpen")) {//鉴权方式同停机保号
 				return;

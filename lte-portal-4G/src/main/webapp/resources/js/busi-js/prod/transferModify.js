@@ -38,6 +38,7 @@ prod.transferModify = (function(){
 	};
 	//过户返档
 	var _showCustTransferReturn = function () {
+		OrderInfo.prodAttrs = [];
 		if(OrderInfo.authRecord.resultCode!="0"){
 			if (order.prodModify.querySecondBusinessAuth("11", "Y", "prod.transferModify.showCustTransferReturn")) {
 				return;
@@ -1097,6 +1098,7 @@ prod.transferModify = (function(){
 	
 	//改造后返档
 	var _showReturnFile = function () {
+		OrderInfo.prodAttrs = [];
 		if(OrderInfo.authRecord.resultCode!="0"){
 			if (order.prodModify.querySecondBusinessAuth("11", "Y", "prod.transferModify.showReturnFile")) {
 				return;
