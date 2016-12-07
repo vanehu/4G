@@ -2848,7 +2848,7 @@ SoOrder = (function() {
 				return false ; 
 			}
 			//纳入老用户判断主卡副卡账户一致
-			if(ec.util.isArray(OrderInfo.oldprodAcctInfos)){
+			/*if(ec.util.isArray(OrderInfo.oldprodAcctInfos)){
 				for(var a=0;a<OrderInfo.oldprodAcctInfos.length;a++){
 					var oldacctId = OrderInfo.oldprodAcctInfos[a].prodAcctInfos[0].acctId;
 					var mainacctid = $("#acctSelect option:selected").val();
@@ -2866,7 +2866,7 @@ SoOrder = (function() {
 						return false ; 
 					}
 				});
-			}
+			}*/
 			//校验号码跟UIM卡
 			if(!(ec.util.isArray(OrderInfo.oldprodInstInfos) && OrderInfo.actionFlag==6)){
 				for ( var i = 0; i < OrderInfo.offerSpec.offerRoles.length; i++) {

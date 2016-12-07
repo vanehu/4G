@@ -263,7 +263,7 @@ order.service = (function(){
 			return;
 		}
 		if(OrderInfo.actionFlag == 2){ //套餐变更	
-			var url=contextPath+"/order/queryFeeType";
+			/*var url=contextPath+"/order/queryFeeType";
 			$.ecOverlay("<strong>正在查询是否判断付费类型的服务中,请稍后....</strong>");
 			var response = $.callServiceAsJsonGet(url,param);	
 			$.unecOverlay();
@@ -284,7 +284,7 @@ order.service = (function(){
 						}
 					}
 				}
-			}
+			}*/
 			offerChange.offerChangeView();
 			return;
 		}
@@ -708,7 +708,7 @@ order.service = (function(){
 			return;
 		}
 		if(OrderInfo.actionFlag == 2){ //套餐变更			
-			var url=contextPath+"/token/pc/order/queryFeeType";
+			/*var url=contextPath+"/token/pc/order/queryFeeType";
 			$.ecOverlay("<strong>正在查询是否判断付费类型的服务中,请稍后....</strong>");
 			var response = $.callServiceAsJsonGet(url,param);	
 			$.unecOverlay();
@@ -729,7 +729,7 @@ order.service = (function(){
 						}
 					}
 				}
-			}
+			}*/
 			offerChange.offerChangeView();
 			return;
 		}
