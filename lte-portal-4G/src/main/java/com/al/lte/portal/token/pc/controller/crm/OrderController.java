@@ -1330,7 +1330,7 @@ public class OrderController extends BaseController {
 		//判断经办人是否必填开关
 		String propertiesKey =  "REAL_NAME_PHOTO_"+sessionStaff.getCurrentAreaId().substring(0,3);
 		String  userFlag = propertiesUtils.getMessage(propertiesKey);
-		if(userFlag!=null && userFlag.equals("OFF") && orderAttrFlag.equals("Y")){
+		if(userFlag!=null && userFlag.equals("OFF")){
 			model.addAttribute("orderAttrFlag","C");//C非必填
 		}
 		//跳过拍照权限
@@ -1341,7 +1341,7 @@ public class OrderController extends BaseController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		if(isSkipPhoto.equals(SysConstant.STRING_0)&& orderAttrFlag.equals("Y")){
+		if(isSkipPhoto.equals(SysConstant.STRING_0)){
 			model.addAttribute("orderAttrFlag","C");//C非必填
 		}
     	if("2".equals(String.valueOf(param.get("actionFlag")))){  //套餐变更

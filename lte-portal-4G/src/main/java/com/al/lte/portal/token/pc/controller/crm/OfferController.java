@@ -39,6 +39,7 @@ import com.al.ecs.spring.annotation.log.LogOperatorAnn;
 import com.al.ecs.spring.controller.BaseController;
 import com.al.lte.portal.bmo.crm.CustBmo;
 import com.al.lte.portal.bmo.crm.OfferBmo;
+import com.al.lte.portal.bmo.staff.StaffBmo;
 import com.al.lte.portal.common.AESUtils;
 import com.al.lte.portal.common.MySimulateData;
 import com.al.lte.portal.common.StringUtil;
@@ -64,6 +65,10 @@ public class OfferController extends BaseController {
 	
 	@Autowired
 	PropertiesUtils propertiesUtils;
+	
+	@Autowired
+	@Qualifier("com.al.lte.portal.bmo.staff.StaffBmo")
+	private StaffBmo staffBmo;
 	
 	/**
 	 * 获取销售品规格构成
@@ -934,6 +939,23 @@ public class OfferController extends BaseController {
 					model.addAttribute("orderAttrFlag","C");//C非必填
 				}
 			}else{//未拍照
+				model.addAttribute("orderAttrFlag","C");//C非必填
+			}
+			//判断经办人是否必填开关
+			String propertiesKey =  "REAL_NAME_PHOTO_"+sessionStaff.getCurrentAreaId().substring(0,3);
+			String  userFlag = propertiesUtils.getMessage(propertiesKey);
+			if(userFlag!=null && userFlag.equals("OFF")){
+				model.addAttribute("orderAttrFlag","C");//C非必填
+			}
+			//跳过拍照权限
+			String isSkipPhoto = "-1";
+			try {
+				isSkipPhoto = staffBmo.checkOperatSpec(SysConstant.TGJBRBTQX, sessionStaff);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			if(isSkipPhoto.equals(SysConstant.STRING_0)){
 				model.addAttribute("orderAttrFlag","C");//C非必填
 			}
 		} catch (BusinessException be) {
