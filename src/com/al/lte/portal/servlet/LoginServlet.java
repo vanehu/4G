@@ -37,23 +37,17 @@ public class LoginServlet extends HttpServlet {
 	
 	 @Override  
 	 protected void doGet(HttpServletRequest req, HttpServletResponse resp){
-//		 System.out.println("**********************统一登录：后端响应开始...");
 		 resp.setContentType( "text/html;charset=utf-8" );  //设置响应页面字符编码  
 	     PrintWriter out;
 	     String province = req.getParameter("province");
-//	     System.out.println("**********************统一登录：入参[province] :"+province);
 	     Map<String, Object> respMap = new HashMap<String, Object>();
 	     respMap.put("provVersion", getProvVersion(province));
 	     respMap.put("provDomain", getProvDomain(province));
-//	     System.out.println("**********************统一登录：返回端口 :"+getProvVersion(province));
-//	     System.out.println("**********************统一登录：返回域名 :"+getProvDomain(province));
 	     JSONObject jsonObj = JSONObject.fromObject(respMap);
-//	     System.out.println("LoginServlet.province============"+province);
 	     try {
 	    	 out = resp.getWriter();
 	    	 out.print(jsonObj);
 		     out.close();
-//		     System.out.println("**********************统一登录：后端响应结束...");
 	     } catch (IOException e) {
 	    	 e.printStackTrace();
 	     }
