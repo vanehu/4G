@@ -944,7 +944,6 @@ offerChange = (function() {
 			}
 			if(viceChangeFlag){
 				$("#accountDiv").hide();
-				$("#orderAttrDiv").hide();
 				$("#orderProvAttrDiv").show();
 			}else{
 				$("#accountDiv").show();
@@ -952,9 +951,7 @@ offerChange = (function() {
 				var newProdId = "'"+prodId+"'";
 				if(newProdId.indexOf("-")!= -1){
 					$("#newProd_"+prodId).show();
-					$("#orderAttrDiv").show();
 				}else{
-					$("#orderAttrDiv").hide();
 				}
 			}
 		}
