@@ -76,6 +76,77 @@
 	</#if>
 	
 	</li>
+<#if prodSpec.itemSpecId=="800000011" >	
+	<!--弹出款-客户定位，选择使用人-->
+<div id="choose_user_dialog_${prodId}" class="easyDialogdiv" style="width:500px;height:300px;">
+<div class="easyDialogclose" id="chooseUserClose_${prodId}" onclick="easyDialog.close();"></div>
+    	<table class="contract_list">
+            <thead>
+                <tr>
+                    <td>选择使用人</td>
+                </tr>                                                    
+            </thead>
+        </table>
+        <div id="chooseUserDiv_${prodId}" class="main_div location main_warp" style ="float:left;width:100%;">
+		<form id="userForm_${prodId}">
+		<ul class="fillin	" style="overflow: hidden;">
+		   <li  class="full" style="width: 100%;" id="li_order_remark1_${prodId}">
+				<label>证件类型：</label>
+		        <select id="orderUserIdentidiesTypeCd_${prodId}" onchange="order.main.identidiesTypeCdUserChoose(this,'orderUserAttrIdCard')">
+		        </select>
+		        <label class="f_red">*</label>
+		        <a class="btn_h30"   id="orderUserAttrReadCertBtn_${prodId}" onclick="javascript:order.main.readUserCertWhenOrder()" style="margin-top: 0px; display: none;"><span>读 卡</span></a>
+		        <span id="userTips" style="color:#F00; font-weight:bold;font-size:16px;margin-left:10%;"></span>
+		        
+		        
+		         <!-- <#if Session["BIND_STATUS"]?? && Session["BIND_STATUS"] == "Y">
+		        <a class="btn_h30"   id="discernBtn_4" onclick="javascript:push.busi.reqDispatch(1,4)" ><span>识别</span></a>
+		        <#else>
+		        <a class="btn_h30"   id="discernBtn_4" onclick="javascript:push.busi.reqDispatch(1,4)" style="display:none;"><span>识别</span></a>
+		        </#if> -->
+			</li>
+			<!-- 经办人为个人用户，证件类型只显示个人证件类型，隐藏客户类型 -->
+			<li class="full" id="li_order_remark_${prodId}" style="display: none;">
+				<label>客户类型：</label> 
+				<select id="orderUserPartyTypeCd_${prodId}" onchange="order.cust.partyTypeCdChoose(this,'orderIdentidiesTypeCd')">
+		                                        <option value="1" >个人</option>
+		        </select>
+		        <label class="f_red">*</label>
+			</li>
+			<li class="full" id="li_order_name_${prodId}">
+				<label>使用人姓名：</label> 
+				<input id="orderUserAttrName_${prodId}" placeHolder="请输入使用人姓名"  data-validate ="validate(required:请输入使用人姓名) on(blur)" class="inputWidth250px" maxlength="16" type="text" style="width:280px;">
+				<span style="line-height: 28px; float:left;"></span>
+				<label class="f_red">*</label>
+			</li>
+			<li  class="full" id="li_order_card_${prodId}">
+				<label>证件号码：</label> 
+				<input id="orderUserAttrIdCard_${prodId}" placeHolder="请输入证件号码" data-validate ="validate(required:请输入证件号码) on(blur)" class="inputWidth250px"maxlength="50"type="text" style="width:280px;">
+				<span style="line-height: 28px; float:left;"></span>
+				<label class="f_red">*</label>
+			</li>
+			<li class="full" id="li_order_addr_${prodId}">
+				<label>证件地址：</label> 
+				<input id="orderUserAttrAddr_${prodId}" placeHolder="请输入证件地址"  data-validate ="validate(required:请输入证件地址) on(blur)" class="inputWidth250px" maxlength="125"type="text" style="width:280px;">
+				<span style="line-height: 28px; float:left;"></span>
+				<label class="f_red">*</label>
+			</li>
+			<li class="full" id="li_order_nbr">
+				<label>联系人号码：</label> 
+				<input id="orderUserAttrPhoneNbr_${prodId}" placeHolder="请输入联系人号码"  class="inputWidth250px" type="text" maxlength="16"style="width:280px;">
+				<label class="f_red"></label>
+			</li>
+		</ul>
+		</form>
+		
+	</div>
+  	<div align="center" style="margin: 20px auto;">
+        <a id="chooseUserBtn_${prodId}" class="btna_o" href="javascript:void(0)"><span >确认</span></a>
+        <a id="chooseQueryBtn_${prodId}" style="display:none" class="btna_o" href="javascript:void(0)"><span >确认</span></a>
+        <a id="cancelChooseUserBtn_${prodId}" class="btna_o" href="javascript:void(0)" style=" margin-left:20px;" onclick="easyDialog.close()"><span>取消</span></a>
+    </div>
+</div>
+</#if>
 	</#list>
 	
 	<#if ((prodSpecParams)?size) % 2 == 1>

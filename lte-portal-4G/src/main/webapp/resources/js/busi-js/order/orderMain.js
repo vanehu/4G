@@ -1460,26 +1460,26 @@ order.main = (function(){
 		order.cust.queryForChooseUser = true; //标识客户定位是为了选择使用人
 		//order.cust.bindCustQueryForChoose(); //客户定位查询按钮
 		//封装用户信息
-		$('#chooseUserBtn').off('click').on('click',function(){
-			$("#userTips").empty();
-			if ($.trim($("#orderUserIdentidiesTypeCd option:selected").val()) == "1" && !ec.util.isObj($('#orderUserAttrIdCard').val())){
-		    	$("#userTips").html("提示："+ "请先读卡");
+		$('#chooseUserBtn_'+prodId).off('click').on('click',function(){
+			$("#userTips_"+prodId).empty();
+			if ($.trim($("#orderUserIdentidiesTypeCd_"+ prodId +" option:selected").val()) == "1" && !ec.util.isObj($('#orderUserAttrIdCard_'+prodId).val())){
+		    	$("#userTips_"+prodId).html("提示："+ "请先读卡");
 		    	return false;
 	    	}
-			if (!_queryUser()) {
+			if (!_queryUser(prodId)) {
 				$('#'+CONST.PROD_ATTR.PROD_USER+'_'+prodId).val(prodId); 
 			}
-			$('#'+CONST.PROD_ATTR.PROD_USER+'_'+prodId).val($.trim($("#orderUserAttrName").val()));
+			$('#'+CONST.PROD_ATTR.PROD_USER+'_'+prodId).val($.trim($("#orderUserAttrName_"+prodId).val()));
 			easyDialog.close();
 		});
 		
-		$("#userForm").off().bind("formIsValid", function(event){	
-        	$("#userTips").empty();
+		$("#userForm_"+prodId).off().bind("formIsValid", function(event){	
+        	$("#userTips_"+prodId).empty();
     	 // if(!!order.cust.tmpChooseUserInfo && order.cust.tmpChooseUserInfo.custId){
 			//保存并显示使用人信息，清空弹出框的客户信息、临时保存的客户信息，关闭弹出框
 		//	OrderInfo.updateChooseUserInfos(prodId, order.cust.tmpChooseUserInfo);
 			
-			if (!_queryUser()) {
+			if (!_queryUser(prodId)) {
 				var isExists=false;
 				var isExists2=false;
 				if(OrderInfo.boUserCustInfos.length>0){
@@ -1488,12 +1488,12 @@ order.main = (function(){
 							OrderInfo.boUserCustInfos[i].prodId = prodId;
 							OrderInfo.boUserCustIdentities[i].state = "ADD";
 							OrderInfo.boUserCustInfos[i].state = "ADD";
-							OrderInfo.boUserCustInfos[i].name=$.trim($("#orderUserAttrName").val())  ;//客户名称
+							OrderInfo.boUserCustInfos[i].name=$.trim($("#orderUserAttrName_"+prodId).val())  ;//客户名称
 							OrderInfo.boUserCustInfos[i].areaId=OrderInfo.getAreaId();//客户地区
-							OrderInfo.boUserCustInfos[i].partyTypeCd=$("#orderUserPartyTypeCd").val();//客户类型---
-							OrderInfo.boUserCustInfos[i].defaultIdTycre=$.trim($("#orderUserIdentidiesTypeCd").val());//证件类型
-							OrderInfo.boUserCustInfos[i].addressStr=$.trim($("#orderUserAttrAddr").val());//客户地址
-							OrderInfo.boUserCustInfos[i].mailAddressStr=$.trim($("#orderUserAttrAddr").val());;//通信地址
+							OrderInfo.boUserCustInfos[i].partyTypeCd=$("#orderUserPartyTypeCd_"+prodId).val();//客户类型---
+							OrderInfo.boUserCustInfos[i].defaultIdTycre=$.trim($("#orderUserIdentidiesTypeCd_"+prodId).val());//证件类型
+							OrderInfo.boUserCustInfos[i].addressStr=$.trim($("#orderUserAttrAddr_"+prodId).val());//客户地址
+							OrderInfo.boUserCustInfos[i].mailAddressStr=$.trim($("#orderUserAttrAddr_"+prodId).val());;//通信地址
 							isExists=true;
 							break;
 						}
@@ -1502,12 +1502,12 @@ order.main = (function(){
 				if(!isExists){
 					var json = {};
 					json.prodId = prodId;
-					json.name=$.trim($("#orderUserAttrName").val())  ;//客户名称
+					json.name=$.trim($("#orderUserAttrName_"+prodId).val())  ;//客户名称
 					json.areaId=OrderInfo.getAreaId();//客户地区
-					json.partyTypeCd=$("#orderUserPartyTypeCd").val();//客户类型---
-					json.defaultIdTycre=$.trim($("#orderUserIdentidiesTypeCd").val());//证件类型
-					json.addressStr=$.trim($("#orderUserAttrAddr").val());//客户地址
-					json.mailAddressStr=$.trim($("#orderUserAttrAddr").val());;//通信地址
+					json.partyTypeCd=$("#orderUserPartyTypeCd_"+prodId).val();//客户类型---
+					json.defaultIdTycre=$.trim($("#orderUserIdentidiesTypeCd_"+prodId).val());//证件类型
+					json.addressStr=$.trim($("#orderUserAttrAddr_"+prodId).val());//客户地址
+					json.mailAddressStr=$.trim($("#orderUserAttrAddr_"+prodId).val());;//通信地址
 					json.state = "ADD";
 					OrderInfo.boUserCustInfos.push(json);
 					
@@ -1516,9 +1516,9 @@ order.main = (function(){
 					for(var i=0;i<OrderInfo.boUserCustIdentities.length;i++){
 						if(OrderInfo.boUserCustIdentities[i].prodId==prodId){
 							OrderInfo.boUserCustIdentities[i].prodId = prodId;
-							OrderInfo.boUserCustIdentities[i].identidiesTypeCd=$.trim($("#orderUserIdentidiesTypeCd").val());
+							OrderInfo.boUserCustIdentities[i].identidiesTypeCd=$.trim($("#orderUserIdentidiesTypeCd_"+prodId).val());
 							OrderInfo.boUserCustIdentities[i].state = "ADD";
-							OrderInfo.boUserCustIdentities[i].identityNum=$.trim($("#orderUserAttrIdCard").val());//证件号码;
+							OrderInfo.boUserCustIdentities[i].identityNum=$.trim($("#orderUserAttrIdCard_"+prodId).val());//证件号码;
 							isExists2=true;
 							break;
 						}
@@ -1527,14 +1527,14 @@ order.main = (function(){
 				if(!isExists2){
 					var json2 = {};
 					json2.prodId = prodId;
-					json2.identidiesTypeCd=$.trim($("#orderUserIdentidiesTypeCd").val());//证件类型
-					json2.identityNum=$.trim($("#orderUserAttrIdCard").val());//证件号码
+					json2.identidiesTypeCd=$.trim($("#orderUserIdentidiesTypeCd_"+prodId).val());//证件类型
+					json2.identityNum=$.trim($("#orderUserAttrIdCard_"+prodId).val());//证件号码
 					json2.state = "ADD";
 					OrderInfo.boUserCustIdentities.push(json2);
 				}
 				$('#'+CONST.PROD_ATTR.PROD_USER+'_'+prodId).val(prodId); 
 			}
-			$('#'+CONST.PROD_ATTR.PROD_USER+'_'+prodId+'_name').val($.trim($("#orderUserAttrName").val()));
+			$('#'+CONST.PROD_ATTR.PROD_USER+'_'+prodId+'_name').val($.trim($("#orderUserAttrName_"+prodId).val()));
 			
 			order.cust.tmpChooseUserInfo = {};
 			
@@ -1546,14 +1546,14 @@ order.main = (function(){
 			//$.alert("提示","请定位客户作为使用人");
 	//		return false;
 	//	}
-		}).ketchup({bindElement:"chooseQueryBtn"});	
+		}).ketchup({bindElement:"chooseQueryBtn_"+prodId});	
 		
 		
 		_showChooseUserDialog(null, prodId);
 	};
 	
 	// 使用人-查询
-	function _queryUser(){
+	function _queryUser(prodId){
 		var isExists =false;
 		var identityCd="";
 		var diffPlace="";
@@ -1561,8 +1561,8 @@ order.main = (function(){
 		var identityNum="";
 		var queryType="";
 		var queryTypeValue="";
-		identityCd=$("#orderUserIdentidiesTypeCd").val();
-		identityNum=$.trim($("#orderUserAttrIdCard").val());
+		identityCd=$("#orderUserIdentidiesTypeCd_"+prodId).val();
+		identityNum=$.trim($("#orderUserAttrIdCard_"+prodId).val());
         diffPlace="local";
 		areaId="";
 		var param = {
@@ -1575,17 +1575,17 @@ order.main = (function(){
 				"areaId" : areaId,
 				"queryType" :queryType,
 				"queryTypeValue":queryTypeValue,
-				"identidies_type":$("#orderUserIdentidiesTypeCd  option:selected").text()
+				"identidies_type":$("#orderUserIdentidiesTypeCd "+ prodId +"  option:selected").text()
 		};
 		
 		var response = $.callServiceAsHtml(contextPath+"/cust/queryCust",param);
 		var custInfoSize = $(response.data).find('#custInfoSize').val();
 			if (parseInt(custInfoSize) >= 1) {
 				var scope = $(response.data).find('#custInfos').eq(0);
-				$("#orderUserAttrName").val($(scope).attr("partyName"));
-				$("#orderUserAttrAddr").val($(scope).attr("addressStr"));
-				$("#orderUserAttrIdCard").val($(scope).attr("idCardNumber"));
-				$("#orderUserIdentidiesTypeCd").val($(scope).attr("identityCd"));
+				$("#orderUserAttrName_"+prodId).val($(scope).attr("partyName"));
+				$("#orderUserAttrAddr_"+prodId).val($(scope).attr("addressStr"));
+				$("#orderUserAttrIdCard_"+prodId).val($(scope).attr("idCardNumber"));
+				$("#orderUserIdentidiesTypeCd_"+prodId).val($(scope).attr("identityCd"));
 				//OrderInfo.handleCustId = $(scope).attr("custId");//经办人客户ID
 				// _choosedCustInfo.handleCustId = $(scope).attr("custId");//经办人客户ID
 //				OrderInfo.boUserCustIdentities.state = "ADD";
@@ -1603,19 +1603,16 @@ order.main = (function(){
 	 * 显示选择使用人弹出框，custInfo为空则使用prodId定位已保存的使用人信息，custInfo不为空则更新临时保存的使用人信息
 	 */
 	function _showChooseUserDialog(custInfo, prodId){
-		$("#userTips").empty();
-		$("#orderUserAttrName").val("");//客户名称
-		$("#orderUserAttrAddr").val("");//客户地址
-		$("#orderUserAttrIdCard").val("");//证件号码;
-		$("#orderUserAttrPhoneNbr").val("");//联系人号码;
+		$("#userTips_"+prodId).empty();
+		
 		//改造
 		custInfo = custInfo || OrderInfo.getChooseUserInfo(prodId);
 		if(custInfo != null && custInfo.custId){
 			//将客户信息作为使用人tmpChooseUserInfo，确认后保存到OrderInfo.choosedUserInfos
 			order.cust.tmpChooseUserInfo = custInfo;
 			
-			$("#orderUserAttrName").val(custInfo.partyName)  ;//客户名称
-			$("#orderUserAttrIdCard").val(custInfo.idCardNumber);//证件号码
+			$("#orderUserAttrName_"+prodId).val(custInfo.partyName)  ;//客户名称
+			$("#orderUserAttrIdCard_"+prodId).val(custInfo.idCardNumber);//证件号码
 			
 //			order.cust.tmpChooseUserInfo.prodId = '';
 //			$('#chooseUserInfoName').html(custInfo.partyName);
@@ -1627,44 +1624,44 @@ order.main = (function(){
 		}
 		
 		
-		$("#orderPartyTypeCd").change();
+		$("#orderPartyTypeCd_"+prodId).change();
 		
-		
-		$("#orderUserIdentidiesTypeCd").empty();
+		$("#orderUserIdentidiesTypeCd_"+prodId).empty();
 		var opts=document.getElementById("orderIdentidiesTypeCd");
+
 		if(opts.options !=null){
 			for(var i=0;i<opts.options.length;i++){
-				$("#orderUserIdentidiesTypeCd").append("<option value='"+opts.options[i].value+"' >"+opts.options[i].text+"</option>");
+				$("#orderUserIdentidiesTypeCd_"+prodId).append("<option value='"+opts.options[i].value+"' >"+opts.options[i].text+"</option>");
 			//	$("#orderUserIdentidiesTypeCd").append("<option value='"+2+"' >"+ 2 +"</option>");
 			}
 		}
 		if($.ketchup){
-			$.ketchup.hideAllErrorContainer($("#userForm"));
+			$.ketchup.hideAllErrorContainer($("#userForm_"+prodId));
 		}
 		easyDialog.open({
-			container : "choose_user_dialog",
+			container : "choose_user_dialog_"+prodId,
 			callback : function(){
 				order.cust.queryForChooseUser = false; //关闭弹出框时重置标识位
 				if($.ketchup){
-					$.ketchup.hideAllErrorContainer($("#userForm"));
+					$.ketchup.hideAllErrorContainer($("#userForm_"+prodId));
 				}
 			}
 		});
 		
-		if($("#orderUserIdentidiesTypeCd").val() =="1"){
-			$("#orderUserAttrReadCertBtn").show();
-			$("#orderUserAttrName").hide();
-			$("#orderUserAttrIdCard").hide();
-			$("#orderUserAttrAddr").hide();
-			$("#orderUserAttrQueryCertBtn").hide();
-			$("#li_order_name span").show();
-			$("#li_order_cert span").show();
-			$("#li_order_nbr span").show();
-			$("#chooseUserBtn").show();
-			$("#chooseQueryBtn").hide();
+		if($("#orderUserIdentidiesTypeCd_"+prodId).val() =="1"){
+			$("#orderUserAttrReadCertBtn_"+prodId).show();
+			$("#orderUserAttrName_"+prodId).hide();
+			$("#orderUserAttrIdCard_"+prodId).hide();
+			$("#orderUserAttrAddr_"+prodId).hide();
+			$("#orderUserAttrQueryCertBtn_"+prodId).hide();
+			$("#li_order_name span_"+prodId).show();
+			$("#li_order_cert span_"+prodId).show();
+			$("#li_order_nbr span_"+prodId).show();
+			$("#chooseUserBtn_"+prodId).show();
+			$("#chooseQueryBtn_"+prodId).hide();
 		}else{
-			$("#chooseUserBtn").hide();
-			$("#chooseQueryBtn").show();
+			$("#chooseUserBtn_"+prodId).hide();
+			$("#chooseQueryBtn_"+prodId).show();
 		}
 	};
 	

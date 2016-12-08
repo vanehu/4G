@@ -393,6 +393,7 @@ SoOrder = (function() {
 						$(this).val(busiOrder.busiObj.instId);
 					}
 				});
+				busiOrder.busiObj.accessNumber = OrderInfo.getAccessNumber(OrderInfo.boUserCustInfos[i].prodId);
 				busiOrder.data.boCustInfos.push(OrderInfo.boUserCustInfos[i]);
 				busiOrder.data.boCustIdentities.push(OrderInfo.boUserCustIdentities[i]);
 				busiOrders.push(busiOrder);
