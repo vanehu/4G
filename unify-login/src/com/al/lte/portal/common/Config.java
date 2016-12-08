@@ -136,6 +136,7 @@ public class Config {
 			case 846: areaName = "hainan"; break;
 			case 823: areaName = "heilongjiang"; break;
 			case 899: areaName = "xuni"; break;
+			case 898: areaName = "ess"; break;
 		}
 		return areaName;
 	}
