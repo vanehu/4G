@@ -515,8 +515,16 @@ SoOrder = (function() {
 			_fillBusiOrder(busiOrders,data,"N"); //填充业务对象节点
 		}
 		
-		//订单填充经办人信息
-		_addHandleInfo(busiOrders, custOrderAttrs);
+		if(OrderInfo.realNamePhotoFlag == "ON"){
+			//订单填充经办人信息
+			_addHandleInfo(busiOrders, custOrderAttrs);
+		} else{
+			//订单填充经办人信息(老模式)
+			if(!_addHandleInfoInPrevious(busiOrders, custOrderAttrs)){
+				return false;
+			}
+		}	
+		
 		OrderInfo.orderData.orderList.orderListInfo.custOrderAttrs = custOrderAttrs; //订单属性数组
 		OrderInfo.orderData.orderList.custOrderList[0].busiOrder = busiOrders; //订单项数组
 		if($("#isTemplateOrder").attr("checked")=="checked"){ //批量订单
@@ -2815,22 +2823,21 @@ SoOrder = (function() {
 		var jbrIdentityNum = OrderInfo.bojbrCustIdentities.identityNum;
 		var jbrName = OrderInfo.bojbrCustInfos.name;
 		var jbrAddressStr = OrderInfo.bojbrCustInfos.addressStr;
-		var realNamePhotoFlag = query.common.queryPropertiesValue("REAL_NAME_PHOTO_" + OrderInfo.staff.areaId.substr(0, 3));
-		OrderInfo.realNamePhotoFlag = realNamePhotoFlag;
+//		var realNamePhotoFlag = query.common.queryPropertiesValue("REAL_NAME_PHOTO_" + OrderInfo.staff.areaId.substr(0, 3));
+//		OrderInfo.realNamePhotoFlag = realNamePhotoFlag;
 		
 		var orderAttrName = $.trim($("#orderAttrName").val()); //经办人姓名
 		var orderAttrIdCard = $.trim($("#orderAttrIdCard").val()); //证件号码
 		var orderAttrAddr = $.trim($("#orderAttrAddr").val()); //地址
 		
-		//若!页!面!上填写了经办人信息，但没有进行拍照，则拦截提示；
-		if(ec.util.isObj(orderAttrName) || ec.util.isObj(orderAttrIdCard) || ec.util.isObj(orderAttrAddr)){
-			if(OrderInfo.virOlId == ""){
-				$.alert("提示","您填写了经办人信息，在订单提交之前，请进行拍照以确认是否“人证相符”。");
-				return false;
-			}
-		}
-		
-		if (CONST.isHandleCustNeeded && realNamePhotoFlag == "ON" && (OrderInfo.actionFlag == 1 || OrderInfo.actionFlag == 2 ||OrderInfo.actionFlag == 6 || OrderInfo.actionFlag == 21 || OrderInfo.actionFlag == 22 || OrderInfo.actionFlag == 23 || OrderInfo.actionFlag == 43)) {
+		if (CONST.isHandleCustNeeded && OrderInfo.realNamePhotoFlag == "ON" && (OrderInfo.actionFlag == 1 || OrderInfo.actionFlag == 2 ||OrderInfo.actionFlag == 6 || OrderInfo.actionFlag == 21 || OrderInfo.actionFlag == 22 || OrderInfo.actionFlag == 23 || OrderInfo.actionFlag == 43)) {
+			//若!页!面!上填写了经办人信息，但没有进行拍照，则拦截提示；
+			if(ec.util.isObj(orderAttrName) || ec.util.isObj(orderAttrIdCard) || ec.util.isObj(orderAttrAddr)){
+				if(OrderInfo.virOlId == ""){
+					$.alert("提示","您填写了经办人信息，在订单提交之前，请进行拍照以确认是否“人证相符”。");
+					return false;
+				}
+			};
 			if(!ec.util.isObj($("#jbrForm").html()) || jbrIdentityNum == "" || jbrName == "" || jbrAddressStr == ""){
 				$.alert("提示","经办人拍照信息不能为空！请确认页面是否已点击【读卡】或者【拍照】按钮，并且拍照和人证相符已成功操作！");
 				return false ; 
@@ -3952,6 +3959,75 @@ SoOrder = (function() {
 		};
 		return busiOrder;
 	};
+	
+	//添加经办人信息：实名制拍照前老模式
+	var _addHandleInfoInPrevious = function(busiOrders, custOrderAttrs){
+		//订单购物车属性(经办人)
+		if(CONST.getAppDesc()==0){
+			var orderAttrName = $.trim($("#orderAttrName").val()); //经办人姓名
+			var orderIdentidiesTypeCd = $("#orderIdentidiesTypeCd  option:selected").val(); //证件类型
+			var orderAttrIdCard =$.trim($("#orderAttrIdCard").val()); //证件号码
+			var orderAttrAddr = $.trim($("#orderAttrAddr").val()); //地址
+			var orderAttrPhoneNbr = $.trim($("#orderAttrPhoneNbr").val()); //联系人号码
+			// 新建客户或二次业务，政企客户，经办人必填 （2016-3-17回退）
+			/*if (OrderInfo.boCustInfos.partyTypeCd == '2' || order.cust.isCovCust(OrderInfo.cust.identityCd)) {
+				if (!(ec.util.isObj(orderAttrName) && ec.util.isObj(orderAttrIdCard) && ec.util.isObj(orderAttrAddr) && ec.util.isObj(orderAttrPhoneNbr))) {
+					$.alert("提示", "政企单位用户经办人为必填项！");
+					return false;
+				}
+			}*/
+			if(ec.util.isObj(orderAttrName)&&ec.util.isObj(orderAttrIdCard)&&ec.util.isObj(orderAttrPhoneNbr)&&ec.util.isObj(orderAttrAddr)){
+				if(ec.util.isObj(orderAttrName)){
+					custOrderAttrs.push({
+						itemSpecId : CONST.BUSI_ORDER_ATTR.orderAttrName,
+						value : orderAttrName
+					});	
+				}
+				if(ec.util.isObj(orderAttrIdCard)){
+					custOrderAttrs.push({
+						itemSpecId : CONST.BUSI_ORDER_ATTR.orderIdentidiesTypeCd,
+						value : orderIdentidiesTypeCd
+					});	
+					custOrderAttrs.push({
+						itemSpecId : CONST.BUSI_ORDER_ATTR.orderAttrIdCard,
+						value : orderAttrIdCard
+					});	
+				}
+				if(ec.util.isObj(orderAttrPhoneNbr)){
+					custOrderAttrs.push({
+						itemSpecId : CONST.BUSI_ORDER_ATTR.orderAttrPhoneNbr,
+						value : orderAttrPhoneNbr
+					});	
+				}
+				if(ec.util.isObj(orderAttrAddr)){
+					custOrderAttrs.push({
+						itemSpecId : CONST.BUSI_ORDER_ATTR.orderAttrAddr,
+						value : orderAttrAddr
+					});	
+				}
+				return true;
+			}else if(ec.util.isObj(orderAttrName)||ec.util.isObj(orderAttrIdCard)||ec.util.isObj(orderAttrPhoneNbr)||ec.util.isObj(orderAttrAddr)){
+				if(!ec.util.isObj(orderAttrName)){
+					$.alert("提示","经办人姓名为空，经办人姓名、联系人号码、证件号码、证件地址必须同时为空或不为空，因此无法提交！");
+					return false;
+				}
+				if(!ec.util.isObj(orderAttrPhoneNbr)){
+					$.alert("提示","联系人号码为空，经办人姓名、联系人号码、证件号码、证件地址必须同时为空或不为空，因此无法提交！");
+					return false;
+				}
+				if(!ec.util.isObj(orderAttrIdCard)){
+					$.alert("提示","证件号码为空，经办人姓名、联系人号码、证件号码、证件地址必须同时为空或不为空，因此无法提交！");
+					return false;
+				}
+				if(!ec.util.isObj(orderAttrAddr)){
+					$.alert("提示","证件地址为空，经办人姓名、联系人号码、证件号码、证件地址必须同时为空或不为空，因此无法提交！");
+					return false;
+				}
+			}
+		}
+		return true;
+	};
+
 	return {
 		builder 				: _builder,
 		createAttOffer  		: _createAttOffer,
