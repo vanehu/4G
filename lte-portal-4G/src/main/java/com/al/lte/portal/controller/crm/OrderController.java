@@ -3112,10 +3112,12 @@ public class OrderController extends BaseController {
     @RequestMapping(value = "/orderSubmit", method = RequestMethod.POST)
     @ResponseBody
     public JsonResponse orderSubmit(@RequestBody Map<String, Object> param, HttpServletResponse response, HttpServletRequest request) throws Exception {
-        JsonResponse jsonResponse = null;
-        if (commonBmo.checkToken(request, SysConstant.ORDER_SUBMIT_TOKEN)) {
+        SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
+    	JsonResponse jsonResponse = null;
+        Object realNameFlag =  MDA.REAL_NAME_PHOTO_FLAG.get("REAL_NAME_PHOTO_"+sessionStaff.getCurrentAreaId().substring(0, 3));
+    	boolean isRealNameFlagOn  = realNameFlag == null ? false : "ON".equals(realNameFlag.toString()) ? true : false;//实名制拍照开关是否打开
+    	if (commonBmo.checkToken(request, SysConstant.ORDER_SUBMIT_TOKEN)) {
             try {
-                SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
                 if(orderBmo.verifyCustCertificate(param, request ,sessionStaff)){
                 	if(commonBmo.orderSubmitFilter(param)){
                         Map<String, Object> orderList = (Map<String, Object>) param.get("orderList");
@@ -3127,7 +3129,11 @@ public class OrderController extends BaseController {
                         List<Map<String, Object>> custOrderAttrs = (List<Map<String, Object>>) orderListInfo.get("custOrderAttrs");
                         //添加客户端IP地址到订单属性
                         Map<String, Object> IPMap = new HashMap<String, Object>();
-                        IPMap.put("itemSpecId", SysConstant.ORDER_ATTRS_IP);
+                        if(isRealNameFlagOn){
+                        	IPMap.put("itemSpecId", SysConstant.ORDER_ATTRS_IP);
+                        } else{
+                        	IPMap.put("itemSpecId", SysConstant.ORDER_ATTRS_IP_TEM);
+                        }
                         IPMap.put("value", ServletUtils.getIpAddr(request));
                         if (custOrderAttrs == null){
                         	custOrderAttrs = new ArrayList<Map<String, Object>>();

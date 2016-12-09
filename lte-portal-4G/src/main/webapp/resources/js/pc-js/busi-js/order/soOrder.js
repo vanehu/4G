@@ -2888,7 +2888,7 @@ SoOrder = (function() {
 			var orderAttrIdCard =$.trim($("#orderAttrIdCard").val()); //证件号码
 			var orderAttrPhoneNbr = $.trim($("#orderAttrPhoneNbr").val()); //联系人号码
 			if(ec.util.isObj(orderAttrName)&&ec.util.isObj(orderAttrIdCard)&&ec.util.isObj(orderAttrPhoneNbr)){
-			}else {
+			}else if(ec.util.isObj(orderAttrName)||ec.util.isObj(orderAttrIdCard)||ec.util.isObj(orderAttrPhoneNbr)){
 				if(!ec.util.isObj(orderAttrName)){
 					$.alert("提示","经办人姓名为空，经办人姓名、联系人号码、证件号码必须同时为空或不为空，因此无法提交！");
 					return false;
@@ -3182,7 +3182,7 @@ SoOrder = (function() {
 						value : orderAttrAddr
 					});	
 				}
-			}else {
+			}else if(ec.util.isObj(orderAttrName)||ec.util.isObj(orderAttrIdCard)||ec.util.isObj(orderAttrPhoneNbr)){
 				if(!ec.util.isObj(orderAttrName)){
 					$.alert("提示","经办人姓名为空，经办人姓名、联系人号码、证件号码必须同时为空或不为空，因此无法提交！");
 					return false;

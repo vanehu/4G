@@ -393,7 +393,11 @@ order.cust = (function(){
 				$("span[name='" + CONST.BUSI_ORDER_ATTR.orderAttrAddr + "']").show();
 			}
 		} else {
-			$("#orderAttrQueryCertBtn").show();
+			if (OrderInfo.realNamePhotoFlag == "OFF"){
+				$("#orderAttrQueryCertBtn").hide();
+		    }else{
+		    	$("#orderAttrQueryCertBtn").show();
+		    }
 			// 新建客户非身份证，还原表单
 			if (id == "cCustIdCard") {
 				$("#btn_readCert").hide(); // 预受理
@@ -2835,14 +2839,16 @@ order.cust = (function(){
 			return;
 		}
 		_setValueForAgentOrderSpan(man.resultContent);
-	    if (undefined != man.resultContent.identityPic && null != man.resultContent.identityPic && "" != man.resultContent.identityPic) {
-	      		$("#img_Cert").attr("src", "data:image/jpeg;base64," + man.resultContent.identityPic);
-	      		OrderInfo.bojbrCustIdentities.identidiesPic = man.resultContent.identityPic;
-		      _showCertPicture();
-		} else{
-			$.alert("错误", "当前经办人身份证照片为空，无法继续受理，请确认。");
-			return;
-		}
+		if (OrderInfo.realNamePhotoFlag == "ON") {
+		    if (undefined != man.resultContent.identityPic && null != man.resultContent.identityPic && "" != man.resultContent.identityPic) {
+		      		$("#img_Cert").attr("src", "data:image/jpeg;base64," + man.resultContent.identityPic);
+		      		OrderInfo.bojbrCustIdentities.identidiesPic = man.resultContent.identityPic;
+			      _showCertPicture();
+			} else{
+				$.alert("错误", "当前经办人身份证照片为空，无法继续受理，请确认。");
+				return;
+			}
+	  }
 	};
 	
 	function _showCertPicture(){
@@ -3206,4 +3212,7 @@ $(function() {
    order.cust.form_valid_init();
    order.cust.initDic();
    CONST.isHandleCustNeeded = query.common.checkOperateSpec(CONST.TGJBRBTQX);
+   if(OrderInfo.realNamePhotoFlag == ""){
+		OrderInfo.realNamePhotoFlag = query.common.queryPropertiesValue("REAL_NAME_PHOTO_" + OrderInfo.staff.areaId.substr(0, 3));
+	}
 });

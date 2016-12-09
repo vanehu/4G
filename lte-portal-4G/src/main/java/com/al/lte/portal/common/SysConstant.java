@@ -758,8 +758,10 @@ public final class SysConstant {
 	/**Session缓存上传成功的实名制照片的virOlId*/
     public static final String SESSION_VIR_OLID = "SESSION_VIR_OLID";
     
-    /**订单属性记录客户端IP*/
+    /**订单属性记录客户端IP(新协议)*/
   	public final static String ORDER_ATTRS_IP = "40010038";
+  	/**订单属性记录客户端IP(老协议)*/
+  	public final static String ORDER_ATTRS_IP_TEM = "800000039";
   	
     /**跳过经办人必填权限*/
     public static final String TGJBRBTQX = "TGJBRBTQX";
