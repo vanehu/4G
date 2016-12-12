@@ -42,7 +42,7 @@ order.highRealNameA = (function () {
             },
             "done": function (response) {
                 if (response.code == 0) {
-                    $.alert("信息提示", response.data.rspInfo);
+                    $.alert("信息提示", response.data.sspPay.body.rspInfo);
                 } else if(response.code == 1){
                     $.alert("信息提示", response.data.certCheckInfo);
                 } else if(response.code == -2){

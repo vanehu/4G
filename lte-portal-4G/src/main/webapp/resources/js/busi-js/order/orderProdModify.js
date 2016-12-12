@@ -4608,7 +4608,7 @@ order.prodModify = (function(){
 			},
 			"done": function (response) {
 				if (response.code == 0) {
-					$.alert("信息提示", response.data.rspInfo);
+					$.alert("信息提示", response.data.sspPay.body.rspInfo);
 				} else if(response.code == -2){
 					$.alert("信息提示", "撤销鉴权短信发送失败！");
 				} else {
