@@ -1281,6 +1281,7 @@ order.calcharge = (function(){
 						},	
 						"done" : function(response){
 							$.unecOverlay();
+							order.calcharge.haveCharge=true;//已经下过收费接口，定时下计费接口任务取消
 							if (response.code == 0) {
 								_chargeSave(1);
 							}else if (response.code == -2) {

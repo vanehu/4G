@@ -237,7 +237,7 @@ $(function() {
     var isNewPay = offerChange.queryPortalProperties(propertiesKey);
     if(isNewPay == "ON"){//开关打开收费方式隐藏，点收费跳转支付平台，否则默认调用原收费方式
 			order.calcharge.myFlag=true;
-			setInterval(order.calcharge.timeToFee,2000);//定时查询支付状态，若成功则下计费接口，已下过则不再下。
+			setInterval(order.calcharge.timeToFee,3000);//定时查询支付状态，若成功则下计费接口，已下过则不再下。
 //		    $("#idtype").empty();
 //			    $("#idtype").append("<option value='100000'>现金</option>");
 //			    $("#idtype").append("<option value='120100'>翼支付</option>");

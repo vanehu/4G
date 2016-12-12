@@ -19,7 +19,7 @@ prod.qRCode = (function() {
 		}
 		var response = $.callServiceAsJson(url, params);
 		if(response.code==0){
-			$.alert("提示","绑定成功！");
+			_showFinDialog("绑定成功!");
 		}else if(response.code==1002){
 			$.alert("提示",response.data);
 		}
@@ -27,6 +27,19 @@ prod.qRCode = (function() {
 			$.alertM(response.data);
 		}
 	}
+	
+	var _showFinDialog=function(msg){
+		var title='信息提示';
+		$("#btn-dialog-ok").removeAttr("data-dismiss");
+		$('#alert-modal').modal({backdrop: 'static', keyboard: false});
+		$("#btn-dialog-ok").off("click").on("click",function(){
+			$("#alert-modal").modal("hide");
+			common.callCloseWebview();
+		});
+		$("#modal-title").html(title);
+		$("#modal-content").html(msg);
+		$("#alert-modal").modal();
+	};
 
 return {
 	bindCode				: _bindCode,

@@ -14,6 +14,7 @@ common = (function($) {
 		var prodIdInfosParams=JSON.stringify(prodIdInfos);//选中产品信息
 		var urlParams=$.parseJSON(JSON.stringify(url));//地址
 		OrderInfo.actionFlag=urlParams.actionFlag;
+		
         //去除四个可能带等号的加密字段
 	    var myCust1=$.parseJSON(custInfosParams);//四个加密字段可能值不合法，传入后台会报400错误，故转换该值。
 	    var CN=myCust1.CN;
@@ -53,6 +54,9 @@ common = (function($) {
 		var enter = urlParams.enter;
 		if(enter != undefined){
 			param.enter = enter;
+		}
+		if(OrderInfo.actionFlag != undefined){
+			param.actionFlag = OrderInfo.actionFlag;
 		}
 		var method=urlParams.method;// /app/prodModify/custAuth
 		$.callServiceAsHtml(contextPath+method,param,{
@@ -467,9 +471,12 @@ common = (function($) {
 		    	$("#fk").removeClass("active");
 				$("#tc").addClass("active");
 				OrderInfo.order.step=1;
+				$("#phonenumber").hide();
 				$("#phonenumber-list").empty();
+				$("#offer_a").show();
+				$("#phoneNumber_a").hide();
 				$("#offer").show();
-				order.amalgamation.searchPack("all","","1000");
+				order.amalgamation.searchPack("all","","");
 				return;
 			}else if(OrderInfo.order.step==3){
 				$("#nav-tab-3").removeClass("active in");
@@ -864,6 +871,13 @@ common = (function($) {
 		var custIdentityPic = OrderInfo.cust.identityPic;
 		var userIdentityPic = OrderInfo.user.identityPic;
 		var jbrIdentityPic = OrderInfo.jbr.identityPic;
+		if(order.broadband.isSameOne){//本人且客户有照片，将客户照片给经办人
+			if(custIdentityPic != undefined){
+				jbrIdentityPic=custIdentityPic;
+				OrderInfo.jbr.identityPic=custIdentityPic;
+			}
+			
+		}
 //		var str = "{\"picturesInfo\":[{\"orderInfo\":\"XXXXXXXXX\",\"picFlag\":\"A\",\"custName\":\"hiuu\",\"certType\":\"身份证\",\"certNumber\":\"902222222\",\"accNbr\":\"123456666\"},{\"orderInfo\":\"XXXXXXXXX\",\"picFlag\":\"B\",\"custName\":\"hiuu\",\"certType\":\"身份证\",\"certNumber\":\"902222222\",\"accNbr\":\"123456666\"},{\"orderInfo\":\"XXXXXXXXX\",\"picFlag\":\"C\",\"custName\":\"hiuu\",\"certType\":\"身份证\",\"certNumber\":\"902222222\",\"accNbr\":\"123456666\"},{\"orderInfo\":\"\",\"picFlag\":\"D\",\"custName\":\"hiuu\",\"certType\":\"身份证\",\"certNumber\":\"902222222\",\"accNbr\":\"123456666\"}]}";
 		var json = "{\"picturesInfo\":[";
 		if(custIdentityPic != undefined){
@@ -882,7 +896,7 @@ common = (function($) {
 		var olId=$("#TransactionID").val();
 		if(olId!=undefined && olId!=""){//宽带甩单经办人拍照
 			arr[2]=olId;
-		}		
+		}	
 		MyPlugin.photoProcess(arr,
             function(result) {
             },

@@ -69,10 +69,10 @@ order.broadband = (function(){
 	
 	//客户定位页面
 	var _cust = function(){
-//		if($("#prodName").val().length<1){
-//			$.alert("提示","请选择套餐！");
-//			return;
-//		}
+		if($("#prodName").val().length<1){
+			$.alert("提示","请选择套餐！");
+			return;
+		}
 //		if($("#upslList").val()=="" || $("#upslList").val()==null){
 //			$.alert("提示","请选择 上行速率！");
 //			return;
@@ -388,7 +388,6 @@ order.broadband = (function(){
 	var _searchProd = function(){
 		var url = "/app/order/broadband/searchProd";
 		var param = {
-				"enter":1,
 				"downRate":$("#MaxRate").val()
 				};
 		$.callServiceAsHtml(contextPath+url,param,{
@@ -476,7 +475,7 @@ order.broadband = (function(){
 							var rlist = order.broadband.alldownRateList[$(obj).attr("index")];
 							for(var j=0;j<rlist.length;j++){
 								if(dwRange[i].text == "512K"){
-									dwRange[i].text = "0.5"
+									dwRange[i].text = "0.5M"
 								}
 								if(dwRange[i].text.replace("M","") == rlist[j].rateRelVal){
 									$("#dwslList").append("<option value='"+dwRange[i].value+"' >"+dwRange[i].text+"</option>");
@@ -2165,7 +2164,7 @@ var _setNoPhoto=function(){
 				}
 	   var currentCT = $("#currentCT").val();//渠道类型
 	   if(response.code==0){
-		           var $label =$('<label for="orderIdentidiesTypeCd">证件类型</label>');
+		           var $label =$('<label style="display: none;" for="orderIdentidiesTypeCd">证件类型</label>');
 		           var $sel = $('<select id="orderIdentidiesTypeCd" class="myselect form-control" onchange="cust.jbridentidiesTypeCdChoose(this,sfzorderAttrIdCard)"></select>');
 					var data = response.data ;
 					if(data!=undefined && data.length>0){

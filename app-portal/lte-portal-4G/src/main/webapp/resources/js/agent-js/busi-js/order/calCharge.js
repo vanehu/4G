@@ -1287,7 +1287,7 @@ order.calcharge = (function(){
 		order.calcharge.busiUpType="1";
 		var params={
 				"olId":OrderInfo.orderResult.olId,
-				"soNbr":OrderInfo.order.soNbr,
+				"soNbr":OrderInfo.orderResult.olNbr,
 				"busiUpType":busiUpType,
 				"chargeItems":charge
 		};
@@ -1323,6 +1323,7 @@ order.calcharge = (function(){
 	 * 获取支付平台返回订单状态
 	 */
 	var _queryPayOrdStatus1 = function(soNbr, status,type) {
+//		alert(order.calcharge.haveCharge);
 		if(order.calcharge.haveCharge){//已下过收费接口，不再处理
 			return;
 		}
@@ -1360,6 +1361,7 @@ order.calcharge = (function(){
 					},	
 					"done" : function(response){
 						$.unecOverlay();
+						order.calcharge.haveCharge=true;//已经下过收费接口，定时下计费接口任务取消
 						if (response.code == 0) {
 							$("#calChargeBack").attr("onclick","javaScript:void(0);");
 							var flag=1;
@@ -1395,6 +1397,7 @@ order.calcharge = (function(){
 							var url=contextPath+"/app/order/chargeSubmit?token="+OrderInfo.order.token;
 							var response=$.callServiceAsJson(url, params, {});
 							var msg="";
+							order.calcharge.haveCharge=true;//已经下过收费接口，定时下计费接口任务取消
 							if (response.code == 0) {
 								//删除session中的客户缓存信息
 								var param={
