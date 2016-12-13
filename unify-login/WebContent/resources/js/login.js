@@ -90,9 +90,6 @@ staff.login = (function($) {
 		    		var password = $("#password").val();
 		    		password = MD5(password);
 		    		var staffProvCode = $("#store-selector-text").attr("area-id");
-		    		if(staffProvCode.indexOf("898") == 0){//若电渠门户，则将地区ID置为北京地区ID
-		    			staffProvCode = "8110000";
-		    		}
 		    		var url = httpconfig+"://"+provDomain+":"+version+"/provPortal/staff/login/page?areaId="+staffProvCode+"&areaName="+areaName
 		    	    +"&provinceName="+provinceName+"&staffCode="+staffCode+"&password="+password+"&prov="+province;
 		    		window.location = url;
@@ -263,7 +260,6 @@ staff.login = (function($) {
 			case "846": areaName = "hainan"; break;
 			case "823": areaName = "heilongjiang"; break;
 			case "899": areaName = "xuni"; break;
-			case "898": areaName = "ess"; break;
 		}
 		return areaName;
 	};
