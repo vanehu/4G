@@ -378,11 +378,9 @@ SoOrder = (function() {
 			});
 		}
 		
-
+		//订单填充使用人信息
 		if(ec.util.isArray(OrderInfo.boUserCustInfos)){
 			OrderInfo.orderData.orderList.orderListInfo.partyId = OrderInfo.cust.custId;//-3经办人客户，-2使用人客户，-1产权客户
-			//订单填充使用人信息
-			//使用人信息节点
 			for(var i=0;i<OrderInfo.boUserCustInfos.length;i++){
 				OrderInfo.boUserCustInfos[i].userCustFlag = "Y";
 				var busiOrder = _createUserCust(busiOrders, custOrderAttrs);
@@ -396,6 +394,7 @@ SoOrder = (function() {
 				busiOrder.busiObj.accessNumber = OrderInfo.getAccessNumber(OrderInfo.boUserCustInfos[i].prodId);
 				busiOrder.data.boCustInfos.push(OrderInfo.boUserCustInfos[i]);
 				busiOrder.data.boCustIdentities.push(OrderInfo.boUserCustIdentities[i]);
+				busiOrder.data.boPartyContactInfo.push(OrderInfo.boUserPartyContactInfos[i]);
 				busiOrders.push(busiOrder);
 			}
 		}
@@ -3933,6 +3932,8 @@ SoOrder = (function() {
 		busiOrder.data.boCustInfos.push(OrderInfo.bojbrCustInfos);
 		//客户证件节点
 		busiOrder.data.boCustIdentities.push(OrderInfo.bojbrCustIdentities);
+		//联系人节点
+		busiOrder.data.boPartyContactInfo.push(OrderInfo.bojbrPartyContactInfo);
 		busiOrders.push(busiOrder);
 	};
 	
@@ -3962,20 +3963,13 @@ SoOrder = (function() {
 	
 	//添加经办人信息：实名制拍照前老模式
 	var _addHandleInfoInPrevious = function(busiOrders, custOrderAttrs){
-		//订单购物车属性(经办人)
-		if(CONST.getAppDesc()==0){
-			var orderAttrName = $.trim($("#orderAttrName").val()); //经办人姓名
-			var orderIdentidiesTypeCd = $("#orderIdentidiesTypeCd  option:selected").val(); //证件类型
-			var orderAttrIdCard =$.trim($("#orderAttrIdCard").val()); //证件号码
-			var orderAttrAddr = $.trim($("#orderAttrAddr").val()); //地址
-			var orderAttrPhoneNbr = $.trim($("#orderAttrPhoneNbr").val()); //联系人号码
-			// 新建客户或二次业务，政企客户，经办人必填 （2016-3-17回退）
-			/*if (OrderInfo.boCustInfos.partyTypeCd == '2' || order.cust.isCovCust(OrderInfo.cust.identityCd)) {
-				if (!(ec.util.isObj(orderAttrName) && ec.util.isObj(orderAttrIdCard) && ec.util.isObj(orderAttrAddr) && ec.util.isObj(orderAttrPhoneNbr))) {
-					$.alert("提示", "政企单位用户经办人为必填项！");
-					return false;
-				}
-			}*/
+		if(CONST.getAppDesc() == 0){
+			var orderAttrName 		 = $.trim($("#orderAttrName").val()); //经办人姓名
+			var orderAttrAddr 		 = $.trim($("#orderAttrAddr").val()); //地址
+			var orderAttrIdCard 	 = $.trim($("#orderAttrIdCard").val()); //证件号码
+			var orderAttrPhoneNbr 	 = $.trim($("#orderAttrPhoneNbr").val()); //联系人号码
+			var orderIdentidiesTypeCd= $("#orderIdentidiesTypeCd  option:selected").val(); //证件类型
+
 			if(ec.util.isObj(orderAttrName)&&ec.util.isObj(orderAttrIdCard)&&ec.util.isObj(orderAttrPhoneNbr)&&ec.util.isObj(orderAttrAddr)){
 				if(ec.util.isObj(orderAttrName)){
 					custOrderAttrs.push({

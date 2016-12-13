@@ -2940,7 +2940,6 @@ order.cust = (function(){
 				$("#orderAttrIdCard").val($(scope).attr("idCardNumber"));
 				$("#orderIdentidiesTypeCd").val($(scope).attr("identityCd"));
 				OrderInfo.handleCustId = $(scope).attr("custId");//经办人客户ID
-				// _choosedCustInfo.handleCustId = $(scope).attr("custId");//经办人客户ID
 				OrderInfo.bojbrCustIdentities.identityNum = $(scope).attr("idCardNumber");
 				OrderInfo.bojbrCustInfos.name = $(scope).attr("partyName");
 				OrderInfo.bojbrCustInfos.addressStr = $(scope).attr("addressStr");
@@ -2975,35 +2974,22 @@ order.cust = (function(){
 	// 拍照(确认拍照)
 	var _createImage = function(scope) {
 		$("#tips").empty();
-		if(!$('#img_Photo').is(":hidden")){
-			//$.alert("提示", "已拍过照片 ，如需重新拍摄，请点击【重新拍照】");
-			//return;
-		}
+		if(!$('#img_Photo').is(":hidden")){}
 		var createImage = cert.createImage();
 		if (createImage && createImage.resultFlag != 0){
 			$("#tips").html("提示："+ createImage.errorMsg);
 			return false;
-		}
-//		$("#img").show();
-//		
-//		$("#takePhotos").removeClass("btna_o").addClass("btna_g").off("click");
-//		
-//		$("#img_Photo").attr("src", "data:;base64," + createImage.image);
-//		$("#img_Photo").data("identityPic", createImage);
-		
+		}	
 		$.ecOverlay("<strong>正在处理,请稍等...</strong>");
 		var url=contextPath+"/cust/preHandleCustCertificate";
 		$.unecOverlay();
 		var response= $.callServiceAsJson(url,{"photograph":encodeURIComponent(createImage.image),"venderId":createImage.venderId});
 		if(response.code==0 && response.data){
-//			$("#img").show();
-//			$('#capture').hide();
 			$("#takePhotos").removeClass("btna_o").addClass("btna_g").off("click");
 			$("#img_Photo").attr("src", "data:image/jpeg;base64," + response.data.photograph);
 			$("#img_Photo").attr("width", 640);
 			$("#img_Photo").attr("height", 360);
-			
-			
+
 			$("#img_Photo").data("identityPic", createImage.image);
 			$("#img_Photo").data("signature", createImage.signature);
 			$("#img_Photo").data("venderId", createImage.venderId);
@@ -3020,7 +3006,6 @@ order.cust = (function(){
 		}
 		
 	};
-	
 	
 	var _rePhotos = function(resultContent){
 		//初始化页面
@@ -3052,10 +3037,6 @@ order.cust = (function(){
 		$("#confirmAgree").removeClass("btna_o").addClass("btna_g");
 		$("#confirmAgree").off("click");
 		$("#tips").empty();
-//		if($('#img_Photo').is(":hidden")){
-//			$("#tips").html("提示："+ "请先拍照");
-//			return false;
-//		}
 	    var pictures = [];
 		if(!!OrderInfo.bojbrCustInfos && OrderInfo.bojbrCustInfos.identidiesTypeCd !=  $.trim($("#orderIdentidiesTypeCd").val())
 			&& OrderInfo.bojbrCustInfos.identityNum!= $.trim($("#orderIdentidiesTypeCd").val()) ){
@@ -3080,7 +3061,7 @@ order.cust = (function(){
 		            "signature" :""
 		        });
 			}
-		var param = {
+			var param = {
 				areaId : OrderInfo.getAreaId(),
 				certType:$.trim($("#orderIdentidiesTypeCd").val()),//证件类型
 				certNumber :$.trim($("#orderAttrIdCard").val()), //证件号码
@@ -3089,33 +3070,47 @@ order.cust = (function(){
 				accNbr : "",
 				srcFlag: "REAL",
 				venderId  : $("#img_Photo").data("venderId")
-	    };
-		$.ecOverlay("<strong>正在处理,请稍等...</strong>");
-		var url=contextPath+"/cust/uploadCustCertificate";
-		$.unecOverlay();
-		var response= $.callServiceAsJson(url,param);
-		if(response.code==0 && response.data){
-			isUploadImageSuccess = true;
-			OrderInfo.virOlId = response.data.virOlId;
-			if (!_queryUser()) {
-				OrderInfo.bojbrCustInfos.name=$.trim($("#orderAttrName").val())  ;//客户名称
-				OrderInfo.bojbrCustInfos.areaId=OrderInfo.getAreaId();//客户地区
-				OrderInfo.bojbrCustInfos.partyTypeCd=$("#orderPartyTypeCd").val();//客户类型---
-				OrderInfo.bojbrCustInfos.defaultIdTycre=$.trim($("#orderIdentidiesTypeCd").val());//证件类型
-				OrderInfo.bojbrCustInfos.addressStr=$.trim($("#orderAttrAddr").val());//客户地址
-				OrderInfo.bojbrCustInfos.mailAddressStr=$.trim($("#orderAttrAddr").val());;//通信地址
-				OrderInfo.bojbrCustIdentities.identidiesTypeCd=$.trim($("#orderIdentidiesTypeCd").val());//证件类型
-				OrderInfo.bojbrCustIdentities.identityNum=$.trim($("#orderAttrIdCard").val());//证件号码
+		    };
+			$.ecOverlay("<strong>正在处理,请稍等...</strong>");
+			var url=contextPath+"/cust/uploadCustCertificate";
+			$.unecOverlay();
+			var response= $.callServiceAsJson(url,param);
+			if(response.code==0 && response.data){
+				isUploadImageSuccess = true;
+				OrderInfo.virOlId = response.data.virOlId;
+				if (!_queryUser()) {
+					//1.经办人客户信息
+					OrderInfo.bojbrCustInfos.name=$.trim($("#orderAttrName").val());//客户名称
+					OrderInfo.bojbrCustInfos.areaId=OrderInfo.getAreaId();//客户地区
+					OrderInfo.bojbrCustInfos.partyTypeCd=$("#orderPartyTypeCd").val();//客户类型---
+					OrderInfo.bojbrCustInfos.defaultIdTycre=$.trim($("#orderIdentidiesTypeCd").val());//证件类型
+					OrderInfo.bojbrCustInfos.addressStr=$.trim($("#orderAttrAddr").val());//客户地址
+					OrderInfo.bojbrCustInfos.mailAddressStr=$.trim($("#orderAttrAddr").val());;//通信地址
+					OrderInfo.bojbrCustInfos.telNumber=$.trim($("#orderAttrPhoneNbr").val());//联系电话
+					//2.经办人证件信息
+					OrderInfo.bojbrCustIdentities.identidiesTypeCd=$.trim($("#orderIdentidiesTypeCd").val());//证件类型
+					OrderInfo.bojbrCustIdentities.identityNum=$.trim($("#orderAttrIdCard").val());//证件号码
+					//3.若用户有填写经办人联系号码，则新建经办人时添加联系人信息，否则不添加联系人信息
+					if(ec.util.isObj(OrderInfo.bojbrCustInfos.telNumber)){
+						OrderInfo.bojbrPartyContactInfo.contactName = $.trim($("#orderAttrName").val());
+						OrderInfo.bojbrPartyContactInfo.contactAddress = $.trim($("#orderAttrAddr").val());
+						OrderInfo.bojbrPartyContactInfo.staffId = OrderInfo.staff.staffId;
+						//根据身份证判断性别，无从判别默认为男
+						if(OrderInfo.bojbrCustIdentities.identidiesTypeCd == "1"){
+							var identityNum = OrderInfo.bojbrCustIdentities.identityNum;
+							identityNum = parseInt(identityNum.substring(16,17));//取身份证第17位判断性别，奇数男，偶数女
+							OrderInfo.bojbrPartyContactInfo.contactGender = (identityNum % 2) == 0 ? "2" : "1";//1男2女
+						} else{
+							OrderInfo.bojbrPartyContactInfo.contactGender = "1";//性别，默认为男
+						}
+					}
+				}
+				_close();
+			}else if(response.code==1){
+				$("#tips").html("提示：FTP上传失败，错误原因："+ response.data);
+			}else{
+				$("#tips").html("提示：FTP上传失败，错误原因："+ response.data);
 			}
-			_close();
-			//查到了，查不到新建 没有身份证！！！
-		}else if(response.code==1){
-			$("#tips").html("提示：FTP上传失败，错误原因："+ response.data);
-		//	$.alert("提示", response.data);
-		}else{
-			$("#tips").html("提示：FTP上传失败，错误原因："+ response.data);
-			//$.alertM(response.data);
-		 }
 		}
 	};
 	//关闭拍照弹框，关闭视频

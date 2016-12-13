@@ -1026,14 +1026,15 @@ OrderInfo = (function() {
 		identidiesPic : "" //证件照片
 	};
 	
-	// 使用使用人证件节点
+	// 使用人：证件节点
 	var _boUserCustIdentities = []; 
 	
-	// 使用使用人证件节点
+	// 使用人：证件节点
 	var _boUserCustInfos = []; 
 	
-	
-	
+	// 使用人：联系人节点
+	var _boUserPartyContactInfos = [];
+
 	//客户证件节点
 	var _bojbrCustIdentities = {
 		identidiesTypeCd : "1", //证件类型
@@ -1079,6 +1080,52 @@ OrderInfo = (function() {
         statusCd : "100001"//订单状态
 	};
 	
+	//新建经办人时的联系人节点
+	var _bojbrPartyContactInfo = {
+		state 			: "ADD",	//状态，新建联系人
+		staffId 		: 0,		//员工ID
+		headFlag 		: "1",		//是否首选联系人，默认为是
+        statusCd 		: "100001",	//订单状态
+	    contactName		: "",		//联系人名称，取页面上经办人的姓名
+		contactAddress	: "",		//联系地址，取页面上经办人的地址
+        contactGender	: "1",		//联系人的性别，无法辨别是默认是男
+        contactType		: "10",		//联系人类型，默认为主要联系人
+        //以下信息全部默认为空
+        fax 			: "",		//传真号
+        eMail			: "",		//参与人的eMail地址
+        contactId		: "",		//参与人联系信息的唯一标识
+        contactDesc 	: "",		//参与人联系详细信息
+        contactEmployer : "",		//参与人的联系单位
+        homePhone 		: "",		//参与人的家庭联系电话
+        mobilePhone 	: "",		//参与人的移动电话号码
+        officePhone 	: "",		//参与人办公室的电话号码
+        postAddress 	: "",		//参与人的邮件地址
+        postcode 		: ""		//参与人联系地址的邮政编码
+	};
+	
+	//新建使用人时联系人信息节点
+	var _boUserPartyContactInfo = {
+		state 			: "ADD",	//状态，新建联系人
+		staffId 		: 0,		//员工ID
+		headFlag 		: "1",		//是否首选联系人，默认为是
+        statusCd 		: "100001",	//订单状态
+	    contactName		: "",		//联系人名称，取页面上经办人的姓名
+		contactAddress	: "",		//联系地址，取页面上经办人的地址
+        contactGender	: "1",		//联系人的性别，无法辨别是默认是男
+        contactType		: "10",		//联系人类型，默认为主要联系人
+        //以下信息全部默认为空
+        fax 			: "",		//传真号
+        eMail			: "",		//参与人的eMail地址
+        contactId		: "",		//参与人联系信息的唯一标识
+        contactDesc 	: "",		//参与人联系详细信息
+        contactEmployer : "",		//参与人的联系单位
+        homePhone 		: "",		//参与人的家庭联系电话
+        mobilePhone 	: "",		//参与人的移动电话号码
+        officePhone 	: "",		//参与人办公室的电话号码
+        postAddress 	: "",		//参与人的邮件地址
+        postcode 		: ""		//参与人联系地址的邮政编码
+	};
+	
 	//客户属性
 	var _boCustProfiles = {};
 	
@@ -1122,6 +1169,7 @@ OrderInfo = (function() {
 			offerMemberInfos : []
 		}; */
 		OrderInfo.order.step = 1;   //填单页面步骤为1
+		_resetOrderInfoCache();
 	};
 	
 	//初始化基础数据，actionClassCd 动作大类，boActionTypeCd 动作小类，actionFlag 受理类型，actionTypeName 动作名称，批量模板使用 templateType
@@ -1663,30 +1711,15 @@ OrderInfo = (function() {
 	 * 填单页面返回“上一步”或“取消”时清空经办人、使用人缓存
 	 */
 	var _resetOrderInfoCache = function() {
-		OrderInfo.virOlId				= "";
-		OrderInfo.handleCustId 			= "";
-		OrderInfo.boUserCustIdentities	= [];
-		OrderInfo.boUserCustInfos 		= [];
-		OrderInfo.realNamePhotoFlag 	= "";
-		OrderInfo.bojbrCustInfos = {
-			name			: "", 	//客户名称
-			state 			: "ADD",//状态
-			areaId			: 0,	//地区
-			telNumber 		: "", 	//联系电话
-			addressStr 		: "",	//客户地址
-			partyTypeCd 	: 1,	//客户类型
-			defaultIdType	: "1",	//证件类型
-			mailAddressStr 	: "",	//通信地址
-			businessPassword: "",	//客户密码
-			jbrFlag 		: "Y"
-		};
-		OrderInfo.bojbrCustIdentities = {
-			state 			: "ADD",//状态
-			isDefault 		: "Y", 	//是否首选
-			identityNum 	: "", 	//证件号码
-			identidiesPic 	: "" ,	//证件照片
-			identidiesTypeCd: "1" 	//证件类型
-		};
+		OrderInfo.boUserPartyContactInfos = [];//使用人：联系人节点
+		OrderInfo.boUserCustIdentities	  = [];//使用人：客户证件节点
+		OrderInfo.boUserCustInfos 		  = [];//使用人：客户信息节点
+		OrderInfo.virOlId				  = "";//拍照上传虚拟购物车ID
+		OrderInfo.handleCustId 			  = "";//经办人为老客户时的客户ID
+		OrderInfo.realNamePhotoFlag 	  = "";//实名制拍照开关
+		OrderInfo.bojbrCustInfos 		  = $.extend(true, {}, _bojbrCustInfos);//经办人：客户信息节点
+		OrderInfo.bojbrCustIdentities	  = $.extend(true, {}, _bojbrCustIdentities);//经办人：客户证件节点
+		OrderInfo.bojbrPartyContactInfo   = $.extend(true, {}, _bojbrPartyContactInfo);//经办人：客户证件节点
 	};
 	
 	return {	
