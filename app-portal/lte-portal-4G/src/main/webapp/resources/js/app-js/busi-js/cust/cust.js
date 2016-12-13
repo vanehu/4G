@@ -594,6 +594,7 @@ cust = (function(){
 					return;
 				}
 	   var currentCT = $("#currentCT").val();//渠道类型
+	   $.alert("dd","currentCT -- " + currentCT);
 	   var propertiesKey = "REAL_NAME_PHOTO_"+(OrderInfo.staff.soAreaId+"").substring(0,3);
 	   var isFlag = offerChange.queryPortalProperties(propertiesKey);
 	   OrderInfo.preBefore.idPicFlag = isFlag;
@@ -632,7 +633,7 @@ cust = (function(){
 						for(var i=0;i<uniData.length;i++){
 							var certTypedate = uniData[i];
 //							if(certTypedate.certTypeCd == cardType && _partyTypeCd==1 && isFlag=="ON"){
-							if(certTypedate.isDefault == "Y"){
+							if(certTypedate.certTypeCd == "1"){
 								_obj.append("<option value='"+certTypedate.certTypeCd+"' selected='selected'>"+certTypedate.name+"</option>");
 							}else{
 								_obj.append("<option value='"+certTypedate.certTypeCd+"' >"+certTypedate.name+"</option>");
@@ -1321,7 +1322,7 @@ cust = (function(){
 				if(busitypeflag!=1){
 					var prodInstInfos = response.data.prodInstInfos;
 					if(prodInstInfos.length<1){
-						$.alert("提示","未返回产品实例信息");
+						$.alert("提示","省份未返回产品实例信息");
 						return false;
 					}
 					order.prodModify.choosedProdInfo={
