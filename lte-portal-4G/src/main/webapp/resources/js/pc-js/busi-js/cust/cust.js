@@ -1865,7 +1865,7 @@ order.cust = (function(){
 				if(busitypeflag!=1){
 					var prodInstInfos = response.data.prodInstInfos;
 					if(prodInstInfos.length<1){
-						$.alert("提示","未返回产品实例信息");
+						$.alert("提示","省份未返回产品实例信息");
 						return false;
 					}
 					order.prodModify.choosedProdInfo={
