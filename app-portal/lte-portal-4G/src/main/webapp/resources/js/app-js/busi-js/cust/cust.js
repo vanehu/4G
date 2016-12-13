@@ -524,27 +524,37 @@ cust = (function(){
 			$("#cmCustName").attr("readonly","readonly");
 			$("#cmCustIdCard").attr("readonly","readonly");
 			$("#cmAddressStr").attr("readonly","readonly");
+			try{
+				$('#custFormdata').data('bootstrapValidator').enableFieldValidators("cmCustIdCardOther",false,null);
+				$('#custFormdata').data('bootstrapValidator').enableFieldValidators("cmCustIdCard",true,null);
+			}catch(err){}
 			
-			$('#custFormdata').data('bootstrapValidator').enableFieldValidators("cmCustIdCardOther",false,null);
-			$('#custFormdata').data('bootstrapValidator').enableFieldValidators("cmCustIdCard",true,null);
 		}else if(identidiesTypeCd==2){
 			$("#cmCustIdCardOther").attr("placeHolder","请输入合法军官证");
 			$("#div-cmcustidcard-none").show();
 			$("#div-cmcustidcard").hide();
+			try{
 			$('#custFormdata').data('bootstrapValidator').enableFieldValidators("cmCustIdCardOther",true,null);
 			$('#custFormdata').data('bootstrapValidator').enableFieldValidators("cmCustIdCard",false,null);
+			}catch(err){}
 		}else if(identidiesTypeCd==3){
 			$("#cmCustIdCardOther").attr("placeHolder","请输入合法护照");
 			$("#div-cmcustidcard-none").show();
 			$("#div-cmcustidcard").hide();
-			$('#custFormdata').data('bootstrapValidator').enableFieldValidators("cmCustIdCardOther",true,null);
-			$('#custFormdata').data('bootstrapValidator').enableFieldValidators("cmCustIdCard",false,null);
+			try{
+				$('#custFormdata').data('bootstrapValidator').enableFieldValidators("cmCustIdCardOther",true,null);
+				$('#custFormdata').data('bootstrapValidator').enableFieldValidators("cmCustIdCard",false,null);
+			}catch(err){}
+			
 		}else{
 			$("#cmCustIdCardOther").attr("placeHolder","请输入合法证件号码");
 			$("#div-cmcustidcard-none").show();
 			$("#div-cmcustidcard").hide();
-			$('#custFormdata').data('bootstrapValidator').enableFieldValidators("cmCustIdCardOther",true,null);
-			$('#custFormdata').data('bootstrapValidator').enableFieldValidators("cmCustIdCard",false,null);
+			try{
+				$('#custFormdata').data('bootstrapValidator').enableFieldValidators("cmCustIdCardOther",true,null);
+				$('#custFormdata').data('bootstrapValidator').enableFieldValidators("cmCustIdCard",false,null);
+			} catch(err){}
+				
 		}
 		_form_custInfomodify_btn();
 	};
@@ -661,14 +671,14 @@ cust = (function(){
 						if(OrderInfo.preBefore.idPicFlag=="ON"){//实名拍照省份开关为开
 //							$("#photo").show();
 //							$("#queryJbr").show();
-							OrderInfo.jbr.custId = OrderInfo.cust.custId;
-							OrderInfo.jbr.partyName = OrderInfo.cust.partyName;
-							OrderInfo.jbr.telNumber = OrderInfo.cust.telNumber;
-							OrderInfo.jbr.addressStr = OrderInfo.cust.addressStr;
-							OrderInfo.jbr.identityCd = OrderInfo.cust.identityCd;
-							OrderInfo.jbr.mailAddressStr = OrderInfo.cust.mailAddressStr;
-							OrderInfo.jbr.identityPic = OrderInfo.cust.identityPic;
-							OrderInfo.jbr.identityNum = OrderInfo.cust.identityNum;
+								OrderInfo.jbr.custId = OrderInfo.cust.custId;
+								OrderInfo.jbr.partyName = OrderInfo.cust.partyName;
+								OrderInfo.jbr.telNumber = OrderInfo.cust.telNumber;
+								OrderInfo.jbr.addressStr = OrderInfo.cust.addressStr;
+								OrderInfo.jbr.identityCd = OrderInfo.cust.identityCd;
+								OrderInfo.jbr.mailAddressStr = OrderInfo.cust.mailAddressStr;
+								OrderInfo.jbr.identityPic = OrderInfo.cust.identityPic;
+								OrderInfo.jbr.identityNum = OrderInfo.cust.identityNum;
 						}
 						//jquery mobile 需要刷新才能生效
 //						_obj.selectmenu().selectmenu('refresh');
@@ -701,10 +711,7 @@ cust = (function(){
 //				OrderInfo.jbr.identityPic = OrderInfo.cust.identityPic;
 //				OrderInfo.jbr.custId = OrderInfo.cust.custId;
 //			}
-			OrderInfo.jbr.custId ="";
-			cust.clearJbrForm();
-			OrderInfo.virOlId = "";
-			OrderInfo.jbr.identityPic = undefined;
+			
 //			$('#jbrFormdata').data('bootstrapValidator').enableFieldValidators("orderAttrIdCard",true,"sfzorderAttrIdCard");
 		}else{
 			$("#jbrsfz").hide();
@@ -713,12 +720,14 @@ cust = (function(){
 			$("#orderAttrName").removeAttr("readonly");
 			$("#orderAttrAddr").removeAttr("readonly");
 			$("#orderAttrIdCard").removeAttr("readonly");
-			OrderInfo.virOlId = "";
-			OrderInfo.jbr.custId ="";
-			cust.clearJbrForm();
-			OrderInfo.jbr.identityPic = undefined;
 //			$('#jbrFormdata').data('bootstrapValidator').enableFieldValidators("orderAttrIdCard",true,"orderAttrIdCard");
 		}
+		if(OrderInfo.jbr){
+			OrderInfo.jbr.custId ="";
+			OrderInfo.virOlId = "";
+			OrderInfo.jbr.identityPic = undefined;
+		}
+		cust.clearJbrForm();
 		
 	};
 	
@@ -1241,10 +1250,10 @@ cust = (function(){
 							$.alert("提示",mainPhoneNum+"不是在用产品！");
 							return false;
 						}
-						if(OrderInfo.actionFlag!=1 && prodInstInfos.feeType.feeType!=order.prodModify.choosedProdInfo.feeType){
-							$.alert("提示",mainPhoneNum+"和主卡的付费类型不一致！");
-							return false;
-						}
+//						if(OrderInfo.actionFlag!=1 && prodInstInfos.feeType.feeType!=order.prodModify.choosedProdInfo.feeType){
+//							$.alert("提示",mainPhoneNum+"和主卡的付费类型不一致！");
+//							return false;
+//						}
 						if(prodInstInfos.productId=="280000000"){
 							$.alert("提示",mainPhoneNum+"是无线宽带，不能纳入！");
 							return false;
@@ -1311,6 +1320,10 @@ cust = (function(){
 				}
 				if(busitypeflag!=1){
 					var prodInstInfos = response.data.prodInstInfos;
+					if(prodInstInfos.length<1){
+						$.alert("提示","未返回产品实例信息");
+						return false;
+					}
 					order.prodModify.choosedProdInfo={
 						accNbr: prodInstInfos[0].accNbr,
 						areaCode: prodInstInfos[0].zoneNumber,

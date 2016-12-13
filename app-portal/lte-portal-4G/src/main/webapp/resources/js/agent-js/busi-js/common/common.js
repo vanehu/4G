@@ -183,22 +183,22 @@ common = (function($) {
 	
 	//客户端调用此方法返回到上一页 1 为prepare页面  2为order-content（填单）页面 3为order-confirm（订单确认和收银台）页面 4为order-print（打印）页面
 	var _callReturnBack=function(){
-		if(order.calcharge.returnFlag==false){//支付成功，禁止返回
+		if(order.calcharge.haveCharge==true){//已下过计费接口
 			return;
 		}
 		//alert("OrderInfo.returnFlag="+OrderInfo.returnFlag+"——OrderInfo.actionFlag="+OrderInfo.actionFlag+"——OrderInfo.order.step="+OrderInfo.order.step+"");
 		$.unecOverlay();//网络出现故障或手机出现故障时按返回关闭“加载中”提示框
 		//如果收费成功  安卓手机返回按钮不可返回
-		if($("#toCharge").length>0){
-			if("disabled"==$("#toCharge").attr("disabled")){
-				if(OrderInfo.order.step==5){
-					
-				}else if(OrderInfo.order.step==4 && OrderInfo.actionFlag != 13 && OrderInfo.actionFlag != 14){
-					
-				}
-				else return;
-			}
-		}
+//		if($("#toCharge").length>0){
+//			if("disabled"==$("#toCharge").attr("disabled")){
+//				if(OrderInfo.order.step==5){
+//					
+//				}else if(OrderInfo.order.step==4 && OrderInfo.actionFlag != 13 && OrderInfo.actionFlag != 14){
+//					
+//				}
+//				else return;
+//			}
+//		}
 		if(OrderInfo.jbrPageFlag == "Y"){
 			OrderInfo.jbrPageFlag = "N";
 			$("#order-content").show();

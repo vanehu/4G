@@ -26,6 +26,7 @@ order.calcharge = (function(){
 	var payType;
 	var _returnFlag=true;//支付平台返回成功后，返回按钮提示不让进行
 	var _haveCharge=false;//是否已经下过计费接口
+	var timeId;//定时计时器
 	//弹出业务对象窗口
 	var _addbusiOrder=function(proId,obj){
 		if($("#div_payitem_"+proId)!=undefined&&$("#div_payitem_"+proId).html()!=undefined){
@@ -731,10 +732,11 @@ order.calcharge = (function(){
 				"areaId" : OrderInfo.staff.areaId,
 				"chargeItems":_chargeItems
 		};
+		order.calcharge.haveCharge=true;
 		var url=contextPath+"/app/order/chargeSubmit?token="+OrderInfo.order.token;
 		var response=$.callServiceAsJson(url, params, {});
 		var msg="";
-		order.calcharge.haveCharge=true;//已经下过收费接口，定时下计费接口任务取消
+		clearInterval(timeId);//已经下过收费接口，定时下计费接口任务取消
 		if (response.code == 0) {
 			submit_success=true;
 			//受理成功，不再取消订单
@@ -1217,6 +1219,7 @@ order.calcharge = (function(){
 			//var payUrl2="http://192.168.4.137:7001/pay_web/platpay/index?payToken="+payUrl.split("=")[1];
    		  // payUrl2="https://crm.189.cn:86/upay/platpay/index?payToken=5D0CB495B3DD59CAEC106F93EEBD13952F62C58C4A13445FB8AC378A32038E99";
 			$.ecOverlay("<strong>支付处理中,请稍等会儿....</strong>");
+			timeId=setInterval(order.calcharge.timeToFee,3000);//定时查询支付状态，若成功则下计费接口，已下过则不再下。
 			common.callOpenPay(payUrl);//打开支付页面
 		}else if(response.code==1002){
 			$.alert("提示",response.data);
@@ -1242,12 +1245,11 @@ order.calcharge = (function(){
 	 * 获取支付平台返回订单状态
 	 */
 	var _queryPayOrdStatus1 = function(soNbr, status,type) {
-		if(order.calcharge.haveCharge){//已下过收费接口，不再处理
+		if(order.calcharge.haveCharge==true){//已下过计费接口
 			return;
 		}
 		if ("1" == status) { // 原生返回成功，调用支付平台查询订单状态接口，再次确定是否成功，如果成功则调用收费接口
 			$.ecOverlay("<strong>正在处理中,请稍等会儿....</strong>");
-			order.calcharge.returnFlag=false;//禁止返回
 			var params = {
 				"olId" : soNbr
 				
@@ -1257,9 +1259,23 @@ order.calcharge = (function(){
 			$.unecOverlay();
 			if (response.code == 0) {//支付成功，调用收费接口
 				var val=$.trim($('#realMoney').html())*100;
-				var payMoney=response.data.split("_")[1];
+				val=val+"";
+				var payMoney="";
+				if(response.data.split("_")[1]!=undefined){
+					payMoney=payMoney+response.data.split("_")[1];
+				}
 				if(val!=payMoney){
-					$.alert("提示","金额可能被篡改，为了您的安全，请重新下单");
+					var title='金额可能被篡改';
+					$("#btn-dialog-ok").removeAttr("data-dismiss");
+					$('#alert-modal').modal({backdrop: 'static', keyboard: false});
+					$("#btn-dialog-ok").off("click").on("click",function(){
+						$("#alert-modal").modal("hide");
+					});
+					var msg="翼销售实收金额:【"+val+"】;支付平台返回金额:【"+payMoney+"】两者不匹配,为了您的安全,请重新下单!"
+					$("#modal-title").html(title);
+					$("#modal-content").html(msg);
+					$("#alert-modal").modal();
+					clearInterval(timeId);
 					return;
 				}
 				payType=type;
@@ -1281,7 +1297,8 @@ order.calcharge = (function(){
 						},	
 						"done" : function(response){
 							$.unecOverlay();
-							order.calcharge.haveCharge=true;//已经下过收费接口，定时下计费接口任务取消
+							order.calcharge.haveCharge=true;
+							clearInterval(timeId);//已经下过收费接口，定时下计费接口任务取消
 							if (response.code == 0) {
 								_chargeSave(1);
 							}else if (response.code == -2) {
@@ -1395,6 +1412,9 @@ order.calcharge = (function(){
 
 //收费界面定时任务入口
 var _timeToFee=function(){
+	if(order.calcharge.haveCharge==true){//已下过计费接口
+		return;
+	}
 	var checkUrl = contextPath + "/app/order/getPayOrdStatus";
 	var checkParams = {
 			"olId" : OrderInfo.orderResult.olId
