@@ -283,8 +283,8 @@ order.memberChange = function(){
 				
 				var $tipTr = null;
 				//主副卡互换开关
-				//var memberChangeFlag =  query.common.queryPropertiesStatus("MEMBER_ROLE_EXCHANGE_" + OrderInfo.staff.areaId.substr(0, 3));
-				if(true){//主副卡互换开关为ON 
+				var memberChangeFlag =  query.common.queryPropertiesStatus("MEMBER_ROLE_EXCHANGE_" + OrderInfo.staff.areaId.substr(0, 3));
+				if(memberChangeFlag){//主副卡互换开关为ON 
 					$tipTr = $(
 						"<tr>"+
 							"<td colspan='4' style='text-align:center;line-height:25px;'>"+
@@ -340,7 +340,7 @@ order.memberChange = function(){
 							});	
 						}
 						//主副卡成员互换入口
-						if(true){
+						if(memberChangeFlag){
 							var eleR = $("<i id='plan_no'><a id='' accNbr='"+this.accessNumber+"' class='purchase' href='javascript:void(0)'>主副卡互换</a></i>").appendTo(li);
 							eleR.click(function(){
 								$.confirm("信息确认","主副卡成员角色互换：原主卡将成为副卡，原副卡将成为主卡，原套餐及产品等信息不变，请确认是否受理？",{ 
