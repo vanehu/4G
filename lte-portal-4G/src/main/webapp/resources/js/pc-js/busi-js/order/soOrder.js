@@ -3240,6 +3240,30 @@ SoOrder = (function() {
 			identidiesPic	: OrderInfo.subHandleInfo.imageInfo,//二进制证件照片
 			identidiesTypeCd: OrderInfo.subHandleInfo.identidiesTypeCd//证件类型
 		});
+		//客户联系人节点
+		if(OrderInfo.subHandleInfo.orderAttrPhoneNbr!=null && OrderInfo.subHandleInfo.orderAttrPhoneNbr !=""){
+			var contactGender = "1";
+			if(OrderInfo.subHandleInfo.identidiesTypeCd == "1"){
+				if (parseInt(OrderInfo.subHandleInfo.identityNum.substr(16, 1)) % 2 == 1) { 
+					contactGender = "1"; 
+				} else { 
+					contactGender = "2"; 
+				}
+			}
+			busiOrder.data.boPartyContactInfo.push({
+				contactAddress : OrderInfo.subHandleInfo.orderAttrAddr,//参与人的联系地址
+		        contactGender  : contactGender,//参与人联系人的性别
+		        contactName : OrderInfo.subHandleInfo.orderAttrName,//参与人的联系人名称
+		        contactType : "10",//联系人类型
+		        headFlag : "1",//是否首选联系人
+		        homePhone : OrderInfo.subHandleInfo.orderAttrPhoneNbr,//参与人的家庭联系电话
+		        mobilePhone : OrderInfo.subHandleInfo.orderAttrPhoneNbr,//参与人的移动电话号码
+		        officePhone : OrderInfo.subHandleInfo.orderAttrPhoneNbr,//参与人办公室的电话号码
+		        staffId : OrderInfo.staff.staffId,//员工ID
+		        state : "ADD",//状态
+		        statusCd : "100001"//订单状态
+			});
+		}
 		busiOrders.push(busiOrder);
 	};	
 	
@@ -3287,6 +3311,30 @@ SoOrder = (function() {
 						identidiesPic	: subUserInfo.identityPic,//二进制证件照片
 						identidiesTypeCd: subUserInfo.orderIdentidiesTypeCd//证件类型
 					});
+					//客户联系人节点
+					if(subUserInfo.orderAttrPhoneNbr!=null && subUserInfo.orderAttrPhoneNbr!=""){
+						var contactGender = "1";
+						if(subUserInfo.orderIdentidiesTypeCd == "1"){
+							if (parseInt(subUserInfo.identityNum.substr(16, 1)) % 2 == 1) { 
+								contactGender = "1"; 
+							} else { 
+								contactGender = "2"; 
+							}
+						}
+						busiOrder.data.boPartyContactInfo.push({
+							contactAddress : subUserInfo.orderAttrAddr,//参与人的联系地址
+					        contactGender  : contactGender,//参与人联系人的性别
+					        contactName : subUserInfo.orderAttrName,//参与人的联系人名称
+					        contactType : "10",//联系人类型
+					        headFlag : "1",//是否首选联系人
+					        homePhone : subUserInfo.orderAttrPhoneNbr,//参与人的家庭联系电话
+					        mobilePhone : subUserInfo.orderAttrPhoneNbr,//参与人的移动电话号码
+					        officePhone : subUserInfo.orderAttrPhoneNbr,//参与人办公室的电话号码
+					        staffId : OrderInfo.staff.staffId,//员工ID
+					        state : "ADD",//状态
+					        statusCd : "100001"//订单状态
+						});
+					}
 					busiOrders.push(busiOrder);
 			    }
 			}

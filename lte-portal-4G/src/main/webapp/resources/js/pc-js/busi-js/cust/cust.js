@@ -2887,6 +2887,14 @@ order.cust = (function(){
 			$('#'+CONST.PROD_ATTR.PROD_USER+'_'+prodId+'_name').val("[新增]"+orderUserName);
 			$('#'+CONST.PROD_ATTR.PROD_USER+'_'+prodId).val(instId);
 		};
+		var  orderAttrPhoneNbr = ec.util.defaultStr($("#orderUserPhoneNbr").val());
+		userSubInfo.orderAttrPhoneNbr = orderAttrPhoneNbr;
+		for(var i=0;i<OrderInfo.subUserInfos.length;i++){
+            if(OrderInfo.subUserInfos[i].prodId == userSubInfo.prodId ){
+                OrderInfo.subUserInfos.splice(i,1);//从下标为i的元素开始，连续删除1个元素
+                i--;//因为删除下标为i的元素后，该位置又被新的元素所占据，所以要重新检测该位置
+            }
+        }
 		OrderInfo.subUserInfos.push(userSubInfo);
 		easyDialog.close();
 	};
