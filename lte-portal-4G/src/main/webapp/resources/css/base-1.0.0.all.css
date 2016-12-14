@@ -4673,3 +4673,13 @@ li.proposal.selected {
   text-align: center;
 }
 /** 扫码登录 end **/
+.sub_label {
+	padding-top: 3px;
+}
+.sub_label li {
+    padding: 0px 12px;
+    line-height: 25px;
+    height: 25px;
+    border: 1px solid #E8E8E8;
+    background-color: #FFF;
+}

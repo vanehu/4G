@@ -3327,9 +3327,10 @@ AttachOffer = (function() {
 							$("#ul_"+prodId+"_"+this.label).show();
 							$("#parentLabel_" + prodId + "_" + this.label).show();
 						}else{
-							$("#tab_"+prodId+"_"+this.label).removeClass("setcon");
 							$("#ul_"+prodId+"_"+this.label).hide();
-							if (1 != flag) {
+							// 选中子标签，附标签仍高亮显示
+							if (1 != flag || ec.util.isObj(this.parentLabel)) {
+								$("#tab_"+prodId+"_"+this.label).removeClass("setcon");
 								$("#parentLabel_" + prodId + "_" + this.label).hide();
 							}
 						}
@@ -3551,7 +3552,7 @@ AttachOffer = (function() {
 		
 		$("#myfavorites_"+prodId).addClass("setcon");
 		//$("#myfavorites_"+prodId).siblings().removeClass("setcon");
-		$("[class='pdcard'][id^='parentLabel_" + prodId + "']").hide();
+		$("[class*='pdcard'][id^='parentLabel_" + prodId + "']").hide();
 		var offerSpec = OrderInfo.offerSpec; //获取产品信息
         if(offerSpec.offerRoles != undefined  && offerSpec.offerRoles[0].prodInsts != undefined){
         	var prodInsts = offerSpec.offerRoles[0].prodInsts;

@@ -32,7 +32,7 @@
 		<#if newLabelMap?? && newLabelMap.result?? && (newLabelMap.result?size>0)>
 			<#list newLabelMap.result as item>
 				<#if item.subLabel?? && (item.subLabel?size>0)>
-					<ul class="pdcard" id="parentLabel_${prodId}_${item.label}" style="display: none;">
+					<ul class="pdcard sub_label" id="parentLabel_${prodId}_${item.label}" style="display: none;">
 						<#list item.subLabel as subItem>
 							<li id="tab_${prodId}_${subItem.label}" onclick="AttachOffer.changeLabel(${prodId},'${param.prodSpecId}',${subItem.label}, 1)">${subItem.value}</li>
 						</#list>
