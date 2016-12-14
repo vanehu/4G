@@ -55,10 +55,10 @@ order.main = (function(){
 				}else if(param.feeTypeMain=="1201" && (param.offerSpec.feeType=="1201"||param.offerSpec.feeType=="3101"||param.offerSpec.feeType=="3102"||param.offerSpec.feeType=="3103")){
 					is_same_feeType=true;
 				}
-				if(!is_same_feeType){
-					$.alert("提示","主副卡付费类型不一致，无法进行主副卡成员变更。");
-					return;
-				}
+//				if(!is_same_feeType){
+//					$.alert("提示","主副卡付费类型不一致，无法进行主副卡成员变更。");
+//					return;
+//				}
 			}
 		}
 		$.callServiceAsHtml(contextPath+"/agent/order/main",param,{
@@ -1748,7 +1748,7 @@ order.main = (function(){
 			identityCd="";
 		}
 		diffPlace="local";
-		areaId=OrderInfo.staff.areaId;
+		areaId=OrderInfo.staff.areaId+"";
 		// lte进行受理地区市级验证
 		if(CONST.getAppDesc()==0&&areaId.indexOf("0000")>0){
 			$.alert("提示","省级地区无法进行定位客户,请选择市级地区！");
@@ -1882,7 +1882,11 @@ order.main = (function(){
 			OrderInfo.jbr.custId = custInfo.custId;
 			if(OrderInfo.jbr.identityCd != custInfo.identityCd || OrderInfo.jbr.identityNum != custInfo.idCardNumber){
 				OrderInfo.jbr.identityCd = custInfo.identityCd;
-				OrderInfo.jbr.identityNum = custInfo.idCardNumber;
+				if(OrderInfo.jbr.identityCd==1){
+					OrderInfo.jbr.identityNum = $('#sfzorderAttrIdCard').val();//证件号码
+				}else{
+					OrderInfo.jbr.identityNum = $('#orderAttrIdCard').val();//证件号码
+				}
 				OrderInfo.virOlId = "";
 			}
 //			order.cust.tmpChooseUserInfo.prodId = '';

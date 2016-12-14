@@ -53,10 +53,10 @@ order.main = (function(){
 				}else if(param.feeTypeMain=="1201" && (param.offerSpec.feeType=="1201"||param.offerSpec.feeType=="3101"||param.offerSpec.feeType=="3102"||param.offerSpec.feeType=="3103")){
 					is_same_feeType=true;
 				}
-				if(!is_same_feeType){
-					$.alert("提示","主副卡付费类型不一致，无法进行主副卡成员变更。");
-					return;
-				}
+//				if(!is_same_feeType){
+//					$.alert("提示","主副卡付费类型不一致，无法进行主副卡成员变更。");
+//					return;
+//				}
 			}
 		}
 		$.callServiceAsHtml(contextPath+"/app/order/main",param,{
@@ -1469,6 +1469,7 @@ function _showJbrInfo(custInfo){
 		$('#orderAttrName').val(custInfo.partyName);
 		$('#orderAttrAddr').val(custInfo.areaName);
 		$('#orderAttrPhoneNbr').val(custInfo.accNbr);
+		OrderInfo.jbr.partyName = custInfo.partyName;
 		$.alert("提示","经办人信息查询成功！\n请对经办人进行拍照");
 	} 
 };
@@ -1493,7 +1494,6 @@ function _queryJbr(){
 	}else{
 		var identityNum = $('#orderAttrIdCard').val();//证件号码
 	}
-	
 	if(ec.util.isObj($.trim($("#orderIdentidiesTypeCd").val()))||ec.util.isObj($.trim($("#sfzorderAttrIdCard").val()))||ec.util.isObj($.trim($("#orderAttrIdCard").val()))){
 		if(!ec.util.isObj($.trim($("#orderIdentidiesTypeCd").val()))){
 			$.alert("提示","请选择证件类型！");
@@ -1521,7 +1521,7 @@ function _queryJbr(){
 		identityCd="";
 	}
 	diffPlace="local";
-	areaId=OrderInfo.staff.areaId;
+	areaId=OrderInfo.staff.areaId+"";
 	// lte进行受理地区市级验证
 	if(CONST.getAppDesc()==0&&areaId.indexOf("0000")>0){
 		$.alert("提示","省级地区无法进行定位客户,请选择市级地区！");
@@ -1551,7 +1551,6 @@ function _queryJbr(){
 			}
 			if(response.data.indexOf("false") ==0) {
 				$.unecOverlay();
-//				$.alert("提示","抱歉，没有定位到客户，请尝试其他客户。");
 				
 				if(!ec.util.isObj($.trim($("#orderAttrName").val()))||!ec.util.isObj($.trim($("#orderAttrAddr").val()))){
 					if(!ec.util.isObj($.trim($("#orderAttrName").val()))){

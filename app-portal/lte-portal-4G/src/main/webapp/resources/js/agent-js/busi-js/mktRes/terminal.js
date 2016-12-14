@@ -904,10 +904,10 @@ mktRes.terminal = (function($){
 						}else if(order.prodModify.choosedProdInfo.feeType=="1201" && (offerSpec.feeType=="1201"||offerSpec.feeType=="3101"||offerSpec.feeType=="3102"||offerSpec.feeType=="3103")){
 							is_same_feeType=true;//准实时预付费
 						}
-						if(!is_same_feeType){
-							$.alert("提示","付费类型不一致,无法进行套餐变更。");
-							return;
-						}
+//						if(!is_same_feeType){
+//							$.alert("提示","付费类型不一致,无法进行套餐变更。");
+//							return;
+//						}
 					}
 				}
 			}
