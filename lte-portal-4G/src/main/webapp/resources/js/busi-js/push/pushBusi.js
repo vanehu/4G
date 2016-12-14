@@ -146,7 +146,7 @@ push.busi = (function($) {
 				rid : rid
 			}, function(data) {
 				if (data.error) {
-					$.alert("提示","工号已连接,请点击【取绑】取消连接!");
+					$.alert("提示","工号已连接,请点击【解绑】取消连接!");
 					return;
 				}
 				document.cookie = "STICKYID="+rid+";path=/; domain=.189.cn";

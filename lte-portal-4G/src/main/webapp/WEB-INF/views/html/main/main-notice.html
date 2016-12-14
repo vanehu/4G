@@ -105,7 +105,7 @@
 </style>
 <#escape x as x?html>
 <div id="popNotice">
-	<div id="popNoticeTitle">重要通知</div>
+	<div id="popNoticeTitle">重要通知（只提醒一次）</div>
 	<a id="popClose" onclick="main.home.hidePopNotice()"></a>
 	<div id="popNoticeInfo" onclick="main.home.queryNotice(${popNotice.bulletinId})">
 		<div id="popInfo">
@@ -119,8 +119,11 @@
 </#escape>
 <script>
 	$(function(){
-		$("#popNotice").show();
-		setTimeout('$("#popNotice").css("height", "150px");', 1000);
+		if($.cookie('_popNotice_') == null){
+			$("#popNotice").show();
+			$.cookie('_popNotice_','yes',{path:'/'});
+			setTimeout('$("#popNotice").css("height", "150px");', 1000);
+		}
 	});
 </script>
 </#if>

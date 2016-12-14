@@ -635,6 +635,8 @@ staff.login = (function($) {
 	//跳转地址
 	var _redirectUrl = function() {
 		var lastUrl=$.cookie("_last_url");
+		// #1121961,删除session会话保持的弹出框cookie标识
+		$.cookie('_popNotice_',null,{path:'/'});
 		if(!!lastUrl && lastUrl.indexOf("/")>=0 && lastUrl.indexOf("/staff/login") <0){
 			$.cookie("_last_url",null,{path:"/"});
 			window.location.href=CommonUtils.replaceAll(lastUrl,'"','');
