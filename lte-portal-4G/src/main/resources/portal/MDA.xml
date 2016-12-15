@@ -1572,6 +1572,42 @@
 				'REAL_NAME_PHOTO_899':'OFF'<!-- 虚拟省 -->
 			}
 		</const>
+		<const type="Map" name="REAL_USER_FLAG" description="使用人分省开关(4GWEB)">
+			{
+				'REAL_USER_854':'OFF',<!-- 西藏 -->
+				'REAL_USER_863':'OFF',<!-- 青海 -->
+				'REAL_USER_815':'OFF',<!-- 内蒙古 -->
+				'REAL_USER_823':'OFF',<!-- 黑龙江 -->
+				'REAL_USER_845':'OFF',<!-- 广西 -->
+				'REAL_USER_850':'OFF',<!-- 重庆 -->
+				'REAL_USER_861':'OFF',<!-- 陕西 -->
+				'REAL_USER_842':'OFF',<!-- 湖北 -->
+				'REAL_USER_835':'OFF',<!-- 福建 -->
+				'REAL_USER_832':'OFF',<!-- 江苏 -->
+				'REAL_USER_846':'OFF',<!-- 海南 -->
+				'REAL_USER_864':'OFF',<!-- 宁夏 -->
+				'REAL_USER_814':'OFF',<!-- 山西 -->
+				'REAL_USER_853':'OFF',<!-- 云南 -->
+				'REAL_USER_836':'OFF',<!-- 江西 -->
+				'REAL_USER_837':'OFF',<!-- 山东 -->
+				'REAL_USER_811':'OFF',<!-- 北京 -->
+				'REAL_USER_843':'OFF',<!-- 湖南 -->
+				'REAL_USER_851':'OFF',<!-- 四川 -->
+				'REAL_USER_844':'OFF',<!-- 广东 -->
+				'REAL_USER_831':'OFF',<!-- 上海 -->
+				'REAL_USER_812':'OFF',<!-- 天津 -->
+				'REAL_USER_813':'OFF',<!-- 河北 -->
+				'REAL_USER_841':'OFF',<!-- 河南 -->
+				'REAL_USER_821':'OFF',<!-- 辽宁 -->
+				'REAL_USER_822':'OFF',<!-- 吉林 -->
+				'REAL_USER_834':'OFF',<!-- 安徽 -->
+				'REAL_USER_833':'OFF',<!-- 浙江 -->
+				'REAL_USER_852':'OFF',<!-- 贵州 -->
+				'REAL_USER_862':'OFF',<!-- 甘肃 -->
+				'REAL_USER_865':'OFF',<!-- 新疆 -->
+				'REAL_USER_899':'OFF'<!-- 虚拟省 -->
+			}
+		</const>
 		<const type="Map" name="MEMBER_ROLE_EXCHANGE_FLAG" description="主副卡角色互换分省开关，默认OFF">
 			{
 				'MEMBER_ROLE_EXCHANGE_854':'OFF',<!-- 西藏 -->

@@ -1464,18 +1464,24 @@ order.main = (function(){
 			$("#userTips_"+prodId).empty();
 			if ($.trim($("#orderUserIdentidiesTypeCd_"+ prodId +" option:selected").val()) == "1" && !ec.util.isObj($('#orderUserAttrIdCard_'+prodId).val())){
 		    	$("#userTips_"+prodId).html("提示："+ "请先读卡");
-		    	return false;
+		    	return ;
 	    	}
 			if (!_queryUser(prodId)) {
-				$('#'+CONST.PROD_ATTR.PROD_USER+'_'+prodId).val(prodId); 
+				if (query.common.queryPropertiesValue("REAL_USER_" + OrderInfo.staff.areaId.substr(0, 3)) == "ON"){
+				   $('#'+CONST.PROD_ATTR.PROD_USER+'_'+prodId).val(prodId); 
+				   $('#'+CONST.PROD_ATTR.PROD_USER+'_'+prodId).val($.trim($("#orderUserAttrName_"+prodId).val()));
+				}else{
+					$.alert("提示","没有查询到客户信息！");
+					return;
+				}
 			}
-			$('#'+CONST.PROD_ATTR.PROD_USER+'_'+prodId).val($.trim($("#orderUserAttrName_"+prodId).val()));
-			easyDialog.close();
+		    easyDialog.close();
 		});
 		
 		$("#userForm_"+prodId).off().bind("formIsValid", function(event){	
         	$("#userTips_"+prodId).empty();
 			if (!_queryUser(prodId)) {
+				if (query.common.queryPropertiesValue("REAL_USER_" + OrderInfo.staff.areaId.substr(0, 3)) == "ON"){
 				var isExists=false;
 				if(OrderInfo.boUserCustInfos.length>0){
 					for(var i=0;i<OrderInfo.boUserCustInfos.length;i++){
@@ -1547,10 +1553,13 @@ order.main = (function(){
 						OrderInfo.boUserPartyContactInfos.push(boPartyContactInfo);
 					}
 				}
-				$('#'+CONST.PROD_ATTR.PROD_USER+'_'+prodId).val(prodId); 
+				 $('#'+CONST.PROD_ATTR.PROD_USER+'_'+prodId).val(prodId); 
+				 $('#'+CONST.PROD_ATTR.PROD_USER+'_'+prodId).val($.trim($("#orderUserAttrName_"+prodId).val()));
+			  }else{
+				  $.alert("提示","没有查询到客户信息！");
+				  return;
+			  }
 			}
-			$('#'+CONST.PROD_ATTR.PROD_USER+'_'+prodId+'_name').val($.trim($("#orderUserAttrName_"+prodId).val()));
-			
 			order.cust.tmpChooseUserInfo = {};
 			easyDialog.close();			
 		}).ketchup({bindElement:"chooseQueryBtn_"+prodId});	
@@ -1592,6 +1601,7 @@ order.main = (function(){
 				$("#orderUserAttrIdCard_"+prodId).val($(scope).attr("idCardNumber"));
 				$("#orderUserIdentidiesTypeCd_"+prodId).val($(scope).attr("identityCd"));
 				$('#'+CONST.PROD_ATTR.PROD_USER+'_'+prodId).val($(scope).attr("custId")); 
+				$('#'+CONST.PROD_ATTR.PROD_USER+'_'+prodId+'_name').val($.trim($("#orderUserAttrName_"+prodId).val()));
 				isExists = true;
 			}
 		}
