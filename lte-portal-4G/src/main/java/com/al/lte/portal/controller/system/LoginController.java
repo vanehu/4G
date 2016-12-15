@@ -1069,7 +1069,7 @@ public class LoginController extends BaseController {
 			Map<String, Object> menuResultMap = (Map<String, Object>) menuResp.getData();
 			
 			//是否具有跳过经办人必填的权限
-			boolean isHandleCustNeeded = "0".equals(staffBmo.checkOperatBySpecCd(SysConstant.TGJBRBTQX + "_" + sessionStaff.getStaffId(), sessionStaff)) ? false : true;
+			boolean isHandleCustNeeded = "0".equals(staffBmo.checkOperatBySpecCd(SysConstant.TGJBRBTQX , sessionStaff)) ? false : true;
 		
 			// 换新sessionId ,让会话失效时间由sessin-config生效
 			String dbKeyWord = (String) request.getSession().getAttribute(SysConstant.SESSION_DATASOURCE_KEY);

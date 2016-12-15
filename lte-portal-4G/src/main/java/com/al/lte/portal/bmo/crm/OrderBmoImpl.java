@@ -3023,7 +3023,7 @@ public class OrderBmoImpl implements OrderBmo {
 		Object realNameFlag =  MDA.REAL_NAME_PHOTO_FLAG.get("REAL_NAME_PHOTO_"+sessionStaff.getCurrentAreaId().substring(0, 3));
     	boolean isRealNameFlagOn  = realNameFlag == null ? false : "ON".equals(realNameFlag.toString()) ? true : false;//实名制拍照开关是否打开
     	boolean resultFlag = false;
-    	Object sessionHandleCustFlag = ServletUtils.getSessionAttribute(request, SysConstant.TGJBRBTQX + "_" + sessionStaff.getStaffId());
+    	Object sessionHandleCustFlag = ServletUtils.getSessionAttribute(request, SysConstant.TGJBRBTQX );
     	boolean isHandleCustNeeded = sessionHandleCustFlag == null ? false : (Boolean) sessionHandleCustFlag;
     	
     	if(isRealNameFlagOn && !isHandleCustNeeded){

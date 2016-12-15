@@ -857,7 +857,7 @@ public class StaffBmoImpl implements StaffBmo {
 		Map<String, Object> dataBusMap = new HashMap<String, Object>();
 		dataBusMap.put("opsManageCode", operatSpecCd);
 		dataBusMap.put("staffId", sessionStaff.getStaffId());
-		dataBusMap.put("areaId", sessionStaff.getCurrentAreaId());
+		dataBusMap.put("areaId", sessionStaff.getAreaId());
 		DataBus db = null;
 		
 		try {		
