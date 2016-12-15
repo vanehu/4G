@@ -113,5 +113,35 @@ CommonUtils = {
 	 */
 	replaceAll:function(param,s1,s2) { 
 	    return param.replace(new RegExp(s1,"gm"),s2); 
+	},
+	
+	/** 判断是否ie浏览器*/
+	isIE : function() {
+		if (!!window.ActiveXObject || "ActiveXObject" in window)
+			return true;
+		else
+			return false;
+	},
+
+	/** 获取浏览器版本*/
+	validateBrowser : function() {
+		var browserVersion = "";
+		// var version = $.browser.version.substring(0, $.browser.version.indexOf("."));
+		var version = $.browser.version;
+		if (CommonUtils.isIE()) {
+			browserVersion = "IE" + version;
+		} else if ($.browser.mozilla) {
+			browserVersion = "Firefox" + version;
+		} else if ($.browser.safari) {
+			var agent = navigator.userAgent.toLowerCase();
+			var regStr_chrome = /(?:chrome|crios|crmo)\/([0-9.]+)/gi;
+			var chromeVer = agent.match(regStr_chrome);
+			if (chromeVer) {
+				var verArr = chromeVer[0].split("/");
+				var chrome_version = verArr[1].split(".");
+				browserVersion = "Chrome" + chrome_version[0];
+			}
+		}
+		return browserVersion;
 	}
 };

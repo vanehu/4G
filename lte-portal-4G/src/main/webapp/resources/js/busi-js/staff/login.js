@@ -370,7 +370,7 @@ staff.login = (function($) {
 				return false;
 			}
 		};
-		var browserVersion = validateBrowser();//判断浏览器
+		var browserVersion = CommonUtils.validateBrowser();//判断浏览器
 		/*
 		 * 问题：unifylogin首页点击登录之后，跳转至应用服务器上的登录首页，此时需要再点击登录才会出现短信框==>需优化成统一登录首页登录后即跳转并弹出短信框
 		 * 原因：原先采用异步验证浏览器，导致登录按钮事件绑定在登录按钮点击之后才生效，故未能自动跳转
@@ -463,36 +463,6 @@ staff.login = (function($) {
 		}catch(e){		
 			 window.location.href=contextPath+"/file/telcom.exe";
 		}
-	};
-	//判断是否是ie浏览器 
-	var isIE=function(){ 
-        if (!!window.ActiveXObject || "ActiveXObject" in window)
-            return true;
-        else
-            return false;
-    };
-	//获取浏览器版本
-	var validateBrowser = function() {
-		var browserVersion = "";
-//		var version = $.browser.version.substring(0, $.browser.version.indexOf("."));
-		var version = $.browser.version;
-		if (isIE()) {
-			browserVersion = "IE" + version;
-		}else if ($.browser.mozilla) {
-			browserVersion = "Firefox" + version;
-		}else if($.browser.safari) {
-			var agent = navigator.userAgent.toLowerCase();
-			var regStr_chrome = /(?:chrome|crios|crmo)\/([0-9.]+)/gi;
-			//var regStr_chrome = /chrome\/[\d.]+/gi ;
-			//var regStr_saf = /safari\/[\d.]+/gi ;
-			var chromeVer = agent.match(regStr_chrome);
-			if(chromeVer){
-				var verArr = chromeVer[0].split("/");
-				var chrome_version = verArr[1].split(".");
-				browserVersion = "Chrome" + chrome_version[0];
-			}
-		}
-		return browserVersion;
 	};
 	
 	//绑定登陆入参
