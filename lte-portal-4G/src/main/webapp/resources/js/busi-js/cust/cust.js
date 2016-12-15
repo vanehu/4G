@@ -2983,9 +2983,9 @@ order.cust = (function(){
 		$.ecOverlay("<strong>正在处理,请稍等...</strong>");
 		var url=contextPath+"/cust/preHandleCustCertificate";
 		$.unecOverlay();
-		var browser = _validateBrowser();
+		var browser = CommonUtils.validateBrowser();
 		var param = {
-			"photograph":browser.indexOf("IE8") >= 0 ? encodeURIComponent(createImage.compImage) : encodeURIComponent(createImage.image),
+			"photograph":((browser.indexOf("IE8") >= 0) || (browser.indexOf("IE7") >= 0)) ? encodeURIComponent(createImage.compImage) : encodeURIComponent(createImage.image),
 			"venderId":createImage.venderId
 		};
 		var response= $.callServiceAsJson(url,param);
@@ -3133,35 +3133,6 @@ order.cust = (function(){
     		return;
     	}
     };
-    
-	//判断是否是ie浏览器 
-	var isIE=function(){ 
-        if (!!window.ActiveXObject || "ActiveXObject" in window)
-            return true;
-        else
-            return false;
-    };
-    //时间紧张，后面优化，封装工具函数
-	var _validateBrowser = function() {
-		var browserVersion = "";
-//		var version = $.browser.version.substring(0, $.browser.version.indexOf("."));
-		var version = $.browser.version;
-		if (isIE()) {
-			browserVersion = "IE" + version;
-		}else if ($.browser.mozilla) {
-			browserVersion = "Firefox" + version;
-		}else if($.browser.safari) {
-			var agent = navigator.userAgent.toLowerCase();
-			var regStr_chrome = /(?:chrome|crios|crmo)\/([0-9.]+)/gi;
-			var chromeVer = agent.match(regStr_chrome);
-			if(chromeVer){
-				var verArr = chromeVer[0].split("/");
-				var chrome_version = verArr[1].split(".");
-				browserVersion = "Chrome" + chrome_version[0];
-			}
-		}
-		return browserVersion;
-	};
 	
 	return {
 		form_valid_init : _form_valid_init,
