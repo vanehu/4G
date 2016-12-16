@@ -3842,7 +3842,7 @@ SoOrder = (function() {
 	var _addHandleInfo = function(busiOrders, custOrderAttrs){
 		//开关ON状态，且经过拍照
 		if(OrderInfo.realNamePhotoFlag == "ON" && OrderInfo.virOlId != null && OrderInfo.virOlId != undefined && OrderInfo.virOlId != ""){
-			if(OrderInfo.handleCustId == "" || OrderInfo.handleCustId == null || OrderInfo.handleCustId == undefined){//新建客户
+			if(OrderInfo.ifCreateHandleCust){//新建客户
 				if(OrderInfo.cust.custId == -1){//新建客户
 					if(OrderInfo.boCustIdentities.identityNum == OrderInfo.bojbrCustIdentities.identityNum && 
 							OrderInfo.boCustIdentities.identidiesTypeCd == OrderInfo.bojbrCustIdentities.identidiesTypeCd){//同一个人新建客户和新建经办人

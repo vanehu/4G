@@ -3024,9 +3024,9 @@ public class OrderBmoImpl implements OrderBmo {
     	boolean isRealNameFlagOn  = realNameFlag == null ? false : "ON".equals(realNameFlag.toString()) ? true : false;//实名制拍照开关是否打开
     	boolean resultFlag = false;
     	Object sessionHandleCustFlag = ServletUtils.getSessionAttribute(request, SysConstant.TGJBRBTQX );
-    	boolean isHandleCustNeeded = sessionHandleCustFlag == null ? false : (Boolean) sessionHandleCustFlag;
+    	boolean isHandleCustNeeded = sessionHandleCustFlag == null ? true : (Boolean) sessionHandleCustFlag;
     	
-    	if(isRealNameFlagOn && !isHandleCustNeeded){
+    	if(isRealNameFlagOn && isHandleCustNeeded){
     		resultFlag = this.checkCustCertificateComprehensive(param, request);
     	} else{
     		resultFlag = this.checkCustCertificate(param, request);

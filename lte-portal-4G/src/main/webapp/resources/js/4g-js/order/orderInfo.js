@@ -1081,6 +1081,7 @@ OrderInfo = (function() {
 		staffId 		: 0,		//员工ID
 		headFlag 		: "1",		//是否首选联系人，默认为是
         statusCd 		: "100001",	//订单状态
+        mobilePhone 	: "",		//参与人的移动电话号码
 	    contactName		: "",		//联系人名称，取页面上经办人的姓名
 		contactAddress	: "",		//联系地址，取页面上经办人的地址
         contactGender	: "1",		//联系人的性别，无法辨别是默认是男
@@ -1092,7 +1093,6 @@ OrderInfo = (function() {
         contactDesc 	: "",		//参与人联系详细信息
         contactEmployer : "",		//参与人的联系单位
         homePhone 		: "",		//参与人的家庭联系电话
-        mobilePhone 	: "",		//参与人的移动电话号码
         officePhone 	: "",		//参与人办公室的电话号码
         postAddress 	: "",		//参与人的邮件地址
         postcode 		: ""		//参与人联系地址的邮政编码
@@ -1701,11 +1701,13 @@ OrderInfo = (function() {
 	};
 	
 	var _realNamePhotoFlag = "";//实名制拍照开关
+	var _ifCreateHandleCust = false;//判断是否需要新建经办人
 
 	/**
 	 * 填单页面返回“上一步”或“取消”时清空经办人、使用人缓存
 	 */
 	var _resetOrderInfoCache = function() {
+		OrderInfo.ifCreateHandleCust	  = false;//判断是否需要新建经办人
 		OrderInfo.boUserPartyContactInfos = [];//使用人：联系人节点
 		OrderInfo.boUserCustIdentities	  = [];//使用人：客户证件节点
 		OrderInfo.boUserCustInfos 		  = [];//使用人：客户信息节点
@@ -1814,17 +1816,18 @@ OrderInfo = (function() {
 		authRecord				:_authRecord,
 		cust_validateType		:_cust_validateType,
 		cust_validateNum		:_cust_validateNum,
-		staffInfoFlag : _staffInfoFlag,
+		staffInfoFlag 			:_staffInfoFlag,
 		essOrderInfo            :_essOrderInfo,
-		preBefore : _preBefore,
-		roleCd   : _roleCd,
-		roleType : _roleType,
-		bojbrCustInfos          : _bojbrCustInfos,
-		bojbrCustIdentities     : _bojbrCustIdentities,
-		virOlId : _virOlId,
-		handleCustId : _handleCustId,
-		boUserCustIdentities : _boUserCustIdentities,
-		boUserCustInfos : _boUserCustInfos,
-		realNamePhotoFlag:_realNamePhotoFlag
+		preBefore 				:_preBefore,
+		roleCd  		 		:_roleCd,
+		roleType 				:_roleType,
+		bojbrCustInfos          :_bojbrCustInfos,
+		bojbrCustIdentities     :_bojbrCustIdentities,
+		virOlId 				:_virOlId,
+		handleCustId 			:_handleCustId,
+		boUserCustIdentities 	:_boUserCustIdentities,
+		boUserCustInfos 		:_boUserCustInfos,
+		realNamePhotoFlag		:_realNamePhotoFlag,
+		ifCreateHandleCust		:_ifCreateHandleCust
 	};
 })();

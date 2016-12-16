@@ -2946,6 +2946,7 @@ order.cust = (function(){
 				isExists = true;
 			} else{
 				OrderInfo.handleCustId = "";
+				OrderInfo.ifCreateHandleCust = true;//需要新建经办人
 			}
 		return isExists;
 	};
