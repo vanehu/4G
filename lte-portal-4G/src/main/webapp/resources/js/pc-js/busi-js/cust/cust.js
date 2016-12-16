@@ -2640,17 +2640,16 @@ order.cust = (function(){
 		var str=capture.createImage(device);
 		var json = JSON.parse(str);
 		if (json.resultFlag == 0) {
-			var browserType = CacheData.getBrowserTypeVersion();
-			var imageBase64 = json.image;
-			if(browserType == "IE:8"){
-				imageBase64 = json.compImage;
-			};
-			OrderInfo.handleInfo.imageInfo = imageBase64;
+			OrderInfo.handleInfo.imageInfo = json.image;
 			OrderInfo.handleInfo.venderId = json.venderId;
 			OrderInfo.handleInfo.signature = json.signature;
 			var param = {
-					photograph : encodeURIComponent(imageBase64),
-					venderId :json.venderId
+				photograph : encodeURIComponent(json.image),
+				venderId :json.venderId
+			};
+			var browserType = CacheData.getBrowserTypeVersion();
+			if((browserType.indexOf("IE:8") >= 0)){
+				param.photograph = encodeURIComponent(json.compImage);
 			};
 			var resp = $.callServiceAsJson(contextPath+"/token/pc/cust/preHandleCustCertificate", param);
 			if(resp.code==0){
