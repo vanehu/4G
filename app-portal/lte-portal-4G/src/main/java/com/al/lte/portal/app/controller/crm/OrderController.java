@@ -2808,8 +2808,7 @@ public class OrderController extends BaseController {
 				}
 				 jsonResponse = super.successed(payCode+"_"+payAmount,ResultConstant.SUCCESS.getCode());
 			} else {
-				jsonResponse = super.failed(rMap.get("respMsg").toString(),
-						ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+				jsonResponse = super.failed(ErrorCode.PAY_TOCKEN, rMap, param);
 			}
 			return jsonResponse;
 		} catch (BusinessException be) {
@@ -3032,6 +3031,11 @@ public class OrderController extends BaseController {
 			params.put("dataDimensionCd", MySimulateData.getInstance().getParam((String) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_DATASOURCE_KEY),SysConstant.AREA_DIMENSION_CD));
 			String operateSpecInfo = EhcacheUtil.getOperateSpecInfo(session, urlType);
 			List<Map<String, Object>> list = CommonMethods.getAreaRangeList(sessionStaff, params, operateSpecInfo);
+			for(int a=0;a<list.size();a++){
+				if(list.get(a).get("commonRegionId")!=null && list.get(a).get("commonRegionId").toString().length()>7){
+					list.remove(a);
+				}
+			}
 			if(list.size()==0){
 				Map<String, Object> mapProv = CommonMethods.getAreaInfo(proid);
 				mapProv.put("commonRegionId", mapProv.get("areaId"));
