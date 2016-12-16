@@ -2186,7 +2186,7 @@ var _setNoPhoto=function(){
 									|| currentCT==CONST.CHANNEL_TYPE_CD.HYKHZXDL || currentCT==CONST.CHANNEL_TYPE_CD.SYKHZXDL
 									|| currentCT==CONST.CHANNEL_TYPE_CD.XYKHZXDL || currentCT==CONST.CHANNEL_TYPE_CD.GZZXJL
 									|| currentCT==CONST.CHANNEL_TYPE_CD.ZYOUT || currentCT==CONST.CHANNEL_TYPE_CD.ZYINGT
-									|| currentCT==CONST.CHANNEL_TYPE_CD.WBT || _partyTypeCd != "1" ){
+									|| currentCT==CONST.CHANNEL_TYPE_CD.WBT){
 								isAllowChannelType = true;
 							}
 							if(!isAllowChannelType && certTypeCd == "1"){

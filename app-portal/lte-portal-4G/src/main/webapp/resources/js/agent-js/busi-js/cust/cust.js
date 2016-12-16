@@ -648,6 +648,16 @@ cust = (function(){
 						var propertiesKey = "REAL_NAME_PHOTO_"+(OrderInfo.staff.soAreaId+"").substring(0,3);
 					    var isFlag = offerChange.queryPortalProperties(propertiesKey);
 					    OrderInfo.preBefore.idPicFlag = isFlag;
+					    if(OrderInfo.jbr){
+							OrderInfo.jbr.custId = undefined;
+							OrderInfo.jbr.partyName = undefined;
+							OrderInfo.jbr.telNumber = undefined;
+							OrderInfo.jbr.addressStr = undefined;
+							OrderInfo.jbr.identityCd = undefined;
+							OrderInfo.jbr.mailAddressStr = undefined;
+							OrderInfo.jbr.identityPic = undefined;
+							OrderInfo.jbr.identityNum = undefined;
+						}
 					    $("#queryJbr").show();
 					    if(isFlag == "ON"){
 					    	
@@ -662,10 +672,11 @@ cust = (function(){
 								OrderInfo.jbr.identityNum = cardNumber;
 					    	}
 					    }
+					    
 						
 						for(var i=0;i<uniData.length;i++){
 							var certTypedate = uniData[i];
-							if(certTypedate.isDefault == "Y"){
+							if(certTypedate.certTypeCd == "1"){
 								_obj.append("<option value='"+certTypedate.certTypeCd+"' selected='selected'>"+certTypedate.name+"</option>");
 							}else{ _obj.append("<option value='"+certTypedate.certTypeCd+"' >"+certTypedate.name+"</option>");}
 						}

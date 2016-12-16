@@ -466,7 +466,7 @@ cust = (function(){
 		//客户类型关联证件类型下拉框
 		_certTypeByPartyType(partyTypeCd);
 		//证件类型选择事件
-		_identidiesTypeCdChoose($("#div_cm_identidiesType").children(":first-child"));
+//		_identidiesTypeCdChoose($("#div_cm_identidiesType").children(":first-child"));
 
 	};
 	//客户类型关联证件类型下拉框
@@ -513,12 +513,17 @@ cust = (function(){
 		if(identidiesTypeCd==undefined){
 			identidiesTypeCd=$("#div_cm_identidiesType  option:selected").val();
 		}
+		$("#cmCustName").val("");
+		$("#cmCustIdCard").val("");
+		$("#cmAddressStr").val("");
+		$("#cmCustIdCardOther").val("");
 		$("#cmCustName").removeAttr("readonly");
 		$("#cmCustIdCard").removeAttr("readonly");
 		$("#cmAddressStr").removeAttr("readonly");
 		if(identidiesTypeCd==1){
 			$("#cmCustIdCard").attr("placeHolder","请输入合法身份证号码");
 			$("#div-cmcustidcard").show();
+			$("#readCard").show();
 			$("#div-cmcustidcard-none").hide();
 			
 			$("#cmCustName").attr("readonly","readonly");
@@ -533,6 +538,7 @@ cust = (function(){
 			$("#cmCustIdCardOther").attr("placeHolder","请输入合法军官证");
 			$("#div-cmcustidcard-none").show();
 			$("#div-cmcustidcard").hide();
+			$("#readCard").hide();
 			try{
 			$('#custFormdata').data('bootstrapValidator').enableFieldValidators("cmCustIdCardOther",true,null);
 			$('#custFormdata').data('bootstrapValidator').enableFieldValidators("cmCustIdCard",false,null);
@@ -541,6 +547,7 @@ cust = (function(){
 			$("#cmCustIdCardOther").attr("placeHolder","请输入合法护照");
 			$("#div-cmcustidcard-none").show();
 			$("#div-cmcustidcard").hide();
+			$("#readCard").hide();
 			try{
 				$('#custFormdata').data('bootstrapValidator').enableFieldValidators("cmCustIdCardOther",true,null);
 				$('#custFormdata').data('bootstrapValidator').enableFieldValidators("cmCustIdCard",false,null);
@@ -550,12 +557,14 @@ cust = (function(){
 			$("#cmCustIdCardOther").attr("placeHolder","请输入合法证件号码");
 			$("#div-cmcustidcard-none").show();
 			$("#div-cmcustidcard").hide();
+			$("#readCard").hide();
 			try{
 				$('#custFormdata').data('bootstrapValidator').enableFieldValidators("cmCustIdCardOther",true,null);
 				$('#custFormdata').data('bootstrapValidator').enableFieldValidators("cmCustIdCard",false,null);
 			} catch(err){}
 				
 		}
+		$("#testBtn").click();
 		_form_custInfomodify_btn();
 	};
 	
@@ -594,7 +603,6 @@ cust = (function(){
 					return;
 				}
 	   var currentCT = $("#currentCT").val();//渠道类型
-	   $.alert("dd","currentCT -- " + currentCT);
 	   var propertiesKey = "REAL_NAME_PHOTO_"+(OrderInfo.staff.soAreaId+"").substring(0,3);
 	   var isFlag = offerChange.queryPortalProperties(propertiesKey);
 	   OrderInfo.preBefore.idPicFlag = isFlag;
@@ -1039,7 +1047,7 @@ cust = (function(){
 	           }
 	     }
 		//根据证件类型对行添加校验
-		_identidiesTypeCdChoose($("#cm_identidiesTypeCd option[selected='selected']"));
+//		_identidiesTypeCdChoose($("#cm_identidiesTypeCd option[selected='selected']"));
 		
 		$('#newCustBtn').off("click").on("click",_newCustSubmit);
 		var BO_ACTION_TYPE=CONST.BO_ACTION_TYPE.CUST_CREATE;
@@ -1093,10 +1101,10 @@ cust = (function(){
 	};
 	
 	var _getGenerationInfos=function(name,idcard,address,identityPic){
-		$("#cmCustName").val(name);
 		$("#cm_identidiesTypeCd").val("1");
 		$("#cm_identidiesTypeCd").change();
 		$("#cmCustIdCard").val(idcard);
+		$("#cmCustName").val(name);
 		$("#cmAddressStr").val(address);
 		OrderInfo.cust.identityPic = identityPic;//证件照片
 	};
@@ -1809,7 +1817,6 @@ cust = (function(){
 	//使用人展示客户鉴权
 	var _showCustAuth = function(scope,type) {
 		_custFlag = type;
-		
 		var a=$(scope).attr("custId");
 		_choosedCustInfo = {
 			custId : $(scope).attr("custId"), //$(scope).find("td:eq(3)").text(),
