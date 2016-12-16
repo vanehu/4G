@@ -3115,11 +3115,16 @@ public class OrderBmoImpl implements OrderBmo {
 
         //先判断经办人证件、拍照是否上传成功，再进行身份证读卡信息校验
         Map<String, Object> sessionVirOlId = (Map<String, Object>) ServletUtils.getSessionAttribute(request, Const.SESSION_UPLOAD_VIR_OLID);
-        Object sessionKey = sessionVirOlId.get(virOlId + "upload");
-        boolean isHandleCustCertificateUpload = sessionKey == null ? false : (Boolean) sessionKey;
-        if(!isHandleCustCertificateUpload){
+        if(sessionVirOlId != null){
+        	 Object sessionKey = sessionVirOlId.get(virOlId + "upload");
+             boolean isHandleCustCertificateUpload = sessionKey == null ? false : (Boolean) sessionKey;
+             if(!isHandleCustCertificateUpload){
+             	return false;
+             }
+        } else{
         	return false;
         }
+       
         
     	//针对每笔订单的virOlId，判断经办人是否老客户，virOlId在session封装为true表示老客户，否则新客户
 //    	sessionKey = ServletUtils.getSessionAttribute(request, virOlId  + "qryCust");
