@@ -3097,9 +3097,10 @@ order.cust = (function(){
 					OrderInfo.bojbrCustIdentities.identityNum=$.trim($("#orderAttrIdCard").val());//证件号码
 					//3.若用户有填写经办人联系号码，则新建经办人时添加联系人信息，否则不添加联系人信息
 					if(ec.util.isObj(OrderInfo.bojbrCustInfos.telNumber)){
-						OrderInfo.bojbrPartyContactInfo.contactName = $.trim($("#orderAttrName").val());
-						OrderInfo.bojbrPartyContactInfo.contactAddress = $.trim($("#orderAttrAddr").val());
-						OrderInfo.bojbrPartyContactInfo.staffId = OrderInfo.staff.staffId;
+						OrderInfo.bojbrPartyContactInfo.staffId 		= OrderInfo.staff.staffId;
+						OrderInfo.bojbrPartyContactInfo.contactName 	= $.trim($("#orderAttrName").val());
+						OrderInfo.bojbrPartyContactInfo.mobilePhone 	= $.trim($("#orderAttrPhoneNbr").val());
+						OrderInfo.bojbrPartyContactInfo.contactAddress 	= $.trim($("#orderAttrAddr").val());
 						//根据身份证判断性别，无从判别默认为男
 						if(OrderInfo.bojbrCustIdentities.identidiesTypeCd == "1"){
 							var identityNum = OrderInfo.bojbrCustIdentities.identityNum;
