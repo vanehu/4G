@@ -3014,18 +3014,24 @@ public class OrderBmoImpl implements OrderBmo {
 	}
 
 	/**
-	 * 订单提交校验客户身份证信息
+	 * 订单提交校验客户身份证信息<br/>
+	 * checkCustCertificateComprehensive方法针对经办人拍照进行客户证件相关的校验；checkCustCertificate方法保持改造前的校验逻辑
 	 * @return true:校验成功; false:校验失败
 	 * @throws Exception
 	 */
+	@SuppressWarnings("unchecked")
 	public boolean verifyCustCertificate(Map<String, Object> param, HttpServletRequest request, SessionStaff sessionStaff) throws Exception{
 		Object realNameFlag =  MDA.REAL_NAME_PHOTO_FLAG.get("REAL_NAME_PHOTO_"+sessionStaff.getCurrentAreaId().substring(0, 3));
     	boolean isRealNameFlagOn  = realNameFlag == null ? false : "ON".equals(realNameFlag.toString()) ? true : false;//实名制拍照开关是否打开
     	boolean resultFlag = false;
     	Object sessionHandleCustFlag = ServletUtils.getSessionAttribute(request, SysConstant.TGJBRBTQX );
     	boolean isHandleCustNeeded = sessionHandleCustFlag == null ? true : (Boolean) sessionHandleCustFlag;
+    	Map<String, Object> orderList = (Map<String, Object>) param.get("orderList");
+        Map<String, Object> orderListInfo = (Map<String, Object>) orderList.get("orderListInfo");
+        int actionFlag = MapUtils.getIntValue(orderListInfo, "actionFlag", 0);
+        boolean isCheckCertificateComprehensive = (actionFlag == 1 || actionFlag == 2 ||actionFlag == 6 ||actionFlag == 21 || actionFlag == 22 || actionFlag == 23 || actionFlag == 43);
     	
-    	if(isRealNameFlagOn && isHandleCustNeeded){
+        if(isRealNameFlagOn && isHandleCustNeeded && isCheckCertificateComprehensive){
     		resultFlag = this.checkCustCertificateComprehensive(param, request);
     	} else{
     		resultFlag = this.checkCustCertificate(param, request);

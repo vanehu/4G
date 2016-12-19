@@ -3939,8 +3939,10 @@ SoOrder = (function() {
 		busiOrder.data.boCustInfos.push(OrderInfo.bojbrCustInfos);
 		//客户证件节点
 		busiOrder.data.boCustIdentities.push(OrderInfo.bojbrCustIdentities);
-		//联系人节点
-		busiOrder.data.boPartyContactInfo.push(OrderInfo.bojbrPartyContactInfo);
+		//判断是否联系人节点，只有填写了经办人联系号码则创建联系人节点，否则不创建
+		if(ec.util.isObj(OrderInfo.bojbrCustInfos.telNumber)){
+			busiOrder.data.boPartyContactInfo.push(OrderInfo.bojbrPartyContactInfo);
+		}
 		busiOrders.push(busiOrder);
 	};
 	

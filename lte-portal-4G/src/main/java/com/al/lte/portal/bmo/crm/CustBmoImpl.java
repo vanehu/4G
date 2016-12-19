@@ -820,7 +820,7 @@ public class CustBmoImpl implements CustBmo {
 		//重新封装，去掉协议之外的无用的节点
 		for(int i = 0; i < photographs.size(); i++){
 			Map<String, String> photograph = photographs.get(i);
-			if(photograph.get("photograph").isEmpty()){//没有证件照片，则不上传，去除该节点
+			if("".equals(MapUtils.getString(photograph, "photograph", ""))){//没有证件照片，则不上传，去除该节点
 				photographs.remove(i--);
 			} else{
 				photograph.put("orderInfo", photograph.get("photograph"));
