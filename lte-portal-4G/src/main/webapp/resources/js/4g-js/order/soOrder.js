@@ -378,24 +378,46 @@ SoOrder = (function() {
 			});
 		}
 		
-		//订单填充使用人信息
-		if(ec.util.isArray(OrderInfo.boUserCustInfos)){
-			OrderInfo.orderData.orderList.orderListInfo.partyId = OrderInfo.cust.custId;//-3经办人客户，-2使用人客户，-1产权客户
-			for(var i=0;i<OrderInfo.boUserCustInfos.length;i++){
+        // 订单填充使用人信息
+		if (ec.util.isArray(OrderInfo.boUserCustInfos)) {
+			OrderInfo.orderData.orderList.orderListInfo.partyId = OrderInfo.cust.custId;
+			var busiOrder;
+			var tempIdentityNum = "";
+			var tempIdentidiesTypeCd = "";
+			var isExists = false;
+			for ( var i = 0; i < OrderInfo.boUserCustInfos.length; i++) {
 				OrderInfo.boUserCustInfos[i].userCustFlag = "Y";
-				var busiOrder = _createUserCust(busiOrders, custOrderAttrs);
-				//封装产品属性
-				$("[name=prodSpec_"+OrderInfo.boUserCustInfos[i].prodId+"]").each(function(){
-					var itemSpecId=$(this).attr("id").split("_")[0];
-					if(itemSpecId == 800000011){
-						$(this).val(busiOrder.busiObj.instId);
-					}
-				});
-				busiOrder.busiObj.accessNumber = OrderInfo.getAccessNumber(OrderInfo.boUserCustInfos[i].prodId);
-				busiOrder.data.boCustInfos.push(OrderInfo.boUserCustInfos[i]);
-				busiOrder.data.boCustIdentities.push(OrderInfo.boUserCustIdentities[i]);
-				busiOrder.data.boPartyContactInfo.push(OrderInfo.boUserPartyContactInfos[i]);
-				busiOrders.push(busiOrder);
+				if ((tempIdentityNum != OrderInfo.boUserCustIdentities[i].identityNum || tempIdentidiesTypeCd != OrderInfo.boUserCustIdentities[i].identidiesTypeCd)
+						&& OrderInfo.boCustIdentities.identityNum != OrderInfo.boUserCustIdentities[i].identityNum
+						&& OrderInfo.boCustIdentities.identidiesTypeCd != OrderInfo.boUserCustIdentities[i].identidiesTypeCd) // 判断是否同时新建客户 // 同一个人新建客户和新建使用人
+				{
+					busiOrder = _createUserCust(busiOrders);
+					tempIdentityNum = OrderInfo.boUserCustIdentities[i].identityNum;
+					tempIdentidiesTypeCd = OrderInfo.boUserCustIdentities[i].identidiesTypeCd;
+					busiOrder.busiObj.accessNumber = OrderInfo
+							.getAccessNumber(OrderInfo.boUserCustInfos[i].prodId);
+					busiOrder.data.boCustInfos
+							.push(OrderInfo.boUserCustInfos[i]);
+					busiOrder.data.boCustIdentities
+							.push(OrderInfo.boUserCustIdentities[i]);
+					busiOrders.push(busiOrder);
+					isExists = true;
+				}
+				// 封装产品属性
+				if (isExists) {
+					$(
+							"[name=prodSpec_"
+									+ OrderInfo.boUserCustInfos[i].prodId + "]")
+							.each(
+									function() {
+										var itemSpecId = $(this).attr("id")
+												.split("_")[0];
+										if (itemSpecId == 800000011) {
+											$(this).val(
+													busiOrder.busiObj.instId);
+										}
+									});
+				}
 			}
 		}
 		
@@ -523,8 +545,7 @@ SoOrder = (function() {
 				return false;
 			}
 		}	
-		
-		OrderInfo.orderData.orderList.orderListInfo.custOrderAttrs = custOrderAttrs; //订单属性数组
+    	OrderInfo.orderData.orderList.orderListInfo.custOrderAttrs = custOrderAttrs; //订单属性数组
 		OrderInfo.orderData.orderList.custOrderList[0].busiOrder = busiOrders; //订单项数组
 		if($("#isTemplateOrder").attr("checked")=="checked"){ //批量订单
 			OrderInfo.orderData.orderList.orderListInfo.isTemplateOrder ="Y";
@@ -3954,7 +3975,7 @@ SoOrder = (function() {
 				seq : OrderInfo.SEQ.seq--
 			}, 
 			busiObj : { //业务对象节点
-				instId		: OrderInfo.SEQ.offerSeq--,
+				instId		:(OrderInfo.SEQ.offerSeq--)-1,
 				accessNumber: OrderInfo.getAccessNumber(-1)
 			},  
 			boActionType : {
