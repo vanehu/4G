@@ -489,8 +489,8 @@
 	</div>
 <!--用户鉴权弹窗 end-->
 
-<!--弹出款-使用人-->
-<div id="choose_user_dialog" class="easyDialogdiv" style="width:700px;height:250px;">
+<!--弹出款-使用人--新模式-->
+<div id="choose_user_dialog_new" class="easyDialogdiv" style="width:700px;height:250px;">
     <div class="easyDialogclose" id="chooseUserClose" onclick="easyDialog.close()"></div>
     <table class="contract_list">
         <thead>
@@ -547,4 +547,78 @@
         <a id="cancelChooseUserBtn" class="btna_o" href="javascript:void(0)" style=" margin-left:20px;" onclick="easyDialog.close()"><span>取消</span></a>
     </div>
 </div>
-<!--弹出款-使用人 end-->
+<!--弹出款-使用人-- 新模式 end-->
+
+<!--弹出款-使用人--老模式-->
+<div id="choose_user_dialog" class="easyDialogdiv" style="width:700px;height:250px;">
+<div class="easyDialogclose" id="chooseUserClose" onclick="easyDialog.close()"></div>
+    	<table class="contract_list">
+            <thead>
+                <tr>
+                    <td>选择使用人</td>
+                </tr>                                                    
+            </thead>
+        </table>
+        <div id="chooseUserDiv" class="main_div location main_warp">
+		<form id="custQueryForChooseForm">
+	    <ul class="usercon">
+	    <li class="ulocation" >
+		<h2 style="margin: 4px 8px 0 5px;">受理地区</h2>
+		</li>
+		<li class="usersearch">
+		   <input id="diffPlaceFlag_choose" type="hidden" value="${DiffPlaceFlag}"> 
+			<#if Session["_ecs_login_session_key"].currentChannelId ?? && (Session["_ecs_login_session_key"].currentChannelId!="") >
+			  <input type="text" class="numberTextBox" style="margin-left:5px; width:100px" readonly id="p_cust_areaId_val_choose" onclick="order.cust.<#if DiffPlaceFlag=="local">chooseAreaForChooseUser<#else></#if>()" value="${Session["_ecs_login_session_key"].currentAreaAllName}" placeholder="请选择地区" readonly />
+	          <input type="hidden" id="p_cust_areaId_choose" value="${Session["_ecs_login_session_key"].currentAreaId}">
+	          <input type="hidden" DiffPlaceFlag="${DiffPlaceFlag}">
+	           <input type="hidden" id="p_cust_areaId" value="${Session["_ecs_login_session_key"].currentAreaId}">
+	         </#if>
+        </li>
+		<li class="ulocation">
+			<h2 style="margin: 4px 8px 0 5px;">客户定位</h2>
+		</li>
+		<li class="usersearch">
+		<select onchange="order.cust.custidentidiesTypeCdChoose(this,'p_cust_identityNum_choose')" id="p_cust_identityCd_choose" class="selectNumbertype" style="width:118px;">
+                                  	  	<option value="-1" >接入号码</option>
+                                  	  	<option value="acctCd" >合同号</option>
+                                  	  	<option value="custNumber" >客户编码</option>
+        </select>
+        <div id="custList" class="usersearchcon" ></div>
+        </li>
+		<li class="usersearch">
+			<input name="" type="text" class="numberTextBox" id="p_cust_identityNum_choose" onkeyup="value=value.replace(/[^\w]|_/ig,'')" 
+				placeHolder="请输入接入号码" data-validate="validate(isTelecomOridCardCheck:请输入合法接入号码) on(blur)" style="width:158px;"/>
+		</li>
+
+        <li class="ubtn">
+		    <a id="userSearchForChooseBtn" href="javascript:void(0)"  class="btn_h30 btn" style="margin-left:30px;" onclick=""><span>查 询</span></a>
+		</li>
+		
+		</ul>
+		</form>
+		
+		<table class="contract_list" id="chooseUserList" style="display: none;">
+		<thead>
+			<tr>
+				<td width="100">姓名</td>
+				<td width="350">证件号码</td>
+				<td width="100">地区</td>
+			</tr>
+		</thead>
+		<tbody>
+			<tr id="chooseUserInfo">
+				<td id="chooseUserInfoName"></td>
+				<td id="chooseUserInfoNum"></td>
+				<td id="chooseUserInfoAreaName"></td>
+			</tr>
+		</tbody>
+	</table>
+	
+	
+	</div>
+  	<div align="center" style="margin: 20px auto;">
+        <a id="chooseUserBtn" class="btna_o" href="javascript:void(0)"><span >确认</span></a>
+        <a id="cancelChooseUserBtn" class="btna_o" href="javascript:void(0)" style=" margin-left:20px;" onclick="easyDialog.close()"><span>取消</span></a>
+    </div>
+</div>
+<!--弹出款-使用人--老模式  end-->

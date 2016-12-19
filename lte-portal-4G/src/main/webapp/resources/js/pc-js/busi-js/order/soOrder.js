@@ -366,8 +366,9 @@ SoOrder = (function() {
 		//订单填充经办人信息
 		_addHandleInfo(busiOrders, custOrderAttrs);
 		//使用人节点
-		_createCustInfo(busiOrders);
-		
+		if(OrderInfo.realUserFlag == "ON"){
+			_createCustInfo(busiOrders);
+		}
 		OrderInfo.orderData.orderList.orderListInfo.custOrderAttrs = custOrderAttrs; //订单属性数组
 		OrderInfo.orderData.orderList.orderListInfo.extCustOrderId = OrderInfo.provinceInfo.provIsale; //省份流水
 		OrderInfo.orderData.orderList.custOrderList[0].busiOrder = busiOrders; //订单项数组
@@ -3256,9 +3257,7 @@ SoOrder = (function() {
 		        contactName : OrderInfo.subHandleInfo.orderAttrName,//参与人的联系人名称
 		        contactType : "10",//联系人类型
 		        headFlag : "1",//是否首选联系人
-		        homePhone : OrderInfo.subHandleInfo.orderAttrPhoneNbr,//参与人的家庭联系电话
 		        mobilePhone : OrderInfo.subHandleInfo.orderAttrPhoneNbr,//参与人的移动电话号码
-		        officePhone : OrderInfo.subHandleInfo.orderAttrPhoneNbr,//参与人办公室的电话号码
 		        staffId : OrderInfo.staff.staffId,//员工ID
 		        state : "ADD",//状态
 		        statusCd : "100001"//订单状态
@@ -3327,9 +3326,7 @@ SoOrder = (function() {
 					        contactName : subUserInfo.orderAttrName,//参与人的联系人名称
 					        contactType : "10",//联系人类型
 					        headFlag : "1",//是否首选联系人
-					        homePhone : subUserInfo.orderAttrPhoneNbr,//参与人的家庭联系电话
 					        mobilePhone : subUserInfo.orderAttrPhoneNbr,//参与人的移动电话号码
-					        officePhone : subUserInfo.orderAttrPhoneNbr,//参与人办公室的电话号码
 					        staffId : OrderInfo.staff.staffId,//员工ID
 					        state : "ADD",//状态
 					        statusCd : "100001"//订单状态
