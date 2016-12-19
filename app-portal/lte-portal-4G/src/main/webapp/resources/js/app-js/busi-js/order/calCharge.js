@@ -732,6 +732,9 @@ order.calcharge = (function(){
 				"areaId" : OrderInfo.staff.areaId,
 				"chargeItems":_chargeItems
 		};
+		if(order.calcharge.haveCharge==true){//已下过计费接口
+			return;
+		}
 		order.calcharge.haveCharge=true;
 		var url=contextPath+"/app/order/chargeSubmit?token="+OrderInfo.order.token;
 		var response=$.callServiceAsJson(url, params, {});
@@ -1291,13 +1294,15 @@ order.calcharge = (function(){
 							"chargeItems":_chargeItems,
 							"custId":OrderInfo.cust.custId
 					};
+					if(order.calcharge.haveCharge==true){//已下过计费接口
+						return;
+					}
 					$.callServiceAsJson(url,params, {
 						"before":function(){
 							$.ecOverlay("<strong>正在处理中,请稍等会儿....</strong>");
 						},	
 						"done" : function(response){
 							$.unecOverlay();
-							order.calcharge.haveCharge=true;
 							clearInterval(timeId);//已经下过收费接口，定时下计费接口任务取消
 							if (response.code == 0) {
 								_chargeSave(1);

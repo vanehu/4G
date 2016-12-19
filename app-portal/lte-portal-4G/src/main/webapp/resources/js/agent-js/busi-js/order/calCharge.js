@@ -760,6 +760,9 @@ order.calcharge = (function(){
 		var url=contextPath+"/app/order/chargeSubmit?token="+OrderInfo.order.token;
 		var response=$.callServiceAsJson(url, params, {});
 		var msg="";
+		if(order.calcharge.haveCharge==true){//已下过计费接口
+			return;
+		}
 		order.calcharge.haveCharge=true;//已经下过收费接口，定时下计费接口任务取消
 		if (response.code == 0) {
 			//删除session中的客户缓存信息

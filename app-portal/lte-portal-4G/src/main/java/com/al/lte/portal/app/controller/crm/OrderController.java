@@ -182,15 +182,15 @@ public class OrderController extends BaseController {
 		// 支付开关
 		String payFlag = propertiesUtils.getMessage(propertiesKey);
 		boolean chargeFlag = true;// 默认允许调用收费接口
-		if ("ON".equals(payFlag)) {
-			HttpSession session = request.getSession();
-			String key = param.get("olId").toString() + "_payCode";// 支付成功唯一标志
-			if (session.getAttribute(key) != null) {
-				chargeFlag = true;
-			} else {
-				chargeFlag = false;// 信息可能被篡改，不允许调用收费接口
-			}
-		}
+//		if ("ON".equals(payFlag)) {
+//			HttpSession session = request.getSession();
+//			String key = param.get("olId").toString() + "_payCode";// 支付成功唯一标志
+//			if (session.getAttribute(key) != null) {
+//				chargeFlag = true;
+//			} else {
+//				chargeFlag = false;// 信息可能被篡改，不允许调用收费接口
+//			}
+//		}
 		if (chargeFlag) {//调用收费接口
 			try {
 				if (commonBmo.checkToken(request,SysConstant.ORDER_SUBMIT_TOKEN)) {
