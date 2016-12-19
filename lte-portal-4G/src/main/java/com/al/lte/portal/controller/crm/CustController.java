@@ -728,7 +728,7 @@ public class CustController extends BaseController {
 				}
 			}else if ("signature".equals(flag)){
 				String signature = MapUtils.getString(param, "signature","");
-				if(null == signature && !"".equals(signature)){
+				if(StringUtils.isNotEmpty(signature)){
 					ServletUtils.setSessionAttribute(getRequest(), Const.SESSION_SIGNATURE,signature);
 				}
 			}

@@ -57,7 +57,11 @@ push.busi = (function($) {
 			protocolType = a.protocol.replace(':','');
 		}
 		host = a.hostname;
-		port = 80;
+		if('http' == protocolType){
+			port = 80;
+		}else if('https' == protocolType){
+			port = 443;
+		}
 		if("" != a.port){
 			port = a.port;
 		}
@@ -122,7 +126,11 @@ push.busi = (function($) {
 			protocolType = a.protocol.replace(':','');
 		}
 		host = a.hostname;
-		port = 80;
+		if('http' == protocolType){
+			port = 80;
+		}else if('https' == protocolType){
+			port = 443;
+		}
 		if("" != a.port){
 			port = a.port;
 		}
