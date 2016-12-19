@@ -85,9 +85,11 @@
 	$("#orderAttrDiv .f_red").hide();
 	// 证件类型初始化（不加不会加载证件）
 	$("#orderPartyTypeCd").change();
-	if(cert.getBrowser()=='FF') {
-		$("#a_obj").append("<object type='application/x-itst-activex' clsid='{454C18E2-8B7D-43C6-8C17-B1825B49D7DE}' id='capture'  width='640' height='360'  style='float: right; margin-right: 10px;'></object>");
-	}else{
-		$("#a_obj").append("<object classid='clsid:454C18E2-8B7D-43C6-8C17-B1825B49D7DE' id='capture'  width='640' height='360'  style='float: right; margin-right: 10px;'></object>");
+	if(OrderInfo.realNamePhotoFlag=="ON"){
+		if(cert.getBrowser()=='FF') {
+			$("#a_obj").append("<object type='application/x-itst-activex' clsid='{454C18E2-8B7D-43C6-8C17-B1825B49D7DE}' id='capture'  width='640' height='360'  style='float: right; margin-right: 10px;'></object>");
+		}else{
+			$("#a_obj").append("<object classid='clsid:454C18E2-8B7D-43C6-8C17-B1825B49D7DE' id='capture'  width='640' height='360'  style='float: right; margin-right: 10px;'></object>");
+		}
 	}
 </script>
