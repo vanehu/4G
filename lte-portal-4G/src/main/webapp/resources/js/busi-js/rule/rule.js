@@ -92,7 +92,7 @@ rule.rule = (function(){
 				});
 				$.alertW("规则提示",$("#ruleDiv2").html(),"error","",800);
 			} else {
-				_credit();	
+				_credit();
 				SoOrder.initFillPage();		
 			}
 		} else {
@@ -167,6 +167,10 @@ rule.rule = (function(){
 	};
 	
 	var _credit = function() {
+        //如果是拆机，违章拆机，欠费拆机，查询橙分期业务标识
+        if (OrderInfo.busitypeflag == 8 || OrderInfo.busitypeflag == 9 || OrderInfo.busitypeflag == 11) {
+            order.prodModify.queryAgreementType();
+        }
 		eval(_callBackStr + "("+JSON.stringify(_callBackParam) + ")");
 		_closeRuleDiv();
 	};

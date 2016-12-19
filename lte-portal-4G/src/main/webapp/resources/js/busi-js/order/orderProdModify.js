@@ -1702,7 +1702,7 @@ order.prodModify = (function(){
 						});
 					}
 				}
-				if ((OrderInfo.actionFlag == 19 || OrderInfo.actionFlag == 20) && OrderInfo.isExistCFQ) {
+                if ((OrderInfo.actionFlag == 19 || OrderInfo.actionFlag == 20 || OrderInfo.busitypeflag == 8 || OrderInfo.busitypeflag == 9 || OrderInfo.busitypeflag == 11) && OrderInfo.isExistCFQ) {
 					$("#li_order_sms").show();
 				} else {
 					OrderInfo.isExistCFQ = false;
@@ -4622,7 +4622,64 @@ order.prodModify = (function(){
 		});
 	};
 
-	/**
+    /**
+     * 橙分期业务标识
+     * @private
+     */
+    var _queryAgreementType = function () {
+        var param = {
+            "areaId": OrderInfo.getAreaId(),
+            "prodInfos": [{
+                "instId": _choosedProdInfo.prodInstId,
+                "soNbr": OrderInfo.order.soNbr,
+                "acctNbr": _choosedProdInfo.accNbr
+            }]
+        };
+
+        var url = contextPath + "/order/queryAgreementType";
+        $.callServiceAsJson(url, param, {
+            "before": function () {
+                $.ecOverlay("<strong>橙分期标识查询中,请稍等...</strong>");
+            },
+            "always": function () {
+                $.unecOverlay();
+            },
+            "done": function (response) {
+                if (response.code == 0) {
+                    //如果存在橙分期业务要发送短信
+                    var prodInfoList = response.data.prodInfoList;
+                    var agreementType = "";
+
+                    $.each(prodInfoList, function () {
+                        if (this.acctNbr == _choosedProdInfo.accNbr) {
+                            $.each(this.agreements, function () {
+                                if (this.prodOfferId == _choosedProdInfo.prodOfferId) {
+                                    agreementType = this.agreementType;
+                                }
+                            });
+                        }
+                    });
+
+                    if (ec.util.isObj(agreementType)&&_isCFQ(agreementType)) {
+                        OrderInfo.isExistCFQ = true;
+                        _revokeAuthentication();
+                    }
+                } else if (response.code == -2) {
+                    OrderInfo.isExistCFQ = false;
+                    $.alert("信息提示", "橙分期标识查询失败！");
+                } else {
+                    OrderInfo.isExistCFQ = false;
+                    $.alertM(response.data);
+                }
+            },
+            fail: function () {
+                $.unecOverlay();
+                $.alert("提示", "请求可能发生异常，请稍后再试！");
+            }
+        });
+    };
+
+    /**
 	 * 判断合约类型标识是否是橙分期合约
 	 * @param flag 待判断合约标识符
 	 * @returns {boolean}
@@ -4755,6 +4812,7 @@ order.prodModify = (function(){
 		roleExchange:_roleExchange,
 		revokeAuthentication:_revokeAuthentication,
 		isCFQ:_isCFQ,
-		checkCFQ:_checkCFQ
+		checkCFQ:_checkCFQ,
+        queryAgreementType:_queryAgreementType
 	};
 })();

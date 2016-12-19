@@ -3046,13 +3046,20 @@ SoOrder = (function() {
 		    }
 		}
 
-		//退订返销校验
-		if (OrderInfo.actionFlag == 3 ||OrderInfo.actionFlag == 19 || OrderInfo.actionFlag == 20) {
-			if (OrderInfo.isExistCFQ && !ec.util.isObj($.trim($("#cfqSMSCode").val()))) {
-				$.alert("提示", "橙分期短信验证码不能为空！");
-				return false;
-			}
-		}
+        //退订返销校验
+        if (OrderInfo.actionFlag == 3 || OrderInfo.actionFlag == 19 || OrderInfo.actionFlag == 20 || OrderInfo.busitypeflag == 8 || OrderInfo.busitypeflag == 9 || OrderInfo.busitypeflag == 11) {
+            if (OrderInfo.isExistCFQ) {
+                var smsCode = $.trim($("#cfqSMSCode").val());
+                if (!ec.util.isObj(smsCode)) {
+                    $.alert("提示", "橙分期短信验证码不能为空！");
+                    return false;
+                }
+                if (!/^\d{4}$/.test(smsCode)) {
+                    $.alert("提示", "验证码必须为纯数字且不小于4位！");
+                    return false;
+                }
+            }
+        }
 
 		//销售品更功能产品参数校验
 		if(OrderInfo.actionFlag == 1||OrderInfo.actionFlag == 2||OrderInfo.actionFlag == 3

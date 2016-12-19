@@ -819,4 +819,15 @@ public interface OrderBmo {
 	 * @throws Exception
 	 */
 	public Map<String, Object> revokeAuthentication(Map<String, Object> paramMap, String optFlowNum,SessionStaff sessionStaff) throws Exception;
+
+	/**
+	 * 橙分期业务标识
+	 * @param paramMap
+	 * @param optFlowNum
+	 * @param sessionStaff
+	 * @return
+	 * @throws Exception
+	 */
+	public Map<String, Object> queryAgreementType(Map<String, Object> paramMap, String optFlowNum,SessionStaff sessionStaff) throws Exception;
+
 }

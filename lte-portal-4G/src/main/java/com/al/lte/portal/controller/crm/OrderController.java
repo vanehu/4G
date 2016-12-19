@@ -51,7 +51,6 @@ import com.al.ecs.common.util.PageUtil;
 import com.al.ecs.common.util.PropertiesUtils;
 import com.al.ecs.common.util.UIDGenerator;
 import com.al.ecs.common.web.ServletUtils;
-import com.al.ecs.common.web.SpringContextUtil;
 import com.al.ecs.exception.AuthorityException;
 import com.al.ecs.exception.BusinessException;
 import com.al.ecs.exception.ErrorCode;
@@ -449,6 +448,35 @@ public class OrderController extends BaseController {
         } catch (Exception e) {
             log.error("门户调用后台撤销鉴权接口service/intf.acctService/highRealNameAuthenticate方法异常", e);
             return super.failed(ErrorCode.HIGH_REAL_NAME_AUTHENTICATE, e, param);
+        }
+        return super.successed(retMap);
+    }
+
+   /**
+     * 橙分期业务标识查询
+     * @param session
+     * @return 橙分期业务标识
+     */
+    @RequestMapping(value = "/queryAgreementType", method = RequestMethod.POST)
+    @ResponseBody
+    public JsonResponse queryAgreementType(@RequestBody Map<String, Object> param, @LogOperatorAnn String optFlowNum, HttpSession session) {
+        SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
+
+        Map<String, Object> retMap = new HashedMap();
+        try {
+            Map<String, Object> returnMap = orderBmo.queryAgreementType(param, optFlowNum, sessionStaff);
+            if (null != returnMap) {
+                retMap = MapUtils.getMap(returnMap, "result");
+            } else {
+                retMap.put("resultCode", ResultCode.R_RULE_EXCEPTION);
+            }
+        } catch (BusinessException be) {
+            return super.failed(be);
+        } catch (InterfaceException ie) {
+            return super.failed(ie, param, ErrorCode.QUERY_AGREEMENTTYPE);
+        } catch (Exception e) {
+            log.error("门户调用后台橙分期业务标识查询接口service/intf.acctService/queryAgreementType方法异常", e);
+            return super.failed(ErrorCode.QUERY_AGREEMENTTYPE, e, param);
         }
         return super.successed(retMap);
     }

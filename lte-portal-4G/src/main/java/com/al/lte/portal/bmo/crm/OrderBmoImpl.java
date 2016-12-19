@@ -14,7 +14,6 @@ import javax.servlet.http.HttpSession;
 
 import net.sf.json.JSONObject;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
@@ -3238,6 +3237,33 @@ public class OrderBmoImpl implements OrderBmo {
 		} catch (Exception e) {
 			log.error("门户处理营业后台的撤销鉴权接口服务返回的数据异常", e);
 			throw new BusinessException(ErrorCode.REVOKE_AUTHENTICATION, paramMap, resultMap, e);
+		}
+		return resultMap;
+	}
+
+	/**
+	 * 橙分期业务标识
+	 * @param paramMap
+	 * @param optFlowNum
+	 * @param sessionStaff
+	 * @return
+	 * @throws Exception
+	 */
+	public Map<String, Object> queryAgreementType(Map<String, Object> paramMap, String optFlowNum, SessionStaff sessionStaff) throws Exception {
+		DataBus db = InterfaceClient.callService(paramMap,
+				PortalServiceCode.QUERY_AGREEMENTTYPE, optFlowNum, sessionStaff);
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		try {
+			if (ResultCode.R_SUCC.equals(db.getResultCode())) {
+				resultMap = db.getReturnlmap();
+				resultMap.put("resultCode", ResultCode.R_SUCC);
+			} else {
+				resultMap.put("resultCode", ResultCode.R_FAILURE);
+				resultMap.put("resultMsg", db.getResultMsg());
+			}
+		} catch (Exception e) {
+			log.error("门户处理营业后台的橙分期业务标识查询接口服务返回的数据异常", e);
+			throw new BusinessException(ErrorCode.QUERY_AGREEMENTTYPE, paramMap, resultMap, e);
 		}
 		return resultMap;
 	}

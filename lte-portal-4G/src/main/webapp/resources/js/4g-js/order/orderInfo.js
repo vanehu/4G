@@ -29,7 +29,7 @@ OrderInfo = (function() {
 	
 	var _handleCustId="";
 
-	var isExistCFQ = false;//是否是橙分期业务
+	var _isExistCFQ = false;//是否是橙分期业务
 	
 	/*购物车业务动作
 	1 新装
@@ -1828,6 +1828,7 @@ OrderInfo = (function() {
 		boUserCustIdentities 	:_boUserCustIdentities,
 		boUserCustInfos 		:_boUserCustInfos,
 		realNamePhotoFlag		:_realNamePhotoFlag,
-		ifCreateHandleCust		:_ifCreateHandleCust
+		ifCreateHandleCust		:_ifCreateHandleCust,
+        isExistCFQ              :_isExistCFQ
 	};
 })();
