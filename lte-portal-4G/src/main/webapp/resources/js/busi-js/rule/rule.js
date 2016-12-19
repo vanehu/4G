@@ -167,8 +167,8 @@ rule.rule = (function(){
 	};
 	
 	var _credit = function() {
-        //如果是拆机，违章拆机，欠费拆机，查询橙分期业务标识
-        if (OrderInfo.busitypeflag == 8 || OrderInfo.busitypeflag == 9 || OrderInfo.busitypeflag == 11) {
+        //如果是拆机，查询橙分期业务标识
+        if (OrderInfo.busitypeflag == 8) {
             order.prodModify.queryAgreementType();
         }
 		eval(_callBackStr + "("+JSON.stringify(_callBackParam) + ")");

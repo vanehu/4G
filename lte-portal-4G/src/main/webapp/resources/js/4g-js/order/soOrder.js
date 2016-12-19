@@ -3068,7 +3068,7 @@ SoOrder = (function() {
 		}
 
         //退订返销校验
-        if (OrderInfo.actionFlag == 3 || OrderInfo.actionFlag == 19 || OrderInfo.actionFlag == 20 || OrderInfo.busitypeflag == 8 || OrderInfo.busitypeflag == 9 || OrderInfo.busitypeflag == 11) {
+        if (OrderInfo.actionFlag == 3 || OrderInfo.actionFlag == 19 || OrderInfo.actionFlag == 20 || OrderInfo.busitypeflag == 8) {
             if (OrderInfo.isExistCFQ) {
                 var smsCode = $.trim($("#cfqSMSCode").val());
                 if (!ec.util.isObj(smsCode)) {

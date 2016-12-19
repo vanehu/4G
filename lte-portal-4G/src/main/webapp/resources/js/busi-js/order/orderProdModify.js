@@ -1702,7 +1702,7 @@ order.prodModify = (function(){
 						});
 					}
 				}
-                if ((OrderInfo.actionFlag == 19 || OrderInfo.actionFlag == 20 || OrderInfo.busitypeflag == 8 || OrderInfo.busitypeflag == 9 || OrderInfo.busitypeflag == 11) && OrderInfo.isExistCFQ) {
+                if ((OrderInfo.actionFlag == 19 || OrderInfo.actionFlag == 20 || OrderInfo.busitypeflag == 8) && OrderInfo.isExistCFQ) {
 					$("#li_order_sms").show();
 				} else {
 					OrderInfo.isExistCFQ = false;
