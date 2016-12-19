@@ -203,9 +203,9 @@ push.busi = (function($) {
 				if (data.error) {
 					return;
 				}
-				if ($('#qrCodeDialog').parent().css("display") != 'none') {
+				/*if ($('#qrCodeDialog').parent().css("display") != 'none') {
 					easyDialog.close();
-				}
+				}*/
 				connStatus = false;
 				push.busi.waitStyle();
 			});
