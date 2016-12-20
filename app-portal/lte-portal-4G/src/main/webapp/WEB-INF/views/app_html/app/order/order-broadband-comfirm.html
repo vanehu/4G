@@ -50,8 +50,8 @@
 		                  	<input type="hidden" id="realhidden_${fList_index}" value="${fList.feeAmount}" />
 							<!-- <td>${fList.objId}</td> -->
 							<td>${fList.acctItemTypeName}</td>
-							<td>${fList.feeAmount}</td>
-							<td id="ssfy_${fList_index}">${fList.feeAmount}</td>
+							<td>${((fList.feeAmount)?number / 100)?string('0.00')}元</td>
+							<td id="ssfy_${fList_index}">${((fList.feeAmount)?number / 100)?string('0.00')}元</td>
 							<span id="editBtn_${fList_index}" style="display:none">
 								<button type="button" class="btn btn-primary btn-lg" style="background-color:#FFFF44;" onclick="order.calcharge.changePayMethod('${fList.objId}','${fList_index}','',this);">减免费用</button>
 							</span>
