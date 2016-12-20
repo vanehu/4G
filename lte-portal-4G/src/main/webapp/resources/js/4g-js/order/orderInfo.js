@@ -1700,7 +1700,6 @@ OrderInfo = (function() {
 		  isLastFlag:""//判断是否需要上一步功能
 	};
 	
-	var _realNamePhotoFlag = "";//实名制拍照开关
 	var _ifCreateHandleCust = false;//判断是否需要新建经办人
 
 	/**
@@ -1713,7 +1712,6 @@ OrderInfo = (function() {
 		OrderInfo.boUserCustInfos 		  = [];//使用人：客户信息节点
 		OrderInfo.virOlId				  = "";//拍照上传虚拟购物车ID
 		OrderInfo.handleCustId 			  = "";//经办人为老客户时的客户ID
-		OrderInfo.realNamePhotoFlag 	  = "";//实名制拍照开关
 		OrderInfo.bojbrCustInfos 		  = $.extend(true, {}, _bojbrCustInfos);//经办人：客户信息节点
 		OrderInfo.bojbrCustIdentities	  = $.extend(true, {}, _bojbrCustIdentities);//经办人：客户证件节点
 		OrderInfo.bojbrPartyContactInfo   = $.extend(true, {}, _bojbrPartyContactInfo);//经办人：客户证件节点
@@ -1827,8 +1825,6 @@ OrderInfo = (function() {
 		handleCustId 			:_handleCustId,
 		boUserCustIdentities 	:_boUserCustIdentities,
 		boUserCustInfos 		:_boUserCustInfos,
-		realNamePhotoFlag		:_realNamePhotoFlag,
-		ifCreateHandleCust		:_ifCreateHandleCust,
-        isExistCFQ              :_isExistCFQ
+		ifCreateHandleCust		:_ifCreateHandleCust
 	};
 })();

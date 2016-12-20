@@ -393,7 +393,7 @@ order.cust = (function(){
 				$("span[name='" + CONST.BUSI_ORDER_ATTR.orderAttrAddr + "']").show();
 			}
 		} else {
-			if (OrderInfo.realNamePhotoFlag == "OFF"){
+			if (CONST.realNamePhotoFlag == "OFF"){
 				$("#orderAttrQueryCertBtn").hide();
 		    }else{
 		    	$("#orderAttrQueryCertBtn").show();
@@ -2839,7 +2839,7 @@ order.cust = (function(){
 			return;
 		}
 		_setValueForAgentOrderSpan(man.resultContent);
-		if (OrderInfo.realNamePhotoFlag == "ON") {
+		if (CONST.realNamePhotoFlag == "ON") {
 		    if (undefined != man.resultContent.identityPic && null != man.resultContent.identityPic && "" != man.resultContent.identityPic) {
 		      		$("#img_Cert").attr("src", "data:image/jpeg;base64," + man.resultContent.identityPic);
 		      		OrderInfo.bojbrCustIdentities.identidiesPic = man.resultContent.identityPic;
@@ -3215,7 +3215,7 @@ $(function() {
    order.cust.form_valid_init();
    order.cust.initDic();
    CONST.isHandleCustNeeded = query.common.checkOperateSpec(CONST.TGJBRBTQX);
-   if(OrderInfo.realNamePhotoFlag == ""){
-		OrderInfo.realNamePhotoFlag = query.common.queryPropertiesValue("REAL_NAME_PHOTO_" + OrderInfo.staff.areaId.substr(0, 3));
+   if(CONST.realNamePhotoFlag == ""){
+	   CONST.realNamePhotoFlag = query.common.queryPropertiesValue("REAL_NAME_PHOTO_" + OrderInfo.staff.areaId.substr(0, 3));
 	}
 });

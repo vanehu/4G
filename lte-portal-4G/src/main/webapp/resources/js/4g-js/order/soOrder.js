@@ -536,7 +536,7 @@ SoOrder = (function() {
 			_fillBusiOrder(busiOrders,data,"N"); //填充业务对象节点
 		}
 		
-		if(OrderInfo.realNamePhotoFlag == "ON"){
+		if(CONST.realNamePhotoFlag == "ON"){
 			//订单填充经办人信息
 			_addHandleInfo(busiOrders, custOrderAttrs);
 		} else{
@@ -2843,14 +2843,12 @@ SoOrder = (function() {
 		var jbrIdentityNum = OrderInfo.bojbrCustIdentities.identityNum;
 		var jbrName = OrderInfo.bojbrCustInfos.name;
 		var jbrAddressStr = OrderInfo.bojbrCustInfos.addressStr;
-//		var realNamePhotoFlag = query.common.queryPropertiesValue("REAL_NAME_PHOTO_" + OrderInfo.staff.areaId.substr(0, 3));
-//		OrderInfo.realNamePhotoFlag = realNamePhotoFlag;
 		
 		var orderAttrName = $.trim($("#orderAttrName").val()); //经办人姓名
 		var orderAttrIdCard = $.trim($("#orderAttrIdCard").val()); //证件号码
 		var orderAttrAddr = $.trim($("#orderAttrAddr").val()); //地址
 		
-		if (CONST.isHandleCustNeeded && OrderInfo.realNamePhotoFlag == "ON" && (OrderInfo.actionFlag == 1 || OrderInfo.actionFlag == 2 ||OrderInfo.actionFlag == 6 || OrderInfo.actionFlag == 21 || OrderInfo.actionFlag == 22 || OrderInfo.actionFlag == 23 || OrderInfo.actionFlag == 43)) {
+		if (CONST.isHandleCustNeeded && CONST.realNamePhotoFlag == "ON" && (OrderInfo.actionFlag == 1 || OrderInfo.actionFlag == 2 ||OrderInfo.actionFlag == 6 || OrderInfo.actionFlag == 21 || OrderInfo.actionFlag == 22 || OrderInfo.actionFlag == 23 || OrderInfo.actionFlag == 43)) {
 			//若!页!面!上填写了经办人信息，但没有进行拍照，则拦截提示；
 			if(ec.util.isObj(orderAttrName) || ec.util.isObj(orderAttrIdCard) || ec.util.isObj(orderAttrAddr)){
 				if(OrderInfo.virOlId == ""){
@@ -3869,7 +3867,7 @@ SoOrder = (function() {
 	//填充订单经办人信息
 	var _addHandleInfo = function(busiOrders, custOrderAttrs){
 		//开关ON状态，且经过拍照
-		if(OrderInfo.realNamePhotoFlag == "ON" && OrderInfo.virOlId != null && OrderInfo.virOlId != undefined && OrderInfo.virOlId != ""){
+		if(CONST.realNamePhotoFlag == "ON" && OrderInfo.virOlId != null && OrderInfo.virOlId != undefined && OrderInfo.virOlId != ""){
 			if(OrderInfo.ifCreateHandleCust){//新建客户
 				if(OrderInfo.cust.custId == -1){//新建客户
 					if(OrderInfo.boCustIdentities.identityNum == OrderInfo.bojbrCustIdentities.identityNum && 
