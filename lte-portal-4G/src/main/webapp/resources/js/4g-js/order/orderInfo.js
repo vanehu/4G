@@ -1821,6 +1821,7 @@ OrderInfo = (function() {
 		roleType 				:_roleType,
 		bojbrCustInfos          :_bojbrCustInfos,
 		bojbrCustIdentities     :_bojbrCustIdentities,
+		boUserPartyContactInfos :_boUserPartyContactInfos,
 		virOlId 				:_virOlId,
 		handleCustId 			:_handleCustId,
 		boUserCustIdentities 	:_boUserCustIdentities,
