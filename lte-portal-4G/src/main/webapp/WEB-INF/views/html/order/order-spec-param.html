@@ -92,7 +92,7 @@
 		<ul class="fillin	" style="overflow: hidden;">
 		   <li  class="full" style="width: 100%;" id="li_order_remark1_${prodId}">
 				<label>证件类型：</label>
-		        <select id="orderUserIdentidiesTypeCd_${prodId}" onchange="order.main.identidiesTypeCdUserChoose(this,'orderUserAttrIdCard')">
+		        <select id="orderUserIdentidiesTypeCd_${prodId}" onchange="order.main.identidiesTypeCdUserChoose(this,'orderUserAttrIdCard_'+${prodId},${prodId})">
 		        </select>
 		        <label class="f_red">*</label>
 		        <a class="btn_h30"   id="orderUserAttrReadCertBtn_${prodId}" onclick="javascript:order.main.readUserCertWhenOrder()" style="margin-top: 0px; display: none;"><span>读 卡</span></a>
@@ -108,7 +108,7 @@
 			<!-- 经办人为个人用户，证件类型只显示个人证件类型，隐藏客户类型 -->
 			<li class="full" id="li_order_remark_${prodId}" style="display: none;">
 				<label>客户类型：</label> 
-				<select id="orderUserPartyTypeCd_${prodId}" onchange="order.cust.partyTypeCdChoose(this,'orderIdentidiesTypeCd')">
+				<select id="orderUserPartyTypeCd_${prodId}" onchange="order.cust.partyTypeCdChoose(this,'orderIdentidiesTypeCd_'+${prodId},${prodId})">
 		                                        <option value="1" >个人</option>
 		        </select>
 		        <label class="f_red">*</label>

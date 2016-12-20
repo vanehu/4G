@@ -1404,39 +1404,39 @@ order.main = (function(){
 	};
 	
 	//使用人证件类型
-	var _identidiesTypeCdUserChoose = function(scope,id) {
+	var _identidiesTypeCdUserChoose = function(scope,id,prodId) {
 		$("#"+id).val("");
 		$("#"+id).attr("onkeyup", "value=value.replace(/[^A-Za-z0-9]/ig,'')");
 		var identidiesTypeCd=$(scope).val();
 		$("#"+id).attr("maxlength", "100");
 		if (identidiesTypeCd == 1) {
-			$("#orderUserAttrReadCertBtn").show();
-			$("#orderUserAttrName").hide();
-			$("#orderUserAttrIdCard").hide();
-			$("#orderUserAttrAddr").hide();
-			$("#orderUserAttrQueryCertBtn").hide();
-			$("#li_order_name span").show();
-			$("#li_order_cert span").show();
-			$("#li_order_nbr span").show();
-			$("#chooseUserBtn").show();
-			$("#chooseQueryBtn").hide();
+			$("#orderUserAttrReadCertBtn_"+prodId).show();
+			$("#orderUserAttrName_"+prodId).hide();
+			$("#orderUserAttrIdCard_"+prodId).hide();
+			$("#orderUserAttrAddr_"+prodId).hide();
+			$("#orderUserAttrQueryCertBtn_"+prodId).hide();
+			$("#li_order_name_"+prodId+ " span").show();
+			$("#li_order_cert_"+prodId+ " span").show();
+			$("#li_order_nbr_"+prodId+ " span").show();
+			$("#chooseUserBtn_"+prodId).show();
+			$("#chooseQueryBtn_"+prodId).hide();
 		} else {
-			$("#orderUserAttrReadCertBtn").hide();
-			$("#orderUserAttrName").show();
-			$("#orderUserAttrName").val("");
-			$("#orderUserAttrIdCard").show();
-			$("#orderUserAttrIdCard").val("");
-			$("#orderUserAttrAddr").show();
-			$("#orderUserAttrAddr").val("");
+			$("#orderUserAttrReadCertBtn_"+prodId).hide();
+			$("#orderUserAttrName_"+prodId).show();
+			$("#orderUserAttrName_"+prodId).val("");
+			$("#orderUserAttrIdCard_"+prodId).show();
+			$("#orderUserAttrIdCard_"+prodId).val("");
+			$("#orderUserAttrAddr_"+prodId).show();
+			$("#orderUserAttrAddr_"+prodId).val("");
 
-			$("#li_order_name span").hide();
-			$("#li_order_name span").text("");
-			$("#li_order_card span").hide();
-			$("#li_order_card span").text("");
-			$("#li_order_addr span").hide();
-			$("#li_order_addr span").text("");
-			$("#chooseQueryBtn").show();
-			$("#chooseUserBtn").hide();
+			$("#li_order_name_"+prodId+ " span").hide();
+			$("#li_order_name_"+prodId+ " span").text("");
+			$("#li_order_card_"+prodId+ " span").hide();
+			$("#li_order_card_"+prodId+ " span").text("");
+			$("#li_order_addr_"+prodId+ " span").hide();
+			$("#li_order_addr_"+prodId+ " span").text("");
+			$("#chooseQueryBtn_"+prodId).show();
+			$("#chooseUserBtn_"+prodId).hide();
 			if(identidiesTypeCd==2){
 				$("#"+id).attr("onkeyup", "value=value.replace(/[^A-Za-z0-9\u4e00-\u9fa5]/ig,'')");
 				$("#"+id).attr("placeHolder","请输入合法军官证");
@@ -1455,8 +1455,71 @@ order.main = (function(){
 			}
 		}
 	};
+	
+	//显示客户定位弹出框
+	function _toChooseUser2(prodId){
+		order.cust.queryForChooseUser = true; //标识客户定位是为了选择使用人
+		order.cust.bindCustQueryForChoose(); //客户定位查询按钮
+		$('#chooseUserBtn').off('click').on('click',function(){
+			if(!!order.cust.tmpChooseUserInfo && order.cust.tmpChooseUserInfo.custId){
+				//保存并显示使用人信息，清空弹出框的客户信息、临时保存的客户信息，关闭弹出框
+				OrderInfo.updateChooseUserInfos(prodId, order.cust.tmpChooseUserInfo);
+				$('#'+CONST.PROD_ATTR.PROD_USER+'_'+prodId+'_name').val(order.cust.tmpChooseUserInfo.partyName);
+				$('#'+CONST.PROD_ATTR.PROD_USER+'_'+prodId).val(order.cust.tmpChooseUserInfo.custId);
+				order.cust.tmpChooseUserInfo = {};
+				
+				easyDialog.close();
+//				$('#p_cust_identityNum_choose').val('');
+//				$('#chooseUserInfo td').html('');
+				$('#chooseUserList').hide();
+			} else {
+				$.alert("提示","请定位客户作为使用人");
+				return false;
+			}
+		});
+		_showChooseUserDialog2(null, prodId);
+	};
+	
+	/*
+	 * 显示选择使用人弹出框，custInfo为空则使用prodId定位已保存的使用人信息，custInfo不为空则更新临时保存的使用人信息
+	 */
+	function _showChooseUserDialog2(custInfo, prodId){
+		custInfo = custInfo || OrderInfo.getChooseUserInfo(prodId);
+		if(custInfo != null && custInfo.custId){
+			//将客户信息作为使用人tmpChooseUserInfo，确认后保存到OrderInfo.choosedUserInfos
+			order.cust.tmpChooseUserInfo = custInfo;
+//			order.cust.tmpChooseUserInfo.prodId = '';
+			$('#chooseUserInfoName').html(custInfo.partyName);
+			$('#chooseUserInfoNum').html(custInfo.identityName + '/' + custInfo.idCardNumber);
+			$('#chooseUserInfoAreaName').html(custInfo.areaName);
+			$('#chooseUserList').show();
+		} else {
+			$('#chooseUserInfo td').html('');
+			$('#chooseUserList').hide();
+		}
+		$('#p_cust_identityCd_choose option:first').attr('selected','selected');
+		$('#p_cust_identityNum_choose').val('');
+		order.cust.custidentidiesTypeCdChoose($('#p_cust_identityCd_choose'),'p_cust_identityNum_choose');
+		if($.ketchup){
+			$.ketchup.hideAllErrorContainer($("#custQueryForChooseForm"));
+		}
+		easyDialog.open({
+			container : "choose_user_dialog",
+			callback : function(){
+				order.cust.queryForChooseUser = false; //关闭弹出框时重置标识位
+				if($.ketchup){
+					$.ketchup.hideAllErrorContainer($("#custQueryForChooseForm"));
+				}
+			}
+		});
+	};
+	
 	//显示客户定位弹出框
 	function _toChooseUser(prodId){
+		if (query.common.queryPropertiesValue("REAL_USER_" + OrderInfo.staff.areaId.substr(0, 3)) == "OFF"){
+			_toChooseUser2(prodId);
+		    return;
+		}
 		order.cust.queryForChooseUser = true; //标识客户定位是为了选择使用人
 		//order.cust.bindCustQueryForChoose(); //客户定位查询按钮
 		//封装用户信息
@@ -1467,13 +1530,13 @@ order.main = (function(){
 		    	return;
 	    	}
 			if (!_queryUser(prodId)) {
-				if (query.common.queryPropertiesValue("REAL_USER_" + OrderInfo.staff.areaId.substr(0, 3)) == "ON"){
+				//if (query.common.queryPropertiesValue("REAL_USER_" + OrderInfo.staff.areaId.substr(0, 3)) == "ON"){
 				   $('#'+CONST.PROD_ATTR.PROD_USER+'_'+prodId).val(prodId); 
 				   $('#'+CONST.PROD_ATTR.PROD_USER+'_'+prodId+'_name').val($.trim($("#orderUserAttrName_"+prodId).val()));
-				}else{
-					$("#userTips_"+prodId).html("没有查询到使用人信息！");
-					return;
-				}
+				//}else{
+				//	$("#userTips_"+prodId).html("没有查询到使用人信息！");
+				//	return;
+			//	}
 			}
 		    easyDialog.close();
 		});
@@ -1481,7 +1544,7 @@ order.main = (function(){
 		$("#userForm_"+prodId).off().bind("formIsValid", function(event){	
         	$("#userTips_"+prodId).empty();
 			if (!_queryUser(prodId)) {
-				if (query.common.queryPropertiesValue("REAL_USER_" + OrderInfo.staff.areaId.substr(0, 3)) == "ON"){
+				//if (query.common.queryPropertiesValue("REAL_USER_" + OrderInfo.staff.areaId.substr(0, 3)) == "ON"){
 				var isExists=false;
 				if(OrderInfo.boUserCustInfos.length>0){
 					for(var i=0;i<OrderInfo.boUserCustInfos.length;i++){
@@ -1555,10 +1618,10 @@ order.main = (function(){
 				}
 				 $('#'+CONST.PROD_ATTR.PROD_USER+'_'+prodId).val(prodId); 
 				 $('#'+CONST.PROD_ATTR.PROD_USER+'_'+prodId+'_name').val($.trim($("#orderUserAttrName_"+prodId).val()));
-			  }else{
-				  $("#userTips_"+prodId).html("没有查询到使用人信息！");
-				  return;
-			  }
+			//  }else{
+			//	  $("#userTips_"+prodId).html("没有查询到使用人信息！");
+			//	  return;
+			//  }
 			}
 			order.cust.tmpChooseUserInfo = {};
 			easyDialog.close();			
