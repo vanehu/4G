@@ -518,14 +518,13 @@ public class MDA {
 	 */
 	public static final String NEW_LABEL_FLAG  = new String("");
 	
-	/**
-	 * 实名制拍照分省开关
-	 */
+	/**实名制拍照分省开关*/
 	public static final Map<String,String> REAL_NAME_PHOTO_FLAG  = new HashMap<String,String>();
 	
-	/**
-	 * 主副卡角色互换分省开关
-	 */
+	/**主副卡角色互换分省开关*/
 	public static final Map<String,String> MEMBER_ROLE_EXCHANGE_FLAG  = new HashMap<String,String>();
+	
+	/** 使用人分省开关(4GWEB+能力共用)*/
+	public static final Map<String,String> REAL_USER_FLAG  = new HashMap<String,String>();
 	
 }
