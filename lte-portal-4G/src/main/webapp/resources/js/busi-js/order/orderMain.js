@@ -1464,14 +1464,14 @@ order.main = (function(){
 			$("#userTips_"+prodId).empty();
 			if ($.trim($("#orderUserIdentidiesTypeCd_"+ prodId +" option:selected").val()) == "1" && !ec.util.isObj($('#orderUserAttrIdCard_'+prodId).val())){
 		    	$("#userTips_"+prodId).html("提示："+ "请先读卡");
-		    	return ;
+		    	return;
 	    	}
 			if (!_queryUser(prodId)) {
 				if (query.common.queryPropertiesValue("REAL_USER_" + OrderInfo.staff.areaId.substr(0, 3)) == "ON"){
 				   $('#'+CONST.PROD_ATTR.PROD_USER+'_'+prodId).val(prodId); 
-				   $('#'+CONST.PROD_ATTR.PROD_USER+'_'+prodId).val($.trim($("#orderUserAttrName_"+prodId).val()));
+				   $('#'+CONST.PROD_ATTR.PROD_USER+'_'+prodId+'_name').val($.trim($("#orderUserAttrName_"+prodId).val()));
 				}else{
-					$.alert("提示","没有查询到客户信息！");
+					$("#userTips_"+prodId).html("没有查询到使用人信息！");
 					return;
 				}
 			}
@@ -1554,9 +1554,9 @@ order.main = (function(){
 					}
 				}
 				 $('#'+CONST.PROD_ATTR.PROD_USER+'_'+prodId).val(prodId); 
-				 $('#'+CONST.PROD_ATTR.PROD_USER+'_'+prodId).val($.trim($("#orderUserAttrName_"+prodId).val()));
+				 $('#'+CONST.PROD_ATTR.PROD_USER+'_'+prodId+'_name').val($.trim($("#orderUserAttrName_"+prodId).val()));
 			  }else{
-				  $.alert("提示","没有查询到客户信息！");
+				  $("#userTips_"+prodId).html("没有查询到使用人信息！");
 				  return;
 			  }
 			}
