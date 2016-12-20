@@ -1477,13 +1477,17 @@ order.main = (function(){
 				return false;
 			}
 		});
-		_showChooseUserDialog2(null, prodId);
+		_showChooseUserDialog(null, prodId);
 	};
 	
 	/*
 	 * 显示选择使用人弹出框，custInfo为空则使用prodId定位已保存的使用人信息，custInfo不为空则更新临时保存的使用人信息
 	 */
-	function _showChooseUserDialog2(custInfo, prodId){
+	function _showChooseUserDialog(custInfo, prodId){
+		if (query.common.queryPropertiesValue("REAL_USER_" + OrderInfo.staff.areaId.substr(0, 3)) == "ON"){
+			_showChooseUserDialog2(custInfo,prodId);
+			return;
+		}
 		custInfo = custInfo || OrderInfo.getChooseUserInfo(prodId);
 		if(custInfo != null && custInfo.custId){
 			//将客户信息作为使用人tmpChooseUserInfo，确认后保存到OrderInfo.choosedUserInfos
@@ -1626,7 +1630,7 @@ order.main = (function(){
 			order.cust.tmpChooseUserInfo = {};
 			easyDialog.close();			
 		}).ketchup({bindElement:"chooseQueryBtn_"+prodId});	
-		_showChooseUserDialog(null, prodId);
+		_showChooseUserDialog2(null, prodId);
 	};
 	
 	// 使用人-查询
@@ -1674,7 +1678,7 @@ order.main = (function(){
 	/*
 	 * 显示选择使用人弹出框，custInfo为空则使用prodId定位已保存的使用人信息，custInfo不为空则更新临时保存的使用人信息
 	 */
-	function _showChooseUserDialog(custInfo, prodId){
+	function _showChooseUserDialog2(custInfo, prodId){
 		$("#userTips_"+prodId).empty();
 		
 		//改造
