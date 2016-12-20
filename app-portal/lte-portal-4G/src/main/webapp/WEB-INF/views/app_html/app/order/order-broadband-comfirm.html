@@ -43,8 +43,8 @@
 					</thead>
 					<tbody class="form-inline" style=" text-align:center;">
 					<#list feelList as fList>
-						<tr id="${fList_index}" class="item_fee" objId="${fList.objId}" acctItemTypeName="${fList.acctItemTypeName}" feeAmount="${fList.feeAmount}" realAmount="" onclick="order.broadband.showEditPage(this)">
-							<input type="hidden" id="feeAmount_${fList_index}" value="${fList.feeAmount}" />
+						<tr id="${fList_index}" class="item_fee" objId="${fList.objId}" acctItemTypeName="${fList.acctItemTypeName}" feeAmount="${((fList.feeAmount)?number / 100)?string('0.00')}" realAmount="" onclick="order.broadband.showEditPage(this)">
+							<input type="hidden" id="feeAmount_${fList_index}" value="${((fList.feeAmount)?number / 100)?string('0.00')}" />
 							<input type="hidden" id="acctItemTypeId_${fList_index}" value="${fList.acctItemTypeId}" />
 		                  	<input type="hidden" id="objId_${fList_index}" value="${fList.objId}" />
 		                  	<input type="hidden" id="realhidden_${fList_index}" value="${fList.feeAmount}" />
