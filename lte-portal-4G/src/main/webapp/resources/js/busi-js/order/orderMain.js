@@ -1568,6 +1568,7 @@ order.main = (function(){
 							OrderInfo.boUserCustIdentities[i].identidiesTypeCd = $.trim($("#orderUserIdentidiesTypeCd_"+prodId).val());
 							//3.使用人：联系人信息，若用户有填写联系号码，则新建使用人时添加联系人信息，否则不添加联系人信息
 							if(ec.util.isObj(OrderInfo.boUserCustInfos[i].telNumber)){
+								OrderInfo.boUserPartyContactInfos[i].mobilePhone = OrderInfo.boUserCustInfos[i].telNumber;
 								OrderInfo.boUserPartyContactInfos[i].contactName = OrderInfo.boUserCustInfos[i].name;
 								OrderInfo.boUserPartyContactInfos[i].contactAddress = OrderInfo.boUserCustInfos[i].addressStr;
 								OrderInfo.boUserPartyContactInfos[i].staffId = OrderInfo.staff.staffId;
@@ -1607,6 +1608,7 @@ order.main = (function(){
 					//3.使用人：联系人信息，若用户有填写联系号码，则新建使用人时添加联系人信息，否则不添加联系人信息
 					if(ec.util.isObj(json.telNumber)){
 						var boPartyContactInfo = $.extend(true, {}, OrderInfo.boUserPartyContactInfo);
+						boPartyContactInfo.mobilePhone = json.telNumber;
 						boPartyContactInfo.contactName = json.name;
 						boPartyContactInfo.contactAddress = json.addressStr;
 						boPartyContactInfo.staffId = OrderInfo.staff.staffId;

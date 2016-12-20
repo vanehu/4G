@@ -1104,6 +1104,7 @@ OrderInfo = (function() {
 		staffId 		: 0,		//员工ID
 		headFlag 		: "1",		//是否首选联系人，默认为是
         statusCd 		: "100001",	//订单状态
+        mobilePhone 	: "",		//参与人的移动电话号码
 	    contactName		: "",		//联系人名称，取页面上经办人的姓名
 		contactAddress	: "",		//联系地址，取页面上经办人的地址
         contactGender	: "1",		//联系人的性别，无法辨别是默认是男
@@ -1115,7 +1116,6 @@ OrderInfo = (function() {
         contactDesc 	: "",		//参与人联系详细信息
         contactEmployer : "",		//参与人的联系单位
         homePhone 		: "",		//参与人的家庭联系电话
-        mobilePhone 	: "",		//参与人的移动电话号码
         officePhone 	: "",		//参与人办公室的电话号码
         postAddress 	: "",		//参与人的邮件地址
         postcode 		: ""		//参与人联系地址的邮政编码

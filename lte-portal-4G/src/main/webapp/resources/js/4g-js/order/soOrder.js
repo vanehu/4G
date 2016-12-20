@@ -398,7 +398,7 @@ SoOrder = (function() {
 							.getAccessNumber(OrderInfo.boUserCustInfos[i].prodId);
 					busiOrder.data.boCustInfos.push(OrderInfo.boUserCustInfos[i]);
 			        busiOrder.data.boPartyContactInfo.push(OrderInfo.boUserPartyContactInfos[i]);
-					busiOrder.data.boCustInfos.push(OrderInfo.boUserCustInfos[i]);
+//					busiOrder.data.boCustInfos.push(OrderInfo.boUserCustInfos[i]);//这里重复了，会多一个boCustInfos节点
 					busiOrder.data.boCustIdentities.push(OrderInfo.boUserCustIdentities[i]);
 					busiOrders.push(busiOrder);
 					isExists = true;
