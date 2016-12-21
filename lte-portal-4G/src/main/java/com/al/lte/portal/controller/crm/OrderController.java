@@ -4389,43 +4389,49 @@ public class OrderController extends BaseController {
                // return super.failed(ErrorCode.INSERT_CARD_INFO, e, param);
             }
             
-           if(!StringUtils.isBlank(venderId)){
-            	if(MDA.USBVERSION_SIGNATURE.get(venderId)==null){
-            		return super.failed("身份证阅读器设备未在集约CRM系统授权范围内，不允许接入", -1);
-            	}
-            	if(MDA.USBVERSION_SIGNATURE.get(venderId).get("isOpen").equals("ON")){//启用新规范控件校验
-	    			String mdaVersion = MDA.USBVERSION_SIGNATURE.get(venderId).get("version");
-	            	if(StringUtils.isBlank(signature)||StringUtils.isBlank(versionSerial)){
-		        		 return super.failed("读卡失败信息有误", -1);
-		        	}
-		            if(versionSerial.equals(mdaVersion)){//校验版本号
-		            	String appSecret=MDA.USBVERSION_SIGNATURE.get(venderId).get("appSecret");
-		            	String ss=partyName+gender+nation+bornDay+certAddress+certNumber+certOrg+effDate+expDate+identityPic+appSecret;
-		            	String sha1Str=DigestUtils.sha1ToHex(ss);
-		            	if(!signature.equals(sha1Str)){
-		            		jsonResponse = super.failed("证件信息被篡改", -2);//信息被篡改
-		            		return jsonResponse;
-		            	}
-		            }else{
-		            	param.put("signature", "");
-		            	Set<String> s = param.keySet();//获取KEY集合
-		            	for (String str : s) {
-		            		if(param.get(str)instanceof String){
-		            			param.put(str,"");
-		            		}else{
-		            			param.put(str,0);
-		            		}
-		            	}
-		            	String fileUrl="FTPSERVICECONFIG"+","+venderId+"_"+mdaVersion+".exe"+","+MDA.CARD_FILEPATH;
-		            	param.put("fileUrl", fileUrl);
-		            	param.put("fileName", MDA.USBVERSION_SIGNATURE.get(venderId).get("name")+".exe");
-		            	jsonResponse = super.failed(param, -3);//版本有误
-		            	return jsonResponse;
-		            }
-            	}
-            	else{
-            		return super.failed("身份证阅读器设备未在集约CRM系统授权范围内，不允许接入", -1);
-            	}
+           Object validateFlag =  MDA.USBSIGNATURE.get("SIGNATURE_"+sessionStaff.getCurrentAreaId().substring(0, 3) + "0000");
+           boolean isValidate  = validateFlag == null ? false : "ON".equals(validateFlag.toString()) ? true : false;//身份证阅读器省份开关 ON：开启校验  OFF不校验
+           if(isValidate){  // 1. 分省开关开启 
+	           if(!StringUtils.isBlank(venderId)){
+	        	    if((MDA.USBVERSION_SIGNATURE.get(venderId)==null)){ //2. 未在集约 CRM 许可范围内
+	            		return super.failed("读卡器未在集约 CRM 许可范围内，请联系厂商升级驱动", -1);
+	            	}
+	        	    if(MDA.USBVERSION_SIGNATURE.get(venderId).get("isOpen").equals("ON")){//启用新规范控件校验
+	            		String mdaVersion = MDA.USBVERSION_SIGNATURE.get(venderId).get("version");
+		    			if(StringUtils.isBlank(signature)||StringUtils.isBlank(versionSerial)){
+			        		 return super.failed("读卡器控件版本过低，请联系厂商升级驱动版本", -1);
+			        	}
+			            if(versionSerial.equals(mdaVersion)){//校验版本号 
+			            	String appSecret=MDA.USBVERSION_SIGNATURE.get(venderId).get("appSecret"); // 3. 件信息被篡改，请确认按照正常流程操作
+			            	String ss=partyName+gender+nation+bornDay+certAddress+certNumber+certOrg+effDate+expDate+identityPic+appSecret;
+			            	String sha1Str=DigestUtils.sha1ToHex(ss);
+			            	if(!signature.equals(sha1Str)){
+			            		jsonResponse = super.failed("证件信息被篡改，请确认按照正常流程操作", -2);//信息被篡改
+			            		return jsonResponse;
+			            	}
+			            }else{  // 4. 读卡器控件版本过低，请联系厂商升级驱动版本
+			            	param.put("signature", "");
+			            	Set<String> s = param.keySet();//获取KEY集合
+			            	for (String str : s) {
+			            		if(param.get(str)instanceof String){
+			            			param.put(str,"");
+			            		}else{
+			            			param.put(str,0);
+			            		}
+			            	}
+			            	String fileUrl=venderId+"_"+mdaVersion;
+			            	param.put("fileUrl", fileUrl);
+			            	param.put("mdaVersion", mdaVersion);
+			            	param.put("fileName", MDA.USBVERSION_SIGNATURE.get(venderId).get("name"));
+			            	jsonResponse = super.failed(param, -3);//版本有误
+			            	return jsonResponse;
+			            }
+	            	}else{
+	            		return super.failed("读卡器驱动未通过集团 CRM 验证，请联系"+ MDA.USBVERSION_SIGNATURE.get(venderId).get("name")+"厂商升级驱动", -1);
+	            	}
+	            }else{
+	            	return super.failed("读卡器控件版本过低，请联系厂商升级驱动版本", -1);
+	            }
             }
             String appSecret1 = propertiesUtils.getMessage("APP_SECRET"); //appId对应的加密密钥
             String nonce = RandomStringUtils.randomAlphanumeric(Const.RANDOM_STRING_LENGTH); //随机字符串
