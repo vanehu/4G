@@ -338,7 +338,7 @@ cert = (function() {
 				if (response.code == 0) {
 					man = {"resultFlag": 0, "errorMsg": "读卡成功", "resultContent": response.data};
 				}else if(response.code == -3){
-					man = {"resultFlag": 0, "errorMsg": "控件版本不一致,请下载新的控件","resultContent": response.data};
+					man = {"resultFlag": -1, "errorMsg": "控件版本不一致,请下载新的控件","resultContent": response.data};
 					$.confirm("信息确认","控件版本已更新，确认下载新的控件？",{
 						yesdo:function(){
 							$("<form>", {
