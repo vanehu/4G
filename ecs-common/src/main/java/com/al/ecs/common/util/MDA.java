@@ -526,5 +526,8 @@ public class MDA {
 	
 	/** 使用人分省开关(4GWEB+能力共用)*/
 	public static final Map<String,String> REAL_USER_FLAG  = new HashMap<String,String>();
-	
+	/**
+	 * 工号实名制需求开关
+	 */
+	public static final String STAFF_AUTH_FLAG  = new String("");
 }
