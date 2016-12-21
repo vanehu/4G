@@ -394,7 +394,8 @@ order.cust = (function(){
 			}
 		} else {
 			if (CONST.realNamePhotoFlag == "OFF"){
-				$("#orderAttrQueryCertBtn").hide();
+//				$("#orderAttrQueryCertBtn").hide();
+				$("#orderAttrQueryCertBtn").remove();
 		    }else{
 		    	$("#orderAttrQueryCertBtn").show();
 		    }
