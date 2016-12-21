@@ -15,9 +15,6 @@ ${error}
     <li class="uicon">客户分群</li><li id="segmentName" class="ucon">${custAuth.custInfo.segmentName}</li>
   	</#if>
     <li class="uedit">
-        <#if custQueryType=="queryOnly"><a id="custModifyId" onclick="javascript:order.prodModify.showCustInfoModify()"
-                                           class="numberSearch loc_edit"
-                                           style="display: none;"><span>修改</span></a></#if>
     <a onclick="javascript:order.cust.custReset()" class="numberSearch loc_refresh"><span>重新定位</span></a></li>   
     </li>
     <a id="orderbutton"  onclick="javascript:order.cust.btnQueryCustProdMore()" <#if custQueryType=="queryOnly">style="display: none;"</#if> ><span>已订购业务</span><i class="arrow" id="arroworder"></i></a>

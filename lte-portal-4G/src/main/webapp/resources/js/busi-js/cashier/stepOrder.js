@@ -111,7 +111,10 @@ stepOrder.main = (function(){
 	var _step = function(k,data){
 		if(k==2){ //订单确认填写页面
 			//修改客户按钮隐藏
-            $("#custModifyId").attr("style","display: none;");
+			var $cm = $("#custModifyId");
+			if($cm.length>0 && !$cm.is(':hidden')) {
+				$cm.attr("style", "display: none;");
+			}
 			$("#main_conetent").hide();
 			$("#order_fill_content").hide();
 			$("#order_tab_panel_content").hide();

@@ -820,9 +820,15 @@ order.cust = (function(){
 		var content$ = $("#custInfo");
 		content$.html(response.data).show();
 		if((OrderInfo.boCusts.partyId!="-1"&&OrderInfo.boCusts.partyId!=""&&OrderInfo.boCusts.partyId!=undefined)&&order.prodModify.lteFlag==true){
-			$("#custModifyId").attr("style","display: none;");
+			//$("#custModifyId").attr("style","display: none;");
 		}else{
-			$("#custModifyId").attr("style","");
+			//$("#custModifyId").attr("style","");
+			var $update = $('<a id="custModifyId" class="numberSearch loc_edit"><span>修改</span></a>');
+			$update.prependTo($('#custInfo').find('.uedit')).css('margin-right','5px'); // 防止IE样式丢失无间隔
+			$('#custModifyId').off('click').on('click',function(){
+				order.prodModify.showCustInfoModify();
+			});
+
 		}
 		$("#cCustName").val("");
 		$("#cCustIdCard").val("");
