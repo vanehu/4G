@@ -3722,18 +3722,6 @@ order.prodModify = (function(){
 			return;
 		}
 		
-		//查分省前置校验开关
-        var propertiesKey = "PRECHECKFLAG_"+OrderInfo.staff.soAreaId.substring(0,3);
-        var isPCF = offerChange.queryPortalProperties(propertiesKey);
-        if(isPCF == "ON"){
-        	if(OrderInfo.preBefore.prcFlag != "Y"){
-        		if(!_preCheckBeforeOrder("22","showBuyBack")){
-            		return ;
-            	}
-        	}
-        }
-        OrderInfo.preBefore.prcFlag = "";
-        
 		OrderInfo.busitypeflag=0;
 		var queryParam = {
 				objInstId : _choosedProdInfo.prodInstId,
@@ -3764,6 +3752,17 @@ order.prodModify = (function(){
 				//动作类型1 新装，S1订购销售品,14补换卡 （返销优先级 新装返销-订购销售品返销-补换卡返销）
 				for(var i=0;i<objList.data.length;i++){
 					if(objList.data[i].boActionTypeCd == CONST.BO_ACTION_TYPE.NEW_PROD){
+						//查分省前置校验开关
+				        var propertiesKey = "PRECHECKFLAG_"+OrderInfo.staff.soAreaId.substring(0,3);
+				        var isPCF = offerChange.queryPortalProperties(propertiesKey);
+				        if(isPCF == "ON"){
+				        	if(OrderInfo.preBefore.prcFlag != "Y"){
+				        		if(!_preCheckBeforeOrder("39","showBuyBack")){
+				            		return ;
+				            	}
+				        	}
+				        }
+				        OrderInfo.preBefore.prcFlag = "";
 						boActionTypeCd = CONST.BO_ACTION_TYPE.BUY_BACK;
 						OrderInfo.boRelas = [{
 							relaTypeCd : CONST.RELATYPECD,
@@ -3780,6 +3779,17 @@ order.prodModify = (function(){
 				if(boActionTypeCd != CONST.BO_ACTION_TYPE.BUY_BACK){
 				    for(var i=0;i<objList.data.length;i++){
 					    if(objList.data[i].boActionTypeCd == CONST.BO_ACTION_TYPE.BUY_OFFER){
+					    	//查分省前置校验开关
+					        var propertiesKey = "PRECHECKFLAG_"+OrderInfo.staff.soAreaId.substring(0,3);
+					        var isPCF = offerChange.queryPortalProperties(propertiesKey);
+					        if(isPCF == "ON"){
+					        	if(OrderInfo.preBefore.prcFlag != "Y"){
+					        		if(!_preCheckBeforeOrder("41","showBuyBack")){
+					            		return ;
+					            	}
+					        	}
+					        }
+					        OrderInfo.preBefore.prcFlag = "";
 						    boActionTypeCd = CONST.BO_ACTION_TYPE.BUY_BACK_ORDER_CONTRACT;
 						    OrderInfo.boRelas = [{
 							    relaTypeCd : CONST.RELATYPECD,
@@ -3792,6 +3802,17 @@ order.prodModify = (function(){
 							_checkCFQ(objList.data[i]);//如果返销中存在橙分期业务要发送短信
 						    break;
 					    }else if(objList.data[i].boActionTypeCd == CONST.BO_ACTION_TYPE.CHANGE_CARD){
+					    	//查分省前置校验开关
+					        var propertiesKey = "PRECHECKFLAG_"+OrderInfo.staff.soAreaId.substring(0,3);
+					        var isPCF = offerChange.queryPortalProperties(propertiesKey);
+					        if(isPCF == "ON"){
+					        	if(OrderInfo.preBefore.prcFlag != "Y"){
+					        		if(!_preCheckBeforeOrder("40","showBuyBack")){
+					            		return ;
+					            	}
+					        	}
+					        }
+					        OrderInfo.preBefore.prcFlag = "";
 						    boActionTypeCd = CONST.BO_ACTION_TYPE.BUY_BACK_CHANGE_CARD;
 						    OrderInfo.boRelas = [{
 								relaTypeCd : CONST.RELATYPECD,
