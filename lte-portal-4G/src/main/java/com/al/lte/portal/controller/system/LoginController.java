@@ -39,6 +39,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ThemeResolver;
 
+import com.al.common.Constant;
 import com.al.common.utils.MD5Helper;
 import com.al.common.utils.StringUtil;
 import com.al.ec.serviceplatform.client.DataBus;
@@ -572,6 +573,20 @@ public class LoginController extends BaseController {
 			// 调用返回服务调用结果code
 			String resultCode = MapUtils.getString(map, "resultCode");
 			if (ResultCode.R_SUCC.equals(resultCode)) {
+				List<Map<String, Object>> attrList = (List<Map<String, Object>>) MapUtils.getObject(map, "attrList", new ArrayList<Map<String, Object>>());
+				boolean staffRealNameFlag = false;
+				// 工号实名制校验
+				if ("ON".equals(com.al.ecs.common.util.MDA.STAFF_AUTH_FLAG)) {
+					for (Map<String, Object> attrMap : attrList) {
+						if (SysConstant.STAFF_AUTH_ATTR_ID.equals(MapUtils.getString(attrMap, "ATTRID")) && SysConstant.STAFF_AUTH_ATTR_VAL_TRUE.equals(MapUtils.getString(attrMap, "ATTRVALUE"))) {
+							staffRealNameFlag = true;
+							break;
+						}
+					} 
+					if (!staffRealNameFlag) {
+						return super.failed("该工号未实名登记，不允许进行受理操作，请进行身份证实名登记！", Integer.parseInt(SysConstant.STAFF_AUTH_ATTR_VAL_FALSE));
+					}
+				}
 				ServletUtils.removeSessionAttribute(request, SysConstant.SESSION_KEY_IMAGE_CODE);
 				if (StringUtils.isNotEmpty(ip)) {
 					map.put("ip", ip);

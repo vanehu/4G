@@ -1536,6 +1536,7 @@
 			}
 		</const>
 		<const type="String" name="NEW_LABEL_FLAG" value="ON" description="流量包父子关系开关"/>
+		<const type="String" name="STAFF_AUTH_FLAG" value="OFF" description="工号实名制需求开关"/>
 		<const type="Map" name="REAL_NAME_PHOTO_FLAG" description="实名制拍照分省开关(4GWEB、能力开放、翼销售共用)">
 			{
 				'REAL_NAME_PHOTO_854':'OFF',<!-- 西藏 -->

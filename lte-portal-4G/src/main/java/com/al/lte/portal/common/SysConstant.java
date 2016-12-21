@@ -767,4 +767,12 @@ public final class SysConstant {
     public static final String TGJBRBTQX = "TGJBRBTQX";
     //常量字符定义
 	public final static String STRING_0 = "0";
+
+	/**员工实名制属性编码*/
+	public static final String STAFF_AUTH_ATTR_ID = "50030003";
+
+	/**员工实名制属性值 10已实名登记*/
+	public static final String STAFF_AUTH_ATTR_VAL_TRUE = "10";
+	/**员工实名制属性值 20未实名登记*/
+	public static final String STAFF_AUTH_ATTR_VAL_FALSE = "20";
 }

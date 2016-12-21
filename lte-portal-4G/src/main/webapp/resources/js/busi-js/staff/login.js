@@ -105,8 +105,11 @@ staff.login = (function($) {
 			$("#confirm_password").val("");
 			easyDialog.open({
 				container : 'PWC'
-			});		
-		}else{
+			});	
+		// 工号实名制校验
+		} else if (response.code == 20) {
+			$.alert("提示", response.data);
+		} else{
 			if(response.errorsList&& response.errorsList.length>0 ){
 				$.alert("提示",response.errorsList[0].message,"error",staff.login.goback);
 			} else {
