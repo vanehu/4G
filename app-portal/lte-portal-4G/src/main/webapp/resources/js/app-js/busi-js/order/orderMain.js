@@ -1467,7 +1467,7 @@ function _showJbrInfo(custInfo){
 		}
 //		order.cust.tmpChooseUserInfo.prodId = '';
 		$('#orderAttrName').val(custInfo.partyName);
-		$('#orderAttrAddr').val(custInfo.areaName);
+		$('#orderAttrAddr').val(custInfo.addressStr);
 		$('#orderAttrPhoneNbr').val(custInfo.accNbr);
 		OrderInfo.jbr.partyName = custInfo.partyName;
 		$.alert("提示","经办人信息查询成功！\n请对经办人进行拍照");
@@ -1554,11 +1554,11 @@ function _queryJbr(){
 				
 				if(!ec.util.isObj($.trim($("#orderAttrName").val()))||!ec.util.isObj($.trim($("#orderAttrAddr").val()))){
 					if(!ec.util.isObj($.trim($("#orderAttrName").val()))){
-						$.alert("提示","抱歉，未查询到经办人信息！经办人姓名为空，请完善经办人信息！");
+						$.alert("提示","经办人姓名为空，请完善经办人信息！");
 						return false;
 					}
 					if(!ec.util.isObj($.trim($("#orderAttrAddr").val()))){
-						$.alert("提示","抱歉，未查询到经办人信息！证件地址为空，请完善经办人信息！");
+						$.alert("提示","证件地址为空，请完善经办人信息！");
 						return false;
 					}
 				} 
@@ -1566,13 +1566,13 @@ function _queryJbr(){
 					
 					if(OrderInfo.cust.custId == -1 && OrderInfo.cust.identityCd == identityCd 
 							&& OrderInfo.cust.identityNum == identityNum){
-						$.alert("提示","抱歉，未查询到经办人信息！\n 当前经办人为用户本人，请对经办人进行拍照！");
+						$.alert("提示","请对经办人进行拍照");
 						OrderInfo.jbr.custId = OrderInfo.cust.custId;
 						OrderInfo.jbr.identityNum = identityNum;
 						OrderInfo.jbr.identityCd = identityCd;
 						return;
 					}
-					$.alert("提示","抱歉，未查询到经办人信息！\n提交经办人信息成功,请对经办人进行拍照");
+					$.alert("提示","请对经办人进行拍照");
 					cust.jbrSubmit();
 				 return;
 			}else{
@@ -1589,22 +1589,9 @@ function _queryJbr(){
 			else if (custInfoSize > 1) {
 				cust.showCustAuth(custInfos,"jbr");
 			} else {
-				$.alert("提示","抱歉，未查询到经办人信息！\n提交经办人信息成功。");
+				$.alert("提示","请对经办人进行拍照");
 				cust.jbrSubmit();
 			}
-//			$(".userclose").off("click").on("click",function(event) {
-//				try {
-//					easyDialog.close();
-//				} catch (e) {
-//					$('#choose_multiple_user_dialog').hide();
-//					$('#overlay').hide();
-//				}
-//				authFlag="";
-//				$(".usersearchcon").hide();
-//			});
-//			if($("#custListTable").attr("custInfoSize")=="1"){
-//				$(".usersearchcon").hide();
-//			}
 		}
 		},
 		"fail":function(response){
