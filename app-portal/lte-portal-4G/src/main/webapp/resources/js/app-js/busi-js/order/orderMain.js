@@ -1470,7 +1470,6 @@ function _showJbrInfo(custInfo){
 		$('#orderAttrAddr').val(custInfo.addressStr);
 		$('#orderAttrPhoneNbr').val(custInfo.accNbr);
 		OrderInfo.jbr.partyName = custInfo.partyName;
-		$.alert("提示","经办人信息查询成功！\n请对经办人进行拍照");
 	} 
 };
 
@@ -1566,14 +1565,18 @@ function _queryJbr(){
 					
 					if(OrderInfo.cust.custId == -1 && OrderInfo.cust.identityCd == identityCd 
 							&& OrderInfo.cust.identityNum == identityNum){
-						$.alert("提示","请对经办人进行拍照");
 						OrderInfo.jbr.custId = OrderInfo.cust.custId;
 						OrderInfo.jbr.identityNum = identityNum;
 						OrderInfo.jbr.identityCd = identityCd;
+						if(OrderInfo.preBefore.idPicFlag == "ON"){
+							common.callPhotos('cust.getPicture');
+						}
 						return;
 					}
-					$.alert("提示","请对经办人进行拍照");
 					cust.jbrSubmit();
+					if(OrderInfo.preBefore.idPicFlag == "ON"){
+						common.callPhotos('cust.getPicture');
+					}
 				 return;
 			}else{
 			$.unecOverlay();
@@ -1589,8 +1592,10 @@ function _queryJbr(){
 			else if (custInfoSize > 1) {
 				cust.showCustAuth(custInfos,"jbr");
 			} else {
-				$.alert("提示","请对经办人进行拍照");
 				cust.jbrSubmit();
+			}
+			if(OrderInfo.preBefore.idPicFlag == "ON"){
+				common.callPhotos('cust.getPicture');
 			}
 		}
 		},
