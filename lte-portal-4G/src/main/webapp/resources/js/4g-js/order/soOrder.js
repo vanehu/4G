@@ -2848,20 +2848,23 @@ SoOrder = (function() {
 		var orderAttrIdCard = $.trim($("#orderAttrIdCard").val()); //证件号码
 		var orderAttrAddr = $.trim($("#orderAttrAddr").val()); //地址
 		
-		if (CONST.isHandleCustNeeded && CONST.realNamePhotoFlag == "ON" && (OrderInfo.actionFlag == 1 || OrderInfo.actionFlag == 2 ||OrderInfo.actionFlag == 6 || OrderInfo.actionFlag == 21 || OrderInfo.actionFlag == 22 || OrderInfo.actionFlag == 23 || OrderInfo.actionFlag == 43)) {
-			//若!页!面!上填写了经办人信息，但没有进行拍照，则拦截提示；
+		if(CONST.realNamePhotoFlag == "ON"){
+			//若页面上填写了经办人信息，但没有进行拍照，则拦截提示，不管权限不权限
 			if(ec.util.isObj(orderAttrName) || ec.util.isObj(orderAttrIdCard) || ec.util.isObj(orderAttrAddr)){
-				if(OrderInfo.virOlId == ""){
+				if(!ec.util.isObj(OrderInfo.virOlId)){
 					$.alert("提示","您填写了经办人信息，在订单提交之前，请进行拍照以确认是否“人证相符”。");
 					return false;
 				}
-			};
-			if(!ec.util.isObj($("#jbrForm").html()) || jbrIdentityNum == "" || jbrName == "" || jbrAddressStr == ""){
-				$.alert("提示","经办人拍照信息不能为空！请确认页面是否已点击【读卡】或者【拍照】按钮，并且拍照和人证相符已成功操作！");
-				return false ; 
+			}
+			//若页面没有填写经办人，根据权限和业务类型进行判断和限制
+			if(CONST.isHandleCustNeeded && (OrderInfo.actionFlag == 1 || OrderInfo.actionFlag == 2 ||OrderInfo.actionFlag == 6 || OrderInfo.actionFlag == 21 || OrderInfo.actionFlag == 22 || OrderInfo.actionFlag == 23 || OrderInfo.actionFlag == 43)) {
+				if(!ec.util.isObj($("#jbrForm").html()) || !ec.util.isObj(OrderInfo.virOlId)){
+					$.alert("提示","经办人拍照信息不能为空！请确认页面是否已点击【读卡】或者【拍照】按钮，并且拍照和人证相符已成功操作！");
+					return false ;
+				}
 			}
 		}
-		
+
 		if(OrderInfo.actionFlag == 1 || OrderInfo.actionFlag == 6 || OrderInfo.actionFlag == 14 || (OrderInfo.actionFlag==2&&offerChange.newMemberFlag)){ //新装
 			if(OrderInfo.cust.custId==""){
 				$.alert("提示","客户信息不能为空！");
