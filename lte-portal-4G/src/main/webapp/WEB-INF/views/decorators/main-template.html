@@ -96,25 +96,23 @@
 
 	<script>
 	    $(function(){
-	    	if(OrderInfo.realNamePhotoFlag == ""){
-	    		OrderInfo.realNamePhotoFlag = query.common.queryPropertiesValue("REAL_NAME_PHOTO_" + OrderInfo.staff.areaId.substr(0, 3));
+	    	if(!ec.util.isObj(CONST.realNamePhotoFlag)){
+	    		CONST.realNamePhotoFlag = query.common.queryPropertiesValue("REAL_NAME_PHOTO_" + OrderInfo.staff.areaId.substr(0, 3));
 	    	}
-	    	if (OrderInfo.realNamePhotoFlag == "ON "){
+	    	if (CONST.realNamePhotoFlag == "ON "){
 		    	//加载拍照仪组件，用以检查版本更新
 		        if(cert.getBrowser()=='FF') {
 		    		$("#camera_obj").append("<object type='application/x-itst-activex' clsid='{454C18E2-8B7D-43C6-8C17-B1825B49D7DE}' id='capture'></object>");
 		    	}else{
 		    		$("#camera_obj").append("<object classid='clsid:454C18E2-8B7D-43C6-8C17-B1825B49D7DE' id='capture'></object>");
 		    	}
-		    	var param = null;
-		    	var camVer = JSON.parse(capture.getVersion());
-		    	if(camVer != null){
+	    		var camVer = JSON.parse(capture.getVersion());
+		    	if(ec.util.isObj(camVer)){
 		    		if(camVer.resultFlag == 0){
-		    			param = {
+		    			query.common.checkCameraDriverVersion({
 		    				"versionSerial"	:camVer.versionSerial,//*控件版本号
 		    				"venderId"		:camVer.venderId//*厂商ID
-		    			};
-		    			query.common.checkCameraDriverVersion(param);
+		    			});
 		    		}
 		    	}
 		    	$("#camera_obj").remove();//检查更新后再清楚拍照仪组件，以免后面拍照引起冲突
