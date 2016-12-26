@@ -387,36 +387,31 @@ SoOrder = (function() {
 			var isExists = false;
 			for ( var i = 0; i < OrderInfo.boUserCustInfos.length; i++) {
 				OrderInfo.boUserCustInfos[i].userCustFlag = "Y";
+				 // 判断是否同时新建客户 ，新建客户和新建使用人是否为同一客户
 				if ((tempIdentityNum != OrderInfo.boUserCustIdentities[i].identityNum || tempIdentidiesTypeCd != OrderInfo.boUserCustIdentities[i].identidiesTypeCd)
 						&& OrderInfo.boCustIdentities.identityNum != OrderInfo.boUserCustIdentities[i].identityNum
-						&& OrderInfo.boCustIdentities.identidiesTypeCd != OrderInfo.boUserCustIdentities[i].identidiesTypeCd) // 判断是否同时新建客户 // 同一个人新建客户和新建使用人
-				{
+						&& OrderInfo.boCustIdentities.identidiesTypeCd != OrderInfo.boUserCustIdentities[i].identidiesTypeCd){
 					busiOrder = _createUserCust(busiOrders);
 					tempIdentityNum = OrderInfo.boUserCustIdentities[i].identityNum;
 					tempIdentidiesTypeCd = OrderInfo.boUserCustIdentities[i].identidiesTypeCd;
-					busiOrder.busiObj.accessNumber = OrderInfo
-							.getAccessNumber(OrderInfo.boUserCustInfos[i].prodId);
+					busiOrder.busiObj.accessNumber = OrderInfo.getAccessNumber(OrderInfo.boUserCustInfos[i].prodId);
 					busiOrder.data.boCustInfos.push(OrderInfo.boUserCustInfos[i]);
-			        busiOrder.data.boPartyContactInfo.push(OrderInfo.boUserPartyContactInfos[i]);
-//					busiOrder.data.boCustInfos.push(OrderInfo.boUserCustInfos[i]);//这里重复了，会多一个boCustInfos节点
 					busiOrder.data.boCustIdentities.push(OrderInfo.boUserCustIdentities[i]);
+					if(ec.util.isObj(OrderInfo.boUserCustInfos[i].telNumber)){
+						//若用户有填写联系号码，则新建使用人时添加联系人节点，否则不添加联系人节点
+				        busiOrder.data.boPartyContactInfo.push(OrderInfo.boUserPartyContactInfos[i]);
+					}
 					busiOrders.push(busiOrder);
 					isExists = true;
 				}
 				// 封装产品属性
 				if (isExists) {
-					$(
-							"[name=prodSpec_"
-									+ OrderInfo.boUserCustInfos[i].prodId + "]")
-							.each(
-									function() {
-										var itemSpecId = $(this).attr("id")
-												.split("_")[0];
-										if (itemSpecId == 800000011) {
-											$(this).val(
-													busiOrder.busiObj.instId);
-										}
-									});
+					$("[name=prodSpec_" + OrderInfo.boUserCustInfos[i].prodId + "]").each(function() {
+						var itemSpecId = $(this).attr("id").split("_")[0];
+						if (itemSpecId == 800000011) {
+							$(this).val(busiOrder.busiObj.instId);
+						}
+					});
 				}
 			}
 		}

@@ -1707,11 +1707,12 @@ OrderInfo = (function() {
 	 */
 	var _resetOrderInfoCache = function() {
 		OrderInfo.ifCreateHandleCust	  = false;//判断是否需要新建经办人
-		OrderInfo.boUserPartyContactInfos = [];//使用人：联系人节点
-		OrderInfo.boUserCustIdentities	  = [];//使用人：客户证件节点
-		OrderInfo.boUserCustInfos 		  = [];//使用人：客户信息节点
 		OrderInfo.virOlId				  = "";//拍照上传虚拟购物车ID
 		OrderInfo.handleCustId 			  = "";//经办人为老客户时的客户ID
+		OrderInfo.boUserCustInfos 		  = [];//使用人：客户信息节点
+		OrderInfo.boUserCustIdentities	  = [];//使用人：客户证件节点
+		OrderInfo.boUserPartyContactInfos = [];//使用人：联系人节点
+		OrderInfo.boUserPartyContactInfo  = $.extend(true, {}, _boUserPartyContactInfo);//使用人：联系人节点
 		OrderInfo.bojbrCustInfos 		  = $.extend(true, {}, _bojbrCustInfos);//经办人：客户信息节点
 		OrderInfo.bojbrCustIdentities	  = $.extend(true, {}, _bojbrCustIdentities);//经办人：客户证件节点
 		OrderInfo.bojbrPartyContactInfo   = $.extend(true, {}, _bojbrPartyContactInfo);//经办人：客户证件节点
@@ -1821,6 +1822,7 @@ OrderInfo = (function() {
 		roleType 				:_roleType,
 		bojbrCustInfos          :_bojbrCustInfos,
 		bojbrCustIdentities     :_bojbrCustIdentities,
+		boUserPartyContactInfo	:_boUserPartyContactInfo,
 		boUserPartyContactInfos :_boUserPartyContactInfos,
 		virOlId 				:_virOlId,
 		handleCustId 			:_handleCustId,
