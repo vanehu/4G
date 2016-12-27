@@ -1086,7 +1086,11 @@ order.main = (function(){
 						yesdo:function(){
 							for ( var j = 0; j < yiPaySpec.prodSpecParams.length; j++) {							
 								var prodSpecParam = yiPaySpec.prodSpecParams[j];
-								prodSpecParam.setValue = prodSpecParam.value;
+								if (CONST.YZFitemSpecId4 == obj.itemSpecId && "ON" != offerChange.queryPortalProperties("AGENT_" + (OrderInfo.staff.soAreaId+"").substring(0,3))) {
+									prodSpecParam.setValue = "";
+								} else {
+									prodSpecParam.setValue = prodSpecParam.value;
+								}					
 //								if (!!prodSpecParam.valueRange[0]) 
 //									prodSpecParam.setValue = prodSpecParam.valueRange[0].value;
 								}

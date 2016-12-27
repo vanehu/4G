@@ -2302,14 +2302,19 @@ AttachOffer = (function() {
 			$.confirm("参数设置： ",content,{ 
 				yes:function(){	
 					var isset = false;
-					$.each(serv.prodSpecParams,function(){
-						var prodItem = CacheData.getServInstParam(prodId,serv.servId,this.itemSpecId);
-						prodItem.setValue = $("#"+prodId+"_"+this.itemSpecId).val();	
+					for(var i = 0;i<serv.prodSpecParams.length;i++){
+					//$.each(serv.prodSpecParams,function(){
+						//var prodItem = CacheData.getServInstParam(prodId,serv.servId,this.itemSpecId);
+						var prodItem = CacheData.getServInstParam(prodId,serv.servId,serv.prodSpecParams[i].itemSpecId);
+						if (prodItem.itemSpecId == CONST.YZFitemSpecId4 && "ON" != offerChange.queryPortalProperties("AGENT_" + (OrderInfo.staff.soAreaId+"").substring(0,3))) {
+							continue;
+						}
+						prodItem.setValue = $("#"+prodId+"_"+serv.prodSpecParams[i].itemSpecId).val();
 						if(prodItem.value!=prodItem.setValue){
 							prodItem.isUpdate = "Y";
 							isset = true;
 						}
-					});
+					}
 					if(isset){
 						$("#can_"+prodId+"_"+serv.servId).removeClass("canshu").addClass("canshu2");
 						serv.isset = "Y";
