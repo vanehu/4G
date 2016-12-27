@@ -530,4 +530,9 @@ public class MDA {
 	 * 工号实名制需求开关
 	 */
 	public static final String STAFF_AUTH_FLAG  = new String("");
+	
+	/**
+	 * 翼销售app省份新版ui开关
+	 */
+	public static final Map<String,String> NEWUIFLAG = new HashMap<String,String>();
 }
