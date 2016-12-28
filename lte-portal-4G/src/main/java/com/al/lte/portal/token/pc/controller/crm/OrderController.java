@@ -1346,6 +1346,9 @@ public class OrderController extends BaseController {
 			model.addAttribute("orderAttrFlag","C");//C非必填
 		}
     	if("2".equals(String.valueOf(param.get("actionFlag")))){  //套餐变更
+    		if(orderAttrFlag.equals("Y")){
+    			model.addAttribute("orderAttrFlag","C");//C非必填
+    		}
     		if (MapUtils.isNotEmpty(param)) {
         		model.addAttribute("main", param);
         	}
