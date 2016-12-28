@@ -3029,7 +3029,7 @@ public class OrderBmoImpl implements OrderBmo {
     	Map<String, Object> orderList = (Map<String, Object>) param.get("orderList");
         Map<String, Object> orderListInfo = (Map<String, Object>) orderList.get("orderListInfo");
         int actionFlag = MapUtils.getIntValue(orderListInfo, "actionFlag", 0);
-        boolean isCheckCertificateComprehensive = (actionFlag == 1 || actionFlag == 2 ||actionFlag == 6 ||actionFlag == 21 || actionFlag == 22 || actionFlag == 23 || actionFlag == 43);
+        boolean isCheckCertificateComprehensive = (actionFlag == 1 ||actionFlag == 6 || actionFlag == 14 ||actionFlag == 21 || actionFlag == 22 || actionFlag == 23 || actionFlag == 43);
     	
         if(isRealNameFlagOn && isHandleCustNeeded && isCheckCertificateComprehensive){
     		resultFlag = this.checkCustCertificateComprehensive(param, request);
