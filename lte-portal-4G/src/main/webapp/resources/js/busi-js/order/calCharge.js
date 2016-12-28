@@ -138,6 +138,7 @@ order.calcharge = (function(){
 			}
 		});
 		if(OrderInfo.actionFlag==15){
+			feeAmount=0;
 			var backAmount=0;
 			$("#calTab tbody tr").each(function() {
 				var val = $(this).attr("id");
