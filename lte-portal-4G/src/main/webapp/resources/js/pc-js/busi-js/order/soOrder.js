@@ -3137,8 +3137,10 @@ SoOrder = (function() {
 						return false;
 					}
 				}
+			}else{
+				var handleCustId = $("#orderAttrCustId").val(); 
+				OrderInfo.orderData.orderList.orderListInfo.handleCustId = handleCustId;
 			}
-			
 			//添加虚拟订单ID属性
 			if(OrderInfo.subHandleInfo.virOlId != null && OrderInfo.subHandleInfo.virOlId != undefined && OrderInfo.subHandleInfo.virOlId != ""){
 				//添加虚拟订单ID属性
