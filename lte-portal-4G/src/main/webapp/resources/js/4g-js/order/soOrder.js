@@ -2852,9 +2852,9 @@ SoOrder = (function() {
 				}
 			}
 			//若页面没有填写经办人，根据权限和业务类型进行判断和限制
-			if(CONST.isHandleCustNeeded && (OrderInfo.actionFlag == 1 || OrderInfo.actionFlag == 2 ||OrderInfo.actionFlag == 6 || OrderInfo.actionFlag == 21 || OrderInfo.actionFlag == 22 || OrderInfo.actionFlag == 23 || OrderInfo.actionFlag == 43)) {
+			if(CONST.isHandleCustNeeded && (OrderInfo.actionFlag == 1 ||OrderInfo.actionFlag == 6 || OrderInfo.actionFlag == 14 || OrderInfo.actionFlag == 21 || OrderInfo.actionFlag == 22 || OrderInfo.actionFlag == 23 || OrderInfo.actionFlag == 43)) {
 				if(!ec.util.isObj($("#jbrForm").html()) || !ec.util.isObj(OrderInfo.virOlId)){
-					$.alert("提示","经办人拍照信息不能为空！请确认页面是否已点击【读卡】或者【拍照】按钮，并且拍照和人证相符已成功操作！");
+					$.alert("提示","经办人拍照信息不能为空！请确认页面是否已点击【读卡】或者【查询】按钮，并且进行拍照和人证相符等操作！");
 					return false ;
 				}
 			}
