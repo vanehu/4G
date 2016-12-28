@@ -3145,6 +3145,15 @@ public class OrderController extends BaseController {
     	JsonResponse jsonResponse = null;
         Object realNameFlag =  MDA.REAL_NAME_PHOTO_FLAG.get("REAL_NAME_PHOTO_"+sessionStaff.getCurrentAreaId().substring(0, 3));
     	boolean isRealNameFlagOn  = realNameFlag == null ? false : "ON".equals(realNameFlag.toString()) ? true : false;//实名制拍照开关是否打开
+    	
+    	//下个版本我来优化这块-ZhangYu
+    	Object sessionHandleCustFlag = ServletUtils.getSessionAttribute(request, SysConstant.TGJBRBTQX );
+    	if(sessionHandleCustFlag == null){
+    		//是否具有跳过经办人必填的权限
+			boolean isHandleCustNeeded = "0".equals(staffBmo.checkOperatBySpecCd(SysConstant.TGJBRBTQX , sessionStaff)) ? false : true;
+			ServletUtils.setSessionAttribute(request, SysConstant.TGJBRBTQX, isHandleCustNeeded);
+    	}
+    	
     	if (commonBmo.checkToken(request, SysConstant.ORDER_SUBMIT_TOKEN)) {
             try {
                 if(orderBmo.verifyCustCertificate(param, request ,sessionStaff)){
