@@ -154,6 +154,7 @@ public class OrderProdModifyController extends BaseController {
 							partyContactInfoList);
 					model.addAttribute("modPartyTypeCd", partyListMap);
 					model.addAttribute("soNbr",param.get("soNbr"));
+					model.addAttribute("currentCT", sessionStaff.getCurrentChannelType());
 					//TODO 测试数据
 //					model.addAttribute("chooseProdInfo",JsonUtil.buildNormal().objectToJson(CommonMethods.getChooseProdInfo(paramMap)));
 //					model.addAttribute("staffInfo",JsonUtil.buildNormal().objectToJson(CommonMethods.getStaffInfo(super.getRequest())));

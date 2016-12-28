@@ -1,4 +1,8 @@
+<link href="${contextPath}/css/app-css/new-css/style.css" rel="stylesheet" />
+<link href="${contextPath}/css/app-css/new-css/old_patch.css" rel="stylesheet" />
+<link href="${contextPath}/css/app-css/new-css/myStyle.css" rel="stylesheet" />
 <link href="${contextPath}/css/app-css/newstyle.css" rel="stylesheet">
+<script src="${contextPath}/js/app-js/new-js/function.min.js" type="text/javascript"></script>
 <div class="tab-box">
 	<ul>
 		<li id="zy" class="tab-1 active" style="width:33.3333333333333%;">
@@ -18,7 +22,7 @@
 
 <div id="orderContent">
     <div>
-	    <div class="main-box">
+	    <div class="main-box m-t-0">
 		<div class="tab-1-box info-box">
 			<div class="input-box" onclick="javascript:order.broadband.searchADD();">
 				<span class="glyphicon glyphicon-map-marker"></span> 
@@ -34,7 +38,7 @@
 			</div>
 			<div class="input-box" id="jrfs" style="display:none;">
 				<span class="glyphicon glyphicon-compressed"></span> 
-				<span class="glyphicon glyphicon-chevron-right"></span> 
+				<i class="iconfont pull-right p-10 font-secondary">&#xe66e;</i> 
 				<span class="select-title font-color">接入方式</span> 
 				<select id="jrfsList" class="myselect select-option" data-role="none" onchange="order.broadband.setSl(this)">
 				
@@ -63,7 +67,7 @@
 			</div>
 			<div class="input-box" id="tcxz" style="" onclick="order.broadband.searchProd();">
 				<span class="glyphicon glyphicon-th"></span>
-				<span class="glyphicon glyphicon-chevron-right"></span>
+				<i class="iconfont pull-right p-10 font-secondary">&#xe66e;</i>
 				<span class="select-title">宽带套餐</span>
 				<input type="text" id="prodName" class="form-control" placeholder="请选择套餐" readonly="readonly">
 				<input type="hidden" class="form-control" id="objId">
@@ -75,7 +79,7 @@
 			</div>
 			<div class="input-box" id="upsl" style="display:none;">
 				<span class="glyphicon glyphicon-flash"></span> 
-				<span class="glyphicon glyphicon-chevron-right"></span> 
+				<i class="iconfont pull-right p-10 font-secondary">&#xe66e;</i> 
 				<span class="select-title font-color">上行速率</span> 
 				<select id="upslList" class="myselect select-option" data-role="none">
 					
@@ -83,7 +87,7 @@
 			</div>
 			<div class="input-box" id="dwsl" style="display:none;">
 				<span class="glyphicon glyphicon-flash"></span> 
-				<span class="glyphicon glyphicon-chevron-right"></span> 
+				<i class="iconfont pull-right p-10 font-secondary">&#xe66e;</i> 
 				<span class="select-title font-color">下行速率</span> 
 				<select id="dwslList" class="myselect select-option" data-role="none">
 					

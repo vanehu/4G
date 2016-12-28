@@ -157,11 +157,10 @@ $(function(){
 			soAreaCode : $("#_session_staff_info").attr("areaCode"),
 			soAreaName : $("#_session_staff_info").attr("areaName"),
 			soAreaAllName : $("#_session_staff_info").attr("areaAllName"),
-			channelCode: $("#_session_staff_info").attr("channelCode"),
-			channelType:$("#_session_staff_info").attr("channelType"),
+			channelCode: $("#_session_staff_info").attr("channelCode"), 
 			idType:$("#_session_staff_info").attr("idType")
 	};
-//	window.localStorage.setItem("OrderInfo.staff",JSON.stringify(OrderInfo.staff));
+	       window.localStorage.setItem("OrderInfo.staff",JSON.stringify(OrderInfo.staff));
 });
 
 var _logout = false; //是否已调用退出登录

@@ -3,13 +3,13 @@
   <div class="row">
     <div class="panel panel-default paneltop"> 
       <!-- Default panel contents -->
-      <div class="panel-heading">收银台</div>
+      <div class="panel-heading" style="background: #fff!important;color: #4c4c4c!important;">收银台</div>
       <!-- <div class="panel-body">
         <p>购物车流水：${olNbr}</p>
       </div> -->
       <div class="panel-body">
       	<form>
-        		  <div class="form-group">
+        		  <div class="form-group" style="height: 1.88rem!important;">
                     <label for="exampleInputEmail1">产品:</label>
                     <p id="pnumber"  style="color: #000; width: 72%; display: inline-block; text-align: left;"></p>
                   </div>
@@ -26,21 +26,21 @@
                     </div>
                   </div>
                    -->
-                  <div class="form-group">
+                  <div class="form-group" id="bjfy" style="height: 1.88rem!important;">
                     <label for="exampleInputPassword1">实收费用:</label>
                     <!--
                     <input type="text" disabled="disabled" id="realAmount_${trid}" onblur="order.calcharge.editMoney(this,'${trid}','old');" class="form-control" onfocus="order.calcharge.setGlobeMoney(this);">
                     -->
-                    <input type="text" disabled="disabled" id="realAmount_${trid}" class="form-control" onfocus="order.calcharge.setGlobeMoney(this);">
+                    <input type="text" style="padding-left: 20px; font-size: 14px;" disabled="disabled" id="realAmount_${trid}" class="form-control" onfocus="order.calcharge.setGlobeMoney(this);">
                   </div>
-                  <div class="form-group" id="chargeModifyReasonCdDiv_${trid}" style="display:none">
+                  <div class="form-group" id="chargeModifyReasonCdDiv_${trid}" style="display:none;height: 1.88rem!important;">
                     <label for="exampleInputPassword1">修改原因</label>
                     <div class="input-group">
-	                    <select class="selectpicker show-tick form-control" id="chargeModifyReasonCd_${trid}" style="border: 1px solid #DCDCDC;height: 23px;line-height: 23px;padding: 1px; width: 100px;">
-														   		<option value="3">补退费</option>
-														   		<option value="2">算费不正确</option>
-														   		<option value="4">营销业务</option>
-														   		<option value="1">其他</option>
+	                    <select class="selectpicker show-tick form-control" id="chargeModifyReasonCd_${trid}" style="font-size: 14px!important;border: 1px solid #DCDCDC;height: 23px;line-height: 23px;padding: 1px; width: 100px;">
+														   		<option style="font-size: 14px!important;" value="3">补退费</option>
+														   		<option style="font-size: 14px!important;" value="2">算费不正确</option>
+														   		<option style="font-size: 14px!important;" value="4">营销业务</option>
+														   		<option style="font-size: 14px!important;" value="1">其他</option>
 					    </select>
 			        </div>
 			        </br>
@@ -50,11 +50,11 @@
 				    </div>
                   </div>
                   
-                  <div class="btn-group btn-group-justified" role="group" aria-label="...">
+                  <!-- <div class="btn-group btn-group-justified" role="group" aria-label="...">
  <div class="btn-group" role="group" id="editBtnDiv" onClick="order.broadband.queryAuthenticDataRange('${trid}');">
     <button type="button" class="btn btn-default">减免费用</button> 
   </div>
-</div>
+</div> -->
                 </form>
       </div>
      <!-- <div class="panel-body">

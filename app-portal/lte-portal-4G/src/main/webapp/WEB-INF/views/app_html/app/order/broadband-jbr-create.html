@@ -5,59 +5,66 @@
    		<div class="container-fluid">
    			<div class="row">
 				<div class="panel panel-default paneltop">
-					<div class="panel-heading">经办人信息</div>
-			<div class="panel-body">
+			<div class="panel-body p-0">
 			<div class="form-group2" id="jbrsfz">
-				<div style="display:inline;"><label for="username">证件扫描</label></div>
+				<div style="display:inline;"><i class="iconfont pull-left">&#xe609;</i><label for="username">证件扫描</label></div>
 				<div style="display:inline;">
-					<ul style="list-style-type:none;display:inline;padding-left: 0;">
-		            	<li style="display:inline;"><img onClick="common.callGenerationRec('cust.getjbrGenerationInfos2','1')" style=" height: 40px;"src="${contextPath}/image/app-image/shebeisaomiao-xxhdpi_03.png"/></li>
-		            	<li id="nfc" style="display:inline;"><img onClick="common.callGenerationRec('cust.getjbrGenerationInfos2','2')" style=" height: 40px; margin-left: 15px;" src="${contextPath}/image/app-image/shebeisaomiao-xxhdpi_05.png"/></li>
-		            	<li id="otg" style="display:inline;"><img onClick="common.callGenerationRec('cust.getjbrGenerationInfos2','3')" style=" height: 40px; margin-left: 15px;" src="${contextPath}/image/app-image/otg@2x_03.png"/></li>
-		            </ul>
+					<i id="otg" onClick="common.callGenerationRec('cust.getjbrGenerationInfos2','3')" class="iconfont pull-right font-orange">&#xe6dc;</i>
+					<i onClick="common.callGenerationRec('cust.getjbrGenerationInfos2','1')" class="iconfont pull-right font-orange">&#xe653;</i>
+					<i id="nfc" onClick="common.callGenerationRec('cust.getjbrGenerationInfos2','2')" class="iconfont pull-right font-orange">&#xe654;</i>
 				</div>
 			</div>
-			<div class="form-group">
-			<div style="display:inline;"><label>拍照</label></div>
-			<div class="btn-group" role="group" >
-			       <button type="button" class="btn btn-default" onClick="common.callPhotos2('cust.getPicture2')">
+			<div class="form-group p-l-r">
+			<div style="display:inline;"><i style="left:0;" class="iconfont pull-left">&#xe61c;</i><label>拍照</label></div>
+			<div class="btn-group pull-right" role="group" >
+				<i onClick="common.callPhotos2('cust.getPicture2')" class="iconfont pull-right font-orange">&#xe61c;</i>
+			       <!-- <button type="button" class="btn btn-default" onClick="common.callPhotos2('cust.getPicture2')">
 			          <span class="glyphicon glyphicon-camera" aria-hidden="true"></span> 拍照
-			        </button>
+			        </button> -->
 			  </div>
 			 </div>
-			<div class="form-group">
-				<label for="orderAttrName">经办人姓名<span class="text-warning"></span></label>
-            	<input type="text" class="form-control" id="orderAttrName"  maxlength="100"  readonly="readonly" onblur="order.broadband.setNoPhoto()">
+			<div class="form-group p-l-r">
+				<label style="display: none;" for="orderAttrName">经办人姓名<span class="text-warning"></span></label>
+				<i class="iconfont pull-left absolute-left">&#xe663;</i>
+            	<input type="text" placeholder="经办人姓名" class="form-control" id="orderAttrName"  maxlength="100"  readonly="readonly" onblur="order.broadband.setNoPhoto()">
+				<div class="Validform_checktip"></div>
 			</div>
-         	<div class="form-group">
-				<label for="orderAttrPhoneNbr">联系方式<span class="text-warning"></span></label>
-            	<input type="text" class="form-control" id="orderAttrPhoneNbr"  maxlength="11" name="orderAttrPhoneNbr">
+         	<div class="form-group p-l-r">
+				<label style="display: none;" for="orderAttrPhoneNbr">联系方式<span class="text-warning"></span></label>
+				<i class="iconfont pull-left absolute-left">&#xe645;</i>
+            	<input type="text" placeholder="联系方式" class="form-control" id="orderAttrPhoneNbr"  maxlength="11" name="orderAttrPhoneNbr">
+				<div class="Validform_checktip"></div>
 			</div>
-			<div class="form-group" id="myType">
-	            <label for="orderIdentidiesTypeCd">证件类型</label>
+			<div class="form-group p-l-r" id="myType">
+	            <label style="display: none;" for="orderIdentidiesTypeCd">证件类型</label>
+	            <i class="iconfont pull-left absolute-left">&#xe616;</i>
 	            <select id="orderIdentidiesTypeCd" class="myselect form-control" onchange="cust.jbridentidiesTypeCdChoose(this,'sfzorderAttrIdCard')"><!-- onchange="cust.identidiesTypeCdChoose(this,'orderAttrIdCard')" -->
 	            </select>
          	</div>
-			<div class="form-group" id="jbrsfz_i">
-	            <div class="form-group feedback-btn1" id="">
-					<label for="sfzorderAttrIdCard">证件号码<span class="text-warning"></span></label>
-		                <input type="text" class="form-control" id="sfzorderAttrIdCard" name="sfzorderAttrIdCard" maxlength="50" placeholder="" readonly="readonly" >
-				</div>
+			<div class="form-group p-l-r" id="jbrsfz_i">
+					<label style="display: none;" for="sfzorderAttrIdCard">证件号码<span class="text-warning"></span></label>
+					<i class="iconfont pull-left absolute-left">&#xe616;</i>
+		                <input type="text" placeholder="证件号码" class="form-control" id="sfzorderAttrIdCard" name="sfzorderAttrIdCard" maxlength="50" placeholder="" readonly="readonly" >
 				<!--<div class="form-group feedback-btn1" style="width:13%;margin-top: 25px;display: block;float: left;" id="">
 				         <span class="input-group-btn">
 		                      <button class="btn btn-info" onClick="common.callGenerationRec('cust.getjbrGenerationInfos')" type="button"> 读卡 </button>
 		                 </span>
 				</div>
 				-->
+				<div class="Validform_checktip"></div>
 				<div style="clear:both"></div>
 			</div>
-			<div class="form-group" id="qtzj" style="display: none;">
-				<label for="orderAttrIdCard">证件号码<span class="text-warning"></span></label>
-            	<input type="text" class="form-control" id="orderAttrIdCard" name="orderAttrIdCard" maxlength="50" readonly="readonly" onblur="order.broadband.setNoPhoto()">
+			<div class="form-group p-l-r" id="qtzj" style="display: none;">
+				<label style="display: none;" for="orderAttrIdCard">证件号码<span class="text-warning"></span></label>
+				<i class="iconfont pull-left absolute-left">&#xe616;</i>
+            	<input type="text" placeholder="证件号码" class="form-control" id="orderAttrIdCard" name="orderAttrIdCard" maxlength="50" readonly="readonly" onblur="order.broadband.setNoPhoto()">
+				<div class="Validform_checktip"></div>
 			</div>
-			<div class="form-group">
-				<label for="orderAttrAddr">证件地址<span class="text-warning"></span></label>
-            	<input type="text" class="form-control" id="orderAttrAddr" maxlength="200" readonly="readonly" onblur="order.broadband.setNoPhoto()">
+			<div class="form-group p-l-r">
+				<label style="display: none;" for="orderAttrAddr">证件地址<span class="text-warning"></span></label>
+				<i class="iconfont pull-left absolute-left">&#xe637;</i>
+            	<input type="text" placeholder="证件地址" class="form-control" id="orderAttrAddr" maxlength="200" readonly="readonly" onblur="order.broadband.setNoPhoto()">
+				<div class="Validform_checktip"></div>
 			</div>
 		</div>
          </div>
@@ -82,6 +89,7 @@
 			</div>
 	 </nav>
 <script type="text/javascript">
+OrderInfo.actionFlag = 111;
     cust.jbrvalidatorForm();
  	var ua = navigator.userAgent.toLowerCase();	
 	if (/iphone|ipad|ipod/.test(ua)) {

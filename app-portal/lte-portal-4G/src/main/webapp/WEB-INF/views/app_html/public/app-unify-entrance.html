@@ -43,21 +43,21 @@
 		<script src="${contextPath}/js/busi-js/push/build.js" type="text/javascript"></script>
 		<script src="${contextPath}/js/app-js/busi-js/saleorder/saleOrderQuery.js?${jsversion}" type="text/javascript"></script>
 		<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=EB49416c882464f8194d4631923ee221"></script>
+		<script src="${contextPath}/js/app-js/busi-js/cfq/cfq.js?${jsversion}" type="text/javascript"></script>
 		<script>
 		window.onload= function() 
 		{  
-			var webSwitch="true";
-			var myCust=window.localStorage.getItem("OrderInfo.cust");
-			if("true"==webSwitch && myCust!=null){
-			  var myCust1=$.parseJSON(myCust);
-			  myCust1.CN="";
-			  
-			  myCust=JSON.stringify(myCust1);//CN值不合法，传入后台会报400错误，故去掉该值。
-			  window.localStorage.setItem("OrderInfo.cust", myCust);
-			}
 			var app_flag="${app_flag}";//1表示来至手机端，空值表示来至浏览器
 			if(!app_flag){//方便浏览器开发
-				
+				var webSwitch="true";
+				var myCust=window.localStorage.getItem("OrderInfo.cust");
+				if("true"==webSwitch && myCust!=null){
+				  var myCust1=$.parseJSON(myCust);
+				  myCust1.CN="";
+				  
+				  myCust=JSON.stringify(myCust1);//CN值不合法，传入后台会报400错误，故去掉该值。
+				  window.localStorage.setItem("OrderInfo.cust", myCust);
+				}
 				var params={};
 				var menu = ${menu}; //菜单测试
 				if(!menu){

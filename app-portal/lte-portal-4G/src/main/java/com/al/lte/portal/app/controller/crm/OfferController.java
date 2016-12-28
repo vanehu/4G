@@ -348,6 +348,9 @@ public class OfferController extends BaseController {
 		} catch (Exception e) {
 			return super.failedStr(model, ErrorCode.QUERY_MUST_OFFER, e, paramMap);
 		}
+		if(paramMap.get("enter")!=null){
+			return "/app/order_new/attach-spec-new";
+		}
 	 	return "/app/offer/attach-spec";
 	}
 	
@@ -566,6 +569,9 @@ public class OfferController extends BaseController {
 		} catch (Exception e) {
 			return super.failedStr(model, ErrorCode.QUERY_MUST_OFFER, e, paramMap);
 		}
+        if(paramMap.get("enter")!=null){//新版ui
+        	return "/app/order_new/attach-offer-list";
+        }
 		return "/app/offer/attach-offer-list";
 	}
 	

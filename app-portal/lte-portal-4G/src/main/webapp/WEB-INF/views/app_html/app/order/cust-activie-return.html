@@ -62,6 +62,7 @@
 		<form id="custFormdata" method="post">
 		<div class="container-fluid">
 				<input type="hidden" id="cmPartyTypeCd" value="1"/>
+				<input type="hidden" id="currentCT" value="${currentCT}"/><!-- 渠道类型 -->
 				<input type="hidden" id="boCustIdentities" partyName="${modPartyTypeCd.partyName}" addressStr="${modPartyTypeCd.addressStr}" partyTypeCd="${modPartyTypeCd.partyTypeCd}" <#if (identities)?? > identidiesTypeCd="${identities[0].identidiesTypeCd}" identityNum="${identities[0].identityNum}"</#if> />
 				<div class="form-group">
 					<label for="cmCustName">客户姓名<span class="text-warning">*</span></label>

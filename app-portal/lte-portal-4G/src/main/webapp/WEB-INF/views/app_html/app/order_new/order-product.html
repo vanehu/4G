@@ -1,0 +1,289 @@
+<input type="hidden" id="currentCT" value="${currentCT}"/><!-- 渠道类型 -->
+<#if offerSpec?? && offerSpec.offerRoles?? && (offerSpec.offerRoles?size>0)>
+<ul class="tab-change-list2" id="tab-change-list2"> 
+ <#list offerSpec.offerRoles as offerRole>
+<#if offerRole.prodInsts?? && (offerRole.prodInsts?size>0)>
+<#list offerRole.prodInsts as prod> <#assign prodId = prod.prodInstId />
+<li class="tab-list" name="tab-li2" id="tab-li2">
+	<ul name="card-list2" class="choice-list-box ${prodId}">
+		<li name="card2"><i class="iconfont pull-left">&#xe6b9;</i> <span
+			class="list-title"> <span class="title-lg" id="phoneNumSpan2_${prodId}"></span>
+				<span class="subtitle font-secondary" id="cardNameSpan2_${prodId}"></span>
+		</span> <i class="iconfont absolute-right font-secondary open-noness">&#xe66e;</i>
+		</li>
+		<!-- 是否信控等产品属性 -->
+		<div id="specParmDiv_${prodId}" class="p-l-43">
+		</div>
+		<li id="terminalDiv_${prodId}" style="display: none;">
+		</li>
+		<li>
+			<div class="choice-box absolute-l-43 border-top-none border-none">
+				<input placeholder="UIM卡，请扫描或输入" class="choice-input p-l-0 " oninput="showCheckUim(${prodId})"; id="uim_input_${prodId}" />
+				<i id="uim_call_${prodId}" class="iconfont right-btn pull-right p-r-10 m-r-45"
+					onclick="common.callScanning('order.service.scaningCallBack',${prodId})">&#xe641;</i>
+				<!--扫描UIM卡按钮-->
+				<i id="uim_check_${prodId}"
+					class="iconfont right-btn pull-right p-r-10 m-r-45 dis-none"
+					onclick="product.uim.checkUim(${prodId});">&#xe672;</i>
+				<!--校验UIM卡按钮-->
+				<i id="uim_release_${prodId}"
+					class="iconfont right-btn pull-right p-r-10 m-r-45 dis-none"
+					onclick="product.uim.releaseUim(${prodId});">&#xe673;</i>
+				<!--释放UIM卡按钮-->
+			</div>
+		</li>
+		
+        </ul>
+		<div class="choice-box m-t-10" id="div_payType">
+			<i class="iconfont pull-left p-l-10">&#xe61a;</i> <#assign
+			feeType_read = "0"> <#if main.actionFlag==6> <#assign feeType_read =
+			"1"> <#else> <#if offerSpec.feeType?? && offerSpec.feeType!="" > <#if
+			offerSpec.feeType=="2100" || offerSpec.feeType=="1200" ||
+			offerSpec.feeType=="1201" > <#assign feeType_read = "1"> </#if>
+			<#else> <#assign feeType_read = "1"> </#if> </#if> <select
+				name="payType" id="payType_${prodId}" class="myselect select-option"
+				data-role="none" prodId="${prodId}" name="pay_type_${prodId}"
+				onchange="order.main.feeTypeCascadeChange(this,'${prodId}')"<#if
+				feeType_read=="1">disabled="disabled"</#if>> <#if
+				offerSpec.feeType?? && offerSpec.feeType!="" > <#if
+				offerSpec.feeType=="1200" || offerSpec.feeType=="3100" ||
+				offerSpec.feeType=="3102" || offerSpec.feeType=="3103" >
+				<option value="1200"<#if main.feeTypeMain=="1200" ||
+					offerSpec.feeType=="3100">selected="selected"</#if> >后付费</option> </#if>
+				<#if offerSpec.feeType=="2100" || offerSpec.feeType=="3100" ||
+				offerSpec.feeType=="3101" || offerSpec.feeType=="3103" >
+				<option value="2100"<#if
+					main.feeTypeMain==2100>selected="selected"</#if> >预付费</option> </#if> <#if
+				offerSpec.feeType=="1201" || offerSpec.feeType=="3101" ||
+				offerSpec.feeType=="3102" || offerSpec.feeType=="3103" >
+				<option value="1201"<#if
+					main.feeTypeMain==1201>selected="selected"</#if> >准实时预付费</option> </#if>
+				<#else>
+				<option value="">无</option> </#if>
+			</select>
+		</div>
+	</li>
+	</#list>
+	</#if>
+ </#list>
+</ul>
+		<div class="choice-box m-t-10 border-none">
+			<input type="hidden" id="cur_channelCode" value="${channelCode}" /> 
+			<i class="iconfont pull-left p-l-10">&#xe66c;</i> 
+			<select name="" id="dealerType" class="myselect select-option" data-role="none" />
+			<i onclick="order.dealer.showDealer()"
+				class="iconfont absolute-right font-default" style="line-height: 0.86rem; vertical-align: middle; margin: 0 0.22rem; font-size:16px;">&#xe670;</i>
+		</div>
+		<ul class="choice-list-box">
+			<li><span class="list-title font-secondary" id="dealerName">
+			</span> 
+			</li>
+		</ul>
+		
+		<ul class="choice-list-box">
+					<li>
+						<i class="iconfont pull-left">&#xe66c;</i>
+						<span class="list-title">添加经办人</span>
+						<i onclick="order.dealer.showJbr()" data-toggle="modal" class="iconfont absolute-right font-default">&#xe670;</i>
+					</li>
+					<li>
+						<span class="list-title font-secondary" id="jbrName">无经办人
+						</span>
+						<i id="deleteJbr" onclick="order.dealer.deleteJbr()" class="iconfont absolute-right">&#xe624;</i>
+					</li>
+				</ul>
+				<ul class="choice-list-box m-0">
+					<li>
+						<div class="choice-box border-none">
+							<i class="iconfont pull-left">&#xe656;</i>
+								<input placeholder="备注" class="choice-input">
+						</div>
+						<i class="iconfont absolute-right"></i>
+					</li>
+				</ul>
+
+		<!-- 发展人弹出层 -->
+		<div class="modal fade modal-message modal-top" id="dealerModal">
+			<div class="modal-dialog" style="display:block;">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal"
+							aria-hidden="true">×</button>
+						<h4 class="modal-title">选择发展人</h4>
+					</div>
+					<div>
+						<div class="choice-box">
+							<i class="iconfont pull-left p-l-10">&#xe637;</i> 
+							<select name="" id="diqu" class="myselect select-option" data-role="none">
+							</select> 
+							<i class="iconfont pull-right p-r-10">&#xe66e;</i>
+						</div>
+						<div class="choice-box">
+							<i class="iconfont pull-left p-l-10">&#xe663;</i>
+							 <input id="staffCode" placeholder="请输入员工号" class="choice-input">
+						</div>
+						<div class="choice-box">
+							<i class="iconfont pull-left p-l-10">&#xe663;</i> 
+							<input id="salesCode" placeholder="请输入销售员编码" class="choice-input">
+						</div>
+						<div class="sub-btn-box p relative">
+							<button class="sun-btn" onclick="order.dealer.queryStaff()">查询</button>
+						</div>
+					</div>
+					<div class="dis-none">
+						<!--查询结果列表  dis-none来控制隐藏与否-->
+						<div class="list-box">
+							<ul class="choice-list-box m-b-0">
+								<li><i class="iconfont pull-left">&#xe663;</i> <span
+									class="list-title">发展人XXX</span>
+									<div class="list-checkbox absolute-right">
+										<label>
+											<div class="checkbox-box">
+												<input type="radio" value="1" id="checkbox-fzr-1" name="fzr" />
+												<label for="checkbox-fzr-1"></label>
+											</div>
+										</label>
+									</div></li>
+								<li><i class="iconfont pull-left">&#xe663;</i> <span
+									class="list-title">发展人XXX</span>
+									<div class="list-checkbox absolute-right">
+										<label>
+											<div class="checkbox-box">
+												<input type="radio" value="2" id="checkbox-fzr-2" name="fzr" />
+												<label for="checkbox-fzr-2"></label>
+											</div>
+										</label>
+									</div></li>
+							</ul>
+						</div>
+						<div class="sub-btn-box p relative">
+							<button class="sun-btn">确定</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div> 
+		<!-- 经办人弹出层 -->
+		<div class="modal modal-message fade modal-top" id="jbr">
+			
+				<div class="modal-dialog" style="display:block;">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" onclick="order.dealer.closeJBR()" aria-hidden="true">×</button>
+							<h4 class="modal-title">添加经办人</h4>
+						</div>
+						<form id="jbrFormdata" method="post">
+						<ul class="choice-list-box bg-body border-none">
+							<li class="m-t-10">
+								<div class="choice-box">
+									<i class="iconfont pull-left">&#xe616;</i>
+									<select name="" id="orderIdentidiesTypeCd" onchange="cust.jbridentidiesTypeCdChoose(this,'sfzorderAttrIdCard')" class="myselect select-option" data-role="none">
+									</select>
+								</div>
+							</li>
+							<li class="m-t-10" id="jbrsfz">
+								<div class="choice-box">
+									<i class="iconfont pull-left">&#xe609;</i>
+									<span class="list-title font-secondary border-none">证件扫描</span>
+									<i id="jbr_otg" onclick="common.callGenerationRec('cust.getjbrGenerationInfos','3')" class="iconfont pull-right font-orange">&#xe6dc;</i>
+									<i  onclick="common.callGenerationRec('cust.getjbrGenerationInfos','1')" class="iconfont pull-right font-orange">&#xe653;</i>
+									<i id="jbr_nfc" onclick="common.callGenerationRec('cust.getjbrGenerationInfos','2')" class="iconfont pull-right font-orange">&#xe654;</i>
+								</div>
+							</li>
+							<li class="m-t-10" id="photo">
+								<div class="choice-box">
+									<i class="iconfont pull-left">&#xe609;</i>
+									<span class="list-title font-secondary border-none">拍照</span>
+									<i onclick="common.callPhotos('cust.getPicture')" class="iconfont pull-right font-orange">&#xe61c;</i>
+								</div>
+							</li>
+							<li class="m-t-10" id="jbrsfz_i">
+								<div class="choice-box">
+									<i class="iconfont pull-left">&#xe616;</i>
+									<input placeholder="证件号码" id="sfzorderAttrIdCard" class="choice-input" readonly="readonly"/>
+									<div class="Validform_checktip"></div>
+								</div>
+							</li>
+							<li class="m-t-10" id="qtzj" style="display: none;">
+								<div class="choice-box">
+									<i class="iconfont pull-left">&#xe616;</i>
+									<input placeholder="证件号码" id="orderAttrIdCard" class="choice-input" />
+									<div class="Validform_checktip"></div>
+								</div>
+							</li>
+							<li class="m-t-10">
+								<div class="choice-box">
+									<i class="iconfont pull-left">&#xe663;</i>
+									<input placeholder="经办人姓名" id="orderAttrName" class="choice-input" readonly="readonly"/>
+									<div class="Validform_checktip"></div>
+								</div>
+							</li>
+							<li class="m-t-10">
+								<div class="choice-box">
+									<i class="iconfont pull-left">&#xe637;</i>
+									<input placeholder="证件地址" id="orderAttrAddr" class="choice-input" readonly="readonly"/>
+									<div class="Validform_checktip"></div>
+								</div>
+							</li>
+							<li class="m-t-10">
+								<div class="choice-box">
+									<i class="iconfont pull-left">&#xe639;</i>
+									<input placeholder="联系人手机" id="orderAttrPhoneNbr" class="choice-input"   ignore="ignore" />
+									<div class="Validform_checktip"></div>
+								</div>
+							</li>
+						</ul>
+						</form>
+						<div class="ordinary-btn-box p p-b-15">
+							<button class="double-btn"  id="queryJbr" onClick="order.main.queryJbr()">查询</button>
+							<button class="double-btn" onClick="order.dealer.closeJBR()">确定</button>
+
+						</div>
+						
+			</div>
+		</div>
+		</div>
+<script type="text/javascript">
+cust.jbrvalidatorForm();
+	var ua = navigator.userAgent.toLowerCase();	
+if (/iphone|ipad|ipod/.test(ua)) {
+	$("#jbr_nfc").hide();
+	$("#jbr_otg").hide();
+	    //alert("iphone");		
+} else if (/android/.test(ua)) {
+	    //alert("android");	
+}
+	$(function() {
+		//初始化Slider 实例
+		new Slider({
+				dom: document.getElementById('tab-change-list2'),
+				list: document.getElementsByName('tab-li2'),
+				run: document.getElementsByName('card-list2'),
+				runList: document.getElementsByName('card2')
+			});
+		order.broadband.init_select();//刷新select组件，使样式生效
+	});
+	function showCheckUim(prodId) {
+		var uimNumber = $("#uim_input_"+prodId).val().trim();
+		if (uimNumber != "") {
+			$("#uim_call_"+prodId).addClass("dis-none");
+			$("#uim_check_"+prodId).removeClass("dis-none");
+		} else {
+			$("#uim_call_"+prodId).removeClass("dis-none");
+			$("#uim_check_"+prodId).addClass("dis-none");
+		}
+
+	}
+	function showCheckTerminal(prodId) {
+		
+		var terminalNumber = $("#terminal_text").val().trim();
+		if (terminalNumber != "") {
+			$("#terminal_call").addClass("dis-none");
+			$("#terminal_check").removeClass("dis-none");
+		} else {
+			$("#terminal_call").removeClass("dis-none");
+			$("#terminal_check").addClass("dis-none");
+		}
+
+	}
+</script> </#if>

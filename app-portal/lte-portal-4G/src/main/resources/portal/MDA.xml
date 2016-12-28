@@ -46,6 +46,8 @@
 				<const type="String" name="CSB_HTTP_MIDDLE_URL" value="http://10.128.90.194:8201/LTE-CSB/HttpAPIService" description="宽带融合-中台地址"/>
 		<const type="String" name="CSB_HTTP_QUERCHEN_URL" value="http://10.128.90.194:8888/channel-mobile-web/" description="宽带融合-定位渠道"/>
 		<const type="String" name="CSB_FLAG" value="OFF" />
+		<const type="String" name="PAY_TOKEN_URL" value="http://10.128.90.195:7001/payconf/" />
+		<const type="String" name="PAY_URL" value="http://10.128.90.195:7001/upay/platpay/index?" />
 		<const type="String" name="ASYNC_FLAG" value="OFF" />
 		<const type="String" name="DEF_HTTP_FLAG" value="ON" />
 		<const type="Map" name="PROVORDERATTR_FLAG" description="是否显示省内订单属性 0-打开，1-关闭">
@@ -1564,7 +1566,7 @@
 				'REAL_NAME_PHOTO_812':'OFF',<!-- 天津 -->
 				'REAL_NAME_PHOTO_813':'OFF',<!-- 河北 -->
 				'REAL_NAME_PHOTO_841':'OFF',<!-- 河南 -->
-				'REAL_NAME_PHOTO_821':'ON',<!-- 辽宁 -->
+				'REAL_NAME_PHOTO_821':'OFF',<!-- 辽宁 -->
 				'REAL_NAME_PHOTO_822':'OFF',<!-- 吉林 -->
 				'REAL_NAME_PHOTO_834':'OFF',<!-- 安徽 -->
 				'REAL_NAME_PHOTO_833':'OFF',<!-- 浙江 -->
@@ -1609,6 +1611,78 @@
 			'PROVCODE_862':'6004010001',<!-- 甘肃 -->
 			'PROVCODE_865':'6003030001',<!-- 新疆 -->
 			'PROVCODE_899':''<!-- 虚拟省 -->
+			}
+		</const>
+		<const type="Map" name="NEWPAYFLAG" description="省份收费调用新支付平台开关">
+		{
+			'NEWPAYFLAG_854':'OFF',<!-- 西藏 -->
+			'NEWPAYFLAG_863':'OFF',<!-- 青海 -->
+			'NEWPAYFLAG_815':'OFF',<!-- 内蒙古 -->
+			'NEWPAYFLAG_823':'OFF',<!-- 黑龙江 -->
+			'NEWPAYFLAG_845':'OFF',<!-- 广西 -->
+			'NEWPAYFLAG_850':'OFF',<!-- 重庆 -->
+			'NEWPAYFLAG_861':'OFF',<!-- 陕西 -->
+			'NEWPAYFLAG_842':'OFF',<!-- 湖北 -->
+			'NEWPAYFLAG_835':'OFF',<!-- 福建 -->
+			'NEWPAYFLAG_832':'OFF',<!-- 江苏 -->
+			'NEWPAYFLAG_846':'OFF',<!-- 海南 -->
+			'NEWPAYFLAG_864':'OFF',<!-- 宁夏 -->
+			'NEWPAYFLAG_814':'OFF',<!-- 山西 -->
+			'NEWPAYFLAG_853':'OFF',<!-- 云南 -->
+			'NEWPAYFLAG_836':'OFF',<!-- 江西 -->
+			'NEWPAYFLAG_837':'OFF',<!-- 山东 -->
+			'NEWPAYFLAG_811':'OFF',<!-- 北京 -->
+			'NEWPAYFLAG_843':'OFF',<!-- 湖南 -->
+			'NEWPAYFLAG_851':'ON',<!-- 四川 -->
+			'NEWPAYFLAG_844':'OFF',<!-- 广东 -->
+			'NEWPAYFLAG_831':'OFF',<!-- 上海 -->
+			'NEWPAYFLAG_812':'OFF',<!-- 天津 -->
+			'NEWPAYFLAG_813':'ON',<!-- 河北 -->
+			'NEWPAYFLAG_841':'OFF',<!-- 河南 -->
+			'NEWPAYFLAG_821':'OFF',<!-- 辽宁 -->
+			'NEWPAYFLAG_822':'ON',<!-- 吉林 -->
+			'NEWPAYFLAG_834':'OFF',<!-- 安徽 -->
+			'NEWPAYFLAG_833':'OFF',<!-- 浙江 -->
+			'NEWPAYFLAG_852':'OFF',<!-- 贵州 -->
+			'NEWPAYFLAG_862':'OFF',<!-- 甘肃 -->
+			'NEWPAYFLAG_865':'OFF',<!-- 新疆 -->
+			'NEWPAYFLAG_899':'OFF'<!-- 虚拟省 -->
+			}
+		</const>
+		<const type="Map" name="NEWUIFLAG" description="翼销售省份新版UI开关">
+		{
+			'NEWUIFLAG_854':'OFF',<!-- 西藏 -->
+			'NEWUIFLAG_863':'OFF',<!-- 青海 -->
+			'NEWUIFLAG_815':'OFF',<!-- 内蒙古 -->
+			'NEWUIFLAG_823':'OFF',<!-- 黑龙江 -->
+			'NEWUIFLAG_845':'ON',<!-- 广西 -->
+			'NEWUIFLAG_850':'OFF',<!-- 重庆 -->
+			'NEWUIFLAG_861':'OFF',<!-- 陕西 -->
+			'NEWUIFLAG_842':'OFF',<!-- 湖北 -->
+			'NEWUIFLAG_835':'OFF',<!-- 福建 -->
+			'NEWUIFLAG_832':'OFF',<!-- 江苏 -->
+			'NEWUIFLAG_846':'OFF',<!-- 海南 -->
+			'NEWUIFLAG_864':'OFF',<!-- 宁夏 -->
+			'NEWUIFLAG_814':'OFF',<!-- 山西 -->
+			'NEWUIFLAG_853':'OFF',<!-- 云南 -->
+			'NEWUIFLAG_836':'OFF',<!-- 江西 -->
+			'NEWUIFLAG_837':'OFF',<!-- 山东 -->
+			'NEWUIFLAG_811':'OFF',<!-- 北京 -->
+			'NEWUIFLAG_843':'OFF',<!-- 湖南 -->
+			'NEWUIFLAG_851':'ON',<!-- 四川 -->
+			'NEWUIFLAG_844':'OFF',<!-- 广东 -->
+			'NEWUIFLAG_831':'OFF',<!-- 上海 -->
+			'NEWUIFLAG_812':'OFF',<!-- 天津 -->
+			'NEWUIFLAG_813':'ON',<!-- 河北 -->
+			'NEWUIFLAG_841':'ON',<!-- 河南 -->
+			'NEWUIFLAG_821':'ON',<!-- 辽宁 -->
+			'NEWUIFLAG_822':'OFF',<!-- 吉林 -->
+			'NEWUIFLAG_834':'OFF',<!-- 安徽 -->
+			'NEWUIFLAG_833':'OFF',<!-- 浙江 -->
+			'NEWUIFLAG_852':'ON',<!-- 贵州 -->
+			'NEWUIFLAG_862':'OFF',<!-- 甘肃 -->
+			'NEWUIFLAG_865':'OFF',<!-- 新疆 -->
+			'NEWUIFLAG_899':'OFF'<!-- 虚拟省 -->
 			}
 		</const>
 	</mda>

@@ -2,12 +2,27 @@
 <#if resultlst?? &&(resultlst?size>0) >
 <#if actionFlag?? && (actionFlag==2)>
 <@portal.scrollPagination "offer_list" "both" totalPage 50 0 "order.service.scroll">
-	<div id="div_offer_list" style="margin: 10px; margin-top:0px;">
+	<!-- <div id="div_offer_list" style="margin: 10px; margin-top:0px;"> -->
+	<ul id="div_offer_list" class="single-list-box meal-choice-box">
 	<#list resultlst as item>
 	<#if item_index<10>
 	<#if subPage??>
+	<li class="done p-10 p-t-15 p-b-15" onclick="javascript:order.service.choosedOffer('tcnum'+${item_index},${item.offerSpecId},'${(item.price)?default("")}','${subPage}','${item.offerSpecName}');">
+		<p class="title" >${item.offerSpecName}</p>
+		<p class="message m-r-10">
+			<i class="iconfont p-r-10">&#xe648;</i><span>
+			<span class="orange">资费：<#if item.fee??>${item.fee}元<#else>无</#if></span></span>
+		</p>
+		<p class="message">
+			<i class="iconfont p-r-10">&#xe64e;</i><span>
+			<span class="orange">带宽：<#if item.speed??>${item.speed}M<#else>无</#if></span></span>
+		</p>
+		<div class="arrow-right-box p-15 m-t-10">
+			<i class="iconfont">&#xe66e;</i>
+		</div>
+	</li>
 	
-	   <a href="#" class="list-group-item" onclick="javascript:order.service.choosedOffer('tcnum'+${item_index},${item.offerSpecId},'${(item.price)?default("")}','${subPage}','${item.offerSpecName}');">
+	   <!-- <a href="#" class="list-group-item" onclick="javascript:order.service.choosedOffer('tcnum'+${item_index},${item.offerSpecId},'${(item.price)?default("")}','${subPage}','${item.offerSpecName}');">
 		<h5 class="list-group-item-heading">
 			${item.offerSpecName}
 			
@@ -16,10 +31,25 @@
 			<small class="col-xs-5">带宽：<b class="cheng"><span class="big"><#if item.speed??>${item.speed}M</span><#else>无</#if></b></small> <small class="col-xs-5">资费：<b class="cheng"><span class="big"><#if item.fee??>${item.fee}元</span><#else>无</#if></b></small>
 		</div>
 		<span class="dinggou">订购</span>
-	    </a>
+	    </a> -->
 						
 	<#else>
-	<a href="#" class="list-group-item" onclick="order.service.buyService(${item.offerSpecId},'${(item.price)?default("")}')">
+	<li class="done p-10 p-t-15 p-b-15" onclick="order.service.buyService(${item.offerSpecId},'${(item.price)?default("")}')">
+		<p class="title" >${item.offerSpecName}</p>
+		<p class="message m-r-10">
+			<i class="iconfont p-r-10">&#xe648;</i><span>
+			<span class="orange">资费：<#if item.fee??>${item.fee}元<#else>无</#if></span></span>
+		</p>
+		<p class="message">
+			<i class="iconfont p-r-10">&#xe64e;</i><span>
+			<span class="orange">带宽：<#if item.speed??>${item.speed}M<#else>无</#if></span></span>
+		</p>
+		<div class="arrow-right-box p-15 m-t-10">
+			<i class="iconfont">&#xe66e;</i>
+		</div>
+	</li>
+	
+	<!-- <a href="#" class="list-group-item" onclick="order.service.buyService(${item.offerSpecId},'${(item.price)?default("")}')">
 		<h5 class="list-group-item-heading">
 			${item.offerSpecName}
 			
@@ -28,21 +58,37 @@
 			<small class="col-xs-5">带宽：<b class="cheng"><span class="big"><#if item.speed??>${item.speed}M</span><#else>无</#if></b></small> <small class="col-xs-5">资费：<b class="cheng"><span class="big"><#if item.fee??>${item.fee}元</span><#else>无</#if></b></small>
 		</div>
 		<span class="dinggou">订购</span>
-	</a>
+	</a> -->
 	</#if>
 	</#if>
 	</#list>
-	</div>
+	</ul>
 </@portal.scrollPagination>
 <#else>
-<@portal.scrollPagination "offer_list" "both" totalPage 101 0 "order.service.scroll">
-	<div id="div_offer_list" style="margin: 10px; margin-top:0px;">
+<@portal.scrollPagination "offer_list" "both" totalPage 115 0 "order.service.scroll">
+	<!-- <div id="div_offer_list" style="margin: 10px; margin-top:0px;"> -->
+	<ul id="div_offer_list" class="single-list-box meal-choice-box">
 	<#list resultlst as item>
 	<#if item_index<10>
 	
 	<#if subPage??>
 	
-	   <a href="#" class="list-group-item" onclick="javascript:order.service.choosedOffer('tcnum'+${item_index},${item.offerSpecId},'${(item.price)?default("")}','${subPage}','${item.offerSpecName}');">
+	<li class="done p-10 p-t-15 p-b-15" onclick="javascript:order.service.choosedOffer('tcnum'+${item_index},${item.offerSpecId},'${(item.price)?default("")}','${subPage}','${item.offerSpecName}');">
+		<p class="title" >${item.offerSpecName}</p>
+		<p class="message m-r-10">
+			<i class="iconfont p-r-10">&#xe648;</i><span>
+			<span class="orange">资费：<#if item.fee??>${item.fee}元<#else>无</#if></span></span>
+		</p>
+		<p class="message">
+			<i class="iconfont p-r-10">&#xe64e;</i><span>
+			<span class="orange">带宽：<#if item.speed??>${item.speed}M<#else>无</#if></span></span>
+		</p>
+		<div class="arrow-right-box p-15 m-t-10">
+			<i class="iconfont">&#xe66e;</i>
+		</div>
+	</li>
+	
+	   <!-- <a href="#" class="list-group-item" onclick="javascript:order.service.choosedOffer('tcnum'+${item_index},${item.offerSpecId},'${(item.price)?default("")}','${subPage}','${item.offerSpecName}');">
 		<h5 class="list-group-item-heading">
 			${item.offerSpecName}
 
@@ -51,10 +97,24 @@
 			<small class="col-xs-5">带宽：<b class="cheng"><span class="big"><#if item.speed??>${item.speed}M</span><#else>无</#if></b></small> <small class="col-xs-5">资费：<b class="cheng"><span class="big"><#if item.fee??>${item.fee}元</span><#else>无</#if></b></small>
 		</div>
 		<span class="dinggou">订购</span>
-	    </a>
+	    </a> -->
 						
 	<#else>
-		<a href="#" class="list-group-item" index="${item.index}" id="${item.offerSpecId}" name="${item.offerSpecName}" compTypeCd="${item.compTypeCd}" offerNbr="${item.offerNbr}" prodNbr="${item.prodNbr}" objId="${item.objId}" roleCd="${item.roleCd}" onclick="order.broadband.buyService(this,'${(item.price)?default("")}')">
+	<li class="done p-10 p-t-15 p-b-15" index="${item.index}" id="${item.offerSpecId}" name="${item.offerSpecName}" compTypeCd="${item.compTypeCd}" offerNbr="${item.offerNbr}" prodNbr="${item.prodNbr}" objId="${item.objId}" roleCd="${item.roleCd}" onclick="order.broadband.buyService(this,'${(item.price)?default("")}')">
+		<p class="title" >${item.offerSpecName}</p>
+		<p class="message m-r-10">
+			<i class="iconfont p-r-10">&#xe648;</i><span>
+			<span class="orange">资费：<#if item.fee??>${item.fee}元<#else>无</#if></span></span>
+		</p>
+		<p class="message">
+			<i class="iconfont p-r-10">&#xe64e;</i><span>
+			<span class="orange">带宽：<#if item.speed??>${item.speed}M<#else>无</#if></span></span>
+		</p>
+		<div class="arrow-right-box p-15 m-t-10">
+			<i class="iconfont">&#xe66e;</i>
+		</div>
+	</li>
+		<!-- <a href="#" class="list-group-item" index="${item.index}" id="${item.offerSpecId}" name="${item.offerSpecName}" compTypeCd="${item.compTypeCd}" offerNbr="${item.offerNbr}" prodNbr="${item.prodNbr}" objId="${item.objId}" roleCd="${item.roleCd}" onclick="order.broadband.buyService(this,'${(item.price)?default("")}')">
 			<h5 class="list-group-item-heading">
 				${item.offerSpecName}
 
@@ -63,19 +123,34 @@
 				<small class="col-xs-5">带宽：<b class="cheng"><span class="big"><#if item.speed??>${item.speed}M</span><#else>无</#if></b></small> <small class="col-xs-5">资费：<b class="cheng"><span class="big"><#if item.fee??>${item.fee}元</span><#else>无</#if></b></small>
 			</div>
 			<span class="dinggou">订购</span>
-		</a>
+		</a> -->
 	</#if>
 	</#if>
 	</#list>
-	</div>
+	</ul>
 </@portal.scrollPagination>
 </#if>
-<div style="display:none" id="div_all_data">
+<!-- <div style="display:none" id="div_all_data"> -->
+<ul style="display:none" id="div_all_data" class="single-list-box meal-choice-box">
 	<#list resultlst as item>
 	<#if item_index gte 10>
 	<#if subPage??>
+	<li class="done p-10 p-t-15 p-b-15" onclick="javascript:order.service.choosedOffer('tcnum'+${item_index},${item.offerSpecId},'${(item.price)?default("")}','${subPage}','${item.offerSpecName}');">
+		<p class="title" >${item.offerSpecName}</p>
+		<p class="message m-r-10">
+			<i class="iconfont p-r-10">&#xe648;</i><span>
+			<span class="orange">资费：<#if item.fee??>${item.fee}元<#else>无</#if></span></span>
+		</p>
+		<p class="message">
+			<i class="iconfont p-r-10">&#xe64e;</i><span>
+			<span class="orange">带宽：<#if item.speed??>${item.speed}M<#else>无</#if></span></span>
+		</p>
+		<div class="arrow-right-box p-15 m-t-10">
+			<i class="iconfont">&#xe66e;</i>
+		</div>
+	</li>
 	
-	   <a href="#" class="list-group-item" onclick="javascript:order.service.choosedOffer('tcnum'+${item_index},${item.offerSpecId},'${(item.price)?default("")}','${subPage}','${item.offerSpecName}');">
+	   <!-- <a href="#" class="list-group-item" onclick="javascript:order.service.choosedOffer('tcnum'+${item_index},${item.offerSpecId},'${(item.price)?default("")}','${subPage}','${item.offerSpecName}');">
 		<h5 class="list-group-item-heading">
 			${item.offerSpecName}
 			
@@ -84,10 +159,25 @@
 			<small class="col-xs-5">带宽：<b class="cheng"><span class="big"><#if item.speed??>${item.speed}M</span><#else>无</#if></b></small> <small class="col-xs-5">资费：<b class="cheng"><span class="big"><#if item.fee??>${item.fee}元</span><#else>无</#if></b></small>
 		</div>
 		<span class="dinggou">订购</span>
-	    </a>
+	    </a> -->
 						
 	<#else>
-		<a href="#" class="list-group-item" index="${item.index}" id="${item.offerSpecId}" name="${item.offerSpecName}" compTypeCd="${item.compTypeCd}" offerNbr="${item.offerNbr}" prodNbr="${item.prodNbr}" objId="${item.objId}" roleCd="${item.roleCd}" onclick="order.broadband.buyService(this,'${(item.price)?default("")}')">
+	<li class="done p-10 p-t-15 p-b-15" index="${item.index}" id="${item.offerSpecId}" name="${item.offerSpecName}" compTypeCd="${item.compTypeCd}" offerNbr="${item.offerNbr}" prodNbr="${item.prodNbr}" objId="${item.objId}" roleCd="${item.roleCd}" onclick="order.broadband.buyService(this,'${(item.price)?default("")}')">
+		<p class="title" >${item.offerSpecName}</p>
+		<p class="message m-r-10">
+			<i class="iconfont p-r-10">&#xe648;</i><span>
+			<span class="orange">资费：<#if item.fee??>${item.fee}元<#else>无</#if></span></span>
+		</p>
+		<p class="message">
+			<i class="iconfont p-r-10">&#xe64e;</i><span>
+			<span class="orange">带宽：<#if item.speed??>${item.speed}M<#else>无</#if></span></span>
+		</p>
+		<div class="arrow-right-box p-15 m-t-10">
+			<i class="iconfont">&#xe66e;</i>
+		</div>
+	</li>
+	
+		<!-- <a href="#" class="list-group-item" index="${item.index}" id="${item.offerSpecId}" name="${item.offerSpecName}" compTypeCd="${item.compTypeCd}" offerNbr="${item.offerNbr}" prodNbr="${item.prodNbr}" objId="${item.objId}" roleCd="${item.roleCd}" onclick="order.broadband.buyService(this,'${(item.price)?default("")}')">
 			<h5 class="list-group-item-heading">
 				${item.offerSpecName}
 				
@@ -96,11 +186,11 @@
 				<small class="col-xs-5">带宽：<b class="cheng"><span class="big"><#if item.speed??>${item.speed}M</span><#else>无</#if></b></small> <small class="col-xs-5">资费：<b class="cheng"><span class="big"><#if item.fee??>${item.fee}元</span><#else>无</#if></b></small>
 			</div>
 			<span class="dinggou">订购</span>
-		</a>
+		</a> -->
 	</#if>
 	</#if>
 	</#list>
-</div>
+</ul>
 <#else>
 	<div class="list-group-item"> 
 		<div class="h4">

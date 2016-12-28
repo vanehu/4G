@@ -3,29 +3,29 @@
             	<div class="input-box">
 					<span class="glyphicon glyphicon-user"></span>
 					<span class="select-title">订单流水</span>
-					<input type="text" id="TransactionID" class="form-control" style="width:170px;font-size:12px;" value="${TransactionID}" readonly="readonly">
+					<input type="text" id="TransactionID" class="form-control p-l-r" style="width:170px;font-size:12px;" value="${TransactionID}" readonly="readonly">
 				</div>
 				<div class="input-box">
 					<span class="glyphicon glyphicon-user"></span>
 					<span class="select-title">联系人</span>
-					<input type="text" id="userName" class="form-control" placeholder="请输入联系人">
+					<input type="text" id="userName" class="form-control p-l-r" placeholder="请输入联系人">
 				</div>
 				<div class="input-box">
 					<span class="glyphicon glyphicon-phone"></span>
 					<span class="select-title">联系电话</span>
-					<input type="text" id="userPhone" class="form-control" placeholder="请输入联系电话">
+					<input type="text" id="userPhone" class="form-control p-l-r" maxlength="11" oninput="this.value=this.value.replace(/\D/g,'')" placeholder="请输入联系电话">
 				</div>
 				<div class="input-box" onclick="javascript:order.broadband.selectYYT();">
 					<span class="glyphicon glyphicon-map-marker"></span>
-					<span class="glyphicon glyphicon glyphicon-chevron-right"></span>
+					<i class="iconfont pull-right p-10 font-secondary">&#xe66e;</i>
 					<input type="hidden" id="MDId" class="form-control">
 					<input type="hidden" id="MDadd" class="form-control">
 					<span class="select-title">受理营业厅</span>
-					<input type="text" id="MDname" class="form-control" placeholder="选择受理营业厅" readonly="readonly">
+					<input type="text" id="MDname" class="form-control" style="padding-left: 20px;" placeholder="选择受理营业厅" readonly="readonly">
 				</div>
 				<div class="input-box" id="jbrDiv" onclick="javascript:order.broadband.showJbr();" style="display: none;">
 					<span class="glyphicon glyphicon-map-marker"></span>
-					<span class="glyphicon glyphicon glyphicon-chevron-right"></span>
+					<i class="iconfont pull-right p-10 font-secondary">&#xe66e;</i>
 					<span class="select-title">经办人</span>
 					<input type="text" id="jbrName" class="form-control" placeholder="请填写经办人信息" readonly="readonly">
 				</div>
@@ -43,11 +43,11 @@
 					</thead>
 					<tbody class="form-inline" style=" text-align:center;">
 					<#list feelList as fList>
-						<tr id="${fList_index}" class="item_fee" objId="${fList.objId}" acctItemTypeName="${fList.acctItemTypeName}" feeAmount="${((fList.feeAmount)?number / 100)?string('0.00')}" realAmount="" onclick="order.broadband.showEditPage(this)">
+						<tr id="${fList_index}" class="item_fee" objId="${fList.objId}" acctItemTypeName="${fList.acctItemTypeName}" feeAmount="${((fList.feeAmount)?number / 100)?string('0.00')}" realAmount="" onclick="$.alert('提示','没有该费用修改权限!')">
 							<input type="hidden" id="feeAmount_${fList_index}" value="${((fList.feeAmount)?number / 100)?string('0.00')}" />
 							<input type="hidden" id="acctItemTypeId_${fList_index}" value="${fList.acctItemTypeId}" />
 		                  	<input type="hidden" id="objId_${fList_index}" value="${fList.objId}" />
-		                  	<input type="hidden" id="realhidden_${fList_index}" value="${fList.feeAmount}" />
+		                  	<input type="hidden" id="realhidden_${fList_index}" value="${((fList.feeAmount)?number / 100)?string('0.00')}" />
 							<!-- <td>${fList.objId}</td> -->
 							<td>${fList.acctItemTypeName}</td>
 							<td>${((fList.feeAmount)?number / 100)?string('0.00')}元</td>
@@ -60,9 +60,9 @@
 					</tbody>
 				</table>
 			</div>
-<div class="form-group panel-body" style="">
+<div class="form-group panel-body" style="height:auto !important;">
 <label style="width: 100%; text-align: left;">备注</label>
-<textarea class="form-control" id="order_remark" style="width: 100%;height:60px!important;"></textarea>
+<textarea class="form-control" id="order_remark" style="font-size:0.28rem;padding:0.22rem;width: 100%;height:60px!important;"></textarea>
 </div>
 <nav class="navbar navbar-default navbar-fixed-bottom" id="cal_main_content">
   <div class="container-fluid">
@@ -93,7 +93,16 @@ $(function() {
 	var isFlag = offerChange.queryPortalProperties(propertiesKey2);
 	if(isFlag == "ON"){//开关打开则必须填写经办人信息，否则默认隐藏
 		order.broadband.isNeedJbr=true;//经办人必须
-	    $("#jbrDiv").css("display","block");	
+	    $("#jbrDiv").css("display","block");
+	    if(OrderInfo.cust.custId == -1){
+			$("#orderAttrPhoneNbr").val(OrderInfo.cust.custOther1.mobilePhone);
+		}else{
+			if(OrderInfo.cust.contactInfos[0].contactMobilePhone != undefined && OrderInfo.cust.contactInfos[0].contactMobilePhone != ""){
+				$("#orderAttrPhoneNbr").val(OrderInfo.cust.contactInfos[0].contactMobilePhone);
+			}
+		}
      }
+	
+	order.broadband.queryAuthenticDataRange();
 });
 </script>

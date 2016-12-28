@@ -7,109 +7,35 @@
 	border:1px solid #ff8202;
 } 
 -->
+.form-control{
+font-size: 1.6rem;
+padding-left: 9.86rem;
+}
 </style>
 <div id="order_prepare">
 <input type="hidden" id="subPage" value="${subPage}" />
 <input type="hidden" id="enter" value="${enter}" />
 <div class="main-box">
-<div class="container-fluid">
-	<div class="row">
-		<div id="myTabContent" class="tab-content no-body">
+		<div id="myTabContent">
 			<!-- 套餐入口 -->
-			<div class="tab-pane fade in" id="pakeage">
-				<div class="row divtab">
-					<div class="col-xs-10">
-						<!--
-						<input type="hidden" id="qryStr" value="乐享"/>
-						-->
-						<!-- <input type="hidden" id="categoryNodeId" value="90132141"/> -->
-						<div class="btn-group btn-group-justified btn-group-noborder"
-							data-toggle="buttons-radio" role="group" aria-label="...">
-							<div class="btn-group" role="group">
-								<button type="button" class="btn btn-default active" value="90132141" >宽带套餐</button>
-								<!-- <button type="button" class="btn btn-default active" value="90132141" onclick="order.service.tabChange(this)">宽带套餐</button> -->
-							</div>
-							<!-- <div class="btn-group" role="group">
-								<button type="button" class="btn btn-default" value="90132143" onclick="order.service.tabChange(this)">积木</button>
-							</div>
-							<div class="btn-group" role="group">
-								<button type="button" class="btn btn-default" value="90139849" onclick="order.service.tabChange(this)">飞Young</button>
-							</div>
-							<div class="btn-group" role="group">
-								<button type="button" class="btn btn-default" value="-9999" onclick="order.service.tabChange(this)">其他</button>
-							</div> -->
+			<div id="pakeage">
+				<div>
+						<div class="input-box" onclick="$('#search-modal').modal('show')">
+							<span class="glyphicon glyphicon-list"></span>
+							<span class="glyphicon glyphicon-search green"></span>
+							<span class="select-title font-color">高级搜索</span>
 						</div>
-					</div>
-					<div class="col-xs-2">
-			            <button type="button" class="btn btn-default navbar-btn nav-justified no-mp" data-toggle="modal" data-target="#search-modal"> <span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
-			          </div>
 				</div>
 				<div id="offer-list" style="margin: 10px; margin-top:0px;">
 				</div>
 			</div>
 		</div>
-	</div>
-</div>
-</div>
-<!-- Modal -->
-<div class="modal fade modal_search" id="search-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-<div class="modal_top">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="panel panel-default">
-          <div class="panel-body">
-            <form>
-            <div class="form-group has-feedback">
-              <input type="text" class="form-control w-100" id="qryStr" aria-describedby="inputSuccess2Status" placeholder="请输入套餐名称">
-            </div>
-            	<div class="form-group">
-                  	<label for="exampleInputEmail1" class="w-100">价格区间（元）</label>
-                  	<div class="input-group w-100">
-                   	<select id="select_price" class="selectpicker show-tick form-control" >
-                   		<option value="">不限</option>
-                	</select>
-		            <span class="input-group-addon select-span"></span>
-	         		</div>
-               </div>
-               <div class="form-group">
-                  	<label for="exampleInputEmail1" class="w-100">语音时长（分钟）</label>
-                  	<div class="input-group w-100">
-                   	<select id="select_invoice" class="selectpicker show-tick form-control" >
-                   		<option value="">不限</option>
-                	</select>
-		            <span class="input-group-addon select-span"></span>
-	         		</div>
-               </div>
-               <div class="form-group">
-                  	<label for="exampleInputEmail1" class="w-100">流量（G）</label>
-                  	<div class="input-group w-100">
-                   	<select id="select_influx" class="selectpicker show-tick form-control" >
-                   		<option value="">不限</option>
-                	</select>
-                	 <span class="input-group-addon select-span"></span>
-	         		</div>
-               </div>
-  
-			</form>
-          </div>
-          <div class="modal-footer">
-          	<div class="col-xs-6">
-          		<button type="button" style="height: 42px;font-size: 14px; width:100%; border-right: 1px solid #d6d6d6;" onclick="order.service.searchPack(1);" class="btn btn-default" style="border-right: 1px solid #;"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> 确定</button>
-          	</div>
-          	<div class="col-xs-6">
-          		<button type="button"  style="height: 42px;font-size: 14px; width:100%;" class="btn btn-default" data-toggle="modal" data-target="#search-modal"> <span class="glyphicon" aria-hidden="true"></span>关闭</button> 
-           	</div>
-          </div>
-        </div>
-    </div>
-  </div>
-</div>
 </div>
 </div>
 <!-- 副卡弹出框 -->
 <div class="modal fade" id="vice_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 <div class="modal_wrapper">
-  <div class="modal-dialog">
+  <div class="modal-dialog" style="display:block;">
     <div class="modal-content">
       <div class="panel panel-default" style="margin-bottom: 0;">
           <div class="panel-body">
@@ -137,41 +63,53 @@
 <div class="item" id="phonenumberContent" style="display:none">
  
 </div>
+<div class="modal modal-message fade modal-top" id="search-modal">
+	<div class="modal-dialog" style="display: block;">
+		<div class="modal-content">
+			<div class="modal-header" >
+				<button type="button" class="close"  data-dismiss="modal" aria-hidden="true">×</button>
+				<h4 class="modal-title" >套餐查询</h4>
+			</div>
+			<div class="modal-body">
+				<div class="choice-box m-t-10" >
+					<i class="iconfont pull-left p-l-10" >&#xe667;</i>
+					<input placeholder="请输入套餐名称"  class="choice-input" id="qryStr"/>
+				</div>
+				<div class="choice-box m-t-10" >
+					<i class="iconfont pull-left p-l-10" >&#xe61a;</i> 
+					<select name="" placeholder="价格区间（元）" id="select_price" class="myselect select-option" data-role="none">
+						<option id="-1" value="">价格区间（元）</option>
+					</select>
+					<i class="iconfont pull-right p-r-10" >&#xe66e;</i>
+				</div>
+				<div class="choice-box m-t-10" >
+					<i class="iconfont pull-left p-l-10" >&#xe648;</i> 
+					<select name="" placeholder="语音时长（分钟）" id="select_invoice" class="myselect select-option" data-role="none">
+						<option id="-1" value="">语音时长（分钟）</option>
+					</select>
+					<i class="iconfont pull-right p-r-10" >&#xe66e;</i>
+				</div>
+				<div class="choice-box m-t-10" >
+					<i class="iconfont pull-left p-l-10" >&#xe618;</i>
+					<select name="" placeholder="流量（G）" id="select_influx" class="myselect select-option" data-role="none">
+						<option id="-1" value="">流量（G）</option>
+					</select>
+					<i class="iconfont pull-right p-r-10" >&#xe66e;</i>
+				</div>
+			</div>
+			<div class="modal-footer" style="margin-top:10px;">
+				<div class="ordinary-btn-box p p-b-15">
+					<button class="sun-btn" onclick="order.service.searchPack(1);">确定</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
 <script>
 //初始化
 $(function(){
-		$("#mima").empty();
-		order.broadband.initProd();
-		$("#pakeage").attr("class","tab-pane fade in active");
-		$("#phone").attr("class","tab-pane fade medialist");
-		$("#number").attr("class","tab-pane fade");
+	order.broadband.initProd();
+	$("#pakeage").attr("class","tab-pane fade in active");
+	order.broadband.init_select();
 });
-function setnumPrice(){
-			var price = $("#numPrice").val();
-			if(price=="-1"){
-				$("#Less").val("");
-				$("#Greater").val("");
-			}else if(price=="0"){
-				$("#Less").val("100");
-				$("#Greater").val("0");
-			}else if(price=="100"){
-				$("#Less").val("300");
-				$("#Greater").val("100");
-			}else if(price=="300"){
-				$("#Less").val("500");
-				$("#Greater").val("300");
-			}else if(price=="500"){
-				$("#Less").val("1200");
-				$("#Greater").val("500");
-			}else if(price=="1200"){
-				$("#Less").val("15000");
-				$("#Greater").val("1200");
-			}else if(price=="15000"){
-				$("#Less").val("30000");
-				$("#Greater").val("15000");
-			}else if(price=="30000"){
-				$("#Less").val("");
-				$("#Greater").val("30000");
-			}
-		}
 </script>

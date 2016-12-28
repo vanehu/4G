@@ -1,5 +1,7 @@
 package com.al.lte.portal.app.controller.main;
 
+import java.io.BufferedInputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -67,6 +69,18 @@ public class MainController extends BaseController {
 			HttpServletRequest request, HttpServletResponse response) {
 		model.addAttribute("menu", request.getParameter("menu"));
 		model.addAttribute("app_flag", session.getAttribute(SysConstant.SESSION_KEY_APP_FLAG));
+		String actionFlag=request.getParameter("actionFlag");
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+				SysConstant.SESSION_KEY_LOGIN_STAFF);
+		String propertiesKey = "NEWUIFLAG_"+ (sessionStaff.getCurrentAreaId() + "").substring(0, 3);//新ui开关
+		// 新UI开关
+		String newUIFlag = propertiesUtils.getMessage(propertiesKey);
+		if("ON".equals(newUIFlag) && actionFlag!=null){
+			return "/public/app-resource";
+		}
+		if("201".equals(actionFlag)){//橙分期无论开关是否开启都走新入口
+			return "/public/app-resource";
+		}
 		return "/public/app-unify-entrance";
 	}
 	
@@ -126,9 +140,9 @@ public class MainController extends BaseController {
 	        					 if(map2.get("id")!=null){
 	        					   id=(String) map2.get("id");
 	        					 }
-	    	            		 String notice_url = propertiesUtils.getMessage(SysConstant.NOTICE_URL);
-	    	            		 notice_url = notice_url+id;
-	    	            		 myMap.put("noticeurl", notice_url);
+	        					 String notice_url = (String) attachslist.get(0).get("noticeurl");
+	        					 notice_url = notice_url +","+ attachslist.get(0).get("name");
+	    	            		 myMap.put("noticeurl", AESUtils.encryptToString(notice_url, SysConstant.BLACK_USER_URL_PWD));
 	    	            		 attchsList2.add(myMap);
 	        			 }
 	        			 JSONArray attachsArray= JSONArray.fromObject(attchsList2);

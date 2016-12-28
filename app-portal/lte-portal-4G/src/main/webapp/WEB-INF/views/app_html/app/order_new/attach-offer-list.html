@@ -1,0 +1,41 @@
+<#assign items= offerMap.result.offerSpecList />
+<#assign servItems= servMap.result.servSpec />
+<#assign flag = true />
+	<#if items?? &&(items?size>0)> <#assign flag = false /> <#list items as
+	item>
+	<li><i class="iconfont pull-left active">&#xe62b;</i>
+	 <span class="list-title">${item.offerSpecName}</span>
+		<div class="list-checkbox absolute-right">
+			<label>
+				<div class="checkbox-box">
+					<input type="checkbox" value="1" id="str_${prodId}_${item.offerSpecId}" name="" /> 
+					<labe for="str_${prodId}_${item.offerSpecId}" onclick="AttachOffer.selectAttachOffer(${prodId},${item.offerSpecId})" href="javascript:void(0);"></label>
+				</div>
+			</label>
+		</div>
+	</li>
+	</#list>
+	</#if>	
+	<#if servItems?? &&(servItems?size>0)>
+	<#assign flag = false />
+	<#list servItems as item>
+	<li><i class="iconfont pull-left active">&#xe62b;</i>
+	 <span class="list-title">${item.servSpecName}</span>
+		<div class="list-checkbox absolute-right">
+			<label>
+				<div class="checkbox-box">
+					<input type="checkbox" value="1" id="str_${prodId}_${item.servSpecId}" name="" /> 
+					<labe for="str_${prodId}_${item.servSpecId}" onclick="AttachOffer.selectServ(${prodId},${item.servSpecId},'${item.servSpecName}','${item.ifParams}')" ></label>
+				</div>
+			</label>
+		</div>
+	</li>
+	</#list>
+	</#if>
+<#if flag >
+	<li href="javascript:void(0);">
+		<span>无搜索结果</span>
+	</li>
+</#if>
+
+

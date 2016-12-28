@@ -1,0 +1,34 @@
+
+<#if phoneNumList?? &&(phoneNumList?size>0)>
+<ul class="double-list-box num-choice-box ">
+	<#if phoneNumList?? &&(phoneNumList?size>0)> <#list phoneNumList as
+	item> <#assign phoneNumber="${item.phoneNumber}" /> <#assign
+	phonehead="${(item.phoneNumber)?substring(0,3)}" /> <#assign
+	phonemiddle="${(item.phoneNumber)?substring(3,7)}" /> <#assign
+	phoneend="${(item.phoneNumber)?substring(7,(item.phoneNumber)?length)}"
+	/>
+	<li class="done pull-left p-10 m-b-5" onclick="order.phoneNumber.clickPhoneNum(this,${ispurchased!'0'});" zoneNumber="${item.zoneNumber}" numberVal="${item.phoneNumber}_${item.prePrice}_${item.pnPrice}_${item.anTypeCd}_${item.pnCharacterId}_${item.pnLevelId}_${item.phoneNumId}_${item.needPwd?default("0")}">
+		<p class="title">${phonehead} ${phonemiddle} ${phoneend}</p>
+		<p class="message m-b-5">
+			预存款<span class="pull-right"><span class="orange">${item.prePrice}</span>元</span>
+		</p>
+		<p class="message">
+			月最低消费<span class="pull-right"><span class="orange">${item.pnPrice}</span>元</span>
+		</p>
+	</li>
+	  </#list> 
+		
+	</#if>
+  </ul>
+<#else>
+	<div class="list-group-item"> 
+		<div class="h4">
+			<img style="vertical-align:middle" src="${contextPath}/image/common/query_search.gif" />&nbsp;&nbsp;抱歉，没有找到相关的号码。
+		</div>
+	</div>
+</#if>
+
+
+
+
+

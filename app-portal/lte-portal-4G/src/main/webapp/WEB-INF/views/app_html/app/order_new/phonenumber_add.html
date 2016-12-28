@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<!--[if IE 8]> <html lang="en" class="ie8"> <![endif]-->
+<!--[if !IE]><!-->
+<html lang="en">
+	<!--<![endif]-->
+
+	<head>
+		<meta charset="utf-8" />
+		<title>号卡新装</title>
+		<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport" />
+		<meta content="" name="description" />
+		<meta content="" name="author" />
+		<meta name="format-detection" content="telephone=no" />
+		<!--<link href="../assets/plugins/ionicons/css/ionicons.min.css" rel="stylesheet">-->
+		<link href="${contextPath}/css/app-css/new-css/patch.css" rel="stylesheet" />
+		<link href="${contextPath}/css/app-css/new-css/myStyle.css" rel="stylesheet" />
+		<script src="${contextPath}/js/app-js/new-js/function.min.js" type="text/javascript"></script>
+	</head>
+
+	<body>
+	    <a id="phoneNumber_a" class="btn no-border btn-white pull-right m menu-search" href="#phoneNumber_search_model" data-toggle="modal">
+			<i class="iconfont tab-icon">&#xe647;</i>
+		</a>
+		<a id="offer_a" class="btn no-border btn-white pull-right m menu-search" href="#offer_search_model" data-toggle="modal" style="display: none">
+			<i class="iconfont tab-icon">&#xe647;</i>
+		</a>
+		<!-- ================== BEGIN 号卡新装 ================== -->
+		<!-- begin #page-loader -->
+		
+		<!-- end #page-loader -->
+
+		<!-- begin #page-container -->
+		<!-- begin #content -->
+		<div id="content2" class="content p-t-0">
+
+			<!-- begin row -->
+			<div class="row">
+				<!-- begin col-12 -->
+				<div class="panel panel-inverse panel-with-tabs" data-sortable-id="ui-unlimited-tabs-1">
+					<div class="panel-heading p-0" id="headTabDiv1">
+						<!-- begin nav-tabs -->
+						<div class="tab-overflow">
+							<ul class="nav nav-tabs nav-tabs-inverse p-t-5">
+								<#if enter=="3">
+								<li class="active" id="tab1_li">
+									<a><i class="iconfont tab-icon">&#xe61d;</i>号码<i class="iconfont tab-result-icon">&#xe611;</i></a>
+								</li>
+								<li class="" id="tab2_li">
+									<a ><i class="iconfont tab-icon">&#xe667;</i>套餐<i class="iconfont tab-result-icon">&#xe611;</i></a>
+								</li>				
+								<#else>
+								<li class="active" id="tab2_li">
+									<a><i class="iconfont tab-icon">&#xe667;</i>套餐<i class="iconfont tab-result-icon">&#xe611;</i></a>
+								</li>
+								<li class="" id="tab1_li">
+									<a><i class="iconfont tab-icon">&#xe61d;</i>号码<i class="iconfont tab-result-icon">&#xe611;</i></a>
+								</li>
+								</#if>
+								<li class="" id="tab3_li">
+									<a><i class="iconfont tab-icon">&#xe671;</i>副卡<i class="iconfont tab-result-icon">&#xe611;</i></a>
+								</li>
+								<li class="" id="tab4_li">
+									<a><i class="iconfont tab-icon">&#xe660;</i>促销<i class="iconfont tab-result-icon">&#xe611;</i></a>
+								</li>
+								<!--<li class=""><a href="#nav-tab-5" data-toggle="tab"><i class="iconfont tab-icon">&#xe662;</i>客户<i class="iconfont tab-result-icon">&#xe611;</i></a></li>-->
+								<li class="" id="tab6_li">
+									<a><i class="iconfont tab-icon">&#xe664;</i>其他<i class="iconfont tab-result-icon">&#xe611;</i></a>
+								</li>
+							</ul>
+						</div>
+					</div>
+					<div class="panel-heading p-0" id="headTabDiv2" style="display: none">
+						<!-- begin nav-tabs -->
+						<div class="tab-overflow">
+							<ul class="nav nav-tabs nav-tabs-inverse p-t-5">								
+								<li id="tab7_li">
+									<a><i class="iconfont tab-icon">&#xe635;</i>订单确认<i class="iconfont tab-result-icon">&#xe611;</i></a>
+								</li>
+								<li id="tab8_li">
+									<a><i class="iconfont tab-icon">&#xe61a;</i>订单支付<i class="iconfont tab-result-icon">&#xe611;</i></a>
+								</li>
+								<!--<li class=""><a href="#nav-tab-5" data-toggle="tab"><i class="iconfont tab-icon">&#xe662;</i>客户<i class="iconfont tab-result-icon">&#xe611;</i></a></li>-->
+							</ul>
+						</div>
+					</div>
+					<div class="tab-content p-0" id="orderContentDiv">
+						<div class="tab-pane fade active in" id="nav-tab-1">
+							<div class="list-box p-5" id="phonenumber-list">
+								
+							</div>
+							<!-- 高级查询 -->
+							<div class="modal modal-message fade modal-top" id="phoneNumber_search_model">
+								<div class="modal-dialog" style="display: block;">
+									<div class="modal-content">
+										<div class="modal-header">
+											<button type="button" class="close" data-dismiss="modal"
+												aria-hidden="true">×</button>
+											<h4 class="modal-title">号卡查询</h4>
+										</div>
+										<div class="modal-body">
+											<div class="choice-box" id="nbrPoolDiv">
+											</div>
+											<div class="choice-box" id="pnHeadDiv">
+											</div>
+							
+											<div class="choice-box m-t-10">
+												<i class="iconfont pull-left p-l-10">&#xe6d5;</i> 
+												<input placeholder="最后四位" class="choice-input" id="pnEnd"/>
+												<!--<i class="iconfont right-btn pull-right p-r-10">&#xe647;</i>-->
+											</div>
+										    <div class="choice-box" id="pnTypeDiv">
+											</div>
+											<div class="choice-box m-t-10">
+												<i class="iconfont pull-left p-l-10">&#xe61a;</i> 
+												<select name="" placeholder="预存话费" id="numPrice" class="myselect select-option dw-hsel" data-role="none">
+												    <option value="-1">预存话费</option>
+							           	     		<option value="0">0-100</option>
+							           				<option  value="100">100-300</option>
+							           				<option  value="300" >300-500</option>
+							           				<option  value="500">500-1200</option>
+							           				<option  value="1200">1200-15000</option>
+							           				<option  value="15000">15000-30000</option>
+							           				<option  value="30000">30000以上</option>
+												</select> <i class="iconfont pull-right p-r-10">&#xe66e;</i>
+											</div>
+										</div>
+										<div class="modal-footer">
+											<div class="ordinary-btn-box p p-b-15">
+												<button class="sun-btn" onclick="order.phoneNumber.btnQueryPhoneNumber()">确定</button>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+
+					</div>
+						<div class="tab-pane fade" id="nav-tab-2">
+												<!-- 套餐高级查询 -->
+						<div class="modal modal-message fade modal-top" id="offer_search_model">
+							<div class="modal-dialog" style="display: block;">
+								<div class="modal-content">
+									<div class="modal-header">
+										<button type="button" class="close" data-dismiss="modal"
+											aria-hidden="true">×</button>
+										<h4 class="modal-title">套餐查询</h4>
+									</div>
+									<div class="modal-body">
+										<div class="choice-box m-t-10">
+											<i class="iconfont pull-left p-l-10">&#xe66c;</i> <select
+												name="" id="categoryNodeId" class="myselect select-option"
+												data-role="none">
+												<option value="">我的收藏</option>
+												<option value="90132141">乐享</option>
+												<option value="90132143">积木</option>
+												<option value="90139849">飞Young</option>
+												<option value="-9999">其他</option>
+											</select> <i class="iconfont pull-right p-r-10">&#xe66e;</i>
+										</div>
+										<div class="choice-box m-t-10">
+											<i class="iconfont pull-left p-l-10">&#xe6da;</i> <input
+												placeholder="请输入套餐名称" class="choice-input" id="offerName" />
+											<!--<i class="iconfont right-btn pull-right p-r-10">&#xe647;</i>-->
+										</div>
+										<div class="choice-box m-t-10">
+											<i class="iconfont pull-left p-l-10">&#xe61a;</i> <select
+												name="" placeholder="价格区间（元）" id="offerPrice"
+												class="myselect select-option" data-role="none">
+												<option id="-1" value="">价格区间</option>
+											</select> <i class="iconfont pull-right p-r-10">&#xe66e;</i>
+										</div>
+										<div class="choice-box m-t-10">
+											<i class="iconfont pull-left p-l-10">&#xe648;</i> <select
+												name="" placeholder="语音时长（分钟）" id=""
+												class="myselect select-option" data-role="none">
+												<option id="-1" value="">语音时长</option>
+											</select> <i class="iconfont pull-right p-r-10">&#xe66e;</i>
+										</div>
+										<div class="choice-box m-t-10">
+											<i class="iconfont pull-left p-l-10">&#xe64e;</i> <select
+												name="" placeholder="流量（G）" id=""
+												class="myselect select-option" data-role="none">
+												<option id="-1" value="">流量</option>
+											</select> <i class="iconfont pull-right p-r-10">&#xe66e;</i>
+										</div>
+									</div>
+									<div class="modal-footer">
+										<div class="ordinary-btn-box p p-b-15">
+											<button class="sun-btn" onclick="order.service.searchPack()">确定</button>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+							<div class="list-box m-t-10" id="offer-list">
+							</div>
+						</div>
+						<div class="tab-pane fade" id="nav-tab-3">
+							<div class="list-box m-t-10">
+								<ul class="choice-list-box" id="secondaryPhoneNumUl">
+									<li>
+										<i class="iconfont pull-left">&#xe66c;</i>
+										<span class="list-title font-secondary">移动电话(0-<span id="maxSpan"></span></span>
+										<i id="addSecondaryCard"  onclick="order.phoneNumber.showSecondaryCardModalData()" class="iconfont absolute-right font-default">&#xe670;</i>
+									</li>
+								</ul>
+							</div>
+							<div class="modal modal-message fade modal-top" id="secondaryCardModal">
+									<div class="modal-dialog" style="display: block;">
+										<div class="modal-content">
+											<div class="modal-header">
+												<button type="button" class="close" onclick="$('#phoneNumber_a').hide();" aria-hidden="true" data-dismiss="modal">×</button>
+												<h4 class="modal-title">副卡号码选择</h4>
+                                             
+											</div>
+										<div class="choice-box" id="nbrPoolDiv2">
+										</div>
+										<div class="list-box p-5" id="phonenumber-list2">
+								
+							            </div>
+								</div>
+							</div>
+							</div>
+										
+							<div class="sub-btn-box p p-b-15">
+								<button class="sun-btn" onclick="order.main.buildMainView()">下一步</button>
+							</div>
+						</div>
+		<div class="tab-pane fade" id="nav-tab-4">
+		   <ul class="tab-change-list" id="tab-change-list" style="overflow: scroll">
+		    <li class="tab-list" name="tab-li" id="attachMain" ><!-- 主卡滚动tab -->
+            </li>
+		   </ul>
+		    <div class="sub-btn-box p p-b-15">
+			<button class="sun-btn done" onclick="order.main.loadOtherParm()">下一步</button>
+		    </div> 
+		</div>
+		<div class="tab-pane fade" id="nav-tab-6">
+		</div>
+		<!-- end col-12 -->
+		</div>
+		<div class="tab-content p-0" id="orderConfirmDiv" style="display: none">
+		  <div class="tab-pane fade active" id="nav-tab-7">
+		  </div>
+		  <div class="tab-pane fade" id="nav-tab-8">
+		  </div>
+		</div>
+		    <!-- 回执内容显示页面 -->
+		<div id="order-print" style="display: none;">
+		</div>
+		<!-- end row -->
+		<!-- begin button -->
+
+		<!-- end button -->
+
+		</div>
+		</div>
+		<!-- ================== END 号卡新装 ================== -->		
+		<script>
+		 function goTab(num){//头部标签点击事件
+			var step= order.phoneNumber.step;
+		    if(num>step){//不能切换
+		    	var li=$("#tab"+num+"_li");//头部标签页
+		    	li.removeClass("active");
+		    	if(step==1){
+		    		$.alert("提示","请先选择号码");
+		    	}
+		    	if(step==2){
+		    		$.alert("提示","请先选择套餐");
+		    	}
+		    	return;
+		    }
+		    $("#phoneNumber_a").hide();
+	    	$("#offer_a").hide();
+		    if(num==1){//号码查询按钮
+		    	$("#phoneNumber_a").show();
+		    	$("#offer_a").hide();
+		    }else if(num==2){//套餐查询按钮
+		    	$("#phoneNumber_a").hide();
+		    	$("#offer_a").show();
+		    }		    
+         	for(var i=1;i<=7;i++){
+         		var li=$("#tab"+i+"_li");//头部标签页
+         		var tab= $("#nav-tab-"+i);//对应tab
+         		if(i==num){
+         			li.addClass("active");
+         			tab.addClass("active in");
+         		}else{
+         			li.removeClass("active");
+         			tab.removeClass("active in");
+         		}
+         	}
+         	
+         }
+			$(document).ready(function() {				
+				App.init();
+				function ClickMenu() {
+					if(!$("#nav-tab-1").is(":hidden")) {
+						$('#menu-search').show();
+					} else if(!$("#nav-tab-2").is(":hidden")) {
+						$('#menu-search').show();
+					} else {
+						$('#menu-search').hide();
+					};
+				};
+				$(".nav-top li").click(function(){
+					ClickMenu();
+				});
+				$(".done").click(function(){
+					ClickMenu();
+				});
+
+				$('#menu-search').on('click', function() {
+					if(!$("#nav-tab-1").is(":hidden")) {
+						$('#modal-numbersearch').modal('show');
+					} else if(!$("#nav-tab-2").is(":hidden")) {
+						$('#modal-pakeagesearch').modal('show');
+					}
+			});
+				var pakeage_handleIonRangeSlider = function() {
+					$('#pakeagesearch_rangeSlider').ionRangeSlider({
+						min: 0,
+						max: 5000,
+						type: 'double',
+						prefix: "¥",
+						maxPostfix: "+",
+						prettify: false,
+						hasGrid: false
+					});
+				}; //滑动插件
+				var pakeage01_handleIonRangeSlider = function() {
+					$('#pakeagesearch01_rangeSlider').ionRangeSlider({
+						min: 0,
+						max: 1000,
+						type: 'double',
+						prefix: "分钟",
+						maxPostfix: "+",
+						prettify: false,
+						hasGrid: false
+					});
+				}; //滑动插件
+				var pakeage02_handleIonRangeSlider = function() {
+					$('#pakeagesearch02_rangeSlider').ionRangeSlider({
+						min: 0,
+						max: 5000,
+						type: 'double',
+						prefix: "兆",
+						maxPostfix: "+",
+						prettify: false,
+						hasGrid: false
+					});
+				}; //滑动插件
+				$('#modal-pakeagesearch').on('shown.bs.modal', function() {
+					pakeage_handleIonRangeSlider();
+					pakeage01_handleIonRangeSlider();
+					pakeage02_handleIonRangeSlider();
+				}); //弹窗后更改插件属性
+
+				var number_handleIonRangeSlider = function() {
+					$('#numbersearch_rangeSlider').ionRangeSlider({
+						min: 0,
+						max: 1000,
+						type: 'double',
+						prefix: "¥",
+						maxPostfix: "+",
+						prettify: false,
+						hasGrid: false
+					});
+				}; //滑动插件
+				$('#modal-numbersearch').on('shown.bs.modal', function() {
+					number_handleIonRangeSlider();
+				}); //弹窗后更改插件属性
+
+			});		
+		</script>
+		<script>
+			$(function() {
+				//前置校验，不符合直接提示
+				//老客户新装才进行前置校验
+				var serviceType="";
+				OrderInfo.actionFlag = 1;
+				order.service.enter=${enter};
+				if(${enter}=="1"){
+					$("#tab2_li").addClass("active");
+					//goTab(2);
+					serviceType="29"; //选套餐
+					 $("#nav-tab-1").removeClass("active in");
+			    	 $("#nav-tab-2").addClass("active in");
+				}else if(${enter}=="2"){
+					serviceType="28";  //购手机
+				}else {
+					goTab(1);
+					serviceType="30"; //选号码
+					 $("#nav-tab-2").removeClass("active in");
+			    	 $("#nav-tab-1").addClass("active in");
+				}
+				var custId = OrderInfo.cust.custId;
+				if(custId !="-1" ){
+					//查分省前置校验开关
+			        var propertiesKey = "PRECHECKFLAG_"+(OrderInfo.staff.soAreaId+"").substring(0,3);
+			        var isPCF = offerChange.queryPortalProperties(propertiesKey);
+			        if(isPCF == "ON"){
+			        	if(OrderInfo.preBefore.prcFlag != "Y"){
+			        		order.prodModify.preCheckBeforeOrder2(serviceType,function () {
+			        			callback();
+			        		});
+			        	}
+			        }else{
+			        	callback();
+			        }
+			        OrderInfo.preBefore.prcFlag = "";
+				} else{
+					callback();
+				}
+			});
+            //前置校验完回调初始化页面
+			function callback() {
+				$("#tab3_li").hide();//副卡默认隐藏
+				if (${enter} == "3") {//选号界面初始化
+					order.phoneNumber.initPhonenumber();
+				} else if (${enter} == "1") {//选套餐界面初始化
+					order.service.searchPack();
+				}
+			}
+			
+		</script>
+<script>
+   $(function() {
+	order.broadband.init_select();
+	order.phoneNumber.queryPhoneNbrPool();//查询号池
+    order.phoneNumber.queryApConfig();//查询号码段和号码类型 
+});
+</script>
+		<!-- ================== END 模仿原生选择事件 JS ================== -->
+
+	</body>
+
+</html>

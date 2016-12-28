@@ -430,13 +430,21 @@ public class CustController extends BaseController {
      * @throws BusinessException
      */
     @RequestMapping(value = "/create", method = { RequestMethod.POST })
-    public String custCreate(HttpServletRequest request,Model model) throws BusinessException {
+    public String custCreate(@RequestBody Map<String, Object> param,HttpServletRequest request,Model model) throws BusinessException {
+    	String forward = "";
     	SessionStaff sessionStaff = (SessionStaff) ServletUtils
 				.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);
     	model.addAttribute("sessionStaff",JsonUtil.buildNormal().objectToJson(sessionStaff));
     	model.addAttribute("flag", "real");
     	model.addAttribute("currentCT", sessionStaff.getCurrentChannelType());
-        return "/app/cust/cust-create";
+    	forward = "/app/cust/cust-create";
+    	String propertiesKey = "NEWUIFLAG_"+ (sessionStaff.getCurrentAreaId() + "").substring(0, 3);//新ui开关
+		// 新UI开关
+		String newUIFlag = propertiesUtils.getMessage(propertiesKey);
+    	if("ON".equals(newUIFlag) && param.get("enter")!=null){
+    		forward= "/app/cust/cust-create-new";
+    	}
+        return forward;
     }
     
     /**
@@ -445,12 +453,20 @@ public class CustController extends BaseController {
      * @throws BusinessException
      */
     @RequestMapping(value = "/realCreate", method = { RequestMethod.POST })
-    public String realCustCreate(HttpServletRequest request,Model model) throws BusinessException {
+    public String realCustCreate(@RequestBody Map<String, Object> param,HttpServletRequest request,Model model) throws BusinessException {
+    	String forward = "";
     	SessionStaff sessionStaff = (SessionStaff) ServletUtils
 				.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);
     	model.addAttribute("sessionStaff",JsonUtil.buildNormal().objectToJson(sessionStaff));
     	model.addAttribute("currentCT", sessionStaff.getCurrentChannelType());
-        return "/app/cust/cust-create";
+    	forward =  "/app/cust/cust-create";
+    	String propertiesKey = "NEWUIFLAG_"+ (sessionStaff.getCurrentAreaId() + "").substring(0, 3);//新ui开关
+		// 新UI开关
+		String newUIFlag = propertiesUtils.getMessage(propertiesKey);
+    	if("ON".equals(newUIFlag) && param.get("enter")!=null){
+    		forward= "/app/cust/cust-create-new";
+    	}
+        return forward;
     }
     
     /**

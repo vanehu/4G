@@ -58,6 +58,10 @@ SoOrder = (function() {
 		}else if(OrderInfo.actionFlag==6){//主副卡成员变更
 			OrderInfo.busitypeflag = 3;
 		}else if(OrderInfo.actionFlag==2){//套餐变更
+			if(OrderInfo.preBefore.idPicFlag == "ON" && !OrderInfo.virOlId){
+				$.alert("提示","请前往经办人页面进行实名拍照！");
+				return;
+			}
 			OrderInfo.busitypeflag = 2;
 		}else if(OrderInfo.actionFlag==9){//客户返档
 			if(OrderInfo.preBefore.idPicFlag == "ON" && !OrderInfo.virOlId){
@@ -217,10 +221,12 @@ SoOrder = (function() {
 				itemSpecId : CONST.BUSI_ORDER_ATTR.VIROLID,//虚拟订单号
 				value : OrderInfo.virOlId
 			});
+		if(OrderInfo.preBefore.idPicFlag == "ON"){
 			custOrderAttrs.push({ //业务类型
 				itemSpecId : CONST.BUSI_ORDER_ATTR.CURIP,
 				value : OrderInfo.curIp
 			});
+		}
 			
 //		} 
 //		else {
@@ -349,11 +355,23 @@ SoOrder = (function() {
 			_createOrder(busiOrders); //新装
 		}else if (OrderInfo.actionFlag==2){ //套餐变更
 			offerChange.changeOffer(busiOrders);	
+			if(OrderInfo.jbr.custId){
+				OrderInfo.orderData.orderList.orderListInfo.handleCustId = OrderInfo.jbr.custId;
+				if(OrderInfo.jbr.custId < -1){
+					OrderInfo.createJbr(busiOrders);
+				}
+			}
 		}else if (OrderInfo.actionFlag==3){ //可选包变更		
 			_createAttOrder(busiOrders); //附属销售品变更
 			if(busiOrders.length==0){
 				$.alert("提示","没有做任何业务，无法提交");
 				return false;
+			}
+			if(OrderInfo.jbr.custId){
+				OrderInfo.orderData.orderList.orderListInfo.handleCustId = OrderInfo.jbr.custId;
+				if(OrderInfo.jbr.custId < -1){
+					OrderInfo.createJbr(busiOrders);
+				}
 			}
 		}else if (OrderInfo.actionFlag==4){ //客户资料变更
 			_createCustOrder(busiOrders,data); //附属销售品变更

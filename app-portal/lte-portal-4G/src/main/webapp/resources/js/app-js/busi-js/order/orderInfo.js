@@ -284,14 +284,9 @@ OrderInfo = (function() {
 		cust.getJbrInfo();
 		busiOrder.data.boCustInfos.push(OrderInfo.boJbrInfos);
 		busiOrder.data.boCustIdentities.push(OrderInfo.boJbrIdentities);
-//		if(OrderInfo.actionFlag==1 || OrderInfo.actionFlag==14){
-//			if(OrderInfo.boPartyContactInfo.contactName == ""){
-//				var jbrName = OrderInfo.boJbrInfos.name;
-//				OrderInfo.boPartyContactInfo.contactName = jbrName;
-//				OrderInfo.boPartyContactInfo.mobilePhone = accNbr;
-//			}
-//			busiOrder.data.boPartyContactInfo.push(OrderInfo.boPartyContactInfo);
-//		}
+		if(OrderInfo.preBefore.idPicFlag == "ON"){
+			busiOrder.data.boPartyContactInfo.push(OrderInfo.bojbrPartyContactInfo);
+		}
 		busiOrders.push(busiOrder);
 	}
 	
@@ -342,11 +337,49 @@ OrderInfo = (function() {
 			state : "ADD",  //状态
 			identidiesPic : custInfo.identityPic //证件照片	
 		};
-//		if(!custInfo.identityPic){
-//			syrzj.identidiesPic = custInfo.identityPic;
-//		}
+		//使用人联系人节点
+		var syrlxr = {
+				contactAddress : "",//参与人的联系地址
+		        contactDesc : "",//参与人联系详细信息
+		        contactEmployer  : "",//参与人的联系单位
+		        contactGender  : "1",//参与人联系人的性别
+		        contactId : "",//参与人联系信息的唯一标识
+		        contactName : "",//参与人的联系人名称
+		        contactType : "10",//联系人类型
+		        eMail : "",//参与人的eMail地址
+		        fax : "",//传真号
+		        headFlag : "1",//是否首选联系人 1是  2否
+		        homePhone : "",//参与人的家庭联系电话
+		        mobilePhone : "",//参与人的移动电话号码
+		        officePhone : "",//参与人办公室的电话号
+		        postAddress : "",//参与人的邮件地址
+		        postcode : "",//参与人联系地址的邮政编码
+		        staffId : 0,//员工ID
+		        state : "ADD",//状态 新增ADD  删除DEL
+		        statusCd : "100001"//订单状态	
+		};
+		//若用户有填写经办人联系号码，则新建经办人时添加联系人信息，否则不添加联系人信息
+		if(ec.util.isObj(OrderInfo.jbr.telNumber)){
+			syrlxr.staffId 		= OrderInfo.staff.staffId;
+			syrlxr.contactName 	= custInfo.partyName;
+			syrlxr.mobilePhone 	= custInfo.accNbr;
+			syrlxr.contactAddress 	= custInfo.addressStr;
+			//根据身份证判断性别，无从判别默认为男
+			if(custInfo.identityCd == "1"){
+				var identityNum = custInfo.idCardNumber;
+				identityNum = parseInt(identityNum.substring(16,17));//取身份证第17位判断性别，奇数男，偶数女
+				syrlxr.contactGender = (identityNum % 2) == 0 ? "2" : "1";//1男2女
+			}
+		}
+		
 		busiOrder.data.boCustInfos.push(syr);
 		busiOrder.data.boCustIdentities.push(syrzj);
+		//使用人开关
+		var propertiesKey = "FUKA_SHIYR_"+(OrderInfo.staff.soAreaId+"").substring(0,3);
+	    var isFlag = offerChange.queryPortalProperties(propertiesKey);
+	    if(isFlag == "ON"){
+	    	busiOrder.data.boPartyContactInfo.push(syrlxr);
+	    }
 		busiOrders.push(busiOrder);
 	}
 	
@@ -923,6 +956,29 @@ OrderInfo = (function() {
         statusCd : "100001"//订单状态
 	};
 	
+	//经办人联系人节点
+	var _bojbrPartyContactInfo = {
+		contactAddress : "",//参与人的联系地址
+        contactDesc : "",//参与人联系详细信息
+        contactEmployer  : "",//参与人的联系单位
+        contactGender  : "1",//参与人联系人的性别
+        contactId : "",//参与人联系信息的唯一标识
+        contactName : "",//参与人的联系人名称
+        contactType : "10",//联系人类型
+        eMail : "",//参与人的eMail地址
+        fax : "",//传真号
+        headFlag : "1",//是否首选联系人 1是  2否
+        homePhone : "",//参与人的家庭联系电话
+        mobilePhone : "",//参与人的移动电话号码
+        officePhone : "",//参与人办公室的电话号
+        postAddress : "",//参与人的邮件地址
+        postcode : "",//参与人联系地址的邮政编码
+        staffId : 0,//员工ID
+        state : "ADD",//状态 新增ADD  删除DEL
+        statusCd : "100001"//订单状态
+	};
+	
+	
 	//客户属性
 	var _boCustProfiles = {};
 	
@@ -1450,6 +1506,7 @@ OrderInfo = (function() {
 		createUser			   :_createUser,
 		certTypedates			:_certTypedates,
 		user					:_user,
-		jbrPageFlag				:_jbrPageFlag
+		jbrPageFlag				:_jbrPageFlag,
+		bojbrPartyContactInfo	:_bojbrPartyContactInfo
 	};
 })();

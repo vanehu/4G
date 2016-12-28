@@ -947,7 +947,7 @@ public class OrderController extends BaseController {
 		} catch (Exception e) {
 			return super.failedStr(model, ErrorCode.QUERY_MAIN_OFFER, e, prams);
 		}
-        if(prams.get("enter")!=null){
+        if(prams.get("enter")!=null && prams.get("enter").toString().length()>0){
 			return "/app/order_new/offer-list";//新版 ui
 		}
         return "/app/order/offer-list";
@@ -3232,6 +3232,15 @@ public class OrderController extends BaseController {
 		String enter = params.get("enter").toString();
 		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
                 SysConstant.SESSION_KEY_LOGIN_STAFF);
+		List<Map> allchannelList = (List<Map>)session.getAttribute(SysConstant.SESSION_KEY_STAFF_CHANNEL);
+		String login_area_id = "";
+		for(int i=0;i<allchannelList.size();i++){
+			Map cl = allchannelList.get(i);
+			if(sessionStaff.getCurrentChannelId().equals(cl.get("id").toString())){
+				login_area_id = cl.get("areaId").toString();
+			}
+		}
+		params.put("region", login_area_id);
 		Map<String, Object> rMap = null;
 		try {
 			if("1".equals(enter)){
@@ -3254,9 +3263,9 @@ public class OrderController extends BaseController {
 				model.addAttribute("channelList",JsonUtil.buildNormal().objectToJson(channelList));
 //				model.addAttribute("MDList",channelList);
 			}else if("3".equals(enter)){
-				String cityid = sessionStaff.getCurrentAreaId();//市
-				String proid = cityid.substring(0, 3) + "0000";//省
-				params.put("region", proid);
+//				String cityid = sessionStaff.getCurrentAreaId();//市
+//				String proid = cityid.substring(0, 3) + "0000";//省
+				params.put("region", login_area_id.substring(0, 5) + "00");
 				List channelList = new ArrayList();
 				rMap = orderBmo.queryChannel(params,optFlowNum, sessionStaff);
 				if("0".equals(rMap.get("resultCode"))){
@@ -3438,6 +3447,46 @@ public class OrderController extends BaseController {
     }
 	
 	/**
+	 * 翼销售宽带甩单重新生成订单号
+	 * 
+	 * @param param
+	 * @param model
+	 * @param session
+	 * @param flowNum
+	 * @return
+	 */
+	@RequestMapping(value = "/getTransactionID", method = RequestMethod.POST)
+	@ResponseBody
+	public JsonResponse getTransactionID(@RequestBody Map<String, Object> param,
+			Model model, HttpSession session, @LogOperatorAnn String flowNum) {
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+						SysConstant.SESSION_KEY_LOGIN_STAFF);
+		JsonResponse jsonResponse = null;
+		try {
+			String AppKey = SysConstant.CSB_SRC_SYS_ID_APP;
+			String ymdStr = DateFormatUtils.format(new Date(), "yyyyMMdd");
+			String str10 = "";
+			String nonce = RandomStringUtils.randomNumeric(5); //随机字符串
+			DataBus _db = null;
+			_db = ServiceClient.callService(new HashMap(), PortalServiceCode.SERVICE_GET_LOG_SEQUENCE, null, sessionStaff);
+			str10 = nonce + String.format("%05d", _db.getReturnlmap().get("logSeq"));
+			String TransactionID = AppKey+ymdStr+str10;
+//			if (rMap != null && "POR-0000".equals(rMap.get("respCode").toString())) {
+				jsonResponse = super.successed(TransactionID,
+						ResultConstant.SUCCESS.getCode());
+//			} else {
+//				jsonResponse = super.failed("订单号生成异常",
+//						ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+//			}
+			return jsonResponse;
+		} catch (Exception e) {
+			log.error("订单号生成异常", e);
+			return super.failed(ErrorCode.CHARGE_ADDITEM, e, param);
+		}
+
+	}
+	
+	/**
 	 * 手机客户端-宽带甩单-费用信息查询
 	 * @param params
 	 * @param request
@@ -3515,4 +3564,5 @@ public class OrderController extends BaseController {
 			return result;
 		}else return "/app/order/order-attach-broad";
     }
+	
 }

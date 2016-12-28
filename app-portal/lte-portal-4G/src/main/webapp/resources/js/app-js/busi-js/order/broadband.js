@@ -45,6 +45,8 @@ order.broadband = (function(){
 	
 	var _haveCallPhote=false;//是否已经拍照
 	
+	var _resetId=false;//是否已重置订单ID
+	
 	var _isOldCust=false;//经办人是否老客户
 	
 	//地址查询
@@ -500,6 +502,8 @@ order.broadband = (function(){
 	
 	//订单确认
 	var _confirm = function() {
+		order.broadband.haveCallPhote=false;
+		order.broadband.resetId=false;
 		if(OrderInfo.cust.custId != undefined && OrderInfo.cust.custId != ""){
 			var kdobjid = $("#objId").val();
 			var tcprodId = $("#prodId").val();
@@ -1105,6 +1109,8 @@ var _saveHtml2Pdf=function(){
 					$(".item_fee").each(function(){
                     	$(this).attr("onclick","");
                     });
+					$("#printVoucherA").attr("disabled","disabled");//回执保存成功后  回执按钮改为灰色不可操作
+					$("#jbrDiv").attr("onclick","");//回执保存成功后，经办人不可更改
 					var msg="保存回执成功！";
 					$("#btn-dialog-ok").removeAttr("data-dismiss");
 					$('#alert-modal').modal({backdrop: 'static', keyboard: false});
@@ -1112,7 +1118,6 @@ var _saveHtml2Pdf=function(){
 						$("#alert-modal").modal("hide");
 						$("#confirm").show();
 						$("#print").hide();
-						$("#printVoucherA").attr("disabled","disabled");//回执保存成功后  回执按钮改为灰色不可操作
 //						$("#showPdf").show();
 						OrderInfo.order.step=3;
 //						common.callCloseWebview();
@@ -1189,8 +1194,14 @@ var _saveHtml2Pdf=function(){
 //		alert(CertNumber);
 		var CustInfo = [];
 		var cust={};
-		var address=OrderInfo.cust.address;
-		var certNum=OrderInfo.cust.certNum;
+		var address="";
+		if(OrderInfo.cust.address!=undefined){
+			address=OrderInfo.cust.address;
+		}
+		var certNum="";
+		if(OrderInfo.cust.certNum!=undefined){
+			certNum=OrderInfo.cust.certNum;
+		}
 		cust.CertInfo = {
 				"CertAddress": OrderInfo.cust.addressStr,
 				"CertNumber": CertNumber,
@@ -1209,7 +1220,10 @@ var _saveHtml2Pdf=function(){
 			cust.CustId = OrderInfo.cust.extCustId+"";
 		}
 		cust.CustName = OrderInfo.cust.partyName;
-		var CN=OrderInfo.cust.CN;
+		var CN="";
+		if(OrderInfo.cust.CN!=undefined){
+			CN=OrderInfo.cust.CN;
+		}
 		var ifEncoded=OrderInfo.cust.ifEncoded;
 		cust.Name = CN.replace(/=/g,"&#61");//加密客户名称
 		cust.Address=address.replace(/=/g,"&#61");//加密客户地址
@@ -1503,6 +1517,11 @@ var _saveHtml2Pdf=function(){
 	 * 获取支付平台支付页面
 	 */
 	var _getPayTocken = function(){
+		var dis=$("#printVoucherA").attr("disabled");//回执按钮置灰收费不可点击
+		if("disabled"!=dis){
+			$.alert("提示","请先保存回执");
+			return;
+		}
 		if(!order.broadband.myFlag){//支付开关关闭，直接提交
 			_orderSubmit();
 			return;
@@ -1571,16 +1590,32 @@ var _saveHtml2Pdf=function(){
 				
 			};
 			var url = contextPath + "/app/order/getPayOrdStatus";
-			var response = $.callServiceAsJson(url, params);
-			if (response.code == 0) {//支付成功，调用订单提交
-				payType=type;
-				_orderSubmit();
-
-			} else if (response.status == 1002) {
-				$.alert("提示","支付失败"); // 支付失败
-			} else {
-				$.alertM(response.data);// 调用接口异常
-			}
+			$.callServiceAsJson(url, params,{
+				"before":function(){
+					$.ecOverlay("<strong>查询订单支付状态中,请稍等...</strong>");
+				},
+				"done" : function(response){
+					$.unecOverlay();
+					if(response.code == 0) {
+						payType=type;
+						_orderSubmit();
+					}else if(response.code == -2){
+						$.alertM(response.data);
+					}
+				},fail:function(response){
+					$.unecOverlay();
+					$.alert("提示","系统异常，请稍后再试！");
+				}
+			});
+//			if (response.code == 0) {//支付成功，调用订单提交
+//				payType=type;
+//				_orderSubmit();
+//
+//			} else if (response.status == 1002) {
+//				$.alert("提示","支付失败"); // 支付失败
+//			} else {
+//				$.alertM(response.data);// 调用接口异常
+//			}
 		}
 	};
 	
@@ -1730,7 +1765,7 @@ var _saveHtml2Pdf=function(){
 //						"boActionType":boActionType
 				};
 				_chargeItems.push(param);
-				_print_chargeItems(print_param);
+				_print_chargeItems.push(print_param);
 			}
 		});
 	};
@@ -1751,6 +1786,8 @@ var _saveHtml2Pdf=function(){
 				OrderInfo.returnFlag = "xgfy";
 				$("#pnumber").text($(obj).attr("acctItemTypeName"));
 				$("#realAmount_"+trid).val($("#realhidden_"+trid).val());
+				$("#realAmount_"+trid).removeAttr("disabled").css("border","1px solid #DCDCDC").focus();
+				$("#chargeModifyReasonCdDiv_"+trid).show();
 			},
 			fail:function(response){
 			     $.alert("提示","显示费用编辑页面失败，请稍后再试！");
@@ -1772,25 +1809,29 @@ var _saveHtml2Pdf=function(){
 				if (response.code == 0) {
 					var dataRanges = response.data;
 					var flag = false;
-					for(var i=0;i<dataRanges.length;i++){
-						if($("#acctItemTypeId_"+trid).val()==dataRanges[i].dataDimensionName){
-							flag = true;
-							$("#realAmount_"+trid).removeAttr("disabled").css("border","1px solid #DCDCDC").focus() ;
-							$("#chargeModifyReasonCdDiv_"+trid).show();
-							break;
-						}else{
-							flag = false;
+					for(var j=0;j<order.broadband.feeInfos.length;j++){
+						for(var i=0;i<dataRanges.length;i++){
+							if($("#acctItemTypeId_"+j).val()==dataRanges[i].dataDimensionName){
+								$("#"+j).attr("onclick","order.broadband.showEditPage(this)");
+//								flag = true;
+//								$("#realAmount_"+trid).removeAttr("disabled").css("border","1px solid #DCDCDC").focus();
+//								$("#chargeModifyReasonCdDiv_"+trid).show();
+//								break;
+							}else{
+//								flag = false;
+							}
 						}
 					}
+					
 					if(flag){
-						return true;
+//						return true;
 					}else{
-						$.alert("提示","修改当前费用项权限不足!");
-						return false;
+//						$.alert("提示","修改当前费用项权限不足!");
+//						return false;
 					}
-				}else if (response.code == -2) {
-					$.alertM(response.data);
-					return false ;
+				}else if (response.code != 0) {
+//					$.alert("提示",response.data);
+//					return false ;
 				}
 			},
 			fail:function(response){
@@ -1821,8 +1862,8 @@ var _saveHtml2Pdf=function(){
 		else{
 			cash = obj;
 			if(cash=='') cash = "0";
-			$("#realhidden_"+val).val(cash);
-			$("#ssfy_"+val).html(cash);
+//			$("#realhidden_"+val).val(cash);
+//			$("#ssfy_"+val).html(cash);
 		}
 		if(cash==''){
 			$(obj).val('0');
@@ -1834,19 +1875,23 @@ var _saveHtml2Pdf=function(){
 				if(cash<0){
 					$.alert("提示","实收费用金额不能小于0！");
 					check = false ;
+					return;
 				}else if(!/^(-)?[0-9]+([.]\d{1,2})?$/.test(cash)){
 			  		$.alert("提示","费用金额请输入数字，最高留两位小数！");
 			  		check = false ;
-				}else if((cash*100>amount*1)&&amount>0){
+			  		return;
+				}else if((cash*100>amount*100)&&amount>0){
 					$.alert("提示","实收费用金额不能高于应收金额！");
 					check = false ;
-				}else if((cash*100<amount*1)&&amount<0){
+					return;
+				}else if((cash*100<amount*100)&&amount<0){
 					$.alert("提示","实收费用金额不能低于应收金额！");
 					check = false ;
+					return;
 				}
 				if(check){
 					var real=(cash)*100;
-		  			if(real!=amount){
+		  			if(real!=amount*100){
 		  				$("#chargeModifyReasonCdDiv_"+val).show();
 					}else{
 						$("#chargeModifyReasonCdDiv_"+val).hide();
@@ -1868,16 +1913,19 @@ var _saveHtml2Pdf=function(){
 				if(!/^(-)?[0-9]+([.]\d{1,2})?$/.test(cash)){//金额非数字，恢复金额
 			  		$.alert("提示","费用金额请输入数字，最高保留两位小数！");
 			  		check = false ;
+			  		return;
 				}else{
 					if(cash<0){//退费金额 不能填负值
 						$.alert("提示","退费金额不能为负值！");
 						check = false ;
+						return;
 					}else{
 						var amount=$("#realhidden_"+val).val();
 						var v_cash = cash*-1 ;
 						if(v_cash<amount*1){//要退-100，不能退120
 							$.alert("提示","退费金额不能高于实收金额！");
 							check = false ;
+							return;
 						}
 					}
 				}
@@ -1907,8 +1955,10 @@ var _saveHtml2Pdf=function(){
 			  			$(obj).val(money);
 			  		}
 			  		money="";
+			  		return;
 				}else if(cash<0){//
 					$.alert("提示","实收费用金额不能为负值！");
+					return;
 				}else{
 					if(typeof obj !="object"){
 						$("#cal_main_content").show();
@@ -1920,6 +1970,7 @@ var _saveHtml2Pdf=function(){
 		}
 		
 		$("#realhidden_"+val).val(cash);
+		$("#ssfy_"+val).html(cash);
 		payMethod = $("#changeMethod_"+val).val();  //付费方式
 		//alert(payMethod);
 		reason = $("#chargeModifyReasonCd_"+val).val();//修改原因
@@ -1942,7 +1993,7 @@ var _saveHtml2Pdf=function(){
 	var _showJbr = function(){
 		//先清空
 		$('#orderAttrName').val("");
-		$('#orderAttrPhoneNbr').val("");
+//		$('#orderAttrPhoneNbr').val("");
 		$('#orderAttrAddr').val("");
 		$('#sfzorderAttrIdCard').val("");
 		$('#orderAttrIdCard').val("");//证件号码
@@ -1967,8 +2018,17 @@ var _saveHtml2Pdf=function(){
 	};
 	
    var _closeJbr=function(){
+	   if(!order.broadband.isSameOne){
+		   var validate=$("#jbrFormdata").Validform();
+			if(!validate.check()){
+				return;
+			}
+	   }
 	   if(!order.broadband.haveCallPhote){
-		   $.alert("提示","请先进行拍照！");
+		   
+		   if(order.broadband.isNeedJbr){
+				common.callPhotos2('cust.getPicture2');
+			}
 			return;
 	   }
 	   $("#confirm").show();
@@ -1981,34 +2041,42 @@ var _saveHtml2Pdf=function(){
    };
 
 //客户和经办人不是同一个人时需要查询经办人
-var _queryJbr=function(){
-	$('#jbrFormdata').data('bootstrapValidator').validate();
-	if($('#jbrFormdata').data('bootstrapValidator').isValid()){
+var _queryJbr=function(idcard){
+	if(!ec.util.isObj(idcard)){
+		var validate=$("#jbrFormdata").Validform();
+		if(!validate.check()){
+			return;
+		}
+	}
+		
 	var custIdentidiesTypeCd=OrderInfo.cust.identityCd;//客户证件类型
 	var custNumber=OrderInfo.cust.idCardNumber;//客户证件号码
 	var jbrIdentidiesTypeCd=$("#orderIdentidiesTypeCd  option:selected").val();//经办人证件类型
 	var jbrIdentityNum;
 	if(jbrIdentidiesTypeCd==1){
 		jbrIdentityNum = $('#sfzorderAttrIdCard').val();//证件号码
+		if(!ec.util.isObj(idcard)){	
+			idcard = jbrIdentityNum;
+		}
 	}else{
 		jbrIdentityNum = $('#orderAttrIdCard').val();//证件号码
 	}
-	if(jbrIdentityNum==""){
-		$.alert("提示","证件号码为空，无法进行查询！");
-		return;
-	}
-	if(custIdentidiesTypeCd==jbrIdentidiesTypeCd && custNumber==jbrIdentityNum){//经办人为本人,无需查询
-		order.broadband.isSameOne=true;
-		$.alert("提示","客户和经办人相同，无需查询！");
-		return;
-	}
+//	if(jbrIdentityNum==""){
+//		$.alert("提示","证件号码为空，无法进行查询！");
+//		return;
+//	}
+//	if(custIdentidiesTypeCd==jbrIdentidiesTypeCd && custNumber==jbrIdentityNum){//经办人为本人,无需查询
+//		order.broadband.isSameOne=true;
+//		$.alert("提示","客户和经办人相同，无需查询！");
+//		return;
+//	}
 	order.broadband.isSameOne=false;
-	order.broadband.searchJbr();
-	}
+	order.broadband.searchJbr(idcard);
 };
 
 //经办人-查询
-function _searchJbr(){
+function _searchJbr(sfzidcard){
+	
 	order.broadband.canCallPhote=false;//查询通过方能拍照
 	var identityCd="";
 	var idcard="";
@@ -2019,7 +2087,8 @@ function _searchJbr(){
 	var queryTypeValue="";
 	identityCd=$("#orderIdentidiesTypeCd  option:selected").val();;
 	if(identityCd==1){
-		var identityNum = $('#sfzorderAttrIdCard').val();//证件号码
+//		var identityNum = $('#sfzorderAttrIdCard').val();//证件号码
+		var identityNum = sfzidcard;
 	}else{
 		var identityNum = $('#orderAttrIdCard').val();//证件号码
 	}
@@ -2056,22 +2125,17 @@ function _searchJbr(){
 				$.unecOverlay();
 //				$.alert("提示","抱歉，没有定位到客户，请尝试其他客户。");
 				
-				if($.trim($("#orderAttrName").val())==""){
-						$.alert("提示","抱歉，未查询到经办人信息！经办人姓名为空，请完善经办人信息！");
-						return false;
-				}
-				if($.trim($("#orderAttrAddr").val())==""){
-					$.alert("提示","抱歉，未查询到经办人信息！证件地址为空，请完善经办人信息！");
-					return false;
-				}
-				if($.trim($("#orderAttrPhoneNbr").val())==""){
-					$.alert("提示","抱歉，未查询到经办人信息！经办人联系方式为空，请完善经办人信息！");
-					return false;
-			    }
-				$.alert("提示","未查询到经办人信息！\n提交经办人信息成功,请对经办人进行拍照");
+
 				order.broadband.canCallPhote=true;
 				order.broadband.isOldCust=false;
-				_getJbrInfo(OrderInfo.SEQ.instSeq--);							
+				_getJbrInfo(OrderInfo.SEQ.instSeq--);
+//				var validate=$("#jbrFormdata").Validform();
+//				if(!validate.check()){
+//					return;
+//				}
+				if(order.broadband.isNeedJbr){
+					common.callPhotos2('cust.getPicture2');
+				}
 					
 			}else{
 			order.broadband.canCallPhote=true;
@@ -2091,12 +2155,17 @@ function _searchJbr(){
 			$('#orderAttrAddr').val(addressStr);
 			if (custInfoSize >= 1) {
 				order.broadband.isOldCust=true;
-				$.alert("提示","经办人存在,请对经办人进行拍照。");
 				_getJbrInfo(extCustId);
 			} else {
 				order.broadband.isOldCust=false;
-				$.alert("提示","未查询到经办人信息！\n提交经办人信息成功,请对经办人进行拍照。");
 				_getJbrInfo(OrderInfo.SEQ.instSeq--);
+			}
+//			var validate=$("#jbrFormdata").Validform();
+//			if(!validate.check()){
+//				return;
+//			}
+			if(order.broadband.isNeedJbr){
+				common.callPhotos2('cust.getPicture2');
 			}
 		}
 		},
@@ -2151,7 +2220,7 @@ var _setNoPhoto=function(){
 		var _obj = $("#orderIdentidiesTypeCd");
 		_obj.empty();
 		var partyTypeCd= "1";//个人
-		var custCertTypeCd=OrderInfo.cust.identityCd;//客户证件类型
+		var custCertTypeCd=1;//客户证件类型
 		var params = {"partyTypeCd":partyTypeCd} ;
 		var url=contextPath+"/app/cust/queryCertType";
 		var response = $.callServiceAsJson(url, params, {});
@@ -2164,8 +2233,8 @@ var _setNoPhoto=function(){
 				}
 	   var currentCT = $("#currentCT").val();//渠道类型
 	   if(response.code==0){
-		           var $label =$('<label style="display: none;" for="orderIdentidiesTypeCd">证件类型</label>');
-		           var $sel = $('<select id="orderIdentidiesTypeCd" class="myselect form-control" onchange="cust.jbridentidiesTypeCdChoose(this,sfzorderAttrIdCard)"></select>');
+		           var $label =$('<label style="display: none;" for="orderIdentidiesTypeCd">证件类型</label><i class="iconfont pull-left absolute-left">&#xe616;</i>');
+		           var $sel = $('<select id="orderIdentidiesTypeCd" class="myselect select-option dw-hsel" onchange="cust.jbridentidiesTypeCdChoose(this,sfzorderAttrIdCard)"></select>');
 					var data = response.data ;
 					if(data!=undefined && data.length>0){
 						//去除重复的证件类型编码
@@ -2214,6 +2283,11 @@ var _setNoPhoto=function(){
 						$("#qtzj").hide();
 						$("#orderAttrName").attr("readonly","readonly");
 						$("#orderAttrAddr").attr("readonly","readonly");
+						$("#orderAttrIdCard").attr("readonly","readonly");
+						$("#orderAttrIdCard").attr("type","hidden");
+						$("#sfzorderAttrIdCard").removeAttr("type");
+//						$("#queryJbr").hide();
+						$("#queryJbr").attr("disabled","disabled");
 //						if((OrderInfo.cust.identityCd == 1) && ($("#sfzorderAttrIdCard").val() == OrderInfo.cust.idCardNumber)){
 //							OrderInfo.jbr.identityPic = OrderInfo.cust.identityPic;
 //							OrderInfo.jbr.custId = OrderInfo.cust.custId;
@@ -2230,12 +2304,17 @@ var _setNoPhoto=function(){
 						$("#orderAttrName").removeAttr("readonly");
 						$("#orderAttrAddr").removeAttr("readonly");
 						$("#orderAttrIdCard").removeAttr("readonly");
+						$("#sfzorderAttrIdCard").attr("type","hidden");
+						$("#orderAttrIdCard").removeAttr("type");
+//						$("#queryJbr").show();
+						$("#queryJbr").removeAttr("disabled");
 						OrderInfo.virOlId = "";
 						OrderInfo.jbr.custId ="";
 						cust.clearJbrForm();
 						OrderInfo.jbr.identityPic = undefined;
 //						$('#jbrFormdata').data('bootstrapValidator').enableFieldValidators("orderAttrIdCard",true,"orderAttrIdCard");
 					}
+					order.broadband.init_select();
 				}
 	};
 	return {
@@ -2282,6 +2361,7 @@ var _setNoPhoto=function(){
 		canCallPhote    :_canCallPhote,
 		getJbrInfo      :_getJbrInfo,
 		haveCallPhote   :_haveCallPhote,
+		resetId   :_resetId,
 		jbrInfoFillIn   :_jbrInfoFillIn,
 		isOldCust       :_isOldCust,
 		setNoPhoto      :_setNoPhoto
