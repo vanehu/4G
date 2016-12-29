@@ -59,6 +59,7 @@ common = (function($) {
 			param.actionFlag = OrderInfo.actionFlag;
 		}
 		var method=urlParams.method;// /app/prodModify/custAuth
+		param.newFlag = "1";
 		$.callServiceAsHtml(contextPath+method,param,{
 			"before":function(){
 				$.ecOverlay("正在努力加载中，请稍等...");

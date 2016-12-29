@@ -987,6 +987,46 @@ query.offer = (function() {
 		};
 		
 		
+
+	/**
+	 * 宽带可订购续约包
+	 */
+	var _queryCanAttachBroadHtml = function(param,callBackFun) {
+		addParam(param);  //添加基本参数
+		var url = contextPath+"/app/offer/queryCanBuyAttachBroad";
+		if(typeof(callBackFun)=="function"){
+			$.callServiceAsHtmlGet(url,{strParam:JSON.stringify(param)},{
+				"before":function(){
+					$.ecOverlay("<strong>正在查询宽带续约包中,请稍后....</strong>");
+				},
+				"done" : function(response){
+					$.unecOverlay();
+					if (response.code==0) {
+						if(response.data){
+							callBackFun(response.data);
+						}
+					}else {
+						$.alert("提示","宽带续约包查询失败,稍后重试");
+						return;
+					}
+				}
+			});
+		}else{
+			$.ecOverlay("<strong>查询宽带续约包中，请稍等...</strong>");
+			var response = $.callServiceAsHtmlGet(url,{strParam:JSON.stringify(param)});	
+			$.unecOverlay();
+			if (response.code==0) {
+				if(response.data){
+					return response.data;
+				}
+			}else {
+				$.alert("提示","宽带续约包查询失败,稍后重试");
+				return;
+			}
+		}		
+	};
+	
+	
 	return {
 		queryMyfavorite         : _queryMyfavorite,
 		addMyfavorite           : _addMyfavorite,
@@ -1016,7 +1056,8 @@ query.offer = (function() {
 		queryProduct			: _queryProduct,
 		queryOpenedAttachAndServ: _queryOpenedAttachAndServ,
 		queryDefMustOfferSpecAndServApp:_queryDefMustOfferSpecAndServApp,
-		queryProdInstParam		: _queryProdInstParam
+		queryProdInstParam		: _queryProdInstParam,
+		queryCanAttachBroadHtml :_queryCanAttachBroadHtml
 		
 		
 	};

@@ -75,10 +75,10 @@ public class MainController extends BaseController {
 		String propertiesKey = "NEWUIFLAG_"+ (sessionStaff.getCurrentAreaId() + "").substring(0, 3);//新ui开关
 		// 新UI开关
 		String newUIFlag = propertiesUtils.getMessage(propertiesKey);
-		if("ON".equals(newUIFlag) && actionFlag!=null){
+		if("112".equals(actionFlag) || "113".equals(actionFlag) || "201".equals(actionFlag)){//直接进入新UI
 			return "/public/app-resource";
 		}
-		if("201".equals(actionFlag)){//橙分期无论开关是否开启都走新入口
+		if("ON".equals(newUIFlag) && actionFlag!=null){
 			return "/public/app-resource";
 		}
 		return "/public/app-unify-entrance";

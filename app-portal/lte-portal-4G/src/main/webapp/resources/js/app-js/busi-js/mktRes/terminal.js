@@ -881,7 +881,7 @@ mktRes.terminal = (function($){
 		}
 		var orderAttrAddr = $.trim($("#orderAttrAddr").val()); //地址
 		var orderAttrPhoneNbr = $.trim($("#orderAttrPhoneNbr").val()); //联系人号码
-		if(OrderInfo.preBefore.idPicFlag=="ON"){
+		if(OrderInfo.preBefore.idPicFlag=="ON" && OrderInfo.actionFlag!=3){
 			if(ec.util.isObj($.trim($("#sfzorderAttrIdCard").val())) || ec.util.isObj($.trim($("#orderAttrIdCard").val()))){
 				if(OrderInfo.jbr.identityCd != orderIdentidiesTypeCd || OrderInfo.jbr.identityNum != orderAttrIdCard){
 					OrderInfo.virOlId = "";
@@ -890,7 +890,7 @@ mktRes.terminal = (function($){
 				}
 			
 			}
-			if(!OrderInfo.virOlId){
+			if(!OrderInfo.virOlId ){
 				$.alert("提示","请进行经办人头像拍照！");
 				return;
 			}

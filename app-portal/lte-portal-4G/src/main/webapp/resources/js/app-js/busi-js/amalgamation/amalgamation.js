@@ -37,7 +37,7 @@ order.amalgamation = (function(){
 		$('#offer_search_model').modal('hide');
 		if(offerType!=undefined && offerType.length>0){
 			ot = offerType;
-		}
+		}else offerType = ot;
 		if(compOfferType!=undefined && compOfferType.length>0){
 			order.amalgamation.cot = compOfferType;
 //			order.amalgamation.cot = "2000";
@@ -51,7 +51,7 @@ order.amalgamation = (function(){
 //			params.categoryNodeId = categoryNodeId;
 //		}
 		
-		if(1==2){
+//		if(1==2){
 			var priceVal = $("#select_price").val();
 			if(ec.util.isObj(priceVal)){
 				var priceArr = priceVal.split("-");
@@ -82,7 +82,7 @@ order.amalgamation = (function(){
 					params.INVOICEMax = invoiceArr[1] ;
 				}
 			}
-		}
+//		}
 		_queryData(params,offerType,scroller);
 		
 	};
@@ -117,14 +117,13 @@ order.amalgamation = (function(){
 					var content$ = $("#searchProd"+"_"+offerType);
 					content$.html(response.data).show();
 				}
-				
 //				var content$ = $("#offer-list");
 //				content$.html(response.data).show();
 //				if(params.ifQueryFavorite && params.ifQueryFavorite == "Y"){
 //					AttachOffer.myFavoriteOfferList = response.data.resultlst;
 //				}
 				if(scroller && $.isFunction(scroller)) scroller.apply(this,[]);
-//				$.refresh(content$);
+				$.refresh(content$);
 			},
 			fail:function(response){
 				$.unecOverlay();
@@ -336,6 +335,11 @@ order.amalgamation = (function(){
 							}
 						});
 						_setOfferSpec(max);
+						order.phoneNumber.queryPhoneNbrPool();//查询号池
+						$("#phonenumber").show();
+						$("#offer_a").hide();
+						$("#phoneNumber_a").show();
+					    order.phoneNumber.queryApConfig();//查询号码段和号码类型 
 						if(order.phoneNumber.initPhonenumber()){
 							$("#offer").hide();
 							$("#offer-list").empty();
@@ -503,7 +507,7 @@ order.amalgamation = (function(){
 //								var rlist = order.broadband.alldownRateList[$("#main_index").val()];
 //								for(var j=0;j<rlist.length;j++){
 									if(dwRange[i].text == "512K"){
-										dwRange[i].text = "0.5"
+										dwRange[i].text = "0.5M"
 									}
 //									if(dwRange[i].text.replace("M","") == rlist[j].rateRelVal){
 										$("#dwslList"+type).append("<option value='"+dwRange[i].value+"' >"+dwRange[i].text+"</option>");
@@ -515,7 +519,7 @@ order.amalgamation = (function(){
 								var rlist = order.broadband.alldownRateList[$("#main_index").val()];
 								for(var j=0;j<rlist.length;j++){
 									if(dwRange[i].text == "512K"){
-										dwRange[i].text = "0.5"
+										dwRange[i].text = "0.5M"
 									}
 									if(dwRange[i].text.replace("M","") == rlist[j].rateRelVal){
 										$("#dwslList"+type).append("<option value='"+dwRange[i].value+"' >"+dwRange[i].text+"</option>");

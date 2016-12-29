@@ -256,7 +256,7 @@ public class OrderController extends BaseController {
 		String propertiesKey = "NEWUIFLAG_"+ (sessionStaff.getCurrentAreaId() + "").substring(0, 3);//新ui开关
 		// 新UI开关
 		String newUIFlag = propertiesUtils.getMessage(propertiesKey);
-		if("ON".equals(newUIFlag)){
+		if("ON".equals(newUIFlag) && params.get("newFlag") != null){
 			if ("2".equals(params.get("enter").toString())) {//购手机暂时走原ui
 				return "/app/order/order-search";
 			}

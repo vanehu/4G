@@ -348,7 +348,7 @@ order.prodModify = (function(){
 		}
 	};
 	
-	//前置校验，app
+//前置校验，app
 	var _preCheckBeforeOrder2 = function (serviceType,callbackFunc){
 //		var accNbr = "";
 //		if(serviceType=="28" || serviceType =="29" || serviceType =="30"){

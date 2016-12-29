@@ -77,19 +77,23 @@ common.print = (function($){
 	};
 	//点击查看
 	var _preSign=function(olId,chargeItems){
-		if(!_voucherCommon(olId)){
-			return;
-		}
+//		if(!_voucherCommon(olId)){
+//			return;
+//		}
+//		var voucherInfo = {
+//			"olId":OrderInfo.orderResult.olId,
+//			"soNbr": OrderInfo.order.soNbr
+//		};
 		var voucherInfo = {
 			"olId":OrderInfo.orderResult.olId,
-			"soNbr": OrderInfo.order.soNbr
+			"srcFlag":"APP"
 		};
 		var arr=new Array(3);
-		if(ec.util.browser.versions.android){
-			arr[0]='order/sign/downVoucher';				
-		}else{
-			arr[0]='print/iosVoucher';				
-		}
+//		if(ec.util.browser.versions.android){
+			arr[0]='/order/sign/downVoucher';				
+//		}else{
+//			arr[0]='/print/iosVoucher';				
+//		}
 		arr[1]='voucherInfo';
 		arr[2]=JSON.stringify(voucherInfo);
 		MyPlugin.printShow(arr,
@@ -159,7 +163,7 @@ common.print = (function($){
 //		var height_=document.getElementById("order-print").offsetHeight;
 //		var imgHeigh_=document.getElementById("datasign").offsetHeight;
 		var accNbr="";
-		if(OrderInfo.actionFlag==1 ||OrderInfo.actionFlag==14){ //新装
+		if(OrderInfo.actionFlag==1 || OrderInfo.actionFlag==14 ||OrderInfo.actionFlag==112){ //新装
 			accNbr=OrderInfo.getAccessNumber(-1);
 		}else if(OrderInfo.actionFlag==13 || OrderInfo.actionFlag==17 || OrderInfo.actionFlag==18){ //裸机销售		
 		}else{//二次业务
@@ -207,6 +211,7 @@ common.print = (function($){
 					$("#order-confirm").show();
 					$("#order-print").hide();
 					$("#printVoucherA").attr("disabled","disabled");//回执保存成功后  回执按钮改为灰色不可操作
+//					$("#showPdf").show();//点击调pdf软件进行回执预览
 					OrderInfo.order.step=3;
 				}else if (response.code == -2) {
 					$.alertM(response.data);

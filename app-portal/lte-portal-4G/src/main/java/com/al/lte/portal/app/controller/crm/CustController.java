@@ -441,7 +441,7 @@ public class CustController extends BaseController {
     	String propertiesKey = "NEWUIFLAG_"+ (sessionStaff.getCurrentAreaId() + "").substring(0, 3);//新ui开关
 		// 新UI开关
 		String newUIFlag = propertiesUtils.getMessage(propertiesKey);
-    	if("ON".equals(newUIFlag) && param.get("enter")!=null){
+    	if("ON".equals(newUIFlag) && param.get("newFlag")!=null){
     		forward= "/app/cust/cust-create-new";
     	}
         return forward;
@@ -463,7 +463,7 @@ public class CustController extends BaseController {
     	String propertiesKey = "NEWUIFLAG_"+ (sessionStaff.getCurrentAreaId() + "").substring(0, 3);//新ui开关
 		// 新UI开关
 		String newUIFlag = propertiesUtils.getMessage(propertiesKey);
-    	if("ON".equals(newUIFlag) && param.get("enter")!=null){
+    	if("ON".equals(newUIFlag) && param.get("newFlag")!=null){
     		forward= "/app/cust/cust-create-new";
     	}
         return forward;

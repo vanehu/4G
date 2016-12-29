@@ -12,6 +12,7 @@ cust = (function(){
 	var _checkUserInfo = {
 			 accNbr: ""
 	};
+	var _newUIFalg = "OFF";
 	var _clearCustForm = function(){
 		$('#cmCustName').val("");
 		$('#cmAddressStr').val("");
@@ -26,7 +27,7 @@ cust = (function(){
 		$('#sfzorderAttrIdCard').val("");
 		$('#orderAttrIdCard').val("");
 		$('#orderAttrAddr').val("");
-		$('#orderAttrPhoneNbr').val("");
+//		$('#orderAttrPhoneNbr').val("");
 		cust.jbrvalidatorForm();
 	};
 	var _clearUserForm = function(){
@@ -156,9 +157,21 @@ cust = (function(){
 			_getJbrInfo();
 			data.boCustInfos.push(OrderInfo.boJbrInfos);
 			data.boCustIdentities.push(OrderInfo.boJbrIdentities);
-//			if($.trim($('#contactName').val()).length>0){
-//				data.boPartyContactInfo.push(OrderInfo.boPartyContactInfo);
-//			}
+			//若用户有填写经办人联系号码，则新建经办人时添加联系人信息，否则不添加联系人信息
+			if(ec.util.isObj(OrderInfo.jbr.telNumber)){
+				OrderInfo.bojbrPartyContactInfo.staffId 		= OrderInfo.staff.staffId;
+				OrderInfo.bojbrPartyContactInfo.contactName 	= $.trim($("#orderAttrName").val());
+				OrderInfo.bojbrPartyContactInfo.mobilePhone 	= $.trim($("#orderAttrPhoneNbr").val());
+				OrderInfo.bojbrPartyContactInfo.contactAddress 	= $.trim($("#orderAttrAddr").val());
+				OrderInfo.bojbrPartyContactInfo.contactGender   = "1";//性别，默认为男
+				//根据身份证判断性别，无从判别默认为男
+				if(OrderInfo.boJbrIdentities.identidiesTypeCd == "1"){
+					var identityNum = OrderInfo.boJbrIdentities.identityNum;
+					identityNum = parseInt(identityNum.substring(16,17));//取身份证第17位判断性别，奇数男，偶数女
+					OrderInfo.bojbrPartyContactInfo.contactGender = (identityNum % 2) == 0 ? "2" : "1";//1男2女
+				}
+				data.boPartyContactInfo.push(OrderInfo.bojbrPartyContactInfo);
+			}
 	}
 	
 	//拼接经办人信息跟经办人属性从jbr节点解析到boJbrInfos，boJbrIdentities
@@ -497,7 +510,6 @@ cust = (function(){
 						OrderInfo.certTypedates = data;
 						for(var i=0;i<OrderInfo.certTypedates.length;i++){
 							var certTypedate = OrderInfo.certTypedates[i];
-							
 							if (certTypedate.certTypeCd == "1") {//身份证
 									$("#cm_identidiesTypeCd").append("<option value='"+certTypedate.certTypeCd+"' >"+certTypedate.name+"</option>");
 								}else if(isAllowChannelType){//如果自有渠道，开放所有
@@ -513,19 +525,24 @@ cust = (function(){
 		if(identidiesTypeCd==undefined){
 			identidiesTypeCd=$("#div_cm_identidiesType  option:selected").val();
 		}
-		$("#cmCustName").val("");
-		$("#cmCustIdCard").val("");
-		$("#cmAddressStr").val("");
-		$("#cmCustIdCardOther").val("");
+		if(OrderInfo.actionFlag!="9"){
+			$("#cmCustName").val("");
+			$("#cmCustIdCard").val("");
+			$("#cmAddressStr").val("");
+			$("#cmCustIdCardOther").val("");
+		}
 		$("#cmCustName").removeAttr("readonly");
 		$("#cmCustIdCard").removeAttr("readonly");
 		$("#cmAddressStr").removeAttr("readonly");
+		$("#cmCustIdCard").attr("type","hidden");
+		$("#cmCustIdCardOther").removeAttr("type");
 		if(identidiesTypeCd==1){
 			$("#cmCustIdCard").attr("placeHolder","请输入合法身份证号码");
 			$("#div-cmcustidcard").show();
 			$("#readCard").show();
 			$("#div-cmcustidcard-none").hide();
-			
+			$("#cmCustIdCardOther").attr("type","hidden");
+			$("#cmCustIdCard").removeAttr("type");
 			$("#cmCustName").attr("readonly","readonly");
 			$("#cmCustIdCard").attr("readonly","readonly");
 			$("#cmAddressStr").attr("readonly","readonly");
@@ -654,14 +671,33 @@ cust = (function(){
 							$("#qtzj").hide();
 							$("#orderAttrName").attr("readonly","readonly");
 							$("#orderAttrAddr").attr("readonly","readonly");
+							$("#orderAttrIdCard").attr("type","hidden");
+							$("#sfzorderAttrIdCard").removeAttr("type");
+							$("#queryJbr").attr("disabled","disabled");
+							if(OrderInfo.actionFlag == "111"){
+								$("#queryJbr").hide();
+							} else if(ec.util.isObj(_newUIFalg) && _newUIFalg == "ON" &&  (OrderInfo.actionFlag=="35" || OrderInfo.actionFlag=="34" || OrderInfo.actionFlag=="1" ||OrderInfo.actionFlag=="8")) {
+								$("#whole").hide();
+								$("#only").show();
+							}
+//							$("#queryJbr").hide();
 						}else{
 							$("#jbrsfz").hide();
 							$("#jbrsfz_i").hide();
 							$("#qtzj").show();
 							$("#orderAttrName").removeAttr("readonly");
 							$("#orderAttrAddr").removeAttr("readonly");
+							$("#sfzorderAttrIdCard").attr("type","hidden");
+							$("#orderAttrIdCard").removeAttr("type");
+							$("#queryJbr").removeAttr("disabled");
+							if(OrderInfo.actionFlag == "111"){
+								$("#queryJbr").hide();
+							} else if(ec.util.isObj(_newUIFalg) && _newUIFalg == "ON" &&  (OrderInfo.actionFlag=="35" || OrderInfo.actionFlag=="34" || OrderInfo.actionFlag=="1" ||OrderInfo.actionFlag=="8")) {
+								$("#whole").hide();
+								$("#only").show();
+							}
+//							$("#queryJbr").show();
 						}
-						$("#queryJbr").show();
 						$("#photo").show();
 						OrderInfo.virOlId = "";
 						if(OrderInfo.jbr){
@@ -709,19 +745,29 @@ cust = (function(){
 //		if(identidiesTypeCd==undefined){
 //			identidiesTypeCd=$("#div_cm_identidiesType  option:selected").val();
 //		}
-
+		
+		
 		if(identidiesTypeCd==1){
 			$("#jbrsfz").show();
 			$("#jbrsfz_i").show();
 			$("#qtzj").hide();
 			$("#orderAttrName").attr("readonly","readonly");
 			$("#orderAttrAddr").attr("readonly","readonly");
+			$("#orderAttrIdCard").attr("type","hidden");
+			$("#sfzorderAttrIdCard").removeAttr("type");
+			$("#queryJbr").attr("disabled","disabled");
+			if(OrderInfo.actionFlag == "111"){
+				$("#queryJbr").hide();
+			} else if(ec.util.isObj(_newUIFalg) && _newUIFalg == "ON" &&  (OrderInfo.actionFlag=="35" || OrderInfo.actionFlag=="34" || OrderInfo.actionFlag=="1" ||OrderInfo.actionFlag=="8")) {
+				$("#whole").hide();
+				$("#only").show();
+			}
+//			$("#queryJbr").hide();
 //			if((OrderInfo.cust.identityCd == 1) && ($("#sfzorderAttrIdCard").val() == OrderInfo.cust.idCardNumber)){
 //				OrderInfo.jbr.identityPic = OrderInfo.cust.identityPic;
 //				OrderInfo.jbr.custId = OrderInfo.cust.custId;
 //			}
 			
-//			$('#jbrFormdata').data('bootstrapValidator').enableFieldValidators("orderAttrIdCard",true,"sfzorderAttrIdCard");
 		}else{
 			$("#jbrsfz").hide();
 			$("#jbrsfz_i").hide();
@@ -729,7 +775,16 @@ cust = (function(){
 			$("#orderAttrName").removeAttr("readonly");
 			$("#orderAttrAddr").removeAttr("readonly");
 			$("#orderAttrIdCard").removeAttr("readonly");
-//			$('#jbrFormdata').data('bootstrapValidator').enableFieldValidators("orderAttrIdCard",true,"orderAttrIdCard");
+			$("#sfzorderAttrIdCard").attr("type","hidden");
+			$("#orderAttrIdCard").removeAttr("type");
+			$("#queryJbr").removeAttr("disabled");
+			if(OrderInfo.actionFlag == "111"){
+				$("#queryJbr").show();
+			} else if(ec.util.isObj(_newUIFalg) && _newUIFalg == "ON" &&  (OrderInfo.actionFlag=="35" || OrderInfo.actionFlag=="34" || OrderInfo.actionFlag=="1" ||OrderInfo.actionFlag=="8")) {
+				$("#whole").show();
+				$("#only").hide();
+			}
+//			
 		}
 		if(OrderInfo.jbr){
 			OrderInfo.jbr.custId ="";
@@ -849,52 +904,120 @@ cust = (function(){
 		$("#orderAttrName").val(name);
 		$("#sfzorderAttrIdCard").val(idcard);
 		$("#orderAttrAddr").val(address);
+		if(ec.util.isObj(_newUIFalg) && _newUIFalg == "ON" &&  (OrderInfo.actionFlag=="35" || OrderInfo.actionFlag=="34" || OrderInfo.actionFlag=="112" ||OrderInfo.actionFlag=="1" ||OrderInfo.actionFlag=="8")){
+			$("#jbrFormdata").Validform().check();
+		} else {
+			$('#jbrFormdata').data('bootstrapValidator').validate();
+		}
 		OrderInfo.jbr.identityPic = identityPic;//证件照片
 		OrderInfo.virOlId = "";
 		order.main.queryJbr();
 	};
 	//校验表单提交
 	var _jbrvalidatorForm=function(){
-		$('#jbrFormdata').bootstrapValidator({
-	        message: '无效值',
-	        feedbackIcons: {
-	            valid: 'glyphicon glyphicon-ok',
-	            invalid: 'glyphicon glyphicon-remove',
-	            validating: 'glyphicon glyphicon-refresh'
-	        },
-	        fields: {
-//	        	sfzorderAttrIdCard: {
-//	            	trigger: 'blur',
-//	                validators: {
-//	                    regexp: {
-//	                        regexp: /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/,
-//	                        //regexp: /^\d{6}(18|19|20)?\d{2}(0[1-9]|1[12])(0[1-9]|[12]\d|3[01])\d{3}(\d|X)$/,
-//	                        message: '请输入合法身份证号码'
-//	                    }
-//	                }
-//	            },
-	            orderAttrIdCard: {
-	            	trigger: 'blur',
-	                validators: {
-	                    regexp: {
-	                        regexp: /^[0-9a-zA-Z]*$/g,
-	                        message: '证件号码只能为数字或字母'
-	                    }
-	                }
-	            },
-	            orderAttrPhoneNbr: {
-	            	trigger: 'blur',
-	                validators: {
-	                    regexp: {
-	                        /*regexp: /(^\d{11}$)/,
-	                        message: '手机号码只能为11数字'*/
-	                    	regexp: /^1[34578]\d{9}$/,
-	                        message: '手机号码不合法'
-	                    }
-	                }
-	            }
-	        }
-	    });
+		if(OrderInfo.actionFlag=="111"){
+			
+			var jbrFormdata = $("#jbrFormdata").Validform({
+				btnSubmit:"queryJbr",
+				ignoreHidden:true,
+				datatype:{
+					"zh6-50":/[\u4e00-\u9fa5]{6}|^.{12}/,
+					"sfz":/(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/,
+					"qtzj":/^[0-9a-zA-Z]{1,100}$/,
+					"phone":/(^\d{11}$)/
+				},
+				tiptype:function(msg,o,cssctl){
+					
+					//msg：提示信息;
+					//o:{obj:*,type:*,curform:*}, obj指向的是当前验证的表单元素（或表单对象），type指示提示的状态，值为1、2、3、4， 1：正在检测/提交数据，2：通过验证，3：验证失败，4：提示ignore状态, curform为当前form对象;
+					//cssctl:内置的提示信息样式控制函数，该函数需传入两个参数：显示提示信息的对象 和 当前提示的状态（既形参o中的type）;
+					if(!o.obj.is("form")){//验证表单元素时o.obj为该表单元素，全部验证通过提交表单时o.obj为该表单对象;
+						if(o.type == 3){
+							var objtip=o.obj.siblings(".Validform_checktip");
+							cssctl(objtip,o.type);
+							objtip.text(msg);
+						}
+						if(o.type == 2){
+							var objtip=o.obj.siblings(".Validform_checktip");
+							cssctl(objtip,o.type);
+							objtip.text("");
+						}
+					}
+				}
+			});
+			jbrFormdata.addRule([
+				{
+				    ele:"#orderAttrName",
+				    datatype:"*",
+				    nullmsg:"经办人姓名不能为空",
+				    errormsg:"经办人姓名不能为空"
+				},
+				{
+				    ele:"#sfzorderAttrIdCard",
+				    datatype:"sfz",
+				    nullmsg:"身份证号码不能为空",
+				    errormsg:"证件号码只能为数字或字母"
+				},
+				{
+				    ele:"#orderAttrIdCard",
+				    datatype:"qtzj",
+				    nullmsg:"证件号码不能为空",
+				    errormsg:"证件号码只能为数字或字母"
+				},
+				{
+				    ele:"#orderAttrAddr",
+				    datatype:"*",
+				    nullmsg:"证件地址不能为空"
+				},
+				{
+				    ele:"#orderAttrPhoneNbr",
+				    datatype:"phone",
+				    errormsg:"请输入正确的手机号码",
+				    nullmsg:"联系方式不能为空"
+				}                
+			]);
+		} else {
+			$('#jbrFormdata').bootstrapValidator({
+		        message: '无效值',
+		        feedbackIcons: {
+		            valid: 'glyphicon glyphicon-ok',
+		            invalid: 'glyphicon glyphicon-remove',
+		            validating: 'glyphicon glyphicon-refresh'
+		        },
+		        fields: {
+//		        	sfzorderAttrIdCard: {
+//		            	trigger: 'blur',
+//		                validators: {
+//		                    regexp: {
+//		                        regexp: /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/,
+//		                        //regexp: /^\d{6}(18|19|20)?\d{2}(0[1-9]|1[12])(0[1-9]|[12]\d|3[01])\d{3}(\d|X)$/,
+//		                        message: '请输入合法身份证号码'
+//		                    }
+//		                }
+//		            },
+		            orderAttrIdCard: {
+		            	trigger: 'blur',
+		                validators: {
+		                    regexp: {
+		                        regexp: /^[0-9a-zA-Z]*$/g,
+		                        message: '证件号码只能为数字或字母'
+		                    }
+		                }
+		            },
+		            orderAttrPhoneNbr: {
+		            	trigger: 'blur',
+		                validators: {
+		                    regexp: {
+		                        /*regexp: /(^\d{11}$)/,
+		                        message: '手机号码只能为11数字'*/
+		                    	regexp: /^1[34578]\d{9}$/,
+		                        message: '手机号码不合法'
+		                    }
+		                }
+		            }
+		        }
+		    });
+		}
 	};
 	//校验表单提交
 	var _uservalidatorForm=function(){
@@ -1014,12 +1137,14 @@ cust = (function(){
 	            }
 	        }
 	    });
+		
 	};
 	
 	//获取证件类型以及初始化
 	var _getIdentidiesTypeCd=function(){
 		//根据客户类型查询证件类型
 		_partyTypeCdChoose("#cmPartyTypeCd");
+		
 		//取客户证件类型
 		$("#cm_identidiesTypeCd option[value='"+$("#boCustIdentities").attr("identidiesTypeCd")+"']").attr("selected", true);
 		//根据证件类型对行添加校验
@@ -1034,6 +1159,7 @@ cust = (function(){
 	
 	//初始化新增客户
 	var _initNewCust = function(){
+		
 		cust.validatorForm();
 		//根据客户类型查询证件类型
 		_partyTypeCdChoose("#cmPartyTypeCd");
@@ -1047,7 +1173,7 @@ cust = (function(){
 	           }
 	     }
 		//根据证件类型对行添加校验
-//		_identidiesTypeCdChoose($("#cm_identidiesTypeCd option[selected='selected']"));
+		_identidiesTypeCdChoose($("#cm_identidiesTypeCd option[selected='selected']"));
 		
 		$('#newCustBtn').off("click").on("click",_newCustSubmit);
 		var BO_ACTION_TYPE=CONST.BO_ACTION_TYPE.CUST_CREATE;
@@ -1106,6 +1232,11 @@ cust = (function(){
 		$("#cmCustIdCard").val(idcard);
 		$("#cmCustName").val(name);
 		$("#cmAddressStr").val(address);
+		if(ec.util.isObj(_newUIFalg) && _newUIFalg == "ON" &&  (OrderInfo.actionFlag=="35" || OrderInfo.actionFlag=="34" || OrderInfo.actionFlag=="112" ||OrderInfo.actionFlag=="1" ||OrderInfo.actionFlag=="8")){
+			$("#custFormdata").Validform().check();
+		} else {
+			$('#custFormdata').data('bootstrapValidator').validate();
+		}
 		OrderInfo.cust.identityPic = identityPic;//证件照片
 	};
 	
@@ -2447,6 +2578,7 @@ cust = (function(){
 	
 	//宽带甩单读卡获取经办人信息
 	var _getjbrGenerationInfos2=function(name,idcard,address,identityPic){
+		order.broadband.queryJbr(idcard);
 		$("#orderAttrName").val(name);
 		$("#sfzorderAttrIdCard").val(idcard);
 		$("#orderAttrAddr").val(address);
@@ -2465,7 +2597,7 @@ cust = (function(){
 			return;
 		}
 		order.broadband.isSameOne=false;
-		order.broadband.queryJbr();
+		
 
 	};
 	
@@ -2531,7 +2663,8 @@ cust = (function(){
 		clearJbrForm				:		_clearJbrForm,
 		clearUserForm				:		_clearUserForm,
 		getPicture2                 :       _getPicture2,
-		getjbrGenerationInfos2      :       _getjbrGenerationInfos2
+		getjbrGenerationInfos2      :       _getjbrGenerationInfos2,
+		newUIFalg					:		_newUIFalg
 	};	
 })();
 // OrderInfo.boCustInfos.partyTypeCd = 1 ;//客户类型
