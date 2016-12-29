@@ -99,6 +99,8 @@ $(function() {
 		}else{
 			if(OrderInfo.cust.contactInfos[0].contactMobilePhone != undefined && OrderInfo.cust.contactInfos[0].contactMobilePhone != ""){
 				$("#orderAttrPhoneNbr").val(OrderInfo.cust.contactInfos[0].contactMobilePhone);
+			} else {
+				$("#orderAttrPhoneNbr").val($("#cust_phone").val());
 			}
 		}
      }

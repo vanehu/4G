@@ -75,7 +75,7 @@
     <nav class="navbar navbar-default navbar-fixed-bottom">
 			<div class="container-fluid">
 				<div class="btn-group btn-group-justified navbar-btn" role="group" aria-label="...">
-				  <div class="btn-group" role="group">
+				  <div class="btn-group"  role="group" id="queryJbr" style="display: none;" >
 				  <button type="button" class="btn btn-primary btn-lg" onClick="javascript:order.broadband.queryJbr()">
 					<span class="glyphicon glyphicon-ok" aria-hidden="true"></span> 查询
 				</button>
@@ -89,7 +89,7 @@
 			</div>
 	 </nav>
 <script type="text/javascript">
-OrderInfo.actionFlag = 111;
+	OrderInfo.actionFlag = 111;
     cust.jbrvalidatorForm();
  	var ua = navigator.userAgent.toLowerCase();	
 	if (/iphone|ipad|ipod/.test(ua)) {
