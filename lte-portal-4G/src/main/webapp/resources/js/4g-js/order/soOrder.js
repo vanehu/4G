@@ -294,6 +294,17 @@ SoOrder = (function() {
 			itemSpecId: "800000048",
 			value: CacheData.getRecordId()
 		});
+		//增加前置校验的流水号redmine1153501
+		if(OrderInfo.preTransactionID !=""){
+			custOrderAttrs.push({ //鉴权日志id
+				itemSpecId: "40010043",
+				value: "Y"
+			});
+			custOrderAttrs.push({ //鉴权日志id
+				itemSpecId: "40010042",
+				value: OrderInfo.preTransactionID
+			});
+		}
 		if (OrderInfo.isExistCFQ) {
 			custOrderAttrs.push({ //橙分期短信验证码
 				itemSpecId: "800000070",

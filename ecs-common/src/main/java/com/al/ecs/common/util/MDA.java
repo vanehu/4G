@@ -530,7 +530,8 @@ public class MDA {
 	 * 工号实名制需求开关
 	 */
 	public static final String STAFF_AUTH_FLAG  = new String("");
-	
+	/**订单提交增加前置校验流水号及细化返销前置校验编码开关*/
+	public static final Map<String,String> COMANDFXPRECHECK = new HashMap<String,String>();
 	/**
 	 * 翼销售app省份新版ui开关
 	 */

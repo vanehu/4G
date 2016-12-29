@@ -1718,6 +1718,9 @@ OrderInfo = (function() {
 		OrderInfo.bojbrPartyContactInfo   = $.extend(true, {}, _bojbrPartyContactInfo);//经办人：客户证件节点
 	};
 	
+	//前置校验流水号
+	var _preTransactionID ="";
+	
 	return {	
 		order					: _order,
 		SEQ						: _SEQ,
@@ -1828,6 +1831,7 @@ OrderInfo = (function() {
 		handleCustId 			:_handleCustId,
 		boUserCustIdentities 	:_boUserCustIdentities,
 		boUserCustInfos 		:_boUserCustInfos,
-		ifCreateHandleCust		:_ifCreateHandleCust
+		ifCreateHandleCust		:_ifCreateHandleCust,
+		preTransactionID        :_preTransactionID
 	};
 })();

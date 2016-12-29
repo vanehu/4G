@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.al.ec.serviceplatform.client.ResultCode;
 import com.al.ecs.common.entity.JsonResponse;
 import com.al.ecs.common.util.JsonUtil;
+import com.al.ecs.common.util.PropertiesUtils;
 import com.al.ecs.common.web.ServletUtils;
 import com.al.ecs.exception.BusinessException;
 import com.al.ecs.exception.ErrorCode;
@@ -68,6 +69,8 @@ public class OrderProdModifyController extends BaseController {
 	@Autowired
 	@Qualifier("com.al.lte.portal.bmo.staff.StaffBmo")
 	private StaffBmo staffBmo;
+	@Autowired
+    private PropertiesUtils propertiesUtils;
 	@RequestMapping(value = "/lossRepProd", method = {RequestMethod.POST})
 	public String lossRepProd(@RequestBody Map<String, Object> param, Model model, HttpServletResponse response) {
 		//TODO call general order rule
@@ -765,10 +768,15 @@ public class OrderProdModifyController extends BaseController {
 			 areaId = sessionStaff.getAreaId();
 			 paramMap.put("areaId",areaId.substring(0, 5) + "00");
 		}
+		String comPreFlag = propertiesUtils.getMessage("COMANDFXPRECHECK_"+areaId.substring(0, 3));
 		try {
         	map = this.orderBmo.preCheckBeforeOrde(paramMap, flowNum, sessionStaff);
         	Map<String, Object>  retMap = new HashMap<String, Object>();
 			String resultCode = MapUtils.getString(map, "resultCode");
+			String transactionID = "";
+			if(SysConstant.ON.equals(comPreFlag)){
+				transactionID = MapUtils.getString(map, "transactionID");
+			}
 			if (ResultCode.R_SUCC.equals(resultCode)){
 				Map<String, Object> datamap = (Map<String, Object>) map.get("result");
 				if(datamap !=null){
@@ -798,15 +806,19 @@ public class OrderProdModifyController extends BaseController {
      					}
                     }
 					if(flag){
+						retMap.put("transactionID", transactionID);
 						retMap.put("checkLevel", "20");
 						retMap.put("checkInfo", sbXZ);
 					}else if(type.equals("10")){
+						retMap.put("transactionID", transactionID);
 						retMap.put("checkLevel", "10");
 						retMap.put("checkInfo", sbcheck);
 					}else{
 						retMap.put("checkLevel", "0");
+						retMap.put("transactionID", transactionID);
 					}
 				}else{
+					retMap.put("transactionID", transactionID);
 					retMap.put("checkLevel", "0");
 				}
 				jsonResponse = super.successed(retMap,ResultConstant.SUCCESS.getCode());
