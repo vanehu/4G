@@ -199,6 +199,7 @@ table.tablecenter>tbody>tr>td .btn {
 .modal_wrapper{
 	display: table;
 	height: 100%;
+	width:100%;
 	margin: 0px auto;
 }
 .modal_top{
@@ -520,7 +521,7 @@ table.tablecenter>tbody>tr>td .btn {
 }
 .form-group label {
 	color:#696969;
-	width: 21%;
+	width: 22%;
 	text-align: right;
 	margin-right: 4%;
 	font-weight: norma;

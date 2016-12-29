@@ -97,37 +97,55 @@ order.phoneNumber = (function(){
 	var _queryPhoneNbrPool2 = function(){
 		var url=contextPath+"/app/mktRes/phonenumber/queryPhoneNbrPool";
 		var param={};
-		var response = $.callServiceAsJson(url,param);
-		if (response.code==0) {
-			if(response.data){
-				$("#nbrPoolDiv2").empty();
-				var phoneNbrPoolList= response.data.phoneNbrPoolList;
-				var $div =$('<i class="iconfont pull-left p-l-10">&#xe66c;</i>');
-				var $div2 =$('<i class="iconfont pull-right p-r-10">&#xe66e;</i>');
-				var $sel = $('<select id="nbrPool2" class="myselect select-option" data-role="none"></select>');  
-				var $defaultopt = $('<option value="" selected="selected">请选择号池</option>');
-				$sel.append($defaultopt);
-				if(phoneNbrPoolList!=null){
-					$.each(phoneNbrPoolList,function(){
-						var $option = "";
-						if(this.localPool == 1){
-							$option = $('<option value="'+this.poolId+'" selected="selected">'+this.poolName+'</option>');
+		$.ecOverlay("<strong>查询号码中,请稍等...</strong>");
+		$.callServiceAsJson(url,param,{
+			"before":function(){
+//				$.ecOverlay("<strong>查询中,请稍等...</strong>");
+			},
+			"always":function(){
+//				$.unecOverlay();
+			},
+			"done" : function(response){
+//				$.unecOverlay();
+				if (response.code==0) {
+					if(response.data){
+						$("#nbrPoolDiv2").empty();
+						var phoneNbrPoolList= response.data.phoneNbrPoolList;
+						var $div =$('<i class="iconfont pull-left p-l-10">&#xe66c;</i>');
+						var $div2 =$('<i class="iconfont pull-right p-r-10">&#xe66e;</i>');
+						var $sel = $('<select id="nbrPool2" class="myselect select-option" data-role="none"></select>');  
+						var $defaultopt = $('<option value="" selected="selected">请选择号池</option>');
+						$sel.append($defaultopt);
+						if(phoneNbrPoolList!=null){
+							$.each(phoneNbrPoolList,function(){
+								var $option = "";
+								if(this.localPool == 1){
+									$option = $('<option value="'+this.poolId+'" selected="selected">'+this.poolName+'</option>');
+								}
+								else{
+								    $option = $('<option value="'+this.poolId+'">'+this.poolName+'</option>');
+								}
+								$sel.append($option);
+							});
 						}
-						else{
-						    $option = $('<option value="'+this.poolId+'">'+this.poolName+'</option>');
-						}
-						$sel.append($option);
-					});
-				}
-				$("#nbrPoolDiv2").append($div).append($sel).append($div2);
-				order.broadband.init_select();//刷新select组件，使样式生效
+						$("#nbrPoolDiv2").append($div).append($sel).append($div2);
+						_btnQueryPhoneNumber2();
+						order.broadband.init_select();//刷新select组件，使样式生效
 
+					}
+				}else if(response.code == -2){
+					$.unecOverlay();
+					$.alertM(response.data);
+				}else{
+					$.unecOverlay();
+					$.alert("提示","号池加载失败，请稍后再试！");
+				}
+			},
+			fail:function(response){
+				$.unecOverlay();
+				$.alert("提示","号池查询失败，请稍后再试！");
 			}
-		}else if(response.code == -2){
-			$.alertM(response.data);
-		}else{
-			$.alert("提示","号池加载失败，请稍后再试！");
-		}
+		});
 	};
 	
 	//查询平台配置信息(号码段和号码类型)
@@ -282,18 +300,20 @@ order.phoneNumber = (function(){
 		var url = contextPath+"/app/mktRes/phonenumber/list";
 		$.callServiceAsHtml(url,param,{
 			"before":function(){
-				$.ecOverlay("<strong>正在查询中,请稍等会儿....</strong>");
+//				$.ecOverlay("<strong>正在查询号码中,请稍等会儿....</strong>");
 			},
 			"always":function(){
-				$.unecOverlay();
+//				$.unecOverlay();
 			},
 			"done" : function(response){
+				$.unecOverlay();
 				if(!response||response.code != 0){
 					 response.data='查询失败,稍后重试';
 				}
 				$("#phoneNumber_a").show();
 				var content$ = $("#phonenumber-list2");
 				content$.html(response.data);
+				$("#secondaryCardModal").modal("show");
 				
 			},
 			fail:function(response){
@@ -536,8 +556,8 @@ order.phoneNumber = (function(){
 			return;
 		}
 		_queryPhoneNbrPool2();
-		_btnQueryPhoneNumber2();
-		$("#secondaryCardModal").modal("show");
+//		_btnQueryPhoneNumber2();
+//		$("#secondaryCardModal").modal("show");
 		
 	};
 	

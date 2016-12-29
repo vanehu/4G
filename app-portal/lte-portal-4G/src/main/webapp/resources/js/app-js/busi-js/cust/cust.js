@@ -657,7 +657,6 @@ cust = (function(){
 						
 						for(var i=0;i<uniData.length;i++){
 							var certTypedate = uniData[i];
-//							if(certTypedate.certTypeCd == cardType && _partyTypeCd==1 && isFlag=="ON"){
 							if(certTypedate.certTypeCd == "1"){
 								_obj.append("<option value='"+certTypedate.certTypeCd+"' selected='selected'>"+certTypedate.name+"</option>");
 							}else{
@@ -674,13 +673,7 @@ cust = (function(){
 							$("#orderAttrIdCard").attr("type","hidden");
 							$("#sfzorderAttrIdCard").removeAttr("type");
 							$("#queryJbr").attr("disabled","disabled");
-							if(OrderInfo.actionFlag == "111"){
-								$("#queryJbr").hide();
-							} else if(ec.util.isObj(_newUIFalg) && _newUIFalg == "ON" &&  (OrderInfo.actionFlag=="35" || OrderInfo.actionFlag=="34" || OrderInfo.actionFlag=="1" ||OrderInfo.actionFlag=="8")) {
-								$("#whole").hide();
-								$("#only").show();
-							}
-//							$("#queryJbr").hide();
+							$("#queryJbr").hide();
 						}else{
 							$("#jbrsfz").hide();
 							$("#jbrsfz_i").hide();
@@ -690,13 +683,7 @@ cust = (function(){
 							$("#sfzorderAttrIdCard").attr("type","hidden");
 							$("#orderAttrIdCard").removeAttr("type");
 							$("#queryJbr").removeAttr("disabled");
-							if(OrderInfo.actionFlag == "111"){
-								$("#queryJbr").hide();
-							} else if(ec.util.isObj(_newUIFalg) && _newUIFalg == "ON" &&  (OrderInfo.actionFlag=="35" || OrderInfo.actionFlag=="34" || OrderInfo.actionFlag=="1" ||OrderInfo.actionFlag=="8")) {
-								$("#whole").hide();
-								$("#only").show();
-							}
-//							$("#queryJbr").show();
+							$("#queryJbr").show();
 						}
 						$("#photo").show();
 						OrderInfo.virOlId = "";
@@ -710,12 +697,7 @@ cust = (function(){
 							OrderInfo.jbr.identityPic = undefined;
 							OrderInfo.jbr.identityNum = undefined;
 						}
-//						if(OrderInfo.jbr.identityPic){
-//							OrderInfo.jbr.identityPic = undefined;
-//						}
 						if(OrderInfo.preBefore.idPicFlag=="ON"){//实名拍照省份开关为开
-//							$("#photo").show();
-//							$("#queryJbr").show();
 								OrderInfo.jbr.custId = OrderInfo.cust.custId;
 								OrderInfo.jbr.partyName = OrderInfo.cust.partyName;
 								OrderInfo.jbr.telNumber = OrderInfo.cust.telNumber;
@@ -725,14 +707,6 @@ cust = (function(){
 								OrderInfo.jbr.identityPic = OrderInfo.cust.identityPic;
 								OrderInfo.jbr.identityNum = OrderInfo.cust.identityNum;
 						}
-						//jquery mobile 需要刷新才能生效
-//						_obj.selectmenu().selectmenu('refresh');
-//						if(id=='orderIdentidiesTypeCd'){
-//							//创建经办人证件类型选择事件
-////							$("#orderIdentidiesTypeCd option[value='1'").attr("selected", true);
-////							_jbridentidiesTypeCdChoose($("#"+id).children(":first-child"),"orderAttrIdCard");
-//							_jbridentidiesTypeCdChoose(($("#" + id + " option[selected='selected']")),"orderAttrIdCard",_partyTypeCd);
-//						}
 					}
 				}
 	};
@@ -742,11 +716,6 @@ cust = (function(){
 		order.broadband.isSameOne=false;
 		order.broadband.canCallPhote=false;
 		var identidiesTypeCd=$(scope).val();
-//		if(identidiesTypeCd==undefined){
-//			identidiesTypeCd=$("#div_cm_identidiesType  option:selected").val();
-//		}
-		
-		
 		if(identidiesTypeCd==1){
 			$("#jbrsfz").show();
 			$("#jbrsfz_i").show();
@@ -756,18 +725,7 @@ cust = (function(){
 			$("#orderAttrIdCard").attr("type","hidden");
 			$("#sfzorderAttrIdCard").removeAttr("type");
 			$("#queryJbr").attr("disabled","disabled");
-			if(OrderInfo.actionFlag == "111"){
-				$("#queryJbr").hide();
-			} else if(ec.util.isObj(_newUIFalg) && _newUIFalg == "ON" &&  (OrderInfo.actionFlag=="35" || OrderInfo.actionFlag=="34" || OrderInfo.actionFlag=="1" ||OrderInfo.actionFlag=="8")) {
-				$("#whole").hide();
-				$("#only").show();
-			}
-//			$("#queryJbr").hide();
-//			if((OrderInfo.cust.identityCd == 1) && ($("#sfzorderAttrIdCard").val() == OrderInfo.cust.idCardNumber)){
-//				OrderInfo.jbr.identityPic = OrderInfo.cust.identityPic;
-//				OrderInfo.jbr.custId = OrderInfo.cust.custId;
-//			}
-			
+			$("#queryJbr").hide();
 		}else{
 			$("#jbrsfz").hide();
 			$("#jbrsfz_i").hide();
@@ -778,13 +736,7 @@ cust = (function(){
 			$("#sfzorderAttrIdCard").attr("type","hidden");
 			$("#orderAttrIdCard").removeAttr("type");
 			$("#queryJbr").removeAttr("disabled");
-			if(OrderInfo.actionFlag == "111"){
-				$("#queryJbr").show();
-			} else if(ec.util.isObj(_newUIFalg) && _newUIFalg == "ON" &&  (OrderInfo.actionFlag=="35" || OrderInfo.actionFlag=="34" || OrderInfo.actionFlag=="1" ||OrderInfo.actionFlag=="8")) {
-				$("#whole").show();
-				$("#only").hide();
-			}
-//			
+			$("#queryJbr").show();
 		}
 		if(OrderInfo.jbr){
 			OrderInfo.jbr.custId ="";
