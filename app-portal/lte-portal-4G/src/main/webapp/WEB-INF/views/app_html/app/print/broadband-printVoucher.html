@@ -1,5 +1,18 @@
-<div class="main" style="background: #fff; margin: 0; padding: 0; ">
-	<ul class="nav_top" id="changeAUI">
+<div class="main" style="background: #fff; margin: 0; padding: 0; overflow:scroll;">
+	<div class="choice-box" id="changeAUI">
+		<i class="iconfont pull-left p-l-10"></i>
+		<select name="" onchange="common.print.changeAgree(this.value,this);"" id="idtype17" class="myselect select-option dw-hsel" data-role="none" tabindex="-1">
+			<option value="1">业务受理单协议</option>
+			<#if fwhtmlFlag=='ON'>
+			<option value="2">服务协议</option>
+			</#if> 
+			<#if lhhtmlFlag=='ON'>
+			<option value="3">靓号服务协议</option>
+			</#if>
+		</select>
+		<i class="iconfont pull-right p-r-10"></i>
+	</div>
+	<!-- <ul class="nav_top" id="changeAUI">
 		<li  class="active" onclick="common.print.changeAgree('1',this);">业务受理单协议</li> 
 		<#if fwhtmlFlag=='ON'>
 		<li onclick="common.print.changeAgree('2',this);">服务协议</li> 
@@ -7,7 +20,7 @@
 		<#if lhhtmlFlag=='ON'>
 		<li onclick="common.print.changeAgree('3',this);">靓号服务协议</li>
 		</#if>
-	</ul>
+	</ul> -->
 	<div class="info_box" id="info_box">
 		<div id="showFtlHtml" class="info">
 		${htmlStr}
@@ -48,6 +61,7 @@
 <input type="hidden" id="signinput" name="sign" value=""/>
 <script>
 $(function(){
+	order.broadband.init_select();
 	var ss=$(document.body).width()/(595*4/3);
 	var sc=Math.round(ss*100)/100;
 	if(sc<=1){

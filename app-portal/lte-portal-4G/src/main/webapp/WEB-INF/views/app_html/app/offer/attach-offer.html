@@ -48,7 +48,7 @@
 	            <div class="input-group">
 	              <input type="text" class="form-control"id="search_text_${prodId}" name="search_text_${prodId}" onkeydown='if(event.keyCode==13){AttachOffer.searchAttachOfferSpec(${prodId},${param.offerSpecId},${param.prodSpecId})}' aria-describedby="inputSuccess2Status" placeholder="请输入您想要办理的附属业务的名称">
 	              <span class="input-group-btn">
-                      <button class="btn btn-default" type="button" id="btn_show_${prodId}" onclick="AttachOffer.searchAttachOfferSpec(${prodId},${param.offerSpecId},${param.prodSpecId})"> 搜索 </button>
+                      <button class="btn btn-default" type="button" id="btn_show_${prodId}" onclick="AttachOffer.searchAttachOfferSpec('${prodId}','${param.offerSpecId}','${param.prodSpecId}')"> 搜索 </button>
                       <button class="btn btn-default" type="button" id="btn_hide_${prodId}" onclick="AttachOffer.closeSearchAttach(${prodId})" style="display: none;"> 隐藏 </button>
                   </span>
                   </div>

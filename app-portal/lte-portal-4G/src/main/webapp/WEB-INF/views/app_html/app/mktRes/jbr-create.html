@@ -16,8 +16,8 @@
 					 <ul style="list-style-type:none;display:inline;padding-left: 0;">
 					
 		            	<li style="display:inline;"><img onClick="common.callGenerationRec('cust.getjbrGenerationInfos','1')" style=" height: 40px; "src="${contextPath}/image/app-image/shebeisaomiao-xxhdpi_03.png"/></li>
-		            	<li id="nfc" style="display:inline;"><img onClick="common.callGenerationRec('cust.getjbrGenerationInfos','2')" style=" height: 40px; margin-left: 15px;" src="${contextPath}/image/app-image/shebeisaomiao-xxhdpi_05.png"/></li>
-		            	<li id="otg" style="display:inline;"><img onClick="common.callGenerationRec('cust.getjbrGenerationInfos','3')" style=" height: 40px; margin-left: 15px;" src="${contextPath}/image/app-image/otg@2x_03.png"/></li>
+		            	<li id="jbr_nfc" style="display:inline;"><img onClick="common.callGenerationRec('cust.getjbrGenerationInfos','2')" style=" height: 40px; margin-left: 15px;" src="${contextPath}/image/app-image/shebeisaomiao-xxhdpi_05.png"/></li>
+		            	<li id="jbr_otg" style="display:inline;"><img onClick="common.callGenerationRec('cust.getjbrGenerationInfos','3')" style=" height: 40px; margin-left: 15px;" src="${contextPath}/image/app-image/otg@2x_03.png"/></li>
 		            </ul>
 				</div>
 			</div>
@@ -87,7 +87,7 @@
 						</button>
 					</div>
 					<div class="btn-group" role="group">
-						<button type="button" class="btn btn-primary btn-lg" onClick="javascript:mktRes.terminal.closeJBR()">
+						<button type="button" class="btn btn-primary btn-lg" id="newJbrBtn" onClick="javascript:mktRes.terminal.closeJBR()">
 							<span class="glyphicon glyphicon-ok" aria-hidden="true"></span> 确定
 						</button>
 					</div>
@@ -102,10 +102,11 @@ cust.jbrvalidatorForm();
 cust.jbrpartyTypeCdChoose($("#orderPartyTypeCd").children(":first-child"),"orderIdentidiesTypeCd");
  	var ua = navigator.userAgent.toLowerCase();	
 	if (/iphone|ipad|ipod/.test(ua)) {
-		$("#nfc").hide();
-		$("#otg").hide();
+		$("#jbr_nfc").hide();
+		$("#jbr_otg").hide();
 		    //alert("iphone");		
 	} else if (/android/.test(ua)) {
-		    //alert("android");	
+		
+		   // alert("android");	
 	}
 </script>
