@@ -4671,7 +4671,7 @@ order.prodModify = (function(){
      * 橙分期业务标识
      * @private
      */
-    var _queryAgreementType = function () {
+    var _queryAgreementType = function (callback) {
         var param = {
             "areaId": OrderInfo.getAreaId(),
             "prodInfos": [{
@@ -4716,6 +4716,7 @@ order.prodModify = (function(){
                     OrderInfo.isExistCFQ = false;
                     $.alertM(response.data);
                 }
+                eval(callback);
             },
             fail: function () {
                 $.unecOverlay();

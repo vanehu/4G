@@ -169,9 +169,10 @@ rule.rule = (function(){
 	var _credit = function() {
         //如果是拆机，查询橙分期业务标识
         if (OrderInfo.busitypeflag == 8) {
-            order.prodModify.queryAgreementType();
+            order.prodModify.queryAgreementType(_callBackStr + "(" + JSON.stringify(_callBackParam) + ")");
+        } else {
+            eval(_callBackStr + "(" + JSON.stringify(_callBackParam) + ")");
         }
-		eval(_callBackStr + "("+JSON.stringify(_callBackParam) + ")");
 		_closeRuleDiv();
 	};
 	
