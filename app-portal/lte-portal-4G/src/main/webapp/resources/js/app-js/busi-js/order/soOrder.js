@@ -58,10 +58,6 @@ SoOrder = (function() {
 		}else if(OrderInfo.actionFlag==6){//主副卡成员变更
 			OrderInfo.busitypeflag = 3;
 		}else if(OrderInfo.actionFlag==2){//套餐变更
-			if(OrderInfo.preBefore.idPicFlag == "ON" && !OrderInfo.virOlId){
-				$.alert("提示","请前往经办人页面进行实名拍照！");
-				return;
-			}
 			OrderInfo.busitypeflag = 2;
 		}else if(OrderInfo.actionFlag==9){//客户返档
 			if(OrderInfo.preBefore.idPicFlag == "ON" && !OrderInfo.virOlId){
@@ -70,13 +66,14 @@ SoOrder = (function() {
 			}
 			OrderInfo.busitypeflag = 12;
 		}else if(OrderInfo.actionFlag==22){//补换卡
-			if(OrderInfo.preBefore.idPicFlag == "ON" && !OrderInfo.virOlId){
+			//补卡经办人必填  换卡经办人非必填
+			if(OrderInfo.preBefore.idPicFlag == "ON" && !OrderInfo.virOlId && OrderInfo.uimtypeflag == "22"){
 				$.alert("提示","请前往经办人页面进行实名拍照！");
 				return;
 			}
 			OrderInfo.busitypeflag = OrderInfo.uimtypeflag;
 		}else if(OrderInfo.actionFlag==23){//异地补换卡
-			if(OrderInfo.preBefore.idPicFlag == "ON" && !OrderInfo.virOlId){
+			if(OrderInfo.preBefore.idPicFlag == "ON" && !OrderInfo.virOlId && OrderInfo.uimtypeflag == "22"){
 				$.alert("提示","请前往经办人页面进行实名拍照！");
 				return;
 			}

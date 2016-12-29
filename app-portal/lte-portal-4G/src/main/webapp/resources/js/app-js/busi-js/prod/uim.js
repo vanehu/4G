@@ -535,7 +535,27 @@ prod.uim = (function() {
 		if(uimSel !=undefined) {
 			OrderInfo.uimtypeflag = parseInt(uimSel);
 		}
-	}
+		if(OrderInfo.jbr){
+			OrderInfo.jbr.custId = undefined;
+			OrderInfo.jbr.partyName = undefined;
+			OrderInfo.jbr.telNumber = undefined;
+			OrderInfo.jbr.addressStr = undefined;
+			OrderInfo.jbr.identityCd = undefined;
+			OrderInfo.jbr.mailAddressStr = undefined;
+			OrderInfo.jbr.identityPic = undefined;
+			OrderInfo.jbr.identityNum = undefined;
+		}
+		if(OrderInfo.uimtypeflag == "22" && OrderInfo.preBefore.idPicFlag=="ON"){//补卡经办人必填
+				OrderInfo.jbr.custId = OrderInfo.cust.custId;
+				OrderInfo.jbr.partyName = OrderInfo.cust.partyName;
+				OrderInfo.jbr.telNumber = OrderInfo.cust.telNumber;
+				OrderInfo.jbr.addressStr = OrderInfo.cust.addressStr;
+				OrderInfo.jbr.identityCd = OrderInfo.cust.identityCd;
+				OrderInfo.jbr.mailAddressStr = OrderInfo.cust.mailAddressStr;
+				OrderInfo.jbr.identityPic = OrderInfo.cust.identityPic;
+				OrderInfo.jbr.identityNum = OrderInfo.cust.identityNum;
+		} 
+	};
 	return {
 		getMktResCd:getMktResCd,
 		checkUim				: _checkUim,

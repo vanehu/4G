@@ -881,7 +881,7 @@ mktRes.terminal = (function($){
 		}
 		var orderAttrAddr = $.trim($("#orderAttrAddr").val()); //地址
 		var orderAttrPhoneNbr = $.trim($("#orderAttrPhoneNbr").val()); //联系人号码
-		if(OrderInfo.preBefore.idPicFlag=="ON" && OrderInfo.actionFlag!=3){
+		if(OrderInfo.preBefore.idPicFlag=="ON" && OrderInfo.actionFlag!="2" && OrderInfo.actionFlag!="3" && OrderInfo.uimtypeflag == "22"){
 			if(ec.util.isObj($.trim($("#sfzorderAttrIdCard").val())) || ec.util.isObj($.trim($("#orderAttrIdCard").val()))){
 				if(OrderInfo.jbr.identityCd != orderIdentidiesTypeCd || OrderInfo.jbr.identityNum != orderAttrIdCard){
 					OrderInfo.virOlId = "";

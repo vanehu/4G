@@ -45,7 +45,7 @@ SoOrder = (function() {
 	
 	var _checkOlId = function(){
 		
-		if(OrderInfo.preBefore.idPicFlag == "ON"){
+		if(OrderInfo.preBefore.idPicFlag == "ON" ){
 			if(!OrderInfo.virOlId){
 				
 				return false;
@@ -79,13 +79,13 @@ SoOrder = (function() {
 			}
 			OrderInfo.busitypeflag = 12;
 		}else if(OrderInfo.actionFlag==22){//补换卡
-			if(!_checkOlId()){
+			if(!_checkOlId()  && OrderInfo.uimtypeflag == "22"){
 				common.callPhotos('cust.getPicture');
 				return;
 			}
 			OrderInfo.busitypeflag = OrderInfo.uimtypeflag;
 		}else if(OrderInfo.actionFlag==23){//异地补换卡
-			if(!_checkOlId()){
+			if(!_checkOlId()  && OrderInfo.uimtypeflag == "22"){
 				common.callPhotos('cust.getPicture');
 				return;
 			}
@@ -254,10 +254,12 @@ SoOrder = (function() {
 				itemSpecId : CONST.BUSI_ORDER_ATTR.VIROLID,//3转4标志
 				value : OrderInfo.virOlId
 			});
-			custOrderAttrs.push({ //业务类型
-				itemSpecId : CONST.BUSI_ORDER_ATTR.CURIP,
-				value : OrderInfo.curIp
-			});
+			if(OrderInfo.preBefore.idPicFlag == "ON"){
+				custOrderAttrs.push({ //业务类型
+					itemSpecId : CONST.BUSI_ORDER_ATTR.CURIP,
+					value : OrderInfo.curIp
+				});
+			}
 			
 //		} 
 //		else {
@@ -393,11 +395,23 @@ SoOrder = (function() {
 			_createOrder(busiOrders); //新装
 		}else if (OrderInfo.actionFlag==2){ //套餐变更
 			offerChange.changeOffer(busiOrders);	
+			if(OrderInfo.jbr.custId){
+				OrderInfo.orderData.orderList.orderListInfo.handleCustId = OrderInfo.jbr.custId;
+				if(OrderInfo.jbr.custId < -1){
+					OrderInfo.createJbr(busiOrders);
+				}
+			}
 		}else if (OrderInfo.actionFlag==3){ //可选包变更		
 			_createAttOrder(busiOrders); //附属销售品变更
 			if(busiOrders.length==0){
 				$.alert("提示","没有做任何业务，无法提交");
 				return false;
+			}
+			if(OrderInfo.jbr.custId){
+				OrderInfo.orderData.orderList.orderListInfo.handleCustId = OrderInfo.jbr.custId;
+				if(OrderInfo.jbr.custId < -1){
+					OrderInfo.createJbr(busiOrders);
+				}
 			}
 		}else if (OrderInfo.actionFlag==4){ //客户资料变更
 			_createCustOrder(busiOrders,data); //附属销售品变更

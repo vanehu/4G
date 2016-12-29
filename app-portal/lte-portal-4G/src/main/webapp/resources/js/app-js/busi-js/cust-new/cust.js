@@ -12,7 +12,7 @@ cust = (function(){
 	var _checkUserInfo = {
 			 accNbr: ""
 	};
-	var _newUIFalg = "OFF";
+	var _newUIFalg = "ON";
 	var _clearCustForm = function(){
 		$('#cmCustName').val("");
 		$('#cmAddressStr').val("");
@@ -62,7 +62,7 @@ cust = (function(){
 	}
 	//客户新增提交
 	var _newCustSubmit = function(){
-		if(ec.util.isObj(_newUIFalg) && _newUIFalg == "ON" &&  (OrderInfo.actionFlag=="35" || OrderInfo.actionFlag=="34" || OrderInfo.actionFlag=="112" ||OrderInfo.actionFlag=="1" ||OrderInfo.actionFlag=="8")){
+		if(OrderInfo.actionFlag=="35" || OrderInfo.actionFlag=="34" || OrderInfo.actionFlag=="112" ||OrderInfo.actionFlag=="1" ||OrderInfo.actionFlag=="8"){
 			var validate=$("#custFormdata").Validform();
 			if(!validate.check()){
 				return;
@@ -683,7 +683,7 @@ cust = (function(){
 							$("#queryJbr").attr("disabled","disabled");
 							if(OrderInfo.actionFlag == "111"){
 								$("#queryJbr").hide();
-							} else if(ec.util.isObj(_newUIFalg) && _newUIFalg == "ON" &&  (OrderInfo.actionFlag=="35" || OrderInfo.actionFlag=="34" || OrderInfo.actionFlag=="1" ||OrderInfo.actionFlag=="8")) {
+							} else{
 								$("#whole").hide();
 								$("#only").show();
 							}
@@ -699,7 +699,7 @@ cust = (function(){
 							$("#queryJbr").removeAttr("disabled");
 							if(OrderInfo.actionFlag == "111"){
 								$("#queryJbr").hide();
-							} else if(ec.util.isObj(_newUIFalg) && _newUIFalg == "ON" &&  (OrderInfo.actionFlag=="35" || OrderInfo.actionFlag=="34" || OrderInfo.actionFlag=="1" ||OrderInfo.actionFlag=="8")) {
+							} else {
 								$("#whole").hide();
 								$("#only").show();
 							}
@@ -749,11 +749,6 @@ cust = (function(){
 		order.broadband.isSameOne=false;
 		order.broadband.canCallPhote=false;
 		var identidiesTypeCd=$(scope).val();
-//		if(identidiesTypeCd==undefined){
-//			identidiesTypeCd=$("#div_cm_identidiesType  option:selected").val();
-//		}
-		
-		
 		if(identidiesTypeCd==1){
 			$("#jbrsfz").show();
 			$("#jbrsfz_i").show();
@@ -765,16 +760,10 @@ cust = (function(){
 			$("#queryJbr").attr("disabled","disabled");
 			if(OrderInfo.actionFlag == "111"){
 				$("#queryJbr").hide();
-			} else if(ec.util.isObj(_newUIFalg) && _newUIFalg == "ON" &&  (OrderInfo.actionFlag=="35" || OrderInfo.actionFlag=="34" || OrderInfo.actionFlag=="1" ||OrderInfo.actionFlag=="8")) {
+			} else{
 				$("#whole").hide();
 				$("#only").show();
 			}
-//			$("#queryJbr").hide();
-//			if((OrderInfo.cust.identityCd == 1) && ($("#sfzorderAttrIdCard").val() == OrderInfo.cust.idCardNumber)){
-//				OrderInfo.jbr.identityPic = OrderInfo.cust.identityPic;
-//				OrderInfo.jbr.custId = OrderInfo.cust.custId;
-//			}
-			
 		}else{
 			$("#jbrsfz").hide();
 			$("#jbrsfz_i").hide();
@@ -787,7 +776,7 @@ cust = (function(){
 			$("#queryJbr").removeAttr("disabled");
 			if(OrderInfo.actionFlag == "111"){
 				$("#queryJbr").show();
-			} else if(ec.util.isObj(_newUIFalg) && _newUIFalg == "ON" &&  (OrderInfo.actionFlag=="35" || OrderInfo.actionFlag=="34" || OrderInfo.actionFlag=="1" ||OrderInfo.actionFlag=="8")) {
+			} else{
 				$("#whole").show();
 				$("#only").hide();
 			}
@@ -880,9 +869,6 @@ cust = (function(){
 	//证件类型选择事件
 	var _useridentidiesTypeCdChoose = function(scope,id) {
 		var identidiesTypeCd=$(scope).val();
-//		if(identidiesTypeCd==undefined){
-//			identidiesTypeCd=$("#div_cm_identidiesType  option:selected").val();
-//		}
 		if(identidiesTypeCd==-1){
 			$("#cust_identityNum_choose_label").html("电话号码"); 
 		} else {
@@ -895,14 +881,12 @@ cust = (function(){
 			$("#userqtzj").hide();
 			$("#userOrderAttrName").attr("readonly","readonly");
 			$("#userOrderAttrAddr").attr("readonly","readonly");
-//			$('#jbrFormdata').data('bootstrapValidator').enableFieldValidators("orderAttrIdCard",true,"sfzorderAttrIdCard");
 		}else{
 			$("#usersfz").hide();
 			$("#usersfz_i").hide();
 			$("#userqtzj").show();
 			$("#userOrderAttrName").removeAttr("readonly");
 			$("#userOrderAttrAddr").removeAttr("readonly");
-//			$('#jbrFormdata').data('bootstrapValidator').enableFieldValidators("orderAttrIdCard",true,"orderAttrIdCard");
 		}
 	};
 	
@@ -922,11 +906,9 @@ cust = (function(){
 	};
 	//校验表单提交
 	var _jbrvalidatorForm=function(){
-		$.alert("dd","OrderInfo.actionFlag -- " + OrderInfo.actionFlag);
 		var propertiesKey = "NEWUIFLAG_"+(OrderInfo.staff.soAreaId+"").substring(0,3);
 		_newUIFalg = offerChange.queryPortalProperties(propertiesKey);
-		if(ec.util.isObj(_newUIFalg) && _newUIFalg == "ON" &&  (OrderInfo.actionFlag=="35" || OrderInfo.actionFlag=="34"  ||OrderInfo.actionFlag=="1" ||OrderInfo.actionFlag=="8")  || OrderInfo.actionFlag=="111"){
-			
+		if(OrderInfo.actionFlag=="35" || OrderInfo.actionFlag=="34"  ||OrderInfo.actionFlag=="1" ||OrderInfo.actionFlag=="8"  || OrderInfo.actionFlag=="111"){
 			var jbrFormdata = $("#jbrFormdata").Validform({
 				btnSubmit:"queryJbr",
 				ignoreHidden:true,
@@ -1273,16 +1255,6 @@ cust = (function(){
 		var BO_ACTION_TYPE=CONST.BO_ACTION_TYPE.CUSTINFOMODIFY;
 		OrderInfo.initData(CONST.ACTION_CLASS_CD.CUST_ACTION,BO_ACTION_TYPE,4,CONST.getBoActionTypeName(BO_ACTION_TYPE),"");
 
-		/*OrderInfo.staff = { //员工登陆信息
-			staffId : sessionStaff.staffId,  //员工id
-			channelId : sessionStaff.currentChannelId,   //受理渠道id
-			channelName: "",
-			areaId : 0,    //受理地区id
-			areaCode : 0,
-			soAreaId : sessionStaff.currentAreaId,    //新装受理地区id
-			soAreaCode : 0, 
-			distributorId : "" //转售商标识
-		};*/
 		SoOrder.initFillPage();
 	};
 	
