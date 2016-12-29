@@ -4674,7 +4674,7 @@ order.prodModify = (function(){
                     $.each(prodInfoList, function () {
                         if (this.acctNbr == _choosedProdInfo.accNbr) {
                             $.each(this.agreements, function () {
-                                if (this.prodOfferId == _choosedProdInfo.prodOfferId) {
+                                if (_isCFQ(this.agreementType)) {
                                     agreementType = this.agreementType;
                                 }
                             });
