@@ -150,6 +150,7 @@ order.calcharge = (function(){
 						val=val.substr(5,val.length);
 						var aa=($("#backAmount_"+val).val())*1;
 						backAmount=backAmount+aa;
+						realAmount = realAmount - aa;
 					}
 				}
 			});
