@@ -264,20 +264,12 @@ OrderInfo = (function() {
 				boPartyContactInfo : []
 			}
 		};
-//		if(ec.util.isObj(accNbr)){ //接入号
-//			busiOrder.busiObj.accessNumber = accNbr;
-//		}
 		cust.getJbrInfo();
 		busiOrder.data.boCustInfos.push(OrderInfo.boJbrInfos);
 		busiOrder.data.boCustIdentities.push(OrderInfo.boJbrIdentities);
-//		if(OrderInfo.actionFlag==1 || OrderInfo.actionFlag==14){
-//			if(OrderInfo.boPartyContactInfo.contactName == ""){
-//				var jbrName = OrderInfo.boJbrInfos.name;
-//				OrderInfo.boPartyContactInfo.contactName = jbrName;
-//				OrderInfo.boPartyContactInfo.mobilePhone = accNbr;
-//			}
-//			busiOrder.data.boPartyContactInfo.push(OrderInfo.boPartyContactInfo);
-//		}
+		if(OrderInfo.preBefore.idPicFlag == "ON" && ec.util.isObj(OrderInfo.jbr.telNumber)){
+			busiOrder.data.boPartyContactInfo.push(OrderInfo.bojbrPartyContactInfo);
+		}
 		busiOrders.push(busiOrder);
 	}
 	
@@ -314,23 +306,8 @@ OrderInfo = (function() {
 		if(ec.util.isObj(accNbr)){ //接入号
 			busiOrder.busiObj.accessNumber = accNbr;
 		}
-//		cust.getUserInfo();
-//		$.each(OrderInfo.boUserInfosArr,function(i,boUserInfos) {
-//			busiOrder.data.boCustInfos.push(OrderInfo.boUserInfos);
-//		});
-//		$.each(OrderInfo.boUserIdentitiesArr,function(i,boUserIdentities) {
-//			busiOrder.data.boCustIdentities.push(OrderInfo.boUserIdentities);
-//		});
 		busiOrder.data.boCustInfos.push(OrderInfo.boUserInfosArr[i]);
 		busiOrder.data.boCustIdentities.push(OrderInfo.boUserIdentitiesArr[i]);
-//		if(OrderInfo.actionFlag==1 || OrderInfo.actionFlag==14){
-//			if(OrderInfo.boPartyContactInfo.contactName == ""){
-//				var userName = OrderInfo.boUserInfos.name;
-//				OrderInfo.boPartyContactInfo.contactName = userName;
-//				OrderInfo.boPartyContactInfo.mobilePhone = accNbr;
-//			}
-//			busiOrder.data.boPartyContactInfo.push(OrderInfo.boPartyContactInfo);
-//		}
 		busiOrders.push(busiOrder);
 	}
 	
@@ -908,6 +885,28 @@ OrderInfo = (function() {
         statusCd : "100001"//订单状态
 	};
 	
+	//经办人联系人节点
+	var _bojbrPartyContactInfo = {
+		contactAddress : "",//参与人的联系地址
+        contactDesc : "",//参与人联系详细信息
+        contactEmployer  : "",//参与人的联系单位
+        contactGender  : "1",//参与人联系人的性别
+        contactId : "",//参与人联系信息的唯一标识
+        contactName : "",//参与人的联系人名称
+        contactType : "10",//联系人类型
+        eMail : "",//参与人的eMail地址
+        fax : "",//传真号
+        headFlag : "1",//是否首选联系人 1是  2否
+        homePhone : "",//参与人的家庭联系电话
+        mobilePhone : "",//参与人的移动电话号码
+        officePhone : "",//参与人办公室的电话号
+        postAddress : "",//参与人的邮件地址
+        postcode : "",//参与人联系地址的邮政编码
+        staffId : 0,//员工ID
+        state : "ADD",//状态 新增ADD  删除DEL
+        statusCd : "100001"//订单状态
+	};
+	
 	//客户属性
 	var _boCustProfiles = {};
 	
@@ -1382,6 +1381,7 @@ OrderInfo = (function() {
 		boJbrIdentities			:_boJbrIdentities,
 		virOlId					:_virOlId,
 		curIp					:_curIp,
-		jbrPageFlag				:_jbrPageFlag
+		jbrPageFlag				:_jbrPageFlag,
+		bojbrPartyContactInfo	:_bojbrPartyContactInfo
 	};
 })();

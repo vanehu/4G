@@ -1778,7 +1778,6 @@ order.main = (function(){
 				}
 				if(response.data.indexOf("false") ==0) {
 					$.unecOverlay();
-//					$.alert("提示","抱歉，没有定位到客户，请尝试其他客户。");
 					
 					if(!ec.util.isObj($.trim($("#orderAttrName").val()))||!ec.util.isObj($.trim($("#orderAttrAddr").val()))){
 						if(!ec.util.isObj($.trim($("#orderAttrName").val()))){
@@ -1790,49 +1789,25 @@ order.main = (function(){
 							return false;
 						}
 					} 
-					
-						
 						if(OrderInfo.cust.custId == -1 && OrderInfo.cust.identityCd == identityCd 
 								&& OrderInfo.cust.identityNum == identityNum){
-							$.alert("提示","请对经办人进行拍照");
 							OrderInfo.jbr.custId = OrderInfo.cust.custId;
 							OrderInfo.jbr.identityNum = identityNum;
 							OrderInfo.jbr.identityCd = identityCd;
 							return;
 						}
-						$.alert("提示","请对经办人进行拍照");
 						cust.jbrSubmit();
 					 return;
 				}else{
 				$.unecOverlay();
-				cust.jumpAuthflag = $(response.data).find('#jumpAuthflag').val();
-				var custInfoSize = $(response.data).find('#custInfoSize').val();
-				var custInfos = $(response.data).find('#custInfos');
+				var data = $.parseHTML(response.data);
+				cust.jumpAuthflag = $(data).find('#jumpAuthflag').val();
+				var custInfoSize = $(data).find('#custInfoSize').val();
 				// 使用人定位时，存在多客户的情况
-				if (custInfoSize == 1) {
-					_showJbrInfo($(response.data).find('#custInfos'));
+				if (custInfoSize >= 1) {
+					_showJbrInfo($(data).find('#custInfos'));
 					
 				} 
-				
-				else if (custInfoSize > 1) {
-					_showJbrInfo(custInfos);
-				} else {
-					$.alert("提示","请对经办人进行拍照");
-					cust.jbrSubmit();
-				}
-//				$(".userclose").off("click").on("click",function(event) {
-//					try {
-//						easyDialog.close();
-//					} catch (e) {
-//						$('#choose_multiple_user_dialog').hide();
-//						$('#overlay').hide();
-//					}
-//					authFlag="";
-//					$(".usersearchcon").hide();
-//				});
-//				if($("#custListTable").attr("custInfoSize")=="1"){
-//					$(".usersearchcon").hide();
-//				}
 			}
 			},
 			"fail":function(response){
@@ -1872,9 +1847,6 @@ order.main = (function(){
 				userCustId:$(scope).attr("userCustId"),//使用人客户id
 				isSame:$(scope).attr("isSame")//使用人名称与账户名称是否一致
 				};
-			//设置被选择标识
-			_checkUserInfo.accNbr = "";
-			_checkUserInfo.accNbr = $(scope).attr("accNbr");
 		if(_choosedCustInfo != null && _choosedCustInfo.custId){
 			var custInfo = _choosedCustInfo;
 			//将客户信息作为使用人tmpChooseUserInfo，确认后保存到OrderInfo.choosedUserInfos
@@ -1893,7 +1865,6 @@ order.main = (function(){
 			$('#orderAttrName').val(custInfo.partyName);
 			$('#orderAttrAddr').val(custInfo.addressStr);
 			$('#orderAttrPhoneNbr').val(custInfo.accNbr);
-			$.alert("提示","经办人信息查询成功！\n请对经办人进行拍照");
 		} 
 	};
 

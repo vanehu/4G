@@ -13,6 +13,7 @@ mktRes.terminal = (function($){
 	var hytcmc = "";//合约名称
 	var hytcid = "";//合约id
 	var isSelect = "N";//是否已经选择合约依赖
+	var _isLj=false;//是否购裸机
 	/**
 	 * 校验是否可以进入下一步
 	 */
@@ -745,6 +746,7 @@ mktRes.terminal = (function($){
 				});
 			}*/
 			$("#terminalMain").hide();
+			mktRes.terminal.isLj=true;
 			SoOrder.getTokenSynchronize();
 			//订单提交
 			SoOrder.submitOrder(data);
@@ -1037,7 +1039,8 @@ mktRes.terminal = (function($){
 		closeJBR            :_closeJBR,
 		showJBR             :_showJBR,
 		closeUSER			:_closeUSER,
-		checkJBR			:_checkJBR
+		checkJBR			:_checkJBR,
+		isLj                :_isLj
 	};
 })(jQuery);
 $(function() {

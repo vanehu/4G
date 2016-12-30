@@ -168,6 +168,7 @@ cust = (function(){
 	};
 	
 	var _jbrSubmit = function(){
+		
 		OrderInfo.jbr.custId = -2;//客户地区
 		OrderInfo.jbr.partyName = $('#orderAttrName').val();//经办人名称
 		OrderInfo.jbr.areaId = OrderInfo.staff.areaId;//经办人地区
@@ -190,9 +191,10 @@ cust = (function(){
 			_getJbrInfo();
 			data.boCustInfos.push(OrderInfo.boJbrInfos);
 			data.boCustIdentities.push(OrderInfo.boJbrIdentities);
-//			if($.trim($('#contactName').val()).length>0){
-//				data.boPartyContactInfo.push(OrderInfo.boPartyContactInfo);
-//			}
+			//若用户有填写经办人联系号码，则新建经办人时添加联系人信息，否则不添加联系人信息
+			if(ec.util.isObj(OrderInfo.jbr.telNumber)){
+				data.boPartyContactInfo.push(OrderInfo.bojbrPartyContactInfo);
+			}
 	}
 	
 	//拼接经办人信息跟经办人属性从jbr节点解析到boJbrInfos，boJbrIdentities
@@ -211,6 +213,18 @@ cust = (function(){
 		OrderInfo.boJbrIdentities.identidiesPic = OrderInfo.jbr.identityPic;//证件照片
 		OrderInfo.boJbrIdentities.isDefault = "Y";
 		OrderInfo.boJbrIdentities.state = "ADD";
+		
+		OrderInfo.bojbrPartyContactInfo.staffId 		= OrderInfo.staff.staffId;
+		OrderInfo.bojbrPartyContactInfo.contactName 	= $.trim($("#orderAttrName").val());
+		OrderInfo.bojbrPartyContactInfo.mobilePhone 	= $.trim($("#orderAttrPhoneNbr").val());
+		OrderInfo.bojbrPartyContactInfo.contactAddress 	= $.trim($("#orderAttrAddr").val());
+		OrderInfo.bojbrPartyContactInfo.contactGender   = "1";//性别，默认为男
+		//根据身份证判断性别，无从判别默认为男
+		if(OrderInfo.boJbrIdentities.identidiesTypeCd == "1"){
+			var identityNum = OrderInfo.boJbrIdentities.identityNum;
+			identityNum = parseInt(identityNum.substring(16,17));//取身份证第17位判断性别，奇数男，偶数女
+			OrderInfo.bojbrPartyContactInfo.contactGender = (identityNum % 2) == 0 ? "2" : "1";//1男2女
+		}
 	};
 	
 	//拼接客户信息跟客户属性从cust节点解析到boCustInfos，boCustIdentities

@@ -59,6 +59,9 @@ common = (function($) {
 			param.actionFlag = OrderInfo.actionFlag;
 		}
 		var method=urlParams.method;// /app/prodModify/custAuth
+//		if(method == "/app/order/broadband/prepare"){
+//		method = "/app/cust/query";
+//	}
 		$.callServiceAsHtml(contextPath+method,param,{
 			"before":function(){
 				$.ecOverlay("正在努力加载中，请稍等...");
@@ -842,6 +845,7 @@ common = (function($) {
 	}
 	//宽带甩单经办调用摄像头拍照
 	var _callPhotos2=function(method){
+		var params = {};
 		if(order.broadband.haveCallPhote && order.broadband.resetId == false){
 			var url=contextPath+"/app/order/getTransactionID";
 			$.callServiceAsJson(url, params, {
@@ -851,7 +855,7 @@ common = (function($) {
 				"done" : function(response){
 					$.unecOverlay();
 					if (response.code == 0) {
-						$("#TransactionID").val(response.data)
+						$("#TransactionID").val(response.data);
 						order.broadband.resetId = true;
 						common.callPhotos2('cust.getPicture2');
 					}else{

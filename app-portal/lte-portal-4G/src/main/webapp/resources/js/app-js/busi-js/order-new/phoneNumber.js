@@ -310,7 +310,7 @@ order.phoneNumber = (function(){
 				if(!response||response.code != 0){
 					 response.data='查询失败,稍后重试';
 				}
-				$("#phoneNumber_a").show();
+				//$("#phoneNumber_a").show();
 				var content$ = $("#phonenumber-list2");
 				content$.html(response.data);
 				$("#secondaryCardModal").modal("show");

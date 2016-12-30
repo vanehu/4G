@@ -1010,6 +1010,9 @@ SoOrder = (function() {
 		
 		$("#order-content").show();
 		//$("#main_conetent").show();
+		if (mktRes.terminal.isLj) {//购裸机返回修改显示
+			$("#terminalMain").show();
+		}
 
 		$("#order-confirm").hide();
 		//SoOrder.showStep(1);
