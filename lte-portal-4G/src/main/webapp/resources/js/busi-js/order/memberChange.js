@@ -592,11 +592,11 @@ order.memberChange = function(){
 							$.alert("提示",custinfolist[i].accNbr+"不是在用产品！");
 							return;
 						}
-						/*if(OrderInfo.actionFlag!=1 && prodInstInfos.feeType.feeType!=order.prodModify.choosedProdInfo.feeType){
+						if(OrderInfo.actionFlag!=1 && prodInstInfos.feeType.feeType!=order.prodModify.choosedProdInfo.feeType){
 							orderflag = false;
 							$.alert("提示",custinfolist[i].accNbr+"和主卡的付费类型不一致！");
 							return;
-						}*/
+						}
 						if(prodInstInfos.productId=="280000000"){
 							$.alert("提示",custinfolist[i].accNbr+"是无线宽带，不能纳入！");
 							return false;

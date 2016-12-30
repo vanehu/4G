@@ -44,7 +44,7 @@ order.main = (function(){
 		if (param == undefined || !param) {
 			param = _getTestParam();
 		}
-		/*if(!ec.util.isArray(OrderInfo.oldprodInstInfos)){
+		if(!ec.util.isArray(OrderInfo.oldprodInstInfos)){
 			if(OrderInfo.actionFlag == 6){//主副卡成员变更 付费类型判断 如果一致才可以进行加装
 				var is_same_feeType=false;//
 				if(param.feeTypeMain=="2100" && (OrderInfo.offerSpec.feeType=="2100"||OrderInfo.offerSpec.feeType=="3100"||OrderInfo.offerSpec.feeType=="3101"||OrderInfo.offerSpec.feeType=="3103")){
@@ -59,7 +59,7 @@ order.main = (function(){
 					return;
 				}
 			}
-		}*/
+		}
 		$.callServiceAsHtml(contextPath+"/order/main",param,{
 			"before":function(){
 				$.ecOverlay("<strong>正在加载中,请稍等...</strong>");
