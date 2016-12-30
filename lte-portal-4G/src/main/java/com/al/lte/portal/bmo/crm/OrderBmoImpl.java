@@ -3129,15 +3129,6 @@ public class OrderBmoImpl implements OrderBmo {
         } else{
         	return false;
         }
-       
-        
-    	//针对每笔订单的virOlId，判断经办人是否老客户，virOlId在session封装为true表示老客户，否则新客户
-//    	sessionKey = ServletUtils.getSessionAttribute(request, virOlId  + "qryCust");
-//        boolean isExitHandleCust = sessionKey == null ? false : (Boolean) sessionKey;
-//    	if(isExitHandleCust){//经办人是老客户
-//    		经办人是老客户，无法获取姓名、地址等用于签名校验的数据，只能判断是否读卡
-//    		sessionKey = ServletUtils.getSessionAttribute(request, Const.SESSION_SIGNATURE_HANDLE_CUST);
-//    	}
 
         for (Map<String, Object> custOrder : custOrderList) {
             List<Map<String, Object>> busiOrderList = (List<Map<String, Object>>) custOrder.get("busiOrder");

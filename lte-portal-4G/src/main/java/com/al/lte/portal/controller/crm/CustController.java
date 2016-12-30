@@ -364,12 +364,6 @@ public class CustController extends BaseController {
 						PageModel<Map<String, Object>> pm = PageUtil.buildPageModel(1, 10, custInfosWithNbr.size(),custInfosWithNbr);
 			    		model.addAttribute("pageModel", pm);
 					}
-				
-					//1.经办人身份证读卡；2.读卡后查询结果为老客户，则在session中标识，用以订单提交验证
-					if(paramMap.get("virOlId") != null && "1".equals(paramMap.get("identityCd"))){
-						String sessionKey = paramMap.get("virOlId").toString() + "qryCust";
-						ServletUtils.setSessionAttribute(super.getRequest(), sessionKey, true);
-					}
 				}else{
 					/*int count = (Integer) httpSession.getAttribute(sessionStaff.getStaffCode()+"custcount")+10;
 					httpSession.setAttribute(sessionStaff.getStaffCode()+"custcount", count);*/

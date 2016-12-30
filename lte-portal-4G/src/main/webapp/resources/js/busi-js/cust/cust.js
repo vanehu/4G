@@ -2838,6 +2838,7 @@ order.cust = (function(){
 		}
 		return isSelfChannel;
 	};
+	
 	// 填单页面经办人读卡
 	var _readCertWhenOrder = function() {
 		man = cert.readCert();
@@ -2848,25 +2849,104 @@ order.cust = (function(){
 		_setValueForAgentOrderSpan(man.resultContent);
 		if (CONST.realNamePhotoFlag == "ON") {
 		    if (undefined != man.resultContent.identityPic && null != man.resultContent.identityPic && "" != man.resultContent.identityPic) {
-		      		$("#img_Cert").attr("src", "data:image/jpeg;base64," + man.resultContent.identityPic);
-		      		OrderInfo.bojbrCustIdentities.identidiesPic = man.resultContent.identityPic;
-			      _showCertPicture();
+	      		$("#img_Cert").attr("src", "data:image/jpeg;base64," + man.resultContent.identityPic);
+	      		OrderInfo.bojbrCustIdentities.identidiesPic = man.resultContent.identityPic;
+		      _showCertPicture();
 			} else{
 				$.alert("错误", "当前经办人身份证照片为空，无法继续受理，请确认。");
 				return;
 			}
-	  }
+		}
 	};
 	
-	function _showCertPicture(){
-//		var  orderIdentidiesTypeCd = ec.util.defaultStr($("#orderIdentidiesTypeCd").val());
-//		var  identityNum = ec.util.defaultStr($("#orderAttrIdCard").val());
-//		var  orderAttrName = ec.util.defaultStr($("#orderAttrName").val());
-//		var  orderAttrAddr = ec.util.defaultStr($("#orderAttrAddr").val());
-//		if(orderIdentidiesTypeCd=="" || identityNum =="" || orderAttrName==""|| orderAttrAddr==""){
-//			$.alert("提示","经办人信息不完整，请重新填写完整！");
-//			return;
-//		}
+	 var _showCertPicture = function(){
+		_queryUser();//查询经办人
+	};
+
+	// 使用人/政企-查询
+	function _queryUser(){
+		var param = {
+			"areaId" 			:"",
+			"acctNbr"			:"",
+			"partyName"			:"",
+			"diffPlace"			:"local",
+			"queryType" 		:"",
+			"identityCd"		:$("#orderIdentidiesTypeCd").val(),
+			"identityNum"		:$.trim($("#orderAttrIdCard").val()),
+			"custQueryType"		:"",
+			"queryTypeValue"	:"",
+			"identidies_type"	:$("#orderIdentidiesTypeCd  option:selected").text(),
+		};
+		$.callServiceAsHtml(contextPath + "/cust/queryCust", param, {
+			"before":function(){
+				$.ecOverlay("<strong>正在查询经办人信息, 请稍等...</strong>");
+			},"done" : function(response){
+				_fillHandleCustInfos(response);
+			},"always":function(){
+				$.unecOverlay();
+				_showCameraView();
+			}
+		});
+	};
+	
+	//往订单信息中填充经办人信息
+	var _fillHandleCustInfos = function(response){
+		//判断新老用户封装用户信息
+		var custInfoSize = $(response.data).find('#custInfoSize').val();
+		if (parseInt(custInfoSize) >= 1) {
+			var scope = $(response.data).find('#custInfos').eq(0);//默认取第一个节点
+			_setValueForAgentOrderSpan({
+				"partyName"		:$(scope).attr("partyName"),
+				"certAddress"	:$(scope).attr("addressStr"),
+				"certNumber"	:$(scope).attr("idCardNumber")
+			});
+			OrderInfo.handleCustId = $(scope).attr("custId");//经办人客户ID
+			OrderInfo.bojbrCustInfos.name = $(scope).attr("partyName");
+			OrderInfo.bojbrCustInfos.addressStr = $(scope).attr("addressStr");
+			OrderInfo.bojbrCustIdentities.identityNum = $(scope).attr("idCardNumber");
+		} else{
+			var orderAttrName = $.trim($("#orderAttrName").val());
+			$.confirm("确认","没有查询到客户信息["+orderAttrName+"]，系统将自动创建经办人客户，是否确认继续受理？",{
+				yes:function(){
+					OrderInfo.handleCustId = "";
+					OrderInfo.ifCreateHandleCust = true;//需要新建经办人
+					//1.经办人客户信息
+					OrderInfo.bojbrCustInfos.name			=orderAttrName;//客户名称
+					OrderInfo.bojbrCustInfos.areaId			=OrderInfo.getAreaId();//客户地区
+					OrderInfo.bojbrCustInfos.telNumber		=$.trim($("#orderAttrPhoneNbr").val());//联系电话
+					OrderInfo.bojbrCustInfos.addressStr		=$.trim($("#orderAttrAddr").val());//客户地址
+					OrderInfo.bojbrCustInfos.partyTypeCd	=$.trim($("#orderPartyTypeCd").val());//客户类型---
+					OrderInfo.bojbrCustInfos.mailAddressStr	=$.trim($("#orderAttrAddr").val());//通信地址
+					OrderInfo.bojbrCustInfos.defaultIdTycre	=$.trim($("#orderIdentidiesTypeCd").val());//证件类型
+					//2.经办人证件信息
+					OrderInfo.bojbrCustIdentities.identidiesTypeCd = $.trim($("#orderIdentidiesTypeCd").val());//证件类型
+					OrderInfo.bojbrCustIdentities.identityNum = $.trim($("#orderAttrIdCard").val());//证件号码
+					//3.若用户有填写经办人联系号码，则新建经办人时添加联系人信息，否则不添加联系人信息
+					if(ec.util.isObj(OrderInfo.bojbrCustInfos.telNumber)){
+						OrderInfo.bojbrPartyContactInfo.staffId 		= OrderInfo.staff.staffId;
+						OrderInfo.bojbrPartyContactInfo.contactName 	= $.trim($("#orderAttrName").val());
+						OrderInfo.bojbrPartyContactInfo.mobilePhone 	= $.trim($("#orderAttrPhoneNbr").val());
+						OrderInfo.bojbrPartyContactInfo.contactAddress 	= $.trim($("#orderAttrAddr").val());
+						//根据身份证判断性别，无从判别默认为男
+						if(OrderInfo.bojbrCustIdentities.identidiesTypeCd == "1"){
+							var identityNum = OrderInfo.bojbrCustIdentities.identityNum;
+							identityNum = parseInt(identityNum.substring(16,17));//取身份证第17位判断性别，奇数男，偶数女
+							OrderInfo.bojbrPartyContactInfo.contactGender = (identityNum % 2) == 0 ? "2" : "1";//1男2女
+						} else{
+							OrderInfo.bojbrPartyContactInfo.contactGender = "1";//性别，默认为男
+						}
+					}
+				},
+				no:function(){
+					_close();//关闭摄像头及弹框
+					return;
+				}
+			});
+		}
+	};
+	
+	//展示拍照弹出加载摄像头
+	var _showCameraView = function(){
 		easyDialog.open({
 			container : "ec-dialog-photo-graph"
 		});
@@ -2892,7 +2972,7 @@ order.cust = (function(){
 		$("#rePhotos").off("click");
 		$("#confirmAgree").off("click");
 		_getCameraInfo();
-	}
+	};
 	
 	var _getCameraInfo = function(){
 		//获取摄像头信息
@@ -2912,51 +2992,7 @@ order.cust = (function(){
 			return;
 		}
 	};
-	// 使用人/政企-查询
-	function _queryUser(){
-		var isExists =false;
-		var identityCd="";
-		var diffPlace="";
-		var acctNbr="";
-		var identityNum="";
-		var queryType="";
-		var queryTypeValue="";
-		identityCd=$("#orderIdentidiesTypeCd").val();
-		identityNum=$.trim($("#orderAttrIdCard").val());
-		diffPlace="local";
-		areaId="";
-		var param = {
-				"acctNbr":"", //17706303974
-				"identityCd":identityCd,
-				"identityNum":identityNum,
-				"partyName":"",
-				"custQueryType":"",
-				"diffPlace":diffPlace,
-				"areaId" : areaId,
-				"queryType" :queryType,
-				"queryTypeValue":queryTypeValue,
-				"identidies_type":$("#orderIdentidiesTypeCd  option:selected").text(),
-				"virOlId":OrderInfo.virOlId
-		};
-		var response = $.callServiceAsHtml(contextPath+"/cust/queryCust",param);
-		var custInfoSize = $(response.data).find('#custInfoSize').val();
-			if (parseInt(custInfoSize) >= 1) {
-				var scope = $(response.data).find('#custInfos').eq(0);//默认取第一个节点
-				$("#orderAttrName").val($(scope).attr("partyName"));
-				$("#orderAttrAddr").val($(scope).attr("addressStr"));
-				$("#orderAttrIdCard").val($(scope).attr("idCardNumber"));
-				$("#orderIdentidiesTypeCd").val($(scope).attr("identityCd"));
-				OrderInfo.handleCustId = $(scope).attr("custId");//经办人客户ID
-				OrderInfo.bojbrCustIdentities.identityNum = $(scope).attr("idCardNumber");
-				OrderInfo.bojbrCustInfos.name = $(scope).attr("partyName");
-				OrderInfo.bojbrCustInfos.addressStr = $(scope).attr("addressStr");
-				isExists = true;
-			} else{
-				OrderInfo.handleCustId = "";
-				OrderInfo.ifCreateHandleCust = true;//需要新建经办人
-			}
-		return isExists;
-	};
+	
 	// 创建视频(重新拍照)
 	var _createVideo = function() {
 		//创建视频
@@ -3091,34 +3127,6 @@ order.cust = (function(){
 			if(response.code==0 && response.data){
 				isUploadImageSuccess = true;
 				OrderInfo.virOlId = response.data.virOlId;
-				if (!_queryUser()) {
-					//1.经办人客户信息
-					OrderInfo.bojbrCustInfos.name=$.trim($("#orderAttrName").val());//客户名称
-					OrderInfo.bojbrCustInfos.areaId=OrderInfo.getAreaId();//客户地区
-					OrderInfo.bojbrCustInfos.partyTypeCd=$("#orderPartyTypeCd").val();//客户类型---
-					OrderInfo.bojbrCustInfos.defaultIdTycre=$.trim($("#orderIdentidiesTypeCd").val());//证件类型
-					OrderInfo.bojbrCustInfos.addressStr=$.trim($("#orderAttrAddr").val());//客户地址
-					OrderInfo.bojbrCustInfos.mailAddressStr=$.trim($("#orderAttrAddr").val());;//通信地址
-					OrderInfo.bojbrCustInfos.telNumber=$.trim($("#orderAttrPhoneNbr").val());//联系电话
-					//2.经办人证件信息
-					OrderInfo.bojbrCustIdentities.identidiesTypeCd=$.trim($("#orderIdentidiesTypeCd").val());//证件类型
-					OrderInfo.bojbrCustIdentities.identityNum=$.trim($("#orderAttrIdCard").val());//证件号码
-					//3.若用户有填写经办人联系号码，则新建经办人时添加联系人信息，否则不添加联系人信息
-					if(ec.util.isObj(OrderInfo.bojbrCustInfos.telNumber)){
-						OrderInfo.bojbrPartyContactInfo.staffId 		= OrderInfo.staff.staffId;
-						OrderInfo.bojbrPartyContactInfo.contactName 	= $.trim($("#orderAttrName").val());
-						OrderInfo.bojbrPartyContactInfo.mobilePhone 	= $.trim($("#orderAttrPhoneNbr").val());
-						OrderInfo.bojbrPartyContactInfo.contactAddress 	= $.trim($("#orderAttrAddr").val());
-						//根据身份证判断性别，无从判别默认为男
-						if(OrderInfo.bojbrCustIdentities.identidiesTypeCd == "1"){
-							var identityNum = OrderInfo.bojbrCustIdentities.identityNum;
-							identityNum = parseInt(identityNum.substring(16,17));//取身份证第17位判断性别，奇数男，偶数女
-							OrderInfo.bojbrPartyContactInfo.contactGender = (identityNum % 2) == 0 ? "2" : "1";//1男2女
-						} else{
-							OrderInfo.bojbrPartyContactInfo.contactGender = "1";//性别，默认为男
-						}
-					}
-				}
 				_close();
 			}else if(response.code==1){
 				$("#tips").html("提示：FTP上传失败，错误原因："+ response.data);
@@ -3129,16 +3137,21 @@ order.cust = (function(){
 	};
 	//关闭拍照弹框，关闭视频
 	var _close = function() {
-		easyDialog.close();
 		try{
-			  cert.closeVideo();
-		}catch(e) {}
+			cert.closeVideo();
+		}catch(e) {
+			throw new Error("Close!Video!Exception : "+e);
+		}finally{
+			easyDialog.close();
+			$(".ZebraDialogOverlay").remove();
+			$(".ZebraDialog").remove();
+		} 
     };
     //捕获ESC动作
     document.onkeydown=function(event){
 		var e = event || window.event || arguments.callee.caller.arguments[0];
     	if(e && e.keyCode==27){//按 Esc 
-    		_close();//关闭摄像头
+    		_close();  		
     		return;
     	}
     };
