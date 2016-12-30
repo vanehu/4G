@@ -1992,17 +1992,17 @@ var _saveHtml2Pdf=function(){
 //显示经办人窗口
 	var _showJbr = function(){
 		//先清空
-		$('#orderAttrName').val("");
-//		$('#orderAttrPhoneNbr').val("");
-		$('#orderAttrAddr').val("");
-		$('#sfzorderAttrIdCard').val("");
-		$('#orderAttrIdCard').val("");//证件号码
 		OrderInfo.returnFlag="jbr";
 		$("#confirm").hide();
 		$("#jbr").show();
 		if(!order.broadband.haveCallPhote){//未拍过照片，默认本人
 			order.broadband.jbrInfoFillIn();//经办人信息默认本人
 			order.broadband.isSameOne=true;
+			$('#orderAttrName').val("");
+//			$('#orderAttrPhoneNbr').val("");
+			$('#orderAttrAddr').val("");
+			$('#sfzorderAttrIdCard').val("");
+			$('#orderAttrIdCard').val("");//证件号码
 			//经办人信息回填，确保信息正确
 //			var custIdentidiesTypeCd=OrderInfo.cust.identityCd;//客户证件类型
 //			var custNumber=OrderInfo.cust.idCardNumber;//客户证件号码
@@ -2042,7 +2042,7 @@ var _saveHtml2Pdf=function(){
 
 //客户和经办人不是同一个人时需要查询经办人
 var _queryJbr=function(idcard){
-	if(!ec.util.isObj(idcard)){
+	if(!ec.util.isObj(idcard) && !order.broadband.isSameOne){
 		var validate=$("#jbrFormdata").Validform();
 		if(!validate.check()){
 			return;
@@ -2065,12 +2065,11 @@ var _queryJbr=function(idcard){
 //		$.alert("提示","证件号码为空，无法进行查询！");
 //		return;
 //	}
-//	if(custIdentidiesTypeCd==jbrIdentidiesTypeCd && custNumber==jbrIdentityNum){//经办人为本人,无需查询
-//		order.broadband.isSameOne=true;
-//		$.alert("提示","客户和经办人相同，无需查询！");
-//		return;
-//	}
 	order.broadband.isSameOne=false;
+	if(custIdentidiesTypeCd==jbrIdentidiesTypeCd && custNumber==jbrIdentityNum){//经办人为本人,无需查询
+		order.broadband.isSameOne=true;
+	}
+	
 	order.broadband.searchJbr(idcard);
 };
 

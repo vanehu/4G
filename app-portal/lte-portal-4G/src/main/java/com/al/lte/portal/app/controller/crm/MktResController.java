@@ -838,7 +838,9 @@ public class MktResController extends BaseController {
             this.log.error("门户/app/mktRes/terminal/list服务异常", e);
             return super.failedStr(model, ErrorCode.QUERY_TERMINAL_LIST, e, param);
         }
-
+        if(param.get("newFlag") != null){
+        	return "/app/mktRes_new/terminal-list";
+        }
         return "/app/mktRes/terminal-list";
     }
 
@@ -1674,10 +1676,10 @@ public class MktResController extends BaseController {
             if (rMap != null && ResultCode.R_SUCCESS.equals(MapUtils.getString(rMap, "code"))) {
                 jsonResponse = super.successed(rMap, ResultConstant.SUCCESS.getCode());
             } else {
-                jsonResponse = super.failed(ErrorCode.ACCOUNT_REQUEST, rMap, param);
+                jsonResponse = super.failed(ErrorCode.FTP_UPLOAD_ERROR, rMap, param);
             }
         } catch (Exception e) {
-            jsonResponse = super.failed(ErrorCode.ACCOUNT_REQUEST, e, param);
+            jsonResponse = super.failed(ErrorCode.FTP_UPLOAD_ERROR, e, param);
         }
     	
     	return jsonResponse;
