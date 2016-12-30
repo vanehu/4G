@@ -3092,8 +3092,8 @@ SoOrder = (function() {
                     $.alert("提示", "橙分期短信验证码不能为空！");
                     return false;
                 }
-                if (!/^\d{4}$/.test(smsCode)) {
-                    $.alert("提示", "验证码必须为纯数字且不小于4位！");
+                if (!/^\d{6}$/.test(smsCode)) {
+                    $.alert("提示", "验证码必须为6位纯数字！");
                     return false;
                 }
             }
