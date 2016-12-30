@@ -3050,6 +3050,7 @@ order.cust = (function(){
 			$("#confirmAgree").removeClass("btna_g").addClass("btna_o");
 			$("#confirmAgree").off("click").on("click",function(){_uploadImage();});
 		}else{
+			$.alertM(response.data);
 			$("#tips").html("提示："+response.data);
 			return;
 		}
@@ -3128,9 +3129,8 @@ order.cust = (function(){
 				isUploadImageSuccess = true;
 				OrderInfo.virOlId = response.data.virOlId;
 				_close();
-			}else if(response.code==1){
-				$("#tips").html("提示：FTP上传失败，错误原因："+ response.data);
 			}else{
+				$.alertM(response.data);
 				$("#tips").html("提示：FTP上传失败，错误原因："+ response.data);
 			}
 		}

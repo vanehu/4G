@@ -35,6 +35,7 @@ import com.al.ecs.common.util.JsonUtil;
 import com.al.ecs.common.util.MDA;
 import com.al.ecs.exception.BusinessException;
 import com.al.ecs.exception.ErrorCode;
+import com.al.ecs.exception.InterfaceException;
 import com.al.ecs.exception.ResultConstant;
 import com.al.ecs.log.Log;
 import com.al.lte.portal.common.Const;
@@ -725,7 +726,7 @@ public class CustBmoImpl implements CustBmo {
 	 * @throws BusinessException 
 	 */
 	@SuppressWarnings("unchecked")
-	public Map<String, Object> uploadCustCertificate(Map<String, Object> param, SessionStaff sessionStaff) throws BusinessException{
+	public Map<String, Object> uploadCustCertificate(Map<String, Object> param, SessionStaff sessionStaff) throws BusinessException, InterfaceException, IOException, Exception{
 		List<Map<String, String>> photographs = (List<Map<String, String>>) param.get("photographs");
 		Map<String, Object> result = new HashMap<String, Object>();
 		
@@ -814,7 +815,7 @@ public class CustBmoImpl implements CustBmo {
 	 * @throws BusinessException
 	 */
 	@SuppressWarnings("unchecked")
-	public Map<String, Object> uploadCustCertificateMethod(Map<String, Object> param, SessionStaff sessionStaff) throws BusinessException{
+	public Map<String, Object> uploadCustCertificateMethod(Map<String, Object> param, SessionStaff sessionStaff) throws InterfaceException, IOException, Exception, BusinessException{
 		List<Map<String, String>> photographs = (List<Map<String, String>>) param.get("photographs");		
 
 		//重新封装，去掉协议之外的无用的节点

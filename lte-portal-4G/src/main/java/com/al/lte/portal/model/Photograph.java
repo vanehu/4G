@@ -21,6 +21,7 @@ import com.al.ecs.common.util.ImageUtil;
 import com.al.ecs.common.util.MDA;
 import com.al.ecs.exception.BusinessException;
 import com.al.ecs.exception.ErrorCode;
+import com.al.ecs.exception.InterfaceException;
 import com.al.ecs.log.Log;
 import com.al.lte.portal.common.InterfaceClient;
 import com.al.lte.portal.common.PortalServiceCode;
@@ -138,13 +139,14 @@ public class Photograph {
 	
 	/**
 	 * 调后台接口上传实名制拍照证件
+	 * @throws Exception 
+	 * @throws IOException 
+	 * @throws InterfaceException 
 	 */
-	public Map<String, Object> uploadCustCertificate(Map<String, Object> param, SessionStaff sessionStaff) throws BusinessException{	
+	public Map<String, Object> uploadCustCertificate(Map<String, Object> param, SessionStaff sessionStaff) throws BusinessException, InterfaceException, IOException, Exception{	
 		Map<String, Object> resultMap = new HashMap<String, Object>();
-		DataBus db = new DataBus();
-		
+		DataBus db = InterfaceClient.callService(param, PortalServiceCode.INTF_UPLOAD_IMAGE, null, sessionStaff);
 		try{
-			db = InterfaceClient.callService(param, PortalServiceCode.INTF_UPLOAD_IMAGE, null, sessionStaff);
 			if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db.getResultCode()))) {
 				resultMap = (Map<String, Object>)db.getReturnlmap();
 				resultMap.put("code", ResultCode.R_SUCCESS);

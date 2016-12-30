@@ -1851,7 +1851,13 @@ public class CustController extends BaseController {
             }
         } catch (BusinessException be) {
             return super.failed(be);	
-        }
+        } catch (InterfaceException ie) {
+        	return super.failed(ie, param, ErrorCode.UPLOAD_CUST_CERTIFICATE);
+		} catch (IOException ioe) {
+			return super.failed(ErrorCode.UPLOAD_CUST_CERTIFICATE, ioe, param);
+		} catch (Exception e) {
+			return super.failed(ErrorCode.UPLOAD_CUST_CERTIFICATE, e, param);
+		}
         return jsonResponse;
     }
     

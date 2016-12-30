@@ -6,6 +6,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import com.al.ecs.exception.BusinessException;
+import com.al.ecs.exception.InterfaceException;
 import com.al.lte.portal.model.SessionStaff;
 
 public interface CustBmo {
@@ -124,9 +125,11 @@ public interface CustBmo {
 	
 	/**
 	 * 实名制证件上传
+	 * @throws Exception 
+	 * @throws InterfaceException 
 	 * @throws IOException 
 	 */
-	public Map<String, Object> uploadCustCertificate(Map<String, Object> param, SessionStaff sessionStaff) throws BusinessException;
+	public Map<String, Object> uploadCustCertificate(Map<String, Object> param, SessionStaff sessionStaff) throws BusinessException, InterfaceException, IOException, Exception;
 	/**
 	 * 实名制证件图片添加水印
 	 */
