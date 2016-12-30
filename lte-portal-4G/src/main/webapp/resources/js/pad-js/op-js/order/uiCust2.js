@@ -1479,7 +1479,7 @@ order.uiCusts = (function(){
 			return;
 		}
 		if(OrderInfo.actionFlag == 2){ //套餐变更
-			/*var url=contextPath+"/order/queryFeeType";
+			var url=contextPath+"/order/queryFeeType";
 			$.ecOverlay("<strong>正在查询是否判断付费类型的服务中,请稍后....</strong>");
 			var response = $.callServiceAsJsonGet(url,param);	
 			$.unecOverlay();
@@ -1500,7 +1500,7 @@ order.uiCusts = (function(){
 						}
 					}
 				}
-			}*/
+			}
 		    order.uiCusts.offerChangeView(inParam,offerSpec);
 		    if(OrderInfo.provinceInfo.reloadFlag=="Y"){
 		    	 if(OrderInfo.provinceInfo.prodOfferId!=null && OrderInfo.provinceInfo.prodOfferId!=""){
@@ -1955,7 +1955,7 @@ order.uiCusts = (function(){
 		
 		if(OrderInfo.actionFlag == 2){
 			if(param.newnum>0 || param.oldnum>0){
-				/*var is_same_feeType=false;//
+				var is_same_feeType=false;//
 				if(param.feeTypeMain=="2100" && (param.offerSpec.feeType=="2100"||param.offerSpec.feeType=="3100"||param.offerSpec.feeType=="3101"||param.offerSpec.feeType=="3103")){
 					is_same_feeType=true;
 				}else if(param.feeTypeMain=="1200" && (param.offerSpec.feeType=="1200"||param.offerSpec.feeType=="3100"||param.offerSpec.feeType=="3102"||param.offerSpec.feeType=="3103")){
@@ -1968,11 +1968,10 @@ order.uiCusts = (function(){
 					$.alert("提示","主副卡付费类型不一致，无法进行纳入老成员。");
 					return;
 				}
-				*/
+				
 			}
 		}
 		
-		/*
 		if(OrderInfo.actionFlag == 6){//主副卡成员变更 付费类型判断 如果一致才可以进行加装
 			var is_same_feeType=false;//
 			if(param.feeTypeMain=="2100" && (param.offerSpec.feeType=="2100"||param.offerSpec.feeType=="3100"||param.offerSpec.feeType=="3101"||param.offerSpec.feeType=="3103")){
@@ -1987,7 +1986,6 @@ order.uiCusts = (function(){
 				return;
 			}
 		}
-		*/
 		
 		$.callServiceAsHtml(contextPath+"/token/pad/order/mainSub",param,{
 			

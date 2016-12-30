@@ -548,7 +548,7 @@ var _custAuthCallBack = function(response) {
 			return;
 		}
 		if(OrderInfo.actionFlag == 2){ //套餐变更			
-			/*var url=contextPath+"/token/pc/order/queryFeeType";
+			var url=contextPath+"/token/pc/order/queryFeeType";
 			$.ecOverlay("<strong>正在查询是否判断付费类型的服务中,请稍后....</strong>");
 			var response = $.callServiceAsJsonGet(url,param);	
 			$.unecOverlay();
@@ -569,7 +569,7 @@ var _custAuthCallBack = function(response) {
 						}
 					}
 				}
-			}*/
+			}
 			order.uiCustes.offerChangeView();
 			return;
 		}
@@ -875,7 +875,7 @@ var _custAuthCallBack = function(response) {
 		if (param == undefined || !param) {
 			param = _getTestParam();
 		}
-		/*if(!ec.util.isArray(OrderInfo.oldprodInstInfos)){
+		if(!ec.util.isArray(OrderInfo.oldprodInstInfos)){
 			if(OrderInfo.actionFlag == 6){//主副卡成员变更 付费类型判断 如果一致才可以进行加装
 				var is_same_feeType=false;//
 				if(param.feeTypeMain=="2100" && (OrderInfo.offerSpec.feeType=="2100"||OrderInfo.offerSpec.feeType=="3100"||OrderInfo.offerSpec.feeType=="3101"||OrderInfo.offerSpec.feeType=="3103")){
@@ -890,7 +890,7 @@ var _custAuthCallBack = function(response) {
 					return;
 				}
 			}
-		}*/
+		}
 		$.callServiceAsHtml(contextPath+"/token/pc/order/main",param,{
 			"before":function(){
 				$.ecOverlay("<strong>正在加载中,请稍等...</strong>");

@@ -220,7 +220,7 @@ offerChangeNew = (function() {
 		}
 		
 		if(OrderInfo.actionFlag == 2){ //套餐变更
-			/*var url=contextPath+"/app/order/queryFeeType";
+			var url=contextPath+"/app/order/queryFeeType";
 			$.ecOverlay("<strong>正在查询是否判断付费类型的服务中,请稍后....</strong>");
 			var response = $.callServiceAsJsonGet(url,param);	
 			$.unecOverlay();
@@ -241,7 +241,7 @@ offerChangeNew = (function() {
 						}
 					}
 				}
-			}*/
+			}
 			offerChangeNew.offerChangeView();
 			return;
 		}

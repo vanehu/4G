@@ -44,7 +44,7 @@ order.main = (function(){
 		if (param == undefined || !param) {
 			param = _getTestParam();
 		}
-		/*if(order.memberChange.newMemberFlag && OrderInfo.actionFlag == 6){//主副卡成员变更 付费类型判断 如果一致才可以进行加装
+		if(order.memberChange.newMemberFlag && OrderInfo.actionFlag == 6){//主副卡成员变更 付费类型判断 如果一致才可以进行加装
 			var is_same_feeType=false;//
 			if(param.feeTypeMain=="2100" && (OrderInfo.offerSpec.feeType=="2100"||OrderInfo.offerSpec.feeType=="3100"||OrderInfo.offerSpec.feeType=="3101"||OrderInfo.offerSpec.feeType=="3103")){
 				is_same_feeType=true;
@@ -57,7 +57,7 @@ order.main = (function(){
 				$.alert("提示","主副卡付费类型不一致，无法进行主副卡成员变更。");
 				return;
 			}
-		}*/
+		}
 		$.callServiceAsHtml(contextPath+"/token/pc/order/main",param,{
 			"before":function(){
 				$.ecOverlay("<strong>正在加载中,请稍等...</strong>");
