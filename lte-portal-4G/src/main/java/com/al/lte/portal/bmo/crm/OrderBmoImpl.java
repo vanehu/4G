@@ -3029,8 +3029,17 @@ public class OrderBmoImpl implements OrderBmo {
     	Map<String, Object> orderList = (Map<String, Object>) param.get("orderList");
         Map<String, Object> orderListInfo = (Map<String, Object>) orderList.get("orderListInfo");
         int actionFlag = MapUtils.getIntValue(orderListInfo, "actionFlag", 0);
-        boolean isCheckCertificateComprehensive = (actionFlag == 1 ||actionFlag == 6 || actionFlag == 14 ||actionFlag == 21 || actionFlag == 22 || actionFlag == 23 || actionFlag == 43);
-    	
+        int busitypeflag = MapUtils.getIntValue(orderListInfo, "busitypeflag", 0);
+        boolean isCheckCertificateComprehensive = (
+    		actionFlag == 1  ||	//办套餐入口做新装
+    		actionFlag == 6  ||	//主副卡成员变更加装新副卡
+    		actionFlag == 14 ||	//购手机入口做新装
+    		actionFlag == 21 || //主副卡成员变更(保留副卡选择新套餐、拆副卡)
+    		(actionFlag == 22 && busitypeflag == 22) || //换卡(补卡busitypeflag是21)
+    		actionFlag == 23 || //异地补换卡
+    		actionFlag == 43	//返档
+    	);
+        
         if(isRealNameFlagOn && isHandleCustNeeded && isCheckCertificateComprehensive){
     		resultFlag = this.checkCustCertificateComprehensive(param, request);
     	} else{

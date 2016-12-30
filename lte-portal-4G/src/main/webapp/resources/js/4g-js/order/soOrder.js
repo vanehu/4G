@@ -466,6 +466,7 @@ SoOrder = (function() {
 			_delViceCardAndNew(busiOrders,data);
 		}else if(OrderInfo.actionFlag== 22 ){ //补换卡
 			busiOrders = data;
+			OrderInfo.orderData.orderList.orderListInfo.busitypeflag = OrderInfo.busitypeflag;//actionFlag无法区分补卡和换卡，故添加busitypeflag
 		}else if(OrderInfo.actionFlag == 23){//异地补换卡
 			busiOrders = data;
 			//异地补换卡的订单地区为当前渠道对应的地区
@@ -2863,7 +2864,16 @@ SoOrder = (function() {
 				}
 			}
 			//若页面没有填写经办人，根据权限和业务类型进行判断和限制
-			if(CONST.isHandleCustNeeded && (OrderInfo.actionFlag == 1 ||OrderInfo.actionFlag == 6 || OrderInfo.actionFlag == 14 || OrderInfo.actionFlag == 21 || OrderInfo.actionFlag == 22 || OrderInfo.actionFlag == 23 || OrderInfo.actionFlag == 43)) {
+			var isActionFlagLimited = (
+				OrderInfo.actionFlag == 1 	|| //办套餐入口做新装
+				OrderInfo.actionFlag == 6 	|| //主副卡成员变更加装新副卡
+				OrderInfo.actionFlag == 14 	|| //购手机入口做新装
+				OrderInfo.actionFlag == 21 	|| //主副卡成员变更(保留副卡选择新套餐、拆副卡)
+				(OrderInfo.actionFlag == 22 && OrderInfo.busitypeflag == 22) || //换卡(补卡busitypeflag是21)
+				OrderInfo.actionFlag == 23 	|| //异地补换卡
+				OrderInfo.actionFlag == 43	   //返档
+			);
+			if(CONST.isHandleCustNeeded && isActionFlagLimited) {
 				if(!ec.util.isObj($("#jbrForm").html()) || !ec.util.isObj(OrderInfo.virOlId)){
 					$.alert("提示","经办人拍照信息不能为空！请确认页面是否已点击【读卡】或者【查询】按钮，并且进行拍照和人证相符等操作！");
 					return false ;
