@@ -2859,12 +2859,8 @@ order.cust = (function(){
 		}
 	};
 	
+	//准备加载拍照弹窗
 	 var _showCertPicture = function(){
-		_queryUser();//查询经办人
-	};
-
-	// 使用人/政企-查询
-	function _queryUser(){
 		var param = {
 			"areaId" 			:"",
 			"acctNbr"			:"",
@@ -2881,72 +2877,78 @@ order.cust = (function(){
 			"before":function(){
 				$.ecOverlay("<strong>正在查询经办人信息, 请稍等...</strong>");
 			},"done" : function(response){
-				_fillHandleCustInfos(response);
+				_fillupHandleCustInfos(response);//开始处理经办人信息
 			},"always":function(){
 				$.unecOverlay();
-				_showCameraView();
+				_showCameraView();//加载拍照弹窗
 			}
 		});
 	};
 	
 	//往订单信息中填充经办人信息
-	var _fillHandleCustInfos = function(response){
+	var _fillupHandleCustInfos = function(response){
 		//判断新老用户封装用户信息
 		var custInfoSize = $(response.data).find('#custInfoSize').val();
 		if (parseInt(custInfoSize) >= 1) {
 			var scope = $(response.data).find('#custInfos').eq(0);//默认取第一个节点
-			_setValueForAgentOrderSpan({
+			OrderInfo.handleCustId 						= $(scope).attr("custId");//经办人客户ID
+			OrderInfo.bojbrCustInfos.name 				= $(scope).attr("partyName");
+			OrderInfo.bojbrCustInfos.addressStr 		= $(scope).attr("addressStr");
+			OrderInfo.bojbrCustIdentities.identityNum 	= $(scope).attr("idCardNumber");
+			_setValueForAgentOrderSpan({//页面展示客户脱敏信息
 				"partyName"		:$(scope).attr("partyName"),
 				"certAddress"	:$(scope).attr("addressStr"),
 				"certNumber"	:$(scope).attr("idCardNumber")
 			});
-			OrderInfo.handleCustId = $(scope).attr("custId");//经办人客户ID
-			OrderInfo.bojbrCustInfos.name = $(scope).attr("partyName");
-			OrderInfo.bojbrCustInfos.addressStr = $(scope).attr("addressStr");
-			OrderInfo.bojbrCustIdentities.identityNum = $(scope).attr("idCardNumber");
 		} else{
 			var orderAttrName = $.trim($("#orderAttrName").val());
-			$.confirm("确认","没有查询到客户信息["+orderAttrName+"]，系统将自动创建经办人客户，是否确认继续受理？",{
+			$.confirm("确认","没有查询到["+orderAttrName+"]客户信息，系统将自动创建经办人客户，是否确认继续受理？",{
 				yes:function(){
-					OrderInfo.handleCustId = "";
-					OrderInfo.ifCreateHandleCust = true;//需要新建经办人
-					//1.经办人客户信息
-					OrderInfo.bojbrCustInfos.name			=orderAttrName;//客户名称
-					OrderInfo.bojbrCustInfos.areaId			=OrderInfo.getAreaId();//客户地区
-					OrderInfo.bojbrCustInfos.telNumber		=$.trim($("#orderAttrPhoneNbr").val());//联系电话
-					OrderInfo.bojbrCustInfos.addressStr		=$.trim($("#orderAttrAddr").val());//客户地址
-					OrderInfo.bojbrCustInfos.partyTypeCd	=$.trim($("#orderPartyTypeCd").val());//客户类型---
-					OrderInfo.bojbrCustInfos.mailAddressStr	=$.trim($("#orderAttrAddr").val());//通信地址
-					OrderInfo.bojbrCustInfos.defaultIdTycre	=$.trim($("#orderIdentidiesTypeCd").val());//证件类型
-					//2.经办人证件信息
-					OrderInfo.bojbrCustIdentities.identidiesTypeCd = $.trim($("#orderIdentidiesTypeCd").val());//证件类型
-					OrderInfo.bojbrCustIdentities.identityNum = $.trim($("#orderAttrIdCard").val());//证件号码
-					//3.若用户有填写经办人联系号码，则新建经办人时添加联系人信息，否则不添加联系人信息
-					if(ec.util.isObj(OrderInfo.bojbrCustInfos.telNumber)){
-						OrderInfo.bojbrPartyContactInfo.staffId 		= OrderInfo.staff.staffId;
-						OrderInfo.bojbrPartyContactInfo.contactName 	= $.trim($("#orderAttrName").val());
-						OrderInfo.bojbrPartyContactInfo.mobilePhone 	= $.trim($("#orderAttrPhoneNbr").val());
-						OrderInfo.bojbrPartyContactInfo.contactAddress 	= $.trim($("#orderAttrAddr").val());
-						//根据身份证判断性别，无从判别默认为男
-						if(OrderInfo.bojbrCustIdentities.identidiesTypeCd == "1"){
-							var identityNum = OrderInfo.bojbrCustIdentities.identityNum;
-							identityNum = parseInt(identityNum.substring(16,17));//取身份证第17位判断性别，奇数男，偶数女
-							OrderInfo.bojbrPartyContactInfo.contactGender = (identityNum % 2) == 0 ? "2" : "1";//1男2女
-						} else{
-							OrderInfo.bojbrPartyContactInfo.contactGender = "1";//性别，默认为男
-						}
-					}
+					_yes2Continue();//继续受理
 				},
 				no:function(){
-					_close();//关闭摄像头及弹框
+					_close();//关闭摄像头及拍照弹框
 					return;
 				}
 			});
 		}
 	};
 	
+	//经办人为新客户，此时会新建客户，用户确认并继续受理
+	var _yes2Continue = function(){
+		OrderInfo.handleCustId = "";
+		OrderInfo.ifCreateHandleCust = true;//需要新建经办人
+		//1.经办人客户信息
+		OrderInfo.bojbrCustInfos.name			=orderAttrName;//客户名称
+		OrderInfo.bojbrCustInfos.areaId			=OrderInfo.getAreaId();//客户地区
+		OrderInfo.bojbrCustInfos.telNumber		=$.trim($("#orderAttrPhoneNbr").val());//联系电话
+		OrderInfo.bojbrCustInfos.addressStr		=$.trim($("#orderAttrAddr").val());//客户地址
+		OrderInfo.bojbrCustInfos.partyTypeCd	=$.trim($("#orderPartyTypeCd").val());//客户类型---
+		OrderInfo.bojbrCustInfos.mailAddressStr	=$.trim($("#orderAttrAddr").val());//通信地址
+		OrderInfo.bojbrCustInfos.defaultIdTycre	=$.trim($("#orderIdentidiesTypeCd").val());//证件类型
+		//2.经办人证件信息
+		OrderInfo.bojbrCustIdentities.identidiesTypeCd = $.trim($("#orderIdentidiesTypeCd").val());//证件类型
+		OrderInfo.bojbrCustIdentities.identityNum = $.trim($("#orderAttrIdCard").val());//证件号码
+		//3.若用户有填写经办人联系号码，则新建经办人时添加联系人信息，否则不添加联系人信息
+		if(ec.util.isObj(OrderInfo.bojbrCustInfos.telNumber)){
+			OrderInfo.bojbrPartyContactInfo.staffId 		= OrderInfo.staff.staffId;
+			OrderInfo.bojbrPartyContactInfo.contactName 	= $.trim($("#orderAttrName").val());
+			OrderInfo.bojbrPartyContactInfo.mobilePhone 	= $.trim($("#orderAttrPhoneNbr").val());
+			OrderInfo.bojbrPartyContactInfo.contactAddress 	= $.trim($("#orderAttrAddr").val());
+			//根据身份证判断性别，无从判别默认为男
+			if(OrderInfo.bojbrCustIdentities.identidiesTypeCd == "1"){
+				var identityNum = OrderInfo.bojbrCustIdentities.identityNum;
+				identityNum = parseInt(identityNum.substring(16,17));//取身份证第17位判断性别，奇数男，偶数女
+				OrderInfo.bojbrPartyContactInfo.contactGender = (identityNum % 2) == 0 ? "2" : "1";//1男2女
+			} else{
+				OrderInfo.bojbrPartyContactInfo.contactGender = "1";//性别，默认为男
+			}
+		}
+	};
+	
 	//展示拍照弹出加载摄像头
 	var _showCameraView = function(){
+		//没有看错，确实是open->close->open
 		easyDialog.open({
 			container : "ec-dialog-photo-graph"
 		});
@@ -2974,8 +2976,8 @@ order.cust = (function(){
 		_getCameraInfo();
 	};
 	
+	//加载拍照设备列表，获取摄像头信息
 	var _getCameraInfo = function(){
-		//获取摄像头信息
 		var device = capture.getDevices();
 	    device = JSON.parse(device);
 		if (device == null || device == undefined) {
@@ -2993,12 +2995,11 @@ order.cust = (function(){
 		}
 	};
 	
-	// 创建视频(重新拍照)
+	// 创建视频(点击重新拍照也是这里)
 	var _createVideo = function() {
-		//创建视频
 		var device = $("#device").val();
 		if(device!=null && device != ""){
-			var createVideo = JSON.parse(capture.createVideo(device,1280,720));
+			var createVideo = JSON.parse(capture.createVideo(device,1280,720));//创建视频
 			if(createVideo.resultFlag == 0){
 				$("#startPhotos").hide();
 				OrderInfo.isCreateVideo = "Y";
@@ -3011,29 +3012,30 @@ order.cust = (function(){
 			}
 		}else{
 			$("#startPhotos").show();
-			$("#tips").html("提示：请选择一个摄像头"); 
+			$("#tips").html("提示：请选择一个摄像头设备"); 
 			return;
 		}
 	};
-	// 拍照(确认拍照)
-	var _createImage = function(scope) {
+	
+	// 拍照(点击确认拍照)
+	var _createImage = function() {
 		$("#tips").empty();
 		if(!$('#img_Photo').is(":hidden")){}
 		var createImage = cert.createImage();
 		if (createImage && createImage.resultFlag != 0){
 			$("#tips").html("提示："+ createImage.errorMsg);
 			return false;
-		}	
-		$.ecOverlay("<strong>正在处理,请稍等...</strong>");
-		var url=contextPath+"/cust/preHandleCustCertificate";
-		$.unecOverlay();
+		}
+		//针对IE8需要压缩照片
 		var browser = CommonUtils.validateBrowser();
 		var param = {
 			"photograph":((browser.indexOf("IE8") >= 0) || (browser.indexOf("IE7") >= 0)) ? encodeURIComponent(createImage.compImage) : encodeURIComponent(createImage.image),
 			"venderId":createImage.venderId
 		};
-		var response= $.callServiceAsJson(url,param);
-		if(response.code==0 && response.data){
+		$.ecOverlay("<strong>正在处理中, 请稍等...</strong>");
+		var response= $.callServiceAsJson(contextPath + "/cust/preHandleCustCertificate", param);
+		$.unecOverlay();
+		if(response.code == 0 && response.data){
 			$("#takePhotos").removeClass("btna_o").addClass("btna_g").off("click");
 			$("#img_Photo").attr("src", "data:image/jpeg;base64," + response.data.photograph);
 			$("#img_Photo").attr("width", 640);
@@ -3054,7 +3056,6 @@ order.cust = (function(){
 			$("#tips").html("提示："+response.data);
 			return;
 		}
-		
 	};
 	
 	var _rePhotos = function(resultContent){
@@ -3072,38 +3073,26 @@ order.cust = (function(){
 		$("#takePhotos").removeClass("btna_g").addClass("btna_o");
 		_createVideo();
 	};
-	// 关闭视频
-	var _closeVideo = function() {	
-		$("#tips").empty();
-		var obj = cert.closeVideo();
-		var json = JSON.parse(obj);
-		if (json && json.resultFlag != 0){
-			$("#tips").html("提示："+ json.errorMsg);
-			return false;
-		}
-	};
+
 	// 上传照片
 	var _uploadImage = function() {
 		$("#confirmAgree").removeClass("btna_o").addClass("btna_g");
 		$("#confirmAgree").off("click");
 		$("#tips").empty();
 	    var pictures = [];
-		if(!!OrderInfo.bojbrCustInfos && OrderInfo.bojbrCustInfos.identidiesTypeCd !=  $.trim($("#orderIdentidiesTypeCd").val())
-			&& OrderInfo.bojbrCustInfos.identityNum!= $.trim($("#orderIdentidiesTypeCd").val()) ){
-			pictures.push(
-				{
-		            "photograph": encodeURIComponent(OrderInfo.bojbrCustIdentities.identidiesPic),
-		            "flag": "C", 
-		            "signature" :""
-		        }
-			); 
-			pictures.push(
-			{
+		if(!!OrderInfo.bojbrCustInfos && 
+				OrderInfo.bojbrCustInfos.identidiesTypeCd !=  $.trim($("#orderIdentidiesTypeCd").val()) && 
+				OrderInfo.bojbrCustInfos.identityNum!= $.trim($("#orderIdentidiesTypeCd").val())){
+			pictures.push({
+	            "photograph": encodeURIComponent(OrderInfo.bojbrCustIdentities.identidiesPic),
+	            "flag": "C", 
+	            "signature" :""
+			}); 
+			pictures.push({
 	            "photograph": encodeURIComponent($("#img_Photo").data("identityPic")),
 	            "flag": "D",
 	            "signature" : $("#img_Photo").data("signature")
-			}
-		   );
+			});
 			if (ec.util.isObj(OrderInfo.boCustIdentities.identidiesPic)){
 				pictures.push({
 		            "photograph": encodeURIComponent(OrderInfo.boCustIdentities.identidiesPic),
@@ -3111,7 +3100,8 @@ order.cust = (function(){
 		            "signature" :""
 		        });
 			}
-			var param = {
+			$.ecOverlay("<strong>正在处理中, 请稍等...</strong>");
+			var response = $.callServiceAsJson(contextPath + "/cust/uploadCustCertificate", {
 				areaId : OrderInfo.getAreaId(),
 				certType:$.trim($("#orderIdentidiesTypeCd").val()),//证件类型
 				certNumber :$.trim($("#orderAttrIdCard").val()), //证件号码
@@ -3120,25 +3110,30 @@ order.cust = (function(){
 				accNbr : "",
 				srcFlag: "REAL",
 				venderId  : $("#img_Photo").data("venderId")
-		    };
-			$.ecOverlay("<strong>正在处理,请稍等...</strong>");
-			var url=contextPath+"/cust/uploadCustCertificate";
+		    });
 			$.unecOverlay();
-			var response= $.callServiceAsJson(url,param);
-			if(response.code==0 && response.data){
+			if(response.code == 0 && response.data){
 				isUploadImageSuccess = true;
 				OrderInfo.virOlId = response.data.virOlId;
 				_close();
-			}else{
+			}else if(response.code == 1 && response.data){
+				$.alert("错误", "证件上传失败，错误原因：" + response.data);
+			}else if(response.code == -2 && response.data){
 				$.alertM(response.data);
-				$("#tips").html("提示：FTP上传失败，错误原因："+ response.data);
+			}else{
+				$.alert("错误", "证件上传发生未知异常，请稍后重试。错误信息：" + response.data);
 			}
 		}
 	};
+	
 	//关闭拍照弹框，关闭视频
 	var _close = function() {
 		try{
-			cert.closeVideo();
+			var closeResult = cert.closeVideo();
+			var closeResultJsonObj = JSON.parse(closeResult);
+			if (closeResultJsonObj && closeResultJsonObj.resultFlag != 0){
+				$.alert("错误", "关闭摄像头发生错误，请清空浏览器缓存，重新将拍照设备与电脑连接后再次尝试，错误信息：" + closeResultJsonObj.errorMsg);
+			}
 		}catch(e) {
 			throw new Error("Close!Video!Exception : "+e);
 		}finally{
@@ -3147,6 +3142,7 @@ order.cust = (function(){
 			$(".ZebraDialog").remove();
 		} 
     };
+    
     //捕获ESC动作
     document.onkeydown=function(event){
 		var e = event || window.event || arguments.callee.caller.arguments[0];
@@ -3223,11 +3219,6 @@ order.cust = (function(){
 		showReadCert:_showReadCert,
 		isSelfChannel:_isSelfChannel,
 		checkUserInfo : _checkUserInfo,
-		createVideo : _createVideo,
-		createImage : _createImage,
-		closeVideo : _closeVideo,
-		uploadImage:_uploadImage,
-		close : _close,
 		showCertPicture : _showCertPicture
 	};
 })();
