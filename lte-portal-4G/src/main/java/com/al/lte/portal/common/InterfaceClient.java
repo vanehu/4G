@@ -211,13 +211,11 @@ public class InterfaceClient {
 		}
 		
 		try {
-		
+			prefix = serviceCode.substring(0, serviceCode.indexOf("-"));
 			if (HTTP_WAY.equals(invokeWay)) {
-				
 				String contentType = JSON_CONTENT_TYPE;
 				String sys = "";
 				// get url, contentType by serviceCode
-				prefix = serviceCode.substring(0, serviceCode.indexOf("-"));
 				if (BIZ_PREFIX.equals(prefix)) {
 					serviceCode = serviceCode.substring(4);
 					intfUrl = getNeeded(dbKeyWord,URL_KEY, BIZ_PREFIX);
@@ -524,8 +522,8 @@ public class InterfaceClient {
 			} else if (WS_WAY.equals(invokeWay)) {
 	
 			} else if (SIMULATE_WAY.equals(invokeWay)) {
-				// 模拟调用，从文件得到json格式返回值
-				retnJson = getRetnJson(serviceCode);
+				paramString = JsonUtil.toString(dataBusMap);
+				retnJson = getRetnJson(serviceCode);// 模拟调用，从文件得到json格式返回值
 				log.debug("retnJson:{}", retnJson.length() > 3000 ? retnJson.substring(0, 3000) : retnJson);
 				
 				if (StringUtils.isBlank(retnJson)) {
@@ -535,36 +533,37 @@ public class InterfaceClient {
 				}
 	
 				Map<String, Object> rootMap = JsonUtil.toObject(retnJson, Map.class);
-				rootMap.put("logSeqId", logSeqId);
-				Object obj = MapUtils.getObject(rootMap, "ContractRoot", null);
-				if (obj != null) {
-					rootMap = (Map<String, Object>) obj;
-					Map<String, Object> tcpContMap = (Map<String, Object>) rootMap
-							.get("TcpCont");
-					Map<String, Object> svcContMap = (Map<String, Object>) rootMap
-							.get("SvcCont");
-					if (MapUtils.isNotEmpty(svcContMap)) {
-						resultCode = (String) svcContMap.get("resultCode");
-						resultMsg = (String) svcContMap.get("resultMsg");
-						Map<String, Object> resultMap = (Map<String, Object>) svcContMap
-								.get("result");
+				if (MapUtils.isNotEmpty(rootMap)){
+					rootMap.put("logSeqId", logSeqId);
+					Object obj = MapUtils.getObject(rootMap, "ContractRoot", null);
+					if (obj != null) {
+						rootMap = (Map<String, Object>) obj;
+						Map<String, Object> tcpContMap = (Map<String, Object>) rootMap
+								.get("TcpCont");
+						Map<String, Object> svcContMap = (Map<String, Object>) rootMap
+								.get("SvcCont");
+						if (MapUtils.isNotEmpty(svcContMap)) {
+							resultCode = (String) svcContMap.get("resultCode");
+							resultMsg = (String) svcContMap.get("resultMsg");
+							Map<String, Object> resultMap = (Map<String, Object>) svcContMap
+									.get("result");
+							db.setResultCode(resultCode);
+							db.setResultMsg(resultMsg);
+							db.setReturnlmap(resultMap);
+						} else {
+							db.setResultCode(ResultCode.R_INTERFACE_PARAM_MISS);
+						}
+					} else {
+						resultCode = (String) rootMap.get("resultCode");
+						resultMsg = (String) rootMap.get("resultMsg");
 						db.setResultCode(resultCode);
 						db.setResultMsg(resultMsg);
-						db.setReturnlmap(resultMap);
-					} else {
-						db.setResultCode(ResultCode.R_INTERFACE_PARAM_MISS);
+						db.setReturnlmap(rootMap);
 					}
-				} else {
-					resultCode = (String) rootMap.get("resultCode");
-					resultMsg = (String) rootMap.get("resultMsg");
-					db.setResultCode(resultCode);
-					db.setResultMsg(resultMsg);
-					db.setReturnlmap(rootMap);
+					log.debug("调用回参:{}", retnJson);
+				} else{
+					throw new InterfaceException(ErrType.OPPOSITE, serviceCode, retnJson, paramString, logSeqId);
 				}
-				log.debug("调用回参:{}", retnJson);
-	
-			} else {
-	
 			}
 		} finally {
 			db.setResultCode(resultCode);
@@ -736,6 +735,9 @@ public class InterfaceClient {
 				// 新增错误标识，0 成功  1  错误  2  异常
 				logObj.put("ERROR_CODE", errorCode);
 				Map<String, Object> logClobObj = new HashMap<String, Object>();
+				if(StringUtils.isBlank(rawRetn)){
+					rawRetn = retnJson;//抛异常的情况下rawRetn可能为空
+				}
 				logClobObj.put("IN_PARAM", paramString);						
 				logClobObj.put("OUT_PARAM", rawRetn);
 
