@@ -1,9 +1,11 @@
 package com.al.lte.portal.bmo.staff;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
 import com.al.ecs.exception.BusinessException;
+import com.al.ecs.exception.InterfaceException;
 import com.al.lte.portal.model.SessionStaff;
 
 /**
@@ -67,8 +69,11 @@ public interface StaffBmo {
 	 * @param sessionStaff
 	 * @return
 	 * @throws BusinessException
+	 * @throws Exception 
+	 * @throws IOException 
+	 * @throws InterfaceException 
 	 */
-	public String checkOperatBySpecCd(String operatSpecCd, SessionStaff sessionStaff) throws BusinessException;
+	public String checkOperatBySpecCd(String operatSpecCd, SessionStaff sessionStaff) throws BusinessException, InterfaceException, IOException, Exception;
 	
 	public Map<String, Object> qrLoginCheck(Map<String, Object> dataBusMap, String optFlowNum, SessionStaff sessionStaff) throws Exception;
 	

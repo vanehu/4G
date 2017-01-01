@@ -43,6 +43,7 @@ import com.al.ecs.spring.annotation.session.AuthorityValid;
 import com.al.ecs.spring.controller.BaseController;
 import com.al.lte.portal.bmo.crm.OrderBmo;
 import com.al.lte.portal.bmo.portal.NoticeBmo;
+import com.al.lte.portal.bmo.staff.StaffBmo;
 import com.al.lte.portal.common.AESUtils;
 import com.al.lte.portal.common.CommonUtils;
 import com.al.lte.portal.common.EhcacheUtil;
@@ -74,6 +75,9 @@ public class MainController extends BaseController {
     @Autowired
   	@Qualifier("com.al.lte.portal.bmo.crm.OrderBmo")
   	private OrderBmo orderBmo;
+    @Autowired
+    @Qualifier("com.al.lte.portal.bmo.staff.StaffBmo")
+    private StaffBmo staffBmo;
     
     @Autowired
 	PropertiesUtils propertiesUtils;
@@ -164,7 +168,31 @@ public class MainController extends BaseController {
 		}
 		String currentAreaId = sessionStaff.getCurrentAreaId();
 		model.addAttribute("XUA", propertiesUtils.getMessage("XUA_" + ((currentAreaId != null && currentAreaId.length() == 7) ? currentAreaId.substring(0, 3) : "")));
-        return "/main/main";
+        
+		//查询工号是否具有跳过经办人必填的权限
+		Object sessionHandleCustFlag = ServletUtils.getSessionAttribute(request, SysConstant.TGJBRBTQX );
+    	if(sessionHandleCustFlag == null){
+			boolean isHandleCustNeeded = true;//默认无权限，需要必填经办人且拍照
+			try {
+				isHandleCustNeeded = "0".equals(staffBmo.checkOperatBySpecCd(SysConstant.TGJBRBTQX , sessionStaff)) ? false : true;
+			} catch (BusinessException be) {
+				log.error("系管权限查询接口sys-checkOperatSpec异常：", be);
+				return super.failedStr(model, be);
+			} catch (InterfaceException ie) {
+				log.error("系管权限查询接口sys-checkOperatSpec异常：", ie);
+				return super.failedStr(model, ie, null, ErrorCode.CHECKOPERATSPEC);
+			} catch (IOException ioe) {
+				log.error("系管权限查询接口sys-checkOperatSpec异常：", ioe);
+				return super.failedStr(model, ErrorCode.CHECKOPERATSPEC, ioe, null);
+			} catch (Exception e) {
+				log.error("系管权限查询接口sys-checkOperatSpec异常：", e);
+				return super.failedStr(model, ErrorCode.CHECKOPERATSPEC, e, null);
+			} finally{
+				ServletUtils.setSessionAttribute(request, SysConstant.TGJBRBTQX, isHandleCustNeeded);
+			}
+    	}
+		
+		return "/main/main";
     }
     
     @RequestMapping(value = "/limit", method = RequestMethod.GET)

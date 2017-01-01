@@ -2361,10 +2361,11 @@ public class OrderBmoImpl implements OrderBmo {
 	 * 如果具有对应的权限，则以ArrayList返回对应的权限编码送与后台
 	 * @param sessionStaff
 	 * @return operatSpecList
-	 * @throws BusinessException 
+	 * @throws IOException 
+	 * @throws InterfaceException 
 	 * @throws Exception
 	 */
-	public List<Map<String, String>> getAvilablePayMethodCdList(SessionStaff sessionStaff) throws BusinessException {
+	public List<Map<String, String>> getAvilablePayMethodCdList(SessionStaff sessionStaff) throws InterfaceException, IOException, Exception {
 		Map<String, String> operatSpecMap = null;
 		List<Map<String, String>> operatSpecList = new ArrayList<Map<String, String>>();
 		StaffBmo staffBmo = new StaffBmoImpl();

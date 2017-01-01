@@ -1815,6 +1815,15 @@ public class OrderController extends BaseController {
 			param.put("rights", orderBmo.getAvilablePayMethodCdList(sessionStaff));
 		} catch (BusinessException be) {
 			return super.failed(be);
+		}  catch (InterfaceException ie) {
+			log.error("系管权限查询接口sys-checkOperatSpec异常：", ie);
+			return super.failed(ie, null, ErrorCode.CHECKOPERATSPEC);
+		} catch (IOException ioe) {
+			log.error("系管权限查询接口sys-checkOperatSpec异常：", ioe);
+			return super.failed(ErrorCode.CHECKOPERATSPEC, ioe, null);
+		} catch (Exception e) {
+			log.error("系管权限查询接口sys-checkOperatSpec异常：", e);
+			return super.failed(ErrorCode.CHECKOPERATSPEC, e, null);
 		}
         
         try {
@@ -3145,14 +3154,6 @@ public class OrderController extends BaseController {
     	JsonResponse jsonResponse = null;
         Object realNameFlag =  MDA.REAL_NAME_PHOTO_FLAG.get("REAL_NAME_PHOTO_"+sessionStaff.getCurrentAreaId().substring(0, 3));
     	boolean isRealNameFlagOn  = realNameFlag == null ? false : "ON".equals(realNameFlag.toString()) ? true : false;//实名制拍照开关是否打开
-    	
-    	//下个版本我来优化这块-ZhangYu
-    	Object sessionHandleCustFlag = ServletUtils.getSessionAttribute(request, SysConstant.TGJBRBTQX );
-    	if(sessionHandleCustFlag == null){
-    		//是否具有跳过经办人必填的权限
-			boolean isHandleCustNeeded = "0".equals(staffBmo.checkOperatBySpecCd(SysConstant.TGJBRBTQX , sessionStaff)) ? false : true;
-			ServletUtils.setSessionAttribute(request, SysConstant.TGJBRBTQX, isHandleCustNeeded);
-    	}
     	
     	if (commonBmo.checkToken(request, SysConstant.ORDER_SUBMIT_TOKEN)) {
             try {

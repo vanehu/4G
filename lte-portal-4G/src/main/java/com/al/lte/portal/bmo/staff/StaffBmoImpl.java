@@ -851,17 +851,18 @@ public class StaffBmoImpl implements StaffBmo {
 	 * @param operatSpecCd
 	 * @param sessionStaff
 	 * @return
-	 * @throws BusinessException
+	 * @throws Exception 
+	 * @throws IOException 
+	 * @throws InterfaceException 
 	 */
-	public String checkOperatBySpecCd(String operatSpecCd, SessionStaff sessionStaff) throws BusinessException {
+	public String checkOperatBySpecCd(String operatSpecCd, SessionStaff sessionStaff) throws InterfaceException, IOException, Exception {
 		Map<String, Object> dataBusMap = new HashMap<String, Object>();
 		dataBusMap.put("opsManageCode", operatSpecCd);
 		dataBusMap.put("staffId", sessionStaff.getStaffId());
 		dataBusMap.put("areaId", sessionStaff.getAreaId());
-		DataBus db = null;
 		
+		DataBus db = InterfaceClient.callService(dataBusMap, PortalServiceCode.CHECK_OPERATSPEC, null, sessionStaff);
 		try {		
-			db = InterfaceClient.callService(dataBusMap, PortalServiceCode.CHECK_OPERATSPEC, null, sessionStaff);
 			if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db.getResultCode()))) {				
 				return "0";
 			}

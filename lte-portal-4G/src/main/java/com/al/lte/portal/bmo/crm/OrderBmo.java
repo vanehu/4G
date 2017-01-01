@@ -620,8 +620,11 @@ public interface OrderBmo {
 
 	/**
 	 * 根据员工信息返回一个支付方式的权限列表
+	 * @throws Exception 
+	 * @throws IOException 
+	 * @throws InterfaceException 
 	 */
-	public List<Map<String, String>> getAvilablePayMethodCdList(SessionStaff sessionStaff) throws BusinessException;
+	public List<Map<String, String>> getAvilablePayMethodCdList(SessionStaff sessionStaff) throws BusinessException, InterfaceException, IOException, Exception;
 	
 	/**
 	 * 电子档案查询
