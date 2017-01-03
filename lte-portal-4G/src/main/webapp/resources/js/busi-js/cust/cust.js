@@ -874,231 +874,252 @@ order.cust = (function(){
 	}
 	//客户列表点击
 	var _showCustAuth = function(scope) {
-		_choosedCustInfo = {
-			custId : $(scope).attr("custId"), //$(scope).find("td:eq(3)").text(),
-			partyName : $(scope).attr("partyName"), //$(scope).find("td:eq(0)").text(),
-			CN : $(scope).attr("CN"),
-			idCardNumber : $(scope).attr("idCardNumber"), //$(scope).find("td:eq(4)").text(),
-			identityName : $(scope).attr("identityName"),
-			areaName : $(scope).attr("areaName"),
-			areaId : $(scope).attr("areaId"),
-			identityCd :$(scope).attr("identityCd"),
-			addressStr :$(scope).attr("addressStr"),
-			norTaxPayer :$(scope).attr("norTaxPayer"),
-			segmentId :$(scope).attr("segmentId"),
-			segmentName :$(scope).attr("segmentName"),
-			custFlag :$(scope).attr("custFlag"),
-			vipLevel :$(scope).attr("vipLevel"),
-			vipLevelName :$(scope).attr("vipLevelName"),
-			accNbr:$(scope).attr("accNbr"),
-			userIdentityCd:$(scope).attr("userIdentityCd"),//使用人证件类型
-			userIdentityName:$(scope).attr("userIdentityName"),//使用人证件名称
-			userIdentityNum:$(scope).attr("userIdentityNum"),//使用人证件号码
-			accountName:$(scope).attr("accountName"),//账户名
-			userName:$(scope).attr("userName"),//使用人名
-			userCustId:$(scope).attr("userCustId"),//使用人客户id
-			isSame:$(scope).attr("isSame")//使用人名称与账户名称是否一致
-			};
-		//设置被选择标识
-		_checkUserInfo.accNbr = "";
-		_checkUserInfo.accNbr = $(scope).attr("accNbr");
-		$(scope).attr("selected","selected");
-		$(scope).siblings().each(function () {
-				$(this).removeAttr("selected");
-		});
-		// 判断是否是政企客户
-		var isGovCust = false;
-		for (var i = 0; i < CacheData.getGovCertType().length; i ++) {
-			if (_choosedCustInfo.identityCd == CacheData.getGovCertType()[i]) {
-				isGovCust = true;
-				break;
-			}
-		}
-		//省份政企开关
-		var response = $.callServiceAsJson(contextPath + "/properties/getValue", {"key": "GOV_"+_choosedCustInfo.areaId.substr(0,3)});
-		var govSwitch = "OFF";
-		if(response.code=="0"){
-			govSwitch = response.data;
-		}
-		if(order.cust.queryForChooseUser && isGovCust){
-			$.alert('提示','使用人必须是公众客户，请重新定位。');
-			return false;
-		}
-		var menuName = $("#menuName").attr("menuName");
-		if(ec.util.isObj(menuName)&&(CONST.MENU_FANDANG==menuName||CONST.MENU_CUSTFANDANG==menuName||CONST.MENU_RETURNFILE==menuName||CONST.MENU_REMOVEPROD==menuName)){
-			authFlag = "1";
-		}
-		if(authFlag=="0"){
-			//TODO init view 
-			if(order.cust.authType == '00'){
-				$("#custAuthTypeName").html("客户密码：");
-			} else {
-				$("#custAuthTypeName").html("产品密码：");
-			}
+        var param = {
+            "accNbr": $(scope).attr("accNbr"),
+            "identityCd": $(scope).attr("identityCd"),
+            "areaId": $(scope).attr("areaId"),
+            "custId": $(scope).attr("custId"),
+            "soNbr": UUID.getDataId()
+        };
 
-			if (govSwitch == "ON" && isGovCust) {
-				if(!ec.util.isObj(_choosedCustInfo.userCustId)&&ec.util.isObj(_choosedCustInfo.accNbr)){
-					$.alert("提示","返回的使用人信息为空，请补全信息！");
-					return;
-				}
-				//政企客户隐藏个人证件鉴权方式【2】
-				$("#auth3").find("#auth_tab2").hide();
-				$("#auth3").find("#content2").hide();
+        $.callServiceAsJson(contextPath + "/cust/queryCustExt", param, {
+            "before": function () {
+                $.ecOverlay("<strong>正在查询中,请稍等...</strong>");
+            }, "done": function (response) {
+                if (response.code == 0) {
+                    _choosedCustInfo = {
+                        custId: $(scope).attr("custId"), //$(scope).find("td:eq(3)").text(),
+                        partyName: $(scope).attr("partyName"), //$(scope).find("td:eq(0)").text(),
+                        CN: $(scope).attr("CN"),
+                        idCardNumber: $(scope).attr("idCardNumber"), //$(scope).find("td:eq(4)").text(),
+                        identityName: $(scope).attr("identityName"),
+                        areaName: $(scope).attr("areaName"),
+                        areaId: $(scope).attr("areaId"),
+                        identityCd: $(scope).attr("identityCd"),
+                        addressStr: $(scope).attr("addressStr"),
+                        norTaxPayer: $(scope).attr("norTaxPayer"),
+                        segmentId: $(scope).attr("segmentId"),
+                        segmentName: $(scope).attr("segmentName"),
+                        custFlag: $(scope).attr("custFlag"),
+                        vipLevel: $(scope).attr("vipLevel"),
+                        vipLevelName: $(scope).attr("vipLevelName"),
+                        accNbr: $(scope).attr("accNbr"),
+                        userIdentityCd: response.data.userIdentityCd,//使用人证件类型
+                        userIdentityName: response.data.userIdentityName,//使用人证件名称
+                        userIdentityNum: response.data.userIdentityNum,//使用人证件号码
+                        accountName: response.data.accountName,//账户名
+                        userName: response.data.userName,//使用人名
+                        userCustId: response.data.userCustId,//使用人客户id
+                        isSame: response.data.isSame//使用人名称与账户名称是否一致
+                    };
+                    //设置被选择标识
+                    _checkUserInfo.accNbr = "";
+                    _checkUserInfo.accNbr = $(scope).attr("accNbr");
+                    $(scope).attr("selected", "selected");
+                    $(scope).siblings().each(function () {
+                        $(this).removeAttr("selected");
+                    });
+                    // 判断是否是政企客户
+                    var isGovCust = false;
+                    for (var i = 0; i < CacheData.getGovCertType().length; i++) {
+                        if (_choosedCustInfo.identityCd == CacheData.getGovCertType()[i]) {
+                            isGovCust = true;
+                            break;
+                        }
+                    }
+                    //省份政企开关
+                    var response = $.callServiceAsJson(contextPath + "/properties/getValue", {"key": "GOV_" + _choosedCustInfo.areaId.substr(0, 3)});
+                    var govSwitch = "OFF";
+                    if (response.code == "0") {
+                        govSwitch = response.data;
+                    }
+                    if (order.cust.queryForChooseUser && isGovCust) {
+                        $.alert('提示', '使用人必须是公众客户，请重新定位。');
+                        return false;
+                    }
+                    var menuName = $("#menuName").attr("menuName");
+                    if (ec.util.isObj(menuName) && (CONST.MENU_FANDANG == menuName || CONST.MENU_CUSTFANDANG == menuName || CONST.MENU_RETURNFILE == menuName || CONST.MENU_REMOVEPROD == menuName)) {
+                        authFlag = "1";
+                    }
+                    if (authFlag == "0") {
+                        //TODO init view
+                        if (order.cust.authType == '00') {
+                            $("#custAuthTypeName").html("客户密码：");
+                        } else {
+                            $("#custAuthTypeName").html("产品密码：");
+                        }
 
-				//设置单位证件+使用人证件【5】
-				$("#auth3").find("#idCardTypeUnit5").text(_choosedCustInfo.identityName);
-				$("#auth3").find("#idCardType5").text(_choosedCustInfo.userIdentityName);
-				if (_choosedCustInfo.userIdentityCd == "1") {
-					$("#auth3").find("#readCertBtnID5").show();
-					$("#auth3").find("#idCardNumber5").attr("disabled", "disabled");
-				} else {
-					$("#auth3").find("#readCertBtnID5").hide();
-					$("#auth3").find("#idCardNumber5").removeAttr("disabled");
-				}
+                        if (govSwitch == "ON" && isGovCust) {
+                            if (!ec.util.isObj(_choosedCustInfo.userCustId) && ec.util.isObj(_choosedCustInfo.accNbr)) {
+                                $.alert("提示", "返回的使用人信息为空，请补全信息！");
+                                return;
+                            }
+                            //政企客户隐藏个人证件鉴权方式【2】
+                            $("#auth3").find("#auth_tab2").hide();
+                            $("#auth3").find("#content2").hide();
 
-				//设置单位证件【6】
-				$("#auth3").find("#idCardType6").text(_choosedCustInfo.identityName);
+                            //设置单位证件+使用人证件【5】
+                            $("#auth3").find("#idCardTypeUnit5").text(_choosedCustInfo.identityName);
+                            $("#auth3").find("#idCardType5").text(_choosedCustInfo.userIdentityName);
+                            if (_choosedCustInfo.userIdentityCd == "1") {
+                                $("#auth3").find("#readCertBtnID5").show();
+                                $("#auth3").find("#idCardNumber5").attr("disabled", "disabled");
+                            } else {
+                                $("#auth3").find("#readCertBtnID5").hide();
+                                $("#auth3").find("#idCardNumber5").removeAttr("disabled");
+                            }
 
-				//设置使用人【7】
-				$("#auth3").find("#idCardType7").text(_choosedCustInfo.userIdentityName);
-				$("#auth3").find("#auth7userName").text(_choosedCustInfo.userName);
-				$("#auth3").find("#auth7accountName").text(_choosedCustInfo.accountName);
-				$("#auth3").find("#auth7isSame").text(_choosedCustInfo.isSame == "Y" ? "是" : "否");
-				if (_choosedCustInfo.userIdentityCd == "1") {
-					$("#auth3").find("#readCertBtnID7").show();
-					$("#auth3").find("#idCardNumber7").attr("disabled", "disabled");
-				} else {
-					$("#auth3").find("#readCertBtnID7").hide();
-					$("#auth3").find("#idCardNumber7").removeAttr("disabled");
-				}
+                            //设置单位证件【6】
+                            $("#auth3").find("#idCardType6").text(_choosedCustInfo.identityName);
+
+                            //设置使用人【7】
+                            $("#auth3").find("#idCardType7").text(_choosedCustInfo.userIdentityName);
+                            $("#auth3").find("#auth7userName").text(_choosedCustInfo.userName);
+                            $("#auth3").find("#auth7accountName").text(_choosedCustInfo.accountName);
+                            $("#auth3").find("#auth7isSame").text(_choosedCustInfo.isSame == "Y" ? "是" : "否");
+                            if (_choosedCustInfo.userIdentityCd == "1") {
+                                $("#auth3").find("#readCertBtnID7").show();
+                                $("#auth3").find("#idCardNumber7").attr("disabled", "disabled");
+                            } else {
+                                $("#auth3").find("#readCertBtnID7").hide();
+                                $("#auth3").find("#idCardNumber7").removeAttr("disabled");
+                            }
 
 
-				var canRealName = $(scope).attr('canrealname');
-				// 针对实名制标识canRealName=""的情况做提示
-				if (!ec.util.isObj(canRealName)) {
-					$.alert("提示", "canRealName为空，当前为非实名制客户，请先沟通营业员进行资料补登。");
-					return;
-				}
-				var accessNumber = _choosedCustInfo.accNbr;
-				//接入号定位，直接使用输入的接入号
-				if (-1 == $("#p_cust_identityCd").val()) {
-					accessNumber = $.trim($("#p_cust_identityNum").val());
-				}
-				//没有使用人信息接入号只有一个单位证件鉴权方式
-				if (!ec.util.isObj(accessNumber)) {
-					//只显示单位证件鉴权
-					$("#auth3").find("#auth_tab1").removeClass();
-					$("#auth3").find("#auth_tab1").hide();
-					$("#auth3").find("#auth_tab2").removeClass();
-					$("#auth3").find("#auth_tab2").hide();
-					$("#auth3").find("#auth_tab3").removeClass();
-					$("#auth3").find("#auth_tab3").hide();
-					$("#auth3").find("#auth_tab5").removeClass();
-					$("#auth3").find("#auth_tab5").hide();
-					$("#auth3").find("#auth_tab6").addClass("setcon");
-					$("#auth3").find("#auth_tab6").show();
-					$("#auth3").find("#auth_tab7").removeClass();
-					$("#auth3").find("#auth_tab7").hide();
-					$("#auth3").find("#content1").hide();
-					$("#auth3").find("#content2").hide();
-					$("#auth3").find("#content3").hide();
-					$("#auth3").find("#content5").hide();
-					$("#auth3").find("#content6").show();
-					$("#auth3").find("#content7").hide();
-				} else {
-					$("#auth3").find("#auth_tab1").addClass("setcon");
-					$("#auth3").find("#auth_tab2").removeClass();
-					$("#auth3").find("#auth_tab3").removeClass();
-					$("#auth3").find("#auth_tab5").removeClass();
-					$("#auth3").find("#auth_tab6").removeClass();
-					$("#auth3").find("#auth_tab7").removeClass();
-					$("#auth3").find("#auth_tab1").show();
-					$("#auth3").find("#auth_tab2").hide();
-					$("#auth3").find("#auth_tab3").show();
-					$("#auth3").find("#auth_tab5").show();
-					$("#auth3").find("#auth_tab6").show();
-					$("#auth3").find("#auth_tab7").show();
-					$("#auth3").find("#content1").show();
-					$("#auth3").find("#content2").hide();
-					$("#auth3").find("#content3").hide();
-					$("#auth3").find("#content5").hide();
-					$("#auth3").find("#content6").hide();
-					$("#auth3").find("#content7").hide();
-				}
-			} else {
-				$("#auth3").find("#idCardType2").text(_choosedCustInfo.identityName);
-				if (_choosedCustInfo.identityCd == "1") {
-					$("#auth3").find("#readCertBtnID2").show();
-					if(CONST.GET_BIND_STATUS()){
-						$("#auth3").find("#discernBtn_5").show();
-					}
-					$("#auth3").find("#idCardNumber2").attr("disabled", "disabled");
-				} else {
-					$("#auth3").find("#readCertBtnID2").hide();
-					$("#auth3").find("#discernBtn_5").hide();
-					$("#auth3").find("#idCardNumber2").removeAttr("disabled");
-				}
-				var canRealName = $(scope).attr('canrealname');
-				// 新疆-未实名号码查询定位异常 canRealName=""
-				if (!ec.util.isObj(canRealName)) {
-					$.alert("提示", "canRealName为空，当前为非实名制客户，请先沟通营业员进行资料补登。");
-					return;
-				}
-				var accessNumber = _choosedCustInfo.accNbr;
-				if (-1 == $("#p_cust_identityCd").val()) {
-					accessNumber = $.trim($("#p_cust_identityNum").val());
-				}
-				if (!ec.util.isObj(accessNumber)) {
-					$("#auth3").find("#auth_tab1").removeClass();
-					$("#auth3").find("#auth_tab1").hide();
-					$("#auth3").find("#auth_tab2").addClass("setcon");
-					$("#auth3").find("#auth_tab3").removeClass();
-					$("#auth3").find("#auth_tab3").hide();
-					$("#auth3").find("#content1").hide();
-					$("#auth3").find("#content2").show();
-					$("#auth3").find("#content3").hide();
-				} else {
-					$("#auth3").find("#auth_tab1").addClass("setcon");
-					$("#auth3").find("#auth_tab2").removeClass();
-					$("#auth3").find("#auth_tab3").removeClass();
-					$("#auth3").find("#auth_tab1").show();
-					$("#auth3").find("#auth_tab2").show();
-					$("#auth3").find("#auth_tab3").show();
-					$("#auth3").find("#content1").show();
-					$("#auth3").find("#content2").hide();
-					$("#auth3").find("#content3").hide();
-				}
-				$("#auth3").find("#auth_tab5").hide();
-				$("#auth3").find("#auth_tab6").hide();
-				$("#auth3").find("#auth_tab7").hide();
-				$("#auth3").find("#content5").hide();
-				$("#auth3").find("#content6").hide();
-				$("#auth3").find("#content7").hide();
-			}
+                            var canRealName = $(scope).attr('canrealname');
+                            // 针对实名制标识canRealName=""的情况做提示
+                            if (!ec.util.isObj(canRealName)) {
+                                $.alert("提示", "canRealName为空，当前为非实名制客户，请先沟通营业员进行资料补登。");
+                                return;
+                            }
+                            var accessNumber = _choosedCustInfo.accNbr;
+                            //接入号定位，直接使用输入的接入号
+                            if (-1 == $("#p_cust_identityCd").val()) {
+                                accessNumber = $.trim($("#p_cust_identityNum").val());
+                            }
+                            //没有使用人信息接入号只有一个单位证件鉴权方式
+                            if (!ec.util.isObj(accessNumber)) {
+                                //只显示单位证件鉴权
+                                $("#auth3").find("#auth_tab1").removeClass();
+                                $("#auth3").find("#auth_tab1").hide();
+                                $("#auth3").find("#auth_tab2").removeClass();
+                                $("#auth3").find("#auth_tab2").hide();
+                                $("#auth3").find("#auth_tab3").removeClass();
+                                $("#auth3").find("#auth_tab3").hide();
+                                $("#auth3").find("#auth_tab5").removeClass();
+                                $("#auth3").find("#auth_tab5").hide();
+                                $("#auth3").find("#auth_tab6").addClass("setcon");
+                                $("#auth3").find("#auth_tab6").show();
+                                $("#auth3").find("#auth_tab7").removeClass();
+                                $("#auth3").find("#auth_tab7").hide();
+                                $("#auth3").find("#content1").hide();
+                                $("#auth3").find("#content2").hide();
+                                $("#auth3").find("#content3").hide();
+                                $("#auth3").find("#content5").hide();
+                                $("#auth3").find("#content6").show();
+                                $("#auth3").find("#content7").hide();
+                            } else {
+                                $("#auth3").find("#auth_tab1").addClass("setcon");
+                                $("#auth3").find("#auth_tab2").removeClass();
+                                $("#auth3").find("#auth_tab3").removeClass();
+                                $("#auth3").find("#auth_tab5").removeClass();
+                                $("#auth3").find("#auth_tab6").removeClass();
+                                $("#auth3").find("#auth_tab7").removeClass();
+                                $("#auth3").find("#auth_tab1").show();
+                                $("#auth3").find("#auth_tab2").hide();
+                                $("#auth3").find("#auth_tab3").show();
+                                $("#auth3").find("#auth_tab5").show();
+                                $("#auth3").find("#auth_tab6").show();
+                                $("#auth3").find("#auth_tab7").show();
+                                $("#auth3").find("#content1").show();
+                                $("#auth3").find("#content2").hide();
+                                $("#auth3").find("#content3").hide();
+                                $("#auth3").find("#content5").hide();
+                                $("#auth3").find("#content6").hide();
+                                $("#auth3").find("#content7").hide();
+                            }
+                        } else {
+                            $("#auth3").find("#idCardType2").text(_choosedCustInfo.identityName);
+                            if (_choosedCustInfo.identityCd == "1") {
+                                $("#auth3").find("#readCertBtnID2").show();
+                                if (CONST.GET_BIND_STATUS()) {
+                                    $("#auth3").find("#discernBtn_5").show();
+                                }
+                                $("#auth3").find("#idCardNumber2").attr("disabled", "disabled");
+                            } else {
+                                $("#auth3").find("#readCertBtnID2").hide();
+                                $("#auth3").find("#discernBtn_5").hide();
+                                $("#auth3").find("#idCardNumber2").removeAttr("disabled");
+                            }
+                            var canRealName = $(scope).attr('canrealname');
+                            // 新疆-未实名号码查询定位异常 canRealName=""
+                            if (!ec.util.isObj(canRealName)) {
+                                $.alert("提示", "canRealName为空，当前为非实名制客户，请先沟通营业员进行资料补登。");
+                                return;
+                            }
+                            var accessNumber = _choosedCustInfo.accNbr;
+                            if (-1 == $("#p_cust_identityCd").val()) {
+                                accessNumber = $.trim($("#p_cust_identityNum").val());
+                            }
+                            if (!ec.util.isObj(accessNumber)) {
+                                $("#auth3").find("#auth_tab1").removeClass();
+                                $("#auth3").find("#auth_tab1").hide();
+                                $("#auth3").find("#auth_tab2").addClass("setcon");
+                                $("#auth3").find("#auth_tab3").removeClass();
+                                $("#auth3").find("#auth_tab3").hide();
+                                $("#auth3").find("#content1").hide();
+                                $("#auth3").find("#content2").show();
+                                $("#auth3").find("#content3").hide();
+                            } else {
+                                $("#auth3").find("#auth_tab1").addClass("setcon");
+                                $("#auth3").find("#auth_tab2").removeClass();
+                                $("#auth3").find("#auth_tab3").removeClass();
+                                $("#auth3").find("#auth_tab1").show();
+                                $("#auth3").find("#auth_tab2").show();
+                                $("#auth3").find("#auth_tab3").show();
+                                $("#auth3").find("#content1").show();
+                                $("#auth3").find("#content2").hide();
+                                $("#auth3").find("#content3").hide();
+                            }
+                            $("#auth3").find("#auth_tab5").hide();
+                            $("#auth3").find("#auth_tab6").hide();
+                            $("#auth3").find("#auth_tab7").hide();
+                            $("#auth3").find("#content5").hide();
+                            $("#auth3").find("#content6").hide();
+                            $("#auth3").find("#content7").hide();
+                        }
 
-			//初始化弹出窗口
-			initAuth3();
-			if (ec.util.isObj(canRealName) && 1 == canRealName) {
-				easyDialog.open({
-					container: 'auth3',
-					callback: function () {
-						order.cust.queryForChooseUser = false; //关闭弹出框时重置标识位
-					}
-				});
-			}else{
-				_realCheck(contextPath, scope);
-			}
-			if(order.cust.jumpAuthflag=="0"){
-				$("#auth3").find("#jumpAuth").show();
-			}
-			$("#authClose").off("click").on("click",function(event){
-				easyDialog.close();
-				initAuth3();
-			});
-		} else{
-			_custAuth(scope);
-		}
-	};
+                        //初始化弹出窗口
+                        initAuth3();
+                        if (ec.util.isObj(canRealName) && 1 == canRealName) {
+                            easyDialog.open({
+                                container: 'auth3',
+                                callback: function () {
+                                    order.cust.queryForChooseUser = false; //关闭弹出框时重置标识位
+                                }
+                            });
+                        } else {
+                            _realCheck(contextPath, scope);
+                        }
+                        if (order.cust.jumpAuthflag == "0") {
+                            $("#auth3").find("#jumpAuth").show();
+                        }
+                        $("#authClose").off("click").on("click", function (event) {
+                            easyDialog.close();
+                            initAuth3();
+                        });
+                    } else {
+                        _custAuth(scope);
+                    }
+                } else {
+                    $.alertM(response);
+                }
+            }, fail: function (response) {
+            }, "always": function () {
+                $.unecOverlay();
+            }
+        });
+    };
 	//创键客户
 	var _userAddClosed = function() {
 		$("#cCustName").val("");

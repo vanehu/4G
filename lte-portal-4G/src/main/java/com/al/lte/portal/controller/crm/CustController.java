@@ -330,13 +330,11 @@ public class CustController extends BaseController {
 										newCustInfoMap.put("accNbr", accNbr);
 										if(StringUtils.isNotBlank(qryAcctNbr)&&!qryAcctNbr.equals(accNbr))
 											continue;
-										addAccountAndCustInfo(flowNum, sessionStaff, areaId, custId, accNbr, soNbr, newCustInfoMap);
 										custInfosWithNbr.add(newCustInfoMap);
 									}
 									if (custInfosWithNbr.size()==0&&StringUtils.isNotBlank(qryAcctNbr)) {
 										Map newCustInfoMap = new HashMap(custInfoMap);
 										newCustInfoMap.put("accNbr", qryAcctNbr);
-										addAccountAndCustInfo(flowNum, sessionStaff, areaId, custId, qryAcctNbr, soNbr, newCustInfoMap);
 										custInfosWithNbr.add(newCustInfoMap);
 									}
 								} else {
@@ -349,8 +347,6 @@ public class CustController extends BaseController {
 								Map custInfoMap = (Map) info;
 								Map newCustInfoMap = new HashMap(custInfoMap);
 								newCustInfoMap.put("accNbr", qryAcctNbr);
-								String custId = MapUtils.getString(custInfoMap, "custId", "");
-								addAccountAndCustInfo(flowNum, sessionStaff, areaId, custId, qryAcctNbr, soNbr, newCustInfoMap);
 								custInfosWithNbr.add(newCustInfoMap);
 							}
 						}
@@ -402,6 +398,30 @@ public class CustController extends BaseController {
 		}
 	}
 
+    @RequestMapping(value = "/queryCustExt", method = {RequestMethod.POST})
+    @ResponseBody
+    public JsonResponse queryCustExt(@RequestBody Map<String, Object> paramMap, @LogOperatorAnn String flowNum) {
+        SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+            SysConstant.SESSION_KEY_LOGIN_STAFF);
+        JsonResponse jsonResponse = null;
+        String areaId = MapUtils.getString(paramMap, "areaId", "");
+        String custId = MapUtils.getString(paramMap, "custId", "");
+        String identityCd = MapUtils.getString(paramMap, "identityCd", "");
+        String accNbr = MapUtils.getString(paramMap, "accNbr", "");
+        String soNbr = MapUtils.getString(paramMap, "soNbr", "");
+        try {
+            Map<String, Object> retMap = addAccountAndCustInfo(flowNum, sessionStaff, areaId, custId, accNbr, soNbr, identityCd);
+            if (null != retMap) {
+                jsonResponse = super.successed(retMap);
+            } else {
+                jsonResponse = super.failed(retMap, ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return jsonResponse;
+    }
+
 	/**
 	 * 添加账户信息和使用人信息
 	 * @param flowNum
@@ -412,8 +432,9 @@ public class CustController extends BaseController {
 	 * @param newCustInfoMap
 	 * @throws Exception
 	 */
-	private void addAccountAndCustInfo(String flowNum, SessionStaff sessionStaff, String areaId, String custId, String accNbr, String soNbr, Map newCustInfoMap) throws Exception {
-		if (isGovCust(flowNum,newCustInfoMap, sessionStaff)) {
+	private Map<String,Object> addAccountAndCustInfo(String flowNum, SessionStaff sessionStaff, String areaId, String custId, String accNbr, String soNbr, String identityCd) throws Exception {
+        Map<String,Object> extCustInfoMap = new HashMap<String,Object>();
+        if (isGovCust(flowNum,identityCd, sessionStaff)) {
 			//账户和使用人信息查询
 			Map<String, Object> auParam = new HashMap<String, Object>();
 			auParam.put("areaId", areaId);
@@ -432,17 +453,17 @@ public class CustController extends BaseController {
 			if (MapUtils.isNotEmpty(auMap)) {
 				Map<String, Object> aMap = MapUtils.getMap(auMap, "account");
 				Map<String, Object> iMap = MapUtils.getMap(auMap, "identity");
-				newCustInfoMap.put("userIdentityCd", MapUtils.getString(iMap, "identityTypeCd"));
-				newCustInfoMap.put("userIdentityName", MapUtils.getString(iMap, "identityName"));
-				newCustInfoMap.put("userIdentityNum", MapUtils.getString(iMap, "identityNum"));
-				newCustInfoMap.put("accountName", MapUtils.getString(aMap, "accountName"));
-				newCustInfoMap.put("userName", MapUtils.getString(auMap, "useCustName"));
-				newCustInfoMap.put("userCustId", MapUtils.getString(auMap, "useCustId"));
-				newCustInfoMap.put("isSame", MapUtils.getString(auMap, "isSame"));
+                extCustInfoMap.put("userIdentityCd", MapUtils.getString(iMap, "identityTypeCd"));
+				extCustInfoMap.put("userIdentityName", MapUtils.getString(iMap, "identityName"));
+				extCustInfoMap.put("userIdentityNum", MapUtils.getString(iMap, "identityNum"));
+				extCustInfoMap.put("accountName", MapUtils.getString(aMap, "accountName"));
+				extCustInfoMap.put("userName", MapUtils.getString(auMap, "useCustName"));
+				extCustInfoMap.put("userCustId", MapUtils.getString(auMap, "useCustId"));
+				extCustInfoMap.put("isSame", MapUtils.getString(auMap, "isSame"));
 			}
 		}
-
-	}
+        return extCustInfoMap;
+    }
 
 	/**
 	 * 判断客户是否是政企客户
@@ -451,12 +472,11 @@ public class CustController extends BaseController {
 	 * @param sessionStaff
      * @return
      */
-	private boolean isGovCust(String flowNum, Map newCustInfoMap, SessionStaff sessionStaff) {
+	private boolean isGovCust(String flowNum, String identityCd, SessionStaff sessionStaff) {
 		boolean isGov = false;
 		Map<String, Object> param = new HashMap<String, Object>();
 		param.put("partyTypeCd", 2);
 		Map<String, Object> rMap;
-		String identityCd = MapUtils.getString(newCustInfoMap, "identityCd", "");
 		try {
 			rMap = this.custBmo.queryCertType(param, flowNum, sessionStaff);
 			List<Map<String, Object>> govMap = (List<Map<String, Object>>) rMap.get("result");
