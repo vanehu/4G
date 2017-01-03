@@ -875,10 +875,15 @@ order.writeCard = (function(){
 		//alert("version: " + version);
 		// 组件版本不是最新, 执行更新
 		if (version != _cardDllInfoJson.dllVersion) {
+			var writeCardNewDLL = $("#selUimType").val();//写卡新组件开关
+			if(writeCardNewDLL == "4"){
+				$.alert("提示","您当前您使用的是测试卡组件版本为[" + version + "]，目前系统对应的卡组件版本为[" + _cardDllInfoJson.dllVersion + "]请使用与系统卡组件相对应的卡进行写卡。");
+			}else{
+				$.alert("提示","您当前使用的白卡组件版本为[" + version + "]，目前系统对应的卡组件版本为[" + _cardDllInfoJson.dllVersion + "]请使用与系统卡组件相对应的卡进行写卡。");
+			}
 //			alert("您插入白卡的卡商写卡组件不是最新版本，请将最新版本组件下载保存到C:\\WINDOWS\\system32 目录下!");
 //			var url = contextPath + "/card/"+ _cardDllInfoJson.dllName;
 //			location.href = url;
-			$.alert("提示","您当前使用的卡组件版本为[" + version + "]，请下载更新至最新的版本[" + _cardDllInfoJson.dllVersion + "]后重新写卡。");
 			return false;
 		}
 		return true;
