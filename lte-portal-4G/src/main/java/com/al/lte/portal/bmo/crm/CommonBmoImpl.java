@@ -520,20 +520,46 @@ public class CommonBmoImpl implements CommonBmo {
 		Set<String> c1BoActionType = new HashSet<String>();
         Map<String, Object> orderList = (Map<String, Object>) param.get("orderList");
         List<Map<String, Object>> custOrderList = (List<Map<String, Object>>) orderList.get("custOrderList");
+        
+        //第一次循环记录新建客户的C1节点
         for (Map<String, Object> custOrder : custOrderList) {
             List<Map<String, Object>> busiOrderList = (List<Map<String, Object>>) custOrder.get("busiOrder");
             for (int i = 0; i < busiOrderList.size(); i++) {
             	Map<String, Object> busiOrder = busiOrderList.get(i);
             	HashMap<String, Object> boActionType = (HashMap<String, Object>) busiOrder.get("boActionType");
-                if ("C1".equalsIgnoreCase(boActionType.get("boActionTypeCd").toString())) {
+                if ("C1".equalsIgnoreCase(MapUtils.getString(boActionType, "boActionTypeCd", ""))) {
                     Map<String, Object> data = (Map<String, Object>) busiOrder.get("data");
+                	Map<String, Object> custInfo = (Map<String, Object>) ((List<Map<String, Object>>) data.get("boCustInfos")).get(0);
                     Map<String, Object> custIdentities = (Map<String, Object>) ((List<Map<String, Object>>) data.get("boCustIdentities")).get(0);
                     String identidiesTypeCd = MapUtils.getString(custIdentities, "identidiesTypeCd", "");//证件类型
                     String identityNum = MapUtils.getString(custIdentities, "identityNum", "");//证件号
                     if("".equals(identidiesTypeCd) || "".equals(identityNum)){
                     	return false;
-                    } else{
-                    	if(!c1BoActionType.add(identityNum + identidiesTypeCd)){
+                    } else if(!("Y".equals(MapUtils.getString(custInfo, "jbrFlag", "")) || 
+                    		"Y".equals(MapUtils.getString(custInfo, "userCustFlag", "")))){//排除新建经办人和使用人节点
+                    	if(!c1BoActionType.add(identityNum + identidiesTypeCd)){//若没有将新建经办人、新建客户区分开，则只能随机过滤
+                    		busiOrderList.remove(i--);
+                    	}
+                    }
+                }
+            }
+        }
+
+        //第二次循环针对新建客户以外的C1节点(新建使用人、新建经办人)进行过滤
+        for (Map<String, Object> custOrder : custOrderList) {
+            List<Map<String, Object>> busiOrderList = (List<Map<String, Object>>) custOrder.get("busiOrder");
+            for (int i = 0; i < busiOrderList.size(); i++) {
+            	Map<String, Object> busiOrder = busiOrderList.get(i);
+            	HashMap<String, Object> boActionType = (HashMap<String, Object>) busiOrder.get("boActionType");
+                if ("C1".equalsIgnoreCase(MapUtils.getString(boActionType, "boActionTypeCd", ""))) {
+                    Map<String, Object> data = (Map<String, Object>) busiOrder.get("data");
+                	Map<String, Object> custInfo = (Map<String, Object>) ((List<Map<String, Object>>) data.get("boCustInfos")).get(0);
+                    Map<String, Object> custIdentities = (Map<String, Object>) ((List<Map<String, Object>>) data.get("boCustIdentities")).get(0);
+                    String identidiesTypeCd = MapUtils.getString(custIdentities, "identidiesTypeCd", "");//证件类型
+                    String identityNum = MapUtils.getString(custIdentities, "identityNum", "");//证件号
+                    if("Y".equals(MapUtils.getString(custInfo, "jbrFlag", "")) || 
+                    		"Y".equals(MapUtils.getString(custInfo, "userCustFlag", ""))){
+                    	if(!c1BoActionType.add(identityNum + identidiesTypeCd)){//针对新建经办人和使用人节点进行过滤
                     		busiOrderList.remove(i--);
                     	}
                     }
