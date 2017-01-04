@@ -76,6 +76,9 @@ public class InterfaceClient {
 	protected static Log log = Log.getLog(InterfaceClient.class);
 	
 	private static final String ENCODING = "UTF-8";
+
+	private static final String AREA_CHINA = "8100000";
+	private static final String AREA_BEIJING = "8110000";
 	
 	private static final String RES_SERVICENAME = "serviceName";
 	private static final String RES_SERVICEMETHOD = "serviceMethod";
@@ -227,6 +230,9 @@ public class InterfaceClient {
 							dataBusMap.put("areaId", sessionStaff.getCurrentAreaId());
 						}
 					}
+					if(AREA_CHINA.equals(dataBusMap.get("areaId"))){
+						dataBusMap.put("areaId", AREA_BEIJING);
+					}
 					paramString = JsonUtil.toString(dataBusMap);
 					paramJson=paramString;
 				} else if (BDW_PREFIX.equals(prefix)) {//
@@ -238,6 +244,9 @@ public class InterfaceClient {
 						if(sessionStaff != null){
 							dataBusMap.put("areaId", sessionStaff.getCurrentAreaId());
 						}
+					}
+					if(AREA_CHINA.equals(dataBusMap.get("areaId"))){
+						dataBusMap.put("areaId", AREA_BEIJING);
 					}
 					paramString = JsonUtil.toString(dataBusMap);
 					paramJson=paramString;
@@ -293,6 +302,9 @@ public class InterfaceClient {
 								dataBusMap.put("areaId", sessionStaff.getCurrentAreaId());
 							}
 						}
+					}
+					if(AREA_CHINA.equals(dataBusMap.get("areaId"))){
+						dataBusMap.put("areaId", AREA_BEIJING);
 					}
 					paramString = JsonUtil.toString(dataBusMap);
 				} else if (RULE_PREFIX.equals(prefix)) {
