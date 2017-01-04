@@ -165,6 +165,11 @@ order.cust = (function(){
 	//客户类型选择事件
 	var _partyTypeCdChoose = function(scope,id) {
 		var partyTypeCd=$(scope).val();
+        if ("1" == partyTypeCd) {
+            $($(scope).parents(".network")[0]).find("#cCustName").attr("data-validate", "validate(personal) on(blur)");
+        } else if ("2" == partyTypeCd) {
+            $($(scope).parents(".network")[0]).find("#cCustName").attr("data-validate", "validate(government) on(blur)");
+        }
 		//客户类型关联证件类型下拉框
 		$("#"+id).empty();
 		_certTypeByPartyType(partyTypeCd,id);
@@ -485,7 +490,18 @@ order.cust = (function(){
 				$("#"+id).attr("placeHolder","请输入合法证件号码");
 				$("#"+id).attr("data-validate","validate(required:请准确填写证件号码) on(blur)");
 			}
-		}
+            if (query.common.queryPropertiesStatus("CHECK_RULES_" + (ec.util.isObj(OrderInfo.staff.areaId) ? OrderInfo.staff.areaId.substr(0, 3) : "")) && CacheData.isInCheckRuleByTypeCd(identidiesTypeCd)) {
+                if (id == "custCAttrIdCard") {
+                    $("#" + CONST.BUSI_ORDER_ATTR.orderAttrIdCard).removeAttr("onkeyup");
+                    $("#" + CONST.BUSI_ORDER_ATTR.orderAttrIdCard).attr("placeHolder", "请输入合法" + CacheData.getCheckRuleByKey(identidiesTypeCd, "name"));
+                    $("#" + CONST.BUSI_ORDER_ATTR.orderAttrIdCard).attr("data-validate", "validate(" + CacheData.getCheckRuleByKey(identidiesTypeCd, "checkFunction") + ":" + CacheData.getCheckRuleByKey(identidiesTypeCd, "description") + ") on(blur)");
+                } else {
+                    $("#" + id).removeAttr("onkeyup");
+                    $("#" + id).attr("placeHolder", "请输入合法" + CacheData.getCheckRuleByKey(identidiesTypeCd, "name"));
+                    $("#" + id).attr("data-validate", "validate(" + CacheData.getCheckRuleByKey(identidiesTypeCd, "checkFunction") + ":" + CacheData.getCheckRuleByKey(identidiesTypeCd, "description") + ") on(blur)");
+                }
+            }
+        }
 		_custcreateButton();
 		
 		//如果是身份证，则禁止输入，否则启用输入控件

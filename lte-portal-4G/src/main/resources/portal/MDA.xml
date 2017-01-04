@@ -1681,5 +1681,136 @@
 			'COMANDFXPRECHECK_899':'OFF'<!-- 虚拟省 -->
 			}
 		</const>
+		<const type="Map" name="CHECK_RULES_ON_OFF" description="证件类型校验规则，默认OFF">
+			{
+				'CHECK_RULES_854':'OFF',<!-- 西藏 -->
+				'CHECK_RULES_863':'OFF',<!-- 青海 -->
+				'CHECK_RULES_815':'OFF',<!-- 内蒙古 -->
+				'CHECK_RULES_823':'OFF',<!-- 黑龙江 -->
+				'CHECK_RULES_845':'OFF',<!-- 广西 -->
+				'CHECK_RULES_850':'OFF',<!-- 重庆 -->
+				'CHECK_RULES_861':'OFF',<!-- 陕西 -->
+				'CHECK_RULES_842':'OFF',<!-- 湖北 -->
+				'CHECK_RULES_835':'OFF',<!-- 福建 -->
+				'CHECK_RULES_832':'OFF',<!-- 江苏 -->
+				'CHECK_RULES_846':'OFF',<!-- 海南 -->
+				'CHECK_RULES_864':'OFF',<!-- 宁夏 -->
+				'CHECK_RULES_814':'OFF',<!-- 山西 -->
+				'CHECK_RULES_853':'OFF',<!-- 云南 -->
+				'CHECK_RULES_836':'OFF',<!-- 江西 -->
+				'CHECK_RULES_837':'OFF',<!-- 山东 -->
+				'CHECK_RULES_811':'OFF',<!-- 北京 -->
+				'CHECK_RULES_843':'OFF',<!-- 湖南 -->
+				'CHECK_RULES_851':'OFF',<!-- 四川 -->
+				'CHECK_RULES_844':'OFF',<!-- 广东 -->
+				'CHECK_RULES_831':'OFF',<!-- 上海 -->
+				'CHECK_RULES_812':'OFF',<!-- 天津 -->
+				'CHECK_RULES_813':'OFF',<!-- 河北 -->
+				'CHECK_RULES_841':'OFF',<!-- 河南 -->
+				'CHECK_RULES_821':'OFF',<!-- 辽宁 -->
+				'CHECK_RULES_822':'OFF',<!-- 吉林 -->
+				'CHECK_RULES_834':'OFF',<!-- 安徽 -->
+				'CHECK_RULES_833':'OFF',<!-- 浙江 -->
+				'CHECK_RULES_852':'OFF',<!-- 贵州 -->
+				'CHECK_RULES_862':'OFF',<!-- 甘肃 -->
+				'CHECK_RULES_865':'OFF',<!-- 新疆 -->
+				'CHECK_RULES_899':'OFF'<!-- 虚拟省 -->
+			}
+		</const>
+		<const type="List" name="CHECK_RULES" description="校验规则">
+            [
+            {
+            "certTypeCd": "1",
+            "description": "6位数字地址码+8位出生年月+3位顺序码+1位校验码。",
+            "name": "居民身份证",
+            "checkFunction":"gb116431999",
+            "param":""
+            },
+            {
+            "certTypeCd": "2",
+            "description": "6位数字地址码+8位出生年月+3位顺序码+1位校验码。",
+            "name": "军人身份证件",
+            "checkFunction":"gb116431999",
+            "param":""
+            },
+            {
+            "certTypeCd": "3",
+            "description": "外国护照 AAA- B- XXXXXXXXXXXXXX，其中A为国家代码 按照“ISO 3166-1-2006”国家及其地区的名称代码的第一部分国家代码规定的3位英文字母表示，如德国为DEU，丹麦DNK。\nB默认为0，X为编制使用外国人有效护照号码，应包含全部英文字母和阿拉伯数字，不包括其中的“.”、“-”等特殊字符。最长14位",
+            "name": "外国公民护照",
+            "checkFunction":"passport",
+            "param":""
+            },
+            {
+            "certTypeCd": "4",
+            "description": " “H”或者“M”+8位有效数字。",
+            "name": "港澳居民来往内地通行证",
+            "checkFunction":"hm8",
+            "param":""
+            },
+            {
+            "certTypeCd": "12",
+            "description": "6位数字地址码+8位出生年月+3位顺序码+1位校验码。",
+            "name": "户口簿",
+            "checkFunction":"gb116431999",
+            "param":""
+            },
+            {
+            "certTypeCd": "14",
+            "description": "6位数字地址码+8位出生年月+3位顺序码+1位校验码。",
+            "name": "武装警察身份证件",
+            "checkFunction":"gb116431999",
+            "param":""
+            },
+            {
+            "certTypeCd": "41",
+            "description": "6位数字地址码+8位出生年月+3位顺序码+1位校验码。",
+            "name": "临时居民身份证",
+            "checkFunction":"gb116431999",
+            "param":""
+            },
+            {
+            "certTypeCd": "42",
+            "description": "8位有效数字",
+            "name": "台湾居民来往内地通行证",
+            "checkFunction":"number8",
+            "param":""
+            },
+            {
+            "certTypeCd": "6",
+            "description": "15位有效数字或者18位有效数字和英文字母",
+            "name": "营业执照",
+            "checkFunction":"gs15200_gb321002015",
+            "param":""
+            },
+            {
+            "certTypeCd": "7",
+            "description": "必须填写，不能为空",
+            "name": "单位介绍信/公函+公章（仅用于党政军客户）",
+            "checkFunction":"required",
+            "param":""
+            },
+            {
+            "certTypeCd": "15",
+            "description": "八位数字（或大写拉丁字母）本体代码和一位数字（或大写拉丁字母）校验码，需要根据要求校验第9位校验位，考虑到目前已经推行统一社会信用代码，但尚未申请新的主数据，因此在组织代码处也需要支持18数字和英文字母组合，校验规则见GB 32100-2015",
+            "name": "组织机构代码",
+            "checkFunction":"gb117141997_gs15200_gb321002015",
+            "param":""
+            },
+            {
+            "certTypeCd": "34",
+            "description": "12位有效数字或者统一社会信用代码",
+            "name": "事业单位法人证书",
+            "checkFunction":"number12_gb321002015",
+            "param":""
+            },
+            {
+            "certTypeCd": "43",
+            "description": "15位有效数字或者18位有效数字和英文字母",
+            "name": "社会团体法人登记证书",
+            "checkFunction":"gs15200_gb321002015",
+            "param":""
+            }
+            ]
+		</const>
 	</mda>
 </mdas>

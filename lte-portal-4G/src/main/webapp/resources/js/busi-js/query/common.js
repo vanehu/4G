@@ -77,7 +77,26 @@ query.common = (function() {
 		
 		return resultFlag;
 	};
-	
+
+    /**
+     * 查询MDA配置节点<const>中数据，以对象形式返回
+     * @param key 要查询的MDA中的项
+     * @returns {*} 此配置项的JSON对象
+     */
+    var _queryPropertiesObject = function (key) {
+
+        if (ec.util.isObj(key)) {
+            var response = $.callServiceAsJson(contextPath + "/properties/getObject", {"key": key});
+            if (response.code == 0) {
+                return response.data;
+            } else if (response.code == 1) {
+                $.alert("提示", "Error: 配置查询失败!");
+            }
+        } else {
+            $.alert("提示", "入参key不能为空！");
+        }
+    };
+
 	/**
 	 * 根据权限编码查询工号的权限，入参key为权限编码，以boolean返回，有权限返回false；无权限或其他情况返回true
 	 */
@@ -145,6 +164,7 @@ query.common = (function() {
 	return {
 		queryApConfig			: _queryApConfig,
 		queryPropertiesValue	: _queryPropertiesValue,
+		queryPropertiesObject	: _queryPropertiesObject,
 		queryPropertiesStatus	: _queryPropertiesStatus,
 		checkOperateSpec		: _checkOperateSpec,
 		checkCameraDriverVersion:_checkCameraDriverVersion

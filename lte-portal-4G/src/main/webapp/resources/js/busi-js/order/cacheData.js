@@ -1316,6 +1316,50 @@ CacheData = (function() {
 		});
 		return key;
 	};
+
+    //证件类型校验规则
+    var checkRules = null;
+    var _getCheckRules = function () {
+        if (!ec.util.isObj(checkRules)) {
+            checkRules = query.common.queryPropertiesObject("CHECK_RULES");
+        }
+        return checkRules;
+    };
+    /**
+     * 根据证件类型id获取对应的证件校验规则
+     * @param typeCd 证件类型id
+     * @param key 规则对象中的key 如果key不传，返回整条规则对象，否则返回指定的key所对应的值。
+     * @returns {*} 规则对象或规则对象下的key值
+     */
+    var _getCheckRuleByKey = function (typeCd,key) {
+        var rules = _getCheckRules();
+        var rule;
+        for(var i in rules){
+            if(rules[i].certTypeCd==typeCd){
+                rule= rules[i];
+            }
+        }
+        if(ec.util.isObj(rule)&&ec.util.isObj(key)){
+            return rule[key];
+        }else{
+            return rule;
+        }
+    };
+    /**
+     * 判断指定的证件类型是否在校验规则列表中
+     * @param typeCd 证件类型id
+     * @returns {boolean} 是否存在
+     */
+    var _isInCheckRuleByTypeCd = function (typeCd) {
+        var isExist = false;
+        var rules = _getCheckRules();
+        for(var i in rules) {
+            if(rules[i].certTypeCd==typeCd) {
+                isExist = true;
+            }
+        }
+        return isExist;
+    };
 	return {
 		setParam				: _setParam,
 		setServParam			: _setServParam,
@@ -1364,6 +1408,9 @@ CacheData = (function() {
 		getSearchs				: _getSearchs,
 		getSearchName			: _getSearchName,
 		getSearchCode			: _getSearchCode,
-		isGov					: _isGov
+		isGov					: _isGov,
+        getCheckRules			: _getCheckRules,
+        getCheckRuleByKey		: _getCheckRuleByKey,
+        isInCheckRuleByTypeCd   :_isInCheckRuleByTypeCd
 	};
 })();

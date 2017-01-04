@@ -143,5 +143,28 @@ CommonUtils = {
 			}
 		}
 		return browserVersion;
-	}
+	},
+
+    /**
+     * 获取字符显示长度，中文记两个长度，非中文记一个长度
+     * @param str 要计算的字符串
+     * @return number
+     */
+    getLength: function (str) {
+        var chinese = 0XFF00;
+        var retValue = 0;
+        if (undefined == str || "" == str) {
+            return 0;
+        }
+        var len = str.length;
+        for (var i = 0; i < len; i++) {
+            if ((chinese & str.charCodeAt(i)) != 0) {
+                retValue += 2;
+            } else {
+                retValue++;
+            }
+        }
+        return retValue;
+    }
+
 };

@@ -536,4 +536,14 @@ public class MDA {
 	 * 翼销售app省份新版ui开关
 	 */
 	public static final Map<String,String> NEWUIFLAG = new HashMap<String,String>();
+
+    /**
+     * 证件类型校验规则是否启用开关
+     */
+    public static final Map<String, String> CHECK_RULES_ON_OFF = new HashMap<String, String>();
+
+	/**
+	 * 证件类型校验规则配置对象
+	 */
+	public static final List<Map<String, Object>> CHECK_RULES = new ArrayList<Map<String, Object>>();
 }

@@ -15,7 +15,42 @@ jQuery.ketchup
 		}
 	}
 })
-
+.validation('gb116431999', '18位有效身份证号', function (form, el, code) {
+    return this.isGB116431999(code);
+})
+.validation('hm8', 'H/M+8位有效数字', function (form, el, code) {
+    return /^[HM]\d{8}$/.test(code);
+})
+.validation('number8', '8位有效数字', function (form, el, code) {
+    return this.isNumber8(code);
+})
+.validation('number12', '12位有效数字', function (form, el, code) {
+    return this.isNumber12(code);
+})
+.validation('gs15200_gb321002015', '15位有效数字或18位有效企业编号', function (form, el, code) {
+    return this.isGS152006(code) || this.isGB321002015(code);
+})
+.validation('gb117141997_gs15200_gb321002015', '组织机构代码', function (form, el, code) {
+    return this.isGB117141997(code) || this.isGS152006(code) || this.isGB321002015(code);
+})
+.validation('gb321002015', '18位有效企业编号', function (form, el, code) {
+    return this.isGB321002015(code);
+})
+.validation('number12_gb321002015', '12位有效数字或者统一社会信用代码', function (form, el, code) {
+    return this.isNumber12(code) || this.isGB321002015(code);
+})
+.validation('passport', '外国公民护照', function (form, el, code) {
+    return this.isPassport(code);
+})
+.validation('personal', '个人用户名:大于等于4个字符（2个汉字）。不能含有数字、不能有特殊字符，可以含有“▪”(半角、全角都可以)', function (form, el, code) {
+    return this.isPersonal(code);
+})
+.validation('government', '企业用户名:a) 不为空，且大于等于10个字节 b) 不能全为数字', function (form, el, code) {
+    return this.isGovernment(code);
+})
+.validation('address', '不少于12个字符(6个汉字），不能为全数字，不能数字开头', function (form, el, code) {
+    return this.isAddress(code);
+})
 .validation('reg', '{arg1}', function(form, el, value, mark) {
   	return new RegExp(mark).test(value);
 })
@@ -136,7 +171,7 @@ jQuery.ketchup
 
 .validation('rangeselect', '必须选 {arg1} 和 {arg2} 项之间.', function(form, el, value, min, max) {
   var checked = this.inputsWithName(form, el).filter(':checked').length;
-  
+
   return (min <= checked && max >= checked);
 }, function(form, el) {
   this.bindBrothers(form, el);
@@ -156,7 +191,7 @@ jQuery.ketchup
 	}else{
 		return true;
 	}
-	
+
 })
 .validation('checkLength', '密码必须为{arg3}位数，且不能过于简单', function(form, el, value,targetId,targetVal,len) {
 	if($("#"+targetId).val()==targetVal){
@@ -164,7 +199,7 @@ jQuery.ketchup
 	}else{
 		return true;
 	}
-	
+
 })
 
 .validation('simple_password_num1', '密码必须为{arg1}位数字，且不可有连续的相同数字，不可连续递增递减', function(form, el,value,len) {
@@ -226,7 +261,7 @@ jQuery.ketchup
 })
 
 .validation('equ_notnull', '两次密码不一致', function(form, el, value,targetId) {
-	
+
 })
 
 .validation('checkLen', '密码必须为{arg1}位数', function(form, el, value,len) {
@@ -313,28 +348,28 @@ jQuery.ketchup
 //		return false;
 //	}
 //	return true;
-	
+
 	//判断是否为单一字符，例如全部为数字或小写字母，必须为组合密码
-	Modes=0; 
-	for (i=0;i<value.length;i++){ 
+	Modes=0;
+	for (i=0;i<value.length;i++){
 		var sChar = 0;
 		var iN = value.charCodeAt(i)
-		if (iN>=48 && iN <=57) //数字 
-		sChar= 1; 
-		if (iN>=65 && iN <=90) //大写字母 
-		sChar= 2; 
-		if (iN>=97 && iN <=122) //小写 
-		sChar= 4; 
-		else 
+		if (iN>=48 && iN <=57) //数字
+		sChar= 1;
+		if (iN>=65 && iN <=90) //大写字母
+		sChar= 2;
+		if (iN>=97 && iN <=122) //小写
+		sChar= 4;
+		else
 		sChar= 8; //特殊字符
-		//测试每一个字符的类别并统计一共有多少种模式. 
-		Modes=Modes|sChar; 
-	} 
+		//测试每一个字符的类别并统计一共有多少种模式.
+		Modes=Modes|sChar;
+	}
 	var S_level = 0;
-	for (i=0;i<4;i++){ 
-		if (Modes & 1) S_level++; 
-		Modes>>>=1; 
-	} 
+	for (i=0;i<4;i++){
+		if (Modes & 1) S_level++;
+		Modes>>>=1;
+	}
 	if(S_level == 0 || S_level == 1) {
 		return false;
 	}
@@ -373,9 +408,9 @@ jQuery.ketchup
 })
 
 .validation('isContinue', '不能出现超过三位的连续数字或者字母', function(form, el,value) {
-	
+
 	var flag = true;
-	for (var i=0;i<value.length-1;i++){ 
+	for (var i=0;i<value.length-1;i++){
 		var iN0 = value.charCodeAt(i);
 		var iN1 = value.charCodeAt(i+1);
 		var iN2 = value.charCodeAt(i+2);
