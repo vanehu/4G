@@ -65,7 +65,9 @@ http://www.springframework.org/schema/beans http://www.springframework.org/schem
 				<beans:property name="loginUrl"  value="/staff/login/page"/>
 				<beans:property name="andOr"  value="true"/>
 				<beans:property name="iSessionInterceptor" >
-    				<beans:bean class="com.al.lte.portal.common.MySessionInterceptor"/>
+    				<beans:bean class="com.al.lte.portal.common.MySessionInterceptor">
+						<beans:property name="mainUrl"  value="/main/home"/>
+					</beans:bean>
     			</beans:property>
 					
 			</beans:bean>

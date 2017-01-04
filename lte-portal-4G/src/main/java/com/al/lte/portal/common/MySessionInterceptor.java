@@ -44,6 +44,9 @@ public class MySessionInterceptor implements ISessionInterceptor {
 	private static final Log log = Log.getLog(MySessionInterceptor.class);
 
 	public static final String SESSION_CODE = "sessionCode";
+
+	private String mainUrl=null;
+
 	@Autowired
 	PropertiesUtils propertiesUtils;
 	
@@ -109,13 +112,22 @@ public class MySessionInterceptor implements ISessionInterceptor {
                 e.printStackTrace();
             }
 			boolean needSingleSign = 	BooleanUtils.toBoolean(param);
-			if (needSingleSign) {//查看是否需要单点登录，配置项在simulate.property文件或者系统参数表中
+			if (needSingleSign && request.getRequestURI().startsWith(request.getContextPath() + mainUrl)) {//查看是否需要单点登录，配置项在simulate.property文件或者系统参数表中
 				return singleSign(request,response,session);
 			} else {// 不需要单点登录，直接去验证
 				return false;
 			}
 		}
 	}
+
+	public String getMainUrl() {
+		return mainUrl;
+	}
+
+	public void setMainUrl(String mainUrl) {
+		this.mainUrl = mainUrl;
+	}
+
 	/**
 	 * 单点登录处理
 	 * @param request
