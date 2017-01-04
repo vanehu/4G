@@ -53,10 +53,10 @@ order.main = (function(){
 				}else if(param.feeTypeMain=="1201" && (param.offerSpec.feeType=="1201"||param.offerSpec.feeType=="3101"||param.offerSpec.feeType=="3102"||param.offerSpec.feeType=="3103")){
 					is_same_feeType=true;
 				}
-//				if(!is_same_feeType){
-//					$.alert("提示","主副卡付费类型不一致，无法进行主副卡成员变更。");
-//					return;
-//				}
+				if(!is_same_feeType){
+					$.alert("提示","主副卡付费类型不一致，无法进行主副卡成员变更。");
+					return;
+				}
 			}
 		}
 		$.callServiceAsHtml(contextPath+"/app/order/main",param,{

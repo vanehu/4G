@@ -170,7 +170,7 @@ AttachOffer = (function() {
 							html='<li id="li_'+ prodId + '_'+ this.offerSpecId  +'" ><i class="iconfont pull-left active" onclick="AttachOffer.delMyfavoriteSpec('+prodId+',\''+'\','+this.offerSpecId+',\''+this.offerSpecName+'\',$(this)'+','+1+');">&#xe62b;</i>';
 							html+='<span class="list-title">'+ this.offerSpecName +'</span>';
 							html+='<div class="list-checkbox absolute-right"><div class="checkbox-box">';
-							html+='<input type="checkbox" value="1"" name="" /><label for="li_'+ this.offerSpecId +'" onclick="AttachOffer.addOfferSpec('+prodId+','+this.offerSpecId+')"></label></div></div>';
+							html+='<input type="checkbox" value="1"" name="" id="input_'+ prodId + '_'+ this.offerSpecId  +'"/><label for="li_'+ this.offerSpecId +'" onclick="AttachOffer.addOfferSpec('+prodId+','+this.offerSpecId+')"></label></div></div>';
 							//html+='<h5 class="list-group-item-heading" style="padding-left: 40px;" onclick="AttachOffer.addOfferSpec('+prodId+','+this.offerSpecId+')">'+ this.offerSpecName +'</h5>';
 							html+='</li>';
 							i++;
@@ -336,6 +336,7 @@ AttachOffer = (function() {
 	
 	//订购附属销售品
 	var _addOfferSpec = function(prodId,offerSpecId){
+		$("#input_"+prodId+"_"+offerSpecId).attr("checked","checked");
 		var newSpec = _setSpec(prodId,offerSpecId);
 		if(newSpec==undefined){ //没有在已开通附属销售列表中
 			return;
@@ -349,8 +350,10 @@ AttachOffer = (function() {
 				_checkOfferExcludeDepend(prodId,newSpec);
 			},
 			no:function(){
+				$("#input_"+prodId+"_"+offerSpecId).removeAttr("checked");
 			}
 		});
+		
 	};
 	
 	//添加可选包到缓存列表
@@ -665,7 +668,7 @@ AttachOffer = (function() {
 						}
 						html+='<span class="list-title">'+ this.servSpecName +'</span>';
 						html+='<div class="list-checkbox absolute-right"><div class="checkbox-box">';
-						html+='<input type="checkbox" value="1"" name="" /><label for="li_'+prodId+'_'+this.servSpecId+'" onclick="javascript:AttachOffer.openServSpec('+prodId+','+this.servSpecId+',\''+this.servSpecName+'\',\''+this.ifParams+'\')"></label></div></div>';						
+						html+='<input type="checkbox" value="1"" name="" id="input_'+prodId+'_'+this.servSpecId+'"/><label for="li_'+prodId+'_'+this.servSpecId+'" onclick="javascript:AttachOffer.openServSpec('+prodId+','+this.servSpecId+',\''+this.servSpecName+'\',\''+this.ifParams+'\')"></label></div></div>';						
 						html+='</li>';
 						$ul.append(html);
 						i++;
@@ -739,7 +742,7 @@ AttachOffer = (function() {
 								}
 								html+='<span class="list-title">'+ this.offerSpecName +'</span>';
 								html+='<div class="list-checkbox absolute-right"><div class="checkbox-box">';
-								html+='<input type="checkbox" value="1" name="" /><label for="li_'+prodId+'_'+this.offerSpecId+'" onclick="AttachOffer.addOfferSpec('+prodId+','+this.offerSpecId+')"></label></div></div>';
+								html+='<input type="checkbox" value="1" name="" id="input_'+ prodId + '_'+ this.offerSpecId  +'"/><label for="li_'+prodId+'_'+this.offerSpecId+'" onclick="AttachOffer.addOfferSpec('+prodId+','+this.offerSpecId+')"></label></div></div>';
 								html+='</li>';
 								$ul.append(html);
 								i++;
@@ -851,6 +854,7 @@ AttachOffer = (function() {
 	
 	//开通功能产品
 	var _openServSpec = function(prodId,servSpecId,specName,ifParams){
+		$("#input_"+prodId+"_"+servSpecId).attr("checked","checked");
 		$.confirm("信息确认","开通【"+specName+"】功能产品",{ 
 			yesdo:function(){
 				var servSpec = CacheData.getServSpec(prodId,servSpecId); //在已选列表中查找
@@ -878,6 +882,7 @@ AttachOffer = (function() {
 				_checkServExcludeDepend(prodId,servSpec);
 			},
 			no:function(){
+				$("#input_"+prodId+"_"+servSpecId).removeAttr("checked");
 			}
 		});
 	};

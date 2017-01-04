@@ -40,6 +40,7 @@
 		            	} 
 		            	$(this).closeDialog(modal);
 		        	}else{
+		        		options.no();
 		        		$(this).closeDialog(modal);
 		        	}
 		        }
