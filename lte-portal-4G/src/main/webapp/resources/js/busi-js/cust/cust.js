@@ -2908,7 +2908,7 @@ order.cust = (function(){
 			"identityNum"		:$.trim($("#orderAttrIdCard").val()),
 			"custQueryType"		:"",
 			"queryTypeValue"	:"",
-			"identidies_type"	:$("#orderIdentidiesTypeCd  option:selected").text(),
+			"identidies_type"	:$("#orderIdentidiesTypeCd  option:selected").text()
 		};
 		$.callServiceAsHtml(contextPath + "/cust/queryCust", param, {
 			"before":function(){
@@ -3091,7 +3091,17 @@ order.cust = (function(){
 		}else{
 			$.alertM(response.data);
 			$("#tips").html("提示："+response.data);
-			return;
+		}
+		
+		try{
+			var obj = cert.closeVideo();
+			var json = JSON.parse(obj);
+			if (json && json.resultFlag != 0){
+				$("#tips").html("提示：" + json.errorMsg);
+			}
+		}catch(e) {
+			$.alert("错误" + "关闭视频连接发生异常：" + e);
+			throw new Error("Close!Video!Exception : " + e);
 		}
 	};
 	
@@ -3256,7 +3266,8 @@ order.cust = (function(){
 		showReadCert:_showReadCert,
 		isSelfChannel:_isSelfChannel,
 		checkUserInfo : _checkUserInfo,
-		showCertPicture : _showCertPicture
+		showCertPicture : _showCertPicture,
+		close:_close
 	};
 })();
 $(function() {
