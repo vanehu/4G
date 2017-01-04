@@ -54,7 +54,10 @@
 						</li>
 						<li><font>证件号码：</font><span>${custCert.certNumber}</span>
 						</li>
-						<li><font>证件地址：</font><span>${custCert.certAddr}</span>
+						<li><font>证件地址：</font><span> <#if (cart.custInfo)??
+								&&((cart.custInfo)?size>0)> <#list cart.custInfo as custInfo >
+								<#if custInfo.state == 'ADD'>${custInfo.custAddr} </#if>
+								</#list> </#if> </span>
 						</li>
 					</ul>
 					<div class="height18"></div>
