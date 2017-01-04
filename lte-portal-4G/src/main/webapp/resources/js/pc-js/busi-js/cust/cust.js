@@ -391,6 +391,14 @@ order.cust = (function(){
 				$("#li_order_remark3 span").text("");
 				if(OrderInfo.realNamePhotoFlag == "ON"){//开关打开
 					$("#orderAttrQryBtn").show();
+					if (query.common.queryPropertiesStatus("CHECK_RULES_" + (ec.util.isObj(OrderInfo.staff.areaId) ? OrderInfo.staff.areaId.substr(0, 3) : "")) && CacheData.isInCheckRuleByTypeCd(identidiesTypeCd)) {
+		                $("#" + id).removeAttr("onkeyup");
+		                $("#" + id).attr("placeHolder", "请输入合法" + CacheData.getCheckRuleByKey(identidiesTypeCd, "name"));
+		                $("#" + id).attr("data-validate", "validate(" + CacheData.getCheckRuleByKey(identidiesTypeCd, "checkFunction") + ":" + CacheData.getCheckRuleByKey(identidiesTypeCd, "description") + ") on(blur)");
+		            }
+					$("#jbrCertCheckForm").off().bind('formIsValid', function(event, form){
+						_qryCustInfo();
+					}).ketchup({bindElement:"orderAttrQryBtn"});	
 				}
 			}else if(id == "orderUserIdCard"){//使用人
 				$("#orderUserReadCertBtn").hide();
@@ -409,16 +417,14 @@ order.cust = (function(){
 				$("#orderUserQryBtn").show();
 				$("#chooseUserBt").removeClass("btna_o").addClass("btna_g");
 				$('#chooseUserBt').off('click');
-			};
-			if(identidiesTypeCd==2){
-				$("#"+id).attr("placeHolder","请输入合法军官证");
-				$("#"+id).attr("data-validate","validate(required:请准确填写军官证) on(blur)");
-			}else if(identidiesTypeCd==3){
-				$("#"+id).attr("placeHolder","请输入合法护照");
-				$("#"+id).attr("data-validate","validate(required:请准确填写护照) on(blur)");
-			}else{
-				$("#"+id).attr("placeHolder","请输入合法证件号码");
-				$("#"+id).attr("data-validate","validate(required:请准确填写证件号码) on(blur)");
+				if (query.common.queryPropertiesStatus("CHECK_RULES_" + (ec.util.isObj(OrderInfo.staff.areaId) ? OrderInfo.staff.areaId.substr(0, 3) : "")) && CacheData.isInCheckRuleByTypeCd(identidiesTypeCd)) {
+	                $("#" + id).removeAttr("onkeyup");
+	                $("#" + id).attr("placeHolder", "请输入合法" + CacheData.getCheckRuleByKey(identidiesTypeCd, "name"));
+	                $("#" + id).attr("data-validate", "validate(" + CacheData.getCheckRuleByKey(identidiesTypeCd, "checkFunction") + ":" + CacheData.getCheckRuleByKey(identidiesTypeCd, "description") + ") on(blur)");
+	            }
+				$("#syrCertCheckForm").off().bind('formIsValid', function(event, form){
+					_qryUserCustInfo();
+				}).ketchup({bindElement:"orderUserQryBtn"});	
 			};
 		};
 		
@@ -2835,10 +2841,6 @@ order.cust = (function(){
 		var  orderAttrAddr = ec.util.defaultStr($("#orderUserAddr").val());
 		var  orderAttrPhoneNbr = ec.util.defaultStr($("#orderUserPhoneNbr").val());
 		var  user_prodId = ec.util.defaultStr($("#user_prodId").val());
-		if(identityNum=="" || orderAttrName=="" || orderAttrAddr==""){
-			$.alert("提示","使用人信息不完整，请重新填写完整！。");
-			return;
-		}
 		var custParam = {
 				"identityCd":orderIdentidiesTypeCd,
 				"identityNum":identityNum,

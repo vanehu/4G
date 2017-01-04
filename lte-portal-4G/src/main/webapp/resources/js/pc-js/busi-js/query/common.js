@@ -142,11 +142,32 @@ query.common = (function() {
 		return resultFlag;
 	};
 
+    /**
+     * 查询MDA配置节点<const>中数据，以对象形式返回
+     * @param key 要查询的MDA中的项
+     * @returns {*} 此配置项的JSON对象
+     */
+    var _queryPropertiesObject = function (key) {
+
+        if (ec.util.isObj(key)) {
+            var response = $.callServiceAsJson(contextPath + "/properties/getObject", {"key": key});
+            if (response.code == 0) {
+                return response.data;
+            } else if (response.code == 1) {
+                $.alert("提示", "Error: 配置查询失败!");
+            }
+        } else {
+            $.alert("提示", "入参key不能为空！");
+        }
+    };
+
+
 	return {
 		queryApConfig			: _queryApConfig,
 		queryPropertiesValue	: _queryPropertiesValue,
 		queryPropertiesStatus	: _queryPropertiesStatus,
 		checkOperateSpec		: _checkOperateSpec,
-		checkCameraDriverVersion: _checkCameraDriverVersion
+		checkCameraDriverVersion: _checkCameraDriverVersion,
+		queryPropertiesObject   : _queryPropertiesObject
 	};
 })();
