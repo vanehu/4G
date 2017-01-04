@@ -692,6 +692,9 @@ common.print = (function($){
 						$.alert("信息", "此购物车对应的发票已打印过，只允许重打。");
 						return true;
 					}
+				} else if(invoiceInfos[i].printFlag == '3'){ // 电子发票
+					$.alert("信息","发票类型为【电子发票】，请移步 营业受理>>电子发票 进行补打。");
+					return true;
 				} else {
 					//默认不允许
 					$.alert("信息", "发票信息中打印标识值不规范");
