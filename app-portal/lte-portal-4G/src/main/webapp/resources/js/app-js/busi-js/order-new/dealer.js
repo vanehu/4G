@@ -109,7 +109,8 @@ order.dealer = (function() {
 	//发展人-查询
 	function _queryStaff(){
 		if($("#staffCode").val().trim() == "" && $("#salesCode").val().trim() == ""){
-			$.alert("操作提示","工号和销售员编码不能都为空！");
+			// $.alert("操作提示","工号和销售员编码不能都为空！");
+			$('#dealerModal').find('.choice-box').children('.help-block').removeClass('hidden');
 			return;
 		}
 		var param = {
@@ -132,7 +133,9 @@ order.dealer = (function() {
 				}
 				if(response.code==0){
 					if(response.data.length == 0){
-						$.alert("操作提示","没有查询到该员工信息！");
+						// $.alert("操作提示","没有查询到该员工信息！");
+						$('#dealerModal-result').show();
+						$('#dealerModal').find('.choice-box').children('.help-block').addClass('hidden');
 					}else{
 						$("#dealerName").html(response.data[0].staffName).attr("staffId", response.data[0].staffId);
 						$("#dealerModal").modal("hide");

@@ -121,11 +121,14 @@
 						<div class="choice-box">
 							<i class="iconfont pull-left p-l-10">&#xe663;</i>
 							 <input id="staffCode" placeholder="请输入员工号" class="choice-input">
+						     <div class="help-block error hidden">工号不能为空</div>
 						</div>
 						<div class="choice-box">
 							<i class="iconfont pull-left p-l-10">&#xe663;</i> 
 							<input id="salesCode" placeholder="请输入销售员编码" class="choice-input">
+							<div class="help-block error hidden">销售员编码不能为空</div>
 						</div>
+						<div id="dealerModal-result" style="line-height: .86rem; color: #ff0000; font-size: .26rem; display:none; text-align:center;">没有查询到该员工信息！</div>
 						<div class="sub-btn-box p relative">
 							<button class="sun-btn" onclick="order.dealer.queryStaff()">查询</button>
 						</div>
@@ -234,10 +237,12 @@
 							</li>
 						</ul>
 						</form>
-						<div class="ordinary-btn-box p p-b-15">
-							<button class="double-btn"  id="queryJbr" onClick="order.main.queryJbr()">查询</button>
+						<div class="ordinary-btn-box p p-b-15" id="whole">
+							<button class="double-btn" id="queryJbr"   onClick="order.main.queryJbr()">查询</button>
 							<button class="double-btn" onClick="order.dealer.closeJBR()">确定</button>
-
+						</div>
+						<div class="sub-btn-box p p-b-15" id="only">
+							<button class="sun-btn" onClick="order.dealer.closeJBR()">确定</button>
 						</div>
 						
 			</div>

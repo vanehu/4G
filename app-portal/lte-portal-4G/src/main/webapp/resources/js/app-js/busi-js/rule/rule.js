@@ -56,7 +56,7 @@ rule.rule = (function(){
 			olTypeCd : CONST.OL_TYPE_CD.UI_LTE
 		};
 		$.ecOverlay("<strong>客户级规则校验中，请稍等...</strong>");
-		var response = $.callServiceAsJson(contextPath+"/rule/prepare",inParam); //调用规则校验
+		var response = $.callServiceAsJson(contextPath+"/app/rule/prepare",inParam); //调用规则校验
 		$.unecOverlay();
 		var checkData = response.data;
 		if(response.code==0){
