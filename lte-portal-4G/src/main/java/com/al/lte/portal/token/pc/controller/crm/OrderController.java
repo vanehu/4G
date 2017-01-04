@@ -1342,7 +1342,7 @@ public class OrderController extends BaseController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		if(isSkipPhoto.equals(SysConstant.STRING_0)){
+		if(isSkipPhoto.equals(SysConstant.STRING_0) && orderAttrFlag.equals("Y")){
 			model.addAttribute("orderAttrFlag","C");//C非必填
 		}
     	if("2".equals(String.valueOf(param.get("actionFlag")))){  //套餐变更

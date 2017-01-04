@@ -947,17 +947,6 @@ public class OfferController extends BaseController {
 			if(userFlag!=null && userFlag.equals("OFF")){
 				model.addAttribute("orderAttrFlag","C");//C非必填
 			}
-			//跳过拍照权限
-			String isSkipPhoto = "-1";
-			try {
-				isSkipPhoto = staffBmo.checkOperatSpec(SysConstant.TGJBRBTQX, sessionStaff);
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			if(isSkipPhoto.equals(SysConstant.STRING_0)){
-				model.addAttribute("orderAttrFlag","C");//C非必填
-			}
 		} catch (BusinessException be) {
 			return super.failedStr(model,be);
 		} catch (InterfaceException ie) {
