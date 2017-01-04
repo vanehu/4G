@@ -1,7 +1,7 @@
 <#if pageType?? && pageType=="cashier">
 	<#assign namespace = "cashier.main" > 
 <#else>
-	<#assign namespace = "${namespace}" >
+	<#assign namespace = "cart.main" >
 </#if>
 <div class="easyDialogclose" id="staff_dialog_close" onclick="easyDialog.close()"></div>
   <table class="contract_list">
