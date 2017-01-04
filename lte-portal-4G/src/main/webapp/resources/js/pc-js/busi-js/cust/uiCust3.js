@@ -2756,10 +2756,10 @@ var _custAuthCallBack = function(response) {
 		if(nowIs3G=="Y"){
 			boInfos=[{
 				boActionTypeCd : CONST.BO_ACTION_TYPE.DEL_OFFER,
-				specId : CONST.PROD_SPEC.CDMA,
+				specId : CONST.PROD_SPEC.CDMA
 			},{
 				boActionTypeCd : CONST.BO_ACTION_TYPE.BUY_OFFER,
-				specId : CONST.PROD_SPEC.CDMA,
+				specId : CONST.PROD_SPEC.CDMA
 			}];
 		}else{
 			boInfos=[{
