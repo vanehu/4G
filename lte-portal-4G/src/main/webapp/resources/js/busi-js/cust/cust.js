@@ -2901,11 +2901,17 @@ order.cust = (function(){
 	
 	//准备加载拍照弹窗
 	 var _showCertPicture = function(){
+		var areaId = order.prodModify.choosedProdInfo.areaId;
+		//lte进行受理地区市级验证
+		if(CONST.getAppDesc() == 0 && areaId.indexOf("0000") > 0){
+			$.alert("提示","省级地区无法进行定位客户, 请选择市级地区！");
+			return;
+		}
 		var param = {
-			"areaId" 			:"",
+			"areaId" 			:areaId,
 			"acctNbr"			:"",
 			"partyName"			:"",
-			"diffPlace"			:"local",
+			"diffPlace"			:$("#DiffPlaceFlag").val(),
 			"queryType" 		:"",
 			"identityCd"		:$("#orderIdentidiesTypeCd").val(),
 			"identityNum"		:$.trim($("#orderAttrIdCard").val()),
