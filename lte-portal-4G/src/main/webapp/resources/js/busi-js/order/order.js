@@ -1107,7 +1107,7 @@ order.service = (function(){
 								$("#defineNewAcct").hide();
 							}
 							else{
-								$("<tr><td colspan=4>"+response.data+"</td</tr>").appendTo($("#acctListTab tbody"));
+								$("<tr><td colspan=4>"+response.data+"</td></tr>").appendTo($("#acctListTab tbody"));
 							}
 							$("#acctListTab tr").off("click");				
 						}			

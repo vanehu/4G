@@ -461,12 +461,14 @@ order.memberChange = function(){
 		return flag;
 	};
 	
+	//主副卡成员变更，加装已有号码
 	var _queryofferinfo = function(){
 		OrderInfo.oldprodInstInfos = [];
 		OrderInfo.oldofferSpec = [];
 		OrderInfo.oldoffer = [];
 		OrderInfo.oldAddNumList = [];
 		custinfolist = [];
+		OrderInfo.busitypeflag = 61;//主副卡成员变更，加装已有号码
 		
 		var oldAddNumList_flag = true;
 		var tbody = "";
@@ -1051,6 +1053,7 @@ order.memberChange = function(){
 			prodId : _offerProd.objInstId//纳入产品成员这些动作时出入宿主产品实例ID
 		}];
 		if(num>0){//新装副卡
+			OrderInfo.busitypeflag = 62;//主副卡成员变更，加装新号码
 			//查询主卡的产品属性并保存
 			var param = {
 				prodId : prod.prodInstId, // 产品实例id

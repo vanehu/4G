@@ -3027,19 +3027,23 @@ public class OrderBmoImpl implements OrderBmo {
     	boolean resultFlag = false;
     	Object sessionHandleCustFlag = ServletUtils.getSessionAttribute(request, SysConstant.TGJBRBTQX );
     	boolean isHandleCustNeeded = sessionHandleCustFlag == null ? true : (Boolean) sessionHandleCustFlag;
-    	Map<String, Object> orderList = (Map<String, Object>) param.get("orderList");
-        Map<String, Object> orderListInfo = (Map<String, Object>) orderList.get("orderListInfo");
-        int actionFlag = MapUtils.getIntValue(orderListInfo, "actionFlag", 0);
-        int busitypeflag = MapUtils.getIntValue(orderListInfo, "busitypeflag", 0);
-        boolean isCheckCertificateComprehensive = (
-    		actionFlag == 1  ||	//办套餐入口做新装
-    		actionFlag == 6  ||	//主副卡成员变更加装新副卡
-    		actionFlag == 14 ||	//购手机入口做新装
-    		actionFlag == 21 || //主副卡成员变更(保留副卡选择新套餐、拆副卡)
-    		(actionFlag == 22 && busitypeflag == 22) || //换卡(补卡busitypeflag是21)
-    		actionFlag == 23 || //异地补换卡
-    		actionFlag == 43	//返档
-    	);
+//    	Map<String, Object> orderList = (Map<String, Object>) param.get("orderList");
+//        Map<String, Object> orderListInfo = (Map<String, Object>) orderList.get("orderListInfo");
+//        int actionFlag = MapUtils.getIntValue(orderListInfo, "actionFlag", 0);
+//        int busitypeflag = MapUtils.getIntValue(orderListInfo, "busitypeflag", 0);
+//        boolean isCheckCertificateComprehensive = (
+//        		actionFlag == 1 	|| //办套餐入口做新装
+//				actionFlag == 14 	|| //购手机入口做新装
+//				(actionFlag == 22 && busitypeflag == 21) || //补卡(换卡busitypeflag是22)
+//				(actionFlag == 23 && busitypeflag == 13) || //异地补换卡
+//				(actionFlag == 6  && busitypeflag == 61 && cust.identityCd != "1") || //主副卡成员变更，加装已有号码，且客户证件为非身份证
+//				(actionFlag == 6  && busitypeflag == 62) || //主副卡成员变更，加装新号码
+//				(actionFlag == 2  && busitypeflag == 202 && cust.identityCd != "1") || //套餐变更加装老号码作为副卡，且客户证件为非身份证
+//				(actionFlag == 2  && busitypeflag == 201)|| //套餐变更加装新号码作为副卡
+//				actionFlag == 43	   //返档
+//    	);
+        
+        boolean isCheckCertificateComprehensive = false;//暂不确定如何从java判断客户的客户证件信息，无法校验，暂时跳过
         
         if(isRealNameFlagOn && isHandleCustNeeded && isCheckCertificateComprehensive){
     		resultFlag = this.checkCustCertificateComprehensive(param, request);

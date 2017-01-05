@@ -2859,18 +2859,20 @@ SoOrder = (function() {
 			//若页面上填写了经办人信息，但没有进行拍照，则拦截提示，不管权限不权限
 			if(ec.util.isObj(orderAttrName) || ec.util.isObj(orderAttrIdCard) || ec.util.isObj(orderAttrAddr)){
 				if(!ec.util.isObj(OrderInfo.virOlId)){
-					$.alert("提示","您填写了经办人信息，在订单提交之前，请进行拍照以确认是否“人证相符”。");
+					$.alert("提示","您填写了经办人信息，在订单提交之前，请点击【读卡】或者【查询】按钮进行拍照以确认是否“人证相符”。");
 					return false;
 				}
 			}
 			//若页面没有填写经办人，根据权限和业务类型进行判断和限制
 			var isActionFlagLimited = (
 				OrderInfo.actionFlag == 1 	|| //办套餐入口做新装
-				OrderInfo.actionFlag == 6 	|| //主副卡成员变更加装新副卡
 				OrderInfo.actionFlag == 14 	|| //购手机入口做新装
-				OrderInfo.actionFlag == 21 	|| //主副卡成员变更(保留副卡选择新套餐、拆副卡)
-				(OrderInfo.actionFlag == 22 && OrderInfo.busitypeflag == 22) || //换卡(补卡busitypeflag是21)
-				OrderInfo.actionFlag == 23 	|| //异地补换卡
+				(OrderInfo.actionFlag == 22 && OrderInfo.busitypeflag == 21) || //补卡(换卡busitypeflag是22)
+				(OrderInfo.actionFlag == 23 && OrderInfo.busitypeflag == 13) || //异地补换卡
+				(OrderInfo.actionFlag == 6  && OrderInfo.busitypeflag == 61 && OrderInfo.cust.identityCd != "1") || //主副卡成员变更，加装已有号码，且客户证件为非身份证
+				(OrderInfo.actionFlag == 6  && OrderInfo.busitypeflag == 62) || //主副卡成员变更，加装新号码
+				(OrderInfo.actionFlag == 2  && OrderInfo.busitypeflag == 61 && OrderInfo.cust.identityCd != "1") || //套餐变更加装老号码作为副卡，且客户证件为非身份证
+				(OrderInfo.actionFlag == 2  && OrderInfo.busitypeflag == 201)|| //套餐变更加装新号码作为副卡
 				OrderInfo.actionFlag == 43	   //返档
 			);
 			if(CONST.isHandleCustNeeded && isActionFlagLimited) {

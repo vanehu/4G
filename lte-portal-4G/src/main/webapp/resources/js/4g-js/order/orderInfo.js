@@ -72,6 +72,11 @@ OrderInfo = (function() {
 
 	var _cust_validateNum = "";//客户鉴权号码
 
+	/**
+	 * 1新装，21补卡，22换卡，61主副卡成员变更加装已有号码，62主副卡成员变更加装新号码，28主副卡成员变更主副卡角色互换
+	 * 201套餐变更加装新号码作为副卡，61套餐变更加装老号码作为副卡，除此之外套餐变更都是2
+	 * update:2017-01-05
+	 */
 	var _busitypeflag = 0;
 	
 	var _orderlonger = "";
@@ -1024,7 +1029,7 @@ OrderInfo = (function() {
 	// 使用人：证件节点
 	var _boUserCustIdentities = []; 
 	
-	// 使用人：证件节点
+	// 使用人：客户节点
 	var _boUserCustInfos = []; 
 	
 	// 使用人：联系人节点
