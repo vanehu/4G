@@ -98,12 +98,6 @@
 	if($("#orderIdentidiesTypeCd").val() !="1"){
 		$("#orderAttrQueryCertBtn").show(); 
 	}
-	
-	$("#jbrForm").off('formIsValid').bind("formIsValid", function(event, form){			
-		order.cust.showCertPicture();
-		var src = contextPath+"/image/id_card.jpg";
-		$("#img_Cert").attr("src", src);
-	}).ketchup({bindElement:"orderAttrQueryCertBtn"});	
 	//清空
 	if($("#capture")){
 		$("#capture").remove();

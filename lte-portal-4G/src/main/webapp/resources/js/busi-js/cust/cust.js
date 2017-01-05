@@ -399,8 +399,8 @@ order.cust = (function(){
 			}
 		} else {
 			if (CONST.realNamePhotoFlag == "OFF"){
-//				$("#orderAttrQueryCertBtn").hide();
-				$("#orderAttrQueryCertBtn").remove();
+				$("#orderAttrQueryCertBtn").hide();
+				// $("#orderAttrQueryCertBtn").remove();
 		    }else{
 		    	$("#orderAttrQueryCertBtn").show();
 		    }
@@ -497,7 +497,7 @@ order.cust = (function(){
             }
         }
 		_custcreateButton();
-		
+        _jbrcreateButton();//经办人事件绑定
 		//如果是身份证，则禁止输入，否则启用输入控件
 		var isID = identidiesTypeCd==1;
 		var isIdTypeOff = OrderInfo.staff.idType=="OFF";
@@ -639,6 +639,15 @@ order.cust = (function(){
 			_checkIdentity();
 	     }).ketchup({bindElement:"createcustsussbtn"});
     };
+
+    //经办人校验form绑定
+    var _jbrcreateButton = function () {
+        $("#jbrForm").off("formIsValid").bind("formIsValid", function (event) {
+            _showCertPicture();
+            $("#img_Cert").attr("src", contextPath + "/image/id_card.jpg");
+        }).ketchup({bindElement: "orderAttrQueryCertBtn"});
+    };
+
 	//客户查询列表
 	var _queryCallBack = function(response) {
 		if(response.data.indexOf("showVerificationcode") >=0) {
@@ -3086,7 +3095,7 @@ order.cust = (function(){
 			$.alertM(response.data);
 			$("#tips").html("提示："+response.data);
 		}
-		
+
 		try{
 			var obj = cert.closeVideo();
 			var json = JSON.parse(obj);
@@ -3261,7 +3270,8 @@ order.cust = (function(){
 		isSelfChannel:_isSelfChannel,
 		checkUserInfo : _checkUserInfo,
 		showCertPicture : _showCertPicture,
-		close:_close
+		close:_close,
+        jbrcreateButton:_jbrcreateButton
 	};
 })();
 $(function() {
