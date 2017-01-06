@@ -412,6 +412,9 @@ public class CustController extends BaseController {
         try {
             Map<String, Object> retMap = addAccountAndCustInfo(flowNum, sessionStaff, areaId, custId, accNbr, soNbr, identityCd);
             if (null != retMap) {
+            	if(ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.CURRENT_CUST_CERTIFICATE_CD) == null){
+                	ServletUtils.setSessionAttribute(super.getRequest(), SysConstant.CURRENT_CUST_CERTIFICATE_CD, identityCd);
+            	}
                 jsonResponse = super.successed(retMap);
             } else {
                 jsonResponse = super.failed(retMap, ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
@@ -947,6 +950,10 @@ public class CustController extends BaseController {
 			}
 		}
 		
+		if(ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.CURRENT_CUST_CERTIFICATE_CD) == null){
+	    	ServletUtils.setSessionAttribute(super.getRequest(), SysConstant.CURRENT_CUST_CERTIFICATE_CD, identityCd);
+		}
+
 		map.put("custInfo", param);
 		model.addAttribute("poingtType",sessionStaff.getPoingtType());
 		model.addAttribute("custAuth", map);

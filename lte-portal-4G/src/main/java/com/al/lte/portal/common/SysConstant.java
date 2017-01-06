@@ -775,4 +775,8 @@ public final class SysConstant {
 	public static final String STAFF_AUTH_ATTR_VAL_TRUE = "10";
 	/**员工实名制属性值 20未实名登记*/
 	public static final String STAFF_AUTH_ATTR_VAL_FALSE = "20";
+	
+	/**客户定位，当前选择的客户的证件类型，即使定位出多个，仍然保存所选择的那一个*/
+	public static final String CURRENT_CUST_CERTIFICATE_CD = "CURRENT_CUST_CERTIFICATE_CD";
+	
 }
