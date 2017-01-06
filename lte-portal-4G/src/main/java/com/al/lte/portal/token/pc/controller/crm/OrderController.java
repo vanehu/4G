@@ -1288,6 +1288,7 @@ public class OrderController extends BaseController {
 		String handlecustNumber = (String) session.getAttribute(SysConstant.SESSION_HANDLECUSTNUMBER+"_PC");
 		String handleprovCustAreaId = (String) session.getAttribute(SysConstant.SESSION_HANDLEPROVCUSTAREAID+"_PC");
 		String orderAttrFlag = "Y";//经办人必填
+		String isRequired = (String) param.get("isRequired");
 		if("Y".equals(isPhotoGraph)){//Y已拍照，如果不传默认为N：未拍照
 			if(!StringUtil.isEmptyStr(handlecustNumber) && !StringUtil.isEmptyStr(handleprovCustAreaId)){//传经办人信息
 				//定位客户接口 queryCust
@@ -1346,7 +1347,7 @@ public class OrderController extends BaseController {
 			model.addAttribute("orderAttrFlag","C");//C非必填
 		}
     	if("2".equals(String.valueOf(param.get("actionFlag")))){  //套餐变更
-    		if(orderAttrFlag.equals("Y")){
+    		if(orderAttrFlag.equals("Y") && isRequired.equals("N")){
     			model.addAttribute("orderAttrFlag","C");//C非必填
     		}
     		if (MapUtils.isNotEmpty(param)) {
@@ -1387,6 +1388,9 @@ public class OrderController extends BaseController {
         	}
     		forward = "/pctoken/offer/offer-change";
     	}else if("6".equals(String.valueOf(param.get("actionFlag")))){
+    		if(orderAttrFlag.equals("Y") && isRequired.equals("N")){
+    			model.addAttribute("orderAttrFlag","C");//C非必填
+    		}
     		if (MapUtils.isNotEmpty(param)) {
         		if (!param.containsKey("offerNum")||param.get("offerNum")==null) {
         			param.put("offerNum", 1);

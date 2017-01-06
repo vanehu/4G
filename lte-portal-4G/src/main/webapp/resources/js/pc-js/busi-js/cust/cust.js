@@ -1838,7 +1838,8 @@ order.cust = (function(){
 					"offerId":prodInstInfos.mainProdOfferInstInfos[0].prodOfferInstId,
 					"offerSpecId":prodInstInfos.mainProdOfferInstInfos[0].prodOfferId,
 					"offerSpecName":prodInstInfos.mainProdOfferInstInfos[0].prodOfferName,
-					"accNbr":prodInstInfos.accNbr
+					"accNbr":prodInstInfos.accNbr,
+					"custInfos":response.data.custInfos
 				};
 				OrderInfo.oldoffer.push(offerInfos);
 				order.memberChange.viceCartNum = 0;

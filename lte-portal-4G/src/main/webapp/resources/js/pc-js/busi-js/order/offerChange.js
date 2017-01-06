@@ -265,6 +265,18 @@ offerChange = (function() {
 			param.oldofferSpec = OrderInfo.oldofferSpec;
 			param.oldoffer = OrderInfo.oldoffer;
 		}
+		//套餐变更（如果有号码新装，则经办人拍照必填；如果是老号码加入，且客户证件类型不是身份证，则经办人拍照必填；其他情况下，经办人拍照非必填。）
+		param.isRequired = "N";
+		if(newnum>0){
+			param.isRequired = "Y";
+		}else if(oldnum>0){
+			for(var i=0;i<OrderInfo.oldoffer.length;i++){
+				if(OrderInfo.oldoffer[i].custInfos[0].identityCd!="1"){
+					param.isRequired = "Y";
+					break;
+				}
+			}
+		}
 		order.main.buildMainView(param);
 		$("#member_dialog").hide();
 		$("#overlay").hide();

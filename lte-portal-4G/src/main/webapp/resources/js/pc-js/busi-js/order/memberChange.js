@@ -1286,6 +1286,18 @@ order.memberChange = function(){
 	   }else{
 		   order.memberChange.changeMemberFlag = false;
 	   }
+	   //主副卡成员变更（如果有号码新装，则经办人拍照必填；如果是老号码加入，且客户证件类型不是身份证，则经办人拍照必填；其他情况下，经办人拍照非必填。）
+	   paramMap.isRequired = "N";
+		if(num>0){
+			paramMap.isRequired = "Y";
+		}else if(oldnum>0){
+			for(var i=0;i<OrderInfo.oldoffer.length;i++){
+				if(OrderInfo.oldoffer[i].custInfos[0].identityCd!="1"){
+					paramMap.isRequired = "Y";
+					break;
+				}
+			}
+		}
 	   order.main.buildMainView(paramMap);	
 	   order.memberChange.closeDialog();
 	};
