@@ -111,6 +111,7 @@ order.dealer = (function() {
 		if($("#staffCode").val().trim() == "" && $("#salesCode").val().trim() == ""){
 			// $.alert("操作提示","工号和销售员编码不能都为空！");
 			$('#dealerModal').find('.choice-box').children('.help-block').removeClass('hidden');
+			$('#dealerModal-result').hide();
 			return;
 		}
 		var param = {
@@ -127,7 +128,9 @@ order.dealer = (function() {
 				$.ecOverlay("<strong>正在查询中,请稍等会儿....</strong>");
 			},
 			"done" : function(response){
-				$.unecOverlay();
+				// $.unecOverlay();
+				$("#overlay-modal .modal-backdrop").remove();
+    		    $("#overlay-modal").modal('hide');
 				if(!response){
 					response.data='';
 				}

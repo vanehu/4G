@@ -170,7 +170,7 @@ AttachOffer = (function() {
 							html='<li id="li_'+ prodId + '_'+ this.offerSpecId  +'" ><i class="iconfont pull-left active" onclick="AttachOffer.delMyfavoriteSpec('+prodId+',\''+'\','+this.offerSpecId+',\''+this.offerSpecName+'\',$(this)'+','+1+');">&#xe62b;</i>';
 							html+='<span class="list-title">'+ this.offerSpecName +'</span>';
 							html+='<div class="list-checkbox absolute-right"><div class="checkbox-box">';
-							html+='<input type="checkbox" value="1"" name="" id="input_'+ prodId + '_'+ this.offerSpecId  +'"/><label for="li_'+ this.offerSpecId +'" onclick="AttachOffer.addOfferSpec('+prodId+','+this.offerSpecId+')"></label></div></div>';
+							html+='<input type="checkbox" value="1"" name="" checked="checked" id="input_'+ prodId + '_'+ this.offerSpecId  +'"><label for="li_'+ this.offerSpecId +'" checked="checked" onclick="AttachOffer.addOfferSpec('+prodId+','+this.offerSpecId+')"></label></input></div></div>';
 							//html+='<h5 class="list-group-item-heading" style="padding-left: 40px;" onclick="AttachOffer.addOfferSpec('+prodId+','+this.offerSpecId+')">'+ this.offerSpecName +'</h5>';
 							html+='</li>';
 							i++;
@@ -348,6 +348,7 @@ AttachOffer = (function() {
 			},
 			yesdo:function(){
 				_checkOfferExcludeDepend(prodId,newSpec);
+				
 			},
 			no:function(){
 				$("#input_"+prodId+"_"+offerSpecId).removeAttr("checked");
@@ -496,7 +497,7 @@ AttachOffer = (function() {
 					excludeAddServ(prodId,"",paramObj);
 				},
 				no:function(){
-					
+					$("#input_"+prodId+"_"+offerSpecId).removeAttr("checked");
 				}
 			});
 		}
@@ -550,12 +551,15 @@ AttachOffer = (function() {
 						}
 					});
 				}else if(len<offerGrpInfo.minQty){
+					$("#input_"+prodId+"_"+specId).removeAttr("checked");
 					$.alert("提示信息","依赖组至少选中"+offerGrpInfo.minQty+"个！");
 					return;
 				}else if(len>offerGrpInfo.maxQty){
+					$("#input_"+prodId+"_"+specId).removeAttr("checked");
 					$.alert("提示信息","依赖组至多选中"+offerGrpInfo.maxQty+"个！");
 					return;
 				}else {
+					$("#input_"+prodId+"_"+specId).removeAttr("checked");
 					$.alert("错误信息","依赖组选择出错！");
 					return;
 				}
@@ -568,10 +572,12 @@ AttachOffer = (function() {
 			for (var i = 0; i < param.excludeOffer.length; i++) {
 				var excludeSpecId = param.excludeOffer[i];
 				var spec = CacheData.getOfferSpec(prodId,excludeSpecId);
+				
 				if(spec!=undefined){
 //					$("#li_"+prodId+"_"+excludeSpecId).remove();
 					var $span = $("#li_"+prodId+"_"+excludeSpecId).find("span");
 					$span.addClass("delete");
+					$("#input_"+prodId+"_"+excludeSpecId).removeAttr("checked");
 					spec.isdel = "Y";
 					$("#terminalUl_"+prodId+"_"+excludeSpecId).remove();
 				}
@@ -580,6 +586,7 @@ AttachOffer = (function() {
 //					$("#li_"+prodId+"_"+excludeSpecId).remove();
 					var $span = $("#li_"+prodId+"_"+offer.offerId).find("span");
 					$span.addClass("delete");
+					$("#input_"+prodId+"_"+excludeSpecId).removeAttr("checked");
 					offer.isdel = "Y";
 				}
 			}
@@ -1252,6 +1259,7 @@ AttachOffer = (function() {
 			}else{
 				var $span = $("#li_"+prodId+"_"+offer.offerId).find("span");
 				$span.removeClass("delete");
+				$("#input_"+prodId+"_"+offerSpecId).attr("checked","checked");
 				offer.isdel = "N";
 			}
 			return;
@@ -1271,7 +1279,7 @@ AttachOffer = (function() {
 			html='<li id="li_'+prodId+'_'+offerSpecId+'">';
 			html+='<span class="list-title">'+ newSpec.offerSpecName +'</span>';
 			html+='<div class="list-checkbox absolute-right"><div class="checkbox-box">';
-			html+='<input type="checkbox" value="1" id="_'+prodId+'_'+offerSpecId+'" name="" /><label for="_'+prodId+'_'+offerSpecId+'" onclick="AttachOffer.delOfferSpec('+prodId+','+offerSpecId+')"></label></div></div>';						
+			html+='<input type="checkbox" checked="checked" value="1" id="input_'+prodId+'_'+offerSpecId+'" name="" ><label for="_'+prodId+'_'+offerSpecId+'" onclick="AttachOffer.delOfferSpec('+prodId+','+offerSpecId+')"></label></input></div></div>';						
 			html+='</li>';
 			var $li = $('#_'+prodId+'_'+offerSpecId);
 //			var $li = $('<a id="li_'+prodId+'_'+offerSpecId+'"  class="list-group-item"></a>');
@@ -1296,6 +1304,7 @@ AttachOffer = (function() {
 		}else if((newSpec.isdel=="Y")) { 
 			var $span = $("#li_"+prodId+"_"+offerSpecId).find("span");
 			$span.removeClass("delete");
+			$("#input_"+prodId+"_"+offerSpecId).attr("checked","checked");
 			newSpec.isdel = "N";
 			
 		}else if(ec.util.isObj(newSpec.ifOrderAgain)&&newSpec.ifOrderAgain=="Y"){
@@ -1311,7 +1320,7 @@ AttachOffer = (function() {
 			html='<li id="li_'+prodId+'_'+offerSpecId+'">';
 			html+='<span class="list-title">'+ newSpec.offerSpecName +'</span>';
 			html+='<div class="list-checkbox absolute-right"><div class="checkbox-box">';
-			html+='<input type="checkbox" value="1" id="_'+prodId+'_'+offerSpecId+'" name="" /><label for="_'+prodId+'_'+offerSpecId+'" onclick="AttachOffer.delOfferSpec('+prodId+','+offerSpecId+')""></label></div></div>';						
+			html+='<input type="checkbox" value="1" checked="checked" id="input_'+prodId+'_'+offerSpecId+'" name="" ><label for="_'+prodId+'_'+offerSpecId+'" onclick="AttachOffer.delOfferSpec('+prodId+','+offerSpecId+')""></label></input></div></div>';						
 			html+='</li>';
 			var $li = $('#_'+prodId+'_'+offerSpecId);
 			if(newSpec.ifDault==0){ //必须
@@ -1544,6 +1553,7 @@ AttachOffer = (function() {
 	};
 	//删除附属销售品规格
 	var _delOfferSpec = function(prodId,offerSpecId){
+		$("#input_"+prodId+"_"+offerSpecId).removeAttr("checked");
 		var $span = $("#li_"+prodId+"_"+offerSpecId).find("span"); //定位删除的附属
 		if($span.attr("class")=="list-title delete"){  //已经取消订购，再订购
 			AttachOffer.addOfferSpec(prodId,offerSpecId);
@@ -1568,6 +1578,7 @@ AttachOffer = (function() {
 //				$("#li_"+prodId+"_"+offerSpecId).remove();
 				$span.addClass("delete");
 				spec.isdel = "Y";
+				$("#input_"+prodId+"_"+offerSpecId).removeAttr("checked");
 				delServSpec(prodId,spec); //取消订购销售品时
 				order.dealer.removeAttDealer(prodId+"_"+offerSpecId); //删除协销人
 //				$("#terminalUl_"+prodId+"_"+offerSpecId).remove();
@@ -1575,6 +1586,7 @@ AttachOffer = (function() {
 				spec.isTerminal = 0;
 			},
 			no:function(){
+				$("#input_"+prodId+"_"+offerSpecId).attr("checked","checked");
 				
 			}
 		});
@@ -1593,6 +1605,7 @@ AttachOffer = (function() {
 					//	$li.remove();
 					//	$li.removeClass("canshu").addClass("canshu2");
 						$li.find("span").addClass("delete"); //定位删除的附属
+						$("#input_"+prodId+"_"+offerSpecId).removeAttr("checked");
 						_showHideUim(1,prodId,servSpecId);   //显示或者隐藏
 					}
 				}

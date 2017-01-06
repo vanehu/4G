@@ -557,7 +557,7 @@ SoOrder = (function() {
 			});
 		}else if(OrderInfo.actionFlag==13 || OrderInfo.actionFlag==17 || OrderInfo.actionFlag==18){ //裸机销售
 			$("#order_prepare").hide();
-			$("#orderTbody").append('<div class="ui-grid-a"><div class="ui-block-a">终端名称：</div><div class="ui-block-b">'+OrderInfo.businessName+'</div></div>');
+			$("#orderTbody").append('<li class="list-group-item"><div class="ui-block-a">终端名称：</div><div class="ui-block-b">'+OrderInfo.businessName+'</div></li>');
 			var busiOrder = OrderInfo.orderData.orderList.custOrderList[0].busiOrder;
 			var bo2Coupons = undefined;
 			if (OrderInfo.actionFlag==13) {
@@ -568,7 +568,7 @@ SoOrder = (function() {
 						bo2Coupons = busiOrder[i].data.bo2Coupons;
 					}
 				}
-				$("#orderTbody").append('<div class="ui-grid-a"><div class="ui-block-a">终端串码：</div><div class="ui-block-b">'+bo2Coupons[0].couponInstanceNumber+'</div></div>');
+				$("#orderTbody").append('<li class="list-group-item"><div class="ui-block-a">终端串码：</div><div class="ui-block-b">'+bo2Coupons[0].couponInstanceNumber+'</div></li>');
 			} else if (OrderInfo.actionFlag==17) {
 				for(var i=0; i<busiOrder.length; i++) {
 					var boActionType = busiOrder[i].boActionType;
@@ -577,7 +577,7 @@ SoOrder = (function() {
 						bo2Coupons = busiOrder[i].data.bo2Coupons;
 					}
 				}
-				$("#orderTbody").append('<div class="ui-grid-a"><div class="ui-block-a">终端串码：</div><div class="ui-block-b">'+bo2Coupons[0].couponInstanceNumber+'</div></div>');
+				$("#orderTbody").append('<li class="list-group-item"><div class="ui-block-a">终端串码：</div><div class="ui-block-b">'+bo2Coupons[0].couponInstanceNumber+'</div></li>');
 			} else if (OrderInfo.actionFlag==18) {
 				for(var i=0; i<busiOrder.length; i++) {
 					var boActionType = busiOrder[i].boActionType;
@@ -594,8 +594,8 @@ SoOrder = (function() {
 					oldCoupon = bo2Coupons[1];
 					newCoupon = bo2Coupons[0];
 				}
-				$("#orderTbody").append('<div class="ui-grid-a"><div class="ui-block-a">旧终端串码：</div><div class="ui-block-b">'+oldCoupon.couponInstanceNumber+'</div></div>');
-				$("#orderTbody").append('<div class="ui-grid-a"><div class="ui-block-a">新终端串码：</div><div class="ui-block-b">'+newCoupon.couponInstanceNumber+'</div></div>');
+				$("#orderTbody").append('<li class="list-group-item"><div class="ui-block-a">旧终端串码：</div><div class="ui-block-b">'+oldCoupon.couponInstanceNumber+'</div></li>');
+				$("#orderTbody").append('<li class="list-group-item"><div class="ui-block-a">新终端串码：</div><div class="ui-block-b">'+newCoupon.couponInstanceNumber+'</div></li>');
 			}
 			var $span = $("<span>"+OrderInfo.actionTypeName+"</span>"+OrderInfo.businessName);
 			$("#tital").append($span);
