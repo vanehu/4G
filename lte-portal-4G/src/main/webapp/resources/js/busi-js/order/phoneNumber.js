@@ -167,9 +167,15 @@ order.phoneNumber = (function(){
 		//var areaId=$("#p_cust_areaId").val();
 //		var param={"identityId":idcode,"areaId":OrderInfo.getAreaId()};
 		// 入参增加客户查询的入参
-		order.cust.custQueryParam.identityId = idcode;
-		order.cust.custQueryParam.areaId = OrderInfo.getAreaId();
-		var param = order.cust.custQueryParam;
+		var param = {};
+		if(ec.util.isObj(order.cust.custQueryParam)){ //客户定位
+			order.cust.custQueryParam.identityId = idcode;
+			order.cust.custQueryParam.areaId = OrderInfo.getAreaId();
+			var param = order.cust.custQueryParam;
+		}else{ //用户预装
+			param.identityId = idcode;
+			param.areaId = OrderInfo.getAreaId();
+		}
 		$.callServiceAsHtmlGet(contextPath+"/mktRes/phonenumber/listByIdentity",param,{
 			"before":function(){
 				$.ecOverlay("<strong>正在查询中,请稍等会儿....</strong>");
