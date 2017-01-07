@@ -546,4 +546,8 @@ public class MDA {
 	 * 证件类型校验规则配置对象
 	 */
 	public static final List<Map<String, Object>> CHECK_RULES = new ArrayList<Map<String, Object>>();
+	/**
+     *  翼支付交费助手——是否需要代扣确认属性后付费用户可选分省开关
+     */
+    public static final Map<String, String> YIPAY_ITEM_PARAM = new HashMap<String,String>();
 }
