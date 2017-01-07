@@ -72,7 +72,7 @@ public class CustBmoImpl implements CustBmo {
 			}
 			return custInfoMap;
 		} catch (Exception e) {
-			log.error("能力开放平台异常的客户资料查询queryCust服务返回的数据异常", e);
+			log.error("客户资料查询queryCust服务返回的数据异常", e);
 			throw new BusinessException(ErrorCode.QUERY_CUST, dataBusMap, db.getReturnlmap(), e);
 		}
 	}

@@ -28,7 +28,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
@@ -1590,16 +1589,25 @@ public class CustController extends BaseController {
 		JsonResponse jsonResponse = null;
 		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
                 SysConstant.SESSION_KEY_LOGIN_STAFF);
+
 		String areaId=(String) paramMap.get("areaId");
 		if(("").equals(areaId)||areaId==null){
 			paramMap.put("areaId", sessionStaff.getCurrentAreaId());
 		}
 		paramMap.put("staffId", sessionStaff.getStaffId());
 		try {
-			resultMap = custBmo.queryCustInfo(paramMap,
-					flowNum, sessionStaff);
+			resultMap = custBmo.queryCustInfo(paramMap, flowNum, sessionStaff);
 			if (MapUtils.isNotEmpty(resultMap)) {
+				if(paramMap.get("handleCust") != null && "handleCust".equals(paramMap.get("handleCust").toString())){
+					//针对经办人查询，返回多个客户时默认取第一个
+					List<Map<String, Object>> custInfos = (List<Map<String, Object>>) resultMap.get("custInfos");
+					if(custInfos.size() > 1){
+						custInfos.subList(1, custInfos.size()).clear();
+					}
+				}
 				jsonResponse = super.successed(resultMap,ResultConstant.SUCCESS.getCode());
+			} else{
+				return super.failed(ErrorCode.QUERY_CUST, "客户查询营业受理后台未返回结果集", paramMap);
 			}
 		} catch (BusinessException be) {
 			return super.failed(be);

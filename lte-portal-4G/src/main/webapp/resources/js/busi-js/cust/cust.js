@@ -2901,32 +2901,58 @@ order.cust = (function(){
 	
 	//准备加载拍照弹窗
 	 var _showCertPicture = function(){
+		 var orderAttrName = $.trim($("#orderAttrName").val()); //经办人姓名
+		 var orderAttrIdCard = $.trim($("#orderAttrIdCard").val()); //证件号码
+		 var orderAttrAddr = $.trim($("#orderAttrAddr").val()); //地址
+		 
+		 if(!(ec.util.isObj(orderAttrName) && ec.util.isObj(orderAttrIdCard) && ec.util.isObj(orderAttrAddr))){
+			$.alert("提示","您填写的经办人信息不完整，姓名、地址、证件号必填。");
+			return false;
+		}
+		 
 		var areaId = order.prodModify.choosedProdInfo.areaId;
+		if(!ec.util.isObj(areaId)){
+			areaId = OrderInfo.cust.areaId;
+		}
 		//lte进行受理地区市级验证
 		if(CONST.getAppDesc() == 0 && areaId.indexOf("0000") > 0){
 			$.alert("提示","省级地区无法进行定位客户, 请选择市级地区！");
 			return;
 		}
+		
 		var param = {
 			"areaId" 			:areaId,
 			"acctNbr"			:"",
 			"partyName"			:"",
 			"diffPlace"			:$("#DiffPlaceFlag").val(),
-			"queryType" 		:"",
+			"queryType" 		:"handleCust",
 			"identityCd"		:$("#orderIdentidiesTypeCd").val(),
 			"identityNum"		:$.trim($("#orderAttrIdCard").val()),
 			"custQueryType"		:"",
 			"queryTypeValue"	:"",
 			"identidies_type"	:$("#orderIdentidiesTypeCd  option:selected").text()
 		};
-		$.callServiceAsHtml(contextPath + "/cust/queryCust", param, {
-			"before":function(){
+		$.callServiceAsJson(contextPath + "/cust/queryoffercust", param, {
+			"before" : function() {
 				$.ecOverlay("<strong>正在查询经办人信息, 请稍等...</strong>");
-			},"done" : function(response){
-				_fillupHandleCustInfos(response);//开始处理经办人信息
-			},"always":function(){
+			},
+			"done" : function(response) {
+				if(response.code == 0 && response.data){
+					_fillupHandleCustInfos(response);// 开始处理经办人信息
+				}else if(response.code == 1 && response.data){
+					$.alert("错误", "查询经办人信息失败，错误原因：" + response.data);
+				}else if(response.code == -2 && response.data){
+					$.alertM(response.data);
+				}else{
+					$.alert("错误", "查询经办人信息发生未知异常，请稍后重试。错误信息：" + response.data);
+				}
+			},
+			"fail" : function(response) {
+				$.alert("错误","查询经办人信息发生未知异常：" + response.data);
+			},
+			"always" : function() {
 				$.unecOverlay();
-				_showCameraView();//加载拍照弹窗
+				_showCameraView();// 加载拍照弹窗
 			}
 		});
 	};
@@ -2934,17 +2960,16 @@ order.cust = (function(){
 	//往订单信息中填充经办人信息
 	var _fillupHandleCustInfos = function(response){
 		//判断新老用户封装用户信息
-		var custInfoSize = $(response.data).find('#custInfoSize').val();
-		if (parseInt(custInfoSize) >= 1) {
-			var scope = $(response.data).find('#custInfos').eq(0);//默认取第一个节点
-			OrderInfo.handleCustId 						= $(scope).attr("custId");//经办人客户ID
-			OrderInfo.bojbrCustInfos.name 				= $(scope).attr("partyName");
-			OrderInfo.bojbrCustInfos.addressStr 		= $(scope).attr("addressStr");
-			OrderInfo.bojbrCustIdentities.identityNum 	= $(scope).attr("idCardNumber");
+		if(ec.util.isArray(response.data.custInfos)){
+			var custInfo = response.data.custInfos[0];//默认取第一个节点，针对经办人查询，Java端也只会返回一个
+			OrderInfo.handleCustId 					  = custInfo.custId;//经办人客户ID
+			OrderInfo.bojbrCustInfos.name 			  = custInfo.partyName;
+			OrderInfo.bojbrCustInfos.addressStr		  = custInfo.addressStr;
+			OrderInfo.bojbrCustIdentities.identityNum = custInfo.idCardNumber;
 			_setValueForAgentOrderSpan({//页面展示客户脱敏信息
-				"partyName"		:$(scope).attr("partyName"),
-				"certAddress"	:$(scope).attr("addressStr"),
-				"certNumber"	:$(scope).attr("idCardNumber")
+				"partyName"		:custInfo.partyName,
+				"certAddress"	:custInfo.addressStr,
+				"certNumber"	:custInfo.idCardNumber
 			});
 		} else{
 			var orderAttrName = $.trim($("#orderAttrName").val());
@@ -2965,16 +2990,16 @@ order.cust = (function(){
 		OrderInfo.handleCustId = "";
 		OrderInfo.ifCreateHandleCust = true;//需要新建经办人
 		//1.经办人客户信息
-		OrderInfo.bojbrCustInfos.name			=orderAttrName;//客户名称
-		OrderInfo.bojbrCustInfos.areaId			=OrderInfo.getAreaId();//客户地区
-		OrderInfo.bojbrCustInfos.telNumber		=$.trim($("#orderAttrPhoneNbr").val());//联系电话
-		OrderInfo.bojbrCustInfos.addressStr		=$.trim($("#orderAttrAddr").val());//客户地址
-		OrderInfo.bojbrCustInfos.partyTypeCd	=$.trim($("#orderPartyTypeCd").val());//客户类型---
-		OrderInfo.bojbrCustInfos.mailAddressStr	=$.trim($("#orderAttrAddr").val());//通信地址
+		OrderInfo.bojbrCustInfos.name			=orderAttrName;							//客户名称
+		OrderInfo.bojbrCustInfos.areaId			=OrderInfo.getAreaId();					//客户地区
+		OrderInfo.bojbrCustInfos.telNumber		=$.trim($("#orderAttrPhoneNbr").val());	//联系电话
+		OrderInfo.bojbrCustInfos.addressStr		=$.trim($("#orderAttrAddr").val());		//客户地址
+		OrderInfo.bojbrCustInfos.partyTypeCd	=$.trim($("#orderPartyTypeCd").val());	//客户类型
+		OrderInfo.bojbrCustInfos.mailAddressStr	=$.trim($("#orderAttrAddr").val());		//通信地址
 		OrderInfo.bojbrCustInfos.defaultIdTycre	=$.trim($("#orderIdentidiesTypeCd").val());//证件类型
 		//2.经办人证件信息
-		OrderInfo.bojbrCustIdentities.identidiesTypeCd = $.trim($("#orderIdentidiesTypeCd").val());//证件类型
-		OrderInfo.bojbrCustIdentities.identityNum = $.trim($("#orderAttrIdCard").val());//证件号码
+		OrderInfo.bojbrCustIdentities.identidiesTypeCd	= $.trim($("#orderIdentidiesTypeCd").val());//证件类型
+		OrderInfo.bojbrCustIdentities.identityNum 		= $.trim($("#orderAttrIdCard").val());		//证件号码
 		//3.若用户有填写经办人联系号码，则新建经办人时添加联系人信息，否则不添加联系人信息
 		if(ec.util.isObj(OrderInfo.bojbrCustInfos.telNumber)){
 			OrderInfo.bojbrPartyContactInfo.staffId 		= OrderInfo.staff.staffId;
@@ -3158,14 +3183,14 @@ order.cust = (function(){
 			}
 			$.ecOverlay("<strong>正在处理中, 请稍等...</strong>");
 			var response = $.callServiceAsJson(contextPath + "/cust/uploadCustCertificate", {
-				areaId : OrderInfo.getAreaId(),
-				certType:$.trim($("#orderIdentidiesTypeCd").val()),//证件类型
-				certNumber :$.trim($("#orderAttrIdCard").val()), //证件号码
-				photographs: pictures,
-				extSystem : "1000000206",
-				accNbr : "",
-				srcFlag: "REAL",
-				venderId  : $("#img_Photo").data("venderId")
+				accNbr		: "",
+				areaId		: OrderInfo.getAreaId(),
+				srcFlag		: "REAL",
+				certType	: $.trim($("#orderIdentidiesTypeCd").val()),//证件类型
+				extSystem	: "1000000206",
+				certNumber	: $.trim($("#orderAttrIdCard").val()), //证件号码
+				photographs	: pictures,
+				venderId  	: $("#img_Photo").data("venderId")
 		    });
 			$.unecOverlay();
 			if(response.code == 0 && response.data){
