@@ -869,7 +869,10 @@ OrderInfo = (function() {
 						var feeType = $("select[name='pay_type_-1']").val();
 						if(feeType==undefined) feeType = order.prodModify.choosedProdInfo.feeType;
 						if(prodServ.servSpecId == CONST.YZFservSpecId && feeType == CONST.PAY_TYPE.AFTER_PAY){
-							if (this.itemSpecId == CONST.YZFitemSpecId1 || this.itemSpecId == CONST.YZFitemSpecId2 || this.itemSpecId == CONST.YZFitemSpecId3 || (this.itemSpecId == CONST.YZFitemSpecId4 && "ON" != offerChange.queryPortalProperties("AGENT_" + OrderInfo.staff.soAreaId.substring(0,3))) ) {
+							//#1129252 去除10020036是否需要代扣确认限制
+							var yiPayItemFlag = query.common.queryPropertiesStatus("YIPAY_ITEM_" + OrderInfo.staff.soAreaId.substring(0,3));							
+							if (this.itemSpecId == CONST.YZFitemSpecId1 || this.itemSpecId == CONST.YZFitemSpecId2 || (this.itemSpecId == CONST.YZFitemSpecId3 && !yiPayItemFlag)
+							 ||  (this.itemSpecId == CONST.YZFitemSpecId4 && "ON" != offerChange.queryPortalProperties("AGENT_" + OrderInfo.staff.soAreaId.substring(0,3))) ) {
 								this.setValue = "";
 							}
 						}

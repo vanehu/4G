@@ -1812,5 +1812,43 @@
             }
             ]
 		</const>
+		
+		<!-- redmine1129252 翼支付交费助手——是否需要代扣确认属性后付费用户可选分省开关  -->
+		<const type="Map" name="YIPAY_ITEM_PARAM" description="redmine1129252 翼支付交费助手——是否需要代扣确认属性后付费用户可选分省开关 ON OFF 默认关闭">
+			{
+			'YIPAY_ITEM_854':'OFF',<!-- 西藏 -->
+			'YIPAY_ITEM_863':'OFF',<!-- 青海 -->
+			'YIPAY_ITEM_815':'OFF',<!-- 内蒙古 -->
+			'YIPAY_ITEM_823':'OFF',<!-- 黑龙江 -->
+			'YIPAY_ITEM_845':'OFF',<!-- 广西 -->
+			'YIPAY_ITEM_850':'OFF',<!-- 重庆 -->
+			'YIPAY_ITEM_861':'OFF',<!-- 陕西 -->
+			'YIPAY_ITEM_842':'OFF',<!-- 湖北 -->
+			'YIPAY_ITEM_835':'OFF',<!-- 福建 -->
+			'YIPAY_ITEM_832':'OFF',<!-- 江苏 -->
+			'YIPAY_ITEM_846':'OFF',<!-- 海南 -->
+			'YIPAY_ITEM_864':'OFF',<!-- 宁夏 -->
+			'YIPAY_ITEM_814':'OFF',<!-- 山西 -->
+			'YIPAY_ITEM_853':'OFF',<!-- 云南 -->
+			'YIPAY_ITEM_836':'OFF',<!-- 江西 -->
+			'YIPAY_ITEM_837':'OFF',<!-- 山东 -->
+			'YIPAY_ITEM_811':'OFF',<!-- 北京 -->
+			'YIPAY_ITEM_843':'OFF',<!-- 湖南 -->
+			'YIPAY_ITEM_851':'OFF',<!-- 四川 -->
+			'YIPAY_ITEM_844':'OFF',<!-- 广东 -->
+			'YIPAY_ITEM_831':'OFF',<!-- 上海 -->
+			'YIPAY_ITEM_812':'OFF',<!-- 天津 -->
+			'YIPAY_ITEM_813':'OFF',<!-- 河北 -->
+			'YIPAY_ITEM_841':'OFF',<!-- 河南 -->
+			'YIPAY_ITEM_821':'OFF',<!-- 辽宁 -->
+			'YIPAY_ITEM_822':'OFF',<!-- 吉林 -->
+			'YIPAY_ITEM_834':'OFF',<!-- 安徽 -->
+			'YIPAY_ITEM_833':'OFF',<!-- 浙江 -->
+			'YIPAY_ITEM_852':'OFF',<!-- 贵州 -->
+			'YIPAY_ITEM_862':'OFF',<!-- 甘肃 -->
+			'YIPAY_ITEM_865':'OFF',<!-- 新疆 -->
+			'YIPAY_ITEM_899':'OFF'<!-- 虚拟省 -->
+			}
+		</const>
 	</mda>
 </mdas>

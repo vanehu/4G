@@ -420,7 +420,10 @@ order.main = (function(){
 				if(feeType == CONST.PAY_TYPE.AFTER_PAY){
 					for ( var j = 0; j < newSpec.prodSpecParams.length; j++) {
 						var prodSpecParam = newSpec.prodSpecParams[j];
-						if (CONST.YZFitemSpecId4 == prodSpecParam.itemSpecId && "ON" == offerChange.queryPortalProperties("AGENT_" + OrderInfo.staff.soAreaId.substring(0,3))) {
+						//#1129252 去除10020036是否需要代扣确认限制
+						var yiPayItemFlag = query.common.queryPropertiesStatus("YIPAY_ITEM_" + OrderInfo.staff.soAreaId.substring(0,3));
+						if ((CONST.YZFitemSpecId4 == prodSpecParam.itemSpecId && "ON" == offerChange.queryPortalProperties("AGENT_" + OrderInfo.staff.soAreaId.substring(0,3)))
+							||(CONST.YZFitemSpecId3 == prodSpecParam.itemSpecId&&yiPayItemFlag)) {
 							if (prodSpecParam.value!="") {
 								prodSpecParam.setValue = prodSpecParam.value;
 							} else if (!!prodSpecParam.valueRange[0]&&prodSpecParam.valueRange[0].value!="")
@@ -2384,10 +2387,12 @@ order.main = (function(){
 							$.each(AttachOffer.openServList, function(index, obj) {
 								$.each(obj.servSpecList, function(index, obj) {
 									if (obj.servSpecId == CONST.YZFservSpecId) {
+									var yiPayItemFlag = query.common.queryPropertiesStatus("YIPAY_ITEM_" + OrderInfo.staff.soAreaId.substring(0,3));
 										$.each(obj.prodSpecParams, function(index, obj) {
+											//#1129252 去除10020036是否需要代扣确认限制
 											if (CONST.YZFitemSpecId4 == obj.itemSpecId && "ON" != offerChange.queryPortalProperties("AGENT_" + OrderInfo.staff.soAreaId.substring(0,3))) {
 												obj.setValue = "";
-											} else {
+											} else if(CONST.YZFitemSpecId3 != obj.itemSpecId||yiPayItemFlag){
 												obj.setValue = obj.value;
 											}
 										});
@@ -2408,16 +2413,34 @@ order.main = (function(){
 				if(isOpen) {
 					// #610119需求增加：托收的属性需要分省下发。
 					var agentFlag = offerChange.queryPortalProperties("AGENT_" + OrderInfo.staff.soAreaId.substring(0,3));
-					$.confirm("信息确认","您已选择开通【翼支付交费助手】功能产品，如果修改付费类型为后付费，" + ("ON" == agentFlag ? "只可变更“翼支付托收”。" : "属性不可变更。"),{ 
+					var yiPayItemFlag = offerChange.queryPortalProperties("YIPAY_ITEM_" + OrderInfo.staff.soAreaId.substring(0,3));
+					var msg = "您已选择开通【翼支付交费助手】功能产品，如果修改付费类型为后付费，";
+					if(agentFlag=="ON"||yiPayItemFlag=="ON"){
+						msg += "只可变更";
+						if(agentFlag=="ON"){
+							msg += "“翼支付托收”";
+						}
+						if(yiPayItemFlag=="ON"){
+							if(agentFlag=="ON"){
+								msg += ",";
+							}
+							msg += "“是否需要代扣确认”。";
+						}
+					}else{
+						msg += "属性不可变更。";
+					}
+					$.confirm("信息确认",msg,{ 
 						yesdo:function(){
 							// 清除主副卡不可更改的值
 							$.each(AttachOffer.openServList, function(index, obj) {
 								$.each(obj.servSpecList, function(index, obj) {
 									if (obj.servSpecId == CONST.YZFservSpecId) {
+										//#1129252 去除10020036是否需要代扣确认限制
 										$.each(obj.prodSpecParams, function(index, obj) {
-											if (CONST.YZFitemSpecId4 == obj.itemSpecId && "ON" == offerChange.queryPortalProperties("AGENT_" + OrderInfo.staff.soAreaId.substring(0,3))) {
+											if ((CONST.YZFitemSpecId4 == obj.itemSpecId && "ON" == agentFlag)
+													||(CONST.YZFitemSpecId3 == obj.itemSpecId && "ON" == yiPayItemFlag)) {
 												obj.setValue = obj.value;
-											} else {
+											} else{
 												obj.setValue = "";
 											}	
 										});

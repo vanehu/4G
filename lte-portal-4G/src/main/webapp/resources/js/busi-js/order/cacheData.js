@@ -158,10 +158,12 @@ CacheData = (function() {
 				for (var i = 0; i < spec.prodSpecParams.length; i++) { 
 					var param = spec.prodSpecParams[i];
 					var qinqingNumberFlag = 0;//亲情号码功能产品标识，根据亲情号码最大可订购数是否存在判断，存放最大可订购数，0为不存在
+					var valueTemp = "";
 					if(ec.util.isArray(spec.prodInstParams)){ //拼接功能产品实例参数
 						$.each(spec.prodInstParams,function(){
 							if(this.itemSpecId==param.itemSpecId){
 								param.value = this.value;
+								valueTemp  = this.value;
 							}
 							if(this.itemSpecId==10020070){//亲情号码最大可订购ID
 								for (var k = 0; k < spec.prodSpecParams.length; k++) { 
@@ -187,7 +189,8 @@ CacheData = (function() {
 					}
 					if(!(qinqingNumberFlag!=0&&param.itemSpecId>=10020059&&param.itemSpecId<=10020068&&param.itemSpecId>=10020059+qinqingNumberFlag)){
 						content += _getStrByParam(prodId,param,spec.servSpecId,param.itemSpecId,param.value);
-					}					
+					}
+					param.value = valueTemp;
 				}
 			}
 		} else if(flag==1){  //销售品实例参数
@@ -288,8 +291,10 @@ CacheData = (function() {
 			selectStr = selectStr + "<div id='div1' style='position: absolute;top:77px;'></div>";
 			return selectStr;
 		}
-		if(!!param.valueRange && (itemSpecId == CONST.YZFitemSpecId1||itemSpecId ==  CONST.YZFitemSpecId2 || itemSpecId ==  CONST.YZFitemSpecId3)){ //可编辑下拉框（10020034,10020035,10020036 为翼支付交费助手的三属性）需求（开发） #610119
-			var feeType = $("select[name='pay_type_-1']").val();
+		 //可编辑下拉框（10020034,10020035,10020036 为翼支付交费助手的三属性）需求（开发） #610119  #1129252 去除10020036是否需要代扣确认限制
+		var feeType = $("select[name='pay_type_-1']").val();
+		var yiPayItemFlag = query.common.queryPropertiesStatus("YIPAY_ITEM_" + OrderInfo.staff.soAreaId.substring(0,3));
+		if(!!param.valueRange && (itemSpecId == CONST.YZFitemSpecId1||itemSpecId ==  CONST.YZFitemSpecId2||(itemSpecId ==  CONST.YZFitemSpecId3 && !yiPayItemFlag))){
 			if(feeType==undefined) feeType = order.prodModify.choosedProdInfo.feeType;
 			if(feeType == CONST.PAY_TYPE.BEFORE_PAY){
 				if(param.rule.isConstant=='Y'){ //不可修改

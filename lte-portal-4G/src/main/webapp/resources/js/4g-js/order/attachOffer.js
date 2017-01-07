@@ -1554,7 +1554,10 @@ AttachOffer = (function() {
 									if(feeType == CONST.PAY_TYPE.AFTER_PAY){
 										for ( var j = 0; j < newSpec.prodSpecParams.length; j++) {
 											var prodSpecParam = newSpec.prodSpecParams[j];
-											if (CONST.YZFitemSpecId4 == prodSpecParam.itemSpecId && "ON" == offerChange.queryPortalProperties("AGENT_" + OrderInfo.staff.soAreaId.substring(0,3))) {
+											//#1129252 去除10020036是否需要代扣确认限制
+											var yiPayItemFlag = query.common.queryPropertiesStatus("YIPAY_ITEM_" + OrderInfo.staff.soAreaId.substring(0,3));
+											if ((CONST.YZFitemSpecId4 == prodSpecParam.itemSpecId && "ON" == offerChange.queryPortalProperties("AGENT_" + OrderInfo.staff.soAreaId.substring(0,3)))
+													||CONST.YZFitemSpecId3 == prodSpecParam.itemSpecId ) {
 												if (prodSpecParam.value!="") {
 													prodSpecParam.setValue = prodSpecParam.value;
 												} else if (!!prodSpecParam.valueRange[0]&&prodSpecParam.valueRange[0].value!="")
@@ -1616,7 +1619,10 @@ AttachOffer = (function() {
 							if(feeType == CONST.PAY_TYPE.AFTER_PAY){
 								for ( var j = 0; j < newSpec.prodSpecParams.length; j++) {
 									var prodSpecParam = newSpec.prodSpecParams[j];
-									if (CONST.YZFitemSpecId4 == prodSpecParam.itemSpecId && "ON" == offerChange.queryPortalProperties("AGENT_" + OrderInfo.staff.soAreaId.substring(0,3))) {
+									//#1129252 去除10020036是否需要代扣确认限制
+									var yiPayItemFlag = query.common.queryPropertiesStatus("YIPAY_ITEM_" + OrderInfo.staff.soAreaId.substring(0,3));
+									if ((CONST.YZFitemSpecId4 == prodSpecParam.itemSpecId && "ON" == offerChange.queryPortalProperties("AGENT_" + OrderInfo.staff.soAreaId.substring(0,3)))
+											||(CONST.YZFitemSpecId3 == prodSpecParam.itemSpecId &&yiPayItemFlag)) {
 										if (prodSpecParam.value!="") {
 											prodSpecParam.setValue = prodSpecParam.value;
 										} else if (!!prodSpecParam.valueRange[0]&&prodSpecParam.valueRange[0].value!="")
@@ -5381,7 +5387,10 @@ AttachOffer = (function() {
 				if(feeType == CONST.PAY_TYPE.AFTER_PAY){
 					for ( var j = 0; j < newSpec.prodSpecParams.length; j++) {
 						var prodSpecParam = newSpec.prodSpecParams[j];
-						if (CONST.YZFitemSpecId4 == prodSpecParam.itemSpecId && "ON" == offerChange.queryPortalProperties("AGENT_" + OrderInfo.staff.soAreaId.substring(0,3))) {
+						//#1129252 去除10020036是否需要代扣确认限制
+						var yiPayItemFlag = query.common.queryPropertiesStatus("YIPAY_ITEM_" + OrderInfo.staff.soAreaId.substring(0,3));
+						if ((CONST.YZFitemSpecId4 == prodSpecParam.itemSpecId && "ON" == offerChange.queryPortalProperties("AGENT_" + OrderInfo.staff.soAreaId.substring(0,3)))
+							||(CONST.YZFitemSpecId3 == prodSpecParam.itemSpecId&&yiPayItemFlag)) {
 							if (prodSpecParam.value!="") {
 								prodSpecParam.setValue = prodSpecParam.value;
 							} else if (!!prodSpecParam.valueRange[0]&&prodSpecParam.valueRange[0].value!="")
