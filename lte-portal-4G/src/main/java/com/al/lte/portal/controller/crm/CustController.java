@@ -411,9 +411,6 @@ public class CustController extends BaseController {
         try {
             Map<String, Object> retMap = addAccountAndCustInfo(flowNum, sessionStaff, areaId, custId, accNbr, soNbr, identityCd);
             if (null != retMap) {
-            	if(ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.CURRENT_CUST_CERTIFICATE_CD) == null){
-                	ServletUtils.setSessionAttribute(super.getRequest(), SysConstant.CURRENT_CUST_CERTIFICATE_CD, identityCd);
-            	}
                 jsonResponse = super.successed(retMap);
             } else {
                 jsonResponse = super.failed(retMap, ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
@@ -947,10 +944,6 @@ public class CustController extends BaseController {
 			} catch (InterfaceException ie) {
 			} catch (Exception e) {
 			}
-		}
-		
-		if(ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.CURRENT_CUST_CERTIFICATE_CD) == null){
-	    	ServletUtils.setSessionAttribute(super.getRequest(), SysConstant.CURRENT_CUST_CERTIFICATE_CD, identityCd);
 		}
 
 		map.put("custInfo", param);
@@ -1598,16 +1591,27 @@ public class CustController extends BaseController {
 		try {
 			resultMap = custBmo.queryCustInfo(paramMap, flowNum, sessionStaff);
 			if (MapUtils.isNotEmpty(resultMap)) {
-				if(paramMap.get("handleCust") != null && "handleCust".equals(paramMap.get("handleCust").toString())){
+				List<Map<String, Object>> custInfos = (List<Map<String, Object>>) resultMap.get("custInfos");
+				if(custInfos != null){
 					//针对经办人查询，返回多个客户时默认取第一个
-					List<Map<String, Object>> custInfos = (List<Map<String, Object>>) resultMap.get("custInfos");
 					if(custInfos.size() > 1){
-						custInfos.subList(1, custInfos.size()).clear();
+						if("queryHandleCust".equals(MapUtils.getString(paramMap, "queryFlag", ""))){
+							custInfos.subList(1, custInfos.size()).clear();
+						}
 					}
+					//针对套餐变更、主副卡成员变更加装老号码作为副卡，判断该号码客户的证件类型并缓存session
+					if(custInfos.size() > 0 && "offerOrMemberChange".equals(MapUtils.getString(paramMap, "queryFlag", ""))){
+						Map<String, Object> custInfo = custInfos.get(0);//js端也是取第一个，这里也随之取第一个
+						if(!"1".equals(MapUtils.getString(custInfo, "identityCd", ""))){
+							ServletUtils.setSessionAttribute(super.getRequest(), SysConstant.IS_ACTION_FLAG_LIMITED, true);
+						}
+					}
+					jsonResponse = super.successed(resultMap,ResultConstant.SUCCESS.getCode());
+				} else{
+					return super.failed(ErrorCode.QUERY_CUST, "客户查询营业受理后台未返回结果集，custInfos为null", paramMap);
 				}
-				jsonResponse = super.successed(resultMap,ResultConstant.SUCCESS.getCode());
 			} else{
-				return super.failed(ErrorCode.QUERY_CUST, "客户查询营业受理后台未返回结果集", paramMap);
+				return super.failed(ErrorCode.QUERY_CUST, "客户查询营业受理后台未返回结果集，result为空", paramMap);
 			}
 		} catch (BusinessException be) {
 			return super.failed(be);

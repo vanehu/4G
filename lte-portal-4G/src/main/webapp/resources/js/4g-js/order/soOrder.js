@@ -2869,10 +2869,8 @@ SoOrder = (function() {
 				OrderInfo.actionFlag == 14 	|| //购手机入口做新装
 				(OrderInfo.actionFlag == 22 && OrderInfo.busitypeflag == 21) || //补卡(换卡busitypeflag是22)
 				(OrderInfo.actionFlag == 23 && OrderInfo.busitypeflag == 13) || //异地补换卡
-				(OrderInfo.actionFlag == 6  && OrderInfo.busitypeflag == 61 && OrderInfo.cust.identityCd != "1") || //主副卡成员变更，加装已有号码，且客户证件为非身份证
-				(OrderInfo.actionFlag == 6  && OrderInfo.busitypeflag == 62) || //主副卡成员变更，加装新号码
-				(OrderInfo.actionFlag == 2  && OrderInfo.busitypeflag == 61 && OrderInfo.cust.identityCd != "1") || //套餐变更加装老号码作为副卡，且客户证件为非身份证
-				(OrderInfo.actionFlag == 2  && OrderInfo.busitypeflag == 201)|| //套餐变更加装新号码作为副卡
+				(OrderInfo.actionFlag == 6  && OrderInfo.isHandleCustNeeded) || //主副卡成员变更，加装新号码或加装老号码且客户证件非身份证
+				(OrderInfo.actionFlag == 2  && OrderInfo.isHandleCustNeeded) || //套餐变更，加装新号码或加装老号码且客户证件非身份证
 				OrderInfo.actionFlag == 43	   //返档
 			);
 			if(CONST.isHandleCustNeeded && isActionFlagLimited) {

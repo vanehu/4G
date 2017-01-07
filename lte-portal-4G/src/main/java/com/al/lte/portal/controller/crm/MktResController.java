@@ -707,6 +707,10 @@ public class MktResController extends BaseController {
 			param.put("orderNo", "");
 			rMap = mktResBmo.uimCheck(param, flowNum, sessionStaff);
 			if (rMap != null&& ResultCode.R_SUCCESS.equals(rMap.get("code").toString())) {
+				//新装、加装新号码作为副卡，则经办人必须填写且拍照，这里统一做记录标识，用于session校验，防止绕过
+				if("handleCust".equals(MapUtils.getString(param, "queryFlag", ""))){
+					ServletUtils.setSessionAttribute(super.getRequest(), SysConstant.IS_ACTION_FLAG_LIMITED, true);
+				}
 				jsonResponse=super.successed(rMap, ResultConstant.SUCCESS.getCode());
 			} else {
 				jsonResponse = super.failed(rMap,

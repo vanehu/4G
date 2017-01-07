@@ -212,12 +212,11 @@ offerChange = (function() {
 		});
 		if(newnum>0){
 			offerChange.newMemberFlag = true;
-			OrderInfo.busitypeflag = 201;
+			OrderInfo.isHandleCustNeeded = true;
 			order.service.setOfferSpec();
 		}
 		if(oldnum>0){
 			offerChange.oldMemberFlag = true;
-//			OrderInfo.busitypeflag = 202;//在order.memberChange.queryofferinfo()中重新被赋值，故这里取消赋值
 			if(!order.memberChange.queryofferinfo()){
 				return;
 			}

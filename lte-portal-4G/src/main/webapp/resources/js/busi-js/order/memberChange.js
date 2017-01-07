@@ -527,31 +527,37 @@ order.memberChange = function(){
 	
 	var queryoffercust = function(accNbr,custinfolist){
 		var param = {
-				"acctNbr":accNbr,
-				"identityCd":"",
-				"identityNum":"",
-				"partyName":"",
-				"diffPlace":"local",
-				"areaId" : $("#p_cust_areaId").val(),
-				"queryType" :"",
-				"queryTypeValue":""
+			"acctNbr"		:accNbr,
+			"identityCd"	:"",
+			"identityNum"	:"",
+			"partyName"		:"",
+			"diffPlace"		:"local",
+			"areaId" 		: $("#p_cust_areaId").val(),
+			"queryType" 	:"",
+			"queryFlag"		:"offerOrMemberChange",//标识:套餐变更、主副卡成员变更加装老号码
+			"queryTypeValue":""
 		};
 		var response = $.callServiceAsJson(contextPath+"/cust/queryoffercust", param, {"before":function(){
 			$.ecOverlay("<strong>正在查询中,请稍等...</strong>");
 		}});
 		if (response.code == 0) {
 			$.unecOverlay();
-			if(response.data.custInfos.length==0){
+			if(!ec.util.isArray(response.data.custInfos)){
 				$.alert("提示","抱歉，没有定位到"+accNbr+"客户，请尝试其他客户。");
 				return false;
 			}
-			var custId = response.data.custInfos[0].custId;
+			var custInfo = response.data.custInfos[0];
+			var custId = custInfo.custId;
 			// 主副卡客户校验取客户查询返回结果中的custId,旧的取order.prodModify.choosedProdInfo.custId
 			if(OrderInfo.actionFlag!=1 && custId!=OrderInfo.cust.custId){
 				$.alert("提示",accNbr+"和主卡的客户不一致！");
 				return false;
 			}
 			custinfolist.push({"accNbr":accNbr,"custId":custId});
+			//判断该查询客户的证件类型，若非身份证，则经办人必须填写且拍照
+			if(custInfo.identityCd != "1"){
+				OrderInfo.isHandleCustNeeded = true;
+			}
 		}else{
 			$.unecOverlay();
 			$.alertM(response.data);
@@ -1054,6 +1060,7 @@ order.memberChange = function(){
 		}];
 		if(num>0){//新装副卡
 			OrderInfo.busitypeflag = 62;//主副卡成员变更，加装新号码
+			OrderInfo.isHandleCustNeeded = true;
 			//查询主卡的产品属性并保存
 			var param = {
 				prodId : prod.prodInstId, // 产品实例id

@@ -3023,38 +3023,26 @@ public class OrderBmoImpl implements OrderBmo {
 	@SuppressWarnings("unchecked")
 	public boolean verifyCustCertificate(Map<String, Object> param, HttpServletRequest request, SessionStaff sessionStaff) throws Exception{
     	boolean resultFlag = false;
-    	String identityCd = "";//客户证件类型
     	
     	Object sessionHandleCustFlag = ServletUtils.getSessionAttribute(request, SysConstant.TGJBRBTQX );
     	boolean isHandleCustNeeded = sessionHandleCustFlag == null ? true : (Boolean) sessionHandleCustFlag;//是否具有跳过经办人权限
 		Object realNameFlag =  MDA.REAL_NAME_PHOTO_FLAG.get("REAL_NAME_PHOTO_"+sessionStaff.getCurrentAreaId().substring(0, 3));
     	boolean isRealNameFlagOn  = realNameFlag == null ? false : "ON".equals(realNameFlag.toString()) ? true : false;//实名制拍照开关是否打开
-    	Object sessionCurrentCustInfo = ServletUtils.getSessionAttribute(request, SysConstant.SESSION_CURRENT_CUST_INFO);
-    	
-    	if(sessionCurrentCustInfo != null){//从session中获取客户证件类型
-    		Map<String, Object> CurrentCustInfo = (Map<String, Object>) sessionCurrentCustInfo;
-    		identityCd = MapUtils.getString(CurrentCustInfo, "identityCd", "");
-    	} else{
-    		Object sessionCurrentCustCertificate = ServletUtils.getSessionAttribute(request, SysConstant.CURRENT_CUST_CERTIFICATE_CD);
-    		if(sessionCurrentCustCertificate != null){
-    			identityCd = (String) sessionCurrentCustCertificate;
-    		}
-    	} 	
+    	Object sessionActionFlagLimited = ServletUtils.getSessionAttribute(request, SysConstant.IS_ACTION_FLAG_LIMITED);
+    	boolean isActionFlagLimited = sessionActionFlagLimited == null ? true : (Boolean) sessionActionFlagLimited;//是否限制经办人必填的业务类型
 		
     	Map<String, Object> orderList = (Map<String, Object>) param.get("orderList");
         Map<String, Object> orderListInfo = (Map<String, Object>) orderList.get("orderListInfo");
         int actionFlag = MapUtils.getIntValue(orderListInfo, "actionFlag", 0);
         int busitypeflag = MapUtils.getIntValue(orderListInfo, "busitypeflag", 0);
         boolean isCheckCertificateComprehensive = (
-        		actionFlag == 1 	|| //办套餐入口做新装
-				actionFlag == 14 	|| //购手机入口做新装
-				(actionFlag == 22 && busitypeflag == 21) || //补卡(换卡busitypeflag是22)
-				(actionFlag == 23 && busitypeflag == 13) || //异地补换卡
-				(actionFlag == 6  && busitypeflag == 61 && !"1".equals(identityCd)) || //主副卡成员变更，加装已有号码，且客户证件为非身份证
-				(actionFlag == 6  && busitypeflag == 62) || //主副卡成员变更，加装新号码
-				(actionFlag == 2  && busitypeflag == 202 && !"1".equals(identityCd)) || //套餐变更加装老号码作为副卡，且客户证件为非身份证
-				(actionFlag == 2  && busitypeflag == 201)|| //套餐变更加装新号码作为副卡
-				actionFlag == 43	   //返档
+    		(actionFlag == 1  && isActionFlagLimited) || //办套餐选号码入口做新装
+			actionFlag == 14  || 						 //购手机入口做新装
+			(actionFlag == 22 && busitypeflag == 21)  || //补卡(换卡busitypeflag是22)
+			(actionFlag == 23 && busitypeflag == 13)  || //异地补换卡
+			(actionFlag == 6  && isActionFlagLimited) || //主副卡成员变更:加装新号码,加装已有号码,且客户证件为非身份证
+			(actionFlag == 2  && isActionFlagLimited) || //套餐变更:加装新号码,加装已有号码,且客户证件为非身份证
+			actionFlag == 43  //返档
     	);
       
         if(isRealNameFlagOn && isHandleCustNeeded && isCheckCertificateComprehensive){

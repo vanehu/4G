@@ -74,7 +74,7 @@ OrderInfo = (function() {
 
 	/**
 	 * 1新装，21补卡，22换卡，61主副卡成员变更加装已有号码，62主副卡成员变更加装新号码，28主副卡成员变更主副卡角色互换
-	 * 201套餐变更加装新号码作为副卡，61套餐变更加装老号码作为副卡，除此之外套餐变更都是2
+	 * 61套餐变更加装老号码作为副卡，除此之外套餐变更都是2
 	 * update:2017-01-05
 	 */
 	var _busitypeflag = 0;
@@ -1711,6 +1711,7 @@ OrderInfo = (function() {
 	 * 填单页面返回“上一步”或“取消”时清空经办人、使用人缓存
 	 */
 	var _resetOrderInfoCache = function() {
+		OrderInfo.isHandleCustNeeded	  = false;
 		OrderInfo.ifCreateHandleCust	  = false;//判断是否需要新建经办人
 		OrderInfo.virOlId				  = "";//拍照上传虚拟购物车ID
 		OrderInfo.handleCustId 			  = "";//经办人为老客户时的客户ID
@@ -1725,6 +1726,9 @@ OrderInfo = (function() {
 	
 	//前置校验流水号
 	var _preTransactionID ="";
+	
+	//true：套餐变更加装新号码、主副卡成员变更加装新号码，此时经办人必须填写且拍照；false：其他所有业务
+	var _isHandleCustNeeded = false;
 	
 	return {	
 		order					: _order,
@@ -1837,6 +1841,7 @@ OrderInfo = (function() {
 		boUserCustIdentities 	:_boUserCustIdentities,
 		boUserCustInfos 		:_boUserCustInfos,
 		ifCreateHandleCust		:_ifCreateHandleCust,
-		preTransactionID        :_preTransactionID
+		preTransactionID        :_preTransactionID,
+		isHandleCustNeeded		:_isHandleCustNeeded
 	};
 })();
