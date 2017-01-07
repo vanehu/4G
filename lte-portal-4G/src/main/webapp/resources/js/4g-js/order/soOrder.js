@@ -545,10 +545,10 @@ SoOrder = (function() {
 		
 		if(CONST.realNamePhotoFlag == "ON"){
 			//订单填充经办人信息
-			_addHandleInfo(busiOrders, custOrderAttrs);
+			_addHandleCustInfo(busiOrders, custOrderAttrs);
 		} else{
 			//订单填充经办人信息(老模式)
-			if(!_addHandleInfoInPrevious(busiOrders, custOrderAttrs)){
+			if(!_addHandleCustInfoInPrevious(busiOrders, custOrderAttrs)){
 				return false;
 			}
 		}	
@@ -3887,9 +3887,9 @@ SoOrder = (function() {
 	};
 	
 	//填充订单经办人信息，开关ON，且经过拍照拼装经办人信息否则不拼装
-	var _addHandleInfo = function(busiOrders, custOrderAttrs){
+	var _addHandleCustInfo = function(busiOrders, custOrderAttrs){
 		if(CONST.realNamePhotoFlag == "ON" && ec.util.isObj(OrderInfo.virOlId)){
-			if(OrderInfo.ifCreateHandleCust){//新建客户
+			if(OrderInfo.ifCreateHandleCust){//新建经办人
 				if(OrderInfo.cust.custId == -1){//新建客户
 					if(OrderInfo.boCustIdentities.identityNum == OrderInfo.bojbrCustIdentities.identityNum && 
 							OrderInfo.boCustIdentities.identidiesTypeCd == OrderInfo.bojbrCustIdentities.identidiesTypeCd){//同一个人新建客户和新建经办人
@@ -3905,6 +3905,9 @@ SoOrder = (function() {
 					OrderInfo.handleCustId = OrderInfo.SEQ.offerSeq--;
 					OrderInfo.orderData.orderList.orderListInfo.partyId = OrderInfo.cust.custId;
 					OrderInfo.orderData.orderList.orderListInfo.handleCustId = OrderInfo.handleCustId;
+					if((OrderInfo.actionFlag == 23 && OrderInfo.busitypeflag == 13)) {//异地补换卡
+						OrderInfo.orderData.orderList.orderListInfo.belongHandleCustId = OrderInfo.handleCustId;
+					}
 					_createHandleCust(busiOrders);
 				}
 			} else{//已有客户
@@ -3977,7 +3980,7 @@ SoOrder = (function() {
 	};
 	
 	//添加经办人信息：实名制拍照前老模式
-	var _addHandleInfoInPrevious = function(busiOrders, custOrderAttrs){
+	var _addHandleCustInfoInPrevious = function(busiOrders, custOrderAttrs){
 		if(CONST.getAppDesc() == 0){
 			var orderAttrName 		 = $.trim($("#orderAttrName").val()); //经办人姓名
 			var orderAttrAddr 		 = $.trim($("#orderAttrAddr").val()); //地址

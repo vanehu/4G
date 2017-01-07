@@ -2911,12 +2911,10 @@ order.cust = (function(){
 		}
 		 
 		var areaId = order.prodModify.choosedProdInfo.areaId;
-		if(!ec.util.isObj(areaId)){
-			areaId = OrderInfo.cust.areaId;
-		}
+		areaId = ec.util.isObj(areaId) ? areaId : OrderInfo.cust.areaId;
 		//lte进行受理地区市级验证
 		if(CONST.getAppDesc() == 0 && areaId.indexOf("0000") > 0){
-			$.alert("提示","省级地区无法进行定位客户, 请选择市级地区！");
+			$.alert("提示","客户【"+OrderInfo.cust.name+"】的归属地区为省级地区，无法定位查询经办人。");
 			return;
 		}
 		
@@ -2938,7 +2936,7 @@ order.cust = (function(){
 			},
 			"done" : function(response) {
 				if(response.code == 0 && response.data){
-					_fillupHandleCustInfos(response);// 开始处理经办人信息
+					_getResponseResult(response);// 开始处理经办人信息
 				}else if(response.code == 1 && response.data){
 					$.alert("错误", "查询经办人信息失败，错误原因：" + response.data);
 				}else if(response.code == -2 && response.data){
@@ -2957,8 +2955,8 @@ order.cust = (function(){
 		});
 	};
 	
-	//往订单信息中填充经办人信息
-	var _fillupHandleCustInfos = function(response){
+	//处理经办人查询结果
+	var _getResponseResult = function(response){
 		//判断新老用户封装用户信息
 		if(ec.util.isArray(response.data.custInfos)){
 			var custInfo = response.data.custInfos[0];//默认取第一个节点，针对经办人查询，Java端也只会返回一个
@@ -2971,9 +2969,13 @@ order.cust = (function(){
 				"certAddress"	:custInfo.addressStr,
 				"certNumber"	:custInfo.idCardNumber
 			});
+			//如果是异地补换卡，无论新老客户，默认对漫游省下新建经办人节点
+			if((OrderInfo.actionFlag == 23 && OrderInfo.busitypeflag == 13)) {
+				_fillupHandleCustInfos(custInfo);
+			}
 		} else{
 			var orderAttrName = $.trim($("#orderAttrName").val());
-			$.confirm("确认","没有查询到["+orderAttrName+"]客户信息，系统将自动创建经办人客户，是否确认继续受理？",{
+			$.confirm("确认","没有查询到【"+orderAttrName+"】客户信息，系统将自动创建经办人客户，是否确认继续受理？",{
 				yes:function(){
 					_yes2Continue();//继续受理
 				},
@@ -2987,25 +2989,42 @@ order.cust = (function(){
 	
 	//经办人为新客户，此时会新建客户，用户确认并继续受理
 	var _yes2Continue = function(){
+		_fillupHandleCustInfosCommon({
+			"name"				:$.trim($("#orderAttrName").val()),
+			"telNumber"			:$.trim($("#orderAttrPhoneNbr").val()),
+			"addressStr"		:$.trim($("#orderAttrAddr").val()),
+			"partyTypeCd"		:$.trim($("#orderPartyTypeCd").val()),
+			"mailAddressStr"	:$.trim($("#orderAttrAddr").val()),
+			"defaultIdTycre"	:$.trim($("#orderIdentidiesTypeCd").val()),
+			"identidiesTypeCd"	:$.trim($("#orderIdentidiesTypeCd").val()),
+			"identityNum"		:$.trim($("#orderAttrIdCard").val()),
+			"contactName"		:$.trim($("#orderAttrName").val()),
+			"mobilePhone"		:$.trim($("#orderAttrPhoneNbr").val()),
+			"contactAddress"	:$.trim($("#orderAttrAddr").val())
+		});
+	};
+	
+	//往订单信息中填充经办人信息，除异地补换卡业务外通用
+	var _fillupHandleCustInfosCommon = function(handleCustInfo){
 		OrderInfo.handleCustId = "";
 		OrderInfo.ifCreateHandleCust = true;//需要新建经办人
 		//1.经办人客户信息
-		OrderInfo.bojbrCustInfos.name			=orderAttrName;							//客户名称
-		OrderInfo.bojbrCustInfos.areaId			=OrderInfo.getAreaId();					//客户地区
-		OrderInfo.bojbrCustInfos.telNumber		=$.trim($("#orderAttrPhoneNbr").val());	//联系电话
-		OrderInfo.bojbrCustInfos.addressStr		=$.trim($("#orderAttrAddr").val());		//客户地址
-		OrderInfo.bojbrCustInfos.partyTypeCd	=$.trim($("#orderPartyTypeCd").val());	//客户类型
-		OrderInfo.bojbrCustInfos.mailAddressStr	=$.trim($("#orderAttrAddr").val());		//通信地址
-		OrderInfo.bojbrCustInfos.defaultIdTycre	=$.trim($("#orderIdentidiesTypeCd").val());//证件类型
+		OrderInfo.bojbrCustInfos.name			= handleCustInfo.name;			//客户名称
+		OrderInfo.bojbrCustInfos.areaId			= OrderInfo.getAreaId();		//客户地区
+		OrderInfo.bojbrCustInfos.telNumber		= handleCustInfo.telNumber;		//联系电话
+		OrderInfo.bojbrCustInfos.addressStr		= handleCustInfo.addressStr;	//证件地址
+		OrderInfo.bojbrCustInfos.partyTypeCd	= handleCustInfo.partyTypeCd;	//客户类型
+		OrderInfo.bojbrCustInfos.mailAddressStr	= handleCustInfo.mailAddressStr;//通信地址
+		OrderInfo.bojbrCustInfos.defaultIdTycre	= handleCustInfo.defaultIdTycre;//证件类型
 		//2.经办人证件信息
-		OrderInfo.bojbrCustIdentities.identidiesTypeCd	= $.trim($("#orderIdentidiesTypeCd").val());//证件类型
-		OrderInfo.bojbrCustIdentities.identityNum 		= $.trim($("#orderAttrIdCard").val());		//证件号码
+		OrderInfo.bojbrCustIdentities.identidiesTypeCd	= handleCustInfo.identidiesTypeCd;	//证件类型
+		OrderInfo.bojbrCustIdentities.identityNum 		= handleCustInfo.identityNum;		//证件号码
 		//3.若用户有填写经办人联系号码，则新建经办人时添加联系人信息，否则不添加联系人信息
 		if(ec.util.isObj(OrderInfo.bojbrCustInfos.telNumber)){
 			OrderInfo.bojbrPartyContactInfo.staffId 		= OrderInfo.staff.staffId;
-			OrderInfo.bojbrPartyContactInfo.contactName 	= $.trim($("#orderAttrName").val());
-			OrderInfo.bojbrPartyContactInfo.mobilePhone 	= $.trim($("#orderAttrPhoneNbr").val());
-			OrderInfo.bojbrPartyContactInfo.contactAddress 	= $.trim($("#orderAttrAddr").val());
+			OrderInfo.bojbrPartyContactInfo.contactName 	= handleCustInfo.contactName;
+			OrderInfo.bojbrPartyContactInfo.mobilePhone 	= handleCustInfo.mobilePhone;
+			OrderInfo.bojbrPartyContactInfo.contactAddress 	= handleCustInfo.contactAddress;
 			//根据身份证判断性别，无从判别默认为男
 			if(OrderInfo.bojbrCustIdentities.identidiesTypeCd == "1"){
 				var identityNum = OrderInfo.bojbrCustIdentities.identityNum;
@@ -3013,6 +3032,62 @@ order.cust = (function(){
 				OrderInfo.bojbrPartyContactInfo.contactGender = (identityNum % 2) == 0 ? "2" : "1";//1男2女
 			} else{
 				OrderInfo.bojbrPartyContactInfo.contactGender = "1";//性别，默认为男
+			}
+		}
+	};
+	
+	//往订单信息中填充经办人信息，针对异地补换卡特殊处理，其他业务不可用
+	var _fillupHandleCustInfos = function(handleCustInfo){
+		OrderInfo.handleCustId = custInfo.custId;
+		OrderInfo.ifCreateHandleCust = true;//需要新建经办人
+		//1.经办人客户信息
+		OrderInfo.bojbrCustInfos.name			= handleCustInfo.partyName;				//客户名称
+		OrderInfo.bojbrCustInfos.areaId			= OrderInfo.getAreaId();				//客户地区
+		OrderInfo.bojbrCustInfos.address		= handleCustInfo.address;				//加密后的客户地址
+		OrderInfo.bojbrCustInfos.custName 		= handleCustInfo.CN;					//加密后的客户名
+		OrderInfo.bojbrCustInfos.telNumber		= $.trim($("#orderAttrPhoneNbr").val());//联系电话
+		OrderInfo.bojbrCustInfos.addressStr		= handleCustInfo.addressStr;			//证件地址
+		OrderInfo.bojbrCustInfos.partyTypeCd	= $.trim($("#orderPartyTypeCd").val());	//客户类型
+		OrderInfo.bojbrCustInfos.mailAddressStr	= handleCustInfo.address;				//加密后的客户地址
+		OrderInfo.bojbrCustInfos.defaultIdTycre	= $.trim($("#orderIdentidiesTypeCd").val());//证件类型
+		//2.经办人证件信息
+		OrderInfo.bojbrCustIdentities.identidiesTypeCd	= $.trim($("#orderIdentidiesTypeCd").val());//证件类型
+		OrderInfo.bojbrCustIdentities.identityNum 		= handleCustInfo.certNum;//加密后的证件号码
+		//3.若用户有填写经办人联系号码，则新建经办人时添加联系人信息，否则不添加联系人信息
+		if(ec.util.isObj(OrderInfo.bojbrCustInfos.telNumber)){
+			if(ec.util.isArray(handleCustInfo.contactInfos)){//有联系人节点返回，则尽可能从联系人节点取值
+				var contactInfo = handleCustInfo.contactInfos[0];
+				OrderInfo.bojbrPartyContactInfo.staffId 		= OrderInfo.staff.staffId;
+				OrderInfo.bojbrPartyContactInfo.mobilePhone 	= OrderInfo.bojbrCustInfos.telNumber;
+				OrderInfo.bojbrPartyContactInfo.contactName 	= contactInfo.contactName;//取经办人名字还是取联系人名字？
+				OrderInfo.bojbrPartyContactInfo.contactNameEnc 	= contactInfo.contactNameEnc;
+				OrderInfo.bojbrPartyContactInfo.contactAddress 	= OrderInfo.bojbrCustInfos.address;//联系人节点没有地址，以经办人地址
+				if(ec.util.isObj(contactInfo.contactGender)){
+					OrderInfo.bojbrPartyContactInfo.contactGender = contactInfo.contactGender;
+				} else{
+					//没能从联系人节点判断性别，则从证件类型判断
+					if(OrderInfo.bojbrCustIdentities.identidiesTypeCd == "1"){
+						var identityNum = OrderInfo.bojbrCustIdentities.identityNum;
+						identityNum = parseInt(identityNum.substring(16,17));//取身份证第17位判断性别，奇数男，偶数女
+						OrderInfo.bojbrPartyContactInfo.contactGender = (identityNum % 2) == 0 ? "2" : "1";//1男2女
+					} else{
+						OrderInfo.bojbrPartyContactInfo.contactGender = "1";//性别，默认为男
+					}
+				}
+			} else{//没有联系人节点返回，完全从客户信息取值
+				OrderInfo.bojbrPartyContactInfo.staffId 		= OrderInfo.staff.staffId;
+				OrderInfo.bojbrPartyContactInfo.mobilePhone 	= OrderInfo.bojbrCustInfos.telNumber;
+				OrderInfo.bojbrPartyContactInfo.contactName 	= OrderInfo.bojbrCustInfos.name;
+				OrderInfo.bojbrPartyContactInfo.contactNameEnc 	= handleCustInfo.CN;//未返回联系人节点时，只能CN代替
+				OrderInfo.bojbrPartyContactInfo.contactAddress 	= OrderInfo.bojbrCustInfos.address;
+				//根据证件类型判断性别
+				if(OrderInfo.bojbrCustIdentities.identidiesTypeCd == "1"){
+					var identityNum = OrderInfo.bojbrCustIdentities.identityNum;
+					identityNum = parseInt(identityNum.substring(16,17));//取身份证第17位判断性别，奇数男，偶数女
+					OrderInfo.bojbrPartyContactInfo.contactGender = (identityNum % 2) == 0 ? "2" : "1";//1男2女
+				} else{
+					OrderInfo.bojbrPartyContactInfo.contactGender = "1";//性别，默认为男
+				}
 			}
 		}
 	};
