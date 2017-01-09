@@ -108,6 +108,7 @@ public class MainController extends BaseController {
     	ServletUtils.removeSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_NUMBER+"_"+sessionStaff.getStaffId());
     	ServletUtils.removeSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_TERMINAL+"_"+sessionStaff.getStaffId());
     	ServletUtils.removeSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_AGREEMENT+"_"+sessionStaff.getStaffId());
+    	ServletUtils.removeSessionAttribute(super.getRequest(), SysConstant.IS_ACTION_FLAG_LIMITED);
     	Map<String, Object> dataBusMap = new HashMap<String, Object>();
     	dataBusMap.put("objCatgName", "recommendOffer,recommendTerminal,hotSaleOffer");
     	
