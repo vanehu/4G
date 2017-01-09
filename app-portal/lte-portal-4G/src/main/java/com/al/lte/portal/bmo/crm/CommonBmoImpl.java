@@ -3,9 +3,11 @@ package com.al.lte.portal.bmo.crm;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -502,6 +504,70 @@ public class CommonBmoImpl implements CommonBmo {
         logClobObj.put("OUT_PARAM", outParams);
 
         logSender.sendLog2DB("PORTAL_SERVICE_LOG", logObj, logClobObj);
+	}
+	
+	
+	/**
+	 * 订单提交报文过滤多余的节点<br/>
+	 * (1)由于同一个客户办理业务时可能同时使用人新建、经办人新建、客户新建等，在此过滤掉重复的C1节点，同一个客户新建应当只有一个C1节点<br/>
+	 * (2)后期可能添加其他过滤，暂留
+	 * @param param 订单提交入参
+	 * @return true：过滤成功；false：过滤失败
+	 */
+	@SuppressWarnings("unchecked")
+	public boolean orderSubmitFilter(Map<String, Object> param) throws Exception{
+		boolean resultFlag = true;
+		Set<String> c1BoActionType = new HashSet<String>();
+        Map<String, Object> orderList = (Map<String, Object>) param.get("orderList");
+        List<Map<String, Object>> custOrderList = (List<Map<String, Object>>) orderList.get("custOrderList");
+        
+        //第一次循环记录新建客户的C1节点
+        for (Map<String, Object> custOrder : custOrderList) {
+            List<Map<String, Object>> busiOrderList = (List<Map<String, Object>>) custOrder.get("busiOrder");
+            for (int i = 0; i < busiOrderList.size(); i++) {
+            	Map<String, Object> busiOrder = busiOrderList.get(i);
+            	HashMap<String, Object> boActionType = (HashMap<String, Object>) busiOrder.get("boActionType");
+                if ("C1".equalsIgnoreCase(MapUtils.getString(boActionType, "boActionTypeCd", ""))) {
+                    Map<String, Object> data = (Map<String, Object>) busiOrder.get("data");
+                	Map<String, Object> custInfo = (Map<String, Object>) ((List<Map<String, Object>>) data.get("boCustInfos")).get(0);
+                    Map<String, Object> custIdentities = (Map<String, Object>) ((List<Map<String, Object>>) data.get("boCustIdentities")).get(0);
+                    String identidiesTypeCd = MapUtils.getString(custIdentities, "identidiesTypeCd", "");//证件类型
+                    String identityNum = MapUtils.getString(custIdentities, "identityNum", "");//证件号
+                    if("".equals(identidiesTypeCd) || "".equals(identityNum)){
+                    	return false;
+                    } else if(!("Y".equals(MapUtils.getString(custInfo, "jbrFlag", "")) || 
+                    		"Y".equals(MapUtils.getString(custInfo, "userCustFlag", "")))){//排除新建经办人和使用人节点
+                    	if(!c1BoActionType.add(identityNum + identidiesTypeCd)){//若没有将新建经办人、新建客户区分开，则只能随机过滤
+                    		busiOrderList.remove(i--);
+                    	}
+                    }
+                }
+            }
+        }
+
+        //第二次循环针对新建客户以外的C1节点(新建使用人、新建经办人)进行过滤
+        for (Map<String, Object> custOrder : custOrderList) {
+            List<Map<String, Object>> busiOrderList = (List<Map<String, Object>>) custOrder.get("busiOrder");
+            for (int i = 0; i < busiOrderList.size(); i++) {
+            	Map<String, Object> busiOrder = busiOrderList.get(i);
+            	HashMap<String, Object> boActionType = (HashMap<String, Object>) busiOrder.get("boActionType");
+                if ("C1".equalsIgnoreCase(MapUtils.getString(boActionType, "boActionTypeCd", ""))) {
+                    Map<String, Object> data = (Map<String, Object>) busiOrder.get("data");
+                	Map<String, Object> custInfo = (Map<String, Object>) ((List<Map<String, Object>>) data.get("boCustInfos")).get(0);
+                    Map<String, Object> custIdentities = (Map<String, Object>) ((List<Map<String, Object>>) data.get("boCustIdentities")).get(0);
+                    String identidiesTypeCd = MapUtils.getString(custIdentities, "identidiesTypeCd", "");//证件类型
+                    String identityNum = MapUtils.getString(custIdentities, "identityNum", "");//证件号
+                    if("Y".equals(MapUtils.getString(custInfo, "jbrFlag", "")) || 
+                    		"Y".equals(MapUtils.getString(custInfo, "userCustFlag", ""))){
+                    	if(!c1BoActionType.add(identityNum + identidiesTypeCd)){//针对新建经办人和使用人节点进行过滤
+                    		busiOrderList.remove(i--);
+                    	}
+                    }
+                }
+            }
+        }
+        
+        return resultFlag;
 	}
 
 }

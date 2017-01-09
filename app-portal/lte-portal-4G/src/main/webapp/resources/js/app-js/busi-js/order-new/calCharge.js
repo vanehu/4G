@@ -24,6 +24,8 @@ order.calcharge = (function(){
 	var _busiUpType;//业务类型，1表示手机业务2表示宽带甩单
 	var payType;
 	var _returnFlag=true;//支付平台返回成功后，返回按钮提示不让进行
+	var _haveCharge=false;//是否已经下过计费接口
+	var timeId;//定时计时器
 	
 	//显示收银台界面
 	var _calchargeInit=function(){
@@ -248,7 +250,7 @@ order.calcharge = (function(){
 				_getPayTocken();
 				return;
 			}else{//获取支付方式
-				payType=response.data.split("_")[0];
+				payType=response.data.payCode+"";
 			}
 
 		}
@@ -310,83 +312,85 @@ order.calcharge = (function(){
 				"areaId" : OrderInfo.staff.areaId,
 				"chargeItems":_chargeItems
 		};
-		var url=contextPath+"/app/order/chargeSubmit?token="+OrderInfo.order.token;
-		var response=$.callServiceAsJson(url, params, {});
-		var msg="";
-		if (response.code == 0) {
-			submit_success=true;
-			//受理成功，不再取消订单
-//			SoOrder.delOrderFin();
-			
-			if(OrderInfo.actionFlag==31){//改产品密码，则将session中密码重置，用户需要重新输入密码
-				var url=contextPath+"/cust/passwordReset";
-				var response2 = $.callServiceAsJson(url, null, {});
-			}
-			if(flag==1){
-				if(OrderInfo.actionFlag==11){
-					msg="退费成功";
-				}else{
-					msg="收费成功";
-				}
-			}else{
-				msg="受理成功";
-			}
-			$("#toCharge").attr("disabled","disabled");
-			$("#toComplate").removeAttr("disabled");
-			$("#orderCancel").removeAttr("disabled");
-			$("#printVoucherA").attr("disabled","disabled");
-			$("#calChangeTab tr").each(function() {
-				var trid = $(this).attr("id");
-				if(trid!=undefined&&trid!=''){
-					trid=trid.substr(5,trid.length);
-					$("#backAmount_"+trid).attr("disabled","disabled");
-					$("#upate").attr("disabled","disabled");					
-				}
-			});
-			
-			if(OrderInfo.actionFlag==112){
-				order.broadband.orderSubmit();
-				return;
-			}
-			
-			if(OrderInfo.actionFlag==11){
-				$("#orderCancel").html("<span>返回首页</span>");
-				$("#orderCancel").off("onclick").on("onclick",function(event){
-					order.undo.toUndoMain(1);
-				});
-			}else{
-				$("#orderCancel").html("继续受理");
-				$("#orderCancel").off("onclick").on("onclick",function(event){
-					_backToEntr();
-				});
-			}
-			//金额不为零，提示收费成功
-			if(flag=='1'){
-				var realmoney=($('#realMoney').html())*1;
-					_showFinDialog(flag, msg);
-			} else {
-				//提示受理完成
-				_showFinDialog(flag, msg);
-			}
+		if(order.calcharge.haveCharge==true){//已下过计费接口
 			return;
-			
-		}else if (response.code == -2) {
-			_conBtns();
-			SoOrder.getToken();
-			inOpetate=false;
-			$.alertM(response.data);
-			//SoOrder.showAlertDialog(response.data);
-		}else{
-			_conBtns();
-			SoOrder.getToken();
-			inOpetate=false;
-			if(response.data!=undefined){
-				alert(response.data);
-				//$.alert("提示",response.data);
-			}else{
-				$.alert("提示","费用信息提交失败!");
+		}
+		order.calcharge.haveCharge=true;
+		var msg="";
+		var url=contextPath+"/app/order/chargeSubmit?token="+OrderInfo.order.token;
+		$.callServiceAsJson(url,params, {
+			"before":function(){
+				$.ecOverlay("<strong>正在处理中,请稍等会儿....</strong>");
+			},	
+			"done" : function(response){
+				$.unecOverlay();
+				clearInterval(timeId);//已经下过收费接口，定时下计费接口任务取消
+				if (response.code == 0) {
+					submit_success=true;
+					//受理成功，不再取消订单
+//					SoOrder.delOrderFin();
+					
+					if(OrderInfo.actionFlag==31){//改产品密码，则将session中密码重置，用户需要重新输入密码
+						var url=contextPath+"/cust/passwordReset";
+						var response2 = $.callServiceAsJson(url, null, {});
+					}
+					if(flag==1){
+						if(OrderInfo.actionFlag==11){
+							msg="退费成功";
+						}else{
+							msg="收费成功";
+						}
+					}else{
+						msg="受理成功";
+					}
+					$("#toCharge").attr("disabled","disabled");
+					$("#toComplate").removeAttr("disabled");
+					$("#orderCancel").removeAttr("disabled");
+					$("#printVoucherA").attr("disabled","disabled");					
+					if(OrderInfo.actionFlag==112){
+						order.broadband.orderSubmit();
+						return;
+					}
+					
+					if(OrderInfo.actionFlag==11){
+						$("#orderCancel").html("<span>返回首页</span>");
+						$("#orderCancel").off("onclick").on("onclick",function(event){
+							order.undo.toUndoMain(1);
+						});
+					}else{
+						$("#orderCancel").html("继续受理");
+						$("#orderCancel").off("onclick").on("onclick",function(event){
+							_backToEntr();
+						});
+					}
+					//金额不为零，提示收费成功
+					if(flag=='1'){
+						var realmoney=($('#realMoney').html())*1;
+							_showFinDialog(flag, msg);
+					} else {
+						//提示受理完成
+						_showFinDialog(flag, msg);
+					}
+					return;
+				}else if (response.code == -2) {
+					_conBtns();
+					SoOrder.getToken();
+					inOpetate=false;
+					$.alertM(response.data);
+					//SoOrder.showAlertDialog(response.data);
+				}else{
+					_conBtns();
+					SoOrder.getToken();
+					inOpetate=false;
+					if(response.data!=undefined){
+						alert(response.data);
+						//$.alert("提示",response.data);
+					}else{
+						$.alert("提示","费用信息提交失败!");
+					}
+				}
 			}
-		}	
+		});
 	};
 
 	var _showFinDialog=function(flag, msg){
@@ -674,18 +678,21 @@ order.calcharge = (function(){
 	 */
 	var _getPayTocken = function(){
 		var dis=$("#printVoucherA").attr("disabled");//回执按钮置灰收费不可点击
-		if("disabled"!=dis){
-			$.alert("提示","请先保存回执");
-			return;
-		}
+//		if("disabled"!=dis){
+//			$.alert("提示","请先保存回执");
+//			return;
+//		}
 		var charge=_getCharge();//支付金额
+		_chargeItems=[];
+		_buildChargeItems();
 		var busiUpType="1";
 		order.calcharge.busiUpType="1";
 		var params={
 				"olId":OrderInfo.orderResult.olId,
 				"soNbr":OrderInfo.orderResult.olNbr,
 				"busiUpType":busiUpType,
-				"chargeItems":charge
+				"chargeItems":_chargeItems,
+				"charge":charge
 		};
 		var url = contextPath+"/app/order/getPayUrl";
 		var response = $.callServiceAsJson(url, params);
@@ -693,6 +700,8 @@ order.calcharge = (function(){
 			payUrl=response.data;
 			//var payUrl2="http://192.168.4.137:7001/pay_web/platpay/index?payToken="+payUrl.split("=")[1];
    		  // payUrl2="https://crm.189.cn:86/upay/platpay/index?payToken=5D0CB495B3DD59CAEC106F93EEBD13952F62C58C4A13445FB8AC378A32038E99";
+			$.ecOverlay("<strong>支付处理中,请稍等会儿....</strong>");
+			timeId=setInterval(order.calcharge.timeToFee,3000);//定时查询支付状态，若成功则下计费接口，已下过则不再下。
 			common.callOpenPay(payUrl);//打开支付页面
 		}else if(response.code==1002){
 			$.alert("提示",response.data);
@@ -718,6 +727,9 @@ order.calcharge = (function(){
 	 * 获取支付平台返回订单状态
 	 */
 	var _queryPayOrdStatus1 = function(soNbr, status,type) {
+		if(order.calcharge.haveCharge==true){//已下过计费接口
+			return;
+		}
 		if ("1" == status) { // 原生返回成功，调用支付平台查询订单状态接口，再次确定是否成功，如果成功则调用收费接口
 			$.ecOverlay("<strong>正在处理中,请稍等会儿....</strong>");
 			_returnFlag=false;//禁止返回
@@ -728,11 +740,12 @@ order.calcharge = (function(){
 			var url = contextPath + "/app/order/getPayOrdStatus";
 			var response = $.callServiceAsJson(url, params);
 			$.unecOverlay();
-			if (response.code == 0) {//支付成功，调用收费接口
+			if (response.code == 0 && response.data!=null && response.data!="") {//支付成功，调用收费接口
 				var val=_getCharge();
-				var payMoney=response.data.split("_")[1];
+				var payMoney=response.data.payAmount+"";
 				if(val!=payMoney){
 					$.alert("提示","金额可能被篡改，为了您的安全，请重新下单");
+					clearInterval(timeId);
 					return;
 				}
 				payType=type;
@@ -748,12 +761,16 @@ order.calcharge = (function(){
 							"chargeItems":_chargeItems,
 							"custId":OrderInfo.cust.custId
 					};
+					if(order.calcharge.haveCharge==true){//已下过计费接口
+						return;
+					}
 					$.callServiceAsJson(url,params, {
 						"before":function(){
 							$.ecOverlay("<strong>正在处理中,请稍等会儿....</strong>");
 						},	
 						"done" : function(response){
 							$.unecOverlay();
+							clearInterval(timeId);//已经下过收费接口，定时下计费接口任务取消
 							if (response.code == 0) {
 								_chargeSave(1);
 							}else if (response.code == -2) {
@@ -775,9 +792,13 @@ order.calcharge = (function(){
 					_chargeSave(0);
 				}			
 				
-			} else if (response.status == 1002) {
+			}else if(response.code==1){//支付接口支付失败
+			
+			}else if (response.status == 1002) {
 				$.alert("提示",response.data); // 支付失败
-			} else {
+			} else if (response.data==""){//封装的ajax方法调用超时也可能返回code=0
+				$.alert("提示","调用支付接口查询超时！"); // 查询失败
+			}else {
 				$.alertM(response.data);// 调用接口异常
 			}
 		}
@@ -818,6 +839,26 @@ order.calcharge = (function(){
 			$("#realMoney").removeAttr("disabled");
 		}
 	};
+	
+	//收费界面定时任务入口
+	var _timeToFee=function(){
+		if(order.calcharge.haveCharge==true){//已下过计费接口
+			return;
+		}
+		var checkUrl = contextPath + "/app/order/getPayOrdStatus";
+		var checkParams = {
+				"olId" : OrderInfo.orderResult.olId
+				
+		};
+		var response = $.callServiceAsJson(checkUrl, checkParams);
+		if (response.code == 0) {// 支付平台购物车id查询支付成功才进入定时任务
+			payType=response.data.payCode;
+			$("#toCharge").attr("disabled","disabled");
+			_queryPayOrdStatus1(OrderInfo.orderResult.olId,"1",payType);
+		}else{
+			$.unecOverlay();//去遮罩
+		}
+	};
 	return {
 		changeRealMoney:_changeRealMoney,
 		refreshTotal:_refreshTotal,
@@ -836,7 +877,8 @@ order.calcharge = (function(){
 		getCharge:_getCharge,
 		busiUpType:_busiUpType,
 		returnFlag:_returnFlag,
-		setGreyNoEdit:_setGreyNoEdit
+		setGreyNoEdit:_setGreyNoEdit,
+		timeToFee    :_timeToFee
 	};
 })();
 

@@ -189,7 +189,17 @@ CacheData = (function() {
 		return content;
 	};
 	
-	
+	//获取某个销售品规格参数  
+	var _getSpecParam = function(prodId,offerSpecId,itemSpecId){
+		var spec = _getOfferSpec(prodId,offerSpecId);
+		if(ec.util.isObj(spec)){
+			for ( var i = 0; i < spec.offerSpecParams.length; i++) {
+				if(spec.offerSpecParams[i].itemSpecId==itemSpecId){
+					return spec.offerSpecParams[i];
+				}
+			}
+		}
+	};
 	//把选中的促销保存到销售品规格中
 	var _setServForOfferSpec = function(prodId,offerSpec){
 		if(offerSpec!=undefined){
@@ -797,6 +807,7 @@ CacheData = (function() {
 		getOfferMember       :_getOfferMember,
 		setServ2OfferSpec	 :_setServ2OfferSpec,
 		setOffer2ExcludeOfferSpec		:_setOffer2ExcludeOfferSpec,
-		setParam			:_setParam
+		setParam			:_setParam,
+		getSpecParam		:_getSpecParam
 	};
 })();

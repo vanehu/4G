@@ -657,7 +657,7 @@ order.calcharge = (function(){
 				_getPayTocken();
 				return;
 			}else{//获取支付方式
-				payType=response.data.split("_")[0];
+				payType=response.data.payCode;
 			}
 
 		}
@@ -1293,7 +1293,8 @@ order.calcharge = (function(){
 				"olId":OrderInfo.orderResult.olId,
 				"soNbr":OrderInfo.orderResult.olNbr,
 				"busiUpType":busiUpType,
-				"chargeItems":charge
+				"chargeItems":_chargeItems,
+				"charge":charge
 		};
 		var url = contextPath+"/app/order/getPayUrl";
 		var response = $.callServiceAsJson(url, params);
@@ -1343,12 +1344,12 @@ order.calcharge = (function(){
 			};
 			var url = contextPath + "/app/order/getPayOrdStatus";
 			var response = $.callServiceAsJson(url, params);
-			if (response.code == 0) {//支付成功，调用收费接口
+			if (response.code == 0 && response.data!=null && response.data!="") {//支付成功，调用收费接口
 				var val=$.trim($('#realMoney').html())*100;
 				val=val+"";
 				var payMoney="";
-				if(response.data.split("_")[1]!=undefined){
-					payMoney=payMoney+response.data.split("_")[1];
+				if(response.data.payAmount!=undefined){
+					payMoney=response.data.payAmount+"";
 				}
 				if(val!=payMoney){
 					var title='金额可能被篡改';
@@ -1583,8 +1584,12 @@ order.calcharge = (function(){
 					}
 				});
 
-			} else if (response.status == 1002) {
+			}else if(response.code==1){//支付接口支付失败
+				
+			}else if (response.status == 1002) {
 				$.alert("提示","支付失败"); // 支付失败
+			} else if (response.data==""){//封装的ajax方法调用超时也可能返回code=0
+				$.alert("提示","调用支付接口查询超时！"); // 查询失败
 			} else {
 				$.alertM(response.data);// 调用接口异常
 			}
@@ -1594,7 +1599,7 @@ order.calcharge = (function(){
 	//获取费用
 	var _getCharge = function(){
 		var realFee=0;
-		var chargeItems2=[];
+		 _chargeItems=[];
 		$("#calChangeTab tr").each(function() {
 			var val = $(this).attr("id");
 			if(val!=undefined&&val!=''){
@@ -1667,7 +1672,7 @@ order.calcharge = (function(){
 						"remark":remark,
 						"boActionType":boActionType
 				};
-				chargeItems2.push(param);				
+				_chargeItems.push(param);				
 			}
 		});
 		return realFee;
@@ -1685,7 +1690,7 @@ order.calcharge = (function(){
 		};
 		var response = $.callServiceAsJson(checkUrl, checkParams);
 		if (response.code == 0) {// 支付平台购物车id查询支付成功才进入定时任务
-			payType=response.data.split("_")[0];
+			payType=response.data.payCode;
 			$("#toCharge").attr("disabled","disabled");
 			_queryPayOrdStatus1(OrderInfo.orderResult.olId,"1",payType);
 		}else{

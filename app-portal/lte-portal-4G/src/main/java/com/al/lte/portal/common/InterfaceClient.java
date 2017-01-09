@@ -76,6 +76,9 @@ public class InterfaceClient {
 	protected static Log log = Log.getLog(InterfaceClient.class);
 	
 	private static final String ENCODING = "UTF-8";
+
+	private static final String AREA_CHINA = "8100000";
+	private static final String AREA_BEIJING = "8110000";
 	
 	private static final String RES_SERVICENAME = "serviceName";
 	private static final String RES_SERVICEMETHOD = "serviceMethod";
@@ -211,13 +214,11 @@ public class InterfaceClient {
 		}
 		
 		try {
-		
+			prefix = serviceCode.substring(0, serviceCode.indexOf("-"));
 			if (HTTP_WAY.equals(invokeWay)) {
-				
 				String contentType = JSON_CONTENT_TYPE;
 				String sys = "";
 				// get url, contentType by serviceCode
-				prefix = serviceCode.substring(0, serviceCode.indexOf("-"));
 				if (BIZ_PREFIX.equals(prefix)) {
 					serviceCode = serviceCode.substring(4);
 					intfUrl = getNeeded(dbKeyWord,URL_KEY, BIZ_PREFIX);
@@ -228,6 +229,9 @@ public class InterfaceClient {
 						if(sessionStaff != null){
 							dataBusMap.put("areaId", sessionStaff.getCurrentAreaId());
 						}
+					}
+					if(AREA_CHINA.equals(dataBusMap.get("areaId"))){
+						dataBusMap.put("areaId", AREA_BEIJING);
 					}
 					paramString = JsonUtil.toString(dataBusMap);
 					paramJson=paramString;
@@ -240,6 +244,9 @@ public class InterfaceClient {
 						if(sessionStaff != null){
 							dataBusMap.put("areaId", sessionStaff.getCurrentAreaId());
 						}
+					}
+					if(AREA_CHINA.equals(dataBusMap.get("areaId"))){
+						dataBusMap.put("areaId", AREA_BEIJING);
 					}
 					paramString = JsonUtil.toString(dataBusMap);
 					paramJson=paramString;
@@ -295,6 +302,9 @@ public class InterfaceClient {
 								dataBusMap.put("areaId", sessionStaff.getCurrentAreaId());
 							}
 						}
+					}
+					if(AREA_CHINA.equals(dataBusMap.get("areaId"))){
+						dataBusMap.put("areaId", AREA_BEIJING);
 					}
 					paramString = JsonUtil.toString(dataBusMap);
 				} else if (RULE_PREFIX.equals(prefix)) {
@@ -394,6 +404,10 @@ public class InterfaceClient {
 					String xml2 = CommonUtils.jsontoXml(s2);
 					paramString = xml2.substring(xml2.indexOf("<proot"),
 							xml2.indexOf("<transactionId"));
+					if(paramString.indexOf("chargeItems")>0){
+						String s=paramString.substring(0,paramString.indexOf("<chargeItems class=\"array\">")+27)+"<![CDATA["+paramString.substring(paramString.indexOf("<chargeItems class=\"array\">")+27,paramString.indexOf("</chargeItems>"))+"]]>"+paramString.substring(paramString.indexOf("</chargeItems>"),paramString.length());
+						paramString=s;
+					}					
 					paramJson = paramString;
 					
 				}
@@ -415,7 +429,10 @@ public class InterfaceClient {
 						if (PAY_PREFIX.equals(prefix)) {// 支付平台接口封装信息全为xml
 							paramString = addCsbInfo2(map, paramString, appDesc,
 									sessionStaff);
-						} else {
+						}else if(CA_PREFIX.equals(prefix)){
+							paramString = addCsbInfoForCa(map, paramString, appDesc,
+									sessionStaff);
+						}else {
 							paramString = addCsbInfo(map, paramString, appDesc,
 									sessionStaff);
 						}
@@ -524,8 +541,8 @@ public class InterfaceClient {
 			} else if (WS_WAY.equals(invokeWay)) {
 	
 			} else if (SIMULATE_WAY.equals(invokeWay)) {
-				// 模拟调用，从文件得到json格式返回值
-				retnJson = getRetnJson(serviceCode);
+				paramString = JsonUtil.toString(dataBusMap);
+				retnJson = getRetnJson(serviceCode);// 模拟调用，从文件得到json格式返回值
 				log.debug("retnJson:{}", retnJson.length() > 3000 ? retnJson.substring(0, 3000) : retnJson);
 				
 				if (StringUtils.isBlank(retnJson)) {
@@ -535,36 +552,37 @@ public class InterfaceClient {
 				}
 	
 				Map<String, Object> rootMap = JsonUtil.toObject(retnJson, Map.class);
-				rootMap.put("logSeqId", logSeqId);
-				Object obj = MapUtils.getObject(rootMap, "ContractRoot", null);
-				if (obj != null) {
-					rootMap = (Map<String, Object>) obj;
-					Map<String, Object> tcpContMap = (Map<String, Object>) rootMap
-							.get("TcpCont");
-					Map<String, Object> svcContMap = (Map<String, Object>) rootMap
-							.get("SvcCont");
-					if (MapUtils.isNotEmpty(svcContMap)) {
-						resultCode = (String) svcContMap.get("resultCode");
-						resultMsg = (String) svcContMap.get("resultMsg");
-						Map<String, Object> resultMap = (Map<String, Object>) svcContMap
-								.get("result");
+				if (MapUtils.isNotEmpty(rootMap)){
+					rootMap.put("logSeqId", logSeqId);
+					Object obj = MapUtils.getObject(rootMap, "ContractRoot", null);
+					if (obj != null) {
+						rootMap = (Map<String, Object>) obj;
+						Map<String, Object> tcpContMap = (Map<String, Object>) rootMap
+								.get("TcpCont");
+						Map<String, Object> svcContMap = (Map<String, Object>) rootMap
+								.get("SvcCont");
+						if (MapUtils.isNotEmpty(svcContMap)) {
+							resultCode = (String) svcContMap.get("resultCode");
+							resultMsg = (String) svcContMap.get("resultMsg");
+							Map<String, Object> resultMap = (Map<String, Object>) svcContMap
+									.get("result");
+							db.setResultCode(resultCode);
+							db.setResultMsg(resultMsg);
+							db.setReturnlmap(resultMap);
+						} else {
+							db.setResultCode(ResultCode.R_INTERFACE_PARAM_MISS);
+						}
+					} else {
+						resultCode = (String) rootMap.get("resultCode");
+						resultMsg = (String) rootMap.get("resultMsg");
 						db.setResultCode(resultCode);
 						db.setResultMsg(resultMsg);
-						db.setReturnlmap(resultMap);
-					} else {
-						db.setResultCode(ResultCode.R_INTERFACE_PARAM_MISS);
+						db.setReturnlmap(rootMap);
 					}
-				} else {
-					resultCode = (String) rootMap.get("resultCode");
-					resultMsg = (String) rootMap.get("resultMsg");
-					db.setResultCode(resultCode);
-					db.setResultMsg(resultMsg);
-					db.setReturnlmap(rootMap);
+					log.debug("调用回参:{}", retnJson);
+				} else{
+					throw new InterfaceException(ErrType.OPPOSITE, serviceCode, retnJson, paramString, logSeqId);
 				}
-				log.debug("调用回参:{}", retnJson);
-	
-			} else {
-	
 			}
 		} finally {
 			db.setResultCode(resultCode);
@@ -736,6 +754,9 @@ public class InterfaceClient {
 				// 新增错误标识，0 成功  1  错误  2  异常
 				logObj.put("ERROR_CODE", errorCode);
 				Map<String, Object> logClobObj = new HashMap<String, Object>();
+				if(StringUtils.isBlank(rawRetn)){
+					rawRetn = retnJson;//抛异常的情况下rawRetn可能为空
+				}
 				logClobObj.put("IN_PARAM", paramString);						
 				logClobObj.put("OUT_PARAM", rawRetn);
 
@@ -1180,6 +1201,54 @@ public class InterfaceClient {
         return paramStr;
 	}
 
+	private static String addCsbInfoForCa(Map<String, Object> csbMap,
+			String paramString, String appDesc,SessionStaff sessionStaff) throws IOException,Exception {
+		String tranid = "";
+		Map tranMap = new HashMap();
+		Map dataBusMap = new HashMap();
+		DataBus db = null;
+		try{
+			db = ServiceClient.callService(dataBusMap, PortalServiceCode.SERVICE_GET_TRANID, null, sessionStaff);
+			if("POR-0000".equals(db.getResultCode().toString())){
+				tranMap = db.getReturnlmap();
+				tranid = (String.valueOf(tranMap.get("TranId")));
+			}else{
+				throw new InterfaceException(ErrType.ECSP, PortalServiceCode.SERVICE_GET_TRANID, String.valueOf(db.getResultMsg()), JsonUtil.toString(dataBusMap));
+			}
+		}catch (Exception e) {
+			throw new InterfaceException(ErrType.ECSP, PortalServiceCode.SERVICE_GET_TRANID, String.valueOf(db.getResultMsg()), JsonUtil.toString(dataBusMap));
+        }
+		String srcSysID = SysConstant.CSB_SRC_SYS_ID_APP;
+		CsbDataMap cdm = new CsbDataMap();
+		cdm.setTranIdSeq(tranid);
+		cdm.setBusCode(MapUtils.getString(csbMap, "BusCode"));
+		cdm.setServiceCode(MapUtils.getString(csbMap, "ServiceCode"));
+		cdm.setServiceContractVer(MapUtils.getString(csbMap, "ServiceContractVer"));
+		cdm.setDstSysID(MapUtils.getString(csbMap, "DstSysID"));
+		cdm.setActionCode(SysConstant.CSB_ACTION_CODE);
+		cdm.setServiceLevel(SysConstant.CSB_SERVICE_LEVEL);
+//		String srcSysSign=MapUtils.getString(csbMap, "srcSysSign");
+//		if(srcSysSign==null||"".equals(srcSysSign)){
+//			cdm.setSrcSysSign(SysConstant.CSB_SRC_SYS_SIGN_YSX);
+//		}else{
+//			cdm.setSrcSysSign(srcSysSign);
+//		}
+		cdm.setSrcSysSign(SysConstant.CSB_SRC_SYS_SIGN_YSX);
+		cdm.setDstOrgID(SysConstant.CSB_ORG_ID_GROUP);
+		cdm.setSrcOrgID(SysConstant.CSB_ORG_ID_GROUP);
+		cdm.setSrcSysID(srcSysID);		
+		//使用CDATA封装svc
+		if(cdataSvcCont){
+			//将报文中的]]>转义
+			if(paramString != null && paramString.indexOf(CDATA_END) != -1){
+				paramString = paramString.replaceAll(CDATA_END, CDATA_END_REPLACEMENT);
+			}
+			paramString = CDATA_BEGIN + paramString + CDATA_END;
+		}
+		cdm.setSvcCont(paramString);
+		
+		return cdm.getXml();
+	}
 	private static String getInvokeWay(String serviceCode) {
 		return MySimulateData.getInstance().getInvokeWay(serviceCode);
 	}
@@ -1607,24 +1676,14 @@ public class InterfaceClient {
 	
 	public static String getTcpCont(Map<String,Object> csbMap,String srcTransactionNbr,String appDesc) {
 		StringBuffer respXml = new StringBuffer();
-		String srcSysID = SysConstant.CSB_SRC_SYS_ID_LTE;
-		String srcSysSign=MapUtils.getString(csbMap, "srcSysSign");
-		String srcSysSign2=srcSysSign;
-		if(srcSysSign==null||"".equals(srcSysSign)){
-			srcSysSign2=SysConstant.CSB_SRC_SYS_SIGN;
-		}
-		if (SysConstant.APPDESC_MVNO.equals(appDesc)) {
-			srcSysID = SysConstant.CSB_SRC_SYS_ID_MVNO;
-		} else if (SysConstant.APPDESC_LTE.equals(appDesc)) {
-			srcSysID = SysConstant.CSB_SRC_SYS_ID_LTE;
-		}
-		HttpSession session = ServletUtils.getSession(request);
-		if (session != null && "1".equals(session.getAttribute(SysConstant.SESSION_KEY_APP_FLAG))) {
-			srcSysID = SysConstant.CSB_SRC_SYS_ID_APP;
-			if(srcSysSign==null||"".equals(srcSysSign)){
-				srcSysSign2=SysConstant.CSB_SRC_SYS_SIGN_YSX;
-			}
-		}
+		String srcSysID = SysConstant.CSB_SRC_SYS_ID_APP;
+//		String srcSysSign=MapUtils.getString(csbMap, "srcSysSign");
+		String srcSysSign2=SysConstant.CSB_SRC_SYS_SIGN_YSX;
+//		if(srcSysSign==null||"".equals(srcSysSign)){
+//			srcSysSign2=SysConstant.CSB_SRC_SYS_SIGN_YSX;
+//		}else{
+//			srcSysSign2=srcSysSign;
+//		}
 		respXml.append("<TcpCont>");
 		respXml.append("<BusCode>"+MapUtils.getString(csbMap, "BusCode")+"</BusCode>");
 		respXml.append("<ServiceCode>" + MapUtils.getString(csbMap, "ServiceCode") + "</ServiceCode>");

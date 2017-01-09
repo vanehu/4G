@@ -142,6 +142,11 @@ order.dealer = (function() {
 					}else{
 						$("#dealerName").html(response.data[0].staffName).attr("staffId", response.data[0].staffId);
 						$("#dealerModal").modal("hide");
+						//重置表单
+						$('#dealerModal-result').hide();
+						$('#dealerModal').find('.choice-box').children('.help-block').addClass('hidden');
+						$('#staffCode,#salesCode').val('');
+						//重置结束
 						
 					}
 				}else if(response.code==-2){

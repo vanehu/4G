@@ -620,8 +620,11 @@ public interface OrderBmo {
 
 	/**
 	 * 根据员工信息返回一个支付方式的权限列表
+	 * @throws Exception 
+	 * @throws IOException 
+	 * @throws InterfaceException 
 	 */
-	public List<Map<String, String>> getAvilablePayMethodCdList(SessionStaff sessionStaff) throws BusinessException;
+	public List<Map<String, String>> getAvilablePayMethodCdList(SessionStaff sessionStaff) throws BusinessException, InterfaceException, IOException, Exception;
 	
 	/**
 	 * 电子档案查询
@@ -651,6 +654,12 @@ public interface OrderBmo {
 	 * 支付页面tocken查询
 	 */
 	public Map<String,Object> queryPayTocken(Map<String, Object> paramMap,String optFlowNum, 
+			SessionStaff sessionStaff) throws Exception;
+	
+	/**
+	 * 支付页面tocken查询(融合甩单)
+	 */
+	public Map<String,Object> queryPayTockenForRh(Map<String, Object> paramMap,String optFlowNum, 
 			SessionStaff sessionStaff) throws Exception;
 	
 	/**
@@ -839,4 +848,15 @@ public interface OrderBmo {
 	 * @throws Exception
 	 */
 	public Map<String, Object> revokeAuthentication(Map<String, Object> paramMap, String optFlowNum,SessionStaff sessionStaff) throws Exception;
+
+	/**
+	 * 橙分期业务标识
+	 * @param paramMap
+	 * @param optFlowNum
+	 * @param sessionStaff
+	 * @return
+	 * @throws Exception
+	 */
+	public Map<String, Object> queryAgreementType(Map<String, Object> paramMap, String optFlowNum,SessionStaff sessionStaff) throws Exception;
+
 }

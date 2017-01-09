@@ -753,12 +753,30 @@ public final class SysConstant {
 	    public static final String ECS_BACK = "17";
 	    /**批量终端销售-18*/
 	    public static final String ECS_SALE = "18";
-	    
 	}
 	
 	/**Session缓存上传成功的实名制照片的virOlId*/
     public static final String SESSION_VIR_OLID = "SESSION_VIR_OLID";
     
-    /**订单属性记录客户端IP*/
+    /**订单属性记录客户端IP(新协议)*/
   	public final static String ORDER_ATTRS_IP = "40010038";
+  	/**订单属性记录客户端IP(老协议)*/
+  	public final static String ORDER_ATTRS_IP_TEM = "800000039";
+  	
+    /**跳过经办人必填权限*/
+    public static final String TGJBRBTQX = "TGJBRBTQX";
+    //常量字符定义
+	public final static String STRING_0 = "0";
+
+	/**员工实名制属性编码*/
+	public static final String STAFF_AUTH_ATTR_ID = "50030003";
+
+	/**员工实名制属性值 10已实名登记*/
+	public static final String STAFF_AUTH_ATTR_VAL_TRUE = "10";
+	/**员工实名制属性值 20未实名登记*/
+	public static final String STAFF_AUTH_ATTR_VAL_FALSE = "20";
+	
+	/**判断业务类型是否限制经办人必须填写且拍照*/
+    public static final String IS_ACTION_FLAG_LIMITED = "isActionFlagLimitedForHandleCust";
+	
 }

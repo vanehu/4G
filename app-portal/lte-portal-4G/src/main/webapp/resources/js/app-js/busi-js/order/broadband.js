@@ -1547,7 +1547,7 @@ var _saveHtml2Pdf=function(){
 				"olId":$("#TransactionID").val(),
 				"soNbr":$("#TransactionID").val(),
 				"busiUpType":busiUpType,
-				"chargeItems":ssfy*100+""//"1"
+				"charge":ssfy*100+""//"1"
 		};
 		var url = contextPath+"/app/order/getPayUrl";
 		$.callServiceAsJson(url, params, {
@@ -1599,7 +1599,11 @@ var _saveHtml2Pdf=function(){
 					if(response.code == 0) {
 						payType=type;
 						_orderSubmit();
-					}else if(response.code == -2){
+					}else if(response.code==1){//支付接口支付失败
+						
+					}else if(response.code==1002){
+						$.alert("提示",response.data);
+					}else{
 						$.alertM(response.data);
 					}
 				},fail:function(response){

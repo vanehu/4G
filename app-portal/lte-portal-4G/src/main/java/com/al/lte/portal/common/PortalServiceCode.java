@@ -1145,5 +1145,8 @@ public final class PortalServiceCode {
     /** 撤销鉴权 */
     public static final String REVOKE_AUTHENTICATION = "biz-service/intf.acctService/revokeAuthentication";
 
+    /** 橙分期业务标识 */
+    public static final String QUERY_AGREEMENTTYPE = "biz-service/intf.prodOfferService/queryAgreementType";
+
 }
 

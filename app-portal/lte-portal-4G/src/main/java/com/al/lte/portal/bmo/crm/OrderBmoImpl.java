@@ -12,9 +12,9 @@ import java.util.Random;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
@@ -2362,10 +2362,11 @@ public class OrderBmoImpl implements OrderBmo {
 	 * 如果具有对应的权限，则以ArrayList返回对应的权限编码送与后台
 	 * @param sessionStaff
 	 * @return operatSpecList
-	 * @throws BusinessException 
+	 * @throws IOException 
+	 * @throws InterfaceException 
 	 * @throws Exception
 	 */
-	public List<Map<String, String>> getAvilablePayMethodCdList(SessionStaff sessionStaff) throws BusinessException {
+	public List<Map<String, String>> getAvilablePayMethodCdList(SessionStaff sessionStaff) throws InterfaceException, IOException, Exception {
 		Map<String, String> operatSpecMap = null;
 		List<Map<String, String>> operatSpecList = new ArrayList<Map<String, String>>();
 		StaffBmo staffBmo = new StaffBmoImpl();
@@ -2422,19 +2423,14 @@ public class OrderBmoImpl implements OrderBmo {
 		paramMap2.put("olId",  olId);//购物车id
 		paramMap2.put("olNbr",  olNbr);//购物车流水
 		paramMap2.put("reqNo", reqNo);//传给支付平台的业务流水号要保证不同
-		String payAmount = paramMap.get("chargeItems").toString(); 
+		String payAmount = paramMap.get("charge").toString(); 
 		String busiUpType=paramMap.get("busiUpType").toString();//业务类型，默认1手机业务
-//		try {
-//			List<Map<String, Object>> chargeItems = new ArrayList<Map<String, Object>>();
-//			chargeItems = (List<Map<String, Object>>) paramMap
-//					.get("chargeItems");
-//			for (Map<String, Object> chargeItem : chargeItems) {
-//				payAmount += Long.parseLong(chargeItem.get("realAmount")
-//						.toString());
-//			}
-//		} catch (Exception e) {
-//			payAmount = 0;
-//		}
+		List<Map<String, Object>> chargeItems2 = new ArrayList<Map<String, Object>>();
+		chargeItems2 = (List<Map<String, Object>>) paramMap.get("chargeItems");
+		JSONArray chargeItems = JSONArray.fromObject(chargeItems2);
+		if(paramMap.get("chargeItems")!=null){
+			paramMap2.put("chargeItems", chargeItems);
+		}
 		paramMap2.put("provinceCode", provinceCode);
 		paramMap2.put("cityCode", cityCode);//areaId
 		paramMap2.put("channelId", channelId);//areaId
@@ -2451,6 +2447,91 @@ public class OrderBmoImpl implements OrderBmo {
 		Map<String, Object> dataBusMap = new HashMap<String, Object>();
 		dataBusMap.put("reqPlatForm", reqPlatForm);//请求平台
 		dataBusMap.put("params", paramMap2);
+		Map<String, Object> dataBusMap2 = new HashMap<String, Object>();
+		dataBusMap2.put("proot", dataBusMap);
+		DataBus db = InterfaceClient.callService(dataBusMap2,
+				PortalServiceCode.PAY_TOCKEN, null, sessionStaff);
+		return db.getReturnlmap();
+	}
+	
+	public Map<String, Object> queryPayTockenForRh(Map<String, Object> paramMap,
+			String optFlowNum, SessionStaff sessionStaff) throws Exception {
+		Map<String, Object> paramMap1 = new HashMap<String, Object>();//移动参数
+		Map<String, Object> paramMap2 = new HashMap<String, Object>();//甩单参数
+		Random rand = new Random();
+		int k = rand.nextInt(89999)+10000;//支付流水随机码
+		String reqPlatForm="1000000244";
+//		String provinceCode="8310000";
+//		String cityCode = "8310001";
+//		String channelId = "1001";
+		String provinceCode="";
+		String cityCode = sessionStaff.getCurrentAreaId();
+		if(cityCode!=null && !cityCode.equals("")){
+			provinceCode=cityCode.substring(0,3)+"0000";
+		}
+		//融合父参数
+		String uId = paramMap.get("uId").toString();
+		String busiType = paramMap.get("busiUpType").toString();
+		String sumAmount = paramMap.get("charge").toString();
+		//移动类参数
+		String channelId=sessionStaff.getCurrentChannelId();
+		String reqNo1 = paramMap.get("olId1").toString()+k;//业务流水号
+		String detail = URLEncoder.encode("翼销售支付", "utf-8");   
+		String customerId = "";
+		String customerName="";
+		String olId1 = paramMap.get("olId1").toString();
+		String olNbr1 = paramMap.get("olNbr1").toString();
+		String olNumber = sessionStaff.getStaffId();
+		paramMap1.put("olId",  olId1);//购物车id
+		paramMap1.put("olNbr",  olNbr1);//购物车流水
+		paramMap1.put("reqNo", reqNo1);//传给支付平台的业务流水号要保证不同
+		String payAmount1 = paramMap.get("charge1").toString(); 
+		String busiUpType1=paramMap.get("busiUpType1").toString();//业务类型，默认1手机业务
+		paramMap1.put("provinceCode", provinceCode);
+		paramMap1.put("cityCode", cityCode);//areaId
+		paramMap1.put("channelId", channelId);//areaId
+		paramMap1.put("payAmount", payAmount1);// 金额，单位分
+		paramMap1.put("olNumber", olNumber);// 工号
+		paramMap1.put("customerId", customerId);// 
+		paramMap1.put("customerName", customerName);
+		paramMap1.put("detail", detail);// 详情描述
+		paramMap1.put("busiUpType", busiUpType1);// 业务类型：1，手机业务2宽带甩单。
+		String paramStr1 = "provinceCode=" + provinceCode + "&cityCode=" + cityCode + "&channelId=" + channelId + 
+				"&reqNo=" + reqNo1 + "&payAmount=" + payAmount1 +"&detail="+detail+"&olId="+olId1+"&olNumber="+olNumber+"&busiUpType="+busiUpType1;
+		String sign1 = AESUtils.encryptToString(paramStr1, "YXS_KEY_2016");
+		paramMap1.put("sign", sign1);
+		//甩单参数
+		String reqNo2 = paramMap.get("olId2").toString()+k;//业务流水号
+		String olId2 = paramMap.get("olId2").toString();
+		String olNbr2 = paramMap.get("olNbr2").toString();
+		paramMap2.put("olId",  olId2);//购物车id
+		paramMap2.put("olNbr",  olNbr2);//购物车流水
+		paramMap2.put("reqNo", reqNo2);//传给支付平台的业务流水号要保证不同
+		String payAmount2 = paramMap.get("charge2").toString(); 
+		String busiUpType2=paramMap.get("busiUpType2").toString();//业务类型，默认1手机业务
+		paramMap2.put("provinceCode", provinceCode);
+		paramMap2.put("cityCode", cityCode);//areaId
+		paramMap2.put("channelId", channelId);//areaId
+		paramMap2.put("payAmount", payAmount2);// 金额，单位分
+		paramMap2.put("olNumber", olNumber);// 工号
+		paramMap2.put("customerId", customerId);// 
+		paramMap2.put("customerName", customerName);
+		paramMap2.put("detail", detail);// 详情描述
+		paramMap2.put("busiUpType", busiUpType2);// 业务类型：1，手机业务2宽带甩单。
+		String paramStr2 = "provinceCode=" + provinceCode + "&cityCode=" + cityCode + "&channelId=" + channelId + 
+				"&reqNo=" + reqNo2 + "&payAmount=" + payAmount2 +"&detail="+detail+"&olId="+olId2+"&olNumber="+olNumber+"&busiUpType="+busiUpType2;
+		String sign2 = AESUtils.encryptToString(paramStr2, "YXS_KEY_2016");
+		paramMap2.put("sign", sign2);
+		//参数拼接
+		List<Map> paramsList=new ArrayList<Map>();
+		paramsList.add(paramMap1);
+		paramsList.add(paramMap2);
+		Map<String, Object> dataBusMap = new HashMap<String, Object>();
+		dataBusMap.put("reqPlatForm", reqPlatForm);//请求平台
+		dataBusMap.put("uId", uId);//融合订单id
+		dataBusMap.put("busiType", busiType);//业务类型
+		dataBusMap.put("sumAmount", sumAmount);//订单总金额
+		dataBusMap.put("params", paramsList);
 		Map<String, Object> dataBusMap2 = new HashMap<String, Object>();
 		dataBusMap2.put("proot", dataBusMap);
 		DataBus db = InterfaceClient.callService(dataBusMap2,
@@ -3015,16 +3096,37 @@ public class OrderBmoImpl implements OrderBmo {
 	}
 
 	/**
-	 * 订单提交校验客户身份证信息
+	 * 订单提交校验客户身份证信息<br/>
+	 * checkCustCertificateComprehensive方法针对经办人拍照进行客户证件相关的校验；checkCustCertificate方法保持改造前的校验逻辑
 	 * @return true:校验成功; false:校验失败
 	 * @throws Exception
 	 */
+	@SuppressWarnings("unchecked")
 	public boolean verifyCustCertificate(Map<String, Object> param, HttpServletRequest request, SessionStaff sessionStaff) throws Exception{
-		Object realNameFlag =  MDA.REAL_NAME_PHOTO_FLAG.get("REAL_NAME_PHOTO_"+sessionStaff.getCurrentAreaId().substring(0, 3));
-    	boolean isrealNameFlagOn  = realNameFlag == null ? false : "ON".equals(realNameFlag.toString()) ? true : false;//经办人开关是否打开
     	boolean resultFlag = false;
     	
-    	if(isrealNameFlagOn){
+    	Object sessionHandleCustFlag = ServletUtils.getSessionAttribute(request, SysConstant.TGJBRBTQX );
+    	boolean isHandleCustNeeded = sessionHandleCustFlag == null ? true : (Boolean) sessionHandleCustFlag;//是否具有跳过经办人权限
+		Object realNameFlag =  MDA.REAL_NAME_PHOTO_FLAG.get("REAL_NAME_PHOTO_"+sessionStaff.getCurrentAreaId().substring(0, 3));
+    	boolean isRealNameFlagOn  = realNameFlag == null ? false : "ON".equals(realNameFlag.toString()) ? true : false;//实名制拍照开关是否打开
+    	Object sessionActionFlagLimited = ServletUtils.getSessionAttribute(request, SysConstant.IS_ACTION_FLAG_LIMITED);
+    	boolean isActionFlagLimited = sessionActionFlagLimited == null ? true : (Boolean) sessionActionFlagLimited;//是否限制经办人必填的业务类型
+		
+    	Map<String, Object> orderList = (Map<String, Object>) param.get("orderList");
+        Map<String, Object> orderListInfo = (Map<String, Object>) orderList.get("orderListInfo");
+        int actionFlag = MapUtils.getIntValue(orderListInfo, "actionFlag", 0);
+        int busitypeflag = MapUtils.getIntValue(orderListInfo, "busitypeflag", 0);
+        boolean isCheckCertificateComprehensive = (
+    		(actionFlag == 1  && isActionFlagLimited) || //办套餐选号码入口做新装
+			actionFlag == 14  || 						 //购手机入口做新装
+			(actionFlag == 22 && busitypeflag == 21)  || //补卡(换卡busitypeflag是22)
+			(actionFlag == 23 && busitypeflag == 13)  || //异地补换卡
+			(actionFlag == 6  && isActionFlagLimited) || //主副卡成员变更:加装新号码,加装已有号码,且客户证件为非身份证
+			(actionFlag == 2  && isActionFlagLimited) || //套餐变更:加装新号码,加装已有号码,且客户证件为非身份证
+			actionFlag == 43  //返档
+    	);
+      
+        if(isRealNameFlagOn && isHandleCustNeeded && isCheckCertificateComprehensive){
     		resultFlag = this.checkCustCertificateComprehensive(param, request);
     	} else{
     		resultFlag = this.checkCustCertificate(param, request);
@@ -3090,7 +3192,7 @@ public class OrderBmoImpl implements OrderBmo {
 	}
 	
 	/**
-	 * 所有业务，证件类型为身份证时，校验是否读卡(例如新建客户、新建使用人、新建经办人)
+	 * 所有业务，证件类型为身份证时，校验是否读卡(例如新建客户、新建使用人、新建经办人等)
 	 * @throws Exception 
 	 */
 	@SuppressWarnings("unchecked")
@@ -3104,6 +3206,7 @@ public class OrderBmoImpl implements OrderBmo {
         int C1Count = 0;//所有C1动作、且证件类型为身份证的节点数
         int successCount = 0;//所有C1动作、证件类型为身份证、且身份证校验成功数
         
+        //循环找出每次订单提交的virOlId
         for (Map<String, String> custOrderAttr : custOrderAttrs) {
         	if("810000000".equals(custOrderAttr.get("itemSpecId").toString())){
         		virOlId = custOrderAttr.get("value");
@@ -3111,19 +3214,16 @@ public class OrderBmoImpl implements OrderBmo {
         }
 
         //先判断经办人证件、拍照是否上传成功，再进行身份证读卡信息校验
-        Object sessionKey = ServletUtils.getSessionAttribute(request, virOlId + "upload");
-        boolean isHandleCustCertificateUpload = sessionKey == null ? false : (Boolean) sessionKey;
-        if(!isHandleCustCertificateUpload){
+        Map<String, Object> sessionVirOlId = (Map<String, Object>) ServletUtils.getSessionAttribute(request, Const.SESSION_UPLOAD_VIR_OLID);
+        if(sessionVirOlId != null){
+        	 Object sessionKey = sessionVirOlId.get(virOlId + "upload");
+             boolean isHandleCustCertificateUpload = sessionKey == null ? false : (Boolean) sessionKey;
+             if(!isHandleCustCertificateUpload){
+             	return false;
+             }
+        } else{
         	return false;
         }
-        
-    	//针对每笔订单的virOlId，判断经办人是否老客户，virOlId在session封装为true表示老客户，否则新客户
-//    	sessionKey = ServletUtils.getSessionAttribute(request, virOlId  + "qryCust");
-//        boolean isExitHandleCust = sessionKey == null ? false : (Boolean) sessionKey;
-//    	if(isExitHandleCust){//经办人是老客户
-//    		经办人是老客户，无法获取姓名、地址等用于签名校验的数据，只能判断是否读卡
-//    		sessionKey = ServletUtils.getSessionAttribute(request, Const.SESSION_SIGNATURE_HANDLE_CUST);
-//    	}
 
         for (Map<String, Object> custOrder : custOrderList) {
             List<Map<String, Object>> busiOrderList = (List<Map<String, Object>>) custOrder.get("busiOrder");
@@ -3229,6 +3329,33 @@ public class OrderBmoImpl implements OrderBmo {
 		} catch (Exception e) {
 			log.error("门户处理营业后台的撤销鉴权接口服务返回的数据异常", e);
 			throw new BusinessException(ErrorCode.REVOKE_AUTHENTICATION, paramMap, resultMap, e);
+		}
+		return resultMap;
+	}
+
+	/**
+	 * 橙分期业务标识
+	 * @param paramMap
+	 * @param optFlowNum
+	 * @param sessionStaff
+	 * @return
+	 * @throws Exception
+	 */
+	public Map<String, Object> queryAgreementType(Map<String, Object> paramMap, String optFlowNum, SessionStaff sessionStaff) throws Exception {
+		DataBus db = InterfaceClient.callService(paramMap,
+				PortalServiceCode.QUERY_AGREEMENTTYPE, optFlowNum, sessionStaff);
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		try {
+			if (ResultCode.R_SUCC.equals(db.getResultCode())) {
+				resultMap = db.getReturnlmap();
+				resultMap.put("resultCode", ResultCode.R_SUCC);
+			} else {
+				resultMap.put("resultCode", ResultCode.R_FAILURE);
+				resultMap.put("resultMsg", db.getResultMsg());
+			}
+		} catch (Exception e) {
+			log.error("门户处理营业后台的橙分期业务标识查询接口服务返回的数据异常", e);
+			throw new BusinessException(ErrorCode.QUERY_AGREEMENTTYPE, paramMap, resultMap, e);
 		}
 		return resultMap;
 	}

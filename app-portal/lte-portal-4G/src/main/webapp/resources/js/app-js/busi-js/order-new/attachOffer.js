@@ -167,7 +167,7 @@ AttachOffer = (function() {
 						}
 					});
 					if(flag){
-							html='<li id="li_'+ prodId + '_'+ this.offerSpecId  +'" ><i class="iconfont pull-left active" onclick="AttachOffer.delMyfavoriteSpec('+prodId+',\''+'\','+this.offerSpecId+',\''+this.offerSpecName+'\',$(this)'+','+1+');">&#xe62b;</i>';
+							html='<li id="_li_'+ prodId + '_'+ this.offerSpecId  +'" ><i class="iconfont pull-left active" onclick="AttachOffer.delMyfavoriteSpec('+prodId+',\''+'\','+this.offerSpecId+',\''+this.offerSpecName+'\',$(this)'+','+1+');">&#xe62b;</i>';
 							html+='<span class="list-title">'+ this.offerSpecName +'</span>';
 							html+='<div class="list-checkbox absolute-right"><div class="checkbox-box">';
 							html+='<input type="checkbox" value="1"" name="" checked="checked" id="input_'+ prodId + '_'+ this.offerSpecId  +'"><label for="li_'+ this.offerSpecId +'" checked="checked" onclick="AttachOffer.addOfferSpec('+prodId+','+this.offerSpecId+')"></label></input></div></div>';
@@ -669,9 +669,9 @@ AttachOffer = (function() {
 					if(flag){
 						var newSpec = _setMyfavoriteSpec(prodId,this.offerSpecId);
 						if(newSpec==undefined){
-							html='<li id="li_'+ prodId + '_'+ this.offerSpecId  +'" ><i class="iconfont pull-left" onclick="AttachOffer.addMyfavoriteSpec('+prodId+','+this.offerSpecId+',\''+this.offerSpecName+'\',$(this)'+');">&#xe62b;</i>';
+							html='<li id="_li_'+ prodId + '_'+ this.offerSpecId  +'" ><i class="iconfont pull-left" onclick="AttachOffer.addMyfavoriteSpec('+prodId+','+this.offerSpecId+',\''+this.offerSpecName+'\',$(this)'+');">&#xe62b;</i>';
 						} else {
-							html='<li id="li_'+ prodId + '_'+ this.offerSpecId  +'" ><i class="iconfont pull-left active" onclick="AttachOffer.delMyfavoriteSpec('+prodId+','+this.offerSpecId+',\''+this.offerSpecName+'\',$(this)'+');">&#xe62b;</i>';
+							html='<li id="_li_'+ prodId + '_'+ this.offerSpecId  +'" ><i class="iconfont pull-left active" onclick="AttachOffer.delMyfavoriteSpec('+prodId+','+this.offerSpecId+',\''+this.offerSpecName+'\',$(this)'+');">&#xe62b;</i>';
 						}
 						html+='<span class="list-title">'+ this.servSpecName +'</span>';
 						html+='<div class="list-checkbox absolute-right"><div class="checkbox-box">';
@@ -742,9 +742,9 @@ AttachOffer = (function() {
 							if(OrderInfo.actionFlag == 1 || OrderInfo.actionFlag == 14 || OrderInfo.actionFlag == 112){
 								var newSpec = _setMyfavoriteSpec(prodId,this.offerSpecId);
 								if(newSpec==undefined){
-									html='<li id="li_'+ prodId + '_'+ this.offerSpecId  +'" ><i class="iconfont pull-left" onclick="AttachOffer.addMyfavoriteSpec('+prodId+','+this.offerSpecId+',\''+this.offerSpecName+'\',$(this)'+');">&#xe62b;</i>';
+									html='<li id="_li_'+ prodId + '_'+ this.offerSpecId  +'" ><i class="iconfont pull-left" onclick="AttachOffer.addMyfavoriteSpec('+prodId+','+this.offerSpecId+',\''+this.offerSpecName+'\',$(this)'+');">&#xe62b;</i>';
 								} else {
-									html='<li id="li_'+ prodId + '_'+ this.offerSpecId  +'" ><i class="iconfont pull-left active" onclick="AttachOffer.delMyfavoriteSpec('+prodId+','+this.offerSpecId+',\''+this.offerSpecName+'\',$(this)'+');">&#xe62b;</i>';
+									html='<li id="_li_'+ prodId + '_'+ this.offerSpecId  +'" ><i class="iconfont pull-left active" onclick="AttachOffer.delMyfavoriteSpec('+prodId+','+this.offerSpecId+',\''+this.offerSpecName+'\',$(this)'+');">&#xe62b;</i>';
 									
 								}
 								html+='<span class="list-title">'+ this.offerSpecName +'</span>';
@@ -1272,16 +1272,16 @@ AttachOffer = (function() {
 			if(_ifOrderAgain(newSpec)){
 				return;
 			}
-			var $spec = $('#li_'+prodId+'_'+offerSpecId); //在已开通附属里面
+			var $spec = $('#_li_'+prodId+'_'+offerSpecId); //在已开通附属里面
 //			$("#canChooseUl_"+prodId).find('i_'+prodId+'_'+offerSpecId).remove();//移除可选促销节点
 			$spec.remove();
+			var $li = $('<li id="li_'+prodId+'_'+offerSpecId+'"></li>');
 			var html ="";
-			html='<li id="li_'+prodId+'_'+offerSpecId+'">';
 			html+='<span class="list-title">'+ newSpec.offerSpecName +'</span>';
 			html+='<div class="list-checkbox absolute-right"><div class="checkbox-box">';
 			html+='<input type="checkbox" checked="checked" value="1" id="input_'+prodId+'_'+offerSpecId+'" name="" ><label for="_'+prodId+'_'+offerSpecId+'" onclick="AttachOffer.delOfferSpec('+prodId+','+offerSpecId+')"></label></input></div></div>';						
-			html+='</li>';
-			var $li = $('#_'+prodId+'_'+offerSpecId);
+			$li.append(html);
+			
 //			var $li = $('<a id="li_'+prodId+'_'+offerSpecId+'"  class="list-group-item"></a>');
 //			$li.append('<span id="span_'+prodId+'_'+offerSpecId+'">'+newSpec.offerSpecName+'</span>');
 			if(newSpec.ifDault==0){ //必须
@@ -1289,17 +1289,17 @@ AttachOffer = (function() {
 			}else{
 				if(newSpec.ifParams){ 
 					if(CacheData.setParam(prodId,newSpec)){ 
-						$li.append('<span id="can_'+prodId+'_'+offerSpecId+'"  isset="N"  class="abtn01 btn-span"><button type="button" class="btn btn-info" style="right:40px;width:48px;" data-toggle="modal" data-target="#setting" onclick="AttachOffer.showParam('+prodId+','+offerSpecId+');"><span style="color:red;">参<span></button><span  class="glyphicon glyphicon-remove pull-right" aria-hidden="true" onclick="AttachOffer.delOfferSpec('+prodId+','+offerSpecId+')"></span></span>');
+						$li.append('<span id="can_'+prodId+'_'+offerSpecId+'"  isset="N"  class="abtn01 btn-span"><button type="button" class="list-can absolute-right" data-toggle="modal" data-target="#setting" onclick="AttachOffer.showParam('+prodId+','+offerSpecId+');"><span style="color:red;">参</button></span>');
 					}else {
-						$li.append('<span id="can_'+prodId+'_'+offerSpecId+'" isset="Y"  class="abtn03 btn-span"><button type="button" class="btn btn-info" style="right:40px;width:48px;" data-toggle="modal" data-target="#setting" onclick="AttachOffer.showParam('+prodId+','+offerSpecId+');">参</button><span  class="glyphicon glyphicon-remove pull-right" aria-hidden="true" onclick="AttachOffer.delOfferSpec('+prodId+','+offerSpecId+')"></span></span>');
+						$li.append('<span id="can_'+prodId+'_'+offerSpecId+'" isset="Y"  class="abtn03 btn-span"><button type="button" class="list-can absolute-right"  data-toggle="modal" data-target="#setting" onclick="AttachOffer.showParam('+prodId+','+offerSpecId+');">参</button></span>');
 					}
 				}else if(ec.util.isObj(newSpec.ifOrderAgain)&&newSpec.ifOrderAgain=="Y"){
-					$li.append('<span id="can_'+prodId+'_'+offerSpecId+'" isset="Y"  class="abtn03 btn-span"><button type="button" class="btn btn-info" style="right:40px;width:48px;" data-toggle="modal" data-target="#setting" onclick="AttachOffer.setParam('+prodId+','+offerSpecId+');">参</button><span  class="glyphicon glyphicon-remove pull-right" aria-hidden="true" onclick="AttachOffer.delOfferSpec('+prodId+','+offerSpecId+')"></span></span>');
+					$li.append('<span id="can_'+prodId+'_'+offerSpecId+'" isset="Y"  class="abtn03 btn-span"><button type="button" class="list-can absolute-right" data-toggle="modal" data-target="#setting" onclick="AttachOffer.setParam('+prodId+','+offerSpecId+');">参</button></span>');
 				}else{
-					$li.append('<span id="span_remove_'+prodId+'_'+offerSpecId+'" class="glyphicon glyphicon-remove pull-right" aria-hidden="true" onclick="AttachOffer.delOfferSpec('+prodId+','+offerSpecId+')"></span>');
+//					$li.append('<span id="span_remove_'+prodId+'_'+offerSpecId+'" class="glyphicon glyphicon-remove pull-right" aria-hidden="true" onclick="AttachOffer.delOfferSpec('+prodId+','+offerSpecId+')"></span>');
 				}
 			}
-			$("#open_ul_"+prodId).append(html);
+			$("#open_ul_"+prodId).append($li);
 			newSpec.isdel = "N";
 		}else if((newSpec.isdel=="Y")) { 
 			var $span = $("#li_"+prodId+"_"+offerSpecId).find("span");
@@ -1316,24 +1316,24 @@ AttachOffer = (function() {
 		}else {  //容错处理 //if((newSpec.isdel=="N")) 
 			var $spec = $('#li_'+prodId+'_'+offerSpecId); //在已开通附属里面
 			$spec.remove();
+			var $li = $('<li id="li_'+prodId+'_'+offerSpecId+'"></li>');
 			var html ="";
-			html='<li id="li_'+prodId+'_'+offerSpecId+'">';
 			html+='<span class="list-title">'+ newSpec.offerSpecName +'</span>';
 			html+='<div class="list-checkbox absolute-right"><div class="checkbox-box">';
 			html+='<input type="checkbox" value="1" checked="checked" id="input_'+prodId+'_'+offerSpecId+'" name="" ><label for="_'+prodId+'_'+offerSpecId+'" onclick="AttachOffer.delOfferSpec('+prodId+','+offerSpecId+')""></label></input></div></div>';						
-			html+='</li>';
-			var $li = $('#_'+prodId+'_'+offerSpecId);
+			$li.append(html);
+			
 			if(newSpec.ifDault==0){ //必须
 				$li.removeAttr("onclick");	
 			}else{	
 				if(newSpec.ifParams){      
 					if(CacheData.setParam(prodId,newSpec)){ 
-						$li.append('<span id="can_'+prodId+'_'+offerSpecId+'" class="canshu2 btn-span"><button type="button" class="btn btn-info" style="right:40px;width:48px;" data-toggle="modal" data-target="#setting" onclick="AttachOffer.showParam('+prodId+','+offerSpecId+');"><span style="color:red;">参<span></button><span  class="glyphicon glyphicon-remove pull-right" aria-hidden="true" onclick="AttachOffer.delOfferSpec('+prodId+','+offerSpecId+')"></span></span>');
+						$li.append('<span id="can_'+prodId+'_'+offerSpecId+'" class="canshu2 btn-span"><button type="button" class="list-can absolute-right" data-toggle="modal" data-target="#setting" onclick="AttachOffer.showParam('+prodId+','+offerSpecId+');"><span style="color:red;">参</span></button></span>');
 					}else {
-						$li.append('<span id="can_'+prodId+'_'+offerSpecId+'" class="canshu btn-span"><button type="button" class="btn btn-info" style="right:40px;width:48px;" data-toggle="modal" data-target="#setting" onclick="AttachOffer.showParam('+prodId+','+offerSpecId+');">参</button><span  class="glyphicon glyphicon-remove pull-right" aria-hidden="true" onclick="AttachOffer.delOfferSpec('+prodId+','+offerSpecId+')"></span></span>');
+						$li.append('<span id="can_'+prodId+'_'+offerSpecId+'" class="canshu btn-span"><button type="button" class="list-can absolute-right" data-toggle="modal" data-target="#setting" onclick="AttachOffer.showParam('+prodId+','+offerSpecId+');">参</button></span>');
 					}
 				}else{
-					$li.append('<span id="span_remove_'+prodId+'_'+offerSpecId+'" class="glyphicon glyphicon-remove pull-right" aria-hidden="true" onclick="AttachOffer.delOfferSpec('+prodId+','+offerSpecId+')"></span>');
+//					$li.append('<span id="span_remove_'+prodId+'_'+offerSpecId+'" class="glyphicon glyphicon-remove pull-right" aria-hidden="true" onclick="AttachOffer.delOfferSpec('+prodId+','+offerSpecId+')"></span>');
 				}
 			}
 			if(newSpec.ifShowTime=="Y"){
@@ -1345,7 +1345,7 @@ AttachOffer = (function() {
 				else
 					$li.append('<dd id="can_'+prodId+'_'+offerSpecId+'" class="canshu2" onclick="AttachOffer.setParam('+prodId+','+offerSpecId+');"></dd>');
 			}
-			$("#open_ul_"+prodId).append(html);
+			$("#open_ul_"+prodId).append($li);
 		}
 		
 		//获取销售品节点校验销售品下功能产品的互斥依赖
@@ -1513,6 +1513,171 @@ AttachOffer = (function() {
 			}
 		}
 	};
+	//1表示从已订购那边过来的
+	var _setParam=function(prodId,offerSpecId,flag){
+		var newSpec = _setSpec(prodId,offerSpecId);  //没有在已选列表里面
+		var offer = CacheData.getOfferBySpecId(prodId,offerSpecId); //从已订购数据中找
+		if(flag==1){
+			newSpec.counts=offer.counts;
+		}
+		var content = '<form id="paramForm">' ;
+		content += "重复订购次数" + ' : <input id="text_'+prodId+'_'+offerSpecId  
+		+'" class="inputWidth183px" type="text" value="'+newSpec.counts+'"><br>'; 
+		content +='</form>' ;
+		$.confirm("参数设置： ",content,{ 
+			yes:function(){
+				if(flag==1){
+					var nums=$("#text_"+prodId+"_"+offerSpecId).val();
+					var reg = /^\+?[0-9][0-9]*$/;//正整数
+					if(!reg.test(nums)){
+						$.alert("信息提示","次数输入有误。");
+						return;
+					}
+				}else{
+					var nums=$("#text_"+prodId+"_"+offerSpecId).val();
+					var reg = /^\+?[1-9][0-9]*$/;//正整数
+					if(!reg.test(nums)){
+						$.alert("信息提示","次数只能是正整数。");
+						return;
+					}
+				}
+				if(parseInt(newSpec.orderCount)<nums){
+					$.alert("信息提示","可选包【"+newSpec.offerSpecName+"】至多只能订购"+newSpec.orderCount+"次");
+					return;
+				}
+				if(flag==1 && offer!=undefined){
+					if(offer.orderCount>nums){//退订附属销售品
+						if(!ec.util.isArray(offer.offerMemberInfos)){//销售品实例查询	
+							var param = {
+									prodId:prodId,
+									areaId: OrderInfo.getProdAreaId(prodId),
+									offerId:offer.offerId	
+							};
+							param.acctNbr = OrderInfo.getAccessNumber(prodId);
+							var data = query.offer.queryOfferInst(param);
+							if(data==undefined){
+								return;
+							}
+							offer.offerMemberInfos = data.offerMemberInfos;
+							offer.offerSpec = data.offerSpec;
+						}
+					}
+					offer.counts=nums;
+				}else{
+					newSpec.counts=nums;
+				}
+			},
+			no:function(){
+			}
+		});
+	};
+	
+	//显示参数
+	var _showParam = function(prodId,offerSpecId,flag){	
+		if(flag==1){ //显示已订购附属		
+			var offer = CacheData.getOfferBySpecId(prodId,offerSpecId);
+			if(!ec.util.isArray(offer.offerMemberInfos)){	
+				var param = {
+					prodId:prodId,
+					areaId: OrderInfo.getProdAreaId(prodId),
+					offerId:offer.offerId	
+				};
+				param.acctNbr = OrderInfo.getAccessNumber(prodId);
+				var data = query.offer.queryOfferInst(param);
+				if(data==undefined){
+					return;
+				}
+				offer.offerMemberInfos = data.offerMemberInfos;
+				offer.offerSpec = data.offerSpec;
+			}
+			if(!offer.isGetParam){  //已订购附属没有参数，需要获取销售品参数
+				var param = {   
+				    offerTypeCd : "2",
+				    offerId: offer.offerId,
+				    offerSpecId : offer.offerSpecId
+				};
+				var offerParam = query.offer.queryOfferParam(param); //重新获取销售品参数
+				if(offerParam==undefined){
+					return;
+				}else{
+					offer.offerParamInfos = offerParam.offerParamInfos;
+					offer.isGetParam = true;
+				}
+			}
+			var content = CacheData.getParamContent(prodId,offer,flag);
+			$.confirm("参数设置： ",content,{ 
+				yes:function(){	
+					var isset = false;
+					$.each(offer.offerSpec.offerSpecParams,function(){
+						var itemInfo = CacheData.getOfferParam(prodId,offer.offerId,this.itemSpecId);
+						itemInfo.setValue = $("#"+prodId+"_"+this.itemSpecId).val();
+						if(itemInfo.itemSpecId == CONST.ITEM_SPEC.PROT_NUMBER){
+							itemInfo.setValue = $("#select1").val();
+						} else if (itemSpec.dateSourceTypeCd == "17") {//搜索框类型组件获取code属性中的值作为设置值
+							itemSpec.setValue = $.trim($("#" + prodId + "_" + this.itemSpecId).attr("code"));
+						} else {
+						    itemInfo.setValue = $("#"+prodId+"_"+this.itemSpecId).val();
+						}
+						if(itemInfo.value!=itemInfo.setValue){
+							itemInfo.isUpdate = "Y";
+							isset = true;
+						}
+					});
+					if(isset){
+						$("#can_"+prodId+"_"+offer.offerId).removeClass("abtn03").addClass("abtn01");
+						offer.isset = "Y";
+						offer.update = "Y";
+					}else{
+						$("#can_"+prodId+"_"+offer.offerId).removeClass("abtn01").addClass("abtn03");
+						offer.isset = "N";
+						offer.update = "N";
+					}
+				},
+				no:function(){
+				}
+			});
+		}else {
+			var spec = CacheData.getOfferSpec(prodId,offerSpecId);
+			if(spec == undefined){  //未开通的附属销售品，需要获取销售品构成
+				spec = query.offer.queryAttachOfferSpec(prodId,offerSpecId); //重新获取销售品构成
+				if(!spec){
+					return;
+				}
+			}
+			var content = CacheData.getParamContent(prodId,spec,flag);	
+			$.confirm("参数设置： ",content,{ 
+				yes:function(){
+					if(!!spec.offerSpecParams){
+						for (var i = 0; i < spec.offerSpecParams.length; i++) {
+							var param = spec.offerSpecParams[i];
+							var itemSpec = CacheData.getSpecParam(prodId,offerSpecId,param.itemSpecId);
+							itemSpec.setValue = $("#"+prodId+"_"+param.itemSpecId).val();
+						}
+					}
+					if(spec.offerRoles!=undefined && spec.offerRoles.length>0){
+						for (var i = 0; i < spec.offerRoles.length; i++) {
+							var offerRole = spec.offerRoles[i];
+							for (var j = 0; j < offerRole.roleObjs.length; j++) {
+								var roleObj = offerRole.roleObjs[j];
+								if(!!roleObj.prodSpecParams){
+									for (var k = 0; k < roleObj.prodSpecParams.length; k++) {
+										var prodParam = roleObj.prodSpecParams[k];
+										var prodItem = CacheData.getProdSpecParam(prodId,offerSpecId,prodParam.itemSpecId);
+										prodItem.value = $("#"+prodId+"_"+prodParam.itemSpecId).val();
+									}
+								}
+							}
+						}
+					}
+					$("#can_"+prodId+"_"+offerSpecId).removeClass("abtn03").addClass("abtn01");
+					var attchSpec = CacheData.getOfferSpec(prodId,offerSpecId);
+					attchSpec.isset = "Y";
+				},
+				no:function(){
+				}
+			});
+		}
+	};
 	
 	//销售品角色成员对象是中 minQty大于0的话 就必须设置其为不能删除（暂定）
 	var _minQtyFileter=function(prodId,servSpecId){
@@ -1522,19 +1687,19 @@ AttachOffer = (function() {
 		if(serv != undefined){
 			$li=$("#li_"+prodId+"_"+serv.servId);
 			$span = $("#span_"+prodId+"_"+serv.servId);
-			$span_remove = $("#span_remove_"+prodId+"_"+serv.servId);
+//			$span_remove = $("#span_remove_"+prodId+"_"+serv.servId);
 		}else{
 			$li=$("#li_"+prodId+"_"+servSpecId);
 			$span = $("#span_"+prodId+"_"+servSpecId);
-			$span_remove = $("#span_remove_"+prodId+"_"+servSpecId);
+//			$span_remove = $("#span_remove_"+prodId+"_"+servSpecId);
 		}
 		if($li!=undefined){
 			if(ec.util.isObj($span)){
 				$span.removeClass("del");
 			}
-			if(ec.util.isObj($span_remove)){
-				$span_remove.hide();
-			}
+//			if(ec.util.isObj($span_remove)){
+//				$span_remove.hide();
+//			}
 			$li.removeAttr("onclick");	
 			
 		}
@@ -1579,6 +1744,7 @@ AttachOffer = (function() {
 				$span.addClass("delete");
 				spec.isdel = "Y";
 				$("#input_"+prodId+"_"+offerSpecId).removeAttr("checked");
+//				$("#can_"+prodId+"_"+offerSpecId).find("button").addClass(); 
 				delServSpec(prodId,spec); //取消订购销售品时
 				order.dealer.removeAttDealer(prodId+"_"+offerSpecId); //删除协销人
 //				$("#terminalUl_"+prodId+"_"+offerSpecId).remove();
@@ -1952,6 +2118,8 @@ AttachOffer = (function() {
 		terminalDiv			:_terminalDiv,
 		checkTerminalCode	:_checkTerminalCode,
 		delOfferSpec		:_delOfferSpec,
-		checkOfferExcludeDepend :_checkOfferExcludeDepend
+		checkOfferExcludeDepend :_checkOfferExcludeDepend,
+		showParam			:_showParam,
+		setParam			:_setParam
 	};
 })();

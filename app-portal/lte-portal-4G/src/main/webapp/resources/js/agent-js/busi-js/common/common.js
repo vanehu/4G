@@ -12,7 +12,8 @@ common = (function($) {
 		var urlParams=$.parseJSON(JSON.stringify(url));//地址
 		OrderInfo.actionFlag=urlParams.actionFlag;
 		//去除四个可能带等号的加密字段
-	    var myCust1=$.parseJSON(custInfosParams);
+		var myCust1;
+	    myCust1=$.parseJSON(custInfosParams);
 		myCust1.CN="";
 		myCust1.certNum="";
 		myCust1.address="";			  

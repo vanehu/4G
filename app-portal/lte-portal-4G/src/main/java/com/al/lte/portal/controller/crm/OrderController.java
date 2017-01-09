@@ -51,7 +51,6 @@ import com.al.ecs.common.util.PageUtil;
 import com.al.ecs.common.util.PropertiesUtils;
 import com.al.ecs.common.util.UIDGenerator;
 import com.al.ecs.common.web.ServletUtils;
-import com.al.ecs.common.web.SpringContextUtil;
 import com.al.ecs.exception.AuthorityException;
 import com.al.ecs.exception.BusinessException;
 import com.al.ecs.exception.ErrorCode;
@@ -453,6 +452,35 @@ public class OrderController extends BaseController {
         return super.successed(retMap);
     }
 
+   /**
+     * 橙分期业务标识查询
+     * @param session
+     * @return 橙分期业务标识
+     */
+    @RequestMapping(value = "/queryAgreementType", method = RequestMethod.POST)
+    @ResponseBody
+    public JsonResponse queryAgreementType(@RequestBody Map<String, Object> param, @LogOperatorAnn String optFlowNum, HttpSession session) {
+        SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
+
+        Map<String, Object> retMap = new HashedMap();
+        try {
+            Map<String, Object> returnMap = orderBmo.queryAgreementType(param, optFlowNum, sessionStaff);
+            if (null != returnMap) {
+                retMap = MapUtils.getMap(returnMap, "result");
+            } else {
+                retMap.put("resultCode", ResultCode.R_RULE_EXCEPTION);
+            }
+        } catch (BusinessException be) {
+            return super.failed(be);
+        } catch (InterfaceException ie) {
+            return super.failed(ie, param, ErrorCode.QUERY_AGREEMENTTYPE);
+        } catch (Exception e) {
+            log.error("门户调用后台橙分期业务标识查询接口service/intf.acctService/queryAgreementType方法异常", e);
+            return super.failed(ErrorCode.QUERY_AGREEMENTTYPE, e, param);
+        }
+        return super.successed(retMap);
+    }
+
     /**
      *
      *
@@ -683,6 +711,7 @@ public class OrderController extends BaseController {
         resquestMap.put("acctNbr", request.getParameter("acctNbr"));
         resquestMap.put("prodSpecId", request.getParameter("prodSpecId"));
         resquestMap.put("areaId", request.getParameter("areaId"));
+        model.addAttribute("prodId", request.getParameter("prodInstId"));
         try {
             Map responseMap = orderBmo.prodInstParam(resquestMap, null, sessionStaff);
             if (responseMap != null && ResultCode.R_SUCC.equals(responseMap.get("resultCode"))) {
@@ -1786,6 +1815,15 @@ public class OrderController extends BaseController {
 			param.put("rights", orderBmo.getAvilablePayMethodCdList(sessionStaff));
 		} catch (BusinessException be) {
 			return super.failed(be);
+		}  catch (InterfaceException ie) {
+			log.error("系管权限查询接口sys-checkOperatSpec异常：", ie);
+			return super.failed(ie, null, ErrorCode.CHECKOPERATSPEC);
+		} catch (IOException ioe) {
+			log.error("系管权限查询接口sys-checkOperatSpec异常：", ioe);
+			return super.failed(ErrorCode.CHECKOPERATSPEC, ioe, null);
+		} catch (Exception e) {
+			log.error("系管权限查询接口sys-checkOperatSpec异常：", e);
+			return super.failed(ErrorCode.CHECKOPERATSPEC, e, null);
 		}
         
         try {
@@ -1942,6 +1980,8 @@ public class OrderController extends BaseController {
                 rMap = orderBmo.chargeSubmit(param, flowNum, sessionStaff);
                 log.debug("return={}", JsonUtil.toString(rMap));
                 if (rMap != null && ResultCode.R_SUCCESS.equals(rMap.get("code").toString())) {
+                	//受理成功清空session中的虚拟购物车ID(virOlId)
+                	ServletUtils.removeSessionAttribute(super.getRequest(), Const.SESSION_UPLOAD_VIR_OLID);
                     jsonResponse = super.successed("收费成功", ResultConstant.SUCCESS.getCode());
                 } else {
                     jsonResponse = super.failed(rMap.get("msg"), ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
@@ -3109,84 +3149,93 @@ public class OrderController extends BaseController {
      */
     @RequestMapping(value = "/orderSubmit", method = RequestMethod.POST)
     @ResponseBody
-    public JsonResponse orderSubmit(@RequestBody Map<String, Object> param, HttpServletResponse response,
-            HttpServletRequest request) throws Exception {
-        JsonResponse jsonResponse = null;
-        if (commonBmo.checkToken(request, SysConstant.ORDER_SUBMIT_TOKEN)) {
+    public JsonResponse orderSubmit(@RequestBody Map<String, Object> param, HttpServletResponse response, HttpServletRequest request) throws Exception {
+        SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
+    	JsonResponse jsonResponse = null;
+        Object realNameFlag =  MDA.REAL_NAME_PHOTO_FLAG.get("REAL_NAME_PHOTO_"+sessionStaff.getCurrentAreaId().substring(0, 3));
+    	boolean isRealNameFlagOn  = realNameFlag == null ? false : "ON".equals(realNameFlag.toString()) ? true : false;//实名制拍照开关是否打开
+    	
+    	if (commonBmo.checkToken(request, SysConstant.ORDER_SUBMIT_TOKEN)) {
             try {
-                SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
-
                 if(orderBmo.verifyCustCertificate(param, request ,sessionStaff)){
-                    Map<String, Object> orderList = (Map<String, Object>) param.get("orderList");
-                    Map<String, Object> orderListInfo = (Map<String, Object>) orderList.get("orderListInfo");
-                    orderListInfo.put("staffId", sessionStaff.getStaffId()); //防止前台修改
-                    orderListInfo.put("channelId", sessionStaff.getCurrentChannelId()); //防止前台修改
-                    
-                    //过滤订单属性
-                    List<Map<String, Object>> custOrderAttrs = (List<Map<String, Object>>) orderListInfo.get("custOrderAttrs");
-                    //添加客户端IP地址到订单属性
-                    Map<String, Object> IPMap = new HashMap<String, Object>();
-                    IPMap.put("itemSpecId", SysConstant.ORDER_ATTRS_IP);
-                    IPMap.put("value", ServletUtils.getIpAddr(request));
-                    if (custOrderAttrs == null){
-                    	custOrderAttrs = new ArrayList<Map<String, Object>>();
-                    }
-                    custOrderAttrs.add(IPMap);
-                    orderListInfo.put("custOrderAttrs", custOrderAttrs);
-
-                    String isAddOperation = (String) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.FDSL + "_" + sessionStaff.getStaffId());
-                    //没有暂存单权限的员工不能添加暂存单订单属性
-                    if (!"0".equals(isAddOperation)) {
-                        if (custOrderAttrs != null && custOrderAttrs.size() != 0) {
-                            List<Map<String, Object>> filterCustOrderAttrs = new ArrayList<Map<String, Object>>();
-                            for (Map<String, Object> custOrderAttr : custOrderAttrs) {
-                                if (custOrderAttr != null
-                                        && !SysConstant.FDSL_ORDER_ATTR_SPECID.equals(custOrderAttr.get("itemSpecId"))) {
-                                    filterCustOrderAttrs.add(custOrderAttr);
-                                }
-                            }
-                            orderListInfo.put("custOrderAttrs", filterCustOrderAttrs);
+                	if(commonBmo.orderSubmitFilter(param)){
+                        Map<String, Object> orderList = (Map<String, Object>) param.get("orderList");
+                        Map<String, Object> orderListInfo = (Map<String, Object>) orderList.get("orderListInfo");
+                        orderListInfo.put("staffId", sessionStaff.getStaffId()); //防止前台修改
+                        orderListInfo.put("channelId", sessionStaff.getCurrentChannelId()); //防止前台修改
+                        
+                        //过滤订单属性
+                        List<Map<String, Object>> custOrderAttrs = (List<Map<String, Object>>) orderListInfo.get("custOrderAttrs");
+                        //添加客户端IP地址到订单属性
+                        Map<String, Object> IPMap = new HashMap<String, Object>();
+                        if(isRealNameFlagOn){
+                        	IPMap.put("itemSpecId", SysConstant.ORDER_ATTRS_IP);
+                        } else{
+                        	IPMap.put("itemSpecId", SysConstant.ORDER_ATTRS_IP_TEM);
                         }
-                    }
-                    
-                    Map<String, Object> resMap = orderBmo.orderSubmit(param, null, sessionStaff);
-                    if (ResultCode.R_SUCC.equals(resMap.get("resultCode"))) {
-                        Map<String, Object> result = (Map<String, Object>) resMap.get("result");
-                        String olId = (String) result.get("olId");
-                        String soNbr = (String) orderListInfo.get("soNbr");
-//                        String olTypeCd = orderListInfo.get("olTypeCd").toString();
-                        String actionFlag = orderListInfo.get("actionFlag") != null ? orderListInfo.get("actionFlag").toString() : "";
-                        if (result.get("ruleInfos") == null) {
-                            resMap.put("rolId", olId);
-                            resMap.put("rsoNbr", soNbr);
-                            resMap.put("checkRule", "checkRule");
-                        } else {
-                            boolean ruleflag = false;
-                            List rulelist = (List) result.get("ruleInfos");
-                            for (int i = 0; i < rulelist.size(); i++) {
-                                Map rulemap = (Map) rulelist.get(i);
-                                String ruleLevel = rulemap.get("ruleLevel").toString();
-                                if ("4".equals(ruleLevel)) {
-                                    ruleflag = true;
-                                    sessionStaff.setOrderData(resMap);
-                                    break;
+                        IPMap.put("value", ServletUtils.getIpAddr(request));
+                        if (custOrderAttrs == null){
+                        	custOrderAttrs = new ArrayList<Map<String, Object>>();
+                        }
+                        custOrderAttrs.add(IPMap);
+                        orderListInfo.put("custOrderAttrs", custOrderAttrs);
+
+                        String isAddOperation = (String) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.FDSL + "_" + sessionStaff.getStaffId());
+                        //没有暂存单权限的员工不能添加暂存单订单属性
+                        if (!"0".equals(isAddOperation)) {
+                            if (custOrderAttrs != null && custOrderAttrs.size() != 0) {
+                                List<Map<String, Object>> filterCustOrderAttrs = new ArrayList<Map<String, Object>>();
+                                for (Map<String, Object> custOrderAttr : custOrderAttrs) {
+                                    if (custOrderAttr != null
+                                            && !SysConstant.FDSL_ORDER_ATTR_SPECID.equals(custOrderAttr.get("itemSpecId"))) {
+                                        filterCustOrderAttrs.add(custOrderAttr);
+                                    }
                                 }
+                                orderListInfo.put("custOrderAttrs", filterCustOrderAttrs);
                             }
-                            if (!ruleflag) {
+                        }
+                        
+                        Map<String, Object> resMap = orderBmo.orderSubmit(param, null, sessionStaff);
+                        if (ResultCode.R_SUCC.equals(resMap.get("resultCode"))) {
+                            Map<String, Object> result = (Map<String, Object>) resMap.get("result");
+                            String olId = (String) result.get("olId");
+                            String soNbr = (String) orderListInfo.get("soNbr");
+//                            String olTypeCd = orderListInfo.get("olTypeCd").toString();
+                            String actionFlag = orderListInfo.get("actionFlag") != null ? orderListInfo.get("actionFlag").toString() : "";
+                            if (result.get("ruleInfos") == null) {
                                 resMap.put("rolId", olId);
                                 resMap.put("rsoNbr", soNbr);
                                 resMap.put("checkRule", "checkRule");
+                            } else {
+                                boolean ruleflag = false;
+                                List rulelist = (List) result.get("ruleInfos");
+                                for (int i = 0; i < rulelist.size(); i++) {
+                                    Map rulemap = (Map) rulelist.get(i);
+                                    String ruleLevel = rulemap.get("ruleLevel").toString();
+                                    if ("4".equals(ruleLevel)) {
+                                        ruleflag = true;
+                                        sessionStaff.setOrderData(resMap);
+                                        break;
+                                    }
+                                }
+                                if (!ruleflag) {
+                                    resMap.put("rolId", olId);
+                                    resMap.put("rsoNbr", soNbr);
+                                    resMap.put("checkRule", "checkRule");
+                                }
                             }
+                            if (actionFlag.equals("37") || actionFlag.equals("38")) {
+                                resMap.put("checkRule", "notCheckRule");
+                            }
+                            jsonResponse = super.successed(resMap, ResultConstant.SUCCESS.getCode());
+                        } else {
+                            jsonResponse = super.failed(resMap.get("resultMsg"), ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
                         }
-                        if (actionFlag.equals("37") || actionFlag.equals("38")) {
-                            resMap.put("checkRule", "notCheckRule");
-                        }
-                        jsonResponse = super.successed(resMap, ResultConstant.SUCCESS.getCode());
-                    } else {
-                        jsonResponse = super.failed(resMap.get("resultMsg"), ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
-                    }
+                	} else{
+                    	return super.failed(ErrorCode.PORTAL_INPARAM_ERROR, "订单提交数据过滤错误，原因可能是新建客户、经办人或使用人时证件信息为空，请清空浏览器缓存后重新尝试，不要进行非法提交、多窗口同时提交受理业务。", param);
+                	}
                 } else{
-                	return super.failed(ErrorCode.PORTAL_INPARAM_ERROR, "订单提交时客户证件数据校验失败，经办人必须拍照，政企客户使用人必填，请不要进行非法提交、多窗口同时提交受理业务。", param);
+                	return super.failed(ErrorCode.PORTAL_INPARAM_ERROR, "订单提交数据校验失败，原因可能是客户证件为身份证时未进行读卡，或身份证读卡数据被篡改，或经办人未拍照，或政企客户未填写使用人，请清空浏览器缓存后重新尝试，不要进行非法提交、多窗口同时提交受理业务。", param);
                 }
             } catch (BusinessException e) {
                 return super.failed(e);
@@ -4093,6 +4142,8 @@ public class OrderController extends BaseController {
         try {
             rMap = orderBmo.saveOrderAttrs(param, flowNum, sessionStaff);
             if (rMap != null && ResultCode.R_SUCCESS.equals(rMap.get("code").toString())) {
+            	//暂存成功清空session中的虚拟购物车ID(virOlId)
+            	ServletUtils.removeSessionAttribute(super.getRequest(), Const.SESSION_UPLOAD_VIR_OLID);
                 jsonResponse = super.successed("", ResultConstant.SUCCESS.getCode());
             } else {
                 jsonResponse = super.failed(rMap.get("msg").toString(), ResultConstant.SERVICE_RESULT_FAILTURE
@@ -4348,49 +4399,60 @@ public class OrderController extends BaseController {
                // return super.failed(ErrorCode.INSERT_CARD_INFO, e, param);
             }
             
-           if(!StringUtils.isBlank(venderId)){
-            	if(MDA.USBVERSION_SIGNATURE.get(venderId)==null){
-            		return super.failed("厂商标识信息有误", -1);
-            	}
-            	if(MDA.USBVERSION_SIGNATURE.get(venderId).get("isOpen").equals("ON")){//启用新规范控件校验
-	    			String mdaVersion = MDA.USBVERSION_SIGNATURE.get(venderId).get("version");
-	            	if(StringUtils.isBlank(signature)||StringUtils.isBlank(versionSerial)){
-		        		 return super.failed("读卡失败信息有误", -1);
-		        	}
-		            if(versionSerial.equals(mdaVersion)){//校验版本号
-		            	String appSecret=MDA.USBVERSION_SIGNATURE.get(venderId).get("appSecret");
-		            	String ss=partyName+gender+nation+bornDay+certAddress+certNumber+certOrg+effDate+expDate+identityPic+appSecret;
-		            	String sha1Str=DigestUtils.sha1ToHex(ss);
-		            	if(!signature.equals(sha1Str)){
-		            		jsonResponse = super.failed("证件信息被篡改", -2);//信息被篡改
-		            		return jsonResponse;
-		            	}
-		            }else{
-		            	param.put("signature", "");
-		            	Set<String> s = param.keySet();//获取KEY集合
-		            	for (String str : s) {
-		            		if(param.get(str)instanceof String){
-		            			param.put(str,"");
-		            		}else{
-		            			param.put(str,0);
-		            		}
-		            	}
-		            	String fileUrl="FTPSERVICECONFIG"+","+venderId+"_"+mdaVersion+".exe"+","+MDA.CARD_FILEPATH;
-		            	param.put("fileUrl", fileUrl);
-		            	param.put("fileName", MDA.USBVERSION_SIGNATURE.get(venderId).get("name")+".exe");
-		            	jsonResponse = super.failed(param, -3);//版本有误
-		            	return jsonResponse;
-		            }
-            	}
+           Object validateFlag =  MDA.USBSIGNATURE.get("SIGNATURE_"+sessionStaff.getCurrentAreaId().substring(0, 3) + "0000");
+           boolean isValidate  = validateFlag == null ? false : "ON".equals(validateFlag.toString()) ? true : false;//身份证阅读器省份开关 ON：开启校验  OFF不校验
+           if(isValidate){  // 1. 分省开关开启 
+	           if(!StringUtils.isBlank(venderId)){
+	        	    if((MDA.USBVERSION_SIGNATURE.get(venderId)==null)){ //2. 未在集约 CRM 许可范围内
+	            		return super.failed("读卡器未在集约 CRM 许可范围内，请联系厂商升级驱动", -1);
+	            	}
+	        	    if(MDA.USBVERSION_SIGNATURE.get(venderId).get("isOpen").equals("ON")){//启用新规范控件校验
+	            		String mdaVersion = MDA.USBVERSION_SIGNATURE.get(venderId).get("version");
+		    			if(StringUtils.isBlank(signature)||StringUtils.isBlank(versionSerial)){
+			        		 return super.failed("读卡器控件版本过低，请联系厂商升级驱动版本", -1);
+			        	}
+			            if(versionSerial.equals(mdaVersion)){//校验版本号 
+			            	String appSecret=MDA.USBVERSION_SIGNATURE.get(venderId).get("appSecret"); // 3. 件信息被篡改，请确认按照正常流程操作
+			            	String ss=partyName+gender+nation+bornDay+certAddress+certNumber+certOrg+effDate+expDate+identityPic+appSecret;
+			            	String sha1Str=DigestUtils.sha1ToHex(ss);
+			            	if(!signature.equals(sha1Str)){
+			            		jsonResponse = super.failed("证件信息被篡改，请确认按照正常流程操作", -2);//信息被篡改
+			            		return jsonResponse;
+			            	}
+			            }else{  // 4. 读卡器控件版本过低，请联系厂商升级驱动版本
+			            	param.put("signature", "");
+			            	Set<String> s = param.keySet();//获取KEY集合
+			            	for (String str : s) {
+			            		if(param.get(str)instanceof String){
+			            			param.put(str,"");
+			            		}else{
+			            			param.put(str,0);
+			            		}
+			            	}
+			            	String fileUrl=venderId+"_"+mdaVersion;
+			            	param.put("fileUrl", fileUrl);
+			            	param.put("mdaVersion", mdaVersion);
+			            	param.put("fileName", MDA.USBVERSION_SIGNATURE.get(venderId).get("name"));
+			            	jsonResponse = super.failed(param, -3);//版本有误
+			            	return jsonResponse;
+			            }
+	            	}else{
+	            		return super.failed("读卡器驱动未通过集团 CRM 验证，请联系"+ MDA.USBVERSION_SIGNATURE.get(venderId).get("name")+"厂商升级驱动", -1);
+	            	}
+	            }else{
+	            	return super.failed("读卡器控件版本过低，请联系厂商升级驱动版本", -1);
+	            }
             }
             String appSecret1 = propertiesUtils.getMessage("APP_SECRET"); //appId对应的加密密钥
             String nonce = RandomStringUtils.randomAlphanumeric(Const.RANDOM_STRING_LENGTH); //随机字符串
             String signature1 = commonBmo.signature(partyName, certNumber, certAddress, identityPic, nonce, appSecret1);
             param.put("signature", signature1);
             if("1".equals(createFlag)){
+            	request.getSession().removeAttribute(Const.SESSION_SIGNATURE);
                 request.getSession().setAttribute(Const.SESSION_SIGNATURE, signature1);
             } else if("Y".equals(MapUtils.getString(param, "jbrFlag"))){
             	//经办人跟随主卡，即使加装副卡，一个单子只有一个经办人
+            	request.getSession().removeAttribute(Const.SESSION_SIGNATURE_HANDLE_CUST);
             	request.getSession().setAttribute(Const.SESSION_SIGNATURE_HANDLE_CUST, signature1);
             }
             
@@ -4425,17 +4487,17 @@ public class OrderController extends BaseController {
 		ServletOutputStream  outputStream = response.getOutputStream();
 		try {
 			FtpUtils ftpUtils = new FtpUtils();
-//			String fileUrl = (String) param.get("fileUrl");
-//			String fileName = (String) param.get("fileName");
-			String[] fileUrls = fileUrl.split(",");
-			String ftpMapping = fileUrls[0];
-			String newFileName = fileUrls[1];
-			String filePath = fileUrls[2];
-			
+			String newFileName = fileUrl+".exe";
+			String filePath = MDA.CARD_FILEPATH;
+			fileName=fileName+".exe";
 			//2.获取FTP服务器的具体登录信息
 			//3.根据服务器映射获取对应的FTP服务器配置信息
-			PropertiesUtils propertiesUtils = (PropertiesUtils) SpringContextUtil.getBean("propertiesUtils");
-			String ftpServiceConfig = propertiesUtils.getMessage(ftpMapping);
+			String ftpServiceConfig ="";
+			if(MDA.CLUSTERFLAG.equals("OFF")){
+				ftpServiceConfig=MDA.FTPSERVICECONFIG;
+			}else{
+				ftpServiceConfig=MDA.FTPServiceConfigs.get(MDA.CARD_FTPCONFIG);
+			}
 			String[] ftpServiceConfigs = ftpServiceConfig.split(",");
 			String remoteAddress = ftpServiceConfigs[0];//FTP服务器地址(IP)
 			String remotePort = ftpServiceConfigs[1];//FTP服务器端口
@@ -4457,8 +4519,7 @@ public class OrderController extends BaseController {
 			}
 		}	
 	}
-	
-	@RequestMapping(value = "/reducePoingts", method = RequestMethod.POST)
+    @RequestMapping(value = "/reducePoingts", method = RequestMethod.POST)
     @ResponseBody
     public JsonResponse reducePoingts(@RequestBody Map<String, Object> param, @LogOperatorAnn String flowNum,
             HttpServletResponse response, HttpServletRequest request) {
@@ -4553,7 +4614,6 @@ public class OrderController extends BaseController {
         }
         return jsonResponse;
     }
-	 
     /**
      *积分查询，获取是否有紧急开机权限
     **/
@@ -4853,31 +4913,6 @@ public class OrderController extends BaseController {
     }
     
     /**
-     * 返档入口
-     */
-    @RequestMapping(value = "/preparReturnBlock", method = RequestMethod.GET)
-    @AuthorityValid(isCheck = true)
-    public String preparReturnBlock(@RequestParam Map<String, Object> mktRes, HttpServletRequest request, Model model,
-            HttpSession session) {
-        model.addAttribute("canOrder", EhcacheUtil.pathIsInSession(session, "order/prepare"));
-        model.addAttribute("menuName", SysConstant.FD);
-        model.addAttribute("DiffPlaceFlag", "local");
-        return "/order/order-prepare";
-    }
-    
-    /**
-     * 未激活拆机
-     */
-    @RequestMapping(value="/prepareRemoveProd", method = RequestMethod.GET)
-    @AuthorityValid(isCheck = false)
-    public String prepareRemoveProd(HttpServletRequest request,Model model,HttpSession session){
-    	 model.addAttribute("canOrder", EhcacheUtil.pathIsInSession(session, "order/prepare"));
-         model.addAttribute("menuName", SysConstant.WJHCJ);
-         model.addAttribute("DiffPlaceFlag", "local");
-    	return "/order/order-prepare";
-    }
-
-    /**
      * 黑名单失效接口
      * @param param
      * @param flowNum
@@ -4910,6 +4945,126 @@ public class OrderController extends BaseController {
         return jsonResponse;
     }
 
+    @ResponseBody
+    @RequestMapping(value = "/savePayRecords", method = RequestMethod.POST)
+    public JsonResponse savePayRecords(@RequestBody Map<String, Object> param,
+            @LogOperatorAnn String flowNum) {
+
+        JsonResponse jsonResponse = null;
+        try {
+            log.debug("param={}", JsonUtil.toString(param));
+            String busiOrderId = MapUtils.getString(param, "orderId");
+            String payOrderId = MapUtils.getString(param, "payId");
+            String amount = MapUtils.getString(param, "amount");
+            String bindId = MapUtils.getString(param, "bindId");
+            String terminalId = MapUtils.getString(param, "terminalNbr");
+
+            if (StringUtils.isNotBlank(amount)) {
+                if (StringUtils.contains(amount, ".")) {
+                    amount = "" + new BigDecimal(amount).multiply(new BigDecimal(100)).intValue();
+                }
+            }
+
+            Map<String, Object> inParam = new HashMap<String, Object>();
+            inParam.put("busiOrderId", busiOrderId);
+            inParam.put("payOrderId", payOrderId);
+            inParam.put("amount", amount);
+            inParam.put("payType", "1");
+            inParam.put("bindId", bindId);
+            inParam.put("payPlat", "1");
+            inParam.put("terminalId", terminalId);
+
+            SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+                    SysConstant.SESSION_KEY_LOGIN_STAFF);
+            Map<String, Object> resultMap = orderBmo.savePayRecords(inParam, flowNum, sessionStaff);
+            log.debug("return={}", JsonUtil.toString(resultMap));
+            String resultCode = resultMap.get("code").toString();
+            if (ResultCode.R_SUCC.equals(resultCode)) {
+                jsonResponse = super.successed(null, ResultConstant.SUCCESS.getCode());
+            } else {
+                String resultMsg = resultMap.get("msg").toString();
+                if (ResultCode.R_EXCEPTION.equals(resultCode)) {
+                    jsonResponse = super.failed(resultMsg, ResultConstant.DATA_NOT_VALID_FAILTURE.getCode());
+                } else {
+                    jsonResponse = super.failed(resultMsg, ResultConstant.FAILD.getCode());
+                }
+            }
+        } catch (BusinessException e) {
+            return super.failed(e);
+        } catch (InterfaceException ie) {
+            return super.failed(ie, param, ErrorCode.CHARGEINFO_CHECK);
+        } catch (Exception e) {
+            return super.failed(ErrorCode.CHARGEINFO_CHECK, e, param);
+        }
+        
+        return jsonResponse;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/updatePayRecords", method = RequestMethod.POST)
+    public JsonResponse updatePayRecords(@RequestBody Map<String, Object> param,
+            @LogOperatorAnn String flowNum) {
+
+        JsonResponse jsonResponse = null;
+        try {
+            log.debug("param={}", JsonUtil.toString(param));
+            String orderId = MapUtils.getString(param, "orderId");
+            String payResult = MapUtils.getString(param, "payResult");
+            String resultMsg = MapUtils.getString(param, "resultMsg");
+            String payBackOrderId = MapUtils.getString(param, "payBackOrderId");
+
+            Map<String, Object> inParam = new HashMap<String, Object>();
+            inParam.put("busiOrderId", orderId);
+            inParam.put("payType", "1");
+            inParam.put("payResult", payResult);
+            inParam.put("remark", resultMsg);
+            inParam.put("payBackOrderId", payBackOrderId);
+
+            SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+                    SysConstant.SESSION_KEY_LOGIN_STAFF);
+            Map<String, Object> resultMap = orderBmo.updatePayRecords(inParam, flowNum, sessionStaff);
+            log.debug("return={}", JsonUtil.toString(resultMap));
+            if (null != resultMap && ResultCode.R_SUCC.equals(resultMap.get("code").toString())) {
+                jsonResponse = super.successed(null, ResultConstant.SUCCESS.getCode());
+            } else {
+                jsonResponse = super.failed(resultMap.get("msg"), ResultConstant.FAILD.getCode());
+            }
+        } catch (BusinessException e) {
+            return super.failed(e);
+        } catch (InterfaceException ie) {
+            return super.failed(ie, param, ErrorCode.CHARGEINFO_CHECK);
+        } catch (Exception e) {
+            return super.failed(ErrorCode.CHARGEINFO_CHECK, e, param);
+        }
+        
+        return jsonResponse;
+    }
+    
+    /**
+     * 返档入口
+     */
+    @RequestMapping(value = "/preparReturnBlock", method = RequestMethod.GET)
+    @AuthorityValid(isCheck = true)
+    public String preparReturnBlock(@RequestParam Map<String, Object> mktRes, HttpServletRequest request, Model model,
+            HttpSession session) {
+        model.addAttribute("canOrder", EhcacheUtil.pathIsInSession(session, "order/prepare"));
+        model.addAttribute("menuName", SysConstant.FD);
+        model.addAttribute("DiffPlaceFlag", "local");
+        return "/order/order-prepare";
+    }
+    
+    /**
+     * 未激活拆机
+     */
+    @RequestMapping(value="/prepareRemoveProd", method = RequestMethod.GET)
+    @AuthorityValid(isCheck = false)
+    public String prepareRemoveProd(HttpServletRequest request,Model model,HttpSession session){
+    	 model.addAttribute("canOrder", EhcacheUtil.pathIsInSession(session, "order/prepare"));
+         model.addAttribute("menuName", SysConstant.WJHCJ);
+         model.addAttribute("DiffPlaceFlag", "local");
+    	return "/order/order-prepare";
+    }
+
     /**
 	 * 主副卡角色互换：主套餐及产品等信息不变，仅主副卡角色发生变化
 	 */
@@ -4919,6 +5074,27 @@ public class OrderController extends BaseController {
         return "/order/order-modify-roleExchange";
     }
     
+    /**
+     * 实名制客户身份证件下载
+     */
+    @RequestMapping(value = "/downloadCustCertificate", method = RequestMethod.POST)
+    @ResponseBody
+    public JsonResponse downloadCustCertificate(@RequestBody Map<String, Object> param, @LogOperatorAnn String flowNum, HttpServletResponse response) {
+        SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
+        Map<String, Object> result = null;
+        JsonResponse jsonResponse = null;
+        try {
+        	result = orderBmo.downloadCustCertificate(param, sessionStaff);
+            if (result != null && ResultCode.R_SUCCESS.equals(result.get("code").toString())) {
+                jsonResponse = super.successed(result, ResultConstant.SUCCESS.getCode());
+            } else {
+                jsonResponse = super.failed(result.get("msg").toString(), ResultConstant.FAILD.getCode());
+            }
+        } catch (BusinessException be) {
+            return super.failed(be);
+        }
+        return jsonResponse;
+    }
     /**
      * 终端预约在途单校验
      */
@@ -4945,28 +5121,6 @@ public class OrderController extends BaseController {
             return super.failed(ErrorCode.QUERY_COUPON_ROAD_RESERVE, e, paramMap);
         }
         
-        return jsonResponse;
-    }
-    
-    /**
-     * 实名制客户身份证件下载
-     */
-    @RequestMapping(value = "/downloadCustCertificate", method = RequestMethod.POST)
-    @ResponseBody
-    public JsonResponse downloadCustCertificate(@RequestBody Map<String, Object> param, @LogOperatorAnn String flowNum, HttpServletResponse response) {
-        SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
-        Map<String, Object> result = null;
-        JsonResponse jsonResponse = null;
-        try {
-        	result = orderBmo.downloadCustCertificate(param, sessionStaff);
-            if (result != null && ResultCode.R_SUCCESS.equals(result.get("code").toString())) {
-                jsonResponse = super.successed(result, ResultConstant.SUCCESS.getCode());
-            } else {
-                jsonResponse = super.failed(result.get("msg").toString(), ResultConstant.FAILD.getCode());
-            }
-        } catch (BusinessException be) {
-            return super.failed(be);
-        }
         return jsonResponse;
     }
 }

@@ -2793,9 +2793,14 @@ public class OrderController extends BaseController {
 		String olId=param.get("olId").toString();
 		try {
 			rMap = orderBmo.queryPayOrderStatus(param, flowNum, sessionStaff);
+			if(rMap.get("chargeItems")!=null){
+				List<Map<String, Object>> chargeItems2 = new ArrayList<Map<String, Object>>();
+				chargeItems2 = (List<Map<String, Object>>) rMap.get("chargeItems");
+				JSONArray chargeItems = JSONArray.fromObject(chargeItems2);	
+				rMap.put("chargeItems", chargeItems);
+			}
 			log.debug("return={}", JsonUtil.toString(rMap));
-			if (rMap != null
-					&& "POR-0000".equals(rMap.get("respCode").toString())) {
+			if (rMap != null && "POR-0000".equals(rMap.get("respCode").toString())) {
 				String payCode="";
 				String payAmount="";
 				//查询成功，接口同时返回支付方式编码，存入session，用于下计费时校验
@@ -2806,19 +2811,19 @@ public class OrderController extends BaseController {
 				if(rMap.get("payAmount")!=null){
 					 payAmount=rMap.get("payAmount").toString();//用于金额校验
 				}
-				 jsonResponse = super.successed(payCode+"_"+payAmount,ResultConstant.SUCCESS.getCode());
+				 jsonResponse = super.successed(rMap,ResultConstant.SUCCESS.getCode());
 			} else {
-				jsonResponse = super.failed(ErrorCode.PAY_TOCKEN, rMap, param);
+				jsonResponse = super.successed(rMap, ResultConstant.FAILD.getCode());
 			}
 			return jsonResponse;
 		} catch (BusinessException be) {
 			this.log.error("调用主数据接口失败", be);
 			return super.failed(be);
 		} catch (InterfaceException ie) {
-			return super.failed(ie, param, ErrorCode.PAY_TOCKEN);
+			return super.failed(ie, param, ErrorCode.PAY_QUERY);
 		} catch (Exception e) {
-			log.error("支付平台/tocken方法异常", e);
-			return super.failed(ErrorCode.PAY_TOCKEN, e, param);
+			log.error("支付平台/查询订单方法异常", e);
+			return super.failed(ErrorCode.PAY_QUERY, e, param);
 		}
 
 	}
@@ -3565,4 +3570,48 @@ public class OrderController extends BaseController {
 		}else return "/app/order/order-attach-broad";
     }
 	
+	/**
+	 * 翼销售融合甩单获取支付页面（url+tocken）
+	 * 
+	 * @param param
+	 * @param model
+	 * @param session
+	 * @param flowNum
+	 * @return
+	 */
+	@RequestMapping(value = "/getPayUrlForRh", method = RequestMethod.POST)
+	@ResponseBody
+	public JsonResponse getPayUrlForRh(@RequestBody Map<String, Object> param,
+			Model model, HttpSession session, @LogOperatorAnn String flowNum) {
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+						SysConstant.SESSION_KEY_LOGIN_STAFF);
+		Map<String, Object> rMap = null;
+		JsonResponse jsonResponse = null;
+		String dbKeyWord = sessionStaff == null ? null : sessionStaff.getDbKeyWord();
+		if(StringUtils.isBlank(dbKeyWord)){
+			dbKeyWord = "";
+		}
+		try {
+			String url=MySimulateData.getInstance().getNeeded(dbKeyWord, "url", "pay");//支付页面url
+			rMap = orderBmo.queryPayTockenForRh(param, flowNum, sessionStaff);
+			log.debug("return={}", JsonUtil.toString(rMap));
+			if (rMap != null && "POR-0000".equals(rMap.get("respCode").toString())) {
+				jsonResponse = super.successed(MDA.PAY_URL.toString()+"payToken="+rMap.get("payToken"),
+						ResultConstant.SUCCESS.getCode());
+			} else {
+				jsonResponse = super.failed(rMap.get("respMsg").toString(),
+						ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+			}
+			return jsonResponse;
+		} catch (BusinessException be) {
+			this.log.error("调用主数据接口失败", be);
+			return super.failed(be);
+		} catch (InterfaceException ie) {
+			return super.failed(ie, param, ErrorCode.PAY_TOCKEN);
+		} catch (Exception e) {
+			log.error("支付平台/tocken方法异常", e);
+			return super.failed(ErrorCode.PAY_TOCKEN, e, param);
+		}
+
+	}
 }
