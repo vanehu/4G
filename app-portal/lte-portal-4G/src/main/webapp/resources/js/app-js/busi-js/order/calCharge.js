@@ -691,31 +691,31 @@ order.calcharge = (function(){
 	};
 	
 	var _tochargeSubmit=function(orderdata){	
-//		var url=contextPath+"/app/order/checkRuleToProv";
-//		var params={
-//				"olId":orderdata.rolId,
-//				"soNbr":orderdata.rsoNbr,
-//				"areaId" : OrderInfo.staff.areaId,
-//				"chargeItems":[]
-//		};
-//		$.ecOverlay("<strong>正在下省校验,请稍等会儿....</strong>");
-//		var response = $.callServiceAsJson(url,params);
-//		$.unecOverlay();		
+		var url=contextPath+"/app/order/checkRuleToProv";
+		var params={
+				"olId":orderdata.rolId,
+				"soNbr":orderdata.rsoNbr,
+				"areaId" : OrderInfo.staff.areaId,
+				"chargeItems":[]
+		};
+		$.ecOverlay("<strong>正在下省校验,请稍等会儿....</strong>");
+		var response = $.callServiceAsJson(url,params);
+		$.unecOverlay();		
 		var provCheckResult;				
-//		if (response.code == 0) {					
-//			var data = response.data;
-//			if(data.checkResult!=undefined){
-//				OrderInfo.checkresult=data.checkResult;		
-//			}
+		if (response.code == 0) {					
+			var data = response.data;
+			if(data.checkResult!=undefined){
+				OrderInfo.checkresult=data.checkResult;		
+			}
 			provCheckResult = {							
 					code : 0				
 			};				
-//		}else{					
-//			provCheckResult = {							
-//					code : 1,							
-//					data : response.data
-//			};
-//		}
+		}else{					
+			provCheckResult = {							
+					code : 1,							
+					data : response.data
+			};
+		}
 		return provCheckResult;
 	};
 	var _chargeSave = function(flag){
