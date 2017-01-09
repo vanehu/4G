@@ -2166,7 +2166,7 @@ order.main = (function(){
 	var _lastStep = function() {
 		$.confirm("信息","确定回到上一步吗？",{
 			yes:function(){
-				OrderInfo.resetChooseUserInfo();
+				OrderInfo.resetChooseUserInfo(true);
 				
 				//TODO　may initialize something;				
 				var boProdAns = OrderInfo.boProdAns;

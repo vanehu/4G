@@ -1647,11 +1647,11 @@ OrderInfo = (function() {
 		return null;
 	};
 	
-	var _resetChooseUserInfo = function(){
+	var _resetChooseUserInfo = function(isInitOrderData){
 		order.cust.queryForChooseUser = false; //重置选择使用人标识
 		order.cust.tmpChooseUserInfo = {};
 		OrderInfo.choosedUserInfos = [];
-		_resetOrderInfoCache();//填单页面返回“上一步”或“取消”时清空经办人、使用人缓存
+		_resetOrderInfoCache(isInitOrderData);//填单页面返回“上一步”或“取消”时清空经办人、使用人缓存
 	};
 				
 	_newofferSpecName = "";
@@ -1713,8 +1713,10 @@ OrderInfo = (function() {
 	/**
 	 * 填单页面返回“上一步”或“取消”时清空经办人、使用人缓存
 	 */
-	var _resetOrderInfoCache = function() {
-		OrderInfo.isHandleCustNeeded	  = false;
+	var _resetOrderInfoCache = function(isInitOrderData) {
+		if(ec.util.isObj(isInitOrderData)){//如果是初始化订单数据，不能清理，上一步或取消需要清理缓存
+			OrderInfo.isHandleCustNeeded  = false;
+		}
 		OrderInfo.ifCreateHandleCust	  = false;//判断是否需要新建经办人
 		OrderInfo.virOlId				  = "";//拍照上传虚拟购物车ID
 		OrderInfo.handleCustId 			  = "";//经办人为老客户时的客户ID

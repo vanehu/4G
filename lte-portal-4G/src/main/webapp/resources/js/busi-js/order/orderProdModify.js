@@ -3080,7 +3080,7 @@ order.prodModify = (function(){
 	var _cancel = function() {
 		$.confirm("信息","确定取消当前操作吗？",{
 		yes:function(){		
-			OrderInfo.resetChooseUserInfo();
+			OrderInfo.resetChooseUserInfo(true);
 			//退出二次业务时释放被预占的UIM卡
 			var boProd2Tds = OrderInfo.boProd2Tds;
 			if(boProd2Tds.length>0){
