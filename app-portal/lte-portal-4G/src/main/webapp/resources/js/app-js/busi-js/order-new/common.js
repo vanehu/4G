@@ -155,6 +155,9 @@ common = (function($) {
 		var custIdentityPic = OrderInfo.cust.identityPic;
 		
 		var jbrIdentityPic = OrderInfo.jbr.identityPic;
+		if(OrderInfo.cust.telNumber == undefined){
+			OrderInfo.cust.telNumber = "";
+		}
 		var json = "{\"picturesInfo\":[";
 		if(custIdentityPic != undefined && ec.util.isObj(custIdentityPic)){
 			json = json + "{\"orderInfo\":\"" + OrderInfo.cust.identityPic + "\",\"picFlag\":\"A\",\"custName\":\"" + OrderInfo.cust.partyName + "\",\"certType\":\"" + OrderInfo.cust.identityCd + "\",\"certNumber\":\"" + OrderInfo.cust.identityNum + "\",\"accNbr\":\"" + OrderInfo.cust.telNumber +"\"},";
@@ -171,6 +174,7 @@ common = (function($) {
 		if(jbrIdentityPic != undefined && ec.util.isObj(jbrIdentityPic)){
 			json = json + "{\"orderInfo\":\"" + OrderInfo.jbr.identityPic + "\",\"picFlag\":\"C\",\"custName\":\"" + partyName + "\",\"certType\":\"" + identityCd + "\",\"certNumber\":\"" + identityNum + "\",\"accNbr\":\"" + telNumber +"\"},";
 		}
+		
 		json = json + "{\"orderInfo\":\"\",\"picFlag\":\"D\",\"custName\":\"" + partyName + "\",\"certType\":\"" + identityCd + "\",\"certNumber\":\"" + identityNum + "\",\"accNbr\":\"" + telNumber +"\"}";
 		json = json+"]}";
 		arr[0]=method;
@@ -314,10 +318,6 @@ common = (function($) {
 	
 	//客户端调用此方法返回到上一页 1 为prepare页面  2为order-content（填单）页面 3为order-confirm（订单确认和收银台）页面 4为order-print（打印）页面
 	var _callReturnBack=function(){
-		if(order.calcharge.returnFlag==false){//支付成功，禁止返回
-			return;
-		}
-		
 //		alert("OrderInfo.actionFlag="+OrderInfo.actionFlag+"---OrderInfo.order.step="+OrderInfo.order.step+"---OrderInfo.returnFlag="+OrderInfo.returnFlag);
 		if($(".modal-backdrop").length>0 && $("#overlay-modal").length>0){
 			$.unecOverlay();//网络出现故障或手机出现故障时按返回关闭“加载中”提示框
@@ -1037,6 +1037,9 @@ common = (function($) {
 		var custIdentityPic = OrderInfo.cust.identityPic;
 		var userIdentityPic = OrderInfo.user.identityPic;
 		var jbrIdentityPic = OrderInfo.jbr.identityPic;
+		if(OrderInfo.cust.telNumber == undefined){
+			OrderInfo.cust.telNumber = "";
+		}
 //		var str = "{\"picturesInfo\":[{\"orderInfo\":\"XXXXXXXXX\",\"picFlag\":\"A\",\"custName\":\"hiuu\",\"certType\":\"身份证\",\"certNumber\":\"902222222\",\"accNbr\":\"123456666\"},{\"orderInfo\":\"XXXXXXXXX\",\"picFlag\":\"B\",\"custName\":\"hiuu\",\"certType\":\"身份证\",\"certNumber\":\"902222222\",\"accNbr\":\"123456666\"},{\"orderInfo\":\"XXXXXXXXX\",\"picFlag\":\"C\",\"custName\":\"hiuu\",\"certType\":\"身份证\",\"certNumber\":\"902222222\",\"accNbr\":\"123456666\"},{\"orderInfo\":\"\",\"picFlag\":\"D\",\"custName\":\"hiuu\",\"certType\":\"身份证\",\"certNumber\":\"902222222\",\"accNbr\":\"123456666\"}]}";
 		var json = "{\"picturesInfo\":[";
 		if(custIdentityPic != undefined){

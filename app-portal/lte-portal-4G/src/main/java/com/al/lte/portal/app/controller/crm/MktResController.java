@@ -1678,9 +1678,13 @@ public class MktResController extends BaseController {
             } else {
                 jsonResponse = super.failed(ErrorCode.FTP_UPLOAD_ERROR, rMap, param);
             }
+        } catch (BusinessException be) {
+            return super.failed(be);
+        } catch (InterfaceException ie) {
+        	jsonResponse = super.failed(ie, param, ErrorCode.FTP_UPLOAD_ERROR);
         } catch (Exception e) {
-            jsonResponse = super.failed(ErrorCode.FTP_UPLOAD_ERROR, e, param);
-        }
+        	jsonResponse = super.failed(ErrorCode.FTP_UPLOAD_ERROR, rMap, param);
+        } 
     	
     	return jsonResponse;
 	}

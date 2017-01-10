@@ -157,6 +157,9 @@ common = (function($) {
 		var custIdentityPic = OrderInfo.cust.identityPic;
 		
 		var jbrIdentityPic = OrderInfo.jbr.identityPic;
+		if(OrderInfo.cust.telNumber == undefined){
+			OrderInfo.cust.telNumber = "";
+		}
 		var json = "{\"picturesInfo\":[";
 		if(custIdentityPic != undefined && ec.util.isObj(custIdentityPic)){
 			json = json + "{\"orderInfo\":\"" + OrderInfo.cust.identityPic + "\",\"picFlag\":\"A\",\"custName\":\"" + OrderInfo.cust.partyName + "\",\"certType\":\"" + OrderInfo.cust.identityCd + "\",\"certNumber\":\"" + OrderInfo.cust.identityNum + "\",\"accNbr\":\"" + OrderInfo.cust.telNumber +"\"},";
@@ -912,6 +915,9 @@ common = (function($) {
 					OrderInfo.jbr.identityNum=custIdentityPic;
 				}
 				
+			}
+			if(OrderInfo.cust.telNumber == undefined){
+				OrderInfo.cust.telNumber = "";
 			}
 			var json = "{\"picturesInfo\":[";
 			if(custIdentityPic != undefined && ec.util.isObj(custIdentityPic)){
