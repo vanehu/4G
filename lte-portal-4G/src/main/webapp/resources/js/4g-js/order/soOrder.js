@@ -3900,11 +3900,15 @@ SoOrder = (function() {
 						_createHandleCust(busiOrders);
 					}
 				} else{
-					OrderInfo.handleCustId = OrderInfo.SEQ.offerSeq--;
+					var initHandleCustId = OrderInfo.SEQ.offerSeq--;
 					OrderInfo.orderData.orderList.orderListInfo.partyId = OrderInfo.cust.custId;
-					OrderInfo.orderData.orderList.orderListInfo.handleCustId = OrderInfo.handleCustId;
-					if((OrderInfo.actionFlag == 23 && OrderInfo.busitypeflag == 13)) {//异地补换卡
-						OrderInfo.orderData.orderList.orderListInfo.belongHandleCustId = OrderInfo.handleCustId;
+					OrderInfo.orderData.orderList.orderListInfo.handleCustId = initHandleCustId;
+					if((OrderInfo.actionFlag == 23 && OrderInfo.busitypeflag == 13)) {//异地补换卡特殊处理
+						if(ec.util.isObj(OrderInfo.handleCustId)){//经办人是老客户
+							OrderInfo.orderData.orderList.orderListInfo.belongHandleCustId = OrderInfo.handleCustId;
+						} else{//经办人是新客户
+							OrderInfo.orderData.orderList.orderListInfo.belongHandleCustId = initHandleCustId;
+						}
 					}
 					_createHandleCust(busiOrders);
 				}

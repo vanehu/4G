@@ -3053,7 +3053,7 @@ order.cust = (function(){
 	
 	//往订单信息中填充经办人信息，针对异地补换卡特殊处理，其他业务不可用
 	var _fillupHandleCustInfos = function(handleCustInfo){
-		OrderInfo.handleCustId = custInfo.custId;
+		OrderInfo.handleCustId = handleCustInfo.custId;
 		OrderInfo.ifCreateHandleCust = true;//需要新建经办人
 		//1.经办人客户信息
 		OrderInfo.bojbrCustInfos.name			= handleCustInfo.partyName;				//客户名称
