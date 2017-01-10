@@ -138,7 +138,7 @@ jQuery.ketchup
     if (CommonUtils.getLength(code) < 12) {
         return false;
     }
-    if (/^\d\w+$/.test(code)) {
+    if (/^\d[\s\S]+$/.test(code)) {
         return false;
     }
     if (/^\d+$/.test(code)) {
