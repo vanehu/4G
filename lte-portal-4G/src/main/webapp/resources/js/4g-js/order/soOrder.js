@@ -3907,6 +3907,7 @@ SoOrder = (function() {
 						if(ec.util.isObj(OrderInfo.handleCustId)){//经办人是老客户
 							OrderInfo.orderData.orderList.orderListInfo.belongHandleCustId = OrderInfo.handleCustId;
 						} else{//经办人是新客户
+							OrderInfo.handleCustId = initHandleCustId;
 							OrderInfo.orderData.orderList.orderListInfo.belongHandleCustId = initHandleCustId;
 						}
 					}
