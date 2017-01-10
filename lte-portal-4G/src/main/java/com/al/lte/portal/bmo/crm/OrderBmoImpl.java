@@ -3029,7 +3029,7 @@ public class OrderBmoImpl implements OrderBmo {
 		Object realNameFlag =  MDA.REAL_NAME_PHOTO_FLAG.get("REAL_NAME_PHOTO_"+sessionStaff.getCurrentAreaId().substring(0, 3));
     	boolean isRealNameFlagOn  = realNameFlag == null ? false : "ON".equals(realNameFlag.toString()) ? true : false;//实名制拍照开关是否打开
     	Object sessionActionFlagLimited = ServletUtils.getSessionAttribute(request, SysConstant.IS_ACTION_FLAG_LIMITED);
-    	boolean isActionFlagLimited = sessionActionFlagLimited == null ? true : (Boolean) sessionActionFlagLimited;//是否限制经办人必填的业务类型
+    	boolean isActionFlagLimited = sessionActionFlagLimited == null ? false : (Boolean) sessionActionFlagLimited;//是否限制经办人必填的业务类型
 		
     	Map<String, Object> orderList = (Map<String, Object>) param.get("orderList");
         Map<String, Object> orderListInfo = (Map<String, Object>) orderList.get("orderListInfo");
