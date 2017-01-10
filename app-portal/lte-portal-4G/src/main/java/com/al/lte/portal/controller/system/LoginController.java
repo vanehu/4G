@@ -39,6 +39,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ThemeResolver;
 
+import com.al.common.Constant;
 import com.al.common.utils.MD5Helper;
 import com.al.common.utils.StringUtil;
 import com.al.ec.serviceplatform.client.DataBus;
@@ -515,7 +516,11 @@ public class LoginController extends BaseController {
 				String message = (String) map.get("resultMsg");
 				return super.failed(message,-1);
 			}
-		} catch (Exception e) {
+		} catch (BusinessException be) {
+            return super.failed(be);
+        } catch (InterfaceException ie) {
+			return super.failed(ie, paramMap, ErrorCode.STAFF_LOGIN);
+        }  catch (Exception e) {
 			log.error("门户/staff/login/loginValid方法异常", e);
 			return super.failed(ErrorCode.STAFF_LOGIN, e, paramMap);
 		}
@@ -572,6 +577,20 @@ public class LoginController extends BaseController {
 			// 调用返回服务调用结果code
 			String resultCode = MapUtils.getString(map, "resultCode");
 			if (ResultCode.R_SUCC.equals(resultCode)) {
+				List<Map<String, Object>> attrList = (List<Map<String, Object>>) MapUtils.getObject(map, "attrList", new ArrayList<Map<String, Object>>());
+				boolean staffRealNameFlag = false;
+				// 工号实名制校验
+				if ("ON".equals(com.al.ecs.common.util.MDA.STAFF_AUTH_FLAG)) {
+					for (Map<String, Object> attrMap : attrList) {
+						if (SysConstant.STAFF_AUTH_ATTR_ID.equals(MapUtils.getString(attrMap, "ATTRID")) && SysConstant.STAFF_AUTH_ATTR_VAL_TRUE.equals(MapUtils.getString(attrMap, "ATTRVALUE"))) {
+							staffRealNameFlag = true;
+							break;
+						}
+					} 
+//					if (!staffRealNameFlag) {
+//						return super.failed("该工号未实名登记，不允许进行受理操作，请进行身份证实名登记！", Integer.parseInt(SysConstant.STAFF_AUTH_ATTR_VAL_FALSE));
+//					}
+				}
 				ServletUtils.removeSessionAttribute(request, SysConstant.SESSION_KEY_IMAGE_CODE);
 				if (StringUtils.isNotEmpty(ip)) {
 					map.put("ip", ip);
@@ -1067,7 +1086,7 @@ public class LoginController extends BaseController {
 				return menuResp;
 			}
 			Map<String, Object> menuResultMap = (Map<String, Object>) menuResp.getData();
-		
+			
 			// 换新sessionId ,让会话失效时间由sessin-config生效
 			String dbKeyWord = (String) request.getSession().getAttribute(SysConstant.SESSION_DATASOURCE_KEY);
 			request.getSession().invalidate();
