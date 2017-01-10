@@ -108,7 +108,7 @@
 				<div class="modal-content">
 					<div class="modal-header">
 						<button type="button" class="close" data-dismiss="modal"
-							aria-hidden="true">×</button>
+							aria-hidden="true" onClick="$('#dealerModal-result').hide();$('#dealerModal').find('.choice-box').children('.help-block').addClass('hidden');$('#staffCode,#salesCode').val('');">×</button>
 						<h4 class="modal-title">选择发展人</h4>
 					</div>
 					<div>
@@ -120,12 +120,12 @@
 						</div>
 						<div class="choice-box">
 							<i class="iconfont pull-left p-l-10">&#xe663;</i>
-							 <input id="staffCode" placeholder="请输入员工号" class="choice-input">
+							 <input id="staffCode" placeholder="请输入员工号" class="choice-input" onblur="if($(this).val().trim() != ''){$('#dealerModal').find('.choice-box').children('.help-block').addClass('hidden');}$('#dealerModal-result').hide();">
 						     <div class="help-block error hidden">工号不能为空</div>
 						</div>
 						<div class="choice-box">
 							<i class="iconfont pull-left p-l-10">&#xe663;</i> 
-							<input id="salesCode" placeholder="请输入销售员编码" class="choice-input">
+							<input id="salesCode" placeholder="请输入销售员编码" class="choice-input" onblur="if($(this).val().trim() != ''){$('#dealerModal').find('.choice-box').children('.help-block').addClass('hidden');}$('#dealerModal-result').hide();">
 							<div class="help-block error hidden">销售员编码不能为空</div>
 						</div>
 						<div id="dealerModal-result" style="line-height: .86rem; color: #ff0000; font-size: .26rem; display:none; text-align:center;">没有查询到该员工信息！</div>
