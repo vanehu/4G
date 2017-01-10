@@ -2425,12 +2425,12 @@ public class OrderBmoImpl implements OrderBmo {
 		paramMap2.put("reqNo", reqNo);//传给支付平台的业务流水号要保证不同
 		String payAmount = paramMap.get("charge").toString(); 
 		String busiUpType=paramMap.get("busiUpType").toString();//业务类型，默认1手机业务
-		List<Map<String, Object>> chargeItems2 = new ArrayList<Map<String, Object>>();
-		chargeItems2 = (List<Map<String, Object>>) paramMap.get("chargeItems");
-		JSONArray chargeItems = JSONArray.fromObject(chargeItems2);
-		if(paramMap.get("chargeItems")!=null){
-			paramMap2.put("chargeItems", chargeItems);
-		}
+//		List<Map<String, Object>> chargeItems2 = new ArrayList<Map<String, Object>>();
+//		chargeItems2 = (List<Map<String, Object>>) paramMap.get("chargeItems");
+//		JSONArray chargeItems = JSONArray.fromObject(chargeItems2);
+//		if(paramMap.get("chargeItems")!=null){
+//			paramMap2.put("chargeItems", chargeItems);
+//		}
 		paramMap2.put("provinceCode", provinceCode);
 		paramMap2.put("cityCode", cityCode);//areaId
 		paramMap2.put("channelId", channelId);//areaId
