@@ -51,6 +51,42 @@ jQuery.ketchup
 .validation('address', '不少于12个字符(6个汉字），不能为全数字，不能数字开头', function (form, el, code) {
     return this.isAddress(code);
 })
+.validation('blank_gb116431999', '18位有效身份证号', function (form, el, code) {
+    return "" == code || this.isGB116431999(code);
+})
+.validation('blank_hm8', 'H/M+8位有效数字', function (form, el, code) {
+    return "" == code || /^[HM]\d{8}$/.test(code);
+})
+.validation('blank_number8', '8位有效数字', function (form, el, code) {
+    return "" == code || this.isNumber8(code);
+})
+.validation('blank_number12', '12位有效数字', function (form, el, code) {
+    return "" == code || this.isNumber12(code);
+})
+.validation('blank_gs15200_gb321002015', '15位有效数字或18位有效企业编号', function (form, el, code) {
+    return "" == code || this.isGS152006(code) || this.isGB321002015(code);
+})
+.validation('blank_gb117141997_gs15200_gb321002015', '组织机构代码', function (form, el, code) {
+    return "" == code || this.isGB117141997(code) || this.isGS152006(code) || this.isGB321002015(code);
+})
+.validation('blank_gb321002015', '18位有效企业编号', function (form, el, code) {
+    return "" == code || this.isGB321002015(code);
+})
+.validation('blank_number12_gb321002015', '12位有效数字或者统一社会信用代码', function (form, el, code) {
+    return "" == code || this.isNumber12(code) || this.isGB321002015(code);
+})
+.validation('blank_passport', '外国公民护照', function (form, el, code) {
+    return "" == code || this.isPassport(code);
+})
+.validation('blank_personal', '个人用户名:大于等于4个字符（2个汉字）。不能含有数字、不能有特殊字符，可以含有“▪”(半角、全角都可以)', function (form, el, code) {
+    return "" == code || this.isPersonal(code);
+})
+.validation('blank_government', '企业用户名:a) 不为空，且大于等于10个字节 b) 不能全为数字', function (form, el, code) {
+    return "" == code || this.isGovernment(code);
+})
+.validation('blank_address', '不少于12个字符(6个汉字），不能为全数字，不能数字开头', function (form, el, code) {
+    return "" == code || this.isAddress(code);
+})
 .validation('reg', '{arg1}', function(form, el, value, mark) {
   	return new RegExp(mark).test(value);
 })

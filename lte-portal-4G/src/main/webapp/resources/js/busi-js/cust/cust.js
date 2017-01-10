@@ -491,9 +491,23 @@ order.cust = (function(){
 				$("#"+id).attr("data-validate","validate(required:请准确填写证件号码) on(blur)");
 			}
             if (query.common.queryPropertiesStatus("CHECK_RULES_" + (ec.util.isObj(OrderInfo.staff.areaId) ? OrderInfo.staff.areaId.substr(0, 3) : "")) && CacheData.isInCheckRuleByTypeCd(identidiesTypeCd)) {
+                if (id == "custCAttrIdCard") {
+                    $("#" + CONST.BUSI_ORDER_ATTR.orderAttrIdCard).removeAttr("onkeyup");
+                    $("#" + CONST.BUSI_ORDER_ATTR.orderAttrIdCard).attr("placeHolder", "请输入合法" + CacheData.getCheckRuleByKey(identidiesTypeCd, "name"));
+                    $("#" + CONST.BUSI_ORDER_ATTR.orderAttrIdCard).attr("data-validate", "validate(blank_" + CacheData.getCheckRuleByKey(identidiesTypeCd, "checkFunction") + ":" + CacheData.getCheckRuleByKey(identidiesTypeCd, "description") + ") on(blur)");
+
+                    $("#" + CONST.BUSI_ORDER_ATTR.orderAttrAddr).removeAttr("onkeyup");
+                    $("#" + CONST.BUSI_ORDER_ATTR.orderAttrAddr).attr("placeHolder", "请输入经办人地址");
+                    $("#" + CONST.BUSI_ORDER_ATTR.orderAttrAddr).attr("data-validate", "validate(blank_address) on(blur)");
+
+                    $("#" + CONST.BUSI_ORDER_ATTR.orderAttrName).removeAttr("onkeyup");
+                    $("#" + CONST.BUSI_ORDER_ATTR.orderAttrName).attr("placeHolder", "请输入经办人姓名");
+                    $("#" + CONST.BUSI_ORDER_ATTR.orderAttrName).attr("data-validate", "validate(blank_personal) on(blur)");
+                } else {
                     $("#" + id).removeAttr("onkeyup");
                     $("#" + id).attr("placeHolder", "请输入合法" + CacheData.getCheckRuleByKey(identidiesTypeCd, "name"));
                     $("#" + id).attr("data-validate", "validate(" + CacheData.getCheckRuleByKey(identidiesTypeCd, "checkFunction") + ":" + CacheData.getCheckRuleByKey(identidiesTypeCd, "description") + ") on(blur)");
+                }
             }
         }
 		_custcreateButton();
