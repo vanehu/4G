@@ -678,10 +678,10 @@ order.calcharge = (function(){
 	 */
 	var _getPayTocken = function(){
 		var dis=$("#printVoucherA").attr("disabled");//回执按钮置灰收费不可点击
-//		if("disabled"!=dis){
-//			$.alert("提示","请先保存回执");
-//			return;
-//		}
+		if("disabled"!=dis){
+			$.alert("提示","请先保存回执");
+			return;
+		}
 		var charge=_getCharge();//支付金额
 		_chargeItems=[];
 		_buildChargeItems();
