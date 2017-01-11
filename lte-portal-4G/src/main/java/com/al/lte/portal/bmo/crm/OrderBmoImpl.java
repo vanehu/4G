@@ -3045,11 +3045,12 @@ public class OrderBmoImpl implements OrderBmo {
 			actionFlag == 43  //返档
     	);
       
-        if(isRealNameFlagOn && isHandleCustNeeded && isCheckCertificateComprehensive){
+        /*if(isRealNameFlagOn && isHandleCustNeeded && isCheckCertificateComprehensive){
     		resultFlag = this.checkCustCertificateComprehensive(param, request);
     	} else{
     		resultFlag = this.checkCustCertificate(param, request);
-    	}
+    	}*/
+        resultFlag = this.checkCustCertificateComprehensive(param, request);
     	
     	return resultFlag;
 	}
