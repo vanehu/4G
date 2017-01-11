@@ -718,6 +718,8 @@ order.calcharge = (function(){
 		if(order.calcharge.busiUpType=="1"){
 			//实时受理收费走计费接口
 			_queryPayOrdStatus1(soNbr, status,type);
+		}else if(order.calcharge.busiUpType=="-1"){//补收费
+			repair.main.queryPayOrdStatus1(soNbr, status,type);
 		}else{//宽带甩单收费完直接订单提交
 			order.broadband.queryPayOrdStatus(soNbr, status,type);
 		}
