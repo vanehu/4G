@@ -76,22 +76,29 @@
 			</ul>
 		</div>
 		<div style="display: none;overflow: scroll;overflow-x:hidden;border:0px;" id="haveChooseServDiv">
-			<ul class="choice-list-box" style="overflow: scroll;overflow-x:hidden;border:0px;">
+			<ul class="choice-list-box" id="open_serv_ul_${param.prodId}" style="overflow: scroll;overflow-x:hidden;border:0px;">
 				<!-- 已选择功能产品 -->
 				<#if openServMap.result.servSpec??> <#assign
 				openServList=openServMap.result.servSpec /> <#if openServList??
 				&&(openServList?size>0)> <#list openServList as item> <#if
 				item.ifDault==0 >
-				<li><i class="iconfont pull-left">&#xe62b;</i> 
+				<li id="li_${prodId}_${item.servSpecId}">
 				<span class="list-title" id="span_${prodId}_${item.servSpecId}">${item.servSpecName}</span>
 				<#if item.ifParams =="Y" && item.servSpecId?? &&item.servSpecId!="">
 				<button class="list-can absolute-right" id="can_${prodId}_${item.servSpecId}" onclick="AttachOffer.showServParam(${prodId},${item.servSpecId});">参</button>
 				</#if>
 				<div class="list-checkbox absolute-right">
-				</div> 
+							<div class="checkbox-box">
+								<input type="checkbox" value="1" name=""
+									id="input_${prodId}_${item.servSpecId}"
+									servSpecId="${item.servSpecId}" checked="checked" /> <label
+									for="li_${prodId}_${item.servSpecId}"
+									onclick="AttachOffer.closeServSpec(${prodId},${item.servSpecId},'${item.servSpecName}','${item.ifParams}')"></label>
+							</div>
+					</div> 
 				<#else>
-				<li><i class="iconfont pull-left">&#xe62b;</i> 
-				<span class="list-title" id="span_${prodId}_${item.offerSpecId}">${item.servSpecName}</span>
+				<li id="li_${prodId}_${item.servSpecId}">
+				<span class="list-title" id="span_${prodId}_${item.servSpecId}">${item.servSpecName}</span>
 				<#if item.ifParams =="Y" && item.servSpecId?? &&item.servSpecId!="">
 				<button class="list-can absolute-right" id="can_${prodId}_${item.servSpecId}" onclick="AttachOffer.showServParam(${prodId},${item.servSpecId});">参</button>
 				</#if>

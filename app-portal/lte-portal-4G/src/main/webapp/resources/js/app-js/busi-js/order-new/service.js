@@ -141,6 +141,7 @@ order.service = (function(){
 	
 	//订购销售品
 	var _buyService = function(specId,price) {
+		order.service.showTab3=false;
 		var custId = OrderInfo.cust.custId;
 		offerprice = price;
 		if(OrderInfo.cust==undefined || custId==undefined || custId==""){

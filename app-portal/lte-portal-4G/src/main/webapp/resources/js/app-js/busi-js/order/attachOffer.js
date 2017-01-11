@@ -3520,8 +3520,13 @@ AttachOffer = (function() {
 			newSpec.counts=offer.counts;
 		}
 		var content = '<form id="paramForm">' ;
-		content += "重复订购次数" + ' : <input id="text_'+prodId+'_'+offerSpecId  
-		+'" class="inputWidth183px" type="text" value="'+newSpec.counts+'"><br>'; 
+		if(ec.util.isObj(newSpec.labelId)){
+			content += "重复订购次数" + ' : <input id="text_'+prodId+'_'+offerSpecId  
+			+'" class="inputWidth183px" type="text" value="'+newSpec.counts+'"><br>'; 
+		} else {
+			content += "重复订购次数" + ' : <input id="text_'+prodId+'_'+offerSpecId  
+			+'" class="inputWidth183px" type="text" disabled="disabled" value="'+newSpec.counts+'"><br>'; 
+		}
 		content +='</form>' ;
 		$.confirm("参数设置： ",content,{ 
 			yes:function(){

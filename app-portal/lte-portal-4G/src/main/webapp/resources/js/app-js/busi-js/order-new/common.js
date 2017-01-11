@@ -378,18 +378,21 @@ common = (function($) {
 					$("#nav-tab-1").removeClass("active in");
 			    	$("#nav-tab-2").addClass("active in");
 			    	$("#tab1_li").removeClass("active");
-			    	$("#tab2_li").addClass("active");				
+			    	$("#tab2_li").addClass("active");
+			    	$("#tab3_li").hide();
 				}
 				OrderInfo.order.step=1;
 				return;
 			}else if(OrderInfo.order.step==3){//副卡
+				$("#secondaryCardModal").modal("hide");
 				if(order.service.enter==3){//选号入口
 					$("#offer_a").show();
 					$("#phoneNumber_a").hide();
 					$("#nav-tab-3").removeClass("active in");
 			    	$("#nav-tab-2").addClass("active in");
 			    	$("#tab3_li").removeClass("active");
-			    	$("#tab2_li").addClass("active");	
+			    	$("#tab2_li").addClass("active");
+			    	$("#tab3_li").hide();
 				}else if(order.service.enter==1){//套餐入口
 					$("#offer_a").hide();
 					$("#phoneNumber_a").show();
@@ -417,7 +420,6 @@ common = (function($) {
 					order.phoneNumber.boProdAn={};//清空号码缓存
 					 order.phoneNumber.initPhonenumber();
 				}
-				 $("#tab3_li").hide();
 				 //移除已选副卡节点
 				 $("#secondaryPhoneNumUl").children("li:gt(0)").remove();
 				 order.phoneNumber.secondaryCarNum=0;
@@ -430,7 +432,7 @@ common = (function($) {
 			    	$("#tab4_li").removeClass("active");
 			    	$("#tab3_li").addClass("active");
 					OrderInfo.order.step=3;
-					order.service.showTab3=false;
+					//order.service.showTab3=false;
 				}else{
 					if(order.service.enter==3){//选号入口
 						$("#offer_a").show();
@@ -738,6 +740,19 @@ common = (function($) {
 				OrderInfo.orderData.orderList.custOrderList[0].busiOrder = [];
 				OrderInfo.resetSeq(); //重置序列
 				SoOrder.delOrder();
+				return;
+			}
+		}
+		if(OrderInfo.actionFlag==301){//补收费
+			if(OrderInfo.order.step==1){
+				_callCloseWebview();
+				return;
+			}else if(OrderInfo.order.step==2){
+				 $("#nav-tab-1").addClass("active in");
+				 $("#tab1_li").addClass("active");
+				 $("#nav-tab-2").removeClass("active in");
+			 	 $("#tab2_li").removeClass("active");
+				OrderInfo.order.step=1;
 				return;
 			}
 		}

@@ -443,7 +443,7 @@ order.phoneNumber = (function(){
 							  $("#phoneNumber_a").hide();
 							  $("#offer_a").hide();
 							 order.phoneNumber.step=3;
-							 if(order.service.max!=undefined){//存在副卡页
+							 if(order.service.max!=undefined && order.service.showTab3){//存在副卡页
 								 OrderInfo.order.step = 3;
 								 $("#nav-tab-1").removeClass("active in");
 						    	 $("#nav-tab-3").addClass("active in");

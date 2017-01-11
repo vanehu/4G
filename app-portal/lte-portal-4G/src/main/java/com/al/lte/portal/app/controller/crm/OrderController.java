@@ -2793,12 +2793,14 @@ public class OrderController extends BaseController {
 		String olId=param.get("olId").toString();
 		try {
 			rMap = orderBmo.queryPayOrderStatus(param, flowNum, sessionStaff);
-//			if(rMap.get("chargeItems")!=null){
-//				List<Map<String, Object>> chargeItems2 = new ArrayList<Map<String, Object>>();
-//				chargeItems2 = (List<Map<String, Object>>) rMap.get("chargeItems");
-//				JSONArray chargeItems = JSONArray.fromObject(chargeItems2);	
-//				rMap.put("chargeItems", chargeItems);
-//			}
+			if(rMap.get("chargeItems")!=null){
+				List<Map<String, Object>> chargeItems2 = new ArrayList<Map<String, Object>>();
+				chargeItems2 = (List<Map<String, Object>>) rMap.get("chargeItems");
+				if(chargeItems2.size()>0 && chargeItems2.get(0)!=null){
+					JSONArray chargeItems = JSONArray.fromObject(chargeItems2);	
+					rMap.put("chargeItems", chargeItems);	
+				}			
+			}
 			log.debug("return={}", JsonUtil.toString(rMap));
 			if (rMap != null && "POR-0000".equals(rMap.get("respCode").toString())) {
 				String payCode="";
@@ -2812,7 +2814,7 @@ public class OrderController extends BaseController {
 					 payAmount=rMap.get("payAmount").toString();//用于金额校验
 				}
 				 jsonResponse = super.successed(rMap,ResultConstant.SUCCESS.getCode());
-			} else {
+			} else{
 				jsonResponse = super.successed(rMap, ResultConstant.FAILD.getCode());
 			}
 			return jsonResponse;

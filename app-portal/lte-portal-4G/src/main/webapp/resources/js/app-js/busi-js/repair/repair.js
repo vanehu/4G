@@ -7,6 +7,13 @@ CommonUtils.regNamespace("repair", "main");
 repair.main = (function(){
 	
 	var _chargeItems = [];
+	
+	var _olId="";
+	
+	var _olNbr="";
+	
+	var _soNbr="";
+	
 	//查询
 	var _queryCartList = function(pageIndex){
 		var curPage = 1 ;
@@ -45,7 +52,9 @@ repair.main = (function(){
 				}else{
 					if(response.data==""||(response.data).indexOf("没有查询到结果")>=0){
 						$.alert("提示","没有查询到结果");
-						return;
+						if(OrderInfo.order.step==1){
+							return;
+						}					
 					}
 					OrderInfo.order.step=2;
 					 $("#nav-tab-2").addClass("active in");
@@ -98,10 +107,11 @@ repair.main = (function(){
 
 var _queryPayStatus=function(index){
 	var checkUrl = contextPath + "/app/order/getPayOrdStatus";
-	var olId=$("#olId_"+index).val();
-	var soNbr=$("#soNbr_"+index).val();
+	_olId=$("#olId_"+index).val();
+	_olNbr=$("#olNbr_"+index).val();
+	_soNbr=$("#soNbr_"+index).val();
 	var checkParams = {
-			"olId" : olId
+			"olId" : _olId
 			
 	};
 	$.callServiceAsJson(checkUrl,checkParams, {
@@ -120,9 +130,22 @@ var _queryPayStatus=function(index){
                     }
 				}
 				//补下计费接口
-				_chargeSave(olId,soNbr);
+				_chargeSave();
 			}else if(response.code==1){//支付接口支付失败
-				alert("支付失败,暂时无法进行补收费！");
+				if(response.data.respCode=="POR-2004"){//支付平台支付失败，跳转支付平台重新支付
+					var payType=response.data.payCode;
+					_chargeItems=response.data.chargeItems;
+					if(_chargeItems==null || _chargeItems==""){
+						$.alert("提示","支付平台未进行收费,费用项为空，暂时无法进行补收费！");
+						return;
+					}
+					_getPayTocken(response.data.payAmount+"");
+				}else if(response.data.respCode=="POR-2002"){//支付平台查询不到订单
+					$.alert("提示","支付平台未进行收费,暂时无法进行补收费！");
+				}else{
+					$.alert("提示","支付平台未进行收费,暂时无法进行补收费！");
+				}
+				//_calchargeInit(olId,olNbr,soNbr);
 			}else if(response.code==1002){
 				$.alert("提示",response.data);
 			}else{
@@ -132,10 +155,10 @@ var _queryPayStatus=function(index){
 	});
 };
 
-var _chargeSave = function(olId,soNbr){
+var _chargeSave = function(){
 	var params={
-			"olId":olId,
-			"soNbr":soNbr,
+			"olId":_olId,
+			"soNbr":_soNbr,
 			"areaId" : OrderInfo.staff.areaId,
 			"chargeItems":_chargeItems
 	};
@@ -169,6 +192,8 @@ var _chargeSave = function(olId,soNbr){
 	});
 };
 
+
+
 var _showFinDialog=function(msg){
 	var title='受理结果';
 	$("#btn-dialog-ok").removeAttr("data-dismiss");
@@ -181,11 +206,79 @@ var _showFinDialog=function(msg){
 	$("#alert-modal").modal();
 };
 
+
+
+/**
+ * 获取支付平台支付页面
+ */
+var _getPayTocken = function(charge){
+	var busiUpType="1";
+	order.calcharge.busiUpType="-1";//补标志
+	var params={
+			"olId":_olId,
+			"soNbr":_olNbr,
+			"busiUpType":busiUpType,
+			"chargeItems":_chargeItems,
+			"charge":charge
+	};
+	var url = contextPath+"/app/order/getPayUrl";
+	var response = $.callServiceAsJson(url, params);
+	if(response.code==0){
+		payUrl=response.data;
+		common.callOpenPay(payUrl);//打开支付页面
+	}else if(response.code==1002){
+		$.alert("提示",response.data);
+	}
+	else{
+		$.alertM(response.data);
+	}
+};
+
+/**
+ * 获取支付平台返回订单状态
+ */
+var _queryPayOrdStatus1 = function(soNbr, status,type) {
+	if ("1" == status) { // 原生返回成功，调用支付平台查询订单状态接口，再次确定是否成功，如果成功则调用收费接口
+		var checkUrl = contextPath + "/app/order/getPayOrdStatus";
+		var checkParams = {
+				"olId" : soNbr
+				
+		};
+		$.callServiceAsJson(checkUrl,checkParams, {
+			"before":function(){
+				$.ecOverlay("<strong>正在处理中,请稍等会儿....</strong>");
+			},	
+			"done" : function(response){
+				$.unecOverlay();
+				if (response.code == 0) {//支付成功的补下计费接口
+					var payType=response.data.payCode;
+					_chargeItems=response.data.chargeItems;
+					for(var i=0;i<_chargeItems.length;i++){//费用项修改付费方式
+						_chargeItems[i].payMethodCd=payType;
+	                    if(_chargeItems[i].posSeriaNbr==""){//将[]转为空
+	                    	_chargeItems[i].posSeriaNbr=""
+	                    }
+					}
+					//补下计费接口
+					_chargeSave();
+				}else if(response.code==1){//支付接口支付失败
+					//_calchargeInit(olId,olNbr,soNbr);
+				}else if(response.code==1002){
+					$.alert("提示",response.data);
+				}else{
+					$.alertM(response.data);
+				}
+			}
+		});
+	}
+};
 	return {
 		queryCartList			:_queryCartList,
 		init				    :_init,
 		queryPayStatus          :_queryPayStatus,
-		chargeSave              :_chargeSave
+		chargeSave              :_chargeSave,
+		getPayTocken            :_getPayTocken,
+		queryPayOrdStatus1      :_queryPayOrdStatus1
 
 	};
 	
