@@ -1116,7 +1116,7 @@ order.writeCard = (function(){
 								},
 								{
 								    "AttrId": "60029005",
-								    "AttrValue": ocx.GetDllVersion()
+								    "AttrValue": _cardDllInfoJson.dllVersion
 								},
 								{
 								    "AttrId": "65010019",
@@ -1154,12 +1154,12 @@ order.writeCard = (function(){
 				//alert(JSON.stringify(response));
 				
 				if (!response) {
-					$.alert("提示","<br/>卡资源回填到卡管系统异常,请稍后重试。");
+					$.alert("提示","<br/>写卡成功后且未响应数据卡资源回填到卡管系统异常,请稍后重试。");
 					var paramLog = {
 							mkt_res_inst_code : $("#resultCardNo").val(),
 							iccid : _rscJson.iccid,
 							card_source : _cardDllInfoJson.dllName,
-							err_desc : "卡资源回填到卡管系统异常,请稍后重试。",
+							err_desc : "写卡成功后未响应数据卡资源回填到卡管系统异常,请稍后重试。",
 							acc_nbr : OrderInfo.getAccessNumber(_rscJson.prodId),
 							contact_record : _TransactionID
 					};
@@ -1167,7 +1167,7 @@ order.writeCard = (function(){
 					return;
 				}
 			   if(response.code != 0) {
-					$.alert("提示","<br/>调用卡资源回填到卡管系统异常,请稍后重试。");
+					$.alert("提示","<br/>写卡成功后调用卡资源回填到卡管系统异常,请稍后重试。");
 					if(response.data !="" && response.data !=undefined){
 						alertMM(response.data);
 					}
@@ -1175,7 +1175,7 @@ order.writeCard = (function(){
 							mkt_res_inst_code : $("#resultCardNo").val(),
 							iccid : _rscJson.iccid,
 							card_source : _cardDllInfoJson.dllName,
-							err_desc : "卡资源回填到卡管系统异常,请稍后重试。"+response.data.errMsg,
+							err_desc : "写卡成功后卡资源回填到卡管系统异常,请稍后重试。错误原因："+response.data.errMsg,
 							acc_nbr : OrderInfo.getAccessNumber(_rscJson.prodId),
 							contact_record : _TransactionID
 					};
@@ -1184,7 +1184,7 @@ order.writeCard = (function(){
 				}
 				//var eventJson = response.data;
 				if (eventJson.code != 0) {
-					$.alert("提示","调用卡资源回填到卡管系统异常！" + eventJson.message,"error");
+					$.alert("提示","写卡成功后调用卡资源回填到卡管系统异常！错误原因：" + eventJson.message,"error");
 					return;
 				}
 //				var flag = eventJson.code;
@@ -1211,12 +1211,12 @@ order.writeCard = (function(){
 				_backFillOrderCardInfo(eventJson.result);
 				return true;
 			} catch(e) {
-				$.alert("提示","调用卡资源回填到卡管系统异常！" + e.message,"error");
+				$.alert("提示","写卡入库成功后订单数据填充异常！错误原因" + e.message,"error");
 				var paramLog = {
 						mkt_res_inst_code : $("#resultCardNo").val(),
 						iccid :_rscJson.iccid,
 						card_source : _cardDllInfoJson.dllName,
-						err_desc : "调用卡资源回填到卡管系统异常！" + e.message,
+						err_desc : "写卡入库成功后订单数据填充异常！错误原因" + e.message,
 						acc_nbr : OrderInfo.getAccessNumber(_rscJson.prodId),
 						contact_record : _TransactionID
 				};
@@ -1226,21 +1226,35 @@ order.writeCard = (function(){
 	};
 	_backFillOrderCardInfo=function(result){
 		//要求截取前19位编码
-		if (_rscJson.iccid.length==20){
-			_rscJson.iccid = _rscJson.iccid.substr(0,_rscJson.iccid.length-1);
-		}
-		$("#uim_txt_"+_rscJson.prodId).val($("#resultCardAsciiFStr").val());
-		var resp = $.callServiceAsJson(contextPath+"/mktRes/terminal/infoQueryByCode", {instCode:_cardInfoJson.serialNumber,"areaId": OrderInfo.getProdAreaId(_rscJson.prodId)});//mark 根据串码获取卡类型，异地补换卡，获取产品的地区
-		if(resp.code ==0&&ec.util.isObj(resp.data.mktResBaseInfo)&&ec.util.isObj(resp.data.mktResBaseInfo.mktResId)){
-			result.mktResId = resp.data.mktResBaseInfo.mktResId;
-		}else{
-			if(ec.util.isObj(resp.data.resultMsg)){
-				$.alert("信息提示","根据串码："+_cardInfoJson.serialNumber+"获取卡类型失败！失败原因："+resp.data.resultMsg);
-				return ;
+		try {
+			if (_rscJson.iccid.length==20){
+				_rscJson.iccid = _rscJson.iccid.substr(0,_rscJson.iccid.length-1);
+			}
+			$("#uim_txt_"+_rscJson.prodId).val($("#resultCardAsciiFStr").val());
+			var resp = $.callServiceAsJson(contextPath+"/mktRes/terminal/infoQueryByCode", {instCode:_cardInfoJson.serialNumber,"areaId": OrderInfo.getProdAreaId(_rscJson.prodId)});//mark 根据串码获取卡类型，异地补换卡，获取产品的地区
+			if(resp.code ==0&&ec.util.isObj(resp.data.mktResBaseInfo)&&ec.util.isObj(resp.data.mktResBaseInfo.mktResId)){
+				result.mktResId = resp.data.mktResBaseInfo.mktResId;
 			}else{
-				$.alert("信息提示","根据串码："+_cardInfoJson.serialNumber+"获取卡类型失败！失败原因未返回！");
-				return ;
-			}				
+				if(ec.util.isObj(resp.data.resultMsg)){
+					$.alert("信息提示","根据串码："+_cardInfoJson.serialNumber+"获取卡类型失败！失败原因："+resp.data.resultMsg);
+					return ;
+				}else{
+					$.alert("信息提示","根据串码："+_cardInfoJson.serialNumber+"获取卡类型失败！失败原因未返回！");
+					return ;
+				}				
+			}
+		} catch(e) {
+			$.alert("提示","根据串码："+_cardInfoJson.serialNumber+"获取卡类型失败！错误原因" + e.message,"error");
+			var paramLog = {
+					mkt_res_inst_code : $("#resultCardNo").val(),
+					iccid :_rscJson.iccid,
+					card_source : _cardDllInfoJson.dllName,
+					err_desc : "根据串码："+_cardInfoJson.serialNumber+"获取卡类型失败！错误原因" + e.message,
+					acc_nbr : OrderInfo.getAccessNumber(_rscJson.prodId),
+					contact_record : _TransactionID
+			};
+			_writeCardLogInfo(paramLog);
+			return false;
 		}
 		 if (OrderInfo.actionFlag == 41) {// ESS远程写卡
 			 _essWriteCard = {
@@ -1293,31 +1307,45 @@ order.writeCard = (function(){
 					uimType:"2",//标识用于订单成功更新订单状态
 					relaSeq : "" //关联序列	
 				};
-		 if(ec.util.isObj(_cardInfoJson.cardTypeId)) {
-			 var uimCardType = prod.uim.getCardType("", "", _cardInfoJson.serialNumber);
-			 if (CONST.UIMTYPE3G4G.IS4G == uimCardType) {//4G卡
-				 coupon.cardTypeFlag = 1;
-			 }
-			 //补换卡和异地补换卡增加4g卡不能补3g卡的限制
-			 if(prod.changeUim.is4GProdInst&&(OrderInfo.actionFlag==22 || OrderInfo.actionFlag==23)){//判断是否有开通4G功能产品
-					if(CONST.UIMTYPE3G4G.IS3G==uimCardType){
-						$.alert("信息提示","您已开通了【4G（LTE）上网】功能产品，而UIM卡是3G卡，请使用4G的白卡！");
-						return false;
+		 try{
+			  if(ec.util.isObj(_cardInfoJson.cardTypeId)) {
+				 var uimCardType = prod.uim.getCardType("", "", _cardInfoJson.serialNumber);
+				 if (CONST.UIMTYPE3G4G.IS4G == uimCardType) {//4G卡
+					 coupon.cardTypeFlag = 1;
+				 }
+				 //补换卡和异地补换卡增加4g卡不能补3g卡的限制
+				 if(prod.changeUim.is4GProdInst&&(OrderInfo.actionFlag==22 || OrderInfo.actionFlag==23)){//判断是否有开通4G功能产品
+						if(CONST.UIMTYPE3G4G.IS3G==uimCardType){
+							$.alert("信息提示","您已开通了【4G（LTE）上网】功能产品，而UIM卡是3G卡，请使用4G的白卡！");
+							return false;
+						}
 					}
-				}
-		 }
-         if(OrderInfo.actionFlag==1 || OrderInfo.actionFlag==6 || OrderInfo.actionFlag==14){
-         	coupon.offerId = "-1";
-         }else{
-         	coupon.offerId = order.prodModify.choosedProdInfo.prodOfferInstId; //销售品实例ID
-         }
- 		 OrderInfo.clearProdUim(_rscJson.prodId);
-         OrderInfo.boProd2Tds.push(coupon);
-         if((OrderInfo.actionFlag==22 || OrderInfo.actionFlag==23) && coupon.cardTypeFlag==1 && order.prodModify.choosedProdInfo.productId != '280000000'){
-        	AttachOffer.openServList = [];
-     		AttachOffer.openList = [];
-     	    AttachOffer.queryCardAttachOffer(coupon.cardTypeFlag);  //加载附属销售品
-      	 }
+			 }
+	         if(OrderInfo.actionFlag==1 || OrderInfo.actionFlag==6 || OrderInfo.actionFlag==14){
+	         	coupon.offerId = "-1";
+	         }else{
+	         	coupon.offerId = order.prodModify.choosedProdInfo.prodOfferInstId; //销售品实例ID
+	         }
+	 		 OrderInfo.clearProdUim(_rscJson.prodId);
+	         OrderInfo.boProd2Tds.push(coupon);
+	         if((OrderInfo.actionFlag==22 || OrderInfo.actionFlag==23) && coupon.cardTypeFlag==1 && order.prodModify.choosedProdInfo.productId != '280000000'){
+	        	AttachOffer.openServList = [];
+	     		AttachOffer.openList = [];
+	     	    AttachOffer.queryCardAttachOffer(coupon.cardTypeFlag);  //加载附属销售品
+	      	 }
+		 } catch(e) {
+				$.alert("提示","您已开通了【4G（LTE）上网】功能产品，而UIM卡是3G卡，请使用4G的白卡！错误原因：" + e.message,"error");
+				var paramLog = {
+						mkt_res_inst_code : $("#resultCardNo").val(),
+						iccid :_rscJson.iccid,
+						card_source : _cardDllInfoJson.dllName,
+						err_desc : "您已开通了【4G（LTE）上网】功能产品，而UIM卡是3G卡，请使用4G的白卡！错误原因：" + e.message,
+						acc_nbr : OrderInfo.getAccessNumber(_rscJson.prodId),
+						contact_record : _TransactionID
+				};
+				_writeCardLogInfo(paramLog);
+				return false;
+		}
  		//3转4弹出促销窗口//查询卡类型
  		var oldCardis4GCard = "";
  		if(ec.util.isObj(_rscJson.prodId)&& _rscJson.prodId>=0){//不为新装
@@ -1364,69 +1392,83 @@ order.writeCard = (function(){
  			if(offerRoleId==undefined){
  				offerRoleId = "";
  			}
- 			param.offerRoleId = offerRoleId;
- 			param.offerSpecIds.push(prodInfo.prodOfferId);
- 			var data = query.offer.queryCanBuyAttachSpec(param);
- 			if(data != undefined && data.resultCode == "0" && data.result.offerSpecList.length > 0){ 				
- 				var attachOfferList = CacheData.getOfferList(_rscJson.prodId);//已订购附属销售品
- 				var content = '<form id="promotionForm"><table>';
- 				var selectStr = "";
- 				var optionStr = "";
- 				selectStr = selectStr + "<tr><td>可订购促销包: </td><td><select class='inputWidth183px' id=" + accNbr + "><br>"; 
- 				
- 				//循环遍历可订购附属销售品
- 				$.each(data.result.offerSpecList,function(){
- 					var offerSpec = this;
- 					var offerSpecId = this.offerSpecId;
-					var offerSpecName = this.offerSpecName;
-					var ifOrderAgain = this.ifOrderAgain;//是否可以重复订购
-					var ifDueOrderAgain = this.ifDueOrderAgain;//当月到期是否可以重复订购
-					
-					if(attachOfferList != undefined && attachOfferList.length > 0){
-						//循环遍历已订购附属销售品
-						$.each(attachOfferList,function(){
-							//如果可订购附属在已订购列表中
-							if(this.offerSpecId == offerSpecId && this.isDel != "C"){
-								var expireDate = this.expDate;//已订购的附属销售品的失效时间
-								expireDate = expireDate.substring(4,6);//截取失效时间(20150201000000)的月份(02)
-								var currentMonth = new Date().getMonth() + 1;//获取当前月份(0-11,从0开始，如0为1月份，1为2月份)
-								if(currentMonth < 10){
-									currentMonth = "0" + currentMonth;//如果月份为个位数，则补充"0"于首位
-								}
-								if(expireDate == currentMonth){
-									//如果已订购是当月到期
-									if(ifOrderAgain == "Y" || ifDueOrderAgain == "Y"){
-										//如果该附属可重复订购或者到期当月可重复订购，则展示；否则屏蔽不展示
-										optionStr += '<option value="' + offerSpecId + '">' + offerSpecName + '</option>';
+ 			try{
+	 			param.offerRoleId = offerRoleId;
+	 			param.offerSpecIds.push(prodInfo.prodOfferId);
+	 			var data = query.offer.queryCanBuyAttachSpec(param);
+	 			if(data != undefined && data.resultCode == "0" && data.result.offerSpecList.length > 0){ 				
+	 				var attachOfferList = CacheData.getOfferList(_rscJson.prodId);//已订购附属销售品
+	 				var content = '<form id="promotionForm"><table>';
+	 				var selectStr = "";
+	 				var optionStr = "";
+	 				selectStr = selectStr + "<tr><td>可订购促销包: </td><td><select class='inputWidth183px' id=" + accNbr + "><br>"; 
+	 				
+	 				//循环遍历可订购附属销售品
+	 				$.each(data.result.offerSpecList,function(){
+	 					var offerSpec = this;
+	 					var offerSpecId = this.offerSpecId;
+						var offerSpecName = this.offerSpecName;
+						var ifOrderAgain = this.ifOrderAgain;//是否可以重复订购
+						var ifDueOrderAgain = this.ifDueOrderAgain;//当月到期是否可以重复订购
+						
+						if(attachOfferList != undefined && attachOfferList.length > 0){
+							//循环遍历已订购附属销售品
+							$.each(attachOfferList,function(){
+								//如果可订购附属在已订购列表中
+								if(this.offerSpecId == offerSpecId && this.isDel != "C"){
+									var expireDate = this.expDate;//已订购的附属销售品的失效时间
+									expireDate = expireDate.substring(4,6);//截取失效时间(20150201000000)的月份(02)
+									var currentMonth = new Date().getMonth() + 1;//获取当前月份(0-11,从0开始，如0为1月份，1为2月份)
+									if(currentMonth < 10){
+										currentMonth = "0" + currentMonth;//如果月份为个位数，则补充"0"于首位
 									}
+									if(expireDate == currentMonth){
+										//如果已订购是当月到期
+										if(ifOrderAgain == "Y" || ifDueOrderAgain == "Y"){
+											//如果该附属可重复订购或者到期当月可重复订购，则展示；否则屏蔽不展示
+											optionStr += '<option value="' + offerSpecId + '">' + offerSpecName + '</option>';
+										}
+									}
+								} else{
+									//如果该可订购附属没有在已订购列表中，则不过滤
+									optionStr += '<option value="' + offerSpecId + '">' + offerSpecName + '</option>';
 								}
-							} else{
-								//如果该可订购附属没有在已订购列表中，则不过滤
-								optionStr += '<option value="' + offerSpecId + '">' + offerSpecName + '</option>';
-							}
-						});
-					} else{
-						optionStr += '<option value="' + offerSpecId + '">' + offerSpecName + '</option>';
-					}
- 				});
- 				selectStr += optionStr + "</select></td></tr>"; 
- 				content +=selectStr;
- 				var offerSpecId;
- 				$.confirm("促销包选择",content,{ 
- 					yes:function(){	
- 						
- 					},
- 					no:function(){
- 						
- 					}
- 				});
- 				$('#promotionForm').bind('formIsValid', function(event, form) {
- 					offerSpecId = $('#'+accNbr+' option:selected').val();
- 					$(".ZebraDialog").remove();
- 	                $(".ZebraDialogOverlay").remove();
- 	                AttachOffer.selectAttachOffer(productId,offerSpecId);
- 				}).ketchup({bindElementByClass:"ZebraDialog_Button1"});
- 				
+							});
+						} else{
+							optionStr += '<option value="' + offerSpecId + '">' + offerSpecName + '</option>';
+						}
+	 				});
+	 				selectStr += optionStr + "</select></td></tr>"; 
+	 				content +=selectStr;
+	 				var offerSpecId;
+	 				$.confirm("促销包选择",content,{ 
+	 					yes:function(){	
+	 						
+	 					},
+	 					no:function(){
+	 						
+	 					}
+	 				});
+	 				$('#promotionForm').bind('formIsValid', function(event, form) {
+	 					offerSpecId = $('#'+accNbr+' option:selected').val();
+	 					$(".ZebraDialog").remove();
+	 	                $(".ZebraDialogOverlay").remove();
+	 	                AttachOffer.selectAttachOffer(productId,offerSpecId);
+	 				}).ketchup({bindElementByClass:"ZebraDialog_Button1"});
+	 				
+	 			}
+ 			} catch(e) {
+ 				$.alert("提示","促销可选包弹出框弹出！错误原因：" + e.message,"error");
+ 				var paramLog = {
+ 						mkt_res_inst_code : $("#resultCardNo").val(),
+ 						iccid :_rscJson.iccid,
+ 						card_source : _cardDllInfoJson.dllName,
+ 						err_desc : "促销可选包弹出框弹出！错误原因：" + e.message,
+ 						acc_nbr : OrderInfo.getAccessNumber(_rscJson.prodId),
+ 						contact_record : _TransactionID
+ 				};
+ 				_writeCardLogInfo(paramLog);
+ 				return false;
  			}
  		}
 	};
