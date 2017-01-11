@@ -3908,7 +3908,7 @@ SoOrder = (function() {
 						if(isOldHandlCust){//经办人是老客户
 							OrderInfo.orderData.orderList.orderListInfo.belongHandleCustId = OrderInfo.handleCust.extCustId;
 						} else{//经办人是新客户
-							OrderInfo.orderData.orderList.orderListInfo.belongHandleCustId = OrderInfo.handleCustId;
+							OrderInfo.orderData.orderList.orderListInfo.belongHandleCustId = -1;//异地补换卡，经办人新客户时，后台要求写死-1，不使用序列
 						}
 					}
 					_createHandleCust(busiOrders);

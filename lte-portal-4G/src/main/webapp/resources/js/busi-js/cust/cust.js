@@ -3065,8 +3065,8 @@ order.cust = (function(){
 		OrderInfo.bojbrCustInfos.telNumber		= $.trim($("#orderAttrPhoneNbr").val());//联系电话
 		OrderInfo.bojbrCustInfos.addressStr		= handleCustInfo.addressStr;			//证件地址
 		OrderInfo.bojbrCustInfos.partyTypeCd	= $.trim($("#orderPartyTypeCd").val());	//客户类型
-		OrderInfo.bojbrCustInfos.mailAddress	= handleCustInfo.address;				//客户地址
-		OrderInfo.bojbrCustInfos.mailAddressStr	= handleCustInfo.custAddress;			//加密后的客户地址
+		OrderInfo.bojbrCustInfos.mailAddress	= handleCustInfo.address;				//加密后的客户地址
+		OrderInfo.bojbrCustInfos.mailAddressStr	= handleCustInfo.custAddress;			//客户地址
 		OrderInfo.bojbrCustInfos.defaultIdTycre	= $.trim($("#orderIdentidiesTypeCd").val());//证件类型
 		//2.经办人证件信息
 		OrderInfo.bojbrCustIdentities.identidiesTypeCd	= $.trim($("#orderIdentidiesTypeCd").val());//证件类型
