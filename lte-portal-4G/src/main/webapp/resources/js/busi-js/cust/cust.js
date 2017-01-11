@@ -3065,20 +3065,22 @@ order.cust = (function(){
 		OrderInfo.bojbrCustInfos.telNumber		= $.trim($("#orderAttrPhoneNbr").val());//联系电话
 		OrderInfo.bojbrCustInfos.addressStr		= handleCustInfo.addressStr;			//证件地址
 		OrderInfo.bojbrCustInfos.partyTypeCd	= $.trim($("#orderPartyTypeCd").val());	//客户类型
-		OrderInfo.bojbrCustInfos.mailAddressStr	= handleCustInfo.address;				//加密后的客户地址
+		OrderInfo.bojbrCustInfos.mailAddress	= handleCustInfo.address;				//客户地址
+		OrderInfo.bojbrCustInfos.mailAddressStr	= handleCustInfo.custAddress;			//加密后的客户地址
 		OrderInfo.bojbrCustInfos.defaultIdTycre	= $.trim($("#orderIdentidiesTypeCd").val());//证件类型
 		//2.经办人证件信息
 		OrderInfo.bojbrCustIdentities.identidiesTypeCd	= $.trim($("#orderIdentidiesTypeCd").val());//证件类型
-		OrderInfo.bojbrCustIdentities.identityNum 		= handleCustInfo.certNum;//加密后的证件号码
+		OrderInfo.bojbrCustIdentities.certNum 			= handleCustInfo.certNum;//加密后的证件号码
+		OrderInfo.bojbrCustIdentities.identityNum 		= handleCustInfo.idCardNumber;//证件号码
 		//3.若用户有填写经办人联系号码，则新建经办人时添加联系人信息，否则不添加联系人信息
 		if(ec.util.isObj(OrderInfo.bojbrCustInfos.telNumber)){
 			if(ec.util.isArray(handleCustInfo.contactInfos)){//有联系人节点返回，则尽可能从联系人节点取值
 				var contactInfo = handleCustInfo.contactInfos[0];
 				OrderInfo.bojbrPartyContactInfo.staffId 		= OrderInfo.staff.staffId;
 				OrderInfo.bojbrPartyContactInfo.mobilePhone 	= OrderInfo.bojbrCustInfos.telNumber;
-				OrderInfo.bojbrPartyContactInfo.contactName 	= contactInfo.contactName;//取经办人名字还是取联系人名字？
+				OrderInfo.bojbrPartyContactInfo.contactName 	= contactInfo.contactName;
 				OrderInfo.bojbrPartyContactInfo.contactNameEnc 	= contactInfo.contactNameEnc;
-				OrderInfo.bojbrPartyContactInfo.contactAddress 	= OrderInfo.bojbrCustInfos.address;//联系人节点没有地址，以经办人地址
+				OrderInfo.bojbrPartyContactInfo.contactAddress 	= "";//后台要求传空字符串
 				if(ec.util.isObj(contactInfo.contactGender)){
 					OrderInfo.bojbrPartyContactInfo.contactGender = contactInfo.contactGender;
 				} else{
@@ -3096,7 +3098,7 @@ order.cust = (function(){
 				OrderInfo.bojbrPartyContactInfo.mobilePhone 	= OrderInfo.bojbrCustInfos.telNumber;
 				OrderInfo.bojbrPartyContactInfo.contactName 	= OrderInfo.bojbrCustInfos.name;
 				OrderInfo.bojbrPartyContactInfo.contactNameEnc 	= handleCustInfo.CN;//未返回联系人节点时，只能CN代替
-				OrderInfo.bojbrPartyContactInfo.contactAddress 	= OrderInfo.bojbrCustInfos.address;
+				OrderInfo.bojbrPartyContactInfo.contactAddress 	= "";//后台要求传空字符串;
 				//根据证件类型判断性别
 				if(OrderInfo.bojbrCustIdentities.identidiesTypeCd == "1"){
 					var identityNum = OrderInfo.bojbrCustIdentities.identityNum;
