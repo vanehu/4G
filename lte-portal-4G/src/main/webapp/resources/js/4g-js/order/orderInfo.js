@@ -1719,14 +1719,15 @@ OrderInfo = (function() {
 		}
 		OrderInfo.ifCreateHandleCust	  = false;//判断是否需要新建经办人
 		OrderInfo.virOlId				  = "";//拍照上传虚拟购物车ID
+		OrderInfo.handleCust			  = {};//针对经办人老客户缓存一些数据
 		OrderInfo.handleCustId 			  = "";//经办人为老客户时的客户ID
 		OrderInfo.boUserCustInfos 		  = [];//使用人：客户信息节点
 		OrderInfo.boUserCustIdentities	  = [];//使用人：客户证件节点
 		OrderInfo.boUserPartyContactInfos = [];//使用人：联系人节点
 		OrderInfo.boUserPartyContactInfo  = $.extend(true, {}, _boUserPartyContactInfo);//使用人：联系人节点
-		OrderInfo.bojbrCustInfos 		  = $.extend(true, {}, _bojbrCustInfos);//经办人：客户信息节点
-		OrderInfo.bojbrCustIdentities	  = $.extend(true, {}, _bojbrCustIdentities);//经办人：客户证件节点
-		OrderInfo.bojbrPartyContactInfo   = $.extend(true, {}, _bojbrPartyContactInfo);//经办人：客户证件节点
+		OrderInfo.bojbrCustInfos 		  = $.extend(true, {}, _bojbrCustInfos);		//经办人：客户信息节点
+		OrderInfo.bojbrCustIdentities	  = $.extend(true, {}, _bojbrCustIdentities);	//经办人：客户证件节点
+		OrderInfo.bojbrPartyContactInfo   = $.extend(true, {}, _bojbrPartyContactInfo);	//经办人：客户证件节点
 	};
 	
 	//前置校验流水号
@@ -1734,6 +1735,9 @@ OrderInfo = (function() {
 	
 	//true：套餐变更加装新号码、主副卡成员变更加装新号码，此时经办人必须填写且拍照；false：其他所有业务
 	var _isHandleCustNeeded = false;
+	
+	//经办人客户信息，针对经办人老客户缓存一些数据
+	var _handleCust = {};
 	
 	return {	
 		order					: _order,
@@ -1847,6 +1851,7 @@ OrderInfo = (function() {
 		boUserCustInfos 		:_boUserCustInfos,
 		ifCreateHandleCust		:_ifCreateHandleCust,
 		preTransactionID        :_preTransactionID,
-		isHandleCustNeeded		:_isHandleCustNeeded
+		isHandleCustNeeded		:_isHandleCustNeeded,
+		handleCust				:_handleCust
 	};
 })();

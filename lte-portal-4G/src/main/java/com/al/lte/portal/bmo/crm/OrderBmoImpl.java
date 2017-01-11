@@ -3050,7 +3050,7 @@ public class OrderBmoImpl implements OrderBmo {
     	} else{
     		resultFlag = this.checkCustCertificate(param, request);
     	}*/
-        resultFlag = this.checkCustCertificateComprehensive(param, request);
+        resultFlag = this.checkCustCertificate(param, request);//新建客户身份证读卡校验
     	
     	return resultFlag;
 	}

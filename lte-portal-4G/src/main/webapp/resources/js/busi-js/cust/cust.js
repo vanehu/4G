@@ -2974,6 +2974,7 @@ order.cust = (function(){
 	var _getResponseResult = function(response){
 		//判断新老用户封装用户信息
 		if(ec.util.isArray(response.data.custInfos)){
+			OrderInfo.ifCreateHandleCust = false;//不需要新建经办人
 			var custInfo = response.data.custInfos[0];//默认取第一个节点，针对经办人查询，Java端也只会返回一个
 			OrderInfo.handleCustId 					  = custInfo.custId;//经办人客户ID
 			OrderInfo.bojbrCustInfos.name 			  = custInfo.partyName;
@@ -2984,7 +2985,7 @@ order.cust = (function(){
 				"certAddress"	:custInfo.addressStr,
 				"certNumber"	:custInfo.idCardNumber
 			});
-			//如果是异地补换卡，无论新老客户，默认对漫游省下新建经办人节点
+			//异地补换卡特殊，无论新老客户，默认对漫游省下新建经办人节点
 			if((OrderInfo.actionFlag == 23 && OrderInfo.busitypeflag == 13)) {
 				_fillupHandleCustInfos(custInfo);
 			}
@@ -3053,8 +3054,9 @@ order.cust = (function(){
 	
 	//往订单信息中填充经办人信息，针对异地补换卡特殊处理，其他业务不可用
 	var _fillupHandleCustInfos = function(handleCustInfo){
-		OrderInfo.handleCustId = handleCustInfo.custId;
-		OrderInfo.ifCreateHandleCust = true;//需要新建经办人
+		OrderInfo.handleCust 		= handleCustInfo;//经办人客户信息
+		OrderInfo.handleCustId		= handleCustInfo.custId;//经办人客户ID
+		OrderInfo.ifCreateHandleCust= true;//需要新建经办人
 		//1.经办人客户信息
 		OrderInfo.bojbrCustInfos.name			= handleCustInfo.partyName;				//客户名称
 		OrderInfo.bojbrCustInfos.areaId			= OrderInfo.getAreaId();				//客户地区

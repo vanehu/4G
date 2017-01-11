@@ -309,7 +309,7 @@ SoOrder = (function() {
 			custOrderAttrs.push({ //橙分期短信验证码
 				itemSpecId: "800000070",
 				value: $.trim($("#cfqSMSCode").val())
-			})
+			});
 		}
 		custOrderAttrs.push({ //业务类型
 			itemSpecId : CONST.BUSI_ORDER_ATTR.BUSITYPE_FLAG,
@@ -3908,7 +3908,7 @@ SoOrder = (function() {
 					OrderInfo.orderData.orderList.orderListInfo.handleCustId = initHandleCustId;
 					if((OrderInfo.actionFlag == 23 && OrderInfo.busitypeflag == 13)) {//异地补换卡特殊处理
 						if(ec.util.isObj(OrderInfo.handleCustId)){//经办人是老客户
-							OrderInfo.orderData.orderList.orderListInfo.belongHandleCustId = OrderInfo.handleCustId;
+							OrderInfo.orderData.orderList.orderListInfo.belongHandleCustId = OrderInfo.handleCust.extCustId;
 						} else{//经办人是新客户
 							OrderInfo.handleCustId = initHandleCustId;
 							OrderInfo.orderData.orderList.orderListInfo.belongHandleCustId = initHandleCustId;
