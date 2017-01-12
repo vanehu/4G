@@ -16,6 +16,9 @@ repair.main = (function(){
 	
 	//查询
 	var _queryCartList = function(pageIndex){
+		if($("#alert-modal").length>0){
+			$("#alert-modal").hide();
+		}
 		var curPage = 1 ;
 		if(pageIndex>0){
 			curPage = pageIndex ;
@@ -51,10 +54,11 @@ repair.main = (function(){
 					return ;
 				}else{
 					if(response.data==""||(response.data).indexOf("没有查询到结果")>=0){
-						$.alert("提示","没有查询到结果");
 						if(OrderInfo.order.step==1){
+							$.alert("提示","没有查询到结果");
 							return;
-						}					
+						}
+										
 					}
 					OrderInfo.order.step=2;
 					 $("#nav-tab-2").addClass("active in");
@@ -110,6 +114,10 @@ var _queryPayStatus=function(index){
 	_olId=$("#olId_"+index).val();
 	_olNbr=$("#olNbr_"+index).val();
 	_soNbr=$("#soNbr_"+index).val();
+	if(_olId==undefined){
+		$.alert("提示","购物车id为空！");
+		return;
+	}
 	var checkParams = {
 			"olId" : _olId
 			
@@ -136,14 +144,19 @@ var _queryPayStatus=function(index){
 					var payType=response.data.payCode;
 					_chargeItems=response.data.chargeItems;
 					if(_chargeItems==null || _chargeItems==""){
-						$.alert("提示","支付平台未进行收费,费用项为空，暂时无法进行补收费！");
+						$.alert("提示","支付平台未进行收费，费用项为空，无法进行补收费！");
+						
 						return;
 					}
 					_getPayTocken(response.data.payAmount+"");
 				}else if(response.data.respCode=="POR-2002"){//支付平台查询不到订单
-					$.alert("提示","支付平台未进行收费,暂时无法进行补收费！");
+					$.alert("提示","支付平台未查到该订单，无法进行补收费,您可以选择作废订单！");
+					$("#button_"+index).attr("style","position:absolute; right:10px;background: #a5a3a2;");
+//					$("#button_"+index).off("onclick").on("onclick",function(event){
+//						repair.main.delOrder(index);
+//					});
 				}else{
-					$.alert("提示","支付平台未进行收费,暂时无法进行补收费！");
+					$.alert("提示","支付平台未进行收费,无法进行补收费！");
 				}
 				//_calchargeInit(olId,olNbr,soNbr);
 			}else if(response.code==1002){
@@ -272,13 +285,46 @@ var _queryPayOrdStatus1 = function(soNbr, status,type) {
 		});
 	}
 };
+
+//作废购物车
+var _delOrder = function(index){
+	_olId=$("#olId_"+index).val();
+	if(_olId!=0&&_olId!=undefined){  //作废购物车
+		var param = {
+			olId : _olId,
+			areaId : OrderInfo.getAreaId()
+		};
+		$.callServiceAsJsonGet(contextPath+"/app/order/delOrder",param,{
+			"before":function(){
+				$.ecOverlay("<strong>正在处理中,请稍等会儿....</strong>");
+			},	
+			"done" : function(response){
+				$.unecOverlay();
+				if (response.code==0) {
+					if(response.data.resultCode==0){
+						$.alert("提示","订单作废成功！");
+						_queryCartList(1);
+					}
+				}else if (response.code==-2){
+					$.alertM(response.data.errData);
+				}else {
+					$.alert("提示","订单作废失败！");
+				}
+			},
+			fail:function(response){
+				$.alert("提示","信息","请求可能发生异常，请稍后再试");
+			}
+		});
+	}
+};
 	return {
 		queryCartList			:_queryCartList,
 		init				    :_init,
 		queryPayStatus          :_queryPayStatus,
 		chargeSave              :_chargeSave,
 		getPayTocken            :_getPayTocken,
-		queryPayOrdStatus1      :_queryPayOrdStatus1
+		queryPayOrdStatus1      :_queryPayOrdStatus1,
+		delOrder                :_delOrder
 
 	};
 	

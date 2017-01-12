@@ -1655,8 +1655,8 @@ order.calcharge = (function(){
 					//payMethodCd=payType;
 				}
 				realFee=Number(realFee)+Number(realmoney);
-				var param={"realAmount":1,
-						"feeAmount":1,
+				var param={"realAmount":realmoney,
+						"feeAmount":feeAmount,
 						"paymentAmount":paymentAmount,
 						"acctItemTypeId":acctItemTypeId,
 						"objId":objId,

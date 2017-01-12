@@ -8,10 +8,11 @@
 		<i class="iconfont pull-left">&#xe635;</i>
 	     <span class="list-title font-secondary">${cart.partyName}</span>
 	     <button class="list-can absolute-right" onclick="repair.main.queryPayStatus(${orderLists_index})">补</button>
+	     <button id="button_${orderLists_index}" class="list-can" style="position:absolute; right:10px;background: #a5a3a2;display: none;" onclick="repair.main.delOrder(${orderLists_index})">废</button>
 	     <input type="hidden" id="olId_${orderLists_index}" value="${cart.olId}"/>
 	      <input type="hidden" id="olNbr_${orderLists_index}" value="${cart.olNbr}"/>
 	      <input type="hidden" id="soNbr_${orderLists_index}" value="${orderLists.soNbr}"/>
-	    <i href="#ordercon2" class="iconfont absolute-right">&#xe66e;</i>
+	    
 	</li>
 	<li>
 	    <span class="list-title">
