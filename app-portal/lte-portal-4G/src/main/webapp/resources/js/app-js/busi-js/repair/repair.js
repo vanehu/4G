@@ -186,8 +186,7 @@ var _chargeSave = function(){
 			$.unecOverlay();
 			if (response.code == 0) {
 				submit_success=true;
-				msg="补收费成功";
-				$("#toCharge").attr("disabled","disabled");				
+				msg="补收费成功";			
 				_showFinDialog(msg);
 				return;
 			}else if (response.code == -2) {

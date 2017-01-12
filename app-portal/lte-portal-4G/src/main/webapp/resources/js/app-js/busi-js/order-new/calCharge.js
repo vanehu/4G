@@ -701,7 +701,8 @@ order.calcharge = (function(){
 			//var payUrl2="http://192.168.4.137:7001/pay_web/platpay/index?payToken="+payUrl.split("=")[1];
    		  // payUrl2="https://crm.189.cn:86/upay/platpay/index?payToken=5D0CB495B3DD59CAEC106F93EEBD13952F62C58C4A13445FB8AC378A32038E99";
 			$.ecOverlay("<strong>支付处理中,请稍等会儿....</strong>");
-			timeId=setInterval(order.calcharge.timeToFee,3000);//定时查询支付状态，若成功则下计费接口，已下过则不再下。
+			setTimeout(function(){timeId=setInterval(order.calcharge.timeToFee,3000);},10000);//10秒后开始定时任务
+			//timeId=setInterval(order.calcharge.timeToFee,3000);//定时查询支付状态，若成功则下计费接口，已下过则不再下。
 			common.callOpenPay(payUrl);//打开支付页面
 		}else if(response.code==1002){
 			$.alert("提示",response.data);
@@ -861,6 +862,7 @@ order.calcharge = (function(){
 			$.unecOverlay();//去遮罩
 		}
 	};
+
 	return {
 		changeRealMoney:_changeRealMoney,
 		refreshTotal:_refreshTotal,
@@ -881,6 +883,7 @@ order.calcharge = (function(){
 		returnFlag:_returnFlag,
 		setGreyNoEdit:_setGreyNoEdit,
 		timeToFee    :_timeToFee
+
 	};
 })();
 
