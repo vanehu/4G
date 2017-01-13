@@ -60,6 +60,9 @@ public class RuleControler extends BaseController {
 			log.error("门户/rule/prepare方法异常", e);
 			return super.failedStr(model,ErrorCode.CHECK_RULE, e, param);
 		}
+		if(param.get("newFlag")!=null){
+			return "/app/rule/new_rule";
+		}
 		return "/app/rule/rulecheck";
 	}
 }

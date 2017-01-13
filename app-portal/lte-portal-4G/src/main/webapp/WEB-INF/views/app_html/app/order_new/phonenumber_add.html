@@ -146,9 +146,8 @@
 									</div>
 									<div class="modal-body">
 										<div class="choice-box m-t-10">
-											<i class="iconfont pull-left p-l-10">&#xe66c;</i> <select
-												name="" id="categoryNodeId" class="myselect select-option"
-												data-role="none">
+											<i class="iconfont pull-left p-l-10">&#xe66c;</i> 
+											<select name="" id="categoryNodeId" class="myselect select-option" data-role="none">
 												<option value="">我的收藏</option>
 												<option value="90132141">乐享</option>
 												<option value="90132143">积木</option>
@@ -162,23 +161,20 @@
 											<!--<i class="iconfont right-btn pull-right p-r-10">&#xe647;</i>-->
 										</div>
 										<div class="choice-box m-t-10">
-											<i class="iconfont pull-left p-l-10">&#xe61a;</i> <select
-												name="" placeholder="价格区间（元）" id="offerPrice"
-												class="myselect select-option" data-role="none">
+											<i class="iconfont pull-left p-l-10">&#xe61a;</i> 
+											<select name="" placeholder="价格区间（元）" id="select_price" class="myselect select-option" data-role="none">
 												<option id="-1" value="">价格区间</option>
 											</select> <i class="iconfont pull-right p-r-10">&#xe66e;</i>
 										</div>
 										<div class="choice-box m-t-10">
-											<i class="iconfont pull-left p-l-10">&#xe648;</i> <select
-												name="" placeholder="语音时长（分钟）" id=""
-												class="myselect select-option" data-role="none">
+											<i class="iconfont pull-left p-l-10">&#xe648;</i> 
+											<select name="" placeholder="语音时长（分钟）" id="select_invoice" class="myselect select-option" data-role="none">
 												<option id="-1" value="">语音时长</option>
 											</select> <i class="iconfont pull-right p-r-10">&#xe66e;</i>
 										</div>
 										<div class="choice-box m-t-10">
-											<i class="iconfont pull-left p-l-10">&#xe64e;</i> <select
-												name="" placeholder="流量（G）" id=""
-												class="myselect select-option" data-role="none">
+											<i class="iconfont pull-left p-l-10">&#xe64e;</i> 
+											<select name="" placeholder="流量（G）" id="select_influx" class="myselect select-option" data-role="none">
 												<option id="-1" value="">流量</option>
 											</select> <i class="iconfont pull-right p-r-10">&#xe66e;</i>
 										</div>
@@ -192,6 +188,8 @@
 							</div>
 						</div>
 							<div class="list-box m-t-10" id="offer-list">
+							</div>
+							<div class="list-box m-t-10" id="offer-rule">
 							</div>
 						</div>
 						<div class="tab-pane fade" id="nav-tab-3">
@@ -418,6 +416,7 @@
 				if (${enter} == "3") {//选号界面初始化
 					order.phoneNumber.initPhonenumber();
 				} else if (${enter} == "1") {//选套餐界面初始化
+					order.service.queryApConfig();
 					order.service.searchPack();
 				}
 			}

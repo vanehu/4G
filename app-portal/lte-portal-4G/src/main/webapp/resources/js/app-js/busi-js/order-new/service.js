@@ -17,6 +17,8 @@ order.service = (function(){
 	var _showTab3=false;
 	//主套餐查询
 	var _searchPack = function(){
+		$("#offer-rule").hide();
+		$("#offer-list").show();
 		var custId = OrderInfo.cust.custId;
 		var qryStr=$("#offerName").val();
 //		var params={"qryStr":qryStr,"pnLevelId":"","custId":custId};
@@ -163,16 +165,16 @@ order.service = (function(){
 //			$.ecOverlay("<strong>正在校验,请稍等会儿...</strong>");
 //			var paramtmp={};
 //			$.callServiceAsHtml(url,paramtmp);
-//				rule.rule.ruleCheck(boInfos,function(checkData){//业务规则校验通过
-//					if(ec.util.isObj(checkData)){
-//						$("#order_prepare").hide();
-//						var content$ = $("#order").html(checkData).show();
-//						$.refresh(content$);
-//					}else{
-//						order.service.querySpec(param);   
-//					}
-//				});
-				order.service.querySpec(param);
+				rule.rule.ruleCheck(boInfos,function(checkData){//业务规则校验通过
+					if(ec.util.isObj(checkData)){
+						$("#offer-list").hide();
+						var content$ = $("#offer-rule").html(checkData).show();
+						$.refresh(content$);
+					}else{
+						order.service.querySpec(param);   
+					}
+				});
+				//order.service.querySpec(param);
 		}
 	};
 	
@@ -390,6 +392,13 @@ order.service = (function(){
 			$("#terminal_check").removeClass("dis-none");
 		}		
 	}
+	
+//关闭规则窗口
+var _closeRule=function(){
+	$("#offer-list").show();
+	$("#offer-rule").hide();
+	
+}
 	return {
 		enter:_enter,
 		max  :_max,
@@ -402,7 +411,8 @@ order.service = (function(){
 		scaningCallBack:_scaningCallBack,
 		setOfferSpec   :_setOfferSpec,
 		showTab3       :_showTab3,
-		terminalScaningCallBack:_terminalScaningCallBack
+		terminalScaningCallBack:_terminalScaningCallBack,
+		closeRule              :_closeRule
 	};
 })();
 
