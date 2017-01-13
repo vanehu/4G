@@ -8,6 +8,7 @@ CommonUtils.regNamespace("CacheData");
 
 /** 缓存数据对象*/
 CacheData = (function() {
+	var recordId = "";
 	//设置鉴权日志id
 	var _setRecordId = function (id) {
 		recordId = id;

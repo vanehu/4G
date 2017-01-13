@@ -82,6 +82,26 @@ public class CustController extends BaseController {
     private MktResBmo mktResBmo;
     
     /**
+     * 客户创建入口-实名制客户创建入口
+     * @return
+     * @throws BusinessException
+     */
+    @RequestMapping(value = "/query", method = { RequestMethod.POST })
+    public String custQuery(@RequestBody Map<String, Object> param,HttpServletRequest request,Model model,HttpSession session) throws BusinessException {
+    	String forward = "";
+    	Map<String, Object> custSessionMap =  (Map<String, Object>) session.getAttribute("custMp");
+    	List menu =  (List) session.getAttribute(SysConstant.SESSION_KEY_MENU_LIST);
+    	//判断是否已经完成客户定位 是Y 否N
+		if(custSessionMap!=null){
+			model.addAttribute("haveCust", "Y");
+		}else{
+			model.addAttribute("haveCust", "N");
+		}
+    	forward = "/app/cust/cust-query";
+        return forward;
+    }
+    
+    /**
 	 * 新增客户订单查询页面
 	 * @param model
 	 * @param session
@@ -1534,6 +1554,10 @@ public class CustController extends BaseController {
 		httpSession.setAttribute("ValidateAccNbr", null);
 		httpSession.setAttribute("ValidateProdPwd", null);
 		httpSession.setAttribute("queryCustAccNbr", paramMap.get("acctNbr"));
+		//每次客户定位前清空客户缓存
+		httpSession.removeAttribute("custMp");
+		//用于缓存客户定位信息
+		Map<String, Object> custMp = new HashMap();
 		//判断是否只能进行本地定位
 /*		String diffPlace=(String) param.get("diffPlace");
 		if(diffPlace.equals("local")){
@@ -1557,6 +1581,7 @@ public class CustController extends BaseController {
 				iseditOperation="1";
 			}
 		model.addAttribute("jumpAuthflag", iseditOperation);
+		custMp.put("jumpAuthflag", iseditOperation);
 		
 		String areaId=(String) paramMap.get("areaId");
 		if(("").equals(areaId)||areaId==null){
@@ -1611,6 +1636,8 @@ public class CustController extends BaseController {
 				
 				sessionStaff.setInPhoneNum(String.valueOf(paramMap.get("acctNbr")));
 				model.addAttribute("custInfoSize", custInfos.size());
+				model.addAttribute("custInfos", JsonUtil.buildNormal().objectToJson(custInfos));
+				custMp.put("custInfoSize", custInfos.size());
 				if(custInfos.size()>0){
 					Map custInfo =(Map)custInfos.get(0);
 					String idCardNumber = (String) custInfo.get("idCardNumber");
@@ -1697,10 +1724,13 @@ public class CustController extends BaseController {
 						}
 						resultMap.put("custInfos", custInfosWithNbr);
 						model.addAttribute("query", paramMap.get("query"));  //综合查询调用标志
+						custMp.put("query", paramMap.get("query"));  //综合查询调用标志
 						model.addAttribute("multiCust", "Y");  //多客户标识
+						custMp.put("multiCust", "Y");  //多客户标识
 						
 						PageModel<Map<String, Object>> pm = PageUtil.buildPageModel(1, 10, custInfosWithNbr.size(),custInfosWithNbr);
 			    		model.addAttribute("pageModel", pm);
+			    		custMp.put("pageModel", pm);
 					}
 					
 				}else{
@@ -1708,18 +1738,21 @@ public class CustController extends BaseController {
 //					httpSession.setAttribute(sessionStaff.getStaffCode()+"custcount", count);
 				}
 				model.addAttribute("cust", resultMap);
+				custMp.put("cust", resultMap);
 			}else{
 				int count = (Integer) httpSession.getAttribute(sessionStaff.getStaffCode()+"custcount")+10;
 				httpSession.setAttribute(sessionStaff.getStaffCode()+"custcount", count);
 			}
 			if(paramMap.containsKey("query")){	
 				model.addAttribute("query", paramMap.get("query"));  //综合查询调用标志
+				custMp.put("query", paramMap.get("query"));  //综合查询调用标志
 			}
 			log.debug("结束后sessionStaff", "20151226");
 			log.debug("agentQueryCust", sessionStaff);
 			log.debug("agentQueryCust/staffId", sessionStaff.getStaffId());
 			log.debug("agentQueryCust/ChannelId", sessionStaff.getChannelId());
-			return "/agent/cust/cust-list";
+			httpSession.setAttribute("custMp", custMp);
+			return "/app/cust/cust-list";
 		} catch (BusinessException be) {
 			return super.failedStr(model, be);
 		} catch (InterfaceException ie) {

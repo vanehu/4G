@@ -214,7 +214,7 @@ html input[disabled] {
 .Validform_checktip.Validform_wrong {
 	position: absolute;
 	right: 5px;
-	top: 13px;
+	/* top: 13px; */
 	color: red;
 }
 .has-feedback label~.form-control-feedback{

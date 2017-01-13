@@ -43,6 +43,9 @@ function Slider(opts) {
 	if(opts.runList!=undefined){
 		this.runList = opts.runList;
 	}
+	if(opts.tab_flag!=undefined){
+		this.tab_flag = opts.tab_flag;
+	}
 	//构造三步奏
 	this.init();
 	//this.renderDOM();
@@ -120,7 +123,10 @@ Slider.prototype.goIndex = function(n) {
 
 	//保留当前索引值
 	this.idx = cidx;
-
+	if(this.tab_flag != undefined){
+		$("."+this.tab_flag).removeClass("active");
+		$("#"+this.tab_flag+"_"+this.idx).addClass("active");
+	}
 	//改变过渡的方式，从无动画变为有动画
 	lis[cidx].style.webkitTransition = '-webkit-transform 0.2s ease-out';
 	lis[cidx - 1] && (lis[cidx - 1].style.webkitTransition = '-webkit-transform 0.2s ease-out');

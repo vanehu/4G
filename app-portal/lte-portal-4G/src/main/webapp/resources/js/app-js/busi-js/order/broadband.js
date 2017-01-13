@@ -27,6 +27,8 @@ order.broadband = (function(){
 	
 	var ssfy = 0;//总实收费用
 	
+	var _broadbandCharge=0;//宽带总实收
+	
 	var upRange = []//上行速率
 	
 	var dwRange = [];//下行速率
@@ -1149,7 +1151,8 @@ var _saveHtml2Pdf=function(){
 //			order.broadband.confirm();
 //			return;
 //		}
-		common.callCustLocation('common.callCustInfo');
+		custQuery.goQueryCust();
+//		common.callCustLocation('common.callCustInfo');
 	}
 	//客户定位
 	var _showCust = function(){
@@ -1700,7 +1703,7 @@ var _saveHtml2Pdf=function(){
 //				var objType=$("#objType_"+val).val();
 //				var acctItemId=$("#acctItemId_"+val).val();
 //				var boId=$("#boId_"+val).val();
-				var payMethodCd=10000;//$(".shouyintai_payType").val();
+				var payMethodCd=100000;//$(".shouyintai_payType").val();
 //				var objInstId=$("#objInstId_"+val).val();
 //				var prodId=$("#prodId_"+val).val();
 //				var boActionType=$("#boActionType_"+val).val();
@@ -1772,6 +1775,7 @@ var _saveHtml2Pdf=function(){
 				_print_chargeItems.push(print_param);
 			}
 		});
+		order.broadband.broadbandCharge=ssfy;
 	};
 	
 	var _showEditPage = function(obj){
@@ -2364,9 +2368,10 @@ var _setNoPhoto=function(){
 		canCallPhote    :_canCallPhote,
 		getJbrInfo      :_getJbrInfo,
 		haveCallPhote   :_haveCallPhote,
-		resetId   :_resetId,
+		resetId         :_resetId,
 		jbrInfoFillIn   :_jbrInfoFillIn,
 		isOldCust       :_isOldCust,
-		setNoPhoto      :_setNoPhoto
+		setNoPhoto      :_setNoPhoto,
+		broadbandCharge :_broadbandCharge
 	}
 })()

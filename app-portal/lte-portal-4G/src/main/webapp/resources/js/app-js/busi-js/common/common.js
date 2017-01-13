@@ -60,8 +60,8 @@ common = (function($) {
 		}
 		var method=urlParams.method;// /app/prodModify/custAuth
 //		if(method == "/app/order/broadband/prepare"){
-//		method = "/app/cust/query";
-//	}
+//			method = "/app/cust/query";
+//		}
 		$.callServiceAsHtml(contextPath+method,param,{
 			"before":function(){
 				$.ecOverlay("正在努力加载中，请稍等...");
@@ -216,6 +216,14 @@ common = (function($) {
 	};
 	
 	var _saveCust = function(){
+		if(OrderInfo.actionFlag == 111){
+			$("#queryCust").hide();
+			order.broadband.showCust();
+			$("#sd_tab-box").show();
+			$("#cust").show();
+			_callCustInfo(OrderInfo.cust);
+			return;
+		}
 		var arr=new Array(1);
 		arr[0]=JSON.stringify(OrderInfo.cust);
 		MyPlugin.showCust(arr,
@@ -367,8 +375,10 @@ common = (function($) {
 				_callCloseWebview();
 				return;
 			}else if(OrderInfo.order.step==2){
+				$("#sd_tab-box").show();
 				$("#orderContent").show();
 				$("#cust").hide();
+				$("#queryCust").hide();
 				OrderInfo.order.step = 1;
 				$("#kh").removeClass("active");
 				$("#kh_1").addClass("dis-none");

@@ -8,6 +8,12 @@ CommonUtils.regNamespace("cust");
  * 订单准备
  */
 cust = (function(){
+	//客户鉴权跳转权限
+	var _jumpAuthflag="";
+	var _queryForChooseUser = false;
+	var authFlag = null; 
+	var _orderBtnflag="";
+	
 	var _choosedCustInfo = {};
 	var _checkUserInfo = {
 			 accNbr: ""
@@ -62,7 +68,14 @@ cust = (function(){
 	}
 	//客户新增提交
 	var _newCustSubmit = function(){
-		$('#custFormdata').data('bootstrapValidator').validate();
+		if(OrderInfo.actionFlag=="111"){
+			var validate=$("#custFormdata").Validform();
+			if(!validate.check()){
+				return;
+			}
+		} else {
+			$('#custFormdata').data('bootstrapValidator').validate();
+		}
 		var propertiesKey = "CMADDRESS_CHECK_FLAG";
 	    var isFlag = offerChange.queryPortalProperties(propertiesKey);
 	    if(!isFlag){
@@ -73,15 +86,19 @@ cust = (function(){
 		if(cmAddressStr.replace(/[^\x00-\xff]/g,"aa").length<12 && isFlag=="ON"){
 			$.alert("提示","证件地址长度不得少于6个汉字");
 		}else {
-			if($('#custFormdata').data('bootstrapValidator').isValid()){
-				/*var url=contextPath+"/order/createorderlonger";
-				var response = $.callServiceAsJson(url, {});
-				if(response.code==0){
-					OrderInfo.custorderlonger=response.data;
-				}*/
-				
-				_checkIdentity();
+			if(OrderInfo.actionFlag!="111"){
+				if($('#custFormdata').data('bootstrapValidator').isValid()){
+					/*var url=contextPath+"/order/createorderlonger";
+					var response = $.callServiceAsJson(url, {});
+					if(response.code==0){
+						OrderInfo.custorderlonger=response.data;
+					}*/
+					
+					_checkIdentity();
 
+				}
+			}else{
+				_checkIdentity();
 			}
 		}
 		
@@ -1017,79 +1034,145 @@ cust = (function(){
 	
 	//校验表单提交
 	var _validatorForm=function(){
-		$('#custFormdata').bootstrapValidator({
-	        message: '无效值',
-	        feedbackIcons: {
-	            valid: 'glyphicon glyphicon-ok',
-	            invalid: 'glyphicon glyphicon-remove',
-	            validating: 'glyphicon glyphicon-refresh'
-	        },
-	        fields: {
-	        	cmCustName: {
-	        		trigger: 'blur',
-	                validators: {
-	                    notEmpty: {
-	                        message: '客户姓名不能为空'
-	                    }
-	                }
-	            },
-	            cmCustIdCard: {
-	            	trigger: 'blur',
-	                validators: {
-	                    notEmpty: {
-	                        message: '身份证号码不能为空'
-	                    },
-	                    regexp: {
-	                        regexp: /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/,
-	                        message: '请输入合法身份证号码'
-	                    }
-	                }
-	            },
-	            cmCustIdCardOther: {
-	            	trigger: 'blur',
-	                validators: {
-	                    notEmpty: {
-	                        message: '证件号码不能为空'
-	                    },
-	                    regexp: {
-	                        regexp: /^[0-9a-zA-Z]*$/g,
-	                        message: '证件号码只能为数字或字母'
-	                    }
-	                }
-	            },
-	            cmAddressStr: {
-	            	trigger: 'blur',
-	                validators: {
-	                    notEmpty: {
-	                        message: '证件地址不能为空'
-	                    }
-//	            ,
-//	                    regexp: {
-//	                        regexp: /[\u4e00-\u9fa5]{6}|^.{12}/,
-//	                        message: '证件地址长度不得少于6个汉字'
-//	                    }
-	                }
-	            },
-	            mobilePhone: {
-	            	trigger: 'blur',
-	                validators: {
-	                    regexp: {
-	                        regexp: /(^\d{11}$)/,
-	                        message: '手机号码只能为11数字'
-	                    }
-	                }
-	            },
-	            phonenumber: {
-	            	trigger: 'blur',
-	                validators: {
-	                    notEmpty: {
-	                        message: '手机号码不能为空'
-	                    }
-	                }
-	            }
-	        }
-	    });
-		
+		if(_newUIFalg == "ON" && (OrderInfo.actionFlag!="111")){
+			$('#custFormdata').bootstrapValidator({
+		        message: '无效值',
+		        feedbackIcons: {
+		            valid: 'glyphicon glyphicon-ok',
+		            invalid: 'glyphicon glyphicon-remove',
+		            validating: 'glyphicon glyphicon-refresh'
+		        },
+		        fields: {
+		        	cmCustName: {
+		        		trigger: 'blur',
+		                validators: {
+		                    notEmpty: {
+		                        message: '客户姓名不能为空'
+		                    }
+		                }
+		            },
+		            cmCustIdCard: {
+		            	trigger: 'blur',
+		                validators: {
+		                    notEmpty: {
+		                        message: '身份证号码不能为空'
+		                    },
+		                    regexp: {
+		                        regexp: /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/,
+		                        message: '请输入合法身份证号码'
+		                    }
+		                }
+		            },
+		            cmCustIdCardOther: {
+		            	trigger: 'blur',
+		                validators: {
+		                    notEmpty: {
+		                        message: '证件号码不能为空'
+		                    },
+		                    regexp: {
+		                        regexp: /^[0-9a-zA-Z]*$/g,
+		                        message: '证件号码只能为数字或字母'
+		                    }
+		                }
+		            },
+		            cmAddressStr: {
+		            	trigger: 'blur',
+		                validators: {
+		                    notEmpty: {
+		                        message: '证件地址不能为空'
+		                    }
+	//	            ,
+	//	                    regexp: {
+	//	                        regexp: /[\u4e00-\u9fa5]{6}|^.{12}/,
+	//	                        message: '证件地址长度不得少于6个汉字'
+	//	                    }
+		                }
+		            },
+		            mobilePhone: {
+		            	trigger: 'blur',
+		                validators: {
+		                    regexp: {
+		                        regexp: /(^\d{11}$)/,
+		                        message: '手机号码只能为11数字'
+		                    }
+		                }
+		            },
+		            phonenumber: {
+		            	trigger: 'blur',
+		                validators: {
+		                    notEmpty: {
+		                        message: '手机号码不能为空'
+		                    }
+		                }
+		            }
+		        }
+		    });
+		}
+		else{
+//		var propertiesKey = "NEWUIFLAG_"+(OrderInfo.staff.soAreaId+"").substring(0,3);
+//		_newUIFalg = offerChange.queryPortalProperties(propertiesKey);
+//		if(_newUIFalg == "ON" && (OrderInfo.actionFlag=="111")){
+			var new_user_box = $(".new_user_box").Validform({
+				btnSubmit:".sun-btn", 
+				ignoreHidden:true,
+				datatype:{
+					"zh6-50":/[\u4e00-\u9fa5]{6}|^.{12}/,
+					"sfz":/(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/,
+					"qtzj":/^[0-9a-zA-Z]{1,100}$/
+				},
+				tiptype:function(msg,o,cssctl){
+					
+					//msg：提示信息;
+					//o:{obj:*,type:*,curform:*}, obj指向的是当前验证的表单元素（或表单对象），type指示提示的状态，值为1、2、3、4， 1：正在检测/提交数据，2：通过验证，3：验证失败，4：提示ignore状态, curform为当前form对象;
+					//cssctl:内置的提示信息样式控制函数，该函数需传入两个参数：显示提示信息的对象 和 当前提示的状态（既形参o中的type）;
+					if(!o.obj.is("form")){//验证表单元素时o.obj为该表单元素，全部验证通过提交表单时o.obj为该表单对象;
+						if(o.type == 3){
+							var objtip=o.obj.siblings(".Validform_checktip");
+							cssctl(objtip,o.type);
+							objtip.text(msg);
+						}
+						if(o.type == 2){
+							var objtip=o.obj.siblings(".Validform_checktip");
+							cssctl(objtip,o.type);
+							objtip.text("");
+						}
+					}
+				},
+				showAllError:true,
+			});
+			new_user_box.addRule([
+				{
+				    ele:"#cmCustName",
+				    datatype:"*",
+				    nullmsg:"客户姓名不能为空",
+				    errormsg:"客户姓名不能为空"
+				},
+				{
+				    ele:"#cmCustIdCardOther",
+				    datatype:"qtzj",
+				    nullmsg:"证件号码不能为空",
+				    errormsg:"证件号码只能为数字或字母"
+				},
+				{
+				    ele:"#cmCustIdCard",
+				    datatype:"sfz",
+				    nullmsg:"身份证号码不能为空",
+				    errormsg:"请输入合法身份证号码"
+				},
+				{
+				    ele:"#cmAddressStr",
+				    datatype:"zh6-50",
+				    nullmsg:"证件地址不能为空",
+				    errormsg:"证件地址长度不得少于6个汉字"
+				},
+				{
+				    ele:"#mobilePhone",
+				    datatype:"m",
+				    errormsg:"请输入正确的手机号码",
+				    ignore:"ignore"
+				}                
+			]);
+		}
 	};
 	
 	//获取证件类型以及初始化
@@ -1126,8 +1209,10 @@ cust = (function(){
 	     }
 		//根据证件类型对行添加校验
 		_identidiesTypeCdChoose($("#cm_identidiesTypeCd option[selected='selected']"));
-		
 		$('#newCustBtn').off("click").on("click",_newCustSubmit);
+		if(OrderInfo.actionFlag!=8){
+			return;
+		}
 		var BO_ACTION_TYPE=CONST.BO_ACTION_TYPE.CUST_CREATE;
 		OrderInfo.initData(CONST.ACTION_CLASS_CD.CUST_ACTION,BO_ACTION_TYPE,8,CONST.getBoActionTypeName(BO_ACTION_TYPE),"");
 
@@ -1380,7 +1465,8 @@ cust = (function(){
 					"offerId":prodInstInfos.mainProdOfferInstInfos[0].prodOfferInstId,
 					"offerSpecId":prodInstInfos.mainProdOfferInstInfos[0].prodOfferId,
 					"offerSpecName":prodInstInfos.mainProdOfferInstInfos[0].prodOfferName,
-					"accNbr":prodInstInfos.accNbr
+					"accNbr":prodInstInfos.accNbr,
+					"custInfos":response.data.custInfos
 				};
 				OrderInfo.oldoffer.push(offerInfos);
 				order.memberChange.viceCartNum = 0;

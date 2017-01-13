@@ -1,5 +1,8 @@
 <input type="hidden" id="currentCT" value="${currentCT}"/><!-- 渠道类型 -->
 <#if offerSpec?? && offerSpec.offerRoles?? && (offerSpec.offerRoles?size>0)>
+<div id="tab_flag" class="point-main-box">
+	<a id="tab_flag_0" href="#" class="tab_flag active"></a>
+</div>
 <ul class="tab-change-list2" id="tab-change-list2"> 
  <#list offerSpec.offerRoles as offerRole>
 <#if offerRole.prodInsts?? && (offerRole.prodInsts?size>0)>
@@ -264,9 +267,14 @@ if (/iphone|ipad|ipod/.test(ua)) {
 				dom: document.getElementById('tab-change-list2'),
 				list: document.getElementsByName('tab-li2'),
 				run: document.getElementsByName('card-list2'),
-				runList: document.getElementsByName('card2')
+				runList: document.getElementsByName('card2'),
+				tab_flag: "tab_flag"
 			});
 		order.broadband.init_select();//刷新select组件，使样式生效
+		//主副卡滚动时 小绿点也滚动
+		for(var i=1;i<order.phoneNumber.secondaryCarNum+1;i++){
+			$("#tab_flag").append('<a id="tab_flag_'+i+'" href="#"  class="tab_flag"></a>');
+		}
 	});
 	function showCheckUim(prodId) {
 		var uimNumber = $("#uim_input_"+prodId).val().trim();
