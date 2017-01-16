@@ -1677,9 +1677,9 @@ OrderInfo = (function() {
 	};
 	
 	var _saveOrder = {
-			olId:"",
-			flag:""
-	}
+		olId:"",
+		flag:""
+	};
 	
 	//二次加载的数据
 	var data="";
