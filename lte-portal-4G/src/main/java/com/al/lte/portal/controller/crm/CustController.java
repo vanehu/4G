@@ -415,8 +415,15 @@ public class CustController extends BaseController {
             } else {
                 jsonResponse = super.failed(retMap, ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
             }
+        } catch (BusinessException be) {
+        	 be.printStackTrace();
+             jsonResponse = super.failed(be);
+        } catch (InterfaceException ie) {
+        	ie.printStackTrace();
+			return super.failed(ie, paramMap, ErrorCode.QUERY_ACCOUNT_USE_CUSTINFO);
         } catch (Exception e) {
             e.printStackTrace();
+            jsonResponse = super.failed(ErrorCode.QUERY_ACCOUNT_USE_CUSTINFO, e, paramMap);
         }
         return jsonResponse;
     }
@@ -431,7 +438,7 @@ public class CustController extends BaseController {
 	 * @param newCustInfoMap
 	 * @throws Exception
 	 */
-	private Map<String,Object> addAccountAndCustInfo(String flowNum, SessionStaff sessionStaff, String areaId, String custId, String accNbr, String soNbr, String identityCd) throws Exception {
+	private Map<String,Object> addAccountAndCustInfo(String flowNum, SessionStaff sessionStaff, String areaId, String custId, String accNbr, String soNbr, String identityCd) throws BusinessException, Exception {
         Map<String,Object> extCustInfoMap = new HashMap<String,Object>();
         if (isGovCust(flowNum,identityCd, sessionStaff)) {
 			//账户和使用人信息查询
