@@ -1,4 +1,5 @@
 <#if resultlst?? &&(resultlst?size>0) >
+<input type="hidden" id="resultlst" value="1"/>
 <ul class="single-list-box meal-choice-box">
 	<#list resultlst as item>
 
@@ -26,12 +27,8 @@
 	</#list> 
 </ul>
 	<#else>
-		<div class="list-group-item">
-			<div class="h4">
-				<img style="vertical-align:middle"
-					src="${contextPath}/image/common/query_search.gif" />&nbsp;&nbsp;抱歉，没有找到相关的套餐。
-			</div>
-		</div> 
+	<input type="hidden" id="resultlst" value="0"/>
+		
 </#if>
 
 

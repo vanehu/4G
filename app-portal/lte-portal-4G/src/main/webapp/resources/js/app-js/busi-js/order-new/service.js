@@ -13,10 +13,15 @@ order.service = (function(){
 	var _max;//副卡最大数
 	//购机和选号入口的预占号码信息缓存
 	var _boProdAn = {};
-	
+	var _isAll = false;
 	var _showTab3=false;
+	
+	var _init = function(){
+		order.service.searchPack(0,"init");
+	};
+	
 	//主套餐查询
-	var _searchPack = function(){
+	var _searchPack = function(flag,initFlag){
 		$("#offer-rule").hide();
 		$("#offer-list").show();
 		var custId = OrderInfo.cust.custId;
@@ -58,7 +63,7 @@ order.service = (function(){
 				params.INVOICEMax = invoiceArr[1] ;
 			}
 		}
-		_queryData(params);
+		_queryData(params,flag,initFlag);
 		
 	};
 	
@@ -104,13 +109,20 @@ order.service = (function(){
 		});
 	};
 	
-	var _queryData = function(params) {
+	var _queryData = function(params,flag,initFlag) {
+		if(_isAll && flag == 1){
+			_isAll = true;
+		} else {
+			_isAll = false;
+		}
 		params.prodOfferFlag = "4G";
 		if(OrderInfo.actionFlag == 1 || OrderInfo.actionFlag == 14){
-			if(params.categoryNodeId == ""){
+			if(params.categoryNodeId == "" && !_isAll){
 				params.ifQueryFavorite = "Y";
 			}
+			
 		}
+		
 		var url = contextPath+"/app/order/offerSpecList";
 		$.callServiceAsHtmlGet(url,params, {
 			"before":function(){
@@ -127,12 +139,30 @@ order.service = (function(){
 				order.phoneNumber.step=4;//选完套餐标签页切到促销或副卡
 				var content$ = $("#offer-list");
 				content$.html(response.data);
-				$("#phoneNumber_a").hide();
-		    	$("#offer_a").show();
-		    	$("#offer_search_model").modal("hide");		    	
-				if(params.ifQueryFavorite && params.ifQueryFavorite == "Y"){
-					AttachOffer.myFavoriteOfferList = response.data.resultlst;
+				var resultlst = $("#resultlst").val();
+				
+				if(initFlag == "init" && resultlst == 0){
+					var custId = OrderInfo.cust.custId;
+					var qryStr=$("#offerName").val();
+					var param={"subPage":"","qryStr":qryStr,"pnLevelId":"","custId":custId,"PageSize":10,"enter":3};
+					_isAll = true;
+					_queryData(param,1);
+				} else if(initFlag == undefined && resultlst == 0){
+					var html = "<div class=\"list-group-item\"><div class=\"h4\"><img style=\"vertical-align:middle\"";
+					html += "src= \"/ltePortal/image/common/query_search.gif\" />&nbsp;&nbsp;抱歉，没有找到相关的套餐。</div></div> ";
+					content$.html(html);
+					$("#phoneNumber_a").hide();
+			    	$("#offer_a").show();
+			    	$("#offer_search_model").modal("hide");		
+				} else {
+					$("#phoneNumber_a").hide();
+			    	$("#offer_a").show();
+			    	$("#offer_search_model").modal("hide");		
+					if(params.ifQueryFavorite && params.ifQueryFavorite == "Y"){
+						AttachOffer.myFavoriteOfferList = response.data.resultlst;
+					}
 				}
+				
 			},
 			fail:function(response){
 				$.unecOverlay();
@@ -412,7 +442,8 @@ var _closeRule=function(){
 		setOfferSpec   :_setOfferSpec,
 		showTab3       :_showTab3,
 		terminalScaningCallBack:_terminalScaningCallBack,
-		closeRule              :_closeRule
+		closeRule              :_closeRule,
+		init			:_init
 	};
 })();
 

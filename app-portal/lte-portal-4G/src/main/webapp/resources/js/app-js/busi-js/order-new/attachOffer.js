@@ -183,7 +183,6 @@ AttachOffer = (function() {
 				html1+='<a href="javascript:void(0);" class="list-group-item"><span>没有收藏的销售品</span></a>';
 				$ul.append(html1);
 			} else {
-				$ul.append(html);
 			}
 		}	
 	};
