@@ -78,15 +78,18 @@ custQuery = (function(){
 //		$("#userid").next("span").find("button").prop("disabled", true);
 		if(identidiesTypeCd==-1){
 			$("#zjsm").hide();
+			$("#cpdl").show();
 			$("#"+id).attr("oninput", "value=value.replace(/[^0-9-]+/,'')");
 			$("#"+id).attr("maxlength","11");
 			if(OrderInfo.actionFlag != "9"){
 				$("#zdjrhm").show();
+				
 			}
 			$("#"+id).attr("placeHolder","请输入接入号码");
 //			$("#"+id).attr("data-validate","validate(required:请准确填写接入号码) on(keyup)");
 		}else if (identidiesTypeCd==1){
 			$("#zjsm").show();
+			$("#cpdl").hide();
 //			$("#userid").next("span").find("button").prop("disabled", false);
 			$("#"+id).attr("placeHolder","请输入身份证号码");
 			$("#"+id).attr("data-validate","validate(idCardCheck:请准确填写身份证号码) on(keyup)");
@@ -492,7 +495,7 @@ custQuery = (function(){
 	
 	//客户鉴权--证件类型
 	var _identityTypeAuth=function(level){
-
+		$('#auth3').modal('hide');
 		var idCardNumber2 = "";
 		if (level == "1") {
 			idCardNumber2 = $("#idCardNumber2").val();
@@ -625,6 +628,7 @@ custQuery = (function(){
 	
 	//短信验证
 	var _smsvalid=function(level){
+		$('#auth3').modal('hide');
 		var params="smspwd="+$("#smspwd2").val();
 		if(!ec.util.isObj($("#smspwd2").val())){
 			$.alert("提示","验证码不能为空！");

@@ -1269,6 +1269,17 @@ cust = (function(){
 		$("#cmCustIdCard").val(idcard);
 		$("#cmCustName").val(name);
 		$("#cmAddressStr").val(address);
+		//客户定位、客户鉴权 读取身份证时填写证件号码
+		if($("#custQuerycontent").css("display")!="none"){
+			if($("#userid").length>0){
+				$("#userid").val(idcard);
+			}
+		}else{
+			if($("#idCardNumber2").length>0){
+				$("#idCardNumber2").val(idcard);
+			}
+		}
+		
 		if(ec.util.isObj(_newUIFalg) && _newUIFalg == "ON" &&  (OrderInfo.actionFlag=="35" || OrderInfo.actionFlag=="34" || OrderInfo.actionFlag=="112" ||OrderInfo.actionFlag=="1" ||OrderInfo.actionFlag=="8")){
 			$("#custFormdata").Validform().check();
 		} else {
