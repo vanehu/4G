@@ -309,10 +309,12 @@
 			<groupId>net.sf.jasperreports</groupId>
 			<artifactId>jasperreports</artifactId>
 		</dependency>
+		<!-- 
 		<dependency>
 			<groupId>net.sf.jasperreports</groupId>
 			<artifactId>jasperreports-applet</artifactId>
 		</dependency>
+		 -->
 		<dependency>
 			<groupId>net.sf.jasperreports</groupId>
 			<artifactId>jasperreports-fonts</artifactId>
@@ -321,10 +323,12 @@
 		  <groupId>net.sf.jasperreports</groupId>
 		  <artifactId>jasperreports-simsun</artifactId>
 		</dependency>
+		<!-- 
 		<dependency>
 			<groupId>net.sf.jasperreports</groupId>
 			<artifactId>jasperreports-javaflow</artifactId>
 		</dependency>
+		 -->
 		<dependency>
 			<groupId>com.lowagie</groupId>
 			<artifactId>iTextAsian</artifactId>
