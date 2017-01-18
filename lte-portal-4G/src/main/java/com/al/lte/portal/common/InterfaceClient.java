@@ -702,7 +702,8 @@ public class InterfaceClient {
 				logObj.put("ROLE_CODE", db.getRoleCode() == null ? "" : db.getRoleCode());
 				String serviceSerial = "SP"+DateFormatUtils.format(new Date(), "yyyyMMddHHmmssSSS")+RandomStringUtils.randomNumeric(4);
 				logObj.put("SERV_RUN_NBR", serviceSerial);
-				//如果是前台记录日志不能用此方法获取session
+				//如果是前台记录日志不能用此方法获取session 
+				//前台记自己服务的日志 前缀为portal
 				HttpSession session=null;
 				if("portal".equals(prefix)){
 					session=null;
@@ -780,8 +781,8 @@ public class InterfaceClient {
 				 //门户日志 记录业务场景 与订单id
 				 if("portal".equals(prefix)){
 						  Map<String,Object>	map = JsonUtil.toObject(paramString, Map.class);
-						  logObj.put("PORTAL_ID", MapUtils.getString(map, "portalId", ""));  
-						  logObj.put("BUSI_INFO", MapUtils.getString(map, "servCode", MapUtils.getString(map, "menuInfo","")));
+						  logObj.put("TRANS_ID", MapUtils.getString(map, "portalId", ""));  
+						  logObj.put("BUSI_TYPE", MapUtils.getString(map, "servCode", MapUtils.getString(map, "menuInfo","")));
 				 
 				 }
 				
