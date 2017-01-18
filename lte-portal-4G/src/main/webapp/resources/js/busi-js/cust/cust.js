@@ -2070,7 +2070,8 @@ order.cust = (function(){
 	};
 	//定位客户时读卡
 	var _readCert = function() {
-		var man = cert.readCert();
+		var servCode="定位客户";
+		var man = cert.readCert(servCode);
 		if (man.resultFlag != 0){
 			if(man.resultFlag==-3){
 				//版本需要更新特殊处理 不需要提示errorMsg
@@ -2100,7 +2101,8 @@ order.cust = (function(){
 		$('#td_custIdCard').data("flag", "1");
 		$inputFlag = $("<input type='hidden' id='createFlag' value='1'/>");
 		$("#createUserbtn").append($inputFlag);
-		var man = cert.readCert();
+		var servCode="新建客户";
+		var man = cert.readCert(servCode);
 		$("#createFlag").remove();
 		//var man=cert.test();
 		if (man.resultFlag != 0){
@@ -2130,7 +2132,8 @@ order.cust = (function(){
 	
 	//用户鉴权时读卡
 	var _readCertWhenAuth = function() {
-		var man = cert.readCert();
+		var servCode="用户鉴权";
+		var man = cert.readCert(servCode);
 		if (man.resultFlag != 0){
 			$.alert("提示", man.errorMsg);
 			return;
@@ -2144,12 +2147,15 @@ order.cust = (function(){
 	//用户鉴权时读卡二次业务
 	var _readCertWhenAuth2 = function (level, id) {
 		var parentId = "";
+		var servCode="";
 		if (level == "1") {
 			parentId = "#auth3";//客户定位鉴权弹出窗口id
+			servCode="客户定位";
 		} else if (level == "2") {
 			parentId = "#auth2";//二次业务鉴权弹出窗口id
+			servCode="二次业务鉴权";
 		}
-		var man = cert.readCert();
+		var man = cert.readCert(servCode);
 		if (man.resultFlag != 0){
 			$.alert("提示", man.errorMsg);
 			return;
@@ -2182,7 +2188,8 @@ order.cust = (function(){
 
 	// 新建客户经办人读卡
 	var _readCertWhenCustCAttr = function() {
-		var man = cert.readCert();
+		var servCode="经办人";
+		var man = cert.readCert(servCode);
 		if (man.resultFlag != 0){
 			$.alert("提示", man.errorMsg);
 			return;
@@ -2916,7 +2923,8 @@ order.cust = (function(){
 	
 	// 填单页面经办人读卡
 	var _readCertWhenOrder = function() {
-		man = cert.readCert();
+		var servCode="经办人";
+		man = cert.readCert(servCode);
 		if (man.resultFlag != 0){
 			$.alert("提示", man.errorMsg);
 			return;

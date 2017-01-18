@@ -3,6 +3,7 @@ package com.al.lte.portal.controller.crm;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,7 +14,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.math.NumberUtils;
-import org.apache.taglibs.standard.tag.common.core.ParamParent;
+import org.apache.commons.lang.time.DateFormatUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
@@ -39,6 +40,7 @@ import com.al.lte.portal.bmo.crm.CustBmo;
 import com.al.lte.portal.bmo.crm.OrderBmo;
 import com.al.lte.portal.bmo.crm.RuleBmo;
 import com.al.lte.portal.bmo.staff.StaffBmo;
+import com.al.lte.portal.common.CommonMethods;
 import com.al.lte.portal.common.Const;
 import com.al.lte.portal.common.SysConstant;
 import com.al.lte.portal.model.SessionStaff;
@@ -876,4 +878,35 @@ public class OrderProdModifyController extends BaseController {
 			}
 			return jsonResponse;
 		}
+	 /**
+	  * 订单id日志生产接口
+	  */
+	 @RequestMapping(value = "/portalOrderLog", method = RequestMethod.POST)
+	 @ResponseBody
+	 public  JsonResponse portalOrderLog(@RequestBody Map<String, Object> paramMap, Model model,
+				@LogOperatorAnn String optFlowNum, HttpServletResponse response,HttpServletRequest request) throws BusinessException, InterfaceException{
+		 SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+					SysConstant.SESSION_KEY_LOGIN_STAFF);
+		 JsonResponse jsonResponse = null;
+		Map<String, Object> resMap = new HashMap<String, Object>();
+		 try{
+			 String portalId=CommonMethods.getUUID();
+			 String sessionId=request.getSession().getId();
+			 paramMap.put("portalId", portalId);
+			 paramMap.put("sessionId",sessionId);
+			 System.out.println("-订单日志开始生成---:"+paramMap.toString());
+			 resMap    = orderBmo.orderLog(paramMap, null, sessionStaff);
+			 String resultCode = MapUtils.getString(resMap, "resultCode");
+			 if (ResultCode.R_SUCC.equals(resultCode)){
+				    //将portalId传与前台
+				    resMap.put("portalId", portalId);
+					jsonResponse = super.successed(resMap, ResultConstant.SUCCESS.getCode());
+				}else{
+					jsonResponse = super.failed(resMap, ResultConstant.FAILD.getCode());
+				}
+		 }catch (Exception e) {
+				return super.failed(ErrorCode.POTAL_ORDER_LOG, e, paramMap);
+			}
+		 return jsonResponse;
+	 }
 }

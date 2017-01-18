@@ -832,5 +832,13 @@ public interface OrderBmo {
 	 * @throws Exception
 	 */
 	public Map<String, Object> queryAgreementType(Map<String, Object> paramMap, String optFlowNum,SessionStaff sessionStaff) throws Exception;
-
+	/**
+	 * 填单页面日志记录
+	 *@param paramMap
+	 * @param optFlowNum
+	 * @param sessionStaff
+	 * @return
+	 * @throws Exception
+	 */
+	public Map<String,Object> orderLog(Map<String, Object> paramMap, String optFlowNum,SessionStaff sessionStaff)throws Exception;
 }

@@ -702,9 +702,17 @@ public class InterfaceClient {
 				logObj.put("ROLE_CODE", db.getRoleCode() == null ? "" : db.getRoleCode());
 				String serviceSerial = "SP"+DateFormatUtils.format(new Date(), "yyyyMMddHHmmssSSS")+RandomStringUtils.randomNumeric(4);
 				logObj.put("SERV_RUN_NBR", serviceSerial);
-				HttpSession session = ServletUtils.getSession(request);
-				String log_busi_run_nbr = (String)session.getAttribute(SysConstant.LOG_BUSI_RUN_NBR);
-				logObj.put("BUSI_RUN_NBR", log_busi_run_nbr);
+				//如果是前台记录日志不能用此方法获取session
+				HttpSession session=null;
+				if("portal".equals(prefix)){
+					session=null;
+				}else{
+					session = ServletUtils.getSession(request);
+				}
+				if(session!=null){
+					String log_busi_run_nbr = (String)session.getAttribute(SysConstant.LOG_BUSI_RUN_NBR);
+					logObj.put("BUSI_RUN_NBR", log_busi_run_nbr);
+				}
 				Date beginDate = new Date(beginTime);
 				Date endDate = new Date(endTime);
 				String st = DateFormatUtils.format(beginDate, "yyyy/MM/dd HH:mm:ss");
@@ -721,17 +729,25 @@ public class InterfaceClient {
 				logObj.put("TRANS_ID", MapUtils.getString(db.getParammap(), "transactionId", ""));
 				logObj.put("AREA_ID", sessionStaff.getCurrentAreaId() == null ? "" : sessionStaff.getCurrentAreaId());
 				
-				if(request!=null){
-					logObj.put("REMOTE_ADDR", request.getRemoteAddr());
-					logObj.put("REMOTE_PORT", String.valueOf(request.getRemotePort()));
-					logObj.put("LOCAL_ADDR", request.getLocalAddr());
-					logObj.put("LOCAL_PORT", String.valueOf(request.getLocalPort()));
+				if(request!=null&&!"portal".equals(prefix)){
+					if(request.getRemoteAddr()!=null){
+						logObj.put("REMOTE_ADDR", request.getRemoteAddr());
+						logObj.put("REMOTE_PORT", String.valueOf(request.getRemotePort()));
+						logObj.put("LOCAL_ADDR", request.getLocalAddr());
+						logObj.put("LOCAL_PORT", String.valueOf(request.getLocalPort()));
+					}else{
+						logObj.put("REMOTE_ADDR", "");
+						logObj.put("REMOTE_PORT", "");
+						logObj.put("LOCAL_ADDR", "");
+						logObj.put("LOCAL_PORT", "");
+					}
 				}else{
 					logObj.put("REMOTE_ADDR", "");
 					logObj.put("REMOTE_PORT", "");
 					logObj.put("LOCAL_ADDR", "");
 					logObj.put("LOCAL_PORT", "");
 				}
+				
 				logObj.put("INTF_URL", intfUrl);
 				logObj.put("INTF_METHOD", serviceCode);
 				logObj.put("STAFF_ID", sessionStaff.getStaffId() == null ? "" : sessionStaff.getStaffId());
@@ -742,6 +758,33 @@ public class InterfaceClient {
 				logObj.put("OL_ID", ol_id);
 				logObj.put("SO_NBR", so_nbr);
 				logObj.put("BUSI_TYPE", "");
+				logObj.put("IP", "");
+				//#1155940 记录 SESSION_ID  PORTAL_ID BUSI_INFO
+				String sessionId="";
+				//取入参中的sessionId
+				if(!StringUtil.isEmptyStr(paramString)){
+					Map<String, Object> paramMap= JsonUtil.toObject(paramString, Map.class);
+					if(paramMap!=null){
+						sessionId = (String) paramMap.get("sessionId");
+						if(!StringUtil.isEmptyStr(sessionId)){
+							logObj.put("SESSION_ID",sessionId );
+						}
+					}
+				}else if(session!=null){
+					//取session中的sessionId
+					sessionId=session.getId();
+					if(!StringUtil.isEmptyStr(sessionId)){
+							logObj.put("SESSION_ID", sessionId);
+						}
+					}
+				 //门户日志 记录业务场景 与订单id
+				 if("portal".equals(prefix)){
+						  Map<String,Object>	map = JsonUtil.toObject(paramString, Map.class);
+						  logObj.put("PORTAL_ID", MapUtils.getString(map, "portalId", ""));  
+						  logObj.put("BUSI_INFO", MapUtils.getString(map, "servCode", MapUtils.getString(map, "menuInfo","")));
+				 
+				 }
+				
 				// 新增日志ID
 				logObj.put("LOG_SEQ_ID", logSeqId);
 				// 新增错误标识，0 成功  1  错误  2  异常
@@ -752,7 +795,6 @@ public class InterfaceClient {
 				}
 				logClobObj.put("IN_PARAM", paramString);						
 				logClobObj.put("OUT_PARAM", rawRetn);
-
 				boolean isDefaultLog = true;
 				if (propertiesUtils.getMessage(SysConstant.PORTAL_SERVICE_LOG_P).contains(serviceCode)) {
 					isDefaultLog = false;
@@ -760,7 +802,10 @@ public class InterfaceClient {
 				}
 				if (propertiesUtils.getMessage(SysConstant.PORTAL_SERVICE_LOG_Y).contains(serviceCode)) {
 					isDefaultLog = false;
+					
 					logSender.sendLog2DB(SysConstant.PORTAL_SERVICE_LOG_Y, logObj, logClobObj);
+					
+
 				}
 				if (propertiesUtils.getMessage(SysConstant.PORTAL_SERVICE_LOG_W).contains(serviceCode)) {
 					isDefaultLog = false;

@@ -532,6 +532,8 @@ public class LoginController extends BaseController {
 			String loginValid) throws PortalCheckedException {
 		this.log.debug("java heap space size={}", Runtime.getRuntime().maxMemory()/(1024*1024)+"M");
 		this.log.debug("userMap={}", staff);
+		//update by yuansq 增加会话id
+		String sessionId=request.getSession().getId();
 		String staffCode = staff.getStaffCode();
 		String password = staff.getPassword();
 		String staffProvCode = staff.getStaffProvCode();
@@ -551,6 +553,7 @@ public class LoginController extends BaseController {
 		dataBusMap.put("staffProvCode", staffProvCode);
 		dataBusMap.put("loginAreaName", loginAreaName);
 		dataBusMap.put("platformCode", SysConstant.SM_PLATFORM_CODE);
+		dataBusMap.put("sessionId", sessionId);
 		String ip = "";
 		try {
 			ip = ServletUtils.getIpAddr(request);

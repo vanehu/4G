@@ -41,6 +41,8 @@ order.main = (function(){
 	 * 
 	 */
 	var _buildMainView = function(param) {
+		//日志记录
+		order.prodModify.portalOrderLog(OrderInfo.actionFlag);
 		if (param == undefined || !param) {
 			param = _getTestParam();
 		}
@@ -1389,8 +1391,9 @@ order.main = (function(){
 	
 	// 填单页面使用人读卡
 	var _readUserCertWhenOrder = function() {
+		var servCode="使用人";
 		$("#userTips").empty();
-		man = cert.readCert();
+		man = cert.readCert(servCode);
 		if (man.resultFlag != 0){
 			$("#userTips").html("提示："+ man.errorMsg);
 			//$.alert("提示", man.errorMsg);

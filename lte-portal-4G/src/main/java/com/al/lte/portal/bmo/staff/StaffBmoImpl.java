@@ -644,6 +644,37 @@ public class StaffBmoImpl implements StaffBmo {
 		}
 
 	}
+	public Map queryStaffByStaffCode4Login(String staffCode,
+			String commonRegionId,String sessionId) throws Exception {
+		Map params=new HashMap();
+		params.put("sessionId", sessionId);
+		params.put("staffCode", staffCode);
+		params.put("commonRegionId", commonRegionId);
+		params.put("areaId", commonRegionId);
+		SessionStaff aSessionStaff=new SessionStaff ();
+		aSessionStaff.setStaffCode(staffCode);
+		aSessionStaff.setAreaId(commonRegionId);
+		aSessionStaff.setAreaCode(commonRegionId);
+		DataBus db = InterfaceClient.callService(params, PortalServiceCode.QUERY_STAFF_BY_STAFFCODE, null, aSessionStaff);
+		try {
+			if (ResultCode.R_SUCC.equals(db.getResultCode())) {
+				Map<String,Object> map=(Map<String,Object>)db.getReturnlmap().get("result");
+				return map;
+			}else{
+				Map<String, Object> resMap =db.getReturnlmap();
+				Map returnMap=new HashMap();
+				returnMap.put("resultCode", ResultCode.R_FAILURE);
+				returnMap.put("resultMsg",  MapUtils.getString(resMap, "resultMsg"));
+				returnMap.put("errCode",  MapUtils.getString(resMap, "errCode"));
+				returnMap.put("errorStack",  MapUtils.getString(resMap, "errorStack"));
+				return returnMap;
+			}
+		} catch (Exception e) {
+			log.error("门户处理系统管理的staffLogin服务返回的数据异常", e);
+			throw new BusinessException(ErrorCode.ORDER_CTGMAINDATA,params,db.getReturnlmap(), e);
+		}
+
+	}
 	
 	
 	public void loginInlog(Long time, String optFlowNum, SessionStaff sessionStaff,String padVersion){

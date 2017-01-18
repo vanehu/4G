@@ -274,6 +274,10 @@ SoOrder = (function() {
 				value : OrderInfo.cust.vipLevel
 			});
 		}
+		 custOrderAttrs.push({
+			itemSpecId : CONST.BUSI_ORDER_ATTR.PORTAL_ORDER_ID,//前台订单ID
+			value : OrderInfo.order.soNbr
+		});
 		custOrderAttrs.push({
 			itemSpecId : CONST.BUSI_ORDER_ATTR.THRETOFOUR_ITEM,//3转4标志
 			value : itemValue

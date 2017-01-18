@@ -186,10 +186,17 @@ public class ServiceClient {
 				logObj.put("RESULT_CODE", db.getResultCode());
 				logObj.put("TRANS_ID", MapUtils.getString(db.getParammap(), "transactionId", ""));
 				if(request!=null){
-					logObj.put("REMOTE_ADDR", request.getRemoteAddr());
-					logObj.put("REMOTE_PORT", String.valueOf(request.getRemotePort()));
-					logObj.put("LOCAL_ADDR", request.getLocalAddr());
-					logObj.put("LOCAL_PORT", String.valueOf(request.getLocalPort()));
+					if(request.getRemoteAddr()!=null){
+						logObj.put("REMOTE_ADDR", request.getRemoteAddr());
+						logObj.put("REMOTE_PORT", String.valueOf(request.getRemotePort()));
+						logObj.put("LOCAL_ADDR", request.getLocalAddr());
+						logObj.put("LOCAL_PORT", String.valueOf(request.getLocalPort()));
+					}else{
+						logObj.put("REMOTE_ADDR", "");
+						logObj.put("REMOTE_PORT", "");
+						logObj.put("LOCAL_ADDR", "");
+						logObj.put("LOCAL_PORT", "");
+					}
 				}else{
 					logObj.put("REMOTE_ADDR", "");
 					logObj.put("REMOTE_PORT", "");

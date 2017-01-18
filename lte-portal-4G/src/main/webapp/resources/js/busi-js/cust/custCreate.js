@@ -338,7 +338,8 @@ cust.create = (function(){
 	};
 	//新建客户时读卡
 	var _readCertWhenCreate = function() {
-		var man = cert.readCert();
+		var servCode="新建客户";
+		var man = cert.readCert(servCode);
 		if (man.resultFlag != 0){
 			$.alert("提示", man.errorMsg);
 			return;

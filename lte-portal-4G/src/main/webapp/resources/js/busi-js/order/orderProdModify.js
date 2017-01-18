@@ -1272,6 +1272,8 @@ order.prodModify = (function(){
 		
 	};
 	var _commonShowDialog=function(){
+		//日志记录
+		order.prodModify.portalOrderLog(OrderInfo.actionFlag);
 		$("#delPhoneNumber .btna_o:last").click(function(){
 			_closeDialog();
 		});
@@ -4280,8 +4282,9 @@ order.prodModify = (function(){
 	}
 	//新建客户时读卡
 	var _readCertWhenCreate = function() {
+		var servCode="新建客户";
 		$('#cmCustIdCard').data("flag", "1");
-		var man = cert.readCert();
+		var man = cert.readCert(servCode);
 		if (man.resultFlag != 0){
 			$.alert("提示", man.errorMsg);
 			return;
@@ -4757,7 +4760,69 @@ order.prodModify = (function(){
 			}
 		}
 	};
-
+	/**
+	 * 到填单页面时进行日志记录操作
+	 * @param menuInfo 菜单信息
+	 * @private
+	 */
+   var _portalOrderLog=function(menuId){
+	       try{
+		        var menuInfo="";
+	   			//非空检验
+	   			 if(menuId!=null&&menuId!=undefined&&menuId!=""){
+	   				 //购机特殊处理
+	   				 if(menuId == 14){
+	   					 if(OrderInfo.busitypeflag == 1){
+	   						menuInfo="购手机+合约套餐"; 
+	   					 }else{
+	   					    //从常量中获取menuInfo
+	 	 	    	        menuInfo= CONST.Action_Flag_Info[menuId];
+	   					 }
+	   				 }else{
+	   				    //从常量中获取menuInfo
+	 	    	        menuInfo= CONST.Action_Flag_Info[menuId];
+	   				 }
+	   			}else{
+	   			    //从常量中获取menuInfo
+	   				menuInfo=  CONST.Busi_Type_Info[OrderInfo.busitypeflag];
+	   			}//如果为空
+		    	   if(menuInfo==null||menuInfo==undefined||menuInfo==""){
+		    		   menuInfo=menuId;
+		    	   }
+		    	   var params = {
+						   "menuInfo":menuInfo 
+				   };
+				   var accNbr = "";
+				   if(menuId=="28" || menuId =="29" || menuId =="30"){
+					   accNbr = order.cust.checkUserInfo.accNbr;
+				   }else{
+					   var prod = order.prodModify.choosedProdInfo ; 
+					   accNbr = prod.accNbr;
+				   }
+				   if( accNbr!=""&&accNbr!=undefined&&accNbr!=null){
+					   params.accNbr=accNbr;
+				   }
+				   var url = contextPath + "/order/prodModify/portalOrderLog";
+				   var response = $.callServiceAsJson(url, params);
+				   if (response.code == 0) {
+					   //缓存日志订单Id portalId
+					   if(response.data!=null||response.data!=undefined){
+						   OrderInfo.order.portalId=response.data.portalId;
+					   }
+				   }else if(response.code == -2){
+					   $.alertM(response.data);
+				   }else{
+					   if (response.data.resultMsg) {
+						   $.alert("提示","该提示不影响业务办理。日志记录失败!失败原因为："+response.data.resultMsg);
+					   } else {
+						   $.alert("提示","日志记录失败!");
+					   }
+				   }
+			}
+		     catch(err){
+					throw new Error("LogWriteException : "+err);
+				}
+		   };
 	return {
 		changeCard : _changeCard,
 		getChooseProdInfo : _getChooseProdInfo,
@@ -4858,6 +4923,7 @@ order.prodModify = (function(){
 		revokeAuthentication:_revokeAuthentication,
 		isCFQ:_isCFQ,
 		checkCFQ:_checkCFQ,
-        queryAgreementType:_queryAgreementType
+        queryAgreementType:_queryAgreementType,
+        portalOrderLog:_portalOrderLog
 	};
 })();

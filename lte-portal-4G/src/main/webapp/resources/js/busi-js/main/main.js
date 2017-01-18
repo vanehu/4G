@@ -71,7 +71,8 @@ main.home = (function(){
 		$("#new").css("margin-left","100px").css("width","90%");
 		$(".homecon").css("width","100%").css("margin-left","0px");
 		//$("#div_main_index").removeClass("main_index").addClass("main_div");
-		
+		//日志记录
+		order.prodModify.portalOrderLog(text);
 		//		$("#" + tabid).after('<iframe frameborder="0" style="height: 548px; min-height: 551px; display: none;"></iframe>');
 	};
 	

@@ -4350,6 +4350,11 @@ public class OrderController extends BaseController {
             HttpServletRequest request) {
     	JsonResponse jsonResponse = null;
 		try {
+			//优化 新增业务场景编码、会话id 等
+			HttpSession session =request.getSession();
+			String sessionId=session.getId();//会话ID
+			param.put("sessionId", sessionId);
+			String servCode= MapUtils.getString(param, "servCode");//业务场景编码
 			String venderId = MapUtils.getString(param, "venderId");// 厂商标识
 			String signature = MapUtils.getString(param, "signature");// 数字签名
 			String versionSerial = MapUtils.getString(param, "versionSerial");// 版本号
@@ -4371,24 +4376,12 @@ public class OrderController extends BaseController {
                 return super.failed("读卡失败信息有误", -1);
             }
             String createFlag = MapUtils.getString(param, "createFlag");
-            
-//			param.put("venderId", "11");
-//			param.put("signature", "11");
-//			param.put("versionSerial", "11");
-//			param.put("partyName", "11");
-//			param.put("gender", "11");
-//			param.put("nation", "11");
-//			param.put("bornDay", "11");
-//			param.put("certAddress", "11");
-//			param.put("certNumber", "11");
-//			param.put("certOrg", "11");
-//			param.put("effDate", "11");
-//			param.put("expDate", "11");
-//			param.put("identityPic", "11");
+
 			SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
                     SysConstant.SESSION_KEY_LOGIN_STAFF);
             Map<String, Object> rMap = null;
             param.put("readCertFlag", "readCert");
+            
             try {
                  orderBmo.insertCertInfo(param, null, sessionStaff);
             } catch (BusinessException e) {
@@ -4447,6 +4440,7 @@ public class OrderController extends BaseController {
             String nonce = RandomStringUtils.randomAlphanumeric(Const.RANDOM_STRING_LENGTH); //随机字符串
             String signature1 = commonBmo.signature(partyName, certNumber, certAddress, identityPic, nonce, appSecret1);
             param.put("signature", signature1);
+            //增加
             if("1".equals(createFlag)){
             	request.getSession().removeAttribute(Const.SESSION_SIGNATURE);
                 request.getSession().setAttribute(Const.SESSION_SIGNATURE, signature1);

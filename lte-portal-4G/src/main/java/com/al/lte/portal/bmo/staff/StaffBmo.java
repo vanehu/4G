@@ -45,7 +45,8 @@ public interface StaffBmo {
 			throws Exception ;
 
 	Map queryStaffByStaffCode4Login(String staffCode, String commonRegionId) throws Exception;
-			
+	
+	Map queryStaffByStaffCode4Login(String staffCode, String commonRegionId,String session) throws Exception;		
 	
 	public void loginInlog(Long time, String optFlowNum, SessionStaff sessionStaff,String padVersion);
 	

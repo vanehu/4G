@@ -712,6 +712,9 @@ query.offer = (function() {
 			$.alert("提示","未获取到产品相关信息，无法办理二次业务！");
 			return false;
 		}
+
+		//日志记录
+		order.prodModify.portalOrderLog(OrderInfo.actionFlag);
 		var param = {
 			areaId : OrderInfo.getProdAreaId(prod.prodInstId),
 			acctNbr : prod.accNbr,
