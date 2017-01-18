@@ -143,8 +143,11 @@ cert = (function() {
 				if (response.code == 0) {
 					man = {"resultFlag": 0, "errorMsg": "读卡成功", "resultContent": response.data};
 				}else if(response.code == -3){
-					man = {"resultFlag": -1, "errorMsg": "控件版本不一致,请下载新的控件","resultContent": response.data};
-					$.confirm("信息确认","控件版本已更新，确认下载新的控件？",{
+					man = {"resultFlag": -3, "errorMsg": "控件版本不一致,请下载新的控件","resultContent": response.data};
+					var info="您当前为 "+response.data.fileName+"读卡器,驱动版本号为 : "+ver.versionSerial+
+					"，请更新升级到版本: "+response.data.mdaVersion+
+					"。请下载新的控件，确认下载新的控件？";
+					$.confirm("信息确认",info,{
 						yesdo:function(){
 							$("<form>", {
 						    	id: "downCardOcxForm",
