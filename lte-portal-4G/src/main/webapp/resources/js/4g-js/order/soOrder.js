@@ -1153,6 +1153,11 @@ SoOrder = (function() {
 							$("#chooseTable").append($('<tr><td width="50%">'+this.offerSpecName+'</td><td>'+CONST.EVENT.OFFER_BUY+'</td></tr>'));
 						}
 					}
+					if(this.orderCount>this.counts){//退订附属销售品
+						for(var k=0;k<(this.orderCount-this.counts);k++){
+							$("#chooseTable").append($('<tr><td width="50%">'+this.offerSpecName+'</td><td>'+CONST.EVENT.OFFER_DEL+'</td></tr>'));
+						}
+					}
 				}
 			});
 		}
