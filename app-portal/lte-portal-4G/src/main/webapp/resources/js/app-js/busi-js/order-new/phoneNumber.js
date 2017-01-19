@@ -11,6 +11,7 @@ order.phoneNumber = (function(){
 	var _step=1;//页面步骤，默认1
 	var mainFlag="true";//是否主卡选号码
 	var _secondaryCarNum;//副卡数目
+	var selectedObj=null;//密码预占查询选中号码对象
 	var _boProdAn = {
 			accessNumber : "", //接入号
 			org_level:"",//原始的号码等级，为了页面展示增加的字段
@@ -216,6 +217,11 @@ order.phoneNumber = (function(){
 	//主卡号码列表查询
 	var _btnQueryPhoneNumber=function(){
 		mainFlag="true";
+		var idcode=$.trim($("#idCode").val());
+		if(idcode!=''){
+		    _btnIBydentityQuery();
+			return;
+		}
 		$("#phoneNumber_search_model").modal("hide");//查询modal关闭
 		var poolId = $("#nbrPool option:selected").val();
 		var pnHead = $("#pnHead option:selected").val();//号码段
@@ -249,6 +255,10 @@ order.phoneNumber = (function(){
 			var max="";
 			var min="30000";
 		}
+		var queryFlag=$("#pwdPur option:selected").val();//号码预占标志
+		if(queryFlag=="-1"){
+			queryFlag="1";
+		}
 		var param={
 				"pnEnd":pnEnd,
 				"pnHead":pnHead,
@@ -257,7 +267,8 @@ order.phoneNumber = (function(){
 				"goodNumFlag":pnCharacterId,
 				"maxPrePrice":max,
 				"minPrePrice":min,
-				"enter":"3"
+				"enter":"3",
+				"queryFlag":queryFlag
 		};
 		//请求地址
 		var url = contextPath+"/app/mktRes/phonenumber/list";
@@ -333,9 +344,17 @@ order.phoneNumber = (function(){
 	
 	//号卡新装选择主卡号码
 	var _clickMainCardPhone = function(obj,purchas) {
-
+		if(purchas==1){//身份证查询
 			_chooseCardPhoneNum(obj,purchas,CONST.MEMBER_ROLE_CD.MAIN_CARD);
-
+		}else{
+			var phoneNumberVal_06 = $(obj).attr("numberVal").split("_")[7];
+			selectedObj=obj;
+			if(phoneNumberVal_06=="1"){
+				$("#needPwdModal").modal("show");
+			}else{
+				_chooseCardPhoneNum(obj,purchas,CONST.MEMBER_ROLE_CD.MAIN_CARD);
+			}
+		}
 	};
 	
 	//号卡新装选择副卡号码
@@ -344,7 +363,26 @@ order.phoneNumber = (function(){
 	
 	};
 	//号卡新装选择号码（主卡和副卡通用）
-	var _chooseCardPhoneNum = function(obj,purchas,memberRoleCd) {
+	var _chooseCardPhoneNum = function(obj,purchas,memberRoleCd,needPsw) {
+		// 号码资源状态前置校验
+		var flagQueryRes = $.callServiceAsJson(contextPath + "/common/queryPortalProperties", {"propertiesKey": "NUMBER_CHECK_" + (OrderInfo.staff.soAreaId+"").substring(0,3)});	
+        var numberCheckFlag = flagQueryRes.code == 0 ? flagQueryRes.data : "";
+		if ("ON" == numberCheckFlag) {
+			var url = contextPath + "/app/prodModify/preCheckBeforeOrde"; // 翼销售app
+			var accNbr = $(obj).attr("numberVal").split("_")[0];
+			var response = $.callServiceAsJson(url, {"serviceType": 38, "accNbr": accNbr});
+			if(response.code == 1){
+				$.alert("错误", response.data);
+				return;
+			}
+			if (response.code != 0) {
+				$.alertM(response.data);
+				return;
+			} else if (response.data.checkLevel == 20) {
+				$.alert("提示", accNbr + "不可放号" + (ec.util.isObj(response.data.checkInfo) ? "，具体原因：" + response.data.checkInfo : ""));
+				return;
+			}
+		}
 		selectedObj = obj;
 		ispurchased=purchas;
 		phoneNumberVal = $(obj).attr("numberVal");
@@ -379,7 +417,11 @@ order.phoneNumber = (function(){
 		if(phoneNumber){
 			var phoneAreaId;
 			var params={};
-			params={"phoneNumber":phoneNumber,"actionType":"E","anTypeCd":anTypeCd,"areaId":phoneAreaId};
+			if(needPsw){
+				 params={"phoneNumber":phoneNumber,"actionType":"E","anTypeCd":anTypeCd,"areaId":phoneAreaId,"attrList":[{"attrId":"65010036","attrValue":needPsw}]};
+			}else{
+				 params={"phoneNumber":phoneNumber,"actionType":"E","anTypeCd":anTypeCd,"areaId":phoneAreaId};
+			}
 			var oldrelease=false;
 			var oldPhoneNumber="";
 			var oldAnTypeCd="";
@@ -579,6 +621,126 @@ order.phoneNumber = (function(){
 				minCharge:""
 		};
 	};
+	
+	var _btnIBydentityQuery=function(){
+		var idcode=$.trim($("#idCode").val());
+//		if(idcode==''){
+//			$.alert("提示","请先输入身份证号码!");
+//			return;
+//		}
+		if(!_idcardCheck(idcode)){
+			$.alert("提示","身份证号码输入有误!");
+			return;
+		}
+		$("#phoneNumber_search_model").modal("hide");//查询modal关闭
+		var areaId=OrderInfo.staff.soAreaId+"";
+		var param={"identityId":idcode,"areaId":areaId};
+		param.newFlag="1";
+		$.callServiceAsHtmlGet(contextPath+"/app/mktRes/phonenumber/listByIdentity",param,{
+			"before":function(){
+				$.ecOverlay("<strong>正在查询中,请稍等会儿....</strong>");
+			},
+			"always":function(){
+				$.unecOverlay();
+			},
+			"done" : function(response){
+				if(!response||response.code != 0){
+					 response.data='查询失败,稍后重试';
+				}
+				
+				var content$ = $("#phonenumber-list");
+				content$.html(response.data);
+				if(OrderInfo.actionFlag == 112){
+					$("#offer").hide();
+					$("#offer-list").empty();
+				}
+//				var content$=$("#order_phonenumber .phone_warp");
+//				content$.html(response.data);
+			},
+			fail:function(response){
+				$.unecOverlay();
+				$.alert("提示","请求可能发生异常，请稍后再试！");
+			}
+		});	
+	};
+	
+	var _idcardCheck=function(num){
+		num = num.toUpperCase();
+		if(!(/(^\d{15}$)|(^\d{17}([0-9]|X)$)/.test(num)))//是否15位数字或者17位数字加一位数字或字母X
+		{
+			return false;
+		}
+		var len, re;
+		len = num.length;
+		if(len == 15) {
+			re = new RegExp(/^(\d{6})(\d{2})(\d{2})(\d{2})(\d{3})$/);
+			var arrSplit = num.match(re);
+			var dtmBirth = new Date('19' + arrSplit[2] + '/' + arrSplit[3] + '/' + arrSplit[4]);
+			var bGoodDay;
+			bGoodDay = (dtmBirth.getYear() == Number(arrSplit[2])) && ((dtmBirth.getMonth() + 1) == Number(arrSplit[3])) && (dtmBirth.getDate() == Number(arrSplit[4]));
+			if(!bGoodDay) {
+				return false;
+			} else {
+				var arrInt = new Array(7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2);
+				var arrCh = new Array('1', '0', 'X', '9', '8', '7', '6', '5', '4', '3', '2');
+				var nTemp = 0, i;
+				num = num.substr(0, 6) + '19' + num.substr(6, num.length - 6);
+				for( i = 0; i < 17; i++) {
+					nTemp += num.substr(i, 1) * arrInt[i];
+				}
+				num += arrCh[nTemp % 11];
+				return num;
+			}
+		}
+		if(len == 18) {
+			re = new RegExp(/^(\d{6})(\d{4})(\d{2})(\d{2})(\d{3})([0-9]|X)$/);
+			var arrSplit = num.match(re);
+			var dtmBirth = new Date(arrSplit[2] + "/" + arrSplit[3] + "/" + arrSplit[4]);
+			var bGoodDay;
+			bGoodDay = (dtmBirth.getFullYear() == Number(arrSplit[2])) && ((dtmBirth.getMonth() + 1) == Number(arrSplit[3])) && (dtmBirth.getDate() == Number(arrSplit[4]));
+			if(!bGoodDay) {
+				return false;
+			} else {
+				var valnum;
+				var arrInt = new Array(7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2);
+				var arrCh = new Array('1', '0', 'X', '9', '8', '7', '6', '5', '4', '3', '2');
+				var nTemp = 0, i;
+				for( i = 0; i < 17; i++) {
+					nTemp += num.substr(i, 1) * arrInt[i];
+				}
+				valnum = arrCh[nTemp % 11];
+				if(valnum != num.substr(17, 1)) {
+					return false;
+				}
+				return num;
+			}
+		}
+		return false;
+	};
+	
+	/**
+	 * 靓号预占 密码校验
+	 */
+	var _preePassword=function(){
+		var needPwd=$("#needPwd").val();
+		if($.trim(needPwd)==""){
+			//$.alert("提示","预占密码不能为空！");
+			$('#needPwdModal').find('.choice-box').children('.help-block').removeClass('hidden');
+			$('#needPwdModal-result').hide();
+		}else{
+			$("#needPwdModal").modal('hide');
+			$("#needPwd").val("");//初始化
+			_chooseCardPhoneNum(selectedObj,"0",CONST.MEMBER_ROLE_CD.MAIN_CARD,needPwd);
+		}
+	};
+	
+	var _clearError=function(){
+		var needPwd=$("#needPwd").val();
+		if($.trim(needPwd)!=""){
+			$('#needPwdModal-result').hide();
+			$('#needPwdModal').find('.choice-box').children('.help-block').addClass('hidden');
+		}
+	};
 	return {
 		secondaryCarNum :_secondaryCarNum,
 		initPhonenumber:_initPhonenumber,
@@ -594,7 +756,9 @@ order.phoneNumber = (function(){
 		chooseCardPhoneNum:_chooseCardPhoneNum,
 		resetBoProdAn     :_resetBoProdAn,
 		boProdAn:_boProdAn,
-	    step    :_step
+	    step    :_step,
+	    preePassword:_preePassword,
+	    clearError:_clearError
 	};
 })();
 

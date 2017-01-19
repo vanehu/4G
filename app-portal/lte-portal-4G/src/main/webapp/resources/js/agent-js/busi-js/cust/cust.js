@@ -2557,6 +2557,11 @@ cust = (function(){
 				if (response.code == -2) {
 					return;
 				}
+				authFlag="0";
+				if( OrderInfo.actionFlag == "9" )
+				{
+					authFlag ="1";
+				}
 				_queryCallBack(response);
 			},fail:function(response){
 				$.unecOverlay();

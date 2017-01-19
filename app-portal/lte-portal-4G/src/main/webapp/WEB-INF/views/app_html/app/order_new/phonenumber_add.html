@@ -123,6 +123,19 @@
 							           				<option  value="30000">30000以上</option>
 												</select> <i class="iconfont pull-right p-r-10">&#xe66e;</i>
 											</div>
+											<div class="choice-box m-t-10">
+											<i class="iconfont pull-left p-l-10">&#xe6da;</i> <input
+												placeholder="请输入身份证号" class="choice-input" id="idCode" />
+											<!--<i class="iconfont right-btn pull-right p-r-10">&#xe647;</i>-->
+										    </div>
+										    <div class="choice-box m-t-10">
+												<i class="iconfont pull-left p-l-10">&#xe602;</i> 
+												<select name="" placeholder="密码预占" id="pwdPur" class="myselect select-option dw-hsel" data-role="none">
+												    <option value="-1" selected="selected">密码预占</option>
+							           	     		<option value="1">否</option>
+							           				<option  value="2">是</option>
+												</select> <i class="iconfont pull-right p-r-10">&#xe66e;</i>
+											</div>
 										</div>
 										<div class="modal-footer">
 											<div class="ordinary-btn-box p p-b-15">
@@ -132,9 +145,30 @@
 									</div>
 								</div>
 							</div>
-
-					</div>
-						<div class="tab-pane fade" id="nav-tab-2">
+					<div class="modal fade modal-message modal-top" id="needPwdModal">
+					<div class="modal-dialog" style="display:block;">
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal"
+									aria-hidden="true" onClick="$('#needPwdModal-result').hide();$('#needPwdModal').find('.choice-box').children('.help-block').addClass('hidden');$('#needPwd').val('');">×</button>
+								<h4 class="modal-title">预占密码</h4>
+							</div>
+							<div>
+								<div class="choice-box">
+									<i class="iconfont pull-left p-l-10">&#xe6d5;</i>
+									 <input id="needPwd" placeholder="请输入预占密码" type="password" class="choice-input" oninput="order.phoneNumber.clearError()">
+								     <div class="help-block error hidden">预占密码不能为空</div>
+								</div>
+								<div id="needPwdModal-result" style="line-height: .86rem; color: #ff0000; font-size: .26rem; display:none; text-align:center;">预占密码有误！</div>
+								<div class="sub-btn-box p relative">
+									<button class="sun-btn" onclick="order.phoneNumber.preePassword()">确定</button>
+								</div>
+							    </div>
+							 </div>
+							 </div>
+						  </div> 
+				</div>
+				<div class="tab-pane fade" id="nav-tab-2">
 												<!-- 套餐高级查询 -->
 						<div class="modal modal-message fade modal-top" id="offer_search_model">
 							<div class="modal-dialog" style="display: block;">

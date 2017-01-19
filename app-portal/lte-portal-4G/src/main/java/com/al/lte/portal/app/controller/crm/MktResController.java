@@ -567,6 +567,9 @@ public class MktResController extends BaseController {
 			return super.failedStr(model, ErrorCode.PHONENUM_IDENTITY, e, param);
 		}
 		model.addAllAttributes(param);
+		if(param.get("newFlag")!=null){
+			return "/app/order_new/phonenumber-list";
+		}
         return "/app/mktRes/phonenumber-list";
     }
 
@@ -903,6 +906,9 @@ public class MktResController extends BaseController {
         param.put("salePrice", Integer.parseInt(mktPrice));
         param.put("mktPicA", MapUtils.getString(param, "mktPicA", ""));
         model.addAttribute("mktRes", param);
+//        if(param.get("newFlag") != null){//新版ui
+//        	 return "/app/mktRes_new/terminal-detail";
+//        }
         return "/app/mktRes/terminal-detail";
     }
 

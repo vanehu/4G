@@ -67,6 +67,9 @@ SoOrder = (function() {
 		if(_getOrderInfo(data)){
 			//订单提交
 			var url = contextPath+"/app/order/orderSubmit?token="+OrderInfo.order.token;
+			if(OrderInfo.actionFlag==8 || OrderInfo.actionFlag==4){//实名制客户新建，和客户修改走一点提交接口
+				url = contextPath+"/app/order/orderSubmitComplete?token="+OrderInfo.order.token;
+			}
 			$.callServiceAsJson(url,JSON.stringify(OrderInfo.orderData), {
 				"before":function(){
 					$.ecOverlay("<strong>订单提交中，请稍等...</strong>");
@@ -78,7 +81,7 @@ SoOrder = (function() {
 							if(data.resultCode==0){
 								var msg="";
 								if(OrderInfo.actionFlag==8){
-									msg="客户创建成功，购物车ID：" + response.data.rolId;
+									msg="客户创建成功，购物车ID：" + response.data.olId;
 								}else{
 									msg="客户修改成功";
 								}
