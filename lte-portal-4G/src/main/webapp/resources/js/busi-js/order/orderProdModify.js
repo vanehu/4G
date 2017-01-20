@@ -4335,7 +4335,7 @@ order.prodModify = (function(){
 					return false;
 				}
 			}
-		} else if (authTypeStr.toString().indexOf(OrderInfo.cust_validateType) != -1 || authTypeStr.toString() == "4") {
+		} else if ((ec.util.isObj(OrderInfo.cust_validateType) && authTypeStr.toString().indexOf(OrderInfo.cust_validateType) != -1) || authTypeStr.toString() == "4") {
 			return false;
 		}
 		if(govSwitch=="ON"&&CacheData.isGov(OrderInfo.cust.identityCd)) {
