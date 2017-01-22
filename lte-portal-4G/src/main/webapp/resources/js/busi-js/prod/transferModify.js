@@ -1349,7 +1349,7 @@ prod.transferModify = (function(){
 	 	$("#postType").attr("disabled","disabled");
 	 	$("#paymentType").attr("disabled","disabled");
 	 	
-	}
+	};
 	//返档提交
 	var _returnCust_Submit=function(){
 		var toCustId = $("#litransCustId").attr("transCustId");
