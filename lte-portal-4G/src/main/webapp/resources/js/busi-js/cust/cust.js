@@ -3016,11 +3016,14 @@ order.cust = (function(){
 			});
 			//异地补换卡特殊，无论新老客户，默认对漫游省下新建经办人节点
 			if((OrderInfo.actionFlag == 23 && OrderInfo.busitypeflag == 13)) {
-				_fillupHandleCustInfos(custInfo);
+				//若同省异市，且为老客户，则不新建经办人；跨省则对漫游省新建经办人
+				if(OrderInfo.staff.areaId.substring(0,3) != OrderInfo.cust.areaId.substring(0,3)){
+					_fillupHandleCustInfos(custInfo);
+				}
 			}
 		} else{
 			var orderAttrName = $.trim($("#orderAttrName").val());
-			$.confirm("确认","没有查询到【"+orderAttrName+"】客户信息，系统将自动创建经办人客户，是否确认继续受理？",{
+			$.confirm("确认","没有查询到【" + orderAttrName + "】客户信息，系统将自动创建经办人客户，是否确认继续受理？", {
 				yes:function(){
 					_yes2Continue();//继续受理
 				},
