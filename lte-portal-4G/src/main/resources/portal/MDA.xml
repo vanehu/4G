@@ -1573,7 +1573,7 @@
 				'REAL_NAME_PHOTO_899':'OFF'<!-- 虚拟省 -->
 			}
 		</const>
-		<const type="Map" name="REAL_USER_FLAG" description="使用人分省开关(4GWEB)">
+		<const type="Map" name="REAL_USER_FLAG" description="使用人分省开关(4GWEB+能力共用)">
 			{
 				'REAL_USER_854':'OFF',<!-- 西藏 -->
 				'REAL_USER_863':'OFF',<!-- 青海 -->
