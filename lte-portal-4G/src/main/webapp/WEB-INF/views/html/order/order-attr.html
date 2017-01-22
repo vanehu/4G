@@ -104,7 +104,7 @@
 	}
 	
 	if(!ec.util.isObj(CONST.realNamePhotoFlag)){
-		CONST.realNamePhotoFlag = query.common.queryPropertiesValue("REAL_NAME_PHOTO_" + OrderInfo.staff.areaId.substr(0, 3));
+		CONST.realNamePhotoFlag = query.common.queryPropertiesValue("REAL_NAME_PHOTO_" + String(OrderInfo.staff.areaId).substr(0, 3));
 	}
 	if (CONST.realNamePhotoFlag == "OFF"){
 		$("#orderAttrDiv .f_red").hide();

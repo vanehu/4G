@@ -2955,9 +2955,11 @@ order.cust = (function(){
 		 
 		var areaId = order.prodModify.choosedProdInfo.areaId;
 		areaId = ec.util.isObj(areaId) ? areaId : OrderInfo.cust.areaId;
+		areaId = ec.util.isObj(areaId) ? areaId : $("#p_cust_areaId").val();
 		//lte进行受理地区市级验证
-		if(CONST.getAppDesc() == 0 && areaId.indexOf("0000") > 0){
-			$.alert("提示","客户【"+OrderInfo.cust.name+"】的归属地区为省级地区，无法定位查询经办人。");
+		if(CONST.getAppDesc() == 0 && String(areaId).indexOf("0000") > 0){
+			var alertMsg = ec.util.isObj(OrderInfo.cust.name) ? "客户【" + OrderInfo.cust.name + "】的归属地区" : "您所选择的受理地区";
+			$.alert("提示", alertMsg + "为省级地区，无法定位查询经办人。");
 			return;
 		}
 		
@@ -3017,7 +3019,7 @@ order.cust = (function(){
 			//异地补换卡特殊，无论新老客户，默认对漫游省下新建经办人节点
 			if((OrderInfo.actionFlag == 23 && OrderInfo.busitypeflag == 13)) {
 				//若同省异市，且为老客户，则不新建经办人；跨省则对漫游省新建经办人
-				if(OrderInfo.staff.areaId.substring(0,3) != OrderInfo.cust.areaId.substring(0,3)){
+				if(String(OrderInfo.staff.areaId).substring(0,3) != String(OrderInfo.cust.areaId).substring(0,3)){
 					_fillupHandleCustInfos(custInfo);
 				}
 			}
@@ -3075,7 +3077,7 @@ order.cust = (function(){
 			OrderInfo.bojbrPartyContactInfo.contactAddress 	= handleCustInfo.contactAddress;
 			//根据身份证判断性别，无从判别默认为男
 			if(OrderInfo.bojbrCustIdentities.identidiesTypeCd == "1"){
-				var identityNum = OrderInfo.bojbrCustIdentities.identityNum;
+				var identityNum = String(OrderInfo.bojbrCustIdentities.identityNum);
 				identityNum = parseInt(identityNum.substring(16,17));//取身份证第17位判断性别，奇数男，偶数女
 				OrderInfo.bojbrPartyContactInfo.contactGender = (identityNum % 2) == 0 ? "2" : "1";//1男2女
 			} else{
@@ -3118,7 +3120,7 @@ order.cust = (function(){
 				} else{
 					//没能从联系人节点判断性别，则从证件类型判断
 					if(OrderInfo.bojbrCustIdentities.identidiesTypeCd == "1"){
-						var identityNum = OrderInfo.bojbrCustIdentities.identityNum;
+						var identityNum = String(OrderInfo.bojbrCustIdentities.identityNum);
 						identityNum = parseInt(identityNum.substring(16,17));//取身份证第17位判断性别，奇数男，偶数女
 						OrderInfo.bojbrPartyContactInfo.contactGender = (identityNum % 2) == 0 ? "2" : "1";//1男2女
 					} else{
@@ -3133,7 +3135,7 @@ order.cust = (function(){
 				OrderInfo.bojbrPartyContactInfo.contactAddress 	= "";//后台要求传空字符串;
 				//根据证件类型判断性别
 				if(OrderInfo.bojbrCustIdentities.identidiesTypeCd == "1"){
-					var identityNum = OrderInfo.bojbrCustIdentities.identityNum;
+					var identityNum = String(OrderInfo.bojbrCustIdentities.identityNum);
 					identityNum = parseInt(identityNum.substring(16,17));//取身份证第17位判断性别，奇数男，偶数女
 					OrderInfo.bojbrPartyContactInfo.contactGender = (identityNum % 2) == 0 ? "2" : "1";//1男2女
 				} else{
@@ -3434,8 +3436,10 @@ order.cust = (function(){
 $(function() {
    order.cust.form_valid_init();
    order.cust.initDic();
-   CONST.isHandleCustNeeded = query.common.checkOperateSpec(CONST.TGJBRBTQX);
-   if(CONST.realNamePhotoFlag == ""){
-	   CONST.realNamePhotoFlag = query.common.queryPropertiesValue("REAL_NAME_PHOTO_" + OrderInfo.staff.areaId.substr(0, 3));
+   if(!ec.util.isObj(CONST.isHandleCustNeeded)){
+	   CONST.isHandleCustNeeded = query.common.checkOperateSpec(CONST.TGJBRBTQX);
+	}
+   if(!ec.util.isObj(CONST.realNamePhotoFlag)){
+	   CONST.realNamePhotoFlag = query.common.queryPropertiesValue("REAL_NAME_PHOTO_" + String(OrderInfo.staff.areaId).substr(0, 3));
 	}
 });
