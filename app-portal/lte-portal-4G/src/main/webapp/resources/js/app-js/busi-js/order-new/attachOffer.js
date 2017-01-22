@@ -170,7 +170,7 @@ AttachOffer = (function() {
 							html='<li id="_li_'+ prodId + '_'+ this.offerSpecId  +'" ><i class="iconfont pull-left active" onclick="AttachOffer.delMyfavoriteSpec('+prodId+',\''+'\','+this.offerSpecId+',\''+this.offerSpecName+'\',$(this)'+','+1+');">&#xe62b;</i>';
 							html+='<span class="list-title">'+ this.offerSpecName +'</span>';
 							html+='<div class="list-checkbox absolute-right"><div class="checkbox-box">';
-							html+='<input type="checkbox" value="1"" name="" id="input_'+ prodId + '_'+ this.offerSpecId  +'"><label for="li_'+ this.offerSpecId +'" checked="checked" onclick="AttachOffer.addOfferSpec('+prodId+','+this.offerSpecId+')"></label></input></div></div>';
+							html+='<input type="checkbox" value="1" name="" id="input_'+ prodId + '_'+ this.offerSpecId  +'" onclick="javascript:{common.setBtnTimer(this);AttachOffer.addOfferSpec('+prodId+','+this.offerSpecId+');}"><label for="input_'+ prodId + '_'+ this.offerSpecId  +'" checked="checked" ></label></input></div></div>';
 							//html+='<h5 class="list-group-item-heading" style="padding-left: 40px;" onclick="AttachOffer.addOfferSpec('+prodId+','+this.offerSpecId+')">'+ this.offerSpecName +'</h5>';
 							html+='</li>';
 							i++;
@@ -677,7 +677,7 @@ AttachOffer = (function() {
 						}
 						html+='<span class="list-title">'+ this.servSpecName +'</span>';
 						html+='<div class="list-checkbox absolute-right"><div class="checkbox-box">';
-						html+='<input type="checkbox" value="1"" name="" id="input_'+prodId+'_'+this.servSpecId+'"/><label for="li_'+prodId+'_'+this.servSpecId+'" onclick="javascript:AttachOffer.openServSpec('+prodId+','+this.servSpecId+',\''+this.servSpecName+'\',\''+this.ifParams+'\')"></label></div></div>';						
+						html+='<input type="checkbox" value="1"" name="" id="input_'+prodId+'_'+this.servSpecId+'" onclick="javascript:{common.setBtnTimer(this);AttachOffer.openServSpec('+prodId+','+this.servSpecId+',\''+this.servSpecName+'\',\''+this.ifParams+'\');}"/><label for="input_'+prodId+'_'+this.servSpecId+'" ></label></div></div>';						
 						html+='</li>';
 						$ul.append(html);
 						i++;
@@ -751,7 +751,7 @@ AttachOffer = (function() {
 								}
 								html+='<span class="list-title">'+ this.offerSpecName +'</span>';
 								html+='<div class="list-checkbox absolute-right"><div class="checkbox-box">';
-								html+='<input type="checkbox" value="1" name="" id="input_'+ prodId + '_'+ this.offerSpecId  +'"/><label for="li_'+prodId+'_'+this.offerSpecId+'" onclick="AttachOffer.addOfferSpec('+prodId+','+this.offerSpecId+')"></label></div></div>';
+								html+='<input type="checkbox" value="1" name="" id="input_'+ prodId + '_'+ this.offerSpecId  +'" onclick="javascript:{common.setBtnTimer(this);AttachOffer.addOfferSpec('+prodId+','+this.offerSpecId+');}"/><label for="input_'+prodId+'_'+this.offerSpecId+'" ></label></div></div>';
 								html+='</li>';
 								$ul.append(html);
 								i++;
@@ -1014,7 +1014,7 @@ AttachOffer = (function() {
 			var html ="";
 			html+='<span class="list-title">'+ spec.servSpecName +'</span>';
 			html+='<div class="list-checkbox absolute-right"><div class="checkbox-box">';
-			html+='<input type="checkbox" checked="checked" value="1" id="input_'+prodId+'_'+servSpecId+'" name="" ><label for="_'+prodId+'_'+servSpecId+'" onclick="AttachOffer.closeServSpec('+prodId+','+servSpecId+',\''+servSpecName+'\',\''+ifParams+'\')""></label></input></div></div>';	
+			html+='<input type="checkbox" checked="checked" value="1" id="input_'+prodId+'_'+servSpecId+'" name="" onclick="javascript:{common.setBtnTimer(this);AttachOffer.closeServSpec('+prodId+','+servSpecId+',\''+servSpecName+'\',\''+ifParams+'\');}"><label for="input_'+prodId+'_'+servSpecId+'"></label></input></div></div>';	
 			$li.append(html);
 			
 			if(spec.ifDault==0){ //必须
@@ -1332,7 +1332,7 @@ AttachOffer = (function() {
 			var html ="";
 			html+='<span class="list-title">'+ newSpec.offerSpecName +'</span>';
 			html+='<div class="list-checkbox absolute-right"><div class="checkbox-box">';
-			html+='<input type="checkbox" checked="checked" value="1" id="input_'+prodId+'_'+offerSpecId+'" name="" ><label for="_'+prodId+'_'+offerSpecId+'" onclick="AttachOffer.delOfferSpec('+prodId+','+offerSpecId+')"></label></input></div></div>';						
+			html+='<input type="checkbox" checked="checked" value="1" id="input_'+prodId+'_'+offerSpecId+'" name="" onclick="javascript:{common.setBtnTimer(this);AttachOffer.delOfferSpec('+prodId+','+offerSpecId+');}"><label for="input_'+prodId+'_'+offerSpecId+'" ></label></input></div></div>';						
 			$li.append(html);
 			
 //			var $li = $('<a id="li_'+prodId+'_'+offerSpecId+'"  class="list-group-item"></a>');
@@ -1373,7 +1373,7 @@ AttachOffer = (function() {
 			var html ="";
 			html+='<span class="list-title">'+ newSpec.offerSpecName +'</span>';
 			html+='<div class="list-checkbox absolute-right"><div class="checkbox-box">';
-			html+='<input type="checkbox" value="1" checked="checked" id="input_'+prodId+'_'+offerSpecId+'" name="" ><label for="_'+prodId+'_'+offerSpecId+'" onclick="AttachOffer.delOfferSpec('+prodId+','+offerSpecId+')""></label></input></div></div>';						
+			html+='<input type="checkbox" value="1" checked="checked" id="input_'+prodId+'_'+offerSpecId+'" name="" onclick="javascript:{common.setBtnTimer(this);AttachOffer.delOfferSpec('+prodId+','+offerSpecId+');}"><label for="input_'+prodId+'_'+offerSpecId+'"></label></input></div></div>';						
 			$li.append(html);
 			
 			if(newSpec.ifDault==0){ //必须
