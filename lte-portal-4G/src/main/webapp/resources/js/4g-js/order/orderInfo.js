@@ -1147,7 +1147,7 @@ OrderInfo = (function() {
 	};
 	
 	//初始化数据
-	var _resetData = function(){
+	var _resetData = function(submitFlag){
 		
 		OrderInfo.boUserCustInfos = []; 
 		OrderInfo.boUserCustIdentities = []; 
@@ -1172,7 +1172,7 @@ OrderInfo = (function() {
 			offerMemberInfos : []
 		}; */
 		OrderInfo.order.step = 1;   //填单页面步骤为1
-		_resetOrderInfoCache();
+		_resetOrderInfoCache(submitFlag);
 	};
 	
 	//初始化基础数据，actionClassCd 动作大类，boActionTypeCd 动作小类，actionFlag 受理类型，actionTypeName 动作名称，批量模板使用 templateType
@@ -1714,20 +1714,22 @@ OrderInfo = (function() {
 	 * 填单页面返回“上一步”或“取消”时清空经办人、使用人缓存
 	 */
 	var _resetOrderInfoCache = function(isInitOrderData) {
-		if(ec.util.isObj(isInitOrderData)){//如果是初始化订单数据，不能清理，上一步或取消需要清理缓存
-			OrderInfo.isHandleCustNeeded  = false;
+		if(!(ec.util.isObj(isInitOrderData) && isInitOrderData == CONST.returnCustSubmitFlag)){
+			if(ec.util.isObj(isInitOrderData)){//如果是初始化订单数据，不能清理，上一步或取消需要清理缓存
+				OrderInfo.isHandleCustNeeded  = false;
+			}
+			OrderInfo.ifCreateHandleCust	  = false;//判断是否需要新建经办人
+			OrderInfo.virOlId				  = "";//拍照上传虚拟购物车ID
+			OrderInfo.handleCust			  = {};//针对经办人老客户缓存一些数据
+			OrderInfo.handleCustId 			  = "";//经办人为老客户时的客户ID
+			OrderInfo.boUserCustInfos 		  = [];//使用人：客户信息节点
+			OrderInfo.boUserCustIdentities	  = [];//使用人：客户证件节点
+			OrderInfo.boUserPartyContactInfos = [];//使用人：联系人节点
+			OrderInfo.boUserPartyContactInfo  = $.extend(true, {}, _boUserPartyContactInfo);//使用人：联系人节点
+			OrderInfo.bojbrCustInfos 		  = $.extend(true, {}, _bojbrCustInfos);		//经办人：客户信息节点
+			OrderInfo.bojbrCustIdentities	  = $.extend(true, {}, _bojbrCustIdentities);	//经办人：客户证件节点
+			OrderInfo.bojbrPartyContactInfo   = $.extend(true, {}, _bojbrPartyContactInfo);	//经办人：客户证件节点
 		}
-		OrderInfo.ifCreateHandleCust	  = false;//判断是否需要新建经办人
-		OrderInfo.virOlId				  = "";//拍照上传虚拟购物车ID
-		OrderInfo.handleCust			  = {};//针对经办人老客户缓存一些数据
-		OrderInfo.handleCustId 			  = "";//经办人为老客户时的客户ID
-		OrderInfo.boUserCustInfos 		  = [];//使用人：客户信息节点
-		OrderInfo.boUserCustIdentities	  = [];//使用人：客户证件节点
-		OrderInfo.boUserPartyContactInfos = [];//使用人：联系人节点
-		OrderInfo.boUserPartyContactInfo  = $.extend(true, {}, _boUserPartyContactInfo);//使用人：联系人节点
-		OrderInfo.bojbrCustInfos 		  = $.extend(true, {}, _bojbrCustInfos);		//经办人：客户信息节点
-		OrderInfo.bojbrCustIdentities	  = $.extend(true, {}, _bojbrCustIdentities);	//经办人：客户证件节点
-		OrderInfo.bojbrPartyContactInfo   = $.extend(true, {}, _bojbrPartyContactInfo);	//经办人：客户证件节点
 	};
 	
 	//前置校验流水号

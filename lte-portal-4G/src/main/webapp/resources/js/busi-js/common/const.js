@@ -539,6 +539,10 @@ CONST = (function(){
 			"10":"未激活拆机",
 			"11":"欠费拆机"
 	};
+	
+	//返档订单提交标识，由于其初始化订单数据特殊，增加标识
+	var _returnCustSubmitFlag = "returnCustSubmit";
+	
 	return {
 		//批量受理查询，是否执行改造后的新代码的开关标识，用于暂时记录是否执行新代码。Y执行改造后的新代码，N执行改造前的旧代码，默认为N。 By ZhangYu 2015-10-20
 		BATCHORDER_FLAG : _BATCHORDER_FLAG,
@@ -603,7 +607,8 @@ CONST = (function(){
 		isHandleCustNeeded	:_isHandleCustNeeded,
 		realNamePhotoFlag	:_realNamePhotoFlag,
 		Action_Flag_Info:_Action_Flag_Info,
-		Busi_Type_Info:_Busi_Type_Info
+		Busi_Type_Info:_Busi_Type_Info,
+		returnCustSubmitFlag:_returnCustSubmitFlag
 	};
 })();
 

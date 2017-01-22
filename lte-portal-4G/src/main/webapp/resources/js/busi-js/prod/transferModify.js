@@ -121,7 +121,7 @@ prod.transferModify = (function(){
 		if(acctId>0){
 			acctCd = $("#acctSelect").find("option:selected").attr("acctcd"); //要更换的帐户合同号
 		}
-		SoOrder.builder();
+		SoOrder.builder(CONST.returnCustSubmitFlag);//返档在订单提交时才初始化订单数据，特殊，增加标识
 		//返档要求partyId取返档后客户ID，做特殊处理redmine 794183
 		OrderInfo.orderData.orderList.orderListInfo.partyId = _toCustId;
 		//查询产品下帐户信息
@@ -1154,7 +1154,7 @@ prod.transferModify = (function(){
 	};
 	
 	var _changeDataReturn_Submit = function(){
-		SoOrder.builder();
+		SoOrder.builder(CONST.returnCustSubmitFlag);//返档在订单提交时才初始化订单数据，特殊，增加标识
 		//查询产品下帐户信息
 		var param = {
 				prodId : order.prodModify.choosedProdInfo.prodInstId,
@@ -1393,7 +1393,7 @@ prod.transferModify = (function(){
 		if(acctId>0){
 			acctCd = $("#acctSelect").find("option:selected").attr("acctcd"); //要更换的帐户合同号
 		}
-		SoOrder.builder();
+		SoOrder.builder(CONST.returnCustSubmitFlag);//返档在订单提交时才初始化订单数据，特殊，增加标识
 		//返档要求partyId取返档后客户ID，做特殊处理redmine 794183
 		OrderInfo.orderData.orderList.orderListInfo.partyId = _toCustId;
 		//查询产品下帐户信息

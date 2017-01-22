@@ -10,9 +10,9 @@ SoOrder = (function() {
 	var isYWTX = "";
 	var _inSubmit = false; //标识位，是否正在进行订单提交
 	//订单准备
-	var _builder = function() {
+	var _builder = function(submitFlag) {
 		if(query.offer.loadInst()){  //加载实例到缓存
-			SoOrder.initFillPage();
+			SoOrder.initFillPage(submitFlag);
 			return true;
 		}else{
 			return false;
@@ -20,23 +20,23 @@ SoOrder = (function() {
 	};
 	//主副卡订单确认信息
 	var _viceParam="";
-	//初始化填单页面，为规则校验类型业务使用
-	var _initFillPage = function(){
-		SoOrder.initOrderData();
+	//初始化填单页面，为规则校验类型业务使用，非返档业务，可不填写入参submitFlag
+	var _initFillPage = function(submitFlag){
+		SoOrder.initOrderData(submitFlag);
 		SoOrder.step(1); //显示填单界面
 		OrderInfo.order.step=1;//订单页面
 		_getToken(); //获取页面步骤
 	}; 
 	
-	//初始化订单数据
-	var _initOrderData = function(){
+	//初始化订单数据，非返档业务，可不填写入参submitFlag
+	var _initOrderData = function(submitFlag){
 		OrderInfo.resetSeq(); //重置序列
-		OrderInfo.resetData(); //重置 数据
+		OrderInfo.resetData(submitFlag); //重置 数据
 		OrderInfo.orderResult = {}; //清空购物车
 		OrderInfo.getOrderData(); //获取订单提交节点	
 		OrderInfo.orderData.orderList.orderListInfo.partyId = OrderInfo.cust.custId;
 		OrderInfo.orderData.orderList.orderListInfo.areaId = OrderInfo.getAreaId();
-		OrderInfo.resetChooseUserInfo();
+		OrderInfo.resetChooseUserInfo(submitFlag);
 	};
 	
 	var _getCheckOperatSpec=function(){
