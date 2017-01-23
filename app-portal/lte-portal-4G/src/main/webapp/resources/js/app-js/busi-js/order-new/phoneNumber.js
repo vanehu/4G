@@ -98,6 +98,7 @@ order.phoneNumber = (function(){
 	var _queryPhoneNbrPool2 = function(){
 		var url=contextPath+"/app/mktRes/phonenumber/queryPhoneNbrPool";
 		var param={};
+		
 		$.ecOverlay("<strong>查询号码中,请稍等...</strong>");
 		$.callServiceAsJson(url,param,{
 			"before":function(){
@@ -216,6 +217,10 @@ order.phoneNumber = (function(){
 	
 	//主卡号码列表查询
 	var _btnQueryPhoneNumber=function(){
+		if(mainFlag=="false"){//走副卡查询
+			_btnQueryPhoneNumber2();
+			return;
+		}
 		mainFlag="true";
 		var idcode=$.trim($("#idCode").val());
 		if(idcode!=''){
@@ -295,36 +300,86 @@ order.phoneNumber = (function(){
 				$.alert("提示","请求可能发生异常，请稍后再试！");
 			}
 		});	
+		mainFlag="true";
 	};
 	
 	//副卡号码列表查询
 	var _btnQueryPhoneNumber2=function(){
 		mainFlag="false";
-		var poolId = $("#nbrPool2 option:selected").val();
+		var idcode=$.trim($("#idCode").val());
+		if(idcode!=''){
+		    _btnIBydentityQuery();
+			return;
+		}
+		$("#phoneNumber_search_model").modal("hide");//查询modal关闭
+		var poolId = $("#nbrPool option:selected").val();
+		var pnHead = $("#pnHead option:selected").val();//号码段
+		var pnType = $("#pnType option:selected").val();//号码类型
+		var pnEnd = $.trim($("#pnEnd").val());
+		var pnCharacterId = ec.util.defaultStr(pnType);
 		var areaId=OrderInfo.staff.soAreaId+"";
+		var numPrice=$("#numPrice option:selected").val();//预存话费
+		var index=$('#numPrice').prop('selectedIndex');
+		var max="";
+		var min="";
+		if(index==1){
+			var max="100";
+			var min="0";
+		}else if(index==2){
+			var max="300";
+			var min="100";
+		}else if(index==3){
+			var max="500";
+			var min="300";
+		}else if(index==4){
+			var max="1200";
+			var min="500";
+		}else if(index==5){
+			var max="15000";
+			var min="1200";
+		}else if(index==6){
+			var max="30000";
+			var min="15000";
+		}else if(index==7){
+			var max="";
+			var min="30000";
+		}
+		var queryFlag=$("#pwdPur option:selected").val();//号码预占标志,副卡暂时不做预占查询
+		//if(queryFlag=="-1"){
+			queryFlag="1";
+//		}
 		var param={
+				"pnEnd":pnEnd,
+				"pnHead":pnHead,
 				"poolId":poolId,
 				"areaId":areaId,
+				"goodNumFlag":pnCharacterId,
+				"maxPrePrice":max,
+				"minPrePrice":min,
 				"enter":"3",
+				"queryFlag":queryFlag
 		};
+		$.ecOverlay("<strong>正在查询号码中,请稍等会儿....</strong>");
 		//请求地址
 		var url = contextPath+"/app/mktRes/phonenumber/list";
 		$.callServiceAsHtml(url,param,{
 			"before":function(){
-//				$.ecOverlay("<strong>正在查询号码中,请稍等会儿....</strong>");
 			},
 			"always":function(){
 //				$.unecOverlay();
 			},
 			"done" : function(response){
-				$.unecOverlay();
+				//$.unecOverlay();
 				if(!response||response.code != 0){
+					$.unecOverlay();
 					 response.data='查询失败,稍后重试';
 				}
 				//$("#phoneNumber_a").show();
+				$.unecOverlay();
 				var content$ = $("#phonenumber-list2");
 				content$.html(response.data);
 				$("#secondaryCardModal").modal("show");
+				$("#secondaryCardModal").show();
 				
 			},
 			fail:function(response){
@@ -597,8 +652,9 @@ order.phoneNumber = (function(){
 		if(order.phoneNumber.secondaryCarNum>=order.service.max){//副卡添加数已达最大
 			return;
 		}
-		_queryPhoneNbrPool2();
-//		_btnQueryPhoneNumber2();
+		$("#phoneNumber2_a").show();
+		//_queryPhoneNbrPool2();
+		_btnQueryPhoneNumber2();
 //		$("#secondaryCardModal").modal("show");
 		
 	};
@@ -649,6 +705,9 @@ order.phoneNumber = (function(){
 				}
 				
 				var content$ = $("#phonenumber-list");
+				if(mainFlag=="false"){//副卡
+					content$ = $("#phonenumber-list2");
+				}
 				content$.html(response.data);
 				if(OrderInfo.actionFlag == 112){
 					$("#offer").hide();
@@ -741,6 +800,12 @@ order.phoneNumber = (function(){
 			$('#needPwdModal').find('.choice-box').children('.help-block').addClass('hidden');
 		}
 	};
+	var _showPhoneNumSearchModal=function(){
+		$('#phoneNumber_search_model').modal('show');
+		$('#secondaryCardModal').modal('hide');
+		
+		
+	};	
 	return {
 		secondaryCarNum :_secondaryCarNum,
 		initPhonenumber:_initPhonenumber,
@@ -758,7 +823,8 @@ order.phoneNumber = (function(){
 		boProdAn:_boProdAn,
 	    step    :_step,
 	    preePassword:_preePassword,
-	    clearError:_clearError
+	    clearError:_clearError,
+	    showPhoneNumSearchModal:_showPhoneNumSearchModal
 	};
 })();
 

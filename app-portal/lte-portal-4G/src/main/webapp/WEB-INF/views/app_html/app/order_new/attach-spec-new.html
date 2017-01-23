@@ -44,7 +44,7 @@
 			</ul>
 		</div>
 
-		<div style="overflow: scroll;overflow-x:hidden;border:0px;" id="offer_${prodId}">
+		<div style="overflow: scroll;overflow-x:hidden;border:0px;" id="haveChooseOfferDiv_${param.prodId}">
 			<ul class="choice-list-box" id="open_ul_${param.prodId}">
 				<!-- 已选择可选包 -->
 				<#if openMap.result??> <#assign
@@ -74,7 +74,7 @@
 				</#if> </#list> </#if> </#if>
 			</ul>
 		</div>
-		<div style="display: none;overflow: scroll;overflow-x:hidden;border:0px;" id="haveChooseServDiv">
+		<div style="display: none;overflow: scroll;overflow-x:hidden;border:0px;" id="haveChooseServDiv_${param.prodId}">
 			<ul class="choice-list-box" id="open_serv_ul_${param.prodId}" style="overflow: scroll;overflow-x:hidden;border:0px;">
 				<!-- 已选择功能产品 -->
 				<#if openServMap.result.servSpec??> <#assign

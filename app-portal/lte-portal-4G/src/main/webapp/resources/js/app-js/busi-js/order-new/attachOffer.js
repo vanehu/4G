@@ -620,14 +620,14 @@ AttachOffer = (function() {
 		}
 		//查询可订购促销分类
 		if(specType=="1"){//已选可选包展示			
-			$("#haveChooseOfferDiv").show();
-			$("#haveChooseServDiv").hide();
+			$("#haveChooseOfferDiv_"+prodId).show();
+			$("#haveChooseServDiv_"+prodId).hide();
 		}else if(specType=="10000"){//已选功能产品展示
-			$("#haveChooseServDiv").show();
-			$("#haveChooseOfferDiv").hide();
+			$("#haveChooseServDiv_"+prodId).show();
+			$("#haveChooseOfferDiv_"+prodId).hide();
 		}else{
-			$("#haveChooseServDiv").hide();
-			$("#haveChooseOfferDiv").hide();
+			$("#haveChooseServDiv_"+prodId).hide();
+			$("#haveChooseOfferDiv_"+prodId).hide();
 		}
 	};
 	

@@ -18,7 +18,91 @@
 	</head>
 
 	<body>
-	    <a id="phoneNumber_a" class="btn no-border btn-white pull-right m menu-search" href="#phoneNumber_search_model" data-toggle="modal">
+	<!-- 号码高级查询 -->
+	<div class="modal modal-message fade modal-top"
+		id="phoneNumber_search_model">
+		<div class="modal-dialog" style="display: block;">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-hidden="true">×</button>
+					<h4 class="modal-title">号卡查询</h4>
+				</div>
+				<div class="modal-body">
+					<div class="choice-box" id="nbrPoolDiv"></div>
+					<div class="choice-box" id="pnHeadDiv"></div>
+
+					<div class="choice-box m-t-10">
+						<i class="iconfont pull-left p-l-10">&#xe6d5;</i> <input
+							placeholder="最后四位" class="choice-input" id="pnEnd" />
+						<!--<i class="iconfont right-btn pull-right p-r-10">&#xe647;</i>-->
+					</div>
+					<div class="choice-box" id="pnTypeDiv"></div>
+					<div class="choice-box m-t-10">
+						<i class="iconfont pull-left p-l-10">&#xe61a;</i> <select name=""
+							placeholder="预存话费" id="numPrice"
+							class="myselect select-option dw-hsel" data-role="none">
+							<option value="-1">预存话费</option>
+							<option value="0">0-100</option>
+							<option value="100">100-300</option>
+							<option value="300">300-500</option>
+							<option value="500">500-1200</option>
+							<option value="1200">1200-15000</option>
+							<option value="15000">15000-30000</option>
+							<option value="30000">30000以上</option>
+						</select> <i class="iconfont pull-right p-r-10">&#xe66e;</i>
+					</div>
+					<div class="choice-box m-t-10">
+						<i class="iconfont pull-left p-l-10">&#xe6da;</i> <input
+							placeholder="请输入身份证号" class="choice-input" id="idCode" />
+						<!--<i class="iconfont right-btn pull-right p-r-10">&#xe647;</i>-->
+					</div>
+					<div class="choice-box m-t-10">
+						<i class="iconfont pull-left p-l-10">&#xe602;</i> <select name=""
+							placeholder="密码预占" id="pwdPur"
+							class="myselect select-option dw-hsel" data-role="none">
+							<option value="-1" selected="selected">密码预占</option>
+							<option value="1">否</option>
+							<option value="2">是</option>
+						</select> <i class="iconfont pull-right p-r-10">&#xe66e;</i>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<div class="ordinary-btn-box p p-b-15">
+						<button class="sun-btn"
+							onclick="order.phoneNumber.btnQueryPhoneNumber()">确定</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- 密码预占弹出层 -->
+	<div class="modal fade modal-message modal-top" id="needPwdModal">
+		<div class="modal-dialog" style="display:block;">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-hidden="true"
+						onClick="$('#needPwdModal-result').hide();$('#needPwdModal').find('.choice-box').children('.help-block').addClass('hidden');$('#needPwd').val('');">×</button>
+					<h4 class="modal-title">预占密码</h4>
+				</div>
+				<div>
+					<div class="choice-box">
+						<i class="iconfont pull-left p-l-10">&#xe6d5;</i> <input
+							id="needPwd" placeholder="请输入预占密码" type="password"
+							class="choice-input" oninput="order.phoneNumber.clearError()">
+						<div class="help-block error hidden">预占密码不能为空</div>
+					</div>
+					<div id="needPwdModal-result"
+						style="line-height: .86rem; color: #ff0000; font-size: .26rem; display:none; text-align:center;">预占密码有误！</div>
+					<div class="sub-btn-box p relative">
+						<button class="sun-btn" onclick="order.phoneNumber.preePassword()">确定</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<a id="phoneNumber_a" class="btn no-border btn-white pull-right m menu-search" href="#phoneNumber_search_model" data-toggle="modal">
 			<i class="iconfont tab-icon">&#xe647;</i>
 		</a>
 		<a id="offer_a" class="btn no-border btn-white pull-right m menu-search" href="#offer_search_model" data-toggle="modal" style="display: none">
@@ -83,93 +167,14 @@
 							</ul>
 						</div>
 					</div>
-					<div class="tab-content p-0" id="orderContentDiv">
-						<div class="tab-pane fade active in" id="nav-tab-1">
-							<div class="list-box p-5" id="phonenumber-list">
+				<div class="tab-content p-0" id="orderContentDiv">
+					<div class="tab-pane fade active in" id="nav-tab-1">
+						<div class="list-box p-5" id="phonenumber-list">
 								
-							</div>
-							<!-- 高级查询 -->
-							<div class="modal modal-message fade modal-top" id="phoneNumber_search_model">
-								<div class="modal-dialog" style="display: block;">
-									<div class="modal-content">
-										<div class="modal-header">
-											<button type="button" class="close" data-dismiss="modal"
-												aria-hidden="true">×</button>
-											<h4 class="modal-title">号卡查询</h4>
-										</div>
-										<div class="modal-body">
-											<div class="choice-box" id="nbrPoolDiv">
-											</div>
-											<div class="choice-box" id="pnHeadDiv">
-											</div>
-							
-											<div class="choice-box m-t-10">
-												<i class="iconfont pull-left p-l-10">&#xe6d5;</i> 
-												<input placeholder="最后四位" class="choice-input" id="pnEnd"/>
-												<!--<i class="iconfont right-btn pull-right p-r-10">&#xe647;</i>-->
-											</div>
-										    <div class="choice-box" id="pnTypeDiv">
-											</div>
-											<div class="choice-box m-t-10">
-												<i class="iconfont pull-left p-l-10">&#xe61a;</i> 
-												<select name="" placeholder="预存话费" id="numPrice" class="myselect select-option dw-hsel" data-role="none">
-												    <option value="-1">预存话费</option>
-							           	     		<option value="0">0-100</option>
-							           				<option  value="100">100-300</option>
-							           				<option  value="300" >300-500</option>
-							           				<option  value="500">500-1200</option>
-							           				<option  value="1200">1200-15000</option>
-							           				<option  value="15000">15000-30000</option>
-							           				<option  value="30000">30000以上</option>
-												</select> <i class="iconfont pull-right p-r-10">&#xe66e;</i>
-											</div>
-											<div class="choice-box m-t-10">
-											<i class="iconfont pull-left p-l-10">&#xe6da;</i> <input
-												placeholder="请输入身份证号" class="choice-input" id="idCode" />
-											<!--<i class="iconfont right-btn pull-right p-r-10">&#xe647;</i>-->
-										    </div>
-										    <div class="choice-box m-t-10">
-												<i class="iconfont pull-left p-l-10">&#xe602;</i> 
-												<select name="" placeholder="密码预占" id="pwdPur" class="myselect select-option dw-hsel" data-role="none">
-												    <option value="-1" selected="selected">密码预占</option>
-							           	     		<option value="1">否</option>
-							           				<option  value="2">是</option>
-												</select> <i class="iconfont pull-right p-r-10">&#xe66e;</i>
-											</div>
-										</div>
-										<div class="modal-footer">
-											<div class="ordinary-btn-box p p-b-15">
-												<button class="sun-btn" onclick="order.phoneNumber.btnQueryPhoneNumber()">确定</button>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-					<div class="modal fade modal-message modal-top" id="needPwdModal">
-					<div class="modal-dialog" style="display:block;">
-						<div class="modal-content">
-							<div class="modal-header">
-								<button type="button" class="close" data-dismiss="modal"
-									aria-hidden="true" onClick="$('#needPwdModal-result').hide();$('#needPwdModal').find('.choice-box').children('.help-block').addClass('hidden');$('#needPwd').val('');">×</button>
-								<h4 class="modal-title">预占密码</h4>
-							</div>
-							<div>
-								<div class="choice-box">
-									<i class="iconfont pull-left p-l-10">&#xe6d5;</i>
-									 <input id="needPwd" placeholder="请输入预占密码" type="password" class="choice-input" oninput="order.phoneNumber.clearError()">
-								     <div class="help-block error hidden">预占密码不能为空</div>
-								</div>
-								<div id="needPwdModal-result" style="line-height: .86rem; color: #ff0000; font-size: .26rem; display:none; text-align:center;">预占密码有误！</div>
-								<div class="sub-btn-box p relative">
-									<button class="sun-btn" onclick="order.phoneNumber.preePassword()">确定</button>
-								</div>
-							    </div>
-							 </div>
-							 </div>
-						  </div> 
-				</div>
-				<div class="tab-pane fade" id="nav-tab-2">
-												<!-- 套餐高级查询 -->
+						</div> 
+				      </div>
+				    <div class="tab-pane fade" id="nav-tab-2">
+						<!-- 套餐高级查询 -->
 						<div class="modal modal-message fade modal-top" id="offer_search_model">
 							<div class="modal-dialog" style="display: block;">
 								<div class="modal-content">
@@ -237,15 +242,16 @@
 								</ul>
 							</div>
 							<div class="modal modal-message fade modal-top" id="secondaryCardModal">
+							
 									<div class="modal-dialog" style="display: block;">
 										<div class="modal-content">
 											<div class="modal-header">
 												<button type="button" class="close" onclick="$('#phoneNumber_a').hide();" aria-hidden="true" data-dismiss="modal">×</button>
 												<h4 class="modal-title">副卡号码选择</h4>
-                                             
+                                               <a id="phoneNumber2_a" class="btn no-border btn-white pull-right m menu-search" onclick="order.phoneNumber.showPhoneNumSearchModal()" style="display: none">
+			                                   <i class="iconfont tab-icon">&#xe647;</i>
+		                                      </a>
 											</div>
-										<div class="choice-box" id="nbrPoolDiv2">
-										</div>
 										<div class="list-box p-5" id="phonenumber-list2">
 								
 							            </div>
