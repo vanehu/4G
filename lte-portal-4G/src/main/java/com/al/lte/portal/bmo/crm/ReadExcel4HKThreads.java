@@ -139,6 +139,7 @@ public class ReadExcel4HKThreads implements Runnable {
 				}
 			} else {
 				message = "批量导入出错:导入数据为空";
+				errorData.append(message);
 			}
 		}
 		this.countDownLatch.countDown();

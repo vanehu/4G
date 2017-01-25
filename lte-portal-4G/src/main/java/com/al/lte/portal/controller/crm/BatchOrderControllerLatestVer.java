@@ -428,6 +428,8 @@ public class BatchOrderControllerLatestVer  extends BaseController {
 		             model.addAttribute("totalNum", total);
 				}
 			}
+		} catch (InterfaceException ie) {
+			return super.failedStr(model, ie, param, ErrorCode.BATCH_IMP_LIST);
 		} catch (Exception e) {
 			return super.failedStr(model, ErrorCode.BATCH_IMP_LIST, e, param);
 		}
