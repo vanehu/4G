@@ -125,6 +125,8 @@ public class SessionStaff implements Serializable {
 	private String dbKeyWord;
 	/** 受理渠道大类  */
 	private String currentChannelType;
+	/**是否使用精品渠道终端销售系统key：isUseGTS value：null（否）、10（ 否）、20 （是）*/
+	private String isUseGTS;
 	/** 手机信息  */
 	private String phoneModel;
 	/** 手机mac地址 */
@@ -624,6 +626,7 @@ public class SessionStaff implements Serializable {
 		sessionStaff.setCurrentAreaName(MapUtils.getString(paramMap, "areaName", ""));
 		sessionStaff.setCurrentAreaAllName(MapUtils.getString(paramMap, "areaAllName", ""));
 		sessionStaff.setCurrentChannelType(MapUtils.getString(paramMap, "type", ""));
+		sessionStaff.setIsUseGTS(MapUtils.getString(paramMap, "isUseGTS", ""));
 		sessionStaff.setOperatorsId(MapUtils.getString(paramMap, "operatorsId", ""));
 		//身份证类型开发
 		PropertiesUtils propertiesUtils = (PropertiesUtils) SpringContextUtil.getBean("propertiesUtils");
@@ -646,6 +649,7 @@ public class SessionStaff implements Serializable {
 		sessionStaff.setCurrentAreaName(MapUtils.getString(paramMap, "areaName", ""));
 		sessionStaff.setCurrentAreaAllName(MapUtils.getString(paramMap, "areaAllName", ""));
 		sessionStaff.setCurrentChannelType(MapUtils.getString(paramMap, "type", ""));
+		sessionStaff.setIsUseGTS(MapUtils.getString(paramMap, "isUseGTS", ""));
 		//身份证类型开发
 		PropertiesUtils propertiesUtils = (PropertiesUtils) SpringContextUtil.getBean("propertiesUtils");
 		sessionStaff.setIdType(propertiesUtils.getMessage(SysConstant.IDTYPE+"-"+MapUtils.getString(paramMap, "areaId", "").substring(0,3)+"0000"));
@@ -841,6 +845,16 @@ public class SessionStaff implements Serializable {
 
 	public void setLoginAreaName(String loginAreaName) {
 		this.loginAreaName = loginAreaName;
+	}
+
+
+	public String getIsUseGTS() {
+		return isUseGTS;
+	}
+
+
+	public void setIsUseGTS(String isUseGTS) {
+		this.isUseGTS = isUseGTS;
 	}	
 	
 }

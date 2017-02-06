@@ -157,9 +157,10 @@ $(function(){
 			soAreaCode : $("#_session_staff_info").attr("areaCode"),
 			soAreaName : $("#_session_staff_info").attr("areaName"),
 			soAreaAllName : $("#_session_staff_info").attr("areaAllName"),
-			channelCode: $("#_session_staff_info").attr("channelCode"),
+			channelCode: $("#_session_staff_info").attr("channelCode"), 
 			channelType:$("#_session_staff_info").attr("channelType"),
-			idType:$("#_session_staff_info").attr("idType")
+			idType:$("#_session_staff_info").attr("idType"),
+			isUseGTS:$("#_session_staff_info").attr("isUseGTS")
 	};
 //	window.localStorage.setItem("OrderInfo.staff",JSON.stringify(OrderInfo.staff));
 });

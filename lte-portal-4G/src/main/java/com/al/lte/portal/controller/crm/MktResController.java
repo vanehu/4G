@@ -2188,6 +2188,10 @@ public class MktResController extends BaseController {
 		SessionStaff sessionStaff = (SessionStaff) ServletUtils
 				.getSessionAttribute(super.getRequest(),
 						SysConstant.SESSION_KEY_LOGIN_STAFF);
+		// “是否使用精品渠道终端销售系统”，取值及说明：10： 否、20 ：是。如为使用精品渠道销售系统的门店（包括该渠道的店中商），则限制不允许办理
+		if ("20".equals(sessionStaff.getIsUseGTS())) {
+			return super.failed("请到精品渠道终端销售系统进行串码的领用和回退", ResultConstant.ACCESS_NOT_NORMAL.getCode());
+		}
 		Map<String, Object> rMap = null;
 		JsonResponse jsonResponse = null;
 		Map<String, Object> paramMap = null;

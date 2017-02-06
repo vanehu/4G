@@ -189,6 +189,11 @@ mktRes.terminal.receive = (function(){
 	 * 确认领用
 	 */
 	var _btnTerminalUse=function(curPage){
+		// “是否使用精品渠道终端销售系统”，取值及说明：10： 否、20 ：是。如为使用精品渠道销售系统的门店（包括该渠道的店中商），则限制不允许办理
+		if (ec.util.isObj(OrderInfo.staff.isUseGTS) && "20" == OrderInfo.staff.isUseGTS) {
+			$.alert("提示", "请到精品渠道终端销售系统进行串码的领用和回退");
+			return;
+		}
 		//请求地址
 		var url = contextPath+"/mktRes/terminal/termianlUse";
 		//收集参数
@@ -225,6 +230,8 @@ mktRes.terminal.receive = (function(){
 					 $("#termCode").val("");
 				}else if (response.code==-2){
 					$.alertM(response.data);
+				}else if (response.code == 1202) {
+					$.alert("提示",response.data);
 				}else{
 					if(response.data!=undefined){
 						$.alert("提示",response.data.msg);

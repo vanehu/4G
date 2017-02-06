@@ -36,7 +36,8 @@
 					soAreaName : $("#_session_staff_info").attr("areaName"),
 					soAreaAllName : $("#_session_staff_info").attr("areaAllName"),
 					channelType:$("#_session_staff_info").attr("channelType"),
-					idType :$("#_session_staff_info").attr("idType")
+					idType :$("#_session_staff_info").attr("idType"),
+					isUseGTS:$("#_session_staff_info").attr("isUseGTS")
 				};
 			});
 	     </script>
@@ -61,6 +62,7 @@
 					operatorsNbr = '${Session["_ecs_login_session_key"].currentOperatorsNbr}'
 					channelType = '${Session["_ecs_login_session_key"].currentChannelType}' 
 					idType = '${Session["_ecs_login_session_key"].idType}'
+					isUseGTS = '${Session["_ecs_login_session_key"].isUseGTS}'
                 	/>
                 </a>
             	</span>
