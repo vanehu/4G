@@ -284,7 +284,7 @@ OrderInfo = (function() {
 		cust.getJbrInfo();
 		busiOrder.data.boCustInfos.push(OrderInfo.boJbrInfos);
 		busiOrder.data.boCustIdentities.push(OrderInfo.boJbrIdentities);
-		if(OrderInfo.preBefore.idPicFlag == "ON"){
+		if(OrderInfo.preBefore.idPicFlag == "ON" && ec.util.isObj(OrderInfo.jbr.telNumber)){
 			busiOrder.data.boPartyContactInfo.push(OrderInfo.bojbrPartyContactInfo);
 		}
 		busiOrders.push(busiOrder);

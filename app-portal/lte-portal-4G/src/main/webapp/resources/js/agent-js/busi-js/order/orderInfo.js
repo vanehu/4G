@@ -209,7 +209,7 @@ OrderInfo = (function() {
 				seq : OrderInfo.SEQ.seq--
 			}, 
 			busiObj : { //业务对象节点
-				instId : OrderInfo.SEQ.instSeq-- //业务对象实例ID
+				instId : -1 //业务对象实例ID
 			},  
 			boActionType : {
 				actionClassCd : CONST.ACTION_CLASS_CD.CUST_ACTION,

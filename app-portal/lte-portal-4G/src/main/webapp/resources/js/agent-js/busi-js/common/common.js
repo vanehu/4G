@@ -187,7 +187,7 @@ common = (function($) {
 		if(order.calcharge.haveCharge==true){//已下过计费接口
 			return;
 		}
-		//alert("OrderInfo.returnFlag="+OrderInfo.returnFlag+"——OrderInfo.actionFlag="+OrderInfo.actionFlag+"——OrderInfo.order.step="+OrderInfo.order.step+"");
+//		alert("OrderInfo.returnFlag="+OrderInfo.returnFlag+"——OrderInfo.actionFlag="+OrderInfo.actionFlag+"——OrderInfo.order.step="+OrderInfo.order.step+"");
 		$.unecOverlay();//网络出现故障或手机出现故障时按返回关闭“加载中”提示框
 		//如果收费成功  安卓手机返回按钮不可返回
 //		if($("#toCharge").length>0){
@@ -341,6 +341,7 @@ common = (function($) {
 				return;
 			}
 			if(OrderInfo.actionFlag==1){
+				OrderInfo.resetSeq();
 				$("#cust-content").hide();
 				$("#order-content").show();
 				OrderInfo.order.step = 1;
