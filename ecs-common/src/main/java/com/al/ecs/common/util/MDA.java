@@ -550,4 +550,7 @@ public class MDA {
      *  翼支付交费助手——是否需要代扣确认属性后付费用户可选分省开关
      */
     public static final Map<String, String> YIPAY_ITEM_PARAM = new HashMap<String,String>();
+
+	/**预拆机提示开关*/
+	public static final Map<String,String> REMOVE_PROD_TIP  = new HashMap<String,String>();
 }
