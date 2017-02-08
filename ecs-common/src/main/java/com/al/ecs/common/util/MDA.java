@@ -553,4 +553,8 @@ public class MDA {
 
 	/**预拆机提示开关*/
 	public static final Map<String,String> REMOVE_PROD_TIP  = new HashMap<String,String>();
+	 /**
+     *  集团CRM-4G主副卡成员变更是否缺陷付费类型判断开关
+     */
+    public static final Map<String, String> SHOW_MEMBER_FEE_TYPE = new HashMap<String,String>();
 }
