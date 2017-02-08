@@ -1388,55 +1388,70 @@ order.prodModify = (function(){
 			_removeCommit(CONST.PROD_STATUS_CD.REMOVE_PROD,CONST.BO_ACTION_TYPE.REMOVE_PROD,1);
 		}
 	};
-	
+
 	//预拆机
 	var _showOrderRemoveProd = function() {
+		if (query.common.queryPropertiesValue("REMOVE_PROD_TIP_" + order.prodModify.choosedProdInfo.areaId.substr(0, 3)) == "ON"){
+			$.confirm("提示","合约期或协议期内的用户，如需要办理正式拆机业务，可在合约或协议到期前10天及以后日期到就近营业厅办理。",{
+				yesdo:function(){
+					orderRemoveProd();
+				},
+				no:function(){
+				}
+			});
+		}else{
+			orderRemoveProd();
+		}
+
+	};
+
+	var orderRemoveProd = function(){
 		OrderInfo.prodAttrs = [];
 		if(OrderInfo.authRecord.resultCode!="0" && OrderInfo.preBefore.prcFlag != "Y"){
 			if (_querySecondBusinessAuth("5", "Y", "showOrderRemoveProd")) {
 				return;
 			}
 		}
-		
+
 		//查分省前置校验开关
-        var propertiesKey = "PRECHECKFLAG_"+OrderInfo.staff.soAreaId.substring(0,3);
-        var isPCF = offerChange.queryPortalProperties(propertiesKey);
-        if(isPCF == "ON"){
-        	if(OrderInfo.preBefore.prcFlag != "Y"){
-        		if(!_preCheckBeforeOrder("5","showOrderRemoveProd")){
-            		return ;
-            	}
-        	}
-        }
-        OrderInfo.preBefore.prcFlag = "";
-        
+		var propertiesKey = "PRECHECKFLAG_"+OrderInfo.staff.soAreaId.substring(0,3);
+		var isPCF = offerChange.queryPortalProperties(propertiesKey);
+		if(isPCF == "ON"){
+			if(OrderInfo.preBefore.prcFlag != "Y"){
+				if(!_preCheckBeforeOrder("5","showOrderRemoveProd")){
+					return ;
+				}
+			}
+		}
+		OrderInfo.preBefore.prcFlag = "";
+
 		/*if(order.prodModify.choosedProdInfo.prodStateCd!=CONST.PROD_STATUS_CD.NORMAL_PROD){
-			$.alert("提示","当前产品状态不是【在用】,不允许受理该业务！");
-			return;
-		}*/
+		 $.alert("提示","当前产品状态不是【在用】,不允许受理该业务！");
+		 return;
+		 }*/
 		OrderInfo.busitypeflag=7;
 		//预校验
 		var inprodStatusCd=_choosedProdInfo.prodStateCd;
 		var intoprodStatusCd=CONST.PROD_STATUS_CD.STOP_PROD;
 		var BO_ACTION_TYPE=CONST.BO_ACTION_TYPE.PREMOVE_PROD;
-/*		if(lteFlag){
-			var flag=_updateCheckByChange(CONST.ACTION_CLASS_CD.PROD_ACTION,BO_ACTION_TYPE,inprodStatusCd,intoprodStatusCd);
-			if (!flag) return;
-		}*/
+		/*		if(lteFlag){
+		 var flag=_updateCheckByChange(CONST.ACTION_CLASS_CD.PROD_ACTION,BO_ACTION_TYPE,inprodStatusCd,intoprodStatusCd);
+		 if (!flag) return;
+		 }*/
 		if(!query.offer.setOffer()){
 			return;
 		}
 		if(_showMemberWin()){
-			$("#delPhoneTitle").html(CONST.getBoActionTypeName(CONST.BO_ACTION_TYPE.PREMOVE_PROD)+'-是否保留成员');			
+			$("#delPhoneTitle").html(CONST.getBoActionTypeName(CONST.BO_ACTION_TYPE.PREMOVE_PROD)+'-是否保留成员');
 			$("#delPhoneNumber .btna_o:first").off("click").on("click",function(event){
 				_closeDialog();
 				_removeAndAdd(CONST.PROD_STATUS_CD.STOP_PROD,CONST.BO_ACTION_TYPE.PREMOVE_PROD,1);
-			});			
+			});
 			_commonShowDialog();
 		}else{
 			_removeCommit(CONST.PROD_STATUS_CD.STOP_PROD,CONST.BO_ACTION_TYPE.PREMOVE_PROD,1);
 		}
-	};
+	}
 	
 	//预拆机复机
 	var _showCoverOrderRemoveProd = function() {

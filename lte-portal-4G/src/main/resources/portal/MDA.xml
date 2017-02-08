@@ -1850,5 +1850,41 @@
 			'YIPAY_ITEM_899':'OFF'<!-- 虚拟省 -->
 			}
 		</const>
+		<const type="Map" name="REMOVE_PROD_TIP" description="预拆机提示开关,山西默认打开">
+		{
+			'REMOVE_PROD_TIP_854':'OFF',<!-- 西藏 -->
+			'REMOVE_PROD_TIP_863':'OFF',<!-- 青海 -->
+			'REMOVE_PROD_TIP_815':'OFF',<!-- 内蒙古 -->
+			'REMOVE_PROD_TIP_823':'OFF',<!-- 黑龙江 -->
+			'REMOVE_PROD_TIP_845':'OFF',<!-- 广西 -->
+			'REMOVE_PROD_TIP_850':'OFF',<!-- 重庆 -->
+			'REMOVE_PROD_TIP_861':'OFF',<!-- 陕西 -->
+			'REMOVE_PROD_TIP_842':'OFF',<!-- 湖北 -->
+			'REMOVE_PROD_TIP_835':'OFF',<!-- 福建 -->
+			'REMOVE_PROD_TIP_832':'ON',<!-- 江苏 -->
+			'REMOVE_PROD_TIP_846':'OFF',<!-- 海南 -->
+			'REMOVE_PROD_TIP_864':'OFF',<!-- 宁夏 -->
+			'REMOVE_PROD_TIP_814':'ON',<!-- 山西 -->
+			'REMOVE_PROD_TIP_853':'OFF',<!-- 云南 -->
+			'REMOVE_PROD_TIP_836':'OFF',<!-- 江西 -->
+			'REMOVE_PROD_TIP_837':'OFF',<!-- 山东 -->
+			'REMOVE_PROD_TIP_811':'OFF',<!-- 北京 -->
+			'REMOVE_PROD_TIP_843':'OFF',<!-- 湖南 -->
+			'REMOVE_PROD_TIP_851':'OFF',<!-- 四川 -->
+			'REMOVE_PROD_TIP_844':'OFF',<!-- 广东 -->
+			'REMOVE_PROD_TIP_831':'OFF',<!-- 上海 -->
+			'REMOVE_PROD_TIP_812':'OFF',<!-- 天津 -->
+			'REMOVE_PROD_TIP_813':'OFF',<!-- 河北 -->
+			'REMOVE_PROD_TIP_841':'OFF',<!-- 河南 -->
+			'REMOVE_PROD_TIP_821':'OFF',<!-- 辽宁 -->
+			'REMOVE_PROD_TIP_822':'OFF',<!-- 吉林 -->
+			'REMOVE_PROD_TIP_834':'OFF',<!-- 安徽 -->
+			'REMOVE_PROD_TIP_833':'OFF',<!-- 浙江 -->
+			'REMOVE_PROD_TIP_852':'OFF',<!-- 贵州 -->
+			'REMOVE_PROD_TIP_862':'OFF',<!-- 甘肃 -->
+			'REMOVE_PROD_TIP_865':'OFF',<!-- 新疆 -->
+			'REMOVE_PROD_TIP_899':'OFF'<!-- 虚拟省 -->
+		}
+		</const>
 	</mda>
 </mdas>
