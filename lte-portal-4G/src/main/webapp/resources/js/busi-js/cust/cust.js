@@ -2106,6 +2106,13 @@ order.cust = (function(){
 		$("#createFlag").remove();
 		//var man=cert.test();
 		if (man.resultFlag != 0){
+			if (man.resultFlag != 0){
+				if(man.resultFlag==-3){
+					//版本需要更新特殊处理 不需要提示errorMsg
+					return ;
+				}
+				$.alert("提示", man.errorMsg);
+				return;
 			$.alert("提示", man.errorMsg);
 			return;
 		}
@@ -2135,6 +2142,14 @@ order.cust = (function(){
 		var servCode="用户鉴权";
 		var man = cert.readCert(servCode);
 		if (man.resultFlag != 0){
+			if (man.resultFlag != 0){
+				if(man.resultFlag==-3){
+					//版本需要更新特殊处理 不需要提示errorMsg
+					return ;
+				}
+				$.alert("提示", man.errorMsg);
+				return;
+		}
 			$.alert("提示", man.errorMsg);
 			return;
 		}
@@ -2157,6 +2172,14 @@ order.cust = (function(){
 		}
 		var man = cert.readCert(servCode);
 		if (man.resultFlag != 0){
+			if (man.resultFlag != 0){
+				if(man.resultFlag==-3){
+					//版本需要更新特殊处理 不需要提示errorMsg
+					return ;
+				}
+				$.alert("提示", man.errorMsg);
+				return;
+		}
 			$.alert("提示", man.errorMsg);
 			return;
 		}
@@ -2191,6 +2214,14 @@ order.cust = (function(){
 		var servCode="经办人";
 		var man = cert.readCert(servCode);
 		if (man.resultFlag != 0){
+			if (man.resultFlag != 0){
+				if(man.resultFlag==-3){
+					//版本需要更新特殊处理 不需要提示errorMsg
+					return ;
+				}
+				$.alert("提示", man.errorMsg);
+				return;
+		}
 			$.alert("提示", man.errorMsg);
 			return;
 		}
@@ -2926,6 +2957,14 @@ order.cust = (function(){
 		var servCode="经办人";
 		man = cert.readCert(servCode);
 		if (man.resultFlag != 0){
+			if (man.resultFlag != 0){
+				if(man.resultFlag==-3){
+					//版本需要更新特殊处理 不需要提示errorMsg
+					return ;
+				}
+				$.alert("提示", man.errorMsg);
+				return;
+		}
 			$.alert("提示", man.errorMsg);
 			return;
 		}

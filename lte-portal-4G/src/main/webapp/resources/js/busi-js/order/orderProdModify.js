@@ -4303,9 +4303,13 @@ order.prodModify = (function(){
 		$('#cmCustIdCard').data("flag", "1");
 		var man = cert.readCert(servCode);
 		if (man.resultFlag != 0){
+			if(man.resultFlag==-3){
+				//版本需要更新特殊处理 不需要提示errorMsg
+				return ;
+			}
 			$.alert("提示", man.errorMsg);
 			return;
-		}
+	    }
 		$('#cmPartyTypeCd').val(1);//个人
 		order.prodModify.partyTypeCdChoose($("#cmPartyTypeCd option[value='1']"));
 		$('#cm_identidiesTypeCd').val(1);//身份证类型

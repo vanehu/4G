@@ -1066,6 +1066,10 @@ prod.transferModify = (function(){
 		var servCode="定位客户";
 		var man = cert.readCert(servCode);
 		if (man.resultFlag != 0){
+			if(man.resultFlag==-3){
+				//版本需要更新特殊处理 不需要提示errorMsg
+				return ;
+			}
 			$.alert("提示", man.errorMsg);
 			return;
 		}
@@ -1081,9 +1085,13 @@ prod.transferModify = (function(){
 		var servCode="新建客户";
 		var man = cert.readCert(servCode);
 		if (man.resultFlag != 0){
+			if(man.resultFlag==-3){
+				//版本需要更新特殊处理 不需要提示errorMsg
+				return ;
+			}
 			$.alert("提示", man.errorMsg);
 			return;
-		}
+	}
 		$('#div_tra_partyTypeCd').val(1);//个人
 		prod.transferModify.partyTypeCdChoose($("#div_tra_partyTypeCd option[value='1']"));
 		$('#div_tra_identidiesTypeCd').val(1);//身份证类型
