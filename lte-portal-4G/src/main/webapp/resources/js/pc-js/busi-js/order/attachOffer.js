@@ -1381,12 +1381,14 @@ AttachOffer = (function() {
 				dependOffer : {  //存放互斥依赖列表
 					dependOffers : [],
 					offerGrpInfos : []
-				}
+				},
+				optDependOffer : []
 		};
 		if(result!=""){
 			var exclude = result.offerSpec.exclude;
 			var depend = result.offerSpec.depend;
 			var defaultOffer=result.offerSpec.defaultList;
+			var optDependOffer = result.offerSpec.optDependList;
 			//解析可选包互斥依赖组
 			if(ec.util.isArray(exclude)){
 				for (var i = 0; i < exclude.length; i++) {
@@ -1452,6 +1454,12 @@ AttachOffer = (function() {
 					param.defaultOffer.push(defaultOffer[i].offerSpecId);
 				}	
 			}
+			if (optDependOffer != undefined && ec.util.isArray(optDependOffer)) {
+				for (var i = 0; i < optDependOffer.length; i++) {
+					content += "可选订购：" + '<input id="'+optDependOffer[i].offerSpecId+'" type="checkbox" value="'+optDependOffer[i].offerSpecId+'"/>' + optDependOffer[i].offerSpecName + "<br>";
+					param.optDependOffer.push(optDependOffer[i].offerSpecId);
+				}
+			}
 		}
 		var serContent=_servExDepReByRoleObjs(prodId,offerSpecId);//查询销售品构成成员的依赖互斥以及连带
 		content=content+serContent;
@@ -1462,8 +1470,6 @@ AttachOffer = (function() {
 			$.confirm("订购： " + specName,content,{ 
 				yes:function(){
 					CacheData.setOffer2ExcludeOfferSpec(prodId,param);
-				},
-				yesdo:function(){
 					excludeAddattch(prodId,offerSpecId,param);
 					excludeAddServ(prodId,"",paramObj);
 				},
@@ -4200,6 +4206,7 @@ AttachOffer = (function() {
 		paramObj.excludeServ=[];//初始化
 		paramObj.dependServ=[];//初始化
 		paramObj.relatedServ=[];//初始化
+		paramObj.offerListServ=[];//初始化
 		var globContent="";
 		$.each(newSpec.offerRoles,function(){
 			$.each(this.roleObjs,function(){
@@ -4244,13 +4251,15 @@ AttachOffer = (function() {
 	var paramObj = {  
 			excludeServ : [],  //互斥依赖显示列表
 			dependServ : [], //存放互斥依赖列表
-			relatedServ : [] //连带
+			relatedServ : [], //连带
+			offerListServ : []
 	};
 	//解析服务互斥依赖
 	var paserServDataByObjs = function(result,prodId,serv,newSpec){
 		var servExclude = result.servSpec.exclude; //互斥
 		var servDepend = result.servSpec.depend; //依赖
 		var servRelated = result.servSpec.related; //连带
+		var servOfferList = result.servSpec.offerList; //带出的可选包
 		var content = "";
 		
 		//解析功能产品互斥
@@ -4291,6 +4300,21 @@ AttachOffer = (function() {
 					paramObj.relatedServ.push(this);
 				}
 			});
+		}
+		//解析带出的可选包，获取功能产品订购依赖互斥的接口返回的带出可选包拼接成字符串
+		if(ec.util.isArray(servOfferList)){
+			if(servOfferList.length>0){
+				content += "需要订购：   <br>";
+				$.each(servOfferList,function(){
+					if(this.ifDault===0){
+						content += '<input id="check_open_'+prodId+'_'+this.offerSpecId +'" type="checkbox" checked="checked" disabled="disabled">'+this.offerSpecName+'<br>'; 
+					}else{
+						content += '<input id="check_open_'+prodId+'_'+this.offerSpecId +'" type="checkbox" checked="checked">'+this.offerSpecName+'<br>'; 
+					}
+//					content += "需要订购：   " + this.offerSpecName + "<br>";
+					paramObj.offerListServ.push(this);
+				});
+			}
 		}
 		return content;
 	};
