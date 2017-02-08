@@ -260,7 +260,7 @@ public class CustController extends BaseController {
 					sessionStaff.setPartyName(String.valueOf(custInfo.get("partyName")));
 					sessionStaff.setCustSegmentId(String.valueOf(custInfo.get("segmentId")));
 					sessionStaff.setCN(String.valueOf(custInfo.get("CN")));
-					
+					sessionStaff.setCustCode(String.valueOf(custInfo.get("extCustId")));
 					//在session中保存查询出的所有待选的原始客户信息
 					Map<String, Map> listCustInfos = (Map<String, Map>) httpSession.getAttribute(SysConstant.SESSION_LIST_CUST_INFOS);
 					if(listCustInfos == null){
@@ -301,7 +301,7 @@ public class CustController extends BaseController {
 						accNbrParamMap.put("areaId", paramMap.get("areaId"));
 						accNbrParamMap.put("custIds", custIds);
 						Map accNbrResultMap = new HashMap();
-						//如果使用接入号定位客户，不需求去调用根据客户查询接入号接口
+						//如果使用接入号定位客户，不需要去调用根据客户查询接入号接口
 						if (!(custInfos.size() == 1 && StringUtils.isBlank(identityCd) && StringUtils.isNotBlank(qryAcctNbr))) {
 							accNbrResultMap = custBmo.queryAccNbrByCust(accNbrParamMap, flowNum, sessionStaff);
 						}
@@ -425,6 +425,9 @@ public class CustController extends BaseController {
             e.printStackTrace();
             jsonResponse = super.failed(ErrorCode.QUERY_ACCOUNT_USE_CUSTINFO, e, paramMap);
         }
+        //update by huangjj3  星级服务参数缓存客户选择定位的号码进行切换
+        sessionStaff.setCustType("11");
+        sessionStaff.setInPhoneNum(MapUtils.getString(paramMap, "accNbr", ""));
         return jsonResponse;
     }
 
@@ -917,7 +920,7 @@ public class CustController extends BaseController {
 			}
 		}
 		String custId = MapUtils.getString(param, "custId", "");
-		if(SysConstant.ON.equals(sessionStaff.getPoingtType()) && !StringUtil.isEmptyStr(custId)){//星级服务开关打开
+		if(SysConstant.ON.equals(sessionStaff.getPoingtType()) && !StringUtil.isEmptyStr(custId) && !StringUtil.isEmpty(sessionStaff.getInPhoneNum())){//星级服务开关打开
 			Map<String, Object> paramMapXJ = new HashMap<String, Object>();
 			paramMapXJ.put("identityCd", sessionStaff.getCardType());
 			paramMapXJ.put("identityNum", sessionStaff.getCardNumber());

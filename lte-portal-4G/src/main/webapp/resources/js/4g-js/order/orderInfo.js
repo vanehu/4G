@@ -162,6 +162,8 @@ OrderInfo = (function() {
 
 	var _orderData = {}; //订单提交完整节点
 	
+	var _memBusiOrders = [];//加装副卡付费类型变更节点
+	
 	var _order = {  //订单常用全局变量
 		dealerType : "",   //保存发展人类型
 		soNbr : "", //购物车流水
@@ -1854,6 +1856,7 @@ OrderInfo = (function() {
 		ifCreateHandleCust		:_ifCreateHandleCust,
 		preTransactionID        :_preTransactionID,
 		isHandleCustNeeded		:_isHandleCustNeeded,
-		handleCust				:_handleCust
+		handleCust				:_handleCust,
+		memBusiOrders           :_memBusiOrders
 	};
 })();

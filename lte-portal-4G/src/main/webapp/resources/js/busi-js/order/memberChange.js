@@ -568,6 +568,7 @@ order.memberChange = function(){
 	
 	var QueryofferCustProd = function(){
 		var orderflag = true;
+		OrderInfo.membusiOrders =[];
 		for(var i=0;i<custinfolist.length;i++){
 			var param={};
 			param.custId=custinfolist[i].custId;
@@ -601,9 +602,38 @@ order.memberChange = function(){
 							return;
 						}
 						if(OrderInfo.actionFlag!=1 && prodInstInfos.feeType.feeType!=order.prodModify.choosedProdInfo.feeType){
-							orderflag = false;
-							$.alert("提示",custinfolist[i].accNbr+"和主卡的付费类型不一致！");
-							return;
+							//redmine1188978 begin
+							var show_member_fee = offerChange.queryPortalProperties("SHOW_MEMBER_FEE_TYPE_"+OrderInfo.staff.soAreaId.substring(0,3));
+							if("ON" == show_member_fee){
+								var busiOrder = {
+										areaId : prodInstInfos.areaId,
+										busiOrderInfo : {
+											seq : OrderInfo.SEQ.seq--
+										},
+										busiObj : { //业务对象节点
+											instId : prodInstInfos.prodInstId, //业务对象实例ID
+											objId : prodInstInfos.productId,  //产品规格ID
+											accessNumber : prodInstInfos.accNbr  //接入号码
+										},
+										boActionType : {
+											actionClassCd : CONST.ACTION_CLASS_CD.PROD_ACTION,
+											boActionTypeCd : CONST.BO_ACTION_TYPE.CHANGE_FEE_TYPE
+										},
+										data:{}
+								};
+								busiOrder.data.boProdFeeTypes = [ {
+										feeType : prodInstInfos.feeType.feeType,
+										state : "DEL"
+									}, {
+										feeType : order.prodModify.choosedProdInfo.feeType,
+										state : "ADD"
+									} ];
+								OrderInfo.membusiOrders.push(busiOrder);//已经是副卡的时候加装会吧此副卡的主卡也加装进去，但是主卡付费类型不会下，这种场景目前没有暂不修改
+							}else{
+								orderflag = false;
+								$.alert("提示",custinfolist[i].accNbr+"和主卡的付费类型不一致！");
+								return;
+							}
 						}
 						if(prodInstInfos.productId=="280000000"){
 							$.alert("提示",custinfolist[i].accNbr+"是无线宽带，不能纳入！");
@@ -621,7 +651,19 @@ order.memberChange = function(){
 			}
 		}
 		if(orderflag){
-			return queryMainOfferSpec();
+			if(OrderInfo.membusiOrders.length>0){
+				$.confirm("提示","主卡和纳入的副卡付费类型不一致需更改副卡付费类型，是否更改？",{ 
+					yes:function(){
+					},
+					yesdo:function(){
+							return queryMainOfferSpec();
+					},
+					no:function(){
+					}
+				});
+			}else{
+				return queryMainOfferSpec();
+			}
 		}
 	};
 	

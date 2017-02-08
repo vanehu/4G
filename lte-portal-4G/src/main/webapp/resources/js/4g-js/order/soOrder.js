@@ -1930,6 +1930,11 @@ SoOrder = (function() {
 					});
 				}
 			}
+		//添加付费类型的节点
+		for(var i=0;i<OrderInfo.membusiOrders.length;i++){
+			var membusiOrder = OrderInfo.membusiOrders[i];
+			busiOrders.push(membusiOrder);
+		}
 		}else{
 			//遍历主销售品构成
 			for ( var i = 0; i < OrderInfo.offerSpec.offerRoles.length; i++) {
