@@ -179,27 +179,29 @@ order.prodModify = (function(){
 			$.alert("提示","停机产品不允许受理！");
 			return;
 		}*/
-		var response = $.callServiceAsJsonGet(contextPath + "/order/prodModify/queryIfLteNewInstall", {"prodInstId": order.prodModify.choosedProdInfo.prodInstId, "areaId": order.prodModify.choosedProdInfo.areaId});
-		var data = response.data;
-		if (response.code == 0) {
-			if (ec.util.isObj(data.result) && ec.util.isObj(data.result.ifLteNewInstall)) {
-				OrderInfo.ifLteNewInstall = data.result.ifLteNewInstall;
+		if('25' != addChange){ // #1171980 - 补卡不做限制,其他场景不变
+			var response = $.callServiceAsJsonGet(contextPath + "/order/prodModify/queryIfLteNewInstall", {"prodInstId": order.prodModify.choosedProdInfo.prodInstId, "areaId": order.prodModify.choosedProdInfo.areaId});
+			var data = response.data;
+			if (response.code == 0) {
+				if (ec.util.isObj(data.result) && ec.util.isObj(data.result.ifLteNewInstall)) {
+					OrderInfo.ifLteNewInstall = data.result.ifLteNewInstall;
+				} else {
+					$.alert("提示", "ifLteNewInstall返回为空");
+					return;
+				}
+			} else if (response.code == 1) {
+				$.alert("提示", data.resultMsg, "error");
+				return;
 			} else {
-				$.alert("提示", "ifLteNewInstall返回为空");
+				$.alertM(data);
 				return;
 			}
-		} else if (response.code == 1) {
-			$.alert("提示", data.resultMsg, "error");
-			return;
-		} else {
-			$.alertM(data);
-			return;
-		}
-		//省内新装
-		if((order.prodModify.choosedProdInfo.prodStateCd==CONST.PROD_STATUS_CD.DONE_PROD||
+			//省内新装
+			if((order.prodModify.choosedProdInfo.prodStateCd==CONST.PROD_STATUS_CD.DONE_PROD||
 				order.prodModify.choosedProdInfo.prodStateCd==CONST.PROD_STATUS_CD.READY_PROD) && OrderInfo.ifLteNewInstall == 'N'){
-			$.alert("提示","当前产品为省内新装且状态为【未激活】,不允许受理该业务！");
-			return;
+				$.alert("提示","当前产品为省内新装且状态为【未激活】,不允许受理该业务！");
+				return;
+			}
 		}
 		//查分省前置校验开关
         var propertiesKey = "PRECHECKFLAG_"+OrderInfo.staff.soAreaId.substring(0,3);
