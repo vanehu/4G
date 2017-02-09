@@ -619,15 +619,18 @@ AttachOffer = (function() {
 			_initCanBuyAttachSpec(prodId,prodSpecId,specType);
 		}
 		//查询可订购促销分类
-		if(specType=="1"){//已选可选包展示			
+		if(specType=="1"){//已选可选包展示		
+			$("#haveChooseUl").find("span").html("已选择可选包");
 			$("#haveChooseOfferDiv_"+prodId).show();
 			$("#haveChooseServDiv_"+prodId).hide();
 		}else if(specType=="10000"){//已选功能产品展示
+			$("#haveChooseUl").find("span").html("已选择功能产品");
 			$("#haveChooseServDiv_"+prodId).show();
 			$("#haveChooseOfferDiv_"+prodId).hide();
 		}else{
+			$("#haveChooseUl").find("span").html("已选择促销");
+			$("#haveChooseOfferDiv_"+prodId).show();
 			$("#haveChooseServDiv_"+prodId).hide();
-			$("#haveChooseOfferDiv_"+prodId).hide();
 		}
 	};
 	

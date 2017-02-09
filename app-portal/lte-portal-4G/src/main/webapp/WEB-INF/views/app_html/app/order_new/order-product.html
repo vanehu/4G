@@ -1,6 +1,6 @@
 <input type="hidden" id="currentCT" value="${currentCT}"/><!-- 渠道类型 -->
 <#if offerSpec?? && offerSpec.offerRoles?? && (offerSpec.offerRoles?size>0)>
-<div id="tab_flag" class="point-main-box">
+<div id="tab_flag" class="point-main-box" style="z-index: 100;">
 	<a id="tab_flag_0" href="#" class="tab_flag active"></a>
 </div>
 <ul class="tab-change-list2" id="tab-change-list2"> 
@@ -176,7 +176,7 @@
 					<div class="modal-content">
 						<div class="modal-header">
 							<button type="button" class="close" data-dismiss="modal" onclick="order.dealer.closeJBR()" aria-hidden="true">×</button>
-							<h4 class="modal-title">添加经办人</h4>
+							<h4 class="modal-title">经办人</h4>
 						</div>
 						<form id="jbrFormdata" method="post">
 						<ul class="choice-list-box bg-body border-none">

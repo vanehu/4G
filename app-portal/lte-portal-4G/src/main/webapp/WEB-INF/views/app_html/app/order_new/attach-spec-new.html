@@ -115,17 +115,29 @@
 			</ul>
 		</div>
 		<script>
-//初始化Slider 实例
-new Slider({
-	dom: document.getElementById('tab-change-list'),
-	list: document.getElementsByName('tab-li'),
-	run: document.getElementsByName('card-list'),
-	runList: document.getElementsByName('card')
-});
-
 
 $(function() {
   order.broadband.init_select();//刷新select组件，使样式生效
+  if(OrderInfo.actionFlag == 112 && order.amalgamation.cot == "1000"){
+//		var newSpec = AttachOffer.setSpec("-1",order.amalgamation.rh_attachOfferId);
+//		CacheData.setServForOfferSpec("-1",newSpec);
+//		AttachOffer.checkOfferExcludeDepend("-1",newSpec);
+	}
+  
+//初始化Slider 实例
+  new Slider({
+  	dom: document.getElementById('tab-change-list'),
+  	list: document.getElementsByName('tab-li'),
+  	run: document.getElementsByName('card-list'),
+  	runList: document.getElementsByName('card'),
+  	tab_flag: "cx_tab_flag"
+  });
+  //主副卡滚动时 小绿点也滚动
+  for(var i=1;i<order.phoneNumber.secondaryCarNum+1;i++){
+	  if($("#cx_tab_flag_"+i).length==0){
+		  $("#cx_tab_flag").append('<a id="cx_tab_flag_'+i+'" href="#"  class="cx_tab_flag"></a>');
+	  }
+  }
 });
 
 	var openMap=${openMapJson};

@@ -236,7 +236,7 @@ order.phoneNumber = (function(){
 		var areaId=OrderInfo.staff.soAreaId+"";
 		var numPrice=$("#numPrice option:selected").val();//预存话费
 		var index=$('#numPrice').prop('selectedIndex');
-		var max="";
+		var max="0";
 		var min="";
 		if(index==1){
 			var max="100";
