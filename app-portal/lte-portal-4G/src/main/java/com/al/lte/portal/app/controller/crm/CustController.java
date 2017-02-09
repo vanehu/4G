@@ -486,7 +486,7 @@ public class CustController extends BaseController {
     	if("ON".equals(newUIFlag) && param.get("newFlag")!=null){
     		forward= "/app/cust/cust-create-new";
     	}
-    	if(param.get("actionFlag")!=null && "111".equals(param.get("actionFlag"))){
+    	if(param.get("actionFlag")!=null && "111".equals(param.get("actionFlag").toString())){
     		forward= "/app/cust/cust-create-new";
     	}
         return forward;
