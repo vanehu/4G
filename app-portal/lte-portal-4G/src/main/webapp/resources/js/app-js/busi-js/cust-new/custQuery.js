@@ -45,7 +45,7 @@ custQuery = (function(){
 	
 	//新增客户
 	var _custCreat = function(){
-		var param = {"newFlag":"Y"};
+		var param = {"newFlag":"Y","actionFlag":"111"};
 		$.callServiceAsHtml(contextPath+"/app/cust/realCreate",param,{
 			"before":function(){
 				$.ecOverlay("<strong>正在加载中,请稍等...</strong>");
