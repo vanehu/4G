@@ -2113,6 +2113,7 @@ order.cust = (function(){
 				}
 				$.alert("提示", man.errorMsg);
 				return;
+			}
 			$.alert("提示", man.errorMsg);
 			return;
 		}
