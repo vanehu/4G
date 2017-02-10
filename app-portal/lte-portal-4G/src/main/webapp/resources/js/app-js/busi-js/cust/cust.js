@@ -1034,7 +1034,7 @@ cust = (function(){
 	
 	//校验表单提交
 	var _validatorForm=function(){
-		if(_newUIFalg == "ON" && (OrderInfo.actionFlag!="111")){
+		if(OrderInfo.actionFlag!="111"){
 			$('#custFormdata').bootstrapValidator({
 		        message: '无效值',
 		        feedbackIcons: {
