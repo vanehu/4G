@@ -3458,10 +3458,6 @@ order.cust = (function(){
 $(function() {
    order.cust.form_valid_init();
    order.cust.initDic();
-   if(!ec.util.isObj(CONST.isHandleCustNeeded)){
-	   CONST.isHandleCustNeeded = query.common.checkOperateSpec(CONST.TGJBRBTQX);
-	}
-   if(!ec.util.isObj(CONST.realNamePhotoFlag)){
-	   CONST.realNamePhotoFlag = query.common.queryPropertiesValue("REAL_NAME_PHOTO_" + String(OrderInfo.staff.areaId).substr(0, 3));
-	}
+   CONST.isHandleCustNeeded = query.common.checkOperateSpec(CONST.TGJBRBTQX);
+   CONST.realNamePhotoFlag = query.common.queryPropertiesValue("REAL_NAME_PHOTO_" + String(OrderInfo.staff.areaId).substr(0, 3));
 });
