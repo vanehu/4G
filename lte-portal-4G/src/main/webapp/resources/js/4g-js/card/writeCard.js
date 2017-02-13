@@ -175,7 +175,7 @@ order.writeCard = (function(){
 			_rscJson.imsi = "1111111111111"+date.getMilliseconds();
 			_rscJson.iccid = "89860314105350023801";
 			if (_rscJson.iccid.length==20){
-				_rscJson.iccid = _rscJson.iccid.substr(0,_rscJson.iccid.length-1)
+				_rscJson.iccid = _rscJson.iccid.substr(0,_rscJson.iccid.length-1);
 			}
 			$("#serialNum"+prodId).val(_rscJson.iccid);
 			$("#serialNum").val("33333333333" + date.getMilliseconds());
