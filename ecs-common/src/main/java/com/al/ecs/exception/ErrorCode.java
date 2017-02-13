@@ -93,6 +93,7 @@ public enum ErrorCode {
     QRY_PHONENBRLEVELINFO_LIST("号码等级查询","010064","01","040019","04"),
     QUERY_TERMINAL_LIST("终端规格信息查询接口","010065","01","040007","04"),
     CHECK_TERMINAL("终端校验接口","010066","01","040008","04"),
+    CHECK_RESERVED_TERMINAL("甩单终端串码预占校验接口","010371","01","160000","16"), // 终端销售系统没有错误编码 自定义为160000
     QUERY_COUPON("根据终端串码查询终端信息","010067","01","020075","02"),
     QUERY_TERMINAL_INFO("终端信息查询接口","010319","01","040009","04"),
     CHECK_UIMANDPHONE("号码和UIM卡批量校验接口","010069","01","040011","04"),
@@ -331,5 +332,6 @@ public enum ErrorCode {
         SYS_MAP.put("13", "物联网");
         SYS_MAP.put("14", "ESS");
         SYS_MAP.put("15", "卡管");
+        SYS_MAP.put("16", "终端销售系统");
     }
 }
