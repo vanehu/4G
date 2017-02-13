@@ -2854,13 +2854,35 @@ AttachOffer = (function() {
 				}
 			}
 		}
-		if(data.statusCd==CONST.MKTRES_STATUS.USABLE || (data.statusCd==CONST.MKTRES_STATUS.HAVESALE && activtyType=="2")){
+		if(data.statusCd==CONST.MKTRES_STATUS.USABLE || data.statusCd == CONST.MKTRES_STATUS.PREEMPTION || (data.statusCd==CONST.MKTRES_STATUS.HAVESALE && activtyType=="2")){
 //			$("#terminalSel_"+objInstId).val(data.mktResId);
 //			$("#terminalName").html(data.mktResName);
 //			$("#terminalDesc").css("display","block");
 //			var price = $("#terminalSel_"+objInstId).find("option:selected").attr("price");
 			
-			
+			// 1213 已销售预占状态需要调用精品渠道销售系统提供的预占串码核实接口（客户的证件信息（允许脱敏）和串码）,返回0000核实校验通过，否则不能受理（也即就是说，预占的串码只能被预占该串码的客户使用）
+			if (data.statusCd == CONST.MKTRES_STATUS.PREEMPTION) {
+				var checkReservedTerminalRes = $.callServiceAsJson(contextPath + "/mktRes/terminal/checkReservedTerminal",{certType: OrderInfo.cust.identityCd,certNo: OrderInfo.cust.idCardNumber, instList: [instCode]});
+				if (ec.util.isObj(checkReservedTerminalRes)) {
+					if (checkReservedTerminalRes.code == 0) {
+						if (ec.util.isObj(checkReservedTerminalRes.data.instList) && ec.util.isObj(checkReservedTerminalRes.data.instList[0])) {
+							if ("0001" == checkReservedTerminalRes.data.instList[0].instState) {
+								$.alert("提示", "精品渠道销售系统预占串码核实接口返回：" + checkReservedTerminalRes.data.instList[0].instMsg, "warning");
+								return;
+							}
+						}
+					} else if (checkReservedTerminalRes.code == 1) {
+						$.alert("提示", checkReservedTerminalRes.data, "warning");
+						return;
+					} else if (checkReservedTerminalRes.code == -2) {
+						$.alertM(checkReservedTerminalRes.data);
+						return;
+					}
+				} else {
+					$.alert("提示", "调用精品渠道销售系统提供的预占串码核实接口返回异常", "error");
+					return;
+				}
+			}
 			var mktPrice=0;//营销资源返回的单位是元
 			var mktColor="";
 			if(ec.util.isArray(data.mktAttrList)){

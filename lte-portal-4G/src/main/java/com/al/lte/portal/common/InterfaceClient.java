@@ -110,6 +110,7 @@ public class InterfaceClient {
 	private static final String XSD_PREFIX = "xsd";//宽带融合（翼销售）销售单下发
 
 	private static final String PAY_PREFIX = "pay";//支付平台
+	private static final String TER_PREFIX = "ter";
 
 	
 	/** 数据路由关键字，根据此标识读取不同数据源的配置数据 */
@@ -406,13 +407,21 @@ public class InterfaceClient {
 							xml2.indexOf("<transactionId"));
 					paramJson = paramString;
 					
+				}else if (TER_PREFIX.equals(prefix)) {
+					serviceCode = serviceCode.substring(4);
+					// 只通过csb调用
+					intfUrl = propertiesUtils.getMessage(URL_KEY + "." + CSB_HTTP);
+					sys = "终端销售系统";
+					paramString = JsonUtil.toString(dataBusMap);
+					paramJson=paramString;
 				}
 				
 				String csbFlag = propertiesUtils.getMessage(SysConstant.CSB_FLAG);
 				String asyncFlag = propertiesUtils.getMessage(SysConstant.ASYNC_FLAG);
 				boolean asyncWay = false;
 				Object serviceCodeObj = null;
-				if (SysConstant.ON.equals(csbFlag)){
+				// 终端销售系统只允许通过csb调用（只支持xml）
+				if (SysConstant.ON.equals(csbFlag) || TER_PREFIX.equals(prefix)){
 					serviceCodeObj = DataRepository.getInstence().getCommonParam(dbKeyWord,serviceCode);
 					Object serviceCodeObjAsyn = DataRepository.getInstence().getCommonParam(dbKeyWord,serviceCode + SysConstant.ASYNC_KEY);
 					if (SysConstant.ON.equals(asyncFlag) && serviceCodeObjAsyn != null) {
@@ -460,7 +469,7 @@ public class InterfaceClient {
 					retnJson = rawRetn;
 				}
 	
-				if (SysConstant.ON.equals(csbFlag) && serviceCodeObj != null){
+				if ((SysConstant.ON.equals(csbFlag) || TER_PREFIX.equals(prefix)) && serviceCodeObj != null){
 					Node svcCont = checkCSBXml(serviceCode, rawRetn, paramString);
 					if (PAY_PREFIX.equals(prefix)) {// 支付平台
 						retnJson = svcCont.asXML();
@@ -483,53 +492,36 @@ public class InterfaceClient {
 //					Result.remove("ResultCode");
 //					Result.remove("ResultMsg");
 				}
-				
 				if (MapUtils.isEmpty(rootMap) || !rootMap.containsKey("resultCode")) {
-					if (rootMap == null || (!rootMap.containsKey("rspCode")&&!rootMap.containsKey("code")&&!rootMap.containsKey("respCode"))) {
+					if (rootMap == null || (!rootMap.containsKey("rspCode")&&!rootMap.containsKey("code")&&!rootMap.containsKey("respCode")&&!rootMap.containsKey("resFlag"))) {
 						//异常判断：返回不是个JSON对象或没有包含resultCode
 						throw new InterfaceException(ErrType.OPPOSITE, serviceCode, retnJson, paramString, logSeqId);
 					}else if(rootMap.containsKey("code")){
 						resultCode = MapUtils.getString(rootMap, "code");
 						resultMsg = MapUtils.getString(rootMap, "message");
-						if (ResultCode.R_EXCEPTION.equals(resultCode) || ResultCode.R_RULE_EXCEPTION.equals(resultCode)) {
-							
-							checkError(rootMap, sys, serviceCode, resultCode, resultMsg, retnJson, paramString, logSeqId);
-							
-						}
-						
-						db.setReturnlmap(rootMap);
+						returnMapSet(serviceCode, db, paramString, retnJson,
+								resultCode, resultMsg, logSeqId, sys, rootMap);
 					}else if(rootMap.containsKey("respCode")){
 						resultCode = MapUtils.getString(rootMap, "respCode");
 						resultMsg = MapUtils.getString(rootMap, "message");
-						if (ResultCode.R_EXCEPTION.equals(resultCode) || ResultCode.R_RULE_EXCEPTION.equals(resultCode)) {
-							
-							checkError(rootMap, sys, serviceCode, resultCode, resultMsg, retnJson, paramString, logSeqId);
-							
-						}
-						
-						db.setReturnlmap(rootMap);
-					}
-					else {
+						returnMapSet(serviceCode, db, paramString, retnJson,
+								resultCode, resultMsg, logSeqId, sys, rootMap);
+					}else if(rootMap.containsKey("resFlag")) {
+						resultCode = MapUtils.getString(rootMap, "resFlag");
+						resultMsg = MapUtils.getString(rootMap, "resMsg");
+						returnMapSet(serviceCode, db, paramString, retnJson,
+								resultCode, resultMsg, logSeqId, sys, rootMap);
+					} else {
 						resultCode = MapUtils.getString(rootMap, "rspCode");
 						resultMsg = MapUtils.getString(rootMap, "rspDesc");
-						if (ResultCode.R_EXCEPTION.equals(resultCode) || ResultCode.R_RULE_EXCEPTION.equals(resultCode)) {
-							
-							checkError(rootMap, sys, serviceCode, resultCode, resultMsg, retnJson, paramString, logSeqId);
-							
-						}
-						
-						db.setReturnlmap(rootMap);
+						returnMapSet(serviceCode, db, paramString, retnJson,
+								resultCode, resultMsg, logSeqId, sys, rootMap);
 					}
 				}else{
 					resultCode = MapUtils.getString(rootMap, "resultCode");
 					resultMsg = MapUtils.getString(rootMap, "resultMsg");
-					if (ResultCode.R_EXCEPTION.equals(resultCode) || ResultCode.R_RULE_EXCEPTION.equals(resultCode)) {
-						
-						checkError(rootMap, sys, serviceCode, resultCode, resultMsg, retnJson, paramString, logSeqId);
-						
-					}
-					rootMap.put("logSeqId", logSeqId);
-					db.setReturnlmap(rootMap);
+					returnMapSet(serviceCode, db, paramString, retnJson,
+							resultCode, resultMsg, logSeqId, sys, rootMap);
 				}
 			} else if (WS_WAY.equals(invokeWay)) {
 	
@@ -587,6 +579,20 @@ public class InterfaceClient {
 		}
 		db.setBusiFlowId(transactionId);
 		return db;
+	}
+	
+	// 重复代码封装
+	private static void returnMapSet(String serviceCode, DataBus db,
+			String paramString, String retnJson, String resultCode,
+			String resultMsg, String logSeqId, String sys,
+			Map<String, Object> rootMap) throws InterfaceException {
+		if (ResultCode.R_EXCEPTION.equals(resultCode) || ResultCode.R_RULE_EXCEPTION.equals(resultCode)) {
+			
+			checkError(rootMap, sys, serviceCode, resultCode, resultMsg, retnJson, paramString, logSeqId);
+			
+		}
+		rootMap.put("logSeqId", logSeqId);
+		db.setReturnlmap(rootMap);
 	}
 
 	private static String createLogSeqId(Map<String, Object> dataBusMap,

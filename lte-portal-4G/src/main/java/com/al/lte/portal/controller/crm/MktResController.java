@@ -1289,7 +1289,38 @@ public class MktResController extends BaseController {
 			return super.failed(ErrorCode.CHECK_TERMINAL, e, mktInfo);
 		}
 	}
-
+	
+	/**
+	 * 甩单终端串码预占校验
+	 * @param paramMap
+	 * @param flowNum
+	 * @return
+	 */
+	@RequestMapping(value = "/terminal/checkReservedTerminal", method = RequestMethod.POST)
+	@ResponseBody
+	public JsonResponse checkReservedTerminal(@RequestBody Map<String, Object> paramMap,
+			@LogOperatorAnn String flowNum) {
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils
+				.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
+		try {
+			Map<String, Object> mktRes = mktResBmo.checkReservedTerminal(
+					paramMap, flowNum, sessionStaff);
+			if (ResultCode.R_SUCCESS.equals(MapUtils.getString(mktRes, "code"))) {
+				return super.successed(MapUtils.getMap(mktRes, "result"));
+			} else {
+				return super.failed(MapUtils.getString(mktRes, "msg"), ResultConstant.FAILD.getCode());
+			}
+		} catch (BusinessException be) {
+			this.log.error("门户/mktRes/terminal/checkReservedTerminal服务异常", be);
+			return super.failed(be);
+		} catch (InterfaceException ie) {
+			return super.failed(ie, paramMap, ErrorCode.CHECK_RESERVED_TERMINAL);
+		} catch (Exception e) {
+			this.log.error("门户/mktRes/terminal/checkReservedTerminal服务异常", e);
+			return super.failed(ErrorCode.CHECK_RESERVED_TERMINAL, e, paramMap);
+		}
+		
+	}
 
 	/**
 	 * 终端合约套餐加载

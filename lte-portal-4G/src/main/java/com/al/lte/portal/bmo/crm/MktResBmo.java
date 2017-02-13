@@ -525,5 +525,17 @@ public interface MktResBmo {
 	public Map<String, Object> upLoadPicturesFileToFtp(Map<String, Object> param,
 			String optFlowNum, SessionStaff sessionStaff) throws Exception;
 	
+	/**
+	 * 甩单终端串码预占校验接口：调用终端销售系统的接口来进行终端串码预占校验（校验预占的客户信息和实际办理业务的客户信息是否一致），检验通过后方可继续合约办理（只走csb）
+	 * @param paramMap
+	 * @param flowNum
+	 * @param sessionStaff
+	 * @return
+	 * @throws Exception
+	 */
+	public Map<String, Object> checkReservedTerminal(
+			Map<String, Object> param, String flowNum,
+			SessionStaff sessionStaff) throws Exception;
+	
 		
  }

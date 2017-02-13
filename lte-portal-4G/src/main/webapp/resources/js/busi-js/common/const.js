@@ -325,7 +325,8 @@ CONST = (function(){
 	
 	var _MKTRES_STATUS = {
 		USABLE : "1001",
-	    HAVESALE:"1115"   //已销售未补贴
+	    HAVESALE:"1115",   //已销售未补贴
+	    PREEMPTION: "1213" // 已销售预占
 	};
 	
 	var _TERMINAL_SPEC_ATTR_ID = {
