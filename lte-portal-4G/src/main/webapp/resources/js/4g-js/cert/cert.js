@@ -80,7 +80,7 @@ cert = (function() {
 	/**
 	 * 读取二代证
 	 */
-	var _readCert = function() {
+	var _readCert = function(servCode) {
 	    if (CertCtl == null || CertCtl == undefined) {
 	    	return {"resultFlag": -1, "errorMsg": "浏览器不支持读卡器"};
 	    }
@@ -105,6 +105,7 @@ cert = (function() {
 	        return conn;
 	    }
 	    var man = null;
+	    var ver=  null;
 	    if (undefined == conn.isCloud || 1 == conn.isCloud) {
 	    	man = JSON.parse(CertCtl.readCert());
 	    	if(man.resultFlag != 0){
@@ -114,14 +115,14 @@ cert = (function() {
 		    	var param={};
 		    	var url = contextPath + "/order/isOpenNewCert";
 				var response = $.callServiceAsJson(url,JSON.stringify(param));
-				var ver="";
 				if (response.code == 0&&response.data=='ON') {
 					if(man.venderId==undefined||man.signature==undefined){
 						man = {"resultFlag": -1, "errorMsg": "读取设备厂家标识/签名信息错误,请安装新的驱动及控件"};
 						return man;
 					}else{
 						try{
-							ver = JSON.parse(CertCtl.getVersion());
+						ver = JSON.parse(CertCtl.getVersion());
+						man.versionSerial=ver.versionSerial;
 						}catch(e){
 							man = {"resultFlag": -1, "errorMsg": "读取设备版本号错误,请安装新的驱动及控件"};
 							return man;
@@ -129,24 +130,28 @@ cert = (function() {
 			    		if(ver.resultFlag!=0){//版本读取错误
 			    			return ver;
 			    		}
-			    		certInfo.signature=man.signature;
-			    		certInfo.versionSerial=ver.versionSerial;
-				    	certInfo.venderId=man.venderId;
 					}
 				}
-
 				//经办人新建
 				certInfo.createFlag = $('#createFlag').val();
 				certInfo.jbrFlag = "Y";//添加经办人读卡标识
+				certInfo.signature=man.signature!=undefined&&man.signature!=null?man.signature:"";// 数字签名
+	    		certInfo.versionSerial=man.versionSerial!=undefined&&man.versionSerial!=null?man.versionSerial:"";//版本号
+		    	certInfo.venderId=man.venderId!=undefined&&man.venderId!=null?man.venderId:"";// 厂商标识
+		    	certInfo.readCardReturnInfo=man!=null&&man!=undefined?JSON.stringify(man):"";//读卡返回信息
+		    	certInfo.servCode=servCode!=null&&servCode!=undefined?servCode:"";//业务场景编码
+		    	//如果已经生成了portalId也一并存入
+				if(OrderInfo.order.portalId!=null&&OrderInfo.order.portalId!=undefined&&OrderInfo.order.portalId!=""){
+					certInfo.portalId=OrderInfo.order.portalId;
+				}
 	    		url = contextPath + "/order/certInfo";
 				var response = $.callServiceAsJson(url,JSON.stringify(certInfo));
 				if (response.code == 0) {
 					man = {"resultFlag": 0, "errorMsg": "读卡成功", "resultContent": response.data};
 				}else if(response.code == -3){
-					man = {"resultFlag": -3, "errorMsg": "控件版本不一致,请下载新的控件","resultContent": response.data};
+					man = {"resultFlag": -3, "errorMsg": "控件版本不一致,您当前为"+response.data.fileName+"读卡器,驱动版本号为:"+ver.versionSerial+"请更新升级到版本:"+response.data.mdaVersion+"请下载新的控件","resultContent": response.data};
 					var info="您当前为 "+response.data.fileName+"读卡器,驱动版本号为 : "+ver.versionSerial+
-					"，请更新升级到版本: "+response.data.mdaVersion+
-					"。请下载新的控件。";
+					"，请更新升级到版本: "+response.data.mdaVersion+"。请下载新的控件。";
 					$.confirm("信息确认",info,{
 						yesdo:function(){
 							$("<form>", {

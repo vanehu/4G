@@ -276,7 +276,7 @@ SoOrder = (function() {
 		}
 		 custOrderAttrs.push({
 			itemSpecId : CONST.BUSI_ORDER_ATTR.PORTAL_ORDER_ID,//前台订单ID
-			value : OrderInfo.order.soNbr
+			value : OrderInfo.order.portalId
 		});
 		custOrderAttrs.push({
 			itemSpecId : CONST.BUSI_ORDER_ATTR.THRETOFOUR_ITEM,//3转4标志

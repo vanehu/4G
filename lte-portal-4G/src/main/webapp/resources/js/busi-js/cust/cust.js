@@ -2159,7 +2159,7 @@ order.cust = (function(){
 		var servCode="";
 		if (level == "1") {
 			parentId = "#auth3";//客户定位鉴权弹出窗口id
-			servCode="客户定位";
+			servCode="客户鉴权";
 		} else if (level == "2") {
 			parentId = "#auth2";//二次业务鉴权弹出窗口id
 			servCode="二次业务鉴权";
