@@ -4346,7 +4346,9 @@ order.prodModify = (function(){
 		var response= $.callServiceAsHtml(url,param);
 		$("#auth2").empty().append(response.data);
 		var authTypeStr=$("#auth2").find("#authTypeStr").html();
-		if (ec.util.isObj(OrderInfo.cust_validateType) && ec.util.isObj(OrderInfo.cust_validateNum) && ec.util.isObj(order.prodModify.choosedProdInfo.accNbr)) {
+        if ("-1" == OrderInfo.cust.custId) {
+            return false;
+        }else if (ec.util.isObj(OrderInfo.cust_validateType) && ec.util.isObj(OrderInfo.cust_validateNum) && ec.util.isObj(order.prodModify.choosedProdInfo.accNbr)) {
 			if ((OrderInfo.cust_validateType == "3" || OrderInfo.cust_validateType == "2") && OrderInfo.cust_validateNum == order.prodModify.choosedProdInfo.accNbr) {
 				if (authTypeStr.toString().indexOf(OrderInfo.cust_validateType) != -1 || authTypeStr.toString() == "4") {
 					return false;
