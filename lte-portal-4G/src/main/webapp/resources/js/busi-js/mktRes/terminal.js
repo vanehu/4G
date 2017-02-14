@@ -1151,6 +1151,8 @@ mktRes.terminal = (function($){
 						}
 						
 						
+					}else if (response.data.statusCd==CONST.MKTRES_STATUS.PREEMPTION) {
+						$.alert("提示", "该终端串号为[" + CONST.MKTRES_STATUS.PREEMPTION + "]已销售预占状态，请从办套餐或选号码入口办理相关业务。");
 					}else{
 						$.alert("提示",response.data.message);
 					}
