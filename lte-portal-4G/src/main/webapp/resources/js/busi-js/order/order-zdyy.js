@@ -256,7 +256,7 @@ order.zdyy = (function(){
 	};
 	
 	
-	var _queryCouponReserve = function(pageIndex){
+	var _queryCouponReserve = function(pageIndex,ifTransfer){
     	var curPage = 1 ;
 		if(pageIndex>0){
 			curPage = pageIndex ;
@@ -279,7 +279,8 @@ order.zdyy = (function(){
 				"areaId":areaId,
 				"channelId":$("#channelId").val(),
 				"curPage":curPage,
-				"pageSize":10
+				"pageSize":10,
+				"ifTransfer":ifTransfer
     	};
 		var identityCd = $("#identityCd").val();
 		var identityNum = $("#identityNum").val();

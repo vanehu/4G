@@ -3967,6 +3967,7 @@ public class OrderController extends BaseController {
         param.put("reserveCode", reserveCode);
         param.put("identityCd", request.getParameter("identityCd") == null ? "" : request.getParameter("identityCd"));
         param.put("identityNum", identityNum);
+        param.put("ifTransfer", request.getParameter("ifTransfer"));
         try {
             curPage = Integer.parseInt(request.getParameter("curPage").toString());
             pageSize = Integer.parseInt(request.getParameter("pageSize").toString());
