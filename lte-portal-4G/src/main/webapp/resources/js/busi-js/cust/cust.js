@@ -546,6 +546,7 @@ order.cust = (function(){
 		if(order.cust.fromProvFlag == "1" || (identityCd!=-1 && CONST.getAppDesc()!=0)){
 			identityCd=$("#p_cust_identityCd").val();
 			authFlag="1";
+            OrderInfo.cust_validateType = "1";
 		}else{
 			//4G所有证件类型定位都需要客户鉴权
 			authFlag="0";
@@ -750,6 +751,7 @@ order.cust = (function(){
 		var param = $.extend(true, {}, _choosedCustInfo);
 		param.prodPwd = $.trim($("#auth3").find("#authPassword2").val());
 		param.authFlag=authFlag;
+		param.fromProvFlag=order.cust.fromProvFlag;
 		param.menuName = $("#menuName").attr("menuName");
 		$.callServiceAsHtml(contextPath+"/cust/custAuth",param,{
 			"before":function(){

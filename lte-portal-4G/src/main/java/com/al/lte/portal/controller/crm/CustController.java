@@ -959,6 +959,7 @@ public class CustController extends BaseController {
 		map.put("custInfo", param);
 		model.addAttribute("poingtType",sessionStaff.getPoingtType());
 		model.addAttribute("custAuth", map);
+		model.addAttribute("fromProvFlag", MapUtils.getString(param,"fromProvFlag","0"));
 		return "/cust/cust-info";
 	}
 	
