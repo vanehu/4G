@@ -2862,6 +2862,10 @@ AttachOffer = (function() {
 			
 			// 1213 已销售预占状态需要调用精品渠道销售系统提供的预占串码核实接口（客户的证件信息（允许脱敏）和串码）,返回0000核实校验通过，否则不能受理（也即就是说，预占的串码只能被预占该串码的客户使用）
 			if (data.statusCd == CONST.MKTRES_STATUS.PREEMPTION) {
+				if (OrderInfo.cust.custId == -1) {
+					$.alert("提示", "该串码状态为[" + CONST.MKTRES_STATUS.PREEMPTION + "]已销售预占，与新建客户不匹配。");
+					return;
+				}
 				var checkReservedTerminalRes = $.callServiceAsJson(contextPath + "/mktRes/terminal/checkReservedTerminal",{certType: OrderInfo.cust.identityCd,certNo: OrderInfo.cust.idCardNumber, instList: [instCode]});
 				if (ec.util.isObj(checkReservedTerminalRes)) {
 					if (checkReservedTerminalRes.code == 0) {
