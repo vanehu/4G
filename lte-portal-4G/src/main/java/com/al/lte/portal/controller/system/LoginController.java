@@ -166,7 +166,7 @@ public class LoginController extends BaseController {
 		session.setAttribute(SysConstant.SERVER_NAME,getSerName());
 		session.setAttribute(SysConstant.SERVER_IP,getSerAddrPart());
 		// 已经登录
-		if (sessionStaff != null) {
+		if (sessionStaff != null && !("tokenLogin".equals(sessionStaff.getLogintype()))) {
 			String lastUrl = ServletUtils.getCookieValue(request, "_last_url");
 			if (lastUrl != null) {
 				lastUrl = lastUrl.substring(lastUrl.indexOf("/", 2));

@@ -151,6 +151,10 @@ public class SessionStaff implements Serializable {
 	private Map<String, Object> essSession;
 	/**登录地区名*/
 	private String loginAreaName;
+	/**
+	 * 用记录session来源的登录方式，tokenLogin 为能力开放，loginMH为4G
+	 */
+	private String logintype ;
 	
 	public String getCustType() {
 		return custType;
@@ -855,6 +859,16 @@ public class SessionStaff implements Serializable {
 
 	public void setIsUseGTS(String isUseGTS) {
 		this.isUseGTS = isUseGTS;
+	}
+
+
+	public String getLogintype() {
+		return logintype;
+	}
+
+
+	public void setLogintype(String logintype) {
+		this.logintype = logintype;
 	}	
 	
 }

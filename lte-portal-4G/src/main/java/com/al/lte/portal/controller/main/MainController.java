@@ -109,7 +109,9 @@ public class MainController extends BaseController {
     	ServletUtils.removeSessionAttribute(super.getRequest(), SysConstant.IS_ACTION_FLAG_LIMITED);
     	Map<String, Object> dataBusMap = new HashMap<String, Object>();
     	dataBusMap.put("objCatgName", "recommendOffer,recommendTerminal,hotSaleOffer");
-    	
+    	if("tokenLogin".equals(sessionStaff.getLogintype())){
+    		return super.redirect("/staff/login/page");
+    	}
     	String channelId = sessionStaff.getCurrentChannelId();
     	if(channelId==null||channelId.equals("")||channelId.equals("null")){
     		dataBusMap.put("areaId", sessionStaff.getCurrentAreaId());
