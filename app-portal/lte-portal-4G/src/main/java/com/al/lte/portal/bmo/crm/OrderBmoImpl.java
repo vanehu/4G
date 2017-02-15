@@ -3,27 +3,18 @@ package com.al.lte.portal.bmo.crm;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
 
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.time.DateFormatUtils;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.al.crm.log.sender.ILogSender;
 import com.al.ec.serviceplatform.client.DataBus;
@@ -37,7 +28,6 @@ import com.al.ecs.exception.BusinessException;
 import com.al.ecs.exception.ErrorCode;
 import com.al.ecs.exception.InterfaceException;
 import com.al.ecs.log.Log;
-import com.al.lte.portal.bmo.log.LogContainer;
 import com.al.lte.portal.bmo.staff.StaffBmo;
 import com.al.lte.portal.bmo.staff.StaffBmoImpl;
 import com.al.lte.portal.common.AESUtils;
@@ -48,6 +38,7 @@ import com.al.lte.portal.common.PortalServiceCode;
 import com.al.lte.portal.common.ServiceClient;
 import com.al.lte.portal.common.SysConstant;
 import com.al.lte.portal.model.SessionStaff;
+import net.sf.json.JSONArray;
 
 /**
  * 订单管理业务实现
@@ -2433,7 +2424,7 @@ public class OrderBmoImpl implements OrderBmo {
 		}
 		paramMap2.put("provinceCode", provinceCode);
 		paramMap2.put("cityCode", cityCode);//areaId
-		paramMap2.put("channelId", channelId);//areaId
+		paramMap2.put("channelId", channelId);
 		paramMap2.put("payAmount", payAmount);// 金额，单位分
 		paramMap2.put("olNumber", olNumber);// 工号
 		paramMap2.put("customerId", customerId);// 
@@ -2800,246 +2791,20 @@ public class OrderBmoImpl implements OrderBmo {
 //			}
 			DataBus db = new DataBus();
 			db = ServiceClient.initDataBus(sessionStaff);
+			db.setResultCode("0");
+			db.setParammap(param);
 			long beginTime = System.currentTimeMillis();
 			String rawRetn = "";
 			String logSeqId = "";
 			rawRetn = JsonUtil.toString(param);
 			if (sessionStaff != null) {
-				callServiceLog(logSeqId, dbKeyWord, db, flowNum, "readCert", "readCert", sessionStaff, "", rawRetn, beginTime, System.currentTimeMillis());
+				InterfaceClient.callServiceLog(logSeqId, dbKeyWord, db, flowNum,"readCert","readCert", sessionStaff,rawRetn, rawRetn, beginTime, beginTime,"","", "portal");
 			}
 		}catch(Exception e){
 			log.error("门户处理身份证信息插入日志服务返回的数据异常", e);
 			//throw new BusinessException(ErrorCode.EMERGENCYBOOT, param, db.getReturnlmap(), e);
 		}	
 		return null;
-	}
-	/**
-	 * 调用服务层日志记录
-	 * @param dbKeyWord2 
-	 * 
-	 * @param db
-	 *            DataBus
-	 * @param busiFlowNum
-	 *            服务层流水号
-	 * @param optFlowNum
-	 *            门户层操作流水号
-	 * @param serviceCode
-	 *            服务编码
-	 * @param startTime
-	 *            开始 时间
-	 * @param endTime
-	 *            结束 时间
-	 */
-	public static void callServiceLog(String logSeqId, String dbKeyWord, DataBus db, String optFlowNum, 
-			String serviceCode, String intfUrl, SessionStaff sessionStaff, String paramString, String rawRetn, long beginTime, long endTime) {
-		long startTime = System.currentTimeMillis();
-		// 开始调用
-		request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
-		try {
-//			String log_flag = MySimulateData.getInstance().getParam(dbKeyWord,prefix+"-"+serviceCode);
-//			if(!"1".equals(log_flag)){
-//				if("2".equals(log_flag)){
-//					if(ResultCode.R_SUCC.equals(db.getResultCode()) || ResultCode.R_SUCCESS.equals(db.getResultCode())|| ResultCode.RES_SUCCESS.equals(db.getResultCode())){
-//						return;
-//					}
-//				}else{
-//					return;
-//				}
-//			}
-			String olIdRemark="";
-			String ol_id = "";
-			String so_nbr = "";
-//			if(PortalServiceCode.ORDER_SUBMIT.equals("biz-"+serviceCode)){//订单提交接口
-//				Map<String, Object> paramMap = new HashMap<String, Object>();
-//				paramMap = JsonUtil.toObject(retnJson, Map.class);
-//				if(!paramMap.isEmpty() && ResultCode.R_SUCC.equals(db.getResultCode())){
-//					Map<String, Object> map=new HashMap<String, Object>();
-//					map=(Map<String, Object>)paramMap.get("result");
-//					olIdRemark=map.get("olId")!=null?map.get("olId").toString():"";
-//					olIdRemark="olId:"+olIdRemark;
-//					ol_id=map.get("olId")!=null?map.get("olId").toString():"";
-//					so_nbr=map.get("olNbr")!=null?map.get("olNbr").toString():"";
-//				}
-//			}else if(PortalServiceCode.INTF_SUBMIT_CHARGE.equals("biz-"+serviceCode)||PortalServiceCode.CHECK_RULE_TO_PROV.equals("biz-"+serviceCode)||PortalServiceCode.INTF_QUERY_CHARGE_LIST.equals("biz-"+serviceCode)){//收费建档接口，下省校验接口,费用项
-//				Map<String, Object> map = new HashMap<String, Object>();
-//				map = JsonUtil.toObject(paramJson, Map.class);
-//				if(!map.isEmpty()){
-//					olIdRemark="olId:"+map.get("olId");
-//					ol_id=map.get("olId")!=null?map.get("olId").toString():"";
-//					so_nbr=map.get("olNbr")!=null?map.get("olNbr").toString():"";
-//				}
-//			}
-//			
-			// 新增错误标识，0 成功  1  错误  2  异常
-			String errorCode = "";
-//			if(ResultCode.R_SUCC.equals(db.getResultCode()) || ResultCode.R_SUCCESS.equals(db.getResultCode()) || ResultCode.RES_SUCCESS.equals(db.getResultCode())){
-//				errorCode = "0";
-//			} else if (ResultCode.R_FAIL.equals(db.getResultCode()) || ResultCode.R_FAILURE.equals(db.getResultCode()) || ResultCode.R_QUERY_FAIL.equals(db.getResultCode())) {
-//				errorCode = "1";
-//			} else {
-//				errorCode = "2";
-//			} 
-//			String write_asynchronous_flag = MySimulateData.getInstance().getParam(dbKeyWord,SysConstant.WRITE_ASYNCHRONOUS_FLAG);
-//			if (SysConstant.ON.equals(write_asynchronous_flag)) {
-				/*try{
-					request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
-				}catch (Exception e) {
-					// TODO: handle exception
-				}*/
-				Map<String, Object> logObj = new HashMap<String, Object>();
-//				String logId = UUID.randomUUID().toString();
-//				logObj.put("LOG_ID", logId);
-				logObj.put("SERVICE_CODE", serviceCode);
-				logObj.put("PORTAL_CODE", db.getPortalCode() == null ? "" : db.getPortalCode());
-				logObj.put("ROLE_CODE", db.getRoleCode() == null ? "" : db.getRoleCode());
-				String serviceSerial = "SP"+DateFormatUtils.format(new Date(), "yyyyMMddHHmmssSSS")+RandomStringUtils.randomNumeric(4);
-				logObj.put("SERV_RUN_NBR", serviceSerial);
-				HttpSession session = ServletUtils.getSession(request);
-				String log_busi_run_nbr = (String)session.getAttribute(SysConstant.LOG_BUSI_RUN_NBR);
-				logObj.put("BUSI_RUN_NBR", log_busi_run_nbr);
-				Date beginDate = new Date(beginTime);
-				Date endDate = new Date(endTime);
-				String st = DateFormatUtils.format(beginDate, "yyyy/MM/dd HH:mm:ss");
-				String et = DateFormatUtils.format(endDate, "yyyy/MM/dd HH:mm:ss");
-				logObj.put("START_TIME", st);
-				logObj.put("END_TIME", et);
-				
-				long useTime = endDate.getTime()-beginDate.getTime();
-				if (useTime>1000000000){
-					useTime = 1000000000;
-				}
-				logObj.put("USE_TIME", Long.toString(useTime));
-				logObj.put("RESULT_CODE", db.getResultCode());
-				logObj.put("TRANS_ID", MapUtils.getString(db.getParammap(), "transactionId", ""));
-				logObj.put("AREA_ID", sessionStaff.getCurrentAreaId() == null ? "" : sessionStaff.getCurrentAreaId());
-				
-				if(request!=null){
-					logObj.put("REMOTE_ADDR", request.getRemoteAddr());
-					logObj.put("REMOTE_PORT", String.valueOf(request.getRemotePort()));
-					logObj.put("LOCAL_ADDR", request.getLocalAddr());
-					logObj.put("LOCAL_PORT", String.valueOf(request.getLocalPort()));
-				}else{
-					logObj.put("REMOTE_ADDR", "");
-					logObj.put("REMOTE_PORT", "");
-					logObj.put("LOCAL_ADDR", "");
-					logObj.put("LOCAL_PORT", "");
-				}
-				logObj.put("INTF_URL", intfUrl);
-				logObj.put("INTF_METHOD", serviceCode);
-				logObj.put("STAFF_ID", sessionStaff.getStaffId() == null ? "" : sessionStaff.getStaffId());
-				logObj.put("STAFF_NAME", sessionStaff.getStaffCode() == null ? "" : sessionStaff.getStaffCode());
-				logObj.put("CHANNEL_NAME", sessionStaff.getCurrentChannelName() == null ? "" : sessionStaff.getCurrentChannelName());
-				logObj.put("CHANNEL_ID", sessionStaff.getCurrentChannelId() == null ? "" : sessionStaff.getCurrentChannelId());
-				logObj.put("REMARK", "");
-				logObj.put("OL_ID", ol_id);
-				logObj.put("SO_NBR", so_nbr);
-				logObj.put("BUSI_TYPE", "");
-				// 新增日志ID
-				logObj.put("LOG_SEQ_ID", logSeqId);
-				// 新增错误标识，0 成功  1  错误  2  异常
-				logObj.put("ERROR_CODE", errorCode);
-				Map<String, Object> logClobObj = new HashMap<String, Object>();
-				logClobObj.put("IN_PARAM", paramString);						
-				logClobObj.put("OUT_PARAM", rawRetn);
-				log.error("身份证读卡日志记录，主表入参：={}", JSONObject.fromObject(logObj));
-                log.error("身份证读卡日志记录，副表入参：={}", JSONObject.fromObject(logClobObj));
-                logSender.sendLog2DB(SysConstant.PORTAL_SERVICE_LOG_Y, logObj, logClobObj);
-                log.error("身份证读卡日志记录，PORTAL_SERVICE_LOG_Y表已记录日志(sendLog2DB)");
-//		    }
-			String writelogFlag = MySimulateData.getInstance().getParam(dbKeyWord,SysConstant.WRITE_LOG_FLAG);
-			if (SysConstant.OFF.equals(writelogFlag)) {
-				return;
-			}
-			String writeDetailFlag = MySimulateData.getInstance().getParam(dbKeyWord,SysConstant.WRITE_LOG_DETAIL);
-			if (StringUtils.isEmpty(writeDetailFlag)) {
-				writeDetailFlag = SysConstant.LOG_PS;
-			}
-			
-			if (SysConstant.LOG_PS.equals(writeDetailFlag)) {
-				Map<String, Object> logMap = new HashMap<String, Object>();
-				
-				logMap.put("intfMethod", serviceCode);
-				logMap.put("logSeqId", logSeqId);
-				logMap.put("errorCode", errorCode);
-				logMap.put("intfUrl", intfUrl);
-				logMap.put("beginDate", "" + beginTime);
-				logMap.put("endDate", "" + endTime);
-				logMap.put("remark", olIdRemark);
-				logMap.put("inParam", paramString);						
-				logMap.put("outParam", rawRetn);
-				
-				LogContainer.getInstance().addServiceLog(logMap, optFlowNum, sessionStaff);
-				
-			} else if (SysConstant.LOG_UNILOG.equals(writeDetailFlag)) {
-				// UNILOG情况下，先记录一般日志到SP_SERVICE_RUN_LOG表，
-				// 再把包含CLOB字段的内容发往日志服务器
-				String logId = DateFormatUtils.format(new Date(), "yyMMddSSS") + RandomStringUtils.randomNumeric(9);
-				
-				Map<String, Object> logMap = new HashMap<String, Object>();
-				logMap.put("logId", logId);
-				logMap.put("intfMethod", serviceCode);
-				logMap.put("intfUrl", intfUrl);
-				logMap.put("beginDate", "" + beginTime);
-				logMap.put("endDate", "" + endTime);
-				logMap.put("remark", olIdRemark);
-				logMap.put("inParam", null);
-				logMap.put("outParam", null);
-				LogContainer.getInstance().addServiceLog(logMap, optFlowNum, sessionStaff);
-				
-				
-				logObj = new HashMap<String, Object>();
-				logObj.put("logId", Long.parseLong(logId));
-				logObj.put("staffNbr", sessionStaff.getStaffId() == null ? "" : sessionStaff.getStaffId());
-				logObj.put("areaId", sessionStaff.getCurrentAreaId() == null ? "" : sessionStaff.getCurrentAreaId());
-				logObj.put("channelId", sessionStaff.getCurrentChannelId() == null ? "" : sessionStaff.getCurrentChannelId());
-				logObj.put("transactionId", MapUtils.getString(db.getParammap(), "transactionId", ""));
-				logObj.put("apiName", serviceCode);
-				logObj.put("beginTime", beginTime);
-				logObj.put("endTime", endTime);
-				logObj.put("usedTime", endTime < beginTime ? 0L : endTime - beginTime);//endTime小于beginTime则设置为0
-//				String olId = MapUtils.getString(db.getParammap(), "olId", "");
-//				String olNbr = MapUtils.getString(db.getParammap(), "olNbr", "");
-//				String acctNbr = MapUtils.getString(db.getParammap(), "acctNbr", "");
-//				if (MapUtils.isNotEmpty(db.getReturnlmap())) {
-//					Object resultObj = db.getReturnlmap().get("result");
-//					if (resultObj instanceof Map) {
-//						if (StringUtils.isEmpty(olId)) {
-//							olId = MapUtils.getString((Map<String, Object>) resultObj, "olId", "");
-//						}
-//						if (StringUtils.isEmpty(olNbr)) {
-//							olNbr = MapUtils.getString((Map<String, Object>) resultObj, "olNbr", "");
-//						}
-//						if (StringUtils.isEmpty(acctNbr)) {
-//							acctNbr = MapUtils.getString((Map<String, Object>) resultObj, "acctNbr", "");
-//						}
-//					}
-//				}
-//				logObj.put("olId", olId);
-//				logObj.put("olNbr", olNbr);
-//				logObj.put("acctNbr", acctNbr);
-				logObj.put("inParam", paramString);						
-				logObj.put("outParam", rawRetn);
-				
-				logSender.sendLog(SysConstant.LOG_TYPE, logObj);
-				
-			} else  if (SysConstant.LOG_NONE.equals(writeDetailFlag)) {
-				Map<String, Object> logMap = new HashMap<String, Object>();
-				logMap.put("logSeqId", logSeqId);
-				logMap.put("errorCode", errorCode);
-				logMap.put("intfMethod", serviceCode);
-				logMap.put("intfUrl", intfUrl);
-				logMap.put("beginDate", "" + beginTime);
-				logMap.put("endDate", "" + endTime);
-				logMap.put("inParam", null);
-				logMap.put("outParam", null);
-				LogContainer.getInstance().addServiceLog(logMap, optFlowNum, sessionStaff);
-			}
-			useTime = System.currentTimeMillis() - startTime;
-			log.debug("addServiceLog use time : {} ms", useTime);
-		} catch (Exception e) {
-			log.error("门户处理身份证信息插入日志服务返回的数据异常", e);
-			log.error("日志记录异常", e);
-		}
 	}
 	
 	public Map<String, Object> queryIfLteNewInstall(
@@ -3110,7 +2875,7 @@ public class OrderBmoImpl implements OrderBmo {
 		Object realNameFlag =  MDA.REAL_NAME_PHOTO_FLAG.get("REAL_NAME_PHOTO_"+sessionStaff.getCurrentAreaId().substring(0, 3));
     	boolean isRealNameFlagOn  = realNameFlag == null ? false : "ON".equals(realNameFlag.toString()) ? true : false;//实名制拍照开关是否打开
     	Object sessionActionFlagLimited = ServletUtils.getSessionAttribute(request, SysConstant.IS_ACTION_FLAG_LIMITED);
-    	boolean isActionFlagLimited = sessionActionFlagLimited == null ? true : (Boolean) sessionActionFlagLimited;//是否限制经办人必填的业务类型
+    	boolean isActionFlagLimited = sessionActionFlagLimited == null ? false : (Boolean) sessionActionFlagLimited;//是否限制经办人必填的业务类型
 		
     	Map<String, Object> orderList = (Map<String, Object>) param.get("orderList");
         Map<String, Object> orderListInfo = (Map<String, Object>) orderList.get("orderListInfo");
@@ -3131,7 +2896,7 @@ public class OrderBmoImpl implements OrderBmo {
     	} else{
     		resultFlag = this.checkCustCertificate(param, request);
     	}*/
-        resultFlag = this.checkCustCertificateComprehensive(param, request);
+        resultFlag = this.checkCustCertificate(param, request);//新建客户身份证读卡校验
     	
     	return resultFlag;
 	}
@@ -3159,6 +2924,10 @@ public class OrderBmoImpl implements OrderBmo {
                         if ("1".equals(identidiesTypeCd)) { //身份证
                         	Map<String, Object> custInfo = (Map<String, Object>) ((List<Map<String, Object>>) data.get("boCustInfos")).get(0);
                         	Object s_sig = null;
+							// 临时处理,不对责任人身份证读卡校验
+							if("Y".equals(MapUtils.getString(custInfo, "ignore"))){
+								continue;
+							}
                         	if(!"Y".equals(MapUtils.getString(custInfo, "jbrFlag"))){//若该C1动作节点是新建经办人
                             	s_sig = ServletUtils.getSessionAttribute(request, Const.SESSION_SIGNATURE);
                         	} else{
@@ -3239,6 +3008,10 @@ public class OrderBmoImpl implements OrderBmo {
                     	C1Count++;//使用身份证新建客户+1
                     	Map<String, Object> custInfo = (Map<String, Object>) ((List<Map<String, Object>>) data.get("boCustInfos")).get(0);
                     	Object s_sig =  null;
+						// 临时处理,不对责任人身份证读卡校验
+						if("Y".equals(MapUtils.getString(custInfo, "ignore"))){
+							C1Count--;
+						}
                     	if("Y".equals(MapUtils.getString(custInfo, "jbrFlag"))){//若该C1动作节点是新建经办人
                     		s_sig =  ServletUtils.getSessionAttribute(request, Const.SESSION_SIGNATURE_HANDLE_CUST);
                     	} else if("Y".equals(MapUtils.getString(custInfo, "userCustFlag"))){//若该C1动作节点是新建使用人
@@ -3358,6 +3131,37 @@ public class OrderBmoImpl implements OrderBmo {
 			log.error("门户处理营业后台的橙分期业务标识查询接口服务返回的数据异常", e);
 			throw new BusinessException(ErrorCode.QUERY_AGREEMENTTYPE, paramMap, resultMap, e);
 		}
+		return resultMap;
+	}
+
+	public Map<String, Object> orderLog(Map<String, Object> paramMap, String optFlowNum, SessionStaff sessionStaff)
+			throws Exception {
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		  String resultCode= "";
+		  String resultMsg ="";
+		try{
+			String dbKeyWord = sessionStaff == null ? null : sessionStaff.getDbKeyWord();
+		  
+			DataBus db = new DataBus();
+			db = ServiceClient.initDataBus(sessionStaff);
+			db.setResultCode(ResultCode.R_SUCC);
+			db.setParammap(paramMap);
+			long beginTime = System.currentTimeMillis();
+			String logSeqId = "";
+			String paramString=JsonUtil.toString(paramMap);
+			if (sessionStaff != null) {
+				InterfaceClient.callServiceLog(logSeqId, dbKeyWord, db, optFlowNum,"portalOrderLog","portalOrderLog", sessionStaff,paramString, paramString, beginTime, beginTime,"",optFlowNum, "portal");
+			}
+			resultCode= ResultCode.R_SUCC;
+			resultMsg= db.getResultMsg();
+		}catch(Exception e){
+			resultCode= ResultCode.R_FAILURE;
+			resultMsg= "订单信息插入失败!"+e;
+			log.error("订单信息插入日志服务异常", e);
+			
+		}	
+		resultMap.put("resultCode", resultCode);
+		resultMap.put("resultMsg", resultMsg);
 		return resultMap;
 	}
 }

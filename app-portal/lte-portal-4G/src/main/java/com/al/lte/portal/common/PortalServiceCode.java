@@ -1129,15 +1129,10 @@ public final class PortalServiceCode {
     /** 判断是否集团新装业务 */
     public static final String QUERY_IF_LTE_NEW_INSTALL = "biz-service/intf.pullingDataService/queryIfLteNewInstall";
 
-  //实名制证件上传
+    //实名制证件上传
     public static final String INTF_UPLOAD_IMAGE = "biz-service/intf.fileOperateService/upLoadPicturesFileToFtp";
     //实名制证件下载
     public static final String INTF_DOWNLOAD_IMAGE = "biz-service/intf.fileOperateService/downLoadPicturesFileFromFtp";
-
-
-    /** 宽带融合--查询费用信息 **/
-    public static final String UPLOAD_PICTURES_FILE_TO_FTP = "biz-service/intf.fileOperateService/upLoadPicturesFileToFtp";
-
 
     /** 高实认证 */
     public static final String HIGH_REAL_NAME_AUTHENTICATE = "biz-service/intf.acctService/highRealNameAuthenticate";
@@ -1147,6 +1142,13 @@ public final class PortalServiceCode {
 
     /** 橙分期业务标识 */
     public static final String QUERY_AGREEMENTTYPE = "biz-service/intf.prodOfferService/queryAgreementType";
+    
+    /** 购物车订单状态 查询 */
+    public static final String QUERY_ORDER_STATUS = "biz-service/intf.detailService/queryCustomerOrderBasicInfo" ;
+
+    /** 甩单终端串码预占校验接口（测试用，生产只走csb） */
+    public static final String CHECK_DITCHORDER = "ter-terminal/ditchOrderCheck";
+
 
 }
 

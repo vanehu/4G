@@ -1511,7 +1511,7 @@ public class MktResBmoImpl implements MktResBmo {
 			String optFlowNum, SessionStaff sessionStaff) throws Exception {
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		DataBus db = InterfaceClient.callService(param, 
-				PortalServiceCode.UPLOAD_PICTURES_FILE_TO_FTP,
+				PortalServiceCode.INTF_UPLOAD_IMAGE,
 				optFlowNum, sessionStaff);
 		Map<String, Object> returnMap = new HashMap<String, Object>();
 		if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db
@@ -1550,6 +1550,27 @@ public class MktResBmoImpl implements MktResBmo {
 			returnMap.put("msg", "帐号&接入号&密码生成接口调用失败");
 		}
 		return returnMap;				
+	}
+
+	public Map<String, Object> checkReservedTerminal(Map<String, Object> param,
+			String flowNum, SessionStaff sessionStaff) throws Exception {
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		// 接口只支持xml 只走csb
+		DataBus db = InterfaceClient.callService(param, 
+				PortalServiceCode.CHECK_DITCHORDER,
+				flowNum, sessionStaff);
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db
+				.getResultCode()))) {
+			resultMap = db.getReturnlmap();
+			Map<String, Object> datamap = resultMap;
+			returnMap.put("code", ResultCode.R_SUCCESS);
+			returnMap.put("result",datamap);
+		} else {
+			returnMap.put("code", ResultCode.R_FAIL);
+			returnMap.put("msg", "甩单终端串码预占校验接口调用失败");
+		}
+		return returnMap;	
 	}
 	
 

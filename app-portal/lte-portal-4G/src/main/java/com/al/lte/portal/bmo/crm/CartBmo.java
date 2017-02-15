@@ -87,4 +87,13 @@ public interface CartBmo {
 	 */
 	public Map<String, Object> queryOCTN(Map<String, Object> dataBusMap, String optFlowNum, SessionStaff sessionStaff) throws Exception;
 	
+	/**
+	  * 查询购物车订单状态
+	  * @param dataBusMap
+	  * @param optFlowNum
+	  * @param sessionStaff
+	  * @return
+	  * @throws BusinessException
+	  */
+	public Map<String, Object> queryOrderStatus(Map<String, Object> dataBusMap,String optFlowNum, SessionStaff sessionStaff) throws Exception;
 }

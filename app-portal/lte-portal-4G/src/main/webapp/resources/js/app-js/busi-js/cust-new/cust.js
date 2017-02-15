@@ -62,13 +62,10 @@ cust = (function(){
 	}
 	//客户新增提交
 	var _newCustSubmit = function(){
-		if(OrderInfo.actionFlag=="35" || OrderInfo.actionFlag=="34" || OrderInfo.actionFlag=="112" ||OrderInfo.actionFlag=="1" ||OrderInfo.actionFlag=="8"){
-			var validate=$("#custFormdata").Validform();
-			if(!validate.check()){
-				return;
-			}
-		} else {
-			$('#custFormdata').data('bootstrapValidator').validate();
+		
+		var validate=$("#custFormdata").Validform();
+		if(!validate.check()){
+			return;
 		}
 		var propertiesKey = "CMADDRESS_CHECK_FLAG";
 	    var isFlag = offerChange.queryPortalProperties(propertiesKey);
@@ -80,18 +77,8 @@ cust = (function(){
 		if(cmAddressStr.replace(/[^\x00-\xff]/g,"aa").length<12 && isFlag=="ON"){
 			$.alert("提示","证件地址长度不得少于6个汉字");
 		}else {
-			if($('#custFormdata').data('bootstrapValidator').isValid()){
-				/*var url=contextPath+"/order/createorderlonger";
-				var response = $.callServiceAsJson(url, {});
-				if(response.code==0){
-					OrderInfo.custorderlonger=response.data;
-				}*/
-				
-				_checkIdentity();
-
-			}
+			_checkIdentity();
 		}
-		
 	};
 	
 	
@@ -107,7 +94,7 @@ cust = (function(){
 		OrderInfo.cust.contactName = $.trim($('#contactName').val());//联系人
 		OrderInfo.cust.mobilePhone = $.trim($('#mobilePhone').val());//联系人手机
 		OrderInfo.cust.contactAddress = $.trim($('#contactAddress').val());//联系人地址
-        
+		
 		//联系人不为空时才封装联系人信息上传
 		if($.trim($('#contactName').val()).length>0){
 			OrderInfo.boPartyContactInfo.contactName = $.trim($('#contactName').val());//联系人
@@ -360,8 +347,10 @@ cust = (function(){
 	var _form_custInfomodify_btn = function() {
 		//修改客户下一步确认按钮
 		$('#custInfoModifyBtn').off("click").on("click",function(event) {
-			$('#custFormdata').data('bootstrapValidator').validate();
-			if($('#custFormdata').data('bootstrapValidator').isValid()){
+			var validate=$("#custFormdata").Validform();
+			if(!validate.check()){
+				return;
+			}
 				if(order.prodModify.accountInfo!=undefined&&$.trim($("#accountName").val())==""){
 					$.alert("提示","账户名称不能为空!"); 
 					return ;
@@ -475,7 +464,6 @@ cust = (function(){
 					data.boPartyContactInfo.push(_boPartyContactInfo);
 				}
 				SoOrder.submitOrder(data);
-			}
 		});
 	};
     //客户类型选择事件
@@ -780,7 +768,6 @@ cust = (function(){
 				$("#whole").show();
 				$("#only").hide();
 			}
-//			
 		}
 		if(OrderInfo.jbr){
 			OrderInfo.jbr.custId ="";
@@ -908,7 +895,6 @@ cust = (function(){
 	var _jbrvalidatorForm=function(){
 		var propertiesKey = "NEWUIFLAG_"+(OrderInfo.staff.soAreaId+"").substring(0,3);
 		_newUIFalg = offerChange.queryPortalProperties(propertiesKey);
-		if(OrderInfo.actionFlag=="35" || OrderInfo.actionFlag=="34"  ||OrderInfo.actionFlag=="1" ||OrderInfo.actionFlag=="8"  || OrderInfo.actionFlag=="111"){
 			var jbrFormdata = $("#jbrFormdata").Validform({
 				btnSubmit:"queryJbr",
 				ignoreHidden:true,
@@ -968,48 +954,6 @@ cust = (function(){
 				    nullmsg:"联系方式不能为空"
 				}                
 			]);
-		} else {
-			$('#jbrFormdata').bootstrapValidator({
-		        message: '无效值',
-		        feedbackIcons: {
-		            valid: 'glyphicon glyphicon-ok',
-		            invalid: 'glyphicon glyphicon-remove',
-		            validating: 'glyphicon glyphicon-refresh'
-		        },
-		        fields: {
-//		        	sfzorderAttrIdCard: {
-//		            	trigger: 'blur',
-//		                validators: {
-//		                    regexp: {
-//		                        regexp: /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/,
-//		                        //regexp: /^\d{6}(18|19|20)?\d{2}(0[1-9]|1[12])(0[1-9]|[12]\d|3[01])\d{3}(\d|X)$/,
-//		                        message: '请输入合法身份证号码'
-//		                    }
-//		                }
-//		            },
-		            orderAttrIdCard: {
-		            	trigger: 'blur',
-		                validators: {
-		                    regexp: {
-		                        regexp: /^[0-9a-zA-Z]*$/g,
-		                        message: '证件号码只能为数字或字母'
-		                    }
-		                }
-		            },
-		            orderAttrPhoneNbr: {
-		            	trigger: 'blur',
-		                validators: {
-		                    regexp: {
-		                        /*regexp: /(^\d{11}$)/,
-		                        message: '手机号码只能为11数字'*/
-		                    	regexp: /^1[34578]\d{9}$/,
-		                        message: '手机号码不合法'
-		                    }
-		                }
-		            }
-		        }
-		    });
-		}
 	};
 	//校验表单提交
 	var _uservalidatorForm=function(){
@@ -1057,82 +1001,10 @@ cust = (function(){
 	
 	//校验表单提交
 	var _validatorForm=function(){
-		$('#custFormdata').bootstrapValidator({
-	        message: '无效值',
-	        feedbackIcons: {
-	            valid: 'glyphicon glyphicon-ok',
-	            invalid: 'glyphicon glyphicon-remove',
-	            validating: 'glyphicon glyphicon-refresh'
-	        },
-	        fields: {
-	        	cmCustName: {
-	        		trigger: 'blur',
-	                validators: {
-	                    notEmpty: {
-	                        message: '客户姓名不能为空'
-	                    }
-	                }
-	            },
-	            cmCustIdCard: {
-	            	trigger: 'blur',
-	                validators: {
-	                    notEmpty: {
-	                        message: '身份证号码不能为空'
-	                    },
-	                    regexp: {
-	                        regexp: /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/,
-	                        message: '请输入合法身份证号码'
-	                    }
-	                }
-	            },
-	            cmCustIdCardOther: {
-	            	trigger: 'blur',
-	                validators: {
-	                    notEmpty: {
-	                        message: '证件号码不能为空'
-	                    },
-	                    regexp: {
-	                        regexp: /^[0-9a-zA-Z]*$/g,
-	                        message: '证件号码只能为数字或字母'
-	                    }
-	                }
-	            },
-	            cmAddressStr: {
-	            	trigger: 'blur',
-	                validators: {
-	                    notEmpty: {
-	                        message: '证件地址不能为空'
-	                    }
-//	            ,
-//	                    regexp: {
-//	                        regexp: /[\u4e00-\u9fa5]{6}|^.{12}/,
-//	                        message: '证件地址长度不得少于6个汉字'
-//	                    }
-	                }
-	            },
-	            mobilePhone: {
-	            	trigger: 'blur',
-	                validators: {
-	                    regexp: {
-	                        regexp: /(^\d{11}$)/,
-	                        message: '手机号码只能为11数字'
-	                    }
-	                }
-	            },
-	            phonenumber: {
-	            	trigger: 'blur',
-	                validators: {
-	                    notEmpty: {
-	                        message: '手机号码不能为空'
-	                    }
-	                }
-	            }
-	        }
-	    });
 //		$(".new_user_box").Validform();
 		var propertiesKey = "NEWUIFLAG_"+(OrderInfo.staff.soAreaId+"").substring(0,3);
 		_newUIFalg = offerChange.queryPortalProperties(propertiesKey);
-		if(_newUIFalg == "ON" && (OrderInfo.actionFlag=="35" || OrderInfo.actionFlag=="34" || OrderInfo.actionFlag=="112" ||OrderInfo.actionFlag=="1")){
+		if(_newUIFalg == "ON" && (OrderInfo.actionFlag=="35" || OrderInfo.actionFlag=="34" || OrderInfo.actionFlag=="112" ||OrderInfo.actionFlag=="1" ||OrderInfo.actionFlag=="9")){
 			var new_user_box = $(".new_user_box").Validform({
 				btnSubmit:".sun-btn", 
 				ignoreHidden:true,
@@ -1279,7 +1151,7 @@ cust = (function(){
 		$("#cmCustIdCard").val(idcard);
 		$("#cmCustName").val(name);
 		$("#cmAddressStr").val(address);
-		if(ec.util.isObj(_newUIFalg) && _newUIFalg == "ON" &&  (OrderInfo.actionFlag=="35" || OrderInfo.actionFlag=="34" || OrderInfo.actionFlag=="112" ||OrderInfo.actionFlag=="1" ||OrderInfo.actionFlag=="8")){
+		if(ec.util.isObj(_newUIFalg) && _newUIFalg == "ON" &&  (OrderInfo.actionFlag=="35" || OrderInfo.actionFlag=="34" || OrderInfo.actionFlag=="112" ||OrderInfo.actionFlag=="1" ||OrderInfo.actionFlag=="8"||OrderInfo.actionFlag=="9")){
 			$("#custFormdata").Validform().check();
 		} else {
 			$('#custFormdata').data('bootstrapValidator').validate();
@@ -2647,6 +2519,15 @@ cust = (function(){
 		
 
 	};
+	var _showAccountModify = function(scope){
+		var _isShowAcc = $(scope).val();
+		if(_isShowAcc == 1){
+			$("#modAccountProfile").hide();
+			
+		} else {
+			order.prodModify.accountChange()
+		}
+	}
 	
 	return {
 		jbridentidiesTypeCdChoose 	: 		_jbridentidiesTypeCdChoose,
@@ -2711,7 +2592,8 @@ cust = (function(){
 		clearUserForm				:		_clearUserForm,
 		getPicture2                 :       _getPicture2,
 		getjbrGenerationInfos2      :       _getjbrGenerationInfos2,
-		newUIFalg					:		_newUIFalg
+		newUIFalg					:		_newUIFalg,
+		showAccountModify			:		_showAccountModify
 	};	
 })();
 // OrderInfo.boCustInfos.partyTypeCd = 1 ;//客户类型

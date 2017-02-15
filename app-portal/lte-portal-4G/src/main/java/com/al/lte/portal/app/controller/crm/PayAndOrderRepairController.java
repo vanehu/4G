@@ -5,10 +5,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-
 import org.apache.commons.collections.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -17,15 +14,19 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.WebRequest;
 
+import com.al.ecs.common.entity.JsonResponse;
 import com.al.ecs.common.entity.PageModel;
+import com.al.ecs.common.util.JsonUtil;
 import com.al.ecs.common.util.PageUtil;
 import com.al.ecs.common.util.PropertiesUtils;
 import com.al.ecs.common.web.ServletUtils;
 import com.al.ecs.exception.BusinessException;
 import com.al.ecs.exception.ErrorCode;
 import com.al.ecs.exception.InterfaceException;
+import com.al.ecs.exception.ResultConstant;
 import com.al.ecs.spring.annotation.log.LogOperatorAnn;
 import com.al.ecs.spring.annotation.session.AuthorityValid;
 import com.al.ecs.spring.controller.BaseController;
@@ -37,11 +38,10 @@ import com.al.lte.portal.bmo.crm.OfferBmo;
 import com.al.lte.portal.bmo.crm.OrderBmo;
 import com.al.lte.portal.bmo.print.PrintBmo;
 import com.al.lte.portal.bmo.staff.StaffBmo;
-import com.al.lte.portal.common.CommonMethods;
 import com.al.lte.portal.common.Const;
-import com.al.lte.portal.common.EhcacheUtil;
 import com.al.lte.portal.common.SysConstant;
 import com.al.lte.portal.model.SessionStaff;
+
 
 
 /**
@@ -190,11 +190,7 @@ public class PayAndOrderRepairController extends BaseController{
         		}
         		
          	}
-        	PageModel<Map<String, Object>> pm = PageUtil.buildPageModel(
-            		nowPage,
-            		pageSize,
-            		totalSize<1?1:totalSize,
-    				list);
+        	PageModel<Map<String, Object>> pm = PageUtil.buildPageModel(nowPage,pageSize,totalSize<1?1:totalSize,list);
     		model.addAttribute("pageModel", pm);
     		model.addAttribute("code", map.get("code"));
 			model.addAttribute("mess", map.get("mess"));
@@ -211,5 +207,42 @@ public class PayAndOrderRepairController extends BaseController{
 			return super.failedStr(model, ErrorCode.CUST_ORDER, e, param);
 		}
     }
+    
+    /**
+	 * 翼销售获取订单支付状态
+	 * 
+	 * @param param
+	 * @param model
+	 * @param session
+	 * @param flowNum
+	 * @return
+	 */
+	@RequestMapping(value = "/queryOrdStatus", method = RequestMethod.POST)
+	@ResponseBody
+	public JsonResponse queryOrdStatus(@RequestBody Map<String, Object> param,
+			Model model, HttpSession session, @LogOperatorAnn String flowNum) {
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);
+		Map<String, Object> rMap = null;
+		JsonResponse jsonResponse = null;
+		try {
+			rMap = cartBmo.queryOrderStatus(param, flowNum, sessionStaff);
+			log.debug("return={}", JsonUtil.toString(rMap));
+			if (rMap != null && "0".equals(rMap.get("code").toString())) {
+				 jsonResponse = super.successed(rMap,ResultConstant.SUCCESS.getCode());
+			} else{
+				jsonResponse = super.successed(rMap, ResultConstant.FAILD.getCode());
+			}
+			return jsonResponse;
+		} catch (BusinessException be) {
+			this.log.error("调用主数据接口失败", be);
+			return super.failed(be);
+		} catch (InterfaceException ie) {
+			return super.failed(ie, param, ErrorCode.CUST_ORDER_DETAIL);
+		} catch (Exception e) {
+			log.error("查询订单状态方法异常", e);
+			return super.failed(ErrorCode.CUST_ORDER_DETAIL, e, param);
+		}
+
+	}
 	
 }

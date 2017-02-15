@@ -59,6 +59,7 @@ public class PortalDataSourceFilter extends OncePerRequestFilter {
 		excludeUrls.add("/card/");
 		excludeUrls.add("/skin/");
 		excludeUrls.add("/merge/");
+		excludeUrls.add("/appInterfince/");//app对外接口暂时不需拦截
 	}
 	
 	public PortalDataSourceFilter() {
