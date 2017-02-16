@@ -1207,15 +1207,19 @@ order.calcharge = (function(){
 	 */
 	var _getPayTocken = function(){	
 		var charge=_getCharge();//支付金额
+		_chargeItems=[];
+		_buildChargeItems();
 		var busiUpType="1";
 		order.calcharge.busiUpType="1";
 		var params={
 				"olId":OrderInfo.orderResult.olId,
 				"soNbr":OrderInfo.orderResult.olNbr,
 				"busiUpType":busiUpType,
-				"chargeItems":_chargeItems,
 				"charge":charge
 		};
+		if(charge!=0){
+			params.chargeItems=_chargeItems;
+		}
 		var url = contextPath+"/app/order/getPayUrl";
 		var response = $.callServiceAsJson(url, params);
 		if(response.code==0){
