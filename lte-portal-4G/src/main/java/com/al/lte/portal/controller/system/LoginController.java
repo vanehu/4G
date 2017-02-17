@@ -540,7 +540,7 @@ public class LoginController extends BaseController {
 		String loginAreaName = staff.getLoginAreaName();
 		//update by huangjj3 为了防止同一个浏览器登录了不同工号
 		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
-		if (staffCode !=null && sessionStaff !=null && sessionStaff.getStaffCode()!=null &&  !staffCode.toUpperCase().equals(sessionStaff.getStaffCode().toUpperCase())) {
+		if (!("tokenLogin".equals(sessionStaff.getLogintype())) && staffCode !=null && sessionStaff !=null && sessionStaff.getStaffCode()!=null &&  !staffCode.toUpperCase().equals(sessionStaff.getStaffCode().toUpperCase())) {
 			Map<String, Object> failData = new HashMap<String, Object>();
 			failData.put("message", "您好，您已登录了工号"+sessionStaff.getStaffCode()+"，请先登出工号"+sessionStaff.getStaffCode()+"再登录，谢谢！");
 			JsonResponse jsonResponse = super.failed(failData, ResultConstant.DATA_NOT_VALID_FAILTURE.getCode());
