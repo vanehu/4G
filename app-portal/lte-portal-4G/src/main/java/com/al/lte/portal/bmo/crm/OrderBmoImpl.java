@@ -2419,7 +2419,7 @@ public class OrderBmoImpl implements OrderBmo {
 		List<Map<String, Object>> chargeItems2 = new ArrayList<Map<String, Object>>();
 		chargeItems2 = (List<Map<String, Object>>) paramMap.get("chargeItems");
 		JSONArray chargeItems = JSONArray.fromObject(chargeItems2);
-		if(paramMap.get("chargeItems")!=null){
+		if(paramMap.get("chargeItems")!=null && chargeItems2.size()>0){
 			paramMap2.put("chargeItems", chargeItems);
 		}
 		paramMap2.put("provinceCode", provinceCode);

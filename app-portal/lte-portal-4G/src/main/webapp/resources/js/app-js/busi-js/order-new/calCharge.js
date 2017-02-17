@@ -745,11 +745,9 @@ order.calcharge = (function(){
 				"olId":OrderInfo.orderResult.olId,
 				"soNbr":OrderInfo.orderResult.olNbr,
 				"busiUpType":busiUpType,
+				"chargeItems":_chargeItems,
 				"charge":charge
 		};
-		if(charge!=0){
-			params.chargeItems=_chargeItems;
-		}
 		var url = contextPath+"/app/order/getPayUrl";
 		var response = $.callServiceAsJson(url, params);
 		if(response.code==0){
