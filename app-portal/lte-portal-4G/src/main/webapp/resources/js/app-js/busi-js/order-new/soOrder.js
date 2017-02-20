@@ -1125,8 +1125,10 @@ SoOrder = (function() {
 		//功能产品显示
 		if(servSpecList!=undefined && servSpecList.length>0){
 			$.each(servSpecList,function(){ //遍历当前产品下面的附属销售品
-                   //订购的附属销售品
-					$("#orderTbody").append('<li><span class="list-title"><span class="title-lg">'+this.servSpecName+'</span><span class="subtitle font-secondary">'+CONST.EVENT.PROD_OPEN+'</span></span></li>');
+				if(this.isdel != "Y" && this.isdel != "C"){  //订购的功能产品
+	                   //订购的附属销售品
+						$("#orderTbody").append('<li><span class="list-title"><span class="title-lg">'+this.servSpecName+'</span><span class="subtitle font-secondary">'+CONST.EVENT.PROD_OPEN+'</span></span></li>');
+				}
 			});
 		}
 		if(servList!=undefined && servList.length>0){
