@@ -253,7 +253,9 @@ AttachOffer = (function() {
 			var accNbr = OrderInfo.getAccessNumber(prodId);
 			if(accNbr != ""){
 				$.each(this.servSpecList,function(){
+					if(this.isdel != "Y" && this.isdel != "C"){  //订购的功能产品
 						SoOrder.createServ(this,prodId,0,busiOrders);
+					}
 				});
 			}
 		});

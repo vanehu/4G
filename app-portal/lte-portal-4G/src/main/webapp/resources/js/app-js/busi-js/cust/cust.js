@@ -161,7 +161,9 @@ cust = (function(){
 		}else{
 			OrderInfo.jbr.identityNum = $('#orderAttrIdCard').val();//证件号码
 		}
-		if(OrderInfo.jbr.identityCd == OrderInfo.cust.identityCd && OrderInfo.jbr.identityNum == OrderInfo.cust.identityNum){
+		var propertiesKey = "REAL_NAME_PHOTO_"+(OrderInfo.staff.soAreaId+"").substring(0,3);
+		var isFlag = offerChange.queryPortalProperties(propertiesKey);
+		if(isFlag == "ON" && !ec.util.isObj(OrderInfo.jbr.identityNum) || OrderInfo.jbr.identityCd == OrderInfo.cust.identityCd && OrderInfo.jbr.identityNum == OrderInfo.cust.identityNum){
 			OrderInfo.jbr.custId = OrderInfo.cust.custId;
 		} else {
 			OrderInfo.jbr.custId = OrderInfo.SEQ.instSeq--;//客户地区
@@ -1194,7 +1196,10 @@ cust = (function(){
 	
 	//初始化新增客户
 	var _initNewCust = function(){
-		
+		var flag=$("#flag").val();
+		if(ec.util.isObj(flag)){//有值代表是实名制创建客户页面
+			OrderInfo.actionFlag=8;
+		}
 		cust.validatorForm();
 		//根据客户类型查询证件类型
 		_partyTypeCdChoose("#cmPartyTypeCd");
