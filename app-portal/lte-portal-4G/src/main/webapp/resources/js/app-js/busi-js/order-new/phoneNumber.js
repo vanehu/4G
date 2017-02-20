@@ -653,6 +653,7 @@ order.phoneNumber = (function(){
 			return;
 		}
 		$("#phoneNumber2_a").show();
+		$("#idCode").val("");
 		//_queryPhoneNbrPool2();
 		_btnQueryPhoneNumber2();
 //		$("#secondaryCardModal").modal("show");
@@ -692,23 +693,26 @@ order.phoneNumber = (function(){
 		var areaId=OrderInfo.staff.soAreaId+"";
 		var param={"identityId":idcode,"areaId":areaId};
 		param.newFlag="1";
+		$.ecOverlay("<strong>正在查询中,请稍等会儿....</strong>");
 		$.callServiceAsHtmlGet(contextPath+"/app/mktRes/phonenumber/listByIdentity",param,{
 			"before":function(){
-				$.ecOverlay("<strong>正在查询中,请稍等会儿....</strong>");
+				
 			},
 			"always":function(){
-				$.unecOverlay();
+				
 			},
 			"done" : function(response){
 				if(!response||response.code != 0){
 					 response.data='查询失败,稍后重试';
 				}
-				
 				var content$ = $("#phonenumber-list");
 				if(mainFlag=="false"){//副卡
 					content$ = $("#phonenumber-list2");
 				}
+				$.unecOverlay();
 				content$.html(response.data);
+				$("#secondaryCardModal").modal("show");
+				$("#secondaryCardModal").show();
 				if(OrderInfo.actionFlag == 112){
 					$("#offer").hide();
 					$("#offer-list").empty();
@@ -806,6 +810,11 @@ order.phoneNumber = (function(){
 		
 		
 	};	
+
+ var _setMainFlag=function(){
+	 mainFlag="true";
+	 $('#phoneNumber_a').hide();
+ };
 	return {
 		secondaryCarNum :_secondaryCarNum,
 		initPhonenumber:_initPhonenumber,
@@ -824,7 +833,8 @@ order.phoneNumber = (function(){
 	    step    :_step,
 	    preePassword:_preePassword,
 	    clearError:_clearError,
-	    showPhoneNumSearchModal:_showPhoneNumSearchModal
+	    showPhoneNumSearchModal:_showPhoneNumSearchModal,
+	    setMainFlag            :_setMainFlag
 	};
 })();
 
