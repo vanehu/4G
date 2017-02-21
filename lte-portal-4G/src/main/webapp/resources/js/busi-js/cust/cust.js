@@ -3027,6 +3027,8 @@ order.cust = (function(){
 	
 	//处理经办人查询结果
 	var _getResponseResult = function(response){
+		//经办人信息填写模块信息保护优化
+		 _disableHandleCustInfos();
 		//判断新老用户封装用户信息
 		if(ec.util.isArray(response.data.custInfos)){
 			OrderInfo.ifCreateHandleCust = false;//不需要新建经办人
@@ -3054,6 +3056,7 @@ order.cust = (function(){
 					_yes2Continue();//继续受理
 				},
 				no:function(){
+					_removeDisabled();//去除经办人被置灰的限制
 					_close();//关闭摄像头及拍照弹框
 					return;
 				}
@@ -3384,7 +3387,78 @@ order.cust = (function(){
     		return;
     	}
     };
-	
+    
+    //经办人信息填写模块信息保护优化
+    var _disableHandleCustInfos = function(){
+    	var backgroundColor = "background-color: #E8E8E8;";
+    	var backgroundColorGray = "#E8E8E8;";
+    	//1.“查询”和“读卡”按钮，改为“重置”按钮
+    	$("#orderAttrReadCertBtn span").text("重置");
+    	$("#orderAttrQueryCertBtn span").text("重置");
+    	//2.修改经办人“查询”和“读卡”按钮的绑定事件
+    	_bindEvent4HandleCust();
+    	//3.置灰证件类型
+    	$('#orderIdentidiesTypeCd').attr("disabled", "disabled");
+    	$('#orderIdentidiesTypeCd').attr("style", backgroundColor);
+    	//4.置灰经办人姓名
+    	$("#orderAttrName").css("background-color", backgroundColorGray).attr("disabled", true);
+    	$("#li_order_attr span").css("background-color", backgroundColorGray).attr("disabled", true);
+    	//5.置灰证件号码
+    	$("#orderAttrIdCard").css("background-color", backgroundColorGray).attr("disabled", true);
+    	$("#li_order_remark2 span").css("background-color", backgroundColorGray).attr("disabled", true);
+    	//6.置灰证件地址
+    	$("#orderAttrAddr").css("background-color", backgroundColorGray).attr("disabled", true);
+    	$("#li_order_remark3 span").css("background-color", backgroundColorGray).attr("disabled", true);
+    	//7.置灰联系人号码
+    	$("#orderAttrPhoneNbr").css("background-color", backgroundColorGray).attr("disabled", true);
+    };
+    
+    //为重置按钮绑定新的事件
+    var _bindEvent4HandleCust = function() {
+        $("#jbrForm").off("formIsValid").bind("formIsValid", function (event) {
+        	_resetHandleCustInfos();
+        }).ketchup({bindElement: "orderAttrQueryCertBtn"});
+        $("#orderAttrReadCertBtn").attr("onclick", "javascript:order.cust.resetHandleCustInfos()");
+    };
+    
+    //恢复被置灰的经办人
+    var _resetHandleCustInfos = function(){
+    	//1.去除置灰的限制
+    	_removeDisabled();
+    	//2.重置页面上的经办人信息
+    	_setValueForAgentOrderSpan({
+			"partyName"		:"",
+			"certAddress"	:"",
+			"certNumber"	:""
+		});
+    	$("#orderAttrPhoneNbr").val("");
+    	//3.重置经办人js缓存
+    	OrderInfo.resetOrderInfoCache();
+    };
+    
+    //去除置灰的限制，恢复读卡和查询两个按钮
+    var _removeDisabled = function(){
+    	var backgroundColorWhite = "white;";
+    	//重置两个按钮极其绑定事件
+    	$("#orderAttrReadCertBtn span").text("读卡");
+    	$("#orderAttrQueryCertBtn span").text("查询");
+    	_jbrcreateButton();
+    	$("#orderAttrReadCertBtn").attr("onclick", "javascript:order.cust.readCertWhenOrder()");
+    	//重置证件类型
+    	$('#orderIdentidiesTypeCd').removeAttr("disabled").removeAttr("style");
+    	//重置经办人姓名
+    	$("#orderAttrName").css("background-color", backgroundColorWhite).attr("disabled", false);
+    	$("#li_order_attr span").css("background-color", backgroundColorWhite).attr("disabled", false);
+    	//重置证件号码
+    	$("#orderAttrIdCard").css("background-color", backgroundColorWhite).attr("disabled", false);
+    	$("#li_order_remark2 span").css("background-color", backgroundColorWhite).attr("disabled", false);
+    	//重置证件地址
+    	$("#orderAttrAddr").css("background-color", backgroundColorWhite).attr("disabled", false);
+    	$("#li_order_remark3 span").css("background-color", backgroundColorWhite).attr("disabled", false);
+    	//重置联系人号码
+    	$("#orderAttrPhoneNbr").css("background-color", backgroundColorWhite).attr("disabled", false); 
+    };
+
 	return {
 		form_valid_init : _form_valid_init,
 		showCustAuth : _showCustAuth,
@@ -3454,7 +3528,10 @@ order.cust = (function(){
 		checkUserInfo : _checkUserInfo,
 		showCertPicture : _showCertPicture,
 		close:_close,
-        jbrcreateButton:_jbrcreateButton
+        jbrcreateButton:_jbrcreateButton,
+        disableHandleCustInfos:_disableHandleCustInfos,
+        resetHandleCustInfos:_resetHandleCustInfos,
+        removeDisabled:_removeDisabled
 	};
 })();
 $(function() {

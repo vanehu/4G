@@ -1857,6 +1857,7 @@ OrderInfo = (function() {
 		preTransactionID        :_preTransactionID,
 		isHandleCustNeeded		:_isHandleCustNeeded,
 		handleCust				:_handleCust,
-		memBusiOrders           :_memBusiOrders
+		memBusiOrders           :_memBusiOrders,
+		resetOrderInfoCache		:_resetOrderInfoCache
 	};
 })();

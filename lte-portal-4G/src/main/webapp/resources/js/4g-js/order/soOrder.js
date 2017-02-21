@@ -2861,10 +2861,6 @@ SoOrder = (function() {
 	
 	//订单数据校验
 	var _checkData = function() {
-		var jbrIdentityNum = OrderInfo.bojbrCustIdentities.identityNum;
-		var jbrName = OrderInfo.bojbrCustInfos.name;
-		var jbrAddressStr = OrderInfo.bojbrCustInfos.addressStr;
-		
 		var orderAttrName = $.trim($("#orderAttrName").val()); //经办人姓名
 		var orderAttrIdCard = $.trim($("#orderAttrIdCard").val()); //证件号码
 		var orderAttrAddr = $.trim($("#orderAttrAddr").val()); //地址
@@ -2891,6 +2887,23 @@ SoOrder = (function() {
 				if(!ec.util.isObj($("#jbrForm").html()) || !ec.util.isObj(OrderInfo.virOlId)){
 					$.alert("提示","经办人拍照信息不能为空！请确认页面是否已点击【读卡】或者【查询】按钮，并且进行拍照和人证相符等操作！");
 					return false ;
+				}
+			}
+			
+			//新建经办人中不允许出现脱敏等非法字符
+			if(OrderInfo.ifCreateHandleCust){
+				if (OrderInfo.bojbrCustInfos.name.match(/[*]/ig) != null
+						|| OrderInfo.bojbrCustInfos.addressStr.match(/[*]/ig) != null
+						|| OrderInfo.bojbrCustIdentities.identityNum.match(/[*]/ig) != null) {
+					$.alert("错误","经办人信息中包含非法字符（*），请确认填写是否正确！");
+					return false ;
+				}
+				
+				if(ec.util.isObj(OrderInfo.bojbrCustInfos.telNumber)){
+					if(OrderInfo.bojbrPartyContactInfo.mobilePhone.match(/[*]/ig) != null){
+						$.alert("错误","经办人信息中包含非法字符（*），请确认填写是否正确！");
+						return false ;
+					}
 				}
 			}
 		}
