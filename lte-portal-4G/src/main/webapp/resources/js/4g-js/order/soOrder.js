@@ -2687,7 +2687,7 @@ SoOrder = (function() {
 			state : "ADD" //动作
 		};
 		for ( var i = 0; i < subUserInfos.length; i++) {
-			if(subUserInfos[i].prodId==prodId){
+			if(subUserInfos[i].prodId==prodId && subUserInfos[i].servType == '2'){
 				tmpObj.partyProductRelaRoleCd = subUserInfos[i].servType;
 				tmpObj.partyId = ec.util.isObj(subUserInfos[i].custId)?subUserInfos[i].custId:subUserInfos[i].instId;
 				busiOrder.data.boCusts.push(tmpObj);
