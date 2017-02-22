@@ -176,6 +176,9 @@ order.phoneNumber = (function(){
 			param.identityId = idcode;
 			param.areaId = OrderInfo.getAreaId();
 		}
+		if (order.prepare.isPreInstall()){
+			param.busiType = 'preInstall';
+		}
 		$.callServiceAsHtmlGet(contextPath+"/mktRes/phonenumber/listByIdentity",param,{
 			"before":function(){
 				$.ecOverlay("<strong>正在查询中,请稍等会儿....</strong>");

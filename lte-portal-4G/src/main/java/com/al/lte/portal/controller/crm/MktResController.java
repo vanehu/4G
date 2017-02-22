@@ -580,38 +580,40 @@ public class MktResController extends BaseController {
 		Map<String, Object> listByIdentityParam = new HashMap<String, Object>();
 		listByIdentityParam.put("identityId", MapUtils.getString(param, "identityId", ""));
 		listByIdentityParam.put("areaId", MapUtils.getString(param, "areaId", ""));
+		String busiType = MapUtils.getString(param, "busiType", "");
 		try {
-			Map<String, Object> checkIdMap = new HashMap<String, Object>();
-			try {
-				//客户的身份证件 需要与 号码预约时所使用身份证件号码 相同
-				Map sessionCustInfo = (Map) super.getRequest().getSession().getAttribute(SysConstant.SESSION_CURRENT_CUST_INFO);
-				if (sessionCustInfo != null && sessionCustInfo.containsKey("custId") && sessionCustInfo.containsKey("areaId")) {
-					checkIdMap = param;
-					checkIdMap.put("areaId", sessionCustInfo.get("areaId"));
-					checkIdMap.put("custId", sessionCustInfo.get("custId"));
-					checkIdMap.put("staffId", sessionStaff.getStaffId());
-					checkIdMap.put("idCardNumber", MapUtils.getString(param, "identityId", ""));
-					checkIdMap.remove("identityId");
-					
-					Map<String, Object> datamap = this.mktResBmo.checkIdCardNumber(checkIdMap,
-							flowNum, sessionStaff);
-					if (datamap != null) {
-						String code = (String) datamap.get("code");
-						if (!ResultCode.R_SUCC.equals(code)) {
-							model.addAttribute("isUnified","false");
-							return "/order/order-phonenumber-list";
+			if(!"preInstall".equals(busiType)) { // 用户预装不需要判断
+				Map<String, Object> checkIdMap = new HashMap<String, Object>();
+				try {
+					//客户的身份证件 需要与 号码预约时所使用身份证件号码 相同
+					Map sessionCustInfo = (Map) super.getRequest().getSession().getAttribute(SysConstant.SESSION_CURRENT_CUST_INFO);
+					if (sessionCustInfo != null && sessionCustInfo.containsKey("custId") && sessionCustInfo.containsKey("areaId")) {
+						checkIdMap = param;
+						checkIdMap.put("areaId", sessionCustInfo.get("areaId"));
+						checkIdMap.put("custId", sessionCustInfo.get("custId"));
+						checkIdMap.put("staffId", sessionStaff.getStaffId());
+						checkIdMap.put("idCardNumber", MapUtils.getString(param, "identityId", ""));
+						checkIdMap.remove("identityId");
+
+						Map<String, Object> datamap = this.mktResBmo.checkIdCardNumber(checkIdMap,
+								flowNum, sessionStaff);
+						if (datamap != null) {
+							String code = (String) datamap.get("code");
+							if (!ResultCode.R_SUCC.equals(code)) {
+								model.addAttribute("isUnified", "false");
+								return "/order/order-phonenumber-list";
+							}
 						}
 					}
+				} catch (BusinessException e) {
+					this.log.error("客户证件校验失败", e);
+					super.addHeadCode(response, ResultConstant.SERVICE_RESULT_FAILTURE);
+				} catch (InterfaceException ie) {
+					return super.failedStr(model, ie, checkIdMap, ErrorCode.IDCARDNUM_CHECK);
+				} catch (Exception e) {
+					return super.failedStr(model, ErrorCode.IDCARDNUM_CHECK, e, checkIdMap);
 				}
-			} catch (BusinessException e) {
-				this.log.error("客户证件校验失败", e);
-				super.addHeadCode(response, ResultConstant.SERVICE_RESULT_FAILTURE);
-			} catch (InterfaceException ie) {
-				return super.failedStr(model, ie, checkIdMap, ErrorCode.IDCARDNUM_CHECK);
-			} catch (Exception e) {
-				return super.failedStr(model, ErrorCode.IDCARDNUM_CHECK, e, checkIdMap);
 			}
-
 			String areaId=(String) listByIdentityParam.get("areaId");
 			listByIdentityParam.putAll(getAreaInfos(areaId));
 			listByIdentityParam.put("phoneNumber", "");
