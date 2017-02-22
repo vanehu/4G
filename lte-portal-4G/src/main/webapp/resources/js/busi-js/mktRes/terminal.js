@@ -551,6 +551,7 @@ mktRes.terminal = (function($){
 				//初始化裸机发展人信息
 				$("#lj").click();
 				OrderInfo.actionFlag=13;
+				OrderInfo.busitypeflag = 24;
 				order.dealer.initDealer();//初始化发展人
 				$("table.tableleft thead tr td a").css('display','none');//在裸机销售页面不展示“添加发展人”
 			}
@@ -1514,6 +1515,7 @@ mktRes.terminal = (function($){
 			return;
 		}
 		OrderInfo.actionFlag = 37;
+		OrderInfo.busitypeflag = 46;
 		var areaId= OrderInfo.staff.soAreaId;
 		// 单位为元
 		var apCharge = $("#mktLjPrice").val() / 100;

@@ -176,6 +176,7 @@ mktRes.terminal.exchange = (function($){
 		OrderInfo.actionTypeName = "退换";
 		OrderInfo.businessName = oldData.couponName;
 		OrderInfo.actionFlag = 18; // 终端换货
+		OrderInfo.busitypeflag = 23;
 		var coupons = [];
 		var oldCoupon = {
 			id: oldData.id,

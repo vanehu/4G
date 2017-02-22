@@ -379,7 +379,8 @@ order.zdyy = (function(){
 		var param={
 				"areaId":areaId,
 				"sourceId":sourceId
-		}							
+		}			
+		OrderInfo.busitypeflag = 47;
 		var url=contextPath+"/order/terminalCancelRoadCheck";
 		var response=$.callServiceAsJson(url, param);
 		if(response.code == 0){

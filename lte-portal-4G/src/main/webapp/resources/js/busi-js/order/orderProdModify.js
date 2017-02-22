@@ -500,7 +500,7 @@ order.prodModify = (function(){
         }
         OrderInfo.preBefore.prcFlag = "";
         
-		OrderInfo.busitypeflag=5;
+		OrderInfo.busitypeflag=42;
 		var submitState="";
         var BO_ACTION_TYPE="";
         var inprodStatusCd="";
@@ -545,7 +545,7 @@ order.prodModify = (function(){
         }
         OrderInfo.preBefore.prcFlag = "";
         
-		OrderInfo.busitypeflag=5;
+		OrderInfo.busitypeflag=43;
 		var submitState="";
         var BO_ACTION_TYPE="";
         var inprodStatusCd="";
@@ -588,7 +588,7 @@ order.prodModify = (function(){
         }
         OrderInfo.preBefore.prcFlag = "";
         
-		OrderInfo.busitypeflag=6;
+		OrderInfo.busitypeflag=44;
 		var submitState="";
         var BO_ACTION_TYPE="";
         var inprodStatusCd="";
@@ -634,7 +634,7 @@ order.prodModify = (function(){
         }
         OrderInfo.preBefore.prcFlag = "";
         
-		OrderInfo.busitypeflag=6;
+		OrderInfo.busitypeflag=45;
 		var submitState="";
         var BO_ACTION_TYPE="";
         var inprodStatusCd="";
@@ -3800,6 +3800,7 @@ order.prodModify = (function(){
 					        }
 					        OrderInfo.preBefore.prcFlag = "";
 						}
+						OrderInfo.busitypeflag = 39;
 						boActionTypeCd = CONST.BO_ACTION_TYPE.BUY_BACK;
 						OrderInfo.boRelas = [{
 							relaTypeCd : CONST.RELATYPECD,
@@ -3829,6 +3830,7 @@ order.prodModify = (function(){
 						        }
 						        OrderInfo.preBefore.prcFlag = "";
 					    	}
+					    	OrderInfo.busitypeflag = 40;
 						    boActionTypeCd = CONST.BO_ACTION_TYPE.BUY_BACK_ORDER_CONTRACT;
 						    OrderInfo.boRelas = [{
 							    relaTypeCd : CONST.RELATYPECD,
@@ -3854,6 +3856,7 @@ order.prodModify = (function(){
 						        }
 						        OrderInfo.preBefore.prcFlag = "";
 					    	}
+					    	OrderInfo.busitypeflag = 41;
 						    boActionTypeCd = CONST.BO_ACTION_TYPE.BUY_BACK_CHANGE_CARD;
 						    OrderInfo.boRelas = [{
 								relaTypeCd : CONST.RELATYPECD,

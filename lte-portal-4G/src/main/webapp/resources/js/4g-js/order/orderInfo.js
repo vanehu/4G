@@ -31,6 +31,21 @@ OrderInfo = (function() {
 
 	var _isExistCFQ = false;//是否是橙分期业务
 	
+	var _authRecord={
+		menuId:"",
+		validateType:"",
+		resultCode:""
+	};//保存鉴权临时结果
+
+	var _preBefore ={
+			prcFlag : ""	
+	};//保存前置检验的结果
+	
+	var _roleCd="";//用户区分当前选择的产品是否是副卡
+	var _roleType = "";//区分副卡新装    Y表示副卡新装
+	var _cust_validateType = "";//客户鉴权方式
+
+	var _cust_validateNum = "";//客户鉴权号码
 	/*购物车业务动作
 	1 新装
 	2  套餐变更
@@ -55,22 +70,22 @@ OrderInfo = (function() {
 	21 补卡
 	22 换卡
 	27 预装
+	redmine 1229860 update by huangjj3
+	23 终端换货
+	24 裸机销售
+	25 新增客户
+	26 群组产品的拆机
+	28 主副卡互换
+	39 新装返销
+	40 补卡返销
+	41 合约返销
+	42 挂失
+	43 解挂
+	44 停机保号
+	45 复机
+	46 终端预约
+	47 终端预约取消
 	*/
-	var _authRecord={
-		menuId:"",
-		validateType:"",
-		resultCode:""
-	};//保存鉴权临时结果
-
-	var _preBefore ={
-			prcFlag : ""	
-	};//保存前置检验的结果
-	
-	var _roleCd="";//用户区分当前选择的产品是否是副卡
-	var _roleType = "";//区分副卡新装    Y表示副卡新装
-	var _cust_validateType = "";//客户鉴权方式
-
-	var _cust_validateNum = "";//客户鉴权号码
 
 	/**
 	 * 1新装，21补卡，22换卡，61主副卡成员变更加装已有号码，62主副卡成员变更加装新号码，28主副卡成员变更主副卡角色互换

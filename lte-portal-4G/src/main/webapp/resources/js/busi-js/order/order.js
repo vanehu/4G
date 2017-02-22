@@ -278,7 +278,8 @@ order.service = (function(){
 						}else if(order.prodModify.choosedProdInfo.feeType=="1201" && (offerSpec.feeType=="1201"||offerSpec.feeType=="3101"||offerSpec.feeType=="3102"||offerSpec.feeType=="3103")){
 							is_same_feeType=true;//准实时预付费
 						}
-						if(!is_same_feeType){
+						var show_change_fee = offerChange.queryPortalProperties("FEETYPE_"+OrderInfo.staff.soAreaId.substring(0,3));
+						if(!is_same_feeType && show_change_fee !="ON"){
 							$.alert("提示","付费类型不一致,无法进行套餐变更。");
 							return;
 						}
