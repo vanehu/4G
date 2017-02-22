@@ -91,7 +91,7 @@ prod.changeUim = (function() {
 			return false;
 		}
 		var prodInfo = order.prodModify.choosedProdInfo;
-		
+		param.newFlag=1;
 		$.callServiceAsHtml(contextPath+"/app/prodModify/changeCard", param, {
 			"before":function(){
 				$.ecOverlay("<strong>信息查询中，请稍等...</strong>");
