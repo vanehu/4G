@@ -809,10 +809,10 @@
 			}
 		</const>
 		<const type="String" name="CARD_FTPCONFIG" value="FTPSERVICECONFIG_3" description="身份证阅读器放置ftp服务器"/>
-		<const type="String" name="CARD_FILEPATH" value="/app/ejbca/card/" description="身份证阅读器放置ftp路径"/>
+		<const type="String" name="CARD_FILEPATH" value="/app/4G/ejbca/card/" description="身份证阅读器放置ftp路径，测试环境为：/app/ejbca/card/"/>
 		<const type="Map" name="USBVERSION_SIGNATURE" description="接入集团规范的身份证阅读器厂商版本及密钥">
 		 {
-            '10000':{'version':'1.0.3.2','appSecret':'<![CDATA[5xRx9H4#5fY3e28@]]>','name':'华旭金卡','isOpen':'ON'},
+	    	'10000':{'version':'1.0.3.2','appSecret':'<![CDATA[5xRx9H4#5fY3e28@]]>','name':'华旭金卡','isOpen':'ON'},
             '10001':{'version':'1.2.0.4','appSecret':'<![CDATA[1%x7H4#2UtPy52@d]]>','name':'深圳华视','isOpen':'ON'},
             '10002':{'version':'2.6.5','appSecret':'<![CDATA[4#5fY18@3eRx5x3H]]>','name':'山东卡尔','isOpen':'ON'},
             '10003':{'version':'2.2.2','appSecret':'<![CDATA[R%dY#d3618@5xT9U]]>','name':'山东信通','isOpen':'ON'},

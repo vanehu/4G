@@ -4481,7 +4481,9 @@ public class OrderController extends BaseController {
 	public void downloadFile(@RequestParam("fileUrl") String fileUrl, 
 			@RequestParam("fileName") String fileName,
 			HttpServletResponse response) throws IOException {		
-		ServletOutputStream  outputStream = response.getOutputStream();
+			ServletOutputStream outputStream = response.getOutputStream();
+			boolean hasDowned = false;
+			String msg = "下载失败，未知原因！";
 		try {
 			FtpUtils ftpUtils = new FtpUtils();
 //			String fileUrl = (String) param.get("fileUrl");
@@ -4500,21 +4502,43 @@ public class OrderController extends BaseController {
 			String remotePort = ftpServiceConfigs[1];//FTP服务器端口
 			String userName = ftpServiceConfigs[2];//FTP服务器用户名
 			String password = ftpServiceConfigs[3];//FTP服务器密码
-			response.setContentType("application/x-msdownload;");
-			response.addHeader("Content-Disposition", "attachment;filename="+new String(fileName.getBytes("gb2312"), "ISO8859-1"));
-			ftpUtils.connectFTPServer(remoteAddress,remotePort,userName,password);
-			boolean isFileExist = ftpUtils.isFileExist(newFileName,filePath);
-			if(isFileExist){
-				ftpUtils.changeWorkingDirectory(filePath);
-				boolean gg=ftpUtils.downloadFileByPath(newFileName, outputStream);
+			
+			boolean isConnected = ftpUtils.connectFTPServer(remoteAddress,remotePort,userName,password);
+			if(isConnected){
+				boolean isFileExist = ftpUtils.isFileExist(newFileName,filePath);
+				if(isFileExist){
+					boolean isChangeWorkingDirectory = ftpUtils.changeWorkingDirectory(filePath);
+					if(isChangeWorkingDirectory){
+						response.setContentType("application/x-msdownload;");
+						response.addHeader("Content-Disposition", "attachment;filename="+new String(fileName.getBytes("gb2312"), "ISO8859-1"));
+						boolean gg=ftpUtils.downloadFileByPath(newFileName, outputStream);
+						hasDowned = true;
+						msg = "下载成功！";
+					}else{
+						msg = "下载失败：切换服务器目录失败；";
+					}
+				}else{
+					msg = "下载失败：文件不存在；";
+				}
+			}else{
+				msg = "下载失败：链接FTP服务器失败；";
+			}
+			if(!hasDowned){
+		        this.log.error("{},文件目录：{}，ftp信息为：{}",msg,filePath+newFileName,ftpServiceConfig);
+		        response.setContentType("text/html;charset=UTF-8");
+		        outputStream.write(msg.getBytes());
 			}
 		}catch (Exception e) {
 			e.printStackTrace();
+			this.log.error(e);
+			msg += "，异常信息："+e;
+	        response.setContentType("text/html;charset=UTF-8");
+	        outputStream.write(msg.getBytes());
 		}finally {
 			if (outputStream != null){
 				outputStream.close();
 			}
-		}	
+		}
 	}
 	
 	@RequestMapping(value = "/reducePoingts", method = RequestMethod.POST)

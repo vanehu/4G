@@ -154,13 +154,16 @@ cert = (function() {
 					"，请更新升级到版本: "+response.data.mdaVersion+"。请下载新的控件。";
 					$.confirm("信息确认",info,{
 						yesdo:function(){
+							//如果二次点击不清除之前生成的，会导致后端入参字符串叠加异常
+							$("#downCardOcxForm").remove();
 							$("<form>", {
 						    	id: "downCardOcxForm",
 						    	style: "display:none;",
-								target: "_self",
+								target: "_blank",
 								method: "POST",
 								action: contextPath + "/order/downloadOCX"
 						    }).appendTo("body");
+							$("#downCardOcxForm").text("");
 							$("#downCardOcxForm").append($("<input>", {
 						    	id : "fileUrl",
 						    	name : "fileUrl",
