@@ -2512,6 +2512,9 @@ order.cust = (function(){
 				return;
 			}
 			_setValueForAgentOrderSpan(man.resultContent);
+			$("#orderAttrReadCertBtn").hide();
+			$("#orderAttrReset").show();
+			$("#orderIdentidiesTypeCd").attr("disabled","disabled");  
 			//弹出拍照弹框
 			_showPhotoGraph(man.resultContent);
 		}else{//老模式
@@ -2580,6 +2583,12 @@ order.cust = (function(){
 			container : "ec-dialog-photo-graph"
 		});
 		//初始化页面
+		$("#orderAttrQryBtn").hide();
+		$("#orderAttrReset").show();
+		$("#orderIdentidiesTypeCd").attr("disabled","disabled");
+		$("#orderAttrName").attr("disabled",true);
+		$("#orderAttrIdCard").attr("disabled",true);
+		$("#orderAttrAddr").attr("disabled",true);
 		//显示默认头像
 		$("#show")[0].src=contextPath+"/image/id_card.jpg";
 		$("#cameraList").empty(); 
@@ -2942,6 +2951,36 @@ order.cust = (function(){
 		return resultFlag;
 	};
 	
+	 //经办人重置按钮
+	var _orderAttrReset = function() {
+		var identidiesTypeCd=$("#orderIdentidiesTypeCd").val();//OrderInfo.cust.identityCd;
+		if(identidiesTypeCd==1){
+			$("#orderAttrReset").hide();
+			$("#orderAttrReadCertBtn").show();
+			$("#orderIdentidiesTypeCd").removeAttr("disabled");
+			
+			$('#orderAttrName').val("");//姓名
+			$('#orderAttrIdCard').val("");//设置身份证号
+			$('#orderAttrAddr').val("");//地址
+			// 设置文本显示
+			$("#li_order_attr span").text("");
+			$("#li_order_remark2 span").text("");
+			$("#li_order_remark3 span").text("");
+		}else{
+			//初始化页面
+			$("#orderAttrReset").hide();
+			$("#orderAttrQryBtn").show();
+			$("#orderIdentidiesTypeCd").removeAttr("disabled");
+			$("#orderAttrName").removeAttr("disabled");
+			$("#orderAttrIdCard").removeAttr("disabled");
+			$("#orderAttrAddr").removeAttr("disabled");
+			$('#orderAttrName').val("");//姓名
+			$('#orderAttrIdCard').val("");//证件号
+			$('#orderAttrAddr').val("");//地址
+		}
+		OrderInfo.subHandleInfo = {};
+	};
+	
 	return {
 		saveAuthRecordFail:_saveAuthRecordFail,
 		saveAuthRecordSuccess:_saveAuthRecordSuccess,
@@ -3011,7 +3050,8 @@ order.cust = (function(){
 		closeShowPhoto:_closeShowPhoto,
 		readCertWhenUser:_readCertWhenUser,
 		qryUserCustInfo:_qryUserCustInfo,
-		commitUser:_commitUser
+		commitUser:_commitUser,
+		orderAttrReset:_orderAttrReset
 	};
 })();
 $(function() {
