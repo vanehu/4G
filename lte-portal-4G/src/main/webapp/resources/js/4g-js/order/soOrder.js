@@ -430,6 +430,9 @@ SoOrder = (function() {
 				}
 			}
 		}
+
+		// 填单添加责任人
+		_createCustInfo(busiOrders);
 		
 		if(OrderInfo.actionFlag==1 || OrderInfo.actionFlag==14){ //新装
 			_createOrder(busiOrders); //新装
@@ -2678,7 +2681,19 @@ SoOrder = (function() {
 			partyProductRelaRoleCd : "0", //客户与产品之间的关系（担保关系）
 			state : "ADD" //动作
 		});
-		
+		// 0 产权客户  1 使用客户（保留） 2 责任人 , 暂时就责任人使用
+		var subUserInfos = OrderInfo.subUserInfos;
+		var tmpObj = {
+			state : "ADD" //动作
+		};
+		for ( var i = 0; i < subUserInfos.length; i++) {
+			if(subUserInfos[i].prodId==prodId){
+				tmpObj.partyProductRelaRoleCd = subUserInfos[i].servType;
+				tmpObj.partyId = ec.util.isObj(subUserInfos[i].custId)?subUserInfos[i].custId:subUserInfos[i].instId;
+				busiOrder.data.boCusts.push(tmpObj);
+			}
+		}
+
 		//封装产品密码
 		var pwd=$("#pwd_"+prodId).val();
 		if(pwd=="******"){
@@ -2945,6 +2960,10 @@ SoOrder = (function() {
 					var offerRole = OrderInfo.offerSpec.offerRoles[i];
 					for ( var j = 0; j < offerRole.prodInsts.length; j++) {
 						var prodInst = offerRole.prodInsts[j];
+						// 套餐变更新装副卡,主卡不需要走该处校验,新装副卡需要
+						if((OrderInfo.actionFlag==2&&offerChange.newMemberFlag) && prodInst.prodInstId > 0){
+							continue;
+						}
 						if(OrderInfo.actionFlag==2){
 							var instid = '"'+prodInst.prodInstId+'"';
 							if(prodInst.memberRoleCd=="401" && instid.indexOf("-")!=-1){
@@ -3042,12 +3061,19 @@ SoOrder = (function() {
 							return false;
 						}
 						//校验必填的产品属性和是否有重复的产品属性
+						var prodItemUserFlag  = false;//使用人产品属性
 						var prodAttrEmptyFlag = false; //必填产品属性是否已输入
 						var prodAttrRepeatFlag = false; //是否包含重复的产品属性
 						var prodAttrEmptyCheckName = null;
 						var prodAttrRepeatCheckName = null;
 						$(OrderInfo.prodAttrs).each(function(){
 							var id = this.id;
+							// 获取当前产品的产品属性,当产品属性为使用人时,重置是否为空标识
+							if($("#"+id).attr('itemSpecId')==CONST.PROD_ATTR.PROD_USER && prodInst.prodInstId == id.split('_')[1]){
+								prodItemUserFlag = true;
+								// 重置,因为在政企客户+测试卡权限下使用人可以为空,如果前一个产品使用人为空,会导致校验后面产品的使用取的前产品的值
+								prodAttrEmptyFlag = false;
+							}
 							if(!prodAttrEmptyFlag){
 								if(this.isOptional == "N" && id){
 									var val=$.trim($("#"+id).val());
@@ -3068,6 +3094,15 @@ SoOrder = (function() {
 						if(prodAttrEmptyCheckName =='使用人' &&  OrderInfo.roleType=="Y"){
 							prodAttrEmptyFlag = false;
 						}
+
+						// 责任人,使用人-政企客户专用测试卡校验
+						if(prodItemUserFlag){
+							if(!checkUserChoose(prodInst.prodInstId,prodAttrEmptyFlag)){
+								return false;
+							}
+							prodAttrEmptyFlag = false;
+						}
+
 						if(prodAttrEmptyFlag){
 							$.alert("信息提示","没有配置产品属性("+prodAttrEmptyCheckName+")，无法提交");
 							return false;
@@ -3456,6 +3491,35 @@ SoOrder = (function() {
 		}
 		}
 		return true; 
+	};
+
+	/**
+	 * 政企客户并且有专用测试权限，责任人和使用人2选一
+	 * 2者必选一个,使用人不强制校验
+	 * @param flag :true 使用人为空 false 不为空
+	 * @returns {boolean}
+	 */
+	var checkUserChoose = function(prodInstId,flag){
+		/** 政企客户并且有专用测试权限 **/
+		var govFlag = (order.cust.isCovCust(OrderInfo.cust.identityCd) ||
+			(OrderInfo.boCustInfos && OrderInfo.boCustInfos.partyTypeCd == '2')) &&
+			OrderInfo.specialtestauth;
+		if(govFlag){
+			// 表示当前产品是否存在责任人,由于使用人根据页面取值去判断,这个地方暂时写死责任人,后续针对扩展优化
+			var sflag = false;
+			$.each(OrderInfo.subUserInfos,function(){
+				var userInfo = this;
+				if(prodInstId == userInfo.prodId && userInfo.servType == '2'){
+					sflag = true;
+				}
+			});
+			if(!sflag && flag){
+				$.alert("信息提示","具有专用测试卡权限的工号受理政企客户的新装使用人与责任人必须填写一个!");
+				return false;
+			}
+			// 其他情况,填了一个,不限制
+		}
+		return true;
 	};
 	//判断是否包含有3G的机型
 	var _isThreeTerminal=function(termTypeFlags,isTerminal){
@@ -4068,6 +4132,78 @@ SoOrder = (function() {
 			}
 		}
 		return true;
+	};
+
+	// 责任人新增添加
+	var _createCustInfo = function(busiOrders) {
+		for(var i=0;i<OrderInfo.subUserInfos.length;i++){
+			var subUserInfo = OrderInfo.subUserInfos[i];
+			if(subUserInfo.isOldCust == "N"){
+				var busiOrder = {
+					areaId	: OrderInfo.getAreaId(),//受理地区ID
+					busiOrderInfo : {
+						seq : OrderInfo.SEQ.seq--
+					},
+					busiObj : { //业务对象节点
+						instId		: subUserInfo.instId,
+						accessNumber: OrderInfo.getAccessNumber(subUserInfo.prodId)
+					},
+					boActionType : {
+						actionClassCd	: CONST.ACTION_CLASS_CD.CUST_ACTION,
+						boActionTypeCd	: CONST.BO_ACTION_TYPE.CUST_CREATE
+					},
+					data : {
+						boCustInfos 		: [],
+						boCustIdentities	: [],
+						boPartyContactInfo	: []
+					}
+				};
+				//信息节点
+				busiOrder.data.boCustInfos.push({
+					name			: subUserInfo.orderAttrName,//客户名称
+					ignore			: "Y", // 临时方法,新建C1订单提交不校验
+					state			: "ADD",//状态
+					areaId			: OrderInfo.getAreaId(),
+					telNumber 		: subUserInfo.orderAttrPhoneNbr,//联系电话
+					addressStr		: subUserInfo.orderAttrAddr,//客户地址
+					partyTypeCd		: 1,//客户类型
+					defaultIdType	: subUserInfo.orderIdentidiesTypeCd,//证件类型
+					mailAddressStr	: subUserInfo.orderAttrAddr,//通信地址
+					businessPassword: ""//客户密码
+				});
+				//证件节点
+				busiOrder.data.boCustIdentities.push({
+					state			: "ADD",//状态
+					isDefault		: "Y",//是否首选
+					identityNum		: subUserInfo.identityNum,//证件号码
+					identidiesPic	: subUserInfo.identityPic,//二进制证件照片
+					identidiesTypeCd: subUserInfo.orderIdentidiesTypeCd//证件类型
+				});
+				//联系人节点
+				if(subUserInfo.orderAttrPhoneNbr!=null && subUserInfo.orderAttrPhoneNbr!=""){
+					var contactGender = "1";
+					if(subUserInfo.orderIdentidiesTypeCd == "1"){
+						if (parseInt(subUserInfo.identityNum.substr(16, 1)) % 2 == 1) {
+							contactGender = "1";
+						} else {
+							contactGender = "2";
+						}
+					}
+					busiOrder.data.boPartyContactInfo.push({
+						contactAddress : subUserInfo.orderAttrAddr,//参与人的联系地址
+						contactGender  : contactGender,//参与人联系人的性别
+						contactName : subUserInfo.orderAttrName,//参与人的联系人名称
+						contactType : "10",//联系人类型
+						headFlag : "1",//是否首选联系人
+						mobilePhone : subUserInfo.orderAttrPhoneNbr,//参与人的移动电话号码
+						staffId : OrderInfo.staff.staffId,//员工ID
+						state : "ADD",//状态
+						statusCd : "100001"//订单状态
+					});
+				}
+				busiOrders.push(busiOrder);
+			}
+		}
 	};
 
 	return {

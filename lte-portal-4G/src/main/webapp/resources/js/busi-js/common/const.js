@@ -42,7 +42,8 @@ CONST = (function(){
 	var _PROD_ATTR = {
 		FEE_TYPE : "10020030",
 		IS_XINKONG : "40010030", //是否信控
-		PROD_USER : "800000011" //使用人
+		PROD_USER : "800000011", //使用人
+		REAL_NAME_TYPE : "10020121" // 实名制登记类型
 	};
 	
 	//产品属性值

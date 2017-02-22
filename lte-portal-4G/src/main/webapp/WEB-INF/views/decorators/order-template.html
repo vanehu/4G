@@ -953,6 +953,68 @@
 	</div>
   </div>
 </div> -->
+<!--弹出款-新模式-->
+<div id="choose_user_dialog_new" class="easyDialogdiv" style="width:700px;height:250px;">
+    <form id="syrCertCheckForm">
+        <div class="easyDialogclose" id="chooseUserClose" onclick="easyDialog.close()"></div>
+        <table class="contract_list">
+            <thead>
+            <tr>
+                <td id="tip_thead"></td>
+            </tr>
+            </thead>
+        </table>
+        <div class="main_div location main_warp">
+            <ul class="fillin show" style="overflow: hidden;">
+                <li class="full" style="padding-right: 50%;">
+                    <label>证件类型：</label>
+                    <select id="orderIdentidiesTypeCdB">
+                    </select>
+                    <label class="f_red">*</label>
+                    <a class="btn_h30" id="orderUserReadCertBtn" style="margin-top: 0px; display: none;"><span>读 卡</span></a>
+                    <a class="btn_h30" id="orderUserQryBtn" style="margin-top: 0px; display: none;"><span>查询</span></a>
+                </li>
+                <!-- 默认为个人用户，隐藏客户类型 -->
+                <li id="li_order_remark" style="display: none;">
+                    <label>客户类型：</label>
+                    <select id="orderPartyTypeCdB" onchange="order.cust.partyTypeCdChoose(this,'orderIdentidiesTypeCdB')">
+                        <option value="1" >个人</option>
+                    </select>
+                    <label class="f_red">*</label>
+                </li>
+                <li id="li_order_user">
+                    <label>姓名：</label>
+                    <input id="orderUserName" class="inputWidth183px" maxlength="16" type="text" style="width:183px;" onkeyup="" placeHolder="请输入使用人姓名" data-validate="validate(personal) on(blur)">
+                    <span style="line-height: 28px; float:left;"></span>
+                    <label class="f_red">*</label>
+                </li>
+                <li id="li_order_user2">
+                    <label>证件号码：</label>
+                    <input id="orderUserIdCard" class="inputWidth183px"maxlength="50"type="text" style="width:183px;">
+                    <span style="line-height: 28px; float:left;"></span>
+                    <label class="f_red">*</label>
+                </li>
+                <li id="li_order_user3">
+                    <label>证件地址：</label>
+                    <input id="orderUserAddr" class="inputWidth183px" maxlength="125"type="text" style="width:183px;" onkeyup="" placeHolder="请输入证件地址" data-validate="validate(address) on(blur)">
+                    <span style="line-height: 28px; float:left;width:200px"></span>
+                    <label class="f_red">*</label>
+                </li>
+                <li>
+                    <label>联系人号码：</label>
+                    <input id="orderUserPhoneNbr" class="inputWidth183px" type="text" maxlength="16"style="width:183px;">
+                </li>
+            </ul>
+            <input id="user_prodId" type="hidden" value="">
+        </div>
+        <div align="center" style="margin: 20px auto;">
+            <a id="chooseUserBt" class="btna_o" ><span >确认</span></a>
+            <a id="cancelChooseUserBtn" class="btna_o" href="javascript:void(0)" style=" margin-left:20px;" onclick="easyDialog.close()"><span>取消</span></a>
+        </div>
+    </form>
+</div>
+<!--弹出款-使用人-- 新模式 end-->
+
 <!--弹出款-客户定位，选择使用人-->
 <div id="choose_user_dialog" class="easyDialogdiv" style="width:700px;height:250px;">
 <div class="easyDialogclose" id="chooseUserClose" onclick="easyDialog.close()"></div>

@@ -2852,6 +2852,10 @@ public class OrderBmoImpl implements OrderBmo {
                         if ("1".equals(identidiesTypeCd)) { //身份证
                         	Map<String, Object> custInfo = (Map<String, Object>) ((List<Map<String, Object>>) data.get("boCustInfos")).get(0);
                         	Object s_sig = null;
+							// 临时处理,不对责任人身份证读卡校验
+							if("Y".equals(MapUtils.getString(custInfo, "ignore"))){
+								continue;
+							}
                         	if(!"Y".equals(MapUtils.getString(custInfo, "jbrFlag"))){//若该C1动作节点是新建经办人
                             	s_sig = ServletUtils.getSessionAttribute(request, Const.SESSION_SIGNATURE);
                         	} else{
@@ -2932,6 +2936,10 @@ public class OrderBmoImpl implements OrderBmo {
                     	C1Count++;//使用身份证新建客户+1
                     	Map<String, Object> custInfo = (Map<String, Object>) ((List<Map<String, Object>>) data.get("boCustInfos")).get(0);
                     	Object s_sig =  null;
+						// 临时处理,不对责任人身份证读卡校验
+						if("Y".equals(MapUtils.getString(custInfo, "ignore"))){
+							C1Count--;
+						}
                     	if("Y".equals(MapUtils.getString(custInfo, "jbrFlag"))){//若该C1动作节点是新建经办人
                     		s_sig =  ServletUtils.getSessionAttribute(request, Const.SESSION_SIGNATURE_HANDLE_CUST);
                     	} else if("Y".equals(MapUtils.getString(custInfo, "userCustFlag"))){//若该C1动作节点是新建使用人

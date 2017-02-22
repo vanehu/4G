@@ -602,6 +602,9 @@ public class OrderController extends BaseController {
         dataBusMap.put("offerRoleId", offerRoleId);
         dataBusMap.put("roleCd", roleCd);//2
 
+        // 系统标识,用来区分其他平台查询,返回web端需要的产品属性
+        dataBusMap.put("sysFlag", "10000");
+
         Map result = null;
         List<Map<String, Object>> list = null;
         try {
@@ -4450,7 +4453,6 @@ public class OrderController extends BaseController {
             	request.getSession().removeAttribute(Const.SESSION_SIGNATURE_HANDLE_CUST);
             	request.getSession().setAttribute(Const.SESSION_SIGNATURE_HANDLE_CUST, signature1);
             }
-            
             request.getSession().setAttribute(Const.CACHE_CERTINFO, certNumber);
     		jsonResponse = super.successed(param, ResultConstant.SUCCESS.getCode());//信息校验通过
             return jsonResponse;

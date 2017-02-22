@@ -778,5 +778,8 @@ public final class SysConstant {
 	
 	/**判断业务类型是否限制经办人必须填写且拍照*/
     public static final String IS_ACTION_FLAG_LIMITED = "isActionFlagLimitedForHandleCust";
+
+    /**专用测试权限*/
+    public static final String SPECIALTESTQX = "ZYCSK";
 	
 }

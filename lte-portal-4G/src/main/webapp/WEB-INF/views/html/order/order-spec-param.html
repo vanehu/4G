@@ -30,7 +30,7 @@
 		itemSpecId="${prodSpec.itemSpecId}" prodSpecItemId="${prodSpec.prodSpecParamId}" 
 		check_name="${prodSpec.name}" check_mask="${rule.mask}" check_mess="${rule.maskMsg}" 
 		check_len="${rule.attrLen}" check_option="${rule.isOptional}" 
-		dataType="${prodSpec.dataTypeCd}" oldValue="${prodSpec.value}" 
+		dataType="${prodSpec.dataTypeCd}" oldValue="${prodSpec.value}" onchange="javascript:changeCallBack(this);"
 		<#if rule.isEnabled=="Y" >check_type="check"<#else>check_type="uncheck" disabled="disabled"</#if>  >
 		<#if prodSpec.value=="">
 		<option value="">--请选择--</option>
@@ -148,10 +148,7 @@
 </div>
 </#if>
 	</#list>
-	
-	<#if ((prodSpecParams)?size) % 2 == 1>
-		<li><label> </label></li>
-  	</#if>
+
 <script type="text/javascript" charset="utf-8">
 	<#list prodSpecParams as prodSpec>
 		<#if prodSpec.dataSourceTypeCd==4 >
@@ -188,6 +185,20 @@
 		    });
 		</#if>
 	</#list>
+	function changeCallBack(dom){
+		var item_specId = $(dom).attr('itemSpecId');
+		if(CONST.PROD_ATTR.REAL_NAME_TYPE == item_specId){
+			var $tip = $(dom).parent().find('span');
+			if($tip.length <= 0){
+				$(dom).parent().append($('<span style="color:red;margin-left: 5px;"></span>'));
+			}
+			if($(dom).val() == '20'){
+				$(dom).parent().find('span').html('实名登记类型是内部测试卡，建议选择测试促销');
+			}else{
+				$(dom).parent().find('span').html('');
+			}
+		}
+	}
 </script>  	
 <#else>
 0

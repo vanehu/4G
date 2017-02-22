@@ -216,6 +216,9 @@ OrderInfo = (function() {
 	var _prodInstAttrs = []; //保存查询产品实例属性时返回的信息
 	
 	var _choosedUserInfos = []; //使用人信息
+
+	var _subUserInfos = []; // 责任人+其他
+	var _specialtestauth = false; // 测试卡权限
 	
 	var _essOrderInfo = {}; //ESS订单信息
 	
@@ -1653,6 +1656,7 @@ OrderInfo = (function() {
 		order.cust.queryForChooseUser = false; //重置选择使用人标识
 		order.cust.tmpChooseUserInfo = {};
 		OrderInfo.choosedUserInfos = [];
+		OrderInfo.subUserInfos = [];
 		_resetOrderInfoCache(isInitOrderData);//填单页面返回“上一步”或“取消”时清空经办人、使用人缓存
 	};
 				
@@ -1829,6 +1833,8 @@ OrderInfo = (function() {
 		isGroupProSpecId		:_isGroupProSpecId,
 		isGroupProSpec			:_isGroupProSpec,
 		choosedUserInfos 		:_choosedUserInfos,
+		subUserInfos			:_subUserInfos,
+		specialtestauth			:_specialtestauth,
 		updateChooseUserInfos	:_updateChooseUserInfos,
 		getChooseUserInfo		:_getChooseUserInfo,
 		resetChooseUserInfo		:_resetChooseUserInfo,

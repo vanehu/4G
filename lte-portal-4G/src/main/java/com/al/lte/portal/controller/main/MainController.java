@@ -192,7 +192,14 @@ public class MainController extends BaseController {
 				ServletUtils.setSessionAttribute(request, SysConstant.TGJBRBTQX, isHandleCustNeeded);
 			}
     	}
-		
+		/** 测试卡权限 **/
+		String specialtestauth = "-1";
+		try {
+			specialtestauth = staffBmo.checkOperatBySpecCd(SysConstant.SPECIALTESTQX, sessionStaff);
+		} catch (Exception e) {
+			specialtestauth = "-1";
+		}
+		model.addAttribute("specialtestauth", specialtestauth);
 		return "/main/main";
     }
     
