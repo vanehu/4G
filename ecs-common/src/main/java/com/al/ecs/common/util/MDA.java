@@ -7,7 +7,6 @@ import java.util.Map;
 
 @com.al.common.annotation.AppModule(moduleName = "Lte4GManager")
 public class MDA {
-	
 	/**
 	 * 各省CRM平台系统编码
 	 */
@@ -20,6 +19,10 @@ public class MDA {
 	 * 宽带甩单过csb的http地址
 	 */
 	public static final String CSB_HTTP_MIDDLE_URL=new String("");
+	/**
+	 * 芝麻信用值查询地址
+	 */
+	public static final String ZHIMA_URL=new String("");
 	/**
 	 * 调用签章系统过csb的http地址
 	 */
@@ -503,11 +506,16 @@ public class MDA {
 	/**公告附件下载FTP服务器配置*/
 	public static final String NOTICE_FTP_SERVICE_CONFIGS = new String("");
 
+	/**
+	 * 翼销售app省份新版ui开关
+	 */
+	public static final Map<String,String> NEWUIFLAG = new HashMap<String,String>();
+
 	/**实名制:证件照片校验签名密钥*/
     public static final Map<String,Map<String,String>> VENDER_SIGNATURE = new HashMap <String,Map<String,String>>();
+
     /**实名制:证件照片水印内容*/
     public static final String WARTER_MARKER_CONEXT = new String("");
-
 	/**
 	 * 集团CRM-4G IE兼容性开关
 	 */
@@ -517,25 +525,21 @@ public class MDA {
 	 * 流量包父子关系开关
 	 */
 	public static final String NEW_LABEL_FLAG  = new String("");
-	
-	/**实名制拍照分省开关*/
+
+	/**实名制拍照分省开关(4GWEB+能力+翼销售共用)*/
 	public static final Map<String,String> REAL_NAME_PHOTO_FLAG  = new HashMap<String,String>();
+	
+	/**使用人拍照分省开关(4GWEB+能力共用)*/
+	public static final Map<String,String> REAL_USER_FLAG  = new HashMap<String,String>();
 	
 	/**主副卡角色互换分省开关*/
 	public static final Map<String,String> MEMBER_ROLE_EXCHANGE_FLAG  = new HashMap<String,String>();
-	
-	/** 使用人分省开关(4GWEB+能力共用)*/
-	public static final Map<String,String> REAL_USER_FLAG  = new HashMap<String,String>();
-	/**
-	 * 工号实名制需求开关
-	 */
+
+	/**工号实名制需求开关*/
 	public static final String STAFF_AUTH_FLAG  = new String("");
+
 	/**订单提交增加前置校验流水号及细化返销前置校验编码开关*/
 	public static final Map<String,String> COMANDFXPRECHECK = new HashMap<String,String>();
-	/**
-	 * 翼销售app省份新版ui开关
-	 */
-	public static final Map<String,String> NEWUIFLAG = new HashMap<String,String>();
 
     /**证件类型校验规则是否启用开关*/
     public static final Map<String, String> CHECK_RULES_ON_OFF = new HashMap<String, String>();
@@ -553,5 +557,5 @@ public class MDA {
     public static final Map<String, String> SHOW_MEMBER_FEE_TYPE = new HashMap<String,String>();
     
     /**拍照仪驱动下载配置*/
-    public static final Map<String, String> SHOW_MEMBER_FEE_TYPE = new HashMap<String,String>();
+	public static final Map<String, String> CAMERA_DRIVER_DOWNLAOD = new HashMap<String, String>();
 }
