@@ -139,7 +139,7 @@ public class StaffMgrController extends com.al.lte.portal.controller.system.Staf
 		JsonResponse jsonResponse = new JsonResponse();
 		Integer totalSize = 1;
 		List list = new ArrayList();
-		String areaId = sessionStaff.getAreaId();
+		String areaId = param.get("areaId")== null || param.get("areaId") == ""?sessionStaff.getAreaId():param.get("areaId").toString();
 		Integer iAreaId = areaId == null ? 0 : Integer.parseInt(areaId);
 		String pageIndex = MapUtils.getString(param, "pageIndex", "");
 		String pageSize = MapUtils.getString(param, "pageSize", "");

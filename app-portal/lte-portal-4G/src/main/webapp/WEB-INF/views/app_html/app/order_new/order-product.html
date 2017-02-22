@@ -70,23 +70,21 @@
 	</#if>
  </#list>
 </ul>
-		<div class="choice-box m-t-10 border-none">
-			<input type="hidden" id="cur_channelCode" value="${channelCode}" /> 
-			<i class="iconfont pull-left p-l-10">&#xe66c;</i> 
-			<select name="" id="dealerType" class="myselect select-option" data-role="none" />
-			<i onclick="order.dealer.showDealer()"
-				class="iconfont absolute-right font-default" style="line-height: 0.86rem; vertical-align: middle; margin: 0 0.22rem; font-size:16px;">&#xe670;</i>
-		</div>
-		<ul class="choice-list-box">
-			<li><span class="list-title font-secondary" id="dealerName">
-			</span> 
-			</li>
-		</ul>
-		
+		<ul class="choice-list-box" id="dealerList">
+		  <li>
+		    <i class="iconfont pull-left">&#xe66c;</i>
+		    <span class="list-title">添加发展人</span>
+		    <i onclick="order.dealer.showDealer()" class="iconfont absolute-right font-default">&#xe670;</i>
+		  </li>
+<!-- 		  <li data-channelNbr="${channelCode}" data-role="" data-vale="">
+			<span class="list-title font-secondary" id="dealerName"></span>
+			<i onclick="" class="iconfont absolute-right">&#xe624;</i>
+		  </li> -->
+ 		</ul>
 		<ul class="choice-list-box">
 					<li>
 						<i class="iconfont pull-left">&#xe66c;</i>
-						<span class="list-title">添加经办人</span>
+						<span class="list-title">经办人</span>
 						<i onclick="order.dealer.showJbr()" data-toggle="modal" class="iconfont absolute-right font-default">&#xe670;</i>
 					</li>
 					<li>
@@ -115,6 +113,12 @@
 						<h4 class="modal-title">选择发展人</h4>
 					</div>
 					<div>
+						<div class="choice-box">
+							<i class="iconfont pull-left p-l-10">&#xe663;</i>
+							<select name="" id="dealerType" class="myselect select-option" data-role="none" />
+							<i class="iconfont pull-right p-r-10">&#xe66e;</i>
+						    <div class="help-block error hidden">该类型已添加</div>
+						</div>
 						<div class="choice-box">
 							<i class="iconfont pull-left p-l-10">&#xe637;</i> 
 							<select name="" id="diqu" class="myselect select-option" data-role="none">
@@ -175,7 +179,7 @@
 				<div class="modal-dialog" style="display:block;">
 					<div class="modal-content">
 						<div class="modal-header">
-							<button type="button" class="close" data-dismiss="modal" onclick="order.dealer.closeJBR()" aria-hidden="true">×</button>
+							<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
 							<h4 class="modal-title">经办人</h4>
 						</div>
 						<form id="jbrFormdata" method="post">
@@ -244,7 +248,7 @@
 							<button class="double-btn" id="queryJbr"   onClick="order.main.queryJbr()">查询</button>
 							<button class="double-btn" onClick="order.dealer.closeJBR()">确定</button>
 						</div>
-						<div class="sub-btn-box p p-b-15" id="only">
+						<div class="ordinary-btn-box p p-b-15" id="only">
 							<button class="sun-btn" onClick="order.dealer.closeJBR()">确定</button>
 						</div>
 						
@@ -299,4 +303,5 @@ if (/iphone|ipad|ipod/.test(ua)) {
 		}
 
 	}
+	var cur_channelCode = ${channelCode};
 </script> </#if>

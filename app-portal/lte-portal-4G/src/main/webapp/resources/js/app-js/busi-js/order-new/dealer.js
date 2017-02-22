@@ -32,13 +32,11 @@ order.dealer = (function() {
 			$.each(OrderInfo.order.dealerTypeList, function() {
 				$select.append("<option value='" + this.PARTYPRODUCTRELAROLECD+ "' >" + this.NAME + "</option>");
 			});
-			$("#dealerName").html(OrderInfo.staff.staffName);
-			$("#dealerName").attr("staffid",OrderInfo.staff.staffId);
-			$("#dealerName").attr("value",OrderInfo.staff.staffName);
+			 _addDealer(OrderInfo.staff.staffName,OrderInfo.staff.staffId,cur_channelCode,40020005);			
 			
 		}
 		if (OrderInfo.actionFlag == 1 || OrderInfo.actionFlag == 2
-				|| OrderInfo.actionFlag == 14){
+				|| OrderInfo.actionFlag == 14 || OrderInfo.actionFlag == 22 || OrderInfo.actionFlag == 9){
 			if(AttachOffer.addTerminal){
 				var $ul = $("#tab-change-list2");
 				if(ec.util.isObj(prodId)){
@@ -110,7 +108,20 @@ order.dealer = (function() {
 	function _queryStaff(){
 		if($("#staffCode").val().trim() == "" && $("#salesCode").val().trim() == ""){
 			// $.alert("操作提示","工号和销售员编码不能都为空！");
-			$('#dealerModal').find('.choice-box').children('.help-block').removeClass('hidden');
+			$('#staffCode').next('.help-block').removeClass('hidden');
+			$('#salesCode').next('.help-block').removeClass('hidden');
+			$('#dealerModal-result').hide();
+			return;
+		}
+		var isAdded = false; //是否添加过同一类型的发展人
+		$('#dealerList').children('li').not(':first').each(function(){
+			if($(this).data().role == $('#dealerType').val()){
+				isAdded = true;			
+			    return false; //跳出each循环
+			}
+		})
+		if(isAdded){
+			$('#dealerType').siblings('.help-block').removeClass('hidden');	
 			$('#dealerModal-result').hide();
 			return;
 		}
@@ -140,7 +151,9 @@ order.dealer = (function() {
 						$('#dealerModal-result').show();
 						$('#dealerModal').find('.choice-box').children('.help-block').addClass('hidden');
 					}else{
-						$("#dealerName").html(response.data[0].staffName).attr("staffId", response.data[0].staffId);
+						// $("#dealerName").html(response.data[0].staffName).attr("staffId", response.data[0].staffId);
+						_addDealer(response.data[0].staffName,response.data[0].staffId,response.data[0].chanInfos[0].channelNbr,$('#dealerType').val(),CONST.BUSI_ORDER_ATTR.DEALER_NAME)
+			
 						$("#dealerModal").modal("hide");
 						//重置表单
 						$('#dealerModal-result').hide();
@@ -166,12 +179,13 @@ order.dealer = (function() {
 	}
 	
 	function _closeJBR(){
-		if(OrderInfo.preBefore.idPicFlag=="ON" && OrderInfo.actionFlag!=3){
+		if(OrderInfo.preBefore.idPicFlag=="ON" && (OrderInfo.actionFlag!="3" || (OrderInfo.actionFlag=="22" && OrderInfo.uimtypeflag == "22"))){
 			if(!OrderInfo.virOlId){
 				common.callPhotos('cust.getPicture');
 				return;
 			}
 		}
+		cust.jbrSubmit();
 		if(ec.util.isObj(OrderInfo.jbr.partyName)){
 			$("#jbrName").html(OrderInfo.jbr.partyName);
 			$("#jbrName").removeClass("font-secondary");
@@ -212,7 +226,27 @@ order.dealer = (function() {
 		$.refresh($("#dealerTbody"));
 	};
 	
-	
+	//添加发展人
+	var _addDealer = function(name, staffId, channelNbr, roleId) {
+		var role = '';
+		switch(roleId){
+			case "40020005":
+			role = "第一发展人";
+			break;
+			case "40020006":
+			role = "第二发展人";
+			break;
+			case "40020007":
+			role = "第三发展人";
+			break;
+			default:
+			role = "第一发展人";
+			break;
+		}
+	    var html = '<li data-channelnbr="' + channelNbr + '" data-role="' + roleId + '" data-staffid="' + staffId + '"> <span class="list-title font-secondary choice-box-left" id="dealerName"> '+name+' <small>('+role+')</small></span> <i onclick="$(this).closest(\'li\').remove();" class="iconfont icon-close absolute-right"></i > </li>'; 
+	    $('#dealerList').append(html);
+	}
+
 	return {
 		initDealer 			: _initDealer,
 		showDealer          : _showDealer,

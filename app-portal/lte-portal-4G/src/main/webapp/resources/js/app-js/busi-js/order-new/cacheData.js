@@ -682,6 +682,7 @@ CacheData = (function() {
 			if (itemSpecId ==  CONST.YZFitemSpecId4 && "ON" != flag) {
 				return selectStr;
 			}
+			
 			selectStr = selectStr+'<div class="form-group pack-pro-box"><label for="exampleInputPassword1">' + param.name + ': </label>';
 			if(param.rule.isConstant=='Y'){ //不可修改
 				selectStr =selectStr+ "<select class='inputWidth183px' id="+prodId+"_"+itemSpecId+" disabled='disabled'>"; 
@@ -694,7 +695,7 @@ CacheData = (function() {
 					optionStr +='<option value="" >请选择</option>';  //不是必填可以不选
 				}
 			}
-			if(itemSpecId == CONST.YZFitemSpecId4){//#658051 账户托收退订特殊权限的需求
+			if(itemSpecId == CONST.YZFitemSpecId4 && OrderInfo.actionFlag != 1 && OrderInfo.actionFlag != 14){//#658051 账户托收退订特殊权限的需求（新装不受权限控制，二次业务受权限控制）
 				var isYZFTS = "";
 				var url = contextPath+"/common/checkOperate";
 				var params = {
@@ -783,6 +784,31 @@ CacheData = (function() {
 		}
 		return {};
 	};
+	
+	//获取某个实例功能产品参数  
+	var _getServInstParam = function(prodId,servId,itemSpecId){
+		var serv = _getServ(prodId,servId);
+		if(ec.util.isArray(serv.prodSpecParams)){
+			for ( var i = 0; i < serv.prodSpecParams.length; i++) {
+				var servParam = serv.prodSpecParams[i];
+				if(servParam.itemSpecId==itemSpecId){
+					return servParam;
+				}
+			}
+		}
+	};
+
+	//通过功能产品id获取功能产品
+	var _getServ = function(prodId,servId){
+		var servList = _getServList(prodId);
+		if(ec.util.isArray(servList)){
+			for ( var i = 0; i < servList.length; i++) {
+				if(servList[i].servId==servId){
+					return servList[i];
+				}
+			}
+		}
+	};
 	return {
 		setOfferSpec        :_setOfferSpec,
 		getOfferSpec        :_getOfferSpec,
@@ -808,6 +834,7 @@ CacheData = (function() {
 		setServ2OfferSpec	 :_setServ2OfferSpec,
 		setOffer2ExcludeOfferSpec		:_setOffer2ExcludeOfferSpec,
 		setParam			:_setParam,
-		getSpecParam		:_getSpecParam
+		getSpecParam		:_getSpecParam,
+		getServInstParam    :_getServInstParam
 	};
 })();

@@ -247,7 +247,7 @@ CacheData = (function() {
 					optionStr +='<option value="" >请选择</option>';  //不是必填可以不选
 				}
 			}
-			if(itemSpecId == CONST.YZFitemSpecId4){//#658051 账户托收退订特殊权限的需求
+			if(itemSpecId == CONST.YZFitemSpecId4 && OrderInfo.actionFlag != 1 && OrderInfo.actionFlag != 14){//#658051 账户托收退订特殊权限的需求（新装不受权限控制，二次业务受权限控制）
 				var isYZFTS = "";
 				var url = contextPath+"/common/checkOperate";
 				var params = {

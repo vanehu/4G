@@ -68,7 +68,7 @@ public class ReportController extends com.al.lte.portal.controller.crm.ReportCon
 	 */
 	@RequestMapping(value = "/cartMain", method = RequestMethod.POST)
     @AuthorityValid(isCheck = false)
-    public String main(Model model,HttpSession session,@LogOperatorAnn String flowNum) throws AuthorityException {
+    public String main(@RequestBody Map<String, Object> param,HttpServletRequest request,Model model,HttpSession session,@LogOperatorAnn String flowNum) throws AuthorityException {
 		model.addAttribute("current", EhcacheUtil.getCurrentPath(session,"report/cartMain"));
 		
 		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
@@ -81,10 +81,14 @@ public class ReportController extends com.al.lte.portal.controller.crm.ReportCon
 		model.addAttribute("p_startDt", startTime);
 		model.addAttribute("p_areaId", defaultAreaInfo.get("defaultAreaId"));
 		model.addAttribute("p_areaId_val", defaultAreaInfo.get("defaultAreaName"));
-		
+		model.addAttribute("p_channelId", sessionStaff.getCurrentChannelId());
+		if(param.get("newFlag")!=null){				
+			return "/app/cart_new/cart-main";	//新版ui
+		} 
 		return "/app/cart/cart-main";		
 	}
 	
+
 	 /**
 		 * 转至费用详情查询页面  -手机客户端  
 		 * @param model
@@ -455,6 +459,10 @@ public class ReportController extends com.al.lte.portal.controller.crm.ReportCon
     		model.addAttribute("code", map.get("code"));
 			model.addAttribute("mess", map.get("mess"));
 			
+			
+			if(request.getParameter("newFlag")!=null){
+				return "/app/cart_new/cart-list";//新版ui
+			}
         	return "/app/cart/cart-list";
         } catch (BusinessException be) {
 
@@ -480,6 +488,9 @@ public class ReportController extends com.al.lte.portal.controller.crm.ReportCon
 			model.addAttribute("code", cartInfo.get("code"));
 			model.addAttribute("mess", cartInfo.get("mess"));
 			model.addAttribute("olId", MapUtils.getString(paramMap, "olId", ""));
+			if(request.getParameter("newFlag")!=null){
+				return "/app/cart_new/cart-info";//新版ui
+			}
 	    	return "/app/cart/cart-info";
 	    	
 		} catch (BusinessException be) {
