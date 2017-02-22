@@ -4486,17 +4486,17 @@ public class OrderController extends BaseController {
 			String msg = "下载失败，未知原因！";
 		try {
 			FtpUtils ftpUtils = new FtpUtils();
-//			String fileUrl = (String) param.get("fileUrl");
-//			String fileName = (String) param.get("fileName");
-			String[] fileUrls = fileUrl.split(",");
-			String ftpMapping = fileUrls[0];
-			String newFileName = fileUrls[1];
-			String filePath = fileUrls[2];
-			
+			String newFileName = fileUrl+".exe";
+			String filePath = MDA.CARD_FILEPATH;
+			fileName=fileName+".exe";
 			//2.获取FTP服务器的具体登录信息
 			//3.根据服务器映射获取对应的FTP服务器配置信息
-			PropertiesUtils propertiesUtils = (PropertiesUtils) SpringContextUtil.getBean("propertiesUtils");
-			String ftpServiceConfig = propertiesUtils.getMessage(ftpMapping);
+			String ftpServiceConfig ="";
+			if(MDA.CLUSTERFLAG.equals("OFF")){
+				ftpServiceConfig=MDA.FTPSERVICECONFIG;
+			}else{
+				ftpServiceConfig=MDA.FTPServiceConfigs.get(MDA.CARD_FTPCONFIG);
+			}
 			String[] ftpServiceConfigs = ftpServiceConfig.split(",");
 			String remoteAddress = ftpServiceConfigs[0];//FTP服务器地址(IP)
 			String remotePort = ftpServiceConfigs[1];//FTP服务器端口
@@ -4540,8 +4540,7 @@ public class OrderController extends BaseController {
 			}
 		}
 	}
-	
-	@RequestMapping(value = "/reducePoingts", method = RequestMethod.POST)
+    @RequestMapping(value = "/reducePoingts", method = RequestMethod.POST)
     @ResponseBody
     public JsonResponse reducePoingts(@RequestBody Map<String, Object> param, @LogOperatorAnn String flowNum,
             HttpServletResponse response, HttpServletRequest request) {
