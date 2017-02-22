@@ -537,24 +537,21 @@ public class MDA {
 	 */
 	public static final Map<String,String> NEWUIFLAG = new HashMap<String,String>();
 
-    /**
-     * 证件类型校验规则是否启用开关
-     */
+    /**证件类型校验规则是否启用开关*/
     public static final Map<String, String> CHECK_RULES_ON_OFF = new HashMap<String, String>();
 
-	/**
-	 * 证件类型校验规则配置对象
-	 */
+	/**证件类型校验规则配置对象*/
 	public static final List<Map<String, Object>> CHECK_RULES = new ArrayList<Map<String, Object>>();
-	/**
-     *  翼支付交费助手——是否需要代扣确认属性后付费用户可选分省开关
-     */
+	
+	/**翼支付交费助手——是否需要代扣确认属性后付费用户可选分省开关*/
     public static final Map<String, String> YIPAY_ITEM_PARAM = new HashMap<String,String>();
 
 	/**预拆机提示开关*/
 	public static final Map<String,String> REMOVE_PROD_TIP  = new HashMap<String,String>();
-	 /**
-     *  集团CRM-4G主副卡成员变更是否缺陷付费类型判断开关
-     */
+	
+	/**集团CRM-4G主副卡成员变更是否缺陷付费类型判断开关*/
+    public static final Map<String, String> SHOW_MEMBER_FEE_TYPE = new HashMap<String,String>();
+    
+    /**拍照仪驱动下载配置*/
     public static final Map<String, String> SHOW_MEMBER_FEE_TYPE = new HashMap<String,String>();
 }
