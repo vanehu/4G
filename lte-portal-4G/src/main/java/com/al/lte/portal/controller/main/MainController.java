@@ -190,6 +190,8 @@ public class MainController extends BaseController {
 				return super.failedStr(model, ErrorCode.CHECKOPERATSPEC, e, null);
 			} finally{
 				ServletUtils.setSessionAttribute(request, SysConstant.TGJBRBTQX, isHandleCustNeeded);
+				sessionStaff.setHandleCustNeeded(isHandleCustNeeded);
+				ServletUtils.setSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF, sessionStaff);
 			}
     	}
 		/** 测试卡权限 **/

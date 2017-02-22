@@ -3174,6 +3174,8 @@ order.cust = (function(){
 	
 	//展示拍照弹出加载摄像头
 	var _showCameraView = function(){
+		//加载拍照仪控件对象
+		order.cust.loadCameraObj("#a_obj", null);
 		//没有看错，确实是open->close->open
 		easyDialog.open({
 			container : "ec-dialog-photo-graph"
@@ -3458,6 +3460,44 @@ order.cust = (function(){
     	//重置联系人号码
     	$("#orderAttrPhoneNbr").css("background-color", backgroundColorWhite).attr("disabled", false); 
     };
+    
+    /**
+     * 加载拍照仪控件对象
+     * dom：必须，加载<object>对象的标签ID
+     * param：非必须，高度宽度样式等
+     */
+    var _loadCameraObj = function(dom, param){
+    	if(!ec.util.isObj(dom)){
+    		throw new Error("入参dom为空!!!");
+    		return;
+    	}
+    	
+    	var width = 640;//默认width='640'
+    	var height = 360;//默认height='360'
+    	var style = "float: right; margin-right: 10px;";//默认style='float: right; margin-right: 10px;'
+    	
+    	if(ec.util.isObj(param)){
+    		if(ec.util.isObj(param.width)){
+    			width = param.width;
+    		}
+    		if(ec.util.isObj(param.height)){
+    			height = param.height;
+    		}
+    		if(ec.util.isObj(param.style)){
+    			style = param.style;
+    		}
+    	}
+
+    	//清空
+    	if($("#capture")){
+    		$("#capture").remove();
+    	}
+    	if(cert.getBrowser() == "FF") {
+			$(dom).append("<object type='application/x-itst-activex' clsid='{454C18E2-8B7D-43C6-8C17-B1825B49D7DE}' id='capture'  width=" + width + " height=" + height + " style=" + style + "></object>");
+		} else{
+			$(dom).append("<object classid='clsid:454C18E2-8B7D-43C6-8C17-B1825B49D7DE' id='capture'  width=" + width + " height=" + height + " style=" + style + "></object>");
+		}
+    };
 
 	return {
 		form_valid_init : _form_valid_init,
@@ -3531,7 +3571,8 @@ order.cust = (function(){
         jbrcreateButton:_jbrcreateButton,
         disableHandleCustInfos:_disableHandleCustInfos,
         resetHandleCustInfos:_resetHandleCustInfos,
-        removeDisabled:_removeDisabled
+        removeDisabled:_removeDisabled,
+        loadCameraObj:_loadCameraObj
 	};
 })();
 $(function() {

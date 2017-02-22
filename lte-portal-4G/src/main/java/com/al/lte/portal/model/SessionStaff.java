@@ -156,6 +156,9 @@ public class SessionStaff implements Serializable {
 	 */
 	private String logintype ;
 	
+	/**工号是否具有跳过经办人权限*/
+	boolean isHandleCustNeeded;
+	
 	public String getCustType() {
 		return custType;
 	}
@@ -869,6 +872,16 @@ public class SessionStaff implements Serializable {
 
 	public void setLogintype(String logintype) {
 		this.logintype = logintype;
+	}
+
+
+	public boolean isHandleCustNeeded() {
+		return isHandleCustNeeded;
+	}
+
+
+	public void setHandleCustNeeded(boolean isHandleCustNeeded) {
+		this.isHandleCustNeeded = isHandleCustNeeded;
 	}	
 	
 }

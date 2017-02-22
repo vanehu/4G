@@ -122,9 +122,34 @@ query.common = (function() {
 	 * 拍照仪驱动版本校验
 	 * 入参param:{"versionSerial":"1.0.1",//*控件版本号 "venderId":"10000"//*厂商ID}
 	 */
-	var _checkCameraDriverVersion = function(param){
+	var _checkCameraDriverVersion = function(){
+		if(!ec.util.isObj(CONST.realNamePhotoFlag)){
+    		CONST.realNamePhotoFlag = query.common.queryPropertiesValue("REAL_NAME_PHOTO_" + OrderInfo.staff.areaId.substr(0, 3));
+    	}
+    	try{
+        	if (CONST.realNamePhotoFlag == "ON"){
+        		//加载拍照仪控件对象
+        		order.cust.loadCameraObj("#camera_obj", null);
+        		//获取版本信息
+        		var camVer = JSON.parse(capture.getVersion());
+    	    	if(ec.util.isObj(camVer)){
+    	    		if(camVer.resultFlag == 0){
+    	    			_checkUpdate({
+    	    				"versionSerial"	:camVer.versionSerial,
+    	    				"venderId"		:camVer.venderId
+    	    			});
+    	    		}
+    	    	}
+        	}
+		} catch(e) {
+			throw new Error("拍照仪控件检查更新异常 : " + e);
+		} finally{
+			$("#camera_obj").remove();
+		}
+	};
+	
+	var _checkUpdate = function(param){
 		var resultFlag = false;
-		
 		if(ec.util.isObj(param)){
 			var versionSerial = param.versionSerial;
 			var venderId = param.venderId;
@@ -139,7 +164,7 @@ query.common = (function() {
 						var alertMsg = "拍照仪驱动已更新[" + cameraDriverInfo.versionSerial + "]，请点击“下载”更新驱动。驱动更新成功后您需要清除浏览器缓存、重启浏览器，以确保驱动及时生效。";
 						$.downLoadConfirm("信息提示",alertMsg,{
 							yesdo:function(){
-								window.location.href = "https://crm.189.cn/portalstatic/assets/camera/DoccameraOcx.exe";
+								window.location.href = cameraDriverInfo.downloadUrl;
 								resultFlag = true;
 							},
 							no:function(){

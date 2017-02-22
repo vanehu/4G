@@ -398,18 +398,35 @@ public class CommonController extends BaseController {
         String versionSerial = MapUtils.getString(param, "versionSerial", "");//版本号
         String venderId = MapUtils.getString(param, "venderId", "");//厂商ID
         
+        //1.入参检查
         if("".equals(versionSerial) || "".equals(venderId)){
         	return super.failed("拍照仪驱动版本号更新失败：查询参数为空！", ResultConstant.FAILD.getCode());
         } else{
         	Map<String,String> cameraDriverInfo = MDA.VENDER_SIGNATURE.get(venderId);
         	if(cameraDriverInfo != null){
         		Map<String,Object> newCameraDriverVersion = new HashMap<String, Object>();
+        		String downloadUrl = null;//装控件下载URL
+        		
+        		//2.session封装控件下载URL
+        		if("ON".equals(MapUtils.getString(MDA.CAMERA_DRIVER_DOWNLAOD, "DOWNLAOD_FLAG", ""))){
+        			//支持针对某一个版本的下载
+        			//URL实例https://crm.189.cn/portalstatic/assets/camera/DoccameraOcx_1.0.exe
+        			downloadUrl = MDA.CAMERA_DRIVER_DOWNLAOD.get("DOWNLAOD_URL") + "DoccameraOcx_" + cameraDriverInfo.get("version") + ".exe";
+        		} else{
+        			//通用下载，不区分版本号
+        			//URL实例https://crm.189.cn/portalstatic/assets/camera/DoccameraOcx.exe
+        			downloadUrl = MDA.CAMERA_DRIVER_DOWNLAOD.get("DOWNLAOD_URL_UNITY");
+        		}
+    			ServletUtils.setSessionAttribute(super.getRequest(), SysConstant.CAMERA_DRIVER_DOWNLOAD_URL, downloadUrl);
+        		
+    			//3.版本号校验
         		if(versionSerial.equals(cameraDriverInfo.get("version"))){//校验成功，没有版本更新，与客户端版本一致
         			newCameraDriverVersion.put("update", false);
         			jsonResponse = super.successed(newCameraDriverVersion, ResultConstant.SUCCESS.getCode());
             	} else{//校验成功，有控件版本更新
             		newCameraDriverVersion.put("update", true);
         			newCameraDriverVersion.put("versionSerial", cameraDriverInfo.get("version"));
+        			newCameraDriverVersion.put("downloadUrl", downloadUrl);
         			jsonResponse = super.successed(newCameraDriverVersion, ResultConstant.SUCCESS.getCode());
             	}
         	} else{

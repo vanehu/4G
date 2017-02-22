@@ -63,7 +63,11 @@
                   <label>选择设备：</label>
                   <select class="inputWidth183px" id="device">
                   </select>
-                  <a href="https://crm.189.cn/portalstatic/assets/camera/DoccameraOcx.exe" class="purchase" id="" >下载控件</a>
+                  	<#if Session["_camera_driver_download_url"]?? >
+                		<a href="${Session['_camera_driver_download_url']}" class="purchase" id="" >下载控件</a>
+                	<#else>
+                		<a href="https://crm.189.cn/portalstatic/assets/camera/DoccameraOcx.exe" class="purchase" id="" >下载控件</a>
+                	</#if>
                   <span id="tips" style="color:#F00; font-weight:bold;font-size:14px;margin-left:10%;"></span>
               </li>
           </ul>
@@ -98,11 +102,7 @@
 	if($("#orderIdentidiesTypeCd").val() !="1"){
 		$("#orderAttrQueryCertBtn").show(); 
 	}
-	//清空
-	if($("#capture")){
-		$("#capture").remove();
-	}
-	
+
 	if(!ec.util.isObj(CONST.realNamePhotoFlag)){
 		CONST.realNamePhotoFlag = query.common.queryPropertiesValue("REAL_NAME_PHOTO_" + String(OrderInfo.staff.areaId).substr(0, 3));
 	}
@@ -110,12 +110,6 @@
 		$("#orderAttrDiv .f_red").hide();
 	//	$("#orderAttrReadCertBtn").hide();
 		$("#orderAttrQueryCertBtn").hide();
-	} else{
-		if(cert.getBrowser()=='FF') {
-			$("#a_obj").append("<object type='application/x-itst-activex' clsid='{454C18E2-8B7D-43C6-8C17-B1825B49D7DE}' id='capture'  width='640' height='360'  style='float: right; margin-right: 10px;'></object>");
-		}else{
-			$("#a_obj").append("<object classid='clsid:454C18E2-8B7D-43C6-8C17-B1825B49D7DE' id='capture'  width='640' height='360'  style='float: right; margin-right: 10px;'></object>");
-		}
 	}
 	if($("#orderIdentidiesTypeCd").val()=="1"){
 		$("#orderAttrReadCertBtn").show(); 

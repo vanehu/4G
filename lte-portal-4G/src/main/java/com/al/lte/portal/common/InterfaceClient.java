@@ -761,7 +761,8 @@ public class InterfaceClient {
 				logObj.put("STAFF_NAME", sessionStaff.getStaffCode() == null ? "" : sessionStaff.getStaffCode());
 				logObj.put("CHANNEL_NAME", sessionStaff.getCurrentChannelName() == null ? "" : sessionStaff.getCurrentChannelName());
 				logObj.put("CHANNEL_ID", sessionStaff.getCurrentChannelId() == null ? "" : sessionStaff.getCurrentChannelId());
-				logObj.put("REMARK", "");
+				String remark = sessionStaff.isHandleCustNeeded() == false ? "是" : "否";
+				logObj.put("REMARK", "工号是否具有跳过经办人权限：" + remark);
 				logObj.put("OL_ID", ol_id);
 				logObj.put("SO_NBR", so_nbr);
 				logObj.put("BUSI_TYPE", "");

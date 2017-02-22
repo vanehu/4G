@@ -1923,5 +1923,12 @@
 			'SHOW_MEMBER_FEE_TYPE_899':'OFF'<!-- 虚拟省 -->
 			}
 		</const>
+		<const type="Map" name="CAMERA_DRIVER_DOWNLAOD" description="拍照仪驱动下载配置">
+		{
+			'DOWNLAOD_FLAG'		:'OFF',																<!-- 默认OFF -->
+			'DOWNLAOD_URL'		:'https://crm.189.cn/portalstatic/assets/camera/',					<!-- ON使用 -->
+			'DOWNLAOD_URL_UNITY':'https://crm.189.cn/portalstatic/assets/camera/DoccameraOcx.exe'	<!-- OFF使用 -->
+		}
+		</const>
 	</mda>
 </mdas>
