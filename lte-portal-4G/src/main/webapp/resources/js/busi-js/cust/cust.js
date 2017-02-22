@@ -3320,18 +3320,18 @@ order.cust = (function(){
 				OrderInfo.bojbrCustInfos.identidiesTypeCd !=  $.trim($("#orderIdentidiesTypeCd").val()) && 
 				OrderInfo.bojbrCustInfos.identityNum!= $.trim($("#orderIdentidiesTypeCd").val())){
 			pictures.push({
-	            "photograph": encodeURIComponent(OrderInfo.bojbrCustIdentities.identidiesPic),
+	            "photograph": encodeURIComponent(OrderInfo.bojbrCustIdentities.identidiesPic),//经办人身份证照片
 	            "flag": "C", 
 	            "signature" :""
 			}); 
 			pictures.push({
-	            "photograph": encodeURIComponent($("#img_Photo").data("identityPic")),
+	            "photograph": encodeURIComponent($("#img_Photo").data("identityPic")),//经办人拍照照片
 	            "flag": "D",
 	            "signature" : $("#img_Photo").data("signature")
 			});
 			if (ec.util.isObj(OrderInfo.boCustIdentities.identidiesPic)){
 				pictures.push({
-		            "photograph": encodeURIComponent(OrderInfo.boCustIdentities.identidiesPic),
+		            "photograph": encodeURIComponent(OrderInfo.boCustIdentities.identidiesPic),//新建客户身份证照片
 		            "flag": "A",
 		            "signature" :""
 		        });

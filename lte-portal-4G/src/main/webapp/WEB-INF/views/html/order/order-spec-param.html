@@ -17,7 +17,7 @@
 		<input type="text" class="inputWidth183px" id="${prodSpec.itemSpecId}_${prodId}_name" readonly="readonly" disabled="disabled"/>
 		<!-- 使用人 -->
 	    <#if prodSpec.itemSpecId=="800000011" >
-	    <input type="button" value="选择使用人" class="purchase" id="choose_user_btn_${prodId}" />
+	    <input type="button" value="选择使用人" class="purchase"  servType=1 prodId=${prodId} id="choose_user_btn_${prodId}" />
 	    </#if>
 		<#if rule.isOptional=="N" >
 			<label class="f_red">*</label>

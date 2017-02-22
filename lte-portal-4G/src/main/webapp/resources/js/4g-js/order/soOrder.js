@@ -4134,7 +4134,7 @@ SoOrder = (function() {
 		return true;
 	};
 
-	// 责任人新增添加
+	// 订单填充责任人、使用人
 	var _createCustInfo = function(busiOrders) {
 		for(var i=0;i<OrderInfo.subUserInfos.length;i++){
 			var subUserInfo = OrderInfo.subUserInfos[i];
@@ -4160,27 +4160,27 @@ SoOrder = (function() {
 				};
 				//信息节点
 				busiOrder.data.boCustInfos.push({
-					name			: subUserInfo.orderAttrName,//客户名称
-					ignore			: "Y", // 临时方法,新建C1订单提交不校验
-					state			: "ADD",//状态
-					areaId			: OrderInfo.getAreaId(),
-					telNumber 		: subUserInfo.orderAttrPhoneNbr,//联系电话
-					addressStr		: subUserInfo.orderAttrAddr,//客户地址
-					partyTypeCd		: 1,//客户类型
+					name			: subUserInfo.orderAttrName,		//客户名称
+					ignore			: "Y", 								// 临时方法,新建C1订单提交不校验
+					state			: "ADD",							//状态
+					areaId			: OrderInfo.getAreaId(),			//订单地区ID
+					telNumber 		: subUserInfo.orderAttrPhoneNbr,	//联系电话
+					addressStr		: subUserInfo.orderAttrAddr,		//客户地址
+					partyTypeCd		: 1,								//客户类型
 					defaultIdType	: subUserInfo.orderIdentidiesTypeCd,//证件类型
-					mailAddressStr	: subUserInfo.orderAttrAddr,//通信地址
-					businessPassword: ""//客户密码
+					mailAddressStr	: subUserInfo.orderAttrAddr,		//通信地址
+					businessPassword: ""								//客户密码
 				});
 				//证件节点
 				busiOrder.data.boCustIdentities.push({
-					state			: "ADD",//状态
-					isDefault		: "Y",//是否首选
-					identityNum		: subUserInfo.identityNum,//证件号码
-					identidiesPic	: subUserInfo.identityPic,//二进制证件照片
-					identidiesTypeCd: subUserInfo.orderIdentidiesTypeCd//证件类型
+					state			: "ADD",	//状态
+					isDefault		: "Y",		//是否首选
+					identityNum		: subUserInfo.identityNum,			//证件号码
+					identidiesPic	: subUserInfo.identityPic,			//二进制证件照片
+					identidiesTypeCd: subUserInfo.orderIdentidiesTypeCd	//证件类型
 				});
 				//联系人节点
-				if(subUserInfo.orderAttrPhoneNbr!=null && subUserInfo.orderAttrPhoneNbr!=""){
+				if(ec.util.isObj(subUserInfo.orderAttrPhoneNbr)){
 					var contactGender = "1";
 					if(subUserInfo.orderIdentidiesTypeCd == "1"){
 						if (parseInt(subUserInfo.identityNum.substr(16, 1)) % 2 == 1) {
@@ -4190,15 +4190,15 @@ SoOrder = (function() {
 						}
 					}
 					busiOrder.data.boPartyContactInfo.push({
-						contactAddress : subUserInfo.orderAttrAddr,//参与人的联系地址
-						contactGender  : contactGender,//参与人联系人的性别
-						contactName : subUserInfo.orderAttrName,//参与人的联系人名称
-						contactType : "10",//联系人类型
-						headFlag : "1",//是否首选联系人
-						mobilePhone : subUserInfo.orderAttrPhoneNbr,//参与人的移动电话号码
-						staffId : OrderInfo.staff.staffId,//员工ID
-						state : "ADD",//状态
-						statusCd : "100001"//订单状态
+						state			: "ADD",						//状态
+						staffId 		: OrderInfo.staff.staffId,		//员工ID
+						statusCd		: "100001",						//订单状态
+						headFlag		: "1",							//是否首选联系人
+						contactName		: subUserInfo.orderAttrName,	//参与人的联系人名称
+						contactType		: "10",							//联系人类型
+						mobilePhone		: subUserInfo.orderAttrPhoneNbr,//参与人的移动电话号码
+						contactGender	: contactGender,				//参与人联系人的性别
+						contactAddress	: subUserInfo.orderAttrAddr		//参与人的联系地址
 					});
 				}
 				busiOrders.push(busiOrder);
