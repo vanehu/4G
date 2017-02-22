@@ -70,6 +70,9 @@ order.main = (function(){
 			"actionFlag" :1,
 			"type" : 1
 		};
+		if(OrderInfo.actionFlag==14){//合约购机
+			param=order.phone.param;
+		}
 		if (param == undefined || !param) {
 			return;
 		}
@@ -124,6 +127,9 @@ order.main = (function(){
 				"actionFlag" :1,
 				"type" : 1
 			};
+		if(OrderInfo.actionFlag==14){//合约购机
+			param=order.phone.param;
+		}
 		param.enter=3;
 		$.callServiceAsHtml(contextPath+"/app/order/main",param,{
 			"before":function(){
@@ -174,6 +180,17 @@ order.main = (function(){
 					 $("#cx").removeClass("active");
 					  $("#qt").addClass("active");
 //					 $("#qt").click();
+				 }else if(OrderInfo.actionFlag==14){//合约购机
+					 OrderInfo.order.step = 6;
+					 $("#nav-tab-5").removeClass("active in");
+					 $("#nav-tab-6").addClass("active in");
+					 $("#tab5_li").removeClass("active");
+					 $("#tab6_li").addClass("active"); 
+					 $("#terminalDiv").show();
+					 $("#hySpan").html(order.phone.hyName);
+					 var terminalCode=$("#terminalNum").val();
+					 $("#terminalCodeInput").val("终端串码:"+terminalCode);					 
+					 //终端信息展示					 
 				 }else{
 					 OrderInfo.order.step = 5;
 					 $("#nav-tab-4").removeClass("active in");
@@ -405,14 +422,11 @@ order.main = (function(){
 	
 	//经办人-查询
 	function _queryJbr(){
-		var propertiesKey = "NEWUIFLAG_"+(OrderInfo.staff.soAreaId+"").substring(0,3);
-		var _newUIFalg = offerChange.queryPortalProperties(propertiesKey);
-		if(ec.util.isObj(_newUIFalg) && _newUIFalg == "ON" &&  (OrderInfo.actionFlag=="35" || OrderInfo.actionFlag=="34" || OrderInfo.actionFlag=="112" || OrderInfo.actionFlag=="112" ||OrderInfo.actionFlag=="1" ||OrderInfo.actionFlag=="8")){
-			var validate=$("#jbrFormdata").Validform();
-			if(!validate.check()){
-				return;
-			}
-		} 
+		var validate=$("#jbrFormdata").Validform();
+		var ch = validate.check();
+		if(!validate.check()){
+			return;
+		}
 		var identityCd="";
 		var idcard="";
 		var diffPlace="";
@@ -426,26 +440,6 @@ order.main = (function(){
 		}else{
 			var identityNum = $('#orderAttrIdCard').val();//证件号码
 		}
-		
-//		if(ec.util.isObj($.trim($("#orderIdentidiesTypeCd").val()))||ec.util.isObj($.trim($("#sfzorderAttrIdCard").val()))||ec.util.isObj($.trim($("#orderAttrIdCard").val()))){
-//			if(!ec.util.isObj($.trim($("#orderIdentidiesTypeCd").val()))){
-//				$.alert("提示","请选择证件类型！");
-//				return false;
-//			}
-//			if($.trim($("#orderIdentidiesTypeCd").val())==1){
-//				if(!ec.util.isObj($.trim($("#sfzorderAttrIdCard").val()))){
-//					$.alert("提示","证件号码为空，无法进行查询！");
-//					return false;
-//				}
-//			}
-//			if($.trim($("#orderIdentidiesTypeCd").val())!=1){
-//				if(!ec.util.isObj($.trim($("#orderAttrIdCard").val()))){
-//					$.alert("提示","证件号码为空，无法进行查询！");
-//					return false;
-//				}
-//			}
-//		}
-
 		authFlag="1"; // 不需要鉴权
 		if(identityCd==-1){
 			
@@ -484,36 +478,22 @@ order.main = (function(){
 				}
 				if(response.data.indexOf("false") ==0) {
 					$.unecOverlay();
-//					$.alert("提示","抱歉，没有定位到客户，请尝试其他客户。");
-					
-//					if(!ec.util.isObj($.trim($("#orderAttrName").val()))||!ec.util.isObj($.trim($("#orderAttrAddr").val()))){
-//						if(!ec.util.isObj($.trim($("#orderAttrName").val()))){
-//							$.alert("提示","经办人姓名为空，请完善经办人信息！");
-//							return false;
-//						}
-//						if(!ec.util.isObj($.trim($("#orderAttrAddr").val()))){
-//							$.alert("提示","证件地址为空，请完善经办人信息！");
-//							return false;
-//						}
-//					} 
-					
-						
-						if(OrderInfo.cust.custId == -1 && OrderInfo.cust.identityCd == identityCd 
-								&& OrderInfo.cust.identityNum == identityNum){
-							OrderInfo.jbr.custId = OrderInfo.cust.custId;
-							OrderInfo.jbr.partyName = OrderInfo.cust.partyName;
-							OrderInfo.jbr.identityNum = identityNum;
-							OrderInfo.jbr.identityCd = identityCd;
-							if(OrderInfo.preBefore.idPicFlag == "ON"){
-								common.callPhotos('cust.getPicture');
-							}
-							return;
-						}
-						cust.jbrSubmit();
+					if(OrderInfo.cust.custId == -1 && OrderInfo.cust.identityCd == identityCd 
+							&& OrderInfo.cust.identityNum == identityNum){
+						OrderInfo.jbr.custId = OrderInfo.cust.custId;
+						OrderInfo.jbr.partyName = OrderInfo.cust.partyName;
+						OrderInfo.jbr.identityNum = identityNum;
+						OrderInfo.jbr.identityCd = identityCd;
 						if(OrderInfo.preBefore.idPicFlag == "ON"){
 							common.callPhotos('cust.getPicture');
 						}
-					 return;
+						return;
+					}
+					cust.jbrSubmit();
+					if(OrderInfo.preBefore.idPicFlag == "ON"){
+						common.callPhotos('cust.getPicture');
+					}
+				    return;
 				}else{
 				$.unecOverlay();
 				cust.jumpAuthflag = $(response.data).find('#jumpAuthflag').val();
@@ -527,19 +507,6 @@ order.main = (function(){
 				} else {
 					cust.jbrSubmit();
 				}
-//				$(".userclose").off("click").on("click",function(event) {
-//					try {
-//						easyDialog.close();
-//					} catch (e) {
-//						$('#choose_multiple_user_dialog').hide();
-//						$('#overlay').hide();
-//					}
-//					authFlag="";
-//					$(".usersearchcon").hide();
-//				});
-//				if($("#custListTable").attr("custInfoSize")=="1"){
-//					$(".usersearchcon").hide();
-//				}
 			}
 				if(OrderInfo.preBefore.idPicFlag == "ON"){
 					common.callPhotos('cust.getPicture');

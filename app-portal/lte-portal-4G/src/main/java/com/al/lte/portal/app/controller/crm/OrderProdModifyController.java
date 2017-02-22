@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.al.ec.serviceplatform.client.ResultCode;
 import com.al.ecs.common.entity.JsonResponse;
+import com.al.ecs.common.util.PropertiesUtils;
 import com.al.ecs.common.web.ServletUtils;
 import com.al.ecs.exception.BusinessException;
 import com.al.ecs.exception.ErrorCode;
@@ -171,7 +172,12 @@ public class OrderProdModifyController extends BaseController {
 			return super.failedStr(model, ErrorCode.QUERY_CUST_EXINFO, datamap,
 					paramMap);
 		}
-
+		String propertiesKey = "NEWUIFLAG_"+ (sessionStaff.getCurrentAreaId() + "").substring(0, 3);//新ui开关
+		// 新UI开关
+		String newUIFlag = propertiesUtils.getMessage(propertiesKey);
+		if("ON".equals(newUIFlag) && params.get("newFlag")!=null){
+			return "/app/order_new/cust-activie-return";
+		}
 		return "/app/order/cust-activie-return";
 	}
 
@@ -185,14 +191,35 @@ public class OrderProdModifyController extends BaseController {
  * @param httpSession
  * @return
  */
+	@Autowired
+	PropertiesUtils propertiesUtils;
 	@RequestMapping(value = "/toCheckUimUI", method = {RequestMethod.POST})
 	public String toCheckUimUI(@RequestBody Map<String, Object> params, Model model, @LogOperatorAnn String optFlowNum,
             HttpServletResponse response, HttpSession httpSession) {
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+				SysConstant.SESSION_KEY_LOGIN_STAFF);
+		String propertiesKey = "NEWUIFLAG_"+ (sessionStaff.getCurrentAreaId() + "").substring(0, 3);//新ui开关
+		// 新UI开关
+		String newUIFlag = propertiesUtils.getMessage(propertiesKey);
+		if("ON".equals(newUIFlag) && params.get("newFlag")!=null){
+			return "/app/changeCard/card-change";
+		} 
 		return "/app/changeCard/order-change-card";		
+		
 	}
 	@RequestMapping(value = "/changeCard", method = RequestMethod.POST)
 	public String changeCard(@RequestBody Map<String, Object> param,Model model,HttpSession session,@LogOperatorAnn String flowNum) {
 		model.addAttribute("prodId",param.get("prodId"));
+		
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+				SysConstant.SESSION_KEY_LOGIN_STAFF);
+		String propertiesKey = "NEWUIFLAG_"+ (sessionStaff.getCurrentAreaId() + "").substring(0, 3);//新ui开关
+		// 新UI开关
+		String newUIFlag = propertiesUtils.getMessage(propertiesKey);
+		if("ON".equals(newUIFlag) && param.get("newFlag")!=null){
+			model.addAttribute("prodInfo",param.get("prodInfo"));
+			return "/app/changeCard/order-uim-new";
+		} 
 		return "/app/changeCard/order-uim";		
 	}
 

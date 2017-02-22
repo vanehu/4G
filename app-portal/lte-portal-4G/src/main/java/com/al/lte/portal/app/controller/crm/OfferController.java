@@ -196,6 +196,32 @@ public class OfferController extends BaseController {
 	}
 	
 	/**
+	 * 查询已订购销售品和功能产品
+	 * @param param
+	 * @return
+	 * @throws BusinessException
+	 */
+	@RequestMapping(value = "/queryOpenedAttachAndServ", method = RequestMethod.GET)
+	public @ResponseBody JsonResponse queryOpenedAttachAndServ(@RequestParam("strParam") String param){
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+				SysConstant.SESSION_KEY_LOGIN_STAFF);
+		Map<String, Object> paramMap =  null;	
+		JsonResponse jsonResponse = null;
+        try {
+        	paramMap = JsonUtil.toObject(param, Map.class);
+        	Map<String, Object> resMap = offerBmo.queryAttachOffer(paramMap,null,sessionStaff);
+        	jsonResponse = super.successed(resMap,ResultConstant.SUCCESS.getCode());
+        } catch (BusinessException be) {
+        	return super.failed(be);
+        } catch (InterfaceException ie) {
+        	return super.failed(ie, paramMap, ErrorCode.QUERY_ATTACH_OFFER);
+		} catch (Exception e) {
+			return super.failed(ErrorCode.QUERY_ATTACH_OFFER, e, paramMap);
+		}
+		return jsonResponse;
+	}
+	
+	/**
 	 * 获取附属销售品实例页面
 	 * @param param
 	 * @param model

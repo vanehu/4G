@@ -285,18 +285,26 @@ custQuery = (function(){
 		$(scope).siblings().each(function () {
 				$(this).removeAttr("selected");
 		});
-		// 判断是否是政企客户
-//		var isGovCust = false;
-//		for (var i = 0; i <= CacheData.getGovCertType().length; i ++) {
-//			if (_choosedCustInfo.identityCd == CacheData.getGovCertType()[i]) {
-//				isGovCust = true;
-//				break;
-//			}
-//		}
-//		if(cust.queryForChooseUser && isGovCust){
-//			$.alert('提示','使用人必须是公众客户，请重新定位。');
-//			return false;
-//		}
+		
+		 判断是否是政企客户
+		var isGovCust = false;
+		for (var i = 0; i <= CacheData.getGovCertType().length; i ++) {
+			if (_choosedCustInfo.identityCd == CacheData.getGovCertType()[i]) {
+				isGovCust = true;
+				break;
+			}
+		}
+		//省份政企开关
+		var response = $.callServiceAsJson(contextPath + "/properties/getValue", {"key": "GOV_"+(_choosedCustInfo.areaId+"").substr(0,3)});
+		var govSwitch = "OFF";
+		if(response.code=="0"){
+			govSwitch = response.data;
+		}
+		if(cust.queryForChooseUser && isGovCust){
+			$.alert('提示','使用人必须是公众客户，请重新定位。');
+			return false;
+		}
+		
 		if(authFlag=="0"){
 			//TODO init view 
 			if(custQuery.authType == '00'){
@@ -329,8 +337,8 @@ custQuery = (function(){
 						$("#auth_tab3").hide();
 						$("#content1").hide();
 						$("#content3").hide();
-						$("#auth_tab2").addClass("active")
-						$("#content2").addClass("active")
+						$("#auth_tab2").addClass("active");
+						$("#content2").addClass("active");
 					}
 				}
 				
@@ -794,22 +802,24 @@ custQuery = (function(){
 		$("#query-cust-btn").html('<span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span> 下一步');
 		// 办号卡
 		if ("1" == OrderInfo.actionFlag) {
-			params.method ='/agent/order/prodoffer/prepare';
+			params.method ='/app/order/prodoffer/prepare';
 			params.actionFlag = 1;
+			common.callOrderServer(OrderInfo.staff, OrderInfo.cust, order.prodModify.choosedProdInfo, params);
+			return;
 		}
 		// 套餐变更
 		if ("2" == OrderInfo.actionFlag) {
-			params.method ="/agent/order/prodoffer/offerchange/prepare";
+			params.method ="/app/order/prodoffer/offerchange/prepare";
 			params.actionFlag = 2;
 		}
 		// 客户资料返档
 		if ("9" == OrderInfo.actionFlag) {
-			params.method ="/agent/prodModify/prepare";
+			params.method ="/app/prodModify/prepare";
 			params.actionFlag = 9;
 		}
 		// 补换卡
 		if ("22" == OrderInfo.actionFlag) {
-			params.method ="/agent/prodModify/toCheckUimUI";
+			params.method ="/app/prodModify/toCheckUimUI";
 			params.actionFlag = 22;
 		}
 		// 购裸机
@@ -905,6 +915,7 @@ custQuery = (function(){
 		jumpAuth:_jumpAuth,
 		identityTypeAuth:_identityTypeAuth,
 		smsvalid:_smsvalid,
-		saveAuthRecord:_saveAuthRecord
+		saveAuthRecord:_saveAuthRecord,
+		queryCustNext:_queryCustNext
 	};	
 })();

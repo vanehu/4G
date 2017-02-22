@@ -124,12 +124,11 @@ common.print = (function($){
 					$("#nav-tab-8").removeClass("active in");
 					if(OrderInfo.actionFlag==1){
 						OrderInfo.order.step=8;
-						$("#order-print").html(response.data).show();	
 					}
 					if(OrderInfo.actionFlag==201){//橙分期
 						OrderInfo.order.step=5;
-						$("#order-print").html(response.data).show();	
 					}
+					$("#order-print").html(response.data).show();
 					$("#datasignBtn").off("click").on("click",function(){
 						common.callDatasign("common.print.showDataSign");
 						/*var b=$("#signinput").val();

@@ -139,14 +139,14 @@ common = (function($) {
 		}else{
 			var identityNum = $('#orderAttrIdCard').val();//证件号码
 		}
+		//当前无经办人，需进行经办人查询
 		if(!OrderInfo.jbr.custId) {
 			OrderInfo.virOlId = "";
 			order.main.queryJbr();
 			return;
 		}
-		
+		//当前输入的证件号码与经办人证件号码不一致，需要重新查询经办人
 		if(ec.util.isObj(identityNum) && identityNum != OrderInfo.jbr.identityNum){
-			
 			OrderInfo.virOlId = "";
 			order.main.queryJbr();
 			return;
@@ -903,8 +903,8 @@ common = (function($) {
 								});
 							}
 						}
-						$("#order-confirm").hide();
-						$("#order_fill_content").show();
+						$("#orderContentDiv").show();
+						$("#orderConfirmDiv").hide;
 						$("#isCheck_Card").css("display","none");
 						$("#btn_next_checkUim").show();
 						OrderInfo.order.step = 1;
@@ -945,11 +945,20 @@ common = (function($) {
 				if (OrderInfo.actionFlag == 13) {
 					$("#terminalMain").show();
 				}
+				if(OrderInfo.actionFlag == 9 || OrderInfo.actionFlag == 22){
+					$("#orderContentDiv").show();
+					$("#orderConfirmDiv").hide;
+				}
 				OrderInfo.order.step = 2;
 			}
 		}else if(OrderInfo.order.step==4){
 			$("#order-confirm").show();
 			$("#order-print").hide();
+			
+			if(OrderInfo.actionFlag == 9 || OrderInfo.actionFlag == 22){
+				$("#nav-tab-7").addClass("active in");
+				$("#nav-tab-8").removeClass("active in");
+			}
 			OrderInfo.order.step=3;
 		}else {
 			_callCloseWebview();

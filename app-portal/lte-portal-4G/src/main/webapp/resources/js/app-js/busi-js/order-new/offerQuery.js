@@ -138,6 +138,25 @@ query.offer = (function() {
 		}
 	};
 	
+	/**
+	 * 已订购销售品和功能产品
+	 */
+	var _queryOpenedAttachAndServ = function(param) {
+		addParam(param);  //添加基本参数
+		var url = contextPath+"/app/offer/queryOpenedAttachAndServ";
+		$.ecOverlay("<strong>查询附属销售品实例中，请稍等...</strong>");
+		var response = $.callServiceAsJsonGet(url,{strParam:JSON.stringify(param)});	
+		$.unecOverlay();
+		if (response.code==0) {
+			if(response.data){
+				return response.data;
+			}
+		}else {
+			$.alert("提示","查询附属销售品失败,稍后重试");
+			return;
+		}
+	};
+	
 	//销售品互斥依赖查询
 	var _queryExcludeDepend = function(param){
 		addParam(param);  //添加基本参数
@@ -468,7 +487,8 @@ query.offer = (function() {
 		  queryAttachOfferSpec  :_queryAttachOfferSpec,
 		  searchAttachOfferSpec :_searchAttachOfferSpec,
 		  loadInst              :_loadInst,
-		  invokeLoadInst        :_invokeLoadInst
+		  invokeLoadInst        :_invokeLoadInst,
+		  queryOpenedAttachAndServ	:_queryOpenedAttachAndServ
 		
 	};
 })();
