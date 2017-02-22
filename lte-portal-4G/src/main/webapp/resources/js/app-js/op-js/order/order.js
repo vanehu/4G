@@ -45,8 +45,18 @@ order.service = (function(){
 	//主套餐查询
 	var _searchPack = function(flag,scroller){
 		var custId = OrderInfo.cust.custId;
-		var qryStr=$("#qryStr").val();
-		var params={"qryStr":qryStr,"pnLevelId":"","custId":custId};
+		var lxStr=$("#qryStr").val();
+		var categoryNodeId = "";//套餐目录
+		if(lxStr == "乐享") {
+			categoryNodeId = "90132141";
+		}else if(lxStr == "积木") {
+			categoryNodeId = "90132143";
+		}else if(lxStr == "飞") {
+			categoryNodeId = "90139849";
+		}else if(lxStr == "其他") {
+			categoryNodeId = "-9999";
+		}
+		var params={"categoryNodeId":categoryNodeId,"pnLevelId":"","custId":custId};
 		if(flag){
 			
 			var priceVal = $("#select_price").val();
@@ -59,7 +69,7 @@ order.service = (function(){
 					params.priceMax = priceArr[1] ;
 				}
 			}
-			var influxVal = $("#select_invoice").val();
+			var influxVal = $("#select_influx").val();
 			if(ec.util.isObj(influxVal)){
 				var influxArr = influxVal.split("-");
 				if(influxArr[0]!=null&&influxArr[0]!=""){
@@ -69,7 +79,7 @@ order.service = (function(){
 					params.INFLUXMax = influxArr[1]*1024 ;
 				}
 			}
-			var invoiceVal = $("#select_influx").val();
+			var invoiceVal = $("#select_invoice").val();
 			if(ec.util.isObj(invoiceVal)){
 				var invoiceArr = invoiceVal.split("-");
 				if(invoiceArr[0]!=null&&invoiceArr[0]!=""){
@@ -174,14 +184,15 @@ order.service = (function(){
 							for(var j=0;j<OFFER_INFLUX.length;j++){
 								var rowKey=OFFER_INFLUX[j].COLUMN_VALUE;
 								var rowVal=OFFER_INFLUX[j].COLUMN_VALUE_NAME;
-								$("#select_invoice").append("<option value='"+rowKey+"'>"+rowVal+"</option>");
+								$("#select_influx").append("<option value='"+rowKey+"'>"+rowVal+"</option>");
+								
 							}
 						}else if(response.data[i].OFFER_INVOICE){
 							OFFER_INVOICE = response.data[i].OFFER_INVOICE ;
 							for(var j=0;j<OFFER_INVOICE.length;j++){
 								var rowKey=OFFER_INVOICE[j].COLUMN_VALUE;
 								var rowVal=OFFER_INVOICE[j].COLUMN_VALUE_NAME;
-								$("#select_influx").append("<option value='"+rowKey+"'>"+rowVal+"</option>");
+								$("#select_invoice").append("<option value='"+rowKey+"'>"+rowVal+"</option>");
 							}
 						}
 						$.refresh($("#search-modal"));
