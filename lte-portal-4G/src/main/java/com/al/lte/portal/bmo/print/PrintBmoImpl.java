@@ -7678,10 +7678,12 @@ public class PrintBmoImpl implements PrintBmo {
 			}
 		}
 		List<StringBeanSet> attachOfferCont = new ArrayList<StringBeanSet>();
-		// 设置附属销售品业务_内容
+        List<OETitleContent> oeTitleContent = new ArrayList<OETitleContent>();
+        // 设置附属销售品业务_内容
 		if(event.containsKey("orderEventCont")) {
 			if ("7".equals(boActionTypeCd) && finalAttachMap != null && finalAttachMap.size() > 0) {
-				attachOfferCont = buildOrderEvent_3_Cont_V2(finalAttachMap);
+                oeTitleContent = buildOrderEvent_3_Cont_V2(finalAttachMap);
+                attachOfferSet.setTitleContent(oeTitleContent);
 			} else if (event.get("orderEventCont") instanceof Map) {
 				int baseCount = 0;
 				Map<String, Object> orderEventContMap = (Map<String, Object>) event.get("orderEventCont");
@@ -8124,33 +8126,70 @@ public class PrintBmoImpl implements PrintBmo {
 	 * @param jsonArrayParam
 	 * @return
 	 */
-	private List<StringBeanSet> buildOrderEvent_3_Cont_V2(List<Map<String, Object>> contList){
-		if (contList == null || contList.size() == 0) {
-			return null;
-		}
+    private List<OETitleContent> buildOrderEvent_3_Cont_V2(List<Map<String, Object>> contList) {
+        List<OETitleContent> oeTitleContentList = new ArrayList<OETitleContent>();
+        if (contList == null || contList.size() == 0) {
+            return null;
+        }
 
-		List<StringBeanSet> attachOfferList = new ArrayList<StringBeanSet>();
-		int len = contList.size();
-		for (int i = 0; i < len; i++) {
-			Map<String, Object> contMap = contList.get(i);
-			StringBeanSet strBean = new StringBeanSet();
+        int len = contList.size();
+        for (int i = 0; i < len; i++) {
+            Map<String, Object> contMap = contList.get(i);
+            OETitleContent oeTitleContent = new OETitleContent();
+            List<StringBeanSet> attachOfferTitleList = new ArrayList<StringBeanSet>();
 
-			String actionType = MapUtils.getString(contMap, "actionName", "");
-			String itemName = MapUtils.getString(contMap, "itemName", "");
-			String itemParam = MapUtils.getString(contMap, "itemParam", "");
-			String itemDesc = MapUtils.getString(contMap, "itemDesc", "");
-			String effectRule = MapUtils.getString(contMap, "effectRule", "");
-			String relaAcceNbr = MapUtils.getString(contMap, "relaAcceNbr", "");
+            //小标题
+            StringBeanSet strBean = new StringBeanSet();
 
-			strBean.setStrBean(buildOE_1_AttachOffer_Serv_Cont_V2(len, i + 1, actionType, itemName, itemParam, itemDesc, effectRule, relaAcceNbr));
+            String actionType = MapUtils.getString(contMap, "actionName", "");
+            String itemName = MapUtils.getString(contMap, "itemName", "");
+            String itemParam = MapUtils.getString(contMap, "itemParam", "");
+            String itemDesc = MapUtils.getString(contMap, "itemDesc", "");
+            String effectRule = MapUtils.getString(contMap, "effectRule", "");
+            String relaAcceNbr = MapUtils.getString(contMap, "relaAcceNbr", "");
 
-			attachOfferList.add(strBean);
-		}
+            strBean.setStrBean(buildOE_1_AttachOffer_Serv_Cont_V2(len, i + 1, actionType, itemName, itemParam, itemDesc, effectRule, relaAcceNbr));
 
-		return attachOfferList;
-	}
+            attachOfferTitleList.add(strBean);
+            oeTitleContent.setOrderTitle(attachOfferTitleList);
 
-	private StringBeanSet buildOrderEvent_6_Title_V2(int eventSize,int seq,String boActionTypeName,String offerSpecName,String effectRule) {
+            //内容
+            List<Map<String, String>> attrList = (List<Map<String, String>>) MapUtils.getObject(contMap, "attrList", null);
+            List<String> remarks = (List<String>) MapUtils.getObject(contMap, "remarks", null);
+            List<StringBeanSet> attachOfferContentList = new ArrayList<StringBeanSet>();
+            if (null != attrList && attrList.size() > 0) {
+                for (Map<String, String> stringMap : attrList) {
+                    StringBeanSet stringBeanSet = new StringBeanSet();
+                    stringBeanSet.setStrBean(getAttrString(stringMap));
+                    attachOfferContentList.add(stringBeanSet);
+                }
+            }
+            if (null != remarks && remarks.size() > 0) {
+                for (String remark : remarks) {
+                    StringBeanSet stringBeanSet = new StringBeanSet();
+                    stringBeanSet.setStrBean(remark);
+                    attachOfferContentList.add(stringBeanSet);
+                }
+            }
+            oeTitleContent.setOrderContent(attachOfferContentList);
+            oeTitleContentList.add(oeTitleContent);
+        }
+        return oeTitleContentList;
+    }
+
+    /**
+     * 获取属性拼接字符串
+     *
+     * @param stringMap
+     * @return
+     */
+    private String getAttrString(Map<String, String> stringMap) {
+        String attrName = MapUtils.getString(stringMap, "attrName", "");
+        String attrValName = MapUtils.getString(stringMap, "attrValName", "");
+        return attrName + SysConstant.STR_SEP + attrValName + SysConstant.STR_SPI;
+    }
+
+    private StringBeanSet buildOrderEvent_6_Title_V2(int eventSize,int seq,String boActionTypeName,String offerSpecName,String effectRule) {
 		StringBeanSet strBean = new StringBeanSet();
 		String titleStr = "";
 		titleStr +=  (ChsStringUtil.getSeqNumByInt(seq) + SysConstant.STR_PAU);
