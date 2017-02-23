@@ -3013,7 +3013,8 @@ order.main = (function(){
 		var cacheObj 	= $(dom).data('cacheObj');
 		var servType 	= $(dom).attr('servType');//1使用人；2责任人
 		var userSubInfo = {};
-		
+		userSubInfo.prodId 				 = prodId;
+		userSubInfo.servType 			 = servType;
 		/** 检测如果点击查询时证件号码和类型未发生改变,不去做客户查询,直接替换其他值 **/
 		if(ec.util.isObj(cacheObj) && orderIdentidiesTypeCd == cacheObj.orderIdentidiesTypeCd && identityNum == cacheObj.identityNum) {
 			for(var i=0;i<OrderInfo.subUserInfos.length;i++){
@@ -3092,8 +3093,6 @@ order.main = (function(){
 		} else{
 			$.confirm("确认","没有查询到客户信息，系统将自动创建客户，是否确认继续受理？", {
 				yes:function(){
-					userSubInfo.prodId 				 = userCustInfo.prodId;
-					userSubInfo.servType 			 = userCustInfo.servType;
 					userSubInfo.isOldCust 			 = "N";
 					userSubInfo.identityNum 		 = userCustInfo.identityNum;
 					userSubInfo.orderAttrName		 = userCustInfo.orderAttrName;
