@@ -3038,44 +3038,33 @@ order.main = (function(){
 				"queryTypeValue"	:"",
 				"identidies_type"	:""
 			};
-			$.callServiceAsJson(contextPath + "/cust/queryoffercust", param, {
-				"before" : function() {
-					$.ecOverlay("<strong>正在查询客户信息, 请稍等...</strong>");
-				},
-				"done" : function(response) {
-					if(response.code == 0 && response.data){
-						_getResponseResult(response, userSubInfo, {
-							"prodId"				:prodId,
-							"cacheObj"				:cacheObj,
-							"servType"				:servType,
-							"identityPic"			:identityPic,
-							"identityNum"			:identityNum,
-							"orderAttrName"			:orderAttrName,
-							"orderAttrAddr"			:orderAttrAddr,
-							"orderAttrPhoneNbr"		:orderAttrPhoneNbr,
-							"orderIdentidiesTypeCd"	:orderIdentidiesTypeCd
-						});
-						//查询、读卡按钮隐藏，重置按钮展示
-						_hiddenBtn();					
-					}else if(response.code == 1 && response.data){
-						$.alert("错误", "查询客户信息失败，错误原因：" + response.data);
-						return;
-					}else if(response.code == -2 && response.data){
-						$.alertM(response.data);
-						return;
-					}else{
-						$.alert("错误", "查询客户信息发生未知异常，请稍后重试。错误信息：" + response.data);
-						return;
-					}
-				},
-				"fail" : function(response) {
-					$.alert("错误","查询客户信息发生未知异常：" + response.data);
-					return;
-				},
-				"always" : function() {
-					$.unecOverlay();
-				}
-			});
+			$.ecOverlay("<strong>正在查询客户信息, 请稍等...</strong>");
+			var response = $.callServiceAsJson(contextPath + "/cust/queryoffercust", param);
+			$.unecOverlay();
+			if(response.code == 0 && response.data){
+				_getResponseResult(response, userSubInfo, {
+					"prodId"				:prodId,
+					"cacheObj"				:cacheObj,
+					"servType"				:servType,
+					"identityPic"			:identityPic,
+					"identityNum"			:identityNum,
+					"orderAttrName"			:orderAttrName,
+					"orderAttrAddr"			:orderAttrAddr,
+					"orderAttrPhoneNbr"		:orderAttrPhoneNbr,
+					"orderIdentidiesTypeCd"	:orderIdentidiesTypeCd
+				});
+				//查询、读卡按钮隐藏，重置按钮展示
+				_hiddenBtn();
+			}else if(response.code == 1 && response.data){
+				$.alert("错误", "查询客户信息失败，错误原因：" + response.data);
+				return;
+			}else if(response.code == -2 && response.data){
+				$.alertM(response.data);
+				return;
+			}else{
+				$.alert("错误", "查询客户信息发生未知异常，请稍后重试。错误信息：" + response.data);
+				return;
+			}
 		}
 
 		$("#chooseUserBt").removeClass("btna_g").addClass("btna_o");
