@@ -3,7 +3,7 @@
  */
 CommonUtils.regNamespace("mktRes", "terminal");
 
-mktRes.terminal = (function($){
+mktRes.terminal = (function(){
 	var _offerSpecId = ""; //保存合约附属ID，合约套餐使用
 	var pageSize = 10;
 	var termInfo = {};
@@ -130,7 +130,6 @@ mktRes.terminal = (function($){
 	 */
 	var _checkTerminal = function(param){
 		var url = contextPath+"/app/mktRes/terminal/checkTerminal";
-		$.ecOverlay("<strong>终端校验中,请稍后....</strong>");
 		var response = $.callServiceAsJson(url,param);
 		$.unecOverlay();
 		if (response.code == -2) {
@@ -144,12 +143,23 @@ mktRes.terminal = (function($){
 			$.alert("提示","<br/>校验失败，请稍后重试！");
 		}
 	};
+	
+var _showCheckTermianl=function(){
+		var terminalNum = $("#terminalNum").val().trim();
+		if (terminalNum != "") {
+			$("#terminal_call").addClass("dis-none");
+			$("#terminal_check").removeClass("dis-none");
+		} else {
+			$("#terminal_call").removeClass("dis-none");
+			$("#terminal_check").addClass("dis-none");
+		}
+	};
+	
+	
 	return {
 		hasCheck          :_hasCheck,
 		checkTerminalCode :_checkTerminalCode,
-		checkTerminal     :_checkTerminal
+		checkTerminal     :_checkTerminal,
+		showCheckTermianl :_showCheckTermianl
 	};
-})(jQuery);
-$(function() {
-	OrderInfo.order.step=1;
-});
+})();

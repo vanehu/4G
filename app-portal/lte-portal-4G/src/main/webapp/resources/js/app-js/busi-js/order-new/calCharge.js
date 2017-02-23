@@ -149,6 +149,12 @@ order.calcharge = (function(){
 		if(OrderInfo.actionFlag==201 || OrderInfo.actionFlag==9){//橙分期
 			OrderInfo.order.step = 4;
 		}
+		if(OrderInfo.actionFlag==13){//购裸机
+			OrderInfo.order.step = 3;
+		}
+		if(OrderInfo.actionFlag==14){//合约新装
+			OrderInfo.order.step = 8;
+		}
 	};
 	
 	//提交参数封装

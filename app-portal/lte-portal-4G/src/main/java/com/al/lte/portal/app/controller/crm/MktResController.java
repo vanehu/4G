@@ -906,9 +906,9 @@ public class MktResController extends BaseController {
         param.put("salePrice", Integer.parseInt(mktPrice));
         param.put("mktPicA", MapUtils.getString(param, "mktPicA", ""));
         model.addAttribute("mktRes", param);
-//        if(param.get("newFlag") != null){//新版ui
-//        	 return "/app/mktRes_new/terminal-detail";
-//        }
+        if(param.get("newFlag") != null){//新版ui
+        	 return "/app/mktRes_new/terminal-detail";
+        }
         return "/app/mktRes/terminal-detail";
     }
 
@@ -921,13 +921,14 @@ public class MktResController extends BaseController {
 	 */
 	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/terminal/mktplan", method = RequestMethod.GET)
-	public String termainlPlanOffer(@RequestParam("mktResCd") int mktResCd,
-			@RequestParam("agreementType") int agreementType, Model model,
+	public String termainlPlanOffer(@RequestParam Map<String, Object> param, Model model,
 			@LogOperatorAnn String flowNum, HttpServletResponse response) {
 		SessionStaff sessionStaff = (SessionStaff) ServletUtils
 				.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
 		Map<String, Object> paramMap = new HashMap<String, Object>();
 		try {
+			String agreementType=param.get("agreementType").toString();
+			String mktResCd=param.get("mktResCd").toString();
 			paramMap.put("mktResCd", mktResCd);
 			paramMap.put("agreementType", agreementType);
 			paramMap.put("areaId", sessionStaff.getCurrentAreaId());
@@ -974,7 +975,9 @@ public class MktResController extends BaseController {
 			this.log.error("门户/mktRes/terminal/mktplan服务异常", e);
 			return super.failedStr(model, ErrorCode.QUERY_AGREEMENT, e, paramMap);
 		}
-
+        if(param.get("newFlag")!=null){
+        	return "/app/mktRes_new/terminal-plan-offer";
+        }
 		return "/app/mktRes/terminal-plan-offer2";
 	}
 	

@@ -534,6 +534,125 @@ common = (function($) {
 				return;
 			}
 		}
+		if(OrderInfo.actionFlag==13){//购裸机
+			if(OrderInfo.order.step==1){
+				_callCloseWebview();
+				return;
+			}else if(OrderInfo.order.step==2){//订单确认
+				SoOrder.orderBack();
+				SoOrder.getToken();
+				OrderInfo.order.step=1;
+				return;
+			}else if(OrderInfo.order.step==3){//支付
+				$("#nav-tab-8").removeClass("active in");
+		    	$("#nav-tab-7").addClass("active in");
+		    	$("#tab8_li").removeClass("active");
+		    	$("#tab7_li").addClass("active");
+				OrderInfo.order.step=2;
+				return;
+			}else if(OrderInfo.order.step==4){//回执
+				$("#order-print").hide();
+				$("#orderConfirmDiv").show();
+				$("#headTabDiv2").show();
+		    	$("#nav-tab-8").addClass("active in");
+		    	$("#tab8_li").addClass("active");
+				OrderInfo.order.step=3;
+				return;
+			}
+		}
+		if(OrderInfo.actionFlag==14){//合约新装
+			if(OrderInfo.order.step==1){
+				_callCloseWebview();
+				return;
+			}else if(OrderInfo.order.step==2){//选号码
+				$("#nav-tab-2").removeClass("active in");
+		    	$("#nav-tab-1").addClass("active in");
+		    	$("#tab2_li").removeClass("active");
+		    	$("#tab1_li").addClass("active");
+		    	$("#phoneNumber_a").hide();
+		    	$("#phone_a").show();
+				OrderInfo.order.step=1;
+				return;
+			}else if(OrderInfo.order.step==3){//选合约
+				var boProdAns = OrderInfo.boProdAns;
+				//释放预占的号码
+				if(boProdAns.length>0){
+					for(var n=0;n<boProdAns.length;n++){
+						if(boProdAns[n].idFlag){
+							continue;
+						}
+						var param = {
+								numType : 1,
+								numValue : boProdAns[n].accessNumber
+						};
+						$.callServiceAsJson(contextPath+"/app/mktRes/phonenumber/releaseErrorNum", param, {
+							"done" : function(){
+							}
+						});
+					}
+				}
+				order.phoneNumber.boProdAn={};//清空号码缓存
+				order.phoneNumber.initPhonenumber();
+				$("#phoneNumber_a").show();
+				$("#nav-tab-3").removeClass("active in");
+		    	$("#nav-tab-2").addClass("active in");
+		    	$("#tab3_li").removeClass("active");
+		    	$("#tab2_li").addClass("active");
+				OrderInfo.order.step=2;
+				return;
+			}else if(OrderInfo.order.step==4){//副卡
+				$("#nav-tab-4").removeClass("active in");
+		    	$("#nav-tab-3").addClass("active in");
+		    	$("#tab4_li").removeClass("active");
+		    	$("#tab3_li").addClass("active");
+				OrderInfo.order.step=3;
+				return;
+			}else if(OrderInfo.order.step==5){//促销
+				if (order.service.showTab3) {// 存在副卡页
+					$("#nav-tab-5").removeClass("active in");
+					$("#nav-tab-4").addClass("active in");
+					$("#tab5_li").removeClass("active");
+					$("#tab4_li").addClass("active");
+					OrderInfo.order.step = 4;
+					return;
+					// order.service.showTab3=false;
+				} else {
+					$("#nav-tab-5").removeClass("active in");
+					$("#nav-tab-3").addClass("active in");
+					$("#tab5_li").removeClass("active");
+					$("#tab3_li").addClass("active");
+					OrderInfo.order.step = 3;
+					return;
+				}
+			}else if(OrderInfo.order.step==6){//其他
+				$("#nav-tab-6").removeClass("active in");
+		    	$("#nav-tab-5").addClass("active in");
+		    	$("#tab6_li").removeClass("active");
+		    	$("#tab5_li").addClass("active");
+				OrderInfo.order.step=5;
+				return;
+			}else if(OrderInfo.order.step==7){//订单确认
+				SoOrder.orderBack();
+				SoOrder.getToken();
+				OrderInfo.order.step=6;
+				return;
+			}else if(OrderInfo.order.step==8){//支付
+				$("#nav-tab-8").removeClass("active in");
+		    	$("#nav-tab-7").addClass("active in");
+		    	$("#tab8_li").removeClass("active");
+		    	$("#tab7_li").addClass("active");
+				OrderInfo.order.step=7;
+				return;
+			}else if(OrderInfo.order.step==9){//回执
+				$("#order-print").hide();
+				$("#orderConfirmDiv").show();
+				$("#headTabDiv2").show();
+		    	$("#nav-tab-8").addClass("active in");
+		    	$("#tab8_li").addClass("active");
+				OrderInfo.order.step=8;
+				return;
+			}
+		}
 		if(OrderInfo.actionFlag==201){//橙分期
 			if(OrderInfo.order.step==1){
 				_callCloseWebview();

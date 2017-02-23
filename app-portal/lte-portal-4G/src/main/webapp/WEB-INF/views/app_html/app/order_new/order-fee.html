@@ -29,11 +29,18 @@
 		</ul>
 		<div id="calChargeDiv">	
 		<#assign amount=0 />
-		<#if prodInfo??&&(prodInfo?size>0)> <#list prodInfo as prodInfoList>
-				<#list prodInfoList.busiOrders as busiList> <#assign
-				boId="${busiList.boId}"/> <#if chargeItems??&&(chargeItems?size>0)>
-				<#list chargeItems as itemList>
+		<#if prodInfo??&&(prodInfo?size>0)> 
+		<#assign boIds=""/>
+		<#list prodInfo as prodInfoList>
+		<#list prodInfoList.busiOrders as busiList> 
+		<#assign boId="${busiList.boId}"/> 
+		<#if busiList.objType!="7"||(busiList.objType=="7"&&boIds?index_of(boId)==-1)>
+		<#if chargeItems??&&(chargeItems?size>0)>
+		<#list chargeItems as itemList>
 		<#if busiList.boId==itemList.boId>
+		<#if busiList.objType=="7">
+		<#assign boIds=boIds+"${busiList.boId}_"/>
+		</#if>
 		<#assign trid="${itemList.boId}_${itemList.acctItemId}" />	
 		<#assign amount=amount+((itemList.feeAmount)?number / 100)/>	
 		<ul class="choice-list-box" id="item_${trid}">
@@ -67,7 +74,47 @@
 			</li>
 		</ul>
 		</#if>
-		</#list> </#if> </#list> </#list> </#if>
+		</#list>
+		</#if>
+		</#if>
+		</#list> 
+		</#list> 
+		<#elseif chargeItems??&&(chargeItems?size>0)>
+			<#list chargeItems as itemList>
+			<#assign trid="${itemList.boId}_${itemList.acctItemId}" />
+			<#assign amount=amount+((itemList.feeAmount)?number / 100)/>
+						<ul class="choice-list-box" id="item_${trid}">
+						<li><i class="iconfont pull-left">&#xe638;</i>
+						 <span class="list-title font-secondary">产品</span>
+						 <span class="pull-right font-secondary p-r-10 list-text">
+						 <span class="font-orange">${businessName}</span></span>
+						</li>
+						<li>
+						<button id="button_${trid}" class="list-can pull-left m-l-10" onclick="order.calcharge.showEditPage('${itemList.accessNumber}','${trid}','${((itemList.realAmount)?number / 100)?string('0.00')}','${itemList.acctItemTypeId}','${itemList.payMethodCd}','${itemList.acctItemTypeName}')" >减</button>
+						<input type="hidden" id="acctItemTypeId_${trid}" value="${itemList.acctItemTypeId}" /> 
+						<input type="hidden" id="chargeModifyReasonCd_${trid}"  /> 
+						<input type="hidden" id="remark_${trid}"  /> 
+						<input type="hidden" id="feeAmount_${trid}" value="${itemList.feeAmount}" />
+										<input type="hidden" id="paymentAmount_${trid}" value="${itemList.paymentAmount}" />
+										<input type="hidden" id="objId_${trid}" value="${itemList.objId}" />
+										<input type="hidden" id="objType_${trid}" value="${itemList.objType}" />
+										<input type="hidden" id="realhidden_${trid}" value="${((itemList.realAmount)?number / 100)?string('0.00')}" />
+										<input type="hidden" id="acctItemId_${trid}" value="${itemList.acctItemId}" />
+										<input type="hidden" id="acctItemTypeId_${trid}" value="${itemList.acctItemTypeId}" />
+										<input type="hidden" id="boId_${trid}" value="${itemList.boId}" />
+										<input type="hidden" id="payMethodCd_${trid}" value="${itemList.payMethodCd}"/>
+										<input type="hidden" id="acctItemTypeName_${trid}" value="${itemList.acctItemTypeName}" />
+										<input type="hidden" id="objInstId_${trid}" value="" />
+										<input type="hidden" id="prodId_${trid}" value="" />
+										<input type="hidden" id="boActionType_${trid}" value="${itemList.boActionType}" />
+						<span class="list-title">${itemList.acctItemTypeName}</span> 
+						<span class="pull-right p-r-10 list-text" > <span class="title-lg">
+						<span class="font-orange" id="realMoney_${trid}">${((itemList.feeAmount)?number / 100)?string('0.00')}</span>元(实)</span> 
+						<span class="subtitle font-secondary" id="shouldMoney_${trid}">${((itemList.feeAmount)?number / 100)?string('0.00')}(应)</span>
+						</li>
+					</ul>
+		</#list>
+		</#if>
 		</div>
 		 <input type="hidden" id="shouldMoney" value="${amount}" />
 	</div>

@@ -243,7 +243,7 @@ order.dealer = (function() {
 			role = "第一发展人";
 			break;
 		}
-	    var html = '<li data-channelnbr="' + channelNbr + '" data-role="' + roleId + '" data-staffid="' + staffId + '"> <span class="list-title font-secondary choice-box-left" id="dealerName"> '+name+' <small>('+role+')</small></span> <i onclick="$(this).closest(\'li\').remove();" class="iconfont icon-close absolute-right"></i > </li>'; 
+	    var html = '<li data-channelnbr="' + channelNbr + '" data-role="' + roleId + '" data-staffid="' + staffId + '" data-dealername="'+name+'"> <span class="list-title font-secondary choice-box-left" id="dealerName"> '+name+' <small>('+role+')</small></span> <i onclick="$(this).closest(\'li\').remove();" class="iconfont icon-close absolute-right"></i > </li>'; 
 	    $('#dealerList').append(html);
 	}
 

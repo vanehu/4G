@@ -1004,7 +1004,7 @@ SoOrder = (function() {
             var dealer_name = {
                 itemSpecId: CONST.BUSI_ORDER_ATTR.DEALER_NAME,
                 role: o.role,
-                value: o.staffid
+                value: o.dealername
             };
             busiOrder.data.busiOrderAttrs.push(dealer_name);
         })	
@@ -1129,7 +1129,7 @@ SoOrder = (function() {
                 var dealer_name = {
                     itemSpecId: CONST.BUSI_ORDER_ATTR.DEALER_NAME,
                     role: o.role,
-                    value: o.staffid
+                    value: o.dealername
                 };
                 busiOrder.data.busiOrderAttrs.push(dealer_name);
             })
@@ -1357,6 +1357,9 @@ SoOrder = (function() {
 		if(OrderInfo.actionFlag==13){//购裸机
 			OrderInfo.order.step = 2;
 		}
+		if(OrderInfo.actionFlag==14){//合约新装
+			OrderInfo.order.step = 7;
+		}
 		$("#tab7_li").addClass("active");	
 	};
 	
@@ -1382,6 +1385,20 @@ SoOrder = (function() {
 	    	$("#nav-tab-2").addClass("active in");
 	    	$("#tab7_li").removeClass("active");
 	    	$("#tab2_li").addClass("active");
+			$("#orderContentDiv").show();
+			$("#orderConfirmDiv").hide();
+			$("#headTabDiv1").show();
+			$("#headTabDiv2").hide();
+			OrderInfo.orderData.orderList.custOrderList[0].busiOrder = [];
+			OrderInfo.resetSeq(); //重置序列
+			SoOrder.delOrder();
+			return;
+		}
+		if(OrderInfo.actionFlag==13){//购裸机
+			$("#nav-tab-7").removeClass("active in");
+	    	$("#nav-tab-1").addClass("active in");
+	    	$("#tab7_li").removeClass("active");
+	    	$("#tab1_li").addClass("active");
 			$("#orderContentDiv").show();
 			$("#orderConfirmDiv").hide();
 			$("#headTabDiv1").show();

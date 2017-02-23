@@ -72,6 +72,16 @@ AttachOffer = (function() {
 					$("#cx").addClass("active");
 					OrderInfo.order.step = 3;
 //					$("#cx").click();
+				}else if(OrderInfo.actionFlag==14){//合约购机
+					if(param.prodId==-1){ //合约计划特殊处理
+						AttachOffer.addOpenList(param.prodId,order.phone.offerSpecId);
+					}
+					//套餐副卡tab隐藏，促销tab显示
+					 OrderInfo.order.step = 5;
+					 $("#nav-tab-4").removeClass("active in");
+			    	 $("#nav-tab-5").addClass("active in");
+			    	 $("#tab4_li").removeClass("active");
+			    	 $("#tab5_li").addClass("active");
 				}else if(order.service.enter=="3"){//选号入口选完套餐跳往副卡或促销
 					//套餐副卡tab隐藏，促销tab显示
 					 $("#nav-tab-2").removeClass("active in");
@@ -1429,17 +1439,7 @@ AttachOffer = (function() {
 				_removeAttach2Coupons(prodId,newSpec.offerSpecId);//清除串码组
 				var objInstId = prodId+'_'+newSpec.offerSpecId;
 				//一个终端对应一个ul
-				var $div = $('<div id="terminalUl_'+objInstId+'" class="choice-box absolute-l-43 border-top-none border-none"></div>');
-//				var $sel = $('<select id="terminalSel_'+objInstId+'"></select>');  
-//				var $li1 = $('<div style="display:none;" class="form-group"><label style="width:auto; margin:0px 10px;"><span style="color:#71AB5A;font-size:16px">'+newSpec.offerSpecName+'</span></label></div>');
-				
-//				var $li2 = $('<div style="display:none;"><label> 可选终端规格：</label></div>'); //隐藏
-//				$.each(newSpec.agreementInfos,function(){
-//					var $option = $('<option value="'+this.terminalModels+'" price="'+this.agreementPrice+'">'+this.terminalName+'</option>');
-//					$sel.append($option);
-//				});
-//				$li2.append($sel).append('<label class="f_red">*</label>');
-				
+				var $div = $('<div id="terminalUl_'+objInstId+'" class="choice-box absolute-l-43 border-top-none border-none"></div>');				
 				var minNum=newSpec.agreementInfos[0].minNum;
 				var maxNum=newSpec.agreementInfos[0].maxNum;
 				var isFastOffer = 0 ;
@@ -1512,52 +1512,24 @@ AttachOffer = (function() {
 				if(newSpec.agreementInfos[0].minNum>0){//合约里面至少要有一个终端
 					newSpec.isTerminal = 1;
 				}
-			}else if(OrderInfo.actionFlag==14){
-					var objInstId = prodId+'_'+newSpec.offerSpecId;
-					var terminalUl=$("#terminalUl_"+objInstId);//如果有就不添加串码框了，防止重复
-					if(terminalUl.length>0){
-						return;
-					}
-					//一个终端对应一个ul
-					var $ul = $('<ul id="terminalUl_'+objInstId+'" class="fillin show" style="list-style-type: none; padding-left: 0px;"></ul>');
-					var $sel = $('<select id="terminalSel_'+objInstId+'"></select>');  
-					var $li1 = $('<li class="full"><label style="width:auto; margin:0px 10px;"><span style="color:#71AB5A;font-size:15px; padding-bottom: 10px;">'+newSpec.offerSpecName+'</span></label></li>');
-					var $li2 = $('<li style="display:none;"><label> 可选终端规格：</label></li>'); //隐藏
-					$.each(newSpec.agreementInfos,function(){
-						var $option = $('<option value="'+this.terminalModels+'" price="'+this.agreementPrice+'">'+this.terminalName+'</option>');
-						$sel.append($option);
-					});
-					$li2.append($sel).append('<label class="f_red">*</label>');
-					var $li3 = $('<li><label style="width:auto; margin:0px 10px;">终端校验：</label><input id="terminalText_'+objInstId+'" type="text" class="inputWidth228px inputMargin0" data-validate="validate(terminalCodeCheck) on(keyup blur)" maxlength="50" placeholder="请先输入终端串号" />'
-							+'<input id="terminalBtn_'+objInstId+'" type="button" onclick="AttachOffer.checkTerminalCode('+prodId+','+newSpec.offerSpecId+')" value="校验" class="purchase" style="float:left"></input></li>');	
-					/*var $li4 = $('<li id="terRes_'+objInstId+'" class="full" style="display: none;" >'
-							+'<label style="width:auto; margin:0px 10px;">终端名称：<span id="terName_'+objInstId+'" ></span></label>'
-							+'<label style="width:auto; margin:0px 10px;">终端串码：<span id="terCode_'+objInstId+'" ></span></label>'
-							+'<label style="width:auto; margin:0px 10px;">终端价格：<span id="terPrice_'+objInstId+'" ></span></label></li>');*/
-					var $div = $("#terminalDiv_"+prodId);
-					var $li4 = $('<li id="terminalDesc" style="display:none;white-space:nowrap;"><label> 终端规格：</label><label id="terminalName"></label></li>');
-					$ul.append($li1).append($li2).append($li3).append($li4).appendTo($div);
-					$div.show();
-					newSpec.isTerminal = 1;
-					
-					for ( var i = 0; i < OrderInfo.attach2Coupons.length; i++) {
-						var coupon = OrderInfo.attach2Coupons[i];
-						if(prodId==coupon.prodId){
-							$("#terminalSel_"+objInstId).val(coupon.couponId);
-							$("#terminalSel_"+objInstId).attr("disabled",true);
-							$("#terminalText_"+objInstId).val(coupon.couponInstanceNumber);
-							$("#terminalText_"+objInstId).attr("disabled",true);
-							$("#terminalBtn_"+objInstId).hide();
-						}
-					}
-					setTimeout(function () { 
-        				if(mktRes.terminal.isSelect=="N" && OrderInfo.actionFlag==14){//带出预存话费
-							AttachOffer.phone_checkOfferExcludeDepend(-1,mktRes.terminal.hytcid,mktRes.terminal.hytcmc);
-							mktRes.terminal.isSelect="Y";
+			}else if(OrderInfo.actionFlag==14){				
+					setTimeout(function () { 					
+        				if(order.phone.isSelect=="N" && OrderInfo.actionFlag==14){//带出主套餐依赖
+							AttachOffer.phone_checkOfferExcludeDepend(-1,order.phone.hytcid,order.phone.hytcmc);
+							order.phone.isSelect="Y";
 						}
     				}, 1000);
 				}
 			//}
+		}
+	};
+	
+	//购合约机选合约校验依赖
+	var _phone_checkOfferExcludeDepend = function(prodId,offerSpecId,offerSpecName){
+		var param = CacheData.getExcDepOfferParam(prodId,offerSpecId);
+		var data = query.offer.queryExcludeDepend(param);//查询规则校验
+		if(data!=undefined){
+			paserOfferData(data.result,prodId,offerSpecId,offerSpecName); //解析数据
 		}
 	};
 	
@@ -2421,6 +2393,7 @@ AttachOffer = (function() {
 		showParam			:_showParam,
 		setParam			:_setParam,
 		closeServSpec		:_closeServSpec,
-		queryOfferAndServDependForCancel	:_queryOfferAndServDependForCancel
+		queryOfferAndServDependForCancel	:_queryOfferAndServDependForCancel,
+		phone_checkOfferExcludeDepend       :_phone_checkOfferExcludeDepend
 	};
 })();

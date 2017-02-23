@@ -526,6 +526,16 @@ order.phoneNumber = (function(){
 							  $("#fk").addClass("active");
 							  $("#phoneNumber_a").hide();
 //							  order.amalgamation.prodSpecParamQuery();
+						  }else if(OrderInfo.actionFlag==14){//合约购机
+							  order.phoneNumber.step=3;
+							//选号tab隐藏，合约tab显示
+							 $("#nav-tab-2").removeClass("active in");
+						     $("#nav-tab-3").addClass("active in");
+						     $("#tab2_li").removeClass("active");
+						     $("#tab3_li").addClass("active");
+						     $("#phoneNumber_a").hide();
+						     //加载合约页
+						     order.phone.showHy();
 						  }else if(order.service.enter=="3"){//选号入口选号完跳完套餐
 							 order.phoneNumber.step=2;//选完号码标签页切到选套餐
 							 OrderInfo.order.step = 2;

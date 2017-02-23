@@ -282,7 +282,14 @@ order.service = (function(){
 						if(iflag >0){//显示副卡tab
 							 //号码入口展示副卡tab，否则展示选号
 							order.service.showTab3=true;
-							if(order.service.enter=="3"){
+							if(OrderInfo.actionFlag==14){//合约购机
+								 OrderInfo.order.step = 4;//跳往副卡
+								 $("#tab3_li").removeClass("active");
+								 $("#tab4_li").addClass("active");
+								 $("#nav-tab-3").removeClass("active in");
+						    	 $("#nav-tab-4").addClass("active in");
+						    	 order.phone.param.offerSpec=offerSpec;
+							}else if(order.service.enter=="3"){
 								 OrderInfo.order.step = 3;
 								 $("#offer_a").hide();
 								 $("#tab3_li").show();
@@ -304,7 +311,13 @@ order.service = (function(){
 							 $("#maxSpan").html(_max+")");
 							
 						}else{//默认隐藏副卡tab
-							if(order.service.enter=="1"){//套餐入口跳往选号
+							if(OrderInfo.actionFlag==14){//合约购机
+								 OrderInfo.order.step = 5;//跳往促销
+								 $("#tab3_li").removeClass("active");
+								 $("#tab5_li").addClass("active");
+								 $("#nav-tab-3").removeClass("active in");
+						    	 $("#nav-tab-5").addClass("active in");
+							}else if(order.service.enter=="1"){//套餐入口跳往选号
 								 order.phoneNumber.initPhonenumber();
 								 OrderInfo.order.step = 2;
 								 $("#tab2_li").removeClass("active");

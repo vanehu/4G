@@ -258,7 +258,7 @@ public class OrderController extends BaseController {
 		String newUIFlag = propertiesUtils.getMessage(propertiesKey);
 		if("ON".equals(newUIFlag) && params.get("newFlag") != null){
 			if ("2".equals(params.get("enter").toString())) {//购手机暂时走原ui
-				return "/app/order/order-search";
+				return "/app/order_new/phone_add";
 			}
 			return "/app/order_new/phonenumber_add";//新版ui选号码入口
 		}else{
