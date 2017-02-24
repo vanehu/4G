@@ -56,7 +56,7 @@
           <ul class="choice-list-box">
             <li>
               <i class="iconfont pull-left">&#xe66c;</i>
-              <span class="list-title font-secondary">基本信息</span>
+              <span class="list-title font-secondary">受理单信息</span>
             </li>
 					<#if (orderLists.list)?? &&((orderLists.list)?size>0)>
 		   			<#list orderLists.list as orderRow >
@@ -144,10 +144,3 @@
 <#else>
 	${mess}
 </#if>
-<script>
-	$('body').css('paddingTop','.86rem');
-	if($('body').find('#page-container > #header')!=undefined){
-     $('body').prepend('<div id="page-container" class="fade in page-without-sidebar"> <div id="header" class="header navbar navbar-default navbar-fixed-top"> <h4 class="text-center">订单详情 <a class="btn no-border btn-white pull-left m absolute-left " onclick="$(\'#page-container\').remove(); $(\'#cart_info\').hide(); $(\'body\').css(\'paddingTop\',\'0\');$(\'#cart_search\').show();"> <i class="iconfont tab-icon">&#xe634;</i> </a> </h4> </div> </div>') 
-   }
-   $('#cart_search').hide();
-</script>

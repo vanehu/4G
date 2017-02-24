@@ -105,7 +105,18 @@
   <a href="javascript:;" class="btn btn-icon btn-circle btn-success btn-scroll-to-top fade" data-click="scroll-top"><i class="fa fa-angle-up"></i></a>
   <!-- end scroll to top btn -->
 </div>
-<div id="cart_info" style="display: none;">
+<div class="modal modal-message fade modal-top" id="cart_info_modal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <i class="iconfont icon-close close" data-dismiss="modal" aria-hidden="true"></i>
+        <h4 class="modal-title">订单详情</h4>
+      </div>
+      <div class="modal-body" id="cart_info">
+        
+      </div>
+    </div>
+  </div>
 </div>
 <script>
   //初始化

@@ -125,6 +125,7 @@ order.dealer = (function() {
 			$('#dealerModal-result').hide();
 			return;
 		}
+		var $queryBtn = $('#qsd').button('loading');
 		var param = {
 				"dealerId":"dealer",
 				"areaId":$("#diqu").val(),
@@ -140,6 +141,7 @@ order.dealer = (function() {
 			},
 			"done" : function(response){
 				// $.unecOverlay();
+				$queryBtn.button('reset');
 				$("#overlay-modal .modal-backdrop").remove();
     		    $("#overlay-modal").modal('hide');
 				if(!response){
@@ -152,7 +154,7 @@ order.dealer = (function() {
 						$('#dealerModal').find('.choice-box').children('.help-block').addClass('hidden');
 					}else{
 						// $("#dealerName").html(response.data[0].staffName).attr("staffId", response.data[0].staffId);
-						_addDealer(response.data[0].staffName,response.data[0].staffId,response.data[0].chanInfos[0].channelNbr,$('#dealerType').val(),CONST.BUSI_ORDER_ATTR.DEALER_NAME)
+						_addDealer(response.data[0].staffName,response.data[0].staffId,response.data[0].chanInfos[0].channelNbr == undefined ? '' : response.data[0].chanInfos[0].channelNbr,$('#dealerType').val(),CONST.BUSI_ORDER_ATTR.DEALER_NAME)
 			
 						$("#dealerModal").modal("hide");
 						//重置表单
@@ -246,6 +248,16 @@ order.dealer = (function() {
 	    var html = '<li data-channelnbr="' + channelNbr + '" data-role="' + roleId + '" data-staffid="' + staffId + '" data-dealername="'+name+'"> <span class="list-title font-secondary choice-box-left" id="dealerName"> '+name+' <small>('+role+')</small></span> <i onclick="$(this).closest(\'li\').remove();" class="iconfont icon-close absolute-right"></i > </li>'; 
 	    $('#dealerList').append(html);
 	}
+    
+    var _watch = function(el) {
+    	var num = $('#dealerList').find('li[data-role=' + $(el).val() + ']').size();
+    	console.log(num)
+        if (num == 0) {
+            $(el).siblings('.help-block').addClass('hidden')
+        } else if(num > 0) {
+            $(el).siblings('.help-block').removeClass('hidden')
+        }
+    }
 
 	return {
 		initDealer 			: _initDealer,
@@ -256,7 +268,8 @@ order.dealer = (function() {
 		closeJBR			:_closeJBR,
 		deleteJbr			:_deleteJbr,
 		removeAttDealer		:_removeAttDealer,
-		removeDealer		:_removeDealer
+		removeDealer		:_removeDealer,
+		watch               :_watch
 		
 	};
 })();

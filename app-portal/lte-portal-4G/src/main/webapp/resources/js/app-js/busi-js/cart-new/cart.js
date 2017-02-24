@@ -197,7 +197,9 @@ cart.main = (function() {
                     return;
                 } else {
                     $("#cart_list_div").hide();
-                    $("#cart_info").html(response.data).show();
+                    $("#cart_info").html(response.data);
+                    //针对jquery.overlay.js中unecOverlay()方法的bug，做的修复处理
+                    setTimeout(function(){$('#cart_info_modal').modal('show');},500)
                     OrderInfo.order.step = 3;
                 }
             },
