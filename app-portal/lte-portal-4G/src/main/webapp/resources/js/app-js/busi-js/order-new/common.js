@@ -572,6 +572,12 @@ common = (function($) {
 		    	$("#phoneNumber_a").hide();
 		    	$("#phone_a").show();
 				OrderInfo.order.step=1;
+				//默认购裸机，合约相关tab页隐藏
+				$("#tab2_li").hide();
+				$("#tab3_li").hide();
+				$("#tab4_li").hide();
+				$("#tab5_li").hide();
+				$("#tab6_li").hide();
 				return;
 			}else if(OrderInfo.order.step==3){//选合约
 				var boProdAns = OrderInfo.boProdAns;

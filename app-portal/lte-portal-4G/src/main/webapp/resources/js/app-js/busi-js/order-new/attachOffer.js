@@ -60,6 +60,7 @@ AttachOffer = (function() {
 					$("#attachSecondary"+id).html(data);
 					$("#cardNameSpan_"+param.prodId).html("副卡");
 				}
+				_showMainRoleProd(param.prodId); //展示必须功能产品或可选包
 				var phoneNum=OrderInfo.getAccessNumber(param.prodId);
 				$("#phoneNumSpan_"+param.prodId).html(phoneNum);
 				_initMyfavoriteSpec(param.prodId,1,0); //初始化第一个标签附属
@@ -100,6 +101,73 @@ AttachOffer = (function() {
 				}
 			}
 		});
+	};
+	
+	//将必选或默认功能产品加入已选列表
+	var _showMainRoleProd = function(prodId){
+		var prodInst = getProdInst(prodId);
+		for (var i = 0; i < OrderInfo.offerSpec.offerRoles.length; i++) {
+			var offerRole = OrderInfo.offerSpec.offerRoles[i];
+			if(offerRole.memberRoleCd==CONST.MEMBER_ROLE_CD.CONTENT){ //增值业务角色
+			}else{ 
+				if(offerRole.prodInsts==undefined){
+					continue;
+				}
+				$.each(offerRole.prodInsts,function(){  //遍历产品实例列表
+					if(this.prodInstId==prodId){
+						for (var k = 0; k < offerRole.roleObjs.length; k++) {
+							var roleObj = offerRole.roleObjs[k];
+							if(roleObj.objType==CONST.OBJ_TYPE.SERV){
+								var servSpecId = roleObj.objId;
+								var $oldLi = $('#li_'+prodId+'_'+servSpecId);
+								var spec = CacheData.getServSpec(prodId,servSpecId);//从已选择功能产品中找
+								if(spec != undefined){
+									continue;
+								}
+								var serv = CacheData.getServBySpecId(prodId,servSpecId);//从已订购功能产品中找
+								if(serv!=undefined){ //不在已经开跟已经选里面
+									continue;
+								}
+								if(roleObj.dfQty > 0){ //必选，或者默选
+									var servSpec=jQuery.extend(true, {}, roleObj);
+									CacheData.setServSpec(prodId,servSpec); //添加到已开通列表里
+									spec = servSpec;
+									if(ec.util.isArray(spec.prodSpecParams)){
+										spec.ifParams = "Y";
+									}
+									$('#_li_'+prodId+'_'+servSpecId).remove(); //删除可开通功能产品里面
+									var $li = $('<li id="li_'+prodId+'_'+servSpecId+'" ></li>');
+									html='<span class="list-title">'+ spec.servSpecName +'</span>';
+									if(spec.ifParams){
+										html+='<button type="button" id="can_'+prodId+'_'+spec.servSpecId+'" class="list-can absolute-right" onclick="AttachOffer.showServParam('+prodId+','+servSpecId+');">参</button>';
+									}
+									html+='<div class="list-checkbox absolute-right"><div class="checkbox-box">';
+									html+='<input type="checkbox" checked="checked" value="1"" name="" id="input_'+prodId+'_'+servSpecId+'" onclick="javascript:{common.setBtnTimer(this);AttachOffer.openServSpec('+prodId+','+servSpecId+',\''+spec.servSpecName+'\',\''+spec.ifParams+'\');}"/><label for="input_'+prodId+'_'+servSpecId+'" ></label></div></div>';						
+									$li.append(html);
+									$("#open_serv_ul_"+prodId).append($li);
+									spec.isdel = "N";
+									_showHideUim(0,prodId,servSpecId);//显示或者隐藏补换卡
+								}
+							}
+						}
+					}
+				});
+			}
+		}
+	};
+	
+	//获取产品实例
+	var getProdInst = function(prodId){
+		for ( var i = 0; i < OrderInfo.offerSpec.offerRoles.length; i++) {
+			var offerRole = OrderInfo.offerSpec.offerRoles[i];
+			if(ec.util.isArray(offerRole.prodInsts)){
+				for ( var j = 0; j < offerRole.prodInsts.length; j++) {  //遍历产品实例列表
+					if(offerRole.prodInsts[j].prodInstId==prodId){
+						return offerRole.prodInsts[j];
+					}
+				}
+			}
+		}
 	};
 	
 //可选包入口展示我的收藏（初始化）
