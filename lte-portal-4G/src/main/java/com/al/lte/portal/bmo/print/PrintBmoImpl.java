@@ -7677,7 +7677,6 @@ public class PrintBmoImpl implements PrintBmo {
 				attachOfferSet.setAttachOfferTitle(attachOfferTitle);
 			}
 		}
-		List<StringBeanSet> attachOfferCont = new ArrayList<StringBeanSet>();
         List<OETitleContent> oeTitleContent = new ArrayList<OETitleContent>();
         // 设置附属销售品业务_内容
 		if(event.containsKey("orderEventCont")) {
@@ -7751,12 +7750,10 @@ public class PrintBmoImpl implements PrintBmo {
 					}
 				}
 			} else {
-				attachOfferCont = buildOrderEvent_3_Cont((List<Map<String, Object>>) event.get("orderEventCont"));
+                oeTitleContent = buildOrderEvent_3_Cont_V2((List<Map<String, Object>>) event.get("orderEventCont"));
+                attachOfferSet.setTitleContent(oeTitleContent);
 			}
 
-			if (null != attachOfferCont && attachOfferCont.size() > 0) {
-				attachOfferSet.setAttachOfferCont(attachOfferCont);
-			}
 		}
 
 		attachOfferList.add(attachOfferSet);
