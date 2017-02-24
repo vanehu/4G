@@ -142,7 +142,7 @@ AttachOffer = (function() {
 										html+='<button type="button" id="can_'+prodId+'_'+spec.servSpecId+'" class="list-can absolute-right" onclick="AttachOffer.showServParam('+prodId+','+servSpecId+');">参</button>';
 									}
 									html+='<div class="list-checkbox absolute-right"><div class="checkbox-box">';
-									html+='<input type="checkbox" checked="checked" value="1"" name="" id="input_'+prodId+'_'+servSpecId+'" onclick="javascript:{common.setBtnTimer(this);AttachOffer.openServSpec('+prodId+','+servSpecId+',\''+spec.servSpecName+'\',\''+spec.ifParams+'\');}"/><label for="input_'+prodId+'_'+servSpecId+'" ></label></div></div>';						
+									html+='<input type="checkbox" checked="checked" value="1"" name="" id="input_'+prodId+'_'+servSpecId+'" onclick="javascript:{common.setBtnTimer(this);AttachOffer.closeServSpec('+prodId+','+servSpecId+',\''+spec.servSpecName+'\',\''+spec.ifParams+'\');}"/><label for="input_'+prodId+'_'+servSpecId+'" ></label></div></div>';						
 									$li.append(html);
 									$("#open_serv_ul_"+prodId).append($li);
 									spec.isdel = "N";
