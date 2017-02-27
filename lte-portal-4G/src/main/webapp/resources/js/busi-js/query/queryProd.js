@@ -173,10 +173,6 @@ query.prod = (function() {
 	//校验UIM卡
 	var _checkUim=function(param){
 		param.olTypeCd = CONST.OL_TYPE_CD.FOUR_G;//增加门户标识
-		//如果是新装、加装新号码作为副卡，则经办人必须填写且拍照，这里统一做记录标识，用于session校验，防止绕过
-		if(OrderInfo.actionFlag == 1 || OrderInfo.actionFlag == 2 || OrderInfo.actionFlag == 6){
-			param.queryFlag = "handleCust";
-		}
 		$.ecOverlay("<strong>UIM卡校验中,请稍等...</strong>");
 		var response = $.callServiceAsJson(contextPath + "/mktRes/uim/checkUim", param);
 		$.unecOverlay();

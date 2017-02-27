@@ -2876,9 +2876,10 @@ SoOrder = (function() {
 	
 	//订单数据校验
 	var _checkData = function() {
-		var orderAttrName = $.trim($("#orderAttrName").val()); //经办人姓名
-		var orderAttrIdCard = $.trim($("#orderAttrIdCard").val()); //证件号码
-		var orderAttrAddr = $.trim($("#orderAttrAddr").val()); //地址
+		var orderAttrName	= $.trim($("#orderAttrName").val());	//经办人姓名
+		var orderAttrIdCard = $.trim($("#orderAttrIdCard").val());	//证件号码
+		var orderAttrAddr	= $.trim($("#orderAttrAddr").val());	//地址
+		var isUimAction		= ec.util.isArray(OrderInfo.boProd2Tds);//判断是否有UIM变更
 		
 		if(CONST.realNamePhotoFlag == "ON"){
 			//若页面上填写了经办人信息，但没有进行拍照，则拦截提示，不管权限不权限
@@ -2888,16 +2889,19 @@ SoOrder = (function() {
 					return false;
 				}
 			}
+			
 			//若页面没有填写经办人，根据权限和业务类型进行判断和限制
 			var isActionFlagLimited = (
-				OrderInfo.actionFlag == 1 	|| //办套餐入口做新装
-				OrderInfo.actionFlag == 14 	|| //购手机入口做新装
+				OrderInfo.actionFlag == 1	||	//办套餐入口做新装
+				OrderInfo.actionFlag == 14 	||	//购手机入口做新装(OrderInfo.busitypeflag为1)
+				OrderInfo.actionFlag == 43	||	//返档
 				(OrderInfo.actionFlag == 22 && OrderInfo.busitypeflag == 21) || //补卡(换卡busitypeflag是22)
 				(OrderInfo.actionFlag == 23 && OrderInfo.busitypeflag == 13) || //异地补换卡
 				(OrderInfo.actionFlag == 6  && OrderInfo.isHandleCustNeeded) || //主副卡成员变更，加装新号码或加装老号码且客户证件非身份证
-				(OrderInfo.actionFlag == 2  && OrderInfo.isHandleCustNeeded) || //套餐变更，加装新号码或加装老号码且客户证件非身份证
-				OrderInfo.actionFlag == 43	   //返档
-			);
+				(OrderInfo.actionFlag == 2  && (OrderInfo.isHandleCustNeeded || isUimAction)) ||//套餐变更，加装新号码、加装老号码且客户证件非身份证或UIM变更
+				(OrderInfo.actionFlag == 3	&& OrderInfo.busitypeflag == 14	 && isUimAction)	//可选包变更涉及UIM动作
+			) && OrderInfo.busitypeflag != 27;//预装不限制
+			
 			if(CONST.isHandleCustNeeded && isActionFlagLimited) {
 				if(!ec.util.isObj($("#jbrForm").html()) || !ec.util.isObj(OrderInfo.virOlId)){
 					$.alert("提示","经办人拍照信息不能为空！请确认页面是否已点击【读卡】或者【查询】按钮，并且进行拍照和人证相符等操作！");
