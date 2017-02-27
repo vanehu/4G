@@ -1955,8 +1955,9 @@ order.cust = (function(){
 		//表示新建客户是身份证，保存信息用户身份证预约号码比对
 		if($.trim($("#identidiesTypeCd option:selected").val()) == 1){
 			var param = {
-					"identityId":_certInfo.custIdCard,
-					"areaId" : OrderInfo.getAreaId()
+					"identityNum":_certInfo.custIdCard,
+					"areaId" : OrderInfo.getAreaId(),
+				    "flag":"1"
 			};
 			order.cust.custQueryParam = param;
 		}

@@ -168,13 +168,14 @@ order.phoneNumber = (function(){
 //		var param={"identityId":idcode,"areaId":OrderInfo.getAreaId()};
 		// 入参增加客户查询的入参
 		var param = {};
-		if(ec.util.isObj(order.cust.custQueryParam)){ //客户定位
+		if(ec.util.isObj(order.cust.custQueryParam)){ //老客户定位,通过身份证新客户新建
 			order.cust.custQueryParam.identityId = idcode;
 			order.cust.custQueryParam.areaId = OrderInfo.getAreaId();
 			var param = order.cust.custQueryParam;
-		}else{ //用户预装
+		}else{
 			param.identityId = idcode;
 			param.areaId = OrderInfo.getAreaId();
+			param.flag = "1";
 		}
 		if (order.prepare.isPreInstall()){
 			param.busiType = 'preInstall';
