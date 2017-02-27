@@ -238,19 +238,14 @@ order.calcharge = (function(){
 	
 	//点击收费执行事件
 	var _updateChargeInfoForCheck=function(){
-		_disableButton();
 		if(submit_success){
 			$.alert("提示","订单已经建档成功,不能重复操作!");
-			return;
-		}
-		if(inOpetate){
 			return;
 		}
 		var val=_getCharge();
 		_chargeItems=[];
 		_buildChargeItems();
 		if(val!=0){//费用不为0
-			inOpetate=true;
 			var url=contextPath+"/app/order/updateChargeInfoForCheck";
 			var params={
 					"olId":_olId,

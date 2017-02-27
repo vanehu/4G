@@ -1254,6 +1254,7 @@ order.calcharge = (function(){
 		if(order.calcharge.haveCharge==true){//已下过计费接口
 			return;
 		}
+		$.unecOverlay();
 		if ("1" == status) { // 原生返回成功，调用支付平台查询订单状态接口，再次确定是否成功，如果成功则调用收费接口
 			$.ecOverlay("<strong>正在处理中,请稍等会儿....</strong>");
 			var params = {

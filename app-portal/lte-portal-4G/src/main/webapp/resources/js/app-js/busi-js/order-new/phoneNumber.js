@@ -26,7 +26,7 @@ order.phoneNumber = (function(){
 	};
 	
 	var _initPhonenumber=function(){
-		_btnQueryPhoneNumber();
+		_btnQueryPhoneNumber(1);
 		
 	};
 	//主卡查询号池
@@ -216,7 +216,7 @@ order.phoneNumber = (function(){
 	};
 	
 	//主卡号码列表查询
-	var _btnQueryPhoneNumber=function(){
+	var _btnQueryPhoneNumber=function(flag){
 		if(mainFlag=="false"){//走副卡查询
 			_btnQueryPhoneNumber2();
 			return;
@@ -236,7 +236,10 @@ order.phoneNumber = (function(){
 		var areaId=OrderInfo.staff.soAreaId+"";
 		var numPrice=$("#numPrice option:selected").val();//预存话费
 		var index=$('#numPrice').prop('selectedIndex');
-		var max="0";
+		var max="";
+		if(flag==1){
+			max="0";
+		}		
 		var min="";
 		if(index==1){
 			var max="100";

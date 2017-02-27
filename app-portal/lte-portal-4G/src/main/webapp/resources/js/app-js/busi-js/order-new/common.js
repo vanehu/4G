@@ -336,9 +336,6 @@ common = (function($) {
 				OrderInfo.order.step = 3;
 				return;
 			}
-			if("disabled"==$("#toCharge").attr("disabled")){
-				return;
-			}
 		}
 		if(OrderInfo.jbrPageFlag == "Y"){
 			OrderInfo.jbrPageFlag = "N";
