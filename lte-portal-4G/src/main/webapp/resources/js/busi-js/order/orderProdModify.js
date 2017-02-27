@@ -4839,9 +4839,9 @@ order.prodModify = (function(){
 					   $.alertM(response.data);
 				   }else{
 					   if (response.data.resultMsg) {
-						   $.alert("提示","该提示不影响业务办理。日志记录失败!失败原因为："+response.data.resultMsg);
+//						   $.alert("提示","该提示不影响业务办理。日志记录失败!失败原因为："+response.data.resultMsg);
 					   } else {
-						   $.alert("提示","日志记录失败!");
+//						   $.alert("提示","日志记录失败!");
 					   }
 				   }
 			}
