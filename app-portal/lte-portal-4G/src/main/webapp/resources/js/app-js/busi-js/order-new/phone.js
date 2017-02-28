@@ -54,7 +54,7 @@ order.phone = (function(){
 		$("#tab5_li").hide();
 		$("#tab6_li").hide();
 		_queryApConfig();
-		_btnQueryTerminal(1);
+		_btnQueryTerminal(1,1);
 	};
 	/**
 	 * 查询平台配置
@@ -124,13 +124,16 @@ order.phone = (function(){
 	/**
 	 * 按钮查询
 	 */
-	var _btnQueryTerminal=function(curPage,scroller){
+	var _btnQueryTerminal=function(curPage,moduldFlag){
 		$("#phone_search_model").modal("hide");
 		//请求地址
 		var url = contextPath+"/app/mktRes/terminal/list";
 		//收集参数
 		var param = _buildInParam(curPage);
 		param.newFlag=1;
+		if(moduldFlag==1){//主推终端标志，默认初始为查询主推终端
+			param.moduleId = 1000; //排序模块
+		}
 		$.callServiceAsHtml(url,param,{
 			"before":function(){
 				if(curPage == 1)$.ecOverlay("<strong>查询中,请稍等...</strong>");
@@ -142,6 +145,10 @@ order.phone = (function(){
 				if(response.code != 0) {
 					$.alert("提示","<br/>查询失败,稍后重试");
 					return;
+				}
+				var resultlst=$().val("#resultlst");
+				if(resultlst=="0" && moduldFlag==1){//主推终端查不到，则切回查询默认
+					_btnQueryTerminal(1);
 				}
 				if(curPage == 1){
 					$("#phone-list").html(response.data);
