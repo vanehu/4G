@@ -4762,7 +4762,7 @@ order.prodModify = (function(){
 	 */
 	var _isCFQ = function (flag) {
 		if (ec.util.isObj(flag)) {
-			if (flag == 3 || flag == 4 || flag == 5 || flag == 6) {
+			if (flag == 4) {
 				return true;
 			} else {
 				return false;
