@@ -216,7 +216,7 @@ order.phoneNumber = (function(){
 	};
 	
 	//主卡号码列表查询
-	var _btnQueryPhoneNumber=function(flag){
+	var _btnQueryPhoneNumber=function(flag,scroller){
 		if(mainFlag=="false"){//走副卡查询
 			_btnQueryPhoneNumber2();
 			return;
@@ -276,7 +276,8 @@ order.phoneNumber = (function(){
 				"maxPrePrice":max,
 				"minPrePrice":min,
 				"enter":"3",
-				"queryFlag":queryFlag
+				"queryFlag":queryFlag,
+				"pageSize":"10"
 		};
 		//请求地址
 		var url = contextPath+"/app/mktRes/phonenumber/list";
@@ -293,6 +294,7 @@ order.phoneNumber = (function(){
 				}
 				var content$ = $("#phonenumber-list");
 				content$.html(response.data);
+				if(scroller && $.isFunction(scroller)) scroller.apply(this,[]);
 				if(OrderInfo.actionFlag == 112){
 					$("#offer").hide();
 					$("#offer-list").empty();
@@ -828,6 +830,15 @@ order.phoneNumber = (function(){
 	 mainFlag="true";
 	 $('#phoneNumber_a').hide();
  };
+ 
+//滚动页面入口
+	var _scroll = function(scrollObj){
+		if(scrollObj && scrollObj.page && scrollObj.page >= 1){
+			order.phoneNumber.btnQueryPhoneNumber("",scrollObj.scroll);
+//			_initPhonenumber($("#subPage").val(),scrollObj.scroll);
+		}
+	};
+	
 	return {
 		secondaryCarNum :_secondaryCarNum,
 		initPhonenumber:_initPhonenumber,
@@ -847,7 +858,8 @@ order.phoneNumber = (function(){
 	    preePassword:_preePassword,
 	    clearError:_clearError,
 	    showPhoneNumSearchModal:_showPhoneNumSearchModal,
-	    setMainFlag            :_setMainFlag
+	    setMainFlag            :_setMainFlag,
+	    scroll	: _scroll
 	};
 })();
 

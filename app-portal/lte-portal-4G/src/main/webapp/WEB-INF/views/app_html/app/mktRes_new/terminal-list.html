@@ -1,4 +1,3 @@
-<ul class="single-list-box">
 <!--终端列表-->
 <#if (pageModel.pageNo)?? && (pageModel.pageNo > 1) >
 	<#list pageModel.list as mkt>
@@ -42,8 +41,9 @@
 	</li>
 	</#list>
 <#else>
-	<#if (pageModel.list)?? &&((pageModel.list)?size>0)>
-		<@portal.scrollPagination "terminal_list" "both" pageModel.totalPages 60 0 "order.phone.scroll">
+<#if (pageModel.list)?? &&((pageModel.list)?size>0)>
+<@portal.scrollPagination "terminal_list" "both" pageModel.totalPages 60 0 "order.phone.scroll">
+<ul class="single-list-box" id="phone-list-all">
 			<#list pageModel.list as mkt>
 				<#assign intf_pic = false>
 				<#assign p_pic = ''>
@@ -70,7 +70,7 @@
 						</#if>
 					</#list>
 				</#if>
-	<li class="p-10" onclick="order.phone.selectTerminal(this)" id="phone-list-all" mktResTypeCd="${mkt.mktResTypeCd}" mktResId="${mkt.mktResId}" mktResCd="${mkt.mktResCd}" brand="${brand}" phoneType="${phoneType}" phoneColor="${phoneColor}" mktName="${mkt.mktResName}" mktPrice="${(mkt.salePrice)}" mktPicA="${p_pic}" mktSpecCode="${mktSpecCode}">
+	<li class="p-10" onclick="order.phone.selectTerminal(this)" mktResTypeCd="${mkt.mktResTypeCd}" mktResId="${mkt.mktResId}" mktResCd="${mkt.mktResCd}" brand="${brand}" phoneType="${phoneType}" phoneColor="${phoneColor}" mktName="${mkt.mktResName}" mktPrice="${(mkt.salePrice)}" mktPicA="${p_pic}" mktSpecCode="${mktSpecCode}">
 	<div class="list-img-box m-r-15">
 		<img src="${p_pic}" alt="${(mkt.mktResName)?default("--")}" />
 	</div>
@@ -84,16 +84,18 @@
 	</div>
 	</li>
 		</#list>
+</ul>
 		</@portal.scrollPagination>
 	<#else>
+	<ul class="single-list-box">
 	 <input type="hidden" id="resultlst" value="0"/>
 		<div class="media">
 			<img style="vertical-align:middle" src="${contextPath}/image/common/query_search.gif" />&nbsp;&nbsp;抱歉，没有找到相关的手机，请尝试其他筛选条件。
 		</div>
+		</ul>
 	</#if>
 </#if>
 <!--终端列表 end--> 
-</ul>
 <div class="modal fade modal-message modal-top" id="modal-phone">
 	<div class="modal-dialog">
 		<div class="modal-content">

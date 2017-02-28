@@ -156,6 +156,7 @@ order.phone = (function(){
 				}else{
 					$("#phone-list-all").append(response.data);
 					$.refresh($("#phone-list-all"));
+					if(moduldFlag && $.isFunction(moduldFlag)) moduldFlag.apply(this,[]);
 				}
 			}
 		});	

@@ -21,7 +21,7 @@ order.service = (function(){
 	};
 	
 	//主套餐查询
-	var _searchPack = function(flag,initFlag){
+	var _searchPack = function(flag,initFlag,scroller){
 		$("#offer-rule").hide();
 		$("#offer-list").show();
 		var custId = OrderInfo.cust.custId;
@@ -63,7 +63,7 @@ order.service = (function(){
 				params.INVOICEMax = invoiceArr[1] ;
 			}
 		}
-		_queryData(params,flag,initFlag);
+		_queryData(params,flag,initFlag,scroller);
 		
 	};
 	
@@ -109,14 +109,14 @@ order.service = (function(){
 		});
 	};
 	
-	var _queryData = function(params,flag,initFlag) {
+	var _queryData = function(params,flag,initFlag,scroller) {
 		if(_isAll && flag == 1){
 			_isAll = true;
 		} else {
 			_isAll = false;
 		}
 		params.prodOfferFlag = "4G";
-		if(OrderInfo.actionFlag == 1 || OrderInfo.actionFlag == 14){
+		if(OrderInfo.actionFlag == 1 || OrderInfo.actionFlag == 14 || OrderInfo.actionFlag == 112){
 			if(params.categoryNodeId == "" && !_isAll){
 				params.ifQueryFavorite = "Y";
 			}
@@ -140,13 +140,14 @@ order.service = (function(){
 				var content$ = $("#offer-list");
 				content$.html(response.data);
 				var resultlst = $("#resultlst").val();
+				if(scroller && $.isFunction(scroller)) scroller.apply(this,[]);
 				
 				if(initFlag == "init" && resultlst == 0){
 					var custId = OrderInfo.cust.custId;
 					var qryStr=$("#offerName").val();
 					var param={"subPage":"","qryStr":qryStr,"pnLevelId":"","custId":custId,"PageSize":10,"enter":3};
 					_isAll = true;
-					_queryData(param,1);
+					_queryData(param,1,undefined,scroller);
 				} else if(initFlag == undefined && resultlst == 0){
 					var html = "<div class=\"list-group-item\"><div class=\"h4\"><img style=\"vertical-align:middle\"";
 					html += "src= \"/ltePortal/image/common/query_search.gif\" />&nbsp;&nbsp;抱歉，没有找到相关的套餐。</div></div> ";
@@ -442,6 +443,30 @@ var _closeRule=function(){
 	$("#offer-rule").hide();
 	
 }
+
+//滚动页面入口
+var _scroll = function(scrollObj){
+	if(scrollObj && scrollObj.page && scrollObj.page >= 1){ 
+		if(scrollObj.page==1){
+			_searchPack(1,scrollObj.scroll);
+		}else{
+			var show_per_page = 10;
+			var size = $('#div_all_data').children().length;
+			if(size<show_per_page){
+				show_per_page = size;
+			}
+			//$('#ul_offer_list').append($('#div_all_data').children().slice(start_from, end_on)).listview("refresh");
+			//alert($('#div_all_data').children().length);
+			$('#div_all_data').children().slice(0,show_per_page).appendTo($('#div_offer_list'));
+//			$('#ul_offer_list').listview("refresh");
+//			$("#ul_offer_list li").off("tap").on("tap",function(){
+//				$(this).addClass("pakeagelistlibg").siblings().removeClass("pakeagelistlibg");
+//			});
+			if(scrollObj.scroll && $.isFunction(scrollObj.scroll)) scrollObj.scroll.apply(this,[]);
+		}
+	}
+};
+
 	return {
 		enter:_enter,
 		max  :_max,
@@ -456,7 +481,8 @@ var _closeRule=function(){
 		showTab3       :_showTab3,
 		terminalScaningCallBack:_terminalScaningCallBack,
 		closeRule              :_closeRule,
-		init			:_init
+		init			:_init,
+		scroll	: _scroll
 	};
 })();
 
