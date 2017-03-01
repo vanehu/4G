@@ -215,7 +215,11 @@ order.prodModify = (function(){
         }
         OrderInfo.preBefore.prcFlag = "";
       //补换卡需要短信验证--redmine27429		
-		var param = {'munber':order.prodModify.choosedProdInfo.accNbr,areaId:order.prodModify.choosedProdInfo.areaId};
+        var param = {
+     		   "munber":order.prodModify.choosedProdInfo.accNbr,
+     		   "areaId":order.prodModify.choosedProdInfo.areaId,
+     		   "flag":"menu"
+     		};
 		$.callServiceAsJsonGet(contextPath+"/staff/login/changeUimCheck", param , {
 			"before" : function(){
 				$.ecOverlay("<strong>短信权限验证中,请稍等会儿....</strong>");

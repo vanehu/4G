@@ -97,39 +97,198 @@ order.writeCard = (function(){
 			$.alert("提示",'请选择号码!','confirmation');
 			return;
 		}
-		_createDialog(prodId,phoneNumber);
-//		ec.form.dialog.createDialog({"id":"-card"+prodId,width:350,"initCallBack":function(){			
-//			$("#write_card_phone_number"+prodId).val(phoneNumber);
-//			//ActiveX 控件无法用JQUERY方法获取
-//			ocx = document.getElementById("ocx"+prodId);
-//			//绑定读卡按钮事件
-//			$("#btnReadCard"+prodId).click(function(){
-//				$("#btnReadCard"+prodId).attr("disabled","disabled");
-//				if (!order.writeCard.readCard(prodId)) {
-//					$("#serialNum"+prodId).val("");
-//					$("#cardTypeId"+prodId).val("");
-//				}else{
-//					$.alert("提示",'成功读卡!','confirmation');
-//				}
-//				$("#btnReadCard"+prodId).removeAttr("disabled");
-//			});
-//			$("#btnWriteCard"+prodId).click(function(){
-//				$("#btnWriteCard"+prodId).attr("disabled","disabled");
-//				var writeResultFlg=order.writeCard.writeCard(prodId);
-//				if (!writeResultFlg) {
-//					//$.alert("提示",'写卡失败!','error');
-//					return;
-//				}
-//				$("#btnWriteCard"+prodId).removeAttr("disabled");
-//				if (writeResultFlg){//写卡成功
-//					$.modal.close();
-//				}
-//
-//			});
-//		},"submitCallBack":function(dialogForm,dialog){}});
+        if(prodId>0 && (OrderInfo.actionFlag == 2 || OrderInfo.actionFlag == 3)){
+        	//任务（小组） #1221286 营业门户 ---- 4G系统换卡增加单独短信验证的需求
+    		var param = {
+    		   "munber":order.prodModify.choosedProdInfo.accNbr,
+    		   "areaId":order.prodModify.choosedProdInfo.areaId,
+    		   "flag":"actionFlag"
+    		};
+    		$.callServiceAsJsonGet(contextPath+"/staff/login/changeUimCheck", param , {
+    			"before" : function(){
+    				$.ecOverlay("<strong>短信权限验证中,请稍等会儿....</strong>");
+    			},
+    			"done" : function(response){
+    				if (response.code == 0) {
+    					$('#changeUimSmsForm').bind('formIsValid', _smsFormIsValid).ketchup({bindElement:"changeuimsmsbutton"});
+    					easyDialog.open({
+    						container : 'CHANGEUIMSMS'
+    					});
+    					//置空短信校验码框
+    					$("#defaultTimeResend").text(second);//验证码提示秒数
+    					window.clearInterval(interResend);
+    					$("#smspwd").val("").removeClass("ketchup-input-error");
+    					$("#changeuimsmsresend").off("click").removeClass("cn").addClass("cf");
+    					if(response.data.randomCode !=undefined||response.data.randomCode !=''){
+    						$(".randomCode").show();
+    						//#544326 IE7不兼容$("#num .txtnum")语法
+//    						$("#num .txtnum").attr("value",response.data.randomCode);
+    						$("#changeUimSmsRandomNum").attr("value",response.data.randomCode);
+    					}
+//    					$("#checkNum .txtnum").attr("value",order.prodModify.choosedProdInfo.accNbr);
+    					$("#changeUimSmsCheckNum").attr("value",order.prodModify.choosedProdInfo.accNbr);
+    					//重新发送验证码成功后,验证错误次数置0.
+    					smsErrorCount=0;
+    					//重新发送验证码成功后,验证码有效期初始化5分钟.
+    					sendSmsAfter30s();
+    					//5分钟倒计时，超过5分钟未输入验证码就失效.
+    					leftInvalidTime=300;
+    					invalidAfter5Mins();
+    					$("#smspwd").focus();
+    					_setEnable("#changeuimsmsbutton", "#changeUimSmsForm");
+    				}else if(response.code==3){
+    					$.alert("提示",response.data);
+    					return;
+    				}else if(response.code==1002){
+    					_createDialog(prodId,phoneNumber);
+    					return;
+    				}else if(response.code==1003){
+    					$.alert("提示",response.data);
+    					return;
+    				}else{
+    					$.alertM(response.data.errMsg);
+    					return;
+    				}
+    			},
+    			"always" : function(){
+    				$.unecOverlay();
+    			},
+    			"fail" : function(response){
+    				$.alert("提示","请求可能发生异常，请稍候");
+    			}
+    		});	
+		}else{
+			_createDialog(prodId,phoneNumber);
+		}
+	};
+	//刷新时间
+	var second=30;
+	var interResend=null;
+	var showTime=function(){
+		if (second>0){
+			second=second-1;
+			if(second==0){
+				$("#defaultTimeResend").html("");	
+				$("#changeuimsmsresend").removeClass("cf").addClass("cn").off("click").on("click",_smsResend);
+				if(interResend!=null){
+					window.clearInterval(interResend);
+					$('#timeInfo').html("");
+					$("#changeuimsmsresend").attr("title","请点击重新发送短信验证码.");		
+					return;
+				}
+			}
+			$("#defaultTimeResend").html("在"+second+"秒内");	
+		}
+		$("#changeuimsmsresend").attr("title","请在"+second+"秒后再点击重新发送.");	
+	};
 
+	//短信验证码失效时间5分钟
+	var leftInvalidTime=300;
+	var smsInvalidTime=function(){
+		if (leftInvalidTime>0){
+			leftInvalidTime=leftInvalidTime-1;
+		}
+	};
+	//30秒后重发短信验证码
+	var sendSmsAfter30s=function(){
+		 second=30;
+		 window.clearInterval(interResend);
+		 interResend=window.setInterval(showTime,1000);
+	};
+	//5分钟之后短信验证码过期失效
+	var invalidAfter5Mins=function(){
+		window.setInterval(smsInvalidTime,1000);
 	};
 	
+	//重发验证码
+	var _smsResend=function(){ 
+		$.callServiceAsJsonGet(contextPath+"/staff/login/changeUimReSend",{'smsErrorCount':smsErrorCount} ,{
+			"done" :function(response){				
+				if (response.code==0) {
+					$.alert("提示","验证码发送成功，请及时输入验证.");
+					$("#smsresend").off("click").removeClass("cn").addClass("cf");
+					//randomNum2 = ec.util.getNRandomCode(2);
+					if(response.data.randomCode != null ){
+						$("#num .txtnum").attr("value",response.data.randomCode);
+					}
+					//重新发送验证码成功后,验证错误次数置0.
+					smsErrorCount=0;
+					//重新发送验证码成功后,验证码有效期初始化5分钟.
+					leftInvalidTime=300;
+					sendSmsAfter30s();
+					//5分钟倒计时，超过5分钟未输入验证码就失效.
+					invalidAfter5Mins();
+				} else{
+					if(response.data!=undefined||response.data!=null){
+						$.alert("提示",response.data);
+					}
+				};
+				_setEnable("#changeuimsmsbutton", "#changeUimSmsForm");
+			}
+		});	
+	};
+	var _setDisable = function(id, form){
+		$(id).attr("disabled", true);
+		$(form).off('formIsValid', _smsFormIsValid);
+	};
+	var _setEnable = function(id, form){
+		$(id).attr("disabled", false);
+		$(form).off('formIsValid').on('formIsValid', _smsFormIsValid);
+	};
+	var _smsFormIsValid = function(event, form) {
+		//判断短信验证码是否过期
+		if(leftInvalidTime==0){
+			$.alert("提示","对不起,您的短信验证码已经过期,请重新发送后再次验证.");
+			return;
+		}
+		//判断短信验证错误次数,超过三次后,验证码失效，需要重新发送.
+		if(smsErrorCount==3){
+			$.alert("提示","对不起,3次错误输入后验证码已自动失效,请重新发送验证码.");
+			$("#changeuimsmsresend").removeClass("cf").addClass("cn").off("click").on("click",_smsResend);
+			if(interResend!=null){
+				window.clearInterval(interResend);
+				$('#timeInfo').html("");
+				$("#changeuimsmsresend").attr("title","请点击重新发送短信验证码.");	
+				return;
+			}
+			return;
+		}
+		var smspwd = $.trim($("#smspwd").val());
+		if (smspwd=="") {
+			smspwd="N";
+		}
+		var params = "smspwd=" + smspwd + "&number=" + order.prodModify.choosedProdInfo.accNbr;
+		_setDisable("#changeuimsmsbutton", "#changeUimSmsForm");
+		$.callServiceAsJson(contextPath+"/staff/login/changeUimSmsValid", params, {
+			"before":function(){
+				$.ecOverlay("<strong>验证短信随机码中,请稍等会儿....</strong>");
+//				_setDisable("#changeuimsmsbutton", "#changeUimSmsForm");
+			},
+			"done" : function(response){
+				if (response.code == 0) {
+					try{
+						easyDialog.close();
+					}catch(e){
+						$("#CHANGEUIMSMS").hide();
+						$("#overlay").hide();
+					}
+					var phoneNumber = OrderInfo.getAccessNumber(prodId);
+					_createDialog(prodId,phoneNumber);
+				} else if (response.code == 1) {
+					smsErrorCount+=1;
+					$.alert("提示",response.data);
+				}else {
+						$.alert("提示","请求异常，请重新登录再试！");
+				}
+			},
+			"always":function(){
+				$.unecOverlay();
+//				_setEnable("#changeuimsmsbutton", "#changeUimSmsForm");
+			}
+		});
+		_setEnable("#changeuimsmsbutton", "#changeUimSmsForm");
+	};
+
 	var _createDialog = function(prodId,phoneNumber){
 		ec.form.dialog.createDialog({"id":"-card"+prodId,width:350,"initCallBack":function(){			
 			$("#write_card_phone_number"+prodId).val(phoneNumber);

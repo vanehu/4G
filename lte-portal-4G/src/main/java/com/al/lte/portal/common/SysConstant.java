@@ -45,8 +45,10 @@ public final class SysConstant {
     public static final String SESSION_KEY_CHANGEUIM_SMS = "_ecs_changeuim_sms_session_key";
     /** 补换卡短信验证随机二位序列号 */
     public static final String SESSION_KEY_CHANGEUIM_RANDONCODE = "_ecs_changeuim_sms_session_code";
-    /**免补换卡短信验证权限*/
+    /**补换卡短信验证权限*/
     public static final String CHANGEUIMSMS_CODE = "CHANGEUIMSMS_CODE";
+    /**换卡单独短信验证权限*/
+    public static final String HKDDDXYZ_CODE = "HKDDDXYZ";
     /**跳过二次鉴权验证权限*/
     public static final String SECOND_JUMPSPECIAL = "JUMPSPECIAL";
 

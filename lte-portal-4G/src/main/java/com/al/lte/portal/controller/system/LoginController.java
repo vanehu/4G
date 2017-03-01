@@ -775,10 +775,15 @@ public class LoginController extends BaseController {
 			String munber = (String) paramMap.get("munber");
 			String areaId = (String) paramMap.get("areaId");
 			String isSecond = (String) paramMap.get("isSecond");
+			String flag = (String) paramMap.get("flag");
 			request.getSession().setAttribute(SESSION_CHANGEUIM_SMS_MUNBER, munber);
 			request.getSession().setAttribute(SESSION_CHANGEUIM_SMS_AREAID, areaId);
 			SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);
-			String changeUimMsgValid  = staffBmo.checkOperatSpec(SysConstant.CHANGEUIMSMS_CODE, sessionStaff);
+			String operatSpecCd = SysConstant.CHANGEUIMSMS_CODE;
+			if(flag.equals("actionFlag")){
+				operatSpecCd = SysConstant.HKDDDXYZ_CODE;
+			}
+			String changeUimMsgValid  = staffBmo.checkOperatSpec(operatSpecCd, sessionStaff);
 			//当前工号无免补换卡短信验证权限!
 			if("0".equals(changeUimMsgValid)||SysConstant.STR_Y.equals(isSecond)){
 				//短信发送时间间隔,10秒内重复发送，会被拦截！
