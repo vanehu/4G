@@ -2270,7 +2270,7 @@ order.prodModify = (function(){
         }
         OrderInfo.preBefore.prcFlag = "";
         
-		OrderInfo.busitypeflag=0;
+		OrderInfo.busitypeflag=48;
 		OrderInfo.initData(CONST.ACTION_CLASS_CD.PROD_ACTION,CONST.BO_ACTION_TYPE.PRODUCT_PASSWORD,0,CONST.getBoActionTypeName(CONST.BO_ACTION_TYPE.PRODUCT_PASSWORD),"");
 		var param = _getCallRuleParam(CONST.BO_ACTION_TYPE.PRODUCT_PASSWORD,_choosedProdInfo.prodInstId);
 		var callParam = {
@@ -2330,6 +2330,7 @@ order.prodModify = (function(){
 		boProdPasswords.push(boProdPasswords_add);
 		var data = {boProdPasswords:boProdPasswords} ;
 		OrderInfo.actionFlag=32;//重置产品密码
+		
 		SoOrder.submitOrder(data);
 	}
 	
@@ -4172,7 +4173,7 @@ order.prodModify = (function(){
         	}
         }
         OrderInfo.preBefore.prcFlag = "";
-        
+        OrderInfo.busitypeflag=51;
 		var param = {
 			mainAccNbr : _choosedProdInfo.accNbr,
 			areaId : _choosedProdInfo.areaId

@@ -62,7 +62,7 @@ prod.transferModify = (function(){
         }
         OrderInfo.preBefore.prcFlag = "";
         
-		OrderInfo.busitypeflag=0;
+		OrderInfo.busitypeflag=49;
 		/*	if(order.prodModify.choosedProdInfo.prodStateCd!="100000"||order.prodModify.choosedProdInfo.prodStateCd!="140000"){
 					$.alert("提示","产品状态为\"在用\"才能进行过户","information");
 					return;

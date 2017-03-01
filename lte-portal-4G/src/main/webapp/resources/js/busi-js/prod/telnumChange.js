@@ -628,7 +628,7 @@ prod.telnum = (function(){
 	        }
 	        OrderInfo.preBefore.prcFlag = "";
 	        
-			OrderInfo.busitypeflag=0;
+			OrderInfo.busitypeflag=50;
 			var param = order.prodModify.getCallRuleParam(CONST.BO_ACTION_TYPE.UPDATE_ACCNBR,order.prodModify.choosedProdInfo.prodInstId);
 			var callParam = {
 					boActionTypeCd : CONST.BO_ACTION_TYPE.UPDATE_ACCNBR,
