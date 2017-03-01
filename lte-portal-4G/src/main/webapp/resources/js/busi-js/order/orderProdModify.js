@@ -1410,7 +1410,7 @@ order.prodModify = (function(){
 	var orderRemoveProd = function(){
 		OrderInfo.prodAttrs = [];
 		if(OrderInfo.authRecord.resultCode!="0" && OrderInfo.preBefore.prcFlag != "Y"){
-			if (_querySecondBusinessAuth("5", "Y", "showOrderRemoveProd")) {
+			if (_querySecondBusinessAuth("5", "Y", orderRemoveProd)) {
 				return;
 			}
 		}
@@ -1420,7 +1420,7 @@ order.prodModify = (function(){
 		var isPCF = offerChange.queryPortalProperties(propertiesKey);
 		if(isPCF == "ON"){
 			if(OrderInfo.preBefore.prcFlag != "Y"){
-				if(!_preCheckBeforeOrder("5","showOrderRemoveProd")){
+				if(!_preCheckBeforeOrder("5",orderRemoveProd)){
 					return ;
 				}
 			}
