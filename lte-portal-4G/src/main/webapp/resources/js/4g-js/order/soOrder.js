@@ -4039,7 +4039,9 @@ SoOrder = (function() {
 			data : {
 				boCustInfos 		: [],
 				boCustIdentities	: [],
-				boPartyContactInfo	: []
+				boPartyContactInfo	: [],
+				boCustCheckLogs     : [],
+				boCustProfiles      : []
 			}
 		};
 		//经办人信息节点
@@ -4049,6 +4051,16 @@ SoOrder = (function() {
 		//判断是否联系人节点，只有填写了经办人联系号码则创建联系人节点，否则不创建
 		if(ec.util.isObj(OrderInfo.bojbrCustInfos.telNumber)){
 			busiOrder.data.boPartyContactInfo.push(OrderInfo.bojbrPartyContactInfo);
+		}
+		if(OrderInfo.bojbrCustCheckLogs.checkCustCertSwitch == "ON"){
+			OrderInfo.bojbrCustIdentities.custId = OrderInfo.handleCustId;
+			busiOrder.data.boCustCheckLogs.push(OrderInfo.bojbrCustIdentities);
+			var realNameChech = {
+					partyProfileCatgCd: CONST.BUSI_ORDER_ATTR.REAL_NAME_CHECK,
+					profileValue: "1",
+		            state: "ADD"
+			};
+			busiOrder.data.boCustProfiles.push(realNameChech);
 		}
 		busiOrders.push(busiOrder);
 	};
@@ -4159,7 +4171,9 @@ SoOrder = (function() {
 					data : {
 						boCustInfos 		: [],
 						boCustIdentities	: [],
-						boPartyContactInfo	: []
+						boPartyContactInfo	: [],
+						boCustCheckLogs     : [],
+						boCustProfiles      : []
 					}
 				};
 				//信息节点
@@ -4204,6 +4218,26 @@ SoOrder = (function() {
 						contactGender	: contactGender,				//参与人联系人的性别
 						contactAddress	: subUserInfo.orderAttrAddr		//参与人的联系地址
 					});
+				}
+				if(subUserInfo.checkCustCertSwitch == "ON"){
+					var boCustCheckLog = {
+						checkMethod			: subUserInfo.checkMethod,
+						custId 		        : subUserInfo.instId,
+						objId		        : "",	
+						checkDate		    : subUserInfo.checkDate,		
+						checker		        : subUserInfo.checker,
+						checkChannel		: subUserInfo.checkChannel,						
+						certCheckResult		: subUserInfo.certCheckResult,
+						errorMessage	    : subUserInfo.errorMessage,				
+						staffId	            : subUserInfo.staffId		
+					};
+					busiOrder.data.boCustCheckLogs.push(boCustCheckLog);
+					var realNameChech = {
+							partyProfileCatgCd: CONST.BUSI_ORDER_ATTR.REAL_NAME_CHECK,
+							profileValue: "1",
+				            state: "ADD"
+					};
+					busiOrder.data.boCustProfiles.push(realNameChech);
 				}
 				busiOrders.push(busiOrder);
 			}

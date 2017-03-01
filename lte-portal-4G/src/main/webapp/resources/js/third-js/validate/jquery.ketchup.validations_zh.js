@@ -464,5 +464,9 @@ jQuery.ketchup
 		}
 	}
 	return flag ;
+})
+
+.validation('gs15200_gb321002015_01', '4-64个字符', function (form, el, code) {
+    return this.isLength4_64(code);
 });
 

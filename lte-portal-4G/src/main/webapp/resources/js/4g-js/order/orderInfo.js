@@ -319,6 +319,9 @@ OrderInfo = (function() {
 			busiOrder.data.boCustProfiles = [];
 			busiOrder.data.boCustProfiles = OrderInfo.boCustProfiles;
 		}
+		if(OrderInfo.boCustCheckLogs.checkCustCertSwitch == "ON"){
+			busiOrder.data.boCustCheckLogs.push(OrderInfo.boCustCheckLogs);
+		}
 		busiOrders.push(busiOrder);
 	};
 	
@@ -1754,6 +1757,7 @@ OrderInfo = (function() {
 			OrderInfo.bojbrCustInfos 		  = $.extend(true, {}, _bojbrCustInfos);		//经办人：客户信息节点
 			OrderInfo.bojbrCustIdentities	  = $.extend(true, {}, _bojbrCustIdentities);	//经办人：客户证件节点
 			OrderInfo.bojbrPartyContactInfo   = $.extend(true, {}, _bojbrPartyContactInfo);	//经办人：客户证件节点
+			OrderInfo.bojbrCustCheckLogs   = $.extend(true, {}, _bojbrCustCheckLogs);	//经办人新建：参与人核查记录节点
 		}
 	};
 	
@@ -1765,6 +1769,13 @@ OrderInfo = (function() {
 	
 	//经办人客户信息，针对经办人老客户缓存一些数据
 	var _handleCust = {};
+	
+	//参与人核查记录节点
+	var _boCustCheckLogs = {};
+	//参与人核查记录节点，使用人
+	var _bojbrCustCheckLogs = {};
+	//行业类型
+	var _industryClassInfo = {};
 	
 	return {	
 		order					: _order,
@@ -1883,6 +1894,9 @@ OrderInfo = (function() {
 		isHandleCustNeeded		:_isHandleCustNeeded,
 		handleCust				:_handleCust,
 		memBusiOrders           :_memBusiOrders,
-		resetOrderInfoCache		:_resetOrderInfoCache
+		resetOrderInfoCache		:_resetOrderInfoCache,
+        boCustCheckLogs         :_boCustCheckLogs,
+        bojbrCustCheckLogs      :_bojbrCustCheckLogs,
+        industryClassInfo       :_industryClassInfo
 	};
 })();

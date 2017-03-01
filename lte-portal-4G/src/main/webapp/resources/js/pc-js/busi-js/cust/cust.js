@@ -2514,7 +2514,42 @@ order.cust = (function(){
 			_setValueForAgentOrderSpan(man.resultContent);
 			$("#orderAttrReadCertBtn").hide();
 			$("#orderAttrReset").show();
-			$("#orderIdentidiesTypeCd").attr("disabled","disabled");  
+			$("#orderIdentidiesTypeCd").attr("disabled","disabled"); 
+			_queryCustInfo();
+			if(OrderInfo.queryCustInfo.code != 0){
+				//新建需要,实名制核验
+				var switchResponse = $.callServiceAsJson(contextPath + "/properties/getValue", {"key": "CHECK_CUST_CERT_" + OrderInfo.staff.soAreaId.substr(0, 3)});
+			    var checkCustCertSwitch = "";
+				if (switchResponse.code == "0") {
+			    	checkCustCertSwitch = switchResponse.data;
+			    }
+				if(checkCustCertSwitch == "ON"){
+					var  orderIdentidiesTypeCd = ec.util.defaultStr($("#orderIdentidiesTypeCd").val());
+					var  identityNum = ec.util.defaultStr($("#orderAttrIdCard").val());
+					var inParams = {
+							"certType": orderIdentidiesTypeCd,
+							"certNum": identityNum
+						};
+					var checkUrl=contextPath+"/cust/checkCustCert";
+					var checkResponse = $.callServiceAsJson(checkUrl, inParams, {"before":function(){
+					}});
+					if (checkResponse.code == 0) {
+						var result = checkResponse.data.result;
+						OrderInfo.handleInfo.checkCustCertSwitch = checkCustCertSwitch;
+						OrderInfo.handleInfo.checkMethod = result.checkMethod;
+						OrderInfo.handleInfo.objId = "";
+						OrderInfo.handleInfo.checkDate = result.checkDate;
+						OrderInfo.handleInfo.checker = OrderInfo.staff.staffName;
+						OrderInfo.handleInfo.checkChannel = OrderInfo.staff.channelCode;
+						OrderInfo.handleInfo.certCheckResult = result.certCheckResult;
+						OrderInfo.handleInfo.errorMessage = result.errorMessage;
+						OrderInfo.handleInfo.staffId = OrderInfo.staff.staffId;
+					}else{
+						$.alertM(checkResponse.data);
+						return;
+					}
+				};
+			}
 			//弹出拍照弹框
 			_showPhotoGraph(man.resultContent);
 		}else{//老模式
@@ -2574,6 +2609,39 @@ order.cust = (function(){
 		if(orderIdentidiesTypeCd=="" || identityNum =="" || orderAttrName==""|| orderAttrAddr==""){
 			$.alert("提示","经办人信息不完整，请重新填写完整！");
 			return;
+		}
+		_queryCustInfo();
+		if(OrderInfo.queryCustInfo.code != 0){
+			//新建需要,实名制核验
+			var switchResponse = $.callServiceAsJson(contextPath + "/properties/getValue", {"key": "CHECK_CUST_CERT_" + OrderInfo.staff.soAreaId.substr(0, 3)});
+		    var checkCustCertSwitch = "";
+			if (switchResponse.code == "0") {
+		    	checkCustCertSwitch = switchResponse.data;
+		    }
+			if(checkCustCertSwitch == "ON"){
+				var inParams = {
+						"certType": orderIdentidiesTypeCd,
+						"certNum": identityNum
+					};
+				var checkUrl=contextPath+"/cust/checkCustCert";
+				var checkResponse = $.callServiceAsJson(checkUrl, inParams, {"before":function(){
+				}});
+				if (checkResponse.code == 0) {
+					var result = checkResponse.data.result;
+					OrderInfo.handleInfo.checkCustCertSwitch = checkCustCertSwitch;
+					OrderInfo.handleInfo.checkMethod = result.checkMethod;
+					OrderInfo.handleInfo.objId = "";
+					OrderInfo.handleInfo.checkDate = result.checkDate;
+					OrderInfo.handleInfo.checker = OrderInfo.staff.staffName;
+					OrderInfo.handleInfo.checkChannel = OrderInfo.staff.channelCode;
+					OrderInfo.handleInfo.certCheckResult = result.certCheckResult;
+					OrderInfo.handleInfo.errorMessage = result.errorMessage;
+					OrderInfo.handleInfo.staffId = OrderInfo.staff.staffId;
+				}else{
+					$.alertM(checkResponse.data);
+					return;
+				}
+			};
 		}
 		easyDialog.open({
 			container : "ec-dialog-photo-graph"
@@ -2710,20 +2778,13 @@ order.cust = (function(){
 		$("#confirmAgree").removeClass("btna_o").addClass("btna_g");
 		$("#confirmAgree").off("click");
 		OrderInfo.subHandleInfo = {};
-		//客户定位
 		var  orderIdentidiesTypeCd = ec.util.defaultStr($("#orderIdentidiesTypeCd").val());
 		var  identityNum = ec.util.defaultStr($("#orderAttrIdCard").val());
 		var  orderAttrName = ec.util.defaultStr($("#orderAttrName").val());
 		var  orderAttrAddr = ec.util.defaultStr($("#orderAttrAddr").val());
 		var  orderAttrPhoneNbr = ec.util.defaultStr($("#orderAttrPhoneNbr").val());
-		var custParam = {
-				"identityCd":orderIdentidiesTypeCd,
-				"identityNum":identityNum,
-				"partyName":"",
-				"queryType" :""
-		};
-		var queryCustInfo = $.callServiceAsJson(contextPath+"/token/pc/cust/queryCustInfo", custParam);
         var param;
+        var queryCustInfo = OrderInfo.queryCustInfo;
 		if(queryCustInfo.code == 0){//定位到客户，照片不下省
 			param = {
 			    photographs: [{
@@ -2793,6 +2854,17 @@ order.cust = (function(){
 		OrderInfo.subHandleInfo.orderAttrFlag = OrderInfo.orderAttrFlag;
 		var uploadCustCertificate = $.callServiceAsJson(contextPath+"/token/pc/cust/uploadCustCertificate",param);
 		if(uploadCustCertificate.code == 0){
+			if(OrderInfo.handleInfo.checkCustCertSwitch == "ON"){
+				OrderInfo.subHandleInfo.checkCustCertSwitch = checkCustCertSwitch;
+				OrderInfo.subHandleInfo.checkMethod = result.checkMethod;
+				OrderInfo.subHandleInfo.objId = "";
+				OrderInfo.subHandleInfo.checkDate = result.checkDate;
+				OrderInfo.subHandleInfo.checker = OrderInfo.staff.staffName;
+				OrderInfo.subHandleInfo.checkChannel = OrderInfo.staff.channelCode;
+				OrderInfo.subHandleInfo.certCheckResult = result.certCheckResult;
+				OrderInfo.subHandleInfo.errorMessage = result.errorMessage;
+				OrderInfo.subHandleInfo.staffId = OrderInfo.staff.staffId;
+			}
 			OrderInfo.subHandleInfo.authFlag = "Y";
 			OrderInfo.subHandleInfo.virOlId = uploadCustCertificate.data.virOlId;
 			_closeShowPhoto();
@@ -2866,6 +2938,38 @@ order.cust = (function(){
 				isOldCust : "Y"
 			};
         }else{//定位不到客户C1
+    		if(OrderInfo.queryCustInfo.code != 0){
+    			//新建需要,实名制核验
+    			var switchResponse = $.callServiceAsJson(contextPath + "/properties/getValue", {"key": "CHECK_CUST_CERT_" + OrderInfo.staff.soAreaId.substr(0, 3)});
+    		    var checkCustCertSwitch = "";
+    			if (switchResponse.code == "0") {
+    		    	checkCustCertSwitch = switchResponse.data;
+    		    }
+    			if(checkCustCertSwitch == "ON"){
+    				var inParams = {
+    						"certType": orderIdentidiesTypeCd,
+    						"certNum": identityNum
+    					};
+    				var checkUrl=contextPath+"/cust/checkCustCert";
+    				var checkResponse = $.callServiceAsJson(checkUrl, inParams, {"before":function(){
+    				}});
+    				if (checkResponse.code == 0) {
+    					var result = checkResponse.data.result;
+    					userSubInfo.checkCustCertSwitch = checkCustCertSwitch;
+    					userSubInfo.checkMethod = result.checkMethod;
+    					userSubInfo.objId = "";
+    					userSubInfo.checkDate = result.checkDate;
+    					userSubInfo.checker = OrderInfo.staff.staffName;
+    					userSubInfo.checkChannel = OrderInfo.staff.channelCode;
+    					userSubInfo.certCheckResult = result.certCheckResult;
+    					userSubInfo.errorMessage = result.errorMessage;
+    					userSubInfo.staffId = OrderInfo.staff.staffId;
+    				}else{
+    					$.alertM(checkResponse.data);
+    					return;
+    				}
+    			};
+    		}
         	userSubInfo = {
     			prodId : user_prodId,
     			orderIdentidiesTypeCd : orderIdentidiesTypeCd,
@@ -2979,6 +3083,20 @@ order.cust = (function(){
 			$('#orderAttrAddr').val("");//地址
 		}
 		OrderInfo.subHandleInfo = {};
+	};
+	 //客户定位
+	var _queryCustInfo = function() {
+		//客户定位
+		var  orderIdentidiesTypeCd = ec.util.defaultStr($("#orderIdentidiesTypeCd").val());
+		var  identityNum = ec.util.defaultStr($("#orderAttrIdCard").val());
+		var custParam = {
+				"identityCd":orderIdentidiesTypeCd,
+				"identityNum":identityNum,
+				"partyName":"",
+				"queryType" :""
+		};
+		var queryCustInfo = $.callServiceAsJson(contextPath+"/token/pc/cust/queryCustInfo", custParam);
+		OrderInfo.queryCustInfo = queryCustInfo;
 	};
 	
 	return {

@@ -134,4 +134,11 @@ public interface CustBmo {
 	 * 实名制证件图片添加水印
 	 */
 	public Map<String, Object> preHandleCustCertificate(String base64ImageStr, String venderId) throws IOException;
+	/**
+	 * 实名核验
+	 * @param queryParam
+	 * @return
+	 */
+	public Map<String, Object> checkCustCert(Map<String, Object> dataBusMap, String optFlowNum,
+            SessionStaff sessionStaff) throws Exception;
 }

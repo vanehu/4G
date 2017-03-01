@@ -417,6 +417,41 @@
                                       <label class="f_red">*</label>
                                 </td>
                           </tr>
+                          <tr id="industryClassCd">
+                                <td> 行业类型：</td>
+                                <td>
+                                    <table>
+                                        <tr>
+                                            <td>
+                                                <select id="industryClassCdSe" onchange="order.cust.industryClassCdSeChoose(this,'first')">
+                                                </select>
+                                            </td>
+                                            <td>-></td>
+                                            <td>
+                                                <select id="industryClassCdSeSecond" onchange="order.cust.industryClassCdSeChoose(this,'second')">
+                                                    <option value="def">--请选择--</option>
+                                                </select>
+                                            </td>
+                                            <td>-></td>
+                                            <td>
+                                                <select id="industryClassCdSeThird">
+                                                    <option value="def">--请选择--</option>
+                                                </select>
+                                                <label class="f_red">*</label>
+                                            </td>
+                                        </tr>
+                                    </table>                                    
+                                </td>
+                          </tr>
+                          <tr>
+                                <td> 实名核验：</td>
+                                <td>
+                                      <select id="isCheck" disabled="disabled">
+                                        <option value="1">是</option>
+                                      </select>
+                                      <label class="f_red">*</label>
+                                </td>
+                          </tr>
                           <tr>
                                 <td> 证件类型：</td>
                                 <td> 
@@ -972,6 +1007,13 @@
 	                <a class="btn_h30" id="orderUserReadCertBtn" style="margin-top: 0px; display: none;"><span>读 卡</span></a>
 	                <a class="btn_h30" id="orderUserQryBtn" style="margin-top: 0px; display: none;"><span>查询</span></a>
 	                <a class="btn_h30" id="orderUserResetBtn" style="margin-top: 0px; display: none;"><span>重置</span></a>
+	            </li>
+	            <li id="li_isCheck">
+                    <label>实名核验：</label>
+		            <select id="isCheck" disabled="disabled">
+                        <option value="1">是</option>
+                    </select>
+		            <label class="f_red">*</label>
 	            </li>
 	            <!-- 默认为个人用户，隐藏客户类型 -->
 	            <li id="li_order_remark" style="display: none;">

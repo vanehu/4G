@@ -249,7 +249,8 @@ CONST = (function(){
 		CHANGE_CARD_AREA_ID : "800000067", //异地补换卡漫游省地区id
 		VIROLID : "810000000",//虚拟订单ID属性
 		CURIP :"40010038",//业务办理ip
-		PORTAL_ORDER_ID	:"8000066"//前台订单编号ID	
+		PORTAL_ORDER_ID	:"8000066",//前台订单编号ID	
+		REAL_NAME_CHECK :"1000100" //客户实名认证标识
 	};
 	
 	//属性规格

@@ -3220,7 +3220,9 @@ SoOrder = (function() {
 			data : {
 				boCustInfos 		: [],
 				boCustIdentities	: [],
-				boPartyContactInfo	: []
+				boPartyContactInfo	: [],
+				boCustCheckLogs     : [],
+				boCustProfiles      : []
 			}
 		};
 		//经办人信息节点
@@ -3265,6 +3267,26 @@ SoOrder = (function() {
 		        statusCd : "100001"//订单状态
 			});
 		}
+		if(OrderInfo.subHandleInfo.checkCustCertSwitch == "ON"){
+			var boCustCheckLog = {
+				checkMethod			: OrderInfo.subHandleInfo.checkMethod,
+				custId 		        : OrderInfo.HandleCustInstId,
+				objId		        : "",	
+				checkDate		    : OrderInfo.subHandleInfo.checkDate,		
+				checker		        : OrderInfo.subHandleInfo.checker,
+				checkChannel		: OrderInfo.subHandleInfo.checkChannel,						
+				certCheckResult		: OrderInfo.subHandleInfo.certCheckResult,
+				errorMessage	    : OrderInfo.subHandleInfo.errorMessage,				
+				staffId	            : OrderInfo.subHandleInfo.staffId		
+			};
+			busiOrder.data.boCustCheckLogs.push(boCustCheckLog);
+			var realNameChech = {
+					partyProfileCatgCd: CONST.BUSI_ORDER_ATTR.REAL_NAME_CHECK,
+					profileValue: "1",
+		            state: "ADD"
+			};
+			busiOrder.data.boCustProfiles.push(realNameChech);
+		}
 		busiOrders.push(busiOrder);
 	};	
 	
@@ -3289,7 +3311,9 @@ SoOrder = (function() {
 						data : {
 							boCustInfos 		: [],
 							boCustIdentities	: [],
-							boPartyContactInfo	: []
+							boPartyContactInfo	: [],
+							boCustCheckLogs     : [],
+							boCustProfiles      : []
 						}
 					};
 					//经办人信息节点
@@ -3333,6 +3357,26 @@ SoOrder = (function() {
 					        state : "ADD",//状态
 					        statusCd : "100001"//订单状态
 						});
+					}
+					if(subUserInfo.checkCustCertSwitch == "ON"){
+						var boCustCheckLog = {
+							checkMethod			: subUserInfo.checkMethod,
+							custId 		        : subUserInfo.instId,
+							objId		        : "",	
+							checkDate		    : subUserInfo.checkDate,		
+							checker		        : subUserInfo.checker,
+							checkChannel		: subUserInfo.checkChannel,						
+							certCheckResult		: subUserInfo.certCheckResult,
+							errorMessage	    : subUserInfo.errorMessage,				
+							staffId	            : subUserInfo.staffId		
+						};
+						busiOrder.data.boCustCheckLogs.push(boCustCheckLog);
+						var realNameChech = {
+								partyProfileCatgCd: CONST.BUSI_ORDER_ATTR.REAL_NAME_CHECK,
+								profileValue: "1",
+					            state: "ADD"
+						};
+						busiOrder.data.boCustProfiles.push(realNameChech);
 					}
 					busiOrders.push(busiOrder);
 			    }

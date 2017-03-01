@@ -1383,8 +1383,40 @@ public class CustController extends BaseController {
             						 if(partyProfileCatgTypeCd==tabList.get(i).get("partyProfileCatgTypeCd")){
                 						 tabTempList.add(list.get(j));
                                 		 
-                                	 }
-            						 
+    }
+
+    @RequestMapping(value = "/checkCustCert", method = RequestMethod.POST)
+    @ResponseBody
+    public JsonResponse checkCustCert(@RequestBody Map<String, Object> paramMap,
+			@LogOperatorAnn String flowNum,HttpServletResponse response){
+		Map<String, Object> resMap = null;
+		JsonResponse jsonResponse = null;
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+                SysConstant.SESSION_KEY_LOGIN_STAFF);
+		String areaId=(String) paramMap.get("areaId");
+		if(("").equals(areaId)||areaId==null){
+			paramMap.put("areaId", sessionStaff.getCurrentAreaId());
+		}
+		paramMap.put("staffId", sessionStaff.getStaffId());
+		List<Map<String, Object>> list = null;
+		try {
+			resMap = custBmo.checkCustCert(paramMap,
+					flowNum, sessionStaff);
+			if (ResultCode.R_SUCC.equals(resMap.get("resultCode"))) {
+                jsonResponse = super.successed(resMap, ResultConstant.SUCCESS.getCode());
+            } else {
+                jsonResponse = super.failed(resMap.get("resultMsg"), ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+            }
+		} catch (BusinessException be) {
+			return super.failed(be);
+		} catch (InterfaceException ie) {
+			return super.failed(ie, paramMap, ErrorCode.CHECK_CUST_CERT);
+		} catch (Exception e) {
+			log.error("实名核验checkCustCert服务返回的数据异常", e);
+			return super.failed(ErrorCode.CHECK_CUST_CERT, e, paramMap);
+		}
+		return jsonResponse;
+    }
             					 }
         					 }
         					 

@@ -167,8 +167,61 @@ order.cust = (function(){
 		var partyTypeCd=$(scope).val();
         if ("1" == partyTypeCd) {
             $($(scope).parents(".network")[0]).find("#cCustName").attr("data-validate", "validate(personal) on(blur)");
+            $("#industryClassCd").hide();
+            OrderInfo.industryClassInfo ={};
         } else if ("2" == partyTypeCd) {
             $($(scope).parents(".network")[0]).find("#cCustName").attr("data-validate", "validate(government) on(blur)");
+            $("#industryClassCd").show();
+            $("#industryClassCdSe").empty();
+            //政企客户显示行业类型
+    		var param = {
+    			"areaId"      :$("#p_cust_areaId").val(),
+    		    "attrSpecCode":"INDUSTRY_CLASS"
+    		} ;
+    		$.callServiceAsJson(contextPath+"/staffMgr/getCTGMainData",param,{
+    			"done" : function(response){
+    				if(response.code==0){
+    					var data = response.data ;
+    					if(data!=undefined && data.length>0){
+    						OrderInfo.industryClassInfo = data;
+    						for(var i=0;i<data.length;i++){
+    							var busiStatus = data[i];
+    							$("#industryClassCdSe").append("<option value='"+busiStatus.attrValueCode+"' >"+busiStatus.attrValueName+"</option>");
+    						}
+    					}
+
+    					var industryClassCdSe = $("#industryClassCdSe").val();
+    					var seCondGradIndustryClass = [];
+    					
+    					for(var i=0;i<OrderInfo.industryClassInfo.length;i++){
+    						if(OrderInfo.industryClassInfo[i].attrValueCode == industryClassCdSe){
+    							seCondGradIndustryClass = OrderInfo.industryClassInfo[i].attrSpecDesc.seCondGradIndustryClass;
+    							if(OrderInfo.industryClassInfo[i].attrExtendValue!=null &&OrderInfo.industryClassInfo[i].attrExtendValue!=""){
+    								$("#identidiesTypeCd").val(OrderInfo.industryClassInfo[i].attrExtendValue);
+    								$("#identidiesTypeCd").attr("disabled","disabled"); 
+    							}else{
+    								$("#identidiesTypeCd").removeAttr("disabled");
+    							}
+    							break;
+    						}
+    					}
+    					$("#industryClassCdSeSecond").empty();
+    					$("#industryClassCdSeSecond").append("<option value='def'>--请选择--</option>");
+    					$("#industryClassCdSeThird").empty();
+    					$("#industryClassCdSeThird").append("<option value='def'>--请选择--</option>");
+    					for(var i=0;i<seCondGradIndustryClass.length;i++){
+    						var seCondInfo= seCondGradIndustryClass[i];
+    						$("#industryClassCdSeSecond").append("<option value='"+seCondInfo.industryClassCd+"' >"+seCondInfo.name+"</option>");
+    					}
+    				}else if(response.code==-2){
+    					$.alertM(response.data);
+    					return;
+    				}else{
+    					$.alert("提示","调用主数据接口失败！");
+    					return;
+    				}
+    			}
+    		});
         }
 		//客户类型关联证件类型下拉框
 		$("#"+id).empty();
@@ -510,6 +563,23 @@ order.cust = (function(){
                 }
             }
         }
+		if($("#partyTypeCd").val() == 2){
+			for(var i=0;i<OrderInfo.industryClassInfo.length;i++){
+				if(OrderInfo.industryClassInfo[i].attrExtendValue == identidiesTypeCd){
+					$("#industryClassCdSeSecond").empty();
+					$("#industryClassCdSeSecond").append("<option value='def'>--请选择--</option>");
+					$("#industryClassCdSeThird").empty();
+					$("#industryClassCdSeThird").append("<option value='def'>--请选择--</option>");
+					$("#industryClassCdSe").attr("value",OrderInfo.industryClassInfo[i].attrValueCode);
+					$("#identidiesTypeCd").attr("disabled","disabled"); 
+					for(var j=0;j<OrderInfo.industryClassInfo[i].attrSpecDesc.seCondGradIndustryClass.length;j++){
+						var seCondInfo= OrderInfo.industryClassInfo[i].attrSpecDesc.seCondGradIndustryClass[j];
+						$("#industryClassCdSeSecond").append("<option value='"+seCondInfo.industryClassCd+"' >"+seCondInfo.name+"</option>");
+					}
+					break;
+				}
+			}
+		}
 		_custcreateButton();
         _jbrcreateButton();//经办人事件绑定
 		//如果是身份证，则禁止输入，否则启用输入控件
@@ -645,6 +715,26 @@ order.cust = (function(){
 				   $.alert("提示", "政企单位用户经办人信息为必填项！");
 				   return;
 			   }
+			   var industryClassCdSe = $("#industryClassCdSe").val();
+			   var identidiesTypeCd =  $("#identidiesTypeCd").val();
+			   var checkFlag = true;
+			   var tipsInfo="";
+			   for(var i=0;i<OrderInfo.industryClassInfo.length;i++){
+				   if(industryClassCdSe == OrderInfo.industryClassInfo[i].attrValueCode && OrderInfo.industryClassInfo[i].attrExtendValue!=null && OrderInfo.industryClassInfo[i].attrExtendValue!="" && identidiesTypeCd!=OrderInfo.industryClassInfo[i].attrExtendValue){
+					   checkFlag = false;
+					   tipsInfo="行业类型为'"+OrderInfo.industryClassInfo[i].attrValueName+"' 时，证件类型必须 "+$("#identidiesTypeCd option[value=" + OrderInfo.industryClassInfo[i].attrExtendValue + "]").text()+"'";
+					   break;
+				   }else if(identidiesTypeCd == OrderInfo.industryClassInfo[i].attrExtendValue && industryClassCdSe != OrderInfo.industryClassInfo[i].attrValueCode){
+					   checkFlag = false;
+					   tipsInfo="证件类型为 '"+$("#identidiesTypeCd option[value=" + OrderInfo.industryClassInfo[i].attrExtendValue + "]").text()+"' 时，行业类型必须为 '"+OrderInfo.industryClassInfo[i].attrValueName+"'";
+					   break;
+				   }
+			   };
+               if(!checkFlag){
+            	   $.alert("提示",tipsInfo);
+    			   return; 
+               }
+			   
 		   }
 	    	var url=contextPath+"/order/createorderlonger";
 			var response = $.callServiceAsJson(url, {});
@@ -1193,6 +1283,7 @@ order.cust = (function(){
 			return;
 		}
 		tabProfileFlag="1";
+		$("#partyTypeCd").val("1");//默认个人客户
 		_partyTypeCdChoose($("#partyTypeCd").children(":first-child"),"identidiesTypeCd");
 		_setSelectVal("identidiesTypeCd","1"); //默认证件类型使用“身份证”
 		_identidiesTypeCdChoose($("#identidiesTypeCd  option:selected").length ?  $("#identidiesTypeCd  option:selected") : $("#identidiesTypeCd").children(":first-child"),"cCustIdCard");
@@ -1746,7 +1837,7 @@ order.cust = (function(){
 			}
 		});
 	};
-	var _createCustConfirm = function() {
+	var _createCustConfirm = function(inData) {
 		//验证客户信息的长度（字符长度）--解决maxleng中中文只占一个字符导致后台数据库存储长度溢出
 		var isLengthFlag = true; 
 		$("#user_add  input").each(function(){
@@ -1806,6 +1897,15 @@ order.cust = (function(){
 	        state : "ADD",//状态
 	        statusCd : "100001"//订单状态
 	};
+	if($("#partyTypeCd").val() == 2){
+		if($("#industryClassCdSeThird").val() !=null && $("#industryClassCdSeThird").val() !="" && $("#industryClassCdSeThird").val() !="def"){
+			OrderInfo.boCustInfos.industryClassCd = $("#industryClassCdSeThird").val();
+		}else if($("#industryClassCdSeSecond").val() !=null && $("#industryClassCdSeSecond").val() !="" && $("#industryClassCdSeSecond").val() !="def"){
+			OrderInfo.boCustInfos.industryClassCd = $("#industryClassCdSeSecond").val();
+		}else {
+			OrderInfo.boCustInfos.industryClassCd = $("#industryClassCdSe").val();
+		}
+	}
 	OrderInfo.boCustInfos.name=createCustInfo.cCustName;//客户名称
 	OrderInfo.boCustInfos.areaId=createCustInfo.cAreaId;//客户地区
 	OrderInfo.boCustInfos.partyTypeCd=createCustInfo.cPartyTypeCd;//客户类型
@@ -1841,6 +1941,24 @@ order.cust = (function(){
 	};
 	//客户属性
 	OrderInfo.boCustProfiles=[];
+	OrderInfo.boCustCheckLogs.checkCustCertSwitch = inData.checkCustCertSwitch;
+	if(inData.checkCustCertSwitch == "ON"){
+		OrderInfo.boCustCheckLogs.checkMethod = inData.checkMethod;
+		OrderInfo.boCustCheckLogs.custId = "-1";
+		OrderInfo.boCustCheckLogs.objId = "";
+		OrderInfo.boCustCheckLogs.checkDate = inData.checkDate;
+		OrderInfo.boCustCheckLogs.checker = OrderInfo.staff.staffName;
+		OrderInfo.boCustCheckLogs.checkChannel = OrderInfo.staff.channelCode;
+		OrderInfo.boCustCheckLogs.certCheckResult = inData.certCheckResult;
+		OrderInfo.boCustCheckLogs.errorMessage = inData.errorMessage;
+		OrderInfo.boCustCheckLogs.staffId = OrderInfo.staff.staffId;
+		var realNameChech = {
+				partyProfileCatgCd: CONST.BUSI_ORDER_ATTR.REAL_NAME_CHECK,
+				profileValue: "1",
+	            state: "ADD"
+		};
+		OrderInfo.boCustProfiles.push(realNameChech);
+	}
 	//客户属性节点
 	for ( var i = 0; i < order.cust.partyProfiles.length; i++) {
 		var partyProfiles = order.cust.partyProfiles[i];
@@ -1907,6 +2025,7 @@ order.cust = (function(){
 			areaId=OrderInfo.staff.areaId;
 		}
 		var custName=$("#p_cust_areaId_val").val();
+		var inData = {};
 		createCustInfo = {
 			cAreaId : areaId,
 			cAreaName : custName,
@@ -1932,6 +2051,33 @@ order.cust = (function(){
 				"diffPlace":diffPlace,
 				"areaId" : createCustInfo.cAreaId
 		};
+		//实名核验 checkCustCert
+		var switchResponse = $.callServiceAsJson(contextPath + "/properties/getValue", {"key": "CHECK_CUST_CERT_" + createCustInfo.cAreaId.substr(0, 3)});
+	    var checkCustCertSwitch = "";
+		if (switchResponse.code == "0") {
+	    	checkCustCertSwitch = switchResponse.data;
+	    }
+		if(checkCustCertSwitch == "ON"){
+			var inParams = {
+					"certType":createCustInfo.cIdentidiesTypeCd,
+					"certNum":createCustInfo.cCustIdCard,
+					"areaId" : createCustInfo.cAreaId
+				};
+				var checkUrl=contextPath+"/cust/checkCustCert";
+				var checkResponse = $.callServiceAsJson(checkUrl, inParams, {"before":function(){
+				}});
+				if (checkResponse.code == 0) {
+					var result = checkResponse.data.result;
+					inData.checkMethod  = result.checkMethod;
+					inData.certCheckResult = result.certCheckResult;
+					inData.errorMessage = result.errorMessage;
+					inData.checkDate = result.checkDate;
+					inData.checkCustCertSwitch = checkCustCertSwitch;
+				}else{
+					$.alertM(checkResponse.data);
+					return;
+				}
+		}
 		var url=contextPath+"/cust/checkIdentity";
 		var response = $.callServiceAsJson(url, params, {"before":function(){
 			$.ecOverlay("<strong>正在查询中,请稍等...</strong>");
@@ -1939,9 +2085,9 @@ order.cust = (function(){
 		var msg="";
 		if (response.code == 0) {
 			$.unecOverlay();
-			$.confirm("确认","此证件号码已存在,是否确认新建?",{ 
-				yes:function(){	
-					_createCustConfirm();
+			$.confirm("确认","此证件号码已存在,是否确认新建?",{
+				yes:function(){
+					_createCustConfirm(inData);
 				},
 				no:function(){
 					
@@ -1949,7 +2095,7 @@ order.cust = (function(){
 			});
 		}else{
 			$.unecOverlay();
-			_createCustConfirm();
+			_createCustConfirm(inData);
 		}
 		
 		//表示新建客户是身份证，保存信息用户身份证预约号码比对
@@ -2981,6 +3127,8 @@ order.cust = (function(){
 		var areaId = order.prodModify.choosedProdInfo.areaId;
 		areaId = ec.util.isObj(areaId) ? areaId : OrderInfo.cust.areaId;
 		areaId = ec.util.isObj(areaId) ? areaId : $("#p_cust_areaId").val();
+		var identityNum = $.trim($("#orderAttrIdCard").val());
+		var identityCd = $("#orderIdentidiesTypeCd").val();
 		//lte进行受理地区市级验证
 		if(CONST.getAppDesc() == 0 && String(areaId).indexOf("0000") > 0){
 			var alertMsg = ec.util.isObj(OrderInfo.cust.name) ? "客户【" + OrderInfo.cust.name + "】的归属地区" : "您所选择的受理地区";
@@ -2995,8 +3143,8 @@ order.cust = (function(){
 			"diffPlace"			:$("#DiffPlaceFlag").val(),
 			"queryType" 		:"",
 			"queryFlag"			:"queryHandleCust",
-			"identityCd"		:$("#orderIdentidiesTypeCd").val(),
-			"identityNum"		:$.trim($("#orderAttrIdCard").val()),
+			"identityCd"		:identityCd,
+			"identityNum"		:identityNum,
 			"custQueryType"		:"",
 			"queryTypeValue"	:"",
 			"identidies_type"	:$("#orderIdentidiesTypeCd  option:selected").text()
@@ -3007,7 +3155,42 @@ order.cust = (function(){
 			},
 			"done" : function(response) {
 				if(response.code == 0 && response.data){
-					_getResponseResult(response);// 开始处理经办人信息
+					//新建需要,实名制核验
+                    if(!ec.util.isArray(response.data.custInfos)){
+						var switchResponse = $.callServiceAsJson(contextPath + "/properties/getValue", {"key": "CHECK_CUST_CERT_" + areaId.substr(0, 3)});
+					    var checkCustCertSwitch = "";
+						if (switchResponse.code == "0") {
+					    	checkCustCertSwitch = switchResponse.data;
+					    	OrderInfo.bojbrCustCheckLogs.checkCustCertSwitch = switchResponse.data;
+					    }
+						if(checkCustCertSwitch == "ON"){
+							var inParams = {
+									"certType":identityCd,
+									"certNum":identityNum,
+									"areaId" : areaId
+							};
+							var checkUrl=contextPath+"/cust/checkCustCert";
+							var checkResponse = $.callServiceAsJson(checkUrl, inParams, {"before":function(){
+							}});
+							if (checkResponse.code == 0) {
+								var result = checkResponse.data.result;
+								OrderInfo.bojbrCustCheckLogs.checkMethod = result.checkMethod;
+								OrderInfo.bojbrCustCheckLogs.objId = "";
+								OrderInfo.bojbrCustCheckLogs.checkDate = result.checkDate;
+								OrderInfo.bojbrCustCheckLogs.checker = OrderInfo.staff.staffName;
+								OrderInfo.bojbrCustCheckLogs.checkChannel = OrderInfo.staff.channelCode;
+								OrderInfo.bojbrCustCheckLogs.certCheckResult = result.certCheckResult;
+								OrderInfo.bojbrCustCheckLogs.errorMessage = result.errorMessage;
+								OrderInfo.bojbrCustCheckLogs.staffId = OrderInfo.staff.staffId;
+							}else{
+								$.alertM(checkResponse.data);
+								return;
+							};
+						};
+						
+					};
+                    _getResponseResult(response);// 开始处理经办人信息
+                	_showCameraView();// 加载拍照弹窗
 				}else if(response.code == 1 && response.data){
 					$.alert("错误", "查询经办人信息失败，错误原因：" + response.data);
 				}else if(response.code == -2 && response.data){
@@ -3021,7 +3204,6 @@ order.cust = (function(){
 			},
 			"always" : function() {
 				$.unecOverlay();
-				_showCameraView();// 加载拍照弹窗
 			}
 		});
 	};
@@ -3499,6 +3681,50 @@ order.cust = (function(){
 			$(dom).append("<object classid='clsid:454C18E2-8B7D-43C6-8C17-B1825B49D7DE' id='capture'  width=" + width + " height=" + height + " style=" + style + "></object>");
 		}
     };
+  //行业类型选择事件
+	var _industryClassCdSeChoose = function(scope,id) {
+		var industryClassCdSe=$(scope).val();
+		if(id == "first"){
+			var seCondGradIndustryClass = [];
+			for(var i=0;i<OrderInfo.industryClassInfo.length;i++){
+				if(OrderInfo.industryClassInfo[i].attrValueCode == industryClassCdSe){
+					seCondGradIndustryClass = OrderInfo.industryClassInfo[i].attrSpecDesc.seCondGradIndustryClass;
+					if(OrderInfo.industryClassInfo[i].attrExtendValue!=null &&OrderInfo.industryClassInfo[i].attrExtendValue!=""){
+						$("#identidiesTypeCd").val(OrderInfo.industryClassInfo[i].attrExtendValue);
+						$("#identidiesTypeCd").attr("disabled","disabled"); 
+					}else{
+						$("#identidiesTypeCd").removeAttr("disabled");
+						$("#identidiesTypeCd option:first").prop("selected","selected");
+					}
+					break;
+				}
+			}
+			$("#industryClassCdSeSecond").empty();
+			$("#industryClassCdSeSecond").append("<option value='def'>--请选择--</option>");
+			$("#industryClassCdSeThird").empty();
+			$("#industryClassCdSeThird").append("<option value='def'>--请选择--</option>");
+			for(var i=0;i<seCondGradIndustryClass.length;i++){
+				var seCondInfo= seCondGradIndustryClass[i];
+				$("#industryClassCdSeSecond").append("<option value='"+seCondInfo.industryClassCd+"' >"+seCondInfo.name+"</option>");
+			}
+		}else if(id == "second"){
+			$("#industryClassCdSeThird").empty();
+			$("#industryClassCdSeThird").append("<option value='def'>--请选择--</option>");
+			var thirdGradIndustryClass = [];
+			for(var i=0;i<OrderInfo.industryClassInfo.length;i++){
+				for(var j=0;j<OrderInfo.industryClassInfo[i].attrSpecDesc.seCondGradIndustryClass.length;j++){
+					if(OrderInfo.industryClassInfo[i].attrSpecDesc.seCondGradIndustryClass[j].industryClassCd == industryClassCdSe){
+						thirdGradIndustryClass = OrderInfo.industryClassInfo[i].attrSpecDesc.seCondGradIndustryClass[j].thirdGradIndustryClass;
+						break;
+					}
+				}
+			}
+			for(var i=0;i<thirdGradIndustryClass.length;i++){
+				var thirdInfo= thirdGradIndustryClass[i];
+				$("#industryClassCdSeThird").append("<option value='"+thirdInfo.industryClassCd+"' >"+thirdInfo.name+"</option>");
+			}
+		}
+    };
 
 	return {
 		form_valid_init : _form_valid_init,
@@ -3573,7 +3799,8 @@ order.cust = (function(){
         disableHandleCustInfos:_disableHandleCustInfos,
         resetHandleCustInfos:_resetHandleCustInfos,
         removeDisabled:_removeDisabled,
-        loadCameraObj:_loadCameraObj
+        loadCameraObj:_loadCameraObj,
+        industryClassCdSeChoose:_industryClassCdSeChoose
 	};
 })();
 $(function() {

@@ -315,4 +315,11 @@ jQuery.ketchup
 			}
 		}
 		return false;
-	});
+	})
+	
+.helper('isLength4_64', function (code) {
+	 if(code==""||code.length<4||code.length>64){
+	     return false;
+	 }
+	 return true;
+});

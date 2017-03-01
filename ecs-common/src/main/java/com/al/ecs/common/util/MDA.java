@@ -558,4 +558,7 @@ public class MDA {
     
     /**拍照仪驱动下载配置*/
 	public static final Map<String, String> CAMERA_DRIVER_DOWNLAOD = new HashMap<String, String>();
+	
+	/**是否实名核验开关 */
+	public static final Map<String, String> CHECK_CUST_CERT = new HashMap<String,String>();
 }

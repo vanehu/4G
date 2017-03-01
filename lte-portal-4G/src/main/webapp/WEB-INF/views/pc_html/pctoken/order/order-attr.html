@@ -1,7 +1,7 @@
 <h5 class="s_title">经办人</h5>
 <form id="jbrCertCheckForm">
 <ul class="fillin show" style="overflow: hidden;">
-    <li style="padding-right: 50%;" id="li_order_remark1">
+    <li id="li_order_remark1">
 		<label>证件类型：</label>
         <select id="orderIdentidiesTypeCd" onchange="order.cust.identidiesTypeCdChoose(this,'orderAttrIdCard')">
         </select>
@@ -10,6 +10,15 @@
         <a class="btn_h30" id="orderAttrQryBtn" style="margin-top: 0px; display: none;"><span>查询</span></a>
         <a class="btn_h30" id="orderAttrReset" onclick="javascript:order.cust.orderAttrReset()" style="margin-top: 0px; display: none;"><span>重置</span></a>
 	</li>
+	<li id="li_isCheck">
+        <label>实名核验：</label>
+		<select id="isCheck" disabled="disabled">
+            <option value="1">是</option>
+        </select>
+		<label class="f_red">*</label>
+	</li>
+</ul>
+<ul class="fillin show" style="overflow: hidden;">
     <!-- 经办人为个人用户，证件类型只显示个人证件类型，隐藏客户类型 -->
 	<li id="li_order_remark" style="display: none;">
 		<label>客户类型：</label> 
