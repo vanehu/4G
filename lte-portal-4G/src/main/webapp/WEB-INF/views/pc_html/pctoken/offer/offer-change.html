@@ -365,6 +365,55 @@
         </table>
     </div>
 <!--渠道选择弹窗结束-->
+<div class="easyDialogdiv" style="width:420px;height:300px;" id="CHANGEUIMSMS">
+  <div class="easyDialogclose" id="svCloseDiv"></div>
+    	<table class="contract_list">
+            <thead>
+                <tr>
+                  <td colspan="6" align="center">短信验证码</td>
+                </tr>                                                    
+            </thead>
+        </table>
+        <table width="100%" border="0" cellspacing="0" cellpadding="0" class="SMScode">
+          <tr>
+            <td><p>为确保用户的个人信息安全，在办理该业务前，需先进行短信验证，请输入用户提供的随机短信验证码！</p></td>
+          </tr>
+           <tr class="randomCode">
+             <td>
+	         <span style="float:left; margin-top:5px">验证的号码</span>
+	         <form id="checkNum">
+		        <input id="changeUimSmsCheckNum" class="txtnum" disabled='disabled'  style="float:left; margin:0px 5px;height:24px" />
+		     </form>
+	        </td>
+           </tr>
+          <tr>
+            <td>
+            	<span style="float:left; margin-top:5px">短信验证码</span>
+		        <form id="changeUimSmsForm" >
+		        <input  type="text" class="txt2 inputWidth228px" style="float:left; margin:0px 5px;" name="smspwd" id="smspwd" data-validate="validate(required:短信验证码不能为空) on(blur)" placeholder="请输入您手机收到的验证码" maxlength="6"/>
+		        <a class="purchase" id="changeuimsmsbutton" href="javascript:void(0)">确 认</a>
+		        </form>
+	        </td>
+          </tr>
+           <tr class="randomCode" style="display:none">
+             <td>
+	         <span style="float:left; margin-top:5px">随机序列号</span>
+	         <form id="num">
+		        <input id="changeUimSmsRandomNum" class="txtnum" disabled='disabled'  style="float:left; margin:0px 5px;height:24px" />
+		     </form>
+	        </td>
+           </tr>
+          <tr>
+            <td>
+            <p>- 验证码在5分钟内有效，3次错误输入后失效。</p>
+            <!-- <p><span style="color:#aaa" id="timeInfo"></span></p> -->
+            <p>- 如您<font id="defaultTimeResend"></font>仍未收到验证码，请点击<a id="changeuimsmsresend" class="cf" onclick="javascript:void(0);">重新获取验证码。</a></p>
+			<p>- 如果您连续3次重试都没有成功收到短信验证码，建议您稍后再试。</p>
+			</td>
+          </tr>
+        </table>
+</div>
+<!--弹出层 end-->
 </div>
 <script type="text/javascript">
 $(document).ready(function(){ 
@@ -386,4 +435,5 @@ $(document).ready(function(){
 	   }
 	
 	}); 
+	
 </script>
