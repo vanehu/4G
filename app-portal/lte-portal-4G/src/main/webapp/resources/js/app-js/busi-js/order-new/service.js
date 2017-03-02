@@ -195,7 +195,7 @@ order.service = (function(){
 	};
 	
 	var _selectOffer = function(offerSpecId, price) {
-		$("#offer_change_sub").click(function() {
+		$("#offer_change_sub").off("click").click(function() {
 			_buyService(offerSpecId, price)
 		});
 	};

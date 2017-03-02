@@ -2811,6 +2811,7 @@ AttachOffer = (function() {
 	
 	//删除附属销售品实例
 	var _delOffer = function(prodId,offerId){
+		$("#input_"+prodId+"_"+offerId).removeAttr("checked");
 		var $span = $("#li_"+prodId+"_"+offerId).find("span"); //定位删除的附属
 		if($span.attr("class")=="list-title delete"){  //已经退订，再订购
 			AttachOffer.addOffer(prodId,offerId,$span.text());
@@ -2868,6 +2869,7 @@ AttachOffer = (function() {
 					delServByOffer(prodId,offer);
 				},
 				no:function(){	
+					$("#input_"+prodId+"_"+offerId).attr("checked","checked");
 				}
 			});
 		}
