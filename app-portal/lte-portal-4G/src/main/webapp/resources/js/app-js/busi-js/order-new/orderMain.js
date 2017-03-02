@@ -44,7 +44,31 @@ order.main = (function(){
 	 * 
 	 */
 	//加载促销tab
-	var _buildMainView = function() {
+	var _buildMainView = function(param) {
+		if(OrderInfo.actionFlag == 2){
+			param.newFlag=1;
+			$.callServiceAsHtml(contextPath+"/app/order/main",param,{
+				"before":function(){
+					$.ecOverlay("<strong>正在加载中,请稍等...</strong>");
+				},"done" : function(response){
+					if(!response){
+						$.unecOverlay();
+						 response.data='查询失败,稍后重试';
+					}
+					if(response.code != 0) {
+						$.unecOverlay();
+						$.alert("提示","查询失败,稍后重试");
+						return;
+					}
+					setTimeout(function () { 
+						$.unecOverlay();
+						offerChange.fillOfferChange(response,param);
+					}, 800);
+				}
+			});
+			return;
+		}
+		
 		OrderInfo.order.step = 4;
 		var num=order.phoneNumber.secondaryCarNum;//手动添加的副卡个数
 		if(num==undefined || num==0){
@@ -131,6 +155,7 @@ order.main = (function(){
 			param=order.phone.param;
 		}
 		param.enter=3;
+		param.newFlag=1;
 		$.callServiceAsHtml(contextPath+"/app/order/main",param,{
 			"before":function(){
 				$.ecOverlay("<strong>正在加载中,请稍等...</strong>");
@@ -146,7 +171,12 @@ order.main = (function(){
 				}
 //				OrderInfo.actionFlag = param.actionFlag;
 				$.unecOverlay();
-				if(OrderInfo.actionFlag==112){
+				if(OrderInfo.actionFlag == 2){
+					setTimeout(function () { 
+						$.unecOverlay();
+						offerChange.fillOfferChange(response,param);
+				    }, 800);
+				} else if(OrderInfo.actionFlag==112){
 					 $("#nav-tab-4").html(response.data);//其他tab页信息填充
 					 order.amalgamation.goConfirm();
 				 }else{

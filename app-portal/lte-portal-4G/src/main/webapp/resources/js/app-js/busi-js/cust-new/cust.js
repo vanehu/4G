@@ -13,6 +13,7 @@ cust = (function(){
 			 accNbr: ""
 	};
 	var _newUIFalg = "ON";
+	var _usedNum;//客户已使用指标数（一证五号需求一个客户最多只能五个号）
 	var _clearCustForm = function(){
 		$('#cmCustName').val("");
 		$('#cmAddressStr').val("");
@@ -509,8 +510,6 @@ cust = (function(){
 							var certTypedate = OrderInfo.certTypedates[i];
 							if (certTypedate.certTypeCd == "1") {//身份证
 									$("#cm_identidiesTypeCd").append("<option value='"+certTypedate.certTypeCd+"' >"+certTypedate.name+"</option>");
-								}else if(isAllowChannelType){//如果自有渠道，开放所有
-									$("#cm_identidiesTypeCd").append("<option value='"+certTypedate.certTypeCd+"' >"+certTypedate.name+"</option>");
 								}
 						}
 					}
@@ -904,7 +903,7 @@ cust = (function(){
 					"zh6-50":/[\u4e00-\u9fa5]{6}|^.{12}/,
 					"sfz":/(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/,
 					"qtzj":/^[0-9a-zA-Z]{1,100}$/,
-					"phone":/(^\d{11}$)/
+					"phone":/^1[3456789]\d{9}$/
 				},
 				tiptype:function(msg,o,cssctl){
 					
@@ -1013,7 +1012,8 @@ cust = (function(){
 				datatype:{
 					"zh6-50":/[\u4e00-\u9fa5]{6}|^.{12}/,
 					"sfz":/(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/,
-					"qtzj":/^[0-9a-zA-Z]{1,100}$/
+					"qtzj":/^[0-9a-zA-Z]{1,100}$/,
+					"phone":/^1[3456789]\d{9}$/
 				},
 				tiptype:function(msg,o,cssctl){
 					
@@ -1062,7 +1062,7 @@ cust = (function(){
 				},
 				{
 				    ele:"#mobilePhone",
-				    datatype:"m",
+				    datatype:"phone",
 				    errormsg:"请输入正确的手机号码",
 				    ignore:"ignore"
 				}                
@@ -2531,6 +2531,60 @@ cust = (function(){
 		}
 	}
 	
+
+	
+
+	    /**
+		 * 证号关系预校验接口
+		 */
+	var _preCheckCertNumberRel = function() {
+		var propertiesKey = "ONE_CERT_5_NUMBER_"+ (OrderInfo.staff.soAreaId + "").substring(0, 3);
+		var isON = offerChange.queryPortalProperties(propertiesKey);
+		if (!isON) {
+			return true;
+		}
+		return true;
+		if (OrderInfo.cust.custId == "-1") {// 新客户
+			var inParam = {
+				"certType" : OrderInfo.cust.identityCd,
+				"certNum" : OrderInfo.cust.idCardNumber,
+				"certAddress" : OrderInfo.cust.addressStr,
+				"custName" : OrderInfo.cust.partyName
+
+			};
+			if(OrderInfo.cust.identityCd!="1"){//非身份证类型
+				inParam.certNum=OrderInfo.cust.identityNum;	
+			}
+		} else {
+			var inParam = {
+				"certType" : OrderInfo.cust.identityCd,
+				"certNum" : OrderInfo.cust.idCardNumber,
+				"certAddress" : OrderInfo.cust.addressStr,
+				"custName" : OrderInfo.cust.partyName,
+				"custNameEnc": OrderInfo.cust.CN,
+                "certNumEnc": OrderInfo.cust.certNum,
+                "certAddressEnc": OrderInfo.cust.address
+
+			};
+		}
+		var checkResult = false;
+		var response = $.callServiceAsJson(contextPath
+				+ "/app/cust/preCheckCertNumberRel", inParam);
+		if (response.code == 0) {
+			var result = response.data;
+			if ((parseInt(result.usedNum)) >= 5) {
+				$.alert("提示", "一个用户证件下不能有超过5个号码！");
+			} else {
+				cust.usedNum = parseInt(result.usedNum) + 1;
+				checkResult = true;
+			}
+		} else {
+			$.alertM(response.data);
+		}
+		return checkResult;
+	};
+
+    
 	return {
 		jbridentidiesTypeCdChoose 	: 		_jbridentidiesTypeCdChoose,
 		jbrvalidatorForm 			: 		_jbrvalidatorForm,
@@ -2595,11 +2649,8 @@ cust = (function(){
 		getPicture2                 :       _getPicture2,
 		getjbrGenerationInfos2      :       _getjbrGenerationInfos2,
 		newUIFalg					:		_newUIFalg,
-		showAccountModify			:		_showAccountModify
+		showAccountModify			:		_showAccountModify,
+		preCheckCertNumberRel       :       _preCheckCertNumberRel,
+		usedNum                     :       _usedNum
 	};	
 })();
-// OrderInfo.boCustInfos.partyTypeCd = 1 ;//客户类型
-//$(document).ready(function() {
-//	order.prodModify.validatorForm();
-//	order.prodModify.getIdentidiesTypeCd();//初始化证件类型
-//});

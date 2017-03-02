@@ -1,0 +1,382 @@
+<script src="${contextPath}/js/app-js/new-js/rangeslider.js"
+	type="text/javascript"></script>
+<!-- begin #page-container -->
+
+<!-- begin #content -->
+<div id="content" class="content p-t-0">
+	<!-- begin row -->
+	<div class="row">
+		<!-- begin col-12 -->
+		<div class="panel panel-inverse panel-with-tabs"
+			data-sortable-id="ui-unlimited-tabs-1" id="orderContentDiv">
+			<div class="panel-heading p-0">
+				<!-- begin nav-tabs -->
+				<div class="tab-overflow">
+					<ul class="nav nav-tabs nav-tabs-inverse nav-top p-t-5">
+						<li class="active" id="tab1_li">
+							<a>
+								<i class="iconfont tab-icon">&#xe667;</i>套餐
+								<i class="iconfont tab-result-icon">&#xe611;</i>
+							</a>
+						</li>
+						<li class="" id="tab2_li">
+							<a>
+								<i class="iconfont tab-icon">&#xe65b;</i>可选包
+								<i class="iconfont tab-result-icon">&#xe611;</i>
+							</a>
+						</li>
+						<li class="" id="tab3_li">
+							<a>
+								<i class="iconfont tab-icon">&#xe664;</i>其他
+								<i class="iconfont tab-result-icon">&#xe611;</i>
+							</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+			<div class="tab-content p-0">
+				<div class="tab-pane fade active in tab-top" id="nav-tab-2">
+				<!-- 套餐高级查询 -->
+				<div class="modal modal-message fade modal-top" id="offer_search_model">
+							<div class="modal-dialog" style="display: block;">
+								<div class="modal-content">
+									<div class="modal-header">
+										<button type="button" class="close" data-dismiss="modal"
+											aria-hidden="true">×</button>
+										<h4 class="modal-title">套餐查询</h4>
+									</div>
+									<div class="modal-body">
+										<div class="choice-box m-t-10">
+											<i class="iconfont pull-left p-l-10">&#xe6da;</i> <input
+												placeholder="请输入套餐名称" class="choice-input" id="offerName" />
+											<!--<i class="iconfont right-btn pull-right p-r-10">&#xe647;</i>-->
+										</div>
+										<div class="choice-box m-t-10">
+											<i class="iconfont pull-left p-l-10">&#xe61a;</i> 
+											<select name="" placeholder="价格区间（元）" id="select_price" class="myselect select-option" data-role="none">
+												<option id="-1" value="">价格区间</option>
+											</select> <i class="iconfont pull-right p-r-10">&#xe66e;</i>
+										</div>
+										<div class="choice-box m-t-10">
+											<i class="iconfont pull-left p-l-10">&#xe648;</i> 
+											<select name="" placeholder="语音时长（分钟）" id="select_invoice" class="myselect select-option" data-role="none">
+												<option id="-1" value="">语音时长</option>
+											</select> <i class="iconfont pull-right p-r-10">&#xe66e;</i>
+										</div>
+										<div class="choice-box m-t-10">
+											<i class="iconfont pull-left p-l-10">&#xe64e;</i> 
+											<select name="" placeholder="流量（G）" id="select_influx" class="myselect select-option" data-role="none">
+												<option id="-1" value="">流量</option>
+											</select> <i class="iconfont pull-right p-r-10">&#xe66e;</i>
+										</div>
+									</div>
+									<div class="modal-footer">
+										<div class="ordinary-btn-box p p-b-15">
+											<button class="sun-btn" onclick="order.service.searchPack()">确定</button>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="list-box m-t-10">
+							<div class="panel-group">
+								<div class="panel panel-default overflow-hidden panel-list" id="offer-list"></div>
+								<div class="sub-btn-box p p-b-15">
+									<button class="sun-btn done" id="offer_change_sub">下一步</button>
+								</div>
+							</div>
+						</div>
+						<div class="list-box m-t-10" id="offer-rule">
+						</div>
+				</div>
+				<div class="tab-pane fade tab-top" id="nav-tab-3">
+					<div id="order"></div>
+				</div>
+				<div class="tab-pane fade tab-top" id="nav-tab-4">
+					<ul class="choice-list-box" id="dealerList">
+		 			 	<li>
+		  				  	<i class="iconfont pull-left">&#xe66c;</i>
+		   					<span class="list-title">添加发展人</span>
+		    				<i onclick="order.dealer.showDealer()" class="iconfont absolute-right font-default">&#xe670;</i>
+		  				</li>
+ 					</ul>
+
+					<ul class="choice-list-box">
+						<li>
+							<i class="iconfont pull-left">&#xe66c;</i>
+							<span class="list-title">经办人</span> 
+							<i onclick="order.dealer.showJbr()"
+								data-toggle="modal" class="iconfont absolute-right font-default">&#xe670;
+							</i>
+						</li>
+						<li>
+							<span class="list-title font-secondary" id="jbrName">无经办人 </span> 
+							<i id="deleteJbr" onclick="order.dealer.deleteJbr()" class="iconfont absolute-right">&#xe624;</i>
+						</li>
+					</ul>
+					<ul class="choice-list-box m-0">
+						<li>
+							<div class="choice-box border-none">
+								<i class="iconfont pull-left">&#xe656;</i> 
+								<input placeholder="备注" class="choice-input">
+							</div> 
+							<i class="iconfont absolute-right"></i>
+						</li>
+					</ul>
+
+					<div class="sub-btn-box p p-b-15">
+						<button onclick="SoOrder.submitOrder()" class="sun-btn">下一步</button>
+					</div>
+
+					<!-- 发展人弹出层 -->
+					<div class="modal fade modal-message modal-top" id="dealerModal">
+						<div class="modal-dialog" style="display:block;">
+							<div class="modal-content">
+								<div class="modal-header">
+									<button type="button" class="close" data-dismiss="modal"
+										aria-hidden="true" onClick="$('#dealerModal-result').hide();$('#dealerModal').find('.choice-box').children('.help-block').addClass('hidden');$('#staffCode,#salesCode').val('');">×</button>
+									<h4 class="modal-title">选择发展人</h4>
+								</div>
+								<div>
+									<div class="choice-box">
+										<i class="iconfont pull-left p-l-10">&#xe663;</i>
+										<select name="" id="dealerType" class="myselect select-option" data-role="none" />
+										<i class="iconfont pull-right p-r-10">&#xe66e;</i>
+									    <div class="help-block error hidden">该类型已添加</div>
+									</div>
+									<div class="choice-box">
+										<i class="iconfont pull-left p-l-10">&#xe637;</i> 
+										<select name="" id="diqu" class="myselect select-option" data-role="none">
+										</select> 
+										<i class="iconfont pull-right p-r-10">&#xe66e;</i>
+									</div>
+									<div class="choice-box">
+										<i class="iconfont pull-left p-l-10">&#xe663;</i>
+										 <input id="staffCode" placeholder="请输入员工号" class="choice-input" onblur="if($(this).val().trim() != ''){$('#dealerModal').find('.choice-box').children('.help-block').addClass('hidden');}$('#dealerModal-result').hide();">
+									     <div class="help-block error hidden">工号不能为空</div>
+									</div>
+									<div class="choice-box">
+										<i class="iconfont pull-left p-l-10">&#xe663;</i> 
+										<input id="salesCode" placeholder="请输入销售员编码" class="choice-input" onblur="if($(this).val().trim() != ''){$('#dealerModal').find('.choice-box').children('.help-block').addClass('hidden');}$('#dealerModal-result').hide();">
+										<div class="help-block error hidden">销售员编码不能为空</div>
+									</div>
+									<div id="dealerModal-result" style="line-height: .86rem; color: #ff0000; font-size: .26rem; display:none; text-align:center;">没有查询到该员工信息！</div>
+									<div class="sub-btn-box p relative">
+										<button class="sun-btn" onclick="order.dealer.queryStaff()">查询</button>
+									</div>
+								</div>
+								<div class="dis-none">
+									<!--查询结果列表  dis-none来控制隐藏与否-->
+									<div class="list-box">
+										<ul class="choice-list-box m-b-0">
+											<li><i class="iconfont pull-left">&#xe663;</i> <span
+												class="list-title">发展人XXX</span>
+												<div class="list-checkbox absolute-right">
+													<label>
+														<div class="checkbox-box">
+															<input type="radio" value="1" id="checkbox-fzr-1" name="fzr" />
+															<label for="checkbox-fzr-1"></label>
+														</div>
+													</label>
+												</div></li>
+											<li><i class="iconfont pull-left">&#xe663;</i> <span
+												class="list-title">发展人XXX</span>
+												<div class="list-checkbox absolute-right">
+													<label>
+														<div class="checkbox-box">
+															<input type="radio" value="2" id="checkbox-fzr-2" name="fzr" />
+															<label for="checkbox-fzr-2"></label>
+														</div>
+													</label>
+												</div></li>
+										</ul>
+									</div>
+									<div class="sub-btn-box p relative">
+										<button class="sun-btn">确定</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div> 
+					<!-- 经办人弹出层 -->
+					<div class="modal modal-message fade modal-top" id="jbr">
+
+						<div class="modal-dialog" style="display: block;">
+							<div class="modal-content">
+								<div class="modal-header">
+									<button type="button" class="close" data-dismiss="modal"
+										aria-hidden="true">×</button>
+									<h4 class="modal-title">经办人</h4>
+								</div>
+								<form id="jbrFormdata" method="post">
+									<ul class="choice-list-box bg-body border-none">
+										<li class="m-t-10">
+											<div class="choice-box">
+												<i class="iconfont pull-left">&#xe616;</i> 
+												<select name="" id="orderIdentidiesTypeCd" onchange="cust.jbridentidiesTypeCdChoose(this,'sfzorderAttrIdCard')" class="myselect select-option" data-role="none"></select>
+											</div>
+										</li>
+										<li class="m-t-10" id="jbrsfz">
+											<div class="choice-box">
+												<i class="iconfont pull-left">&#xe609;</i> 
+												<span class="list-title font-secondary border-none">证件扫描</span> 
+												<i id="jbr_otg" onclick="common.callGenerationRec('cust.getjbrGenerationInfos','3')" class="iconfont pull-right font-orange">&#xe6dc;</i> 
+												<i onclick="common.callGenerationRec('cust.getjbrGenerationInfos','1')" class="iconfont pull-right font-orange">&#xe653;</i> 
+												<i id="jbr_nfc" onclick="common.callGenerationRec('cust.getjbrGenerationInfos','2')" class="iconfont pull-right font-orange">&#xe654;</i>
+											</div>
+										</li>
+										<li class="m-t-10" id="photo">
+											<div class="choice-box">
+												<i class="iconfont pull-left">&#xe609;</i> 
+												<span class="list-title font-secondary border-none">拍照</span> 
+												<i onclick="common.callPhotos('cust.getPicture')" class="iconfont pull-right font-orange">&#xe61c;</i>
+											</div>
+										</li>
+										<li class="m-t-10" id="jbrsfz_i">
+											<div class="choice-box">
+												<i class="iconfont pull-left">&#xe616;</i> 
+												<input placeholder="证件号码" id="sfzorderAttrIdCard" class="choice-input" readonly="readonly" />
+												<div class="Validform_checktip"></div>
+											</div>
+										</li>
+										<li class="m-t-10" id="qtzj" style="display: none;">
+											<div class="choice-box">
+												<i class="iconfont pull-left">&#xe616;</i> 
+												<input placeholder="证件号码" id="orderAttrIdCard" class="choice-input" />
+												<div class="Validform_checktip"></div>
+											</div>
+										</li>
+										<li class="m-t-10">
+											<div class="choice-box">
+												<i class="iconfont pull-left">&#xe663;</i> 
+												<input placeholder="经办人姓名" id="orderAttrName" class="choice-input" readonly="readonly" />
+												<div class="Validform_checktip"></div>
+											</div>
+										</li>
+										<li class="m-t-10">
+											<div class="choice-box">
+												<i class="iconfont pull-left">&#xe637;</i> 
+												<input placeholder="证件地址" id="orderAttrAddr" class="choice-input" readonly="readonly" />
+												<div class="Validform_checktip"></div>
+											</div>
+										</li>
+										<li class="m-t-10">
+											<div class="choice-box">
+												<i class="iconfont pull-left">&#xe639;</i> 
+												<input placeholder="联系人手机" id="orderAttrPhoneNbr" class="choice-input" ignore="ignore" />
+												<div class="Validform_checktip"></div>
+											</div>
+										</li>
+									</ul>
+								</form>
+								<div class="ordinary-btn-box p p-b-15" id="whole">
+									<button class="double-btn" id="queryJbr" onClick="order.main.queryJbr()">查询</button>
+									<button class="double-btn" onClick="order.dealer.closeJBR()">确定</button>
+								</div>
+								<div class="ordinary-btn-box p p-b-15" id="only">
+									<button class="sun-btn" onClick="order.dealer.closeJBR()">确定</button>
+								</div>
+
+							</div>
+						</div>
+
+					</div>
+					<!-- end col-12 -->
+
+					<!-- end row -->
+					<!-- begin button -->
+
+					<!-- end button -->
+
+				</div>
+				<!-- end #content -->
+				<div class="modal fade modal-message modal-top" id="modal-goback">
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+								<h4 class="modal-title">确认返回</h4>
+							</div>
+							<div class="modal-body">
+								<div class="alert alert-danger fade in">返回将清空您已经填写的信息</div>
+							</div>
+							<div class="modal-footer">
+								<div class="ordinary-btn-box p p-b-15">
+									<button class="double-btn done" data-dismiss="modal">取消</button>
+									<button class="double-btn done" onclick="javascript:window.location.href='index.html'">确定</button>
+
+								</div>
+
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<a id="offer_a"
+		class="btn no-border btn-white pull-right m menu-search"
+		href="#offer_search_model" data-toggle="modal"> <i
+		class="iconfont tab-icon">&#xe647;</i>
+	</a>
+	
+	<div class="tab-content p-0" id="orderConfirmDiv" style="display: none">
+		  <div class="tab-pane fade active" id="nav-tab-7">
+		  </div>
+		  <div class="tab-pane fade" id="nav-tab-8">
+		  </div>
+	</div>
+	<!-- 回执内容显示页面 -->
+	<div id="order-print" style="display: none;">
+	</div>
+
+	<div id="checkRuleDiv" style="display:none">
+	</div>
+</div>
+
+
+
+	<!-- ================== END 套餐变更 ================== -->
+
+
+
+	<!-- ================== 本页面脚本开始 ================== -->
+	<script>
+		//套餐变更初始化
+		$(function() {
+			//前置校验
+			var custId = OrderInfo.cust.custId;
+			if (custId != "-1") {
+				//查分省前置校验开关
+				var propertiesKey = "PRECHECKFLAG_"
+						+ (OrderInfo.staff.soAreaId + "").substring(0, 3);
+				var isPCF = offerChange.queryPortalProperties(propertiesKey);
+				if (isPCF == "ON") {
+					if (OrderInfo.preBefore.prcFlag != "Y") {
+						var checkPre = order.prodModify.preCheckBeforeOrder2(
+								"1", function() {
+									callback();
+								});
+						if (checkPre) {
+							callback();
+						}
+					}
+				} else {
+					callback();
+				}
+				OrderInfo.preBefore.prcFlag = "";
+			} else {
+				callback();
+			}
+		});
+		function callback() {
+			OrderInfo.order.soNbr = '${soNbr}';
+			offerChange.init();
+		}
+		$(document).ready(function() {
+			App.init();
+		});
+		cust.jbrvalidatorForm();
+		
+	</script>
+	<!-- ================== 本页面脚本结束 ================== -->

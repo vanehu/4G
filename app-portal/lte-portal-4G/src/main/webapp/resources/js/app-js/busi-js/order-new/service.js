@@ -115,7 +115,29 @@ order.service = (function(){
 		} else {
 			_isAll = false;
 		}
-		params.prodOfferFlag = "4G";
+		if (OrderInfo.actionFlag == 2) {
+			var offerSpecId = order.prodModify.choosedProdInfo.prodOfferId;
+			if (offerSpecId != undefined) {
+				params.changeGradeProdOfferId = offerSpecId;
+			}
+			var prodSpecIds = '';
+			$.each(OrderInfo.offer.offerMemberInfos, function() { // 遍历旧套餐构成
+				if (this.objType == CONST.OBJ_TYPE.PROD) { // 接入类产品
+					if (this.objId != undefined) {
+						prodSpecIds = prodSpecIds + "," + this.objId;
+					}
+				}
+			});
+			if (prodSpecIds != '') {
+				prodSpecIds = prodSpecIds.substring(1, prodSpecIds.length);
+				params.prodSpecId = prodSpecIds;
+			}
+			params.actionFlag = 2;
+		} else if (CONST.getAppDesc() == 0) {
+			params.prodOfferFlag = "4G";
+		}
+		params.newFlag = "1";
+
 		if(OrderInfo.actionFlag == 1 || OrderInfo.actionFlag == 14 || OrderInfo.actionFlag == 112){
 			if(params.categoryNodeId == "" && !_isAll){
 				params.ifQueryFavorite = "Y";
@@ -172,6 +194,12 @@ order.service = (function(){
 		});
 	};
 	
+	var _selectOffer = function(offerSpecId, price) {
+		$("#offer_change_sub").click(function() {
+			_buyService(offerSpecId, price)
+		});
+	};
+	
 	//订购销售品
 	var _buyService = function(specId,price) {
 		order.service.showTab3=false;
@@ -186,17 +214,16 @@ order.service = (function(){
 					"custId" : OrderInfo.cust.custId,
 					"areaId" : OrderInfo.staff.soAreaId
 			};
-             //新装
-			var boInfos = [{
-				boActionTypeCd: "S1",//动作类型
-				instId : "",
-				specId : specId //产品（销售品）规格ID
-			}];
-//			var url = contextPath+"/order/sign/gotoPrint";
-//			$.ecOverlay("<strong>正在校验,请稍等会儿...</strong>");
-//			var paramtmp={};
-//			$.callServiceAsHtml(url,paramtmp);
-				rule.rule.ruleCheck(boInfos,function(checkData){//业务规则校验通过
+			if (OrderInfo.actionFlag == 2) { // 套餐变更不做校验
+				order.service.querySpec(param);
+			} else {
+				 // 新装
+				var boInfos = [{
+					boActionTypeCd: "S1",// 动作类型
+					instId : "",
+					specId : specId // 产品（销售品）规格ID
+					}];
+				rule.rule.ruleCheck(boInfos,function(checkData){// 业务规则校验通过
 					if(ec.util.isObj(checkData)){
 						$("#offer-list").hide();
 						var content$ = $("#offer-rule").html(checkData).show();
@@ -205,7 +232,8 @@ order.service = (function(){
 						order.service.querySpec(param);   
 					}
 				});
-				//order.service.querySpec(param);
+			}
+            
 		}
 	};
 	
@@ -259,6 +287,46 @@ order.service = (function(){
 						if(!offerSpec){
 							return;
 						}
+						if (OrderInfo.actionFlag == 2) { // 套餐变更
+							var url = contextPath + "/app/order/queryFeeType";
+							$.ecOverlay("<strong>正在查询是否判断付费类型的服务中,请稍后....</strong>");
+							var response = $.callServiceAsJsonGet(url, param);
+							$.unecOverlay();
+							if (response.code == 0) {
+								if (response.data != undefined) {
+									if ("0" == response.data) {
+										var is_same_feeType = false;
+										if (order.prodModify.choosedProdInfo.feeType == "2100"
+												&& (offerSpec.feeType == "2100"
+														|| offerSpec.feeType == "3100"
+														|| offerSpec.feeType == "3101"
+														|| offerSpec.feeType == "3103"
+														|| offerSpec.feeType == "1202" || offerSpec.feeType == "2101")) {
+											is_same_feeType = true;// 预付费
+										} else if (order.prodModify.choosedProdInfo.feeType == "1200"
+												&& (offerSpec.feeType == "1200"
+														|| offerSpec.feeType == "3100"
+														|| offerSpec.feeType == "3102"
+														|| offerSpec.feeType == "3103"
+														|| offerSpec.feeType == "1202" || offerSpec.feeType == "2101")) {
+											is_same_feeType = true;// 后付费
+										} else if (order.prodModify.choosedProdInfo.feeType == "1201"
+												&& (offerSpec.feeType == "1201"
+														|| offerSpec.feeType == "3101"
+														|| offerSpec.feeType == "3102" || offerSpec.feeType == "3103")) {
+											is_same_feeType = true;// 准实时预付费
+										}
+										// if(!is_same_feeType){
+										// $.alert("提示","付费类型不一致,无法进行套餐变更。");
+										// return;
+										// }
+									}
+								}
+							}
+							offerChange.offerChangeView();
+							return;
+						}
+						
 						_max=0;
 						var iflag = 0; //判断是否弹出副卡选择框 false为不选择
 						var str="";
@@ -482,6 +550,7 @@ var _scroll = function(scrollObj){
 		terminalScaningCallBack:_terminalScaningCallBack,
 		closeRule              :_closeRule,
 		init			:_init,
+		selectOffer		:_selectOffer,
 		scroll	: _scroll
 	};
 })();

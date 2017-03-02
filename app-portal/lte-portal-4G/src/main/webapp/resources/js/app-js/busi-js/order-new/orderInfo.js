@@ -222,7 +222,8 @@ OrderInfo = (function() {
 			data:{
 				boCustInfos : [],
 				boCustIdentities : [],
-				boPartyContactInfo : []
+				boPartyContactInfo : [],
+				boCertiAccNbrRels : []   //一证五号新增证号关系节点
 			}
 		};
 		if(ec.util.isObj(accNbr)){ //接入号
@@ -231,6 +232,7 @@ OrderInfo = (function() {
 		cust.getCustInfo();
 		busiOrder.data.boCustInfos.push(OrderInfo.boCustInfos);
 		busiOrder.data.boCustIdentities.push(OrderInfo.boCustIdentities);
+		busiOrder.data.boCertiAccNbrRels.push(OrderInfo.boCertiAccNbrRel);//证号关系节点
 		// 联系人信息为空的情况下，新开户移动号码时，默认以本人及新办的手机号（如果是主副卡的，默认主号码）作为联系人信息
 //		if(OrderInfo.actionFlag==1 || OrderInfo.actionFlag==14){
 //			if(OrderInfo.boPartyContactInfo.contactName == ""){
@@ -946,6 +948,23 @@ OrderInfo = (function() {
         statusCd : "100001"//订单状态
 	};
 	
+	//证号关系节点
+    var _boCertiAccNbrRel={
+        accNbr:"",
+        gPartyId:"",
+        gCustId:"",
+        partyId:"",
+        certType:"",
+        certNum:"",
+        certNumEnc:"",
+        state:"ADD",
+        custName:"",
+        custNameEnc:"",
+        certAddress:"",
+        certAddressEnc:"",
+        serviceType:""
+    };
+	
 	//经办人联系人节点
 	var _bojbrPartyContactInfo = {
 		contactAddress : "",//参与人的联系地址
@@ -1494,7 +1513,8 @@ OrderInfo = (function() {
 		boUserIdentitiesArr 	: _boUserIdentitiesArr,
 		virOlId					: _virOlId,
 		curIp					:_curIp,
-		bojbrPartyContactInfo	:_bojbrPartyContactInfo
+		bojbrPartyContactInfo	:_bojbrPartyContactInfo,
+		boCertiAccNbrRel        :_boCertiAccNbrRel
 		
 	};
 })();

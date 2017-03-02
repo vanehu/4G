@@ -29,7 +29,7 @@
 		<script src="${contextPath}/js/app-js/busi-js/order-new/phoneNumber.js" type="text/javascript"></script>
 		<script src="${contextPath}/js/app-js/busi-js/order-new/service.js" type="text/javascript"></script>
 		<script src="${contextPath}/js/app-js/busi-js/order-new/orderMain.js" type="text/javascript"></script>
-		<script src="${contextPath}/js/app-js/busi-js/order/offerChange.js?${jsversion}" type="text/javascript"></script>
+		<script src="${contextPath}/js/app-js/busi-js/order-new/offerChange.js?${jsversion}" type="text/javascript"></script>
 		<script src="${contextPath}/js/app-js/busi-js/order-new/attachOffer.js" type="text/javascript"></script>
 		<script src="${contextPath}/js/app-js/busi-js/order-new/offerQuery.js" type="text/javascript"></script>
 		<script src="${contextPath}/js/app-js/busi-js/order-new/uim.js" type="text/javascript"></script>
@@ -87,6 +87,7 @@
 					break;
 				case 4 :
 					params.method = "/app/report/cartMain"; //受理单查询
+					params.actionFlag = 4;
 					break;
 				case 5 :
 					params.method = "/app/order/prodoffer/prepare"; //新装
@@ -104,6 +105,10 @@
 					break;
 				case 10 :
 					params.method = "/app/push/enter"; //双屏推送
+					break;
+				case 101 :
+					params.method = "/app/mktRes/terminalListUI"; //主推终端					
+					params.actionFlag = 101;
 					break;
 				case 51 :
 					params.method = "/app/order/prodoffer/prepare"; //选套餐

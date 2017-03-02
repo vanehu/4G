@@ -3995,4 +3995,15 @@ object {
     font-size: 1em;
     margin-top: 1em;
   }
+  
+  .second-select-box {
+  border-bottom: none;
+  border-top: 1px solid #dedede;
+  }
+  .second-select-box .form-control {
+    color: #05a642 !important;
+    font-weight: bold;
+  }  
+  
+ 
 }

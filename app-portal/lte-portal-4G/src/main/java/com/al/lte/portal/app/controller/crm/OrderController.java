@@ -322,11 +322,20 @@ public class OrderController extends BaseController {
     @AuthorityValid(isCheck = false)
     public String offerchangePre(@RequestBody Map<String, Object> params, Model model, @LogOperatorAnn String optFlowNum,
             HttpServletResponse response, HttpSession httpSession) throws BusinessException {
-
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+				SysConstant.SESSION_KEY_LOGIN_STAFF);
+		String propertiesKey = "NEWUIFLAG_"+ (sessionStaff.getCurrentAreaId() + "").substring(0, 3);//新ui开关
+		// 新UI开关
+		String newUIFlag = propertiesUtils.getMessage(propertiesKey);
+		
 		String result = rulecheck(params,model,optFlowNum,httpSession);
 		if(result != null){
 			return result;
-		}else return "/app/order/order-offerchange-search";
+		}else if("ON".equals(newUIFlag) && params.get("newFlag")!=null){
+			return "/app/order_new/order-offerchange-search";
+		} else {
+			return "/app/order/order-offerchange-search";
+		}
     }
 	
 	/**
@@ -429,9 +438,16 @@ public class OrderController extends BaseController {
 		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);
     	String channelCode =sessionStaff.getCurrentChannelCode();
     	model.addAttribute("channelCode", channelCode);
+    	String propertiesKey = "NEWUIFLAG_"+ (sessionStaff.getCurrentAreaId() + "").substring(0, 3);//新ui开关
+		// 新UI开关
+		String newUIFlag = propertiesUtils.getMessage(propertiesKey);
 		if(result != null){
 			return result;
-		}else return "/app/order/order-attach-offer";
+		} else if("ON".equals(newUIFlag) && params.get("newFlag") != null){
+			return "/app/order_new/order-attach-offer";
+		}else {
+			return "/app/order/order-attach-offer";
+		}
     }
 	
 	/**
@@ -947,9 +963,16 @@ public class OrderController extends BaseController {
 		} catch (Exception e) {
 			return super.failedStr(model, ErrorCode.QUERY_MAIN_OFFER, e, prams);
 		}
-        if(prams.get("enter")!=null && prams.get("enter").toString().length()>0){
-			return "/app/order_new/offer-list";//新版 ui
-		}
+		String propertiesKey = "NEWUIFLAG_"+ (sessionStaff.getCurrentAreaId() + "").substring(0, 3);//新ui开关
+		// 新UI开关
+		String newUIFlag = propertiesUtils.getMessage(propertiesKey);
+        if("ON".equals(newUIFlag) && prams.get("newFlag") != null){
+        	if (prams.get("actionFlag")!=null && prams.get("actionFlag").equals("2")){
+            	return "/app/order_new/offer-change-list";//新版套餐变更ui
+    		}else if(prams.get("enter")!=null && prams.get("enter").toString().length()>0){
+    			return "/app/order_new/offer-list";//新版 ui
+    		} 
+        }
         return "/app/order/offer-list";
     }
     
@@ -1167,16 +1190,24 @@ public class OrderController extends BaseController {
     	SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);
     	String channelCode =sessionStaff.getCurrentChannelCode();
     	model.addAttribute("channelCode", channelCode);
+    	String propertiesKey = "NEWUIFLAG_"+ (sessionStaff.getCurrentAreaId() + "").substring(0, 3);//新ui开关
+		// 新UI开关
+		String newUIFlag = propertiesUtils.getMessage(propertiesKey);
     	if("2".equals(String.valueOf(param.get("actionFlag")))){  //套餐变更
     		if (MapUtils.isNotEmpty(param)) {
         		model.addAttribute("main", param);
         		System.out.println("++++++++++++reqMap="+JsonUtil.toString(param));
         	}
     		forward = "/app/offer/offer-change";
+    		if("ON".equals(newUIFlag) && param.get("newFlag") != null){
+    			forward = "/app/order_new/offer-change";
+    		}
+    		
     	}else if("21".equals(String.valueOf(param.get("actionFlag")))){  //套餐变更
     		if (MapUtils.isNotEmpty(param)) {
         		model.addAttribute("main", param);
         	}
+    		
     		forward = "/app/offer/member-change";
     	}else if("3".equals(String.valueOf(param.get("actionFlag")))){
     		if (MapUtils.isNotEmpty(param)) {

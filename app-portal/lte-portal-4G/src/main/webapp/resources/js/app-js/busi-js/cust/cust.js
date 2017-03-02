@@ -530,10 +530,8 @@ cust = (function(){
 						for(var i=0;i<OrderInfo.certTypedates.length;i++){
 							var certTypedate = OrderInfo.certTypedates[i];
 							if (certTypedate.certTypeCd == "1") {//身份证
-									$("#cm_identidiesTypeCd").append("<option value='"+certTypedate.certTypeCd+"' >"+certTypedate.name+"</option>");
-								}else if(isAllowChannelType){//如果自有渠道，开放所有
-									$("#cm_identidiesTypeCd").append("<option value='"+certTypedate.certTypeCd+"' >"+certTypedate.name+"</option>");
-								}
+								$("#cm_identidiesTypeCd").append("<option value='"+certTypedate.certTypeCd+"' >"+certTypedate.name+"</option>");
+							}
 						}
 					}
 				}
@@ -1120,7 +1118,8 @@ cust = (function(){
 				datatype:{
 					"zh6-50":/[\u4e00-\u9fa5]{6}|^.{12}/,
 					"sfz":/(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/,
-					"qtzj":/^[0-9a-zA-Z]{1,100}$/
+					"qtzj":/^[0-9a-zA-Z]{1,100}$/,
+					"phone":/^1[3456789]\d{9}$/
 				},
 				tiptype:function(msg,o,cssctl){
 					
@@ -1169,7 +1168,7 @@ cust = (function(){
 				},
 				{
 				    ele:"#mobilePhone",
-				    datatype:"m",
+				    datatype:"phone",
 				    errormsg:"请输入正确的手机号码",
 				    ignore:"ignore"
 				}                

@@ -227,3 +227,8 @@ html input[disabled] {
 /* --------- 2016/12/30 by soon--------- */
 .choice-box > .help-block{font-size: 0.28rem; position: absolute; right:.22rem; line-height: .86rem; height: .86rem; top:0; }
 .choice-box > .help-block.error{color: #ff0000}
+
+/* --------- 2016/02/24 by soon--------- */
+.padding-15{padding: 15px;}
+.btn-green.btn-success{border: none;}
+.btn-green{background: #05a642!important;}

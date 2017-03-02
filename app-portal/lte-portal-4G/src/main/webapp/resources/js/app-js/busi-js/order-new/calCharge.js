@@ -979,7 +979,7 @@ order.calcharge = (function(){
 			$("#toCharge").attr("disabled","disabled");
 			_queryPayOrdStatus1(OrderInfo.orderResult.olId,"1",payType);
 		}else{
-			$.unecOverlay();//去遮罩
+			//$.unecOverlay();//去遮罩
 		}
 	};
 

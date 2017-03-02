@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.al.ec.serviceplatform.client.ResultCode;
 import com.al.ecs.common.entity.JsonResponse;
 import com.al.ecs.common.util.JsonUtil;
+import com.al.ecs.common.util.PropertiesUtils;
 import com.al.ecs.common.web.ServletUtils;
 import com.al.ecs.exception.BusinessException;
 import com.al.ecs.exception.ErrorCode;
@@ -54,6 +55,9 @@ public class OfferController extends BaseController {
 	@Autowired
 	@Qualifier("com.al.lte.portal.bmo.crm.OrderBmo")
 	private OrderBmo orderBmo;
+	
+	@Autowired
+	PropertiesUtils propertiesUtils;
 	
 	/**
 	 * 获取销售品规格构成
@@ -252,6 +256,12 @@ public class OfferController extends BaseController {
 		} catch (Exception e) {
 			return super.failedStr(model, ErrorCode.QUERY_ATTACH_OFFER, e, paramMap);
 		}
+		String propertiesKey = "NEWUIFLAG_"+ (sessionStaff.getCurrentAreaId() + "").substring(0, 3);//新ui开关
+		// 新UI开关
+		String newUIFlag = propertiesUtils.getMessage(propertiesKey);
+		if("ON".equals(newUIFlag) && paramMap.get("newFlag") != null){
+			return "/app/order_new/attach-offer-change";
+		}
 	 	return "/app/offer/attach-offer-change";
 	}
 	
@@ -288,6 +298,12 @@ public class OfferController extends BaseController {
 			return super.failedStr(model, ie, paramMap, ErrorCode.QUERY_ATTACH_OFFER);
 		} catch (Exception e) {
 			return super.failedStr(model, ErrorCode.QUERY_ATTACH_OFFER, e, paramMap);
+		}
+		String propertiesKey = "NEWUIFLAG_"+ (sessionStaff.getCurrentAreaId() + "").substring(0, 3);//新ui开关
+		// 新UI开关
+		String newUIFlag = propertiesUtils.getMessage(propertiesKey);
+		if("ON".equals(newUIFlag) && paramMap.get("newFlag") != null){
+			return "/app/order_new/attach-offer";
 		}
 	 	return "/app/offer/attach-offer";
 	}

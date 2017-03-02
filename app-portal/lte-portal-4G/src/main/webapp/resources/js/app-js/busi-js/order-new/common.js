@@ -324,7 +324,7 @@ common = (function($) {
 		if($(".modal-dialog").is(":visible")){//有弹出层不允许返回
 			return;
 		}
-//		alert("OrderInfo.actionFlag="+OrderInfo.actionFlag+"---OrderInfo.order.step="+OrderInfo.order.step+"---OrderInfo.returnFlag="+OrderInfo.returnFlag);
+		//alert("OrderInfo.actionFlag="+OrderInfo.actionFlag+"---OrderInfo.order.step="+OrderInfo.order.step+"---OrderInfo.returnFlag="+OrderInfo.returnFlag);
 		if($(".modal-backdrop").length>0 && $("#overlay-modal").length>0){
 			$.unecOverlay();//网络出现故障或手机出现故障时按返回关闭“加载中”提示框
 		}
@@ -531,6 +531,110 @@ common = (function($) {
 				return;
 			}
 		}
+		if(OrderInfo.actionFlag==3){//可选包变更
+			if(OrderInfo.order.step==1){//选择套餐
+				_callCloseWebview();
+				return;
+			} else if(OrderInfo.order.step==3){//订单提交
+				$("#nav-tab-4").removeClass("active in");
+				$("#nav-tab-3").addClass("active in");
+				$("#tab3_li").removeClass("active");
+				$("#tab2_li").addClass("active");
+				OrderInfo.order.step=1;
+				return;
+			} else if(OrderInfo.order.step==6){//订单确认
+				var boProd2Tds = OrderInfo.boProd2Tds;
+				//取消订单时，释放被预占的UIM卡
+				if(boProd2Tds.length>0){
+					for(var n=0;n<boProd2Tds.length;n++){
+						var param = {
+								numType : 2,
+								numValue : boProd2Tds[n].terminalCode
+						};
+						$.callServiceAsJson(contextPath+"/app/mktRes/phonenumber/releaseErrorNum", param, {
+							"done" : function(){}
+						});
+					}
+				}
+				SoOrder.orderBack();
+				SoOrder.getToken();
+				OrderInfo.order.step=3;
+				return;
+			} else if(OrderInfo.order.step==7){//收银台
+				$("#nav-tab-8").removeClass("active in");
+		    	$("#nav-tab-7").addClass("active in");
+		    	$("#tab8_li").removeClass("active");
+		    	$("#tab7_li").addClass("active");
+				OrderInfo.order.step=6;
+				return;
+			} else if(OrderInfo.order.step==8){//回执
+				$("#order-print").hide();
+				$("#orderConfirmDiv").show();
+				$("#headTabDiv2").show();
+		    	$("#nav-tab-8").addClass("active in");
+		    	$("#tab8_li").addClass("active");
+				OrderInfo.order.step=7;
+				return;
+			}
+		}
+		
+		if(OrderInfo.actionFlag==2){//套餐变更
+			if(OrderInfo.order.step==1){//选择套餐
+				_callCloseWebview();
+				return;
+			} else if(OrderInfo.order.step==2){//选择可选包
+				$("#nav-tab-3").removeClass("active in");
+				$("#nav-tab-2").addClass("active in");
+				$("#tab2_li").removeClass("active");
+				$("#tab1_li").addClass("active");
+				$("#offer_a").show();
+				OrderInfo.order.step=1;
+				return;
+			} else if(OrderInfo.order.step==3){//订单提交
+				$("#nav-tab-4").removeClass("active in");
+				$("#nav-tab-3").addClass("active in");
+				$("#tab3_li").removeClass("active");
+				$("#tab2_li").addClass("active");
+				OrderInfo.order.step=2;
+				return;
+			} else if(OrderInfo.order.step==6){//订单确认
+				var boProd2Tds = OrderInfo.boProd2Tds;
+				//取消订单时，释放被预占的UIM卡
+				if(boProd2Tds.length>0){
+					for(var n=0;n<boProd2Tds.length;n++){
+						var param = {
+								numType : 2,
+								numValue : boProd2Tds[n].terminalCode
+						};
+						$.callServiceAsJson(contextPath+"/app/mktRes/phonenumber/releaseErrorNum", param, {
+							"done" : function(){}
+						});
+					}
+				}
+				SoOrder.orderBack();
+				SoOrder.getToken();
+				OrderInfo.order.step=3;
+				return;
+			} else if(OrderInfo.order.step==7){//收银台
+				$("#nav-tab-8").removeClass("active in");
+		    	$("#nav-tab-7").addClass("active in");
+		    	$("#tab8_li").removeClass("active");
+		    	$("#tab7_li").addClass("active");
+				OrderInfo.order.step=6;
+				return;
+			} else if(OrderInfo.order.step==8){//回执
+				$("#order-print").hide();
+				$("#orderConfirmDiv").show();
+				$("#headTabDiv2").show();
+		    	$("#nav-tab-8").addClass("active in");
+		    	$("#tab8_li").addClass("active");
+				OrderInfo.order.step=7;
+				return;
+			}
+		}
+		
+		
+		
 		if(OrderInfo.actionFlag==13){//购裸机
 			if(OrderInfo.order.step==1){
 				_callCloseWebview();

@@ -10,7 +10,7 @@ CommonUtils.regNamespace("order", "phoneNumber");
 order.phoneNumber = (function(){
 	var _step=1;//页面步骤，默认1
 	var mainFlag="true";//是否主卡选号码
-	var _secondaryCarNum;//副卡数目
+	var _secondaryCarNum=0;//副卡数目
 	var selectedObj=null;//密码预占查询选中号码对象
 	var _boProdAn = {
 			accessNumber : "", //接入号
@@ -664,6 +664,10 @@ order.phoneNumber = (function(){
 	
    //副卡号码池数据展示
 	var _showSecondaryCardModalData=function(){
+		if(cust.usedNum!=undefined && (order.phoneNumber.secondaryCarNum+cust.usedNum)>=5){//一证五号
+			$.alert("提示","一个用户证件下不能有超过五个号码!");
+			return;
+		}
 		if(order.phoneNumber.secondaryCarNum>=order.service.max){//副卡添加数已达最大
 			return;
 		}

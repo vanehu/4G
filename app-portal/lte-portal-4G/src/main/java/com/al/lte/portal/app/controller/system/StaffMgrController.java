@@ -69,6 +69,92 @@ public class StaffMgrController extends com.al.lte.portal.controller.system.Staf
     	return "/app/staff/staff-pwd";
     }
     
+    /**
+	 * 手机客户端-修改手势密码
+	 * @param params
+	 * @param request
+	 * @param model
+	 * @param session
+	 * @return
+	 * @throws AuthorityException
+	 */
+	@RequestMapping(value = "/hand/UpdatePwd", method = RequestMethod.POST)
+	public @ResponseBody JsonResponse UpdatePwd(@RequestBody Map<String, Object> reqMap, String optFlowNum,
+			HttpServletResponse response,HttpServletRequest request){
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+                SysConstant.SESSION_KEY_LOGIN_STAFF);
+		JsonResponse jsonResponse = null;
+		Map<String, Object> rMap = null;
+		String areaid = sessionStaff.getAreaId();//区
+		reqMap.put("areaId", areaid);
+		reqMap.put("actionType", "UPDATE");
+		reqMap.put("is_hand", "true");
+		reqMap.put("staffId", sessionStaff.getStaffId());
+			try {
+//				System.out.println("++++++++++++reqMap="+JsonUtil.toString(reqMap));
+				rMap = staffBmo.updateStaffPwd(reqMap, optFlowNum, sessionStaff);
+//	 			log.debug("return={}", JsonUtil.toString(rMap));
+	 			if (rMap != null&& "0".equals(rMap.get("code").toString())) {
+	 				jsonResponse = super.successed(rMap,ResultConstant.SUCCESS.getCode());
+	 			} else {
+	 				jsonResponse = super.failed(rMap,ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+	 			}
+//				DataBus db = InterfaceClient.callService(reqMap, PortalServiceCode.BORAD_BAND_QUERYCHARGECONFIG,optFlowNum, sessionStaff);
+	        }  catch (BusinessException be) {
+				this.log.error("UPDATE_STAFF_PWD", be);
+				return super.failed(be);
+			} catch (InterfaceException ie) {
+				return super.failed(ie, reqMap, ErrorCode.UPDATE_STAFF_PWD);
+			} catch (Exception e) {
+				log.error("员工密码修改失败", e);
+				return super.failed(ErrorCode.UPDATE_STAFF_PWD, e, reqMap);
+			}
+			return jsonResponse;
+	}
+    
+	/**
+	 * 手机客户端-设置手势密码
+	 * @param params
+	 * @param request
+	 * @param model
+	 * @param session
+	 * @return
+	 * @throws AuthorityException
+	 */
+	@RequestMapping(value = "/hand/SetPwd", method = RequestMethod.POST)
+	public @ResponseBody JsonResponse SetPwd(@RequestBody Map<String, Object> reqMap, String optFlowNum,
+			HttpServletResponse response,HttpServletRequest request){
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+                SysConstant.SESSION_KEY_LOGIN_STAFF);
+		JsonResponse jsonResponse = null;
+		Map<String, Object> rMap = null;
+		String areaid = sessionStaff.getAreaId();//区
+		reqMap.put("areaId", areaid);
+		reqMap.put("actionType", "SET");
+		reqMap.put("is_hand", "true");
+		reqMap.put("staffId", sessionStaff.getStaffId());
+			try {
+//				System.out.println("++++++++++++reqMap="+JsonUtil.toString(reqMap));
+				rMap = staffBmo.updateStaffPwd(reqMap, optFlowNum, sessionStaff);
+//	 			log.debug("return={}", JsonUtil.toString(rMap));
+				if (rMap != null&& "0".equals(rMap.get("code").toString())) {
+	 				jsonResponse = super.successed(rMap,ResultConstant.SUCCESS.getCode());
+	 			} else {
+	 				jsonResponse = super.failed(rMap,ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+	 			}
+//				DataBus db = InterfaceClient.callService(reqMap, PortalServiceCode.BORAD_BAND_QUERYCHARGECONFIG,optFlowNum, sessionStaff);
+	        }  catch (BusinessException be) {
+				this.log.error("员工密码设置失败", be);
+				return super.failed(be);
+			} catch (InterfaceException ie) {
+				return super.failed(ie, reqMap, ErrorCode.UPDATE_STAFF_PWD);
+			} catch (Exception e) {
+				log.error("员工密码设置失败", e);
+				return super.failed(ErrorCode.UPDATE_STAFF_PWD, e, reqMap);
+			}
+			return jsonResponse;
+	}
+	
     //员工查询及协销人--入口
     @RequestMapping(value = "/getStaffListPrepare", method = RequestMethod.GET)
     @AuthorityValid(isCheck = false)

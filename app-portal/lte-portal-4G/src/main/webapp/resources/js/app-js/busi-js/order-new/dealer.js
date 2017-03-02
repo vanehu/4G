@@ -23,7 +23,6 @@ order.dealer = (function() {
 			"PARTYPRODUCTRELAROLECD" : "40020007",
 			"NAME" : "第三发展人"
 		} ];
-		
 		if (OrderInfo.actionFlag == 1 || OrderInfo.actionFlag == 2
 				|| OrderInfo.actionFlag == 14 || OrderInfo.actionFlag == 112 || OrderInfo.actionFlag == 201) { // 新装业务，套餐变更需要主套餐发展人
 			var objInstId = OrderInfo.offerSpec.offerSpecId;
@@ -35,17 +34,15 @@ order.dealer = (function() {
 			 _addDealer(OrderInfo.staff.staffName,OrderInfo.staff.staffId,cur_channelCode,40020005);			
 			
 		}
-		if (OrderInfo.actionFlag == 1 || OrderInfo.actionFlag == 2
+		if (OrderInfo.actionFlag == 1 || OrderInfo.actionFlag == 2 || OrderInfo.actionFlag == 3
 				|| OrderInfo.actionFlag == 14 || OrderInfo.actionFlag == 22 || OrderInfo.actionFlag == 9){
-			if(AttachOffer.addTerminal){
+			$.each(AttachOffer.addTerminalList,function(){
 				var $ul = $("#tab-change-list2");
-				if(ec.util.isObj(prodId)){
-					var $li = $("#terminalDiv_"+prodId);
-					AttachOffer.terminalDiv.appendTo($li);
-					$li.show();
-				}
+				var $li = $("#terminalDiv_"+this.prodId);
+				AttachOffer.terminalDiv.appendTo($li);
+				$li.show();
 				$('#tab-change-list2').css('height','4.62rem');
-			}
+			});
 			$("#orderIdentidiesTypeCd").empty();
 			cust.jbrcertTypeByPartyType(1,"orderIdentidiesTypeCd");
 			$("#deleteJbr").hide();
@@ -54,6 +51,7 @@ order.dealer = (function() {
 				$("#jbrName").removeClass("font-secondary");
 				$("#deleteJbr").show();
 			}
+			order.broadband.init_select();
 			try{
 				if(!ec.util.isObj(OrderInfo.curIp)){
 					common.getMobileIp("cust.getIp");
@@ -154,7 +152,7 @@ order.dealer = (function() {
 						$('#dealerModal').find('.choice-box').children('.help-block').addClass('hidden');
 					}else{
 						// $("#dealerName").html(response.data[0].staffName).attr("staffId", response.data[0].staffId);
-						_addDealer(response.data[0].staffName,response.data[0].staffId,response.data[0].chanInfos[0].channelNbr == undefined ? '' : response.data[0].chanInfos[0].channelNbr,$('#dealerType').val(),CONST.BUSI_ORDER_ATTR.DEALER_NAME)
+						_addDealer(response.data[0].staffName,response.data[0].staffId,response.data[0].chanInfos[0] == undefined ? '' : response.data[0].chanInfos[0].channelNbr,$('#dealerType').val(),CONST.BUSI_ORDER_ATTR.DEALER_NAME)
 			
 						$("#dealerModal").modal("hide");
 						//重置表单

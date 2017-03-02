@@ -1697,4 +1697,62 @@ public class MktResController extends BaseController {
     	
     	return jsonResponse;
 	}
+    /**
+     * 1主推终端页面
+     * @param model
+     * @param session
+     * @param flowNum
+     * @return
+     * @throws AuthorityException
+     */
+    @RequestMapping(value = "/terminalListUI", method = RequestMethod.POST)
+    @AuthorityValid(isCheck = false)
+    public String terminalListUI(Model model,HttpSession session,@LogOperatorAnn String flowNum) throws AuthorityException {
+        SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+                SysConstant.SESSION_KEY_LOGIN_STAFF);
+        model.addAttribute("default_area_id", sessionStaff.getCurrentAreaId());
+        return "/app/mktRes/terminalMainPush-list";
+    }
+    
+    @SuppressWarnings("unchecked")
+    @RequestMapping(value = "/terminalQueryList", method = { RequestMethod.POST }, produces = "text/html;charset=UTF-8")
+    @LogOperatorAnn(desc = "主推终端查询", code = "TERMINAL_QUERY", level = LevelLog.DB)
+    public String terminalQueryList(@RequestBody Map<String, Object> param, Model model, @LogOperatorAnn String flowNum,
+            HttpServletResponse response) {
+        SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+                SysConstant.SESSION_KEY_LOGIN_STAFF);
+        param.put("channelId", sessionStaff.getCurrentChannelId());
+        try {
+
+            Map<String, Object> mktResMap = mktResBmo.queryMktResInfo(param, flowNum, sessionStaff);
+            Object obj = MapUtils.getObject(mktResMap, "mktResList");
+            if (obj != null && obj instanceof List) {
+                List<Map<String, Object>> mktResList = (List<Map<String, Object>>) obj;
+                String mktResPicUrl = propertiesUtils.getMessage(SysConstant.MKT_RES_PIC_URL);
+                if (StringUtils.isNotEmpty(mktResPicUrl)) {
+                    log.debug("mktResPicUrl:{}", mktResPicUrl);
+                    model.addAttribute("mktResPicUrl", mktResPicUrl);
+                }
+                Map<String, Object> mktPageInfo = MapUtil.map(mktResMap, "mktPageInfo");
+                // 设置分页对象信息
+                PageModel<Map<String, Object>> pm = PageUtil.buildPageModel(MapUtils.getIntValue(mktPageInfo,
+                        "pageIndex", 1), MapUtils.getIntValue(mktPageInfo, "pageSize", 10), MapUtils.getIntValue(
+                        mktPageInfo, "totalCount", 0), mktResList);
+                model.addAttribute("pageModel", pm);
+            } else {
+                super.setNoCacheHeader(response);
+            }
+            model.addAllAttributes(param);
+        } catch (BusinessException be) {
+            this.log.error("门户/app/mktRes/terminalQueryList服务异常", be);
+            return super.failedStr(model, be);
+        } catch (InterfaceException ie) {
+            return super.failedStr(model, ie, param, ErrorCode.QUERY_TERMINAL_LIST);
+        } catch (Exception e) {
+            this.log.error("门户/app/mktRes/terminalQueryList服务异常", e);
+            return super.failedStr(model, ErrorCode.QUERY_TERMINAL_LIST, e, param);
+        }
+
+        return "/app/terminal/terminal-search";
+    }
 }

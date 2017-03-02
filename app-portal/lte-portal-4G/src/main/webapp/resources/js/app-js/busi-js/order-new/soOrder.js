@@ -266,6 +266,26 @@ SoOrder = (function() {
 		}
 		if(OrderInfo.actionFlag==1 || OrderInfo.actionFlag==14 || OrderInfo.actionFlag==112){ //新装
 			_createOrder(busiOrders); //新装
+		}else if (OrderInfo.actionFlag==2){ //套餐变更
+			offerChange.changeOffer(busiOrders);	
+			if(OrderInfo.jbr.custId){
+				OrderInfo.orderData.orderList.orderListInfo.handleCustId = OrderInfo.jbr.custId;
+				if(OrderInfo.jbr.custId < -1){
+					OrderInfo.createJbr(busiOrders);
+				}
+			}
+		}else if (OrderInfo.actionFlag==3){ //可选包变更		
+			_createAttOrder(busiOrders); //附属销售品变更
+			if(busiOrders.length==0){
+				$.alert("提示","没有做任何业务，无法提交");
+				return false;
+			}
+			if(OrderInfo.jbr.custId){
+				OrderInfo.orderData.orderList.orderListInfo.handleCustId = OrderInfo.jbr.custId;
+				if(OrderInfo.jbr.custId < -1){
+					OrderInfo.createJbr(busiOrders);
+				}
+			}
 		}else if (OrderInfo.actionFlag==201){ //订购橙分期合约包
 			query.offer.loadInst(); //加载实例到缓存
 			_createAttOrder(busiOrders); 
@@ -1185,9 +1205,19 @@ SoOrder = (function() {
 			$("#orderTbody").append('<li><span class="list-title"><span class="title-lg">'+bo2Coupons[0].couponInstanceNumber+'</span><span class="subtitle font-secondary">终端串码</span></span></li>');
 		}else{ //二次业务
 			var prod = order.prodModify.choosedProdInfo;
-			$("#orderTbody").append('<li><span class="list-title"><span class="title-lg">'+prod.prodOfferName+'</span><span class="subtitle font-secondary">套餐名称</span></span></li>');
-			$("#orderTbody").append('<li><span class="list-title"><span class="title-lg">'+prod.accNbr+'</span><span class="subtitle font-secondary">手机号码</span></span></li>');	
-           if(OrderInfo.actionFlag==3){ //可选包变更 和订购橙分期合约包
+			$("#orderTbody").append('<li id="offerSpecName"><span class="list-title"><span class="title-lg">'+prod.prodOfferName+'</span><span class="subtitle font-secondary">套餐名称</span></span></li>');
+			$("#orderTbody").append('<li id="accNbrTr"><span class="list-title"><span class="title-lg">'+prod.accNbr+'</span><span class="subtitle font-secondary">手机号码</span></span></li>');	
+			if(OrderInfo.actionFlag==2){ //套餐变更 
+				OrderInfo.actionTypeName = "套餐变更";
+				$("#accNbrTr").hide();
+				$("#orderTbody").append('<li><span class="list-title"><span class="title-lg">'+OrderInfo.offerSpec.offerSpecName+'</span><span class="subtitle font-secondary">新套餐名称</span></span></li>');
+				for ( var i = 0; i < OrderInfo.offer.offerMemberInfos.length; i++) { //遍历主销售品构成
+					var offerMember = OrderInfo.offer.offerMemberInfos[i];
+					if(offerMember.objType==CONST.OBJ_TYPE.PROD){
+						$("#orderTbody").append('<li><span class="list-title"><span class="title-lg">'+offerMember.accessNumber+'</span><span class="subtitle font-secondary">'+offerMember.roleName+'号码</span></span></li>');
+					}
+				}
+			} else if(OrderInfo.actionFlag==3){ //可选包变更 和订购橙分期合约包
 				OrderInfo.actionTypeName = "订购/退订可选包与功能产品";
 			}else if(OrderInfo.actionFlag==201){
 				OrderInfo.actionTypeName = "订购橙分期合约包";
@@ -1209,6 +1239,10 @@ SoOrder = (function() {
 		if(ruleFlag){
 			if(OrderInfo.actionFlag==1 || OrderInfo.actionFlag==14 || OrderInfo.actionFlag==112){
 				_showOrderOffer(); //显示订购的销售品
+			}else if(OrderInfo.actionFlag==2){ //套餐变更 
+				_showChangeAttach();
+			}else if (OrderInfo.actionFlag==3){
+				_showAttachOffer(); //显示订购的销售品
 			}else if(OrderInfo.actionFlag==201){//订购橙分期合约包
 				_showAttachOffer(); //显示订购的销售品
 			}
@@ -1224,6 +1258,20 @@ SoOrder = (function() {
 							
 				_showAttOffer(this.prodInstId);
 			});
+		});
+	};
+	//套餐变更销售附属
+	var _showChangeAttach = function(){
+		var i=0;
+		$.each(OrderInfo.offer.offerMemberInfos,function(){
+			if(this.objType==CONST.OBJ_TYPE.PROD){
+				if(OrderInfo.offer.offerMemberInfos.length >1){
+					_showAttOffer(this.objInstId,this.roleName);
+				} else {
+					_showAttOffer(this.objInstId);
+				}
+				
+			}
 		});
 	};
 	
@@ -1264,11 +1312,14 @@ SoOrder = (function() {
 	};
 	
 	//显示的可选包/功能产品
-	var _showAttOffer = function(prodId){
+	var _showAttOffer = function(prodId,roleName){
 		var offerSpecList = CacheData.getOfferSpecList(prodId);
 		var offerList = CacheData.getOfferList(prodId);
 		var servSpecList = CacheData.getServSpecList(prodId);
 		var servList = CacheData.getServList(prodId);
+		if(roleName != undefined){
+			$("#orderTbody").append('<li><span class="list-title"><span>'+roleName+' 业务动作</span></span></li>');					
+		}
 		//可选包显示
 		if(offerSpecList!=undefined && offerSpecList.length>0){  
 			$.each(offerSpecList,function(){ //遍历当前产品下面的附属销售品
@@ -1393,6 +1444,10 @@ SoOrder = (function() {
 			OrderInfo.resetSeq(); //重置序列
 			SoOrder.delOrder();
 			return;
+		}
+		if(OrderInfo.actionFlag==3 || OrderInfo.actionFlag==2){
+			OrderInfo.order.step=3;
+			$("#order-content").show();
 		}
 		if(OrderInfo.actionFlag==13){//购裸机
 			$("#nav-tab-7").removeClass("active in");

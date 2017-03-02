@@ -54,6 +54,48 @@ query.offer = (function() {
 		}
 	};
 	
+	// 查询默认必须可选包
+	var _queryDefMustOfferSpec = function(param) {
+		addParam(param);  //添加基本参数
+		var url = contextPath+"/app/offer/queryDefaultAndRequiredOfferSpec";
+		$.ecOverlay("<strong>查询默认必须可选包中，请稍等...</strong>");
+		var response = $.callServiceAsJsonGet(url,param);	
+		$.unecOverlay();
+		if (response.code==0) {
+			if(response.data){
+				return response.data;
+			}
+		}else if (response.code==-2){
+			OrderInfo.isSuccess = "N";
+			$.alertM(response.data);
+			return;
+		}else {
+			OrderInfo.isSuccess = "N";
+			$.alert("提示","可订购功能产品失败,稍后重试");
+			return;
+		}
+	};
+	// 查询默认必须可选包 + 功能产品 (补换卡加可选包)
+	var _queryDefMustOfferSpecAndServ = function(param) {
+		addParam(param);  //添加基本参数
+		var url = contextPath+"//app/offer/queryDefaultAndRequiredOfferSpecAndServ";
+		$.ecOverlay("<strong>查询默认必须可选包和功能产品中，请稍等...</strong>");
+		var response = $.callServiceAsJsonGet(url,param);	
+		$.unecOverlay();
+		if (response.code==0) {
+			OrderInfo.isSuccess = "Y";
+			if(response.data){
+				return response.data;
+			}
+		}else if (response.code==-2){
+			$.alertM(response.data);
+			return;
+		}else {
+			$.alert("提示","可订购可选包和功能产品失败,稍后重试");
+			return;
+		}
+	};
+	
 	//附属销售品规格查询(选完主套餐带出的可订购和可选择可选包等)
 	var _queryAttachSpec = function(param,callBackFun) {
 		param.enter=3;//传给controller表示新版ui
@@ -136,6 +178,7 @@ query.offer = (function() {
 			param.soNbr = UUID.getDataId();
 			OrderInfo.order.soNbr = UUID.getDataId();
 		}
+		param.newFlag=1; //新ui标识
 	};
 	
 	/**
@@ -209,6 +252,182 @@ query.offer = (function() {
 			$.alert("提示","可订购功能产品失败,稍后重试");
 			return;
 		}
+	};
+	
+	//根据选择产品查询销售品实例，并保存到OrderInfo.offer
+	var _setOffer = function(callBack) {
+		var prod = order.prodModify.choosedProdInfo ; 
+		var param = {
+			offerId : prod.prodOfferInstId,
+			offerSpecId : prod.prodOfferId,
+			acctNbr : prod.accNbr,
+			areaId : prod.areaId,
+			distributorId : ""
+		};
+		if(typeof(callBack)=="function"){
+			query.offer.queryOfferInst(param,function(data){
+				if(data&&data.code == CONST.CODE.SUCC_CODE){
+					var flag = true;
+					if(ec.util.isArray(data.offerMemberInfos)){
+						CacheData.sortOffer(data);
+						for ( var i = 0; i < data.offerMemberInfos.length; i++) {
+							var member = data.offerMemberInfos[i];
+							if(member.objType==""){
+								$.alert("提示","销售品实例构成 "+member.roleName+" 成员类型【objType】节点为空，无法继续受理,请营业后台核实");
+								return false;
+							}else if(member.objType==CONST.OBJ_TYPE.PROD){
+								/*if(member.objId==""){
+							$.alert("提示","销售品实例构成 "+member.roleName+" 接入产品规格【objId】节点为空，无法继续受理,请营业后台核实");
+							return false;
+						}*/
+								if(member.accessNumber==""){
+									$.alert("提示","销售品实例构成 "+member.roleName+" 接入产品号码【accessNumber】节点为空，无法继续受理,请营业后台核实");
+									return false;
+								}
+							}
+							if(member.objInstId==prod.prodInstId){
+								flag = false;
+							}
+						}
+						if(flag){
+							$.alert("提示","销售品实例构成中 没有包含选中接入号码【"+prod.accNbr+"】，无法继续受理，请业务后台核实");
+							return false;
+						}
+						OrderInfo.offer.offerMemberInfos = data.offerMemberInfos; 
+						OrderInfo.offer.offerId = prod.prodOfferInstId;
+						OrderInfo.offer.offerSpecId = prod.prodOfferId;
+						OrderInfo.offer.offerSpecName = prod.prodOfferName;
+						callBack();
+					}else{//销售品成员实例为空
+						$.alert("提示","查询销售品实例构成，没有返回成员实例无法继续受理");
+						return false;
+					}
+				}
+			}); //查询销售品实例构成
+		}else{
+			var data = query.offer.queryOfferInst(param); //查询销售品实例构成
+			if(data&&data.code == CONST.CODE.SUCC_CODE){
+				var flag = true;
+				if(ec.util.isArray(data.offerMemberInfos)){
+					CacheData.sortOffer(data);
+					for ( var i = 0; i < data.offerMemberInfos.length; i++) {
+						var member = data.offerMemberInfos[i];
+						if(member.objType==""){
+							$.alert("提示","销售品实例构成 "+member.roleName+" 成员类型【objType】节点为空，无法继续受理,请营业后台核实");
+							return false;
+						}else if(member.objType==CONST.OBJ_TYPE.PROD){
+							/*if(member.objId==""){
+							$.alert("提示","销售品实例构成 "+member.roleName+" 接入产品规格【objId】节点为空，无法继续受理,请营业后台核实");
+							return false;
+						}*/
+							if(member.accessNumber==""){
+								$.alert("提示","销售品实例构成 "+member.roleName+" 接入产品号码【accessNumber】节点为空，无法继续受理,请营业后台核实");
+								return false;
+							}
+						}
+						if(member.objInstId==prod.prodInstId){
+							flag = false;
+						}
+					}
+					if(flag){
+						$.alert("提示","销售品实例构成中 没有包含选中接入号码【"+prod.accNbr+"】，无法继续受理，请业务后台核实");
+						return false;
+					}
+					OrderInfo.offer.offerMemberInfos = data.offerMemberInfos; 
+					OrderInfo.offer.offerId = prod.prodOfferInstId;
+					OrderInfo.offer.offerSpecId = prod.prodOfferId;
+					OrderInfo.offer.offerSpecName = prod.prodOfferName;
+					return true;
+				}else{//销售品成员实例为空
+					$.alert("提示","查询销售品实例构成，没有返回成员实例无法继续受理");
+					return false;
+				}
+			}
+		}
+	};
+	
+	/**
+	 * 销售品实例构成查询
+	 * @param  offerId 销售品实例ID
+	 * @param  areaId 地区ID
+	 * @param  accessNumber 接入号
+	 * @callBackFun 异步调用函数
+	 */
+	var _queryOfferInst = function(param,callBackFun) {
+		var url= contextPath+"/app/offer/queryOfferInst";
+		if(typeof(callBackFun)=="function"){
+			$.callServiceAsJsonGet(url, param, {
+				"before":function(){
+					$("#attach-modal").modal('show');
+					//$.ecOverlay("<strong>正在查询销售品实例中,请稍后....</strong>");
+				},	
+				"done" : function(response){
+					//$.unecOverlay();
+					$("#attach-modal").modal('hide');
+					if (response.code==0) {
+						if(response.data){
+							callBackFun(response.data);
+						}
+					}else if (response.code==-2){
+						$.alertM(response.data);
+					}else {
+						$.alert("提示","查询销售品实例失败,稍后重试");
+					}
+				}
+			});
+		}else {
+			$.ecOverlay("<strong>正在查询销售品实例中,请稍后....</strong>");
+			var response = $.callServiceAsJsonGet(url,param);	
+			$.unecOverlay();
+			if (response.code==0) {
+				if(response.data){
+					return response.data;
+				}
+			}else if (response.code==-2){
+				$.alertM(response.data);
+			}else {
+				$.alert("提示","查询销售品实例失败,稍后重试");
+			}
+		}
+	};
+	//套餐变更，查询附属销售品页面
+	var _queryChangeAttachOffer = function(param,callBackFun) {
+		addParam(param);  //添加基本参数
+		var url = contextPath+"/app/offer/queryChangeAttachOffer";
+		if(typeof(callBackFun)=="function"){
+			$.callServiceAsHtmlGet(url,{strParam:JSON.stringify(param)},{
+				"before":function(){
+					$.ecOverlay("<strong>正在查询销售品实例中,请稍后....</strong>");
+				},
+				"always":function(){
+					$.unecOverlay();
+				},
+				"done" : function(response){
+					$.unecOverlay();
+					if (response.code==0) {
+						
+						if(response.data){
+							callBackFun(response.data);
+						}
+					}else {
+						$.alert("提示","附属销售品实例查询失败,稍后重试");
+						return;
+					}
+				}
+			});
+		}else{
+			$.ecOverlay("<strong>查询附属销售品实例中，请稍等...</strong>");
+			var response = $.callServiceAsHtmlGet(url,{strParam:JSON.stringify(param)});	
+			$.unecOverlay();
+			if (response.code==0) {
+				if(response.data){
+					return response.data;
+				}
+			}else {
+				$.alert("提示","查询附属销售品实例失败,稍后重试");
+				return;
+			}
+		}		
 	};
 	
 	//查询促销页可订购可选包、流量包等
@@ -391,6 +610,130 @@ query.offer = (function() {
 	};
 	
 	/**
+	 * 已订购附属查询 
+	 */
+	var _queryAttachOfferHtml = function(param,callBackFun) {
+		addParam(param);  //添加基本参数
+		var url = contextPath+"/app/offer/queryAttachOffer";
+		if(OrderInfo.actionFlag==22){
+			url = contextPath+"/app/offer/queryAttachOffer2";
+		}
+		if(typeof(callBackFun)=="function"){
+			$.callServiceAsHtmlGet(url,{strParam:JSON.stringify(param)},{
+				"before":function(){
+					$.ecOverlay("<strong>正在查询销售品实例中,请稍后....</strong>");
+				},
+				"done" : function(response){
+					$.unecOverlay();
+					if (response.code==0) {
+						if(response.data){
+							callBackFun(response.data);
+						}
+					}else {
+						$.alert("提示","附属销售品实例查询失败,稍后重试");
+						return;
+					}
+				}
+			});
+		}else{
+			$.ecOverlay("<strong>查询附属销售品实例中，请稍等...</strong>");
+			var response = $.callServiceAsHtmlGet(url,{strParam:JSON.stringify(param)});	
+			$.unecOverlay();
+			if (response.code==0) {
+				if(response.data){
+					return response.data;
+				}
+			}else {
+				$.alert("提示","查询附属销售品失败,稍后重试");
+				return;
+			}
+		}		
+		
+	};
+	
+	
+	//预校验
+	var _updateCheckByChange = function(param,callBackFun){
+		var url = contextPath+"/order/prodModify/updateCheckByChange";
+		if(typeof(callBackFun)=="function"){
+			$.ecOverlay("<strong>正在预校验中，请稍等...</strong>");
+			$.callServiceAsJson(url,param,{
+				"before":function(){
+					$.ecOverlay("<strong>正在预校验中，请稍等...</strong>");
+				},
+				"done" : function(response){
+					$.unecOverlay();
+					if (response.code == 0) {
+						callBackFun(response.data);
+					}else if (response.code == -2) {
+						$.alertM(response.data);
+					}else{
+					    if (response.data.resultMsg) {
+					        $.alert("提示","预校验失败!失败原因为："+response.data.resultMsg);
+					    } else {
+					        $.alert("提示","预校验失败! 集团营业后台未给出原因。");
+					    }
+					}
+				},
+				fail:function(response){
+					$.unecOverlay();
+					$.alert("提示","预校验失败! 集团营业后台未给出原因。");
+				}
+			});
+		}else{
+			$.ecOverlay("<strong>正在预校验中，请稍等...</strong>");
+			var response = $.callServiceAsJson(url,param);
+			$.unecOverlay();
+			if (response.code == 0) {
+				return response.data;
+			}else if (response.code == -2) {
+				$.alertM(response.data);
+			}else{
+			    if (response.data.resultMsg) {
+			        $.alert("提示","预校验失败!失败原因为："+response.data.resultMsg);
+			    } else {
+			        $.alert("提示","预校验失败! 集团营业后台未给出原因。");
+			    }
+			}
+		}
+	};
+	
+	/**
+	 * 查询主销售品规格构成
+	 * 并对结果进行数据校验
+	 */
+	var _queryMainOfferSpec = function(param){
+		var offerSpec = query.offer.queryOfferSpec(param); //查询主销售品构成
+		if(offerSpec ==undefined){
+			$.alert("错误提示","销售品规格构成查询: 没有找到销售品规格！");
+			return false;
+		}
+		if( offerSpec.offerRoles ==undefined){
+			$.alert("错误提示","销售品规格构成查询: 返回的销售品规格构成结构不对！");
+			return false;
+		}
+		if(offerSpec.offerSpecId==undefined || offerSpec.offerSpecId==""){
+			$.alert("错误提示","销售品规格构成查询: 销售品规格ID未返回，无法继续受理！");
+			return false;
+		}
+		if(offerSpec.offerRoles.length == 0){
+			$.alert("错误提示","销售品规格构成查询: 成员角色为空，无法继续受理！");
+			return false;
+		}
+		if(offerSpec.feeType ==undefined || offerSpec.feeType=="" || offerSpec.feeType=="null"){
+			$.alert("错误提示","无付费类型，无法新装！");
+			return false;
+		}
+		offerSpec = SoOrder.sortOfferSpec(offerSpec); //排序主副卡套餐	
+		if((OrderInfo.actionFlag==6||OrderInfo.actionFlag==2||OrderInfo.actionFlag==1) && ec.util.isArray(OrderInfo.oldprodInstInfos)){//主副卡纳入老用户
+			OrderInfo.oldofferSpec.push({"offerSpec":offerSpec,"accNbr":param.accNbr});
+		}else{
+			OrderInfo.offerSpec = offerSpec;
+		}
+		return offerSpec;
+	};
+	
+	/**
 	 * 加载实例
 	 * 如果传入了paramInfo，则使用它，否则拼入参
 	 */
@@ -488,7 +831,15 @@ query.offer = (function() {
 		  searchAttachOfferSpec :_searchAttachOfferSpec,
 		  loadInst              :_loadInst,
 		  invokeLoadInst        :_invokeLoadInst,
-		  queryOpenedAttachAndServ	:_queryOpenedAttachAndServ
+		  queryOpenedAttachAndServ	:_queryOpenedAttachAndServ,
+		  setOffer				:_setOffer,
+		  queryOfferInst		:_queryOfferInst,
+		  queryChangeAttachOffer	:_queryChangeAttachOffer,
+		  queryDefMustOfferSpec	:_queryDefMustOfferSpec,
+		  queryDefMustOfferSpecAndServ	:_queryDefMustOfferSpecAndServ,
+		  queryMainOfferSpec			:_queryMainOfferSpec,
+		  queryAttachOfferHtml			:_queryAttachOfferHtml,
+		  updateCheckByChange			:_updateCheckByChange
 		
 	};
 })();
