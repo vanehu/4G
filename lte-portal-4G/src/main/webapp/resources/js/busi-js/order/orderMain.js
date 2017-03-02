@@ -3013,7 +3013,8 @@ order.main = (function(){
 		var cacheObj 	= $(dom).data('cacheObj');
 		var servType 	= $(dom).attr('servType');//1使用人；2责任人
 		var userSubInfo = {};
-		
+		userSubInfo.prodId 				 = prodId;
+		userSubInfo.servType 			 = servType;
 		/** 检测如果点击查询时证件号码和类型未发生改变,不去做客户查询,直接替换其他值 **/
 		if(ec.util.isObj(cacheObj) && orderIdentidiesTypeCd == cacheObj.orderIdentidiesTypeCd && identityNum == cacheObj.identityNum) {
 			for(var i=0;i<OrderInfo.subUserInfos.length;i++){
@@ -3038,76 +3039,33 @@ order.main = (function(){
 				"queryTypeValue"	:"",
 				"identidies_type"	:""
 			};
-			$.callServiceAsJson(contextPath + "/cust/queryoffercust", param, {
-				"before" : function() {
-					$.ecOverlay("<strong>正在查询客户信息, 请稍等...</strong>");
-				},
-				"done" : function(response) {
-					if(response.code == 0 && response.data){
-						if(!ec.util.isArray(response.data.custInfos)){
-							//新建需要,实名制核验
-							var switchResponse = $.callServiceAsJson(contextPath + "/properties/getValue", {"key": "CHECK_CUST_CERT_" + OrderInfo.staff.soAreaId.substr(0, 3)});
-						    var checkCustCertSwitch = "";
-							if (switchResponse.code == "0") {
-						    	checkCustCertSwitch = switchResponse.data;
-						    }
-							if(checkCustCertSwitch == "ON"){
-								var inParams = {
-										"certType": orderIdentidiesTypeCd,
-										"certNum": identityNum
-									};
-								var checkUrl=contextPath+"/cust/checkCustCert";
-								var checkResponse = $.callServiceAsJson(checkUrl, inParams, {"before":function(){
-								}});
-								if (checkResponse.code == 0) {
-									var result = checkResponse.data.result;
-									userSubInfo.checkCustCertSwitch = checkCustCertSwitch;
-									userSubInfo.checkMethod = result.checkMethod;
-									userSubInfo.objId = "";
-									userSubInfo.checkDate = result.checkDate;
-									userSubInfo.checker = OrderInfo.staff.staffName;
-									userSubInfo.checkChannel = OrderInfo.staff.channelCode;
-									userSubInfo.certCheckResult = result.certCheckResult;
-									userSubInfo.errorMessage = result.errorMessage;
-									userSubInfo.staffId = OrderInfo.staff.staffId;
-								}else{
-									$.alertM(checkResponse.data);
-									return;
-								}
-							};
-						}
-						_getResponseResult(response, userSubInfo, {
-							"prodId"				:prodId,
-							"cacheObj"				:cacheObj,
-							"servType"				:servType,
-							"identityPic"			:identityPic,
-							"identityNum"			:identityNum,
-							"orderAttrName"			:orderAttrName,
-							"orderAttrAddr"			:orderAttrAddr,
-							"orderAttrPhoneNbr"		:orderAttrPhoneNbr,
-							"orderIdentidiesTypeCd"	:orderIdentidiesTypeCd
-						});
-						//查询、读卡按钮隐藏，重置按钮展示
-						_hiddenBtn();					
-					}else if(response.code == 1 && response.data){
-						$.alert("错误", "查询客户信息失败，错误原因：" + response.data);
-						return;
-					}else if(response.code == -2 && response.data){
-						$.alertM(response.data);
-						return;
-					}else{
-						$.alert("错误", "查询客户信息发生未知异常，请稍后重试。错误信息：" + response.data);
-						return;
-					}
-				},
-				"fail" : function(response) {
-					$.alert("错误","查询客户信息发生未知异常：" + response.data);
-					return;
-				},
-				"always" : function() {
-					$.unecOverlay();
-				}
-			});
+			$.ecOverlay("<strong>正在查询客户信息, 请稍等...</strong>");
+			var response = $.callServiceAsJson(contextPath + "/cust/queryoffercust", param);
+			$.unecOverlay();
+			if(response.code == 0 && response.data){
+				_getResponseResult(response, userSubInfo, {
+					"prodId"				:prodId,
+					"cacheObj"				:cacheObj,
+					"servType"				:servType,
+					"identityPic"			:identityPic,
+					"identityNum"			:identityNum,
+					"orderAttrName"			:orderAttrName,
+					"orderAttrAddr"			:orderAttrAddr,
+					"orderAttrPhoneNbr"		:orderAttrPhoneNbr,
+					"orderIdentidiesTypeCd"	:orderIdentidiesTypeCd
+				});
+				//查询、读卡按钮隐藏，重置按钮展示
+				_hiddenBtn();
+			}else if(response.code == 1 && response.data){
+				$.alert("错误", "查询客户信息失败，错误原因：" + response.data);
+				return;
+			}else if(response.code == -2 && response.data){
+				$.alertM(response.data);
+				return;
+			}else{
+				$.alert("错误", "查询客户信息发生未知异常，请稍后重试。错误信息：" + response.data);
+				return;
+			}
 		}
 
 		$("#chooseUserBt").removeClass("btna_g").addClass("btna_o");
@@ -3135,8 +3093,6 @@ order.main = (function(){
 		} else{
 			$.confirm("确认","没有查询到客户信息，系统将自动创建客户，是否确认继续受理？", {
 				yes:function(){
-					userSubInfo.prodId 				 = userCustInfo.prodId;
-					userSubInfo.servType 			 = userCustInfo.servType;
 					userSubInfo.isOldCust 			 = "N";
 					userSubInfo.identityNum 		 = userCustInfo.identityNum;
 					userSubInfo.orderAttrName		 = userCustInfo.orderAttrName;
