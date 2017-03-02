@@ -2273,6 +2273,7 @@ cust = (function(){
 		var param = _choosedCustInfo;
 		param.prodPwd = $.trim($("#auth3").find("#authPassword2").val());
 		param.authFlag=authFlag;
+		param.CN="";
 		$.callServiceAsHtml(contextPath+"/cust/custAuth",param,{
 			"before":function(){
 				$.ecOverlay("<strong>正在查询中,请稍等...</strong>");
@@ -2282,7 +2283,7 @@ cust = (function(){
 					return;
 				}
 				//鉴权成功后显示选择使用人弹出框
-				order.main.showChooseUserDialog(param);
+				order.main.showChooseUserTable(param);
 			},"always":function(){
 				$.unecOverlay();
 			}

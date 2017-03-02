@@ -2141,6 +2141,7 @@ cust = (function(){
 		var param = _choosedCustInfo;
 		param.prodPwd = $.trim($("#auth3").find("#authPassword2").val());
 		param.authFlag=authFlag;
+		param.CN="";
 		$.callServiceAsHtml(contextPath+"/cust/custAuth",param,{
 			"before":function(){
 				$.ecOverlay("<strong>正在查询中,请稍等...</strong>");
