@@ -1965,7 +1965,21 @@
 			'CHECK_CUST_CERT_862':'OFF',<!-- 甘肃 -->
 			'CHECK_CUST_CERT_865':'OFF',<!-- 新疆 -->
 			'CHECK_CUST_CERT_899':'OFF'<!-- 虚拟省 -->
-			}
+            }
+        </const>
+        <const type="List" name="SENSITIVE_KEYS" description="安全敏感相关的配置列表">
+		[
+			'USBVERSION_SIGNATURE',
+			'VENDER_SIGNATURE',
+			'SecretKey',
+			'TOKENPROVINEKEY',
+			'TOKENKEY',
+			'COMMON_PARAM_KEY',
+			'TOKEN_JMPROVINCECODE_KEY',
+			'APP_SECRET',
+			'DES3_SECRET',
+			'USBSIGNATURE'
+		]
 		</const>
 	</mda>
 </mdas>

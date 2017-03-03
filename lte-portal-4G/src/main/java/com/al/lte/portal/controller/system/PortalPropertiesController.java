@@ -42,6 +42,9 @@ public class PortalPropertiesController extends BaseController {
     public JsonResponse getValue(@RequestBody Map<String, Object> param) {
         JsonResponse jsonResponse;
         try {
+        	if(MDA.SENSITIVE_KEYS.contains(MapUtils.getString(param, "key", ""))){
+            	return super.failed("forbidden", ResultConstant.FAILD.getCode());
+            }
             String value = propertiesUtils.getMessage(MapUtils.getString(param, "key", ""));
             jsonResponse = super.successed(value, ResultConstant.SUCCESS.getCode());
         } catch (Exception e) {
@@ -62,6 +65,9 @@ public class PortalPropertiesController extends BaseController {
         JsonResponse jsonResponse;
         try {
             String key = MapUtils.getString(param, "key", "");
+            if(MDA.SENSITIVE_KEYS.contains(key)){
+            	return super.failed("forbidden", ResultConstant.FAILD.getCode());
+            }
             Object o = null;
             Field[] fields = MDA.class.getDeclaredFields();
             for (Field field : fields) {

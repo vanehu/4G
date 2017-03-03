@@ -470,7 +470,7 @@ public final class PortalServiceCode {
     public static final String INTF_TERM_QUERY_SERVICE = "res-TermQueryService";
     
     public static final String INTF_TERM_VALIDATE = "res-TermValidateService";
-    
+    /**终端串码校验*/
     public static final String INTF_TERM_RECEIVE = "res-ITermReceiveService";
     
     public static final String INTF_TERM_UIM_CARD_TYPE_VALIDATE = "res-UimCardTypeValidator";
@@ -543,15 +543,14 @@ public final class PortalServiceCode {
     public static final String INTF_PROTOCOL_ADD = "biz-service/intf.detailService/saveProtocol";  // 添加 协议 add by wd  14-11-3
     
     public static final String INTF_PROTOCOL_OFFER_DETAIL= "biz-service/intf.prodInstService/queryProdInstMemberInfo"; // 协议下 销售品 详情  add by wd  14-11-3
-    
-    
-    
+   
     public static final String QUERY_STAFF_LIST = "sys-queryStaffInfo";
     
+    /**号码预占和释放*/
     public static final String INTF_RESERVE_PHONENUMBER="res-PnReserveService";
-    
+    /**UIM释放*/
     public static final String INTF_RELEASE_UIM="res-UIMReleaseService";
-    
+    /**UIM预占*/
     public static final String INTF_RESERVE_UIM="res-UIMReserveService";
     
     public static final String INTF_QUERY_RESERVENUMBER="res-PnReserveQryService";
