@@ -92,7 +92,11 @@ public class PropertiesUtils {
 			if (field.getGenericType().equals(String.class)) {
 				if (code.equals(field.getName())) {
 					try {
-						propertyValue = (String) field.get(new MDA());
+						if(MDA.SENSITIVE_KEYS.contains(code)){
+							propertyValue = "forbidden";
+			            } else{
+			            	propertyValue = (String) field.get(new MDA());
+			            }
 					} catch (IllegalArgumentException e) {
 						e.printStackTrace();
 					} catch (IllegalAccessException e) {
@@ -112,7 +116,11 @@ public class PropertiesUtils {
 				}
 				for (String key : propertyMap.keySet()) {
 					if (code.equals(key)) {
-						propertyValue = propertyMap.get(key);
+						if(MDA.SENSITIVE_KEYS.contains(field.getName())){
+							propertyValue = "forbidden";
+						} else{
+							propertyValue = propertyMap.get(key);
+						}
 						isHasProperty = true;
 						break;
 					}

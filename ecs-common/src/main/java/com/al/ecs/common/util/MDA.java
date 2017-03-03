@@ -416,7 +416,7 @@ public class MDA {
 	 */
 	public static final String PORTAL_SERVICE_LOG_Y = new String("");
 	/**
-	 * 日志分级-保存一击
+	 * 日志分级-保存一周
 	 */
 	public static final String PORTAL_SERVICE_LOG_W = new String("");
 
@@ -558,7 +558,13 @@ public class MDA {
     
     /**拍照仪驱动下载配置*/
 	public static final Map<String, String> CAMERA_DRIVER_DOWNLAOD = new HashMap<String, String>();
-	
+
 	/**是否实名核验开关 */
-	public static final Map<String, String> CHECK_CUST_CERT = new HashMap<String,String>();
+    public static final Map<String, String> CHECK_CUST_CERT = new HashMap<String,String>();
+
+    /**一证一号开关*/
+    public static final Map<String, String> ONE_CERT_5_NUMBER_ON_OFF = new HashMap<String, String>();
+
+	/**安全敏感相关的配置列表*/
+	public static final List<String> SENSITIVE_KEYS = new ArrayList<String>();
 }
