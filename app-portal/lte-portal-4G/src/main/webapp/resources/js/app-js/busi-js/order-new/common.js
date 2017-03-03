@@ -324,7 +324,7 @@ common = (function($) {
 		if($(".modal-dialog").is(":visible")){//有弹出层不允许返回
 			return;
 		}
-		//alert("OrderInfo.actionFlag="+OrderInfo.actionFlag+"---OrderInfo.order.step="+OrderInfo.order.step+"---OrderInfo.returnFlag="+OrderInfo.returnFlag);
+//		alert("OrderInfo.actionFlag="+OrderInfo.actionFlag+"---OrderInfo.order.step="+OrderInfo.order.step+"---OrderInfo.returnFlag="+OrderInfo.returnFlag);
 		if($(".modal-backdrop").length>0 && $("#overlay-modal").length>0){
 			$.unecOverlay();//网络出现故障或手机出现故障时按返回关闭“加载中”提示框
 		}
@@ -368,7 +368,7 @@ common = (function($) {
 						}
 					}
 					order.phoneNumber.boProdAn={};//清空号码缓存
-					 order.phoneNumber.initPhonenumber();
+					 order.phoneNumber.btnQueryPhoneNumber(1,undefined,"true");
 					 $("#offer_a").hide();
 					 $("#phoneNumber_a").show();
 					$("#nav-tab-2").removeClass("active in");
@@ -388,6 +388,14 @@ common = (function($) {
 				return;
 			}else if(OrderInfo.order.step==3){//副卡
 				$("#secondaryCardModal").modal("hide");
+				//如果副卡页面未关闭  则关闭副卡页面
+				if($("#phonenumber-list2").length>0 && $("#phonenumber-list2").css("display")!="none"){
+					$("#phonenumber-list2").hide();
+					$("#phoneNumber_a").hide();
+					$("#secondaryPhoneNumUl").show();
+					$("#fk_phonenumber_next").show();
+					return;
+				}
 				if(order.service.enter==3){//选号入口
 					$("#offer_a").show();
 					$("#phoneNumber_a").hide();
@@ -421,7 +429,7 @@ common = (function($) {
 						}
 					}
 					order.phoneNumber.boProdAn={};//清空号码缓存
-					 order.phoneNumber.initPhonenumber();
+					 order.phoneNumber.btnQueryPhoneNumber(1,undefined,"true");
 				}
 				 //移除已选副卡节点
 				 $("#secondaryPhoneNumUl").children("li:gt(0)").remove();
@@ -699,7 +707,7 @@ common = (function($) {
 					}
 				}
 				order.phoneNumber.boProdAn={};//清空号码缓存
-				order.phoneNumber.initPhonenumber();
+				 order.phoneNumber.btnQueryPhoneNumber(1,undefined,"true");
 				$("#phoneNumber_a").show();
 				$("#nav-tab-3").removeClass("active in");
 		    	$("#nav-tab-2").addClass("active in");
@@ -708,6 +716,14 @@ common = (function($) {
 				OrderInfo.order.step=2;
 				return;
 			}else if(OrderInfo.order.step==4){//副卡
+				//如果副卡页面未关闭  则关闭副卡页面
+				if($("#phonenumber-list2").length>0 && $("#phonenumber-list2").css("display")!="none"){
+					$("#phonenumber-list2").hide();
+					$("#phoneNumber_a").hide();
+					$("#secondaryPhoneNumUl").show();
+					$("#fk_phonenumber_next").show();
+					return;
+				}
 				$("#nav-tab-4").removeClass("active in");
 		    	$("#nav-tab-3").addClass("active in");
 		    	$("#tab4_li").removeClass("active");

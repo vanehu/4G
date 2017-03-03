@@ -1064,12 +1064,14 @@ OrderInfo = (function() {
 	//获取号码
 	var _setProdAn = function(prodId,an){
 		$.each(OrderInfo.offerSpec.offerRoles,function(){
-			$.each(this.prodInsts,function(){
-				if(this.prodInstId == prodId){
-					this.an = an;
-					return false;
-				}
-			});
+			if(this.prodInsts!=undefined){
+				$.each(this.prodInsts,function(){
+					if(this.prodInstId == prodId){
+						this.an = an;
+						return false;
+					}
+				});
+			}
 		});
 	};
 	
@@ -1349,7 +1351,7 @@ OrderInfo = (function() {
 	//根据接入产品id获取接人产品规格
 	var _getProdSpecId = function(prodId){
 		var prodSpecId = CONST.PROD_SPEC.CDMA;  //默认CDMA
-		if(OrderInfo.actionFlag==1 || OrderInfo.actionFlag==14){
+		if(OrderInfo.actionFlag==1 || OrderInfo.actionFlag==14 || OrderInfo.actionFlag==112){
 			$.each(OrderInfo.offerSpec.offerRoles,function(){
 				$.each(this.prodInsts,function(){
 					if(this.prodInstId == prodId){

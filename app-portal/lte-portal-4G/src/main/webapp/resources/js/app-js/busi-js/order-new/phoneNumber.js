@@ -216,12 +216,17 @@ order.phoneNumber = (function(){
 	};
 	
 	//主卡号码列表查询
-	var _btnQueryPhoneNumber=function(flag,scroller){
-		if(mainFlag=="false"){//走副卡查询
-			_btnQueryPhoneNumber2();
-			return;
+	var _btnQueryPhoneNumber=function(flag,scroller,ifMain){
+//		if(mainFlag=="false"){//走副卡查询
+//			_btnQueryPhoneNumber2();
+//			return;
+//		}
+		//是否主卡号码查询
+		if(ifMain==undefined){
+			ifMain = mainFlag;
+		}else{
+			mainFlag = ifMain;
 		}
-		mainFlag="true";
 		var idcode=$.trim($("#idCode").val());
 		if(idcode!=''){
 		    _btnIBydentityQuery();
@@ -292,20 +297,27 @@ order.phoneNumber = (function(){
 				if(!response||response.code != 0){
 					 response.data='查询失败,稍后重试';
 				}
-				var content$ = $("#phonenumber-list");
-				content$.html(response.data);
+				if(ifMain=="false"){
+					var content$ = $("#phonenumber-list2");
+					$("#phoneNumber_a").show();
+				}else{
+					var content$ = $("#phonenumber-list");
+				}
+				content$.html(response.data).show();
 				if(scroller && $.isFunction(scroller)) scroller.apply(this,[]);
+				$("#phonenumber-list_scroller").css("transform","translate(0px, -40px) translateZ(0px)");
 				if(OrderInfo.actionFlag == 112){
 					$("#offer").hide();
 					$("#offer-list").empty();
 				}
+//				mainFlag="true";
 			},
 			fail:function(response){
+//				mainFlag="true";
 				$.unecOverlay();
 				$.alert("提示","请求可能发生异常，请稍后再试！");
 			}
 		});	
-		mainFlag="true";
 	};
 	
 	//副卡号码列表查询
@@ -577,7 +589,7 @@ order.phoneNumber = (function(){
 								var $div =$('<li class="PhoneNumLi"><span class="list-title"><span class="title-lg">'+phoneNumber+'</span><span class="subtitle font-secondary">移动电话</span></span></li>');
 								$("#secondaryPhoneNumUl").append($div);			
 								$("#secondaryCardModal").modal("hide");
-								mainFlag="true";//恢复主副卡标志
+//								mainFlag="true";//恢复主副卡标志
 								order.phoneNumber.secondaryCarNum=$('#secondaryPhoneNumUl').children('li').length-1;//副卡数目
 								$("#yd_min").text(order.phoneNumber.secondaryCarNum);
 								prodId=-(order.phoneNumber.secondaryCarNum+1);
@@ -589,7 +601,7 @@ order.phoneNumber = (function(){
 								var $div =$('<li><span class="list-title"><span class="title-lg">'+phoneNumber+'</span><span class="subtitle font-secondary">移动电话</span></span></li>');
 								$("#secondaryPhoneNumUl").append($div);			
 								$("#secondaryCardModal").modal("hide");
-								mainFlag="true";//恢复主副卡标志
+//								mainFlag="true";//恢复主副卡标志
 								order.phoneNumber.secondaryCarNum=$('#secondaryPhoneNumUl').children('li').length-1;//副卡数目
 								prodId=-(order.phoneNumber.secondaryCarNum+1);
 							   if(order.phoneNumber.secondaryCarNum==order.service.max){//副卡添加到最大，添加图标置灰
@@ -614,7 +626,7 @@ order.phoneNumber = (function(){
 									if(OrderInfo.offerSpec.offerRoles!=undefined){
 										OrderInfo.setProdAn(OrderInfo.boProdAns[i]);  //保存到产品实例列表里面
 									}
-									order.dealer.changeAccNbr(subnum,phoneNumber); //选号玩要刷新发展人管理里面的号码
+//									order.dealer.changeAccNbr(subnum,phoneNumber); //选号玩要刷新发展人管理里面的号码
 									break;
 								}
 							}
@@ -638,6 +650,13 @@ order.phoneNumber = (function(){
 							//OrderInfo.setProdAn(param);//保存到产品实例列表里面
 						}
 						// _qryOfferInfoByPhoneNumFee();
+						$("#phonenumber-list").empty();
+						$("#phonenumber-list2").empty();
+						$("#phonenumber-list2").hide();
+						if(mainFlag=="false"){
+							$("#secondaryPhoneNumUl").show();
+							$("#fk_phonenumber_next").show();
+						}
 					} else if (response.code == -2) {
 						$.alertM(response.data);
 					} else {
@@ -671,10 +690,14 @@ order.phoneNumber = (function(){
 		if(order.phoneNumber.secondaryCarNum>=order.service.max){//副卡添加数已达最大
 			return;
 		}
-		$("#phoneNumber2_a").show();
+//		$("#phoneNumber2_a").show();
 		$("#idCode").val("");
 		//_queryPhoneNbrPool2();
-		_btnQueryPhoneNumber2();
+//		_btnQueryPhoneNumber2();
+		mainFlag = "false";//副卡选号时 主卡标识为false
+		$("#secondaryPhoneNumUl").hide();
+		$("#fk_phonenumber_next").hide();
+		_btnQueryPhoneNumber(1);
 //		$("#secondaryCardModal").modal("show");
 		
 	};
@@ -838,7 +861,7 @@ order.phoneNumber = (function(){
 //滚动页面入口
 	var _scroll = function(scrollObj){
 		if(scrollObj && scrollObj.page && scrollObj.page >= 1){
-			order.phoneNumber.btnQueryPhoneNumber("",scrollObj.scroll);
+			order.phoneNumber.btnQueryPhoneNumber("",scrollObj.scroll,mainFlag);
 //			_initPhonenumber($("#subPage").val(),scrollObj.scroll);
 		}
 	};

@@ -970,6 +970,21 @@ CacheData = (function() {
 				}
 			}
 		}
+		/**
+		 * 	可选依赖包遍历optDependOffer
+		 * 	defaultOffer	默认，默认打钩，钩可以去掉，
+		 *	dependOffer 	依赖，默认打钩，钩不能去掉，
+		 *	excludeOffer	互斥，用来和已订购的销售品对比，如果有互斥中的，就退订，
+		 *	optDependOffer	可选依赖
+		 */
+		if(param.optDependOffer && param.optDependOffer.length > 0){
+			var optDependOffers = param.optDependOffer;
+			for (var i = 0; i < optDependOffers.length; i++) {
+				if($("#"+optDependOffers[i]).is(':checked') == true){
+					AttachOffer.addOpenList(prodId,optDependOffers[i]);
+				}
+			}
+		}
 	};
 	// 获取政企客户证件类型
 	var govCertTyteArr = [];
