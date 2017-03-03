@@ -4054,7 +4054,7 @@ SoOrder = (function() {
 		}
 		if(OrderInfo.bojbrCustCheckLogs.checkCustCertSwitch == "ON"){
 			OrderInfo.bojbrCustIdentities.custId = OrderInfo.handleCustId;
-			busiOrder.data.boCustCheckLogs.push(OrderInfo.bojbrCustIdentities);
+			busiOrder.data.boCustCheckLogs.push(OrderInfo.bojbrCustCheckLogs);
 			var realNameChech = {
 					partyProfileCatgCd: CONST.BUSI_ORDER_ATTR.REAL_NAME_CHECK,
 					profileValue: "1",

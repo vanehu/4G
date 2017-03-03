@@ -290,7 +290,8 @@ OrderInfo = (function() {
 			data:{
 				boCustInfos : [],
 				boCustIdentities : [],
-				boPartyContactInfo : []
+				boPartyContactInfo : [],
+				boCustCheckLogs : []
 			}
 		};
 		if(ec.util.isObj(accNbr)){ //接入号
@@ -1772,7 +1773,7 @@ OrderInfo = (function() {
 	
 	//参与人核查记录节点
 	var _boCustCheckLogs = {};
-	//参与人核查记录节点，使用人
+	//参与人核查记录节点，经办人
 	var _bojbrCustCheckLogs = {};
 	//行业类型
 	var _industryClassInfo = {};

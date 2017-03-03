@@ -383,6 +383,7 @@ order.cust = (function(){
 
 	//创建客户证件类型选择事件
 	var _identidiesTypeCdChoose = function(scope,id) {
+		$("#identidiesTypeCd").removeAttr("disabled");
 		$("#"+id).val("");
 		$("#"+id).attr("onkeyup", "value=value.replace(/[^A-Za-z0-9]/ig,'')");
 		var identidiesTypeCd=$(scope).val();
@@ -1948,7 +1949,7 @@ order.cust = (function(){
 		OrderInfo.boCustCheckLogs.objId = "";
 		OrderInfo.boCustCheckLogs.checkDate = inData.checkDate;
 		OrderInfo.boCustCheckLogs.checker = OrderInfo.staff.staffName;
-		OrderInfo.boCustCheckLogs.checkChannel = OrderInfo.staff.channelCode;
+		OrderInfo.boCustCheckLogs.checkChannel = OrderInfo.staff.channelId;
 		OrderInfo.boCustCheckLogs.certCheckResult = inData.certCheckResult;
 		OrderInfo.boCustCheckLogs.errorMessage = inData.errorMessage;
 		OrderInfo.boCustCheckLogs.staffId = OrderInfo.staff.staffId;
@@ -3151,7 +3152,6 @@ order.cust = (function(){
 		};
 		$.callServiceAsJson(contextPath + "/cust/queryoffercust", param, {
 			"before" : function() {
-				$.ecOverlay("<strong>正在查询经办人信息, 请稍等...</strong>");
 			},
 			"done" : function(response) {
 				if(response.code == 0 && response.data){
@@ -3178,7 +3178,7 @@ order.cust = (function(){
 								OrderInfo.bojbrCustCheckLogs.objId = "";
 								OrderInfo.bojbrCustCheckLogs.checkDate = result.checkDate;
 								OrderInfo.bojbrCustCheckLogs.checker = OrderInfo.staff.staffName;
-								OrderInfo.bojbrCustCheckLogs.checkChannel = OrderInfo.staff.channelCode;
+								OrderInfo.bojbrCustCheckLogs.checkChannel = OrderInfo.staff.channelId;
 								OrderInfo.bojbrCustCheckLogs.certCheckResult = result.certCheckResult;
 								OrderInfo.bojbrCustCheckLogs.errorMessage = result.errorMessage;
 								OrderInfo.bojbrCustCheckLogs.staffId = OrderInfo.staff.staffId;

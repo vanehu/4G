@@ -2540,7 +2540,7 @@ order.cust = (function(){
 						OrderInfo.handleInfo.objId = "";
 						OrderInfo.handleInfo.checkDate = result.checkDate;
 						OrderInfo.handleInfo.checker = OrderInfo.staff.staffName;
-						OrderInfo.handleInfo.checkChannel = OrderInfo.staff.channelCode;
+						OrderInfo.handleInfo.checkChannel = OrderInfo.staff.channelId;
 						OrderInfo.handleInfo.certCheckResult = result.certCheckResult;
 						OrderInfo.handleInfo.errorMessage = result.errorMessage;
 						OrderInfo.handleInfo.staffId = OrderInfo.staff.staffId;
@@ -2633,7 +2633,7 @@ order.cust = (function(){
 					OrderInfo.handleInfo.objId = "";
 					OrderInfo.handleInfo.checkDate = result.checkDate;
 					OrderInfo.handleInfo.checker = OrderInfo.staff.staffName;
-					OrderInfo.handleInfo.checkChannel = OrderInfo.staff.channelCode;
+					OrderInfo.handleInfo.checkChannel = OrderInfo.staff.channelId;
 					OrderInfo.handleInfo.certCheckResult = result.certCheckResult;
 					OrderInfo.handleInfo.errorMessage = result.errorMessage;
 					OrderInfo.handleInfo.staffId = OrderInfo.staff.staffId;
@@ -2855,14 +2855,14 @@ order.cust = (function(){
 		var uploadCustCertificate = $.callServiceAsJson(contextPath+"/token/pc/cust/uploadCustCertificate",param);
 		if(uploadCustCertificate.code == 0){
 			if(OrderInfo.handleInfo.checkCustCertSwitch == "ON"){
-				OrderInfo.subHandleInfo.checkCustCertSwitch = checkCustCertSwitch;
-				OrderInfo.subHandleInfo.checkMethod = result.checkMethod;
+				OrderInfo.subHandleInfo.checkCustCertSwitch = OrderInfo.handleInfo.checkCustCertSwitch;
+				OrderInfo.subHandleInfo.checkMethod = OrderInfo.handleInfo.checkMethod;
 				OrderInfo.subHandleInfo.objId = "";
-				OrderInfo.subHandleInfo.checkDate = result.checkDate;
+				OrderInfo.subHandleInfo.checkDate = OrderInfo.handleInfo.checkDate;
 				OrderInfo.subHandleInfo.checker = OrderInfo.staff.staffName;
-				OrderInfo.subHandleInfo.checkChannel = OrderInfo.staff.channelCode;
-				OrderInfo.subHandleInfo.certCheckResult = result.certCheckResult;
-				OrderInfo.subHandleInfo.errorMessage = result.errorMessage;
+				OrderInfo.subHandleInfo.checkChannel = OrderInfo.staff.channelId;
+				OrderInfo.subHandleInfo.certCheckResult = OrderInfo.handleInfo.certCheckResult;
+				OrderInfo.subHandleInfo.errorMessage = OrderInfo.handleInfo.errorMessage;
 				OrderInfo.subHandleInfo.staffId = OrderInfo.staff.staffId;
 			}
 			OrderInfo.subHandleInfo.authFlag = "Y";
@@ -2938,6 +2938,15 @@ order.cust = (function(){
 				isOldCust : "Y"
 			};
         }else{//定位不到客户C1
+        	userSubInfo = {
+        			prodId : user_prodId,
+        			orderIdentidiesTypeCd : orderIdentidiesTypeCd,
+        			identityNum : identityNum,
+        			orderAttrName : orderAttrName,
+        			orderAttrAddr : orderAttrAddr,
+        			orderAttrPhoneNbr : orderAttrPhoneNbr,
+        			isOldCust : "N"
+        		};
     		if(OrderInfo.queryCustInfo.code != 0){
     			//新建需要,实名制核验
     			var switchResponse = $.callServiceAsJson(contextPath + "/properties/getValue", {"key": "CHECK_CUST_CERT_" + OrderInfo.staff.soAreaId.substr(0, 3)});
@@ -2960,7 +2969,7 @@ order.cust = (function(){
     					userSubInfo.objId = "";
     					userSubInfo.checkDate = result.checkDate;
     					userSubInfo.checker = OrderInfo.staff.staffName;
-    					userSubInfo.checkChannel = OrderInfo.staff.channelCode;
+    					userSubInfo.checkChannel = OrderInfo.staff.channelId;
     					userSubInfo.certCheckResult = result.certCheckResult;
     					userSubInfo.errorMessage = result.errorMessage;
     					userSubInfo.staffId = OrderInfo.staff.staffId;
@@ -2970,15 +2979,6 @@ order.cust = (function(){
     				}
     			};
     		}
-        	userSubInfo = {
-    			prodId : user_prodId,
-    			orderIdentidiesTypeCd : orderIdentidiesTypeCd,
-    			identityNum : identityNum,
-    			orderAttrName : orderAttrName,
-    			orderAttrAddr : orderAttrAddr,
-    			orderAttrPhoneNbr : orderAttrPhoneNbr,
-    			isOldCust : "N"
-    		};
         	if(orderIdentidiesTypeCd == 1){
         		userSubInfo.identityPic = data.identityPic;
         	}
