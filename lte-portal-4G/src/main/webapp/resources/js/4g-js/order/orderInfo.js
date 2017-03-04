@@ -206,6 +206,7 @@ OrderInfo = (function() {
 		prodSeq : -1,  //序列号，用来实例化每个是产品,每次减1
 		servSeq : -1,  //序列号，用来实例化每个是服务,每次减1
 		itemSeq : -1,  //序列号，用来实例化每个是产品属性,每次减1
+		custSeq : -2,  //序列号, 用来实例化每个是否新建客户
 		acctSeq : -1,  //序列号，用来实例化每个是帐户,每次减1
 		acctCdSeq : -1,  //序列号，用来实例化每个是帐户合同号,每次减1
 		paramSeq : -1,  //序列号，用来实例化每个附属销售品参数的每个值,每次减1
@@ -1167,8 +1168,8 @@ OrderInfo = (function() {
 		OrderInfo.SEQ.prodSeq = -1;  
 		OrderInfo.SEQ.servSeq = -1;  
 		OrderInfo.SEQ.itemSeq = -1;  
-		OrderInfo.SEQ.acctSeq = -1;  
-		OrderInfo.SEQ.acctCdSeq = -1;  
+		OrderInfo.SEQ.acctSeq = -1;
+		OrderInfo.SEQ.acctCdSeq = -1;
 		OrderInfo.SEQ.paramSeq = -1;  
 		OrderInfo.SEQ.atomActionSeq = -1;
 		//OrderInfo.SEQ.dealerSeq = 1;

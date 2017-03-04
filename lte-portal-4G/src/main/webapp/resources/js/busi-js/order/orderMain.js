@@ -3199,7 +3199,7 @@ order.main = (function(){
 		}else if(userSubInfo.isOldCust == "N"){
 			var instId = '-1';
 			if(!updateFlag){ // update不修改序列,新增才修改
-				var instId = OrderInfo.SEQ.offerSeq--;
+				var instId = OrderInfo.SEQ.custSeq--;
 				userSubInfo.instId = instId;
 			}else{
 				instId = userSubInfo.instId;
@@ -3242,13 +3242,19 @@ order.main = (function(){
 		order.main.identidiesTypeForUser("#orderIdentidiesTypeCdB", "orderUserIdCard", dom);
 		$('#orderUserPhoneNbr').val("");
 		$(dom).prev('input').val("");
-		$(dom).prev('input').val("");
+		var $hidden = $(dom).prev('input').prev(":hidden");
+		if(ec.util.isObj($hidden) && $hidden.length > 0){
+			$hidden.val("");
+		}
 		$('#orderIdentidiesTypeCdB').removeAttr("disabled").removeAttr("style");
 		//按钮展示
 		if($("#orderIdentidiesTypeCdB").val() == 1){
 			$("#orderUserQryBtn").hide();
 			$("#orderUserReadCertBtn").show();
 			$("#orderUserResetBtn").hide();
+			$("#li_order_user span").text('');
+			$("#li_order_user2 span").text('');
+			$("#li_order_user3 span").text('');
 		} else{
 			$("#orderUserQryBtn").show();
 			$("#orderUserReadCertBtn").hide();

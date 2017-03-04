@@ -3161,7 +3161,10 @@ public class OrderController extends BaseController {
     	if (commonBmo.checkToken(request, SysConstant.ORDER_SUBMIT_TOKEN)) {
             try {
                 if(orderBmo.verifyCustCertificate(param, request ,sessionStaff)){
-                	if(commonBmo.orderSubmitFilter(param)){
+                    Map<String,Object> resultMap = commonBmo.orderSubmitUpdate(param);
+                    if("0".equals(resultMap.get("resultFlag"))){
+                        param = (Map<String,Object>)resultMap.get("tmpParam");// 修正后订单数据
+                    //if(commonBmo.orderSubmitFilter(param)){
                         Map<String, Object> orderList = (Map<String, Object>) param.get("orderList");
                         Map<String, Object> orderListInfo = (Map<String, Object>) orderList.get("orderListInfo");
                         orderListInfo.put("staffId", sessionStaff.getStaffId()); //防止前台修改

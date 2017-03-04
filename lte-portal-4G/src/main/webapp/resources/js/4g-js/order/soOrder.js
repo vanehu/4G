@@ -31,6 +31,7 @@ SoOrder = (function() {
 	//初始化订单数据，非返档业务，可不填写入参submitFlag
 	var _initOrderData = function(submitFlag){
 		OrderInfo.resetSeq(); //重置序列
+		OrderInfo.SEQ.custSeq = -2;
 		OrderInfo.resetData(submitFlag); //重置 数据
 		OrderInfo.orderResult = {}; //清空购物车
 		OrderInfo.getOrderData(); //获取订单提交节点	
@@ -3989,14 +3990,14 @@ SoOrder = (function() {
 						OrderInfo.orderData.orderList.orderListInfo.partyId = -1;//-3经办人客户，-2使用人客户，-1产权客户
 						OrderInfo.orderData.orderList.orderListInfo.handleCustId = -1;//新建客户同时新建经办人，handleCustId与partyId一致
 					} else{//新建客户与新建经办人不同
-						OrderInfo.handleCustId = OrderInfo.SEQ.offerSeq--;
+						OrderInfo.handleCustId = OrderInfo.SEQ.custSeq--;
 						OrderInfo.orderData.orderList.orderListInfo.partyId = OrderInfo.cust.custId;
 						OrderInfo.orderData.orderList.orderListInfo.handleCustId = OrderInfo.handleCustId;
 						_createHandleCust(busiOrders);
 					}
 				} else{
 					var isOldHandlCust = ec.util.isObj(OrderInfo.handleCustId);
-					OrderInfo.handleCustId = OrderInfo.SEQ.offerSeq--;
+					OrderInfo.handleCustId = OrderInfo.SEQ.custSeq--;
 					OrderInfo.orderData.orderList.orderListInfo.partyId = OrderInfo.cust.custId;
 					OrderInfo.orderData.orderList.orderListInfo.handleCustId = OrderInfo.handleCustId;
 					if((OrderInfo.actionFlag == 23 && OrderInfo.busitypeflag == 13)) {//异地补换卡特殊处理
@@ -4073,7 +4074,7 @@ SoOrder = (function() {
 				seq : OrderInfo.SEQ.seq--
 			}, 
 			busiObj : { //业务对象节点
-				instId		:(OrderInfo.SEQ.offerSeq--)-1,
+				instId		:OrderInfo.SEQ.custSeq--,
 				accessNumber: OrderInfo.getAccessNumber(-1)
 			},  
 			boActionType : {
@@ -4180,6 +4181,8 @@ SoOrder = (function() {
 				busiOrder.data.boCustInfos.push({
 					name			: subUserInfo.orderAttrName,		//客户名称
 					ignore			: "Y", 								// 临时方法,新建C1订单提交不校验
+					custType		: subUserInfo.servType,  			//新建客户类型 1:使用人,2责任人
+					ownerProd		: subUserInfo.prodId,				//客户产品归属
 					state			: "ADD",							//状态
 					areaId			: OrderInfo.getAreaId(),			//订单地区ID
 					telNumber 		: subUserInfo.orderAttrPhoneNbr,	//联系电话

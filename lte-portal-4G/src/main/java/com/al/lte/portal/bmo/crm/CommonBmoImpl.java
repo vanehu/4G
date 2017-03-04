@@ -1,13 +1,7 @@
 package com.al.lte.portal.bmo.crm;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -570,4 +564,219 @@ public class CommonBmoImpl implements CommonBmo {
         return resultFlag;
 	}
 
+	/**
+	 * 订单提交报文过滤多余的节点后修正<br/>
+	 * (1)由于同一个客户办理业务时可能同时使用人新建、经办人新建、客户新建等，在此过滤掉重复的C1节点，同一个客户新建应当只有一个C1节点<br/>
+	 * (2)后期可能添加其他过滤，暂留
+	 * @param param 订单提交入参
+	 * @return map param:回参 resultFlag:true 成功 false 失败
+	 */
+	@SuppressWarnings("unchecked")
+	public Map<String, Object> orderSubmitUpdate(Map<String, Object> param) throws Exception{
+		Map<String,Object> tmpParam = param;
+		Map<String,Object> resutltMap = new HashMap<String,Object>();
+		resutltMap.put("resultFlag","0");
+		List<Map<String,Object>> cacheCustInfo = new ArrayList<Map<String,Object>>(); // 缓存与之前缓存数据全不一样的C1客户的证件类型和证件号
+		Map<String, Object> orderList = (Map<String, Object>) tmpParam.get("orderList");
+		List<Map<String, Object>> custOrderList = (List<Map<String, Object>>) orderList.get("custOrderList");
+
+		// 第一次遍历保证新建客户已保存在缓存中
+		for (Map<String, Object> custOrder : custOrderList) {
+			List<Map<String, Object>> busiOrderList = (List<Map<String, Object>>) custOrder.get("busiOrder");
+			for (int i = 0; i < busiOrderList.size(); i++) {
+				Map<String, Object> busiOrder = busiOrderList.get(i);
+				HashMap<String, Object> boActionType = (HashMap<String, Object>) busiOrder.get("boActionType");
+				if ("C1".equalsIgnoreCase(MapUtils.getString(boActionType, "boActionTypeCd", ""))) {
+					Map<String, Object> data = (Map<String, Object>) busiOrder.get("data");
+					Map<String, Object> custInfo = (Map<String, Object>) ((List<Map<String, Object>>) data.get("boCustInfos")).get(0);
+					if(null == custInfo.get("jbrFlag") && null == custInfo.get("custType")){ // 新建客户
+						cacheCustInfo.add(busiOrder);
+					}
+				}
+			}
+		}
+
+		// 第二次遍历从经办人、使用人、责任人等从缓存中对比数据处理,并对订单做修正,以第一个C1客户为主
+		for (Map<String, Object> custOrder : custOrderList) {
+			List<Map<String, Object>> busiOrderList = (List<Map<String, Object>>) custOrder.get("busiOrder");
+			for (int i = 0; i < busiOrderList.size(); i++) {
+				Map<String, Object> busiOrder = busiOrderList.get(i);
+				HashMap<String, Object> boActionType = (HashMap<String, Object>) busiOrder.get("boActionType");
+				if ("C1".equalsIgnoreCase(MapUtils.getString(boActionType, "boActionTypeCd", ""))) {
+					Map<String, Object> data = (Map<String, Object>) busiOrder.get("data");
+					Map<String, Object> custInfo = (Map<String, Object>) ((List<Map<String, Object>>) data.get("boCustInfos")).get(0);
+					// C1动作区分 经办人:jbrFlag,责任人(2)、使用人(1):servType
+					if("Y".equals(MapUtils.getString(custInfo, "jbrFlag", ""))){ // 新建经办人
+						if(!eachListIsExist(cacheCustInfo, busiOrder)){ //不存在则缓存
+							cacheCustInfo.add(busiOrder);
+						}else{
+							tmpParam = dealCustRelation(tmpParam, cacheCustInfo,busiOrder);
+							busiOrder.put("delFlag", "Y");
+						}
+					} else if(SysConstant.USER_CUST_TYPE.equals(MapUtils.getString(custInfo, "custType", ""))) { // 新建使用人
+						if(!eachListIsExist(cacheCustInfo, busiOrder)){ //不存在则缓存
+							cacheCustInfo.add(busiOrder);
+						}else{
+							tmpParam = dealCustRelation(tmpParam, cacheCustInfo,busiOrder);
+							busiOrder.put("delFlag", "Y");
+						}
+					} else if(SysConstant.RESP_CUST_TYPE.equals(MapUtils.getString(custInfo, "custType", ""))){ // 新建责任人
+						if(!eachListIsExist(cacheCustInfo, busiOrder)){ //不存在则缓存
+							cacheCustInfo.add(busiOrder);
+						}else{
+							tmpParam = dealCustRelation(tmpParam, cacheCustInfo,busiOrder);
+							busiOrder.put("delFlag", "Y");
+						}
+					}
+				}
+			}
+
+			Map<String, Object> orderList0 = (Map<String, Object>) tmpParam.get("orderList");
+			List<Map<String, Object>> custOrderList0 = (List<Map<String, Object>>) orderList0.get("custOrderList");
+			// 第一次遍历保证新建客户已保存在缓存中
+			for (Map<String, Object> custOrder0 : custOrderList0) {
+				List<Map<String, Object>> busiOrderList0 = (List<Map<String, Object>>) custOrder0.get("busiOrder");
+				// 删除操作
+				Iterator<Map<String,Object>> it = busiOrderList0.iterator();
+				while(it.hasNext()){
+					Map<String,Object> busiOrder = it.next();
+					if(busiOrder.containsKey("delFlag")){
+						it.remove();
+					}
+				}
+			}
+
+		}
+		resutltMap.put("tmpParam",tmpParam);
+		return resutltMap;
+	}
+
+	/**
+	 * 传入当前C1动作，校验客户是否已存在List中
+	 * true:存在->获取当前C1动作匹配的关系,从缓存中
+	 * false:不存在->刷入缓存中,关系不做处理
+	 *
+	 * @param cachelist 缓存集
+	 * @param busiOrder 当前C1动作
+	 */
+	private boolean eachListIsExist(List<Map<String, Object>> cachelist, Map<String, Object> busiOrder) {
+
+		Map<String, Object> data = (Map<String, Object>) busiOrder.get("data");
+		Map<String, Object> custIdentities = (Map<String, Object>) ((List<Map<String, Object>>) data.get("boCustIdentities")).get(0);
+		String identidiesTypeCd = MapUtils.getString(custIdentities, "identidiesTypeCd", "");//证件类型
+		String identityNum = MapUtils.getString(custIdentities, "identityNum", "");//证件号
+
+		Boolean existFlag = false;
+		for (int i = 0; i < cachelist.size(); i++) {
+			 if(checkExist(cachelist.get(i),identidiesTypeCd,identityNum)){
+				 existFlag = true;
+			 }
+		}
+		return existFlag;
+	}
+
+	private boolean checkExist(Map<String, Object> cachebBusiOrder,String identidiesTypeCd,String identityNum){
+		Map<String, Object> cacheData = (Map<String, Object>) cachebBusiOrder.get("data");
+		Map<String, Object> cacheCustIdentities = (Map<String, Object>) ((List<Map<String, Object>>) cacheData.get("boCustIdentities")).get(0);
+
+		if (MapUtils.getString(cacheCustIdentities, "identidiesTypeCd", "").equals(identidiesTypeCd)
+				&& MapUtils.getString(cacheCustIdentities, "identityNum", "").equals(identityNum)) {
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * 处理客户关系
+	 * @return
+	 */
+	private Map<String,Object>  dealCustRelation(Map<String,Object> param,List<Map<String,Object>> cacheList,Map<String,Object> busiOrder){
+
+		Map<String,Object> tmpParam = param;
+
+		Map<String, Object> orderList = (Map<String, Object>) tmpParam.get("orderList");
+		Map<String, Object> orderListInfo = (Map<String, Object>) orderList.get("orderListInfo");
+		List<Map<String, Object>> custOrderList = (List<Map<String, Object>>) orderList.get("custOrderList");
+
+		// 获取原C1动作节点，根据原点的类型，归属产品是关联新装节点，并从缓存的节点中取实例ID做覆盖
+		Map<String, Object> data = (Map<String, Object>) busiOrder.get("data");
+		Map<String, Object> custInfo = (Map<String, Object>) ((List<Map<String, Object>>) data.get("boCustInfos")).get(0);
+		Map<String, Object> busiObj = (Map<String, Object>) busiOrder.get("busiObj");
+		Map<String, Object> custIdentities = (Map<String, Object>) ((List<Map<String, Object>>) data.get("boCustIdentities")).get(0);
+		String identidiesTypeCd = MapUtils.getString(custIdentities, "identidiesTypeCd", "");//证件类型
+		String identityNum = MapUtils.getString(custIdentities, "identityNum", "");//证件号
+
+		for(Map<String,Object> cacheBusiOrder: cacheList) {
+			Map<String, Object> cacheBusiObj = (Map<String, Object>) cacheBusiOrder.get("busiObj");
+			if(checkExist(cacheBusiOrder,identidiesTypeCd,identityNum)) {
+				if ("Y".equals(MapUtils.getString(custInfo, "jbrFlag", ""))) {
+					if (orderListInfo.containsKey("handleCustId")) {
+						orderListInfo.put("handleCustId", MapUtils.getString(cacheBusiObj, "instId", ""));
+					}
+				} else if (SysConstant.USER_CUST_TYPE.equals(MapUtils.getString(custInfo, "custType", ""))) { // 产品属性修正
+					// 获取产品属性，根据归属产品ID替换使用人值
+					String ownerProdId = MapUtils.getString(custInfo, "ownerProd", "");
+					if (StringUtils.isNotBlank(ownerProdId)) {
+						// 获取新装节点
+						for (Map<String, Object> custOrder : custOrderList) {
+							List<Map<String, Object>> busiOrderList = (List<Map<String, Object>>) custOrder.get("busiOrder");
+							for (int i = 0; i < busiOrderList.size(); i++) {
+								Map<String, Object> prodNode = busiOrderList.get(i);
+								HashMap<String, Object> boActionType = (HashMap<String, Object>) busiOrderList.get(i).get("boActionType");
+								if ("1".equalsIgnoreCase(MapUtils.getString(boActionType, "boActionTypeCd", ""))) {
+									//Map<String, Object> prodBusiObj = (Map<String, Object>) prodNode.get("busiObj");
+									//if (ownerProdId.equals(MapUtils.getString(prodBusiObj, "instId", ""))) {
+										List<Map<String, Object>> boProdItems = (List<Map<String, Object>>) ((Map<String, Object>) prodNode.get("data")).get("boProdItems");
+										boProdItems = dealBoProdItems(boProdItems,MapUtils.getString(busiObj, "instId", ""), MapUtils.getString(cacheBusiObj, "instId", ""));
+										((Map<String, Object>) prodNode.get("data")).put("boProdItems", boProdItems);
+									//}
+								}
+							}
+						}
+					}
+				} else if (SysConstant.RESP_CUST_TYPE.equals(MapUtils.getString(custInfo, "custType", ""))) { // 客户产品关系修正
+					// 获取客户产品关系，修改责任人值
+					String ownerProdId = MapUtils.getString(custInfo, "ownerProd", "");
+					if (StringUtils.isNotBlank(ownerProdId)) {
+						// 获取新装节点
+						for (Map<String, Object> custOrder : custOrderList) {
+							List<Map<String, Object>> busiOrderList = (List<Map<String, Object>>) custOrder.get("busiOrder");
+							for (int i = 0; i < busiOrderList.size(); i++) {
+								Map<String, Object> prodNode = busiOrderList.get(i);
+								HashMap<String, Object> boActionType = (HashMap<String, Object>) busiOrderList.get(i).get("boActionType");
+								if ("1".equalsIgnoreCase(MapUtils.getString(boActionType, "boActionTypeCd", ""))) {
+									//Map<String, Object> prodBusiObj = (Map<String, Object>) prodNode.get("busiObj");
+									//if (ownerProdId.equals(MapUtils.getString(prodBusiObj, "instId", ""))) {
+										List<Map<String, Object>> boCusts = (List<Map<String, Object>>) ((Map<String, Object>) prodNode.get("data")).get("boCusts");
+										boCusts = dealBoCusts(boCusts,MapUtils.getString(busiObj, "instId", ""), MapUtils.getString(cacheBusiObj, "instId", ""));
+										((Map<String, Object>) prodNode.get("data")).put("boCusts", boCusts);
+									//}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		return tmpParam;
+	}
+
+	private List<Map<String,Object>> dealBoProdItems(List<Map<String,Object>> prodItems,String oldInstId,String instId){
+		List<Map<String,Object>> boProdItems = prodItems;
+		for(Map<String,Object> prodItem:prodItems){
+			if(SysConstant.PROD_ITEM_SPEC_ID_USER.equals(prodItem.get("itemSpecId")) && oldInstId.equals(MapUtils.getString(prodItem,"value",""))){ // 使用人产品属性
+				prodItem.put("value",instId);
+			}
+		}
+		return boProdItems;
+	}
+	private List<Map<String,Object>> dealBoCusts(List<Map<String,Object>> custs,String oldInstId,String instId){
+		List<Map<String,Object>> boCusts = custs;
+		for(Map<String,Object> boCust:boCusts){
+			if(SysConstant.RESP_CUST_TYPE.equals(boCust.get("partyProductRelaRoleCd")) && oldInstId.equals(MapUtils.getString(boCust, "partyId", ""))){ // 责任人产权客户
+				boCust.put("partyId",instId);
+			}
+		}
+		return boCusts;
+	}
 }

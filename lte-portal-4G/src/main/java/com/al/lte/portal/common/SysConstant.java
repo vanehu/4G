@@ -785,5 +785,11 @@ public final class SysConstant {
     public static final String SPECIALTESTQX = "ZYCSK";
     
     /**拍照仪驱动控件下载URL*/
-    public static final String CAMERA_DRIVER_DOWNLOAD_URL = "_camera_driver_download_url";	
+    public static final String CAMERA_DRIVER_DOWNLOAD_URL = "_camera_driver_download_url";
+
+    /** 使用人类型标识 **/
+    public static final String USER_CUST_TYPE = "1";
+    /** 责任人类型标识 **/
+    public static final String RESP_CUST_TYPE = "2";
+
 }
