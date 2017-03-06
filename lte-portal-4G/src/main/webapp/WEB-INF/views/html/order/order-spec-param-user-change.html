@@ -97,7 +97,7 @@
 	var itemId = CONST.PROD_ATTR.PROD_USER + '_' + prodId;
 	$('#'+itemId).attr({'check_option':'N','readonly':'readonly','disabled':'disabled'});
 	$('#choose_user_btn_'+prodId).off('click').on('click',function(){
-		if (query.common.queryPropertiesValue("REAL_USER_" + OrderInfo.staff.areaId.substr(0, 3)) != "ON"){
+		if (query.common.queryPropertiesValue("REAL_USER_" + OrderInfo.staff.areaId.substr(0, 3)) == "ON"){
 			//使用人新模式
 			order.main.openChooseDialog(this, {"tipThead"	:"选择使用人"});
 		} else{
