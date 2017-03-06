@@ -3325,6 +3325,20 @@ button:focus {
 .tab-change-list2 {
   min-height: 3.74rem;
 }
+.fixed-bottom-box {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  background: #f6f6f6;
+}
+.fixed-bottom-box .choice-list-box li .serial {
+  font-size: 0.34rem;
+  width: 0.86rem;
+  height: 0.86rem;
+  line-height: 0.86rem;
+  text-align: center;
+}
 .sub-btn-box {
   width: 100%;
   position: fixed;
