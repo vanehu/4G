@@ -49,6 +49,9 @@ public class PropertiesUtils {
 	 */
 	public String getMessage(String code, Object[] args, Locale locale) {
 		try {
+			if(MDA.SENSITIVE_KEYS.contains(code)){
+				return "forbidden";
+			}
 			return message.getMessage(code, args, locale);
 		} catch (NoSuchMessageException e) {
 			log.error("properties key不存在", e);
@@ -67,6 +70,9 @@ public class PropertiesUtils {
 	 */
 	public String getMessage(String code, Object[] args) {
 		try {
+			if(MDA.SENSITIVE_KEYS.contains(code)){
+				return "forbidden";
+			}
 			return message.getMessage(code, args, null);
 		} catch (NoSuchMessageException e) {
 			log.error("properties key不存在", e);
@@ -85,6 +91,12 @@ public class PropertiesUtils {
 		// java反射遍历MDA类中是否存在该属性
 		boolean isHasProperty = false;
 		String propertyValue = "";
+		
+		if(MDA.SENSITIVE_KEYS.contains(code)){
+			propertyValue = "forbidden";
+			return propertyValue;
+		}
+
 		Map<String, String> propertyMap = new HashMap<String, String>();
 		Field[] fields = MDA.class.getDeclaredFields();
 		for (Field field : fields) {
@@ -183,6 +195,9 @@ public class PropertiesUtils {
 	 */
 	public String getMessage(String code, Locale locale) {
 		try {
+			if(MDA.SENSITIVE_KEYS.contains(code)){
+				return "forbidden";
+			}
 			return message.getMessage(code, null, locale);
 		} catch (NoSuchMessageException e) {
 			log.error("properties key不存在", e);
@@ -206,6 +221,9 @@ public class PropertiesUtils {
 	public String getMessage(String code, Object[] args, String defaultMessage,
 			Locale locale) {
 		try {
+			if(MDA.SENSITIVE_KEYS.contains(code)){
+				return "forbidden";
+			}
 			return message.getMessage(code, args, defaultMessage, locale);
 		} catch (NoSuchMessageException e) {
 			log.error("properties key不存在", e);
@@ -226,6 +244,9 @@ public class PropertiesUtils {
 	 */
 	public String getMessage(String code, Object[] args, String defaultMessage) {
 		try {
+			if(MDA.SENSITIVE_KEYS.contains(code)){
+				return "forbidden";
+			}
 			return message.getMessage(code, args, defaultMessage, null);
 		} catch (NoSuchMessageException e) {
 			log.error("properties key不存在", e);
@@ -244,6 +265,9 @@ public class PropertiesUtils {
 	 */
 	public String getMessage(String code, String defaultMessage) {
 		try {
+			if(MDA.SENSITIVE_KEYS.contains(code)){
+				return "forbidden";
+			}
 			return message.getMessage(code, null, defaultMessage, null);
 		} catch (NoSuchMessageException e) {
 			log.error("properties key不存在", e);
@@ -264,6 +288,9 @@ public class PropertiesUtils {
 	 */
 	public String getMessage(String code, String defaultMessage, Locale locale) {
 		try {
+			if(MDA.SENSITIVE_KEYS.contains(code)){
+				return "forbidden";
+			}
 			return message.getMessage(code, null, defaultMessage, locale);
 		} catch (NoSuchMessageException e) {
 			log.error("properties key不存在", e);
