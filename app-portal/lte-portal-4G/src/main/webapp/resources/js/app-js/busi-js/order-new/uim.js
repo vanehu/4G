@@ -26,11 +26,19 @@ product.uim = (function() {
     			"before" : function(){
     				$.ecOverlay("<strong>短信权限验证中,请稍等会儿....</strong>");
     			},
+//    			"always" : function(){
+//    				$.unecOverlay();
+//    			},
     			"done" : function(response){
-    				if (response.code == 0) {
-    					$('#CHANGEUIMSMS_' + prodId).show();
+    				$.unecOverlay();
+    				if (response.code == 3) {
+    					var content = getMsgContent(response.data);
+    					$.alertMsgVal("短信验证 ",content,{ 
+    						yes:function(){
+    							_smsFormIsValid();
+    						}
+    					});
     					//置空短信校验码框
-    					$("#defaultTimeResend").text(second);//验证码提示秒数
     					window.clearInterval(interResend);
     					$("#smspwd").val("");
     					$("#changeuimsmsresend").off("click");
@@ -38,10 +46,10 @@ product.uim = (function() {
     						$(".randomCode").show();
     						//#544326 IE7不兼容$("#num .txtnum")语法
 //    						$("#num .txtnum").attr("value",response.data.randomCode);
-    						$("#changeUimSmsRandomNum").attr("value",response.data.randomCode);
+    						$("#changeUimSmsRandomNum").html(response.data.randomCode);
     					}
 //    					$("#checkNum .txtnum").attr("value",order.prodModify.choosedProdInfo.accNbr);
-    					$("#changeUimSmsCheckNum").attr("value",order.prodModify.choosedProdInfo.accNbr);
+    					$("#changeUimSmsCheckNum").html(order.prodModify.choosedProdInfo.accNbr);
     					//重新发送验证码成功后,验证错误次数置0.
     					smsErrorCount=0;
     					//重新发送验证码成功后,验证码有效期初始化5分钟.
@@ -51,7 +59,7 @@ product.uim = (function() {
     					invalidAfter5Mins();
     					$("#smspwd").focus();
     					_setEnable("#changeuimsmsbutton", "#changeUimSmsForm");
-    				}else if(response.code==3){
+    				}else if(response.code==0){
     					$.alert("提示",response.data);
     					return;
     				}else if(response.code==1002){
@@ -65,9 +73,7 @@ product.uim = (function() {
     					return;
     				}
     			},
-    			"always" : function(){
-    				$.unecOverlay();
-    			},
+    			
     			"fail" : function(response){
     				$.alert("提示","请求可能发生异常，请稍候");
     			}
@@ -115,16 +121,39 @@ product.uim = (function() {
 		window.setInterval(smsInvalidTime,1000);
 	};
 	
+	//短信对话框展示内容
+	var getMsgContent = function(data){
+		var html = '<table width="100%" border="0" cellspacing="0" cellpadding="0" class="SMScode"> <tr>';
+		html += '<td><p>为确保用户的个人信息安全，在办理该业务前，需先进行短信验证，请输入用户提供的随机短信验证码！</p></td> </tr>';
+		html += '<tr class="randomCode"> <td style="height: 0.9rem;font-size: medium;">验证的号码  '+order.prodModify.choosedProdInfo.accNbr;
+		html += '</td></tr>';
+		html += '<tr><td  style="height: 0.9rem;font-size: medium;">短信验证码  ';
+		html += '<input  type="text" name="smspwd" id="smspwd" placeholder="请输入验证码" maxlength="6"/>';
+	    html += '</td></tr>';
+	    html += ' <tr class="randomCode"><td>';
+	    html += '<div id="msg_error" class="hidden" style="font-size: small;color: red;paddingleft: 0.4rem;">验证码不能为空</div>';
+	    html += '</td></tr>';
+	    html += ' <tr class="randomCode" style="display:none"><td  style="height: 0.9rem;font-size: medium;">';
+	    html += ' 随机序列号';
+	    html +='<p id="changeUimSmsRandomNum" class="txtnum" disabled="disabled"/>';
+	    html +='</td> </tr><tr>';
+	    html +='<tr><td><p>- 验证码在5分钟内有效，3次错误输入后失效。</p>';
+	    html +='<p>- 如您<font id="defaultTimeResend">'+second+'</font>仍未收到验证码，请点击<a id="changeuimsmsresend" onclick="javascript:void(0);">重新获取验证码。</a></p>';
+	    html +='<p>- 如果您连续3次重试都没有成功收到短信验证码，建议您稍后再试。</p></td></tr></table>';
+	    return html;
+	    
+	}
+	
 	//重发验证码
 	var _smsResend=function(){ 
 		$.callServiceAsJsonGet(contextPath+"/staff/login/changeUimReSend",{'smsErrorCount':smsErrorCount} ,{
 			"done" :function(response){				
 				if (response.code==0) {
 					$.alert("提示","验证码发送成功，请及时输入验证.");
-					$("#smsresend").off("click").removeClass("cn").addClass("cf");
+					$("#smsresend_" + prodId).off("click").removeClass("cn").addClass("cf");
 					//randomNum2 = ec.util.getNRandomCode(2);
 					if(response.data.randomCode != null ){
-						$("#num .txtnum").attr("value",response.data.randomCode);
+						$("#txtnum").attr("value",response.data.randomCode);
 					}
 					//重新发送验证码成功后,验证错误次数置0.
 					smsErrorCount=0;
@@ -147,7 +176,13 @@ product.uim = (function() {
 		$(id).attr("disabled", false);
 		$(form).off('formIsValid').on('formIsValid', _smsFormIsValid);
 	};
-	var _smsFormIsValid = function(event, form) {
+	var _smsFormIsValid = function() {
+		if($('#smspwd').val().trim() == ""){
+			$('#msg_error').removeClass('hidden');
+			return;
+		} else {
+			$('#msg_error').addClass('hidden');
+		}
 		//判断短信验证码是否过期
 		if(leftInvalidTime==0){
 			$.alert("提示","对不起,您的短信验证码已经过期,请重新发送后再次验证.");
@@ -177,6 +212,7 @@ product.uim = (function() {
 //				_setDisable("#changeuimsmsbutton", "#changeUimSmsForm");
 			},
 			"done" : function(response){
+				$.unecOverlay();
 				if (response.code == 0) {
 					$('#CHANGEUIMSMS_' + prodId).hide();
 					_checkUimFunction(prodId);
@@ -188,7 +224,7 @@ product.uim = (function() {
 				}
 			},
 			"always":function(){
-				$.unecOverlay();
+				
 //				_setEnable("#changeuimsmsbutton", "#changeUimSmsForm");
 			}
 		});
@@ -666,6 +702,7 @@ product.uim = (function() {
 		selUimApp               : _selUimApp,
 		checkData               :_checkData,
 		smsFormIsValid			:_smsFormIsValid,
-		smsResend				:_smsResend
+		smsResend				:_smsResend,
+		smsFormIsValid			:_smsFormIsValid
 	};
 })();

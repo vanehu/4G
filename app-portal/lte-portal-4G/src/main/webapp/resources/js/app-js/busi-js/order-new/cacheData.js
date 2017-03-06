@@ -835,9 +835,17 @@ CacheData = (function() {
 		var selectStr = ""; //返回字符串
 		var optionStr = "";
 		if(!!param.valueRange && (itemSpecId == CONST.YZFitemSpecId1||itemSpecId ==  CONST.YZFitemSpecId2 || itemSpecId ==  CONST.YZFitemSpecId3)){ //可编辑下拉框（10020034,10020035,10020036 为翼支付交费助手的三属性）需求（开发） #610119
-			var feeType =$("#payType_"+prodId).val();
+			var feeType= 1200;
+			if(OrderInfo.offerSpec.feeType=="1201" || OrderInfo.offerSpec.feeType=="3101" || OrderInfo.offerSpec.feeType=="3102" || OrderInfo.offerSpec.feeType=="3103"){
+				feeType = 1201;
+			}
+			if(OrderInfo.offerSpec.feeType=="2100" || OrderInfo.offerSpec.feeType=="3100" || OrderInfo.offerSpec.feeType=="3101" || OrderInfo.offerSpec.feeType=="3103"){
+				feeType = 2100;
+			}
+			if(OrderInfo.offerSpec.feeType=="1200" || OrderInfo.offerSpec.feeType=="3100" || OrderInfo.offerSpec.feeType=="3102" || OrderInfo.offerSpec.feeType=="3103"){
+				feeType = 1200;
+			}
 			if(feeType==undefined) feeType = order.prodModify.choosedProdInfo.feeType;
-			if(feeType==undefined) feeType = CONST.PAY_TYPE.AFTER_PAY;
 			if(feeType == CONST.PAY_TYPE.BEFORE_PAY){
 				selectStr = selectStr+'<div class="form-group pack-pro-box"><label for="exampleInputPassword1">' + param.name + ': </label>';
 				if(param.rule.isConstant=='Y'){ //不可修改
