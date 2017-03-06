@@ -700,6 +700,25 @@ OrderInfo = (function() {
 						if(this.setValue==undefined){
 							this.setValue = this.value;
 						}
+						var feeType= 1200;
+						if(OrderInfo.offerSpec.feeType=="1201" || OrderInfo.offerSpec.feeType=="3101" || OrderInfo.offerSpec.feeType=="3102" || OrderInfo.offerSpec.feeType=="3103"){
+							feeType = 1201;
+						}
+						if(OrderInfo.offerSpec.feeType=="2100" || OrderInfo.offerSpec.feeType=="3100" || OrderInfo.offerSpec.feeType=="3101" || OrderInfo.offerSpec.feeType=="3103"){
+							feeType = 2100;
+						}
+						if(OrderInfo.offerSpec.feeType=="1200" || OrderInfo.offerSpec.feeType=="3100" || OrderInfo.offerSpec.feeType=="3102" || OrderInfo.offerSpec.feeType=="3103"){
+							feeType = 1200;
+						}
+						if(feeType==undefined) feeType = order.prodModify.choosedProdInfo.feeType;
+						if(prodServ.servSpecId == CONST.YZFservSpecId && feeType == CONST.PAY_TYPE.AFTER_PAY){
+							if (this.itemSpecId == CONST.YZFitemSpecId1 || this.itemSpecId == CONST.YZFitemSpecId2 || this.itemSpecId == CONST.YZFitemSpecId3 || (this.itemSpecId == CONST.YZFitemSpecId4 && "ON" != offerChange.queryPortalProperties("AGENT_" + (OrderInfo.staff.soAreaId+"").substring(0,3))) ) {
+								this.setValue = "";
+							}
+						}
+						if (this.itemSpecId == CONST.YZFitemSpecId4 && "ON" != offerChange.queryPortalProperties("AGENT_" + (OrderInfo.staff.soAreaId+"").substring(0,3))) {
+							this.setValue = "";
+						}
 						if(ec.util.isObj(this.setValue)){
 							var addParam = {
 				                itemSpecId : this.itemSpecId,

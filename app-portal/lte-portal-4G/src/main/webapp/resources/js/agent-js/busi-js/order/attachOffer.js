@@ -900,8 +900,16 @@ AttachOffer = (function() {
 						if(feeType == CONST.PAY_TYPE.AFTER_PAY){
 							for ( var j = 0; j < newSpec.prodSpecParams.length; j++) {
 								var prodSpecParam = newSpec.prodSpecParams[j];
-								prodSpecParam.setValue = "";
-							}																			
+								if (CONST.YZFitemSpecId4 == prodSpecParam.itemSpecId && "ON" == offerChange.queryPortalProperties("AGENT_" + (OrderInfo.staff.soAreaId+"").substring(0,3))) {
+									if (prodSpecParam.value!="") {
+										prodSpecParam.setValue = prodSpecParam.value;
+									} else if (!!prodSpecParam.valueRange[0]&&prodSpecParam.valueRange[0].value!="")
+										//默认值为空则取第一个
+										prodSpecParam.setValue = prodSpecParam.valueRange[0].value;
+								} else {
+									prodSpecParam.setValue = "";
+								}
+							}																						
 						}else{
 							for ( var j = 0; j < newSpec.prodSpecParams.length; j++) {							
 								var prodSpecParam = newSpec.prodSpecParams[j];
@@ -2349,14 +2357,19 @@ AttachOffer = (function() {
 			});
 			$('#paramForm').bind('formIsValid', function(event, form) {
 				var isset = false;
-				$.each(serv.prodSpecParams,function(){
-					var prodItem = CacheData.getServInstParam(prodId,serv.servId,this.itemSpecId);
-					prodItem.setValue = $("#"+prodId+"_"+this.itemSpecId).val();	
-					if(prodItem.value!=prodItem.setValue){
-						prodItem.isUpdate = "Y";
-						isset = true;
-					}
-				});
+				for(var i = 0;i<serv.prodSpecParams.length;i++){
+					//$.each(serv.prodSpecParams,function(){
+						//var prodItem = CacheData.getServInstParam(prodId,serv.servId,this.itemSpecId);
+						var prodItem = CacheData.getServInstParam(prodId,serv.servId,serv.prodSpecParams[i].itemSpecId);
+						if (prodItem.itemSpecId == CONST.YZFitemSpecId4 && "ON" != offerChange.queryPortalProperties("AGENT_" + (OrderInfo.staff.soAreaId+"").substring(0,3))) {
+							continue;
+						}
+						prodItem.setValue = $("#"+prodId+"_"+serv.prodSpecParams[i].itemSpecId).val();
+						if(prodItem.value!=prodItem.setValue){
+							prodItem.isUpdate = "Y";
+							isset = true;
+						}
+				}
 				if(isset){
 					$("#can_"+prodId+"_"+serv.servId).removeClass("canshu").addClass("canshu2");
 					serv.isset = "Y";

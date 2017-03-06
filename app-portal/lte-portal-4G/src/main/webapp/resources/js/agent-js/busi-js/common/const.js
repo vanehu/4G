@@ -358,6 +358,7 @@ CONST = (function(){
 	var _YZFitemSpecId1 = 10020034; //翼支付助手阀值级别属性编码
 	var _YZFitemSpecId2 = 10020035; //翼支付助手单次充值额度属性编码
 	var _YZFitemSpecId3 = 10020036; //翼支付助手是否需要代扣确认属性编码
+	var _YZFitemSpecId4 = 10020087; //翼支付助手翼支付托收
 	
 	//渠道大类
 	var _CHANNEL_TYPE_CD ={
@@ -450,6 +451,7 @@ CONST = (function(){
 		YZFitemSpecId1 : _YZFitemSpecId1,
 		YZFitemSpecId2 : _YZFitemSpecId2,
 		YZFitemSpecId3 : _YZFitemSpecId3,
+		YZFitemSpecId4 : _YZFitemSpecId4,		
 		CHANNEL_TYPE_CD : _CHANNEL_TYPE_CD,
 		GROUP_SERV_SPEC_ID:_GROUP_SERV_SPEC_ID,
 		GROUP_PROD_SPEC:_GROUP_PROD_SPEC,
