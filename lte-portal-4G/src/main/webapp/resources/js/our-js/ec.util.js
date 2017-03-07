@@ -537,7 +537,27 @@ ec.util=(function(){
 		
 		return isNoErr;
 	};
-    
+
+    /**
+     * map操作函数get
+     */
+    var _mapGet = function (map, key) {
+        if (typeof map != "object") {
+            return;
+        }
+        return map[key];
+    };
+
+    /**
+     * map操作函数put
+     */
+    var _mapPut = function (map, k, v) {
+        if (typeof map != "object") {
+            return;
+        }
+        map[k] = v;
+    };
+
 	//要暴露出的公共方法
 	return {
 		showErrors			:_showErrorsTip,
@@ -564,6 +584,8 @@ ec.util=(function(){
 		isObj				:_isObj,
 		isArray				:_isArray,
 		sort				:_sort,
-		checkParam			:_checkParam
+		checkParam			:_checkParam,
+        mapGet              : _mapGet,
+        mapPut              : _mapPut
 	};
 })();

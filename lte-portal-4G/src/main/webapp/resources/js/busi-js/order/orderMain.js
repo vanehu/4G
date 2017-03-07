@@ -1523,7 +1523,20 @@ order.main = (function(){
 		order.cust.bindCustQueryForChoose(); //客户定位查询按钮
 		$('#chooseUserBtn').off('click').on('click',function(){
             if(!!order.cust.tmpChooseUserInfo && order.cust.tmpChooseUserInfo.custId){
-				//保存并显示使用人信息，清空弹出框的客户信息、临时保存的客户信息，关闭弹出框
+                //一证五号校验
+                var inParam = {
+                    "certType": order.cust.tmpChooseUserInfo.identityCd,
+                    "certNum": order.cust.tmpChooseUserInfo.idCardNumber,
+                    "certAddress": order.cust.tmpChooseUserInfo.addressStr,
+                    "custName": order.cust.tmpChooseUserInfo.partyName,
+                    "custNameEnc": order.cust.tmpChooseUserInfo.CN,
+                    "certNumEnc": order.cust.tmpChooseUserInfo.certNum,
+                    "certAddressEnc": order.cust.tmpChooseUserInfo.address
+                };
+                if(!order.cust.preCheckCertNumberRel(prodId, inParam)){
+                    return ;
+                }
+                //保存并显示使用人信息，清空弹出框的客户信息、临时保存的客户信息，关闭弹出框
 				OrderInfo.updateChooseUserInfos(prodId, order.cust.tmpChooseUserInfo);
 				$('#'+CONST.PROD_ATTR.PROD_USER+'_'+prodId+'_name').val(order.cust.tmpChooseUserInfo.partyName);
 				$('#'+CONST.PROD_ATTR.PROD_USER+'_'+prodId).val(order.cust.tmpChooseUserInfo.custId);
@@ -1810,7 +1823,8 @@ order.main = (function(){
 		if(!_check_parm("order_spc_update")){
 			return ;
 		}
-		var boProdItems = new Array();
+        var boProdItems = new Array();
+        var data = {boProdItems:boProdItems,boCertiAccNbrRels:[]} ;
 		//input
 		var chang_row = 0;
 		$("#order_spc_update input").each(function(){
@@ -1858,6 +1872,52 @@ order.main = (function(){
 								};
 								boProdItems.push(row3);
 								chang_row++;
+                                if (CONST.PROD_ATTR.PROD_USER == $(this).attr("itemSpecId")) {//如果是使用人属性变更，则要封装证号关系节点
+                                    var isON = query.common.queryPropertiesStatus("REAL_USER_"+OrderInfo.cust.areaId.substr(0,3));
+                                    var choosedProdInfo=order.prodModify.choosedProdInfo;
+                                    if(isON){
+                                        $.each(OrderInfo.subUserInfos, function () {
+                                            if (this.prodId == choosedProdInfo.prodInstId) {
+                                                var ca = $.extend(true, {}, OrderInfo.boCertiAccNbrRel);
+                                                ca.accNbr = choosedProdInfo.accNbr;
+                                                ca.state = "ADD";
+                                                if (ec.util.isObj(this)) {
+                                                    ca.partyId = ec.util.isObj(this.custId)?this.custId.toString():"-1";
+                                                    ca.certType = this.orderIdentidiesTypeCd;
+                                                    ca.certNum = this.identityNum;
+                                                    ca.custName = this.custName;
+                                                    ca.certAddress = this.orderAttrAddr;
+                                                    ca.certNumEnc = this.certNumEnc;
+                                                    ca.custNameEnc = this.custNameEnc;
+                                                    ca.certAddressEnc = this.certAddressEnc;
+                                                    ca.serviceType = "1200";//变更使用人
+                                                    data.boCertiAccNbrRels.push(ca);
+                                                }
+                                            }
+                                        });
+
+                                    }else{
+                                        $.each(OrderInfo.choosedUserInfos, function () {
+                                        if (this.prodId == choosedProdInfo.prodInstId) {
+                                            var ca = $.extend(true, {}, OrderInfo.boCertiAccNbrRel);
+                                            ca.accNbr = choosedProdInfo.accNbr;
+                                            ca.state = "ADD";
+                                            if (ec.util.isObj(this.custInfo)) {
+                                                ca.partyId = this.custInfo.custId;
+                                                ca.certType = this.custInfo.identityCd;
+                                                ca.certNum = this.custInfo.idCardNumber;
+                                                ca.certNumEnc = this.custInfo.certNum;
+                                                ca.custName = this.custInfo.partyName;
+                                                ca.custNameEnc = this.custInfo.CN;
+                                                ca.certAddress = this.custInfo.addressStr;
+                                                ca.certAddressEnc = this.custInfo.address;
+                                                ca.serviceType = "1200";//变更使用人
+                                                data.boCertiAccNbrRels.push(ca);
+                                            }
+                                        }
+                                    });
+                                    }
+                                }
 							}
 						}
 					}
@@ -1926,7 +1986,6 @@ order.main = (function(){
 		*/
 		//配置参数：来调用产品属性修改的ser
 		//OrderInfo.boProdItems = boProdItems ;
-		var data = {boProdItems:boProdItems} ;
 		if(busiOrderAttrs){
 			data.busiOrderAttrs = busiOrderAttrs ;
 		}
@@ -2026,7 +2085,6 @@ order.main = (function(){
 				"objInstId":objInstId,
 				"pageSize":10
 		};
-		
 		$.callServiceAsHtml(contextPath + "/staffMgr/getStaffList",param,{
 			"before":function(){
 				$.ecOverlay("<strong>正在查询中,请稍等会儿....</strong>");
@@ -3046,15 +3104,15 @@ order.main = (function(){
 				if(!ec.util.isArray(response.data.custInfos)){
 					//新建需要,实名制核验
 					var switchResponse = $.callServiceAsJson(contextPath + "/properties/getValue", {"key": "CHECK_CUST_CERT_" + OrderInfo.staff.soAreaId.substr(0, 3)});
-				    var checkCustCertSwitch = "";
+					var checkCustCertSwitch = "";
 					if (switchResponse.code == "0") {
-				    	checkCustCertSwitch = switchResponse.data;
-				    }
+						checkCustCertSwitch = switchResponse.data;
+					}
 					if(checkCustCertSwitch == "ON"){
 						var inParams = {
-								"certType": orderIdentidiesTypeCd,
-								"certNum": identityNum
-							};
+							"certType": orderIdentidiesTypeCd,
+							"certNum": identityNum
+						};
 						var checkUrl=contextPath+"/cust/checkCustCert";
 						var checkResponse = $.callServiceAsJson(checkUrl, inParams, {"before":function(){
 						}});
@@ -3087,7 +3145,7 @@ order.main = (function(){
 					"orderIdentidiesTypeCd"	:orderIdentidiesTypeCd
 				});
 				//查询、读卡按钮隐藏，重置按钮展示
-				_hiddenBtn();					
+				_hiddenBtn();
 			}else if(response.code == 1 && response.data){
 				$.alert("错误", "查询客户信息失败，错误原因：" + response.data);
 				return;
@@ -3121,6 +3179,10 @@ order.main = (function(){
 			userSubInfo.orderAttrName 		 = custInfo.partyName;
 			userSubInfo.orderAttrAddr 		 = custInfo.addressStr;
 			userSubInfo.orderIdentidiesTypeCd= custInfo.identityCd;
+            userSubInfo.certNumEnc           = custInfo.certNum;
+            userSubInfo.custName             = custInfo.partyName;
+            userSubInfo.custNameEnc          = custInfo.CN;
+            userSubInfo.certAddressEnc       = custInfo.address;
 			resetParam(userSubInfo);
 		} else{
 			$.confirm("确认","没有查询到客户信息，系统将自动创建客户，是否确认继续受理？", {
@@ -3225,6 +3287,18 @@ order.main = (function(){
 			OrderInfo.subUserInfos.push(userSubInfo);
 		}
 		easyDialog.close();
+
+        //一证五号校验
+        var inParam = {
+            "certType": userSubInfo.orderIdentidiesTypeCd,
+            "certNum": userSubInfo.identityNum,
+            "certAddress": userSubInfo.orderAttrAddr,
+            "custName": userSubInfo.orderAttrName,
+            "certNumEnc": userSubInfo.certNumEnc,
+            "certAddressEnc": userSubInfo.certAddressEnc,
+            "custNameEnc": userSubInfo.custNameEnc
+        };
+        order.cust.preCheckCertNumberRel(order.prodModify.choosedProdInfo.prodInstId, inParam);
 	};
 	
 	//责任人、使用人(新模式)重置按钮

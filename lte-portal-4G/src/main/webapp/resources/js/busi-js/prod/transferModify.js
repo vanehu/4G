@@ -84,7 +84,6 @@ prod.transferModify = (function(){
 			
 	//过户订单提交
 	var _custTransfer_Submit = function() {
-		
 		var toCustId = $("#litransCustId").attr("transCustId");
 		var _toCustId = -1;
 		if(toCustId!=""){
@@ -115,8 +114,12 @@ prod.transferModify = (function(){
 				return;
 			}
 		}
-		
-		var acctId = $("#acctSelect").val(); //要更换的帐户ID
+        //一证五号校验
+        if(!_transOneCertFiveNumCheck(toCustId,toIdentidiesTypeCd,toIdCardNumber,toCustName,toAddressStr)){
+		    return;
+        }
+
+        var acctId = $("#acctSelect").val(); //要更换的帐户ID
 		var acctCd = -1;
 		if(acctId>0){
 			acctCd = $("#acctSelect").find("option:selected").attr("acctcd"); //要更换的帐户合同号
@@ -252,6 +255,10 @@ prod.transferModify = (function(){
 					state : "ADD"
 				}
 				];
+
+                //添加证号关系
+                _addCertiAccNbrRels(_transchoosedCustInfo, busiOrderAdd, toIdentidiesTypeCd, toIdCardNumber, toCustName, toAddressStr);
+
 				busiOrder.push(busiOrderAdd);
 				
 			}
@@ -716,6 +723,11 @@ prod.transferModify = (function(){
 		_transchoosedCustInfo = {
 			custId : $(scope).find("td:eq(3)").text(),
 			partyName : $(scope).find("td:eq(0)").text(),
+            identityCd : $(scope).attr("identityCd"),
+            addressStr : $(scope).attr("addressStr"),
+            partyName : $(scope).attr("partyName"),
+            certNum : $(scope).attr("certNum"),
+            address : $(scope).attr("address"),
 			idCardNumber : $(scope).attr("idCardNumber"),
 			identityName : $(scope).attr("identityName"),
 			areaName : $(scope).attr("areaName"),
@@ -1242,9 +1254,11 @@ prod.transferModify = (function(){
 					state : "ADD"
 		        }],
 		        boCustProfiles : [],
-		        boPartyContactInfo : []
+		        boPartyContactInfo : [],
+                boCertiAccNbrRels:[]
 			}
 		};
+
 		if(boAccountInfos.length>0){
 			busiOrderReturn.data.boAccountInfos = boAccountInfos;
 		}
@@ -1270,6 +1284,15 @@ prod.transferModify = (function(){
 			isDefault : "Y",
 			state : "DEL"
 		};
+        //证号关系
+        var boCertiAccNbrRel = $.extend(true, {}, OrderInfo.boCertiAccNbrRel);
+        boCertiAccNbrRel.accNbr = order.prodModify.choosedProdInfo.accNbr;
+        boCertiAccNbrRel.partyId = "-1";
+        boCertiAccNbrRel.certType = toIdentidiesTypeCd;
+        boCertiAccNbrRel.certNum = toIdCardNumber;
+        boCertiAccNbrRel.custName = _transferCreatedCustInfos.cCustName;
+        boCertiAccNbrRel.certAddress = _transferCreatedCustInfos.cAddressStr;
+        busiOrderReturn.data.boCertiAccNbrRels.push(boCertiAccNbrRel);
 		boCustIdentitie.push(boCustIdentitieAdd);
 		boCustIdentitie.push(boCustIdentitieOld);
 		busiOrderReturn.data.boCustIdentities = boCustIdentitie;
@@ -1394,6 +1417,12 @@ prod.transferModify = (function(){
 			$.alert("提示","帐户名称不能为空！");
 			return;
 		}
+
+        //一证五号校验
+        if (!_transOneCertFiveNumCheck(toCustId, toIdentidiesTypeCd, toIdCardNumber, toCustName, toAddressStr)) {
+            return;
+        }
+
 		//订单备注信息
 		OrderInfo.orderDataRemark =$("#order_remark").val();
 		var acctId = $("#acctSelect").val(); //要更换的帐户ID
@@ -1527,7 +1556,11 @@ prod.transferModify = (function(){
 					state : "ADD"
 				}
 				];
-				busiOrder.push(busiOrderAdd);
+
+        //添加证号关系
+        _addCertiAccNbrRels(_transchoosedCustInfo, busiOrderAdd, toIdentidiesTypeCd, toIdCardNumber, toCustName, toAddressStr);
+
+        busiOrder.push(busiOrderAdd);
 			//账户节点变更节点
 			var boAccountInfoAdd={
 					areaId : order.prodModify.choosedProdInfo.areaId,  //受理地区ID		
@@ -1576,7 +1609,84 @@ prod.transferModify = (function(){
 				busiOrder.push(boAccountInfoAdd);
 				//订单提交
 				SoOrder.submitOrder(busiOrder);
-	}
+	};
+
+    /**
+     * 添加证号关系节点
+     * @param _transchoosedCustInfo
+     * @param busiOrderAdd
+     * @param toIdentidiesTypeCd
+     * @param toIdCardNumber
+     * @param toCustName
+     * @param toAddressStr
+     * @private
+     */
+    var _addCertiAccNbrRels = function (_transchoosedCustInfo, busiOrderAdd, toIdentidiesTypeCd, toIdCardNumber, toCustName, toAddressStr) {
+        if (!CacheData.isGov(_transchoosedCustInfo.identityCd)) {//判断是否是政企客户，为个人客户时封装证号关系节点
+            busiOrderAdd.data.boCertiAccNbrRels = [];
+
+            var ca = $.extend(true, {}, OrderInfo.boCertiAccNbrRel);
+            ca.accNbr = order.prodModify.choosedProdInfo.accNbr;
+            ca.state = "ADD";
+            if (ec.util.isObj(_transchoosedCustInfo) && _transchoosedCustInfo.custId != "-1") {
+                ca.partyId = _transchoosedCustInfo.custId;
+                ca.certType = _transchoosedCustInfo.identityCd;
+                ca.certNum = _transchoosedCustInfo.idCardNumber;
+                ca.certNumEnc = _transchoosedCustInfo.certNum;
+                ca.custName = _transchoosedCustInfo.partyName;
+                ca.custNameEnc = _transchoosedCustInfo.CN;
+                ca.certAddress = _transchoosedCustInfo.addressStr;
+                ca.certAddressEnc = _transchoosedCustInfo.address;
+            } else {
+                ca.partyId = "-1";
+                ca.certType = toIdentidiesTypeCd;
+                ca.certNum = toIdCardNumber;
+                ca.custName = toCustName;
+                ca.certAddress = toAddressStr;
+            }
+            ca.serviceType = "1300";//返档
+            busiOrderAdd.data.boCertiAccNbrRels.push(ca);
+        }
+    };
+
+    /**
+     * 返档一证五号校验
+     * @param toCustId
+     * @param toIdentidiesTypeCd
+     * @param toIdCardNumber
+     * @param toCustName
+     * @param toAddressStr
+     * @private
+     */
+    var _transOneCertFiveNumCheck = function (toCustId, toIdentidiesTypeCd, toIdCardNumber, toCustName, toAddressStr) {
+        //一证五号校验
+        var checkResult = true;
+        var inParam = {};
+        var transProdId = "-1";
+        if (ec.util.isObj(toCustId)) {
+            inParam = {
+                "certType": _transchoosedCustInfo.identityCd,
+                "certNum": _transchoosedCustInfo.idCardNumber,
+                "certAddress": _transchoosedCustInfo.addressStr,
+                "custName": _transchoosedCustInfo.partyName,
+                "custNameEnc": _transchoosedCustInfo.CN,
+                "certNumEnc": _transchoosedCustInfo.certNum,
+                "certAddressEnc": _transchoosedCustInfo.address
+            };
+            transProdId = _transchoosedCustInfo.prodId;
+        } else {
+            inParam = {
+                "certType": toIdentidiesTypeCd,
+                "certNum": toIdCardNumber,
+                "certAddress": toAddressStr,
+                "custName": toCustName
+            };
+        }
+        if (!order.cust.preCheckCertNumberRel(transProdId, inParam)) {
+            checkResult = false;
+        }
+        return checkResult;
+    };
 	return {
 		showCustTransfer : _showCustTransfer,
 		custTransfer : _custTransfer,
@@ -1597,7 +1707,9 @@ prod.transferModify = (function(){
 		returnFile_Submit : _returnFile_Submit,
 		changeDataReturn_Submit : _changeDataReturn_Submit,
 		showCustUpdate:_showCustUpdate,
-		returnCust_Submit:_returnCust_Submit
+		returnCust_Submit:_returnCust_Submit,
+        addCertiAccNbrRels:_addCertiAccNbrRels,
+        transOneCertFiveNumCheck:_transOneCertFiveNumCheck
 	};
 })();
 $(function(){

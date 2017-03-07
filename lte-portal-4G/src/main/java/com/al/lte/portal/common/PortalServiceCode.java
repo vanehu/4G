@@ -1152,5 +1152,15 @@ public final class PortalServiceCode {
     /**客户信息核验接口*/
     public static final String CHECK_CUST_CERT = "biz-service/intf.custService/checkCustCert";
 
+
+    /** 客户资料同步接口 */
+    public static final String CUSTINFO_SYNCHRONIZE = "biz-service/intf.custService/custInfoSynchronize";
+
+    /** 证号关系预校验接口 */
+    public static final String PRE_CHECK_CERT_NUMBER_REL = "biz-service/intf.pullingDataService/preCheckForCertAndNumberRel";
+
+    /** 获取seq接口 */
+    public static final String GET_SEQ = "biz-service/intf.soService/getSeq";
+
 }
 

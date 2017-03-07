@@ -477,7 +477,11 @@ mktRes.terminal = (function($){
 						$.alert("提示","在选号码之前请先进行客户定位或者新建客户！");
 						return;
 					}
-					var callback = function () {
+                    //一证五号校验
+                    if(!order.cust.preCheckCertNumberRel("-1", order.cust.getCustInfo415())){
+                        return ;
+                    }
+                    var callback = function () {
 						_chkState();
 						order.prepare.phoneNumDialog('terminal', 'Y1', '01');
 					};

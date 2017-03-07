@@ -31,21 +31,6 @@ OrderInfo = (function() {
 
 	var _isExistCFQ = false;//是否是橙分期业务
 	
-	var _authRecord={
-		menuId:"",
-		validateType:"",
-		resultCode:""
-	};//保存鉴权临时结果
-
-	var _preBefore ={
-			prcFlag : ""	
-	};//保存前置检验的结果
-	
-	var _roleCd="";//用户区分当前选择的产品是否是副卡
-	var _roleType = "";//区分副卡新装    Y表示副卡新装
-	var _cust_validateType = "";//客户鉴权方式
-
-	var _cust_validateNum = "";//客户鉴权号码
 	/*购物车业务动作
 	1 新装
 	2  套餐变更
@@ -90,6 +75,22 @@ OrderInfo = (function() {
 	50 改号
 	51 一卡双号退订
 	*/
+	var _authRecord={
+		menuId:"",
+		validateType:"",
+		resultCode:""
+	};//保存鉴权临时结果
+
+    var _oneCardFiveNum={"usedNum":{},"checkNum":{}};//一证五号校验缓存
+	var _preBefore ={
+			prcFlag : ""	
+	};//保存前置检验的结果
+	
+	var _roleCd="";//用户区分当前选择的产品是否是副卡
+	var _roleType = "";//区分副卡新装    Y表示副卡新装
+	var _cust_validateType = "";//客户鉴权方式
+
+	var _cust_validateNum = "";//客户鉴权号码
 
 	/**
 	 * 1新装，21补卡，22换卡，61主副卡成员变更加装已有号码，62主副卡成员变更加装新号码，28主副卡成员变更主副卡角色互换
@@ -182,7 +183,7 @@ OrderInfo = (function() {
 	var _orderData = {}; //订单提交完整节点
 	
 	var _memBusiOrders = [];//加装副卡付费类型变更节点
-	
+
 	var _order = {  //订单常用全局变量
 		dealerType : "",   //保存发展人类型
 		soNbr : "", //购物车流水
@@ -239,7 +240,7 @@ OrderInfo = (function() {
 
 	var _subUserInfos = []; // 责任人+其他
 	var _specialtestauth = false; // 测试卡权限
-	
+
 	var _essOrderInfo = {}; //ESS订单信息
 	
 	var _checkUimData = []; //保存UIM校验后的返回数据
@@ -1111,7 +1112,22 @@ OrderInfo = (function() {
         state : "",//状态
         statusCd : "100001"//订单状态
 	};
-	
+
+	//证号关系节点
+    var _boCertiAccNbrRel={
+        accNbr:"",
+        partyId:"",
+        certType:"",
+        certNum:"",
+        certNumEnc:"",
+        state:"ADD",
+        custName:"",
+        custNameEnc:"",
+        certAddress:"",
+        certAddressEnc:"",
+        serviceType:""
+    };
+    
 	//新建经办人时的联系人节点
 	var _bojbrPartyContactInfo = {
 		state 			: "ADD",	//状态，新建联系人
@@ -1897,8 +1913,10 @@ OrderInfo = (function() {
 		handleCust				:_handleCust,
 		memBusiOrders           :_memBusiOrders,
 		resetOrderInfoCache		:_resetOrderInfoCache,
+        oneCardFiveNum          :_oneCardFiveNum,
         boCustCheckLogs         :_boCustCheckLogs,
         bojbrCustCheckLogs      :_bojbrCustCheckLogs,
-        industryClassInfo       :_industryClassInfo
+        industryClassInfo       :_industryClassInfo,
+        boCertiAccNbrRel        :_boCertiAccNbrRel
 	};
 })();

@@ -11,7 +11,7 @@
 		</thead>
 		<tbody>
 			<#list transfercust.custInfos as custInfo>
-			<tr id="transCustAuth" onclick="prod.transferModify.showCustAuth(this)" identityName="${custInfo.identityName}" idCardNumber="${custInfo.idCardNumber}" CN="${custInfo.CN}">
+			<tr id="transCustAuth" onclick="prod.transferModify.showCustAuth(this)" identityName="${custInfo.identityName}" identityCd="${custInfo.identityCd}" idCardNumber="${custInfo.idCardNumber}" CN="${custInfo.CN}" addressStr="${custInfo.addressStr}" partyName="${custInfo.partyName}" certNum="${custInfo.certNum}" address="${custInfo.address}">
 				<td id="custListTableParName">${custInfo.partyName}</td>
 				<td id="custListTableidCard">${custInfo.identityName}/${custInfo.idCardNumber}</td>
 				<td id="custListTableaddress">${custInfo.addressStr}</td>

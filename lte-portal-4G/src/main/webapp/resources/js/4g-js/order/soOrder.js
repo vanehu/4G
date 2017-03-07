@@ -108,7 +108,6 @@ SoOrder = (function() {
 		try {
 			_getCheckOperatSpec();
 			if(_getOrderInfo(data)){
-				
 				//订单提交
 				var url = contextPath+"/order/orderSubmit";
 				if(OrderInfo.order.token!=""){
@@ -434,7 +433,7 @@ SoOrder = (function() {
 
 		// 填单添加责任人
 		_createCustInfo(busiOrders);
-		
+
 		if(OrderInfo.actionFlag==1 || OrderInfo.actionFlag==14){ //新装
 			_createOrder(busiOrders); //新装
 		}else if (OrderInfo.actionFlag==2){ //套餐变更
@@ -2606,6 +2605,7 @@ SoOrder = (function() {
 				//boProd2Tds : [], //UIM卡节点信息
 				bo2Coupons : [],  //物品信息节点
 				boAccountRelas : [], //帐户关联关系节
+                boCertiAccNbrRels : [], //证号关联关系节点
 				boProdStatuses : [], //产品状态节点
 				busiOrderAttrs : [] //订单属性节点
 			}
@@ -2816,8 +2816,46 @@ SoOrder = (function() {
 			priority : "1",  //付费优先级
 			state : "ADD" //动作
 		};
-		
-		busiOrder.data.boAccountRelas.push(boAccountRela);	
+
+		busiOrder.data.boAccountRelas.push(boAccountRela);
+
+        if (ec.util.isObj(OrderInfo.boProdAns) && OrderInfo.boProdAns.length > 0) {
+            $.each(OrderInfo.boProdAns, function () {
+                var currUserInfo = null;
+                var parent = this;
+                $.each(OrderInfo.choosedUserInfos, function () {
+                    if (this.prodId == parent.prodId) {
+                        currUserInfo = this;
+                    }
+                });
+                var ca = $.extend(true, {}, OrderInfo.boCertiAccNbrRel);
+                ca.accNbr = this.accessNumber;
+                ca.state = this.state;
+                if (ec.util.isObj(currUserInfo)) {
+                    ca.partyId = currUserInfo.custId;
+                    ca.certType = currUserInfo.identityCd;
+                    ca.certNum = currUserInfo.idCardNumber;
+                    ca.certNumEnc = currUserInfo.certNum;
+                    ca.custName = currUserInfo.partyName;
+                    ca.custNameEnc = currUserInfo.CN;
+                    ca.certAddress = currUserInfo.addressStr;
+                    ca.certAddressEnc = currUserInfo.address;
+                } else {
+                    ca.partyId = OrderInfo.cust.custId;
+                    if (OrderInfo.cust.custId == "-1") {//新建客户
+                        ca.certType = OrderInfo.boCustIdentities.identidiesTypeCd;
+                        ca.certNum = OrderInfo.boCustIdentities.identityNum;
+                        ca.custName = OrderInfo.boCustInfos.name;
+                        ca.certAddress = OrderInfo.boCustInfos.addressStr;
+                    } else {//老客户
+                        _setUserInfo(ca);
+                    }
+                }
+                ca.serviceType = "1000";
+                busiOrder.data.boCertiAccNbrRels.push(ca);
+            });
+        }
+
 		return busiOrder;
 	};
 	
@@ -2881,7 +2919,13 @@ SoOrder = (function() {
 	
 	//订单数据校验
 	var _checkData = function() {
-		var orderAttrName	= $.trim($("#orderAttrName").val());	//经办人姓名
+
+        //一证五号校验
+        if(!_oneCertFiveCheckData(order.cust.getCustInfo415())){
+            return ;
+        }
+
+        var orderAttrName	= $.trim($("#orderAttrName").val());	//经办人姓名
 		var orderAttrIdCard = $.trim($("#orderAttrIdCard").val());	//证件号码
 		var orderAttrAddr	= $.trim($("#orderAttrAddr").val());	//地址
 		var isUimAction		= ec.util.isArray(OrderInfo.boProd2Tds);//判断是否有UIM变更
@@ -4251,7 +4295,66 @@ SoOrder = (function() {
 		}
 	};
 
-	return {
+    /**
+     * 一证五号订单数据校验
+     * @param custInfo
+     * @returns {boolean}
+     * @private
+     */
+    var _oneCertFiveCheckData = function (inParam) {
+        var oneCertFiveNum = false;//一证五号校验结果
+        if (ec.util.isObj(OrderInfo.boProdAns) && OrderInfo.boProdAns.length > 0) {
+            $.each(OrderInfo.boProdAns, function () {
+                var parent = this;
+                var isCheck = true;//是否进行一证五号校验，选择了使用人的号码之前校验过，这里跳过
+                if (ec.util.isObj(OrderInfo.choosedUserInfos) && OrderInfo.choosedUserInfos.length > 0) {//有选择使用人的情况
+                    $.each(OrderInfo.choosedUserInfos, function () {
+                        if (this.prodId == parent.prodId) {
+                            isCheck = false;
+                        }
+                    });
+                }
+                if (isCheck) {
+                    //一证五号校验
+                    if (order.cust.preCheckCertNumberRel(this.prodId, inParam)) {
+                        oneCertFiveNum = true;
+                    }
+                } else {
+                    oneCertFiveNum = true;//不做一证五号校验的默认返回true
+                }
+            });
+        } else {
+            oneCertFiveNum = true;//不做一证五号校验的默认返回true
+        }
+        return oneCertFiveNum;
+    };
+
+    /**
+     * 获取使用人信息，政企客户取使用人信息
+     * @param ca
+     * @private
+     */
+    var _setUserInfo = function (ca) {
+        if (CacheData.isGov(OrderInfo.cust.identityCd)) {
+            ca.certType = OrderInfo.cust.userIdentityCd;
+            ca.certNum = OrderInfo.cust.userIdentityNum;
+            ca.certNumEnc = OrderInfo.cust.userCertNumEnc;
+            ca.custName = OrderInfo.cust.userName;
+            ca.custNameEnc = OrderInfo.cust.userNameEnc;
+            ca.certAddress = OrderInfo.cust.userCertAddress;
+            ca.certAddressEnc = OrderInfo.cust.userCertAddressEnc;
+        } else {
+            ca.certType = OrderInfo.cust.identityCd;
+            ca.certNum = OrderInfo.cust.idCardNumber;
+            ca.custName = OrderInfo.cust.partyName;
+            ca.certAddress = OrderInfo.cust.addressStr;
+            ca.certNumEnc = OrderInfo.cust.certNum;
+            ca.custNameEnc = OrderInfo.cust.CN;
+            ca.certAddressEnc = OrderInfo.cust.address;
+        }
+    };
+
+    return {
 		builder 				: _builder,
 		createAttOffer  		: _createAttOffer,
 		createServ				: _createServ,
@@ -4280,6 +4383,8 @@ SoOrder = (function() {
 		saveOrderSubmit			: _saveOrderSubmit,
 		createProd				: _createProd,
 		inSubmit				: _inSubmit,
-		changeFeeType			:_changeFeeType
+		changeFeeType			: _changeFeeType,
+        oneCertFiveCheckData    : _oneCertFiveCheckData,
+        setUserInfo             : _setUserInfo
 	};
 })();
