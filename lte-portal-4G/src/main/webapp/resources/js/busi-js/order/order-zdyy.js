@@ -366,6 +366,7 @@ order.zdyy = (function(){
 		data.coupons = coupons;
 		SoOrder.getTokenSynchronize();
 		//订单提交
+		OrderInfo.busitypeflag = 46;
 		SoOrder.submitOrder(data);
 	};
 	//终端预约取消-在途校验  

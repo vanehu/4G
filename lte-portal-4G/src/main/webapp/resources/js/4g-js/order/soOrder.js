@@ -655,6 +655,10 @@ SoOrder = (function() {
 		} else {
 			OrderInfo.orderData.orderList.orderListInfo.partyId = CONST.CUST_COUPON_SALE;
 		}
+		data.custOrderAttrs.push({ //业务类型
+			itemSpecId : CONST.BUSI_ORDER_ATTR.BUSITYPE_FLAG,
+			value : order.prepare.isPreInstall() ? 27 : OrderInfo.busitypeflag
+		});
 		OrderInfo.orderData.orderList.orderListInfo.custOrderAttrs = data.custOrderAttrs;
 		//填入订单
 		$.each(data.terminalList,function(){
