@@ -808,7 +808,7 @@ order.calcharge = (function(){
 					"areaId":OrderInfo.staff.areaId					
 			};
 			var response = $.callServiceAsJson(queryUrl, checkParams);
-			if (response.code == 0) {//已后台收费成功，直接提示，不走收费流程
+			if (response.code == 0 && response.data!=null && response.data!="") {//已后台收费成功，直接提示，不走收费流程
 				var statusCd=response.data.statusCd;
 				if("201700"==statusCd || "201800"==statusCd || "201900"==statusCd ||"301200"==statusCd ||"201300"==statusCd){
 					_showFinDialog("1","收费成功！");

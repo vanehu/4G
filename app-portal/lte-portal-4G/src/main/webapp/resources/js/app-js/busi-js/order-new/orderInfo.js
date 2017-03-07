@@ -223,7 +223,6 @@ OrderInfo = (function() {
 				boCustInfos : [],
 				boCustIdentities : [],
 				boPartyContactInfo : [],
-				boPartyContactInfo : [],
 				boCustCheckLogs : [],
 				boCustProfiles : []
 			}
@@ -254,6 +253,36 @@ OrderInfo = (function() {
 				OrderInfo.boPartyContactInfo.mobilePhone = accNbr;
 			}
 			busiOrder.data.boPartyContactInfo.push(OrderInfo.boPartyContactInfo);
+		}
+		if(OrderInfo.boCustIdentities.identidiesTypeCd!=undefined && OrderInfo.boCustIdentities.identidiesTypeCd == "1"){
+			cust.checkCustLog = {};
+			//实名核验 checkCustCert
+			var switchResponse = $.callServiceAsJson(contextPath + "/properties/getValue", {"key": "CHECK_CUST_CERT_" + (OrderInfo.staff.areaId+"").substr(0, 3)});
+		    var checkCustCertSwitch = "";
+			if (switchResponse.code == "0") {
+		    	checkCustCertSwitch = switchResponse.data;
+		    }
+			if(checkCustCertSwitch == "ON"){
+				var inParams = {
+						"certType":"1",
+						"certNum":OrderInfo.boCustIdentities.identityNum,
+						"areaId" :OrderInfo.staff.areaId
+					};
+					var checkUrl=contextPath+"/app/cust/checkCustCert";
+					var checkResponse = $.callServiceAsJson(checkUrl, inParams, {"before":function(){
+					}});
+					if (checkResponse.code == 0) {
+						var result = checkResponse.data.result;
+						cust.checkCustLog.checkMethod  = result.checkMethod;
+						cust.checkCustLog.certCheckResult = result.certCheckResult;
+						cust.checkCustLog.errorMessage = result.errorMessage;
+						cust.checkCustLog.checkDate = result.checkDate;
+						cust.checkCustLog.checkCustCertSwitch = checkCustCertSwitch;
+					}else{
+						$.alertM(checkResponse.data);
+						return;
+					}
+			}
 		}
 		if(cust.checkCustLog.checkCustCertSwitch != undefined && cust.checkCustLog.checkCustCertSwitch == "ON"){
 			cust.checkCustLog.staffId = OrderInfo.staff.staffId;
@@ -962,7 +991,6 @@ OrderInfo = (function() {
         state : "ADD",//状态 新增ADD  删除DEL
         statusCd : "100001"//订单状态
 	};
-	
 	
 	//经办人联系人节点
 	var _bojbrPartyContactInfo = {

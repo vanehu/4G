@@ -78,7 +78,8 @@ cust = (function(){
 		if(cmAddressStr.replace(/[^\x00-\xff]/g,"aa").length<12 && isFlag=="ON"){
 			$.alert("提示","证件地址长度不得少于6个汉字");
 		}else {
-			if($.trim($("#cm_identidiesTypeCd").val()) == "1"){
+			var flag=$("#flag").val();//有值代表是实名制创建客户页面
+			if($.trim($("#cm_identidiesTypeCd").val()) == "1" && ec.util.isObj(flag)){
 				cust.checkCustLog = {};
 				//实名核验 checkCustCert
 				var switchResponse = $.callServiceAsJson(contextPath + "/properties/getValue", {"key": "CHECK_CUST_CERT_" + (OrderInfo.staff.areaId+"").substr(0, 3)});
