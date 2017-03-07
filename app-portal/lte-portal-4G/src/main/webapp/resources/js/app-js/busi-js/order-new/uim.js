@@ -79,11 +79,16 @@ product.uim = (function() {
 				$.unecOverlay();
 				if (response.code == 0) {
 					var content = getMsgContent(response.data);
-					$.alertMsgVal("短信验证 ",content,{ 
-						yes:function(){
-							_smsFormIsValid();
-						}
+					var title='短信验证';
+					$("#btn-dialog-ok").removeAttr("data-dismiss");
+					$('#alert-modal').modal({backdrop: 'static', keyboard: false});
+					$("#btn-dialog-ok").off("click").on("click",function(){
+						_smsFormIsValid();
 					});
+					$("#modal-title").html(title);
+					$("#modal-content").html(content);
+					$("#alert-modal").modal();
+					
 					//置空短信校验码框
 					window.clearInterval(interResend);
 					$("#smspwd").val("");
@@ -165,7 +170,7 @@ product.uim = (function() {
 					$("#smsresend").off("click").removeClass("cn").addClass("cf");
 					//randomNum2 = ec.util.getNRandomCode(2);
 					if(response.data.randomCode != null ){
-						$("#txtnum").attr("value",response.data.randomCode);
+						$("#changeUimSmsRandomNum").html(response.data.randomCode);
 					}
 					//重新发送验证码成功后,验证错误次数置0.
 					smsErrorCount=0;
@@ -226,6 +231,7 @@ product.uim = (function() {
 			"done" : function(response){
 				$.unecOverlay();
 				if (response.code == 0) {
+					$("#alert-modal").modal("hide");
 					if(OrderInfo.actionFlag == 3 || OrderInfo.actionFlag == 2){
 						_checkUimFunction(prodId);
 					} else {
