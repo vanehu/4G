@@ -31,7 +31,7 @@
 			 />
 		<input type="text" class="inputWidth183px" id="${prodSpec.itemSpecId}_${prodId}_name" value="<#if userInfo?? && (userInfo.partyList)??>${userInfo.partyList.partyName}</#if>" readonly="readonly" disabled="disabled"/>
 		<!-- 使用人 -->
-	    <input type="button" value="选择使用人" class="purchase" id="choose_user_btn_${prodId}" servType=1 prodId=${prodId}/>
+	    <input type="button" value="选择使用人" class="purchase" id="choose_user_btn_${prodId}" servType="1" prodId="${prodId}"/>
 		<#if prodSpec.rule?? && prodSpec.rule.isOptional=="N" >
 			<label class="f_red">*</label>
 	      	<div class="order_check" style="display: none"></div>
