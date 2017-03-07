@@ -338,7 +338,6 @@ order.calcharge = (function(){
 			},	
 			"done" : function(response){
 				$.unecOverlay();
-				clearInterval(timeId);//已经下过收费接口，定时下计费接口任务取消
 				if (response.code == 0) {
 					submit_success=true;
 					//受理成功，不再取消订单
@@ -827,6 +826,7 @@ order.calcharge = (function(){
 			var response = $.callServiceAsJson(url, params);
 			$.unecOverlay();
 			if (response.code == 0 && response.data!=null && response.data!="") {//支付成功，调用收费接口
+				clearInterval(timeId);//查询成功定时任务取消
 				var val=_getCharge();
 				if(OrderInfo.actionFlag==112){//融合甩单传融合
 					val=val+order.broadband.broadbandCharge;
@@ -834,7 +834,6 @@ order.calcharge = (function(){
 				var payMoney=response.data.payAmount+"";
 				if(val!=payMoney){
 					$.alert("提示","金额可能被篡改，为了您的安全，请重新下单");
-					clearInterval(timeId);
 					return;
 				}
 				payType=type;
@@ -859,7 +858,6 @@ order.calcharge = (function(){
 						},	
 						"done" : function(response){
 							$.unecOverlay();
-							clearInterval(timeId);//已经下过收费接口，定时下计费接口任务取消
 							if (response.code == 0) {
 								_chargeSave(1);
 							}else if (response.code == -2) {
@@ -964,7 +962,8 @@ order.calcharge = (function(){
 				
 		};
 		var response = $.callServiceAsJson(checkUrl, checkParams);
-		if (response.code == 0) {// 支付平台购物车id查询支付成功才进入定时任务
+		if (response.code == 0) {
+			clearInterval(timeId);//查询成功定时任务取消
 			payType=response.data.payCode;
 			$("#toCharge").attr("disabled","disabled");
 			_queryPayOrdStatus1(OrderInfo.orderResult.olId,"1",payType);
