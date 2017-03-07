@@ -236,16 +236,46 @@ order.calcharge = (function(){
 		});
 	};
 	
-	//点击收费执行事件
+	// 点击收费执行事件
 	var _updateChargeInfoForCheck=function(){
 		if(submit_success){
 			$.alert("提示","订单已经建档成功,不能重复操作!");
 			return;
 		}
+		if (order.calcharge.myFlag) {
+			var checkUrl = contextPath + "/app/order/getPayOrdStatus";
+			var olId=OrderInfo.orderResult.olId;
+			if(OrderInfo.actionFlag==112){// 融合甩单传融合id
+				var AttrInfos=OrderInfo.orderData.orderList.orderListInfo.custOrderAttrs;
+				var uId="";// 融合id
+				for(var i=0; i<AttrInfos.length; i++){
+		             var id=AttrInfos[i].AttrSpecId;
+		             if(id=="40010037"){
+		            	 uId=AttrInfos[i].AttrValue; 
+		             }
+		        }   
+				olId=uId;
+			}
+			var checkParams = {
+					"olId" : olId
+					
+			};
+			var response = $.callServiceAsJson(checkUrl, checkParams);
+			if (response.code != 0) {// 支付平台购物车id查询未支付成功才打开支付页面，否则直接下计费接口
+				if(OrderInfo.actionFlag==112){// 融合甩单
+					_getPayTockenRh();
+				}else{
+					_getPayTocken();
+				}
+				return;
+			}else{//获取支付方式
+				payType=response.data.payCode+"";
+			}
+
+		}
 		var val=_getCharge();
-		_chargeItems=[];
-		_buildChargeItems();
 		if(val!=0){//费用不为0
+			inOpetate=true;
 			var url=contextPath+"/app/order/updateChargeInfoForCheck";
 			var params={
 					"olId":_olId,
@@ -261,96 +291,25 @@ order.calcharge = (function(){
 				"done" : function(response){
 					$.unecOverlay();
 					if (response.code == 0) {
-						if (order.calcharge.myFlag) {
-							var checkUrl = contextPath + "/app/order/getPayOrdStatus";
-							var olId=OrderInfo.orderResult.olId;
-							if(OrderInfo.actionFlag==112){//融合甩单传融合id
-								var AttrInfos=OrderInfo.orderData.orderList.orderListInfo.custOrderAttrs;
-								var uId="";//融合id
-								for(var i=0; i<AttrInfos.length; i++){
-						             var id=AttrInfos[i].AttrSpecId;
-						             if(id=="40010037"){
-						            	 uId=AttrInfos[i].AttrValue; 
-						             }
-						        }   
-								olId=uId;
-							}
-							var checkParams = {
-									"olId" : olId
-									
-							};
-							var response = $.callServiceAsJson(checkUrl, checkParams);
-							if (response.code != 0) {// 支付平台购物车id查询未支付成功才打开支付页面，否则直接下计费接口
-								if(OrderInfo.actionFlag==112){//融合甩单
-									_getPayTockenRh();
-								}else{
-									_getPayTocken();
-								}
-								return;
-							}else{
-								if (response.data==""){//有可能支付查询接口异常
-									$.alert("提示","支付接口查询失败!");
-									return;
-								}
-								//获取支付方式
-								payType=response.data.payCode+"";
-							}
-
-						}
 						_chargeSave(1);
 					}else if (response.code == -2) {
 						_conBtns();
 						inOpetate=false;
 						$.alertM(response.data);
-						return;
 					}else{
 						_conBtns();
 						inOpetate=false;
 						if(response.data!=undefined){
 							$.alert("提示",response.data);
-							return;
 						}else{
 							$.alert("提示","代理商保证金校验失败!");
-							return
 						}
 					}
 				}
 			});
-		}else{
-			if (order.calcharge.myFlag) {
-				var checkUrl = contextPath + "/app/order/getPayOrdStatus";
-				var olId=OrderInfo.orderResult.olId;
-				if(OrderInfo.actionFlag==112){//融合甩单传融合id
-					var AttrInfos=OrderInfo.orderData.orderList.orderListInfo.custOrderAttrs;
-					var uId="";//融合id
-					for(var i=0; i<AttrInfos.length; i++){
-			             var id=AttrInfos[i].AttrSpecId;
-			             if(id=="40010037"){
-			            	 uId=AttrInfos[i].AttrValue; 
-			             }
-			        }   
-					olId=uId;
-				}
-				var checkParams = {
-						"olId" : olId
-						
-				};
-				var response = $.callServiceAsJson(checkUrl, checkParams);
-				if (response.code != 0) {// 支付平台购物车id查询未支付成功才打开支付页面，否则直接下计费接口
-					if(OrderInfo.actionFlag==112){//融合甩单
-						_getPayTockenRh();
-					}else{
-						_getPayTocken();
-					}
-					return;
-				}else{//获取支付方式
-					payType=response.data.payCode+"";
-				}
-
-			}
+		}else{//直接走计费接口
 			_chargeSave(0);
 		}
-		
 	};
 	
 	var _chargeSave = function(flag){
@@ -882,10 +841,41 @@ order.calcharge = (function(){
 				_chargeItems=[];
 				_buildChargeItems();//根据支付平台返回支付方式重新生成费用项
 				if(val!=0){//费用不为0
-					_chargeSave(1);
+					inOpetate=true;
+					var url=contextPath+"/app/order/updateChargeInfoForCheck";
+					var params={
+							"olId":_olId,
+							"soNbr":OrderInfo.order.soNbr,
+							"areaId" : OrderInfo.staff.areaId,
+							"chargeItems":_chargeItems,
+							"custId":OrderInfo.cust.custId
+					};
+					if(order.calcharge.haveCharge==true){//已下过计费接口
+						return;
+					}
+					$.callServiceAsJson(url,params, {
+						"before":function(){
+							$.ecOverlay("<strong>正在处理中,请稍等会儿....</strong>");
+						},	
+						"done" : function(response){
+							$.unecOverlay();
+							clearInterval(timeId);//已经下过收费接口，定时下计费接口任务取消
+							if (response.code == 0) {
+								_chargeSave(1);
+							}else if (response.code == -2) {
+								$.alertM(response.data);
+							}else{
+								if(response.data!=undefined){
+									$.alert("提示",response.data);
+								}else{
+									$.alert("提示","代理商保证金校验失败!");
+								}
+							}
+						}
+					});
 				}else{
 					_chargeSave(0);
-				}			
+				}		
 				
 			}else if(response.code==1){//支付接口支付失败
 			
