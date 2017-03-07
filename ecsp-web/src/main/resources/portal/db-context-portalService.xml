@@ -47,6 +47,18 @@ http://www.springframework.org/schema/cache http://www.springframework.org/schem
 				<entry key="fhzc" value-ref="fhzcDataSource"/>
 				<entry key="zzxj" value-ref="zzxjDataSource"/>
 				<entry key="xmkj" value-ref="xmkjDataSource"/>
+				<!--第三批转售商-->
+				<entry key="guomeizj" value-ref="guomeizjDataSource"/>
+				<entry key="leyuzj" value-ref="leyuzjDataSource"/>
+				<entry key="dixtzj" value-ref="dixtzjDataSource"/>
+				<entry key="aisdzj" value-ref="aisdzjDataSource"/>
+				<entry key="huajsjzj" value-ref="huajsjzjDataSource"/>
+				<entry key="langmazj" value-ref="langmazjDataSource"/>
+				<entry key="lianlkjzj" value-ref="lianlkjzjDataSource"/>
+				<entry key="yongytxzj" value-ref="yongytxzjDataSource"/>
+				<entry key="fenxzxzj" value-ref="fenxzxzjDataSource"/>
+				<entry key="sanwhlzj" value-ref="sanwhlzjDataSource"/>
+				<entry key="changjsdzj" value-ref="changjsdzjDataSource"/>
 	        </map>
 	    </property> 
 	</bean>  
@@ -284,6 +296,107 @@ http://www.springframework.org/schema/cache http://www.springframework.org/schem
 		</property>
 	</bean>
 
+	<!--第三批转售商-->
+	<bean id="guomeizjDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName">
+			<value>jdbc/oracle/mvno/write/crmApp26</value>
+		</property>
+		<property name="resourceRef">
+			<value>true</value>
+		</property>
+	</bean>
+	
+	<bean id="leyuzjDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName">
+			<value>jdbc/oracle/mvno/write/crmApp27</value>
+		</property>
+		<property name="resourceRef">
+			<value>true</value>
+		</property>
+	</bean>
+	
+	<bean id="dixtzjDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName">
+			<value>jdbc/oracle/mvno/write/crmApp28</value>
+		</property>
+		<property name="resourceRef">
+			<value>true</value>
+		</property>
+	</bean>
+	
+	<bean id="aisdzjDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName">
+			<value>jdbc/oracle/mvno/write/crmApp29</value>
+		</property>
+		<property name="resourceRef">
+			<value>true</value>
+		</property>
+	</bean>
+	
+	<bean id="huajsjzjDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName">
+			<value>jdbc/oracle/mvno/write/crmApp30</value>
+		</property>
+		<property name="resourceRef">
+			<value>true</value>
+		</property>
+	</bean>
+	
+	<bean id="langmazjDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName">
+			<value>jdbc/oracle/mvno/write/crmApp31</value>
+		</property>
+		<property name="resourceRef">
+			<value>true</value>
+		</property>
+	</bean>
+	
+	<bean id="lianlkjzjDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName">
+			<value>jdbc/oracle/mvno/write/crmApp32</value>
+		</property>
+		<property name="resourceRef">
+			<value>true</value>
+		</property>
+	</bean>
+	
+	<bean id="yongytxzjDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName">
+			<value>jdbc/oracle/mvno/write/crmApp33</value>
+		</property>
+		<property name="resourceRef">
+			<value>true</value>
+		</property>
+	</bean>
+	
+	<bean id="fenxzxzjDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName">
+			<value>jdbc/oracle/mvno/write/crmApp34</value>
+		</property>
+		<property name="resourceRef">
+			<value>true</value>
+		</property>
+	</bean>
+	
+	<bean id="sanwhlzjDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName">
+			<value>jdbc/oracle/mvno/write/crmApp35</value>
+		</property>
+		<property name="resourceRef">
+			<value>true</value>
+		</property>
+	</bean>
+	
+	<bean id="changjsdzjDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName">
+			<value>jdbc/oracle/mvno/write/crmApp36</value>
+		</property>
+		<property name="resourceRef">
+			<value>true</value>
+		</property>
+	</bean>
+	
+	
 	<!-- define the SqlSessionFactory-->
     <bean id="ecspSqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
         <property name="dataSource" ref="multiDataSource" />
