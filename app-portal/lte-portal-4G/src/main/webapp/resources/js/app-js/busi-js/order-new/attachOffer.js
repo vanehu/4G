@@ -547,15 +547,17 @@ AttachOffer = (function() {
 										spec.ifParams = "Y";
 									}
 									$('#li_'+prodId+'_'+servSpecId).remove(); //删除可开通功能产品里面
-									var $li = $('<a id="li_'+prodId+'_'+servSpecId+'" class="list-group-item"></a>');
-									$li.append('<span id="span_'+prodId+'_'+servSpecId+'">'+spec.servSpecName+'</span>');
-									if(spec.ifParams){
-										$li.append('<span class="canshu btn-span"><button type="button" style="right:50px;width:48px;" class="btn btn-info" onclick="AttachOffer.showServParam('+prodId+','+servSpecId+');">参</button></span>');
-									}
+									var $li = $('<li id="li_'+prodId+'_'+servSpecId+'"</li>');
+									$li.append('<i class="iconfont pull-left active"></i>');
+									$li.append('<span id="span_'+prodId+'_'+servSpecId+'" class="list-title">'+spec.servSpecName+'</span>');
+									//<div class="list-checkbox absolute-right"><div class="checkbox-box"><input type="checkbox" checked="checked" value="1" id="input_700022128850_111111112" name="" onclick="javascript:{common.setBtnTimer(this);AttachOffer.closeServSpec(700022128850,111111112,'<5G（LTE）上网>','Y');}" class=""><label for="input_700022128850_111111112"></label></div></div>
 									if(roleObj.minQty==0){
-										$li.append('<span id="span_remove_'+prodId+'_'+servSpecId+'" class="glyphicon glyphicon-remove pull-right" aria-hidden="true" onclick="AttachOffer.closeServSpec('+prodId+','+servSpecId+',\''+spec.servSpecName+'\',\''+spec.ifParams+'\')"></span>');
+										$li.append('<div class="list-checkbox absolute-right"><div class="checkbox-box"><input type="checkbox" checked="checked" value="1" id="input_'+prodId+'_'+servSpecId+'" name="" onclick="javascript:{common.setBtnTimer(this);AttachOffer.closeServSpec('+prodId+','+servSpecId+',\''+spec.servSpecName+'\',\''+spec.ifParams+'\');}" class=""><label for="input_'+prodId+'_'+servSpecId+'"></label></div></div>');
 									}else{
 										$li.removeAttr("onclick");
+									}
+									if(spec.ifParams){
+										$li.append('<span id="can_'+prodId+'_'+servSpecId+'" isset="N" class="abtn01 btn-span"><button type="button" class="list-can absolute-right" data-toggle="modal" data-target="#setting" onclick="AttachOffer.showServParam('+prodId+','+servSpecId+');">参</button></span>');
 									}
 //									if (spec.ifParams=="Y"){
 //										if(CacheData.setServParam(prodId,spec)){ 
@@ -1585,7 +1587,7 @@ AttachOffer = (function() {
 			//没有订购过
 			$('#_li_'+prodId+'_'+servSpecId).remove(); //删除可开通功能产品里面
 			var $li = $('<li id="li_'+prodId+'_'+servSpecId+'"></li>');
-			var html ="";
+			var html ='<i class="iconfont pull-left active"></i>';
 			html+='<span class="list-title">'+ spec.servSpecName +'</span>';
 			html+='<div class="list-checkbox absolute-right"><div class="checkbox-box">';
 			html+='<input type="checkbox" checked="checked" value="1" id="input_'+prodId+'_'+servSpecId+'" name="" onclick="javascript:{common.setBtnTimer(this);AttachOffer.closeServSpec('+prodId+','+servSpecId+',\''+servSpecName+'\',\''+ifParams+'\');}"><label for="input_'+prodId+'_'+servSpecId+'"></label></input></div></div>';	
@@ -1953,6 +1955,9 @@ AttachOffer = (function() {
 			$spec.remove();
 			var $li = $('<li id="li_'+prodId+'_'+offerSpecId+'"></li>');
 			var html ="";
+			if(OrderInfo.actionFlag == 2 || OrderInfo.actionFlag == 3){
+				html+='<i class="iconfont pull-left active">&#xe635;</i>';
+			}
 			html+='<span class="list-title">'+ newSpec.offerSpecName +'</span>';
 			html+='<div class="list-checkbox absolute-right"><div class="checkbox-box">';
 			html+='<input type="checkbox" value="1" checked="checked" id="input_'+prodId+'_'+offerSpecId+'" name="" onclick="javascript:{common.setBtnTimer(this);AttachOffer.delOfferSpec('+prodId+','+offerSpecId+');}"><label for="input_'+prodId+'_'+offerSpecId+'"></label></input></div></div>';						
@@ -1963,9 +1968,9 @@ AttachOffer = (function() {
 			}else{	
 				if(newSpec.ifParams){      
 					if(CacheData.setParam(prodId,newSpec)){ 
-						$li.append('<span id="can_'+prodId+'_'+offerSpecId+'" class="canshu2 btn-span"><button type="button" class="list-can absolute-right" data-toggle="modal" data-target="#setting" onclick="AttachOffer.showParam('+prodId+','+offerSpecId+');"><span style="color:red;">参</span></button></span>');
+						$li.append('<span id="can_'+prodId+'_'+offerSpecId+'"  isset="N"  class="abtn01 btn-span"><button type="button" class="list-can absolute-right" data-toggle="modal" data-target="#setting" onclick="AttachOffer.showParam('+prodId+','+offerSpecId+');"><span style="color:red;">参</button></span>');
 					}else {
-						$li.append('<span id="can_'+prodId+'_'+offerSpecId+'" class="canshu btn-span"><button type="button" class="list-can absolute-right" data-toggle="modal" data-target="#setting" onclick="AttachOffer.showParam('+prodId+','+offerSpecId+');">参</button></span>');
+						$li.append('<span id="can_'+prodId+'_'+offerSpecId+'" isset="Y"  class="abtn03 btn-span"><button type="button" class="list-can absolute-right"  data-toggle="modal" data-target="#setting" onclick="AttachOffer.showParam('+prodId+','+offerSpecId+');">参</button></span>');
 					}
 				}else{
 //					$li.append('<span id="span_remove_'+prodId+'_'+offerSpecId+'" class="glyphicon glyphicon-remove pull-right" aria-hidden="true" onclick="AttachOffer.delOfferSpec('+prodId+','+offerSpecId+')"></span>');
@@ -2006,7 +2011,7 @@ AttachOffer = (function() {
 				_removeAttach2Coupons(prodId,newSpec.offerSpecId);//清除串码组
 				var objInstId = prodId+'_'+newSpec.offerSpecId;
 				//一个终端对应一个ul
-				var $div = $('<div id="terminalUl_'+objInstId+'" class="choice-box absolute-l-43 border-top-none border-none"></div>');				
+				var $div = $('<div id="terminalUl_'+objInstId+'"</div>');				
 				var minNum=newSpec.agreementInfos[0].minNum;
 				var maxNum=newSpec.agreementInfos[0].maxNum;
 				var isFastOffer = 0 ;
@@ -2075,10 +2080,11 @@ AttachOffer = (function() {
 				};
 				AttachOffer.addTerminalList.push(addTerminalId);
 				AttachOffer.terminalDiv = $liTerminal.append($ulGroups);
-//				var $li = $("#terminalDiv_"+prodId);
+				var $li = $("#terminalDiv_"+prodId);
+				$div.append($liTerminal);
 ////				$ul.append($li1).append($li2).append($li3).appendTo($div);
-//				$div.appendTo($li);
-//				$li.show();
+				$div.appendTo($li);
+				$li.show();
 				if(newSpec.agreementInfos[0].minNum>0){//合约里面至少要有一个终端
 					newSpec.isTerminal = 1;
 				}

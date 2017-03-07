@@ -107,6 +107,8 @@ cust = (function(){
 							$.alertM(checkResponse.data);
 							return;
 						}
+				}else{
+					_checkIdentity();
 				}
 			}else{
 				_checkIdentity();

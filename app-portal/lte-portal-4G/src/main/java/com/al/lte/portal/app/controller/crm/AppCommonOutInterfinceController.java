@@ -170,8 +170,8 @@ public class AppCommonOutInterfinceController extends BaseController{
 				return rwtMsg;
 			}
 		}
-		resultMsg.put("success", "false"); // true:成功，false:失败
-		resultMsg.put("data", "请求失败，请求参数不完整，chargeItems为空！"); // 返回信息0成功，1失败
+		resultMsg.put("success", "true"); // true:成功，false:失败
+		resultMsg.put("data", "请求成功，chargeItems为空！"); // 返回信息0成功，1失败
 		rwtMsg = JsonUtil.toString(resultMsg);
 		return rwtMsg;
 	}

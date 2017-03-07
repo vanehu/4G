@@ -134,6 +134,11 @@
 	<div class="panel-group" id="ordering_offer_${prodId}">
 			<ul class="choice-list-box" id="open_ul_${prodId}">
 			</ul>
+			<ul class="choice-list-box border-none" >
+				<li id="terminalDiv_${prodId}" style="display:none">
+					
+				</li>
+			</ul>
 	</div>
 	<div class="panel-group" id="ordering_prod_${prodId}" style="display:none;">
 			<ul class="choice-list-box" id="open_serv_ul_${prodId}">
@@ -175,6 +180,18 @@ if(openMap!=undefined && openMap.result!=undefined){
 		servOpen.servList = openMap.result.servLists; 
 		AttachOffer.openedServList.push(servOpen);
 	}
+}
+function showCheckTerminal(prodId) {
+	
+	var terminalNumber = $("#terminal_text").val().trim();
+	if (terminalNumber != "") {
+		$("#terminal_call").addClass("dis-none");
+		$("#terminal_check").removeClass("dis-none");
+	} else {
+		$("#terminal_call").removeClass("dis-none");
+		$("#terminal_check").addClass("dis-none");
+	}
+
 }
 
 </script>
