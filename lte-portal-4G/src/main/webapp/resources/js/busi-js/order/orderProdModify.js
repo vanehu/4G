@@ -1917,12 +1917,12 @@ order.prodModify = (function(){
 	//产品实例属性:使用人-展示
 	var _spec_parm_user_show = function(){
 		var param={
-				prodInstId:_choosedProdInfo.prodInstId,
-				offerSpecId:_choosedProdInfo.prodOfferId,
-				prodSpecId:_choosedProdInfo.productId,
+				prodInstId:order.prodModify.choosedProdInfo.prodInstId,
+				offerSpecId:order.prodModify.choosedProdInfo.prodOfferId,
+				prodSpecId:order.prodModify.choosedProdInfo.productId,
 				partyId:OrderInfo.cust.custId,
-				acctNbr:_choosedProdInfo.accNbr,
-				areaId:_choosedProdInfo.areaId
+				acctNbr:order.prodModify.choosedProdInfo.accNbr,
+				areaId:order.prodModify.choosedProdInfo.areaId
 		};
 		$.callServiceAsHtmlGet(contextPath + "/order/orderSpecParamUserChange",param, {
 			"before":function(){
