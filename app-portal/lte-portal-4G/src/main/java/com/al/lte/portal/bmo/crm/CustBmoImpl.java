@@ -1,13 +1,10 @@
 package com.al.lte.portal.bmo.crm;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,12 +26,11 @@ import org.springframework.stereotype.Service;
 
 import com.al.ec.serviceplatform.client.DataBus;
 import com.al.ec.serviceplatform.client.ResultCode;
-import com.al.ecs.common.util.DateUtil;
 import com.al.ecs.common.util.EncodeUtils;
 import com.al.ecs.common.util.JsonUtil;
-import com.al.ecs.common.util.MDA;
 import com.al.ecs.exception.BusinessException;
 import com.al.ecs.exception.ErrorCode;
+import com.al.ecs.exception.InterfaceException;
 import com.al.ecs.exception.ResultConstant;
 import com.al.ecs.log.Log;
 import com.al.lte.portal.common.Const;
@@ -71,7 +67,7 @@ public class CustBmoImpl implements CustBmo {
 			}
 			return custInfoMap;
 		} catch (Exception e) {
-			log.error("能力开放平台异常的客户资料查询queryCust服务返回的数据异常", e);
+			log.error("客户资料查询queryCust服务返回的数据异常", e);
 			throw new BusinessException(ErrorCode.QUERY_CUST, dataBusMap, db.getReturnlmap(), e);
 		}
 	}
@@ -725,7 +721,7 @@ public class CustBmoImpl implements CustBmo {
 	 * @throws BusinessException 
 	 */
 	@SuppressWarnings("unchecked")
-	public Map<String, Object> uploadCustCertificate(Map<String, Object> param, SessionStaff sessionStaff) throws BusinessException{
+	public Map<String, Object> uploadCustCertificate(Map<String, Object> param, SessionStaff sessionStaff) throws BusinessException, InterfaceException, IOException, Exception{
 		List<Map<String, String>> photographs = (List<Map<String, String>>) param.get("photographs");
 		Map<String, Object> result = new HashMap<String, Object>();
 		
@@ -814,21 +810,25 @@ public class CustBmoImpl implements CustBmo {
 	 * @throws BusinessException
 	 */
 	@SuppressWarnings("unchecked")
-	public Map<String, Object> uploadCustCertificateMethod(Map<String, Object> param, SessionStaff sessionStaff) throws BusinessException{
+	public Map<String, Object> uploadCustCertificateMethod(Map<String, Object> param, SessionStaff sessionStaff) throws InterfaceException, IOException, Exception, BusinessException{
 		List<Map<String, String>> photographs = (List<Map<String, String>>) param.get("photographs");		
-		
+
 		//重新封装，去掉协议之外的无用的节点
 		for(int i = 0; i < photographs.size(); i++){
 			Map<String, String> photograph = photographs.get(i);
-			photograph.put("orderInfo", photograph.get("photograph"));
-			photograph.put("picFlag", photograph.get("flag"));
-			photograph.remove("photograph");
-			photograph.remove("flag");
-			photograph.remove("signature");//签名不在协议之内，去除
+			if("".equals(MapUtils.getString(photograph, "photograph", ""))){//没有证件照片，则不上传，去除该节点
+				photographs.remove(i--);
+			} else{
+				photograph.put("orderInfo", photograph.get("photograph"));
+				photograph.put("picFlag", photograph.get("flag"));
+				photograph.remove("photograph");
+				photograph.remove("flag");
+				photograph.remove("signature");//签名不在协议之内，去除
+			}
 		}
 		param.put("picturesInfo", photographs);
 		param.remove("photographs");
-		
+
 		return Photograph.getInstanceSync().uploadCustCertificate(param, sessionStaff);
 	}
 	
@@ -877,5 +877,102 @@ public class CustBmoImpl implements CustBmo {
 		}
 		
 		return resultFlag;
+	}
+
+    /**
+     * 客户资料同步接口
+     *
+     * @param dataBusMap
+     * @param optFlowNum
+     * @param sessionStaff
+     * @return
+     * @throws Exception
+     */
+    public Map<String, Object> custinfoSynchronize(Map<String, Object> dataBusMap, String optFlowNum, SessionStaff sessionStaff) throws Exception {
+        Map<String, Object> retnMap = new HashMap<String, Object>();
+        DataBus db = InterfaceClient.callService(dataBusMap,
+            PortalServiceCode.CUSTINFO_SYNCHRONIZE, optFlowNum, sessionStaff);
+        Map returnMap = db.getReturnlmap();
+        try {
+            String code = (String) returnMap.get("resultCode");
+            if (ResultCode.R_SUCC.equals(code)) {
+                retnMap = (HashMap) returnMap.get("result");
+            }
+            return retnMap;
+        } catch (Exception e) {
+            log.error("客户资料同步接口custInfoSynchronize服务返回的数据异常", e);
+            throw new BusinessException(ErrorCode.CUSTINFO_SYNCHRONIZE, dataBusMap, db.getReturnlmap(), e);
+        }
+    }
+
+    /**
+     * 证号关系预校验接口
+     *
+     * @param dataBusMap
+     * @param optFlowNum
+     * @param sessionStaff
+     * @return
+     * @throws Exception
+     */
+    public Map<String, Object> preCheckCertNumberRel(Map<String, Object> dataBusMap, String optFlowNum, SessionStaff sessionStaff) throws Exception {
+        Map<String, Object> retnMap = new HashMap<String, Object>();
+        DataBus db = InterfaceClient.callService(dataBusMap,
+            PortalServiceCode.PRE_CHECK_CERT_NUMBER_REL, optFlowNum, sessionStaff);
+        Map returnMap = db.getReturnlmap();
+        try {
+            String code = (String) returnMap.get("resultCode");
+            if (ResultCode.R_SUCC.equals(code)) {
+                retnMap = (HashMap) returnMap.get("result");
+            }
+            return retnMap;
+        } catch (Exception e) {
+            log.error("证号关系预校验接口preCheckForCertAndNumberRel服务返回的数据异常", e);
+            throw new BusinessException(ErrorCode.PRE_CHECK_CERT_NUMBER_REL, dataBusMap, db.getReturnlmap(), e);
+        }
+    }
+
+    /**
+     * 获取custId的seq
+     *
+     * @param paramMap
+     * @param optFlowNum
+     * @param sessionStaff
+     * @return
+     * @throws Exception
+     */
+    public Map<String, Object> getSeq(Map<String, Object> paramMap, String optFlowNum, SessionStaff sessionStaff) throws Exception {
+        Map<String, Object> retnMap = new HashMap<String, Object>();
+        DataBus db = InterfaceClient.callService(paramMap,
+            PortalServiceCode.GET_SEQ, optFlowNum, sessionStaff);
+        Map returnMap = db.getReturnlmap();
+        try {
+            String code = (String) returnMap.get("resultCode");
+            if (ResultCode.R_SUCC.equals(code)) {
+                retnMap = (HashMap) returnMap.get("result");
+            }
+            return retnMap;
+        } catch (Exception e) {
+            log.error("门户处理营业后台的获取seq查询接口服务返回的数据异常", e);
+            throw new BusinessException(ErrorCode.GET_SEQ, paramMap, db.getReturnlmap(), e);
+        }
+    }
+	public Map<String, Object> checkCustCert(Map<String, Object> dataBusMap,
+			String optFlowNum, SessionStaff sessionStaff) throws Exception {
+		DataBus db = InterfaceClient.callService(dataBusMap,
+				PortalServiceCode.CHECK_CUST_CERT, optFlowNum, sessionStaff);
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		try{
+			// 服务层调用与接口层调用都成功时，返回列表；否则返回空列表
+			if (ResultCode.R_SUCC.equals(db.getResultCode())) {
+				resultMap = db.getReturnlmap();
+			} else {
+				resultMap.put("resultCode", ResultCode.R_FAILURE);
+				resultMap.put("resultMsg", db.getResultMsg());
+			}
+		} catch (Exception e) {
+			log.error("实名核验checkCustCert服务返回的数据异常", e);
+			throw new BusinessException(ErrorCode.CHECK_CUST_CERT, dataBusMap, resultMap, e);
+		}
+		return resultMap;
 	}
 }

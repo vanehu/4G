@@ -12,6 +12,7 @@ cust = (function(){
 	var _checkUserInfo = {
 			 accNbr: ""
 	};
+	var _checkCustLog = {};//客户信息核验记录
 	var _newUIFalg = "ON";
 	var _usedNum;//客户已使用指标数（一证五号需求一个客户最多只能五个号）
 	var _clearCustForm = function(){
@@ -63,7 +64,6 @@ cust = (function(){
 	}
 	//客户新增提交
 	var _newCustSubmit = function(){
-		
 		var validate=$("#custFormdata").Validform();
 		if(!validate.check()){
 			return;
@@ -78,7 +78,39 @@ cust = (function(){
 		if(cmAddressStr.replace(/[^\x00-\xff]/g,"aa").length<12 && isFlag=="ON"){
 			$.alert("提示","证件地址长度不得少于6个汉字");
 		}else {
-			_checkIdentity();
+			if($.trim($("#cm_identidiesTypeCd").val()) == "1"){
+				cust.checkCustLog = {};
+				//实名核验 checkCustCert
+				var switchResponse = $.callServiceAsJson(contextPath + "/properties/getValue", {"key": "CHECK_CUST_CERT_" + (OrderInfo.staff.areaId+"").substr(0, 3)});
+			    var checkCustCertSwitch = "";
+				if (switchResponse.code == "0") {
+			    	checkCustCertSwitch = switchResponse.data;
+			    }
+				if(checkCustCertSwitch == "ON"){
+					var inParams = {
+							"certType":$.trim($("#cm_identidiesTypeCd").val()),
+							"certNum":$.trim($("#cmCustIdCard").val()),
+							"areaId" :OrderInfo.staff.areaId
+						};
+						var checkUrl=contextPath+"/app/cust/checkCustCert";
+						var checkResponse = $.callServiceAsJson(checkUrl, inParams, {"before":function(){
+						}});
+						if (checkResponse.code == 0) {
+							var result = checkResponse.data.result;
+							cust.checkCustLog.checkMethod  = result.checkMethod;
+							cust.checkCustLog.certCheckResult = result.certCheckResult;
+							cust.checkCustLog.errorMessage = result.errorMessage;
+							cust.checkCustLog.checkDate = result.checkDate;
+							cust.checkCustLog.checkCustCertSwitch = checkCustCertSwitch;
+							_checkIdentity();
+						}else{
+							$.alertM(checkResponse.data);
+							return;
+						}
+				}
+			}else{
+				_checkIdentity();
+			}
 		}
 	};
 	
@@ -113,13 +145,29 @@ cust = (function(){
 			var data = {
 				boCustInfos : [],
 				boCustIdentities : [],	
-				boPartyContactInfo : []
+				boPartyContactInfo : [],
+				boCustCheckLogs : [],
+				boCustProfiles : []
 			};
 			_getCustInfo();
 			data.boCustInfos.push(OrderInfo.boCustInfos);
 			data.boCustIdentities.push(OrderInfo.boCustIdentities);
 			if($.trim($('#contactName').val()).length>0){
 				data.boPartyContactInfo.push(OrderInfo.boPartyContactInfo);
+			}
+			if(cust.checkCustLog.checkCustCertSwitch != undefined && cust.checkCustLog.checkCustCertSwitch == "ON" && $.trim($("#cm_identidiesTypeCd").val()) == "1"){
+				cust.checkCustLog.staffId = OrderInfo.staff.staffId;
+				cust.checkCustLog.objId = "";
+				cust.checkCustLog.custId = "-1";
+				cust.checkCustLog.checker = OrderInfo.staff.staffName;
+				cust.checkCustLog.checkChannel = OrderInfo.staff.channelId;
+				data.boCustCheckLogs.push(cust.checkCustLog);
+				
+				var custProfiles = {};
+				custProfiles.partyProfileCatgCd = "1000100";
+				custProfiles.profileValue = "1";
+				custProfiles.state = "ADD";
+				data.boCustProfiles.push(custProfiles);
 			}
 			SoOrder.submitOrder(data);
 		}else{
@@ -2151,7 +2199,7 @@ cust = (function(){
 					return;
 				}
 				//鉴权成功后显示选择使用人弹出框
-				order.main.showChooseUserDialog(param);
+				order.main.showChooseUserTable(param);
 			},"always":function(){
 				$.unecOverlay();
 			}
@@ -2566,7 +2614,16 @@ cust = (function(){
                 "certNumEnc": OrderInfo.cust.certNum,
                 "certAddressEnc": OrderInfo.cust.address
 
-			};
+			};			
+			inParam.certNum = "320421196000000000";
+			inParam.custName = "朱**";
+			inParam.certAddress = "常州地区********";
+			inParam.certNumEnc = "Nk+Wno9wjP29EIH6PPOKePE/Uq/KSFymzakHpmnTrPg=";
+			inParam.custNameEnc = "n8+uWKEn13Kcuq0JNmON0A==";
+			inParam.certAddressEnc = "vJ3NSCG4tYp8h3Ybck1Pe+MJWawGc4FYj3Ucptl9U8M=";
+			inParam.certNumEnc = inParam.certNumEnc.replace(/=/g,"&#61");
+			inParam.custNameEnc = inParam.custNameEnc.replace(/=/g,"&#61");
+			inParam.certAddressEnc =inParam.certAddressEnc.replace(/=/g,"&#61");
 		}
 		var checkResult = false;
 		var response = $.callServiceAsJson(contextPath
@@ -2574,7 +2631,16 @@ cust = (function(){
 		if (response.code == 0) {
 			var result = response.data;
 			if ((parseInt(result.usedNum)) >= 5) {
-				$.alert("提示", "一个用户证件下不能有超过5个号码！");
+				var title='信息提示';
+				$("#btn-dialog-ok").removeAttr("data-dismiss");
+				$('#alert-modal').modal({backdrop: 'static', keyboard: false});
+				$("#btn-dialog-ok").off("click").on("click",function(){
+					$("#alert-modal").modal("hide");
+					common.callCloseWebview();
+				});
+				$("#modal-title").html(title);
+				$("#modal-content").html("一个用户证件下不能有超过5个号码！");
+				$("#alert-modal").modal();
 			} else {
 				cust.usedNum = parseInt(result.usedNum) + 1;
 				checkResult = true;
@@ -2652,6 +2718,7 @@ cust = (function(){
 		newUIFalg					:		_newUIFalg,
 		showAccountModify			:		_showAccountModify,
 		preCheckCertNumberRel       :       _preCheckCertNumberRel,
-		usedNum                     :       _usedNum
+		usedNum                     :       _usedNum,
+		checkCustLog				:		_checkCustLog
 	};	
 })();

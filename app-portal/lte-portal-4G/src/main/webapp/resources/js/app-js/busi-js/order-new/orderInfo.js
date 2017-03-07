@@ -224,6 +224,9 @@ OrderInfo = (function() {
 				boCustIdentities : [],
 				boPartyContactInfo : [],
 				boCertiAccNbrRels : []   //一证五号新增证号关系节点
+				boPartyContactInfo : [],
+				boCustCheckLogs : [],
+				boCustProfiles : []
 			}
 		};
 		if(ec.util.isObj(accNbr)){ //接入号
@@ -253,6 +256,20 @@ OrderInfo = (function() {
 				OrderInfo.boPartyContactInfo.mobilePhone = accNbr;
 			}
 			busiOrder.data.boPartyContactInfo.push(OrderInfo.boPartyContactInfo);
+		}
+		if(cust.checkCustLog.checkCustCertSwitch != undefined && cust.checkCustLog.checkCustCertSwitch == "ON"){
+			cust.checkCustLog.staffId = OrderInfo.staff.staffId;
+			cust.checkCustLog.objId = "";
+			cust.checkCustLog.custId = "-1";
+			cust.checkCustLog.checker = OrderInfo.staff.staffName;
+			cust.checkCustLog.checkChannel = OrderInfo.staff.channelId;
+			busiOrder.data.boCustCheckLogs.push(cust.checkCustLog);
+			
+			var custProfiles = {};
+			custProfiles.partyProfileCatgCd = "1000100";
+			custProfiles.profileValue = "1";
+			custProfiles.state = "ADD";
+			busiOrder.data.boCustProfiles.push(custProfiles);
 		}
 		busiOrders.push(busiOrder);
 	};

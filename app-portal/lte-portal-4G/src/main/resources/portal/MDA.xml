@@ -45,7 +45,7 @@
 		<const type="String" name="CSB_HTTP_FORCA_URL" value="http://10.128.90.194:10901/LTE-CSB/HttpDEPService" />
 				<const type="String" name="CSB_HTTP_MIDDLE_URL" value="http://10.128.90.194:8201/LTE-CSB/HttpAPIService" description="宽带融合-中台地址"/>
 		<const type="String" name="CSB_HTTP_QUERCHEN_URL" value="http://10.128.90.194:8888/channel-mobile-web/" description="宽带融合-定位渠道"/>
-		<const type="String" name="CSB_FLAG" value="OFF" />
+		<const type="String" name="CSB_FLAG" value="ON" />
 		<const type="String" name="PAY_TOKEN_URL" value="http://10.128.90.195:7001/payconf/" />
 		<const type="String" name="PAY_URL" value="http://10.128.90.195:7001/upay/platpay/index?" />
 		<const type="String" name="ASYNC_FLAG" value="OFF" />
@@ -1565,8 +1565,8 @@
 				'REAL_NAME_PHOTO_831':'OFF',<!-- 上海 -->
 				'REAL_NAME_PHOTO_812':'OFF',<!-- 天津 -->
 				'REAL_NAME_PHOTO_813':'OFF',<!-- 河北 -->
-				'REAL_NAME_PHOTO_841':'OFF',<!-- 河南 -->
-				'REAL_NAME_PHOTO_821':'OFF',<!-- 辽宁 -->
+				'REAL_NAME_PHOTO_841':'ON',<!-- 河南 -->
+				'REAL_NAME_PHOTO_821':'ON',<!-- 辽宁 -->
 				'REAL_NAME_PHOTO_822':'OFF',<!-- 吉林 -->
 				'REAL_NAME_PHOTO_834':'OFF',<!-- 安徽 -->
 				'REAL_NAME_PHOTO_833':'OFF',<!-- 浙江 -->
@@ -1624,7 +1624,7 @@
 			'NEWPAYFLAG_861':'OFF',<!-- 陕西 -->
 			'NEWPAYFLAG_842':'OFF',<!-- 湖北 -->
 			'NEWPAYFLAG_835':'OFF',<!-- 福建 -->
-			'NEWPAYFLAG_832':'OFF',<!-- 江苏 -->
+			'NEWPAYFLAG_832':'ON',<!-- 江苏 -->
 			'NEWPAYFLAG_846':'OFF',<!-- 海南 -->
 			'NEWPAYFLAG_864':'OFF',<!-- 宁夏 -->
 			'NEWPAYFLAG_814':'OFF',<!-- 山西 -->
@@ -1675,8 +1675,8 @@
 			'NEWUIFLAG_812':'OFF',<!-- 天津 -->
 			'NEWUIFLAG_813':'ON',<!-- 河北 -->
 			'NEWUIFLAG_841':'ON',<!-- 河南 -->
-			'NEWUIFLAG_821':'ON',<!-- 辽宁 -->
-			'NEWUIFLAG_822':'OFF',<!-- 吉林 -->
+			'NEWUIFLAG_821':'OFF',<!-- 辽宁 -->
+			'NEWUIFLAG_822':'ON',<!-- 吉林 -->
 			'NEWUIFLAG_834':'OFF',<!-- 安徽 -->
 			'NEWUIFLAG_833':'OFF',<!-- 浙江 -->
 			'NEWUIFLAG_852':'ON',<!-- 贵州 -->
@@ -1685,5 +1685,78 @@
 			'NEWUIFLAG_899':'OFF'<!-- 虚拟省 -->
 			}
 		</const>
+		<!-- 是否实名核验开关  ON OFF 默认关闭 -->
+		<const type="Map" name="CHECK_CUST_CERT" description="是否实名核验开关 ">
+			{
+			'CHECK_CUST_CERT_854':'OFF',<!-- 西藏 -->
+			'CHECK_CUST_CERT_863':'OFF',<!-- 青海 -->
+			'CHECK_CUST_CERT_815':'OFF',<!-- 内蒙古 -->
+			'CHECK_CUST_CERT_823':'OFF',<!-- 黑龙江 -->
+			'CHECK_CUST_CERT_845':'OFF',<!-- 广西 -->
+			'CHECK_CUST_CERT_850':'OFF',<!-- 重庆 -->
+			'CHECK_CUST_CERT_861':'OFF',<!-- 陕西 -->
+			'CHECK_CUST_CERT_842':'OFF',<!-- 湖北 -->
+			'CHECK_CUST_CERT_835':'OFF',<!-- 福建 -->
+			'CHECK_CUST_CERT_832':'ON',<!-- 江苏 -->
+			'CHECK_CUST_CERT_846':'OFF',<!-- 海南 -->
+			'CHECK_CUST_CERT_864':'OFF',<!-- 宁夏 -->
+			'CHECK_CUST_CERT_814':'OFF',<!-- 山西 -->
+			'CHECK_CUST_CERT_853':'OFF',<!-- 云南 -->
+			'CHECK_CUST_CERT_836':'OFF',<!-- 江西 -->
+			'CHECK_CUST_CERT_837':'OFF',<!-- 山东 -->
+			'CHECK_CUST_CERT_811':'OFF',<!-- 北京 -->
+			'CHECK_CUST_CERT_843':'OFF',<!-- 湖南 -->
+			'CHECK_CUST_CERT_851':'OFF',<!-- 四川 -->
+			'CHECK_CUST_CERT_844':'OFF',<!-- 广东 -->
+			'CHECK_CUST_CERT_831':'OFF',<!-- 上海 -->
+			'CHECK_CUST_CERT_812':'OFF',<!-- 天津 -->
+			'CHECK_CUST_CERT_813':'OFF',<!-- 河北 -->
+			'CHECK_CUST_CERT_841':'OFF',<!-- 河南 -->
+			'CHECK_CUST_CERT_821':'OFF',<!-- 辽宁 -->
+			'CHECK_CUST_CERT_822':'OFF',<!-- 吉林 -->
+			'CHECK_CUST_CERT_834':'OFF',<!-- 安徽 -->
+			'CHECK_CUST_CERT_833':'ON',<!-- 浙江 -->
+			'CHECK_CUST_CERT_852':'OFF',<!-- 贵州 -->
+			'CHECK_CUST_CERT_862':'OFF',<!-- 甘肃 -->
+			'CHECK_CUST_CERT_865':'OFF',<!-- 新疆 -->
+			'CHECK_CUST_CERT_899':'OFF'<!-- 虚拟省 -->
+			}
+		</const>
+        <const type="Map" name="ONE_CERT_5_NUMBER_ON_OFF" description="一证五号校验开关，默认OFF">
+            {
+            'ONE_CERT_5_NUMBER_854':'OFF',<!-- 西藏 -->
+            'ONE_CERT_5_NUMBER_863':'OFF',<!-- 青海 -->
+            'ONE_CERT_5_NUMBER_815':'OFF',<!-- 内蒙古 -->
+            'ONE_CERT_5_NUMBER_823':'OFF',<!-- 黑龙江 -->
+            'ONE_CERT_5_NUMBER_845':'OFF',<!-- 广西 -->
+            'ONE_CERT_5_NUMBER_850':'OFF',<!-- 重庆 -->
+            'ONE_CERT_5_NUMBER_861':'OFF',<!-- 陕西 -->
+            'ONE_CERT_5_NUMBER_842':'OFF',<!-- 湖北 -->
+            'ONE_CERT_5_NUMBER_835':'OFF',<!-- 福建 -->
+            'ONE_CERT_5_NUMBER_832':'ON',<!-- 江苏 -->
+            'ONE_CERT_5_NUMBER_846':'OFF',<!-- 海南 -->
+            'ONE_CERT_5_NUMBER_864':'OFF',<!-- 宁夏 -->
+            'ONE_CERT_5_NUMBER_814':'OFF',<!-- 山西 -->
+            'ONE_CERT_5_NUMBER_853':'OFF',<!-- 云南 -->
+            'ONE_CERT_5_NUMBER_836':'OFF',<!-- 江西 -->
+            'ONE_CERT_5_NUMBER_837':'OFF',<!-- 山东 -->
+            'ONE_CERT_5_NUMBER_811':'OFF',<!-- 北京 -->
+            'ONE_CERT_5_NUMBER_843':'OFF',<!-- 湖南 -->
+            'ONE_CERT_5_NUMBER_851':'OFF',<!-- 四川 -->
+            'ONE_CERT_5_NUMBER_844':'OFF',<!-- 广东 -->
+            'ONE_CERT_5_NUMBER_831':'OFF',<!-- 上海 -->
+            'ONE_CERT_5_NUMBER_812':'OFF',<!-- 天津 -->
+            'ONE_CERT_5_NUMBER_813':'OFF',<!-- 河北 -->
+            'ONE_CERT_5_NUMBER_841':'OFF',<!-- 河南 -->
+            'ONE_CERT_5_NUMBER_821':'OFF',<!-- 辽宁 -->
+            'ONE_CERT_5_NUMBER_822':'OFF',<!-- 吉林 -->
+            'ONE_CERT_5_NUMBER_834':'OFF',<!-- 安徽 -->
+            'ONE_CERT_5_NUMBER_833':'OFF',<!-- 浙江 -->
+            'ONE_CERT_5_NUMBER_852':'OFF',<!-- 贵州 -->
+            'ONE_CERT_5_NUMBER_862':'OFF',<!-- 甘肃 -->
+            'ONE_CERT_5_NUMBER_865':'OFF',<!-- 新疆 -->
+            'ONE_CERT_5_NUMBER_899':'OFF'<!-- 虚拟省 -->
+            }
+        </const>
 	</mda>
 </mdas>

@@ -470,7 +470,7 @@ public final class PortalServiceCode {
     public static final String INTF_TERM_QUERY_SERVICE = "res-TermQueryService";
     
     public static final String INTF_TERM_VALIDATE = "res-TermValidateService";
-    
+    /**终端串码校验*/
     public static final String INTF_TERM_RECEIVE = "res-ITermReceiveService";
     
     public static final String INTF_TERM_UIM_CARD_TYPE_VALIDATE = "res-UimCardTypeValidator";
@@ -543,15 +543,14 @@ public final class PortalServiceCode {
     public static final String INTF_PROTOCOL_ADD = "biz-service/intf.detailService/saveProtocol";  // 添加 协议 add by wd  14-11-3
     
     public static final String INTF_PROTOCOL_OFFER_DETAIL= "biz-service/intf.prodInstService/queryProdInstMemberInfo"; // 协议下 销售品 详情  add by wd  14-11-3
-    
-    
-    
+   
     public static final String QUERY_STAFF_LIST = "sys-queryStaffInfo";
     
+    /**号码预占和释放*/
     public static final String INTF_RESERVE_PHONENUMBER="res-PnReserveService";
-    
+    /**UIM释放*/
     public static final String INTF_RELEASE_UIM="res-UIMReleaseService";
-    
+    /**UIM预占*/
     public static final String INTF_RESERVE_UIM="res-UIMReserveService";
     
     public static final String INTF_QUERY_RESERVENUMBER="res-PnReserveQryService";
@@ -1142,13 +1141,25 @@ public final class PortalServiceCode {
 
     /** 橙分期业务标识 */
     public static final String QUERY_AGREEMENTTYPE = "biz-service/intf.prodOfferService/queryAgreementType";
-    
+
     /** 购物车订单状态 查询 */
     public static final String QUERY_ORDER_STATUS = "biz-service/intf.detailService/queryCustomerOrderBasicInfo" ;
 
     /** 甩单终端串码预占校验接口（测试用，生产只走csb） */
     public static final String CHECK_DITCHORDER = "ter-terminal/ditchOrderCheck";
+    
+    /**客户信息核验接口*/
+    public static final String CHECK_CUST_CERT = "biz-service/intf.custService/checkCustCert";
 
+
+    /** 客户资料同步接口 */
+    public static final String CUSTINFO_SYNCHRONIZE = "biz-service/intf.custService/custInfoSynchronize";
+
+    /** 证号关系预校验接口 */
+    public static final String PRE_CHECK_CERT_NUMBER_REL = "biz-service/intf.pullingDataService/preCheckForCertAndNumberRel";
+
+    /** 获取seq接口 */
+    public static final String GET_SEQ = "biz-service/intf.soService/getSeq";
 
 }
 

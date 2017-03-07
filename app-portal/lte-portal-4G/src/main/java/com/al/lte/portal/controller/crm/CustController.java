@@ -28,7 +28,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
@@ -133,8 +132,8 @@ public class CustController extends BaseController {
 		httpSession.setAttribute("ValidateAccNbr", null);
 		httpSession.setAttribute("ValidateProdPwd", null);
 		httpSession.setAttribute("queryCustAccNbr", paramMap.get("acctNbr"));
-		
-		String diffPlace=MapUtils.getString(paramMap, "diffPlace","");
+
+		String diffPlace = MapUtils.getString(paramMap, "diffPlace", "");
 		String flag = propertiesUtils.getMessage(SysConstant.CHECKAREAIDFLAG);
 		if(SysConstant.ON.equals(flag)){
 			if("local".equals(diffPlace)){//如果是本地业务，判断传过来的地区是不是受理地区
@@ -261,7 +260,7 @@ public class CustController extends BaseController {
 					sessionStaff.setPartyName(String.valueOf(custInfo.get("partyName")));
 					sessionStaff.setCustSegmentId(String.valueOf(custInfo.get("segmentId")));
 					sessionStaff.setCN(String.valueOf(custInfo.get("CN")));
-					
+					sessionStaff.setCustCode(String.valueOf(custInfo.get("extCustId")));
 					//在session中保存查询出的所有待选的原始客户信息
 					Map<String, Map> listCustInfos = (Map<String, Map>) httpSession.getAttribute(SysConstant.SESSION_LIST_CUST_INFOS);
 					if(listCustInfos == null){
@@ -302,7 +301,7 @@ public class CustController extends BaseController {
 						accNbrParamMap.put("areaId", paramMap.get("areaId"));
 						accNbrParamMap.put("custIds", custIds);
 						Map accNbrResultMap = new HashMap();
-						//如果使用接入号定位客户，不需求去调用根据客户查询接入号接口
+						//如果使用接入号定位客户，不需要去调用根据客户查询接入号接口
 						if (!(custInfos.size() == 1 && StringUtils.isBlank(identityCd) && StringUtils.isNotBlank(qryAcctNbr))) {
 							accNbrResultMap = custBmo.queryAccNbrByCust(accNbrParamMap, flowNum, sessionStaff);
 						}
@@ -330,13 +329,11 @@ public class CustController extends BaseController {
 										newCustInfoMap.put("accNbr", accNbr);
 										if(StringUtils.isNotBlank(qryAcctNbr)&&!qryAcctNbr.equals(accNbr))
 											continue;
-										addAccountAndCustInfo(flowNum, sessionStaff, areaId, custId, accNbr, soNbr, newCustInfoMap);
 										custInfosWithNbr.add(newCustInfoMap);
 									}
 									if (custInfosWithNbr.size()==0&&StringUtils.isNotBlank(qryAcctNbr)) {
 										Map newCustInfoMap = new HashMap(custInfoMap);
 										newCustInfoMap.put("accNbr", qryAcctNbr);
-										addAccountAndCustInfo(flowNum, sessionStaff, areaId, custId, qryAcctNbr, soNbr, newCustInfoMap);
 										custInfosWithNbr.add(newCustInfoMap);
 									}
 								} else {
@@ -349,8 +346,6 @@ public class CustController extends BaseController {
 								Map custInfoMap = (Map) info;
 								Map newCustInfoMap = new HashMap(custInfoMap);
 								newCustInfoMap.put("accNbr", qryAcctNbr);
-								String custId = MapUtils.getString(custInfoMap, "custId", "");
-								addAccountAndCustInfo(flowNum, sessionStaff, areaId, custId, qryAcctNbr, soNbr, newCustInfoMap);
 								custInfosWithNbr.add(newCustInfoMap);
 							}
 						}
@@ -363,12 +358,6 @@ public class CustController extends BaseController {
 
 						PageModel<Map<String, Object>> pm = PageUtil.buildPageModel(1, 10, custInfosWithNbr.size(),custInfosWithNbr);
 			    		model.addAttribute("pageModel", pm);
-					}
-				
-					//1.经办人身份证读卡；2.读卡后查询结果为老客户，则在session中标识，用以订单提交验证
-					if(paramMap.get("virOlId") != null && "1".equals(paramMap.get("identityCd"))){
-						String sessionKey = paramMap.get("virOlId").toString() + "qryCust";
-						ServletUtils.setSessionAttribute(super.getRequest(), sessionKey, true);
 					}
 				}else{
 					/*int count = (Integer) httpSession.getAttribute(sessionStaff.getStaffCode()+"custcount")+10;
@@ -408,6 +397,40 @@ public class CustController extends BaseController {
 		}
 	}
 
+    @RequestMapping(value = "/queryCustExt", method = {RequestMethod.POST})
+    @ResponseBody
+    public JsonResponse queryCustExt(@RequestBody Map<String, Object> paramMap, @LogOperatorAnn String flowNum) {
+        SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+            SysConstant.SESSION_KEY_LOGIN_STAFF);
+        JsonResponse jsonResponse = null;
+        String areaId = MapUtils.getString(paramMap, "areaId", "");
+        String custId = MapUtils.getString(paramMap, "custId", "");
+        String identityCd = MapUtils.getString(paramMap, "identityCd", "");
+        String accNbr = MapUtils.getString(paramMap, "accNbr", "");
+        String soNbr = MapUtils.getString(paramMap, "soNbr", "");
+        try {
+            Map<String, Object> retMap = addAccountAndCustInfo(flowNum, sessionStaff, areaId, custId, accNbr, soNbr, identityCd);
+            if (null != retMap) {
+                jsonResponse = super.successed(retMap);
+            } else {
+                jsonResponse = super.failed(retMap, ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+            }
+        } catch (BusinessException be) {
+        	 be.printStackTrace();
+             jsonResponse = super.failed(be);
+        } catch (InterfaceException ie) {
+        	ie.printStackTrace();
+			return super.failed(ie, paramMap, ErrorCode.QUERY_ACCOUNT_USE_CUSTINFO);
+        } catch (Exception e) {
+            e.printStackTrace();
+            jsonResponse = super.failed(ErrorCode.QUERY_ACCOUNT_USE_CUSTINFO, e, paramMap);
+        }
+        //update by huangjj3  星级服务参数缓存客户选择定位的号码进行切换
+        sessionStaff.setCustType("11");
+        sessionStaff.setInPhoneNum(MapUtils.getString(paramMap, "accNbr", ""));
+        return jsonResponse;
+    }
+
 	/**
 	 * 添加账户信息和使用人信息
 	 * @param flowNum
@@ -418,8 +441,9 @@ public class CustController extends BaseController {
 	 * @param newCustInfoMap
 	 * @throws Exception
 	 */
-	private void addAccountAndCustInfo(String flowNum, SessionStaff sessionStaff, String areaId, String custId, String accNbr, String soNbr, Map newCustInfoMap) throws Exception {
-		if (isGovCust(flowNum,newCustInfoMap, sessionStaff)) {
+	private Map<String,Object> addAccountAndCustInfo(String flowNum, SessionStaff sessionStaff, String areaId, String custId, String accNbr, String soNbr, String identityCd) throws BusinessException, Exception {
+        Map<String,Object> extCustInfoMap = new HashMap<String,Object>();
+        if (isGovCust(flowNum,identityCd, sessionStaff)) {
 			//账户和使用人信息查询
 			Map<String, Object> auParam = new HashMap<String, Object>();
 			auParam.put("areaId", areaId);
@@ -438,17 +462,21 @@ public class CustController extends BaseController {
 			if (MapUtils.isNotEmpty(auMap)) {
 				Map<String, Object> aMap = MapUtils.getMap(auMap, "account");
 				Map<String, Object> iMap = MapUtils.getMap(auMap, "identity");
-				newCustInfoMap.put("userIdentityCd", MapUtils.getString(iMap, "identityTypeCd"));
-				newCustInfoMap.put("userIdentityName", MapUtils.getString(iMap, "identityName"));
-				newCustInfoMap.put("userIdentityNum", MapUtils.getString(iMap, "identityNum"));
-				newCustInfoMap.put("accountName", MapUtils.getString(aMap, "accountName"));
-				newCustInfoMap.put("userName", MapUtils.getString(auMap, "useCustName"));
-				newCustInfoMap.put("userCustId", MapUtils.getString(auMap, "useCustId"));
-				newCustInfoMap.put("isSame", MapUtils.getString(auMap, "isSame"));
+                extCustInfoMap.put("userIdentityCd", MapUtils.getString(iMap, "identityTypeCd"));
+				extCustInfoMap.put("userIdentityName", MapUtils.getString(iMap, "identityName"));
+				extCustInfoMap.put("userIdentityNum", MapUtils.getString(iMap, "identityNum"));
+				extCustInfoMap.put("userCertNumEnc", MapUtils.getString(iMap, "certNumEnc"));
+				extCustInfoMap.put("userCertAddress", MapUtils.getString(iMap, "certAddress"));
+				extCustInfoMap.put("userCertAddressEnc", MapUtils.getString(iMap, "certAddressEnc"));
+				extCustInfoMap.put("accountName", MapUtils.getString(aMap, "accountName"));
+				extCustInfoMap.put("userName", MapUtils.getString(auMap, "useCustName"));
+				extCustInfoMap.put("userNameEnc", MapUtils.getString(auMap, "useCustNameEnc"));
+				extCustInfoMap.put("userCustId", MapUtils.getString(auMap, "useCustId"));
+				extCustInfoMap.put("isSame", MapUtils.getString(auMap, "isSame"));
 			}
 		}
-
-	}
+        return extCustInfoMap;
+    }
 
 	/**
 	 * 判断客户是否是政企客户
@@ -457,12 +485,11 @@ public class CustController extends BaseController {
 	 * @param sessionStaff
      * @return
      */
-	private boolean isGovCust(String flowNum, Map newCustInfoMap, SessionStaff sessionStaff) {
+	private boolean isGovCust(String flowNum, String identityCd, SessionStaff sessionStaff) {
 		boolean isGov = false;
 		Map<String, Object> param = new HashMap<String, Object>();
 		param.put("partyTypeCd", 2);
 		Map<String, Object> rMap;
-		String identityCd = MapUtils.getString(newCustInfoMap, "identityCd", "");
 		try {
 			rMap = this.custBmo.queryCertType(param, flowNum, sessionStaff);
 			List<Map<String, Object>> govMap = (List<Map<String, Object>>) rMap.get("result");
@@ -728,7 +755,7 @@ public class CustController extends BaseController {
 				}
 			}else if ("signature".equals(flag)){
 				String signature = MapUtils.getString(param, "signature","");
-				if(null == signature && !"".equals(signature)){
+				if(StringUtils.isNotEmpty(signature)){
 					ServletUtils.setSessionAttribute(getRequest(), Const.SESSION_SIGNATURE,signature);
 				}
 			}
@@ -897,7 +924,7 @@ public class CustController extends BaseController {
 			}
 		}
 		String custId = MapUtils.getString(param, "custId", "");
-		if(SysConstant.ON.equals(sessionStaff.getPoingtType()) && !StringUtil.isEmptyStr(custId)){//星级服务开关打开
+		if(SysConstant.ON.equals(sessionStaff.getPoingtType()) && !StringUtil.isEmptyStr(custId) && !StringUtil.isEmpty(sessionStaff.getInPhoneNum())){//星级服务开关打开
 			Map<String, Object> paramMapXJ = new HashMap<String, Object>();
 			paramMapXJ.put("identityCd", sessionStaff.getCardType());
 			paramMapXJ.put("identityNum", sessionStaff.getCardNumber());
@@ -932,10 +959,11 @@ public class CustController extends BaseController {
 			} catch (Exception e) {
 			}
 		}
-		
+
 		map.put("custInfo", param);
 		model.addAttribute("poingtType",sessionStaff.getPoingtType());
 		model.addAttribute("custAuth", map);
+		model.addAttribute("fromProvFlag", MapUtils.getString(param,"fromProvFlag","0"));
 		return "/cust/cust-info";
 	}
 	
@@ -1569,16 +1597,36 @@ public class CustController extends BaseController {
 		JsonResponse jsonResponse = null;
 		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
                 SysConstant.SESSION_KEY_LOGIN_STAFF);
+
 		String areaId=(String) paramMap.get("areaId");
 		if(("").equals(areaId)||areaId==null){
 			paramMap.put("areaId", sessionStaff.getCurrentAreaId());
 		}
 		paramMap.put("staffId", sessionStaff.getStaffId());
 		try {
-			resultMap = custBmo.queryCustInfo(paramMap,
-					flowNum, sessionStaff);
+			resultMap = custBmo.queryCustInfo(paramMap, flowNum, sessionStaff);
 			if (MapUtils.isNotEmpty(resultMap)) {
-				jsonResponse = super.successed(resultMap,ResultConstant.SUCCESS.getCode());
+				List<Map<String, Object>> custInfos = (List<Map<String, Object>>) resultMap.get("custInfos");
+				if(custInfos != null){
+					//针对经办人查询，返回多个客户时默认取第一个
+					if(custInfos.size() > 1){
+						if("queryHandleCust".equals(MapUtils.getString(paramMap, "queryFlag", ""))){
+							custInfos.subList(1, custInfos.size()).clear();
+						}
+					}
+					//针对套餐变更、主副卡成员变更加装老号码作为副卡，判断该号码客户的证件类型并缓存session
+					if(custInfos.size() > 0 && "offerOrMemberChange".equals(MapUtils.getString(paramMap, "queryFlag", ""))){
+						Map<String, Object> custInfo = custInfos.get(0);//js端也是取第一个，这里也随之取第一个
+						if(!"1".equals(MapUtils.getString(custInfo, "identityCd", ""))){
+							ServletUtils.setSessionAttribute(super.getRequest(), SysConstant.IS_ACTION_FLAG_LIMITED, true);
+						}
+					}
+					jsonResponse = super.successed(resultMap,ResultConstant.SUCCESS.getCode());
+				} else{
+					return super.failed(ErrorCode.QUERY_CUST, "客户查询营业受理后台未返回结果集，custInfos为null", paramMap);
+				}
+			} else{
+				return super.failed(ErrorCode.QUERY_CUST, "客户查询营业受理后台未返回结果集，result为空", paramMap);
 			}
 		} catch (BusinessException be) {
 			return super.failed(be);
@@ -1848,14 +1896,22 @@ public class CustController extends BaseController {
             if (result != null && ResultCode.R_SUCCESS.equals(result.get("code").toString())) {
             	//拍照校验、上传成功后写入session标识
             	String sessionKey = ((Map<String, String>)result.get("result")).get("virOlId") + "upload";
-            	ServletUtils.setSessionAttribute(super.getRequest(), sessionKey, true);
+            	Map<String, Object> sessionVirOlId = new HashMap<String, Object>();
+            	sessionVirOlId.put(sessionKey, true);
+            	ServletUtils.setSessionAttribute(super.getRequest(),Const.SESSION_UPLOAD_VIR_OLID, sessionVirOlId);
                 jsonResponse = super.successed(result.get("result"), ResultConstant.SUCCESS.getCode());
             } else {
                 jsonResponse = super.failed(result.get("msg").toString(), ResultConstant.FAILD.getCode());
             }
         } catch (BusinessException be) {
             return super.failed(be);	
-        }
+        } catch (InterfaceException ie) {
+        	return super.failed(ie, param, ErrorCode.UPLOAD_CUST_CERTIFICATE);
+		} catch (IOException ioe) {
+			return super.failed(ErrorCode.UPLOAD_CUST_CERTIFICATE, ioe, param);
+		} catch (Exception e) {
+			return super.failed(ErrorCode.UPLOAD_CUST_CERTIFICATE, e, param);
+		}
         return jsonResponse;
     }
     
@@ -1886,5 +1942,123 @@ public class CustController extends BaseController {
         	jsonResponse = super.failed(ErrorCode.PORTAL_INPARAM_ERROR, "未获取到有效入参,可能入参为空", param);
         }
         return jsonResponse;
+    }
+
+    /**
+     * 客户资料同步接口
+     *
+     * @param paramMap
+     * @param flowNum
+     * @return
+     */
+    @RequestMapping(value = "/custinfoSynchronize", method = {RequestMethod.POST})
+    @ResponseBody
+    public JsonResponse custinfoSynchronize(@RequestBody Map<String, Object> paramMap, @LogOperatorAnn String flowNum) {
+        SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+            SysConstant.SESSION_KEY_LOGIN_STAFF);
+        JsonResponse jsonResponse = null;
+        Map<String, Object> resultMap = new HashMap<String,Object>();
+        try {
+            resultMap = custBmo.custinfoSynchronize(paramMap, flowNum, sessionStaff);
+            if (MapUtils.isNotEmpty(resultMap)) {
+                jsonResponse = super.successed(resultMap);
+            } else {
+                jsonResponse = super.failed(resultMap, ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+            }
+        } catch (InterfaceException e) {
+            jsonResponse = super.failed(e,resultMap,ErrorCode.CUSTINFO_SYNCHRONIZE);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return jsonResponse;
+    }
+
+    /**
+     * 证号关系预校验接口
+     * @param paramMap
+     * @param flowNum
+     * @return
+     */
+    @RequestMapping(value = "/preCheckCertNumberRel", method = {RequestMethod.POST})
+    @ResponseBody
+    public JsonResponse preCheckCertNumberRel(@RequestBody Map<String, Object> paramMap, @LogOperatorAnn String flowNum) {
+        SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+            SysConstant.SESSION_KEY_LOGIN_STAFF);
+        JsonResponse jsonResponse = null;
+        Map<String, Object> resultMap = new HashMap<String, Object>();
+        try {
+            resultMap = custBmo.preCheckCertNumberRel(paramMap, flowNum, sessionStaff);
+            if (MapUtils.isNotEmpty(resultMap)) {
+                jsonResponse = super.successed(resultMap);
+            } else {
+                jsonResponse = super.failed(resultMap, ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+            }
+        } catch (InterfaceException e) {
+            jsonResponse = super.failed(e, paramMap,ErrorCode.PRE_CHECK_CERT_NUMBER_REL);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return jsonResponse;
+    }
+
+    /**
+     * 获取seq接口
+     * @param paramMap
+     * @param flowNum
+     * @return
+     */
+    @RequestMapping(value = "/getSeq", method = {RequestMethod.POST})
+    @ResponseBody
+    public JsonResponse getSeq(@RequestBody Map<String, Object> paramMap, @LogOperatorAnn String flowNum) {
+        SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+            SysConstant.SESSION_KEY_LOGIN_STAFF);
+        JsonResponse jsonResponse = null;
+        Map<String, Object> resultMap = new HashMap<String, Object>();
+        try {
+            resultMap = custBmo.getSeq(paramMap, flowNum, sessionStaff);
+            if (MapUtils.isNotEmpty(resultMap)) {
+                jsonResponse = super.successed(resultMap);
+            } else {
+                jsonResponse = super.failed(resultMap, ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+            }
+        } catch (InterfaceException e) {
+            jsonResponse = super.failed(e, resultMap, ErrorCode.GET_SEQ);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return jsonResponse;
+    }
+
+    @RequestMapping(value = "/checkCustCert", method = RequestMethod.POST)
+    @ResponseBody
+    public JsonResponse checkCustCert(@RequestBody Map<String, Object> paramMap,
+			@LogOperatorAnn String flowNum,HttpServletResponse response){
+		Map<String, Object> resMap = null;
+		JsonResponse jsonResponse = null;
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+                SysConstant.SESSION_KEY_LOGIN_STAFF);
+		String areaId=(String) paramMap.get("areaId");
+		if(("").equals(areaId)||areaId==null){
+			paramMap.put("areaId", sessionStaff.getCurrentAreaId());
+		}
+		paramMap.put("staffId", sessionStaff.getStaffId());
+		List<Map<String, Object>> list = null;
+		try {
+			resMap = custBmo.checkCustCert(paramMap,
+					flowNum, sessionStaff);
+			if (ResultCode.R_SUCC.equals(resMap.get("resultCode"))) {
+                jsonResponse = super.successed(resMap, ResultConstant.SUCCESS.getCode());
+            } else {
+                jsonResponse = super.failed(resMap.get("resultMsg"), ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+            }
+		} catch (BusinessException be) {
+			return super.failed(be);
+		} catch (InterfaceException ie) {
+			return super.failed(ie, paramMap, ErrorCode.CHECK_CUST_CERT);
+		} catch (Exception e) {
+			log.error("实名核验checkCustCert服务返回的数据异常", e);
+			return super.failed(ErrorCode.CHECK_CUST_CERT, e, paramMap);
+		}
+		return jsonResponse;
     }
 }

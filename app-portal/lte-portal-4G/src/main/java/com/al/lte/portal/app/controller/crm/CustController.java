@@ -2130,4 +2130,85 @@ public class CustController extends BaseController {
 
   		return jsonResponse;
   	}
+
+  	
+
+    /**
+     * 证号关系预校验接口
+     * @param paramMap
+     * @param flowNum
+     * @return
+     */
+    @RequestMapping(value = "/preCheckCertNumberRel", method = {RequestMethod.POST})
+    @ResponseBody
+    public JsonResponse preCheckCertNumberRel(@RequestBody Map<String, Object> paramMap, @LogOperatorAnn String flowNum) {
+        SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+            SysConstant.SESSION_KEY_LOGIN_STAFF);
+        JsonResponse jsonResponse = null;
+        Map<String, Object> resultMap = new HashMap<String, Object>();
+        if(paramMap.get("custNameEnc")!=null){////取出三个加密字段进行=号还原
+			String Name=(String) paramMap.get("custNameEnc");
+			String Name2=Name.replaceAll("&#61", "=");
+			paramMap.put("custNameEnc", Name2);
+		}
+        if(paramMap.get("certNumEnc")!=null){
+			String Num=(String) paramMap.get("certNumEnc");
+			String Num2=Num.replaceAll("&#61", "=");
+			paramMap.put("certNumEnc", Num2);
+		}
+        if(paramMap.get("certAddressEnc")!=null){
+			String addr=(String) paramMap.get("certAddressEnc");
+			String addr2=addr.replaceAll("&#61", "=");
+			paramMap.put("certAddressEnc", addr2);
+		}
+        try {
+            resultMap = custBmo.preCheckCertNumberRel(paramMap, flowNum, sessionStaff);
+            if (MapUtils.isNotEmpty(resultMap)) {
+                jsonResponse = super.successed(resultMap);
+            } else {
+                jsonResponse = super.failed(resultMap, ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+            }
+        } catch (InterfaceException e) {
+            jsonResponse = super.failed(e, paramMap,ErrorCode.PRE_CHECK_CERT_NUMBER_REL);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return jsonResponse;
+    }
+
+  	
+  	//客户信息核验
+  	@RequestMapping(value = "/checkCustCert", method = RequestMethod.POST)
+    @ResponseBody
+    public JsonResponse checkCustCert(@RequestBody Map<String, Object> paramMap,
+			@LogOperatorAnn String flowNum,HttpServletResponse response){
+		Map<String, Object> resMap = null;
+		JsonResponse jsonResponse = null;
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+                SysConstant.SESSION_KEY_LOGIN_STAFF);
+		String areaId=(String) paramMap.get("areaId");
+		if(("").equals(areaId)||areaId==null){
+			paramMap.put("areaId", sessionStaff.getCurrentAreaId());
+		}
+		paramMap.put("staffId", sessionStaff.getStaffId());
+		List<Map<String, Object>> list = null;
+		try {
+			resMap = custBmo.checkCustCert(paramMap,
+					flowNum, sessionStaff);
+			if (ResultCode.R_SUCC.equals(resMap.get("resultCode"))) {
+                jsonResponse = super.successed(resMap, ResultConstant.SUCCESS.getCode());
+            } else {
+                jsonResponse = super.failed(resMap.get("resultMsg"), ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+            }
+		} catch (BusinessException be) {
+			return super.failed(be);
+		} catch (InterfaceException ie) {
+			return super.failed(ie, paramMap, ErrorCode.CHECK_CUST_CERT);
+		} catch (Exception e) {
+			log.error("实名核验checkCustCert服务返回的数据异常", e);
+			return super.failed(ErrorCode.CHECK_CUST_CERT, e, paramMap);
+		}
+		return jsonResponse;
+    }
+  	
 }
