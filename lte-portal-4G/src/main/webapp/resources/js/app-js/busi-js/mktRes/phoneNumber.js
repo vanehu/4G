@@ -733,8 +733,20 @@ order.phoneNumber = (function(){
 //			phoneNum='';
 //		}
 		var pnCharacterId="";
-		var Greater = $("#Greater").val();
-		var Less  = $("#Less").val();
+		var numPrice  = $("#numPrice").val();
+		var Greater="";
+		var Less= "";
+		if(numPrice>-1){
+			var attr = $("#numPrice").find("option:selected").text().split("-"); 
+			if(attr.length >1){
+			    Less = attr[0];
+				Greater  = attr[1];
+			}else{
+				Less = numPrice;
+		    }
+			
+		}
+		
 //		var preStore$=$("#preStore").find("a.selected");
 //		if(preStore$.length>0){
 //			Greater= preStore$.attr("Greater");
@@ -751,8 +763,8 @@ order.phoneNumber = (function(){
 //			pnCharacterId = $("#pnCharacterId_all option:selected").attr("val");
 //		}
 		pnCharacterId = ec.util.defaultStr(pnCharacterId);
-		return {"pnHead":pnHead,"pnEnd":pnEnd,"pnNotExitNum":pnNotExitNum,"goodNumFlag":pnCharacterId,"maxPrePrice":Less,
-			"minPrePrice":Greater,"pnLevelId":'',"pageSize":"10","phoneNum":phoneNum,"areaId":areaId,"poolId":poolId,"subPage":subPage,   
+		return {"pnHead":pnHead,"pnEnd":pnEnd,"pnNotExitNum":pnNotExitNum,"goodNumFlag":pnCharacterId,"maxPrePrice":Greater,
+			"minPrePrice":Less,"pnLevelId":'',"pageSize":"10","phoneNum":phoneNum,"areaId":areaId,"poolId":poolId,"subPage":subPage,   
 			"queryFlag":query_flag_01
 		};
 	};
