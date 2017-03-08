@@ -3158,18 +3158,15 @@ order.cust = (function(){
 		};
 		$.callServiceAsJson(contextPath + "/cust/queryoffercust", param, {
 			"before" : function() {
+				$.ecOverlay("<strong>正在查询经办人信息, 请稍等...</strong>");
 			},
 			"done" : function(response) {
 				if(response.code == 0 && response.data){
 					//新建需要,实名制核验
                     if(!ec.util.isArray(response.data.custInfos)){
-						var switchResponse = $.callServiceAsJson(contextPath + "/properties/getValue", {"key": "CHECK_CUST_CERT_" + areaId.substr(0, 3)});
-					    var checkCustCertSwitch = "";
-						if (switchResponse.code == "0") {
-					    	checkCustCertSwitch = switchResponse.data;
-					    	OrderInfo.bojbrCustCheckLogs.checkCustCertSwitch = switchResponse.data;
-					    }
-						if(checkCustCertSwitch == "ON"){
+						var switchResponse = query.common.queryPropertiesValue("CHECK_CUST_CERT_" + areaId.substr(0, 3));
+				    	OrderInfo.bojbrCustCheckLogs.checkCustCertSwitch = switchResponse;
+						if(switchResponse == "ON"){
 							var inParams = {
 									"certType":identityCd,
 									"certNum":identityNum,
@@ -3193,7 +3190,6 @@ order.cust = (function(){
 								return;
 							};
 						};
-						
 					};
                     _getResponseResult(response);// 开始处理经办人信息
                 	_showCameraView();// 加载拍照弹窗
