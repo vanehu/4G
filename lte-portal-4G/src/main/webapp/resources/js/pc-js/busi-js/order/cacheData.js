@@ -1098,7 +1098,15 @@ CacheData = (function() {
 			}
 		}
 	};
-	
+	/**
+	 * 根据证件id判断是否是政企客户
+	 * @param certTypeId 证件id
+	 * @returns {*} 布尔值
+	 * @private
+	 */
+	var _isGov = function (certTypeId) {
+		return "-1"!=$.inArray(certTypeId, _getGovCertType());
+	};
 	// 获取政企客户证件类型
 	var govCertTyteArr = [];
 	var _getGovCertType = function() {
@@ -1245,6 +1253,7 @@ CacheData = (function() {
 		getBrowserTypeVersion:_getBrowserTypeVersion,
         getCheckRules			: _getCheckRules,
         getCheckRuleByKey		: _getCheckRuleByKey,
-        isInCheckRuleByTypeCd   :_isInCheckRuleByTypeCd
+        isInCheckRuleByTypeCd   :_isInCheckRuleByTypeCd,
+        isGov                   :_isGov
 	};
 })();

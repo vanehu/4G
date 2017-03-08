@@ -945,6 +945,40 @@ CacheData = (function() {
 		}
 	};
 	
+	/**
+	 * 根据证件id判断是否是政企客户
+	 * @param certTypeId 证件id
+	 * @returns {*} 布尔值
+	 * @private
+	 */
+	var _isGov = function (certTypeId) {
+		return "-1"!=$.inArray(certTypeId, _getGovCertType());
+	};
+	// 获取政企客户证件类型
+	var govCertTyteArr = [];
+	var _getGovCertType = function() {
+		if (govCertTyteArr.length == 0) {
+			var params = {"partyTypeCd": 2} ;
+			var url=contextPath+"/cust/queryCertType";
+			var response = $.callServiceAsJson(url, params, {});
+			if (response.code == -2) {
+				$.alertM(response.data);
+			}
+			if (response.code == 1002) {
+				$.alert("错误","根据员工类型查询员工证件类型无数据,请配置","information");
+				return;
+			}
+			if(response.code==0){
+				var data = response.data ;
+				if(data!=undefined && data.length>0){
+					for (var i=0; i<data.length; i++) {
+						govCertTyteArr[i] = data[i].certTypeCd;
+					}
+				}
+			}
+		}
+		return govCertTyteArr;
+	};
 	return {
 		setParam				: _setParam,
 		setServParam			: _setServParam,
@@ -979,6 +1013,7 @@ CacheData = (function() {
 		parseServ				: _parseServ,
 		parseOffer				: _parseOffer,
 		setOffer2ExcludeOfferSpec : _setOffer2ExcludeOfferSpec,
-		setRecordId:_setRecordId
+		setRecordId:_setRecordId,
+		isGov                   :_isGov
 	};
 })();

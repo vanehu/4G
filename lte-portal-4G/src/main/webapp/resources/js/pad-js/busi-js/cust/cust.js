@@ -933,6 +933,68 @@ order.cust = (function(){
 		}).ketchup({bindElement:"userSearchForChooseBtn"});
 	};
 
+	 /**
+     * 证号关系预校验接口
+     */
+    var _preCheckCertNumberRel = function (prodId, inParam) {
+    	//查分省前置校验开关
+	    var isON = offerChange.queryPortalProperties("ONE_CERT_5_NUMBER_"+OrderInfo.cust.areaId.substr(0,3));
+        if(!isON){_choosedCustInfo
+            return true;
+        }
+        var checkResult = false;
+        var param = $.extend(true, {"certType": "", "certNum": "", "certAddress": "", "custName": ""}, inParam);
+        var response=$.callServiceAsJson(contextPath + "/cust/preCheckCertNumberRel", JSON.stringify(param));
+        if (response.code == 0) {
+            var result = response.data;
+            if (ec.util.isObj(result)) {
+                var checkData = ec.util.mapGet(OrderInfo.oneCardFiveNum, inParam.certNum);
+                if (!ec.util.isObj(checkData)) {
+                    checkData = [];
+                }
+                var checkCount = checkData.length;
+                if ($.inArray(prodId, checkData) != -1) {
+                    checkCount = checkData.length - 1;
+                }
+                if ((parseInt(result.usedNum) + checkCount) < 5) {
+                    $.unique($.merge(checkData, [prodId]));
+                    ec.util.mapPut(OrderInfo.oneCardFiveNum, inParam.certNum, checkData);
+                    checkResult=true;
+                } else {
+                    $.alert("提示", "一个用户证件下不能有超过5个号码！");
+                }
+            }
+        } else {
+            $.alertM(response.data);
+        }
+        return checkResult;
+    };
+    /**
+     * 获取一证五号客户信息，新客户或者老用户
+     * @private
+     */
+    var _getCustInfo415 = function () {
+        var inParam = {};
+        if (OrderInfo.cust.custId == "-1") {//新客户
+            inParam={
+                "certType": OrderInfo.boCustIdentities.identidiesTypeCd,
+                "certNum": OrderInfo.boCustIdentities.identityNum,
+                "certAddress": OrderInfo.boCustInfos.addressStr,
+                "custName": OrderInfo.boCustInfos.name,
+            }
+        } else {//老客户
+            inParam = {
+                "certType": OrderInfo.cust.identityCd,
+                "certNum": OrderInfo.cust.idCardNumber,
+                "certAddress": OrderInfo.cust.addressStr,
+                "custName": OrderInfo.cust.partyName,
+                "custNameEnc": OrderInfo.cust.CN,
+                "certNumEnc": OrderInfo.cust.certNum,
+                "certAddressEnc": OrderInfo.cust.address
+            };
+        }
+        return inParam;
+    };
 	return {	
 		identidiesTypeCdChoose :_identidiesTypeCdChoose,
 		partyTypeCdChoose :_partyTypeCdChoose,
@@ -958,7 +1020,9 @@ order.cust = (function(){
 		isSelfChannel:_isSelfChannel,
 		goService:_goService,
 		identityTypeAuthSub:_identityTypeAuthSub,
-		bindCustQueryForChoose : _bindCustQueryForChoose
+		bindCustQueryForChoose : _bindCustQueryForChoose,
+		preCheckCertNumberRel       :       _preCheckCertNumberRel,
+		getCustInfo415              :       _getCustInfo415
 		
 	};
 })();

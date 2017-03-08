@@ -1262,6 +1262,15 @@ CacheData = (function() {
 			}
 			CacheData.getMyfavoriteSpecList(prodId).push(offerSpec);//添加到我已收藏的销售品列表中
 		};
+	/**
+	 * 根据证件id判断是否是政企客户
+	 * @param certTypeId 证件id
+	 * @returns {*} 布尔值
+	 * @private
+	 */
+	var _isGov = function (certTypeId) {
+		return "-1"!=$.inArray(certTypeId, _getGovCertType());
+	};
 	// 获取政企客户证件类型
 	var govCertTyteArr = [];
 	var _getGovCertType = function() {
@@ -1331,6 +1340,7 @@ CacheData = (function() {
 		getSearchs				: _getSearchs,
 		getSearchName			: _getSearchName,
 		getSearchCode			: _getSearchCode,
-		getGovCertType         : _getGovCertType
+		getGovCertType         : _getGovCertType,
+        isGov                   :_isGov
 	};
 })();

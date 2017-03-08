@@ -1507,12 +1507,27 @@ order.main = (function(){
 					OrderInfo.updateChooseUserInfos(prodId, order.cust.tmpChooseUserInfo);
 					$('#'+CONST.PROD_ATTR.PROD_USER+'_'+prodId+'_name').val(order.cust.tmpChooseUserInfo.partyName);
 					$('#'+CONST.PROD_ATTR.PROD_USER+'_'+prodId).val(order.cust.tmpChooseUserInfo.custId);
-					order.cust.tmpChooseUserInfo = {};
 					
 					easyDialog.close();
 //					$('#p_cust_identityNum_choose').val('');
 //					$('#chooseUserInfo td').html('');
 					$('#chooseUserList').hide();
+					//一证五号校验
+					 var inParam = {
+		                "certType": order.cust.tmpChooseUserInfo.identityCd,
+		                "certNum":order.cust.tmpChooseUserInfo.idCardNumber, 
+		                "certAddress": order.cust.tmpChooseUserInfo.addressStr,
+		                "custName": order.cust.tmpChooseUserInfo.partyName,
+		                "custNameEnc": order.cust.tmpChooseUserInfo.CN,
+		                "certNumEnc": order.cust.tmpChooseUserInfo.certNum,
+		                "certAddressEnc": order.cust.tmpChooseUserInfo.address
+		            };
+		            if(!order.cust.preCheckCertNumberRel(prodId, inParam)){
+		            	$('#'+CONST.PROD_ATTR.PROD_USER+'_'+prodId+'_name').val("");
+						$('#'+CONST.PROD_ATTR.PROD_USER+'_'+prodId).val("");
+		                return false;
+		            }
+		            order.cust.tmpChooseUserInfo = {};
 				} else {
 					$.alert("提示","请定位客户作为使用人");
 					return false;
