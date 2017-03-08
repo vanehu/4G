@@ -628,6 +628,16 @@ public class ProdController extends BaseController {
 	@RequestMapping(value = "/changeCard", method = {RequestMethod.POST})
 	public String changerCard(@RequestBody Map<String, Object> param, Model model, HttpServletResponse response) {
 		model.addAttribute("prodId",param.get("prodId"));
+		 SessionStaff sessionStaff2 = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+	                SysConstant.SESSION_KEY_LOGIN_STAFF);
+		 String iseditOperation = "-1";
+			try {
+				iseditOperation = this.staffBmo.checkOperatSpec(SysConstant.YCZJQX_TEST, sessionStaff2);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	        model.addAttribute("newCard", iseditOperation);
 		return "/order/order-change-card";
 	}
 }
