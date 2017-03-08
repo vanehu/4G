@@ -161,6 +161,8 @@
        <filter-name>OverFrequencyFilter</filter-name>
        <url-pattern>/cust/queryCust</url-pattern>
        <url-pattern>/mktRes/phonenumber/list</url-pattern>
+       <url-pattern>/mktRes/phonenumber/purchase</url-pattern>
+       <url-pattern>/mktRes/phonenumber/releaseErrorNum</url-pattern>
     </filter-mapping>
      
     <!-- 会话管理控制 

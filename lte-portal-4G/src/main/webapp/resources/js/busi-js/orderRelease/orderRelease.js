@@ -195,7 +195,7 @@ order.release = (function(){
 						},
 						fail:function(response){
 							$.unecOverlay();
-							$.alert("提示","请求可能发生异常，请稍后再试！");
+							$.alert("提示","请求可能发生异常或由于过频操作回话信息被清空，请稍后再试！");
 						}
 					});
 				}
@@ -213,7 +213,7 @@ order.release = (function(){
 			},
 			fail:function(response){
 				$.unecOverlay();
-				$.alert("提示","请求可能发生异常，请稍后再试！");
+				$.alert("提示","请求可能发生异常或由于过频操作回话信息被清空，请稍后再试！");
 			}
 		});
 	};

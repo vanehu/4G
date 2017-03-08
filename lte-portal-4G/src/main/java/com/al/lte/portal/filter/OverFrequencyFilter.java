@@ -48,6 +48,8 @@ public class OverFrequencyFilter extends OncePerRequestFilter{
         defaultExcludeUrls = new HashSet<String>(10);
         defaultExcludeUrls.add("/cust/queryCust");
         defaultExcludeUrls.add("/mktRes/phonenumber/list");
+        defaultExcludeUrls.add("/mktRes/phonenumber/purchase");
+        defaultExcludeUrls.add("/mktRes/phonenumber/releaseErrorNum");
     }
 	
 	
@@ -84,6 +86,10 @@ public class OverFrequencyFilter extends OncePerRequestFilter{
 			type = "custType";
 		}else if(path.startsWith("/mktRes/phonenumber/list")){
 			type = "phoneType";
+		}else if(path.startsWith("/mktRes/phonenumber/releaseErrorNum")){
+			type = "release";
+		}else if(path.startsWith("/mktRes/phonenumber/purchase")){
+			type = "purchase";
 		}
 		
 		long endTime = System.currentTimeMillis();
@@ -129,7 +135,7 @@ public class OverFrequencyFilter extends OncePerRequestFilter{
 							}else if("phoneType".equals(type)){
 								logmap.put("STATUS_CD", "号码查询次数超过阀值"+limit_count);
 							}else{
-								logmap.put("STATUS_CD", "未知");
+								logmap.put("STATUS_CD", "超过阀值"+limit_count);
 							}
 							logmap.put("INTF_URL", type);
 							logmap.put("IDENTIDIES_TYPE", " ");
