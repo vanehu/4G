@@ -134,6 +134,28 @@ public interface CustBmo {
 	 * 实名制证件图片添加水印
 	 */
 	public Map<String, Object> preHandleCustCertificate(String base64ImageStr, String venderId) throws IOException;
+
+    /**
+     * 客户资料同步接口
+     */
+    public Map<String, Object> custinfoSynchronize(Map<String, Object> dataBusMap, String optFlowNum, SessionStaff sessionStaff) throws Exception;
+
+    /**
+     * 证号关系预校验接口
+     */
+    public Map<String, Object> preCheckCertNumberRel(Map<String, Object> dataBusMap, String optFlowNum, SessionStaff sessionStaff) throws Exception;
+
+    /**
+     * 获取custId的seq
+     *
+     * @param paramMap
+     * @param optFlowNum
+     * @param sessionStaff
+     * @return
+     * @throws Exception
+     */
+    public Map<String, Object> getSeq(Map<String, Object> paramMap, String optFlowNum, SessionStaff sessionStaff) throws Exception;
+
 	/**
 	 * 实名核验
 	 * @param queryParam

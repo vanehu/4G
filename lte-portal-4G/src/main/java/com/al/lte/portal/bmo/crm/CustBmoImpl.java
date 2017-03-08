@@ -1,13 +1,10 @@
 package com.al.lte.portal.bmo.crm;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,10 +26,8 @@ import org.springframework.stereotype.Service;
 
 import com.al.ec.serviceplatform.client.DataBus;
 import com.al.ec.serviceplatform.client.ResultCode;
-import com.al.ecs.common.util.DateUtil;
 import com.al.ecs.common.util.EncodeUtils;
 import com.al.ecs.common.util.JsonUtil;
-import com.al.ecs.common.util.MDA;
 import com.al.ecs.exception.BusinessException;
 import com.al.ecs.exception.ErrorCode;
 import com.al.ecs.exception.InterfaceException;
@@ -883,6 +878,90 @@ public class CustBmoImpl implements CustBmo {
 		
 		return resultFlag;
 	}
+
+    /**
+     * 客户资料同步接口
+     *
+     * @param dataBusMap
+     * @param optFlowNum
+     * @param sessionStaff
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public Map<String, Object> custinfoSynchronize(Map<String, Object> dataBusMap, String optFlowNum, SessionStaff sessionStaff) throws Exception {
+        Map<String, Object> retnMap = new HashMap<String, Object>();
+        DataBus db = InterfaceClient.callService(dataBusMap,
+            PortalServiceCode.CUSTINFO_SYNCHRONIZE, optFlowNum, sessionStaff);
+        Map returnMap = db.getReturnlmap();
+        try {
+            String code = (String) returnMap.get("resultCode");
+            if (ResultCode.R_SUCC.equals(code)) {
+                retnMap = (HashMap) returnMap.get("result");
+            }
+            return retnMap;
+        } catch (Exception e) {
+            log.error("客户资料同步接口custInfoSynchronize服务返回的数据异常", e);
+            throw new BusinessException(ErrorCode.CUSTINFO_SYNCHRONIZE, dataBusMap, db.getReturnlmap(), e);
+        }
+    }
+
+    /**
+     * 证号关系预校验接口
+     *
+     * @param dataBusMap
+     * @param optFlowNum
+     * @param sessionStaff
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public Map<String, Object> preCheckCertNumberRel(Map<String, Object> dataBusMap, String optFlowNum, SessionStaff sessionStaff) throws Exception {
+        Map<String, Object> retnMap = new HashMap<String, Object>();
+        DataBus db = InterfaceClient.callService(dataBusMap,
+            PortalServiceCode.PRE_CHECK_CERT_NUMBER_REL, optFlowNum, sessionStaff);
+        Map returnMap = db.getReturnlmap();
+        try {
+            String code = (String) returnMap.get("resultCode");
+            if (ResultCode.R_SUCC.equals(code)) {
+                retnMap = (HashMap) returnMap.get("result");
+                retnMap.put("code", code);
+            }else{
+            	return returnMap;
+            }
+            return retnMap;
+        } catch (Exception e) {
+            log.error("证号关系预校验接口preCheckForCertAndNumberRel服务返回的数据异常", e);
+            throw new BusinessException(ErrorCode.PRE_CHECK_CERT_NUMBER_REL, dataBusMap, db.getReturnlmap(), e);
+        }
+    }
+
+    /**
+     * 获取custId的seq
+     *
+     * @param paramMap
+     * @param optFlowNum
+     * @param sessionStaff
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public Map<String, Object> getSeq(Map<String, Object> paramMap, String optFlowNum, SessionStaff sessionStaff) throws Exception {
+        Map<String, Object> retnMap = new HashMap<String, Object>();
+        DataBus db = InterfaceClient.callService(paramMap,
+            PortalServiceCode.GET_SEQ, optFlowNum, sessionStaff);
+        Map returnMap = db.getReturnlmap();
+        try {
+            String code = (String) returnMap.get("resultCode");
+            if (ResultCode.R_SUCC.equals(code)) {
+                retnMap = (HashMap) returnMap.get("result");
+            }
+            return retnMap;
+        } catch (Exception e) {
+            log.error("门户处理营业后台的获取seq查询接口服务返回的数据异常", e);
+            throw new BusinessException(ErrorCode.GET_SEQ, paramMap, db.getReturnlmap(), e);
+        }
+    }
 	public Map<String, Object> checkCustCert(Map<String, Object> dataBusMap,
 			String optFlowNum, SessionStaff sessionStaff) throws Exception {
 		DataBus db = InterfaceClient.callService(dataBusMap,

@@ -132,8 +132,8 @@ public class CustController extends BaseController {
 		httpSession.setAttribute("ValidateAccNbr", null);
 		httpSession.setAttribute("ValidateProdPwd", null);
 		httpSession.setAttribute("queryCustAccNbr", paramMap.get("acctNbr"));
-		
-		String diffPlace=MapUtils.getString(paramMap, "diffPlace","");
+
+		String diffPlace = MapUtils.getString(paramMap, "diffPlace", "");
 		String flag = propertiesUtils.getMessage(SysConstant.CHECKAREAIDFLAG);
 		if(SysConstant.ON.equals(flag)){
 			if("local".equals(diffPlace)){//如果是本地业务，判断传过来的地区是不是受理地区
@@ -465,8 +465,12 @@ public class CustController extends BaseController {
                 extCustInfoMap.put("userIdentityCd", MapUtils.getString(iMap, "identityTypeCd"));
 				extCustInfoMap.put("userIdentityName", MapUtils.getString(iMap, "identityName"));
 				extCustInfoMap.put("userIdentityNum", MapUtils.getString(iMap, "identityNum"));
+				extCustInfoMap.put("userCertNumEnc", MapUtils.getString(iMap, "certNumEnc"));
+				extCustInfoMap.put("userCertAddress", MapUtils.getString(iMap, "certAddress"));
+				extCustInfoMap.put("userCertAddressEnc", MapUtils.getString(iMap, "certAddressEnc"));
 				extCustInfoMap.put("accountName", MapUtils.getString(aMap, "accountName"));
 				extCustInfoMap.put("userName", MapUtils.getString(auMap, "useCustName"));
+				extCustInfoMap.put("userNameEnc", MapUtils.getString(auMap, "useCustNameEnc"));
 				extCustInfoMap.put("userCustId", MapUtils.getString(auMap, "useCustId"));
 				extCustInfoMap.put("isSame", MapUtils.getString(auMap, "isSame"));
 			}
@@ -1939,7 +1943,108 @@ public class CustController extends BaseController {
         }
         return jsonResponse;
     }
-    
+
+    /**
+     * 客户资料同步接口
+     *
+     * @param paramMap
+     * @param flowNum
+     * @return
+     */
+    @RequestMapping(value = "/custinfoSynchronize", method = {RequestMethod.POST})
+    @ResponseBody
+    public JsonResponse custinfoSynchronize(@RequestBody Map<String, Object> paramMap, @LogOperatorAnn String flowNum) {
+        SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+            SysConstant.SESSION_KEY_LOGIN_STAFF);
+        JsonResponse jsonResponse = null;
+        Map<String, Object> resultMap = new HashMap<String,Object>();
+        try {
+            resultMap = custBmo.custinfoSynchronize(paramMap, flowNum, sessionStaff);
+            if (MapUtils.isNotEmpty(resultMap)) {
+                jsonResponse = super.successed(resultMap);
+            } else {
+                jsonResponse = super.failed(resultMap, ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+            }
+        } catch (InterfaceException e) {
+            jsonResponse = super.failed(e,resultMap,ErrorCode.CUSTINFO_SYNCHRONIZE);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return jsonResponse;
+    }
+
+    /**
+     * 证号关系预校验接口
+     * @param paramMap
+     * @param flowNum
+     * @return
+     */
+    @RequestMapping(value = "/preCheckCertNumberRel", method = {RequestMethod.POST})
+    @ResponseBody
+    public JsonResponse preCheckCertNumberRel(@RequestBody Map<String, Object> paramMap, @LogOperatorAnn String flowNum) {
+        SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+            SysConstant.SESSION_KEY_LOGIN_STAFF);
+        JsonResponse jsonResponse = null;
+        Map<String, Object> resultMap = new HashMap<String, Object>();
+        Map<String, Object> resultMapErr = new HashMap<String, Object>();
+        try {
+            resultMap = custBmo.preCheckCertNumberRel(paramMap, flowNum, sessionStaff);
+            if(ResultCode.R_SUCC.equals(resultMap.get("code"))){
+            	jsonResponse = super.successed(resultMap);
+            }else{
+            	Map<String, Object> retnMap = new HashMap<String, Object>();
+            	retnMap = (Map<String, Object>) resultMap.get("result");
+            	if(retnMap !=null){
+            		resultMapErr.put("errData", retnMap.get("errorStack"));
+            	}
+            	resultMapErr.put("errCode", "020162");
+            	resultMapErr.put("paramMap", JsonUtil.toString(paramMap));
+            	resultMapErr.put("errMsg", resultMap.get("resultMsg"));
+            	resultMapErr.put("logSeqId", resultMap.get("transactionId"));
+            	resultMapErr.put("resultCode", "-1");
+            	jsonResponse = super.failed(resultMapErr, ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+            }
+            /*if (MapUtils.isNotEmpty(resultMap)) {
+                jsonResponse = super.successed(resultMap);
+            } else {
+                jsonResponse = super.failed(resultMap, ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+            }*/
+        } catch (InterfaceException e) {
+            jsonResponse = super.failed(e, paramMap,ErrorCode.PRE_CHECK_CERT_NUMBER_REL);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return jsonResponse;
+    }
+
+    /**
+     * 获取seq接口
+     * @param paramMap
+     * @param flowNum
+     * @return
+     */
+    @RequestMapping(value = "/getSeq", method = {RequestMethod.POST})
+    @ResponseBody
+    public JsonResponse getSeq(@RequestBody Map<String, Object> paramMap, @LogOperatorAnn String flowNum) {
+        SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+            SysConstant.SESSION_KEY_LOGIN_STAFF);
+        JsonResponse jsonResponse = null;
+        Map<String, Object> resultMap = new HashMap<String, Object>();
+        try {
+            resultMap = custBmo.getSeq(paramMap, flowNum, sessionStaff);
+            if (MapUtils.isNotEmpty(resultMap)) {
+                jsonResponse = super.successed(resultMap);
+            } else {
+                jsonResponse = super.failed(resultMap, ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+            }
+        } catch (InterfaceException e) {
+            jsonResponse = super.failed(e, resultMap, ErrorCode.GET_SEQ);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return jsonResponse;
+    }
+
     @RequestMapping(value = "/checkCustCert", method = RequestMethod.POST)
     @ResponseBody
     public JsonResponse checkCustCert(@RequestBody Map<String, Object> paramMap,
