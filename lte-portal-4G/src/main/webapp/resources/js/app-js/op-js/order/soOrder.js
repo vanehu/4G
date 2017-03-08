@@ -1980,38 +1980,13 @@ SoOrder = (function() {
 		busiOrder.data.boAccountRelas.push(boAccountRela);	
 		if (ec.util.isObj(OrderInfo.boProdAns) && OrderInfo.boProdAns.length > 0) {
             $.each(OrderInfo.boProdAns, function () {
-                var currUserInfo = null;
-                var parent = this;
-                $.each(OrderInfo.choosedUserInfos, function () {
-                    if (this.prodId == parent.prodId) {
-                        currUserInfo = this.custInfo;
-                    }
-                });
-                var ca = $.extend(true, {}, OrderInfo.boCertiAccNbrRel);
-                ca.accNbr = this.accessNumber;
-                ca.state = this.state;
-                if (ec.util.isObj(currUserInfo)) {
-                    ca.partyId = currUserInfo.custId;
-                    ca.certType = currUserInfo.identityCd;
-                    ca.certNum = currUserInfo.idCardNumber;
-                    ca.certNumEnc = currUserInfo.certNum;
-                    ca.custName = currUserInfo.partyName;
-                    ca.custNameEnc = currUserInfo.CN;
-                    ca.certAddress = currUserInfo.addressStr;
-                    ca.certAddressEnc = currUserInfo.address;
-                } else {
-                    ca.partyId = OrderInfo.cust.custId;
-                    if (OrderInfo.cust.custId == "-1") {//新建客户
-                        ca.certType = OrderInfo.boCustIdentities.identidiesTypeCd;
-                        ca.certNum = OrderInfo.boCustIdentities.identityNum;
-                        ca.custName = OrderInfo.boCustInfos.name;
-                        ca.certAddress = OrderInfo.boCustInfos.addressStr;
-                    } else {//老客户
-                        _setUserInfo(ca);
-                    }
-                }
-                ca.serviceType = "1000";
-                busiOrder.data.boCertiAccNbrRels.push(ca);
+            	 var ca = $.extend(true, {}, OrderInfo.boCertiAccNbrRel);
+                 ca.accNbr = this.accessNumber;
+                 ca.state = this.state;
+                 ca.partyId = OrderInfo.cust.custId;
+                 _setUserInfo(ca);
+                 ca.serviceType = "1000";
+                 busiOrder.data.boCertiAccNbrRels.push(ca);
             });
         }
 		return busiOrder;

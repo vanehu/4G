@@ -1340,7 +1340,7 @@ cust = (function(){
 	                "certNumEnc": OrderInfo.cust.certNum,
 	                "certAddressEnc": OrderInfo.cust.address
 	            };
-      if(OrderInfo.actionFlag ==1 && !order.cust.preCheckCertNumberRel(prodId, inParam)){
+      if(OrderInfo.busitypeflag ==1 && !cust.preCheckCertNumberRel("-1", inParam)){
           return false;
       }
 		return true;
