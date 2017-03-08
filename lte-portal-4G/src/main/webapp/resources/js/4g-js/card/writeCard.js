@@ -680,7 +680,7 @@ order.writeCard = (function(){
 			var paramLog = {
 					mkt_res_inst_code : $("#resultCardNo").val(),
 					iccid : $("#resultCardNo").val(),
-					card_source : cardDllInfoJson.dllName,
+					card_source : _cardDllInfoJson.dllName,
 					err_desc :"写卡失败，请将白卡取出！错误编码=" + writeCardResult+"详细错误请联系卡商["+_cardDllInfoJson.remark+"]确认",
 					acc_nbr : '',
 					contact_record : ''
