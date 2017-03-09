@@ -3149,7 +3149,7 @@ order.cust = (function(){
      */
     var _preCheckCertNumberRel = function (prodId, inParam) {
         var isON = query.common.queryPropertiesStatus("ONE_CERT_5_NUMBER_"+OrderInfo.cust.areaId.substr(0,3));
-        if(!isON){_choosedCustInfo
+        if(isON !="ON"){
             return true;
         }
         var checkResult = false;

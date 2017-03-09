@@ -937,9 +937,8 @@ order.cust = (function(){
      * 证号关系预校验接口
      */
     var _preCheckCertNumberRel = function (prodId, inParam) {
-    	//查分省前置校验开关
 	    var isON = offerChange.queryPortalProperties("ONE_CERT_5_NUMBER_"+OrderInfo.cust.areaId.substr(0,3));
-        if(!isON){_choosedCustInfo
+        if(isON !="ON"){
             return true;
         }
         var checkResult = false;
