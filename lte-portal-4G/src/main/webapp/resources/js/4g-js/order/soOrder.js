@@ -2944,7 +2944,7 @@ SoOrder = (function() {
 				OrderInfo.actionFlag == 1	||	//办套餐入口做新装
 				OrderInfo.actionFlag == 14 	||	//购手机入口做新装(OrderInfo.busitypeflag为1)
 				OrderInfo.actionFlag == 43	||	//返档
-				(OrderInfo.actionFlag == 22 && OrderInfo.busitypeflag == 21) || //补卡(换卡busitypeflag是22)
+				(OrderInfo.actionFlag == 22 && OrderInfo.busitypeflag == 22) || //补卡(换卡busitypeflag是21)
 				(OrderInfo.actionFlag == 23 && OrderInfo.busitypeflag == 13) || //异地补换卡
 				(OrderInfo.actionFlag == 6  && OrderInfo.isHandleCustNeeded) || //主副卡成员变更，加装新号码或加装老号码且客户证件非身份证
 				(OrderInfo.actionFlag == 2  && (OrderInfo.isHandleCustNeeded || isUimAction)) ||//套餐变更，加装新号码、加装老号码且客户证件非身份证或UIM变更
@@ -2958,18 +2958,26 @@ SoOrder = (function() {
 				}
 			}
 			
-			//新建经办人中不允许出现脱敏等非法字符
-			if(OrderInfo.ifCreateHandleCust){
-				if (OrderInfo.bojbrCustInfos.name.match(/[*]/ig) != null
-						|| OrderInfo.bojbrCustInfos.addressStr.match(/[*]/ig) != null
-						|| OrderInfo.bojbrCustIdentities.identityNum.match(/[*]/ig) != null) {
-					$.alert("错误","经办人信息中包含非法字符（*），请确认填写是否正确！");
+			//新建经办人中不允许出现脱敏等非法字符，异地补换卡特殊不校验
+			if(OrderInfo.ifCreateHandleCust && !(OrderInfo.actionFlag == 23 && OrderInfo.busitypeflag == 13)){
+				var invalidCharacterName = OrderInfo.bojbrCustInfos.name.match(/[!@#$%^&*()（）-=_+]/ig);
+				var invalidCharacterAddr = OrderInfo.bojbrCustInfos.addressStr.match(/[!@#$%^&*]/ig);
+				var invalidCharacterNum = OrderInfo.bojbrCustIdentities.identityNum.match(/[!@#$%^&*()（）]/ig);
+				if (invalidCharacterName != null){
+					$.alert("错误","经办人姓名包含非法字符" + invalidCharacterName + "，无法新建经办人客户，请确认填写是否正确！");
+					return false ;
+				} else if(invalidCharacterAddr != null){
+					$.alert("错误","经办人地址包含非法字符" + invalidCharacterAddr + "，无法新建经办人客户，请确认填写是否正确！");
+					return false ;
+				} else if(invalidCharacterNum != null){
+					$.alert("错误","经办人证件号包含非法字符" + invalidCharacterNum + "，无法新建经办人客户，请确认填写是否正确！");
 					return false ;
 				}
 				
 				if(ec.util.isObj(OrderInfo.bojbrCustInfos.telNumber)){
-					if(OrderInfo.bojbrPartyContactInfo.mobilePhone.match(/[*]/ig) != null){
-						$.alert("错误","经办人信息中包含非法字符（*），请确认填写是否正确！");
+					var invalidCharacterTel = OrderInfo.bojbrPartyContactInfo.mobilePhone.match(/[!@#$%^&*()（）]/ig);
+					if(invalidCharacterTel != null){
+						$.alert("错误","经办人联系号码包含非法字符" + invalidCharacterTel + "，无法新建经办人客户，请确认填写是否正确！");
 						return false ;
 					}
 				}

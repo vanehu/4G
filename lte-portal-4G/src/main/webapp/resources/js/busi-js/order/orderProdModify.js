@@ -165,9 +165,9 @@ order.prodModify = (function(){
 			addChange = "13";
 		}
 		if("25"==addChange){
-			addOrChange=21;
+			addOrChange=22;//补卡
 		}else if("26"==addChange){
-			addOrChange=22;
+			addOrChange=21;//换卡
 		}
 
 		if(OrderInfo.authRecord.resultCode!="0"  && OrderInfo.preBefore.prcFlag != "Y"){
