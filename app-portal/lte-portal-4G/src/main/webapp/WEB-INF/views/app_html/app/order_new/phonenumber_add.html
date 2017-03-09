@@ -420,6 +420,11 @@
 					 $("#nav-tab-2").removeClass("active in");
 			    	 $("#nav-tab-1").addClass("active in");
 				}
+				if(OrderInfo.actionFlag==1){//新装入口初始化校验一证五号
+					if(!cust.preCheckCertNumberRel()){
+						return;
+					}
+				}
 				var custId = OrderInfo.cust.custId;
 				if(custId !="-1" ){
 					//查分省前置校验开关

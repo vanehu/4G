@@ -37,9 +37,6 @@ order.phone = (function(){
 			tsnFlag : false
 	};
 	var _initPhone=function(){
-		if(!cust.preCheckCertNumberRel()){//一证五号校验
-			return;
-		}
 		OrderInfo.order.step=1;
 		OrderInfo.busitypeflag=1;
 		_initInParam();
@@ -454,6 +451,9 @@ order.phone = (function(){
 				$.alert("提示","<br/>在订购套餐之前请先进行客户定位！");
 				return;
 			}
+			if(!cust.preCheckCertNumberRel()){//一证五号校验
+				return;
+			}
 			//构造参数，填单
 			if (buyChk.hyType==""){
 				$.alert("提示","<br/>请选择合约!");
@@ -491,8 +491,6 @@ order.phone = (function(){
 		order.phone.isLj=false;
 		OrderInfo.actionTypeName = "订购";
 		//加载选号页面
-		 order.phoneNumber.queryPhoneNbrPool();
-		 order.phoneNumber.queryApConfig();
 		 order.phoneNumber.initPhonenumber();
 		 OrderInfo.order.step = 2;
 		 $("#tab1_li").removeClass("active");

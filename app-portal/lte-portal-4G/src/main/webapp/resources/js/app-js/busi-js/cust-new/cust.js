@@ -2643,7 +2643,7 @@ cust = (function(){
 					common.callCloseWebview();
 				});
 				$("#modal-title").html(title);
-				$("#modal-content").html("一个用户证件下不能有超过5个号码！");
+				$("#modal-content").html("一个用户证件下不能有超过5个号码,请重新选择用户！");
 				$("#alert-modal").modal();
 			} else {
 				cust.usedNum = parseInt(result.usedNum) + 1;

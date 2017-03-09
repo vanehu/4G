@@ -26,11 +26,6 @@ order.phoneNumber = (function(){
 	};
 	
 	var _initPhonenumber=function(){
-		if(OrderInfo.actionFlag==1 && order.service.enter=="3"){//新装选号入口初始化校验一证五号
-			if(!cust.preCheckCertNumberRel()){
-				return;
-			}
-		}
 		order.phoneNumber.queryPhoneNbrPool();//查询号池
 	    order.phoneNumber.queryApConfig();//查询号码段和号码类型 
 		_btnQueryPhoneNumber(1);
