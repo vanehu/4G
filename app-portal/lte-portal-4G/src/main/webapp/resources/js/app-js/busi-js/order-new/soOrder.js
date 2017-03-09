@@ -738,6 +738,37 @@ SoOrder = (function() {
 			state : "ADD"
 		}
 		];
+        if (!cust.isCovCust(OrderInfo.cust.identityCd)) {// 判断是否是政企客户，为个人客户时封装证号关系节点
+            busiOrderAdd.data.boCertiAccNbrRels = [];
+            if(cust.readIdCardUser.newUserFlag=="true"){//新客户
+            	 var boCertiAccNbrRel={
+            			 "accNbr":order.prodModify.choosedProdInfo.accNbr,
+                         "state": "ADD",
+                         "partyId" : cust.readIdCardUser.custId,
+                         "certType": cust.readIdCardUser.identityCd,
+                         "certNum" : cust.readIdCardUser.idCardNumber,
+                         "custName" : cust.readIdCardUser.partyName,
+                         "certAddress": cust.readIdCardUser.addressStr,
+                         "serviceType": "1300"// 返档	 
+            	 }
+            }else{
+                var boCertiAccNbrRel={
+                        "accNbr":order.prodModify.choosedProdInfo.accNbr,
+                        "state": "ADD",
+                        "partyId" : cust.readIdCardUser.custId,
+                        "certType": cust.readIdCardUser.identityCd,
+                        "certNum" : cust.readIdCardUser.idCardNumber,
+                        "certNumEnc": cust.readIdCardUser.certNum,
+                        "custName" : cust.readIdCardUser.partyName,
+                        "custNameEnc": cust.readIdCardUser.CN,
+                        "certAddress": cust.readIdCardUser.addressStr,
+                        "certAddressEnc": cust.readIdCardUser.address,
+                        "serviceType": "1300"// 返档
+                    }
+            }
+
+            busiOrderAdd.data.boCertiAccNbrRels.push(boCertiAccNbrRel);
+        }
 		busiOrders.push(busiOrderAdd);
 		if (data.boAccountInfos != undefined || data.boAccountInfos != null) {
 			// 新增帐户节点
@@ -1062,11 +1093,14 @@ SoOrder = (function() {
 				//boProd2Tds : [], //UIM卡节点信息
 				bo2Coupons : [],  //物品信息节点
 				boAccountRelas : [], //帐户关联关系节
+				//boCertiAccNbrRels : [], //证号关联关系节点
 				boProdStatuses : [], //产品状态节点
 				busiOrderAttrs : [] //订单属性节点
 			}
 		};
-		
+		if(OrderInfo.actionFlag==1 || OrderInfo.actionFlag==14){//新装添加证号关系节点
+			busiOrder.data.boCertiAccNbrRels=[];
+		}
 		var prodStatus = CONST.PROD_STATUS_CD.NORMAL_PROD;
 		//封装产品状态节点
 		busiOrder.data.boProdStatuses.push({
@@ -1171,6 +1205,39 @@ SoOrder = (function() {
 		};
 		
 		busiOrder.data.boAccountRelas.push(boAccountRela);
+		//新装：一证五号需封装证号信息节点
+		if(OrderInfo.actionFlag==1 || OrderInfo.actionFlag==14){
+			if (ec.util.isObj(OrderInfo.boProdAns) && OrderInfo.boProdAns.length > 0) {
+				var ca={};
+				if (OrderInfo.cust.custId == "-1") {//新建客户
+                    ca.certType = OrderInfo.cust.identityCd;
+                    ca.certNum = OrderInfo.cust.idCardNumber;
+                    ca.custName = OrderInfo.cust.partyName;
+                    ca.certAddress =OrderInfo.cust.addressStr;
+                    if(OrderInfo.cust.identityCd!="1"){//非身份证类型
+                    	ca.certNum=OrderInfo.cust.identityNum;	
+        			}
+                } else {//老客户
+                    ca.certType = OrderInfo.cust.identityCd;
+                    ca.certNum = OrderInfo.cust.idCardNumber;
+                    ca.custName = OrderInfo.cust.partyName;
+                    ca.certAddress = OrderInfo.cust.addressStr;
+                    ca.certNumEnc = OrderInfo.cust.certNum.replace(/&#61/g,"=");
+                    ca.custNameEnc = OrderInfo.cust.CN.replace(/&#61/g,"=");
+                    ca.certAddressEnc = OrderInfo.cust.address.replace(/&#61/g,"=");
+        
+                }
+				ca.partyId=OrderInfo.cust.custId;
+				ca.serviceType = "1000";
+				ca.state="ADD";
+				$.each(OrderInfo.boProdAns, function () {
+					if(this.prodId==prodId){
+					   ca.accNbr=this.accessNumber;
+					   busiOrder.data.boCertiAccNbrRels.push(ca);
+					}
+				});
+			}
+		}
 		return busiOrder;
 	};
 	

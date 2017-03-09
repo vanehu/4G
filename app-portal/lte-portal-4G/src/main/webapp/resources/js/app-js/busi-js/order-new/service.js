@@ -17,6 +17,11 @@ order.service = (function(){
 	var _showTab3=false;
 	
 	var _init = function(){
+		if(OrderInfo.actionFlag==1 && order.service.enter=="1"){//新装选套餐入口初始化校验一证五号
+			if(!cust.preCheckCertNumberRel()){
+				return;
+			}
+		}
 		order.service.searchPack(0,"init");
 	};
 	

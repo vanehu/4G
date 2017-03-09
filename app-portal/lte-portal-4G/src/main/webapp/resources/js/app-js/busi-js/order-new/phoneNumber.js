@@ -26,6 +26,13 @@ order.phoneNumber = (function(){
 	};
 	
 	var _initPhonenumber=function(){
+		if(OrderInfo.actionFlag==1 && order.service.enter=="3"){//新装选号入口初始化校验一证五号
+			if(!cust.preCheckCertNumberRel()){
+				return;
+			}
+		}
+		order.phoneNumber.queryPhoneNbrPool();//查询号池
+	    order.phoneNumber.queryApConfig();//查询号码段和号码类型 
 		_btnQueryPhoneNumber(1);
 		
 	};
@@ -436,6 +443,11 @@ order.phoneNumber = (function(){
 	};
 	//号卡新装选择号码（主卡和副卡通用）
 	var _chooseCardPhoneNum = function(obj,purchas,memberRoleCd,needPsw) {
+		if(mainFlag=="true"){
+			memberRoleCd = CONST.MEMBER_ROLE_CD.MAIN_CARD;
+		}else{
+			memberRoleCd = CONST.MEMBER_ROLE_CD.VICE_CARD;
+		}
 		// 号码资源状态前置校验
 		var flagQueryRes = $.callServiceAsJson(contextPath + "/common/queryPortalProperties", {"propertiesKey": "NUMBER_CHECK_" + (OrderInfo.staff.soAreaId+"").substring(0,3)});	
         var numberCheckFlag = flagQueryRes.code == 0 ? flagQueryRes.data : "";

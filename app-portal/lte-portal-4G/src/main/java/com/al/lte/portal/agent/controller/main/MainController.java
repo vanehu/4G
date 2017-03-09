@@ -63,14 +63,14 @@ public class MainController extends BaseController {
 			HttpServletRequest request, HttpServletResponse response) {
 		model.addAttribute("menu", request.getParameter("menu"));
 		model.addAttribute("app_flag", session.getAttribute(SysConstant.SESSION_KEY_APP_FLAG));
-		return "/public/app-unify-entrance";
+		return "/public/agent-unify-entrance";
 	}
 	
 	@RequestMapping(value = "/test", method = RequestMethod.GET)
 	@SessionValid(false)
 	public String test(HttpSession session, Model model,
 			HttpServletRequest request, HttpServletResponse response) {
-		return "/public/app-unify";
+		return "/public/agent-unify";
 	}
 	
 	@LogOperatorAnn(switchs = Switch.OFF)

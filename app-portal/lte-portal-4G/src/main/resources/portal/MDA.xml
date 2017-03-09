@@ -1660,7 +1660,7 @@
 			'NEWUIFLAG_861':'OFF',<!-- 陕西 -->
 			'NEWUIFLAG_842':'OFF',<!-- 湖北 -->
 			'NEWUIFLAG_835':'OFF',<!-- 福建 -->
-			'NEWUIFLAG_832':'OFF',<!-- 江苏 -->
+			'NEWUIFLAG_832':'ON',<!-- 江苏 -->
 			'NEWUIFLAG_846':'OFF',<!-- 海南 -->
 			'NEWUIFLAG_864':'OFF',<!-- 宁夏 -->
 			'NEWUIFLAG_814':'OFF',<!-- 山西 -->

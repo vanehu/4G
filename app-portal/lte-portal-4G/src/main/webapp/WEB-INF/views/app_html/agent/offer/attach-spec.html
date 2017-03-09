@@ -49,9 +49,12 @@
 	      				    <span id="span_${prodId}_${item.servSpecId}">${item.servSpecName}</span
 	      				 ></a>
 	      		  <#else>
-			             <a href="javascript:void(0);"  onclick="AttachOffer.closeServSpec(${prodId},${item.servSpecId},'${item.servSpecName}','${item.ifParams}')" id="li_${prodId}_${item.servSpecId}" offerSpecId="${item.servSpecId}" isdel='N' class="list-group-item abtn02 icon-del">
+			             <a href="javascript:void(0);"   id="li_${prodId}_${item.servSpecId}" offerSpecId="${item.servSpecId}" isdel='N' class="list-group-item abtn02 icon-del">
 			          <span id="span_${prodId}_${item.servSpecId}">${item.servSpecName}</span>
-			          <span id="span_remove_${prodId}_${item.servSpecId}" class="glyphicon glyphicon-remove pull-right" aria-hidden="true"></span>
+			          <span id="span_remove_${prodId}_${item.servSpecId}" onclick="AttachOffer.closeServSpec(${prodId},${item.servSpecId},'${item.servSpecName}','${item.ifParams}')" class="glyphicon glyphicon-remove pull-right" aria-hidden="true"></span>
+			          <#if item.ifParams =="Y" && item.servSpecId?? && item.servSpecId!="">
+		              <p id="can_${prodId}_${item.servSpecId}"  isset="N"  class="abtn01 btn-span" style="display: inline"><button type="button" class="btn btn-info" style="right:40px;width:48px;top:13px;" data-toggle="modal" data-target="#setting" onclick="AttachOffer.showServParam(${prodId},${item.servSpecId});">参</button></p>
+	              </#if>
 			         </a>
 			        </#if> 
                 </#list>

@@ -3,7 +3,7 @@
 	<head>
 		<meta charset="utf-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
-		<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0;" name="viewport" />
+		<meta content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, target-densityDpi=device-dpi" name="viewport" />
 		<title>业务受理</title>
 		<META HTTP-EQUIV="Pragma" CONTENT="no-cache"> 
 		<META HTTP-EQUIV="Cache-Control" CONTENT="no-store,no-cache,must-revalidate"> 
@@ -42,6 +42,15 @@
 		<script>
 		window.onload= function() 
 		{  
+			var webSwitch="true";
+			var myCust=window.localStorage.getItem("OrderInfo.cust");
+			if("true"==webSwitch && myCust!=null){
+			  var myCust1=$.parseJSON(myCust);
+			  myCust1.CN="";
+			  
+			  myCust=JSON.stringify(myCust1);//CN值不合法，传入后台会报400错误，故去掉该值。
+			  window.localStorage.setItem("OrderInfo.cust", myCust);
+			}
 			var app_flag="${app_flag}";//1表示来至手机端，空值表示来至浏览器
 			if(!app_flag){//方便浏览器开发
 				var params={};

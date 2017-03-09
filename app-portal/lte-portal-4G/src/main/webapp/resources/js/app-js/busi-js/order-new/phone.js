@@ -37,6 +37,9 @@ order.phone = (function(){
 			tsnFlag : false
 	};
 	var _initPhone=function(){
+		if(!cust.preCheckCertNumberRel()){//一证五号校验
+			return;
+		}
 		OrderInfo.order.step=1;
 		OrderInfo.busitypeflag=1;
 		_initInParam();
