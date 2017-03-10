@@ -3733,7 +3733,7 @@ order.cust = (function(){
                 "certNum": OrderInfo.boCustIdentities.identityNum,
                 "certAddress": OrderInfo.boCustInfos.addressStr,
                 "custName": OrderInfo.boCustInfos.name
-            }
+            };
         } else {//老客户
             inParam = {
                 "certType": OrderInfo.cust.identityCd,
