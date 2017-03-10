@@ -3732,7 +3732,7 @@ order.cust = (function(){
                 "certType": OrderInfo.boCustIdentities.identidiesTypeCd,
                 "certNum": OrderInfo.boCustIdentities.identityNum,
                 "certAddress": OrderInfo.boCustInfos.addressStr,
-                "custName": OrderInfo.boCustInfos.name,
+                "custName": OrderInfo.boCustInfos.name
             }
         } else {//老客户
             inParam = {
