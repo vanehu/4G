@@ -442,8 +442,12 @@ order.service = (function(){
 			$.alert("提示","加装数量已经超过能加装的最大数量【"+maxNum+"】!");
 			return;
 		}
-		if((parseInt(newnum)+parseInt(ec.util.mapGet(OrderInfo.oneCardFiveNum.usedNum,order.cust.getCustInfo415Flag(order.cust.getCustInfo415()))))>4){
-            $.alert("提示","此用户下已经有"+ec.util.mapGet(OrderInfo.oneCardFiveNum.usedNum,order.cust.getCustInfo415Flag(order.cust.getCustInfo415()))+"个号码，多余的副卡请选择其它使用人后继续办理业务！");
+		var usedNum=ec.util.mapGet(OrderInfo.oneCardFiveNum.usedNum,order.cust.getCustInfo415Flag(order.cust.getCustInfo415()));
+		if(!ec.util.isObj(usedNum)){
+            usedNum = 0;
+        }
+		if((parseInt(newnum)+parseInt(usedNum))>4){
+            $.alert("提示","此用户下已经有"+usedNum+"个号码，多余的副卡请选择其它使用人后继续办理业务！");
         }
 		if(OrderInfo.actionFlag!=14){ //合约套餐不初始化
 			order.main.buildMainView(param);	
@@ -629,7 +633,7 @@ order.service = (function(){
 			},
 			"done" : function(response){
 				if(!response){
-					 response.data='<div style="margin:2px 0 2px 0;width:100%,height:100%;text-align:center;"><strong>页面显示失败,稍后重试</strong></div>';
+					 response.data='<div style="margin:2px 0 2px 0;width:100%;height:100%;text-align:center;"><strong>页面显示失败,稍后重试</strong></div>';
 				}
 				if(response.code != 0) {
 					$.alert("提示","页面显示失败,稍后重试");

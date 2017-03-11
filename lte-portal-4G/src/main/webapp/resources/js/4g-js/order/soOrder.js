@@ -2823,30 +2823,44 @@ SoOrder = (function() {
             $.each(OrderInfo.boProdAns, function () {
                 var currUserInfo = null;
                 var parent = this;
-                $.each(OrderInfo.choosedUserInfos, function () {
-                    if (this.prodId == parent.prodId) {
-                        currUserInfo = this;
-                    }
-                });
                 var ca = $.extend(true, {}, OrderInfo.boCertiAccNbrRel);
+                var isON = query.common.queryPropertiesStatus("REAL_USER_"+OrderInfo.cust.areaId.substr(0,3));//新使用人开关
+                if (isON) {
+                    $.each(OrderInfo.subUserInfos, function () {
+                        if (this.prodId == parent.prodId && this.servType == "1") {//servType：1的为使用人，2为责任人
+                            currUserInfo = this;
+                        }
+                    });
+                } else {
+                    $.each(OrderInfo.choosedUserInfos, function () {
+                        if (this.prodId == parent.prodId) {
+                            currUserInfo = this;
+                        }
+                    });
+                }
+
                 ca.accNbr = this.accessNumber;
                 ca.state = this.state;
                 if (ec.util.isObj(currUserInfo)) {
                     ca.partyId = currUserInfo.custId;
-                    ca.certType = currUserInfo.identityCd;
-                    ca.certNum = currUserInfo.idCardNumber;
-                    ca.certNumEnc = currUserInfo.certNum;
-                    ca.custName = currUserInfo.partyName;
-                    ca.custNameEnc = currUserInfo.CN;
-                    ca.certAddress = currUserInfo.addressStr;
-                    ca.certAddressEnc = currUserInfo.address;
+                    ca.certType = isON ? currUserInfo.orderIdentidiesTypeCd : currUserInfo.identityCd;
+                    ca.certNum = isON?currUserInfo.identityNum:currUserInfo.idCardNumber;
+                    ca.certNumEnc = isON ? currUserInfo.certNumEnc : currUserInfo.certNum;
+                    ca.custName = isON ? currUserInfo.custName : currUserInfo.partyName;
+                    ca.custNameEnc = isON ? currUserInfo.custNameEnc : currUserInfo.CN;
+                    ca.certAddress = isON ? currUserInfo.orderAttrAddr : currUserInfo.addressStr;
+                    ca.certAddressEnc = isON ? currUserInfo.certAddressEnc : currUserInfo.address;
                 } else {
                     ca.partyId = OrderInfo.cust.custId;
                     if (OrderInfo.cust.custId == "-1") {//新建客户
-                        ca.certType = OrderInfo.boCustIdentities.identidiesTypeCd;
-                        ca.certNum = OrderInfo.boCustIdentities.identityNum;
-                        ca.custName = OrderInfo.boCustInfos.name;
-                        ca.certAddress = OrderInfo.boCustInfos.addressStr;
+                        if (CacheData.isGov(OrderInfo.boCustIdentities.identidiesTypeCd)) {//政企客户新建没使用人，不封装证号关系节点
+                            return true;
+                        } else {
+                            ca.certType = OrderInfo.boCustIdentities.identidiesTypeCd;
+                            ca.certNum = OrderInfo.boCustIdentities.identityNum;
+                            ca.custName = OrderInfo.boCustInfos.name;
+                            ca.certAddress = OrderInfo.boCustInfos.addressStr;
+                        }
                     } else {//老客户
                         _setUserInfo(ca);
                     }

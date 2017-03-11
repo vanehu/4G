@@ -3694,6 +3694,9 @@ order.cust = (function(){
         }
         var checkResult = false;
         var param = $.extend(true, {"certType": "", "certNum": "", "certAddress": "", "custName": ""}, inParam);
+        if(CacheData.isGov(param.certType)){//过滤政企的证件类型，政企的证件不调用一证五号校验
+            return true;
+        }
         var response=$.callServiceAsJson(contextPath + "/cust/preCheckCertNumberRel", JSON.stringify(param));
         if (response.code == 0) {
             var result = response.data;
@@ -3735,15 +3738,27 @@ order.cust = (function(){
                 "custName": OrderInfo.boCustInfos.name
             };
         } else {//老客户
-            inParam = {
-                "certType": OrderInfo.cust.identityCd,
-                "certNum": OrderInfo.cust.idCardNumber,
-                "certAddress": OrderInfo.cust.addressStr,
-                "custName": OrderInfo.cust.partyName,
-                "custNameEnc": OrderInfo.cust.CN,
-                "certNumEnc": OrderInfo.cust.certNum,
-                "certAddressEnc": OrderInfo.cust.address
-            };
+            if(CacheData.isGov(OrderInfo.cust.identityCd)){//如果是政企客户取政企使用人信息
+                inParam = {
+                    "certType": OrderInfo.cust.userIdentityCd,
+                    "certNum": OrderInfo.cust.userIdentityNum,
+                    "certAddress": OrderInfo.cust.userCertAddress,
+                    "custName": OrderInfo.cust.userName,
+                    "custNameEnc": OrderInfo.cust.userNameEnc,
+                    "certNumEnc": OrderInfo.cust.userCertNumEnc,
+                    "certAddressEnc": OrderInfo.cust.userCertAddressEnc
+                }
+            }else{
+                inParam = {
+                    "certType": OrderInfo.cust.identityCd,
+                    "certNum": OrderInfo.cust.idCardNumber,
+                    "certAddress": OrderInfo.cust.addressStr,
+                    "custName": OrderInfo.cust.partyName,
+                    "custNameEnc": OrderInfo.cust.CN,
+                    "certNumEnc": OrderInfo.cust.certNum,
+                    "certAddressEnc": OrderInfo.cust.address
+                };
+            }
         }
         return inParam;
     };
