@@ -1946,7 +1946,7 @@ order.cust = (function(){
 	                "certNumEnc": OrderInfo.cust.certNum,
 	                "certAddressEnc": OrderInfo.cust.address
 	            };
-       if(OrderInfo.actionFlag ==1 && !order.cust.preCheckCertNumberRel("-1", inParam)){
+       if(OrderInfo.actionFlag ==0 && !order.cust.preCheckCertNumberRel("-1", inParam)){
            return false;
        }
 		return true;
@@ -3149,7 +3149,7 @@ order.cust = (function(){
      */
     var _preCheckCertNumberRel = function (prodId, inParam) {
         var isON = query.common.queryPropertiesStatus("ONE_CERT_5_NUMBER_"+OrderInfo.cust.areaId.substr(0,3));
-        if(isON !="ON"){
+        if(!isON){
             return true;
         }
         var checkResult = false;
