@@ -8,7 +8,7 @@
 <#if offerRole.prodInsts?? && (offerRole.prodInsts?size>0)>
 <#list offerRole.prodInsts as prod> <#assign prodId = prod.prodInstId />
 <li class="tab-list" name="tab-li2" id="tab-li2">
-	<ul name="card-list2" class="choice-list-box ${prodId}">
+	<ul name="card-list2" class="choice-list-box ${prodId} h-scroll" >
 		<li name="card2"><i class="iconfont pull-left">&#xe6b9;</i> <span
 			class="list-title"> <span class="title-lg" id="phoneNumSpan2_${prodId}"></span>
 				<span class="subtitle font-secondary" id="cardNameSpan2_${prodId}"></span>

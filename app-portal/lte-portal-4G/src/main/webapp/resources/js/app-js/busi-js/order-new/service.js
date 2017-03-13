@@ -16,12 +16,15 @@ order.service = (function(){
 	var _isAll = false;
 	var _showTab3=false;
 	
+	var _isCloudOffer=false;//是否云盘套餐
+	
 	var _init = function(){
 		order.service.searchPack(0,"init");
 	};
 	
 	//主套餐查询
 	var _searchPack = function(flag,initFlag,scroller){
+		order.service.isCloudOffer=false;
 		$("#offer-rule").hide();
 		$("#offer-list").show();
 		var custId = OrderInfo.cust.custId;
@@ -387,6 +390,16 @@ order.service = (function(){
 								 $("#nav-tab-3").removeClass("active in");
 						    	 $("#nav-tab-5").addClass("active in");
 							}else if(order.service.enter=="1"){//套餐入口跳往选号
+								//天翼云盘套餐带出虚拟号码，不走选号界面
+								$.each(offerSpec.offerRoles, function () {
+									$.each(this.roleObjs, function () {
+										if (this.objType == CONST.OBJ_TYPE.PROD && this.objId == CONST.PROD_SPEC.PROD_CLOUD_OFFER) {
+											order.service.isCloudOffer=true;
+											 order.phoneNumber.getVirtualNum(CONST.MEMBER_ROLE_CD.MAIN_CARD);
+										}
+									});
+								 });
+								 if(order.service.isCloudOffer) return;//云盘套餐自动带出虚拟号码，不走选号页面
 								 order.phoneNumber.initPhonenumber();
 								 OrderInfo.order.step = 2;
 								 $("#tab2_li").removeClass("active");
@@ -551,7 +564,8 @@ var _scroll = function(scrollObj){
 		closeRule              :_closeRule,
 		init			:_init,
 		selectOffer		:_selectOffer,
-		scroll	: _scroll
+		scroll	: _scroll,
+		isCloudOffer  :_isCloudOffer
 	};
 })();
 

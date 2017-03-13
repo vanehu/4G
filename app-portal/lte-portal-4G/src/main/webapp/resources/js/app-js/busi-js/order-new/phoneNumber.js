@@ -873,6 +873,103 @@ order.phoneNumber = (function(){
 		}
 	};
 	
+
+		/**
+		 * 企业云盘选套餐自带出号码（虚拟号码获取,暂时只有主卡）
+		 */
+	var _getVirtualNum = function(memberRoleCd) {// 主副卡标志
+		var param = {
+			seqType : "cloudAccNbr"
+		}
+		var url = contextPath + "/app/cust/getSeq";
+		$.ecOverlay("<strong>云套餐号码获取中，请稍等...</strong>");
+		var response = $.callServiceAsJson(url, param);
+		$.unecOverlay();
+		if (response.code == 0) {
+			if (response.data) {
+				var phoneNumber=response.data.seq;
+				var areaId = "";
+				var areaCode = "";
+				if (areaId == null || areaId == "") {
+					areaId = OrderInfo.staff.soAreaId;
+				}
+				if (areaCode == null || areaCode == "") {
+					areaCode = OrderInfo.staff.areaCode;
+				}
+				var selectedLevel = "";
+				_boProdAn.accessNumber = phoneNumber;
+				_boProdAn.anTypeCd = "";
+				_boProdAn.level = selectedLevel;
+				_boProdAn.org_level = "";
+				_boProdAn.anId = "1";
+				_boProdAn.areaId = areaId;
+				_boProdAn.areaCode = areaCode;
+				_boProdAn.memberRoleCd = memberRoleCd;
+				_boProdAn.preStore = "";
+				_boProdAn.minCharge = "";
+				_boProdAn.virtualFlag = "1";
+				order.service.boProdAn = _boProdAn;
+				var prodId;
+				if (memberRoleCd == CONST.MEMBER_ROLE_CD.MAIN_CARD) {
+					prodId = -1;
+				}
+				var isExists = false;
+				if (OrderInfo.boProdAns.length > 0) {// 判断是否选过
+					for (var i = 0; i < OrderInfo.boProdAns.length; i++) {
+						if (OrderInfo.boProdAns[i].prodId == prodId) {
+							OrderInfo.boProdAns[i].accessNumber = phoneNumber;
+							OrderInfo.boProdAns[i].anTypeCd = "";
+							OrderInfo.boProdAns[i].pnLevelId = selectedLevel;
+							OrderInfo.boProdAns[i].anId = "1";
+							OrderInfo.boProdAns[i].areaId = areaId;
+							OrderInfo.boProdAns[i].areaCode = areaCode;
+							OrderInfo.boProdAns[i].memberRoleCd = memberRoleCd;
+							OrderInfo.boProdAns[i].preStore = "";
+							OrderInfo.boProdAns[i].minCharge = "";
+							isExists = true;
+							if (OrderInfo.offerSpec.offerRoles != undefined) {
+								OrderInfo.setProdAn(OrderInfo.boProdAns[i]); // 保存到产品实例列表里面
+							}
+							break;
+						}
+					}
+				}
+				if (!isExists) {
+					var param = {
+						prodId : prodId, // 产品id,-1(主),-2（副）-3……
+						accessNumber : phoneNumber, // 接入号
+						anChooseTypeCd : "2", // 接入号选择方式,自动生成或手工配号，默认传2
+						anId : "1", // 接入号ID
+						pnLevelId : selectedLevel,
+						anTypeCd : "", // 号码类型
+						state : "ADD", // 动作 ,新装默认ADD
+						areaId : areaId,
+						areaCode : areaCode,
+						memberRoleCd : memberRoleCd,
+						preStore : "",
+						minCharge : ""
+					};
+					OrderInfo.boProdAns.push(param);
+				}
+				OrderInfo.order.step = 3;
+				$("#tab2_li").removeClass("active");
+				$("#tab1_li").removeClass("active");
+				$("#nav-tab-2").removeClass("active in");
+				$("#nav-tab-1").removeClass("active in");
+				$("#tab3_li").removeClass("active");
+				$("#nav-tab-3").addClass("active in");
+				$("#offer_a").hide();
+				order.main.buildMainView();// 选号入口跳转促销
+			}
+		} else if (response.code == -2) {
+			$.alertM(response.data);
+			return;
+		} else {
+			$.alert("提示", "企业版云套餐虚拟号码获取失败,原因:[接口异常]");
+			return;
+		}
+	};
+	
 	return {
 		secondaryCarNum :_secondaryCarNum,
 		initPhonenumber:_initPhonenumber,
@@ -893,7 +990,8 @@ order.phoneNumber = (function(){
 	    clearError:_clearError,
 	    showPhoneNumSearchModal:_showPhoneNumSearchModal,
 	    setMainFlag            :_setMainFlag,
-	    scroll	: _scroll
+	    scroll	: _scroll,
+	    getVirtualNum  :_getVirtualNum
 	};
 })();
 

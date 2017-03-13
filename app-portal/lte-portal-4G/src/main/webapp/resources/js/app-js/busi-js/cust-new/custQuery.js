@@ -286,7 +286,7 @@ custQuery = (function(){
 				$(this).removeAttr("selected");
 		});
 		
-		 判断是否是政企客户
+		//判断是否是政企客户
 		var isGovCust = false;
 		for (var i = 0; i <= CacheData.getGovCertType().length; i ++) {
 			if (_choosedCustInfo.identityCd == CacheData.getGovCertType()[i]) {

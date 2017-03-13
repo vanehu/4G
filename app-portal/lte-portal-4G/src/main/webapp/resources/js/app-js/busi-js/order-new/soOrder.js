@@ -738,7 +738,10 @@ SoOrder = (function() {
 			state : "ADD"
 		}
 		];
-        if (!cust.isCovCust(OrderInfo.cust.identityCd)) {// 判断是否是政企客户，为个人客户时封装证号关系节点
+		var propertiesKey = "ONE_CERT_5_NUMBER_"
+			+ (OrderInfo.staff.soAreaId + "").substring(0, 3);
+	    var isON = offerChange.queryPortalProperties(propertiesKey);
+        if (isON=="ON" && !cust.isCovCust(OrderInfo.cust.identityCd)) {// 判断是否是政企客户，为个人客户时封装证号关系节点
             busiOrderAdd.data.boCertiAccNbrRels = [];
             if(cust.readIdCardUser.newUserFlag=="true"){//新客户
             	 var boCertiAccNbrRel={
@@ -1098,9 +1101,14 @@ SoOrder = (function() {
 				busiOrderAttrs : [] //订单属性节点
 			}
 		};
-		if(OrderInfo.actionFlag==1 || OrderInfo.actionFlag==14){//新装添加证号关系节点
-			busiOrder.data.boCertiAccNbrRels=[];
-		}
+		var propertiesKey = "ONE_CERT_5_NUMBER_"
+			+ (OrderInfo.staff.soAreaId + "").substring(0, 3);
+	    var isON = offerChange.queryPortalProperties(propertiesKey);
+	    if(isON=="ON"){
+	    	if(OrderInfo.actionFlag==1 || OrderInfo.actionFlag==14){//新装添加证号关系节点
+				busiOrder.data.boCertiAccNbrRels=[];
+			}
+	    }
 		var prodStatus = CONST.PROD_STATUS_CD.NORMAL_PROD;
 		//封装产品状态节点
 		busiOrder.data.boProdStatuses.push({
@@ -1206,38 +1214,41 @@ SoOrder = (function() {
 		
 		busiOrder.data.boAccountRelas.push(boAccountRela);
 		//新装：一证五号需封装证号信息节点
-		if(OrderInfo.actionFlag==1 || OrderInfo.actionFlag==14){
-			if (ec.util.isObj(OrderInfo.boProdAns) && OrderInfo.boProdAns.length > 0) {
-				var ca={};
-				if (OrderInfo.cust.custId == "-1") {//新建客户
-                    ca.certType = OrderInfo.cust.identityCd;
-                    ca.certNum = OrderInfo.cust.idCardNumber;
-                    ca.custName = OrderInfo.cust.partyName;
-                    ca.certAddress =OrderInfo.cust.addressStr;
-                    if(OrderInfo.cust.identityCd!="1"){//非身份证类型
-                    	ca.certNum=OrderInfo.cust.identityNum;	
-        			}
-                } else {//老客户
-                    ca.certType = OrderInfo.cust.identityCd;
-                    ca.certNum = OrderInfo.cust.idCardNumber;
-                    ca.custName = OrderInfo.cust.partyName;
-                    ca.certAddress = OrderInfo.cust.addressStr;
-                    ca.certNumEnc = OrderInfo.cust.certNum.replace(/&#61/g,"=");
-                    ca.custNameEnc = OrderInfo.cust.CN.replace(/&#61/g,"=");
-                    ca.certAddressEnc = OrderInfo.cust.address.replace(/&#61/g,"=");
-        
-                }
-				ca.partyId=OrderInfo.cust.custId;
-				ca.serviceType = "1000";
-				ca.state="ADD";
-				$.each(OrderInfo.boProdAns, function () {
-					if(this.prodId==prodId){
-					   ca.accNbr=this.accessNumber;
-					   busiOrder.data.boCertiAccNbrRels.push(ca);
-					}
-				});
+	    if(isON=="ON"){
+			if(OrderInfo.actionFlag==1 || OrderInfo.actionFlag==14){
+				if (ec.util.isObj(OrderInfo.boProdAns) && OrderInfo.boProdAns.length > 0) {
+					var ca={};
+					if (OrderInfo.cust.custId == "-1") {//新建客户
+	                    ca.certType = OrderInfo.cust.identityCd;
+	                    ca.certNum = OrderInfo.cust.idCardNumber;
+	                    ca.custName = OrderInfo.cust.partyName;
+	                    ca.certAddress =OrderInfo.cust.addressStr;
+	                    if(OrderInfo.cust.identityCd!="1"){//非身份证类型
+	                    	ca.certNum=OrderInfo.cust.identityNum;	
+	        			}
+	                } else {//老客户
+	                    ca.certType = OrderInfo.cust.identityCd;
+	                    ca.certNum = OrderInfo.cust.idCardNumber;
+	                    ca.custName = OrderInfo.cust.partyName;
+	                    ca.certAddress = OrderInfo.cust.addressStr;
+	                    ca.certNumEnc = OrderInfo.cust.certNum.replace(/&#61/g,"=");
+	                    ca.custNameEnc = OrderInfo.cust.CN.replace(/&#61/g,"=");
+	                    ca.certAddressEnc = OrderInfo.cust.address.replace(/&#61/g,"=");
+	        
+	                }
+					ca.partyId=OrderInfo.cust.custId;
+					ca.serviceType = "1000";
+					ca.state="ADD";
+					$.each(OrderInfo.boProdAns, function () {
+						if(this.prodId==prodId){
+						   ca.accNbr=this.accessNumber;
+						   busiOrder.data.boCertiAccNbrRels.push(ca);
+						}
+					});
+				}
 			}
-		}
+	    }
+
 		return busiOrder;
 	};
 	
@@ -1511,6 +1522,9 @@ SoOrder = (function() {
 			OrderInfo.resetSeq(); //重置序列
 			SoOrder.delOrder();
 			return;
+		}
+		if(OrderInfo.actionFlag==22){
+			$("#order_fill_content").show();
 		}
 		if(OrderInfo.actionFlag==3 || OrderInfo.actionFlag==2){
 			OrderInfo.order.step=3;

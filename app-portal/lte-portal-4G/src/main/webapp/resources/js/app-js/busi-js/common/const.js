@@ -29,7 +29,8 @@ CONST = (function(){
 	var _PROD_SPEC = {
 		CDMA : 235010000, // test-235010000 dev-379
 		DATA_CARD : 280000000,
-		PROD_FUN_4G : "280000020"
+		PROD_FUN_4G : "280000020",
+		PROD_CLOUD_OFFER:13410447 // 天翼云盘企业版接入类产品
 	};
 	
 	//功能产品规格ID
@@ -384,6 +385,9 @@ CONST = (function(){
 	
 	var _LTE_PHONE_HEAD = /^(180|189|133|134|153|181|108|170|173|177)\d{8}$/;
 	
+	// 非0开头正整数,不超过三位数
+	var _POSITIVE_NUM = /^[1-9]+[0-9]{0,2}$/;
+	
 	var _MVNO_PHONE_HEAD = /^(170)\d{8}$/;
 	
 	var  _RELATYPECD = "100003";
@@ -473,7 +477,40 @@ CONST = (function(){
 		}
 		return statusFlag;
 	};
-
+	// 地区编码
+	var _AREA_PROVINCE_MAPPING = {
+			811: {provName: "北京", provId: "609001"},
+			812: {provName: "天津", provId: "609902"},
+			813: {provName: "河北", provId: "609906"},
+			814: {provName: "山西", provId: "609907"},
+			815: {provName: "内蒙古", provId: "609908"},
+			821: {provName: "辽宁", provId: "609905"},
+			822: {provName: "吉林", provId: "609909"},
+			823: {provName: "黑龙江", provId: "609910"},
+			831: {provName: "上海", provId: "600102"},
+			832: {provName: "江苏", provId: "600103"},
+			833: {provName: "浙江", provId: "600104"},
+			834: {provName: "安徽", provId: "600301"},
+			835: {provName: "福建", provId: "600105"},
+			836: {provName: "江西", provId: "600305"},
+			837: {provName: "山东", provId: "609903"},
+			841: {provName: "河南", provId: "609904"},
+			842: {provName: "湖北", provId: "600202"},
+			843: {provName: "湖南", provId: "600203"},
+			844: {provName: "广东", provId: "600101"},
+			845: {provName: "广西", provId: "600302"},
+			846: {provName: "海南", provId: "600403"},
+			850: {provName: "重庆", provId: "600304"},
+			851: {provName: "四川", provId: "600201"},
+			852: {provName: "贵州", provId: "600402"},
+			853: {provName: "云南", provId: "600205"},
+			854: {provName: "西藏", provId: "600406"},
+			861: {provName: "陕西", provId: "600204"},
+			862: {provName: "甘肃", provId: "600401"},
+			863: {provName: "青海", provId: "600405"},
+			864: {provName: "宁夏", provId: "600404"},
+			865: {provName: "新疆", provId: "600303"}
+	};
 	return {
 		//批量受理查询，是否执行改造后的新代码的开关标识，用于暂时记录是否执行新代码。Y执行改造后的新代码，N执行改造前的旧代码，默认为N。 By ZhangYu 2015-10-20
 		BATCHORDER_FLAG : _BATCHORDER_FLAG,
@@ -534,7 +571,9 @@ CONST = (function(){
 		YZFitemSpecId4 : _YZFitemSpecId4,
 		USER_PRE_INSTALLED:_USER_PRE_INSTALLED,
 		SECURITY_OFFICE_PROD_ID: _SECURITY_OFFICE_PROD_ID,
-		GET_BIND_STATUS:_GET_BIND_STATUS
+		GET_BIND_STATUS:_GET_BIND_STATUS,
+		AREA_PROVINCE_MAPPING: _AREA_PROVINCE_MAPPING,
+		POSITIVE_NUM: _POSITIVE_NUM
 	};
 })();
 

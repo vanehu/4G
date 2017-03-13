@@ -2211,4 +2211,32 @@ public class CustController extends BaseController {
 		return jsonResponse;
     }
   	
+    /**
+     * 获取seq接口（客户id、手机号等）
+     * @param paramMap
+     * @param flowNum
+     * @return
+     */
+    @RequestMapping(value = "/getSeq", method = {RequestMethod.POST})
+    @ResponseBody
+    public JsonResponse getSeq(@RequestBody Map<String, Object> paramMap, @LogOperatorAnn String flowNum) {
+        SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+            SysConstant.SESSION_KEY_LOGIN_STAFF);
+        JsonResponse jsonResponse = null;
+        Map<String, Object> resultMap = new HashMap<String, Object>();
+        try {
+            resultMap = custBmo.getSeq(paramMap, flowNum, sessionStaff);
+			if (ResultCode.R_SUCC.equals(resultMap.get("resultCode"))) {
+				jsonResponse = super.successed(resultMap, ResultConstant.SUCCESS.getCode());
+			} else {
+				jsonResponse = super.failed(resultMap.get("resultMsg"), ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+			}
+        } catch (InterfaceException e) {
+            jsonResponse = super.failed(e, resultMap, ErrorCode.GET_SEQ);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return jsonResponse;
+    }
+  	
 }

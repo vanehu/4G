@@ -20,10 +20,9 @@
      </select>
 </li>
 	<#else>
-  <li class="choice-box-left"> 
-	<span class="select-title left-0 p-0">${prodSpec.name}</span>
-	<span class="input-group">
-		<input type="<#if prodSpec.dataTypeCd==8 >password<#else>text</#if>" class="form-control"
+  <li class="choice-box-left">
+    <div class="choice-box border-none">
+		<input type="<#if prodSpec.dataTypeCd==8 >password<#else>text</#if>" placeholder="${prodSpec.name}" class="choice-input pull-left p-l-0" 
 		id="${prodSpec.itemSpecId}_${prodId}" name="prodSpec_${prodId}" value="${prodSpec.value}" 
 		itemSpecId="${prodSpec.itemSpecId}" prodSpecItemId="${prodSpec.prodSpecParamId}" 
 		check_name="${prodSpec.name}" check_mask="${rule.mask}" check_mess="${rule.maskMsg}" 
@@ -46,7 +45,7 @@
 			
 		</#if>
 		/>
-	</span>
+	</div>
 </#if>
 </li>
 </#list>

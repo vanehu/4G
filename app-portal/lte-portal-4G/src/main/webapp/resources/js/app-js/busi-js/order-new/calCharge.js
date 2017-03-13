@@ -25,7 +25,7 @@ order.calcharge = (function(){
 	var payType;
 	var _returnFlag=true;//支付平台返回成功后，返回按钮提示不让进行
 	var _haveCharge=false;//是否已经下过计费接口
-	var timeId;//定时计时器
+	var timeId=1;//定时计时器
 	
 	//显示收银台界面
 	var _calchargeInit=function(){

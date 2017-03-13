@@ -114,6 +114,17 @@ AttachOffer = (function() {
 					$("#cardNameSpan_"+param.prodId).html("副卡");
 				}
 				_showMainRoleProd(param.prodId); //展示必须功能产品或可选包
+				//展示主套餐名称和是否有点参
+				var spec = OrderInfo.offerSpec;
+				$("#mainOfferName").html(spec.offerSpecName);
+				if(spec.ifParams&&spec.offerSpecParams!=null&&spec.offerSpecParams.length>0){  //销售参数节点					
+					$("#mainOfferLi").append('<button class="list-can absolute-right" onclick="AttachOffer.showMainParam()">参</button>');					
+				}
+				if(OrderInfo.actionFlag==1){
+					//为主套餐属性自动设置服务参数
+					if(CacheData.setParam(-1,OrderInfo.offerSpec)){ 
+					}
+				}
 				var phoneNum=OrderInfo.getAccessNumber(param.prodId);
 				$("#phoneNumSpan_"+param.prodId).html(phoneNum);
 				_initMyfavoriteSpec(param.prodId,1,0); //初始化第一个标签附属
@@ -3127,6 +3138,19 @@ AttachOffer = (function() {
 			}
 		}
 	};
+	
+	//现在主销售品参数
+	var _showMainParam = function(){
+		var content = CacheData.getParamContent(-1,OrderInfo.offerSpec,0);
+		$.confirm("参数设置： ",content,{ 
+			yes:function(){	
+				
+			},
+			no:function(){
+				
+			}
+		});
+	};
 	return {
 		openList				: _openList,
 		openedList				: _openedList,
@@ -3173,6 +3197,7 @@ AttachOffer = (function() {
 		init				:_init,
 		queryAttachOffer	:_queryAttachOffer,
 		phone_checkOfferExcludeDepend       :_phone_checkOfferExcludeDepend,
-		offer_showMainParam :_offer_showMainParam
+		offer_showMainParam :_offer_showMainParam,
+		showMainParam       :_showMainParam
 	};
 })();

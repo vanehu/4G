@@ -549,6 +549,59 @@ order.main = (function(){
 		});
 
 	};
+	
+	//产品属性-校验单个属性
+	function _check_parm_self(obj){
+		//alert("---"+$(obj).val());
+		if($(obj).attr("check_option")=="N"){
+			if($(obj).val()==null||$(obj).val()==""){
+				$.alert("提示",$(obj).attr("check_name")+" 尚未填写");
+				return false;
+			}
+		}
+		
+		if($(obj).attr("check_type")=="check"){
+			var len = $(obj).attr("check_len");
+			//alert($(this).val()+"--"+len);
+			if(len>0){
+				//alert($(this).val().length+"---"+len);
+				if($(obj).val().length>len){
+					$.alert("提示",$(obj).attr("check_name")+" 长度过长(<"+len+")");
+					return false;
+				}
+			}
+			var mask = $(obj).attr("check_mask");
+			if(mask!=null&&$(obj).val()!=null&&$(obj).val()!=""){
+				//alert($(obj).val()+"---"+mask);
+				//mask= "^[A-Za-z]+$";
+				var pattern = new RegExp(mask) ;
+				if(!pattern.test($(obj).val())){
+					$.alert("提示",$(obj).attr("check_name")+ " 校验失败：" + $(obj).attr("check_mess"));
+					return false;
+				}
+			}
+			var v_len = $(obj).val().length;
+			if(v_len>0&&$(obj).attr("dataType")=="3"){//整数
+				if(!/^[0-9]+$/.test($(obj).val())){
+					$.alert("提示",$(obj).attr("check_name")+ " 非数字，请修改");
+					return false;
+				}
+			}else if(v_len>0&&$(obj).attr("dataType")=="5"){//小数
+				if(!/^-?(?:\d+|\d{1,3}(?:,\d{3})+)(?:\.\d+)?$/.test($(obj).val())){
+					$.alert("提示",$(obj).attr("check_name")+ " 非小数，请修改");
+					return false;
+				}
+			}else if(v_len>0&&($(obj).attr("dataType")=="4"||$(obj).attr("dataType")=="16")){//日期
+				/*
+				if(/Invalid|NaN/.test(new Date($(obj).val().substring(0,10)))){
+					$.alert("提示",$(obj).attr("check_name")+ " 非日期，请修改");
+					return false;
+				}
+				*/
+			}
+		}
+		return true ;
+	}
 
 	return {
 		buildMainView :	_buildMainView,
@@ -562,7 +615,8 @@ order.main = (function(){
 		checkIncreace6:_checkIncreace6,
 		queryJbr:_queryJbr,
 		showJbrInfo:_showJbrInfo,
-		feeTypeCascadeChange:_feeTypeCascadeChange
+		feeTypeCascadeChange:_feeTypeCascadeChange,
+		check_parm_self     :_check_parm_self
 	};
 })();
 

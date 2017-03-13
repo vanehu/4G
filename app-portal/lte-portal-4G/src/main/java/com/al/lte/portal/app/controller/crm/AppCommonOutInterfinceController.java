@@ -80,18 +80,18 @@ public class AppCommonOutInterfinceController extends BaseController{
 			rwtMsg = JsonUtil.toString(resultMsg);
 			return rwtMsg;
 		}
+		if (param.get("olId") == null || "".equals(param.get("olId").toString())) {// 参数为空校验
+			resultMsg.put("success", "false"); // true:成功，false:失败
+			resultMsg.put("data", "购物车id为空！");
+			rwtMsg = JsonUtil.toString(resultMsg);
+			return rwtMsg;
+		}
 		// 签名校验
 		String signKey = param.get("olId") + "1000000244";
 		String sign = AESUtils.getMD5Str(signKey);
 		if (!sign.equals(param.get("sign"))) {
 			resultMsg.put("success", "false"); // true:成功，false:失败
 			resultMsg.put("data", "签名不一致！");
-			rwtMsg = JsonUtil.toString(resultMsg);
-			return rwtMsg;
-		}
-		if (param.get("olId") == null || "".equals(param.get("olId").toString())) {// 参数为空校验
-			resultMsg.put("success", "false"); // true:成功，false:失败
-			resultMsg.put("data", "购物车id为空！");
 			rwtMsg = JsonUtil.toString(resultMsg);
 			return rwtMsg;
 		}
@@ -170,8 +170,8 @@ public class AppCommonOutInterfinceController extends BaseController{
 				return rwtMsg;
 			}
 		}
-		resultMsg.put("success", "true"); // true:成功，false:失败
-		resultMsg.put("data", "请求成功，chargeItems为空！"); // 返回信息0成功，1失败
+		resultMsg.put("success", "false"); // true:成功，false:失败
+		resultMsg.put("data", "请求失败，请求参数不完整，chargeItems为空！"); // 返回信息0成功，1失败
 		rwtMsg = JsonUtil.toString(resultMsg);
 		return rwtMsg;
 	}

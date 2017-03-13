@@ -2597,7 +2597,7 @@ cust = (function(){
 	var _preCheckCertNumberRel = function() {
 		var propertiesKey = "ONE_CERT_5_NUMBER_"+ (OrderInfo.staff.soAreaId + "").substring(0, 3);
 		var isON = offerChange.queryPortalProperties(propertiesKey);
-		if (!isON) {
+		if (isON=="OFF") {
 			return true;
 		}
 		if(_isCovCust(OrderInfo.cust.identityCd)){//政企客户不校验
@@ -2727,7 +2727,7 @@ cust = (function(){
 		var propertiesKey = "ONE_CERT_5_NUMBER_"
 				+ (OrderInfo.staff.soAreaId + "").substring(0, 3);
 		var isON = offerChange.queryPortalProperties(propertiesKey);
-		if (!isON) {
+		if (isON=="OFF") {
 			return true;
 		}
 		if (_isCovCust(OrderInfo.cust.identityCd)) {// 政企客户不校验
