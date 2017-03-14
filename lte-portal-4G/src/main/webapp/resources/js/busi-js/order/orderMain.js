@@ -3238,7 +3238,7 @@ order.main = (function(){
             "certAddressEnc": userSubInfo.certAddressEnc,
             "custNameEnc": userSubInfo.custNameEnc
         };
-        if (!order.cust.preCheckCertNumberRel(order.prodModify.choosedProdInfo.prodInstId, inParam)) {
+        if (!order.cust.preCheckCertNumberRel(userSubInfo.prodId, inParam)) {
             return;
         }
 		userSubInfo.orderAttrPhoneNbr = ec.util.defaultStr($("#orderUserPhoneNbr").val());
