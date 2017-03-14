@@ -898,7 +898,7 @@ order.phoneNumber = (function(){
 				}
 				var selectedLevel = "";
 				_boProdAn.accessNumber = phoneNumber;
-				_boProdAn.anTypeCd = "";
+				_boProdAn.anTypeCd = "4";
 				_boProdAn.level = selectedLevel;
 				_boProdAn.org_level = "";
 				_boProdAn.anId = "1";
@@ -918,7 +918,7 @@ order.phoneNumber = (function(){
 					for (var i = 0; i < OrderInfo.boProdAns.length; i++) {
 						if (OrderInfo.boProdAns[i].prodId == prodId) {
 							OrderInfo.boProdAns[i].accessNumber = phoneNumber;
-							OrderInfo.boProdAns[i].anTypeCd = "";
+							OrderInfo.boProdAns[i].anTypeCd = "4";
 							OrderInfo.boProdAns[i].pnLevelId = selectedLevel;
 							OrderInfo.boProdAns[i].anId = "1";
 							OrderInfo.boProdAns[i].areaId = areaId;
@@ -941,7 +941,7 @@ order.phoneNumber = (function(){
 						anChooseTypeCd : "2", // 接入号选择方式,自动生成或手工配号，默认传2
 						anId : "1", // 接入号ID
 						pnLevelId : selectedLevel,
-						anTypeCd : "", // 号码类型
+						anTypeCd : "4", // 号码类型
 						state : "ADD", // 动作 ,新装默认ADD
 						areaId : areaId,
 						areaCode : areaCode,
@@ -956,8 +956,6 @@ order.phoneNumber = (function(){
 				$("#tab1_li").removeClass("active");
 				$("#nav-tab-2").removeClass("active in");
 				$("#nav-tab-1").removeClass("active in");
-				$("#tab3_li").removeClass("active");
-				$("#nav-tab-3").addClass("active in");
 				$("#offer_a").hide();
 				order.main.buildMainView();// 选号入口跳转促销
 			}

@@ -784,7 +784,7 @@ order.calcharge = (function(){
 		if(order.calcharge.busiUpType=="1"){
 			//实时受理收费走计费接口
 			_queryPayOrdStatus1(soNbr, status,type);
-			setTimeout(function(){timeId=setInterval(order.calcharge.timeToFee,3000);},5000);//5秒后开始定时任务
+			timeId=setInterval(order.calcharge.timeToFee,3000);//开始定时任务
 		}else if(order.calcharge.busiUpType=="-1"){//补收费
 			repair.main.queryPayOrdStatus1(soNbr, status,type);
 		}else{//宽带甩单收费完直接订单提交

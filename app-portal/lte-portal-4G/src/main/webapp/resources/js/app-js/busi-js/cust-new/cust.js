@@ -2712,7 +2712,6 @@ cust = (function(){
 					
 				};
 			}
-			 alert(JSON.stringify(cust.readIdCardUser));
 		}else {
 			$.alert("提示","查询客户信息失败,稍后重试");
 			return;

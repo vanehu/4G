@@ -437,6 +437,16 @@ common = (function($) {
 				OrderInfo.order.step=2;
 				return;
 			}else if(OrderInfo.order.step==4){//促销页
+				if(order.service.isCloudOffer && order.service.enter==1){//企业云盘套餐，且套餐入口直接返回选套餐界面
+					$("#offer_a").show();
+					$("#nav-tab-4").removeClass("active in");
+			    	$("#nav-tab-2").addClass("active in");
+			    	$("#tab4_li").removeClass("active");
+			    	$("#tab2_li").addClass("active");
+			    	OrderInfo.order.step=1;
+			    	order.phoneNumber.boProdAn={};//清空号码缓存
+			    	return;
+				}
 				if(order.service.showTab3){//存在副卡页
 					$("#nav-tab-4").removeClass("active in");
 			    	$("#nav-tab-3").addClass("active in");
@@ -755,6 +765,19 @@ common = (function($) {
 				OrderInfo.order.step=5;
 				return;
 			}else if(OrderInfo.order.step==7){//订单确认
+				var boProd2Tds = OrderInfo.boProd2Tds;
+				//取消订单时，释放被预占的UIM卡
+				if(boProd2Tds.length>0){
+					for(var n=0;n<boProd2Tds.length;n++){
+						var param = {
+								numType : 2,
+								numValue : boProd2Tds[n].terminalCode
+						};
+						$.callServiceAsJson(contextPath+"/app/mktRes/phonenumber/releaseErrorNum", param, {
+							"done" : function(){}
+						});
+					}
+				}
 				SoOrder.orderBack();
 				SoOrder.getToken();
 				OrderInfo.order.step=6;
