@@ -2389,7 +2389,7 @@ SoOrder = (function() {
                 var isON = query.common.queryPropertiesStatus("REAL_USER_"+OrderInfo.cust.areaId.substr(0,3));//新使用人开关
                 if (isON) {
                     $.each(OrderInfo.subUserInfos, function () {
-                        if (this.prodId == parent.prodId && this.servType == "1") {//servType：1的为使用人，2为责任人
+                        if (this.prodId == parent.prodId) {
                             currUserInfo = this;
                         }
                     });
@@ -2408,7 +2408,7 @@ SoOrder = (function() {
                     ca.certType = isON ? currUserInfo.orderIdentidiesTypeCd : currUserInfo.identityCd;
                     ca.certNum = isON?currUserInfo.identityNum:currUserInfo.idCardNumber;
                     ca.certNumEnc = isON ? currUserInfo.certNumEnc : currUserInfo.certNum;
-                    ca.custName = isON ? currUserInfo.custName : currUserInfo.partyName;
+                    ca.custName = isON ? currUserInfo.orderAttrName : currUserInfo.partyName;
                     ca.custNameEnc = isON ? currUserInfo.custNameEnc : currUserInfo.CN;
                     ca.certAddress = isON ? currUserInfo.orderAttrAddr : currUserInfo.addressStr;
                     ca.certAddressEnc = isON ? currUserInfo.certAddressEnc : currUserInfo.address;

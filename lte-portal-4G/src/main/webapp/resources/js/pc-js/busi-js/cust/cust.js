@@ -2958,6 +2958,7 @@ order.cust = (function(){
         }else{//定位不到客户C1
         	userSubInfo = {
         			prodId : user_prodId,
+        			custId : -1,
         			orderIdentidiesTypeCd : orderIdentidiesTypeCd,
         			identityNum : identityNum,
         			orderAttrName : orderAttrName,
