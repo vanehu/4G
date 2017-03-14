@@ -2822,7 +2822,7 @@ SoOrder = (function() {
         if (ec.util.isObj(OrderInfo.boProdAns) && OrderInfo.boProdAns.length > 0) {
             $.each(OrderInfo.boProdAns, function () {
                 if (busiOrder.busiObj.accessNumber != this.accessNumber) {//封装当前号码下的证号关系节点
-                    return false;
+                    return true;
                 }
                 var currUserInfo = null;
                 var parent = this;
