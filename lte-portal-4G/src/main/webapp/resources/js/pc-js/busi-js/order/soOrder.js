@@ -49,6 +49,7 @@ SoOrder = (function() {
 		_getCheckOperatSpec();
 		if(_getOrderInfo(data)){
 			//过滤订单数据判断是否有客户变更
+			OrderInfo.oneCardFiveNum = [];
 			//订单提交
 			var url = contextPath+"/token/pc/order/orderSubmit";
 			if(OrderInfo.order.token!=""){

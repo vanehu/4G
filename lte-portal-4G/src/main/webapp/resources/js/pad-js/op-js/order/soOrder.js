@@ -48,6 +48,7 @@ SoOrder = (function() {
 		_getCheckOperatSpec();
 		if(_getOrderInfo(data)){
 			//订单提交
+			OrderInfo.oneCardFiveNum = [];
 			var url = contextPath+"/token/pad/order/orderSubmit";
 			if(OrderInfo.order.token!=""){
 				url = contextPath+"/token/pad/order/orderSubmit?token="+OrderInfo.order.token;
