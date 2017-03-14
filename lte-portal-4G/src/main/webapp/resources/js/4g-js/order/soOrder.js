@@ -2837,7 +2837,7 @@ SoOrder = (function() {
                 } else {
                     $.each(OrderInfo.choosedUserInfos, function () {
                         if (this.prodId == parent.prodId) {
-                            currUserInfo = this;
+                            currUserInfo = this.custInfo;
                         }
                     });
                 }
