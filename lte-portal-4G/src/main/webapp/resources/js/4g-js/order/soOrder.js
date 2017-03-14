@@ -4300,12 +4300,12 @@ SoOrder = (function() {
      */
     var _oneCertFiveCheckData = function (inParam) {
         var oneCertFiveNum = false;//一证五号校验结果
+        var isON = query.common.queryPropertiesStatus("REAL_USER_" + OrderInfo.cust.areaId.substr(0, 3));//新使用人开关
         if (ec.util.isObj(OrderInfo.boProdAns) && OrderInfo.boProdAns.length > 0) {
             $.each(OrderInfo.boProdAns, function () {
                 var parent = this;
                 var isCheck = true;//是否进行一证五号校验，选择了使用人的号码之前校验过，这里跳过
 
-                var isON = query.common.queryPropertiesStatus("REAL_USER_" + OrderInfo.cust.areaId.substr(0, 3));//新使用人开关
                 if (isON) {
                     if (ec.util.isObj(OrderInfo.subUserInfos) && OrderInfo.subUserInfos.length > 0) {//有选择使用人的情况
                         $.each(OrderInfo.subUserInfos, function () {
@@ -4328,6 +4328,8 @@ SoOrder = (function() {
                     //一证五号校验
                     if (order.cust.preCheckCertNumberRel(this.prodId, inParam)) {
                         oneCertFiveNum = true;
+                    }else{
+                        oneCertFiveNum = false
                     }
                 } else {
                     oneCertFiveNum = true;//不做一证五号校验的默认返回true
