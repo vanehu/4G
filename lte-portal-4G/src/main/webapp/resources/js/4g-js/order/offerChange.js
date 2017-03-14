@@ -225,6 +225,15 @@ offerChange = (function() {
 			$.alert("提示","加装数量已经超过能加装的最大数量【"+maxNum+"】!");
 			return;
 		}
+
+        var usedNum=ec.util.mapGet(OrderInfo.oneCardFiveNum.usedNum,order.cust.getCustInfo415Flag(order.cust.getCustInfo415()));
+        if(!ec.util.isObj(usedNum)){
+            usedNum = 0;
+        }
+        if((parseInt(newnum)+parseInt(usedNum))>5){
+            $.alert("提示","此用户下已经有"+usedNum+"个号码，多余的副卡请选择其它使用人后继续办理业务！");
+        }
+
 		//初始化填单页面
 		var prodInfo = order.prodModify.choosedProdInfo;
 		var param = {
