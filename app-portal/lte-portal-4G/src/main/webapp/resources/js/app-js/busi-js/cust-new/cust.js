@@ -2708,7 +2708,7 @@ cust = (function(){
 					"identityCd":identityCd,
 					"idCardNumber":identityNum,
 					"addressStr":address,
-					"partyName":address
+					"partyName":partyName
 					
 				};
 			}
@@ -2734,7 +2734,7 @@ cust = (function(){
 		}
 		_searchUser(identityCd,identityNum,partyName,address);
 		// return true;
-		if (_readIdCardUser.newUserFlag=="true") {// 新客户
+		if (cust.readIdCardUser.newUserFlag=="true") {// 新客户
 			var inParam = {
 				"certType" : cust.readIdCardUser.identityCd,
 				"certNum" : cust.readIdCardUser.idCardNumber,

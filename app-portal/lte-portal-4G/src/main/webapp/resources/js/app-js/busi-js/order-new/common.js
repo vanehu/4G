@@ -758,6 +758,19 @@ common = (function($) {
 					return;
 				}
 			}else if(OrderInfo.order.step==6){//其他
+				var boProd2Tds = OrderInfo.boProd2Tds;
+				//取消订单时，释放被预占的UIM卡
+				if(boProd2Tds.length>0){
+					for(var n=0;n<boProd2Tds.length;n++){
+						var param = {
+								numType : 2,
+								numValue : boProd2Tds[n].terminalCode
+						};
+						$.callServiceAsJson(contextPath+"/app/mktRes/phonenumber/releaseErrorNum", param, {
+							"done" : function(){}
+						});
+					}
+				}
 				$("#nav-tab-6").removeClass("active in");
 		    	$("#nav-tab-5").addClass("active in");
 		    	$("#tab6_li").removeClass("active");
