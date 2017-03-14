@@ -3228,6 +3228,19 @@ order.main = (function(){
 	};
 
 	var _commitUser = function(userSubInfo,dom) {
+        //一证五号校验
+        var inParam = {
+            "certType": userSubInfo.orderIdentidiesTypeCd,
+            "certNum": userSubInfo.identityNum,
+            "certAddress": userSubInfo.orderAttrAddr,
+            "custName": userSubInfo.orderAttrName,
+            "certNumEnc": userSubInfo.certNumEnc,
+            "certAddressEnc": userSubInfo.certAddressEnc,
+            "custNameEnc": userSubInfo.custNameEnc
+        };
+        if (!order.cust.preCheckCertNumberRel(order.prodModify.choosedProdInfo.prodInstId, inParam)) {
+            return;
+        }
 		userSubInfo.orderAttrPhoneNbr = ec.util.defaultStr($("#orderUserPhoneNbr").val());
 		var updateFlag = false;
 		for(var i=0;i<OrderInfo.subUserInfos.length;i++){
@@ -3287,18 +3300,6 @@ order.main = (function(){
 			OrderInfo.subUserInfos.push(userSubInfo);
 		}
 		easyDialog.close();
-
-        //一证五号校验
-        var inParam = {
-            "certType": userSubInfo.orderIdentidiesTypeCd,
-            "certNum": userSubInfo.identityNum,
-            "certAddress": userSubInfo.orderAttrAddr,
-            "custName": userSubInfo.orderAttrName,
-            "certNumEnc": userSubInfo.certNumEnc,
-            "certAddressEnc": userSubInfo.certAddressEnc,
-            "custNameEnc": userSubInfo.custNameEnc
-        };
-        order.cust.preCheckCertNumberRel(order.prodModify.choosedProdInfo.prodInstId, inParam);
 	};
 	
 	//责任人、使用人(新模式)重置按钮
