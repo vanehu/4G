@@ -2936,7 +2936,7 @@ SoOrder = (function() {
 
         //一证五号校验
         if(!_oneCertFiveCheckData(order.cust.getCustInfo415())){
-            return ;
+            return false;
         }
 
         var orderAttrName	= $.trim($("#orderAttrName").val());	//经办人姓名
