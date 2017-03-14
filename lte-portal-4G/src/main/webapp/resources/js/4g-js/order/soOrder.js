@@ -4304,13 +4304,26 @@ SoOrder = (function() {
             $.each(OrderInfo.boProdAns, function () {
                 var parent = this;
                 var isCheck = true;//是否进行一证五号校验，选择了使用人的号码之前校验过，这里跳过
-                if (ec.util.isObj(OrderInfo.choosedUserInfos) && OrderInfo.choosedUserInfos.length > 0) {//有选择使用人的情况
-                    $.each(OrderInfo.choosedUserInfos, function () {
-                        if (this.prodId == parent.prodId) {
-                            isCheck = false;
-                        }
-                    });
+
+                var isON = query.common.queryPropertiesStatus("REAL_USER_" + OrderInfo.cust.areaId.substr(0, 3));//新使用人开关
+                if (isON) {
+                    if (ec.util.isObj(OrderInfo.subUserInfos) && OrderInfo.subUserInfos.length > 0) {//有选择使用人的情况
+                        $.each(OrderInfo.subUserInfos, function () {
+                            if (this.prodId == parent.prodId && this.servType == "1") {//servType：1的为使用人，2为责任人
+                                isCheck = false;
+                            }
+                        });
+                    }
+                } else {
+                    if (ec.util.isObj(OrderInfo.choosedUserInfos) && OrderInfo.choosedUserInfos.length > 0) {//有选择使用人的情况
+                        $.each(OrderInfo.choosedUserInfos, function () {
+                            if (this.prodId == parent.prodId) {
+                                isCheck = false;
+                            }
+                        });
+                    }
                 }
+
                 if (isCheck) {
                     //一证五号校验
                     if (order.cust.preCheckCertNumberRel(this.prodId, inParam)) {
