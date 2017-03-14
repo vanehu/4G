@@ -163,6 +163,7 @@ OrderInfo = (function() {
 	};//保存前置检验的结果
 		
 	var _offerSpec = {}; //主销售品构成
+	var _oneCardFiveNum=[];//一证五号校验缓存
 	
 	var _offer = { //主销售品实例构成
 		offerId : "",
@@ -1505,6 +1506,7 @@ OrderInfo = (function() {
 		acctNbr:_acctNbr,
 		uimType:_uimType,
 		recordId:_recordId,
-		preBefore:_preBefore
+		preBefore:_preBefore,
+		oneCardFiveNum : _oneCardFiveNum
 	};
 })();

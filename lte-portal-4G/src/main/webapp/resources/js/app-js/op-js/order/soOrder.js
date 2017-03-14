@@ -157,7 +157,7 @@ SoOrder = (function() {
 	var _getOrderInfo = function(data){
 		//一证五号校验
         if(!_oneCertFiveCheckData(cust.getCustInfo415())){
-            return ;
+            return false;
         }
 		if(OrderInfo.actionFlag==13 || OrderInfo.actionFlag==17 || OrderInfo.actionFlag==18){ //终端购买、退换货
 			//如果是合约机换货，已经加载缓存
@@ -2638,6 +2638,7 @@ SoOrder = (function() {
     var _oneCertFiveCheckData = function (inParam) {
         var oneCertFiveNum = false;//一证五号校验结果
         if (ec.util.isObj(OrderInfo.boProdAns) && OrderInfo.boProdAns.length > 0) {
+        	var oneCertFiveNO = 0;
             $.each(OrderInfo.boProdAns, function () {
                 var parent = this;
                 var isCheck = true;//是否进行一证五号校验，选择了使用人的号码之前校验过，这里跳过
@@ -2649,14 +2650,19 @@ SoOrder = (function() {
                     });
                 }
                 if (isCheck) {
-                    //一证五号校验
-                    if (cust.preCheckCertNumberRel(this.prodId, inParam)) {
-                        oneCertFiveNum = true;
-                    }
+                	oneCertFiveNO ++ ;
                 } else {
                     oneCertFiveNum = true;//不做一证五号校验的默认返回true
                 }
             });
+            var oneCardFive ={
+            		certNum:inParam.certNum,
+            		oneCertFiveNO:oneCertFiveNO
+			};
+            OrderInfo.oneCardFiveNum.push(oneCardFive);
+            if (cust.preCheckCertNumberRel(this.prodId, inParam)) {
+                oneCertFiveNum = true;
+            }
         } else {
             oneCertFiveNum = true;//不做一证五号校验的默认返回true
         }

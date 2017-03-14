@@ -60,6 +60,7 @@ OrderInfo = (function() {
 	
 	var _busitypeflag = 0;
 	
+	var _oneCardFiveNum=[];//一证五号校验缓存
 	var _orderlonger = "";
 	
 	var _custorderlonger = "";
@@ -1459,6 +1460,7 @@ OrderInfo = (function() {
 		acctNbr:_acctNbr,
 		uimType:_uimType,
 		recordId:_recordId,
-		preBefore:_preBefore
+		preBefore:_preBefore,
+		oneCardFiveNum : _oneCardFiveNum
 	};
 })();

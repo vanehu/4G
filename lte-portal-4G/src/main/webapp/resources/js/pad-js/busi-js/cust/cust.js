@@ -943,24 +943,33 @@ order.cust = (function(){
         }
         var checkResult = false;
         var param = $.extend(true, {"certType": "", "certNum": "", "certAddress": "", "custName": ""}, inParam);
+        if(CacheData.isGov(param.certType)){//过滤政企的证件类型，政企的证件不调用一证五号校验
+            return true;
+        }
         var response=$.callServiceAsJson(contextPath + "/cust/preCheckCertNumberRel", JSON.stringify(param));
         if (response.code == 0) {
             var result = response.data;
             if (ec.util.isObj(result)) {
-                var checkData = ec.util.mapGet(OrderInfo.oneCardFiveNum, inParam.certNum);
-                if (!ec.util.isObj(checkData)) {
-                    checkData = [];
-                }
-                var checkCount = checkData.length;
-                if ($.inArray(prodId, checkData) != -1) {
-                    checkCount = checkData.length - 1;
-                }
-                if ((parseInt(result.usedNum) + checkCount) < 5) {
-                    $.unique($.merge(checkData, [prodId]));
-                    ec.util.mapPut(OrderInfo.oneCardFiveNum, inParam.certNum, checkData);
-                    checkResult=true;
-                } else {
-                    $.alert("提示", "一个用户证件下不能有超过5个号码！");
+            	if (ec.util.isObj(result)) {
+            		if(parseInt(result.usedNum)>=5){
+                		$.alert("提示", "一个用户证件下不能有超过5个号码！");
+                	}else if(parseInt(result.usedNum) <5 && OrderInfo.oneCardFiveNum.length<=0){
+                		 $.alert("提示","此用户下已经有"+result.usedNum+"个号码，多余的副卡请选择其它使用人后继续办理业务！");
+                		checkResult=true;
+                	}
+                	if(OrderInfo.oneCardFiveNum.length>0){
+                		 $.each(OrderInfo.oneCardFiveNum, function () {
+                			 var oneCard = this;
+                			 if(inParam.certNum ==oneCard.certNum){
+                				 if ((parseInt(result.usedNum) + oneCard.oneCertFiveNO) <=5) {
+                	                    checkResult=true;
+                	                } else {
+                	                	 checkResult = false;
+                	                    $.alert("提示", "一个用户证件下不能有超过5个号码！");
+                	                }
+                			 }
+                		 });
+                	}
                 }
             }
         } else {

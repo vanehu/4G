@@ -142,6 +142,8 @@ OrderInfo = (function() {
 		custFlag :"1100"//1000：红客户，1100：白客户，1200：黑客户
 	}; 
 	
+	var _oneCardFiveNum=[];//一证五号校验缓存
+	
 	var _preBefore ={
 			prcFlag : ""	
 	};//保存前置检验的结果
@@ -1581,6 +1583,7 @@ OrderInfo = (function() {
 		handleInfo:_handleInfo,
 		subHandleInfo:_subHandleInfo,
 		subUserInfos:_subUserInfos,
+		oneCardFiveNum : _oneCardFiveNum,
 		queryCustInfo:_queryCustInfo
 	};
 })();
