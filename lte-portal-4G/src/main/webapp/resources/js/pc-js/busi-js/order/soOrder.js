@@ -3445,6 +3445,13 @@ SoOrder = (function() {
                         }
                     });
                 }
+                if (ec.util.isObj(OrderInfo.subUserInfos) && OrderInfo.subUserInfos.length > 0) {//有选择使用人的情况
+                    $.each(OrderInfo.subUserInfos, function () {
+                        if (this.prodId == parent.prodId) {
+                            isCheck = false;
+                        }
+                    });
+                }
                 if (isCheck) {
                 	oneCertFiveNO ++ ;
                 } else {

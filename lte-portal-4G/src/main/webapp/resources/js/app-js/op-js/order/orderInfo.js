@@ -1410,7 +1410,8 @@ OrderInfo = (function() {
 			return query.offer.checkOperate(param);
 		}
 	};
-				
+			
+	var _oneCardFiveNO={"usedNum":{},"checkNum":{}};//一证五号校验缓存
 	return {
 		state:state,
 		delViceCard:delViceCard,
@@ -1507,6 +1508,7 @@ OrderInfo = (function() {
 		uimType:_uimType,
 		recordId:_recordId,
 		preBefore:_preBefore,
-		oneCardFiveNum : _oneCardFiveNum
+		oneCardFiveNum : _oneCardFiveNum,
+		oneCardFiveNO  : _oneCardFiveNO
 	};
 })();

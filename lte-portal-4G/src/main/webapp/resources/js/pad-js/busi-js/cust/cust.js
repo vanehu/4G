@@ -951,10 +951,10 @@ order.cust = (function(){
             var result = response.data;
             if (ec.util.isObj(result)) {
             	if (ec.util.isObj(result)) {
+            		ec.util.mapPut(OrderInfo.oneCardFiveNO.usedNum, _getCustInfo415Flag(inParam), result.usedNum);
             		if(parseInt(result.usedNum)>=5){
                 		$.alert("提示", "一个用户证件下不能有超过5个号码！");
                 	}else if(parseInt(result.usedNum) <5 && OrderInfo.oneCardFiveNum.length<=0){
-                		 $.alert("提示","此用户下已经有"+result.usedNum+"个号码，多余的副卡请选择其它使用人后继续办理业务！");
                 		checkResult=true;
                 	}
                 	if(OrderInfo.oneCardFiveNum.length>0){
@@ -965,7 +965,9 @@ order.cust = (function(){
                 	                    checkResult=true;
                 	                } else {
                 	                	 checkResult = false;
+                	                	 OrderInfo.oneCardFiveNum = [];
                 	                    $.alert("提示", "一个用户证件下不能有超过5个号码！");
+                	                    return checkResult;
                 	                }
                 			 }
                 		 });
@@ -988,8 +990,8 @@ order.cust = (function(){
                 "certType": OrderInfo.boCustIdentities.identidiesTypeCd,
                 "certNum": OrderInfo.boCustIdentities.identityNum,
                 "certAddress": OrderInfo.boCustInfos.addressStr,
-                "custName": OrderInfo.boCustInfos.name,
-            }
+                "custName": OrderInfo.boCustInfos.name
+            };
         } else {//老客户
             inParam = {
                 "certType": OrderInfo.cust.identityCd,
@@ -1002,6 +1004,17 @@ order.cust = (function(){
             };
         }
         return inParam;
+    };
+    /**
+     * 获取一证五号客户信息唯一标识，新客户或者老用户
+     * @private 有脱敏信息的客户信息中脱敏证件号不具有唯一性，用加密字段做唯一标识，
+     */
+    var _getCustInfo415Flag = function (inParam) {
+        if(ec.util.isObj(inParam.certNumEnc)){
+            return inParam.certNumEnc;
+        }else{
+            return inParam.certNum;
+        }
     };
 	return {	
 		identidiesTypeCdChoose :_identidiesTypeCdChoose,
@@ -1030,7 +1043,8 @@ order.cust = (function(){
 		identityTypeAuthSub:_identityTypeAuthSub,
 		bindCustQueryForChoose : _bindCustQueryForChoose,
 		preCheckCertNumberRel       :       _preCheckCertNumberRel,
-		getCustInfo415              :       _getCustInfo415
+		getCustInfo415              :       _getCustInfo415,
+		getCustInfo415Flag          :       _getCustInfo415Flag
 		
 	};
 })();

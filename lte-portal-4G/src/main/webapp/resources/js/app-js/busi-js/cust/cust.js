@@ -1266,6 +1266,9 @@ cust = (function(){
 					segmentId: custInfos[0].segmentId,
 					segmentName: custInfos[0].segmentName,
 					vipLevel: custInfos[0].vipLevel,
+					certNum : custInfos[0].certNum,
+					CN:custInfos[0].CN,
+					address:custInfos[0].address,
 					vipLevelName: custInfos[0].vipLevelName
 				}
 				if(busitypeflag!=1){
@@ -2441,10 +2444,12 @@ cust = (function(){
         if (response.code == 0) {
             var result = response.data;
             if (ec.util.isObj(result)) {
+            	ec.util.mapPut(OrderInfo.oneCardFiveNO.usedNum, _getCustInfo415Flag(inParam), result.usedNum);
             	if(parseInt(result.usedNum)>=5){
             		$.alert("提示", "一个用户证件下不能有超过5个号码！");
-            	}else if(parseInt(result.usedNum) <5 && OrderInfo.oneCardFiveNum.length<=0){
-            		 $.alert("提示","此用户下已经有"+result.usedNum+"个号码，多余的副卡请选择其它使用人后继续办理业务！");
+            		checkResult = false;
+            		return checkResult;
+            	}else if(parseInt(result.usedNum) <5 && OrderInfo.oneCardFiveNum.length<=0){            		 
             		checkResult=true;
             	}
             	if(OrderInfo.oneCardFiveNum.length>0){
@@ -2455,7 +2460,9 @@ cust = (function(){
             	                    checkResult=true;
             	                } else {
             	                	 checkResult = false;
+            	                	 OrderInfo.oneCardFiveNum = [];
             	                    $.alert("提示", "一个用户证件下不能有超过5个号码！");
+            	                    return checkResult;
             	                }
             			 }
             		 });
@@ -2477,8 +2484,8 @@ cust = (function(){
                 "certType": OrderInfo.boCustIdentities.identidiesTypeCd,
                 "certNum": OrderInfo.boCustIdentities.identityNum,
                 "certAddress": OrderInfo.boCustInfos.addressStr,
-                "custName": OrderInfo.boCustInfos.name,
-            }
+                "custName": OrderInfo.boCustInfos.name
+            };
         } else {//老客户
             inParam = {
                 "certType": OrderInfo.cust.identityCd,
@@ -2493,6 +2500,17 @@ cust = (function(){
         return inParam;
     };
 	
+    /**
+     * 获取一证五号客户信息唯一标识，新客户或者老用户
+     * @private 有脱敏信息的客户信息中脱敏证件号不具有唯一性，用加密字段做唯一标识，
+     */
+    var _getCustInfo415Flag = function (inParam) {
+        if(ec.util.isObj(inParam.certNumEnc)){
+            return inParam.certNumEnc;
+        }else{
+            return inParam.certNum;
+        }
+    };
 	return {
 		jbridentidiesTypeCdChoose 	: 		_jbridentidiesTypeCdChoose,
 		jbrvalidatorForm 			: 		_jbrvalidatorForm,
@@ -2557,7 +2575,8 @@ cust = (function(){
 		getPicture2                 :       _getPicture2,
 		getjbrGenerationInfos2      :       _getjbrGenerationInfos2,
 		preCheckCertNumberRel       :       _preCheckCertNumberRel,
-		getCustInfo415              :       _getCustInfo415
+		getCustInfo415              :       _getCustInfo415,
+		getCustInfo415Flag          :       _getCustInfo415Flag
 	};	
 })();
 // OrderInfo.boCustInfos.partyTypeCd = 1 ;//客户类型

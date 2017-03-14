@@ -515,7 +515,9 @@ order.service = (function(){
 			return;
 		}
 		//e
-		
+		if((parseInt(newnum)+parseInt(ec.util.mapGet(OrderInfo.oneCardFiveNO.usedNum,cust.getCustInfo415Flag(cust.getCustInfo415()))))>4){
+            $.alert("提示","此用户下已经有"+ec.util.mapGet(OrderInfo.oneCardFiveNO.usedNum,cust.getCustInfo415Flag(cust.getCustInfo415()))+"个号码，多余的副卡请选择其它使用人后继续办理业务！");
+        }
 		if(OrderInfo.actionFlag!=14){ //合约套餐不初始化
 			order.main.buildMainView(param);	
 		}else{

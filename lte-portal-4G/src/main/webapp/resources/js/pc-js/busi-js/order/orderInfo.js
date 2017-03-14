@@ -1482,7 +1482,8 @@ OrderInfo = (function() {
 	};
 	
 	var _realNamePhotoFlag = "OFF";
-				
+		
+	var _oneCardFiveNO={"usedNum":{},"checkNum":{}};//一证五号校验缓存
 	return {
 		terminalCode:_terminalCode,
 		mktResInstCode:_mktResInstCode,
@@ -1584,6 +1585,7 @@ OrderInfo = (function() {
 		subHandleInfo:_subHandleInfo,
 		subUserInfos:_subUserInfos,
 		oneCardFiveNum : _oneCardFiveNum,
+		oneCardFiveNO  : _oneCardFiveNO,
 		queryCustInfo:_queryCustInfo
 	};
 })();
