@@ -339,7 +339,7 @@ order.cust = (function(){
 			$("#"+id).attr("data-validate","validate(required:请准确填写证件号码) on(keyup)");
 			$("#"+id).attr("maxlength","20");
 
-		}else if (identidiesTypeCd="bizId") {
+		}else if (identidiesTypeCd=="bizId") {
 			$("#"+id).attr("placeHolder","请输入计费标识");
 			$("#"+id).attr("data-validate","validate(required:请准确填写计费标识) on(keyup)");
 		}else{

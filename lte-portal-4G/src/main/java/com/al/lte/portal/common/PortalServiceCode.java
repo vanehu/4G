@@ -598,6 +598,10 @@ public final class PortalServiceCode {
     public static final String INTF_BATCH_ECSBATCHRECEIVE="res-EcsTerminalService/ecsBatchReceive"; 
     /**批量终端领用、批量终端领用回退、批量终端销售批次查询*/
     public static final String INTF_BATCH_QRYECSBATCHORDER="res-EcsTerminalService/queryEcsBatchInfo"; 
+    
+    /**查询用户信息*/  
+    public static final String INTF_QUERY_USEINFOBYACCNBR="biz-service/intf.pullingDataService/queryUseInfoByAccNbr";
+    
     /**批量终端领用、批量终端领用回退、批量终端销售批次详情查询*/
     public static final String INTF_BATCH_QRYECSBATCHORDERDETAIL="res-EcsTerminalService/queryEcsBatchLogDetail"; 
     /**批量终端领用、批量终端领用回退、批量终端销售仓库查询*/
@@ -1097,6 +1101,13 @@ public final class PortalServiceCode {
     
     /** 宽带融合--订单详情查询 **/
     public static final String BORAD_BAND_ORDER_DETAIL = "qry.order.orderdetail";
+    
+    /** 一证五号--查询 **/
+    public static final String QRY_CERTPHONENUM_REL = "qry.party.queryCmcCertNumRel";  
+     
+    /** 一证五号--修复 **/
+    public static final String MOD_CERTPHONENUM_REL = "order.party.changeCmcCertNumRel";
+    
     
     /** 宽带融合--根据坐标查询门店 **/
     public static final String BORAD_BAND_QUERYCHANNEL_BYCOORDS = "yim-locationService/queryChannelByCoords";

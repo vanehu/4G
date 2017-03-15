@@ -1,0 +1,48 @@
+<input type="hidden" id="isRepairFive" value="${isEqual}"/>
+<input type="hidden" id="isSucceed" value="${isSucceed}"/>
+<table class="numberList">
+	<thead>
+		<td width="20%">类型</td>
+		<td width="40%">省内</td>
+		<td width="40%">集团</td>
+	</thead>
+	<tbody>
+		<tr>
+			<td style="font-weight: bold; background: #f8f8f8; border-right: 1px solid #d3d8d0;">客户姓名</td>
+			<td id="custName">${userList.custName}</td>
+			<td id="custName2">${certPhoneNumRel.custName}</td>
+		</tr>
+		<tr>
+			<td style="font-weight: bold; background: #f8f8f8; border-right: 1px solid #d3d8d0;">号码</td>
+			<td id="phoneNum" id="phoneNum"></td>
+			<td id="phoneNum2">${certPhoneNumRel.phoneNum}</td>
+		</tr>
+		<tr>
+			<td style="font-weight: bold; background: #f8f8f8; border-right: 1px solid #d3d8d0;">证件类型</td>
+			<td id="certTypeName">${userList.certTypeName}</td>
+			<td id="certTypeName2">${certPhoneNumRel.certTypeName}</td>
+			<td id="certType" style="display:none">${userList.certType}</td>
+			<td id="certType2" style="display:none">${certPhoneNumRel.certType}</td>
+			
+		</tr>
+		<tr>
+			<td style="font-weight: bold; background: #f8f8f8; border-right: 1px solid #d3d8d0;">证件号码</td>
+			<td id="certNum">${userList.certNum}</td>
+			<td id="certNum2">${certPhoneNumRel.certNum}</td>
+		</tr>
+		<tr>
+			<td style="font-weight: bold; background: #f8f8f8; border-right: 1px solid #d3d8d0;">客户地址</td>
+			<td id="custAddress">${userList.custAddress}</td>
+			<td id="custAddress2">${certPhoneNumRel.custAddress}</td>
+		</tr>
+		<tr>
+			<td style="font-weight: bold; background: #f8f8f8; border-right: 1px solid #d3d8d0;">证件地址</td>
+			<td id="certAddress">${userList.certAddress}</td>
+			<td id="certAddress2">${certPhoneNumRel.certAddress}</td>
+		</tr>
+		<tr>
+			<td style="font-weight: bold; background: #f8f8f8; border-right: 1px solid #d3d8d0;">操作</td>
+			<td colspan="2"><a id="btnRepair" href="javascript:void(0)"  onclick="user.repair.updateUserInfo()" class="purchase">修复</a></td>
+		</tr>
+	</tbody>
+</table>
