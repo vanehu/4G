@@ -3038,8 +3038,8 @@ order.cust = (function(){
                     }
                 });
             }
-        	if((parseInt(userNO)+parseInt(ec.util.mapGet(OrderInfo.oneCardFiveNO.usedNum,order.cust.getCustInfo415Flag(order.cust.getCustInfo415()))))>4){
-                $.alert("提示","此用户下已经有"+(parseInt(userNO)+ec.util.mapGet(OrderInfo.oneCardFiveNO.usedNum,order.cust.getCustInfo415Flag(order.cust.getCustInfo415())))+"个号码，请选择其他用户做为使用人！");
+        	if((parseInt(userNO)+parseInt(ec.util.mapGet(OrderInfo.oneCardFiveNO.usedNum,order.cust.getCustInfo415Flag(order.cust.getCustInfo415()))))>5){
+                $.alert("提示","此用户下已经有"+(parseInt(userNO-1)+ec.util.mapGet(OrderInfo.oneCardFiveNO.usedNum,order.cust.getCustInfo415Flag(order.cust.getCustInfo415())))+"个号码，请选择其他用户做为使用人！");
             }else{
             	$("#chooseUserBt").removeClass("btna_g").addClass("btna_o");
         		$('#chooseUserBt').off('click').on('click',function(){
@@ -3209,6 +3209,8 @@ order.cust = (function(){
                 		$.alert("提示", "工信部要求支撑全国实名制一证五卡验证,一个用户证件下不能有超过5个号码！");
                 		checkResult = false;
                 	}else if(parseInt(result.usedNum) <5 && OrderInfo.oneCardFiveNum.length<=0){
+                		checkResult=true;
+                	}else if(parseInt(result.usedNum)>=5 && OrderInfo.actionFlag !=0){//应该可以直接else，由于是补丁，只能新加
                 		checkResult=true;
                 	}
                 	if(OrderInfo.oneCardFiveNum.length>0){

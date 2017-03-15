@@ -2451,6 +2451,8 @@ cust = (function(){
             		return checkResult;
             	}else if(parseInt(result.usedNum) <5 && OrderInfo.oneCardFiveNum.length<=0){            		 
             		checkResult=true;
+            	}else if(parseInt(result.usedNum)>=5 && OrderInfo.busitypeflag !=1){
+            		checkResult=true;
             	}
             	if(OrderInfo.oneCardFiveNum.length>0){
             		 $.each(OrderInfo.oneCardFiveNum, function () {

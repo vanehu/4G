@@ -956,6 +956,8 @@ order.cust = (function(){
                 		$.alert("提示", "工信部要求支撑全国实名制一证五卡验证,一个用户证件下不能有超过5个号码！");
                 	}else if(parseInt(result.usedNum) <5 && OrderInfo.oneCardFiveNum.length<=0){
                 		checkResult=true;
+                	}else if(parseInt(result.usedNum)>=5 && OrderInfo.actionFlag !=1){
+                		checkResult=true;
                 	}
                 	if(OrderInfo.oneCardFiveNum.length>0){
                 		 $.each(OrderInfo.oneCardFiveNum, function () {
