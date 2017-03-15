@@ -72,7 +72,8 @@ order.prodModify = (function(){
 				instId : prodId,
 				specId : CONST.PROD_SPEC.CDMA,
 				prodId : prodId
-			}]
+			}],
+			busiFlag : $('#busiFlag').val() // 用来标识新菜单(未实名)二次业务与实名业务的区分标识 暂时只有 未实名返销"01"
 		};
 	};
 	//预校验单校验
@@ -1087,7 +1088,7 @@ order.prodModify = (function(){
 					order.prodModify.cancel();
 				});
 				var menuName = $("#menuName").attr("menuName");
-				if((ec.util.isObj(menuName)&&(CONST.MENU_FANDANG==menuName||CONST.MENU_CUSTFANDANG==menuName||CONST.MENU_RETURNFILE==menuName||CONST.MENU_REMOVEPROD==menuName))){
+				if((ec.util.isObj(menuName)&&(CONST.MENU_FANDANG==menuName||CONST.MENU_CUSTFANDANG==menuName||CONST.MENU_RETURNFILE==menuName||CONST.MENU_REMOVEPROD==menuName||CONST.MENU_BUYBACK==menuName))){
 					$("#fillLastStep").hide();
 					$("#order_quick_nav").hide();
 				}
@@ -1672,7 +1673,7 @@ order.prodModify = (function(){
 					order.prodModify.cancel();
 				});
 				var menuName = $("#menuName").attr("menuName");
-				if((ec.util.isObj(menuName)&&(CONST.MENU_REMOVEPROD==menuName))){
+				if((ec.util.isObj(menuName)&&(CONST.MENU_REMOVEPROD==menuName && CONST.MENU_BUYBACK==menuName))){
 					$("#fillLastStep").hide();
 					$("#order_quick_nav").hide();
 				}

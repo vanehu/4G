@@ -640,6 +640,10 @@ public final class SysConstant {
 	/** 未激活拆机 **/
 	public static final String WJHCJ = "WJHCJ";
 	public static final String WJHCJ_NAME = "未激活拆机";
+    /** 未激活返销 **/
+    public static final String WSMFX = "WSMFX";
+    public static final String WSMFX_NAME = "返销";
+    public static final String WSMFX_BUSIFLAG = "01";
 	
     /** 客户鉴权短信验证证随机二位序列号 */
     public static final String SESSION_KEY_CUSTAUTH_RANDONCODE = "_ecs_custauth_sms_session_code";

@@ -2220,7 +2220,7 @@ public class OrderController extends BaseController {
                 List<Map<String, Object>> offerCoupon = (List<Map<String, Object>>) result.get("offerCoupon");
                 Map returnMap = new HashMap();
                 if (offerCoupon.isEmpty()) {
-                    jr = super.failed("未查询到旧卡物品信息(流水号："+transactionID+")", ResultConstant.FAILD.getCode());
+                    jr = super.failed("未查询到旧卡物品信息(流水号：" + transactionID + ")", ResultConstant.FAILD.getCode());
                 } else {
                     for (int i = 0; i < offerCoupon.size(); i++) {
                         String currentCouponTypeCd = offerCoupon.get(i).get("couponTypeCd").toString();
@@ -2235,7 +2235,7 @@ public class OrderController extends BaseController {
                     }
                 }
             } else {
-                jr = super.failed(resultMap.get("msg").toString()+"(流水号“"+transactionID+")", ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+                jr = super.failed(resultMap.get("msg").toString() + "(流水号“" + transactionID + ")", ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
             }
             return jr;
         } catch (BusinessException be) {
@@ -5053,5 +5053,18 @@ public class OrderController extends BaseController {
             return super.failed(be);
         }
         return jsonResponse;
+    }
+
+    /**
+     * 未激活返销
+     */
+    @RequestMapping(value="/prepareBuyBack", method = RequestMethod.GET)
+    @AuthorityValid(isCheck = false)
+    public String prepareBuyBack(HttpServletRequest request,Model model,HttpSession session){
+        model.addAttribute("canOrder", EhcacheUtil.pathIsInSession(session, "order/prepare"));
+        model.addAttribute("menuName", SysConstant.WSMFX);
+        model.addAttribute("DiffPlaceFlag", "local");
+        model.addAttribute("busiFlag",SysConstant.WSMFX_BUSIFLAG);//未实名返销标识，用来区分
+        return "/order/order-prepare";
     }
 }

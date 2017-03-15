@@ -57,7 +57,8 @@ rule.rule = (function(){
 			channelId : param.channelId,
 			custId : param.custId,
 			boInfos : param.boInfos,
-			soNbr : OrderInfo.order.soNbr
+			soNbr : OrderInfo.order.soNbr,
+			busiFlag : param.busiFlag
 		};
 		$.ecOverlay("<strong>客户级规则校验中，请稍等...</strong>");
 		var response = $.callServiceAsJson(contextPath+"/rule/prepare",inParam); //调用规则校验

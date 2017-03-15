@@ -140,7 +140,7 @@ order.prepare = (function(){
 				$("#nothreelinks").show();
 			}
 			var menuName = $("#menuName").attr("menuName");
-			if ((ec.util.isObj(menuName) && (CONST.MENU_FANDANG == menuName || CONST.MENU_CUSTFANDANG == menuName || CONST.MENU_RETURNFILE==menuName||CONST.MENU_REMOVEPROD==menuName))) {
+			if ((ec.util.isObj(menuName) && (CONST.MENU_FANDANG == menuName || CONST.MENU_CUSTFANDANG == menuName || CONST.MENU_RETURNFILE==menuName||CONST.MENU_REMOVEPROD==menuName||CONST.MENU_BUYBACK==menuName))) {
 				$("#order_prepare").hide();
 				$("#nothreelinks").hide();
 			}
