@@ -754,8 +754,8 @@ public class CustBmoImpl implements CustBmo {
 				}
 			}
 			
-			//5.证件上传
-			if(count == photographs.size()){
+			//5.证件上传，实名信息采集单中可以不需要拍照照片
+			if(count == photographs.size()&&!("true".equals(param.get("collection")))){
 				result.put("code", ResultCode.R_FAIL);
 				result.put("msg", "请求入参中未获取到有效的实名拍照信息，原因可能是请求入参中的数据已被篡改或丢失，请不要试图进行非法操作、重复操作或在多个浏览器窗口同时提交业务。");
 			} else{

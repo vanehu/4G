@@ -251,6 +251,7 @@ public final class SysConstant {
 	public final static String P_MOD_SUB_INVOICE = "invoice/";
 	public final static String P_MOD_SUB_OLD2NEW = "old2new/";
 	public final static String P_MOD_SUB_STBRESERVE = "STBreserve/";
+	public final static String P_MOD_SUB_CUSTCLT = "custCollection/";
 	public final static String P_MOD_ABS_INVOICE = "D:/temp/invoice/";
 	//充值收据（发票）模板目录
 	public final static String P_MOD_DIR_CHARGE_RECEIPT = "chargeReceiptAndInvoice/";
@@ -265,6 +266,8 @@ public final class SysConstant {
 	public final static String P_MOD_FILE_OLD2NEW = "printOld2New";  // 发票打印业务
 	//天翼高清机顶盒预约回执主模板
 	public final static String P_MOD_FILE_STBRESERVE = "receiptMain";
+	//实名信息采集单确认回执主模板
+	public final static String P_MOD_FILE_CUSTCLT = "receiptMain";
 	//充值收据（发票）模板名称
 	public final static String P_MOD_FILE_CHARGE_RECEIPT = "chargeReceipt"; //充值收据
 	//业务模板类型
@@ -766,6 +769,19 @@ public final class SysConstant {
     
     /**订单属性记录客户端IP(新协议)*/
   	public final static String ORDER_ATTRS_IP = "40010038";
+
+    /**订单属性采集客户订单号*/
+  	public final static String CLTORDERID = "810000001";
+  	
+    /**订单属性采集客户订单项ID*/
+  	public final static String CLTUSERID = "810000002";
+  	
+    /**订单属性采集经办人文件订单ID*/
+  	public final static String CLTVIROLID = "810000003";
+  	
+    /**订单属性发展人staffId*/
+  	public final static String DEALER = "111111116";
+  	
   	/**订单属性记录客户端IP(老协议)*/
   	public final static String ORDER_ATTRS_IP_TEM = "800000039";
   	
@@ -796,4 +812,7 @@ public final class SysConstant {
     /** 责任人类型标识 **/
     public static final String RESP_CUST_TYPE = "2";
 
+    
+    /**实名信息采集单session缓存键*/
+    public static final String CLT_ORDER_INFO = "_clt_order_info";	
 }

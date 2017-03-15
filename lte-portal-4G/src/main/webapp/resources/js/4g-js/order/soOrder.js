@@ -393,6 +393,15 @@ SoOrder = (function() {
 			});
 		}
 		
+		//采集单受理时，采集单号（只新装）
+		if(OrderInfo.isCltNewOrder()){
+			custOrderAttrs.push({
+				itemSpecId : CONST.BUSI_ORDER_ATTR.CLTORDERID,
+				value : OrderInfo.cltOrderInfo.orderId
+			});
+			OrderInfo.orderData.orderList.orderListInfo.isCltOrder = "Y";
+		}
+		
         // 订单填充使用人信息
 		if (ec.util.isArray(OrderInfo.boUserCustInfos)) {
 			OrderInfo.orderData.orderList.orderListInfo.partyId = OrderInfo.cust.custId;
@@ -2735,6 +2744,15 @@ SoOrder = (function() {
 				}
 			}
 		});
+		//采集单添加产品属性，采集单使用人ID
+		if(OrderInfo.isCltNewOrder()){
+			var cltUserId = $("#"+CONST.PROD_ATTR.PROD_USER+"_"+prodId).attr("cltUserId");
+			var prodSpecItem = {
+					itemSpecId : CONST.BUSI_ORDER_ATTR.CLTUSERID,  //属性规格ID
+					value : cltUserId//属性值	
+			};
+			busiOrder.data.busiOrderAttrs.push(prodSpecItem);
+		}
 		
 		//封装付费方式
 		//var paytype=$('select[name="pay_type_'+prodId+'"]').val(); 
@@ -2952,7 +2970,8 @@ SoOrder = (function() {
 		if(CONST.realNamePhotoFlag == "ON"){
 			//若页面上填写了经办人信息，但没有进行拍照，则拦截提示，不管权限不权限
 			if(ec.util.isObj(orderAttrName) || ec.util.isObj(orderAttrIdCard) || ec.util.isObj(orderAttrAddr)){
-				if(!ec.util.isObj(OrderInfo.virOlId)){
+				//采集单不拍照
+				if(!ec.util.isObj(OrderInfo.virOlId)&&!OrderInfo.isCltNewOrder()){
 					$.alert("提示","您填写了经办人信息，在订单提交之前，请点击【读卡】或者【查询】按钮进行拍照以确认是否“人证相符”。");
 					return false;
 				}
@@ -2971,7 +2990,8 @@ SoOrder = (function() {
 			) && OrderInfo.busitypeflag != 27;//预装不限制
 			
 			if(CONST.isHandleCustNeeded && isActionFlagLimited) {
-				if(!ec.util.isObj($("#jbrForm").html()) || !ec.util.isObj(OrderInfo.virOlId)){
+				//采集单不拍照
+				if((!ec.util.isObj($("#jbrForm").html()) || !ec.util.isObj(OrderInfo.virOlId))&&!OrderInfo.isCltNewOrder()){
 					$.alert("提示","经办人拍照信息不能为空！请确认页面是否已点击【读卡】或者【查询】按钮，并且进行拍照和人证相符等操作！");
 					return false ;
 				}
@@ -4032,7 +4052,7 @@ SoOrder = (function() {
 	
 	//填充订单经办人信息，开关ON，且经过拍照拼装经办人信息否则不拼装
 	var _addHandleCustInfo = function(busiOrders, custOrderAttrs){
-		if(CONST.realNamePhotoFlag == "ON" && ec.util.isObj(OrderInfo.virOlId)){
+		if(CONST.realNamePhotoFlag == "ON" && (ec.util.isObj(OrderInfo.virOlId)||OrderInfo.isCltNewOrder())){
 			if(OrderInfo.ifCreateHandleCust){//新建经办人
 				if(OrderInfo.cust.custId == -1){//新建客户
 					if(OrderInfo.boCustIdentities.identityNum == OrderInfo.bojbrCustIdentities.identityNum && 
@@ -4063,13 +4083,22 @@ SoOrder = (function() {
 				OrderInfo.orderData.orderList.orderListInfo.partyId = OrderInfo.cust.custId;//门户主页客户定位的客户ID
 				OrderInfo.orderData.orderList.orderListInfo.handleCustId = OrderInfo.handleCustId;//经办人查询出的客户ID
 			}
-			
+			//实名信息采集单受理订单属性ID不同
+			if(OrderInfo.isCltNewOrder()){
 			//添加虚拟订单ID属性
-			custOrderAttrs.push({
-				itemSpecId : CONST.BUSI_ORDER_ATTR.VIROLID,
-				value : OrderInfo.virOlId//即照片上传时后台返回的18位的虚拟订单ID:virOlId
-			});
+				custOrderAttrs.push({
+					itemSpecId : CONST.BUSI_ORDER_ATTR.CLTVIROLID,
+					value : OrderInfo.cltjbrInfo.fileOrderId
+				});
+			}else{
+				//添加虚拟订单ID属性
+				custOrderAttrs.push({
+					itemSpecId : CONST.BUSI_ORDER_ATTR.VIROLID,
+					value : OrderInfo.virOlId//即照片上传时后台返回的18位的虚拟订单ID:virOlId
+				});
+			}
 		}
+
 	};
 	
 	//创建经办人节点

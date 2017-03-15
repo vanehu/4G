@@ -18,6 +18,8 @@ OrderInfo = (function() {
 	 * 31改产品密码，32重置产品密码，,33改产品属性，34修改短号，35分段受理（订单确认及后续受理）,36一卡双号订购
 	 * 
 	 * 37终端预约，38取消终端预约，39改付费类型及信控属性，40紧急开机，41ESS远程写卡，42ESS二次写卡，43返档，28主副卡角色互换
+	 * 
+	 * 45实名信息采集单
 	 */
 	var _actionFlag = 0;
 	
@@ -1795,6 +1797,17 @@ OrderInfo = (function() {
 	//行业类型
 	var _industryClassInfo = {};
 	
+	var _isCltOrder = false; //来自采集单受理
+	var _cltOrderInfo = {};//实名信息采集单信息
+	var _cltCustInfo = {};//实名信息采集单客户信息
+	var _cltUserList = [];//实名信息采集单使用人信息
+	var _cltjbrInfo = {};//实名信息采集单经办人信息
+
+	//是否是采集单受理新装，统一判断
+	var _isCltNewOrder = function(){
+		return 	OrderInfo.isCltOrder&&(OrderInfo.actionFlag == 1 || OrderInfo.busitypeflag == 14)
+	}
+	
 	return {	
 		order					: _order,
 		SEQ						: _SEQ,
@@ -1917,6 +1930,12 @@ OrderInfo = (function() {
         boCustCheckLogs         :_boCustCheckLogs,
         bojbrCustCheckLogs      :_bojbrCustCheckLogs,
         industryClassInfo       :_industryClassInfo,
-        boCertiAccNbrRel        :_boCertiAccNbrRel
+        boCertiAccNbrRel        :_boCertiAccNbrRel,
+        isCltOrder				:_isCltOrder,
+		cltOrderInfo			:_cltOrderInfo,
+		cltCustInfo				:_cltCustInfo,
+		cltUserList				:_cltUserList,
+		cltjbrInfo				:_cltjbrInfo,
+        isCltNewOrder			:_isCltNewOrder
 	};
 })();

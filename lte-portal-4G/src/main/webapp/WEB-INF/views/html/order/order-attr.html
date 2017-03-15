@@ -8,6 +8,7 @@
         <label class="f_red">*</label>
         <a class="btn_h30" id="orderAttrReadCertBtn" onclick="javascript:order.cust.readCertWhenOrder()" style="margin-top: 0px; display: none;"><span>读 卡</span></a>
         <a class="btn_h30" id="orderAttrQueryCertBtn"><span>查询</span></a>
+        <a class="btn_h30" id="orderAttrPicShowBtn" style="margin-top: 0px; display: none;"><span>拍照查看</span></a>
     </li>
     <li id="li_isCheck">
         <label>实名核验：</label>
@@ -92,6 +93,16 @@
       </div> 
   </div>
 </div>
+</div>
+
+<div style="display:none;background:#fff;" id="ec-dialog-photo-show" class="ec-dialog-form-container" style="width:640px;height:360px;">
+  <div class="easyDialogclose" onclick="order.cust.close()"></div>
+  <div class="ec-dialog-form-top">
+    <h1 class="ec-dialog-form-title">人证相符-拍照查看</h1>
+  </div>
+  <div class="order"> 
+     <img id="img_photo_show" width="640" height ="360">
+  </div>
 </div>
 <!--认证相符拍照弹框 End-->
 <div class="height18"></div>

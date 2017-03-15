@@ -81,6 +81,8 @@ order.dealer = (function() {
 			$tr.append($tdType);
 			if(order.ysl!=undefined){
 				var $td = $('<td><input type="text" id="dealer_'+objId+'" staffId="'+OrderInfo.staff.staffId+'" value="'+OrderInfo.staff.staffName+'" class="inputWidth183px" style="width:150px;"></input></td>');
+			}else if(OrderInfo.isCltNewOrder()){
+				var $td = $('<td><input type="text" id="dealer_'+objId+'" staffId="'+OrderInfo.cltOrderInfo.staffId+'" value="'+OrderInfo.cltOrderInfo.staffName+'" class="inputWidth183px" style="width:150px;" readonly="readonly" ></input></td>');
 			}else{
 				var $td = $('<td><input type="text" id="dealer_'+objId+'" staffId="'+OrderInfo.staff.staffId+'" value="'+OrderInfo.staff.staffName+'" class="inputWidth183px" style="width:150px;" readonly="readonly" ></input></td>');
 			}
@@ -89,12 +91,17 @@ order.dealer = (function() {
 			$tr.append($td);
 			var $tdChannel = $('<td></td>');
 			var $channelSelect = $('<select id="dealerChannel_'+objId+'" name="dealerChannel_'+objInstId+'" class="inputWidth183px" onclick=a=this.value;></select>');
-			$.each(OrderInfo.channelList,function(){
-				if(this.isSelect==1)
-					$channelSelect.append("<option value='"+this.channelNbr+"' selected ='selected'>"+this.channelName+"</option>");
-				else
-					$channelSelect.append("<option value='"+this.channelNbr+"'>"+this.channelName+"</option>");
-			});
+			if(OrderInfo.isCltNewOrder()){
+				$channelSelect.append("<option value='"+OrderInfo.cltOrderInfo.channelNbr+"' selected ='selected'>"+OrderInfo.cltOrderInfo.channelName+"</option>");
+			}else{
+				$.each(OrderInfo.channelList,function(){
+					if(this.isSelect==1)
+						$channelSelect.append("<option value='"+this.channelNbr+"' selected ='selected'>"+this.channelName+"</option>");
+					else
+						$channelSelect.append("<option value='"+this.channelNbr+"'>"+this.channelName+"</option>");
+				});
+			}
+			
 			$tdChannel.append($channelSelect);
 			$tdChannel.append('<label class="f_red">*</label>');	
 			$tr.append($tdChannel);

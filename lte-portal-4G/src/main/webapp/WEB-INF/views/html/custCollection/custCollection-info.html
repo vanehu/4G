@@ -1,0 +1,168 @@
+<#if code?? && (code==0) >
+<div class="main_div"> 
+  <div class=" main_warp">
+  <div class="ordercon">
+  <!--订单确认-->
+    <div class="order_confirmation ordertabcon" style="display:block">
+  <h2 class="h2_title">实名信息采集单详情<span class="showhide"></span>
+  </h2>
+  <div class="main_body">
+  <#if cart.collectionOrderList?? >
+  <#assign orderList = cart.collectionOrderList >
+    <#if orderList.collectionOrderInfo?? >
+  		<#assign orderListInfo = orderList.collectionOrderInfo >
+		  <h5 class="s_title">基本信息</h5>
+		  <ul class="fillin">
+		    <li>
+		      <font>采集单号：</font><span>${orderListInfo.orderNbr}</span>
+		    </li>
+		    <li>
+		      <font>采集单ID：</font><span>${orderId}</span>
+		    </li>
+		    <li>
+		      <font>受理人：</font><span>${orderListInfo.staffName}</span>
+		    </li>
+		    <li>
+		      <font>受理地区：</font><span>${orderListInfo.areaName}</span>
+		    </li>
+		    <li>
+		      <font>受理渠道：</font><span>${orderListInfo.channelName}</span>
+		    </li>
+		    <li>
+		      <font>状态：</font>
+		      <#if orderListInfo.ifExp == "N">
+		       		<span>有效</span>
+		   	   <#else>
+		   			<span>无效</span>
+		   	   </#if>
+		    </li>
+			<li>
+		      <font>受理时间：</font><span>${orderListInfo.soDate}</span>
+		    </li>
+		    <li>
+		      <font>失效时间：</font><span>${orderListInfo.expDate}</span>
+		    </li>
+		  </ul>
+		  <div class="height18"></div>
+	  </#if>	
+  </#if>		
+			
+	<#if (orderList.collectionCustInfos)?? &&((orderList.collectionCustInfos)?size>0)>
+	    <#list orderList.collectionCustInfos as cust >
+	    	<!-- 产权人 -->
+	    	<#if cust.partyRoleCd == "0">
+				<h2 class="s_title">客户信息</h2>
+				 <ul class="fillin">
+				    <li>
+				      <font>客户名称：</font><span>${cust.custName}</span>
+				    </li>
+				    <li>
+				      <font>客户证件类型：</font><span>${cust.certTypeName}</span>
+				    </li>
+				    <li>
+				      <font>客户证件号：</font><span>${cust.certNumber}</span>
+				    </li>
+				    <li>
+				      <font>联系地址：</font><span>${cust.addressStr}</span>
+				    </li>
+				    
+			     </ul>
+		  		<div class="height18"></div>
+			 </#if>
+		</#list>
+ 	</#if>             
+
+    <div class="height18"></div>
+	<h5 class="s_title">使用人信息</h5>
+	<table width="100%" border="0" cellspacing="0" cellpadding="0" class="orderdetail_fs">
+	   <thead>
+    	<tr>
+    		<td width="5%">姓名</td>
+    		<td width="10%">证件类型</td>
+    		<td width="15%">证件号码</td>
+    		<td width="10%">办理数目</td>
+    		<td width="10%">已办理数目</td>
+    		<td width="10%">联系人号码</td>
+    		<td width="20%" >办理说明</td>
+        </tr>
+       </thead>
+	   <tbody>
+	   <#if (orderList.collectionCustInfos)?? &&((orderList.collectionCustInfos)?size>0)>
+   	    <#list orderList.collectionCustInfos as cust >
+   	    	<!-- 使用人 -->
+	    	<#if cust.partyRoleCd == "1">
+		      <tr>
+		        <td>${cust.custName}</td>
+		        <td>${cust.certTypeName}</td>
+		        <td>${cust.certNumber}</td>
+		        <td>${cust.maxQuantity}</td>
+		        <td>${cust.realQuantity}</td>
+		        <#if cust.telNumber == "">
+		       		<td>无</td>
+		   	   <#else>
+		   			<td>${cust.telNumber}</td>
+		   	   </#if>
+		   	   <#if cust.remarks == "">
+		       		<td>无</td>
+		   	   <#else>
+		   			<td>${cust.remarks}</td>
+		   	   </#if>
+		      </tr>
+		    </#if>
+	     </#list>
+    	</#if>     
+    	</tbody>
+	</table>
+
+	<h5 class="s_title">经办人信息</h5>
+	<#if (orderList.collectionCustInfos)?? &&((orderList.collectionCustInfos)?size>0)>
+	    <#list orderList.collectionCustInfos as cust >
+	    	<!-- 经办人 -->
+	    	<#if cust.partyRoleCd == "3">
+				 <ul class="fillin">
+				    <li>
+				      <font>经办人名称：</font><span>${cust.custName}</span>
+				    </li>
+				    <li>
+				      <font>证件类型：</font><span>${cust.certTypeName}</span>
+				    </li>
+				    <li>
+				      <font>证件号：</font><span>${cust.certNumber}</span>
+				    </li>
+				    <li>
+				      <font>联系地址：</font><span>${cust.addressStr}</span>
+				    </li>
+				    <li>
+				      <font>联系方式：</font>
+				       <#if cust.telNumber == "">
+				       		<span>无</span>
+				   	    <#else>
+				   			<span>${cust.telNumber}</span>
+				   	    </#if>
+				    </li>
+			     </ul>
+		  		<div class="height18"></div>
+			 </#if>
+		</#list>
+ 	</#if>   
+	
+	<h5 class="s_title">订单备注</h5>
+	 <div style="margin-top:20px;margin-left:30px;">
+	    <#if orderListInfo.remarks == "">
+       		<td>无</td>
+   	    <#else>
+   			<td>${orderListInfo.remarks}</td>
+   	    </#if>
+	 </div>
+	 <div class="height18"></div>
+	</div>
+	</div>
+	</div>
+	<!--订单填写 end-->
+	<div align="right" style="margin: 20px auto; padding:0 20px;"> 
+		<a style=" margin-left:20px;" class="btna_o" href="javascript:cart.main.showMain()"><span>返回</span></a> 
+	</div>
+	</div>
+</div>
+<!--内容 end--> 
+<#else>${mess}</#if>

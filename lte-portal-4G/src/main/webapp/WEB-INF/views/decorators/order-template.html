@@ -8,6 +8,7 @@
 <!--客户定位未定位-->
 	<div id="custQryDiv" class="main_div location main_warp">
 		<form id="custQueryFirstForm">
+		<input type="hidden" value="${cltOrder}" id="cltOrder"/>
 		<input type="hidden" value="${fromProvFlag}" id="fromProvFlag"/>
 		<input type="hidden" value="${provIsale}" id="provIsale"/>
 		<input type="hidden" value="${provIdentityCd}" id="provIdentityCd"/>
@@ -999,7 +1000,7 @@
     </table>
     <div id="" class="main_div location main_warp" style ="float:left;width:100%;">
 	    <form id="syrCertCheckForm">
-	        <ul class="fillin" style="overflow: hidden;">
+	        <ul class="fillin" style="overflow: hidden;" id = "user_info_ul">
 	            <li class="full" style="width: 100%;">
 	                <label>证件类型：</label>
 	                <select id="orderIdentidiesTypeCdB">
@@ -1047,6 +1048,31 @@
 	                <input id="orderUserPhoneNbr" class="inputWidth250px" type="text" maxlength="16"style="width:280px;">
 	            </li>
 	    	</ul>
+	    	<!-- 采集单使用人列表展示 -->
+	    	<div class="fillin" id = "clt_user_list_div" style="overflow-y: scroll;display: none; height: 180px;" >
+		    	<table class="contract_list" style = "height: initial;">
+	              <thead>
+	                <tr>
+	                  <td width="5%"></td>
+	                  <td width="18%">姓名</td>
+	                  <td width="25%">证件号码</td>
+	                  <td width="17%">最大数量</td>
+	                  <td width="17%">已办数量</td>
+   					  <td width="18%">本次数量</td>
+	               	 </tr>
+	              </thead>
+	              <tbody id="clt_user_list_tbody">
+	              <!--
+	 				<tr>
+	                  <td>张三</td>
+	                  <td>123456789012345678</td>
+	                  <td>5</td>
+	                  <td>2</td>
+	               	</tr>
+	               	 -->
+	              </tbody>
+	            </table>
+	    	 </div>
 	    </form>
 	</div>
 	<div align="center" style="margin: 20px auto;">

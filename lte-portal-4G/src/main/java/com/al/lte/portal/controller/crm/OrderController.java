@@ -38,6 +38,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.WebRequest;
 
+import com.al.common.utils.DateUtil;
 import com.al.common.utils.StringUtil;
 import com.al.ec.serviceplatform.client.ResultCode;
 import com.al.ecs.common.entity.JsonResponse;
@@ -58,6 +59,7 @@ import com.al.ecs.exception.ErrorCode;
 import com.al.ecs.exception.InterfaceException;
 import com.al.ecs.exception.ResultConstant;
 import com.al.ecs.exception.InterfaceException.ErrType;
+import com.al.ecs.exception.Result;
 import com.al.ecs.spring.annotation.log.LogOperatorAnn;
 import com.al.ecs.spring.annotation.session.AuthorityValid;
 import com.al.ecs.spring.controller.BaseController;
@@ -302,17 +304,6 @@ public class OrderController extends BaseController {
         log.debug("prepare.param={}", param);
         model.addAttribute("mktRes", param);
         model.addAttribute("DiffPlaceFlag", "local");
-        //		String[] params = param.split("-");
-        //		if (params.length > 0) {
-        //			model.addAttribute("flowStep", params[0]);
-        //		} else {
-        //			model.addAttribute("flowStep", "order_tab_panel_terminal");
-        //		}
-        //		if (params.length > 1) {
-        //			model.addAttribute("flowStepParam", params[1]);
-        //		} else {
-        //			model.addAttribute("flowStepParam", "");
-        //		}
         return "/order/order-prepare";
     }
 
@@ -1985,6 +1976,8 @@ public class OrderController extends BaseController {
                 if (rMap != null && ResultCode.R_SUCCESS.equals(rMap.get("code").toString())) {
                 	//受理成功清空session中的虚拟购物车ID(virOlId)
                 	ServletUtils.removeSessionAttribute(super.getRequest(), Const.SESSION_UPLOAD_VIR_OLID);
+                	//受理成功清空session中的实名信息采集单session缓存键
+                	ServletUtils.removeSessionAttribute(super.getRequest(), SysConstant.CLT_ORDER_INFO);
                     jsonResponse = super.successed("收费成功", ResultConstant.SUCCESS.getCode());
                 } else {
                     jsonResponse = super.failed(rMap.get("msg"), ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
@@ -3170,6 +3163,14 @@ public class OrderController extends BaseController {
                         orderListInfo.put("staffId", sessionStaff.getStaffId()); //防止前台修改
                         orderListInfo.put("channelId", sessionStaff.getCurrentChannelId()); //防止前台修改
                         
+                        //实名信息采集单订单提交信息校验
+                        String isCltOrder = (String) orderListInfo.get("isCltOrder");
+                        if(!StringUtils.isEmpty(isCltOrder)&&"Y".equals(isCltOrder)){
+                        	Map<String, Object> cltOrderCheckResMap = orderBmo.cltOrderCheck(param, request ,sessionStaff);
+							if (!ResultCode.R_SUCC.equals(cltOrderCheckResMap.get("resultCode"))) {
+                            	return super.failed(ErrorCode.PORTAL_INPARAM_ERROR, cltOrderCheckResMap.get("resultMsg"), param);
+                            }
+                        }
                         //过滤订单属性
                         List<Map<String, Object>> custOrderAttrs = (List<Map<String, Object>>) orderListInfo.get("custOrderAttrs");
                         //添加客户端IP地址到订单属性
@@ -3248,6 +3249,7 @@ public class OrderController extends BaseController {
             } catch (InterfaceException ie) {
                 return super.failed(ie, param, ErrorCode.ORDER_SUBMIT);
             } catch (Exception e) {
+            	e.printStackTrace();
                 return super.failed(ErrorCode.ORDER_SUBMIT, e, param);
             }
         } else {
@@ -5051,6 +5053,10 @@ public class OrderController extends BaseController {
             }
         } catch (BusinessException be) {
             return super.failed(be);
+        } catch (InterfaceException ie) {
+            return super.failed(ie, param, ErrorCode.DOWNLOAD_CUST_CERTIFICATE);
+        } catch (Exception e) {
+            return super.failed(ErrorCode.DOWNLOAD_CUST_CERTIFICATE, e, param);
         }
         return jsonResponse;
     }
@@ -5066,5 +5072,308 @@ public class OrderController extends BaseController {
         model.addAttribute("DiffPlaceFlag", "local");
         model.addAttribute("busiFlag",SysConstant.WSMFX_BUSIFLAG);//未实名返销标识，用来区分
         return "/order/order-prepare";
+    }
+    
+    /**
+     * 实名信息采集单入口
+     */
+    @RequestMapping(value = "/preCustCollection", method = RequestMethod.GET)
+    @AuthorityValid(isCheck = true)
+    public String preCustCollection(HttpServletRequest request, Model model,
+            HttpSession session) {
+        Calendar c = Calendar.getInstance();
+        SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd");
+        String startTime = f.format(c.getTime());
+        c.add(Calendar.DATE, 7);
+        String defaultTime = f.format(c.getTime());
+        c.add(Calendar.DATE, 8);
+        String endTime = f.format(c.getTime());
+        model.addAttribute("p_startDt", startTime);
+        model.addAttribute("p_expDt", defaultTime);
+        model.addAttribute("p_endDt", endTime);
+        return "/custCollection/custCollection-prepare";
+    }
+    
+    /**
+     * 实名信息采集单订单提交
+     */
+    @ResponseBody
+    @RequestMapping(value = "/custCltSubmit", method = { RequestMethod.POST })
+    public JsonResponse custCltSubmit(@RequestBody Map<String, Object> param, HttpServletResponse response, HttpServletRequest request) throws Exception {
+        SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
+    	JsonResponse jsonResponse = null;
+        try {
+            Map<String, Object> orderList = (Map<String, Object>) param.get("collectionOrderList");
+            Map<String, Object> orderListInfo = (Map<String, Object>) orderList.get("collectionOrderInfo");
+            orderListInfo.put("staffId", sessionStaff.getStaffId()); //防止前台修改
+            orderListInfo.put("channelId", sessionStaff.getCurrentChannelId()); //防止前台修改
+            orderListInfo.put("collectType", "1"); //防止前台修改
+            orderListInfo.put("areaId", sessionStaff.getCurrentAreaId()); //防止前台修改
+            
+            Map<String, Object> resMap = orderBmo.cltOrderSubmit(param, null, sessionStaff);
+            if (ResultCode.R_SUCC.equals(resMap.get("resultCode"))) {
+                Map<String, Object> result = (Map<String, Object>) resMap.get("result");
+                String olId = (Long) result.get("orderId")+"";
+                String  soNbr = (String) result.get("orderNbr");
+                if(StringUtil.isEmpty(olId)||StringUtil.isEmpty(soNbr)){
+                    jsonResponse = super.failed("返回采集单号为空", ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+                }else{
+                    param.put("orderId", olId);
+                    param.put("orderNbr", soNbr);
+                    jsonResponse = super.successed(param, ResultConstant.SUCCESS.getCode());
+                }
+            } else {
+                jsonResponse = super.failed(resMap.get("resultMsg"), ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+            }
+        } catch (BusinessException e) {
+            return super.failed(e);
+        } catch (InterfaceException ie) {
+            return super.failed(ie, param, ErrorCode.CLTORDER_SUBMIT);
+        } catch (Exception e) {
+            return super.failed(ErrorCode.CLTORDER_SUBMIT, e, param);
+        }
+        return jsonResponse;
+    }
+    
+    /**
+     * 实名信息采集单订单确认
+     */
+    @ResponseBody
+    @RequestMapping(value = "/custCltCommit", method = { RequestMethod.POST })
+    public JsonResponse custCltCommit(@RequestBody Map<String, Object> param, HttpServletResponse response, HttpServletRequest request) throws Exception {
+        SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
+    	JsonResponse jsonResponse = null;
+        try {
+            Map<String, Object> paramMap = new HashMap<String, Object>();
+            String orderId = MapUtils.getString(param, "orderId");
+            if(StringUtils.isEmpty(orderId)){
+                jsonResponse = super.failed("采集单号为空，不能提交确认，请重试！", ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+                return jsonResponse;
+            }
+            paramMap.put("orderId", orderId);
+            paramMap.put("ifExp", "N");
+            Map<String, Object> resMap = orderBmo.cltOrderCommit(paramMap, null, sessionStaff);
+            if (ResultCode.R_SUCC.equals(resMap.get("resultCode"))) {
+            	jsonResponse = super.successed(ResultConstant.SUCCESS);
+            } else {
+                jsonResponse = super.failed(resMap.get("resultMsg"), ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+            }
+        } catch (BusinessException e) {
+            return super.failed(e);
+        } catch (InterfaceException ie) {
+            return super.failed(ie, param, ErrorCode.CLTORDER_COMMIT);
+        } catch (Exception e) {
+            return super.failed(ErrorCode.CLTORDER_COMMIT, e, param);
+        }
+        return jsonResponse;
+    }
+    
+    /**
+     * 实名信息采集单查询入口
+     */
+    @RequestMapping(value = "/preQueryCustCollection", method = RequestMethod.GET)
+    @AuthorityValid(isCheck = true)
+    public String preQueryCustCollection(HttpServletRequest request, Model model,
+            HttpSession session) {
+        model.addAttribute("current", EhcacheUtil.getCurrentPath(session, "report/cartMain"));
+        SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+                SysConstant.SESSION_KEY_LOGIN_STAFF);
+        Calendar c = Calendar.getInstance();
+        SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd");
+        String endTime = f.format(c.getTime());
+        String startTime = f.format(c.getTime());
+        Map<String, Object> defaultAreaInfo = CommonMethods.getDefaultAreaInfo_MinimumC3(sessionStaff);
+
+        model.addAttribute("p_startDt", startTime);
+        model.addAttribute("p_endDt", endTime);
+        model.addAttribute("p_areaId", defaultAreaInfo.get("defaultAreaId"));
+        model.addAttribute("p_areaId_val", defaultAreaInfo.get("defaultAreaName"));
+        model.addAttribute("pageType", "detail");    
+        return "/custCollection/custCollection-main";
+    }
+    
+    /**
+     * 实名信息采集单列表
+     */
+    @RequestMapping(value = "/queryCustCollectionList", method = RequestMethod.GET)
+    public String queryCustCollectionList(HttpSession session, Model model, WebRequest request) throws BusinessException {
+        SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+                SysConstant.SESSION_KEY_LOGIN_STAFF);
+        HttpSession httpSession = ServletUtils.getSession(super.getRequest());
+        Map<String, Object> param = new HashMap<String, Object>();
+        List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+        Integer nowPage = 1;
+        Integer pageSize = 10;
+        Integer totalSize = 0;
+        String startDt = request.getParameter("startDt");
+        String endDt = request.getParameter("endDt");
+        String channelId = request.getParameter("channelId");
+        try {
+            if (StringUtils.isNotBlank(startDt) && (startDt.length()> 8 || !DateUtil.isRightDate(startDt, "yyyyMMdd"))) {
+                param.put("startDt", startDt);
+                throw new BusinessException(ErrorCode.CLTORDER_LIST, param, null, new Throwable("startDt data format invalid"));
+            }
+            if (StringUtils.isNotBlank(endDt) && (endDt.length()> 8 || !DateUtil.isRightDate(endDt, "yyyyMMdd"))) {
+                param.put("endDt", endDt);
+                throw new BusinessException(ErrorCode.CLTORDER_LIST, param, null, new Throwable("endDt data format invalid"));
+            }
+            if (StringUtils.isNotBlank(channelId) && !NumberUtils.isNumber(channelId)) {
+                param.put("channelId", channelId);
+                throw new BusinessException(ErrorCode.CLTORDER_LIST, param, null, new Throwable("channelId data format invalid"));
+            }
+            if (StringUtils.isNotBlank(startDt)){
+                param.put("startDt", startDt);
+                param.put("endtDt", startDt);
+            }
+            if (StringUtils.isNotBlank(channelId)){
+                param.put("channelId", channelId);
+            }
+            param.put("areaId", request.getParameter("areaId"));
+            if(request.getParameter("olNbr") != null){
+                param.put("orderNbr", request.getParameter("olNbr"));
+            }
+            param.put("ifExp", "Y");//只查询有效的（正式单，订单确认后的采集单）
+            if (request.getParameter("staffId") == null) {
+                param.put("staffId", "");//员工ID(主键)
+            }
+            nowPage = Integer.parseInt(request.getParameter("nowPage").toString());
+            pageSize = Integer.parseInt(request.getParameter("pageSize").toString());
+            param.put("nowPage", nowPage);
+            param.put("pageSize", pageSize);
+            Map<String, Object> resMap = cartBmo.queryCltCarts(param, null, sessionStaff);
+            if (ResultCode.R_SUCC.equals(resMap.get("resultCode"))) {
+            	Map<String, Object> map = (Map<String, Object>) resMap.get("result");
+                if (map != null && map.get("collectionOrderLists") != null) {
+                    list = (List<Map<String, Object>>) map.get("collectionOrderLists");
+                    //添加是否失效标志
+                    for(int i = 0;i<list.size();i++){
+                    	Map<String, Object> collectionOrder = list.get(i);
+                    	String expDateStr = (String) collectionOrder.get("expDate");
+                    	Date expDate = DateUtil.getDateFromString(expDateStr,"yy-MM-dd HH:mm:ss");
+                    	if(new Date().before(expDate)){
+                    		collectionOrder.put("ifExp", "N");
+                		}else{
+                			collectionOrder.put("ifExp", "Y");
+                		}
+                    }
+                    totalSize = MapUtils.getInteger(map, "totalCnt", 1);
+                }
+                PageModel<Map<String, Object>> pm = PageUtil.buildPageModel(nowPage, pageSize, totalSize < 1 ? 1
+                        : totalSize, list);
+                model.addAttribute("pageModel", pm);
+                model.addAttribute("code", "0");
+
+            } else {
+                model.addAttribute("code", resMap.get("resultCode"));
+                model.addAttribute("mess", resMap.get("resultMsg"));
+            }
+            return "/custCollection/custCollection-list";
+        } catch (BusinessException be) {
+            return super.failedStr(model, be);
+        } catch (InterfaceException ie) {
+            return super.failedStr(model, ie, param, ErrorCode.CLTORDER_LIST);
+        } catch (Exception e) {
+            log.error("采集单查询/order/queryCustCollectionList方法异常", e);
+            return super.failedStr(model, ErrorCode.CLTORDER_LIST, e, param);
+        }
+    }
+    
+    /**
+     * 实名信息采集单详情
+     */
+    @RequestMapping(value = "/queryCustCollectionInfo", method = RequestMethod.GET)
+    public String queryCustCollectionInfo(WebRequest request, Model model, HttpSession session, HttpServletResponse response,
+            @RequestParam Map<String, Object> paramMap) throws BusinessException {
+        SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+                SysConstant.SESSION_KEY_LOGIN_STAFF);
+        try {
+        	String orderId = MapUtils.getString(paramMap, "orderId", "");
+        	if(StringUtils.isEmpty(orderId)){
+        		super.addHeadCode(response, ResultConstant.IN_PARAM_FAILTURE);
+        	}else{
+        		Map<String, Object> resMap = cartBmo.queryCltCartOrder(paramMap, null, sessionStaff);
+                if (ResultCode.R_SUCC.equals(resMap.get("resultCode"))) {
+                	Map<String, Object> cartInfo = (Map<String, Object>) resMap.get("result");
+                	
+    				if (request.getParameter("acceptOrder") != null &&"Y".equals(request.getParameter("acceptOrder"))) {
+    					//放置采集单信息与Session用于拦截和校验
+    					session.setAttribute(SysConstant.CLT_ORDER_INFO, cartInfo);
+    				}
+    	            Map<String, Object> orderList = (Map<String, Object>) cartInfo.get("collectionOrderList");
+    	            Map<String, Object> orderListInfo = (Map<String, Object>) orderList.get("collectionOrderInfo");
+    				String expDateStr = (String) orderListInfo.get("expDate");
+                	Date expDate = DateUtil.getDateFromString(expDateStr,"yy-MM-dd HH:mm:ss");
+                	if(new Date().before(expDate)){
+                		orderListInfo.put("ifExp", "N");
+            		}else{
+            			orderListInfo.put("ifExp", "Y");
+            		}
+    				model.addAttribute("cart", cartInfo);
+    				model.addAttribute("code", ResultCode.R_SUCC);
+    				model.addAttribute("orderId", orderId);
+                } else {
+    				model.addAttribute("code", resMap.get("resultCode"));
+    				model.addAttribute("mess", resMap.get("resultMsg"));
+    				super.addHeadCode(response, new Result(ResultConstant.FAILD.getCode(),(String) resMap.get("resultMsg")));
+                }
+        	}
+            return "/custCollection/custCollection-info";
+        } catch (BusinessException be) {
+            return super.failedStr(model, be);
+        } catch (InterfaceException ie) {
+            return super.failedStr(model, ie, paramMap, ErrorCode.CLTORDER_DETAIL);
+        } catch (Exception e) {
+            log.error("购物车详情/order/queryCustCollectionInfo方法异常", e);
+            return super.failedStr(model, ErrorCode.CLTORDER_DETAIL, e, paramMap);
+        }
+    }
+    
+    /**
+     * 实名制信息查询受理
+     * 
+     * @param param
+     * @param model
+     * @return
+     */
+    @RequestMapping(value = "/cltPrepare", method = RequestMethod.GET)
+    public String cltPrepare(HttpSession session, Model model) {
+        model.addAttribute("canOrder", EhcacheUtil.pathIsInSession(session, "order/prepare"));
+        model.addAttribute("cltOrder", "Y");
+        model.addAttribute("DiffPlaceFlag", "local");
+        SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
+		/** 测试卡权限 **/
+		String specialtestauth = "-1";
+		try {
+			specialtestauth = staffBmo.checkOperatBySpecCd(SysConstant.SPECIALTESTQX, sessionStaff);
+		} catch (Exception e) {
+			specialtestauth = "-1";
+		}
+		model.addAttribute("specialtestauth", specialtestauth);
+        return "/order/order-prepare";
+    }
+    
+    /**
+     * 从缓存中获取实名信息采集单信息
+     * 
+     * @param param
+     * @param model
+     * @return
+     */
+    @RequestMapping(value = "/getCltorderInfo", method = { RequestMethod.POST })
+    @ResponseBody
+    public JsonResponse getCltorderInfo(@RequestBody Map<String, Object> param, HttpServletResponse response, HttpSession session, 
+    		HttpServletRequest request) throws Exception {
+    	JsonResponse jsonResponse = null;
+        try {
+        	if(session.getAttribute(SysConstant.CLT_ORDER_INFO)!=null){
+                Map<String, Object> resMap = (Map<String, Object>) session.getAttribute(SysConstant.CLT_ORDER_INFO);
+            	jsonResponse = super.successed(resMap);
+        	}else {
+                jsonResponse = super.failed("获取实名信息采集单信息失败，请重新查询后再受理！", ResultConstant.FAILD.getCode());
+            }
+        } catch (Exception e) {
+            return super.failed(ErrorCode.CLTORDER_INFO, e, param);
+        }
+        return jsonResponse;
     }
 }

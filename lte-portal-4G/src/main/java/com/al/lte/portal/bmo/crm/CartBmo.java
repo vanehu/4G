@@ -87,4 +87,23 @@ public interface CartBmo {
 	 */
 	public Map<String, Object> queryOCTN(Map<String, Object> dataBusMap, String optFlowNum, SessionStaff sessionStaff) throws Exception;
 	
+	/**
+	  * 实名信息采集单列表
+	  * @param dataBusMap
+	  * @param optFlowNum
+	  * @param sessionStaff
+	  * @return
+	  * @throws BusinessException
+	  */
+	public Map<String, Object> queryCltCarts(Map<String, Object> dataBusMap,String optFlowNum, SessionStaff sessionStaff) throws Exception;
+	
+	/**
+	  * 实名信息采集单详情
+	  * @param dataBusMap
+	  * @param optFlowNum
+	  * @param sessionStaff
+	  * @return
+	  * @throws BusinessException
+	  */
+	public Map<String, Object> queryCltCartOrder(Map<String, Object> dataBusMap,String optFlowNum, SessionStaff sessionStaff) throws Exception;
 }

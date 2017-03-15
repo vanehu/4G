@@ -47,6 +47,16 @@ public interface OrderBmo {
 	 */
 	public Map<String, Object> orderSubmit(Map<String, Object> paramMap,String optFlowNum, 
 			SessionStaff sessionStaff) throws Exception;
+	
+	/**
+	 * 实名信息采集单订单提交
+	 * @param paramMap
+	 * @return
+	 * @throws Exception
+	 */
+	public Map<String, Object> cltOrderSubmit(Map<String, Object> paramMap,String optFlowNum, 
+			SessionStaff sessionStaff) throws Exception;
+	
 	/**
 	 * 物联网订单提交
 	 * @param paramMap
@@ -793,7 +803,7 @@ public interface OrderBmo {
 	/**
 	 * 调后台接口下载实名制拍照证件
 	 */
-	public Map<String, Object> downloadCustCertificate(Map<String, Object> param, SessionStaff sessionStaff) throws BusinessException;
+	public Map<String, Object> downloadCustCertificate(Map<String, Object> param, SessionStaff sessionStaff) throws Exception;
 
 	/**
 	 * 订单提交校验客户身份证信息
@@ -832,8 +842,10 @@ public interface OrderBmo {
 	 * @throws Exception
 	 */
 	public Map<String, Object> queryAgreementType(Map<String, Object> paramMap, String optFlowNum,SessionStaff sessionStaff) throws Exception;
+	
+	
 	/**
-	 * 填单页面日志记录
+	 * 订单id日志生产接口
 	 *@param paramMap
 	 * @param optFlowNum
 	 * @param sessionStaff
@@ -841,4 +853,25 @@ public interface OrderBmo {
 	 * @throws Exception
 	 */
 	public Map<String,Object> orderLog(Map<String, Object> paramMap, String optFlowNum,SessionStaff sessionStaff)throws Exception;
+
+	/**
+	 * 实名信息采集单订单确认
+	 *@param paramMap
+	 * @param optFlowNum
+	 * @param sessionStaff
+	 * @return
+	 * @throws Exception
+	 */
+	public Map<String,Object> cltOrderCommit(Map<String, Object> paramMap, String optFlowNum,SessionStaff sessionStaff)throws Exception;
+
+	/**
+	 * 实名信息采集单受理订单提交信息校验
+	 * @param paramMap
+	 * @param request
+	 * @param sessionStaff
+	 * @return
+	 * @throws Exception
+	 */
+	public Map<String, Object> cltOrderCheck(Map<String, Object> param, HttpServletRequest request,
+			SessionStaff sessionStaff)throws Exception;
 }

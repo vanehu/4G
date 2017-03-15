@@ -249,6 +249,9 @@ CONST = (function(){
 		CHANGE_CARD_ORDER_TYPE : "800000065", //异地补换卡订单类型
 		CHANGE_CARD_AREA_ID : "800000067", //异地补换卡漫游省地区id
 		VIROLID : "810000000",//虚拟订单ID属性
+		CLTORDERID : "810000001",//采集客户订单号
+		CLTUSERID : "810000002",//采集客户订单项ID
+		CLTVIROLID : "810000003",//采集经办人文件订单ID
 		CURIP :"40010038",//业务办理ip
 		PORTAL_ORDER_ID	:"8000066",//前台订单编号ID	
 		REAL_NAME_CHECK :"1000100" //客户实名认证标识
@@ -485,6 +488,7 @@ CONST = (function(){
 	};
 	
 	var _TGJBRBTQX = "TGJBRBTQX";//是否具有跳过经办人必填的权限
+	var _ZYCSK = "ZYCSK";//专用测试权限
 	var _isHandleCustNeeded = true;//false：有权限；true：无权限
 	
 	var _realNamePhotoFlag = "";//实名制拍照开关
@@ -615,6 +619,7 @@ CONST = (function(){
 		SECURITY_OFFICE_PROD_ID: _SECURITY_OFFICE_PROD_ID,
 		GET_BIND_STATUS:_GET_BIND_STATUS,
 		TGJBRBTQX :_TGJBRBTQX,
+		ZYCSK : _ZYCSK,
 		isHandleCustNeeded	:_isHandleCustNeeded,
 		realNamePhotoFlag	:_realNamePhotoFlag,
 		Action_Flag_Info:_Action_Flag_Info,

@@ -41,6 +41,7 @@ import org.xhtmlrenderer.pdf.ITextRenderer;
 import com.al.ec.serviceplatform.client.DataBus;
 import com.al.ec.serviceplatform.client.ResultCode;
 import com.al.ecs.common.util.DateUtil;
+import com.al.ecs.common.util.JsonUtil;
 import com.al.ecs.common.util.MDA;
 import com.al.ecs.common.util.NumUtil;
 import com.al.ecs.common.util.PropertiesUtils;
@@ -5836,6 +5837,81 @@ public class PrintBmoImpl implements PrintBmo {
 			resultCode = ResultCode.R_FAILURE;
 		}
 		return resultCode;
+	}
+	
+	/**
+	 * 实名信息采集单打印
+	 */
+	public String printCustCltReceipt(Map<String, Object> dataBusMap, String optFlowNum, SessionStaff sessionStaff, HttpServletResponse response) throws Exception {
+		
+        Map<String, Object> orderList = (Map<String, Object>) dataBusMap.get("collectionOrderList");
+        Map<String, Object> orderListInfo = (Map<String, Object>) orderList.get("collectionOrderInfo");
+
+		Map<String, Object> printData = new HashMap<String, Object>();
+		
+		printData.put("cltNo", MapUtils.getString(dataBusMap, "orderNbr"));
+		printData.put("createDate", DateUtil.getNow("yyyy/MM/dd"));
+		printData.put("expDate", MapUtils.getString(orderListInfo, "expDate"));
+		printData.put("remarks", MapUtils.getString(orderListInfo, "remarks"));
+
+		ArrayList<Map<String, Object>> custInfos = (ArrayList<Map<String, Object>>) orderList.get("collectionCustInfos");
+		ArrayList<Map<String, Object>> userListInfos = new ArrayList<Map<String, Object>>();
+
+		for(Map<String, Object> custInfo:custInfos){
+			String partyRoleCd = MapUtils.getString(custInfo,"partyRoleCd");
+			if(!StringUtils.isEmpty(partyRoleCd)){
+				//0为产权人
+				if("0".equals(partyRoleCd)){
+					printData.put("custName", MapUtils.getString(custInfo, "custName"));
+					printData.put("telNumber", MapUtils.getString(custInfo, "telNumber"));
+					printData.put("addressStr", MapUtils.getString(custInfo, "addressStr"));
+					printData.put("certTypeName", MapUtils.getString(custInfo, "certTypeName"));
+					printData.put("certNumber", MapUtils.getString(custInfo, "certNumber"));
+				//3为经办人
+				}else if("3".equals(partyRoleCd)){
+					printData.put("jbrCustName", MapUtils.getString(custInfo, "custName"));
+					printData.put("jbrTelNumber", MapUtils.getString(custInfo, "telNumber"));
+					printData.put("jbrAddressStr", MapUtils.getString(custInfo, "addressStr"));
+					printData.put("jbrCertType", MapUtils.getString(custInfo, "certTypeName"));
+					printData.put("jbrCertNumber", MapUtils.getString(custInfo, "certNumber"));
+				//1为使用人
+				}else{
+					Map<String, Object> userInfo = new HashMap<String, Object>();
+					userInfo.put("no", MapUtils.getString(custInfo, "printSeq"));
+					userInfo.put("custName", MapUtils.getString(custInfo, "custName"));
+					userInfo.put("telNumber", MapUtils.getString(custInfo, "telNumber"));
+					userInfo.put("addressStr", MapUtils.getString(custInfo, "addressStr"));
+					userInfo.put("certTypeName", MapUtils.getString(custInfo, "certTypeName"));
+					userInfo.put("certNumber", MapUtils.getString(custInfo, "certNumber"));
+					userInfo.put("maxQuantity", MapUtils.getString(custInfo, "maxQuantity"));
+					userInfo.put("remark", MapUtils.getString(custInfo, "remarks"));
+					userListInfos.add(userInfo);
+				}
+			}
+		}
+		
+		printData.put("userListInfo", userListInfos);
+		
+		printData.put("staffNumber", sessionStaff.getStaffCode());
+		printData.put("staffName", sessionStaff.getStaffName());
+		printData.put("channelName", sessionStaff.getCurrentChannelName());
+
+		log.error("dataBusMap={}", JsonUtil.toString(dataBusMap));
+		log.error("printData={}", JsonUtil.toString(printData));
+		
+		String printTypeDir = SysConstant.P_MOD_SUB_BASE_DIR + SysConstant.P_MOD_SUB_CUSTCLT;
+        String strJasperFileName = SysConstant.P_MOD_BASE_DIR + SysConstant.P_MOD_SUB_CUSTCLT
+        		+ SysConstant.P_MOD_FILE_STBRESERVE + SysConstant.P_MOD_FILE_SUBFIX;
+
+        Collection<Map<String, Object>> inFields = new ArrayList<Map<String, Object>>();
+        inFields.add(printData);
+
+        Map<String, Object> reportParams = new HashMap<String, Object>();
+        reportParams.put("SUBREPORT_DIR", printTypeDir);
+
+        //输出打印内容
+        commonPdfPrint(strJasperFileName, reportParams, inFields, response, 0, 0);
+		return ResultCode.R_SUCC;
 	}
 
 	protected Map<String, Object> runInvoicePrint(Map<String, Object> printData,

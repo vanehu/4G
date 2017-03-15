@@ -1163,6 +1163,22 @@ common.print = (function($){
 			value: JSON.stringify(params)
 		})).appendTo("body").submit();
 	};
+	
+	//实名信息采集单打印
+	var _custCltReceipt = function(printData){
+		$("<form>", {
+			id: "custCltReceiptForm",
+			style: "display:none;",
+			target: "_blank",
+			method: "POST",
+			action: contextPath + "/print/custCltReceipt"
+		}).append($("<input>", {
+			id: "custCltReceipt",
+			name: "custCltReceipt",
+			type: "hidden",
+			value: JSON.stringify(printData)
+		})).appendTo("body").submit();
+	};
 
 	var _queryElInvoice=function(pageIndex){
 		if (!$("#p_areaId_val").val() || $("#p_areaId_val").val() == "") {
@@ -1305,6 +1321,7 @@ common.print = (function($){
 		signVoucher:_signVoucher,
 		printOld2new:_printOld2new,
 		STBReserveReceipt : _STBReserveReceipt,
+		custCltReceipt : _custCltReceipt,
 		queryElInvoice:_queryElInvoice,
 		preVoucherLoc:_preVoucherLoc,
 		queryConstConfig:_queryConstConfig,

@@ -1013,7 +1013,10 @@ order.main = (function(){
 		//客户类型,证件类型
 		order.cust.partyTypeCdChoose($("#orderPartyTypeCd").children(":first-child"),"orderIdentidiesTypeCd");
 		order.cust.identidiesTypeCdChoose($("#orderIdentidiesTypeCd").children(":first-child"),"orderAttrIdCard");
-		
+		//实名信息采集单受理，自动填充经办人信息
+		if(OrderInfo.isCltNewOrder()) {
+			order.cust.cltjbrCreate();
+		}
 	};
 	
 	//初始化省内订单属性
@@ -1403,12 +1406,101 @@ order.main = (function(){
 				$('#'+itemId).attr({'check_option':'N','readonly':'readonly','disabled':'disabled'}).show();
 				
 				$('#choose_user_btn_'+prodId).off('click').on('click',function(){
-					if (query.common.queryPropertiesValue("REAL_USER_" + OrderInfo.staff.areaId.substr(0, 3)) == "ON"){
-						//使用人新模式
-						order.main.openChooseDialog(this, {"tipThead"	:"选择使用人"});
-					} else{
-						//使用人老模式
-						order.main.toChooseUser2(prodId);
+					if(OrderInfo.isCltNewOrder()) {
+						$('#tip_thead').html('选择使用人');
+						$("#clt_user_list_div").show();
+						$("#user_info_ul").hide();
+						//填充使用人列表并绑定点击事件
+						$("#clt_user_list_tbody").empty();
+						//获取原来的值，展示时自动打勾
+						var cltUserId = $(this).prev('input').prev(":hidden").attr("cltUserId");
+						for(var i = 0;i<OrderInfo.cltUserList.length;i++){
+							var cltUser = OrderInfo.cltUserList[i];
+							var li$ = "<tr userId='"+cltUser.collectionItemId+"' fileOrderId='"+cltUser.fileOrderId+"' certNumber='"+cltUser.certNumber+"'";
+							
+							if(cltUserId==cltUser.collectionItemId){
+								li$ += "class ='plan_select'><td style ='text-align: center;'><i class='select'></i></td>";
+							}else{
+								li$ += "><td style ='text-align: center;'></td>";
+							}
+							li$ += "<td>"+cltUser.custName+"</td>;";
+							li$ += "<td>"+cltUser.certNumber+"</td>";
+							li$ += "<td>"+cltUser.maxQuantity+"</td>";
+							li$ += "<td>"+cltUser.realQuantity+"</td>";
+							li$ += "<td>"+cltUser.thisOrderUseNum+"</td>";
+							li$ += "</tr>";
+							$("#clt_user_list_tbody").append(li$);
+						}
+						
+						
+						$("#clt_user_list_tbody tr").each(function(){
+							$(this).off("click").on("click",function(event){
+								//如果是已选，再次选中不触发事件
+								if($(this).hasClass("plan_select")){
+									return;
+								}
+								for(var i = 0;i<OrderInfo.cltUserList.length;i++){
+									var cltUser = OrderInfo.cltUserList[i];
+									if(cltUser.collectionItemId == $(this).attr("userId")){
+										if(cltUser.maxQuantity<=cltUser.realQuantity+cltUser.thisOrderUseNum){
+											$.alert("提示","该使用人已经达到最大数量，无法再次受理，请选择其他使用人！");
+											return;
+										}
+										
+										//选择取消
+										$("#clt_user_list_tbody tr").filter(".plan_select").children(":first-child").html("");
+										$("#clt_user_list_tbody tr").filter(".plan_select").removeClass("plan_select");
+
+										//打勾操作
+										var nike="<i class='select'></i>";
+										$(this).children(":first-child").html(nike);
+										$(this).addClass("plan_select");
+										
+										//触发回填以及查询事件
+										// 设置隐藏域的表单数据
+										$('#orderUserName').val(cltUser.custName);//姓名
+										$('#orderUserName').data('identityPic',"");
+										$('#orderUserIdCard').val(cltUser.certNumber);//设置身份证号
+										$('#orderUserAddr').val(cltUser.addressStr);//地址
+										// 设置文本显示
+										$("#li_order_user span").text(cltUser.custName);
+										$("#li_order_user2 span").text(cltUser.certNumber);
+										$("#li_order_user3 span").text(cltUser.addressStr);
+										_qryUserCustInfo($("#choose_user_btn_"+prodId));	
+										break;
+									}
+								}						
+							});
+						});
+						
+						easyDialog.open({
+							container : "choose_user_dialog_new"
+						});
+
+						$('#orderIdentidiesTypeCdB').off('change').on('change',function(){
+							order.main.identidiesTypeForUser(this,"orderUserIdCard",$("#choose_user_btn_"+prodId));
+						});
+
+						/** 初始化证件类型,客户类型 **/
+						order.cust.partyTypeCdChoose($("#orderPartyTypeCdB").children(":first-child"),"orderIdentidiesTypeCdB");
+						order.main.identidiesTypeForUser($("#orderIdentidiesTypeCdB").children("[value]='1'"),"orderUserIdCard",$("#choose_user_btn_"+prodId));
+						
+						//设置为身份证
+						$("#orderIdentidiesTypeCdB option").each(function(){
+							if($(this).val() == "1"){
+								$(this).attr("selected","selected");
+							} else {
+								$(this).removeAttr("selected");
+							}
+						});
+					}else{
+						if (query.common.queryPropertiesValue("REAL_USER_" + OrderInfo.staff.areaId.substr(0, 3)) == "ON"){
+							//使用人新模式
+							order.main.openChooseDialog(this, {"tipThead"	:"选择使用人"});
+						} else{
+							//使用人老模式
+							order.main.toChooseUser2(prodId);
+						}
 					}
 				}).show();
 			} else {
@@ -2350,6 +2442,13 @@ order.main = (function(){
 				//清除号码的缓存！
 				order.phoneNumber.resetBoProdAn();
 				
+				//如果是采集单受理的，则清空采集单使用人本次订单占用数目
+				if(OrderInfo.isCltNewOrder()){
+					for(var i = 0; i<OrderInfo.cltUserList.length; i++){
+		    			OrderInfo.cltUserList[i].thisOrderUseNum = 0;
+		    		}
+				}
+				
 				$("#order_fill_content").empty();
 				order.prepare.showOrderTitle();
 				$("#order_tab_panel_content").show();
@@ -2950,6 +3049,10 @@ order.main = (function(){
 		}else{
 			$('#tip_thead').html('选择责任人');
 		}
+		
+		//采集单受理打开责任人
+		$("#clt_user_list_div").hide();
+		$("#user_info_ul").show();
 
 		easyDialog.open({
 			container : "choose_user_dialog_new"
@@ -3196,7 +3299,36 @@ order.main = (function(){
 					userSubInfo.orderAttrPhoneNbr	 = userCustInfo.orderAttrPhoneNbr;
 					userSubInfo.orderIdentidiesTypeCd= userCustInfo.orderIdentidiesTypeCd;
 					if(userSubInfo.orderIdentidiesTypeCd == 1){
-						userSubInfo.identityPic = userCustInfo.identityPic;
+						//采集单身份证照片由后台下载获取
+						if(OrderInfo.isCltNewOrder()) {
+							var fileOrderId = $("#clt_user_list_tbody tr.plan_select").attr("fileOrderId");
+							//调用后台接口下载使用人身份证照片
+							$.ecOverlay("<strong>正在处理使用人信息中, 请稍等...</strong>");
+							var response = $.callServiceAsJson(contextPath + "/order/downloadCustCertificate", {
+								areaId		: OrderInfo.getAreaId(),
+								srcFlag		: "REAL",
+								olId		: fileOrderId,
+								picFlag		: "C"
+						    });
+							$.unecOverlay();
+							if(response.code != 0){
+								$("#chooseUserBt").removeClass("btna_o").addClass("btna_g").off('click');
+							}
+							if(response.code == 0 && response.data){
+								userSubInfo.identityPic = response.data.photographs[0].photograph;
+							}else if(response.code == 1 && response.data){
+								$.alert("错误", "使用人证件照下载失败，错误原因：" + response.data);
+								return;
+							}else if(response.code == -2 && response.data){
+								$.alertM(response.data);
+								return;
+							}else{
+								$.alert("错误", "使用人证件照下载发生未知异常，请稍后重试。错误信息：" + response.data);
+								return;
+							}
+						}else{
+							userSubInfo.identityPic = userCustInfo.identityPic;
+						}
 					}
 				},
 				no:function(){
@@ -3285,6 +3417,39 @@ order.main = (function(){
 				$hidden.val(instId);
 			}
 		};
+		//采集单添加使用人信息dom缓存
+		if(OrderInfo.isCltNewOrder()) {
+			//使用人确认，记录本次订单占用情况，原使用人-1（如果有），新使用人+1
+			var cltUserId = $("#clt_user_list_tbody tr.plan_select").attr("userId");
+			var oldCltUserId = $hidden.attr("cltUserId");
+			//相等不做操作
+			if(cltUserId!=oldCltUserId){
+				for(var i = 0;i<OrderInfo.cltUserList.length;i++){
+					var cltUser = OrderInfo.cltUserList[i];
+					//原使用人-1
+					if(ec.util.isObj(oldCltUserId)){
+						if(oldCltUserId == cltUser.collectionItemId){
+							if(ec.util.isObj(cltUser.thisOrderUseNum)){
+								cltUser.thisOrderUseNum = cltUser.thisOrderUseNum - 1;
+							}else{
+								cltUser.thisOrderUseNum = 0;
+							}
+						}
+					}
+					//新使用人+1
+					if(cltUserId == cltUser.collectionItemId){
+						if(ec.util.isObj(cltUser.thisOrderUseNum)){
+							cltUser.thisOrderUseNum = cltUser.thisOrderUseNum + 1;
+						}else{
+							cltUser.thisOrderUseNum = 1;
+						}
+					}
+				}
+				$hidden.attr("cltUserId",cltUserId);
+			}
+			
+		}
+		
 		/** 保存设置值,再次弹出初始化文本框数据 **/
 		var cacheObj = {
 			orderIdentidiesTypeCd : userSubInfo.orderIdentidiesTypeCd,

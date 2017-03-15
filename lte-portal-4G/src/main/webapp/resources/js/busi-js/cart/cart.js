@@ -1330,6 +1330,7 @@ $(function(){
 		});
 
 		$("#bt_cartQry").off("click").on("click",function(){cart.main.queryCartList(1);});
+		$("#bt_cltListQry").off("click").on("click",function(){cust.collection.queryCartList(1);});
 		$("#qry_virtualNumber").off("click").on("click",function(){cart.main.qryVirtualNumber();});
 		$("#qry_blackUserInfo").off("click").on("click",function(){cart.main.qryBlackUserInfo(1);});
 		

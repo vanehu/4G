@@ -23,8 +23,12 @@ cert = (function() {
 		}; //判断是否IE浏览器
 	};
 
-	var _getDevices = function() {
+	var _getDevices = function(deviceId) {
 		try {
+			var deviceDomId = "device";
+		  	if(ec.util.isObj(deviceId)){
+		  		deviceDomId = deviceId;
+		  	}
 			var ret = capture.getDevices();
 			var json = JSON.parse(ret);
 			if (json.resultFlag != 0) {
@@ -35,8 +39,8 @@ cert = (function() {
 			}
 			var devicesArr = json.devices;
 			var len = devicesArr.length;
-			var deviceElement = document.getElementById("device");
-			$("#device").html("");
+			var deviceElement = document.getElementById(deviceDomId);
+			$("#"+deviceDomId).html("");
 			for ( var i = 0; i < len; i++) {
 				var option = new Option();
 				option.value = devicesArr[i].device;
@@ -51,9 +55,13 @@ cert = (function() {
 		}
 	};
 	
-	var _createVideo = function() {
+	var _createVideo = function(deviceId) {
 		try{
-			var device = document.getElementById("device");   
+			var deviceDomId = "device";
+		  	if(ec.util.isObj(deviceId)){
+		  		deviceDomId = deviceId;
+		  	}
+			var device = document.getElementById(deviceDomId);   
 			var dev=device.options[device.selectedIndex].value;
 			var video = capture.createVideo(dev,width,height);
 			return JSON.parse(video);
@@ -62,9 +70,13 @@ cert = (function() {
 	    }
 	};
 
-	var _createImage = function() {
+	var _createImage = function(deviceId) {
 	  try{
-			var device = document.getElementById("device");   
+			var deviceDomId = "device";
+		  	if(ec.util.isObj(deviceId)){
+		  		deviceDomId = deviceId;
+		  	}
+			var device = document.getElementById(deviceDomId);   
 			var dev=device.options[device.selectedIndex].value;
 			var image = capture.createImage(dev);
 			return JSON.parse(image);

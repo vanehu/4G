@@ -1163,7 +1163,6 @@ public final class PortalServiceCode {
     /**客户信息核验接口*/
     public static final String CHECK_CUST_CERT = "biz-service/intf.custService/checkCustCert";
 
-
     /** 客户资料同步接口 */
     public static final String CUSTINFO_SYNCHRONIZE = "biz-service/intf.custService/custInfoSynchronize";
 
@@ -1172,6 +1171,18 @@ public final class PortalServiceCode {
 
     /** 获取seq接口 */
     public static final String GET_SEQ = "biz-service/intf.soService/getSeq";
+
+    /** 实名信息采集单订单提交 */
+    public static final String CLT_ORDER_SUBMIT = "biz-service/intf.soService/commitCollectionOrder";
+    
+    /** 实名信息采集单订单确认 */
+    public static final String CLT_ORDER_COMMIT = "biz-service/intf.soService/updateCollectionOrderExpOrEff";
+    
+    /** 实名信息采集单订单查询 */
+    public static final String CLT_ORDER_QUERY = "biz-service/intf.detailService/queryCollectionOrders";
+    
+    /** 实名信息采集单订单详情 */
+    public static final String CLT_ORDER_Detail = "biz-service/intf.detailService/queryCollectionOrderItemDetail";
 
 }
 

@@ -660,6 +660,17 @@ order.cust = (function(){
 		}
 		// 将客户查询入参保存，供查询预约号码用
 		order.cust.custQueryParam = param;
+		//实名信息采集单将查询信息保存
+		if(OrderInfo.actionFlag == 45){
+			cust.collection.custInfo = {
+				"queryNum":$.trim($("#p_cust_identityNum").val()),
+				"queryType":$.trim($("#p_cust_identityCd").val()),
+				"queryTypeName":$("#p_cust_identityCd  option:selected").text(),
+				"queryAreaId" : areaId,
+				"queryAreaName" : $("#p_cust_areaId_val").val()
+			}
+		};
+		
 		$.callServiceAsHtml(contextPath+"/cust/queryCust",param,{
 			"before":function(){
 				$.ecOverlay("<strong>正在查询中,请稍等...</strong>");
@@ -1035,7 +1046,24 @@ order.cust = (function(){
             userCustId: "",//使用人客户id
             isSame: ""//使用人名称与账户名称是否一致
         };
-
+        
+        //实名信息采集单客户定位判断是否为政企客户，否则提示拦截
+        if(OrderInfo.actionFlag == 45){
+        	 // 判断是否是政企客户
+            var isGovCust = false;
+            for (var i = 0; i < CacheData.getGovCertType().length; i++) {
+                if (_choosedCustInfo.identityCd == CacheData.getGovCertType()[i]) {
+                    isGovCust = true;
+                    break;
+                }
+            }
+            if(!isGovCust){
+            	 $.alert('提示', '实名信息采集单客户必须为政企客户，请重新定位。');
+            	 $(".userclose").click();
+                 return false;
+            }
+        }
+        
         if(ec.util.isObj(param.accNbr)){
         	$.callServiceAsJson(contextPath + "/cust/queryCustExt", param, {
                 "before": function () {
@@ -1655,6 +1683,79 @@ order.cust = (function(){
         	$("#p_cust_identityCd option[value='bizId']").hide();
         	$("#p_cust_identityCd option[value='bizId']").remove(); // 兼容ie下option隐藏无效
         }
+        
+        //实名信息采集单信息获取,自动定位客户
+    	var cltOrder = $("#cltOrder").val();
+    	if(cltOrder == "Y"){
+    		$.callServiceAsJson(contextPath + "/order/getCltorderInfo",{}, {
+    			"before":function(){
+    				$.ecOverlay("<strong>正在查询中,请稍等会儿....</strong>");
+    			},
+    			"always":function(){
+    				$.unecOverlay();
+    			},
+    			"done" : function(response){
+    				if (response.code == 0) {
+						OrderInfo.cltOrderInfo = response.data.collectionOrderList.collectionOrderInfo;
+    					var cltCustList = response.data.collectionOrderList.collectionCustInfos
+    					for(var i = 0; i<cltCustList.length; i++){
+    						//产权人
+    						if(cltCustList[i].partyRoleCd =='0'){
+								OrderInfo.cltCustInfo = cltCustList[i];
+    						//使用人
+    						}else if(cltCustList[i].partyRoleCd =='1'){
+    							cltCustList[i].thisOrderUseNum = 0;//初始化本次订单使用数目为0
+								OrderInfo.cltUserList.push(cltCustList[i]);
+    						//经办人
+    						}else if(cltCustList[i].partyRoleCd =='3'){
+								OrderInfo.cltjbrInfo = cltCustList[i];
+    						}
+    					}
+    					
+    			    	if(!ec.util.isObj(OrderInfo.cltCustInfo.collectionItemId)||
+    			    			!ec.util.isObj(OrderInfo.cltCustInfo.remarks.queryAreaId)||
+    			    			!ec.util.isObj(OrderInfo.cltCustInfo.remarks.queryNum)||
+    			    			!ec.util.isObj(OrderInfo.cltCustInfo.remarks.queryType)){
+    			    		$.alert("错误", "采集单客户信息获取失败，采集单错误，无法继续受理，请重试。");
+    						return;
+    			    	}
+    					
+    			    	if(!ec.util.isObj(OrderInfo.cltjbrInfo.collectionItemId)){
+    			    		$.alert("错误", "采集单经办人信息获取失败，采集单错误，无法继续受理，请重试。");
+    						return;
+    			    	}
+    			    	
+    			    	if(OrderInfo.cltUserList.length<1){
+    			    		$.alert("错误", "采集单使用人信息获取失败，采集单错误，无法继续受理，请重试。");
+    						return;
+    			    	}else{
+    			    		var hasEmptyUser = false;
+    			    		for(var i = 0; i<OrderInfo.cltUserList.length; i++){
+    			    			if(OrderInfo.cltUserList[i].realQuantity<OrderInfo.cltUserList[i].maxQuantity){
+    			    				hasEmptyUser = true;
+    			    				break;
+    			    			}
+    			    		}
+    			    		if(!hasEmptyUser){
+        			    		$.alert("错误", "该采集单使用人已经全部达到期望办理号卡数量，无法继续受理业务。");
+        						return;
+    			    		}
+    			    	}
+        				//实名信息采集单受理  
+        				OrderInfo.isCltOrder = true;
+    					$("#p_cust_areaId").val(OrderInfo.cltCustInfo.remarks.queryAreaId);
+    					$("#p_cust_identityCd").val(OrderInfo.cltCustInfo.remarks.queryType);
+    					$("#p_cust_identityNum").val(OrderInfo.cltCustInfo.remarks.queryNum);
+    					$("#p_cust_areaId_val").val(OrderInfo.cltCustInfo.remarks.queryAreaName);
+    					$("#usersearchbtn").click();
+    					
+    				}else{
+    					$.alert("提示",response.data);
+    					return;
+    				}
+    			}
+    		});	
+    	}
 	};
 	//使用带入的客户信息自动定位客户
 	var _checkAutoCustQry = function(){
@@ -3112,7 +3213,12 @@ order.cust = (function(){
 		    if (undefined != man.resultContent.identityPic && null != man.resultContent.identityPic && "" != man.resultContent.identityPic) {
 	      		$("#img_Cert").attr("src", "data:image/jpeg;base64," + man.resultContent.identityPic);
 	      		OrderInfo.bojbrCustIdentities.identidiesPic = man.resultContent.identityPic;
-		      _showCertPicture();
+	      		if(OrderInfo.actionFlag == 45){
+		      		OrderInfo.bojbrCustIdentities.addressStr = man.resultContent.certAddress;
+		      		OrderInfo.bojbrCustIdentities.name = man.resultContent.partyName;
+		      		OrderInfo.bojbrCustIdentities.identityNum = man.resultContent.certNumber;
+	      		}
+	      		_showCertPicture();
 			} else{
 				$.alert("错误", "当前经办人身份证照片为空，无法继续受理，请确认。");
 				return;
@@ -3192,7 +3298,11 @@ order.cust = (function(){
 						};
 					};
                     _getResponseResult(response);// 开始处理经办人信息
-                	_showCameraView();// 加载拍照弹窗
+                    //采集单受理不拍照
+        			if(!OrderInfo.isCltNewOrder()) {
+                    	_showCameraView();// 加载拍照弹窗
+        			}
+
 				}else if(response.code == 1 && response.data){
 					$.alert("错误", "查询经办人信息失败，错误原因：" + response.data);
 				}else if(response.code == -2 && response.data){
@@ -3214,6 +3324,10 @@ order.cust = (function(){
 	var _getResponseResult = function(response){
 		//经办人信息填写模块信息保护优化
 		 _disableHandleCustInfos();
+		// 加载拍照弹窗，实名信息采集单受理除外(只新装)
+		if(!OrderInfo.isCltNewOrder()){
+			_showCameraView();
+		 }
 		//判断新老用户封装用户信息
 		if(ec.util.isArray(response.data.custInfos)){
 			OrderInfo.ifCreateHandleCust = false;//不需要新建经办人
@@ -3235,17 +3349,22 @@ order.cust = (function(){
 				}
 			}
 		} else{
-			var orderAttrName = $.trim($("#orderAttrName").val());
-			$.confirm("确认","没有查询到【" + orderAttrName + "】客户信息，系统将自动创建经办人客户，是否确认继续受理？", {
-				yes:function(){
-					_yes2Continue();//继续受理
-				},
-				no:function(){
-					_removeDisabled();//去除经办人被置灰的限制
-					_close();//关闭摄像头及拍照弹框
-					return;
-				}
-			});
+			//实名信息采集单受理自动新建
+			if(OrderInfo.isCltNewOrder()) {
+				_yes2Continue();//继续受理
+			}else{
+				var orderAttrName = $.trim($("#orderAttrName").val());
+				$.confirm("确认","没有查询到【" + orderAttrName + "】客户信息，系统将自动创建经办人客户，是否确认继续受理？", {
+					yes:function(){
+						_yes2Continue();//继续受理
+					},
+					no:function(){
+						_removeDisabled();//去除经办人被置灰的限制
+						_close();//关闭摄像头及拍照弹框
+						return;
+					}
+				});
+			}
 		}
 	};
 
@@ -3668,7 +3787,7 @@ order.cust = (function(){
     		if(ec.util.isObj(param.height)){
     			height = param.height;
     		}
-    		if(ec.util.isObj(param.style)){
+    		if(param.style!=null&&param.style!=undefined){
     			style = param.style;
     		}
     	}
@@ -3683,6 +3802,83 @@ order.cust = (function(){
 			$(dom).append("<object classid='clsid:454C18E2-8B7D-43C6-8C17-B1825B49D7DE' id='capture'  width=" + width + " height=" + height + " style=" + style + "></object>");
 		}
     };
+    
+    /*
+     * 实名信息采集单经办人自动填充
+     */
+    var _cltjbrCreate = function(){	
+    	_setSelectVal("orderIdentidiesTypeCd","1"); //默认证件类型使用“身份证”
+    	_identidiesTypeCdChoose($('#orderIdentidiesTypeCd'),'orderAttrIdCard');
+		$("#orderAttrReadCertBtn").remove();//读卡（重置）按钮去除，不允许再添加其他人为经办人
+		$("#orderAttrQueryCertBtn").remove();//查询（重置）按钮去除，不允许再添加其他人为经办人
+
+    	//拦截采集单信息
+    	if(!ec.util.isObj(OrderInfo.cltjbrInfo.fileOrderId)){
+    		$.alert("错误", "经办人信息获取失败，采集单错误，无法继续受理，请重试。");
+			return;
+    	}
+    	//调用后台接口下载经办人身份证照片
+		$.ecOverlay("<strong>正在处理经办人信息中, 请稍等...</strong>");
+		var response = $.callServiceAsJson(contextPath + "/order/downloadCustCertificate", {
+			areaId		: OrderInfo.getAreaId(),
+			srcFlag		: "REAL",
+			olId		: OrderInfo.cltjbrInfo.fileOrderId
+		});
+		$.unecOverlay();
+		if(response.code == 0 && response.data){
+			var _identidiesPic ="";
+			var _custPhoto = "";
+			for(var i=0; i<response.data.photographs.length;i++){
+				if(response.data.photographs[i].picFlag == "C"){
+					_identidiesPic = response.data.photographs[i].photograph;
+				}else if(response.data.picturesInfo[i].picFlag == "D"){
+					_custPhoto = response.data.photographs[i].photograph;
+				}
+			}
+
+			OrderInfo.bojbrCustIdentities.identidiesPic = _identidiesPic;
+			OrderInfo.bojbrCustIdentities.custPhoto = _custPhoto;
+			// 设置隐藏域的表单数据
+			$('#orderAttrName').val(OrderInfo.cltjbrInfo.custName);//姓名
+			$('#orderAttrIdCard').val(OrderInfo.cltjbrInfo.certNumber);//设置身份证号
+			$('#orderAttrAddr').val(OrderInfo.cltjbrInfo.addressStr);//地址
+			$('#orderAttrPhoneNbr').val(OrderInfo.cltjbrInfo.telNumber);//联系方式
+			// 设置文本显示
+			$("#li_order_attr span").text(OrderInfo.cltjbrInfo.custName);
+			$("#li_order_remark2 span").text(OrderInfo.cltjbrInfo.certNumber);
+			$("#li_order_remark3 span").text(OrderInfo.cltjbrInfo.addressStr);
+			
+			if (CONST.realNamePhotoFlag == "ON") {
+			    if (ec.util.isObj(_identidiesPic)) {
+					if (!ec.util.isObj(_custPhoto)) {
+						$.alert("错误", "当前采集单经办人照片为空，采集单错误，无法继续受理，请确认重试。");
+						return;
+					}else{
+						//拍照预览按钮展示，事件绑定
+						$("#orderAttrPicShowBtn").show().off("click").on("click",function(){
+							$("#img_photo_show").attr("src", "data:image/jpeg;base64," + _custPhoto);
+			                easyDialog.open({
+			                    container: 'ec-dialog-photo-show'
+			                });
+						});
+			      		_showCertPicture();
+					}
+				} else{
+					$.alert("错误", "当前经办人身份证照片为空，采集单错误，无法继续受理，请确认重试。");
+					return;
+				}
+			}
+		}else if(response.code == 1 && response.data){
+			$.alert("错误", "经办人证件照下载失败，错误原因：" + response.data);
+			return;
+		}else if(response.code == -2 && response.data){
+			$.alertM(response.data);
+			return;
+		}else{
+			$.alert("错误", "经办人证件照下载发生未知异常，请稍后重试。错误信息：" + response.data);
+			return;
+		}
+	};
 	
     /**
      * 证号关系预校验接口
@@ -3888,12 +4084,15 @@ order.cust = (function(){
 		isSelfChannel:_isSelfChannel,
 		checkUserInfo : _checkUserInfo,
 		showCertPicture : _showCertPicture,
+		createVideo : _createVideo,
+		getCameraInfo : _getCameraInfo,
 		close:_close,
         jbrcreateButton:_jbrcreateButton,
         disableHandleCustInfos:_disableHandleCustInfos,
         resetHandleCustInfos:_resetHandleCustInfos,
         loadCameraObj:_loadCameraObj,
         removeDisabled:_removeDisabled,
+        cltjbrCreate:_cltjbrCreate,
         preCheckCertNumberRel:_preCheckCertNumberRel,
         industryClassCdSeChoose:_industryClassCdSeChoose,
         getCustInfo415:_getCustInfo415,
@@ -3903,6 +4102,7 @@ order.cust = (function(){
 $(function() {
    order.cust.form_valid_init();
    order.cust.initDic();
+   OrderInfo.specialtestauth = !query.common.checkOperateSpec(CONST.ZYCSK);
    CONST.isHandleCustNeeded = query.common.checkOperateSpec(CONST.TGJBRBTQX);
    CONST.realNamePhotoFlag = query.common.queryPropertiesValue("REAL_NAME_PHOTO_" + String(OrderInfo.staff.areaId).substr(0, 3));
 });
