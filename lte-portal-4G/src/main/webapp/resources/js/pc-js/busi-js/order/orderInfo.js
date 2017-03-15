@@ -717,6 +717,22 @@ OrderInfo = (function() {
 						var feeType = $("select[name='pay_type_-1']").val();
 						if(feeType==undefined) feeType = order.prodModify.choosedProdInfo.feeType;
 						if(prodServ.servSpecId == CONST.YZFservSpecId && feeType == CONST.PAY_TYPE.AFTER_PAY){
+							//#1129252 去除10020036是否需要代扣确认限制
+							var yiPayItemRes = $.callServiceAsJson(contextPath + "/properties/getValue", {"key": "YIPAY_ITEM_" + OrderInfo.staff.areaId.substr(0, 3)});
+							var yiPayItemFlag = "OFF";
+							if (yiPayItemRes.code == "0") {
+								yiPayItemFlag = yiPayItemRes.data;
+							}
+							if (this.itemSpecId == CONST.YZFitemSpecId1 || this.itemSpecId == CONST.YZFitemSpecId2 || (this.itemSpecId == CONST.YZFitemSpecId3 && yiPayItemFlag == "OFF")) {
+								this.setValue = "";
+							}
+						}
+						var agentResponse = $.callServiceAsJson(contextPath + "/properties/getValue", {"key": "AGENT_" + OrderInfo.staff.areaId.substr(0, 3)});
+						var agentFlag = "OFF";
+						if (agentResponse.code == "0") {
+							agentFlag = agentResponse.data;
+						}
+						if (this.itemSpecId == CONST.YZFitemSpecId4 && agentFlag == "OFF") {
 							this.setValue = "";
 						}
 						if(ec.util.isObj(this.setValue)){

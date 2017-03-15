@@ -176,7 +176,49 @@ CacheData = (function() {
 		}
 		var paramVal = param.setValue;
 		var selectStr = ""; //返回字符串
+		if(!!param.valueRange && (itemSpecId == CONST.YZFitemSpecId1||itemSpecId ==  CONST.YZFitemSpecId2||itemSpecId ==  CONST.YZFitemSpecId3)){ //可编辑下拉框（10020034,10020035,10020036 为翼支付交费助手的三属性）
+			//缴费助手的属性值,如果是预付费的，则属性中展示默认值，且必填，如果是后付费的，属性为空，且不可填
+		var feeType = $("select[name='pay_type_-1']").val();
+		if(feeType==undefined) feeType = order.prodModify.choosedProdInfo.feeType;
+		if(feeType == CONST.PAY_TYPE.BEFORE_PAY){
+			if(param.rule.isConstant=='Y'){ //不可修改
+				selectStr = selectStr+"<tr><td>"+param.name + ": </td><td><select class='inputWidth183px' id="+prodId+"_"+itemSpecId+" disabled='disabled'>"; 
+			}else {
+				if(param.rule.isOptional=="N") { //必填
+					selectStr = selectStr+"<tr><" +
+							"td>"+param.name + ": </td><td><select class='inputWidth183px' id="+prodId+"_"+itemSpecId+" data-validate='validate(required,reg:"
+							  + param.rule.maskMsg+"("+param.rule.mask+")) on(blur)'><label class='f_red'>*</label><br>"; 
+				}else{
+					selectStr = selectStr+"<tr><td>"+param.name + ": </td><td><select class='inputWidth183px' id="+prodId+"_"+itemSpecId+"><br>"; 
+				}
+			}
+			for ( var j = 0; j < param.valueRange.length; j++) {
+				var valueRange = param.valueRange[j];
+				if(valueRange.value== param.setValue){
+					optionStr +='<option value="'+valueRange.value+'" selected="selected" >'+valueRange.text+'</option>';
+				}else {
+					optionStr +='<option value="'+valueRange.value+'">'+valueRange.text+'</option>';
+				}
+			}
+			selectStr += optionStr + "</select></td></tr>"; 
+			return selectStr;
+		}
+			else if(feeType == CONST.PAY_TYPE.AFTER_PAY){
+				selectStr =selectStr+"<tr><td>"+ param.name + ":</td><td> <select class='inputWidth183px' id="+prodId+"_"+itemSpecId+" disabled='disabled'>";
+				optionStr +='<option value="" selected="selected">不可选</option>';
+				selectStr += optionStr + "</select></td></tr>"; 
+				return selectStr;
+			}
+		}
 		if(ec.util.isArray(param.valueRange)){ //下拉框
+			var agentResponse = $.callServiceAsJson(contextPath + "/properties/getValue", {"key": "AGENT_" + OrderInfo.staff.areaId.substr(0, 3)});
+			var agentFlag = "OFF";
+			if (agentResponse.code == "0") {
+				agentFlag = agentResponse.data;
+			}
+			if (itemSpecId ==  CONST.YZFitemSpecId4 && agentFlag == "OFF") {
+				return selectStr;
+			}
 			var optionStr = "";
 			if(param.rule.isConstant=='Y'){ //不可修改
 				selectStr = param.name + ": <select class='inputWidth183px' id="+prodId+"_"+itemSpecId+" disabled='disabled'>"; 
@@ -188,6 +230,31 @@ CacheData = (function() {
 					selectStr = param.name + ": <select class='inputWidth183px' id="+prodId+"_"+itemSpecId+"><br>"; 
 					optionStr +='<option value="" >请选择</option>';  //不是必填可以不选
 				}
+			}
+			if(itemSpecId == CONST.YZFitemSpecId4 && OrderInfo.actionFlag != 1){//#658051 账户托收退订特殊权限的需求
+				var isYZFTS = "";
+				var url = contextPath+"/common/checkOperate";
+				var params = {
+					operatSpecCd : "ZHTS_TD_QS" //账户托收退订权限
+				};
+				var response = $.callServiceAsJson(url,params);
+				$.unecOverlay();
+				if(response.code == 0){
+					isYZFTS = response.data;
+				}
+				for ( var j = 0; j < param.valueRange.length; j++) {
+					var valueRange = param.valueRange[j];
+					if(isYZFTS != "0" && valueRange.value=="10"){
+						continue;
+					}
+					if(valueRange.value== param.setValue){
+					    optionStr +='<option value="'+valueRange.value+'" selected="selected" >'+valueRange.text+'</option>';
+					}else {
+						optionStr +='<option value="'+valueRange.value+'">'+valueRange.text+'</option>';
+					}
+				}
+				selectStr += optionStr + "</select></td></tr>";
+				return selectStr;
 			}
 			for ( var j = 0; j < param.valueRange.length; j++) {
 				var valueRange = param.valueRange[j];

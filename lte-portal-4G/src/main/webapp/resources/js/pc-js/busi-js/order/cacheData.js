@@ -308,6 +308,14 @@ CacheData = (function() {
 			}
 		}
 		if(ec.util.isArray(param.valueRange)){ //下拉框
+			var agentResponse = $.callServiceAsJson(contextPath + "/properties/getValue", {"key": "AGENT_" + OrderInfo.staff.areaId.substr(0, 3)});
+			var agentFlag = "OFF";
+			if (agentResponse.code == "0") {
+				agentFlag = agentResponse.data;
+			}
+			if (itemSpecId ==  CONST.YZFitemSpecId4 && agentFlag == "OFF") {
+				return selectStr;
+			}
 			if(param.rule.isConstant=='Y'){ //不可修改
 				selectStr = param.name + ": <select class='inputWidth183px' id="+prodId+"_"+itemSpecId+" disabled='disabled'>"; 
 			}else {
@@ -319,7 +327,7 @@ CacheData = (function() {
 					optionStr +='<option value="" >请选择</option>';  //不是必填可以不选
 				}
 			}
-			if(itemSpecId == CONST.YZFitemSpecId4){//#658051 账户托收退订特殊权限的需求
+			if(itemSpecId == CONST.YZFitemSpecId4 && OrderInfo.actionFlag != 1){//#658051 账户托收退订特殊权限的需求
 				var isYZFTS = "";
 				var url = contextPath+"/common/checkOperate";
 				var params = {
