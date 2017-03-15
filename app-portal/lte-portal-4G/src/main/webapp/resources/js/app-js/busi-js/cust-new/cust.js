@@ -2606,7 +2606,7 @@ cust = (function(){
 		if (OrderInfo.cust.custId == "-1") {// 新客户
 			var inParam = {
 				"certType" : OrderInfo.cust.identityCd,
-				"certNum" : OrderInfo.cust.idCardNumber,
+				"certNum" : OrderInfo.cust.identityNum,
 				"certAddress" : OrderInfo.cust.addressStr,
 				"custName" : OrderInfo.cust.partyName
 
