@@ -3141,10 +3141,13 @@ SoOrder = (function() {
 						var prodAttrRepeatFlag = false; //是否包含重复的产品属性
 						var prodAttrEmptyCheckName = null;
 						var prodAttrRepeatCheckName = null;
-						$(OrderInfo.prodAttrs).each(function(){
+						$.each(OrderInfo.prodAttrs,function(){
 							var id = this.id;
+							if(prodInst.prodInstId != id.split('_')[1]){
+								return false;
+							}
 							// 获取当前产品的产品属性,当产品属性为使用人时,重置是否为空标识
-							if($("#"+id).attr('itemSpecId')==CONST.PROD_ATTR.PROD_USER && prodInst.prodInstId == id.split('_')[1]){
+							if($("#"+id).attr('itemSpecId')==CONST.PROD_ATTR.PROD_USER){
 								prodItemUserFlag = true;
 								// 重置,因为在政企客户+测试卡权限下使用人可以为空,如果前一个产品使用人为空,会导致校验后面产品的使用取的前产品的值
 								prodAttrEmptyFlag = false;
