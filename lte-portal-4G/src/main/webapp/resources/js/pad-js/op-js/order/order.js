@@ -542,6 +542,8 @@ order.service = (function(){
 			offerChange.offerChangeView();
 			return;
 		}
+		// 销售品后处理
+		offerSpecAfterDeal(offerSpec);
 		var iflag = 0; //判断是否弹出副卡选择框 false为不选择
 		var htmlStr='<div id="dlg-memberRole-num" data-role="popup" data-transition="slideup" data-corners="false" data-overlay-theme="b" class="popwindow" data-dismissible="false">'+
 		'<div data-role="header" data-position="inline" data-tap-toggle="false" data-theme="t">'+
@@ -656,6 +658,16 @@ order.service = (function(){
 			}
 		}
 	};
+
+	var offerSpecAfterDeal = function(offerSpec){
+		$.each(offerSpec.offerRoles, function () {
+			$.each(this.roleObjs, function () {
+				if (this.objType == CONST.OBJ_TYPE.PROD && this.objId == CONST.PROD_SPEC.PROD_CLOUD_OFFER) {
+					mktRes.phoneNbr.getVirtualNum();
+				}
+			});
+		});
+	}
 	
 	//选择完主套餐构成后确认
 	var _confirm = function(param){

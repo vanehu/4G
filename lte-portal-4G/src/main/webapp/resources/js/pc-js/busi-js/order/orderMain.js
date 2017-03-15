@@ -163,9 +163,9 @@ order.main = (function(){
 		if(OrderInfo.acct&&OrderInfo.acct.acctCd!=null&&OrderInfo.acct.acctCd!=""){//新装传帐户id
 			_createAcctWithId();
 		}
-		
+
 		//新装省份传主副卡信息
-		if(OrderInfo.newOrderNumInfo.mainPhoneNum!=""){
+		if(OrderInfo.newOrderNumInfo.mainPhoneNum!="" && !ec.util.isObj(OrderInfo.newOrderNumInfo.virtualFlag)){
 			//主卡选号需要的参数 
 			var param = {"phoneNum":"",
 						"prodId":""};
