@@ -1307,6 +1307,7 @@ public class ReportController extends BaseController {
     	inParam.put("accNbr",request.getParameter("accNbr"));
     	inParam.put("startDt", request.getParameter("startDt"));
     	inParam.put("endDt", request.getParameter("endDt"));
+        inParam.put("ifTransfer", request.getParameter("ifTransfer"));
     	
     	int pageSize = Integer.parseInt(request.getParameter("pageSize"));
     	int pageIndex = Integer.parseInt(request.getParameter("pageIndex"));

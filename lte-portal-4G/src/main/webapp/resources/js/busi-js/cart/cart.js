@@ -1142,6 +1142,12 @@ cart.main = (function(){
 					"pageIndex":pageIndex
 				};
 		}
+		var ferValue = $('#timeZones input[name=timeRadio]:checked').val();
+		if(!ec.util.isObj(ferValue)){
+			$.alert('提示','时间选项不能为空,请选择具体选项!');
+			return;
+		}
+		param.ifTransfer = ferValue;
 			
 		$.callServiceAsHtmlGet(contextPath+"/report/queryElecRecodeList",param,{
 			"before":function(){
@@ -1252,29 +1258,63 @@ cart.main = (function(){
 })();
 //初始化
 $(function(){
-	
-	$("#p_startDt").off("click").on("click",function(){
-		$.calendar({ format:'yyyy年MM月dd日 ',real:'#p_startDt',maxDate:$("#p_endDt").val() });
-	});
-	$("#p_endDt").off("click").on("click",function(){
-		$.calendar({ format:'yyyy年MM月dd日 ',real:'#p_endDt',minDate:$("#p_startDt").val(),maxDate:'%y-%M-%d' });	
-	});
 	// 电子档案查询界面
 	if("Y" == $("#recodeFlag").val()){
+		$("#p_startDt").off("click").on("click",function(){
+			var nowDate = new Date();
+			var minDate = new Date(nowDate.getFullYear(),nowDate.getMonth()-1,nowDate.getDate());
+			var strMinDate = DateUtil.Format('yyyy-MM-dd',minDate);
+			$.calendar({ minDate:strMinDate,maxDate:$("#p_endDt").val() });
+		});
+		$("#p_endDt").off("click").on("click",function(){
+			$.calendar({ format:'yyyy年MM月dd日 ',real:'#p_endDt',minDate:$("#p_startDt").val(),maxDate:'%y-%M-%d' });
+		});
+
+		$('#timeZones input[name=timeRadio]').off('click').on('click', function () {
+			var radioValue = $('#timeZones input[name=timeRadio]:checked').val();
+			if('Y' == radioValue){//一个月内
+				var nowDate = new Date();
+				var minDate = new Date(nowDate.getFullYear(),nowDate.getMonth()-1,nowDate.getDate());
+				var strMinDate = DateUtil.Format('yyyy-MM-dd',minDate);
+				var strMaxDate = DateUtil.Format('yyyy-MM-dd',nowDate);
+				$("#p_startDt").val(strMaxDate);
+				$("#p_endDt").val(strMaxDate);
+				$("#p_startDt").off("click").on("click",function(){
+					$.calendar({ minDate:strMinDate,maxDate:$("#p_endDt").val() });
+				});
+				$("#p_endDt").off("click").on("click",function(){
+					$.calendar({ minDate:$("#p_startDt").val(),maxDate:strMaxDate });
+				});
+			}else{ //一个月前
+				var nowDate = new Date();
+				var maxDate = new Date(nowDate.getFullYear(),nowDate.getMonth()-1,nowDate.getDate()-1);
+				var strMinDate = DateUtil.Format('yyyy-MM-dd',maxDate);
+				var strMaxDate = DateUtil.Format('yyyy-MM-dd',maxDate);
+				$("#p_startDt").val(strMinDate);
+				$("#p_endDt").val(DateUtil.Format('yyyy-MM-dd',new Date(nowDate.getFullYear(),nowDate.getMonth()-1,nowDate.getDate()-1)));
+				$("#p_startDt").off("click").on("click",function(){
+					$.calendar({ maxDate:$("#p_endDt").val() });
+				});
+				$("#p_endDt").off("click").on("click",function(){
+					$.calendar({ minDate:$("#p_startDt").val(),maxDate:strMaxDate});
+				});
+			}
+		});
+
 		$("#qry_elecrecord").off("click").on("click",function(){cart.main.qryElecRecord(1);});
 		
 		$("#if_p_olNbr").change(function(){
 			if($("#if_p_olNbr").attr("checked")){
 				$("#p_olNbr").css("background-color","white").attr("disabled", false) ;
-				$("#p_startDt").css("background-color","#E8E8E8").attr("disabled", true) ;
-				$("#p_endDt").css("background-color","#E8E8E8").attr("disabled", true) ;
+				//$("#p_startDt").css("background-color","#E8E8E8").attr("disabled", true) ;
+				//$("#p_endDt").css("background-color","#E8E8E8").attr("disabled", true) ;
 				$("#p_qryNumber").css("background-color","#E8E8E8").attr("disabled", true) ;
 				$("#p_custName").css("background-color","#E8E8E8").attr("disabled", true) ;
 				//$("#p_certNumber").css("background-color","#E8E8E8").attr("disabled", true) ;
 			}else{
 				$("#p_olNbr").css("background-color","#E8E8E8").attr("disabled", true) ;
-				$("#p_startDt").css("background-color","white").attr("disabled", false) ;
-				$("#p_endDt").css("background-color","white").attr("disabled", false) ;
+				//$("#p_startDt").css("background-color","white").attr("disabled", false) ;
+				//$("#p_endDt").css("background-color","white").attr("disabled", false) ;
 				$("#p_qryNumber").css("background-color","white").attr("disabled", false) ;
 				$("#p_custName").css("background-color","white").attr("disabled", false) ;
 				//$("#p_certNumber").css("background-color","white").attr("disabled", false) ;
@@ -1282,6 +1322,13 @@ $(function(){
 		});
 		
 	}else{
+		$("#p_startDt").off("click").on("click",function(){
+			$.calendar({ format:'yyyy年MM月dd日 ',real:'#p_startDt',maxDate:$("#p_endDt").val() });
+		});
+		$("#p_endDt").off("click").on("click",function(){
+			$.calendar({ format:'yyyy年MM月dd日 ',real:'#p_endDt',minDate:$("#p_startDt").val(),maxDate:'%y-%M-%d' });
+		});
+
 		$("#bt_cartQry").off("click").on("click",function(){cart.main.queryCartList(1);});
 		$("#qry_virtualNumber").off("click").on("click",function(){cart.main.qryVirtualNumber();});
 		$("#qry_blackUserInfo").off("click").on("click",function(){cart.main.qryBlackUserInfo(1);});
