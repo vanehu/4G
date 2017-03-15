@@ -947,21 +947,23 @@ public class CustBmoImpl implements CustBmo {
      */
     @Override
     public Map<String, Object> getSeq(Map<String, Object> paramMap, String optFlowNum, SessionStaff sessionStaff) throws Exception {
-        Map<String, Object> retnMap = new HashMap<String, Object>();
         DataBus db = InterfaceClient.callService(paramMap,
-            PortalServiceCode.GET_SEQ, optFlowNum, sessionStaff);
-        Map returnMap = db.getReturnlmap();
-        try {
-            String code = (String) returnMap.get("resultCode");
-            if (ResultCode.R_SUCC.equals(code)) {
-                retnMap = (HashMap) returnMap.get("result");
-            }
-            return retnMap;
-        } catch (Exception e) {
-            log.error("门户处理营业后台的获取seq查询接口服务返回的数据异常", e);
+				PortalServiceCode.GET_SEQ, optFlowNum, sessionStaff);
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		try{
+			if (ResultCode.R_SUCC.equals(db.getResultCode())) {
+				resultMap = (Map<String,Object>)db.getReturnlmap().get("result");
+				resultMap.put("resultCode", ResultCode.R_SUCC);
+			} else {
+				resultMap.put("resultCode", ResultCode.R_FAILURE);
+				resultMap.put("resultMsg", db.getResultMsg());
+			}
+		} catch (Exception e) {
             throw new BusinessException(ErrorCode.GET_SEQ, paramMap, db.getReturnlmap(), e);
         }
+		return resultMap;
     }
+
 	public Map<String, Object> checkCustCert(Map<String, Object> dataBusMap,
 			String optFlowNum, SessionStaff sessionStaff) throws Exception {
 		DataBus db = InterfaceClient.callService(dataBusMap,

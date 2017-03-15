@@ -267,7 +267,7 @@ order.service = (function(){
 		if(!offerSpec){
 			return;
 		}
-		if(OrderInfo.actionFlag == 2){ //套餐变更	
+		if(OrderInfo.actionFlag == 2){ //套餐变更
 			var url=contextPath+"/order/queryFeeType";
 			$.ecOverlay("<strong>正在查询是否判断付费类型的服务中,请稍后....</strong>");
 			var response = $.callServiceAsJsonGet(url,param);	
@@ -294,6 +294,8 @@ order.service = (function(){
 			offerChange.offerChangeView();
 			return;
 		}
+		// 销售品后处理
+		offerSpecAfterDeal(offerSpec);
 		var areaidflag = order.memberChange.areaidJurisdiction();
 		var iflag = 0; //判断是否弹出副卡选择框 false为不选择
 		var $tbody = $("#member_tbody");
@@ -394,6 +396,16 @@ order.service = (function(){
 			}
 		}
 	};
+
+	var offerSpecAfterDeal = function(offerSpec){
+		$.each(offerSpec.offerRoles, function () {
+			$.each(this.roleObjs, function () {
+				if (this.objType == CONST.OBJ_TYPE.PROD && this.objId == CONST.PROD_SPEC.PROD_CLOUD_OFFER) {
+					order.phoneNumber.getVirtualNum();
+				}
+			});
+		});
+	}
 	
 	//选择完主套餐构成后确认
 	var _confirm = function(param){

@@ -2032,11 +2032,11 @@ public class CustController extends BaseController {
         Map<String, Object> resultMap = new HashMap<String, Object>();
         try {
             resultMap = custBmo.getSeq(paramMap, flowNum, sessionStaff);
-            if (MapUtils.isNotEmpty(resultMap)) {
-                jsonResponse = super.successed(resultMap);
-            } else {
-                jsonResponse = super.failed(resultMap, ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
-            }
+			if (ResultCode.R_SUCC.equals(resultMap.get("resultCode"))) {
+				jsonResponse = super.successed(resultMap, ResultConstant.SUCCESS.getCode());
+			} else {
+				jsonResponse = super.failed(resultMap.get("resultMsg"), ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+			}
         } catch (InterfaceException e) {
             jsonResponse = super.failed(e, resultMap, ErrorCode.GET_SEQ);
         } catch (Exception e) {

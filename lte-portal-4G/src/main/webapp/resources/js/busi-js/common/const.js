@@ -29,7 +29,8 @@ CONST = (function(){
 	var _PROD_SPEC = {
 		CDMA : 235010000, // test-235010000 dev-379
 		DATA_CARD : 280000000,
-		PROD_FUN_4G : "280000020"
+		PROD_FUN_4G : "280000020",
+		PROD_CLOUD_OFFER:13410447 // 天翼云盘企业版接入类产品
 	};
 	
 	//功能产品规格ID
@@ -45,7 +46,7 @@ CONST = (function(){
 		PROD_USER : "800000011", //使用人
 		REAL_NAME_TYPE : "10020121" // 实名制登记类型
 	};
-	
+
 	//产品属性值
 	var _PROD_ATTR_VALUE = {
 		IS_XINKONG_YES : "20",//是否信控 是

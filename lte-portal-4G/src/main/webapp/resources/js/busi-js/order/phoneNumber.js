@@ -391,6 +391,9 @@ order.phoneNumber = (function(){
 			$("#nbr_btn_"+subnum).removeClass("selectBoxTwo");
 			$("#nbr_btn_"+subnum).addClass("selectBoxTwoOn");
 			$("#nbr_btn_"+subnum).html(_boProdAn.accessNumber+"<u></u>");
+			if(ec.util.isObj(_boProdAn.virtualFlag)){ // 虚拟号码,去掉号码选择事件
+				$("#nbr_btn_"+subnum).removeAttr('onclick');
+			}
 			order.dealer.changeAccNbr(subnum,_boProdAn.accessNumber);
 			var isExists=false;
 			if(OrderInfo.boProdAns.length>0){
@@ -1273,6 +1276,42 @@ order.phoneNumber = (function(){
 			}
 		}
 	};
+
+	/**
+	 * 虚拟号码获取
+	 */
+	var _getVirtualNum = function(){
+		var param = {
+			seqType:"cloudAccNbr"
+		}
+		var url = contextPath+"/cust/getSeq";
+		$.ecOverlay("<strong>虚拟号码获取中，请稍等...</strong>");
+		var response = $.callServiceAsJson(url,param);
+		$.unecOverlay();
+		if (response.code==0) {
+			if(response.data){
+				_boProdAn.accessNumber=response.data.seq;
+				_boProdAn.anTypeCd="";
+				_boProdAn.level="";
+				_boProdAn.org_level="";
+				_boProdAn.anId="";
+				_boProdAn.areaId=$("#p_cust_areaId").val();
+				_boProdAn.areaCode ="";
+				_boProdAn.memberRoleCd=CONST.MEMBER_ROLE_CD.COMMON_MEMBER;
+				_boProdAn.preStore="";
+				_boProdAn.minCharge="";
+				_boProdAn.virtualFlag="1";
+				order.service.boProdAn = _boProdAn;
+			}
+		}else if (response.code==-2){
+			$.alertM(response.data);
+			return;
+		}else {
+			$.alert("提示","企业版云套餐虚拟号码获取失败,原因:[接口异常]");
+			return;
+		}
+	};
+
 	return {
 		qryPhoneNbrLevelInfoList:_qryPhoneNbrLevelInfoList,
 		selectNum:_selectNum,
@@ -1297,6 +1336,7 @@ order.phoneNumber = (function(){
 		nbrtime:_nbrtime,
 		nbrcount:_nbrcount,
 		pswChange: _pswChange,
-		numOrder: _numOrder
+		numOrder: _numOrder,
+		getVirtualNum:_getVirtualNum
 	};
 })();
