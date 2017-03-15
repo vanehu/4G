@@ -1523,8 +1523,20 @@ order.main = (function(){
 		                "certAddressEnc": order.cust.tmpChooseUserInfo.address
 		            };
 		            if(!order.cust.preCheckCertNumberRel(prodId, inParam)){
-		            	$('#'+CONST.PROD_ATTR.PROD_USER+'_'+prodId+'_name').val("");
-						$('#'+CONST.PROD_ATTR.PROD_USER+'_'+prodId).val("");
+		            	//校验使用人添加几次
+		            	var userNO = 0;
+		            	if (ec.util.isObj(OrderInfo.choosedUserInfos) && OrderInfo.choosedUserInfos.length > 0) {//有选择使用人的情况
+		                    $.each(OrderInfo.choosedUserInfos, function () {
+		                        if(order.cust.getCustInfo415Flag(this) == order.cust.getCustInfo415Flag(inParam)){
+		                        	userNO ++;
+		                        }
+		                    });
+		                }
+		            	if((parseInt(userNO)+parseInt(ec.util.mapGet(OrderInfo.oneCardFiveNO.usedNum,order.cust.getCustInfo415Flag(order.cust.getCustInfo415()))))>4){
+		            		$('#'+CONST.PROD_ATTR.PROD_USER+'_'+prodId+'_name').val("");
+							$('#'+CONST.PROD_ATTR.PROD_USER+'_'+prodId).val("");
+		            		$.alert("提示","此用户下已经有"+(parseInt(userNO)+ec.util.mapGet(OrderInfo.oneCardFiveNO.usedNum,order.cust.getCustInfo415Flag(order.cust.getCustInfo415())))+"个号码，请选择其他用户做为使用人！");
+		                }
 		                return false;
 		            }
 		            order.cust.tmpChooseUserInfo = {};

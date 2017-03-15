@@ -3010,7 +3010,7 @@ order.cust = (function(){
         	}
         }
 		var inParam = {};
-        if (OrderInfo.cust.custId == "-1") {//新客户
+        if (queryCustInfo.data.custInfos.length==0 || OrderInfo.cust.custId == "-1") {//新客户
             inParam={
                 "certType": userSubInfo.orderIdentidiesTypeCd,
                 "certNum": userSubInfo.identityNum,
@@ -3029,10 +3029,23 @@ order.cust = (function(){
             };
         }
         if (order.cust.preCheckCertNumberRel(this.prodId, inParam)) {
-        	$("#chooseUserBt").removeClass("btna_g").addClass("btna_o");
-    		$('#chooseUserBt').off('click').on('click',function(){
-    			_commitUser(userSubInfo);
-    		});
+        	//校验使用人添加几次
+        	var userNO = 0;
+        	if (ec.util.isObj(OrderInfo.subUserInfos) && OrderInfo.subUserInfos.length > 0) {//有选择使用人的情况
+                $.each(OrderInfo.subUserInfos, function () {
+                    if(_getCustInfo415Flag(this) == _getCustInfo415Flag(inParam)){
+                    	userNO ++;
+                    }
+                });
+            }
+        	if((parseInt(userNO)+parseInt(ec.util.mapGet(OrderInfo.oneCardFiveNO.usedNum,order.cust.getCustInfo415Flag(order.cust.getCustInfo415()))))>4){
+                $.alert("提示","此用户下已经有"+(parseInt(userNO)+ec.util.mapGet(OrderInfo.oneCardFiveNO.usedNum,order.cust.getCustInfo415Flag(order.cust.getCustInfo415())))+"个号码，请选择其他用户做为使用人！");
+            }else{
+            	$("#chooseUserBt").removeClass("btna_g").addClass("btna_o");
+        		$('#chooseUserBt').off('click').on('click',function(){
+        			_commitUser(userSubInfo);
+        		});
+            }
         }
 	}; 
 	
@@ -3193,7 +3206,7 @@ order.cust = (function(){
             	if (ec.util.isObj(result)) {
             		ec.util.mapPut(OrderInfo.oneCardFiveNO.usedNum, _getCustInfo415Flag(inParam), result.usedNum);
             		if(parseInt(result.usedNum)>=5){
-                		$.alert("提示", "一个用户证件下不能有超过5个号码！");
+                		$.alert("提示", "工信部要求支撑全国实名制一证五卡验证,一个用户证件下不能有超过5个号码！");
                 		checkResult = false;
                 	}else if(parseInt(result.usedNum) <5 && OrderInfo.oneCardFiveNum.length<=0){
                 		checkResult=true;
@@ -3207,7 +3220,7 @@ order.cust = (function(){
                 	                } else {
                 	                	 checkResult = false;
                 	                	 OrderInfo.oneCardFiveNum = [];
-                	                    $.alert("提示", "一个用户证件下不能有超过5个号码！");
+                	                    $.alert("提示", "工信部要求支撑全国实名制一证五卡验证,一个用户证件下不能有超过5个号码！");
                 	                    return checkResult;
                 	                }
                 			 }
