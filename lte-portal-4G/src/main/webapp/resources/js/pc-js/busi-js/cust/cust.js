@@ -2953,6 +2953,13 @@ order.cust = (function(){
 			userSubInfo = {
 				prodId : user_prodId,
 				custId : queryCustInfo.data.custInfos[0].custId,
+				orderIdentidiesTypeCd : queryCustInfo.data.custInfos[0].identityCd,
+    			identityNum : queryCustInfo.data.custInfos[0].idCardNumber,
+    			orderAttrName : queryCustInfo.data.custInfos[0].partyName,
+    			orderAttrAddr : queryCustInfo.data.custInfos[0].addressStr,
+    			certNumEnc    : queryCustInfo.data.custInfos[0].certNum,
+    			custNameEnc   : queryCustInfo.data.custInfos[0].CN,
+    			certAddressEnc : queryCustInfo.data.custInfos[0].address,
 				isOldCust : "Y"
 			};
         }else{//定位不到客户C1
@@ -3012,10 +3019,13 @@ order.cust = (function(){
             };
         } else {//老客户
             inParam = {
-            	 "certType": userSubInfo.orderIdentidiesTypeCd,
-                 "certNum": userSubInfo.identityNum,
-                 "certAddress": userSubInfo.orderAttrAddr,
-                 "custName": userSubInfo.orderAttrName
+            		"certType": queryCustInfo.data.custInfos[0].identityCd,
+                    "certNum": queryCustInfo.data.custInfos[0].idCardNumber,
+                    "certAddress": queryCustInfo.data.custInfos[0].addressStr,
+                    "custName": queryCustInfo.data.custInfos[0].partyName,
+                    "custNameEnc": queryCustInfo.data.custInfos[0].CN,
+                    "certNumEnc": queryCustInfo.data.custInfos[0].certNum,
+                    "certAddressEnc": queryCustInfo.data.custInfos[0].address
             };
         }
         if (order.cust.preCheckCertNumberRel(this.prodId, inParam)) {

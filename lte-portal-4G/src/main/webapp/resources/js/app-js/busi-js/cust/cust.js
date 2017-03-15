@@ -2492,9 +2492,9 @@ cust = (function(){
                 "certNum": OrderInfo.cust.idCardNumber,
                 "certAddress": OrderInfo.cust.addressStr,
                 "custName": OrderInfo.cust.partyName,
-                "custNameEnc": OrderInfo.cust.CN,
-                "certNumEnc": OrderInfo.cust.certNum,
-                "certAddressEnc": OrderInfo.cust.address
+                "custNameEnc": OrderInfo.cust.CN.replace(/&#61/g,"="),
+                "certNumEnc": OrderInfo.cust.certNum.replace(/&#61/g,"="),
+                "certAddressEnc": OrderInfo.cust.address.replace(/&#61/g,"=")
             };
         }
         return inParam;
@@ -2505,7 +2505,7 @@ cust = (function(){
      * @private 有脱敏信息的客户信息中脱敏证件号不具有唯一性，用加密字段做唯一标识，
      */
     var _getCustInfo415Flag = function (inParam) {
-        if(ec.util.isObj(inParam.certNumEnc)){
+        if(ec.util.isObj(inParam.certNumEnc.replace(/&#61/g,"="))){
             return inParam.certNumEnc;
         }else{
             return inParam.certNum;

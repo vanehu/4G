@@ -1186,6 +1186,12 @@ order.memberChange = function(){
 			$.alert("提示","加装数量已经超过能加装的最大数量【"+maxNum+"】!");
 			return;
 		}
+		if (!order.cust.preCheckCertNumberRel("-1", order.cust.getCustInfo415())) {
+            return;
+        }
+		if((parseInt(num)+parseInt(ec.util.mapGet(OrderInfo.oneCardFiveNO.usedNum,order.cust.getCustInfo415Flag(order.cust.getCustInfo415()))))>5){
+            $.alert("提示","此用户下已经有"+ec.util.mapGet(OrderInfo.oneCardFiveNO.usedNum,order.cust.getCustInfo415Flag(order.cust.getCustInfo415()))+"个号码，多余的副卡请选择其它使用人后继续办理业务！");
+        }
 	   if(ifRemoveProd){//保留副卡
 		   var viceparam = [];
 			$.each(lis,function(i, li){//所有副卡信息

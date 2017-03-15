@@ -220,6 +220,9 @@ offerChange = (function() {
 		if(newnum>0){
 			offerChange.newMemberFlag = true;
 			order.service.setOfferSpec();
+			if (!cust.preCheckCertNumberRel("-1", cust.getCustInfo415())) {
+	            return;
+	        }
 		}
 		if(oldnum>0){
 			offerChange.oldMemberFlag = true;
@@ -231,6 +234,9 @@ offerChange = (function() {
 			$.alert("提示","加装数量已经超过能加装的最大数量【"+maxNum+"】!");
 			return;
 		}
+		if((parseInt(newnum)+parseInt(ec.util.mapGet(OrderInfo.oneCardFiveNO.usedNum,cust.getCustInfo415Flag(cust.getCustInfo415()))))>5){
+            $.alert("提示","此用户下已经有"+ec.util.mapGet(OrderInfo.oneCardFiveNO.usedNum,cust.getCustInfo415Flag(cust.getCustInfo415()))+"个号码，多余的副卡请选择其它使用人后继续办理业务！");
+        }
 		//初始化填单页面
 		var prodInfo = order.prodModify.choosedProdInfo;
 		var param = {
