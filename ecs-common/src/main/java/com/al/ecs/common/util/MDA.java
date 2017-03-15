@@ -16,6 +16,11 @@ public class MDA {
 	 */
 	public static final String CSB_HTTP_QUERCHEN_URL=new String("");
 	/**
+	 * 一证五号 - http地址
+	 */
+	public static final String CSB_HTTP_CMP_URL=new String("");
+	
+	/**
 	 * 宽带甩单过csb的http地址
 	 */
 	public static final String CSB_HTTP_MIDDLE_URL=new String("");
