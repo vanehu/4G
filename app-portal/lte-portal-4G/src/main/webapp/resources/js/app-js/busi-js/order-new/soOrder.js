@@ -1220,7 +1220,7 @@ SoOrder = (function() {
 					var ca={};
 					if (OrderInfo.cust.custId == "-1") {//新建客户
 	                    ca.certType = OrderInfo.cust.identityCd;
-	                    ca.certNum = OrderInfo.cust.idCardNumber;
+	                    ca.certNum = OrderInfo.cust.identityNum;
 	                    ca.custName = OrderInfo.cust.partyName;
 	                    ca.certAddress =OrderInfo.cust.addressStr;
 	                    if(OrderInfo.cust.identityCd!="1"){//非身份证类型
