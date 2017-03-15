@@ -2445,7 +2445,7 @@ cust = (function(){
             var result = response.data;
             if (ec.util.isObj(result)) {
             	ec.util.mapPut(OrderInfo.oneCardFiveNO.usedNum, _getCustInfo415Flag(inParam), result.usedNum);
-            	if(parseInt(result.usedNum)>=5 && OrderInfo.actionFlag ==1){
+            	if(parseInt(result.usedNum)>=5 && OrderInfo.busitypeflag ==1){
             		$.alert("提示", "工信部要求支撑全国实名制一证五卡验证,一个用户证件下不能有超过5个号码！");
             		checkResult = false;
             		return checkResult;
