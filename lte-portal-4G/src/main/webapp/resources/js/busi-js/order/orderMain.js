@@ -3291,6 +3291,7 @@ order.main = (function(){
 			$.confirm("确认","没有查询到客户信息，系统将自动创建客户，是否确认继续受理？", {
 				yes:function(){
 					userSubInfo.prodId 				 = userCustInfo.prodId;
+					userSubInfo.custId 				 = "-1";
 					userSubInfo.servType 			 = userCustInfo.servType;
 					userSubInfo.isOldCust 			 = "N";
 					userSubInfo.identityNum 		 = userCustInfo.identityNum;
