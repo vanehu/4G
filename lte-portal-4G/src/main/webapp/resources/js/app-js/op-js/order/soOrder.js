@@ -2684,13 +2684,13 @@ SoOrder = (function() {
             ca.certAddress = OrderInfo.cust.userCertAddress;
             ca.certAddressEnc = OrderInfo.cust.userCertAddressEnc;
         } else {
-            ca.certType = OrderInfo.cust.identityCd;
-            ca.certNum = OrderInfo.cust.idCardNumber;
-            ca.custName = OrderInfo.cust.partyName;
-            ca.certAddress = OrderInfo.cust.addressStr;
-            ca.certNumEnc = OrderInfo.cust.certNum;
-            ca.custNameEnc = OrderInfo.cust.CN;
-            ca.certAddressEnc = OrderInfo.cust.address;
+            ca.certType = OrderInfo.custBak.identityCd;
+            ca.certNum = OrderInfo.custBak.idCardNumber;
+            ca.custName = OrderInfo.custBak.partyName;
+            ca.certAddress = OrderInfo.custBak.addressStr;
+            ca.certNumEnc = OrderInfo.custBak.certNum;
+            ca.custNameEnc = OrderInfo.custBak.CN;
+            ca.certAddressEnc = OrderInfo.custBak.address;
 	    }
     };
 	return {
