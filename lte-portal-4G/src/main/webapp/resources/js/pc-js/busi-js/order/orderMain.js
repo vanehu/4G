@@ -1532,10 +1532,10 @@ order.main = (function(){
 		                        }
 		                    });
 		                }
-		            	if((parseInt(userNO)+parseInt(ec.util.mapGet(OrderInfo.oneCardFiveNO.usedNum,order.cust.getCustInfo415Flag(order.cust.getCustInfo415()))))>5){
+		            	if((parseInt(userNO)+parseInt(ec.util.mapGet(OrderInfo.oneCardFiveNO.usedNum,order.cust.getCustInfo415Flag(inParam))))>5){
 		            		$('#'+CONST.PROD_ATTR.PROD_USER+'_'+prodId+'_name').val("");
 							$('#'+CONST.PROD_ATTR.PROD_USER+'_'+prodId).val("");
-		            		$.alert("提示","此用户下已经有"+(parseInt(userNO-1)+ec.util.mapGet(OrderInfo.oneCardFiveNO.usedNum,order.cust.getCustInfo415Flag(order.cust.getCustInfo415())))+"个号码，请选择其他用户做为使用人！");
+		            		$.alert("提示","此用户下已经有"+(parseInt(userNO-1)+ec.util.mapGet(OrderInfo.oneCardFiveNO.usedNum,order.cust.getCustInfo415Flag(inParam)))+"个号码，请选择其他用户做为使用人！");
 		                }
 		                return false;
 		            }

@@ -3038,8 +3038,8 @@ order.cust = (function(){
                     }
                 });
             }
-        	if((parseInt(userNO)+parseInt(ec.util.mapGet(OrderInfo.oneCardFiveNO.usedNum,order.cust.getCustInfo415Flag(order.cust.getCustInfo415()))))>5){
-                $.alert("提示","此用户下已经有"+(parseInt(userNO-1)+ec.util.mapGet(OrderInfo.oneCardFiveNO.usedNum,order.cust.getCustInfo415Flag(order.cust.getCustInfo415())))+"个号码，请选择其他用户做为使用人！");
+        	if((parseInt(userNO)+parseInt(ec.util.mapGet(OrderInfo.oneCardFiveNO.usedNum,order.cust.getCustInfo415Flag(inParam))))>5){
+                $.alert("提示","此用户下已经有"+(parseInt(userNO-1)+ec.util.mapGet(OrderInfo.oneCardFiveNO.usedNum,order.cust.getCustInfo415Flag(inParam)))+"个号码，请选择其他用户做为使用人！");
             }else{
             	$("#chooseUserBt").removeClass("btna_g").addClass("btna_o");
         		$('#chooseUserBt').off('click').on('click',function(){
