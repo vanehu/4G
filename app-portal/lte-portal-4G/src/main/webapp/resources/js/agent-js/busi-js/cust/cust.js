@@ -13,6 +13,8 @@ cust = (function(){
 	var _queryForChooseUser = false;
 	var authFlag = null; 
 	var _orderBtnflag="";
+	var _usedNum;//客户已使用指标数（一证五号需求一个客户最多只能五个号）
+	var _readIdCardUser={};//客户返档读卡客户信息
 	var _clearCustForm = function(){
 		$('#cmCustName').val("");
 		$('#cmAddressStr').val("");
@@ -459,6 +461,10 @@ cust = (function(){
 				if(order.prodModify.accountInfo!=undefined&&$.trim($("#accountName").val())==""){
 					$.alert("提示","账户名称不能为空!"); 
 					return ;
+				}
+				//客户返档一证五号校验
+				if(!cust.checkCertNumberForReturn($("#div_cm_identidiesType  option:selected").val(),$.trim($("#cmCustIdCard").val()),$.trim($("#cmCustName").val()),$.trim($("#cmAddressStr").val()))){
+						return;
 				}
 				var modifyCustInfo={};
 				modifyCustInfo = {
@@ -2578,6 +2584,204 @@ cust = (function(){
 		
 	}
 	
+    /**
+	 * 新装证号关系预校验接口
+	 */
+var _preCheckCertNumberRel = function() {
+	var propertiesKey = "ONE_CERT_5_NUMBER_"+ (OrderInfo.staff.soAreaId + "").substring(0, 3);
+	var isON = offerChange.queryPortalProperties(propertiesKey);
+	if (isON=="OFF") {
+		return true;
+	}
+	if(_isCovCust(OrderInfo.cust.identityCd)){//政企客户不校验
+		return true;
+	}
+	var phonenums=1;//号码数（包括主卡和副卡）
+	phonenums=OrderInfo.boProdAns.length;
+	if (OrderInfo.cust.custId == "-1") {// 新客户
+		var inParam = {
+			"certType" : OrderInfo.cust.identityCd,
+			"certNum" : OrderInfo.cust.identityNum,
+			"certAddress" : OrderInfo.cust.addressStr,
+			"custName" : OrderInfo.cust.partyName
+
+		};
+		if(OrderInfo.cust.identityCd!="1"){//非身份证类型
+			inParam.certNum=OrderInfo.cust.identityNum;	
+		}
+	} else {
+		var inParam = {
+			"certType" : OrderInfo.cust.identityCd,
+			"certNum" : OrderInfo.cust.idCardNumber,
+			"certAddress" : OrderInfo.cust.addressStr,
+			"custName" : OrderInfo.cust.partyName,
+			"custNameEnc": OrderInfo.cust.CN,
+            "certNumEnc": OrderInfo.cust.certNum,
+            "certAddressEnc": OrderInfo.cust.address
+
+		};			
+		inParam.certNumEnc = inParam.certNumEnc.replace(/=/g,"&#61");
+		inParam.custNameEnc = inParam.custNameEnc.replace(/=/g,"&#61");
+		inParam.certAddressEnc =inParam.certAddressEnc.replace(/=/g,"&#61");
+	}
+	var checkResult = false;
+	var response = $.callServiceAsJson(contextPath
+			+ "/app/cust/preCheckCertNumberRel", inParam);
+	if (response.code == 0) {
+		var result = response.data;
+		var allNum=phonenums+parseInt(result.usedNum);
+		if (allNum > 5) {
+			var title='信息提示';
+			$("#btn-dialog-ok").removeAttr("data-dismiss");
+			$('#alert-modal').modal({backdrop: 'static', keyboard: false});
+			$("#btn-dialog-ok").off("click").on("click",function(){
+				$("#alert-modal").modal("hide");
+			});
+			$("#modal-title").html(title);
+			$("#modal-content").html("一个用户证件下不能有超过5个号码,请返回重新选择用户，或者减少副卡数！");
+			$("#alert-modal").modal();
+		} else {
+			cust.usedNum = parseInt(result.usedNum) + 1;
+			checkResult = true;
+		}
+	} else {
+		$.alertM(response.data);
+	}
+	return checkResult;
+};
+
+//客户返档读卡查询客户
+var _searchUser = function(identityCd,identityNum,partyName,address) {
+	diffPlace="local";
+	areaId=OrderInfo.staff.areaId;
+	// lte进行受理地区市级验证
+	if(CONST.getAppDesc()==0&&(areaId+"").indexOf("0000")>0){
+		$.alert("提示","省级地区无法进行定位客户,请选择市级地区！");
+		return;
+	}
+	var param = {
+			"acctNbr":"",
+			"identityCd":identityCd,
+			"identityNum":identityNum,
+			"partyName":"",
+			"custQueryType":"",
+			"diffPlace":diffPlace,
+			"areaId" : areaId+"",
+			"queryType" :"",
+			"queryTypeValue":"",
+			"identidies_type":""
+	};
+	var response = $.callServiceAsHtml(contextPath+"/cust/queryCust",param);
+	if (response.code==0) {
+		var custInfoSize = $(response.data).find('#custInfoSize').val();
+		if (parseInt(custInfoSize) >= 1) {//老客户
+			var custInfos = $(response.data).find('#custInfos').eq(0);
+			var custId=$(custInfos).attr("custId");
+			var identityCd=$(custInfos).attr("identityCd");
+			var idCardNumber=$(custInfos).attr("idCardNumber");
+			var partyName=$(custInfos).attr("partyName");
+			var addressStr=$(custInfos).attr("addressStr");//地址
+			var CN=$(custInfos).attr("CN");
+			var certNum=$(custInfos).attr("certNum");
+			var address=$(custInfos).attr("address");
+			cust.readIdCardUser={
+					"custId":custId,
+					"newUserFlag":"false",
+					"identityCd":identityCd,
+					"idCardNumber":idCardNumber,
+					"addressStr":addressStr,
+					"partyName":partyName,
+					"CN"      :CN,
+					"certNum" :certNum,
+					"address" :address
+					
+			};
+		}else{//新客户
+			cust.readIdCardUser={
+				"custId":"-1",
+				"newUserFlag":"true",
+				"identityCd":identityCd,
+				"idCardNumber":identityNum,
+				"addressStr":address,
+				"partyName":partyName
+				
+			};
+		}
+	}else {
+		$.alert("提示","查询客户信息失败,稍后重试");
+		return;
+	}
+
+};
+
+/**
+ * 客户返档证号关系预校验接口
+ */
+var _checkCertNumberForReturn = function(identityCd,identityNum,partyName,address) {
+	var propertiesKey = "ONE_CERT_5_NUMBER_"
+			+ (OrderInfo.staff.soAreaId + "").substring(0, 3);
+	var isON = offerChange.queryPortalProperties(propertiesKey);
+	if (isON=="OFF") {
+		return true;
+	}
+	if (_isCovCust(OrderInfo.cust.identityCd)) {// 政企客户不校验
+		return true;
+	}
+	_searchUser(identityCd,identityNum,partyName,address);
+	// return true;
+	if (cust.readIdCardUser.newUserFlag=="true") {// 新客户
+		var inParam = {
+			"certType" : cust.readIdCardUser.identityCd,
+			"certNum" : cust.readIdCardUser.idCardNumber,
+			"certAddress" :cust.readIdCardUser.addressStr,
+			"custName" : cust.readIdCardUser.partyName
+
+		};
+		if (OrderInfo.cust.identityCd != "1") {// 非身份证类型
+			inParam.certNum = OrderInfo.cust.identityNum;
+		}
+	} else {
+		var inParam = {
+			"certType" : cust.readIdCardUser.identityCd,
+			"certNum" : cust.readIdCardUser.idCardNumber,
+			"certAddress" :cust.readIdCardUser.addressStr,
+			"custName" : cust.readIdCardUser.partyName,
+			"custNameEnc" : cust.readIdCardUser.CN,
+			"certNumEnc" : cust.readIdCardUser.certNum,
+			"certAddressEnc" : cust.readIdCardUser.address
+
+		};
+		inParam.certNumEnc = inParam.certNumEnc.replace(/=/g,"&#61");
+		inParam.custNameEnc = inParam.custNameEnc.replace(/=/g,"&#61");
+		inParam.certAddressEnc =inParam.certAddressEnc.replace(/=/g,"&#61");
+	}
+	var checkResult = false;
+	var response = $.callServiceAsJson(contextPath
+			+ "/app/cust/preCheckCertNumberRel", inParam);
+	if (response.code == 0) {
+		var result = response.data;
+		if ((parseInt(result.usedNum)) >= 5) {
+			var title = '信息提示';
+			$("#btn-dialog-ok").removeAttr("data-dismiss");
+			$('#alert-modal').modal({
+				backdrop : 'static',
+				keyboard : false
+			});
+			$("#btn-dialog-ok").off("click").on("click", function() {
+				$("#alert-modal").modal("hide");
+			});
+			$("#modal-title").html(title);
+			$("#modal-content").html("一个用户证件下不能有超过5个号码,请重新选择用户！");
+			$("#alert-modal").modal();
+		} else {
+			checkResult = true;
+		}
+	} else {
+		$.alertM(response.data);
+	}
+	return checkResult;
+};
+	
 	return {
 		jbridentidiesTypeCdChoose 	: 		_jbridentidiesTypeCdChoose,
 		jbrvalidatorForm 			: 		_jbrvalidatorForm,
@@ -2631,6 +2835,11 @@ cust = (function(){
 		getUserInfo					:		_getUserInfo,
 		jbrSubmit					:		_jbrSubmit,
 		getJbrInfo					:		_getJbrInfo,
-		getIp						:		_getIp
+		getIp						:		_getIp,
+		preCheckCertNumberRel       :       _preCheckCertNumberRel,
+		usedNum                     :       _usedNum,
+		searchUser                  :       _searchUser,
+		readIdCardUser              :       _readIdCardUser,
+		checkCertNumberForReturn    :       _checkCertNumberForReturn
 	};	
 })();
