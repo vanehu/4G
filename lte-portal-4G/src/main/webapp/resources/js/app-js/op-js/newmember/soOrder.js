@@ -150,7 +150,10 @@ SoOrder = (function() {
 	
 	//填充订单信息
 	var _getOrderInfo = function(data){
-		
+		//一证五号校验
+        if(!_oneCertFiveCheckData(cust.getCustInfo415())){
+            return false;
+        }
 		var busiOrders = [];  //存放订单项数组
 		var custOrderAttrs = []; //获取订单属性数组
 		var itemValue="N";
@@ -1967,6 +1970,7 @@ SoOrder = (function() {
 				//boProd2Tds : [], //UIM卡节点信息
 				bo2Coupons : [],  //物品信息节点
 				boAccountRelas : [], //帐户关联关系节
+				boCertiAccNbrRels : [], //证号关联关系节点
 				boProdStatuses : [], //产品状态节点
 				busiOrderAttrs : [] //订单属性节点
 			}
@@ -2093,6 +2097,17 @@ SoOrder = (function() {
 		};
 		
 		busiOrder.data.boAccountRelas.push(boAccountRela);	
+		if (ec.util.isObj(OrderInfo.boProdAns) && OrderInfo.boProdAns.length > 0) {
+            $.each(OrderInfo.boProdAns, function () {
+            	 var ca = $.extend(true, {}, OrderInfo.boCertiAccNbrRel);
+                 ca.accNbr = this.accessNumber;
+                 ca.state = this.state;
+                 ca.partyId = OrderInfo.cust.custId;
+                 _setUserInfo(ca);
+                 ca.serviceType = "1000";
+                 busiOrder.data.boCertiAccNbrRels.push(ca);
+            });
+        }
 		return busiOrder;
 	};
 	
@@ -2671,6 +2686,69 @@ SoOrder = (function() {
 		$("#modal-content").html(content);
 		$("#alert-modal").modal('show');
 	};
+	/**
+     * 一证五号订单数据校验
+     * @param custInfo
+     * @returns {boolean}
+     * @private
+     */
+    var _oneCertFiveCheckData = function (inParam) {
+        var oneCertFiveNum = false;//一证五号校验结果
+        if (ec.util.isObj(OrderInfo.boProdAns) && OrderInfo.boProdAns.length > 0) {
+        	var oneCertFiveNO = 0;
+            $.each(OrderInfo.boProdAns, function () {
+                var parent = this;
+                var isCheck = true;//是否进行一证五号校验，选择了使用人的号码之前校验过，这里跳过
+                if (ec.util.isObj(OrderInfo.choosedUserInfos) && OrderInfo.choosedUserInfos.length > 0) {//有选择使用人的情况
+                    $.each(OrderInfo.choosedUserInfos, function () {
+                        if (this.prodId == parent.prodId) {
+                            isCheck = false;
+                        }
+                    });
+                }
+                if (isCheck) {
+                	oneCertFiveNO ++ ;
+                } else {
+                    oneCertFiveNum = true;//不做一证五号校验的默认返回true
+                }
+            });
+            var oneCardFive ={
+            		certNum:inParam.certNum,
+            		oneCertFiveNO:oneCertFiveNO
+			};
+            OrderInfo.oneCardFiveNum.push(oneCardFive);
+            if (cust.preCheckCertNumberRel(this.prodId, inParam)) {
+                oneCertFiveNum = true;
+            }
+        } else {
+            oneCertFiveNum = true;//不做一证五号校验的默认返回true
+        }
+        return oneCertFiveNum;
+    };
+    /**
+     * 获取使用人信息，政企客户取使用人信息
+     * @param ca
+     * @private
+     */
+    var _setUserInfo = function (ca) {
+        if (CacheData.isGov(OrderInfo.cust.identityCd)) {
+            ca.certType = OrderInfo.cust.userIdentityCd;
+            ca.certNum = OrderInfo.cust.userIdentityNum;
+            ca.certNumEnc = OrderInfo.cust.userCertNumEnc;
+            ca.custName = OrderInfo.cust.userName;
+            ca.custNameEnc = OrderInfo.cust.userNameEnc;
+            ca.certAddress = OrderInfo.cust.userCertAddress;
+            ca.certAddressEnc = OrderInfo.cust.userCertAddressEnc;
+        } else {
+            ca.certType = OrderInfo.custBak.identityCd;
+            ca.certNum = OrderInfo.custBak.idCardNumber;
+            ca.custName = OrderInfo.custBak.partyName;
+            ca.certAddress = OrderInfo.custBak.addressStr;
+            ca.certNumEnc = OrderInfo.custBak.certNum;
+            ca.custNameEnc = OrderInfo.custBak.CN;
+            ca.certAddressEnc = OrderInfo.custBak.address;
+	    }
+    };
 	return {
 		builder 				: _builder,
 		createAttOffer  		: _createAttOffer,

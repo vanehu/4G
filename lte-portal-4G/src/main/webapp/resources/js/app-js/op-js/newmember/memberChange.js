@@ -1497,13 +1497,15 @@ order.memberChange = function(){
 			$.alert("提示","加装副卡和纳入老成员数量超过最大值"+maxPhone);
 			return;
 		}
-		if (!cust.preCheckCertNumberRel("-1", cust.getCustInfo415())) {
-            return;
-        }
-		if((parseInt(newnum)+parseInt(ec.util.mapGet(OrderInfo.oneCardFiveNO.usedNum,cust.getCustInfo415Flag(cust.getCustInfo415()))))>4){
-            $.alert("提示","此用户下已经有"+ec.util.mapGet(OrderInfo.oneCardFiveNO.usedNum,cust.getCustInfo415Flag(cust.getCustInfo415()))+"个号码，工信部要求支撑全国实名制一证五卡验证！");
-            return;
-        } 
+		if(newnum>0){
+			if (!cust.preCheckCertNumberRel("-1", cust.getCustInfo415())) {
+	            return;
+	        }
+			if((parseInt(newnum)+parseInt(ec.util.mapGet(OrderInfo.oneCardFiveNO.usedNum,cust.getCustInfo415Flag(cust.getCustInfo415()))))>5){
+	            $.alert("提示","此用户下已经有"+ec.util.mapGet(OrderInfo.oneCardFiveNO.usedNum,cust.getCustInfo415Flag(cust.getCustInfo415()))+"个号码，工信部要求支撑全国实名制一证五卡验证！");
+	            return;
+	        } 
+		}
 		if (!(ifRemoveProd) && num <=0 && oldnum<=0) {
 			$.alert("提示","没有对副卡进行操作。");
 			return;
