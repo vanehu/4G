@@ -1238,7 +1238,8 @@ cust = (function(){
 					"offerId":prodInstInfos.mainProdOfferInstInfos[0].prodOfferInstId,
 					"offerSpecId":prodInstInfos.mainProdOfferInstInfos[0].prodOfferId,
 					"offerSpecName":prodInstInfos.mainProdOfferInstInfos[0].prodOfferName,
-					"accNbr":prodInstInfos.accNbr
+					"accNbr":prodInstInfos.accNbr,
+					"custInfos":response.data.custInfos
 				};
 				OrderInfo.oldoffer.push(offerInfos);
 				order.memberChange.viceCartNum = 0;
@@ -1270,7 +1271,27 @@ cust = (function(){
 					CN:custInfos[0].CN,
 					address:custInfos[0].address,
 					vipLevelName: custInfos[0].vipLevelName
-				}
+				};
+				OrderInfo.custBak={//进入主副卡成员变更页面客户信息部分被清空，重新声明一个应急
+						addressStr: custInfos[0].addressStr,
+						areaId: custInfos[0].areaId,
+						areaName: custInfos[0].areaName,
+						authFlag: custInfos[0].authType,
+						custFlag: custInfos[0].custFlag,
+						custId: custInfos[0].custId,
+						idCardNumber: custInfos[0].idCardNumber,
+						identityCd: custInfos[0].identityCd,
+						identityName: custInfos[0].identityName,
+						norTaxPayer: "",
+						partyName: custInfos[0].partyName,
+						segmentId: custInfos[0].segmentId,
+						segmentName: custInfos[0].segmentName,
+						vipLevel: custInfos[0].vipLevel,
+						certNum : custInfos[0].certNum,
+						CN:custInfos[0].CN,
+						address:custInfos[0].address,
+						vipLevelName: custInfos[0].vipLevelName
+					};
 				if(busitypeflag!=1){
 					var prodInstInfos = response.data.prodInstInfos;
                                         if(prodInstInfos.length<1){
@@ -2490,13 +2511,13 @@ cust = (function(){
             };
         } else {//老客户
             inParam = {
-                "certType": OrderInfo.cust.identityCd,
-                "certNum": OrderInfo.cust.idCardNumber,
-                "certAddress": OrderInfo.cust.addressStr,
-                "custName": OrderInfo.cust.partyName,
-                "custNameEnc": OrderInfo.cust.CN.replace(/&#61/g,"="),
-                "certNumEnc": OrderInfo.cust.certNum.replace(/&#61/g,"="),
-                "certAddressEnc": OrderInfo.cust.address.replace(/&#61/g,"=")
+                "certType": OrderInfo.custBak.identityCd,
+                "certNum": OrderInfo.custBak.idCardNumber,
+                "certAddress": OrderInfo.custBak.addressStr,
+                "custName": OrderInfo.custBak.partyName,
+                "custNameEnc": OrderInfo.custBak.CN,
+                "certNumEnc": OrderInfo.custBak.certNum,
+                "certAddressEnc": OrderInfo.custBak.address
             };
         }
         return inParam;

@@ -1501,7 +1501,8 @@ order.memberChange = function(){
             return;
         }
 		if((parseInt(newnum)+parseInt(ec.util.mapGet(OrderInfo.oneCardFiveNO.usedNum,cust.getCustInfo415Flag(cust.getCustInfo415()))))>4){
-            $.alert("提示","此用户下已经有"+ec.util.mapGet(OrderInfo.oneCardFiveNO.usedNum,cust.getCustInfo415Flag(cust.getCustInfo415()))+"个号码，多余的副卡请选择其它使用人后继续办理业务！");
+            $.alert("提示","此用户下已经有"+ec.util.mapGet(OrderInfo.oneCardFiveNO.usedNum,cust.getCustInfo415Flag(cust.getCustInfo415()))+"个号码，工信部要求支撑全国实名制一证五卡验证！");
+            return;
         } 
 		if (!(ifRemoveProd) && num <=0 && oldnum<=0) {
 			$.alert("提示","没有对副卡进行操作。");

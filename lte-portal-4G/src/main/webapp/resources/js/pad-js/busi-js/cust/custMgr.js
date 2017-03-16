@@ -1163,6 +1163,9 @@ order.cust.mgr = (function(){
 					segmentId: custInfos[0].segmentId,
 					segmentName: custInfos[0].segmentName,
 					vipLevel: custInfos[0].vipLevel,
+					certNum : custInfos[0].certNum,
+					CN:custInfos[0].CN,
+					address:custInfos[0].address,
 					vipLevelName: custInfos[0].vipLevelName
 				}
 				if(busitypeflag!=1){

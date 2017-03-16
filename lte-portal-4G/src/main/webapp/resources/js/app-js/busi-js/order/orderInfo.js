@@ -76,6 +76,7 @@ OrderInfo = (function() {
 //		identityPic : "",
 		custOther1:""
 	}; 
+	var _custBak={};
 	
 	var _jbr = { //保存经办人信息
 			custId : "",
@@ -1448,6 +1449,7 @@ OrderInfo = (function() {
 		createUser			   :_createUser,
 		certTypedates			:_certTypedates,
 		user					:_user,
-		jbrPageFlag				:_jbrPageFlag
+		jbrPageFlag				:_jbrPageFlag,
+                 custBak                 :_custBak
 	};
 })();
