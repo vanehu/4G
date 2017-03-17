@@ -2976,7 +2976,7 @@ SoOrder = (function() {
 					return false;
 				}
 			}
-			
+
 			//若页面没有填写经办人，根据权限和业务类型进行判断和限制
 			var isActionFlagLimited = (
 				OrderInfo.actionFlag == 1	||	//办套餐入口做新装
@@ -2987,11 +2987,11 @@ SoOrder = (function() {
 				(OrderInfo.actionFlag == 6  && OrderInfo.isHandleCustNeeded) || //主副卡成员变更，加装新号码或加装老号码且客户证件非身份证
 				(OrderInfo.actionFlag == 2  && (OrderInfo.isHandleCustNeeded || isUimAction)) ||//套餐变更，加装新号码、加装老号码且客户证件非身份证或UIM变更
 				(OrderInfo.actionFlag == 3	&& OrderInfo.busitypeflag == 14	 && isUimAction)	//可选包变更涉及UIM动作
-			) && OrderInfo.busitypeflag != 27;//预装不限制
+			) && !order.prepare.isPreInstall();//预装不限制，此时busitypeflag为1不是27，不可以busitypeflag判断业务类型
 			
 			if(CONST.isHandleCustNeeded && isActionFlagLimited) {
 				//采集单不拍照
-				if((!ec.util.isObj($("#jbrForm").html()) || !ec.util.isObj(OrderInfo.virOlId))&&!OrderInfo.isCltNewOrder()){
+				if((!ec.util.isObj($("#jbrForm").html()) || !ec.util.isObj(OrderInfo.virOlId)) && !OrderInfo.isCltNewOrder()){
 					$.alert("提示","经办人拍照信息不能为空！请确认页面是否已点击【读卡】或者【查询】按钮，并且进行拍照和人证相符等操作！");
 					return false ;
 				}
