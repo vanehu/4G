@@ -3291,7 +3291,6 @@ order.main = (function(){
 			$.confirm("确认","没有查询到客户信息，系统将自动创建客户，是否确认继续受理？", {
 				yes:function(){
 					userSubInfo.prodId 				 = userCustInfo.prodId;
-					userSubInfo.custId 				 = "-1";
 					userSubInfo.servType 			 = userCustInfo.servType;
 					userSubInfo.isOldCust 			 = "N";
 					userSubInfo.identityNum 		 = userCustInfo.identityNum;
@@ -3405,17 +3404,17 @@ order.main = (function(){
 				$hidden.val(userSubInfo.custId);
 			}
 		}else if(userSubInfo.isOldCust == "N"){
-			var instId = '-1';
+			var custId = '-1';
 			if(!updateFlag){ // update不修改序列,新增才修改
-				var instId = OrderInfo.SEQ.custSeq--;
-				userSubInfo.instId = instId;
+				var custId = OrderInfo.SEQ.custSeq--;
+				userSubInfo.custId = custId;
 			}else{
-				instId = userSubInfo.instId;
+                custId = userSubInfo.custId;
 			}
 			$(dom).prev('input').val("[新增]"+orderUserName);
 			var $hidden = $(dom).prev('input').prev(":hidden");
 			if(ec.util.isObj($hidden) && $hidden.length > 0){
-				$hidden.val(instId);
+				$hidden.val(custId);
 			}
 		};
 		//采集单添加使用人信息dom缓存

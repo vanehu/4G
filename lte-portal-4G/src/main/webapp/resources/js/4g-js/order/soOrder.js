@@ -2703,7 +2703,7 @@ SoOrder = (function() {
 		for ( var i = 0; i < subUserInfos.length; i++) {
 			if(subUserInfos[i].prodId==prodId && subUserInfos[i].servType == '2'){
 				tmpObj.partyProductRelaRoleCd = subUserInfos[i].servType;
-				tmpObj.partyId = ec.util.isObj(subUserInfos[i].custId)?subUserInfos[i].custId:subUserInfos[i].instId;
+				tmpObj.partyId = subUserInfos[i].custId;
 				busiOrder.data.boCusts.push(tmpObj);
 			}
 		}
@@ -4244,7 +4244,7 @@ SoOrder = (function() {
 						seq : OrderInfo.SEQ.seq--
 					},
 					busiObj : { //业务对象节点
-						instId		: subUserInfo.instId,
+						instId		: subUserInfo.custId,
 						accessNumber: OrderInfo.getAccessNumber(subUserInfo.prodId)
 					},
 					boActionType : {
@@ -4307,7 +4307,7 @@ SoOrder = (function() {
 				if(subUserInfo.checkCustCertSwitch == "ON"){
 					var boCustCheckLog = {
 						checkMethod			: subUserInfo.checkMethod,
-						custId 		        : subUserInfo.instId,
+						custId 		        : subUserInfo.custId,
 						objId		        : "",	
 						checkDate		    : subUserInfo.checkDate,		
 						checker		        : subUserInfo.checker,
