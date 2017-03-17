@@ -2965,7 +2965,6 @@ order.cust = (function(){
         }else{//定位不到客户C1
         	userSubInfo = {
         			prodId : user_prodId,
-        			custId : -1,
         			orderIdentidiesTypeCd : orderIdentidiesTypeCd,
         			identityNum : identityNum,
         			orderAttrName : orderAttrName,
@@ -3059,6 +3058,7 @@ order.cust = (function(){
 		}else if(userSubInfo.isOldCust == "N"){
 			var instId = OrderInfo.SEQ.offerSeq--;
 			userSubInfo.instId = instId;
+			userSubInfo.custId = instId;
 			$('#'+CONST.PROD_ATTR.PROD_USER+'_'+prodId+'_name').val("[新增]"+orderUserName);
 			$('#'+CONST.PROD_ATTR.PROD_USER+'_'+prodId).val(instId);
 		};
