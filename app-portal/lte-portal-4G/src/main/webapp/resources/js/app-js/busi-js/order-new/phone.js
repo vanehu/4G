@@ -314,7 +314,7 @@ order.phone = (function(){
 			"orderNo" 		: ""
 		};
 		if(CONST.getAppDesc()==0){
-			var mktSpecCode=$("#mktSpecCode").val();
+			var mktSpecCode =$("#phoneColor").find("option:selected").attr("mktSpecCode");
 			if($.trim(mktSpecCode)==""){
 				$.alert("提示","营销资源返回的规格存货编码为空！");
 				return;

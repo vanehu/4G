@@ -1461,7 +1461,10 @@ cust = (function(){
 			custFlag :$(scope).attr("custFlag"),
 			vipLevel :$(scope).attr("vipLevel"),
 			vipLevelName :$(scope).attr("vipLevelName"),
-			accNbr:$(scope).attr("accNbr")
+			accNbr:$(scope).attr("accNbr"),
+			CN:$(scope).attr("CN").replace(/=/g,"&#61"),
+			address:$(scope).attr("address").replace(/=/g,"&#61"),
+			certNum:$(scope).attr("certNum").replace(/=/g,"&#61")
 		};
 		//设置被选择标识
 		$(scope).attr("selected","selected");
@@ -2780,6 +2783,18 @@ var _checkCertNumberForReturn = function(identityCd,identityNum,partyName,addres
 		$.alertM(response.data);
 	}
 	return checkResult;
+};
+
+// 判断是否是政企客户(入参identityCd 为要判断的证件类型)
+var _isCovCust = function (identityCd) {
+	var isGovCustFlag = false;
+	for (var i = 0; i < CacheData.getGovCertType().length; i ++) {
+		if (identityCd == CacheData.getGovCertType()[i]) {
+			isGovCustFlag = true;
+			break;
+		}
+	}
+	return isGovCustFlag;
 };
 	
 	return {
