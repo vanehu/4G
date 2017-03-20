@@ -74,9 +74,13 @@ cart.main = (function() {
                         $.alert("提示", "没有查询到结果");
                         return;
                     }
+                    $("#nav-tab-1").removeClass("active in");
+        	    	$("#nav-tab-2").addClass("active in");
+        	    	$("#tab1_li").removeClass("active");
+        	    	$("#tab2_li").addClass("active");
                     //					if(curPage == 1){
-                    $("#nav-tab-18").children('.list-box').html(response.data);
-                    $('a[href="#nav-tab-18"]').click();
+                    $("#nav-tab-2").children('.list-box').html(response.data);
+                    $('a[href="#nav-tab-2"]').click();
                     // $("#cart_list_scroller").css("transform", "translate(0px, -40px) translateZ(0px)");
                     // if (scroller && $.isFunction(scroller)) scroller.apply(this, []);
                     //						}
@@ -199,8 +203,7 @@ cart.main = (function() {
                     $("#cart_list_div").hide();
                     $("#cart_info").html(response.data);
                     //针对jquery.overlay.js中unecOverlay()方法的bug，做的修复处理
-                    setTimeout(function(){$('#cart_info_modal').modal('show');},500)
-                    OrderInfo.order.step = 3;
+                    setTimeout(function(){$('#cart_info_modal').modal('show');},500);
                 }
             },
             fail: function(response) {
@@ -279,17 +282,11 @@ cart.main = (function() {
         } else if (OrderInfo.order.step == 2) {
             $("#cart_search").show();
             $("#cart_list_div").hide();
+            $("#nav-tab-2").removeClass("active in");
+	    	$("#nav-tab-1").addClass("active in");
+	    	$("#tab2_li").removeClass("active");
+	    	$("#tab1_li").addClass("active");
             OrderInfo.order.step = 1;
-        } else if (OrderInfo.order.step == 3) {
-            $("#cart_list_div").show();
-            $("#cart_info").hide();
-            OrderInfo.order.step = 2;
-        } else if (OrderInfo.order.step == 4) {
-            $("#cart_info").show();
-            $("#cart_item_detail").hide();
-            OrderInfo.order.step = 3;
-        } else {
-            common.callCloseWebview();
         }
     };
     //受理单查询上一页

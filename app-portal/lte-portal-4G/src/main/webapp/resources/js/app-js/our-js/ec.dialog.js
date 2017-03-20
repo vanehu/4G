@@ -167,6 +167,9 @@
 			$("#btn_error_info").off("click").on("click",function(){
 				$("#order-error").hide();
 				$("#content").show();
+				if(OrderInfo.actionFlag ==1 && cust.checkResult==false){
+					common.callCloseWebview();//一证五号校验失败，确定时退出
+				}
 			});
 		},
 		//error, warning, question, information,confirmation

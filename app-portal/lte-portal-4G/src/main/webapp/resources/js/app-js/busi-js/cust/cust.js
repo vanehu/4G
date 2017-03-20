@@ -1509,8 +1509,31 @@ cust = (function(){
 					segmentId: custInfos[0].segmentId,
 					segmentName: custInfos[0].segmentName,
 					vipLevel: custInfos[0].vipLevel,
+					certNum : custInfos[0].certNum,
+					CN:custInfos[0].CN,
+					address:custInfos[0].address,
 					vipLevelName: custInfos[0].vipLevelName
-				}
+				};
+				OrderInfo.custBak={//进入主副卡成员变更页面客户信息部分被清空，重新声明一个应急
+						addressStr: custInfos[0].addressStr,
+						areaId: custInfos[0].areaId,
+						areaName: custInfos[0].areaName,
+						authFlag: custInfos[0].authType,
+						custFlag: custInfos[0].custFlag,
+						custId: custInfos[0].custId,
+						idCardNumber: custInfos[0].idCardNumber,
+						identityCd: custInfos[0].identityCd,
+						identityName: custInfos[0].identityName,
+						norTaxPayer: "",
+						partyName: custInfos[0].partyName,
+						segmentId: custInfos[0].segmentId,
+						segmentName: custInfos[0].segmentName,
+						vipLevel: custInfos[0].vipLevel,
+						certNum : custInfos[0].certNum,
+						CN:custInfos[0].CN,
+						address:custInfos[0].address,
+						vipLevelName: custInfos[0].vipLevelName
+					};
 				if(busitypeflag!=1){
 					var prodInstInfos = response.data.prodInstInfos;
 					if(prodInstInfos.length<1){
@@ -1573,6 +1596,19 @@ cust = (function(){
 			$.alertM(response.data);
 			return false;
 		}
+		//一证五号校验
+		 var inParam = {
+	                "certType": OrderInfo.cust.identityCd,
+	                "certNum":OrderInfo.cust.idCardNumber, 
+	                "certAddress": OrderInfo.cust.addressStr,
+	                "custName": OrderInfo.cust.partyName,
+	                "custNameEnc": OrderInfo.cust.CN,
+	                "certNumEnc": OrderInfo.cust.certNum,
+	                "certAddressEnc": OrderInfo.cust.address
+	            };
+      if(OrderInfo.busitypeflag ==1 && !cust.preCheckCertNumberRel("-1", inParam)){
+          return false;
+      }
 		return true;
 	};
 	//客户鉴权--证件类型
@@ -2654,7 +2690,93 @@ cust = (function(){
 		
 
 	};
+	 /**
+     * 证号关系预校验接口
+     */
+    var _preCheckCertNumberRel = function (prodId, inParam) {
+    	//查分省一证五号校验开关
+	    var isON = offerChange.queryPortalProperties("ONE_CERT_5_NUMBER_"+OrderInfo.cust.areaId.substr(0,3));
+	    if(isON !="ON"){
+            return true;
+        }
+        var checkResult = false;
+        var param = $.extend(true, {"certType": "", "certNum": "", "certAddress": "", "custName": ""}, inParam);
+        if(CacheData.isGov(param.certType)){//过滤政企的证件类型，政企的证件不调用一证五号校验
+            return true;
+        }
+        var response=$.callServiceAsJson(contextPath + "/cust/preCheckCertNumberRel", JSON.stringify(param));
+        if (response.code == 0) {
+            var result = response.data;
+            if (ec.util.isObj(result)) {
+            	ec.util.mapPut(OrderInfo.oneCardFiveNO.usedNum, _getCustInfo415Flag(inParam), result.usedNum);
+            	if(parseInt(result.usedNum)>=5 && OrderInfo.busitypeflag ==1){
+            		$.alert("提示", "工信部要求支撑全国实名制一证五卡验证,一个用户证件下不能有超过5个号码！");
+            		checkResult = false;
+            		return checkResult;
+            	}else if(parseInt(result.usedNum) <5 && OrderInfo.oneCardFiveNum.length<=0){            		 
+            		checkResult=true;
+            	}else if(parseInt(result.usedNum)>=5 && OrderInfo.busitypeflag !=1){
+            		checkResult=true;
+            	}
+            	if(OrderInfo.oneCardFiveNum.length>0){
+            		 $.each(OrderInfo.oneCardFiveNum, function () {
+            			 var oneCard = this;
+            			 if(inParam.certNum ==oneCard.certNum){
+            				 if ((parseInt(result.usedNum) + oneCard.oneCertFiveNO) <=5) {
+            	                    checkResult=true;
+            	                } else {
+            	                	 checkResult = false;
+            	                	 OrderInfo.oneCardFiveNum = [];
+            	                    $.alert("提示", "工信部要求支撑全国实名制一证五卡验证,一个用户证件下不能有超过5个号码！");
+            	                    return checkResult;
+            	                }
+            			 }
+            		 });
+            	}
+            }
+        } else {
+            $.alertM(response.data);
+        }
+        return checkResult;
+    };
+    /**
+     * 获取一证五号客户信息，新客户或者老用户
+     * @private
+     */
+    var _getCustInfo415 = function () {
+        var inParam = {};
+        if (OrderInfo.cust.custId == "-1") {//新客户
+            inParam={
+                "certType": OrderInfo.boCustIdentities.identidiesTypeCd,
+                "certNum": OrderInfo.boCustIdentities.identityNum,
+                "certAddress": OrderInfo.boCustInfos.addressStr,
+                "custName": OrderInfo.boCustInfos.name
+            };
+        } else {//老客户
+            inParam = {
+                "certType": OrderInfo.custBak.identityCd,
+                "certNum": OrderInfo.custBak.idCardNumber,
+                "certAddress": OrderInfo.custBak.addressStr,
+                "custName": OrderInfo.custBak.partyName,
+                "custNameEnc": OrderInfo.custBak.CN,
+                "certNumEnc": OrderInfo.custBak.certNum,
+                "certAddressEnc": OrderInfo.custBak.address
+            };
+        }
+        return inParam;
+    };
 	
+    /**
+     * 获取一证五号客户信息唯一标识，新客户或者老用户
+     * @private 有脱敏信息的客户信息中脱敏证件号不具有唯一性，用加密字段做唯一标识，
+     */
+    var _getCustInfo415Flag = function (inParam) {
+        if(ec.util.isObj(inParam.certNumEnc.replace(/&#61/g,"="))){
+            return inParam.certNumEnc;
+        }else{
+            return inParam.certNum;
+        }
+    };
 	return {
 		jbridentidiesTypeCdChoose 	: 		_jbridentidiesTypeCdChoose,
 		jbrvalidatorForm 			: 		_jbrvalidatorForm,
@@ -2718,7 +2840,10 @@ cust = (function(){
 		clearUserForm				:		_clearUserForm,
 		getPicture2                 :       _getPicture2,
 		getjbrGenerationInfos2      :       _getjbrGenerationInfos2,
-		newUIFalg					:		_newUIFalg
+		newUIFalg					:		_newUIFalg,
+		preCheckCertNumberRel       :       _preCheckCertNumberRel,
+		getCustInfo415              :       _getCustInfo415,
+		getCustInfo415Flag          :       _getCustInfo415Flag
 	};	
 })();
 // OrderInfo.boCustInfos.partyTypeCd = 1 ;//客户类型

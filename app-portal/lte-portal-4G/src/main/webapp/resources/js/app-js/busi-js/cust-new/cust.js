@@ -12,10 +12,12 @@ cust = (function(){
 	var _checkUserInfo = {
 			 accNbr: ""
 	};
+	var _isOldCust = false;
 	var _checkCustLog = {};//客户信息核验记录
 	var _newUIFalg = "ON";
 	var _usedNum;//客户已使用指标数（一证五号需求一个客户最多只能五个号）
 	var _readIdCardUser={};//客户返档读卡客户信息
+	var _checkResult=true;//一证五号校验失败标志
 	var _clearCustForm = function(){
 		$('#cmCustName').val("");
 		$('#cmAddressStr').val("");
@@ -41,6 +43,7 @@ cust = (function(){
 		$('#userOrderAttrPhoneNbr').val("");
 		cust.uservalidatorForm();
 	};
+	var authFlag = null; 
 	var _queryForChooseUser = false;
 	var _custFlag = "";
 	//客户鉴权跳转权限
@@ -193,10 +196,16 @@ cust = (function(){
 		}
 		var propertiesKey = "REAL_NAME_PHOTO_"+(OrderInfo.staff.soAreaId+"").substring(0,3);
 		var isFlag = offerChange.queryPortalProperties(propertiesKey);
-		if(isFlag == "ON" &&!ec.util.isObj(OrderInfo.jbr.identityNum) || OrderInfo.jbr.identityCd == OrderInfo.cust.identityCd && OrderInfo.jbr.identityNum == OrderInfo.cust.identityNum){
-			OrderInfo.jbr.custId = OrderInfo.cust.custId;
+		if(isFlag == "ON" && cust.isOldCust){
+			if(ec.util.isObj(OrderInfo.jbr.identityNum) && OrderInfo.jbr.identityNum == OrderInfo.cust.identityNum && OrderInfo.jbr.identityCd == OrderInfo.cust.identityCd){
+					OrderInfo.jbr.custId = OrderInfo.cust.custId;
+			}
 		} else {
-			OrderInfo.jbr.custId = OrderInfo.SEQ.instSeq--;//客户地区
+			if(ec.util.isObj(OrderInfo.jbr.identityNum) && OrderInfo.jbr.identityNum != OrderInfo.cust.identityNum){
+				OrderInfo.jbr.custId = OrderInfo.SEQ.instSeq--;//客户地区
+			} else {
+				OrderInfo.jbr.custId = OrderInfo.cust.custId;
+			}
 		}
 		var data = {
 				boCustInfos : [],
@@ -768,6 +777,7 @@ cust = (function(){
 						if(OrderInfo.preBefore.idPicFlag=="ON"){//实名拍照省份开关为开
 //							$("#photo").show();
 //							$("#queryJbr").show();
+								_isOldCust = true;
 								OrderInfo.jbr.custId = OrderInfo.cust.custId;
 								OrderInfo.jbr.partyName = OrderInfo.cust.partyName;
 								OrderInfo.jbr.telNumber = OrderInfo.cust.telNumber;
@@ -775,8 +785,9 @@ cust = (function(){
 								OrderInfo.jbr.identityCd = OrderInfo.cust.identityCd;
 								OrderInfo.jbr.mailAddressStr = OrderInfo.cust.mailAddressStr;
 								OrderInfo.jbr.identityPic = OrderInfo.cust.identityPic;
-								OrderInfo.jbr.identityNum = OrderInfo.cust.identityNum;
+								OrderInfo.jbr.identityNum = OrderInfo.cust.idCardNumber;
 						}
+						
 						//jquery mobile 需要刷新才能生效
 //						_obj.selectmenu().selectmenu('refresh');
 //						if(id=='orderIdentidiesTypeCd'){
@@ -939,11 +950,7 @@ cust = (function(){
 		$("#orderAttrName").val(name);
 		$("#sfzorderAttrIdCard").val(idcard);
 		$("#orderAttrAddr").val(address);
-		if(ec.util.isObj(_newUIFalg) && _newUIFalg == "ON" &&  (OrderInfo.actionFlag=="35" || OrderInfo.actionFlag=="34" || OrderInfo.actionFlag=="112" ||OrderInfo.actionFlag=="1" ||OrderInfo.actionFlag=="8")){
-			$("#jbrFormdata").Validform().check();
-		} else {
-			$('#jbrFormdata').data('bootstrapValidator').validate();
-		}
+		$("#jbrFormdata").Validform().check();
 		OrderInfo.jbr.identityPic = identityPic;//证件照片
 		OrderInfo.virOlId = "";
 		order.main.queryJbr();
@@ -2650,6 +2657,7 @@ cust = (function(){
 				checkResult = true;
 			}
 		} else {
+			cust.checkResult=false;
 			$.alertM(response.data);
 		}
 		return checkResult;
@@ -2858,6 +2866,8 @@ cust = (function(){
 		checkCustLog				:		_checkCustLog,
 		searchUser                  :       _searchUser,
 		readIdCardUser              :       _readIdCardUser,
-		checkCertNumberForReturn    :       _checkCertNumberForReturn
+		checkCertNumberForReturn    :       _checkCertNumberForReturn,
+		isOldCust					:		_isOldCust,
+		checkResult                 :       _checkResult
 	};	
 })();

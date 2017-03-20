@@ -2146,6 +2146,7 @@ public class CustController extends BaseController {
             SysConstant.SESSION_KEY_LOGIN_STAFF);
         JsonResponse jsonResponse = null;
         Map<String, Object> resultMap = new HashMap<String, Object>();
+        Map<String, Object> resultMapErr = new HashMap<String, Object>();
         if(paramMap.get("custNameEnc")!=null){////取出三个加密字段进行=号还原
 			String Name=(String) paramMap.get("custNameEnc");
 			String Name2=Name.replaceAll("&#61", "=");
@@ -2163,10 +2164,20 @@ public class CustController extends BaseController {
 		}
         try {
             resultMap = custBmo.preCheckCertNumberRel(paramMap, flowNum, sessionStaff);
-            if (MapUtils.isNotEmpty(resultMap)) {
-                jsonResponse = super.successed(resultMap);
-            } else {
-                jsonResponse = super.failed(resultMap, ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+            if(ResultCode.R_SUCC.equals(resultMap.get("code"))){
+            	jsonResponse = super.successed(resultMap);
+            }else{
+            	Map<String, Object> retnMap = new HashMap<String, Object>();
+            	retnMap = (Map<String, Object>) resultMap.get("result");
+            	if(retnMap !=null){
+            		resultMapErr.put("errData", retnMap.get("errorStack"));
+            	}
+            	resultMapErr.put("errCode", "020162");
+            	resultMapErr.put("paramMap", JsonUtil.toString(paramMap));
+            	resultMapErr.put("errMsg", resultMap.get("resultMsg"));
+            	resultMapErr.put("logSeqId", resultMap.get("transactionId"));
+            	resultMapErr.put("resultCode", "-1");
+            	jsonResponse = super.failed(resultMapErr, ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
             }
         } catch (InterfaceException e) {
             jsonResponse = super.failed(e, paramMap,ErrorCode.PRE_CHECK_CERT_NUMBER_REL);

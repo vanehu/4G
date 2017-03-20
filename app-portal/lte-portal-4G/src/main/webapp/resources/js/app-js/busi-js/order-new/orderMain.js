@@ -302,7 +302,7 @@ order.main = (function(){
 						OrderInfo.prodAttrs[i].isOptional = 'N';
 						break;
 					}
-				}				
+				}			
 			} else {
 				//隐藏使用人
 			}
@@ -432,6 +432,7 @@ order.main = (function(){
 		if(custInfo != null && custInfo.custId){
 			//将客户信息作为使用人tmpChooseUserInfo，确认后保存到OrderInfo.choosedUserInfos
 			cust.tmpJbrInfo = custInfo;
+			cust.isOldCust = true;
 			OrderInfo.jbr.custId = custInfo.custId;
 			if(OrderInfo.jbr.identityCd != custInfo.identityCd || OrderInfo.jbr.identityNum != custInfo.idCardNumber){
 				OrderInfo.jbr.identityCd = custInfo.identityCd;
@@ -457,6 +458,7 @@ order.main = (function(){
 		if(!validate.check()){
 			return;
 		}
+		cust.isOldCust = false;
 		var identityCd="";
 		var idcard="";
 		var diffPlace="";
