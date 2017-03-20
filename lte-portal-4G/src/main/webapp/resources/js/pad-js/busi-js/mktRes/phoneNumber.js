@@ -1021,10 +1021,10 @@ mktRes.phoneNbr = (function(){
 		if (response.code==0) {
 			if(response.data){
 				_boProdAn.accessNumber=response.data.seq;
-				_boProdAn.anTypeCd="";
+				_boProdAn.anTypeCd="4";
 				_boProdAn.level="";
 				_boProdAn.org_level="";
-				_boProdAn.anId="";
+				_boProdAn.anId="1";
 				_boProdAn.areaId=$("#p_cust_areaId").val();
 				_boProdAn.areaCode ="";
 				_boProdAn.memberRoleCd=CONST.MEMBER_ROLE_CD.COMMON_MEMBER;
