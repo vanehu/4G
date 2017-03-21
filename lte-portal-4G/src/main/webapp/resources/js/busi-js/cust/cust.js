@@ -3325,9 +3325,9 @@ order.cust = (function(){
 		//经办人信息填写模块信息保护优化
 		 _disableHandleCustInfos();
 		// 加载拍照弹窗，实名信息采集单受理除外(只新装)
-		if(!OrderInfo.isCltNewOrder()){
-			_showCameraView();
-		 }
+//		if(!OrderInfo.isCltNewOrder()){
+//			_showCameraView();
+//		 }
 		//判断新老用户封装用户信息
 		if(ec.util.isArray(response.data.custInfos)){
 			OrderInfo.ifCreateHandleCust = false;//不需要新建经办人
@@ -3776,31 +3776,29 @@ order.cust = (function(){
     		return;
     	}
     	
-    	var width = 640;//默认width='640'
-    	var height = 360;//默认height='360'
-    	var style = "float: right; margin-right: 10px;";//默认style='float: right; margin-right: 10px;'
-    	
-    	if(ec.util.isObj(param)){
-    		if(ec.util.isObj(param.width)){
-    			width = param.width;
-    		}
-    		if(ec.util.isObj(param.height)){
-    			height = param.height;
-    		}
-    		if(param.style!=null&&param.style!=undefined){
-    			style = param.style;
-    		}
-    	}
+    	if($("#capture").length == 0){
+    		var width = 640;//默认width='640'
+        	var height = 360;//默认height='360'
+        	var style = "float: right; margin-right: 10px;";//默认style='float: right; margin-right: 10px;'
 
-    	//清空
-    	if($("#capture")){
-    		$("#capture").remove();
+        	if(ec.util.isObj(param)){
+        		if(ec.util.isObj(param.width)){
+        			width = param.width;
+        		}
+        		if(ec.util.isObj(param.height)){
+        			height = param.height;
+        		}
+        		if(param.style!=null&&param.style!=undefined){
+        			style = param.style;
+        		}
+        	}
+        	
+        	if(cert.getBrowser() == "FF") {
+    			$(dom).append("<object type='application/x-itst-activex' clsid='{454C18E2-8B7D-43C6-8C17-B1825B49D7DE}' id='capture'  width='" + width + "' height='" + height + "' style='" + style + "'></object>");
+    		} else{
+    			$(dom).append("<object classid='clsid:454C18E2-8B7D-43C6-8C17-B1825B49D7DE' id='capture'  width='" + width + "' height='" + height + "' style='" + style + "'></object>");
+    		}
     	}
-    	if(cert.getBrowser() == "FF") {
-			$(dom).append("<object type='application/x-itst-activex' clsid='{454C18E2-8B7D-43C6-8C17-B1825B49D7DE}' id='capture'  width=" + width + " height=" + height + " style=" + style + "></object>");
-		} else{
-			$(dom).append("<object classid='clsid:454C18E2-8B7D-43C6-8C17-B1825B49D7DE' id='capture'  width=" + width + " height=" + height + " style=" + style + "></object>");
-		}
     };
     
     /*

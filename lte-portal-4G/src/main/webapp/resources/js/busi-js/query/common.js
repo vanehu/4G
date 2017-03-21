@@ -127,7 +127,7 @@ query.common = (function() {
     		CONST.realNamePhotoFlag = query.common.queryPropertiesValue("REAL_NAME_PHOTO_" + OrderInfo.staff.areaId.substr(0, 3));
     	}
     	try{
-        	if (CONST.realNamePhotoFlag == "ON"){
+        	if (CONST.realNamePhotoFlag == "ON" && CacheData.getBrowserTypeVersion().split(":")[1]>=45){
         		//加载拍照仪控件对象
         		order.cust.loadCameraObj("#camera_obj", null);
         		//获取版本信息
