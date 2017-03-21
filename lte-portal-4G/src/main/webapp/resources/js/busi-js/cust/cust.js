@@ -3699,8 +3699,8 @@ order.cust = (function(){
     	var backgroundColor = "background-color: #E8E8E8;";
     	var backgroundColorGray = "#E8E8E8;";
     	//1.“查询”和“读卡”按钮，改为“重置”按钮
-    	$("#orderAttrReadCertBtn span").text("重置");
-    	$("#orderAttrQueryCertBtn span").text("重置");
+//    	$("#orderAttrReadCertBtn span").text("重置");
+//    	$("#orderAttrQueryCertBtn span").text("重置");
     	//2.修改经办人“查询”和“读卡”按钮的绑定事件
     	_bindEvent4HandleCust();
     	//3.置灰证件类型
@@ -3721,10 +3721,13 @@ order.cust = (function(){
 
     //为重置按钮绑定新的事件
     var _bindEvent4HandleCust = function() {
-        $("#jbrForm").off("formIsValid").bind("formIsValid", function (event) {
-        	_resetHandleCustInfos();
-        }).ketchup({bindElement: "orderAttrQueryCertBtn"});
-        $("#orderAttrReadCertBtn").attr("onclick", "javascript:order.cust.resetHandleCustInfos()");
+    	$("#orderAttrResetBtn").show();
+    	$("#orderAttrReadCertBtn").hide();
+    	$("#orderAttrQueryCertBtn").hide();
+//        $("#jbrForm").off("formIsValid").bind("formIsValid", function (event) {
+//        	_resetHandleCustInfos();
+//        }).ketchup({bindElement: "orderAttrQueryCertBtn"});
+//        $("#orderAttrReadCertBtn").attr("onclick", "javascript:order.cust.resetHandleCustInfos()");
     };
 
     //恢复被置灰的经办人
@@ -3746,8 +3749,18 @@ order.cust = (function(){
     var _removeDisabled = function(){
     	var backgroundColorWhite = "white;";
     	//重置两个按钮极其绑定事件
-    	$("#orderAttrReadCertBtn span").text("读卡");
-    	$("#orderAttrQueryCertBtn span").text("查询");
+//    	$("#orderAttrReadCertBtn span").text("读卡");
+//    	$("#orderAttrQueryCertBtn span").text("查询");
+    	var orderIdentidiesTypeCd = $("#orderIdentidiesTypeCd").val();
+    	if(orderIdentidiesTypeCd == 1){
+    		$("#orderAttrResetBtn").hide();
+        	$("#orderAttrReadCertBtn").show();
+        	$("#orderAttrQueryCertBtn").hide();
+    	} else{
+    		$("#orderAttrResetBtn").hide();
+        	$("#orderAttrReadCertBtn").hide();
+        	$("#orderAttrQueryCertBtn").show();
+    	}
     	_jbrcreateButton();
     	$("#orderAttrReadCertBtn").attr("onclick", "javascript:order.cust.readCertWhenOrder()");
     	//重置证件类型
