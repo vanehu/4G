@@ -26,10 +26,8 @@ order.phoneNumber = (function(){
 	};
 	
 	var _initPhonenumber=function(){
-		order.phoneNumber.queryPhoneNbrPool();//查询号池
-	    order.phoneNumber.queryApConfig();//查询号码段和号码类型 
-		_btnQueryPhoneNumber(1);
-		
+		order.phoneNumber.queryApConfig();//查询号码段和号码类型 
+		order.phoneNumber.queryPhoneNbrPool();//查询号池		
 	};
 	//主卡查询号池
 	var _queryPhoneNbrPool = function(){
@@ -82,6 +80,7 @@ order.phoneNumber = (function(){
 							}
 							$("#nbrPoolDiv").append($div).append($sel).append($div2);
 						}
+						_btnQueryPhoneNumber(1);
 						order.broadband.init_select();//刷新select组件，使样式生效
 
 					}

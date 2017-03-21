@@ -108,7 +108,7 @@ public class AppCommonOutInterfinceController extends BaseController{
 			return rwtMsg;
 		}
 		if (param.get("chargeItems") == null || "".equals(param.get("chargeItems").toString())) {
-			resultMsg.put("success", "false"); // true:成功，false:失败
+			resultMsg.put("success", "true"); // true:成功，false:失败
 			resultMsg.put("data", "费用项为空！");
 			rwtMsg = JsonUtil.toString(resultMsg);
 			return rwtMsg;
@@ -151,15 +151,15 @@ public class AppCommonOutInterfinceController extends BaseController{
 						rwtMsg = JsonUtil.toString(resultMsg);
 						return rwtMsg;
 					} else {
-						resultMsg.put("success", "false"); // true:成功，false:失败
+						resultMsg.put("success", "true"); // true:成功，false:失败
 						resultMsg.put("data", "调用收费接口成功，收费失败！"); // 返回信息0成功，1失败
 						rwtMsg = JsonUtil.toString(resultMsg);
 						return rwtMsg;
 					}
 					
 				} catch (Exception e) {
-					resultMsg.put("success", "false"); // true:成功，false:失败
-					resultMsg.put("data", "请求失败，下计费接口出错！"); // 返回信息0成功，1失败
+					resultMsg.put("success", "true"); // true:成功，false:失败
+					resultMsg.put("data", "请求成功，下计费接口出错！"); // 返回信息0成功，1失败
 					rwtMsg = JsonUtil.toString(resultMsg);
 					return rwtMsg;
 				}
@@ -170,8 +170,8 @@ public class AppCommonOutInterfinceController extends BaseController{
 				return rwtMsg;
 			}
 		}
-		resultMsg.put("success", "false"); // true:成功，false:失败
-		resultMsg.put("data", "请求失败，请求参数不完整，chargeItems为空！"); // 返回信息0成功，1失败
+		resultMsg.put("success", "true"); // true:成功，false:失败
+		resultMsg.put("data", "请求成功，请求参数不完整，chargeItems为空,不下计费！"); // 返回信息0成功，1失败
 		rwtMsg = JsonUtil.toString(resultMsg);
 		return rwtMsg;
 	}
