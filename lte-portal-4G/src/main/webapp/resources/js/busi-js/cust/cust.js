@@ -3895,6 +3895,9 @@ order.cust = (function(){
      * 证号关系预校验接口
      */
     var _preCheckCertNumberRel = function (prodId, inParam) {
+        if(order.prepare.isPreInstall()) {
+            return true;
+        }
         var isON = query.common.queryPropertiesStatus("ONE_CERT_5_NUMBER_"+OrderInfo.cust.areaId.substr(0,3));
         if(!isON){
             return true;
@@ -3934,6 +3937,9 @@ order.cust = (function(){
      * 证号关系预校验接口,只查询数据不校验
      */
     var _preCheckCertNumberRelQueryOnly = function (prodId, inParam) {
+        if(order.prepare.isPreInstall()) {
+            return true;
+        }
         var isON = query.common.queryPropertiesStatus("ONE_CERT_5_NUMBER_" + OrderInfo.cust.areaId.substr(0, 3));
         if (isON) {
             var param = $.extend(true, {"certType": "", "certNum": "", "certAddress": "", "custName": ""}, inParam);
