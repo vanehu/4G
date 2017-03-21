@@ -2740,9 +2740,6 @@ var _checkCertNumberForReturn = function(identityCd,identityNum,partyName,addres
 			"custName" : cust.readIdCardUser.partyName
 
 		};
-		if (OrderInfo.cust.identityCd != "1") {// 非身份证类型
-			inParam.certNum = OrderInfo.cust.identityNum;
-		}
 	} else {
 		var inParam = {
 			"certType" : cust.readIdCardUser.identityCd,
