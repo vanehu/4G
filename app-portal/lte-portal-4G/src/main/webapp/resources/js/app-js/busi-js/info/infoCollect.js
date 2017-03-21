@@ -232,6 +232,7 @@ info.collect = (function () {
 					$("#tab8_li").addClass("active");
 					$("#nav-tab-7").html(_getConfirmHtml(response.data));
 					$("#nav-tab-7").addClass("active in");
+					$("#custInfoConfirm").off("click").on("click",_custInfoConfirm);
 //					OrderInfo.orderResult.olId = response.data.result.orderId;
 //					OrderInfo.orderResult.olNbr = response.data.result.orderNbr;
 					
