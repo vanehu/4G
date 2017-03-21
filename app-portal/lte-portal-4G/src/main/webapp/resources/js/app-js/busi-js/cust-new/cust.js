@@ -774,9 +774,7 @@ cust = (function(){
 //						if(OrderInfo.jbr.identityPic){
 //							OrderInfo.jbr.identityPic = undefined;
 //						}
-						if(OrderInfo.preBefore.idPicFlag=="ON"){//实名拍照省份开关为开
-//							$("#photo").show();
-//							$("#queryJbr").show();
+						if(OrderInfo.preBefore.idPicFlag=="ON"&& !cust.isCovCust(OrderInfo.cust.identityCd)	){//实名拍照省份开关为开并且不是政企客户
 								_isOldCust = true;
 								OrderInfo.jbr.custId = OrderInfo.cust.custId;
 								OrderInfo.jbr.partyName = OrderInfo.cust.partyName;
@@ -1021,46 +1019,65 @@ cust = (function(){
 	};
 	//校验表单提交
 	var _uservalidatorForm=function(){
-		$('#userFormdata').bootstrapValidator({
-	        message: '无效值',
-	        feedbackIcons: {
-	            valid: 'glyphicon glyphicon-ok',
-	            invalid: 'glyphicon glyphicon-remove',
-	            validating: 'glyphicon glyphicon-refresh'
-	        },
-	        fields: {
-	        	usersfzorderAttrIdCard: {
-	            	trigger: 'blur',
-	                validators: {
-	                    regexp: {
-	                        regexp: /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/,
-	                        //regexp: /^\d{6}(18|19|20)?\d{2}(0[1-9]|1[12])(0[1-9]|[12]\d|3[01])\d{3}(\d|X)$/,
-	                        message: '请输入合法身份证号码'
-	                    }
-	                }
-	            },
-	            userOrderAttrIdCard: {
-	            	trigger: 'blur',
-	                validators: {
-	                    regexp: {
-	                        regexp: /^[0-9a-zA-Z]*$/g,
-	                        message: '证件号码只能为数字或字母'
-	                    }
-	                }
-	            },
-	            userOrderAttrPhoneNbr: {
-	            	trigger: 'blur',
-	                validators: {
-	                    regexp: {
-	                        /*regexp: /(^\d{11}$)/,
-	                        message: '手机号码只能为11数字'*/
-	                    	regexp: /^1[34578]\d{9}$/,
-	                        message: '手机号码不合法'
-	                    }
-	                }
-	            }
-	        }
-	    });
+		var userFormdata = $("#userFormdata").Validform({
+			btnSubmit:"userInfoCreate",
+			ignoreHidden:true,
+			datatype:{
+				"zh6-50":/[\u4e00-\u9fa5]{6}|^.{12}/,
+				"sfz":/(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/,
+				"qtzj":/^[0-9a-zA-Z]{1,100}$/,
+				"phone":/^1[3456789]\d{9}$/
+			},
+			tiptype:function(msg,o,cssctl){
+				
+				//msg：提示信息;
+				//o:{obj:*,type:*,curform:*}, obj指向的是当前验证的表单元素（或表单对象），type指示提示的状态，值为1、2、3、4， 1：正在检测/提交数据，2：通过验证，3：验证失败，4：提示ignore状态, curform为当前form对象;
+				//cssctl:内置的提示信息样式控制函数，该函数需传入两个参数：显示提示信息的对象 和 当前提示的状态（既形参o中的type）;
+				if(!o.obj.is("form")){//验证表单元素时o.obj为该表单元素，全部验证通过提交表单时o.obj为该表单对象;
+					if(o.type == 3){
+						var objtip=o.obj.siblings(".Validform_checktip");
+						cssctl(objtip,o.type);
+						objtip.text(msg);
+					}
+					if(o.type == 2){
+						var objtip=o.obj.siblings(".Validform_checktip");
+						cssctl(objtip,o.type);
+						objtip.text("");
+					}
+				}
+			}
+		});
+		userFormdata.addRule([
+			{
+			    ele:"#userOrderAttrName",
+			    datatype:"*",
+			    nullmsg:"使用人姓名不能为空",
+			    errormsg:"使用人姓名不能为空"
+			},
+			{
+			    ele:"#usersfzorderAttrIdCard",
+			    datatype:"sfz",
+			    nullmsg:"身份证号码不能为空",
+			    errormsg:"请输入正确的身份证号码"
+			},
+			{
+			    ele:"#userOrderAttrIdCard",
+			    datatype:"qtzj",
+			    nullmsg:"证件号码不能为空",
+			    errormsg:"证件号码只能为数字或字母"
+			},
+			{
+			    ele:"#userOrderAttrAddr",
+			    datatype:"*",
+			    nullmsg:"证件地址不能为空"
+			},
+			{
+			    ele:"#userOrderAttrPhoneNbr",
+			    datatype:"phone",
+			    errormsg:"请输入正确的手机号码",
+			    nullmsg:"联系方式不能为空"
+			}                
+		]);
 	};
 	
 	//校验表单提交

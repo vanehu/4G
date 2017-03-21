@@ -434,6 +434,17 @@ public final class PortalServiceCode {
     public static final String SIGLE_SIGN_CHECK_LOGIN= "com.linkage.portal.service.lte.core.system.CheckLogin";
     /** 充值订单查询*/
     public static final String QUERY_CHARGE_RECORD = "com.linkage.portal.service.lte.core.charge.QueryChargeRecord";
+    /** 翼销售充值*/
+    public static final String APP_CHARGE = "com.linkage.portal.service.lte.core.charge.AppCharge";
+    
+    /** 翼销售余额查询*/
+    public static final String APP_BALANCE = "com.linkage.portal.service.lte.core.charge.AppBalance";
+    
+    /** 翼销售欠费查询*/
+    public static final String APP_ARREARS = "com.linkage.portal.service.lte.core.charge.AppArrears";
+    
+    /** 翼销售充值订单查询*/
+    public static final String APP_PAYMENT_QUERY = "com.linkage.portal.service.lte.core.charge.AppPaymentQuery";
     
     /** 蓝牙密钥查询*/
     public static final String QUERY_BLUETOOTH_KEY = "com.linkage.portal.service.lte.core.resources.QueryBlueToothKey";
@@ -598,6 +609,10 @@ public final class PortalServiceCode {
     public static final String INTF_BATCH_ECSBATCHRECEIVE="res-EcsTerminalService/ecsBatchReceive"; 
     /**批量终端领用、批量终端领用回退、批量终端销售批次查询*/
     public static final String INTF_BATCH_QRYECSBATCHORDER="res-EcsTerminalService/queryEcsBatchInfo"; 
+    
+    /**查询用户信息*/  
+    public static final String INTF_QUERY_USEINFOBYACCNBR="biz-service/intf.pullingDataService/queryUseInfoByAccNbr";
+    
     /**批量终端领用、批量终端领用回退、批量终端销售批次详情查询*/
     public static final String INTF_BATCH_QRYECSBATCHORDERDETAIL="res-EcsTerminalService/queryEcsBatchLogDetail"; 
     /**批量终端领用、批量终端领用回退、批量终端销售仓库查询*/
@@ -1098,6 +1113,13 @@ public final class PortalServiceCode {
     /** 宽带融合--订单详情查询 **/
     public static final String BORAD_BAND_ORDER_DETAIL = "qry.order.orderdetail";
     
+    /** 一证五号--查询 **/
+    public static final String QRY_CERTPHONENUM_REL = "qry.party.queryCmcCertNumRel";  
+     
+    /** 一证五号--修复 **/
+    public static final String MOD_CERTPHONENUM_REL = "order.party.changeCmcCertNumRel";
+    
+    
     /** 宽带融合--根据坐标查询门店 **/
     public static final String BORAD_BAND_QUERYCHANNEL_BYCOORDS = "yim-locationService/queryChannelByCoords";
     
@@ -1151,7 +1173,6 @@ public final class PortalServiceCode {
     /**客户信息核验接口*/
     public static final String CHECK_CUST_CERT = "biz-service/intf.custService/checkCustCert";
 
-
     /** 客户资料同步接口 */
     public static final String CUSTINFO_SYNCHRONIZE = "biz-service/intf.custService/custInfoSynchronize";
 
@@ -1160,6 +1181,18 @@ public final class PortalServiceCode {
 
     /** 获取seq接口 */
     public static final String GET_SEQ = "biz-service/intf.soService/getSeq";
+
+    /** 实名信息采集单订单提交 */
+    public static final String CLT_ORDER_SUBMIT = "biz-service/intf.soService/commitCollectionOrder";
+    
+    /** 实名信息采集单订单确认 */
+    public static final String CLT_ORDER_COMMIT = "biz-service/intf.soService/updateCollectionOrderExpOrEff";
+    
+    /** 实名信息采集单订单查询 */
+    public static final String CLT_ORDER_QUERY = "biz-service/intf.detailService/queryCollectionOrders";
+    
+    /** 实名信息采集单订单详情 */
+    public static final String CLT_ORDER_Detail = "biz-service/intf.detailService/queryCollectionOrderItemDetail";
 
 }
 

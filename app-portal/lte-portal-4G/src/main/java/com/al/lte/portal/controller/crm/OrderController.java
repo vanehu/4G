@@ -5076,10 +5076,11 @@ public class OrderController extends BaseController {
     
     /**
      * 实名制客户身份证件下载
+     * @throws Exception 
      */
     @RequestMapping(value = "/downloadCustCertificate", method = RequestMethod.POST)
     @ResponseBody
-    public JsonResponse downloadCustCertificate(@RequestBody Map<String, Object> param, @LogOperatorAnn String flowNum, HttpServletResponse response) {
+    public JsonResponse downloadCustCertificate(@RequestBody Map<String, Object> param, @LogOperatorAnn String flowNum, HttpServletResponse response) throws Exception {
         SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
         Map<String, Object> result = null;
         JsonResponse jsonResponse = null;

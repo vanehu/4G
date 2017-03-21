@@ -3,6 +3,7 @@ package com.al.lte.portal.bmo.crm;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
 import com.al.crm.log.sender.ILogSender;
 import com.al.ec.serviceplatform.client.DataBus;
 import com.al.ec.serviceplatform.client.ResultCode;
+import com.al.ecs.common.util.DateUtil;
 import com.al.ecs.common.util.JsonUtil;
 import com.al.ecs.common.util.MDA;
 import com.al.ecs.common.util.PropertiesUtils;
@@ -541,6 +543,46 @@ public class OrderBmoImpl implements OrderBmo {
 		}
 		return resultMap;
 	}
+	
+	public Map<String, Object> cltOrderSubmit(Map<String, Object> paramMap,String optFlowNum, 
+			SessionStaff sessionStaff)throws Exception {
+		DataBus db = InterfaceClient.callService(paramMap,
+				PortalServiceCode.CLT_ORDER_SUBMIT, optFlowNum, sessionStaff);
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		try{
+			// 服务层调用与接口层调用都成功时，返回列表；否则返回空列表
+			if (ResultCode.R_SUCC.equals(db.getResultCode())) {
+				resultMap = db.getReturnlmap();
+			} else {
+				resultMap.put("resultCode", ResultCode.R_FAILURE);
+				resultMap.put("resultMsg", db.getResultMsg());
+			}
+		} catch (Exception e) {
+			log.error("门户处理营业后台的"+PortalServiceCode.CLT_ORDER_SUBMIT+"服务返回的数据异常", e);
+			throw new BusinessException(ErrorCode.CLTORDER_SUBMIT, paramMap, resultMap, e);
+		}
+		return resultMap;
+	}
+	
+	public Map<String, Object> cltOrderCommit(Map<String, Object> paramMap, String optFlowNum,
+			SessionStaff sessionStaff) throws Exception {
+		DataBus db = InterfaceClient.callService(paramMap,
+				PortalServiceCode.CLT_ORDER_COMMIT, optFlowNum, sessionStaff);
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		try{
+			// 服务层调用与接口层调用都成功时，返回列表；否则返回空列表
+			if (ResultCode.R_SUCC.equals(db.getResultCode())) {
+				resultMap = db.getReturnlmap();
+			} else {
+				resultMap.put("resultCode", ResultCode.R_FAILURE);
+				resultMap.put("resultMsg", db.getResultMsg());
+			}
+		} catch (Exception e) {
+			throw new BusinessException(ErrorCode.CLTORDER_COMMIT, paramMap, resultMap, e);
+		}
+		return resultMap;
+	}
+	
 	public Map<String, Object> orderSubmit4iot(Map<String, Object> paramMap,String optFlowNum,
 			SessionStaff sessionStaff)throws Exception {
 		DataBus db = ServiceClient.callService(paramMap,
@@ -2416,6 +2458,9 @@ public class OrderBmoImpl implements OrderBmo {
 		paramMap2.put("reqNo", reqNo);//传给支付平台的业务流水号要保证不同
 		String payAmount = paramMap.get("charge").toString(); 
 		String busiUpType=paramMap.get("busiUpType").toString();//业务类型，默认1手机业务
+		if ("4".equals(busiUpType)) {
+			paramMap2.put("accNbr", MapUtils.getString(paramMap, "accNbr"));
+		}
 		List<Map<String, Object>> chargeItems2 = new ArrayList<Map<String, Object>>();
 		chargeItems2 = (List<Map<String, Object>>) paramMap.get("chargeItems");
 		JSONArray chargeItems = JSONArray.fromObject(chargeItems2);
@@ -2833,19 +2878,18 @@ public class OrderBmoImpl implements OrderBmo {
 	 * 调后台接口下载拍照证件
 	 */
 	@SuppressWarnings("unchecked")
-	public Map<String, Object> downloadCustCertificate(Map<String, Object> param, SessionStaff sessionStaff) throws BusinessException{	
+	public Map<String, Object> downloadCustCertificate(Map<String, Object> param, SessionStaff sessionStaff) throws Exception{	
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		DataBus db = new DataBus();
+		db = InterfaceClient.callService(param, PortalServiceCode.INTF_DOWNLOAD_IMAGE, null, sessionStaff);
 		try{
-			db = InterfaceClient.callService(param, PortalServiceCode.INTF_DOWNLOAD_IMAGE, null, sessionStaff);
 			if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db.getResultCode()))) {
-				resultMap = (Map<String, Object>)db.getReturnlmap();
+				resultMap = (Map<String, Object>)db.getReturnlmap().get("result");
 				ArrayList<HashMap<String, Object>> photographs = (ArrayList<HashMap<String, Object>>) resultMap.get("picturesInfo");
 				for(int i = 0; i < photographs.size(); i++){
 					HashMap<String, Object> photographsMap = photographs.get(i);
+					photographsMap.put("photograph", photographsMap.get("orderInfo"));
 					photographsMap.remove("orderInfo");
-					photographsMap.put("photograph", photographsMap.get("orderInfo").toString());
-					photographs.add(i, photographsMap);
 				}
 				resultMap.put("photographs", photographs);
 				resultMap.put("code", ResultCode.R_SUCCESS);
@@ -3162,6 +3206,188 @@ public class OrderBmoImpl implements OrderBmo {
 		}	
 		resultMap.put("resultCode", resultCode);
 		resultMap.put("resultMsg", resultMsg);
+		return resultMap;
+	}
+
+	@SuppressWarnings("unchecked")
+	public Map<String, Object> cltOrderCheck(Map<String, Object> param, HttpServletRequest request,
+			SessionStaff sessionStaff) throws Exception {
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		String resultCode = ResultCode.R_FAIL;
+		String resultMsg = "实名信息采集单受理信息校验失败，信息被篡改或不存在，请按正常流程重新受理！";
+		resultMap.put("resultCode", resultCode);
+		
+		/**
+		 * 采集单信息
+		 */
+		Map<String, Object> cltOrderInfo = (Map<String, Object>) request.getSession().getAttribute(SysConstant.CLT_ORDER_INFO);
+		Map<String, Object> collectionOrderList = (Map<String, Object>) cltOrderInfo.get("collectionOrderList");
+        Map<String, Object> collectionOrderInfo = (Map<String, Object>) collectionOrderList.get("collectionOrderInfo");	
+		String orderId = collectionOrderInfo.get("orderId")+"";//采集单号
+		ArrayList<Map<String, Object>> custInfos = (ArrayList<Map<String, Object>>) collectionOrderList.get("collectionCustInfos");
+		ArrayList<Map<String, Object>> userListInfos = new ArrayList<Map<String, Object>>();
+		String cltVirolId = "";//经办人拍照上传虚拟购物车ID
+		for(Map<String, Object> custInfo:custInfos){
+			String partyRoleCd = MapUtils.getString(custInfo,"partyRoleCd");
+			if(!StringUtils.isEmpty(partyRoleCd)){
+				//0为产权人
+				if("0".equals(partyRoleCd)){
+
+				//3为经办人
+				}else if("3".equals(partyRoleCd)){
+					cltVirolId = (String) custInfo.get("fileOrderId");
+				}else{
+					userListInfos.add(custInfo);//使用人列表信息
+				}
+			}
+		}
+        
+        /**
+         * 订单提交信息
+         */
+		Map<String, Object> orderList = (Map<String, Object>) param.get("orderList");
+		List<Map<String, Object>> custOrderList = (List<Map<String, Object>>) orderList.get("custOrderList");
+        Map<String, Object> orderListInfo = (Map<String, Object>) orderList.get("orderListInfo");
+        
+        /**
+         * 1、校验有效期，操作有效期的不能提交
+         */
+		String expDateStr = (String) collectionOrderInfo.get("expDate");
+    	Date expDate = DateUtil.getDateFromString(expDateStr,"yy-MM-dd HH:mm:ss");
+    	if(new Date().after(expDate)){
+			resultMsg += "校验失败原因：该采集单已经超出有效期，不能继续受理业务。";
+			resultMap.put("resultMsg", resultMsg);
+			return resultMap;
+		}
+    	
+    	/**
+    	 *	2、校验采集单号 订单属性 以及经办人实名制拍照属性（不同于普通受理属性ID）
+    	 */    	
+        List<Map<String, Object>> custOrderAttrs = (List<Map<String, Object>>) orderListInfo.get("custOrderAttrs");
+        Object realNameFlag =  MDA.REAL_NAME_PHOTO_FLAG.get("REAL_NAME_PHOTO_"+sessionStaff.getCurrentAreaId().substring(0, 3));
+    	boolean isRealNameFlagOn  = realNameFlag == null ? false : "ON".equals(realNameFlag.toString()) ? true : false;//实名制拍照开关是否打开
+    	boolean hasCltOrderIdItem = false;
+    	boolean hasCltVirolIdItem = false;
+    	for(Map<String, Object> custOrderAttr:custOrderAttrs){
+    		String itemSpecId = (String)custOrderAttr.get("itemSpecId");
+    		if(SysConstant.CLTORDERID.equals(itemSpecId)){
+    			String itemValue = custOrderAttr.get("value")+"";
+    			if(StringUtils.isEmpty(orderId)||StringUtils.isEmpty(itemValue)||!orderId.equals(itemValue)){
+    				resultMsg += "校验失败原因： 该订单采集客户订单号订单属性不存在或与受理采集单不同，请确认后重试。";
+					resultMap.put("resultMsg", resultMsg);
+					return resultMap;
+    			}
+    			hasCltOrderIdItem = true;
+    		}
+    		if(SysConstant.CLTVIROLID.equals(itemSpecId)){
+    			String itemValue = (String)custOrderAttr.get("value");
+    			//属性ID存在必为Session采集单ID
+    			if(StringUtils.isEmpty(itemValue)||StringUtils.isEmpty(cltVirolId)||!cltVirolId.equals(itemValue)){
+    				resultMsg += "校验失败原因： 该订单采集单经办人拍照订单ID订单属性不存在或与受理采集单不同，请确认后重试。";
+					resultMap.put("resultMsg", resultMsg);
+					return resultMap;
+    			}
+    			hasCltVirolIdItem = true;
+    		}
+    	}
+    	//经办人开关开了，必传属性ID
+        if(isRealNameFlagOn&&!hasCltVirolIdItem){
+			resultMsg += "校验失败原因： 该订单采集单经办人拍照订单ID订单属性不存在，请确认后重试。";
+			resultMap.put("resultMsg", resultMsg);
+			return resultMap;
+        } 
+        
+    	//必传采集单号属性ID
+        if(!hasCltOrderIdItem){
+			resultMsg += "校验失败原因： 该订单采集客户订单号订单属性不存在，请确认后重试。";
+			resultMap.put("resultMsg", resultMsg);
+			return resultMap;
+        } 
+
+    	/**
+    	 *	3、使用人信息属性ID结点存在，且校验可新装数目是否大于最大值
+    	 *	4、新装结点校验发展人是否为采集单受理人员
+    	 */ 
+		for (Map<String, Object> custOrder : custOrderList) {
+			List<Map<String, Object>> busiOrderList = (List<Map<String, Object>>) custOrder.get("busiOrder");
+			for (int i = 0; i < busiOrderList.size(); i++) {
+				Map<String, Object> busiOrder = busiOrderList.get(i);
+				HashMap<String, Object> boActionType = (HashMap<String, Object>) busiOrder.get("boActionType");
+				// 遍历新装结点
+				if ("1".equalsIgnoreCase(MapUtils.getString(boActionType, "boActionTypeCd", ""))) {
+					boolean hasCltUserIdItem = false;
+					boolean hasDealerItem = false;
+					Map<String, Object> data = (Map<String, Object>) busiOrder.get("data");
+					List<Map<String, Object>> busiOrderAttrs = (List<Map<String, Object>>) data.get("busiOrderAttrs");
+					for(Map<String, Object> busiOrderAttr:busiOrderAttrs){
+						String itemSpecId = (String)busiOrderAttr.get("itemSpecId");
+						if(SysConstant.CLTUSERID.equals(itemSpecId)){
+			    			String itemValue = (String)busiOrderAttr.get("value");
+							boolean inCltUserList = false;
+			    			for(Map<String, Object> userListInfo:userListInfos){
+			    				String collectionItemId = userListInfo.get("collectionItemId")+"";
+			    				if(!StringUtils.isEmpty(collectionItemId)&&collectionItemId.equals(itemValue)){
+			    					//本次订单新装数目
+			    					Integer orderUseNum = (Integer) userListInfo.get("orderUseNum");
+			    					if(orderUseNum != null){
+			    						userListInfo.put("orderUseNum",orderUseNum+1);
+			    					}else{
+			    						userListInfo.put("orderUseNum",1);
+			    					}
+			    					inCltUserList = true;
+			    				}
+			    			}
+			    			//使用人信息属性值在缓存使用人列表中不存在
+			    			if(!inCltUserList){
+			    				resultMsg += "校验失败原因：新装结点使用人信息产品属性值不在采集单使用人列表中。";
+								resultMap.put("resultMsg", resultMsg);
+								return resultMap;
+			    			}
+							hasCltUserIdItem = true;
+						}else if(SysConstant.DEALER.equals(itemSpecId)){
+			    			String itemValue = (String)busiOrderAttr.get("value");
+			    			String staffId = collectionOrderInfo.get("staffId")+"";
+			    			if(StringUtils.isEmpty(itemValue)||StringUtils.isEmpty(itemValue)||!staffId.equals(itemValue)){
+								resultMsg += "校验失败原因：新装结点发展人信息产品属性不存在，或发展人不为采集单受理人员，请确认发展人后重试。";
+								resultMap.put("resultMsg", resultMsg);
+								return resultMap;
+			    			}
+							hasDealerItem = true;
+						}
+					}
+					//使用人信息属性属性ID不存在
+					if(!hasCltUserIdItem){
+						resultMsg += "校验失败原因：新装结点使用人信息产品属性不存在。";
+						resultMap.put("resultMsg", resultMsg);
+						return resultMap;
+					}
+					
+					//使用人信息属性属性ID不存在
+					if(!hasDealerItem){
+						resultMsg += "校验失败原因：新装结点发展人信息产品属性不存在。";
+						resultMap.put("resultMsg", resultMsg);
+						return resultMap;
+					}
+				}
+			}
+			//校验新装数目是否大于最大值
+			for(Map<String, Object> userListInfo:userListInfos){
+				//本次订单新装数目
+				Integer orderUseNum = (Integer) userListInfo.get("orderUseNum");
+				if(orderUseNum==null){
+					orderUseNum= 0;
+				}
+				Integer maxQuantity = (Integer) userListInfo.get("maxQuantity");
+				Integer realQuantity = (Integer) userListInfo.get("realQuantity");
+				if(maxQuantity<orderUseNum+realQuantity){
+					resultMsg += "校验失败原因：使用人"+userListInfo.get("custName")+"办理好卡数目大于期望办理号卡数值。";
+					resultMap.put("resultMsg", resultMsg);
+					return resultMap;
+				}
+			}
+		}
+		//校验通过
+		resultMap.put("resultCode", ResultCode.R_SUCC);
 		return resultMap;
 	}
 }

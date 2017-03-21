@@ -122,9 +122,7 @@ common.print = (function($){
 					}
 					$("#headTabDiv2").hide();
 					$("#nav-tab-8").removeClass("active in");
-					if(OrderInfo.actionFlag==1){
-						OrderInfo.order.step=8;
-					}
+					OrderInfo.order.step=8;
 					if(OrderInfo.actionFlag==201){//橙分期
 						OrderInfo.order.step=5;
 					}

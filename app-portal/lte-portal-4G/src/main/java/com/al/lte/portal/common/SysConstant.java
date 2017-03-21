@@ -45,8 +45,10 @@ public final class SysConstant {
     public static final String SESSION_KEY_CHANGEUIM_SMS = "_ecs_changeuim_sms_session_key";
     /** 补换卡短信验证随机二位序列号 */
     public static final String SESSION_KEY_CHANGEUIM_RANDONCODE = "_ecs_changeuim_sms_session_code";
-    /**免补换卡短信验证权限*/
+    /**补换卡短信验证权限*/
     public static final String CHANGEUIMSMS_CODE = "CHANGEUIMSMS_CODE";
+    /**换卡单独短信验证权限*/
+    public static final String HKDDDXYZ_CODE = "HKDDDXYZ";
     /**跳过二次鉴权验证权限*/
     public static final String SECOND_JUMPSPECIAL = "JUMPSPECIAL";
 
@@ -249,6 +251,7 @@ public final class SysConstant {
 	public final static String P_MOD_SUB_INVOICE = "invoice/";
 	public final static String P_MOD_SUB_OLD2NEW = "old2new/";
 	public final static String P_MOD_SUB_STBRESERVE = "STBreserve/";
+	public final static String P_MOD_SUB_CUSTCLT = "custCollection/";
 	public final static String P_MOD_ABS_INVOICE = "D:/temp/invoice/";
 	//充值收据（发票）模板目录
 	public final static String P_MOD_DIR_CHARGE_RECEIPT = "chargeReceiptAndInvoice/";
@@ -263,6 +266,8 @@ public final class SysConstant {
 	public final static String P_MOD_FILE_OLD2NEW = "printOld2New";  // 发票打印业务
 	//天翼高清机顶盒预约回执主模板
 	public final static String P_MOD_FILE_STBRESERVE = "receiptMain";
+	//实名信息采集单确认回执主模板
+	public final static String P_MOD_FILE_CUSTCLT = "receiptMain";
 	//充值收据（发票）模板名称
 	public final static String P_MOD_FILE_CHARGE_RECEIPT = "chargeReceipt"; //充值收据
 	//业务模板类型
@@ -638,6 +643,10 @@ public final class SysConstant {
 	/** 未激活拆机 **/
 	public static final String WJHCJ = "WJHCJ";
 	public static final String WJHCJ_NAME = "未激活拆机";
+    /** 未激活返销 **/
+    public static final String WSMFX = "WSMFX";
+    public static final String WSMFX_NAME = "返销";
+    public static final String WSMFX_BUSIFLAG = "01";
 	
     /** 客户鉴权短信验证证随机二位序列号 */
     public static final String SESSION_KEY_CUSTAUTH_RANDONCODE = "_ecs_custauth_sms_session_code";
@@ -760,6 +769,19 @@ public final class SysConstant {
     
     /**订单属性记录客户端IP(新协议)*/
   	public final static String ORDER_ATTRS_IP = "40010038";
+
+    /**订单属性采集客户订单号*/
+  	public final static String CLTORDERID = "810000001";
+  	
+    /**订单属性采集客户订单项ID*/
+  	public final static String CLTUSERID = "810000002";
+  	
+    /**订单属性采集经办人文件订单ID*/
+  	public final static String CLTVIROLID = "810000003";
+  	
+    /**订单属性发展人staffId*/
+  	public final static String DEALER = "111111116";
+  	
   	/**订单属性记录客户端IP(老协议)*/
   	public final static String ORDER_ATTRS_IP_TEM = "800000039";
   	
@@ -778,5 +800,19 @@ public final class SysConstant {
 	
 	/**判断业务类型是否限制经办人必须填写且拍照*/
     public static final String IS_ACTION_FLAG_LIMITED = "isActionFlagLimitedForHandleCust";
-	
+
+    /**专用测试权限*/
+    public static final String SPECIALTESTQX = "ZYCSK";
+    
+    /**拍照仪驱动控件下载URL*/
+    public static final String CAMERA_DRIVER_DOWNLOAD_URL = "_camera_driver_download_url";
+
+    /** 使用人类型标识 **/
+    public static final String USER_CUST_TYPE = "1";
+    /** 责任人类型标识 **/
+    public static final String RESP_CUST_TYPE = "2";
+
+    
+    /**实名信息采集单session缓存键*/
+    public static final String CLT_ORDER_INFO = "_clt_order_info";	
 }

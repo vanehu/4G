@@ -47,6 +47,7 @@
 		<script src="${contextPath}/js/app-js/busi-js/repair/repair.js" type="text/javascript"></script>
 		<script src="${contextPath}/js/app-js/busi-js/cfq/cfq.js?${jsversion}" type="text/javascript"></script>
 		<script src="${contextPath}/js/app-js/busi-js/cust-new/custQuery.js" type="text/javascript"></script>
+		<script src="${contextPath}/js/app-js/busi-js/info/infoCollect.js" type="text/javascript"></script>
 		<script>
 		window.onload= function() 
 		{  
@@ -141,11 +142,20 @@
 				case 12 :
 					params.method = "/app/saleorder/queryorderlist"; //销售单列表查询
 					break;
+				case 19 :
+					params.method = "/app/infocollect/realname/prepare"; //实名信息采集单新增
+					break;
 				case 201 :
 					params.method = "/app/orange/orange-offer"; //橙 分期
 					break;
 				case 301 :
 					params.method = "/app/pay/repair/prepare"; //支付补单
+					break;
+				case 150 :
+					params.method = "/app/bill/chargePrepare"; //话费充值查询
+					break;
+				case 160 :
+					params.method = "/app/bill/paymentQueryPrepare"; //充值记录查询
 					break;
 				}  
 				var custInfos=$.parseJSON(window.localStorage.getItem("OrderInfo.cust"));

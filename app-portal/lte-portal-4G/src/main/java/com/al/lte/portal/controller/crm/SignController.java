@@ -135,6 +135,9 @@ public class SignController extends BaseController {
 		} catch (Exception e) {
 			return super.failedStr(model,ErrorCode.PRINT_VOUCHER, e, paramMap);
 		}
+		if(paramMap.get("enter")!=null){//新版ui
+			return "/app/order_new/printVoucher";
+		}
     	return "/app/print/printVoucher";
     }
     
@@ -543,5 +546,38 @@ public class SignController extends BaseController {
 //		} catch (IOException e) {
 //			e.printStackTrace();
 //		}
+    }
+	
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(value = "/custCltReceipt", method = RequestMethod.POST)
+    public String custCltReceipt(@RequestBody Map<String, Object> params, @LogOperatorAnn String flowNum, HttpServletRequest request, HttpServletResponse response,Model model){
+    	
+    	SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
+    	params.put("areaId", sessionStaff.getCurrentAreaId());
+    	params.put("printType", SysConstant.PRINT_TYPE_HTML);
+    	
+    	params.put("signFlag", SysConstant.PREVIEW_SIGN_PDF);
+    	params.put("busiType", SysConstant.BUSI_TYPE_CRM_COMMON);
+		try {
+			Map<String, Object> resultMap = printBmo.printVoucher(params, flowNum,
+					super.getRequest(), response);
+			if (MapUtils.isNotEmpty(resultMap)) {
+				Map<String,Object> reObject=signBmo.setPrintInfos(resultMap,super.getRequest(),params);
+				RedisUtil.set("mgrPdf_"+ params.get("olId").toString(), reObject.get("pp"));	
+				reObject.remove("pp");
+				model.addAllAttributes(reObject);
+				model.addAttribute("custName", resultMap.get("custName"));
+				model.addAttribute("idCardNbr", resultMap.get("idCardNbr"));
+			}
+		}catch (BusinessException be) {
+			return super.failedStr(model, be);
+		} catch (InterfaceException ie) {
+			return super.failedStr(model, ie, params, ErrorCode.CLTORDER_INFO_PRINT);
+		} catch (Exception e) {
+			return super.failedStr(model,ErrorCode.CLTORDER_INFO_PRINT, e, params);
+		}
+    	return "/app/infoCollect/info-confirm";
+    	
     }
 }

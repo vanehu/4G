@@ -34,7 +34,7 @@ order.dealer = (function() {
 			 _addDealer(OrderInfo.staff.staffName,OrderInfo.staff.staffId,cur_channelCode,40020005);			
 			
 		}
-		if (OrderInfo.actionFlag == 1 || OrderInfo.actionFlag == 2 || OrderInfo.actionFlag == 3
+		if (OrderInfo.actionFlag == 1 || OrderInfo.actionFlag == 2 || OrderInfo.actionFlag == 3 || OrderInfo.actionFlag == 19
 				|| OrderInfo.actionFlag == 14 || OrderInfo.actionFlag == 22 || OrderInfo.actionFlag == 9){
 			$.each(AttachOffer.addTerminalList,function(){
 				var $ul = $("#tab-change-list2");
@@ -50,6 +50,40 @@ order.dealer = (function() {
 				$("#jbrName").html(OrderInfo.jbr.partyName);
 				$("#jbrName").removeClass("font-secondary");
 				$("#deleteJbr").show();
+//				$("#jbrTabDiv").show();
+//				$("#jbrFormdata").hide();
+				$("#jbrself").show();
+				  $("#tab1_li").off("click").on("click",function(){
+						$("#jbrFormdata").hide();
+						$("#jbrself").show();
+						$("#tab2_li").removeClass("active");
+						$("#tab1_li").addClass("active");
+						OrderInfo.jbr.custId = OrderInfo.cust.custId;
+						OrderInfo.jbr.partyName = OrderInfo.cust.partyName;
+						OrderInfo.jbr.telNumber = OrderInfo.cust.telNumber;
+						OrderInfo.jbr.addressStr = OrderInfo.cust.addressStr;
+						OrderInfo.jbr.identityCd = OrderInfo.cust.identityCd;
+						OrderInfo.jbr.mailAddressStr = OrderInfo.cust.mailAddressStr;
+						OrderInfo.jbr.identityPic = OrderInfo.cust.identityPic;
+						OrderInfo.jbr.identityNum = OrderInfo.cust.idCardNumber;
+						
+					});
+					$("#tab2_li").off("click").on("click",function(){
+						$("#jbrFormdata").show();
+						$("#jbrself").hide();
+						$("#tab1_li").removeClass("active");
+						$("#tab2_li").addClass("active");
+						if(OrderInfo.jbr){
+							OrderInfo.jbr.custId = undefined;
+							OrderInfo.jbr.partyName = undefined;
+							OrderInfo.jbr.telNumber = undefined;
+							OrderInfo.jbr.addressStr = undefined;
+							OrderInfo.jbr.identityCd = undefined;
+							OrderInfo.jbr.mailAddressStr = undefined;
+							OrderInfo.jbr.identityPic = undefined;
+							OrderInfo.jbr.identityNum = undefined;
+						}
+					});
 			}
 			order.broadband.init_select();
 			try{
@@ -208,7 +242,7 @@ order.dealer = (function() {
 		cust.clearJbrForm();
 		OrderInfo.virOlId = "";
 		$("#deleteJbr").hide();
-		$("#jbrName").html("无经办人");
+		$("#jbrName").html("请添加经办人");
 		$("#jbrName").addClass("font-secondary");
 		
 	}

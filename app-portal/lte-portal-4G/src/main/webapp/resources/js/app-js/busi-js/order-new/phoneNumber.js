@@ -563,7 +563,7 @@ order.phoneNumber = (function(){
 							 order.phoneNumber.step=2;//选完号码标签页切到选套餐
 							 OrderInfo.order.step = 2;
 							 order.service.queryApConfig();
-							 order.service.searchPack();
+							 order.service.searchPack(0,"init");
 							//选号tab隐藏，套餐tab显示
 							 $("#nav-tab-1").removeClass("active in");
 					    	 $("#nav-tab-2").addClass("active in");
