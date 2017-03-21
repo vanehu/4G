@@ -401,8 +401,8 @@ var _saveHtml2Pdf=function(){
 			html += '<span class="subtitle font-secondary" style="margin-left:0.2rem;">姓名</span></span></li>';
 		});
 		html += '<nav class="navbar navbar-default navbar-fixed-bottom"><div class="container-fluid"><div class="btn-group btn-group-justified navbar-btn" role="group" ><div class="sub-btn-box p p-b-15">';
-		html += '<button class="double-btn pull-left" id="print" onClick="info.collect.signVoucher()">打印</button>';
-		html += '<button class="double-btn pull-right" disabled="disabled" id="custInfoConfirm" onClick="info.collect.custInfoConfirm">确认</button></div></div></div></nav>';
+		html += '<button class="double-btn pull-left" id="print" disabled="disabled" onClick="info.collect.signVoucher()">打印</button> ';
+		html += '<button class="double-btn pull-right" id="custInfoConfirm" onClick="info.collect.custInfoConfirm">确认</button></div></div></div></nav>';
 		return html;
 	}
 	
