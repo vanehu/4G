@@ -55,57 +55,7 @@
 	</li>
 </ul>
 </form>
-<!--认证相符拍照弹框-->
-<div style="display:none;background:#fff;" id="ec-dialog-photo-graph" class="ec-dialog-form-container">
-  <div class="easyDialogclose" id="staff_dialog_close" onclick="order.cust.close()"></div>
-  <div class="ec-dialog-form-top">
-    <h1 class="ec-dialog-form-title">人证相符-拍照</h1>
-  </div>
-  <div class="order"> 
-    <div class="order_nav_new">
-      <div class="order-camera-box" >
-          <ul class="fillin show" style="overflow: hidden;">
-              <li style="width: 80%;">
-                  <label>选择设备：</label>
-                  <select class="inputWidth183px" id="device">
-                  </select>
-                  	<#if Session["_camera_driver_download_url"]?? >
-                		<a href="${Session['_camera_driver_download_url']}" class="purchase" id="" >下载控件</a>
-                	<#else>
-                		<a href="https://crm.189.cn/portalstatic/assets/camera/DoccameraOcx.exe" class="purchase" id="" >下载控件</a>
-                	</#if>
-                  <span id="tips" style="color:#F00; font-weight:bold;font-size:14px;margin-left:10%;"></span>
-              </li>
-          </ul>
-          <div class="camera-box">
-            <div style="overflow: hidden;">
-                <a  style="display:inline-block; width: 200px; height: 258px; margin: 54px 50px 0 50px; overflow: hidden;"><img id="img_Cert" src="${contextPath}/image/id_card.jpg" class=""></a>
-                <a id="a_obj" style="display:inline-block; width: 640px; height: 360px; margin-right: 50px; vertical-align: top;">
-                    <img id = "startPhotos" src="${contextPath}/image/start_photo.jpg"/>
-                    <img id="img_Photo">
-                </a>
-            </div>
-          </div>
-      </div>                   
-      <div align="center" style="margin:30px auto;">
-          <a class="btna_o" id="takePhotos"><span >确认拍照</span></a>
-          <a style=" margin-left:20px;" class="btna_o" id="rePhotos"><span>重新拍照</span></a>
-          <a style=" margin-left:20px;" class="btna_o" id="confirmAgree"><span>人证相符</span></a>
-      </div> 
-  </div>
-</div>
-</div>
 
-<div style="display:none;background:#fff;" id="ec-dialog-photo-show" class="ec-dialog-form-container" style="width:640px;height:360px;">
-  <div class="easyDialogclose" onclick="order.cust.close()"></div>
-  <div class="ec-dialog-form-top">
-    <h1 class="ec-dialog-form-title">人证相符-拍照查看</h1>
-  </div>
-  <div class="order"> 
-     <img id="img_photo_show" width="640" height ="360">
-  </div>
-</div>
-<!--认证相符拍照弹框 End-->
 <div class="height18"></div>
 <script>
 	//新建客户或老客户，如果是政企客户，经办人必填（2016-3-17回退）
@@ -118,7 +68,7 @@
 	if($("#orderIdentidiesTypeCd").val() !="1"){
 		$("#orderAttrQueryCertBtn").show(); 
 	}
-
+	
 	if(!ec.util.isObj(CONST.realNamePhotoFlag)){
 		CONST.realNamePhotoFlag = query.common.queryPropertiesValue("REAL_NAME_PHOTO_" + String(OrderInfo.staff.areaId).substr(0, 3));
 	}

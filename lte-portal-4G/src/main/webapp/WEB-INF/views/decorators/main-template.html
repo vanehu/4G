@@ -74,6 +74,8 @@
 			<@block name="content">
 			<#include "/main-content.html"/>
 			</@block>
+			<!--弹出框-经办人拍照弹窗-->
+			<#include "/order-camera-box.html"/>
 		<!-- </div>-->
 		<!--内容 end-->
 		<!--底部 start-->
@@ -93,8 +95,4 @@
 		<script src="${contextPath}/js/busi-js/push/monitor_web.js?${jsversion}"></script>
 		<script src="${contextPath}/js/busi-js/push/pushBusi.js?${jsversion}"></script>
 	</#if>
-
-	<script>
-	    $(function(){query.common.checkCameraDriverVersion();});
-	</script>
 </html>
