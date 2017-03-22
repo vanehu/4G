@@ -2837,7 +2837,7 @@ SoOrder = (function() {
 
 		busiOrder.data.boAccountRelas.push(boAccountRela);
 
-        if (ec.util.isObj(OrderInfo.boProdAns) && OrderInfo.boProdAns.length > 0) {
+        if (ec.util.isObj(OrderInfo.boProdAns) && OrderInfo.boProdAns.length > 0 && !order.prepare.isPreInstall()) {
             $.each(OrderInfo.boProdAns, function () {
                 if (busiOrder.busiObj.accessNumber != this.accessNumber) {//封装当前号码下的证号关系节点
                     return true;
