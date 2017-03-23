@@ -727,6 +727,10 @@ query.offer = (function() {
 		if (prod.productId == CONST.SECURITY_OFFICE_PROD_ID) {
 			param.prodBigClass = 17;
 		}
+		// 企业版云盘需要传入prodBigClass为19
+		if (prod.productId == CONST.PROD_SPEC.PROD_CLOUD_OFFER) {
+			param.prodBigClass = 19;
+		}
 		if(ec.util.isArray(OrderInfo.offer.offerMemberInfos)){ //遍历主销售品构成
 			var flag = true;
 			$.each(OrderInfo.offer.offerMemberInfos,function(){
