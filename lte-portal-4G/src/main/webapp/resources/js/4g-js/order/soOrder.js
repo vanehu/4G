@@ -2955,13 +2955,6 @@ SoOrder = (function() {
 	//订单数据校验
 	var _checkData = function() {
 
-        if (OrderInfo.actionFlag != 16) {//如果是改号业务，不需要调用一证五号校验
-            //一证五号校验
-            if (!_oneCertFiveCheckData(order.cust.getCustInfo415())) {
-                return false;
-            }
-        }
-
         var orderAttrName	= $.trim($("#orderAttrName").val());	//经办人姓名
 		var orderAttrIdCard = $.trim($("#orderAttrIdCard").val());	//证件号码
 		var orderAttrAddr	= $.trim($("#orderAttrAddr").val());	//地址
@@ -3214,6 +3207,14 @@ SoOrder = (function() {
 				}
 			}
 		}
+		
+		//政企客户先校验使用人是否填写，再进行一证五号校验
+		if (OrderInfo.actionFlag != 16) {//如果是改号业务，不需要调用一证五号校验
+            //一证五号校验
+            if (!_oneCertFiveCheckData(order.cust.getCustInfo415())) {
+                return false;
+            }
+        }
 		
 		//补换卡校验
 		if(OrderInfo.actionFlag == 22 || OrderInfo.actionFlag == 23){
