@@ -55,7 +55,16 @@
 	</li>
 </ul>
 </form>
-
+<!-- 采集单经办人相片查看 -->
+<div style="display:none;background:#fff;" id="ec-dialog-photo-show" class="ec-dialog-form-container" style="width:640px;height:360px;">
+  <div class="easyDialogclose" onclick="order.cust.close()"></div>
+  <div class="ec-dialog-form-top">
+    <h1 class="ec-dialog-form-title">人证相符-拍照查看</h1>
+  </div>
+  <div class="order"> 
+     <img id="img_photo_show" width="640" height ="360">
+  </div>
+</div>
 <div class="height18"></div>
 <script>
 	//新建客户或老客户，如果是政企客户，经办人必填（2016-3-17回退）

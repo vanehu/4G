@@ -3787,6 +3787,7 @@ order.cust = (function(){
     	_identidiesTypeCdChoose($('#orderIdentidiesTypeCd'),'orderAttrIdCard');
 		$("#orderAttrReadCertBtn").remove();//读卡（重置）按钮去除，不允许再添加其他人为经办人
 		$("#orderAttrQueryCertBtn").remove();//查询（重置）按钮去除，不允许再添加其他人为经办人
+		$("#orderAttrResetBtn").remove();//查询（重置）按钮去除，不允许再添加其他人为经办人
 
     	//拦截采集单信息
     	if(!ec.util.isObj(OrderInfo.cltjbrInfo.fileOrderId)){
