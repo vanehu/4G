@@ -2378,7 +2378,7 @@ SoOrder = (function() {
 		};
 		
 		busiOrder.data.boAccountRelas.push(boAccountRela);	
-		if (ec.util.isObj(OrderInfo.boProdAns) && OrderInfo.boProdAns.length > 0) {
+		if (ec.util.isObj(OrderInfo.boProdAns) && OrderInfo.boProdAns.length > 0 && prodSpecId != CONST.PROD_SPEC.PROD_CLOUD_OFFER) {
             $.each(OrderInfo.boProdAns, function () {
                 if (busiOrder.busiObj.accessNumber != this.accessNumber) {//封装当前号码下的证号关系节点
                     return true;
@@ -2576,9 +2576,11 @@ SoOrder = (function() {
 									return false;
 								} 
 								if(OrderInfo.getProdTd(prodInst.prodInstId)==""&&(OrderInfo.zcd_privilege!=0||OrderInfo.actionFlag == 14)){
-									$.alert("信息提示","【接入产品("+offerRole.offerRoleName+")】UIM卡不能为空！");
-									$("#uim_txt_"+prodInst.prodInstId).css("border-color","red");
-									return false;
+									if(prodInst.objId!=CONST.PROD_SPEC.PROD_CLOUD_OFFER){
+										$.alert("信息提示","【接入产品("+offerRole.offerRoleName+")】UIM卡不能为空！");
+										$("#uim_txt_"+prodInst.prodInstId).css("border-color","red");
+										return false;
+									}
 								}
 							}
 							//封装产品属性

@@ -1028,8 +1028,8 @@ mktRes.phoneNbr = (function(){
 				_boProdAn.areaId=$("#p_cust_areaId").val();
 				_boProdAn.areaCode ="";
 				_boProdAn.memberRoleCd=CONST.MEMBER_ROLE_CD.COMMON_MEMBER;
-				_boProdAn.preStore="";
-				_boProdAn.minCharge="";
+				//_boProdAn.preStore="";
+				//_boProdAn.minCharge="";
 				_boProdAn.virtualFlag="1";
 				order.service.boProdAn = _boProdAn;
 			}

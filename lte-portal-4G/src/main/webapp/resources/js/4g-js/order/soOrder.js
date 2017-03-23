@@ -2837,7 +2837,7 @@ SoOrder = (function() {
 
 		busiOrder.data.boAccountRelas.push(boAccountRela);
 
-        if (ec.util.isObj(OrderInfo.boProdAns) && OrderInfo.boProdAns.length > 0 && !order.prepare.isPreInstall()) {
+        if (ec.util.isObj(OrderInfo.boProdAns) && OrderInfo.boProdAns.length > 0 && prodSpecId != CONST.PROD_SPEC.PROD_CLOUD_OFFER && !order.prepare.isPreInstall()) {
             $.each(OrderInfo.boProdAns, function () {
                 if (busiOrder.busiObj.accessNumber != this.accessNumber) {//封装当前号码下的证号关系节点
                     return true;
@@ -3082,7 +3082,7 @@ SoOrder = (function() {
 								}
 							} 
 							if(OrderInfo.getProdTd(prodInst.prodInstId)==""&&(OrderInfo.zcd_privilege!=0||OrderInfo.actionFlag == 14)){
-								if(!OrderInfo.isGroupProSpec(prodInst.objId)){
+								if(!OrderInfo.isGroupProSpec(prodInst.objId) && prodInst.objId!=CONST.PROD_SPEC.PROD_CLOUD_OFFER){
 									if($("#uim_txt_"+prodInst.prodInstId).val() !=""){
 										$.alert("信息提示","请先校验【接入产品("+offerRole.offerRoleName+")】UIM卡！");
 									}else{

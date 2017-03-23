@@ -2293,7 +2293,7 @@ SoOrder = (function() {
 		};
 		
 		busiOrder.data.boAccountRelas.push(boAccountRela);	
-		if (ec.util.isObj(OrderInfo.boProdAns) && OrderInfo.boProdAns.length > 0) {
+		if (ec.util.isObj(OrderInfo.boProdAns) && OrderInfo.boProdAns.length > 0 && prodSpecId != CONST.PROD_SPEC.PROD_CLOUD_OFFER) {
             $.each(OrderInfo.boProdAns, function () {
                 var ca = $.extend(true, {}, OrderInfo.boCertiAccNbrRel);
                 ca.accNbr = this.accessNumber;
@@ -2439,9 +2439,11 @@ SoOrder = (function() {
 								return false;
 							} 
 							if(OrderInfo.getProdTd(prodInst.prodInstId)==""){
-								$.alert("信息提示","【接入产品("+offerRole.offerRoleName+")】UIM卡不能为空！");
-								$("#uim_txt_"+prodInst.prodInstId).css("border-color","red");
-								return false;
+								if(prodInst.objId!=CONST.PROD_SPEC.PROD_CLOUD_OFFER) {
+									$.alert("信息提示", "【接入产品(" + offerRole.offerRoleName + ")】UIM卡不能为空！");
+									$("#uim_txt_" + prodInst.prodInstId).css("border-color", "red");
+									return false;
+								}
 							}
 						}
 						

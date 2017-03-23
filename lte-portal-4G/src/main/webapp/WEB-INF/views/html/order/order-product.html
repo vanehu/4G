@@ -28,7 +28,9 @@
 								<a class="selectBoxTwo selectNumbel" href="javascript:void(0);" id="nbr_btn_${prodId}" onclick="order.prepare.phoneNumDialog('offer','Y2','${prodId}');" href="javascript:void(0);">选择号码<u></u></a>
 								<label class="f_red">*</label>
 							</li>
-							<#include "/order/order-uim.html" />
+							<#if prod.objId != 13410447>
+								<#include "/order/order-uim.html" />
+							</#if>
 						</#if>
 						<#if prodId==-1 >
 						<li>

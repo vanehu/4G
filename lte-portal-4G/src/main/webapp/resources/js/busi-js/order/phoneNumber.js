@@ -428,10 +428,14 @@ order.phoneNumber = (function(){
 					state : "ADD", //动作	,新装默认ADD
 					areaId:_boProdAn.areaId,
 					areaCode:_boProdAn.areaCode,
-					memberRoleCd:_boProdAn.memberRoleCd,
-					preStore:_boProdAn.preStore,
-					minCharge:_boProdAn.minCharge
+					memberRoleCd:_boProdAn.memberRoleCd
 				};
+				if(ec.util.isObj(_boProdAn.preStore)){
+					param.preStore=_boProdAn.preStore
+				}
+				if(ec.util.isObj(_boProdAn.minCharge)){
+					param.minCharge=_boProdAn.minCharge
+				}
 				if(_boProdAn.idFlag){
 					param.idFlag=_boProdAn.idFlag;
 				}
@@ -1298,8 +1302,8 @@ order.phoneNumber = (function(){
 				_boProdAn.areaId=$("#p_cust_areaId").val();
 				_boProdAn.areaCode ="";
 				_boProdAn.memberRoleCd=CONST.MEMBER_ROLE_CD.COMMON_MEMBER;
-				_boProdAn.preStore="";
-				_boProdAn.minCharge="";
+				//_boProdAn.preStore="";
+				//_boProdAn.minCharge="";
 				_boProdAn.virtualFlag="1";
 				order.service.boProdAn = _boProdAn;
 			}
