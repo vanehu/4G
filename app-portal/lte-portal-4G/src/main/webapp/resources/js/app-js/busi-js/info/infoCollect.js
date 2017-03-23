@@ -8,6 +8,8 @@ info.collect = (function () {
 	var _seq = 0;
 	var _expDate;
 	var _printParam;
+	var _custInfo;
+	var _transactionId;
 	
     /**
      * 实名信息采集单初始化
@@ -15,6 +17,7 @@ info.collect = (function () {
      */
     var _init = function () {
        OrderInfo.actionFlag = 19;
+       OrderInfo.order.step = 1;
        $("#partyName").html(OrderInfo.cust.partyName);
        var $dateSel = $("#use_date");
        for(var i=0;i<15;i++){
@@ -25,21 +28,26 @@ info.collect = (function () {
     		   $("#use_date").append('<option value="'+date+'">'+date+'</option>');
     	   }
        }
-      
+       info.collect.custInfo = {
+  				"queryNum":OrderInfo.cust.accNbr,//查询号码
+  				"queryType":"-1",//
+  				"queryTypeName":"接入号码",//查询的类型名称，如居民身份证
+  				"queryAreaId":OrderInfo.cust.areaId,//查询的地区ID
+  				"queryAreaName":OrderInfo.cust.areaName,//查询的地区名称
+  			};
+       info.collect.transactionId = $("#TransactionID").val();
        $("#custInfoCollectBtn").off('click').on("click",function(event){
+    	   OrderInfo.actionFlag = 19;
     	   if(info.collect.userList.length == 0){
        			$.alert("提示","当前未采集使用人信息，无法提交！");
        			return;
        	   }
-    	   var propertiesKey = "REAL_NAME_PHOTO_"+(OrderInfo.staff.soAreaId+"").substring(0,3);
-   		   var isFlag = offerChange.queryPortalProperties(propertiesKey);
-   		   OrderInfo.preBefore.idPicFlag = isFlag;
-   		   if(OrderInfo.preBefore.idPicFlag == "ON" && !OrderInfo.virOlId){
+   		   if(!OrderInfo.virOlId){
 				$.alert("提示","请前往经办人页面进行实名拍照！");
 				return;
    		   }
    		   _seq = 0;
-   		   var transactionId = $("#TransactionId").val();
+   		  
    		   _expDate = ($("#use_date").val())+" 23:59:59";
    		   _collectionOrderList={
    				"collectionCustInfos":[],
@@ -48,6 +56,7 @@ info.collect = (function () {
    					"staffId":OrderInfo.staff.staffId,
    					"areaId":OrderInfo.staff.areaId,
    					"sysFlag":"15",
+   					"remarks":$.trim($("#remark").val()),
    					"collectType":"1",
    					"expDate":_expDate,
    					"transactionId":$("#TransactionID").val()
@@ -56,7 +65,7 @@ info.collect = (function () {
    		   var _custInfo = {
    				"custName":OrderInfo.cust.partyName,
    				"certType":OrderInfo.cust.identityCd,
-   				"certTypeName": "居民身份证",
+   				"certTypeName": OrderInfo.cust.identityName,
    				"certNumber":OrderInfo.cust.idCardNumber,
    				"addressStr":OrderInfo.cust.addressStr,
    				"contactAddress":OrderInfo.cust.mailAddressStr,
@@ -65,7 +74,8 @@ info.collect = (function () {
    				"partyRoleCd":"0",
    				"partyTypeCd":"2",
    				"seq":_seq++,
-   				"maxQuantity":0
+   				"maxQuantity":0,
+   				"remarks": JSON.stringify(info.collect.custInfo)
    			};
    		   var _jbrInfo = {
    				"custName":OrderInfo.jbr.partyName,
@@ -74,7 +84,8 @@ info.collect = (function () {
    				"certTypeName": "居民身份证",
    				"addressStr":OrderInfo.jbr.addressStr,
    				"contactAddress":OrderInfo.jbr.mailAddressStr,
-   				"telNumber":OrderInfo.jbr.accNbr,
+   				"telNumber":OrderInfo.jbr.telNumber,
+   				"fileOrderId":OrderInfo.virOlId,
    				"lanId":OrderInfo.cust.areaId,
    				"partyRoleCd":"3",
    				"partyTypeCd":"1",
@@ -226,6 +237,7 @@ info.collect = (function () {
 			"done" : function(response){
 				if (response.code==0) {
 					_printParam = response.data;
+					OrderInfo.order.step=2
 					$("#orderContentDiv").hide();
 					$("#orderConfirmDiv").show();
 					$("#tab7_li").removeClass("active");
@@ -233,8 +245,8 @@ info.collect = (function () {
 					$("#nav-tab-7").html(_getConfirmHtml(response.data));
 					$("#nav-tab-7").addClass("active in");
 					$("#custInfoConfirm").off("click").on("click",_custInfoConfirm);
-//					OrderInfo.orderResult.olId = response.data.result.orderId;
-//					OrderInfo.orderResult.olNbr = response.data.result.orderNbr;
+					OrderInfo.orderResult.olId = response.data.orderId;
+					OrderInfo.orderResult.olNbr = response.data.orderNbr;
 					
 				}else if (response.code==-2){
 					$.alertM(response.data);
@@ -311,7 +323,7 @@ info.collect = (function () {
 					OrderInfo.order.step = 4;
 					$("#headTabDiv2").hide();
 					$("#orderConfirmDiv").hide();
-					$("#order-print").show();
+					$("#order-print").html(response.data).show();
 					$("#datasignBtn").off("click").on("click",function(){
 						common.callDatasign("common.print.showDataSign");
 					});
@@ -348,7 +360,7 @@ var _saveHtml2Pdf=function(){
 			certType=OrderInfo.boCustIdentities.identidiesTypeCd;
 		}
 		var params={
-			"olId":OrderInfo.orderResult.olNbr,
+			"orderNbr":OrderInfo.orderResult.olNbr,
 			"signFlag":"5",
 			"busiType":"9",
 			"sign":_splitBaseforStr($("#signinput").val()),
@@ -356,9 +368,11 @@ var _saveHtml2Pdf=function(){
 			"custName":OrderInfo.cust.printCustName,
 			"certType":certType,
 			"certNumber":OrderInfo.cust.printIdCardNbr,
-			"accNbr":accNbr
+			"accNbr":accNbr,
+			"printParam":_printParam
 		};
-		var url=contextPath+"/order/sign/saveSignPdfForApp";
+		
+		var url=contextPath+"/order/sign/saveCollectionSignPdfForApp";
 		$.callServiceAsJson(url, params, {
 			"before":function(){
 				$.ecOverlay("<strong>正在保存采集单信息,请稍等会儿....</strong>");
@@ -366,6 +380,7 @@ var _saveHtml2Pdf=function(){
 			"done" : function(response){
 				$.unecOverlay();
 				if (response.code == 0) {
+					OrderInfo.order.step=2
 					$("#order-print").hide();
 					$("#headTabDiv2").show();
 					$("#orderConfirmDiv").show();
@@ -402,8 +417,8 @@ var _saveHtml2Pdf=function(){
 			html += '<span class="subtitle font-secondary" style="margin-left:0.2rem;">姓名</span></span></li>';
 		});
 		html += '<nav class="navbar navbar-default navbar-fixed-bottom"><div class="container-fluid"><div class="btn-group btn-group-justified navbar-btn" role="group" ><div class="sub-btn-box p p-b-15">';
-		html += '<button class="double-btn pull-left" id="print" disabled="disabled" onClick="info.collect.signVoucher()">打印</button> ';
-		html += '<button class="double-btn pull-right" id="custInfoConfirm" onClick="info.collect.custInfoConfirm">确认</button></div></div></div></nav>';
+		html += '<button class="double-btn pull-left" id="print" onClick="info.collect.signVoucher()">回执</button> ';
+		html += '<button class="double-btn pull-right" id="custInfoConfirm"  disabled="disabled" onClick="info.collect.custInfoConfirm">提交</button></div></div></div></nav>';
 		return html;
 	}
 	
@@ -454,7 +469,9 @@ var _saveHtml2Pdf=function(){
     	userList		:_userList,
     	deleteUser		:_deleteUser,
     	signVoucher		:_signVoucher,
-    	custInfoConfirm	:_custInfoConfirm
+    	custInfoConfirm	:_custInfoConfirm,
+    	custInfo		:_custInfo,
+    	transactionId	:_transactionId
     };
 })();
 //初始化

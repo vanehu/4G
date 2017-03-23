@@ -294,6 +294,51 @@ public class SignController extends BaseController {
 		}
     }
     
+    
+    @RequestMapping(value = "/saveCollectionSignPdfForApp", method = RequestMethod.POST)
+    @AuthorityValid(isCheck = false)
+	public @ResponseBody JsonResponse saveCollectionSignPdfForApp(@RequestBody Map<String, Object> paramMap,
+			@LogOperatorAnn String flowNum, 
+			HttpServletRequest request, HttpServletResponse response) {
+    	JsonResponse jsonResponse=null;
+    	Map<String, Object> errorMap = new HashMap<String, Object>();
+    	try {
+    		Object obj=RedisUtil.get("mgrPdf_"+ paramMap.get("orderNbr").toString());
+			Map<String,Object> orderInfo=null;
+			if(obj!=null){
+				orderInfo=(Map<String,Object>)obj;
+				paramMap.put("sign", paramMap.get("sign").toString().replaceAll("\\(p/\\)", "="));
+				paramMap.put("orderInfo", orderInfo);
+				SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
+				paramMap.put("areaId", sessionStaff.getCurrentAreaId());
+				Map<String, Object> params = (Map<String, Object>) paramMap.get("printParam");
+				params.put("areaId", sessionStaff.getCurrentAreaId());
+				Map<String, Object> resultMap = printBmo.printCustCltReceiptApp(params, flowNum,
+						sessionStaff, response);
+				if (MapUtils.isNotEmpty(resultMap)) {
+						RedisUtil.remove("mgrPdf_"+ paramMap.get("orderNbr").toString());
+		 				jsonResponse = super.successed("签名文件上传成功",
+		 						ResultConstant.SUCCESS.getCode());
+				} else {
+					errorMap.put("errData", "回执签名文件生成调用异常");
+					jsonResponse = super.failed(errorMap,
+							ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+				}
+			}else{
+				errorMap.put("errData", "从缓存中取预览的pdf异常");
+				jsonResponse = super.failed(errorMap,
+						ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+			}
+			return jsonResponse;
+		} catch (BusinessException e) {
+			return jsonResponse=super.failed(e);
+		} catch (InterfaceException ie) {
+			return jsonResponse=super.failed(ie, paramMap, ErrorCode.SAVE_SIGN_PDF);
+		} catch (Exception e) {
+			return jsonResponse=super.failed(ErrorCode.SAVE_SIGN_PDF, e, paramMap);
+		}
+    }
+    
     @RequestMapping(value = "/gotoPrint", method = RequestMethod.POST)
 	public String gotosubmitOrder(@RequestBody Map<String, Object> param,Model model
 			,HttpServletResponse response,HttpServletRequest request){
@@ -555,18 +600,21 @@ public class SignController extends BaseController {
     	
     	SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
     	params.put("areaId", sessionStaff.getCurrentAreaId());
-    	params.put("printType", SysConstant.PRINT_TYPE_HTML);
+//    	params.put("printType", "custCollection/receiptMain");
     	
     	params.put("signFlag", SysConstant.PREVIEW_SIGN_PDF);
-    	params.put("busiType", SysConstant.BUSI_TYPE_CRM_COMMON);
+//    	params.put("busiType", SysConstant.BUSI_TYPE_TERMINAL_ORDER);
 		try {
-			Map<String, Object> resultMap = printBmo.printVoucher(params, flowNum,
-					super.getRequest(), response);
+			Map<String, Object> resultMap = printBmo.printCustCltReceiptApp(params, flowNum,
+					sessionStaff, response);
 			if (MapUtils.isNotEmpty(resultMap)) {
 				Map<String,Object> reObject=signBmo.setPrintInfos(resultMap,super.getRequest(),params);
-				RedisUtil.set("mgrPdf_"+ params.get("olId").toString(), reObject.get("pp"));	
+				RedisUtil.set("mgrPdf_"+ params.get("orderNbr").toString(), reObject.get("pp"));
+				Object obj=RedisUtil.get("mgrPdf_"+ params.get("orderNbr").toString());
 				reObject.remove("pp");
-				model.addAllAttributes(reObject);
+//				model.addAllAttributes(reObject);
+				model.addAttribute("htmlStr", reObject.get("htmlStr"));
+				System.out.println(reObject.get("htmlStr"));
 				model.addAttribute("custName", resultMap.get("custName"));
 				model.addAttribute("idCardNbr", resultMap.get("idCardNbr"));
 			}

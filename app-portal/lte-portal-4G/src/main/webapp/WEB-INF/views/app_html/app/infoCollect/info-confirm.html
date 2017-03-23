@@ -35,7 +35,7 @@ $(function(){
 		$("#showFtlHtml").css("-webkit-transform-origin","0px 0px");
 	}
 	$("#showFtlHtml span").each(function(){//所有的span标签
-		if($.trim($(this).text())=='申请人/经办人(签字)：'){
+		if($.trim($(this).text())=='申请人/经办人（签字）'){
 			var html=$("#showFtlHtml").html();
 			html=html.replace("\t|\r|\n","");
 			html=html.replace(">  <", "><");

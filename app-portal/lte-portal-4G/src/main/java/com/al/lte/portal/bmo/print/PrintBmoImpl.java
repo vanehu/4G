@@ -42,6 +42,7 @@ import org.xhtmlrenderer.pdf.ITextRenderer;
 import com.al.ec.serviceplatform.client.DataBus;
 import com.al.ec.serviceplatform.client.ResultCode;
 import com.al.ecs.common.util.DateUtil;
+import com.al.ecs.common.util.JsonUtil;
 import com.al.ecs.common.util.MDA;
 import com.al.ecs.common.util.NumUtil;
 import com.al.ecs.common.util.PropertiesUtils;
@@ -5841,6 +5842,158 @@ public class PrintBmoImpl implements PrintBmo {
 		}
 		return resultCode;
 	}
+	
+	/**
+	 * 实名信息采集单打印
+	 */
+	public String printCustCltReceipt(Map<String, Object> dataBusMap, String optFlowNum, SessionStaff sessionStaff, HttpServletResponse response) throws Exception {
+		
+        Map<String, Object> orderList = (Map<String, Object>) dataBusMap.get("collectionOrderList");
+        Map<String, Object> orderListInfo = (Map<String, Object>) orderList.get("collectionOrderInfo");
+
+		Map<String, Object> printData = new HashMap<String, Object>();
+		
+		printData.put("cltNo", MapUtils.getString(dataBusMap, "orderNbr"));
+		printData.put("createDate", DateUtil.getNow("yyyy/MM/dd"));
+		printData.put("expDate", MapUtils.getString(orderListInfo, "expDate"));
+		printData.put("remarks", MapUtils.getString(orderListInfo, "remarks"));
+
+		ArrayList<Map<String, Object>> custInfos = (ArrayList<Map<String, Object>>) orderList.get("collectionCustInfos");
+		ArrayList<Map<String, Object>> userListInfos = new ArrayList<Map<String, Object>>();
+
+		for(Map<String, Object> custInfo:custInfos){
+			String partyRoleCd = MapUtils.getString(custInfo,"partyRoleCd");
+			if(!StringUtils.isEmpty(partyRoleCd)){
+				//0为产权人
+				if("0".equals(partyRoleCd)){
+					printData.put("custName", MapUtils.getString(custInfo, "custName"));
+					printData.put("telNumber", MapUtils.getString(custInfo, "telNumber"));
+					printData.put("addressStr", MapUtils.getString(custInfo, "addressStr"));
+					printData.put("certTypeName", MapUtils.getString(custInfo, "certTypeName"));
+					printData.put("certNumber", MapUtils.getString(custInfo, "certNumber"));
+				//3为经办人
+				}else if("3".equals(partyRoleCd)){
+					printData.put("jbrCustName", MapUtils.getString(custInfo, "custName"));
+					printData.put("jbrTelNumber", MapUtils.getString(custInfo, "telNumber"));
+					printData.put("jbrAddressStr", MapUtils.getString(custInfo, "addressStr"));
+					printData.put("jbrCertType", MapUtils.getString(custInfo, "certTypeName"));
+					printData.put("jbrCertNumber", MapUtils.getString(custInfo, "certNumber"));
+				//1为使用人
+				}else{
+					Map<String, Object> userInfo = new HashMap<String, Object>();
+					userInfo.put("no", MapUtils.getString(custInfo, "printSeq"));
+					userInfo.put("custName", MapUtils.getString(custInfo, "custName"));
+					userInfo.put("telNumber", MapUtils.getString(custInfo, "telNumber"));
+					userInfo.put("addressStr", MapUtils.getString(custInfo, "addressStr"));
+					userInfo.put("certTypeName", MapUtils.getString(custInfo, "certTypeName"));
+					userInfo.put("certNumber", MapUtils.getString(custInfo, "certNumber"));
+					userInfo.put("maxQuantity", MapUtils.getString(custInfo, "maxQuantity"));
+					userInfo.put("remark", MapUtils.getString(custInfo, "remarks"));
+					userListInfos.add(userInfo);
+				}
+			}
+		}
+		
+		printData.put("userListInfo", userListInfos);
+		
+		printData.put("staffNumber", sessionStaff.getStaffCode());
+		printData.put("staffName", sessionStaff.getStaffName());
+		printData.put("channelName", sessionStaff.getCurrentChannelName());
+
+		log.error("dataBusMap={}", JsonUtil.toString(dataBusMap));
+		log.error("printData={}", JsonUtil.toString(printData));
+		
+		String printTypeDir = SysConstant.P_MOD_SUB_BASE_DIR + SysConstant.P_MOD_SUB_CUSTCLT;
+        String strJasperFileName = SysConstant.P_MOD_BASE_DIR + SysConstant.P_MOD_SUB_CUSTCLT
+        		+ SysConstant.P_MOD_FILE_STBRESERVE + SysConstant.P_MOD_FILE_SUBFIX;
+
+        Collection<Map<String, Object>> inFields = new ArrayList<Map<String, Object>>();
+        inFields.add(printData);
+
+        Map<String, Object> reportParams = new HashMap<String, Object>();
+        reportParams.put("SUBREPORT_DIR", printTypeDir);
+
+        //输出打印内容
+        commonPdfPrint(strJasperFileName, reportParams, inFields, response, 0, 0);
+		return ResultCode.R_SUCC;
+	}
+	
+	/**
+	 * 实名信息采集单打印-app
+	 */
+	public Map<String, Object> printCustCltReceiptApp(Map<String, Object> dataBusMap, String optFlowNum, SessionStaff sessionStaff, HttpServletResponse response) throws Exception {
+		
+        Map<String, Object> orderList = (Map<String, Object>) dataBusMap.get("collectionOrderList");
+        Map<String, Object> orderListInfo = (Map<String, Object>) orderList.get("collectionOrderInfo");
+
+		Map<String, Object> printData = new HashMap<String, Object>();
+		
+		printData.put("cltNo", MapUtils.getString(dataBusMap, "orderNbr"));
+		printData.put("createDate", DateUtil.getNow("yyyy/MM/dd"));
+		printData.put("expDate", MapUtils.getString(orderListInfo, "expDate"));
+		printData.put("remarks", MapUtils.getString(orderListInfo, "remarks"));
+
+		ArrayList<Map<String, Object>> custInfos = (ArrayList<Map<String, Object>>) orderList.get("collectionCustInfos");
+		ArrayList<Map<String, Object>> userListInfos = new ArrayList<Map<String, Object>>();
+
+		for(Map<String, Object> custInfo:custInfos){
+			String partyRoleCd = MapUtils.getString(custInfo,"partyRoleCd");
+			if(!StringUtils.isEmpty(partyRoleCd)){
+				//0为产权人
+				if("0".equals(partyRoleCd)){
+					printData.put("custName", MapUtils.getString(custInfo, "custName"));
+					printData.put("telNumber", MapUtils.getString(custInfo, "telNumber"));
+					printData.put("addressStr", MapUtils.getString(custInfo, "addressStr"));
+					printData.put("certTypeName", MapUtils.getString(custInfo, "certTypeName"));
+					printData.put("certNumber", MapUtils.getString(custInfo, "certNumber"));
+				//3为经办人
+				}else if("3".equals(partyRoleCd)){
+					printData.put("jbrCustName", MapUtils.getString(custInfo, "custName"));
+					printData.put("jbrTelNumber", MapUtils.getString(custInfo, "telNumber"));
+					printData.put("jbrAddressStr", MapUtils.getString(custInfo, "addressStr"));
+					printData.put("jbrCertType", MapUtils.getString(custInfo, "certTypeName"));
+					printData.put("jbrCertNumber", MapUtils.getString(custInfo, "certNumber"));
+				//1为使用人
+				}else{
+					Map<String, Object> userInfo = new HashMap<String, Object>();
+					userInfo.put("no", MapUtils.getString(custInfo, "printSeq"));
+					userInfo.put("custName", MapUtils.getString(custInfo, "custName"));
+					userInfo.put("telNumber", MapUtils.getString(custInfo, "telNumber"));
+					userInfo.put("addressStr", MapUtils.getString(custInfo, "addressStr"));
+					userInfo.put("certTypeName", MapUtils.getString(custInfo, "certTypeName"));
+					userInfo.put("certNumber", MapUtils.getString(custInfo, "certNumber"));
+					userInfo.put("maxQuantity", MapUtils.getString(custInfo, "maxQuantity"));
+					userInfo.put("remark", MapUtils.getString(custInfo, "remarks"));
+					userListInfos.add(userInfo);
+				}
+			}
+		}
+		
+		printData.put("userListInfo", userListInfos);
+		
+		printData.put("staffNumber", sessionStaff.getStaffCode());
+		printData.put("staffName", sessionStaff.getStaffName());
+		printData.put("channelName", sessionStaff.getCurrentChannelName());
+
+		log.error("dataBusMap={}", JsonUtil.toString(dataBusMap));
+		log.error("printData={}", JsonUtil.toString(printData));
+		
+		String printTypeDir = SysConstant.P_MOD_SUB_BASE_DIR + SysConstant.P_MOD_SUB_CUSTCLT;
+        String strJasperFileName = SysConstant.P_MOD_BASE_DIR + SysConstant.P_MOD_SUB_CUSTCLT
+        		+ SysConstant.P_MOD_FILE_STBRESERVE + SysConstant.P_MOD_FILE_SUBFIX;
+
+        Collection<Map<String, Object>> inFields = new ArrayList<Map<String, Object>>();
+        inFields.add(printData);
+
+        Map<String, Object> reportParams = new HashMap<String, Object>();
+        reportParams.put("SUBREPORT_DIR", printTypeDir);
+	    Map<String,Object> ret1=previewHtml(strJasperFileName, reportParams, inFields, 0, 0);
+        Map<String,Object> ret2=savePdf(strJasperFileName, reportParams, inFields, 0, 0);
+		ret1.putAll(ret2);
+		ret1.put("custName", printData.get("custName"));
+		ret1.put("idCardNbr", printData.get("idCardNbr"));
+		return ret1;
+	}
 
 	protected Map<String, Object> runInvoicePrint(Map<String, Object> printData,
 			HttpServletResponse response, String printType,
@@ -7683,11 +7836,12 @@ public class PrintBmoImpl implements PrintBmo {
 				attachOfferSet.setAttachOfferTitle(attachOfferTitle);
 			}
 		}
-		List<StringBeanSet> attachOfferCont = new ArrayList<StringBeanSet>();
-		// 设置附属销售品业务_内容
+        List<OETitleContent> oeTitleContent = new ArrayList<OETitleContent>();
+        // 设置附属销售品业务_内容
 		if(event.containsKey("orderEventCont")) {
 			if ("7".equals(boActionTypeCd) && finalAttachMap != null && finalAttachMap.size() > 0) {
-				attachOfferCont = buildOrderEvent_3_Cont_V2(finalAttachMap);
+                oeTitleContent = buildOrderEvent_3_Cont_V2(finalAttachMap);
+                attachOfferSet.setTitleContent(oeTitleContent);
 			} else if (event.get("orderEventCont") instanceof Map) {
 				int baseCount = 0;
 				Map<String, Object> orderEventContMap = (Map<String, Object>) event.get("orderEventCont");
@@ -7755,12 +7909,10 @@ public class PrintBmoImpl implements PrintBmo {
 					}
 				}
 			} else {
-				attachOfferCont = buildOrderEvent_3_Cont((List<Map<String, Object>>) event.get("orderEventCont"));
+                oeTitleContent = buildOrderEvent_3_Cont_V2((List<Map<String, Object>>) event.get("orderEventCont"));
+                attachOfferSet.setTitleContent(oeTitleContent);
 			}
 
-			if (null != attachOfferCont && attachOfferCont.size() > 0) {
-				attachOfferSet.setAttachOfferCont(attachOfferCont);
-			}
 		}
 
 		attachOfferList.add(attachOfferSet);
@@ -8130,33 +8282,70 @@ public class PrintBmoImpl implements PrintBmo {
 	 * @param jsonArrayParam
 	 * @return
 	 */
-	private List<StringBeanSet> buildOrderEvent_3_Cont_V2(List<Map<String, Object>> contList){
-		if (contList == null || contList.size() == 0) {
-			return null;
-		}
+    private List<OETitleContent> buildOrderEvent_3_Cont_V2(List<Map<String, Object>> contList) {
+        List<OETitleContent> oeTitleContentList = new ArrayList<OETitleContent>();
+        if (contList == null || contList.size() == 0) {
+            return null;
+        }
 
-		List<StringBeanSet> attachOfferList = new ArrayList<StringBeanSet>();
-		int len = contList.size();
-		for (int i = 0; i < len; i++) {
-			Map<String, Object> contMap = contList.get(i);
-			StringBeanSet strBean = new StringBeanSet();
+        int len = contList.size();
+        for (int i = 0; i < len; i++) {
+            Map<String, Object> contMap = contList.get(i);
+            OETitleContent oeTitleContent = new OETitleContent();
+            List<StringBeanSet> attachOfferTitleList = new ArrayList<StringBeanSet>();
 
-			String actionType = MapUtils.getString(contMap, "actionName", "");
-			String itemName = MapUtils.getString(contMap, "itemName", "");
-			String itemParam = MapUtils.getString(contMap, "itemParam", "");
-			String itemDesc = MapUtils.getString(contMap, "itemDesc", "");
-			String effectRule = MapUtils.getString(contMap, "effectRule", "");
-			String relaAcceNbr = MapUtils.getString(contMap, "relaAcceNbr", "");
+            //小标题
+            StringBeanSet strBean = new StringBeanSet();
 
-			strBean.setStrBean(buildOE_1_AttachOffer_Serv_Cont_V2(len, i + 1, actionType, itemName, itemParam, itemDesc, effectRule, relaAcceNbr));
+            String actionType = MapUtils.getString(contMap, "actionName", "");
+            String itemName = MapUtils.getString(contMap, "itemName", "");
+            String itemParam = MapUtils.getString(contMap, "itemParam", "");
+            String itemDesc = MapUtils.getString(contMap, "itemDesc", "");
+            String effectRule = MapUtils.getString(contMap, "effectRule", "");
+            String relaAcceNbr = MapUtils.getString(contMap, "relaAcceNbr", "");
 
-			attachOfferList.add(strBean);
-		}
+            strBean.setStrBean(buildOE_1_AttachOffer_Serv_Cont_V2(len, i + 1, actionType, itemName, itemParam, itemDesc, effectRule, relaAcceNbr));
 
-		return attachOfferList;
-	}
+            attachOfferTitleList.add(strBean);
+            oeTitleContent.setOrderTitle(attachOfferTitleList);
 
-	private StringBeanSet buildOrderEvent_6_Title_V2(int eventSize,int seq,String boActionTypeName,String offerSpecName,String effectRule) {
+            //内容
+            List<Map<String, String>> attrList = (List<Map<String, String>>) MapUtils.getObject(contMap, "attrList", null);
+            List<String> remarks = (List<String>) MapUtils.getObject(contMap, "remarks", null);
+            List<StringBeanSet> attachOfferContentList = new ArrayList<StringBeanSet>();
+            if (null != attrList && attrList.size() > 0) {
+                for (Map<String, String> stringMap : attrList) {
+                    StringBeanSet stringBeanSet = new StringBeanSet();
+                    stringBeanSet.setStrBean(getAttrString(stringMap));
+                    attachOfferContentList.add(stringBeanSet);
+                }
+            }
+            if (null != remarks && remarks.size() > 0) {
+                for (String remark : remarks) {
+                    StringBeanSet stringBeanSet = new StringBeanSet();
+                    stringBeanSet.setStrBean(remark);
+                    attachOfferContentList.add(stringBeanSet);
+                }
+            }
+            oeTitleContent.setOrderContent(attachOfferContentList);
+            oeTitleContentList.add(oeTitleContent);
+        }
+        return oeTitleContentList;
+    }
+
+    /**
+     * 获取属性拼接字符串
+     *
+     * @param stringMap
+     * @return
+     */
+    private String getAttrString(Map<String, String> stringMap) {
+        String attrName = MapUtils.getString(stringMap, "attrName", "");
+        String attrValName = MapUtils.getString(stringMap, "attrValName", "");
+        return attrName + SysConstant.STR_SEP + attrValName + SysConstant.STR_SPI;
+    }
+
+    private StringBeanSet buildOrderEvent_6_Title_V2(int eventSize,int seq,String boActionTypeName,String offerSpecName,String effectRule) {
 		StringBeanSet strBean = new StringBeanSet();
 		String titleStr = "";
 		titleStr +=  (ChsStringUtil.getSeqNumByInt(seq) + SysConstant.STR_PAU);

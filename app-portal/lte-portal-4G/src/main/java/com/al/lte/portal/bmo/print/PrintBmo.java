@@ -59,4 +59,15 @@ public interface PrintBmo {
 	 * 天翼高清机顶盒预约单回执打印
 	 */
 	public String printSTBReserveReceipt(Map<String, Object> dataBusMap, String optFlowNum, SessionStaff sessionStaff, HttpServletResponse response) throws Exception;
+	
+	/**
+	 * 实名信息采集单打印
+	 */
+	public String printCustCltReceipt(Map<String, Object> dataBusMap, String optFlowNum, SessionStaff sessionStaff, HttpServletResponse response) throws Exception;
+	/**
+	 * 实名信息采集单打印-app
+	 */
+	public Map<String, Object> printCustCltReceiptApp(Map<String, Object> params, String flowNum, SessionStaff sessionStaff,
+			HttpServletResponse response) throws Exception;;
+	
 }
