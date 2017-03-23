@@ -953,7 +953,7 @@ order.cust = (function(){
             	if (ec.util.isObj(result)) {
             		ec.util.mapPut(OrderInfo.oneCardFiveNO.usedNum, _getCustInfo415Flag(inParam), result.usedNum);
             		if(parseInt(result.usedNum)>=5 && OrderInfo.actionFlag ==1){
-                		$.alert("提示", "工信部要求支撑全国实名制一证五卡验证,一个用户证件下不能有超过5个号码！");
+            			$.alert("提示", "证件「" + inParam.certNum + "」全国范围已有5张及以上移动号卡，无法在证件下新增证号关系！");
                 	}else if(parseInt(result.usedNum) <5 && OrderInfo.oneCardFiveNum.length<=0){
                 		checkResult=true;
                 	}else if(parseInt(result.usedNum)>=5 && OrderInfo.actionFlag !=1){
@@ -968,7 +968,7 @@ order.cust = (function(){
                 	                } else {
                 	                	 checkResult = false;
                 	                	 OrderInfo.oneCardFiveNum = [];
-                	                    $.alert("提示", "工信部要求支撑全国实名制一证五卡验证,一个用户证件下不能有超过5个号码！");
+                	                	 $.alert("提示", "证件「" + inParam.certNum + "」全国范围已有5张及以上移动号卡，无法在证件下新增证号关系！");
                 	                    return checkResult;
                 	                }
                 			 }
