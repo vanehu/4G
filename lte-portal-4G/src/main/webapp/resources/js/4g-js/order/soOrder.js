@@ -3172,15 +3172,22 @@ SoOrder = (function() {
 						if(prodAttrEmptyCheckName =='使用人' &&  OrderInfo.roleType=="Y"){
 							prodAttrEmptyFlag = false;
 						}
-
-						// 责任人,使用人-政企客户专用测试卡校验
-						if(prodItemUserFlag){
-							if(!checkUserChoose(prodInst.prodInstId,prodAttrEmptyFlag)){
-								return false;
+						
+						// 使用人-政企客户专用测试卡校验,
+						if(prodAttrEmptyCheckName =='使用人'){
+							/*
+							 * 当prodAttrEmptyCheckName为使用人表示使用人为空
+							 * 下面判读当有专用测试权限校验使用人责任人两者未填写，否则不进入校验，走原逻辑正常拦截使用人
+							 */
+							if(prodItemUserFlag&&OrderInfo.specialtestauth){
+								if(!checkUserChoose(prodInst.prodInstId,prodAttrEmptyFlag)){
+									return false;
+								}else{
+									prodAttrEmptyFlag = false;
+								}
 							}
-							prodAttrEmptyFlag = false;
 						}
-
+						
 						if(prodAttrEmptyFlag){
 							$.alert("信息提示","没有配置产品属性("+prodAttrEmptyCheckName+")，无法提交");
 							return false;
