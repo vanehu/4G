@@ -3890,7 +3890,7 @@ order.cust = (function(){
                     ec.util.mapPut(OrderInfo.oneCardFiveNum.usedNum, _getCustInfo415Flag(inParam), result.usedNum);
                     checkResult=true;
                 } else {
-                    $.alert("提示", "一个用户证件下不能有超过5个号码！");
+                    $.alert("提示", "证件「" + inParam.certNum + "」全国范围已有5张及以上移动号卡，无法在证件下新增证号关系！");
                 }
             }
         } else {
