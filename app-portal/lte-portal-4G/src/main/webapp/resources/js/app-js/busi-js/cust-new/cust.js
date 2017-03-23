@@ -2667,7 +2667,7 @@ cust = (function(){
 					common.callCloseWebview();
 				});
 				$("#modal-title").html(title);
-				$("#modal-content").html("一个用户证件下不能有超过5个号码,请重新选择用户！");
+				$("#modal-content").html("证件「"+inParam.certNum+"」全国范围已有5张及以上移动号卡，不能新装!");
 				$("#alert-modal").modal();
 			} else {
 				cust.usedNum = parseInt(result.usedNum) + 1;
@@ -2798,7 +2798,7 @@ cust = (function(){
 					$("#alert-modal").modal("hide");
 				});
 				$("#modal-title").html(title);
-				$("#modal-content").html("一个用户证件下不能有超过5个号码,请重新选择用户！");
+				$("#modal-content").html("证件「"+cust.readIdCardUser.idCardNumber+"」全国范围已有5张及以上移动号卡，不能返档！");
 				$("#alert-modal").modal();
 			} else {
 				checkResult = true;

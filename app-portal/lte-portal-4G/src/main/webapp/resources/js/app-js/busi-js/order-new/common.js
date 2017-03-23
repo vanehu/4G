@@ -651,7 +651,25 @@ common = (function($) {
 			}
 		}
 		
-		
+		if(OrderInfo.actionFlag==19){//采集单
+			if(OrderInfo.order.step==1){
+				_callCloseWebview();
+				return;
+			}else if(OrderInfo.order.step==2){
+				$("#orderContentDiv").show();
+				$("#orderConfirmDiv").hide();
+				$("#tab7_li").addClass("active");
+				$("#tab8_li").removeClass("active");
+				OrderInfo.order.step=1;
+				return;
+			}else if(OrderInfo.order.step==4){
+				$("#headTabDiv2").show();
+				$("#orderConfirmDiv").show();
+				$("#order-print").hide();
+				OrderInfo.order.step=2;
+				return;
+			}
+		}
 		
 		if(OrderInfo.actionFlag==13){//购裸机
 			if(OrderInfo.order.step==1){

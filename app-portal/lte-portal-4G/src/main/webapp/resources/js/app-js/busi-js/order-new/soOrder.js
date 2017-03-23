@@ -396,22 +396,35 @@ SoOrder = (function() {
 	
 	
 	//订单数据校验
-	var _checkData = function() {	
+	var _checkData = function() {
 		if(OrderInfo.actionFlag == 1 || OrderInfo.actionFlag == 6 || OrderInfo.actionFlag == 14 || OrderInfo.actionFlag == 112){ //新装
 			if(OrderInfo.cust.custId==""){
 				$.alert("提示","客户信息不能为空！");
 				return false ; 
 			}
+			var prodAttrFlag = true;
+			if(OrderInfo.prodAttrs.length>0){
+				for ( var i = 0; i < OrderInfo.prodAttrs.length; i++) {
+					var prodAttr=OrderInfo.prodAttrs[i];
+					if(prodAttr.isOptional=="N"){//必填需校验
+						prodAttrFlag=order.main.check_parm_self($("#"+prodAttr.id));
+					}
+				}
+			}
+			if(!prodAttrFlag){
+				return false;
+			}
 			for ( var i = 0; i < OrderInfo.offerSpec.offerRoles.length; i++) {
 				var offerRole = OrderInfo.offerSpec.offerRoles[i];
 				for ( var j = 0; j < offerRole.prodInsts.length; j++) {
-					var prodInst = offerRole.prodInsts[j];
+					var prodInst = offerRole.prodInsts[j];			        
+					var prodId=prodInst.prodInstId;
 					var accNbr = OrderInfo.getProdAn(prodInst.prodInstId).accessNumber;
 					if(accNbr==undefined || accNbr == ""){
 						$.alert("信息提示","【接入产品("+offerRole.offerRoleName+")】号码不能为空！");
 						return false;
 					} 
-					if(OrderInfo.getProdTd(prodInst.prodInstId)==""){
+					if(OrderInfo.getProdTd(prodInst.prodInstId)=="" && !order.service.isCloudOffer){//非企业云盘
 						$.alert("信息提示","【接入产品("+offerRole.offerRoleName+")】UIM卡不能为空！");
 						return false;
 					}
@@ -428,23 +441,23 @@ SoOrder = (function() {
 					}
 					
 					//校验必填的产品属性
-					var prodAttrFlag = true;
-					var checkName = null;
-					$(OrderInfo.prodAttrs).each(function(){
-						var isOptional = this.isOptional;
-						var id = this.id;
-						if(isOptional == "N" && id){
-							var val=$.trim($("#"+id).val());
-							if(val == "" || val == undefined){
-								checkName = this.name;
-								prodAttrFlag = false;
-							}
-						}
-					});
-					if(!prodAttrFlag){
-						$.alert("信息提示","没有配置产品属性("+checkName+")，无法提交");
-						return false;
-					}
+//					var prodAttrFlag = true;
+//					var checkName = null;
+//					$(OrderInfo.prodAttrs).each(function(){
+//						var isOptional = this.isOptional;
+//						var id = this.id;
+//						if(isOptional == "N" && id){
+//							var val=$.trim($("#"+id).val());
+//							if(val == "" || val == undefined){
+//								checkName = this.name;
+//								prodAttrFlag = false;
+//							}
+//						}
+//					});
+//					if(!prodAttrFlag){
+//						$.alert("信息提示","没有配置产品属性("+checkName+")，无法提交");
+//						return false;
+//					}
 					
 				}
 			}
@@ -1214,7 +1227,7 @@ SoOrder = (function() {
 		
 		busiOrder.data.boAccountRelas.push(boAccountRela);
 		//新装：一证五号需封装证号信息节点
-	    if(isON=="ON"){
+	    if(isON=="ON" && !order.service.isCloudOffer){//非天翼云盘
 			if(OrderInfo.actionFlag==1 || OrderInfo.actionFlag==14){
 				if (ec.util.isObj(OrderInfo.boProdAns) && OrderInfo.boProdAns.length > 0) {
 					var ca={};

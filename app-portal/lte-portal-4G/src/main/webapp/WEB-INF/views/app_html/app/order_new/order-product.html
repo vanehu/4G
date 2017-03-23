@@ -15,11 +15,11 @@
 		</span> <i class="iconfont absolute-right font-secondary open-noness">&#xe66e;</i>
 		</li>
 		<!-- 是否信控等产品属性 -->
-		<div id="specParmDiv_${prodId}" class="p-l-43">
+		<div id="specParmDiv_${prodId}">
 		</div>
 		<li id="terminalDiv_${prodId}" style="display: none;">
 		</li>
-		<li>
+		<li id="uimDiv_${prodId}">
 			<div class="choice-box absolute-l-43 border-top-none border-none">
 				<input placeholder="UIM卡，请扫描或输入" class="choice-input p-l-0 " oninput="showCheckUim(${prodId})"; id="uim_input_${prodId}" />
 				<i id="uim_call_${prodId}" class="iconfont right-btn pull-right p-r-10 m-r-45"
@@ -36,7 +36,6 @@
 			</div>
 		</li>
 		
-        </ul>
 		<div class="choice-box m-t-10" id="div_payType">
 			<i class="iconfont pull-left p-l-10">&#xe61a;</i> <#assign
 			feeType_read = "0"> <#if main.actionFlag==6> <#assign feeType_read =
@@ -65,6 +64,8 @@
 				<option value="">无</option> </#if>
 			</select>
 		</div>
+        </ul>
+		
 	</li>
 	</#list>
 	</#if>

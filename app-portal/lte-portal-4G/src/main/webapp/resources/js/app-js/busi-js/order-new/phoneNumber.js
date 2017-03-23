@@ -26,6 +26,11 @@ order.phoneNumber = (function(){
 	};
 	
 	var _initPhonenumber=function(){
+		if(order.service.enter=="1" && !order.service.isCloudOffer){
+			if(!cust.preCheckCertNumberRel()){//选套餐入口在初始化号池前校验，排除天翼云盘
+				return;
+			}
+		}
 		order.phoneNumber.queryApConfig();//查询号码段和号码类型 
 		order.phoneNumber.queryPhoneNbrPool();//查询号池		
 	};
@@ -904,8 +909,6 @@ order.phoneNumber = (function(){
 				_boProdAn.areaId = areaId;
 				_boProdAn.areaCode = areaCode;
 				_boProdAn.memberRoleCd = memberRoleCd;
-				_boProdAn.preStore = "";
-				_boProdAn.minCharge = "";
 				_boProdAn.virtualFlag = "1";
 				order.service.boProdAn = _boProdAn;
 				var prodId;
@@ -923,8 +926,6 @@ order.phoneNumber = (function(){
 							OrderInfo.boProdAns[i].areaId = areaId;
 							OrderInfo.boProdAns[i].areaCode = areaCode;
 							OrderInfo.boProdAns[i].memberRoleCd = memberRoleCd;
-							OrderInfo.boProdAns[i].preStore = "";
-							OrderInfo.boProdAns[i].minCharge = "";
 							isExists = true;
 							if (OrderInfo.offerSpec.offerRoles != undefined) {
 								OrderInfo.setProdAn(OrderInfo.boProdAns[i]); // 保存到产品实例列表里面
@@ -944,9 +945,7 @@ order.phoneNumber = (function(){
 						state : "ADD", // 动作 ,新装默认ADD
 						areaId : areaId,
 						areaCode : areaCode,
-						memberRoleCd : memberRoleCd,
-						preStore : "",
-						minCharge : ""
+						memberRoleCd : memberRoleCd
 					};
 					OrderInfo.boProdAns.push(param);
 				}

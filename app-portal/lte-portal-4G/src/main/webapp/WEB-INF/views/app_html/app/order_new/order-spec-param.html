@@ -3,8 +3,8 @@
 <#assign rule=prodSpec.rule />
 <#if prodSpec.itemSpecId=="800000011">
 <#elseif prodSpec.dataSourceTypeCd==4 >
-<li class="choice-box-left"> 
-   <span class="select-title left-0 p-0">${prodSpec.name}</span>
+<li class="choice-box-left p-l-43 border-none"> 
+   <span class="select-title left-0">${prodSpec.name}</span>
     <select  class="myselect select-option dw-hsel"  id="${prodSpec.itemSpecId}_${prodId}" name="prodSpec_${prodId}" value="${prodSpec.value}" 
 		itemSpecId="${prodSpec.itemSpecId}" prodSpecItemId="${prodSpec.prodSpecParamId}" 
 		check_name="${prodSpec.name}" check_mask="${rule.mask}" check_mess="${rule.maskMsg}" 
@@ -20,15 +20,18 @@
      </select>
 </li>
 	<#else>
-  <li class="choice-box-left">
-    <div class="choice-box border-none">
+  <li class="choice-box-left p-l-43 border-none">
+  <#if rule.isOptional=="N">
+  <i class="iconfont absolute-left red">&#xe8d4;</i>
+  </#if> 
+    <div class="choice-box border-top-none">      
 		<input type="<#if prodSpec.dataTypeCd==8 >password<#else>text</#if>" placeholder="${prodSpec.name}" class="choice-input pull-left p-l-0" 
 		id="${prodSpec.itemSpecId}_${prodId}" name="prodSpec_${prodId}" value="${prodSpec.value}" 
 		itemSpecId="${prodSpec.itemSpecId}" prodSpecItemId="${prodSpec.prodSpecParamId}" 
 		check_name="${prodSpec.name}" check_mask="${rule.mask}" check_mess="${rule.maskMsg}" 
 		check_len="${rule.attrLen}" check_option="${rule.isOptional}" 
 		dataType="${prodSpec.dataTypeCd}" oldValue="${prodSpec.value}" 
-		check_type="check"
+		check_type="check" oninput="if($(this).val().trim() != ''){$(this).next('.help-block').addClass('hidden');}"
 		<#if prodSpec.dataTypeCd?? && prodSpec.dataTypeCd=="4" >
 			readonly="readonly"
 			onclick="$.calendar({ format:'yyyy年MM月dd日 ',real:'#${prodSpec.itemSpecId}_${prodId}' });" 
@@ -36,7 +39,6 @@
 			readonly="readonly"
 			onclick="$.calendar({ format:'yyyy年MM月dd日  HH:mm:ss',real:'#${prodSpec.itemSpecId}_${prodId}' });"
 		<#elseif rule.isConstant=="N" && rule.isEnabled=="Y" >
-			onblur="order.main.check_parm_self(this)" 
 		<#elseif rule.isConstant=="Y" >
 			readonly="readonly"
 		<#elseif rule.isEnabled=="N" >
@@ -45,6 +47,7 @@
 			
 		</#if>
 		/>
+		<div id="${prodSpec.itemSpecId}_${prodId}_check" class="help-block error hidden"></div>
 	</div>
 </#if>
 </li>
