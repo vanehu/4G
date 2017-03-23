@@ -24,8 +24,7 @@ query.cert = (function(){
 		var identidiesTypeCd=$(scope).val();
 		$("#"+id).attr("maxlength", "100");
 		$("#orderAttrReadCertBtn").css("display","none");
-	
-		if(identidiesTypeCd==1){
+	   if(identidiesTypeCd==1 || identidiesTypeCd==12 || identidiesTypeCd== 41){
 			$("#"+id).removeAttr("data-validate");
 			$("#"+id).attr("placeHolder","请点击右面读卡按钮，进行读卡操作！");
 			$("#orderAttrIdCard").attr("disabled","disabled");

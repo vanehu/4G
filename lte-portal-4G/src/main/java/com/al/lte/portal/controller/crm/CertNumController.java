@@ -113,7 +113,7 @@ public class CertNumController  extends BaseController {
 	        		    list = (List<Map<String, Object>>)map.get("certPhoneNumRel");
 	        			Map<String,Object> mapPageInfo = (Map<String,Object>)map.get("pageRes");
 	        			curPage = (String) mapPageInfo.get("pageIndex");
-	        			totalSize = (String)mapPageInfo.get("totalCount");
+	        			totalSize = (String)map.get("usedNum");
 	        			model.addAttribute("totalNum", totalSize);
 				}
         	}else{
