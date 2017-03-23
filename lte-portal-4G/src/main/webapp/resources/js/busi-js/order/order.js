@@ -188,9 +188,11 @@ order.service = (function(){
 						instId: "",
 						specId: specId //产品（销售品）规格ID
 					}];
-                    //一证五号校验
-                    if (!order.cust.preCheckCertNumberRel("-1", order.cust.getCustInfo415())) {
-                        return;
+                    if (!CacheData.isGov(OrderInfo.cust.custId == "-1" ? OrderInfo.boCustIdentities.identidiesTypeCd : OrderInfo.cust.identityCd)) {//政企客户新装不调用一证五号校验
+                        //一证五号校验
+                        if (!order.cust.preCheckCertNumberRel("-1", order.cust.getCustInfo415())) {
+                            return;
+                        }
                     }
 					if (rule.rule.ruleCheck(boInfos)) {  //业务规则校验通过
 						order.service.opeSer(param);
