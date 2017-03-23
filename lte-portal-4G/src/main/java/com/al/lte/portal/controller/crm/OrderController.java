@@ -5224,7 +5224,7 @@ public class OrderController extends BaseController {
             }
             if (StringUtils.isNotBlank(startDt)){
                 param.put("startDt", startDt);
-                param.put("endtDt", startDt);
+                param.put("endDt", startDt);
             }
             if (StringUtils.isNotBlank(channelId)){
                 param.put("channelId", channelId);
