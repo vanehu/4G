@@ -811,7 +811,10 @@ query.offer = (function() {
 			acctNbr : "",
 			data:[]
 		};
-		
+		// 企业版云盘需要传入prodBigClass为19
+		if (prod.productId == CONST.PROD_SPEC.PROD_CLOUD_OFFER) {
+			param.prodBigClass = 19;
+		}
 		var queryMergeFlag=OrderInfo.provinceInfo.mergeFlag;
 		
 		if(ec.util.isArray(OrderInfo.offer.offerMemberInfos)){ //遍历主销售品构成

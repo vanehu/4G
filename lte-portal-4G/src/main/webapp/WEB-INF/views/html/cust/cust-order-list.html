@@ -48,7 +48,7 @@
 				<td>${item.prodStateName}${item.stopRecordName}</td>
 				<td>${item.feeType.feeTypeName}</td>
 				<td name = "pord_uim_type_query" areaId="${item.areaId}"  prodInstId="${item.prodInstId}" acctNbr="${item.accNbr}"></td>
-				<td style="text-align:center"><a class="purchase" onclick="product.query.queryProdDetail(${item.prodInstId},${item.accNbr},${item.areaId})">详情</a></td>
+				<td style="text-align:center"><a class="purchase" onclick="product.query.queryProdDetail(${item.prodInstId},'${item.accNbr}',${item.areaId})">详情</a></td>
 				<td style="display:none;">${item.prodInstId}</td>
 				<td style="display:none;">${item.prodStateCd}</td>
 				<td style="display:none;">${item.productId}</td>

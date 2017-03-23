@@ -710,7 +710,10 @@ query.offer = (function() {
 			acctNbr : "",
 			data:[]
 		};
-		
+		// 企业版云盘需要传入prodBigClass为19
+		if (prod.productId == CONST.PROD_SPEC.PROD_CLOUD_OFFER) {
+			param.prodBigClass = 19;
+		}
 		//获取判断是调用新的全量接口是旧的全量接口
 		var queryMergeFlag=OrderInfo.provinceInfo.mergeFlag;
 		
