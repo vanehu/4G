@@ -1809,6 +1809,24 @@ AttachOffer = (function() {
 			$.alert("提示信息","用户付费类型为后付费，不能订购该销售品！");
 			return;
 		}
+		var offer = CacheData.getOfferBySpecId(prodId,offerSpecId); //从已订购数据中找
+		if(offer != undefined && offer.ifDueOrderAgain != "Y"){//如果是合约，则跳过，执行下面代码
+			var tipsContent = "您已订购 '"+newSpec.offerSpecName+"' 销售品 "+offer.counts+" 次，请确认是否继续订购";
+			$.confirm("信息确认",tipsContent,{ 
+				yes:function(){
+				},
+				yesdo:function(){
+				    _addOfferSpecFunction(prodId,newSpec);
+			    },
+				no:function(){
+				}
+			});
+		}else{
+			_addOfferSpecFunction(prodId,newSpec);
+		}
+	};
+	
+	var _addOfferSpecFunction = function(prodId,newSpec){
 		var content = CacheData.getOfferProdStr(prodId,newSpec,0);
 		$.confirm("信息确认",content,{ 
 			yes:function(){
@@ -1821,6 +1839,7 @@ AttachOffer = (function() {
 			}
 		});
 	};
+	
 	
 	//根据预校验返回订购附属销售品
 	var _addOfferSpecByCheck = function(prodId,offerSpecId){
