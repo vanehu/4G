@@ -2015,5 +2015,14 @@
 			'TOKEN_JMPROVINCECODE_KEY'
 		]
 		</const>
+		<const type="Map" name="PORTAL_REGEXP" description="门户常用正则表达式集合">
+		{
+			"LTEPHONEHEAD"	:"^(149|133|153|173|177|180|181|189)\\d{8}?$",	<!-- 电信号码号段正则表达式(portal.properties迁移沿用命名) -->
+			"REGEXP_PRICE"	:"^[0-9]+(.[0-9]{1,2})?$",						<!-- 批量订购裸终端价格校验正则表达式 -->
+			"REGEXP_DEALER"	:"^\\d+@\\d+@\\d+@\\d+?$",						<!-- 批量修改发展人[产品发展人]正则表达式 -->
+			"REGEXP_OFFER"	:"^\\d+@\\d+@\\d+@\\d+?$",						<!-- 批量修改发展人[销售品发展人]正则表达式 -->
+			"REGEXP_NOTNULL":"^\\w+?$"										<!-- 非空校验正则表达式 -->
+		}
+		</const>
 	</mda>
 </mdas>
