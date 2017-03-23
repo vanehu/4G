@@ -84,7 +84,7 @@
 					if(params) {
 						if(paramOptions.type==="GET"){
 							isForm=true;
-						}else if(/^(.+=.+&?){1,}$/.test(params)){
+						}else if(!isJsonObjet && /^(.+=.+&?){1,}$/.test(params)){ // 修复json入参含有“=”报400错误（此正则也能匹配包含“=”的json入参，所以先过滤json格式后再去匹配）
 							isForm=true;
 						}
 					}
