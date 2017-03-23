@@ -25,7 +25,7 @@ user.repair = (function(){
 		$("#custName2").html("");
 		$("#phoneNum").html("");
 		$("#phoneNum2").html("");
-		
+		$("#btnRepair").css("display","none");
 		
 		var url=contextPath+"/user/repair/queryRepairList";
 		areaId=$.trim($("#p_cust_areaId").val());

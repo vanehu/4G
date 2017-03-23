@@ -1472,16 +1472,13 @@ public class InterfaceClient {
 		TcpCont.put("AppKey", AppKey);
 		TcpCont.put("ReqTime", ReqTime);
 		
-		//开始拼接签名sign
+//		//开始拼接签名sign
 		Map<String,Object> svcCont = (Map<String, Object>) ContractRoot.get("SvcCont");
-		
-		svcCont.put("staffCode", sessionStaff.getStaffCode());
-		svcCont.put("channelNbr", sessionStaff.getCurrentChannelCode());
-		svcCont.put("commonRegionId", sessionStaff.getAreaId());
+
 		
 		
 		String svcString=JsonUtil.toString(svcCont);
-		String signKey=TransactionID+"\"SvcCont\":"+svcString+"DJKF34ER35D58D";
+		String signKey=TransactionID+"\"SvcCont\":"+svcString+MDA.SecretKey.toString();
 		String sign=AESUtils.getMD5Str(signKey);
 		TcpCont.put("Sign", sign);
 		TcpCont.put("Method", serviceCode);
@@ -1514,6 +1511,7 @@ public class InterfaceClient {
 		if(MDA.CSB_HTTP_CMP_URL.toString()!=null && MDA.CSB_HTTP_CMP_URL.toString().length()>0){
 	        	intfUrl = MDA.CSB_HTTP_CMP_URL.toString();
 	        			//"http://10.128.90.194:8201/LTE-CSB/HttpAPIService";  
+	        			//"http://10.128.90.195:7003/CmpWeb/cmpService/queryRelInstInfo";
 	    }
 //		if (SysConstant.ON.equals(csbFlag)) {
 //			intfUrl = propertiesUtils.getMessage(URL_KEY + "." + CSB_HTTP);
@@ -1541,7 +1539,7 @@ public class InterfaceClient {
 				db = httpCall(sys, serviceCode, paramString, intfUrl, contentType, optFlowNum, sessionStaff, beginTime, logSeqId);
 				System.out.println("++++++++++++接口回参="+JsonUtil.toString(db));
 				rawRetn = db.getResultMsg();
-//				Node svcCont = checkCSBXml(serviceCode, rawRetn, paramString);
+//				Node svcCont = checkCSBXml(serviceCode, rawRetn, paramString);	
 //				retnJson = svcCont.getText();
 				retnJson = rawRetn;
 			//	log.debug("retnJson:{}", retnJson.length() > 3000 ? retnJson.substring(0, 3000) : retnJson);

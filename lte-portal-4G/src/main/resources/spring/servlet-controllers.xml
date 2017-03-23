@@ -60,6 +60,7 @@ http://www.springframework.org/schema/beans http://www.springframework.org/schem
 			<mapping path="/app/**" />
 			<mapping path="/ess/**" />
 			<mapping path="/user/**" />
+			<mapping path="/cm/**" />
 			<beans:bean class="com.al.ecs.spring.interceptor.SessionInterceptor">
 				<beans:property name="valid"  value="url"/>
 				<beans:property name="sessionKey"  value="_ecs_login_session_key"/>

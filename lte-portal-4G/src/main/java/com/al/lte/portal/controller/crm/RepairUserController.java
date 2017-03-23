@@ -31,8 +31,8 @@ import com.al.ecs.exception.InterfaceException;
 import com.al.ecs.exception.ResultConstant;
 import com.al.ecs.spring.annotation.log.LogOperatorAnn;
 import com.al.ecs.spring.controller.BaseController;
+import com.al.lte.portal.bmo.crm.CmBmo;
 import com.al.lte.portal.bmo.crm.CustBmo;
-import com.al.lte.portal.bmo.crm.RepairBmo;
 import com.al.lte.portal.common.SysConstant;
 import com.al.lte.portal.model.SessionStaff;
 
@@ -41,8 +41,8 @@ import com.al.lte.portal.model.SessionStaff;
 public class RepairUserController  extends BaseController {
 	
 	@Autowired
-	@Qualifier("com.al.lte.portal.bmo.crm.RepairBmo")
-	private RepairBmo repairBmo;
+	@Qualifier("com.al.lte.portal.bmo.crm.CmBmo")
+	private CmBmo cmBmo;
 	@Autowired
 	@Qualifier("com.al.lte.portal.bmo.crm.CustBmo")
 	private CustBmo custBmo;
@@ -82,7 +82,7 @@ public class RepairUserController  extends BaseController {
 		try {
 			
 			Map<String, Object> userInfoMap = (Map<String, Object>) paramMap.get("userInfo");
-			userList = repairBmo.queryProvUserList(userInfoMap, flowNum,
+			userList = cmBmo.queryProvUserList(userInfoMap, flowNum,
 					sessionStaff);
 			model.addAttribute("userList", userList);
 			if(ResultCode.R_SUCCESS.equals(userList.get("code"))){
@@ -103,29 +103,7 @@ public class RepairUserController  extends BaseController {
 
 		try {
 			Map<String, Object> contractRootMap = (Map<String, Object>) paramMap.get("userInfoFive");
-			certPhoneNumRelList = repairBmo.queryRepairList(contractRootMap,
-					flowNum, sessionStaff);
-			model.addAttribute("certPhoneNumRel", certPhoneNumRelList);
-			if(ResultCode.R_SUCCESS.equals(certPhoneNumRelList.get("code"))){
-				httpSession.setAttribute("enCertNumFive", certPhoneNumRelList.get("enCertNum"));
-				httpSession.setAttribute("enCertAddressFive", certPhoneNumRelList.get("enCertAddress"));
-				httpSession.setAttribute("enCustNameFive", certPhoneNumRelList.get("enCustName"));
-			}
-			
-		} catch (BusinessException e) {
-			this.log.error("查询信息失败", e);
-			super.addHeadCode(response, ResultConstant.SERVICE_RESULT_FAILTURE);
-		} catch (InterfaceException ie) {
-			return super.failedStr(model, ie, paramMap,
-					ErrorCode.QUERY_CMP);
-		} catch (Exception e) {
-			return super
-					.failedStr(model, ErrorCode.QUERY_CMP, e, paramMap);
-		}
-		
-		try {
-			Map<String, Object> contractRootMap = (Map<String, Object>) paramMap.get("userInfoFive");
-			certPhoneNumRelList = repairBmo.queryRepairList(contractRootMap,
+			certPhoneNumRelList = cmBmo.queryRepairList(contractRootMap,
 					flowNum, sessionStaff);
 			model.addAttribute("certPhoneNumRel", certPhoneNumRelList);
 			if(ResultCode.R_SUCCESS.equals(certPhoneNumRelList.get("code"))){
@@ -166,9 +144,13 @@ public class RepairUserController  extends BaseController {
 		}
 		
 		if(ResultCode.R_SUCCESS.equals(userList.get("code")) && ResultCode.R_SUCCESS.equals(certPhoneNumRelList.get("code"))){
-			isEqual = userList.get("enCertNum").equals(certPhoneNumRelList
+			if(userList.get("enCertNum")!=null && certPhoneNumRelList
+					.get("enCertNum")!=null && userList.get("certType")!=null && certPhoneNumRelList
+					.get("certType")!=null){
+				isEqual = userList.get("enCertNum").equals(certPhoneNumRelList
 					.get("enCertNum")) &&  userList.get("certType").equals(certPhoneNumRelList
-							.get("certType"));
+						.get("certType"));
+			}
 			// 证件号码秘钥 和 证件类型
 			model.addAttribute("isSucceed", "y");
 		}
@@ -235,7 +217,7 @@ public class RepairUserController  extends BaseController {
 	    Map<String, Object> rMap = new HashMap<String, Object>();
 		
 		try {
-			rMap = repairBmo.updateUserInfo(param, null, sessionStaff);
+			rMap = cmBmo.updateUserInfo(param, null, sessionStaff);
 			if (rMap != null && ResultCode.R_SUCCESS.equals(rMap.get("code").toString())){
 				return super.successed("修复成功！");
 			} else{
