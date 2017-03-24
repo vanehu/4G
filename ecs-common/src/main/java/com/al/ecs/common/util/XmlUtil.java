@@ -9,6 +9,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.Transformer;
@@ -16,6 +18,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.apache.commons.lang.StringUtils;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.io.OutputFormat;
@@ -264,5 +267,30 @@ public class XmlUtil {
 		//if (0 == iMode)
 			//sb.append("</root>");
 		return sb.toString();
+	}
+	
+	/**
+	 * 根据节点名称获取该节点下的所有内容，且是贪婪模式
+	 * <P>
+	 * 
+	 * @param xmlStr xml字符串
+	 * 
+	 * @param nodeName 节点名称
+	 * 
+	 * @param isContainsParentNode 是否包含父标签
+	 *            
+	 * @return 返回匹配的内容
+	 */
+	public static String getXMLNodeValue(String xmlStr, String nodeName, boolean isContainsParentNode) {
+		if (StringUtils.isBlank(xmlStr)) {
+			return "";
+		}
+		String pattern = "<" + nodeName + ">(.*)</" + nodeName + ">";
+		Pattern r = Pattern.compile(pattern);
+		Matcher m = r.matcher(xmlStr);
+		if (m.find()) {
+			return isContainsParentNode ? "<" + nodeName + ">" + m.group(1) + "</" + nodeName + ">" : m.group(1);
+		}
+		return "";
 	}
 }
