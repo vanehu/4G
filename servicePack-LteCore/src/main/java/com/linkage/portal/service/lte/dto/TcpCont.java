@@ -14,8 +14,11 @@ import com.ailk.ecsp.core.DataRepository;
 import com.ailk.ecsp.core.SysConstant;
 import com.ailk.ecsp.util.IConstant;
 import com.al.ec.serviceplatform.client.DataMap;
+import com.al.ecs.common.util.DigestUtils;
 import com.al.ecs.common.util.JsonUtil;
+import com.al.ecs.common.util.MDA;
 import com.al.ecs.common.util.MapUtil;
+import com.al.ecs.common.util.XmlUtil;
 import com.linkage.portal.service.lte.LteConstants;
 import com.linkage.portal.service.lte.dao.CommonDAO;
 import com.linkage.portal.service.lte.dao.CommonDAOImpl;
@@ -252,5 +255,16 @@ public class TcpCont {
 		long s = Calendar.getInstance().get(Calendar.SECOND) * 1000;
 		long ms = Calendar.getInstance().get(Calendar.MILLISECOND);
 		return StringUtils.leftPad(String.valueOf(h + m + s + ms), 8, '0');
+	}
+	
+	/**
+	 * 生成数字签名
+	 * @param inXML
+	 * @return 增加了sign签名的xml
+	 */
+	public static String createSign(String inXML) {
+		String rawData = XmlUtil.getXMLNodeValue(inXML, "TransactionID", false) + XmlUtil.getXMLNodeValue(inXML, "SvcCont", true) + MDA.SECRET_KEY;
+        inXML = inXML.replace("|sign|", DigestUtils.encryptPassword(rawData));
+        return inXML;
 	}
 }
