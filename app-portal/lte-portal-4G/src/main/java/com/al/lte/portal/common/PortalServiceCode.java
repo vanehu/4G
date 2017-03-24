@@ -1113,8 +1113,16 @@ public final class PortalServiceCode {
     /** 宽带融合--订单详情查询 **/
     public static final String BORAD_BAND_ORDER_DETAIL = "qry.order.orderdetail";
     
-    /** 一证五号--查询 **/
+    /** 一证五号修复--查询 **/
     public static final String QRY_CERTPHONENUM_REL = "qry.party.queryCmcCertNumRel";  
+    
+    
+    /** 一证五号--查询 **/
+    
+    public static final String QRY_REL_INST_INFO = "qry.party.queryRelInstInfo";
+    
+    
+    
      
     /** 一证五号--修复 **/
     public static final String MOD_CERTPHONENUM_REL = "order.party.changeCmcCertNumRel";

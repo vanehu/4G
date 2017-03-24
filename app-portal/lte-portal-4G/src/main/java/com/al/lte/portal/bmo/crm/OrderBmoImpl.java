@@ -3209,7 +3209,8 @@ public class OrderBmoImpl implements OrderBmo {
 		return resultMap;
 	}
 
-	@SuppressWarnings("unchecked")
+	@Override
+    @SuppressWarnings("unchecked")
 	public Map<String, Object> cltOrderCheck(Map<String, Object> param, HttpServletRequest request,
 			SessionStaff sessionStaff) throws Exception {
 		Map<String, Object> resultMap = new HashMap<String, Object>();

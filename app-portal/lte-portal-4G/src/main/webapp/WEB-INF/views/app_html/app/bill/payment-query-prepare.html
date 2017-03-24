@@ -1,0 +1,157 @@
+<script src="${contextPath}/js/app-js/new-js/function.min.js" type="text/javascript"></script>
+<!-- begin #page-container -->
+<div id="page-container" class="fade page-without-sidebar">
+	<!-- begin #header -->
+	<div id="header" class="header navbar navbar-default navbar-fixed-top">
+		<!-- begin container-fluid -->
+		<div id="header" class="header navbar navbar-default navbar-fixed-top">
+			<!-- begin container-fluid -->
+			<h4 class="text-center">充值订单查询
+				<a class="btn no-border btn-white pull-left m absolute-left ">
+					<i class="iconfont tab-icon">&#xe634;</i>
+				</a>
+				<!--<a class="btn no-border btn-white pull-right m">
+				 	<i class="iconfont tab-icon">&#xe670;</i>
+				</a>-->
+			</h4>
+			<!-- end container-fluid -->
+		</div>
+		<!-- end container-fluid -->
+	</div>
+	<!-- begin #header -->
+</div>
+
+<!-- begin #content -->
+<div class="content p-t-0" style="padding-top: 0.86rem !important;">
+	<div id="page-container" class="fade page-without-sidebar">
+		<!-- begin #header -->
+		<div id="header" class="header navbar navbar-default navbar-fixed-top">
+			<!-- begin container-fluid -->
+			<h4 class="text-center">话费充值
+			<a class="btn no-border btn-white pull-left m" id="goback">
+				<i class="iconfont tab-icon">&#xe634;</i>
+			</a>
+		</h4>
+			<!-- end container-fluid -->
+		</div>
+		<!-- begin #header -->
+	</div>
+	<!-- begin row -->
+	<div class="row">
+		<!-- begin col-12 -->
+		<div class="panel panel-inverse panel-with-tabs" data-sortable-id="ui-unlimited-tabs-1">
+			<div class="panel-heading p-0">
+				<!-- begin nav-tabs -->
+				<div class="tab-overflow">
+					<ul class="nav nav-tabs nav-tabs-inverse nav-top p-t-5">
+						<!--<li class="prev-button"><a href="javascript:;" data-click="prev-tab" class="text-success"><i class="fa fa-arrow-left"></i></a></li>-->
+						<li class="active">
+							<a href="#nav-tab-1" data-toggle="tab"><i class="iconfont tab-icon">&#xe6d5;</i>查询条件<i class="iconfont tab-result-icon">&#xe611;</i></a>
+						</li>
+						<li class="">
+							<a href="#nav-tab-2" data-toggle="tab"><i class="iconfont tab-icon">&#xe603;</i>查询结果<i class="iconfont tab-result-icon dis-none">&#xe611;</i></a>
+						</li>
+						<!--<li class="next-button"><a href="javascript:;" data-click="next-tab" class="text-success"><i class="fa fa-arrow-right"></i></a></li>-->
+					</ul>
+				</div>
+			</div>
+			<div class="tab-content p-0 m-t-10">
+				<div class="tab-pane fade active in tab-top" id="nav-tab-1">
+					<div class="list-box m-t-10">
+						<ul class="choice-list-box bg-body border-none">
+							<li>
+								<div class="choice-box">
+									<i class="iconfont pull-left">&#xe61d;</i>
+									<input placeholder="请输入手机号码" class="choice-input" />
+								</div>
+							</li>
+							<li class="m-t-10">
+								<div class="choice-box">
+									<i class="iconfont pull-left">&#xe688;</i>
+									<input class="mydate form-control" id="" placeholder="受理时间">
+								</div>
+							</li>
+							<li class="m-t-10">
+								<div class="choice-box">
+									<i class="iconfont pull-left">&#xe635;</i>
+									<input placeholder="请输订单号码" class="choice-input" />
+								</div>
+							</li>
+						</ul>
+					</div>
+					<!-- begin button -->
+					<div class="sub-btn-box p p-b-15">
+						<button class="sun-btn done">查询</button>
+					</div>
+					<!-- end button -->
+				</div>
+				<div class="tab-pane fade tab-top" id="nav-tab-2">
+					<div class="list-box m-t-10">
+						<ul class="choice-list-box m-0">
+							<li>
+								<i class="iconfont pull-left">&#xe66c;</i>
+								<span class="list-title font-secondary">充值订单列表</span>
+							</li>
+							<li href="#ordercon1" data-toggle="modal">
+								<i class="iconfont pull-left">&#xe640;</i>
+								<span class="list-title">18596668899<span class="font-secondary">(手机号)</span></span>
+							</li>
+							<li href="#ordercon1" data-toggle="modal">
+								<i class="iconfont pull-left">&#xe640;</i>
+								<span class="list-title">2017/2/11<span class="font-secondary">(充值日期)</span></span>
+							</li>
+							<li href="#ordercon1" data-toggle="modal">
+								<i class="iconfont pull-left">&#xe640;</i>
+								<span class="list-title">201702110011<span class="font-secondary">(订单号)</span></span>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+			<!-- end col-12 -->
+		</div>
+		<!-- end row -->
+
+	</div>
+	<!-- end #content -->
+	<div class="modal fade modal-message modal-top" id="ordercon1">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+					<h4 class="modal-title">订单详情</h4>
+				</div>
+				<div>
+					<ul class="choice-list-box m-t-10">
+						<li>
+							<i class="iconfont">&#xe686;</i>
+							<span class="list-title font-secondary">充值金额</span>
+							<span class="pull-right font-secondary p-r-10 list-text"><span class="font-orange">￥128</span>元</span>
+						</li>
+						<li>
+							<i class="iconfont">&#xe688;</i>
+							<span class="list-title font-secondary">充值时间</span>
+							<span class="pull-right p-r-10 list-text">2017/02/11 08:01:33</span>
+						</li>
+					</ul>
+					<div class="list-box">
+						<div class="sub-btn-box p p-b-15 relative">
+							<button class="double-btn done" data-dismiss="modal">退款</button>
+							<button class="double-btn done" data-dismiss="modal">关闭</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- begin scroll to top btn -->
+	<a href="javascript:;" class="btn btn-icon btn-circle btn-success btn-scroll-to-top fade" data-click="scroll-top"><i class="fa fa-angle-up"></i></a>
+	<!-- end scroll to top btn -->
+</div>
+<script>
+	$(document).ready(function() {
+		App.init();
+		// bill.charge.init();
+		order.broadband.init_select();
+	});
+</script>

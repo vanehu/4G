@@ -30,6 +30,7 @@ import com.al.ec.serviceplatform.client.DataBus;
 import com.al.ec.serviceplatform.client.ResultCode;
 import com.al.ecs.common.entity.JsonResponse;
 import com.al.ecs.common.entity.PageModel;
+import com.al.ecs.common.util.DateUtil;
 import com.al.ecs.common.util.JsonUtil;
 import com.al.ecs.common.util.PageUtil;
 import com.al.ecs.common.web.ServletUtils;
@@ -46,6 +47,7 @@ import com.al.lte.portal.bmo.crm.CustBmo;
 import com.al.lte.portal.bmo.crm.OrderBmo;
 import com.al.lte.portal.bmo.staff.StaffBmo;
 import com.al.lte.portal.common.CommonMethods;
+import com.al.lte.portal.common.Const;
 import com.al.lte.portal.common.EhcacheUtil;
 import com.al.lte.portal.common.SysConstant;
 import com.al.lte.portal.common.print.CustomizeBillUtils;
@@ -1789,6 +1791,137 @@ public class BillController extends BaseController {
 		} catch (Exception e) {
 			request.setAttribute("errorMsg", "生成客户化账单打印预览页面发生异常，错误信息:" + e.getMessage());
 			return "/error/500.jsp";
+		}
+	}
+	
+	@RequestMapping(value = "/paymentQueryPrepare", method = RequestMethod.POST)
+	public String paymentQueryPrepare() {
+		return "/app/bill/payment-query-prepare";
+	}
+	
+	@RequestMapping(value = "/paymentQuery", method = RequestMethod.POST)
+	@ResponseBody
+	public JsonResponse paymentQuery(@RequestBody Map<String, Object> paramMap, @LogOperatorAnn String flowNum) {
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
+		try {
+			String accNbr = MapUtils.getString(paramMap, "accNbr", "");
+			if (!accNbr.matches(Const.LTE_PHONE_HEAD)) {
+				return super.failed("非法请求！", ResultConstant.ACCESS_NOT_NORMAL.getCode());
+			}
+			// 以下字段先设定默认值，后续有需求再做调整
+			// 1：按ReqSerial 充值订单号查询； 2：按AccNbr充值号码查询;
+			paramMap.put("qryType", "2");
+			// 有效查询期限为一个月
+			paramMap.put("qryFromTime", DateUtil.getNowDefault());
+			paramMap.put("qryEndTime", DateUtil.nearDayDetail(30));
+			// TODO
+			Map<String, Object> resultMap = billBmo.paymentQuery(paramMap, flowNum, sessionStaff);
+			return successed(resultMap);
+		}catch(BusinessException be){
+			return failed(be);
+		}catch(InterfaceException ie) {
+			return failed(ie, paramMap, ErrorCode.BILL_PAYMENT_QUERY);
+   		}catch(Exception e){
+   			return failed(ErrorCode.BILL_PAYMENT_QUERY, e, paramMap);
+		}
+	}
+	
+	
+	@RequestMapping(value = "/getTranId", method = RequestMethod.GET)
+	@ResponseBody
+	public JsonResponse getTranId(@RequestParam Map<String, Object> paramMap, @LogOperatorAnn String flowNum) {
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
+		try {
+			String tranId = billBmo.getTranId(paramMap, flowNum, sessionStaff);
+			return successed(tranId, tranId == null ? ResultConstant.FAILD.getCode() : ResultConstant.SUCCESS.getCode());
+		}catch(BusinessException be){
+			return failed(be);
+		}catch(InterfaceException ie) {
+			return failed(ie, paramMap, ErrorCode.BILL_GET_TRAN_ID);
+   		}catch(Exception e){
+   			return failed(ErrorCode.BILL_GET_TRAN_ID, e, paramMap);
+		}
+	}
+	
+	@RequestMapping(value = "/chargePrepare", method = RequestMethod.POST)
+    public String chargePrepare() {
+		return "/app/bill/charge-prepare";
+    }
+	
+	@RequestMapping(value = "/charge", method = RequestMethod.POST)
+	@ResponseBody
+	public JsonResponse charge(@RequestBody Map<String, Object> paramMap, HttpSession session, @LogOperatorAnn String flowNum) {
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
+		try {
+			String feeAmount = MapUtils.getString(paramMap, "feeAmount");
+			String destinationId = MapUtils.getString(paramMap, "destinationId");
+			if (!(null != feeAmount && null != destinationId 
+					&& destinationId.matches(Const.LTE_PHONE_HEAD) 
+					&& feeAmount.matches(Const.FEE_AMOUNT) 
+					&& Integer.parseInt(feeAmount) <= 50000 
+					&& feeAmount.equals((String) session.getAttribute(Const.SESSION_PAY_CHARGE_AMOUNT)))) {
+				return super.failed("非法请求！", ResultConstant.ACCESS_NOT_NORMAL.getCode());
+			}
+			// 以下字段先设定默认值，后续有需求再做调整
+			// 缴费用户属性 0：固话 1：小灵通 2：移动用户 3：ADSL（宽带）
+			paramMap.put("destinationAttr", "2");
+			// 帐本类型 0：默认（全部应缴话费）1：本地话费2：长途话费3：上网费
+			paramMap.put("balanceItemTypeID", "0");
+			// 充值单位类型 0：分（金额）1：分钟（时长）2：次数3：流量（KB）
+			paramMap.put("unitTypeId", "0");
+
+			Map<String, Object> resultMap = billBmo.charge(paramMap, flowNum, sessionStaff);
+			return successed(resultMap, MapUtils.getIntValue(resultMap, "resultCode", 1));
+		}catch(BusinessException be){
+			return failed(be);
+		}catch(InterfaceException ie) {
+			return failed(ie, paramMap, ErrorCode.BILL_CHARGE);
+   		}catch(Exception e){
+   			return failed(ErrorCode.BILL_CHARGE, e, paramMap);
+		}
+	}
+	
+	@RequestMapping(value = "/balance", method = RequestMethod.POST)
+	@ResponseBody
+	public JsonResponse balance(@RequestBody Map<String, Object> paramMap, @LogOperatorAnn String flowNum) {
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
+		try {
+			String destinationId = MapUtils.getString(paramMap, "destinationId");
+			if (!destinationId.matches(Const.LTE_PHONE_HEAD)) {
+				return super.failed("非法请求！", ResultConstant.ACCESS_NOT_NORMAL.getCode());
+			}
+			// 以下字段先设定默认值，后续有需求再做调整
+			// 欠费查询默认入参
+			// 查询条件类型 0：帐户 1：用户 2：输入号码（含区号）
+			paramMap.put("billQueryType", "2");
+			// 用户属性 0-固话 2-移动 3-宽带
+			paramMap.put("destinationAttr", "2");
+			// 查询业务类型 0：按帐户查询 1：按用户查询
+			paramMap.put("queryFlag", "0");
+			// 查询费用类型 0:查询全部费用 1:只查询信息费 2:查询通讯费
+			paramMap.put("feeQueryFlag", "0");
+
+			Map<String, Object> arrearsResultMap = billBmo.arrears(paramMap, flowNum, sessionStaff);
+			
+			// 余额查询默认入参
+			// 用户号码类型 0 ：客户ID 1：用户ID 2：用户号码
+			paramMap.put("destinationIdType", "2");
+			// 用户属性（当号码类型为用户号码时填写） 0：固话 2：移动 3：宽带；（同上）
+			paramMap.put("destinationAttr", "2");
+			// 电话区号
+			paramMap.put("areaCode", "");
+			// 查询业务类型 0：按帐户查询 1：按用户查询（同上）
+			paramMap.put("queryFlag", "0");
+			// 查询余额类型 0：表示查询对象拥有的余额帐本 1：表示查询对象可以使用的余额帐本 2：表示查询对象可以划拨到支付帐户的余额帐本 3：查询对象余额总视图：省通信余额+全国中心ABM支付余额
+			paramMap.put("queryItemType", "3");
+			Map<String, Object> balanceResultMap = billBmo.balance(paramMap, flowNum, sessionStaff);
+			return successed(balanceResultMap);
+		}catch(BusinessException be){
+			return failed(be);
+		}catch(InterfaceException ie) {
+			return failed(ie, paramMap, ErrorCode.BILL_BALANCE);
+   		}catch(Exception e){
+   			return failed(ErrorCode.BILL_BALANCE, e, paramMap);
 		}
 	}
 }

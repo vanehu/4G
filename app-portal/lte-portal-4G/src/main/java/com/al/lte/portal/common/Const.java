@@ -48,6 +48,8 @@ public class Const {
 	public static final String SESSION_SIGNATURE_HANDLE_CUST = "SESSION_SIGNATURE_HANDLE_CUST";
 	/**经办人证件照上传校验*/
 	public static final String SESSION_UPLOAD_VIR_OLID = "SESSION_UPLOAD_VIR_OLID";
+	// 支付平台金额
+	public static final String SESSION_PAY_CHARGE_AMOUNT = "SESSION_PAY_CHARGE_AMOUNT";
 	
 	/**
 	 * #896069对于省级工号只配置了一个省级渠道的情况，将登录地区加载到受理地区(三级地区)；若登录地区为直辖市
@@ -106,5 +108,14 @@ public class Const {
 	 * 正则：匹配全国各省的省级地区ID(32省)
 	 */
 	public static final String AREA_ID_REGEX_A = "^(811|831|812|850|854|863|815|823|845|861|842|835|832|846|864|814|853|836|837|843|851|844|813|841|821|822|834|833|852|862|865|899)0000$";
+	
+	/**
+	 * 正则：匹配中国电信手机号头
+	 */
+	public static final String LTE_PHONE_HEAD = "^(180|189|133|134|153|181|108|170|173|177)\\d{8}$";
 
+	/**
+	 * 正则：正整数话费（单位：分）
+	 */
+	public static final String FEE_AMOUNT = "^[1-9]+[0-9]*0{2}$";
 }

@@ -21,7 +21,7 @@ order.calcharge = (function(){
 	var reason = '';//修改原因
 	var remark = '';//备注
 	var _myFlag=false;//是否开启调用支付平台
-	var _busiUpType;//业务类型，1表示手机业务2表示宽带甩单
+	var _busiUpType;//业务类型，1表示手机业务2表示宽带甩单4表示话费充值
 	var payType;
 	var _returnFlag=true;//支付平台返回成功后，返回按钮提示不让进行
 	var _haveCharge=false;//是否已经下过计费接口
@@ -787,7 +787,11 @@ order.calcharge = (function(){
 			timeId=setInterval(order.calcharge.timeToFee,3000);//开始定时任务
 		}else if(order.calcharge.busiUpType=="-1"){//补收费
 			repair.main.queryPayOrdStatus1(soNbr, status,type);
-		}else{//宽带甩单收费完直接订单提交
+		}else if(order.calcharge.busiUpType == CONST.APP_CHARGE_BUSI_UP_TYPE) { // 话费充值
+			// 初始化失败次数
+			bill.charge.failTimes = 0;
+			bill.charge.afterPayCallBack(soNbr, status, type);
+		} else{//宽带甩单收费完直接订单提交
 			order.broadband.queryPayOrdStatus(soNbr, status,type);
 		}
 	};

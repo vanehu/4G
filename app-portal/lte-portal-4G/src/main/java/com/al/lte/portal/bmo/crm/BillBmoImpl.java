@@ -1,23 +1,30 @@
 package com.al.lte.portal.bmo.crm;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Map;
 
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateFormatUtils;
 import org.dom4j.DocumentException;
 import org.springframework.stereotype.Service;
 
 import com.al.ec.serviceplatform.client.DataBus;
 import com.al.ec.serviceplatform.client.ResultCode;
+import com.al.ecs.common.util.JsonUtil;
 import com.al.ecs.exception.BusinessException;
 import com.al.ecs.exception.ErrorCode;
 import com.al.ecs.exception.InterfaceException;
+import com.al.ecs.exception.ResultConstant;
+import com.al.ecs.exception.InterfaceException.ErrType;
 import com.al.ecs.log.Log;
 import com.al.lte.portal.common.InterfaceClient;
 import com.al.lte.portal.common.PortalServiceCode;
 import com.al.lte.portal.common.ServiceClient;
+import com.al.lte.portal.common.SysConstant;
 import com.al.lte.portal.model.SessionStaff;
 
 
@@ -400,4 +407,147 @@ public class BillBmoImpl implements BillBmo {
 		}
 		return resultMap;
 	}
+
+	public Map<String, Object> charge(Map<String, Object> paramMap,
+			String flowNum, SessionStaff sessionStaff) throws Exception {
+		DataBus db = ServiceClient.callService(paramMap, PortalServiceCode.APP_CHARGE, flowNum, sessionStaff);
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		try {
+			if (ResultCode.R_SUCCESS.equals(StringUtils.defaultString(db.getResultCode()))) {
+				if (MapUtils.isEmpty(db.getReturnlmap())) {
+					resultMap.put("resultCode", ResultCode.R_FAILURE);
+					resultMap.put("message", "服务层返回的returnMap为空");
+					return resultMap;
+				}
+				Map<String, Object> returnMap = db.getReturnlmap();
+				if(ResultConstant.R_POR_SUCCESS.getCode().equals(returnMap.get("code"))){
+					resultMap.put("resultCode", ResultCode.R_SUCC);
+					resultMap.put("result", returnMap);
+				}else{
+					resultMap.put("resultCode", ResultCode.R_FAILURE);
+					resultMap.put("message", returnMap.get("message"));
+				}
+			}else{
+				resultMap.put("resultCode", ResultCode.R_FAILURE);
+				resultMap.put("message", db.getResultMsg());
+			}
+		} catch(Exception e){
+			log.error("翼销售充值返回的数据异常", e);
+			throw new BusinessException(ErrorCode.BILL_CHARGE, paramMap, db.getReturnlmap(), e);
+		}
+		return resultMap;
+	}
+
+	public Map<String, Object> balance(Map<String, Object> paramMap,
+			String flowNum, SessionStaff sessionStaff) throws Exception {
+		DataBus db = ServiceClient.callService(paramMap, PortalServiceCode.APP_BALANCE, flowNum, sessionStaff);
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		try {
+			if (ResultCode.R_SUCCESS.equals(StringUtils.defaultString(db.getResultCode()))) {
+				if (MapUtils.isEmpty(db.getReturnlmap())) {
+					resultMap.put("resultCode", ResultCode.R_FAILURE);
+					resultMap.put("message", "服务层返回的returnMap为空");
+					return resultMap;
+				}
+				Map<String, Object> returnMap = db.getReturnlmap();
+				if(ResultConstant.R_POR_SUCCESS.getCode().equals(returnMap.get("code"))){
+					resultMap.put("resultCode", ResultCode.R_SUCC);
+					resultMap.put("result", returnMap);
+				}else{
+					resultMap.put("resultCode", ResultCode.R_FAILURE);
+					resultMap.put("message", returnMap.get("message"));
+				}
+			}else{
+				resultMap.put("resultCode", ResultCode.R_FAILURE);
+				resultMap.put("message", db.getResultMsg());
+			}
+		} catch(Exception e){
+			log.error("翼销售余额查询返回的数据异常", e);
+			throw new BusinessException(ErrorCode.BILL_BALANCE, paramMap, db.getReturnlmap(), e);
+		}
+		return resultMap;
+	}
+
+	@Override
+	public Map<String, Object> arrears(Map<String, Object> paramMap,
+			String flowNum, SessionStaff sessionStaff) throws Exception {
+		DataBus db = ServiceClient.callService(paramMap, PortalServiceCode.APP_ARREARS, flowNum, sessionStaff);
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		try {
+			if (ResultCode.R_SUCCESS.equals(StringUtils.defaultString(db.getResultCode()))) {
+				if (MapUtils.isEmpty(db.getReturnlmap())) {
+					resultMap.put("resultCode", ResultCode.R_FAILURE);
+					resultMap.put("message", "服务层返回的returnMap为空");
+					return resultMap;
+				}
+				Map<String, Object> returnMap = db.getReturnlmap();
+				if(ResultConstant.R_POR_SUCCESS.getCode().equals(returnMap.get("code"))){
+					resultMap.put("resultCode", ResultCode.R_SUCC);
+					resultMap.put("result", returnMap);
+				}else{
+					resultMap.put("resultCode", ResultCode.R_FAILURE);
+					resultMap.put("message", returnMap.get("message"));
+				}
+			}else{
+				resultMap.put("resultCode", ResultCode.R_FAILURE);
+				resultMap.put("message", db.getResultMsg());
+			}
+		} catch(Exception e){
+			log.error("翼销售余额查询返回的数据异常", e);
+			throw new BusinessException(ErrorCode.BILL_BALANCE, paramMap, db.getReturnlmap(), e);
+		}
+		return resultMap;
+	}
+
+	@Override
+	public Map<String, Object> paymentQuery(Map<String, Object> paramMap,
+			String flowNum, SessionStaff sessionStaff) throws Exception {
+		DataBus db = ServiceClient.callService(paramMap, PortalServiceCode.APP_PAYMENT_QUERY, flowNum, sessionStaff);
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		try {
+			if (ResultCode.R_SUCCESS.equals(StringUtils.defaultString(db.getResultCode()))) {
+				if (MapUtils.isEmpty(db.getReturnlmap())) {
+					resultMap.put("resultCode", ResultCode.R_FAILURE);
+					resultMap.put("message", "服务层返回的returnMap为空");
+					return resultMap;
+				}
+				Map<String, Object> returnMap = db.getReturnlmap();
+				if(ResultConstant.R_POR_SUCCESS.getCode().equals(returnMap.get("code"))){
+					resultMap.put("resultCode", ResultCode.R_SUCC);
+					resultMap.put("result", returnMap);
+				}else{
+					resultMap.put("resultCode", ResultCode.R_FAILURE);
+					resultMap.put("message", returnMap.get("message"));
+				}
+			}else{
+				resultMap.put("resultCode", ResultCode.R_FAILURE);
+				resultMap.put("message", db.getResultMsg());
+			}
+		} catch(Exception e){
+			log.error("翼销售充值订单查询返回的数据异常", e);
+			throw new BusinessException(ErrorCode.BILL_PAYMENT_QUERY, paramMap, db.getReturnlmap(), e);
+		}
+		return resultMap;
+	}
+
+	@Override
+	public String getTranId(Map<String, Object> paramMap,
+			String flowNum, SessionStaff sessionStaff) throws Exception {
+		DataBus db = ServiceClient.callService(new HashMap<String, Object>(), PortalServiceCode.SERVICE_GET_TRANID, null, sessionStaff);
+		String tranId = null;
+		try {
+			if("POR-0000".equals(db.getResultCode().toString())){
+				tranId = MapUtils.getString(paramMap, "srcSysId", SysConstant.CSB_SRC_SYS_ID_APP) + DateFormatUtils.format(new Date(), "yyyyMMdd") + MapUtils.getString(db.getReturnlmap(), "TranId", "");
+				if (28 == StringUtils.length(tranId)) {
+					return tranId;
+				}
+			}
+			
+		} catch(Exception e){
+			log.error("生成csb流水号异常", e);
+			throw new BusinessException(ErrorCode.BILL_GET_TRAN_ID, paramMap, db.getReturnlmap(), e);
+		}
+		return null;
+	}
+
 }

@@ -2890,6 +2890,8 @@ public class OrderController extends BaseController {
 			if (rMap != null && "POR-0000".equals(rMap.get("respCode").toString())) {
 				jsonResponse = super.successed(MDA.PAY_URL.toString()+"payToken="+rMap.get("payToken"),
 						ResultConstant.SUCCESS.getCode());
+				// 保存金额到session
+				session.setAttribute(Const.SESSION_PAY_CHARGE_AMOUNT, MapUtils.getString(param, "charge", ""));
 			} else {
 				jsonResponse = super.failed(rMap.get("respMsg").toString(),
 						ResultConstant.SERVICE_RESULT_FAILTURE.getCode());

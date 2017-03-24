@@ -160,4 +160,54 @@ public interface BillBmo {
 	public Map<String, Object> getInvoiceItems(Map<String, Object> dataBusMap, String optFlowNum,SessionStaff sessionStaff) throws Exception;
 	
 	public Map<String, Object> chargeRecord(Map<String, Object> dataBusMap,String optFlowNum, SessionStaff sessionStaff);
+	
+	/**
+	 * 翼销售充值
+	 * @param paramMap
+	 * @param flowNum
+	 * @param sessionStaff
+	 * @return
+	 */
+	public Map<String, Object> charge(Map<String, Object> paramMap,
+			String flowNum, SessionStaff sessionStaff) throws Exception;
+	
+	/**
+	 * 翼销售查余额
+	 * @param paramMap
+	 * @param flowNum
+	 * @param sessionStaff
+	 * @return
+	 */
+	public Map<String, Object> balance(Map<String, Object> paramMap,
+			String flowNum, SessionStaff sessionStaff) throws Exception;
+
+	/**
+	 * 翼销售欠费查询
+	 * @param paramMap
+	 * @param flowNum
+	 * @param sessionStaff
+	 * @return
+	 */
+	public Map<String, Object> arrears(Map<String, Object> paramMap,
+			String flowNum, SessionStaff sessionStaff) throws Exception;
+
+	/**
+	 * 翼销售充值订单查询
+	 * @param paramMap
+	 * @param flowNum
+	 * @param sessionStaff
+	 * @return
+	 */
+	public Map<String, Object> paymentQuery(Map<String, Object> paramMap,
+			String flowNum, SessionStaff sessionStaff) throws Exception;
+	/**
+	 * 生成csb流水号（10位平台编码（默认翼销售）+YYYYMMDD+10位序列）
+	 * @param paramMap
+	 * @param flowNum
+	 * @param sessionStaff
+	 * @return
+	 * @throws Exception
+	 */
+	public String getTranId(Map<String, Object> paramMap,
+			String flowNum, SessionStaff sessionStaff) throws Exception;
 }

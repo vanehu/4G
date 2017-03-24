@@ -537,9 +537,71 @@ ec.util=(function(){
 		
 		return isNoErr;
 	};
-    
+
+    /**
+     * map操作函数get
+     */
+    var _mapGet = function (map, key) {
+        if (typeof map != "object") {
+            return;
+        }
+        return map[key];
+    };
+
+    /**
+     * map操作函数put
+     */
+    var _mapPut = function (map, k, v) {
+        if (typeof map != "object") {
+            return;
+        }
+        map[k] = v;
+    };
+
+    /**
+     * 位数不足，补0操作
+     * str 原始字符串
+     * length 补0处理后的字符串长度
+     * 如果“0”不够，自行添加，目前最多补五个“0”
+     */
+    var _addPrefix = function (str, length){
+	    var str = '00000' + str;
+	    return str.substring(str.length - length, str.length);
+	};
+	
+	/**
+	 * 日期时间格式化
+	 * date 输入日期
+	 * pattern 返回的日期格式（目前返回yyyyMMddHHmmssSSS和yyyyMMddHHmmss（默认）格式，如需其它格式，自行扩展）
+	 */
+	var _dateFormat = function (date, pattern) {
+		if (!ec.util.isObj(date)) {
+			date = new Date();
+		}
+		var dateObj = {
+				yyyy: date.getFullYear(),
+				MM: _addPrefix(date.getMonth() + 1, 2),
+				dd: _addPrefix(date.getDate(), 2),
+				HH: _addPrefix(date.getHours(), 2),
+				mm: _addPrefix(date.getMinutes(), 2),
+				ss: _addPrefix(date.getSeconds(), 2),
+				SSS: _addPrefix(date.getMilliseconds(), 3)
+		};
+		switch (pattern) {
+			case CONST.DATE_FORMATE.STRING_A: 
+				return dateObj.yyyy + dateObj.MM + dateObj.dd + dateObj.HH + dateObj.mm + dateObj.ss;
+				break;
+			case CONST.DATE_FORMATE.STRING_B: 
+				return dateObj.yyyy + dateObj.MM + dateObj.dd + dateObj.HH + dateObj.mm + dateObj.ss + dateObj.SSS;
+				break;
+			default: 
+				return dateObj.yyyy + dateObj.MM + dateObj.dd + dateObj.HH + dateObj.mm + dateObj.ss;
+		}
+	};
 	//要暴露出的公共方法
 	return {
+		dateFormat			:_dateFormat,
+		addPrefix			:_addPrefix,
 		showErrors			:_showErrorsTip,
 		defaultStr			:_defaultStr,
 		back				:_back,
@@ -564,6 +626,8 @@ ec.util=(function(){
 		isObj				:_isObj,
 		isArray				:_isArray,
 		sort				:_sort,
-		checkParam			:_checkParam
+		checkParam			:_checkParam,
+        mapGet              : _mapGet,
+        mapPut              : _mapPut
 	};
 })();
