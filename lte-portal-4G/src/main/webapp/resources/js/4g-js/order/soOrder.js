@@ -2846,6 +2846,7 @@ SoOrder = (function() {
                 var parent = this;
                 var ca = $.extend(true, {}, OrderInfo.boCertiAccNbrRel);
                 var isON = query.common.queryPropertiesStatus("REAL_USER_"+OrderInfo.cust.areaId.substr(0,3));//新使用人开关
+                isON = isON||OrderInfo.isCltNewOrder();//采集单走新使用人逻辑，但不受开关控制，直接为ON
                 if (isON) {
                     $.each(OrderInfo.subUserInfos, function () {
                         if (this.prodId == parent.prodId && this.servType == "1") {//servType：1的为使用人，2为责任人
@@ -4351,7 +4352,7 @@ SoOrder = (function() {
                 var parent = this;
                 var isCheck = true;//是否进行一证五号校验，选择了使用人的号码之前校验过，这里跳过
 
-                if (isON) {
+                if (isON||OrderInfo.isCltNewOrder()) {//采集单走新使用人逻辑，但不受开关控制，直接为ON
                     if (ec.util.isObj(OrderInfo.subUserInfos) && OrderInfo.subUserInfos.length > 0) {//有选择使用人的情况
                         $.each(OrderInfo.subUserInfos, function () {
                             if (this.prodId == parent.prodId && this.servType == "1") {//servType：1的为使用人，2为责任人
