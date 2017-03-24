@@ -41,6 +41,7 @@
 	<!-- 数据源配置end -->
 	<mda className="com.al.ecs.common.util" moduleName = "Lte4GManager">	   
 		<const type="String" name="CSB_WS_URL" value="http://10.1.5.111:9080/CRM-DEP/services/DEPService?wsdl" />
+		<const type="String" name="BILL_CSB_HTTP_URL" description="App CSB测试环境" value="http://10.128.91.65:8201/CRM-CSB/HttpAPIService" />
 		<const type="String" name="CSB_HTTP_URL" value="http://10.1.5.111:9080/CRM-DEP/HttpDEPService" />
 		<const type="String" name="CSB_FLAG" value="OFF" />
 		<const type="String" name="ASYNC_FLAG" value="OFF" />
@@ -416,5 +417,6 @@
  	     <const type="String" name="APPDESC" value="LTE" description="LTE 或 MVNO "/>
  	     <const type="String" name="FILE_PREFER_FLAG" value="ON" description="决定参数是先从以下配置中取，还是先从数据库参数表取 "/>
  	     <const type="String" name="ABS_DIRECTORY_KEY" value="/app/data/portal/invoiceTemplate/" description="如果启用绝对路径，则使用下面路径作为父级路径 "/>
+ 	     <const type="String" name="SECRET_KEY" value="DJKF34ER35D58D" description="xml数字签名密钥"/>
  	</mda>
 </mdas>
