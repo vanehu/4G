@@ -862,6 +862,18 @@ public class DateUtil {
 		cal.set(Calendar.DAY_OF_YEAR, cal.get(Calendar.DAY_OF_YEAR)+n);
 		return formatDate(cal.getTime(),"yyyy-MM-dd");
 	}
+	/**
+	 * 近日（n日前/后），n为正数为n日后，n为负数为n日前。默认日期格式yyyy-MM-dd.
+	 * @author chylg
+	 * @param format 日期格式
+	 * @param num n月
+	 * @return yyyyMMddHHmmss
+	 */
+	public static String nearDayDetail(int n){
+		Calendar cal = Calendar.getInstance();
+		cal.set(Calendar.DAY_OF_YEAR, cal.get(Calendar.DAY_OF_YEAR)+n);
+		return formatDate(cal.getTime(),DATE_FORMATE_STRING_DEFAULT);
+	}
 	
 	public static void main(String[] args) throws ParseException {
 		//System.out.println(nearDay("yyyyMMdd000000",-7));

@@ -37,6 +37,10 @@ public class MDA {
 	 */
 	public static final String CSB_WS_URL=new String("");
 	/**
+	 * App CSB测试地址
+	 */
+	public static final String BILL_CSB_HTTP_URL = new String("");
+	/**
 	 * 调用接口过csb的http地址
 	 */
 	public static final String CSB_HTTP_URL=new String("");
@@ -569,6 +573,8 @@ public class MDA {
 
     /**一证一号开关*/
     public static final Map<String, String> ONE_CERT_5_NUMBER_ON_OFF = new HashMap<String, String>();
+    /**xml数字签名密钥*/
+	public static final String SECRET_KEY = new String("");
 
 	/**安全敏感相关的配置列表*/
 	public static final List<String> SENSITIVE_KEYS = new ArrayList<String>();
