@@ -3205,13 +3205,28 @@ order.cust = (function(){
             if (ec.util.isObj(result)) {
             	if (ec.util.isObj(result)) {
             		ec.util.mapPut(OrderInfo.oneCardFiveNO.usedNum, _getCustInfo415Flag(inParam), result.usedNum);
+            		//针对使用人，临时加个判断
+            		var userFlag = false;
+            		$.each(OrderInfo.subUserInfos, function () {
+                        if (this.certNum == _getCustInfo415Flag(inParam)) {
+                        	userFlag = true;
+                        }
+                    });
+            		$.each(OrderInfo.choosedUserInfos, function () {
+                        if (this.custInfo.certNum == _getCustInfo415Flag(inParam)) {
+                        	userFlag = true;
+                        }
+                    });
             		if(parseInt(result.usedNum)>=5 && OrderInfo.actionFlag ==0){
             			$.alert("提示", "证件「" + inParam.certNum + "」全国范围已有5张及以上移动号卡，无法在证件下新增证号关系！");
                 		checkResult = false;
                 	}else if(parseInt(result.usedNum) <5 && OrderInfo.oneCardFiveNum.length<=0){
                 		checkResult=true;
-                	}else if(parseInt(result.usedNum)>=5 && OrderInfo.actionFlag !=0){//应该可以直接else，由于是补丁，只能新加
+                	}else if(parseInt(result.usedNum)>=5 && OrderInfo.actionFlag !=0 && !userFlag){//应该可以直接else，由于是补丁，只能新加
                 		checkResult=true;
+                	}else if(parseInt(result.usedNum)>=5 && userFlag){
+                		$.alert("提示", "证件「" + inParam.certNum + "」全国范围已有5张及以上移动号卡，无法在证件下新增证号关系！");
+                		checkResult = false;
                 	}
                 	if(OrderInfo.oneCardFiveNum.length>0){
                 		 $.each(OrderInfo.oneCardFiveNum, function () {
