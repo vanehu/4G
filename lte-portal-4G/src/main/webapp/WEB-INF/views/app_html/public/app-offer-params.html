@@ -50,7 +50,10 @@
 					var segmentName=custInfo.segmentName;
 					var vipLevel=custInfo.vipLevel;
 					var vipLevelName=custInfo.vipLevelName;
-					OrderInfo.cust={"addressStr": addressStr,"areaId": areaId,"areaName": areaName,"authFlag": "1","custFlag": custFlag,"custId": custId,"idCardNumber": idCardNumber,"identityCd": identityCd,"identityName": identityName,"norTaxPayer": "","partyName": partyName,"segmentId": segmentId,"segmentName": segmentName,"vipLevel": vipLevel,"vipLevelName": vipLevelName};
+					var certNum = custInfo.certNum;
+					var CN = custInfo.CN;
+					var address = custInfo.address;
+					OrderInfo.cust={"CN": CN,"address": address,"certNum": certNum,"addressStr": addressStr,"areaId": areaId,"areaName": areaName,"authFlag": "1","custFlag": custFlag,"custId": custId,"idCardNumber": idCardNumber,"identityCd": identityCd,"identityName": identityName,"norTaxPayer": "","partyName": partyName,"segmentId": segmentId,"segmentName": segmentName,"vipLevel": vipLevel,"vipLevelName": vipLevelName};
 					return false;
 				});
 				//订购业务

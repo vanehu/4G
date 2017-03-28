@@ -305,6 +305,9 @@
 		var segmentName="";
 		var vipLevel="";
 		var vipLevelName="";
+		var certNum = "";
+		var CN = "";
+		var address = "";
 		$.each(custInfos.custInfos,function(index,custInfo){
 			 addressStr=custInfo.addressStr;
 			 areaId=custInfo.areaId;
@@ -321,7 +324,10 @@
 			 segmentName=custInfo.segmentName;
 			 vipLevel=custInfo.vipLevel;
 			 vipLevelName=custInfo.vipLevelName;
-			OrderInfo.cust={addressStr: addressStr,areaId: areaId,areaName: areaName,authFlag: "1",custFlag: custFlag,custId: custId,idCardNumber: idCardNumber,identityCd: identityCd,identityName: identityName,norTaxPayer: "",partyName: partyName,segmentId: segmentId,segmentName: segmentName,vipLevel: vipLevel,vipLevelName: vipLevelName};
+			 certNum = custInfo.certNum;
+			 CN = custInfo.CN;
+			 address = custInfo.address;
+			OrderInfo.cust={CN: CN,address: address,certNum: certNum,addressStr: addressStr,areaId: areaId,areaName: areaName,authFlag: "1",custFlag: custFlag,custId: custId,idCardNumber: idCardNumber,identityCd: identityCd,identityName: identityName,norTaxPayer: "",partyName: partyName,segmentId: segmentId,segmentName: segmentName,vipLevel: vipLevel,vipLevelName: vipLevelName};
 			nextFlag = true;
 		});
 	}else{
