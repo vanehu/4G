@@ -75,6 +75,9 @@ offerChange = (function() {
 			var max = 0;
 			str = "";
 			$("#div_content").empty();
+			if (order.prodModify.choosedProdInfo.productId == CONST.PROD_SPEC.PROD_CLOUD_OFFER) {
+				str += OrderInfo.offerSpec.offerSpecName;
+			}
 			$.each(OrderInfo.offerSpec.offerRoles,function(){
 				if(this.memberRoleCd=="401"){
 					var offerRole = this;
