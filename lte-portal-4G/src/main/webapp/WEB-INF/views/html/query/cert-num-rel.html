@@ -29,8 +29,10 @@
                                  <dt>证件类型：</dt>
                                   <dd>
                                     <select id="identidiesTypeCd" onchange="query.cert.identidiesTypeCdChoose(this,'orderAttrIdCard')">
-                                        <#list list as item>
-										 <option value="${item.certTypeCd}">${item.name}</option>
+                                        <#list list as item>  
+                                         <#if item.certTypeCd != 34 && item.certTypeCd != 15 &&  item.certTypeCd != 43 &&  item.certTypeCd != 6 &&  item.certTypeCd != 7>
+                                             <option value="${item.certTypeCd}">${item.name}</option>
+                                         </#if>
 										</#list>
 									</select>
                                   	<label class="f_red">*</label>
@@ -42,10 +44,10 @@
                                     <input id="orderAttrIdCard" placeHolder="请输入证件号码"  class="inputWidth250px"maxlength="50"type="text">
                                     <label class="f_red">*</label>
                                   </dd>
-                                  
+                                 
                                  <dd>
                                  
-                                    <input type="button" value="读卡" class="numberSearch" id="orderAttrReadCertBtn" onclick="javascript:order.cust.readCertWhenOrder()"/>
+                                    <input type="button" value="读卡" class="numberSearch" id="orderAttrReadCertBtn" onclick="javascript:query.cert.readCertWhenOrder()"/>
                                     <input type="button" value="查询" class="numberSearch" id="bt_Qry" />
                                    
                                    <!-- <a class="btn_h30" id="orderAttrReadCertBtn"  style="margin-top: 0px; display: none;"><span>c</span></a>-->

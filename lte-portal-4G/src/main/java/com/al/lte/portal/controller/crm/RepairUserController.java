@@ -89,7 +89,10 @@ public class RepairUserController  extends BaseController {
 				httpSession.setAttribute("enCertNum", userList.get("enCertNum"));
 				httpSession.setAttribute("enCertAddress", userList.get("enCertAddress"));
 				httpSession.setAttribute("enCustName", userList.get("enCustName"));
-			}
+			}else{
+	    		return super
+						.failedStr(model, ErrorCode.QUERY_USER_INO, userInfoMap, paramMap);
+	    	}
 		} catch (BusinessException e) {
 			this.log.error("查询信息失败", e);
 			super.addHeadCode(response, ResultConstant.SERVICE_RESULT_FAILTURE);
@@ -110,7 +113,10 @@ public class RepairUserController  extends BaseController {
 				httpSession.setAttribute("enCertNumFive", certPhoneNumRelList.get("enCertNum"));
 				httpSession.setAttribute("enCertAddressFive", certPhoneNumRelList.get("enCertAddress"));
 				httpSession.setAttribute("enCustNameFive", certPhoneNumRelList.get("enCustName"));
-			}
+			}else{
+	    		return super
+						.failedStr(model, ErrorCode.QUERY_CMP, contractRootMap, paramMap);
+	    	}
 			
 		} catch (BusinessException e) {
 			this.log.error("查询信息失败", e);
