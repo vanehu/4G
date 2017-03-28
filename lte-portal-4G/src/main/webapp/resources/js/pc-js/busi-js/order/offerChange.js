@@ -186,9 +186,11 @@ offerChange = (function() {
 					return;
 				}
 			}
-			//根据UIM类型，设置产品是3G还是4G，并且保存旧卡
-			if(!prod.uim.setProdUim()){ 
-				return ;
+			if (!order.prodModify.choosedProdInfo.productId == CONST.PROD_SPEC.PROD_CLOUD_OFFER) {
+				//根据UIM类型，设置产品是3G还是4G，并且保存旧卡
+				if(!prod.uim.setProdUim()){ 
+					return ;
+				}
 			}
 		}
 		OrderInfo.oldprodInstInfos = [];

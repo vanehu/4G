@@ -492,6 +492,9 @@ prod.uim = (function() {
 	//根据UIM类型，设置产品是3G还是4G，并且保存uim卡
 	var _setProdUim = function(){
 		OrderInfo.boProd2OldTds = []; //清空旧卡
+		if (order.prodModify.choosedProdInfo.productId == CONST.PROD_SPEC.PROD_CLOUD_OFFER) {
+			return true;
+		}
 		var flag = true;
 		if(OrderInfo.actionFlag==3 || OrderInfo.actionFlag==22 || OrderInfo.actionFlag==23){ //可选包变更，补换卡
 			var prod = order.prodModify.choosedProdInfo; 
