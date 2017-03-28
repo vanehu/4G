@@ -578,4 +578,8 @@ public class MDA {
 
 	/**安全敏感相关的配置列表*/
 	public static final List<String> SENSITIVE_KEYS = new ArrayList<String>();
+	
+    public static final Map<String, Object> BATCH_CONFIGS = new HashMap<String, Object>();
+    
+    public static final Map<String, String> PORTAL_REGEXP = new HashMap<String, String>();
 }
