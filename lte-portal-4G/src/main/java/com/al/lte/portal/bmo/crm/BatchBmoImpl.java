@@ -7,1019 +7,143 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.regex.Pattern;
-
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.stereotype.Service;
 
 import com.al.ec.serviceplatform.client.DataBus;
 import com.al.ec.serviceplatform.client.ResultCode;
-import com.al.ecs.common.util.PropertiesUtils;
-import com.al.ecs.common.web.SpringContextUtil;
+import com.al.ecs.common.util.JsonUtil;
+import com.al.ecs.common.util.MDA;
 import com.al.ecs.exception.BusinessException;
 import com.al.ecs.exception.ErrorCode;
 import com.al.ecs.exception.InterfaceException;
 import com.al.ecs.log.Log;
-import com.al.lte.portal.common.CommonUtils;
 import com.al.lte.portal.common.InterfaceClient;
 import com.al.lte.portal.common.PortalServiceCode;
 import com.al.lte.portal.common.SysConstant;
+import com.al.lte.portal.model.BatchExcelTask;
 import com.al.lte.portal.model.SessionStaff;
 
 /**
- * 批量业务处理类<br/>
- * 主要包含针对各个批量业务场景的Excel解析的方法
+ * 批量业务处理类
  * @author ZhangYu 2016-03-10
  *
  */
 @Service("com.al.lte.portal.bmo.crm.BatchBmo")
 public class BatchBmoImpl implements BatchBmo {
-
 	private static Log log = Log.getLog(BatchBmoImpl.class);
-	
-	/**中国电信手机号段正则表达式^(149|133|153|173|177|180|181|189)\\d{8}$*/
-	private final String ltePhoneHeadRegExp = ((PropertiesUtils) SpringContextUtil.getBean("propertiesUtils")).getMessage("LTEPHONEHEAD");
-	
-	public Map<String, Object> readExcel(final Workbook workbook, final String batchType, final SessionStaff sessionStaff){
-		String message = "";
+
+	public Map<String, Object> readExcel(BatchExcelTask batchExcelTask){
 		String code = "-1";
+		String message = "";
 		Map<String, Object> returnMap = new HashMap<String, Object>();
-		StringBuffer errorData = new StringBuffer();
-		boolean ifExcelHasData = false;
 		
-		for (int sheetIndex = 0; sheetIndex < workbook.getNumberOfSheets(); sheetIndex ++) {
-			// 得到当前页sheet
-			Sheet sheet = workbook.getSheetAt(sheetIndex);
-			// 得到当前表单的总行数
-			int totalRows = sheet.getPhysicalNumberOfRows();
-			if (totalRows > 1) {
-				if(SysConstant.BATCH_TYPE.NEW_ORDER.equals(batchType)){
-					returnMap = this.readExcel4NewOrder(workbook, batchType, sessionStaff);
-				} else if(SysConstant.BATCH_TYPE.HUO_KA.equals(batchType)){
-					returnMap = this.readExcel4HK(workbook, batchType);
-				} else if(SysConstant.BATCH_TYPE.ATTACH_OFFER_ORDER.equals(batchType) || 
-						SysConstant.BATCH_TYPE.CHAI_JI.equals(batchType) ||
-						SysConstant.BATCH_TYPE.CHANGE.equals(batchType) ||
-						SysConstant.BATCH_TYPE.DISMANTLE_IN_USE.equals(batchType) || 
-						SysConstant.BATCH_TYPE.DISMANTLE_INACTIVE.equals(batchType)){
-					returnMap = this.readExcel4Common(workbook);
-				} else if(SysConstant.BATCH_TYPE.ZU_HE.equals(batchType) || SysConstant.BATCH_TYPE.EDIT_ATTR.equals(batchType)){
-					//我也不知道为啥...
-				} else if(SysConstant.BATCH_TYPE.FA_ZHAN_REN.equals(batchType)){
-					returnMap = this.readExcel4ExtendCust(workbook);
-				} else if(SysConstant.BATCH_TYPE.CHANGE_FEETYPE.equals(batchType) ||
-						SysConstant.BATCH_TYPE.CHANGE_UIM.equals(batchType)){
-					returnMap = this.readExcelBatchChange(workbook, batchType);
-				} else if(SysConstant.BATCH_TYPE.ORDER_TERMINAL.equals(batchType)){
-					returnMap = this.readOrderTerminalExcel(workbook);
-				} else if(SysConstant.BATCH_TYPE.BLACKLIST.equals(batchType)){
-					returnMap = this.readBlacklistTerminalExcel(workbook);
-				} else if(SysConstant.BATCH_TYPE.ECS_BACK.equals(batchType) ||
-						SysConstant.BATCH_TYPE.ECS_RECEIVE.equals(batchType) ||
-						SysConstant.BATCH_TYPE.ECS_SALE.equals(batchType)){
-					returnMap = this.readExcel4EcsBatch(workbook, batchType);
-				} else{
-					message = "批量导入出错：<br/>没有匹配到您提交的批量业务受理类型[batchType:"+batchType+"]，无法继续受理，请尝试清空浏览器缓存后刷新页面重新受理。";
-					errorData.setLength(0);
-					errorData.append(message);
-					returnMap.put("errorData", errorData.toString());
-					returnMap.put("code", code);
-					returnMap.put("message", message);
-				}
-				
-				if(returnMap.get("totalDataSize") != null && ((Integer)returnMap.get("totalDataSize") <= 0)){
-					if(returnMap.get("errorData") != null && (returnMap.get("errorData").toString()).length() <= 0){
-						break;
-					} else{
-						ifExcelHasData = true;
-						break;
-					}
-				} else{
-					ifExcelHasData = true;
-					break;
-				}			
-			}
+		if(batchExcelTask.getBatchRuleConfigs().isThreadsFlagOn()){
+			//多线程解析Excel
+			returnMap = this.readExcelByThreads(batchExcelTask);
+		} else{
+			//单线程解析Excel
+			returnMap = this.readExcelNormal(batchExcelTask);
 		}
 		
-		if(!ifExcelHasData){
+		if(returnMap.get("totalDataSize") != null && ((Integer)returnMap.get("totalDataSize") <= 0)){
 			message = "批量导入出错：<br/>导入数据为空，没有解析到有效数据，您可能导入了空Excel。";
-			errorData.setLength(0);
-			errorData.append(message);
-			returnMap.put("errorData", errorData.toString());
 			returnMap.put("code", code);
+			returnMap.put("errorData", message);
 			returnMap.put("message", message);
+		} else{
+			if(returnMap.get("errorData") != null && (returnMap.get("errorData").toString()).length() > 0){
+				returnMap.put("code", code);
+				returnMap.put("errorData", returnMap.get("errorData").toString());
+				returnMap.put("message", returnMap.get("errorData").toString());
+			}
 		}
+		
+		log.debug("portalBatch-批量解析Excel结果={}", JsonUtil.toString(returnMap));
 
 		return returnMap;
 	}
 	
 	/**
-	 * 根据证件类型判断是否政企客户
-	 * @return ture: 政企客户<br/>
-	 * 			false:公众客户(非政企客户)
+	 * 单线程解析Excel
 	 */
-	private boolean custJudging(final SessionStaff sessionStaff){
-		Map<String, Object> newCustInfoMap = new HashMap<String, Object>();
-		newCustInfoMap.put("identityCd", sessionStaff.getCardType());
-		return CommonUtils.isGovCust(null, newCustInfoMap, sessionStaff);
+	public Map<String, Object> readExcelNormal(BatchExcelTask batchExcelTask) {
+		return null;
 	}
-	
 	/**
-	 * 批量新装解析excle<br/>
-	 * #13802，批量新装的时候门户批量新装的模版去掉客户列，调用服务传的custID为定位的客户信息<br/>
-	 * 批量新装，Excel模板新增一列“使用人custNumber”，校验客户类型：当客户为政企客户(政企证件)，“使用人custNumber”一列不能为空；公众证件置空
-	 * @param workbook
-	 * @param batchType
-	 * @param str
-	 * @return
+	 * 多线程解析Excel
 	 */
-	public Map<String, Object> readExcel4NewOrder(final Workbook workbook, final String batchType, final SessionStaff sessionStaff) {
+	public Map<String, Object> readExcelByThreads(BatchExcelTask batchExcelTask) {
 		
-		String message = "";
-		String code = "-1";
-		Map<String, Object> returnMap = new HashMap<String, Object>();
-		StringBuffer errorData = new StringBuffer();//封装错误提示信息
-		boolean custFlag = !this.custJudging(sessionStaff);//政企客户(政企证件)：false；个人账户(公众证件)：true	
-
-		// 封装Excel的列名称，用于返回错误提示信息时告知用户是哪一列
-		Map<Integer, Object> errorData2ShowUser = new HashMap<Integer, Object>() {
-			private static final long serialVersionUID = 1L;
-			{
-				put(0, "帐户ID");//Excel第一列对应的内容是帐户ID，如该列有错误，将提示对应列的信息，下同
-				put(1, "主接入号");//Excel的第二列
-				put(2, "UIM卡号");//...
-				put(3, "租机串码");
-				put(4, "区号");
-				put(5, "联系人");
-				put(6, "联系电话");
-				put(7, "使用人");
-			}
-		};
+		int sheetsNum = batchExcelTask.getWorkbook().getNumberOfSheets();
+		Sheet sheet = null;
+		ExecutorService cachedThreadPool = Executors.newCachedThreadPool();//创建线程池
+		int threshold = batchExcelTask.getBatchRuleConfigs().getThreshold();
+		int shiftLeft = batchExcelTask.getBatchRuleConfigs().getShiftLeft();
+		int totalThreadNum = 0;
+		int totalRowsAllSheets = 0;
+		Map<Integer,Integer> sheetThreads = new HashMap<Integer,Integer>();
+		Map<Integer,Integer> sheetRows = new HashMap<Integer,Integer>();
 		
-		final int columns = 8;//在新装Excel中共有8列数据
-		Set<Object> accessNumberSets = new TreeSet<Object>();//对接入号进行去重校验
-		Set<Object> UIMSets = new TreeSet<Object>();//对UIM卡号进行去重校验
-		Sheet sheet = null;//这是一个表单
-		int totalRows = 0;//Excel中的当前表单下的总行数
-		Row row = null;//Excel中的一行
-		Cell cellTemp = null;//这是一个单元格，用于跳过空行
-		boolean cellIsNull = true;//用于跳过空行
-		String cellValue = "";//单元格的值
-		Cell cell = null;//这也是一个单元格，用于获取单元格内容
-		int i = 1;
-		int k = 0;
-		int j = 0;
-		
-		/**
-		 * *******尽量不要将上面的变量定义到循环体里面，当Excel数据上W条时，会引起内存溢出同时也不便使用多线程************************
-		 */
-		
-		// 循环读取每个sheet中的数据放入dataOfExcelList集合中
-		for (int sheetIndex = 0; sheetIndex < workbook.getNumberOfSheets(); sheetIndex ++) {
-			// 得到当前页sheet
-			sheet = workbook.getSheetAt(sheetIndex);
-			// 得到当前表单的总行数
-			totalRows = sheet.getPhysicalNumberOfRows();
-			if (totalRows > 1) {//Excel第一行不读取
-				i = 1;
-				for (; i < totalRows; i++) {
-					row = sheet.getRow(i);//获取当前表单的一行
-					if (null != row) {
-						cellIsNull = true;
-						k = 0;
-						for (; k < columns; k++) {
-							cellTemp = row.getCell(k);
-							if (null != cellTemp) {
-								cellValue = this.checkExcelCellValue(cellTemp);
-								if (cellValue != null && !cellValue.equals("") && !cellValue.equals("null")) {
-									cellIsNull = false;
-								}
-							}
-						}
-						if (cellIsNull) {
-							continue;
-						}
-						
-						//开始循环遍历当前行的每一列数据
-						j = 0;
-						for(; j < columns; j++){
-							cell = row.getCell(j);
-							if(j == 0 || j == 1 || j == 2 || j == 4){//第1列、第2列、第3列、第5列必填
-								if(cell != null){
-									cellValue = this.checkExcelCellValue(cell);
-									if (cellValue == null || "".equals(cellValue)) {
-										errorData.append("<br/>【第" + (i + 1) + "行,第" + (j + 1) + "列】"+ errorData2ShowUser.get(j) +"单元格为空或单元格格式不正确");
-										break;
-									} else if (j == 1) {// 第2行接入号
-										if (this.checkAccessNbrReg(cellValue)) {// 接入号去重校验
-											if (!accessNumberSets.add(cellValue)) {
-												errorData.append("<br/>【第" + (i + 1) + "行,第" + (j + 1) + "列】" + errorData2ShowUser.get(j) + "【" + cellValue + "】重复，请检查 !");
-												break;
-											}
-										} else {// 接入号正则校验
-											errorData.append("<br/>【第" + (i + 1) + "行,第" + (j + 1) + "列】" + errorData2ShowUser.get(j) + "【" + cellValue + "】" + "不符合电信号码规格");
-											break;
-										}
-									} else if (j == 2) {// 第3行UIM卡号
-										if (!UIMSets.add(cellValue)) {
-											errorData.append("<br/>【第" + (i + 1) + "行,第" + (j + 1) + "列】" + errorData2ShowUser.get(j) + "【" + cellValue + "】重复，请检查 ");
-											break;
-										}
-									}
-								} else{
-									errorData.append("<br/>【第" + (i + 1) + "行,第" + (j + 1) + "列】"+ errorData2ShowUser.get(j) +"单元格为空或单元格格式不正确");
-									break;
-								}
-							} else if(j == 7 && !custFlag){//第7列使用人，政企客户必填，公众客户非必填
-								if(cell != null){
-									if (cellValue == null || cellValue.length() == 0) {
-										errorData.append("<br/>【第" + (i + 1) + "行,第" + (j + 1) + "列】单元格为空或单元格格式不对，政企客户使用人一列不可为空");
-										break;
-									}
-								} else{
-									errorData.append("<br/>【第" + (i + 1) + "行,第" + (j + 1) + "列】单元格为空或单元格格式不对，政企客户使用人一列不可为空");
-									break;
-								}
-							}
-						}
-					}
-				}
-			}
+		//第一次循环计算线程总数
+		for (int sheetIndex = 0; sheetIndex < sheetsNum; sheetIndex++) {
+			sheet = batchExcelTask.getWorkbook().getSheetAt(sheetIndex);
+			int totalRowsOfSheet = sheet.getPhysicalNumberOfRows();
+			int threadNumOfSheet = (int) totalRowsOfSheet / threshold;
+			threadNumOfSheet = totalRowsOfSheet % threshold == 0 ? threadNumOfSheet : threadNumOfSheet + 1;
+			totalThreadNum = totalThreadNum + threadNumOfSheet;
+			sheetThreads.put(sheetIndex, threadNumOfSheet);
+			sheetRows.put(sheetIndex, totalRowsOfSheet);
+			totalRowsAllSheets = totalRowsAllSheets + totalRowsOfSheet;
+			log.debug("portalBatch-批量解析Excel表单总行数={}，该表单线程数={}", totalRowsOfSheet, threadNumOfSheet);
 		}
 		
-		if ("".equals(errorData.toString())) {
-			code = "0";
-		}
-		
-		returnMap.put("errorData", errorData.toString());
-		returnMap.put("code", code);
-		returnMap.put("message", message);
-		returnMap.put("totalDataSize", accessNumberSets.size());//Excel中有效的数据的总行数，排除Excel中的空白行
+		if(totalRowsAllSheets > batchExcelTask.getBatchRuleConfigs().getMaxRows()){
+			batchExcelTask.setCode("-1");
+			batchExcelTask.setErrorData("您导入的Excel数据总量是："+totalRowsAllSheets+"，已超过50000条数据，请分批次进行。");
+			log.error("portalBatch-用户一次性导入的Excel数据总量是={}，已超过50000条数据", totalRowsAllSheets);
+		} else{
+			//控制同步
+			CountDownLatch countDownLatch = new CountDownLatch(totalThreadNum);
+			batchExcelTask.setCountDownLatch(countDownLatch);
+			log.debug("portalBatch-批量解析Excel线程总数={}", totalThreadNum);
 
-		return returnMap;
-	}
-
-	/**
-	 * 批开活卡解析Excel(多线程)
-	 * @author ZhangYu 2016-04-10
-	 */
-	public Map<String, Object> readExcel4HKUseThreads(final Workbook workbook, final String batchType) {
-		
-		int threadNum = 1;//启用多线程的数量
-		CountDownLatch countDownLatch = new CountDownLatch(threadNum);//这个用作使线程同步执行，所有由自己发起的线程执行结束后才开始执行后面的任务
-		ReadExcel4HKThreads readExcel4HKThreads = new ReadExcel4HKThreads(workbook, countDownLatch);//创建线程执行的对象
-		ExecutorService cachedThreadPool = Executors.newCachedThreadPool();//创建一个线程池
-
-		for(int i = 0; i < threadNum; i++){
-			
-			/*ReadExcel4HKThreads readExcel4HKThreads = new ReadExcel4HKThreads(workbook, countDownLatch);
-			readExcel4HKThreads.run();*/
-			
-			cachedThreadPool.execute(readExcel4HKThreads);
-			
-			/*Thread thread = new Thread(readExcel4HKThreads);
-			thread.start();*/
-		}
-		
-		try {
-			countDownLatch.await();//等待所有由自己发起的线程执行完毕
-		} catch (InterruptedException e) {
-			//应该做些什么...
-		}
-		
-		cachedThreadPool.shutdown();//关闭线程池
-		
-		return readExcel4HKThreads.getReadExcelResult();
-	}
-	
-	/**
-	 * 批开活卡解析Excel(单线程)
-	 * @author ZhangYu 2016-03-10
-	 */
-	public Map<String, Object> readExcel4HK(final Workbook workbook, final String batchType) {
-		
-		String message = "";
-		String code = "-1";
-		final int columns = 8;//在批开活卡Excel中共有8列数据
-		Map<String, Object> returnMap = new HashMap<String, Object>();
-		StringBuffer errorData = new StringBuffer();//封装错误信息
-		Set<Object> accessNumberSets = new TreeSet<Object>();//号码集合，用于去重校验
-		Set<Object> uimSets = new TreeSet<Object>();//UIM卡号集合，用于去重校验
+			//第二次循环创建线程
+			for (int sheetIndex = 0; sheetIndex < sheetsNum; sheetIndex++) {
+				int threadNumOfSheet = sheetThreads.get(sheetIndex);
+				int rowsOfSheet = sheetRows.get(sheetIndex);
 				
-		Sheet sheet = null;//这是一个表单
-		int totalRows = 0;//一个表单的总行数
-		Row row = null;//Excel的一行
-		boolean cellIsNull = true;//用于跳过Excel没有数据的空行
-		String cellValue = "";//单元格的值
-		Cell cellTemp = null;//这是一个单元格，用于跳过Excel没有数据的空行
-		Cell cell = null;//这是一个单元格
-		int i = 1;
-		int k = 0;
-		int j = 0;
-		
-		/**
-		 * *******尽量不要将上面的变量定义到循环体里面，当Excel数据上W条时，会引起内存溢出同时也不便使用多线程************************
-		 */
-		
-		// 封装Excel的列名称，用于返回错误提示信息时告知用户是哪一列
-		Map<Integer, Object> errorData2ShowUser = new HashMap<Integer, Object>() {
-			private static final long serialVersionUID = 1L;
-			{
-				put(0, "客户ID");//Excel第一列对应的内容是客户ID，如该列有错误，将提示对应列的信息，下同
-				put(1, "帐户ID");//Excel的第二列
-				put(2, "主接入号");//...
-				put(3, "UIM卡号");
-				put(4, "租机串码");
-				put(5, "区号");
-				put(6, "联系人");
-				put(7, "联系电话");
-			}
-		};
-		
-
-		// 循环读取每个sheet中的数据放入list集合中
-		for (int sheetIndex = 0; sheetIndex < workbook.getNumberOfSheets(); sheetIndex++) {
-			// 得到当前页sheet
-			sheet = workbook.getSheetAt(sheetIndex);
-			// 得到Excel的行数
-			totalRows = sheet.getPhysicalNumberOfRows();
-			if (totalRows > 1) {
-				i = 1;
-				for (; i < totalRows; i++) {
-					log.debug("*************************read Excel for {} row...", i);
-					row = sheet.getRow(i);
-					if (null != row) {
-						cellIsNull = true;
-						k = 0;
-						for (; k < columns; k++) {
-							cellTemp = row.getCell(k);
-							if (null != cellTemp) {
-								cellValue = this.checkExcelCellValue(cellTemp);
-								if (cellValue != null && !cellValue.equals("") && !cellValue.equals("null")) {
-									cellIsNull = false;//如果当前行的每一列不为空，则遍历，否则跳过该行
-								}
-							}
-						}
-						if (cellIsNull) {
-							continue;
-						}
-						
-						//开始循环遍历当前行的每一列数据
-						j = 0;
-						for(; j < columns; j++){
-							cell = row.getCell(j);
-							if(j == 0 || j == 1 || j == 2 || j == 3 || j == 5){//第1列、第2列、第3列、第4列、第6列必填
-								if(cell != null){
-									cellValue = this.checkExcelCellValue(cell);
-									if (cellValue == null || "".equals(cellValue)) {
-										errorData.append("<br/>【第" + (i + 1) + "行,第" + (j + 1) + "列】单元格为空或单元格格式不正确");
-										break;
-									} else if (j == 2) {// 第3行接入号
-										if (this.checkAccessNbrReg(cellValue)) {// 接入号去重校验
-											if (!accessNumberSets.add(cellValue)) {
-												errorData.append("<br/>【第" + (i + 1) + "行,第" + (j + 1) + "列】" + errorData2ShowUser.get(j) + "【" + cellValue + "】重复，请检查 ");
-												break;
-											}
-										} else {// 接入号正则校验
-											errorData.append("<br/>【第" + (i + 1) + "行,第" + (j + 1) + "列】" + errorData2ShowUser.get(j) + "【" + cellValue + "】" + "不符合电信号码规格");
-											break;
-										}
-									} else if (j == 3) {// 第4行UIM卡号
-										if (!uimSets.add(cellValue)) {
-											errorData.append("<br/>【第" + (i + 1) + "行,第" + (j + 1) + "列】" + errorData2ShowUser.get(j) + "【" + cellValue + "】重复，请检查 ");
-											break;
-										}
-									}
-								} else{
-									errorData.append("<br/>【第" + (i + 1) + "行,第" + (j + 1) + "列】单元格为空或单元格格式不正确");
-									break;
-								}
-							}
-						}
+				for(int i = 0; i < threadNumOfSheet; i++){
+					int fromIndex = i << shiftLeft;//每个线程从哪一行开始解析Excel
+					int toIndex = ((i + 1) << shiftLeft) - 1;//每个线程解析到哪一行结束
+					
+					if(toIndex > rowsOfSheet){
+						toIndex = rowsOfSheet;
 					}
+					
+					cachedThreadPool.execute(new BatchReadExcelImpl(batchExcelTask, fromIndex, toIndex, sheetIndex));
 				}
 			}
+			
+			try {
+				countDownLatch.await();//等待所有线程执行完毕
+			} catch (InterruptedException e) {
+				batchExcelTask.setCode("-1");
+				batchExcelTask.setErrorData("批量解析Excel异常，线程未能正确执行完毕。");
+				log.error("portalBatch-批量解析Excel异常，线程未能正确执行完毕，异常信息={}", e);
+			} finally{
+				cachedThreadPool.shutdown();//关闭线程池
+			}
 		}
 		
-		if ("".equals(errorData.toString())) {
-			code = "0";
-		}
-
-		returnMap.put("errorData", errorData.toString());
-		returnMap.put("code", code);
-		returnMap.put("message", message);
-		returnMap.put("totalDataSize", accessNumberSets.size());//取accessNumberSets的大小，排除重复项(即实际有效行数)
-
-		return returnMap;
+		return batchExcelTask.getReadExcelResult();
 	}
 
-	/**
-	 * 批量拆机(8)、批量订购/退订附属(2)、批量在用拆机(14)、批量未激活拆机(15)解析Excel
-	 * @param workbook
-	 * @return
-	 */
-	public Map<String, Object> readExcel4Common(final Workbook workbook) {
-		
-		String message = "";
-		String code = "-1";
-		final int columns = 2;//在批量拆机、批量订购退订附属Excel中共有2列数据
-		
-		Map<String,Object> returnMap=new HashMap<String,Object>();
-		StringBuffer errorData = new StringBuffer();//封装错误信息
-		Set<Object> accessNumberSets = new TreeSet<Object>();//号码集合，用于去重校验
-		
-		Cell cell = null;//这个一个单元格
-		String cellValue = "";//单元格的值
-		boolean cellIsNull = true;//用来跳过没有数据的空行
-		Row row = null;//这是Excel的一行
-		Cell cellTemp = null;//一个单元格
-		Sheet sheet = null;//一个表单
-		int totalRows = 0;//Excel下一个表单的总行数
-		int i = 1;
-		int k = 0;
-		int j = 0;
-		
-		/**
-		 * *******尽量不要将上面的变量定义到循环体里面，当Excel数据上W条时，会引起内存溢出同时也不便使用多线程************************
-		 */
-		
-		// 封装Excel的列名称，用于返回错误提示信息时告知用户是哪一列
-		Map<Integer, Object> errorData2ShowUser = new HashMap<Integer, Object>() {
-			private static final long serialVersionUID = 1L;
-			{
-				put(0, "主接入号");// Excel第一列对应的内容是客户ID，如该列有错误，将提示对应列的信息，下同
-				put(1, "区号");// Excel的第二列
-			}
-		};
-		
-		for (int sheetIndex = 0; sheetIndex < workbook.getNumberOfSheets(); sheetIndex++) {
-			// 得到一个sheet
-			sheet = workbook.getSheetAt(sheetIndex);
-			// 得到Excel的行数
-			totalRows = sheet.getPhysicalNumberOfRows();
-			if (totalRows > 1) {
-				i = 1;
-				for (; i < totalRows; i++) {
-					row = sheet.getRow(i);
-					if (null != row) {
-						//判断该行的每一列是否为空
-						cellIsNull = true;
-						k = 0;
-						for (; k < columns; k++) {
-							cellTemp = row.getCell(k);
-							if (null != cellTemp) {
-								cellValue = checkExcelCellValue(cellTemp);
-								if (cellValue != null && !cellValue.equals("") && !cellValue.equals("null")) {
-									cellIsNull = false;//如果当前行的每一列不为空，则遍历，否则跳过该行
-								}
-							}
-						}
-						//如果该行每列为空，则跳过该行
-						if (cellIsNull) {
-							continue;
-						}
-						
-						//开始循环遍历当前行的每一列数据
-						j = 0;
-						for(; j < columns; j++){
-							cell = row.getCell(j);
-							if (cell != null) {
-								cellValue = this.checkExcelCellValue(cell);
-								if (cellValue == null && "".equals(cellValue)) {
-									errorData.append("<br/>【第" + (i + 1) + "行,第" + (j + 1) + "列】" + errorData2ShowUser.get(j) + "单元格为空或单元格式不正确");
-									break;
-								} else {
-									if(j == 0){
-										//第一列的接入号要进行去重校验和正则校验
-										if (this.checkAccessNbrReg(cellValue)) {
-											if (!accessNumberSets.add(cellValue)) {
-												errorData.append("<br/>接入号【" + cellValue + "】重复，请检查");
-												break;
-											}
-										} else {
-											errorData.append("<br/>【第" + (i + 1) + "行,第" + (j + 1) + "列】接入号【" + cellValue + "】" + "不符合电信号码规格");
-											break;
-										}
-									}
-								}
-							}else{
-								errorData.append("<br/>【第" + (i + 1) + "行,第" + (j + 1) + "列】" + errorData2ShowUser.get(j) + "单元格为空或单元格式不正确");
-								break;
-							}
-						}
-					}
-				}
-			}
-		}
-		
-		if("".equals(errorData.toString())){
-			code = "0";
-		}
-		
-		returnMap.put("errorData", errorData.toString());
-		returnMap.put("code", code);
-		returnMap.put("message", message);
-		returnMap.put("totalDataSize", accessNumberSets.size());
-		
-		return returnMap;
-	}
-
-	/**
-	 * 批量修改发展人(9)解析Excel
-	 * @param workbook
-	 * @return
-	 */
-	public Map<String, Object> readExcel4ExtendCust(final Workbook workbook) {
-		String message="";
-		String code="-1";
-		StringBuffer errorData = new StringBuffer();
-		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
-		Map<String, Object> item = null;
-		Map<String,Object> returnMap=new HashMap<String,Object>();
-		// 得到第一个sheet
-		Sheet sheet = workbook.getSheetAt(0);
-		// 得到Excel的行数
-		int totalRows = sheet.getPhysicalNumberOfRows();
-		if (totalRows > 1) {
-			for (int i = 1; i < totalRows; i++) {
-				item = new HashMap<String, Object>();
-				Row row = sheet.getRow(i);
-				if (null != row) {
-					Cell cell = row.getCell(0);
-					if (null != cell) {
-						String cellValue = checkExcelCellValue(cell);
-						if (cellValue == null) {
-							errorData.append("<br/>【第" + (i + 1) + "行,第1列】单元格格式不正确");
-							break;
-						} else if (!"".equals(cellValue)) {
-							item.put("accessNumber", cellValue);
-						}else{
-							errorData.append("<br/>【第" + (i + 1) + "行,第1列】主接入号不能为空");
-							break;
-						}
-					}else{
-						errorData.append("<br/>【第" + (i + 1) + "行,第1列】数据读取异常");
-						break;
-					}
-					cell = row.getCell(1);
-					if (null != cell) {
-						String cellValue = checkExcelCellValue(cell);
-						if (cellValue == null) {
-							errorData.append("<br/>【第" + (i + 1) + "行,第2列】单元格格式不正确");
-							break;
-						} else if (!"".equals(cellValue)) {
-							item.put("zoneNumber", cellValue);
-						}else{
-							errorData.append("<br/>【第" + (i + 1) + "行,第2列】区号不能为空");
-							break;
-						}
-					}else{
-						errorData.append("<br/>【第" + (i + 1) + "行,第2列】数据读取异常");
-						break;
-					}
-					String maindata="";
-					cell = row.getCell(2);
-					if (null != cell) {
-						String cellValue = checkExcelCellValue(cell);
-						if (cellValue == null) {
-							errorData.append("<br/>【第" + (i + 1) + "行,第3列】单元格格式不对");
-							break;
-						} else if (!"".equals(cellValue)) {
-							String maindata1="";
-							maindata1=cellValue;
-							String[] data1=maindata1.split("@");
-							if(data1.length!=4){
-								errorData.append("<br/>【第" + (i + 1) + "行,第3列】产品发展人数据格式应为:1@111@222@333");
-								break;
-							}else{
-								boolean ff=false;
-								for(int ii=0;ii<data1.length;ii++){
-									if("".equals(data1[ii])){
-										ff=true;
-										errorData.append("<br/>【第" + (i + 1) + "行,第4列】产品发展人数据格式应为:1@111@222@333");
-										break;
-									}
-								}
-								if(ff){
-									break;
-								}
-								maindata=maindata1;
-							}
-						}
-					}else{
-						errorData.append("<br/>【第" + (i + 1) + "行,第3列】数据读取异常");
-						break;
-					}
-					cell = row.getCell(3);
-					if (null != cell) {
-						String cellValue = checkExcelCellValue(cell);
-						if (cellValue == null) {
-							errorData.append("<br/>【第" + (i + 1) + "行,第4列】单元格格式不对");
-							break;
-						} else if (!"".equals(cellValue)) {
-							String maindata2="";
-							maindata2=cellValue;
-							String[] data2=maindata2.split("@");
-							if(data2.length!=4){
-								errorData.append("<br/>【第" + (i + 1) + "行,第4列】销售品发展人数据格式应为:2@111@222@333");
-								break;
-							}else{
-								boolean ff = false;
-								for(int ii = 0; ii < data2.length; ii++){
-									if("".equals(data2[ii])){
-										ff = true;
-										errorData.append("<br/>【第" + (i + 1) + "行,第4列】销售品发展人数据格式应为:2@111@222@333");
-										break;
-									}
-								}
-								if(ff){
-									break;
-								}
-								if("".equals(maindata)){
-									maindata=maindata2;
-								}else{
-									maindata=maindata+","+maindata2;
-								}
-							}
-						}
-					}else{
-						errorData.append("<br/>【第" + (i + 1) + "行,第4列】数据读取异常");
-						break;
-					}
-					if("".equals(maindata)){
-						errorData.append("<br/>【第" + (i + 1) + "行】,产品发展人和销售品发展人信息不能同时为空");
-						break;
-					}else{
-						item.put("attr", maindata);
-					}
-				}
-				if (item.size() > 0) {
-					list.add(item);
-				}
-			}
-		}
-
-		if("".equals(errorData.toString())){
-			code="0";
-		}
-		
-		returnMap.put("errorData", errorData.toString());
-		returnMap.put("list", list);
-		returnMap.put("code", code);
-		returnMap.put("message", message);
-		returnMap.put("totalDataSize", list.size());
-		
-		return returnMap;
-	}
-
-	/**
-	 * 批量订购裸终端Excel解析
-	 * @param workbook
-	 * @return Map<String,Object>
-	 */
-	public Map<String, Object> readOrderTerminalExcel(Workbook workbook) {
-		
-		String message = "";
-		String code = "-1";
-		final int columns = 3;//在批量订购裸终端Excel中共有3列数据
-		Map<String, Object> returnMap = new HashMap<String, Object>();
-		StringBuffer errorData = new StringBuffer();
-		List<String> mktResCodeList = null; //保存Excel中串码列，用于去重校验
-		Map<String, Object> dataOfRowMap = null;// 记录Excel中的一行数据
-		List<Map<String, Object>> dataOfExcelList = new ArrayList<Map<String, Object>>();
-		
-		//循环读取每个sheet中的数据放入list集合中
-		for (int sheetIndex = 0; sheetIndex < workbook.getNumberOfSheets(); sheetIndex++) {
-			//获取当前页sheet
-			Sheet sheet = workbook.getSheetAt(sheetIndex);
-			//获取Excel的行数
-			int totalRows = sheet.getPhysicalNumberOfRows();
-			if (totalRows > 1) {
-				for (int i = 1; i < totalRows; i++) {
-					dataOfRowMap = new HashMap<String, Object>();
-					mktResCodeList = new ArrayList<String>(); 
-					Row row = sheet.getRow(i);
-					if (null != row) {
-						boolean cellIsNull = true;
-						for (int k = 0; k < columns; k++) {
-							Cell cellTemp = row.getCell(k);
-							if (null != cellTemp) {
-								String cellValue = checkExcelCellValue(cellTemp);
-								if (cellValue != null && !cellValue.equals("") && !cellValue.equals("null")) {
-									cellIsNull = false;//如果当前行的每一列不为空，则遍历，否则跳过该行
-								}
-							}
-						}
-						if (cellIsNull) {
-							continue;
-						}
-						Cell cell = row.getCell(0);
-						if (null != cell) {
-							String cellValue = checkExcelCellValue(cell);
-							if (cellValue == null) {
-								errorData.append("<br/>【第" + (i + 1) + "行,第1列】单元格格式不对");
-								break;
-							} else if (!"".equals(cellValue)) {
-								dataOfRowMap.put("mktResCode", cellValue);
-								if(mktResCodeList.contains(cellValue)){
-									errorData.append("<br/>【第" + (i + 1) + "行,第1列】串码【"+cellValue+"】"+"重复");
-									break;
-								}
-								mktResCodeList.add(cellValue);
-							}else{
-								errorData.append("<br/>【第" + (i + 1) + "行,第1列】串码不能为空");
-								break;
-							}
-						}else{
-							errorData.append("<br/>【第" + (i + 1) + "行,第1列】数据读取异常");
-							break;
-						}
-						cell = row.getCell(1);
-						if (null != cell) {
-							String cellValue = checkExcelCellValue(cell);
-							if (cellValue == null) {
-								errorData.append("<br/>【第" + (i + 1) + "行,第2列】单元格格式不正确");
-								break;
-							} else if (!"".equals(cellValue)) {
-								dataOfRowMap.put("salePrice", cellValue);
-								if(!this.checkSalePriceReg(cellValue)){
-									errorData.append("<br/>【第" + (i + 1) + "行,第2列】价格【"+cellValue+"】输入错误");
-									break;
-								}
-							}else{
-								errorData.append("<br/>【第" + (i + 1) + "行,第2列】价格不能为空");
-								break;
-							}
-						}else{
-							errorData.append("<br/>【第" + (i + 1) + "行,第2列】数据读取异常");
-							break;
-						}
-						cell = row.getCell(2);
-						if (null != cell) {
-							String cellValue = checkExcelCellValue(cell);
-							if (cellValue == null) {
-								errorData.append("<br/>【第" + (i + 1) + "行,第3列】单元格格式不正确");
-								break;
-							} else {
-								dataOfRowMap.put("dealer", cellValue);
-							}
-						}else{
-							dataOfRowMap.put("dealer", "");
-						}
-					}
-					if (dataOfRowMap.size() > 0) {
-						dataOfExcelList.add(dataOfRowMap);
-					}
-				}
-			}
-		}
-
-		if("".equals(errorData.toString())){
-			code="0";
-		}
-		
-		returnMap.put("errorData", errorData.toString());
-		returnMap.put("data", dataOfExcelList);
-		returnMap.put("code", code);
-		returnMap.put("message", message);
-		returnMap.put("totalDataSize", mktResCodeList.size());
-		
-		return returnMap;
-	}
-	
-	/**
-	 * 批量换档、批量换卡Excel解析
-	 * @param workbook
-	 * @param batchType
-	 * @param str
-	 * @return returnMap
-	 * @author ZhangYu 2016-03-31
-	 */
-	public Map<String, Object> readExcelBatchChange(final Workbook workbook, final String batchType) {
-		
-		String message = "";
-		String code = "-1";
-		final int columns = 2;//在换卡、换档Excel中共有2列数据
-		
-		Map<String, Object> returnMap = new HashMap<String, Object>();
-		StringBuffer errorData = new StringBuffer();//封装错误提示信息
-		Set<String> accessNumberSets = new TreeSet<String>();//接入号去重使用
-		Set<String> UIMSets = new TreeSet<String>();//UIM卡号去重使用
-		
-		Sheet sheet = null;//这是一个表单
-		int totalRows = 0;//Excel中一个表单下的总行数
-		Row row = null;//这是Excel的一行
-		boolean cellIsNull = true;//跳过没有数据的空行
-		String cellValue = "";//一个单元格值
-		Cell cellTemp = null;//一个单元格
-		Cell cell = null;//一个单元格
-		int k = 0;
-		
-		/**
-		 * *******尽量不要将上面的变量定义到循环体里面，当Excel数据上W条时，会引起内存溢出同时也不便使用多线程************************
-		 */
-		
-		// 循环读取每个sheet中的数据放入list集合中
-		for (int sheetIndex = 0; sheetIndex < workbook.getNumberOfSheets(); sheetIndex++) {
-			// 获取当前页sheet
-			sheet = workbook.getSheetAt(sheetIndex);
-			// 获取Excel的行数
-			totalRows = sheet.getPhysicalNumberOfRows();
-			if (totalRows > 1) {
-				for (int i = 1; i < totalRows; i++) {
-					log.debug("*************************read Excel for {} row...", i);
-					row = sheet.getRow(i);
-					if (row != null) {
-						cellIsNull = true;
-						k = 0;
-						for (; k < columns; k++) {
-							cellTemp = row.getCell(k);
-							if (null != cellTemp) {
-								cellValue = checkExcelCellValue(cellTemp);
-								if (cellValue != null && !cellValue.equals("") && !cellValue.equals("null")) {
-									cellIsNull = false;
-								}
-							}
-						}
-						if (cellIsNull) {
-							continue;
-						}
-						// 读取该行第一列数据
-						cell = row.getCell(0);
-						if(cell != null){
-							cellValue = checkExcelCellValue(cell);
-							if (cellValue == null || "".equals(cellValue)) {
-								errorData.append("<br/>【第" + (i + 1) + "行】【第1列】接入号单元格为空或单元格格式不正确");
-								break;
-							} else{
-								if (this.checkAccessNbrReg(cellValue)) {
-									if (!accessNumberSets.add(cellValue)) {
-										errorData.append("<br/>接入号【" + cellValue + "】重复，请检查 !");
-										break;
-									}
-								} else {
-									errorData.append("<br/>【第" + (i + 1) + "行】【第1列】接入号【" + cellValue + "】" + "不符合电信号码规格");
-									break;
-								}
-							}
-						}
-						
-						// 读取该行第二列数据
-						cell = row.getCell(1);
-						if(cell != null){
-							cellValue = checkExcelCellValue(cell);
-							if (cellValue == null || "".equals(cellValue)) {
-								if (SysConstant.BATCH_TYPE.CHANGE_FEETYPE.equals(batchType))
-									errorData.append("<br/>【第" + (i + 1) + "行】【第2列】换档套餐规格ID为空或格式不正确");
-								if (SysConstant.BATCH_TYPE.CHANGE_UIM.equals(batchType))
-									errorData.append("<br/>【第" + (i + 1) + "行】【第2列】UIM卡号为空或格式不正确");
-								break;
-							} else {
-								if (SysConstant.BATCH_TYPE.CHANGE_UIM.equals(batchType)) {
-									if (!UIMSets.add(cellValue)) {
-										errorData.append("<br/>UIM卡号【" + cellValue + "】重复，请检查 !");
-										break;
-									}
-								}
-							}
-						} else{
-							if (SysConstant.BATCH_TYPE.CHANGE_FEETYPE.equals(batchType))
-								errorData.append("<br/>【第" + (i + 1) + "行】【第2列】换档套餐规格ID为空或格式不正确");
-							if (SysConstant.BATCH_TYPE.CHANGE_UIM.equals(batchType))
-								errorData.append("<br/>【第" + (i + 1) + "行】【第2列】UIM卡号为空或格式不正确");
-							break;
-						}
-					}
-				}
-			}
-		}// 循环读取每个sheet中的数据--end
-
-		if ("".equals(errorData.toString())) {
-			code = "0";
-		}
-		
-		returnMap.put("errorData", errorData.toString());
-		returnMap.put("code", code);
-		returnMap.put("message", message);
-		returnMap.put("totalDataSize", accessNumberSets.size());//Excel中有效的数据的总行数，排除Excel中的空白行
-
-		return returnMap;
-	}
-	
-	/* @see com.al.lte.portal.bmo.crm.BatchBmo#readExcel4EcsBatch(org.apache.poi.ss.usermodel.Workbook, java.lang.String)
-	 * 批量终端领用(16)、批量终端领用回退(17)、批量终端销售(18)Excel解析
-	 * @param workbook
-	 * @param batchType
-	 * @return returnMap
-	 * @author ZhangYu 2016-04-21
-	 */
-	public Map<String, Object> readExcel4EcsBatch(final Workbook workbook, final String batchType) {
-		
-		String message = "";
-		String code = "-1";
-		final int columns = 1;//在批量终端领用、批量终端领用回退、批量终端销售Excel中共有1列数据
-		
-		Map<String,Object> returnMap=new HashMap<String,Object>();
-		StringBuffer errorData = new StringBuffer();//封装错误信息
-		Set<Object> instCodeSets = new TreeSet<Object>();//终端串码集合，用于去重校验
-		
-		Cell cell = null;//这个一个单元格
-		String cellValue = "";//单元格的值
-		boolean cellIsNull = true;//用来跳过没有数据的空行
-		Row row = null;//这是Excel的一行
-		Cell cellTemp = null;//一个单元格
-		Sheet sheet = null;//一个表单
-		int totalRows = 0;//Excel下一个表单的总行数
-		int k = 0;
-		int j = 0;
-		
-		/**
-		 * *******尽量不要将上面的变量定义到循环体里面，当Excel数据上W条时，会引起内存溢出同时也不便使用多线程************************
-		 */
-		
-		// 封装Excel的列名称，用于返回错误提示信息时告知用户是哪一列
-		Map<Integer, Object> errorData2ShowUser = new HashMap<Integer, Object>() {
-			private static final long serialVersionUID = 1L;
-			{
-				put(0, "终端串码");
-			}
-		};
-		
-		for (int sheetIndex = 0; sheetIndex < workbook.getNumberOfSheets(); sheetIndex++) {
-			// 得到一个sheet
-			sheet = workbook.getSheetAt(sheetIndex);
-			// 得到Excel的行数
-			totalRows = sheet.getPhysicalNumberOfRows();
-			if (totalRows > 1) {
-				for (int i = 1; i < totalRows; i++) {
-					row = sheet.getRow(i);
-					if (null != row) {
-						//判断该行的每一列是否为空
-						cellIsNull = true;
-						k = 0;
-						for (; k < columns; k++) {
-							cellTemp = row.getCell(k);
-							if (null != cellTemp) {
-								cellValue = checkExcelCellValue(cellTemp);
-								if (cellValue != null && !cellValue.equals("") && !cellValue.equals("null")) {
-									cellIsNull = false;//如果当前行的每一列不为空，则遍历，否则跳过该行
-								}
-							}
-						}
-						//如果该行每列为空，则跳过该行
-						if (cellIsNull) {
-							continue;
-						}
-						
-						//开始循环遍历当前行的每一列数据
-						j = 0;
-						for(; j < columns; j++){
-							cell = row.getCell(j);
-							if (cell != null) {
-								cellValue = this.checkExcelCellValue(cell);
-								if (cellValue == null && "".equals(cellValue)) {
-									errorData.append("<br/>【第" + (i + 1) + "行,第" + (j + 1) + "列】" + errorData2ShowUser.get(j) + "单元格为空或单元格式不正确");
-									break;
-								} else {
-									if (!instCodeSets.add(cellValue)) {
-										errorData.append("<br/>" + errorData2ShowUser.get(j) + "【" + cellValue + "】重复，请检查");
-										break;
-									}
-								}
-							}else{
-								errorData.append("<br/>【第" + (i + 1) + "行,第" + (j + 1) + "列】" + errorData2ShowUser.get(j) + "单元格为空或单元格式不正确");
-								break;
-							}
-						}
-					}
-				}
-			}
-		}
-		
-		if(instCodeSets.size() > 10000){
-			errorData.append("<br/>导入有效的总记录不能超过10000条（实际有效总记录数为" + instCodeSets.size() + "条）");
-		}
-		
-		if("".equals(errorData.toString())){
-			code = "0";
-		}
-		
-		returnMap.put("errorData", errorData.toString());
-		returnMap.put("code", code);
-		returnMap.put("message", message);
-		returnMap.put("totalDataSize", instCodeSets.size());
-		
-		return returnMap;
-	}
 	
 	/**
 	 * 文件上传成功通知服务<br/>
@@ -1099,25 +223,24 @@ public class BatchBmoImpl implements BatchBmo {
 		return resultMap;
 	}
 	
-
-	/**
-	 * 0--批开活卡<br/>
-	 * 1--批量新装<br/>
-	 * 2--批量订购/退订附属<br/>
-	 * 3--组合产品纳入退出<br/>
-	 * 4--批量修改产品属性<br/>
-	 * 5--批量换档(废弃)<br/>
-	 * 8--拆机<br/>
-	 * 9--批量修改发展人<br/>
-	 * 10--批量订购裸终端<br/>
-	 * 11--批量换档<br/>
-	 * 12--批量换卡
-	 * 13--批量一卡双号黑名单
-	 * @param templateType 上述0~12
-	 * @return 批量业务类型名称，以字符串返回
-	 */
-	public String getTypeNames(String templateType){		
-		return SysConstant.templateTypeMap.get(templateType);
+	@SuppressWarnings("unchecked")
+	public String getTypeNames(String batchType){
+		Map<String, Object> batchConfigs = MapUtils.getMap(MDA.BATCH_CONFIGS, batchType, null);
+		if(batchConfigs != null){
+			return MapUtils.getString(batchConfigs, "batchTypeName", "未知批量业务类型[batchType="+batchType+"]");
+		} else{
+			return "未知批量业务类型[batchType="+batchType+"]";
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	public String getTemplateType(String batchType){
+		Map<String, Object> batchConfigs = MapUtils.getMap(MDA.BATCH_CONFIGS, batchType, null);
+		if(batchConfigs != null){
+			return MapUtils.getString(batchConfigs, "templateType", "未知批量业务类型[batchType="+batchType+"]");
+		} else{
+			return "未知批量业务类型[batchType="+batchType+"]";
+		}
 	}
 
 	/**
@@ -1209,76 +332,6 @@ public class BatchBmoImpl implements BatchBmo {
 	}
 	
 	/**
-	 * Excel单元格校验<br/>
-	 * 入参cell不可为null，否则抛异常<br/>
-	 * 单元格为空或者不是文本(字符串)格式，则返回""空字符串，不会返回null<br/>
-	 * Updated by ZhangYu 2016-04-01
-	 * @param cell
-	 * @return cellValue
-	 */
-	protected String checkExcelCellValue(Cell cell) {
-		String cellValue = null;
-		if(cell.getCellType() == Cell.CELL_TYPE_BLANK){
-			cellValue = "";
-		}else if (cell.getCellType() == Cell.CELL_TYPE_STRING) {
-			cellValue = cell.getStringCellValue();
-		}
-		if(cellValue != null){
-			cellValue = cellValue.trim();
-		}
-		return cellValue;
-	}
-	
-	/**
-	 * 正则校验：批量换卡、换档套餐ID是否为数字(目前没有提出需求，暂时未使用)
-	 * @param cellValue
-	 * @return 校验成功返回<strong>true</strong>，否则返回<strong>false</strong>
-	 * @author ZhangYu
-	 */
-	protected boolean checkOfferSpecIdReg(String cellValue){
-		return Pattern.matches("^[1-9]\\d*|0$", cellValue);//匹配整数
-		
-	}
-	
-	/**
-	 * 号码正则校验：判断是否符合电信手机号码规格   
-	 * @param cellValue
-	 * @return 校验成功返回<strong>true</strong>，否则返回<strong>false</strong>
-	 * @author ZhangYu
-	 */
-	protected boolean checkAccessNbrReg(String cellValue){
-//		"^(149|133|153|173|177|180|181|189)\\d{8}$"
-		return Pattern.matches(this.ltePhoneHeadRegExp, cellValue);
-		
-	}
-	
-	/**
-	 * UIM卡号正则校验
-	 * @param cellValue
-	 * @return 校验成功返回<strong>true</strong>，否则返回<strong>false</strong>
-	 * @author ZhangYu
-	 */
-	/*private boolean checkUIMReg(String cellValue){
-		return Pattern.matches("^$", cellValue);
-		
-	}*/
-	
-	/**
-	 * 正则校验：批量订购裸终端Excel中的价格列
-	 * @param cellValue
-	 * @return 校验成功返回<strong>true</strong>，否则返回<strong>false</strong>
-	 */
-	private boolean checkSalePriceReg(String cellValue){
-		/*Pattern pattern = Pattern.compile("^[0-9]+(.[0-9]{1,2})?$");
-		Matcher matcher = pattern.matcher(cellValue);
-		if(!matcher.matches()){
-			errorData.append("【第" + (i + 1) + "行,第2列】价格输入错误");
-			break;
-		}*/
-		return Pattern.matches("^[0-9]+(.[0-9]{1,2})?$", cellValue);
-	}
-	
-	/**
 	 * 批量终端领用、批量终端领用回退、批量终端销售拼装参数
 	 * @param batchType
 	 * @param fromRepositoryID
@@ -1330,145 +383,6 @@ public class BatchBmoImpl implements BatchBmo {
 		}
 		
 		return errorCode;
-	}
-	
-	/**
-	 * 批量一卡双号Excel解析
-	 * @param workbook
-	 * @return Map<String,Object>
-	 */
-	public Map<String, Object> readBlacklistTerminalExcel(Workbook workbook) {
-		
-		String message = "";
-		String code = "-1";
-		final int columns = 5;//在批量一卡双号Excel中共有5列数据
-		Map<String, Object> returnMap = new HashMap<String, Object>();
-		StringBuffer errorData = new StringBuffer();
-		List<String> BlackList = null; //保存Excel中串码列，用于去重校验
-		Map<String, Object> dataOfRowMap = null;// 记录Excel中的一行数据
-		List<Map<String, Object>> dataOfExcelList = new ArrayList<Map<String, Object>>();
-		
-		//循环读取每个sheet中的数据放入list集合中
-		for (int sheetIndex = 0; sheetIndex < workbook.getNumberOfSheets(); sheetIndex++) {
-			//获取当前页sheet
-			Sheet sheet = workbook.getSheetAt(sheetIndex);
-			//获取Excel的行数
-			int totalRows = sheet.getPhysicalNumberOfRows();
-			if (totalRows > 1) {
-				for (int i = 1; i < totalRows; i++) {
-					dataOfRowMap = new HashMap<String, Object>();
-					BlackList = new ArrayList<String>(); 
-					Row row = sheet.getRow(i);
-					if (null != row) {
-						boolean cellIsNull = true;
-						for (int k = 0; k < columns; k++) {
-							Cell cellTemp = row.getCell(k);
-							if (null != cellTemp) {
-								String cellValue = checkExcelCellValue(cellTemp);
-								if (cellValue != null && !cellValue.equals("") && !cellValue.equals("null")) {
-									cellIsNull = false;//如果当前行的每一列不为空，则遍历，否则跳过该行
-								}
-							}
-						}
-						if (cellIsNull) {
-							continue;
-						}
-						
-						Cell cell = row.getCell(0);
-						if (null != cell) {
-							String cellValue = checkExcelCellValue(cell);
-							if (cellValue == null) {
-								errorData.append("<br/>【第" + (i + 1) + "行,第1列】单元格格式不正确");
-								break;
-							} else {
-								dataOfRowMap.put("mainAreaId", cellValue);
-							}
-						}else{
-							dataOfRowMap.put("mainAreaId", "");
-						}
-						cell = row.getCell(1);
-						if (null != cell) {
-							String cellValue = checkExcelCellValue(cell);
-							if (cellValue == null) {
-								errorData.append("<br/>【第" + (i + 1) + "行,第2列】单元格格式不正确");
-								break;
-							} else if (!"".equals(cellValue)) {
-								dataOfRowMap.put("mainAccNbr", cellValue);
-								if(!this.checkAccessNbrReg(cellValue)){
-									errorData.append("<br/>【第" + (i + 1) + "行,第2列】主号号码【"+cellValue+"】输入错误");
-									break;
-								}
-							}else{
-								errorData.append("<br/>【第" + (i + 1) + "行,第2列】主号号码不能为空");
-								break;
-							}
-						}else{
-							errorData.append("<br/>【第" + (i + 1) + "行,第2列】数据读取异常");
-							break;
-						}
-						cell = row.getCell(2);
-						if (null != cell) {
-							String cellValue = checkExcelCellValue(cell);
-							if (cellValue == null) {
-								errorData.append("<br/>【第" + (i + 1) + "行,第3列】单元格格式不正确");
-								break;
-							} else {
-								dataOfRowMap.put("virtualAreaId", cellValue);
-							}
-						}else{
-							dataOfRowMap.put("virtualAreaId", "");
-						}
-						cell = row.getCell(3);
-						if (null != cell) {
-							String cellValue = checkExcelCellValue(cell);
-							if (cellValue == null) {
-								errorData.append("<br/>【第" + (i + 1) + "行,第4列】单元格格式不正确");
-								break;
-							} else if (!"".equals(cellValue)) {
-								dataOfRowMap.put("virtualAccNbr", cellValue);
-								if(!this.checkAccessNbrReg(cellValue)){
-									errorData.append("<br/>【第" + (i + 1) + "行,第4列】虚号号码【"+cellValue+"】输入错误");
-									break;
-								}
-							}else{
-								errorData.append("<br/>【第" + (i + 1) + "行,第4列】虚号号码不能为空");
-								break;
-							}
-						}else{
-							errorData.append("<br/>【第" + (i + 1) + "行,第4列】数据读取异常");
-							break;
-						}
-						cell = row.getCell(4);
-						if (null != cell) {
-							String cellValue = checkExcelCellValue(cell);
-							if (cellValue == null) {
-								errorData.append("<br/>【第" + (i + 1) + "行,第5列】单元格格式不正确");
-								break;
-							} else {
-								dataOfRowMap.put("reason", cellValue);
-							}
-						}else{
-							dataOfRowMap.put("reason", "");
-						}
-					}
-					if (dataOfRowMap.size() > 0) {
-						dataOfExcelList.add(dataOfRowMap);
-					}
-				}
-			}
-		}
-
-		if("".equals(errorData.toString())){
-			code="0";
-		}
-		
-		returnMap.put("errorData", errorData.toString());
-		returnMap.put("data", dataOfExcelList);
-		returnMap.put("code", code);
-		returnMap.put("message", message);
-		returnMap.put("totalDataSize", BlackList.size());
-		
-		return returnMap;
 	}
 
 	/* 批量终端领用、批量终端领用回退、批量终端销售批次查询

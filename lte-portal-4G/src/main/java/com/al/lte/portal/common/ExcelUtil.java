@@ -16,6 +16,7 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.xssf.usermodel.XSSFCell;
@@ -207,6 +208,52 @@ public class ExcelUtil {
 		} finally{
 			outputStream.flush();
 			outputStream.close();
+		}
+	}
+	
+	/**
+	 * Excel单元格校验<br/>
+	 * 只要单元格cell的格式为文本，且不为空字符串""时返回单元格实际值，除此之外的其他情况全部返回null
+	 * @param cell
+	 * @return cellValue
+	 */
+	public static String checkExcelCellValue(Cell cell) {
+		if(cell != null){
+			if(cell.getCellType() == Cell.CELL_TYPE_BLANK){
+				return null;
+			}else if (cell.getCellType() == Cell.CELL_TYPE_STRING) {
+				try{
+					return "".equals(cell.getStringCellValue().trim()) ? null : cell.getStringCellValue().trim();
+				} catch(Exception e){
+					return null;
+				}
+			} else{
+				return null;
+			}
+		} {
+			return null;
+		}
+	}
+	
+	/**
+	 * 校验Excel单元格是否具有有效数据，单元格的有效数据必须是文本类型，合法有效返回true；null、""、非文本格式等均返回false<br/>
+	 * @param 单元格cell
+	 */
+	public static boolean checkExcelCellValid(Cell cell) {
+		if(cell != null){
+			if(cell.getCellType() == Cell.CELL_TYPE_BLANK){
+				return false;
+			}else if (cell.getCellType() == Cell.CELL_TYPE_STRING) {
+				try{
+					return "".equals(cell.getStringCellValue().trim()) ? false : true;
+				} catch(Exception e){
+					return false;
+				}
+			} else{
+				return false;
+			}
+		} else{
+			return false;
 		}
 	}
 }

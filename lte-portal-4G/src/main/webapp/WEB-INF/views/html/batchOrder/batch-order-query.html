@@ -1,13 +1,15 @@
 <@override name="title">${batchTypeName}</@override>
 <@override name="header">
 <#include "/busi-js-tpl.html"/>
-<script src="${contextPath}/js/4g-js/order/orderInfo.js" type="text/javascript"></script>
 <script src="${contextPath}/js/busi-js/batchOrder/batchOrder.js?${jsversion}" type="text/javascript"></script>
 <script src="${contextPath}/js/busi-js/batchOrder/batOrderCart.js?${jsversion}" type="text/javascript"></script>
 </@override>
 <@override name="content">
 <#assign amount="${templateType}" />
-<#if amount == 1>
+<#assign batchType="${batchType}" />
+<input type="hidden" id="templateType" value="${templateType}"/>
+<input type="hidden" id="batchType" value="${batchType}"/>
+<#if amount == 1 || batchType == 19>
 <!--客户定位开始-->
 <!--客户定位未定位-->
 	<div id="custQryDiv" class="main_div location main_warp">
@@ -68,26 +70,6 @@
 	<!--客户定位已定位-->
 	<div id="custInfo"  style="display:none"></div>
 	<!--客户定位已定位 end-->
-<#--<!--用户鉴权弹窗&ndash;&gt;-->
-	<#--<div class="easyDialogdiv" style="height:300px;display:none" id="auth">-->
-	<#--<div class="easyDialogclose" id="authClose"></div>-->
-	<#--<form id="custAuthForm">-->
-	<#--<h1 class="easyDialogTitle">客户身份鉴权</h1>-->
-	<#--<div class="infoBox">-->
-		<#--<table class="network">-->
-                          <#--<tbody>-->
-                          <#--<tr>-->
-                                <#--<td width="100"><label class="f_red">*</label><label id="custAuthTypeName">产品密码：</label></td>-->
-                                <#--<td width="300"><input id="authPassword" type="password" placeHolder="请输入密码" data-validate="validate(required:密码不能为空, maxlength:密码长度最多为{arg1}(12)) on(blur)" class="inputWidth150px"><a  class="purchase" id="custAuthbtn" href="javascript:void(0)">校验</a><a class="purchase" id="jumpAuth" style="display:none" onclick="order.cust.jumpAuth()">跳过校验</a>-->
-                                <#--</td>-->
-                          <#--</tr>   -->
-                          <#---->
-                        <#--</tbody>-->
-         <#--</table>-->
-    <#--</div>-->
-    <#--</form>-->
-	<#--</div>-->
-<#--<!--用户鉴权弹窗 end&ndash;&gt;-->
 <!--用户鉴权弹窗-->
 <div class="easyDialogdiv" style="height:300px;display:none" id="auth3">
     <div class="easyDialogclose" id="authClose"></div>
@@ -226,7 +208,6 @@
                                   </dd>
                                   <dd>
                                   	<input type="button" value="搜 索" class="numberSearch" id="bt_orderQry" onclick="order.batch.batchOrderList('1');" />
-                                  	<input type="hidden" id="templateType" value="${templateType}" >
                                   </dd>
 						</dl> 
 		        </div>  

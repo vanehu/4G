@@ -1,7 +1,6 @@
 package com.al.lte.portal.controller.crm;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -32,7 +31,7 @@ import com.al.ec.serviceplatform.client.ResultCode;
 import com.al.ecs.common.entity.JsonResponse;
 import com.al.ecs.common.entity.PageModel;
 import com.al.ecs.common.util.FtpUtils;
-import com.al.ecs.common.util.JsonUtil;
+import com.al.ecs.common.util.MDA;
 import com.al.ecs.common.util.PageUtil;
 import com.al.ecs.common.util.PropertiesUtils;
 import com.al.ecs.common.web.ServletUtils;
@@ -54,6 +53,7 @@ import com.al.lte.portal.common.EhcacheUtil;
 import com.al.lte.portal.common.ExcelUtil;
 import com.al.lte.portal.common.FTPServiceUtils;
 import com.al.lte.portal.common.SysConstant;
+import com.al.lte.portal.model.BatchExcelTask;
 import com.al.lte.portal.model.SessionStaff;
 
 @Controller("com.al.lte.portal.controller.crm.BatchOrderControllerLatestVer")
@@ -117,7 +117,6 @@ public class BatchOrderControllerLatestVer  extends BaseController {
 		String batchType = request.getParameter("batchType");
 		String reserveDt = request.getParameter("reserveDt");
 		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
-		PropertiesUtils propertiesUtils = (PropertiesUtils) SpringContextUtil.getBean("propertiesUtils");
 		String currentAreaId = sessionStaff.getCurrentAreaId();
 		
 		if (olId == null || "".equals(olId)) {
@@ -160,24 +159,10 @@ public class BatchOrderControllerLatestVer  extends BaseController {
 					Map<String,Object> checkResult=null;
 					boolean checkResultFlag = false;
 					String custStr = sessionStaff.getCustId() +"/"+ sessionStaff.getPartyName() +"/" + sessionStaff.getCardNumber()+"/"+sessionStaff.getCardType();
-					String encryptCustName = "";//客户定位回参中的CN点
-					
-					//针对批量新装的客户定位，由于脱敏原因，在入参中增加CN节点用于解密，CN即为客户定位回参中的CN节点
-					if(SysConstant.BATCH_TYPE.NEW_ORDER.equals(batchType)){						
-						Map<String, Object> sessionCustInfo = (Map<String, Object>) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_CURRENT_CUST_INFO);
-						if(sessionCustInfo != null){
-							if(sessionCustInfo.get("CN") != null){
-								encryptCustName = sessionCustInfo.get("CN").toString();
-							} else{
-								encryptCustName = sessionStaff.getCN();
-							}
-						} else{
-							encryptCustName = sessionStaff.getCN();
-						}	
-					}
-					
-					checkResult =  batchBmo.readExcel(workbook, batchType, sessionStaff);
-					if(checkResult.get("code") != null && "0".equals(checkResult.get("code"))){
+					Map<String, Object> sessionCustInfo = (Map<String, Object>) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_CURRENT_CUST_INFO);
+
+					checkResult =  batchBmo.readExcel(new BatchExcelTask(workbook, null, batchType, sessionStaff));
+					if("0".equals(MapUtils.getString(checkResult, "code", ""))){
 						checkResultFlag = true;
 					} else{
 						message = "批量校验<br/>" + (String)checkResult.get("errorData");
@@ -191,7 +176,9 @@ public class BatchOrderControllerLatestVer  extends BaseController {
 						
 						param.put("custOrderId", olId);
 						param.put("custId", custStr);
-						param.put("encryptCustName", encryptCustName);
+						param.put("encryptCustName", MapUtils.getString(sessionCustInfo, "CN", "客户定位未获取到CN字段"));//加密后的姓名
+						param.put("encryptAddress", MapUtils.getString(sessionCustInfo, "address", "客户定位未获取到address字段"));//加密后的客户地址
+						param.put("encryptCertNum", MapUtils.getString(sessionCustInfo, "certNum", "客户定位未获取到certNum字段"));//加密后的证件号码
 						param.putAll(getAreaInfos());
 						param.put("batchType", batchType);
 						param.put("reserveDt", reserveDt);
@@ -201,7 +188,7 @@ public class BatchOrderControllerLatestVer  extends BaseController {
 						
 						//Excel校验成功后上传Excel文件
 						try {
-							if(!"ON".equals(propertiesUtils.getMessage("CLUSTERFLAG"))){
+							if(!"ON".equals(MDA.CLUSTERFLAG)){
 								//上传到单台FTP服务器
 								ftpResultMap = ftpServiceUtils.fileUpload2FTP(file.getInputStream(), fileName, batchType);
 							} else{
@@ -753,18 +740,8 @@ public class BatchOrderControllerLatestVer  extends BaseController {
 		
 	@RequestMapping(value = "/batchOrderQuery", method = RequestMethod.GET)
 	@AuthorityValid(isCheck = true)
-	public String batchOrderQuery(Model model,HttpServletRequest request,HttpSession session) {
-		
+	public String batchOrderQuery(Model model,HttpServletRequest request,HttpSession session) {		
 		String batchType = request.getParameter("batchType");
-		String batchTypeName = null;
-		
-		if (batchType != null) {
-			batchTypeName = batchBmo.getTypeNames(batchType);
-		} else {
-			//如果非 拆机，就默认是新装
-			batchType = SysConstant.BATCH_TYPE.NEW_ORDER;
-			batchTypeName = batchBmo.getTypeNames(batchType);
-		}
 		
 		Calendar calendar = Calendar.getInstance();
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -774,8 +751,9 @@ public class BatchOrderControllerLatestVer  extends BaseController {
 		
 		model.addAttribute("startDt", start);
 		model.addAttribute("endDt", end);
-		model.addAttribute("templateType", batchType);
-		model.addAttribute("batchTypeName", batchTypeName);
+		model.addAttribute("batchType", batchType);
+		model.addAttribute("templateType", batchBmo.getTemplateType(batchType));
+		model.addAttribute("batchTypeName", batchBmo.getTypeNames(batchType));
 		model.addAttribute("current", EhcacheUtil.getCurrentPath(session, "order/batchOrder/batchOrderQuery"));
 		
 		return "/batchOrder/batch-order-query";
@@ -941,209 +919,6 @@ public class BatchOrderControllerLatestVer  extends BaseController {
 		
 		return "/batchOrder/batch-order-change";
 	}
-
-	/**
-	 * 批量订购裸终端 - 文件校验</br>
-	 * @deprecated #88538：前台将不在进行号码预占等业务操作，非空、去重校验成功后直接上传Excel至FTP服务器，所以此方法目前不再使用
-	 * updated by  2016-03-20
-	 */
-	@Deprecated
-	@SuppressWarnings("unchecked")
-	@RequestMapping(value = "/batchOrderVerify", method = RequestMethod.POST)
-	public String checkTerminal(Model model, HttpServletRequest request, HttpServletResponse response, @LogOperatorAnn String flowNum,
-			@RequestParam("upFile") MultipartFile file) {
-		
-		String message = "";
-		String code = "-1";
-		boolean isError = false;
-		boolean isTrue = false; // 是否能导入文件
-		JsonResponse jsonResponse = null;
-		Map<String,Object> checkResult = null;
-		if (null != file) {
-			boolean oldVersion = true;
-			String fileName = file.getOriginalFilename();
-			if (fileName.matches("^.+\\.(?i)(xls)$")) {
-				oldVersion = true;
-			} else if (fileName.matches("^.+\\.(?i)(xlsx)$")) {
-				oldVersion = false;
-			} else {
-				message = "导入的文件类型错误，后缀必须为.xls或.xlsx！";
-				isError = true;
-			}
-			if(!isError){
-				Workbook workbook = null;
-				try {
-					if (oldVersion) {// 2003版本Excel(.xls)
-						workbook = new HSSFWorkbook(file.getInputStream());
-					} else {// 2007版本Excel或更高版本(.xlsx)
-						workbook = new XSSFWorkbook(file.getInputStream());
-					}
-				} catch (Exception e) {
-					message="对不起，文件读取异常！";
-					isError = true;
-				}
-				if(!isError){
-					boolean flag=false;
-					SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
-					// Excel格式校验
-					checkResult = batchBmo.readOrderTerminalExcel(workbook);
-					if(checkResult.get("code")!=null&&"0".equals(checkResult.get("code"))){
-						flag=true;
-					}else{
-						message="批量文件格式出错:"+(String)checkResult.get("errorData");
-					}
-					if(flag){
-						//Map<String,Object> checkResult = null;
-						List<Map<String, Object>> terminalInfo = new ArrayList<Map<String, Object>>(); // 校验后的保存的终端信息
-						int successNum = 0;// 校验成功数目
-						List<Map<String, Object>> resultList = (List<Map<String, Object>>)checkResult.get("data"); 
-						for(Map<String, Object> mktResCode : resultList ){
-							Map<String, Object> param = new HashMap<String, Object>();
-							// 串码校验
-							try {
-								Map<String, Object> mktResInfo = new HashMap<String, Object>();
-								String excelPrice =  mktResCode.get("salePrice").toString();
-								mktResInfo.put("mktResCode",mktResCode.get("mktResCode"));
-								mktResInfo.put("salePrice",excelPrice);
-								mktResInfo.put("dealer",mktResCode.get("dealer"));
-								param.put("channelId", sessionStaff.getCurrentChannelId());
-								param.put("instCode",mktResCode.get("mktResCode"));
-								param.put("mktResTypeCd", "101000"); //固定类型为终端
-								Map<String, Object> mktRes = mktResBmo.checkTerminalCode( param, flowNum, sessionStaff);
-								if (MapUtils.isNotEmpty(mktRes)) {
-									if(ResultCode.R_SUCC.equals(mktRes.get("code").toString())){
-										String statusCd = MapUtils.getString(mktRes, "statusCd","");
-										if(SysConstant.MKT_RES_STATUSCD_USABLE.equals(statusCd)){
-											String salePrice = "0";
-											String colour = "";
-											for(Map<String, Object> mktResAttr : (List<Map<String, Object>>)mktRes.get("mktAttrList")){
-												if(MapUtils.getString(mktResAttr, "attrId").equals(SysConstant.MKT_RES_ATTR_TERMINAL_PRICE)){
-													salePrice = MapUtils.getString(mktResAttr, "attrValue");
-												}
-												if(MapUtils.getString(mktResAttr, "attrId").equals(SysConstant.MKT_RES_ATTR_TERMINAL_COLOUR)){
-													colour = MapUtils.getString(mktResAttr, "attrValue");
-												}
-											}
-											mktResInfo.put("mktResName",mktRes.get("mktResName"));
-											mktResInfo.put("salePrice",salePrice);
-											mktResInfo.put("colour",colour);
-											BigDecimal excelAmount =  new BigDecimal(excelPrice); // 文件里的金额
-											BigDecimal terminalAmount =  new BigDecimal(salePrice); // 资源返回金额
-											// 金额不一致
-											if(terminalAmount.compareTo(excelAmount) == 0){
-												++successNum;
-											}else{
-												mktRes.put("code", "-1");
-												mktRes.put("message", "校验失败,填写金额["+excelAmount+"]与资源销售金额["+terminalAmount+"]不一致！");
-											}
-										}else if(SysConstant.MKT_RES_STATUSCD_HAVESALE.equals(statusCd)){
-											mktRes.put("code", "-1");
-											mktRes.put("message", "终端当前状态为已销售未补贴[1115],只有在办理话补合约时可用！");
-										}else{
-											mktRes.put("code", "-1");
-											mktRes.put("message", "终端当前状态为不可用状态,请检查！");
-										}
-									}
-									mktResInfo.put("code",mktRes.get("code"));
-									mktResInfo.put("message",mktRes.get("message"));
-									terminalInfo.add(mktResInfo);
-								} else {
-									message="校验终端串号失败,校验返回结果为空！";
-								}
-							} catch (BusinessException be) {
-								this.log.error("门户/mktRes/terminal/checkTerminal服务异常", be);
-								jsonResponse = super.failed(be);
-								break;
-							} catch (InterfaceException ie) {
-								jsonResponse = super.failed(ie, param, ErrorCode.CHECK_TERMINAL);
-								break;
-							} catch (Exception e) {
-								jsonResponse = super.failed(ErrorCode.CHECK_TERMINAL, e, param);
-								break;
-							}
-						}
-						if(resultList.size() == successNum){
-							isTrue = true;
-						}
-						model.addAttribute("isTrue", isTrue==true?"true":"false");
-						if(terminalInfo!=null&&terminalInfo.size()>0){
-				             model.addAttribute("terminalInfoList", terminalInfo);
-				             Map<String,Object> terminalInfoMap = new HashMap<String,Object>();
-				             // 保存校验结果到前台
-				             terminalInfoMap.put("data",terminalInfo);
-				             String terminalInfoJson = JsonUtil.buildNormal().objectToJson(terminalInfoMap);
-				             terminalInfoJson = terminalInfoJson.replace("\"", "'");
-				 			 model.addAttribute("terminalInfoJson",terminalInfoJson);
-						}
-					}
-				}
-			}
-		} else {
-			message="文件上传失败！";
-		}
-		model.addAttribute("message", message);
-		model.addAttribute("code", code);
-		if(jsonResponse!=null){
-			model.addAttribute("errorStack",jsonResponse);
-		}
-		if(isTrue){
-			String result = JsonUtil.buildNormal().objectToJson(checkResult);
-			result = result.replace("\"", "'");
-			model.addAttribute("result",result);
-		}
-		//model.addAttribute("batchType", batchType);
-		return "/batchOrder/batch-order-terminal-list";
-	}
-	
-	/**
-	 * 批量订购裸终端 - 文件提交
-	 * @deprecated #88538：前台将不在进行号码预占等业务操作，非空、去重校验成功后直接上传Excel至FTP服务器，所以此方法目前不再使用
-	 * updated by  2016-03-20
-	 */
-	@Deprecated
-	@SuppressWarnings("unchecked")
-	@RequestMapping(value = "/batchTerminalImport", method = RequestMethod.POST)
-	public @ResponseBody JsonResponse batchTerminalImport(@RequestBody Map<String, Object> params,HttpServletRequest request,
-			@LogOperatorAnn String flowNum) {
-		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
-		JsonResponse jsonResponse = null;
-		List<Map<String,Object>> list=(List<Map<String,Object>>)params.get("data");
-		Map<String, Object> rMap = null;
-		Map<String, Object> param = new HashMap<String, Object>();
-		param.put("orderList", list);
-		param.put("custOrderId", "");
-		param.putAll(getAreaInfos());
-		param.put("commonRegionId",sessionStaff.getCurrentAreaId());
-		param.put("batchType", params.get("batchType").toString());
-		param.put("reserveDt", params.get("reserveDt").toString());
-		Map<String, Object> busMap = new HashMap<String, Object>();
-		busMap.put("batchOrder", param);
-		try {
-			rMap = orderBmo.batchExcelImport(busMap, flowNum, sessionStaff);
-			if (rMap != null&& ResultCode.R_SUCCESS.equals(rMap.get("code").toString())) {
-				rMap.put("msg", "批量导入成功,导入批次号["+rMap.get("groupId")+"],请到“批量受理查询”功能中查询受理结果");
-				jsonResponse = super.successed(rMap,
-						ResultConstant.SUCCESS.getCode());
- 			}else{
- 				if(rMap==null||rMap.get("msg")==null){
- 					rMap.put("msg", "批量导入服务调用失败");
- 					jsonResponse = super.failed(rMap,
- 							ResultConstant.FAILD.getCode());
- 				}else{
- 					rMap.put("msg", rMap.get("msg").toString());
- 					jsonResponse = super.failed(rMap,
- 							ResultConstant.FAILD.getCode());
- 				}		 				
- 			}
-			return jsonResponse;
-		} catch (BusinessException be) {
-			return super.failed(be);
-		} catch (InterfaceException ie) {
-			return super.failed(ie, busMap, ErrorCode.BATCH_IMP_SUBMIT);
-		} catch (Exception e) {
-			return super.failed(ErrorCode.BATCH_IMP_SUBMIT, e, busMap);
-		}
-	}
 	
 	/**
 	 * 批量换档、批量换卡、批量订购裸终端、批量未激活拆机、批量在用拆机
@@ -1202,7 +977,7 @@ public class BatchOrderControllerLatestVer  extends BaseController {
 					boolean flag = false;
 					SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);
 					
-					checkResult = batchBmo.readExcel(workbook, batchType, sessionStaff);
+					checkResult = batchBmo.readExcel(new BatchExcelTask(workbook, null, batchType, sessionStaff));
 					if(checkResult.get("code") != null && ResultCode.R_SUCC.equals(checkResult.get("code"))){//Excel校验成功
 						flag = true;
 					} else{
@@ -1368,7 +1143,7 @@ public class BatchOrderControllerLatestVer  extends BaseController {
 					boolean flag = false;
 					SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);
 					
-					checkResult = batchBmo.readExcel(workbook, batchType, sessionStaff);
+					checkResult = batchBmo.readExcel(new BatchExcelTask(workbook, null, batchType, sessionStaff));
 					if(checkResult.get("code") != null && ResultCode.R_SUCC.equals(checkResult.get("code"))){
 						flag = true;
 					} else{

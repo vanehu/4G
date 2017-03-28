@@ -2024,5 +2024,292 @@
 			"REGEXP_NOTNULL":"^\\w+?$"										<!-- 非空校验正则表达式 -->
 		}
 		</const>
+		<const type="Map" name="BATCH_CONFIGS" description="批量业务配置">
+		{
+			"0":{
+				"totalColumns"		:8,				<!-- Excel共7列数据 -->
+				"strictColumns"		:[0,1,2,3,5],	<!-- Excel第0,1,2,3,5列数据必填(起始列0) -->
+				"govEntCheckList"	:[],			<!-- 针对政企客户需要特别校验的列 -->
+				"regexpCheckList"	:[2],			<!-- 需要进行正则校验的列，例如号码和价格列 -->
+				"nameColumns"		:["客户ID","帐户ID","主接入号","UIM卡号","租机串码","区号","联系人","联系电话"],	<!-- Excel每列数据名称 -->
+				"maxRows"			:50000,			<!-- Excel允许导入最大行数(不指定即为无限制) -->
+				"batchTypeName"		:"批开活卡",		<!-- 批量业务名称 -->
+				"repeatCheckList"	:[2,3],			<!-- 防止重复需要校验的列 -->
+				"regexpCheck"		:{				<!-- 需要特别正则校验的列，比如号码、价格等 -->
+					"2":"LTEPHONEHEAD"
+				},
+				"templateType"		:0,				<!-- 批量模板订单(种子订单)类型，一般情况下与batchType一致，政企批开特殊，没有则null -->
+				"threshold"			:1024,			<!-- 每1024条数据起一个线程，必须是2的倍数 -->
+				"errorDataMaxCount"	:10,			<!-- 解析Excel错误数据缓存总数，当错误数据大于errorDataMaxCount时，则停止解析Excel返回所有错误信息 -->
+				"threadsFlag"		:'ON'			<!-- 是否启用多线程解析Excel -->
+			},
+			"1":{
+				"totalColumns"		:8,
+				"strictColumns"		:[0,1,2,4],
+				"govEntCheckList"	:[7],
+				"regexpCheckList"	:[1],
+				"nameColumns"		:["帐户ID","主接入号","UIM卡号","租机串码","区号","联系人","联系电话","使用人"],
+				"maxRows"			:50000,
+				"batchTypeName"		:"批量新装",
+				"repeatCheckList"	:[1,2],
+				"regexpCheck"		:{
+					"1":"LTEPHONEHEAD",
+					"7":"REGEXP_NOTNULL"
+				},
+				"templateType"		:1,
+				"threshold"			:1024,
+				"errorDataMaxCount"	:10,
+				"threadsFlag"		:'ON'
+			},
+			"2":{
+				"totalColumns"		:2,
+				"strictColumns"		:[0,1],
+				"govEntCheckList"	:[],
+				"regexpCheckList"	:[0],
+				"nameColumns"		:["主接入号","区号"],
+				"maxRows"			:50000,
+				"batchTypeName"		:"批量订购/退订附属",
+				"repeatCheckList"	:[0],
+				"regexpCheck"		:{
+					"0":"LTEPHONEHEAD"
+				},
+				"templateType"		:2,
+				"threshold"			:1024,
+				"errorDataMaxCount"	:10,
+				"threadsFlag"		:'ON'
+			},
+			"3":{
+				"totalColumns"		:0,
+				"strictColumns"		:[],
+				"govEntCheckList"	:[],
+				"regexpCheckList"	:[],
+				"nameColumns"		:[],
+				"maxRows"			:50000,
+				"batchTypeName"		:"组合产品纳入退出",
+				"repeatCheckList"	:[],
+				"regexpCheck"		:{},
+				"templateType"		:null,
+				"threshold"			:1024,
+				"errorDataMaxCount"	:10,
+				"threadsFlag"		:'ON'
+			},
+			"4":{
+				"totalColumns"		:0,
+				"strictColumns"		:[],
+				"govEntCheckList"	:[],
+				"regexpCheckList"	:[],
+				"nameColumns"		:[],
+				"maxRows"			:50000,
+				"batchTypeName"		:"批量修改产品属性",
+				"repeatCheckList"	:[],
+				"regexpCheck"		:{},
+				"templateType"		:null,
+				"threshold"			:1024,
+				"errorDataMaxCount"	:10,
+				"threadsFlag"		:'ON'
+			},
+			"8":{
+				"totalColumns"		:2,
+				"strictColumns"		:[0,1],
+				"govEntCheckList"	:null,
+				"regexpCheckList"	:[0],
+				"nameColumns"		:["主接入号","区号"],
+				"maxRows"			:50000,
+				"batchTypeName"		:"批量拆机",
+				"repeatCheckList"	:[0],
+				"regexpCheck"		:{
+					"0":"LTEPHONEHEAD"
+				},
+				"templateType"		:null,
+				"threshold"			:1024,
+				"errorDataMaxCount"	:10,
+				"threadsFlag"		:'ON'
+			},
+			"9":{
+				"totalColumns"		:4,
+				"strictColumns"		:[0,1,2,3],
+				"govEntCheckList"	:[],
+				"regexpCheckList"	:[0,2,3],
+				"nameColumns"		:["主接入号","区号","产品发展人","销售品发展人"],
+				"maxRows"			:50000,
+				"batchTypeName"		:"批量修改发展人",
+				"repeatCheckList"	:[0],
+				"regexpCheck"		:{
+					"0":"LTEPHONEHEAD",
+					"2":"REGEXP_DEALER",
+					"3":"REGEXP_OFFER"
+				},
+				"templateType"		:null,
+				"threshold"			:1024,
+				"errorDataMaxCount"	:10,
+				"threadsFlag"		:'ON'
+			},
+			"10":{
+				"totalColumns"		:3,
+				"strictColumns"		:[0,1],
+				"govEntCheckList"	:[],
+				"regexpCheckList"	:[1],
+				"nameColumns"		:["串码","价格","发展人"],
+				"maxRows"			:50000,
+				"batchTypeName"		:"批量订购裸终端",
+				"repeatCheckList"	:[0],
+				"regexpCheck"		:{
+					"1":"REGEXP_PRICE"
+				},
+				"templateType"		:null,
+				"threshold"			:1024,
+				"errorDataMaxCount"	:10,
+				"threadsFlag"		:'ON'
+			},
+			"11":{
+				"totalColumns"		:2,
+				"strictColumns"		:[0,1],
+				"govEntCheckList"	:[],
+				"regexpCheckList"	:[0],
+				"nameColumns"		:["接入号码","套餐规格ID"],
+				"maxRows"			:50000,
+				"batchTypeName"		:"批量换档",
+				"repeatCheckList"	:[0],
+				"regexpCheck"		:{
+					"0":"LTEPHONEHEAD"
+				},
+				"templateType"		:null,
+				"threshold"			:16,
+				"errorDataMaxCount"	:10,
+				"threadsFlag"		:'ON'
+			},
+			"12":{
+				"totalColumns"		:2,
+				"strictColumns"		:[0,1],
+				"govEntCheckList"	:[],
+				"regexpCheckList"	:[0],
+				"nameColumns"		:['接入号码','新UIM卡号'],
+				"maxRows"			:50000,
+				"batchTypeName"		:'批量换卡',
+				"repeatCheckList"	:[0,1],
+				"regexpCheck"		:{
+					"0":"LTEPHONEHEAD"
+				},
+				"templateType"		:null,
+				"threshold"			:16,
+				"errorDataMaxCount"	:10,
+				"threadsFlag"		:'ON'
+			},
+			"13":{
+				"totalColumns"		:5,
+				"strictColumns"		:[1,3],
+				"govEntCheckList"	:[],
+				"regexpCheckList"	:[1,3],
+				"nameColumns"		:['主号地区','主号号码','虚号地区','虚号号码','黑名单原因'],
+				"maxRows"			:50000,
+				"batchTypeName"		:'批量一卡双号黑名单',
+				"repeatCheckList"	:[1,3],
+				"regexpCheck"		:{
+					"1":"LTEPHONEHEAD",
+					"3":"LTEPHONEHEAD"
+				},
+				"templateType"		:null,
+				"threshold"			:1024,
+				"errorDataMaxCount"	:10,
+				"threadsFlag"		:'ON'
+			},
+			"14":{
+				"totalColumns"		:2,
+				"strictColumns"		:[0,1],
+				"govEntCheckList"	:[],
+				"regexpCheckList"	:[0],
+				"nameColumns"		:["主接入号","区号"],
+				"maxRows"			:50000,
+				"batchTypeName"		:"批量在用拆机",
+				"repeatCheckList"	:[0],
+				"regexpCheck"		:{
+					"0":"LTEPHONEHEAD"
+				},
+				"templateType"		:null,
+				"threshold"			:1024,
+				"errorDataMaxCount"	:10,
+				"threadsFlag"		:'ON'
+			},
+			"15":{
+				"totalColumns"		:2,
+				"strictColumns"		:[0,1],
+				"govEntCheckList"	:[],
+				"regexpCheckList"	:[0],
+				"nameColumns"		:["主接入号","区号"],
+				"maxRows"			:50000,
+				"batchTypeName"		:"批量未激活拆机",
+				"repeatCheckList"	:[0],
+				"regexpCheck"		:{
+					"0":"LTEPHONEHEAD"
+				},
+				"templateType"		:null,
+				"threshold"			:1024,
+				"errorDataMaxCount"	:10,
+				"threadsFlag"		:'ON'
+			},
+			"16":{
+				"totalColumns"		:1,
+				"strictColumns"		:[0],
+				"govEntCheckList"	:[],
+				"regexpCheckList"	:[],
+				"nameColumns"		:["终端串码"],
+				"maxRows"			:10000,
+				"batchTypeName"		:"批量终端领用",
+				"repeatCheckList"	:[0],
+				"regexpCheck"		:{},
+				"templateType"		:null,
+				"threshold"			:1024,
+				"errorDataMaxCount"	:10,
+				"threadsFlag"		:'ON'
+			},
+			"17":{
+				"totalColumns"		:1,
+				"strictColumns"		:[0],
+				"govEntCheckList"	:[],
+				"regexpCheckList"	:[],
+				"nameColumns"		:["终端串码"],
+				"maxRows"			:10000,
+				"batchTypeName"		:"批量终端回退",
+				"repeatCheckList"	:[0],
+				"regexpCheck"		:{},
+				"templateType"		:null,
+				"threshold"			:1024,
+				"errorDataMaxCount"	:10,
+				"threadsFlag"		:'ON'
+			},
+			"18":{
+				"totalColumns"		:1,
+				"strictColumns"		:[0],
+				"govEntCheckList"	:[],
+				"regexpCheckList"	:[],
+				"nameColumns"		:["终端串码"],
+				"maxRows"			:10000,
+				"batchTypeName"		:"批量终端销售",
+				"repeatCheckList"	:[0],
+				"regexpCheck"		:{},
+				"templateType"		:null,
+				"threshold"			:1024,
+				"errorDataMaxCount"	:10,
+				"threadsFlag"		:'ON'
+			},
+			"19":{
+				"totalColumns"		:7,
+				"strictColumns"		:[0,1,2,4],
+				"govEntCheckList"	:[],
+				"regexpCheckList"	:[1],
+				"nameColumns"		:["帐户ID","主接入号","UIM卡号","租机串码","区号","联系人","联系电话"],
+				"maxRows"			:50000,
+				"batchTypeName"		:"政企批开",
+				"repeatCheckList"	:[1,2],
+				"regexpCheck"		:{
+					"1":"LTEPHONEHEAD"
+				},
+				"templateType"		:0,
+				"threshold"			:1024,
+				"errorDataMaxCount"	:10,
+				"threadsFlag"		:'ON'
+			}
+		}
+		</const>
 	</mda>
 </mdas>

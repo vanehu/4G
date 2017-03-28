@@ -503,4 +503,18 @@ public class StringUtil {
     	}
     	return yuan;
     }
+
+    /**
+     * 字符串正则校验
+     * @param regExp 字符串正则表达式
+     * @param cellValue 待校验字符串
+	 * @return 校验成功返回<strong>true</strong>，入参为空或校验失败则返回<strong>false</strong>
+     */
+	public static boolean checkRegExp(String regExp, String cellValue){
+		if(regExp == null || cellValue == null || "".equals(regExp) || "".equals(cellValue)){
+			return false;
+		} else{
+			return Pattern.matches(regExp, cellValue);
+		}
+	}
 }

@@ -117,23 +117,23 @@ order.batch = (function(){
 		}
 		if(batchType == '16'){//批量终端领用
 			var destRepositoryId = $("#destRepositoryId").val();
-			if(destRepositoryId == null || destRepositoryId == "" || destRepositoryId == "undefined"){
+			if(!ec.util.isObj(destRepositoryId)){
 				$('#alertInfo').html("目标仓库(destRepositoryID)为空，无法继续受理，请刷新页面或稍后重试！");
 				return;
 			}
 		}else if(batchType == '17'){//批量终端领用回退
 			var fromRepositoryId = $("#fromRepositoryId").val();
-			if(fromRepositoryId == null || fromRepositoryId == "" || fromRepositoryId == "undefined"){
+			if(!ec.util.isObj(fromRepositoryId)){
 				$('#alertInfo').html("终端所在仓库(fromRepositoryId)为空，无法继续受理，请选择仓库后再进行受理！");
 				return;
 			}
 		}else if(batchType == '18'){//批量终端领用回退
 			var fromRepositoryId = $("#fromRepositoryId").val();	
 			var destStatusCd = $("#destStatusCd").val();
-			if(fromRepositoryId == null || fromRepositoryId == "" || fromRepositoryId == "undefined"){
+			if(!ec.util.isObj(fromRepositoryId)){
 				$('#alertInfo').html("终端所在仓库(fromRepositoryId)为空，无法继续受理，请选择仓库后再进行受理！");
 				return;
-			}else if(destStatusCd == null || destStatusCd == "" || destStatusCd == "undefined"){
+			}else if(!ec.util.isObj(destStatusCd)){
 				$('#alertInfo').html("销售状态(destStatusCd)为空，无法继续受理，请选择仓库后再进行受理！");
 				return;	
 			}
@@ -170,7 +170,8 @@ order.batch = (function(){
 	
 	//弹出导入窗口
 	var _barchImport=function(olId,olnumber,areaId){
-		if($("#h2_tit").attr("value") == 1){//批量新装,需要客户定位
+		var batchType = $("#batchType").val();
+		if($("#h2_tit").attr("value") == 1 || batchType == 19){//批量新装、政企批开需要客户定位
 			var custId = OrderInfo.cust.custId;
 			if(OrderInfo.cust==undefined || custId==undefined || custId==""){
 				$.alert("提示","在导入Excel模板前请先进行客户定位！");

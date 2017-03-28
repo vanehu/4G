@@ -4,11 +4,10 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.poi.ss.usermodel.Workbook;
-
 import com.al.ecs.exception.BusinessException;
 import com.al.ecs.exception.ErrorCode;
 import com.al.ecs.exception.InterfaceException;
+import com.al.lte.portal.model.BatchExcelTask;
 import com.al.lte.portal.model.SessionStaff;
 
 /**
@@ -25,72 +24,7 @@ public interface BatchBmo {
 	 * @param sessionStaff
 	 * @return
 	 */
-	public Map<String, Object> readExcel(final Workbook workbook, final String batchType, final SessionStaff sessionStaff);
-
-	/**
-	 * 批量新装(1)解析Excel
-	 * @param workbook
-	 * @param batchType
-	 * @param str
-	 * @return
-	 */
-	public Map<String, Object> readExcel4NewOrder(Workbook workbook, String batchType, SessionStaff sessionStaff);
-	
-	/**
-	 * 批开活卡解析Excel(多线程)
-	 * @author ZhangYu 2016-04-10
-	 */
-	public Map<String, Object> readExcel4HKUseThreads(Workbook workbook, String batchType);	
-	
-	/**
-	 * 批开活卡(0)解析Excel
-	 * @param workbook
-	 * @param batchType
-	 * @return
-	 */
-	public Map<String, Object> readExcel4HK(Workbook workbook, String batchType);
-	
-	/**
-	 * 批量拆机(8)、批量订购/退订附属(2)、批量在用拆机(14)、批量未激活拆机(15)解析Excel
-	 * @param workbook
-	 * @return
-	 */
-	public Map<String,Object> readExcel4Common(Workbook workbook);
-	
-	/**
-	 * 批量修改发展人(9)解析Excel
-	 * @param workbook
-	 * @return
-	 */
-	public Map<String,Object> readExcel4ExtendCust(Workbook workbook);
-	
-	/**
-	 * 批量订购裸终端解析(10)Excel
-	 * @param workbook
-	 * @return Map<String,Object>
-	 */
-	public Map<String,Object> readOrderTerminalExcel(Workbook workbook);
-	
-	/**
-	 * 批量换档(11)、批量换卡(12)Excel解析
-	 * @param workbook
-	 * @param batchType
-	 * @param str
-	 * @return returnMap
-	 * @author ZhangYu
-	 */
-	public Map<String, Object> readExcelBatchChange(Workbook workbook, String batchType);
-	
-	/**
-	 * 批量终端领用(16)、批量终端领用回退(17)、批量终端销售(18)Excel解析
-	 * @param workbook
-	 * @param batchType
-	 * @param str
-	 * @return returnMap
-	 * @author ZhangYu
-	 */
-	public Map<String, Object> readExcel4EcsBatch(Workbook workbook, String batchType);
-		
+	public Map<String, Object> readExcel(BatchExcelTask batchExcelTask);
 	/**
 	 * 获取未来5天的时间列表，精确到“时”，以实现未来5天的预约时间。该方法目前用于批开活卡、批量新装、批量裸机销售等批量受理。
 	 * @return 时间列表
@@ -100,7 +34,9 @@ public interface BatchBmo {
 	
 	public List<Map<String,Object>> getTimeList();
 	
-	public String getTypeNames(String templateType);
+	public String getTypeNames(String batchType);
+	
+	public String getTemplateType(String batchType);
 	
 	/**
 	 * 文件上传成功通知服务</br>
@@ -142,13 +78,6 @@ public interface BatchBmo {
 	 * @return
 	 */
 	public ErrorCode getErrorCode2Ecs(String batchType);
-	
-	/**
-	 * 批量一卡双号黑名单(14)Excel
-	 * @param workbook
-	 * @return Map<String,Object>
-	 */
-	public Map<String,Object> readBlacklistTerminalExcel(Workbook workbook);
 	
 	/**
 	 * 批量终端领用、批量终端领用回退、批量终端销售批次查询
