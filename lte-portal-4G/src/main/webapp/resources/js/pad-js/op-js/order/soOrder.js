@@ -2295,6 +2295,9 @@ SoOrder = (function() {
 		busiOrder.data.boAccountRelas.push(boAccountRela);	
 		if (ec.util.isObj(OrderInfo.boProdAns) && OrderInfo.boProdAns.length > 0 && prodSpecId != CONST.PROD_SPEC.PROD_CLOUD_OFFER) {
             $.each(OrderInfo.boProdAns, function () {
+            	if (busiOrder.busiObj.accessNumber != this.accessNumber) {//封装当前号码下的证号关系节点
+                    return true;
+                }
                 var ca = $.extend(true, {}, OrderInfo.boCertiAccNbrRel);
                 ca.accNbr = this.accessNumber;
                 ca.state = this.state;
