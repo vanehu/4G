@@ -3243,7 +3243,7 @@ public class OrderController extends BaseController {
                     	return super.failed(ErrorCode.PORTAL_INPARAM_ERROR, "订单提交数据过滤错误，原因可能是新建客户、经办人或使用人时证件信息为空，请清空浏览器缓存后重新尝试，不要进行非法提交、多窗口同时提交受理业务。", param);
                 	}
                 } else{
-                	return super.failed(ErrorCode.PORTAL_INPARAM_ERROR, "订单提交数据校验失败，原因可能是客户证件为身份证时未进行读卡，或身份证读卡数据被篡改，或经办人未拍照，或政企客户未填写使用人，请清空浏览器缓存后重新尝试，不要进行非法提交、多窗口同时提交受理业务。", param);
+                	return super.failed(ErrorCode.PORTAL_INPARAM_ERROR, "订单提交数据校验失败，原因可能是客户证件为身份证时未进行读卡，或身份证读卡数据被篡改，或经办人未拍照，请清空浏览器缓存后重新尝试，不要进行非法提交、多窗口同时提交受理业务。", param);
                 }
             } catch (BusinessException e) {
                 return super.failed(e);

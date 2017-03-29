@@ -2858,6 +2858,17 @@ public class OrderBmoImpl implements OrderBmo {
 			(actionFlag == 2  && isActionFlagLimited) || //套餐变更:加装新号码,加装已有号码,且客户证件为非身份证
 			actionFlag == 43  //返档
     	);
+        
+        //循环找出每次订单提交的virOlId
+        List<Map<String, String>> custOrderAttrs = (List<Map<String, String>>) orderListInfo.get("custOrderAttrs");        
+        for (Map<String, String> custOrderAttr : custOrderAttrs) {
+        	if("810000000".equals(custOrderAttr.get("itemSpecId").toString())){
+        		//既然有该属性，说明已经拍照，则必然存在handleCustId
+        		if("".equals(MapUtils.getString(orderListInfo, "handleCustId", ""))){
+        			return false;
+        		}
+        	}
+        }
       
         /*if(isRealNameFlagOn && isHandleCustNeeded && isCheckCertificateComprehensive){
     		resultFlag = this.checkCustCertificateComprehensive(param, request);
