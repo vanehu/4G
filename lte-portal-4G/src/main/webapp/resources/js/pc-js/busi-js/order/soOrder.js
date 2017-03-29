@@ -180,10 +180,6 @@ SoOrder = (function() {
 	
 	//填充订单信息
 	var _getOrderInfo = function(data){
-		//一证五号校验
-        if(!_oneCertFiveCheckData(order.cust.getCustInfo415())){
-            return false;
-        }
 		if(OrderInfo.actionFlag==13 || OrderInfo.actionFlag==17 || OrderInfo.actionFlag==18){ //终端购买、退换货
 			//如果是合约机换货，已经加载缓存
 			if (OrderInfo.actionFlag==18 && data.boActionType.actionClassCd==CONST.ACTION_CLASS_CD.OFFER_ACTION) {
@@ -2674,7 +2670,12 @@ SoOrder = (function() {
 				}
 			}
 		}
-		
+
+        //一证五号校验
+        if(!_oneCertFiveCheckData(order.cust.getCustInfo415())){
+            return false;
+        }
+
 		//补换卡校验
 		if(OrderInfo.actionFlag == 22 || OrderInfo.actionFlag == 23){
 			if(OrderInfo.boProd2OldTds.length==0){
