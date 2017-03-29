@@ -354,7 +354,9 @@ order.cust = (function(){
 			$("#"+id).attr("disabled",isID&&(!isIdTypeOff));
 		}
 
-		if(identidiesTypeCd!=-1){
+		if(identidiesTypeCd==-1 || identidiesTypeCd=="cloudId"){
+			$("#isAppointNum").attr("checked",true);
+		}else{
 			$("#isAppointNum").attr("checked",false);
 		}
 		if(id == 'p_cust_identityNum_choose'){
@@ -622,7 +624,7 @@ order.cust = (function(){
 			//4G所有证件类型定位都需要客户鉴权
 			authFlag="0";
 		}
-		if(identityCd==-1){
+		if(identityCd==-1 || identityCd=="cloudId"){
 			acctNbr=identityNum;
 			identityNum="";
 			identityCd="";
@@ -632,7 +634,6 @@ order.cust = (function(){
 			identityCd="";
 			queryType=$("#p_cust_identityCd").val();
 			queryTypeValue=$.trim($("#p_cust_identityNum").val());
-
 		}
 		diffPlace=$("#DiffPlaceFlag").val();
 		areaId=$("#p_cust_areaId").val();
@@ -657,6 +658,8 @@ order.cust = (function(){
 		// 如果是接入号，且开关打开，则添加产品大类字段
 		if ($("#p_cust_identityCd").val() == -1 && "ON" == CacheData.getIntOptSwitch()) {
 			param.prodClass = $("#prodTypeCd").val();
+		}else if($("#p_cust_identityCd").val()=="cloudId"){
+			param.prodClass = CONST.PROD_BIG_CLASS.PROD_CLASS_CLOUD;
 		}
 		// 将客户查询入参保存，供查询预约号码用
 		order.cust.custQueryParam = param;
@@ -2250,7 +2253,7 @@ order.cust = (function(){
 	//指定号码checkbox
 	var _isAppointNum = function(identityCdId){
 		identityCdId = identityCdId || 'p_cust_identityCd';
-		if($("#"+identityCdId).val()!=-1){
+		if($("#"+identityCdId).val()!=-1 && $("#"+identityCdId).val()!="cloudId"){
 			$.alert("提示","只能接入号码才能指定号码！","information");
 			$("#isAppointNum").attr("checked",false);
 			return;

@@ -32,6 +32,18 @@ CONST = (function(){
 		PROD_FUN_4G : "280000020",
 		PROD_CLOUD_OFFER:13410447 // 天翼云盘企业版接入类产品
 	};
+
+	//产品大类
+	var _PROD_BIG_CLASS = {
+		PROD_CLASS_FIXED 		: 10, 		//固话
+		PROD_CLASS_BAND  		: 11, 		//宽带
+		PROD_CLASS_PHONE 		: 12,		//移动电话(当前默认产品大类)
+		PROD_CLASS_VIRACCOUNT	: 13, 		//虚拟帐号(异网用户)
+		PROD_CLASS_PHS			: 14, 		//小灵通
+		PROD_CLASS_WIFI 		: 15,		//无线宽带
+		PROD_CLASS_ITV 			: 16,		//ITV(天翼高清)
+		PROD_CLASS_CLOUD		: 19		//天翼云盘
+	};
 	
 	//功能产品规格ID
 	var _PROD_SPEC_ID={
@@ -569,6 +581,7 @@ CONST = (function(){
 		MEMBER_ROLE_CD 		: _MEMBER_ROLE_CD,
 		MEMBER_ROLE_LIST    : _MEMBER_ROLE_LIST,
 		PROD_SPEC			: _PROD_SPEC,
+		PROD_BIG_CLASS		: _PROD_BIG_CLASS,
 		PROD_ATTR			: _PROD_ATTR,
 		ACCT_ATTR      : _ACCT_ATTR,
 		getBoActionTypeName : _getBoActionTypeName,

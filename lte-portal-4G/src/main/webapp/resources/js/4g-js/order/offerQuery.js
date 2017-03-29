@@ -729,7 +729,7 @@ query.offer = (function() {
 		}
 		// 企业版云盘需要传入prodBigClass为19
 		if (prod.productId == CONST.PROD_SPEC.PROD_CLOUD_OFFER) {
-			param.prodBigClass = 19;
+			param.prodBigClass = CONST.PROD_BIG_CLASS.PROD_CLASS_CLOUD;
 		}
 		if(ec.util.isArray(OrderInfo.offer.offerMemberInfos)){ //遍历主销售品构成
 			var flag = true;
@@ -797,6 +797,11 @@ query.offer = (function() {
 					param.mainOfferSpecId=OrderInfo.oldprodInstInfos[i].mainProdOfferInstInfos[0].prodOfferId;
 				}
 			}
+		}
+		var prodInstInfo = order.prodModify.choosedProdInfo;
+		if((ec.util.isObj(prodInstInfo.prodBigClass) && prodInstInfo.prodBigClass == CONST.PROD_BIG_CLASS.PROD_CLASS_CLOUD) || prodInstInfo.productId == CONST.PROD_SPEC.PROD_CLOUD_OFFER){
+			//不需要查询产品信息的产品大类或接入类产品 (可能产品大类未返回)
+			param.prodBigClass = CONST.PROD_BIG_CLASS.PROD_CLASS_CLOUD;
 		}
 	};
 	

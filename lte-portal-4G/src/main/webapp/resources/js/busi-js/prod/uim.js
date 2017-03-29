@@ -653,8 +653,13 @@ prod.uim = (function() {
 	var _setProdUim = function(){
 		OrderInfo.boProd2OldTds = []; //清空旧卡
 		var flag = true;
+		var prodInstInfo = order.prodModify.choosedProdInfo;
+		if((ec.util.isObj(prodInstInfo.prodBigClass) && prodInstInfo.prodBigClass == CONST.PROD_BIG_CLASS.PROD_CLASS_CLOUD) || prodInstInfo.productId == CONST.PROD_SPEC.PROD_CLOUD_OFFER){
+			//不需要查询产品信息的产品大类或接入类产品 (可能产品大类未返回)
+			return true;
+		}
 		if(OrderInfo.actionFlag==3 || OrderInfo.actionFlag==22 || OrderInfo.actionFlag==23){ //可选包变更，补换卡
-			var prod = order.prodModify.choosedProdInfo; 
+			var prod = prodInstInfo;
 			var uim = query.prod.getTerminalInfo(prod);
 			if(uim == undefined){  //查询旧卡信息失败返回
 				return false;

@@ -711,7 +711,8 @@ order.undo = (function(){
 			var _acctNbr = "";
 			var _identityNum = "";
 			var _identityCd = "";
-			if($("#cust_id_type").val()==0){
+			var flagValue = $("#cust_id_type").val();
+			if( flagValue ==0 || flagValue=="cloudId"){
 				_acctNbr = $("#cust").val();
 			}
 			else{
@@ -729,6 +730,9 @@ order.undo = (function(){
 					query : "acct",  //账户详情查询的页面标志
 					pageType : "orderUndo"
 			};
+			if(flagValue=="cloudId"){
+				param.prodClass = CONST.PROD_BIG_CLASS.PROD_CLASS_CLOUD;
+			}
 			$.callServiceAsHtml(contextPath+"/cust/queryCust",param,{
 				"before":function(){
 					$.ecOverlay("<strong>正在查询中,请稍等...</strong>");

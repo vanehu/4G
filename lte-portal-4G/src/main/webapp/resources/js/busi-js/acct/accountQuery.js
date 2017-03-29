@@ -85,7 +85,8 @@ account.query = (function(){
 			var _acctNbr = "";
 			var _identityNum = "";
 			var _identityCd = "";
-			if($("#cust_id_type").val()==0){
+			var falgValue = $("#cust_id_type").val();
+			if(falgValue==0 || falgValue == "cloudId"){
 				_acctNbr = $("#cust").val();
 			}
 			else{
@@ -102,6 +103,9 @@ account.query = (function(){
 					areaId : $("#p_areaId").val(),
 					query : "acct"  //账户详情查询的页面标志
 			};
+			if( falgValue == "cloudId" ){
+				param.prodClass = CONST.PROD_BIG_CLASS.PROD_CLASS_CLOUD;
+			}
 			$.callServiceAsHtml(contextPath+"/cust/queryCust",param,{
 				"before":function(){
 					$.ecOverlay("<strong>正在查询中,请稍等...</strong>");
