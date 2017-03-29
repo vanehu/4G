@@ -1,89 +1,10 @@
 <input type="hidden" id="currentCT" value="${currentCT}"/><!-- 渠道类型 -->
 		<!-- begin #page-container -->
 		<div id="page-container" class="fade page-without-sidebar">
-			<!-- 经办人弹出层 -->
+					<!-- 经办人弹出层 -->
 			<div class="modal modal-message fade modal-top" id="jbr">
-					<div class="modal-dialog" style="display:block;">
-						<div class="modal-content">
-							<div class="modal-header">
-								<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-								<h4 class="modal-title">经办人</h4>
-							</div>
-							<form id="jbrFormdata" method="post">
-							<ul class="choice-list-box bg-body border-none">
-								<li class="m-t-10">
-									<div class="choice-box">
-										<i class="iconfont pull-left">&#xe616;</i>
-										<select name="" id="orderIdentidiesTypeCd" onchange="cust.jbridentidiesTypeCdChoose(this,'sfzorderAttrIdCard')" class="myselect select-option" data-role="none">
-										</select>
-									</div>
-								</li>
-								<li class="m-t-10" id="jbrsfz">
-									<div class="choice-box">
-										<i class="iconfont pull-left">&#xe609;</i>
-										<span class="list-title font-secondary border-none">证件扫描</span>
-										<i id="jbr_otg" onclick="common.callGenerationRec('cust.getjbrGenerationInfos','3')" class="iconfont pull-right font-orange">&#xe6dc;</i>
-										<i  onclick="common.callGenerationRec('cust.getjbrGenerationInfos','1')" class="iconfont pull-right font-orange">&#xe653;</i>
-										<i id="jbr_nfc" onclick="common.callGenerationRec('cust.getjbrGenerationInfos','2')" class="iconfont pull-right font-orange">&#xe654;</i>
-									</div>
-								</li>
-								<li class="m-t-10" id="photo">
-									<div class="choice-box">
-										<i class="iconfont pull-left">&#xe609;</i>
-										<span class="list-title font-secondary border-none">拍照</span>
-										<i onclick="common.callPhotos('cust.getPicture')" class="iconfont pull-right font-orange">&#xe61c;</i>
-									</div>
-								</li>
-								<li class="m-t-10" id="jbrsfz_i">
-									<div class="choice-box">
-										<i class="iconfont pull-left">&#xe616;</i>
-										<input placeholder="证件号码" id="sfzorderAttrIdCard" class="choice-input" readonly="readonly"/>
-										<div class="Validform_checktip"></div>
-									</div>
-								</li>
-								<li class="m-t-10" id="qtzj" style="display: none;">
-									<div class="choice-box">
-										<i class="iconfont pull-left">&#xe616;</i>
-										<input placeholder="证件号码" id="orderAttrIdCard" class="choice-input" />
-										<div class="Validform_checktip"></div>
-									</div>
-								</li>
-								<li class="m-t-10">
-									<div class="choice-box">
-										<i class="iconfont pull-left">&#xe663;</i>
-										<input placeholder="经办人姓名" id="orderAttrName" class="choice-input" readonly="readonly"/>
-										<div class="Validform_checktip"></div>
-									</div>
-								</li>
-								<li class="m-t-10">
-									<div class="choice-box">
-										<i class="iconfont pull-left">&#xe637;</i>
-										<input placeholder="证件地址" id="orderAttrAddr" class="choice-input" readonly="readonly"/>
-										<div class="Validform_checktip"></div>
-									</div>
-								</li>
-								<li class="m-t-10">
-									<div class="choice-box">
-										<i class="iconfont pull-left">&#xe639;</i>
-										<input placeholder="联系人手机" id="orderAttrPhoneNbr" class="choice-input"   ignore="ignore" />
-										<div class="Validform_checktip"></div>
-									</div>
-								</li>
-							</ul>
-							</form>
-							<div class="ordinary-btn-box p p-b-15" id="whole">
-								<button class="double-btn" id="queryJbr"   onClick="order.main.queryJbr()">查询</button>
-								<button class="double-btn" onClick="order.dealer.closeJBR()">确定</button>
-							</div>
-							<div class="ordinary-btn-box p p-b-15" id="only">
-								<button class="sun-btn" onClick="order.dealer.closeJBR()">确定</button>
-							</div>
-							
-				</div>
+				<#include "/app/order_new/jbr-create.html"/> 
 			</div>
-			</div>
-				
-		</div>
 		<input type="hidden" id="isOut" name="isOut" value="0"/>
 		<div id="order_fill_content" class="content p-t-0">
 		<ul class="choice-list-box">
@@ -109,6 +30,9 @@
 						<i class="iconfont absolute-right"></i>
 					</li>
 				</ul>
+			<div id="btn_next_checkUim" class="sub-btn-box p p-b-15">
+				<button onclick="javascript:prod.changeUim.submit()" class="sun-btn">下一步</button>
+			</div>
 		</div>
 		<div id="order-content" class="content p-t-0">
 		</div>
@@ -116,9 +40,7 @@
 		<!-- begin #content -->
 		
 
-		<div id="btn_next_checkUim" class="sub-btn-box p p-b-15">
-			<button onclick="javascript:prod.changeUim.submit()" class="sun-btn">下一步</button>
-		</div>
+		
 		<div id="attach" style="display:none">
 	    </div>
 		<div class="tab-content p-0" id="orderConfirmDiv" style="display: none">

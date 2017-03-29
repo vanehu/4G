@@ -63,22 +63,6 @@
 								</div>
 							</li>
 							</ul>
-						
-						<ul class="choice-list-box m-b-10" style="display:none" id="CHANGEUIMSMS_${prodId}">
-							<li >
-								<div class="choice-box absolute-l-43 border-top-none border-none"  >
-									<input placeholder="请输入手机验证码" class="choice-input p-l-0 " id="smspwd_${prodId}" />
-									<i id="uim_call_${prodId}" class="iconfont right-btn pull-right p-r-10 m-r-45"
-											onclick="product.uim.smsFormIsValid()">&#xe641;</i>
-												
-								</div>
-								
-							</li>
-							<p style="color:red; padding-left:0.85rem">- 如您未收到随机序列号为<font id="changeUimSmsRandomNum"></font>验证码，请点击<a id="changeuimsmsresend" onclick="product.uim.smsResend()" title="请点击重新发送短信验证码.">重新获取验证码。</a></p>
-						
-						</ul>
-							
-						
 						<div id="item_order_${prodId}">
 							<div id="attach_${prodId}">
 								
@@ -149,6 +133,19 @@ function showCheckUim(prodId) {
 	} else {
 		$("#uim_call_"+prodId).removeClass("dis-none");
 		$("#uim_check_"+prodId).addClass("dis-none");
+	}
+
+}
+
+function showCheckTerminal(prodId) {
+	
+	var terminalNumber = $("#terminal_text").val().trim();
+	if (terminalNumber != "") {
+		$("#terminal_call").addClass("dis-none");
+		$("#terminal_check").removeClass("dis-none");
+	} else {
+		$("#terminal_call").removeClass("dis-none");
+		$("#terminal_check").addClass("dis-none");
 	}
 
 }

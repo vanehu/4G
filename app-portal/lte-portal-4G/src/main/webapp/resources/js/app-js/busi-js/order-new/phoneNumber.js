@@ -66,6 +66,7 @@ order.phoneNumber = (function(){
 								});
 							}
 						}else{
+							$("#nbrPoolDiv").empty();
 							var $div =$('<i class="iconfont pull-left p-l-10">&#xe66c;</i>');
 							var $div2 =$('<i class="iconfont pull-right p-r-10">&#xe66e;</i>');
 							var $sel = $('<select id="nbrPool" class="myselect select-option" data-role="none"></select>');  
@@ -246,12 +247,14 @@ order.phoneNumber = (function(){
 		var pnCharacterId = ec.util.defaultStr(pnType);
 		var areaId=OrderInfo.staff.soAreaId+"";
 		var numPrice=$("#numPrice option:selected").val();//预存话费
+		var numLevel=$("#numLevel option:selected").val();//号码等级
 		var index=$('#numPrice').prop('selectedIndex');
 		var max="";
+		var min="";
 		if(flag==1){
 			max="0";
-		}		
-		var min="";
+			min="0";
+		}				
 		if(index==1){
 			var max="100";
 			var min="0";
@@ -286,6 +289,7 @@ order.phoneNumber = (function(){
 				"goodNumFlag":pnCharacterId,
 				"maxPrePrice":max,
 				"minPrePrice":min,
+				"pnLevelCd":numLevel,
 				"enter":"3",
 				"queryFlag":queryFlag,
 				"pageSize":"10"

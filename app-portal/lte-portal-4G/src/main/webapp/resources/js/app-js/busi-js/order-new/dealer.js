@@ -35,7 +35,7 @@ order.dealer = (function() {
 			
 		}
 		if (OrderInfo.actionFlag == 1 || OrderInfo.actionFlag == 2 || OrderInfo.actionFlag == 3 || OrderInfo.actionFlag == 19
-				|| OrderInfo.actionFlag == 14 || OrderInfo.actionFlag == 22 || OrderInfo.actionFlag == 9){
+				|| OrderInfo.actionFlag == 14 || OrderInfo.actionFlag == 22 || OrderInfo.actionFlag == 9 || OrderInfo.actionFlag == 20){
 			$.each(AttachOffer.addTerminalList,function(){
 				var $ul = $("#tab-change-list2");
 				var $li = $("#terminalDiv_"+this.prodId);
@@ -46,45 +46,7 @@ order.dealer = (function() {
 			$("#orderIdentidiesTypeCd").empty();
 			cust.jbrcertTypeByPartyType(1,"orderIdentidiesTypeCd");
 			$("#deleteJbr").hide();
-			if(ec.util.isObj(OrderInfo.jbr.partyName)){
-				$("#jbrName").html(OrderInfo.jbr.partyName);
-				$("#jbrName").removeClass("font-secondary");
-				$("#deleteJbr").show();
-//				$("#jbrTabDiv").show();
-//				$("#jbrFormdata").hide();
-				$("#jbrself").show();
-				  $("#tab1_li").off("click").on("click",function(){
-						$("#jbrFormdata").hide();
-						$("#jbrself").show();
-						$("#tab2_li").removeClass("active");
-						$("#tab1_li").addClass("active");
-						OrderInfo.jbr.custId = OrderInfo.cust.custId;
-						OrderInfo.jbr.partyName = OrderInfo.cust.partyName;
-						OrderInfo.jbr.telNumber = OrderInfo.cust.telNumber;
-						OrderInfo.jbr.addressStr = OrderInfo.cust.addressStr;
-						OrderInfo.jbr.identityCd = OrderInfo.cust.identityCd;
-						OrderInfo.jbr.mailAddressStr = OrderInfo.cust.mailAddressStr;
-						OrderInfo.jbr.identityPic = OrderInfo.cust.identityPic;
-						OrderInfo.jbr.identityNum = OrderInfo.cust.idCardNumber;
-						
-					});
-					$("#tab2_li").off("click").on("click",function(){
-						$("#jbrFormdata").show();
-						$("#jbrself").hide();
-						$("#tab1_li").removeClass("active");
-						$("#tab2_li").addClass("active");
-						if(OrderInfo.jbr){
-							OrderInfo.jbr.custId = undefined;
-							OrderInfo.jbr.partyName = undefined;
-							OrderInfo.jbr.telNumber = undefined;
-							OrderInfo.jbr.addressStr = undefined;
-							OrderInfo.jbr.identityCd = undefined;
-							OrderInfo.jbr.mailAddressStr = undefined;
-							OrderInfo.jbr.identityPic = undefined;
-							OrderInfo.jbr.identityNum = undefined;
-						}
-					});
-			}
+			order.dealer.initJbrTab();
 			order.broadband.init_select();
 			try{
 				if(!ec.util.isObj(OrderInfo.curIp)){
@@ -96,6 +58,75 @@ order.dealer = (function() {
 		}
 //		 $('#tab-change-list2').height($('#tab-li2').height());
 	};
+	
+	var _initJbrTab = function() {
+		if(ec.util.isObj(OrderInfo.jbr.partyName)){
+			cust.isSameOne = true;
+			$("#jbrName").html(OrderInfo.jbr.partyName);
+			$("#jbrName").removeClass("font-secondary");
+			$("#deleteJbr").show();
+			$("#jbrTabDiv").show();
+			$("#jbrFormdata").hide();
+			$("#jbrself").show();
+			  $("#tab1_jbr").off("click").on("click",function(){
+				  cust.isSameOne = true;
+					$("#jbrFormdata").hide();
+					$("#jbrself").show();
+					$("#tab2_jbr").removeClass("active");
+					$("#tab1_jbr").addClass("active");
+					if(OrderInfo.actionFlag == 9){
+						OrderInfo.jbr.custId = cust.readIdCardUser.custId;
+						OrderInfo.jbr.partyName = cust.readIdCardUser.partyName;//经办人名称
+						OrderInfo.jbr.areaId = OrderInfo.staff.areaId;//经办人地区
+						OrderInfo.jbr.addressStr = cust.readIdCardUser.addressStr;//经办人地址
+						OrderInfo.jbr.identityCd = cust.readIdCardUser.identityCd;//证件类型
+						OrderInfo.jbr.identityNum = cust.readIdCardUser.idCardNumber;//证件号码
+						OrderInfo.jbr.identityPic = OrderInfo.cust.identityPic;
+						cust.isOldCust = false;
+						if(cust.readIdCardUser.newUserFlag != "true"){
+							cust.isOldCust = true;
+						}
+					} else {
+						OrderInfo.jbr.custId = OrderInfo.cust.custId;
+						if(OrderInfo.cust.custId != "-1"){
+							cust.isOldCust = true;
+						} else {
+							cust.isOldCust = false;
+						}
+						OrderInfo.jbr.partyName = OrderInfo.cust.partyName;
+						OrderInfo.jbr.telNumber = OrderInfo.cust.telNumber;
+						OrderInfo.jbr.addressStr = OrderInfo.cust.addressStr;
+						OrderInfo.jbr.identityCd = OrderInfo.cust.identityCd;
+						OrderInfo.jbr.mailAddressStr = OrderInfo.cust.mailAddressStr;
+						OrderInfo.jbr.identityPic = OrderInfo.cust.identityPic;
+						OrderInfo.jbr.identityNum = OrderInfo.cust.idCardNumber;
+					}
+					
+					
+				});
+				$("#tab2_jbr").off("click").on("click",function(){
+					
+					$("#jbrFormdata").show();
+					$("#jbrself").hide();
+					$("#tab1_jbr").removeClass("active");
+					$("#tab2_jbr").addClass("active");
+					if(cust.isSameOne){
+						cust.clearJbrForm();
+						OrderInfo.jbr.custId = undefined;
+						OrderInfo.jbr.partyName = undefined;
+						OrderInfo.jbr.telNumber = undefined;
+						OrderInfo.jbr.addressStr = undefined;
+						OrderInfo.jbr.identityCd = undefined;
+						OrderInfo.jbr.mailAddressStr = undefined;
+						OrderInfo.jbr.identityPic = undefined;
+						OrderInfo.jbr.identityNum = undefined;
+					}
+					$("#jbrName").html("");
+					cust.isSameOne = false;
+				});
+		}
+	}
+	
 	function _showDealer(){
 		$("#diqu").empty();
 		var ad = ""+OrderInfo.staff.areaId;
@@ -138,10 +169,11 @@ order.dealer = (function() {
 
 	//发展人-查询
 	function _queryStaff(){
-		if($("#staffCode").val().trim() == "" && $("#salesCode").val().trim() == ""){
+		if($("#staffCode").val().trim() == "" && $("#salesCode").val().trim() == "" && $("#staffName").val().trim() == ""){
 			// $.alert("操作提示","工号和销售员编码不能都为空！");
 			$('#staffCode').next('.help-block').removeClass('hidden');
 			$('#salesCode').next('.help-block').removeClass('hidden');
+			$('#staffName').next('.help-block').removeClass('hidden');
 			$('#dealerModal-result').hide();
 			return;
 		}
@@ -162,6 +194,7 @@ order.dealer = (function() {
 				"dealerId":"dealer",
 				"areaId":$("#diqu").val(),
 				"code":$("#staffCode").val().trim(),
+				"name":$("#staffName").val().trim(),
 				"salesCode":$("#salesCode").val().trim(),//销售员编码
 				"pageIndex":1,
 				"pageSize":1
@@ -192,7 +225,7 @@ order.dealer = (function() {
 						//重置表单
 						$('#dealerModal-result').hide();
 						$('#dealerModal').find('.choice-box').children('.help-block').addClass('hidden');
-						$('#staffCode,#salesCode').val('');
+						$('#staffCode,#salesCode,#staffName').val('');
 						//重置结束
 						
 					}
@@ -219,13 +252,14 @@ order.dealer = (function() {
 				return;
 			}
 		}
+		$("#jbr").modal("hide");
 		cust.jbrSubmit();
 		if(ec.util.isObj(OrderInfo.jbr.partyName)){
 			$("#jbrName").html(OrderInfo.jbr.partyName);
 			$("#jbrName").removeClass("font-secondary");
 			$("#deleteJbr").show();
 		}
-		$("#jbr").modal("hide");
+		
 	}
 	
 	function _deleteJbr(){
@@ -301,7 +335,8 @@ order.dealer = (function() {
 		deleteJbr			:_deleteJbr,
 		removeAttDealer		:_removeAttDealer,
 		removeDealer		:_removeDealer,
-		watch               :_watch
+		watch               :_watch,
+		initJbrTab			:_initJbrTab
 		
 	};
 })();

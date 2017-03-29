@@ -17,6 +17,8 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
+import org.apache.commons.lang.math.RandomUtils;
+import org.apache.commons.lang.time.DateFormatUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
@@ -1713,6 +1715,71 @@ public class MktResController extends BaseController {
         model.addAttribute("default_area_id", sessionStaff.getCurrentAreaId());
         return "/app/mktRes/terminalMainPush-list";
     }
+    
+    /**
+  	 * 终端规格排序
+  	 * @param model
+  	 * @param param
+  	 * @return
+  	 */
+      @SuppressWarnings({ "unchecked", "deprecation", "rawtypes" })
+      @RequestMapping(value = "/termSort", method = {RequestMethod.GET, RequestMethod.POST})
+      @ResponseBody
+      public JsonResponse termSort(Model model, @LogOperatorAnn String flowNum,@RequestBody Map<String, Object> param) {
+      	JsonResponse jsonResponse = null;
+      	String resultCode="0";
+      	try {
+      		
+      		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+      				SysConstant.SESSION_KEY_LOGIN_STAFF);
+      		Date date = new Date();
+    		    String reqTime= DateFormatUtils.format(date, "yyyyMMddHHmmssSSS");
+    		    int randInt = RandomUtils.nextInt(900000000) + 100000000;
+  	    	Map map =new HashMap();
+  	    	Map reqInfoMap =new HashMap();
+  	    	String srcSysID = SysConstant.CSB_SRC_SYS_ID_APP;
+  	    	reqInfoMap.put("tranId", reqTime + randInt);
+  	    	reqInfoMap.put("areaId", sessionStaff.getAreaId());
+  	    	reqInfoMap.put("reqTime", reqTime.substring(0, 14));
+  	    	reqInfoMap.put("srcSysID", srcSysID);
+  	    	//reqInfoMap.put("distributorId", sessionStaff.getPartnerId());
+  	    	reqInfoMap.put("requestService", "TermSortService");
+  	    	map.put("reqInfo", reqInfoMap);
+  	    	map.put("moduleId", 1000);
+  	    	map.put("newFlag", 1);
+  	    	map.put("objId", sessionStaff.getCurrentChannelId());
+  	    	map.put("objType", 20001);
+  	    	map.put("areaId", sessionStaff.getAreaId());
+  	    	map.put("staffId", sessionStaff.getStaffId());
+  	    	/*List<Map> mktResListMap =new ArrayList<Map>();
+  	    	Map mktResMap =new HashMap();
+  	    	param.get("mktResList");
+  	    	mktResMap.put("mktResId", "7345");
+  	    	mktResMap.put("sortId", "1");
+  	    	mktResListMap.add(0, mktResMap);*/
+  	    	/*for(int i = 0 ;i < mktResListMap.size(); i++){
+  	    		mktResListMap.add(i, mktResMap);
+  	    	}*/
+  	    	map.put("mktResList", param.get("mktResList"));
+  		    Map<String, Object> resultMap = this.mktResBmo.termSort(map,flowNum,sessionStaff);
+  		    /*if(resultCode.equals("POR-0000")){
+  		    	jsonResponse = super.successed(resultCode,ResultConstant.SUCCESS.getCode());
+  		    }else{
+  		    	jsonResponse = super.failed(resultCode,ResultConstant.FAILD.getCode());
+  		    }*/
+  		    resultCode = resultMap.get("resultCode").toString();
+  		    String resultMsg = resultMap.get("resultMsg").toString();
+  		    if("0".equals(resultCode)){
+  		    	jsonResponse = super.successed(resultMsg,ResultConstant.SUCCESS.getCode());
+  		    }else{
+  		    	jsonResponse = super.failed(resultMsg,ResultConstant.FAILD.getCode());
+  		    }
+      	} catch (Exception e) {
+      		this.log.error("门户/mktRes/terminal/termSort服务异常", e);
+      		jsonResponse = super.failed("服务异常",-1);
+  		}
+  		return jsonResponse;
+      }
     
     @SuppressWarnings("unchecked")
     @RequestMapping(value = "/terminalQueryList", method = { RequestMethod.POST }, produces = "text/html;charset=UTF-8")

@@ -71,6 +71,9 @@
 					</#list>
 				</#if>
 	<li class="p-10" onclick="order.phone.selectTerminal(this)" mktResTypeCd="${mkt.mktResTypeCd}" mktResId="${mkt.mktResId}" mktResCd="${mkt.mktResCd}" brand="${brand}" phoneType="${phoneType}" phoneColor="${phoneColor}" mktName="${mkt.mktResName}" mktPrice="${(mkt.salePrice)}" mktPicA="${p_pic}" mktSpecCode="${mktSpecCode}">
+	<#if mkt.orderId lte 4>
+         <i class="iconfont orange hot-icon">&#xe690;</i>
+    </#if>
 	<div class="list-img-box m-r-15">
 		<img src="${p_pic}" alt="${(mkt.mktResName)?default("--")}" />
 	</div>

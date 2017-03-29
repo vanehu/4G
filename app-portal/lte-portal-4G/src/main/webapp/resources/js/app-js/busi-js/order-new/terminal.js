@@ -337,6 +337,8 @@ mktRes.terminal = (function() {
             "mktResType": "",
             "minPrice": minPrice,
             "maxPrice": maxPrice,
+            "newFlag":1,
+            "moduleId":1000,
             //"contractFlag":contractFlag,
             "pageInfo": {
                 "pageIndex": curPage,
@@ -413,7 +415,7 @@ mktRes.terminal = (function() {
      */
     var _mainPushSubmit = function() {
         //请求地址
-        var url = contextPath + "/agent/mktRes/termSort";
+        var url = contextPath + "/app/mktRes/termSort";
         //收集参数
         var param = _buildInParamSort();
         $.ecOverlay("<strong>正在推送终端,请稍后....</strong>");
@@ -422,7 +424,7 @@ mktRes.terminal = (function() {
         if (response.code == 0) {
             $("#mainPushList_Div").find('li[data-mktresid]').remove();
             $("#mainPushList_Div").parent('.fixed-bottom-box').addClass('hidden');
-            $.alert("提示", response.data);
+            $.alert("提示", "推送终端成功!");
         } else {
             if (typeof response == undefined) {
                 $.alert("提示", "推送终端请求调用失败，可能原因服务停止或者数据解析异常");
