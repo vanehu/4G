@@ -1805,7 +1805,7 @@ OrderInfo = (function() {
 
 	//是否是采集单受理新装，统一判断
 	var _isCltNewOrder = function(){
-		return 	OrderInfo.isCltOrder&&(OrderInfo.actionFlag == 1 || OrderInfo.busitypeflag == 14);
+		return 	OrderInfo.isCltOrder&&(OrderInfo.actionFlag == 1 || OrderInfo.actionFlag == 14);
 	};
 	
 	return {	

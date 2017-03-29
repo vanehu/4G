@@ -1697,7 +1697,7 @@ order.cust = (function(){
     			"done" : function(response){
     				if (response.code == 0) {
 						OrderInfo.cltOrderInfo = response.data.collectionOrderList.collectionOrderInfo;
-    					var cltCustList = response.data.collectionOrderList.collectionCustInfos
+    					var cltCustList = response.data.collectionOrderList.collectionCustInfos;
     					for(var i = 0; i<cltCustList.length; i++){
     						//产权人
     						if(cltCustList[i].partyRoleCd =='0'){
