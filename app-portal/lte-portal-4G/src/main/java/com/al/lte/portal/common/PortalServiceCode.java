@@ -1178,6 +1178,9 @@ public final class PortalServiceCode {
     /** 甩单终端串码预占校验接口（测试用，生产只走csb） */
     public static final String CHECK_DITCHORDER = "ter-terminal/ditchOrderCheck";
     
+    /** 人证合一图片比对**/
+    public static final String PIC_VERIFY = "PIC-service/verify";
+    
     /**客户信息核验接口*/
     public static final String CHECK_CUST_CERT = "biz-service/intf.custService/checkCustCert";
 
@@ -1201,6 +1204,9 @@ public final class PortalServiceCode {
     
     /** 实名信息采集单订单详情 */
     public static final String CLT_ORDER_Detail = "biz-service/intf.detailService/queryCollectionOrderItemDetail";
+    
+    /** 查询特殊协议服务 */
+    public static final String QUERY_SPECIALPROTOCOL_BYOLID = "biz-service/intf.detailService/querySpecialProtocolByOlId";
 
 }
 

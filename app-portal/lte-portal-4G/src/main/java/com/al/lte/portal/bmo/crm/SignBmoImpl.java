@@ -1,5 +1,6 @@
 package com.al.lte.portal.bmo.crm;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -120,6 +121,34 @@ public class SignBmoImpl implements SignBmo{
 //		returnMap.put("protocolPeriod", "2");
 		return returnMap;
 	}
+	
+	//特殊协议参数查询
+	@SuppressWarnings("unchecked")
+	public Map<String, Object> querySpecialProtocolByOlId(Map<String, Object> dataBusMap,
+			String optFlowNum, SessionStaff sessionStaff)
+			throws Exception {
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+//		dataBusMap.put("areaId", sessionStaff.getAreaId());
+		//log.error("dataBusMap={}", JsonUtil.toString(dataBusMap));
+		DataBus db = InterfaceClient.callService(dataBusMap,
+				PortalServiceCode.QUERY_SPECIALPROTOCOL_BYOLID, optFlowNum, sessionStaff);
+		try{
+			if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db.getResultCode()))) {
+				Map<String, Object> resultMap = db.getReturnlmap();
+				Object result = resultMap.get("result");
+				if(result!=null){
+					returnMap = (Map<String, Object>) result;
+				}
+			}else{
+				log.error("db.getReturnlmap()", JsonUtil.toString(db.getReturnlmap()));
+			}
+		} catch(Exception e) {
+			log.error("门户处理营业受理的service/intf.detailService/queryPrettyNbrInfosByOlId服务返回的数据异常", e);
+			throw new BusinessException(ErrorCode.QUERY_PRETTYNBR_INFO, dataBusMap, db.getReturnlmap(), e);
+		}
+		return returnMap;
+	}
+	
 	/**
      * 合成pdf等业务
      * @param resultMap
@@ -136,121 +165,230 @@ public class SignBmoImpl implements SignBmo{
 			//htmlStr=HTMLFile2PDF.replaceForSign(htmlStr);
 			//htmlStr=htmlStr+"<div style=\"display:none\" id=\"signYwImgDiv\" style=\"position:absolute;\"><img  width=\"100px\" height=\"100px\" src=\"#\"/></div>";
 			reObject.put("htmlStr", htmlStr);
-			int i=1;
+//			int i=1;
 			//2.查询服务协议和靓号协议
-			String fwhtmlStr="";
-			byte[] fwpdf=null;
-			String fw="";
-			String lhhtmlStr="";
-			byte[] lhpdf=null;
-			String lh="";
+//			String fwhtmlStr="";
+//			byte[] fwpdf=null;
+//			String fw="";
+//			String lhhtmlStr="";
+//			byte[] lhpdf=null;
+//			String lh="";
 			SessionStaff sessionStaff = (SessionStaff) ServletUtils
 					.getSessionAttribute(request, SysConstant.SESSION_KEY_LOGIN_STAFF);
-			String provinceCode=sessionStaff.getAreaId();
-			provinceCode=provinceCode.substring(0, 3) + "0000";
-			String flags=MDA.PRINTFTL_FLAG.get("PRINTFTL-"+provinceCode);
+//			String provinceCode=sessionStaff.getAreaId();
+//			provinceCode=provinceCode.substring(0, 3) + "0000";
+//			String flags=MDA.PRINTFTL_FLAG.get("PRINTFTL-"+provinceCode);
 			//log.debug("flags={}", flags);
 			Map<String,Object> pp=new HashMap<String,Object>();
 			String yewPdf= resultMap.get("orderInfo").toString();
 			//pp.put("yewPdf", yewPdf);
-			String lhhtmlFlag="OFF";
-			String fwhtmlFlag="OFF";
-			if(flags!=null&&!"".equals(flags)){
-				fwhtmlFlag=flags.split(",")[0];
+//			String lhhtmlFlag="OFF";
+//			String fwhtmlFlag="OFF";
+//			if(flags!=null&&!"".equals(flags)){
+//				fwhtmlFlag=flags.split(",")[0];
+//				Map<String,Object> param1=new HashMap<String,Object>();
+//				param1.put("custName", resultMap.get("custName"));
+//				param1.put("areaName",DataSignTool.getAreaName(sessionStaff.getCurrentAreaId(), sessionStaff));
+//				param1.put("dateYear", DateUtil.nowYear());
+//				param1.put("dateMonth", DateUtil.nowMonth());
+//				param1.put("dateDay", DateUtil.nowDayOfMonth());
+//				if("ON".equals(fwhtmlFlag)){
+//					param1.put("totalPage", flags.split(",")[2]);
+//					fwhtmlStr=ParseFreemark.parseTemplate(param1,flags.split(",")[4]);
+//					fwpdf=HTMLFile2PDF.createPdfToByte(fwhtmlStr,param1);
+//					fwhtmlStr=fwhtmlStr.replaceAll("</body>", "").replaceAll("</html>", "");
+//					//fwhtmlStr=fwhtmlStr.replaceAll("<!--", "").replaceAll("-->", "");
+//					fwhtmlStr=fwhtmlStr+HTMLFile2PDF.doWithHtml(param1,"fwsign");
+//					//fwhtmlStr=fwhtmlStr+"<div  style=\"display:none\" id=\"signFwImgDiv\" style=\"position:absolute;\"><img width=\"100px\" height=\"100px\" src=\"#\"/></div>";
+//					if(fwpdf!=null){
+//						i++;
+//						fw=Base64.encodeBase64String(fwpdf).replaceAll("\n|\r", "");
+//						//pp.put("fwpdf", fwpdf);
+//					}
+//				}
+//				//3.封装拼凑预览的html
+//				lhhtmlFlag=flags.split(",")[1];
+//				if("ON".equals(lhhtmlFlag)){
+//					Map<String,Object> param2=queryPrettyNbrInfosByOlId(paramMap,
+//							null,sessionStaff);
+//					if(param2!=null&&param2.size()>0){
+//						param2.putAll(param1);
+//						param1.put("totalPage", flags.split(",")[3]);
+//						lhhtmlStr=ParseFreemark.parseTemplate(param2,flags.split(",")[5]);
+//						lhpdf=HTMLFile2PDF.createPdfToByte(lhhtmlStr,param1);
+//						lhhtmlStr=lhhtmlStr.replaceAll("</body>", "").replaceAll("</html>", "");
+//						//lhhtmlStr=lhhtmlStr.replaceAll("<!--", "").replaceAll("-->", "");
+//						lhhtmlStr=lhhtmlStr+HTMLFile2PDF.doWithHtml(param1,"lhsign");
+//						//lhhtmlStr=lhhtmlStr+"<div style=\"display:none\" id=\"signLhImgDiv\" style=\"position:absolute;left:120px;top:10px\"><img  width=\"100px\" height=\"100px\" src=\"#\"/></div>";
+//						if(lhpdf!=null){
+//							i++;
+//							lh=Base64.encodeBase64String(lhpdf).replaceAll("\n|\r", "");
+//							//pp.put("lhpdf", lhpdf);
+//						}
+//					}
+//				}
+//				if(i>1){
+//					String[] list=new String[i];
+//					int j=0;
+//					list[j]=yewPdf;
+//					if(fw!=null&&!"".equals(fw)){
+//						j++;
+//						list[j]=fw;
+//					}
+//					if(lh!=null&&!"".equals(lh)){
+//						j++;
+//						list[j]=lh;
+//					}
+//					Map<String,Object> re=PdfUtils.mergePdfFiles(list);
+//					yewPdf=re.get("byte").toString();
+//					//yewPage业务受理pdf页码
+//					j=0;
+//					pp.put("yewPage", re.get("page"+j));
+//					if(fw!=null&&!"".equals(fw)){
+//						j++;
+//						pp.put("fwPage", re.get("page"+j));
+//					}
+//					if(lh!=null&&!"".equals(lh)){
+//						j++;
+//						pp.put("lhPage", re.get("page"+j));
+//					}
+//				}else{
+//					byte[] file=Base64.decodeBase64(yewPdf);
+//					PdfReader reader = new PdfReader(file);
+//					int n = reader.getNumberOfPages();
+//					pp.put("yewPage",n);
+//				}
+//			}else{
+//				byte[] file=Base64.decodeBase64(yewPdf);
+//				PdfReader reader = new PdfReader(file);
+//				int n = reader.getNumberOfPages();
+//				pp.put("yewPage",n);
+//			}
+//			//yewPdf最后合成的pdf，有可能只有一个协议，有可能多个
+//			pp.put("mgrPdf", yewPdf);
+//			reObject.put("pp", pp);
+//			if(!"".equals(fwhtmlStr)){
+//				reObject.put("fwhtmlFlag", "ON");
+//			}else{
+//				reObject.put("fwhtmlFlag", "OFF");
+//			}
+//			if(!"".equals(lhhtmlStr)){
+//				reObject.put("lhhtmlFlag", "ON");
+//			}else{
+//				reObject.put("lhhtmlFlag", "OFF");
+//			}
+//			reObject.put("lhhtmlStr", lhhtmlStr);
+//			reObject.put("fwhtmlStr", fwhtmlStr);
+			
+			HttpSession session = request.getSession();
+			String login_area_id = "";
+    		List<Map> channelList = (List<Map>)session.getAttribute(SysConstant.SESSION_KEY_STAFF_CHANNEL);
+    		for(int k=0;k<channelList.size();k++){
+    			Map cl = channelList.get(k);
+    			if(sessionStaff.getCurrentChannelId().equals(cl.get("id").toString())){
+    				login_area_id = cl.get("areaId").toString();
+    			}
+    		}
+			List specialAgreement = MDA.SPECIAL_AGREEMENT.get("SPECIAL_AGREEMENT_"+login_area_id.substring(0, 3));//省份特殊协议配置
+			List<String> spList = new ArrayList<String>();
+			String actionFlag = (String) resultMap.get("actionFlag");
+			if(specialAgreement.size()>0){
+				 List<String> list= new ArrayList<String>(); 
+				int j=0;
 				Map<String,Object> param1=new HashMap<String,Object>();
 				param1.put("custName", resultMap.get("custName"));
+				param1.put("idCardNbr", resultMap.get("idCardNbr"));
 				param1.put("areaName",DataSignTool.getAreaName(sessionStaff.getCurrentAreaId(), sessionStaff));
 				param1.put("dateYear", DateUtil.nowYear());
 				param1.put("dateMonth", DateUtil.nowMonth());
 				param1.put("dateDay", DateUtil.nowDayOfMonth());
-				if("ON".equals(fwhtmlFlag)){
-					param1.put("totalPage", flags.split(",")[2]);
-					fwhtmlStr=ParseFreemark.parseTemplate(param1,flags.split(",")[4]);
-					fwpdf=HTMLFile2PDF.createPdfToByte(fwhtmlStr,param1);
-					fwhtmlStr=fwhtmlStr.replaceAll("</body>", "").replaceAll("</html>", "");
-					//fwhtmlStr=fwhtmlStr.replaceAll("<!--", "").replaceAll("-->", "");
-					fwhtmlStr=fwhtmlStr+HTMLFile2PDF.doWithHtml(param1,"fwsign");
-					//fwhtmlStr=fwhtmlStr+"<div  style=\"display:none\" id=\"signFwImgDiv\" style=\"position:absolute;\"><img width=\"100px\" height=\"100px\" src=\"#\"/></div>";
-					if(fwpdf!=null){
-						i++;
-						fw=Base64.encodeBase64String(fwpdf).replaceAll("\n|\r", "");
-						//pp.put("fwpdf", fwpdf);
-					}
-				}
-				//3.封装拼凑预览的html
-				lhhtmlFlag=flags.split(",")[1];
-				if("ON".equals(lhhtmlFlag)){
-					Map<String,Object> param2=queryPrettyNbrInfosByOlId(paramMap,
-							null,sessionStaff);
-					if(param2!=null&&param2.size()>0){
-						param2.putAll(param1);
-						param1.put("totalPage", flags.split(",")[3]);
-						lhhtmlStr=ParseFreemark.parseTemplate(param2,flags.split(",")[5]);
-						lhpdf=HTMLFile2PDF.createPdfToByte(lhhtmlStr,param1);
-						lhhtmlStr=lhhtmlStr.replaceAll("</body>", "").replaceAll("</html>", "");
-						//lhhtmlStr=lhhtmlStr.replaceAll("<!--", "").replaceAll("-->", "");
-						lhhtmlStr=lhhtmlStr+HTMLFile2PDF.doWithHtml(param1,"lhsign");
-						//lhhtmlStr=lhhtmlStr+"<div style=\"display:none\" id=\"signLhImgDiv\" style=\"position:absolute;left:120px;top:10px\"><img  width=\"100px\" height=\"100px\" src=\"#\"/></div>";
-						if(lhpdf!=null){
-							i++;
-							lh=Base64.encodeBase64String(lhpdf).replaceAll("\n|\r", "");
-							//pp.put("lhpdf", lhpdf);
+				for(int m=0;m<specialAgreement.size();m++){
+					Map agreementMap = (Map) specialAgreement.get(m);
+					if("ON".equals(agreementMap.get("provinceisopen"))){//省份开关是否打开
+						if("all".equals(agreementMap.get("opencity").toString()) || (agreementMap.get("opencity").toString()).indexOf(login_area_id.substring(0, 5)+"00")>0){//地市开关是否打开
+							if(j==0){
+								list.add(yewPdf);
+								j++;
+							}
+							String agreement_htmlStr="";
+							byte[] agreement_pdf=null;
+							String agreement ="";
+							String templet = agreementMap.get("templet").toString();
+							String agreementName = templet.substring(0, templet.length()-7);//协议名称
+							param1.put("totalPage", agreementMap.get("page").toString());
+							if("lh".equals(agreementName)){//靓号
+								Map<String,Object> param2=queryPrettyNbrInfosByOlId(paramMap,null,sessionStaff);
+								param2.putAll(param1);
+								agreement_htmlStr=ParseFreemark.parseTemplate(param2,templet);
+							}else if("llh".equals(agreementName)){//流量壕
+								Map<String,Object> llhMap=querySpecialProtocolByOlId(paramMap,null,sessionStaff);
+								Map<String,Object> param2 = new HashMap<String,Object>();
+								Map<String,Object> flowMoatInfo = (Map<String, Object>) llhMap.get("flowMoatInfo");
+								if(flowMoatInfo!=null){
+									param2.put("accessNbr", flowMoatInfo.get("accessNbr"));
+									param2.put("terminalName", flowMoatInfo.get("terminalName"));
+									param2.put("terminalCode", flowMoatInfo.get("terminalCode"));
+									param2.put("agreementPeriod", flowMoatInfo.get("agreementPeriod"));
+									param2.put("attachedOfferName", flowMoatInfo.get("attachedOfferName"));
+									param2.put("minChange", flowMoatInfo.get("minChange"));
+									param2.putAll(param1);
+									agreement_htmlStr=ParseFreemark.parseTemplate(param2,templet);
+								}
+							}else if("rw".equals(agreementName)){//特号入网
+								Map<String,Object> rwMap=querySpecialProtocolByOlId(paramMap,null,sessionStaff);
+								Map<String,Object> param2 = new HashMap<String,Object>();
+								List prettyNbrList = (List) rwMap.get("prettyNbrInfo");
+								if(prettyNbrList!=null && prettyNbrList.size()>0){
+									Map<String,Object> prettyNbrInfo = (Map<String, Object>) prettyNbrList.get(0);
+									param2.put("accessNbr", prettyNbrInfo.get("accessNbr"));
+									param2.put("preStore", prettyNbrInfo.get("preStore"));
+									param2.put("minCharge", prettyNbrInfo.get("minCharge"));
+									param2.putAll(param1);
+									agreement_htmlStr=ParseFreemark.parseTemplate(param2,templet);
+								}
+							}else if("ydrw".equals(agreementName)){//移动入网
+								if("1".equals(actionFlag) || "14".equals(actionFlag)){
+									agreement_htmlStr=ParseFreemark.parseTemplate(param1,templet);
+								}
+							}else{
+								agreement_htmlStr=ParseFreemark.parseTemplate(param1,templet);
+							}
+							if(agreement_htmlStr.length()>0){
+								agreement_pdf=HTMLFile2PDF.createPdfToByte(agreement_htmlStr,param1);
+								agreement_htmlStr=agreement_htmlStr.replaceAll("</body>", "").replaceAll("</html>", "");
+								agreement_htmlStr=agreement_htmlStr+HTMLFile2PDF.doWithHtml(param1,agreementName+"sign");
+								if(agreement_pdf!=null){
+//									i++;
+									spList.add(agreementName);
+									agreement=Base64.encodeBase64String(agreement_pdf).replaceAll("\n|\r", "");
+									list.add(agreement);
+									reObject.put(agreementName+"htmlFlag", "ON");
+									reObject.put(agreementName+"htmlStr", agreement_htmlStr);
+									j++;
+								}
+							}
+							if(j>1 && m == specialAgreement.size()-1){
+								Map<String,Object> re=PdfUtils.mergePdfFiles(list);
+								yewPdf=re.get("byte").toString();
+								pp.put("yewPage", re.get("page"+0));
+								for(int ii=0;ii<spList.size();ii++){
+									pp.put(spList.get(ii)+"Page", re.get("page"+(ii+1)));
+								}
+							}
 						}
 					}
 				}
-				if(i>1){
-					String[] list=new String[i];
-					int j=0;
-					list[j]=yewPdf;
-					if(fw!=null&&!"".equals(fw)){
-						j++;
-						list[j]=fw;
-					}
-					if(lh!=null&&!"".equals(lh)){
-						j++;
-						list[j]=lh;
-					}
-					Map<String,Object> re=PdfUtils.mergePdfFiles(list);
-					yewPdf=re.get("byte").toString();
-					//yewPage业务受理pdf页码
-					j=0;
-					pp.put("yewPage", re.get("page"+j));
-					if(fw!=null&&!"".equals(fw)){
-						j++;
-						pp.put("fwPage", re.get("page"+j));
-					}
-					if(lh!=null&&!"".equals(lh)){
-						j++;
-						pp.put("lhPage", re.get("page"+j));
-					}
-				}else{
-					byte[] file=Base64.decodeBase64(yewPdf);
-					PdfReader reader = new PdfReader(file);
-					int n = reader.getNumberOfPages();
-					pp.put("yewPage",n);
-				}
-			}else{
+			}
+			if(spList.size()<1){
 				byte[] file=Base64.decodeBase64(yewPdf);
 				PdfReader reader = new PdfReader(file);
 				int n = reader.getNumberOfPages();
 				pp.put("yewPage",n);
 			}
-			//yewPdf最后合成的pdf，有可能只有一个协议，有可能多个
 			pp.put("mgrPdf", yewPdf);
 			reObject.put("pp", pp);
-			if(!"".equals(fwhtmlStr)){
-				reObject.put("fwhtmlFlag", "ON");
-			}else{
-				reObject.put("fwhtmlFlag", "OFF");
-			}
-			if(!"".equals(lhhtmlStr)){
-				reObject.put("lhhtmlFlag", "ON");
-			}else{
-				reObject.put("lhhtmlFlag", "OFF");
-			}
-			reObject.put("lhhtmlStr", lhhtmlStr);
-			reObject.put("fwhtmlStr", fwhtmlStr);
 		}
+    	System.out.println(JsonUtil.toString(reObject));
 		return reObject;
     }
 	/**

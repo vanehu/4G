@@ -6223,6 +6223,57 @@ public class PrintBmoImpl implements PrintBmo {
 			si3.put("isSign", "0");
 			signs.add(si3);
 		}
+		if(orderInfo.get("llhPage")!=null){
+			Map<String,Object> go4=new HashMap<String,Object>();
+			go4.put("page", orderInfo.get("llhPage"));
+			go4.put("llx", 400);
+			go4.put("lly", 60);
+			//go3.put("urx", 0);
+			//go3.put("ury", 0);
+			seals.add(go4);
+			Map<String,Object> si4=new HashMap<String,Object>();
+			si4.put("pageSign", orderInfo.get("llhPage"));
+			si4.put("llxSign", 100);
+			si4.put("llySign", 70);
+			si4.put("urxSign", 100 + 109);
+			si4.put("urySign", 100 + 57);
+			si4.put("isSign", "0");
+			signs.add(si4);
+		}
+		if(orderInfo.get("rwPage")!=null){
+			Map<String,Object> go5=new HashMap<String,Object>();
+			go5.put("page", orderInfo.get("rwPage"));
+			go5.put("llx", 400);
+			go5.put("lly", 60);
+			//go3.put("urx", 0);
+			//go3.put("ury", 0);
+			seals.add(go5);
+			Map<String,Object> si5=new HashMap<String,Object>();
+			si5.put("pageSign", orderInfo.get("rwPage"));
+			si5.put("llxSign", 100);
+			si5.put("llySign", 70);
+			si5.put("urxSign", 100 + 109);
+			si5.put("urySign", 100 + 57);
+			si5.put("isSign", "0");
+			signs.add(si5);
+		}
+		if(orderInfo.get("ydrwPage")!=null){
+			Map<String,Object> go6=new HashMap<String,Object>();
+			go6.put("page", orderInfo.get("ydrwPage"));
+			go6.put("llx", 400);
+			go6.put("lly", 60);
+			//go3.put("urx", 0);
+			//go3.put("ury", 0);
+			seals.add(go6);
+			Map<String,Object> si6=new HashMap<String,Object>();
+			si6.put("pageSign", orderInfo.get("ydrwPage"));
+			si6.put("llxSign", 100);
+			si6.put("llySign", 70);
+			si6.put("urxSign", 100 + 109);
+			si6.put("urySign", 100 + 57);
+			si6.put("isSign", "0");
+			signs.add(si6);
+		}
 		paramMap.put("seals", seals);
 		paramMap.put("signs", signs);
 		Map<String, Object> dataBusMap = new HashMap<String, Object>();

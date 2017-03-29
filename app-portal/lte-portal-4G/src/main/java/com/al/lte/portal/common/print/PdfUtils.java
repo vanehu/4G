@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -113,10 +114,13 @@ public class PdfUtils {
 		byte[] outByte=out.toByteArray();
 		out.flush();
 		out.close();
-		String[] files=new String[2];
-		files[0]=pdfStr;
-		files[1]=Base64.encodeBase64String(outByte);
-		Map<String,Object> obj=mergePdfFiles(files);
+		List<String> liststr = new ArrayList<String>();
+		liststr.add(pdfStr);
+		liststr.add(Base64.encodeBase64String(outByte));
+//		String[] files=new String[2];
+//		files[0]=pdfStr;
+//		files[1]=Base64.encodeBase64String(outByte);
+		Map<String,Object> obj=mergePdfFiles(liststr);
 		return obj.get("byte").toString();
 	}
 	/**
@@ -124,17 +128,17 @@ public class PdfUtils {
 	 * @param files
 	 * @return
 	 */
-	public static Map<String,Object> mergePdfFiles(String[] files)throws Exception {
+	public static Map<String,Object> mergePdfFiles(List<String> files)throws Exception {
 		Map<String,Object> obj=new HashMap<String,Object>();
 		Document document = new Document(
-				new PdfReader(Base64.decodeBase64(files[0])).getPageSize(1));
+				new PdfReader(Base64.decodeBase64(files.get(0))).getPageSize(1));
 		ByteArrayOutputStream out=new ByteArrayOutputStream();
 		PdfCopy copy = new PdfCopy(document, out);
 		document.open();
 		int k=0;
-		obj.put("allfileCount",files.length);
-		for (int i = 0; i < files.length; i++) {
-			byte[] file=Base64.decodeBase64(files[i]);
+		obj.put("allfileCount",files.size());
+		for (int i = 0; i < files.size(); i++) {
+			byte[] file=Base64.decodeBase64(files.get(i));
 			PdfReader reader = new PdfReader(file);
 			int n = reader.getNumberOfPages();
 			k+=n;

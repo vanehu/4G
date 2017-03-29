@@ -9,6 +9,15 @@
 			<#if lhhtmlFlag=='ON'>
 			<option value="3">靓号服务协议</option>
 			</#if>
+			<#if llhhtmlFlag=='ON'>
+			<option value="4">流量壕协议</option>
+			</#if>
+			<#if rwhtmlFlag=='ON'>
+			<option value="5">特号入网协议</option>
+			</#if>
+			<#if ydrwhtmlFlag=='ON'>
+			<option value="6">移动入网协议</option>
+			</#if>
 		</select>
 		<i class="iconfont pull-right p-r-10"></i>
 	</div>
@@ -21,18 +30,33 @@
 		<li onclick="common.print.changeAgree('3',this);">靓号服务协议</li>
 		</#if>
 	</ul> -->
-	<div class="info_box" id="info_box">
-		<div id="showFtlHtml" class="info">
+	<div class="info_box" id="info_box" style="margin: 0px 0px 45px 0px!important;">
+		<div id="showFtlHtml" class="info hzhtml">
 		${htmlStr}
 		</div>
-		<div id="fwhtml" style="display:none"  class="info">
+		<div id="fwhtml" style="display:none"  class="info hzhtml">
 		<#if fwhtmlFlag=='ON'>
 			${fwhtmlStr}
 		</#if>
 		</div>
-		<div id="lhhtml" style="display:none"  class="info">
+		<div id="lhhtml" style="display:none"  class="info hzhtml">
 		<#if lhhtmlFlag=='ON'>
 			${lhhtmlStr}
+		</#if>
+		</div>
+		<div id="llhhtml" style="display:none"  class="info hzhtml">
+		<#if llhhtmlFlag=='ON'>
+			${llhhtmlStr}
+		</#if>
+		</div>
+		<div id="rwhtml" style="display:none"  class="info hzhtml">
+		<#if rwhtmlFlag=='ON'>
+			${rwhtmlStr}
+		</#if>
+		</div>
+		<div id="ydrwhtml" style="display:none"  class="info hzhtml">
+		<#if ydrwhtmlFlag=='ON'>
+			${ydrwhtmlStr}
 		</#if>
 		</div>
 	</div>

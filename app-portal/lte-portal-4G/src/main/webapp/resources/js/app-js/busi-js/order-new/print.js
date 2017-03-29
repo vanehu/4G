@@ -233,12 +233,42 @@ common.print = (function($){
 						}
 					});
 //					$("#showPdf").show();
-				}else if (response.code == -2) {
-					$.alertM(response.data);
-				}else{
-					var error=response.data.errData!=null?response.data.errData:"保存回执失败!";
-					$.alert("提示",error);
+				}else{//else if (response.code == -2) {
+//					$.alertM(response.data);
+					//回执保存失败，弹出提示：“电子回执在拼命处理中，是否先跳过继续办理”，点击确定后，允许业务先继续往下办理
+					$.confirm("保存电子回执","电子回执在拼命处理中，是否先跳过保存回执继续办理业务？",{
+						yes:function(){
+							$(".item_fee").each(function(){
+		                    	$(this).attr("onclick","");
+		                    });
+							//$("#order-confirm").show();
+							$("#headTabDiv2").show();
+							$("#nav-tab-8").addClass("active in");
+							if(OrderInfo.actionFlag==1){
+								OrderInfo.order.step=7;	
+							}
+							if(OrderInfo.actionFlag==201){//橙分期
+								OrderInfo.order.step=4;
+							}
+							$("#order-print").hide();
+							$("#printVoucherA").attr("disabled","disabled");//回执保存成功后  回执按钮改为灰色不可操作
+							$("#calChargeDiv ul").each(function() {//回执保存成功后不可减免费用
+								var trid = $(this).attr("id");
+								if(trid!=undefined&&trid!=''){
+									trid=trid.substr(5,trid.length);
+									$("#button_"+trid).attr("disabled","disabled");
+									$("#button_"+trid).attr("style","background: #ddd!important;");
+								}
+							});
+							return;
+						},no:function(){
+						return;
+					}},"question");
 				}
+//				else{
+//					var error=response.data.errData!=null?response.data.errData:"保存回执失败!";
+//					$.alert("提示",error);
+//				}
 			}
 		});
 		
@@ -268,24 +298,49 @@ common.print = (function($){
 			     "background-size": "120px 120px"
 			});
 		}
+		if($.trim($("#rwhtml").html())!=''){
+			$("#rwsign").css({ 
+			     "background":"url(data:image/jpg;base64,"+datasignBase64+") 50px -10px no-repeat", 
+			     "background-size": "120px 120px"
+			});
+		}
+		if($.trim($("#llhhtml").html())!=''){
+			$("#llhsign").css({ 
+			     "background":"url(data:image/jpg;base64,"+datasignBase64+") 50px -10px no-repeat", 
+			     "background-size": "120px 120px"
+			});
+		}
+		if($.trim($("#ydrwhtml").html())!=''){
+			$("#ydrwsign").css({ 
+			     "background":"url(data:image/jpg;base64,"+datasignBase64+") 50px -10px no-repeat", 
+			     "background-size": "120px 120px"
+			});
+		}
 	};
 	var _changeAgree=function(flag,obj){
 		$("#changeAUI li").each(function(index){
 			$(this).removeClass("active");
 		});
 //		$(obj).addClass("active");
+		$(".hzhtml").hide();
 		if(flag=='1'){
 			$("#showFtlHtml").show();
-			$("#fwhtml").hide();
-			$("#lhhtml").hide();
+//			$("#fwhtml").hide();
+//			$("#lhhtml").hide();
 		}else if(flag=='2'){
-			$("#showFtlHtml").hide();
+//			$("#showFtlHtml").hide();
 			$("#fwhtml").show();
-			$("#lhhtml").hide();
+//			$("#lhhtml").hide();
 		}else if(flag=='3'){
-			$("#showFtlHtml").hide();
-			$("#fwhtml").hide();
+//			$("#showFtlHtml").hide();
+//			$("#fwhtml").hide();
 			$("#lhhtml").show();
+		}else if(flag=='4'){
+			$("#llhhtml").show();
+		}else if(flag=='5'){
+			$("#rwhtml").show();
+		}else if(flag=='6'){
+			$("#ydrwhtml").show();
 		}
 	};
 	//回执打印（重打）
