@@ -538,6 +538,8 @@ order.batch = (function(){
 			location.href=contextPath+"/file/BATCHBLACKLIST.xls";
 		}else if(batType=='16' || batType=='17' || batType=='18'){//批量终端领用、回退、销售
 			location.href=contextPath+"/file/BATCHECS.xls";
+		}else if(batType=='19'){//政企批开
+			location.href=contextPath+"/file/BATCHORDER.xls";
 		}else{
 			$.alert("提示","未找到批量类型所对应的模板文件，请检查！");
 			return;
@@ -549,7 +551,7 @@ order.batch = (function(){
 	};
 	
 	var _initDic = function(){
-		//初始化批量订单查询页面的订单状态 By ZhangYu
+		//初始化批量订单查询页面的订单状态
 		var param = {"attrSpecCode":"EVT-0002"};
 		$.callServiceAsJson(contextPath+"/staffMgr/getCTGMainData",param,{
 			"done" : function(response){

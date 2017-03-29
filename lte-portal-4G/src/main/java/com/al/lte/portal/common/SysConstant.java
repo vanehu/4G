@@ -490,7 +490,7 @@ public final class SysConstant {
 
 
 
-    //批量受理查询，管理员权限 BATCHORDER_GLY，营业班长权限 BATCHORDER_YYBZ	By ZhangYu 2015-10-19
+    //批量受理查询，管理员权限 BATCHORDER_GLY，营业班长权限 BATCHORDER_YYBZ
     public static final String BATCHORDER_GLY = "PLDDCX_GLY";
     public static final String BATCHORDER_YYBZ = "PLDDCX_YYBZ";
     public static final String URL_BATCHORDERQRY = "batchOrder/batchImportQuery";
@@ -676,6 +676,7 @@ public final class SysConstant {
 			put(BATCH_TYPE.ECS_RECEIVE, 		"批量终端领用");
 			put(BATCH_TYPE.ECS_BACK, 			"批量终端领用回退");
 			put(BATCH_TYPE.ECS_SALE, 			"批量终端销售");
+			put(BATCH_TYPE.GOV_ENT_BATCH_ORDER, "政企批开");
 		}
 	};
 	
@@ -762,6 +763,8 @@ public final class SysConstant {
 	    public static final String ECS_BACK = "17";
 	    /**批量终端销售-18*/
 	    public static final String ECS_SALE = "18";
+	    /**政企批开-19*/
+	    public static final String GOV_ENT_BATCH_ORDER = "19";
 	}
 	
 	/**Session缓存上传成功的实名制照片的virOlId*/
