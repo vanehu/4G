@@ -2089,7 +2089,7 @@
 				"repeatCheckList"	:[],
 				"regexpCheck"		:{},
 				"templateType"		:null,
-				"threshold"			:1024,
+				"threshold"			:512,
 				"errorDataMaxCount"	:10,
 				"threadsFlag"		:'ON'
 			},
@@ -2108,13 +2108,13 @@
 				"errorDataMaxCount"	:10,
 				"threadsFlag"		:'ON'
 			},
-				"repeatCheckList"	:[],
-				"regexpCheck"		:{},
-				"templateType"		:null,
-				"threshold"			:512,
-				"errorDataMaxCount"	:10,
-				"threadsFlag"		:'ON'
-			},
+			"8":{
+				"totalColumns"		:2,
+				"strictColumns"		:[0,1],
+				"govEntCheckList"	:null,
+				"regexpCheckList"	:[0],
+				"nameColumns"		:["主接入号","区号"],
+				"maxRows"			:50000,
 				"batchTypeName"		:"批量拆机",
 				"repeatCheckList"	:[0],
 				"regexpCheck"		:{
@@ -2174,7 +2174,7 @@
 					"0":"LTEPHONEHEAD"
 				},
 				"templateType"		:null,
-				"threshold"			:16,
+				"threshold"			:512,
 				"errorDataMaxCount"	:10,
 				"threadsFlag"		:'ON'
 			},
@@ -2195,13 +2195,13 @@
 				"errorDataMaxCount"	:10,
 				"threadsFlag"		:'ON'
 			},
-					"0":"LTEPHONEHEAD"
-				},
-				"templateType"		:null,
-				"threshold"			:512,
-				"errorDataMaxCount"	:10,
-				"threadsFlag"		:'ON'
-			},
+			"13":{
+				"totalColumns"		:5,
+				"strictColumns"		:[1,3],
+				"govEntCheckList"	:[],
+				"regexpCheckList"	:[1,3],
+				"nameColumns"		:['主号地区','主号号码','虚号地区','虚号号码','黑名单原因'],
+				"maxRows"			:50000,
 				"batchTypeName"		:'批量一卡双号黑名单',
 				"repeatCheckList"	:[1,3],
 				"regexpCheck"		:{
@@ -2226,7 +2226,7 @@
 					"0":"LTEPHONEHEAD"
 				},
 				"templateType"		:null,
-				"threshold"			:1024,
+				"threshold"			:512,
 				"errorDataMaxCount"	:10,
 				"threadsFlag"		:'ON'
 			},
@@ -2247,18 +2247,18 @@
 				"errorDataMaxCount"	:10,
 				"threadsFlag"		:'ON'
 			},
-					"0":"LTEPHONEHEAD"
-				},
-				"templateType"		:null,
-				"threshold"			:512,
-				"errorDataMaxCount"	:10,
-				"threadsFlag"		:'ON'
-			},
+			"16":{
+				"totalColumns"		:1,
+				"strictColumns"		:[0],
+				"govEntCheckList"	:[],
+				"regexpCheckList"	:[],
+				"nameColumns"		:["终端串码"],
+				"maxRows"			:10000,
 				"batchTypeName"		:"批量终端领用",
 				"repeatCheckList"	:[0],
 				"regexpCheck"		:{},
 				"templateType"		:null,
-				"threshold"			:1024,
+				"threshold"			:512,
 				"errorDataMaxCount"	:10,
 				"threadsFlag"		:'ON'
 			},
@@ -2273,7 +2273,7 @@
 				"repeatCheckList"	:[0],
 				"regexpCheck"		:{},
 				"templateType"		:null,
-				"threshold"			:1024,
+				"threshold"			:512,
 				"errorDataMaxCount"	:10,
 				"threadsFlag"		:'ON'
 			},
@@ -2292,20 +2292,16 @@
 				"errorDataMaxCount"	:10,
 				"threadsFlag"		:'ON'
 			},
-				"repeatCheckList"	:[0],
-				"regexpCheck"		:{},
-				"templateType"		:null,
-				"threshold"			:512,
-				"errorDataMaxCount"	:10,
-				"threadsFlag"		:'ON'
-			},
-				"repeatCheckList"	:[0],
-				"regexpCheck"		:{},
-				"templateType"		:null,
-				"threshold"			:512,
-				"errorDataMaxCount"	:10,
-				"threadsFlag"		:'ON'
-			},
+			"19":{
+				"totalColumns"		:7,
+				"strictColumns"		:[0,1,2,4],
+				"govEntCheckList"	:[],
+				"regexpCheckList"	:[1],
+				"nameColumns"		:["帐户ID","主接入号","UIM卡号","租机串码","区号","联系人","联系电话"],
+				"maxRows"			:50000,
+				"batchTypeName"		:"政企批开",
+				"repeatCheckList"	:[1,2],
+				"regexpCheck"		:{
 					"1":"LTEPHONEHEAD"
 				},
 				"templateType"		:0,
@@ -2313,3 +2309,7 @@
 				"errorDataMaxCount"	:10,
 				"threadsFlag"		:'ON'
 			}
+		}
+		</const>
+	</mda>
+</mdas>
