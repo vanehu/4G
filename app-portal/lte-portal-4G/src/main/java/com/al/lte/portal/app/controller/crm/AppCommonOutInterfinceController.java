@@ -9,6 +9,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import net.sf.json.JSONObject;
 import net.sf.json.xml.XMLSerializer;
 
@@ -24,6 +25,7 @@ import com.al.ecs.common.util.JsonUtil;
 import com.al.ecs.spring.controller.BaseController;
 import com.al.lte.portal.bmo.crm.OrderBmo;
 import com.al.lte.portal.common.AESUtils;
+import com.al.lte.portal.common.RedisUtil;
 
 /**
  * app统一对外接口，排除session拦截、拦截器等
@@ -86,6 +88,22 @@ public class AppCommonOutInterfinceController extends BaseController{
 			rwtMsg = JsonUtil.toString(resultMsg);
 			return rwtMsg;
 		}
+		if (param.get("payMethodCd") == null || "".equals(param.get("payMethodCd").toString())) {
+			resultMsg.put("success", "false"); // true:成功，false:失败
+			resultMsg.put("data", "支付方式为空！");
+			rwtMsg = JsonUtil.toString(resultMsg);
+			return rwtMsg;
+		}
+		if (param.get("payAmount") == null || "".equals(param.get("payAmount").toString())) {
+			resultMsg.put("success", "false"); // true:成功，false:失败
+			resultMsg.put("data", "收费金额为空！");
+			rwtMsg = JsonUtil.toString(resultMsg);
+			return rwtMsg;
+		}
+		//将olId、支付方式和收费金额存入redis，表示支付成功
+		RedisUtil.set("app_status_"+param.get("olId").toString(), "0");
+		RedisUtil.set("app_payCode_"+param.get("olId").toString(), param.get("payMethodCd").toString());
+		RedisUtil.set("app_payAmount_"+param.get("olId").toString(), param.get("payAmount").toString());
 		// 签名校验
 		String signKey = param.get("olId") + "1000000244";
 		String sign = AESUtils.getMD5Str(signKey);
@@ -94,16 +112,10 @@ public class AppCommonOutInterfinceController extends BaseController{
 			resultMsg.put("data", "签名不一致！");
 			rwtMsg = JsonUtil.toString(resultMsg);
 			return rwtMsg;
-		}
+		}		
 		if (param.get("areaId") == null || "".equals(param.get("areaId").toString())) {
 			resultMsg.put("success", "false"); // true:成功，false:失败
 			resultMsg.put("data", "地区id为空！");
-			rwtMsg = JsonUtil.toString(resultMsg);
-			return rwtMsg;
-		}
-		if (param.get("payMethodCd") == null || "".equals(param.get("payMethodCd").toString())) {
-			resultMsg.put("success", "false"); // true:成功，false:失败
-			resultMsg.put("data", "支付方式为空！");
 			rwtMsg = JsonUtil.toString(resultMsg);
 			return rwtMsg;
 		}
@@ -152,26 +164,26 @@ public class AppCommonOutInterfinceController extends BaseController{
 						return rwtMsg;
 					} else {
 						resultMsg.put("success", "true"); // true:成功，false:失败
-						resultMsg.put("data", "调用收费接口成功，收费失败！"); // 返回信息0成功，1失败
+						resultMsg.put("data", "调用收费接口成功，收费失败！");
 						rwtMsg = JsonUtil.toString(resultMsg);
 						return rwtMsg;
 					}
 					
 				} catch (Exception e) {
 					resultMsg.put("success", "true"); // true:成功，false:失败
-					resultMsg.put("data", "请求成功，下计费接口出错！"); // 返回信息0成功，1失败
+					resultMsg.put("data", "请求失败，下计费接口出错！"); // 返回信息0成功，1失败
 					rwtMsg = JsonUtil.toString(resultMsg);
 					return rwtMsg;
 				}
 			}else{
 				resultMsg.put("success", "true"); // true:成功，false:失败
-				resultMsg.put("data", "请求失败，请求参数不完整，soNbr为空！"); // 返回信息0成功，1失败
+				resultMsg.put("data", "请求参数不完整，soNbr为空！"); // 返回信息0成功，1失败
 				rwtMsg = JsonUtil.toString(resultMsg);
 				return rwtMsg;
 			}
 		}
 		resultMsg.put("success", "true"); // true:成功，false:失败
-		resultMsg.put("data", "请求成功，请求参数不完整，chargeItems为空,不下计费！"); // 返回信息0成功，1失败
+		resultMsg.put("data", "请求参数不完整，chargeItems为空！"); 
 		rwtMsg = JsonUtil.toString(resultMsg);
 		return rwtMsg;
 	}

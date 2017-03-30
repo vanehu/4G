@@ -5,7 +5,11 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.servlet.http.HttpSession;
+
+import net.sf.json.JSONArray;
+
 import org.apache.commons.collections.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -39,6 +43,7 @@ import com.al.lte.portal.bmo.crm.OrderBmo;
 import com.al.lte.portal.bmo.print.PrintBmo;
 import com.al.lte.portal.bmo.staff.StaffBmo;
 import com.al.lte.portal.common.Const;
+import com.al.lte.portal.common.RedisUtil;
 import com.al.lte.portal.common.SysConstant;
 import com.al.lte.portal.model.SessionStaff;
 
@@ -209,7 +214,7 @@ public class PayAndOrderRepairController extends BaseController{
     }
     
     /**
-	 * 翼销售获取订单支付状态
+	 * 翼销售获取订单下计费支付状态
 	 * 
 	 * @param param
 	 * @param model
@@ -243,6 +248,57 @@ public class PayAndOrderRepairController extends BaseController{
 			return super.failed(ErrorCode.CUST_ORDER_DETAIL, e, param);
 		}
 
+	}
+	
+    /**
+	 * 从redis缓存获取支付平台是否支付成功
+	 * 
+	 * @param param
+	 * @param model
+	 * @param session
+	 * @param flowNum
+	 * @return
+	 */
+	@RequestMapping(value = "/queryOrdStatusFromRedis", method = RequestMethod.POST)
+	@ResponseBody
+	public JsonResponse queryPayOrdStatusFromRedis(@RequestBody Map<String, Object> param,
+			Model model, HttpSession session, @LogOperatorAnn String flowNum) {
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils
+				.getSessionAttribute(super.getRequest(),
+						SysConstant.SESSION_KEY_LOGIN_STAFF);
+		Map<String, Object> rMap = null;
+		JsonResponse jsonResponse = null;
+		String olId=param.get("olId").toString();
+		//先从redis中获取支付状态和支付方式，若支付状态不存在或redis异常，则调支付平台订单查询接口获取
+		if(RedisUtil.get("app_status_"+olId)!=null && RedisUtil.get("app_payCode_"+olId)!=null && RedisUtil.get("app_payAmount_"+olId)!=null){
+			String payStatus=RedisUtil.get("app_status_"+olId).toString();
+			String payCode=RedisUtil.get("app_payCode_"+olId).toString();
+			String payAmount=RedisUtil.get("app_payAmount_"+olId).toString();
+			if("0".equals(payStatus)){
+				rMap=new HashMap<String, Object>();
+				rMap.put("payCode", payCode);
+				rMap.put("payAmount", payAmount);
+				return super.successed(rMap,ResultConstant.SUCCESS.getCode());
+			}
+		}
+		try {
+			rMap = orderBmo.queryPayOrderStatus(param, flowNum, sessionStaff);
+			log.debug("return={}", JsonUtil.toString(rMap));
+			if (rMap != null && "POR-0000".equals(rMap.get("respCode").toString())) {
+				 jsonResponse = super.successed(rMap,ResultConstant.SUCCESS.getCode());
+			} else{
+				jsonResponse = super.successed(rMap, ResultConstant.FAILD.getCode());
+			}
+			return jsonResponse;
+		} catch (BusinessException be) {
+			this.log.error("调用主数据接口失败", be);
+			return super.failed(be);
+		} catch (InterfaceException ie) {
+			return super.failed(ie, param, ErrorCode.PAY_QUERY);
+		} catch (Exception e) {
+			log.error("支付平台/查询订单方法异常", e);
+			return super.failed(ErrorCode.PAY_QUERY, e, param);
+		}
 	}
 	
 }

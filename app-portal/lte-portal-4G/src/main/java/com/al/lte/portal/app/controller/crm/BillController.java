@@ -38,6 +38,7 @@ import com.al.ecs.exception.AuthorityException;
 import com.al.ecs.exception.BusinessException;
 import com.al.ecs.exception.ErrorCode;
 import com.al.ecs.exception.InterfaceException;
+import com.al.ecs.exception.Result;
 import com.al.ecs.exception.ResultConstant;
 import com.al.ecs.spring.annotation.log.LogOperatorAnn;
 import com.al.ecs.spring.annotation.session.AuthorityValid;
@@ -1800,29 +1801,30 @@ public class BillController extends BaseController {
 	}
 	
 	@RequestMapping(value = "/paymentQuery", method = RequestMethod.POST)
-	@ResponseBody
-	public JsonResponse paymentQuery(@RequestBody Map<String, Object> paramMap, @LogOperatorAnn String flowNum) {
+	public String paymentQuery(@RequestBody Map<String, Object> paramMap, HttpServletResponse response, Model model, @LogOperatorAnn String flowNum) {
 		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
 		try {
 			String accNbr = MapUtils.getString(paramMap, "accNbr", "");
 			if (!accNbr.matches(Const.LTE_PHONE_HEAD)) {
-				return super.failed("非法请求！", ResultConstant.ACCESS_NOT_NORMAL.getCode());
+				super.addHeadCode(response,  new Result(ResultConstant.ACCESS_NOT_NORMAL.getCode(), "非法请求！"));
+				return null;
 			}
 			// 以下字段先设定默认值，后续有需求再做调整
 			// 1：按ReqSerial 充值订单号查询； 2：按AccNbr充值号码查询;
 			paramMap.put("qryType", "2");
 			// 有效查询期限为一个月
-			paramMap.put("qryFromTime", DateUtil.getNowDefault());
-			paramMap.put("qryEndTime", DateUtil.nearDayDetail(30));
-			// TODO
+			paramMap.put("qryFromTime", DateUtil.nearDayDetail(-30));
+			paramMap.put("qryEndTime", DateUtil.getNowDefault());
+			
 			Map<String, Object> resultMap = billBmo.paymentQuery(paramMap, flowNum, sessionStaff);
-			return successed(resultMap);
+			model.addAttribute("result", MapUtils.getObject(resultMap, "result"));
+			return "/app/bill/payment-query-result";
 		}catch(BusinessException be){
-			return failed(be);
+			return failedStr(model, be);
 		}catch(InterfaceException ie) {
-			return failed(ie, paramMap, ErrorCode.BILL_PAYMENT_QUERY);
+			return failedStr(model, ie, paramMap, ErrorCode.BILL_PAYMENT_QUERY);
    		}catch(Exception e){
-   			return failed(ErrorCode.BILL_PAYMENT_QUERY, e, paramMap);
+   			return failedStr(model, ErrorCode.BILL_PAYMENT_QUERY, e, paramMap);
 		}
 	}
 	
