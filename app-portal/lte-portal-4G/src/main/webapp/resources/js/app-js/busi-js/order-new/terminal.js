@@ -275,6 +275,7 @@ mktRes.terminal = (function() {
     //页面初始化数据
     var _initPhone_mainPush = function() {
         var curPage = 1;
+        OrderInfo.actionFlag = 101;
         OrderInfo.order.step = 1;
         OrderInfo.busitypeflag = 1;
         mktRes.terminal.queryApConfig();
@@ -424,7 +425,7 @@ mktRes.terminal = (function() {
         if (response.code == 0) {
             $("#mainPushList_Div").find('li[data-mktresid]').remove();
             $("#mainPushList_Div").parent('.fixed-bottom-box').addClass('hidden');
-            $.alert("提示", "推送终端成功!");
+            _showFinDialog();
         } else {
             if (typeof response == undefined) {
                 $.alert("提示", "推送终端请求调用失败，可能原因服务停止或者数据解析异常");
@@ -435,6 +436,18 @@ mktRes.terminal = (function() {
             }
         }
     };
+    
+    var _showFinDialog=function(){
+		var title='推送成功';
+		$("#btn-dialog-ok").removeAttr("data-dismiss");
+		$('#alert-modal').modal({backdrop: 'static', keyboard: false});
+		$("#btn-dialog-ok").off("click").on("click",function(){
+			common.relocationCust();
+		});
+		$("#modal-title").html(title);
+		$("#modal-content").html("终端推送成功！");
+		$("#alert-modal").modal();
+	};
     return {
         hasCheck: _hasCheck,
         checkTerminalCode: _checkTerminalCode,

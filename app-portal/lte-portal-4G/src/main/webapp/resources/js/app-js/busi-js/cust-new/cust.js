@@ -33,7 +33,7 @@ cust = (function(){
 		$('#sfzorderAttrIdCard').val("");
 		$('#orderAttrIdCard').val("");
 		$('#orderAttrAddr').val("");
-//		$('#orderAttrPhoneNbr').val("");
+		$('#orderAttrPhoneNbr').val("");
 		cust.jbrvalidatorForm();
 	};
 	var _clearUserForm = function(){
@@ -985,6 +985,7 @@ cust = (function(){
 	
 	//读卡获取经办人信息
 	var _getjbrGenerationInfos=function(name,idcard,address,identityPic){
+		cust.clearJbrForm();
 		$("#orderAttrName").val(name);
 		$("#sfzorderAttrIdCard").val(idcard);
 		$("#orderAttrAddr").val(address);
@@ -2755,6 +2756,16 @@ cust = (function(){
 						 	var identityCd2=$(custInfos).attr("identityCd");
 							var idCardNumber2=$(custInfos).attr("idCardNumber");
 							if(identityCd2!=undefined && identityCd2!="" && idCardNumber2!=undefined && idCardNumber2!=""){//过滤空证件数据
+								break;
+							}						
+						}
+						for(var i=0;i<parseInt(custInfoSize);i++){
+						 	var custInfos2=$(response.data).find('#custInfos').eq(i);
+						 	var identityCd3=$(custInfos2).attr("identityCd");
+							var idCardNumber3=$(custInfos2).attr("idCardNumber");
+							var addressStr3=$(custInfos2).attr("addressStr");//地址
+							if(identityCd3!=undefined && identityCd3!="" && idCardNumber3!=undefined && idCardNumber3!="" && addressStr3!=undefined && addressStr3!=""){//取最完整的客户信息，包括地址，如果存在
+								custInfos=custInfos2;
 								break;
 							}						
 						}

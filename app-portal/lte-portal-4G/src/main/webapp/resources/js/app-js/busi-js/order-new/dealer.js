@@ -45,7 +45,6 @@ order.dealer = (function() {
 			});
 			$("#orderIdentidiesTypeCd").empty();
 			cust.jbrcertTypeByPartyType(1,"orderIdentidiesTypeCd");
-			$("#deleteJbr").hide();
 			order.dealer.initJbrTab();
 			order.broadband.init_select();
 			try{
@@ -64,12 +63,15 @@ order.dealer = (function() {
 			cust.isSameOne = true;
 			$("#jbrName").html(OrderInfo.jbr.partyName);
 			$("#jbrName").removeClass("font-secondary");
-			$("#deleteJbr").show();
 			$("#jbrTabDiv").show();
 			$("#jbrFormdata").hide();
 			$("#jbrself").show();
 			  $("#tab1_jbr").off("click").on("click",function(){
+				  if(!cust.isSameOne){
+					  OrderInfo.virOlId = "";
+				  }
 				  cust.isSameOne = true;
+				 
 					$("#jbrFormdata").hide();
 					$("#jbrself").show();
 					$("#tab2_jbr").removeClass("active");
@@ -101,16 +103,16 @@ order.dealer = (function() {
 						OrderInfo.jbr.identityPic = OrderInfo.cust.identityPic;
 						OrderInfo.jbr.identityNum = OrderInfo.cust.idCardNumber;
 					}
-					
+					$("#jbrName").html(OrderInfo.jbr.partyName);
 					
 				});
 				$("#tab2_jbr").off("click").on("click",function(){
-					
 					$("#jbrFormdata").show();
 					$("#jbrself").hide();
 					$("#tab1_jbr").removeClass("active");
 					$("#tab2_jbr").addClass("active");
 					if(cust.isSameOne){
+						OrderInfo.virOlId = "";
 						cust.clearJbrForm();
 						OrderInfo.jbr.custId = undefined;
 						OrderInfo.jbr.partyName = undefined;
@@ -120,8 +122,8 @@ order.dealer = (function() {
 						OrderInfo.jbr.mailAddressStr = undefined;
 						OrderInfo.jbr.identityPic = undefined;
 						OrderInfo.jbr.identityNum = undefined;
+						$("#jbrName").html("");
 					}
-					$("#jbrName").html("");
 					cust.isSameOne = false;
 				});
 		}
@@ -257,7 +259,6 @@ order.dealer = (function() {
 		if(ec.util.isObj(OrderInfo.jbr.partyName)){
 			$("#jbrName").html(OrderInfo.jbr.partyName);
 			$("#jbrName").removeClass("font-secondary");
-			$("#deleteJbr").show();
 		}
 		
 	}

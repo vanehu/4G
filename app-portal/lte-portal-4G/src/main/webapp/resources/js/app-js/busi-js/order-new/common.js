@@ -743,7 +743,6 @@ common = (function($) {
 				_callCloseWebview();
 				return;
 			}else if(OrderInfo.order.step==2){
-				SoOrder.orderBack();
 				$("#orderContentDiv").show();
 				$("#orderConfirmDiv").hide();
 				$("#tab7_li").addClass("active");
@@ -852,10 +851,23 @@ common = (function($) {
 			    	$("#tab8_li").removeClass("active");
 			    	$("#tab7_li").addClass("active");
 					OrderInfo.order.step=3;
-					//防止重复算费	
+					//补换卡
+					var boProd2Tds = OrderInfo.boProd2Tds;
+					//取消订单时，释放被预占的UIM卡
+					if(boProd2Tds.length>0){
+						for(var n=0;n<boProd2Tds.length;n++){
+							var param = {
+									numType : 2,
+									numValue : boProd2Tds[n].terminalCode
+							};
+							$.callServiceAsJson(contextPath+"/app/mktRes/phonenumber/releaseErrorNum", param, {
+								"done" : function(){}
+							});
+						}
+					}
 					SoOrder.orderBack();
 					SoOrder.getToken();
-					OrderInfo.order.step=2;
+					OrderInfo.order.step=1;
 					return;
 				},
 				no:function(){	
@@ -1330,6 +1342,7 @@ common = (function($) {
 			order.phoneNumber.back(); 
 			return;
 		}
+		
 		if(OrderInfo.actionFlag==-999){//处理预受理查询 返回
 			if(OrderInfo.order.step==2){
 				OrderInfo.order.step = 1;
@@ -1341,64 +1354,11 @@ common = (function($) {
 			}
 			return;
 		}
-
-	if(OrderInfo.order.step==1){
+		if(OrderInfo.actionFlag==101){
 			_callCloseWebview();
 			return;
-		}else if(OrderInfo.order.step==2){
-			if(OrderInfo.actionFlag==3||OrderInfo.actionFlag==9){
-				_callCloseWebview();
-				return;
-			}
-			
-		}else if(OrderInfo.order.step==3){
-				// 可选包变更订单页面返回 释放UIM卡
-				if (OrderInfo.actionFlag == 3) {
-					var boProd2Tds = OrderInfo.boProd2Tds;
-					// 取消订单时，释放被预占的UIM卡
-					if (boProd2Tds.length > 0) {
-						for (var n = 0; n < boProd2Tds.length; n++) {
-							var param = {
-								numType : 2,
-								numValue : boProd2Tds[n].terminalCode
-							};
-							$
-									.callServiceAsJson(
-											contextPath
-													+ "/app/mktRes/phonenumber/releaseErrorNum",
-											param, {
-												"done" : function() {
-												}
-											});
-						}
-					}
-//					_callCloseWebview();   2016年8月12日熊公正提出可选包订单确认返回同新装一样，退回 上一步
-//					return;
-				}
-				SoOrder.orderBack();
-				$("#order-content").show();
-				$("#order-confirm").hide();
-				$("#order-dealer").hide();
-				if (OrderInfo.actionFlag == 13) {
-					$("#terminalMain").show();
-				}
-				if(OrderInfo.actionFlag == 9 || OrderInfo.actionFlag == 22){
-					$("#orderContentDiv").show();
-					$("#orderConfirmDiv").hide;
-				}
-				OrderInfo.order.step = 2;
-		}else if(OrderInfo.order.step==4){
-			$("#order-confirm").show();
-			$("#order-print").hide();
-			
-			if(OrderInfo.actionFlag == 9 || OrderInfo.actionFlag == 22){
-				$("#nav-tab-7").addClass("active in");
-				$("#nav-tab-8").removeClass("active in");
-			}
-			OrderInfo.order.step=3;
-		}else {
-			_callCloseWebview();
 		}
+	
 	};
 	//调用客户端 改变头部的状态
 	var _callTitle=function(str){

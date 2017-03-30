@@ -3120,7 +3120,7 @@ button:focus {
 .single-list-box li .hot-icon {
   position: absolute;
   left: 0;
-  top: -0.2rem;
+  top: -0.14rem;
   font-size: 0.88rem;
 }
 .single-list-box li .title {
@@ -3872,16 +3872,10 @@ button:focus {
   margin: 0 0 0.12rem;
   line-height: 0.36rem;
 }
-.g-menu-box .menu-box li:nth-child(1),
-.g-menu-box .menu-box li:nth-child(2),
-.g-menu-box .menu-box li:nth-child(3),
-.g-menu-box .menu-box li:nth-child(4) {
-  border-top: none;
-}
-.g-menu-box .menu-box li:nth-child(1),
-.g-menu-box .menu-box li:nth-child(5),
-.g-menu-box .menu-box li:nth-child(9),
-.g-menu-box .menu-box li:nth-child(13) {
+.g-menu-box .menu-box li:nth-child(8n+1),
+.g-menu-box .menu-box li:nth-child(8n+5),
+.g-menu-box .menu-box li:nth-child(8n+9),
+.g-menu-box .menu-box li:nth-child(8n+13) {
   border-left: none;
 }
 .g-menu-box .menu-box li > i {
@@ -3891,28 +3885,28 @@ button:focus {
   line-height: 0.8rem;
   text-align: center;
 }
-.g-menu-box .menu-box li:nth-child(1) > i,
-.g-menu-box .menu-box li:nth-child(8) > i,
-.g-menu-box .menu-box li:nth-child(10) > i,
-.g-menu-box .menu-box li:nth-child(15) > i {
+.g-menu-box .menu-box li:nth-child(8n+1) > i,
+.g-menu-box .menu-box li:nth-child(8n+8) > i,
+.g-menu-box .menu-box li:nth-child(8n+10) > i,
+.g-menu-box .menu-box li:nth-child(8n+15) > i {
   color: #65b031;
 }
-.g-menu-box .menu-box li:nth-child(2) > i,
-.g-menu-box .menu-box li:nth-child(5) > i,
-.g-menu-box .menu-box li:nth-child(11) > i,
-.g-menu-box .menu-box li:nth-child(16) > i {
+.g-menu-box .menu-box li:nth-child(8n+2) > i,
+.g-menu-box .menu-box li:nth-child(8n+5) > i,
+.g-menu-box .menu-box li:nth-child(8n+11) > i,
+.g-menu-box .menu-box li:nth-child(8n+16) > i {
   color: #f09635;
 }
-.g-menu-box .menu-box li:nth-child(3) > i,
-.g-menu-box .menu-box li:nth-child(6) > i,
-.g-menu-box .menu-box li:nth-child(12) > i,
-.g-menu-box .menu-box li:nth-child(13) > i {
+.g-menu-box .menu-box li:nth-child(8n+3) > i,
+.g-menu-box .menu-box li:nth-child(8n+6) > i,
+.g-menu-box .menu-box li:nth-child(8n+12) > i,
+.g-menu-box .menu-box li:nth-child(8n+13) > i {
   color: #22a7e0;
 }
-.g-menu-box .menu-box li:nth-child(4) > i,
-.g-menu-box .menu-box li:nth-child(7) > i,
-.g-menu-box .menu-box li:nth-child(9) > i,
-.g-menu-box .menu-box li:nth-child(12) > i {
+.g-menu-box .menu-box li:nth-child(8n+4) > i,
+.g-menu-box .menu-box li:nth-child(8n+7) > i,
+.g-menu-box .menu-box li:nth-child(8n+9) > i,
+.g-menu-box .menu-box li:nth-child(8n+12) > i {
   color: #ee5a50;
 }
 .g-footer-tab-box {
