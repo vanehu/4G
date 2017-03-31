@@ -129,7 +129,7 @@ jQuery.ketchup
 	 * 2、大于4个字符（一个汉字为两个字符）；
 	 * 3、不能以空格开始和结束。
 	 */
-    return /^[\u4E00-\u9FA5·a-zA-Z][\u4E00-\u9FA5·\sa-zA-Z]*[\u4E00-\u9FA5·a-zA-Z]$/.test(code)&&CommonUtils.getLength(code)>=4;
+    return /^[\u4E00-\u9FA5·.a-zA-Z][\u4E00-\u9FA5·.\sa-zA-Z]*[\u4E00-\u9FA5·.a-zA-Z]$/.test(code)&&CommonUtils.getLength(code)>=4;
 })
 
 .helper('isGovernment', function(code) {

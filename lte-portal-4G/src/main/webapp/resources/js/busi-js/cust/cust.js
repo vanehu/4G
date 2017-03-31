@@ -719,6 +719,16 @@ order.cust = (function(){
         		$.alert("提示","请先读卡");
         		return false;
         	}
+        	
+        	//判断新建客户姓名以空格开头或结尾，身份证读取的不管
+        	if ($.trim($("#identidiesTypeCd option:selected").val()) != "1"){
+	        	var cCustName = $("#cCustName").val();
+	        	if(ec.util.isObj(cCustName)&&cCustName.substr(0,1)==" "||cCustName.substr(cCustName.length-1)==" "){
+	        		$.alert("提示", "客户姓名不能以空格开头或结尾，请确认！");
+	        		return false;
+	        	}
+        	}
+        	
     	   // 如果填写了联系人相关信息，则联系人名称不能为空
 		   if (!($.trim($("#dishomePhone").val()) == "" && $.trim($("#disofficePhone").val()) == "" && $.trim($("#dismobilePhone").val()) == "") && $.trim($("#discontactName").val()) == "") {
 			   $.alert("提示","联系人名称不能为空！","information");
