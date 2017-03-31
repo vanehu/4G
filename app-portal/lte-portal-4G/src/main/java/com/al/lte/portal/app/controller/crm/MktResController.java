@@ -619,7 +619,7 @@ public class MktResController extends BaseController {
     /**
      * 转至异常单释放页面，释放异常单的号码资源
      */
-    @RequestMapping(value = "/phonenumber/preNumRelease", method = RequestMethod.GET)
+    @RequestMapping(value = "/phonenumber/preNumRelease", method = RequestMethod.POST)
     public String preNumRelease(HttpSession session, Model model) throws AuthorityException {
 
         Calendar calendar = Calendar.getInstance();
@@ -629,9 +629,9 @@ public class MktResController extends BaseController {
         String start = sdf.format(calendar.getTime());
         model.addAttribute("p_startTime", start);
         model.addAttribute("p_endTime", end);
-        model.addAttribute("current", EhcacheUtil.getCurrentPath(session, "mktRes/phonenumber/preNumRelease"));
+//        model.addAttribute("current", EhcacheUtil.getCurrentPath(session, "/app/sourceRelease/sourceRelease-main"));
 
-        return "/orderRelease/order-error-query";
+        return "/app/sourceRelease/sourceRelease-main";
     }
 
     /**
@@ -665,8 +665,9 @@ public class MktResController extends BaseController {
                         if (numberList.size() > 0) {
                             if (result.get("totalNumber") != null) {
                                 int pageNo = Integer.parseInt(param.get("pageIndex").toString());
+                                int pageSize = Integer.parseInt(param.get("pageSize").toString());
                                 int totalRecords = Integer.parseInt(result.get("totalNumber").toString());
-                                PageModel<Map<String, Object>> pm = PageUtil.buildPageModel(pageNo, 10,
+                                PageModel<Map<String, Object>> pm = PageUtil.buildPageModel(pageNo, pageSize,
                                         totalRecords < 1 ? 1 : totalRecords, numberList);
                                 model.addAttribute("pageModel", pm);
                                 //数据返回正常&&查询成功&&结果不为空
@@ -696,7 +697,7 @@ public class MktResController extends BaseController {
         } catch (Exception e) {
             return super.failedStr(model, ErrorCode.QUERY_RES_RELEASE, e, param);
         }
-        return "/orderRelease/order-error-list";
+        return "/app/sourceRelease/sourceRelease-list";
     }
 
     /**

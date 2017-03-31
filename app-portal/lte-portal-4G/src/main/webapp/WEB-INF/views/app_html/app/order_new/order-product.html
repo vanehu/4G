@@ -123,7 +123,7 @@
 				<div class="modal-content">
 					<div class="modal-header">
 						<button style="padding:0.1rem 0 0 0;" type="button" class="close iconfont icon-close" data-dismiss="modal"
-							aria-hidden="true" onClick="$('#dealerModal-result').hide();$('#dealerModal').find('.choice-box').children('.help-block').addClass('hidden');$('#staffCode,#salesCode').val('');"></button>
+							aria-hidden="true" onClick="$('#dealerModal-result').hide();$('#dealerList2').hide();$('#dealerModal').find('.choice-box').children('.help-block').addClass('hidden');$('#staffCode,#salesCode,#staffName').val('');"></button>
 						<h4 class="modal-title">选择发展人</h4>
 					</div>
 					<div>
@@ -154,39 +154,14 @@
 							<input id="salesCode" placeholder="请输入销售员编码" class="choice-input" onblur="if($(this).val().trim() != ''){$('#dealerModal').find('.choice-box').children('.help-block').addClass('hidden');}$('#dealerModal-result').hide();">
 							<div class="help-block error hidden">销售员编码不能为空</div>
 						</div>
+						<div class="list-box" id="dealerList2" style="display: none;">
+						    <h3 style="text-align: center">查询列表</h3>
+							<ul class="choice-list-box m-b-0" id="dealerListUl">
+							</ul>
+						</div>
 						<div id="dealerModal-result" style="line-height: .86rem; color: #ff0000; font-size: .26rem; display:none; text-align:center;">没有查询到该员工信息！</div>
 						<div class="sub-btn-box p relative">
 							<button class="sun-btn" onclick="order.dealer.queryStaff()" id="qsd" data-loading-text="查询...">查询</button>
-						</div>
-					</div>
-					<div class="dis-none">
-						<!--查询结果列表  dis-none来控制隐藏与否-->
-						<div class="list-box">
-							<ul class="choice-list-box m-b-0">
-								<li><i class="iconfont pull-left">&#xe663;</i> <span
-									class="list-title">发展人XXX</span>
-									<div class="list-checkbox absolute-right">
-										<label>
-											<div class="checkbox-box">
-												<input type="radio" value="1" id="checkbox-fzr-1" name="fzr" />
-												<label for="checkbox-fzr-1"></label>
-											</div>
-										</label>
-									</div></li>
-								<li><i class="iconfont pull-left">&#xe663;</i> <span
-									class="list-title">发展人XXX</span>
-									<div class="list-checkbox absolute-right">
-										<label>
-											<div class="checkbox-box">
-												<input type="radio" value="2" id="checkbox-fzr-2" name="fzr" />
-												<label for="checkbox-fzr-2"></label>
-											</div>
-										</label>
-									</div></li>
-							</ul>
-						</div>
-						<div class="sub-btn-box p relative">
-							<button class="sun-btn">确定</button>
 						</div>
 					</div>
 				</div>

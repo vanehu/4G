@@ -756,6 +756,20 @@ common = (function($) {
 				return;
 			}
 		}
+		if(OrderInfo.actionFlag==114){//采集单
+			if(OrderInfo.order.step==1){
+				_callCloseWebview();
+				return;
+			}else if(OrderInfo.order.step==2){
+				$("#nav-tab-2").removeClass("active in");
+    	    	$("#nav-tab-1").addClass("active in");
+    	    	$("#tab2_li").removeClass("active");
+    	    	$("#tab1_li").addClass("active");
+                $("#resList").empty();
+				OrderInfo.order.step=1;
+				return;
+			}
+		}
 		if(OrderInfo.actionFlag==9){//客户返档
 			if(OrderInfo.order.step==1){
 				_callCloseWebview();

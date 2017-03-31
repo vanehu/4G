@@ -131,9 +131,7 @@ order.phone = (function(){
 		//收集参数
 		var param = _buildInParam(curPage);
 		param.newFlag=1;
-		if(moduldFlag==1){//主推终端标志，默认初始为查询主推终端
-			param.moduleId = 1000; //排序模块
-		}
+		param.moduleId = 1000; //排序模块
 		$.callServiceAsHtml(url,param,{
 			"before":function(){
 				if(curPage == 1)$.ecOverlay("<strong>查询中,请稍等...</strong>");
