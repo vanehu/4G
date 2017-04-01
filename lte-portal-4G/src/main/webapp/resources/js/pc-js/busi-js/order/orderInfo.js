@@ -1500,6 +1500,7 @@ OrderInfo = (function() {
 	var _realNamePhotoFlag = "OFF";
 		
 	var _oneCardFiveNO={"usedNum":{},"checkNum":{}};//一证五号校验缓存
+	var _oneCardPhone = "";
 	return {
 		terminalCode:_terminalCode,
 		mktResInstCode:_mktResInstCode,
@@ -1602,6 +1603,7 @@ OrderInfo = (function() {
 		subUserInfos:_subUserInfos,
 		oneCardFiveNum : _oneCardFiveNum,
 		oneCardFiveNO  : _oneCardFiveNO,
+		oneCardPhone   : _oneCardPhone,
 		queryCustInfo:_queryCustInfo
 	};
 })();

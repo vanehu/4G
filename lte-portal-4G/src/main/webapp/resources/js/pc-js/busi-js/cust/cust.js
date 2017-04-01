@@ -3236,9 +3236,9 @@ order.cust = (function(){
                 	                    checkResult=true;
                 	                } else {
                 	                	 checkResult = false;
+                	                	 $.alert("提示", "证件「" + inParam.certNum + "」全国范围已有5张及以上移动号卡，您当前业务在本证件下新增"+oneCard.oneCertFiveNO+"张号卡「"+OrderInfo.oneCardPhone+"]，合计超过5卡，请对于新号卡登记其他使用人");
                 	                	 OrderInfo.oneCardFiveNum = [];
-                	                	 $.alert("提示", "证件「" + inParam.certNum + "」全国范围已有5张及以上移动号卡，无法在证件下新增证号关系！");
-                	                    return checkResult;
+                	                	 return checkResult;
                 	                }
                 			 }
                 		 });

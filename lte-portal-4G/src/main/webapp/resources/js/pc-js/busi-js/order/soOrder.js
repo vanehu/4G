@@ -3452,6 +3452,7 @@ SoOrder = (function() {
      * @private
      */
     var _oneCertFiveCheckData = function (inParam) {
+    	OrderInfo.oneCardPhone = "";
         var oneCertFiveNum = false;//一证五号校验结果
         if (ec.util.isObj(OrderInfo.boProdAns) && OrderInfo.boProdAns.length > 0) {
         	var oneCertFiveNO = 0;
@@ -3474,6 +3475,7 @@ SoOrder = (function() {
                 }
                 if (isCheck) {
                 	oneCertFiveNO ++ ;
+                	OrderInfo.oneCardPhone = "号码："+this.accessNumber+"，"+OrderInfo.oneCardPhone;
                 } else {
                     oneCertFiveNum = true;//不做一证五号校验的默认返回true
                 }
@@ -3483,9 +3485,7 @@ SoOrder = (function() {
             		oneCertFiveNO:oneCertFiveNO
 			};
             OrderInfo.oneCardFiveNum.push(oneCardFive);
-            if (order.cust.preCheckCertNumberRel(this.prodId, inParam)) {
-                oneCertFiveNum = true;
-            }
+            oneCertFiveNum = order.cust.preCheckCertNumberRel(this.prodId, inParam);
         } else {
             oneCertFiveNum = true;//不做一证五号校验的默认返回true
         }
