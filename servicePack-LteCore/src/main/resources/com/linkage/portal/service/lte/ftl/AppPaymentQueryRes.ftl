@@ -19,18 +19,18 @@
 		<#if SvcCont.PaymentRecQueryRsp?exists>
 			<#list SvcCont.PaymentRecQueryRsp as item>
 				<PaymentRecQueryRsp type = 'list'>
-					<ServiceResultCode>${SvcCont.PaymentRecQueryRsp.ServiceResultCode}</ServiceResultCode>
+					<ServiceResultCode>${item.ServiceResultCode}</ServiceResultCode>
 					<ParaFieldResult/>
 					<PaymentRecordInfo>
-						<AccNbr>${SvcCont.PaymentRecQueryRsp.PaymentRecordInfo.AccNbr}</AccNbr>
-						<PaymentAmount>${SvcCont.PaymentRecQueryRsp.PaymentRecordInfo.PaymentAmount}</PaymentAmount>
-						<PaymentMethod>${SvcCont.PaymentRecQueryRsp.PaymentRecordInfo.PaymentMethod}</PaymentMethod>
-						<PaidTime>${SvcCont.PaymentRecQueryRsp.PaymentRecordInfo.PaidTime}</PaidTime>
-						<Status>${SvcCont.PaymentRecQueryRsp.PaymentRecordInfo.Status}</Status>
-						<ReqSerial>${SvcCont.PaymentRecQueryRsp.PaymentRecordInfo.ReqSerial}</ReqSerial>
-						<TranId_FromCsb>${SvcCont.PaymentRecQueryRsp.PaymentRecordInfo.TranId_FromCsb}</TranId_FromCsb>
-						<TranId_ToCsb>${SvcCont.PaymentRecQueryRsp.PaymentRecordInfo.TranId_ToCsb}</TranId_ToCsb>
-						<MID>${SvcCont.PaymentRecQueryRsp.PaymentRecordInfo.MID}</MID>
+						<AccNbr>${item.PaymentRecordInfo.AccNbr}</AccNbr>
+						<PaymentAmount>${item.PaymentRecordInfo.PaymentAmount}</PaymentAmount>
+						<PaymentMethod>${item.PaymentRecordInfo.PaymentMethod}</PaymentMethod>
+						<PaidTime>${item.PaymentRecordInfo.PaidTime}</PaidTime>
+						<Status>${item.PaymentRecordInfo.Status}</Status>
+						<ReqSerial>${item.PaymentRecordInfo.ReqSerial}</ReqSerial>
+						<TranId_FromCsb>${item.PaymentRecordInfo.TranId_FromCsb}</TranId_FromCsb>
+						<TranId_ToCsb>${item.PaymentRecordInfo.TranId_ToCsb}</TranId_ToCsb>
+						<MID>${item.PaymentRecordInfo.MID}</MID>
 					</PaymentRecordInfo>
 				</PaymentRecQueryRsp>
 			</#list>
