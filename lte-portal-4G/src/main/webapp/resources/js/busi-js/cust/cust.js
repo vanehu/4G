@@ -1032,6 +1032,8 @@ order.cust = (function(){
             "soNbr": UUID.getDataId()
         };
 
+		var isCloud = $('#p_cust_identityCd').val()=="cloudId"?true:false;
+
         _choosedCustInfo = {
             custId: $(scope).attr("custId"), //$(scope).find("td:eq(3)").text(),
             partyName: $(scope).attr("partyName"), //$(scope).find("td:eq(0)").text(),
@@ -1051,6 +1053,7 @@ order.cust = (function(){
             vipLevel: $(scope).attr("vipLevel"),
             vipLevelName: $(scope).attr("vipLevelName"),
             accNbr: $(scope).attr("accNbr"),
+			isCloud:isCloud,
             userIdentityCd: "",//使用人证件类型
             userIdentityName: "",//使用人证件名称
             userIdentityNum: "",//使用人证件号码
@@ -1076,8 +1079,9 @@ order.cust = (function(){
                  return false;
             }
         }
-        
-        if(ec.util.isObj(param.accNbr)){
+
+		// 天翼云盘无使用人
+        if(ec.util.isObj(param.accNbr) && !_choosedCustInfo.isCloud){
         	$.callServiceAsJson(contextPath + "/cust/queryCustExt", param, {
                 "before": function () {
                     $.ecOverlay("<strong>正在查询中,请稍等...</strong>");
@@ -1148,7 +1152,7 @@ order.cust = (function(){
             }
 
             if (govSwitch == "ON" && isGovCust) {
-                if (!ec.util.isObj(_choosedCustInfo.userCustId) && ec.util.isObj(_choosedCustInfo.accNbr)) {
+                if (!ec.util.isObj(_choosedCustInfo.userCustId) && ec.util.isObj(_choosedCustInfo.accNbr) && !_choosedCustInfo.isCloud) {
                     $.alert("提示", "返回的使用人信息为空，请补全信息！");
                     return;
                 }
@@ -1361,6 +1365,9 @@ order.cust = (function(){
 		// 如果是接入号，且开关打开，则添加产品大类字段
 		if ($("#p_cust_identityCd").val() == -1 && "ON" == CacheData.getIntOptSwitch()) {
 			param.prodClass = $("#prodTypeCd").val();
+		}
+		if ($("#p_cust_identityCd").val() == "cloudId"){
+			param.prodClass = CONST.PROD_BIG_CLASS.PROD_CLASS_CLOUD;
 		}
 		if(_choosedCustInfo==null){
 			param.custId="";

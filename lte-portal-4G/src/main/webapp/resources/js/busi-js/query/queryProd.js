@@ -286,6 +286,12 @@ query.prod = (function() {
 		if(OrderInfo.order.soNbr!=undefined && OrderInfo.order.soNbr != ""){  //缓存流水号
 			param.soNbr = OrderInfo.order.soNbr;
 		}
+		var prodInstInfo = order.prodModify.choosedProdInfo;
+		if(ec.util.isObj(prodInstInfo.prodBigClass)){
+			param.prodBigClass = prodInstInfo.prodBigClass;
+		}else if(prodInstInfo.productId == CONST.PROD_SPEC.PROD_CLOUD_OFFER){
+			param.prodBigClass = CONST.PROD_BIG_CLASS.PROD_CLASS_CLOUD;
+		}
 	};
 	
 	return {

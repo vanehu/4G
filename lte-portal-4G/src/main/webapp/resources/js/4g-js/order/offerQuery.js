@@ -65,6 +65,11 @@ query.offer = (function() {
 		if ("ON" == CacheData.getIntOptSwitch()) {
 			param.prodClass = order.prodModify.choosedProdInfo.prodBigClass;
 		}
+		if(ec.util.isObj(order.prodModify.choosedProdInfo.prodBigClass)){
+			param.prodClass = order.prodModify.choosedProdInfo.prodBigClass;
+		}else if(order.prodModify.choosedProdInfo.productId == CONST.PROD_SPEC.PROD_CLOUD_OFFER){
+			param.prodClass = CONST.PROD_BIG_CLASS.PROD_CLASS_CLOUD;
+		}
 		var url= contextPath+"/offer/queryOfferInst";
 		if(typeof(callBackFun)=="function"){
 			$.callServiceAsJsonGet(url,param,{
@@ -161,6 +166,12 @@ query.offer = (function() {
 	
 	//销售品参数查询
 	var _queryOfferParam = function(param,callBackFun) {
+		var prodInstInfo = order.prodModify.choosedProdInfo;
+		if(ec.util.isObj(prodInstInfo.prodBigClass)){
+			param.prodBigClass = prodInstInfo.prodBigClass;
+		}else if(prodInstInfo.productId == CONST.PROD_SPEC.PROD_CLOUD_OFFER){
+			param.prodBigClass = CONST.PROD_BIG_CLASS.PROD_CLASS_CLOUD;
+		}
 		var url= contextPath+"/offer/queryOfferParam";
 		if(typeof(callBackFun)=="function"){
 			$.callServiceAsJsonGet(url,param,{
