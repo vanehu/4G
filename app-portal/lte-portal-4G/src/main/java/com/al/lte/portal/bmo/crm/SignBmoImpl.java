@@ -281,14 +281,14 @@ public class SignBmoImpl implements SignBmo{
 //			reObject.put("fwhtmlStr", fwhtmlStr);
 			
 			HttpSession session = request.getSession();
-			String login_area_id = "";
-    		List<Map> channelList = (List<Map>)session.getAttribute(SysConstant.SESSION_KEY_STAFF_CHANNEL);
-    		for(int k=0;k<channelList.size();k++){
-    			Map cl = channelList.get(k);
-    			if(sessionStaff.getCurrentChannelId().equals(cl.get("id").toString())){
-    				login_area_id = cl.get("areaId").toString();
-    			}
-    		}
+			String login_area_id = sessionStaff.getCurrentAreaId();
+//    		List<Map> channelList = (List<Map>)session.getAttribute(SysConstant.SESSION_KEY_STAFF_CHANNEL);
+//    		for(int k=0;k<channelList.size();k++){
+//    			Map cl = channelList.get(k);
+//    			if(sessionStaff.getCurrentChannelId().equals(cl.get("id").toString())){
+//    				login_area_id = cl.get("areaId").toString();
+//    			}
+//    		}
 			List specialAgreement = MDA.SPECIAL_AGREEMENT.get("SPECIAL_AGREEMENT_"+login_area_id.substring(0, 3));//省份特殊协议配置
 			List<String> spList = new ArrayList<String>();
 			String actionFlag = (String) resultMap.get("actionFlag");

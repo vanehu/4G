@@ -425,7 +425,8 @@ mktRes.terminal = (function() {
         if (response.code == 0) {
             $("#mainPushList_Div").find('li[data-mktresid]').remove();
             $("#mainPushList_Div").parent('.fixed-bottom-box').addClass('hidden');
-            $.alert("提示", "推送终端成功","information",_refreshPush());
+            _initPhone_mainPush();
+            $.alert("提示", "推送终端成功");
         } else {
             if (typeof response == undefined) {
                 $.alert("提示", "推送终端请求调用失败，可能原因服务停止或者数据解析异常");
@@ -436,11 +437,6 @@ mktRes.terminal = (function() {
             }
         }
     };
-    var _refreshPush = function(){
-    	setTimeout(function() {
-    		_initPhone_mainPush();
-        }, 3000);
-    }
     
     var _showFinDialog=function(){
 		var title='推送成功';

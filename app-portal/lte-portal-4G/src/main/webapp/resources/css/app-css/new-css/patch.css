@@ -461,7 +461,10 @@ fieldset[disabled] .form-control:focus {
 	height: 3.56rem;
 	overflow-y: scroll;
 }
-
+.clear-both-padding {
+	padding-left: 0 !important;
+	padding-right: 0 !important;
+}
 /* --------- 2016/12/30 by soon--------- */
 .choice-box > .help-block{font-size: 0.28rem; position: absolute; right:.22rem; line-height: .86rem; height: .86rem; top:0; }
 .choice-box > .help-block.error{color: #ff0000}

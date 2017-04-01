@@ -1817,7 +1817,12 @@ public class BillController extends BaseController {
 			paramMap.put("qryEndTime", DateUtil.getNowDefault());
 			
 			Map<String, Object> resultMap = billBmo.paymentQuery(paramMap, flowNum, sessionStaff);
-			model.addAttribute("result", MapUtils.getObject(resultMap, "result"));
+			if (ResultConstant.SUCCESS.getCode() == MapUtils.getIntValue(resultMap, "resultCode", 1)) {
+				model.addAttribute("result", MapUtils.getObject(resultMap, "result"));
+			} else {
+				model.addAttribute("resultCode", MapUtils.getObject(resultMap, "resultCode"));
+				model.addAttribute("message", MapUtils.getObject(resultMap, "message"));
+			}
 			return "/app/bill/payment-query-result";
 		}catch(BusinessException be){
 			return failedStr(model, be);

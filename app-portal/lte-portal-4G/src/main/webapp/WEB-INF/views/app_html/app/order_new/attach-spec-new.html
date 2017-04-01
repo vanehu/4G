@@ -31,17 +31,22 @@
 	</select> 
 	<i class="iconfont pull-right p-r-10">&#xe66e;</i>
 </div>
-	<div class="list-box four-list m-t-10" style="overflow: scroll;overflow-x:hidden;border:0px;">
-		<ul class="choice-list-box m-0" id="canChooseUl_${prodId}">
-			<li id="li_${prodId}_${param.offerSpecId}" >
+<div class="list-box four-list m-t-10" id="" style="overflow: scroll;overflow-x:hidden;border:0px;">
+<!-- 模糊搜索 -->
+		<ul class="choice-list-box m-0" id="">
+			<li id="" >
 				<div class="choice-box border-top-none">
 					<i class="iconfont pull-left">&#xe66c;</i>
-					<input placeholder="请输入查询条件" class="choice-input" id="attachName_${prodId}">
-					<i class="iconfont pull-right font-orange absolute-right m-r-3 p-r-10" onclick="AttachOffer.searchAttachOfferSpec(${param.prodId},${param.prodSpecId},${param.offerSpecId})">&#xe647;</i>
+					<input placeholder="请输入查询条件" class="choice-input" id="search_text_${prodId}">
+					<i class="iconfont pull-right font-orange absolute-right m-r-3 p-r-10" onclick="AttachOffer.searchAttachOfferSpec(${param.prodId},${param.offerSpecId},${param.prodSpecId})">&#xe647;</i>
 				</div> 
 				<i class="iconfont absolute-right"></i>
 			</li>
 	</ul>
+</div>
+	<div class="list-box four-list m-t-10" style="overflow: scroll;overflow-x:hidden;border:0px;">
+		<ul class="choice-list-box m-0" id="canChooseUl_${prodId}">
+		</ul>
 		<!-- 可选择促销 -->
 </div>
 		<!-- 已选择促销 -->

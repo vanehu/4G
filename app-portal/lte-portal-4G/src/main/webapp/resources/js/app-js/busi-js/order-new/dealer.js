@@ -199,7 +199,7 @@ order.dealer = (function() {
 				"name":$("#staffName").val().trim(),
 				"salesCode":$("#salesCode").val().trim(),//销售员编码
 				"pageIndex":1,
-				"pageSize":1
+				"pageSize":10
 		};
 		
 		$.callServiceAsJson(contextPath + "/app/staffMgr/getStaffList2",param,{
@@ -221,6 +221,7 @@ order.dealer = (function() {
 						$('#dealerModal-result').show();
 						$('#dealerModal').find('.choice-box').children('.help-block').addClass('hidden');
 					}else{
+						$('#dealerModal-result').hide();					
 						$('#dealerListUl').empty();
 						$('#dealerList2').show();
 						if(response.data.length==1){
@@ -230,10 +231,18 @@ order.dealer = (function() {
 							for(var i=0;i<response.data.length;i++){//
 								var dealer=response.data[i];
 								var channelNbr="";
-								if(dealer.chanInfos[0]!=undefined){
-									channelNbr=dealer.chanInfos[0].channelNbr;
+								if(dealer.chanInfos[i]!=undefined){
+									channelNbr=dealer.chanInfos[i].channelNbr;
 								}
-								$('#dealerListUl').append('<li style="cursor:pointer" onclick="order.dealer.chooseDealer(\''+dealer.staffName+'\','+dealer.staffId+',\''+channelNbr+'\','+$('#dealerType').val()+')"><i class="iconfont pull-left">&#xe663;</i> <span class="list-title">姓名【'+response.data[0].staffName+'】编码:【'+response.data[0].salesCode+'】员工号:【'+response.data[0].staffCode+'】</span> <div class="list-checkbox absolute-right"><label></label></div></li>');	
+								var staffName="";
+								var staffCode="";
+								if(dealer.staffName!=null && dealer.staffName!=undefined){
+									staffName=dealer.staffName;
+								}
+								if(dealer.staffCode!=null && dealer.staffCode!=undefined){
+									staffCode=dealer.staffCode;
+								}
+								$('#dealerListUl').append('<li style="cursor:pointer" onclick="order.dealer.chooseDealer(\''+dealer.staffName+'\','+dealer.staffId+',\''+channelNbr+'\','+$('#dealerType').val()+')"><i class="iconfont pull-left">&#xe663;</i> <span  class="list-title p-r-43">姓名【'+staffName+'】员工号:【'+staffCode+'】</span> </li>');	
 							}
 						}						
 						// $("#dealerName").html(response.data[0].staffName).attr("staffId", response.data[0].staffId);						
@@ -310,6 +319,7 @@ order.dealer = (function() {
 	var _chooseDealer = function(name, staffId, channelNbr, roleId) {
 		_addDealer(name, staffId, channelNbr, roleId);
 		//重置表单
+		$('#dealerList2').hide();
 		$('#dealerModal').modal("hide");
 		$('#dealerModal-result').hide();
 		$('#dealerModal').find('.choice-box').children('.help-block').addClass('hidden');

@@ -2129,6 +2129,9 @@ button:focus {
   border-radius: 0;
   font-size: 0.24rem;
 }
+.del-line {
+  text-decoration: line-through !important;
+}
 @font-face {
   font-family: "iconfont";
   src: url('iconfont.eot?t=1481078776375');
@@ -2668,6 +2671,9 @@ button:focus {
 }
 .p-t-43 {
   padding-top: 0.86rem!important;
+}
+.p-r-43 {
+  padding-right: 0.86rem!important;
 }
 .m {
   margin: 0.22rem!important;

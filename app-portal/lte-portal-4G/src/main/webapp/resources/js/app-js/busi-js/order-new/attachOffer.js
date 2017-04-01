@@ -724,12 +724,14 @@ AttachOffer = (function() {
 		var content = CacheData.getOfferProdStr(prodId,newSpec,0);
 		$.confirm("信息确认",content,{ 
 			yes:function(){
-				CacheData.setServ2OfferSpec(prodId,newSpec);
+				CacheData.setServForOfferSpec(prodId,newSpec);//把选中促销保存到销售品规格中
 			},
 			yesdo:function(){
 				_checkOfferExcludeDepend(prodId,newSpec);
+				
 			},
 			no:function(){
+				$("#input_"+prodId+"_"+newSpec.offerSpecId).removeAttr("checked");
 			}
 		});
 	};
@@ -1448,7 +1450,7 @@ AttachOffer = (function() {
 		if (prodInst) {
 			param.offerRoleId = prodInst.offerRoleId;
 		}
-		var offerSepcName = $("#attachName_" + prodId).val();
+		var offerSepcName = $("#search_text_" + prodId).val();
 		if (offerSepcName.replace(/\ /g, "") == "") {
 			$.alert("提示", "请输入查询条件！");
 			return;
@@ -1458,7 +1460,7 @@ AttachOffer = (function() {
 		query.offer.searchAttachOfferSpec(param, function(data) {
 			if (data != undefined) {
 				var $ul = $("#canChooseUl_"+prodId);		
-				$("#canChooseUl_"+prodId).children("li:gt(0)").remove();//移除可选促销节点
+				$("#canChooseUl_"+prodId).empty();//移除可选促销节点
 				$("#canChooseUl_"+prodId).append(data);
 			}
 		});

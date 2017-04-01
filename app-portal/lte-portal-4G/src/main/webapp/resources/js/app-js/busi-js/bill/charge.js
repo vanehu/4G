@@ -77,7 +77,7 @@ bill.charge = (function() {
 			if (!_checkParams(param)) {
 				return;
 			}
-			$.callServiceAsJson(contextPath+"/app/bill/balance", param, {
+			$.callServiceAsJson(contextPath + "/app/bill/balance", param, {
 				"before": function() {
 					$.ecOverlay("查询中，请稍等...");
 				},
@@ -110,7 +110,7 @@ bill.charge = (function() {
 		});
 	};
 	var _toCharge = function() {
-		$.callServiceAsJson(contextPath+"/app/bill/charge", _chargeParams, {
+		$.callServiceAsJson(contextPath + "/app/bill/charge", _chargeParams, {
 			"before": function() {
 				$.ecOverlay("提交中，请稍等...");
 			},
@@ -180,7 +180,7 @@ bill.charge = (function() {
 	var _appCharge = function() {
 		$("#recharge").on("click", function() {
 			// 参数收集
-			var feeAmount = $("#amount").val();
+			var feeAmount = $.trim($("#amount").val());
 			if (!(ec.util.isObj(feeAmount) && CONST.POSITIVE_NUM.test(feeAmount) && feeAmount <= 500)) {
 				$.alert("提示", "请正确选择或输入金额，最高500元。");
 				return;
@@ -192,7 +192,7 @@ bill.charge = (function() {
 				return;
 			}
 			_chargeParams = {
-					destinationId: $("#userPhoneNum").val(),
+					destinationId: $.trim($("#userPhoneNum").val()),
 					provinceId: $("#provinceId").val(),
 					feeAmount: feeAmount*100,
 					tranId: tranId
@@ -224,11 +224,18 @@ bill.charge = (function() {
 			}
 		});
 	};
+	var _amountValCheck = function() {
+		$("#amount").on("keyup", function() {
+			this.value = this.value.replace(/\D/g, "");
+		});
+	};
 	var _init = function() {
 		// 选择或输入金额
 		_amountChange();
-		// TODO 查余额
-		// _appBalance();
+		// 金额输入非数字限制
+		_amountValCheck();
+		// 查余额
+		_appBalance();
 		// 充值
 		_appCharge();
 		// 根据工号的省份限制，暂时限制跨省业务

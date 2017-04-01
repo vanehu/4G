@@ -514,7 +514,7 @@ public class BillBmoImpl implements BillBmo {
 				Map<String, Object> returnMap = db.getReturnlmap();
 				if(ResultConstant.R_POR_SUCCESS.getCode().equals(returnMap.get("code"))){
 					resultMap.put("resultCode", ResultCode.R_SUCC);
-					resultMap.put("result", returnMap);
+					resultMap.put("result", MapUtils.getObject(returnMap, "PaymentRecQueryRsp"));
 				}else{
 					resultMap.put("resultCode", ResultCode.R_FAILURE);
 					resultMap.put("message", returnMap.get("message"));
