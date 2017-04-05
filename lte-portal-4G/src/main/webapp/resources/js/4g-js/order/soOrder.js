@@ -4348,15 +4348,17 @@ SoOrder = (function() {
         var oneCertFiveNum = false;//一证五号校验结果
         var isON = query.common.queryPropertiesStatus("REAL_USER_" + OrderInfo.cust.areaId.substr(0, 3));//新使用人开关
         if (ec.util.isObj(OrderInfo.boProdAns) && OrderInfo.boProdAns.length > 0) {
+            var numbers = "";
+            var newNumbers = 0;
+            OrderInfo.oneCardFiveNum.hasUserProdIds = [];
             $.each(OrderInfo.boProdAns, function () {
                 var parent = this;
-                var isCheck = true;//是否进行一证五号校验，选择了使用人的号码之前校验过，这里跳过
 
-                if (isON||OrderInfo.isCltNewOrder()) {//采集单走新使用人逻辑，但不受开关控制，直接为ON
+                if (isON || OrderInfo.isCltNewOrder()) {//采集单走新使用人逻辑，但不受开关控制，直接为ON
                     if (ec.util.isObj(OrderInfo.subUserInfos) && OrderInfo.subUserInfos.length > 0) {//有选择使用人的情况
                         $.each(OrderInfo.subUserInfos, function () {
                             if (this.prodId == parent.prodId && this.servType == "1") {//servType：1的为使用人，2为责任人
-                                isCheck = false;
+                                OrderInfo.oneCardFiveNum.hasUserProdIds.push(this.prodId);// 选择了使用人的prodId
                             }
                         });
                     }
@@ -4364,23 +4366,27 @@ SoOrder = (function() {
                     if (ec.util.isObj(OrderInfo.choosedUserInfos) && OrderInfo.choosedUserInfos.length > 0) {//有选择使用人的情况
                         $.each(OrderInfo.choosedUserInfos, function () {
                             if (this.prodId == parent.prodId) {
-                                isCheck = false;
+                                OrderInfo.oneCardFiveNum.hasUserProdIds.push(this.prodId);// 选择了使用人的prodId
                             }
                         });
                     }
                 }
-
-                if (isCheck) {
-                    //一证五号校验
-                    if (order.cust.preCheckCertNumberRel(this.prodId, inParam)) {
-                        oneCertFiveNum = true;
-                    }else{
-                        oneCertFiveNum = false
-                    }
-                } else {
-                    oneCertFiveNum = true;//不做一证五号校验的默认返回true
+            });
+            order.cust.preCheckCertNumberRelQueryOnly(inParam);//查询证件下已经有的号码个数
+            var oldNum = OrderInfo.oneCardFiveNum.usedNum[order.cust.getCustInfo415Flag(inParam)];
+            $.each(OrderInfo.boProdAns, function () {//提取出所有没有选择使用人的号码
+                if ($.inArray(this.prodId, OrderInfo.oneCardFiveNum.hasUserProdIds) == -1) {
+                    numbers += numbers == "" ? this.accessNumber : "，" + this.accessNumber;
+                    newNumbers++;
                 }
             });
+
+            if (oldNum + newNumbers > 5 && ec.util.isObj(numbers)) {
+                $.alert("提示", "证件「" + inParam.certNum + "」全国范围已有" + oldNum + "张移动号卡，您当前业务在本证件下新增" + newNumbers + "张号卡「" + numbers + "]，合计超过5卡，请对于新号卡登记其他使用人！");
+                oneCertFiveNum = false;
+            } else {
+                oneCertFiveNum = true;
+            }
         } else {
             oneCertFiveNum = true;//不做一证五号校验的默认返回true
         }

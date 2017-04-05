@@ -180,7 +180,7 @@ order.service = (function(){
 					"areaId": OrderInfo.staff.soAreaId
 				};
 				if (OrderInfo.actionFlag == 2) {  //套餐变更不做校验
-                    order.cust.preCheckCertNumberRelQueryOnly("-1", order.cust.getCustInfo415());//调用一证五号校验接口获取已有的数量
+                    order.cust.preCheckCertNumberRelQueryOnly(order.cust.getCustInfo415());//调用一证五号校验接口获取已有的数量
                     order.service.opeSer(param);
 				} else {  //新装
 					var boInfos = [{

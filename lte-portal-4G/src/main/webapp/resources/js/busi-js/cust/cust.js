@@ -3922,7 +3922,7 @@ order.cust = (function(){
     /**
      * 证号关系预校验接口,只查询数据不校验
      */
-    var _preCheckCertNumberRelQueryOnly = function (prodId, inParam) {
+    var _preCheckCertNumberRelQueryOnly = function (inParam) {
         if(order.prepare.isPreInstall()) {
             return true;
         }

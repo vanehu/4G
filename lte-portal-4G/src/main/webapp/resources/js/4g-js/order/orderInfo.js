@@ -83,7 +83,7 @@ OrderInfo = (function() {
 		resultCode:""
 	};//保存鉴权临时结果
 
-    var _oneCardFiveNum={"usedNum":{},"checkNum":{}};//一证五号校验缓存
+    var _oneCardFiveNum={"usedNum":{},"checkNum":{},"hasUserProdIds":[]};//一证五号校验缓存
 	var _preBefore ={
 			prcFlag : ""	
 	};//保存前置检验的结果
