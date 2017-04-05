@@ -1170,7 +1170,7 @@ prod.transferModify = (function(){
 			}
 		};
 		
-		if(OrderInfo.actionFlag==43&&_returnFlag){
+		if(OrderInfo.actionFlag==43 && _returnFlag){
 			if (isGovEntCust && query.common.queryPropertiesStatus("TRANSFER_CUST_FLAG")) {
 				//针对政企、预开通、已实名的客户返档
 				_returnCustSubmit4GovEnt();
@@ -1708,7 +1708,7 @@ prod.transferModify = (function(){
     	//非政企客户或开关未开启，不做任何处理
     	var isGovEntCust = CacheData.isGov(OrderInfo.cust.identityCd);
     	var isTransferCustFlagOn = query.common.queryPropertiesStatus("TRANSFER_CUST_FLAG");
-    	if(!(isGovEntCust && isTransferCustFlagOn)){
+    	if(!(isGovEntCust && isTransferCustFlagOn && _returnFlag)){
     		return;
     	}
     	//1.展示使用人按钮
@@ -1897,7 +1897,7 @@ prod.transferModify = (function(){
 			"itemSpecId"	:CONST.PROD_ATTR.PROD_USER,
 			"prodSpecItemId":""
 		};
-        changeUserBusiOrder.data.boProdItems.push(boProdItemsDel);
+//        changeUserBusiOrder.data.boProdItems.push(boProdItemsDel);
         changeUserBusiOrder.data.boProdItems.push(boProdItemsAdd);
 		busiOrders.push(changeUserBusiOrder);
 		
