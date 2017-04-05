@@ -1662,7 +1662,8 @@ OrderInfo = (function() {
 		}
 	};
 	
-	var _updateChooseUserInfos = function(prodId, custInfo){
+	var _updateChooseUserInfos = function(prodId, chooseCustInfo){
+		var custInfo = $.extend(true, {}, chooseCustInfo);
 		if(!OrderInfo.choosedUserInfos){
 			OrderInfo.choosedUserInfos = [];
 		}

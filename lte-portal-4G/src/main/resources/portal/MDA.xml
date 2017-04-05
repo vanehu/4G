@@ -2311,5 +2311,6 @@
 			}
 		}
 		</const>
+		<const type="String" name="TRANSFER_CUST_FLAG" value="OFF" description="针对政企批开的返档优化开关"/>
 	</mda>
 </mdas>

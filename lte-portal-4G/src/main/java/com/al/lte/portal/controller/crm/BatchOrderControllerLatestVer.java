@@ -574,14 +574,14 @@ public class BatchOrderControllerLatestVer  extends BaseController {
 				totalNbr =  rMap.get("totalNbr");//后台totalNbr为BigDecimal类型
 				if (result instanceof List) {
 					resultList = (List<Map<String, Object>>) result;
-					model.addAttribute("code", rMap.get("code").toString());
+					model.addAttribute("code", MapUtils.getString(rMap,"code", "-1"));
 				}else{
 					message = "营业后台封装的回参objList不是List类型，请检查 !";
-					model.addAttribute("code", rMap.get("code").toString());
+					model.addAttribute("code", MapUtils.getString(rMap, "code", "-1"));
 				}
 			} else{
-				message = "业务查询发生异常 :" + rMap.get("msg").toString();
-				model.addAttribute("code", rMap.get("code").toString());
+				message = "业务查询发生异常 :" + MapUtils.getString(rMap, "msg", "");
+				model.addAttribute("code", MapUtils.getString(rMap,"code", "-1"));
 			}
 		} catch (BusinessException be) {
 			jsonResponse = super.failed(ErrorCode.BATCH_IMP_LIST, be, param);
@@ -589,7 +589,7 @@ public class BatchOrderControllerLatestVer  extends BaseController {
 			jsonResponse = super.failed(ErrorCode.BATCH_IMP_LIST, e, param);
 		}
 		
-		model.addAttribute("batchType", rMap.get("batchType"));
+		model.addAttribute("batchType", MapUtils.getString(rMap, "batchType", ""));
 		model.addAttribute("message", message);
 		model.addAttribute("totalNbr", totalNbr);
 		if(jsonResponse != null)
@@ -626,7 +626,7 @@ public class BatchOrderControllerLatestVer  extends BaseController {
 			if (rMap != null && ResultCode.R_SUCCESS.equals(rMap.get("code").toString())){
 				return super.successed(rMap.get("msg").toString());
 			} else{
-				jsonResponse = super.failed(rMap.get("msg").toString(),ResultConstant.FAILD.getCode());
+				jsonResponse = super.failed(MapUtils.getString(rMap, "msg", ""), ResultConstant.FAILD.getCode());
 			}
 		} catch (InterfaceException ie) {
 			jsonResponse = super.failed(ie, param,ErrorCode.BATCH_IMP_LIST);
@@ -658,7 +658,7 @@ public class BatchOrderControllerLatestVer  extends BaseController {
 			if (rMap != null && ResultCode.R_SUCCESS.equals(rMap.get("code").toString())){
 				return super.successed(rMap.get("msg").toString());
 			} else{
-				jsonResponse = super.failed(rMap.get("msg").toString(),ResultConstant.FAILD.getCode());
+				jsonResponse = super.failed(MapUtils.getString(rMap, "msg", ""),ResultConstant.FAILD.getCode());
 			}
 		} catch (InterfaceException ie) {
 			jsonResponse = super.failed(ie, param,ErrorCode.BATCH_IMP_LIST);
@@ -855,7 +855,7 @@ public class BatchOrderControllerLatestVer  extends BaseController {
 			if (rMap != null&& ResultCode.R_SUCCESS.equals(rMap.get("code").toString())) {
 				jsonResponse=super.successed("", ResultConstant.SUCCESS.getCode());
 			} else {
-				jsonResponse = super.failed(rMap.get("msg").toString(), ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+				jsonResponse = super.failed(MapUtils.getString(rMap, "msg", ""), ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
 			}
 		} catch (BusinessException e) {
 			this.log.error("作废种子订单服务出错", e);
@@ -1446,8 +1446,8 @@ public class BatchOrderControllerLatestVer  extends BaseController {
 		             model.addAttribute("batchId_dialog", qryParam.get("batchId"));
 				}
 			} else{
-				model.addAttribute("code", resultMap.get("code"));
-				model.addAttribute("message", resultMap.get("msg"));
+				model.addAttribute("code", MapUtils.getString(resultMap, "code" ,ResultCode.R_EXCEPTION));
+				model.addAttribute("message", MapUtils.getString(resultMap, "msg" ,""));
 			}
 		} catch (Exception e) {
 			return super.failedStr(model, ErrorCode.BATCH_ECS_QUERY, e, qryParam);

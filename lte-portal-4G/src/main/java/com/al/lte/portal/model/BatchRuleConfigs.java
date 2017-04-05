@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 
+import net.minidev.json.JSONObject;
+
 import org.apache.commons.collections.MapUtils;
 
 import com.al.ecs.common.util.MDA;
@@ -58,12 +60,12 @@ public class BatchRuleConfigs {
 			this.nameColumns = (ArrayList<String>)batchRuleConfig.get("nameColumns");
 			this.batchTypeName = (String)(batchRuleConfig.get("batchTypeName"));
 			
-			this.shiftLeft = ((int) (Math.log(this.threshold) / Math.log(2)));
-			this.threadsFlag = "ON".equals(MapUtils.getString(batchRuleConfig, "threadsFlag", ""));
-			
 			this.errorDataMaxCount = MapUtils.getIntValue(batchRuleConfig, "errorDataMaxCount", 10);
 			this.maxRows = MapUtils.getIntValue(batchRuleConfig, "maxRows", 50000);
 			this.threshold = MapUtils.getIntValue(batchRuleConfig, "threshold", 1024);
+			
+			this.shiftLeft = ((int) (Math.log(this.threshold) / Math.log(2)));
+			this.threadsFlag = "ON".equals(MapUtils.getString(batchRuleConfig, "threadsFlag", ""));
 			
 			this.setGovEntCheckList((ArrayList<Integer>) batchRuleConfig.get("govEntCheckList"));
 			this.setRepeatCheckList((ArrayList<Integer>) batchRuleConfig.get("repeatCheckList"));
@@ -100,10 +102,9 @@ public class BatchRuleConfigs {
 					returnMap.put(key, value);
 				}	
 			}catch(NumberFormatException e){
+				returnMap.clear();
 				log.error("portalBatch-解析转换MDA(BATCH_CONFIGS)异常={}", e);
 				log.error("portalBatch-解析转换MDA(BATCH_CONFIGS)异常，可能由batchType={}，={}配置导致", this.getBatchType(), this.getBatchTypeName());
-			} finally{
-				returnMap.clear();
 			}
 		}
 		

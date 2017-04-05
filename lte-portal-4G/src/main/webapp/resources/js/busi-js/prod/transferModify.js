@@ -1016,6 +1016,7 @@ prod.transferModify = (function(){
 				}
 				_initDic();
 				_form_custTransfer_btn();
+				_initReturnCust4GovEnt();
 			}
 		});
 	};
@@ -1160,12 +1161,23 @@ prod.transferModify = (function(){
 	var _returnFile_Submit = function(){
 		//政企必须传使用人
 		var toIdentidiesTypeCd = $("#div_tra_identidiesTypeCd option:selected").val();
-		if(CacheData.isGov(toIdentidiesTypeCd) && ($("#800000011_-1").val()==null || $("#800000011_-1").val()=='')){
-			$.alert("提示","政企客户必须选择使用人！");
-			return;
-		}
+		var isGovEntCust = false;//判断是否政企客户，true：是；false：否
+		if (CacheData.isGov(toIdentidiesTypeCd)) {
+			isGovEntCust = true;
+			if(($("#800000011_-1").val()==null || $("#800000011_-1").val()=='')){
+				$.alert("提示","政企客户必须选择使用人！");
+				return;
+			}
+		};
+		
 		if(OrderInfo.actionFlag==43&&_returnFlag){
-			_returnCust_Submit();
+			if (isGovEntCust && query.common.queryPropertiesStatus("TRANSFER_CUST_FLAG")) {
+				//针对政企、预开通、已实名的客户返档
+				_returnCustSubmit4GovEnt();
+			} else{
+				//其他情况的返档
+				_returnCust_Submit();
+			};
 		}else if(_BO_ACTION_TYPE == CONST.BO_ACTION_TYPE.TRANSFERRETURN){
 			_custTransfer_Submit();
 		}else{
@@ -1687,6 +1699,212 @@ prod.transferModify = (function(){
         }
         return checkResult;
     };
+    
+    /**
+     * 针对预开通的政企客户返档初始化页面，一般从“政企批开”来做“返档”
+     * 满足3个条件：政企客户、预开通、已实名
+     */
+    var _initReturnCust4GovEnt = function(){
+    	//非政企客户或开关未开启，不做任何处理
+    	var isGovEntCust = CacheData.isGov(OrderInfo.cust.identityCd);
+    	var isTransferCustFlagOn = query.common.queryPropertiesStatus("TRANSFER_CUST_FLAG");
+    	if(!(isGovEntCust && isTransferCustFlagOn)){
+    		return;
+    	}
+    	//1.展示使用人按钮
+    	$("#govUser").show();
+        $('#choose_user_btn_-1').off('click').on('click',function(){
+			order.main.toChooseUser("-1");
+		}).show();
+        //2.去除客户定位
+        $("#queryCust").hide();
+        //3.展示账户信息，且不可修改
+        //3.1调接口查询账户
+        _initAcct();
+        //3.2展示账户ID
+        $("#accountDiv").show();
+        //3.3展示账户名称
+        $("#defineNewAcct").show();
+        //3.4禁止修改账户
+        $("#acctName").attr("disabled","disabled");
+        $("#acctSelect").attr("disabled","disabled");
+        $('#acctSelect').attr("style", "background-color:#E8E8E8;width:282px;");
+		$("#account").find("a").hide();
+		//4.最后初始化订单基础数据
+		SoOrder.builder(CONST.returnCustSubmitFlag);
+    };
+    
+    /**
+     * 针对预开通的政企客户返档提交，一般从“政企批开”来做“返档”
+     */
+	var _returnCustSubmit4GovEnt=function(){
+//		var toCustId = $("#litransCustId").attr("transCustId");
+		var toCustId = OrderInfo.cust.custId;
+		var _toCustId = -1;
+		if(ec.util.isObj(toCustId)){
+			_toCustId = toCustId;
+		}
+		
+		var nameCN = OrderInfo.cust.CN;
+		var toCustName = OrderInfo.cust.partyName;
+		var toAddressStr = OrderInfo.cust.addressStr;
+		var toIdCardNumber = OrderInfo.cust.idCardNumber;
+		var toIdentidiesTypeCd = OrderInfo.cust.identityCd;
+		
+		if(toIdCardNumber==undefined || toCustId==undefined){		
+			$.alert("提示","未定位目标客户，请先定位！","information");		
+			return;
+	    }
+		//帐户信息校验
+		if(!$("#acctSelect").val()){
+			$.alert("提示","请新建或者查询选择一个可用帐户");
+			return;
+		}
+		if($("#acctSelect").val()<0){
+			//帐户信息填写校验
+			if(!SoOrder.checkAcctInfo()){
+				return;
+			}
+		}
+		if($.trim($("#acctName").val())==""){
+			$.alert("提示","帐户名称不能为空！");
+			return;
+		}
+
+        //一证五号校验
+        if (!_transOneCertFiveNumCheck(toCustId, toIdentidiesTypeCd, toIdCardNumber, toCustName, toAddressStr)) {
+            return;
+        }
+
+		//订单备注信息
+		OrderInfo.orderDataRemark =$("#order_remark").val();
+		var acctId = $("#acctSelect").val(); //要更换的帐户ID
+		var acctCd = -1;
+		if(acctId > 0){
+			acctCd = $("#acctSelect").find("option:selected").attr("acctcd"); //要更换的帐户合同号
+		}
+		
+		//返档在订单提交时才初始化订单数据，特殊，增加标识
+//		SoOrder.builder(CONST.returnCustSubmitFlag);
+		//返档要求partyId取返档后客户ID，做特殊处理redmine 794183
+		OrderInfo.orderData.orderList.orderListInfo.partyId = _toCustId;
+		
+		//查询产品下帐户信息
+//		var response = $.callServiceAsJson(contextPath+"/order/queryProdAcctInfo", {
+//			areaId : order.prodModify.choosedProdInfo.areaId,
+//			prodId : order.prodModify.choosedProdInfo.prodInstId,
+//			acctNbr: order.prodModify.choosedProdInfo.accNbr
+//		});
+//		if(response.code != 0||response.data.length==0) {
+//			if(response.code==-2){
+//				$.alertM(response.data);
+//			}
+//			else{
+//				$.alert("提示","当前产品帐户定位失败，请联系管理员");
+//			}
+//			return;
+//		}
+
+        OrderInfo.initData(
+	    	CONST.ACTION_CLASS_CD.PROD_ACTION,
+	    	CONST.BO_ACTION_TYPE.PRODUCT_INFOS,
+	    	43,
+	    	CONST.getBoActionTypeName(CONST.BO_ACTION_TYPE.PRODUCT_INFOS),
+	    	""
+        );
+			
+		var busiOrders = [];
+		var choosedProdInfo = order.prodModify.choosedProdInfo;		
+		var changeUserBusiOrder = {
+			areaId : OrderInfo.getProdAreaId(choosedProdInfo.prodInstId),	
+			busiOrderInfo : {
+				seq : OrderInfo.SEQ.seq--
+			}, 
+			busiObj : {
+				objId 		: choosedProdInfo.productId,	//业务对象规格ID
+				instId 		: choosedProdInfo.prodInstId,	//业务对象实例ID
+				isComp 		: "N", 							//是否组合
+				offerTypeCd : "1",  						//1主销售品
+				accessNumber: choosedProdInfo.accNbr  		//业务号码
+			},  
+			boActionType : {
+				actionClassCd : CONST.ACTION_CLASS_CD.PROD_ACTION, //动作大类							
+				boActionTypeCd: CONST.BO_ACTION_TYPE.PRODUCT_INFOS //动作小类
+			}, 
+			data:{
+				boProdItems		 :[],
+				boCertiAccNbrRels:[]
+			}
+		};		
+		
+		var prodAttrsOfUserId = null;
+        var isRealUserFlagON = query.common.queryPropertiesStatus("REAL_USER_"+OrderInfo.cust.areaId.substr(0,3));
+        if(isRealUserFlagON){
+            $.each(OrderInfo.subUserInfos, function () {
+            	//this.prodId == choosedProdInfo.prodInstId
+                if (this.prodId == -1) {
+                    var ca = $.extend(true, {}, OrderInfo.boCertiAccNbrRel);
+                    ca.accNbr = choosedProdInfo.accNbr;
+                    ca.state = "ADD";
+                    if (ec.util.isObj(this)) {
+                        ca.partyId = ec.util.isObj(this.custId)?this.custId.toString():"-1";
+                        ca.certType = this.orderIdentidiesTypeCd;
+                        ca.certNum = this.identityNum;
+                        ca.custName = this.custName;
+                        ca.certAddress = this.orderAttrAddr;
+                        ca.certNumEnc = this.certNumEnc;
+                        ca.custNameEnc = this.custNameEnc;
+                        ca.certAddressEnc = this.certAddressEnc;
+                        ca.serviceType = "1200";//变更使用人
+                        changeUserBusiOrder.data.boCertiAccNbrRels.push(ca);
+                        prodAttrsOfUserId = ca.partyId;
+                    }
+                }
+            });
+        } else{
+            $.each(OrderInfo.choosedUserInfos, function () {
+            	//this.prodId == choosedProdInfo.prodInstId
+	            if (this.prodId == -1) {
+	                var ca = $.extend(true, {}, OrderInfo.boCertiAccNbrRel);
+	                ca.accNbr = choosedProdInfo.accNbr;
+	                ca.state = "ADD";
+	                if (ec.util.isObj(this.custInfo)) {
+	                    ca.partyId = this.custInfo.custId;
+	                    ca.certType = this.custInfo.identityCd;
+	                    ca.certNum = this.custInfo.idCardNumber;
+	                    ca.certNumEnc = this.custInfo.certNum;
+	                    ca.custName = this.custInfo.partyName;
+	                    ca.custNameEnc = this.custInfo.CN;
+	                    ca.certAddress = this.custInfo.addressStr;
+	                    ca.certAddressEnc = this.custInfo.address;
+	                    ca.serviceType = "1200";//变更使用人
+	                    changeUserBusiOrder.data.boCertiAccNbrRels.push(ca);
+	                    prodAttrsOfUserId = ca.partyId;
+	                }
+	            }
+            });
+        }
+        
+        var boProdItemsAdd = {
+        	"state"			:"ADD",
+        	"value"			:prodAttrsOfUserId,
+			"itemSpecId"	:CONST.PROD_ATTR.PROD_USER,
+			"prodSpecItemId":""
+		};
+        var boProdItemsDel = {
+			"state"			:"DEL",
+        	"value"			:prodAttrsOfUserId,
+			"itemSpecId"	:CONST.PROD_ATTR.PROD_USER,
+			"prodSpecItemId":""
+		};
+        changeUserBusiOrder.data.boProdItems.push(boProdItemsDel);
+        changeUserBusiOrder.data.boProdItems.push(boProdItemsAdd);
+		busiOrders.push(changeUserBusiOrder);
+		
+		//订单提交
+		SoOrder.submitOrder(busiOrders);
+	};
+	
 	return {
 		showCustTransfer : _showCustTransfer,
 		custTransfer : _custTransfer,

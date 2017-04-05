@@ -224,6 +224,8 @@ public class ExcelUtil {
 			}else if (cell.getCellType() == Cell.CELL_TYPE_STRING) {
 				try{
 					return "".equals(cell.getStringCellValue().trim()) ? null : cell.getStringCellValue().trim();
+				} catch(RuntimeException re){
+					return null;
 				} catch(Exception e){
 					return null;
 				}
@@ -246,6 +248,8 @@ public class ExcelUtil {
 			}else if (cell.getCellType() == Cell.CELL_TYPE_STRING) {
 				try{
 					return "".equals(cell.getStringCellValue().trim()) ? false : true;
+				} catch(RuntimeException re){
+					return false;
 				} catch(Exception e){
 					return false;
 				}

@@ -15,20 +15,22 @@
 		identityNum="${identities[0].identityNum}"
 		certNum="${identities[0].certNum}"</#if> ></a>
 	<div class="main_body">
-		<h5 class="s_title">客户定位</h5>
-		<ul class="fillin">
-			<li class="full">
-		    	<form id="custTransferForm">
-		    		<select onchange="order.cust.custidentidiesTypeCdChoose(this,'TransferNum')" id="p_cust_tra_identityCd" class="selectNumbertype">
-            		</select>
-		    		<input id="TransferNum" type="text" class="inputWidth183px" />
-		    		<a href="javascript:void(0)" id="custTransferBtn" class="purchase">查询</a>
-		    		<a onclick="javascript:prod.transferModify.readCert()" id="readCertTransferBtn" class="purchase">读卡</a>
-		    		<a style="display:none" onclick="javascript:prod.transferModify.showCustCreate(this)" class="purchase" id="addCust">新增</a>
-		    		<label class="f_red">*</label>
-		    	</form>
-		  	</li>		  		  
-		</ul>
+		<div id="queryCust">
+			<h5 class="s_title">客户定位</h5>
+			<ul class="fillin">
+				<li class="full">
+			    	<form id="custTransferForm">
+			    		<select onchange="order.cust.custidentidiesTypeCdChoose(this,'TransferNum')" id="p_cust_tra_identityCd" class="selectNumbertype">
+	            		</select>
+			    		<input id="TransferNum" type="text" class="inputWidth183px" />
+			    		<a href="javascript:void(0)" id="custTransferBtn" class="purchase">查询</a>
+			    		<a onclick="javascript:prod.transferModify.readCert()" id="readCertTransferBtn" class="purchase">读卡</a>
+			    		<a style="display:none" onclick="javascript:prod.transferModify.showCustCreate(this)" class="purchase" id="addCust">新增</a>
+			    		<label class="f_red">*</label>
+			    	</form>
+			  	</li>		  		  
+			</ul>
+		</div>
 		<ul id="custTransferInfo" class="fillin"></ul>
 		<ul class="fillin">
 		    <div id="govUser" style="display:none">

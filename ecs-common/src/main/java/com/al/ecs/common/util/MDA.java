@@ -588,4 +588,7 @@ public class MDA {
     public static final Map<String, Object> BATCH_CONFIGS = new HashMap<String, Object>();
     
     public static final Map<String, String> PORTAL_REGEXP = new HashMap<String, String>();
+    
+    /**针对政企批开的返档优化开关*/
+	public static final String TRANSFER_CUST_FLAG = new String("");
 }

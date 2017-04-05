@@ -6,6 +6,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeSet;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Workbook;
 
@@ -25,23 +27,24 @@ public class BatchExcelTask {
 
 	private volatile String code 					= "-1";
 	private volatile String message 				= "";
-	private volatile String batchType				= "";
 	private volatile boolean redLigth 				= false;
-	private volatile int errorDataCount 			= 0;
 	private volatile int successDataCount 			= 0;
 	private volatile StringBuffer errorData 		= new StringBuffer();	// 封装错误信息
 	private volatile Map<Integer, TreeSet<String>> fruitsBucket = new HashMap<Integer, TreeSet<String>>();
 	
-	private volatile Workbook workbook;
+	private final String batchType;
+	private final Workbook workbook;
+	private final SessionStaff sessionStaff;
+	private volatile AtomicInteger errorDataCount;
+
 	private volatile CountDownLatch countDownLatch;
 	private volatile BatchRuleConfigs batchRuleConfigs;
-	private volatile SessionStaff sessionStaff;
 	
 	public BatchExcelTask(final Workbook workbook, CountDownLatch countDownLatch, String batchType, SessionStaff sessionStaff){
 		this.redLigth			= false;
 		this.workbook			= workbook;
 		this.batchType			= batchType;
-		this.errorDataCount		= 0;
+		this.errorDataCount		= new AtomicInteger(0);
 		this.countDownLatch		= countDownLatch;
 		this.batchRuleConfigs	= new BatchRuleConfigs(batchType);
 		this.sessionStaff		= sessionStaff;
@@ -54,7 +57,7 @@ public class BatchExcelTask {
 		Map<String, Object> returnMap = new HashMap<String, Object>();
 		int totalDataSize = 0;
 		
-		if ("".equals(errorData.toString())) {
+		if ("".equals(this.getErrorData())) {
 			code = "0";
 		}
 		
@@ -69,7 +72,7 @@ public class BatchExcelTask {
 		returnMap.put("code", code);
 		returnMap.put("message", message);
 		returnMap.put("batchType", this.batchType);
-		returnMap.put("errorData", errorData.toString());
+		returnMap.put("errorData", this.getErrorData());
 		returnMap.put("totalDataSize", totalDataSize);//排除重复项取实际有效行数
 		
 		log.debug("portalBatch-多线程解析Excel结果={}", JsonUtil.toString(returnMap));
@@ -222,12 +225,12 @@ public class BatchExcelTask {
 	}
 
 	public void setErrorData(Object errorData) {
-		if(this.errorDataCount >= this.batchRuleConfigs.getErrorDataMaxCount()){
+		if(this.errorDataCount.get() >= this.batchRuleConfigs.getErrorDataMaxCount()){
 			this.redLigth = true;
-			log.debug("portalBatch-errorData缓存已达上限redLigth={},errorDataCount={},errorDataMaxCount={}", this.redLigth, this.errorDataCount, this.batchRuleConfigs.getErrorDataMaxCount());
+			log.debug("portalBatch-errorData缓存已达上限redLigth={},errorDataCount={},errorDataMaxCount={}", this.redLigth, this.errorDataCount.get(), this.batchRuleConfigs.getErrorDataMaxCount());
 		} else{
-			this.errorData.append(errorData.toString());
-			this.errorDataCount++;
+			this.errorData.append(errorData == null ? "" : errorData.toString());
+			this.errorDataCount.getAndIncrement();
 		}
 	}
 
@@ -241,10 +244,6 @@ public class BatchExcelTask {
 
 	public Workbook getWorkbook() {
 		return workbook;
-	}
-
-	public void setWorkbook(Workbook workbook) {
-		this.workbook = workbook;
 	}
 
 	public BatchRuleConfigs getBatchRuleConfigs() {
@@ -267,10 +266,6 @@ public class BatchExcelTask {
 		return batchType;
 	}
 
-	public void setBatchType(String batchType) {
-		this.batchType = batchType;
-	}
-
 	public int getSuccessDataCount() {
 		return successDataCount;
 	}
@@ -281,9 +276,5 @@ public class BatchExcelTask {
 
 	public SessionStaff getSessionStaff() {
 		return sessionStaff;
-	}
-
-	public void setSessionStaff(SessionStaff sessionStaff) {
-		this.sessionStaff = sessionStaff;
 	}
 }
