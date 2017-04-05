@@ -335,6 +335,51 @@ AttachOffer = (function() {
 	
 	//查询附属销售品规格
 	var _searchAttachOfferSpec = function(prodId,offerSpecId,prodSpecId) {
+		var offerSepcName = $.trim($("#search_text_"+prodId).val());
+		var instCode = $.trim($("#search_instCode_"+prodId).val());
+		if(offerSepcName.replace(/\ /g,"")=="" && instCode.replace(/\ /g,"")==""){
+			$.alert("提示","请输入查询条件！");
+			return;
+		}
+		if(instCode!=null && instCode !=""){
+			var param = { 
+					agreementName : offerSepcName,
+					offerSpecId : offerSpecId,
+					instCode : instCode,
+					areaId : OrderInfo.getProdAreaId(prodId),
+					prodId : prodId
+			};
+			//获取已订购附属销售品，送到后端进行遍历过滤
+			var attachOffersOrdered = CacheData.getOfferList(prodId);
+			$.each(attachOffersOrdered,function(){
+				//summary和offerSpecName两个节点包含大量文字，且这里不需要该节点，故遍历去除，以减少报文大小
+				if(this.summary != null){
+					this.summary = "";
+				}
+				if(this.offerSpecName != null){
+					this.offerSpecName = "";
+				}
+			});
+			if(order.ysl!=undefined){
+				if(order.ysl.yslbean.yslflag!=undefined){
+					param.yslflag = order.ysl.yslbean.yslflag;
+				}
+			}
+			param.attachOfferOrderedList = attachOffersOrdered;
+			var url = contextPath+"/offer/queryAgreementAttachOfferSpec";
+			$.ecOverlay("<strong>附属销售品查询中，请稍等...</strong>");
+			var response = $.callServiceAsHtml(url,param);
+			$.unecOverlay();
+			if(response.code == 0){
+				if(response.data!=undefined){
+					$("#attach_div_"+prodId).html(response.data).show();
+				}
+			}else if(response.code == -2){
+				$.alertM(response.data);
+			}else{
+				$.alert("提示","查询合约失败，请稍后重试！");
+			}
+		}else{
 		var param = {   
 			prodId : prodId,
 		    prodSpecId : prodSpecId,
@@ -438,6 +483,7 @@ AttachOffer = (function() {
 		var data = query.offer.searchAttachOfferSpec(param);
 		if(data!=undefined){
 			$("#attach_div_"+prodId).html(data).show();
+		}
 		}
 	};
 	

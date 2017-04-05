@@ -412,11 +412,17 @@ AttachOffer = (function() {
 			}
 		}
 		var offerSepcName = $("#search_text_"+prodId).val();
-		if(offerSepcName.replace(/\ /g,"")==""){
+		var instCode = $.trim($("#search_instCode_"+prodId).val());
+		if(offerSepcName.replace(/\ /g,"")=="" && instCode.replace(/\ /g,"")==""){
 			$.alert("提示","请输入查询条件！");
 			return;
 		}
 		param.offerSpecName = offerSepcName;
+		if(instCode!=null && instCode !=""){
+			param.instCode = instCode;
+			param.agreementName  = offerSepcName;
+			param.offerSpecId  = offerSpecId;
+		}
 		query.offer.searchAttachOfferSpec(param,function(data){
 			if(data!=undefined){
 				$("#attach_div_"+prodId).html(data).show();

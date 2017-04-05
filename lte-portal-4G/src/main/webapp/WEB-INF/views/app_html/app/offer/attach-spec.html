@@ -27,6 +27,7 @@
             <div class="form-group has-feedback">
              <div class="input-group">
               <input type="text" class="form-control"id="search_text_${param.prodId}" name="search_text_${param.prodId}"  aria-describedby="inputSuccess2Status" placeholder="请输入可选包名称">
+              <input type="text" class="form-control"id="search_instCode_${param.prodId}" name="search_instCode_${param.prodId}"  aria-describedby="inputSuccess2Status" placeholder="请输入您想要查询的终端串码">
               <span class="input-group-btn">
                       <button class="btn btn-default" onclick='AttachOffer.searchAttachOfferSpec(${param.prodId},${param.offerSpecId},${param.prodSpecId})' type="button"> 搜索 </button>
                       <button class="btn btn-default" onclick="AttachOffer.closeAttachSearch(${prodId})" type="button"> 隐藏 </button>

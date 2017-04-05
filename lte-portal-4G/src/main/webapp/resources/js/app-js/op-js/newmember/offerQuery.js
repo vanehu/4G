@@ -540,6 +540,9 @@ query.offer = (function() {
 		
 		addParam(param);  //添加基本参数
 		var url = contextPath+"/app/offer/searchAttachOfferSpec";
+		if(param.instCode!=null && param.instCode !=""){
+			url = contextPath+"/app/offer/queryAgreementAttachOfferSpec";
+		}
 		if(typeof(callBackFunc)=="function"){
 			$.callServiceAsHtmlGet(url,{strParam:encodeURI(JSON.stringify(param),"utf-8")},{
 				"before":function(){
