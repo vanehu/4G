@@ -75,9 +75,13 @@ public class OfferBmoImpl implements OfferBmo {
 		attachOfferOrderedList = (List<Map<String, Object>>) paramMap.get("attachOfferOrderedList");
 		offerSpecMap = (Map<String, Object>) resultMap.get("result");
 		if(offerSpecMap.size() > 0){
-			offerSpecCanBuyList = (List<Map<String, Object>>) offerSpecMap.get("offerSpecList");
+			if(null!=offerSpecMap.get("offerSpecList") && ((List<Map<String, Object>>) offerSpecMap.get("offerSpecList")).size()>0){
+				offerSpecCanBuyList = (List<Map<String, Object>>) offerSpecMap.get("offerSpecList");
+			}else if(null !=offerSpecMap.get("agreementOfferList") && ((List<Map<String, Object>>) offerSpecMap.get("agreementOfferList")).size()>0){
+				offerSpecCanBuyList = (List<Map<String, Object>>) offerSpecMap.get("agreementOfferList");
+			}
+			
 		}
-		
 		if(attachOfferOrderedList.size() > 0 && offerSpecCanBuyList.size() > 0){
 			//获取两个Calendar实例，一个表示当前时间，一个表示到期时间
 			Calendar NowCalendar = Calendar.getInstance();

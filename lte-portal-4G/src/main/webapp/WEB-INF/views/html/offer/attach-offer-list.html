@@ -1,5 +1,12 @@
+<#if offerMap>
 <#assign items= offerMap.result.offerSpecList />
+</#if>
+<#if servMap>
 <#assign servItems= servMap.result.servSpec />
+</#if>
+<#if offerByMtkResCdMap>
+<#assign agreementItems= offerByMtkResCdMap.result.agreementOfferList /> 
+</#if>
 <#assign flag = true />
 <#if items?? &&(items?size>5)>
 	<#assign lt5="overflow-x:hidden;overflow-y:auto;width:100%;height:200px;"/>
@@ -50,6 +57,30 @@
 				<tr id="str_${prodId}_${item.servSpecId}" onclick="AttachOffer.selectServ(${prodId},${item.servSpecId},'${item.servSpecName}','${item.ifParams}')">
 					<td >${item.servSpecName}</td>
 				</tr>
+			</#if>
+			</#list>
+		</tbody>
+	</table>
+	</#if>
+    <#if agreementItems?? &&(agreementItems?size>0)>
+	<#assign flag = false />
+	<table class="contract_list" id="custListTable" style="width:320px;">
+		<thead>
+			<tr><td width="300">合约名称</td></tr>
+		</thead>
+		<tbody id="attachSearchTbody_${prodId}">
+			<#list agreementItems as item>
+			<#--<#if item_index==5>-->
+				<#--<#break>-->
+			<#--</#if>-->
+			<#if yslflag??>
+				<tr id="str_${prodId}_${item.offerSpecId}" onclick="order.ysl.confirmAttachOffer('${item.offerSpecName}','${item.offerSpecId}','1')">
+					<td >${item.offerSpecName}</td>
+				</tr>
+			<#else>
+				<tr id="str_${prodId}_${item.offerSpecId}" onclick="AttachOffer.selectAttachOffer(${prodId},${item.offerSpecId})">
+				<td >${item.offerSpecName}</td>
+			</tr>
 			</#if>
 			</#list>
 		</tbody>

@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -31,7 +32,9 @@ import com.al.ecs.exception.BusinessException;
 import com.al.ecs.exception.ErrorCode;
 import com.al.ecs.exception.InterfaceException;
 import com.al.ecs.exception.ResultConstant;
+import com.al.ecs.spring.annotation.log.LogOperatorAnn;
 import com.al.ecs.spring.controller.BaseController;
+import com.al.lte.portal.bmo.crm.MktResBmo;
 import com.al.lte.portal.bmo.crm.OfferBmo;
 import com.al.lte.portal.bmo.staff.StaffBmo;
 import com.al.lte.portal.common.MySimulateData;
@@ -58,6 +61,10 @@ public class OfferController extends BaseController {
 	@Autowired
 	@Qualifier("com.al.lte.portal.bmo.staff.StaffBmo")
 	private StaffBmo staffBmo;
+	
+	@Autowired
+	@Qualifier("com.al.lte.portal.bmo.crm.MktResBmo")
+	private MktResBmo mktResBmo;
 	
 	/**
 	 * 获取销售品规格构成
@@ -889,5 +896,52 @@ public class OfferController extends BaseController {
 			return super.failed(ErrorCode.QUERY_SERVDEPEND_FORCANCEL, e, paramMap);
 		}
 		return jsonResponse;
+	}
+	
+	/**
+	 * 根据终端串码查询合约
+	 */
+	@RequestMapping(value = "/queryAgreementAttachOfferSpec", method = { RequestMethod.POST })
+		public String queryAgreementAttachOfferSpec(@RequestBody Map<String, Object> paramMap, Model model,HttpServletResponse response,@LogOperatorAnn String flowNum){
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);	
+		try {
+			paramMap.put("receiveFlag","1");
+			paramMap.put("channelName",sessionStaff.getCurrentChannelName());
+			model.addAttribute("prodId",paramMap.get("prodId"));
+			/*String offerSpecName = MapUtils.getString(mktInfo, "offerSpecName")==null?" ":MapUtils.getString(mktInfo, "offerSpecName");
+			mktInfo.remove("offerSpecName");*/
+			Map<String, Object> mktRes = mktResBmo.checkTermCompVal(
+					paramMap, flowNum, sessionStaff);
+			if (MapUtils.isNotEmpty(mktRes) && ResultCode.R_SUCC.equals(mktRes.get("code"))) {
+				paramMap.put("mktResCd",mktRes.get("mktResId"));
+			}else{
+				return "/offer/attach-offer-list";
+			}
+		} catch (BusinessException be) {
+			this.log.error("门户/mktRes/terminal/checkTerminal服务异常", be);
+			return super.failedStr(model,be);
+		} catch (InterfaceException ie) {
+			return super.failedStr(model, ie, paramMap, ErrorCode.CHECK_TERMINAL);
+		} catch (Exception e) {
+			this.log.error("门户/mktRes/terminal/checkTerminal服务异常", e);
+			return super.failedStr(model, ErrorCode.CHECK_TERMINAL, e, paramMap);
+		}
+		try {
+			
+			paramMap.put("agreementType","");
+			Map<String, Object> offerByMtkResCdMap = mktResBmo.queryOfferByMtkResCd(paramMap, flowNum, sessionStaff);
+			offerByMtkResCdMap = offerBmo.removeAttachOfferExpired(paramMap, offerByMtkResCdMap);
+			if(paramMap.get("yslflag")!=null){
+    			model.addAttribute("yslflag",paramMap.get("yslflag"));
+    		}
+			model.addAttribute("offerByMtkResCdMap",offerByMtkResCdMap);
+        } catch (BusinessException be) {
+        	return super.failedStr(model,be);
+        } catch (InterfaceException ie) {
+        	return super.failedStr(model, ie, paramMap, ErrorCode.QUERY_MUST_OFFER);
+		} catch (Exception e) {
+			return super.failedStr(model, ErrorCode.QUERY_MUST_OFFER, e, paramMap);
+		}
+		return "/offer/attach-offer-list";
 	}
 }
