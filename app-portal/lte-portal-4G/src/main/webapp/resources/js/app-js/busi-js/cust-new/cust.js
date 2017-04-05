@@ -2712,6 +2712,9 @@ cust = (function(){
 				$("#alert-modal").modal();
 			} else {
 				cust.usedNum = parseInt(result.usedNum) + 1;
+				if(OrderInfo.actionFlag==6){//主副卡新增成员，无需加1
+					cust.usedNum = parseInt(result.usedNum) + 1;
+				}
 				checkResult = true;
 			}
 		} else {
@@ -2900,7 +2903,8 @@ cust = (function(){
 					$("#alert-modal").modal("hide");
 				});
 				$("#modal-title").html(title);
-				$("#modal-content").html("证件「"+cust.readIdCardUser.idCardNumber+"」全国范围已有5张及以上移动号卡，不能返档！");
+				var phoneNumber=$("#phonenumber").val();
+				$("#modal-content").html("证件「"+cust.readIdCardUser.idCardNumber+"」全国范围已有"+parseInt(result.usedNum)+"张移动号卡，您当前业务在本证件下新增1张号卡「"+phoneNumber+"」，合计超过5卡，请对于新号卡登记其他使用人");
 				$("#alert-modal").modal();
 			} else {
 				checkResult = true;
