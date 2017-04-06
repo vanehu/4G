@@ -7,10 +7,16 @@ order.batch = (function(){
 	//导入excel
 	var _submit = function(){		
 		var batchType = $("#batchType").val();		
-		if(batchType == ''){
+		
+		if(!ec.util.isObj(batchType)){
 			$.alert("提示","种子订单受理类型不能为空!");
 			return;
-		}		
+		}
+		if(batchType == '19' && !CacheData.isGov(OrderInfo.cust.identityCd)){
+			$.alert("提示","非政企客户不可受理。");
+			return;
+		}
+		
 		if(batchType == '10' || batchType == '11' || batchType == '12'|| batchType == '13' || batchType == '14'|| batchType == '15'){						
 			//批量订购裸终端、批量换档、批量换卡、批量在用拆机、批量未激活拆机
 			_submitFormAjax(batchType);
