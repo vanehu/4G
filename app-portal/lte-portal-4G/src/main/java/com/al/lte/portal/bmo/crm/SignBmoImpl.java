@@ -305,7 +305,7 @@ public class SignBmoImpl implements SignBmo{
 				for(int m=0;m<specialAgreement.size();m++){
 					Map agreementMap = (Map) specialAgreement.get(m);
 					if("ON".equals(agreementMap.get("provinceisopen"))){//省份开关是否打开
-						if("all".equals(agreementMap.get("opencity").toString()) || (agreementMap.get("opencity").toString()).indexOf(login_area_id.substring(0, 5)+"00")>0){//地市开关是否打开
+						if("all".equals(agreementMap.get("opencity").toString()) || (agreementMap.get("opencity").toString()).indexOf(login_area_id.substring(0, 5)+"00")>=0){//地市开关是否打开
 							if(j==0){
 								list.add(yewPdf);
 								j++;

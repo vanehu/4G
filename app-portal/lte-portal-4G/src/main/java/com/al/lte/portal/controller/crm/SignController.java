@@ -121,6 +121,7 @@ public class SignController extends BaseController {
 			Map<String, Object> resultMap = printBmo.printVoucher(paramMap, flowNum,
 					super.getRequest(), response);
 			if (MapUtils.isNotEmpty(resultMap)) {
+				resultMap.put("actionFlag", paramMap.get("actionFlag").toString());
 				Map<String,Object> reObject=signBmo.setPrintInfos(resultMap,super.getRequest(),paramMap);
 				RedisUtil.set("mgrPdf_"+ paramMap.get("olId").toString(), reObject.get("pp"));	
 				reObject.remove("pp");

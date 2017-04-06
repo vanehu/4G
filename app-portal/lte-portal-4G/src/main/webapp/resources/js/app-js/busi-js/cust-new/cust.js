@@ -761,8 +761,6 @@ cust = (function(){
 //							if(certTypedate.certTypeCd == cardType && _partyTypeCd==1 && isFlag=="ON"){
 							if(certTypedate.certTypeCd == "1"){
 								_obj.append("<option value='"+certTypedate.certTypeCd+"' selected='selected'>"+certTypedate.name+"</option>");
-							}else{
-								_obj.append("<option value='"+certTypedate.certTypeCd+"' >"+certTypedate.name+"</option>");
 							}
 						}
 					    var identidiesTypeCd=$("#" + id + " option[selected='selected']").val();

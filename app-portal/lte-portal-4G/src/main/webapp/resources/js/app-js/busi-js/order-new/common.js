@@ -467,6 +467,8 @@ common = (function($) {
 				OrderInfo.order.step=2;
 				return;
 			}else if(OrderInfo.order.step==4){//促销页
+				AttachOffer.addTerminalList = [];
+				AttachOffer.offerSpecIds = [];
 				if(order.service.isCloudOffer && order.service.enter==1){//企业云盘套餐，且套餐入口直接返回选套餐界面
 					$("#offer_a").show();
 					$("#nav-tab-4").removeClass("active in");

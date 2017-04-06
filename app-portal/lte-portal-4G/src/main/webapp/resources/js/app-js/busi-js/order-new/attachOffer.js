@@ -1456,7 +1456,7 @@ AttachOffer = (function() {
 			return;
 		}
 		param.offerSpecName = offerSepcName;
-		param.specIds = _offerSpecIds;
+		param.specIds = AttachOffer.offerSpecIds;
 		query.offer.searchAttachOfferSpec(param, function(data) {
 			if (data != undefined) {
 				var $ul = $("#canChooseUl_"+prodId);		
@@ -1580,7 +1580,7 @@ AttachOffer = (function() {
 	
 	//添加到开通列表
 	var _addOpenServList = function(prodId,servSpecId,servSpecName,ifParams){
-		_offerSpecIds.push(servSpecId);//加入已选择缓存，用于过滤搜索
+		AttachOffer.offerSpecIds.push(servSpecId);//加入已选择缓存，用于过滤搜索
 		//从已开通功能产品中找
 		var serv = CacheData.getServBySpecId(prodId,servSpecId); 
 		if(serv != undefined){
@@ -1891,7 +1891,7 @@ AttachOffer = (function() {
 	};
 	//添加到开通列表
 	var _addOpenList = function(prodId,offerSpecId){
-		_offerSpecIds.push(offerSpecId);//加入已选择缓存，用于过滤搜索
+		AttachOffer.offerSpecIds.push(offerSpecId);//加入已选择缓存，用于过滤搜索
 		if(!_manyPhoneFilter(prodId,offerSpecId)){
 			return;
 		}

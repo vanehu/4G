@@ -108,6 +108,7 @@ common.print = (function($){
 		var PcFlag="1";
 		params.PcFlag=PcFlag;
 		params.enter="1";//新版标志
+		params.actionFlag=OrderInfo.actionFlag;
 		var url=contextPath+"/order/sign/previewHtmlForSign";
 		$.callServiceAsHtml(url, params, {
 			"before":function(){
