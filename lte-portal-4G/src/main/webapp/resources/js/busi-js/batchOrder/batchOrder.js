@@ -12,11 +12,7 @@ order.batch = (function(){
 			$.alert("提示","种子订单受理类型不能为空!");
 			return;
 		}
-		if(batchType == '19' && !CacheData.isGov(OrderInfo.cust.identityCd)){
-			$.alert("提示","非政企客户不可受理。");
-			return;
-		}
-		
+
 		if(batchType == '10' || batchType == '11' || batchType == '12'|| batchType == '13' || batchType == '14'|| batchType == '15'){						
 			//批量订购裸终端、批量换档、批量换卡、批量在用拆机、批量未激活拆机
 			_submitFormAjax(batchType);
@@ -177,6 +173,7 @@ order.batch = (function(){
 	//弹出导入窗口
 	var _barchImport=function(olId,olnumber,areaId){
 		var batchType = $("#batchType").val();
+		var templateType=$("#templateType").val();
 		if($("#h2_tit").attr("value") == 1 || batchType == 19){//批量新装、政企批开需要客户定位
 			var custId = OrderInfo.cust.custId;
 			if(OrderInfo.cust==undefined || custId==undefined || custId==""){
@@ -184,8 +181,11 @@ order.batch = (function(){
 				return;
 			}
 		}
-		var templateType=$("#templateType").val();
-		var html='<iframe src="'+contextPath+'/order/batchOrder/batchForm?olId='+olId+'&olseq='+olnumber+'&type='+templateType+'&areaId='+areaId+'" width="650" height="270" style="border:0px"></iframe>';
+		if(batchType == '19' && !CacheData.isGov(OrderInfo.cust.identityCd)){
+			$.alert("提示","非政企客户不可受理。");
+			return;
+		}
+		var html='<iframe src="'+contextPath+'/order/batchOrder/batchForm?olId='+olId+'&olseq='+olnumber+'&type='+batchType+'&areaId='+areaId+'" width="650" height="270" style="border:0px"></iframe>';
 		ec.form.dialog.createDialog({
 			"id":"-import",
 			"width":700,
