@@ -606,7 +606,14 @@ prod.telnum = (function(){
 		
 		//规则校验
 		var _initPage = function(){
-			if(OrderInfo.authRecord.resultCode!="0" && OrderInfo.preBefore.prcFlag != "Y"){
+            var custInfo = order.cust.getCustInfo415();
+            order.cust.preCheckCertNumberRelQueryOnly(custInfo);//查询证件下已经有的号码个数
+            var oldNum = OrderInfo.oneCardFiveNum.usedNum[order.cust.getCustInfo415Flag(custInfo)];
+            if (oldNum > 5) {
+                $.alert("提示", "证件「" + custInfo.certNum + "」全国范围已有5张以上移动号卡，不允许办理改号业务！");
+                return;
+            }
+            if(OrderInfo.authRecord.resultCode!="0" && OrderInfo.preBefore.prcFlag != "Y"){
 				if (order.prodModify.querySecondBusinessAuth("17", "Y", "prod.telnum.initPage")) {
 					return;
 				}
