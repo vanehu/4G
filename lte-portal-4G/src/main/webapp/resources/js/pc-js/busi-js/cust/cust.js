@@ -2967,6 +2967,7 @@ order.cust = (function(){
         			prodId : user_prodId,
         			orderIdentidiesTypeCd : orderIdentidiesTypeCd,
         			identityNum : identityNum,
+        			certNum: identityNum,
         			orderAttrName : orderAttrName,
         			orderAttrAddr : orderAttrAddr,
         			orderAttrPhoneNbr : orderAttrPhoneNbr,
@@ -3027,29 +3028,14 @@ order.cust = (function(){
                     "certAddressEnc": queryCustInfo.data.custInfos[0].address
             };
         }
-        if (order.cust.preCheckCertNumberRel(this.prodId, inParam)) {
-        	//校验使用人添加几次
-        	var userNO = 0;
-        	if (ec.util.isObj(OrderInfo.subUserInfos) && OrderInfo.subUserInfos.length > 0) {//有选择使用人的情况
-                $.each(OrderInfo.subUserInfos, function () {
-                    if(_getCustInfo415Flag(this) == _getCustInfo415Flag(inParam)){
-                    	userNO ++;
-                    }
-                });
-            }
-        	if((parseInt(userNO)+parseInt(ec.util.mapGet(OrderInfo.oneCardFiveNO.usedNum,order.cust.getCustInfo415Flag(inParam))))>5){
-                $.alert("提示","此用户下已经有"+(parseInt(userNO-1)+ec.util.mapGet(OrderInfo.oneCardFiveNO.usedNum,order.cust.getCustInfo415Flag(inParam)))+"个号码，请选择其他用户做为使用人！");
-            }else{
-            	$("#chooseUserBt").removeClass("btna_g").addClass("btna_o");
-        		$('#chooseUserBt').off('click').on('click',function(){
-        			_commitUser(userSubInfo);
-        		});
-            }
-        }
+        $("#chooseUserBt").removeClass("btna_g").addClass("btna_o");
+		$('#chooseUserBt').off('click').on('click',function(){
+			_commitUser(userSubInfo,inParam,this.prodId);
+		});
 	}; 
 	
     // 使用人
-	var _commitUser = function(userSubInfo) {
+	var _commitUser = function(userSubInfo,inParam,prodId) {
 		var prodId = $("#user_prodId").val();
 		var orderUserName = $("#orderUserName").val();
 		if(userSubInfo.isOldCust == "Y"){
@@ -3071,6 +3057,34 @@ order.cust = (function(){
             }
         }
 		OrderInfo.subUserInfos.push(userSubInfo);
+		order.cust.preCheckCertNumberRel(prodId, inParam);
+		//校验使用人添加几次
+    	var userNO = 0;
+    	if (ec.util.isObj(OrderInfo.subUserInfos) && OrderInfo.subUserInfos.length > 0) {//有选择使用人的情况
+            $.each(OrderInfo.subUserInfos, function () {
+                if(_getCustInfo415Flag(this) == _getCustInfo415Flag(inParam)){
+                	userNO ++;
+                }
+            });
+        }
+    	if((parseInt(userNO)+parseInt(ec.util.mapGet(OrderInfo.oneCardFiveNO.usedNum,order.cust.getCustInfo415Flag(inParam))))>5){
+    		//删除选择的使用人
+    		$('#'+CONST.PROD_ATTR.PROD_USER+'_'+prodId+'_name').val();
+			$('#'+CONST.PROD_ATTR.PROD_USER+'_'+prodId).val();
+			//删除当前选择的使用人
+			for(var i=0; i<OrderInfo.subUserInfos.length; i++){
+				if(OrderInfo.subUserInfos[i].prodId == prodId){
+					OrderInfo.subUserInfos.splice(i,1);
+					break;
+				}
+			}
+            $.alert("提示","此用户下已经有"+(parseInt(userNO-1)+ec.util.mapGet(OrderInfo.oneCardFiveNO.usedNum,order.cust.getCustInfo415Flag(inParam)))+"个号码，请选择其他用户做为使用人！");
+        }else{
+        	$("#chooseUserBt").removeClass("btna_g").addClass("btna_o");
+    		$('#chooseUserBt').off('click').on('click',function(){
+    			_commitUser(userSubInfo,inParam,this.prodId);
+    		});
+        }
 		easyDialog.close();
 	};
     
