@@ -1585,7 +1585,24 @@ SoOrder = (function() {
 			}
 			
 			busiOrders.push(busiOrder2);
-			}else{
+                //查询副卡的产品属性并保存
+                var param = {
+                    prodId: offerSpec.objInstId, // 产品实例id
+                    acctNbr: offerSpec.accessNumber, // 接入号
+                    prodSpecId: offerSpec.objId, // 产品规格id
+                    areaId: OrderInfo.getAreaId() // 地区id
+                };
+                var prodAttr = query.offer.queryProdInstParam(param);
+                if (ec.util.isObj(prodAttr) && ec.util.isObj(prodAttr.prodSpecParams) && prodAttr.prodSpecParams.length > 0) {
+                    $.each(prodAttr.prodSpecParams, function () {
+                        if (this.itemSpecId == CONST.PROD_ATTR.PROD_USER) {//获取使用人属性
+                            if (ec.util.isObj(this.userId) && this.userId != OrderInfo.cust.custId) {//副卡有对应的使用人信息，此时副卡换套餐变成单成员时要下使用人变更节点。
+                                _fillBusiOrder4changeUse(busiOrders, offerSpec, this);
+                            }
+                        }
+                    });
+                }
+            } else {
 			var prod = {
 						prodId : newData[i].objInstId, 
 						isComp : "Y",
@@ -1765,7 +1782,47 @@ SoOrder = (function() {
 			busiOrders.push(offerBusiOrder);
 		}
 	};
-	
+
+	//创建变更使用人节点
+	var _fillBusiOrder4changeUse = function(busiOrders,bobj,attr) {
+        var busiOrder = {
+            areaId: OrderInfo.getAreaId(),  //受理地区ID
+            busiOrderInfo: {
+                seq: OrderInfo.SEQ.seq--
+            },
+            busiObj: { //业务对象节点
+                objId: bobj.objId,////业务对象规格ID
+                instId: bobj.objInstId, //业务对象实例ID
+                isComp: "N", //是否组合
+                accessNumber: bobj.accessNumber,   //业务号码
+                offerTypeCd: bobj.objType //1主销售品
+            },
+            boActionType: {
+                actionClassCd: CONST.ACTION_CLASS_CD.PROD_ACTION,
+                boActionTypeCd: CONST.BO_ACTION_TYPE.PRODUCT_INFOS
+            },
+            data: {
+                boProdItems: [
+                    {
+                        itemSpecId: CONST.PROD_ATTR.PROD_USER,
+                        prodSpecItemId: "",
+                        state: "DEL",
+                        value: attr.value
+                    }
+                ],
+                boCertiAccNbrRels: []
+            }
+        };
+        var ca = $.extend(true, {}, OrderInfo.boCertiAccNbrRel);
+        ca.partyId = OrderInfo.cust.custId;
+        ca.accNbr = bobj.accessNumber;
+        ca.state = "ADD";
+        ca.serviceType = "1200";//变更使用人
+        _setUserInfo(ca);
+        busiOrder.data.boCertiAccNbrRels.push(ca);
+        busiOrders.push(busiOrder);
+    };
+
 	//创建订单数据
 	var _createOrder = function(busiOrders) {
 		//添加客户节点
@@ -4449,6 +4506,7 @@ SoOrder = (function() {
 		inSubmit				: _inSubmit,
 		changeFeeType			: _changeFeeType,
         oneCertFiveCheckData    : _oneCertFiveCheckData,
-        setUserInfo             : _setUserInfo
+        setUserInfo             : _setUserInfo,
+        fillBusiOrder4changeUse : _fillBusiOrder4changeUse
 	};
 })();
