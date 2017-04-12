@@ -907,6 +907,8 @@ public class OfferController extends BaseController {
 		try {
 			paramMap.put("receiveFlag","1");
 			paramMap.put("channelName",sessionStaff.getCurrentChannelName());
+			paramMap.put("staffId",sessionStaff.getStaffId());
+			paramMap.put("channelId",sessionStaff.getCurrentChannelId());
 			model.addAttribute("prodId",paramMap.get("prodId"));
 			/*String offerSpecName = MapUtils.getString(mktInfo, "offerSpecName")==null?" ":MapUtils.getString(mktInfo, "offerSpecName");
 			mktInfo.remove("offerSpecName");*/
