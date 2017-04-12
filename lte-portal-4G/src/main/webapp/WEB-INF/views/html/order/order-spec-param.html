@@ -189,12 +189,17 @@
 		var item_specId = $(dom).attr('itemSpecId');
 		if(CONST.PROD_ATTR.REAL_NAME_TYPE == item_specId){
 			var $tip = $(dom).parent().find('span');
+			var responsi = $(dom).parent().prevAll().find('input[servType=2]');
 			if($tip.length <= 0){
 				$(dom).parent().append($('<span style="color:red;margin-left: 5px;"></span>'));
 			}
 			if($(dom).val() == '20'){
-				$(dom).parent().find('span').html('实名登记类型是内部测试卡，建议选择测试促销');
+                responsi.removeAttr("disabled");
+                responsi.css("background","#A7BC9A");
+			    $(dom).parent().find('span').html('实名登记类型是内部测试卡，建议选择测试促销');
 			}else{
+                responsi.attr("disabled","disabled");
+                responsi.css("background","#d3d8d0");
 				$(dom).parent().find('span').html('');
 			}
 		}

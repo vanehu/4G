@@ -3032,7 +3032,7 @@ order.main = (function(){
 		// servType : 1 使用人 2 责任人
 		var $uhtml = $('<li><label style="width:120px;">责任人：</label>' +
 		'<input type="text" class="inputWidth183px" readonly="readonly" disabled="disabled"/>' +
-		'<input type="button" value="选择责任人" class="purchase" id="choose_duty_btn_'+prodId+'" servType=2 prodId="'+prodId+'" /></li>');
+		'<input type="button" value="选择责任人" class="purchase" style="background: #d3d8d0" id="choose_duty_btn_' + prodId + '" servType=2 prodId="' + prodId + '" disabled="disabled" /></li>');
 		$('#'+divId).append($uhtml);
 		$('#choose_duty_btn_'+prodId).off('click').on('click',function(){
 			order.main.openChooseDialog(this);

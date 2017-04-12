@@ -2941,6 +2941,9 @@ SoOrder = (function() {
                             ca.certAddress = OrderInfo.boCustInfos.addressStr;
                         }
                     } else {//老客户
+                        if (CacheData.isGov(OrderInfo.cust.identityCd) && OrderInfo.specialtestauth) {//老政企客户没使用人且有测试卡权限，不封装证号关系节点
+                            return true;
+                        }
                         _setUserInfo(ca);
                     }
                 }
@@ -3267,7 +3270,7 @@ SoOrder = (function() {
 		}
 		
 		//政企客户先校验使用人是否填写，再进行一证五号校验
-		if (OrderInfo.actionFlag != 16) {//如果是改号业务，不需要调用一证五号校验
+        if (!(OrderInfo.actionFlag == 16 || (CacheData.isGov(order.cust.getCustCertType()) && OrderInfo.specialtestauth))) {//如果是改号业务或政企客户有测试卡权限，不需要调用一证五号校验
             //一证五号校验
             if (!_oneCertFiveCheckData(order.cust.getCustInfo415())) {
                 return false;

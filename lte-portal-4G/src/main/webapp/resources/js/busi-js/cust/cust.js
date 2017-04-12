@@ -3984,6 +3984,18 @@ order.cust = (function(){
     };
 
     /**
+     * 获取当前客户的证件类型
+     * @private
+     */
+    var _getCustCertType = function () {
+        var certType = OrderInfo.cust.identityCd;
+        if (OrderInfo.cust.custId == "-1") {//新客户
+            certType=OrderInfo.boCustIdentities.identidiesTypeCd;
+        }
+        return certType;
+    };
+
+    /**
      * 获取一证五号客户信息唯一标识，新客户或者老用户
      * @private 有脱敏信息的客户信息中脱敏证件号不具有唯一性，用加密字段做唯一标识，
      */
@@ -4120,7 +4132,8 @@ order.cust = (function(){
         preCheckCertNumberRelQueryOnly:_preCheckCertNumberRelQueryOnly,
         industryClassCdSeChoose:_industryClassCdSeChoose,
         getCustInfo415:_getCustInfo415,
-        getCustInfo415Flag:_getCustInfo415Flag
+        getCustInfo415Flag:_getCustInfo415Flag,
+        getCustCertType:_getCustCertType
 	};
 })();
 $(function() {
