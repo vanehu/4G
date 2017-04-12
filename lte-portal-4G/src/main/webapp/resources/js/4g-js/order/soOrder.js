@@ -4418,7 +4418,7 @@ SoOrder = (function() {
                     if (ec.util.isObj(OrderInfo.subUserInfos) && OrderInfo.subUserInfos.length > 0) {//有选择使用人的情况
                         $.each(OrderInfo.subUserInfos, function () {
                             if (this.prodId == parent.prodId && this.servType == "1") {//servType：1的为使用人，2为责任人
-                                OrderInfo.oneCardFiveNum.hasUserProdIds.push(this.prodId);// 选择了使用人的prodId
+                                OrderInfo.oneCardFiveNum.hasUserProdIds.push(String(this.prodId));// 选择了使用人的prodId
                             }
                         });
                     }
@@ -4426,7 +4426,7 @@ SoOrder = (function() {
                     if (ec.util.isObj(OrderInfo.choosedUserInfos) && OrderInfo.choosedUserInfos.length > 0) {//有选择使用人的情况
                         $.each(OrderInfo.choosedUserInfos, function () {
                             if (this.prodId == parent.prodId) {
-                                OrderInfo.oneCardFiveNum.hasUserProdIds.push(this.prodId);// 选择了使用人的prodId
+                                OrderInfo.oneCardFiveNum.hasUserProdIds.push(String(this.prodId));// 选择了使用人的prodId
                             }
                         });
                     }
@@ -4435,7 +4435,7 @@ SoOrder = (function() {
             order.cust.preCheckCertNumberRelQueryOnly(inParam);//查询证件下已经有的号码个数
             var oldNum = OrderInfo.oneCardFiveNum.usedNum[order.cust.getCustInfo415Flag(inParam)];
             $.each(OrderInfo.boProdAns, function () {//提取出所有没有选择使用人的号码
-                if ($.inArray(this.prodId, OrderInfo.oneCardFiveNum.hasUserProdIds) == -1) {
+                if ($.inArray(String(this.prodId), OrderInfo.oneCardFiveNum.hasUserProdIds) == -1) {
                     numbers += numbers == "" ? this.accessNumber : "，" + this.accessNumber;
                     newNumbers++;
                 }
