@@ -46,7 +46,7 @@ order.highRealNameA = (function () {
                 } else if(response.code == 1){
                     $.alert("信息提示", response.data.certCheckInfo);
                 } else if(response.code == -2){
-                    $.alert("信息提示", "翼支付账户资料信息中证件类型不是身份证！");
+                    $.alertM(response.data);
                 } else {
                     $.alertM(response.data);
                 }
