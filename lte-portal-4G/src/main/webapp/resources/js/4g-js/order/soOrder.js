@@ -1807,7 +1807,7 @@ SoOrder = (function() {
                         itemSpecId: CONST.PROD_ATTR.PROD_USER,
                         prodSpecItemId: "",
                         state: "DEL",
-                        value: attr.value
+                        value: attr.userId
                     }
                 ],
                 boCertiAccNbrRels: []
