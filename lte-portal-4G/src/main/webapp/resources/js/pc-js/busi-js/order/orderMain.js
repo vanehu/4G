@@ -1346,7 +1346,15 @@ order.main = (function(){
 				}
 				//$("#order_spec_parm").append(response.data);
 				$("#"+param.ul_id).append(response.data);
-				
+				//#1467125 能力开放不需要做责任人需求，屏蔽实名制登记属性
+				//去除页面实名制登记属性
+				$("#"+CONST.PROD_ATTR.REAL_NAME_TYPE+"_"+param.prodId).parent("li").remove();
+				//去除JS缓存实名制登记属性
+				for(var i=0; i<OrderInfo.prodAttrs.length; i++){
+					if(OrderInfo.prodAttrs[i].id == CONST.PROD_ATTR.REAL_NAME_TYPE+"_"+param.prodId){
+						OrderInfo.prodAttrs.splice(i,1); 
+					}
+				};
 				//判断使用人产品属性是否必填
 				_checkUsersProdAttr(param.prodId, $("#"+param.ul_id));
 				

@@ -3069,8 +3069,8 @@ order.cust = (function(){
         }
     	if((parseInt(userNO)+parseInt(ec.util.mapGet(OrderInfo.oneCardFiveNO.usedNum,order.cust.getCustInfo415Flag(inParam))))>5){
     		//删除选择的使用人
-    		$('#'+CONST.PROD_ATTR.PROD_USER+'_'+prodId+'_name').val();
-			$('#'+CONST.PROD_ATTR.PROD_USER+'_'+prodId).val();
+    		$('#'+CONST.PROD_ATTR.PROD_USER+'_'+prodId+'_name').val("");
+			$('#'+CONST.PROD_ATTR.PROD_USER+'_'+prodId).val("");
 			//删除当前选择的使用人
 			for(var i=0; i<OrderInfo.subUserInfos.length; i++){
 				if(OrderInfo.subUserInfos[i].prodId == prodId){
