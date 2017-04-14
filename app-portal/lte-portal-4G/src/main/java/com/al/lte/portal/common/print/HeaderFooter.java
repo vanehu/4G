@@ -1,11 +1,15 @@
 package com.al.lte.portal.common.print;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
+import com.al.ecs.common.util.MDA;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Font;
 import com.itextpdf.text.Phrase;
+import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.ColumnText;
 import com.itextpdf.text.pdf.PdfPageEventHelper;
 import com.itextpdf.text.pdf.PdfWriter;
@@ -17,9 +21,11 @@ public class HeaderFooter extends PdfPageEventHelper{
     	param=inparam;
 	}
 	public void onEndPage (PdfWriter writer, Document document) {
-        try{ 
+        try{
+        	String fontPath = MDA.WORD_FONT;
         	if(writer.getPageNumber()==Integer.parseInt(param.get("totalPage").toString())){
-		        Font fontDetail = new XMLWorkerFontProvider().getFont("微软雅黑", 10.2f, BaseColor.BLACK);
+//        		Font fontDetail = new XMLWorkerFontProvider("E:\\apache-tomcat-6.0.29\\webapps\\ltePortal\\resources\\image\\gongz\\fonts\\").getFont("微软雅黑", 10.2f, BaseColor.BLACK);
+        		Font fontDetail = new XMLWorkerFontProvider(fontPath).getFont("微软雅黑", 10.2f, BaseColor.BLACK);
 		        ColumnText.showTextAligned(writer.getDirectContent(),
 		                Element.ALIGN_LEFT,  new Phrase("甲方:",fontDetail),
 		                35f, 100f, 0);

@@ -292,9 +292,10 @@ public class SignBmoImpl implements SignBmo{
 			List specialAgreement = MDA.SPECIAL_AGREEMENT.get("SPECIAL_AGREEMENT_"+login_area_id.substring(0, 3));//省份特殊协议配置
 			List<String> spList = new ArrayList<String>();
 			String actionFlag = (String) resultMap.get("actionFlag");
-			if(specialAgreement.size()>0){
+			if(specialAgreement !=null && specialAgreement.size()>0){
 				 List<String> list= new ArrayList<String>(); 
 				int j=0;
+				int m=0;
 				Map<String,Object> param1=new HashMap<String,Object>();
 				param1.put("custName", resultMap.get("custName"));
 				param1.put("idCardNbr", resultMap.get("idCardNbr"));
@@ -302,7 +303,7 @@ public class SignBmoImpl implements SignBmo{
 				param1.put("dateYear", DateUtil.nowYear());
 				param1.put("dateMonth", DateUtil.nowMonth());
 				param1.put("dateDay", DateUtil.nowDayOfMonth());
-				for(int m=0;m<specialAgreement.size();m++){
+				for(m=0;m<specialAgreement.size();m++){
 					Map agreementMap = (Map) specialAgreement.get(m);
 					if("ON".equals(agreementMap.get("provinceisopen"))){//省份开关是否打开
 						if("all".equals(agreementMap.get("opencity").toString()) || (agreementMap.get("opencity").toString()).indexOf(login_area_id.substring(0, 5)+"00")>=0){//地市开关是否打开
@@ -354,7 +355,7 @@ public class SignBmoImpl implements SignBmo{
 								agreement_htmlStr=ParseFreemark.parseTemplate(param1,templet);
 							}
 							if(agreement_htmlStr.length()>0){
-								agreement_pdf=HTMLFile2PDF.createPdfToByte(agreement_htmlStr,param1);
+								agreement_pdf=HTMLFile2PDF.createPdfToByte(agreement_htmlStr,param1,request);
 								agreement_htmlStr=agreement_htmlStr.replaceAll("</body>", "").replaceAll("</html>", "");
 								agreement_htmlStr=agreement_htmlStr+HTMLFile2PDF.doWithHtml(param1,agreementName+"sign");
 								if(agreement_pdf!=null){
@@ -367,15 +368,15 @@ public class SignBmoImpl implements SignBmo{
 									j++;
 								}
 							}
-							if(j>1 && m == specialAgreement.size()-1){
-								Map<String,Object> re=PdfUtils.mergePdfFiles(list);
-								yewPdf=re.get("byte").toString();
-								pp.put("yewPage", re.get("page"+0));
-								for(int ii=0;ii<spList.size();ii++){
-									pp.put(spList.get(ii)+"Page", re.get("page"+(ii+1)));
-								}
-							}
 						}
+					}
+				}
+				if(j>1 && m == specialAgreement.size()){
+					Map<String,Object> re=PdfUtils.mergePdfFiles(list);
+					yewPdf=re.get("byte").toString();
+					pp.put("yewPage", re.get("page"+0));
+					for(int ii=0;ii<spList.size();ii++){
+						pp.put(spList.get(ii)+"Page", re.get("page"+(ii+1)));
 					}
 				}
 			}

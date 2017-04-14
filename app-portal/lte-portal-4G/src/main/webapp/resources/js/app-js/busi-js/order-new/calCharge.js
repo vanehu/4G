@@ -304,6 +304,7 @@ order.calcharge = (function(){
 						}
 
 					}
+					_chargeSave(1);
 				}
 			});
 		}else{
@@ -334,6 +335,10 @@ order.calcharge = (function(){
 					}
 					return;
 				}else{//获取支付方式
+					if (response.data==""){//有可能支付查询接口异常
+						$.alert("提示","支付接口查询失败!");
+						return;
+					}
 					payType=response.data.payCode+"";
 				}
 

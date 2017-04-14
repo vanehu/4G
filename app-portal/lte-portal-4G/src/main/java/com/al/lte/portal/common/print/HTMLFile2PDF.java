@@ -1,20 +1,29 @@
 package com.al.lte.portal.common.print;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.StringReader;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.xhtmlrenderer.pdf.ITextFontResolver;
 import org.xhtmlrenderer.pdf.ITextRenderer;
 
 import com.al.ecs.common.util.DateUtil;
+import com.al.ecs.common.util.MDA;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.PdfWriter;
+import com.itextpdf.tool.xml.XMLWorkerFontProvider;
 import com.itextpdf.tool.xml.XMLWorkerHelper;
 
 /**
@@ -94,7 +103,7 @@ public class HTMLFile2PDF {
      * @throws IOException
      * @throws DocumentException
      */
-    public static byte[] createPdfToByte(String html,Map<String,Object> param) throws IOException, DocumentException {
+    public static byte[] createPdfToByte(String html,Map<String,Object> param,HttpServletRequest request) throws IOException, DocumentException {
      	ByteArrayOutputStream out=new ByteArrayOutputStream();
         // step 1
         Document document = new Document();
@@ -106,8 +115,14 @@ public class HTMLFile2PDF {
         // step 3
         document.open();
         // step 4
-        XMLWorkerHelper.getInstance().parseXHtml(writer, document,
-        		new StringReader(html));
+        InputStream in=new ByteArrayInputStream(html.getBytes());
+        Charset charset = Charset.forName("UTF-8");
+        String fontPath = MDA.WORD_FONT;
+        XMLWorkerFontProvider fontProvider = new XMLWorkerFontProvider(fontPath);
+//        XMLWorkerFontProvider fontProvider = new XMLWorkerFontProvider("E:\\apache-tomcat-6.0.29\\webapps\\ltePortal\\resources\\image\\gongz\\fonts\\");
+        XMLWorkerHelper.getInstance().parseXHtml(writer, document, in, charset, fontProvider);
+//        XMLWorkerHelper.getInstance().parseXHtml(writer, document,
+//        		new StringReader(html));
         // step 5
         document.close();
         byte[] tt=out.toByteArray();
