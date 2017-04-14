@@ -3360,18 +3360,20 @@ order.main = (function(){
 	};
 
 	var _commitUser = function(userSubInfo,dom) {
-        //一证五号校验
-        var inParam = {
-            "certType": userSubInfo.orderIdentidiesTypeCd,
-            "certNum": userSubInfo.identityNum,
-            "certAddress": userSubInfo.orderAttrAddr,
-            "custName": userSubInfo.orderAttrName,
-            "certNumEnc": userSubInfo.certNumEnc,
-            "certAddressEnc": userSubInfo.certAddressEnc,
-            "custNameEnc": userSubInfo.custNameEnc
-        };
-        if (!order.cust.preCheckCertNumberRel(userSubInfo.prodId, inParam)) {
-            return;
+        if ("2" != userSubInfo.servType) {//责任人选择时不调用一证五号校验
+            //一证五号校验
+            var inParam = {
+                "certType": userSubInfo.orderIdentidiesTypeCd,
+                "certNum": userSubInfo.identityNum,
+                "certAddress": userSubInfo.orderAttrAddr,
+                "custName": userSubInfo.orderAttrName,
+                "certNumEnc": userSubInfo.certNumEnc,
+                "certAddressEnc": userSubInfo.certAddressEnc,
+                "custNameEnc": userSubInfo.custNameEnc
+            };
+            if (!order.cust.preCheckCertNumberRel(userSubInfo.prodId, inParam)) {
+                return;
+            }
         }
 		userSubInfo.orderAttrPhoneNbr = ec.util.defaultStr($("#orderUserPhoneNbr").val());
 		var updateFlag = false;
