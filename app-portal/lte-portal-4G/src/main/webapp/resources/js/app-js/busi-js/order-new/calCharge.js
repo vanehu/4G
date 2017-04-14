@@ -150,8 +150,14 @@ order.calcharge = (function(){
 		if(OrderInfo.actionFlag==201 || OrderInfo.actionFlag==9){//橙分期
 			OrderInfo.order.step = 4;
 		}
+		if(OrderInfo.actionFlag==6){//加装副卡
+			OrderInfo.order.step = 5;
+		}
 		if(OrderInfo.actionFlag==13){//购裸机
 			OrderInfo.order.step = 3;
+		}
+		if(OrderInfo.actionFlag==21){//拆副卡
+			OrderInfo.order.step = 4;
 		}
 		if(OrderInfo.actionFlag==14){//合约新装
 			OrderInfo.order.step = 8;

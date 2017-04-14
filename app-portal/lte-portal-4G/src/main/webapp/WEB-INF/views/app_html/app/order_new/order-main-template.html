@@ -4,7 +4,7 @@
 	<#include "/app/order_new/order-product.html"/> 
 </@block>
 <div class="sub-btn-box p p-b-15">
-	<button class="sun-btn done" onclick="order.main.orderSubmit();">下一步</button>
+	<button class="sun-btn done" onclick="javascript:{common.setBtnTimer(this);order.main.orderSubmit();}">下一步</button>
 </div>
 
 

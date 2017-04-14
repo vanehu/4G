@@ -49,6 +49,7 @@
 		<script src="${contextPath}/js/app-js/busi-js/cust-new/custQuery.js" type="text/javascript"></script>
 		<script src="${contextPath}/js/app-js/busi-js/info/infoCollect.js" type="text/javascript"></script>
 		<script src="${contextPath}/js/app-js/busi-js/bill/charge.js?${jsversion}" type="text/javascript"></script>
+		<script src="${contextPath}/js/app-js/busi-js/order-new/memberChange.js" type="text/javascript"></script>
 		<script src="${contextPath}/js/app-js/busi-js/bill/paymentQuery.js?${jsversion}" type="text/javascript"></script>
 		<script>
 		window.onload= function() 
@@ -158,6 +159,9 @@
 					break;
 				case 160 :
 					params.method = "/app/bill/paymentQueryPrepare"; //充值记录查询
+					break;
+				case 302 :
+					params.method = "/app/card/memberChange/prepare"; //主副卡成员变更
 					break;
 				}  
 				var custInfos=$.parseJSON(window.localStorage.getItem("OrderInfo.cust"));

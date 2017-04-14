@@ -104,21 +104,31 @@ AttachOffer = (function() {
 	//可订购的附属查询 
 	var _queryAttachOfferSpec = function(param) {
 		query.offer.queryAttachSpec(param,function(data){
-			if (data) {//主套餐已选择和可订购可选包等展示
-				if(param.prodId=="-1"){//主卡促销滚动tab
-					$("#attachMain").html(data);
-					$("#cardNameSpan_"+param.prodId).html("主卡");
-				}else{
-					var id=-(param.prodId+1);
+			if (data) {
+				query.offer.loadInst(); //加载实例到缓存
+				//主套餐已选择和可订购可选包等展示
+				if(OrderInfo.actionFlag==6){//加装副卡
+					var id=-(param.prodId);
 					$("#attachSecondary"+id).html(data);
 					$("#cardNameSpan_"+param.prodId).html("副卡");
-				}
+				}else{
+					if(param.prodId=="-1"){//主卡促销滚动tab
+						$("#attachMain").html(data);
+						$("#cardNameSpan_"+param.prodId).html("主卡");
+					}else{
+						var id=-(param.prodId+1);
+						$("#attachSecondary"+id).html(data);
+						$("#cardNameSpan_"+param.prodId).html("副卡");
+					}
+				}				
 				_showMainRoleProd(param.prodId); //展示必须功能产品或可选包
 				//展示主套餐名称和是否有点参
 				var spec = OrderInfo.offerSpec;
-				$("#mainOfferName").html(spec.offerSpecName);
-				if(spec.ifParams&&spec.offerSpecParams!=null&&spec.offerSpecParams.length>0){  //销售参数节点					
-					$("#mainOfferLi").append('<button class="list-can absolute-right" onclick="AttachOffer.showMainParam()">参</button>');					
+				$("#mainOfferName_"+param.prodId).html(spec.offerSpecName);
+				if(OrderInfo.actionFlag!=6){//非新增副卡
+					if(spec.ifParams&&spec.offerSpecParams!=null&&spec.offerSpecParams.length>0){  //销售参数节点					
+						$("#mainOfferLi_-1").append('<button class="list-can absolute-right" onclick="AttachOffer.showMainParam()">参</button>');					
+					}
 				}
 				if(OrderInfo.actionFlag==1){
 					//为主套餐属性自动设置服务参数
@@ -147,6 +157,12 @@ AttachOffer = (function() {
 			    	 $("#nav-tab-5").addClass("active in");
 			    	 $("#tab4_li").removeClass("active");
 			    	 $("#tab5_li").addClass("active");
+				}else if(OrderInfo.actionFlag==6){//加装副卡
+					OrderInfo.order.step = 2;
+					 $("#nav-tab-1").removeClass("active in");
+			    	 $("#nav-tab-2").addClass("active in");
+			    	 $("#tab1_li").removeClass("active");
+			    	 $("#tab2_li").addClass("active");
 				}else if(order.service.enter=="3"){//选号入口选完套餐跳往副卡或促销
 					//套餐副卡tab隐藏，促销tab显示
 					 $("#nav-tab-2").removeClass("active in");
@@ -271,7 +287,20 @@ AttachOffer = (function() {
     				prodId : prodId			
     		};
         }
-        
+        if(OrderInfo.actionFlag==6){//加装副卡入参
+        	$.each(OrderInfo.offerSpec.offerRoles,function(){ //遍历主套餐规格
+    			var offerRole = this;
+    			for ( var i = 0; i < this.prodInsts.length; i++) {
+    				var prodInst = this.prodInsts[i];
+        			if(prodInst.prodInstId == prodId){
+        				param.prodSpecId = prodInst.objId;
+        				param.offerRoleId = prodInst.offerRoleId;
+        				param.prodId = prodInst.prodInstId;
+        				param.offerSpecIds.push(OrderInfo.offerSpec.offerSpecId);
+        			}
+    			}
+        	});
+        }
 		var data = query.offer.queryMyfavorite(param);
 		//清空缓存中的收藏夹
 		AttachOffer.myFavoriteList = [];
@@ -1338,7 +1367,7 @@ AttachOffer = (function() {
 							}
 						});
 						if(flag){
-							if(OrderInfo.actionFlag == 1 || OrderInfo.actionFlag == 14 || OrderInfo.actionFlag == 112){
+							if(OrderInfo.actionFlag == 1 || OrderInfo.actionFlag == 14 || OrderInfo.actionFlag == 112 || OrderInfo.actionFlag == 6){
 								var newSpec = _setMyfavoriteSpec(prodId,this.offerSpecId);
 								if(newSpec==undefined){
 									html='<li id="_li_'+ prodId + '_'+ this.offerSpecId  +'" ><i class="iconfont pull-left" onclick="AttachOffer.addMyfavoriteSpec('+prodId+','+this.offerSpecId+',\''+this.offerSpecName+'\',$(this)'+');">&#xe62b;</i>';
@@ -1456,7 +1485,7 @@ AttachOffer = (function() {
 			return;
 		}
 		param.offerSpecName = offerSepcName;
-		param.specIds = _offerSpecIds;
+		param.specIds = AttachOffer.offerSpecIds;
 		query.offer.searchAttachOfferSpec(param, function(data) {
 			if (data != undefined) {
 				var $ul = $("#canChooseUl_"+prodId);		
@@ -1580,7 +1609,7 @@ AttachOffer = (function() {
 	
 	//添加到开通列表
 	var _addOpenServList = function(prodId,servSpecId,servSpecName,ifParams){
-		_offerSpecIds.push(servSpecId);//加入已选择缓存，用于过滤搜索
+		AttachOffer.offerSpecIds.push(servSpecId);//加入已选择缓存，用于过滤搜索
 		//从已开通功能产品中找
 		var serv = CacheData.getServBySpecId(prodId,servSpecId); 
 		if(serv != undefined){
@@ -3216,6 +3245,7 @@ AttachOffer = (function() {
 		queryAttachOffer	:_queryAttachOffer,
 		phone_checkOfferExcludeDepend       :_phone_checkOfferExcludeDepend,
 		offer_showMainParam :_offer_showMainParam,
-		showMainParam       :_showMainParam
+		showMainParam       :_showMainParam,
+		offerSpecIds		:_offerSpecIds
 	};
 })();

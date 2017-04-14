@@ -9,6 +9,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.collections.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
@@ -28,8 +29,10 @@ import com.al.ecs.exception.BusinessException;
 import com.al.ecs.exception.ErrorCode;
 import com.al.ecs.exception.InterfaceException;
 import com.al.ecs.exception.ResultConstant;
+import com.al.ecs.spring.annotation.log.LogOperatorAnn;
 import com.al.ecs.spring.annotation.session.AuthorityValid;
 import com.al.ecs.spring.controller.BaseController;
+import com.al.lte.portal.bmo.crm.MktResBmo;
 import com.al.lte.portal.bmo.crm.OfferBmo;
 import com.al.lte.portal.bmo.crm.OrderBmo;
 import com.al.lte.portal.common.SysConstant;
@@ -55,6 +58,10 @@ public class OfferController extends BaseController {
 	@Autowired
 	@Qualifier("com.al.lte.portal.bmo.crm.OrderBmo")
 	private OrderBmo orderBmo;
+	
+	@Autowired
+	@Qualifier("com.al.lte.portal.bmo.crm.MktResBmo")
+	private MktResBmo mktResBmo;
 	
 	@Autowired
 	PropertiesUtils propertiesUtils;
@@ -541,10 +548,8 @@ public class OfferController extends BaseController {
 		Map<String, Object> paramMap = new HashMap();
         try {
         	SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
-					SysConstant.SESSION_KEY_LOGIN_STAFF);	
+    				SysConstant.SESSION_KEY_LOGIN_STAFF);
         	paramMap =  JsonUtil.toObject(URLDecoder.decode(param,"utf-8"), Map.class);
-        //	paramMap =  JsonUtil.toObject(param, Map.class);
-        	
         	//搜索可订购销售品
         	paramMap.put("operatorsId", sessionStaff.getOperatorsId()!=""?sessionStaff.getOperatorsId():"99999");
     		Map<String, Object> offerMap = offerBmo.queryCanBuyAttachSpec(paramMap,null,sessionStaff);
@@ -828,5 +833,78 @@ public class OfferController extends BaseController {
 		return jsonResponse;
 	}
 
-
+	/**
+	 * 查询合约
+	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@RequestMapping(value = "/queryAgreementAttachOfferSpec", method = RequestMethod.GET)
+	public String queryAgreementAttachOfferSpec(@RequestParam("strParam") String param,Model model,HttpServletResponse response,@LogOperatorAnn String flowNum){
+		Map<String, Object> paramMap = new HashMap();
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+				SysConstant.SESSION_KEY_LOGIN_STAFF);	
+		try {
+			paramMap =  JsonUtil.toObject(URLDecoder.decode(param,"utf-8"), Map.class);
+			paramMap.put("receiveFlag","1");
+			paramMap.put("channelName",sessionStaff.getCurrentChannelName());
+			Map<String, Object> mktRes = mktResBmo.checkTermCompVal(
+					paramMap, flowNum, sessionStaff);
+			if (MapUtils.isNotEmpty(mktRes) && ResultCode.R_SUCC.equals(mktRes.get("code"))) {
+				paramMap.put("mktResCd",mktRes.get("mktResId"));
+			}else{
+				if(paramMap.get("enter")!=null){//新版ui
+		        	return "/app/order_new/attach-offer-list";
+		        }
+				return "/app/offer/attach-offer-list";
+			}
+		} catch (BusinessException be) {
+			return super.failedStr(model,be);
+		} catch (InterfaceException ie) {
+			return super.failedStr(model, ie, paramMap, ErrorCode.CHECK_TERMINAL);
+		} catch (Exception e) {
+			return super.failedStr(model, ErrorCode.CHECK_TERMINAL, e, paramMap);
+		}
+        try {
+			paramMap.put("agreementType","");
+			Map<String, Object> offerByMtkResCdMap = mktResBmo.queryOfferByMtkResCd(paramMap, flowNum, sessionStaff);
+			if(paramMap.get("yslflag")!=null){
+    			model.addAttribute("yslflag",paramMap.get("yslflag"));
+    		}
+			List<Integer> specIds=new ArrayList<Integer>(); //存放已选择可选包或功能id
+    		if(paramMap.get("specIds")!=null){
+    			specIds=(List) paramMap.get("specIds");
+    		}
+			if (offerByMtkResCdMap != null) {
+				Map result = (Map) offerByMtkResCdMap.get("result");
+				if (result != null) {
+					List<Map> offerSpecList = (List<Map>) result.get("agreementOfferList");
+					List<Map> offerSpecList2 = new ArrayList<Map>();
+					for (Map offerSpec : offerSpecList) {
+						boolean flag=true;//未在已选择列表标志
+						for (int id : specIds) {
+							if ((id+"").equals(offerSpec.get("offerSpecId").toString())) {
+								flag=false;
+								break;
+							}
+						}
+						if (flag) {
+							offerSpecList2.add(offerSpec);
+						}
+					}
+					result.put("offerSpecList", offerSpecList2);
+					offerByMtkResCdMap.put("result", result);
+				}
+				model.addAttribute("offerByMtkResCdMap", offerByMtkResCdMap);
+			}
+        } catch (BusinessException be) {
+        	return super.failedStr(model,be);
+        } catch (InterfaceException ie) {
+        	return super.failedStr(model, ie, paramMap, ErrorCode.QUERY_MUST_OFFER);
+		} catch (Exception e) {
+			return super.failedStr(model, ErrorCode.QUERY_MUST_OFFER, e, paramMap);
+		}
+        if(paramMap.get("enter")!=null){//新版ui
+        	return "/app/order_new/attach-offer-list";
+        }
+		return "/app/offer/attach-offer-list";
+	}
 }

@@ -800,7 +800,7 @@ common = (function($) {
 						//防止重复算费	
 						SoOrder.orderBack();
 						SoOrder.getToken();
-						OrderInfo.order.step=2;
+						OrderInfo.order.step=1;
 						return;
 					},
 					no:function(){	
@@ -899,9 +899,7 @@ common = (function($) {
 			OrderInfo.order.step=7;
 			return;
 		}
-		}
-		
-		
+		}		
 		if(OrderInfo.actionFlag==13){//购裸机
 			if(OrderInfo.order.step==1){
 				_callCloseWebview();
@@ -1140,6 +1138,131 @@ common = (function($) {
 		    	$("#nav-tab-8").addClass("active in");
 		    	$("#tab8_li").addClass("active");
 				OrderInfo.order.step=4;
+				return;
+			}
+		}
+		if(OrderInfo.actionFlag==21){//拆副卡
+			if(OrderInfo.order.step==1){
+				_callCloseWebview();
+				return;
+			}else if(OrderInfo.order.step==2){//其他
+				$("#nav-tab-3").removeClass("active in");
+		    	$("#nav-tab-1").addClass("active in");
+		    	$("#tab3_li").removeClass("active");
+		    	$("#tab1_li").addClass("active");
+		    	$("#tab2_li").hide();
+				$("#tab3_li").hide();
+				OrderInfo.order.step=1;
+				OrderInfo.actionFlag=6;//重置为拆副卡
+				return;
+			}else if(OrderInfo.order.step==3){//订单确认
+				SoOrder.orderBack();
+				SoOrder.getToken();
+				OrderInfo.order.step=2;
+				return;
+			}else if(OrderInfo.order.step==4){//支付
+				$.confirm("确认","您是否要回到填单页面",{ 
+					yes:function(){
+						$("#nav-tab-8").removeClass("active in");
+				    	$("#nav-tab-7").addClass("active in");
+				    	$("#tab8_li").removeClass("active");
+				    	$("#tab7_li").addClass("active");
+						OrderInfo.order.step=3;
+						//防止重复算费	
+						SoOrder.orderBack();
+						SoOrder.getToken();
+						OrderInfo.order.step=2;
+						return;
+					},
+					no:function(){	
+						return;
+					}
+				});
+				
+			}else if(OrderInfo.order.step==5){//回执
+				$("#order-print").hide();
+				$("#orderConfirmDiv").show();
+				$("#headTabDiv2").show();
+		    	$("#nav-tab-8").addClass("active in");
+		    	$("#tab8_li").addClass("active");
+				OrderInfo.order.step=4;
+				return;
+			}
+		}
+		if(OrderInfo.actionFlag==6){//加装副卡
+			if(OrderInfo.order.step==1){
+				_callCloseWebview();
+				return;
+			}else if(OrderInfo.order.step==2){//促销
+				$("#nav-tab-2").removeClass("active in");
+		    	$("#nav-tab-1").addClass("active in");
+		    	$("#tab2_li").removeClass("active");
+		    	$("#tab1_li").addClass("active");
+		    	$("#tab2_li").hide();
+				$("#tab3_li").hide();
+				OrderInfo.order.step=2;
+				 //移除已选副卡节点
+				 $("#secondaryPhoneNumUl2").children("li:gt(0)").remove();
+				 order.phoneNumber.secondaryCarNum=0;
+				var boProdAns = OrderInfo.boProdAns;
+				//释放预占的号码
+				if(boProdAns.length>0){
+					for(var n=0;n<boProdAns.length;n++){
+						if(boProdAns[n].idFlag){
+							continue;
+						}
+						var param = {
+								numType : 1,
+								numValue : boProdAns[n].accessNumber
+						};
+						$.callServiceAsJson(contextPath+"/app/mktRes/phonenumber/releaseErrorNum", param, {
+							"done" : function(){
+							}
+						});
+					}
+				}
+				OrderInfo.boProdAns=[];
+				order.phoneNumber.boProdAn={};//清空号码缓存
+				order.memberChange.clearMemberData();
+				return;
+			}else if(OrderInfo.order.step==3){//其他
+				$("#nav-tab-3").removeClass("active in");
+		    	$("#nav-tab-2").addClass("active in");
+		    	$("#tab3_li").removeClass("active");
+		    	$("#tab2_li").addClass("active");
+				OrderInfo.order.step=2;
+				return;
+			}else if(OrderInfo.order.step==4){//订单确认
+				SoOrder.orderBack();
+				SoOrder.getToken();
+				OrderInfo.order.step=3;
+				return;
+			}else if(OrderInfo.order.step==5){//支付
+				$.confirm("确认","您是否要回到填单页面",{ 
+					yes:function(){
+						$("#nav-tab-8").removeClass("active in");
+				    	$("#nav-tab-7").addClass("active in");
+				    	$("#tab8_li").removeClass("active");
+				    	$("#tab7_li").addClass("active");
+						OrderInfo.order.step=4;
+						//防止重复算费	
+						SoOrder.orderBack();
+						SoOrder.getToken();
+						OrderInfo.order.step=3;
+						return;
+					},
+					no:function(){	
+						return;
+					}
+				});
+				
+			}else if(OrderInfo.order.step==6){//回执
+				$("#order-print").hide();
+				$("#orderConfirmDiv").show();
+				$("#headTabDiv2").show();
+		    	$("#nav-tab-8").addClass("active in");
+		    	$("#tab8_li").addClass("active");
+				OrderInfo.order.step=5;
 				return;
 			}
 		}

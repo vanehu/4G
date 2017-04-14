@@ -1907,7 +1907,7 @@ public class BillController extends BaseController {
 			paramMap.put("queryFlag", "0");
 			// 查询费用类型 0:查询全部费用 1:只查询信息费 2:查询通讯费
 			paramMap.put("feeQueryFlag", "0");
-
+			// 欠费查询
 			Map<String, Object> arrearsResultMap = billBmo.arrears(paramMap, flowNum, sessionStaff);
 			
 			// 余额查询默认入参
@@ -1921,7 +1921,9 @@ public class BillController extends BaseController {
 			paramMap.put("queryFlag", "0");
 			// 查询余额类型 0：表示查询对象拥有的余额帐本 1：表示查询对象可以使用的余额帐本 2：表示查询对象可以划拨到支付帐户的余额帐本 3：查询对象余额总视图：省通信余额+全国中心ABM支付余额
 			paramMap.put("queryItemType", "3");
+			// 余额查询
 			Map<String, Object> balanceResultMap = billBmo.balance(paramMap, flowNum, sessionStaff);
+			// TODO 需要整合上面两个接口的返回
 			return successed(balanceResultMap);
 		}catch(BusinessException be){
 			return failed(be);

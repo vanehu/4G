@@ -113,6 +113,7 @@ order.service = (function(){
 	};
 	
 	var _queryData = function(params,flag,initFlag,scroller) {
+		params.sysFlag = "10004";//系统标识
 		if(_isAll && flag == 1){
 			_isAll = true;
 		} else {
@@ -447,6 +448,9 @@ order.service = (function(){
 					var num=0;	
 					if(offerRole.memberRoleCd==CONST.MEMBER_ROLE_CD.MAIN_CARD){
 						num=1;//主卡
+						if(OrderInfo.actionFlag==6){//加装副卡
+							num=0;//主卡
+						}
 					}else{
 						num=order.phoneNumber.secondaryCarNum;//手动添加的副卡数量
 					}

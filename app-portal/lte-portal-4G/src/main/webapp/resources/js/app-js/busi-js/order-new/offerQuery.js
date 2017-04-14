@@ -171,6 +171,7 @@ query.offer = (function() {
 		param.areaId = OrderInfo.getProdAreaId(param.prodId);
 		param.partyId = OrderInfo.cust.custId;
 		param.mainOfferSpecId=OrderInfo.offerSpec.offerSpecId;
+		param.sysFlag = "10004";//系统标识
 		if(ec.util.isObj(OrderInfo.order.soNbr)){  //缓存流水号
 			param.soNbr = OrderInfo.order.soNbr;
 		}

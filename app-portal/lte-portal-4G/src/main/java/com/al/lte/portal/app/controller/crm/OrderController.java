@@ -357,26 +357,7 @@ public class OrderController extends BaseController {
 		return "/app/order/order-ysl-pack";
     }
 	
-	/**
-	 * 手机客户端-主副卡成员变更
-	 * @param params
-	 * @param model
-	 * @param optFlowNum
-	 * @param response
-	 * @param httpSession
-	 * @return
-	 * @throws BusinessException
-	 */
-	@RequestMapping(value = "/prodoffer/memberchange/prepare", method = RequestMethod.POST)
-    @AuthorityValid(isCheck = false)
-    public String memberchangePre(@RequestBody Map<String, Object> params, Model model, @LogOperatorAnn String optFlowNum,
-            HttpServletResponse response, HttpSession httpSession) throws BusinessException {
 
-		String result = rulecheck(params,model,optFlowNum,httpSession);
-		if(result != null){
-			return result;
-		}else return "/app/order/order-memberchange";
-    }
 	/**
 	 * 手机客户端-套餐变更
 	 * @param params
@@ -1203,12 +1184,11 @@ public class OrderController extends BaseController {
     			forward = "/app/order_new/offer-change";
     		}
     		
-    	}else if("21".equals(String.valueOf(param.get("actionFlag")))){  //套餐变更
+    	}else if("21".equals(String.valueOf(param.get("actionFlag")))){  //拆除副卡
     		if (MapUtils.isNotEmpty(param)) {
         		model.addAttribute("main", param);
-        	}
-    		
-    		forward = "/app/offer/member-change";
+        	}  		
+    		forward = "/app/member/card-other";
     	}else if("3".equals(String.valueOf(param.get("actionFlag")))){
     		if (MapUtils.isNotEmpty(param)) {
         		//重新拼接参数

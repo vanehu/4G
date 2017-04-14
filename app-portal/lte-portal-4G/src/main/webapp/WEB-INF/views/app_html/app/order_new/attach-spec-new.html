@@ -1,13 +1,13 @@
+<#assign prodId="${param.prodId}"/>
  <ul class="choice-list-box m-b-10">
-	<li name="card-list" id="mainOfferLi">
+	<li name="card-list" id="mainOfferLi_${prodId}">
 		<i class="iconfont pull-left">&#xe667;</i>
 		<span class="list-title">
-               <span class="title-lg" id="mainOfferName"></span>
+               <span class="title-lg" id="mainOfferName_${prodId}"></span>
 		<span class="subtitle font-secondary">主套餐</span>
 		</span>
 	</li>
 </ul>
- <#assign prodId="${param.prodId}"/>
 <ul class="choice-list-box m-b-10" name="card-list">
 	<li name="card">
 	<i class="iconfont pull-left">&#xe6b9;</i> 
@@ -61,12 +61,13 @@
 		<div style="overflow: scroll;overflow-x:hidden;border:0px;" id="haveChooseOfferDiv_${param.prodId}">
 			<ul class="choice-list-box" id="open_ul_${param.prodId}">
 				<!-- 已选择可选包 -->
-				<#if openMap.result??> <#assign
-				openSpecList=openMap.result.offerSpec /> <#if openSpecList??
-				&&(openSpecList?size>0)> <#list openSpecList as item> <#if
-				item.ifDault==0 > <#else>
-				<li id="li_${prodId}_${item.offerSpecId}"><span
-					class="list-title">${item.offerSpecName}</span>
+				<#if openMap.result??> 
+				<#assign openSpecList=openMap.result.offerSpec /> <#if openSpecList??
+				&&(openSpecList?size>0)> <#list openSpecList as item> 
+				<#if item.ifDault==0 > 
+				<li id="li_${prodId}_${item.offerSpecId}"><span class="list-title">${item.offerSpecName}</span>
+				<#else>
+				<li id="li_${prodId}_${item.offerSpecId}"><span class="list-title">${item.offerSpecName}</span>
 					<div class="list-checkbox absolute-right">
 							<div class="checkbox-box">
 								<input type="checkbox" value="1" name=""
@@ -74,18 +75,25 @@
 									offerSpecId="${item.offerSpecId}" checked="checked" onclick="javascript:{common.setBtnTimer(this);AttachOffer.delOfferSpec(${prodId},${item.offerSpecId});}"/> 
 									<label for="input_${param.prodId}_${item.offerSpecId}"></label>
 							</div>
-					</div> </#if> <#if item.ifParams > <span class="abtn03 btn-span"><button
+					</div> 
+				</#if> 
+				<#if item.ifParams > 
+				<span class="abtn03 btn-span"><button
 							type="button" class="btn btn-info"
 							style="right:50px;width:48px;top:13px;" data-toggle="modal"
 							data-target="#setting"
 							onclick="AttachOffer.showParam(${prodId},${item.offerSpecId},0);">参</button></span></li>
 				<#else>
-				</li> </#if> <#if item.ifShowTime=="Y">
+				</li> 
+				</#if> <#if item.ifShowTime=="Y">
 				<a class="time" id="time_${prodId}_${item.offerSpecId}" isset="N"><button
 						type="button" class="btn btn-info" style="right:40px;width:48px;"
 						data-toggle="modal" data-target="#setting"
 						onclick="AttachOffer.showTime(${prodId},${item.offerSpecId},'${item.offerSpecName}');">时</button></a>
-				</#if> </#list> </#if> </#if>
+				</#if> 
+				</#list> 
+				</#if> 
+				</#if>
 			</ul>
 		</div>
 		<div style="display: none;overflow: scroll;overflow-x:hidden;border:0px;" id="haveChooseServDiv_${param.prodId}">
@@ -147,11 +155,20 @@ $(function() {
   	tab_flag: "cx_tab_flag"
   });
   //主副卡滚动时 小绿点也滚动
-  for(var i=1;i<order.phoneNumber.secondaryCarNum+1;i++){
-	  if($("#cx_tab_flag_"+i).length==0){
-		  $("#cx_tab_flag").append('<a id="cx_tab_flag_'+i+'" href="#"  class="cx_tab_flag"></a>');
+  if(OrderInfo.actionFlag==6){//加装副卡圆点数减1
+	  for(var i=1;i<order.phoneNumber.secondaryCarNum;i++){
+		  if($("#cx_tab_flag_"+i).length==0){
+			  $("#cx_tab_flag").append('<a id="cx_tab_flag_'+i+'" href="#"  class="cx_tab_flag"></a>');
+		  }
+	  }
+  }else{
+	  for(var i=1;i<order.phoneNumber.secondaryCarNum+1;i++){
+		  if($("#cx_tab_flag_"+i).length==0){
+			  $("#cx_tab_flag").append('<a id="cx_tab_flag_'+i+'" href="#"  class="cx_tab_flag"></a>');
+		  }
 	  }
   }
+  
 });
 
 	var openMap=${openMapJson};

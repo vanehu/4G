@@ -901,6 +901,55 @@ SoOrder = (function() {
 	            busiOrderAdd.data.boCertiAccNbrRels.push(boCertiAccNbrRel);
 			};
 			busiOrders.push(busiOrderAdd);
+			var origAcctInfo = {							
+					acctCd: order.prodModify.accountInfo.acctCd,
+	                acctId: order.prodModify.accountInfo.acctId,						
+					acctRelaTypeCd : "1",							
+					chargeItemCd : "0",				
+					percent : "100",							
+					priority : 1,							
+					prodAcctId : "",						
+					state : "DEL"					
+			};
+			var newAcctInfo = {							
+					acctCd : -1,							
+					acctId : "-1",							
+					acctRelaTypeCd : "1",							
+					chargeItemCd : 1,				
+					percent : 100,							
+					priority : 1,							
+					prodAcctId : -1,						
+					state : "ADD"					
+			};
+			var _boAccountRelas = [];
+			_boAccountRelas.push(origAcctInfo);
+			_boAccountRelas.push(newAcctInfo);
+			var account = {
+					boAccountRelas : _boAccountRelas,
+			};
+			OrderInfo.initData(CONST.ACTION_CLASS_CD.PROD_ACTION,CONST.BO_ACTION_TYPE.CHANGE_ACCOUNT,10,CONST.getBoActionTypeName(CONST.BO_ACTION_TYPE.CHANGE_ACCOUNT),"");
+			//新建帐户节点
+//			OrderInfo.createAcct(data, -1);
+			//更改帐户节点
+			var acctChangeNode = {
+					areaId : OrderInfo.getAreaId(), 
+					busiOrderInfo : {
+						seq : OrderInfo.SEQ.seq-- 
+					}, 
+					busiObj : {
+						accessNumber: order.prodModify.choosedProdInfo.accNbr,
+						instId : order.prodModify.choosedProdInfo.prodInstId, //业务对象实例ID
+						objId :order.prodModify.choosedProdInfo.productId,
+	                    isComp: "N",
+	                    offerTypeCd: "1"
+					},  
+					boActionType : {
+						actionClassCd : 1300,
+						boActionTypeCd : "-6"
+					}, 
+					data : account
+			};
+			busiOrders.push(acctChangeNode);
 			if (data.boAccountInfos != undefined || data.boAccountInfos != null) {
 				// 新增帐户节点
 				var acctChangeNode = {
@@ -1232,7 +1281,7 @@ SoOrder = (function() {
 			}
 		};
 	    if(cust.OneCertNumFlag=="ON"){
-	    	if(OrderInfo.actionFlag==1 || OrderInfo.actionFlag==14){//新装添加证号关系节点
+	    	if(OrderInfo.actionFlag==1 || OrderInfo.actionFlag==14 || OrderInfo.actionFlag==6){//新装添加证号关系节点
 				busiOrder.data.boCertiAccNbrRels=[];
 			}
 	    }

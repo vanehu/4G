@@ -45,6 +45,19 @@ order.main = (function(){
 	 */
 	//加载促销tab
 	var _buildMainView = function(param) {
+		if(OrderInfo.actionFlag == 6){
+			param = {
+					memberChange : "Y",
+					type : 1,
+					boActionTypeName : "主副卡成员变更",
+					viceCardNum : num,
+					offerNum : 1,
+					custId : OrderInfo.cust.custId,
+					actionFlag:6,
+					offerSpec: OrderInfo.offerSpec,
+					newnum:num
+				};
+		}
 		if(OrderInfo.actionFlag == 2){
 			param.newFlag=1;
 			$.callServiceAsHtml(contextPath+"/app/order/main",param,{
@@ -94,6 +107,20 @@ order.main = (function(){
 			"actionFlag" :1,
 			"type" : 1
 		};
+		if(OrderInfo.actionFlag == 6){//主副卡成员变更,加装副卡
+			param = {
+					memberChange : "Y",
+					type : 1,
+					boActionTypeName : "主副卡成员变更",
+					viceCardNum : num,
+					offerNum : 1,
+					custId : OrderInfo.cust.custId,
+					actionFlag:6,
+					offerSpec: OrderInfo.offerSpec,
+					newnum:num
+				};
+			OrderInfo.order.step = 2;
+		}
 		if(OrderInfo.actionFlag==14){//合约购机
 			param=order.phone.param;
 		}
@@ -151,8 +178,25 @@ order.main = (function(){
 				"actionFlag" :1,
 				"type" : 1
 			};
+		if(OrderInfo.actionFlag==6){//加装副卡
+			param={
+					"boActionTypeCd" : "S1" ,
+					"boActionTypeName" : "主副卡成员变更",
+					"offerSpec" : OrderInfo.offerSpec,
+					"actionFlag" :6,
+					"type" : 1	,
+					"memberChange":"Y",
+					"feeTypeMain":order.memberChange.mainFeeType
+					
+			};
+		}
 		if(OrderInfo.actionFlag==14){//合约购机
 			param=order.phone.param;
+		}
+		if(OrderInfo.actionFlag==21){//合约购机
+			param={
+					"actionFlag" :21,	
+			};
 		}
 		param.enter=3;
 		param.newFlag=1;
@@ -179,9 +223,45 @@ order.main = (function(){
 				} else if(OrderInfo.actionFlag==112){
 					 $("#nav-tab-4").html(response.data);//其他tab页信息填充
 					 order.amalgamation.goConfirm();
-				 }else{
+				} else if(OrderInfo.actionFlag==6){//加装副卡
+					OrderInfo.order.step = 3;
+					 $("#nav-tab-3").html(response.data);//其他tab页信息填充
+				}else if(OrderInfo.actionFlag==21){//拆副卡
+						OrderInfo.order.step = 2;
+						$("#tab3_li").show();
+						 $("#nav-tab-1").removeClass("active in");
+					     $("#nav-tab-3").addClass("active in");
+					     $("#tab1_li").removeClass("active");
+					     $("#tab3_li").addClass("active");
+					     $("#nav-tab-3").html(response.data);
+					     order.dealer.initDealer();
+					     $.each(order.memberChange.viceparam,function(){
+					    	 var cardParam=this;
+					    	 var param={
+						    		"areaId":OrderInfo.getProdAreaId(this.objInstId),
+						    		"channelId":OrderInfo.staff.channelId,
+						    		"staffId":OrderInfo.staff.staffId,
+						    		"prodId":this.objInstId,
+						    		"prodSpecId":this.objId,
+						    		"offerSpecId":order.prodModify.choosedProdInfo.prodOfferId,	
+						    		"offerRoleId":this.offerRoleId,
+						    		"acctNbr":this.accessNumber,
+						    		"partyId":OrderInfo.cust.custId
+
+						     };
+					 		if(ec.util.isObj(OrderInfo.order.soNbr)){  //缓存流水号
+								param.soNbr = OrderInfo.order.soNbr;
+							}
+							else{
+								param.soNbr = UUID.getDataId();
+								OrderInfo.order.soNbr = UUID.getDataId();
+							}
+					 		setTimeout(function(){order.memberChange.queryCardAttachOffer(param);},500);
+					     });
+						return;
+				}else{
 					 $("#nav-tab-6").html(response.data);//其他tab页信息填充
-				 }
+				}
 				_initFeeType(param);//初始化付费方式
 				$.each(OrderInfo.offerSpec.offerRoles,function(){ //遍历主套餐规格
 					var offerRole = this;
@@ -201,6 +281,9 @@ order.main = (function(){
 					}			
 				});
 				 order.dealer.initDealer();
+				 if(OrderInfo.actionFlag==1 || OrderInfo.actionFlag==6 || OrderInfo.actionFlag==13 || OrderInfo.actionFlag==14){
+						_initAcct(0);//初始化主卡帐户列表 
+				 }
 				 if(OrderInfo.actionFlag==112){
 					 OrderInfo.order.step = 4;
 					 $("#nav-tab-3").removeClass("active in");
@@ -210,6 +293,12 @@ order.main = (function(){
 					 $("#cx").removeClass("active");
 					  $("#qt").addClass("active");
 //					 $("#qt").click();
+				 }else if(OrderInfo.actionFlag==6){//加装副卡
+					 OrderInfo.order.step = 3;
+					 $("#nav-tab-2").removeClass("active in");
+					 $("#nav-tab-3").addClass("active in");
+					 $("#tab2_li").removeClass("active");
+					 $("#tab3_li").addClass("active"); 					 				 
 				 }else if(OrderInfo.actionFlag==14){//合约购机
 					 OrderInfo.order.step = 6;
 					 $("#nav-tab-5").removeClass("active in");
@@ -236,7 +325,7 @@ order.main = (function(){
 		var prodId=param.prodId;
 		var cardphoneNum=OrderInfo.getAccessNumber(prodId);
 		$("#phoneNumSpan2_"+param.prodId).html(cardphoneNum);
-		if(prodId==-1){
+		if(prodId==-1 && OrderInfo.actionFlag!=6){
 			$("#cardNameSpan2_"+param.prodId).html("主卡");
 		}else{
 			$("#cardNameSpan2_"+param.prodId).html("副卡");
@@ -317,7 +406,15 @@ order.main = (function(){
 		if(!SoOrder.checkData()){ //校验不通过
 			return false;
 		}
-		SoOrder.submitOrder();//订单提交
+		if(OrderInfo.actionFlag==21){//拆副卡
+			var data={
+				 "viceParam":order.memberChange.viceparam,
+				 "ooRoles":order.memberChange.ooRoles
+			}
+			SoOrder.submitOrder(data);//订单提交
+		}else{
+			SoOrder.submitOrder();//订单提交
+		}
 	}
 
 	var _genRandPass6 = function(){
@@ -623,6 +720,59 @@ order.main = (function(){
 		}		
 	}
 
+	//初始化帐户展示
+	var _initAcct = function(flag) {
+			//主副卡成员变更业务不能更改帐户，只展示主卡帐户
+			if(OrderInfo.actionFlag==6){
+				var param = {};
+				if(flag==1){
+					for(var i=0;i<OrderInfo.oldprodInstInfos.length;i++){
+						param.prodId=OrderInfo.oldprodInstInfos[i].prodInstId;
+						param.acctNbr=OrderInfo.oldprodInstInfos[i].accNbr;
+						param.areaId=OrderInfo.oldprodInstInfos[i].areaId;
+						var jr = $.callServiceAsJson(contextPath+"/apporder/queryProdAcctInfo", param);
+						if(jr.code==-2){
+							$.alertM(jr.data);
+							return;
+						}
+						var prodAcctInfos = jr.data;
+						prodAcctInfos[0].accessNumber = OrderInfo.oldprodInstInfos.accNbr;
+						OrderInfo.oldprodAcctInfos.push({"prodAcctInfos":prodAcctInfos});
+					}
+				}else{
+					param.prodId=order.prodModify.choosedProdInfo.prodInstId;
+					param.acctNbr=order.prodModify.choosedProdInfo.accNbr;
+					param.areaId=order.prodModify.choosedProdInfo.areaId;
+					var jr = $.callServiceAsJson(contextPath+"/app/order/queryProdAcctInfo", param);
+					if(jr.code==-2){
+						$.alertM(jr.data);
+						return;
+					}
+					var prodAcctInfos = jr.data;
+					//$("#accountDiv").find("label:eq(0)").text("主卡帐户：");
+					$.each(prodAcctInfos, function(i, prodAcctInfo){
+						OrderInfo.acctId = prodAcctInfo.acctId;
+						OrderInfo.acctCd = prodAcctInfo.acctCd;
+//						$("<option>").text(prodAcctInfo.name+" : "+prodAcctInfo.acctCd).attr("value",prodAcctInfo.acctId)
+//						.attr("acctcd",prodAcctInfo.acctCd).appendTo($("#acctSelect"));					
+					});
+				//	$("#accountDiv").find("a:eq(0)").hide();
+				}
+			}
+	};
+
+	//刷新页面select内容
+	var _initReadOnlySelect = function() {
+        // Select demo initialization
+        $('.myselect2').mobiscroll().select({
+          theme: "android-holo-light", // Specify theme like: theme: 'ios' or omit setting to use default 
+          mode: "scroller", // Specify scroller mode like: mode: 'mixed' or omit setting to use default 
+          display: "bottom", // Specify display mode like: display: 'bottom' or omit setting to use default 
+          lang: "zh", // Specify language like: lang: 'pl' or omit setting to use default 
+          inputClass: "form-control",
+          disabled:"true"
+        });
+      }
 	return {
 		buildMainView :	_buildMainView,
 		initFeeType:_initFeeType,
@@ -637,7 +787,9 @@ order.main = (function(){
 		showJbrInfo:_showJbrInfo,
 		feeTypeCascadeChange:_feeTypeCascadeChange,
 		check_parm_self     :_check_parm_self,
-		clearCheckMsg       :_clearCheckMsg
+		clearCheckMsg       :_clearCheckMsg,
+		initAcct            :_initAcct,
+		initReadOnlySelect  :_initReadOnlySelect
 	};
 })();
 

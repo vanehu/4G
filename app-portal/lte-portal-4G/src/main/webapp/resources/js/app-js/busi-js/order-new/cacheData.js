@@ -8,7 +8,11 @@ CommonUtils.regNamespace("CacheData");
 
 /** 缓存数据对象*/
 CacheData = (function() {
-	
+	var recordId = "";
+	//设置鉴权日志id
+	var _setRecordId = function (id) {
+		recordId = id;
+	};
 	//促销保存到开通列表里面
 	var _setOfferSpec = function(prodId,offerSpec){
 		offerSpec.isdel="C";
@@ -846,6 +850,9 @@ CacheData = (function() {
 				feeType = 1200;
 			}
 			if(feeType==undefined) feeType = order.prodModify.choosedProdInfo.feeType;
+			if(OrderInfo.actionFlag==6){//加装副卡
+				feeType = order.prodModify.choosedProdInfo.feeType;
+			}
 			if(feeType == CONST.PAY_TYPE.BEFORE_PAY){
 				selectStr = selectStr+'<div class="form-group pack-pro-box"><label for="exampleInputPassword1">' + param.name + ': </label>';
 				if(param.rule.isConstant=='Y'){ //不可修改
@@ -856,7 +863,6 @@ CacheData = (function() {
 						  + param.rule.maskMsg+"("+param.rule.mask+")) on(blur)'><label class='f_red'>*</label><br>";
 					}else{
 						selectStr =  selectStr+ "<select class='inputWidth183px' id="+prodId+"_"+itemSpecId+">"; 
-						optionStr +='<option value="" >请选择</option>';  //不是必填可以不选 
 					}
 				}
 				for ( var j = 0; j < param.valueRange.length; j++) {
@@ -1053,7 +1059,9 @@ CacheData = (function() {
 		}
 		return govCertTyteArr;
 	};
+	
 	return {
+		setRecordId			:_setRecordId,
 		setOfferSpec        :_setOfferSpec,
 		getOfferSpec        :_getOfferSpec,
 		getOfferSpecList    :_getOfferSpecList,

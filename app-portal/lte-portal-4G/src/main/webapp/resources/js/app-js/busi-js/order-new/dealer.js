@@ -24,7 +24,7 @@ order.dealer = (function() {
 			"NAME" : "第三发展人"
 		} ];
 		if (OrderInfo.actionFlag == 1 || OrderInfo.actionFlag == 2
-				|| OrderInfo.actionFlag == 14 || OrderInfo.actionFlag == 112 || OrderInfo.actionFlag == 201) { // 新装业务，套餐变更需要主套餐发展人
+				|| OrderInfo.actionFlag == 14 || OrderInfo.actionFlag == 112 || OrderInfo.actionFlag == 201 || OrderInfo.actionFlag == 6) { // 新装业务，套餐变更需要主套餐发展人
 			var objInstId = OrderInfo.offerSpec.offerSpecId;
 			var objId = objInstId + "_" + OrderInfo.SEQ.dealerSeq;
 			var $select = $("#dealerType");
@@ -35,7 +35,7 @@ order.dealer = (function() {
 			
 		}
 		if (OrderInfo.actionFlag == 1 || OrderInfo.actionFlag == 2 || OrderInfo.actionFlag == 3 || OrderInfo.actionFlag == 19
-				|| OrderInfo.actionFlag == 14 || OrderInfo.actionFlag == 22 || OrderInfo.actionFlag == 9 || OrderInfo.actionFlag == 20){
+				|| OrderInfo.actionFlag == 14 || OrderInfo.actionFlag == 22 || OrderInfo.actionFlag == 9 || OrderInfo.actionFlag == 20 || OrderInfo.actionFlag == 21 || OrderInfo.actionFlag == 6){
 			$.each(AttachOffer.addTerminalList,function(){
 				var $ul = $("#tab-change-list2");
 				var $li = $("#terminalDiv_"+this.prodId);

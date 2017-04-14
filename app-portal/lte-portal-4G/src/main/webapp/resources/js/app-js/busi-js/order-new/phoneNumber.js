@@ -614,14 +614,27 @@ order.phoneNumber = (function(){
 							   }
 							}else{
 								var $div =$('<li><span class="list-title"><span class="title-lg">'+phoneNumber+'</span><span class="subtitle font-secondary">移动电话</span></span></li>');
-								$("#secondaryPhoneNumUl").append($div);			
+								if(OrderInfo.actionFlag==6){//主副卡成员变更加装副卡
+									var $div2 =$('<li id="li_'+phoneNumber+'"><span class="list-title"><span class="title-lg">'+phoneNumber+'</span><span class="subtitle font-secondary">移动电话</span></span><i onclick="order.memberChange.removeAddPhoneNum('+phoneNumber+')" class="iconfont absolute-right">&#xe624;</i></li>');									
+									$("#secondaryPhoneNumUl2").append($div2);
+									order.memberChange.memberAddList.push(phoneNumber);
+								}else{
+									$("#secondaryPhoneNumUl").append($div);
+								}											
 								$("#secondaryCardModal").modal("hide");
 //								mainFlag="true";//恢复主副卡标志
 								order.phoneNumber.secondaryCarNum=$('#secondaryPhoneNumUl').children('li').length-1;//副卡数目
 								prodId=-(order.phoneNumber.secondaryCarNum+1);
+								if(OrderInfo.actionFlag==6){//主副卡成员变更加装副卡
+									order.phoneNumber.secondaryCarNum=$('#secondaryPhoneNumUl2').children('li').length-1;
+									prodId=-(order.phoneNumber.secondaryCarNum);
+								}
 							   if(order.phoneNumber.secondaryCarNum==order.service.max){//副卡添加到最大，添加图标置灰
 								   $("#addSecondaryCard").removeClass("font-default").addClass("font-secondary");
 							   }
+//							   if(OrderInfo.actionFlag==6){//主副卡成员变更加装副卡,设置正确的副卡添加数量
+//									order.phoneNumber.secondaryCarNum=order.memberChange.memberAddList.length;
+//								}
 							}
 						}
 						var isExists=false;
@@ -698,6 +711,16 @@ order.phoneNumber = (function(){
 	
    //副卡号码池数据展示
 	var _showSecondaryCardModalData=function(){
+		if(OrderInfo.actionFlag==6){//加装副卡
+			if(order.memberChange.memberDelList.length>0){//存在拆除的副卡不许新增副卡
+				$.alert("提示","不允许同时办理拆机和新增副卡！");
+				return;
+			}
+			//一五校验
+			if(!cust.preCheckCertNumberRel()){//一五校验
+				return;
+			}
+		}
 		if(cust.usedNum!=undefined && (order.phoneNumber.secondaryCarNum+cust.usedNum)>=5){//一证五号
 			$.alert("提示","一个用户证件下不能有超过五个号码!");
 			return;
@@ -712,6 +735,11 @@ order.phoneNumber = (function(){
 		mainFlag = "false";//副卡选号时 主卡标识为false
 		$("#secondaryPhoneNumUl").hide();
 		$("#fk_phonenumber_next").hide();
+		if(OrderInfo.actionFlag==6){//加装副卡
+			order.phoneNumber.queryApConfig();//查询号码段和号码类型 
+			order.phoneNumber.queryPhoneNbrPool();//查询号池
+			return;
+		}
 		_btnQueryPhoneNumber(1);
 //		$("#secondaryCardModal").modal("show");
 		

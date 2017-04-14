@@ -127,6 +127,18 @@ common.print = (function($){
 					if(OrderInfo.actionFlag==201){//橙分期
 						OrderInfo.order.step=5;
 					}
+					if(OrderInfo.actionFlag==6){//加装副卡
+						OrderInfo.order.step=6;
+					}
+					if(OrderInfo.actionFlag==13){//购裸机
+						OrderInfo.order.step=4;
+					}
+					if(OrderInfo.actionFlag==21){//拆副卡
+						OrderInfo.order.step=5;
+					}
+					if(OrderInfo.actionFlag==14){//合约新装
+						OrderInfo.order.step=9;
+					}
 					$("#order-print").html(response.data).show();
 					$("#datasignBtn").off("click").on("click",function(){
 						common.callDatasign("common.print.showDataSign");
@@ -223,6 +235,18 @@ common.print = (function($){
 					if(OrderInfo.actionFlag==201){//橙分期
 						OrderInfo.order.step=4;
 					}
+					if(OrderInfo.actionFlag==6){//加装副卡
+						OrderInfo.order.step=5;
+					}
+					if(OrderInfo.actionFlag==13){//购裸机
+						OrderInfo.order.step=3;
+					}
+					if(OrderInfo.actionFlag==21){//拆副卡
+						OrderInfo.order.step=4;
+					}
+					if(OrderInfo.actionFlag==14){//合约新装
+						OrderInfo.order.step=8;
+					}
 					$("#order-print").hide();
 					$("#printVoucherA").attr("disabled","disabled");//回执保存成功后  回执按钮改为灰色不可操作
 					$("#calChargeDiv ul").each(function() {//回执保存成功后不可减免费用
@@ -250,6 +274,18 @@ common.print = (function($){
 							}
 							if(OrderInfo.actionFlag==201){//橙分期
 								OrderInfo.order.step=4;
+							}
+							if(OrderInfo.actionFlag==6){//加装副卡
+								OrderInfo.order.step=5;
+							}
+							if(OrderInfo.actionFlag==13){//购裸机
+								OrderInfo.order.step=3;
+							}
+							if(OrderInfo.actionFlag==21){//拆副卡
+								OrderInfo.order.step=4;
+							}
+							if(OrderInfo.actionFlag==14){//合约新装
+								OrderInfo.order.step=8;
 							}
 							$("#order-print").hide();
 							$("#printVoucherA").attr("disabled","disabled");//回执保存成功后  回执按钮改为灰色不可操作

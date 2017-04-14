@@ -517,6 +517,7 @@ order.phone = (function(){
 				"agreementType":agreementType
 		};
 		param.newFlag="1";//新ui
+		param.sysFlag = "10004";//系统标识
 		var url=contextPath+"/app/mktRes/terminal/mktplan";
 		$.callServiceAsHtmlGet(url,param,{
 			"before":function(){
@@ -640,6 +641,7 @@ order.phone = (function(){
 			"agreementType":agreementType,
 			"numLevel":numLevel
 		};
+		params.sysFlag = "10004";//系统标识
 		var url = contextPath+"/order/queryPackForTerm";
 		var response = $.callServiceAsJson(url,params, {});
 		return response;
