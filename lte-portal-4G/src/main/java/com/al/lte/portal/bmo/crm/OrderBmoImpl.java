@@ -2860,14 +2860,16 @@ public class OrderBmoImpl implements OrderBmo {
     	);
         
         //循环找出每次订单提交的virOlId
-        List<Map<String, String>> custOrderAttrs = (List<Map<String, String>>) orderListInfo.get("custOrderAttrs");        
-        for (Map<String, String> custOrderAttr : custOrderAttrs) {
-        	if("810000000".equals(custOrderAttr.get("itemSpecId").toString())){
-        		//既然有该属性，说明已经拍照，则必然存在handleCustId
-        		if("".equals(MapUtils.getString(orderListInfo, "handleCustId", ""))){
-        			return false;
-        		}
-        	}
+        List<Map<String, Object>> custOrderAttrs = (List<Map<String, Object>>) orderListInfo.get("custOrderAttrs");
+        if(custOrderAttrs != null){
+        	for (Map<String, Object> custOrderAttr : custOrderAttrs) {
+            	if("810000000".equals(MapUtils.getString(custOrderAttr, "itemSpecId", ""))){
+            		//既然有该属性，说明已经拍照，则必然存在handleCustId
+            		if("".equals(MapUtils.getString(orderListInfo, "handleCustId", ""))){
+            			return false;
+            		}
+            	}
+            }
         }
       
         /*if(isRealNameFlagOn && isHandleCustNeeded && isCheckCertificateComprehensive){
@@ -2949,17 +2951,19 @@ public class OrderBmoImpl implements OrderBmo {
         Map<String, Object> orderList = (Map<String, Object>) param.get("orderList");
         Map<String, Object> orderListInfo = (Map<String, Object>) orderList.get("orderListInfo");
         List<Map<String, Object>> custOrderList = (List<Map<String, Object>>) orderList.get("custOrderList");
-        List<Map<String, String>> custOrderAttrs = (List<Map<String, String>>) orderListInfo.get("custOrderAttrs");
+        List<Map<String, Object>> custOrderAttrs = (List<Map<String, Object>>) orderListInfo.get("custOrderAttrs");
         String virOlId = null;//订单提交报文中的virOlId
         boolean isSuccessed = false;
         int C1Count = 0;//所有C1动作、且证件类型为身份证的节点数
         int successCount = 0;//所有C1动作、证件类型为身份证、且身份证校验成功数
         
         //循环找出每次订单提交的virOlId
-        for (Map<String, String> custOrderAttr : custOrderAttrs) {
-        	if("810000000".equals(custOrderAttr.get("itemSpecId").toString())){
-        		virOlId = custOrderAttr.get("value");
-        	}
+        if(custOrderAttrs != null){
+        	for (Map<String, Object> custOrderAttr : custOrderAttrs) {
+            	if("810000000".equals(MapUtils.getString(custOrderAttr, "itemSpecId", ""))){
+            		virOlId = MapUtils.getString(custOrderAttr, "value", "noVirOlIdFound");
+            	}
+            }
         }
 
         //先判断经办人证件、拍照是否上传成功，再进行身份证读卡信息校验
