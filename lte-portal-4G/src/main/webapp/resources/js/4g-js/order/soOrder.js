@@ -299,7 +299,7 @@ SoOrder = (function() {
 			value: CacheData.getRecordId()
 		});
 		//增加前置校验的流水号redmine1153501
-		if(OrderInfo.preTransactionID !=""){
+		if(OrderInfo.preTransactionID !="" && OrderInfo.preTransactionID != undefined){
 			custOrderAttrs.push({ //鉴权日志id
 				itemSpecId: "40010043",
 				value: "Y"
@@ -3198,7 +3198,7 @@ SoOrder = (function() {
 						$.each(OrderInfo.prodAttrs,function(){
 							var id = this.id;
 							if(prodInst.prodInstId != id.split('_')[1]){
-								return false;
+								return true;
 							}
 							// 获取当前产品的产品属性,当产品属性为使用人时,重置是否为空标识
 							if($("#"+id).attr('itemSpecId')==CONST.PROD_ATTR.PROD_USER){
