@@ -419,6 +419,7 @@ cust = (function(){
 	};
 	
 	var _form_custInfomodify_btn = function() {
+		order.prodModify.accountChange();
 		//修改客户下一步确认按钮
 		$('#custInfoModifyBtn').off("click").on("click",function(event) {
 			var obj=$('#custInfoModifyBtn');
@@ -544,7 +545,6 @@ cust = (function(){
 					data.boAccountInfos.push(_boProdAcctInfosOld);
 					data.boAccountInfos.push(_boProdAcctInfos);
 					
-				}
 				//清除账户信息缓存
 				order.prodModify.accountInfo=null;
 
@@ -572,6 +572,7 @@ cust = (function(){
 					data.boPartyContactInfo.push(_boPartyContactInfo);
 				}else if(ec.util.isObj($.trim($("#contactName").val()))){
 					data.boPartyContactInfo.push(_boPartyContactInfo);
+				}
 				}
 				SoOrder.submitOrder(data);
 		});
@@ -2711,7 +2712,7 @@ cust = (function(){
 			} else {
 				cust.usedNum = parseInt(result.usedNum) + 1;
 				if(OrderInfo.actionFlag==6){//主副卡新增成员，无需加1
-					cust.usedNum = parseInt(result.usedNum) + 1;
+					cust.usedNum = parseInt(result.usedNum);
 				}
 				checkResult = true;
 			}
