@@ -42,7 +42,11 @@ order.highRealNameA = (function () {
             },
             "done": function (response) {
                 if (response.code == 0) {
-                    $.alert("信息提示", response.data.sspPay.body.rspInfo);
+                    if (ec.util.isObj(response.data) && ec.util.isObj(response.data.sspPay) && ec.util.isObj(response.data.sspPay.body) && ec.util.isObj(response.data.sspPay.body.respInfo)) {
+                        $.alert("信息提示", response.data.sspPay.body.rspInfo);
+                    } else {
+                        $.alert("信息提示", "未返回有效数据，当前数据：" + response.data);
+                    }
                 } else if(response.code == 1){
                     $.alert("信息提示", response.data.certCheckInfo);
                 } else if(response.code == -2){
