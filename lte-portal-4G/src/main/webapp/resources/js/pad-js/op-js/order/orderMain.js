@@ -3477,6 +3477,15 @@ order.main = (function(){
 				}
 				//$("#order_spec_parm").append(response.data);				
 				$("#"+param.ul_id).append(response.data);
+				//#1467125 能力开放不需要做责任人需求，屏蔽实名制登记属性
+				//去除页面实名制登记属性
+				$("#"+CONST.PROD_ATTR.REAL_NAME_TYPE+"_"+param.prodId).parent("div").parent("div").remove();
+				//去除JS缓存实名制登记属性
+				for(var i=0; i<OrderInfo.prodAttrs.length; i++){
+					if(OrderInfo.prodAttrs[i].id == CONST.PROD_ATTR.REAL_NAME_TYPE+"_"+param.prodId){
+						OrderInfo.prodAttrs.splice(i,1); 
+					}
+				};
 				//加载可选包		
 				var pageagehtml = "<div class=\"optional\"> 可选包/功能产品 <a href=\"#optional_"+param.prodId+"\" data-role=\"button\" data-icon=\"optional\" data-iconpos=\"notext\" data-theme=\"i\" class=\"ui-link ui-btn ui-btn-i ui-icon-optional ui-btn-icon-notext ui-shadow ui-corner-all\">可选包/功能产品</a> </div>";
 				$("#"+param.ul_id).append(pageagehtml);
