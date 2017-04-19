@@ -585,10 +585,15 @@ public class MDA {
 	/**安全敏感相关的配置列表*/
 	public static final List<String> SENSITIVE_KEYS = new ArrayList<String>();
 	
+	/**批量业务配置*/
     public static final Map<String, Object> BATCH_CONFIGS = new HashMap<String, Object>();
     
+    /**门户正则表达式集合*/
     public static final Map<String, String> PORTAL_REGEXP = new HashMap<String, String>();
     
     /**针对政企批开的返档优化开关*/
 	public static final String TRANSFER_CUST_FLAG = new String("");
+	
+	/**USB二代证读卡统一分省配置*/
+	public static final Map<String, Object> CERT_SIGNATURE = new HashMap<String, Object>();
 }
