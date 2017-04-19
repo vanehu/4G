@@ -4356,96 +4356,54 @@ public class OrderController extends BaseController {
     @ResponseBody
     @AuthorityValid(isCheck = false)
     @RequestMapping(value = "/certInfo", method = RequestMethod.POST)
-    public JsonResponse cacheCertInfo(@RequestBody Map<String, Object> param,
-            HttpServletRequest request) {
-    	JsonResponse jsonResponse = null;
-		try {
-			//优化 新增业务场景编码、会话id 等
-			HttpSession session =request.getSession();
-			String sessionId=session.getId();//会话ID
-			param.put("sessionId", sessionId);
-			String servCode= MapUtils.getString(param, "servCode");//业务场景编码
-			String venderId = MapUtils.getString(param, "venderId");// 厂商标识
-			String signature = MapUtils.getString(param, "signature");// 数字签名
-			String versionSerial = MapUtils.getString(param, "versionSerial");// 版本号
-			String partyName = MapUtils.getString(param, "partyName");// 姓名
-			String gender = MapUtils.getString(param, "gender");// 性别
-			String nation = MapUtils.getString(param, "nation");// 民族
-			String bornDay = MapUtils.getString(param, "bornDay");// 出生日期
-			String certAddress = MapUtils.getString(param, "certAddress");// 地址
-			String certNumber = MapUtils.getString(param, "certNumber");// 身份证号码
-			String certOrg = MapUtils.getString(param, "certOrg");// 签发机关
-			String effDate = MapUtils.getString(param, "effDate");// 起始有效期
-			String expDate = MapUtils.getString(param, "expDate");// 终止有效期
-			String identityPic = MapUtils.getString(param, "identityPic");// 照片
-            if (StringUtils.isBlank(partyName) || StringUtils.isBlank(gender)
-                || StringUtils.isBlank(nation) || StringUtils.isBlank(bornDay)
-                || StringUtils.isBlank(certNumber) || StringUtils.isBlank(certAddress)
-                || StringUtils.isBlank(certOrg) || StringUtils.isBlank(effDate)
-                || StringUtils.isBlank(expDate)){
-                return super.failed("读卡失败信息有误", -1);
-            }
-            String createFlag = MapUtils.getString(param, "createFlag");
-
-			SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
-                    SysConstant.SESSION_KEY_LOGIN_STAFF);
+    public JsonResponse cacheCertInfo(@RequestBody Map<String, Object> param, HttpServletRequest request) {
+    	//优化 新增业务场景编码、会话id 等
+		HttpSession session =request.getSession();
+		String sessionId=session.getId();//会话ID
+		param.put("sessionId", sessionId);
+		String servCode= MapUtils.getString(param, "servCode");//业务场景编码
+		String venderId = MapUtils.getString(param, "venderId");// 厂商标识
+		String signature = MapUtils.getString(param, "signature");// 数字签名
+		String versionSerial = MapUtils.getString(param, "versionSerial");// 版本号
+		String partyName = MapUtils.getString(param, "partyName");// 姓名
+		String gender = MapUtils.getString(param, "gender");// 性别
+		String nation = MapUtils.getString(param, "nation");// 民族
+		String bornDay = MapUtils.getString(param, "bornDay");// 出生日期
+		String certAddress = MapUtils.getString(param, "certAddress");// 地址
+		String certNumber = MapUtils.getString(param, "certNumber");// 身份证号码
+		String certOrg = MapUtils.getString(param, "certOrg");// 签发机关
+		String effDate = MapUtils.getString(param, "effDate");// 起始有效期
+		String expDate = MapUtils.getString(param, "expDate");// 终止有效期
+		String identityPic = MapUtils.getString(param, "identityPic");// 照片
+		String createFlag = MapUtils.getString(param, "createFlag");
+		
+        if (StringUtils.isBlank(partyName) || StringUtils.isBlank(gender)
+            || StringUtils.isBlank(nation) || StringUtils.isBlank(bornDay)
+            || StringUtils.isBlank(certNumber) || StringUtils.isBlank(certAddress)
+            || StringUtils.isBlank(certOrg) || StringUtils.isBlank(effDate)
+            || StringUtils.isBlank(expDate)){
+            return super.failed("读卡失败信息有误", -1);
+        }
+        
+    	try {
+			SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
             Map<String, Object> rMap = null;
             param.put("readCertFlag", "readCert");
             
-            try {
-                 orderBmo.insertCertInfo(param, null, sessionStaff);
-            } catch (BusinessException e) {
-               // return super.failed(e);
-            } catch (InterfaceException ie) {
-               // return super.failed(ie, param, ErrorCode.INSERT_CARD_INFO);
-            } catch (Exception e) {
-               // return super.failed(ErrorCode.INSERT_CARD_INFO, e, param);
+            //二代证校验读卡日志记录
+            orderBmo.insertCertInfo(param, null, sessionStaff);
+            
+            //二代证校验
+            Map<String, Object> verifyResult = orderBmo.certReaderVerify(param, request, sessionStaff);
+            if(MapUtils.getIntValue(verifyResult, SysConstant.RESULT_CODE) == ResultCode.FAIL_ON){
+            	return super.failed(MapUtils.getString(verifyResult, SysConstant.RESULT_MSG, ""), ResultCode.FAIL_ON);
+            } else if(MapUtils.getIntValue(verifyResult, SysConstant.RESULT_CODE) == ResultCode.FAIL_TW){
+            	return super.failed(MapUtils.getString(verifyResult, SysConstant.RESULT_MSG, ""), ResultCode.FAIL_TW);
+            } else if(MapUtils.getIntValue(verifyResult, SysConstant.RESULT_CODE) == ResultCode.FAIL_TH){
+            	return super.failed(param, ResultCode.FAIL_TH);
             }
             
-           Object validateFlag =  MDA.USBSIGNATURE.get("SIGNATURE_"+sessionStaff.getCurrentAreaId().substring(0, 3) + "0000");
-           boolean isValidate  = validateFlag == null ? false : "ON".equals(validateFlag.toString()) ? true : false;//身份证阅读器省份开关 ON：开启校验  OFF不校验
-           if(isValidate){  // 1. 分省开关开启 
-	           if(!StringUtils.isBlank(venderId)){
-	        	    if((MDA.USBVERSION_SIGNATURE.get(venderId)==null)){ //2. 未在集约 CRM 许可范围内
-	            		return super.failed("读卡器未在集约 CRM 许可范围内，请联系厂商升级驱动", -1);
-	            	}
-	        	    if(MDA.USBVERSION_SIGNATURE.get(venderId).get("isOpen").equals("ON")){//启用新规范控件校验
-	            		String mdaVersion = MDA.USBVERSION_SIGNATURE.get(venderId).get("version");
-		    			if(StringUtils.isBlank(signature)||StringUtils.isBlank(versionSerial)){
-			        		 return super.failed("读卡器控件版本过低，请联系厂商升级驱动版本", -1);
-			        	}
-			            if(versionSerial.equals(mdaVersion)){//校验版本号 
-			            	String appSecret=MDA.USBVERSION_SIGNATURE.get(venderId).get("appSecret"); // 3. 件信息被篡改，请确认按照正常流程操作
-			            	String ss=partyName+gender+nation+bornDay+certAddress+certNumber+certOrg+effDate+expDate+identityPic+appSecret;
-			            	String sha1Str=DigestUtils.sha1ToHex(ss);
-			            	if(!signature.equals(sha1Str)){
-			            		jsonResponse = super.failed("证件信息被篡改，请确认按照正常流程操作", -2);//信息被篡改
-			            		return jsonResponse;
-			            	}
-			            }else{  // 4. 读卡器控件版本过低，请联系厂商升级驱动版本
-			            	param.put("signature", "");
-			            	Set<String> s = param.keySet();//获取KEY集合
-			            	for (String str : s) {
-			            		if(param.get(str)instanceof String){
-			            			param.put(str,"");
-			            		}else{
-			            			param.put(str,0);
-			            		}
-			            	}
-			            	String fileUrl=venderId+"_"+mdaVersion;
-			            	param.put("fileUrl", fileUrl);
-			            	param.put("mdaVersion", mdaVersion);
-			            	param.put("fileName", MDA.USBVERSION_SIGNATURE.get(venderId).get("name"));
-			            	jsonResponse = super.failed(param, -3);//版本有误
-			            	return jsonResponse;
-			            }
-	            	}else{
-	            		return super.failed("读卡器驱动未通过集团 CRM 验证，请联系"+ MDA.USBVERSION_SIGNATURE.get(venderId).get("name")+"厂商升级驱动", -1);
-	            	}
-	            }else{
-	            	return super.failed("读卡器控件版本过低，请联系厂商升级驱动版本", -1);
-	            }
-            }
+            //二代证读卡session缓存
             String appSecret1 = propertiesUtils.getMessage("APP_SECRET"); //appId对应的加密密钥
             String nonce = RandomStringUtils.randomAlphanumeric(Const.RANDOM_STRING_LENGTH); //随机字符串
             String signature1 = commonBmo.signature(partyName, certNumber, certAddress, identityPic, nonce, appSecret1);
@@ -4460,12 +4418,12 @@ public class OrderController extends BaseController {
             	request.getSession().setAttribute(Const.SESSION_SIGNATURE_HANDLE_CUST, signature1);
             }
             request.getSession().setAttribute(Const.CACHE_CERTINFO, certNumber);
-    		jsonResponse = super.successed(param, ResultConstant.SUCCESS.getCode());//信息校验通过
-            return jsonResponse;
+            return super.successed(param, ResultConstant.SUCCESS.getCode());//信息校验通过
         } catch (Exception e) {
             return super.failed("读卡失败信息异常", -1);
         }
     }
+    
     @ResponseBody
     @AuthorityValid(isCheck = false)
     @RequestMapping(value = "/isOpenNewCert", method = RequestMethod.POST)
@@ -4475,9 +4433,8 @@ public class OrderController extends BaseController {
 				request, SysConstant.SESSION_KEY_LOGIN_STAFF);
     	JsonResponse jsonResponse = null;
 		try {
-			Long areaId = Long.valueOf(StringUtils.substring(sessionStaff.getCurrentAreaId(), 0, 3)+ "0000");
-			String isopen = MDA.USBSIGNATURE.get("SIGNATURE_"+areaId);
-			jsonResponse = super.successed(isopen, ResultConstant.SUCCESS.getCode());//信息校验通过
+			Map<String, Object> certConfigsOfTheProv = (HashMap<String, Object>) MDA.CERT_SIGNATURE.get(SysConstant.CERT_SIGNATURE_PROV + sessionStaff.getCurrentAreaId().substring(0, 3));
+			jsonResponse = super.successed(MapUtils.getString(certConfigsOfTheProv, SysConstant.USB_SIGNATURE_CHECK, ""), ResultConstant.SUCCESS.getCode());//信息校验通过
             return jsonResponse;
         } catch (Exception e) {
             return super.failed("读取身份证省份配置开关失败", -1);

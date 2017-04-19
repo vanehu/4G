@@ -785,8 +785,8 @@ public interface OrderBmo {
 	 * @return
 	 * @throws Exception
 	 */
-	public Map<String, Object> insertCertInfo(Map<String, Object> param, 
-			String flowNum,SessionStaff sessionStaff) throws Exception;
+	public void insertCertInfo(Map<String, Object> param, 
+			String flowNum,SessionStaff sessionStaff);
 	
 	/**
 	 * 判断是否集团新装业务
@@ -881,4 +881,13 @@ public interface OrderBmo {
 	public Map<String, Object> qryPreliminaryInfo(Map<String, Object> dataBusMap, String optFlowNum,
             SessionStaff sessionStaff) throws Exception;
 	
+	/**
+	 * USB二代证读卡校验
+	 * @param param
+	 * @param request
+	 * @param sessionStaff
+	 * @return
+	 */
+	public Map<String, Object> certReaderVerify(Map<String, Object> param, HttpServletRequest request, SessionStaff sessionStaff);
+
 }

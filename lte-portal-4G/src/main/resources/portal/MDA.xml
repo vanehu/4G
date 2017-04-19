@@ -811,58 +811,6 @@
 		</const>
 		<const type="String" name="CARD_FTPCONFIG" value="FTPSERVICECONFIG_3" description="身份证阅读器放置ftp服务器"/>
 		<const type="String" name="CARD_FILEPATH" value="/app/4G/ejbca/card/" description="身份证阅读器放置ftp路径，测试环境为：/app/ejbca/card/"/>
-		<const type="Map" name="USBVERSION_SIGNATURE" description="接入集团规范的身份证阅读器厂商版本及密钥">
-		 {
-	    	'10000':{'version':'1.0.3.2','appSecret':'<![CDATA[5xRx9H4#5fY3e28@]]>','name':'华旭金卡','isOpen':'ON'},
-            '10001':{'version':'1.2.0.4','appSecret':'<![CDATA[1%x7H4#2UtPy52@d]]>','name':'深圳华视','isOpen':'ON'},
-            '10002':{'version':'2.6.5','appSecret':'<![CDATA[4#5fY18@3eRx5x3H]]>','name':'山东卡尔','isOpen':'ON'},
-            '10003':{'version':'2.2.2','appSecret':'<![CDATA[R%dY#d3618@5xT9U]]>','name':'山东信通','isOpen':'ON'},
-            '10004':{'version':'1.1','appSecret':'<![CDATA[9PURePy&L7#2R18@]]>','name':'长春鸿达','isOpen':'ON'},
-            '10005':{'version':'2.2.2','appSecret':'<![CDATA[8g%xtPy52@YRxRe6]]>','name':'上海普天','isOpen':'ON'},
-            '10006':{'version':'2.24','appSecret':'<![CDATA[74#2iBN4#29eV%xW]]>','name':'因纳伟盛','isOpen':'ON'},
-            '10007':{'version':'1.0.0.5','appSecret':'<![CDATA[Hty52@d1Xp$4#2tt]]>','name':'山东神思','isOpen':'ON'},
-            '10008':{'version':'1.1','appSecret':'<![CDATA[x3H4#5fYx18@53e&]]>','name':'精伦电子','isOpen':'OFF'},
-            '10009':{'version':'2.2.2','appSecret':'<![CDATA[vePy18@R9P&L7#3E]]>','name':'内蒙古银安科技','isOpen':'ON'},
-            '10010':{'version':'1.0','appSecret':'<![CDATA[&L7#2R9PURePy18@]]>','name':'南京亿数','isOpen':'OFF'},
-            '10011':{'version':'1.0','appSecret':'<![CDATA[18@5xT9UR%dY#d36]]>','name':'北冰洋','isOpen':'OFF'}
-         }	
-		</const>	
-		<const type="Map" name="USBSIGNATURE" description="身份证阅读器省份开关 ON：开启校验  OFF不校验">
-	      {
-	       'SIGNATURE_8540000':'OFF',<!-- 西藏 -->
-	       'SIGNATURE_8630000':'OFF',<!-- 青海 -->
-	       'SIGNATURE_8150000':'OFF',<!-- 内蒙古 -->
-	       'SIGNATURE_8230000':'OFF',<!-- 黑龙江 -->
-	       'SIGNATURE_8450000':'OFF',<!-- 广西 -->
-	       'SIGNATURE_8500000':'OFF',<!-- 重庆 -->
-	       'SIGNATURE_8610000':'OFF',<!-- 陕西 -->
-	       'SIGNATURE_8420000':'OFF',<!-- 湖北 -->
-	       'SIGNATURE_8350000':'OFF',<!-- 福建 -->
-	       'SIGNATURE_8320000':'OFF',<!-- 江苏 -->	       
-	       'SIGNATURE_8460000':'OFF',<!-- 海南 -->
-	       'SIGNATURE_8640000':'OFF',<!-- 宁夏 -->
-	       'SIGNATURE_8140000':'OFF',<!-- 山西 -->
-	       'SIGNATURE_8530000':'OFF',<!-- 云南 -->
-	       'SIGNATURE_8360000':'OFF',<!-- 江西 -->
-	       'SIGNATURE_8370000':'OFF',<!-- 山东 -->
-	       'SIGNATURE_8110000':'OFF',<!-- 北京 -->
-	       'SIGNATURE_8430000':'OFF',<!-- 湖南 -->
-	       'SIGNATURE_8510000':'OFF',<!-- 四川 -->
-	       'SIGNATURE_8440000':'OFF',<!-- 广东 -->
-	       'SIGNATURE_8310000':'OFF',<!-- 上海 -->
-	       'SIGNATURE_8120000':'OFF',<!-- 天津 -->
-	       'SIGNATURE_8130000':'OFF',<!-- 河北 -->
-	       'SIGNATURE_8410000':'OFF',<!-- 河南 -->
-	       'SIGNATURE_8210000':'OFF',<!-- 辽宁 -->
-	       'SIGNATURE_8220000':'OFF',<!-- 吉林 -->
-	       'SIGNATURE_8340000':'OFF',<!-- 安徽 -->
-	       'SIGNATURE_8330000':'OFF',<!-- 浙江 -->
-	       'SIGNATURE_8520000':'OFF',<!-- 贵州 -->
-	       'SIGNATURE_8620000':'OFF',<!-- 甘肃 -->
-	       'SIGNATURE_8650000':'OFF',<!-- 新疆 -->
-	       'SIGNATURE_8990000':'OFF'<!-- 虚拟省 -->
-	      }
-    	</const>
         <!-- 集团CRM-4G新装、套餐变更纳入老用户作为副卡开关  ON OFF 默认关闭 -->
         <const type="Map" name="OLDMEMBER_JOIN" description="集团CRM-4G新装、套餐变更纳入老用户作为副卡开关  ON OFF 默认关闭">
 			{
@@ -2312,5 +2260,562 @@
 		}
 		</const>
 		<const type="String" name="TRANSFER_CUST_FLAG" value="OFF" description="针对政企批开的返档优化开关"/>
+		<const type="Map" name="CERT_SIGNATURE" description="USB二代证读卡统一分省配置">
+	    {
+	    	'CERT_SIGNATURE_854':{
+	       		<!--即USBSIGNATURE 身份证阅读器省份开关 ON：开启校验  OFF不校验-->
+	       		'USB_SIGNATURE_CHECK':'ON',
+	       		'VENDORS':{
+	       			<!--即USBVERSION_SIGNATURE 接入集团规范的身份证阅读器厂商版本及密钥-->
+		       		'10000':{'version':'1.0.3.2','appSecret':'<![CDATA[5xRx9H4#5fY3e28@]]>','name':'华旭金卡','isOpen':'ON'},
+		            '10001':{'version':'1.0.3.2','appSecret':'<![CDATA[1%x7H4#2UtPy52@d]]>','name':'深圳华视','isOpen':'ON'},
+		            '10002':{'version':'2.6.5','appSecret':'<![CDATA[4#5fY18@3eRx5x3H]]>','name':'山东卡尔','isOpen':'ON'},
+		            '10003':{'version':'2.2.2','appSecret':'<![CDATA[R%dY#d3618@5xT9U]]>','name':'山东信通','isOpen':'ON'},
+		            '10004':{'version':'1.1','appSecret':'<![CDATA[9PURePy&L7#2R18@]]>','name':'长春鸿达','isOpen':'ON'},
+		            '10005':{'version':'2.2.2','appSecret':'<![CDATA[8g%xtPy52@YRxRe6]]>','name':'上海普天','isOpen':'ON'},
+		            '10006':{'version':'2.24','appSecret':'<![CDATA[74#2iBN4#29eV%xW]]>','name':'因纳伟盛','isOpen':'ON'},
+		            '10007':{'version':'1.0.0.5','appSecret':'<![CDATA[Hty52@d1Xp$4#2tt]]>','name':'山东神思','isOpen':'ON'},
+		            '10008':{'version':'4.0.1.2','appSecret':'<![CDATA[x3H4#5fYx18@53e&]]>','name':'精伦电子','isOpen':'ON'},
+		            '10009':{'version':'2.2.3','appSecret':'<![CDATA[vePy18@R9P&L7#3E]]>','name':'内蒙古银安科技','isOpen':'ON'},
+		            '10010':{'version':'1.0','appSecret':'<![CDATA[&L7#2R9PURePy18@]]>','name':'南京亿数','isOpen':'OFF'},
+		            '10011':{'version':'1.0','appSecret':'<![CDATA[18@5xT9UR%dY#d36]]>','name':'北冰洋','isOpen':'OFF'}
+	       		}
+		    },<!-- 西藏 -->
+	       'CERT_SIGNATURE_863':{
+	       		'USB_SIGNATURE_CHECK':'ON',
+	       		'VENDORS':{
+		       		'10000':{'version':'1.0.3.2','appSecret':'<![CDATA[5xRx9H4#5fY3e28@]]>','name':'华旭金卡','isOpen':'ON'},
+		            '10001':{'version':'1.0.3.2','appSecret':'<![CDATA[1%x7H4#2UtPy52@d]]>','name':'深圳华视','isOpen':'ON'},
+		            '10002':{'version':'2.6.5','appSecret':'<![CDATA[4#5fY18@3eRx5x3H]]>','name':'山东卡尔','isOpen':'ON'},
+		            '10003':{'version':'2.2.2','appSecret':'<![CDATA[R%dY#d3618@5xT9U]]>','name':'山东信通','isOpen':'ON'},
+		            '10004':{'version':'1.1','appSecret':'<![CDATA[9PURePy&L7#2R18@]]>','name':'长春鸿达','isOpen':'ON'},
+		            '10005':{'version':'2.2.2','appSecret':'<![CDATA[8g%xtPy52@YRxRe6]]>','name':'上海普天','isOpen':'ON'},
+		            '10006':{'version':'2.24','appSecret':'<![CDATA[74#2iBN4#29eV%xW]]>','name':'因纳伟盛','isOpen':'ON'},
+		            '10007':{'version':'1.0.0.5','appSecret':'<![CDATA[Hty52@d1Xp$4#2tt]]>','name':'山东神思','isOpen':'ON'},
+		            '10008':{'version':'4.0.1.2','appSecret':'<![CDATA[x3H4#5fYx18@53e&]]>','name':'精伦电子','isOpen':'ON'},
+		            '10009':{'version':'2.2.3','appSecret':'<![CDATA[vePy18@R9P&L7#3E]]>','name':'内蒙古银安科技','isOpen':'ON'},
+		            '10010':{'version':'1.0','appSecret':'<![CDATA[&L7#2R9PURePy18@]]>','name':'南京亿数','isOpen':'OFF'},
+		            '10011':{'version':'1.0','appSecret':'<![CDATA[18@5xT9UR%dY#d36]]>','name':'北冰洋','isOpen':'OFF'}
+	       		}
+		    },<!-- 青海 -->
+	       'CERT_SIGNATURE_815':{
+	       		'USB_SIGNATURE_CHECK':'ON',
+	       		'VENDORS':{
+		       		'10000':{'version':'1.0.3.2','appSecret':'<![CDATA[5xRx9H4#5fY3e28@]]>','name':'华旭金卡','isOpen':'ON'},
+		            '10001':{'version':'1.0.3.2','appSecret':'<![CDATA[1%x7H4#2UtPy52@d]]>','name':'深圳华视','isOpen':'ON'},
+		            '10002':{'version':'2.6.5','appSecret':'<![CDATA[4#5fY18@3eRx5x3H]]>','name':'山东卡尔','isOpen':'ON'},
+		            '10003':{'version':'2.2.2','appSecret':'<![CDATA[R%dY#d3618@5xT9U]]>','name':'山东信通','isOpen':'ON'},
+		            '10004':{'version':'1.1','appSecret':'<![CDATA[9PURePy&L7#2R18@]]>','name':'长春鸿达','isOpen':'ON'},
+		            '10005':{'version':'2.2.2','appSecret':'<![CDATA[8g%xtPy52@YRxRe6]]>','name':'上海普天','isOpen':'ON'},
+		            '10006':{'version':'2.24','appSecret':'<![CDATA[74#2iBN4#29eV%xW]]>','name':'因纳伟盛','isOpen':'ON'},
+		            '10007':{'version':'1.0.0.5','appSecret':'<![CDATA[Hty52@d1Xp$4#2tt]]>','name':'山东神思','isOpen':'ON'},
+		            '10008':{'version':'4.0.1.2','appSecret':'<![CDATA[x3H4#5fYx18@53e&]]>','name':'精伦电子','isOpen':'ON'},
+		            '10009':{'version':'2.2.3','appSecret':'<![CDATA[vePy18@R9P&L7#3E]]>','name':'内蒙古银安科技','isOpen':'ON'},
+		            '10010':{'version':'1.0','appSecret':'<![CDATA[&L7#2R9PURePy18@]]>','name':'南京亿数','isOpen':'OFF'},
+		            '10011':{'version':'1.0','appSecret':'<![CDATA[18@5xT9UR%dY#d36]]>','name':'北冰洋','isOpen':'OFF'}
+	       		}
+		    },<!-- 内蒙古 -->
+	       'CERT_SIGNATURE_823':{
+	       		'USB_SIGNATURE_CHECK':'ON',
+	       		'VENDORS':{
+		       		'10000':{'version':'1.0.3.2','appSecret':'<![CDATA[5xRx9H4#5fY3e28@]]>','name':'华旭金卡','isOpen':'ON'},
+		            '10001':{'version':'1.0.3.2','appSecret':'<![CDATA[1%x7H4#2UtPy52@d]]>','name':'深圳华视','isOpen':'ON'},
+		            '10002':{'version':'2.6.5','appSecret':'<![CDATA[4#5fY18@3eRx5x3H]]>','name':'山东卡尔','isOpen':'ON'},
+		            '10003':{'version':'2.2.2','appSecret':'<![CDATA[R%dY#d3618@5xT9U]]>','name':'山东信通','isOpen':'ON'},
+		            '10004':{'version':'1.1','appSecret':'<![CDATA[9PURePy&L7#2R18@]]>','name':'长春鸿达','isOpen':'ON'},
+		            '10005':{'version':'2.2.2','appSecret':'<![CDATA[8g%xtPy52@YRxRe6]]>','name':'上海普天','isOpen':'ON'},
+		            '10006':{'version':'2.24','appSecret':'<![CDATA[74#2iBN4#29eV%xW]]>','name':'因纳伟盛','isOpen':'ON'},
+		            '10007':{'version':'1.0.0.5','appSecret':'<![CDATA[Hty52@d1Xp$4#2tt]]>','name':'山东神思','isOpen':'ON'},
+		            '10008':{'version':'4.0.1.2','appSecret':'<![CDATA[x3H4#5fYx18@53e&]]>','name':'精伦电子','isOpen':'ON'},
+		            '10009':{'version':'2.2.3','appSecret':'<![CDATA[vePy18@R9P&L7#3E]]>','name':'内蒙古银安科技','isOpen':'ON'},
+		            '10010':{'version':'1.0','appSecret':'<![CDATA[&L7#2R9PURePy18@]]>','name':'南京亿数','isOpen':'OFF'},
+		            '10011':{'version':'1.0','appSecret':'<![CDATA[18@5xT9UR%dY#d36]]>','name':'北冰洋','isOpen':'OFF'}
+	       		}
+		    },<!-- 黑龙江 -->
+	       'CERT_SIGNATURE_845':{
+	       		'USB_SIGNATURE_CHECK':'ON',
+	       		'VENDORS':{
+	       			'10000':{'version':'1.0.3.2','appSecret':'<![CDATA[5xRx9H4#5fY3e28@]]>','name':'华旭金卡','isOpen':'ON'},
+		            '10001':{'version':'1.0.3.2','appSecret':'<![CDATA[1%x7H4#2UtPy52@d]]>','name':'深圳华视','isOpen':'ON'},
+		            '10002':{'version':'2.6.5','appSecret':'<![CDATA[4#5fY18@3eRx5x3H]]>','name':'山东卡尔','isOpen':'ON'},
+		            '10003':{'version':'2.2.2','appSecret':'<![CDATA[R%dY#d3618@5xT9U]]>','name':'山东信通','isOpen':'ON'},
+		            '10004':{'version':'1.1','appSecret':'<![CDATA[9PURePy&L7#2R18@]]>','name':'长春鸿达','isOpen':'ON'},
+		            '10005':{'version':'2.2.2','appSecret':'<![CDATA[8g%xtPy52@YRxRe6]]>','name':'上海普天','isOpen':'ON'},
+		            '10006':{'version':'2.24','appSecret':'<![CDATA[74#2iBN4#29eV%xW]]>','name':'因纳伟盛','isOpen':'ON'},
+		            '10007':{'version':'1.0.0.5','appSecret':'<![CDATA[Hty52@d1Xp$4#2tt]]>','name':'山东神思','isOpen':'ON'},
+		            '10008':{'version':'4.0.1.2','appSecret':'<![CDATA[x3H4#5fYx18@53e&]]>','name':'精伦电子','isOpen':'ON'},
+		            '10009':{'version':'2.2.3','appSecret':'<![CDATA[vePy18@R9P&L7#3E]]>','name':'内蒙古银安科技','isOpen':'ON'},
+		            '10010':{'version':'1.0','appSecret':'<![CDATA[&L7#2R9PURePy18@]]>','name':'南京亿数','isOpen':'OFF'},
+		            '10011':{'version':'1.0','appSecret':'<![CDATA[18@5xT9UR%dY#d36]]>','name':'北冰洋','isOpen':'OFF'}
+	       		}
+		    },<!-- 广西 -->
+	       'CERT_SIGNATURE_850':{
+	       		'USB_SIGNATURE_CHECK':'ON',
+	       		'VENDORS':{
+		       		'10000':{'version':'1.0.3.2','appSecret':'<![CDATA[5xRx9H4#5fY3e28@]]>','name':'华旭金卡','isOpen':'ON'},
+		            '10001':{'version':'1.0.3.2','appSecret':'<![CDATA[1%x7H4#2UtPy52@d]]>','name':'深圳华视','isOpen':'ON'},
+		            '10002':{'version':'2.6.5','appSecret':'<![CDATA[4#5fY18@3eRx5x3H]]>','name':'山东卡尔','isOpen':'ON'},
+		            '10003':{'version':'2.2.2','appSecret':'<![CDATA[R%dY#d3618@5xT9U]]>','name':'山东信通','isOpen':'ON'},
+		            '10004':{'version':'1.1','appSecret':'<![CDATA[9PURePy&L7#2R18@]]>','name':'长春鸿达','isOpen':'ON'},
+		            '10005':{'version':'2.2.2','appSecret':'<![CDATA[8g%xtPy52@YRxRe6]]>','name':'上海普天','isOpen':'ON'},
+		            '10006':{'version':'2.24','appSecret':'<![CDATA[74#2iBN4#29eV%xW]]>','name':'因纳伟盛','isOpen':'ON'},
+		            '10007':{'version':'1.0.0.5','appSecret':'<![CDATA[Hty52@d1Xp$4#2tt]]>','name':'山东神思','isOpen':'ON'},
+		            '10008':{'version':'4.0.1.2','appSecret':'<![CDATA[x3H4#5fYx18@53e&]]>','name':'精伦电子','isOpen':'ON'},
+		            '10009':{'version':'2.2.3','appSecret':'<![CDATA[vePy18@R9P&L7#3E]]>','name':'内蒙古银安科技','isOpen':'ON'},
+		            '10010':{'version':'1.0','appSecret':'<![CDATA[&L7#2R9PURePy18@]]>','name':'南京亿数','isOpen':'OFF'},
+		            '10011':{'version':'1.0','appSecret':'<![CDATA[18@5xT9UR%dY#d36]]>','name':'北冰洋','isOpen':'OFF'}
+	       		}
+			},<!-- 重庆 -->
+	       'CERT_SIGNATURE_861':{
+	       		'USB_SIGNATURE_CHECK':'ON',
+	       		'VENDORS':{
+		       		'10000':{'version':'1.0.3.2','appSecret':'<![CDATA[5xRx9H4#5fY3e28@]]>','name':'华旭金卡','isOpen':'ON'},
+		            '10001':{'version':'1.0.3.2','appSecret':'<![CDATA[1%x7H4#2UtPy52@d]]>','name':'深圳华视','isOpen':'ON'},
+		            '10002':{'version':'2.6.5','appSecret':'<![CDATA[4#5fY18@3eRx5x3H]]>','name':'山东卡尔','isOpen':'ON'},
+		            '10003':{'version':'2.2.2','appSecret':'<![CDATA[R%dY#d3618@5xT9U]]>','name':'山东信通','isOpen':'ON'},
+		            '10004':{'version':'1.1','appSecret':'<![CDATA[9PURePy&L7#2R18@]]>','name':'长春鸿达','isOpen':'ON'},
+		            '10005':{'version':'2.2.2','appSecret':'<![CDATA[8g%xtPy52@YRxRe6]]>','name':'上海普天','isOpen':'ON'},
+		            '10006':{'version':'2.24','appSecret':'<![CDATA[74#2iBN4#29eV%xW]]>','name':'因纳伟盛','isOpen':'ON'},
+		            '10007':{'version':'1.0.0.5','appSecret':'<![CDATA[Hty52@d1Xp$4#2tt]]>','name':'山东神思','isOpen':'ON'},
+		            '10008':{'version':'4.0.1.2','appSecret':'<![CDATA[x3H4#5fYx18@53e&]]>','name':'精伦电子','isOpen':'ON'},
+		            '10009':{'version':'2.2.3','appSecret':'<![CDATA[vePy18@R9P&L7#3E]]>','name':'内蒙古银安科技','isOpen':'ON'},
+		            '10010':{'version':'1.0','appSecret':'<![CDATA[&L7#2R9PURePy18@]]>','name':'南京亿数','isOpen':'OFF'},
+		            '10011':{'version':'1.0','appSecret':'<![CDATA[18@5xT9UR%dY#d36]]>','name':'北冰洋','isOpen':'OFF'}
+	       		}
+			},<!-- 陕西 -->
+	       'CERT_SIGNATURE_842':{
+	       		'USB_SIGNATURE_CHECK':'ON',
+	       		'VENDORS':{
+	       			'10000':{'version':'1.0.3.2','appSecret':'<![CDATA[5xRx9H4#5fY3e28@]]>','name':'华旭金卡','isOpen':'ON'},
+		            '10001':{'version':'1.0.3.2','appSecret':'<![CDATA[1%x7H4#2UtPy52@d]]>','name':'深圳华视','isOpen':'ON'},
+		            '10002':{'version':'2.6.5','appSecret':'<![CDATA[4#5fY18@3eRx5x3H]]>','name':'山东卡尔','isOpen':'ON'},
+		            '10003':{'version':'2.2.2','appSecret':'<![CDATA[R%dY#d3618@5xT9U]]>','name':'山东信通','isOpen':'ON'},
+		            '10004':{'version':'1.1','appSecret':'<![CDATA[9PURePy&L7#2R18@]]>','name':'长春鸿达','isOpen':'ON'},
+		            '10005':{'version':'2.2.2','appSecret':'<![CDATA[8g%xtPy52@YRxRe6]]>','name':'上海普天','isOpen':'ON'},
+		            '10006':{'version':'2.24','appSecret':'<![CDATA[74#2iBN4#29eV%xW]]>','name':'因纳伟盛','isOpen':'ON'},
+		            '10007':{'version':'1.0.0.5','appSecret':'<![CDATA[Hty52@d1Xp$4#2tt]]>','name':'山东神思','isOpen':'ON'},
+		            '10008':{'version':'4.0.1.2','appSecret':'<![CDATA[x3H4#5fYx18@53e&]]>','name':'精伦电子','isOpen':'ON'},
+		            '10009':{'version':'2.2.3','appSecret':'<![CDATA[vePy18@R9P&L7#3E]]>','name':'内蒙古银安科技','isOpen':'ON'},
+		            '10010':{'version':'1.0','appSecret':'<![CDATA[&L7#2R9PURePy18@]]>','name':'南京亿数','isOpen':'OFF'},
+		            '10011':{'version':'1.0','appSecret':'<![CDATA[18@5xT9UR%dY#d36]]>','name':'北冰洋','isOpen':'OFF'}
+	       		}
+			},<!-- 湖北 -->
+	       'CERT_SIGNATURE_835':{
+	       		'USB_SIGNATURE_CHECK':'ON',
+	       		'VENDORS':{
+	       			'10000':{'version':'1.0.3.2','appSecret':'<![CDATA[5xRx9H4#5fY3e28@]]>','name':'华旭金卡','isOpen':'ON'},
+		            '10001':{'version':'1.0.3.2','appSecret':'<![CDATA[1%x7H4#2UtPy52@d]]>','name':'深圳华视','isOpen':'ON'},
+		            '10002':{'version':'2.6.5','appSecret':'<![CDATA[4#5fY18@3eRx5x3H]]>','name':'山东卡尔','isOpen':'ON'},
+		            '10003':{'version':'2.2.2','appSecret':'<![CDATA[R%dY#d3618@5xT9U]]>','name':'山东信通','isOpen':'ON'},
+		            '10004':{'version':'1.1','appSecret':'<![CDATA[9PURePy&L7#2R18@]]>','name':'长春鸿达','isOpen':'ON'},
+		            '10005':{'version':'2.2.2','appSecret':'<![CDATA[8g%xtPy52@YRxRe6]]>','name':'上海普天','isOpen':'ON'},
+		            '10006':{'version':'2.24','appSecret':'<![CDATA[74#2iBN4#29eV%xW]]>','name':'因纳伟盛','isOpen':'ON'},
+		            '10007':{'version':'1.0.0.5','appSecret':'<![CDATA[Hty52@d1Xp$4#2tt]]>','name':'山东神思','isOpen':'ON'},
+		            '10008':{'version':'4.0.1.2','appSecret':'<![CDATA[x3H4#5fYx18@53e&]]>','name':'精伦电子','isOpen':'ON'},
+		            '10009':{'version':'2.2.3','appSecret':'<![CDATA[vePy18@R9P&L7#3E]]>','name':'内蒙古银安科技','isOpen':'ON'},
+		            '10010':{'version':'1.0','appSecret':'<![CDATA[&L7#2R9PURePy18@]]>','name':'南京亿数','isOpen':'OFF'},
+		            '10011':{'version':'1.0','appSecret':'<![CDATA[18@5xT9UR%dY#d36]]>','name':'北冰洋','isOpen':'OFF'}
+	       		}
+			},<!-- 福建 -->
+	       'CERT_SIGNATURE_832':{
+	       		'USB_SIGNATURE_CHECK':'ON',
+	       		'VENDORS':{
+	       			'10000':{'version':'1.0.3.2','appSecret':'<![CDATA[5xRx9H4#5fY3e28@]]>','name':'华旭金卡','isOpen':'ON'},
+		            '10001':{'version':'1.0.3.2','appSecret':'<![CDATA[1%x7H4#2UtPy52@d]]>','name':'深圳华视','isOpen':'ON'},
+		            '10002':{'version':'2.6.5','appSecret':'<![CDATA[4#5fY18@3eRx5x3H]]>','name':'山东卡尔','isOpen':'ON'},
+		            '10003':{'version':'2.2.2','appSecret':'<![CDATA[R%dY#d3618@5xT9U]]>','name':'山东信通','isOpen':'ON'},
+		            '10004':{'version':'1.1','appSecret':'<![CDATA[9PURePy&L7#2R18@]]>','name':'长春鸿达','isOpen':'ON'},
+		            '10005':{'version':'2.2.2xxxx','appSecret':'<![CDATA[8g%xtPy52@YRxRe6]]>','name':'上海普天','isOpen':'ON'},
+		            '10006':{'version':'2.24','appSecret':'<![CDATA[74#2iBN4#29eV%xW]]>','name':'因纳伟盛','isOpen':'ON'},
+		            '10007':{'version':'1.0.0.5','appSecret':'<![CDATA[Hty52@d1Xp$4#2tt]]>','name':'山东神思','isOpen':'ON'},
+		            '10008':{'version':'4.0.1.2','appSecret':'<![CDATA[x3H4#5fYx18@53e&]]>','name':'精伦电子','isOpen':'ON'},
+		            '10009':{'version':'2.2.3','appSecret':'<![CDATA[vePy18@R9P&L7#3E]]>','name':'内蒙古银安科技','isOpen':'ON'},
+		            '10010':{'version':'1.0','appSecret':'<![CDATA[&L7#2R9PURePy18@]]>','name':'南京亿数','isOpen':'OFF'},
+		            '10011':{'version':'1.0','appSecret':'<![CDATA[18@5xT9UR%dY#d36]]>','name':'北冰洋','isOpen':'OFF'}
+	       		}
+			},<!-- 江苏 -->	       
+	       'CERT_SIGNATURE_846':{
+	       		'USB_SIGNATURE_CHECK':'ON',
+	       		'VENDORS':{
+	       			'10000':{'version':'1.0.3.2','appSecret':'<![CDATA[5xRx9H4#5fY3e28@]]>','name':'华旭金卡','isOpen':'ON'},
+		            '10001':{'version':'1.0.3.2','appSecret':'<![CDATA[1%x7H4#2UtPy52@d]]>','name':'深圳华视','isOpen':'ON'},
+		            '10002':{'version':'2.6.5','appSecret':'<![CDATA[4#5fY18@3eRx5x3H]]>','name':'山东卡尔','isOpen':'ON'},
+		            '10003':{'version':'2.2.2','appSecret':'<![CDATA[R%dY#d3618@5xT9U]]>','name':'山东信通','isOpen':'ON'},
+		            '10004':{'version':'1.1','appSecret':'<![CDATA[9PURePy&L7#2R18@]]>','name':'长春鸿达','isOpen':'ON'},
+		            '10005':{'version':'2.2.2','appSecret':'<![CDATA[8g%xtPy52@YRxRe6]]>','name':'上海普天','isOpen':'ON'},
+		            '10006':{'version':'2.24','appSecret':'<![CDATA[74#2iBN4#29eV%xW]]>','name':'因纳伟盛','isOpen':'ON'},
+		            '10007':{'version':'1.0.0.5','appSecret':'<![CDATA[Hty52@d1Xp$4#2tt]]>','name':'山东神思','isOpen':'ON'},
+		            '10008':{'version':'4.0.1.2','appSecret':'<![CDATA[x3H4#5fYx18@53e&]]>','name':'精伦电子','isOpen':'ON'},
+		            '10009':{'version':'2.2.3','appSecret':'<![CDATA[vePy18@R9P&L7#3E]]>','name':'内蒙古银安科技','isOpen':'ON'},
+		            '10010':{'version':'1.0','appSecret':'<![CDATA[&L7#2R9PURePy18@]]>','name':'南京亿数','isOpen':'OFF'},
+		            '10011':{'version':'1.0','appSecret':'<![CDATA[18@5xT9UR%dY#d36]]>','name':'北冰洋','isOpen':'OFF'}
+	       		}
+			},<!-- 海南 -->
+	       'CERT_SIGNATURE_864':{
+	       		'USB_SIGNATURE_CHECK':'ON',
+	       		'VENDORS':{
+	       			'10000':{'version':'1.0.3.2','appSecret':'<![CDATA[5xRx9H4#5fY3e28@]]>','name':'华旭金卡','isOpen':'ON'},
+		            '10001':{'version':'1.0.3.2','appSecret':'<![CDATA[1%x7H4#2UtPy52@d]]>','name':'深圳华视','isOpen':'ON'},
+		            '10002':{'version':'2.6.5','appSecret':'<![CDATA[4#5fY18@3eRx5x3H]]>','name':'山东卡尔','isOpen':'ON'},
+		            '10003':{'version':'2.2.2','appSecret':'<![CDATA[R%dY#d3618@5xT9U]]>','name':'山东信通','isOpen':'ON'},
+		            '10004':{'version':'1.1','appSecret':'<![CDATA[9PURePy&L7#2R18@]]>','name':'长春鸿达','isOpen':'ON'},
+		            '10005':{'version':'2.2.2','appSecret':'<![CDATA[8g%xtPy52@YRxRe6]]>','name':'上海普天','isOpen':'ON'},
+		            '10006':{'version':'2.24','appSecret':'<![CDATA[74#2iBN4#29eV%xW]]>','name':'因纳伟盛','isOpen':'ON'},
+		            '10007':{'version':'1.0.0.5','appSecret':'<![CDATA[Hty52@d1Xp$4#2tt]]>','name':'山东神思','isOpen':'ON'},
+		            '10008':{'version':'4.0.1.2','appSecret':'<![CDATA[x3H4#5fYx18@53e&]]>','name':'精伦电子','isOpen':'ON'},
+		            '10009':{'version':'2.2.3','appSecret':'<![CDATA[vePy18@R9P&L7#3E]]>','name':'内蒙古银安科技','isOpen':'ON'},
+		            '10010':{'version':'1.0','appSecret':'<![CDATA[&L7#2R9PURePy18@]]>','name':'南京亿数','isOpen':'OFF'},
+		            '10011':{'version':'1.0','appSecret':'<![CDATA[18@5xT9UR%dY#d36]]>','name':'北冰洋','isOpen':'OFF'}
+	       		}
+			},<!-- 宁夏 -->
+	       'CERT_SIGNATURE_814':{
+	       		'USB_SIGNATURE_CHECK':'ON',
+	       		'VENDORS':{
+	       			'10000':{'version':'1.0.3.2','appSecret':'<![CDATA[5xRx9H4#5fY3e28@]]>','name':'华旭金卡','isOpen':'ON'},
+		            '10001':{'version':'1.0.3.2','appSecret':'<![CDATA[1%x7H4#2UtPy52@d]]>','name':'深圳华视','isOpen':'ON'},
+		            '10002':{'version':'2.6.5','appSecret':'<![CDATA[4#5fY18@3eRx5x3H]]>','name':'山东卡尔','isOpen':'ON'},
+		            '10003':{'version':'2.2.2','appSecret':'<![CDATA[R%dY#d3618@5xT9U]]>','name':'山东信通','isOpen':'ON'},
+		            '10004':{'version':'1.1','appSecret':'<![CDATA[9PURePy&L7#2R18@]]>','name':'长春鸿达','isOpen':'ON'},
+		            '10005':{'version':'2.2.2','appSecret':'<![CDATA[8g%xtPy52@YRxRe6]]>','name':'上海普天','isOpen':'ON'},
+		            '10006':{'version':'2.24','appSecret':'<![CDATA[74#2iBN4#29eV%xW]]>','name':'因纳伟盛','isOpen':'ON'},
+		            '10007':{'version':'1.0.0.5','appSecret':'<![CDATA[Hty52@d1Xp$4#2tt]]>','name':'山东神思','isOpen':'ON'},
+		            '10008':{'version':'4.0.1.2','appSecret':'<![CDATA[x3H4#5fYx18@53e&]]>','name':'精伦电子','isOpen':'ON'},
+		            '10009':{'version':'2.2.3','appSecret':'<![CDATA[vePy18@R9P&L7#3E]]>','name':'内蒙古银安科技','isOpen':'ON'},
+		            '10010':{'version':'1.0','appSecret':'<![CDATA[&L7#2R9PURePy18@]]>','name':'南京亿数','isOpen':'OFF'},
+		            '10011':{'version':'1.0','appSecret':'<![CDATA[18@5xT9UR%dY#d36]]>','name':'北冰洋','isOpen':'OFF'}
+	       		}
+			},<!-- 山西 -->
+	       'CERT_SIGNATURE_853':{
+	       		'USB_SIGNATURE_CHECK':'ON',
+	       		'VENDORS':{
+	       			'10000':{'version':'1.0.3.2','appSecret':'<![CDATA[5xRx9H4#5fY3e28@]]>','name':'华旭金卡','isOpen':'ON'},
+		            '10001':{'version':'1.0.3.2','appSecret':'<![CDATA[1%x7H4#2UtPy52@d]]>','name':'深圳华视','isOpen':'ON'},
+		            '10002':{'version':'2.6.5','appSecret':'<![CDATA[4#5fY18@3eRx5x3H]]>','name':'山东卡尔','isOpen':'ON'},
+		            '10003':{'version':'2.2.2','appSecret':'<![CDATA[R%dY#d3618@5xT9U]]>','name':'山东信通','isOpen':'ON'},
+		            '10004':{'version':'1.1','appSecret':'<![CDATA[9PURePy&L7#2R18@]]>','name':'长春鸿达','isOpen':'ON'},
+		            '10005':{'version':'2.2.2','appSecret':'<![CDATA[8g%xtPy52@YRxRe6]]>','name':'上海普天','isOpen':'ON'},
+		            '10006':{'version':'2.24','appSecret':'<![CDATA[74#2iBN4#29eV%xW]]>','name':'因纳伟盛','isOpen':'ON'},
+		            '10007':{'version':'1.0.0.5','appSecret':'<![CDATA[Hty52@d1Xp$4#2tt]]>','name':'山东神思','isOpen':'ON'},
+		            '10008':{'version':'4.0.1.2','appSecret':'<![CDATA[x3H4#5fYx18@53e&]]>','name':'精伦电子','isOpen':'ON'},
+		            '10009':{'version':'2.2.3','appSecret':'<![CDATA[vePy18@R9P&L7#3E]]>','name':'内蒙古银安科技','isOpen':'ON'},
+		            '10010':{'version':'1.0','appSecret':'<![CDATA[&L7#2R9PURePy18@]]>','name':'南京亿数','isOpen':'OFF'},
+		            '10011':{'version':'1.0','appSecret':'<![CDATA[18@5xT9UR%dY#d36]]>','name':'北冰洋','isOpen':'OFF'}
+	       		}
+			},<!-- 云南 -->
+	       'CERT_SIGNATURE_836':{
+	       		'USB_SIGNATURE_CHECK':'ON',
+	       		'VENDORS':{
+	       			'10000':{'version':'1.0.3.2','appSecret':'<![CDATA[5xRx9H4#5fY3e28@]]>','name':'华旭金卡','isOpen':'ON'},
+		            '10001':{'version':'1.0.3.2','appSecret':'<![CDATA[1%x7H4#2UtPy52@d]]>','name':'深圳华视','isOpen':'ON'},
+		            '10002':{'version':'2.6.5','appSecret':'<![CDATA[4#5fY18@3eRx5x3H]]>','name':'山东卡尔','isOpen':'ON'},
+		            '10003':{'version':'2.2.2','appSecret':'<![CDATA[R%dY#d3618@5xT9U]]>','name':'山东信通','isOpen':'ON'},
+		            '10004':{'version':'1.1','appSecret':'<![CDATA[9PURePy&L7#2R18@]]>','name':'长春鸿达','isOpen':'ON'},
+		            '10005':{'version':'2.2.2','appSecret':'<![CDATA[8g%xtPy52@YRxRe6]]>','name':'上海普天','isOpen':'ON'},
+		            '10006':{'version':'2.24','appSecret':'<![CDATA[74#2iBN4#29eV%xW]]>','name':'因纳伟盛','isOpen':'ON'},
+		            '10007':{'version':'1.0.0.5','appSecret':'<![CDATA[Hty52@d1Xp$4#2tt]]>','name':'山东神思','isOpen':'ON'},
+		            '10008':{'version':'4.0.1.2','appSecret':'<![CDATA[x3H4#5fYx18@53e&]]>','name':'精伦电子','isOpen':'ON'},
+		            '10009':{'version':'2.2.3','appSecret':'<![CDATA[vePy18@R9P&L7#3E]]>','name':'内蒙古银安科技','isOpen':'ON'},
+		            '10010':{'version':'1.0','appSecret':'<![CDATA[&L7#2R9PURePy18@]]>','name':'南京亿数','isOpen':'OFF'},
+		            '10011':{'version':'1.0','appSecret':'<![CDATA[18@5xT9UR%dY#d36]]>','name':'北冰洋','isOpen':'OFF'}
+	       		}
+		 	},<!-- 江西 -->
+	       'CERT_SIGNATURE_837':{
+	       		'USB_SIGNATURE_CHECK':'ON',
+	       		'VENDORS':{
+	       			'10000':{'version':'1.0.3.2','appSecret':'<![CDATA[5xRx9H4#5fY3e28@]]>','name':'华旭金卡','isOpen':'ON'},
+		            '10001':{'version':'1.0.3.2','appSecret':'<![CDATA[1%x7H4#2UtPy52@d]]>','name':'深圳华视','isOpen':'ON'},
+		            '10002':{'version':'2.6.5','appSecret':'<![CDATA[4#5fY18@3eRx5x3H]]>','name':'山东卡尔','isOpen':'ON'},
+		            '10003':{'version':'2.2.2','appSecret':'<![CDATA[R%dY#d3618@5xT9U]]>','name':'山东信通','isOpen':'ON'},
+		            '10004':{'version':'1.1','appSecret':'<![CDATA[9PURePy&L7#2R18@]]>','name':'长春鸿达','isOpen':'ON'},
+		            '10005':{'version':'2.2.2','appSecret':'<![CDATA[8g%xtPy52@YRxRe6]]>','name':'上海普天','isOpen':'ON'},
+		            '10006':{'version':'2.24','appSecret':'<![CDATA[74#2iBN4#29eV%xW]]>','name':'因纳伟盛','isOpen':'ON'},
+		            '10007':{'version':'1.0.0.5','appSecret':'<![CDATA[Hty52@d1Xp$4#2tt]]>','name':'山东神思','isOpen':'ON'},
+		            '10008':{'version':'4.0.1.2','appSecret':'<![CDATA[x3H4#5fYx18@53e&]]>','name':'精伦电子','isOpen':'ON'},
+		            '10009':{'version':'2.2.3','appSecret':'<![CDATA[vePy18@R9P&L7#3E]]>','name':'内蒙古银安科技','isOpen':'ON'},
+		            '10010':{'version':'1.0','appSecret':'<![CDATA[&L7#2R9PURePy18@]]>','name':'南京亿数','isOpen':'OFF'},
+		            '10011':{'version':'1.0','appSecret':'<![CDATA[18@5xT9UR%dY#d36]]>','name':'北冰洋','isOpen':'OFF'}
+	       		}
+			},<!-- 山东 -->
+	       'CERT_SIGNATURE_811':{
+	       		'USB_SIGNATURE_CHECK':'ON',
+	       		'VENDORS':{
+	       			'10000':{'version':'1.0.3.2','appSecret':'<![CDATA[5xRx9H4#5fY3e28@]]>','name':'华旭金卡','isOpen':'ON'},
+		            '10001':{'version':'1.0.3.2','appSecret':'<![CDATA[1%x7H4#2UtPy52@d]]>','name':'深圳华视','isOpen':'ON'},
+		            '10002':{'version':'2.6.5','appSecret':'<![CDATA[4#5fY18@3eRx5x3H]]>','name':'山东卡尔','isOpen':'ON'},
+		            '10003':{'version':'2.2.2','appSecret':'<![CDATA[R%dY#d3618@5xT9U]]>','name':'山东信通','isOpen':'ON'},
+		            '10004':{'version':'1.1','appSecret':'<![CDATA[9PURePy&L7#2R18@]]>','name':'长春鸿达','isOpen':'ON'},
+		            '10005':{'version':'2.2.2','appSecret':'<![CDATA[8g%xtPy52@YRxRe6]]>','name':'上海普天','isOpen':'ON'},
+		            '10006':{'version':'2.24','appSecret':'<![CDATA[74#2iBN4#29eV%xW]]>','name':'因纳伟盛','isOpen':'ON'},
+		            '10007':{'version':'1.0.0.5','appSecret':'<![CDATA[Hty52@d1Xp$4#2tt]]>','name':'山东神思','isOpen':'ON'},
+		            '10008':{'version':'4.0.1.2','appSecret':'<![CDATA[x3H4#5fYx18@53e&]]>','name':'精伦电子','isOpen':'ON'},
+		            '10009':{'version':'2.2.3','appSecret':'<![CDATA[vePy18@R9P&L7#3E]]>','name':'内蒙古银安科技','isOpen':'ON'},
+		            '10010':{'version':'1.0','appSecret':'<![CDATA[&L7#2R9PURePy18@]]>','name':'南京亿数','isOpen':'OFF'},
+		            '10011':{'version':'1.0','appSecret':'<![CDATA[18@5xT9UR%dY#d36]]>','name':'北冰洋','isOpen':'OFF'}
+	       		}
+			},<!-- 北京 -->
+	       'CERT_SIGNATURE_843':{
+	       		'USB_SIGNATURE_CHECK':'ON',
+	       		'VENDORS':{
+	       			'10000':{'version':'1.0.3.2','appSecret':'<![CDATA[5xRx9H4#5fY3e28@]]>','name':'华旭金卡','isOpen':'ON'},
+		            '10001':{'version':'1.0.3.2','appSecret':'<![CDATA[1%x7H4#2UtPy52@d]]>','name':'深圳华视','isOpen':'ON'},
+		            '10002':{'version':'2.6.5','appSecret':'<![CDATA[4#5fY18@3eRx5x3H]]>','name':'山东卡尔','isOpen':'ON'},
+		            '10003':{'version':'2.2.2','appSecret':'<![CDATA[R%dY#d3618@5xT9U]]>','name':'山东信通','isOpen':'ON'},
+		            '10004':{'version':'1.1','appSecret':'<![CDATA[9PURePy&L7#2R18@]]>','name':'长春鸿达','isOpen':'ON'},
+		            '10005':{'version':'2.2.2','appSecret':'<![CDATA[8g%xtPy52@YRxRe6]]>','name':'上海普天','isOpen':'ON'},
+		            '10006':{'version':'2.24','appSecret':'<![CDATA[74#2iBN4#29eV%xW]]>','name':'因纳伟盛','isOpen':'ON'},
+		            '10007':{'version':'1.0.0.5','appSecret':'<![CDATA[Hty52@d1Xp$4#2tt]]>','name':'山东神思','isOpen':'ON'},
+		            '10008':{'version':'4.0.1.2','appSecret':'<![CDATA[x3H4#5fYx18@53e&]]>','name':'精伦电子','isOpen':'ON'},
+		            '10009':{'version':'2.2.3','appSecret':'<![CDATA[vePy18@R9P&L7#3E]]>','name':'内蒙古银安科技','isOpen':'ON'},
+		            '10010':{'version':'1.0','appSecret':'<![CDATA[&L7#2R9PURePy18@]]>','name':'南京亿数','isOpen':'OFF'},
+		            '10011':{'version':'1.0','appSecret':'<![CDATA[18@5xT9UR%dY#d36]]>','name':'北冰洋','isOpen':'OFF'}
+	       		}
+			},<!-- 湖南 -->
+	       'CERT_SIGNATURE_851':{
+	       		'USB_SIGNATURE_CHECK':'ON',
+	       		'VENDORS':{
+	       			'10000':{'version':'1.0.3.2','appSecret':'<![CDATA[5xRx9H4#5fY3e28@]]>','name':'华旭金卡','isOpen':'ON'},
+		            '10001':{'version':'1.0.3.2','appSecret':'<![CDATA[1%x7H4#2UtPy52@d]]>','name':'深圳华视','isOpen':'ON'},
+		            '10002':{'version':'2.6.5','appSecret':'<![CDATA[4#5fY18@3eRx5x3H]]>','name':'山东卡尔','isOpen':'ON'},
+		            '10003':{'version':'2.2.2','appSecret':'<![CDATA[R%dY#d3618@5xT9U]]>','name':'山东信通','isOpen':'ON'},
+		            '10004':{'version':'1.1','appSecret':'<![CDATA[9PURePy&L7#2R18@]]>','name':'长春鸿达','isOpen':'ON'},
+		            '10005':{'version':'2.2.2','appSecret':'<![CDATA[8g%xtPy52@YRxRe6]]>','name':'上海普天','isOpen':'ON'},
+		            '10006':{'version':'2.24','appSecret':'<![CDATA[74#2iBN4#29eV%xW]]>','name':'因纳伟盛','isOpen':'ON'},
+		            '10007':{'version':'1.0.0.5','appSecret':'<![CDATA[Hty52@d1Xp$4#2tt]]>','name':'山东神思','isOpen':'ON'},
+		            '10008':{'version':'4.0.1.2','appSecret':'<![CDATA[x3H4#5fYx18@53e&]]>','name':'精伦电子','isOpen':'ON'},
+		            '10009':{'version':'2.2.3','appSecret':'<![CDATA[vePy18@R9P&L7#3E]]>','name':'内蒙古银安科技','isOpen':'ON'},
+		            '10010':{'version':'1.0','appSecret':'<![CDATA[&L7#2R9PURePy18@]]>','name':'南京亿数','isOpen':'OFF'},
+		            '10011':{'version':'1.0','appSecret':'<![CDATA[18@5xT9UR%dY#d36]]>','name':'北冰洋','isOpen':'OFF'}
+	       		}
+			},<!-- 四川 -->
+	       'CERT_SIGNATURE_844':{
+	       		'USB_SIGNATURE_CHECK':'ON',
+	       		'VENDORS':{
+	       			'10000':{'version':'1.0.3.2','appSecret':'<![CDATA[5xRx9H4#5fY3e28@]]>','name':'华旭金卡','isOpen':'ON'},
+		            '10001':{'version':'1.0.3.2','appSecret':'<![CDATA[1%x7H4#2UtPy52@d]]>','name':'深圳华视','isOpen':'ON'},
+		            '10002':{'version':'2.6.5','appSecret':'<![CDATA[4#5fY18@3eRx5x3H]]>','name':'山东卡尔','isOpen':'ON'},
+		            '10003':{'version':'2.2.2','appSecret':'<![CDATA[R%dY#d3618@5xT9U]]>','name':'山东信通','isOpen':'ON'},
+		            '10004':{'version':'1.1','appSecret':'<![CDATA[9PURePy&L7#2R18@]]>','name':'长春鸿达','isOpen':'ON'},
+		            '10005':{'version':'2.2.2','appSecret':'<![CDATA[8g%xtPy52@YRxRe6]]>','name':'上海普天','isOpen':'ON'},
+		            '10006':{'version':'2.24','appSecret':'<![CDATA[74#2iBN4#29eV%xW]]>','name':'因纳伟盛','isOpen':'ON'},
+		            '10007':{'version':'1.0.0.5','appSecret':'<![CDATA[Hty52@d1Xp$4#2tt]]>','name':'山东神思','isOpen':'ON'},
+		            '10008':{'version':'4.0.1.2','appSecret':'<![CDATA[x3H4#5fYx18@53e&]]>','name':'精伦电子','isOpen':'ON'},
+		            '10009':{'version':'2.2.3','appSecret':'<![CDATA[vePy18@R9P&L7#3E]]>','name':'内蒙古银安科技','isOpen':'ON'},
+		            '10010':{'version':'1.0','appSecret':'<![CDATA[&L7#2R9PURePy18@]]>','name':'南京亿数','isOpen':'OFF'},
+		            '10011':{'version':'1.0','appSecret':'<![CDATA[18@5xT9UR%dY#d36]]>','name':'北冰洋','isOpen':'OFF'}
+	       		}
+			},<!-- 广东 -->
+	       'CERT_SIGNATURE_831':{
+	       		'USB_SIGNATURE_CHECK':'ON',
+	       		'VENDORS':{
+	       			'10000':{'version':'1.0.3.2','appSecret':'<![CDATA[5xRx9H4#5fY3e28@]]>','name':'华旭金卡','isOpen':'ON'},
+		            '10001':{'version':'1.0.3.2','appSecret':'<![CDATA[1%x7H4#2UtPy52@d]]>','name':'深圳华视','isOpen':'ON'},
+		            '10002':{'version':'2.6.5','appSecret':'<![CDATA[4#5fY18@3eRx5x3H]]>','name':'山东卡尔','isOpen':'ON'},
+		            '10003':{'version':'2.2.2','appSecret':'<![CDATA[R%dY#d3618@5xT9U]]>','name':'山东信通','isOpen':'ON'},
+		            '10004':{'version':'1.1','appSecret':'<![CDATA[9PURePy&L7#2R18@]]>','name':'长春鸿达','isOpen':'ON'},
+		            '10005':{'version':'2.2.2','appSecret':'<![CDATA[8g%xtPy52@YRxRe6]]>','name':'上海普天','isOpen':'ON'},
+		            '10006':{'version':'2.24','appSecret':'<![CDATA[74#2iBN4#29eV%xW]]>','name':'因纳伟盛','isOpen':'ON'},
+		            '10007':{'version':'1.0.0.5','appSecret':'<![CDATA[Hty52@d1Xp$4#2tt]]>','name':'山东神思','isOpen':'ON'},
+		            '10008':{'version':'4.0.1.2','appSecret':'<![CDATA[x3H4#5fYx18@53e&]]>','name':'精伦电子','isOpen':'ON'},
+		            '10009':{'version':'2.2.3','appSecret':'<![CDATA[vePy18@R9P&L7#3E]]>','name':'内蒙古银安科技','isOpen':'ON'},
+		            '10010':{'version':'1.0','appSecret':'<![CDATA[&L7#2R9PURePy18@]]>','name':'南京亿数','isOpen':'OFF'},
+		            '10011':{'version':'1.0','appSecret':'<![CDATA[18@5xT9UR%dY#d36]]>','name':'北冰洋','isOpen':'OFF'}
+	       		}
+			},<!-- 上海 -->
+	       'CERT_SIGNATURE_812':{
+	       		'USB_SIGNATURE_CHECK':'ON',
+	       		'VENDORS':{
+	       			'10000':{'version':'1.0.3.2','appSecret':'<![CDATA[5xRx9H4#5fY3e28@]]>','name':'华旭金卡','isOpen':'ON'},
+		            '10001':{'version':'1.0.3.2','appSecret':'<![CDATA[1%x7H4#2UtPy52@d]]>','name':'深圳华视','isOpen':'ON'},
+		            '10002':{'version':'2.6.5','appSecret':'<![CDATA[4#5fY18@3eRx5x3H]]>','name':'山东卡尔','isOpen':'ON'},
+		            '10003':{'version':'2.2.2','appSecret':'<![CDATA[R%dY#d3618@5xT9U]]>','name':'山东信通','isOpen':'ON'},
+		            '10004':{'version':'1.1','appSecret':'<![CDATA[9PURePy&L7#2R18@]]>','name':'长春鸿达','isOpen':'ON'},
+		            '10005':{'version':'2.2.2','appSecret':'<![CDATA[8g%xtPy52@YRxRe6]]>','name':'上海普天','isOpen':'ON'},
+		            '10006':{'version':'2.24','appSecret':'<![CDATA[74#2iBN4#29eV%xW]]>','name':'因纳伟盛','isOpen':'ON'},
+		            '10007':{'version':'1.0.0.5','appSecret':'<![CDATA[Hty52@d1Xp$4#2tt]]>','name':'山东神思','isOpen':'ON'},
+		            '10008':{'version':'4.0.1.2','appSecret':'<![CDATA[x3H4#5fYx18@53e&]]>','name':'精伦电子','isOpen':'ON'},
+		            '10009':{'version':'2.2.3','appSecret':'<![CDATA[vePy18@R9P&L7#3E]]>','name':'内蒙古银安科技','isOpen':'ON'},
+		            '10010':{'version':'1.0','appSecret':'<![CDATA[&L7#2R9PURePy18@]]>','name':'南京亿数','isOpen':'OFF'},
+		            '10011':{'version':'1.0','appSecret':'<![CDATA[18@5xT9UR%dY#d36]]>','name':'北冰洋','isOpen':'OFF'}
+	       		}
+			},<!-- 天津 -->
+	       'CERT_SIGNATURE_813':{
+	       		'USB_SIGNATURE_CHECK':'ON',
+	       		'VENDORS':{
+	       			'10000':{'version':'1.0.3.2','appSecret':'<![CDATA[5xRx9H4#5fY3e28@]]>','name':'华旭金卡','isOpen':'ON'},
+		            '10001':{'version':'1.0.3.2','appSecret':'<![CDATA[1%x7H4#2UtPy52@d]]>','name':'深圳华视','isOpen':'ON'},
+		            '10002':{'version':'2.6.5','appSecret':'<![CDATA[4#5fY18@3eRx5x3H]]>','name':'山东卡尔','isOpen':'ON'},
+		            '10003':{'version':'2.2.2','appSecret':'<![CDATA[R%dY#d3618@5xT9U]]>','name':'山东信通','isOpen':'ON'},
+		            '10004':{'version':'1.1','appSecret':'<![CDATA[9PURePy&L7#2R18@]]>','name':'长春鸿达','isOpen':'ON'},
+		            '10005':{'version':'2.2.2','appSecret':'<![CDATA[8g%xtPy52@YRxRe6]]>','name':'上海普天','isOpen':'ON'},
+		            '10006':{'version':'2.24','appSecret':'<![CDATA[74#2iBN4#29eV%xW]]>','name':'因纳伟盛','isOpen':'ON'},
+		            '10007':{'version':'1.0.0.5','appSecret':'<![CDATA[Hty52@d1Xp$4#2tt]]>','name':'山东神思','isOpen':'ON'},
+		            '10008':{'version':'4.0.1.2','appSecret':'<![CDATA[x3H4#5fYx18@53e&]]>','name':'精伦电子','isOpen':'ON'},
+		            '10009':{'version':'2.2.3','appSecret':'<![CDATA[vePy18@R9P&L7#3E]]>','name':'内蒙古银安科技','isOpen':'ON'},
+		            '10010':{'version':'1.0','appSecret':'<![CDATA[&L7#2R9PURePy18@]]>','name':'南京亿数','isOpen':'OFF'},
+		            '10011':{'version':'1.0','appSecret':'<![CDATA[18@5xT9UR%dY#d36]]>','name':'北冰洋','isOpen':'OFF'}
+	       		}
+			},<!-- 河北 -->
+	       'CERT_SIGNATURE_841':{
+	       		'USB_SIGNATURE_CHECK':'ON',
+	       		'VENDORS':{
+	       			'10000':{'version':'1.0.3.2','appSecret':'<![CDATA[5xRx9H4#5fY3e28@]]>','name':'华旭金卡','isOpen':'ON'},
+		            '10001':{'version':'1.0.3.2','appSecret':'<![CDATA[1%x7H4#2UtPy52@d]]>','name':'深圳华视','isOpen':'ON'},
+		            '10002':{'version':'2.6.5','appSecret':'<![CDATA[4#5fY18@3eRx5x3H]]>','name':'山东卡尔','isOpen':'ON'},
+		            '10003':{'version':'2.2.2','appSecret':'<![CDATA[R%dY#d3618@5xT9U]]>','name':'山东信通','isOpen':'ON'},
+		            '10004':{'version':'1.1','appSecret':'<![CDATA[9PURePy&L7#2R18@]]>','name':'长春鸿达','isOpen':'ON'},
+		            '10005':{'version':'2.2.2','appSecret':'<![CDATA[8g%xtPy52@YRxRe6]]>','name':'上海普天','isOpen':'ON'},
+		            '10006':{'version':'2.24','appSecret':'<![CDATA[74#2iBN4#29eV%xW]]>','name':'因纳伟盛','isOpen':'ON'},
+		            '10007':{'version':'1.0.0.5','appSecret':'<![CDATA[Hty52@d1Xp$4#2tt]]>','name':'山东神思','isOpen':'ON'},
+		            '10008':{'version':'4.0.1.2','appSecret':'<![CDATA[x3H4#5fYx18@53e&]]>','name':'精伦电子','isOpen':'ON'},
+		            '10009':{'version':'2.2.3','appSecret':'<![CDATA[vePy18@R9P&L7#3E]]>','name':'内蒙古银安科技','isOpen':'ON'},
+		            '10010':{'version':'1.0','appSecret':'<![CDATA[&L7#2R9PURePy18@]]>','name':'南京亿数','isOpen':'OFF'},
+		            '10011':{'version':'1.0','appSecret':'<![CDATA[18@5xT9UR%dY#d36]]>','name':'北冰洋','isOpen':'OFF'}
+	       		}
+			},<!-- 河南 -->
+	       'CERT_SIGNATURE_821':{
+	       		'USB_SIGNATURE_CHECK':'ON',
+	       		'VENDORS':{
+	       			'10000':{'version':'1.0.3.2','appSecret':'<![CDATA[5xRx9H4#5fY3e28@]]>','name':'华旭金卡','isOpen':'ON'},
+		            '10001':{'version':'1.0.3.2','appSecret':'<![CDATA[1%x7H4#2UtPy52@d]]>','name':'深圳华视','isOpen':'ON'},
+		            '10002':{'version':'2.6.5','appSecret':'<![CDATA[4#5fY18@3eRx5x3H]]>','name':'山东卡尔','isOpen':'ON'},
+		            '10003':{'version':'2.2.2','appSecret':'<![CDATA[R%dY#d3618@5xT9U]]>','name':'山东信通','isOpen':'ON'},
+		            '10004':{'version':'1.1','appSecret':'<![CDATA[9PURePy&L7#2R18@]]>','name':'长春鸿达','isOpen':'ON'},
+		            '10005':{'version':'2.2.2','appSecret':'<![CDATA[8g%xtPy52@YRxRe6]]>','name':'上海普天','isOpen':'ON'},
+		            '10006':{'version':'2.24','appSecret':'<![CDATA[74#2iBN4#29eV%xW]]>','name':'因纳伟盛','isOpen':'ON'},
+		            '10007':{'version':'1.0.0.5','appSecret':'<![CDATA[Hty52@d1Xp$4#2tt]]>','name':'山东神思','isOpen':'ON'},
+		            '10008':{'version':'4.0.1.2','appSecret':'<![CDATA[x3H4#5fYx18@53e&]]>','name':'精伦电子','isOpen':'ON'},
+		            '10009':{'version':'2.2.3','appSecret':'<![CDATA[vePy18@R9P&L7#3E]]>','name':'内蒙古银安科技','isOpen':'ON'},
+		            '10010':{'version':'1.0','appSecret':'<![CDATA[&L7#2R9PURePy18@]]>','name':'南京亿数','isOpen':'OFF'},
+		            '10011':{'version':'1.0','appSecret':'<![CDATA[18@5xT9UR%dY#d36]]>','name':'北冰洋','isOpen':'OFF'}
+	       		}
+			},<!-- 辽宁 -->
+	       'CERT_SIGNATURE_822':{
+	       		'USB_SIGNATURE_CHECK':'ON',
+	       		'VENDORS':{
+	       			'10000':{'version':'1.0.3.2','appSecret':'<![CDATA[5xRx9H4#5fY3e28@]]>','name':'华旭金卡','isOpen':'ON'},
+		            '10001':{'version':'1.0.3.2','appSecret':'<![CDATA[1%x7H4#2UtPy52@d]]>','name':'深圳华视','isOpen':'ON'},
+		            '10002':{'version':'2.6.5','appSecret':'<![CDATA[4#5fY18@3eRx5x3H]]>','name':'山东卡尔','isOpen':'ON'},
+		            '10003':{'version':'2.2.2','appSecret':'<![CDATA[R%dY#d3618@5xT9U]]>','name':'山东信通','isOpen':'ON'},
+		            '10004':{'version':'1.1','appSecret':'<![CDATA[9PURePy&L7#2R18@]]>','name':'长春鸿达','isOpen':'ON'},
+		            '10005':{'version':'2.2.2','appSecret':'<![CDATA[8g%xtPy52@YRxRe6]]>','name':'上海普天','isOpen':'ON'},
+		            '10006':{'version':'2.24','appSecret':'<![CDATA[74#2iBN4#29eV%xW]]>','name':'因纳伟盛','isOpen':'ON'},
+		            '10007':{'version':'1.0.0.5','appSecret':'<![CDATA[Hty52@d1Xp$4#2tt]]>','name':'山东神思','isOpen':'ON'},
+		            '10008':{'version':'4.0.1.2','appSecret':'<![CDATA[x3H4#5fYx18@53e&]]>','name':'精伦电子','isOpen':'ON'},
+		            '10009':{'version':'2.2.3','appSecret':'<![CDATA[vePy18@R9P&L7#3E]]>','name':'内蒙古银安科技','isOpen':'ON'},
+		            '10010':{'version':'1.0','appSecret':'<![CDATA[&L7#2R9PURePy18@]]>','name':'南京亿数','isOpen':'OFF'},
+		            '10011':{'version':'1.0','appSecret':'<![CDATA[18@5xT9UR%dY#d36]]>','name':'北冰洋','isOpen':'OFF'}
+	       		}
+			},<!-- 吉林 -->
+	       'CERT_SIGNATURE_834':{
+	       		'USB_SIGNATURE_CHECK':'ON',
+	       		'VENDORS':{
+	       			'10000':{'version':'1.0.3.2','appSecret':'<![CDATA[5xRx9H4#5fY3e28@]]>','name':'华旭金卡','isOpen':'ON'},
+		            '10001':{'version':'1.0.3.2','appSecret':'<![CDATA[1%x7H4#2UtPy52@d]]>','name':'深圳华视','isOpen':'ON'},
+		            '10002':{'version':'2.6.5','appSecret':'<![CDATA[4#5fY18@3eRx5x3H]]>','name':'山东卡尔','isOpen':'ON'},
+		            '10003':{'version':'2.2.2','appSecret':'<![CDATA[R%dY#d3618@5xT9U]]>','name':'山东信通','isOpen':'ON'},
+		            '10004':{'version':'1.1','appSecret':'<![CDATA[9PURePy&L7#2R18@]]>','name':'长春鸿达','isOpen':'ON'},
+		            '10005':{'version':'2.2.2','appSecret':'<![CDATA[8g%xtPy52@YRxRe6]]>','name':'上海普天','isOpen':'ON'},
+		            '10006':{'version':'2.24','appSecret':'<![CDATA[74#2iBN4#29eV%xW]]>','name':'因纳伟盛','isOpen':'ON'},
+		            '10007':{'version':'1.0.0.5','appSecret':'<![CDATA[Hty52@d1Xp$4#2tt]]>','name':'山东神思','isOpen':'ON'},
+		            '10008':{'version':'4.0.1.2','appSecret':'<![CDATA[x3H4#5fYx18@53e&]]>','name':'精伦电子','isOpen':'ON'},
+		            '10009':{'version':'2.2.3','appSecret':'<![CDATA[vePy18@R9P&L7#3E]]>','name':'内蒙古银安科技','isOpen':'ON'},
+		            '10010':{'version':'1.0','appSecret':'<![CDATA[&L7#2R9PURePy18@]]>','name':'南京亿数','isOpen':'OFF'},
+		            '10011':{'version':'1.0','appSecret':'<![CDATA[18@5xT9UR%dY#d36]]>','name':'北冰洋','isOpen':'OFF'}
+	       		}
+			},<!-- 安徽 -->
+	       'CERT_SIGNATURE_833':{
+	       		'USB_SIGNATURE_CHECK':'ON',
+	       		'VENDORS':{
+	       			'10000':{'version':'1.0.3.2','appSecret':'<![CDATA[5xRx9H4#5fY3e28@]]>','name':'华旭金卡','isOpen':'ON'},
+		            '10001':{'version':'1.0.3.2','appSecret':'<![CDATA[1%x7H4#2UtPy52@d]]>','name':'深圳华视','isOpen':'ON'},
+		            '10002':{'version':'2.6.5','appSecret':'<![CDATA[4#5fY18@3eRx5x3H]]>','name':'山东卡尔','isOpen':'ON'},
+		            '10003':{'version':'2.2.2','appSecret':'<![CDATA[R%dY#d3618@5xT9U]]>','name':'山东信通','isOpen':'ON'},
+		            '10004':{'version':'1.1','appSecret':'<![CDATA[9PURePy&L7#2R18@]]>','name':'长春鸿达','isOpen':'ON'},
+		            '10005':{'version':'2.2.2','appSecret':'<![CDATA[8g%xtPy52@YRxRe6]]>','name':'上海普天','isOpen':'ON'},
+		            '10006':{'version':'2.24','appSecret':'<![CDATA[74#2iBN4#29eV%xW]]>','name':'因纳伟盛','isOpen':'ON'},
+		            '10007':{'version':'1.0.0.5','appSecret':'<![CDATA[Hty52@d1Xp$4#2tt]]>','name':'山东神思','isOpen':'ON'},
+		            '10008':{'version':'4.0.1.2','appSecret':'<![CDATA[x3H4#5fYx18@53e&]]>','name':'精伦电子','isOpen':'ON'},
+		            '10009':{'version':'2.2.3','appSecret':'<![CDATA[vePy18@R9P&L7#3E]]>','name':'内蒙古银安科技','isOpen':'ON'},
+		            '10010':{'version':'1.0','appSecret':'<![CDATA[&L7#2R9PURePy18@]]>','name':'南京亿数','isOpen':'OFF'},
+		            '10011':{'version':'1.0','appSecret':'<![CDATA[18@5xT9UR%dY#d36]]>','name':'北冰洋','isOpen':'OFF'}
+	       		}
+			},<!-- 浙江 -->
+	       'CERT_SIGNATURE_852':{
+	       		'USB_SIGNATURE_CHECK':'ON',
+	       		'VENDORS':{
+	       			'10000':{'version':'1.0.3.2','appSecret':'<![CDATA[5xRx9H4#5fY3e28@]]>','name':'华旭金卡','isOpen':'ON'},
+		            '10001':{'version':'1.0.3.2','appSecret':'<![CDATA[1%x7H4#2UtPy52@d]]>','name':'深圳华视','isOpen':'ON'},
+		            '10002':{'version':'2.6.5','appSecret':'<![CDATA[4#5fY18@3eRx5x3H]]>','name':'山东卡尔','isOpen':'ON'},
+		            '10003':{'version':'2.2.2','appSecret':'<![CDATA[R%dY#d3618@5xT9U]]>','name':'山东信通','isOpen':'ON'},
+		            '10004':{'version':'1.1','appSecret':'<![CDATA[9PURePy&L7#2R18@]]>','name':'长春鸿达','isOpen':'ON'},
+		            '10005':{'version':'2.2.2','appSecret':'<![CDATA[8g%xtPy52@YRxRe6]]>','name':'上海普天','isOpen':'ON'},
+		            '10006':{'version':'2.24','appSecret':'<![CDATA[74#2iBN4#29eV%xW]]>','name':'因纳伟盛','isOpen':'ON'},
+		            '10007':{'version':'1.0.0.5','appSecret':'<![CDATA[Hty52@d1Xp$4#2tt]]>','name':'山东神思','isOpen':'ON'},
+		            '10008':{'version':'4.0.1.2','appSecret':'<![CDATA[x3H4#5fYx18@53e&]]>','name':'精伦电子','isOpen':'ON'},
+		            '10009':{'version':'2.2.3','appSecret':'<![CDATA[vePy18@R9P&L7#3E]]>','name':'内蒙古银安科技','isOpen':'ON'},
+		            '10010':{'version':'1.0','appSecret':'<![CDATA[&L7#2R9PURePy18@]]>','name':'南京亿数','isOpen':'OFF'},
+		            '10011':{'version':'1.0','appSecret':'<![CDATA[18@5xT9UR%dY#d36]]>','name':'北冰洋','isOpen':'OFF'}
+	       		}
+			},<!-- 贵州 -->
+	       'CERT_SIGNATURE_862':{
+	       		'USB_SIGNATURE_CHECK':'ON',
+	       		'VENDORS':{
+	       			'10000':{'version':'1.0.3.2','appSecret':'<![CDATA[5xRx9H4#5fY3e28@]]>','name':'华旭金卡','isOpen':'ON'},
+		            '10001':{'version':'1.0.3.2','appSecret':'<![CDATA[1%x7H4#2UtPy52@d]]>','name':'深圳华视','isOpen':'ON'},
+		            '10002':{'version':'2.6.5','appSecret':'<![CDATA[4#5fY18@3eRx5x3H]]>','name':'山东卡尔','isOpen':'ON'},
+		            '10003':{'version':'2.2.2','appSecret':'<![CDATA[R%dY#d3618@5xT9U]]>','name':'山东信通','isOpen':'ON'},
+		            '10004':{'version':'1.1','appSecret':'<![CDATA[9PURePy&L7#2R18@]]>','name':'长春鸿达','isOpen':'ON'},
+		            '10005':{'version':'2.2.2','appSecret':'<![CDATA[8g%xtPy52@YRxRe6]]>','name':'上海普天','isOpen':'ON'},
+		            '10006':{'version':'2.24','appSecret':'<![CDATA[74#2iBN4#29eV%xW]]>','name':'因纳伟盛','isOpen':'ON'},
+		            '10007':{'version':'1.0.0.5','appSecret':'<![CDATA[Hty52@d1Xp$4#2tt]]>','name':'山东神思','isOpen':'ON'},
+		            '10008':{'version':'4.0.1.2','appSecret':'<![CDATA[x3H4#5fYx18@53e&]]>','name':'精伦电子','isOpen':'ON'},
+		            '10009':{'version':'2.2.3','appSecret':'<![CDATA[vePy18@R9P&L7#3E]]>','name':'内蒙古银安科技','isOpen':'ON'},
+		            '10010':{'version':'1.0','appSecret':'<![CDATA[&L7#2R9PURePy18@]]>','name':'南京亿数','isOpen':'OFF'},
+		            '10011':{'version':'1.0','appSecret':'<![CDATA[18@5xT9UR%dY#d36]]>','name':'北冰洋','isOpen':'OFF'}
+	       		}
+			},<!-- 甘肃 -->
+	       'CERT_SIGNATURE_865':{
+	       		'USB_SIGNATURE_CHECK':'ON',
+	       		'VENDORS':{
+	       			'10000':{'version':'1.0.3.2','appSecret':'<![CDATA[5xRx9H4#5fY3e28@]]>','name':'华旭金卡','isOpen':'ON'},
+		            '10001':{'version':'1.0.3.2','appSecret':'<![CDATA[1%x7H4#2UtPy52@d]]>','name':'深圳华视','isOpen':'ON'},
+		            '10002':{'version':'2.6.5','appSecret':'<![CDATA[4#5fY18@3eRx5x3H]]>','name':'山东卡尔','isOpen':'ON'},
+		            '10003':{'version':'2.2.2','appSecret':'<![CDATA[R%dY#d3618@5xT9U]]>','name':'山东信通','isOpen':'ON'},
+		            '10004':{'version':'1.1','appSecret':'<![CDATA[9PURePy&L7#2R18@]]>','name':'长春鸿达','isOpen':'ON'},
+		            '10005':{'version':'2.2.2','appSecret':'<![CDATA[8g%xtPy52@YRxRe6]]>','name':'上海普天','isOpen':'ON'},
+		            '10006':{'version':'2.24','appSecret':'<![CDATA[74#2iBN4#29eV%xW]]>','name':'因纳伟盛','isOpen':'ON'},
+		            '10007':{'version':'1.0.0.5','appSecret':'<![CDATA[Hty52@d1Xp$4#2tt]]>','name':'山东神思','isOpen':'ON'},
+		            '10008':{'version':'4.0.1.2','appSecret':'<![CDATA[x3H4#5fYx18@53e&]]>','name':'精伦电子','isOpen':'ON'},
+		            '10009':{'version':'2.2.3','appSecret':'<![CDATA[vePy18@R9P&L7#3E]]>','name':'内蒙古银安科技','isOpen':'ON'},
+		            '10010':{'version':'1.0','appSecret':'<![CDATA[&L7#2R9PURePy18@]]>','name':'南京亿数','isOpen':'OFF'},
+		            '10011':{'version':'1.0','appSecret':'<![CDATA[18@5xT9UR%dY#d36]]>','name':'北冰洋','isOpen':'OFF'}
+	       		}
+			},<!-- 新疆 -->
+	       'CERT_SIGNATURE_899':{
+	       		'USB_SIGNATURE_CHECK':'ON',
+	       		'VENDORS':{
+	       			'10000':{'version':'1.0.3.2','appSecret':'<![CDATA[5xRx9H4#5fY3e28@]]>','name':'华旭金卡','isOpen':'ON'},
+		            '10001':{'version':'1.0.3.2','appSecret':'<![CDATA[1%x7H4#2UtPy52@d]]>','name':'深圳华视','isOpen':'ON'},
+		            '10002':{'version':'2.6.5','appSecret':'<![CDATA[4#5fY18@3eRx5x3H]]>','name':'山东卡尔','isOpen':'ON'},
+		            '10003':{'version':'2.2.2','appSecret':'<![CDATA[R%dY#d3618@5xT9U]]>','name':'山东信通','isOpen':'ON'},
+		            '10004':{'version':'1.1','appSecret':'<![CDATA[9PURePy&L7#2R18@]]>','name':'长春鸿达','isOpen':'ON'},
+		            '10005':{'version':'2.2.2','appSecret':'<![CDATA[8g%xtPy52@YRxRe6]]>','name':'上海普天','isOpen':'ON'},
+		            '10006':{'version':'2.24','appSecret':'<![CDATA[74#2iBN4#29eV%xW]]>','name':'因纳伟盛','isOpen':'ON'},
+		            '10007':{'version':'1.0.0.5','appSecret':'<![CDATA[Hty52@d1Xp$4#2tt]]>','name':'山东神思','isOpen':'ON'},
+		            '10008':{'version':'4.0.1.2','appSecret':'<![CDATA[x3H4#5fYx18@53e&]]>','name':'精伦电子','isOpen':'ON'},
+		            '10009':{'version':'2.2.3','appSecret':'<![CDATA[vePy18@R9P&L7#3E]]>','name':'内蒙古银安科技','isOpen':'ON'},
+		            '10010':{'version':'1.0','appSecret':'<![CDATA[&L7#2R9PURePy18@]]>','name':'南京亿数','isOpen':'OFF'},
+		            '10011':{'version':'1.0','appSecret':'<![CDATA[18@5xT9UR%dY#d36]]>','name':'北冰洋','isOpen':'OFF'}
+	       		}
+			},<!-- 虚拟省 -->
+			'NOTICE_INFOS':{
+				'venderIdInvalid':'读卡器控件版本过低，请联系厂商升级驱动版本',
+				'venderInvalid':'读卡器未在集约 CRM 许可范围内，请联系厂商升级驱动',
+				'isOpenInvalid':'读卡器驱动未通过集团 CRM 验证，请联系%厂商升级驱动',<!-- %将被自动替换 -->
+				'versionInvalid':'读卡器控件版本过低，请联系厂商升级驱动版本',
+				'signatureInvalid':'证件信息被篡改，请确认按照正确流程操作'
+			}
+	    }
+    	</const>
 	</mda>
 </mdas>

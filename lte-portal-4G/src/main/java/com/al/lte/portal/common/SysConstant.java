@@ -824,4 +824,20 @@ public final class SysConstant {
 	public static final String ZXHYBL_TCBG_NAME = "套餐变更";
 	public static final String ZXHYBL_KXB_NAME = "可选包/服务变更";
     
+    /**靓号调级*/
+	public static final String  PHONE_LEVEL_MODIFY = "PHONE_LEVEL_MODIFY";
+	/**靓号调级*/
+	public static final String PHONE_LEVEL_MODIFY_NAME = "靓号调级";
+	
+	/**二代证读卡分省配置：前缀*/
+	public static final String CERT_SIGNATURE_PROV = "CERT_SIGNATURE_";
+	/**二代证读卡分省配置：即原有的USBSIGNATURE 身份证阅读器省份开关 ON：开启校验  OFF不校验*/
+	public static final String USB_SIGNATURE_CHECK = "USB_SIGNATURE_CHECK";
+	/**二代证读卡分省配置：某省份下读卡器厂商集合*/
+	public static final String VENDORS = "VENDORS";
+	/**二代证读卡分省配置：提示语信息*/
+	public static final String NOTICE_INFOS = "NOTICE_INFOS";
+	
+	public static final String RESULT_CODE = "resultCode";
+	public static final String RESULT_MSG = "resultMsg";
 }

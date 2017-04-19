@@ -74,7 +74,19 @@ public interface ResultCode {
 	/**成功*/
 	final String RES_SUCCESS = "0000";
 	
+	/**成功*/
+	final int SUCCESS = 0;
+	/**失败*/
+	final int FAIL = 1;
+	/**接口异常*/
+	final int INTERFACE_EXCEPTION = -1;
+	/**业务异常*/
+	final int BUSINESS_EXCEPTION = -2;
 	
-	
-	
+	/**失败*/
+	final int FAIL_ON = -1;
+	/**失败*/
+	final int FAIL_TW = -2;
+	/**失败*/
+	final int FAIL_TH = -3;
 }
