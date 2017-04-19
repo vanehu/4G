@@ -446,7 +446,8 @@ order.service = (function(){
 				$pop.append('</div></div>');
 				order.prepare.backToInit();
 				_initSpec();
-				order.prodOffer.queryApConfig();								
+				order.prodOffer.queryApConfig();
+				OrderInfo.busitypeflag = 21;
 				//统一弹出框
 				var popup = $.popup("#chooseofferspec",$pop,{
 					width:1200,

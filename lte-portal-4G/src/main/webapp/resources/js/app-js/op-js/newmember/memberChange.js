@@ -359,6 +359,7 @@ order.memberChange = function(){
 							var btn2 = $("<button class='btn btn-default' accNbr='"+this.accessNumber+"' type='button'>保留>>选择新套餐 </button>");
 							btn2.click(function(){
 								order.service.offerDialog('viceCard_new_'+$(this).attr("accNbr"));
+								OrderInfo.busitypeflag = 21;
 	//							$($("#plan_no")).parent().css("text-decoration","line-through").attr("del","Y");
 							});	
 						    $span.append(btn2);
