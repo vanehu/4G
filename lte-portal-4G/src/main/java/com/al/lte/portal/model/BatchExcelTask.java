@@ -190,7 +190,7 @@ public class BatchExcelTask {
 	 * @param cellValue
 	 * @return 若重复返回<strong>true</strong>，否则返回<strong>false</strong>
 	 */
-	public boolean ifRepeat(int column, String cellValue){
+	public synchronized boolean ifRepeat(int column, String cellValue){
 		boolean ifRepeat = false;
 		
 		if(this.fruitsBucket.get(column) == null){
@@ -198,7 +198,7 @@ public class BatchExcelTask {
 			littleBucket.add(cellValue);
 			this.fruitsBucket.put(column, littleBucket);
 		} else{
-			ifRepeat = this.fruitsBucket.get(column).add(cellValue) ? false : true;
+			ifRepeat = !this.fruitsBucket.get(column).add(cellValue);
 		}
 		
 		return ifRepeat;
@@ -224,7 +224,7 @@ public class BatchExcelTask {
 		return errorData.toString();
 	}
 
-	public void setErrorData(Object errorData) {
+	public synchronized void setErrorData(Object errorData) {
 		if(this.errorDataCount.get() >= this.batchRuleConfigs.getErrorDataMaxCount()){
 			this.redLigth = true;
 			log.debug("portalBatch-errorData缓存已达上限redLigth={},errorDataCount={},errorDataMaxCount={}", this.redLigth, this.errorDataCount.get(), this.batchRuleConfigs.getErrorDataMaxCount());

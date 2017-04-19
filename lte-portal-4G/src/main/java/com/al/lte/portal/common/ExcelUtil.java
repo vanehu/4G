@@ -218,22 +218,20 @@ public class ExcelUtil {
 	 * @return cellValue
 	 */
 	public static String checkExcelCellValue(Cell cell) {
-		if(cell != null){
-			if(cell.getCellType() == Cell.CELL_TYPE_BLANK){
-				return null;
-			}else if (cell.getCellType() == Cell.CELL_TYPE_STRING) {
-				try{
+		if (cell == null) {
+			return null;
+		} else {
+			if (cell.getCellType() == Cell.CELL_TYPE_STRING) {
+				try {
 					return "".equals(cell.getStringCellValue().trim()) ? null : cell.getStringCellValue().trim();
-				} catch(RuntimeException re){
+				} catch (RuntimeException re) {
 					return null;
-				} catch(Exception e){
+				} catch (Exception e) {
 					return null;
 				}
-			} else{
+			} else {
 				return null;
 			}
-		} {
-			return null;
 		}
 	}
 	
@@ -242,12 +240,12 @@ public class ExcelUtil {
 	 * @param 单元格cell
 	 */
 	public static boolean checkExcelCellValid(Cell cell) {
-		if(cell != null){
-			if(cell.getCellType() == Cell.CELL_TYPE_BLANK){
-				return false;
-			}else if (cell.getCellType() == Cell.CELL_TYPE_STRING) {
+		if(cell == null){
+			return false;
+		} else{
+			if (cell.getCellType() == Cell.CELL_TYPE_STRING) {
 				try{
-					return "".equals(cell.getStringCellValue().trim()) ? false : true;
+					return !"".equals(cell.getStringCellValue().trim());
 				} catch(RuntimeException re){
 					return false;
 				} catch(Exception e){
@@ -256,8 +254,6 @@ public class ExcelUtil {
 			} else{
 				return false;
 			}
-		} else{
-			return false;
 		}
 	}
 }
