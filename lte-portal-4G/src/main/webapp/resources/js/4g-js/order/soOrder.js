@@ -610,6 +610,18 @@ SoOrder = (function() {
 			//主副卡互换拼装custOrderType节点，表示业务类型，用于后台落表，与属性CONST.BUSI_ORDER_ATTR.BUSITYPE_FLAG一样
 			OrderInfo.orderData.orderList.orderListInfo.custOrderType = OrderInfo.actionFlag;//或OrderInfo.busitypeflag
 		}
+		if(OrderInfo.menuName == "ZXHYBL"){
+			var  mainOfferSpecIdParam = { //套餐id
+				itemSpecId : CONST.BUSI_ORDER_ATTR.MAIN_OFFER_SPECID,
+				value : OrderInfo.preliminaryInfo.mainOfferSpecId
+			};
+			OrderInfo.orderData.orderList.orderListInfo.custOrderAttrs.push(mainOfferSpecIdParam);
+			var  creditLineParam = { //征信信用额度
+					itemSpecId : CONST.BUSI_ORDER_ATTR.CREDIT_LINE,
+					value : OrderInfo.preliminaryInfo.money
+			};
+			OrderInfo.orderData.orderList.orderListInfo.custOrderAttrs.push(creditLineParam);
+		}
 		return true;
 	};
 	

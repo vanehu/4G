@@ -129,6 +129,16 @@ order.prepare = (function(){
 						}
 					}
 				} else {
+					if (forTab == "order_tab_panel_offer" && OrderInfo.menuName == "ZXHYBL"){
+						if (OrderInfo.cust == undefined || OrderInfo.cust.custId == undefined || OrderInfo.cust.custId == "") {
+							$.alert("提示", "在办理征信合约业务之前请先进行客户定位或者新建客户！");
+							return;
+						}
+						if(OrderInfo.preliminaryInfo.businessType != CONST.BUS_TYPE.ADD_SINGLE && OrderInfo.preliminaryInfo.businessType != CONST.BUS_TYPE.ADD_FUSE && OrderInfo.preliminaryInfo.businessType != CONST.BUS_TYPE.ADD_OTHER_FUSE){
+							$.alert("提示","'客户信息核验接口'返回可做业务类型为："+OrderInfo.preliminaryInfo.businessType+",该业务类型不可办理新增业务");
+							return;
+						}
+					}
 					callback(event, url, forTab);
 				}
 			});

@@ -874,4 +874,11 @@ public interface OrderBmo {
 	 */
 	public Map<String, Object> cltOrderCheck(Map<String, Object> param, HttpServletRequest request,
 			SessionStaff sessionStaff)throws Exception;
+	
+	/**
+	 * 获取初审信息接口
+	 */
+	public Map<String, Object> qryPreliminaryInfo(Map<String, Object> dataBusMap, String optFlowNum,
+            SessionStaff sessionStaff) throws Exception;
+	
 }

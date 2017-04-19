@@ -598,7 +598,7 @@ order.cust = (function(){
 	};
 	 var _custLookforButton = function() {
 	//客户定位查询按钮
-	$('#custQueryFirstForm').off().bind('formIsValid', function(event, form) {
+    $('#custQueryFirstForm').off().bind('formIsValid', function(event, form) {
 		var url=contextPath+"/order/createorderlonger";
 		var response = $.callServiceAsJson(url, {});
 		if(response.code==0){
@@ -1024,6 +1024,37 @@ order.cust = (function(){
 	}
 	//客户列表点击
 	var _showCustAuth = function(scope) {
+		if(OrderInfo.menuName == "ZXHYBL"){
+			var accNbr = $(scope).attr("accNbr");
+			var  qryResponse =  _qryPreliminaryInfo(accNbr);
+			if(qryResponse.code == 0){
+				if(qryResponse.data.result == null || qryResponse.data.result.userInfo == null || qryResponse.data.result.userInfo.businessType==null){
+					$.alert("错误","查询后台 '客户信息核验接口' 未返回结果，查询接口流水号："+qryResponse.data.transactionID);
+					return;
+				}else{
+					var userInfo = qryResponse.data.result.userInfo;
+					var areaId = $("#p_cust_areaId").val();
+					if(userInfo.cityCode.substr(0,5) != areaId.substr(0,5)){
+						$.alert("提示","集约4G系统里用户的受理地区 "+areaId+" 和征信平台初审接口返回 cityCode "+userInfo.cityCode+" 办理业务的城市编码不一致,无法办理征信业务。");
+						return;
+					}
+					var identityNum = $.trim($("#p_cust_identityNum").val());
+					if(identityNum != userInfo.idcard){
+						$.alert("提示","集约4G系统里用户办理用户的证件号码和征信平台初审接口返回的idcard用户身份证号码不一致，无法办理征信业务。");
+						return;
+					}
+					if(accNbr != userInfo.userPhone){
+						$.alert("提示","集约4G征信平台初审接口返回的userPhone用户手机号码不一致，无法办理征信业务。");
+						return;
+					}
+					
+					OrderInfo.preliminaryInfo = userInfo;
+				};
+			}else{
+				$.alertM(qryResponse.data);
+				return;
+			};
+		};
         var param = {
             "accNbr": $(scope).attr("accNbr"),
             "identityCd": $(scope).attr("identityCd"),
@@ -1330,6 +1361,8 @@ order.cust = (function(){
 	};
 	var _showCustCreate = function(scope) {
 		var areaId=$("#p_cust_areaId").val();
+		var menuName = $("#menuName").val();
+		OrderInfo.menuName = menuName;
 		if(areaId.indexOf("0000")>0){
 			$.alert("提示","前页受理地区为省级地区无法进行创建,请先选择市级地区！");
 			return;
@@ -1341,6 +1374,10 @@ order.cust = (function(){
 		_identidiesTypeCdChoose($("#identidiesTypeCd  option:selected").length ?  $("#identidiesTypeCd  option:selected") : $("#identidiesTypeCd").children(":first-child"),"cCustIdCard");
 		_custcreateButton();
 		_spec_parm_show();
+		if(menuName!=null && menuName == "ZXHYBL"){
+			$("#partyTypeCd").attr("disabled","disabled");  
+			$("#identidiesTypeCd").attr("disabled","disabled"); 
+		}
 		$("#partyProfile").attr("style","display:none");
 		easyDialog.open({
 			container: 'user_add',
@@ -1579,6 +1616,12 @@ order.cust = (function(){
 			$.alert("提示","新建客户无法查询已订购产品！");
 			return;
 		}
+		if (OrderInfo.menuName == "ZXHYBL"){
+			if(OrderInfo.preliminaryInfo.businessType != CONST.BUS_TYPE.STOCK_SINGLE && OrderInfo.preliminaryInfo.businessType != CONST.BUS_TYPE.STOCK_FUSE){
+				$.alert("提示","'客户信息核验接口'返回可做业务类型为："+OrderInfo.preliminaryInfo.businessType+",该业务类型不可办理二次业务");
+				return;
+			}
+		}
 		var curPage=1;
 		$("#prodDetail").hide();
 		$("#prodInfo").hide();
@@ -1691,7 +1734,9 @@ order.cust = (function(){
 		_iotCustidentidiesTypeCdChoose($("#iot_p_cust_identityCd").children(":first-child"),"p_cust_identityNum");
 		_checkAutoCustQry(); //省份甩单，自动定位客户
 		//根据身份证开关隐藏读卡按钮
-		if(OrderInfo.staff.idType=="OFF")
+		var menuName = $("#menuName").val();
+		OrderInfo.menuName = menuName;
+		if(OrderInfo.staff.idType=="OFF" && menuName !="ZXHYBL")
 		{
 			$("#readCertBtn").hide();
 			$("#readCertBtnID").hide();
@@ -2206,6 +2251,35 @@ order.cust = (function(){
 					return;
 				}
 		}
+		if(OrderInfo.menuName == "ZXHYBL"){
+			var  qryResponse =  _qryPreliminaryInfo("");
+			if(qryResponse.code == 0){
+				if(qryResponse.data.result == null || qryResponse.data.result.userInfo == null || qryResponse.data.result.userInfo.businessType==null){
+					$.alert("错误","查询后台 '客户信息核验接口' 未返回结果，查询接口流水号："+qryResponse.data.transactionID);
+					return;
+				}else{
+					var userInfo = qryResponse.data.result.userInfo;
+					if(userInfo.businessType != CONST.BUS_TYPE.ADD_SINGLE && userInfo.businessType != CONST.BUS_TYPE.ADD_FUSE && userInfo.businessType != CONST.BUS_TYPE.ADD_OTHER_FUSE){
+						$.alert("提示","新建客户只能做新增业务,'客户信息核验接口'返回可做业务类型为："+userInfo.businessType);
+						return;
+					}
+					var areaId = $("#p_cust_areaId").val();
+					if(userInfo.cityCode.substr(0,5) != areaId.substr(0,5)){
+						$.alert("提示","集约4G系统里用户的受理地区 "+areaId+" 和征信平台初审接口返回 cityCode "+userInfo.cityCode+" 办理业务的城市编码不一致,无法办理征信业务。");
+						return;
+					}
+					var identityNum = $.trim($("#p_cust_identityNum").val());
+					if(identityNum != userInfo.idcard){
+						$.alert("提示","集约4G系统里用户办理用户的证件号码和征信平台初审接口返回的idcard用户身份证号码不一致，无法办理征信业务。");
+						return;
+					}
+					OrderInfo.preliminaryInfo = userInfo;
+				};
+			}else{
+				$.alertM(qryResponse.data);
+				return;
+			};
+		};
 		var url=contextPath+"/cust/checkIdentity";
 		var response = $.callServiceAsJson(url, params, {"before":function(){
 			$.ecOverlay("<strong>正在查询中,请稍等...</strong>");
@@ -2408,6 +2482,9 @@ order.cust = (function(){
 			$("#tr_custPhoto").show();
 		}
 		$('#td_addressStr').text(data.certAddress);//地址
+		if(OrderInfo.menuName!=null && OrderInfo.menuName == "ZXHYBL"){
+			$("#identidiesTypeCd").attr("disabled","disabled"); 
+		}
 		_submitCertInfo(data);
 	};
 
@@ -4050,6 +4127,24 @@ order.cust = (function(){
 				$("#industryClassCdSeThird").append("<option value='"+thirdInfo.industryClassCd+"' >"+thirdInfo.name+"</option>");
 			}
 		}
+	};
+	
+	//征信 获取初审信息
+	var _qryPreliminaryInfo = function(phoneNumber) {
+		OrderInfo.preliminaryInfo = {};
+		var partnerCode = $("#partnerCode").val();
+		var param = {
+			areaId : $("#p_cust_areaId").val(),
+			idCard : $.trim($("#p_cust_identityNum").val()),
+			phoneNumber : phoneNumber
+		};
+		var qryUrl=contextPath+"/order/qryPreliminaryInfo";
+		var response = $.callServiceAsJson(qryUrl, param);
+		if (response.code == 0 && response.data.result!=null && response.data.result.userInfo!=null) {
+			response.data.result.userInfo.partnerCode = partnerCode;
+			response.data.result.userInfo.transactionID = response.data.transactionID;
+		};
+		return response;
 	};
 
 	return {

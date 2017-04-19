@@ -360,8 +360,28 @@ query.offer = (function() {
 	var _queryCanBuyAttachSpec = function(param,callBackFun) {
 		addParam(param);  //添加基本参数
 		var url = contextPath+"/offer/queryCanBuyAttachSpec";
+		var inparam;
+		if(param.isAgree == "Y"){//促销标签下，子标签合约 调用合约查询接口
+			url = contextPath+"/offer/queryAgreeAttachOfferSpec";
+			inparam = {
+					areaId : param.areaId,
+					mktResCd : "",
+					agreementType : "",
+					offerSpecId : param.mainOfferSpecId,
+					agreementName : ""
+			};
+			if(OrderInfo.menuName == "ZXHYBL"){
+				inparam.agreementTypeList = [3];
+				inparam.subsidyAmount = OrderInfo.preliminaryInfo.money*100;
+				inparam.agreementPeriod = OrderInfo.preliminaryInfo.leaseMonth;
+				inparam.partnerCodeList = [OrderInfo.preliminaryInfo.partnerCode];
+				OrderInfo.preliminaryInfo.mainOfferSpecId = param.mainOfferSpecId;
+			};
+		}else {
+			inparam = param;
+		}
 		if(typeof(callBackFun)=="function"){
-			$.callServiceAsJsonGet(url,{strParam:JSON.stringify(param)},{
+			$.callServiceAsJsonGet(url,{strParam:JSON.stringify(inparam)},{
 				"before":function(){
 					$.ecOverlay("<strong>正在查询附属销售品中,请稍后....</strong>");
 				},
@@ -384,7 +404,7 @@ query.offer = (function() {
 			});	
 		}else {
 			$.ecOverlay("<strong>查询附属销售品中，请稍等...</strong>");
-			var response = $.callServiceAsJsonGet(url,{strParam:JSON.stringify(param)});	
+			var response = $.callServiceAsJsonGet(url,{strParam:JSON.stringify(inparam)});	
 			$.unecOverlay();
 			if (response.code==0) {
 				if(response.data){

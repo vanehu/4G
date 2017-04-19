@@ -325,6 +325,26 @@ CacheData = (function() {
 				return selectStr;
 			} 
 		}
+		//可编辑下拉框 20030115 征信合约征信业务类型属性
+		if(OrderInfo.menuName == "ZXHYBL" && !!param.valueRange && itemSpecId == CONST.ZXYWLX){
+			if(OrderInfo.preliminaryInfo.businessType == CONST.BUS_TYPE.ADD_SINGLE || OrderInfo.preliminaryInfo.businessType == CONST.BUS_TYPE.ADD_FUSE || OrderInfo.preliminaryInfo.businessType == CONST.BUS_TYPE.ADD_OTHER_FUSE){//单手机业务 1000
+				selectStr =selectStr+"<tr><td>"+ param.name + ":</td><td> <select class='inputWidth183px' id="+prodId+"_"+itemSpecId+" disabled='disabled'>";
+				optionStr +='<option value="1000">单手机业务</option>';
+				selectStr += optionStr + "</select></td></tr>"; 
+			}else {//融合业务 1001
+				selectStr =selectStr+"<tr><td>"+ param.name + ":</td><td> <select class='inputWidth183px' id="+prodId+"_"+itemSpecId+" disabled='disabled'>";
+				optionStr +='<option value="1001">融合业务</option>';
+				selectStr += optionStr + "</select></td></tr>"; 
+			}
+			return selectStr;
+		}
+		//不可编辑文本框 20030116 征信合约征信平台工单编号属性
+		if(itemSpecId == CONST.ZXPTGDBMH && OrderInfo.menuName == "ZXHYBL"){
+			selectStr += '<tr><td>'+param.name + ': </td><td><input id="'+prodId+'_'+itemSpecId
+			+'" class="inputWidth183px" type="text" disabled="disabled" value="'+OrderInfo.preliminaryInfo.bzjOrderNo+'" >';
+		    selectStr+='</td></tr>';
+		    return selectStr;
+		};
 		if (ec.util.isArray(param.valueRange) && param.dateSourceTypeCd == "17") {//带搜索功能输入组件
 			var id=prodId+'_'+itemSpecId;
 			if(ec.util.isObj(specId)){

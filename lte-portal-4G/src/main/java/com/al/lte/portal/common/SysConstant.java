@@ -818,4 +818,10 @@ public final class SysConstant {
     
     /**实名信息采集单session缓存键*/
     public static final String CLT_ORDER_INFO = "_clt_order_info";	
+
+    /**征信合约办理*/
+	public static final String  ZXHYBL= "ZXHYBL";
+	public static final String ZXHYBL_TCBG_NAME = "套餐变更";
+	public static final String ZXHYBL_KXB_NAME = "可选包/服务变更";
+    
 }

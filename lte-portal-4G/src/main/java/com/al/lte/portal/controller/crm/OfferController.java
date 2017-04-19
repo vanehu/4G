@@ -946,4 +946,27 @@ public class OfferController extends BaseController {
 		}
 		return "/offer/attach-offer-list";
 	}
+	
+	/**
+	 * 合约查询
+	 */
+	@RequestMapping(value = "/queryAgreeAttachOfferSpec", method = {RequestMethod.GET})
+	public @ResponseBody JsonResponse queryAgreeAttachOfferSpec(@RequestParam("strParam") String param,Model model) {
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+				SysConstant.SESSION_KEY_LOGIN_STAFF);
+		JsonResponse jsonResponse = null;
+		Map<String, Object> paramMap = null;
+        try {
+        	paramMap =  JsonUtil.toObject(param, Map.class);
+        	Map<String, Object> resMap = mktResBmo.queryOfferByMtkResCd(paramMap, null, sessionStaff);
+        	jsonResponse = super.successed(resMap,ResultConstant.SUCCESS.getCode());
+        } catch (BusinessException be) {
+        	return super.failed(be);
+        } catch (InterfaceException ie) {
+        	return super.failed(ie, paramMap, ErrorCode.QUERY_MUST_OFFER);
+		} catch (Exception e) {
+			return super.failed(ErrorCode.QUERY_MUST_OFFER, e, paramMap);
+		}
+		return jsonResponse;
+	}
 }

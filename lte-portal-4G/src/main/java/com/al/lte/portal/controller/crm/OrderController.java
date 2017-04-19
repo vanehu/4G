@@ -5377,4 +5377,50 @@ public class OrderController extends BaseController {
         }
         return jsonResponse;
     }
+    
+    
+    /**
+     * 征信合约办理入口
+     */
+    @RequestMapping(value = "/creditManagementPrepare", method = RequestMethod.GET)
+    @AuthorityValid(isCheck = true)
+    public String creditManagementPrepare(@RequestParam Map<String, Object> mktRes, HttpServletRequest request, Model model,
+            HttpSession session) {
+        model.addAttribute("canOrder", EhcacheUtil.pathIsInSession(session, "order/prepare"));
+        model.addAttribute("menuName", SysConstant.ZXHYBL);
+        model.addAttribute("DiffPlaceFlag", "local");
+        return "/order/order-credit-prepare";
+    }
+    
+    @RequestMapping(value = "/qryPreliminaryInfo", method = RequestMethod.POST)
+    @ResponseBody
+    public JsonResponse qryPreliminaryInfo(@RequestBody Map<String, Object> paramMap,
+			@LogOperatorAnn String flowNum,HttpServletResponse response){
+		Map<String, Object> resMap = null;
+		JsonResponse jsonResponse = null;
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+                SysConstant.SESSION_KEY_LOGIN_STAFF);
+		String areaId=(String) paramMap.get("areaId");
+		if(("").equals(areaId)||areaId==null){
+			paramMap.put("areaId", sessionStaff.getCurrentAreaId());
+		}
+		List<Map<String, Object>> list = null;
+		try {
+			resMap = orderBmo.qryPreliminaryInfo(paramMap,
+					flowNum, sessionStaff);
+			if (ResultCode.R_SUCC.equals(resMap.get("resultCode"))) {
+                jsonResponse = super.successed(resMap, ResultConstant.SUCCESS.getCode());
+            } else {
+                jsonResponse = super.failed(resMap.get("resultMsg"), ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+            }
+		} catch (BusinessException be) {
+			return super.failed(be);
+		} catch (InterfaceException ie) {
+			return super.failed(ie, paramMap, ErrorCode.QRY_PRELININARY_INFO);
+		} catch (Exception e) {
+			log.error("客户信息核验接口qryPreliminaryInfo服务返回的数据异常", e);
+			return super.failed(ErrorCode.QRY_PRELININARY_INFO, e, paramMap);
+		}
+		return jsonResponse;
+    }
 }

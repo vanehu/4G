@@ -1809,6 +1809,8 @@ OrderInfo = (function() {
 		return 	OrderInfo.isCltOrder&&(OrderInfo.actionFlag == 1 || OrderInfo.actionFlag == 14);
 	};
 	
+	var _preliminaryInfo  = {};//征信业务信息
+	
 	return {	
 		order					: _order,
 		SEQ						: _SEQ,
@@ -1938,6 +1940,7 @@ OrderInfo = (function() {
 		cltUserList				:_cltUserList,
 		cltjbrInfo				:_cltjbrInfo,
         isCltNewOrder			:_isCltNewOrder,
-        bojbrPartyContactInfo	:_bojbrPartyContactInfo
+        bojbrPartyContactInfo	:_bojbrPartyContactInfo,
+        preliminaryInfo         :_preliminaryInfo
 	};
 })();

@@ -552,6 +552,12 @@ AttachOffer = (function() {
 					areaId : OrderInfo.getProdAreaId(prodId),
 					prodId : prodId
 			};
+			if(OrderInfo.menuName == "ZXHYBL"){//征信页面
+				param.agreementTypeList = [3];
+				param.subsidyAmount = OrderInfo.preliminaryInfo.money*100;
+				param.agreementPeriod = OrderInfo.preliminaryInfo.leaseMonth;
+				param.partnerCodeList = [OrderInfo.preliminaryInfo.partnerCode];
+			}
 			//获取已订购附属销售品，送到后端进行遍历过滤
 			var attachOffersOrdered = CacheData.getOfferList(prodId);
 			$.each(attachOffersOrdered,function(){
@@ -2958,6 +2964,12 @@ AttachOffer = (function() {
 					}
 				});
 			}
+			if(OrderInfo.menuName == "ZXHYBL"){
+				if(mktPrice>OrderInfo.preliminaryInfo.money){
+					$.alert("提示","终端的合约价格"+mktPrice+"元，不能超过征信的额度"+OrderInfo.preliminaryInfo.money);
+					return false;
+				}
+			}
 			$("#terminalName_"+num).html("终端规格："+data.mktResName+",终端颜色："+mktColor+",合约价格："+mktPrice+"元");
 			$("#terminalDesc_"+num).css("display","block");
 			
@@ -4111,6 +4123,10 @@ AttachOffer = (function() {
  			$("#parentLabel_" + prodId + "_" + labelId + " li:first").click();
 			return;
  		}
+		if(labelId == 10001) {
+ 			$("#parentLabel_" + prodId + "_" + labelId + " li:first").click();
+			return;
+ 		}
 		$("#tab_myfavorites_"+prodId).hide();
 		$("#myfavorites_"+prodId).removeClass("setcon");
 		var $ul = $("#ul_"+prodId+"_"+labelId); //创建ul
@@ -4160,13 +4176,19 @@ AttachOffer = (function() {
 				}
 				$("#div_"+prodId).append($ul);
 			}else{
+				var isAgree = "";
+				//测试 先注释掉
+				if(labelId == "10020"){
+					isAgree = "Y";
+				}
 				var param = {
 					prodSpecId : prodSpecId,
 					offerSpecIds : [],
 					queryType : queryType,
 					prodId : prodId,
 					partyId : OrderInfo.cust.custId,
-					ifCommonUse : ""			
+					ifCommonUse : "",
+					isAgree : isAgree
 				};
 				if(OrderInfo.actionFlag != 22 && OrderInfo.actionFlag != 23){
 					param.labelId = labelId;
@@ -4256,10 +4278,16 @@ AttachOffer = (function() {
 					var $ul = $('<ul id="ul_'+prodId+'_'+labelId+'"></ul>');
 					if(data!=undefined && data.resultCode == "0"){
 						var currentDate = new Date();
-						if(ec.util.isArray(data.result.offerSpecList)){
+						var resultList;
+						if(isAgree == "Y"){//合约调用合约查询接口
+							resultList = data.result.agreementOfferList;
+						}else {
+							resultList = data.result.offerSpecList;
+						}
+						if(ec.util.isArray(resultList)){
 							var offerList = CacheData.getOfferList(prodId); //过滤已订购
 							var offerSpecList = CacheData.getOfferSpecList(prodId);//过滤已选择
-							$.each(data.result.offerSpecList,function(){
+							$.each(resultList,function(){
 								AttachOffer.allOfferList.push(this);
 								var offerSpecId = this.offerSpecId;
 								var flag = true;

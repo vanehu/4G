@@ -3329,4 +3329,24 @@ public class OrderBmoImpl implements OrderBmo {
 		resultMap.put("resultCode", ResultCode.R_SUCC);
 		return resultMap;
 	}
+	
+	public Map<String, Object> qryPreliminaryInfo(Map<String, Object> dataBusMap,
+			String optFlowNum, SessionStaff sessionStaff) throws Exception {
+		DataBus db = InterfaceClient.callService(dataBusMap,
+				PortalServiceCode.QRY_PRELININARY_INFO, optFlowNum, sessionStaff);
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		try{
+			// 服务层调用与接口层调用都成功时，返回列表；否则返回空列表
+			if (ResultCode.R_SUCC.equals(db.getResultCode())) {
+				resultMap = db.getReturnlmap();
+			} else {
+				resultMap.put("resultCode", ResultCode.R_FAILURE);
+				resultMap.put("resultMsg", db.getResultMsg());
+			}
+		} catch (Exception e) {
+			log.error("获取初审信息接口qryPreliminaryInfo服务返回的数据异常", e);
+			throw new BusinessException(ErrorCode.QRY_PRELININARY_INFO, dataBusMap, resultMap, e);
+		}
+		return resultMap;
+	}
 }

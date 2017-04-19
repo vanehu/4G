@@ -1191,6 +1191,9 @@ public final class PortalServiceCode {
     
     /** 实名信息采集单订单详情 */
     public static final String CLT_ORDER_Detail = "biz-service/intf.detailService/queryCollectionOrderItemDetail";
+    
+    /**获取初审信息接口*/
+    public static final String QRY_PRELININARY_INFO = "biz-service/intf.acctService/qryPreliminaryInfo";
 
 }
 

@@ -266,7 +266,9 @@ CONST = (function(){
 		CLTVIROLID : "810000003",//采集经办人文件订单ID
 		CURIP :"40010038",//业务办理ip
 		PORTAL_ORDER_ID	:"8000066",//前台订单编号ID	
-		REAL_NAME_CHECK :"1000100" //客户实名认证标识
+		REAL_NAME_CHECK :"1000100", //客户实名认证标识
+		MAIN_OFFER_SPECID:"800000090",//主套餐id
+		CREDIT_LINE:"800000091"//征信信用额度
 	};
 	
 	//属性规格
@@ -568,6 +570,18 @@ CONST = (function(){
 	//返档订单提交标识，由于其初始化订单数据特殊，增加标识
 	var _returnCustSubmitFlag = "returnCustSubmit";
 	
+	//征信合约办理-业务类型single 
+	var _BUS_TYPE = {
+		ADD_SINGLE : "1",	 //新增单手机
+		ADD_FUSE : "2",	     //新增融合
+		STOCK_SINGLE : "3",	 //存量单手机
+		STOCK_FUSE : "4",	 //存量融合
+		ADD_OTHER_FUSE : "9" //其他融合，当着新增融合处理
+	};
+	
+	var  _ZXYWLX = "20030115"; //征信合约属性，征信业务类型
+	var  _ZXPTGDBMH = "20030116"; //征信合约属性，征信平台工单编号
+	
 	return {
 		//批量受理查询，是否执行改造后的新代码的开关标识，用于暂时记录是否执行新代码。Y执行改造后的新代码，N执行改造前的旧代码，默认为N。 By ZhangYu 2015-10-20
 		BATCHORDER_FLAG : _BATCHORDER_FLAG,
@@ -637,7 +651,10 @@ CONST = (function(){
 		realNamePhotoFlag	:_realNamePhotoFlag,
 		Action_Flag_Info:_Action_Flag_Info,
 		Busi_Type_Info:_Busi_Type_Info,
-		returnCustSubmitFlag:_returnCustSubmitFlag
+		returnCustSubmitFlag:_returnCustSubmitFlag,
+		BUS_TYPE : _BUS_TYPE,
+		ZXYWLX   : _ZXYWLX,
+		ZXPTGDBMH : _ZXPTGDBMH
 	};
 })();
 
