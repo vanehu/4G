@@ -177,6 +177,10 @@ AttachOffer = (function() {
 //				});
 				var objInstId = prodId+'_'+newSpec.offerSpecId;
 				//一个终端对应一个ul
+				var terminalUl = $("#terminalUl_" + objInstId);//如果有就不添加串码框了，防止重复
+				if(ec.util.isObj(terminalUl) && terminalUl.length > 0){
+					return;
+				}
 				var $ul = $('<ul id="terminalUl_'+objInstId+'" class="fillin show"></ul>');
 				var $sel = $('<select id="terminalSel_'+objInstId+'"></select>');  
 				var $li1 = $('<li class="full"><label style="width:auto; margin:0px 10px;"><span style="color:#71AB5A;font-size:16px">'+newSpec.offerSpecName+'</span></label></li>');
@@ -2665,6 +2669,11 @@ AttachOffer = (function() {
 //				});
 				var objInstId = prodId+'_'+newSpec.offerSpecId;
 				//一个终端对应一个ul
+				
+				var terminalUl = $("#terminalUl_" + objInstId);//如果有就不添加串码框了，防止重复
+				if(ec.util.isObj(terminalUl) && terminalUl.length > 0){
+					return;
+				}
 				var $ul = $('<ul id="terminalUl_'+objInstId+'" class="fillin show"></ul>');
 				var $sel = $('<select id="terminalSel_'+objInstId+'"></select>');  
 				var $li1 = $('<li class="full"><label style="width:auto; margin:0px 10px;"><span style="color:#71AB5A;font-size:16px">'+newSpec.offerSpecName+'</span></label></li>');
