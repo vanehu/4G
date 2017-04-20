@@ -59,6 +59,12 @@ common = (function($) {
 			"custInfos":JSON.stringify(custParam),
 			"prodIdInfos":prodIdInfosParams
 		};
+		if($("#home").length>0){
+			$("#queryCust").empty();
+			$("#prodofferPrepare").empty();
+			//客户信息
+			OrderInfo.cust = [];
+		}
 		var enter = urlParams.enter;
 		if(enter != undefined){
 			param.enter = enter;
@@ -1236,6 +1242,12 @@ common = (function($) {
 		}
 		if(OrderInfo.actionFlag==6){//加装副卡
 			if(OrderInfo.order.step==1){
+				if($("#phonenumber-list2").is(":visible")){//存在副卡号码也，特殊处理
+					$("#phonenumber-list2").hide();
+					$("#secondaryPhoneNumUl").show();
+					$("#fk_phonenumber_next").show();
+					return;
+				}
 				_callCloseWebview();
 				return;
 			}else if(OrderInfo.order.step==2){//促销
@@ -1719,6 +1731,11 @@ common = (function($) {
 		);
 	}
 	
+	var _setListTop=function(px){//设置top间距
+		if($("#home").length>0){
+			$(".wrapper").css("top",px);
+		}		
+	}
 	return {
 		relocationCust		:	_relocationCust,
 		setCalendar			:	_setCalendar,
@@ -1744,7 +1761,8 @@ common = (function($) {
 		callPhotos2         :   _callPhotos2,
 		setBtnTimer         :   _setBtnTimer,
 		CallNativeButtonClick:_CallNativeButtonClick,
-		goKuandai:_goKuandai
+		goKuandai:_goKuandai,
+		setListTop :_setListTop
 	};
 })(jQuery);
 

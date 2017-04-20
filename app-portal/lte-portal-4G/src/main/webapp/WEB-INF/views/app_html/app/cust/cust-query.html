@@ -123,7 +123,7 @@
 $(function() {
 		order.area.initTree();
 		cust.custCatsh = {};
-		if(OrderInfo.actionFlag == "9"){
+		if(OrderInfo.actionFlag == "9" || OrderInfo.actionFlag == "19"){
 			$("#identidiesType").empty();
 			$("#identidiesType").append('<option id="xzjrf" value="-1" >接入号码</option>');
 			order.broadband.init_select();

@@ -1,6 +1,6 @@
 <#if resultlst?? &&(resultlst?size>0) >
 <input type="hidden" id="resultlst" value="1"/>
-<@portal.scrollPagination "offer_list" "both" totalPage 110 0 "order.service.scroll">
+<@portal.scrollPagination "offer_list" "both" totalPage 50 0 "order.service.scroll">
 <#if item_index<10>
 <ul class="single-list-box meal-choice-box" id="div_offer_list">
 	<#list resultlst as item>
@@ -67,5 +67,8 @@
 <script type="text/javascript" charset="utf-8">
 $(function() {
 	  order.broadband.init_select();//刷新select组件，使样式生效
+	  if(OrderInfo.actionFlag != 2){
+		  common.setListTop("110px");
+	  }
 	});
 </script>

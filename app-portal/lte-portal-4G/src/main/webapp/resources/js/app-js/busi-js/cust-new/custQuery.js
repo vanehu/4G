@@ -301,8 +301,13 @@ custQuery = (function(){
 		});
 		
 //		 判断是否是政企客户
-		if(_choosedCustInfo.isGov == "Y"){
+		if(_choosedCustInfo.isGov == "Y" && "19" != OrderInfo.actionFlag){
 			$.alert("提示","政企客户不允许受理该业务！");
+			return;
+		}
+		
+		if(_choosedCustInfo.isGov != "Y" && "19" == OrderInfo.actionFlag){
+			$.alert("提示","客户证件类型为！【"+_choosedCustInfo.identityName+"】，"+"证件号码为："+_choosedCustInfo.idCardNumber+"，当前不能办理此业务！");
 			return;
 		}
 		
@@ -332,6 +337,12 @@ custQuery = (function(){
 		$("#auth_tab1").hide();
 		$("#auth_tab2").hide();
 		$("#auth_tab3").hide();
+		$("#auth_tab1").removeClass("active");
+		$("#auth_tab2").removeClass("active");
+		$("#auth_tab3").removeClass("active");
+		$("#auth-nav-tab-"+1).removeClass("active in");
+		$("#auth-nav-tab-"+2).removeClass("active in");
+		$("#auth-nav-tab-"+3).removeClass("active in");
 		
 		var first_show = 0;//第一个鉴权方式显示标识
 		
@@ -590,6 +601,12 @@ custQuery = (function(){
 								}
 							}
 					}
+					$("#auth_tab1").removeClass("active");
+					$("#auth_tab2").removeClass("active");
+					$("#auth_tab3").removeClass("active");
+					$("#auth-nav-tab-1").removeClass("active in");
+					$("#auth-nav-tab-2").removeClass("active in");
+					$("#auth-nav-tab-3").removeClass("active in");
 					$("#auth_tab"+first_show).addClass("active");
 					$("#auth-nav-tab-"+first_show).addClass("active in");
 				}else{
@@ -710,30 +727,30 @@ custQuery = (function(){
 	//客户鉴权--证件类型
 	var _identityTypeAuth=function(level){
 		$('#auth3').modal('hide');
-		var idCardNumber2 = "";
-		if (level == "1") {
-			idCardNumber2 = $("#idCardNumber2").val();
-			if (_choosedCustInfo.identityCd != "1") {
-				if (_isSelfChannel()) {
-					$("#idCardNumber2").removeAttr("disabled");
-				} else {
-					$("#idCardNumber2").attr("disabled", "disabled");
-					$.alert("提示", "请到电信自有营业厅办理业务！");
-					return;
-				}
-			}
-		} else if (level == "2") {
-			idCardNumber2 = $("#idCardNumber2").val();
-			if (_choosedCustInfo.identityCd != "1") {
-				if (_isSelfChannel()) {
-					$("#idCardNumber2").removeAttr("disabled");
-				} else {
-					$("#idCardNumber2").attr("disabled", "disabled");
-					$.alert("提示", "请到电信自有营业厅办理业务！");
-					return;
-				}
-			}
-		}
+//		var idCardNumber2 = "";
+//		if (level == "1") {
+//			idCardNumber2 = $("#idCardNumber2").val();
+//			if (_choosedCustInfo.identityCd != "1") {
+//				if (_isSelfChannel()) {
+//					$("#idCardNumber2").removeAttr("disabled");
+//				} else {
+//					$("#idCardNumber2").attr("disabled", "disabled");
+//					$.alert("提示", "请到电信自有营业厅办理业务！");
+//					return;
+//				}
+//			}
+//		} else if (level == "2") {
+//			idCardNumber2 = $("#idCardNumber2").val();
+//			if (_choosedCustInfo.identityCd != "1") {
+//				if (_isSelfChannel()) {
+//					$("#idCardNumber2").removeAttr("disabled");
+//				} else {
+//					$("#idCardNumber2").attr("disabled", "disabled");
+//					$.alert("提示", "请到电信自有营业厅办理业务！");
+//					return;
+//				}
+//			}
+//		}
 		var param = _choosedCustInfo;
 		param.validateType="1";
 		param.identityNum = base64encode(utf16to8($.trim($("#idCardNumber2").val())));

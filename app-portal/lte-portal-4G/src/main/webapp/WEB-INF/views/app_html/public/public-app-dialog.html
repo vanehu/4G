@@ -43,21 +43,21 @@
 				<!-- begin nav-tabs -->
 				<div class="tab-overflow">
 					<ul class="nav nav-tabs nav-tabs-inverse p-t-5" style="border-radius: 5px 5px 0 0;">
-						<li id="auth_tab1" class="active" onclick="custQuery.changeTab(1);">
+						<li id="auth_tab1" style="display:none;" class="" onclick="custQuery.changeTab(1);">
 						<a data-toggle="tab">
 						<i class="iconfont tab-icon">&#xe667;</i>
 						产品密码
 						<i class="iconfont tab-result-icon">&#xe611;</i>
 						</a>
 						</li>
-						<li id="auth_tab2" class="" onclick="custQuery.changeTab(2);">
+						<li id="auth_tab2" style="display:none;" class="" onclick="custQuery.changeTab(2);">
 						<a data-toggle="tab">
 						<i class="iconfont tab-icon">&#xe671;</i>
 						证件
 						<i class="iconfont tab-result-icon">&#xe611;</i>
 						</a>
 						</li>
-						<li id="auth_tab3" class="" onclick="custQuery.changeTab(3);">
+						<li id="auth_tab3" style="display:none;" class="" onclick="custQuery.changeTab(3);">
 						<a data-toggle="tab">
 						<i class="iconfont tab-icon">&#xe671;</i>
 						短信
@@ -90,7 +90,7 @@
 			</div>
 
 			<div class="tab-content p-0" id="">
-				<div class="tab-pane fade active in" id="auth-nav-tab-1">
+				<div class="tab-pane fade " id="auth-nav-tab-1">
 					<div class="form-group" style="height: 0.86rem!important;">
 						<input type="text" class="form-control" id="authPassword2" placeholder="请输入产品密码" maxlength="20" oninput="this.value=this.value.replace(/[/W]/g,'')">
 					</div>

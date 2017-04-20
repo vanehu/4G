@@ -98,7 +98,7 @@ cust = (function(){
 					var inParams = {
 							"certType":$.trim($("#cm_identidiesTypeCd").val()),
 							"certNum":$.trim($("#cmCustIdCard").val()),
-							"areaId" :OrderInfo.staff.areaId
+							"areaId" :OrderInfo.staff.areaId+""
 						};
 						var checkUrl=contextPath+"/app/cust/checkCustCert";
 						var checkResponse = $.callServiceAsJson(checkUrl, inParams, {"before":function(){
