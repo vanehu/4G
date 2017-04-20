@@ -519,6 +519,9 @@ public class MDA {
 	 * 翼销售app省份新版ui开关
 	 */
 	public static final Map<String,String> NEWUIFLAG = new HashMap<String,String>();
+	
+	/**公告附件下载FTP服务器配置*/
+	public static final String WORD_FONT = new String("");
 
 	/**实名制:证件照片校验签名密钥*/
     public static final Map<String,Map<String,String>> VENDER_SIGNATURE = new HashMap <String,Map<String,String>>();
