@@ -3,12 +3,12 @@ package com.al.lte.portal.model;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
-
-import net.minidev.json.JSONObject;
 
 import org.apache.commons.collections.MapUtils;
 
+import com.al.ecs.common.util.JsonUtil;
 import com.al.ecs.common.util.MDA;
 import com.al.ecs.log.Log;
 
@@ -71,7 +71,23 @@ public class BatchRuleConfigs {
 			this.setRepeatCheckList((ArrayList<Integer>) batchRuleConfig.get("repeatCheckList"));
 			this.setRegexpCheck((HashMap<String, String>)batchRuleConfig.get("regexpCheck"));
 			this.setTemplateType(MapUtils.getIntValue(batchRuleConfig, "templateType", -1));
-			log.debug("portalBatch-私有成员属性实例化完成.");
+			
+			Map<String, Object> batchRuleConfigMap = new HashMap<String, Object>();
+			batchRuleConfigMap.put("totalColumns", totalColumns);
+			batchRuleConfigMap.put("strictColumns", strictColumns);
+			batchRuleConfigMap.put("nameColumns", nameColumns);
+			batchRuleConfigMap.put("maxRows", maxRows);
+			batchRuleConfigMap.put("batchTypeName", batchTypeName);
+			batchRuleConfigMap.put("govEntCheckList", govEntCheckList);
+			batchRuleConfigMap.put("repeatCheckList", repeatCheckList);
+			batchRuleConfigMap.put("regexpCheck", regexpCheck);
+			batchRuleConfigMap.put("templateType", templateType);
+			batchRuleConfigMap.put("batchType", batchType);
+			batchRuleConfigMap.put("threshold", threshold);
+			batchRuleConfigMap.put("shiftLeft", shiftLeft);
+			batchRuleConfigMap.put("errorDataMaxCount", errorDataMaxCount);
+			batchRuleConfigMap.put("threadsFlag", threadsFlag);
+			log.debug("portalBatch-私有成员属性实例化完成={}", JsonUtil.toString(batchRuleConfigMap));
 		} else{
 			log.error("portalBatch-类BatchRuleConfigs实例化异常，MDA.BATCH_CONFIGS未获取到有效信息={}，batchType={}.", batchRuleConfig, batchType);
 //			throw new Exception("类BatchRuleConfigs实例化异常，未获取到有效配置信息");
