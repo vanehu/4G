@@ -125,6 +125,8 @@ public class SessionStaff implements Serializable {
 	private String dbKeyWord;
 	/** 受理渠道大类  */
 	private String currentChannelType;
+	/**是否使用精品渠道终端销售系统key：isUseGTS value：null（否）、10（ 否）、20 （是）*/
+	private String isUseGTS;
 	/** 手机信息  */
 	private String phoneModel;
 	/** 手机mac地址 */
@@ -149,6 +151,13 @@ public class SessionStaff implements Serializable {
 	private Map<String, Object> essSession;
 	/**登录地区名*/
 	private String loginAreaName;
+	/**
+	 * 用记录session来源的登录方式，tokenLogin 为能力开放，loginMH为4G
+	 */
+	private String logintype ;
+	
+	/**工号是否具有跳过经办人权限*/
+	boolean isHandleCustNeeded;
 	
 	public String getCustType() {
 		return custType;
@@ -624,6 +633,7 @@ public class SessionStaff implements Serializable {
 		sessionStaff.setCurrentAreaName(MapUtils.getString(paramMap, "areaName", ""));
 		sessionStaff.setCurrentAreaAllName(MapUtils.getString(paramMap, "areaAllName", ""));
 		sessionStaff.setCurrentChannelType(MapUtils.getString(paramMap, "type", ""));
+		sessionStaff.setIsUseGTS(MapUtils.getString(paramMap, "isUseGTS", ""));
 		sessionStaff.setOperatorsId(MapUtils.getString(paramMap, "operatorsId", ""));
 		//身份证类型开发
 		PropertiesUtils propertiesUtils = (PropertiesUtils) SpringContextUtil.getBean("propertiesUtils");
@@ -646,6 +656,7 @@ public class SessionStaff implements Serializable {
 		sessionStaff.setCurrentAreaName(MapUtils.getString(paramMap, "areaName", ""));
 		sessionStaff.setCurrentAreaAllName(MapUtils.getString(paramMap, "areaAllName", ""));
 		sessionStaff.setCurrentChannelType(MapUtils.getString(paramMap, "type", ""));
+		sessionStaff.setIsUseGTS(MapUtils.getString(paramMap, "isUseGTS", ""));
 		//身份证类型开发
 		PropertiesUtils propertiesUtils = (PropertiesUtils) SpringContextUtil.getBean("propertiesUtils");
 		sessionStaff.setIdType(propertiesUtils.getMessage(SysConstant.IDTYPE+"-"+MapUtils.getString(paramMap, "areaId", "").substring(0,3)+"0000"));
@@ -841,6 +852,36 @@ public class SessionStaff implements Serializable {
 
 	public void setLoginAreaName(String loginAreaName) {
 		this.loginAreaName = loginAreaName;
+	}
+
+
+	public String getIsUseGTS() {
+		return isUseGTS;
+	}
+
+
+	public void setIsUseGTS(String isUseGTS) {
+		this.isUseGTS = isUseGTS;
+	}
+
+
+	public String getLogintype() {
+		return logintype;
+	}
+
+
+	public void setLogintype(String logintype) {
+		this.logintype = logintype;
+	}
+
+
+	public boolean isHandleCustNeeded() {
+		return isHandleCustNeeded;
+	}
+
+
+	public void setHandleCustNeeded(boolean isHandleCustNeeded) {
+		this.isHandleCustNeeded = isHandleCustNeeded;
 	}	
 	
 }

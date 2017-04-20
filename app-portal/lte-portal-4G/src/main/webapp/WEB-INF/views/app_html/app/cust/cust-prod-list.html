@@ -1,0 +1,114 @@
+<#if custflag==0>
+
+<#if (pageModel.list)?? &&((pageModel.list)?size>0)>
+		<#assign parm_row = 0 />
+		<#list pageModel.list as item>
+			<#assign parm_row = parm_row + 1 />
+          	<#if item.prodOfferName!="">
+		  			<#assign styletype="display:none">
+		  			<#else>
+		  			<#assign styletype="">
+			</#if>
+	        <#if item.treeFlag==""||item.treeFlag=="tree_bottom">
+			  			<#assign substyletype="">
+			  			<#else>
+			  			<#assign substyletype="tree_center">
+			</#if>
+          <ul class="choice-list-box" prodBigClass="${item.prodBigClass}" areaId="${item.areaId}" accNbr="${item.accNbr}" productName="${item.productName}" prodStateName="${item.prodStateName}" feeType="${item.feeType.feeType}" feeTypeName="${item.feeType.feeTypeName}" 
+			    prodInstId="${item.prodInstId}" extProdInstId="${item.extProdInstId}" corProdInstId="${item.corProdInstId}" prodStateCd="${item.prodStateCd}" productId="${item.productId}" prodClass="${item.prodClass}" stopRecordCd="${item.stopRecordCd}" stopRecordName="${item.stopRecordName}" zoneNumber="${item.zoneNumber}" ifLteNewInstall="${item.ifLteNewInstall}">
+          	<li>
+              <span class="list-title">
+            	<span class="title-lg">${item.accNbr}</span>
+              	<span class="subtitle font-secondary">${item.roleName}</span>
+              </span>
+            </li>
+            <li>
+              <span class="list-title">
+            	<span class="title-lg">${item.prodStateName}${item.stopRecordName}</span>
+              	<span class="subtitle font-secondary">产品状态</span>
+              </span>
+            </li>
+            <#if item.prodOfferName!="">
+            <#list item.mainProdOfferInstInfos as subitem>
+            <li style="height:auto;" prodOfferName="${subitem.prodOfferName}" startDt="${subitem.startDt}" custName="${subitem.custName}" endDt="${subitem.endDt}"
+				prodOfferId="${subitem.prodOfferId}" prodOfferInstId="${subitem.prodOfferInstId}" custId="${subitem.custId}" is3G="${subitem.is3G}">
+              <span class="list-title" onClick="custQuery.getChooseProdInfo(this, '');">
+            	<span class="title-lg">${item.prodOfferName}</span>
+              	<span class="font-secondary">套餐名称</span>
+              </span>
+              <br/>
+              <br/>
+              <button class="no-sub" style="float: right;margin-top: 10px;width: 4em;margin-right: 10px;">选择</button>
+              <br/>
+              <br/>
+              <span class="subtitle font-secondary">&nbsp;</span>
+            </li>
+            </#list>
+            <!--
+            <li prodOfferName=${item.prodOfferName} style="height:auto;">
+              <span class="list-title" onClick="custQuery.getChooseProdInfo(this, '');">
+            	<span class="title-lg">${item.prodOfferName}</span>
+              	<span class="font-secondary">套餐名称</span>
+              </span>
+              <br/>
+              <br/>
+              <button class="no-sub" style="float: right;margin-top: 10px;width: 4em;margin-right: 10px;">选择</button>
+              <br/>
+              <br/>
+              <span class="subtitle font-secondary">&nbsp;</span>
+            </li>
+            -->
+            <#else>
+            <#list item.mainProdOfferInstInfos as subitem>
+            <li style="height:auto;" prodOfferName="${subitem.prodOfferName}" startDt="${subitem.startDt}" custName="${subitem.custName}" endDt="${subitem.endDt}"
+				prodOfferId="${subitem.prodOfferId}" prodOfferInstId="${subitem.prodOfferInstId}" custId="${subitem.custId}" is3G="${subitem.is3G}">
+              <span onClick="custQuery.getChooseProdInfo(this, 'sub');" class="list-title" style="width:50%;">
+            	<span class="title-lg">${subitem.prodOfferName}</span>
+              	<span class="subtitle font-secondary">套餐名称</span>
+              </span>
+              <button class="yes-sub" style="float: right;margin-top: 10px;width: 4em;margin-right: 10px;">选择</button>
+              <span class="subtitle font-secondary">&nbsp;</span>
+            </li>
+            </#list>
+	        </#if>
+	        <li>
+              <span class="list-title">
+            	<span class="title-lg">${item.productName}</span>
+              	<span class="subtitle font-secondary">产品规格</span>
+              </span>
+            </li>
+	        <li>
+              <span class="list-title">
+            	<span class="title-lg">${item.feeType.feeTypeName}</span>
+              	<span class="subtitle font-secondary">付费类型</span>
+              </span>
+            </li>
+            <li>
+              <span class="list-title">
+            	<span class="title-lg" name="pord_uim_type_query" prodInstId="${item.prodInstId}"></span>
+              	<span class="subtitle font-secondary">卡类型</span>
+              </span>
+            </li>
+          </ul>
+          </#list>
+          <div id="goOrder" onClick="custQuery.goOrder();" style="display:none;" class="sub-btn-box p p-b-15">
+			<button class="sun-btn">下一步</button>
+		  </div>
+<#else>
+  	<ul class="choice-list-box">
+        <li>
+          <i class="iconfont pull-left"></i>
+          <span class="list-title font-secondary">没有查询到产品</span>
+        </li>
+     </ul>
+</#if>
+<#elseif custflag==1>
+	<#if msg??>
+		<ul class="single-list-box">
+	 		<input type="hidden" id="resultlst" value="0"/>
+			<div class="media">
+			<img style="vertical-align:middle" src="${contextPath}/image/common/query_search.gif" />&nbsp;&nbsp;${msg}。
+		</div>
+		</ul>
+	</#if>
+</#if>

@@ -10,6 +10,7 @@
 				<!-- begin nav-tabs -->
 				<div class="tab-overflow">
 					<ul class="nav nav-tabs nav-tabs-inverse p-t-5">
+					<!--
 						<li id="lyh" class="active" onclick="custTab(1);">
 						<a data-toggle="tab">
 						<i class="iconfont tab-icon">&#xe667;</i>
@@ -21,6 +22,14 @@
 						<a data-toggle="tab">
 						<i class="iconfont tab-icon">&#xe671;</i>
 						新用户
+						<i class="iconfont tab-result-icon">&#xe611;</i>
+						</a>
+						</li>
+					-->
+						<li id="lyh" class="active">
+						<a data-toggle="tab">
+						<i class="iconfont tab-icon">&#xe667;</i>
+						客户信息
 						<i class="iconfont tab-result-icon">&#xe611;</i>
 						</a>
 						</li>
@@ -39,8 +48,8 @@
 						<div class="choice-box">
 							<i class="iconfont pull-left">&#xe66c;</i> 
 							<select name="" id="identidiesType" onchange="custQuery.custidentidiesTypeCdChoose(this,'userid')" class="myselect select-option" data-role="none">
-								<option value="1" selected="selected">居民身份证</option>
-								<option value="-1" >接入号码</option>
+								<option id="xzsfz" value="1" selected="selected">居民身份证</option>
+								<option id="xzjrf" value="-1" >接入号码</option>
 							</select>
 						</div>
 					</li>
@@ -86,7 +95,7 @@
 					<li class="m-t-10">
 						<div class="choice-box">
 							<i class="iconfont pull-left">&#xe66c;</i> 
-							<input placeholder="请输入号码" id="userid" class="choice-input" oninput="value=value.replace(/[^A-Za-z0-9]/ig,'')" />
+							<input placeholder="请输入身份证号码" id="userid" class="choice-input" readonly="readonly" oninput="value=value.replace(/[^A-Za-z0-9]/ig,'')" />
 						</div>
 					</li>
 				</ul>
@@ -108,10 +117,21 @@
 </div>
 <div id="custInfo">
 </div>
+<div id="custProd">
+</div>
 <script>
 $(function() {
-		order.broadband.init_select();
 		order.area.initTree();
+		cust.custCatsh = {};
+		if(OrderInfo.actionFlag == "9"){
+			$("#identidiesType").empty();
+			$("#identidiesType").append('<option id="xzjrf" value="-1" >接入号码</option>');
+			order.broadband.init_select();
+			custQuery.custidentidiesTypeCdChoose($("#identidiesType"),'userid');
+		}else{
+			order.broadband.init_select();
+		}
+		
 });
 var cq_ua = navigator.userAgent.toLowerCase();	
 if (/iphone|ipad|ipod/.test(cq_ua)) {

@@ -113,7 +113,6 @@ order.service = (function(){
 	};
 	
 	var _queryData = function(params,flag,initFlag,scroller) {
-		params.sysFlag = "10004";//系统标识
 		if(_isAll && flag == 1){
 			_isAll = true;
 		} else {
@@ -524,6 +523,12 @@ order.service = (function(){
 	
 //关闭规则窗口
 var _closeRule=function(){
+	if(OrderInfo.actionFlag==6){
+		$("#error-rule").hide();		
+		$("#secondaryPhoneNumUl").show();
+		common.callReturnBack();
+		return;
+	}
 	$("#offer-list").show();
 	$("#offer-rule").hide();
 	

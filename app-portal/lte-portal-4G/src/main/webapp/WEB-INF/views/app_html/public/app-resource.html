@@ -12,6 +12,8 @@
 		<META name="description" content="电信集团">
 		<#include "/public/common-app-newcss-tpl.html"/>
 		<#include "/public/common-app-newjs.html"/>
+		<script src="${contextPath}/js/app-js/busi-js/common/home.js?${jsversion}" type="text/javascript"></script>
+		<script src="${contextPath}/js/app-js/busi-js/common/menuConst.js?${jsversion}" type="text/javascript"></script>
 		<script src="${contextPath}/js/app-js/busi-js/common/const.js?${jsversion}" type="text/javascript"></script>
 		<script src="${contextPath}/js/app-js/busi-js/order-new/common.js?${jsversion}" type="text/javascript"></script>
 		<script src="${contextPath}/js/app-js/busi-js/order/orderProdModify.js?${jsversion}" type="text/javascript"></script>
@@ -49,7 +51,7 @@
 		<script src="${contextPath}/js/app-js/busi-js/cust-new/custQuery.js" type="text/javascript"></script>
 		<script src="${contextPath}/js/app-js/busi-js/info/infoCollect.js" type="text/javascript"></script>
 		<script src="${contextPath}/js/app-js/busi-js/bill/charge.js?${jsversion}" type="text/javascript"></script>
-		<script src="${contextPath}/js/app-js/busi-js/order-new/memberChange.js" type="text/javascript"></script>
+		<script src="${contextPath}/js/app-js/busi-js/order-new/memberChange.js?${jsversion}" type="text/javascript"></script>
 		<script src="${contextPath}/js/app-js/busi-js/bill/paymentQuery.js?${jsversion}" type="text/javascript"></script>
 		<script>
 		window.onload= function() 
@@ -72,6 +74,11 @@
 					menu = 1;
 				}
 				switch(menu){
+				case 10000 :
+					params.method = "/app/main/app_home"; //实名制客户新增
+					params.actionFlag = 10000;
+					params.enter = 4;
+					break;
 				case 1 :
 					params.method = "/app/cust/create"; //实名制客户新增
 					params.actionFlag = 34;
@@ -161,7 +168,7 @@
 					params.method = "/app/bill/paymentQueryPrepare"; //充值记录查询
 					break;
 				case 302 :
-					params.method = "/app/card/memberChange/prepare"; //主副卡成员变更
+					params.method = "/app/order/prodoffer/memberchange/prepare"; //主副卡成员变更
 					break;
 				}  
 				var custInfos=$.parseJSON(window.localStorage.getItem("OrderInfo.cust"));

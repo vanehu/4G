@@ -438,6 +438,31 @@ public class BillBmoImpl implements BillBmo {
 		return resultMap;
 	}
 
+	public Map<String, Object> checkDeposit(Map<String, Object> paramMap,
+			String flowNum, SessionStaff sessionStaff) throws Exception {
+		 Map<String, Object> resultMap = new HashMap<String, Object>();
+		Map<String,Object> contractRootMap = (Map<String, Object>) paramMap.get("ContractRoot");
+		Map<String,Object> svcContMap = (Map<String, Object>) contractRootMap.get("SvcCont");
+		svcContMap.put("StaffCode", sessionStaff.getStaffCode());//sessionStaff.getStaffCode()); // "TJ4562"(津)   100037304(西)   boss_test2(疆)  31001862(吉) 110063321(贵) 100000036(河南) YCY71203000412(内蒙古)
+        svcContMap.put("ChannelNbr", sessionStaff.getCurrentChannelCode()); //sessionStaff.getCurrentChannelCode()); // "1201001006237"  4501003020321  1033230071 2201001020978  5203251000384  4114811104532  1501013006302
+		svcContMap.put("CommonRegionId", sessionStaff.getAreaId()); //sessionStaff.getAreaId()); //"8120100"   8450101   8320100  8220100  8520325  8410100  8150100
+		DataBus db = InterfaceClient.callCheckDepositService(paramMap, PortalServiceCode.CHECK_DEPOSIT, flowNum, sessionStaff);
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		try{
+			if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db
+					.getResultCode()))) {
+				resultMap = db.getReturnlmap();
+				returnMap.put("code", ResultCode.R_SUCCESS);
+			//	returnMap.putAll((Map)resultMap);
+			} else {
+				returnMap.put("code", ResultCode.R_FAIL);
+				returnMap.put("msg", db.getResultMsg());
+			}
+		}catch(Exception e){
+			throw new BusinessException(ErrorCode.CHECK_DEPOSIT, paramMap, db.getReturnlmap(), e);
+		}	
+		return returnMap;		
+	}
 	public Map<String, Object> balance(Map<String, Object> paramMap,
 			String flowNum, SessionStaff sessionStaff) throws Exception {
 		DataBus db = ServiceClient.callService(paramMap, PortalServiceCode.APP_BALANCE, flowNum, sessionStaff);

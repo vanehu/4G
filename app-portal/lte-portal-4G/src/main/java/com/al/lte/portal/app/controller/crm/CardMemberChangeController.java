@@ -1,15 +1,11 @@
 package com.al.lte.portal.app.controller.crm;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.collections.MapUtils;
-import org.apache.commons.collections.map.HashedMap;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
@@ -22,7 +18,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.al.ec.serviceplatform.client.ResultCode;
 import com.al.ecs.common.entity.JsonResponse;
-import com.al.ecs.common.util.JsonUtil;
 import com.al.ecs.common.util.PropertiesUtils;
 import com.al.ecs.common.web.ServletUtils;
 import com.al.ecs.exception.AuthorityException;

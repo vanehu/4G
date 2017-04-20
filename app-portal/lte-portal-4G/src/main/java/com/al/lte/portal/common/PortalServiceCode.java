@@ -440,6 +440,10 @@ public final class PortalServiceCode {
     /** 翼销售余额查询*/
     public static final String APP_BALANCE = "com.linkage.portal.service.lte.core.charge.AppBalance";
     
+    /** 代理商保证金校验*/
+    public static final String CHECK_DEPOSIT = "chk.order.chkdeposit";
+    
+    
     /** 翼销售欠费查询*/
     public static final String APP_ARREARS = "com.linkage.portal.service.lte.core.charge.AppArrears";
     
@@ -1207,6 +1211,9 @@ public final class PortalServiceCode {
     
     /** 查询特殊协议服务 */
     public static final String QUERY_SPECIALPROTOCOL_BYOLID = "biz-service/intf.detailService/querySpecialProtocolByOlId";
+    
+    /**获取初审信息接口*/
+    public static final String QRY_PRELININARY_INFO = "biz-service/intf.acctService/qryPreliminaryInfo";
 
 }
 

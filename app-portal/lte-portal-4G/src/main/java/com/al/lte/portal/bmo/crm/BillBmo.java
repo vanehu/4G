@@ -210,4 +210,17 @@ public interface BillBmo {
 	 */
 	public String getTranId(Map<String, Object> paramMap,
 			String flowNum, SessionStaff sessionStaff) throws Exception;
+	
+	/**
+	 * 代理商保证金校验接口
+	 * @param paramMap
+	 * @param flowNum
+	 * @param sessionStaff
+	 * @return
+	 * @throws Exception
+	 */
+	public Map<String, Object> checkDeposit(Map<String, Object> paramMap,
+			String flowNum, SessionStaff sessionStaff) throws Exception;
+	
+	
 }

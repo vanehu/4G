@@ -27,6 +27,7 @@ import com.al.ec.serviceplatform.client.ResultCode;
 import com.al.ecs.common.entity.JsonResponse;
 import com.al.ecs.common.entity.PageModel;
 import com.al.ecs.common.util.PageUtil;
+import com.al.ecs.common.util.PropertiesUtils;
 import com.al.ecs.common.web.ServletUtils;
 import com.al.ecs.exception.AuthorityException;
 import com.al.ecs.exception.BusinessException;
@@ -48,6 +49,8 @@ import com.al.lte.portal.model.SessionStaff;
 @Controller("com.al.lte.portal.app.controller.crm.ReportController")
 @RequestMapping("/app/report/*")
 public class ReportController extends com.al.lte.portal.controller.crm.ReportController {
+	@Autowired
+	PropertiesUtils propertiesUtils;
 	@Autowired
 	@Qualifier("com.al.lte.portal.bmo.crm.CartBmo")
 	private CartBmo cartBmo;
@@ -98,7 +101,7 @@ public class ReportController extends com.al.lte.portal.controller.crm.ReportCon
 		 * @throws AuthorityException
 		 */
 		@RequestMapping(value = "/freeInfoMain", method = RequestMethod.POST)
-	    public String freeInfoMain(Model model,HttpSession session,@LogOperatorAnn String flowNum) throws AuthorityException {
+	    public String freeInfoMain(@RequestBody Map<String, Object> param,Model model,HttpSession session,@LogOperatorAnn String flowNum) throws AuthorityException {
 			model.addAttribute("current", EhcacheUtil.getCurrentPath(session,"report/cartMain"));
 			
 			SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
@@ -115,6 +118,10 @@ public class ReportController extends com.al.lte.portal.controller.crm.ReportCon
 			model.addAttribute("p_endDt", endTime);
 			model.addAttribute("p_areaId", defaultAreaInfo.get("defaultAreaId"));
 			model.addAttribute("p_areaId_val", defaultAreaInfo.get("defaultAreaName"));
+			model.addAttribute("p_channelId", sessionStaff.getCurrentChannelId());
+			if(param.get("newFlag")!=null){				
+				return "/app/cart_new/order-fee-main";	//新版ui
+			} 
 			return "/app/order/order-fee-main";
 		}
 			
@@ -174,6 +181,9 @@ public class ReportController extends com.al.lte.portal.controller.crm.ReportCon
 	    		model.addAttribute("pageModel", pm);
 	    		model.addAttribute("code", map.get("code"));
 				model.addAttribute("mess", map.get("mess"));
+				if(request.getParameter("newFlag")!=null){
+					return "/app/cart_new/order-fee-list";//新版ui
+				}
 				return "/app/order/order-fee-list";
 		    } catch (BusinessException be) {
 	           return super.failedStr(model, be);
@@ -193,7 +203,7 @@ public class ReportController extends com.al.lte.portal.controller.crm.ReportCon
 		 * @throws AuthorityException
 		 */
 		@RequestMapping(value = "/terminalSalesMain", method = RequestMethod.POST)
-	    public String terminalSalesMain(Model model,HttpSession session,@LogOperatorAnn String flowNum) throws AuthorityException {
+	    public String terminalSalesMain(@RequestBody Map<String, Object> param,Model model,HttpSession session,@LogOperatorAnn String flowNum) throws AuthorityException {
 			model.addAttribute("current", EhcacheUtil.getCurrentPath(session,"report/cartMain"));
 			
 			SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
@@ -210,6 +220,10 @@ public class ReportController extends com.al.lte.portal.controller.crm.ReportCon
 			model.addAttribute("p_endDt", endTime);
 			model.addAttribute("p_areaId", defaultAreaInfo.get("defaultAreaId"));
 			model.addAttribute("p_areaId_val", defaultAreaInfo.get("defaultAreaName"));
+			model.addAttribute("p_channelId", sessionStaff.getCurrentChannelId());
+			if(param.get("newFlag")!=null){//跳转新ui
+				return "/app/cart_new/terminal-sales-main";
+			}
 			return "/app/mktRes/terminal-sales-main";
 		}
 			
@@ -258,6 +272,9 @@ public class ReportController extends com.al.lte.portal.controller.crm.ReportCon
 	    		model.addAttribute("pageModel", pm);
 	    		model.addAttribute("code", map.get("code"));
 				model.addAttribute("mess", map.get("mess"));
+				if(request.getParameter("newFlag")!=null){
+					return "/app/cart_new/terminal-sales-list";//新版ui
+				}
 				return "/app/mktRes/terminal-sales-list";
 		    } catch (BusinessException be) {
 	           return super.failedStr(model, be);
@@ -277,7 +294,7 @@ public class ReportController extends com.al.lte.portal.controller.crm.ReportCon
 	 */
 	@RequestMapping(value = "/statisticsCartMain", method = RequestMethod.POST)
     @AuthorityValid(isCheck = false)
-    public String statisticsCartMain(Model model,HttpSession session,@LogOperatorAnn String flowNum) throws AuthorityException {
+    public String statisticsCartMain(@RequestBody Map<String, Object> param,Model model,HttpSession session,@LogOperatorAnn String flowNum) throws AuthorityException {
 		model.addAttribute("current", EhcacheUtil.getCurrentPath(session,"report/statisticsCartMain"));
 		
 		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
@@ -293,7 +310,10 @@ public class ReportController extends com.al.lte.portal.controller.crm.ReportCon
 		model.addAttribute("p_endDt", endTime);
 		model.addAttribute("p_areaId", defaultAreaInfo.get("defaultAreaId"));
 		model.addAttribute("p_areaId_val", defaultAreaInfo.get("defaultAreaName"));
-		
+		model.addAttribute("p_channelId", sessionStaff.getCurrentChannelId());
+		if(param.get("newFlag")!=null){//跳转新ui
+			return "/app/cart_new/cart-main";
+		}
 		return "/app/cart/statistics-cart-main";		
 	}
 	/**
@@ -306,7 +326,7 @@ public class ReportController extends com.al.lte.portal.controller.crm.ReportCon
 	 */
 	@RequestMapping(value = "/statisticsCompleteCartMain", method = RequestMethod.POST)
     @AuthorityValid(isCheck = false)
-    public String statisticsCompleteCartMain(Model model,HttpSession session,@LogOperatorAnn String flowNum) throws AuthorityException {
+    public String statisticsCompleteCartMain(@RequestBody Map<String, Object> param,Model model,HttpSession session,@LogOperatorAnn String flowNum) throws AuthorityException {
 		model.addAttribute("current", EhcacheUtil.getCurrentPath(session,"report/statisticsCartMain"));
 		
 		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
@@ -323,6 +343,10 @@ public class ReportController extends com.al.lte.portal.controller.crm.ReportCon
 		model.addAttribute("status", "301200"); // 竣工状态
 		model.addAttribute("p_areaId_val", defaultAreaInfo.get("defaultAreaName"));
 		model.addAttribute("p_areaId", defaultAreaInfo.get("defaultAreaId"));
+		model.addAttribute("p_channelId", sessionStaff.getCurrentChannelId());
+		if(param.get("newFlag")!=null){//跳转新ui
+			return "/app/cart_new/cart-main";
+		}
 		return "/app/cart/statistics-cart-main";		
 	}
 	

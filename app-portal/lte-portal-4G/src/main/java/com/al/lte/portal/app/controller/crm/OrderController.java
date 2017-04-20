@@ -1,6 +1,5 @@
 package com.al.lte.portal.app.controller.crm;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -43,7 +42,6 @@ import com.al.ecs.common.util.JsonUtil;
 import com.al.ecs.common.util.MDA;
 import com.al.ecs.common.util.PageUtil;
 import com.al.ecs.common.util.PropertiesUtils;
-import com.al.ecs.common.util.UIDGenerator;
 import com.al.ecs.common.web.ServletUtils;
 import com.al.ecs.exception.AuthorityException;
 import com.al.ecs.exception.BusinessException;
@@ -56,8 +54,8 @@ import com.al.ecs.spring.annotation.session.AuthorityValid;
 import com.al.ecs.spring.controller.BaseController;
 import com.al.lte.portal.bmo.crm.CommonBmo;
 import com.al.lte.portal.bmo.crm.CustBmo;
-import com.al.lte.portal.bmo.crm.OrderBmo;
 import com.al.lte.portal.bmo.crm.MktResBmo;
+import com.al.lte.portal.bmo.crm.OrderBmo;
 import com.al.lte.portal.bmo.print.PrintBmo;
 import com.al.lte.portal.bmo.staff.StaffBmo;
 import com.al.lte.portal.common.CommonMethods;
@@ -77,7 +75,7 @@ import com.al.lte.portal.model.SessionStaff;
  * @author wukf
  * @version V1.0 2013-08-07
  * @createDate 2013-08-07 上午10:03:44 
- * @modifyDate 2014-07-15
+ * @modifyDate 2014-07-15method
  * @modifyby liusd
  * @copyRight 亚信联创EC研发部
  */
@@ -178,10 +176,10 @@ public class OrderController extends BaseController {
 						SysConstant.SESSION_KEY_LOGIN_STAFF);
 		Map<String, Object> rMap = null;
 		JsonResponse jsonResponse = null;
-		String propertiesKey = "NEWPAYFLAG_"+ (sessionStaff.getCurrentAreaId() + "").substring(0, 3);
+//		String propertiesKey = "NEWPAYFLAG_"+ (sessionStaff.getCurrentAreaId() + "").substring(0, 3);
 		// 支付开关
-		String payFlag = propertiesUtils.getMessage(propertiesKey);
-		boolean chargeFlag = true;// 默认允许调用收费接口
+//		String payFlag = propertiesUtils.getMessage(propertiesKey);
+//		boolean chargeFlag = true;// 默认允许调用收费接口
 //		if ("ON".equals(payFlag)) {
 //			HttpSession session = request.getSession();
 //			String key = param.get("olId").toString() + "_payCode";// 支付成功唯一标志
@@ -191,34 +189,26 @@ public class OrderController extends BaseController {
 //				chargeFlag = false;// 信息可能被篡改，不允许调用收费接口
 //			}
 //		}
-		if (chargeFlag) {//调用收费接口
-			try {
-				if (commonBmo.checkToken(request,SysConstant.ORDER_SUBMIT_TOKEN)) {
-					log.debug("param={}", JsonUtil.toString(param));
-					param.put("areaId", sessionStaff.getCurrentAreaId());
-					rMap = orderBmo.chargeSubmit(param, flowNum, sessionStaff);
-					log.debug("return={}", JsonUtil.toString(rMap));
-					if (rMap != null && ResultCode.R_SUCCESS.equals(rMap.get("code").toString())) {
-						jsonResponse = super.successed("收费成功",
-								ResultConstant.SUCCESS.getCode());
-					} else {
-						jsonResponse = super.failed(rMap.get("msg"),
-								ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
-					}
+		try {
+			if (commonBmo.checkToken(request, SysConstant.ORDER_SUBMIT_TOKEN)) {
+				log.debug("param={}", JsonUtil.toString(param));
+				param.put("areaId", sessionStaff.getCurrentAreaId());
+				rMap = orderBmo.chargeSubmit(param, flowNum, sessionStaff);
+				log.debug("return={}", JsonUtil.toString(rMap));
+				if (rMap != null && ResultCode.R_SUCCESS.equals(rMap.get("code").toString())) {
+					jsonResponse = super.successed("收费成功",ResultConstant.SUCCESS.getCode());
 				} else {
-					jsonResponse = super.failed("订单已经建档成功,不能重复操作!",
-							ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+					jsonResponse = super.failed(rMap.get("msg"),ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
 				}
-			} catch (BusinessException e) {
-				return super.failed(e);
-			} catch (InterfaceException ie) {
-				return super.failed(ie, param, ErrorCode.CHARGE_SUBMIT);
-			} catch (Exception e) {
-				return super.failed(ErrorCode.CHARGE_SUBMIT, e, param);
+			} else {
+				jsonResponse = super.failed("订单已经建档成功,不能重复操作!",ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
 			}
-		} else {
-			jsonResponse = super.failed("收费信息可能被篡改,请退出重新操作!",
-					ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+		} catch (BusinessException e) {
+			return super.failed(e);
+		} catch (InterfaceException ie) {
+			return super.failed(ie, param, ErrorCode.CHARGE_SUBMIT);
+		} catch (Exception e) {
+			return super.failed(ErrorCode.CHARGE_SUBMIT, e, param);
 		}
 		return jsonResponse;
 	}
@@ -863,7 +853,7 @@ public class OrderController extends BaseController {
         	map1.put("custId", prams.get("custId"));
 //        	DataBus db = InterfaceClient.callService(map1,
 //    				PortalServiceCode.QUERY_MAIN_OFFER_CATEGORY, null, sessionStaff);
-        	
+        	prams.put("sysFlag", Const.APP_SEARCH_OFFER_SYSFLAG);//系统标识
         	map = orderBmo.queryMainOfferSpecList(prams,null, sessionStaff);
         	if(ResultCode.R_SUCCESS.equals(map.get("code"))){
         		//拼装前台显示的套餐详情

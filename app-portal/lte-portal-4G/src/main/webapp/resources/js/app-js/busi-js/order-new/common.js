@@ -5,7 +5,7 @@
 CommonUtils.regNamespace("common");
 common = (function($) { 
 	
-	var _callOrderServer=function(staffInfos,custInfos,prodIdInfos,url){
+	var _callOrderServer=function(staffInfos,custInfos,prodIdInfos,url,from_cust){
 //		var custInfosTemp = custInfos;
 //		custInfosTemp.identityPic = "";
 //		var custInfosParamsTemp=JSON.stringify(custInfosTemp);//客户定位信息
@@ -13,10 +13,15 @@ common = (function($) {
 		var custInfosParams=JSON.stringify(custInfos);//客户定位信息
 		var prodIdInfosParams=JSON.stringify(prodIdInfos);//选中产品信息
 		var urlParams=$.parseJSON(JSON.stringify(url));//地址
-		OrderInfo.actionFlag=urlParams.actionFlag;
+		
+		if(urlParams.actionFlag != undefined)
+		{
+			OrderInfo.actionFlag=urlParams.actionFlag;
+		}
 		
         //去除四个可能带等号的加密字段
 	    var myCust1=$.parseJSON(custInfosParams);//四个加密字段可能值不合法，传入后台会报400错误，故转换该值。
+	    if (myCust1!=null){
 	    var CN=myCust1.CN;
 	    var address=myCust1.address;
 	    var certNum=myCust1.certNum;
@@ -29,6 +34,7 @@ common = (function($) {
 	    if(address!=undefined){
 	    	myCust1.certNum=certNum.replace(/=/g,"&#61");
 	    }	
+	    }
 		var myCust=JSON.stringify(myCust1);
 		custInfosParams=myCust;	
 		if(ec.util.isObj(prodIdInfos)){
@@ -45,7 +51,9 @@ common = (function($) {
 			}
 		}
 		var custParam = JSON.parse(custInfosParams);
-		custParam.identityPic = "";
+		if(ec.util.isObj(custParam)){
+			custParam.identityPic = "";
+			}
 		var param={
 			"staffInfos":staffInfosParams,
 			"custInfos":JSON.stringify(custParam),
@@ -60,6 +68,9 @@ common = (function($) {
 		}
 		OrderInfo.order.step=1;
 		var method=urlParams.method;// /app/prodModify/custAuth
+//		if(method == "/app/order/prodoffer/prepare"){
+//			method = "/app/main/app_home";
+//		}
 		param.newFlag = "1";
 		$.callServiceAsHtml(contextPath+method,param,{
 			"before":function(){
@@ -68,8 +79,22 @@ common = (function($) {
 			"done" : function(response){
 				$.unecOverlay();
 				$("#load").hide();
-				var pp =$("#content").html(response.data);
-				$.refresh(pp);
+				//prodofferPrepare为1是web客户定位完进入菜单页面
+				if (from_cust!= undefined && from_cust == 1)
+				{
+					$("#home").hide();
+					$("#queryCust").hide();
+					$("#headText").text(home.menuData.menuName);
+					$("#header").show();
+					var pp =$("#prodofferPrepare").html(response.data);
+					$.refresh(pp);
+				}
+				else
+				{
+					var pp =$("#content").html(response.data);
+					$.refresh(pp);
+				}
+				
 			},fail:function(response){
 				$.unecOverlay();
 				$.alert("提示","查询失败，请稍后再试！");
@@ -154,8 +179,6 @@ common = (function($) {
 				return;
 			}
 		}
-		
-		
 		var arr=new Array(1);
 		var custIdentityPic = OrderInfo.cust.identityPic;
 		
@@ -221,14 +244,21 @@ common = (function($) {
 	};
 	
 	var _saveCust = function(){
-		var arr=new Array(1);
-		arr[0]=JSON.stringify(OrderInfo.cust);
-		MyPlugin.showCust(arr,
-	            function(result) {
-        },
-        function(error) {
-        }
-        );
+		if($("#home").length>0){
+			var params={};
+			params.method = home.menuData.method;
+			params.actionFlag = home.menuData.actionFlag;
+			params.enter = home.menuData.enter;
+			common.callOrderServer(OrderInfo.staff, OrderInfo.cust, order.prodModify.choosedProdInfo, params,1);
+		}else{
+			var arr=new Array(1);
+			arr[0]=JSON.stringify(OrderInfo.cust);
+			MyPlugin.showCust(arr,function(result) {
+	        },
+	        function(error) {
+	        }
+	        );
+		}
 	};
 	
 	
@@ -237,14 +267,23 @@ common = (function($) {
 		if($("#alert-modal").length>0){
 			$("#alert-modal").hide();
 		}
-		var arr=new Array(1);
-		arr[0]="";
-		MyPlugin.closeWebview(arr,
-            function(result) {
-            },
-            function(error) {
-            }
-		);
+		if($("#home").length>0){
+			$("#header").hide();
+			$("#queryCust").empty();
+			$("#prodofferPrepare").empty();
+			$("#home").show();
+			//客户信息
+			OrderInfo.cust = [];
+		}else{
+			var arr=new Array(1);
+			arr[0]="";
+			MyPlugin.closeWebview(arr,
+	            function(result) {
+	            },
+	            function(error) {
+	            }
+			);
+		}
 	};
 	
 	//调用客户端的类似重定位去除客户缓存方法
@@ -252,18 +291,24 @@ common = (function($) {
 		if($("#alert-modal").length>0){
 			$("#alert-modal").hide();
 		}
-		var arr=new Array(1);
-		arr[0]="";
-		MyPlugin.relocationCust(arr,
-            function(result) {
-            },
-            function(error) {
-            }
-		);
+		if ($("#home").length > 0) {
+			$("#header").hide();
+			$("#queryCust").empty();
+			$("#prodofferPrepare").empty();
+			$("#home").show();
+			// 客户信息
+			OrderInfo.cust = [];
+		} else {
+			var arr = new Array(1);
+			arr[0] = "";
+			MyPlugin.relocationCust(arr, function(result) {
+			}, function(error) {
+			});
+		}
 	};
 	
 	
-	//调用客户端的数字签名板
+	// 调用客户端的数字签名板
 	var _callDatasign=function(method){
 		var arr=new Array(1);
 		arr[0]=method;
@@ -758,7 +803,7 @@ common = (function($) {
 				return;
 			}
 		}
-		if(OrderInfo.actionFlag==114){//采集单
+		if(OrderInfo.actionFlag==114){//资源释放
 			if(OrderInfo.order.step==1){
 				_callCloseWebview();
 				return;
@@ -1200,7 +1245,7 @@ common = (function($) {
 		    	$("#tab1_li").addClass("active");
 		    	$("#tab2_li").hide();
 				$("#tab3_li").hide();
-				OrderInfo.order.step=2;
+				OrderInfo.order.step=1;
 				 //移除已选副卡节点
 				 $("#secondaryPhoneNumUl2").children("li:gt(0)").remove();
 				 order.phoneNumber.secondaryCarNum=0;
@@ -1328,6 +1373,10 @@ common = (function($) {
 				OrderInfo.order.step = 3;
 				return;
 			}
+		}
+		if(OrderInfo.actionFlag==1001){//扫码登录
+			_callCloseWebview();
+			return;
 		}
 		if(OrderInfo.actionFlag==110){//双屏互动
 			$("#disConnect").click();
@@ -1465,7 +1514,7 @@ common = (function($) {
 			_callCloseWebview();
 			return;
 		}
-		if(OrderInfo.actionFlag==40){
+		if(OrderInfo.actionFlag==40 || OrderInfo.actionFlag==140 || OrderInfo.actionFlag==150){
 			cart.main.cartBack();
 			return;
 		}
@@ -1494,6 +1543,10 @@ common = (function($) {
 			return;
 		}
 		if(OrderInfo.actionFlag==101){
+			_callCloseWebview();
+			return;
+		}
+		if(OrderInfo.order.step==1){
 			_callCloseWebview();
 			return;
 		}
@@ -1642,6 +1695,30 @@ common = (function($) {
 		$(btn).attr("disabled","disabled");  
 	   window.setTimeout(function(){$(btn).removeAttr("disabled")}, 2000);
 	};
+	//调用原生tabbar切换页面
+	var _CallNativeButtonClick=function(method){
+//		alert(method);
+		var arr=new Array(1);
+		arr[0]=method;
+		MyPlugin.nativeButtonClick(arr,
+            function(result) {
+            },
+            function(error) {
+            }
+		);
+	};
+	
+	var _goKuandai=function(method){//打开一个新的webview加载宽带甩单旧UI
+		var arr=new Array(1);
+		arr[0]="";
+		MyPlugin.goKuandai(arr,
+            function(result) {
+            },
+            function(error) {
+            }
+		);
+	}
+	
 	return {
 		relocationCust		:	_relocationCust,
 		setCalendar			:	_setCalendar,
@@ -1665,7 +1742,9 @@ common = (function($) {
 		callCustLocation	:	_callCustLocation,
 		getMobileIp			: 	_getMobileIp,
 		callPhotos2         :   _callPhotos2,
-		setBtnTimer         :   _setBtnTimer
+		setBtnTimer         :   _setBtnTimer,
+		CallNativeButtonClick:_CallNativeButtonClick,
+		goKuandai:_goKuandai
 	};
 })(jQuery);
 

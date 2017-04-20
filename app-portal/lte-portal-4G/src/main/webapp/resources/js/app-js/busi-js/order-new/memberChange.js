@@ -14,77 +14,93 @@ order.memberChange = function(){
 	var _mainFeeType;
 	//点击主副卡成员变更跳出一个div
 	var _init=function(){
-		//默认退副卡，相关tab页隐藏
-		$("#tab2_li").hide();
-		$("#tab3_li").hide();
-		if(order.prodModify.choosedProdInfo.prodStateCd!=CONST.PROD_STATUS_CD.NORMAL_PROD){
-			closeAndAlert("当前产品状态不是【在用】,不允许受理该业务！");
-			return;
-		}
-		OrderInfo.busitypeflag=3;
 		OrderInfo.actionFlag=6;	//默认加装副卡
-		//4G系统判断，如果是3g套餐不能做该业务
-		if(CONST.getAppDesc()==0 && order.prodModify.choosedProdInfo.is3G=="Y"){
-			closeAndAlert("3G套餐不允许做主副卡成员变更业务！");
-			return;
-		}
-		//根据省份来限制纳入老用户入口,开关在portal.properties
-		//var areaidflag = _areaidJurisdiction(1);
-		//查询销售品规格并且保存
-		var param = {
-			offerSpecId : order.prodModify.choosedProdInfo.prodOfferId, 
-			offerTypeCd : 1,
-			partyId : OrderInfo.cust.custId
-		};
-		var offerSpec = query.offer.queryMainOfferSpec(param); //查询主销售品构成
-		if(!offerSpec){
-			return;
-		}
-		order.memberChange.mainFeeType=order.prodModify.choosedProdInfo.feeType;//主卡付费类型
-		//根据销售品规格验证是否是主副卡套餐
-		var flag = true;
-		$.each(offerSpec.offerRoles,function(){
-			if (this.memberRoleCd == CONST.MEMBER_ROLE_CD.MAIN_CARD) {
-				flag = false;
-				return false;
-			}
-		});
-		if(flag){
-			closeAndAlert("你选择的套餐不是主副卡套餐，不能进行主副卡成员变更");
-			return;
-		}
-		$.each(offerSpec.offerRoles,function(){
-			var offerRole = this;
-			if(offerRole.memberRoleCd==CONST.MEMBER_ROLE_CD.VICE_CARD){//副卡接入类产品
-				$.each(this.roleObjs,function(){
-					var objInstId = offerRole.offerRoleId+"_"+this.objId;//角色id+产品规格id
-					if(this.objType == CONST.OBJ_TYPE.PROD){
-						if(offerRole.minQty == 0){ //加装角色
-							this.minQty = 0;
-							this.dfQty = 0;
-						}
-						order.service.max=this.maxQty;
+		OrderInfo.order.step = 1;
+		var prod = order.prodModify.choosedProdInfo;
+		var boInfos = [{
+			boActionTypeCd : CONST.BO_ACTION_TYPE.ADDOREXIT_COMP,
+			instId : prod.prodOfferInstId,
+			specId : prod.prodOfferId
+		}];
+		rule.rule.ruleCheck(boInfos,function(checkData){// 业务规则校验通过
+			if(ec.util.isObj(checkData)){
+				$("#secondaryPhoneNumUl").hide();				
+				$("#fk_phonenumber_next").hide();
+				var content$ = $("#error-rule").html(checkData).show();
+				$.refresh(content$);
+			}else{
+				//默认退副卡，相关tab页隐藏
+				$("#tab2_li").hide();
+				$("#tab3_li").hide();
+				if(order.prodModify.choosedProdInfo.prodStateCd!=CONST.PROD_STATUS_CD.NORMAL_PROD){
+					closeAndAlert("当前产品状态不是【在用】,不允许受理该业务！");
+					return;
+				}
+				OrderInfo.busitypeflag=3;
+				//4G系统判断，如果是3g套餐不能做该业务
+				if(CONST.getAppDesc()==0 && order.prodModify.choosedProdInfo.is3G=="Y"){
+					closeAndAlert("3G套餐不允许做主副卡成员变更业务！");
+					return;
+				}
+				//根据省份来限制纳入老用户入口,开关在portal.properties
+				//var areaidflag = _areaidJurisdiction(1);
+				//查询销售品规格并且保存
+				var param = {
+					offerSpecId : order.prodModify.choosedProdInfo.prodOfferId, 
+					offerTypeCd : 1,
+					partyId : OrderInfo.cust.custId
+				};
+				var offerSpec = query.offer.queryMainOfferSpec(param); //查询主销售品构成
+				if(!offerSpec){
+					return;
+				}
+				order.memberChange.mainFeeType=order.prodModify.choosedProdInfo.feeType;//主卡付费类型
+				//根据销售品规格验证是否是主副卡套餐
+				var flag = true;
+				$.each(offerSpec.offerRoles,function(){
+					if (this.memberRoleCd == CONST.MEMBER_ROLE_CD.MAIN_CARD) {
+						flag = false;
 						return false;
 					}
 				});
+				if(flag){
+					closeAndAlert("你选择的套餐不是主副卡套餐，不能进行主副卡成员变更");
+					return;
+				}
+				$.each(offerSpec.offerRoles,function(){
+					var offerRole = this;
+					if(offerRole.memberRoleCd==CONST.MEMBER_ROLE_CD.VICE_CARD){//副卡接入类产品
+						$.each(this.roleObjs,function(){
+							var objInstId = offerRole.offerRoleId+"_"+this.objId;//角色id+产品规格id
+							if(this.objType == CONST.OBJ_TYPE.PROD){
+								if(offerRole.minQty == 0){ //加装角色
+									this.minQty = 0;
+									this.dfQty = 0;
+								}
+								order.service.max=this.maxQty;
+								return false;
+							}
+						});
+					}
+				});
+				//查询销售品实例并且保存
+				if(!query.offer.setOffer()){  
+					return;
+				}
+				var offerMemberInfos=OrderInfo.offer.offerMemberInfos;
+				$.each(offerMemberInfos,function(){
+					if (this.roleCd == CONST.MEMBER_ROLE_CD.MAIN_CARD) {//填充主卡号码
+						$("#mainCardSpan").html(this.accessNumber);
+					}else if(this.roleCd == CONST.MEMBER_ROLE_CD.VICE_CARD){//副卡展示
+						var $div =$('<li><span class="list-title"><span class="title-lg" id="span_'+this.accessNumber+'">'+this.accessNumber+'</span><span class="subtitle font-secondary">副卡</span></span><button id="delBtn_'+this.accessNumber+'" class="list-can absolute-right" onclick="order.memberChange.removeSecondCard('+this.accessNumber+')">退</button><button id="cancelDelBtn_'+this.accessNumber+'" class="list-can" style="position:absolute; right:10px;background: #a5a3a2;display: none;" onclick="order.memberChange.cancelRemoveSecondCard('+this.accessNumber+')">不退</button></li>');
+						$("#memberCardUl").append($div);
+					}
+				});
+				var haveNum=$('#memberCardUl').children('li').length-2;//已有副卡数目
+				order.service.max=order.service.max-haveNum;
+				$("#maxSpan").html(order.service.max+")");
 			}
-		});
-		//查询销售品实例并且保存
-		if(!query.offer.setOffer()){  
-			return;
-		}
-		var offerMemberInfos=OrderInfo.offer.offerMemberInfos;
-		$.each(offerMemberInfos,function(){
-			if (this.roleCd == CONST.MEMBER_ROLE_CD.MAIN_CARD) {//填充主卡号码
-				$("#mainCardSpan").html(this.accessNumber);
-			}else if(this.roleCd == CONST.MEMBER_ROLE_CD.VICE_CARD){//副卡展示
-				var $div =$('<li><span class="list-title"><span class="title-lg" id="span_'+this.accessNumber+'">'+this.accessNumber+'</span><span class="subtitle font-secondary">副卡</span></span><button id="delBtn_'+this.accessNumber+'" class="list-can absolute-right" onclick="order.memberChange.removeSecondCard('+this.accessNumber+')">退</button><button id="cancelDelBtn_'+this.accessNumber+'" class="list-can" style="position:absolute; right:10px;background: #a5a3a2;display: none;" onclick="order.memberChange.cancelRemoveSecondCard('+this.accessNumber+')">不退</button></li>');
-				$("#memberCardUl").append($div);
-			}
-		});
-		var haveNum=$('#memberCardUl').children('li').length-2;//已有副卡数目
-		order.service.max=order.service.max-haveNum;
-		$("#maxSpan").html(order.service.max+")");
+		});		
 };
 
 //点击退

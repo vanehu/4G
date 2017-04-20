@@ -146,7 +146,7 @@
 									<li>
 										<i class="iconfont pull-left">&#xe66c;</i>
 										<span class="list-title font-secondary">新增副卡成员(0-<span id="maxSpan"></span></span>
-										<i id="addSecondaryCard" onclick="order.phoneNumber.showSecondaryCardModalData()" class="iconfont absolute-right font-default">&#xe670;</i>
+										<i id="addSecondaryCard" onclick="javascript:{common.setBtnTimer(this);order.phoneNumber.showSecondaryCardModalData();}" class="iconfont absolute-right font-default">&#xe670;</i>
 									</li>
 								</ul>
 							</div>
@@ -156,7 +156,7 @@
 							<div class="sub-btn-box p p-b-15" id="fk_phonenumber_next">
 								<button class="sun-btn done" onclick="javascript:{common.setBtnTimer(this);order.memberChange.buildMainView();}">下一步</button>
 							</div>
-
+                            <div id="error-rule"></div> 
 					</div>
 				  <div class="tab-pane fade" id="nav-tab-2">
 		            <ul class="tab-change-list" id="tab-change-list" style="overflow: scroll">
@@ -167,7 +167,7 @@
 					</div>
 				    <div class="sub-btn-box p p-b-15">
 					<button class="sun-btn done" onclick="order.main.loadOtherParm()">下一步</button>
-				    </div> 						
+				    </div>						
 				</div>
 		<div class="tab-pane fade" id="nav-tab-3">
           						

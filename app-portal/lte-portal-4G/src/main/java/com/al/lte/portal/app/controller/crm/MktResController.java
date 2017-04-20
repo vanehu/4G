@@ -51,6 +51,7 @@ import com.al.ecs.spring.controller.BaseController;
 import com.al.lte.portal.bmo.crm.MktResBmo;
 import com.al.lte.portal.bmo.crm.OrderBmo;
 import com.al.lte.portal.bmo.staff.StaffBmo;
+import com.al.lte.portal.common.Const;
 import com.al.lte.portal.common.EhcacheUtil;
 import com.al.lte.portal.common.MySimulateData;
 import com.al.lte.portal.common.StringUtil;
@@ -935,6 +936,7 @@ public class MktResController extends BaseController {
 			paramMap.put("mktResCd", mktResCd);
 			paramMap.put("agreementType", agreementType);
 			paramMap.put("areaId", sessionStaff.getCurrentAreaId());
+			paramMap.put("sysFlag", Const.APP_SEARCH_OFFER_SYSFLAG);//系统标识
 			//新接口改造，需要多传下面两个参数
 			paramMap.put("channelId", sessionStaff.getCurrentChannelId());
 			paramMap.put("staffId", sessionStaff.getStaffId());

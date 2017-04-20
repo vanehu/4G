@@ -1923,8 +1923,13 @@ public class BillController extends BaseController {
 			paramMap.put("queryItemType", "3");
 			// 余额查询
 			Map<String, Object> balanceResultMap = billBmo.balance(paramMap, flowNum, sessionStaff);
+			
+			Map<String, Object> returnMap = new HashMap<String, Object>();
+			returnMap.put("arrears", arrearsResultMap);
+			returnMap.put("balance", balanceResultMap);
+			
 			// TODO 需要整合上面两个接口的返回
-			return successed(balanceResultMap);
+			return successed(returnMap);
 		}catch(BusinessException be){
 			return failed(be);
 		}catch(InterfaceException ie) {
@@ -1932,5 +1937,52 @@ public class BillController extends BaseController {
    		}catch(Exception e){
    			return failed(ErrorCode.BILL_BALANCE, e, paramMap);
 		}
+	}
+	// 校验代理商保证金
+	@RequestMapping(value = "/checkDeposit", method = RequestMethod.POST)
+	@ResponseBody
+	public JsonResponse checkDeposit(@RequestBody Map<String, Object> paramMap, @LogOperatorAnn String flowNum) {
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
+		JsonResponse jsonResponse = new JsonResponse();
+		try {
+//			String destinationId = MapUtils.getString(paramMap, "AccNbr");
+//			if (!destinationId.matches(Const.LTE_PHONE_HEAD)) {
+//				return super.failed("非法请求！", ResultConstant.ACCESS_NOT_NORMAL.getCode());
+//			}
+			String iseditOperation = (String) ServletUtils.getSessionAttribute(super.getRequest(),
+	                SysConstant.SESSION_KEY_DEPOSIT + "_" + sessionStaff.getStaffId());
+	        try {
+	            if (iseditOperation == null) {
+	                iseditOperation = staffBmo.checkOperatSpec(SysConstant.DEPOSIT_CODE, sessionStaff);
+	                ServletUtils.setSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_DEPOSIT + "_"
+	                        + sessionStaff.getStaffId(), iseditOperation);
+	            }
+	        } catch (BusinessException e) {
+	            iseditOperation = "1";
+	        } catch (InterfaceException ie) {
+	            iseditOperation = "1";
+	        } catch (Exception e) {
+	            iseditOperation = "1";
+	        }
+            if ("0".equals(iseditOperation)) {
+				Map<String, Object> checkResultMap = billBmo.checkDeposit(paramMap, flowNum, sessionStaff);
+				if(ResultCode.R_SUCCESS.equals(checkResultMap.get("code"))){
+					return successed(checkResultMap);
+	    		}
+	    		else{ 
+	    			return failed(checkResultMap.get("msg"),ResultConstant.FAILD.getCode());            	
+	    		} 
+	        }else if("1".equals(iseditOperation)){
+				jsonResponse = super.failed("签权接口异常",
+						ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+			}	
+		}catch(BusinessException be){
+			return failed(be);
+		}catch(InterfaceException ie) {
+			return failed(ie, paramMap, ErrorCode.CHECK_DEPOSIT);
+   		}catch(Exception e){
+   			return failed(ErrorCode.CHECK_DEPOSIT, e, paramMap);
+		}
+		return jsonResponse;
 	}
 }

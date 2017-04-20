@@ -78,7 +78,7 @@ query.offer = (function() {
 	// 查询默认必须可选包 + 功能产品 (补换卡加可选包)
 	var _queryDefMustOfferSpecAndServ = function(param) {
 		addParam(param);  //添加基本参数
-		var url = contextPath+"//app/offer/queryDefaultAndRequiredOfferSpecAndServ";
+		var url = contextPath+"/app/offer/queryDefaultAndRequiredOfferSpecAndServ";
 		$.ecOverlay("<strong>查询默认必须可选包和功能产品中，请稍等...</strong>");
 		var response = $.callServiceAsJsonGet(url,param);	
 		$.unecOverlay();
@@ -171,7 +171,6 @@ query.offer = (function() {
 		param.areaId = OrderInfo.getProdAreaId(param.prodId);
 		param.partyId = OrderInfo.cust.custId;
 		param.mainOfferSpecId=OrderInfo.offerSpec.offerSpecId;
-		param.sysFlag = "10004";//系统标识
 		if(ec.util.isObj(OrderInfo.order.soNbr)){  //缓存流水号
 			param.soNbr = OrderInfo.order.soNbr;
 		}

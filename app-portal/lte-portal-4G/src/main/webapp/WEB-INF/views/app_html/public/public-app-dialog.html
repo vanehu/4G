@@ -64,14 +64,35 @@
 						<i class="iconfont tab-result-icon">&#xe611;</i>
 						</a>
 						</li>
+						<!-- <li id="auth_tab4" class="" onclick="custQuery.changeTab(4);">
+						<a data-toggle="tab">
+						<i class="iconfont tab-icon">&#xe671;</i>
+						单位证件
+						<i class="iconfont tab-result-icon">&#xe611;</i>
+						</a>
+						</li>
+						<li id="auth_tab5" class="" onclick="custQuery.changeTab(5);">
+						<a data-toggle="tab">
+						<i class="iconfont tab-icon">&#xe671;</i>
+						使用人
+						<i class="iconfont tab-result-icon">&#xe611;</i>
+						</a>
+						</li>
+						<li id="auth_tab6" class="" onclick="custQuery.changeTab(6);">
+						<a data-toggle="tab">
+						<i class="iconfont tab-icon">&#xe671;</i>
+						单位证件+使用人
+						<i class="iconfont tab-result-icon">&#xe611;</i>
+						</a>
+						</li> -->
 					</ul>
 				</div>
 			</div>
 
 			<div class="tab-content p-0" id="">
 				<div class="tab-pane fade active in" id="auth-nav-tab-1">
-					<div class="form-group" style="height: 1.38rem!important;">
-						<input type="text" class="form-control" id="authPassword2" placeholder="请输入产品密码">
+					<div class="form-group" style="height: 0.86rem!important;">
+						<input type="text" class="form-control" id="authPassword2" placeholder="请输入产品密码" maxlength="20" oninput="this.value=this.value.replace(/[/W]/g,'')">
 					</div>
 					<div class="modal-footer">
 	        			<button id="custAuthbtn1" type="button" class="btn btn-primary"  onclick="custQuery.productPwdAuth('1')">校验</button>
@@ -102,7 +123,7 @@
 					</ul>
 				</div>
 					<div class="form-group" style="height: 1.38rem!important;">
-						<input type="text" id="idCardNumber2" class="form-control" placeholder="输入证件号码">
+						<input type="text" id="idCardNumber2" class="form-control" placeholder="输入证件号码" maxlength="30" oninput="this.value=this.value.replace(/[/W]/g,'')">
                  	</div>
 					<div class="modal-footer">
 	        			<button id="custAuthbtn" type="button" class="btn btn-primary" onclick="custQuery.identityTypeAuth('1')" >校验</button>
@@ -110,14 +131,14 @@
 	    			</div>
 				</div>
 				<div class="tab-pane fade" id="auth-nav-tab-3">
-					<div class="form-group" style="height: 1.38rem!important;">
-						<div class="input-group">
-							<input type="text" id="smspwd2" class="form-control" placeholder="输入短信验证码">
+					<div class="form-group" style="height: 0.58rem!important;">
+						<div class="input-group" style="margin-top: 2px;">
+							<input type="text" id="smspwd2" class="form-control" placeholder="输入短信验证码" maxlength="8" oninput="this.value=this.value.replace(/\D/g,'')">
 							<span style="display: table-cell; vertical-align: middle; width: 1%;" >
 		                      <button class="btn btn-info" id="smsSend" onclick="custQuery.smsResend('1')"  type="button"> 获取 </button>
 		                      </span> </div>
 					</div>
-					<div class="form-group" style="height: 1.38rem!important;">
+					<div class="form-group" style="height: 0.58rem!important;">
 						随机序列号:<input id="num" disabled='disabled'  style="float:right; margin:0px 5px;height:24px" />
 					 </div>
 					<div class="modal-footer">

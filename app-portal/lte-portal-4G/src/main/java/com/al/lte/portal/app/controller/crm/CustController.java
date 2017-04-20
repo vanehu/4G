@@ -640,7 +640,7 @@ public class CustController extends BaseController {
         paramMap.put("acctNbr", param.get("acctNbr"));
         paramMap.put("custId", param.get("custId"));
         paramMap.put("curPage", param.get("curPage"));
-        String pageSize = MapUtils.getString(param, "pageSize", "8");
+        int pageSize = 8;
         paramMap.put("pageSize", pageSize);
         this.log.debug("param={}", JsonUtil.toString(paramMap));
         try {
@@ -659,12 +659,14 @@ public class CustController extends BaseController {
                             "pageIndex", 1), MapUtils.getIntValue(mktPageInfo, "pageSize", 8), MapUtils.getIntValue(
                             mktPageInfo, "totalCount", 1), list);
                     model.addAttribute("pageModel", pm);
+                    model.addAttribute("custflag", "0");
                 }
             } else {
+            	model.addAttribute("custflag", "1");
                 model.addAttribute("msg", MapUtils.getString(datamap, "msg", "抱歉,没有找到已订购的业务！"));
             }
             model.addAllAttributes(param);
-            return "/app/cust/cust-order-list";
+            return "/app/cust/cust-prod-list";
         } catch (BusinessException be) {
             return super.failedStr(model, be);
         } catch (InterfaceException ie) {
@@ -1241,7 +1243,8 @@ public class CustController extends BaseController {
 							for(int ii=0;ii<custInfosWithNbr.size();ii++){
 								Map mm = (Map) custInfosWithNbr.get(ii);
 								//省份政企开关打开，且客户为政企客户
-								if("ON".equals(govSwitch) && mm.get("identityCd")!=null && zqstr.contains(","+mm.get("identityCd").toString()+",")){
+								//if("ON".equals(govSwitch) && mm.get("identityCd")!=null && zqstr.contains(","+mm.get("identityCd").toString()+",")){
+								if(mm.get("identityCd")!=null && zqstr.contains(","+mm.get("identityCd").toString()+",")){
 									mm.put("isGov", "Y");
 								}else{
 									mm.put("isGov", "N");
@@ -1281,6 +1284,236 @@ public class CustController extends BaseController {
         } catch (Exception e) {
             return super.failed(ErrorCode.QUERY_CUST, e, paramMap);
         }
+
+    }
+    
+    /**翼销售新UI客户列表查询
+     * 
+     * @param paramMap
+     * @param model
+     * @param flowNum
+     * @param response
+     * @param httpSession
+     * @return
+     */
+    @RequestMapping(value = "/getCustList", method = { RequestMethod.POST })
+    public String getCustList(@RequestBody Map<String, Object> paramMap, Model model,@LogOperatorAnn String flowNum,
+            HttpServletResponse response,HttpSession httpSession,HttpServletRequest request) {
+        SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+                SysConstant.SESSION_KEY_LOGIN_STAFF);
+        Map<String, Object> resultMap = new HashMap<String, Object>();
+        httpSession.setAttribute("ValidateAccNbr", null);
+        httpSession.setAttribute("ValidateProdPwd", null);
+        httpSession.setAttribute("queryCustAccNbr", paramMap.get("acctNbr"));
+        String qryAcctNbr=MapUtils.getString(paramMap,"acctNbr","");
+        String soNbr=CommonMethods.getUUID();
+        //客户鉴权跳过 权限查询
+        String iseditOperation = (String) ServletUtils.getSessionAttribute(super.getRequest(),
+                SysConstant.SESSION_KEY_JUMPAUTH + "_" + sessionStaff.getStaffId());
+        try {
+            if (iseditOperation == null) {
+                iseditOperation = this.staffBmo.checkOperatSpec(SysConstant.JUMPAUTH_CODE, sessionStaff);
+                ServletUtils.setSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_JUMPAUTH + "_"
+                        + sessionStaff.getStaffId(), iseditOperation);
+            }
+        } catch (BusinessException e) {
+            iseditOperation = "1";
+        } catch (InterfaceException ie) {
+            iseditOperation = "1";
+        } catch (Exception e) {
+            iseditOperation = "1";
+        }
+        
+        //是否要脱敏 权限
+        String isViewOperation= (String)ServletUtils.getSessionAttribute(super.getRequest(),
+				SysConstant.SESSION_KEY_VIEWSENSI+"_"+sessionStaff.getStaffId());
+		try{
+ 			if(isViewOperation==null){
+ 				isViewOperation=staffBmo.checkOperatSpec(SysConstant.VIEWSENSI_CODE,sessionStaff);
+ 				ServletUtils.setSessionAttribute(super.getRequest(),
+ 						SysConstant.SESSION_KEY_VIEWSENSI+"_"+sessionStaff.getStaffId(), isViewOperation);
+ 			}
+			} catch (BusinessException e) {
+				isViewOperation="1";
+	 		} catch (InterfaceException ie) {
+	 			isViewOperation="1";
+			} catch (Exception e) {
+				isViewOperation="1";
+			}
+        
+        String areaId = (String) paramMap.get("areaId");
+        if (("").equals(areaId) || areaId == null) {
+            paramMap.put("areaId", sessionStaff.getCurrentAreaId());
+        }
+        paramMap.put("staffId", sessionStaff.getStaffId());
+        if (StringUtils.isNotBlank(MapUtils.getString(paramMap, "custQueryType"))) {
+            httpSession.setAttribute("custQueryType", paramMap.get("custQueryType"));
+        } else {
+            httpSession.setAttribute("custQueryType", "");
+        }
+      //政企客户证件类型查询,第一次查询完存入session以便后面再次使用
+        List zqList = new ArrayList();
+        if(httpSession.getAttribute("zqList")!=null){
+        	zqList = (List) httpSession.getAttribute("zqList");
+        }else{
+        	Map<String, Object> zqParam = new HashMap<String, Object>();
+	        zqParam.put("partyTypeCd", 2);
+	        Map<String, Object> rMap = null;
+	        try {
+				rMap = this.custBmo.queryCertType(zqParam, flowNum, sessionStaff);
+				zqList = (List) rMap.get("result");
+				httpSession.setAttribute("zqList", zqList);
+			} catch (BusinessException be) {
+				return super.failedStr(model, be);
+			} catch (InterfaceException ie) {
+				return super.failedStr(model, ie, paramMap, ErrorCode.QUERY_CUST);
+			} catch (Exception e) {
+				return super.failedStr(model, ErrorCode.QUERY_CUST, e, paramMap);
+			}
+        }
+        //获取省份政企开关
+        String govSwitch = "OFF";
+        if (SysConstant.ON.equals(propertiesUtils.getMessage("GOV_" + paramMap.get("areaId").toString().substring(0, 3)))) {
+        	govSwitch = "ON";
+		}
+        model.addAttribute("govSwitch", govSwitch);
+//        resultMap.put("govSwitch", govSwitch);
+        
+        List custInfos = new ArrayList();
+        try {
+        	String an = paramMap.get("acctNbr").toString();
+        	String ic = paramMap.get("identityCd").toString();
+        	String in = paramMap.get("identityNum").toString();
+        	//接入号  或  证件类型、证件号码不为空时才调用客户资料查询接口
+        	if(an.length()>0 || (ic.length()>0 && in.length()>0)){
+        		paramMap.put("_test_appFlag", "app");
+	            resultMap = custBmo.queryCustInfo(paramMap, flowNum, sessionStaff);
+	            if (MapUtils.isNotEmpty(resultMap)) {
+	            	if (paramMap.containsKey("query")) {
+	            		model.addAttribute("query", paramMap.get("query"));
+//	            		resultMap.put("query", paramMap.get("query")); //综合查询调用标志
+	            	}
+	            	
+	            	custInfos=(List<Map<String, Object>>) resultMap.get("custInfos");
+	            	//前置校验设置session值
+	            	if(custInfos.size()>0){
+						Map custInfo =(Map)custInfos.get(0);
+						HttpSession session = request.getSession(false);
+						session.setAttribute("preCustId", String.valueOf(custInfo.get("custId")));
+						session.setAttribute("preAreaID", (String) paramMap.get("areaId"));
+						session.setAttribute("preAccNbr", String.valueOf(paramMap.get("acctNbr")));
+					}
+	            	List<String> custIds = new ArrayList<String>();
+	            	//脱敏
+					for(int i = 0; i < custInfos.size(); i++){
+						Map tmpCustInfo =(Map)custInfos.get(i);
+//						listCustInfos.put(MapUtils.getString(tmpCustInfo,"custId",""), tmpCustInfo);
+						
+						String tmpIdCardNumber = (String) tmpCustInfo.get("idCardNumber");
+						tmpCustInfo.put("filterIdCardNumber", tmpIdCardNumber);
+						if (tmpIdCardNumber != null && tmpIdCardNumber.length() == 18) {
+							String preStr = tmpIdCardNumber.substring(0, 6);
+							String subStr = tmpIdCardNumber.substring(14);
+							tmpIdCardNumber = preStr + "********" + subStr;
+							tmpCustInfo.put("filterIdCardNumber", tmpIdCardNumber);
+						} else if (tmpIdCardNumber != null && tmpIdCardNumber.length() == 15) {
+							String preStr = tmpIdCardNumber.substring(0, 5);
+							String subStr = tmpIdCardNumber.substring(13);
+							tmpIdCardNumber = preStr + "********" + subStr;
+							tmpCustInfo.put("filterIdCardNumber", tmpIdCardNumber);
+						}
+						custIds.add(MapUtils.getString(tmpCustInfo,"custId",""));
+					}
+					if (custInfos.size() > 0) {
+						
+						//若省份只返回了一条客户信息，则与原有接口无差异。若省份返回了多条客户信息，则前台需要再次调用后台的新提供的接口，来查询客户下的接入号信息，并拼装报文，按客户ID和接入号逐条展示客户信息
+						if(custInfos.size() >= 1){
+							String zqstr = ",";
+							for(int jj=0;jj<zqList.size();jj++){
+								Map mm = (Map) zqList.get(jj);
+								zqstr = zqstr + mm.get("certTypeCd")+",";
+							}
+							Map<String, Object> accNbrParamMap = new HashMap<String, Object>();
+							accNbrParamMap.put("areaId", paramMap.get("areaId"));
+							accNbrParamMap.put("custIds", custIds);
+							Map accNbrResultMap = custBmo.queryAccNbrByCust(accNbrParamMap, flowNum, sessionStaff);
+							
+							List custInfosWithNbr = null;
+							if (MapUtils.isNotEmpty(accNbrResultMap)) {
+								custInfosWithNbr = new ArrayList();
+								List<Map<String, Object>> accNbrCustInfos = (List<Map<String, Object>>) accNbrResultMap.get("custInfos");
+								for(Object tmpCustInfo : custInfos){
+									Map custInfoMap = (Map)tmpCustInfo;
+									String custId = MapUtils.getString(custInfoMap,"custId","");
+									
+									List<Map<String, Object>> accNbrs = null;
+									for(Map<String, Object> accNbrCustInfo : accNbrCustInfos){
+										if(custId.equals(MapUtils.getString(accNbrCustInfo,"custId",""))){
+											accNbrs = (List<Map<String, Object>>) accNbrCustInfo.get("accNbrInfos");
+											break;
+										}
+									}
+									
+									if(accNbrs != null && accNbrs.size() != 0){
+										for(Map<String, Object> accNbrMap : accNbrs){
+											String accNbr = MapUtils.getString(accNbrMap, "accNbr", "");
+											Map newCustInfoMap = new HashMap(custInfoMap);
+											newCustInfoMap.put("accNbr", accNbr);
+											if(StringUtils.isNotBlank(qryAcctNbr)&&!qryAcctNbr.equals(accNbr))
+												continue;
+											if(newCustInfoMap.get("identityCd")!=null && zqstr.contains(","+newCustInfoMap.get("identityCd").toString()+",")){
+												//政企客户才去查询使用人信息
+												addAccountAndCustInfo(flowNum, sessionStaff, areaId, custId, accNbr, soNbr, newCustInfoMap);
+											}
+											custInfosWithNbr.add(newCustInfoMap);
+										}
+										if (custInfosWithNbr.size()==0&&StringUtils.isNotBlank(qryAcctNbr)) {
+											Map newCustInfoMap = new HashMap(custInfoMap);
+											newCustInfoMap.put("accNbr", qryAcctNbr);
+											if("ON".equals(govSwitch) && newCustInfoMap.get("identityCd")!=null && zqstr.contains(","+newCustInfoMap.get("identityCd").toString()+",")){
+												//政企客户才去查询使用人信息
+												addAccountAndCustInfo(flowNum, sessionStaff, areaId, custId, qryAcctNbr, soNbr, newCustInfoMap);
+											}
+											custInfosWithNbr.add(newCustInfoMap);
+										}
+									} else {
+										custInfosWithNbr.add(custInfoMap);
+									}
+								}
+							} else {
+								custInfosWithNbr = custInfos;
+							}
+							for(int ii=0;ii<custInfosWithNbr.size();ii++){
+								Map mm = (Map) custInfosWithNbr.get(ii);
+								//省份政企开关打开，且客户为政企客户
+								if(mm.get("identityCd")!=null && zqstr.contains(","+mm.get("identityCd").toString()+",")){
+									mm.put("isGov", "Y");
+								}else{
+									mm.put("isGov", "N");
+								}
+							}
+							resultMap.put("custInfos", custInfosWithNbr);
+							model.addAttribute("cust", resultMap);
+							model.addAttribute("custInfos", JsonUtil.buildNormal().objectToJson(custInfosWithNbr));
+							model.addAttribute("custInfoSize", custInfosWithNbr.size());
+							System.out.println("+++++++++++++++++++++"+JsonUtil.toString(custInfosWithNbr));
+						}
+					}
+					model.addAttribute("jumpAuthflag", iseditOperation);
+	            }else{
+	            	return super.failedStr(model, ErrorCode.QUERY_CUST, "业务层返回结果失败或异常", paramMap);
+	            }
+        	}else{
+        		return super.failedStr(model, ErrorCode.QUERY_CUST, "客户资料查询业务出错，接入号为空或证件类型和证件号码为空！", paramMap);
+        	}
+        	return "/app/cust/cust-list";
+		} catch (BusinessException be) {
+			return super.failedStr(model, be);
+		} catch (InterfaceException ie) {
+			return super.failedStr(model, ie, paramMap, ErrorCode.QUERY_CUST);
+		} catch (Exception e) {
+			return super.failedStr(model, ErrorCode.QUERY_CUST, e, paramMap);
+		}
 
     }
     

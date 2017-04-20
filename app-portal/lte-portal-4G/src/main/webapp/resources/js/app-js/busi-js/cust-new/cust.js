@@ -19,6 +19,7 @@ cust = (function(){
 	var _usedNum;//客户已使用指标数（一证五号需求一个客户最多只能五个号）
 	var _readIdCardUser={};//客户返档读卡客户信息
 	var _checkResult=true;//一证五号校验失败标志
+	var _custCatsh = {};//读卡的客户缓存
 	var _clearCustForm = function(){
 		$('#cmCustName').val("");
 		$('#cmAddressStr').val("");
@@ -685,6 +686,12 @@ cust = (function(){
 		}
 		$("#testBtn").click();
 		_form_custInfomodify_btn();
+		
+		if(cust.custCatsh.idcard != undefined){
+			$("#cmCustName").val(cust.custCatsh.name);
+			$("#cmCustIdCard").val(cust.custCatsh.idcard);
+			$("#cmAddressStr").val(cust.custCatsh.address);
+		}
 	};
 	
 	//翼销售-经办人-客户类型选择事件
@@ -1268,11 +1275,27 @@ cust = (function(){
 	};
 	
 	var _getGenerationInfos=function(name,idcard,address,identityPic){
+		cust.custCatsh = {};
+		cust.custCatsh.name = name;
+		cust.custCatsh.idcard = idcard;
+		cust.custCatsh.address = address;
+		cust.custCatsh.identityPic = identityPic;
+		
 		$("#cm_identidiesTypeCd").val("1");
 		$("#cm_identidiesTypeCd").change();
 		$("#cmCustIdCard").val(idcard);
 		$("#cmCustName").val(name);
 		$("#cmAddressStr").val(address);
+		//客户定位、客户鉴权 读取身份证时填写证件号码
+		if($("#custQuerycontent").css("display")!="none"){
+			if($("#userid").length>0){
+				$("#userid").val(idcard);
+			}
+		}else{
+			if($("#idCardNumber2").length>0){
+				$("#idCardNumber2").val(idcard);
+			}
+		}
 		OrderInfo.cust.identityPic = identityPic;//证件照片
 		if(OrderInfo.actionFlag==9){//返档需查客户
 			OrderInfo.jbr.identityPic = OrderInfo.cust.identityPic;
@@ -2988,6 +3011,7 @@ cust = (function(){
 		checkCertNumberForReturn    :       _checkCertNumberForReturn,
 		isOldCust					:		_isOldCust,
 		checkResult                 :       _checkResult,
-		OneCertNumFlag              :       _OneCertNumFlag
+		OneCertNumFlag              :       _OneCertNumFlag,
+		custCatsh					:		_custCatsh
 	};	
 })();

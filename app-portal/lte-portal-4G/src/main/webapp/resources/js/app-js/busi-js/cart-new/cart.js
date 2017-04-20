@@ -16,6 +16,10 @@ cart.main = (function() {
         }
         var qryNumber = $("#p_qryNumber").val();
         var param = {};
+        var endDate=$("#p_endDt").val();
+        if(endDate==""){
+        	endDate=$("#p_startDt").val();
+        }
         if ($("#if_p_olNbr").is(':checked')) {
             $('#cartFormdata').data('bootstrapValidator').enableFieldValidators("p_olNbr", true, null);
             $('#cartFormdata').data('bootstrapValidator').enableFieldValidators("p_qryNumber", false, null);
@@ -40,7 +44,7 @@ cart.main = (function() {
         } else {
             param = {
                 "startDt": ($("#p_startDt").val()).replace(/\//g, ''),
-                "endDt": ($("#p_startDt").val()).replace(/\//g, ''),
+                "endDt": endDate.replace(/\//g, ''),
                 "qryNumber": qryNumber,
                 "olStatusCd": $("#p_olStatusCd").val(),
                 "busiStatusCd": $("#p_busiStatusCd").val(),
@@ -51,6 +55,13 @@ cart.main = (function() {
                 nowPage: curPage,
                 pageSize: 10
             };
+            if($("#p_endDt").val() != undefined || $("#p_endDt").val() != ""){
+            	var validate=$("#cartStatFormdata").Validform();
+        		if(!$("#cartStatFormdata").Validform().check()){
+        			return;
+        		}
+            	param.endDt = ($("#p_endDt").val()).replace(/\//g, '');
+            }
         }
         param.newFlag="1";
         $.callServiceAsHtmlGet(contextPath + "/app/report/cartList", param, {
@@ -66,8 +77,6 @@ cart.main = (function() {
                     return;
                 } else {
                     OrderInfo.order.step = 2;
-                    //$("#cart_list_scroller").css("transform", "translate(0px, -40px) translateZ(0px)");
-                    //if (scroller && $.isFunction(scroller)) scroller.apply(this, []);
                     if (response.data == "" || (response.data).indexOf("没有查询到结果") >= 0) {
                         $("#islastPage").val(1);
                         $("#currentPage").val(Number(curPage) - 1);
@@ -78,17 +87,18 @@ cart.main = (function() {
         	    	$("#nav-tab-2").addClass("active in");
         	    	$("#tab1_li").removeClass("active");
         	    	$("#tab2_li").addClass("active");
-                    //					if(curPage == 1){
-                    $("#nav-tab-2").children('.list-box').html(response.data);
-                    $('a[href="#nav-tab-2"]').click();
-                    // $("#cart_list_scroller").css("transform", "translate(0px, -40px) translateZ(0px)");
-                    // if (scroller && $.isFunction(scroller)) scroller.apply(this, []);
-                    //						}
-                    //						if(curPage > 1){
-                    //							$("#all_cart_list").append(response.data);
-                    //							$("#cart_list_scroller").css("transform","translate(0px, -40px) translateZ(0px)");
-                    //							if(scroller && $.isFunction(scroller)) scroller.apply(this,[]);
-                    //						}
+                   
+                    if (curPage == 1) {
+                    	 $("#nav-tab-2").children('.list-box').html(response.data);
+                         $('a[href="#nav-tab-2"]').click();
+                    } else {
+                    	$("#order-list-all").empty();
+                        $("#order-list-all").append(response.data);
+                        $.refresh($("#order-list-all"));
+                    }
+                    
+                    //回调刷新iscroll控制数据,控件要求
+                    if (scroller && $.isFunction(scroller)) scroller.apply(this, []);
                 }
             },
             fail: function(response) {
@@ -182,6 +192,44 @@ cart.main = (function() {
             }
         });
     };
+    
+    var _statValidatorForm = function(){
+    	var cartStatFormdata = $("#cartStatFormdata").Validform({
+			btnSubmit:"bt_cartQry",
+			ignoreHidden:true,
+			tiptype:function(msg,o,cssctl){
+				
+				//msg：提示信息;
+				//o:{obj:*,type:*,curform:*}, obj指向的是当前验证的表单元素（或表单对象），type指示提示的状态，值为1、2、3、4， 1：正在检测/提交数据，2：通过验证，3：验证失败，4：提示ignore状态, curform为当前form对象;
+				//cssctl:内置的提示信息样式控制函数，该函数需传入两个参数：显示提示信息的对象 和 当前提示的状态（既形参o中的type）;
+				if(!o.obj.is("form")){//验证表单元素时o.obj为该表单元素，全部验证通过提交表单时o.obj为该表单对象;
+					if(o.type == 3){
+						var objtip=o.obj.siblings(".Validform_checktip");
+						cssctl(objtip,o.type);
+						objtip.text(msg);
+					}
+					if(o.type == 2){
+						var objtip=o.obj.siblings(".Validform_checktip");
+						cssctl(objtip,o.type);
+						objtip.text("");
+					}
+				}
+			}
+		});
+    	cartStatFormdata.addRule([
+			{
+			    ele:"#p_startDt",
+			    datatype:"*",
+			    nullmsg:"起始时间不能为空"
+			},
+			{
+				ele:"#p_endDt",
+			    datatype:"*",
+			    nullmsg:"结束时间不能为空"
+			}       
+		]);
+    };
+    
     //受理单详情查询
     var _queryCartInfo = function(olId) {
         var param = {
@@ -289,6 +337,75 @@ cart.main = (function() {
             OrderInfo.order.step = 1;
         }
     };
+   
+	//终端销售 滚动页面入口
+	var _termSaleScroll = function(scrollObj){
+		if(scrollObj && scrollObj.page && scrollObj.page >= 1){
+			_btnQueryTerminalSale(scrollObj.page,scrollObj.scroll);
+		}
+	};
+	//查询
+	var _btnQueryTerminalSale = function(pageIndex,scroller){
+		OrderInfo.actionFlag=150;
+		var curPage = 1 ;
+		if(pageIndex>0){
+			curPage = pageIndex;
+		}
+		if(pageIndex==1){
+			$("#islastPage").val(0);
+			$("#currentPage").val(1);
+		}
+		var param = {} ;
+		param = {
+					"startDate":($("#p_startDt").val()).replace(/-/g,''),
+					"endDate":($("#p_endDt").val()).replace(/-/g,''),
+					"channelId":$("#p_channelId").val(),
+					"areaId":$("#p_channelId").attr("areaid"),
+					pageIndex:curPage,
+					pageSize:10
+		};
+		param.newFlag="1";
+        $.callServiceAsHtmlGet(contextPath+"/app/report/terminalSalesList",param,{
+			"before":function(){
+				$.ecOverlay("终端销售详情查询中，请稍等...");
+			},
+			"always":function(){
+				//$.unecOverlay();
+			},
+			"done" : function(response){
+				$.unecOverlay();
+				if(response && response.code == -2){
+					return ;
+				}else{
+					if(response.data==""||(response.data).indexOf("没有查询到结果")>=0){
+						$("#islastPage").val(1);
+						$("#currentPage").val(Number(curPage)-1);
+						$.alert("提示","没有查询到结果");
+						return;
+					}
+					OrderInfo.order.step=2;
+					$("#nav-tab-1").removeClass("active in");
+        	    	$("#nav-tab-2").addClass("active in");
+        	    	$("#tab1_li").removeClass("active");
+        	    	$("#tab2_li").addClass("active");
+                   
+                    if (curPage == 1) {
+                    	 $("#nav-tab-2").children('.list-box').html(response.data);
+                         $('a[href="#nav-tab-2"]').click();
+                    } else {
+                    	 $("#order-list-all").empty();
+                        $("#order-list-all").append(response.data);
+                        $.refresh($("#order-list-all"));
+                    }
+					if(scroller && $.isFunction(scroller)) scroller.apply(this,[]);
+				}
+			},
+			fail:function(response){
+				$.unecOverlay();
+				$.alert("提示","请求可能发生异常，请稍后再试！");
+			}
+		});
+	};
     //受理单查询上一页
     var _upPage = function() {
         var currentPage = Number($("#currentPage").val());
@@ -314,6 +431,128 @@ cart.main = (function() {
         $("#currentPage").val(currentPage);
         _queryCartList(currentPage)
     };
+    
+    //终端销售查询上一页
+    var _upPage2 = function() {
+        var currentPage = Number($("#currentPage").val());
+        if (currentPage == 1) {
+            $.alert("提示", "当前已经是第一页");
+            return;
+        } else {
+            currentPage = currentPage - 1;
+        }
+        $("#islastPage").val(0);
+        $("#currentPage").val(currentPage);
+        _btnQueryTerminalSale(currentPage)
+    };
+    //终端销售查询下一页
+    var _nextPage2 = function() {
+        var currentPage = Number($("#currentPage").val());
+        var isLastPage = $("#islastPage").val();
+        if (isLastPage == 1) {
+            $.alert("提示", "已经到最后一页!");
+            return;
+        }
+        currentPage = currentPage + 1;
+        $("#currentPage").val(currentPage);
+        _btnQueryTerminalSale(currentPage)
+    };
+    
+    //费用详情查询上一页
+    var _upPage3 = function() {
+        var currentPage = Number($("#currentPage").val());
+        if (currentPage == 1) {
+            $.alert("提示", "当前已经是第一页");
+            return;
+        } else {
+            currentPage = currentPage - 1;
+        }
+        $("#islastPage").val(0);
+        $("#currentPage").val(currentPage);
+        _btnQueryfee(currentPage)
+    };
+    //费用详情查询下一页
+    var _nextPage3 = function() {
+        var currentPage = Number($("#currentPage").val());
+        var isLastPage = $("#islastPage").val();
+        if (isLastPage == 1) {
+            $.alert("提示", "已经到最后一页!");
+            return;
+        }
+        currentPage = currentPage + 1;
+        $("#currentPage").val(currentPage);
+        _btnQueryfee(currentPage)
+    };
+    
+    
+	//终端销售 滚动页面入口
+	var _feeScroll = function(scrollObj){
+		if(scrollObj && scrollObj.page && scrollObj.page >= 1){
+			_btnQueryfee(scrollObj.page,scrollObj.scroll);
+		}
+	};
+	//查询
+	var _btnQueryfee = function(pageIndex,scroller){
+		OrderInfo.actionFlag=140;
+		var curPage = 1 ;
+		if(pageIndex>0){
+			curPage = pageIndex ;
+		}
+		if(pageIndex==1){
+			$("#islastPage").val(0);
+			$("#currentPage").val(1);
+		}
+		var param = {} ;
+		param = {
+					"startDate":($("#p_startDt").val()).replace(/-/g,''),
+					"endDate":($("#p_endDt").val()).replace(/-/g,''),
+					"channelId":$("#p_channelId").val(),
+					"areaId":$("#p_channelId").attr("areaid"),
+					pageIndex:curPage,
+					pageSize:10
+		};
+		param.newFlag="1";
+        $.callServiceAsHtmlGet(contextPath+"/app/report/freeInfoList",param,{
+			"before":function(){
+				$.ecOverlay("终端销售详情查询中，请稍等...");
+			},
+			"always":function(){
+			  //$.unecOverlay();
+			},
+			"done" : function(response){
+				$.unecOverlay();
+				if(response && response.code == -2){
+					return ;
+				}else{
+					if((response.data).indexOf("没有查询到结果")>=0){
+						$("#islastPage").val(1);
+						$("#currentPage").val(Number(curPage)-1);
+						$.alert("提示","没有查询到结果");
+						return;
+					}
+					OrderInfo.order.step=2;
+					$("#nav-tab-1").removeClass("active in");
+        	    	$("#nav-tab-2").addClass("active in");
+        	    	$("#tab1_li").removeClass("active");
+        	    	$("#tab2_li").addClass("active");
+                   
+                    if (curPage == 1) {
+                    	 $("#nav-tab-2").children('.list-box').html(response.data);
+                         $('a[href="#nav-tab-2"]').click();
+                    } else {
+                    	$("#order-list-all").empty();
+                        $("#order-list-all").append(response.data);
+                        $.refresh($("#order-list-all"));
+                    }
+					if(scroller && $.isFunction(scroller)) scroller.apply(this,[]);
+				}
+			},
+			fail:function(response){
+				$.unecOverlay();
+				$.alert("提示","请求可能发生异常，请稍后再试！");
+			}
+		});
+	};
     return {
         cartBack: _cartBack,
         channelChange: _channelChange,
@@ -326,6 +565,15 @@ cart.main = (function() {
         showOffer: _showOffer,
         validatorForm: _validatorForm,
         upPage: _upPage,
-        nextPage: _nextPage
+        nextPage: _nextPage,
+        upPage2: _upPage2,
+        nextPage2: _nextPage2,
+        upPage3: _upPage3,
+        nextPage3: _nextPage3,
+        statValidatorForm	:_statValidatorForm,
+        btnQueryTerminalSale:_btnQueryTerminalSale,
+        btnQueryfee         :_btnQueryfee,
+        termSaleScroll      :_termSaleScroll,
+        feeScroll           :_feeScroll
     };
 })();

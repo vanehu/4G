@@ -33,6 +33,8 @@ public class Const {
 	
 	public static final String OL_TYPE_CD = "15";// app 系统标示
 	
+	public static final String APP_SEARCH_OFFER_SYSFLAG = "10004";//翼销售查询主销售品与附属销售品的系统标识
+	
 	//发展人数据
 	public static Object ASSISTANT_TYPE = null;
 	

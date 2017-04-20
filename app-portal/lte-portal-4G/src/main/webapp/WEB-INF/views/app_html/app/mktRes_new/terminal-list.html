@@ -42,7 +42,7 @@
 	</#list>
 <#else>
 <#if (pageModel.list)?? &&((pageModel.list)?size>0)>
-<@portal.scrollPagination "terminal_list" "both" pageModel.totalPages 60 0 "order.phone.scroll">
+<@portal.scrollPagination "terminal_list" "both" pageModel.totalPages 110 0 "order.phone.scroll">
 <ul class="single-list-box" id="phone-list-all">
 			<#list pageModel.list as mkt>
 				<#assign intf_pic = false>

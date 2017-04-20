@@ -9,6 +9,9 @@ bill.charge = (function() {
 	var _failTimes = 0;
 	// 最大容错次数
 	var _maxFailTimes = 10;
+	
+	var chargeCheck="0";//代理保证金校验编码   0成功   1校验不通过 -2接口异常
+	
 	/**
 	 * 获取支付平台返回订单状态并进行下一步操作
 	 */
@@ -85,8 +88,39 @@ bill.charge = (function() {
 					$.unecOverlay();
 					if (ec.util.isObj(response)) {
 						if (response.code == 0) {
-							$('#queryResult').modal('show');
-							console.log(response);
+							// TODO 在charge-prepare.html显示余额
+							if(response.data.arrears.resultCode !=0){
+								$.alert("提示", response.data.arrears.message);
+								return;
+							}
+							if(response.data.balance.resultCode !=0){
+								$.alert("提示", response.data.balance.message);
+								return;
+							}
+								$('#queryResult').modal('show');
+								var totalBalance = "0";
+								if(response.data.arrears.result.SvcCont && response.data.arrears.result.SvcCont.Service_Information && response.data.arrears.result.SvcCont.Service_Information.Bill_Query_Information){
+									totalBalance =response.data.arrears.result.SvcCont.Service_Information.Bill_Query_Information.Sum_Charge;
+								}
+								$('#totalBalance').text('￥'+ totalBalance);	
+								if(totalBalance =="0"){
+									$('#currentBalanceli').modal('hide');
+								}else{
+									$('#currentBalanceli').modal('show');
+									if(response.data.balance.result.SvcCont && response.data.balance.result.SvcCont.Service_Information && response.data.balance.result.SvcCont.Service_Information.Total_Balance_Available){
+										totalBalance =response.data.balance.result.SvcCont.Service_Information.Total_Balance_Available;
+									}
+									$('#totalBalance').text('￥'+ totalBalance);
+									var currentBalance = "0";
+									if(response.data.balance.result.SvcCont && response.data.balance.result.SvcCont.Service_Information && response.data.balance.result.SvcCont.Service_Information.Balance_Information){
+										for (var i=0; i < response.data.balance.result.SvcCont.Service_Information.Balance_Information.length; i++) {
+											if(response.data.balance.result.SvcCont.Service_Information.Balance_Information[i].BalanceTypeFlag == 0){
+												currentBalance =response.data.balance.result.SvcCont.Service_Information.Balance_Information[i].Balance_Available;
+											}
+										}
+									}
+									$('#currentBalance').text('￥'+ currentBalance);
+							}
 						} else if (response.code == 1) {
 							$.alert("提示", response.data.message);
 							return;
@@ -154,7 +188,8 @@ bill.charge = (function() {
 				soNbr: _chargeParams.tranId,
 				charge: _chargeParams.feeAmount,
 				busiUpType: "4",
-				accNbr: _chargeParams.destinationId
+				accNbr: _chargeParams.destinationId,
+				chargeCheck:chargeCheck
 		};
 		$.callServiceAsJson(contextPath + "/app/order/getPayUrl", getPayUrlParams, {
 			"before": function() {
@@ -202,10 +237,47 @@ bill.charge = (function() {
 			}
 			// 因为支付平台返回，原生只会调用calCharge.js中的queryPayOrdStatus方法，所以先设置业务类型，方便回调
 			order.calcharge.busiUpType = CONST.APP_CHARGE_BUSI_UP_TYPE;
+			_checkDeposit();
 			// 跳转支付平台
 			_toPay();
 		});
 	};
+	
+	var _checkDeposit = function() {
+		//MDA获取省份CRM系统编码
+		var propertiesKey = "PROVCODE_"+$("#provinceId").val().substring(0,3);
+	    var PROVCODE = offerChange.queryPortalProperties(propertiesKey);
+	    var DstSysID ="";
+	    if(PROVCODE!=undefined && PROVCODE.length>0){
+	    	DstSysID = PROVCODE;
+	    }
+		var params={ 
+				"ContractRoot":{
+					"TcpCont":{
+						"DstSysID": DstSysID + ""
+					},
+					"SvcCont":{
+						"AccNbr":  $.trim($("#userPhoneNum").val()),  
+						"Amount": $.trim($("#amount").val())*100 + "", 
+						"ReqSerial":"",
+						"CustOrderId":""
+					}
+				}			
+			};
+            var url = contextPath+"/app/bill/checkDeposit";
+			var response = $.callServiceAsJson(url,params, {});
+			if(response.code){
+				return;
+			}
+			if (response.code == 0) {
+				chargeCheck="0";
+			}else if (response.code == -2) {
+				chargeCheck="-2";
+			}else{
+				chargeCheck="1";
+			}
+	};
+	
 	var _provinceSet = function() {
 		var provinceInfo = CONST.AREA_PROVINCE_MAPPING[OrderInfo.staff.areaId.substr(0, 3)];
 		$("#provinceId").html('<option value="' + provinceInfo.provId + '">' + provinceInfo.provName + '</option>');

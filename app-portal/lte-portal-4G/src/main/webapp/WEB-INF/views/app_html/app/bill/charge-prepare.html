@@ -77,12 +77,12 @@
 						<li>
 							<i class="iconfont">&#xe686;</i>
 							<span class="list-title font-secondary">话费总余额</span>
-							<span class="pull-right font-secondary p-r-10 list-text"><span class="font-orange">￥128</span>元</span>
+							<span class="pull-right font-secondary p-r-10 list-text"><span class="font-orange" id= "totalBalance"></span>元</span>
 						</li>
-						<li>
+						<li id ="currentBalanceli">
 							<i class="iconfont">&#xe686;</i>
 							<span class="list-title font-secondary">可用余额</span>
-							<span class="pull-right font-secondary p-r-10 list-text"><span class="font-orange">￥128</span>元</span>
+							<span class="pull-right font-secondary p-r-10 list-text"><span class="font-orange" id= "currentBalance"></span>元</span>
 						</li>
 					</ul>
 					<div class="list-box">
@@ -100,6 +100,7 @@
 </div>
 <script>
 	$(document).ready(function() {
+		OrderInfo.order.step = 1;
 		App.init();
 		bill.charge.init();
 		order.broadband.init_select();

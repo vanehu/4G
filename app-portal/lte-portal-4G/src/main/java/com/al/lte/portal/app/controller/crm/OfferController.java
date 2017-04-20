@@ -35,6 +35,7 @@ import com.al.ecs.spring.controller.BaseController;
 import com.al.lte.portal.bmo.crm.MktResBmo;
 import com.al.lte.portal.bmo.crm.OfferBmo;
 import com.al.lte.portal.bmo.crm.OrderBmo;
+import com.al.lte.portal.common.Const;
 import com.al.lte.portal.common.SysConstant;
 import com.al.lte.portal.model.SessionStaff;
 
@@ -220,6 +221,7 @@ public class OfferController extends BaseController {
 		JsonResponse jsonResponse = null;
         try {
         	paramMap = JsonUtil.toObject(param, Map.class);
+        	paramMap.put("sysFlag", Const.APP_SEARCH_OFFER_SYSFLAG);//系统标识
         	Map<String, Object> resMap = offerBmo.queryAttachOffer(paramMap,null,sessionStaff);
         	jsonResponse = super.successed(resMap,ResultConstant.SUCCESS.getCode());
         } catch (BusinessException be) {
@@ -286,6 +288,7 @@ public class OfferController extends BaseController {
 				SysConstant.SESSION_KEY_LOGIN_STAFF);
 		Map<String, Object> paramMap =  JsonUtil.toObject(param, Map.class);
 		try{
+			paramMap.put("sysFlag", Const.APP_SEARCH_OFFER_SYSFLAG);//系统标识
 			//已订购附属销售品查询
 			Map<String, Object> openMap = offerBmo.queryAttachOffer(paramMap,null,sessionStaff);
 			model.addAttribute("openMap",openMap);
@@ -328,6 +331,7 @@ public class OfferController extends BaseController {
 		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);
 		Map<String, Object> paramMap =  JsonUtil.toObject(param, Map.class);
 		try{
+			paramMap.put("sysFlag", Const.APP_SEARCH_OFFER_SYSFLAG);//系统标识
 			//默认必开功能产品
 			Map<String, Object> openServMap = offerBmo.queryServSpec(paramMap,null,sessionStaff);
 			model.addAttribute("openServMap",openServMap);
@@ -371,7 +375,7 @@ public class OfferController extends BaseController {
 			SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);	
 			
 			paramMap =  JsonUtil.toObject(param, Map.class);
-			
+			paramMap.put("sysFlag", Const.APP_SEARCH_OFFER_SYSFLAG);//系统标识
 			//默认必开功能产品
 			Map<String, Object> openServMap = offerBmo.queryServSpec(paramMap,null,sessionStaff);
 			model.addAttribute("openServMap",openServMap);
@@ -469,6 +473,7 @@ public class OfferController extends BaseController {
 		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
 				SysConstant.SESSION_KEY_LOGIN_STAFF);
 		JsonResponse jsonResponse = null;
+		paramMap.put("sysFlag", Const.APP_SEARCH_OFFER_SYSFLAG);//系统标识
         try {
         	Map<String, Object> resMap = offerBmo.queryMustAttOffer(paramMap,null,sessionStaff);
         	jsonResponse = super.successed(resMap,ResultConstant.SUCCESS.getCode());
@@ -497,6 +502,7 @@ public class OfferController extends BaseController {
 		Map<String, Object> paramMap = null;
         try {
         	paramMap =  JsonUtil.toObject(param, Map.class);
+        	paramMap.put("sysFlag", Const.APP_SEARCH_OFFER_SYSFLAG);//系统标识
         	Map<String, Object> resMap = offerBmo.queryCanBuyAttachSpec(paramMap,null,sessionStaff);
         	jsonResponse = super.successed(resMap,ResultConstant.SUCCESS.getCode());
         } catch (BusinessException be) {
@@ -552,6 +558,7 @@ public class OfferController extends BaseController {
         	paramMap =  JsonUtil.toObject(URLDecoder.decode(param,"utf-8"), Map.class);
         	//搜索可订购销售品
         	paramMap.put("operatorsId", sessionStaff.getOperatorsId()!=""?sessionStaff.getOperatorsId():"99999");
+        	paramMap.put("sysFlag", Const.APP_SEARCH_OFFER_SYSFLAG);//系统标识
     		Map<String, Object> offerMap = offerBmo.queryCanBuyAttachSpec(paramMap,null,sessionStaff);
     		List<Integer> specIds=new ArrayList<Integer>(); //存放已选择可选包或功能id
     		if(paramMap.get("specIds")!=null){
@@ -667,6 +674,7 @@ public class OfferController extends BaseController {
 				SysConstant.SESSION_KEY_LOGIN_STAFF);
 		Map<String, Object> paramMap =  null;	
 		try{	
+			paramMap.put("sysFlag", Const.APP_SEARCH_OFFER_SYSFLAG);//系统标识
 			paramMap =  JsonUtil.toObject(param, Map.class);
 			Map<String, Object> labelMap = offerBmo.queryLabel(paramMap,null,sessionStaff);	
 			model.addAttribute("labelMap",labelMap);
@@ -820,6 +828,7 @@ public class OfferController extends BaseController {
 		Map<String, Object> paramMap = null;
         try {
         	paramMap =  JsonUtil.toObject(param, Map.class);
+        	paramMap.put("sysFlag", Const.APP_SEARCH_OFFER_SYSFLAG);//系统标识
         	paramMap.put("operatorsId", sessionStaff.getOperatorsId()!=""?sessionStaff.getOperatorsId():"99999");
         	Map<String, Object> resMap = offerBmo.queryMyfavorite(paramMap,null,sessionStaff);
         	jsonResponse = super.successed(resMap,ResultConstant.SUCCESS.getCode());

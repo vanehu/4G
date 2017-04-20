@@ -89,6 +89,7 @@ public class InterfaceClient {
 	private static final String SIMULATE_WAY = "SIMULATE";
 	
 	private static final String URL_KEY = "url";
+	private static final String CMP_PREFIX = "cmp";
 	private static final String BIZ_PREFIX = "biz";
 	private static final String CA_PREFIX = "ca";//无纸化签章系统
 	private static final String BDW_PREFIX = "bdw";// bdw代表后台BusinessDispatchWeb项目 
@@ -110,6 +111,7 @@ public class InterfaceClient {
 	private static final String XSD_PREFIX = "xsd";//宽带融合（翼销售）销售单下发
 
 	private static final String PAY_PREFIX = "pay";//支付平台
+	private static final String TER_PREFIX = "ter";
 
 	
 	/** 数据路由关键字，根据此标识读取不同数据源的配置数据 */
@@ -410,13 +412,21 @@ public class InterfaceClient {
 					}					
 					paramJson = paramString;
 					
+				}else if (TER_PREFIX.equals(prefix)) {
+					serviceCode = serviceCode.substring(4);
+					// 只通过csb调用
+					intfUrl = propertiesUtils.getMessage(URL_KEY + "." + CSB_HTTP);
+					sys = "终端销售系统";
+					paramString = JsonUtil.toString(dataBusMap);
+					paramJson=paramString;
 				}
 				
 				String csbFlag = propertiesUtils.getMessage(SysConstant.CSB_FLAG);
 				String asyncFlag = propertiesUtils.getMessage(SysConstant.ASYNC_FLAG);
 				boolean asyncWay = false;
 				Object serviceCodeObj = null;
-				if (SysConstant.ON.equals(csbFlag)){
+				// 终端销售系统只允许通过csb调用（只支持xml）
+				if (SysConstant.ON.equals(csbFlag) || TER_PREFIX.equals(prefix)){
 					serviceCodeObj = DataRepository.getInstence().getCommonParam(dbKeyWord,serviceCode);
 					Object serviceCodeObjAsyn = DataRepository.getInstence().getCommonParam(dbKeyWord,serviceCode + SysConstant.ASYNC_KEY);
 					if (SysConstant.ON.equals(asyncFlag) && serviceCodeObjAsyn != null) {
@@ -467,7 +477,7 @@ public class InterfaceClient {
 					retnJson = rawRetn;
 				}
 	
-				if (SysConstant.ON.equals(csbFlag) && serviceCodeObj != null){
+				if ((SysConstant.ON.equals(csbFlag) || TER_PREFIX.equals(prefix)) && serviceCodeObj != null){
 					Node svcCont = checkCSBXml(serviceCode, rawRetn, paramString);
 					if (PAY_PREFIX.equals(prefix)) {// 支付平台
 						retnJson = svcCont.asXML();
@@ -490,53 +500,36 @@ public class InterfaceClient {
 //					Result.remove("ResultCode");
 //					Result.remove("ResultMsg");
 				}
-				
 				if (MapUtils.isEmpty(rootMap) || !rootMap.containsKey("resultCode")) {
-					if (rootMap == null || (!rootMap.containsKey("rspCode")&&!rootMap.containsKey("code")&&!rootMap.containsKey("respCode"))) {
+					if (rootMap == null || (!rootMap.containsKey("rspCode")&&!rootMap.containsKey("code")&&!rootMap.containsKey("respCode")&&!rootMap.containsKey("resFlag"))) {
 						//异常判断：返回不是个JSON对象或没有包含resultCode
 						throw new InterfaceException(ErrType.OPPOSITE, serviceCode, retnJson, paramString, logSeqId);
 					}else if(rootMap.containsKey("code")){
 						resultCode = MapUtils.getString(rootMap, "code");
 						resultMsg = MapUtils.getString(rootMap, "message");
-						if (ResultCode.R_EXCEPTION.equals(resultCode) || ResultCode.R_RULE_EXCEPTION.equals(resultCode)) {
-							
-							checkError(rootMap, sys, serviceCode, resultCode, resultMsg, retnJson, paramString, logSeqId);
-							
-						}
-						
-						db.setReturnlmap(rootMap);
+						returnMapSet(serviceCode, db, paramString, retnJson,
+								resultCode, resultMsg, logSeqId, sys, rootMap);
 					}else if(rootMap.containsKey("respCode")){
 						resultCode = MapUtils.getString(rootMap, "respCode");
 						resultMsg = MapUtils.getString(rootMap, "message");
-						if (ResultCode.R_EXCEPTION.equals(resultCode) || ResultCode.R_RULE_EXCEPTION.equals(resultCode)) {
-							
-							checkError(rootMap, sys, serviceCode, resultCode, resultMsg, retnJson, paramString, logSeqId);
-							
-						}
-						
-						db.setReturnlmap(rootMap);
-					}
-					else {
+						returnMapSet(serviceCode, db, paramString, retnJson,
+								resultCode, resultMsg, logSeqId, sys, rootMap);
+					}else if(rootMap.containsKey("resFlag")) {
+						resultCode = MapUtils.getString(rootMap, "resFlag");
+						resultMsg = MapUtils.getString(rootMap, "resMsg");
+						returnMapSet(serviceCode, db, paramString, retnJson,
+								resultCode, resultMsg, logSeqId, sys, rootMap);
+					} else {
 						resultCode = MapUtils.getString(rootMap, "rspCode");
 						resultMsg = MapUtils.getString(rootMap, "rspDesc");
-						if (ResultCode.R_EXCEPTION.equals(resultCode) || ResultCode.R_RULE_EXCEPTION.equals(resultCode)) {
-							
-							checkError(rootMap, sys, serviceCode, resultCode, resultMsg, retnJson, paramString, logSeqId);
-							
-						}
-						
-						db.setReturnlmap(rootMap);
+						returnMapSet(serviceCode, db, paramString, retnJson,
+								resultCode, resultMsg, logSeqId, sys, rootMap);
 					}
 				}else{
 					resultCode = MapUtils.getString(rootMap, "resultCode");
 					resultMsg = MapUtils.getString(rootMap, "resultMsg");
-					if (ResultCode.R_EXCEPTION.equals(resultCode) || ResultCode.R_RULE_EXCEPTION.equals(resultCode)) {
-						
-						checkError(rootMap, sys, serviceCode, resultCode, resultMsg, retnJson, paramString, logSeqId);
-						
-					}
-					rootMap.put("logSeqId", logSeqId);
-					db.setReturnlmap(rootMap);
+					returnMapSet(serviceCode, db, paramString, retnJson,
+							resultCode, resultMsg, logSeqId, sys, rootMap);
 				}
 			} else if (WS_WAY.equals(invokeWay)) {
 	
@@ -594,6 +587,20 @@ public class InterfaceClient {
 		}
 		db.setBusiFlowId(transactionId);
 		return db;
+	}
+	
+	// 重复代码封装
+	private static void returnMapSet(String serviceCode, DataBus db,
+			String paramString, String retnJson, String resultCode,
+			String resultMsg, String logSeqId, String sys,
+			Map<String, Object> rootMap) throws InterfaceException {
+		if (ResultCode.R_EXCEPTION.equals(resultCode) || ResultCode.R_RULE_EXCEPTION.equals(resultCode)) {
+			
+			checkError(rootMap, sys, serviceCode, resultCode, resultMsg, retnJson, paramString, logSeqId);
+			
+		}
+		rootMap.put("logSeqId", logSeqId);
+		db.setReturnlmap(rootMap);
 	}
 
 	private static String createLogSeqId(Map<String, Object> dataBusMap,
@@ -709,9 +716,18 @@ public class InterfaceClient {
 				logObj.put("ROLE_CODE", db.getRoleCode() == null ? "" : db.getRoleCode());
 				String serviceSerial = "SP"+DateFormatUtils.format(new Date(), "yyyyMMddHHmmssSSS")+RandomStringUtils.randomNumeric(4);
 				logObj.put("SERV_RUN_NBR", serviceSerial);
-				HttpSession session = ServletUtils.getSession(request);
-				String log_busi_run_nbr = (String)session.getAttribute(SysConstant.LOG_BUSI_RUN_NBR);
-				logObj.put("BUSI_RUN_NBR", log_busi_run_nbr);
+				//如果是前台记录日志不能用此方法获取session 
+				//前台记自己服务的日志 前缀为portal
+				HttpSession session=null;
+				if("portal".equals(prefix)){
+					session=null;
+				}else{
+					session = ServletUtils.getSession(request);
+				}
+				if(session!=null){
+					String log_busi_run_nbr = (String)session.getAttribute(SysConstant.LOG_BUSI_RUN_NBR);
+					logObj.put("BUSI_RUN_NBR", log_busi_run_nbr);
+				}
 				Date beginDate = new Date(beginTime);
 				Date endDate = new Date(endTime);
 				String st = DateFormatUtils.format(beginDate, "yyyy/MM/dd HH:mm:ss");
@@ -728,27 +744,61 @@ public class InterfaceClient {
 				logObj.put("TRANS_ID", MapUtils.getString(db.getParammap(), "transactionId", ""));
 				logObj.put("AREA_ID", sessionStaff.getCurrentAreaId() == null ? "" : sessionStaff.getCurrentAreaId());
 				
-				if(request!=null){
-					logObj.put("REMOTE_ADDR", request.getRemoteAddr());
-					logObj.put("REMOTE_PORT", String.valueOf(request.getRemotePort()));
-					logObj.put("LOCAL_ADDR", request.getLocalAddr());
-					logObj.put("LOCAL_PORT", String.valueOf(request.getLocalPort()));
+				if(request!=null&&!"portal".equals(prefix)){
+					if(request.getRemoteAddr()!=null){
+						logObj.put("REMOTE_ADDR", request.getRemoteAddr());
+						logObj.put("REMOTE_PORT", String.valueOf(request.getRemotePort()));
+						logObj.put("LOCAL_ADDR", request.getLocalAddr());
+						logObj.put("LOCAL_PORT", String.valueOf(request.getLocalPort()));
+					}else{
+						logObj.put("REMOTE_ADDR", "");
+						logObj.put("REMOTE_PORT", "");
+						logObj.put("LOCAL_ADDR", "");
+						logObj.put("LOCAL_PORT", "");
+					}
 				}else{
 					logObj.put("REMOTE_ADDR", "");
 					logObj.put("REMOTE_PORT", "");
 					logObj.put("LOCAL_ADDR", "");
 					logObj.put("LOCAL_PORT", "");
 				}
+				
 				logObj.put("INTF_URL", intfUrl);
 				logObj.put("INTF_METHOD", serviceCode);
 				logObj.put("STAFF_ID", sessionStaff.getStaffId() == null ? "" : sessionStaff.getStaffId());
 				logObj.put("STAFF_NAME", sessionStaff.getStaffCode() == null ? "" : sessionStaff.getStaffCode());
 				logObj.put("CHANNEL_NAME", sessionStaff.getCurrentChannelName() == null ? "" : sessionStaff.getCurrentChannelName());
 				logObj.put("CHANNEL_ID", sessionStaff.getCurrentChannelId() == null ? "" : sessionStaff.getCurrentChannelId());
-				logObj.put("REMARK", "");
+				String remark = sessionStaff.isHandleCustNeeded() == false ? "是" : "否";
+				logObj.put("REMARK", "工号是否具有跳过经办人权限：" + remark);
 				logObj.put("OL_ID", ol_id);
 				logObj.put("SO_NBR", so_nbr);
 				logObj.put("BUSI_TYPE", "");
+				logObj.put("IP", "");
+				//#1155940 记录 sessionId、  portalId 和servCode或者menuInfo
+				String sessionId="";
+				//取入参中的sessionId
+				if(!StringUtil.isEmptyStr(paramString)){
+					Map<String, Object> paramMap= JsonUtil.toObject(paramString, Map.class);
+					if(paramMap!=null){
+						sessionId = (String) paramMap.get("sessionId");
+						if(!StringUtil.isEmptyStr(sessionId)){
+							logObj.put("SESSION_ID",sessionId );
+						}
+					}
+				}else if(session!=null){
+					//取session中的sessionId
+					sessionId=session.getId();
+					if(!StringUtil.isEmptyStr(sessionId)){
+							logObj.put("SESSION_ID", sessionId);
+						}
+					}
+				 //门户日志 记录业务场景 与订单id
+				 if("portal".equals(prefix)){
+						  Map<String,Object>	map = JsonUtil.toObject(paramString, Map.class);
+						  logObj.put("TRANS_ID", MapUtils.getString(map, "portalId", ""));  
+						  logObj.put("BUSI_TYPE", MapUtils.getString(map, "servCode", MapUtils.getString(map, "menuInfo","")));
+				 }
 				// 新增日志ID
 				logObj.put("LOG_SEQ_ID", logSeqId);
 				// 新增错误标识，0 成功  1  错误  2  异常
@@ -759,8 +809,9 @@ public class InterfaceClient {
 				}
 				logClobObj.put("IN_PARAM", paramString);						
 				logClobObj.put("OUT_PARAM", rawRetn);
-
 				boolean isDefaultLog = true;
+				System.out.println("prefix:"+prefix);
+				System.out.println("-------------------------日志平台开始调用-------------------");
 				if (propertiesUtils.getMessage(SysConstant.PORTAL_SERVICE_LOG_P).contains(serviceCode)) {
 					isDefaultLog = false;
 					logSender.sendLog2DB(SysConstant.PORTAL_SERVICE_LOG_P, logObj, logClobObj);
@@ -775,6 +826,7 @@ public class InterfaceClient {
 				}
 				if (isDefaultLog)
 					logSender.sendLog2DB(SysConstant.PORTAL_SERVICE_LOG, logObj, logClobObj);
+				System.out.println("-------------------------日志平台调用结束-------------------");
 			}
 			String writelogFlag = MySimulateData.getInstance().getParam(dbKeyWord,SysConstant.WRITE_LOG_FLAG);
 			if (SysConstant.OFF.equals(writelogFlag)) {
@@ -1424,6 +1476,389 @@ public class InterfaceClient {
 			log.error("日志记录异常", e);
 		}
 	}
+	
+	/**
+	 * 调用eop接口 - 代理商校验接口
+	 * 
+	 * @param dataBusMap
+	 *            入参
+	 * @param serviceCode
+	 *            　服务层的服务编码
+	 * @param optFlowNum
+	 *            平台编码，用于记录日志
+	 * @param sessionStaff
+	 *            员工Session对象
+	 * @return DataBus 返回
+	 * @throws IOException 
+	 * @throws DocumentException 
+	 * @throws Exception
+	 */
+	public static DataBus callCheckDepositService(Map<String, Object> dataBusMap,
+			String serviceCode, String optFlowNum, SessionStaff sessionStaff)
+			throws InterfaceException, IOException, Exception {
+		/*
+		 * 1、数据路由关键字，根据此标识读取不同数据源的配置数据，为空则读取默认数据源的配置数据；
+		 * 2、优先读取sessionStaff中的路由参数,如果为空则从入参dataBusMap中读取；
+		 */
+		
+		String dbKeyWord = sessionStaff == null ? null : sessionStaff.getDbKeyWord();
+		if(StringUtils.isBlank(dbKeyWord)){
+			dbKeyWord = MapUtils.getString(dataBusMap, DATABUS_DBKEYWORD,"");
+			dataBusMap.remove(DATABUS_DBKEYWORD);
+		}
+		
+		Map<String,Object> ContractRoot = (Map<String, Object>) dataBusMap.get("ContractRoot");
+		Map<String,Object> TcpCont = (Map<String, Object>) ContractRoot.get("TcpCont");
+		
+		
+		
+		String AppKey = SysConstant.CSB_SRC_SYS_ID_APP;
+		String TransactionID = "";
+		String ymdStr = DateFormatUtils.format(new Date(), "yyyyMMdd");
+		String str10 = "";
+		String nonce = RandomStringUtils.randomNumeric(5); //随机字符串
+		DataBus _db = null;
+		_db = ServiceClient.callService(new HashMap(), PortalServiceCode.SERVICE_GET_LOG_SEQUENCE, null, sessionStaff);
+		str10 = nonce + String.format("%05d", _db.getReturnlmap().get("logSeq"));
+		TransactionID = AppKey+ymdStr+str10;
+	    TcpCont.put("TransactionID", TransactionID);
+		String ReqTime = DateFormatUtils.format(new Date(), "yyyyMMddHHmmss"); 
+		TcpCont.put("AppKey", AppKey);
+		TcpCont.put("ReqTime", ReqTime);
+		//开始拼接签名sign
+		Map<String,Object> svcCont = (Map<String, Object>) ContractRoot.get("SvcCont");
+        String svcString=JsonUtil.toString(svcCont);
+		String signKey=TransactionID+"\"SvcCont\":"+svcString+MDA.SecretKey.toString();
+		String sign=AESUtils.getMD5Str(signKey);
+		TcpCont.put("Sign", sign);
+		TcpCont.put("Method", serviceCode);
+		TcpCont.put("Version", "V1.0");
+		//签名串结束
+		DataBus db = new DataBus();
+		db = ServiceClient.initDataBus(sessionStaff);
+		long beginTime = System.currentTimeMillis();
+//		String appDesc = propertiesUtils.getMessage(SysConstant.APPDESC);
+//		if (sessionStaff != null && SysConstant.APPDESC_MVNO.equals(appDesc)) {
+//			dataBusMap.put("distributorId", sessionStaff.getPartnerId());
+//		}
+//		String transactionId = UIDGenerator.getRand();
+//		dataBusMap.put("transactionId", transactionId);
+//		if (StringUtils.isEmpty(optFlowNum)) {
+//			optFlowNum = transactionId;
+//		}
+		// 开始调用
+		request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
+		String paramString = "";
+		paramString = JsonUtil.toString(dataBusMap);
+		System.out.println("++++++++++++接口入参paramString="+paramString);
+		String paramJson="";
+		String retnJson = "";
+		String rawRetn = "";
+		String intfUrl = "";
+		String csbFlag = propertiesUtils.getMessage(SysConstant.CSB_FLAG);
+		String asyncFlag = propertiesUtils.getMessage(SysConstant.ASYNC_FLAG);
+		boolean asyncWay = false;
+		if(MDA.CSB_HTTP_MIDDLE_URL.toString()!=null && MDA.CSB_HTTP_MIDDLE_URL.toString().length()>0){
+	       	intfUrl = MDA.CSB_HTTP_MIDDLE_URL.toString();
+	        			//"http://10.128.90.194:8201/LTE-CSB/HttpAPIService";  
+	    }
+//		if (SysConstant.ON.equals(csbFlag)) {
+//			intfUrl = propertiesUtils.getMessage(URL_KEY + "." + CSB_HTTP);
+//		}else {
+//			intfUrl = getNeeded(dbKeyWord,URL_KEY, CMP_PREFIX);
+//			if(serviceCode == PortalServiceCode.QRY_CERTPHONENUM_REL){
+//				serviceCode = "/queryCmcCertNumRel";
+//			}else if(serviceCode ==PortalServiceCode.MOD_CERTPHONENUM_REL){
+//				serviceCode = "/changeCmcCertNumRel";
+//			}
+//			intfUrl += serviceCode;
+       /// }
+      //  String method = serviceCode;
+      //  serviceCode = intfUrl;
+		String resultCode = "";
+		String resultMsg = "";
+//		String errCode = "";
+//		String errorStack = "";
+		String prefix = "";
+		String logSeqId = "";
+		Map<String, Object> rootMap =  new HashMap();
+		try {
+		        String contentType = JSON_CONTENT_TYPE;
+				db = httpCall("", serviceCode, paramString, intfUrl, contentType, optFlowNum, sessionStaff, beginTime, logSeqId);
+				System.out.println("++++++++++++接口回参="+JsonUtil.toString(db));
+				rawRetn = db.getResultMsg();
+//				Node svcCont = checkCSBXml(serviceCode, rawRetn, paramString);	
+//				retnJson = svcCont.getText();
+				retnJson = rawRetn;
+			//	log.debug("retnJson:{}", retnJson.length() > 3000 ? retnJson.substring(0, 3000) : retnJson);
+				
+				if (StringUtils.isBlank(retnJson)) {
+					db.setResultCode(ResultCode.R_INTERFACE_EXCEPTION);
+					db.setResultMsg("接口返回为空");
+					return db;
+				}
+	
+				rootMap = JsonUtil.toObject(retnJson, Map.class);
+				rootMap.put("logSeqId", logSeqId);
+				Object obj = MapUtils.getObject(rootMap, "ContractRoot", null);
+				if (obj != null) {
+					rootMap = (Map<String, Object>) obj;
+					Map<String, Object> tcpContMap = (Map<String, Object>) rootMap.get("TcpCont");
+					Map<String, Object> svcContMap = new HashMap();
+					if(rootMap.get("SvcCont") instanceof Map){
+						svcContMap = (Map<String, Object>) rootMap.get("SvcCont");
+					}
+					if(MapUtils.isNotEmpty(tcpContMap)){
+						Map respMap=(Map) tcpContMap.get("Response");
+						String respCode=(String) respMap.get("RspCode");
+						if(ResultCode.RES_SUCCESS.equals(respCode)){
+							resultCode = "0";
+							resultMsg = (String)respMap.get("RspDesc");
+							db.setResultCode(ResultCode.R_SUCC);
+							if (MapUtils.isNotEmpty(svcContMap)) {
+								db.setReturnlmap((Map<String, Object>)svcContMap.get("result"));
+							}
+						}else{
+							resultCode = respCode;
+							resultMsg = (String)respMap.get("RspDesc");
+							db.setResultCode(ResultCode.R_FAIL);
+ 						}
+					}
+					
+//					if (MapUtils.isNotEmpty(svcContMap)) {
+//						Map respMap=(Map) tcpContMap.get("Response");
+//							String respCode=(String) respMap.get("RspCode");
+//							if(ResultCode.RES_SUCCESS.equals(respCode)){
+//								resultCode = "0";
+//								resultMsg = (String)respMap.get("RspDesc");
+//								db.setResultCode(ResultCode.R_SUCC);
+//								db.setReturnlmap(svcContMap);
+//							}else{
+//								resultCode = respCode;
+//								resultMsg = (String)respMap.get("RspDesc");
+//								db.setResultCode(ResultCode.R_FAIL);
+//
+//							}
+//                      }
+				} else {
+//					resultCode = (String) rootMap.get("resultCode");
+//					resultMsg = (String) rootMap.get("resultMsg");
+//					if(resultCode==null && resultMsg == null){
+//						resultCode = "-11111";
+//						resultMsg = rootMap.toString();
+//					}
+//					db.setResultCode(resultCode);
+//					db.setResultMsg(resultMsg);
+//					db.setReturnlmap(rootMap);
+				}
+				log.debug("调用回参:{}", retnJson);
+	
+		} finally {
+			db.setResultCode(resultCode);
+			db.setResultMsg(resultMsg);
+			db.setParammap(dataBusMap);
+//			db.setReturnlmap(rootMap);
+			if (sessionStaff != null) {
+				callServiceLog(logSeqId, dbKeyWord, db, optFlowNum, serviceCode, intfUrl, sessionStaff, paramString, rawRetn, beginTime, System.currentTimeMillis(),retnJson,paramJson,prefix);
+			}
+		}
+		db.setBusiFlowId(TransactionID);
+		return db;
+	}	
+	/**
+	 * 调用一证五号接口
+	 * 
+	 * @param dataBusMap
+	 *            入参
+	 * @param serviceCode
+	 *            　服务层的服务编码
+	 * @param optFlowNum
+	 *            平台编码，用于记录日志
+	 * @param sessionStaff
+	 *            员工Session对象
+	 * @return DataBus 返回
+	 * @throws IOException 
+	 * @throws DocumentException 
+	 * @throws Exception
+	 */
+	public static DataBus callServiceCardFiveSys(Map<String, Object> dataBusMap,
+			String serviceCode, String optFlowNum, SessionStaff sessionStaff)
+			throws InterfaceException, IOException, Exception {
+		/*
+		 * 1、数据路由关键字，根据此标识读取不同数据源的配置数据，为空则读取默认数据源的配置数据；
+		 * 2、优先读取sessionStaff中的路由参数,如果为空则从入参dataBusMap中读取；
+		 */
+		
+		String dbKeyWord = sessionStaff == null ? null : sessionStaff.getDbKeyWord();
+		if(StringUtils.isBlank(dbKeyWord)){
+			dbKeyWord = MapUtils.getString(dataBusMap, DATABUS_DBKEYWORD,"");
+			dataBusMap.remove(DATABUS_DBKEYWORD);
+		}
+		
+		Map<String,Object> ContractRoot = (Map<String, Object>) dataBusMap.get("ContractRoot");
+		Map<String,Object> TcpCont = (Map<String, Object>) ContractRoot.get("TcpCont");
+		
+		
+		
+		String AppKey = SysConstant.CSB_SRC_SYS_ID_LTE;
+		String TransactionID = "";
+		String ymdStr = DateFormatUtils.format(new Date(), "yyyyMMdd");
+		String str10 = "";
+		String nonce = RandomStringUtils.randomNumeric(5); //随机字符串
+		DataBus _db = null;
+		_db = ServiceClient.callService(new HashMap(), PortalServiceCode.SERVICE_GET_LOG_SEQUENCE, null, sessionStaff);
+		str10 = nonce + String.format("%05d", _db.getReturnlmap().get("logSeq"));
+		TransactionID = AppKey+ymdStr+str10;
+	    TcpCont.put("TransactionID", TransactionID);
+		String ReqTime = DateFormatUtils.format(new Date(), "yyyyMMddHHmmss");
+		TcpCont.put("AppKey", AppKey);
+		TcpCont.put("ReqTime", ReqTime);
+		
+//		//开始拼接签名sign
+		Map<String,Object> svcCont = (Map<String, Object>) ContractRoot.get("SvcCont");
+
+		
+		
+		String svcString=JsonUtil.toString(svcCont);
+		String signKey=TransactionID+"\"SvcCont\":"+svcString+MDA.SecretKey.toString();
+		String sign=AESUtils.getMD5Str(signKey);
+		TcpCont.put("Sign", sign);
+		TcpCont.put("Method", serviceCode);
+		TcpCont.put("Version", "V1.0");
+		//签名串结束
+		DataBus db = new DataBus();
+		db = ServiceClient.initDataBus(sessionStaff);
+		long beginTime = System.currentTimeMillis();
+//		String appDesc = propertiesUtils.getMessage(SysConstant.APPDESC);
+//		if (sessionStaff != null && SysConstant.APPDESC_MVNO.equals(appDesc)) {
+//			dataBusMap.put("distributorId", sessionStaff.getPartnerId());
+//		}
+//		String transactionId = UIDGenerator.getRand();
+//		dataBusMap.put("transactionId", transactionId);
+//		if (StringUtils.isEmpty(optFlowNum)) {
+//			optFlowNum = transactionId;
+//		}
+		// 开始调用
+		request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
+		String paramString = "";
+		paramString = JsonUtil.toString(dataBusMap);
+		System.out.println("++++++++++++接口入参paramString="+paramString);
+		String paramJson="";
+		String retnJson = "";
+		String rawRetn = "";
+		String intfUrl = "";
+		String csbFlag = propertiesUtils.getMessage(SysConstant.CSB_FLAG);
+		String asyncFlag = propertiesUtils.getMessage(SysConstant.ASYNC_FLAG);
+		boolean asyncWay = false;
+		if(MDA.CSB_HTTP_CMP_URL.toString()!=null && MDA.CSB_HTTP_CMP_URL.toString().length()>0){
+	        	intfUrl = MDA.CSB_HTTP_CMP_URL.toString();
+	        			//"http://10.128.90.194:8201/LTE-CSB/HttpAPIService";  
+	        			//"http://10.128.90.195:7003/CmpWeb/cmpService/queryRelInstInfo";
+	    }
+//		if (SysConstant.ON.equals(csbFlag)) {
+//			intfUrl = propertiesUtils.getMessage(URL_KEY + "." + CSB_HTTP);
+//		}else {
+//			intfUrl = getNeeded(dbKeyWord,URL_KEY, CMP_PREFIX);
+//			if(serviceCode == PortalServiceCode.QRY_CERTPHONENUM_REL){
+//				serviceCode = "/queryCmcCertNumRel";
+//			}else if(serviceCode ==PortalServiceCode.MOD_CERTPHONENUM_REL){
+//				serviceCode = "/changeCmcCertNumRel";
+//			}
+//			intfUrl += serviceCode;
+       /// }
+      //  String method = serviceCode;
+      //  serviceCode = intfUrl;
+		String resultCode = "";
+		String resultMsg = "";
+//		String errCode = "";
+//		String errorStack = "";
+		String prefix = "";
+		String logSeqId = "";
+		Map<String, Object> rootMap =  new HashMap();
+		try {
+		        String sys = "一证五号系统";
+				String contentType = JSON_CONTENT_TYPE;
+				db = httpCall(sys, serviceCode, paramString, intfUrl, contentType, optFlowNum, sessionStaff, beginTime, logSeqId);
+				System.out.println("++++++++++++接口回参="+JsonUtil.toString(db));
+				rawRetn = db.getResultMsg();
+//				Node svcCont = checkCSBXml(serviceCode, rawRetn, paramString);	
+//				retnJson = svcCont.getText();
+				retnJson = rawRetn;
+			//	log.debug("retnJson:{}", retnJson.length() > 3000 ? retnJson.substring(0, 3000) : retnJson);
+				
+				if (StringUtils.isBlank(retnJson)) {
+					db.setResultCode(ResultCode.R_INTERFACE_EXCEPTION);
+					db.setResultMsg("接口返回为空");
+					return db;
+				}
+	
+				rootMap = JsonUtil.toObject(retnJson, Map.class);
+				rootMap.put("logSeqId", logSeqId);
+				Object obj = MapUtils.getObject(rootMap, "ContractRoot", null);
+				if (obj != null) {
+					rootMap = (Map<String, Object>) obj;
+					Map<String, Object> tcpContMap = (Map<String, Object>) rootMap.get("TcpCont");
+					Map<String, Object> svcContMap = new HashMap();
+					if(rootMap.get("SvcCont") instanceof Map){
+						svcContMap = (Map<String, Object>) rootMap.get("SvcCont");
+					}
+					if(MapUtils.isNotEmpty(tcpContMap)){
+						Map respMap=(Map) tcpContMap.get("Response");
+						String respCode=(String) respMap.get("RspCode");
+						if(ResultCode.RES_SUCCESS.equals(respCode)){
+							resultCode = "0";
+							resultMsg = (String)respMap.get("RspDesc");
+							db.setResultCode(ResultCode.R_SUCC);
+							if (MapUtils.isNotEmpty(svcContMap)) {
+								db.setReturnlmap((Map<String, Object>)svcContMap.get("result"));
+							}
+						}else{
+							resultCode = respCode;
+							resultMsg = (String)respMap.get("RspDesc");
+							db.setResultCode(ResultCode.R_FAIL);
+ 						}
+					}
+					
+//					if (MapUtils.isNotEmpty(svcContMap)) {
+//						Map respMap=(Map) tcpContMap.get("Response");
+//							String respCode=(String) respMap.get("RspCode");
+//							if(ResultCode.RES_SUCCESS.equals(respCode)){
+//								resultCode = "0";
+//								resultMsg = (String)respMap.get("RspDesc");
+//								db.setResultCode(ResultCode.R_SUCC);
+//								db.setReturnlmap(svcContMap);
+//							}else{
+//								resultCode = respCode;
+//								resultMsg = (String)respMap.get("RspDesc");
+//								db.setResultCode(ResultCode.R_FAIL);
+//
+//							}
+//                      }
+				} else {
+//					resultCode = (String) rootMap.get("resultCode");
+//					resultMsg = (String) rootMap.get("resultMsg");
+//					if(resultCode==null && resultMsg == null){
+//						resultCode = "-11111";
+//						resultMsg = rootMap.toString();
+//					}
+//					db.setResultCode(resultCode);
+//					db.setResultMsg(resultMsg);
+//					db.setReturnlmap(rootMap);
+				}
+				log.debug("调用回参:{}", retnJson);
+	
+		} finally {
+			db.setResultCode(resultCode);
+			db.setResultMsg(resultMsg);
+			db.setParammap(dataBusMap);
+//			db.setReturnlmap(rootMap);
+			if (sessionStaff != null) {
+				callServiceLog(logSeqId, dbKeyWord, db, optFlowNum, serviceCode, intfUrl, sessionStaff, paramString, rawRetn, beginTime, System.currentTimeMillis(),retnJson,paramJson,prefix);
+			}
+		}
+		db.setBusiFlowId(TransactionID);
+		return db;
+	}	
 	/**
 	 * 调用中台接口
 	 * 

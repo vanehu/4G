@@ -1,7 +1,7 @@
 <script src="${contextPath}/js/app-js/new-js/function.min.js?${jsversion}" type="text/javascript"></script>
 <script src="${contextPath}/js/app-js/new-js/mobiscroll.js?${jsversion}" type="text/javascript"></script>
 <script src="${contextPath}/js/app-js/busi-js/cart-new/cart.js?${jsversion}"></script>
-<div id="cart_search">
+<div id="fee_search">
   <!-- begin row -->
   <div class="row">
     <!-- begin col-12 -->
@@ -11,7 +11,7 @@
         <div class="tab-overflow">
           <ul class="nav nav-tabs nav-tabs-inverse nav-top p-t-5">
             <li class="active" id="tab1_li">
-              <a ><i class="iconfont tab-icon">&#xe6d5;</i>订单查询<i class="iconfont tab-result-icon dis-none">&#xe611;</i></a>
+              <a ><i class="iconfont tab-icon">&#xe6d5;</i>费用详情查询<i class="iconfont tab-result-icon dis-none">&#xe611;</i></a>
             </li>
             <li class="" id="tab2_li">
               <a ><i class="iconfont tab-icon">&#xe64d;</i>查询结果<i class="iconfont tab-result-icon dis-none">&#xe611;</i></a>
@@ -51,13 +51,7 @@
                   </div>
                 </li>
                 </#if>
-                <li class="m-t-10">
-                  <div class="choice-box">
-                    <i class="iconfont pull-left">&#xe61d;</i>
-                    <input placeholder="请输入接入号码" class="choice-input" id="p_qryNumber" onkeyup="this.value=this.value.replace(/\D/g,'')" />
-                  </div>
-                </li>
-                <li class="m-t-10" <#if status?? && status!="" >style="display: none;"</#if>>
+                <li class="m-t-10" style="display: none;">
                   <div class="choice-box">
                     <i class="iconfont pull-left">&#xe66c;</i>
                     <select name="" id="p_olStatusCd" class="myselect select-option" data-role="none" >
@@ -100,58 +94,35 @@
               <input type="hidden" id="islastPage" value="0" />
             </div>
             <div class="sub-btn-box p p-b-15">
-              <button class="sun-btn" id="bt_cartQry" onclick="cart.main.queryCartList(1)">查询</button>
+              <button class="sun-btn" id="bt_cartQry" onclick="cart.main.btnQueryfee(1)">查询</button>
             </div>
           </div>
         </div>
         <div class="tab-pane fade tab-top" id="nav-tab-2">
           <div class="list-box m-t-10">
           </div>
-		<nav class="navbar navbar-default navbar-fixed-bottom">
+          		<nav class="navbar navbar-default navbar-fixed-bottom">
 		    <div class="container-fluid">
 			<div class="btn-group btn-group-justified navbar-btn" role="group" aria-label="...">
 				<div class="sub-btn-box p p-b-15">
-						<button class="double-btn pull-left" id="bt_cartQry" onclick="cart.main.upPage()">上一页</button><!-- onclick="SoOrder.orderBack();" -->
-						<button id="toCharge" class="double-btn pull-right" id="bt_cartQry" onclick="cart.main.nextPage()">下一页</button>
+						<button class="double-btn pull-left" id="bt_cartQry" onclick="cart.main.upPage3()">上一页</button><!-- onclick="SoOrder.orderBack();" -->
+						<button  class="double-btn pull-right" id="bt_cartQry" onclick="cart.main.nextPage3()">下一页</button>
 				</div>
 		    </div>
 		    </div>
 	    </nav>
         </div>
       </div>
-
-      <!-- end col-12 -->
     </div>
-    <!-- end row -->
-    <!-- begin button -->
-
-    <!-- end button -->
 
   </div>
-  <!-- end #content -->
+</div>
 
-  <!-- begin scroll to top btn -->
-  <a href="javascript:;" class="btn btn-icon btn-circle btn-success btn-scroll-to-top fade" data-click="scroll-top"><i class="fa fa-angle-up"></i></a>
-  <!-- end scroll to top btn -->
-</div>
-<div class="modal modal-message fade modal-top" id="cart_info_modal">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <i class="iconfont icon-close close" data-dismiss="modal" aria-hidden="true"></i>
-        <h4 class="modal-title">订单详情</h4>
-      </div>
-      <div class="modal-body" id="cart_info">
-        
-      </div>
-    </div>
-  </div>
-</div>
 <script>
-  //初始化
-  $(function() {
-    App.init();
-    mydate();
-    cart.main.initDic();
-  });
+	//初始化
+	$(function(){
+		 OrderInfo.order.step = 1;
+		 App.init();
+		 mydate(); 
+	});
 </script>
