@@ -1256,9 +1256,13 @@ CacheData = (function() {
 	 * @returns {*} 布尔值
 	 * @private
 	 */
-	var _isGov = function (certTypeId) {
-		return "-1"!=$.inArray(certTypeId, _getGovCertType());
-	};
+    var _isGov = function (certTypeId) {
+        if (ec.util.isObj(certTypeId)) {
+            return "-1" != $.inArray(certTypeId, _getGovCertType());
+        } else {
+            return false;
+        }
+    };
 	//获取浏览器类型和版本
 	var _getBrowserTypeVersion =function(){
 		var userAgentStr = window.navigator.userAgent.toLowerCase();
