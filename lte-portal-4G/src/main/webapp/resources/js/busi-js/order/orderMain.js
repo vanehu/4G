@@ -3091,7 +3091,7 @@ order.main = (function(){
 		$("#"+id).attr("onkeyup", "value=value.replace(/[^A-Za-z0-9]/ig,'')");
 		var identidiesTypeCd=$(scope).val();
 		$("#"+id).attr("maxlength", "100");
-		if (identidiesTypeCd == 1) {
+		if (identidiesTypeCd == 1 && $(dom).attr("servType") != 2) {
 			$("#orderUserResetBtn").hide();
 			$("#orderUserQryBtn").hide();
 			$("#orderUserReadCertBtn").show();
@@ -3490,7 +3490,7 @@ order.main = (function(){
 		}
 		$('#orderIdentidiesTypeCdB').removeAttr("disabled").removeAttr("style");
 		//按钮展示
-		if($("#orderIdentidiesTypeCdB").val() == 1){
+        if ($("#orderIdentidiesTypeCdB").val() == 1 && $(dom).attr("servType") != 2) {
 			$("#orderUserQryBtn").hide();
 			$("#orderUserReadCertBtn").show();
 			$("#orderUserResetBtn").hide();
