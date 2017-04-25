@@ -59,12 +59,6 @@ common = (function($) {
 			"custInfos":JSON.stringify(custParam),
 			"prodIdInfos":prodIdInfosParams
 		};
-		if($("#home").length>0){
-			$("#queryCust").empty();
-			$("#prodofferPrepare").empty();
-			//客户信息
-			OrderInfo.cust = [];
-		}
 		var enter = urlParams.enter;
 		if(enter != undefined){
 			param.enter = enter;

@@ -22,8 +22,8 @@ sourceRelease = (function(){
 		}else if($("#SJ_cardNumber").val().length>0){
 			param.accNbr = $("#SJ_cardNumber").val();
 		}else{
-			param.beginDate = $("#p_startDt").val().replace("/","-");
-			param.endDate = $("#p_endDt").val().replace("/","-");
+			param.beginDate = $("#p_startDt").val().replace("/","-").replace("/","-");
+			param.endDate = $("#p_endDt").val().replace("/","-").replace("/","-");
 			if(param.beginDate>param.endDate){
 				$.alert("提示", "开始日期不能大于结束日期！");
 				flag = false;

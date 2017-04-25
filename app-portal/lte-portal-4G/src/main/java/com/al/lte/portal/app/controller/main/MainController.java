@@ -198,7 +198,13 @@ public class MainController extends BaseController {
 //		System.out.println(List);
 		boolean isCanOrder = false; 
 		List pageSecondaryBusinessMenuArra = new ArrayList();
-		
+		Map<String, Object> resultMsg = new HashMap<String, Object>();
+		if(menu==null){
+			resultMsg.put("code", -2);
+			resultMsg.put("Msg", "该工号未配置菜单信息");
+			return super.failedStr(model, ErrorCode.QUERY_MENU_INFO, resultMsg, params);
+// 	       return "";
+		}
 		for (int i=0; i< menu.size(); i++) 
 		{
 			Map oneMap = (Map)menu.get(i);
@@ -275,71 +281,6 @@ public class MainController extends BaseController {
 		{
 			pageFunctionMenuArray = tempArray.get(1);
 		}
-		
-		/*
-		 for (int i=0; i<[pMenuArray count]; i++)
-	        {
-	            
-	            NSDictionary *oneDcit = [pMenuArray objectAtIndex:i];
-	            if ([oneDcit objectForKey:@"childMenuResources"]==nil) {
-	                continue;
-	            };
-	            
-	            NSArray *twoArray = [oneDcit objectForKey:@"childMenuResources"];
-	            
-	            for (int j=0; j<[twoArray count]; j++)
-	            {
-	                NSDictionary *twoDict = [twoArray objectAtIndex:j];
-	                if ([twoDict objectForKey:@"parentResourceId"]==nil) {
-	                    continue;
-	                }
-	                
-	                NSString *isMainMenu = [twoDict objectForKey:@"isMainMenu"];
-	                if ([@"N" isEqualToString:isMainMenu]) {
-	                    //二次业务菜单按钮存放
-	                    NSArray *pageSecondaryBusinessMenuArra = [twoDict objectForKey:@"childMenuResources"];
-	                    [[MenuBean getInstance] setValue:pageSecondaryBusinessMenuArra forKey:@"pageSecondaryBusinessMenuArra"];
-	                    NSLog(@"二次业务菜单列表:~~~%@",[[MenuBean getInstance] pageSecondaryBusinessMenuArra]);
-	                }
-	                else{
-	                    
-	                    NSArray *pageSecondaryBusinessMenuArra = [twoDict objectForKey:@"childMenuResources"];
-	                    if (pageSecondaryBusinessMenuArra==nil
-	                        || [pageSecondaryBusinessMenuArra count]==0) {
-	                        NSString *menuPath = [twoDict objectForKey:@"menuPath"];
-	                        
-	                        
-	                        if ([menuPath isEqualToString:prodoffer])
-	                        {
-	                            //判断是否有受理权限，默认0，没有
-	                            [[NSUserDefaults standardUserDefaults] setValue:[NSNumber numberWithBool:YES] forKey:@"isCanOrder"];
-	                            [[NSUserDefaults standardUserDefaults] synchronize];
-	                            
-	                            MenuBean *menuBean = [MenuBean getInstance];
-	                            menuBean.isCreateCust = YES;
-	                        }
-	                    }
-	                    else{
-	                        for(NSDictionary *menu in pageSecondaryBusinessMenuArra){
-	                            NSString *menuPath = [menu objectForKey:@"menuPath"];
-	                            
-	                            if ([menuPath isEqualToString:prodoffer])
-	                            {
-	                                //判断是否有受理权限，默认0，没有
-	                                [[NSUserDefaults standardUserDefaults] setValue:[NSNumber numberWithBool:YES] forKey:@"isCanOrder"];
-	                                [[NSUserDefaults standardUserDefaults] synchronize];
-	                                
-	                                MenuBean *menuBean = [MenuBean getInstance];
-	                                menuBean.isCreateCust = YES;
-	                                break;
-	                            }
-	                        }
-	                    }
-	                }
-	            }
-	        }
-
-		*/
 		if(menu==null){
     	       return "";
     	}

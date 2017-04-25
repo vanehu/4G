@@ -205,6 +205,7 @@ html input[disabled] {
 }
 
 .point-main-box {
+	margin-top: 60px!important;
 	width: 100%;
 	text-align: center;
 	position: fixed;
@@ -224,11 +225,12 @@ html input[disabled] {
 	background: #05a642;
 }
 .menu-search.btn-white {
+	margin-top: 60px!important;
 	position: fixed!important;
 	right: 0.22rem;
 	top: 1.1rem!important;
 	z-index: 999;
-	margin: 0 !important;
+	/* margin: 0 !important; */
 	padding: 0.08rem 0.15rem!important;
 	background: #05a642;
 	opacity: 0.6;
