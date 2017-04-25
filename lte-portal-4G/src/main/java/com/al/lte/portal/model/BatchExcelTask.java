@@ -224,7 +224,7 @@ public class BatchExcelTask {
 		return errorData.toString();
 	}
 
-	public synchronized void setErrorData(Object errorData) {
+	public void setErrorData(Object errorData) {
 		if(this.errorDataCount.get() >= this.batchRuleConfigs.getErrorDataMaxCount()){
 			this.redLigth = true;
 			log.debug("portalBatch-errorData缓存已达上限redLigth={},errorDataCount={},errorDataMaxCount={}", this.redLigth, this.errorDataCount.get(), this.batchRuleConfigs.getErrorDataMaxCount());
