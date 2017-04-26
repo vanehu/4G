@@ -16,6 +16,7 @@
 				<Destination_Attr>${destinationAttr}</Destination_Attr>
 				<Query_Flag>${queryFlag}</Query_Flag>
 				<Fee_Query_Flag>${feeQueryFlag}</Fee_Query_Flag>
+				<ProvinceID>${provinceId}</ProvinceID>
 			</Bill_Query>
 		</Service_Information>
 	</SvcCont>
