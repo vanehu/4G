@@ -165,7 +165,7 @@ public class BatchOrderControllerLatestVer  extends BaseController {
 					if("0".equals(MapUtils.getString(checkResult, "code", ""))){
 						checkResultFlag = true;
 					} else{
-						message = "批量校验<br/>" + (String)checkResult.get("errorData");
+						message = "批量校验<br/>" + MapUtils.getString(checkResult, "errorData", "");
 					}
 					
 					//Excel校验是否成功

@@ -39,8 +39,6 @@ public class BatchBmoImpl implements BatchBmo {
 	private static Log log = Log.getLog(BatchBmoImpl.class);
 
 	public Map<String, Object> readExcel(BatchExcelTask batchExcelTask){
-		String code = "-1";
-		String message = "";
 		Map<String, Object> returnMap = new HashMap<String, Object>();
 		
 		if(batchExcelTask.getBatchRuleConfigs().isThreadsFlagOn()){
@@ -49,19 +47,6 @@ public class BatchBmoImpl implements BatchBmo {
 		} else{
 			//单线程解析Excel
 			returnMap = this.readExcelNormal(batchExcelTask);
-		}
-		
-		if(returnMap.get("totalDataSize") != null && ((Integer)returnMap.get("totalDataSize") <= 0)){
-			message = "批量导入出错：<br/>导入数据为空，没有解析到有效数据，您可能导入了空Excel。";
-			returnMap.put("code", code);
-			returnMap.put("errorData", message);
-			returnMap.put("message", message);
-		} else{
-			if(returnMap.get("errorData") != null && (returnMap.get("errorData").toString()).length() > 0){
-				returnMap.put("code", code);
-				returnMap.put("errorData", returnMap.get("errorData").toString());
-				returnMap.put("message", returnMap.get("errorData").toString());
-			}
 		}
 		
 		log.debug("portalBatch-批量解析Excel结果={}", JsonUtil.toString(returnMap));
@@ -105,8 +90,8 @@ public class BatchBmoImpl implements BatchBmo {
 		
 		if(totalRowsAllSheets > batchExcelTask.getBatchRuleConfigs().getMaxRows()){
 			batchExcelTask.setCode("-1");
-			batchExcelTask.setErrorData("您导入的Excel数据总量是："+totalRowsAllSheets+"，已超过50000条数据，请分批次进行。");
-			log.error("portalBatch-用户一次性导入的Excel数据总量是={}，已超过50000条数据", totalRowsAllSheets);
+			batchExcelTask.setErrorData("您导入的Excel数据总量是：" + totalRowsAllSheets + "，请分批次进行。");
+			log.error("portalBatch-用户一次性导入的Excel数据总量是={}，已超过{}限制", totalRowsAllSheets, batchExcelTask.getBatchRuleConfigs().getMaxRows());
 		} else{
 			//控制同步
 			CountDownLatch countDownLatch = new CountDownLatch(totalThreadNum);

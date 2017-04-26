@@ -8,6 +8,7 @@ import java.util.TreeSet;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Workbook;
 
@@ -57,18 +58,25 @@ public class BatchExcelTask {
 		Map<String, Object> returnMap = new HashMap<String, Object>();
 		int totalDataSize = 0;
 		
-		if ("".equals(this.getErrorData())) {
+		if (StringUtils.isBlank(this.getErrorData())) {
+			//没有任何错误，说明成功
 			code = "0";
+			//计算Excel实际有效行数
+			Collection<TreeSet<String>> fruits = this.fruitsBucket.values();
+			Iterator<TreeSet<String>> iterator = fruits.iterator();
+			TreeSet<String> pineapple = null;
+			if(iterator.hasNext()){
+				pineapple = (TreeSet<String>) iterator.next();
+				totalDataSize = pineapple.size();
+			}
+			//判断是否解析了空Excel
+			if(totalDataSize <= 0){
+				code = "-1";
+				message = "批量导入出错：<br/>导入数据为空，没有解析到有效数据，您可能导入了空Excel。";
+				this.setErrorData(message);
+			}
 		}
-		
-		Collection<TreeSet<String>> fruits = this.fruitsBucket.values();
-		Iterator<TreeSet<String>> iterator = fruits.iterator();
-		TreeSet<String> pineapple = null;
-		if(iterator.hasNext()){
-			pineapple = (TreeSet<String>) iterator.next();
-			totalDataSize = pineapple.size();
-		}
-		
+
 		returnMap.put("code", code);
 		returnMap.put("message", message);
 		returnMap.put("batchType", this.batchType);
