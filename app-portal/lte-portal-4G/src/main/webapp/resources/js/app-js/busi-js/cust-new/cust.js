@@ -214,6 +214,8 @@ cust = (function(){
 			}
 			if(ec.util.isObj(OrderInfo.jbr.identityNum) && OrderInfo.jbr.identityNum == OrderInfo.cust.identityNum){
 				OrderInfo.jbr.custId = OrderInfo.cust.custId;
+			} else if(ec.util.isObj(OrderInfo.jbr.identityNum) && OrderInfo.jbr.identityNum == cust.readIdCardUser.idCardNumber){
+				OrderInfo.jbr.custId = cust.readIdCardUser.custId;
 			} else {
 				OrderInfo.jbr.custId = OrderInfo.SEQ.instSeq--;//客户地区
 			}
@@ -421,6 +423,7 @@ cust = (function(){
 	
 	var _form_custInfomodify_btn = function() {
 		order.prodModify.accountChange();
+
 		//修改客户下一步确认按钮
 		$('#custInfoModifyBtn').off("click").on("click",function(event) {
 			var obj=$('#custInfoModifyBtn');
@@ -442,7 +445,7 @@ cust = (function(){
 						return;
 				}
 				var data = {};
-				if(cust.readIdCardUser.custId == "-1"){
+				if(!true){
 					var modifyCustInfo={};
 					modifyCustInfo = {
 							custName : $.trim($("#cmCustName").val()),
@@ -2842,7 +2845,6 @@ cust = (function(){
 						};
 					}
 					//填充经办人信息
-					if(OrderInfo.jbr.custId == undefined || OrderInfo.jbr.custId == ""){
 						OrderInfo.jbr.custId = cust.readIdCardUser.custId;
 						OrderInfo.jbr.partyName = cust.readIdCardUser.partyName;//经办人名称
 						OrderInfo.jbr.areaId = OrderInfo.staff.areaId;//经办人地区
@@ -2854,7 +2856,6 @@ cust = (function(){
 							cust.isOldCust = true;
 						}
 						order.dealer.initJbrTab();
-					}
 				}else {
 					$.alert("提示","查询客户信息失败,稍后重试");
 					return;

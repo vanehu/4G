@@ -32,12 +32,12 @@
 				<!-- ================== BEGIN 首页头部 ================== -->
 				<div class="g-top-box">
 					<div class="g-set-box m-b">
-						<div class="user-box pull-left p-l">
+						<div class="user-box pull-left p-l" style="width: 28%;">
 							<i class="iconfont">&#xe663;</i>
 							<i>${staff.staffName}</i>
 						</div>
-						<div class="set-box pull-right p-r">
-							<span>${staff.currentChannelName}</span>
+						<div class="set-box pull-right p-r" style="width: 70%;  overflow: hidden;">
+							<span style="float: right;">${staff.currentChannelName}</span>
 							<!-- <i class="iconfont set-btn">&#xe656;</i> -->
 						</div>
 					</div>
@@ -60,7 +60,7 @@
 							<#assign icon = "&#xe6d7">
 							</#if>  -->
 							<#if item.resourceName!="办业务">
-							<li id="${item.menuPath}" onclick="home.initData('${item.menuPath}',0,'${item.resourceName}')">
+							<li id="${item.menuPath}" onclick="home.initData('${item.menuPath}',0,'${item.resourceName}','${item.resourceId}')">
 								<i class="iconfont">${item.iconPic}</i>
 								<p>${item.resourceName}</p>
 							</li>
@@ -81,7 +81,7 @@
 							<#list pageFunctionMenuArray as item>
 							<#if item_index<8  && item.resourceName!="办业务">
 							
-							<li onclick="home.initData('${item.menuPath}',0,'${item.resourceName}')" style="border: 1px solid #dedede;">
+							<li onclick="home.initData('${item.menuPath}',0,'${item.resourceName}','${item.resourceId}')" style="border: 1px solid #dedede;">
 								<i class="iconfont">${item.iconPic}</i>
 								<p>${item.resourceName}</p>
 							</li>
@@ -110,7 +110,7 @@
 						<#if pageFunctionMenuArray?? &&(pageFunctionMenuArray?size>0) >
 							<#list pageFunctionMenuArray as item>
 							<#if (item_index gte 8) && item.resourceName!="办业务">
-							<li onclick="home.initData('${item.menuPath}',0,'${item.resourceName}')" style="border: 1px solid #dedede;">
+							<li onclick="home.initData('${item.menuPath}',0,'${item.resourceName}','${item.resourceId}')" style="border: 1px solid #dedede;">
 								<i class="iconfont">${item.iconPic}</i>
 								<p>${item.resourceName}</p>
 							</li>

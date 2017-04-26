@@ -291,25 +291,17 @@ custQuery = (function(){
 			canRealName:$(scope).attr("canrealname")
 			
 		};
-		_choosedCustInfo.CN=_choosedCustInfo.CN.replace(/=/g,"&#61");
-		_choosedCustInfo.certNum=_choosedCustInfo.certNum.replace(/=/g,"&#61");
-		_choosedCustInfo.address=_choosedCustInfo.address.replace(/=/g,"&#61");
+		if("9" != OrderInfo.actionFlag){
+			_choosedCustInfo.CN=_choosedCustInfo.CN.replace(/=/g,"&#61");
+			_choosedCustInfo.certNum=_choosedCustInfo.certNum.replace(/=/g,"&#61");
+			_choosedCustInfo.address=_choosedCustInfo.address.replace(/=/g,"&#61");
+		}
 		//设置被选择标识
 		$(scope).attr("selected","selected");
 		$(scope).siblings().each(function () {
 				$(this).removeAttr("selected");
 		});
 		
-//		 判断是否是政企客户
-		if(_choosedCustInfo.isGov == "Y" && "19" != OrderInfo.actionFlag){
-			$.alert("提示","政企客户不允许受理该业务！");
-			return;
-		}
-		
-		if(_choosedCustInfo.isGov != "Y" && "19" == OrderInfo.actionFlag){
-			$.alert("提示","客户证件类型为！【"+_choosedCustInfo.identityName+"】，"+"证件号码为："+_choosedCustInfo.idCardNumber+"，当前不能办理此业务！");
-			return;
-		}
 		
 		if("9" != OrderInfo.actionFlag) {
 			if ( ec.util.isObj(_choosedCustInfo.canRealName) && 1 == _choosedCustInfo.canRealName) {
@@ -320,11 +312,30 @@ custQuery = (function(){
 			}
 		}else {
 			if ( ec.util.isObj(_choosedCustInfo.canRealName) && 1 != _choosedCustInfo.canRealName) {
-				$('#auth3').modal('show');
+//				$('#auth3').modal('show');
 			}else{
 				$.alert("提示","实名制不能进行此操作");
 				return;
 			}
+		}
+		
+		if(OrderInfo.actionFlag == "9"){
+			$("#custQuerycontent").hide();
+			$("#cust-query-list").hide();
+			OrderInfo.cust = _choosedCustInfo;
+			_queryCustNext();
+			return;
+		}
+		
+//		 判断是否是政企客户
+		if(_choosedCustInfo.isGov == "Y" && "19" != OrderInfo.actionFlag){
+			$.alert("提示","政企客户不允许受理该业务！");
+			return;
+		}
+		
+		if(_choosedCustInfo.isGov != "Y" && "19" == OrderInfo.actionFlag){
+			$.alert("提示","客户证件类型为！【"+_choosedCustInfo.identityName+"】，"+"证件号码为："+_choosedCustInfo.idCardNumber+"，当前不能办理此业务！");
+			return;
 		}
 		
 		var showProdType = "N";
@@ -348,7 +359,7 @@ custQuery = (function(){
 		
 		//二次业务鉴权
 		var af = OrderInfo.actionFlag;
-		if(af=="1" || af=="2" || af=="3" || af=="6" || af=="22" || af=="14"){
+		if(af=="1" || af=="2" || af=="3" || af=="6" || af=="9" || af=="22" || af=="14"){
 			_querySecondBusinessAuth();
 		}else{
 			//指定接入号码才能使用短信鉴权
@@ -1013,6 +1024,11 @@ custQuery = (function(){
 	};
 	
 	var _queryCustNext = function () {
+		//如果是省份菜单，跳转到省份页面
+//		if(home.menuData.isProvenceMenu == "Y"){
+//			provence.sendRandom();
+//			return;
+//		}
 		var params={};
 		// 改变按钮事件和文字
 //		$("#query-cust-btn").removeAttr("onclick");
@@ -1248,17 +1264,19 @@ custQuery = (function(){
 	
 	//获取选中的产品信息
 	var _getChooseProdInfo = function(obj, flag) {
-		$(obj).parent().find("button").text("已选");
+//		$(obj).parent().find("button").text("已选");
 //		$(obj).text("已选");
 		_choosedProdInfo  = {};
 		var prodInfoTr;
 		var prodInfoChildTr;
 		// 选择子套餐
 		if ("sub" == flag) {
-			$(".yes_sub").not($(obj).parent().find(".yes_sub")).text("选择");
-			prodInfoTr = $(obj).parent().parent();
-			prodInfoChildTr = $(obj).parent("li");
+			$(obj).find("button").text("已选");
+			$(".yes_sub").not($(obj).find(".yes_sub")).text("选择");
+			prodInfoTr = $(obj).parent();
+			prodInfoChildTr = $(obj);
 		} else {
+			$(obj).parent().find("button").text("已选");
 			$(".no_sub").not($(obj).parent().find(".yes_sub")).text("选择");
 			prodInfoTr = $(obj).parent().parent();
 			prodInfoChildTr = $(obj).parent();

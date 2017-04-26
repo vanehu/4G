@@ -25,8 +25,10 @@ order.calcharge = (function(){
 	var payType="100000";//默认现金，用于调用代理保证金接口校验
 	var _returnFlag=true;//支付平台返回成功后，返回按钮提示不让进行
 	var _haveCharge=false;//是否已经下过计费接口
-	var timeId=1;//定时计时器
+	var _timeId=1;//定时计时器
 	var chargeCheck="0";//代理保证金校验编码   0成功   1校验不通过 -2接口异常
+	var chargeOlId;//算费时的OlId
+	var payOlId;//支付时OlId
 	
 	//显示收银台界面
 	var _calchargeInit=function(){
@@ -55,6 +57,7 @@ order.calcharge = (function(){
 			"checkResult":JSON.stringify(OrderInfo.checkresult),
 			"enter":"new"
 		};
+		chargeOlId=params.olId;//用于前台校验OlId是否与支付平台回传一致
 		$.callServiceAsHtmlGet(contextPath+"/app/order/getChargeList",params,{
 			"before":function(){
 				$.ecOverlay("<strong>正在查询中,请稍等会儿....</strong>");
@@ -362,6 +365,30 @@ order.calcharge = (function(){
 				return ;
 			}
 	    }
+		if(chargeOlId!=payOlId){//调取算费接口的olId与支付平台回传的OlId比较，不一样直接拦截
+			var title='信息提示';
+			$("#btn-dialog-ok").removeAttr("data-dismiss");
+			$('#alert-modal').modal({backdrop: 'static', keyboard: false});
+			$("#btn-dialog-ok").off("click").on("click",function(){
+				$("#alert-modal").modal("hide");
+			});
+			$("#modal-title").html(title);
+			$("#modal-content").html("算费时的olId:["+chargeOlId+"]与支付成功的olId["+payOlId+"]不一致，请退出重新受理!");
+			$("#alert-modal").modal();
+			return;
+		}
+        if(chargeOlId!=OrderInfo.orderResult.olId){//调取算费接口的olId与收费建档提交的OlId比较，不一样直接拦截
+        	var title='信息提示';
+			$("#btn-dialog-ok").removeAttr("data-dismiss");
+			$('#alert-modal').modal({backdrop: 'static', keyboard: false});
+			$("#btn-dialog-ok").off("click").on("click",function(){
+				$("#alert-modal").modal("hide");
+			});
+			$("#modal-title").html(title);
+			$("#modal-content").html("算费时的olId:["+chargeOlId+"]与收费建档时的olId["+OrderInfo.orderResult.olId+"]不一致，请退出重新受理!");
+			$("#alert-modal").modal();
+			return;
+		}
 		var params={
 				"olId":OrderInfo.orderResult.olId,
 				"soNbr":OrderInfo.order.soNbr,
@@ -438,8 +465,8 @@ order.calcharge = (function(){
 					SoOrder.getToken();
 					inOpetate=false;
 					if(response.data!=undefined){
-						alert(response.data);
-						//$.alert("提示",response.data);
+						//alert(response.data);
+						$.alert("提示",response.data);
 					}else{
 						$.alert("提示","费用信息提交失败!");
 					}
@@ -459,6 +486,7 @@ order.calcharge = (function(){
 		}else{
 			title='受理结果';
 		}
+		$("#alert-modal").modal("show");
 		$("#btn-dialog-ok").removeAttr("data-dismiss");
 		$('#alert-modal').modal({backdrop: 'static', keyboard: false});
 		$("#btn-dialog-ok").off("click").on("click",function(){
@@ -732,6 +760,7 @@ order.calcharge = (function(){
 	 * 获取支付平台支付页面
 	 */
 	var _getPayTocken = function(){
+		clearInterval(order.calcharge.timeId);//定时任务取消
 		var dis=$("#printVoucherA").attr("disabled");//回执按钮置灰收费不可点击
 		if("disabled"!=dis){
 			$.alert("提示","请先保存回执");
@@ -750,6 +779,18 @@ order.calcharge = (function(){
 				"charge":charge,
 				"chargeCheck":chargeCheck
 		};
+		if(chargeOlId!=OrderInfo.orderResult.olId){//调取算费接口的olId与跳转支付平台的OlId比较，不一样直接拦截
+        	var title='信息提示';
+			$("#btn-dialog-ok").removeAttr("data-dismiss");
+			$('#alert-modal').modal({backdrop: 'static', keyboard: false});
+			$("#btn-dialog-ok").off("click").on("click",function(){
+				$("#alert-modal").modal("hide");
+			});
+			$("#modal-title").html(title);
+			$("#modal-content").html("算费时的olId:["+chargeOlId+"]与跳转支付界面的olId["+OrderInfo.orderResult.olId+"]不一致，请退出重新受理!");
+			$("#alert-modal").modal();
+			return;
+		}
 		var url = contextPath+"/app/order/getPayUrl";
 		var response = $.callServiceAsJson(url, params);
 		if(response.code==0){
@@ -825,9 +866,25 @@ order.calcharge = (function(){
 	 */
 	var _queryPayOrdStatus= function(soNbr, status,type) {
 		if(order.calcharge.busiUpType=="1"){
+			if(OrderInfo.actionFlag!=112){//非融合，先查订单收费状态，未收费继续流程，否则直接提示
+				var queryUrl = contextPath + "/app/pay/repair/queryOrdStatus";
+				var olId=OrderInfo.orderResult.olId;
+				var checkParams = {
+						"olId" : olId,
+						"areaId":OrderInfo.staff.areaId					
+				};
+				var response = $.callServiceAsJson(queryUrl, checkParams);
+				if (response.code == 0 && response.data!=null && response.data!="") {//已后台收费成功，直接提示，不走收费流程
+					var statusCd=response.data.statusCd;
+					if("201700"==statusCd || "201800"==statusCd || "201900"==statusCd ||"301200"==statusCd ||"201300"==statusCd){
+						clearInterval(order.calcharge.timeId);//查询成功定时任务取消
+						_showFinDialog("1","收费成功！");
+						return;
+					}				
+				}
+			}
 			//实时受理收费走计费接口
-			_queryPayOrdStatus1(soNbr, status,type);
-			timeId=setInterval(order.calcharge.timeToFee,3000);//开始定时任务
+			order.calcharge.timeId=setInterval(order.calcharge.timeToFee,5000);//开始定时任务
 		}else if(order.calcharge.busiUpType=="-1"){//补收费
 			repair.main.queryPayOrdStatus1(soNbr, status,type);
 		}else if(order.calcharge.busiUpType == CONST.APP_CHARGE_BUSI_UP_TYPE) { // 话费充值
@@ -846,34 +903,18 @@ order.calcharge = (function(){
 		if(order.calcharge.haveCharge==true){//已下过计费接口
 			return;
 		}
-		if(OrderInfo.actionFlag!=112){//非融合，先查订单收费状态，未收费继续流程，否则直接提示
-			var queryUrl = contextPath + "/app/pay/repair/queryOrdStatus";
-			var olId=OrderInfo.orderResult.olId;
-			var checkParams = {
-					"olId" : olId,
-					"areaId":OrderInfo.staff.areaId					
-			};
-			var response = $.callServiceAsJson(queryUrl, checkParams);
-			if (response.code == 0 && response.data!=null && response.data!="") {//已后台收费成功，直接提示，不走收费流程
-				var statusCd=response.data.statusCd;
-				if("201700"==statusCd || "201800"==statusCd || "201900"==statusCd ||"301200"==statusCd ||"201300"==statusCd){
-					clearInterval(timeId);//查询成功定时任务取消
-					_showFinDialog("1","收费成功！");
-					return;
-				}				
-			}
-		}
 		if ("1" == status) { // 原生返回成功，调用支付平台查询订单状态接口，再次确定是否成功，如果成功则调用收费接口
 			$.ecOverlay("<strong>正在处理中,请稍等会儿....</strong>");
 			var params = {
 				"olId" : soNbr
 				
 			};
+			payOlId=params.olId;//调取支付平台传回的olId用于前台校验
 			var url = contextPath + "/app/pay/repair/queryOrdStatusFromRedis";
 			var response = $.callServiceAsJson(url, params);
 			$.unecOverlay();
 			if (response.code == 0 && response.data!=null && response.data!="") {//支付成功，调用收费接口
-				clearInterval(timeId);//查询成功定时任务取消
+				clearInterval(order.calcharge.timeId);//查询成功定时任务取消
 				var val=_getCharge();
 				if(OrderInfo.actionFlag==112){//融合甩单传融合
 					val=val+order.broadband.broadbandCharge;
@@ -941,24 +982,7 @@ order.calcharge = (function(){
 	};
 	
 	//收费界面定时任务入口
-	var _timeToFee=function(){
-		if(OrderInfo.actionFlag!=112){//非融合，先查订单收费状态，未收费继续流程，否则直接提示
-			var queryUrl = contextPath + "/app/pay/repair/queryOrdStatus";
-			var olId=OrderInfo.orderResult.olId;
-			var checkParams = {
-					"olId" : olId,
-					"areaId":OrderInfo.staff.areaId					
-			};
-			var response = $.callServiceAsJson(queryUrl, checkParams);
-			if (response.code == 0) {//已后台收费成功，直接提示，不走收费流程
-				var statusCd=response.data.statusCd;
-				if("201700"==statusCd || "201800"==statusCd || "201900"==statusCd ||"301200"==statusCd ||"201300"==statusCd){
-					_showFinDialog("1","收费成功！");
-					return;
-				}				
-			}
-		}
-		
+	var _timeToFee=function(){		
 		_queryPayOrdStatus1(OrderInfo.orderResult.olId,"1");
 		
 	};
@@ -983,7 +1007,8 @@ order.calcharge = (function(){
 		returnFlag:_returnFlag,
 		setGreyNoEdit:_setGreyNoEdit,
 		timeToFee    :_timeToFee,
-		getPayTockenRh:_getPayTockenRh
+		getPayTockenRh:_getPayTockenRh,
+		timeId        :_timeId
 
 	};
 })();

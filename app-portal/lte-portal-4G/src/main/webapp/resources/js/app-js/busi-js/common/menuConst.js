@@ -37,7 +37,7 @@ menuConst = (function($) {
 			,{"menuPath":"/app/order/attachoffer/prepare","resourName":"可选包变更","actionFlag":"3","enter":"","isSecond":"Y","needCust":"Y"}
 			,{"menuPath":"/app/order/prodoffer/memberchange/prepare","resourName":"主副卡成员变更","actionFlag":"6","enter":"","isSecond":"Y","needCust":"Y"}
 			,{"menuPath":"/app/cust/create","resourName":"客户新增","actionFlag":"8","enter":"","isSecond":"N","needCust":"N"}
-			,{"menuPath":"/app/prodModify/prepare","resourName":"客户返档","actionFlag":"9","enter":"","isSecond":"N","needCust":"Y"}
+			,{"menuPath":"/app/prodModify/prepare","resourName":"客户返档","actionFlag":"9","enter":"","isSecond":"Y","needCust":"Y"}
 			,{"menuPath":"/app/prodModify/toCheckUimUI","resourName":"补换卡","actionFlag":"22","enter":"","isSecond":"Y","needCust":"Y"}
 			,{"menuPath":"/app/infocollect/realname/prepare","resourName":"实名信息采集","actionFlag":"19","enter":"","isSecond":"N","needCust":"Y"}
 			,{"menuPath":"/app/cfq/prepare","resourName":"芝麻信用","actionFlag":"222","enter":"","isSecond":"N","needCust":"Y"}

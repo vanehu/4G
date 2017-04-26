@@ -265,7 +265,7 @@ common = (function($) {
 	//调用客户端的关闭webview方法
 	var _callCloseWebview=function(){
 		if($("#alert-modal").length>0){
-			$("#alert-modal").hide();
+			$("#alert-modal").modal("hide");
 		}
 		if($("#home").length>0){
 			$("#header").hide();
@@ -289,7 +289,7 @@ common = (function($) {
 	//调用客户端的类似重定位去除客户缓存方法
 	var _relocationCust=function(){
 		if($("#alert-modal").length>0){
-			$("#alert-modal").hide();
+			$("#alert-modal").modal("hide");
 		}
 		if ($("#home").length > 0) {
 			$("#header").hide();
@@ -374,6 +374,7 @@ common = (function($) {
 		if($(".modal-dialog").is(":visible")){//有弹出层不允许返回
 			return;
 		}
+		clearInterval(order.calcharge.timeId);//查询成功定时任务取消
 //		alert("OrderInfo.actionFlag="+OrderInfo.actionFlag+"---OrderInfo.order.step="+OrderInfo.order.step+"---OrderInfo.returnFlag="+OrderInfo.returnFlag);
 		if($(".modal-backdrop").length>0 && $("#overlay-modal").length>0){
 			$.unecOverlay();//网络出现故障或手机出现故障时按返回关闭“加载中”提示框

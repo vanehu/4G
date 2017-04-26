@@ -60,9 +60,9 @@
             -->
             <#else>
             <#list item.mainProdOfferInstInfos as subitem>
-            <li style="height:auto;" prodOfferName="${subitem.prodOfferName}" startDt="${subitem.startDt}" custName="${subitem.custName}" endDt="${subitem.endDt}"
+            <li style="height:auto;" onClick="custQuery.getChooseProdInfo(this, 'sub');" prodOfferName="${subitem.prodOfferName}" startDt="${subitem.startDt}" custName="${subitem.custName}" endDt="${subitem.endDt}"
 				prodOfferId="${subitem.prodOfferId}" prodOfferInstId="${subitem.prodOfferInstId}" custId="${subitem.custId}" is3G="${subitem.is3G}">
-              <span onClick="custQuery.getChooseProdInfo(this, 'sub');" class="list-title" style="width:50%;">
+              <span class="list-title" style="width:50%;">
             	<span class="title-lg">${subitem.prodOfferName}</span>
               	<span class="subtitle font-secondary">套餐名称</span>
               </span>
