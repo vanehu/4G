@@ -250,6 +250,7 @@ public final class SysConstant {
 	public final static String P_MOD_SUB_CTG_PDF = "ctgpdf/";
 	public final static String P_MOD_SUB_INVOICE = "invoice/";
 	public final static String P_MOD_SUB_OLD2NEW = "old2new/";
+	public final static String P_MOD_SUB_ONE_CERT_5 = "oneCert5/";
 	public final static String P_MOD_SUB_STBRESERVE = "STBreserve/";
 	public final static String P_MOD_SUB_CUSTCLT = "custCollection/";
 	public final static String P_MOD_ABS_INVOICE = "D:/temp/invoice/";
@@ -264,6 +265,8 @@ public final class SysConstant {
 	public final static String P_MOD_FILE_INVOICE = "invoiceGroup";  // 发票打印业务
 	//以旧换新模板名称
 	public final static String P_MOD_FILE_OLD2NEW = "printOld2New";  // 发票打印业务
+	//一证五号模板名称
+	public final static String P_MOD_FILE_ONE_CERT_5 = "oneCertFiveNumberGroup";  // 一证五号打印业务
 	//天翼高清机顶盒预约回执主模板
 	public final static String P_MOD_FILE_STBRESERVE = "receiptMain";
 	//实名信息采集单确认回执主模板
@@ -858,4 +861,28 @@ public final class SysConstant {
     public static final String SESSION_KEY_CONFIRMAGREE_SMS = "_confirmagree_sms_session_key";
     /** 经办人拍照人证相符审核类型-本地审核*/
     public static final String CHECKTYPE_LOCAL = "1";
+
+    /**
+     * 一证五号号码处理状态，初始状态（100002）作废（100004）成功（301200）
+     */
+    public static final String ONE_FIVE_NUMBER_STATUS_INIT = "100002";
+    public static final String ONE_FIVE_NUMBER_STATUS_VOID = "100004";
+    public static final String ONE_FIVE_NUMBER_STATUS_SUCC = "301200";
+
+    /**
+     * 一证五卡文件类型标识
+     * 跨省一证五号图片：E
+     * 跨省一证五号pdf：F
+     */
+    public static final String ONE_FIVE_FILE_TYPE_JPG = "E";
+    public static final String ONE_FIVE_FILE_TYPE_PDF = "F";
+
+    /**
+     * 图片批量上传,srcFlag（来源标识）取值定义
+     * 不传默认为WEB无纸化。
+     * 苹果直营店图片暂存需传“APPLE”;
+     * 实名制拍照留存需传“REAL”
+     */
+    public static final String ONE_FIVE_SRC_FLAG_REAL = "REAL";
+    public static final String ONE_FIVE_SRC_FLAG_APPLE = "APPLE";
 }

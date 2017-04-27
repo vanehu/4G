@@ -1189,6 +1189,9 @@ public final class PortalServiceCode {
     /** 实名信息采集单订单查询 */
     public static final String CLT_ORDER_QUERY = "biz-service/intf.detailService/queryCollectionOrders";
     
+    /** 实名信息采集单订单项 */
+    public static final String CLT_ORDER_ITEMS = "biz-service/intf.detailService/queryCollectionOrderItem";
+
     /** 实名信息采集单订单详情 */
     public static final String CLT_ORDER_Detail = "biz-service/intf.detailService/queryCollectionOrderItemDetail";
     

@@ -5152,7 +5152,6 @@ public class OrderController extends BaseController {
             Map<String, Object> orderListInfo = (Map<String, Object>) orderList.get("collectionOrderInfo");
             orderListInfo.put("staffId", sessionStaff.getStaffId()); //防止前台修改
             orderListInfo.put("channelId", sessionStaff.getCurrentChannelId()); //防止前台修改
-            orderListInfo.put("collectType", "1"); //防止前台修改
             orderListInfo.put("areaId", sessionStaff.getCurrentAreaId()); //防止前台修改
             
             Map<String, Object> resMap = orderBmo.cltOrderSubmit(param, null, sessionStaff);

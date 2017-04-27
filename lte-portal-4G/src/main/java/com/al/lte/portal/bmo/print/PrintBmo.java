@@ -33,6 +33,8 @@ public interface PrintBmo {
 	Map<String, Object> printOld2New(Map<String, Object> paramMap, String optFlowNum,
 			HttpServletRequest request, HttpServletResponse response,
 			 Map<String, Object> templateInfoMap) throws Exception;
+	Map<String, Object> printOneCertFiveNumber(Map<String, Object> paramMap,
+			HttpServletRequest request, HttpServletResponse response) throws Exception;
 	Map<String, Object> printInvoice(Map<String, Object> paramMap, String optFlowNum,
 			HttpServletRequest request, HttpServletResponse response,
 			Map<String, Object> templateInfoMap) throws Exception;

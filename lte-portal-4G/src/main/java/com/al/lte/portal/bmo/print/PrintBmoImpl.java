@@ -5731,7 +5731,88 @@ public class PrintBmoImpl implements PrintBmo {
 		}
 	}
 
-	protected Map<String, Object> runOld2NewPrint(Map<String, Object> printData,
+    /**
+     *  一证五号回执打印
+     * @param paramMap 打印入参
+     * @param request
+     * @param response
+     * @return
+     * @throws Exception
+     */
+	public Map<String, Object> printOneCertFiveNumber(Map<String, Object> paramMap, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        {
+
+            Map<String, Object> printData = new HashMap();
+            String printType = MapUtils.getString(paramMap, "printType");
+
+            //时间信息
+            Calendar calendar = Calendar.getInstance();
+            printData.put("year", calendar.get(Calendar.YEAR));
+            printData.put("month", calendar.get(Calendar.MONTH)+1);
+            printData.put("day", calendar.get(Calendar.DATE));
+
+            //客户信息
+            Map<String, Object> custInfoMap = MapUtils.getMap(paramMap, "custInfo", null);
+            if (MapUtils.isNotEmpty(custInfoMap)) {
+                printData.put("custName", MapUtils.getString(custInfoMap, "custName", ""));
+                printData.put("phoneNumber", MapUtils.getString(custInfoMap, "phoneNumber", ""));
+                printData.put("certType", MapUtils.getString(custInfoMap, "certType", ""));
+                printData.put("certNumber", MapUtils.getString(custInfoMap, "certNumber", ""));
+            }
+
+            //详细内容
+            printData.put("packageTitleContent",parseOneCertFiveNumberContent((List<String>) MapUtils.getObject(paramMap,"numbers")) );
+
+            //如果printData为空，则返回失败
+            if (MapUtils.isEmpty(printData)) {
+                return printData;
+            }
+
+            // 3. 数据驱动模板、展示打印页面
+            runOneCertFiveNumberPrint(printData, response, printType);
+
+            return printData;
+        }
+    }
+
+    /**
+     * 解析一证五号打印内容
+     * @param numbers
+     * @return
+     */
+    private List<OEPackageTitleTitleContent> parseOneCertFiveNumberContent(List<String> numbers) {
+        List<OEPackageTitleTitleContent> oePackageTitleTitleContents = new ArrayList<>();
+        OEPackageTitleTitleContent oePackageTitleTitleContent = new OEPackageTitleTitleContent();
+        Map<String, Object> oneCertFiveNumberContent = MDA.ONE_CERT_FIVE_NUMBER_PRINT_CONTENT;
+
+        List<StringBeanSet> titleList = new ArrayList();
+        String title = MapUtils.getString(oneCertFiveNumberContent, "title", "");
+        if (StringUtils.isNotBlank(title)) {
+            StringBeanSet titleBean = new StringBeanSet(SysConstant.STR_LB_BRE + title + SysConstant.STR_RB_BRE);
+            titleList.add(titleBean);
+            oePackageTitleTitleContent.setOrderTitle(titleList);
+        }
+
+        List<OETitleContent> contentList = new ArrayList<>();
+        List<Map<String, Object>> content = (List<Map<String, Object>>) MapUtils.getObject(oneCertFiveNumberContent, "content");
+
+        int size = content.size();
+        int index=1;
+        for (Map<String, Object> map : content) {
+            String content2 = MapUtils.getString(map, "content","");
+            if(StringUtils.isNotBlank(content2)&&"numbers".equals(content2)){//变量替换
+                map.put("content", numbers);
+            }
+            OETitleContent oeTitleContent = buildOETitleContentEasy(size>1?index++:0, SysConstant.STR_SEP, map);
+            contentList.add(oeTitleContent);
+        }
+
+        oePackageTitleTitleContent.setOrderContent(contentList);
+        oePackageTitleTitleContents.add(oePackageTitleTitleContent);
+        return oePackageTitleTitleContents;
+    }
+
+    protected Map<String, Object> runOld2NewPrint(Map<String, Object> printData,
 			HttpServletResponse response, String printType,
 			Map<String, Object> templateInfoMap) throws Exception {
 		Map<String, Object> resultMap = new HashMap<String, Object>();
@@ -5761,6 +5842,41 @@ public class PrintBmoImpl implements PrintBmo {
 
 		return resultMap;
 	}
+
+    /**
+     * @param printData 打印数据
+     * @param response
+     * @param printType 打印类型，html或者pdf
+     * @return
+     * @throws Exception
+     */
+    protected Map<String, Object> runOneCertFiveNumberPrint(Map<String, Object> printData,
+                                                   HttpServletResponse response, String printType) throws Exception {
+        Map<String, Object> resultMap = new HashMap();
+
+        String printTypeDir;
+        String strJasperFileName;
+        printTypeDir = SysConstant.P_MOD_SUB_BASE_DIR + SysConstant.P_MOD_SUB_ONE_CERT_5;
+        strJasperFileName = SysConstant.P_MOD_BASE_DIR + SysConstant.P_MOD_SUB_ONE_CERT_5
+            + SysConstant.P_MOD_FILE_ONE_CERT_5 + SysConstant.P_MOD_FILE_SUBFIX;
+
+        log.debug(" 一证五号模板名称： " + strJasperFileName);
+
+        Collection<Map<String, Object>> inFields = new ArrayList();
+        inFields.add(printData);
+
+        Map<String, Object> reportParams = new HashMap();
+        reportParams.put("SUBREPORT_DIR", printTypeDir);
+
+        //输出打印内容
+        if (SysConstant.PRINT_TYPE_HTML.equals(printType)) {
+            commonHtmlPrint(strJasperFileName, reportParams, inFields, response, 0, 0);
+        } else {
+            commonPdfPrint(strJasperFileName, reportParams, inFields, response, 0, 0);
+        }
+
+        return resultMap;
+    }
 
 	/**
 	 * 打印天翼预约单回执
@@ -6638,7 +6754,40 @@ public class PrintBmoImpl implements PrintBmo {
 		oeTitleContent.setOrderContent(strBeanContentList);
 		return oeTitleContent;
 	}
-	/**
+
+    /**
+     * 构建二级标题-内容--精简报文
+     *
+     * @param seq
+     * @param map
+     * @return
+     */
+    private OETitleContent buildOETitleContentEasy(int seq, String separator, Map<String, Object> map) {
+        if (null == map || map.size() == 0) {
+            return null;
+        }
+        OETitleContent oeTitleContent = new OETitleContent();
+
+        List<StringBeanSet> strBeanTitleList = new ArrayList();
+        StringBeanSet strBeanTitle = new StringBeanSet();
+        strBeanTitle.setStrBean(buildBusiInfoTitle_V2(seq, separator, MapUtils.getString(map, "title")));
+        strBeanTitleList.add(strBeanTitle);
+
+        List<StringBeanSet> strBeanContentList = new ArrayList();
+        List<String> content = (List<String>) MapUtils.getObject(map, "content", null);
+        if (null != content && content.size() > 0) {
+            for (String s : content) {
+                StringBeanSet strBeanContent = new StringBeanSet(s);
+                strBeanContentList.add(strBeanContent);
+            }
+        }
+
+        oeTitleContent.setOrderTitle(strBeanTitleList);
+        oeTitleContent.setOrderContent(strBeanContentList);
+        return oeTitleContent;
+    }
+
+    /**
 	 * 单行校验
 	 * @param itemMap
 	 * @return true 单行，false不是单行

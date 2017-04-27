@@ -250,4 +250,24 @@ public class CartBmoImpl implements CartBmo{
 		}
 
 	}
+	/**
+	 * 查询采集单项
+	 */
+	public Map<String, Object> queryCltCartOrderItems(Map<String, Object> dataBusMap,String optFlowNum, SessionStaff sessionStaff) throws Exception{
+		Map<String, Object> resultMap = new HashMap<>();
+		DataBus db = InterfaceClient.callService(dataBusMap,PortalServiceCode.CLT_ORDER_ITEMS, optFlowNum, sessionStaff);
+		try{
+			// 服务层调用与接口层调用都成功时，返回列表；否则返回空列表
+			if (ResultCode.R_SUCC.equals(db.getResultCode())) {
+				resultMap = db.getReturnlmap();
+			} else {
+				resultMap.put("resultCode", ResultCode.R_FAILURE);
+				resultMap.put("resultMsg", db.getResultMsg());
+			}
+			return resultMap ;
+		} catch (Exception e) {
+			throw new BusinessException(ErrorCode.CLT_ORDER_ITEMS, dataBusMap, resultMap, e);
+		}
+
+	}
 }

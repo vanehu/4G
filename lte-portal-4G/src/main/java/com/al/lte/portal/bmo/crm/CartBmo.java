@@ -106,4 +106,15 @@ public interface CartBmo {
 	  * @throws BusinessException
 	  */
 	public Map<String, Object> queryCltCartOrder(Map<String, Object> dataBusMap,String optFlowNum, SessionStaff sessionStaff) throws Exception;
+
+    /**
+     * 采集单项查询
+     *
+     * @param dataBusMap
+     * @param optFlowNum
+     * @param sessionStaff
+     * @return
+     * @throws BusinessException
+     */
+    public Map<String, Object> queryCltCartOrderItems(Map<String, Object> dataBusMap, String optFlowNum, SessionStaff sessionStaff) throws Exception;
 }

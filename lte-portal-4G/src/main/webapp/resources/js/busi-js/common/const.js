@@ -581,7 +581,13 @@ CONST = (function(){
 	
 	var  _ZXYWLX = "20030115"; //征信合约属性，征信业务类型
 	var  _ZXPTGDBMH = "20030116"; //征信合约属性，征信平台工单编号
-	
+
+    /**
+     * 上传文件的大小限制，1
+     * @type {number}
+     */
+    var _MAX_FILE_SIZE = 1024 * 1024;
+
 	return {
 		//批量受理查询，是否执行改造后的新代码的开关标识，用于暂时记录是否执行新代码。Y执行改造后的新代码，N执行改造前的旧代码，默认为N。 By ZhangYu 2015-10-20
 		BATCHORDER_FLAG : _BATCHORDER_FLAG,
@@ -654,6 +660,7 @@ CONST = (function(){
 		returnCustSubmitFlag:_returnCustSubmitFlag,
 		BUS_TYPE : _BUS_TYPE,
 		ZXYWLX   : _ZXYWLX,
+        MAX_FILE_SIZE   : _MAX_FILE_SIZE,
 		ZXPTGDBMH : _ZXPTGDBMH
 	};
 })();
