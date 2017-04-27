@@ -997,7 +997,7 @@ public class StaffBmoImpl implements StaffBmo {
 		params.put("exceptStaffId", sessionStaff.getStaffId());//该员工信息将被过滤不返回
 		params.put(SysConstant.STAFF_ID, sessionStaff.getStaffId());
 		params.put(SysConstant.AREA_ID, sessionStaff.getCurrentAreaId());
-		params.put(SysConstant.CHANNEL_ID, sessionStaff.getChannelId());
+		params.put(SysConstant.CHANNEL_ID, sessionStaff.getCurrentChannelId());
 				
 		DataBus db = InterfaceClient.callService(params, PortalServiceCode.QRY_OPERATESPEC_STAFF_LIST, null, sessionStaff);
 		try {

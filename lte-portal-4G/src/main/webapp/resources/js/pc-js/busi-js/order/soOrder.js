@@ -3017,6 +3017,12 @@ SoOrder = (function() {
 					if(OrderInfo.subHandleInfo.authFlag == "F"){
 						$.alert("提示","经办人拍照留存上传失败，请重新拍照认证！");
 						return false;
+					}  else if(OrderInfo.subHandleInfo.authFlag == "N"){
+						$.alert("提示","经办人拍照人证相符审核，发送短信失败，失败原因："+OrderInfo.subHandleInfo.authFlagErr);
+						return false;
+					} else if(OrderInfo.subHandleInfo.authFlag == "S"){
+						$.alert("提示","经办人拍照人证相符审核不通过，请重新审核。");
+						return false;
 					} else{
 						$.alert("提示","经办人信息未通过人证相符认证，请您先对经办人拍照认证！");
 						return false;

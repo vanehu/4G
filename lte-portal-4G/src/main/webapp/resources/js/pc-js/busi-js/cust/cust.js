@@ -2594,6 +2594,11 @@ order.cust = (function(){
 		easyDialog.open({
 			container : "ec-dialog-photo-graph"
 		});
+		$("#checkType").val("-1");
+		$("#auditPersonnel").val("-1");
+		$("#auditDiv").hide();
+		$("#photoDiv").show();
+		
 		//显示身份证照片
 		$("#show")[0].src="data:;base64,"+resultContent.identityPic;
 		OrderInfo.handleInfo.identityPic = resultContent.identityPic;
@@ -2669,6 +2674,10 @@ order.cust = (function(){
 			container : "ec-dialog-photo-graph"
 		});
 		//初始化页面
+		$("#checkType").val("-1");
+		$("#auditPersonnel").val("-1");
+		$("#auditDiv").hide();
+		$("#photoDiv").show();
 		$("#orderAttrQryBtn").hide();
 		$("#orderAttrReset").show();
 		$("#orderIdentidiesTypeCd").attr("disabled","disabled");
@@ -2699,6 +2708,7 @@ order.cust = (function(){
 	};
 	
 	var _getCameraInfo = function(){
+		_qryOperateSpecStaffList();
 		//获取摄像头信息
 		var device = capture.getDevices();
 	    device = JSON.parse(device);
@@ -2792,10 +2802,32 @@ order.cust = (function(){
 		$("#takePhotos").removeClass("btna_g").addClass("btna_o");
 		_startPhotos();
 	};
-	var _confirmAgree = function(resultContent){
+	var _confirmAgree = function(){
+		var auditType = $("#checkType").val();
+		var auditPersonnel = $("#auditPersonnel").val();
+		if(auditPersonnel == "" || auditPersonnel == "-1"){
+			$.alert("提示","请选择审核人");
+			return;
+		}else if(auditType == "" || auditType == "-1"){
+			$.alert("提示","请选择审核方式");
+			return;
+		}
 		$("#confirmAgree").removeClass("btna_o").addClass("btna_g");
 		$("#confirmAgree").off("click");
 		OrderInfo.subHandleInfo = {};
+		var staffId = $("#auditPersonnel").val();
+		var number = "";
+		var staffName = "";
+        $.each(OrderInfo.handleInfo.staffList, function(){
+			if(this.staffId == staffId){
+				number = this.phone;
+				staffName = this.staffName;
+				return false;
+			}
+		});
+		OrderInfo.subHandleInfo.number = number;
+		OrderInfo.subHandleInfo.auditStaffId = staffId;
+		OrderInfo.subHandleInfo.auditType = auditType;
 		var  orderIdentidiesTypeCd = ec.util.defaultStr($("#orderIdentidiesTypeCd").val());
 		var  identityNum = ec.util.defaultStr($("#orderAttrIdCard").val());
 		var  orderAttrName = ec.util.defaultStr($("#orderAttrName").val());
@@ -2808,6 +2840,7 @@ order.cust = (function(){
 			    photographs: [{
 				    photograph: encodeURIComponent(OrderInfo.handleInfo.imageInfo),
 				    flag: "D",//*经办人头像照片
+				    staffId     : staffId,
 				    signature:OrderInfo.handleInfo.signature
 				}],
 			    venderId  	: OrderInfo.handleInfo.venderId,//*厂商ID
@@ -2828,9 +2861,11 @@ order.cust = (function(){
         			        {
         				        photograph: encodeURIComponent(OrderInfo.handleInfo.imageInfo),
         				        flag: "D",//*经办人头像照片
+        				        staffId     : staffId,
         				        signature:OrderInfo.handleInfo.signature},
         				    {
             				    photograph: encodeURIComponent(OrderInfo.handleInfo.identityPic),
+            				    staffId     : staffId,
             				    flag: "C"//*经办人身份证照片
             				}
         			    ],
@@ -2849,6 +2884,7 @@ order.cust = (function(){
         			        {
         				        photograph: encodeURIComponent(OrderInfo.handleInfo.imageInfo),
         				        flag: "D",//*经办人头像照片
+        				        staffId     : staffId,
         				        signature:OrderInfo.handleInfo.signature}
         			    ],
         			    venderId  	: OrderInfo.handleInfo.venderId,//*厂商ID
@@ -2883,9 +2919,75 @@ order.cust = (function(){
 				OrderInfo.subHandleInfo.errorMessage = OrderInfo.handleInfo.errorMessage;
 				OrderInfo.subHandleInfo.staffId = OrderInfo.staff.staffId;
 			}
-			OrderInfo.subHandleInfo.authFlag = "Y";
 			OrderInfo.subHandleInfo.virOlId = uploadCustCertificate.data.virOlId;
-			_closeShowPhoto();
+			//审核发送短信验证码
+    		var param = {
+    		   number: number,
+    		   areaId : OrderInfo.getAreaId(),
+    		   virOlId : uploadCustCertificate.data.virOlId,
+    		   checkType : auditType
+    		};
+    		$.callServiceAsJsonGet(contextPath+"/staff/login/confirmAgreeCheck", param , {
+    			"before" : function(){
+    				$.ecOverlay("<strong>短信发送中,请稍等会儿....</strong>");
+    			},
+    			"done" : function(response){
+    				if (response.code == 0) {
+    					if(auditType=="1"){//本地
+    						$("#photoDiv").hide();
+        					$("#auditDiv").show();
+        					$("#auditFailure").off("click").on("click",function(){order.cust.auditFailure();});
+        					$("#auditConfirm").off("click").on("click",function(){order.cust.auditConfirm();});
+        					$("#auditInfo").text("审核人:"+staffName+"，号码："+number);
+        					$("#auditdefaultTimeResend").text(second);//验证码提示秒数
+        					window.clearInterval(interResend);
+        					$("#auditsmspwd").val("").removeClass("ketchup-input-error");
+        					$("#confirmagreesmsresend").off("click").removeClass("cn").addClass("cf");
+        					//重新发送验证码成功后,验证错误次数置0.
+        					smsErrorCount=0;
+        					//重新发送验证码成功后,验证码有效期初始化5分钟.
+        					sendSmsAfter30s();
+        					//5分钟倒计时，超过5分钟未输入验证码就失效.
+        					leftInvalidTime=300;
+        					invalidAfter5Mins();
+        					$("#auditsmspwd").focus();
+//        					$("#confirmagreesmsresend").removeClass("cf").addClass("cn").off("click").on("click",_confirmAgreeSmsResend);
+    					}else{//远程
+    						OrderInfo.subHandleInfo.authFlag = "Y";
+    						_closeShowPhoto();
+    						var auditTips = "经办人拍照人像远程审核请求已经发送 "+staffName+"（工号"+staffId+"），虚拟流水号："+uploadCustCertificate.data.virOlId+"，请联系审核人尽快处理";
+    						$.alert("提示",auditTips);
+    						return;
+    					};
+    				}else if(response.code==3){
+    					OrderInfo.subHandleInfo.authFlag = "N";
+    					OrderInfo.subHandleInfo.authFlagErr = response.data;
+    					$.alert("提示",response.data);
+    					return;
+    				}else if(response.code==1002){
+    					OrderInfo.subHandleInfo.authFlag = "N";
+    					OrderInfo.subHandleInfo.authFlagErr = response.data;
+    					return;
+    				}else if(response.code==1003){
+    					OrderInfo.subHandleInfo.authFlag = "N";
+    					OrderInfo.subHandleInfo.authFlagErr = response.data;
+    					$.alert("提示",response.data);
+    					return;
+    				}else{
+    					OrderInfo.subHandleInfo.authFlag = "N";
+    					OrderInfo.subHandleInfo.authFlagErr = response.data.errMsg;
+    					$.alertM(response.data.errMsg);
+    					return;
+    				}
+    			},
+    			"always" : function(){
+    				$.unecOverlay();
+    			},
+    			"fail" : function(response){
+    				$.alert("提示","请求可能发生异常，请稍候");
+    			}
+    		});	
+		
 		}else{
 			OrderInfo.subHandleInfo.authFlag = "F";
 			$("#confirmAgree").removeClass("btna_g").addClass("btna_o");
@@ -2898,7 +3000,209 @@ order.cust = (function(){
 			return;
 		}
 	};
-	//关闭弹框
+	
+	//刷新时间
+	var second=30;
+	var interResend=null;
+	var showTime=function(){
+		if (second>0){
+			second=second-1;
+			if(second==0){
+				$("#auditdefaultTimeResend").html("");
+				$("#confirmagreesmsresend").removeClass("cf").addClass("cn").off("click").on("click",_confirmAgreeSmsResend);
+				if(interResend!=null){
+					window.clearInterval(interResend);
+					$('#timeInfo').html("");
+					$("#confirmagreesmsresend").attr("title","请点击重新发送短信验证码.");		
+					return;
+				}
+			}
+			$("#auditdefaultTimeResend").html("在"+second+"秒内");	
+		}
+		$("#confirmagreesmsresend").attr("title","请在"+second+"秒后再点击重新发送.");	
+	};
+
+	//短信验证码失效时间5分钟
+	var leftInvalidTime=300;
+	var smsInvalidTime=function(){
+		if (leftInvalidTime>0){
+			leftInvalidTime=leftInvalidTime-1;
+		}
+	};
+	//30秒后重发短信验证码
+	var sendSmsAfter30s=function(){
+		 second=30;
+		 window.clearInterval(interResend);
+		 interResend=window.setInterval(showTime,1000);
+	};
+	//5分钟之后短信验证码过期失效
+	var invalidAfter5Mins=function(){
+		window.setInterval(smsInvalidTime,1000);
+	};
+	
+	//重发验证码
+	var _confirmAgreeSmsResend=function(){ 
+		$.callServiceAsJsonGet(contextPath+"/staff/login/confirmAgreeSmsResend",{'smsErrorCount':smsErrorCount} ,{
+			"done" :function(response){				
+				if (response.code==0) {
+					$.alert("提示","验证码发送成功，请及时输入验证.");
+					$("#confirmagreesmsresend").off("click").removeClass("cn").addClass("cf");
+					//重新发送验证码成功后,验证错误次数置0.
+					smsErrorCount=0;
+					//重新发送验证码成功后,验证码有效期初始化5分钟.
+					leftInvalidTime=300;
+					sendSmsAfter30s();
+					//5分钟倒计时，超过5分钟未输入验证码就失效.
+					invalidAfter5Mins();
+				} else{
+					if(response.data!=undefined||response.data!=null){
+						$.alert("提示",response.data);
+					}
+				};
+			}
+		});	
+	};
+	
+	var _auditConfirm = function() {
+		OrderInfo.subHandleInfo.authFlag = "S";
+		//判断短信验证码是否过期
+		if(leftInvalidTime==0){
+			$.alert("提示","对不起,您的短信验证码已经过期,请重新发送后再次验证.");
+			return;
+		}
+		//判断短信验证错误次数,超过三次后,验证码失效，需要重新发送.
+		if(smsErrorCount==3){
+			$.alert("提示","对不起,3次错误输入后验证码已自动失效,请重新发送验证码.");
+			$("#confirmagreesmsresend").removeClass("cf").addClass("cn").off("click").on("click",_confirmAgreeSmsResend);
+			if(interResend!=null){
+				window.clearInterval(interResend);
+				$('#timeInfo').html("");
+				$("#confirmagreesmsresend").attr("title","请点击重新发送短信验证码.");	
+				return;
+			}
+			return;
+		}
+		var smspwd = $.trim($("#auditsmspwd").val());
+		if (smspwd=="") {
+			smspwd="N";
+		}
+		var params = "smspwd=" + smspwd + "&number=" + OrderInfo.subHandleInfo.number;
+		$.callServiceAsJson(contextPath+"/staff/login/confirmAgreeSmsValid", params, {
+			"before":function(){
+				$.ecOverlay("<strong>验证短信随机码中,请稍等会儿....</strong>");
+			},
+			"done" : function(response){
+				if (response.code == 0) {
+                    //调用实名审核记录接口
+			    	var params ={
+			    			areaId : OrderInfo.getAreaId(),
+			    			olId : OrderInfo.subHandleInfo.virOlId,
+			    			checkType : OrderInfo.subHandleInfo.auditType,
+			    			staffId : OrderInfo.subHandleInfo.auditStaffId,
+			    			srcFlag : "REAL"
+			    	};
+					$.callServiceAsJson(contextPath + "/order/savePhotographReviewRecord", params, {
+						"before" : function() {
+							$.ecOverlay("<strong>正在确认审核信息, 请稍等...</strong>");
+						},
+						"done" : function(response) {
+							if(response.code == 0 && response.data){
+								OrderInfo.subHandleInfo.authFlag = "Y";
+								_closeShowPhoto();
+							}else if(response.code == 1 && response.data){
+								$.alert("错误", "审核确认信息发送失败，错误原因：" + response.data);
+							}else if(response.code == -2 && response.data){
+								$.alertM(response.data);
+							}else{
+								$.alert("错误", "审核确认信息发生未知异常，请稍后重试。错误信息：" + response.data);
+							}
+						},
+						"fail" : function(response) {
+							$.alert("错误","审核确认信息发生未知异常：" + response.data);
+						},
+						"always" : function() {
+							$.unecOverlay();
+						}
+					});
+				} else if (response.code == 1) {
+					smsErrorCount+=1;
+					$.alert("提示",response.data);
+				}else {
+					$.alert("提示","请求异常，请重新登录再试！");
+					OrderInfo.subHandleInfo.authFlagErr = "请求异常，请重新登录再试！";
+				};
+			},
+			"always":function(){
+				$.unecOverlay();
+			}
+		});
+	};
+	
+	var _auditFailure = function(){
+		$("#auditDiv").hide();
+		$("#photoDiv").show();
+		$("#auditFailure").off("click");
+		$("#auditConfirm").off("click");
+		_rePhotos();
+	};
+	
+	/**
+	 * 查询具有某权限的员工列表
+	 */
+	var _qryOperateSpecStaffList = function(){
+		var requestParams = {};		
+		$.callServiceAsJson(contextPath + "/order/qryOperateSpecStaffList", requestParams, {
+			"before" : function() {
+				$.ecOverlay("<strong>正在查询审核人员信息, 请稍等...</strong>");
+			},
+			"done" : function(response) {
+				if(response.code == 0 && response.data){
+//					response.data= [{
+//							phone:"18099999999",
+//							staffCode:"905899",
+//							staffId:30034129612,
+//							staffName:"李志华",
+//							statusCd:"1000"
+//						}];
+					_setOperateSpecStaffList(response.data);
+					OrderInfo.handleInfo.staffList = response.data;
+				}else if(response.code == 1 && response.data){
+					$.alert("错误", "查询审核人员失败，错误原因：" + response.data);
+					return null;
+				}else if(response.code == -2 && response.data){
+					$.alertM(response.data);
+					return null;
+				}else{
+					$.alert("错误", "查询审核人员发生未知异常，请稍后重试。错误信息：" + response.data);
+					return null;
+				}
+			},
+			"fail" : function(response) {
+				$.alert("错误","查询审核人员信息发生未知异常：" + response.data);
+				return null;
+			},
+			"always" : function() {
+				$.unecOverlay();
+			}
+		});
+	};
+	
+	/**
+	 * 将查询到的具有某权限的员工列表拼装到select标签
+	 */
+	var _setOperateSpecStaffList = function(staffList){
+		var selectIdDom = "#auditPersonnel";//默认selectId
+		$(selectIdDom).empty();
+		$(selectIdDom).append("<option value='-1'>--请选择审核人员--</option>");
+		if(ec.util.isArray(staffList)){
+			$.each(staffList, function(){
+				if(this.staffId!=OrderInfo.staff.staffId){
+					$(selectIdDom).append("<option value='"+this.staffId+"'>"+this.staffName+"/"+this.staffCode+"</option>"); 
+				}
+			});
+		}
+	};
+
     var _closeShowPhoto = function(){
     	capture.closeVideo();
     	easyDialog.close();
@@ -3349,7 +3653,11 @@ order.cust = (function(){
 		orderAttrReset:_orderAttrReset,
 		getCustInfo415 : _getCustInfo415,
 		preCheckCertNumberRel : _preCheckCertNumberRel,
-		getCustInfo415Flag : _getCustInfo415Flag
+		getCustInfo415Flag : _getCustInfo415Flag,
+		confirmAgreeSmsResend : _confirmAgreeSmsResend,
+		auditFailure : _auditFailure,
+		auditConfirm : _auditConfirm,
+		qryOperateSpecStaffList : _qryOperateSpecStaffList
 	};
 })();
 $(function() {

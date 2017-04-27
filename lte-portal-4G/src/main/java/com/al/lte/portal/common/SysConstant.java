@@ -848,5 +848,14 @@ public final class SysConstant {
 	public static final String CHANNEL_ID	= "channelId";
 	
 	/**权限编码：人像审核*/
-	public static final String RXSH = "PZRGSH";
+	public static final String RXSH = "RXSH";
+	
+	/**经办人拍照人证相符审核短信验证短信发送时间 */
+    public static final String SESSION_KEY_TEMP_CONFIRMAGREE_SMS_TIME = "_session_key_temp_confirmagree_sms_time";  
+    /** 经办人拍照人证相符审核短信验证随机二位序列号 */
+    public static final String SESSION_KEY_CONFIRMAGREE_RANDONCODE = "_confirmagree_sms_session_code";
+    /** 经办人拍照人证相符审核短信验证 sms Session key */
+    public static final String SESSION_KEY_CONFIRMAGREE_SMS = "_confirmagree_sms_session_key";
+    /** 经办人拍照人证相符审核类型-本地审核*/
+    public static final String CHECKTYPE_LOCAL = "1";
 }
