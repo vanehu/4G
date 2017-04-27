@@ -1,0 +1,39 @@
+<div class="container-fluid">
+	<div class="row">
+		<div class="panel panel-default paneltop">
+			<!-- Default panel contents -->
+			<div class="panel-heading" id="tital">
+				<span style="font-size:16px;">预受理成功</span>
+			</div>
+			<!-- List group -->
+			<ul class="list-group" id="orderTbody">
+				<li class="list-group-item">
+					<h4 class="list-group-item-heading">购物车流水号</h4>
+					<p class="list-group-item-text" id="yslbuyid"></p>
+				</li>
+				<li class="list-group-item">
+					<h4 class="list-group-item-heading">产品号码</h4>
+					<p class="list-group-item-text" id="yslbuynum"></p>
+				</li>
+			</ul>
+			<nav class="navbar navbar-default navbar-fixed-bottom">
+				<div class="container-fluid">
+					<div class="btn-group btn-group-justified navbar-btn" role="group"
+						aria-label="...">
+						<!-- <div class="btn-group" role="group">
+							<button type="button" class="btn btn-info btn-lg" onclick="SoOrder.orderBack();" id="orderBack">
+								<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+								返回修改
+							</button>
+						</div> -->
+						<div class="btn-group" role="group"><!--order.calcharge.chargeSave('0',false)  -->
+							<button type="button" class="btn btn-primary btn-lg" onclick="common.callCloseWebview();">
+								<span class="glyphicon glyphicon-ok" aria-hidden="true"></span> 确定
+							</button>
+						</div>
+					</div>
+				</div>
+			</nav>
+		</div>
+	</div>
+</div>

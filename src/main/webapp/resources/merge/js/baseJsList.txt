@@ -1,0 +1,45 @@
+# 按行读取待合并的文件名称
+# 只读取后缀为js或css的文件
+# 以#号开始的行会被视作注释
+# 路径从WEB-INF的上级目录作为基础目录
+resources/js/third-js/jquery/jquery-1.7.2.min.js
+resources/js/third-js/json/json2.js
+resources/js/third-js/utils/md5.js
+resources/js/third-js/utils/Base64.js
+resources/js/third-js/utils/UUID.js
+resources/js/third-js/validate/jquery.ketchup.js
+resources/js/third-js/validate/jquery.ketchup.helpers.js
+resources/js/third-js/validate/jquery.ketchup.validations.js
+resources/js/third-js/validate/jquery.ketchup.validations_zh.js
+resources/js/third-js/jquery/zebra-dialog/zebra_dialog.src.js
+resources/js/third-js/jquery/jquery.overlay/jquery.overlay.js
+resources/js/third-js/jquery/jquery.jevent.js
+resources/js/third-js/jquery/jquery.cookies.js
+resources/js/third-js/jquery/jquery.simplemodal/jquery.simplemodal-1.4.4.bin.js
+resources/js/third-js/jquery/jquery.lhgcalendar/lhgcalendar.js
+resources/js/third-js/utils/DateUtil.js
+resources/js/third-js/utils/validateSimple.js
+resources/js/third-js/jquery/jquery.ztree/jquery.ztree.core-3.4.js
+resources/js/third-js/ligerUI/ligerui.min.js
+resources/js/third-js/jquery/jquery.ui/jquery.ui.core.min.js
+resources/js/third-js/jquery/jquery.ui/jquery.ui.widget.min.js
+resources/js/third-js/jquery/jquery.ui/jquery.ui.mouse.min.js
+resources/js/third-js/jquery/jquery.ui/jquery.ui.draggable.min.js
+resources/js/third-js/jquery/jquery.ui/jquery.ui.droppable.min.js
+resources/js/our-js/common.js
+resources/js/our-js/ec.agent.js
+resources/js/our-js/ec.dialog.js
+resources/js/our-js/ec.util.js
+resources/js/our-js/serviceAxClient.js
+resources/js/our-js/login.windowpub.js
+resources/js/our-js/ec.form.dialog.js
+resources/js/4g-js/global.js
+resources/js/4g-js/jquery.idTabs.min.js
+resources/js/4g-js/top_plugins.js
+resources/js/4g-js/jquery.scrolltotop.js
+resources/js/4g-js/nav.js
+resources/js/4g-js/easydialog.min.js
+resources/js/4g-js/other.js
+resources/js/busi-js/common/page.js
+resources/js/busi-js/common/arrayPage.js
+resources/js/busi-js/query/common.js

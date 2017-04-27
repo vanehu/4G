@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>业务受理</title>
+		<META HTTP-EQUIV="Pragma" CONTENT="no-cache"> 
+		<META HTTP-EQUIV="Cache-Control" CONTENT="no-store,no-cache,must-revalidate"> 
+		<META HTTP-EQUIV="Expires" CONTENT="0">
+		<META name="keywords" content="电信集团">
+		<META name="description" content="电信集团">
+	    <#include "/public/common-tokenapp-css-tpl.html"/>
+		<#include "/public/common-tokenapp-js-tpl.html"/>
+		<#include "/public/base-js-tpl.html"/>
+		<script src="${contextPath}/js/app-js/op-js/order/memberChange.js?${jsversion}" type="text/javascript"></script>
+		<script>
+		//初始化渠道
+		$(function() {
+			OrderInfo.getChannelList();
+		});
+		
+		window.onload= function() 
+		{  
+			OrderInfo.order.orderAttrCustId='${orderAttrCustId}';
+			OrderInfo.typeCd="${typeCd}";
+			OrderInfo.verifyLevel='${verifyLevel}';
+			OrderInfo.actionFlag=14;
+			//用户信息
+			OrderInfo.staff=${staffInfo_};
+			//保存传过来的主套餐id   套餐变更使用
+			var offid='${offid}';
+			if(offid!=null && offid!=""){
+				OrderInfo.offid=offid;
+			}
+			//保存传入的帐户合同号
+			OrderInfo.acct={acctCd:'${acctCd}'};//账户合同号
+			//跳转地址
+			var params=${jumpParams_};
+			var actionFlag=params.actionFlag;
+			if(actionFlag=="1"){
+				OrderInfo.busitypeflag="1";
+			}
+			var nextFlag = false;
+			var mergeFlag = "${mergeFlag}";
+			if(mergeFlag=="0"){
+				//客户定位
+				var custInfos = ${custInfo_};
+				$.each(custInfos.custInfos,function(index,custInfo){
+					var addressStr=custInfo.addressStr;
+					var areaId=custInfo.areaId;
+					var areaName=custInfo.areaName;
+					var authFlag="1";
+					var custFlag=custInfo.custFlag;
+					var custId=custInfo.custId;
+					var idCardNumber=custInfo.idCardNumber;
+					var identityCd=custInfo.identityCd;
+					var identityName=custInfo.identityName;
+					var norTaxPayer="";
+					var partyName=custInfo.partyName;
+					var segmentId=custInfo.segmentId;
+					var segmentName=custInfo.segmentName;
+					var vipLevel=custInfo.vipLevel;
+					var vipLevelName=custInfo.vipLevelName;
+					var certNum = custInfo.certNum;
+					var CN = custInfo.CN;
+					var address = custInfo.address;
+					OrderInfo.cust={CN: CN,address: address,certNum: certNum,addressStr: addressStr,areaId: areaId,areaName: areaName,authFlag: "1",custFlag: custFlag,custId: custId,idCardNumber: idCardNumber,identityCd: identityCd,identityName: identityName,norTaxPayer: "",partyName: partyName,segmentId: segmentId,segmentName: segmentName,vipLevel: vipLevel,vipLevelName: vipLevelName};
+					return false;
+				});
+				
+				//订购业务
+				if(actionFlag!="1"){
+					var prodInfo=${prodInfo_};
+					var stopRecordCd="";
+					var stopRecordName="";
+					if(prodInfo.prodStopRecords!=null && prodInfo.prodStopRecords.length>0){
+						$.each(prodInfo.prodStopRecords,function(i,prodStopRecord){
+							stopRecordCd=prodStopRecord.stopRecordCd;
+							stopRecordName=prodStopRecord.stopRecordName;
+						});
+					}
+					var custId="";
+					var custName="";
+					var startDt="";
+					var endDt="";
+					var prodOfferId=""; 
+					var prodOfferInstId="";
+					var is3G="";
+					if(prodInfo.mainProdOfferInstInfos!=null && prodInfo.mainProdOfferInstInfos.length>0){
+						$.each(prodInfo.mainProdOfferInstInfos,function(i,mainProdOfferInstInfo){
+							custId=mainProdOfferInstInfo.custId;
+							custName=mainProdOfferInstInfo.custName;
+							startDt=mainProdOfferInstInfo.startDt;
+							endDt=mainProdOfferInstInfo.endDt;
+							prodOfferId=mainProdOfferInstInfo.prodOfferId;
+							prodOfferInstId=mainProdOfferInstInfo.prodOfferInstId;
+							is3G=mainProdOfferInstInfo.is3G;
+						});
+					}
+					var _choosedProdInfo  = {
+						accNbr :prodInfo.accNbr,//产品接入号
+						productName :prodInfo.productName,//产品规格名称
+						prodStateName :prodInfo.prodStateName,//产品状态名称
+						feeTypeName :prodInfo.feeType.feeTypeName,//付费方式名称
+						prodInstId :prodInfo.prodInstId,//产品ID
+						extProdInstId : prodInfo.extProdInstId,//省内产品实例ID
+						corProdInstId : prodInfo.corProdInstId,//外部产品实例ID
+						prodStateCd :prodInfo.prodStateCd,//产品状态CD
+						productId :prodInfo.productId,//产品规格ID
+						feeType :prodInfo.feeType.feeType,//付费方式id
+						prodClass :prodInfo.prodClass,//产品大类 4 表示4G；3表示3G
+						stopRecordCd :stopRecordCd,//停机记录CD
+						stopRecordName :stopRecordName,//停机记录名称
+						prodOfferName :prodInfo.prodOfferName,//主套餐名称
+						custName :custName,//所属人客户名称
+						startDt :startDt,//生效时间
+						endDt :endDt,//失效时间
+						prodOfferId :prodOfferId,//主套餐规格ID
+						prodOfferInstId :prodOfferInstId,//主套餐实例ID
+						custId :custId,//所属人客户ID
+						is3G :is3G,//3G/4G主销售品标识
+						areaCode :prodInfo.zoneNumber,//产品地区CODE
+						areaId : prodInfo.areaId//产品地区id
+					};
+					order.prodModify.choosedProdInfo=_choosedProdInfo;
+				}
+				nextFlag = true;
+			}else{
+				var nbr = "";
+				if(actionFlag!="1"){
+					nbr = "${acrNum}";
+				}else{
+					nbr = "${custNumber}";
+				}
+				var provCustAreaId = "${provCustAreaId}";
+				nextFlag = cust.queryCustCompreInfo(nbr,provCustAreaId,actionFlag,'');
+			}
+			
+			//订单必要参数
+			var provinceInfo=${provinceInfo_};
+			var reloadFlag=provinceInfo.reloadFlag;
+			//成员变更参数 
+			OrderInfo.memberChangeInfo='${memberChangeInfo_}';
+			OrderInfo.provinceInfo.provIsale=provinceInfo.provIsale;
+			//uim卡信息
+			OrderInfo.newOrderNumInfo.mktResInstCode = provinceInfo.mktResInstCode;
+			OrderInfo.newOrderNumInfo.codeMsg = provinceInfo.codeMsg;
+			
+			//终端串码和发展人工号
+			OrderInfo.codeInfos.DevelopmentCode=provinceInfo.salesCode;
+			OrderInfo.codeInfos.terminalCode=provinceInfo.termCode;
+			
+			//老用户号码
+			OrderInfo.oldSubPhoneNum.oldSubPhoneNum='${oldSubPhoneNum}';
+			if(provinceInfo.redirectUri!=null && provinceInfo.redirectUri!=""){
+				OrderInfo.provinceInfo.redirectUri=provinceInfo.redirectUri;
+			}
+			OrderInfo.provinceInfo.isFee=provinceInfo.isFee;
+			//是否二次加载
+			OrderInfo.provinceInfo.reloadFlag=provinceInfo.reloadFlag;
+			if(provinceInfo.prodOfferId!=undefined&&provinceInfo.prodOfferId!=""){
+				OrderInfo.provinceInfo.prodOfferId=provinceInfo.prodOfferId;
+			}		
+			OrderInfo.provinceInfo.prodOfferName=provinceInfo.prodOfferName;
+			OrderInfo.provinceInfo.mergeFlag = "${mergeFlag}";
+			//放置二次加载数据
+			if(reloadFlag=="N"){
+				OrderInfo.reloadOrderInfo=${reloadOrderInfo_};
+			}
+			var terminalCode='${terminalCode}'; //终端串码
+			//终端串码
+			if(terminalCode!=null && terminalCode!="" && terminalCode!="null"){
+				OrderInfo.terminalCode=terminalCode;
+			}
+			
+			//装载数据
+			window.localStorage.setItem("OrderInfo.cust",JSON.stringify(OrderInfo.cust));
+			window.localStorage.setItem("OrderInfo.staff",JSON.stringify(OrderInfo.staff));
+			window.localStorage.setItem("order.prodModify.choosedProdInfo",JSON.stringify(order.prodModify.choosedProdInfo));
+			var custInfos=$.parseJSON(JSON.stringify(OrderInfo.cust));
+			var staffInfos=$.parseJSON(JSON.stringify(OrderInfo.staff));
+			var prodIdInfos=$.parseJSON(JSON.stringify(order.prodModify.choosedProdInfo));
+			$("#p_cust_areaId").val(OrderInfo.cust.areaId);
+			if(nextFlag){
+				common.callOrderServer(staffInfos,custInfos,prodIdInfos,params);
+			}
+		}
+		</script>
+	</head>
+	<body><!-- app 二次业务统一入口 -->
+		<!-- 省份传入主副卡号码 -->
+		<input type="hidden" id="mainPhoneNum" value="${mainPhoneNum}"/>
+		<input type="hidden" id="newSubPhoneNum" value="${newSubPhoneNum}"/>
+		<input type="hidden" id="p_cust_areaId" value="">
+		<div align="center" id="load"></div>
+		
+       
+		
+		<div id="content"></div>
+		
+		<!--接口异常错误封装展示-->
+		<#include "/public/public-app-error.html"/>
+		
+		<!--弹出框-->
+		<#include "/public/public-app-dialog.html"/>
+		
+		<!-- 渠道展示 -->
+		<#include "/public/app-channels.html"/>
+		 
+	</body>
+</html>

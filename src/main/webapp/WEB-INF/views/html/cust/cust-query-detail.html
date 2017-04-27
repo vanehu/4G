@@ -1,0 +1,195 @@
+<#if (result.partyList)?? &&((result.partyList)?size>0)>
+<div class=" main_warp">
+    
+        <!--订单确认-->
+        <div class="order_confirmation">
+            <div class="main_body">
+            	<form id="custModifyForm">
+            	<h5 class="s_title">基本信息</h5>
+                <div class="infoBox">
+                    <table class="network" style="margin:0px 15px">
+                          <tbody>
+                          <tr>
+                                <td width="70"> 客户姓名：</td>
+                                <td width="780">${result.partyList.partyName}</td>
+                          </tr>
+                          <tr>
+                                <td>创建时间：</td>
+                                <td>${result.partyList.createDt}</td>
+                          </tr>
+                          <tr>
+                                <td>地区名称：</td>
+                                <td>${result.partyList.areaName}</td>
+                          </tr>
+                          <tr>
+                                <td>地址：</td>
+                                <td>${result.partyList.addressStr}</td>
+                          </tr>                     
+                          
+                        </tbody>
+                    </table>                
+                </div>
+                 <h5 class="s_title">客户证件信息</h5>
+		                <div class="infoBox">
+		                    <#if identities?? && (identities?size>0)>
+		                   
+		                    <table class="network" style="margin:0px 15px">
+		                          <tbody>	
+							    <ul>
+							    <#list identities as identitiesitem>
+								    <tr>
+			                                <td width="70">${identitiesitem.identidiesTypeName} ：</td>
+			                                <td width="780"><#if identitiesitem.identidiesTypeCd?? && identitiesitem.identidiesTypeCd=="1" && identitiesitem.identityNum?? && (identitiesitem.identityNum?length>14) >
+																<#if isViewOperation?? && isViewOperation =="0" >
+																	${identitiesitem.identityNum}
+																<#else>
+																	<#assign len = identitiesitem.identityNum?length >
+																	${identitiesitem.identityNum[0..5]}********${identitiesitem.identityNum[14..len-1]}
+																</#if>
+															<#else>
+																${identitiesitem.identityNum}
+															</#if>
+                                            </td>
+			                        </tr>
+								</#list>
+								</ul>
+		                        </tbody>
+		                    </table>
+		                    </#if>  
+		                </div>
+               <h5 class="s_title">客户联系人</h5>
+		       <div class="infoBox">
+		  <#if (partyContactInfos)?? &&((partyContactInfos)?size>0)>
+          <table class="network" style="margin:0px 15px">
+		  <tbody>
+				<tr>
+				    <td width="70"> 联系人名称：</td>
+				    <td width="430">${partyContactInfos[0].contactName}</td>
+					
+				    <td width="70">联系类型：</td>
+				    <td width="430">
+	                           <#if partyContactInfos[0].contactType=="10" >主要联系人</#if>
+							   <#if partyContactInfos[0].contactType=="11" >非主要联系人</#if>
+					</td>
+			    </tr>
+               <tr>
+				    <td width="70"> 是否首要联系人：</td>
+				    <td width="430">
+							  <#if partyContactInfos[0].headFlag=="1" >是</#if>
+							  <#if partyContactInfos[0].headFlag=="2" >否</#if>
+					</td>
+					
+				    <td width="70"> 性别：</td>
+				    <td width="430">
+							   <#if partyContactInfos[0].contactGender=="1" >男</#if>
+							   <#if partyContactInfos[0].contactGender=="2" >女</#if>
+							   <#if partyContactInfos[0].contactGender=="3" >未知</#if>
+							   <#if partyContactInfos[0].contactGender=="4" >未说明</#if>
+					</td>
+			    </tr>
+				<tr>
+				    <td width="70"> 联系地址：</td>
+				    <td width="430">
+							   ${partyContactInfos[0].contactAddress}
+					</td>
+				    
+					
+				    <td width="70"> 雇佣单位：</td>
+				    <td width="430">
+							   ${partyContactInfos[0].contactEmployer}
+					</td>
+			    </tr>
+				<tr>
+				    <td width="70"> 家庭电话：</td>
+				    <td width="430">
+							   ${partyContactInfos[0].homePhone}
+					</td>
+				    <td width="70"> 办公室电话：</td>
+				    <td width="430">${partyContactInfos[0].officePhone}</td>
+				</tr>
+				<tr>
+				    <td width="70"> 移动电话：</td>
+				    <td width="430">
+							   ${partyContactInfos[0].mobilePhone}
+					</td>
+				    
+					
+				    <td width="70"> 联系信息：</td>
+				    <td width="430">
+							   ${partyContactInfos[0].contactDesc}
+					</td>
+			    </tr>
+				<tr>
+				    <td width="70"> 邮箱地址：</td>
+				    <td width="430">
+							   ${partyContactInfos[0].email}
+					</td>
+				    
+					
+				    <td width="70"> 邮政编码：</td>
+				    <td width="430">
+							   ${partyContactInfos[0].postCode}
+					</td>
+			    </tr>
+				<tr>
+				    <td width="70"> 邮寄地址：</td>
+				    <td width="430">
+							   ${partyContactInfos[0].postAddress}
+					</td>
+				    <td width="70"> 传真号：</td>
+				    <td width="430">
+							   ${partyContactInfos[0].fax}
+					</td>
+			    </tr>
+				
+		</tbody>
+</table>
+</#if>  
+		                </div>
+		                <h5 class="s_title">客户属性信息</h5>
+		                <div class="infoBox">
+		                    <#if profiles?? && (profiles?size>0)>
+		                    
+		                    <table class="network" style="margin:0px 15px">
+		                        <tbody>
+                               <#assign parm_row = 0 />
+								<#list profiles as tabProfile1>
+								<#if tabProfile1.attrSpecTypeCd?? && tabProfile1.attrSpecTypeCd!="" >
+								<#assign parm_row = parm_row + 1 />
+									<#if parm_row%2==1><tr></#if>
+								    <td width="70"> ${tabProfile1.attrName}：</td>
+								    <td width="430">
+											<#if tabProfile1.dsTypeCd==4 >
+												<#list tabProfile1.valueRange as valueRange>
+													<#if tabProfile1.defaultValue==valueRange.value >${valueRange.text}</#if>
+												</#list>
+											  </select>
+											    
+											<#else>
+											   ${tabProfile1.defaultValue}
+											</#if>
+									</td>
+								    <#if parm_row%2==0||(profiles?size==parm_row)></tr></#if>
+							    </#if>
+								</#list>
+		                        </tbody>
+		                    </table>
+		                    </#if>  
+		                </div>
+                <!--返回按钮-->
+                <div align="right" style="margin: 20px auto;">
+                    <a href="javascript:order.cust.back()" class="btna_o" style=" margin-left:20px;"><span>返回</span></a>
+                </div>                  
+                <!--返回按钮 end-->  
+                
+            </form>
+        	</div>
+        </div>
+        <!--订单确认 end-->
+        
+    </div>
+<#else>
+	<ul class="" >
+		<li class="full" style="font-size: 20px;margin-top: 20px;text-align: center;" >客户信息获取失败</li>
+	</ul>	
+</#if>

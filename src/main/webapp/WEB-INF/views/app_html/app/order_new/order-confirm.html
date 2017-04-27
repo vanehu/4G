@@ -1,0 +1,112 @@
+<#if resMap.resultCode==0>
+	<#assign result=resMap.result />
+		<div class="list-box m-t-10">
+				<ul class="choice-list-box" id="orderTbody">
+					
+					<li>
+					<i class="iconfont pull-left">&#xe667;</i>
+						<span class="list-title font-secondary">套餐及号码</span>
+					</li>
+					<li>
+						<span class="list-title">
+							<span class="title-lg">${result.olNbr}</span>
+							<span class="subtitle font-secondary">购物车流水号</span>
+						</span>
+					</li>
+				</ul>
+		</div>
+				<#if resMap.provCheckError??>
+			   		<table id="ruleTable" class="table table-bordered">
+			   			<thead>
+				   			<tr>
+				                <th style="color: #fff; font-size: 0.28rem;background: #05a642;">校验失败</th>
+				             </tr>
+			             </thead>
+			    		<tbody id="ruleTbody">		            	
+			            	<tr>				            
+					        	<td id="provCheckErrorMsg" style="word-break: break-all;">${resMap.provCheckErrorMsg}</td>
+				          	</tr>
+			            </tbody>
+			   		</table>
+			   		
+			   		<div class="sub-btn-box p p-b-15">
+						<button class="sun-btn done" onclick="SoOrder.orderBack();" id="orderBack">返回修改</button>
+					</div>
+				<#else>	
+				<#assign flag=0 />
+				<#if result.ruleInfos?? &&(result.ruleInfos?size>0)>
+					<table id="ruleTable" class="table table-striped table-bordered tablecenter">
+						<thead>
+							<tr>
+								<th>规则编码</th>
+								<th>规则限制等级</th>
+							</tr>
+						</thead>
+						 <tbody id="ruleTbody">
+			            	<#list result.ruleInfos as item>
+			            		<#assign ruleLevelName=""/>
+			            		<#if item.ruleLevel==0>
+			            			<#assign ruleLevelName="提示级别"/>
+			            		<#elseif item.ruleLevel==1>
+			            			<#assign ruleLevelName="高级级别"/>
+			            		<#elseif item.ruleLevel==2>
+			            			<#assign ruleLevelName="中级级别"/>
+			            		<#elseif item.ruleLevel==3>
+			            			<#assign ruleLevelName="特技级别"/>
+			            		<#elseif item.ruleLevel==4>
+			            			<#assign flag=1 />
+			            			<#assign ruleLevelName="限制级别"/>		            		
+				              	</#if>
+			            		<tr>
+					                <td width="50%"><a data-toggle="collapse" data-parent="#accordion" href="#collapse-${item_index + 1}" ruleLevel="${flag}">${item.ruleCode}</a></td>
+				                	<td >${ruleLevelName}</td>
+				              	</tr>
+				              	<tr id="collapse-${item_index + 1}" class="panel-collapse collapse">
+		                            <td class="panel-body" colspan="2">
+		                               	 ${item.ruleDesc}
+		                            </td>
+		                        </tr>
+			            	</#list>
+			            </tbody>
+					</table>
+					
+					<#if flag==1>
+					<div class="sub-btn-box p p-b-15">
+						<button class="sun-btn done" onclick="SoOrder.orderBack();" id="orderBack">返回修改</button>
+					</div>
+					<#else>
+					<div class="sub-btn-box p p-b-15">
+						<button class="sun-btn done" onclick="SoOrder.orderBack();" id="orderBack">返回修改</button>
+					</div>
+					<div class="sub-btn-box p p-b-15">
+						<button class="sun-btn done" onclick="javascript:{common.setBtnTimer(this);order.calcharge.calchargeInit();}" id="toComplate">订单确认</button>
+					</div>
+					</#if>
+				<#else>
+				<div class="sub-btn-box p p-b-15">
+					<button class="sun-btn done" onclick="javascript:{common.setBtnTimer(this);order.calcharge.calchargeInit();}" id="toComplate">确定</button>
+				</div>
+			 	</#if> 
+				</#if>
+			</div>
+		</div>
+	</div>
+<#else> 
+ 	<table class="table table-bordered">
+		<tbody>
+			<tr>
+				<td>失败原因：</td>
+				<td>${resMap.resultMsg}</td>
+			</tr>
+		</tbody>
+	</table>
+	<div class="sub-btn-box p p-b-15">
+		<button class="sun-btn done" onclick="SoOrder.orderBack();" id="orderBack">返回修改</button>
+	</div>
+</#if>
+<script>
+	var resMap = ${resMapJson};
+	if (resMap.resultCode == 0) {
+		OrderInfo.orderResult = resMap.result;
+	}
+</script>

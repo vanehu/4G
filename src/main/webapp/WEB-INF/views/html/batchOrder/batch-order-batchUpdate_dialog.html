@@ -1,0 +1,83 @@
+<div class="easyDialogclose" id="batchUpdate_dialog_close" onclick="easyDialog.close()"></div>
+<html>
+<table>
+	<head>
+		<style>
+		html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, font, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td {
+		    color: #797979;
+		    font-family: 微软雅黑,宋体,Arial,Tahoma;
+		    font-size: 12px;
+		    font-style: inherit;
+		    font-weight: inherit;
+		}
+		a:link {
+		    text-decoration: none;
+		}
+		li {
+		    list-style-type: none;
+		}
+		
+		.fillin li.full {
+		    width: 450px;
+		}
+		
+		.fillin label {
+		    height: 28px;
+		    text-align: left;
+		    width: 90px;
+		}
+		</style>
+	</head>
+<body>
+	<form method="post" id="batchUpdate_dialog" enctype="multipart/form-data">
+		<ul class="fillin">
+			<li class="full">
+				<label>原预约时间：</label>
+				<#if param.reserveDt== "-1">立即执行
+		     	<#else>${param.reserveDt}
+		     	</#if>
+			</li>
+			<li class="full">
+				<label>新预约时间：</label> 
+				<select id="reserveDt_dialog" name="reserveDt_dialog" style="width: 100px">
+					<option value="-1">立即执行</option> 
+					<#list timeList as item>
+						<option value="${item.date}">${item.dateStr}</option>
+					</#list>
+				</select>
+			</li>
+			<li class="full" style="text-align :center">
+				<input type="hidden" name="batchType" id="batchType_dialog" value="${param.batchType}" /> 
+				<input type="hidden" name="areaId" id="areaId_dialog" value="${param.areaId}" /> 
+				<input type="hidden" name="staffId" id="staffId_dialog" value="${param.staffId}" /> 
+				<input type="hidden" name="groupId" id="groupId_dialog" value="${param.groupId}" /> 
+				
+				<a class="numberSearch" href="javascript:void(0)" onclick="order.batch.batchUpdateConfirm()">确 定</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				<a class="numberSearch" href="javascript:void(0)" onclick = "easyDialog.close()">取 消</a>
+			</li>
+			<li style="border-bottom: 0px;" class="full">
+				<table width="100%" border="0" cellspacing="0" cellpadding="0">
+					<tr>
+						<td><i class="rule_icon_notice"></i></td>
+						<td>
+							<span style="line-height: 25px;"> 
+								(1)批次修改仅限于修改预约时间，其他参数不可修改；
+								<br/> 
+								(2)批次为“未处理”时，可修改“预约处理时间”；其他情况，不可修改。
+								<br/> 
+							</span>
+						</td>
+					</tr>
+					<tr>
+						<!-- <td> <i class="rule_icon"></i> </td> -->
+						<td>
+							<span id="batchUpdateMsg_dialog" style="line-height: 25px;align:center;color:red"></span>
+						</td>
+					</tr>
+				</table>
+			</li>
+		</ul>
+	</form>
+	</body>
+</table>
+</html>

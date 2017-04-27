@@ -1,0 +1,169 @@
+<#if offerSpec?? && offerSpec.offerRoles?? && (offerSpec.offerRoles?size>0)>
+<#assign k = 0 />
+<#list offerSpec.offerRoles as offerRole>	
+	<#if offerRole.prodInsts?? && (offerRole.prodInsts?size>0)>
+		<#list offerRole.prodInsts as prod>
+			<#assign prodId = prod.prodInstId /> 
+			<#if prodId==-1 >
+			<div class="item active" id="target_${k}">
+				<div class="panel panel-default panelcon" id="prodinfo_${prodId}">
+					<!-- Default panel contents -->
+				<div class="panel-heading" id=${offerRole.offerRoleId}><span class="title_lv"></span>${prod.offerRoleName}</div>
+				<form>
+				<div class="panel-body" id="item_order_${prodId}">
+					<div class="form-group">
+						<label for="exampleInputEmail1">付费方式</label>
+						<#assign feeType_read = "0">
+						<#if main.actionFlag==6>
+							<#assign feeType_read = "1">
+						<#else>
+							<#if offerSpec.feeType?? && offerSpec.feeType!="" >
+								<#if offerSpec.feeType=="2100" || offerSpec.feeType=="1200" || offerSpec.feeType=="1201"  >
+									<#assign feeType_read = "1">
+								</#if>
+							<#else>
+								<#assign feeType_read = "1">
+							</#if>
+						</#if>
+						<div class="input-group select-box">
+					    <select ss="${offerSpec.feeTypeMain}"  id="idtype" class="selectpicker show-tick form-control" prodId="${prodId}" name="pay_type_${prodId}" onchange="order.main.feeTypeCascadeChange(this,'${prodId}')" <#if feeType_read=="1">disabled="disabled"</#if>>
+			              	<#if offerSpec.feeType?? && offerSpec.feeType!="" >
+							<#if offerSpec.feeType=="1200" || offerSpec.feeType=="3100" || offerSpec.feeType=="3102" || offerSpec.feeType=="3103" >
+								<option value="1200" <#if main.feeTypeMain==1200>selected="selected"</#if> >后付费</option>
+							</#if>
+							<#if offerSpec.feeType=="2100" || offerSpec.feeType=="3100" || offerSpec.feeType=="3101" || offerSpec.feeType=="3103" >
+								<option value="2100" <#if main.feeTypeMain==2100>selected="selected"</#if> >预付费</option>
+							</#if>
+							<#if offerSpec.feeType=="1201" || offerSpec.feeType=="3101" || offerSpec.feeType=="3102" || offerSpec.feeType=="3103" >
+								<option value="1201" <#if main.feeTypeMain==1201>selected="selected"</#if> >准实时预付费</option>
+							</#if>
+							<#else>
+								<option value="" >无</option>
+							</#if>
+			            </select>
+			            <span class="input-group-addon select-span"></span>
+		         		</div>
+					</div>
+					<div class="form-group">
+						<label for="exampleInputPassword1">接入号码<span class="text-warning">*</span></label>
+						<div class="input-group select-box">
+							<input type="text" id="nbr_btn_${prodId}" class="form-control" readonly="readonly"/> <span
+								class="input-group-btn">
+								<button class="btn btn-default"  onclick="order.phoneNumber.initPage(${prodId},'offer')" type="button">选号</button>
+							</span>
+						</div>
+					</div>
+				    <!-- <div class="form-group">
+						<label for="exampleInputFile">UIM卡号</label>
+						<div class="input-group">
+							<input type="text" class="form-control" id="uim_txt_${prodId}"/> <span
+								class="input-group-btn">
+								<button class="btn btn-default" type="button" onclick="common.callScanning('order.service.scaningCallBack',${prodId})"> 扫描 </button>
+								<button class="btn btn-default" type="button" id= "uim_check_btn_${prodId}" onclick="prod.uim.checkUim(${prodId});">校验</button>
+								<button class="btn btn-default" id="uim_release_btn_${prodId}" onclick="prod.uim.releaseUim(${prodId});"  type="button" disabled>
+									释放</button>
+							</span>
+						</div>
+					</div> -->
+					<div class="form-group">
+						<label for="exampleInputFile">UIM卡<span class="text-warning">*</span></label>
+						<div class="input-group select-box">
+					      <input type="tel" class="form-control uim-pl0" id="uim_txt_${prodId}">
+					      <div class="input-group-btn">
+					        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">操作 </button>
+					        <ul class="dropdown-menu dropdown-menu-right" role="menu">
+					          <li><button class="btn btn-uim" type="button" onclick="common.callScanning('order.service.scaningCallBack',${prodId})"> <span style="float:left;">扫描 </span></button></li>
+					          <li class="divider"></li>
+					          <li><button class="btn btn-uim" type="button" id= "uim_check_btn_${prodId}" onclick="prod.uim.checkUim(${prodId});"><span style="float:left;">校验</span></button></li>
+					          <li class="divider"></li>
+					          <li><button class="btn btn-uim" id="uim_release_btn_${prodId}" onclick="prod.uim.releaseUim(${prodId});"  type="button" disabled="disabled">
+									<span style="float:left;">释放</span></button></li>
+					        </ul>
+					      </div><!-- /btn-group -->
+					    </div><!-- /input-group -->
+					</div>
+					<div id="terminalDiv_${prodId}" style="display: none;">
+	  				</div>
+				</div>
+				</form>
+				<button type="button" onClick="AttachOffer.show(${prodId})"
+					class="btn btn-default btn-block button-right" style="height: 60px; text-align:left;">
+					<span class="title_lv"></span>可选包/功能 <span class="glyphicon glyphicon-chevron-right"
+						aria-hidden="true" style="float: right;"></span>
+				</button>
+				<div class="displaydiv" id="myjbr">
+			     <ul class="list-group">
+  				  <a class="list-group-item" onClick="javascript:mktRes.terminal.showJBR()">
+  					<span class="glyphicon glyphicon-chevron-right pull-right" aria-hidden="true"></span>
+    				<span class="title_lv"></span> 经办人
+  				   </a>
+			     </ul>
+                </div>
+			</div>
+		</div>
+	<#else>
+		<div class="item" id="target_${k}">
+				<div class="panel panel-default panelcon" id="prodinfo_${prodId}">
+					<!-- Default panel contents -->
+				<div class="panel-heading" id=${offerRole.offerRoleId}><span class="title_lv"></span>${prod.offerRoleName}</div>
+				<form>
+				<div class="panel-body" id="item_order_${prodId}">
+					<div class="form-group">
+						<label for="exampleInputPassword1">接入号码<span class="text-warning">*</span></label>
+						<div class="input-group select-box">
+							<input type="text" id="nbr_btn_${prodId}" class="form-control" readonly="readonly"/> <span
+								class="input-group-btn">
+								<button class="btn btn-default"  onclick="order.phoneNumber.initPage(${prodId},'offer')"  type="button">选号</button>
+							</span>
+						</div>
+					</div>
+					<!-- <div class="form-group">
+						<label for="exampleInputFile">UIM卡号</label>
+						<div class="input-group">
+							<input type="text" id="uim_txt_${prodId}" class="form-control"/> <span
+								class="input-group-btn">
+								<button class="btn btn-default" type="button" onclick="common.callScanning('order.service.scaningCallBack',${prodId})"> 扫描 </button>
+								<button class="btn btn-default" id="uim_release_btn_${prodId}" type="button" onclick="prod.uim.checkUim(${prodId});">校验</button>
+								<button class="btn btn-default" id="uim_release_btn_${prodId}" onclick="prod.uim.releaseUim(${prodId});"type="button" disabled>
+									释放</button>
+							</span>
+						</div>
+					</div> -->
+					<div class="form-group">
+						<label for="exampleInputFile">UIM卡号<span class="text-warning">*</span></label>
+						<div class="input-group select-box">
+					      <input type="tel" class="form-control" id="uim_txt_${prodId}">
+					      <div class="input-group-btn">
+					        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">操作 <span class="caret"></span></button>
+					        <ul class="dropdown-menu dropdown-menu-right" role="menu">
+					          <li><button class="btn btn-uim" type="button" onclick="common.callScanning('order.service.scaningCallBack',${prodId})"><span style="float:left;">扫描 </span></button></li>
+					          <li class="divider"></li>
+					          <li><button class="btn btn-uim" type="button" id= "uim_check_btn_${prodId}" onclick="prod.uim.checkUim(${prodId});"><span style="float:left;">校验</span></button></li>
+					          <li class="divider"></li>
+					          <li><button class="btn btn-uim" id="uim_release_btn_${prodId}" onclick="prod.uim.releaseUim(${prodId});" disabled="disabled"  type="button">
+									<span style="float:left;">释放</span></button></li>
+					        </ul>
+					      </div><!-- /btn-group -->
+					    </div><!-- /input-group -->
+					</div>
+				</div>
+				</form>
+				<button type="button" onClick="AttachOffer.show(${prodId})"
+					class="btn btn-default btn-block button-right" style="height: 60px; text-align: left;">
+					<span class="title_lv"></span>可选包/功能 <span class="glyphicon glyphicon-chevron-right"
+						aria-hidden="true" style="float: right;"></span>
+				</button>
+				<br>
+				<br>
+				<br>
+				<br>
+			</div>
+		</div>
+		</#if>
+		<div id="attach_${prodId}" style="display:none"></div>
+		<#assign k = k+1 />	
+		</#list>
+	</#if>
+</#list>
+	
+</#if>

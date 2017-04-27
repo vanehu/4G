@@ -1,0 +1,21 @@
+<@override name="title">
+<#if doCashTypeCd??&&doCashTypeCd=="0">
+充值缴费
+<#else>
+充值冲正
+</#if>
+</@override>
+<@override name="header">
+<#include "/busi-js-tpl.html"/>
+
+</@override>
+<@override name="content">
+<div class="main_div"> 
+	<#include "/bill/cash-charge-content.html" />
+</div>
+</@override>
+<#if Session["_session_portal_type"]?? && Session["_session_portal_type"]=="MVNO" >
+<@extends name="/mvno-template.html"/>
+<#else>
+<@extends name="/content-template.html"/>
+</#if>

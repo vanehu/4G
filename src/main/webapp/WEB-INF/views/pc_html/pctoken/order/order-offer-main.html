@@ -1,0 +1,223 @@
+<@override name="title">中国电信4G营业受理</@override>
+<@override name="header">
+<#include "/pcpublic/busi-js-tpl.html"/>
+</@override>
+
+<@override name="content">
+<!--
+
+//-->
+</script>
+<!--内容-->
+<style>
+
+.contract_list thead {background: white;};
+
+.contract_list {
+text-align: center;
+width: 100%;
+background-color: #FFF;
+};
+
+</style>
+<div class="main_div" style="width:100%;" >
+
+    <div class="main_content" style="">
+        <#if Session["_session_pad_flag"]??&&Session["_session_pad_flag"]=="1">
+            <div>
+                <#else>
+                    <div class="homecon" style="width: 100%; margin-left: 0px;">
+        </#if>
+
+        <div id="div_main_index" class="main_index">
+            <div id="framecenter" style="min-height: 300px;height: auto !important; repeat-x fixed center;" >
+                <div title="可选包">
+                 	<input type="hidden" id="provIsale_" value="${provIsale_}"/>
+                 	<input type="hidden" id="phoneNum_" value="${phoneNum_}"/>
+                 	<input type="hidden" id="custAreaId_" value="${custAreaId_}"/>
+                    <div>
+                        <#include "/pctoken/order/order-offer-template.html"/>
+                    </div>
+
+                    <div class="main_bottom"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--弹出框的内容-->
+<div class="easyDialogdiv" style="width:500px;height:400px;" id="moneyAdd">
+   	<div class="easyDialogclose" id="moneyclose"></div>
+   	<div id="addContent"></div>
+</div>
+<div class="easyDialogdiv" style="width:400px;height:200px;vertical-align: middle;" id="packageTip_dialog" >
+  <div id="infoTipContent" style="height: 200px;"></div>
+</div>
+
+<!-- 带主套餐id下 -->
+<!--弹出框的内容-->
+<div class="easyDialogdiv" style="width:700px;height:200px;" id="offer_dialog" >
+	
+  	<table  class="contract_list rule">
+        <thead>
+            <tr>
+                <td colspan="2" id="offer_title1">套餐变更</td>
+            </tr>                                                    
+        </thead>
+  	</table>
+  	<br/>
+  	<div style="text-align: center;">
+	  <table  class="contract_list rule">
+        <thead>
+            <tr>
+                <td colspan="2" id="offer_title"></td>
+            </tr>                                                    
+        </thead>
+  	</table>
+  	</table>
+	    
+	      	<div align="center" style="margin: 20px auto;">
+	      		<a href="javascript:void(0)" id="offer_btn" class="btna_o"><span>下一步</span></a>
+	      		<a class="btna_o" id="closeBtn" href="javascript:void(0)" style=" margin-left:20px;display: none;" onclick="easyDialog.close()"><span>取消</span></a>
+	      	</div>
+	    </div>
+  	</div>
+</div>
+
+
+<#include "/validate-window.html"/>
+
+<script type="text/javascript">
+	window.onload = function() { 
+		OrderInfo.actionFlag=2;
+		var nextFlag = false;
+	    var mainPhoneNum='${mainPhoneNum}';   //手机号码
+		var isFee='${isFee}';   //是否收费
+        var provIsale='${provIsale}';   //省内订单流水
+        var redirectUri='${redirectUri}';  //回调url地址
+        var reloadFlag='${reloadFlag}'; //是否二次加载
+        var mainProdOfferId="${offid}";//"81008";//'${offid}';  //主套餐id
+        var offerNbr='${offerNbr}';//集团销售品编码
+        var prodOfferName='${prodOfferName}'; //集团销售品名称
+		var data='${orderJson}';   //二次加载数据
+		var mktResInstCode='${mktResInstCode}';//传入uim卡号码
+		var mergeFlag = "${mergeFlag}";
+		var provCustAreaId = "${custAreaId_}";
+		OrderInfo.typeCd="${typeCd}";
+		OrderInfo.verifyLevel='${verifyLevel}';
+		$("#p_cust_areaId").val(provCustAreaId);
+		if(terminalCode!=null && terminalCode!="" && terminalCode!="null"){
+			OrderInfo.terminalCode=terminalCode;
+		}
+		if(mktResInstCode!=null && mktResInstCode!=""){
+			OrderInfo.mktResInstCode=mktResInstCode;
+		}
+		order.memberChange.newSubPhoneNum = "${newSubPhoneNum}";
+		order.memberChange.oldSubPhoneNum = "${oldSubPhoneNum}";
+        $("#p_cust_identityNum").val(mainPhoneNum);
+		OrderInfo.provinceInfo.isFee=isFee;
+		OrderInfo.reloadFlag=reloadFlag;
+		OrderInfo.acctNbr=mainPhoneNum;
+		OrderInfo.provinceInfo.salesCode = "${salesCode}";
+		var terminalCode='${terminalCode}'; //终端串码
+		//终端串码
+		if(terminalCode!=null && terminalCode!="" && terminalCode!="null"){
+			OrderInfo.terminalCode=terminalCode;
+		}
+		//修复，不要去重定义参数，导致参数丢失
+		OrderInfo.provinceInfo.provIsale=provIsale;
+		OrderInfo.provinceInfo.redirectUri=redirectUri;
+		OrderInfo.provinceInfo.isFee=isFee;
+		OrderInfo.provinceInfo.extCustOrderID="";
+		OrderInfo.provinceInfo.mergeFlag = "${mergeFlag}";
+		
+		
+        if(reloadFlag=="N"){
+        	var d=eval("("+data+")");
+        	if(d==null){
+        		$.alertM("提示","没有取到暂存单数据。");
+        		return ;
+        	}else{
+	            var offerid="";  
+	            var phoneNumber="";
+	            for(var i=0;i<d.orderList.custOrderList[0].busiOrder.length;i++){
+	            	var busiOrder=d.orderList.custOrderList[0].busiOrder[i];
+	            	
+	            	if(busiOrder.boActionType.actionClassCd=="1200" && busiOrder.boActionType.boActionTypeCd=="S1" && busiOrder.busiObj.offerTypeCd=="1"){
+	            		offerid=busiOrder.busiObj.objId;
+	            		phoneNumber=busiOrder.busiObj.accessNumber;
+	
+	            		break;
+	            	}
+	            }
+	
+	        	OrderInfo.offid=offerid;
+		    	OrderInfo.reloadFlag=reloadFlag;
+		    	OrderInfo.data=d;
+		    	
+		    	//二次加载，判断是否本类型订单
+		    	var custOrderAttrs=OrderInfo.data.orderList.orderListInfo.custOrderAttrs;
+		    	var is=false;
+		    	
+				$.each(custOrderAttrs,function(){
+				  if(this.itemSpecId=="30010024"){
+				   if(this.value=="2"){
+				        is=true;
+				        return false;
+				    }
+				  }
+				});
+				
+				if(is){
+				   if(mergeFlag=="0"){
+	    	    		order.uiCustes.custQuery();   
+	     		   }else{
+	     			  nextFlag = order.cust.queryCustCompreInfo(mainPhoneNum,provCustAreaId,2,'');
+	     			  if(nextFlag){
+	   			  	  	order.uiCustes.linkQueryOffer();
+	     			  }
+	     		   }
+				}else{
+					 $.alert("提示","不是套餐变更受理流水号，请重试！");
+				}
+        	}
+        }else{
+        	  //带主套餐id1
+        	if(mainProdOfferId!=null && mainProdOfferId!=""){
+    	    	OrderInfo.offid=mainProdOfferId;
+    	    	OrderInfo.reloadFlag=reloadFlag;
+    	    	if(mergeFlag=="0"){
+    	    		order.uiCustes.custQuery();   
+     		   }else{
+     			  nextFlag = order.cust.queryCustCompreInfo(mainPhoneNum,provCustAreaId,2,'');
+     			  if(nextFlag){		
+     				 // oauthTypeStrrder.prodModify.querySecondBusinessAuth('20','Y');
+     				 order.prodModify.querySecondBusinessAuth('1','N');
+     				 }
+     				
+     			  }
+    		}else{
+    			//判断是否使用新接口,0-不调用
+    		   if(mergeFlag=="0"){
+    			   order.uiCusts.custQuery();
+    		   }else{
+    			   nextFlag = order.cust.queryCustCompreInfo(mainPhoneNum,provCustAreaId,2,'');
+    			   if(nextFlag){
+    				   order.prodModify.querySecondBusinessAuth('1','N');
+    			   }
+    		   }
+    		}
+        } 
+	};
+</script>
+
+</@override>
+
+<#if Session["_session_portal_type"]?? && Session["_session_portal_type"]=="MVNO" >
+    <@extends name="/mvno-template.html"/>
+    <#else>
+        <@extends name="/pcpublic/main-template.html"/>
+</#if>
+<#if Session._loginUrl ?? && (Session._loginUrl!="") >
+<iframe style="display:none;"  src='${Session._loginUrl}'></iframe>
+</#if>

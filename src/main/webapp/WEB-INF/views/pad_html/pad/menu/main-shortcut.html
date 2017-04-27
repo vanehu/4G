@@ -1,0 +1,13 @@
+<#if preSetShortCut?? && (preSetShortCut?size > 0)>
+	<#list preSetShortCut as sc>
+<li url="${contextPath}/${sc.menuPath}">
+	<span class="quickimg ${sc.resourcePath}"></span>
+    <p>${sc.resourceName}</p>
+</li>
+	</#list>
+<#else>
+<li ctrl="add">
+	<span class="quickimg icon-q05"></span>
+	<p>添加快捷</p>
+</li>
+</#if>

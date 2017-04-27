@@ -1,0 +1,92 @@
+	<#if code==0>
+	
+	<#elseif validatoResutlMap?? && (validatoResutlMap.ruleMap)?? >
+	<div class="container-fluid">
+		<div class="row">
+			<div class="panel panel-default paneltop">
+				<!-- Default panel contents -->
+				<div class="panel-heading">
+					<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>规则校验提示
+				</div>
+				<div class="panel-body">
+					<p>规则校验未通过</p>
+				</div>
+				<table class="table table-striped table-bordered tablecenter">
+					<thead>
+						<tr>
+							<th>规则编码</th>
+							<th>规则等级</th>
+							<th>校验结果</th>
+						</tr>
+					</thead>
+					<#if (validatoResutlMap.ruleMap.resultInfo)?? && ((validatoResutlMap.ruleMap.resultInfo)?size>0)>
+					<tbody class="panel-group" id="accordion">
+					<#list validatoResutlMap.ruleMap.resultInfo as resultInfo >
+					  <tr>
+			              <td><a data-toggle="collapse" data-parent="#accordion" href="#collapse-${resultInfo_index + 1}" ruleLevel="${flag}">${resultInfo.resultCode}</a></td>
+			              <td>
+			              	<#if (resultInfo.ruleLevel==0)>
+								提示级
+							<#elseif (resultInfo.ruleLevel==1)>
+								中级
+							<#elseif (resultInfo.ruleLevel==2)>
+								高级
+							<#elseif (resultInfo.ruleLevel==3)>
+								特级
+							<#elseif (resultInfo.ruleLevel==4)>
+								限制级
+							</#if>
+			              </td>
+			              <td><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></td>
+			            </tr>
+			            <tr id="collapse-${resultInfo_index + 1}" class="panel-collapse collapse">
+                            <td class="panel-body" colspan="3">
+                               	 ${resultInfo.ruleDesc}
+                            </td>
+                        </tr>
+					</#list>
+					</tbody>
+					</#if>
+				</table>
+			</div>
+		</div>
+	</div>
+	<nav class="navbar navbar-default navbar-fixed-bottom">
+	<div class="container-fluid">
+		<div class="btn-group btn-group-justified navbar-btn" role="group"
+			aria-label="...">
+			<div class="btn-group" role="group">
+				<button type="button" class="btn btn-primary btn-lg" onclick="common.callCloseWebview()">
+					<span class="glyphicon glyphicon-ok" aria-hidden="true"></span> 确定
+				</button>
+			</div>
+		</div>
+	</div>
+	</nav>
+	<#else>
+	<div class="container-fluid">
+		<div class="row">
+			<div class="panel panel-default paneltop">
+				<!-- Default panel contents -->
+				<div class="panel-heading">
+					<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>错误提示
+				</div>
+				<div class="panel-body">
+					<p>${validatoResutlMap.msg}</p>
+				</div>
+			</div>
+		</div>
+	</div>
+	<nav class="navbar navbar-default navbar-fixed-bottom">
+		<div class="container-fluid">
+			<div class="btn-group btn-group-justified navbar-btn" role="group"
+				aria-label="...">
+				<div class="btn-group" role="group">
+					<button type="button" class="btn btn-primary btn-lg" onclick="common.callCloseWebview()">
+						<span class="glyphicon glyphicon-ok" aria-hidden="true"></span> 确定
+					</button>
+				</div>
+			</div>
+		</div>
+	</nav>
+	</#if>

@@ -1,0 +1,48 @@
+<#if prodinstlist?? &&(prodinstlist?size>0)>	
+<!--号码列表-->
+	<table class="contract_list textleft numberList" style="height: 24px;">
+		<thead>
+        	<tr>
+            	<td class="borderLTB" width="10%">&nbsp;</td>
+                <td width="20%">产品号码</td>
+                <td width="20%">产品规格</td>
+                <td width="15%">状态</td>
+                <td width="15%">付费方式</td>
+                <td width="20%">&nbsp;</td>
+            </tr>                                                    
+        </thead>
+		<tbody id="phoneNumList">
+		<#list prodinstlist as item>
+			<tr>
+			    <td></td>
+				<td class="nbr">${item.accNbr}</td>
+				<td>${item.productName}</td>
+				<td>${item.prodStateName}</td>
+				<td>${item.feeType.name}</td>
+				<td><input type="button" value="加入" class="numberSearch" onclick="order.prodModify.addToComp(this);" /></td>
+				<td style="display:none;" id="prodStateCd">${item.prodStateCd}</td>
+				<td style="display:none;" id="prodInstId">${item.prodInstId}</td>
+				<td style="display:none;" id="productId">${item.productId}</td>
+		  </tr>
+		</#list>
+		</tbody>
+	</table>
+<#else>
+	<table class="contract_list textleft numberList" style="height: 24px;">
+		<thead>
+        	<tr>
+            	<td class="borderLTB" width="10%">&nbsp;</td>
+                <td width="20%">产品号码</td>
+                <td width="20%">产品规格</td>
+                <td width="15%">状态</td>
+                <td width="15%">付费方式</td>
+                <td width="20%">&nbsp;</td>
+            </tr>                                                    
+        </thead>
+		<tbody>
+			<tr>
+			    <td colspan="6" style="text-align: center;">没有查到该产品，请重新选择！</td>
+		  	</tr>
+		</tbody>
+	</table>
+</#if>

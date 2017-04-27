@@ -1,0 +1,16 @@
+CTCT02{
+"ContractNumber":"${ContractNumber}",
+"StaffNumber":"${StaffNumber}",
+"StoreNumber":"${StoreNumber}", 
+"DateOfProcessing":"2015/11/10",
+"CustName":"${CustName}",
+"CustomerType":"C",
+"CertType":"${CertType}",
+"CertNumber":"${CertNumber}",
+"ActivationType":"U",
+"BillingAccountNumber":"${BillingAccountNumber}",
+"MobileNumber":"${MobileNumber}",
+"ICCID":"${ICCID}",
+"ChangeUimFee":"0",
+"TotalMoneyNeedToPaid":"0",
+"Currency":"RMB"}

@@ -1,0 +1,51 @@
+<#if code?? && (code>=0) >
+           <table class="numberList" id="tab_orderList" >
+              <thead>
+                <tr>
+                  <td width="20"></td>
+                  <td width="100" align="center">购物车流水</td>
+                  <td width="120" align="center">下单时间</td>
+                  <td width="120" align="center">交易金额</td>
+                  <td width="120" align="center">交易状态</td>
+                </tr>
+              </thead>
+              <tbody>
+              <#if code=0 >
+              <#if (pageModel.list)?? &&((pageModel.list)?size>0) >
+              <#list pageModel.list as order >
+                <tr>
+                  <td>&nbsp;</td>
+                  <td>${order.orderReqNo}</td>
+                  <td>${order.orderDate?datetime('yyyyMMddHHmmss')}</td>
+                  <td>￥${(order.transAmt?number / 100)?string('0.00')}</td>
+                  <td>
+                    <#if order.transStatus?? && order.transStatus == "A">
+                                                            支付中
+                    <#elseif order.transStatus?? && order.transStatus == "B">
+                                                            支付成功
+                    <#elseif order.transStatus?? && order.transStatus == "C">
+                                                            支付失败
+                    <#elseif order.transStatus?? && order.transStatus == "G">
+                                                            订单作废
+                    <#else>
+                                                            未知
+                    </#if>
+                  </td>
+                </tr>
+              </#list>
+              <#else>
+              	<tr><td colspan="5">没有查询到结果</td></tr>
+              </#if>
+              <#else>
+                <tr><td colspan="5">${msg}</td></tr>
+              </#if>
+              </tbody>
+            </table>
+
+            <!--页码-->
+			<@portal.modelPagination pageModel 5 "pay.best.queryOrderList"/>
+			<!--页码 end-->
+
+<script src="${contextPath}/js/our-js/ec.pagination.js?${jsversion}" type="text/javascript"></script>
+
+<#else>-1</#if>

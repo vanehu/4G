@@ -1,0 +1,37 @@
+<#if flag==0>
+<table class="contract_list rule">
+  <thead>
+    <tr>
+      <td>施工单状态</td>
+    </tr>                                                    
+  </thead>
+</table>   
+<table class="com_table cashier_table" style="margin-top:-1px;table-layout:fixed;word-wrap:break-word;word-break:break-all;">
+  <tbody>
+    <tr>
+      <th width="15%" style="border-left:0px;">接入号</th>
+      <th width="15%">渠道</th>
+      <th width="12%">施工环节</th>
+      <th width="12%">施工状态</th>
+      <th width="17%">开始时间</th>
+      <th width="17%">结束时间</th>
+      <th width="12%" style="border-right:0px;">施工人员</th> 
+    </tr>
+    <#list resultList as stateInfo>
+    <tr class="cashier_tr">
+      <td style="text-align:center;" style="border-left:0px;">${stateInfo.accNbr}</td>
+      <td style="text-align:center;">${stateInfo.channelName}</td>
+      <td style="text-align:center;">${stateInfo.segmentName}</td>
+      <td style="text-align:center;">${stateInfo.statusName}</td>
+      <td style="text-align:center;">${stateInfo.beginDate}</td>
+      <td style="text-align:center;">${stateInfo.endDate}</td>
+      <td style="border-right:0px;text-align:center">${stateInfo.workStaffName}</td>
+    </tr>
+    </#list>
+  </tbody>        
+</table> 
+<#elseif flag==1>
+fail
+<#else>
+error
+</#if>

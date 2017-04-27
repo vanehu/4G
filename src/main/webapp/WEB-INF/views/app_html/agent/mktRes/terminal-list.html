@@ -1,0 +1,93 @@
+<!--终端列表-->
+<#if (pageModel.pageNo)?? && (pageModel.pageNo > 1) > 
+	<#list pageModel.list as mkt>
+		<#assign intf_pic = false>
+		<#assign p_pic = ''>
+		<#assign brand = ''>
+		<#assign phoneType = ''>
+		<#assign phoneColor = ''>
+		<#if (mkt.attrList)??>
+			<#list mkt.attrList as attrList>
+				<#if mktResPicUrl?? && (attrList.attrId)?? && (attrList.attrId) =='60019454'>
+					<#assign p_pic = mktResPicUrl+attrList.attrValue>
+					<#assign intf_pic = true>
+				</#if>
+				<#if (attrList.attrId)?? && (attrList.attrId) =='2100161'>
+					<#assign brand = attrList.attrValue>
+				</#if>
+				<#if (attrList.attrId)?? && (attrList.attrId) =='2100162'>
+					<#assign phoneType = attrList.attrValue>
+				</#if>
+				<#if (attrList.attrId)?? && (attrList.attrId) =='17'>
+					<#assign phoneColor = attrList.attrValue>
+				</#if>
+				<#if (attrList.attrId)?? && (attrList.attrId) =='60010005'>
+					<#assign mktSpecCode = attrList.attrValue>
+				</#if>
+			</#list>
+		</#if>
+		<div class="media"  onclick="javascript:mktRes.terminal.selectTerminal(this)" 
+	           	mktResTypeCd="${mkt.mktResTypeCd}" mktResId="${mkt.mktResId}" mktResCd="${mkt.mktResCd}" brand="${brand}" phoneType="${phoneType}" phoneColor="${phoneColor}" mktName="${mkt.mktResName}" mktPrice="${(mkt.salePrice)}" mktPicA="${p_pic}" mktSpecCode="${mktSpecCode}">
+	         <div class="media-left">
+	           <a href="javascript:void(0);">
+	             <img class="media-object" style="width:60px;height:60px;border:1px solid #67bb1b;" src="${p_pic}" alt="${(mkt.mktResName)?default("--")}">
+	           </a>
+	         </div>
+	         <div class="media-body">
+	           <h4 class="media-heading">${(mkt.mktResName)?default("--")} <span class="glyphicon glyphicon-chevron-right pull-right" aria-hidden="true"></span></h4>
+	           	 ￥<#if (mkt.salePrice)?default(0) != 0>${mkt.salePrice / 100}<#else>--</#if>元
+	      </div>
+	     </div>
+	</#list>
+<#else>
+	<#if (pageModel.list)?? &&((pageModel.list)?size>0)>
+		<@portal.scrollPagination "terminal_list" "both" pageModel.totalPages 90 0 "mktRes.terminal.scroll">
+			<#list pageModel.list as mkt>
+				<#assign intf_pic = false>
+				<#assign p_pic = ''>
+				<#assign brand = ''>
+				<#assign phoneType = ''>
+				<#assign phoneColor = ''>
+				<#if (mkt.attrList)??>
+					<#list mkt.attrList as attrList>
+						<#if mktResPicUrl?? && (attrList.attrId)?? && (attrList.attrId) =='60019454'>
+							<#assign p_pic = mktResPicUrl+attrList.attrValue>
+							<#assign intf_pic = true>
+						</#if>
+						<#if (attrList.attrId)?? && (attrList.attrId) =='2100161'>
+							<#assign brand = attrList.attrValue>
+						</#if>
+						<#if (attrList.attrId)?? && (attrList.attrId) =='2100162'>
+							<#assign phoneType = attrList.attrValue>
+						</#if>
+						<#if (attrList.attrId)?? && (attrList.attrId) =='17'>
+							<#assign phoneColor = attrList.attrValue>
+						</#if>
+						<#if (attrList.attrId)?? && (attrList.attrId) =='60010005'>
+							<#assign mktSpecCode = attrList.attrValue>
+						</#if>
+					</#list>
+				</#if>
+				<div id="phone-list-all">
+					<div class="media"  onclick="javascript:mktRes.terminal.selectTerminal(this)" 
+			            	mktResTypeCd="${mkt.mktResTypeCd}" mktResId="${mkt.mktResId}" mktResCd="${mkt.mktResCd}" brand="${brand}" phoneType="${phoneType}" phoneColor="${phoneColor}" mktName="${mkt.mktResName}" mktPrice="${(mkt.salePrice)}" mktPicA="${p_pic}" mktSpecCode="${mktSpecCode}">
+			          <div class="media-left">
+			            <a href="javascript:void(0);">
+			              <img class="media-object" style="width:60px;height:60px;border:1px solid #67bb1b;" src="${p_pic}" alt="${(mkt.mktResName)?default("--")}">
+			            </a>
+			          </div>
+			          <div class="media-body" >
+			            <h4 class="media-heading">${(mkt.mktResName)?default("--")} <span class="glyphicon glyphicon-chevron-right pull-right" aria-hidden="true"></span></h4>
+				           	 ￥<#if (mkt.salePrice)?default(0) != 0>${mkt.salePrice / 100}<#else>--</#if>元
+				      </div>
+				     </div>
+			     </div>
+			</#list>
+		</@portal.scrollPagination>
+	<#else>
+		<div class="media">
+			<img style="vertical-align:middle" src="${contextPath}/image/common/query_search.gif" />&nbsp;&nbsp;抱歉，没有找到相关的手机，请尝试其他筛选条件。
+		</div>
+	</#if>
+</#if>
+<!--终端列表 end--> 

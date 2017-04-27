@@ -1,0 +1,181 @@
+<div class="tab-content">
+	<ul class="list-group" onClick="AttachOffer.initMyfavoriteSpec(-1)">
+		<a class="list-group-item"> <span
+			class="glyphicon glyphicon-chevron-right pull-right"
+			aria-hidden="true"></span> <span class="badge"></span> 我的收藏</a>
+	
+	</ul>
+	<ul class="list-group" onclick="changeIcon(this, 'ydgcx')">
+		<!-- 已订购促销 -->
+		<a id="ydgcx" class="list-group-item" href="#offer_${prodId}" onclick="changeIcon(this, 'ydgcx')" tabindex="-1" data-toggle="tab">
+			已选择促销
+			<span class="glyphicon glyphicon-chevron-right pull-right" aria-hidden="true"></span>
+		</a>
+	</ul>
+	<div class="tab-pane fade" id="offer_${prodId}">
+		<div class="list-group order-list" id="open_ul_${prodId}">
+		 <#if openMap.result??>
+			<#assign openSpecList=openMap.result.offerSpec />
+			<#if openSpecList?? &&(openSpecList?size>0)>	
+				<#list openSpecList as item>
+				<#if item.ifDault==0>
+	      			<a href="javascript:void(0);" id="li_${param.prodId}_${item.offerSpecId}" offerSpecId="${item.offerSpecId}" isdel='N' class="list-group-item" class="abtn03 icon-nodel">&nbsp;<span id="span_${prodId}_${item.offerSpecId}">${item.offerSpecName}</span></a>
+	      		 <#else>
+	      			 <a href="javascript:void(0);" onclick="AttachOffer.delOfferSpec(${prodId},${item.offerSpecId})" id="li_${param.prodId}_${item.offerSpecId}" offerSpecId="${item.offerSpecId}" isdel='N' class="list-group-item">
+			          <span id="span_${prodId}_${item.offerSpecId}">${item.offerSpecName}</span>
+			          <span id="span_remove_${prodId}_${item.offerSpecId}" class="glyphicon glyphicon-remove pull-right" aria-hidden="true"></span>
+			         </a> 
+			         </#if>
+                </#list>
+		    </#if>
+	    </#if>
+		</div>
+	</div>
+	<ul class="list-group" onclick="changeIcon(this, 'yxzgncp')">
+		<!-- 已订购促销 -->
+		<a id="yxzgncp" class="list-group-item" href="#prod_${prodId}" onclick="changeIcon(this, 'yxzgncp')" tabindex="-1" data-toggle="tab">
+			已选择功能产品
+			<span class="glyphicon glyphicon-chevron-right pull-right" aria-hidden="true"></span>
+		</a>
+	</ul>
+	<div class="tab-pane fade " id="prod_${prodId}">
+        <div class="list-group order-list" id="open_serv_ul_${param.prodId}"> 
+        <#if openServMap.result.servSpec??>
+			<#assign openServList=openServMap.result.servSpec />
+			<#if openServList?? &&(openServList?size>0)>	
+				<#list openServList as item>
+				  <#if item.ifDault==0 >
+	      				 <a href="javascript:void(0);" id="li_${prodId}_${item.servSpecId}" offerSpecId="${item.servSpecId}" isdel='N' class="list-group-item" class="abtn03 icon-nodel">&nbsp;
+	      				    <span id="span_${prodId}_${item.servSpecId}">${item.servSpecName}</span
+	      				 ></a>
+	      		  <#else>
+			             <a href="javascript:void(0);"   id="li_${prodId}_${item.servSpecId}" offerSpecId="${item.servSpecId}" isdel='N' class="list-group-item abtn02 icon-del">
+			          <span id="span_${prodId}_${item.servSpecId}">${item.servSpecName}</span>
+			          <span id="span_remove_${prodId}_${item.servSpecId}" onclick="AttachOffer.closeServSpec(${prodId},${item.servSpecId},'${item.servSpecName}','${item.ifParams}')" class="glyphicon glyphicon-remove pull-right" aria-hidden="true"></span>
+			          <#if item.ifParams =="Y" && item.servSpecId?? && item.servSpecId!="">
+		              <p id="can_${prodId}_${item.servSpecId}"  isset="N"  class="abtn01 btn-span" style="display: inline"><button type="button" class="btn btn-info" style="right:40px;width:48px;top:13px;" data-toggle="modal" data-target="#setting" onclick="AttachOffer.showServParam(${prodId},${item.servSpecId});">参</button></p>
+	              </#if>
+			         </a>
+			        </#if> 
+                </#list>
+		    </#if>
+	    </#if>
+        </div>
+    </div>
+	<!-- <ul class="list-group" onclick="changeIcon(this, 'ready_offer')">
+		<a id="ordered_offer" class="list-group-item" href="#prod_${prodId}" onclick="changeIcon(this, 'ready_offer')" tabindex="-1" data-toggle="tab">
+			已选择功能产品
+			<span class="glyphicon glyphicon-chevron-right pull-right" aria-hidden="true"></span>
+		</a>
+	</ul>
+	<div class="tab-pane fade" id="prod_${prodId}">
+        <div class="list-group" id="open_serv_ul_${param.prodId}"> 
+        <#if openServMap.result.servSpec??>
+			<#assign openServList=openServMap.result.servSpec />
+			<#if openServList?? &&(openServList?size>0)>	
+				<#list openServList as item>
+				  <#if item.ifDault==0 >
+	      				 <a href="javascript:void(0);" id="li_${prodId}_${item.servSpecId}" offerSpecId="${item.servSpecId}" isdel='N' class="list-group-item" class="abtn03 icon-nodel">&nbsp;
+	      				    <span id="span_${prodId}_${item.servSpecId}">${item.servSpecName}</span
+	      				 ></a>
+	      		  <#else>
+			             <a href="javascript:void(0);"  onclick="AttachOffer.closeServSpec(${prodId},${item.servSpecId},'${item.servSpecName}','${item.ifParams}')" id="li_${prodId}_${item.servSpecId}" offerSpecId="${item.servSpecId}" isdel='N' class="list-group-item abtn02 icon-del">
+			          <span id="span_${prodId}_${item.servSpecId}">${item.servSpecName}</span>
+			          <span id="span_remove_${prodId}_${item.servSpecId}" class="glyphicon glyphicon-remove pull-right" aria-hidden="true"></span>
+			         </a>
+			        </#if> 
+                </#list>
+		    </#if>
+	    </#if>
+        </div>
+      </div>
+     -->
+	<#if labelMap.result?? &&(labelMap.result?size>1)>
+		<ul class="list-group" onclick="changeIcon(this, 'ready_offer')"> 
+			<!-- 只保留促销 -->
+			<#list labelMap.result as item>
+				<#if item.label == 10001>
+					  <a id="ready_offer" class="list-group-item" href="#orderno_${prodId}"  onclick="OrderInfo.actionFlag=1;AttachOffer.changeLabel(${param.prodId},${param.prodSpecId},${item.label})" tabindex="-1" data-toggle="tab">
+						可订购促销
+						<span class="glyphicon glyphicon-chevron-right pull-right" aria-hidden="true"></span>
+					  </a>
+				</#if>
+			</#list>
+		</ul>
+	</#if>
+	<div class="tab-pane fade" id="orderno_${prodId}">
+      	<div class="panel-body">
+	        <form>
+	            <div class="form-group has-feedback">
+	            <div class="input-group">
+	              <input type="text" class="form-control"id="search_text_${prodId}" name="search_text_${prodId}" aria-describedby="inputSuccess2Status" placeholder="请输入促销包名称">
+	              <span class="input-group-btn">
+                      <button class="btn btn-primary" type="button" onclick="AttachOffer.searchAttachOfferSpec(${prodId},${param.offerSpecId},${param.prodSpecId})"> 搜索 </button>
+                      <button class="btn btn-primary" type="button" onclick="AttachOffer.closeSearchAttach(${prodId})"> 隐藏 </button>
+                  </span>
+                  </div>
+	            </div>
+	        </form>
+        </div>
+        <div id="attach_div_${prodId}" class="list-group" value=""></div>
+        <div class="list-group" id="attachSearch_div_${prodId}"> 
+        </div>
+      </div>
+</div>
+<script>
+	var openMap=${openMapJson};
+	var prodId= ${prodId};
+	var open = {
+		prodId : prodId,
+		specList : []
+	};
+	if(openMap!=undefined && openMap.result!=undefined){
+		open.specList = openMap.result.offerSpec;
+		AttachOffer.openList.push(open);
+		//$.each(openMap.result.offerSpec,function(){
+		//	if(this.ifParams){
+		//		var flag = CacheData.setParam(prodId,this);
+		//		if(flag){
+		//			$("#can_"+prodId+'_'+this.offerSpecId).removeClass("canshu").addClass("canshu2");
+		//		}
+		//	}
+	//	});
+	}
+	
+	var openServMap=${openServMapJson};
+	var openServ = {
+		prodId : prodId,
+		servSpecList : []
+	};
+	if(openServMap!=undefined && openServMap.result!=undefined){
+		openServ.servSpecList = openServMap.result.servSpec;
+		AttachOffer.openServList.push(openServ);
+		//$.each(openServMap.result.servSpec,function(){
+		//	if(this.ifParams){
+		//		var flag = CacheData.setServParam(prodId,this);
+		//		if(flag){
+		//			$("#can_"+prodId+'_'+this.servSpecId).removeClass("canshu").addClass("canshu2");
+		//		}
+		//	}
+		//});
+	}
+	function changeIcon(obj, id) {
+		$(obj).find("span").removeClass().addClass("glyphicon glyphicon-chevron-down pull-right");
+		$("#" + id).find("span").removeClass().addClass("glyphicon glyphicon-chevron-right pull-right");
+	}
+	$("#ydgcx").click(function(){
+  		$("#offer_-1").toggle();
+  		$("#prod_-1").hide();
+  		$("#orderno_-1").hide();
+	});
+	$("#yxzgncp").click(function(){
+  		$("#prod_-1").toggle();
+  		$("#offer_-1").hide();
+  		$("#orderno_-1").hide();
+	});
+	$("#ready_offer").click(function(){
+  		$("#orderno_-1").toggle();
+  		$("#prod_-1").hide();
+  		$("#offer_-1").hide();
+	});
+</script>

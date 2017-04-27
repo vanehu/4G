@@ -1,0 +1,19 @@
+<@override name="title">天翼新装</@override>
+<@override name="header">
+<#include "/busi-js-tpl.html"/>
+
+</@override>
+
+<@override name="content">
+
+<#include "/order-credit-template.html"/>
+
+</@override>
+
+<#if Session["_session_portal_type"]?? && Session["_session_portal_type"]=="MVNO" >
+<@extends name="/mvno-template.html"/>
+<#else>
+<@extends name="/content-template.html"/>
+</#if>
+
+

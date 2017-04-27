@@ -1,0 +1,334 @@
+<script src="${contextPath}/js/busi-js/main/main.js?${jsversion}" type="text/javascript"></script>
+<style type="text/css">
+.bindStyle span {
+	background-color: #d3d8d0;
+	-webkit-border-radius: 5px;
+	height: 26px;
+	margin-top: 1px;
+	font-size: 14px;
+	width: 54px;
+	line-height: 26px;
+	text-align: center;
+	display: inline-block
+}
+
+.bindStyle:hover span
+{ 
+	background-color:#16C413;
+}
+</style>
+<div style="height=35px;" >
+	<div class='allsort'>
+
+		<div class='mt'>营业导航<div class='extra' >&nbsp;</div></div>
+		<div class='mc'>
+			 <div class='item fore'>
+				<span><h3><a href="${contextPath}/main/home">门户首页</a></h3></span>
+			</div> 
+			<!-- 
+			<div class='item fore'>
+				<span><h3><a href="#">营业受理</a></h3><s></s></span>
+				<div class='i-mc'>
+					<div class='close' onclick="$(this).parent().parent().removeClass('hover')"></div>
+					<div class='subitem'>
+						<dl class='fore'>
+							<dt>业务受理</dt>
+							<dd>
+								<em><a href="#">业务受理</a></em>
+								<em><a href="#">撤单</a></em>
+								<em><a href="#">重打回执</a></em>
+								<em><a href="#">异常单释放</a></em>
+								<em><a href="#">新建客户</a></em>
+                             <em><a href="#">终端退换货</a></em>
+							</dd>
+						</dl>
+						<dl>
+							<dt>异地业务</dt>
+							<dd>
+								<em><a href="#">异地补换卡</a></em>
+							</dd>
+						</dl>
+					</div>
+				</div>
+			</div>
+			 -->
+
+        <#if __menuList?? >
+		<#list __menuList as menu1>
+		<#if menu1.isMainMenu="Y" ><!-- 第一层是否展示 -->
+			
+			<#if menu1.menuPath?? && !menu1.menuPath=="" && !menu1.menuPath=="#" >
+				<#if (menu1.menuPath?index_of('http')<0) >
+					<#assign lnk1 = "${contextPath}/${menu1.menuPath}" >
+				<#else>
+					<#assign lnk1 = "${menu1.menuPath}" >
+				</#if>
+			<#else>
+				<#assign lnk1 = "javascript:void(0)" >
+			</#if>
+			
+			
+			<div class='item'>
+				<span><h3><a href="${lnk1}">${menu1.resourceName}</a></h3><#if (menu1.shownum>0) ><s></s></#if></span>
+				
+				<#if (menu1.shownum>0) >
+				
+				
+				<#if menu1.shownum="2" >
+				<div class='i-mc'>
+					<div class='close' onclick="$(this).parent().parent().removeClass('hover')"></div>
+					<div class='subitem'>
+						<#list menu1.childMenuResources as menu2>
+						
+						<#if menu2.menuPath?? && menu2.menuPath!="" && menu2.menuPath!="#" >
+							<#if (menu2.menuPath?index_of('http')<0) >
+								<#assign lnk2 = "${contextPath}/${menu2.menuPath}" >
+							<#else>
+								<#assign lnk2 = "${menu2.menuPath}" >
+							</#if>
+						<#else>
+							<#assign lnk2 = "javascript:void(0)" >
+						</#if>
+						
+						<#if menu2.isMainMenu="Y" >
+						<dl>
+							<dt>${menu2.resourceName}</dt>
+							<dd>
+							<#list menu2.childMenuResources as menu3 >
+	                		<#if menu3.isMainMenu="Y" >
+	                		
+		                	<#if menu3.menuPath?? && menu3.menuPath!="" && menu3.menuPath!="#" >
+								<#if (menu3.menuPath?index_of('http')<0) >
+									<#assign lnk3 = "${contextPath}/${menu3.menuPath}" >
+								<#else>
+									<#assign lnk3 = "${menu3.menuPath}" >
+								</#if>
+							<#else>
+								<#assign lnk3 = "javascript:void(0)" >
+							</#if>
+	                		<em><a href="javascript:void(0)" onclick="main.home.addTab('main_tab_${menu3.resourceId}','${menu3.resourceName}','${lnk3}')">${menu3.resourceName}</a></em>
+	                		
+	                 	    </#if>
+	                 		</#list>
+	                 		</dd>
+						</dl>
+						</#if>
+						</#list>
+					</div>
+				</div>
+				<#elseif menu1.shownum="1" ><!-- 2级菜单 -->
+				<div class='i-mc'>
+					<div class='close' onclick="$(this).parent().parent().removeClass('hover')"></div>
+					<div class='subitem'>
+						<dl class='fore'>
+							<dd>
+								<#list menu1.childMenuResources as menu3 >
+		                		<#if menu3.isMainMenu="Y" >
+		                		<#if menu1.resourceName=="营业报表">
+				                	<#if menu3.menuPath?? && menu3.menuPath!="" && menu3.menuPath!="#" >
+										<#if (menu3.menuPath?index_of('http')<0) >
+											<#assign lnk3 = "${contextPath}/${menu3.menuPath}?Token=${Session['is_report_check_session_key'].Token}&areaId=${Session['is_report_check_session_key'].areaId}&staffId=${Session['_ecs_login_session_key'].staffId}" >
+										<#else>
+											<#assign lnk3 = "${menu3.menuPath}?Token=${Session['is_report_check_session_key'].Token}&areaId=${Session['is_report_check_session_key'].areaId}&staffId=${Session['_ecs_login_session_key'].staffId}" >
+										</#if>
+									<#else>
+										<#assign lnk3 = "javascript:void(0)" >
+									</#if>
+								<#else>
+									<#if menu3.menuPath?? && menu3.menuPath!="" && menu3.menuPath!="#" >
+										<#if (menu3.menuPath?index_of('http')<0) >
+											<#assign lnk3 = "${contextPath}/${menu3.menuPath}" >
+										<#else>
+											<#assign lnk3 = "${menu3.menuPath}" >
+										</#if>
+									<#else>
+										<#assign lnk3 = "javascript:void(0)" >
+								</#if>
+								</#if>
+								
+								<#if menu1.resourceName=="营业报表">
+									<#if menu3_index==0 >
+			                		<!-- <em style="border-left: none" ><a href="${lnk3}">${menu3.resourceName}</a></em> -->
+			                		<em><a <#if menu3.menuPath=="staffMgr/toitms" >target="_blank"</#if> href="#" onclick='header.menu.turnreport("${lnk3}")'>${menu3.resourceName}</a></em>
+			                		<#else>
+			                		<em><a <#if menu3.menuPath=="staffMgr/toitms" >target="_blank"</#if> href="#" onclick='header.menu.turnreport("${lnk3}")'>${menu3.resourceName}</a></em>
+			                		</#if>
+			                	<#else>
+			                		<#if menu3_index==0 >
+			                		<!-- <em style="border-left: none" ><a href="${lnk3}">${menu3.resourceName}</a></em> -->
+			                		<em><a  href="javascript:void(0);" onclick="main.home.addTab('main_tab_${menu3.resourceId}','${menu3.resourceName}','${lnk3}')">${menu3.resourceName}</a></em>
+			                		<#else>
+			                		<em><a  href="javascript:void(0);" onclick="main.home.addTab('main_tab_${menu3.resourceId}','${menu3.resourceName}','${lnk3}')">${menu3.resourceName}</a></em>
+			                		</#if>
+		                		</#if>
+		                		
+		                 	    </#if>
+		                 	    </#list>
+							</dd>
+						</dl>
+					</div>
+				</div>
+				</#if>
+				
+				</#if>
+				
+			</div>
+			
+         </#if>
+		 </#list>
+		 </#if>
+			
+					
+		</div>
+		
+	</div><!--allsort end-->
+    
+    <div class="topuser" id="d_user_menuType" menuType="${Session["_session_portal_type"]}" >
+           <!--  <span onclick="main.home.addTab('main_tab_144','受理订单查询','${contextPath}/report/cartMain?strParam=1')">在途订单数量<a id="total" href="javascript:void(0);" onclick="main.home.addTab('main_tab_144','受理订单查询','${contextPath}/report/cartMain?strParam=1')">${total}</a></span> -->
+            <span><div class="top_user_sprite"></div></span>
+            <span>${Session["_ecs_login_session_key"].staffName}</span>
+            
+            <#if Session["_ecs_login_session_key"].currentChannelId ?? && (Session["_ecs_login_session_key"].currentChannelId!="") >
+             	<span class="topqudao" onclick="header.menu.openChannel()" >
+            	<a id="_session_staff_info" 
+					staffId="${Session["_ecs_login_session_key"].staffId}" 
+					staffCode="${Session["_ecs_login_session_key"].staffCode}" 
+					channelCode="${Session["_ecs_login_session_key"].currentChannelCode}" 
+					staffName="${Session["_ecs_login_session_key"].staffName}" 
+					channelId='${Session["_ecs_login_session_key"].currentChannelId}' 
+					channelName='${Session["_ecs_login_session_key"].currentChannelName}' 
+					areaId='${Session["_ecs_login_session_key"].currentAreaId}'
+					areaCode='${Session["_ecs_login_session_key"].currentAreaCode}'
+					areaName='${Session["_ecs_login_session_key"].currentAreaName}'
+					areaAllName='${Session["_ecs_login_session_key"].currentAreaAllName}'
+					orgId='${Session["_ecs_login_session_key"].orgId}' 
+					operatorsId = '${Session["_ecs_login_session_key"].operatorsId}' 
+					operatorsName = '${Session["_ecs_login_session_key"].currentOperatorsName}' 
+					operatorsNbr = '${Session["_ecs_login_session_key"].currentOperatorsNbr}' 
+					channelType = '${Session["_ecs_login_session_key"].currentChannelType}'
+					idType = '${Session["_ecs_login_session_key"].idType}'
+					isUseGTS = '${Session["_ecs_login_session_key"].isUseGTS}'
+                	 >
+                	${Session["_ecs_login_session_key"].currentChannelName}
+                </a>
+            	</span>
+             <#else>
+             	<span class="topqudao" onclick="" >
+            	<a id="_session_staff_info" 
+					staffId="${Session["_ecs_login_session_key"].staffId}" 
+					staffCode="${Session["_ecs_login_session_key"].staffCode}" 
+					staffName="${Session["_ecs_login_session_key"].staffName}" 
+					channelCode="" 
+					channelId='' 
+					channelName='' 
+					areaId=''
+					areaCode=''
+					areaName=''
+					orgId='${Session["_ecs_login_session_key"].orgId}' 
+					operatorsId = '' 
+					operatorsName = '' 
+					operatorsNbr = ''  >
+                	无受理渠道</a>
+           		</span>
+            </#if>
+            <#if Session["_logoutUrl"] ??&&Session["_logoutUrl"]!="" >
+            	<#if Session["QRCODE_SWITH"]?? && Session["QRCODE_SWITH"] == "ON">
+	            <a href="#" id="bindClick" class="bindStyle"><span>绑定</span></a>
+				<a href="#" id="bindCancel" class="bindStyle"><span>解绑</span></a>
+	            </#if>
+            	<a href="#" onclick="sigleSignLogout('${Session['_logoutUrl']}')"><img src="${contextPath}/image/home/zhuxiao.png" /></a>
+            <#else>
+	            <#if Session["_session_pad_flag"]??&&Session["_session_pad_flag"]=="1">
+	            	<a href="javascript:window.lte.exitSystem();"><img src="${contextPath}/image/home/zhuxiao.png" /></a>
+	            <#else>
+	            	 <#if Session["QRCODE_SWITH"]?? && Session["QRCODE_SWITH"] == "ON">
+	            	 <a href="#" id="bindClick" class="bindStyle"><span>绑定</span></a>
+					 <a href="#" id="bindCancel" class="bindStyle"><span>解绑</span></a>
+	            	 </#if>
+		             <a href="${contextPath}/staff/login/logout"><img src="${contextPath}/image/home/zhuxiao.png" /></a>
+	             </#if>
+            </#if>
+        </div>
+
+
+<!--渠道选择弹窗-->
+<div class="easyDialogdiv" style="width:450px; max-height: 380px;min-height: 250px" id="qudao">
+    <div class="easyDialogclose" id="qudaoclose"></div>
+    <div>
+         <input type="text" class="numberTextBox" id="searchParam" placeholder="请输入搜索关键字"
+         data-validate="validate(required:请输入搜索关键字) on(keyup)" maxlength="100" style="margin-top:0px;">
+         <input type="button" onclick="main.home.searchChannel()" class="purchase" value="搜索">
+    </div>
+    <table class="contract_list">
+            <thead>
+                <tr>
+                    <td>选择渠道</td>
+                    <td>省份</td>
+                    <td>地区</td>
+               </tr>                                                    
+            </thead>
+            <tbody>
+            	<#if Session["_staff_channel"]?? && (Session["_ecs_login_session_key"].currentChannelId!="") >
+				<#list Session["_staff_channel"] as channel>				
+				<tr <#if channel_index%2="1" >class="bg"</#if> >
+					<td class="channel_sel" onclick="header.menu.chooseChannel('${channel.id}')" >
+                  		<dd>
+                  		<i name= "channel_iofo_i" channel_Id ="${channel.id}" channel_Name = "${channel.name}" channel_Nbr = "${channel.chnNbr}" 
+                  		<#if channel.id=Session["_ecs_login_session_key"].currentChannelId >class="select"</#if> ></i>
+			      			${channel.name}
+			    		</dd>
+			    	</td>
+			    	<td class="channel_sel" onclick="header.menu.chooseChannel('${channel.id}')" >
+                  		<dd>
+			      			${channel.cityName}
+			    		</dd>
+			    	</td>
+			    	<td class="channel_sel" onclick="header.menu.chooseChannel('${channel.id}')" >
+                  		<dd>
+			      			${channel.areaName}
+			    		</dd>
+			    	</td>
+				</tr>
+				
+                <!-- 
+                <tr <#if channel_index%2="1" >class="bg"</#if> >
+                  <td class="channel_sel" 
+                  	channelname="${channel.name}" channelid="${channel.id}" agenttypecd="${channel.type}" 
+                  	areaid="${channel.areaId}" areacode="${channel.areaCode}" areaName="${channel.areaName}" 
+                  	onclick="header.menu.chooseChannel(this)" >${channel.name}</td>
+                </tr>
+                <tr class="bg">
+                  <td>XX营业厅</td>
+                </tr>
+                <tr>
+                  <td>XX营业厅</td>
+                </tr>
+                 -->
+                 
+                </#list>
+				</#if>
+            </tbody>
+        </table>
+    </div>
+<!--渠道选择弹窗结束-->
+<!--绑定二维码弹出框-->
+<div class="easyDialogdiv" style="width:300px; max-height: 380px;min-height: 200px" id="qrCodeDialog">
+	<div class="easyDialogclose" id="qrCodeclose"></div>
+	<div style="text-align:center;margin-top:20px;">
+		<!--
+		<div>
+			<span>频道名称：</span>
+			<span></span>
+		</div>
+		-->
+		<a id="qgcode" href="javascript:void(0);"></a>
+		<div>
+			<span>注：请使用翼销售客户端APP进行扫描绑定</span>
+		</div>
+	</div>
+</div>
+
+</div>
+<!-- 置顶公告&弹窗公告&公告详情 -->
+<div class="news" style="float:right;width:100%;">
+</div>

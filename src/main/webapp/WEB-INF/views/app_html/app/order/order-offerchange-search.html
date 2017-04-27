@@ -1,0 +1,136 @@
+<div id="order_prepare">
+	<div class="container-fluid">
+		<div class="row">
+			<div class="row divtab">
+				<div class="col-xs-10">
+					<div class="panel-heading">选择套餐</div>
+				</div>
+				<div class="col-xs-2">
+					<button type="button"
+						class="btn btn-default navbar-btn nav-justified no-mp"
+						data-toggle="modal" data-target="#search-modal">
+						<span class="glyphicon glyphicon-search" aria-hidden="true"></span><br>
+						高级查询
+					</button>
+				</div>
+			</div>
+			<div id="offer-list"></div>
+		</div>
+	</div>
+	<!-- Modal -->
+	<div class="modal fade modal_search" id="search-modal"
+		tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+		aria-hidden="true">
+		<div class="modal_top">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="panel panel-default">
+						<div class="panel-body">
+							<form>
+								<div class="form-group has-feedback">
+									<input type="text" id="qryStr" class="form-control"  style="width: 100%;"
+										aria-describedby="inputSuccess2Status" placeholder="请输入套餐名称">
+									
+								</div>
+								<div class="form-group">
+									<label for="exampleInputEmail1" class="w-100"><span class="title_lv"></span>价格区间（元）</label> 
+									<div class="input-group w-100">
+									<select
+										id="select_price" class="selectpicker show-tick form-control">
+										<option value="">不限</option>
+									</select>
+						            <span class="input-group-addon select-span"></span>
+					         		</div>
+								</div>
+								<div class="form-group">
+									<label for="exampleInputEmail1" class="w-100"><span class="title_lv"></span>语音时长（分钟）</label> 
+									<div class="input-group w-100">
+									<select
+										id="select_invoice"
+										class="selectpicker show-tick form-control">
+										<option value="">不限</option>
+									</select>
+						            <span class="input-group-addon select-span"></span>
+					         		</div>
+								</div>
+								<div class="form-group">
+									<label for="exampleInputEmail1" class="w-100"><span class="title_lv"></span>流量（G）</label> 
+									<div class="input-group w-100">
+									<select
+										id="select_influx" class="selectpicker show-tick form-control">
+										<option value="">不限</option>
+									</select>
+						            <span class="input-group-addon select-span"></span>
+					         		</div>
+								</div>
+							</form>
+						</div>
+						<div class=" divfoot modal-footer">
+							<div class="col-xs-6">
+								<button type="button" class="btn btn-default navbar-btn nav-justified no-mp"
+									onclick="order.service.searchPack(1);" data-target="#attach-modal">
+									<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+									确定
+								</button>
+							</div>
+							<div class="col-xs-6">
+								<button type="button" 
+									class="btn btn-default navbar-btn nav-justified no-mp"
+									data-toggle="modal" data-target="#search-modal">
+									<span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+									关闭
+								</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="modal fade " id="attach-modal" tabindex="-1" role="dialog"
+		aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal_wrapper">
+			<div class="modal-dialog ">
+				<div class="modal-content">
+					<div class="modal-body"><strong>正在查询销售品实例中,请稍后....</strong></div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div id="order" style="display: none;">
+</div>
+<script>
+	//套餐变更初始化
+
+	$(function() {
+		//前置校验
+		var custId = OrderInfo.cust.custId;
+		if (custId != "-1") {
+			//查分省前置校验开关
+			var propertiesKey = "PRECHECKFLAG_"
+					+ (OrderInfo.staff.soAreaId + "").substring(0, 3);
+			var isPCF = offerChange.queryPortalProperties(propertiesKey);
+			if (isPCF == "ON") {
+				if (OrderInfo.preBefore.prcFlag != "Y") {
+					var checkPre = order.prodModify.preCheckBeforeOrder2("1",
+							function() {
+								callback();
+							});
+					if (checkPre) {
+						callback();
+					}
+				}
+			} else {
+				callback();
+			}
+			OrderInfo.preBefore.prcFlag = "";
+		} else {
+			callback();
+		}
+	});
+	function callback() {
+		OrderInfo.order.soNbr = '${soNbr}';
+		offerChange.init();
+	}
+</script>

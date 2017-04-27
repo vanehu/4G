@@ -1,0 +1,65 @@
+<h4>已订购附属业务</h4>
+<#if (provMap.resultCode==0)>	
+<#assign openedList = provMap.result.prodOfferInfos />
+<div id="order_div_${prodId}" class="fs_choosed">
+	<ul id="order_ul_${prodId}">
+	<#if openedList?? &&(openedList?size>0)>	
+		<#list openedList as item>
+		<#if item.state == "DEL" >
+			<li id="li_${prodId}_${item.prodOfferInstId}" offerSpecId="${item.prodOfferId}" offerId="${item.prodOfferInstId}" isdel='N'>
+		        <span class="del">${item.prodOfferName}</span>
+	     	</li>
+		</#if>
+    	</#list>
+	</#if>
+	<#if provMap.resultCode == 1 >
+		${provMap.resultMsg}
+	</#if>
+    </ul>
+    <div class="clear"></div>
+</div>
+</#if>
+
+<#include "/pad/offer/attach-offer-open.html" />
+
+<#include "/pad/offer/attach-search.html" />
+
+<#assign unOpenSpecList=unOpenMap.result.offerSpecList />
+<h4>常用可选附属业务</h4>
+<div id="unopen_div_${prodId}" class="fs_tab">
+    <ul id="common_ul_${prodId}">
+    <#if unOpenSpecList?? && (unOpenSpecList?size>0)>	
+	    <#list unOpenSpecList as item>
+	    		<#assign labelId = 0 />
+	    		<#list item.labels as label>
+	    			<#assign labelId = label.labelId />
+	    		</#list>
+	    		<li id="li_${prodId}_${item.offerSpecId}"  labelId = ${labelId} isdel='N' >
+		    		<dd class="canchoose" onclick="AttachOffer.addParam(${prodId},${item.offerSpecId},'${item.offerSpecName}')"></dd>
+			        <span><a href="javascript:AttachOffer.addParam(${prodId},${item.offerSpecId},'${item.offerSpecName}')" >${item.offerSpecName}</a></span>
+			     </li>
+		</#list>
+	</#if>
+	<#if unOpenMap.resultCode == 1 >
+		${unOpenMap.resultMsg}
+	</#if>
+	</ul>
+	<div class="clear"></div>
+</div>
+
+<div class="height18"></div>
+
+<div id="uimDiv_${prodId}" >
+	<h5 class="s_title">补换卡： </h5>
+	<div class="pdcardcon show" >
+		<ul class="fillin show">
+			<#include "/order/order-uim.html" />
+		</ul>
+	</div>
+</div>
+
+<script>
+	AttachOffer.isChangeUim = 1;
+</script>	
+
+

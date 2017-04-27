@@ -1,0 +1,89 @@
+<div id="order-content">
+<div class="container-fluid">
+	<div class="row">
+		<div class="panel panel-default paneltop">
+			<!-- 套餐名称 -->
+			<#assign offerSpec = main.offerSpec />
+			<div class="panel-heading">
+				原套餐:${main.oldOfferSpecName}</br>
+				新套餐:${offerSpec.offerSpecName}<p>
+			</div>
+			<div id="carousel-example-generic" class="carousel slide">
+				<!-- 图标 -->
+				<ol class="carousel-indicators" id="c-indicators">
+				<#assign memberNum = 0 />
+				<#if main.offerMembers?? &&(main.offerMembers?size>0)>
+					<!-- <#assign i = 0 /> -->
+					<#list main.offerMembers as item>
+					<#if item.objType==2>
+					<#assign memberNum = memberNum+1 />
+					<#if memberNum==1>
+						<li data-target="#carousel-example-generic" id="target-slide-${memberNum}" data-slide-to="0"
+							class="active"></li>
+					<#else>
+						<li data-target="#carousel-example-generic" id="target-slide-${memberNum}" data-slide-to="${memberNum-1}"></li>
+					</#if>
+					</#if>
+					</#list>
+				</#if>
+				<#if (main.newnum?number>0)>
+					<#list offerSpec.offerRoles as offerRole>	
+						<#if (offerRole.prodInsts?? && offerRole.prodInsts?size>0)>
+							<#list offerRole.prodInsts as prod>
+								<#if prod.memberRoleCd==401 && prod.accessNumber==undefined>
+									<#assign memberNum = memberNum+1 />
+									<li data-target="#carousel-example-generic" id="target-slide-${memberNum}" data-slide-to="${memberNum-1}"></li>
+								</#if>
+							</#list>
+						</#if>
+					</#list>
+				</#if>
+				<#if (main.oldnum?number>0)>
+					<#list main.oldprodInstInfos as prodinfos>
+						<#list main.oldoffer as offerinst>
+							<#if prodinfos.accNbr==offerinst.accNbr>
+								<#list offerinst.offerMemberInfos as Member>
+									<#if Member.objType==2>
+									<#assign memberNum = memberNum+1 />
+										<li data-target="#carousel-example-generic" id="target-slide-${memberNum}" data-slide-to="${memberNum-1}"></li>
+									</#if>
+								</#list>
+							</#if>
+						</#list>
+					</#list>
+				</#if>
+				</ol>
+				<!-- 产品信息-->
+				<div class="carousel-inner">
+					<#include "/apptoken/order/attach-offer-templatesub.html"/>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<nav class="navbar navbar-default navbar-fixed-bottom" id="nextNav">
+	<div class="container-fluid">
+		<div class="btn-group btn-group-justified navbar-btn" role="group"
+			aria-label="...">
+			<div class="btn-group" role="group">
+				<button type="button" class="btn btn-info btn-lg" id="fillNextStep">
+					下一步
+					<span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span>
+				</button>
+			</div>
+		</div>
+	</div>
+</nav>
+</div>
+<!-- 订单确认页面、收银台页面 -->
+<div id="order-confirm" style="display: none;">
+</div>
+<!-- 回执内容显示页面 -->
+<div id="order-print" style="display: none;">
+</div>
+<!-- 协销人展示 -->
+<div id="order-dealer" style="display: none;">
+	<@block name="dealer">
+		<#include "/apptoken/order/order-dealer.html" />
+	</@block>
+</div>

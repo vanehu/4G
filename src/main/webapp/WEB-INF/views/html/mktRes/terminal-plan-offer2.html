@@ -1,0 +1,102 @@
+<div class="main_warp">
+	<div id="phone_warp_id" class="phone_warp">
+		<!--合约计划-->
+		<#if aoList?? >
+		<div class="contract_content">
+			<div class="contract_nav" id="contract_nav_agreement">
+				<ul style="float:left;">
+					<#list aoList as item>
+						<li itemIndex="${item_index}" id="tab_${item_index}" <#if item_index==0>class="current"</#if>>
+							<#if agreementType==1>
+							<span>${item.period}%机补</span>
+							<#else>
+							<span>${item.period}%话补</span>
+							</#if>
+						</li>
+					</#list>
+				</ul>
+			</div>
+			<!-- 公用内容切换部分 -->
+			<#list aoList as item>
+			<div class="contract_tab_content" id="tab_content_${item_index}" style="display:none;">
+				<table class="contract_list" >
+					<thead>
+						<tr>
+							<td class="borderLTB">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+							<td style="width:200px;">合约名称</td>
+							<td>首月返还（元）</td>
+							<td>每月返还（元）</td>
+							<td>尾月返还（元）</td>
+							<td>购机优惠价（元）</td>
+							<td class="borderRTB">应预存话费（元）</td>
+						</tr>
+					</thead>
+					<tbody id="contract_tab_panel_tbody">
+					<#list item.subList as subItem>
+						<tr offerSpecId="${subItem.offerSpecId}"
+							offerSpecName="${subItem.offerSpecName}"
+							agreementType="${agreementType}"
+							agreementPeriod="${subItem.agreementPeriod}"
+							agreementPrice="${subItem.agreementPrice}"
+							terminalSubsidyPrice="${subItem.terminalSubsidyPrice}"
+							storedCalls="${subItem.storedCalls}"
+							subsidyAmount="${subItem.subsidyAmount}"
+							permonthReturn="${subItem.permonthReturn}"
+							firstmonthReturn="${subItem.firstmonthReturn}"
+							lastmonthReturn="${subItem.lastmonthReturn}">
+							<td><i class="open_close"></i></td>
+							<td>${subItem.offerSpecName!""}</td>
+							<td><#if (subItem.firstmonthReturn)??>${(subItem.firstmonthReturn)?number / 100}</#if></td>
+							<td><#if (subItem.permonthReturn)??>${(subItem.permonthReturn)?number / 100}</#if></td>
+							<td><#if (subItem.lastmonthReturn)??>${(subItem.lastmonthReturn)?number / 100}</#if></td>
+							<td><#if (subItem.terminalSubsidyPrice)??>${(subItem.terminalSubsidyPrice)?number / 100}</#if></td>
+							<td><#if (subItem.storedCalls)??>${(subItem.storedCalls)?number / 100}</#if></td>
+						</tr>
+					</#list>
+					</tbody>
+				</table>
+			</div>
+			</#list>
+			<!-- 公用内容切换部分 end -->
+		</div>
+		<!--合约计划 end-->
+		</#if>
+	</div>
+</div>
+<!--新主副卡弹窗 BEGIN-->
+<div class="easyDialogdiv" style="width:481px;height:300px;" id="termOfferSpecNew">
+  <div class="easyDialogclose" id="termOfferSpecClose"></div>
+  <h5 class="s_title">选择销售品构成</h5>
+  <div class="form-content" id="rolesdiv">
+  </div>
+
+  <!--上下步按钮-->
+  <div align="center" style="margin: 20px auto;">
+    <a id="termOfferSpecConfirm" class="btna_o" href="javascript:void(0)"><span >确认</span></a>
+    <a id="termOfferSpecCancel" class="btna_o" style="margin-left:20px;" href="javascript:void(0)"><span>取消</span></a>
+  </div> 
+</div>
+<!--主副卡弹窗 END-->
+<!--主副卡弹窗 BEGIN
+<div class="easyDialogdiv" style="width:481px;height:300px;" id="termOfferSpec">
+  <div class="easyDialogclose" id="termOfferSpecClose"></div>
+  <h5 class="s_title">选择销售品构成</h5>
+
+  <div class="height18"></div>    
+  <ul class="fillin show">
+  	<h5 class="s_title">选择副卡个数</h5>
+    <li id="termOfferSpecViceLi">
+    	<a class='add'></a>
+    	<input type='text' value='0' class='numberTextBox width22' disabled='disabled'>
+    	<a class='add2'></a>
+    	<i class="addinfo"></i>
+    </li>
+    <div class="clear"></div>
+  </ul>
+
+  <div align="center" style="margin: 20px auto;">
+    <a id="termOfferSpecConfirm" class="btna_o" href="javascript:void(0)"><span >确认</span></a>
+    <a id="termOfferSpecCancel" class="btna_o" style="margin-left:20px;" href="javascript:void(0)"><span>取消</span></a>
+  </div> 
+</div>-->
+<!--主副卡弹窗 END-->

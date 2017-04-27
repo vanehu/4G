@@ -1,0 +1,63 @@
+<@override name="title">星光计划</@override>
+<@override name="header">
+	<script src="${contextPath}/js/4g-js/order/orderInfo.js" type="text/javascript"></script>
+	<style>
+		/*重写样式 */
+		.order .order_nav_ul {
+			padding: 35px 0 20px 0;
+		}
+		.order .order_nav_ul li a {
+			font-size: 18px;
+		    text-indent: 0%;
+		    height: 100px;
+		    line-height: 100px;
+		    width: 18%;
+		    margin: 0 15px
+		}
+		.order .plan_desc {
+			margin: 0 auto;
+			width: 55%;
+		}
+		.order .plan_desc div {
+			text-indent: 2em;
+			margin-bottom: 10px;
+		}
+	</style>
+</@override>
+<@override name="content">
+<div class="main_div">
+	<div class="main_warp">
+		<h2 class="h2_title">星光计划</h2>
+		<div class="order">
+			<ul class="order_nav_ul" id="order_nav">
+              	<li onclick="location.href='toAdvice'">
+					<a href="javascript:void(0)">提交系统优化建议</a>
+				</li>
+				<!-- 
+				<li onclick="location.href='toVote'">
+					<a href="javascript:void(0)">优化建议投票</a>
+				</li>
+				<li onclick="location.href='toPraise'">
+					<a href="javascript:void(0)">上线功能评价</a>
+				</li>
+				-->
+            </ul>
+            <div class="plan_desc">
+            	活动背景：
+            	<div>
+            		每位一线营业操作人员都是一颗星，都有自己的光与热。“星光行动”就是让每一位集约系统使用者充分发挥自己的能量，主动向集团公司提出集约CRM系统优化建议。所有优化建议将采取投票的方式进行评比；对得票最多的优化建议，集团公司将优先实现，并对建议提出者进行表彰。
+            	</div>
+				优化建议范围：
+				<div>
+					包括界面文字表述、提示信息可读性优化、菜单优化、 操作方法优化等。优化建议不包括业务需求及系统BUG，如涉及业务流程与规则优化的，按中国电信〔2015〕22号文规定的移动业务集约系统需求管理流程处理；与咨询报障、系统BUG相关的，按照两级IT事件流程处理。
+				</div>
+            </div>
+		</div>
+	</div>
+</div>
+</@override>
+<#if Session["_session_portal_type"]?? && Session["_session_portal_type"]=="MVNO" >
+<@extends name="/mvno-template.html"/>
+<#else>
+<@extends name="/content-template.html"/>
+</#if>

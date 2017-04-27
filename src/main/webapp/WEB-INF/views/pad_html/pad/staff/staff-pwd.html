@@ -1,0 +1,72 @@
+<@override name="title">密码修改</@override>
+<@override name="header">
+<script src="${contextPath}/js/busi-js/staff/staffMgr.js?${jsversion}" type="text/javascript"></script>
+</@override>
+<@override name="content">
+<div class="main_div" id="main_content">
+	<div class="main_warp">
+		<div class="order_confirmation">
+			<h2 class="h2_title">密码修改</h2>
+			<div class="main_body"> 				
+                <label id="msg" style="display:none;margin-left:100px;color:red;"></label>                  
+				<div class="infoBox">
+				<form id="staffPwdForm">
+				    <div class="ui-grid-a">
+				    <div class="ui-block-a">
+				      <div class="ui-grid-b">
+				        <div class="ui-block-a">
+				          <label for="recommend"><font>*</font>旧密码：</label>
+				        </div>
+				        <div class="ui-block-b">
+							<input type="password" id="password" placeholder="请输入旧密码"  data-validate="validate(required:旧密码不能为空) on(blur)" class="inputWidth228px" maxlength="6"/>
+				        </div>
+				        <div class="ui-block-c"> </div>
+				      </div>
+				    </div>
+				    <div class="ui-block-a">
+				      <div class="ui-grid-b">
+				        <div class="ui-block-a">
+				          <label for="recommend"><font>*</font>新密码：</label>
+				        </div>
+				        <div class="ui-block-b">
+							<input type="password" id="newPassword" placeholder="请输入新密码"  data-validate="validate(required:密码不能为空,checkLen:密码必须为{arg1}位.(6),isSimplePwd:密码强度太低，至少包含一位数字和字母) on(blur)" class="inputWidth228px" maxlength="6"/>
+				        </div>
+				        <div class="ui-block-c"> </div>
+				      </div>
+				    </div>
+				    <div class="ui-block-a">
+				      <div class="ui-grid-b">
+				        <div class="ui-block-a">
+				          <label for="recommend"><font>*</font>确认新密码：</label>
+				        </div>
+				        <div class="ui-block-b">
+							<input type="password" id="confirm_password" placeholder="请输入确认密码"  data-validate="validate(depEq:两次密码必须一致(newPassword)) on(blur)" class="inputWidth228px" maxlength="6"/>
+				        </div>
+				        <div class="ui-block-c"> </div>
+				      </div>
+				    </div>       
+					<div class="ui-block-a">
+				      <div class="ui-grid-b">
+				        <div class="ui-block-a">
+				  			<button id="btn_staffPwd_submit" onclick="javascript:void(0);" data-inline="true" data-icon="prev">提交</button>
+				        </div>
+				        <div class="ui-block-c"> </div>
+				      </div>
+				    </div>    				     
+				  </div>	
+				  	<div data-role="footer" data-position="fixed" data-tap-toggle="false" data-theme="n">
+
+					</div>				
+				</form>
+				</div>
+
+			</div>
+		</div>
+	</div>
+</div>
+</@override>
+<#if Session["_session_portal_type"]?? && Session["_session_portal_type"]=="MVNO" >
+<@extends name="/mvno-template.html"/>
+<#else>
+<@extends name="/public/main-template.html"/>
+</#if>
