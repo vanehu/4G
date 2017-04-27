@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="CtgPrintAgreementTerminal" language="groovy" pageWidth="550" pageHeight="842" columnWidth="550" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="agr_title" fontName="黑体" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
+	<style name="agr_content" fontName="黑体" fontSize="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H">
+		<paragraph lineSpacing="Proportional" lineSpacingSize="1.2"/>
+	</style>
+	<field name="custName" class="java.lang.String"/>
+	<field name="accessNumber" class="java.lang.String"/>
+	<field name="offerSpecName" class="java.lang.String"/>
+	<field name="offerSpecDesc" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="600" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="550" height="55"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="黑体" size="16" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
+				</textElement>
+				<text><![CDATA[中国电信股份有限公司北京分公司
+ 手机补贴通用范本协议书]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="agr_content" x="0" y="68" width="70" height="13"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="黑体"/>
+				</textElement>
+				<text><![CDATA[甲方（用户）：]]></text>
+			</staticText>
+			<textField>
+				<reportElement style="agr_content" x="70" y="68" width="480" height="13">
+					<printWhenExpression><![CDATA[$F{custName}!=null]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="黑体" isUnderline="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{custName}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement style="agr_content" x="0" y="81" width="550" height="26"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="黑体"/>
+					<paragraph lineSpacing="Proportional" lineSpacingSize="1.3"/>
+				</textElement>
+				<text><![CDATA[乙方：中国电信股份有限公司北京分公司
+    为保证甲乙双方权益，甲乙双方就以下活动相关事宜达成以下合作协议，供双方共同遵守：
+]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="agr_content" x="0" y="107" width="80" height="13"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="黑体"/>
+				</textElement>
+				<text><![CDATA[促销活动名称]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="agr_content" x="275" y="107" width="85" height="13"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="黑体"/>
+				</textElement>
+				<text><![CDATA[参加活动号码]]></text>
+			</staticText>
+			<textField>
+				<reportElement style="agr_content" x="80" y="107" width="195" height="13">
+					<printWhenExpression><![CDATA[$F{offerSpecName}!=null]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="黑体" isUnderline="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{offerSpecName}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="agr_content" x="360" y="107" width="190" height="13">
+					<printWhenExpression><![CDATA[$F{accessNumber}!=null]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="黑体" isUnderline="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{accessNumber}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement style="agr_content" x="0" y="120" width="80" height="26"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="黑体"/>
+				</textElement>
+				<text><![CDATA[促销内容描述]]></text>
+			</staticText>
+			<textField>
+				<reportElement style="agr_content" x="80" y="120" width="470" height="26">
+					<printWhenExpression><![CDATA[$F{offerSpecDesc}!=null]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Top">
+					<font fontName="黑体" isUnderline="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{offerSpecDesc}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement style="agr_content" x="0" y="146" width="550" height="454"/>
+				<textElement>
+					<font fontName="黑体"/>
+					<paragraph lineSpacing="Proportional" lineSpacingSize="1.3"/>
+				</textElement>
+				<text><![CDATA[一、甲方参加中国电信股份有限公司北京分公司的终端补贴活动，并约定在网期限及相关预存款、话费消费的要求，即可获赠一定金额的“终端补贴款”（抵用购机款）。若选购高于“抵用购机款”的手机，您需缴纳购机差价。
+二、北京地区正品天翼3G手机可参加活动，甲方当厅购买手机凭串码当天进行验证，决定可获得的“终端补贴款”及“赠送话费”。具体机型及串码以中国电信股份有限公司北京分公司数据信息为准。
+三、本协议中月最低消费额指：甲方在执行标准资费或乙方认可的优惠资费标准下，每个月使用乙方业务产生的，除国际长途费、国际漫游费、无线宽带费以及由乙方代收的、归属于内容服务商的声讯费和信息费以外的其他使用费应达到的最小金额。
+四、本协议中约定消费总额指：自参加本次活动次月起约定在网期限内，甲方在执行标准资费或乙方认可的优惠资费标准下，每个月使用乙方业务产生的，除国际长途费、国际漫游费、无线宽带费以及由乙方代收的、归属于内容服务商的声讯费和信息费以外的其他使用费应达到的的总金额。
+五、办理总额考核型补贴政策，乙方受理本协议约定业务的当月，乙方按甲方产生的实际使用费计收，从次月开始至实交使用费达到约定消费总额止，每月考核甲方月最低消费额。甲方每月实际发生的使用费小于约定的月最低消费额，乙方按约定的月最低消费额扣除甲方的预存使用费；甲方每月实际发生的使用费超出月最低消费额，乙方按实际使用费扣除甲方的预存使用费。
+六、办理分月考核型补贴政策，乙方受理本协议约定业务的当月，乙方按甲方实际产生的使用费计收，从次月开始至约定在网期限结束，每月考核甲方月最低消费额。甲方每月实际发生的使用费小于约定的月最低消费额，甲方应按约定的月最低消费额向乙方交费；甲方每月实际发生的使用费超出月最低消费额，甲方按实际使用费向乙方交费。
+七、乙方每月将从甲方预存的使用费中扣除月使用费，在预存使用费扣完后，甲方须按时到乙方交费网点交纳使用费。若甲方没有按时交纳使用费，乙方将做停机处理，且乙方有权每日按欠费金额的3‰向甲方收取违约金；若甲方欠费三个月，乙方将对上述号码进行销号，并有权继续追缴甲方欠费、违约金及约定消费总额与实交使用费总额的差额部分。
+八、根据乙方所参加活动，预存话费（赠送话费）可以分为一次性到账话费与分月到账话费，均从用户办理租机成功后的次月开始返还。
+九、预存话费的抵扣范围与月最低消费相同；赠送话费可以抵扣除国际长途费、国际漫游费、无线宽带费、短信套餐费以及由乙方代收的、归属于内容服务商的声讯费和信息费以外的其他使用费，赠费限当月使用，不能向次月累计。
+十、在本协议有效期内，甲方不能离网、过户或提前终止本协议。
+十一、在本协议有效期内，甲方也不能享受和参加乙方推出的其他终端补贴、积分政策及各类优惠活动（乙方规定甲方可参加的特殊活动除外）。
+十二、在本协议有效期内，甲方主动申请停机或因欠费停机，停机期间使用费按月最低消费额收取。
+十三、在本协议有效期内，如甲方向乙方购买的手机丢失或坏损，甲方需自行解决手机终端问题，并继续履行本协议中要求的月最低消费额及约定消费总额。
+十四、自本业务受理次月起在约定消费期限内，乙方实交使用费总额达到约定消费总额后，本协议自动终止。甲方可选择乙方其他套餐服务。
+十五、在本协议有效期内，因国家规定的移动通信资费标准发生变化，本协议第二、三、四、五款之规定不变。
+十六、本协议未尽事宜，甲乙双方另行协商解决，并签订书面补充协议。
+十七、因本协议产生的一切争议，双方应友好协商解决。协商不成时，任何一方均可向北京仲裁委员会提起仲裁解决，仲裁裁决是终局的，对双方均有约束力。
+十八、本协议自甲方签字或盖章、乙方盖章之日起生效。本协议一式两份，甲乙双方各执一份，具有同等法律效力。
+]]></text>
+			</staticText>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

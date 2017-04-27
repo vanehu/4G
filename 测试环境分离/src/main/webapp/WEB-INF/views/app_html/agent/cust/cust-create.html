@@ -1,0 +1,127 @@
+
+<meta charset="utf-8">
+   		<div class="container-fluid">
+   			<div class="row">
+				<div class="panel panel-default paneltop"> 
+			<!-- Default panel contents -->
+					<div class="panel-heading">客户信息</div>
+			           <div class="panel-body">
+			           <button id="passcust" style="display:none;" type="button" onClick="javascript:mktRes.terminal.passcust()" class="btn btn-info btn-group-justified">跳过客户信息填写</button>
+			<div class="form-group">
+				<label for="idtype"></label>
+				<div class="btn-group btn-group-justified" data-toggle="buttons" id="">
+					<a class="btn btn-default active" id="gouhyj" onclick = "javascript:mktRes.terminal.newCClick($(this))">
+						<input type="radio" name="khdw" value="1" checked="checked"> 新建客户
+					</a>
+					<a class="btn btn-default" id="laokhdw" onclick = "javascript:mktRes.terminal.oldCClick($(this))">
+						<input type="radio" name="khdw" value="2"> 客户定位
+					</a>
+				</div>
+			</div>
+			<div id="newc">
+			<form id="custFormdata" method="post" >
+			<input type="hidden" id="cmPartyTypeCd" value="1"/>
+			<input type="hidden" id="boCustIdentities" />
+			<input type="hidden" id="flag" value="real"/>
+			
+			<div class="form-group" id="div-readcmcustidcard">
+				<div style="display:inline;"><label for="username">证件扫描</label></div>
+				<div style="display:inline;">
+					<ul style="list-style-type:none;display:inline;">
+		            	<li style="display:inline;"><img onClick="common.callGenerationRec('cust.getGenerationInfos','1')" style=" height: 40px; margin-left: 15px;"src="${contextPath}/image/app-image/shebeisaomiao-xxhdpi_03.png"/></li>
+		            	<li id="nfc-n" style="display:inline;"><img onClick="common.callGenerationRec('cust.getGenerationInfos','2')" style=" height: 40px; margin-left: 15px;" src="${contextPath}/image/app-image/shebeisaomiao-xxhdpi_05.png"/></li>
+		            	<li id="otg-n" style="display:inline;"><img onClick="common.callGenerationRec('cust.getGenerationInfos','3')" style=" height: 40px; margin-left: 15px;" src="${contextPath}/image/app-image/otg@2x_03.png"/></li>
+		            </ul>
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="cmCustName">客户姓名<span class="text-warning">*</span></label>
+            	<input type="text" class="form-control" id="cmCustName"  maxlength="100" name="cmCustName" placeholder="请输入客户姓名">
+			</div>
+			<div class="form-group" id="div_cm_identidiesType">
+				<input type="hidden" id="currentCT" value="${currentCT}"/><!-- 渠道类型 -->
+	            <label for="cm_identidiesTypeCd">证件类型</label>
+	            <select id="cm_identidiesTypeCd" class="myselect form-control" onchange="cust.identidiesTypeCdChoose(this)">
+	            </select>
+         	</div>
+			<div class="form-group" id="div-cmcustidcard">
+				<label for="cmCustIdCard">证件号码<span class="text-warning">*</span></label>
+	                <input type="text" class="form-control" id="cmCustIdCard" name="cmCustIdCard" maxlength="50" placeholder="请输入证件号码">
+			</div>
+			<!--<div class="form-group feedback-btn1" style="width:13%;margin-top: 25px;display: block;float: left;" id="div-readcmcustidcard">
+			         <span class="input-group-btn">
+	                      <button class="btn btn-info" onClick="common.callGenerationRec('cust.getGenerationInfos')" type="button"> 读卡 </button>
+	                 </span>
+			</div>
+			-->
+			<div style="clear:both"></div>
+			<div class="form-group" id="div-cmcustidcard-none" style="display: none;">
+				<label for="cmCustIdCard">证件号码<span class="text-warning">*</span></label>
+            	<input type="text" class="form-control" id="cmCustIdCardOther" name="cmCustIdCardOther" maxlength="50" placeholder="请输入证件号码" >
+			</div>
+			<div class="form-group">
+				<label for="cmAddressStr">证件地址<span class="text-warning">*</span></label>
+            	<input type="text" class="form-control" id="cmAddressStr" name="cmAddressStr" maxlength="200" placeholder="请输入证件地址">
+			</div>
+			<div class="form-group" style="display: none;">
+	           <label for="telNumber">联系电话</label>
+	           <input type="text" class="form-control" id="telNumber" placeholder="请输入电话">
+	         </div>
+			<div class="form-group" style="display: none;">
+				<label for="mailAddressStr">通讯地址</label>
+            	<input type="text" class="form-control" id="mailAddressStr" name="mailAddressStr" maxlength="200" placeholder="请输入通讯地址" >
+			</div>
+			<div class="form-group" >
+				<label for="mailAddressStr">联系人</label>
+            	<input type="text" class="form-control" id="contactName" name="contactName" maxlength="100" placeholder="请输入联系人" >
+			</div>
+			<div class="form-group">
+	           <label for="mailAddressStr">联系人手机</label>
+	           <input type="text" class="form-control" id="mobilePhone" name="mobilePhone" maxlength="11" placeholder="请输入联系人手机">
+	         </div>
+			<div class="form-group" >
+				<label for="mailAddressStr">联系地址</label>
+            	<input type="text" class="form-control" id="contactAddress" name="contactAddress" maxlength="200" placeholder="请输入联系地址" >
+			</div>
+			</form>
+		<nav class="navbar navbar-default navbar-fixed-bottom">
+			<div class="container-fluid">
+				<div class="btn-group btn-group-justified navbar-btn" role="group" aria-label="...">
+					<div class="btn-group" role="group">
+						<button type="button" class="btn btn-primary btn-lg" id="newCustBtn">
+							<span class="glyphicon glyphicon-ok" aria-hidden="true"></span> 下一步
+						</button>
+					</div>
+				</div>
+			</div>
+		 </nav>
+		</div>
+		<div id="oldc" style="display: none;">
+			<#include "/agent/cust/cust-query.html" />
+		</div>
+		</div>
+         </div>
+         </div>
+         </div>
+    
+ 
+  
+<script type="text/javascript">
+ 	cust.initNewCust();
+ 	var ua = navigator.userAgent.toLowerCase();	
+	if (/iphone|ipad|ipod/.test(ua)) {
+		$("#nfc-n").hide();
+		$("#otg-n").hide();
+		    //alert("iphone");		
+	} else if (/android/.test(ua)) {
+		    //alert("android");	
+	}
+ 	/* OrderInfo.cust=${custInfo};//客户定位信息 */
+	/* OrderInfo.order.soNbr='${soNbr}';
+	order.prodModify.choosedProdInfo=${chooseProdInfo};//选中的产品信息 
+	//$("#phonenumber").val(order.prodModify.choosedProdInfo.accNbr);
+	OrderInfo.staff=${staffInfo};//员工登录信息
+	OrderInfo.cust=${custInfo};//客户定位信息
+	order.prodModify.validatorForm();
+	order.prodModify.getIdentidiesTypeCd();//初始化证件类型 */
+</script>

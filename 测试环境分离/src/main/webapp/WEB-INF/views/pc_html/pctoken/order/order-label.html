@@ -1,0 +1,12 @@
+<div class="ordernav" style="position:absolute">
+	<ul class="ordertab">
+		<#list 1..main.offerNum as n>
+		<li order=${n}>订单${n}<img width="22" height="16"
+			src="${contextPath}/image/common/ordertab_delete.png"></li>
+		</#list>
+		<div class="clear"></div>
+	</ul>
+	<div class="order_copy" style="display:none">
+		<a onclick="order.main.copyOrder(this)" href="#" class="purchase" id="order_2_main_nbr_btn" style='float:right'>复制订单</a>
+	</div>
+</div>

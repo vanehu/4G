@@ -1,0 +1,289 @@
+<div  id ="terminalMain">
+	<div class="panel panel-default paneltop"> 
+      <!-- Default panel contents -->
+      <div class="panel-heading">${(mktRes.mktResName)?default('')}</div>
+     </div>
+     <form>
+		<div class="container-fluid">  
+			<div class="form-group" data-toggle="buttons">
+			<#if mktResList?? &&(mktResList?size>0)>
+				<label for="username">颜色</label>
+			<#assign count = 0>
+            <#list mktResList as mkt>
+				<#assign contractFlag = mkt.contractFlag>
+				<#assign mktResId = mkt.mktResId>
+				<#assign mktResName = (mkt.mktResName)?default("--")>
+				<#assign mktResTypeCd = mkt.mktResTypeCd>
+				<#if (mkt.salePrice)?default(0) != 0>
+					<#assign mktSalePrice = (mkt.salePrice / 100)>
+				<#else>
+					<#assign mktSalePrice = '--'>
+				</#if>
+				<#assign flag = true>
+				<#assign p_pic_color = contextPath+'/image/common/phone/20120409123004-1319113024_170_170.jpg'>
+           		<#if (mkt.attrList)??>
+					<#list mkt.attrList as mktSpecCodes>
+						<#if (mktSpecCodes.attrId)?? && (mktSpecCodes.attrId) =='60010005'>
+							<#assign mktSpecCode = mktSpecCodes.attrValue>
+						</#if>
+					</#list>
+					<#list mkt.attrList as attrList>
+						<#if (attrList.attrId)?? && (attrList.attrId) =='60019454'>
+							<#assign flag = false>
+							<#assign p_pic_color = mktResPicUrl+attrList.attrValue>
+							<#list mkt.attrList as attrListTmp>
+								<#if (attrListTmp.attrId)?? && (attrListTmp.attrId) =='60010004'>
+									<#if count%3=0>
+										<#assign divflag = true>
+										<div class="btn-group btn-group-justified">
+									</#if>
+									<#if mkt.mktResId == (mktRes.mktResId)>
+									<label class="btn zdys_btn btn-default active zdys" onclick = "javascript:mktRes.terminal.selectColor('color${mkt_index}')">
+										<input type="radio" name="phonecolor"
+									 id="color${mkt_index}" mktValue="${attrListTmp.attrValue}"  mktResId="${mktResId}" mktResName="${mktResName}" mktSalePrice="${mktSalePrice}" mktNormalSalePrice="${(mkt.salePrice)?default(0)}" p_pic="${p_pic_color}" mktResTypeCd="${mktResTypeCd}" mktSpecCode="${mktSpecCode}">
+										${attrListTmp.attrValue}
+									</label>
+									<#else>
+									<label class="btn zdys_btn btn-default zdys" onclick = "javascript:mktRes.terminal.selectColor('color${mkt_index}')">
+										<input type="radio" name="phonecolor" 
+									 id="color${mkt_index}" mktValue="${attrListTmp.attrValue}"  mktResId="${mktResId}" mktResName="${mktResName}" mktSalePrice="${mktSalePrice}" mktNormalSalePrice="${(mkt.salePrice)?default(0)}" p_pic="${p_pic_color}" mktResTypeCd="${mktResTypeCd}" mktSpecCode="${mktSpecCode}">
+										${attrListTmp.attrValue}
+									</label>
+				 					</#if>
+									<#if count%3=2>
+										<#assign divflag = false>
+										</div>
+									</#if>
+									<#assign count = count+1>
+						         </#if>
+						     </#list>
+						 </#if>
+				     </#list>
+				     <#if flag=='true'>
+							<#list mkt.attrList as attrListTmp>
+								<#if (attrListTmp.attrId)?? && (attrListTmp.attrId) =='60010004'>
+									<#if count%3=0>
+										<#assign divflag = true>
+										<div class="btn-group btn-group-justified" data-toggle="buttons">
+									</#if>
+									<#if mkt.mktResId == (mktRes.mktResId)>
+									<label class="btn zdys_btn btn-default active zdys" onclick = "javascript:mktRes.terminal.selectColor('color${mkt_index}')">
+										<input type="radio" name="phonecolor"
+									 id="color${mkt_index}" mktValue="${attrListTmp.attrValue}"  mktResId="${mktResId}" mktResName="${mktResName}" mktSalePrice="${mktSalePrice}" mktNormalSalePrice="${(mkt.salePrice)?default(0)}" p_pic="${p_pic_color}" mktResTypeCd="${mktResTypeCd}" mktSpecCode="${mktSpecCode}">
+										${attrListTmp.attrValue}
+									</label>
+									<#else>
+									<label class="btn zdys_btn btn-default zdys" onclick = "javascript:mktRes.terminal.selectColor('color${mkt_index}')">
+										<input type="radio" name="phonecolor"
+									 id="color${mkt_index}" mktValue="${attrListTmp.attrValue}"  mktResId="${mktResId}" mktResName="${mktResName}" mktSalePrice="${mktSalePrice}" mktNormalSalePrice="${(mkt.salePrice)?default(0)}" p_pic="${p_pic_color}" mktResTypeCd="${mktResTypeCd}" mktSpecCode="${mktSpecCode}">
+										${attrListTmp.attrValue}
+									</label>
+				 					</#if>
+									<#if count%3=2>
+										<#assign divflag = false>
+										</div>
+									</#if>
+						         	<#assign count = count+1>
+								</#if>
+							</#list>
+						</#if>
+				 </#if>
+			</#list>
+		</#if>
+<#if divflag=='true'>
+	</div>
+</#if>
+			</div>
+			<div class="form-group">
+				<label for="idtype">购机方式</label>
+				<div class="btn-group btn-group-justified" data-toggle="buttons" id="buyTypeBtns">
+					<#if contractFlag == '1' >
+					<a class="btn btn-default active" id="gouhyj" onclick = "javascript:mktRes.terminal.hyClick($(this))">
+						<input type="radio" name="buytype" value="1" checked="checked"> 合约购机
+					</a>
+					</#if>
+					<a class="btn btn-default" id="goulj" onclick = "javascript:mktRes.terminal.ljClick($(this))">
+						<input type="radio" name="buytype" value="2"> 购买裸机
+					</a>
+				</div>
+			</div>
+			<div class="displaydiv">
+			<div class="form-group" id ="phonenumberFie">
+				<label for="exampleInputPassword1">号码</label>
+				<div class="input-group">
+					<input type="text" class="form-control" id="nbr_btn_-1" placeholder="" disabled="disabled">
+					<span class="input-group-btn">
+                      <button class="btn btn-info" type="button" id="hyxh" onclick = "javascript:mktRes.terminal.selectNum(-1,'offer')"> 选号 </button> <!-- id="cNumA" -->
+                      </span> </div>
+			</div>
+			<div class="form-group" id="treaty" style="display: none;">
+				<label for="userid">合约类型</label>
+				<div class="btn-group btn-group-justified" data-toggle="buttons">
+					<label class="btn btn-default" id="cf" onclick = "javascript:mktRes.terminal.selectHy(1,this)">
+						<input type="radio" name="package" id="package"> 存费赠机
+					</label>
+					<label class="btn btn-default" id="gj" onclick = "javascript:mktRes.terminal.selectHy(2,this)">
+						<input type="radio" name="package" id="package"> 购机送费
+					</label>
+				</div>
+			</div>
+			
+			<div class="form-group" style="display: none;" id="agreementFie">
+				<label for="exampleInputPassword1">合约套餐</label>
+				<div class="input-group">
+					<input class="form-control" id="choosedOfferPlan" disabled="disabled"/>
+					<input type="hidden" id="offerSpecId-1"/>
+					<span class="input-group-btn">
+                      <button class="btn btn-info" type="button" id="cxhy" onClick="javascript:mktRes.terminal.reSelectHy()"> 重选 </button>
+                      </span> </div>
+			</div>
+			
+			<!--
+			<div class="form-group displaydiv">
+				<label for="exampleInputPassword1">UIM卡 <small class="text-warning">校验通过</small></label>
+				<div class="input-group">
+					<input type="text" class="form-control" id="uim_txt_1">
+					<span class="input-group-btn">
+                      <button class="btn btn-info" type="button" onclick="common.callScanning('order.service.scaningCallBack',${prodId})"> 扫描 </button>
+                      <button class="btn btn-info" id= "uim_check_btn_-1" type="button" onclick="prod.uim.checkUim(1);"> 校验 </button>
+                      <button class="btn btn-info disabled" id="uim_release_btn_${prodId}" type="button" onclick="prod.uim.releaseUim(${prodId});"> 释放 </button>
+                      </span>
+                </div>
+			</div>
+			-->
+			<div id="productInfo" style="display: none;">
+			</div>
+			</div>
+			<div class="form-group">
+				<label for="exampleInputPassword1">终端串号 <small id="jytg" class="text-warning" style="display: none;">校验通过</small></label>
+				<div class="input-group">
+					<input type="text" class="form-control" id="tsn">
+					<span class="input-group-btn">
+                      <button class="btn btn-info" type="button" id="chkTsnA"> 校验 </button>
+                      <button class="btn btn-info" type="button" onclick="common.callScanning('order.service.scaningCallBack','-999')"> 扫描 </button>
+                      </span> </div>
+			</div>
+			<div class="panel panel-default displaydiv" id="fkxx" style="display:none;">
+				<div class="panel-heading">副卡信息</div>
+				<div class="panel-body">
+					<button  type="button" onClick="javascript:mktRes.terminal.zjfk()" class="btn btn-info btn-group-justified">增加副卡<span id="cur_num">0</span>-<span id="max_num">0</span></button>
+				</div>
+
+				
+				<ul class="list-group" id="ul_memeber">
+					<!--
+					<a onClick="" class="list-group-item">
+						<h4 class="list-group-item-heading">18953110232 <span class="glyphicon glyphicon-remove pull-right" aria-hidden="true"></span></h4>
+						<p class="list-group-item-text">乐享4G套餐389元</p>
+					</a>
+					-->
+				</ul>
+			</div>
+			<div class="displaydiv">
+			<ul class="list-group">
+  				<a class="list-group-item" onClick="javascript:mktRes.terminal.showJBR()">
+  					<span class="glyphicon glyphicon-chevron-right pull-right" aria-hidden="true"></span>
+    				 经办人
+  				</a>
+			</ul>
+			</div>
+</form>
+</div>
+		<nav class="navbar navbar-default navbar-fixed-bottom">
+			<div class="container-fluid">
+				<div class="btn-group btn-group-justified navbar-btn" role="group" aria-label="...">
+					<div class="btn-group" role="group">
+						<button type="button" class="btn btn-primary btn-lg" onclick="javascript:mktRes.terminal.nextStep()"> <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span> 下一步 </button>
+					</div>
+				</div>
+			</div>
+		</nav>
+</div>
+<!-- term info -->
+<input type="hidden" id="mktResType" value="${(mktRes.mktResTypeCd)?default('')}" />
+<input type="hidden" id="mktResId" value="${(mktRes.mktResId)?default('')}" />
+<input type="hidden" id="mktResCd" value="${(mktRes.mktResCd)?default('')}" />
+<input type="hidden" id="mktResName" value="${(mktRes.mktResName)?default('')}" />
+<input type="hidden" id="price" value="${(mktRes.salePrice)?default('0')}" />
+<input type="hidden" id="brand" value="${(mktRes.brand)?default('')}" />
+<input type="hidden" id="type" value="${(mktRes.phoneType)?default('')}" />
+<input type="hidden" id="color" value="${(mktRes.phoneColor)?default('')}" />
+<input type="hidden" id="tsn_hid" value="" />
+<input type="hidden" id="mktSpecCode" value="${(mktRes.mktSpecCode)?default('')}" />
+
+<div id="div_offer" style="display:none">
+</div>
+<!-- 选套餐页面 -->
+<div id="offer-prepare" style="display:none">
+</div>
+<!-- 订单确认页面、收银台页面 -->
+<div id="order-confirm" style="display: none;">
+</div>
+<!-- 回执内容显示页面 -->
+<div id="order-print" style="display: none;">
+</div>
+<!-- 发展人展示 -->
+<div id="order-dealer" style="display: none;">
+	<@block name="dealer">
+		<#include "/agent/order/order-dealer.html" />
+	</@block>
+</div>
+<!-- 经办人展示 -->
+<div id="jbr" style="display: none;">
+	<#include "/agent/mktRes/jbr-create.html" />
+</div>
+<!-- 我的收藏 -->
+<div id="my-cang" style="display: none;">
+	<#include "/agent/offer/attach-spec-cang.html" />
+</div>
+<!-- 可选包功能产品页面 -->
+<div id="attach_phone_-1" style="display:none"></div>
+<div id="attach_phone_-2" style="display:none"></div>
+<div id="attach_phone_-3" style="display:none"></div>
+<div id="attach_phone_-4" style="display:none"></div>
+<div id="attach_phone_-5" style="display:none"></div>
+<div id="attach_phone_-6" style="display:none"></div>
+<div id="attach_phone_-7" style="display:none"></div>
+<div id="attach_phone_-8" style="display:none"></div>
+<div id="attach_phone_-9" style="display:none"></div>
+<div id="attach_phone_-10" style="display:none"></div>
+<div id="attach_phone_-11" style="display:none"></div>
+<div id="attach_phone_-12" style="display:none"></div>
+<div id="attach_phone_-13" style="display:none"></div>
+<div id="attach_phone_-14" style="display:none"></div>
+<div id="attach_phone_-15" style="display:none"></div>
+<div id="attach_phone_-16" style="display:none"></div>
+<div id="attach_phone_-17" style="display:none"></div>
+<div id="attach_phone_-18" style="display:none"></div>
+<div id="attach_phone_-19" style="display:none"></div>
+<div id="attach_phone_-20" style="display:none"></div>
+
+<!-- 客户新增页面 -->
+<div id="cust-content" style="display: none;">
+  <#include "/agent/cust/cust-create.html" />
+</div>
+<!-- 增加副卡页面 -->
+<div id="zzfkym">
+	<#include "/agent/mktRes/t.zjfk.html" />
+</div>
+		<script type="text/javascript">
+			$(document).ready(function() {
+				//$(".displaydiv").show();
+				$(".hidediv").hide();
+				//$("input[name='buytype']").change(function() { //判断购机方式隐藏不需要的组件
+				//	var buytype = $("input[name='buytype']:checked").val();
+				//	if (buytype == "2") {
+				//		$(".displaydiv").hide();
+				//		$(".hidediv").show();
+				//	} else {
+				//		$(".displaydiv").show();
+				//		$(".hidediv").hide();
+				//	}
+				//})
+				
+			//初始化经办人客户类型,证件类型
+			cust.jbrvalidatorForm();
+			cust.jbrpartyTypeCdChoose($("#orderPartyTypeCd").children(":first-child"),"orderIdentidiesTypeCd");
+		
+			})
+		</script>
