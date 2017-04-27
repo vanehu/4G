@@ -407,7 +407,9 @@ common.print = (function($){
 			return;
 		}
 		//发票代码、发票号码查询
-		getInvoiceNumber(100);//默认查发票
+		if ("ON" == onoff) {
+		  getInvoiceNumber(100);//默认查发票
+		}
 		function getInvoiceNumber(billType) {
 			var iiqResp = _queryInvoiceInfo(billType);
 			if (iiqResp) {
@@ -555,7 +557,9 @@ common.print = (function($){
 				$("#numTitleDt").html("发票号码：");
 				$("#tempDt").parent().show();
 				param.billType = 0;
-				getInvoiceNumber(100);
+				if ("ON" == onoff) {
+				  getInvoiceNumber(100);
+				}
 			} else if ($("input[name=billType]:checked").val()=="1") {
 				$("#invoiceNbrNumDl").hide();
 				$("#titleDt").html("票据抬头：");
