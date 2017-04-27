@@ -549,7 +549,42 @@ public class PrintController extends BaseController {
 			}
 		}
 	}
-    
+
+    /**
+     * 一证五号回执打印
+     *
+     * @param param    入参
+     * @param request
+     * @param response
+     */
+    @RequestMapping(value = "/oneCertFiveNumber", method = RequestMethod.POST)
+    public void printOneCertFiveNumber(@RequestParam("oneCertFiveNumber") String param,
+                                       HttpServletRequest request, HttpServletResponse response) {
+        Map<String, Object> paramMap = JsonUtil.toObject(param, Map.class);
+        try {
+            Map<String, Object> resultMap = printBmo.printOneCertFiveNumber(paramMap, request, response);
+            if (MapUtils.isNotEmpty(resultMap)) {
+                return;
+            } else {
+                response.sendRedirect(request.getContextPath() + "/error/500.jsp");
+            }
+        } catch (Exception e) {
+            log.error(e);
+            DataBus db = new DataBus();
+            db.setParammap(paramMap);
+            try {
+                JsonResponse jsonResponse = failed(ErrorCode.PRINT_INVOICE, e, paramMap);
+                Map<String, Object> errorMap = new HashMap();
+                errorMap.put("code", "-2");
+                errorMap.put("data", jsonResponse.getData());
+                String errorJson = JsonUtil.toString(errorMap);
+                request.setAttribute("errorJson", errorJson);
+                request.getRequestDispatcher("/error/500.jsp").forward(request, response);
+            } catch (Exception e1) {
+            }
+        }
+    }
+
     /**
      * 天翼高清机顶盒预约回执打印
      * @param paramsStr
