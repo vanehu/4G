@@ -1,0 +1,79 @@
+<@override name="title">渠道绑定IP配置</@override>
+<@override name="header">
+<script src="${contextPath}/js/busi-js/staff/staffMgr.js?${jsversion}"type="text/javascript"></script>
+</@override>
+<@override name="content">
+<div class="main_div" id="main_content">
+	<!--位置导航-->
+    <div class="position">
+            现在位置：<a href="#">业务受理</a>&gt;<a href="#">渠道绑定IP配置</a>       
+    </div>   
+    <!--位置导航 end-->
+	<div class=" main_warp m_top10">
+        <div class="order_confirmation" id="order_confirm">
+        	<h2 class="h2_title">渠道绑定IP配置</h2>
+            <div class="main_body">
+                <div class="infoBox_">
+                    <table class="network">
+                          <tbody>
+                          <tr>
+                                <td width="100"><label class="f_red">*</label>IP类型：</td>
+                                <td width="765">
+                                  	<select id="ipType" class="inputW120H20">
+                                  		<option value="CHANNEL_TO_WANIP">外网IP</option>
+                                  	</select>
+                                </td>
+                          </tr>
+                          <tr>
+                                <td><label class="f_red">*</label>对应渠道：</td>
+                                <td>
+                                  <input type="text" id="channelName" value="${curtChannelName}" class="inputWidth228px" readOnly="readonly"/>&nbsp;&nbsp;&nbsp;&nbsp;
+                                	<input type="hidden" id="channelId" value="${curtChannelId}">
+                                <a style="margin-top: 4px;" id="channelSelect" class="purchase" href="javascript:void(0);">选择</a>
+                                </td>
+                          </tr>
+                          <tr>
+                                <td><label class="f_red">*</label>绑定IP：</td>
+                                <td>
+                                  <input type="text" id="ips" value=""   class="inputWidth228px" style="float:left;font-weight: bold;" />
+                                	<span style="color:red;margin-left:20px;">多个IP用"，"隔开</span>
+                                </td>
+                          </tr> 
+                          <!--<tr>
+                                <td><label class="f_red">*</label> 描述：</td>
+                                <td>
+                                  <input type="text" id="desc" class="inputWidth228px" style="float:left;font-weight: bold;" value="" />
+                                  <span id="cardPinTip" style="color:red;">请输入18位密码</span>
+                                </td>
+                          </tr>
+                          --><tr>
+                                <td colspan="2" style="padding-left:115px"><a class="btna_o" href="javascript:void(0)" id="doChannelIpSubmit"><span>提交</span></a></td>
+                          </tr>            
+                        </tbody>
+                    </table>                
+                </div>
+        	</div>
+        </div>
+        
+	<div class="clear"></div>
+</div>
+<div style="display:none" id="ec-dialog-form-container-auth-range" class="ec-dialog-form-container">
+	<div class="ec-dialog-form-top">
+		<h1 class="ec-dialog-form-title"></h1>
+	</div>
+	<div class="ec-dialog-form-content">
+		<div class="ec-dialog-form-loading" style="display:none"></div>
+		<div class="ec-dialog-form-message" style="display:none"></div>
+		<div class="ec-dialog-form-form" >
+			<form id="dialogForm">
+				<div id="auth_range_info" style="max-height:200px;margin-left: 25px;padding-top: 10px;word-wrap:break-word;overflow:auto;"></div>
+			</form>
+		</div>
+		<div class="ec-dialog-form-bottom-button">
+			<input type="button"  id="dialogFormSubmit" class="ec-dialog-form-send ec-dialog-form-button" tabindex="1007" value="提交"/>
+			<input type="button" class="ec-dialog-form-cancel ec-dialog-form-button simplemodal-close" tabindex="1008"  value="取消"/>
+		</div>
+	</div>
+	<div class="ec-dialog-form-bottom"></div>
+</div>
+</@override> <@extends name="/content-template.html"/>

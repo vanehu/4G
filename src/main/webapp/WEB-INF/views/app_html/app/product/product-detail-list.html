@@ -1,0 +1,188 @@
+  <div class="container-fluid">
+    <div class="row">
+    <#if flag==0>
+      <div class="panel panel-default paneltop">
+        <!-- Default panel contents -->
+        <div class="panel-heading" style="background:#05a642;">基本信息</div>
+        <table class="table">
+          <tbody>
+            <tr>
+              <td>产品名称</td>
+              <td>${basic.prodName}</td>
+            </tr>
+            <tr>
+              <td>接入号码</td>
+              <td>${basic.accessNumber}</td>
+            </tr>
+            <tr>
+              <td>地区</td>
+              <td>${basic.area}</td>
+            </tr>
+            <tr>
+              <td>产品状态</td>
+              <td>${basic.prodStatus}</td>
+            </tr>
+            <tr>
+              <td>付费类型</td>
+              <td>${basic.feeType}</td>
+            </tr>
+            <tr>
+              <td>开通时间</td>
+              <td>${basic.beginDate}</td>
+            </tr>
+            <tr>
+              <td>失效时间</td>
+              <td>${basic.endDate}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <#if offerMembers??>
+      <div class="panel panel-default paneltop">
+        <!-- Default panel contents -->
+        <div class="panel-heading" style="background:#05a642;">销售品成员信息</div>
+        <table class="table">
+          <tbody>
+          <#list offerMembers as offerMember>
+      		<#if offerMember.objType=="2">
+            <tr>
+              <td width="30%">主套餐名称</td>
+              <td>${offerMember.offerName}</td>
+            </tr>
+            <tr>
+              <td>成员角色</td>
+              <td>${offerMember.roleName}</td>
+            </tr>
+            <tr>
+              <td width="30%">接入号</td>
+              <td>${offerMember.accessNumber}</td>
+            </tr>
+            </#if>
+     	  </#list>
+          </tbody>
+        </table>
+      </div>
+      </#if>
+      <#if queryMembersFail??>
+      <div class="panel panel-default paneltop">
+        <!-- Default panel contents -->
+        <div class="panel-heading" style="background:#05a642;">查询失败</div>
+		<table class="table">
+          <tbody>
+            <tr>
+              <td><img src="${contextPath}/image/icon/tip.png">${queryMembersFail}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      </#if>
+      <#list dtos as dto>
+	  <#if dto.dtoType==10 || dto.dtoType==11>
+      <div class="panel panel-default paneltop">
+        <!-- Default panel contents -->
+        <div class="panel-heading" style="background:#05a642;">主套餐</div>
+        <ul class="list-group">
+          <li href="#" class="list-group-item">
+            <h4 class="list-group-item-heading">【${dto.dtoName}】&nbsp;${dto.dtoStatus}</h4>
+            <p class="list-group-item-text">生效日期：${dto.startDate}</p>
+			<p class="list-group-item-text">失效日期：${dto.endDate}</p>
+          </li>
+        </ul>
+      </div>
+      </#if>
+	  </#list>
+      <div class="panel panel-default paneltop">
+        <!-- Default panel contents -->
+        <div class="panel-heading" style="background:#05a642;">已订购可选包</div>
+        <table class="table table-striped table-bordered tablecenter">
+          <thead>
+            <tr>
+              <th>销售品名称</th>
+              <th>生失效时间</th>
+            </tr>
+          </thead>
+          <tbody>
+          <#list dtos as dto>
+	      <#if dto.dtoType==12 || dto.dtoType==13 || dto.dtoType==14>
+            <tr>
+              <td>【${dto.dtoName}】&nbsp;${dto.dtoStatus}</td>
+              <td>${dto.startDate}到${dto.endDate}</td>
+            </tr>
+            </#if>
+		  </#list>
+          </tbody>
+        </table>
+      </div>
+      <div class="panel panel-default paneltop">
+        <!-- Default panel contents -->
+        <div class="panel-heading" style="background:#05a642;">服务信息</div>
+        <table class="table table-striped table-bordered tablecenter">
+          <thead>
+            <tr>
+              <th style="width: 40%;">服务名称</th>
+              <th style="width: 60%;">服务参数</th>
+            </tr>
+          </thead>
+          <tbody>
+           <#list servs as serv>
+            <tr>
+              <td>${serv.servName}</td>
+              <td>
+              <#assign servItems = serv.servItems/>
+              <#list servItems as servItem>
+              ${servItem.itemName} : ${servItem.itemValue}&nbsp;&nbsp;
+              </#list></td>
+            </tr>
+            <tr>
+              <td colspan='2'>生失效时间:
+              ${serv.beginDate}到${(serv.endDate)?default('无失效时间')}
+              </td>
+            </tr>
+            </#list>
+          </tbody>
+        </table>
+      </div>
+      <div class="panel panel-default paneltop">
+        <div class="panel-heading" style="background:#05a642;">物品信息</div>
+        <div class="table-responsive">
+        <table class="table table-striped table-bordered tablecenter">
+          <thead>
+            <tr>
+              <th>出入库流水号</th>
+              <th>物品名称</th>
+              <th>实例化编码</th>
+              <th>物品数量</th>
+            </tr>
+          </thead>
+          <tbody>
+           <#list coupons as coupon>
+            <tr>
+              <td>${coupon.flowNum}</td>
+              <td>${coupon.couponName}</td>
+              <td>${coupon.instNum}</td>
+              <td>${coupon.num}</td>
+            </tr>
+            </#list>
+          </tbody>
+        </table>
+        </div>
+      </div>
+     <#elseif flag==1>
+	 <#if failInfo??>
+	 <div class="panel panel-default paneltop">
+        <!-- Default panel contents -->
+        <div class="panel-heading" style="background:#05a642;">查询失败</div>
+		<table class="table">
+          <tbody>
+            <tr>
+              <td><img src="${contextPath}/image/icon/tip.png">xxxxxx</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+	 <#else>fail</#if>
+	 <#else>
+     error
+	 </#if>
+    </div>
+  </div>

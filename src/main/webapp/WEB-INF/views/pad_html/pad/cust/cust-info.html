@@ -1,0 +1,30 @@
+<#if error??>
+${error}
+<#elseif custAuth.isValidate=="true" >
+	<ul class="user">
+      <li id="partyName">${custAuth.custInfo.partyName}<span>姓名${custQueryType}</span></li>
+      <li id="identityName">${custAuth.custInfo.identityName}/${custAuth.custInfo.idCardNumber}<span>证件</span></li>
+      <li id="area" areaId="${custAuth.custInfo.areaId}">${custAuth.custInfo.areaName}<span>地区</span></li>
+      <#if custQueryType!="queryOnly">
+      <li id="vipLevelName">
+      <#if custAuth.custInfo.vipLevelName??&&custAuth.custInfo.vipLevelName=="">
+      	&nbsp;
+      <#else>
+      	${custAuth.custInfo.vipLevelName?default("&nbsp;")}
+      </#if>
+      <span>客户等级</span></li>
+      <li id="segmentName">${custAuth.custInfo.segmentName}<span>客户分群</span></li>
+      </#if>
+	</ul>
+	<div class="topbutton">
+		<#if custQueryType!="queryOnly">
+		<a href="javascript:;" data-role="button" data-icon="edit" data-theme="g" id="a-cust-modify">修改</a>
+		</#if>
+		<a href="javascript:;" data-role="button" data-icon="back" data-theme="g" id="a-cust-rechk">重定位</a>
+		<#if custQueryType!="queryOnly">
+		<a href="javascript:;" data-role="button" data-icon="grid" data-theme="g" id="a-qry-cust-prod">已订购业务</a>
+		</#if>
+	</div>
+<#else>
+false
+</#if>

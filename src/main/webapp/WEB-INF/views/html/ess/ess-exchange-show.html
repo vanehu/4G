@@ -1,0 +1,80 @@
+<!--终端换货-->
+<h2 class="h2_title">
+             终端换货<span></span>
+    <a href="javascript:void(0);" class="numberSearch back3" 
+        onclick="easyDialog.close();">
+        <span>返回</span>
+    </a>
+</h2>
+<div class="order">
+	<div class="order_content" style="border: none; padding: 10px">
+		<div class="order_tab_panel lazyloadModule" style="display: block;"
+			id="ess_order_event">
+			<div class="order_tab_header">
+				<div class="selectList">
+				    <dl>
+						<dt style="width: 100px">订单流水号：</dt>
+						<dd>
+						    ${extCustOrderId}
+						</dd>
+					</dl>
+					<dl>
+						<dt style="width: 100px">手机终端名称：</dt>
+						<dd>
+						    ${mktResCdName}
+						</dd>
+					</dl>
+					<dl>
+						<dt style="width: 100px">手机品牌：</dt>
+						<dd>
+						    ${brand}
+						</dd>
+					</dl>
+					<dl>
+						<dt style="width: 100px">手机机型：</dt>
+						<dd>
+						    ${modelStr}
+						</dd>
+					</dl>
+					<dl>
+						<dt style="width: 100px">手机颜色：</dt>
+						<dd>
+						    ${color}
+						</dd>
+					</dl>
+					<dl>
+						<dt style="width: 100px">手机价格：</dt>
+						<dd>
+						    ${salesPrice}
+						</dd>
+					</dl>
+					<dl>
+						<dt style="width: 100px">接入号码：</dt>
+						<dd>
+						    ${accNbr}
+						</dd>
+					</dl>
+					<dl>
+						<dt style="width: 100px">原终端实例号：</dt>
+						<dd>
+						    ${mktResInstCode}
+						</dd>
+					</dl>
+				    <form id ="chkTsnAForm" >
+					<dl>
+						<dt style="width: 100px">新终端实例号：</dt>
+						<dd>
+						    <input type="text" class="inputWidth228px inputMargin0" id="p_mktResInstCode" placeholder="请先输入终端串号" maxlength="35"  data-validate="validate(terminalCodeCheck) on(keyup blur)" />
+						</dd>
+						<dd>
+							<label class="f_red">&nbsp;&nbsp;</label> 
+							<input type="button" value="提 交" class="numberSearch" id="bt_orderRepeal" />
+						</dd>
+					</dl>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!--订单状态历史 end-->

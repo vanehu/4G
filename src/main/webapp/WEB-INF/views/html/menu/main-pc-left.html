@@ -1,0 +1,29 @@
+<li class="nav_list">
+			<div class="ul_list clearfix">
+				<div class="ul_list_b">
+					<div class="ul_list_t">
+						<div class="ul_list_m">
+							<h1 class="ul_list_m_title "><a href="${contextPath}"><span>首页</span></a></h1>
+						</div>
+					</div>
+				</div>
+			</div>
+		</li>
+<#if menuList ??>
+<#list menuList as item>
+<li class="nav_list">
+			<div class="ul_list clearfix">
+				<div class="ul_list_b">
+					<div class="ul_list_t">
+						<div class="ul_list_m">
+							<h1 class="ul_list_m_title ul_list_m_close"><a   id="pc_${item.RESOURCE_ID}" href="javascript:void(0)" onclick="pc_get_sonlist('pc_${item.RESOURCE_ID}',${item.RESOURCE_ID});"><span>${item.RESOURCE_NAME}</span></a></h1>
+							<div class="secend_list" id="pc_son_list_${item.RESOURCE_ID}">
+								 
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</li>
+</#list>
+</#if>
