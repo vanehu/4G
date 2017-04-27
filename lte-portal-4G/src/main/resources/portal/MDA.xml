@@ -2817,7 +2817,7 @@
 			}
 	    }
     	</const>
-        <const type="Map" name="ONE_CERT_FIVE_NUMBER_PRINT_CONTENT">
+        <const type="Map" name="ONE_CERT_FIVE_NUMBER_PRINT_CONTENT" description="一证五号打印配置内容">
             {
             "title": "一证多卡号码核实",
             "content": [
