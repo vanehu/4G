@@ -5466,4 +5466,39 @@ public class OrderController extends BaseController {
         
         return jsonResponse;
     }
+    /**
+	 * 获取订单状态
+	 * 
+	 * @param param
+	 * @param model
+	 * @param session
+	 * @param flowNum
+	 * @return
+	 */
+	@RequestMapping(value = "/queryOrdStatus", method = RequestMethod.POST)
+	@ResponseBody
+	public JsonResponse queryOrdStatus(@RequestBody Map<String, Object> param,
+			Model model, HttpSession session, @LogOperatorAnn String flowNum) {
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);
+		Map<String, Object> rMap = null;
+		JsonResponse jsonResponse = null;
+		try {
+			rMap = cartBmo.queryOrderStatus(param, flowNum, sessionStaff);
+			log.debug("return={}", JsonUtil.toString(rMap));
+			if (rMap != null && "0".equals(rMap.get("code").toString())) {
+				 jsonResponse = super.successed(rMap,ResultConstant.SUCCESS.getCode());
+			} else{
+				jsonResponse = super.failed(rMap, ResultConstant.FAILD.getCode());
+			}
+			return jsonResponse;
+		} catch (BusinessException be) {
+			this.log.error("调用主数据接口失败", be);
+			return super.failed(be);
+		} catch (InterfaceException ie) {
+			return super.failed(ie, param, ErrorCode.CUST_ORDER_DETAIL);
+		} catch (Exception e) {
+			log.error("查询订单状态方法异常", e);
+			return super.failed(ErrorCode.CUST_ORDER_DETAIL, e, param);
+		}
+   }
 }

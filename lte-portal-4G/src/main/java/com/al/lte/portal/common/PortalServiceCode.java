@@ -1165,6 +1165,10 @@ public final class PortalServiceCode {
 
     /** 橙分期业务标识 */
     public static final String QUERY_AGREEMENTTYPE = "biz-service/intf.prodOfferService/queryAgreementType";
+
+    /** 购物车订单状态 查询 */
+    public static final String QUERY_ORDER_STATUS = "biz-service/intf.detailService/queryCustomerOrderBasicInfo" ;
+
     /** 甩单终端串码预占校验接口（测试用，生产只走csb） */
     public static final String CHECK_DITCHORDER = "ter-terminal/ditchOrderCheck";
     

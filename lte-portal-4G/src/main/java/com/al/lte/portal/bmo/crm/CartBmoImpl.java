@@ -19,6 +19,7 @@ import com.al.lte.portal.common.CompareObject;
 import com.al.lte.portal.common.InterfaceClient;
 import com.al.lte.portal.common.PortalServiceCode;
 import com.al.lte.portal.model.SessionStaff;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * 购物车 实现类
@@ -207,6 +208,30 @@ public class CartBmoImpl implements CartBmo{
 			return result ;
 		}catch(Exception e){
 			throw new BusinessException(ErrorCode.QUERY_OCTN,dataBusMap,db.getReturnlmap(), e);
+		}
+	}
+	
+	/*
+	 * 购物车订单状态查询 
+	 */
+	@SuppressWarnings("unchecked")
+	public Map<String, Object> queryOrderStatus(Map<String, Object> dataBusMap,String optFlowNum, SessionStaff sessionStaff) throws Exception{
+		Map<String, Object> result = new HashMap<String, Object>();
+		DataBus db = InterfaceClient.callService(dataBusMap,PortalServiceCode.QUERY_ORDER_STATUS, optFlowNum, sessionStaff);
+		try{
+			result.put("code", -1);
+			result.put("mess", db.getResultMsg());
+			if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db.getResultCode()))) {
+				Map<String, Object> returnMap = db.getReturnlmap() ;				
+				if(ResultCode.R_SUCC.equals(returnMap.get("resultCode"))){
+					result = (Map<String, Object>)returnMap.get("custOrder");
+					result.put("code", 0);
+					result.put("mess", returnMap.get("resultMsg"));
+				}
+			}
+			return result ;
+		}catch(Exception e){
+			throw new BusinessException(ErrorCode.CUST_ORDER_DETAIL,dataBusMap,db.getReturnlmap(), e);
 		}
 	}
 	

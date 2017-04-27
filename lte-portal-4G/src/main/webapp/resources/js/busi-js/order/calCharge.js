@@ -848,7 +848,7 @@ order.calcharge = (function(){
 			}
 	    }
 		var params={
-				"olId":_olId,		
+				"olId":_olId,	
 				"soNbr":OrderInfo.order.soNbr,
 				"areaId" : OrderInfo.staff.areaId,
 				"chargeItems":_chargeItems,
@@ -862,6 +862,7 @@ order.calcharge = (function(){
 		}
 		var url=contextPath+"/order/chargeSubmit?token="+OrderInfo.order.token;
 		var response=$.callServiceAsJson(url, params, {});
+		
 		var msg="";
 		if (response.code == 0) {
 			//取消已定购业务点击事件，防止收费建档后再次办理业务，实例缓存不正确
@@ -958,6 +959,17 @@ order.calcharge = (function(){
 								"areaId" : OrderInfo.staff.areaId,
 								"acctItemIds":[]
 							};
+							var params={
+									"olId":_olId,	
+									"areaId" : OrderInfo.staff.areaId
+							};
+							var url=contextPath+"/order/queryOrdStatus";
+							var response=$.callServiceAsJson(url, params, {});
+							if(response && response.data && response.data.statusCd != "201300"
+								&& response.data.statusCd !="301200"){
+								$.alert("提示","订单未下省成功，请到发票补打菜单中进行打印！");
+								return;
+							}
 							common.print.prepareInvoiceInfo(param);
 							return;
 						},
