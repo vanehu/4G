@@ -596,7 +596,13 @@ public class MDA {
     
     /**针对政企批开的返档优化开关*/
 	public static final String TRANSFER_CUST_FLAG = new String("");
-	
+
 	/**USB二代证读卡统一分省配置*/
 	public static final Map<String, Object> CERT_SIGNATURE = new HashMap<String, Object>();
+
+    /**
+     * 一证五号回执打印内容
+     */
+    public static final Map<String, Object> ONE_CERT_FIVE_NUMBER_PRINT_CONTENT = new HashMap<>();
+
 }
