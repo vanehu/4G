@@ -3779,6 +3779,7 @@ order.cust = (function(){
 
 	// 上传照片
 	var uploadCustCertificateParams = {};
+	
 	var _uploadImage = function() {
 		var auditStaff = $("#auditStaffList").val();
 		var auditMode = $("#auditMode").val();
@@ -3815,13 +3816,11 @@ order.cust = (function(){
 				OrderInfo.bojbrCustInfos.identityNum!= $.trim($("#orderIdentidiesTypeCd").val())){
 			pictures.push({
 				"flag"		: "C",
-				"staffId"	: OrderInfo.staff.staffId,
 				"signature" : "",
 	            "photograph": encodeURIComponent(OrderInfo.bojbrCustIdentities.identidiesPic)//经办人身份证照片
 			});
 			pictures.push({
 	            "flag"		: "D",
-	            "staffId"	: OrderInfo.staff.staffId,
 	            "signature" : $("#img_Photo").data("signature"),
 	            "photograph": encodeURIComponent($("#img_Photo").data("identityPic"))//经办人拍照照片
 	            
@@ -3829,10 +3828,17 @@ order.cust = (function(){
 			if (ec.util.isObj(OrderInfo.boCustIdentities.identidiesPic)){
 				pictures.push({
 		            "flag"		: "A",
-		            "staffId"	: OrderInfo.staff.staffId,
 		            "signature" : "",
 		            "photograph": encodeURIComponent(OrderInfo.boCustIdentities.identidiesPic)//新建客户身份证照片
 		        });
+			}
+			
+			//现场审核补充参数
+			if(auditMode == "1"){
+				$.each(pictures, function(){
+					this.staffId = OrderInfo.operateSpecStaff.staffId;
+					this.checkType = auditMode;
+				});
 			}
 			
 			uploadCustCertificateParams = {
@@ -3983,8 +3989,10 @@ order.cust = (function(){
 			},
 			"done" : function(response){
 				if (response.code == 0) {
-					var callBackFuncMust = "order.query.photographReviewSucess()";
-					var callBackFuncOption = "order.cust.close()";
+//					var callBackFuncMust = "order.query.photographReviewSucess()";
+//					var callBackFuncOption = "order.cust.close()";
+					var callBackFuncMust = "order.cust.close()";
+					var callBackFuncOption = "";
 					_uploadImageMainFunc(uploadCustCertificateParams, callBackFuncMust, callBackFuncOption);
 				} else if (response.code == 1) {
 					smsErrorCount++;
