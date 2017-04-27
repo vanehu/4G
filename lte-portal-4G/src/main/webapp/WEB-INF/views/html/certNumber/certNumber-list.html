@@ -14,7 +14,7 @@
     <tbody>
         <#list pageModel.list as item >
         <tr>
-            <td><#if (item.handleStatus)??&&("100002"==item.handleStatus)><input type="checkbox"onchange="oneFive.certNumber.selectItem(this)"/></#if></td>
+            <td><#if (item.handleStatus)??&&("100002"!=item.handleStatus)><input type="checkbox"onchange="oneFive.certNumber.selectItem(this)"/></#if></td>
             <td>${item.proLanName}</td>
             <td style="display: none;">${item.lanId}</td>
             <td>${item.lanName}</td>
