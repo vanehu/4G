@@ -3448,4 +3448,48 @@ public class OrderBmoImpl implements OrderBmo {
 		log.debug("二代证读卡校验-结束，staffId={}，resultStr={}", sessionStaff.getStaffId(), JsonUtil.toString(returnMap));
         return returnMap;
 	}
+	
+	/**
+	 * 实名审核记录接口
+	 * @param params <br/>olId和checkType必传，否则抛BusinessException；<br>areaId和staffId若为空，则以session替代；<br>srcFlag若为空，则以"REAL"替代
+	 * @param sessionStaff
+	 * @return
+	 * @throws InterfaceException
+	 * @throws IOException
+	 * @throws BusinessException
+	 * @throws Exception
+	 */
+	public Map<String, Object> savePhotographReviewRecord(Map<String, Object> params, SessionStaff sessionStaff) throws InterfaceException, IOException, BusinessException, Exception {
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		
+		String olId = MapUtils.getString(params, "olId", "");
+		String checkType = MapUtils.getString(params, "checkType", "");
+		
+		if(StringUtils.isBlank(olId) || StringUtils.isBlank(checkType)){
+			returnMap.put(SysConstant.RESULT_CODE, ResultCode.R_FAILURE);
+			returnMap.put(SysConstant.RESULT_MSG, "无效的入参olId、checkType。");
+			throw new BusinessException(ErrorCode.PORTAL_INPARAM_ERROR, params, returnMap, null);
+		}
+		
+		params.put("srcFlag", MapUtils.getString(params, "srcFlag", "REAL"));
+		params.put(SysConstant.STAFF_ID, MapUtils.getString(params, SysConstant.STAFF_ID, sessionStaff.getStaffId()));
+		params.put(SysConstant.AREA_ID, MapUtils.getString(params, SysConstant.AREA_ID, sessionStaff.getCurrentAreaId()));
+		
+		DataBus db = InterfaceClient.callService(params, PortalServiceCode.SAVE_PHOTOGRAPH_REVIEW_RECORD, null, sessionStaff);
+		try {
+			String resultCode = StringUtils.defaultString(db.getResultCode(), "1");
+			if (ResultCode.R_SUCC.equals(resultCode)) {
+				returnMap.put(SysConstant.RESULT_CODE, ResultCode.R_SUCC);
+			} else {
+				returnMap.put(SysConstant.RESULT_CODE, ResultCode.R_FAILURE);
+			}
+			//resultCode为0或1时，都从resultMsg获取信息
+			returnMap.put(SysConstant.RESULT_MSG, db.getResultMsg());
+		} catch (Exception e) {
+			log.error("门户处理后台的的service/intf.fileOperateService/saveRealCheckRecord服务返回的数据异常", e);
+			throw new BusinessException(ErrorCode.SAVE_PHOTOGRAPH_REVIEW_RECORD, params, db.getReturnlmap(), e);
+		}
+		
+		return returnMap;
+	}
 }

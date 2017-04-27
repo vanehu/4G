@@ -3027,12 +3027,13 @@ SoOrder = (function() {
 	
 	//订单数据校验
 	var _checkData = function() {
+		var auditMode 		= OrderInfo.operateSpecStaff.auditMode;		//经办人审核方式
+		var isUimAction		= ec.util.isArray(OrderInfo.boProd2Tds);	//判断是否有UIM变更
+        var orderAttrName	= $.trim($("#orderAttrName").val());		//经办人姓名
+        var orderAttrAddr	= $.trim($("#orderAttrAddr").val());		//经办人证件地址
+        var isAuditSucess 	= OrderInfo.operateSpecStaff.isAuditSucess;	//审核是否成功
+		var orderAttrIdCard = $.trim($("#orderAttrIdCard").val());		//经办人证件号码
 
-        var orderAttrName	= $.trim($("#orderAttrName").val());	//经办人姓名
-		var orderAttrIdCard = $.trim($("#orderAttrIdCard").val());	//证件号码
-		var orderAttrAddr	= $.trim($("#orderAttrAddr").val());	//地址
-		var isUimAction		= ec.util.isArray(OrderInfo.boProd2Tds);//判断是否有UIM变更
-		
 		if(CONST.realNamePhotoFlag == "ON"){
 			//若页面上填写了经办人信息，但没有进行拍照，则拦截提示，不管权限不权限
 			if(ec.util.isObj(orderAttrName) || ec.util.isObj(orderAttrIdCard) || ec.util.isObj(orderAttrAddr)){
@@ -3060,6 +3061,13 @@ SoOrder = (function() {
 				if((!ec.util.isObj($("#jbrForm").html()) || !ec.util.isObj(OrderInfo.virOlId)) && !OrderInfo.isCltNewOrder()){
 					$.alert("提示","经办人拍照信息不能为空！请确认页面是否已点击【读卡】或者【查询】按钮，并且进行拍照和人证相符等操作！");
 					return false ;
+				}
+				//拍照审核校验
+				if(ec.util.isObj(auditMode) && auditMode == "1"){//现场审核
+					if(!isAuditSucess){
+						$.alert("提示", "请完成经办人人像审核操作！");
+						return false ;
+					}
 				}
 			}
 		}

@@ -1194,6 +1194,12 @@ public final class PortalServiceCode {
     
     /**获取初审信息接口*/
     public static final String QRY_PRELININARY_INFO = "biz-service/intf.acctService/qryPreliminaryInfo";
+    
+    /** 查询某权限下的员工列表*/
+    public static final String QRY_OPERATESPEC_STAFF_LIST = "sys-queryOperaStaff";
+    
+    /**实名审核记录接口*/
+    public static final String SAVE_PHOTOGRAPH_REVIEW_RECORD = "biz-service/intf.fileOperateService/saveRealCheckRecord";
 
 }
 

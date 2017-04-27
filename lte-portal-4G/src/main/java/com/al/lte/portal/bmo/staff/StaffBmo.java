@@ -86,5 +86,16 @@ public interface StaffBmo {
 	 * @throws Exception
 	 */
 	public Map<String, Object> bindQrCode(Map<String, Object> paramMap, String string,SessionStaff sessionStaff)throws Exception;
-	
+
+	/**
+	 * 查询某权限下的员工列表
+	 * @param operatSpecCd 权限编码 <br>若入参中不指定具体的权限编码，则默认根据SysConstant.RXSH权限进行查询
+	 * @param sessionStaff
+	 * @return 员工列表List
+	 * @throws InterfaceException
+	 * @throws IOException
+	 * @throws BusinessException
+	 */
+	public Map<String, Object> qryOperateSpecStaffList(String operatSpecCd, SessionStaff sessionStaff) throws InterfaceException, IOException, BusinessException, Exception;
+
 }

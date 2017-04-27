@@ -19,7 +19,7 @@ OrderInfo = (function() {
 	 * 
 	 * 37终端预约，38取消终端预约，39改付费类型及信控属性，40紧急开机，41ESS远程写卡，42ESS二次写卡，43返档，28主副卡角色互换
 	 * 
-	 * 45实名信息采集单
+	 * 45实名信息采集单，64靓号调级
 	 */
 	var _actionFlag = 0;
 	
@@ -54,8 +54,8 @@ OrderInfo = (function() {
 	18 撤单
 	19 异地补换卡
 	20 预写白卡
-	21 补卡
-	22 换卡
+	21  换卡
+	22 补卡
 	27 预装
 	redmine 1229860 update by huangjj3
 	23 终端换货
@@ -76,7 +76,11 @@ OrderInfo = (function() {
 	49 过户返档
 	50 改号
 	51 一卡双号退订
+	64 靓号调级
+	_busitypeflag定义依据《购物车动作跟主数据对应关系20170224.xlsx》
 	*/
+	var _busitypeflag = 0;
+	
 	var _authRecord={
 		menuId:"",
 		validateType:"",
@@ -94,12 +98,6 @@ OrderInfo = (function() {
 
 	var _cust_validateNum = "";//客户鉴权号码
 
-	/**
-	 * 1新装，21补卡，22换卡，61主副卡成员变更加装已有号码，62主副卡成员变更加装新号码，28主副卡成员变更主副卡角色互换
-	 * 61套餐变更加装老号码作为副卡，除此之外套餐变更都是2
-	 * update:2017-01-05
-	 */
-	var _busitypeflag = 0;
 	
 	var _orderlonger = "";
 	
@@ -1767,18 +1765,20 @@ OrderInfo = (function() {
 			if(ec.util.isObj(isInitOrderData)){//如果是初始化订单数据，不能清理，上一步或取消需要清理缓存
 				OrderInfo.isHandleCustNeeded  = false;
 			}
-			OrderInfo.ifCreateHandleCust	  = false;//判断是否需要新建经办人
-			OrderInfo.virOlId				  = "";//拍照上传虚拟购物车ID
-			OrderInfo.handleCust			  = {};//针对经办人老客户缓存一些数据
-			OrderInfo.handleCustId 			  = "";//经办人为老客户时的客户ID
-			OrderInfo.boUserCustInfos 		  = [];//使用人：客户信息节点
-			OrderInfo.boUserCustIdentities	  = [];//使用人：客户证件节点
-			OrderInfo.boUserPartyContactInfos = [];//使用人：联系人节点
-			OrderInfo.boUserPartyContactInfo  = $.extend(true, {}, _boUserPartyContactInfo);//使用人：联系人节点
+			
+			OrderInfo.virOlId				  = "";		//拍照上传虚拟购物车ID
+			OrderInfo.handleCust			  = {};		//针对经办人老客户缓存一些数据
+			OrderInfo.handleCustId 			  = "";		//经办人为老客户时的客户ID
+			OrderInfo.boUserCustInfos 		  = [];		//使用人：客户信息节点
+			OrderInfo.ifCreateHandleCust	  = false;	//判断是否需要新建经办人
+			OrderInfo.boUserCustIdentities	  = [];		//使用人：客户证件节点
+			OrderInfo.boUserPartyContactInfos = [];		//使用人：联系人节点
 			OrderInfo.bojbrCustInfos 		  = $.extend(true, {}, _bojbrCustInfos);		//经办人：客户信息节点
+			OrderInfo.operateSpecStaff	  	  = $.extend(true, {}, _operateSpecStaff);		//经办人：人像审核
+			OrderInfo.bojbrCustCheckLogs	  = $.extend(true, {}, _bojbrCustCheckLogs);	//经办人新建：参与人核查记录节点
 			OrderInfo.bojbrCustIdentities	  = $.extend(true, {}, _bojbrCustIdentities);	//经办人：客户证件节点
 			OrderInfo.bojbrPartyContactInfo   = $.extend(true, {}, _bojbrPartyContactInfo);	//经办人：客户证件节点
-			OrderInfo.bojbrCustCheckLogs   = $.extend(true, {}, _bojbrCustCheckLogs);	//经办人新建：参与人核查记录节点
+			OrderInfo.boUserPartyContactInfo  = $.extend(true, {}, _boUserPartyContactInfo);//使用人：联系人节点
 		}
 	};
 	
@@ -1810,6 +1810,17 @@ OrderInfo = (function() {
 	};
 	
 	var _preliminaryInfo  = {};//征信业务信息
+	
+	//经办人人像审核
+	var _operateSpecStaff = {
+		"staffId"				:"",
+		"staffName"				:"",
+		"staffCode"				:"",
+		"auditMode"				:"",
+		"phoneNumber"			:"",
+		"isAuditSucess"			:false,
+		"operateSpecStaffList"	:[]		
+	};
 	
 	return {	
 		order					: _order,
@@ -1941,6 +1952,7 @@ OrderInfo = (function() {
 		cltjbrInfo				:_cltjbrInfo,
         isCltNewOrder			:_isCltNewOrder,
         bojbrPartyContactInfo	:_bojbrPartyContactInfo,
-        preliminaryInfo         :_preliminaryInfo
+        preliminaryInfo         :_preliminaryInfo,
+        operateSpecStaff		:_operateSpecStaff
 	};
 })();

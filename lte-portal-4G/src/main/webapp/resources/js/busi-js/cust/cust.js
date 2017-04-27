@@ -3421,10 +3421,6 @@ order.cust = (function(){
 	var _getResponseResult = function(response){
 		//经办人信息填写模块信息保护优化
 		 _disableHandleCustInfos();
-		// 加载拍照弹窗，实名信息采集单受理除外(只新装)
-//		if(!OrderInfo.isCltNewOrder()){
-//			_showCameraView();
-//		 }
 		//判断新老用户封装用户信息
 		if(ec.util.isArray(response.data.custInfos)){
 			OrderInfo.ifCreateHandleCust = false;//不需要新建经办人
@@ -3589,7 +3585,7 @@ order.cust = (function(){
 		$("#device").empty();
 		$("#startPhotos").show();
 		$("#startPhotos").off("click").on("click",function(){_createVideo();});
-		$("#tips").html("");
+		$("#tips").empty();
 		$("#img_Photo")[0].src="";
 		$("#img_Photo")[0].height=0;
 		$("#img_Photo")[0].width=0;
@@ -3600,7 +3596,12 @@ order.cust = (function(){
 		$("#takePhotos").off("click");
 		$("#rePhotos").off("click");
 		$("#confirmAgree").off("click");
+		$("#auditSmsPwd").val("");
+		$("#auditStaffTips").empty();
+		$("#photographReviewDiv").show();
+		$("#auditDiv").hide();
 		_getCameraInfo();
+		order.query.qryOperateSpecStaffList();
 	};
 
 	//加载拍照设备列表，获取摄像头信息
@@ -3693,12 +3694,12 @@ order.cust = (function(){
 				$("#tips").html("提示：" + json.errorMsg);
 			}
 		}catch(e) {
-			$.alert("错误" + "关闭视频连接发生异常：" + e);
+			$.alert("错误", "关闭视频连接发生异常：" + e);
 			throw new Error("Close!Video!Exception : " + e);
 		}
 	};
 
-	var _rePhotos = function(resultContent){
+	var _rePhotos = function(){
 		//初始化页面
 		$("#tips").html("");
 		$("#img_Photo")[0].src="";
@@ -3714,8 +3715,97 @@ order.cust = (function(){
 		_createVideo();
 	};
 
+	//刷新时间
+	var second = 30;
+	var interResend = null;
+	var showTime = function(){
+		if (second > 0){
+			second--;
+			if(second == 0){
+				$("#confirmagreesmsresend").removeClass("cf").addClass("cn").off("click").on("click",_confirmAgreeSmsResend);
+				$("#auditDefaultTimeResend").html("");
+				if(interResend != null){
+					window.clearInterval(interResend);
+					$('#timeInfo').html("");
+					$("#confirmagreesmsresend").attr("title","请点击重新发送短信验证码.");		
+					return;
+				}
+			}
+			$("#auditDefaultTimeResend").html("在" + second + "秒内");	
+		}
+		$("#confirmagreesmsresend").attr("title", "请在"+second+"秒后再点击重新发送.");	
+	};
+
+	//短信验证码失效时间5分钟
+	var leftInvalidTime=300;
+	var smsInvalidTime=function(){
+		if (leftInvalidTime>0){
+			leftInvalidTime--;
+		}
+	};
+	//30秒后重发短信验证码
+	var sendSmsAfter30s=function(){
+		 second=30;
+		 window.clearInterval(interResend);
+		 interResend=window.setInterval(showTime,1000);
+	};
+	//5分钟之后短信验证码过期失效
+	var invalidAfter5Mins=function(){
+		window.setInterval(smsInvalidTime,1000);
+	};
+	
+	//重发验证码
+	var _confirmAgreeSmsResend=function(){ 
+		$.callServiceAsJsonGet(contextPath+"/staff/login/confirmAgreeSmsResend",{'smsErrorCount':smsErrorCount} ,{
+			"done" :function(response){				
+				if (response.code==0) {
+					$.alert("提示","验证码发送成功，请及时输入验证.");
+					$("#confirmagreesmsresend").off("click").removeClass("cn").addClass("cf");
+					//重新发送验证码成功后,验证错误次数置0.
+					smsErrorCount=0;
+					//重新发送验证码成功后,验证码有效期初始化5分钟.
+					leftInvalidTime=300;
+					sendSmsAfter30s();
+					//5分钟倒计时，超过5分钟未输入验证码就失效.
+					invalidAfter5Mins();
+				} else{
+					if(response.data!=undefined||response.data!=null){
+						$.alert("提示",response.data);
+					}
+				};
+			}
+		});	
+	};
+
 	// 上传照片
+	var uploadCustCertificateParams = {};
 	var _uploadImage = function() {
+		var auditStaff = $("#auditStaffList").val();
+		var auditMode = $("#auditMode").val();
+		
+		if(!ec.util.isObj(auditStaff) || auditStaff == "-1"){
+			$.alert("提示", "请选择审核人");
+			return;
+		}
+		if(!ec.util.isObj(auditMode) || auditMode == "-1"){
+			$.alert("提示", "请选择审核方式");
+			return;
+		}
+		
+		if(ec.util.isArray(OrderInfo.operateSpecStaff.operateSpecStaffList)){
+			$.each(OrderInfo.operateSpecStaff.operateSpecStaffList, function(){
+				if(this.staffId == auditStaff){
+					OrderInfo.operateSpecStaff.staffId = this.staffId;
+					OrderInfo.operateSpecStaff.staffCode = this.staffCode;
+					OrderInfo.operateSpecStaff.staffName = this.staffName;
+					OrderInfo.operateSpecStaff.phoneNumber = this.phone;
+				}
+			});
+		} else{
+			$.alert("错误", "未获取到审核人员列表数据");
+			return;
+		}
+		
 		$("#confirmAgree").removeClass("btna_o").addClass("btna_g");
 		$("#confirmAgree").off("click");
 		$("#tips").empty();
@@ -3724,46 +3814,189 @@ order.cust = (function(){
 				OrderInfo.bojbrCustInfos.identidiesTypeCd !=  $.trim($("#orderIdentidiesTypeCd").val()) &&
 				OrderInfo.bojbrCustInfos.identityNum!= $.trim($("#orderIdentidiesTypeCd").val())){
 			pictures.push({
-	            "photograph": encodeURIComponent(OrderInfo.bojbrCustIdentities.identidiesPic),//经办人身份证照片
-	            "flag": "C",
-	            "signature" :""
+				"flag"		: "C",
+				"staffId"	: OrderInfo.staff.staffId,
+				"signature" : "",
+	            "photograph": encodeURIComponent(OrderInfo.bojbrCustIdentities.identidiesPic)//经办人身份证照片
 			});
 			pictures.push({
-	            "photograph": encodeURIComponent($("#img_Photo").data("identityPic")),//经办人拍照照片
-	            "flag": "D",
-	            "signature" : $("#img_Photo").data("signature")
+	            "flag"		: "D",
+	            "staffId"	: OrderInfo.staff.staffId,
+	            "signature" : $("#img_Photo").data("signature"),
+	            "photograph": encodeURIComponent($("#img_Photo").data("identityPic"))//经办人拍照照片
+	            
 			});
 			if (ec.util.isObj(OrderInfo.boCustIdentities.identidiesPic)){
 				pictures.push({
-		            "photograph": encodeURIComponent(OrderInfo.boCustIdentities.identidiesPic),//新建客户身份证照片
-		            "flag": "A",
-		            "signature" :""
+		            "flag"		: "A",
+		            "staffId"	: OrderInfo.staff.staffId,
+		            "signature" : "",
+		            "photograph": encodeURIComponent(OrderInfo.boCustIdentities.identidiesPic)//新建客户身份证照片
 		        });
 			}
-			$.ecOverlay("<strong>正在处理中, 请稍等...</strong>");
-			var response = $.callServiceAsJson(contextPath + "/cust/uploadCustCertificate", {
+			
+			uploadCustCertificateParams = {
 				accNbr		: "",
 				areaId		: OrderInfo.getAreaId(),
 				srcFlag		: "REAL",
 				certType	: $.trim($("#orderIdentidiesTypeCd").val()),//证件类型
+				venderId  	: $("#img_Photo").data("venderId"),
 				extSystem	: "1000000206",
 				certNumber	: $.trim($("#orderAttrIdCard").val()), //证件号码
-				photographs	: pictures,
-				venderId  	: $("#img_Photo").data("venderId")
-		    });
-			$.unecOverlay();
-			if(response.code == 0 && response.data){
-				isUploadImageSuccess = true;
-				OrderInfo.virOlId = response.data.virOlId;
-				_close();
-			}else if(response.code == 1 && response.data){
-				$.alert("错误", "证件上传失败，错误原因：" + response.data);
-			}else if(response.code == -2 && response.data){
-				$.alertM(response.data);
-			}else{
-				$.alert("错误", "证件上传发生未知异常，请稍后重试。错误信息：" + response.data);
+				photographs	: pictures
+		    };
+			
+			if(auditMode == "1"){//现场审核，短信校验通过再上传
+				//发送短信
+				_sendSms4Audit("1");
+			} else if(auditMode == "2"){//远程审核，上传后再短信
+				var callBackFuncOption = "";
+				var callBackFuncMust = "order.cust.sendSms4Audit('2')";
+				_uploadImageMainFunc(uploadCustCertificateParams, callBackFuncMust, callBackFuncOption);
 			}
 		}
+	};
+	
+	//现场审核、远程审核发送短信
+	var _sendSms4Audit = function(auditMode){
+		var param = {
+		   number: OrderInfo.operateSpecStaff.phoneNumber,
+		   areaId : OrderInfo.getAreaId(),
+		   virOlId : OrderInfo.virOlId,
+		   checkType: auditMode
+		};
+		$.callServiceAsJsonGet(contextPath + "/staff/login/confirmAgreeCheck", param , {
+			"before" : function(){
+				$.ecOverlay("<strong>短信发送中,请稍等会儿...</strong>");
+			},
+			"done" : function(response){
+				if (response.code == 0) {
+					_initAuditHtml(auditMode);
+				}else if(response.code == 3){
+					$.alert("提示", "审核短信发送失败：" + response.data);
+					return;
+				}else if(response.code == 1002){
+					return;
+				}else if(response.code == 1003){
+					$.alert("提示","审核短信发送失败：" + response.data);
+					return;
+				}else{
+					$.alertM(response.data.errMsg);
+					return;
+				}
+			},
+			"always" : function(){
+				$.unecOverlay();
+			},
+			"fail" : function(response){
+				$.alert("提示", "审核短信发送失败： 请求可能发生未知异常，请稍候再试");
+			}
+		});	
+	};
+	
+	var _initAuditHtml = function(auditMode){
+		OrderInfo.operateSpecStaff.auditMode = auditMode;
+		if(auditMode == "1"){//现场审核
+			$("#auditStaffTips").html("审核人：" + OrderInfo.operateSpecStaff.staffName + "/" + OrderInfo.operateSpecStaff.phoneNumber);
+			$("#photographReviewDiv").hide();
+			$("#auditDiv").show();
+			$("#auditDefaultTimeResend").text(second);//验证码提示秒数
+			window.clearInterval(interResend);
+			$("#auditSmsPwd").val("").removeClass("ketchup-input-error");
+			$("#confirmagreesmsresend").off("click").removeClass("cn").addClass("cf");
+			//重新发送验证码成功后,验证错误次数置0.
+			smsErrorCount=0;
+			//重新发送验证码成功后,验证码有效期初始化5分钟.
+			sendSmsAfter30s();
+			//5分钟倒计时，超过5分钟未输入验证码就失效.
+			leftInvalidTime = 300;
+			invalidAfter5Mins();
+			$("#auditSmsPwd").focus();
+			
+		}else{//远程审核
+			_close();
+			var virOlId = OrderInfo.virOlId;
+			var staffId = OrderInfo.operateSpecStaff.staffId;
+			var staffName = OrderInfo.operateSpecStaff.staffName;
+			var auditTips = "经办人拍照人像远程审核请求已经发送 "+staffName+"（工号"+staffId+"），虚拟流水号："+virOlId+"，请联系审核人尽快处理。";
+			$.alert("提示", auditTips);
+			return;
+		};
+	};
+	
+	//上传照片主函数
+	var _uploadImageMainFunc = function(params, callBackFuncMust, callBackFuncOption){
+		$.ecOverlay("<strong>正在处理中, 请稍等...</strong>");
+		var response = $.callServiceAsJson(contextPath + "/cust/uploadCustCertificate", params);
+		$.unecOverlay();
+		if(response.code == 0 && response.data){
+			isUploadImageSuccess = true;
+			OrderInfo.virOlId = response.data.virOlId;
+			eval(callBackFuncMust);
+			if(ec.util.isObj(callBackFuncOption)){
+				eval(callBackFuncOption);
+			}
+		}else if(response.code == 1 && response.data){
+			$.alert("错误", "证件上传失败，错误原因：" + response.data);
+			return false;
+		}else if(response.code == -2 && response.data){
+			$.alertM(response.data);
+			return false;
+		}else{
+			$.alert("错误", "证件上传发生未知异常，请稍后重试。错误信息：" + response.data);
+			return false;
+		}
+	};
+	
+	//现场审核：审核不过，重新拍照按钮
+	var _auditFailureRePhoto = function(){
+		$("#photographReviewDiv").show();
+		$("#auditDiv").hide();
+		_rePhotos();
+	};
+	
+	//现场审核：审核通过按钮
+	var _auditConfirm = function() {
+		//判断短信验证码是否过期
+		if(leftInvalidTime == 0){
+			$.alert("提示", "您的短信验证码已经过期，请重新发送后再次验证。");
+			return;
+		}
+		//判断短信验证错误次数,超过三次后,验证码失效，需要重新发送.
+		if(smsErrorCount == 3){
+			$.alert("提示","对不起，3次错误输入后验证码已自动失效，请重新发送验证码。");
+			$("#confirmagreesmsresend").removeClass("cf").addClass("cn").off("click").on("click",_confirmAgreeSmsResend);
+			if(interResend != null){
+				window.clearInterval(interResend);
+				$('#timeInfo').html("");
+				$("#confirmagreesmsresend").attr("title","请点击重新发送短信验证码.");	
+				return;
+			}
+			return;
+		}
+		
+		var smspwd = ec.util.isObj($.trim($("#auditSmsPwd").val())) ? $.trim($("#auditSmsPwd").val()) : "N";
+		var smsValidparams = "smspwd=" + smspwd + "&number=" + OrderInfo.operateSpecStaff.phoneNumber;
+		$.callServiceAsJson(contextPath + "/staff/login/confirmAgreeSmsValid", smsValidparams, {
+			"before":function(){
+				$.ecOverlay("<strong>验证短信随机码中,请稍等会儿...</strong>");
+			},
+			"done" : function(response){
+				if (response.code == 0) {
+					var callBackFuncMust = "order.query.photographReviewSucess()";
+					var callBackFuncOption = "order.cust.close()";
+					_uploadImageMainFunc(uploadCustCertificateParams, callBackFuncMust, callBackFuncOption);
+				} else if (response.code == 1) {
+					smsErrorCount++;
+					$.alert("提示", response.data);
+				}else {
+					$.alert("提示","请求异常，请重新登录再试！");
+				};
+			},
+			"always":function(){
+				$.unecOverlay();
+			}
+		});
 	};
 
 	//关闭拍照弹框，关闭视频
@@ -3796,24 +4029,21 @@ order.cust = (function(){
     var _disableHandleCustInfos = function(){
     	var backgroundColor = "background-color: #E8E8E8;";
     	var backgroundColorGray = "#E8E8E8;";
-    	//1.“查询”和“读卡”按钮，改为“重置”按钮
-//    	$("#orderAttrReadCertBtn span").text("重置");
-//    	$("#orderAttrQueryCertBtn span").text("重置");
-    	//2.修改经办人“查询”和“读卡”按钮的绑定事件
+    	//1.“查询读卡”按钮隐藏，“重置”按钮展示
     	_bindEvent4HandleCust();
-    	//3.置灰证件类型
+    	//2.置灰证件类型
     	$('#orderIdentidiesTypeCd').attr("disabled", "disabled");
     	$('#orderIdentidiesTypeCd').attr("style", backgroundColor);
-    	//4.置灰经办人姓名
+    	//3.置灰经办人姓名
     	$("#orderAttrName").css("background-color", backgroundColorGray).attr("disabled", true);
     	$("#li_order_attr span").css("background-color", backgroundColorGray).attr("disabled", true);
-    	//5.置灰证件号码
+    	//4.置灰证件号码
     	$("#orderAttrIdCard").css("background-color", backgroundColorGray).attr("disabled", true);
     	$("#li_order_remark2 span").css("background-color", backgroundColorGray).attr("disabled", true);
-    	//6.置灰证件地址
+    	//5.置灰证件地址
     	$("#orderAttrAddr").css("background-color", backgroundColorGray).attr("disabled", true);
     	$("#li_order_remark3 span").css("background-color", backgroundColorGray).attr("disabled", true);
-    	//7.置灰联系人号码
+    	//6.置灰联系人号码
     	$("#orderAttrPhoneNbr").css("background-color", backgroundColorGray).attr("disabled", true);
     };
 
@@ -3822,10 +4052,6 @@ order.cust = (function(){
     	$("#orderAttrResetBtn").show();
     	$("#orderAttrReadCertBtn").hide();
     	$("#orderAttrQueryCertBtn").hide();
-//        $("#jbrForm").off("formIsValid").bind("formIsValid", function (event) {
-//        	_resetHandleCustInfos();
-//        }).ketchup({bindElement: "orderAttrQueryCertBtn"});
-//        $("#orderAttrReadCertBtn").attr("onclick", "javascript:order.cust.resetHandleCustInfos()");
     };
 
     //恢复被置灰的经办人
@@ -3846,9 +4072,6 @@ order.cust = (function(){
     //去除置灰的限制，恢复读卡和查询两个按钮
     var _removeDisabled = function(){
     	var backgroundColorWhite = "white;";
-    	//重置两个按钮极其绑定事件
-//    	$("#orderAttrReadCertBtn span").text("读卡");
-//    	$("#orderAttrQueryCertBtn span").text("查询");
     	var orderIdentidiesTypeCd = $("#orderIdentidiesTypeCd").val();
     	if(orderIdentidiesTypeCd == 1){
     		$("#orderAttrResetBtn").hide();
@@ -4044,7 +4267,7 @@ order.cust = (function(){
                     "custNameEnc": OrderInfo.cust.userNameEnc,
                     "certNumEnc": OrderInfo.cust.userCertNumEnc,
                     "certAddressEnc": OrderInfo.cust.userCertAddressEnc
-                }
+                };
             }else{
                 inParam = {
                     "certType": OrderInfo.cust.identityCd,
@@ -4228,7 +4451,10 @@ order.cust = (function(){
         industryClassCdSeChoose:_industryClassCdSeChoose,
         getCustInfo415:_getCustInfo415,
         getCustInfo415Flag:_getCustInfo415Flag,
-        getCustCertType:_getCustCertType
+        getCustCertType:_getCustCertType,
+        auditFailureRePhoto:_auditFailureRePhoto,
+        auditConfirm:_auditConfirm,
+        sendSms4Audit:_sendSms4Audit
 	};
 })();
 $(function() {

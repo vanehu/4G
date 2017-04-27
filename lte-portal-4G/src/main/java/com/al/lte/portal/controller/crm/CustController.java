@@ -1898,7 +1898,7 @@ public class CustController extends BaseController {
         JsonResponse jsonResponse = null;
         try {
         	result = custBmo.uploadCustCertificate(param, sessionStaff);
-            if (result != null && ResultCode.R_SUCCESS.equals(result.get("code").toString())) {
+            if (result != null && ResultCode.R_SUCCESS.equals(MapUtils.getString(result, "code", "1"))) {
             	//拍照校验、上传成功后写入session标识
             	String sessionKey = ((Map<String, String>)result.get("result")).get("virOlId") + "upload";
             	Map<String, Object> sessionVirOlId = new HashMap<String, Object>();
@@ -1906,10 +1906,10 @@ public class CustController extends BaseController {
             	ServletUtils.setSessionAttribute(super.getRequest(),Const.SESSION_UPLOAD_VIR_OLID, sessionVirOlId);
                 jsonResponse = super.successed(result.get("result"), ResultConstant.SUCCESS.getCode());
             } else {
-                jsonResponse = super.failed(result.get("msg").toString(), ResultConstant.FAILD.getCode());
+                jsonResponse = super.failed(MapUtils.getString(result, "msg", ""), ResultConstant.FAILD.getCode());
             }
         } catch (BusinessException be) {
-            return super.failed(be);	
+            return super.failed(be);
         } catch (InterfaceException ie) {
         	return super.failed(ie, param, ErrorCode.UPLOAD_CUST_CERTIFICATE);
 		} catch (IOException ioe) {

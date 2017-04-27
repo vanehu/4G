@@ -890,4 +890,15 @@ public interface OrderBmo {
 	 */
 	public Map<String, Object> certReaderVerify(Map<String, Object> param, HttpServletRequest request, SessionStaff sessionStaff);
 
+	/**
+	 * 实名审核记录接口
+	 * @param params <br/>olId和checkType必传，否则抛BusinessException；<br>areaId和staffId若为空，则以session替代；<br>srcFlag若为空，则以"REAL"替代
+	 * @param sessionStaff
+	 * @return
+	 * @throws InterfaceException
+	 * @throws IOException
+	 * @throws BusinessException
+	 * @throws Exception
+	 */
+	public Map<String, Object> savePhotographReviewRecord(Map<String, Object> params, SessionStaff sessionStaff) throws InterfaceException, IOException, BusinessException, Exception;
 }

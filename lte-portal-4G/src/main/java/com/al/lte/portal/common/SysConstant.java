@@ -838,6 +838,15 @@ public final class SysConstant {
 	/**二代证读卡分省配置：提示语信息*/
 	public static final String NOTICE_INFOS = "NOTICE_INFOS";
 	
-	public static final String RESULT_CODE = "resultCode";
-	public static final String RESULT_MSG = "resultMsg";
+	public static final String RESULT 		= "result";
+	public static final String RESULT_MSG 	= "resultMsg";
+	public static final String RESULT_CODE 	= "resultCode";
+	
+	public static final String AREA_ID 		= "areaId";
+	public static final String STAFF_ID 	= "staffId";
+	public static final String STAFF_CODE	= "staffCode";
+	public static final String CHANNEL_ID	= "channelId";
+	
+	/**权限编码：人像审核*/
+	public static final String RXSH = "PZRGSH";
 }

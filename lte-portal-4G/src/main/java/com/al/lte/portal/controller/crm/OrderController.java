@@ -4552,9 +4552,96 @@ public class OrderController extends BaseController {
 			}else if("100800".equals(acctItemId)){//国漫
 				if(!"true".equals(gm)){
 					jsonResponse = super.failed("非法请求", ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
-					return jsonResponse;
-				}
-			}
+		return jsonResponse;
+    }
+    
+    /**
+     * 查询某权限下的员工列表<br/>
+     * @param param 若入参中不指定具体的权限编码，则默认根据SysConstant.RXSH权限进行查询
+     * @return 员工列表List
+     */
+    @RequestMapping(value = "/qryOperateSpecStaffList", method = RequestMethod.POST)
+    @ResponseBody
+    public JsonResponse qryOperateSpecStaffList(@RequestBody Map<String, Object> param, @LogOperatorAnn String flowNum, HttpServletResponse response) {
+        SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
+        Map<String, Object> result = null;
+        JsonResponse jsonResponse = null;
+        String operateSpec = null;
+
+        if(StringUtils.isBlank(MapUtils.getString(param, "operateSpec", ""))){
+        	operateSpec = SysConstant.RXSH;
+        } else{
+        	operateSpec = MapUtils.getString(param, "operateSpec");
+        }
+        
+        String sessionKey = sessionStaff.getStaffId() + operateSpec;
+        
+        List<Map<String, Object>> staffList = (List<Map<String, Object>>) ServletUtils.getSessionAttribute(super.getRequest(), sessionKey);
+        if(staffList != null){
+        	jsonResponse = super.successed(staffList, ResultConstant.SUCCESS.getCode());
+        } else{
+        	try {
+            	result = staffBmo.qryOperateSpecStaffList(operateSpec, sessionStaff);
+                if (ResultCode.R_SUCC.equals(MapUtils.getString(result, SysConstant.RESULT_CODE, "1"))) {
+                	jsonResponse = super.successed(result.get(SysConstant.RESULT), ResultConstant.SUCCESS.getCode());
+                	ServletUtils.setSessionAttribute(super.getRequest(), sessionKey, result.get(SysConstant.RESULT));
+                } else {
+                    jsonResponse = super.failed(MapUtils.getString(result, SysConstant.RESULT_MSG, ""), ResultConstant.FAILD.getCode());
+                }
+            } catch (BusinessException be) {
+            	jsonResponse = super.failed(be);	
+            } catch (InterfaceException ie) {
+            	jsonResponse = super.failed(ie, param, ErrorCode.QUERY_STAFF_INFO);
+    		} catch (IOException ioe) {
+    			jsonResponse = super.failed(ErrorCode.QUERY_STAFF_INFO, ioe, param);
+    		} catch (Exception e) {
+    			jsonResponse = super.failed(ErrorCode.QUERY_STAFF_INFO, e, param);
+    		}
+        }
+        
+        return jsonResponse;
+    }
+    
+    /**
+     * 远程审核：页面入口
+     */
+    @RequestMapping(value = "/photographReview", method = RequestMethod.GET)
+    @AuthorityValid(isCheck = true)
+    public String photographReview(@RequestParam Map<String, Object> params, HttpServletRequest request, Model model) {
+//        model.addAttribute("canOrder", EhcacheUtil.pathIsInSession(super.getRequest().getSession(), "order/photographReview"));
+        return "/order/photograph-review-query";
+    }
+    
+    /**
+     * 实名审核记录
+     */
+    @RequestMapping(value = "/savePhotographReviewRecord", method = RequestMethod.POST)
+    @ResponseBody
+    public JsonResponse savePhotographReviewRecord(@RequestBody Map<String, Object> param, @LogOperatorAnn String flowNum, HttpServletResponse response) {
+        SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
+        Map<String, Object> result = null;
+        JsonResponse jsonResponse = null;
+        
+    	try {
+        	result = orderBmo.savePhotographReviewRecord(param, sessionStaff);
+            if (ResultCode.R_SUCC.equals(MapUtils.getString(result, SysConstant.RESULT_CODE, "1"))) {
+            	jsonResponse = super.successed(MapUtils.getString(result, SysConstant.RESULT_MSG, ""), ResultConstant.SUCCESS.getCode());
+            } else {
+                jsonResponse = super.failed(MapUtils.getString(result, SysConstant.RESULT_MSG, ""), ResultConstant.FAILD.getCode());
+            }
+        } catch (BusinessException be) {
+        	jsonResponse = super.failed(be);
+        } catch (InterfaceException ie) {
+        	jsonResponse = super.failed(ie, param, ErrorCode.SAVE_PHOTOGRAPH_REVIEW_RECORD);
+		} catch (IOException ioe) {
+			jsonResponse = super.failed(ErrorCode.SAVE_PHOTOGRAPH_REVIEW_RECORD, ioe, param);
+		} catch (Exception e) {
+			jsonResponse = super.failed(ErrorCode.SAVE_PHOTOGRAPH_REVIEW_RECORD, e, param);
+		}
+        
+        return jsonResponse;
+    }
+}
 		}
         try {
         	String areaId = (String) session.getAttribute("pointareaId");
