@@ -1236,7 +1236,8 @@ order.main = (function(){
 	
 	function _spec_parm(param){
 		var govFlag = order.cust.isCovCust(OrderInfo.cust.identityCd) || (OrderInfo.boCustInfos && OrderInfo.boCustInfos.partyTypeCd == '2');
-		if(govFlag && OrderInfo.specialtestauth){ // 政企客户并且拥有专用测试权限
+		//云盘去掉责任人
+		if(govFlag && OrderInfo.specialtestauth && param.prodSpecId != CONST.PROD_SPEC.PROD_CLOUD_OFFER){ // 政企客户并且拥有专用测试权限
 			/** render责任人 **/
 			order.main.initUserHtml(param.prodId,param.ul_id);
 		}
@@ -1256,7 +1257,6 @@ order.main = (function(){
 				}
 				//$("#order_spec_parm").append(response.data);
 				$("#"+param.ul_id).append(response.data);
-				
 				//判断使用人产品属性是否必填
 				_checkUsersProdAttr(param.prodId, $("#"+param.ul_id),govFlag);
 
