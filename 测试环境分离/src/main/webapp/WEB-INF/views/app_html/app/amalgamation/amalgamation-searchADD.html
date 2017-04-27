@@ -1,0 +1,78 @@
+    <div class="main-box">
+    <div class="tab-1-1-box info-box"><!--安装地址查询-->
+				<div class="input-box">
+					<i class="iconfont absolute-left">&#xe637;</i>
+					<i class="iconfont pull-right p-10 font-secondary">&#xe66e;</i>
+					<span class="select-title font-color">省</span> 
+					<select id="province_${prodType}" class="myselect select-option" data-role="none" onchange="order.broadband.getCity(this,'${prodType}')">
+						<#if province?? &&(province?size>0) >
+                    	<#list province as item>
+                    	<#if item.areaLevel == 3>
+                    	<option value="${item.commonRegionId}" <#if item.commonRegionId == proid>selected="selected"</#if>>${item.regionName}</option>
+                    	</#if>
+                    	</#list>
+                    	</#if>
+					</select>
+				</div>
+				<div class="input-box">
+					<i class="iconfont absolute-left">&#xe637;</i>
+					<i class="iconfont pull-right p-10 font-secondary">&#xe66e;</i>
+					<span class="select-title font-color">市</span> 
+					<select id="city_${prodType}" class="myselect select-option" data-role="none" onchange="order.broadband.getArea(this,'${prodType}')">
+						<#if citylist?? &&(citylist?size>0) >
+                    	<#list citylist as item>
+                    	<option value="${item.commonRegionId}" <#if item.commonRegionId == cityid>selected="selected"</#if>>${item.regionName}</option>
+                    	</#list>
+                    	</#if>
+					</select>
+				</div>
+				<div class="input-box">
+					<i class="iconfont absolute-left">&#xe637;</i>
+					<i class="iconfont pull-right p-10 font-secondary">&#xe66e;</i>
+					<span class="select-title font-color">区</span> 
+					<select id="area_${prodType}" class="myselect select-option" data-role="none">
+						<#if childlist?? &&(childlist?size>0) >
+                    	<#list childlist as item>
+                    	<option value="${item.commonRegionId}" <#if item.commonRegionId == areaid>selected="selected"</#if>>${item.regionName}</option>
+                    	</#list>
+                    	</#if>
+					</select>
+				</div>
+				<div class="input-box">
+					<i class="iconfont absolute-left">&#xe637;</i>
+					<i class="iconfont absolute-right" onclick="order.broadband.searchRes('${prodType}')">&#xe647;</i>
+					<input type="text" id="resKey_${prodType}" placeholder="搜索资源关键字">
+				</div>
+			</div>
+    </div>
+
+    <div class="modal fade" id="rescode_${prodType}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal_wrapper">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                            <h4 class="modal-title" id="myModalLabel_${prodType}">资源</h4>
+                        </div>
+                        <div class="modal-body" id="resList_${prodType}" style="max-height: 230px;overflow: scroll;">
+                            <!-- <p><label style="border: none;"><input type="radio" name="address"> 长江路民权北七街</label></p>
+                            <p><label style="border: none;"><input type="radio" name="address"> 长江路江都春花园</label></p> -->
+                        </div>
+                        <div class="modal-footer">
+                            <div class="btn-group btn-group-justified" role="group" aria-label="...">
+                                <div class="btn-group" role="group">
+                                    <button type="button" data-dismiss="modal" aria-label="Close" class="btn btn-primary btn-lg" onclick="order.broadband.rescapability('${prodType}');">确认</button>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+<script>
+$(function() {
+	order.broadband.init_select();
+});
+</script>

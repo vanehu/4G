@@ -1,0 +1,86 @@
+<@override name="title">手动归档</@override> <@override name="header">
+<!-- <link href="${contextPath}/css/default/top.css" rel="stylesheet" type="text/css" /> -->
+<#include "/busi-js-tpl.html"/>
+
+<script type="text/javascript">
+function updateArchivedAuto(){
+	var olId=$("#olId").val();
+	var olNbr=$("#olNbr").val();
+	if(olId==""&&olNbr==""){
+		$.alert("提示","订单id和购物车流水号至少要添加一个");
+		return ;
+	}
+	var param={"olId":olId,"olNbr":olNbr};
+	var url="${contextPath}/order/updateArchivedAuto";
+	$.callServiceAsJson(url,param,{
+		"before":function(){
+			$.ecOverlay("正在执行手动归档，请稍等...");
+		},
+		"always":function(){
+			$.unecOverlay();
+		},
+		"done" : function(response){
+			if(response.code==0){
+				$.alert("提示","归档成功！");
+			}else if (response.code == -2) {
+				$.alertM(response.data);
+			}else{
+				$.alert("提示","归档异常");
+				return;
+			}
+		},
+		fail:function(response){
+			$.unecOverlay();
+			$.alert("提示","请求可能发生异常，请稍后再试！");
+		}
+	});
+}
+</script>
+
+<link href="${contextPath}/css/system/css/main.css" rel="stylesheet" type="text/css" />
+<link href="${contextPath}/css/system/css/tree.css" rel="stylesheet" type="text/css" />
+
+
+</@override> <@override name="content">
+
+<div class="main_div">
+	<div class=" main_warp">
+  		<div class="ordercon">
+  			<div class="order_confirmation ordertabcon">
+  				<h2 class="h2_title">手动归档<span class="showhide"></span>
+  				</h2>
+  				<div class="main_body">
+  					<ul class="fillin show billSearch" style="height:205px">
+  						<li class="full">
+      						可归档订单状态有：待发送（201700），开通中（201300）
+    					</li>
+    					<li class="full">
+      						<label>订单id：</label>
+      						<input type="text" class="inputWidth150px" id="olId"/><font color="red">*</font>&nbsp;订单id和购物车流水号至少要添加一个
+    					</li>
+    					<li class="full">
+      						<label>购物车流水号：</label>
+      						<input type="text" class="inputWidth150px" id="olNbr"/>
+    					</li>
+						<a class="btn_h30"  style="margin:20px 0px 0px 20px;" onclick="updateArchivedAuto();"><span>确定</span></a>
+  					</ul>
+  					<ul class="billSearch" style="margin-top:10px">
+    					<table class="totalnoBorder" width="400px;" cellpadding="0" cellspacing="0">
+        					<tbody>
+        						<tr  id="puk_div">
+        						</tr>
+        					</tbody>
+        				</table>
+  					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+</@override> 
+<#if Session["_session_portal_type"]?? &&Session["_session_portal_type"]=="MVNO" > 
+<@extends name="/mvno-template.html"/> 
+<#else>
+<@extends name="/main-template.html"/>
+</#if>

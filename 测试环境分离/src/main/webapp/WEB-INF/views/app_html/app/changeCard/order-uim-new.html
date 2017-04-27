@@ -1,0 +1,87 @@
+<div id="orderContentDiv" class="content p-t-0">
+			
+			<div class="list-box m-t-10">
+				<ul id="tab-change-list2">
+					<li class="tab-list" name="tab-li">
+						<ul class="choice-list-box">
+						<li name="card-list">
+								<i class="iconfont pull-left">&#xe671;</i>
+								<span class="list-title">${prodInfo.accNbr}
+								</span>
+								<i class="iconfont absolute-right font-secondary open-noness">&#xe66e;</i>
+							</li>
+							<li class="p-l-43">
+								<div class="choice-box-left">
+									<span class="select-title p-l-0">补换卡</span>
+									<select id="uimSel"  onchange="product.uim.selUimApp()" class="myselect select-option dw-hsel" data-role="none" tabindex="-1">
+				                        	<option value="21">换卡</option>
+											<option value="22">补卡</option>
+				                   </select>
+								</div>
+							</li>
+							<li>
+					<div class="choice-box absolute-l-43 border-top-none border-none">
+									<input placeholder="UIM卡，请扫描或输入" class="choice-input p-l-0 " oninput="showCheckUim(${prodId})"; id="uim_input_${prodId}" />
+									<i id="uim_call_${prodId}" class="iconfont right-btn pull-right p-r-10 m-r-45"
+										onclick="common.callScanning('order.service.scaningCallBack',${prodId})">&#xe641;</i>
+									<!--扫描UIM卡按钮-->
+									<i id="uim_check_${prodId}"
+										class="iconfont right-btn pull-right p-r-10 m-r-45 dis-none"
+										onclick="product.uim.checkUim(${prodId});">&#xe672;</i>
+									<!--校验UIM卡按钮-->
+									<i id="uim_release_${prodId}"
+										class="iconfont right-btn pull-right p-r-10 m-r-45 dis-none"
+										onclick="product.uim.releaseUim(${prodId});">&#xe673;</i>
+									<!--释放UIM卡按钮-->
+								</div>
+							</li>
+							
+						</ul>
+					</li>
+				</ul>
+				<ul class="choice-list-box m-b-10" style="display:none" id="CHANGEUIMSMS_${prodId}">
+							<li >
+								<div class="choice-box absolute-l-43 border-top-none border-none"  >
+									<input placeholder="请输入手机验证码" class="choice-input p-l-0 " id="smspwd_${prodId}" />
+									<i id="uim_call_${prodId}" class="iconfont right-btn pull-right p-r-10 m-r-45"
+											onclick="product.uim.smsFormIsValid()">&#xe641;</i>
+												
+								</div>
+								
+							</li>
+							<p style="color:red; padding-left:0.85rem">- 如您未收到随机序列号为<font id="changeUimSmsRandomNum"></font>验证码，请点击<a id="changeuimsmsresend" onclick="product.uim.smsResend()" title="请点击重新发送短信验证码.">重新获取验证码。</a></p>
+				</ul>
+				
+				
+			</div>
+			</div>
+
+
+<script type="text/javascript" charset="utf-8">
+	$(function() {
+	  order.broadband.init_select();//刷新select组件，使样式生效
+	});
+	
+	function showCheckUim(prodId) {
+		var uimNumber = $("#uim_input_"+prodId).val().trim();
+		if (uimNumber != "") {
+			$("#uim_call_"+prodId).addClass("dis-none");
+			$("#uim_check_"+prodId).removeClass("dis-none");
+		} else {
+			$("#uim_call_"+prodId).removeClass("dis-none");
+			$("#uim_check_"+prodId).addClass("dis-none");
+		}
+
+	}
+	
+	cust.jbrvalidatorForm();
+	var ua = navigator.userAgent.toLowerCase();	
+	if (/iphone|ipad|ipod/.test(ua)) {
+		$("#jbr_nfc").hide();
+		$("#jbr_otg").hide();
+		    //alert("iphone");		
+	} else if (/android/.test(ua)) {
+		    //alert("android");	
+	}
+</script> 
+

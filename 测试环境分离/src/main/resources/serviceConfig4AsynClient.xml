@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<services>
+	<endpoints>
+		<!-- 通过LogThreadLocalAtrrSette将消息中的交互ID放入异步线程的线程变量中，供日志采集所需    -->
+		<endpoint id="12" endpointCode="setLogAttr_p11" endpointName="setLogAttr_p11" 
+			endpointSpecCode="bean" inDataType="Message">
+			<endpointAttrs>
+				<endpointAttr attrSpecCode="className" attrValue="com.al.crm.log.util.ThreadLocalAtrrSetter" />		
+				<endpointAttr attrSpecCode="method" attrValue="setAttr" />
+			</endpointAttrs>
+		</endpoint>
+	</endpoints>
+	
+	<service id="1" serviceCode="asynInvokeByHttp" serviceEnName="asynInvokeByHttp" serviceCnName="调用集团CSB服务" state="A">
+		<endpoints>
+			<!-- 首端点为虚拟端点，接收客户端输入的消息 -->
+			<endpoint id="101" endpointCode="asynInvokeByHttp_p101" endpointName="asynInvokeByHttp_p101" 
+				endpointSpecCode="virtual">				
+			</endpoint>
+			<!-- 将CEP报文中的CEP_PKG_GROUP节点中的内容（作为异步交互流水号）与"系统编码_主机名_server名"的映射关系放入缓存    
+			<endpoint id="102" endpointCode="asynInvokeByHttp_p102" endpointName="asynInvokeByHttp_p102" 
+				endpointSpecCode="redisCache">		
+				<endpointAttrs>					
+					<endpointAttr attrSpecCode="address" attrValue="${asyn.redis.url}" />	
+					<endpointAttr attrSpecCode="maxActive" attrValue="${asyn.redis.maxActive}" />	
+					<endpointAttr attrSpecCode="maxIdle" attrValue="${asyn.redis.maxIdle}" />	
+					<endpointAttr attrSpecCode="minIdle" attrValue="${asyn.redis.minIdle}" />		
+					<endpointAttr attrSpecCode="method" attrValue="put" />
+					<endpointAttr attrSpecCode="cacheKey" attrValue="${CEP_PKG_GROUP}" />
+					<endpointAttr attrSpecCode="cacheValue" attrValue="${HOST_IPS},${DEFAULT_SYS_ID},${APP_SERVER_NAME}" />
+					<endpointAttr attrSpecCode="expireTime" attrValue="${asyn.redis.expireTime}" />
+					<endpointAttr attrSpecCode="throwExpIfExistsKey" attrValue="重复的PackageGroup值. PackageGroup=" />
+				</endpointAttrs>		
+			</endpoint>	
+			-->
+			<endpoint id="102" endpointCode="asynInvokeByHttp_p102" endpointName="asynInvokeByHttp_p102" 
+				endpointSpecCode="cacheProxy">		
+				<endpointAttrs>					
+					<endpointAttr attrSpecCode="address" attrValue="${asyn.redis.proxy.url}" />	
+					<endpointAttr attrSpecCode="method" attrValue="put" />
+					<endpointAttr attrSpecCode="cacheKey" attrValue="${CEP_PKG_GROUP}" />
+					<endpointAttr attrSpecCode="cacheValue" attrValue="${HOST_IPS},${DEFAULT_SYS_ID},${APP_SERVER_NAME}" />
+					<endpointAttr attrSpecCode="expireTime" attrValue="${asyn.redis.expireTime}" />
+					<endpointAttr attrSpecCode="throwExpIfExistsKey" attrValue="重复的PackageGroup值. PackageGroup=" />
+				</endpointAttrs>		
+			</endpoint>	
+			
+			<!-- 调用集团CSB的HTTP服务 -->
+			<endpoint id="103" endpointCode="asynInvokeByHttp_p103" endpointName="asynInvokeByHttp_p103" 
+				endpointSpecCode="http">
+				<endpointAttrs>
+					<endpointAttr attrSpecCode="address" attrValue="${asyn.http.url}" />					
+					<endpointAttr attrSpecCode="timeout" attrValue="${asyn.http.timeout}" />
+					<endpointAttr attrSpecCode="maxConnections" attrValue="${asyn.http.maxConnections}" />	
+				</endpointAttrs>
+			</endpoint>	
+			<!-- 等待异步调用结果返回 -->
+			<endpoint id="104" endpointCode="asynInvokeByHttp_p104" endpointName="asynInvokeByHttp_p104" 
+				endpointSpecCode="asynWait">	
+				<endpointAttrs>
+					<endpointAttr attrSpecCode="timeout" attrValue="${asyn.wait.timeout}" />	
+					<endpointAttr attrSpecCode="timeOutErrMsg" attrValue="接收异步服务反馈超时，交易流水号:SRC_TRANSACTION_ID, 异步流水号=ASYN_TRANS_ID" />					
+				</endpointAttrs>		
+			</endpoint>		 
+		</endpoints>
+		<serviceRoutes>
+			<serviceRoute fromEndpoint="101" toEndpoint="102">				
+				<routePolicy strategyCode="DIRECT" >					
+				</routePolicy>
+			</serviceRoute>
+			<serviceRoute fromEndpoint="102" toEndpoint="103">				
+				<routePolicy strategyCode="DIRECT" >					
+				</routePolicy>
+			</serviceRoute>
+			<!-- 判断调用集团HTTP服务是否成功，如果成功，才会等待异步结果返回 -->
+			<serviceRoute fromEndpoint="103" toEndpoint="104">				
+				<routePolicy strategyCode="CONTENT_BASED" >
+					<routeCondition  exprType="REGEX" operator="=" matchValue="0">
+						<getValueExpr>
+							<![CDATA[
+								<RspType>(.*?)</RspType>
+							]]>
+						</getValueExpr>
+					</routeCondition>
+				</routePolicy>
+			</serviceRoute>
+			
+		</serviceRoutes>
+	</service>
+	
+	<!-- 这个服务用来从ActiveMQ获取异步返回的结果，并通知等待线程 -->
+	<service id="2" serviceCode="asynInvokeReturnByAMQ" serviceEnName="asynInvokeReturnByAMQ" serviceCnName="服务测试2" state="A">
+		<endpoints> 
+			<!-- 从ActiveMQ获取结果  -->
+			<endpoint id="201" endpointCode="asynInvokeReturnByAMQ_p201" endpointName="asynInvokeReturnByAMQ_p201"
+				endpointSpecCode="amq">
+				<endpointAttrs>
+					<endpointAttr attrSpecCode="address" attrValue="${asyn.amq.recv.address}" />		
+					<!-- 
+					<endpointAttr attrSpecCode="queueName" attrValue="${DEFAULT_SYS_ID}_${HOST_NAME}_${APP_SERVER_NAME}" />
+					<endpointAttr attrSpecCode="queueName" attrValue="${DEFAULT_SYS_ID}_${HOST_IPS}_${APP_SERVER_NAME}" />
+					 -->
+					<endpointAttr attrSpecCode="queueName" attrValue="${HOST_IPS}" />
+					<endpointAttr attrSpecCode="comsumerConcurrents" attrValue="${asyn.amq.recv.comsumerConcurrents}" />
+					<endpointAttr attrSpecCode="minConcurrents" attrValue="10" />	
+					<endpointAttr attrSpecCode="maxConcurrents" attrValue="100" />	
+					<endpointAttr attrSpecCode="selector" attrValue="receiver='${DEFAULT_SYS_ID}_${APP_SERVER_NAME}'" />		
+				</endpointAttrs>
+			</endpoint>
+			 
+			<!--  
+			<endpoint id="201" endpointCode="asynInvokeReturnByAMQ_p201" endpointName="asynInvokeReturnByAMQ_p201" 
+				endpointSpecCode="redismq">
+				<endpointAttrs>
+					<endpointAttr attrSpecCode="address" attrValue="redis://:test@192.168.1.24:6379/0" />		
+					<endpointAttr attrSpecCode="queueName" attrValue="${HOST_NAME}_${APP_SERVER_NAME}" />	
+					<endpointAttr attrSpecCode="maxActive" attrValue="300" />	
+					<endpointAttr attrSpecCode="maxIdle" attrValue="50" />	
+					<endpointAttr attrSpecCode="minIdle" attrValue="20" />		
+				</endpointAttrs>
+			</endpoint>
+			--> 
+			<!-- 从CEP报文中提取出嵌套的CEP报文，作为真正结果返回。 -->
+			<endpoint id="202" endpointCode="asynInvokeReturnByAMQ_p202" endpointName="asynInvokeReturnByAMQ_p202" 
+				endpointSpecCode="bean">
+				<endpointAttrs>					
+					<endpointAttr attrSpecCode="beanId" attrValue="csb2ClientRespMsgResolver" />						
+					<endpointAttr attrSpecCode="method" attrValue="handleMsg" />	
+					<endpointAttr attrSpecCode="paramTypes" attrValue="Message" />			
+				</endpointAttrs>
+			</endpoint>
+			<!-- 将异步返回的结果送给等待的线程 -->
+			<endpoint id="203" endpointCode="asynInvokeReturnByRedis_p203" endpointName="asynInvokeReturnByRedis_p203" 
+				endpointSpecCode="asynReturn">				
+			</endpoint>
+		</endpoints>
+		<serviceRoutes>	
+			<serviceRoute fromEndpoint="201" toEndpoint="202" >				
+				<routePolicy strategyCode="DIRECT" />					
+			</serviceRoute>
+			<serviceRoute fromEndpoint="202" toEndpoint="203" >				
+				<routePolicy strategyCode="DIRECT" />					
+			</serviceRoute>
+		</serviceRoutes>
+	</service>
+	
+	<!-- 这个服务是一个http服务，通过servlet接收异步返回的结果后放入ActiveMQ对立  -->
+	<service id="3" serviceCode="recvAsynRespHttpService" serviceEnName="recvAsynRespHttpService" serviceCnName="异步框架回调接收服务" state="A">
+		<endpoints>
+			<!-- http服务入口 -->
+			<endpoint id="300" endpointCode="recvAsynRespHttpService_p300" endpointName="recvAsynRespHttpService_p300" 
+				endpointSpecCode="servlet">						
+			</endpoint>
+			<!-- 内存队列端点不可共用 -->
+			<endpoint id="301" endpointCode="recvAsynRespHttpService_p301" endpointName="recvAsynRespHttpService_p301" 
+				endpointSpecCode="mq">
+				<endpointAttrs>
+					<!-- 
+					<endpointAttr attrSpecCode="concurrents" attrValue="50" />	
+					 -->
+					<endpointAttr attrSpecCode="minConcurrents" attrValue="30" />	
+					<endpointAttr attrSpecCode="maxConcurrents" attrValue="200" />
+					<endpointAttr attrSpecCode="capacity" attrValue="2000" />							
+				</endpointAttrs>
+			</endpoint>
+			
+			<!-- 取出缓存中异步交互流水号（在CEP报文中的CEP_OLD_PKG_GROUP节点中）与 客户端server对应关系，客户端server格式为"系统编码_主机名_server名" -->			 
+			<endpoint id="302" endpointCode="recvAsynRespHttpService_p302" endpointName="recvAsynRespHttpService_p302" 
+				endpointSpecCode="cacheProxy">	
+				<!-- 	
+				endpointSpecCode="redisCache">
+				 -->
+				<endpointAttrs>					
+					<endpointAttr attrSpecCode="address" attrValue="${asyn.redis.proxy.url}" />	
+					<!-- 
+					<endpointAttr attrSpecCode="maxActive" attrValue="${asyn.redis.maxActive}" />	
+					<endpointAttr attrSpecCode="maxIdle" attrValue="${asyn.redis.maxIdle}" />	
+					<endpointAttr attrSpecCode="minIdle" attrValue="${asyn.redis.minIdle}" />	
+					 -->	
+					<endpointAttr attrSpecCode="method" attrValue="get" />
+					<endpointAttr attrSpecCode="cacheKey" attrValue="${CEP_OLD_PKG_GROUP}" />
+					<endpointAttr attrSpecCode="keyOfPutReturnValueInMsgHead" attrValue="ClientID" />					
+				</endpointAttrs>		
+			</endpoint>	
+			
+			<endpoint id="3021" endpointCode="asynInvokeReturnByAMQ_p3021" endpointName="asynInvokeReturnByAMQ_p3021" 
+				endpointSpecCode="bean">
+				<endpointAttrs>					
+					<endpointAttr attrSpecCode="className" attrValue="com.al.crm.asynframe.integration.resolver.MsgTargetAddrHandler" />						
+					<endpointAttr attrSpecCode="method" attrValue="handleMsg" />	
+					<endpointAttr attrSpecCode="paramTypes" attrValue="Message" />			
+				</endpointAttrs>
+			</endpoint>
+			
+			<!-- 将异步结果送入队列，队列名称就是从缓存取出的 客户端server的名称 --> 
+			<endpoint id="303" endpointCode="recvAsynRespHttpService_p303" endpointName="recvAsynRespHttpService_p303" 
+				endpointSpecCode="amq">
+				<endpointAttrs>					
+					<endpointAttr attrSpecCode="address" attrValue="${asyn.amq.send.address}" />
+					<!-- 
+					<endpointAttr attrSpecCode="queueName" attrValue="${ClientID}" />	
+					 -->
+					<endpointAttr attrSpecCode="queueName" attrValue="${ClientID_IPS}" />
+					<endpointAttr attrSpecCode="maxConnections" attrValue="${asyn.amq.send.maxConnections}" />
+					<!-- 
+					<endpointAttr attrSpecCode="timeToLive" attrValue="${asyn.amq.msg.timeToAlive}" />	
+					 -->
+				</endpointAttrs>
+			</endpoint>
+			
+			<!-- 
+			<endpoint id="3003" endpointCode="recvAsynRespHttpService_p3003" endpointName="recvAsynRespHttpService_p3003" 
+				endpointSpecCode="redismq">
+				<endpointAttrs>
+					<endpointAttr attrSpecCode="address" attrValue="redis://:test@192.168.1.24:6379/0" />		
+					<endpointAttr attrSpecCode="queueName" attrValue="${ClientID}" />	
+					<endpointAttr attrSpecCode="maxActive" attrValue="200" />	
+					<endpointAttr attrSpecCode="maxIdle" attrValue="30" />	
+					<endpointAttr attrSpecCode="minIdle" attrValue="10" />		
+				</endpointAttrs>
+			</endpoint>
+			 --> 
+		</endpoints>
+		<serviceRoutes>			
+			<serviceRoute fromEndpoint="300" toEndpoint="301">				
+				<routePolicy strategyCode="DIRECT" >					
+				</routePolicy>
+			</serviceRoute>	
+			<serviceRoute fromEndpoint="301" toEndpoint="12">				
+				<routePolicy strategyCode="DIRECT" >					
+				</routePolicy>
+			</serviceRoute>	
+			<!-- -->
+			<serviceRoute fromEndpoint="12" toEndpoint="302">				
+				<routePolicy strategyCode="DIRECT" >					
+				</routePolicy>
+			</serviceRoute>	
+			
+			<serviceRoute fromEndpoint="302" toEndpoint="3021">				
+				<routePolicy strategyCode="DIRECT" >					
+				</routePolicy>
+			</serviceRoute>			
+			 
+			<serviceRoute fromEndpoint="3021" toEndpoint="303">				
+				<routePolicy strategyCode="DIRECT" >					
+				</routePolicy>
+			</serviceRoute>	
+			
+		</serviceRoutes>
+		
+	
+	</service>
+	
+	
+</services>

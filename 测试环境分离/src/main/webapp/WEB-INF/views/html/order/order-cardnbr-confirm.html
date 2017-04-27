@@ -1,0 +1,56 @@
+<div class="order_confirmation">
+	
+		<#if param.pageType=="unOrderAccNber">
+		<h2 class="h2_title">
+		<span> 一卡双号退订</span>
+		<#elseif param.pageType=="orderAccNber">
+		<span> 一卡双号订购</span>
+		<span class="showhide"></span>
+	    </h2>
+		</#if>
+    <div class="main_body">
+    	<h2 class="s_title">受理完成</h2>
+<#if resMap.resultCode==0>
+<div class="height18"></div>
+	    		<table id="ruleTable" class="com_table">
+	    			<thead>
+		    			<tr>
+			                <th>受理成功</th>
+		              	</tr>
+		    		</thead>
+		    		<tbody id="ruleTbody">		            	
+		            	<tr>				            
+				        	<td>${resMap.rspDesc}</td>
+			          	</tr>
+		            </tbody>
+	    		</table>
+	    		<div align="right" style="margin: 20px auto;">
+					<a id="successTip_dialog_cnt" class="btn_h30 ec_dialog_form_btn_cls"><span >继续受理</span></a>
+				</div>
+<#else>
+<div class="height18"></div>
+	    		<table id="ruleTable" class="com_table">
+	    			<thead>
+		    			<tr>
+			                <th>校验失败</th>
+		              	</tr>
+		    		</thead>
+		    		<tbody id="ruleTbody">		            	
+		            	<tr>				            
+				        	<td>失败原因：${resMap.resultMsg}</td>
+			          	</tr>
+		            </tbody>
+	    		</table>
+	    		<div align="right" style="margin: 20px auto;">
+	    		    <#if param.pageType=="unOrderVirtualAccNber">
+	    		    <a class="btna_o" id="confirmBack"><span >返回修改</span></a>
+		            <#else>
+		            <a class="btna_o" href="javascript:SoOrder.orderBack()"><span >返回修改</span></a>
+		            </#if>
+					
+				</div>
+</#if>
+</div>
+</div>
+	
+

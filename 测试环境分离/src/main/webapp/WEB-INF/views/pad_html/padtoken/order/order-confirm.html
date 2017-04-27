@@ -1,0 +1,110 @@
+<div data-role="content"  data-theme="w" class="ui-content ui-body-w">
+	<div class="ordertitle">订单信息</div>
+	<#if resMap.resultCode==0> 
+		<#assign result=resMap.result />
+		<div id="orderTable" olNbr="${result.olNbr}" olId="${result.olId}">
+			<div class="orderok" id="orderTbody">
+				<div class="ui-grid-a">
+					<div class="ui-block-a">购物车流水号：</div>
+					<div class="ui-block-b">${result.olNbr}</div>
+				</div>
+			</div>
+		</div>
+		<#if resMap.provCheckError??>
+   		<table id="ruleTable" class="searchtable">
+   			<tr>
+                <th>校验失败</th>
+             </tr>
+    		<tbody id="ruleTbody">		            	
+            	<tr>				            
+		        	<td id="provCheckErrorMsg" title='${resMap.provCheckErrorData}'>${resMap.provCheckErrorMsg}</td>
+	          	</tr>
+            </tbody>
+   		</table>
+   		<div data-role="footer" data-position="fixed" data-tap-toggle="false"
+		data-theme="n">
+			<div class="orderpackage" id="tital">
+			</div>
+			<button data-inline="true" data-icon="prev" onclick="SoOrder.orderBack();">返回修改</button>
+		</div>	
+		<#else>	
+		<#assign flag=0 />
+		<#if result.ruleInfos?? &&(result.ruleInfos?size>0)>
+		<table id="ruleTable" class="searchtable">
+			<tr>
+				<th width="20%">规则编码</th>
+				<th width="20%">规则限制等级</th>
+				<th>规则限制原因</th>
+			</tr>
+			 <tbody id="ruleTbody">
+            	<#list result.ruleInfos as item>
+            		<#assign ruleLevelName=""/>
+            		<#if item.ruleLevel==0>
+            			<#assign ruleLevelName="提示级别"/>
+            		<#elseif item.ruleLevel==1>
+            			<#assign ruleLevelName="高级级别"/>
+            		<#elseif item.ruleLevel==2>
+            			<#assign ruleLevelName="中级级别"/>
+            		<#elseif item.ruleLevel==3>
+            			<#assign ruleLevelName="特技级别"/>
+            		<#elseif item.ruleLevel==4>
+            			<#assign flag=1 />
+            			<#assign ruleLevelName="限制级别"/>		            		
+	              	</#if>
+            		<tr ruleLevel="${flag}">
+		                <td width="50%" align="center">${item.ruleCode}</td>
+		                	<td align="center">${ruleLevelName}</td>
+		                <td>${item.ruleDesc}</td>
+	              	</tr>
+            	</#list>
+            </tbody>
+		</table>
+		<div data-role="footer" data-position="fixed" data-tap-toggle="false"
+		data-theme="n">
+		<div class="orderpackage" id="tital">
+		</div>
+			<#if flag==1>
+			<button data-inline="true" data-icon="prev" onclick="SoOrder.orderBack();">返回修改</button>
+			<#else>
+			<table id="chooseTable" class="searchtable"></table>
+			<button data-inline="true" data-icon="prev" onclick="SoOrder.orderBack();">返回修改</button>
+			<button data-inline="true" data-icon="next" onclick="order.calcharge.calchargeInit();" id="orderConfirmBtn">订单确认</button>
+			</#if>
+		</div>
+		<#else>
+		<table id="chooseTable" class="searchtable"></table>
+		<div data-role="footer" data-position="fixed" data-tap-toggle="false"
+			data-theme="n">
+			<div class="orderpackage" id="tital">
+			</div>
+				<button data-inline="true" data-icon="prev" onclick="SoOrder.orderBack();">返回修改</button>
+				<button data-inline="true" data-icon="next" onclick="order.calcharge.calchargeInit();" id="orderConfirmBtn">订单确认</button>
+		</div>
+	 	</#if> 
+		</#if>
+	<#else> 
+	 	<table class="table_txt">
+			<tbody>
+				<tr>
+					<td>失败原因：</td>
+					<td>${resMap.resultMsg}</td>
+				</tr>
+			</tbody>
+		</table>
+		<div data-role="footer" data-position="fixed" data-tap-toggle="false"
+			data-theme="n">
+			<div class="orderpackage" id="tital">
+			</div>
+				<button data-inline="true" data-icon="prev" onclick="SoOrder.orderBack();">返回修改</button>
+		</div>
+	</#if>
+</div>
+<script>
+	var resMap = ${resMapJson};
+	if(resMap.resultCode==0){
+		OrderInfo.orderResult = resMap.result;
+	}
+</script>	
+
+
+

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="CtgPrintOrderEventMainOfferOfferProdAttrs" language="groovy" pageWidth="450" pageHeight="802" columnWidth="450" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<field name="acceNbrInfo" class="java.util.List"/>
+	<field name="norOfferProdInfos" class="java.util.List"/>
+	<field name="lineOfferProdInfos" class="java.util.List"/>
+	<group name="acceNbrInfoGroup">
+		<groupExpression><![CDATA[$F{acceNbrInfo}]]></groupExpression>
+		<groupHeader>
+			<band height="15">
+				<subreport>
+					<reportElement x="0" y="0" width="450" height="15" isRemoveLineWhenBlank="true">
+						<printWhenExpression><![CDATA[$F{acceNbrInfo}!=null]]></printWhenExpression>
+					</reportElement>
+					<subreportParameter name="SUBREPORT_DIR">
+						<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+					</subreportParameter>
+					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{acceNbrInfo})]]></dataSourceExpression>
+					<subreportExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "CtgPrintBaseString.jasper"]]></subreportExpression>
+				</subreport>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<group name="norOfferProdInfoGroup">
+		<groupExpression><![CDATA[$F{norOfferProdInfos}]]></groupExpression>
+		<groupHeader>
+			<band height="15">
+				<subreport>
+					<reportElement x="0" y="0" width="450" height="15">
+						<printWhenExpression><![CDATA[$F{norOfferProdInfos}!=null]]></printWhenExpression>
+					</reportElement>
+					<subreportParameter name="SUBREPORT_DIR">
+						<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+					</subreportParameter>
+					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{norOfferProdInfos})]]></dataSourceExpression>
+					<subreportExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "CtgPrintItemInfoTwoNew.jasper"]]></subreportExpression>
+				</subreport>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<group name="lineOfferProdInfoGroup">
+		<groupExpression><![CDATA[$F{lineOfferProdInfos}]]></groupExpression>
+		<groupHeader>
+			<band height="15">
+				<subreport>
+					<reportElement x="0" y="0" width="450" height="15" isRemoveLineWhenBlank="true">
+						<printWhenExpression><![CDATA[$F{lineOfferProdInfos}!=null]]></printWhenExpression>
+					</reportElement>
+					<subreportParameter name="SUBREPORT_DIR">
+						<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+					</subreportParameter>
+					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{lineOfferProdInfos})]]></dataSourceExpression>
+					<subreportExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "CtgPrintBaseString.jasper"]]></subreportExpression>
+				</subreport>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band splitType="Stretch"/>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

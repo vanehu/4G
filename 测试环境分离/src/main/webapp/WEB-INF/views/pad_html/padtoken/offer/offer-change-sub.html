@@ -1,0 +1,363 @@
+<script src="${contextPath}/js/pad-js/our-js/layout.js?${jsversion}"></script>
+<script type="text/javascript">
+
+$(document).ready(function(){
+	$("#logobar").click(function(){
+    $("#navbar").slideToggle(400);
+  });
+});
+</script>
+<script type="text/javascript">
+$(document).ready(function () {
+	$(".many li").bind("click", function () {
+		var index = $(this).index();
+		var divs = $("#tabs-body .ordercona");
+		$(this).parent().children("li").attr("class", "tab-nav");//将所有选项置为未选中
+		$(this).attr("class", "tab-nav-action"); //设置当前选中项为选中样式
+		divs.hide();//隐藏所有选中项内容
+		divs.eq(index).show(); //显示选中项对应内容
+		var newnum='${main.newnum}';
+		//alert(newnum);
+		var oldnum='${main.oldnum}';
+		//alert(oldnum);
+		
+		if((newnum *1 >0)  || (oldnum *1 >0)){
+			$("#accountDiv").show();
+			$("#orderAttrDiv").show();
+			$("#zhxx").show();
+		}
+		else{
+			$("#accountDiv").hide();
+			$("#orderAttrDiv").hide();
+		}
+	});
+	
+	var newnum='${main.newnum}';
+	var oldnum='${main.oldnum}';
+	if((newnum *1 >0)  || (oldnum *1 >0)){
+		$("#accountDiv").show();
+		$("#orderAttrDiv").show();
+		$("#zhxx").show();
+	}
+	else{
+		$("#accountDiv").hide();
+		$("#orderAttrDiv").hide();
+	}
+});
+var x_m_d =null;
+var x_m_u = null;
+var m_d=false;
+//document.getElementById("tabs").addEventListener('touchstart',m_down, false);
+//document.getElementById("tabs").addEventListener('touchmove',m_up, false);
+function m_down(e){
+     x_m_d = e.touches[0].pageX;
+                
+     m_d=true;
+}
+function m_up(e){
+    x_m_u = e.touches[0].pageX;
+    if(m_d){
+        if(x_m_u - x_m_d > 50)
+                  right();//调用右划方法 
+       if(x_m_u - x_m_d < -50)
+                 left();//调用左划方法
+    }
+}
+</script>
+<div class="" data-role="content" role="main">
+<!-- 多个订单时，分标签展示 -->
+	<#assign prodId = 0 /> 
+	<#assign offerSpec = main.offerSpec />	
+	
+    <div id="tabs-body" class="tabs-body">
+            <#if offerSpec.ifShowTime=="Y">
+				<a class="numberSearch setssxiao" onclick="javascript:AttachOffer.showOfferTime();">生失效设置</a>
+			</#if>
+				  
+    	<!-- 产品信息展示 -->    	
+    		<#assign i = 0 />
+    <#if main.offerMembers?? &&(main.offerMembers?size>0)>		
+		<#list main.offerMembers as item>	
+		<#if item.objType==2>
+			<#assign prodId = item.objInstId/>
+			<#assign i = i+1 />				
+	      <div class="ordercona orderform">
+	        <div class="ui-grid-a">
+	          <div class="ui-block-a">
+	            <div class="ui-grid-a">
+	              <div style="width:400px;" >
+	                <label for="money">原套餐:${main.oldOfferSpecName}</label>
+	              </div>
+	            </div>
+	          </div>
+	          <div class="ui-block-b">
+	                <label for="money">新套餐:${offerSpec.offerSpecName}</label>	          
+	          </div>
+	        </div>      
+			<div class="ui-grid-a" id="uimDiv_${prodId}" style="display: none;">
+				<#include "/padtoken/offer/order-uim.html" />
+			</div>		        
+	        <div class="ui-grid-a">
+	          <div class="ui-block-a">
+	            <div class="ui-grid-a">
+	            </div>
+	          </div>
+	          <div class="ui-block-b">
+				<div class="optional"> 可选包/功能产品 <a href="#optional_${prodId}" data-role="button" data-icon="optional" data-iconpos="notext" data-theme="i">可选包/功能产品</a> </div>
+	          </div>
+	        </div>  	        
+			</div>		        
+		</#if>
+		</#list>	
+		</#if>
+    		
+    		
+    		
+    		
+    		
+   			<#if (main.oldnum?? && (main.oldnum?number>0))>
+   				<#list main.oldprodInstInfos as prodinfos>
+					<#list main.oldoffer as offerinst>
+						<#if prodinfos.accNbr==offerinst.accNbr>
+							<#list offerinst.offerMemberInfos as item>
+								<#if item.objType==2>
+									<#assign prodId = item.objInstId/>
+									<#if i==0>
+									  <!--
+										<div class="ordercona orderform" style="display:block;">  -->						
+									<#else>
+										<div class="ordercona orderform" style="display:none;" >						
+									</#if>
+										<div class="optional"> 可选包/功能产品 <a href="#optional_${prodId}" data-role="button" data-icon="optional" data-iconpos="notext" data-theme="i">可选包/功能产品</a></div>
+										<div style="width: 50%; float: left;" class="ui-grid-a">	
+											<div class="ui-grid-a" id="uimDiv_${prodId}"  style="display: none;">
+				                     		<#include "/pad/member/order-uim.html" />
+				                     	</div>
+			                        </div>
+									</div>
+									<#assign i = i+1 />
+								</#if>
+							</#list>
+						</#if>
+					</#list>
+				</#list>
+				</#if>
+			<#if (main.newnum?? && (main.newnum?number>0))>
+				<#assign i = i+1 />
+				<@block name="product">
+					<#include "/padtoken/offer/order-product.html" />
+				</@block>				
+			</#if>			
+			
+    </div>
+    
+   
+    
+     <div class="orderconb" style="height: 325px;">
+        <div class="many">
+      	  <button data-role="button" data-icon="arrow-l" data-iconpos="notext" disabled>向左</button>
+	      <div class="tabsdiv">
+		        <ul id="tabs">
+		        	<!--展示套餐下多个成员标签-->
+	            <#assign index = 0>
+	             <!-- 套餐变更  -->
+	          	<#if main.offerMembers?? &&(main.offerMembers?size>0)>
+					<#list main.offerMembers as item>
+					<#if item.objType==2>
+						<#assign index = index+1 />					
+						<#if index==1>
+							<li class="tab-nav-action" id="tab_${item.objInstId}" prodId="${item.objInstId}" onclick="offerChange.changeTab(${item.objInstId})">${item.roleName}${item.accessNumber}</li>
+						<#else>
+							<li class="tab-nav" id="tab_${item.objInstId}" prodId="${item.objInstId}" onclick="offerChange.changeTab(${item.objInstId})">${item.roleName}${item.accessNumber}</li>
+						</#if>	
+				    </#if>  				    
+				    </#list>
+				</#if>
+				<!-- 纳入老用户  -->
+				<#if (main.oldnum?? && (main.oldnum?number>0))>
+						<#list main.oldprodInstInfos as prodinfos>
+							<#list main.oldoffer as offerinst>
+								<#if prodinfos.accNbr==offerinst.accNbr>
+									<#list offerinst.offerMemberInfos as Member>
+										<#if Member.objType==2>
+										   <#assign index = index+1>
+											
+												<li id="tab_${Member.objInstId}" prodId="${Member.objInstId}" class="tab-nav" onclick="offerChange.changeTab(${Member.objInstId})">已有移动电话${Member.accessNumber}</li>	
+										
+											
+										</#if>
+									</#list>
+								</#if>
+							</#list>
+						</#list>
+				 </#if>
+				 <#if (main.newnum?? && (main.newnum?number>0))>
+						<#if offerSpec.offerRoles?? && (offerSpec.offerRoles?size>0)>					
+							<#list offerSpec.offerRoles as offerRole>	
+								<#if (offerRole.prodInsts?? && offerRole.prodInsts?size>0)>
+									<#list offerRole.prodInsts as prod>
+									    <#if prod.memberRoleCd==401>
+										<li offerRoleId=${offerRole.offerRoleId} class="tab-nav">${prod.offerRoleName}</li>	
+										</#if>
+									</#list>
+								</#if>
+							</#list>
+						</#if>					
+				  </#if>
+				
+	        	</ul>
+	        </div>
+	        
+	       <button data-role="button" data-icon="arrow-r" data-iconpos="notext" disabled>向右</button>
+	      </div>
+	      
+	       <div id="packageinfo" class="ordertitle">订单信息</div>
+	       <!-- 发展人展示 -->
+			<@block name="dealer">
+				<#include "/pad/order/order-dealer.html" />
+			</@block>
+			<!-- 订单备注展示-->
+			<@block name="remark">
+				<#include "/pad/member/order-remark.html" />
+			</@block>
+			<!-- 帐户展示 -->
+	      	<div id="zhxx" class="ordertitle" style="display: none">账户信息		
+			<@block name="account">
+				<#include "/pad/member/order-account.html" />
+			 </@block>	
+			
+	      		</div>		
+
+	      	
+			
+			<!--购物车订单属性展示-->
+			<div id="orderAttrDiv" style="display: none;">
+				<div class="ordertitle">经办人</div>
+				<@block name="orderAttr">
+					<#include "/pad/member/order-attr.html" />
+				</@block>
+			</div>			
+			<!--省内订单属性展示-->
+			<div id="orderProvAttrDiv"  style="display: none;">
+				<@block name="orderProvAttr">
+					<#include "/pad/order/order-prov-attr.html" />
+				</@block>
+			</div>
+	  	</div>
+	
+
+  	
+  	
+  	
+  	<!-- 底部  -->
+  	<div data-role="footer" data-position="fixed" data-tap-toggle="false" data-theme="n">
+ 	<div class="orderpackage" style="margin: 20px 0 0 30px;"><span>${main.boActionTypeName}</span> 
+			<#if main.actionFlag == 1>
+				${main.offerSpec.offerSpecName}
+			<#elseif main.actionFlag == 14>
+				${main.offerSpec.offerSpecName}
+			<#else>
+				${main.accessNumber}
+			</#if> 
+	</div>     
+     <button id="fillNextStep" data-inline="true" data-icon="next">下一步</button>
+     <button id="fillLastStep" data-inline="true" data-icon="prev">取消</button> 
+ 	</div>
+ 	<#assign i = 0 />
+ 	<#if main.offerMembers?? &&(main.offerMembers?size>0)>
+	<#list main.offerMembers as item>
+	<#if item.objType==2>
+		<#assign prodId = item.objInstId/>	
+		<#assign i = i+1 />	
+		<div id="attach_tab_${prodId}" >	
+				<div id="attach_${prodId}"></div>
+		</div>
+
+	</#if>  				    
+	</#list>
+	</#if>  	
+ 	<#if (main.oldnum?? && (main.oldnum?number>0))>
+		<#list main.oldprodInstInfos as prodinfos>
+			<#list main.oldoffer as offerinst>
+				<#if prodinfos.accNbr==offerinst.accNbr>
+					<#list offerinst.offerMemberInfos as item>
+						<#if item.objType==2>
+							<#assign prodId = item.objInstId/>
+								<div type="attach" id="attach_${prodId}">								
+								<div id="uimDiv_${prodId}" style="display: none;">
+									<h5 class="s_title" id="title_${prodId}">补换卡： </h5>
+									<div class="pdcardcon show" >
+										<ul class="fillin show">
+											<#include "/pad/member/order-uim.html" />
+										</ul>
+									</div>
+								</div>
+							</div>
+						</#if>
+					</#list>
+				</#if>
+			</#list>
+		</#list>
+		</#if>
+	<#if (main.newnum?? && (main.newnum?number>0))>
+		<#if offerSpec.offerRoles?? && (offerSpec.offerRoles?size>0)>
+			<#list offerSpec.offerRoles as offerRole>
+				<#if offerRole.prodInsts?? && (offerRole.prodInsts?size>0)>
+					<#list offerRole.prodInsts as prod>
+						<#assign prodId = prod.prodInstId />
+						<div id="attach_${prodId}"></div>
+					</#list>
+				</#if>
+			</#list>
+		</#if> 					
+	</#if>
+	
+ 	<!-- 帐户、协销人等弹出框-->
+	<div id="dialogDiv" style="display:none">
+		<div class="easyDialogdiv" style="width:980px;height:400px;" id="acctDialog">
+			<div class="easyDialogclose" id="zhanghuclose"></div>
+			<table class="contract_list">
+				<thead>
+					<tr>
+						<td>选择帐户</td>
+					</tr>
+				</thead>
+			</table>
+			<div class="form-content">
+				<div class="selectList">
+					<form id="acctQueryForm">
+						<dl>
+							<select id="chooseQueryAcctType" style="width:120px">
+								<option value=0>客户下帐户</option>
+								<option value=1>接入号码</option>
+								<option value=2>帐户合同号</option>
+							</select>
+						
+							<dd>
+								&nbsp;<input type="button" class="numberSearch" value="查 询" id="querAcctBtn" >
+							</dd>
+						</dl>
+					</form>
+				</div>
+				<div class="phone_warp">
+					<table id="acctListTab" class="numberList">
+						<thead>
+							<tr>
+								<td class="borderLTB">帐户名称</td>
+								<td class="borderLTB">合同号</td>
+								<td class="borderLTB">帐户属主</td>
+								<td class="borderLTB">代表号码</td>
+							</tr>
+						</thead>
+						<tbody>
+						</tbody>
+					</table>
+		
+					<!--页码-->
+					<div id="acctPageDiv"></div>
+					<!--页码 end-->
+				</div>
+			</div>
+		</div>
+	</div>
+  </div>

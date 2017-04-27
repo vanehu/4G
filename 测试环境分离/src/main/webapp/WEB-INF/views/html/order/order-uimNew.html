@@ -1,0 +1,13 @@
+<li>
+	<label style="width:80px;" id ="uim_lable">
+		空白卡
+    </label>
+    <input type="hidden" id="selUimType" value="1"/>
+    <input type="hidden" id="resultCardNo"/>
+    <input type="hidden" id="resultCardAsciiFStr"/>
+	<input type="text" id="uim_txt_${prodId}" value="" class="inputWidth183px">
+	<input type="button" class="purchase" value="写卡" onclick="order.writeCard.writeReadCard('0');">
+	<input type="hidden" id="isMIFI_${prodId}" value="no"/>
+	<label class="f_red">*</label>
+</li>
+<@extends name="/order/write-card.html"/>

@@ -1,0 +1,145 @@
+<#if params.enter==3>
+<ul class="list-group">
+	<li>
+		<div class="form-group">
+			<label for="userid">营业厅列表</label>
+			<div class="modal-body" style="max-height: 230px;overflow: scroll;">
+				<#list MDList as item>
+					<p><label style="  width: 94%;border: none;"><input type="radio" style="height:12px;" name="MDradio" id="${item.channelNbr}" channelName="${item.channelName}" value="${item.address}">${item.channelName}</label></p>
+                           <!--  <p><label style="border: none;"><input type="radio" name="address"> 长江路江都春花园</label></p> -->
+                </#list>
+			</div>
+		</div>
+	</li>
+</ul>
+<nav class="navbar navbar-default navbar-fixed-bottom">
+     <div class="container-fluid">
+       <div class="btn-group btn-group-justified navbar-btn" role="group" aria-label="...">
+         <div class="btn-group" role="group">
+           <a>
+           	<button type="button" class="btn btn-primary btn-lg" onclick="order.broadband.closeMap(3);">确定</button>
+           </a>
+         </div>
+
+       </div>
+     </div>
+   </nav>
+</#if>
+<#if params.enter==1>
+<div style="height:400px;width:320px;border:1px solid gray" id="container">
+</div>
+<script type="text/javascript">
+	$(function() {
+		$("#container").css("height", window.screen.height-180);
+		$("#container").css("width", window.screen.width);
+		var map = new BMap.Map("container");
+		var data_info = [];
+		setTimeout(function() {//延迟加载使目标地点居中
+			map.centerAndZoom(new BMap.Point(${params.longitude},${params.latitude}), 16);
+		}, 200);
+		var channelList = ${channelList};
+		if (channelList.length == 0) {
+			$.alert("提示", "在附近没搜索到门店！");
+		}
+		for (var i = 0; i < channelList.length; i++) {
+			data_info[i] = [ channelList[i].longitude,channelList[i].latitude, channelList[i].channelName,channelList[i].address, channelList[i].channelId, channelList[i].channelNbr ];
+		}
+
+		/* setTimeout(function(){//延迟加载使目标地点居中
+		map.centerAndZoom(new BMap.Point(121.54404,31.13432), 16);
+		 }, 200);  */
+		//map.centerAndZoom(new BMap.Point(121.544014,31.135047), 16);
+		//map.panBy(220,260);//为了居中设置中心偏移  可根据具体情况设置偏移量
+		/* var data_info = [
+		                [121.54404,31.13432,"中国电信1","中国电信信息园1中国电信信息园1中国电信信息园1中国电信信息园1中国电信信息园1","渠道ID"],
+					 [121.54838,31.13225,"中国电信2","中国电信信息园2","渠道ID"],
+					 [121.55205,31.13433,"中国电信3","中国电信信息园3","渠道ID"],
+					 [121.55606,31.13619,"中国电信4","中国电信信息园3","渠道ID"],
+					 [121.56007,31.13432,"中国电信5","中国电信信息园3","渠道ID"],
+					 [121.56404,31.13433,"中国电信6","中国电信信息园3","渠道ID"]
+					]; */
+		for (var k = 0; k < data_info.length; k++) {
+			var marker = new BMap.Marker(new BMap.Point(data_info[k][0],
+					data_info[k][1]));
+			map.addOverlay(marker);
+			marker.addEventListener('click', function() {
+				openWindow(this);
+			});
+		}
+		var opts = {
+			width : 250, // 信息窗口宽度
+			enableMessage : true
+		//设置允许信息窗发送短息
+		};
+		function openWindow(obj) {
+			for (var j = 0; j < data_info.length; j++) {
+				if (data_info[j][0] == obj.getPosition().lng) {
+					var licontent = "<b id='channelName'>" + data_info[j][2]+ "</b><br>"; //自定义信息弹窗窗口
+					licontent += "<b style='display:none' id='channelId'>"+ data_info[j][5] + "</b>";
+					licontent += "<b style='display:none' id='address'>"+ data_info[j][3] + "</b>";
+					licontent += "<span><strong>地址：</strong>" + data_info[j][3]+ "</span><br><br>";
+					licontent += "<span><button class='btn btn-info' style='float:right;' type='button' onclick='order.broadband.closeMap(1);'>选择</button></span><br>";
+					var infoWindow = new BMap.InfoWindow(licontent, opts);
+					obj.openInfoWindow(infoWindow);
+				}
+			}
+		}
+
+	});
+</script>  
+</#if>
+<#if params.enter==2>
+<div style="height:700px;width:320px;border:1px solid gray" id="container">
+</div>
+<script type="text/javascript">
+	$(function() {
+		$("#container").css("height", window.screen.height);
+		$("#container").css("width", window.screen.width);
+		var map = new BMap.Map("container");
+		var data_info = [];
+		var channelList = ${channelList};
+		if(channelList.length>0){
+			setTimeout(function() {//延迟加载使目标地点居中
+				map.centerAndZoom(new BMap.Point(channelList[0].longitude,channelList[0].latitude), 16);
+			}, 200);
+		}else{
+			setTimeout(function() {//延迟加载使目标地点居中
+				map.centerAndZoom(new BMap.Point(${params.longitude},${params.latitude}), 16);
+			}, 200);
+		}
+		if (channelList.length == 0) {
+			$.alert("提示", "在附近没搜索到门店！");
+		}
+		for (var i = 0; i < channelList.length; i++) {
+			data_info[i] = [ channelList[i].longitude,channelList[i].latitude, channelList[i].channelName,channelList[i].address, channelList[i].channelId, channelList[i].channelNbr ];
+		}
+		for (var k = 0; k < data_info.length; k++) {
+			var marker = new BMap.Marker(new BMap.Point(data_info[k][0],
+					data_info[k][1]));
+			map.addOverlay(marker);
+			marker.addEventListener('click', function() {
+				openWindow(this);
+			});
+		}
+		var opts = {
+			width : 250, // 信息窗口宽度
+			enableMessage : true
+		//设置允许信息窗发送短息
+		};
+		function openWindow(obj) {
+			for (var j = 0; j < data_info.length; j++) {
+				if (data_info[j][0] == obj.getPosition().lng) {
+					var licontent = "<b id='channelName'>" + data_info[j][2]+ "</b><br>"; //自定义信息弹窗窗口
+					licontent += "<b style='display:none' id='channelId'>"+ data_info[j][5] + "</b>";
+					licontent += "<b style='display:none' id='address'>"+ data_info[j][3] + "</b>";
+					licontent += "<span><strong>地址：</strong>" + data_info[j][3]+ "</span><br><br>";
+					licontent += "<span><button class='btn btn-info' style='float:right;' type='button' onclick='order.broadband.closeMap(2);'>选择 </button></span><br>";
+					var infoWindow = new BMap.InfoWindow(licontent, opts);
+					obj.openInfoWindow(infoWindow);
+				}
+			}
+		}
+
+	});
+</script>  
+</#if>

@@ -1,0 +1,104 @@
+<!--终端列表-->
+<#if (pageModel.pageNo)?? && (pageModel.pageNo > 1) >
+	<#list pageModel.list as mkt>
+		<#assign intf_pic = false>
+		<#assign p_pic = ''>
+		<#assign brand = ''>
+		<#assign phoneType = ''>
+		<#assign phoneColor = ''>
+		<#if (mkt.attrList)??>
+			<#list mkt.attrList as attrList>
+				<#if mktResPicUrl?? && (attrList.attrId)?? && (attrList.attrId) =='60019454'>
+					<#assign p_pic = mktResPicUrl+attrList.attrValue>
+					<#assign intf_pic = true>
+				</#if>
+				<#if (attrList.attrId)?? && (attrList.attrId) =='2100161'>
+					<#assign brand = attrList.attrValue>
+				</#if>
+				<#if (attrList.attrId)?? && (attrList.attrId) =='2100162'>
+					<#assign phoneType = attrList.attrValue>
+				</#if>
+				<#if (attrList.attrId)?? && (attrList.attrId) =='17'>
+					<#assign phoneColor = attrList.attrValue>
+				</#if>
+				<#if (attrList.attrId)?? && (attrList.attrId) =='60010005'>
+					<#assign mktSpecCode = attrList.attrValue>
+				</#if>
+			</#list>
+		</#if>
+              <li class="p-10" onclick="javascript:mktRes.terminal.mainPush(this)" mktrestypeCd="${mkt.mktResTypeCd}" mktresid="${mkt.mktResId}" mktrescd="${mkt.mktResCd}" brand="${brand}" phonetype="${phoneType}" phonecolor="${phoneColor}" mktname="${mkt.mktResName}" mktprice="${(mkt.salePrice)}" mktpica="${p_pic}" mktspeccode="${mktSpecCode}">
+                
+                <div class="list-img-box m-r-15"> <img src="${p_pic}" alt="${(mkt.mktResName)?default(" -- ")}"> </div>
+                <div class="list-message-box">
+                  <p class="title">${(mkt.mktResName)?default("--")}</p>
+                  <p class="message"><span><span class="orange"><#if (mkt.salePrice)?default(0) != 0>${mkt.salePrice / 100}<#else>--</#if></span>元</span>
+                  </p>
+                </div>
+                <div class="arrow-right-box padding-15">
+                  <button class="btn btn-success btn-green">推荐</button>
+                </div>
+              </li>
+	</#list>
+<#else>
+	<#if (pageModel.list)?? &&((pageModel.list)?size>0)>
+		<@portal.scrollPagination "terminal_list" "both" pageModel.totalPages 0 0 "mktRes.terminal.terminalMainPushScroll">
+			<ul class="single-list-box" id="phone-list-all">
+			<#list pageModel.list as mkt>
+				<#assign intf_pic = false>
+				<#assign p_pic = ''>
+				<#assign brand = ''>
+				<#assign phoneType = ''>
+				<#assign phoneColor = ''>
+				<#assign orderId = mkt.orderId>
+				<#if (mkt.attrList)??>
+					<#list mkt.attrList as attrList>
+						<#if mktResPicUrl?? && (attrList.attrId)?? && (attrList.attrId) =='60019454'>
+							<#assign p_pic = mktResPicUrl+attrList.attrValue>
+							<#assign intf_pic = true>
+						</#if>
+						<#if (attrList.attrId)?? && (attrList.attrId) =='2100161'>
+							<#assign brand = attrList.attrValue>
+						</#if>
+						<#if (attrList.attrId)?? && (attrList.attrId) =='2100162'>
+							<#assign phoneType = attrList.attrValue>
+						</#if>
+						<#if (attrList.attrId)?? && (attrList.attrId) =='17'>
+							<#assign phoneColor = attrList.attrValue>
+						</#if>
+						<#if (attrList.attrId)?? && (attrList.attrId) =='60010005'>
+							<#assign mktSpecCode = attrList.attrValue>
+						</#if>
+					</#list>
+				</#if>
+                    <li class="p-10" onclick="javascript:mktRes.terminal.mainPush(this)" mktrestypeCd="${mkt.mktResTypeCd}" mktresid="${mkt.mktResId}" mktrescd="${mkt.mktResCd}" brand="${brand}" phonetype="${phoneType}" phonecolor="${phoneColor}" mktname="${mkt.mktResName}" mktprice="${(mkt.salePrice)}" mktpica="${p_pic}" mktspeccode="${mktSpecCode}">
+                      	<#if orderId lte 4>
+                      	<i class="iconfont orange hot-icon">&#xe690;</i>
+                      	</#if>
+                      <div class="list-img-box m-r-15"> <img src="${p_pic}" alt="${(mkt.mktResName)?default(" -- ")}"> </div>
+                      <div class="list-message-box">
+                        <p class="title">${(mkt.mktResName)?default("--")}</p>
+                        <p class="message"><span><span class="orange"><#if (mkt.salePrice)?default(0) != 0>${mkt.salePrice / 100}<#else>--</#if></span>元</span>
+                        </p>
+                      </div>
+                      <div class="arrow-right-box padding-15">
+                        <button class="btn btn-success btn-green">推荐</button>
+                      </div>
+                    </li>
+			</#list>
+			</ul>
+		</@portal.scrollPagination>
+	<#else>
+		<ul class="single-list-box">
+		 <input type="hidden" id="resultlst" value="0"/>
+		<li class="media">
+			<img style="vertical-align:middle" src="${contextPath}/image/common/query_search.gif" />&nbsp;&nbsp;抱歉，没有找到相关的手机，请尝试其他筛选条件。
+		</li>
+		</ul>
+	</#if>
+</#if>
+<!--终端列表 end--> 
+<script type="text/javascript" charset="utf-8">
+$(function() {
+	  common.setListTop("60px");
+	});
+</script>

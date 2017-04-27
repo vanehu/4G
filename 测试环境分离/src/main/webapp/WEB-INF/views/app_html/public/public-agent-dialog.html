@@ -1,0 +1,179 @@
+<!-- 弹出确认框Modal -->
+<div class="modal fade" id="alert-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog" style="display:block;"> 
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title" id="modal-title">标题</h4>
+      </div>
+      <div class="modal-body" id="modal-content">
+       	 内容 
+      </div>
+      <div class="modal-footer" id="div_info_btn">
+      	<div class="btn-group btn-group-justified" role="group" aria-label="...">
+          <div class="btn-group" role="group">
+            <button type="button" class="btn btn-primary btn-lg"  data-dismiss="modal" aria-hidden="true" id="btn-dialog-ok">确认</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- 遮罩 弹出框-->
+<div class="modal fade " id="overlay-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal_wrapper">
+  <div class="modal-dialog ">
+    <div class="modal-content">
+    	<div class="modal-body" id="overlay-modal-content">
+      Loading...
+      </div>
+    </div>
+  </div>
+  </div>
+</div>
+<div id="auth3" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+  <div class="modal-dialog modal-sm" style="display:block;">
+    <div class="modal-content">
+    	<div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	        <h4 class="modal-title">客户身份鉴权</h4>
+	    </div>
+      <div class="panel-body">
+            <ul class="nav nav-tabs" role="tablist">
+    <li id="auth_tab1" role="presentation" class="active"><a href="#content1" aria-controls="content1" onclick="cust.changeTab(1)" role="tab" data-toggle="tab">产品密码</a></li>
+    <li id="auth_tab2" role="presentation"><a href="#content2" aria-controls="content2" onclick="cust.changeTab(2)" role="tab" data-toggle="tab">证件</a></li>
+    <li id="auth_tab3" role="presentation"><a href="#content3" aria-controls="content3" onclick="cust.changeTab(3)" role="tab" data-toggle="tab">短信</a></li>
+  </ul>
+
+  <!-- Tab panes -->
+  <div class="tab-content">
+    <div role="tabpanel" class="tab-pane active" id="content1">
+    		<form class="form-list">
+				<div class="form-group">
+					<input type="text" class="form-control" id="authPassword2" placeholder="请输入产品密码">
+				</div>
+				
+			</form>
+		<div class="modal-footer">
+	        <!-- <button type="button" class="btn btn-default" data-dismiss="modal">取消</button> -->
+	        <button id="custAuthbtn1" type="button" class="btn btn-primary"  onclick="cust.productPwdAuth('1')">校验</button>
+	        <button id="jumpAuth1" style="display:none" onclick="cust.jumpAuth()" type="button" class="btn btn-primary">跳过校验</button>
+	    </div>
+    </div>
+    <div role="tabpanel" class="tab-pane" id="content2">
+    		<form class="form-list">
+    			<div class="form-group">
+				<div style="display:inline;"><label id="idCardType2">证件类型：</label></div>
+				<div style="display:inline;" id="readCertBtnID2">
+					<ul style="list-style-type:none;display:inline;">
+		            	<li style="display:inline;"><img onClick="common.callGenerationRec('cust.getreadCertBtnID','1')" style=" height: 40px; margin-left: 15px;"src="${contextPath}/image/app-image/shebeisaomiao-xxhdpi_03.png"/></li>
+		            	<li id="nfc" style="display:inline;"><img onClick="common.callGenerationRec('cust.getreadCertBtnID','2')" style=" height: 40px; margin-left: 15px;" src="${contextPath}/image/app-image/shebeisaomiao-xxhdpi_05.png"/></li>
+		            	<li id="otg" style="display:inline;"><img onClick="common.callGenerationRec('cust.getreadCertBtnID','3')" style=" height: 40px; margin-left: 15px;" src="${contextPath}/image/app-image/otg@2x_03.png"/></li>
+		            </ul>
+				</div>
+				</div>
+				<!--<div class="form-group">
+				    <label id="idCardType2">证件类型：</label>
+				</div>
+				-->
+				<div class="form-group">
+				<div class="form-group">
+					<input type="text" id="idCardNumber2" class="form-control" placeholder="输入证件号码">
+					<!--<span style="display: table-cell; vertical-align: middle; width: 1%;">
+                      <button class="btn btn-info" id="readCertBtnID2" onclick="common.callGenerationRec('cust.getreadCertBtnID')"  type="button"> 读卡 </button>
+                      </span> 
+                 -->
+                 </div>
+			</div>
+			</form>
+		<div class="modal-footer">
+	        <!-- <button type="button" class="btn btn-default" data-dismiss="modal">取消</button> -->
+	        <button id="custAuthbtn" type="button" class="btn btn-primary" onclick="cust.identityTypeAuth('1')" >校验</button>
+	        <button id="jumpAuth2" style="display:none" onclick="cust.jumpAuth()" type="button" class="btn btn-primary">跳过校验</button>
+	    </div>
+    </div>
+    <div role="tabpanel" class="tab-pane" id="content3">
+    	<form class="form-list">
+    		<div class="form-group">
+				<div class="input-group">
+					<input type="text" id="smspwd2" class="form-control" placeholder="输入短信验证码">
+					<span style="display: table-cell; vertical-align: middle; width: 1%;" >
+                      <button class="btn btn-info" id="smsSend" onclick="cust.smsResend('1')"  type="button"> 获取 </button>
+                      </span> </div>
+			</div>
+	</form>
+	      <div class="form-group">
+					随机序列号:<input id="num" disabled='disabled'  style="float:right; margin:0px 5px;height:24px" />
+		 </div>
+		<div class="modal-footer">
+	        <!-- <button type="button" class="btn btn-default" data-dismiss="modal">取消</button> -->
+	        <button id="custAuthbt3" type="button" class="btn btn-primary" onclick="cust.smsvalid('1')" >校验</button>
+	        <button id="jumpAuth3" style="display:none" onclick="cust.jumpAuth()" type="button" class="btn btn-primary">跳过校验</button>
+	    </div>
+    </div>
+  </div>
+          </div>
+    </div>
+  </div>
+</div>
+<!-- 客户鉴权框 -->
+ <!-- <div id="auth" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+  <div class="modal-dialog modal-sm" style="display:block;">
+    <div class="modal-content">
+    	<div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	        <h4 class="modal-title">客户身份鉴权</h4>
+	    </div>
+	    <div class="modal-body">
+	        <form id="custAuthForm">
+	          	<div class="form-group">
+	          		<label class="f_red">*</label>
+	            	<label id="custAuthTypeName" for="recipient-name" class="control-label">产品密码：&nbsp;&nbsp;</label>
+	            	<small class="text-warning"></small>
+	            	<input id="authPassword" type="password" placeHolder="请输入密码" class="form-control">
+	          	</div>
+        	</form>
+	    </div>
+	    <div class="modal-footer">
+	        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+	        <button id="custAuthbtn" type="button" class="btn btn-primary" onclick="cust.custAuth()">校验</button>
+	        <button id="jumpAuth" style="display:none" onclick="cust.jumpAuth()" type="button" class="btn btn-primary">跳过校验</button>
+	    </div>
+    </div>
+  </div>
+</div> 
+客户身份证鉴权框
+ <div id="authID" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+  <div class="modal-dialog modal-sm" style="display:block;">
+    <div class="modal-content">
+    	<div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	        <h4 class="modal-title">客户身份鉴权</h4>
+	    </div>
+	    <div class="modal-body">
+	        <form id="custAuthFormID">
+	          	<div class="form-group">
+	          		<label class="f_red">*</label>
+	            	<label id="custAuthTypeNameID" for="recipient-name" class="control-label">身份证号：&nbsp;&nbsp;<small class="text-warning"></small></label>
+	            	<input id="authIDTD" placeHolder="请输入身份证号" type="text" class="form-control">
+	          	</div>
+        	</form>
+	    </div>
+	    <div class="modal-footer">
+	        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+	        <button id="readCertBtnID" type="button" class="btn btn-primary" data-dismiss="modal" onclick="cust.readCertWhenAuth()">取消</button>
+	        <button id="custAuthbtnID" type="button" class="btn btn-primary" onclick="cust.custIdAuth()">校验</button>
+	        <button id="jumpAuthID" style="display:none" onclick="cust.jumpAuth()" type="button" class="btn btn-primary">跳过校验</button>
+	    </div>
+    </div>
+  </div>
+</div>  -->
+<script type="text/javascript">
+ 	var ua = navigator.userAgent.toLowerCase();	
+	if (/iphone|ipad|ipod/.test(ua)) {
+		$("#nfc").hide();
+		$("#otg").hide();
+		    //alert("iphone");		
+	} else if (/android/.test(ua)) {
+		    //alert("android");	
+	}
+</script>

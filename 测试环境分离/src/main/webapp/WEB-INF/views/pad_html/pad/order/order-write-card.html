@@ -1,0 +1,21 @@
+<!--ActiveX 声明-->
+<OBJECT id="ocx" style="height: 0px;width: 0px;" Classid="clsid:5e497bde-0e29-4ac0-bfb1-4af7b7940277" codeBase="${contextPath}/card/common.ocx#version=1.0.0.1"></OBJECT>2
+<div class="main_div" id="main_content">
+	<div>
+		<p class="pb" style="height: 30px;">
+			<label class="w1">电话号码:</label>
+			<input type="text"  readonly="readonly" disabled="disabled"class="txt2 inputDisabled" maxlength="11"/>
+		</p>
+		<p class="pb" id="dk_content"><label class="w1">卡序列号：</label>
+			<input type="text" class="txt3" id="serialNum" maxlength="50"/>
+		</p>
+	</div>
+	<div align="left" style="margin-left: 60px;"><a class="btna_o" href="javascript:void(0);" id="btnReadCard"><span>读卡</span></a>&nbsp;
+	<a class="btna_o" href="javascript:void(0);" id="btnWriteCard"><span>写卡</span></a></div>
+	<input type="hidden" id="iccid" value=""/>
+	<input type="hidden" id="imsi" value=""/>
+</div>
+<div align="right" style="margin: 20px auto;">
+	<a style=" margin-left:20px;" class="btna_o" href="javascript:void(0)"><span>下一步</span></a>
+</div>
+<script src="${contextPath}/js/busi-js/card/cpBoWriteCard.js?${jsversion}" type="text/javascript"></script>
