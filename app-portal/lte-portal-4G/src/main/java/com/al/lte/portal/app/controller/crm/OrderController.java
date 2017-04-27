@@ -897,6 +897,36 @@ public class OrderController extends BaseController {
         					}
         					prodOfferInfosList.get(i).put("inFlux", influx_str);
         				}
+        				if(exitParam.containsKey("inProvFlux")){
+        					float inProvFlux = 0 ;
+        					String inProvFlux_str ="";
+        					/*
+        					 判断返回的流量是否大于1024M，如果大于1024M，显示的单位是G，否则显示的单位是M
+        					 */
+        					if(exitParam.get("inProvFlux")!=null){
+        						try{
+        							inProvFlux = Float.parseFloat(exitParam.get("inProvFlux").toString());
+        							if(inProvFlux<1024){
+        								inProvFlux_str = inProvFlux+"";
+        								if(inProvFlux_str.indexOf(".") > 0){  
+        									inProvFlux_str = inProvFlux_str.replaceAll("0+?$", "");//去掉多余的0  
+        									inProvFlux_str = inProvFlux_str.replaceAll("[.]$", "");//如最后一位是.则去掉  
+                    			        } 
+        								inProvFlux_str = inProvFlux_str+"M";
+        							}else{
+        								inProvFlux_str = inProvFlux/1024+"";
+        								if(inProvFlux_str.indexOf(".") > 0){  
+        									inProvFlux_str = inProvFlux_str.replaceAll("0+?$", "");//去掉多余的0  
+        									inProvFlux_str = inProvFlux_str.replaceAll("[.]$", "");//如最后一位是.则去掉  
+                    			        } 
+        								inProvFlux_str = inProvFlux_str +"G";
+        							}
+        						}catch(Exception e){
+        							this.log.error("WIFI", e);
+        						}
+        					}
+        					prodOfferInfosList.get(i).put("inProvFlux", inProvFlux_str);
+        				}
         				if("Y".equals(prams.get("ifQueryFavorite"))){
     						prodOfferInfosList.get(i).put("ifQueryFavorite", "Y");
     						OfferIds += prodOfferInfosList.get(i).get("offerSpecId").toString()+",";//存储已收藏套餐的ＩＤ

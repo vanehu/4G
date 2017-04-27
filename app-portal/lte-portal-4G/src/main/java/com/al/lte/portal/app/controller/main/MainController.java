@@ -186,25 +186,16 @@ public class MainController extends BaseController {
 //		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);
 
 		List menu =  (List) ServletUtils.getSessionAttribute(request,SysConstant.SESSION_KEY_MENU_LIST);
-		List channelList = (List) ServletUtils.getSessionAttribute(request,SysConstant.SESSION_KEY_STAFF_CHANNEL);
+//		List channelList = (List) ServletUtils.getSessionAttribute(request,SysConstant.SESSION_KEY_STAFF_CHANNEL);
 		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
                 SysConstant.SESSION_KEY_LOGIN_STAFF);
-		System.out.println(sessionStaff.getStaffName());
-		Map channel = null;
-		if (channelList.size()>0){
-			channel = (Map)channelList.get(0);
-		}
-		
-//		System.out.println(List);
+		List pagePowerMenuArray = new ArrayList();
+		List pageFunctionMenuArray = new ArrayList();
 		boolean isCanOrder = false; 
 		List pageSecondaryBusinessMenuArra = new ArrayList();
 		Map<String, Object> resultMsg = new HashMap<String, Object>();
-		if(menu==null){
-			resultMsg.put("code", -2);
-			resultMsg.put("Msg", "该工号未配置菜单信息");
-			return super.failedStr(model, ErrorCode.QUERY_MENU_INFO, resultMsg, params);
-// 	       return "";
-		}
+		if(menu!=null){
+		model.addAttribute("haveMenu", "Y");
 		for (int i=0; i< menu.size(); i++) 
 		{
 			Map oneMap = (Map)menu.get(i);
@@ -261,8 +252,6 @@ public class MainController extends BaseController {
              }
 		}
 		
-		List pagePowerMenuArray = new ArrayList();
-		List pageFunctionMenuArray = new ArrayList();
 		
 		pagePowerMenuArray = PowerMenuInit(isCanOrder);
 		
@@ -281,18 +270,17 @@ public class MainController extends BaseController {
 		{
 			pageFunctionMenuArray = tempArray.get(1);
 		}
-		if(menu==null){
-    	       return "";
-    	}
-		
-		System.out.println(menu.size());
+		}else{
+			model.addAttribute("haveMenu", "N");
+		}
+//		System.out.println(menu.size());
 		pagePowerMenuArray = setMenuPic(pagePowerMenuArray);
 		pageFunctionMenuArray = setMenuPic(pageFunctionMenuArray);
     	model.addAttribute("pagePowerMenuArray", pagePowerMenuArray);
     	model.addAttribute("pageFunctionMenuArray", pageFunctionMenuArray);
-    	if (channel != null){
-    		model.addAttribute("channel", channel);
-    	}
+//    	if (channel != null){
+//    		model.addAttribute("channel", channel);
+//    	}
     	model.addAttribute("staff", sessionStaff);
 		return "/app/home/app-menu-home";
     }

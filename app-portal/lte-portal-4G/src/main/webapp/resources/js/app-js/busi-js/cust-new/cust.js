@@ -129,7 +129,7 @@ cust = (function(){
 		//从页面信息读取到cust缓存
 		OrderInfo.cust.custId = -1;//客户地区
 		OrderInfo.cust.partyName = $('#cmCustName').val();//客户名称
-		OrderInfo.cust.areaId = OrderInfo.staff.areaId;//客户地区
+		OrderInfo.cust.areaId = OrderInfo.staff.areaId+"";//客户地区
 		OrderInfo.cust.telNumber = $('#telNumber').val();//联系电话
 		OrderInfo.cust.addressStr = $('#cmAddressStr').val();//客户地址
 		OrderInfo.cust.mailAddressStr = $('#mailAddressStr').val();//通信地址
@@ -365,9 +365,9 @@ cust = (function(){
     
 	//验证证件号码是否存在
 	var _checkIdentity = function() {
-		var areaId = OrderInfo.staff.areaId;
+		var areaId = OrderInfo.staff.areaId+"";
 		if(areaId==null||areaId==""){
-			areaId=OrderInfo.staff.areaId;
+			areaId=OrderInfo.staff.areaId+"";
 		}
 		var custName=$("#p_cust_areaId_val").val();
 		createCustInfo = {

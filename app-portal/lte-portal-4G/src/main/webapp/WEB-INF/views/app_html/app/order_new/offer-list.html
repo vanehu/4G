@@ -15,11 +15,21 @@
 		<p class="title">${item.offerSpecName}</p>
 		<p class="message m-r-10">
 			<i class="iconfont p-r-10" >&#xe648;</i><span><span
-				class="orange"><#if item.inVoice??>${item.inVoice}<#else>0</#if></span>分钟</span>
+				class="orange">国内:<#if item.inVoice??>${item.inVoice}<#else>0</#if></span>分钟</span>
+		</p>
+		<p class="message m-r-10">
+			<i class="iconfont p-r-10" >&#xe648;</i><span><span
+				class="orange">省内:<#if item.inProvVoice??>${item.inProvVoice}<#else>0</#if></span>分钟</span>
+		</p>
+		</br>
+		</br>
+		<p class="message">
+			<i class="iconfont p-r-10">&#xe64e;</i><span><span
+				class="orange">国内:<#if item.inFlux??>${item.inFlux}<#else>0M</#if></span></span>
 		</p>
 		<p class="message">
 			<i class="iconfont p-r-10">&#xe64e;</i><span><span
-				class="orange"><#if item.inFlux??>${item.inFlux}<#else>0M</#if></span></span>
+				class="orange">省内:<#if item.inProvFlux??>${item.inProvFlux}<#else>0M</#if></span></span>
 		</p>
 		<div class="arrow-right-box p-15 m-t-15">
 			<i class="iconfont">&#xe66e;</i>
@@ -43,11 +53,21 @@
 		<p class="title">${item.offerSpecName}</p>
 		<p class="message m-r-10">
 			<i class="iconfont p-r-10" >&#xe648;</i><span><span
-				class="orange"><#if item.inVoice??>${item.inVoice}<#else>0</#if></span>分钟</span>
+				class="orange">国内:<#if item.inVoice??>${item.inVoice}<#else>0</#if></span>分钟</span>
+		</p>
+		<p class="message m-r-10">
+			<i class="iconfont p-r-10" >&#xe648;</i><span><span
+				class="orange">省内:<#if item.inProvVoice??>${item.inProvVoice}<#else>0</#if></span>分钟</span>
+		</p>
+		</br>
+		</br>
+		<p class="message">
+			<i class="iconfont p-r-10">&#xe64e;</i><span><span
+				class="orange">国内:<#if item.inFlux??>${item.inFlux}<#else>0M</#if></span></span>
 		</p>
 		<p class="message">
 			<i class="iconfont p-r-10">&#xe64e;</i><span><span
-				class="orange"><#if item.inFlux??>${item.inFlux}<#else>0M</#if></span></span>
+				class="orange">省内:<#if item.inProvFlux??>${item.inProvFlux}<#else>0M</#if></span></span>
 		</p>
 		<div class="arrow-right-box p-15 m-t-15">
 			<i class="iconfont">&#xe66e;</i>
