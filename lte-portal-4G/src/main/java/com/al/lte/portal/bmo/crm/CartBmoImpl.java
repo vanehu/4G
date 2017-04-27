@@ -254,7 +254,7 @@ public class CartBmoImpl implements CartBmo{
 	 * 查询采集单项
 	 */
 	public Map<String, Object> queryCltCartOrderItems(Map<String, Object> dataBusMap,String optFlowNum, SessionStaff sessionStaff) throws Exception{
-		Map<String, Object> resultMap = new HashMap<>();
+		Map<String, Object> resultMap = new HashMap<String, Object>();
 		DataBus db = InterfaceClient.callService(dataBusMap,PortalServiceCode.CLT_ORDER_ITEMS, optFlowNum, sessionStaff);
 		try{
 			// 服务层调用与接口层调用都成功时，返回列表；否则返回空列表

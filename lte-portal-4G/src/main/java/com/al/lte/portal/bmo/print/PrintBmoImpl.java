@@ -5781,7 +5781,7 @@ public class PrintBmoImpl implements PrintBmo {
      * @return
      */
     private List<OEPackageTitleTitleContent> parseOneCertFiveNumberContent(List<String> numbers) {
-        List<OEPackageTitleTitleContent> oePackageTitleTitleContents = new ArrayList<>();
+        List<OEPackageTitleTitleContent> oePackageTitleTitleContents = new ArrayList<OEPackageTitleTitleContent>();
         OEPackageTitleTitleContent oePackageTitleTitleContent = new OEPackageTitleTitleContent();
         Map<String, Object> oneCertFiveNumberContent = MDA.ONE_CERT_FIVE_NUMBER_PRINT_CONTENT;
 
@@ -5793,7 +5793,7 @@ public class PrintBmoImpl implements PrintBmo {
             oePackageTitleTitleContent.setOrderTitle(titleList);
         }
 
-        List<OETitleContent> contentList = new ArrayList<>();
+        List<OETitleContent> contentList = new ArrayList<OETitleContent>();
         List<Map<String, Object>> content = (List<Map<String, Object>>) MapUtils.getObject(oneCertFiveNumberContent, "content");
 
         int size = content.size();

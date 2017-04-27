@@ -110,7 +110,7 @@ public class OneCertFiveNumberController extends BaseController {
                 if (map.get("certPhoneNumRel") != null) {
                     list = (List<Map<String, Object>>) map.get("certPhoneNumRel");
 
-                    Map<String, Object> paramMap2 = new HashMap<>();
+                    Map<String, Object> paramMap2 = new HashMap<String, Object>();
                     Map<String, Object> crMap = MapUtils.getMap(paramMap, "ContractRoot");
                     if (crMap != null) {
                         Map<String, Object> scMap = MapUtils.getMap(crMap, "SvcCont");
@@ -122,7 +122,7 @@ public class OneCertFiveNumberController extends BaseController {
                         }
                     }
                     Map<String, Object> resMap = cartBmo.queryCltCartOrderItems(paramMap2, null, sessionStaff);
-                    List<String> handlingNumbers = new ArrayList<>();
+                    List<String> handlingNumbers = new ArrayList<String>();
                     if (ResultCode.R_SUCC.equals(resMap.get("resultCode"))) {
                         Map<String, Object> resultMap = MapUtils.getMap(resMap, "result");
                         if (null != resultMap) {
@@ -176,15 +176,15 @@ public class OneCertFiveNumberController extends BaseController {
     public JsonResponse uploadAttachment(Model model, @RequestParam(value = "mFileUpload") CommonsMultipartFile[] files,
                                          @RequestParam(value = "soNbr") String soNbr) {
         SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
-        Map<String, Object> param = new HashMap<>();
-        Map<String, Object> retMap = new HashMap<>();
-        List<Map<String, String>> fileInfos = new ArrayList<>();
+        Map<String, Object> param = new HashMap<String, Object>();
+        Map<String, Object> retMap = new HashMap<String, Object>();
+        List<Map<String, String>> fileInfos = new ArrayList<Map<String, String>>();
         JsonResponse jsonResponse = null;
         param.put("areaId", sessionStaff != null ? sessionStaff.getCurrentAreaId() : "");
         param.put("soNbr", soNbr);
         param.put("srcFlag", SysConstant.ONE_FIVE_SRC_FLAG_REAL);
         for (CommonsMultipartFile file : files) {
-            Map<String, String> fileInfo = new HashMap<>();
+            Map<String, String> fileInfo = new HashMap<String, String>();
             String fileName = file.getFileItem().getName();
             String fileType = file.getFileItem().getContentType();
             String picFlag = "";
