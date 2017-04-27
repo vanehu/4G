@@ -2784,12 +2784,11 @@ public class LoginController extends BaseController {
 		return super.successed(successedData, ResultConstant.SUCCESS.getCode());
 	}
 	
-	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/login/confirmAgreeSmsValid", method = RequestMethod.POST)
 	@ResponseBody
 	public JsonResponse confirmAgreeSmsValid(@RequestParam("smspwd") String smsPwd,@RequestParam("number") String number,
 			HttpServletRequest request ,HttpServletResponse response) throws Exception {
-		this.log.debug("confirmAgreeSmsValidsmsPwd={}", smsPwd);
+		this.log.debug("confirmAgreeSmsValidsmsPwd={}，number={}", smsPwd, number);
 		// 验证码内容
 		String smsPwdSession = (String) ServletUtils.getSessionAttribute(
 				request, SysConstant.SESSION_KEY_CONFIRMAGREE_SMS);
