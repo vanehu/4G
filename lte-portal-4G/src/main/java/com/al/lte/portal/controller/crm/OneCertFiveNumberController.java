@@ -182,6 +182,7 @@ public class OneCertFiveNumberController extends BaseController {
         JsonResponse jsonResponse = null;
         param.put("areaId", sessionStaff != null ? sessionStaff.getCurrentAreaId() : "");
         param.put("soNbr", soNbr);
+        param.put("olId", soNbr);
         param.put("srcFlag", SysConstant.ONE_FIVE_SRC_FLAG_REAL);
         for (CommonsMultipartFile file : files) {
             Map<String, String> fileInfo = new HashMap<String, String>();
