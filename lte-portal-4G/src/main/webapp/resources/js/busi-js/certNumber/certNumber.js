@@ -192,9 +192,6 @@ oneFive.certNumber = (function () {
     var _selectConfirm = function () {
         resetCustInfo();//重置客户信息
         resetAttachment();//重置附件
-        $("#oneFiveCustInfoForm").off("formIsValid").on("formIsValid", function () {
-            _oneCertFiveNumberPrint();
-        }).ketchup({bindElement: "printBtn"});
         if (selectList.length > 0) {
             var selectTbody = $("#tab_selectConfirmList").find("tbody");
             selectTbody.empty();
@@ -218,25 +215,22 @@ oneFive.certNumber = (function () {
     var _oneCertFiveNumberPrint = function () {
 
         //客户信息
-        var custName = $("#tab_custInfoList").find("#custName").val();
         var phoneNumber = $("#tab_custInfoList").find("#phoneNumber").val();
         var certType = $("#certNumRelForm").find("#identidiesTypeCd").find("option:selected").text();
         var certNumber = $("#certNumRelForm").find("#certNumber").val();
 
-        if (!ec.util.isObj(certType)) {
-            $.alert("提示", "请输入客户姓名！");
-            return;
-        }
-
-        if (!ec.util.isObj(certNumber)) {
+        if (!ec.util.isObj(phoneNumber)) {
             $.alert("提示", "请输入客户联系方式！");
+            return;
+        } else if (!/^1\d{10}$/.test(phoneNumber)) {
+            $.alert("提示", "请输入正确的手机号！");
             return;
         }
 
         disabledCustInfo();
 
         var custInfo = {
-            "custName": custName,
+            "custName": idCardInfo.partyName,
             "phoneNumber": phoneNumber,
             "certType": certType,
             "certNumber": certNumber
@@ -308,8 +302,8 @@ oneFive.certNumber = (function () {
                     isTooLarge = true;
                 }
             });
-            if(isTooLarge){
-                $.alert("提示","上传的附件过大，单个文件的大小不得超出1！");
+            if (isTooLarge) {
+                $.alert("提示", "上传的附件过大，单个文件的大小不得超出1！");
                 return;
             }
             var options = {
@@ -425,6 +419,7 @@ oneFive.certNumber = (function () {
         });
         var flagStr = MD5(certNum + numbersStr);
         if (flagStr != OneFiveFlag) {
+            OneFiveFlag = flagStr;
             soNbr = OrderInfo.staff.areaId + UUID.getDataId();
         }
         return soNbr;
@@ -443,7 +438,6 @@ oneFive.certNumber = (function () {
      * 打印后禁用客户信息输入
      */
     function disabledCustInfo() {
-        $("#tab_custInfoList").find("#custName").attr("disabled", true);
         $("#tab_custInfoList").find("#phoneNumber").attr("disabled", true);
     }
 
@@ -451,14 +445,9 @@ oneFive.certNumber = (function () {
      * 重置客户信息
      */
     function resetCustInfo() {
-        var custName = $("#tab_custInfoList").find("#custName");
         var phoneNumber = $("#tab_custInfoList").find("#phoneNumber");
-        custName.val("");
         phoneNumber.val("");
-        custName.removeAttr("disabled");
         phoneNumber.removeAttr("disabled");
-
-        $.ketchup.hideAllErrorContainer($("#tab_custInfoList"));
     }
 
     return {

@@ -146,27 +146,18 @@
     </div>
 
     <div class="oneFiveBottomDiv">
-        <form id="oneFiveCustInfoForm">
-            <table class="network" id="tab_custInfoList">
-                <tbody>
-                <tr>
-                    <td width="60" align="right" style="text-align: right;"> 客户姓名：</td>
-                    <td width="200" id="td_custName">
-                        <input type="text" placeholder="请准确填写客户姓名" data-validate="validate(personal) on(blur)"
-                               class="inputWidth150px ketchup-input-error" maxlength="10" id="custName"><label
-                        class="f_red">*</label>
-                    </td>
-
-                    <td width="60" align="right" style="text-align: right;"> 联系方式：</td>
-                    <td width="200" id="td_phoneNum">
-                        <input type="text" placeholder="请准确填写联系方式" data-validate="validate(number) on(blur)"
-                               class="inputWidth183px ketchup-input-error" maxlength="12" id="phoneNumber"><label
-                        class="f_red">*</label>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-        </form>
+        <table class="network" id="tab_custInfoList">
+            <tbody>
+            <tr>
+                <td width="60" align="right" style="text-align: right;"> 联系方式：</td>
+                <td width="200" id="td_phoneNum">
+                    <input type="text" placeholder="请准确填写联系方式" class="inputWidth183px"
+                           maxlength="12" id="phoneNumber"><label
+                    class="f_red">*</label>
+                </td>
+            </tr>
+            </tbody>
+        </table>
         <div class="oneFiveBottomDiv">
             <div class="oneFiveBottomLeftDiv">
                 <div align="left" style="margin: 10px auto;">
@@ -180,7 +171,7 @@
                 </div>
                 <!--操作工具条-->
                 <div align="left" style="margin: 10px auto;">
-                    <a style=" margin-left:30px;" class="btna_o" id="printBtn"><span>打印</span></a>
+                    <a style=" margin-left:30px;" class="btna_o" onclick="oneFive.certNumber.oneCertFiveNumberPrint()"><span>打印</span></a>
                     <a style=" margin-left:30px;" class="btna_o"
                        onclick="oneFive.certNumber.orderSubmit()"><span>订单提交</span></a>
                 </div>
