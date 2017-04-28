@@ -2453,11 +2453,14 @@ public class OrderBmoImpl implements OrderBmo {
 		String olId = paramMap.get("olId").toString();
 		String olNbr = paramMap.get("soNbr").toString();
 		String olNumber = sessionStaff.getStaffId();
-		String chargeCheck=paramMap.get("chargeCheck").toString();
+		if(paramMap.get("chargeCheck")!=null){
+			String chargeCheck=paramMap.get("chargeCheck").toString();
+			paramMap2.put("chargeCheck", chargeCheck);//代理商保证金校验结果，0展示现金，其他不展示
+		}
+		
 		paramMap2.put("olId",  olId);//购物车id
 		paramMap2.put("olNbr",  olNbr);//购物车流水
-		paramMap2.put("reqNo", reqNo);//传给支付平台的业务流水号要保证不同
-		paramMap2.put("chargeCheck", chargeCheck);//传给支付平台的业务流水号要保证不同
+		paramMap2.put("reqNo", reqNo);//传给支付平台的业务流水号要保证不同		
 		String payAmount = paramMap.get("charge").toString(); 
 		String busiUpType=paramMap.get("busiUpType").toString();//业务类型，默认1手机业务
 		if ("4".equals(busiUpType)) {
