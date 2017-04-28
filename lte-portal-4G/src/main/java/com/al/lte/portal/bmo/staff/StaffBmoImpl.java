@@ -83,8 +83,15 @@ public class StaffBmoImpl implements StaffBmo {
 				returnMap.put("resultMsg", message);
 			}
 		} else {
+			if(StringUtils.isBlank(db.getResultMsg())){
+				returnMap = db.getReturnlmap();
+				if(returnMap != null){
+					returnMap.put("resultMsg", MapUtils.getString(returnMap, "resultMsg", "短信发送发生未知异常！"));
+				}
+			} else{
+				returnMap.put("resultMsg", "调用失败，" + db.getResultMsg());
+			}
 			returnMap.put("resultCode", "1");
-			returnMap.put("resultMsg", "调用失败，" + db.getResultMsg());
 		}
 		return returnMap;
 	}

@@ -133,8 +133,8 @@ order.query = (function(){
 		var handleCustPhotograph = $("#handleCustPhotograph").attr("src");
 		var handleCustCertificateImg = $("#handleCustCertificateImg").attr("src");
 		
-		if(!(ec.util.isObj(handleCustPhotograph) && ec.util.isObj(handleCustCertificateImg))){
-			$.alert("错误", "页面没有经办人人像信息，无法进行审核操作，请先根据虚拟流水号查询人像信息。");
+		if(!ec.util.isObj(handleCustPhotograph)){
+			$.alert("错误", "页面没有经办人人像信息，无法进行审核操作，请根据正确的虚拟流水号查询人像信息。");
 			return false;
 		} else{
 			return true;
