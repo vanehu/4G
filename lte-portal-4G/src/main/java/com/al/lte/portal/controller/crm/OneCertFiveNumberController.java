@@ -16,7 +16,9 @@ import com.al.lte.portal.bmo.crm.CartBmo;
 import com.al.lte.portal.bmo.crm.CmBmo;
 import com.al.lte.portal.bmo.crm.CustBmo;
 import com.al.lte.portal.bmo.crm.OneFiveBmo;
+import com.al.lte.portal.bmo.crm.OrderBmo;
 import com.al.lte.portal.common.Base64;
+import com.al.lte.portal.common.CommonMethods;
 import com.al.lte.portal.common.SysConstant;
 import com.al.lte.portal.model.SessionStaff;
 import org.apache.commons.collections.MapUtils;
@@ -24,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -32,7 +35,10 @@ import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -64,8 +70,12 @@ public class OneCertFiveNumberController extends BaseController {
     @Qualifier("com.al.lte.portal.bmo.crm.OneFiveBmo")
     private OneFiveBmo oneFiveBmo;
 
+    @Autowired
+    @Qualifier("com.al.lte.portal.bmo.crm.OrderBmo")
+    private OrderBmo orderBmo;
+
     /**
-     * 实名信息采集单入口
+     * 跨省一证五卡受理，受理省入口
      */
     @RequestMapping(value = "/preCertNumber", method = RequestMethod.GET)
     public String preCertNumber(HttpServletRequest request, Model model) {
@@ -82,6 +92,98 @@ public class OneCertFiveNumberController extends BaseController {
             e.printStackTrace();
         }
         return "/certNumber/certNumber-prepare";
+    }
+
+    /**
+     * 跨省一证五卡处理，归属省入口
+     */
+    @RequestMapping(value = "/afterCertNumber", method = RequestMethod.GET)
+    public String afterCertNumber(Model model) {
+
+        SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+            SysConstant.SESSION_KEY_LOGIN_STAFF);
+
+        Calendar c = Calendar.getInstance();
+        SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd");
+        String endTime = f.format(c.getTime());
+        String startTime = f.format(c.getTime());
+        Map<String, Object> defaultAreaInfo = CommonMethods.getDefaultAreaInfo_MinimumC3(sessionStaff);
+
+        model.addAttribute("p_startDt", startTime);
+        model.addAttribute("p_endDt", endTime);
+        model.addAttribute("p_areaId", defaultAreaInfo.get("defaultAreaId"));
+        model.addAttribute("p_areaId_val", defaultAreaInfo.get("defaultAreaName"));
+        model.addAttribute("pageType", "detail");
+        return "/certNumber/certNumber-handle-main";
+    }
+
+    /**
+     * 跨省一证五卡订单列表
+     */
+    @RequestMapping(value = "/queryOneFiveOrderList", method = RequestMethod.GET)
+    public String queryOneFiveOrderList(Model model, @RequestParam Map<String, Object> param) throws BusinessException {
+        SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+            SysConstant.SESSION_KEY_LOGIN_STAFF);
+        List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+        Integer totalSize = 0;
+        try {
+            param.put("statusCd", SysConstant.ONE_FIVE_NUMBER_STATUS_INIT);
+            Map<String, Object> resMap = cartBmo.queryCltCarts(param, null, sessionStaff);
+            if (ResultCode.R_SUCC.equals(resMap.get("resultCode"))) {
+                Map<String, Object> map = (Map<String, Object>) resMap.get("result");
+                if (map != null && map.get("collectionOrderLists") != null) {
+                    list = (List<Map<String, Object>>) map.get("collectionOrderLists");
+                    totalSize = MapUtils.getInteger(map, "totalCnt", 1);
+                }
+                PageModel<Map<String, Object>> pm = PageUtil.buildPageModel(1, 10, totalSize < 1 ? 1
+                    : totalSize, list);
+                model.addAttribute("pageModel", pm);
+                model.addAttribute("code", "0");
+
+            } else {
+                model.addAttribute("code", resMap.get("resultCode"));
+                model.addAttribute("mess", resMap.get("resultMsg"));
+            }
+            return "/certNumber/certNumber-handle-list";
+        } catch (BusinessException be) {
+            return super.failedStr(model, be);
+        } catch (InterfaceException ie) {
+            return super.failedStr(model, ie, param, ErrorCode.CLTORDER_LIST);
+        } catch (Exception e) {
+            log.error("采集单查询/order/queryCustCollectionList方法异常", e);
+            return super.failedStr(model, ErrorCode.CLTORDER_LIST, e, param);
+        }
+    }
+
+    /**
+     * 跨省一证五卡订单列表详情
+     */
+    @RequestMapping(value = "/queryOneFiveOrderItemDetail", method = RequestMethod.GET)
+    public String queryOneFiveOrderItemDetail(Model model, HttpSession session, @RequestParam Map<String, Object> paramMap) throws BusinessException {
+        SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
+        try {
+            paramMap.put("areaId", sessionStaff.getCurrentAreaId());
+
+            Map<String, Object> resMap = cartBmo.queryCltCartOrder(paramMap, null, sessionStaff);
+            if (ResultCode.R_SUCC.equals(resMap.get("resultCode"))) {
+                Map<String, Object> cartInfo = (Map<String, Object>) resMap.get("result");
+
+                Map<String, Object> orderList = (Map<String, Object>) cartInfo.get("collectionOrderList");
+                model.addAttribute("orderList", orderList);
+                model.addAttribute("code", ResultCode.R_SUCC);
+            } else {
+                model.addAttribute("code", resMap.get("resultCode"));
+                model.addAttribute("mess", resMap.get("resultMsg"));
+            }
+            return "/certNumber/certNumber-handle-detail";
+        } catch (BusinessException be) {
+            return super.failedStr(model, be);
+        } catch (InterfaceException ie) {
+            return super.failedStr(model, ie, paramMap, ErrorCode.CLTORDER_DETAIL);
+        } catch (Exception e) {
+            log.error("购物车详情/order/queryCustCollectionInfo方法异常", e);
+            return super.failedStr(model, ErrorCode.CLTORDER_DETAIL, e, paramMap);
+        }
     }
 
     /**
@@ -171,9 +273,16 @@ public class OneCertFiveNumberController extends BaseController {
     }
 
 
+    /**
+     * 附件信息上传
+     *
+     * @param files 附件数组
+     * @param soNbr 流水号
+     * @return
+     */
     @RequestMapping(value = "/uploadAttachment", method = RequestMethod.POST)
     @ResponseBody
-    public JsonResponse uploadAttachment(Model model, @RequestParam(value = "mFileUpload") CommonsMultipartFile[] files,
+    public JsonResponse uploadAttachment(@RequestParam(value = "mFileUpload") CommonsMultipartFile[] files,
                                          @RequestParam(value = "soNbr") String soNbr) {
         SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
         Map<String, Object> param = new HashMap<String, Object>();
@@ -217,4 +326,62 @@ public class OneCertFiveNumberController extends BaseController {
         }
         return jsonResponse;
     }
+
+    /**
+     * 附件信息下载
+     *
+     * @param paramMap 入参主要为流水号
+     * @return
+     */
+    @RequestMapping(value = "/downAttachment", method = RequestMethod.POST)
+    @ResponseBody
+    public JsonResponse downAttachment(@RequestBody Map<String, Object> paramMap) {
+        SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
+        Map<String, Object> retMap = new HashMap<String, Object>();
+        JsonResponse jsonResponse = null;
+        paramMap.put("areaId", sessionStaff != null ? sessionStaff.getCurrentAreaId() : "");
+        paramMap.put("srcFlag", SysConstant.ONE_FIVE_SRC_FLAG_REAL);
+        try {
+            Map<String, Object> returnMap = oneFiveBmo.downFile(paramMap, sessionStaff);
+            if (null != returnMap) {
+                retMap = MapUtils.getMap(returnMap, "result");
+            } else {
+                retMap.put("resultCode", ResultCode.R_RULE_EXCEPTION);
+            }
+            jsonResponse = successed(retMap);
+        } catch (InterfaceException e) {
+            jsonResponse = failed(e, paramMap, ErrorCode.DOWN_FILE);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return jsonResponse;
+    }
+
+
+    /**
+     * 一证五卡归属省订单确认
+     */
+    @ResponseBody
+    @RequestMapping(value = "/oneFiveAfterOrderSubmit", method = {RequestMethod.POST})
+    public JsonResponse oneFiveAfterOrderSubmit(@RequestBody Map<String, Object> param) throws Exception {
+        SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
+        JsonResponse jsonResponse;
+        try {
+            Map<String, Object> resMap = orderBmo.cltOrderCommit(param, null, sessionStaff);
+            if (ResultCode.R_SUCC.equals(resMap.get("resultCode"))) {
+                jsonResponse = super.successed(ResultConstant.SUCCESS);
+            } else {
+                jsonResponse = super.failed(resMap.get("resultMsg"), ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+            }
+        } catch (BusinessException e) {
+            return super.failed(e);
+        } catch (InterfaceException ie) {
+            return super.failed(ie, param, ErrorCode.CLTORDER_COMMIT);
+        } catch (Exception e) {
+            return super.failed(ErrorCode.CLTORDER_COMMIT, e, param);
+        }
+        return jsonResponse;
+    }
+
+
 }

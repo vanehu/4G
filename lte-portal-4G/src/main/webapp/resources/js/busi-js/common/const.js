@@ -588,6 +588,17 @@ CONST = (function(){
      */
     var _MAX_FILE_SIZE = 1024 * 1024;
 
+    /**
+     * 一证五号订单状态编码
+     * @type {{INIT: string, CANCEL: string, SUCCESS: string}}
+     * @private
+     */
+    var _CERT_NUMBER_ORDER_STATUS = {
+        "INIT":"100002",
+        "CANCEL":"100004",
+        "SUCCESS":"301200"
+    };
+
 	return {
 		//批量受理查询，是否执行改造后的新代码的开关标识，用于暂时记录是否执行新代码。Y执行改造后的新代码，N执行改造前的旧代码，默认为N。 By ZhangYu 2015-10-20
 		BATCHORDER_FLAG : _BATCHORDER_FLAG,
@@ -661,6 +672,7 @@ CONST = (function(){
 		BUS_TYPE : _BUS_TYPE,
 		ZXYWLX   : _ZXYWLX,
         MAX_FILE_SIZE   : _MAX_FILE_SIZE,
+        CERT_NUMBER_ORDER_STATUS   : _CERT_NUMBER_ORDER_STATUS,
 		ZXPTGDBMH : _ZXPTGDBMH
 	};
 })();

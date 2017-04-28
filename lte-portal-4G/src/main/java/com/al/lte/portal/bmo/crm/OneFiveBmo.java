@@ -22,4 +22,13 @@ public interface OneFiveBmo {
      * @return 上传结果
      */
     Map<String, Object> uploadFile(Map<String, Object> param, SessionStaff sessionStaff) throws Exception;
+
+    /**
+     * 下载文件
+     * @param param 入参主要流水号
+     * @param sessionStaff 当前登录的工号
+     * @return 下载结果
+     */
+    Map<String, Object> downFile(Map<String, Object> param, SessionStaff sessionStaff) throws Exception;
+
 }

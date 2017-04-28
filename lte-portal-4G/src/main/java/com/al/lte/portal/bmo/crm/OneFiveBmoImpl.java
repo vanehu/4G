@@ -54,4 +54,30 @@ public class OneFiveBmoImpl implements OneFiveBmo {
         }
         return resultMap;
     }
+
+    /**
+     * 下载文件
+     *
+     * @param param        入参主要为流水号
+     * @param sessionStaff 当前登录的工号
+     * @return 下载结果
+     */
+    @Override
+    public Map<String, Object> downFile(Map<String, Object> param, SessionStaff sessionStaff) throws Exception {
+        Map<String, Object> resultMap = new HashMap<String, Object>();
+        DataBus db = InterfaceClient.callService(param, PortalServiceCode.INTF_DOWNLOAD_IMAGE, null, sessionStaff);
+        try {
+            if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db.getResultCode()))) {
+                resultMap = db.getReturnlmap();
+                resultMap.put("code", ResultCode.R_SUCCESS);
+            } else {
+                resultMap.put("code", ResultCode.R_FAIL);
+                resultMap.put("msg", db.getResultMsg());
+            }
+        } catch (Exception e) {
+            log.error("门户处理营业受理后台的service/intf.fileOperateService/downLoadPicturesFileFromFtp服务返回的数据异常", e);
+            throw new BusinessException(ErrorCode.DOWNLOAD_CUST_CERTIFICATE, param, db.getReturnlmap(), e);
+        }
+        return resultMap;
+    }
 }
