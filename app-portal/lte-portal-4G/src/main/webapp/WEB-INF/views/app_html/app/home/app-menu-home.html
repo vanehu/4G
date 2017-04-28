@@ -32,12 +32,12 @@
 				<!-- ================== BEGIN 首页头部 ================== -->
 				<div class="g-top-box">
 					<div class="g-set-box m-b">
-						<div class="user-box pull-left p-l" style="width: 28%;">
-							<i class="iconfont">&#xe663;</i>
-							<i>${staff.staffName}</i>
+						<div class="user-box pull-left p-l" style="width: 38%;height: auto;margin-top: 8px;">
+							<i class="iconfont" >&#xe663;</i>
+							<i style="line-height: 0.24rem;">${staff.staffName}</i>
 						</div>
-						<div class="set-box pull-right p-r" style="width: 70%;  overflow: hidden;">
-							<span style="float: right;">${staff.currentChannelName}</span>
+						<div class="set-box pull-right p-r" style="width: 60%; margin-top: 20px;">
+							<span style="float: right;text-align: right;line-height: 0.3rem;">${staff.currentChannelName}</span>
 							<!-- <i class="iconfont set-btn">&#xe656;</i> -->
 						</div>
 					</div>
@@ -76,7 +76,9 @@
 				<!-- ================== BEGIN 首页菜单 功能菜单 ================== -->
 				<div class="g-menu-box m-t">
 					<ul class="menu-box">
-					
+						<#if haveMenu?? && (haveMenu=="N")>
+							<span>无受理权限，无法受理业务！</span>
+						</#if>
 						<#if pageFunctionMenuArray?? &&(pageFunctionMenuArray?size>0) >
 							<#list pageFunctionMenuArray as item>
 							<#if item_index<8  && item.resourceName!="办业务">

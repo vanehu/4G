@@ -928,9 +928,6 @@ SoOrder = (function() {
 			var account = {
 					boAccountRelas : _boAccountRelas,
 			};
-			OrderInfo.initData(CONST.ACTION_CLASS_CD.PROD_ACTION,CONST.BO_ACTION_TYPE.CHANGE_ACCOUNT,9,CONST.getBoActionTypeName(CONST.BO_ACTION_TYPE.CHANGE_ACCOUNT),"");
-			
-			
 			
 			//更改帐户节点
 			var acctChangeNode = {
