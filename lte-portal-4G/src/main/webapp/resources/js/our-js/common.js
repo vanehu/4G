@@ -165,6 +165,175 @@ CommonUtils = {
             }
         }
         return retValue;
-    }
+    },
+    
+    /**
+     *获取浏览器插件列表
+     */
+	getPlugins: function(){
+    	var plugins = new Array();
+    	var pluginList = window.navigator.plugins;
+    	for(var i = 0, length = pluginList.length; i < length; i++){
+    		plugins.push({
+    			"name"			:pluginList[i].name,
+    			"fileName"		:pluginList[i].filename,
+    			"description"	:pluginList[i].description
+    		});
+    	}
+    	return plugins;
+     },
 
+    /**
+	*获取浏览器插件列表(IE)
+	*/
+	getIEPlugins : function(){
+		return [];
+	},
+
+	/**
+	*获取cookie列表
+	*/
+	getCookies: function(){
+	 	var cookies = [];
+	 	var cookisList = [];
+
+	 	if(document.cookie.length > 0){
+	 		cookisList = document.cookie.split(";");
+	 		for(var i = 0, length = cookisList.length; i < length; i++){
+	 			var smallCookie = cookisList[i].split("=");
+				cookies.push({
+					"key"	:smallCookie[0],
+					"value"	:smallCookie[1]
+				});
+			}
+	 	}
+
+	 	var cookie = {
+			"cookieEnabled":window.navigator.cookieEnabled,
+			"cookies":cookies
+		};
+
+		return cookie;
+	 },
+
+	getClientOS: function(isIE){
+	 	var os = "";//操作系统名称
+	 	var osBit = "";//操作系统是32位或64位
+	 	var browserBit = "";//浏览器是32位或64位
+		var userAgentStr = window.navigator.userAgent.toLowerCase();
+
+		if(userAgentStr.indexOf("nt 6.2") > -1){
+			os = "Windows 8";
+		} else if(userAgentStr.indexOf("nt 6.1") > -1){
+			os = "Windows 7";
+		} else if(userAgentStr.indexOf("nt 6.0") > -1){
+			os = "Vista";
+		} else if(userAgentStr.indexOf("nt 5.2") > -1){
+			os = "Windows 2003";
+		} else if(userAgentStr.indexOf("nt 5.1") > -1){
+			os = "Windows XP";
+		} else if (userAgentStr.indexOf("macintosh") != -1 || userAgentStr.indexOf("mac os x") != -1) {
+			os = "Mac OS";
+		} else if(userAgentStr.indexOf("linux") > -1){
+			os = "Linux";
+		} else if(userAgentStr.indexOf("X11") > -1){
+			os = "Unix";
+		}
+
+		if(userAgentStr.indexOf("win64") > -1 || userAgentStr.indexOf("wow64") > -1){
+			osBit = "x64";
+		} else {
+			osBit = "x32";
+		}
+
+		if(!!isIE){
+			browserBit = window.navigator.cpuClass.toLowerCase();
+		} else{
+			if(userAgentStr.indexOf("x64") > -1){
+				browserBit = "x64";
+			} else{
+				browserBit = "x32";
+			}
+		}
+
+		var clientOS = {
+			"os"		:os,
+			"osBit"		:osBit,
+			"browserBit":browserBit
+		};
+
+		return clientOS;
+	},
+	
+	/** 
+	*获取浏览器信息，包括浏览器品牌、版本号、插件支持情况、文本模式(IE)等完整信息
+	*/
+	getBrowserInfos: function() {
+		var plugins 		= "";//插件列表
+		var clientOS 		= {};//客户端信息(操作系统等)
+		var browserMode		= "";//浏览器模式(IE)
+		var documentMode	= "";//文本模式(IE)
+		var browserBrand	= "";//浏览器
+		var browserVersion	= "";//浏览器版本号
+
+		var cookie 			= CommonUtils.getCookies();
+		var vendor 			= window.navigator.vendor;//浏览器厂商
+		var language 		= window.navigator.language;//浏览器语言
+		var userAgentStr 	= window.navigator.userAgent.toLowerCase();
+
+		//IE
+		if(userAgentStr.indexOf("msie") != -1 && !window.opera){
+			browserMode 	= ((navigator.appVersion.split(";"))[1]).replace(/[ ]/g,"");
+			documentMode 	= document.documentMode;
+			clientOS 		= CommonUtils.getClientOS(true);
+		}
+		//Firefox
+		else if (userAgentStr.indexOf("firefox") >= 0) {
+			browserVersion	= userAgentStr.match(/firefox\/([\d.]+)/)[1];
+			browserBrand 	= "Firefox";
+			plugins 		= CommonUtils.getPlugins();
+			clientOS 		= CommonUtils.getClientOS();
+		}
+		//Chrome
+		else if (userAgentStr.indexOf("chrome") >= 0) {
+			browserVersion	= userAgentStr.match(/chrome\/([\d.]+)/)[1];
+			browserBrand 	= "Chrome";
+			plugins 		= CommonUtils.getPlugins();
+			clientOS 		= CommonUtils.getClientOS();
+		}
+		//Opera
+		else if (userAgentStr.indexOf("opera") >= 0) {
+			browserVersion 	= userAgentStr.match(/opera.([\d.]+)/)[1];
+			browserBrand 	= "Opera";
+			plugins 		= CommonUtils.getPlugins();
+			clientOS 		= CommonUtils.getClientOS();
+		}
+		//Safari
+		else if (userAgentStr.indexOf("safari") >= 0) {
+			browserVersion	= userAgentStr.match(/version\/([\d.]+)/)[1];
+			browserBrand	= "Safari";
+			plugins 		= CommonUtils.getPlugins();
+			clientOS 		= CommonUtils.getClientOS();
+		}
+		//Other
+		else {
+			browserBrand	= "(可能是个假浏览器O(∩_∩)O~)";
+			plugins 		= CommonUtils.getPlugins();
+			clientOS 		= CommonUtils.getClientOS();
+		}
+
+		var browserInfos = {
+			"vendor"		:vendor,
+			"cookie"		:cookie,
+			"plugins"		:plugins,
+			"language"		:language,
+			"clientOS"		:clientOS,
+			"browserMode"	:browserMode,
+			"documentMode"	:documentMode,
+			"browserBrand"	:browserBrand,
+			"browserVersion":browserVersion
+		};
+		
+		return browserInfos;
+	}
 };

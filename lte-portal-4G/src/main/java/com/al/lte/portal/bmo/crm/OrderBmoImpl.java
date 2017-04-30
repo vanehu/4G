@@ -2802,8 +2802,19 @@ public class OrderBmoImpl implements OrderBmo {
 	@SuppressWarnings("unchecked")
 	public Map<String, Object> downloadCustCertificate(Map<String, Object> param, SessionStaff sessionStaff) throws Exception{	
 		Map<String, Object> resultMap = new HashMap<String, Object>();
-		DataBus db = new DataBus();
-		db = InterfaceClient.callService(param, PortalServiceCode.INTF_DOWNLOAD_IMAGE, null, sessionStaff);
+		String olId = MapUtils.getString(param, "olId");
+		String srcFlag = MapUtils.getString(param, "srcFlag");
+		
+		if(StringUtils.isBlank(olId) || StringUtils.isBlank(srcFlag)){
+			resultMap.put("code",  ResultCode.R_FAIL);
+			resultMap.put("msg", "无效的入参olId、srcFlag。");
+			throw new BusinessException(ErrorCode.PORTAL_INPARAM_ERROR, param, resultMap, null);
+		}
+		
+		param.put(SysConstant.STAFF_ID, sessionStaff.getStaffId());
+		param.put(SysConstant.AREA_ID, MapUtils.getString(param, SysConstant.AREA_ID, sessionStaff.getCurrentAreaId()));
+		
+		DataBus db = InterfaceClient.callService(param, PortalServiceCode.INTF_DOWNLOAD_IMAGE, null, sessionStaff);
 		try{
 			if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db.getResultCode()))) {
 				resultMap = (Map<String, Object>)db.getReturnlmap().get("result");

@@ -180,42 +180,6 @@ order.query = (function(){
 		});
 	};
 	
-	//现场审核：审核通过
-	var _photographReviewSucess = function(){
-		var params = {
-			"olId":OrderInfo.virOlId,
-			"checkType":"1"
-		};
-
-		$.callServiceAsJson(contextPath + "/order/savePhotographReviewRecord", params, {
-			"before" : function() {
-				$.ecOverlay("<strong>正在确认审核信息, 请稍等...</strong>");
-			},
-			"done" : function(response) {
-				if(response.code == 0 && response.data){
-					OrderInfo.operateSpecStaff.isAuditSucess = true;
-					return true;
-				}else if(response.code == 1 && response.data){
-					$.alert("错误", "审核确认信息发送失败，错误原因：" + response.data);
-					return false;
-				}else if(response.code == -2 && response.data){
-					$.alertM(response.data);
-					return false;
-				}else{
-					$.alert("错误", "审核确认信息发生未知异常，请稍后重试。错误信息：" + response.data);
-					return false;
-				}
-			},
-			"fail" : function(response) {
-				$.alert("错误","审核确认信息发生未知异常：" + response.data);
-				return false;
-			},
-			"always" : function() {
-				$.unecOverlay();
-			}
-		});
-	};
-	
 	/**
 	 * 查询具有某权限的员工列表
 	 * params：可为{}或者null，此时按SysConstant.RXSH权限进行查询，
@@ -280,7 +244,6 @@ order.query = (function(){
 		chooseAree				:_chooseAree,
 		queryOrderList			:_queryOrderList,
 		callBackFunc4Check		:_callBackFunc4Check,
-		photographReviewSucess	:_photographReviewSucess,
 		photographReviewPassed	:_photographReviewPassed,
 		qryOperateSpecStaffList	:_qryOperateSpecStaffList,
 		photographReviewCheckOK	:_photographReviewCheckOK,

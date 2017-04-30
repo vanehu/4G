@@ -140,9 +140,8 @@ query.common = (function() {
     	    	}
         	}
 		} catch(e) {
-			throw new Error("拍照仪控件检查更新异常 : " + e);
-		} finally{
-			$("#camera_obj").remove();
+			window.console && window.console.log && (console.log("%c" + JSON.stringify(CommonUtils.getBrowserInfos()), "color:red"));
+			throw new Error("camera driver (DoccameraOcx.exe) is not installed correctly.");
 		}
 	};
 	

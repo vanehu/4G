@@ -3694,8 +3694,7 @@ order.cust = (function(){
 				$("#tips").html("提示：" + json.errorMsg);
 			}
 		}catch(e) {
-			$.alert("错误", "关闭视频连接发生异常：" + e);
-			throw new Error("Close!Video!Exception : " + e);
+			throw new Error("camera driver (DoccameraOcx.exe) is not installed correctly.");
 		}
 	};
 
@@ -3803,7 +3802,7 @@ order.cust = (function(){
 				}
 			});
 		} else{
-			$.alert("错误", "未获取到审核人员列表数据");
+			$.alert("错误", "未获取到审核人员列表数据，请关闭拍照窗稍后重新尝试。");
 			return;
 		}
 		
@@ -3856,8 +3855,8 @@ order.cust = (function(){
 				//发送短信
 				_sendSms4Audit("1");
 			} else if(auditMode == "2"){//远程审核，上传后再短信
-				var callBackFuncOption = "";
 				var callBackFuncMust = "order.cust.sendSms4Audit('2')";
+				var callBackFuncOption = "";
 				_uploadImageMainFunc(uploadCustCertificateParams, callBackFuncMust, callBackFuncOption);
 			}
 		}
@@ -3922,9 +3921,9 @@ order.cust = (function(){
 		}else{//远程审核
 			_close();
 			var virOlId = OrderInfo.virOlId;
-			var staffId = OrderInfo.operateSpecStaff.staffId;
+			var staffCode = OrderInfo.operateSpecStaff.staffCode;
 			var staffName = OrderInfo.operateSpecStaff.staffName;
-			var auditTips = "经办人拍照人像远程审核请求已经发送 "+staffName+"（工号"+staffId+"），虚拟流水号："+virOlId+"，请联系审核人尽快处理。";
+			var auditTips = "经办人拍照人像远程审核请求已经发送 "+staffName+"（工号"+staffCode+"），虚拟流水号："+virOlId+"，请联系审核人尽快处理。";
 			$.alert("提示", auditTips);
 			return;
 		};
@@ -3942,6 +3941,7 @@ order.cust = (function(){
 			if(ec.util.isObj(callBackFuncOption)){
 				eval(callBackFuncOption);
 			}
+			return true;
 		}else if(response.code == 1 && response.data){
 			$.alert("错误", "证件上传失败，错误原因：" + response.data);
 			return false;
@@ -3992,7 +3992,7 @@ order.cust = (function(){
 //					var callBackFuncMust = "order.query.photographReviewSucess()";
 //					var callBackFuncOption = "order.cust.close()";
 					var callBackFuncMust = "order.cust.close()";
-					var callBackFuncOption = "";
+					var callBackFuncOption = "OrderInfo.operateSpecStaff.isAuditSucess = true";
 					_uploadImageMainFunc(uploadCustCertificateParams, callBackFuncMust, callBackFuncOption);
 				} else if (response.code == 1) {
 					smsErrorCount++;
@@ -4016,7 +4016,7 @@ order.cust = (function(){
 				$.alert("错误", "关闭摄像头发生错误，请清空浏览器缓存，重新将拍照设备与电脑连接后再次尝试，错误信息：" + closeResultJsonObj.errorMsg);
 			}
 		}catch(e) {
-			throw new Error("Close!Video!Exception : "+e);
+			throw new Error("camera driver (DoccameraOcx.exe) is not installed correctly.");
 		}finally{
 			easyDialog.close();
 			$(".ZebraDialogOverlay").remove();
