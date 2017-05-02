@@ -293,6 +293,7 @@ oneFive.certNumber = (function () {
     var _uploadAttachment = function () {
         var files = $("#mFileUpload").get(0).files;
         var isTooLarge = false;
+        var isZero = false;
         if (ec.util.isObj(files) && files.length > 0) {
             if (files.length > 5) {
                 $.alert("提示", "最多同时上传5个附件");
@@ -302,9 +303,16 @@ oneFive.certNumber = (function () {
                 if (this.size > CONST.MAX_FILE_SIZE) {
                     isTooLarge = true;
                 }
+                if (this.size == 0) {
+                    isZero = true;
+                }
             });
             if (isTooLarge) {
-                $.alert("提示", "上传的附件过大，单个文件的大小不得超出1！");
+                $.alert("提示", "上传的附件过大，单个文件的大小不得超出1M！");
+                return;
+            }
+            if (isZero) {
+                $.alert("提示", "上传的附件无效，单个文件的大小为零！");
                 return;
             }
             var options = {
