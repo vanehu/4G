@@ -466,114 +466,7 @@ cust = (function(){
 				if(!cust.checkCertNumberForReturn($("#div_cm_identidiesType  option:selected").val(),$.trim($("#cmCustIdCard").val()),$.trim($("#cmCustName").val()),$.trim($("#cmAddressStr").val()))){
 						return;
 				}
-				var modifyCustInfo={};
-				modifyCustInfo = {
-						custName : $.trim($("#cmCustName").val()),
-						identidiesTypeCd :  $("#div_cm_identidiesType  option:selected").val(),
-						custIdCard :  $.trim($("#cmCustIdCard").val()),
-						addressStr: $.trim($("#cmAddressStr").val())
-				};
-				var data = {};
-				data.boCustInfos = [{
-					areaId : OrderInfo.cust.areaId,
-					name : $("#boCustIdentities").attr("partyName"),
-					norTaxPayerId : "0",
-					partyTypeCd : $("#boCustIdentities").attr("partyTypeCd"),
-					addressStr :$("#boCustIdentities").attr("addressStr"),
-					state : "DEL"
-				},{
-					areaId : OrderInfo.cust.areaId,
-					name : modifyCustInfo.custName,
-					norTaxPayerId : "0",
-					partyTypeCd : $("#cmPartyTypeCd").val(),
-					addressStr :modifyCustInfo.addressStr,
-					state : "ADD"
-				}];
-				var identityPic = OrderInfo.cust.identityPic;
-				if (identityPic === undefined) {
-					identityPic = "";
-				}
-				if(!ec.util.isObj(OrderInfo.cust.idCardNumber)){
-					data.boCustIdentities = [{
-						identidiesTypeCd :modifyCustInfo.identidiesTypeCd,
-						identityNum : modifyCustInfo.custIdCard,
-						isDefault : "Y",
-						state : "ADD",
-						identidiesPic : identityPic
-					}];	
-				}else{
-					data.boCustIdentities = [{
-						identidiesTypeCd :modifyCustInfo.identidiesTypeCd,
-						identityNum : OrderInfo.cust.idCardNumber,
-						isDefault : "Y",
-						state : "DEL",
-						identidiesPic : ""
-					},{
-						identidiesTypeCd :modifyCustInfo.identidiesTypeCd,
-						identityNum : modifyCustInfo.custIdCard,
-						isDefault : "Y",
-						state : "ADD",
-						identidiesPic : identityPic
-					}];
-				}
-				//当有账户缓存且所填账户名称与账户缓存名称不一致时 accountChangeState为true 否则为false
-				var	accountChangeState=(order.prodModify.accountInfo!=undefined)&&($.trim($("#accountName").val())!=order.prodModify.accountInfo.name)?true:false;
-				//如果accountChangeState为ture ,拼接账户信息
-				if(accountChangeState){
-					accountInfoOld=order.prodModify.accountInfo;
-					var name=$.trim($("#accountName").val());
-					data.boAccountInfos=[];
-					var _boProdAcctInfosOld={
-	                            acctCd: accountInfoOld.acctCd,
-	                            acctId: accountInfoOld.acctId,
-	                            acctName: accountInfoOld.name,
-	                            CN:accountInfoOld.acctName==undefined?"":accountInfoOld.acctName,
-	                            acctTypeCd: "1",
-	                            partyId: accountInfoOld.custId,
-	                            prodId: order.prodModify.choosedProdInfo.productId,
-	                            state: "DEL"
-					};
-					var _boProdAcctInfos={
-							 	acctCd: accountInfoOld.acctCd,
-							 	acctId: accountInfoOld.acctId,
-							 	acctName: $.trim($("#accountName").val()),
-							 	acctTypeCd: "1",
-							 	partyId: accountInfoOld.custId,
-							 	prodId: order.prodModify.choosedProdInfo.productId,
-							 	state: "ADD"
-					};
-					data.boAccountInfos.push(_boProdAcctInfosOld);
-					data.boAccountInfos.push(_boProdAcctInfos);
-					
-				}
 				
-//				//客户联系人
-				data.boPartyContactInfo=[];
-				var _boPartyContactInfoOld = {
-						contactId : $("#contactIdOld").val(),//参与人联系信息的唯一标识
-						statusCd : "100001",
-						contactName : $("#contactNameOld").val(),//参与人的联系人名称
-						headFlag :  $("#headFlagOld").val(),//是否首选联系人
-						state : "DEL"//状态
-				};
-				var _boPartyContactInfo = {
-						contactAddress : $.trim($("#contactAddress").val()),//参与人的联系地址
-						contactId : "",//参与人联系信息的唯一标识
-						contactName : $.trim($("#contactName").val()),//参与人的联系人名称
-						mobilePhone : $.trim($("#mobilePhone").val()),//参与人的联系人手机
-						headFlag :  $("#headFlag").val(),//是否首选联系人
-						staffId : OrderInfo.staff.staffId,//员工ID
-						state : "ADD",//状态
-						statusCd : "100001"//订单状态
-				};
-				if(ec.util.isObj(_boPartyContactInfoOld.contactId)){
-					data.boPartyContactInfo.push(_boPartyContactInfoOld);
-					data.boPartyContactInfo.push(_boPartyContactInfo);
-				}else if(ec.util.isObj($.trim($("#contactName").val()))&&ec.util.isObj($.trim($("#contactAddress").val()))){
-					data.boPartyContactInfo.push(_boPartyContactInfo);
-				}
-					
-				SoOrder.submitOrder(data);
 			}
 		});
 	};
@@ -689,7 +582,7 @@ cust = (function(){
 								OrderInfo.jbr.identityCd = OrderInfo.cust.identityCd;
 								OrderInfo.jbr.mailAddressStr = OrderInfo.cust.mailAddressStr;
 								OrderInfo.jbr.identityPic = OrderInfo.cust.identityPic;
-								OrderInfo.jbr.identityNum = cardNumber;
+								OrderInfo.jbr.identityNum = OrderInfo.cust.identityNum;
 					    	}
 					    }
 					    
@@ -2641,7 +2534,7 @@ var _preCheckCertNumberRel = function() {
 				$("#alert-modal").modal("hide");
 			});
 			$("#modal-title").html(title);
-			$("#modal-content").html("一个用户证件下不能有超过5个号码,请返回重新选择用户，或者减少副卡数！");
+			$("#modal-content").html("证件「"+inParam.certNum+"」全国范围已有5张及以上移动号卡，不能新装!");
 			$("#alert-modal").modal();
 		} else {
 			cust.usedNum = parseInt(result.usedNum) + 1;
@@ -2660,7 +2553,7 @@ var _searchUser = function(identityCd,identityNum,partyName,address) {
 	// lte进行受理地区市级验证
 	if(CONST.getAppDesc()==0&&(areaId+"").indexOf("0000")>0){
 		$.alert("提示","省级地区无法进行定位客户,请选择市级地区！");
-		return;
+		return false;
 	}
 	var param = {
 			"acctNbr":"",
@@ -2674,46 +2567,60 @@ var _searchUser = function(identityCd,identityNum,partyName,address) {
 			"queryTypeValue":"",
 			"identidies_type":""
 	};
-	var response = $.callServiceAsHtml(contextPath+"/cust/queryCust",param);
-	if (response.code==0) {
-		var custInfoSize = $(response.data).find('#custInfoSize').val();
-		if (parseInt(custInfoSize) >= 1) {//老客户
-			var custInfos = $(response.data).find('#custInfos').eq(0);
-			var custId=$(custInfos).attr("custId");
-			var identityCd=$(custInfos).attr("identityCd");
-			var idCardNumber=$(custInfos).attr("idCardNumber");
-			var partyName=$(custInfos).attr("partyName");
-			var addressStr=$(custInfos).attr("addressStr");//地址
-			var CN=$(custInfos).attr("CN");
-			var certNum=$(custInfos).attr("certNum");
-			var address=$(custInfos).attr("address");
-			cust.readIdCardUser={
-					"custId":custId,
-					"newUserFlag":"false",
-					"identityCd":identityCd,
-					"idCardNumber":idCardNumber,
-					"addressStr":addressStr,
-					"partyName":partyName,
-					"CN"      :CN,
-					"certNum" :certNum,
-					"address" :address
-					
-			};
-		}else{//新客户
-			cust.readIdCardUser={
-				"custId":"-1",
-				"newUserFlag":"true",
-				"identityCd":identityCd,
-				"idCardNumber":identityNum,
-				"addressStr":address,
-				"partyName":partyName
-				
-			};
+	$.callServiceAsJson(contextPath+"/agent/cust/queryfirstCust",param,{
+		"before":function(){
+//				$.ecOverlay("<strong>正在查询中,请稍等...</strong>");
+		},"done" : function(response){
+//				$.unecOverlay();
+			if (response.code==0) {
+				if(response.data.custInfos!=undefined){
+					var custInfoList = response.data.custInfos;
+					if(custInfoList.length>0){
+						var custInfos = custInfoList[0];
+						var custId=custInfos.custId;
+						var identityCd=custInfos.identityCd;
+						var idCardNumber=custInfos.idCardNumber;
+						var partyName=custInfos.partyName;
+						var addressStr=custInfos.addressStr;//地址
+						var CN=custInfos.CN;
+						var certNum=custInfos.certNum;;
+						var address=custInfos.address;;
+						cust.readIdCardUser={
+								"custId":custId,
+								"newUserFlag":"false",
+								"identityCd":identityCd,
+								"idCardNumber":idCardNumber,
+								"addressStr":addressStr,
+								"partyName":partyName,
+								"CN"      :CN,
+								"certNum" :certNum,
+								"address" :address
+								
+						};
+					}else{//新客户
+						cust.readIdCardUser={
+						"custId":"-1",
+						"newUserFlag":"true",
+						"identityCd":"1",
+						"idCardNumber":$("#cmCustIdCard").val(),
+						"addressStr":$("#cmAddressStr").val(),
+						"partyName":$("#cmCustName").val()
+						
+					};
+				}
+				}
+				_preCheckCertNumberRel_1();
+			}else{
+				return false;
+			}
+		},fail:function(response){
+//				$.unecOverlay();
+			$.alert("提示","客户信息查询失败，请稍后再试！");
+			return false;
+		},"always":function(){
+//			$.unecOverlay();
 		}
-	}else {
-		$.alert("提示","查询客户信息失败,稍后重试");
-		return;
-	}
+	});
 
 };
 
@@ -2732,6 +2639,9 @@ var _checkCertNumberForReturn = function(identityCd,identityNum,partyName,addres
 	}
 	_searchUser(identityCd,identityNum,partyName,address);
 	// return true;
+};
+
+var _preCheckCertNumberRel_1 = function(){
 	if (cust.readIdCardUser.newUserFlag=="true") {// 新客户
 		var inParam = {
 			"certType" : cust.readIdCardUser.identityCd,
@@ -2751,9 +2661,15 @@ var _checkCertNumberForReturn = function(identityCd,identityNum,partyName,addres
 			"certAddressEnc" : cust.readIdCardUser.address
 
 		};
-		inParam.certNumEnc = inParam.certNumEnc.replace(/=/g,"&#61");
-		inParam.custNameEnc = inParam.custNameEnc.replace(/=/g,"&#61");
-		inParam.certAddressEnc =inParam.certAddressEnc.replace(/=/g,"&#61");
+		if(inParam.certNumEnc!=undefined){
+			inParam.certNumEnc = inParam.certNumEnc.replace(/=/g,"&#61");
+		}
+		if(inParam.custNameEnc!=undefined){
+			inParam.custNameEnc = inParam.custNameEnc.replace(/=/g,"&#61");		
+		}
+		if(inParam.certAddressEnc!=undefined){
+			inParam.certAddressEnc =inParam.certAddressEnc.replace(/=/g,"&#61");
+		}
 	}
 	var checkResult = false;
 	var response = $.callServiceAsJson(contextPath
@@ -2771,17 +2687,128 @@ var _checkCertNumberForReturn = function(identityCd,identityNum,partyName,addres
 				$("#alert-modal").modal("hide");
 			});
 			$("#modal-title").html(title);
-			$("#modal-content").html("一个用户证件下不能有超过5个号码,请重新选择用户！");
+			$("#modal-content").html("证件「"+cust.readIdCardUser.idCardNumber+"」全国范围已有5张及以上移动号卡，不能返档！");
 			$("#alert-modal").modal();
 		} else {
-			checkResult = true;
+//			checkResult = true;
+			_setData();
 		}
 	} else {
 		$.alertM(response.data);
 	}
-	return checkResult;
-};
+//	return checkResult;
+}
 
+var _setData = function(){
+	var modifyCustInfo={};
+	modifyCustInfo = {
+			custName : $.trim($("#cmCustName").val()),
+			identidiesTypeCd :  $("#div_cm_identidiesType  option:selected").val(),
+			custIdCard :  $.trim($("#cmCustIdCard").val()),
+			addressStr: $.trim($("#cmAddressStr").val())
+	};
+	var data = {};
+	data.boCustInfos = [{
+		areaId : OrderInfo.cust.areaId,
+		name : $("#boCustIdentities").attr("partyName"),
+		norTaxPayerId : "0",
+		partyTypeCd : $("#boCustIdentities").attr("partyTypeCd"),
+		addressStr :$("#boCustIdentities").attr("addressStr"),
+		state : "DEL"
+	},{
+		areaId : OrderInfo.cust.areaId,
+		name : modifyCustInfo.custName,
+		norTaxPayerId : "0",
+		partyTypeCd : $("#cmPartyTypeCd").val(),
+		addressStr :modifyCustInfo.addressStr,
+		state : "ADD"
+	}];
+	var identityPic = OrderInfo.cust.identityPic;
+	if (identityPic === undefined) {
+		identityPic = "";
+	}
+	if(!ec.util.isObj(OrderInfo.cust.idCardNumber)){
+		data.boCustIdentities = [{
+			identidiesTypeCd :modifyCustInfo.identidiesTypeCd,
+			identityNum : modifyCustInfo.custIdCard,
+			isDefault : "Y",
+			state : "ADD",
+			identidiesPic : identityPic
+		}];	
+	}else{
+		data.boCustIdentities = [{
+			identidiesTypeCd :modifyCustInfo.identidiesTypeCd,
+			identityNum : OrderInfo.cust.idCardNumber,
+			isDefault : "Y",
+			state : "DEL",
+			identidiesPic : ""
+		},{
+			identidiesTypeCd :modifyCustInfo.identidiesTypeCd,
+			identityNum : modifyCustInfo.custIdCard,
+			isDefault : "Y",
+			state : "ADD",
+			identidiesPic : identityPic
+		}];
+	}
+	//当有账户缓存且所填账户名称与账户缓存名称不一致时 accountChangeState为true 否则为false
+	var	accountChangeState=(order.prodModify.accountInfo!=undefined)&&($.trim($("#accountName").val())!=order.prodModify.accountInfo.name)?true:false;
+	//如果accountChangeState为ture ,拼接账户信息
+	if(accountChangeState){
+		accountInfoOld=order.prodModify.accountInfo;
+		var name=$.trim($("#accountName").val());
+		data.boAccountInfos=[];
+		var _boProdAcctInfosOld={
+                    acctCd: accountInfoOld.acctCd,
+                    acctId: accountInfoOld.acctId,
+                    acctName: accountInfoOld.name,
+                    CN:accountInfoOld.acctName==undefined?"":accountInfoOld.acctName,
+                    acctTypeCd: "1",
+                    partyId: accountInfoOld.custId,
+                    prodId: order.prodModify.choosedProdInfo.productId,
+                    state: "DEL"
+		};
+		var _boProdAcctInfos={
+				 	acctCd: accountInfoOld.acctCd,
+				 	acctId: accountInfoOld.acctId,
+				 	acctName: $.trim($("#accountName").val()),
+				 	acctTypeCd: "1",
+				 	partyId: accountInfoOld.custId,
+				 	prodId: order.prodModify.choosedProdInfo.productId,
+				 	state: "ADD"
+		};
+		data.boAccountInfos.push(_boProdAcctInfosOld);
+		data.boAccountInfos.push(_boProdAcctInfos);
+		
+	}
+	
+//	//客户联系人
+	data.boPartyContactInfo=[];
+	var _boPartyContactInfoOld = {
+			contactId : $("#contactIdOld").val(),//参与人联系信息的唯一标识
+			statusCd : "100001",
+			contactName : $("#contactNameOld").val(),//参与人的联系人名称
+			headFlag :  $("#headFlagOld").val(),//是否首选联系人
+			state : "DEL"//状态
+	};
+	var _boPartyContactInfo = {
+			contactAddress : $.trim($("#contactAddress").val()),//参与人的联系地址
+			contactId : "",//参与人联系信息的唯一标识
+			contactName : $.trim($("#contactName").val()),//参与人的联系人名称
+			mobilePhone : $.trim($("#mobilePhone").val()),//参与人的联系人手机
+			headFlag :  $("#headFlag").val(),//是否首选联系人
+			staffId : OrderInfo.staff.staffId,//员工ID
+			state : "ADD",//状态
+			statusCd : "100001"//订单状态
+	};
+	if(ec.util.isObj(_boPartyContactInfoOld.contactId)){
+		data.boPartyContactInfo.push(_boPartyContactInfoOld);
+		data.boPartyContactInfo.push(_boPartyContactInfo);
+	}else if(ec.util.isObj($.trim($("#contactName").val()))&&ec.util.isObj($.trim($("#contactAddress").val()))){
+		data.boPartyContactInfo.push(_boPartyContactInfo);
+	}
+		
+	SoOrder.submitOrder(data);
+}
 // 判断是否是政企客户(入参identityCd 为要判断的证件类型)
 var _isCovCust = function (identityCd) {
 	var isGovCustFlag = false;
@@ -2852,6 +2879,7 @@ var _isCovCust = function (identityCd) {
 		usedNum                     :       _usedNum,
 		searchUser                  :       _searchUser,
 		readIdCardUser              :       _readIdCardUser,
-		checkCertNumberForReturn    :       _checkCertNumberForReturn
+		checkCertNumberForReturn    :       _checkCertNumberForReturn,
+		isCovCust					:		_isCovCust
 	};	
 })();

@@ -3,7 +3,6 @@ package com.al.lte.portal.agent.controller.crm;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,7 +23,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.context.request.WebRequest;
 
 import com.al.ec.serviceplatform.client.DataBus;
 import com.al.ec.serviceplatform.client.ResultCode;
@@ -33,7 +31,6 @@ import com.al.ecs.common.entity.PageModel;
 import com.al.ecs.common.util.JsonUtil;
 import com.al.ecs.common.util.MapUtil;
 import com.al.ecs.common.util.PageUtil;
-import com.al.ecs.common.util.UIDGenerator;
 import com.al.ecs.common.web.ServletUtils;
 import com.al.ecs.exception.AuthorityException;
 import com.al.ecs.exception.BusinessException;
@@ -51,7 +48,6 @@ import com.al.lte.portal.common.Base64;
 import com.al.lte.portal.common.CommonMethods;
 import com.al.lte.portal.common.EhcacheUtil;
 import com.al.lte.portal.common.InterfaceClient;
-import com.al.lte.portal.common.MySimulateData;
 import com.al.lte.portal.common.PortalServiceCode;
 import com.al.lte.portal.common.SysConstant;
 import com.al.lte.portal.model.SessionStaff;
@@ -234,10 +230,13 @@ public class CustController extends BaseController {
             }
         } catch (BusinessException e) {
             iseditOperation = "1";
+            log.error("权限检查异常", e);
         } catch (InterfaceException ie) {
             iseditOperation = "1";
+            log.error("权限检查异常", ie);
         } catch (Exception e) {
             iseditOperation = "1";
+            log.error("权限检查异常", e);
         }
         model.addAttribute("jumpAuthflag", iseditOperation);
 
@@ -273,6 +272,49 @@ public class CustController extends BaseController {
 
     }
 
+    @RequestMapping(value = "/queryfirstCust", method = RequestMethod.POST)
+    @AuthorityValid(isCheck = false)
+    @ResponseBody
+    public JsonResponse queryfirstCust(@RequestBody Map<String, Object> paramMap, @LogOperatorAnn String flowNum,
+            HttpServletResponse response, HttpSession httpSession) {
+        SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+                SysConstant.SESSION_KEY_LOGIN_STAFF);
+        Map<String, Object> resultMap = new HashMap<String, Object>();
+        JsonResponse jsonResponse = null;
+        String areaId = (String) paramMap.get("areaId");
+        if (("").equals(areaId) || areaId == null) {
+            paramMap.put("areaId", sessionStaff.getCurrentAreaId());
+        }
+        paramMap.put("staffId", sessionStaff.getStaffId());
+        if (StringUtils.isNotBlank(MapUtils.getString(paramMap, "custQueryType"))) {
+            httpSession.setAttribute("custQueryType", paramMap.get("custQueryType"));
+        } else {
+            httpSession.setAttribute("custQueryType", "");
+        }
+        try {
+            resultMap = custBmo.queryCustInfo(paramMap, flowNum, sessionStaff);
+//            if (MapUtils.isNotEmpty(resultMap)) {
+//                List<Map<String, Object>> custInfos = new ArrayList<Map<String, Object>>();
+//                custInfos = (List<Map<String, Object>>) resultMap.get("custInfos");
+////                model.addAttribute("custInfoSize", custInfos.size());
+//                model.addAttribute("cust", resultMap);
+//            }
+//            if (paramMap.containsKey("query")) {
+//                model.addAttribute("query", paramMap.get("query")); //综合查询调用标志
+//            }
+            if (MapUtils.isNotEmpty(resultMap)) {
+				jsonResponse = super.successed(resultMap,ResultConstant.SUCCESS.getCode());
+			}
+		} catch (BusinessException be) {
+			return super.failed(be);
+		} catch (InterfaceException ie) {
+			return super.failed(ie, resultMap, ErrorCode.QUERY_CUST);
+		} catch (Exception e) {
+			return super.failed(ErrorCode.QUERY_CUST, e, resultMap);
+		}
+		return jsonResponse;
+
+    }
     
 	@RequestMapping(value = "/queryoffercust", method = RequestMethod.POST)
     @ResponseBody
@@ -607,7 +649,7 @@ public class CustController extends BaseController {
 		Map resultMap = new HashMap();
 		String areaName="";
 		String identityCd="";
-        String pCustIdentityCd=MapUtils.getString(param,"pCustIdentityCd");
+        //String pCustIdentityCd=MapUtils.getString(param,"pCustIdentityCd");
 		String idCardNumber="";
 		//{accessNumber:'11969577',areaId:21,prodPwd:'000000'}
 		String accNbr= (String) httpSession.getAttribute("queryCustAccNbr");
@@ -642,13 +684,16 @@ public class CustController extends BaseController {
 	 						SysConstant.SESSION_KEY_VIEWSENSI+"_"+sessionStaff.getStaffId(), isViewOperation);
 	 			}
 				} catch (BusinessException e) {
+					log.error("权限检查异常", e);
 					isViewOperation="1";
 		 		} catch (InterfaceException ie) {
+		 			log.error("权限检查异常", ie);
 		 			isViewOperation="1";
 				} catch (Exception e) {
+					log.error("权限检查异常", e);
 					isViewOperation="1";
 				}
-			Integer aa=idCardNumber.length();
+			//Integer aa=idCardNumber.length();
 			if(!isViewOperation.equals("0")&&idCardNumber.length()==18){
 				 String preStr = idCardNumber.substring(0,6);
 		    	 String subStr = idCardNumber.substring(14);
@@ -990,10 +1035,13 @@ public class CustController extends BaseController {
 									iseditOperation);
 						}
 					} catch (BusinessException e) {
+						log.error("权限检查异常", e);
 						iseditOperation = "1";
 					} catch (InterfaceException ie) {
+						log.error("权限检查异常", ie);
 						iseditOperation = "1";
 					} catch (Exception e) {
+						log.error("权限检查异常", e);
 						iseditOperation = "1";
 					}
 					model.addAttribute("identities", identitiesList);
@@ -1010,11 +1058,10 @@ public class CustController extends BaseController {
 		} catch (BusinessException be) {
 			return super.failedStr(model, be);
 		} catch (InterfaceException ie) {
-
 			return super.failedStr(model, ie, paramMap,
 					ErrorCode.QUERY_CUST_EXINFO);
 		} catch (Exception e) {
-
+			log.error("权限检查异常", e);
 			return super.failedStr(model, ErrorCode.QUERY_CUST_EXINFO, datamap,
 					paramMap);
 		}
@@ -1203,10 +1250,13 @@ public class CustController extends BaseController {
                                 + sessionStaff.getStaffId(), iseditOperation);
                     }
                 } catch (BusinessException e) {
+                	log.error("权限检查异常", e);
                     iseditOperation = "1";
                 } catch (InterfaceException ie) {
+                	log.error("权限检查异常", ie);
                     iseditOperation = "1";
                 } catch (Exception e) {
+                	log.error("权限检查异常", e);
                     iseditOperation = "1";
                 }
                 list = (List<Map<String, Object>>) result.get("profileSpec");
@@ -1518,10 +1568,13 @@ public class CustController extends BaseController {
                         + sessionStaff.getStaffId(), iseditOperation);
             }
         } catch (BusinessException e) {
+        	log.error("权限检查异常", e);
             iseditOperation = "1";
         } catch (InterfaceException ie) {
+        	log.error("权限检查异常", ie);
             iseditOperation = "1";
         } catch (Exception e) {
+        	log.error("权限检查异常", e);
             iseditOperation = "1";
         }
         
@@ -1535,10 +1588,13 @@ public class CustController extends BaseController {
  						SysConstant.SESSION_KEY_VIEWSENSI+"_"+sessionStaff.getStaffId(), isViewOperation);
  			}
 			} catch (BusinessException e) {
+				log.error("权限检查异常", e);
 				isViewOperation="1";
 	 		} catch (InterfaceException ie) {
+	 			log.error("权限检查异常", ie);
 	 			isViewOperation="1";
 			} catch (Exception e) {
+				log.error("权限检查异常", e);
 				isViewOperation="1";
 			}
         
@@ -1724,10 +1780,13 @@ public class CustController extends BaseController {
  						SysConstant.SESSION_KEY_JUMPAUTH+"_"+sessionStaff.getStaffId(), iseditOperation);
  			}
 			} catch (BusinessException e) {
+				log.error("权限检查异常", e);
 				iseditOperation="1";
 	 		} catch (InterfaceException ie) {
+	 			log.error("权限检查异常", ie);
 	 			iseditOperation="1";
 			} catch (Exception e) {
+				log.error("权限检查异常", e);
 				iseditOperation="1";
 			}
 		model.addAttribute("jumpAuthflag", iseditOperation);
@@ -1753,8 +1812,7 @@ public class CustController extends BaseController {
 					return "/cust/cust-list";
 				}
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				log.error("权限检查异常", e);
 			}
 		}
 		List custInfos = new ArrayList();
