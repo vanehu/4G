@@ -79,7 +79,7 @@ order.query = (function(){
 		var params = {
 			"olId"		:$.trim($("#virOlIdInput").val()),
 			"areaId"	:OrderInfo.staff.areaId,
-			"srcFlag"	:"REAL",
+			"srcFlag"	:"REAL"
 		};
 		
 		$.callServiceAsJson(contextPath + "/order/downloadCustCertificate", params, {
