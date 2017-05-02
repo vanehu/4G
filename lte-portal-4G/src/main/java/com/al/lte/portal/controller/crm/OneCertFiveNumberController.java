@@ -22,6 +22,7 @@ import com.al.lte.portal.common.CommonMethods;
 import com.al.lte.portal.common.SysConstant;
 import com.al.lte.portal.model.SessionStaff;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
@@ -206,6 +207,7 @@ public class OneCertFiveNumberController extends BaseController {
         List<Map<String, Object>> list = new ArrayList();
         Map<String, Object> paramMap = JsonUtil.toObject(param, Map.class);
         try {
+            List<String> handlingNumbers = new ArrayList<String>();
             map = cmBmo.queryCertNumRelList(paramMap, flowNum, sessionStaff);
             if (ResultCode.R_SUCCESS.equals(map.get("code"))) {
                 if (map.get("certPhoneNumRel") != null) {
@@ -218,23 +220,25 @@ public class OneCertFiveNumberController extends BaseController {
                         if (scMap != null) {
                             paramMap2.put("certType", MapUtils.getString(scMap, "certType"));
                             paramMap2.put("certNumber", MapUtils.getString(scMap, "certNum"));
-                            paramMap2.put("areaId", sessionStaff != null ? sessionStaff.getCurrentAreaId() : "");
                             paramMap2.put("statusCd", SysConstant.ONE_FIVE_NUMBER_STATUS_INIT);
                         }
                     }
-                    Map<String, Object> resMap = cartBmo.queryCltCartOrderItems(paramMap2, null, sessionStaff);
-                    List<String> handlingNumbers = new ArrayList<String>();
-                    if (ResultCode.R_SUCC.equals(resMap.get("resultCode"))) {
-                        Map<String, Object> resultMap = MapUtils.getMap(resMap, "result");
-                        if (null != resultMap) {
-                            List<Map<String, Object>> collectionCustInfos = (List<Map<String, Object>>) MapUtils.getObject(resultMap, "collectionCustInfos");
-                            if (null != collectionCustInfos && collectionCustInfos.size() > 0) {
-                                for (Map<String, Object> info : collectionCustInfos) {
-                                    handlingNumbers.add(MapUtils.getString(info, "telNumber"));
+                    for (Map<String, Object> item : list) {
+                        paramMap2.put("areaId", MapUtils.getString(item, "lanId", ""));
+                        Map<String, Object> resMap = cartBmo.queryCltCartOrderItems(paramMap2, null, sessionStaff);
+                        if (ResultCode.R_SUCC.equals(resMap.get("resultCode"))) {
+                            Map<String, Object> resultMap = MapUtils.getMap(resMap, "result");
+                            if (null != resultMap) {
+                                List<Map<String, Object>> collectionCustInfos = (List<Map<String, Object>>) MapUtils.getObject(resultMap, "collectionCustInfos");
+                                if (null != collectionCustInfos && collectionCustInfos.size() > 0) {
+                                    for (Map<String, Object> info : collectionCustInfos) {
+                                        handlingNumbers.add(MapUtils.getString(info, "telNumber"));
+                                    }
                                 }
                             }
                         }
                     }
+
 
                     for (Map<String, Object> item : list) {
                         String phoneNum = MapUtils.getString(item, "phoneNum", "");
@@ -377,6 +381,43 @@ public class OneCertFiveNumberController extends BaseController {
             return super.failed(ie, param, ErrorCode.CLTORDER_COMMIT);
         } catch (Exception e) {
             return super.failed(ErrorCode.CLTORDER_COMMIT, e, param);
+        }
+        return jsonResponse;
+    }
+
+
+    /**
+     * 一证五卡归属省订单确认预校验
+     */
+    @ResponseBody
+    @RequestMapping(value = "/oneFiveAfterOrderPreCheck", method = {RequestMethod.POST})
+    public JsonResponse oneFiveAfterOrderPreCheck(@RequestBody Map<String, Object> param) throws Exception {
+        SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
+        JsonResponse jsonResponse;
+        Map<String, Object> csbParam = MapUtils.getMap(param, "csbParam");
+        String telNumber = MapUtils.getString(param, "telNumber", "");
+        try {
+            Map<String, Object> map = cmBmo.queryCertNumRelList(csbParam, null, sessionStaff);
+            Map<String, Object> resultMap = new HashMap();
+            boolean isExist = false;
+            if (ResultCode.R_SUCCESS.equals(map.get("code"))) {
+                if (map.get("certPhoneNumRel") != null) {
+                    List<Map<String, Object>> list = (List<Map<String, Object>>) map.get("certPhoneNumRel");
+                    for (Map<String, Object> item : list) {
+                        if (StringUtils.isNotBlank(telNumber) && telNumber.equals(MapUtils.getString(item, "phoneNum", ""))) {
+                            isExist = true;
+                        }
+                    }
+                }
+            }
+            resultMap.put("isExist", isExist);
+            jsonResponse = successed(resultMap);
+        } catch (BusinessException e) {
+            return failed(e);
+        } catch (InterfaceException ie) {
+            return failed(ie, param, ErrorCode.CLTORDER_COMMIT);
+        } catch (Exception e) {
+            return failed(ErrorCode.CLTORDER_COMMIT, e, param);
         }
         return jsonResponse;
     }

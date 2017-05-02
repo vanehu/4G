@@ -226,8 +226,39 @@ oneFive.certNumberHandle = (function () {
      * 订单确认
      * @private
      */
-    var _orderConfirm = function (orderId, areaId, number) {
-        _orderSubmit(orderId, areaId, number, CONST.CERT_NUMBER_ORDER_STATUS.SUCCESS);
+    var _orderConfirm = function (orderId, areaId, number, certType, certNumber) {
+
+        var param = {
+            "csbParam": {
+                "ContractRoot": {
+                    "SvcCont": {
+                        "certType": certType,
+                        "certNum": certNumber
+                    },
+                    "TcpCont": {}
+                }
+            },
+            "telNumber": number
+        };
+        $.callServiceAsJson(contextPath + "/certNumber/oneFiveAfterOrderPreCheck", param, {
+            "before": function () {
+                $.ecOverlay("<strong>正在预校验中,请稍等...</strong>");
+            }, "done": function (response) {
+                if (response.code == 0) {
+                    if (ec.util.isObj(response.data) && response.data.isExist) {
+                        $.alert("提示", "证件【" + certNumber + "】" + "下的号码【" + number + "】还存在关系，不能确认。")
+                    } else {
+                        _orderSubmit(orderId, areaId, number, CONST.CERT_NUMBER_ORDER_STATUS.SUCCESS);
+                    }
+                } else {
+                    $.alertM(response.data);
+                }
+            }, "fail": function (response) {
+
+            }, "always": function () {
+                $.unecOverlay();
+            }
+        });
     };
 
     /**
