@@ -3819,11 +3819,13 @@ order.cust = (function(){
 				OrderInfo.bojbrCustInfos.identityNum!= $.trim($("#orderIdentidiesTypeCd").val())){
 			pictures.push({
 				"flag"		: "C",
+				"staffId"	: OrderInfo.operateSpecStaff.staffId,
 				"signature" : "",
 	            "photograph": encodeURIComponent(OrderInfo.bojbrCustIdentities.identidiesPic)//经办人身份证照片
 			});
 			pictures.push({
 	            "flag"		: "D",
+	            "staffId"	: OrderInfo.operateSpecStaff.staffId,
 	            "signature" : $("#img_Photo").data("signature"),
 	            "photograph": encodeURIComponent($("#img_Photo").data("identityPic"))//经办人拍照照片
 	            
@@ -3839,7 +3841,6 @@ order.cust = (function(){
 			//现场审核补充参数
 			if(auditMode == "1"){
 				$.each(pictures, function(){
-					this.staffId = OrderInfo.operateSpecStaff.staffId;
 					this.checkType = auditMode;
 				});
 			}
@@ -3879,6 +3880,7 @@ order.cust = (function(){
 				$.ecOverlay("<strong>短信发送中,请稍等会儿...</strong>");
 			},
 			"done" : function(response){
+				response.code = 0;
 				if (response.code == 0) {
 					_initAuditHtml(auditMode);
 				}else if(response.code == 3){
