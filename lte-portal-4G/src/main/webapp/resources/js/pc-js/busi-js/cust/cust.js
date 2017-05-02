@@ -2818,10 +2818,12 @@ order.cust = (function(){
 		var staffId = $("#auditPersonnel").val();
 		var number = "";
 		var staffName = "";
+		var staffCode = "";
         $.each(OrderInfo.handleInfo.staffList, function(){
 			if(this.staffId == staffId){
 				number = this.phone;
 				staffName = this.staffName;
+				staffCode = this.staffCode;
 				return false;
 			}
 		});
@@ -2955,7 +2957,7 @@ order.cust = (function(){
     					}else{//远程
     						OrderInfo.subHandleInfo.authFlag = "Y";
     						_closeShowPhoto();
-    						var auditTips = "经办人拍照人像远程审核请求已经发送 "+staffName+"（工号"+staffId+"），虚拟流水号："+uploadCustCertificate.data.virOlId+"，请联系审核人尽快处理";
+    						var auditTips = "经办人拍照人像远程审核请求已经发送 "+staffName+"（工号"+staffCode+"），虚拟流水号："+uploadCustCertificate.data.virOlId+"，请联系审核人尽快处理";
     						$.alert("提示",auditTips);
     						return;
     					};

@@ -2252,6 +2252,10 @@ order.cust = (function(){
 				}
 		}
 		if(OrderInfo.menuName == "ZXHYBL"){
+			if(createCustInfo.cIdentidiesTypeCd!="1"){
+				$.alert("错误","办理征信分期合约业务，证件类型必须是身份证。");
+				return;
+			}
 			var  qryResponse =  _qryPreliminaryInfo("");
 			if(qryResponse.code == 0){
 				if(qryResponse.data.result == null || qryResponse.data.result.userInfo == null || qryResponse.data.result.userInfo.businessType==null){
@@ -4367,7 +4371,8 @@ order.cust = (function(){
 		var param = {
 			areaId : $("#p_cust_areaId").val(),
 			idCard : $.trim($("#p_cust_identityNum").val()),
-			phoneNumber : phoneNumber
+			phoneNumber : phoneNumber,
+			partnerCode : partnerCode
 		};
 		var qryUrl=contextPath+"/order/qryPreliminaryInfo";
 		var response = $.callServiceAsJson(qryUrl, param);
