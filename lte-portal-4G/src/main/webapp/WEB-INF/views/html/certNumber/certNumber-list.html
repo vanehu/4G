@@ -1,4 +1,3 @@
-<#if (pageModel.list)?? &&((pageModel.list)?size>0)>
 <table class="numberList" id="tab_orderList">
     <thead>
     <tr>
@@ -12,9 +11,12 @@
     </tr>
     </thead>
     <tbody>
+    <#if (pageModel.list)?? &&((pageModel.list)?size>0)>
         <#list pageModel.list as item >
         <tr>
-            <td><#if (item.handleStatus)??&&("100002"!=item.handleStatus)><input type="checkbox"onchange="oneFive.certNumber.selectItem(this)"/></#if></td>
+            <td><#if (item.handleStatus)??&&("100002"!=item.handleStatus)><input type="checkbox"
+                                                                                 onchange="oneFive.certNumber.selectItem(this)"/></#if>
+            </td>
             <td>${item.proLanName}</td>
             <td style="display: none;">${item.lanId}</td>
             <td>${item.lanName}</td>
@@ -23,19 +25,16 @@
             <td><#if (item.handleStatus)??&&("100002"==item.handleStatus)>处理中<#else>未处理</#if></td>
         </tr>
         </#list>
+    <#else>
+    <tr>
+        <td colspan="7">没有查询到结果</td>
+    </tr>
+    </#if>
     </tbody>
 </table>
 <!--页码-->
-    <@portal.modelPagination pageModel 5 "oneFive.certNumber.queryCertNumRelList"/>
+<@portal.modelPagination pageModel 5 "oneFive.certNumber.queryCertNumRelList"/>
 <script src="${contextPath}/js/our-js/ec.pagination.js?${jsversion}" type="text/javascript"></script>
 <!--页码 end-->
-<#else>
-<div class="no_search">
-    <div class="h1">
-        <img style="vertical-align: middle"
-             src="${contextPath}/image/common/query_search.gif"/>&nbsp;&nbsp;抱歉，没有找到相关的记录，请尝试其他筛选条件。
-    </div>
-</div>
-</#if>
 
 
