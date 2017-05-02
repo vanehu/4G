@@ -5,7 +5,7 @@
 		<groupId>com.ailk.ecsp</groupId>
 		<artifactId>ecsp-parent</artifactId>
 		<version>3.0.0</version>
-		<relativePath>./com.ailk.ecsp.ecsp-parent</relativePath>
+		<relativePath>../ecsp-parent/pom.xml</relativePath>
 	</parent>
 
 	<artifactId>ecsp-web</artifactId>
