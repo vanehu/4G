@@ -205,6 +205,7 @@ oneFive.certNumber = (function () {
                 container: "selectConfirmDivMain"
             });
             $("#uploadAttachment").find("#soNbr").val(_getOneFiveSoNbr());
+            $("#tab_custInfoList").find("#soNbr").text(soNbr);
         } else {
             $.alert("提示", "未选中任何号码！");
         }
