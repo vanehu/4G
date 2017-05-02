@@ -85,10 +85,6 @@ oneFive.certNumberHandle = (function () {
             };
         } else {
             var channelId = $("#p_channelId").val();
-            if (!ec.util.isObj(channelId)) {
-                $.alert("提示", "渠道地区为空，无法查询！");
-                return;
-            }
             var areaId = $("#p_areaId").val();
             if (!ec.util.isObj(areaId)) {
                 $.alert("提示", "请选择【地区】再查询");
@@ -105,10 +101,12 @@ oneFive.certNumberHandle = (function () {
                 "areaId": areaId,
                 "startDt": startDt,
                 "endDt": endDt,
-                "channelId": channelId,
                 "nowPage": curPage,
                 "pageSize": 10
             };
+            if(ec.util.isObj(channelId)){
+                param.channelId = channelId;
+            }
         }
         $.callServiceAsHtmlGet(contextPath + "/certNumber/queryOneFiveOrderList", param, {
             "before": function () {
