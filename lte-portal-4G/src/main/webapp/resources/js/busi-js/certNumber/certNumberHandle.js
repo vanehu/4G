@@ -148,7 +148,7 @@ oneFive.certNumberHandle = (function () {
      * @private
      */
     var _queryDetail = function (orderId) {
-        var param = {"orderId": orderId};
+        var param = {"orderId": orderId,"areaId":$("#p_areaId").val()};
         $.callServiceAsHtmlGet(contextPath + "/certNumber/queryOneFiveOrderItemDetail", param, {
             "before": function () {
                 $.ecOverlay("详情查询中，请稍等...");
