@@ -78,6 +78,7 @@ oneFive.certNumberHandle = (function () {
             }
 
             param = {
+                "collectType": "2",
                 "areaId": $("#p_areaId").val(),
                 "orderNbr": $("#p_olNbr").val(),
                 "nowPage": curPage,
@@ -98,13 +99,14 @@ oneFive.certNumberHandle = (function () {
             }
 
             param = {
+                "collectType": "2",
                 "areaId": areaId,
                 "startDt": startDt,
                 "endDt": endDt,
                 "nowPage": curPage,
                 "pageSize": 10
             };
-            if(ec.util.isObj(channelId)){
+            if (ec.util.isObj(channelId)) {
                 param.channelId = channelId;
             }
         }
