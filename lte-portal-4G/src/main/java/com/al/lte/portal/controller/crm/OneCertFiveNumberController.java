@@ -338,7 +338,6 @@ public class OneCertFiveNumberController extends BaseController {
         SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
         Map<String, Object> retMap = new HashMap<String, Object>();
         JsonResponse jsonResponse = null;
-        paramMap.put("areaId", sessionStaff != null ? sessionStaff.getCurrentAreaId() : "");
         paramMap.put("srcFlag", SysConstant.ONE_FIVE_SRC_FLAG_REAL);
         try {
             Map<String, Object> returnMap = oneFiveBmo.downFile(paramMap, sessionStaff);

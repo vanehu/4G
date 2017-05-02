@@ -148,7 +148,7 @@ oneFive.certNumberHandle = (function () {
      * @private
      */
     var _queryDetail = function (orderId) {
-        var param = {"orderId": orderId,"areaId":$("#p_areaId").val()};
+        var param = {"orderId": orderId, "areaId": $("#p_areaId").val()};
         $.callServiceAsHtmlGet(contextPath + "/certNumber/queryOneFiveOrderItemDetail", param, {
             "before": function () {
                 $.ecOverlay("详情查询中，请稍等...");
@@ -177,9 +177,10 @@ oneFive.certNumberHandle = (function () {
      * 查询附件信息
      * @private
      */
-    var _queryAttachment = function (soNbr) {
+    var _queryAttachment = function (soNbr, areaId) {
         var param = {
-            "soNbr": soNbr
+            "soNbr": soNbr,
+            "areaId": areaId
         };
         $.callServiceAsJson(contextPath + "/certNumber/downAttachment", param, {
             "before": function () {
@@ -226,7 +227,7 @@ oneFive.certNumberHandle = (function () {
      * @private
      */
     var _orderConfirm = function (orderId, areaId, number) {
-        _orderSubmit(orderId, areaId, "Y", number, CONST.CERT_NUMBER_ORDER_STATUS.SUCCESS);
+        _orderSubmit(orderId, areaId, number, CONST.CERT_NUMBER_ORDER_STATUS.SUCCESS);
     };
 
     /**
@@ -239,18 +240,17 @@ oneFive.certNumberHandle = (function () {
             $.alert("提示", "取消号码必须输入取消原因！");
             return;
         }
-        _orderSubmit(orderId, areaId, "N", number, CONST.CERT_NUMBER_ORDER_STATUS.CANCEL, remarks);
+        _orderSubmit(orderId, areaId, number, CONST.CERT_NUMBER_ORDER_STATUS.CANCEL, remarks);
     };
 
     /**
      * 订单确认
      * @private
      */
-    var _orderSubmit = function (orderId, areaId, ifExp, number, statusCd, remark) {
+    var _orderSubmit = function (orderId, areaId, number, statusCd, remark) {
         var param = {
             "orderId": orderId,
             "areaId": areaId,
-            "ifExp": ifExp,
             "accNbr": number,
             "statusCd": statusCd,
             "remark": remark
