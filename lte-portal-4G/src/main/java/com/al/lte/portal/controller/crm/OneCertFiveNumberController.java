@@ -126,6 +126,7 @@ public class OneCertFiveNumberController extends BaseController {
             SysConstant.SESSION_KEY_LOGIN_STAFF);
         List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
         Integer totalSize = 0;
+        int nowPage = MapUtils.getIntValue(param, "nowPage", 1);
         try {
             param.put("statusCd", SysConstant.ONE_FIVE_NUMBER_STATUS_INIT);
             Map<String, Object> resMap = cartBmo.queryCltCarts(param, null, sessionStaff);
@@ -135,7 +136,7 @@ public class OneCertFiveNumberController extends BaseController {
                     list = (List<Map<String, Object>>) map.get("collectionOrderLists");
                     totalSize = MapUtils.getInteger(map, "totalCnt", 1);
                 }
-                PageModel<Map<String, Object>> pm = PageUtil.buildPageModel(1, 10, totalSize < 1 ? 1
+                PageModel<Map<String, Object>> pm = PageUtil.buildPageModel(nowPage, 10, totalSize < 1 ? 1
                     : totalSize, list);
                 model.addAttribute("pageModel", pm);
                 model.addAttribute("code", "0");
