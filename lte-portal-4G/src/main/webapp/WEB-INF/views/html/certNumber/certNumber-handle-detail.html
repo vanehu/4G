@@ -47,7 +47,7 @@
                                     <td>${item.certNumber}</td>
                                     <td>${item.telNumber}</td>
                                     <td>
-                                        <textarea id="order_remark_" +${item.telNumber} rows="3" style="width: 350px;" placeholder="在此处输入取消原因"/>
+                                        <textarea id="order_remark_${item.telNumber}" rows="3" style="width: 350px;" placeholder="在此处输入取消原因"/>
                                         <a style=" margin-left:20px;" class="btna_o"
                                            onclick="oneFive.certNumberHandle.orderConfirm('${item.orderId}','${item.areaId}','${item.telNumber}')"><span>确认</span></a>
                                         <a style=" margin-left:20px;" class="btna_o"
