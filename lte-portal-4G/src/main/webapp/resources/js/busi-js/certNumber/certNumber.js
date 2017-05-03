@@ -164,7 +164,14 @@ oneFive.certNumber = (function () {
         if (selectInput.checked) {
             selectList.push(selectTR);
         } else {
-            selectList.splice($.inArray(selectTR, selectList), 1);
+            var index = 0;
+            $.each(selectList, function () {
+                if ($(this).find("td:eq(4)").text() == $(selectTR).find("td:eq(4)").text()) {
+                    return false;
+                }
+                index++;
+            });
+            selectList.splice(index, 1);
         }
     };
 
