@@ -5799,8 +5799,8 @@ public class PrintBmoImpl implements PrintBmo {
         int size = content.size();
         int index=1;
         for (Map<String, Object> map : content) {
-            String content2 = MapUtils.getString(map, "content","");
-            if(StringUtils.isNotBlank(content2)&&"numbers".equals(content2)){//变量替换
+            String title2 = MapUtils.getString(map, "title","");
+            if("待核实号码".equals(title2)){//变量替换
                 map.put("content", numbers);
             }
             OETitleContent oeTitleContent = buildOETitleContentEasy(size>1?index++:0, SysConstant.STR_SEP, map);
