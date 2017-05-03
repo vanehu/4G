@@ -222,6 +222,14 @@ prod.transferModify = (function(){
 			                partyProductRelaRoleCd : 0,
 			                state : "ADD"
 			            }],
+			            boProdStatuses : [{
+							prodStatusCd : CONST.PROD_STATUS_CD.READY_PROD,
+							state : "DEL"
+						},{
+							prodStatusCd : CONST.PROD_STATUS_CD.DONE_PROD,
+							state : "ADD"
+						}
+						],
 			            busiOrderAttrs : [{			            				    				
 			            	itemSpecId : "111111118",	    				
 			            	value : $("#order_remark").val() //订单备注		    			
@@ -231,35 +239,35 @@ prod.transferModify = (function(){
 			busiOrder.push(transferCust);
 			//过户返档
 			if(_BO_ACTION_TYPE==CONST.BO_ACTION_TYPE.TRANSFERRETURN){
-				var busiOrderAdd = {
-						areaId : order.prodModify.choosedProdInfo.areaId,  //受理地区ID		
-						busiOrderInfo : {
-							seq : OrderInfo.SEQ.seq--
-						}, 
-						busiObj : { //业务对象节点
-							accessNumber: order.prodModify.choosedProdInfo.accNbr,
-							instId : order.prodModify.choosedProdInfo.prodInstId, //业务对象实例ID
-							objId :order.prodModify.choosedProdInfo.productId
-						},  
-						boActionType : {
-							actionClassCd: CONST.ACTION_CLASS_CD.PROD_ACTION,
-		                    boActionTypeCd: CONST.BO_ACTION_TYPE.ACTIVERETURNTWO
-						}, 
-						data:{}
-					};
-				busiOrderAdd.data.boProdStatuses = [{
-					prodStatusCd : CONST.PROD_STATUS_CD.READY_PROD,
-					state : "DEL"
-				},{
-					prodStatusCd : CONST.PROD_STATUS_CD.DONE_PROD,
-					state : "ADD"
-				}
-				];
+//				var busiOrderAdd = {
+//						areaId : order.prodModify.choosedProdInfo.areaId,  //受理地区ID		
+//						busiOrderInfo : {
+//							seq : OrderInfo.SEQ.seq--
+//						}, 
+//						busiObj : { //业务对象节点
+//							accessNumber: order.prodModify.choosedProdInfo.accNbr,
+//							instId : order.prodModify.choosedProdInfo.prodInstId, //业务对象实例ID
+//							objId :order.prodModify.choosedProdInfo.productId
+//						},  
+//						boActionType : {
+//							actionClassCd: CONST.ACTION_CLASS_CD.PROD_ACTION,
+//		                    boActionTypeCd: CONST.BO_ACTION_TYPE.ACTIVERETURNTWO
+//						}, 
+//						data:{}
+//					};
+//				busiOrderAdd.data.boProdStatuses = [{
+//					prodStatusCd : CONST.PROD_STATUS_CD.READY_PROD,
+//					state : "DEL"
+//				},{
+//					prodStatusCd : CONST.PROD_STATUS_CD.DONE_PROD,
+//					state : "ADD"
+//				}
+//				];
 
                 //添加证号关系
-                _addCertiAccNbrRels(_transchoosedCustInfo, busiOrderAdd, toIdentidiesTypeCd, toIdCardNumber, toCustName, toAddressStr);
+                _addCertiAccNbrRels(_transchoosedCustInfo, transferCust, toIdentidiesTypeCd, toIdCardNumber, toCustName, toAddressStr);
 
-				busiOrder.push(busiOrderAdd);
+				//busiOrder.push(transferCust);
 				
 			}
 			//新建帐户节点
