@@ -164,6 +164,7 @@ public class OneCertFiveNumberController extends BaseController {
     public String queryOneFiveOrderItemDetail(Model model, HttpSession session, @RequestParam Map<String, Object> paramMap) throws BusinessException {
         SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
         try {
+            paramMap.put("statusCd", SysConstant.ONE_FIVE_NUMBER_STATUS_INIT);
             Map<String, Object> resMap = cartBmo.queryCltCartOrder(paramMap, null, sessionStaff);
             if (ResultCode.R_SUCC.equals(resMap.get("resultCode"))) {
                 Map<String, Object> cartInfo = (Map<String, Object>) resMap.get("result");
