@@ -1326,6 +1326,62 @@ AttachOffer = (function() {
 		if(newSpec==undefined){ //没有在已开通附属销售列表中
 			return;
 		}
+		if(newSpec.agreementInfos.length>0 && newSpec.agreementInfos[0].activtyType!=null && newSpec.agreementInfos[0].activtyType =="3"){//征信合约
+			if(OrderInfo.actionFlag == "6"){
+				$.alert("提示","主副卡成员变更场景下不能订购征信合约。");
+				return;
+			}
+            if(OrderInfo.cust.identityCd!=1){//证件类型必须为身份证
+            	$.alert("提示","订购征信合约，证件类型必须为身份证。");
+				return;
+			}
+			var areaId = OrderInfo.staff.soAreaId;
+			var identityNum = OrderInfo.cust.idCardNumber;
+			var accNbr = OrderInfo.getAccessNumber(prodId);
+			var partnerCode = newSpec.agreementInfos[0].partnerCode;
+			var param = {
+				areaId : areaId,
+				idCard : identityNum,
+				partnerCode : partnerCode
+			};
+			if(OrderInfo.actionFlag == "2" || OrderInfo.actionFlag == "14"){
+				param.phoneNumber = accNbr;
+			}
+			var  qryResponse = _qryPreliminaryInfo(param);
+			if(qryResponse.code == 0){
+				if(qryResponse.data.result == null || qryResponse.data.result.userInfo == null || qryResponse.data.result.userInfo.businessType==null){
+					$.alert("错误","查询后台 '客户信息核验接口' 未返回结果，查询接口流水号："+qryResponse.data.transactionID);
+					return;
+				}else{
+					var userInfo = qryResponse.data.result.userInfo;
+					if(OrderInfo.actionFlag == "1" && userInfo.businessType != CONST.BUS_TYPE.ADD_SINGLE && userInfo.businessType != CONST.BUS_TYPE.ADD_FUSE && userInfo.businessType != CONST.BUS_TYPE.ADD_OTHER_FUSE){
+						$.alert("提示","'客户信息核验接口'返回可做业务类型为："+userInfo.businessType+",本次订单为新装业务，不能订购征信分期合约。");
+						return;
+					}
+					if((OrderInfo.actionFlag == "2" || OrderInfo.actionFlag == "14")&& userInfo.businessType != CONST.BUS_TYPE.STOCK_SINGLE && OrderInfo.preliminaryInfo.businessType != CONST.BUS_TYPE.STOCK_FUSE){
+						$.alert("提示","'客户信息核验接口'返回可做业务类型为："+OrderInfo.preliminaryInfo.businessType+",本次订单为二次业务受理，不能订购征信分期合约。");
+						return;
+					}
+					if(userInfo.cityCode.substr(0,5) != areaId.substr(0,5)){
+						$.alert("提示","能力开放系统里用户的受理地区 "+areaId+" 和征信平台初审接口返回 cityCode "+userInfo.cityCode+" 办理业务的城市编码不一致,无法办理征信分期合约。");
+						return;
+					}
+					if(identityNum != userInfo.idcard){
+						$.alert("提示","能力开放系统里用户办理用户的证件号码和征信平台初审接口返回的idcard用户身份证号码不一致，无法办理征信分期合约。");
+						return;
+					}
+					if(OrderInfo.actionFlag != "1" && accNbr != userInfo.userPhone){
+						$.alert("提示","能力开放和征信平台初审接口返回的userPhone用户手机号码不一致，无法办理征信分期合约。");
+						return;
+					}
+					OrderInfo.preliminaryInfo = userInfo;
+				};
+			}else{
+				$.alertM(qryResponse.data);
+				return;
+			};
+			
+		}
 		var offer = CacheData.getOfferBySpecId(prodId,offerSpecId); //从已订购数据中找
 		if(offer != undefined && offer.ifDueOrderAgain != "Y"){//如果是合约，则跳过，执行下面代码
 			var tipsContent = "您已订购 '"+newSpec.offerSpecName+"' 销售品 "+offer.counts+" 次，请确认是否继续订购";
@@ -1376,6 +1432,9 @@ AttachOffer = (function() {
 	
 	//删除附属销售品带出删除功能产品
 	var delServSpec = function(prodId,offerSpec){
+		if(offerSpec.agreementInfos.length>0 && offerSpec.agreementInfos[0].activtyType!=null && offerSpec.agreementInfos[0].activtyType =="3"){//征信合约
+			OrderInfo.preliminaryInfo = {};
+		}
 		$.each(offerSpec.offerRoles,function(){
 			$.each(this.roleObjs,function(){
 				var servSpecId = this.objId;
@@ -2346,6 +2405,12 @@ AttachOffer = (function() {
 						mktColor=this.attrValue;
 					}
 				});
+			}
+			if(OrderInfo.preliminaryInfo !=null && OrderInfo.preliminaryInfo.businessType != null){
+				if(mktPrice - OrderInfo.preliminaryInfo.money > 0){
+					$.alert("提示","终端的合约价格"+mktPrice+"元，不能超过征信的额度"+OrderInfo.preliminaryInfo.money);
+					return false;
+				}
 			}
 			$("#terminalName_"+num).html("终端规格："+data.mktResName+",终端颜色："+mktColor+",合约价格："+mktPrice+"元");
 			$("#terminalDesc_"+num).css("display","block");
@@ -3410,6 +3475,10 @@ AttachOffer = (function() {
 		});
 		// 选择流量包时，默认显示第一个子标签的内容，加return是为了避免递归循环
 		if(labelId == 100 && "ON" == offerChange.queryPortalProperties("NEW_LABEL_FLAG")) {
+ 			$("#parentLabel_" + prodId + "_" + labelId + " li:first").click();
+			return;
+ 		}
+		if(labelId == 10001) {
  			$("#parentLabel_" + prodId + "_" + labelId + " li:first").click();
 			return;
  		}
@@ -5020,6 +5089,9 @@ AttachOffer = (function() {
 	
 	//删除附属销售品带出删除功能产品
 	var _delServSpec = function(prodId,offerSpec){
+		if(offerSpec.agreementInfos.length>0 && offerSpec.agreementInfos[0].activtyType!=null && offerSpec.agreementInfos[0].activtyType =="3"){//征信合约
+			OrderInfo.preliminaryInfo = {};
+		}
 		$.each(offerSpec.offerRoles,function(){
 			$.each(this.roleObjs,function(){
 				var servSpecId = this.objId;
@@ -5049,6 +5121,18 @@ AttachOffer = (function() {
 				soNbr : OrderInfo.order.soNbr
 		};
 		var response = $.callServiceAsJson(contextPath+"/offer/queryOfferAndServDependForCancel",param); //依赖销售品查询
+		return response;
+	};
+	
+	//征信 获取初审信息
+	var _qryPreliminaryInfo = function(param) {
+		OrderInfo.preliminaryInfo = {};
+		var qryUrl=contextPath+"/order/qryPreliminaryInfo";
+		var response = $.callServiceAsJson(qryUrl, param);
+		if (response.code == 0 && response.data.result!=null && response.data.result.userInfo!=null) {
+			response.data.result.userInfo.partnerCode = param.partnerCode;
+			response.data.result.userInfo.transactionID = response.data.transactionID;
+		};
 		return response;
 	};
 	
@@ -5118,7 +5202,8 @@ AttachOffer = (function() {
 		initMyfavoriteSpec:_initMyfavoriteSpec,
 		addMyfavoriteSpec:_addMyfavoriteSpec,
 		delMyfavoriteSpec:_delMyfavoriteSpec,
-		myFavoriteList:_myFavoriteList
+		myFavoriteList:_myFavoriteList,
+		qryPreliminaryInfo : _qryPreliminaryInfo
 		
 	};
 })();

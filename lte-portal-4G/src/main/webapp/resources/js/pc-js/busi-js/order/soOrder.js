@@ -393,7 +393,18 @@ SoOrder = (function() {
 		if(OrderInfo.order.soNbr!=undefined && OrderInfo.order.soNbr != ""){  //缓存流水号
 			OrderInfo.orderData.orderList.orderListInfo.soNbr = OrderInfo.order.soNbr;
 		}
-		
+		if(OrderInfo.preliminaryInfo !=null && OrderInfo.preliminaryInfo.businessType != null){
+			var  mainOfferSpecIdParam = { //套餐id
+				itemSpecId : CONST.BUSI_ORDER_ATTR.MAIN_OFFER_SPECID,
+				value : OrderInfo.mainOfferSpecId
+			};
+			OrderInfo.orderData.orderList.orderListInfo.custOrderAttrs.push(mainOfferSpecIdParam);
+			var  creditLineParam = { //征信信用额度
+					itemSpecId : CONST.BUSI_ORDER_ATTR.CREDIT_LINE,
+					value : OrderInfo.preliminaryInfo.money
+			};
+			OrderInfo.orderData.orderList.orderListInfo.custOrderAttrs.push(creditLineParam);
+		}
 		return true;
 	};
 	

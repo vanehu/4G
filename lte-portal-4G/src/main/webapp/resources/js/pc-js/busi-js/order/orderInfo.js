@@ -1501,6 +1501,8 @@ OrderInfo = (function() {
 		
 	var _oneCardFiveNO={"usedNum":{},"checkNum":{}};//一证五号校验缓存
 	var _oneCardPhone = "";
+	var _preliminaryInfo  = {};//征信业务信息
+	
 	return {
 		terminalCode:_terminalCode,
 		mktResInstCode:_mktResInstCode,
@@ -1604,6 +1606,7 @@ OrderInfo = (function() {
 		oneCardFiveNum : _oneCardFiveNum,
 		oneCardFiveNO  : _oneCardFiveNO,
 		oneCardPhone   : _oneCardPhone,
-		queryCustInfo:_queryCustInfo
+		queryCustInfo  : _queryCustInfo,
+		preliminaryInfo : _preliminaryInfo
 	};
 })();

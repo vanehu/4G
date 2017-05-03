@@ -368,6 +368,7 @@ query.offer = (function() {
 	var _queryCanBuyAttachSpec = function(param,callBackFun) {
 		addParam(param);  //添加基本参数
 		var url = contextPath+"/offer/queryCanBuyAttachSpec";
+		OrderInfo.mainOfferSpecId = param.mainOfferSpecId;
 		if(typeof(callBackFun)=="function"){
 			$.callServiceAsJsonGet(url,{strParam:JSON.stringify(param)},{
 				"before":function(){

@@ -2974,7 +2974,7 @@ AttachOffer = (function() {
 				});
 			}
 			if(OrderInfo.menuName == "ZXHYBL"){
-				if(mktPrice>OrderInfo.preliminaryInfo.money){
+				if(mktPrice - OrderInfo.preliminaryInfo.money > 0){
 					$.alert("提示","终端的合约价格"+mktPrice+"元，不能超过征信的额度"+OrderInfo.preliminaryInfo.money);
 					return false;
 				}
