@@ -45,6 +45,45 @@ SoOrder = (function() {
 	
 	//提交订单节点
 	var _submitOrder = function(data) {
+		//#1466473  纳入老用户判断主卡副卡账户是否一致，不一致提示修改副卡账户
+		if(ec.util.isArray(OrderInfo.oldprodInstInfos)){
+			var acctIdFlag = false;//主副卡是否一致标识
+			var acctNumberList = [];//副卡是否一致标识
+			for(var a=0;a<OrderInfo.oldprodAcctInfos.length;a++){
+				var oldacctId = OrderInfo.oldprodAcctInfos[a].prodAcctInfos[0].acctId;
+				var mainAcctId = $("#acctSelect option:selected").val();
+				if(oldacctId!=mainAcctId){
+					acctIdFlag = true;
+					acctNumberList.push(OrderInfo.oldprodAcctInfos[a].prodAcctInfos[0].accessNumber);
+				}
+			}
+			if(acctIdFlag){
+				var tips = "您当前纳入加装的号码[";
+				for(var a=0;a<acctNumberList.length;a++){
+					if(a==0){
+						tips += acctNumberList[a];
+					}else{
+						tips += ","+acctNumberList[a];
+					}
+				}
+				tips += "]，账户与主卡账户不一致，纳入后将统一使用主卡账户，是否确认修改？";
+				
+				$.confirm("确认",tips,{ 
+					yesdo:function(){
+						_submitOrder2(data);
+					},
+					no:function(){
+					}
+				});
+			}else{
+				_submitOrder2(data);
+			}
+		}else{
+			_submitOrder2(data);
+		}
+	};
+	
+	var _submitOrder2 = function(data) {
 		_getCheckOperatSpec();
 		if(_getOrderInfo(data)){
 			//订单提交
@@ -332,6 +371,9 @@ SoOrder = (function() {
 		}else{  //默认单个业务动作
 			_fillBusiOrder(busiOrders,data,"N"); //填充业务对象节点
 		}
+		
+		//老用户副卡纳入帐号修改结点
+		if(!_oldprodAcctChange(busiOrders)) return false;
 		OrderInfo.orderData.orderList.orderListInfo.custOrderAttrs = custOrderAttrs; //订单属性数组
 		OrderInfo.orderData.orderList.orderListInfo.extCustOrderId = OrderInfo.provinceInfo.provIsale; //省份流水
 		OrderInfo.orderData.orderList.custOrderList[0].busiOrder = busiOrders; //订单项数组
@@ -2439,18 +2481,6 @@ SoOrder = (function() {
 				return false ; 
 			}
 			
-			//纳入老用户判断主卡副卡账户一致
-			if(ec.util.isArray(OrderInfo.oldprodAcctInfos)){
-				for(var a=0;a<OrderInfo.oldprodAcctInfos.length;a++){
-					var oldacctId = OrderInfo.oldprodAcctInfos[a].prodAcctInfos[0].acctId;
-					var mainacctid = $("#acctSelect option:selected").val();
-					if(oldacctId!=mainacctid){
-						$.alert("提示","副卡和主卡的账户不一致！");
-						return false ; 
-					}
-				}
-			}
-			
 			//新装纳入老用户
 			
 			if(offerChange.oldMemberFlag){
@@ -3090,6 +3120,75 @@ SoOrder = (function() {
             ca.certAddressEnc = OrderInfo.cust.address;
 	    }
     };
+    
+   	var _oldprodAcctChange= function (busiOrders) {
+    	//#1466473  纳入老用户判断主卡副卡账户是否一致，不一致提示修改副卡账户
+		if(ec.util.isArray(OrderInfo.oldprodInstInfos)){
+			for(var i=0;i<OrderInfo.oldprodInstInfos.length;i++){
+				var oldprodInst = OrderInfo.oldprodInstInfos[i];
+				if(!ec.util.isArray(oldprodInst.prodAcctInfos)||!ec.util.isObj(oldprodInst.prodAcctInfos[0].acctId)){
+					$.alert("提示", "号码["+oldprodInst.accNbr+"]未查到帐号信息，无法完成副卡纳入！");
+					return false;
+				}
+				var oldprodAcct = oldprodInst.prodAcctInfos[0];
+				var mainAcctid = $("#acctSelect option:selected").val();
+				var mainAcctCd = $("#acctSelect option:selected").attr("acctCd");
+				if(mainAcctid<0){
+					mainAcctCd = mainAcctid;
+				}
+
+				if(oldprodAcct.acctId!=mainAcctid){
+					//账户节点变更节点
+					var busiOrder={
+						areaId : OrderInfo.getAreaId(),  //受理地区ID		
+						busiOrderInfo : {
+							seq : OrderInfo.SEQ.seq--
+						}, 
+						busiObj : { //业务对象节点
+							accessNumber: oldprodInst.accNbr,
+							instId : oldprodInst.prodInstId, //业务对象实例ID
+							objId :oldprodInst.productId,
+							isComp : "N",
+							offerTypeCd : "1"
+						},  
+						boActionType : {
+							actionClassCd: CONST.ACTION_CLASS_CD.PROD_ACTION,
+		                    boActionTypeCd: CONST.BO_ACTION_TYPE.CHANGE_ACCOUNT
+						}, 
+						data:{}
+					};
+					//创建账户变更节点
+					busiOrder.data.boAccountRelas=[];
+					var _boAccountRelasOld={
+	                        acctCd: oldprodAcct.acctCd,
+	                        acctId: oldprodAcct.acctId,
+							acctRelaTypeCd : "1",
+							chargeItemCd : oldprodAcct.chargeItemCd,
+							percent : oldprodAcct.percent,
+							priority : ec.util.isObj(oldprodAcct.priority)?oldprodAcct.priority:"1",//没返回协商取1，不然后台报错
+							prodAcctId : oldprodAcct.prodAcctId,
+							extProdAcctId : ec.util.isObj(oldprodAcct.prodAcctId)?oldprodAcct.prodAcctId:"",
+							state : "DEL"
+					};
+					var _boAccountRelasNew={
+						 	acctCd: mainAcctCd,
+						 	acctId: mainAcctid,
+							acctRelaTypeCd : "1",			//协商写死
+							chargeItemCd : 1,               //账目项标识，暂固定为1，表示支付所有账目项
+							percent : "100",                //支付比重，该账目项占该产品的价格比重，与上一个属性相匹配，暂固定为100
+							priority : "1",                 //支付优先级，暂固定为1，表示最高优先级
+							prodAcctId : "-1",              //标识产品与帐户的支付匹配关系，新选的帐户和该产品无匹配关系，默认 -1
+							state : "ADD"
+					};
+					busiOrder.data.boAccountRelas.push(_boAccountRelasOld);
+					busiOrder.data.boAccountRelas.push(_boAccountRelasNew);
+					busiOrders.push(busiOrder);
+				}
+			}
+		}
+		return true;
+    };
+    
 	return {
 		builder 				: _builder,
 		createAttOffer  		: _createAttOffer,

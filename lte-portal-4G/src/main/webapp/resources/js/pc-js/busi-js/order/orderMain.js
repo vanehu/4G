@@ -142,7 +142,42 @@ order.main = (function(){
 			$("#fillLastStep").show();
 		}
 		$("#fillNextStep").off("click").on("click",function(){
-			SoOrder.submitOrder();
+			//#1466473  纳入老用户判断主卡副卡账户是否一致，不一致提示修改副卡账户
+			if(ec.util.isArray(OrderInfo.oldprodInstInfos)){
+				var acctIdFlag = false;//主副卡是否一致标识
+				var acctNumberList = [];//副卡是否一致标识
+				for(var a=0;a<OrderInfo.oldprodAcctInfos.length;a++){
+					var oldacctId = OrderInfo.oldprodAcctInfos[a].prodAcctInfos[0].acctId;
+					var mainacctid = $("#acctSelect option:selected").val();
+					if(oldacctId!=mainacctid){
+						acctIdFlag = true;
+						acctNumberList.push(OrderInfo.oldprodAcctInfos[a].prodAcctInfos[0].accessNumber);
+					}
+				}
+				if(acctIdFlag){
+					var tips = "您当前纳入加装的号码[";
+					for(var a=0;a<acctNumberList.length;a++){
+						if(a==0){
+							tips += acctNumberList[a];
+						}else{
+							tips += ","+acctNumberList[a];
+						}
+					}
+					tips += "]，账户与主卡账户不一致，纳入后将统一使用主卡账户，是否确认修改？";
+					
+					$.confirm("确认",tips,{ 
+						yesdo:function(){
+							SoOrder.submitOrder();
+						},
+						no:function(){
+						}
+					});
+				}else{
+					SoOrder.submitOrder();
+				}
+			}else{
+				SoOrder.submitOrder();
+			}
 		});	
 		if (param.memberChange) {
 			$("#orderedprod").hide();
@@ -956,44 +991,45 @@ order.main = (function(){
 			_createAcct();
 			return;
 		}
-			//主副卡成员变更业务不能更改帐户，只展示主卡帐户
-			if(OrderInfo.actionFlag==6 || OrderInfo.actionFlag==2){
-				var param = {};
-				if(flag==1){
-					for(var i=0;i<OrderInfo.oldprodInstInfos.length;i++){
-						param.prodId=OrderInfo.oldprodInstInfos[i].prodInstId;
-						param.acctNbr=OrderInfo.oldprodInstInfos[i].accNbr;
-						param.areaId=OrderInfo.oldprodInstInfos[i].areaId;
-						var jr = $.callServiceAsJson(contextPath+"/order/queryProdAcctInfo", param);
-						if(jr.code==-2){
-							$.alertM(jr.data);
-							return;
-						}
-						var prodAcctInfos = jr.data;
-						prodAcctInfos[0].accessNumber = OrderInfo.oldprodInstInfos.accNbr;
-						OrderInfo.oldprodAcctInfos.push({"prodAcctInfos":prodAcctInfos});
-					}
-				}else{
-					param.prodId=order.prodModify.choosedProdInfo.prodInstId;
-					param.acctNbr=order.prodModify.choosedProdInfo.accNbr;
-					param.areaId=order.prodModify.choosedProdInfo.areaId;
+		//主副卡成员变更业务不能更改帐户，只展示主卡帐户
+		if(OrderInfo.actionFlag==6 || OrderInfo.actionFlag==2||OrderInfo.actionFlag==1){
+			var param = {};
+			if(flag==1){
+				for(var i=0;i<OrderInfo.oldprodInstInfos.length;i++){
+					param.prodId=OrderInfo.oldprodInstInfos[i].prodInstId;
+					param.acctNbr=OrderInfo.oldprodInstInfos[i].accNbr;
+					param.areaId=OrderInfo.oldprodInstInfos[i].areaId;
 					var jr = $.callServiceAsJson(contextPath+"/order/queryProdAcctInfo", param);
 					if(jr.code==-2){
 						$.alertM(jr.data);
 						return;
 					}
 					var prodAcctInfos = jr.data;
-					$("#accountDiv").find("label:eq(0)").text("主卡帐户：");
-					$.each(prodAcctInfos, function(i, prodAcctInfo){
-						$("<option>").text(prodAcctInfo.name+" : "+prodAcctInfo.acctCd).attr("value",prodAcctInfo.acctId)
-						.attr("acctcd",prodAcctInfo.acctCd).appendTo($("#acctSelect"));					
-					});
-					$("#accountDiv").find("a:eq(0)").hide();
+					prodAcctInfos[0].accessNumber = OrderInfo.oldprodInstInfos[i].accNbr;
+					OrderInfo.oldprodAcctInfos.push({"prodAcctInfos":prodAcctInfos});
+					OrderInfo.oldprodInstInfos[i].prodAcctInfos = prodAcctInfos;
 				}
 			}else{
-				//新装默认新建帐户
-				_createAcct();
+				param.prodId=order.prodModify.choosedProdInfo.prodInstId;
+				param.acctNbr=order.prodModify.choosedProdInfo.accNbr;
+				param.areaId=order.prodModify.choosedProdInfo.areaId;
+				var jr = $.callServiceAsJson(contextPath+"/order/queryProdAcctInfo", param);
+				if(jr.code==-2){
+					$.alertM(jr.data);
+					return;
+				}
+				var prodAcctInfos = jr.data;
+				$("#accountDiv").find("label:eq(0)").text("主卡帐户：");
+				$.each(prodAcctInfos, function(i, prodAcctInfo){
+					$("<option>").text(prodAcctInfo.name+" : "+prodAcctInfo.acctCd).attr("value",prodAcctInfo.acctId)
+					.attr("acctcd",prodAcctInfo.acctCd).appendTo($("#acctSelect"));					
+				});
+				$("#accountDiv").find("a:eq(0)").hide();
 			}
+		}else{
+			//新装默认新建帐户
+			_createAcct();
+		}
 	};
 	
 	//初始化订单标签

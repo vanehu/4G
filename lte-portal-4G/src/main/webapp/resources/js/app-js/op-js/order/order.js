@@ -405,7 +405,8 @@ order.service = (function(){
 										+"<span class='input-group-btn'>"
 											+"<button class='btn btn-default' type='button' onclick='order.memberChange.addNum("+max+");'> + </button>"
 										+"</span> " 
-										+"</div>"
+									+"</div>"
+									+"<lable>注意：您纳入加装的移动电话纳入后将统一使用主卡账户！</lable>"
 								+"</div>";
 							
 							$("#div_content").append(oldstr);

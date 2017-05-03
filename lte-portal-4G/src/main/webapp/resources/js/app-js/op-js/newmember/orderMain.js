@@ -608,6 +608,7 @@ order.main = (function(){
     		if(OrderInfo.actionFlag==6 ){
     			_initAcct(0);//初始化主卡帐户列表 
     			if(ec.util.isArray(OrderInfo.oldprodInstInfos)){
+    				_initAcct(1);
     				for(var i=0;i<OrderInfo.oldprodInstInfos.length;i++){
     					var prodInfo = OrderInfo.oldprodInstInfos[i];
     					order.dealer.initDealer(prodInfo);//初始化协销
@@ -856,8 +857,42 @@ order.main = (function(){
     			});
     		}
     		$("#fillNextStepSub").off("click").on("click",function(){
-    			SoOrder.submitOrder();
-			
+				//#1466473  纳入老用户判断主卡副卡账户是否一致，不一致提示修改副卡账户
+				if(ec.util.isArray(OrderInfo.oldprodInstInfos)){
+					var acctIdFlag = false;//主副卡是否一致标识
+					var acctNumberList = [];//副卡是否一致标识
+					for(var a=0;a<OrderInfo.oldprodAcctInfos.length;a++){
+						var oldacctId = OrderInfo.oldprodAcctInfos[a].prodAcctInfos[0].acctId;
+						var mainacctid = OrderInfo.acctId;
+						if(oldacctId!=mainacctid){
+							acctIdFlag = true;
+							acctNumberList.push(OrderInfo.oldprodAcctInfos[a].prodAcctInfos[0].accessNumber);
+						}
+					}
+					if(acctIdFlag){
+						var tips = "您当前纳入加装的号码[";
+						for(var a=0;a<acctNumberList.length;a++){
+							if(a==0){
+								tips += acctNumberList[a];
+							}else{
+								tips += ","+acctNumberList[a];
+							}
+						}
+						tips += "]，账户与主卡账户不一致，纳入后将统一使用主卡账户，是否确认修改？";
+						
+						$.confirm("确认",tips,{ 
+							yesdo:function(){
+								SoOrder.submitOrder();
+							},
+							no:function(){
+							}
+						});
+					}else{
+						SoOrder.submitOrder();
+					}
+				}else{
+					SoOrder.submitOrder();
+				}
 			});
           }
 		
@@ -1036,14 +1071,15 @@ order.main = (function(){
 						param.prodId=OrderInfo.oldprodInstInfos[i].prodInstId;
 						param.acctNbr=OrderInfo.oldprodInstInfos[i].accNbr;
 						param.areaId=OrderInfo.oldprodInstInfos[i].areaId;
-						var jr = $.callServiceAsJson(contextPath+"/apporder/queryProdAcctInfo", param);
+						var jr = $.callServiceAsJson(contextPath+"/app/order/queryProdAcctInfo", param);
 						if(jr.code==-2){
 							$.alertM(jr.data);
 							return;
 						}
 						var prodAcctInfos = jr.data;
-						prodAcctInfos[0].accessNumber = OrderInfo.oldprodInstInfos.accNbr;
+						prodAcctInfos[0].accessNumber = OrderInfo.oldprodInstInfos[i].accNbr;
 						OrderInfo.oldprodAcctInfos.push({"prodAcctInfos":prodAcctInfos});
+						OrderInfo.oldprodInstInfos[i].prodAcctInfos = prodAcctInfos;
 					}
 				}else{
 					param.prodId=order.prodModify.choosedProdInfo.prodInstId;

@@ -1638,6 +1638,8 @@ order.uiCusts = (function(){
 								$dl.append(str);
 								$li.append($dl);
 								$ul.append($li);
+								var $tipsLi=$('<li><dl><dd></dd><dd style =\"width: 90%;\">注意：您纳入加装的移动电话纳入后将统一使用主卡账户！</dd></dl></li>');
+								$ul.append($tipsLi);
 							}
 							else if(oldSubPhoneNumsize.length>max){
 								$.alert("规则限制","oldSubPhoneNum的角色成员数量总和不能超过"+max);
@@ -1670,6 +1672,8 @@ order.uiCusts = (function(){
 									$dl.append(str);
 									$li.append($dl);
 									$ul.append($li);
+									var $tipsLi=$('<li><dl><dd></dd><dd style =\"width: 90%;\">注意：您纳入加装的移动电话纳入后将统一使用主卡账户！</dd></dl></li>');
+									$ul.append($tipsLi);
 									$.jqmRefresh($("#dlg-memberRole-num"));
 								}
 							}

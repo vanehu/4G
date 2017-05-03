@@ -321,6 +321,17 @@ offerChange = (function() {
 									param.objType = member.objType;
 									param.memberRoleCd = "401";
 									//默认必须可选包
+									//#1467760套餐变更传新套餐的规格ID和角色ID
+									if(OrderInfo.actionFlag==2){
+										//套餐规格ID取套餐
+										param.offerSpecId = OrderInfo.offerSpec.offerSpecId;
+										//角色ID取副卡角色ID
+										$.each(OrderInfo.offerSpec.offerRoles,function(){
+											if(this.memberRoleCd == "401"){
+												param.offerRoleId = this.offerRoleId;
+											}
+										});
+									}
 									var data = query.offer.queryDefMustOfferSpec(param);
 									CacheData.parseOffer(data,prodId);
 									//默认必须功能产品

@@ -271,10 +271,12 @@ order.memberChange = function(){
 									var $span = $("<span class='input-group-btn'>");
 									$span.append("<button class='btn btn-default' type='button' onClick='javascript:order.memberChange.addNum("+max+");'> + </button>");
 									//$span.append("<button class='btn btn-default' type='button' onclick='order.memberChange.queryofferinfo()'> 加装    </button>");
-									$span.append("<button class='btn btn-default' type='button' onClick='javascript:order.memberChange.delNum(\"oldnum_"+idnum+"\");'> - </button>");
+//									$span.append("<button class='btn btn-default' type='button' onClick='javascript:order.memberChange.delNum(\"oldnum_"+idnum+"\");'> - </button>");
 									$div2.append($span).appendTo($div);
 									$label.appendTo($div);
 									$div2.appendTo($div);
+									var $label2 = $("<label style='font-weight: initial;'>注意：您纳入加装的移动电话纳入后将统一使用主卡账户！</label>");
+									$label2.appendTo($div);
 									$("#form").append($div);
 								}
 								else if(oldSubPhoneNumsize.length>max){

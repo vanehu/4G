@@ -121,6 +121,7 @@ offerChange = (function() {
 											+"<span class='input-group-btn'>"
 											+"<button class='btn btn-default' type='button' onclick='offerChange.addNum("+max+",\"\")';> + </button>"
 											+"</span> </div>"
+											+"<lable name = 'oldphone_tips'>注意：您纳入加装的移动电话纳入后将统一使用主卡账户！</lable>";
 									}else{
 										for(var k=0;k<oldSubPhoneNumsize.length;k++){
 											if(k==0){
@@ -132,6 +133,7 @@ offerChange = (function() {
 													+"<span class='input-group-btn'>"
 													+"<button class='btn btn-default' type='button' onclick='offerChange.addNum("+max+",\"\")';> + </button>"
 													+"</span> </div>"
+													+"<lable name = 'oldphone_tips'>注意：您纳入加装的移动电话纳入后将统一使用主卡账户！</lable>";
 											}else{
 												offerChange.addNum(max,oldSubPhoneNumsize[k]);
 											}
@@ -453,7 +455,10 @@ offerChange = (function() {
 				});
 			}
 		});
+
 		if(offerChange.oldMemberFlag){
+			order.main.initAcct(0);
+			order.main.initAcct(1);//初始化副卡帐户列表
 			for(var i=0;i<OrderInfo.oldprodInstInfos.length;i++){
 				var prodInfo = OrderInfo.oldprodInstInfos[i]; //获取老用户产品信息
 				$.each(OrderInfo.oldoffer,function(){

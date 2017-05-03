@@ -148,7 +148,8 @@ offerChange = (function() {
 									var olro = "<tr style='background:#f8f8f8;' id='oldnum_1' name='oldnbr'>" +
 									"<td class='borderLTB' style='font-size:14px; padding:0px 0px 0px 12px'><span style='color:#518652; font-size:14px;'>已有移动电话</span></td>" +
 									"<td align='left' colspan='3'><input value='' style='margin-top:10px' class='numberTextBox' id='oldphonenum_1' type='text' >" +
-									"<a style='margin-top:15px' class='add2' href='javascript:order.memberChange.addNum("+max+",\"\");'> </a>"+this.minQty+"-"+max+"（张）</td></tr>";	
+									"<a style='margin-top:15px' class='add2' href='javascript:order.memberChange.addNum("+max+",\"\");'> </a>"+this.minQty+"-"+max+"（张）</td></tr>"+
+									"<tr style='background:#f8f8f8;' name='oldnum_tips'><td align='left' colspan='4' style ='color: red; padding-left: 30px;'>注意：您纳入加装的移动电话纳入后将统一使用主卡账户！</td></tr>";	
 									$tr.after(olro);
 								}else{
 									for(var k=0;k<oldSubPhoneNumsize.length;k++){
@@ -156,7 +157,8 @@ offerChange = (function() {
 											var olro = "<tr style='background:#f8f8f8;' id='oldnum_1' name='oldnbr'>" +
 											"<td class='borderLTB' style='font-size:14px; padding:0px 0px 0px 12px'><span style='color:#518652; font-size:14px;'>已有移动电话</span></td>" +
 											"<td align='left' colspan='3'><input value='"+oldSubPhoneNumsize[k]+"' style='margin-top:10px' class='numberTextBox' id='oldphonenum_1' type='text' >" +
-											"<a style='margin-top:15px' class='add2' href='javascript:order.memberChange.addNum("+max+",\"\");'> </a>"+this.minQty+"-"+max+"（张）</td></tr>";	
+											"<a style='margin-top:15px' class='add2' href='javascript:order.memberChange.addNum("+max+",\"\");'> </a>"+this.minQty+"-"+max+"（张）</td></tr>"+
+											"<tr style='background:#f8f8f8;' name='oldnum_tips'><td align='left' colspan='4' style ='color: red; padding-left: 30px;'>注意：您纳入加装的移动电话纳入后将统一使用主卡账户！</td></tr>";	
 											$tr.after(olro);
 										}else{
 											order.memberChange.addNum(max,oldSubPhoneNumsize[k]);
@@ -308,7 +310,42 @@ offerChange = (function() {
 			SoOrder.submitOrder();
 		});
 		$("#fillNextStep1").off("click").on("click",function(){
-			SoOrder.submitOrder();
+			//#1466473  纳入老用户判断主卡副卡账户是否一致，不一致提示修改副卡账户
+			if(ec.util.isArray(OrderInfo.oldprodInstInfos)){
+				var acctIdFlag = false;//主副卡是否一致标识
+				var acctNumberList = [];//副卡是否一致标识
+				for(var a=0;a<OrderInfo.oldprodAcctInfos.length;a++){
+					var oldacctId = OrderInfo.oldprodAcctInfos[a].prodAcctInfos[0].acctId;
+					var mainacctid = $("#acctSelect option:selected").val();
+					if(oldacctId!=mainacctid){
+						acctIdFlag = true;
+						acctNumberList.push(OrderInfo.oldprodAcctInfos[a].prodAcctInfos[0].accessNumber);
+					}
+				}
+				if(acctIdFlag){
+					var tips = "您当前纳入加装的号码[";
+					for(var a=0;a<acctNumberList.length;a++){
+						if(a==0){
+							tips += acctNumberList[a];
+						}else{
+							tips += ","+acctNumberList[a];
+						}
+					}
+					tips += "]，账户与主卡账户不一致，纳入后将统一使用主卡账户，是否确认修改？";
+					
+					$.confirm("确认",tips,{ 
+						yesdo:function(){
+							SoOrder.submitOrder();
+						},
+						no:function(){
+						}
+					});
+				}else{
+					SoOrder.submitOrder();
+				}
+			}else{
+				SoOrder.submitOrder();
+			}
 		});
 		$("#fillLastStep").off("click").on("click",function(){
 			order.main.lastStep();
@@ -474,9 +511,9 @@ offerChange = (function() {
 				});
 			}
 		});
-		if(offerChange.newMemberFlag){
+//		if(offerChange.newMemberFlag){
 			order.main.initAcct(0);
-		}
+//		}
 		if(offerChange.oldMemberFlag){
 			order.main.initAcct(1);//初始化副卡帐户列表
 			order.main.loadAttachOffer();

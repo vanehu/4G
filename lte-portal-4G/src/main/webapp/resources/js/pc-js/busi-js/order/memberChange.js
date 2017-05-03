@@ -278,7 +278,8 @@ order.memberChange = function(){
 									addNumpic+
 									this.minQty+"-"+max+"（张）"+
 //									"<a href='javascript:void(0)' class='purchase' onclick='order.memberChange.queryofferinfo()'>加装</a>"+
-									"</td></tr>";	
+									"</td></tr>"+
+									"<tr style='background:#f8f8f8;' name='oldnum_tips'><td align='left' colspan='4' style ='color: red; padding-left: 30px;'>注意：您纳入加装的移动电话纳入后将统一使用主卡账户！</td></tr>";	
 									$tr.after(olro);
 								}else if(oldSubPhoneNumsize.length>max){
 									$.alert("规则限制","oldSubPhoneNum的角色成员数量总和不能超过"+max);
@@ -293,7 +294,8 @@ order.memberChange = function(){
 //											addNumpic+
 											this.minQty+"-"+max+"（张）"+
 //											"<a href='javascript:void(0)' class='purchase' onclick='order.memberChange.queryofferinfo()'>加装</a>"+
-											"</td></tr>";	
+											"</td></tr>"+
+											"<tr style='background:#f8f8f8;' name='oldnum_tips'><td align='left' colspan='4' style ='color: red; padding-left: 30px;'>注意：您纳入加装的移动电话纳入后将统一使用主卡账户！</td></tr>";	
 											$tr.after(olro);
 										}else{
 											order.memberChange.addNum(max,oldSubPhoneNumsize[k]);
@@ -436,10 +438,11 @@ order.memberChange = function(){
 		delNumpic+
 		"</td></tr>";
 		
+		//#1466473 增加提示信息，修改添加元素位置逻辑，添加至提示前
 		if(OrderInfo.actionFlag==2 || OrderInfo.actionFlag==1){
-			$("#member_tbody").append(olro);
+			$("#member_tbody").find("tr[name=oldnum_tips]").before(olro);
 		}else{
-			$("#maincard_member_tbody").append(olro);
+			$("#maincard_member_tbody").find("tr[name=oldnum_tips]").before(olro);
 		}
 	};
 	

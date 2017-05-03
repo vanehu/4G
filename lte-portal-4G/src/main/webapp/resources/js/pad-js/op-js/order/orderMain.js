@@ -2036,8 +2036,9 @@ order.main = (function(){
 							return;
 						}
 						var prodAcctInfos = jr.data;
-						prodAcctInfos[0].accessNumber = OrderInfo.oldprodInstInfos.accNbr;
+						prodAcctInfos[0].accessNumber = OrderInfo.oldprodInstInfos[i].accNbr;
 						OrderInfo.oldprodAcctInfos.push({"prodAcctInfos":prodAcctInfos});
+						OrderInfo.oldprodInstInfos[i].prodAcctInfos = prodAcctInfos;
 					}
 				}else{
 					param.prodId=order.prodModify.choosedProdInfo.prodInstId;

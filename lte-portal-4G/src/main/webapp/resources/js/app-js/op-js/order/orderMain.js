@@ -1026,6 +1026,8 @@ order.main = (function(){
 		
 		if(order.service.oldMemberFlag){
 			order.main.loadAttachOffer();
+			_initAcct(1);//初始化副卡帐户列表
+
 		}
 	};
 	
@@ -1738,6 +1740,44 @@ order.main = (function(){
 		$(xkDom).addClass("styled-select");
 	};
 	
+	//初始化帐户展示
+	var _initAcct = function(flag) {
+		if(OrderInfo.actionFlag==1||OrderInfo.actionFlag==2){
+			var param = {};
+			if(flag==1){
+				for(var i=0;i<OrderInfo.oldprodInstInfos.length;i++){
+					param.prodId=OrderInfo.oldprodInstInfos[i].prodInstId;
+					param.acctNbr=OrderInfo.oldprodInstInfos[i].accNbr;
+					param.areaId=OrderInfo.oldprodInstInfos[i].areaId;
+					var jr = $.callServiceAsJson(contextPath+"/app/order/queryProdAcctInfo", param);
+					if(jr.code==-2){
+						$.alertM(jr.data);
+						return;
+					}
+					var prodAcctInfos = jr.data;
+					prodAcctInfos[0].accessNumber = OrderInfo.oldprodInstInfos[i].accNbr;
+					OrderInfo.oldprodAcctInfos.push({"prodAcctInfos":prodAcctInfos});
+					OrderInfo.oldprodInstInfos[i].prodAcctInfos = prodAcctInfos;
+
+				}
+			}else{
+				param.prodId=order.prodModify.choosedProdInfo.prodInstId;
+				param.acctNbr=order.prodModify.choosedProdInfo.accNbr;
+				param.areaId=order.prodModify.choosedProdInfo.areaId;
+				var jr = $.callServiceAsJson(contextPath+"/app/order/queryProdAcctInfo", param);
+				if(jr.code==-2){
+					$.alertM(jr.data);
+					return;
+				}
+				var prodAcctInfos = jr.data;
+				$.each(prodAcctInfos, function(i, prodAcctInfo){
+					OrderInfo.acctId = prodAcctInfo.acctId;
+					OrderInfo.acctCd = prodAcctInfo.acctCd;			
+				});
+			}
+		}
+	};
+	
 	
 	return {
 		buildMainView 				:				 _buildMainView,
@@ -1769,6 +1809,7 @@ order.main = (function(){
 		checkIncreace6		:_checkIncreace6,
 		newProdReload      :_newProdReload,
 		loadAttachOffer:_loadAttachOffer,
+		initAcct		:_initAcct
 	};
 })();
 
