@@ -598,6 +598,8 @@ CONST = (function(){
         "CANCEL":"100004",
         "SUCCESS":"301200"
     };
+    
+    var _photographReviewFlag = "";//实名制拍照开关
 
 	return {
 		//批量受理查询，是否执行改造后的新代码的开关标识，用于暂时记录是否执行新代码。Y执行改造后的新代码，N执行改造前的旧代码，默认为N。 By ZhangYu 2015-10-20
@@ -673,7 +675,8 @@ CONST = (function(){
 		ZXYWLX   : _ZXYWLX,
         MAX_FILE_SIZE   : _MAX_FILE_SIZE,
         CERT_NUMBER_ORDER_STATUS   : _CERT_NUMBER_ORDER_STATUS,
-		ZXPTGDBMH : _ZXPTGDBMH
+		ZXPTGDBMH : _ZXPTGDBMH,
+		photographReviewFlag:_photographReviewFlag
 	};
 })();
 

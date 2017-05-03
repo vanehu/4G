@@ -3066,7 +3066,7 @@ SoOrder = (function() {
 					return false ;
 				}
 				//拍照审核校验
-				if(ec.util.isObj(auditMode) && auditMode == "1"){//现场审核
+				if(ec.util.isObj(auditMode) && auditMode == "1" && CONST.photographReviewFlag == "ON"){//现场审核
 					if(!isAuditSucess){
 						$.alert("提示", "请完成经办人人像审核操作！");
 						return false ;

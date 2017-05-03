@@ -30,14 +30,16 @@
 	        	</div>
       		</div>                   
       		<div align="center" style="margin:30px auto;" id="photographReviewDiv">
-		    	<select id="auditStaffList">
-		        	<option value="-1">--请选择审核人员--</option>
-		        </select>
-		        <select id="auditMode">
-		        	<option value="-1" >--请选择审核方式--</option>
-		            <option value="1" >现场审核</option>
-		            <option value="2" >远程审核</option>
-		        </select>
+      			<#if Session["PHOTOGRAPH_REVIEW_FLAG"] ?? && (Session["PHOTOGRAPH_REVIEW_FLAG"]=="ON") >
+			    	<select id="auditStaffList">
+			        	<option value="-1">--请选择审核人员--</option>
+			        </select>
+			        <select id="auditMode">
+			        	<option value="-1" >--请选择审核方式--</option>
+			            <option value="1" >现场审核</option>
+			            <option value="2" >远程审核</option>
+			        </select>
+		        </#if>
 		        <a class="btna_o" id="takePhotos"><span >确认拍照</span></a>
 		        <a style=" margin-left:20px;" class="btna_o" id="rePhotos"><span>重新拍照</span></a>
 		    	<a style=" margin-left:20px;" class="btna_o" id="confirmAgree"><span>人证相符</span></a>

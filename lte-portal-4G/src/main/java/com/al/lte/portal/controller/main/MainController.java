@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.net.ftp.FTPClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -120,17 +121,7 @@ public class MainController extends BaseController {
     		dataBusMap.put("areaId", sessionStaff.getAreaId());
             dataBusMap.put("channelId", sessionStaff.getChannelId());
     	}
-//    	Map<String, Object> mapHotProd = new HashMap<String, Object>();
-//
-//        try {
-//        	mapHotProd = noticeBmo.getHotProd(dataBusMap, null, sessionStaff);
-//        } catch (BusinessException e) {
-//            this.log.error("加载热卖失败", e);
-//        } catch (InterfaceException ie) {
-//
-//		} catch (Exception e) {
-//
-//		}
+
         Map<String, Object> param = new HashMap<String, Object>();
         Map<String, Object> rMap = new HashMap<String, Object>();
         param.put("areaId", sessionStaff.getCurrentAreaId());
@@ -139,27 +130,11 @@ public class MainController extends BaseController {
         Map<String, Object> reqMap= new HashMap<String, Object>();
         reqMap.put("staffId", sessionStaff.getStaffId());
         param.put("reqInfo", reqMap);
-//        Integer total = 0;
-//		try {
-//			rMap = orderBmo.qryCount(param, null, sessionStaff);
-//			if (rMap != null
-//					&& ResultCode.R_SUCCESS.equals(rMap.get("code")
-//							.toString())) {
-//				total = (Integer)rMap.get("totalSize");
-//			}
-//        } catch (BusinessException be) {
-//			this.log.error("加载总量失败", be);
-//		} catch (InterfaceException ie) {
-//			this.log.error("加载总量失败", ie);
-//		} catch (Exception e) {
-//			
-//		}
-//		model.addAttribute("total",total);
+
         ServletUtils.setSessionAttribute(request, SysConstant.QRCODE_SWITH, CommonUtils.getSwithFromMDA(sessionStaff.getAreaId().substring(0,3), "QRCODE_LOGIN_SWITCH"));
         ServletUtils.setSessionAttribute(request, SysConstant.BIND_STATUS, "N");
         String CARD_NEW_DLL = propertiesUtils.getMessage(SysConstant.CARD_NEW_DLL);
 		model.addAttribute("canOrder", EhcacheUtil.pathIsInSession(session,"order/prepare"));
-//        model.addAttribute("hotMap", mapHotProd);
         model.addAttribute("DiffPlaceFlag", "local");
         model.addAttribute("writeCardNewDLL", CARD_NEW_DLL);
 		if(null == sessionStaff.getHintCode() || "".equals(sessionStaff.getHintCode())){
@@ -175,7 +150,7 @@ public class MainController extends BaseController {
     	if(sessionHandleCustFlag == null){
 			boolean isHandleCustNeeded = true;//默认无权限，需要必填经办人且拍照
 			try {
-				isHandleCustNeeded = "0".equals(staffBmo.checkOperatBySpecCd(SysConstant.TGJBRBTQX , sessionStaff)) ? false : true;
+				isHandleCustNeeded = !"0".equals(staffBmo.checkOperatBySpecCd(SysConstant.TGJBRBTQX , sessionStaff));
 			} catch (BusinessException be) {
 				log.error("系管权限查询接口sys-checkOperatSpec异常：", be);
 				return super.failedStr(model, be);
@@ -192,6 +167,10 @@ public class MainController extends BaseController {
 				ServletUtils.setSessionAttribute(request, SysConstant.TGJBRBTQX, isHandleCustNeeded);
 				sessionStaff.setHandleCustNeeded(isHandleCustNeeded);
 				ServletUtils.setSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF, sessionStaff);
+				ServletUtils.setSessionAttribute(super.getRequest(), 
+						SysConstant.PHOTOGRAPH_REVIEW_FLAG, 
+						MapUtils.getString(MDA.PHOTOGRAPH_REVIEW_FLAG, 
+								"PHOTOGRAPH_REVIEW_" + StringUtils.substring(new String(sessionStaff.getCurrentAreaId()), 0, 3), ""));
 			}
     	}
 		/** 测试卡权限 **/

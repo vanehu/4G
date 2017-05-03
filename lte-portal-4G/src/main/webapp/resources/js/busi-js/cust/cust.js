@@ -3605,7 +3605,9 @@ order.cust = (function(){
 		$("#photographReviewDiv").show();
 		$("#auditDiv").hide();
 		_getCameraInfo();
-		order.query.qryOperateSpecStaffList();
+		if(CONST.photographReviewFlag == "ON"){
+			order.query.qryOperateSpecStaffList();
+		}
 	};
 
 	//加载拍照设备列表，获取摄像头信息
@@ -3787,27 +3789,29 @@ order.cust = (function(){
 		var auditStaff = $("#auditStaffList").val();
 		var auditMode = $("#auditMode").val();
 		
-		if(!ec.util.isObj(auditStaff) || auditStaff == "-1"){
-			$.alert("提示", "请选择审核人");
-			return;
-		}
-		if(!ec.util.isObj(auditMode) || auditMode == "-1"){
-			$.alert("提示", "请选择审核方式");
-			return;
-		}
-		
-		if(ec.util.isArray(OrderInfo.operateSpecStaff.operateSpecStaffList)){
-			$.each(OrderInfo.operateSpecStaff.operateSpecStaffList, function(){
-				if(this.staffId == auditStaff){
-					OrderInfo.operateSpecStaff.staffId = this.staffId;
-					OrderInfo.operateSpecStaff.staffCode = this.staffCode;
-					OrderInfo.operateSpecStaff.staffName = this.staffName;
-					OrderInfo.operateSpecStaff.phoneNumber = this.phone;
-				}
-			});
-		} else{
-			$.alert("错误", "未获取到审核人员列表数据，请关闭拍照窗稍后重新尝试。");
-			return;
+		if(CONST.photographReviewFlag == "ON"){
+			if(!ec.util.isObj(auditStaff) || auditStaff == "-1"){
+				$.alert("提示", "请选择审核人");
+				return;
+			}
+			if(!ec.util.isObj(auditMode) || auditMode == "-1"){
+				$.alert("提示", "请选择审核方式");
+				return;
+			}
+			
+			if(ec.util.isArray(OrderInfo.operateSpecStaff.operateSpecStaffList)){
+				$.each(OrderInfo.operateSpecStaff.operateSpecStaffList, function(){
+					if(this.staffId == auditStaff){
+						OrderInfo.operateSpecStaff.staffId = this.staffId;
+						OrderInfo.operateSpecStaff.staffCode = this.staffCode;
+						OrderInfo.operateSpecStaff.staffName = this.staffName;
+						OrderInfo.operateSpecStaff.phoneNumber = this.phone;
+					}
+				});
+			} else{
+				$.alert("错误", "未获取到审核人员列表数据，请关闭拍照窗稍后重新尝试。");
+				return;
+			}
 		}
 		
 		$("#confirmAgree").removeClass("btna_o").addClass("btna_g");
@@ -3839,7 +3843,7 @@ order.cust = (function(){
 			}
 			
 			//现场审核补充参数
-			if(auditMode == "1"){
+			if(auditMode == "1" && CONST.photographReviewFlag == "ON"){
 				$.each(pictures, function(){
 					this.checkType = auditMode;
 				});
@@ -3856,13 +3860,17 @@ order.cust = (function(){
 				photographs	: pictures
 		    };
 			
-			if(auditMode == "1"){//现场审核，短信校验通过再上传
-				//发送短信
-				_sendSms4Audit("1");
-			} else if(auditMode == "2"){//远程审核，上传后再短信
-				var callBackFuncMust = "order.cust.sendSms4Audit('2')";
-				var callBackFuncOption = "";
-				_uploadImageMainFunc(uploadCustCertificateParams, callBackFuncMust, callBackFuncOption);
+			if(CONST.photographReviewFlag == "ON"){
+				if(auditMode == "1"){//现场审核，短信校验通过再上传
+					//发送短信
+					_sendSms4Audit("1");
+				} else if(auditMode == "2"){//远程审核，上传后再短信
+					var callBackFuncMust = "order.cust.sendSms4Audit('2')";
+					var callBackFuncOption = "";
+					_uploadImageMainFunc(uploadCustCertificateParams, callBackFuncMust, callBackFuncOption);
+				}
+			} else{
+				_uploadImageMainFunc(uploadCustCertificateParams, "order.cust.close()", "");
 			}
 		}
 	};
@@ -4478,4 +4486,5 @@ $(function() {
    OrderInfo.specialtestauth = !query.common.checkOperateSpec(CONST.ZYCSK);
    CONST.isHandleCustNeeded = query.common.checkOperateSpec(CONST.TGJBRBTQX);
    CONST.realNamePhotoFlag = query.common.queryPropertiesValue("REAL_NAME_PHOTO_" + String(OrderInfo.staff.areaId).substr(0, 3));
+   CONST.photographReviewFlag = query.common.queryPropertiesValue("PHOTOGRAPH_REVIEW_" + String(OrderInfo.staff.areaId).substr(0, 3));
 });

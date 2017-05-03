@@ -2871,5 +2871,41 @@
             }
             }
         </const>
+        <const type="Map" name="PHOTOGRAPH_REVIEW_FLAG" description="实名制拍照人像审核分省开关，默认OFF(4GWEB+能力+翼销售共用)">
+			{
+				'PHOTOGRAPH_REVIEW_854':'OFF',<!-- 西藏 -->
+				'PHOTOGRAPH_REVIEW_863':'OFF',<!-- 青海 -->
+				'PHOTOGRAPH_REVIEW_815':'OFF',<!-- 内蒙古 -->
+				'PHOTOGRAPH_REVIEW_823':'OFF',<!-- 黑龙江 -->
+				'PHOTOGRAPH_REVIEW_845':'OFF',<!-- 广西 -->
+				'PHOTOGRAPH_REVIEW_850':'OFF',<!-- 重庆 -->
+				'PHOTOGRAPH_REVIEW_861':'OFF',<!-- 陕西 -->
+				'PHOTOGRAPH_REVIEW_842':'OFF',<!-- 湖北 -->
+				'PHOTOGRAPH_REVIEW_835':'OFF',<!-- 福建 -->
+				'PHOTOGRAPH_REVIEW_832':'OFF',<!-- 江苏 -->
+				'PHOTOGRAPH_REVIEW_846':'OFF',<!-- 海南 -->
+				'PHOTOGRAPH_REVIEW_864':'OFF',<!-- 宁夏 -->
+				'PHOTOGRAPH_REVIEW_814':'OFF',<!-- 山西 -->
+				'PHOTOGRAPH_REVIEW_853':'OFF',<!-- 云南 -->
+				'PHOTOGRAPH_REVIEW_836':'OFF',<!-- 江西 -->
+				'PHOTOGRAPH_REVIEW_837':'OFF',<!-- 山东 -->
+				'PHOTOGRAPH_REVIEW_811':'OFF',<!-- 北京 -->
+				'PHOTOGRAPH_REVIEW_843':'OFF',<!-- 湖南 -->
+				'PHOTOGRAPH_REVIEW_851':'OFF',<!-- 四川 -->
+				'PHOTOGRAPH_REVIEW_844':'OFF',<!-- 广东 -->
+				'PHOTOGRAPH_REVIEW_831':'ON',<!-- 上海 -->
+				'PHOTOGRAPH_REVIEW_812':'OFF',<!-- 天津 -->
+				'PHOTOGRAPH_REVIEW_813':'OFF',<!-- 河北 -->
+				'PHOTOGRAPH_REVIEW_841':'OFF',<!-- 河南 -->
+				'PHOTOGRAPH_REVIEW_821':'OFF',<!-- 辽宁 -->
+				'PHOTOGRAPH_REVIEW_822':'OFF',<!-- 吉林 -->
+				'PHOTOGRAPH_REVIEW_834':'OFF',<!-- 安徽 -->
+				'PHOTOGRAPH_REVIEW_833':'OFF',<!-- 浙江 -->
+				'PHOTOGRAPH_REVIEW_852':'OFF',<!-- 贵州 -->
+				'PHOTOGRAPH_REVIEW_862':'OFF',<!-- 甘肃 -->
+				'PHOTOGRAPH_REVIEW_865':'OFF',<!-- 新疆 -->
+				'PHOTOGRAPH_REVIEW_899':'OFF'<!-- 虚拟省 -->
+			}
+		</const>
 	</mda>
 </mdas>

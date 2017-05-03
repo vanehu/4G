@@ -604,5 +604,8 @@ public class MDA {
      * 一证五号回执打印内容
      */
     public static final Map<String, Object> ONE_CERT_FIVE_NUMBER_PRINT_CONTENT = new HashMap<String, Object>();
+    
+    /**实名制拍照人像审核分省开关，默认OFF(4GWEB+能力+翼销售共用)*/
+	public static final Map<String,String> PHOTOGRAPH_REVIEW_FLAG  = new HashMap<String,String>();
 
 }
