@@ -260,7 +260,8 @@ order.memberChange = function(){
 									"<td class='borderLTB' style='font-size:14px; padding:0px 0px 0px 12px'><span style='color:#518652; font-size:14px;'>已有移动电话</span></td>" +
 									"<td align='left' colspan='3'><input value='' style='margin-top:10px' class='numberTextBox' id='oldphonenum_1' type='text' >" +
 									"<a style='margin-top:15px' class='add2' href='javascript:order.memberChange.addNum("+max+",\"\");'> </a>"+this.minQty+"-"+max+"（张）"+
-									"<a href='javascript:void(0)' class='purchase' onclick='order.memberChange.queryofferinfo()'>加装</a></td></tr>";	
+									"<a href='javascript:void(0)' class='purchase' onclick='order.memberChange.queryofferinfo()'>加装</a></td></tr>"+
+									"<tr style='background:#f8f8f8;' name='oldnum_tips'><td align='left' colspan='4' style ='color: red; padding-left: 30px;'>注意：您纳入加装的移动电话纳入后将统一使用主卡账户！</td></tr>";	
 									$tr.after(olro);
 								}else{
 									for(var k=0;k<oldSubPhoneNumsize.length;k++){
@@ -269,7 +270,8 @@ order.memberChange = function(){
 											"<td align='left' class='borderLTB' style='font-size:14px; padding:0px 0px 0px 12px'><span style='color:#518652; font-size:14px;'>已有移动电话</span></td>" +
 											"<td align='left' colspan='3'><input value='"+oldSubPhoneNumsize[k]+"' style='margin-top:10px' class='numberTextBox' id='oldphonenum_1' type='text' readonly='readonly'>" +
 											this.minQty+"-"+max+"（张）"+
-											"<a href='javascript:void(0)' class='purchase' onclick='order.memberChange.queryofferinfo()'>加装</a></td></tr>";	
+											"<a href='javascript:void(0)' class='purchase' onclick='order.memberChange.queryofferinfo()'>加装</a></td></tr>"+
+											"<tr style='background:#f8f8f8;' name='oldnum_tips'><td align='left' colspan='4' style ='color: red; padding-left: 30px;'>注意：您纳入加装的移动电话纳入后将统一使用主卡账户！</td></tr>";	
 											$tr.after(olro);
 										}else{
 											order.memberChange.addNum(max,oldSubPhoneNumsize[k]);
@@ -420,10 +422,11 @@ order.memberChange = function(){
 		"<td align='left' colspan='3'><input value='"+addnum+"' style='margin-top:10px' class='numberTextBox' id='oldphonenum_"+idnum+"' type='text'>" +
 		"<a style='margin-top:15px' class='add' href='javascript:order.memberChange.delNum(\"oldnum_"+idnum+"\");'> </a>"+
 		"</td></tr>";
+		//#1466473 增加提示信息，修改添加元素位置逻辑，添加至提示前
 		if(OrderInfo.actionFlag==2 || OrderInfo.actionFlag==1){
-			$("#member_tbody").append(olro);
+			$("#member_tbody").find("tr[name=oldnum_tips]").before(olro);
 		}else{
-			$("#maincard_member_tbody").append(olro);
+			$("#maincard_member_tbody").find("tr[name=oldnum_tips]").before(olro);
 		}
 	};
 	

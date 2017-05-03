@@ -559,6 +559,9 @@ SoOrder = (function() {
 			_fillBusiOrder(busiOrders,data,"N"); //填充业务对象节点
 		}
 		
+		//老用户副卡纳入帐号修改结点
+		if(!_oldprodAcctChange(busiOrders)) return false;
+		
 		if(CONST.realNamePhotoFlag == "ON"){
 			//订单填充经办人信息
 			_addHandleCustInfo(busiOrders, custOrderAttrs);
@@ -3083,17 +3086,6 @@ SoOrder = (function() {
 				$.alert("提示","发展人类型不能为空！");
 				return false ; 
 			}
-			//纳入老用户判断主卡副卡账户一致
-			if(ec.util.isArray(OrderInfo.oldprodAcctInfos)){
-				for(var a=0;a<OrderInfo.oldprodAcctInfos.length;a++){
-					var oldacctId = OrderInfo.oldprodAcctInfos[a].prodAcctInfos[0].acctId;
-					var mainacctid = $("#acctSelect option:selected").val();
-					if(oldacctId!=mainacctid){
-						$.alert("提示","副卡和主卡的账户不一致！");
-						return false ; 
-					}
-				}
-			}
 			if(order.service.oldMemberFlag){
 				var paytype=$('select[name="pay_type_-1"]').val();
 				$.each(OrderInfo.oldprodInstInfos,function(){
@@ -4496,6 +4488,74 @@ SoOrder = (function() {
             ca.custNameEnc = OrderInfo.cust.CN;
             ca.certAddressEnc = OrderInfo.cust.address;
         }
+    };
+    
+    var _oldprodAcctChange= function (busiOrders) {
+    	//#1466473  纳入老用户判断主卡副卡账户是否一致，不一致提示修改副卡账户
+		if(ec.util.isArray(OrderInfo.oldprodInstInfos)){
+			for(var i=0;i<OrderInfo.oldprodInstInfos.length;i++){
+				var oldprodInst = OrderInfo.oldprodInstInfos[i];
+				if(!ec.util.isArray(oldprodInst.prodAcctInfos)||!ec.util.isObj(oldprodInst.prodAcctInfos[0].acctId)){
+					$.alert("提示", "号码["+oldprodInst.accNbr+"]未查到帐号信息，无法完成副卡纳入！");
+					return false;
+				}
+				var oldprodAcct = oldprodInst.prodAcctInfos[0];
+				var mainAcctid = $("#acctSelect option:selected").val();
+				var mainAcctCd = $("#acctSelect option:selected").attr("acctCd");
+				if(mainAcctid<0){
+					mainAcctCd = mainAcctid;
+				}
+
+				if(oldprodAcct.acctId!=mainAcctid){
+					//账户节点变更节点
+					var busiOrder={
+						areaId : OrderInfo.getAreaId(),  //受理地区ID		
+						busiOrderInfo : {
+							seq : OrderInfo.SEQ.seq--
+						}, 
+						busiObj : { //业务对象节点
+							accessNumber: oldprodInst.accNbr,
+							instId : oldprodInst.prodInstId, //业务对象实例ID
+							objId :oldprodInst.productId,
+							isComp : "N",
+							offerTypeCd : "1"
+						},  
+						boActionType : {
+							actionClassCd: CONST.ACTION_CLASS_CD.PROD_ACTION,
+		                    boActionTypeCd: CONST.BO_ACTION_TYPE.CHANGE_ACCOUNT
+						}, 
+						data:{}
+					};
+					//创建账户变更节点
+					busiOrder.data.boAccountRelas=[];
+					var _boAccountRelasOld={
+	                        acctCd: oldprodAcct.acctCd,
+	                        acctId: oldprodAcct.acctId,
+							acctRelaTypeCd : "1",
+							chargeItemCd : oldprodAcct.chargeItemCd,
+							percent : oldprodAcct.percent,
+							priority : ec.util.isObj(oldprodAcct.priority)?oldprodAcct.priority:"1",//没返回协商取1，不然后台报错
+							prodAcctId : oldprodAcct.prodAcctId,
+							extProdAcctId : ec.util.isObj(oldprodAcct.prodAcctId)?oldprodAcct.prodAcctId:"",
+							state : "DEL"
+					};
+					var _boAccountRelasNew={
+						 	acctCd: mainAcctCd,
+						 	acctId: mainAcctid,
+							acctRelaTypeCd : "1",			//协商写死
+							chargeItemCd : 1,               //账目项标识，暂固定为1，表示支付所有账目项
+							percent : "100",                //支付比重，该账目项占该产品的价格比重，与上一个属性相匹配，暂固定为100
+							priority : "1",                 //支付优先级，暂固定为1，表示最高优先级
+							prodAcctId : "-1",              //标识产品与帐户的支付匹配关系，新选的帐户和该产品无匹配关系，默认 -1
+							state : "ADD"
+					};
+					busiOrder.data.boAccountRelas.push(_boAccountRelasOld);
+					busiOrder.data.boAccountRelas.push(_boAccountRelasNew);
+					busiOrders.push(busiOrder);
+				}
+			}
+		}
+		return true;
     };
 
     return {

@@ -157,7 +157,42 @@ order.main = (function(){
 		_addEvent();//添加页面事件
 		order.phoneNumber.initOffer('-1');//主卡自动填充号码入口已选过的号码
 		$("#fillNextStep").off("click").on("click",function(){
-			SoOrder.submitOrder();
+			//#1466473纳入老用户判断主卡副卡账户是否一致，不一致提示修改副卡账户
+			if(ec.util.isArray(OrderInfo.oldprodInstInfos)){
+				var acctIdFlag = false;//主副卡是否一致标识
+				var acctNumberList = [];//副卡是否一致标识
+				for(var a=0;a<OrderInfo.oldprodAcctInfos.length;a++){
+					var oldacctId = OrderInfo.oldprodAcctInfos[a].prodAcctInfos[0].acctId;
+					var mainacctid = $("#acctSelect option:selected").val();
+					if(oldacctId!=mainacctid){
+						acctIdFlag = true;
+						acctNumberList.push(OrderInfo.oldprodAcctInfos[a].prodAcctInfos[0].accessNumber);
+					}
+				}
+				if(acctIdFlag){
+					var tips = "您当前纳入加装的号码[";
+					for(var a=0;a<acctNumberList.length;a++){
+						if(a==0){
+							tips += acctNumberList[a];
+						}else{
+							tips += ","+acctNumberList[a];
+						}
+					}
+					tips += "]，账户与主卡账户不一致，纳入后将统一使用主卡账户，是否确认修改？";
+					
+					$.confirm("确认",tips,{ 
+						yesdo:function(){
+							SoOrder.submitOrder();
+						},
+						no:function(){
+						}
+					});
+				}else{
+					SoOrder.submitOrder();
+				}
+			}else{
+				SoOrder.submitOrder();
+			}
 		});
 		if (param.memberChange) {
 			$("#orderedprod").hide();
@@ -909,8 +944,9 @@ order.main = (function(){
 							return;
 						}
 						var prodAcctInfos = jr.data;
-						prodAcctInfos[0].accessNumber = OrderInfo.oldprodInstInfos.accNbr;
+						prodAcctInfos[0].accessNumber = OrderInfo.oldprodInstInfos[i].accNbr;
 						OrderInfo.oldprodAcctInfos.push({"prodAcctInfos":prodAcctInfos});
+						OrderInfo.oldprodInstInfos[i].prodAcctInfos = prodAcctInfos;
 					}
 				}else{
 					param.prodId=order.prodModify.choosedProdInfo.prodInstId;
