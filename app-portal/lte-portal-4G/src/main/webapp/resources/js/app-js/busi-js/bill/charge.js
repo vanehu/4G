@@ -97,30 +97,30 @@ bill.charge = (function() {
 								$.alert("提示", response.data.balance.message);
 								return;
 							}
-								$('#queryResult').modal('show');
-								var totalBalance = "0";
-								if(response.data.arrears.result.SvcCont && response.data.arrears.result.SvcCont.Service_Information && response.data.arrears.result.SvcCont.Service_Information.Bill_Query_Information){
-									totalBalance =response.data.arrears.result.SvcCont.Service_Information.Bill_Query_Information.Sum_Charge;
-								}
-								$('#totalBalance').text('￥'+ totalBalance);	
-								if(totalBalance =="0"){
-									$('#currentBalanceli').modal('hide');
-								}else{
-									$('#currentBalanceli').modal('show');
-									if(response.data.balance.result.SvcCont && response.data.balance.result.SvcCont.Service_Information && response.data.balance.result.SvcCont.Service_Information.Total_Balance_Available){
-										totalBalance =response.data.balance.result.SvcCont.Service_Information.Total_Balance_Available;
-									}
-									$('#totalBalance').text('￥'+ totalBalance);
-									var currentBalance = "0";
-									if(response.data.balance.result.SvcCont && response.data.balance.result.SvcCont.Service_Information && response.data.balance.result.SvcCont.Service_Information.Balance_Information){
-										for (var i=0; i < response.data.balance.result.SvcCont.Service_Information.Balance_Information.length; i++) {
-											if(response.data.balance.result.SvcCont.Service_Information.Balance_Information[i].BalanceTypeFlag == 0){
-												currentBalance =response.data.balance.result.SvcCont.Service_Information.Balance_Information[i].Balance_Available;
-											}
-										}
-									}
-									$('#currentBalance').text('￥'+ currentBalance);
+							$('#queryResult').modal('show');
+							var totalBalance = "0";
+							if(response.data.arrears.result.SvcCont && response.data.arrears.result.SvcCont.Service_Information && response.data.arrears.result.SvcCont.Service_Information.Bill_Query_Information.Sum_Charge){
+								totalBalance =response.data.arrears.result.SvcCont.Service_Information.Bill_Query_Information.Sum_Charge;
 							}
+							$('#totalBalance').text(totalBalance?totalBalance:"0");	
+							var currentBalance = "0";
+							if(totalBalance =="0"){
+								if(response.data.balance.result.SvcCont && response.data.balance.result.SvcCont.Service_Information && response.data.balance.result.SvcCont.Service_Information.Total_Balance_Available){
+						        	currentBalance =response.data.balance.result.SvcCont.Service_Information.Total_Balance_Available;
+								}
+								
+								
+//								if(response.data.balance.result.SvcCont && response.data.balance.result.SvcCont.Service_Information && response.data.balance.result.SvcCont.Service_Information.Balance_Information){
+//									for (var i=0; i < response.data.balance.result.SvcCont.Service_Information.Balance_Information.length; i++) {
+//										if(response.data.balance.result.SvcCont.Service_Information.Balance_Information[i].BalanceTypeFlag == 0){
+//											currentBalance =response.data.balance.result.SvcCont.Service_Information.Balance_Information[i].Balance_Available;
+//										}
+//									}
+//								}
+								$('#totalBalance').text(currentBalance?currentBalance:"0");
+							}
+							$('#currentBalance').text(currentBalance?currentBalance:"0");
+								
 						} else if (response.code == 1) {
 							$.alert("提示", response.data.message);
 							return;
