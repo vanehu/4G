@@ -173,14 +173,13 @@ oneFive.certNumber = (function () {
      * @private
      */
     var _selectAll = function (allSelectInput) {
+        selectList = [];//全选时清空选中列表
         var tbody = $("#certNumberlist").find("table>tbody input");
         $.each(tbody, function () {
             var selectTR = $(this).parent().parent();
             this.checked = allSelectInput.checked;
             if (this.checked) {
                 selectList.push(selectTR);
-            } else {
-                selectList.splice($.inArray(selectTR, selectList), 1);
             }
         });
     };
