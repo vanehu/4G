@@ -3207,6 +3207,8 @@ SoOrder = (function() {
 						var prodAttrRepeatFlag = false; //是否包含重复的产品属性
 						var prodAttrEmptyCheckName = null;
 						var prodAttrRepeatCheckName = null;
+						var prodAttrErrorFlag = false;//产品属性格式错误
+						var prodAttrErrorCheckName = null;
 						$.each(OrderInfo.prodAttrs,function(){
 							var id = this.id;
 							if(prodInst.prodInstId != id.split('_')[1]){
@@ -3217,6 +3219,22 @@ SoOrder = (function() {
 								prodItemUserFlag = true;
 								// 重置,因为在政企客户+测试卡权限下使用人可以为空,如果前一个产品使用人为空,会导致校验后面产品的使用取的前产品的值
 								prodAttrEmptyFlag = false;
+							}
+							//遍历产品属性，涉及企业云邮箱和管理员手机号，单独做正则判断
+							var checkName = this.name;
+							if(checkName == "企业管理员邮箱"){
+								var val=$.trim($("#"+id).val());
+								 if(!val.match(/^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+((\.[a-zA-Z0-9_-]{2,3}){1,2})$/)){
+									 prodAttrErrorFlag = true;
+									 prodAttrErrorCheckName = "管理员邮箱格式输入错误，无法提交";
+								 }
+							}
+							if(checkName == "管理员手机号码"){
+								var val=$.trim($("#"+id).val());
+								 if(!val.match(/^[1][0-9]\d{9}$/)){
+									 prodAttrErrorFlag = true;
+									 prodAttrErrorCheckName = "管理员手机号码格式输入错误，无法提交";
+								 }
 							}
 							if(!prodAttrEmptyFlag){
 								if(this.isOptional == "N" && id){
@@ -3234,6 +3252,11 @@ SoOrder = (function() {
 								}
 							}
 						});
+						if(prodAttrErrorFlag){
+							$.alert("信息提示",prodAttrErrorCheckName);
+							return false;
+						}
+						
 						//加载副卡使用人可以为空 redmine926533
 						if(prodAttrEmptyCheckName =='使用人' &&  OrderInfo.roleType=="Y"){
 							prodAttrEmptyFlag = false;
