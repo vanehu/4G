@@ -560,6 +560,7 @@ order.phoneNumber = (function(){
 //							  order.amalgamation.prodSpecParamQuery();
 						  }else if(OrderInfo.actionFlag==14){//合约购机
 							  order.phoneNumber.step=3;
+							  OrderInfo.order.step = 3;
 							//选号tab隐藏，合约tab显示
 							 $("#nav-tab-2").removeClass("active in");
 						     $("#nav-tab-3").addClass("active in");

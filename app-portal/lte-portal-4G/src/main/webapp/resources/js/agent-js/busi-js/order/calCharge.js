@@ -627,7 +627,7 @@ order.calcharge = (function(){
 //				$("#toCharge").hide();
 //				$("#toCharge_2").show();
 				// 两个按钮切换会影响样式 故变更事件
-				$("#toCharge").attr("onClick", "order.calcharge.chargeSave('0',false)");
+				//$("#toCharge").attr("onClick", "order.calcharge.chargeSave('0',false)");
 			}
 		}else{
 			$("#toCharge").removeAttr("disabled");
