@@ -2179,9 +2179,27 @@ SoOrder = (function() {
 					//校验必填的产品属性
 					var prodAttrFlag = true;
 					var checkName = null;
+					var prodAttrErrorFlag = false;//产品属性格式错误
+					var prodAttrErrorCheckName = null;
 					$(OrderInfo.prodAttrs).each(function(){
 						var isOptional = this.isOptional;
 						var id = this.id;
+						//遍历产品属性，涉及企业云邮箱和管理员手机号，单独做正则判断
+						var checkName = this.name;
+						if(checkName == "企业管理员邮箱"){
+							var val=$.trim($("#"+id).val());
+							 if(!val.match(/^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+((\.[a-zA-Z0-9_-]{2,3}){1,2})$/)){
+								 prodAttrErrorFlag = true;
+								 prodAttrErrorCheckName = "管理员邮箱格式输入错误，无法提交";
+							 }
+						}
+						if(checkName == "管理员手机号码"){
+							var val=$.trim($("#"+id).val());
+							 if(!val.match(/^[1][0-9]\d{9}$/)){
+								 prodAttrErrorFlag = true;
+								 prodAttrErrorCheckName = "管理员手机号码格式输入错误，无法提交";
+							 }
+						}
 						if(isOptional == "N" && id){
 							var val=$.trim($("#"+id).val());
 							if(val == "" || val == undefined){
@@ -2190,6 +2208,10 @@ SoOrder = (function() {
 							}
 						}
 					});
+					if(prodAttrErrorFlag){
+						$.alert("信息提示",prodAttrErrorCheckName);
+						return false;
+					}
 					if(!prodAttrFlag){
 						$.alert("信息提示","没有配置产品属性("+checkName+")，无法提交");
 						return false;
