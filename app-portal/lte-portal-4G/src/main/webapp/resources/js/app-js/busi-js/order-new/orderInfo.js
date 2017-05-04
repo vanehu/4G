@@ -266,7 +266,7 @@ OrderInfo = (function() {
 				var inParams = {
 						"certType":"1",
 						"certNum":OrderInfo.boCustIdentities.identityNum,
-						"areaId" :OrderInfo.staff.areaId
+						"areaId" :OrderInfo.staff.areaId+""
 					};
 					var checkUrl=contextPath+"/app/cust/checkCustCert";
 					var checkResponse = $.callServiceAsJson(checkUrl, inParams, {"before":function(){
