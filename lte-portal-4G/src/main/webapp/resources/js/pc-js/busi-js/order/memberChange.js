@@ -335,7 +335,7 @@ order.memberChange = function(){
 						if(areaidflag!="" && areaidflag.flag=="ON"){
 							var eleR = $("<i id='plan_no_remain'><a id='' accNbr='"+this.accessNumber+"' class='purchase' href='javascript:void(0)'>保留>>选择新套餐</a></i>").appendTo(li);
 							eleR.click(function(){
-								OrderInfo.busitypeflag = 21;
+								//OrderInfo.busitypeflag = 21;
 								order.service.offerDialog('viceCard_new_'+$(this).find("a").attr("accNbr"));
 	//							$($("#plan_no")).parent().css("text-decoration","line-through").attr("del","Y");
 							});	
