@@ -2594,11 +2594,6 @@ order.cust = (function(){
 		easyDialog.open({
 			container : "ec-dialog-photo-graph"
 		});
-		$("#checkType").val("-1");
-		$("#auditPersonnel").val("-1");
-		$("#auditDiv").hide();
-		$("#photoDiv").show();
-		
 		//显示身份证照片
 		$("#show")[0].src="data:;base64,"+resultContent.identityPic;
 		OrderInfo.handleInfo.identityPic = resultContent.identityPic;
@@ -2674,10 +2669,6 @@ order.cust = (function(){
 			container : "ec-dialog-photo-graph"
 		});
 		//初始化页面
-		$("#checkType").val("-1");
-		$("#auditPersonnel").val("-1");
-		$("#auditDiv").hide();
-		$("#photoDiv").show();
 		$("#orderAttrQryBtn").hide();
 		$("#orderAttrReset").show();
 		$("#orderIdentidiesTypeCd").attr("disabled","disabled");
@@ -2708,7 +2699,23 @@ order.cust = (function(){
 	};
 	
 	var _getCameraInfo = function(){
-		_qryOperateSpecStaffList();
+		var auditResponse = $.callServiceAsJson(contextPath + "/properties/getValue", {"key": "PHOTOGRAPH_REVIEW_" + OrderInfo.staff.soAreaId.substr(0, 3)});
+		var auditSwitch = "";
+		OrderInfo.auditSwitch = "";
+    	if (auditResponse.code == "0") {
+    	    auditSwitch = auditResponse.data;
+    	    OrderInfo.auditSwitch = auditSwitch;
+        }
+    	if(auditSwitch == "ON"){
+    	    _qryOperateSpecStaffList();
+    	    $("#checkType").val("-1");
+		    $("#auditPersonnel").val("-1");
+		    $("#auditDiv").hide();
+		    $("#photoDiv").show();
+    	}else{
+    		$("#auditPersonnel").hide();
+    		$("#checkType").hide();
+    	}
 		//获取摄像头信息
 		var device = capture.getDevices();
 	    device = JSON.parse(device);
@@ -2805,28 +2812,30 @@ order.cust = (function(){
 	var _confirmAgree = function(){
 		var auditType = $("#checkType").val();
 		var auditPersonnel = $("#auditPersonnel").val();
-		if(auditPersonnel == "" || auditPersonnel == "-1"){
-			$.alert("提示","请选择审核人");
-			return;
-		}else if(auditType == "" || auditType == "-1"){
-			$.alert("提示","请选择审核方式");
-			return;
-		}
-		$("#confirmAgree").removeClass("btna_o").addClass("btna_g");
-		$("#confirmAgree").off("click");
-		OrderInfo.subHandleInfo = {};
 		var staffId = $("#auditPersonnel").val();
 		var number = "";
 		var staffName = "";
 		var staffCode = "";
-        $.each(OrderInfo.handleInfo.staffList, function(){
-			if(this.staffId == staffId){
-				number = this.phone;
-				staffName = this.staffName;
-				staffCode = this.staffCode;
-				return false;
-			}
-		});
+		if(OrderInfo.auditSwitch == "ON"){
+		    if(auditPersonnel == "" || auditPersonnel == "-1"){
+			    $.alert("提示","请选择审核人");
+			    return;
+		    }else if(auditType == "" || auditType == "-1"){
+			    $.alert("提示","请选择审核方式");
+			    return;
+		    }
+		    $.each(OrderInfo.handleInfo.staffList, function(){
+			    if(this.staffId == staffId){
+				    number = this.phone;
+				    staffName = this.staffName;
+				    staffCode = this.staffCode;
+				    return false;
+			    }
+		    });
+		}
+		$("#confirmAgree").removeClass("btna_o").addClass("btna_g");
+		$("#confirmAgree").off("click");
+		OrderInfo.subHandleInfo = {};
 		OrderInfo.subHandleInfo.number = number;
 		OrderInfo.subHandleInfo.auditStaffId = staffId;
 		OrderInfo.subHandleInfo.auditType = auditType;
@@ -2887,7 +2896,8 @@ order.cust = (function(){
         				        photograph: encodeURIComponent(OrderInfo.handleInfo.imageInfo),
         				        flag: "D",//*经办人头像照片
         				        staffId     : staffId,
-        				        signature:OrderInfo.handleInfo.signature}
+        				        signature:OrderInfo.handleInfo.signature
+        				    }
         			    ],
         			    venderId  	: OrderInfo.handleInfo.venderId,//*厂商ID
         				srcFlag   	: "REAL",//*来源标识(实名制拍照留存需传REAL)
@@ -2922,7 +2932,8 @@ order.cust = (function(){
 				OrderInfo.subHandleInfo.staffId = OrderInfo.staff.staffId;
 			}
 			OrderInfo.subHandleInfo.virOlId = uploadCustCertificate.data.virOlId;
-			//审核发送短信验证码
+    	    if(OrderInfo.auditSwitch == "ON"){
+    	        //审核发送短信验证码
     		var param = {
     		   number: number,
     		   areaId : OrderInfo.getAreaId(),
@@ -2988,8 +2999,11 @@ order.cust = (function(){
     			"fail" : function(response){
     				$.alert("提示","请求可能发生异常，请稍候");
     			}
-    		});	
-		
+    		});
+    	    }else{
+    	    	OrderInfo.subHandleInfo.authFlag = "Y";
+			    _closeShowPhoto();
+    	    }
 		}else{
 			OrderInfo.subHandleInfo.authFlag = "F";
 			$("#confirmAgree").removeClass("btna_g").addClass("btna_o");
@@ -3159,13 +3173,6 @@ order.cust = (function(){
 			},
 			"done" : function(response) {
 				if(response.code == 0 && response.data){
-//					response.data= [{
-//							phone:"18099999999",
-//							staffCode:"905899",
-//							staffId:30034129612,
-//							staffName:"李志华",
-//							statusCd:"1000"
-//						}];
 					_setOperateSpecStaffList(response.data);
 					OrderInfo.handleInfo.staffList = response.data;
 				}else if(response.code == 1 && response.data){
