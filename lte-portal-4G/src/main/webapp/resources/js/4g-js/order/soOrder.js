@@ -1600,22 +1600,24 @@ SoOrder = (function() {
 			}
 			
 			busiOrders.push(busiOrder2);
-                //查询副卡的产品属性并保存
-                var param = {
-                    prodId: offerSpec.objInstId, // 产品实例id
-                    acctNbr: offerSpec.accessNumber, // 接入号
-                    prodSpecId: offerSpec.objId, // 产品规格id
-                    areaId: OrderInfo.getAreaId() // 地区id
-                };
-                var prodAttr = query.offer.queryProdInstParam(param);
-                if (ec.util.isObj(prodAttr) && ec.util.isObj(prodAttr.prodSpecParams) && prodAttr.prodSpecParams.length > 0) {
-                    $.each(prodAttr.prodSpecParams, function () {
-                        if (this.itemSpecId == CONST.PROD_ATTR.PROD_USER) {//获取使用人属性
-                            if (ec.util.isObj(this.userId) && this.userId != OrderInfo.cust.custId) {//副卡有对应的使用人信息，此时副卡换套餐变成单成员时要下使用人变更节点。
-                                _fillBusiOrder4changeUse(busiOrders, offerSpec, this);
+                if (query.common.queryPropertiesStatus("VICE_CARD_DEL_USER_" + OrderInfo.staff.areaId.substr(0, 3)) && !CacheData.isGov(OrderInfo.cust.identityCd)) {
+                    //查询副卡的产品属性并保存
+                    var param = {
+                        prodId: offerSpec.objInstId, // 产品实例id
+                        acctNbr: offerSpec.accessNumber, // 接入号
+                        prodSpecId: offerSpec.objId, // 产品规格id
+                        areaId: OrderInfo.getAreaId() // 地区id
+                    };
+                    var prodAttr = query.offer.queryProdInstParam(param);
+                    if (ec.util.isObj(prodAttr) && ec.util.isObj(prodAttr.prodSpecParams) && prodAttr.prodSpecParams.length > 0) {
+                        $.each(prodAttr.prodSpecParams, function () {
+                            if (this.itemSpecId == CONST.PROD_ATTR.PROD_USER) {//获取使用人属性
+                                if (ec.util.isObj(this.userId) && this.userId != OrderInfo.cust.custId) {//副卡有对应的使用人信息，此时副卡换套餐变成单成员时要下使用人变更节点。
+                                    _fillBusiOrder4changeUse(busiOrders, offerSpec, this);
+                                }
                             }
-                        }
-                    });
+                        });
+                    }
                 }
             } else {
 			var prod = {
