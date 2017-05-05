@@ -608,4 +608,9 @@ public class MDA {
     /**实名制拍照人像审核分省开关，默认OFF(4GWEB+能力+翼销售共用)*/
 	public static final Map<String,String> PHOTOGRAPH_REVIEW_FLAG  = new HashMap<String,String>();
 
+    /**
+     * 主副卡，保留套餐拆副卡删除使用人
+     */
+    public static final Map<String, String> VICE_CARD_DEL_USER_ON_OFF = new HashMap<String, String>();
+
 }
