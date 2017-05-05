@@ -167,20 +167,26 @@
 				</div>
 			</div>
 		</div> 
+		<!-- 使用人弹出层 -->
+		<div class="modal modal-message fade modal-top" id="userModal">
+			<#include "/app/order_new/user-create.html"/> 
+		</div>
 		<!-- 经办人弹出层 -->
-			<div class="modal modal-message fade modal-top" id="jbr">
-				<#include "/app/order_new/jbr-create.html"/> 
-			</div>
+		<div class="modal modal-message fade modal-top" id="jbr">
+			<#include "/app/order_new/jbr-create.html"/> 
+		</div>
 <script type="text/javascript">
-cust.jbrvalidatorForm();
+	cust.jbrvalidatorForm();
 	var ua = navigator.userAgent.toLowerCase();	
-if (/iphone|ipad|ipod/.test(ua)) {
-	$("#jbr_nfc").hide();
-	$("#jbr_otg").hide();
-	    //alert("iphone");		
-} else if (/android/.test(ua)) {
-	    //alert("android");	
-}
+	if (/iphone|ipad|ipod/.test(ua)) {
+		$("#jbr_nfc").hide();
+		$("#jbr_otg").hide();
+		$("#user_nfc").hide();
+		$("#user_otg").hide();
+		    //alert("iphone");		
+	} else if (/android/.test(ua)) {
+		    //alert("android");	
+	}
 	$(function() {
 		//初始化Slider 实例
 		new Slider({
@@ -206,6 +212,7 @@ if (/iphone|ipad|ipod/.test(ua)) {
 			}
 		  }
 	});
+	
 	function showCheckUim(prodId) {
 		var uimNumber = $("#uim_input_"+prodId).val().trim();
 		if (uimNumber != "") {

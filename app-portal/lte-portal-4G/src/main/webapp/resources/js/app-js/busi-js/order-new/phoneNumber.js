@@ -718,14 +718,14 @@ order.phoneNumber = (function(){
 				return;
 			}
 			//一五校验
-			if(!cust.preCheckCertNumberRel()){//一五校验
-				return;
-			}
+//			if(!cust.preCheckCertNumberRel()){//一五校验
+//				return;
+//			}
 		}
-		if(cust.usedNum!=undefined && (order.phoneNumber.secondaryCarNum+cust.usedNum)>=5){//一证五号
-			$.alert("提示","一个用户证件下不能有超过五个号码!");
-			return;
-		}
+//		if(cust.usedNum!=undefined && (order.phoneNumber.secondaryCarNum+cust.usedNum)>=5){//一证五号
+//			$.alert("提示","一个用户证件下不能有超过五个号码!");
+//			return;
+//		}
 		if(order.phoneNumber.secondaryCarNum>=order.service.max){//副卡添加数已达最大
 			return;
 		}

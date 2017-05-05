@@ -13,7 +13,6 @@ common = (function($) {
 		var custInfosParams=JSON.stringify(custInfos);//客户定位信息
 		var prodIdInfosParams=JSON.stringify(prodIdInfos);//选中产品信息
 		var urlParams=$.parseJSON(JSON.stringify(url));//地址
-		
 		if(urlParams.actionFlag != undefined)
 		{
 			OrderInfo.actionFlag=urlParams.actionFlag;
@@ -186,19 +185,36 @@ common = (function($) {
 		if(OrderInfo.cust.telNumber == undefined){
 			OrderInfo.cust.telNumber = "";
 		}
+		if(OrderInfo.jbr.telNumber == undefined){
+			OrderInfo.jbr.telNumber = "";
+		}
 		var json = "{\"picturesInfo\":[";
+		//客户照片节点
 		if(custIdentityPic != undefined && ec.util.isObj(custIdentityPic)){
 			json = json + "{\"orderInfo\":\"" + OrderInfo.cust.identityPic + "\",\"picFlag\":\"A\",\"custName\":\"" + OrderInfo.cust.partyName + "\",\"certType\":\"" + OrderInfo.cust.identityCd + "\",\"certNumber\":\"" + OrderInfo.cust.identityNum + "\",\"accNbr\":\"" + OrderInfo.cust.telNumber +"\"},";
 		}
+		//使用人照片节点
 		for(var i=0; i<OrderInfo.choosedUserInfos.length; i++){
-			var prodId = OrderInfo.choosedUserInfos[i].prodId;
-			var custInfo = OrderInfo.getChooseUserInfo(prodId);
+			var custInfo = OrderInfo.choosedUserInfos[i].custInfo;;
 			var userIdentityPic = custInfo.identityPic;
-			if(userIdentityPic != undefined && ec.util.isObj(userIdentityPic)){
-				json = json + "{\"orderInfo\":\"" + userIdentityPic + "\",\"picFlag\":\"B\",\"custName\":\"" + custInfo.partyName + "\",\"certType\":\"" + custInfo.identityCd + "\",\"certNumber\":\"" + custInfo.identityNum + "\",\"accNbr\":\"" + custInfo.telNumber +"\"},";
+			if(custInfo.accNbr == undefined){
+				custInfo.accNbr = "";
+			}
+			var isAddPic = true;
+			//使用人与客户或经办人一致  无需传照片节点
+			if(custInfo.custId == OrderInfo.cust.custId || custInfo.custId == OrderInfo.jbr.custId){
+				isAddPic = false;
+			}
+			for(var j=0; j<i; j++){
+				if(custInfo.custId == OrderInfo.choosedUserInfos[j].custInfo.custId){
+					isAddPic = false;
+				}
+			}
+			if(isAddPic && userIdentityPic != undefined && ec.util.isObj(userIdentityPic)){
+				json = json + "{\"orderInfo\":\"" + userIdentityPic + "\",\"picFlag\":\"B\",\"custName\":\"" + custInfo.partyName + "\",\"certType\":\"" + custInfo.identityCd + "\",\"certNumber\":\"" + custInfo.idCardNumber + "\",\"accNbr\":\"" + custInfo.accNbr +"\"},";
 			}
 		}
-	
+		//经办人照片节点
 		if(jbrIdentityPic != undefined && ec.util.isObj(jbrIdentityPic)){
 			json = json + "{\"orderInfo\":\"" + OrderInfo.jbr.identityPic + "\",\"picFlag\":\"C\",\"custName\":\"" + OrderInfo.jbr.partyName + "\",\"certType\":\"" + OrderInfo.jbr.identityCd + "\",\"certNumber\":\"" + OrderInfo.jbr.identityNum + "\",\"accNbr\":\"" + OrderInfo.jbr.telNumber +"\"},";
 		}
@@ -207,6 +223,11 @@ common = (function($) {
 		json = json+"]}";
 		arr[0]=method;
 		arr[1]=json;
+		//获取实名审核开关，传给原生判断是否开启审核页面
+		var propertiesKey = "PHOTOGRAPH_REVIEW_"
+			+ (OrderInfo.staff.soAreaId + "").substring(0, 3);
+	   var isON = offerChange.queryPortalProperties(propertiesKey);
+		arr[3]=isON;
 		MyPlugin.photoProcess(arr,
             function(result) {
             },

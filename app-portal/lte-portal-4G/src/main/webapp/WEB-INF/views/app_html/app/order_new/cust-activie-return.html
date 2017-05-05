@@ -14,22 +14,6 @@
 					<div class="list-box m-t-10">
 					<form id="custFormdata" class="new_user_box" method="post">
 						<ul class="choice-list-box bg-body border-none">
-							<li class="" style="display: none;">
-									<div class=" choice-box-left border-top-1">
-										<i class="iconfont pull-left">&#xe656;</i>
-										<span class="select-title left-0">是否修改账户</span>
-										<select name="Cities" id="account_mod" class="myselect select-option dw-hsel" data-role="none" tabindex="-1" onChange="cust.showAccountModify(this)">
-											<option value="1">否</option>
-											<option value="2">是</option>
-										</select>
-									</div>
-								</li>
-								<li class="m-t-10" id="" style="display: none;">
-									<div class="choice-box">
-										<i class="iconfont pull-left">&#xe663;</i>
-										<input placeholder="账户名称" class="choice-input" id="accountName"/>
-									</div>
-								</li>
 							<li class="m-t-10">
 								<div class="choice-box">
 									<i class="iconfont pull-left">&#xe609;</i>
@@ -125,6 +109,35 @@
 						</ul>
 						</form>
 						 </#if>
+						 <ul class="choice-list-box" id="accountInfo" style="display:none;">
+							<li name="card-list">
+								<i class="iconfont pull-left">&#xe663;</i>
+								<span class="list-title">账户信息
+								</span>
+								<!-- <i id="selectAcct" data-toggle="modal" class="iconfont absolute-right font-default">&#xe670;</i> -->
+							</li>
+							<li id="">
+									<div class="choice-box absolute-l-43 border-none">
+										<input type="text" id="accountName" class="form-control" placeholder="" readonly="readonly">
+									</div>
+							</li>
+							<li  style="display: none;" id="modAccountSel">
+									<div class=" choice-box-left border-top-1">
+										<i class="iconfont pull-left">&#xe656;</i>
+										<span class="select-title left-0">是否修改账户</span>
+										<select name="Cities" id="account_mod" class="myselect select-option dw-hsel" data-role="none" tabindex="-1" onChange="cust.showAccountModify(this)">
+											<option value="1">否</option>
+											<option value="2">是</option>
+										</select>
+									</div>
+								</li>
+								<li class="m-t-10" id="modAccountProfile" style="display: none;">
+									<div class="choice-box">
+										<i class="iconfont pull-left">&#xe663;</i>
+										<input placeholder="账户名称" class="choice-input" id="accountName_mod"/>
+									</div>
+								</li>
+						</ul>
 						<ul class="choice-list-box">
 							<li name="card-list">
 								<i class="iconfont pull-left">&#xe6c8;</i>
@@ -132,7 +145,7 @@
 								</span>
 							</li>
 							<li>
-								<div class="choice-box absolute-l-43 border-top-none">
+								<div class="choice-box absolute-l-43 border-none">
 									<input placeholder="请输入手机号码" class="choice-input p-l-0" id="phonenumber" name="phonenumber" readonly="readonly"/>
 								</div>
 							</li>
@@ -178,9 +191,42 @@
 			<!-- end scroll to top btn -->
 			</#if>
 		</div>
-					<!-- 经办人弹出层 -->
+			<!-- 经办人弹出层 -->
 			<div class="modal modal-message fade modal-top" id="jbr">
 				<#include "/app/order_new/jbr-create.html"/> 
+			</div>
+			
+			<!-- 账户查询弹出层 -->
+			<div class="modal modal-message fade modal-top" id="acct">
+			<div class="modal-dialog" style="display:block;">
+				<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+								<h4 class="modal-title">账户查询</h4>
+							</div>
+						<div class="choice-box">
+							<i class="iconfont pull-left p-l-10">&#xe663;</i>
+							<select id="acctQueryType" class="myselect select-option">
+								<option value="1" selected="selected">接入号码</option>
+								<option value="2">帐户合同号</option>
+							</select>
+							<i class="iconfont pull-right p-r-10">&#xe66e;</i>
+						</div>
+						
+						<div class="choice-box">
+							<i class="iconfont pull-left p-l-10">&#xe663;</i>
+							 <input id="p_cust_acct_choose" placeholder="请输入号码" class="choice-input" onblur="if($(this).val().trim() != ''){$('#dealerModal').find('.choice-box').children('.help-block').addClass('hidden');}$('#dealerModal-result').hide();">
+						     <div class="help-block error hidden">查询号码不能为空</div>
+						</div>
+						<div id="acctModal-result" style="line-height: .86rem; color: #ff0000; font-size: .26rem; display:none; text-align:center;">没有查询到该客户信息！</div>
+						<ul id="acct-result" style=" display:none;line-height: .36rem;font-size: .26rem;margin-top: 0.3rem;color:#fe7e19;"></ul>
+						
+						<div class="sub-btn-box p relative">
+							<button class="sun-btn"  id="queryAccount" data-loading-text="查询...">查询</button>
+							<button class="sun-btn"  style="display:none" id="chooseAcctBtn" data-loading-text="确定...">确定</button>
+						</div>
+			</div>
+			</div>
 			</div>
 				
 		<div class="tab-content p-0" id="orderConfirmDiv" style="display: none">

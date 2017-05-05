@@ -2,6 +2,21 @@
 <#list prodSpecParams as prodSpec>
 <#assign rule=prodSpec.rule />
 <#if prodSpec.itemSpecId=="800000011">
+	<li id="userList_${prodId}" >
+	<span class="list-title">
+		<span class="title-lg">${prodSpec.name}</span>
+		<span class="subtitle font-secondary" style="color: rgb(255, 0, 0);" id="userName_${prodId}">无</span>
+	</span>
+	 <i id="addUser_${prodId}" onclick="order.main.showUser(${prodId})" class="iconfont absolute-right font-default">&#xe66e;</i>
+	<input type="hidden"
+		id="${prodSpec.itemSpecId}_${prodId}" name="prodSpec_${prodId}" 
+		itemSpecId="${prodSpec.itemSpecId}" prodSpecItemId="${prodSpec.prodSpecParamId}" 
+		check_name="${prodSpec.name}" check_mask="${rule.mask}" check_mess="${rule.maskMsg}" 
+		check_len="${rule.attrLen}" check_option="${rule.isOptional}" 
+		dataType="${prodSpec.dataTypeCd}" oldValue="${prodSpec.value}"  prodId="${prodId}"
+		check_type="check"/>
+	</li>
+
 <#elseif prodSpec.dataSourceTypeCd==4 >
 <li class="choice-box-left p-l-43 border-none"> 
    <span class="select-title left-0">${prodSpec.name}</span>
@@ -9,7 +24,7 @@
 		itemSpecId="${prodSpec.itemSpecId}" prodSpecItemId="${prodSpec.prodSpecParamId}" 
 		check_name="${prodSpec.name}" check_mask="${rule.mask}" check_mess="${rule.maskMsg}" 
 		check_len="${rule.attrLen}" check_option="${rule.isOptional}" 
-		dataType="${prodSpec.dataTypeCd}" oldValue="${prodSpec.value}" 
+		dataType="${prodSpec.dataTypeCd}" oldValue="${prodSpec.value}"  
 		<#if rule.isEnabled=="Y" >check_type="check"<#else>check_type="uncheck" disabled="disabled"</#if>  >
 		<#if prodSpec.value=="">
 		<option value="">${prodSpec.name}</option>
@@ -58,14 +73,14 @@ $(function() {
 	});
 	var prodAttrs = [];
 	<#list prodSpecParams as prodSpec>
-		prodAttrs.push({
+	   OrderInfo.prodAttrs.push({
 			"isOptional" : "${prodSpec.rule.isOptional}",
 			"name" : "${prodSpec.name}",
 			"value" : "${prodSpec.value}",
 			"id" : "${prodSpec.itemSpecId}_${prodId}"
 		});
 	</#list>
-	OrderInfo.prodAttrs = prodAttrs;
 </script>  	
+
 <#else>
 </#if>

@@ -159,7 +159,7 @@ OrderInfo = (function() {
 		atomActionSeq : -1,  //序列号，用来实例化每个原子动作的每个值,每次减1
 		offerMemberSeq : -1, //序列号，用来实例化每个角色成员的每个值,每次减1
 		dealerSeq : 1,   //协销人序列号，
-		instSeq : -2
+		instSeq : -1
 	};
 	
 	var _boCusts = []; //客户信息节点
@@ -331,9 +331,6 @@ OrderInfo = (function() {
 	
 	//创建使用人节点
 	var _createUser = function(busiOrders,custInfo) {
-		if(custInfo.custId > -2){
-			return;
-		}
 		var busiOrder = {
 			areaId : OrderInfo.getAreaId(),  //受理地区ID
 			busiOrderInfo : {
@@ -355,10 +352,11 @@ OrderInfo = (function() {
 		if(ec.util.isObj(custInfo.accNbr)){ //接入号
 			busiOrder.busiObj.accessNumber = custInfo.accNbr;
 		}
-		
+//		cust.getUserInfo(custInfo);
 		//使用人信息节点
-		var syr = {
+		var _boUserInfos = {
 			areaId : OrderInfo.staff.areaId,
+			custId : custInfo.custId,
 			defaultIdType:"1",//证件类型
 			businessPassword : "", //使用人密码
 			name : custInfo.partyName, //	使用人名称
@@ -368,60 +366,64 @@ OrderInfo = (function() {
 			addressStr:custInfo.addressStr,//使用人地址
 			mailAddressStr:custInfo.mailAddressStr//通信地址
 		};
+		
 		//使用人证件节点
-		var syrzj = {
+		var _boUserIdentities = {
 			identidiesTypeCd : custInfo.identityCd, //证件类型
 			identityNum : custInfo.idCardNumber, //证件号码
 			isDefault : "Y", //是否首选
 			state : "ADD",  //状态
 			identidiesPic : custInfo.identityPic //证件照片	
 		};
+		
 		//使用人联系人节点
-		var syrlxr = {
-				contactAddress : "",//参与人的联系地址
-		        contactDesc : "",//参与人联系详细信息
-		        contactEmployer  : "",//参与人的联系单位
-		        contactGender  : "1",//参与人联系人的性别
-		        contactId : "",//参与人联系信息的唯一标识
-		        contactName : "",//参与人的联系人名称
-		        contactType : "10",//联系人类型
-		        eMail : "",//参与人的eMail地址
-		        fax : "",//传真号
-		        headFlag : "1",//是否首选联系人 1是  2否
-		        homePhone : "",//参与人的家庭联系电话
-		        mobilePhone : "",//参与人的移动电话号码
-		        officePhone : "",//参与人办公室的电话号
-		        postAddress : "",//参与人的邮件地址
-		        postcode : "",//参与人联系地址的邮政编码
-		        staffId : 0,//员工ID
-		        state : "ADD",//状态 新增ADD  删除DEL
-		        statusCd : "100001"//订单状态	
+		var _boUserPartyContactInfo = {
+			contactAddress : "",//参与人的联系地址
+	        contactDesc : "",//参与人联系详细信息
+	        contactEmployer  : "",//参与人的联系单位
+	        contactGender  : "1",//参与人联系人的性别
+	        contactId : "",//参与人联系信息的唯一标识
+	        contactName : "",//参与人的联系人名称
+	        contactType : "10",//联系人类型
+	        eMail : "",//参与人的eMail地址
+	        fax : "",//传真号
+	        headFlag : "1",//是否首选联系人 1是  2否
+	        homePhone : "",//参与人的家庭联系电话
+	        mobilePhone : "",//参与人的移动电话号码
+	        officePhone : "",//参与人办公室的电话号
+	        postAddress : "",//参与人的邮件地址
+	        postcode : "",//参与人联系地址的邮政编码
+	        staffId : 0,//员工ID
+	        state : "ADD",//状态 新增ADD  删除DEL
+	        statusCd : "100001"//订单状态
 		};
+		
 		//若用户有填写经办人联系号码，则新建经办人时添加联系人信息，否则不添加联系人信息
-		if(ec.util.isObj(OrderInfo.jbr.telNumber)){
-			syrlxr.staffId 		= OrderInfo.staff.staffId;
-			syrlxr.contactName 	= custInfo.partyName;
-			syrlxr.mobilePhone 	= custInfo.accNbr;
-			syrlxr.contactAddress 	= custInfo.addressStr;
+		if(ec.util.isObj(custInfo.accNbr)){
+			_boUserPartyContactInfo.staffId 		= OrderInfo.staff.staffId;
+			_boUserPartyContactInfo.contactName 	= custInfo.partyName;
+			_boUserPartyContactInfo.mobilePhone 	= custInfo.accNbr;
+			_boUserPartyContactInfo.contactAddress 	= custInfo.addressStr;
+			_boUserPartyContactInfo.contactGender   = "1";//性别，默认为男
 			//根据身份证判断性别，无从判别默认为男
-			if(custInfo.identityCd == "1"){
+			if(_boUserIdentities.identidiesTypeCd == "1"){
 				var identityNum = custInfo.idCardNumber;
 				identityNum = parseInt(identityNum.substring(16,17));//取身份证第17位判断性别，奇数男，偶数女
-				syrlxr.contactGender = (identityNum % 2) == 0 ? "2" : "1";//1男2女
+				_boUserPartyContactInfo.contactGender = (identityNum % 2) == 0 ? "2" : "1";//1男2女
 			}
 		}
-		busiOrder.data.boCustInfos.push(syr);
-		busiOrder.data.boCustIdentities.push(syrzj);
+		busiOrder.data.boCustInfos.push(_boUserInfos);
+		busiOrder.data.boCustIdentities.push(_boUserIdentities);
 		//使用人开关
-		var propertiesKey = "FUKA_SHIYR_"+(OrderInfo.staff.soAreaId+"").substring(0,3);
+		var propertiesKey = "REAL_USER_"+(OrderInfo.staff.soAreaId+"").substring(0,3);
 	    var isFlag = offerChange.queryPortalProperties(propertiesKey);
-	    if(isFlag == "ON"){
-	    	busiOrder.data.boPartyContactInfo.push(syrlxr);
+	    if(isFlag == "ON" && ec.util.isObj(custInfo.accNbr)){
+	    	busiOrder.data.boPartyContactInfo.push(_boUserPartyContactInfo);
 	    }
 		busiOrders.push(busiOrder);
 	}
 	//创建帐户节点  默认写死
-	var _createAcct = function(busiOrders,acctId) {
+	var _createAcct = function(busiOrders,acctId,toCustId,nameCN) {
 		var acctName = OrderInfo.cust.partyName;
 		var paymentType = 100000;  //100000现金，110000银行
 		var bankId = "";
@@ -433,7 +435,6 @@ OrderInfo = (function() {
 			bankAcct = $("#bankAcct").val(); //银行帐号
 			paymentMan = $("#paymentMan").val(); //支付人
 		}
-		
 		var busiOrder = {
 			areaId : OrderInfo.getAreaId(),  //受理地区ID
 			busiOrderInfo : {
@@ -456,7 +457,7 @@ OrderInfo = (function() {
 					state : "ADD", //动作
 					acctTypeCd : "1" // 默认1
 				}],
-				boPaymentAccounts : [{ //帐户托收节点
+				boPaymentAccounts : [{ //帐户托收节点un
 					paymentAcctTypeCd : paymentType, //类型
 					bankId : bankId, //银行ID
 					bankAcct : bankAcct, //银行帐户ID
@@ -472,6 +473,14 @@ OrderInfo = (function() {
 				boAccountMailings : [] //账单投递信息节点	
 			}
 		};
+		//返档要求partyId取返档后客户ID，做特殊处理redmine 794183
+		if(OrderInfo.actionFlag=='9'){
+			busiOrder.data.boAccountInfos[0].partyId = toCustId;
+			// 如果账号名称默认取客户名称，则送后台加密后的客户名称（客户信息脱敏后，导致后台下省也脱敏）
+			if (nameCN!=undefined&&nameCN!="") {
+				busiOrder.data.boAccountInfos[0].CN = nameCN;
+			}
+		}
 		var accNbr = _getAccessNumber(-1);
 		if(ec.util.isObj(accNbr)){ //接入号
 			busiOrder.busiObj.accessNumber = accNbr;
@@ -994,6 +1003,28 @@ OrderInfo = (function() {
 	
 	//经办人联系人节点
 	var _bojbrPartyContactInfo = {
+		contactAddress : "",//参与人的联系地址
+        contactDesc : "",//参与人联系详细信息
+        contactEmployer  : "",//参与人的联系单位
+        contactGender  : "1",//参与人联系人的性别
+        contactId : "",//参与人联系信息的唯一标识
+        contactName : "",//参与人的联系人名称
+        contactType : "10",//联系人类型
+        eMail : "",//参与人的eMail地址
+        fax : "",//传真号
+        headFlag : "1",//是否首选联系人 1是  2否
+        homePhone : "",//参与人的家庭联系电话
+        mobilePhone : "",//参与人的移动电话号码
+        officePhone : "",//参与人办公室的电话号
+        postAddress : "",//参与人的邮件地址
+        postcode : "",//参与人联系地址的邮政编码
+        staffId : 0,//员工ID
+        state : "ADD",//状态 新增ADD  删除DEL
+        statusCd : "100001"//订单状态
+	};
+	
+	//使用人联系人节点
+	var _boUserPartyContactInfo = {
 		contactAddress : "",//参与人的联系地址
         contactDesc : "",//参与人联系详细信息
         contactEmployer  : "",//参与人的联系单位
@@ -1542,7 +1573,8 @@ OrderInfo = (function() {
 		boUserIdentitiesArr 	: _boUserIdentitiesArr,
 		virOlId					: _virOlId,
 		curIp					:_curIp,
-		bojbrPartyContactInfo	:_bojbrPartyContactInfo
+		bojbrPartyContactInfo	:_bojbrPartyContactInfo,
+		boUserPartyContactInfo	:_boUserPartyContactInfo
 		
 	};
 })();
