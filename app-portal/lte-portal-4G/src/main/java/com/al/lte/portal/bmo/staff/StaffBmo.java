@@ -1,9 +1,11 @@
 package com.al.lte.portal.bmo.staff;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
 import com.al.ecs.exception.BusinessException;
+import com.al.ecs.exception.InterfaceException;
 import com.al.lte.portal.model.SessionStaff;
 
 /**
@@ -43,7 +45,8 @@ public interface StaffBmo {
 			throws Exception ;
 
 	Map queryStaffByStaffCode4Login(String staffCode, String commonRegionId) throws Exception;
-			
+	
+	Map queryStaffByStaffCode4Login(String staffCode, String commonRegionId,String session) throws Exception;		
 	
 	public void loginInlog(Long time, String optFlowNum, SessionStaff sessionStaff,String padVersion);
 	
@@ -67,8 +70,11 @@ public interface StaffBmo {
 	 * @param sessionStaff
 	 * @return
 	 * @throws BusinessException
+	 * @throws Exception 
+	 * @throws IOException 
+	 * @throws InterfaceException 
 	 */
-	public String checkOperatBySpecCd(String operatSpecCd, SessionStaff sessionStaff) throws BusinessException;
+	public String checkOperatBySpecCd(String operatSpecCd, SessionStaff sessionStaff) throws BusinessException, InterfaceException, IOException, Exception;
 	
 	public Map<String, Object> qrLoginCheck(Map<String, Object> dataBusMap, String optFlowNum, SessionStaff sessionStaff) throws Exception;
 	
@@ -80,5 +86,16 @@ public interface StaffBmo {
 	 * @throws Exception
 	 */
 	public Map<String, Object> bindQrCode(Map<String, Object> paramMap, String string,SessionStaff sessionStaff)throws Exception;
-	
+
+	/**
+	 * 查询某权限下的员工列表
+	 * @param operatSpecCd 权限编码 <br>若入参中不指定具体的权限编码，则默认根据SysConstant.RXSH权限进行查询
+	 * @param sessionStaff
+	 * @return 员工列表List
+	 * @throws InterfaceException
+	 * @throws IOException
+	 * @throws BusinessException
+	 */
+	public Map<String, Object> qryOperateSpecStaffList(String operatSpecCd, SessionStaff sessionStaff) throws InterfaceException, IOException, BusinessException, Exception;
+
 }

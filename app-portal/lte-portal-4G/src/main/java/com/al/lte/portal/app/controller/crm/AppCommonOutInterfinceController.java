@@ -10,6 +10,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import net.sf.json.xml.XMLSerializer;
 
@@ -26,6 +27,7 @@ import com.al.ecs.spring.controller.BaseController;
 import com.al.lte.portal.bmo.crm.OrderBmo;
 import com.al.lte.portal.common.AESUtils;
 import com.al.lte.portal.common.RedisUtil;
+import com.al.lte.portal.common.SysConstant;
 
 /**
  * app统一对外接口，排除session拦截、拦截器等
@@ -129,33 +131,40 @@ public class AppCommonOutInterfinceController extends BaseController{
 		Map<String, Object> rMap = null;
 		chargeItems=(List) param.get("chargeItems");
 		if(chargeItems.size()>0){
-			for(Map<String, Object> map:chargeItems){
-				map.put("payMethodCd", param.get("payMethodCd").toString());
-				String objInstId=map.get("objInstId").toString();//将[]转为""
-				String posSeriaNbr=map.get("posSeriaNbr").toString();
-				String prodId=map.get("prodId").toString();
-				String remark=map.get("remark").toString();
-				String terminalNo=map.get("terminalNo").toString();
-				if("[]".equals(objInstId)){
-					map.put("objInstId", "");
+			if(chargeItems.get(0).get("acctItemId")!=null){//用于判断费用项是否为空
+				for(Map<String, Object> map:chargeItems){
+					map.put("payMethodCd", param.get("payMethodCd").toString());
+					String objInstId=map.get("objInstId").toString();//将[]转为""
+					String posSeriaNbr=map.get("posSeriaNbr").toString();
+					String prodId=map.get("prodId").toString();
+					String remark=map.get("remark").toString();
+					String terminalNo=map.get("terminalNo").toString();
+					if("[]".equals(objInstId)){
+						map.put("objInstId", "");
+					}
+					if("[]".equals(posSeriaNbr)){
+						map.put("posSeriaNbr", "");
+					}
+					if("[]".equals(prodId)){
+						map.put("prodId", "");
+					}
+					if("[]".equals(remark)){
+						map.put("remark", "");
+					}
+					if("[]".equals(terminalNo)){
+						map.put("terminalNo", "");
+					}
 				}
-				if("[]".equals(posSeriaNbr)){
-					map.put("posSeriaNbr", "");
-				}
-				if("[]".equals(prodId)){
-					map.put("prodId", "");
-				}
-				if("[]".equals(remark)){
-					map.put("remark", "");
-				}
-				if("[]".equals(terminalNo)){
-					map.put("terminalNo", "");
-				}
+			}else{
+				JSONArray jsonarray=new JSONArray();
+				param.put("chargeItems", jsonarray);//空费用项
 			}
 			if(chargeItems.get(0).get("soNbr")!=null){
 				String soNbr=chargeItems.get(0).get("soNbr").toString();
 				param.put("soNbr", soNbr);
 				try {
+					//添加app标志
+					request.getSession().setAttribute(SysConstant.SESSION_KEY_APP_FLAG,"1");
 					rMap = orderBmo.chargeSubmit(param, null, null);
 					if (rMap != null && ResultCode.R_SUCCESS.equals(rMap.get("code").toString())) {
 						resultMsg.put("success", "true"); // true:成功，false:失败

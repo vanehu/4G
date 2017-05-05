@@ -132,10 +132,14 @@ var _queryPayStatus=function(index){
 				var payType=response.data.payCode;
 				_chargeItems=response.data.chargeItems;
 				for(var i=0;i<_chargeItems.length;i++){//费用项修改付费方式
-					_chargeItems[i].payMethodCd=payType;
-                    if(_chargeItems[i].posSeriaNbr==""){//将[]转为空
-                    	_chargeItems[i].posSeriaNbr=""
-                    }
+					if(_chargeItems[0].acctItemId!=null && _chargeItems[0].acctItemId!=""){
+						_chargeItems[i].payMethodCd=payType;
+	                    if(_chargeItems[i].posSeriaNbr==""){//将[]转为空
+	                    	_chargeItems[i].posSeriaNbr="";
+	                    }
+					}else{
+						_chargeItems=[];
+					}
 				}
 				//补下计费接口
 				_chargeSave();

@@ -3,6 +3,7 @@ CommonUtils.regNamespace("cart", "main");
  *订单查询.
  */
 cart.main = (function() {
+	var _checkOlId;//待审核的虚拟订单号
     //查询
     var _queryCartList = function(pageIndex, scroller) {
         OrderInfo.actionFlag = 40;
@@ -55,7 +56,8 @@ cart.main = (function() {
                 nowPage: curPage,
                 pageSize: 10
             };
-            if($("#p_endDt").val() != undefined || $("#p_endDt").val() != ""){
+            alert(JSON.stringify(param));
+            if($("#p_endDt").val() != undefined && $("#p_endDt").val() != ""){
             	var validate=$("#cartStatFormdata").Validform();
         		if(!$("#cartStatFormdata").Validform().check()){
         			return;
@@ -553,6 +555,151 @@ cart.main = (function() {
 			}
 		});
 	};
+
+//远程审核根据虚拟订单号获取经办人实名制照片
+ var _getjbrPhotos = function(){
+	 if($("#p_qry_olId").val().trim()==""){
+		 $.alert("提示", "虚拟订单号不能为空");
+		 return;
+	 }
+    //调用后台接口下载经办人身份证照片和拍照照片
+	 var params={
+			 areaId		: $("#p_channelId").attr("areaid"),
+			 srcFlag	: "REAL",
+			 olId		: $("#p_qry_olId").val().trim()
+	 }
+	 params.olId="201704253300001083";
+	 params.areaId="8220100";
+	 _checkOlId=params.olId;
+	 $.callServiceAsJson(contextPath+"/app/realName/photoCheck/downloadCustCertificate", params, {
+			"before":function(){
+				$.ecOverlay("<strong>正在获取实名审核信息中, 请稍等...</strong>");
+			},
+			"done" : function(response){
+				if (response.code == 0 && response.data) {
+					$.unecOverlay();
+					for(var i=0; i<response.data.photographs.length;i++){
+						if(response.data.photographs[i].picFlag == "C"){
+							var _identidiesPic = response.data.photographs[i].photograph;
+						}else if(response.data.picturesInfo[i].picFlag == "D"){
+							var _custPhoto = response.data.photographs[i].photograph;
+						}
+					}
+					$("#img_photo_show1").attr("src", "data:image/jpeg;base64," + _identidiesPic);
+					$("#img_photo_show2").attr("src", "data:image/jpeg;base64," + _custPhoto);
+					$("#check_btn").css("display","block");//审核按钮显示
+				}else if(response.code == 1 && response.data){
+					$.unecOverlay();
+					$.alert("错误", "经办人实名照片获取失败，错误原因：" + response.data);
+					return;
+				}else if(response.code == -2 && response.data){
+					$.unecOverlay();
+					$.alertM(response.data);
+					return;
+				}else{
+					$.unecOverlay();
+					$.alert("错误", "经办人实名制照片获取发生未知异常，请稍后重试。错误信息：" + response.data);
+					return;
+				}
+			},
+			"always":function(){
+				$("#check_photo").slideDown();
+			}
+		});
+	};
+	
+	//远程审核
+	 var _checkjbrPhotos = function(){
+//		 if($("#p_qry_olId").val().trim()!=_checkOlId){
+//			 $.alert("提示", "你已修改了虚拟订单号,请重新查询后审核");
+//			 return;
+//		 }
+		 var params = {
+				    "areaId"		:$("#p_channelId").attr("areaid"),
+					"olId"          :$("#p_qry_olId").val().trim(),
+					"checkType"     :"2",
+					"srcFlag"       :"REAL",
+					"staffId"       :OrderInfo.staff.staffId+""
+				};
+		 params.olId="201704253300001083";
+		 params.areaId="8220100";
+		$.callServiceAsJson(contextPath + "/app/realName/photoCheck/savePhotographReviewRecord", params, {
+			"before" : function() {
+				$.ecOverlay("<strong>正在确认审核信息, 请稍等...</strong>");
+			},
+			"done" : function(response) {
+				if(response.code == 0 && response.data){
+					if(ec.util.isObj(response.data)){
+						$.unecOverlay();
+						$.alert("信息", response.data);
+					} else{
+						$.unecOverlay();
+						$.alert("信息", "审核成功");
+					}
+				}else if(response.code == 1 && response.data){
+					$.unecOverlay();
+					$.alert("错误", "审核确认信息发送失败，错误原因：" + response.data);
+					return false;
+				}else if(response.code == -2 && response.data){
+					$.unecOverlay();
+					$.alertM(response.data);
+					return false;
+				}else{
+					$.unecOverlay();
+					$.alert("错误", "审核确认信息发生未知异常，请稍后重试。错误信息：" + response.data);
+					return false;
+				}
+			},
+			"fail" : function(response) {
+				$.unecOverlay();
+				$.alert("错误","审核确认信息发生未知异常：" + response.data);
+				return false;
+			},
+			"always" : function() {
+				
+			}
+		});
+	 };
+	 
+		//测试
+	var _testUrl = function(){
+		var requestParams = {};		
+		$.callServiceAsJson(contextPath + "/app/realName/photoCheck/qryOperateSpecStaffList", requestParams, {
+			"before" : function() {
+				$.ecOverlay("<strong>正在查询审核人员信息, 请稍等...</strong>");
+			},
+			"done" : function(response) {
+				if(response.code == 0 && response.data){
+//					response.data= [{
+//							phone:"18099999999",
+//							staffCode:"905899",
+//							staffId:30034129612,
+//							staffName:"李志华",
+//							statusCd:"1000"
+//						}];
+//					_setOperateSpecStaffList(response.data);
+//					OrderInfo.handleInfo.staffList = response.data;
+					alert(JSON.stringify(response.data));
+				}else if(response.code == 1 && response.data){
+					$.alert("错误", "查询审核人员失败，错误原因：" + response.data);
+					return null;
+				}else if(response.code == -2 && response.data){
+					$.alertM(response.data);
+					return null;
+				}else{
+					$.alert("错误", "查询审核人员发生未知异常，请稍后重试。错误信息：" + response.data);
+					return null;
+				}
+			},
+			"fail" : function(response) {
+				$.alert("错误","查询审核人员信息发生未知异常：" + response.data);
+				return null;
+			},
+			"always" : function() {
+				$.unecOverlay();
+			}
+		});
+	};
     return {
         cartBack: _cartBack,
         channelChange: _channelChange,
@@ -574,6 +721,9 @@ cart.main = (function() {
         btnQueryTerminalSale:_btnQueryTerminalSale,
         btnQueryfee         :_btnQueryfee,
         termSaleScroll      :_termSaleScroll,
-        feeScroll           :_feeScroll
+        feeScroll           :_feeScroll,
+        getjbrPhotos        :_getjbrPhotos,
+        checkjbrPhotos      :_checkjbrPhotos,
+        testUrl             :_testUrl
     };
 })();

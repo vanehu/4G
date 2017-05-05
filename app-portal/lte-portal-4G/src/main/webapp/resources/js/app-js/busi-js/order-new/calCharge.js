@@ -45,19 +45,29 @@ order.calcharge = (function(){
 		if(OrderInfo.actionFlag==201){
 			actionFlag=3;
 		}
+        //从session中获取olId，确保olId正确且唯一
+		var url = contextPath + "/app/pay/repair/queryOlId";
+		var response = $.callServiceAsJson(url, {});
+		var sessionOlId=_olId;
+		if (response.code == 0 && response.data!=null && response.data!="") {//从session获取olId成功
+			 sessionOlId=response.data.olId+"";						
+		}else {
+			   // 取不到则默认缓存中olId
+		}
+		OrderInfo.orderResult.olId=sessionOlId;
+		chargeOlId=sessionOlId;
 		var params={
-			"olId":_olId,
-			'custVipLevel':OrderInfo.cust.vipLevel,
-			"actionFlag":actionFlag,
-			"actionTypeName" : encodeURI(OrderInfo.actionTypeName),
-			"businessName" : encodeURI(OrderInfo.businessName),
-			"olNbr":OrderInfo.orderResult.olNbr,
-			"soNbr" : OrderInfo.order.soNbr,
-			"refundType":refundType,
-			"checkResult":JSON.stringify(OrderInfo.checkresult),
-			"enter":"new"
-		};
-		chargeOlId=params.olId;//用于前台校验OlId是否与支付平台回传一致
+				"olId":sessionOlId,
+				'custVipLevel':OrderInfo.cust.vipLevel,
+				"actionFlag":actionFlag,
+				"actionTypeName" : encodeURI(OrderInfo.actionTypeName),
+				"businessName" : encodeURI(OrderInfo.businessName),
+				"olNbr":OrderInfo.orderResult.olNbr,
+				"soNbr" : OrderInfo.order.soNbr,
+				"refundType":refundType,
+				"checkResult":JSON.stringify(OrderInfo.checkresult),
+				"enter":"new"
+			};
 		$.callServiceAsHtmlGet(contextPath+"/app/order/getChargeList",params,{
 			"before":function(){
 				$.ecOverlay("<strong>正在查询中,请稍等会儿....</strong>");
@@ -365,32 +375,17 @@ order.calcharge = (function(){
 				return ;
 			}
 	    }
-		if(chargeOlId!=payOlId){//调取算费接口的olId与支付平台回传的OlId比较，不一样直接拦截
-			var title='信息提示';
-			$("#btn-dialog-ok").removeAttr("data-dismiss");
-			$('#alert-modal').modal({backdrop: 'static', keyboard: false});
-			$("#btn-dialog-ok").off("click").on("click",function(){
-				$("#alert-modal").modal("hide");
-			});
-			$("#modal-title").html(title);
-			$("#modal-content").html("算费时的olId:["+chargeOlId+"]与支付成功的olId["+payOlId+"]不一致，请退出重新受理!");
-			$("#alert-modal").modal();
-			return;
-		}
-        if(chargeOlId!=OrderInfo.orderResult.olId){//调取算费接口的olId与收费建档提交的OlId比较，不一样直接拦截
-        	var title='信息提示';
-			$("#btn-dialog-ok").removeAttr("data-dismiss");
-			$('#alert-modal').modal({backdrop: 'static', keyboard: false});
-			$("#btn-dialog-ok").off("click").on("click",function(){
-				$("#alert-modal").modal("hide");
-			});
-			$("#modal-title").html(title);
-			$("#modal-content").html("算费时的olId:["+chargeOlId+"]与收费建档时的olId["+OrderInfo.orderResult.olId+"]不一致，请退出重新受理!");
-			$("#alert-modal").modal();
-			return;
+		//从session中获取olId，确保olId正确且唯一
+		var url = contextPath + "/app/pay/repair/queryOlId";
+		var response = $.callServiceAsJson(url, {});
+		var sessionOlId=OrderInfo.orderResult.olId;
+		if (response.code == 0 && response.data!=null && response.data!="") {//从session获取olId成功
+			 sessionOlId=response.data.olId+"";						
+		}else {
+			   // 取不到则默认缓存中olId
 		}
 		var params={
-				"olId":OrderInfo.orderResult.olId,
+				"olId":sessionOlId,
 				"soNbr":OrderInfo.order.soNbr,
 				"areaId" : OrderInfo.staff.areaId,
 				"chargeItems":_chargeItems
@@ -771,15 +766,31 @@ order.calcharge = (function(){
 		_buildChargeItems();
 		var busiUpType="1";
 		order.calcharge.busiUpType="1";
+		 //从session中获取olId，确保olId正确且唯一
+		var url = contextPath + "/app/pay/repair/queryOlId";
+		var response = $.callServiceAsJson(url, {});
+		var sessionOlId=OrderInfo.orderResult.olId;
+		if (response.code == 0 && response.data!=null && response.data!="") {//从session获取olId成功
+			 sessionOlId=response.data.olId+"";						
+		}else {
+			   // 取不到则默认缓存中olId
+		}
+		if(_chargeItems.length==0){//费用项为空，则只设soNbr
+			var item={
+					"soNbr":OrderInfo.order.soNbr	
+			};
+			_chargeItems.push(item);
+		}
+		OrderInfo.orderResult.olId=sessionOlId;
 		var params={
-				"olId":OrderInfo.orderResult.olId,
+				"olId":sessionOlId,
 				"soNbr":OrderInfo.orderResult.olNbr,
 				"busiUpType":busiUpType,
 				"chargeItems":_chargeItems,
 				"charge":charge,
 				"chargeCheck":chargeCheck
 		};
-		if(chargeOlId!=OrderInfo.orderResult.olId){//调取算费接口的olId与跳转支付平台的OlId比较，不一样直接拦截
+		if(chargeOlId!=sessionOlId){//调取算费接口的olId与跳转支付平台的OlId比较，不一样直接拦截
         	var title='信息提示';
 			$("#btn-dialog-ok").removeAttr("data-dismiss");
 			$('#alert-modal').modal({backdrop: 'static', keyboard: false});
@@ -787,12 +798,14 @@ order.calcharge = (function(){
 				$("#alert-modal").modal("hide");
 			});
 			$("#modal-title").html(title);
-			$("#modal-content").html("算费时的olId:["+chargeOlId+"]与跳转支付界面的olId["+OrderInfo.orderResult.olId+"]不一致，请退出重新受理!");
+			$("#modal-content").html("算费时的olId:["+chargeOlId+"]与跳转支付界面的olId["+sessionOlId+"]不一致，请退出重新受理!");
 			$("#alert-modal").modal();
 			return;
 		}
 		var url = contextPath+"/app/order/getPayUrl";
 		var response = $.callServiceAsJson(url, params);
+		_chargeItems=[];
+		_buildChargeItems();
 		if(response.code==0){
 			payUrl=response.data;
 			//var payUrl2="http://192.168.4.137:7001/pay_web/platpay/index?payToken="+payUrl.split("=")[1];
@@ -865,13 +878,25 @@ order.calcharge = (function(){
 	 * 获取支付平台返回订单状态并进行下一步操作
 	 */
 	var _queryPayOrdStatus= function(soNbr, status,type) {
+		if ("1" == status) { // 原生返回成功，收费按钮不可点
+			$("#toCharge").attr("disabled","disabled");
+		}
 		if(order.calcharge.busiUpType=="1"){
 			if(OrderInfo.actionFlag!=112){//非融合，先查订单收费状态，未收费继续流程，否则直接提示
+				//从session中获取olId，确保olId正确且唯一
+				var url = contextPath + "/app/pay/repair/queryOlId";
+				var response = $.callServiceAsJson(url, {});
+				var sessionOlId=OrderInfo.orderResult.olId;
+				if (response.code == 0 && response.data!=null && response.data!="") {//从session获取olId成功
+					 sessionOlId=response.data.olId+"";						
+				}else {
+					   // 取不到则默认缓存中olId
+				}
+				OrderInfo.orderResult.olId=sessionOlId;
 				var queryUrl = contextPath + "/app/pay/repair/queryOrdStatus";
-				var olId=OrderInfo.orderResult.olId;
 				var checkParams = {
-						"olId" : olId,
-						"areaId":OrderInfo.staff.areaId					
+						"olId" : sessionOlId,
+						"areaId":OrderInfo.staff.areaId+""					
 				};
 				var response = $.callServiceAsJson(queryUrl, checkParams);
 				if (response.code == 0 && response.data!=null && response.data!="") {//已后台收费成功，直接提示，不走收费流程
@@ -982,8 +1007,18 @@ order.calcharge = (function(){
 	};
 	
 	//收费界面定时任务入口
-	var _timeToFee=function(){		
-		_queryPayOrdStatus1(OrderInfo.orderResult.olId,"1");
+	var _timeToFee=function(){
+		//从session中获取olId，确保olId正确且唯一
+		var url = contextPath + "/app/pay/repair/queryOlId";
+		var response = $.callServiceAsJson(url, {});
+		var sessionOlId=OrderInfo.orderResult.olId;
+		if (response.code == 0 && response.data!=null && response.data!="") {//从session获取olId成功
+			 sessionOlId=response.data.olId+"";						
+		}else {
+			   // 取不到则默认缓存中olId
+		}
+		OrderInfo.orderResult.olId=sessionOlId;
+		_queryPayOrdStatus1(sessionOlId,"1");
 		
 	};
 

@@ -60,6 +60,9 @@ import com.al.lte.portal.model.SessionStaff;
 @Controller("com.al.lte.portal.app.controller.crm.PayAndOrderRepairController")
 @RequestMapping("/app/pay/repair/*")
 public class PayAndOrderRepairController extends BaseController{
+	/** 订单提交成功后返回的olId */
+	public static final String SESSION_OL_ID = "APP_OL_ID";
+	
 	@Autowired
 	@Qualifier("com.al.lte.portal.bmo.crm.OrderBmo")
 	private OrderBmo orderBmo;
@@ -301,4 +304,29 @@ public class PayAndOrderRepairController extends BaseController{
 		}
 	}
 	
+	/**
+	 * 翼销售获取session中订单olId
+	 * 
+	 * @param param
+	 * @param model
+	 * @param session
+	 * @param flowNum
+	 * @return
+	 */
+	@RequestMapping(value = "/queryOlId", method = RequestMethod.POST)
+	@ResponseBody
+	public JsonResponse queryOlId(@RequestBody Map<String, Object> param,
+			Model model, HttpSession session, @LogOperatorAnn String flowNum) {
+		Map<String, Object> rMap = new HashMap<String, Object>();
+		JsonResponse jsonResponse = null;
+		if (session.getAttribute(SESSION_OL_ID) != null) {
+			rMap.put("olId", session.getAttribute(SESSION_OL_ID).toString());
+			jsonResponse = super.successed(rMap,ResultConstant.SUCCESS.getCode());
+		} else {
+			jsonResponse = super.successed(rMap, ResultConstant.FAILD.getCode());
+		}
+		return jsonResponse;
+
+	}
+
 }

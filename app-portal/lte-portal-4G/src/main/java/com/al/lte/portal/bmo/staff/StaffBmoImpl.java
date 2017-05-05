@@ -12,6 +12,7 @@ import java.util.Map;
 
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -27,6 +28,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import com.al.ec.serviceplatform.client.DataBus;
 import com.al.ec.serviceplatform.client.ResultCode;
 import com.al.ecs.common.util.DateUtil;
+import com.al.ecs.common.util.JsonUtil;
 import com.al.ecs.common.util.MapUtil;
 import com.al.ecs.exception.BusinessException;
 import com.al.ecs.exception.ErrorCode;
@@ -81,8 +83,15 @@ public class StaffBmoImpl implements StaffBmo {
 				returnMap.put("resultMsg", message);
 			}
 		} else {
+			if(StringUtils.isBlank(db.getResultMsg())){
+				returnMap = db.getReturnlmap();
+				if(returnMap != null){
+					returnMap.put("resultMsg", MapUtils.getString(returnMap, "resultMsg", "短信发送发生未知异常！"));
+				}
+			} else{
+				returnMap.put("resultMsg", "调用失败，" + db.getResultMsg());
+			}
 			returnMap.put("resultCode", "1");
-			returnMap.put("resultMsg", "调用失败，" + db.getResultMsg());
 		}
 		return returnMap;
 	}
@@ -644,6 +653,37 @@ public class StaffBmoImpl implements StaffBmo {
 		}
 
 	}
+	public Map queryStaffByStaffCode4Login(String staffCode,
+			String commonRegionId,String sessionId) throws Exception {
+		Map params=new HashMap();
+		params.put("sessionId", sessionId);
+		params.put("staffCode", staffCode);
+		params.put("commonRegionId", commonRegionId);
+		params.put("areaId", commonRegionId);
+		SessionStaff aSessionStaff=new SessionStaff ();
+		aSessionStaff.setStaffCode(staffCode);
+		aSessionStaff.setAreaId(commonRegionId);
+		aSessionStaff.setAreaCode(commonRegionId);
+		DataBus db = InterfaceClient.callService(params, PortalServiceCode.QUERY_STAFF_BY_STAFFCODE, null, aSessionStaff);
+		try {
+			if (ResultCode.R_SUCC.equals(db.getResultCode())) {
+				Map<String,Object> map=(Map<String,Object>)db.getReturnlmap().get("result");
+				return map;
+			}else{
+				Map<String, Object> resMap =db.getReturnlmap();
+				Map returnMap=new HashMap();
+				returnMap.put("resultCode", ResultCode.R_FAILURE);
+				returnMap.put("resultMsg",  MapUtils.getString(resMap, "resultMsg"));
+				returnMap.put("errCode",  MapUtils.getString(resMap, "errCode"));
+				returnMap.put("errorStack",  MapUtils.getString(resMap, "errorStack"));
+				return returnMap;
+			}
+		} catch (Exception e) {
+			log.error("门户处理系统管理的staffLogin服务返回的数据异常", e);
+			throw new BusinessException(ErrorCode.ORDER_CTGMAINDATA,params,db.getReturnlmap(), e);
+		}
+
+	}
 	
 	
 	public void loginInlog(Long time, String optFlowNum, SessionStaff sessionStaff,String padVersion){
@@ -851,17 +891,18 @@ public class StaffBmoImpl implements StaffBmo {
 	 * @param operatSpecCd
 	 * @param sessionStaff
 	 * @return
-	 * @throws BusinessException
+	 * @throws Exception 
+	 * @throws IOException 
+	 * @throws InterfaceException 
 	 */
-	public String checkOperatBySpecCd(String operatSpecCd, SessionStaff sessionStaff) throws BusinessException {
+	public String checkOperatBySpecCd(String operatSpecCd, SessionStaff sessionStaff) throws InterfaceException, IOException, Exception {
 		Map<String, Object> dataBusMap = new HashMap<String, Object>();
 		dataBusMap.put("opsManageCode", operatSpecCd);
 		dataBusMap.put("staffId", sessionStaff.getStaffId());
-		dataBusMap.put("areaId", sessionStaff.getCurrentAreaId());
-		DataBus db = null;
+		dataBusMap.put("areaId", sessionStaff.getAreaId());
 		
+		DataBus db = InterfaceClient.callService(dataBusMap, PortalServiceCode.CHECK_OPERATSPEC, null, sessionStaff);
 		try {		
-			db = InterfaceClient.callService(dataBusMap, PortalServiceCode.CHECK_OPERATSPEC, null, sessionStaff);
 			if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db.getResultCode()))) {				
 				return "0";
 			}
@@ -937,5 +978,57 @@ public class StaffBmoImpl implements StaffBmo {
 		DataBus db = InterfaceClient.callService(dataBusMap,
 				PortalServiceCode.BIND_QR_CODE_RECORDS, null, sessionStaff);
 		return db.getReturnlmap();
+	}
+	
+	/**
+	 * 查询某权限下的员工列表
+	 * @param operatSpecCd 权限编码 <br>若入参中不指定具体的权限编码，则默认根据SysConstant.RXSH权限进行查询
+	 * @param sessionStaff
+	 * @return 员工列表List
+	 * @throws InterfaceException
+	 * @throws IOException
+	 * @throws BusinessException
+	 */
+	@SuppressWarnings("unchecked")
+	public Map<String, Object> qryOperateSpecStaffList(String operatSpecCd, SessionStaff sessionStaff) throws InterfaceException, IOException, BusinessException, Exception {
+		Map<String, Object> params = new HashMap<String, Object>();
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		
+		if(StringUtils.isBlank(operatSpecCd)){
+			returnMap.put(SysConstant.RESULT_CODE, ResultCode.R_FAILURE);
+			returnMap.put(SysConstant.RESULT_MSG, "无效入参operatSpecCd");
+			throw new BusinessException(ErrorCode.PORTAL_INPARAM_ERROR, params, returnMap, null);
+		}
+		
+		params.put("opsCd", operatSpecCd);
+		params.put("exceptStaffId", sessionStaff.getStaffId());//该员工信息将被过滤不返回
+		params.put(SysConstant.STAFF_ID, sessionStaff.getStaffId());
+		params.put(SysConstant.AREA_ID, sessionStaff.getCurrentAreaId());
+		params.put(SysConstant.CHANNEL_ID, sessionStaff.getCurrentChannelId());
+				
+		DataBus db = InterfaceClient.callService(params, PortalServiceCode.QRY_OPERATESPEC_STAFF_LIST, null, sessionStaff);
+		try {
+			String resultCode = StringUtils.defaultString(db.getResultCode(), "1");
+			if (ResultCode.R_SUCC.equals(resultCode)) {
+				List<Map<String, Object>> staffList = (List<Map<String, Object>>) db.getReturnlmap().get("result");
+				if(staffList == null){
+					returnMap.put(SysConstant.RESULT_CODE, ResultCode.R_FAILURE);
+					returnMap.put(SysConstant.RESULT_MSG, "系管operatSpecCd服务未返回非null的有效结果集：" + JsonUtil.toString(db.getReturnlmap()));
+					log.error("系管operatSpecCd服务未返回非null的有效结果集={}", JsonUtil.toString(db.getReturnlmap()));
+					throw new BusinessException(ErrorCode.QUERY_STAFF_INFO, params, returnMap, null);
+				} else{
+					returnMap.put(SysConstant.RESULT_CODE, ResultCode.R_SUCC);
+					returnMap.put(SysConstant.RESULT, staffList);
+				}
+			} else {
+				returnMap.put(SysConstant.RESULT_CODE, ResultCode.R_FAILURE);
+				returnMap.put(SysConstant.RESULT_MSG, db.getResultMsg());
+			}
+		} catch (Exception e) {
+			log.error("门户处理系统管理的queryOperaStaff服务返回的数据异常", e);
+			throw new BusinessException(ErrorCode.QUERY_STAFF_INFO, params, db.getReturnlmap(), e);
+		}
+		
+		return returnMap;
 	}
 }

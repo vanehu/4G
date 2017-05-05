@@ -82,6 +82,9 @@ import com.al.lte.portal.model.SessionStaff;
 @Controller("com.al.lte.portal.app.controller.crm.OrderController")
 @RequestMapping("/app/order/*")
 public class OrderController extends BaseController {
+	
+	/** 订单提交成功后返回的olId */
+	public static final String SESSION_OL_ID = "APP_OL_ID";
 	@Autowired
 	@Qualifier("com.al.lte.portal.bmo.crm.OrderBmo")
 	private OrderBmo orderBmo;
@@ -2433,6 +2436,8 @@ public class OrderController extends BaseController {
 			if(ResultCode.R_SUCC.equals(resMap.get("resultCode"))){
 				Map result = (Map)resMap.get("result");
 				String olId = (String)result.get("olId");
+				//将olId存入session确保跳转支付平台的olId、收费建档的olId与算费时的olId一致。
+				session.setAttribute(SESSION_OL_ID, olId);
 				String soNbr = (String)orderListInfo.get("soNbr");
 				String olTypeCd = orderListInfo.get("olTypeCd").toString();
 				String actionFlag = orderListInfo.get("actionFlag") != null ? orderListInfo.get("actionFlag").toString() : "";

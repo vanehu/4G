@@ -1206,6 +1206,9 @@ public final class PortalServiceCode {
     /** 实名信息采集单订单查询 */
     public static final String CLT_ORDER_QUERY = "biz-service/intf.detailService/queryCollectionOrders";
     
+    /** 实名信息采集单订单项 */
+    public static final String CLT_ORDER_ITEMS = "biz-service/intf.detailService/queryCollectionOrderItem";
+
     /** 实名信息采集单订单详情 */
     public static final String CLT_ORDER_Detail = "biz-service/intf.detailService/queryCollectionOrderItemDetail";
     
@@ -1214,6 +1217,12 @@ public final class PortalServiceCode {
     
     /**获取初审信息接口*/
     public static final String QRY_PRELININARY_INFO = "biz-service/intf.acctService/qryPreliminaryInfo";
+    
+    /** 查询某权限下的员工列表*/
+    public static final String QRY_OPERATESPEC_STAFF_LIST = "sys-queryOperaStaff";
+    
+    /**实名审核记录接口*/
+    public static final String SAVE_PHOTOGRAPH_REVIEW_RECORD = "biz-service/intf.fileOperateService/saveRealCheckRecord";
 
 }
 
