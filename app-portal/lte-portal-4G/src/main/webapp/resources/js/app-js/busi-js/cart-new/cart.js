@@ -56,7 +56,6 @@ cart.main = (function() {
                 nowPage: curPage,
                 pageSize: 10
             };
-            alert(JSON.stringify(param));
             if($("#p_endDt").val() != undefined && $("#p_endDt").val() != ""){
             	var validate=$("#cartStatFormdata").Validform();
         		if(!$("#cartStatFormdata").Validform().check()){
