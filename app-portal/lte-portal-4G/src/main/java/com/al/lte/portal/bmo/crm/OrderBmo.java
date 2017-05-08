@@ -811,8 +811,8 @@ public interface OrderBmo {
 	 * @return
 	 * @throws Exception
 	 */
-	public Map<String, Object> insertCertInfo(Map<String, Object> param, 
-			String flowNum,SessionStaff sessionStaff) throws Exception;
+	public void insertCertInfo(Map<String, Object> param, 
+			String flowNum,SessionStaff sessionStaff);
 	
 	/**
 	 * 判断是否集团新装业务
@@ -900,4 +900,31 @@ public interface OrderBmo {
 	 */
 	public Map<String, Object> cltOrderCheck(Map<String, Object> param, HttpServletRequest request,
 			SessionStaff sessionStaff)throws Exception;
+	
+	/**
+	 * 获取初审信息接口
+	 */
+	public Map<String, Object> qryPreliminaryInfo(Map<String, Object> dataBusMap, String optFlowNum,
+            SessionStaff sessionStaff) throws Exception;
+	
+	/**
+	 * USB二代证读卡校验
+	 * @param param
+	 * @param request
+	 * @param sessionStaff
+	 * @return
+	 */
+	public Map<String, Object> certReaderVerify(Map<String, Object> param, HttpServletRequest request, SessionStaff sessionStaff);
+
+	/**
+	 * 实名审核记录接口
+	 * @param params <br/>olId和checkType必传，否则抛BusinessException；<br>areaId和staffId若为空，则以session替代；<br>srcFlag若为空，则以"REAL"替代
+	 * @param sessionStaff
+	 * @return
+	 * @throws InterfaceException
+	 * @throws IOException
+	 * @throws BusinessException
+	 * @throws Exception
+	 */
+	public Map<String, Object> savePhotographReviewRecord(Map<String, Object> params, SessionStaff sessionStaff) throws InterfaceException, IOException, BusinessException, Exception;
 }

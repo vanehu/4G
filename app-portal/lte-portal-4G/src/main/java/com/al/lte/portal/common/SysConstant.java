@@ -250,6 +250,7 @@ public final class SysConstant {
 	public final static String P_MOD_SUB_CTG_PDF = "ctgpdf/";
 	public final static String P_MOD_SUB_INVOICE = "invoice/";
 	public final static String P_MOD_SUB_OLD2NEW = "old2new/";
+	public final static String P_MOD_SUB_ONE_CERT_5 = "oneCert5/";
 	public final static String P_MOD_SUB_STBRESERVE = "STBreserve/";
 	public final static String P_MOD_SUB_CUSTCLT = "custCollection/";
 	public final static String P_MOD_ABS_INVOICE = "D:/temp/invoice/";
@@ -264,6 +265,8 @@ public final class SysConstant {
 	public final static String P_MOD_FILE_INVOICE = "invoiceGroup";  // 发票打印业务
 	//以旧换新模板名称
 	public final static String P_MOD_FILE_OLD2NEW = "printOld2New";  // 发票打印业务
+	//一证五号模板名称
+	public final static String P_MOD_FILE_ONE_CERT_5 = "oneCertFiveNumberGroup";  // 一证五号打印业务
 	//天翼高清机顶盒预约回执主模板
 	public final static String P_MOD_FILE_STBRESERVE = "receiptMain";
 	//实名信息采集单确认回执主模板
@@ -818,7 +821,74 @@ public final class SysConstant {
     
     /**实名信息采集单session缓存键*/
     public static final String CLT_ORDER_INFO = "_clt_order_info";	
+
+    /**征信合约办理*/
+	public static final String  ZXHYBL= "ZXHYBL";
+	public static final String ZXHYBL_TCBG_NAME = "套餐变更";
+	public static final String ZXHYBL_KXB_NAME = "可选包/服务变更";
     
-  //业务受理
+	//业务受理
   	public final static String prodoffer = "/app/order/prodoffer/prepare";
+
+    /**靓号调级*/
+	public static final String  PHONE_LEVEL_MODIFY = "PHONE_LEVEL_MODIFY";
+	/**靓号调级*/
+	public static final String PHONE_LEVEL_MODIFY_NAME = "靓号调级";
+	
+	/**二代证读卡分省配置：前缀*/
+	public static final String CERT_SIGNATURE_PROV = "CERT_SIGNATURE_";
+	/**二代证读卡分省配置：即原有的USBSIGNATURE 身份证阅读器省份开关 ON：开启校验  OFF不校验*/
+	public static final String USB_SIGNATURE_CHECK = "USB_SIGNATURE_CHECK";
+	/**二代证读卡分省配置：某省份下读卡器厂商集合*/
+	public static final String VENDORS = "VENDORS";
+	/**二代证读卡分省配置：提示语信息*/
+	public static final String NOTICE_INFOS = "NOTICE_INFOS";
+	
+	public static final String RESULT 		= "result";
+	public static final String RESULT_MSG 	= "resultMsg";
+	public static final String RESULT_CODE 	= "resultCode";
+	
+	public static final String AREA_ID 		= "areaId";
+	public static final String STAFF_ID 	= "staffId";
+	public static final String STAFF_CODE	= "staffCode";
+	public static final String CHANNEL_ID	= "channelId";
+	
+	/**权限编码：人像审核*/
+	public static final String RXSH = "RXSH";
+	
+	/**经办人拍照人证相符审核短信验证短信发送时间 */
+    public static final String SESSION_KEY_TEMP_CONFIRMAGREE_SMS_TIME = "_session_key_temp_confirmagree_sms_time";  
+    /** 经办人拍照人证相符审核短信验证随机二位序列号 */
+    public static final String SESSION_KEY_CONFIRMAGREE_RANDONCODE = "_confirmagree_sms_session_code";
+    /** 经办人拍照人证相符审核短信验证 sms Session key */
+    public static final String SESSION_KEY_CONFIRMAGREE_SMS = "_confirmagree_sms_session_key";
+    /** 经办人拍照人证相符审核类型-本地审核*/
+    public static final String CHECKTYPE_LOCAL = "1";
+
+    /**
+     * 一证五号号码处理状态，初始状态（100002）作废（100004）成功（301200）
+     */
+    public static final String ONE_FIVE_NUMBER_STATUS_INIT = "100002";
+    public static final String ONE_FIVE_NUMBER_STATUS_VOID = "100004";
+    public static final String ONE_FIVE_NUMBER_STATUS_SUCC = "301200";
+
+    /**
+     * 一证五卡文件类型标识
+     * 跨省一证五号图片：E
+     * 跨省一证五号pdf：F
+     */
+    public static final String ONE_FIVE_FILE_TYPE_JPG = "E";
+    public static final String ONE_FIVE_FILE_TYPE_PDF = "F";
+
+    /**
+     * 图片批量上传,srcFlag（来源标识）取值定义
+     * 不传默认为WEB无纸化。
+     * 苹果直营店图片暂存需传“APPLE”;
+     * 实名制拍照留存需传“REAL”
+     */
+    public static final String ONE_FIVE_SRC_FLAG_REAL = "REAL";
+    public static final String ONE_FIVE_SRC_FLAG_APPLE = "APPLE";
+    
+    /** 实名制拍照人像审核分省开关，默认OFF(4GWEB+能力共用)*/
+    public static final String PHOTOGRAPH_REVIEW_FLAG = "PHOTOGRAPH_REVIEW_FLAG";
 }

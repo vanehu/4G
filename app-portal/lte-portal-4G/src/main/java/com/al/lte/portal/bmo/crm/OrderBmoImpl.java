@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -21,6 +22,7 @@ import com.al.crm.log.sender.ILogSender;
 import com.al.ec.serviceplatform.client.DataBus;
 import com.al.ec.serviceplatform.client.ResultCode;
 import com.al.ecs.common.util.DateUtil;
+import com.al.ecs.common.util.DigestUtils;
 import com.al.ecs.common.util.JsonUtil;
 import com.al.ecs.common.util.MDA;
 import com.al.ecs.common.util.PropertiesUtils;
@@ -67,6 +69,8 @@ public class OrderBmoImpl implements OrderBmo {
 	private static ILogSender logSender = (ILogSender) SpringContextUtil.getBean("defaultLogSender");
 	
 	private static HttpServletRequest request = null;
+	
+	private StringBuffer strBuffer = new StringBuffer();
 
 	/*
 	 * 销售品查询 (non-Javadoc)
@@ -2457,10 +2461,9 @@ public class OrderBmoImpl implements OrderBmo {
 			String chargeCheck=paramMap.get("chargeCheck").toString();
 			paramMap2.put("chargeCheck", chargeCheck);//代理商保证金校验结果，0展示现金，其他不展示
 		}
-		
 		paramMap2.put("olId",  olId);//购物车id
 		paramMap2.put("olNbr",  olNbr);//购物车流水
-		paramMap2.put("reqNo", reqNo);//传给支付平台的业务流水号要保证不同		
+		paramMap2.put("reqNo", reqNo);//传给支付平台的业务流水号要保证不同
 		String payAmount = paramMap.get("charge").toString(); 
 		String busiUpType=paramMap.get("busiUpType").toString();//业务类型，默认1手机业务
 		if ("4".equals(busiUpType)) {
@@ -2831,14 +2834,9 @@ public class OrderBmoImpl implements OrderBmo {
 		return returnMap;
 	}
 	
-	public Map<String, Object> insertCertInfo(Map<String, Object> param,
-			String flowNum, SessionStaff sessionStaff) throws Exception {
+	public void insertCertInfo(Map<String, Object> param, String flowNum, SessionStaff sessionStaff){
 		try{
 			String dbKeyWord = sessionStaff == null ? null : sessionStaff.getDbKeyWord();
-//			if(StringUtils.isBlank(dbKeyWord)){
-//				dbKeyWord = MapUtils.getString(dataBusMap, DATABUS_DBKEYWORD,"");
-//				dataBusMap.remove(DATABUS_DBKEYWORD);
-//			}
 			DataBus db = new DataBus();
 			db = ServiceClient.initDataBus(sessionStaff);
 			db.setResultCode("0");
@@ -2851,10 +2849,9 @@ public class OrderBmoImpl implements OrderBmo {
 				InterfaceClient.callServiceLog(logSeqId, dbKeyWord, db, flowNum,"readCert","readCert", sessionStaff,rawRetn, rawRetn, beginTime, beginTime,"","", "portal");
 			}
 		}catch(Exception e){
-			log.error("门户处理身份证信息插入日志服务返回的数据异常", e);
-			//throw new BusinessException(ErrorCode.EMERGENCYBOOT, param, db.getReturnlmap(), e);
-		}	
-		return null;
+			log.error("二代证读卡日志记录异常，异常信息={}", e);
+            log.error("二代证读卡日志记录异常，入参信息={}", JsonUtil.toString(param));
+		}
 	}
 	
 	public Map<String, Object> queryIfLteNewInstall(
@@ -2885,8 +2882,19 @@ public class OrderBmoImpl implements OrderBmo {
 	@SuppressWarnings("unchecked")
 	public Map<String, Object> downloadCustCertificate(Map<String, Object> param, SessionStaff sessionStaff) throws Exception{	
 		Map<String, Object> resultMap = new HashMap<String, Object>();
-		DataBus db = new DataBus();
-		db = InterfaceClient.callService(param, PortalServiceCode.INTF_DOWNLOAD_IMAGE, null, sessionStaff);
+		String olId = MapUtils.getString(param, "olId");
+		String srcFlag = MapUtils.getString(param, "srcFlag");
+		
+		if(StringUtils.isBlank(olId) || StringUtils.isBlank(srcFlag)){
+			resultMap.put("code",  ResultCode.R_FAIL);
+			resultMap.put("msg", "无效的入参olId、srcFlag。");
+			throw new BusinessException(ErrorCode.PORTAL_INPARAM_ERROR, param, resultMap, null);
+		}
+		
+		param.put(SysConstant.STAFF_ID, sessionStaff.getStaffId());
+		param.put(SysConstant.AREA_ID, MapUtils.getString(param, SysConstant.AREA_ID, sessionStaff.getCurrentAreaId()));
+		
+		DataBus db = InterfaceClient.callService(param, PortalServiceCode.INTF_DOWNLOAD_IMAGE, null, sessionStaff);
 		try{
 			if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db.getResultCode()))) {
 				resultMap = (Map<String, Object>)db.getReturnlmap().get("result");
@@ -2939,6 +2947,19 @@ public class OrderBmoImpl implements OrderBmo {
 			(actionFlag == 2  && isActionFlagLimited) || //套餐变更:加装新号码,加装已有号码,且客户证件为非身份证
 			actionFlag == 43  //返档
     	);
+        
+        //循环找出每次订单提交的virOlId
+        List<Map<String, Object>> custOrderAttrs = (List<Map<String, Object>>) orderListInfo.get("custOrderAttrs");
+        if(custOrderAttrs != null){
+        	for (Map<String, Object> custOrderAttr : custOrderAttrs) {
+            	if("810000000".equals(MapUtils.getString(custOrderAttr, "itemSpecId", ""))){
+            		//既然有该属性，说明已经拍照，则必然存在handleCustId
+            		if("".equals(MapUtils.getString(orderListInfo, "handleCustId", ""))){
+            			return false;
+            		}
+            	}
+            }
+        }
       
         /*if(isRealNameFlagOn && isHandleCustNeeded && isCheckCertificateComprehensive){
     		resultFlag = this.checkCustCertificateComprehensive(param, request);
@@ -3019,17 +3040,19 @@ public class OrderBmoImpl implements OrderBmo {
         Map<String, Object> orderList = (Map<String, Object>) param.get("orderList");
         Map<String, Object> orderListInfo = (Map<String, Object>) orderList.get("orderListInfo");
         List<Map<String, Object>> custOrderList = (List<Map<String, Object>>) orderList.get("custOrderList");
-        List<Map<String, String>> custOrderAttrs = (List<Map<String, String>>) orderListInfo.get("custOrderAttrs");
+        List<Map<String, Object>> custOrderAttrs = (List<Map<String, Object>>) orderListInfo.get("custOrderAttrs");
         String virOlId = null;//订单提交报文中的virOlId
         boolean isSuccessed = false;
         int C1Count = 0;//所有C1动作、且证件类型为身份证的节点数
         int successCount = 0;//所有C1动作、证件类型为身份证、且身份证校验成功数
         
         //循环找出每次订单提交的virOlId
-        for (Map<String, String> custOrderAttr : custOrderAttrs) {
-        	if("810000000".equals(custOrderAttr.get("itemSpecId").toString())){
-        		virOlId = custOrderAttr.get("value");
-        	}
+        if(custOrderAttrs != null){
+        	for (Map<String, Object> custOrderAttr : custOrderAttrs) {
+            	if("810000000".equals(MapUtils.getString(custOrderAttr, "itemSpecId", ""))){
+            		virOlId = MapUtils.getString(custOrderAttr, "value", "noVirOlIdFound");
+            	}
+            }
         }
 
         //先判断经办人证件、拍照是否上传成功，再进行身份证读卡信息校验
@@ -3394,5 +3417,170 @@ public class OrderBmoImpl implements OrderBmo {
 		//校验通过
 		resultMap.put("resultCode", ResultCode.R_SUCC);
 		return resultMap;
+	}
+	
+	public Map<String, Object> qryPreliminaryInfo(Map<String, Object> dataBusMap,
+			String optFlowNum, SessionStaff sessionStaff) throws Exception {
+		DataBus db = InterfaceClient.callService(dataBusMap,
+				PortalServiceCode.QRY_PRELININARY_INFO, optFlowNum, sessionStaff);
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		try{
+			// 服务层调用与接口层调用都成功时，返回列表；否则返回空列表
+			if (ResultCode.R_SUCC.equals(db.getResultCode())) {
+				resultMap = db.getReturnlmap();
+			} else {
+				resultMap.put("resultCode", ResultCode.R_FAILURE);
+				resultMap.put("resultMsg", db.getResultMsg());
+			}
+		} catch (Exception e) {
+			log.error("获取初审信息接口qryPreliminaryInfo服务返回的数据异常", e);
+			throw new BusinessException(ErrorCode.QRY_PRELININARY_INFO, dataBusMap, resultMap, e);
+		}
+		return resultMap;
+	}
+	
+	/**
+	 * USB二代证读卡校验
+	 * @param param
+	 * @param request
+	 * @param sessionStaff
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public Map<String, Object> certReaderVerify(Map<String, Object> param, HttpServletRequest request, SessionStaff sessionStaff){
+		
+		log.debug("二代证读卡校验-开始，staffId={}， paramStr={}", sessionStaff.getStaffId(), JsonUtil.toString(param));
+		
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		returnMap.put(SysConstant.RESULT_CODE, ResultCode.SUCCESS);
+		
+		String venderId = MapUtils.getString(param, "venderId", "");// 厂商标识
+		String signature = MapUtils.getString(param, "signature", "");// 数字签名
+		String versionSerial = MapUtils.getString(param, "versionSerial", "");// 版本号
+		String partyName = MapUtils.getString(param, "partyName", "");// 姓名
+		String gender = MapUtils.getString(param, "gender", "");// 性别
+		String nation = MapUtils.getString(param, "nation", "");// 民族
+		String bornDay = MapUtils.getString(param, "bornDay", "");// 出生日期
+		String certAddress = MapUtils.getString(param, "certAddress", "");// 地址
+		String certNumber = MapUtils.getString(param, "certNumber", "");// 身份证号码
+		String certOrg = MapUtils.getString(param, "certOrg", "");// 签发机关
+		String effDate = MapUtils.getString(param, "effDate", "");// 起始有效期
+		String expDate = MapUtils.getString(param, "expDate", "");// 终止有效期
+		String identityPic = MapUtils.getString(param, "identityPic", "");// 照片
+		
+		Map<String, Object> noticeInfos = (HashMap<String, Object>) MDA.CERT_SIGNATURE.get(SysConstant.NOTICE_INFOS);
+		Map<String, Object> certConfigsOfTheProv = (HashMap<String, Object>) MDA.CERT_SIGNATURE.get(SysConstant.CERT_SIGNATURE_PROV + sessionStaff.getCurrentAreaId().substring(0, 3));
+        //身份证阅读器省份开关 ON：开启校验  OFF不校验
+		boolean isValidate  = "ON".equals(MapUtils.getString(certConfigsOfTheProv, SysConstant.USB_SIGNATURE_CHECK, ""));
+        
+		if (isValidate) {
+			//分省开关开启
+			if (StringUtils.isBlank(venderId)) {
+				returnMap.put(SysConstant.RESULT_CODE, ResultCode.FAIL_ON);
+				returnMap.put(SysConstant.RESULT_MSG, MapUtils.getString(noticeInfos, "venderIdInvalid", "读卡器控件版本过低，请联系厂商升级驱动版本"));
+			} else {
+				Map<String, Object> vendors = MapUtils.getMap(certConfigsOfTheProv, "VENDORS");
+				Map<String, Object> vendorConfigs = MapUtils.getMap(vendors, venderId);
+				if (vendorConfigs == null) {
+					//未在集约 CRM 许可范围内
+					returnMap.put(SysConstant.RESULT_CODE, ResultCode.FAIL_ON);
+					returnMap.put(SysConstant.RESULT_MSG, MapUtils.getString(noticeInfos, "venderInvalid", "读卡器未在集约 CRM 许可范围内，请联系厂商升级驱动"));
+				} else {
+					if ("ON".equals(MapUtils.getString(vendorConfigs, "isOpen", ""))){
+						// 启用新规范控件校验
+						String mdaVersion = MapUtils.getString(vendorConfigs, "version", "");
+						if (StringUtils.isBlank(signature) || StringUtils.isBlank(versionSerial)){
+							returnMap.put(SysConstant.RESULT_CODE, ResultCode.FAIL_ON);
+							returnMap.put(SysConstant.RESULT_MSG, MapUtils.getString(noticeInfos, "versionInvalid", "读卡器控件版本过低，请联系厂商升级驱动版本"));
+						} else {
+							if (versionSerial.equals(mdaVersion)) {// 校验版本号
+								String appSecret = MapUtils.getString(vendorConfigs, "appSecret", "");
+								this.strBuffer.setLength(0);
+								this.strBuffer.append(partyName)
+									.append(gender)
+									.append(nation)
+									.append(bornDay)
+									.append(certAddress)
+									.append(certNumber)
+									.append(certOrg)
+									.append(effDate)
+									.append(expDate)
+									.append(identityPic)
+									.append(appSecret);
+								String sha1Str = DigestUtils.sha1ToHex(this.strBuffer.toString());
+								if (!signature.equals(sha1Str)) {
+									// 信息被篡改
+									returnMap.put(SysConstant.RESULT_CODE, ResultCode.FAIL_TW);
+									returnMap.put(SysConstant.RESULT_MSG, MapUtils.getString(noticeInfos, "signatureInvalid", "证件信息被篡改，请确认按照正确流程操作"));
+								}
+							} else {
+								param.clear();
+								param.put("fileUrl", venderId + "_" + mdaVersion);
+								param.put("mdaVersion", mdaVersion);
+								param.put("fileName", MapUtils.getString(vendorConfigs, "name", ""));
+
+								returnMap.put(SysConstant.RESULT_CODE,ResultCode.FAIL_TH);
+							}
+						}
+					} else {
+						String noticeInfoStr = MapUtils.getString(noticeInfos, "isOpenInvalid", "");
+						if ("".equals(noticeInfoStr)) {
+							noticeInfoStr = "读卡器驱动未通过集团 CRM 验证，请联系" + MapUtils.getString(vendorConfigs, "name", "") + "厂商升级驱动";
+						} else {
+							noticeInfoStr = StringUtils.replace(noticeInfoStr, "%", MapUtils.getString(vendorConfigs, "name", ""));
+						}
+						returnMap.put(SysConstant.RESULT_CODE, ResultCode.FAIL_ON);
+						returnMap.put(SysConstant.RESULT_MSG, noticeInfoStr);
+					}
+				}
+			}
+		}
+		
+		log.debug("二代证读卡校验-结束，staffId={}，resultStr={}", sessionStaff.getStaffId(), JsonUtil.toString(returnMap));
+        return returnMap;
+	}
+	
+	/**
+	 * 实名审核记录接口
+	 * @param params <br/>olId和checkType必传，否则抛BusinessException；<br>areaId和staffId若为空，则以session替代；<br>srcFlag若为空，则以"REAL"替代
+	 * @param sessionStaff
+	 * @return
+	 * @throws InterfaceException
+	 * @throws IOException
+	 * @throws BusinessException
+	 * @throws Exception
+	 */
+	public Map<String, Object> savePhotographReviewRecord(Map<String, Object> params, SessionStaff sessionStaff) throws InterfaceException, IOException, BusinessException, Exception {
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		
+		String olId = MapUtils.getString(params, "olId", "");
+		String checkType = MapUtils.getString(params, "checkType", "");
+		
+		if(StringUtils.isBlank(olId) || StringUtils.isBlank(checkType)){
+			returnMap.put(SysConstant.RESULT_CODE, ResultCode.R_FAILURE);
+			returnMap.put(SysConstant.RESULT_MSG, "无效的入参olId、checkType。");
+			throw new BusinessException(ErrorCode.PORTAL_INPARAM_ERROR, params, returnMap, null);
+		}
+		
+		params.put("srcFlag", MapUtils.getString(params, "srcFlag", "REAL"));
+		params.put(SysConstant.STAFF_ID, MapUtils.getString(params, SysConstant.STAFF_ID, sessionStaff.getStaffId()));
+		params.put(SysConstant.AREA_ID, MapUtils.getString(params, SysConstant.AREA_ID, sessionStaff.getCurrentAreaId()));
+		
+		DataBus db = InterfaceClient.callService(params, PortalServiceCode.SAVE_PHOTOGRAPH_REVIEW_RECORD, null, sessionStaff);
+		try {
+			String resultCode = StringUtils.defaultString(db.getResultCode(), "1");
+			if (ResultCode.R_SUCC.equals(resultCode)) {
+				returnMap.put(SysConstant.RESULT_CODE, ResultCode.R_SUCC);
+			} else {
+				returnMap.put(SysConstant.RESULT_CODE, ResultCode.R_FAILURE);
+			}
+			//resultCode为0或1时，都从resultMsg获取信息
+			returnMap.put(SysConstant.RESULT_MSG, db.getResultMsg());
+		} catch (Exception e) {
+			log.error("门户处理后台的的service/intf.fileOperateService/saveRealCheckRecord服务返回的数据异常", e);
+			throw new BusinessException(ErrorCode.SAVE_PHOTOGRAPH_REVIEW_RECORD, params, db.getReturnlmap(), e);
+		}
+		
+		return returnMap;
 	}
 }
