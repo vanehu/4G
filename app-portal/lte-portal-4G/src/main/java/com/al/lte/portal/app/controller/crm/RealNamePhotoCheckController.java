@@ -75,6 +75,7 @@ public class RealNamePhotoCheckController extends BaseController{
 	/** 人证相符审核实名制传虚拟订单号 */
 	public static final String SESSION_CONFIRMAGREE_SMS_OLID = "_confirmAgree_sms_olId";
 	
+	
 	@Autowired
 	@Qualifier("com.al.lte.portal.bmo.crm.OrderBmo")
 	private OrderBmo orderBmo;
@@ -413,8 +414,16 @@ public class RealNamePhotoCheckController extends BaseController{
 
 	@RequestMapping(value = "/smsValid", method = RequestMethod.POST)
 	@ResponseBody
-	public JsonResponse smsValid(@RequestParam("smspwd") String smsPwd,@RequestParam("number") String number,
+	public JsonResponse smsValid(@RequestBody Map<String, Object> param,
 			HttpServletRequest request ,HttpServletResponse response) throws Exception {
+		String smsPwd="";
+		String number="";
+		if(param.get("smspwd")!=null){
+			smsPwd=param.get("smspwd").toString();	
+		}
+		if(param.get("number")!=null){
+			number=param.get("number").toString();	
+		}
 		this.log.debug("smsValid={}", smsPwd);
 		// 验证码内容
 		String smsPwdSession = (String) ServletUtils.getSessionAttribute(
