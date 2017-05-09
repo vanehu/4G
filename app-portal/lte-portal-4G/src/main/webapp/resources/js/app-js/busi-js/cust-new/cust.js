@@ -2780,9 +2780,9 @@ cust = (function(){
 	var _showAccountModify = function(scope){
 		var _isShowAcc = $(scope).val();
 		$("#accountName_mod").val(cust.readIdCardUser.partyName);
-		if(_isShowAcc == "1"){//账户名称不改
+		if(_isShowAcc == "2"){//账户名称更改
 			$("#modAccountProfile").show();
-		} else {//账户名称更改
+		} else {//账户名称不改
 			$("#modAccountProfile").hide();
 		}
 	}

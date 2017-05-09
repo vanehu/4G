@@ -274,7 +274,7 @@ custQuery = (function(){
 			idCardNumber : $(scope).attr("idCardNumber"), //$(scope).find("td:eq(4)").text(),
 			identityName : $(scope).attr("identityName"),
 			areaName : $(scope).attr("areaName"),
-			areaId : $(scope).attr("areaId"),
+			areaId : $(scope).attr("areaId")+"",
 			identityCd :$(scope).attr("identityCd"),
 			addressStr :$(scope).attr("addressStr"),
 			norTaxPayer :$(scope).attr("norTaxPayer"),
@@ -291,6 +291,15 @@ custQuery = (function(){
 			canRealName:$(scope).attr("canrealname")
 			
 		};
+		
+//		if(home.menuData.isProvenceMenu == "Y"){
+//			$("#custQuerycontent").hide();
+//			$("#cust-query-list").hide();
+//			OrderInfo.cust = _choosedCustInfo;
+//			provence.sendRandom();
+//			return;
+//		}
+		
 		if("9" != OrderInfo.actionFlag){
 			_choosedCustInfo.CN=_choosedCustInfo.CN.replace(/=/g,"&#61");
 			_choosedCustInfo.certNum=_choosedCustInfo.certNum.replace(/=/g,"&#61");
@@ -328,10 +337,10 @@ custQuery = (function(){
 		}
 		
 //		 判断是否是政企客户
-		if(_choosedCustInfo.isGov == "Y" && "19" != OrderInfo.actionFlag){
-			$.alert("提示","政企客户不允许受理该业务！");
-			return;
-		}
+//		if(_choosedCustInfo.isGov == "Y" && "19" != OrderInfo.actionFlag){
+//			$.alert("提示","政企客户不允许受理该业务！");
+//			return;
+//		}
 		
 		if(_choosedCustInfo.isGov != "Y" && "19" == OrderInfo.actionFlag){
 			$.alert("提示","客户证件类型为！【"+_choosedCustInfo.identityName+"】，"+"证件号码为："+_choosedCustInfo.idCardNumber+"，当前不能办理此业务！");

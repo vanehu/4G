@@ -712,20 +712,26 @@ order.phoneNumber = (function(){
 	
    //副卡号码池数据展示
 	var _showSecondaryCardModalData=function(){
+		var propertiesKey = "FUKA_SHIYR_"+(OrderInfo.staff.soAreaId+"").substring(0,3);
+	    var isFlag = offerChange.queryPortalProperties(propertiesKey);
 		if(OrderInfo.actionFlag==6){//加装副卡
 			if(order.memberChange.memberDelList.length>0){//存在拆除的副卡不许新增副卡
 				$.alert("提示","不允许同时办理拆机和新增副卡！");
 				return;
 			}
+			//使用人开关关闭 一五校验前置 
+			//使用人开关打开 一五校验在选择使用人时进行校验
 			//一五校验
-//			if(!cust.preCheckCertNumberRel()){//一五校验
-//				return;
-//			}
+			if(isFlag!="ON" && !cust.preCheckCertNumberRel()){//一五校验
+				return;
+			}
 		}
-//		if(cust.usedNum!=undefined && (order.phoneNumber.secondaryCarNum+cust.usedNum)>=5){//一证五号
-//			$.alert("提示","一个用户证件下不能有超过五个号码!");
-//			return;
-//		}
+		//使用人开关关闭 一五校验前置
+		//使用人开关打开 一五校验在选择使用人时进行校验
+		if(isFlag!="ON" && cust.usedNum!=undefined && (order.phoneNumber.secondaryCarNum+cust.usedNum)>=5){//一证五号
+			$.alert("提示","一个用户证件下不能有超过五个号码!");
+			return;
+		}
 		if(order.phoneNumber.secondaryCarNum>=order.service.max){//副卡添加数已达最大
 			return;
 		}
