@@ -567,8 +567,6 @@ cart.main = (function() {
 			 srcFlag	: "REAL",
 			 olId		: $("#p_qry_olId").val().trim()
 	 }
-	 params.olId="201704253300001083";
-	 params.areaId="8220100";
 	 _checkOlId=params.olId;
 	 $.callServiceAsJson(contextPath+"/app/realName/photoCheck/downloadCustCertificate", params, {
 			"before":function(){
@@ -620,8 +618,6 @@ cart.main = (function() {
 					"srcFlag"       :"REAL",
 					"staffId"       :OrderInfo.staff.staffId+""
 				};
-		 params.olId="201704253300001083";
-		 params.areaId="8220100";
 		$.callServiceAsJson(contextPath + "/app/realName/photoCheck/savePhotographReviewRecord", params, {
 			"before" : function() {
 				$.ecOverlay("<strong>正在确认审核信息, 请稍等...</strong>");
