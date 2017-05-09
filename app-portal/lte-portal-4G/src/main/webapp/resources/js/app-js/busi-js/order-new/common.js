@@ -227,6 +227,7 @@ common = (function($) {
 		var propertiesKey = "PHOTOGRAPH_REVIEW_"
 			+ (OrderInfo.staff.soAreaId + "").substring(0, 3);
 	   var isON = offerChange.queryPortalProperties(propertiesKey);
+	    arr[2]="";
 		arr[3]=isON;
 		MyPlugin.photoProcess(arr,
             function(result) {

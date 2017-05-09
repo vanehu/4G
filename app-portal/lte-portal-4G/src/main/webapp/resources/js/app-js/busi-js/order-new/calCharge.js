@@ -40,6 +40,7 @@ order.calcharge = (function(){
 		money=0;
 		submit_success=false;
 		inOpetate=false;
+		order.calcharge.haveCharge=false;
 		var refundType = "0" ;//是否允许修改实收，>0表示不能
 		var actionFlag=OrderInfo.actionFlag;
 		if(OrderInfo.actionFlag==201){
