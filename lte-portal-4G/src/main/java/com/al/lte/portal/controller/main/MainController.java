@@ -173,6 +173,29 @@ public class MainController extends BaseController {
 								"PHOTOGRAPH_REVIEW_" + StringUtils.substring(new String(sessionStaff.getCurrentAreaId()), 0, 3), ""));
 			}
     	}
+    	//是否需要人像审核
+		Object sessionPhotographReviewFlag = ServletUtils.getSessionAttribute(request, SysConstant.RXSHGN);
+    	if(sessionPhotographReviewFlag == null){
+			boolean isPhotographReviewNeeded = false;//默认无权限，需要必填经办人且拍照
+			try {
+				isPhotographReviewNeeded = "0".equals(staffBmo.checkOperatBySpecCd(SysConstant.RXSHGN , sessionStaff));
+			} catch (BusinessException be) {
+				log.error("系管权限查询接口sys-checkOperatSpec异常：", be);
+				return super.failedStr(model, be);
+			} catch (InterfaceException ie) {
+				log.error("系管权限查询接口sys-checkOperatSpec异常：", ie);
+				return super.failedStr(model, ie, null, ErrorCode.CHECKOPERATSPEC);
+			} catch (IOException ioe) {
+				log.error("系管权限查询接口sys-checkOperatSpec异常：", ioe);
+				return super.failedStr(model, ErrorCode.CHECKOPERATSPEC, ioe, null);
+			} catch (Exception e) {
+				log.error("系管权限查询接口sys-checkOperatSpec异常：", e);
+				return super.failedStr(model, ErrorCode.CHECKOPERATSPEC, e, null);
+			} finally{
+				ServletUtils.setSessionAttribute(request, SysConstant.RXSHGN, isPhotographReviewNeeded);
+			}
+    	}
+    	
 		/** 测试卡权限 **/
 		String specialtestauth = "-1";
 		try {

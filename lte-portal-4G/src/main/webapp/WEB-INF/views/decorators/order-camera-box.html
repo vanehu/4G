@@ -30,7 +30,10 @@
 	        	</div>
       		</div>                   
       		<div align="center" style="margin:30px auto;" id="photographReviewDiv">
-      			<#if Session["PHOTOGRAPH_REVIEW_FLAG"] ?? && (Session["PHOTOGRAPH_REVIEW_FLAG"]=="ON") >
+      			<#if Session["PHOTOGRAPH_REVIEW_FLAG"] ?? 
+      				&& (Session["PHOTOGRAPH_REVIEW_FLAG"]=="ON") 
+      				&& Session["RXSHGN"] ?? 
+      				&& (Session["RXSHGN"]?string("true","false")=="true")>
 			    	<select id="auditStaffList">
 			        	<option value="-1">--请选择审核人员--</option>
 			        </select>

@@ -3067,8 +3067,8 @@ SoOrder = (function() {
 					$.alert("提示","经办人拍照信息不能为空！请确认页面是否已点击【读卡】或者【查询】按钮，并且进行拍照和人证相符等操作！");
 					return false ;
 				}
-				//拍照审核校验
-				if(ec.util.isObj(auditMode) && auditMode == "1" && CONST.photographReviewFlag == "ON"){//现场审核
+				//现场审核，拍照审核校验
+				if(CONST.photographReviewFlag == "ON" && CONST.isPhotographReviewNeeded && ec.util.isObj(auditMode) && auditMode == "1"){
 					if(!isAuditSucess){
 						$.alert("提示", "请完成经办人人像审核操作！");
 						return false ;

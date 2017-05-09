@@ -3605,7 +3605,7 @@ order.cust = (function(){
 		$("#photographReviewDiv").show();
 		$("#auditDiv").hide();
 		_getCameraInfo();
-		if(CONST.photographReviewFlag == "ON"){
+		if(CONST.photographReviewFlag == "ON" && CONST.isPhotographReviewNeeded){
 			order.query.qryOperateSpecStaffList();
 		}
 	};
@@ -3789,7 +3789,7 @@ order.cust = (function(){
 		var auditStaff = $("#auditStaffList").val();
 		var auditMode = $("#auditMode").val();
 		
-		if(CONST.photographReviewFlag == "ON"){
+		if(CONST.photographReviewFlag == "ON" && CONST.isPhotographReviewNeeded){
 			if(!ec.util.isObj(auditStaff) || auditStaff == "-1"){
 				$.alert("提示", "请选择审核人");
 				return;
@@ -3843,7 +3843,7 @@ order.cust = (function(){
 			}
 			
 			//现场审核补充参数
-			if(auditMode == "1" && CONST.photographReviewFlag == "ON"){
+			if(CONST.isPhotographReviewNeeded && CONST.photographReviewFlag == "ON" && auditMode == "1"){
 				$.each(pictures, function(){
 					this.checkType = auditMode;
 				});
@@ -3860,7 +3860,7 @@ order.cust = (function(){
 				photographs	: pictures
 		    };
 			
-			if(CONST.photographReviewFlag == "ON"){
+			if(CONST.photographReviewFlag == "ON" && CONST.isPhotographReviewNeeded){
 				if(auditMode == "1"){//现场审核，短信校验通过再上传
 					//发送短信
 					_sendSms4Audit("1");
@@ -4485,6 +4485,7 @@ $(function() {
    order.cust.initDic();
    OrderInfo.specialtestauth = !query.common.checkOperateSpec(CONST.ZYCSK);
    CONST.isHandleCustNeeded = query.common.checkOperateSpec(CONST.TGJBRBTQX);
+   CONST.isPhotographReviewNeeded = !query.common.checkOperateSpec(CONST.RXSHGN);
    CONST.realNamePhotoFlag = query.common.queryPropertiesValue("REAL_NAME_PHOTO_" + String(OrderInfo.staff.areaId).substr(0, 3));
    CONST.photographReviewFlag = query.common.queryPropertiesValue("PHOTOGRAPH_REVIEW_" + String(OrderInfo.staff.areaId).substr(0, 3));
 });

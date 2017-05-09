@@ -888,4 +888,7 @@ public final class SysConstant {
     
     /** 实名制拍照人像审核分省开关，默认OFF(4GWEB+能力共用)*/
     public static final String PHOTOGRAPH_REVIEW_FLAG = "PHOTOGRAPH_REVIEW_FLAG";
+    
+    /**跳过经办人人像审核权限*/
+    public static final String RXSHGN = "RXSHGN";
 }
