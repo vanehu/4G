@@ -21,12 +21,13 @@
                   <td>&nbsp;<!-- <img src="" width="16" height="16" class="showsuborder" /> --></td>
                   <td>${order.areaName}</td>
                   <td>${order.channelName}</td>
-                  <td>${order.staffName}</td>
+                  <td id="undostaffname">${order.staffName}</td>
                   <td>${order.soDate}</td>
                   <td>${order.soStatusDt}</td>
                   <td>${order.olNbr}</td>
                   <td>${order.statusName}
-                  <input id="areaId_${order.olNbr}"  value=${order.areaId} type="hidden"></td>
+                  <input id="areaId_${order.olNbr}"  value=${order.areaId} type="hidden">
+                  <input id="olType_${order.olNbr}"  value=${order.olType} type="hidden"></td>
                   <td>
                   <#assign undo_num=0 >
                   <#assign new_prod_num=0 >

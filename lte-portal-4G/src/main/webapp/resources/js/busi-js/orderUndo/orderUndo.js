@@ -143,16 +143,31 @@ order.undo = (function(){
 			easyDialog.open({
 				container : 'undo_d_main'
 			});
+			var olNbr= $("#"+id).attr("olNbr");
+			if($("#olType_"+olNbr).val()==CONST.OL_TYPE_CD.ESS){
+				$("#tremark").text("撤单原因：");
+				$("#undor").show();
+				$("#undo_d_form").off().bind("formIsValid", function(event, form){
+					submit_id = id ;
+					submit_type = y_n ;
+					undo_type = all_only;
+					easyDialog.close();
+					_undoCheckSer();
+				}).ketchup({bindElement:"undo_d_bt"});
+			}else{
+				$("#tremark").text("撤单备注：");
+				$("#undor").hide();
+				$("#undo_d_bt").off("click").on("click",function(event){
+					submit_id = id ;
+					submit_type = y_n ;
+					undo_type = all_only;
+					easyDialog.close();
+					_undoCheckSer();
+				});
+			}
 			$("#undo_d_close").off("click").on("click",function(event){
 				easyDialog.close();
 				$("#undo_d_txt").val("");
-			});
-			$("#undo_d_bt").off("click").on("click",function(event){
-				submit_id = id ;
-				submit_type = y_n ;
-				undo_type = all_only;
-				easyDialog.close();
-				_undoCheckSer();
 			});
 			$("#undo_d_no").off("click").on("click",function(event){
 				easyDialog.close();
@@ -312,9 +327,21 @@ order.undo = (function(){
 		//var busiObj = {"objId":$("#"+id).attr("objId"),"name":"","instId":$("#"+id).attr("instId")};
 		var busiObj = {"objId":$("#"+id).attr("objId"),"instId":$("#"+id).attr("instId"),"accessNumber":$("#"+id).attr("acctnbr")};
 		var boActionType = {"actionClassCd":$("#"+id).attr("actionClassCd"),"boActionTypeCd":"3000"};
-		
 		var busiOrderAttrs = new Array() ;
-		var busiOrderAttrs_row = {"atomActionId":atomActionId,"itemSpecId":CONST.ITEM_SPEC_ID_CODE.busiOrderAttrs,"value":$("#undo_d_txt").val()};
+		var remark = $("#undo_d_txt").val();
+		if($("#olType_"+$("#"+id).attr("olnbr")).val()==CONST.OL_TYPE_CD.ESS){
+			//“人员信息”于“时间”在4G前台操作撤单，基于原因“撤单原因”
+			var MM,dd,hh,mm,ss,d;  
+			d= new Date();
+		    MM=d.getMonth()+1;   
+            dd=d.getDate();   
+            hh=d.getHours();   
+            mm=d.getMinutes();   
+            ss=d.getSeconds();     
+		    var currentdate = d.getFullYear()+"/"+MM+"/"+dd+" "+hh+"/"+mm+"/"+ss;   
+			remark =  $("#undostaffname").text() + "于" + currentdate + "在4G前台操作撤单,原因为：" + $("#undo_d_txt").val();
+		}
+		var busiOrderAttrs_row = {"atomActionId":atomActionId,"itemSpecId":CONST.ITEM_SPEC_ID_CODE.busiOrderAttrs,"value":remark};
 		busiOrderAttrs.push(busiOrderAttrs_row);
 		
 		atomActionId -- ;

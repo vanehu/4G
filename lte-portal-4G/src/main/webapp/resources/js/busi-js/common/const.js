@@ -16,7 +16,8 @@ CONST = (function(){
 		APP : 15, // app 标示
 		LTE : 10,
 		UI_LTE : 8,
-		ZDYY : 14
+		ZDYY : 14,
+		ESS : 17
 	};
 	
 	//附属销售品标签分类

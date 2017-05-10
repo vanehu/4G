@@ -210,25 +210,21 @@
 	<form id="undo_d_form">
 	<h1 class="easyDialogTitle" id="undo_d_title" >撤单确认</h1>
 	<div class="infoBox">
-		<table class="network" style="text-align: center;" >
+		<table class="network" style="margin: 0px 25px;">
                           <tbody>
-                          <tr style="" >
-                                <td width="80">撤单备注：</td>
-                                <td width="300" align="center">
-                                	<textarea id="undo_d_txt" name="undo_d_txt" cols="" rows="" style="width: 290px"></textarea>
-                                </td>
-                                <td width="80"></td>
-                          </tr>   
-                          <tr style="text-align: center;" >
-                          	<td></td>
-                          	<td align="center">
-                          		<a class="purchase" id="undo_d_bt" href="javascript:void(0)">撤单</a>
-                            	<a class="purchase" id="undo_d_no" href="javascript:void(0)">取消</a>
-                          	</td>
-                          	<td></td>
-                          </tr>
+	                          <tr style="" >
+	                                <td width="80" id="tremark">撤单备注：</td>
+	                                <td width="300" align="center">
+	                                    <textarea type ="textarea" id="undo_d_txt" maxlength="500" name="undo_d_txt" data-validate="validate(required:请准确填写撤单原因) on(blur)" cols="" rows="" style="width: 290px"></textarea>
+	                                </td>
+	                                <td width="80"> <label class="f_red" id="undor">*</label> </td>
+	                          </tr>   
                         </tbody>
-                    </table>
+         </table>
+         <div align="center" style="margin: 20px auto;">
+                    <a class="btna_o" id="undo_d_bt"  href="javascript:void(0)"><span>撤单</span></a>
+                    <a style=" margin-left:20px;" class="btna_o" href="javascript:void(0)" id="undo_d_no"><span>取消</span></a>
+          </div>
     </div>
     </form>
 	</div>
