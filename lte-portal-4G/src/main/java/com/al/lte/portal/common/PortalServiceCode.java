@@ -1183,7 +1183,6 @@ public final class PortalServiceCode {
 
     /** 获取seq接口 */
     public static final String GET_SEQ = "biz-service/intf.soService/getSeq";
-
     /** 实名信息采集单订单提交 */
     public static final String CLT_ORDER_SUBMIT = "biz-service/intf.soService/commitCollectionOrder";
     
@@ -1208,5 +1207,9 @@ public final class PortalServiceCode {
     /**实名审核记录接口*/
     public static final String SAVE_PHOTOGRAPH_REVIEW_RECORD = "biz-service/intf.fileOperateService/saveRealCheckRecord";
 
+    /**员工身份信息验证*/
+    public static final String CHECKSTAFFMESSAGE = "sys-checkStaffMessage";
+    /**员工密码修改*/
+    public static final String UPDATTEPASSWORD = "sys-updatePassword";
 }
 

@@ -178,6 +178,8 @@ public class StaffBmoImpl implements StaffBmo {
 		DataBus db = InterfaceClient.callService(dataBusMap, 
 				PortalServiceCode.INTF_STAFF_LOGIN, optFlowNum, sessionStaff);
 		try {
+			log.error("db====",db.getResultCode());
+			log.error("db====",MapUtils.getString(db.getReturnlmap(), "resultMsg", "无错误信息"));
 			String resultCode = StringUtils.defaultString(db.getResultCode(), "1");
 			returnMap.put("resultCode", resultCode);
 			returnMap.put("resultMsg", MapUtils.getString(db.getReturnlmap(), "resultMsg", "无错误信息"));			
@@ -1030,5 +1032,39 @@ public class StaffBmoImpl implements StaffBmo {
 		}
 		
 		return returnMap;
+	}
+	@Override
+	public Map<String, Object> checkStaffMessage(
+			Map<String, Object> dataBusMap, String optFlowNum,
+			SessionStaff sessionStaff) throws Exception {
+		// TODO Auto-generated method stub
+		DataBus db = InterfaceClient.callService(dataBusMap, PortalServiceCode.CHECKSTAFFMESSAGE, null, null);
+		Map<String, Object> retnMap = new HashMap<String, Object>();
+		if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db
+				.getResultCode()))) {
+			Map<String, Object> resultMap = db.getReturnlmap();
+			return resultMap;
+		} else {
+			retnMap.put("resultCode", ResultCode.R_FAIL);
+			retnMap.put("msg", db.getResultMsg());
+		}
+		return retnMap;
+	}
+
+	@Override
+	public Map<String, Object> updatePassword(Map<String, Object> param, String optFlowNum,
+			SessionStaff sessionStaff)throws Exception {
+		// TODO Auto-generated method stub
+		DataBus db = InterfaceClient.callService(param, PortalServiceCode.UPDATTEPASSWORD, null, null);
+		Map<String, Object> retnMap = new HashMap<String, Object>();
+		if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db
+				.getResultCode()))) {
+			Map<String, Object> resultMap = db.getReturnlmap();
+			retnMap.put("code", resultMap.get("resultCode"));
+		} else {
+			retnMap.put("code", ResultCode.R_FAIL);
+			retnMap.put("msg", db.getResultMsg());
+		}
+		return retnMap;
 	}
 }

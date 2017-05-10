@@ -98,4 +98,9 @@ public interface StaffBmo {
 	 */
 	public Map<String, Object> qryOperateSpecStaffList(String operatSpecCd, SessionStaff sessionStaff) throws InterfaceException, IOException, BusinessException, Exception;
 
+	public Map<String, Object> checkStaffMessage(Map<String, Object> dataBusMap, String optFlowNum, SessionStaff sessionStaff)
+			throws Exception;
+
+	public  Map<String, Object> updatePassword(Map<String, Object> param,  String optFlowNum, SessionStaff sessionStaff)throws Exception;
+	
 }

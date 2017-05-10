@@ -16,7 +16,8 @@
 <script src="${contextPath}/js/busi-js/staff/passwordMgr.js?${jsversion}" type="text/javascript"></script>
 <script src="${contextPath}/js/our-js/global.js?${jsversion}" type="text/javascript"></script>
 <!-- <script src="${contextPath}/js/busi-js/staff/staffMgr.js?${jsversion}" type="text/javascript"></script> -->
-
+<script src="${contextPath}/js/busi-js/staff/qrLogin.js?${jsversion}" type="text/javascript"></script>
+ <input type='text' id='resetPwd'  style="display:none"/>
 <div class="main_div" id="main_content">
 	<!--位置导航 end-->
 	<div class=" main_warp m_top0">  
@@ -74,6 +75,26 @@
 					             <div>
 				                        <p class="floatleft"><input id="staffCode" type="text" value="" class="inputWidth228px" data-validate="validate(required:工号不能为空) on(keyup blur)" placeholder="请输入工号" maxlength="64"/>
 				                        &nbsp;&nbsp;&nbsp;&nbsp;<span  id="tip" style ="display:none" class="f_red"> 该工号不存在，请输入正确工号</span>
+				                        </p>
+			                    </div>
+			                 </td>
+			                 </tr>
+			                 <tr> 
+			                 <td width="100">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;身份证号：</td>
+					          <td>
+					             <div>
+				                        <p class="floatleft"><input id="idCardNumber" type="text" value="" class="inputWidth228px" data-validate="validate(required:身份证号码不能为空) on(keyup blur)" placeholder="请输入身份证号码" maxlength="18"/>
+				                        &nbsp;&nbsp;&nbsp;&nbsp;<span  id="tip" style ="display:none" class="f_red"> 身份证号输入错误</span>
+				                        </p>
+			                    </div>
+			                 </td>
+			                 </tr>
+			                 <tr>
+			                 <td width="100">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;手机号：</td>
+					          <td>
+					             <div>
+				                        <p class="floatleft"><input id="phoneNo" type="text" value="" class="inputWidth228px" data-validate="validate(required:手机号不能为空) on(keyup blur)" placeholder="请输入手机号" maxlength="11"/>
+				                        &nbsp;&nbsp;&nbsp;&nbsp;<span  id="tip" style ="display:none" class="f_red"> 手机号输入错误</span>
 				                        </p>
 			                    </div>
 			                 </td>
@@ -178,6 +199,8 @@
         	</div>
         </div>
     </div>
-
+<script type="text/javascript">
+var qrLoginParam = {};
+</script>
 
 

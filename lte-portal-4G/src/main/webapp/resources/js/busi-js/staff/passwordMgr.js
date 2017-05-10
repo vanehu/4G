@@ -53,11 +53,6 @@ password.info = (function(){
 				},
 				"done":function(response){
 					if (response.code == 0) {
-//						$.confirm("信息",response.data
-//								,{yes:function(
-//						){
-//							window.location.href=contextPath+"/staff/login/page";
-//						},no:""});
 						if(confirm("密码修改成功，您是否需要重新登录?"))
 						{
 							window.location.href = "http://crm.189.cn/ltePortal/";
@@ -95,20 +90,20 @@ password.info = (function(){
 			if (smspwd=="") {
 				smspwd="N";
 			}
-			var params="smspwd=" + smspwd;
-			//_setDisable("#smsbutton", "#loginSmsForm");
+			var params = {
+					"areaId":$("#p_password_areaId").val(),
+					"newPwd":MD5($("#resetPwd").val()),
+					"smsPwd":smspwd
+			};
 			$.callServiceAsJson(contextPath+"/passwordMgr/smsValid", params, {
 				"before":function(){
 					$.ecOverlay("<strong>验证短信随机码中,请稍等会儿....</strong>");
-//					_setDisable("#smsbutton", "#loginSmsForm");
 				},
-				"done" : callBack_success_sms_f,
+				"done" : callBack_SUS_Sms_f,
 				"always":function(){
 					$.unecOverlay();
-//					_setEnable("#smsbutton", "#loginSmsForm");
 				}
 			});
-			//_setEnable("#smsbutton", "#loginSmsForm");
 		};
 		//短信发送成功回调函数
 		var callBack_success_sms_f =function(response){
@@ -138,25 +133,43 @@ password.info = (function(){
 				staff.login.smsErrorCount=staff.login.smsErrorCount+1;
 				$.alert("提示",response.data);
 			}else {
-				//if(response.errorsList&& response.errorsList.length>0 ){
-				//	$.alert("提示",response.errorsList[0].message);
-				//} else {
 					$.alert("提示",response.data);
-				//}
 			}
-			//_setEnable("#smsbutton", "#loginSmsForm");
 		};
+		var callBack_SUS_Sms_f =function(response){
+			if (response.code == 0) {
+				$.confirm("信息","您好，您的新密码已发送到您手机，一次登录有效，请及时登录系统修改。"
+						,{yes:function(
+				){
+					window.location.href=contextPath+"/staff/login/page";
+				},no:""});
+			}else if (response.code == -2) {
+				$.alertM(response.data);
+				
+			} else if (response.code ==1001){
+				ec.util.showErrors(response.errorsList,$("#form1"));
+			//参数业务校验不通过
+			} else if (response.code ==1004){	
+				ec.util.showErrors(response.errorsList,$("#form1"));
+			} else if(response.code==1){
+				staff.login.smsErrorCount=staff.login.smsErrorCount+1;
+				$.alert("提示",response.data);
+			}else {
+					$.alert("提示",response.data);
+			}
+		}
 		function _queryStaff(qryPage){
-			//_refreshValidateCodeImg();
 			$("#tip").hide(); 
 			var param = {
 					"areaId":$("#p_password_areaId").val(),
-					"code":$("#staffCode").val(),
+					"staffCode":$("#staffCode").val(),
+					"IDcard":MD5($("#idCardNumber").val()),
+					"mobilePhone":$("#phoneNo").val(),
 					"pageIndex":qryPage,
 					"pageSize":10
 			};
 			var vali = $("#vali_code_input").val().toUpperCase();
-			$.callServiceAsJson(contextPath + "/passwordMgr/getStaff?validatecode="+vali,param,{
+			$.callServiceAsJson(contextPath + "/passwordMgr/checkStaffMessage?validatecode="+vali,param,{
 				"before":function(){
 					$.ecOverlay("<strong>正在查询中,请稍等会儿....</strong>");
 				},
@@ -166,8 +179,6 @@ password.info = (function(){
 				"done" : function(response){
 					_refreshValidateCodeImg();
 					if(response.code == 1005){
-						//$("#validatecode_li").show();
-						//ec.util.showErrors(response.errorsList,$("#form"));
 						$.alert("失败", "<br>验证码不正确", 'error');
 						return;
 					}
@@ -176,15 +187,17 @@ password.info = (function(){
 						return;
 					}
 					else if(response.code == 1){
-						if(response.data == "该工号不存在"){
+						if(response.data == "员工信息验证有误"){
 							$("#tip").show(); 
 							return;
 						}
-						alert(response.data);
+						alert(response.data.message);
 						return;
 					}
 					else if (response.code == 0) {
 						 _showStep(2);
+						 $("#resetPwd").val(response.data.pwd);
+						 $("#smspwd").val("");
 						 $("#info_2").css("display","");
 						 $("#info_1").css("display","none");
 						//重新发送验证码成功后,验证错误次数置0.
@@ -196,20 +209,6 @@ password.info = (function(){
 						staff.login.invalidAfter5Mins();
 						$("#smspwd").focus();
 					}
-//					else if(response.code ==1005){
-//						$("#validatecode_li").show();
-//						_refreshValidateCodeImg();
-//						//ec.util.showErrors(response.errorsList,$("#form"));
-//						$.alert("失败", "<br>验证码不正确", 'error');
-//						return;
-//					}
-					
-//					if(!response){
-//						response.data='';
-//					}
-                   
-					//第二步 显示 
-					//工号不存在
 				}
 			});	
 	   }
@@ -229,15 +228,9 @@ password.info = (function(){
 			//5分钟倒计时，超过5分钟未输入验证码就失效.
 			staff.login.invalidAfter5Mins();
 		} else if (response.code ==1202){
-//			$.confirm("信息",response.data
-//					,{yes:function(
-//			){
-//				window.location.href=contextPath+"/staff/login/page";
-//			},no:""},"error");
 		} else{
 			$.alert("提示","验证码发送失败，请重新发送.");
 		};
-	//	_setEnable("#smsbutton", "#loginSmsForm");
 	};
 	//重发验证码
 	var _smsResend=function(){
