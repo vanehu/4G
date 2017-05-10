@@ -1758,6 +1758,13 @@
             "name": "社会团体法人登记证书",
             "checkFunction":"gs15200_gb321002015_01",
             "param":""
+            },
+            {
+            "certTypeCd": "49",
+            "description": "统一社会信用代码证书，证件号码的有效位长为18位",
+            "name": "统一社会信用代码证书",
+            "checkFunction":"gb321002015",
+            "param":""
             }
             ]
 		</const>
