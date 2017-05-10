@@ -36,7 +36,9 @@
 		<option value="">--请选择--</option>
 		</#if>
 		<#list prodSpec.valueRange as valueRange>
-			<option value="${valueRange.value}" <#if prodSpec.value==valueRange.value >selected="selected"</#if> >${valueRange.text}</option>	
+            <#if !(prodSpec.itemSpecId=="10020121"&&valueRange.value==40)>
+                <option value="${valueRange.value}"<#if prodSpec.value==valueRange.value >selected="selected"</#if>>${valueRange.text}</option>
+            </#if>
 		</#list>
 		</select>
 		<#if rule.isOptional=="N" >
@@ -154,6 +156,7 @@
 		<#if prodSpec.dataSourceTypeCd==4 >
 		var valueRange = [];
 		<#list prodSpec.valueRange as valueRan>
+		    <#if !(prodSpec.itemSpecId=="10020121"&&valueRan.value==40)>
 		    var itemRelation = [];
 		    <#list valueRan.itemRelation as itemRel>
 		        itemRelation.push({
@@ -168,6 +171,7 @@
 		    	"text" : "${valueRan.text}",
 		    	"itemRelation" : itemRelation
 		    });
+            </#if>
 		</#list>
 		OrderInfo.prodAttrs.push({
 			    "isOptional" : "${prodSpec.rule.isOptional}",
@@ -197,6 +201,10 @@
                 responsi.removeAttr("disabled");
                 responsi.css("background","#A7BC9A");
 			    $(dom).parent().find('span').html('实名登记类型是内部测试卡，建议选择测试促销');
+			}else if($(dom).val() == '30'){
+                responsi.removeAttr("disabled");
+                responsi.css("background","#A7BC9A");
+			    $(dom).parent().find('span').html('');
 			}else{
                 responsi.attr("disabled","disabled");
                 responsi.css("background","#d3d8d0");

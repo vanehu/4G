@@ -1,13 +1,13 @@
 package com.al.lte.portal.common;
 
+import com.al.ecs.common.entity.LevelLog;
+import com.al.ecs.common.util.PortalConstant;
+import com.al.ecs.log.Log;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import com.al.ecs.common.entity.LevelLog;
-import com.al.ecs.common.util.PortalConstant;
-import com.al.ecs.log.Log;
 
 /**
  * 集团LTE共同常量类 . 
@@ -809,7 +809,14 @@ public final class SysConstant {
 
     /**专用测试权限*/
     public static final String SPECIALTESTQX = "ZYCSK";
-    
+
+    /**专用测试权限*/
+    public static final String DZJBAKQX = "DZJBAKQX";
+
+    /**实名登记类型*/
+    public static final String REAL_NAME_TYPE = "10020121";
+
+
     /**拍照仪驱动控件下载URL*/
     public static final String CAMERA_DRIVER_DOWNLOAD_URL = "_camera_driver_download_url";
 

@@ -1273,7 +1273,7 @@ order.main = (function(){
 	function _spec_parm(param){
 		var govFlag = order.cust.isCovCust(OrderInfo.cust.identityCd) || (OrderInfo.boCustInfos && OrderInfo.boCustInfos.partyTypeCd == '2');
 		//云盘去掉责任人
-		if(govFlag && OrderInfo.specialtestauth && param.prodSpecId != CONST.PROD_SPEC.PROD_CLOUD_OFFER){ // 政企客户并且拥有专用测试权限
+		if((OrderInfo.specialtestauth || OrderInfo.dzjbakqx) && param.prodSpecId != CONST.PROD_SPEC.PROD_CLOUD_OFFER){ // 政企客户并且拥有专用测试权限
 			/** render责任人 **/
 			order.main.initUserHtml(param.prodId,param.ul_id);
 		}
@@ -1548,7 +1548,7 @@ order.main = (function(){
 	};
 
 	/**
-	 * 实名登记类型 : 是否展示与场景默认值(10:普通,20:内部测试卡)
+	 * 实名登记类型 : 是否展示与场景默认值(10:普通,20:内部测试卡,30:党政军备案,40:物用卡)
 	 * 	政企客户并且有专用测试权限：
 	 * 		1) 展示
 	 * 		2) 值可选
@@ -1557,7 +1557,7 @@ order.main = (function(){
 	var dealRealNameType = function(prodId,dom,govFlag){
 		var $itemId = $('#'+CONST.PROD_ATTR.REAL_NAME_TYPE + '_' + prodId);
 		if($itemId.length > 0){
-			if(govFlag && OrderInfo.specialtestauth){
+			if(govFlag && (OrderInfo.specialtestauth || OrderInfo.dzjbakqx)){
 			}else{
 				$itemId.attr({'readonly':'readonly','disabled':'disabled'}).hide();
 				$itemId.parent().hide();

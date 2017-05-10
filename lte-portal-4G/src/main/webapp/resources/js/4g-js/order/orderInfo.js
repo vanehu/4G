@@ -240,6 +240,7 @@ OrderInfo = (function() {
 
 	var _subUserInfos = []; // 责任人+其他
 	var _specialtestauth = false; // 测试卡权限
+	var _dzjbakqx = false; // 党政军备案卡权限
 
 	var _essOrderInfo = {}; //ESS订单信息
 	
@@ -1910,6 +1911,7 @@ OrderInfo = (function() {
 		choosedUserInfos 		:_choosedUserInfos,
 		subUserInfos			:_subUserInfos,
 		specialtestauth			:_specialtestauth,
+        dzjbakqx                : _dzjbakqx,
 		updateChooseUserInfos	:_updateChooseUserInfos,
 		getChooseUserInfo		:_getChooseUserInfo,
 		resetChooseUserInfo		:_resetChooseUserInfo,

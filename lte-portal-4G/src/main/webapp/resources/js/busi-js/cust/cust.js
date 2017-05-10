@@ -4484,6 +4484,7 @@ $(function() {
    order.cust.form_valid_init();
    order.cust.initDic();
    OrderInfo.specialtestauth = !query.common.checkOperateSpec(CONST.ZYCSK);
+   OrderInfo.dzjbakqx = !query.common.checkOperateSpec(CONST.DZJBAKQX);
    CONST.isHandleCustNeeded = query.common.checkOperateSpec(CONST.TGJBRBTQX);
    CONST.isPhotographReviewNeeded = !query.common.checkOperateSpec(CONST.RXSHGN);
    CONST.realNamePhotoFlag = query.common.queryPropertiesValue("REAL_NAME_PHOTO_" + String(OrderInfo.staff.areaId).substr(0, 3));

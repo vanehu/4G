@@ -2958,7 +2958,7 @@ SoOrder = (function() {
                             ca.certAddress = OrderInfo.boCustInfos.addressStr;
                         }
                     } else {//老客户
-                        if (CacheData.isGov(OrderInfo.cust.identityCd) && OrderInfo.specialtestauth) {//老政企客户没使用人且有测试卡权限，不封装证号关系节点
+                        if (CacheData.isGov(OrderInfo.cust.identityCd) && (OrderInfo.specialtestauth || OrderInfo.dzjbakqx)) {//老政企客户没使用人且有测试卡权限，不封装证号关系节点
                             return true;
                         }
                         _setUserInfo(ca);
@@ -3270,7 +3270,7 @@ SoOrder = (function() {
 							 * 当prodAttrEmptyCheckName为使用人表示使用人为空
 							 * 下面判读当有专用测试权限校验使用人责任人两者未填写，否则不进入校验，走原逻辑正常拦截使用人
 							 */
-							if(prodItemUserFlag&&OrderInfo.specialtestauth){
+							if(prodItemUserFlag&&(OrderInfo.specialtestauth || OrderInfo.dzjbakqx)){
 								if(!checkUserChoose(prodInst.prodInstId,prodAttrEmptyFlag)){
 									return false;
 								}else{
@@ -3307,7 +3307,7 @@ SoOrder = (function() {
 		}
 		
 		//政企客户先校验使用人是否填写，再进行一证五号校验
-        if (!(OrderInfo.actionFlag == 16 || (CacheData.isGov(order.cust.getCustCertType()) && OrderInfo.specialtestauth))) {//如果是改号业务或政企客户有测试卡权限，不需要调用一证五号校验
+        if (!(OrderInfo.actionFlag == 16 || (CacheData.isGov(order.cust.getCustCertType()) && (OrderInfo.specialtestauth || OrderInfo.dzjbakqx)))) {//如果是改号业务或政企客户有测试卡权限，不需要调用一证五号校验
             //一证五号校验
             if (!_oneCertFiveCheckData(order.cust.getCustInfo415())) {
                 return false;
@@ -3687,7 +3687,7 @@ SoOrder = (function() {
 		/** 政企客户并且有专用测试权限 **/
 		var govFlag = (order.cust.isCovCust(OrderInfo.cust.identityCd) ||
 			(OrderInfo.boCustInfos && OrderInfo.boCustInfos.partyTypeCd == '2')) &&
-			OrderInfo.specialtestauth;
+            (OrderInfo.specialtestauth || OrderInfo.dzjbakqx);
 		if(govFlag){
 			// 表示当前产品是否存在责任人,由于使用人根据页面取值去判断,这个地方暂时写死责任人,后续针对扩展优化
 			var sflag = false;

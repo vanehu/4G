@@ -1,49 +1,10 @@
 package com.al.lte.portal.controller.crm;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
-import net.sf.json.JSONObject;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.MapUtils;
-import org.apache.commons.collections.map.HashedMap;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.time.DateFormatUtils;
-import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.context.request.WebRequest;
-
 import com.al.common.utils.DateUtil;
 import com.al.common.utils.StringUtil;
 import com.al.ec.serviceplatform.client.ResultCode;
 import com.al.ecs.common.entity.JsonResponse;
 import com.al.ecs.common.entity.PageModel;
-import com.al.ecs.common.util.DigestUtils;
 import com.al.ecs.common.util.EncodeUtils;
 import com.al.ecs.common.util.FtpUtils;
 import com.al.ecs.common.util.JsonUtil;
@@ -57,9 +18,9 @@ import com.al.ecs.exception.AuthorityException;
 import com.al.ecs.exception.BusinessException;
 import com.al.ecs.exception.ErrorCode;
 import com.al.ecs.exception.InterfaceException;
-import com.al.ecs.exception.ResultConstant;
 import com.al.ecs.exception.InterfaceException.ErrType;
 import com.al.ecs.exception.Result;
+import com.al.ecs.exception.ResultConstant;
 import com.al.ecs.spring.annotation.log.LogOperatorAnn;
 import com.al.ecs.spring.annotation.session.AuthorityValid;
 import com.al.ecs.spring.controller.BaseController;
@@ -80,6 +41,41 @@ import com.al.lte.portal.common.PortalServiceCode;
 import com.al.lte.portal.common.SysConstant;
 import com.al.lte.portal.core.DataRepository;
 import com.al.lte.portal.model.SessionStaff;
+import net.sf.json.JSONObject;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
+import org.apache.commons.collections.map.HashedMap;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateFormatUtils;
+import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.context.request.WebRequest;
+
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * 订单受理控制层 主要受理，新装，变更，附属变更
@@ -602,6 +598,7 @@ public class OrderController extends BaseController {
             result = orderBmo.orderSpecParam(dataBusMap, null, sessionStaff);
             if ("0".equals(result.get("code").toString())) {
                 list = (List<Map<String, Object>>) result.get("prodSpecParams");
+                filterAttrData(sessionStaff, list);
                 model.addAttribute("prodSpecParams", list);
                 model.addAttribute("ul_id", ul_id);
                 model.addAttribute("prodId", prodId);
@@ -628,6 +625,33 @@ public class OrderController extends BaseController {
             return super.failedStr(model, ErrorCode.ORDER_PROD_ITEM, e, dataBusMap);
         }
         return "/order/order-spec-param";
+    }
+
+    /**
+     * 根据权限过滤测试卡及党政军备案
+     * @param sessionStaff
+     * @param list 产品属性列表
+     * @throws Exception
+     */
+    private void filterAttrData(SessionStaff sessionStaff, List<Map<String, Object>> list) throws Exception {
+        String specialtestauth = staffBmo.checkOperatBySpecCd(SysConstant.SPECIALTESTQX, sessionStaff);//测试卡权限
+        String dzjbakqx = staffBmo.checkOperatBySpecCd(SysConstant.DZJBAKQX, sessionStaff);//党政军备案权限
+
+        for (Map<String, Object> map : list) {
+            if (SysConstant.REAL_NAME_TYPE.equals(MapUtils.getString(map, "itemSpecId", ""))) {
+                List<Map<String, Object>> newList = new ArrayList();
+                List<Map<String, Object>> oldList = (List<Map<String, Object>>) MapUtils.getObject(map, "valueRange", null);
+                for (Map<String, Object> objectMap : oldList) {
+                    String value = MapUtils.getString(objectMap, "value", "");
+                    if (!"20".equals(value) && !"30".equals(value)) {
+                        newList.add(objectMap);
+                    } else if (("0".equals(specialtestauth) && "20".equals(value)) || ("0".equals(dzjbakqx) && "30".equals(value))) {
+                        newList.add(objectMap);
+                    }
+                }
+                map.put("valueRange",newList);
+            }
+        }
     }
 
     /*bxw产品实例属性*/

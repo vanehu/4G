@@ -503,6 +503,7 @@ CONST = (function(){
 	
 	var _TGJBRBTQX = "TGJBRBTQX";//是否具有跳过经办人必填的权限
 	var _ZYCSK = "ZYCSK";//专用测试权限
+	var _DZJBAKQX = "DZJBAKQX";//党政军备案卡权限
 	var _isHandleCustNeeded = true;//false：有权限；true：无权限
 	
 	var _realNamePhotoFlag = "";//实名制拍照开关
@@ -666,6 +667,7 @@ CONST = (function(){
 		GET_BIND_STATUS:_GET_BIND_STATUS,
 		TGJBRBTQX :_TGJBRBTQX,
 		ZYCSK : _ZYCSK,
+        DZJBAKQX : _DZJBAKQX,
 		isHandleCustNeeded	:_isHandleCustNeeded,
 		realNamePhotoFlag	:_realNamePhotoFlag,
 		Action_Flag_Info:_Action_Flag_Info,
