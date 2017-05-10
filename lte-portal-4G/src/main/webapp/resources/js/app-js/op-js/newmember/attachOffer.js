@@ -1141,12 +1141,14 @@ AttachOffer = (function() {
 				dependOffer : {  //存放互斥依赖列表
 					dependOffers : [],
 					offerGrpInfos : []
-				}
+				},
+				optDependOffer : []
 		};
 		if(result!=""){
 			var exclude = result.offerSpec.exclude;
 			var depend = result.offerSpec.depend;
 			var defaultOffer=result.offerSpec.defaultList;
+			var optDependOffer = result.offerSpec.optDependList;
 			//解析可选包互斥依赖组
 			if(ec.util.isArray(exclude)){
 				for (var i = 0; i < exclude.length; i++) {
@@ -1211,6 +1213,12 @@ AttachOffer = (function() {
 					content += "需要开通： " + defaultOffer[i].offerSpecName + "<br>";
 					param.defaultOffer.push(defaultOffer[i].offerSpecId);
 				}	
+			}
+			if (optDependOffer != undefined && ec.util.isArray(optDependOffer)) {
+				for (var i = 0; i < optDependOffer.length; i++) {
+					content += "可选订购：" + '<input id="'+optDependOffer[i].offerSpecId+'" type="checkbox" value="'+optDependOffer[i].offerSpecId+'"/>' + optDependOffer[i].offerSpecName + "<br>";
+					param.optDependOffer.push(optDependOffer[i].offerSpecId);
+				}
 			}
 		}
 		var serContent=_servExDepReByRoleObjs(prodId,offerSpecId);//查询销售品构成成员的依赖互斥以及连带
