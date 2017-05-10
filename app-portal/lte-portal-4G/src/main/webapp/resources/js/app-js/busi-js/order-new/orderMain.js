@@ -673,12 +673,22 @@ order.main = (function(){
 			if($(obj).val()==null||$(obj).val()==""){
 				if(CONST.PROD_ATTR.PROD_USER == $(obj).attr("itemspecid")){
 					var prodId = $(obj).attr("prodId");
-					$("#userName_"+prodId).html("请添加使用人").removeClass('font-secondary');
+					cust.tmpChooseUserInfo = OrderInfo.cust;
+					$("#userName_"+prodId).addClass('font-secondary').text(cust.tmpChooseUserInfo.partyName);
+					OrderInfo.updateChooseUserInfos(prodId, cust.tmpChooseUserInfo);
+					$('#'+CONST.PROD_ATTR.PROD_USER+'_'+prodId+'_name').val(cust.tmpChooseUserInfo.partyName);
+					$('#'+CONST.PROD_ATTR.PROD_USER+'_'+prodId).val(cust.tmpChooseUserInfo.custId);
+					cust.tmpChooseUserInfo = {};
+					SoOrder.usedNum++;
+					if(SoOrder.usedNum >= 5){
+						$.alert("提示","证件「"+OrderInfo.cust.idCardNumber+"」超过五个号码，请重新选择使用人!");
+						return false;
+					}
+				} else {
+					$(obj).next('.help-block').removeClass('hidden');
+					$(obj).next('.help-block').html("不能为空");
 					return false;
 				}
-				$(obj).next('.help-block').removeClass('hidden');
-				$(obj).next('.help-block').html("不能为空");
-				return false;
 			}
 		}
 		
@@ -835,7 +845,12 @@ order.main = (function(){
 			_showUserFlag = "create";
 			cust.tmpChooseUserInfo = {};
 			cust.clearUserForm();
-			
+//			$('#user_otg').off('click').on('click',function(){
+//				_queryUser("1","210281198109190536","picturechenzheng陈真","asdasd","陈真");
+//			});
+//			$('#user_nfc').off('click').on('click',function(){
+//				_queryUser("1","632123199207249138","picturewuzhihan雾紫函","sdasdasd","雾紫函");
+//			});
 			$('#userConfirmBtn').off('click').on('click',function(){
 				if(!$("#userFormdata").Validform().check()){
 					return;

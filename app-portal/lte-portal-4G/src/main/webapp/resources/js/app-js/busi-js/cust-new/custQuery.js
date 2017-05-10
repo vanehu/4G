@@ -312,6 +312,17 @@ custQuery = (function(){
 		});
 		
 		
+		
+//		 判断是否是政企客户
+//		if(_choosedCustInfo.isGov == "Y" && "19" != OrderInfo.actionFlag){
+//			$.alert("提示","政企客户不允许受理该业务！");
+//			return;
+//		}
+		
+		if(_choosedCustInfo.isGov != "Y" && "19" == OrderInfo.actionFlag){
+			$.alert("提示","客户证件类型为！【"+_choosedCustInfo.identityName+"】，"+"证件号码为："+_choosedCustInfo.idCardNumber+"，当前不能办理此业务！");
+			return;
+		}
 		if("9" != OrderInfo.actionFlag) {
 			if ( ec.util.isObj(_choosedCustInfo.canRealName) && 1 == _choosedCustInfo.canRealName) {
 				$('#auth3').modal('show');
@@ -327,7 +338,6 @@ custQuery = (function(){
 				return;
 			}
 		}
-		
 		if(OrderInfo.actionFlag == "9"){
 			$("#custQuerycontent").hide();
 			$("#cust-query-list").hide();
@@ -335,18 +345,6 @@ custQuery = (function(){
 			_queryCustNext();
 			return;
 		}
-		
-//		 判断是否是政企客户
-//		if(_choosedCustInfo.isGov == "Y" && "19" != OrderInfo.actionFlag){
-//			$.alert("提示","政企客户不允许受理该业务！");
-//			return;
-//		}
-		
-		if(_choosedCustInfo.isGov != "Y" && "19" == OrderInfo.actionFlag){
-			$.alert("提示","客户证件类型为！【"+_choosedCustInfo.identityName+"】，"+"证件号码为："+_choosedCustInfo.idCardNumber+"，当前不能办理此业务！");
-			return;
-		}
-		
 		var showProdType = "N";
 		var showCertType = "N";
 		var showSmsType = "N";

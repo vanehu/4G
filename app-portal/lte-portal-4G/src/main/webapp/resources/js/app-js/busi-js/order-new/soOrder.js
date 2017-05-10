@@ -7,7 +7,7 @@ CommonUtils.regNamespace("SoOrder");
 
 /** 受理订单对象*/
 SoOrder = (function() { 
-
+	var _usedNum = 0; 
 	//初始化填单页面，为规则校验类型业务使用
 	var _initFillPage = function(){
 		SoOrder.initOrderData();
@@ -39,6 +39,7 @@ SoOrder = (function() {
 		var propertiesKey = "REAL_NAME_PHOTO_"+(OrderInfo.staff.soAreaId+"").substring(0,3);
 		var isFlag = offerChange.queryPortalProperties(propertiesKey);
 		OrderInfo.preBefore.idPicFlag = isFlag;
+		SoOrder.usedNum = cust.usedNum;
 
 		if(OrderInfo.actionFlag==8){//新增客户
 			OrderInfo.busitypeflag = 25;
@@ -425,12 +426,12 @@ SoOrder = (function() {
 					if(prodAttr.isOptional=="N"){//必填需校验
 						prodAttrFlag=order.main.check_parm_self($("#"+prodAttr.id));
 						if(!prodAttrFlag){
-							$.alert("信息提示","没有配置产品属性(使用人)，无法提交");
 							return false;
 						}
 					}
 				}
 			}
+			
 			for ( var i = 0; i < OrderInfo.offerSpec.offerRoles.length; i++) {
 				var offerRole = OrderInfo.offerSpec.offerRoles[i];
 				for ( var j = 0; j < offerRole.prodInsts.length; j++) {
@@ -2108,6 +2109,7 @@ SoOrder = (function() {
 		showAttachOffer         :_showAttachOffer,
 		getTokenSynchronize     :_getTokenSynchronize,
 		createMainOrder         :_createMainOrder,
-		delViceCardAndNew       :_delViceCardAndNew
+		delViceCardAndNew       :_delViceCardAndNew,
+		usedNum					:_usedNum
 	};
 })();

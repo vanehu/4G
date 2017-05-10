@@ -16,7 +16,7 @@ cust = (function(){
 	var _isSameOne = false;
 	var _checkCustLog = {};//客户信息核验记录
 	var _newUIFalg = "ON";
-	var _usedNum;//客户已使用指标数（一证五号需求一个客户最多只能五个号）
+	var _usedNum=0;//客户已使用指标数（一证五号需求一个客户最多只能五个号）
 	var _readIdCardUser={};//客户返档读卡客户信息
 	var _checkResult=true;//一证五号校验失败标志
 	var _custCatsh = {};//读卡的客户缓存
@@ -2797,7 +2797,7 @@ cust = (function(){
 		var propertiesKey = "ONE_CERT_5_NUMBER_"+ (OrderInfo.staff.soAreaId + "").substring(0, 3);
 		var isON = offerChange.queryPortalProperties(propertiesKey);
 		cust.OneCertNumFlag=isON;
-		if (isON=="OFF") {
+		if (isON!="ON") {
 			return true;
 		}
 //		if(_isCovCust(OrderInfo.cust.identityCd)){//政企客户不校验
@@ -3032,7 +3032,7 @@ cust = (function(){
 };
 
 	/**
-	 * 客户返档证号关系预校验接口
+	 * 使用人与客户返档证号关系预校验接口
 	 */
 	var _checkCertNumberForReturn = function(identityCd,identityNum,partyName,address) {
 		var propertiesKey = "ONE_CERT_5_NUMBER_"

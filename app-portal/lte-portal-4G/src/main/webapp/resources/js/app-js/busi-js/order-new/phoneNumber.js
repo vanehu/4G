@@ -719,16 +719,16 @@ order.phoneNumber = (function(){
 				$.alert("提示","不允许同时办理拆机和新增副卡！");
 				return;
 			}
-			//使用人开关关闭 一五校验前置 
-			//使用人开关打开 一五校验在选择使用人时进行校验
+			//公众客户 使用人开关关闭 一五校验前置 
+			//公众客户 使用人开关打开 一五校验在选择使用人时进行校验
 			//一五校验
-			if(isFlag!="ON" && !cust.preCheckCertNumberRel()){//一五校验
+			if(isFlag!="ON" && !cust.isCovCust(OrderInfo.cust.identityCd) && !cust.preCheckCertNumberRel()){//一五校验
 				return;
 			}
 		}
 		//使用人开关关闭 一五校验前置
 		//使用人开关打开 一五校验在选择使用人时进行校验
-		if(isFlag!="ON" && cust.usedNum!=undefined && (order.phoneNumber.secondaryCarNum+cust.usedNum)>=5){//一证五号
+		if(isFlag!="ON" && !cust.isCovCust(OrderInfo.cust.identityCd) && cust.usedNum!=undefined && (order.phoneNumber.secondaryCarNum+cust.usedNum)>=5){//一证五号
 			$.alert("提示","一个用户证件下不能有超过五个号码!");
 			return;
 		}
