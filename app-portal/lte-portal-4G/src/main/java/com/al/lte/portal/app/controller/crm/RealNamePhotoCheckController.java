@@ -25,7 +25,6 @@ import com.al.common.utils.StringUtil;
 import com.al.ec.serviceplatform.client.ResultCode;
 import com.al.ecs.common.entity.JsonResponse;
 import com.al.ecs.common.entity.LevelLog;
-import com.al.ecs.common.util.JsonUtil;
 import com.al.ecs.common.util.PropertiesUtils;
 import com.al.ecs.common.util.UIDGenerator;
 import com.al.ecs.common.web.ServletUtils;
@@ -444,5 +443,30 @@ public class RealNamePhotoCheckController extends BaseController{
 		}
 	}
     
+	/**
+	 * 查询是否有跳过人像审核权限
+	 */
+	@RequestMapping(value = "/queryCheckPhotoOperatSpec", method = {RequestMethod.POST, RequestMethod.GET })
+	public @ResponseBody
+	String queryCheckPhotoOperatSpec(@RequestBody Map<String, Object> param,
+			@LogOperatorAnn String flowNum, HttpServletResponse response,HttpServletRequest request) {
+		    SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
+		    // 是否需要人像审核
+			String isPhotographReviewNeeded = "1";// 默认无权限，不展示审核
+			try {
+				isPhotographReviewNeeded = staffBmo.checkOperatBySpecCd(SysConstant.RXSHGN, sessionStaff);
+			} catch (BusinessException be) {
+				log.error("系管权限查询接口sys-checkOperatSpec异常：", be);
+			} catch (InterfaceException ie) {
+				log.error("系管权限查询接口sys-checkOperatSpec异常：", ie);
+			} catch (IOException ioe) {
+				log.error("系管权限查询接口sys-checkOperatSpec异常：", ioe);
+			} catch (Exception e) {
+				log.error("系管权限查询接口sys-checkOperatSpec异常：", e);
+			} finally {
+				
+			}
+			return isPhotographReviewNeeded;
+	}
 	
 }

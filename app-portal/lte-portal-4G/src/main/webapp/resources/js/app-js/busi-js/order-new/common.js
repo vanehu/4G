@@ -229,6 +229,10 @@ common = (function($) {
 	   var isON = offerChange.queryPortalProperties(propertiesKey);
 	    arr[2]="";
 		arr[3]=isON;
+		var isNeedCheck=_isNeedCheckPhoto();
+		if(isNeedCheck!="0"){
+			arr[3]="OFF";
+		}
 		MyPlugin.photoProcess(arr,
             function(result) {
             },
@@ -1754,6 +1758,23 @@ common = (function($) {
 			$(".wrapper").css("top",px);
 		}		
 	}
+
+	/**
+	 * 查询员工是否有跳过人像审核权限
+	 */
+	var _isNeedCheckPhoto = function(){
+		var url= contextPath+"/app/realName/photoCheck/queryCheckPhotoOperatSpec";
+		var propertiesParam={
+		};
+		var response = $.callServiceAsJson(url,propertiesParam);	
+		$.unecOverlay();
+		if (response.code==0) {
+			return response.data;
+		}else {
+			return "";
+		}
+	
+	};
 	return {
 		relocationCust		:	_relocationCust,
 		setCalendar			:	_setCalendar,
