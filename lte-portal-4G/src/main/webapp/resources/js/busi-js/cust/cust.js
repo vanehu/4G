@@ -1183,7 +1183,8 @@ order.cust = (function(){
             }
 
             if (govSwitch == "ON" && isGovCust) {
-                if (!ec.util.isObj(_choosedCustInfo.userCustId) && ec.util.isObj(_choosedCustInfo.accNbr) && !_choosedCustInfo.isCloud) {
+                //有“测试卡权限”或“党政军备案卡权限”定位客户时不校验政企客户使用人信息
+                if (!ec.util.isObj(_choosedCustInfo.userCustId) && ec.util.isObj(_choosedCustInfo.accNbr) && !_choosedCustInfo.isCloud&&!OrderInfo.specialtestauth&&!OrderInfo.dzjbakqx) {
                     $.alert("提示", "返回的使用人信息为空，请补全信息！");
                     return;
                 }
@@ -1231,7 +1232,7 @@ order.cust = (function(){
                     accessNumber = $.trim($("#p_cust_identityNum").val());
                 }
                 //没有使用人信息接入号只有一个单位证件鉴权方式
-                if (!ec.util.isObj(accessNumber)) {
+                if (!ec.util.isObj(accessNumber) || !ec.util.isObj(_choosedCustInfo.userCustId)) {
                     //只显示单位证件鉴权
                     $("#auth3").find("#auth_tab1").removeClass();
                     $("#auth3").find("#auth_tab1").hide();
