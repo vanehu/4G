@@ -116,7 +116,7 @@ order.phoneNumber = (function(){
 		}
 		param.isReserveFlag=_queryFlag;
 		if(_queryFlag=='1'){//预约选号
-			param.queryFlag="3";
+			param.queryFlag="1";
 		}
 		$.callServiceAsHtml(url,param,{
 			"before":function(){
