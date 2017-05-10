@@ -35,7 +35,6 @@
     </#if>
  <#else>
     <#if (pageModel.list)?? &&((pageModel.list)?size>0)>
-		<@portal.scrollPagination "order_list" "both" pageModel.totalRecords 0 0 "cart.main.scroll">
 		 <div id="order-list-all">
 	      <#list pageModel.list as orderLists>
 	      <#if (orderLists.list)?? &&((orderLists.list)?size>0)>
@@ -69,7 +68,6 @@
       	</#if>
     	</#list>
     	  </div>
-      </@portal.scrollPagination>
 	<#else>
       <ul class="choice-list-box">
         <li>
