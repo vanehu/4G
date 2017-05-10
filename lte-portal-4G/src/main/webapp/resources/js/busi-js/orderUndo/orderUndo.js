@@ -112,6 +112,10 @@ order.undo = (function(){
 	var _undoCheck = function (all_only,y_n,id) {
 		var statusCd = $("#"+id).attr("statusCd");
 		var cancelFlag = $("#"+id).attr("cancelFlag");
+		if(statusCd == 201800){
+			$.alert("提示","当前订单正在下省中，请耐心等待一分钟后重试!");
+			return;
+		}
 		if(cancelFlag!=null && cancelFlag!="" && cancelFlag !=undefined && cancelFlag==2){
 			$.alert("提示","该订单是电渠ESS订单，且未向ESS异常报竣，请先异常报竣后再撤单！");
 			return;
