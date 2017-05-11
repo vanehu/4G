@@ -158,7 +158,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{certType}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField" style="styleSong" x="347" y="27" width="85" height="20"/>
+				<reportElement key="textField" style="styleSong" x="347" y="27" width="111" height="20"/>
 				<textElement>
 					<font fontName="宋体"/>
 				</textElement>
@@ -179,7 +179,7 @@
 				<text><![CDATA[联系电话：]]></text>
 			</staticText>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField" style="styleSong" x="347" y="7" width="85" height="20"/>
+				<reportElement key="textField" style="styleSong" x="347" y="7" width="111" height="20"/>
 				<textElement>
 					<font fontName="宋体"/>
 				</textElement>
