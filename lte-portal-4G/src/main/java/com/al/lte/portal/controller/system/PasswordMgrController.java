@@ -388,7 +388,9 @@ public class PasswordMgrController extends BaseController {
  		if (!"00".equals(areaId.substring(5))) {
  			areaId = areaId.substring(0, 5) + "00";
  		}
+ 		msgMap.put("MsgNumber", "5487");
  		msgMap.put("areaId", areaId);
+ 		msgMap.put("sendflag", "handleCustPhotographReviewMessage");
  		retnMap = staffBmo.sendMsgInfo(msgMap, null, null);
  		request.getSession().removeAttribute(SysConstant.SESSION_KEY_LOGIN_SMS);
  		request.getSession().setAttribute(SysConstant.SESSION_KEY_LOGIN_SMS, smsCode);
