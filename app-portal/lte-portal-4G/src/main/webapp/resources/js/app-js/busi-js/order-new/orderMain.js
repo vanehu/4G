@@ -171,6 +171,19 @@ order.main = (function(){
 	
 	//加载其它tab页产品属性
 	var _loadOtherParm = function(param){
+		var key;
+		if(OrderInfo.cust.custId == "-1"){
+			key = OrderInfo.cust.identityNum;
+		} else {
+			key = OrderInfo.cust.custId;
+		}
+		cust.custCernum=[];
+		var idCardUser = {
+				 "id":key,
+				 "prodId":[-1],
+				 "usedNum":cust.usedNum
+		 };
+		 cust.custCernum.push(idCardUser);
 		var param = {
 				"boActionTypeCd" : "S1" ,
 				"boActionTypeName" : "订购",
@@ -674,16 +687,16 @@ order.main = (function(){
 				if(CONST.PROD_ATTR.PROD_USER == $(obj).attr("itemspecid")){
 					var prodId = $(obj).attr("prodId");
 					cust.tmpChooseUserInfo = OrderInfo.cust;
-					$("#userName_"+prodId).addClass('font-secondary').text(cust.tmpChooseUserInfo.partyName);
-					OrderInfo.updateChooseUserInfos(prodId, cust.tmpChooseUserInfo);
-					$('#'+CONST.PROD_ATTR.PROD_USER+'_'+prodId+'_name').val(cust.tmpChooseUserInfo.partyName);
-					$('#'+CONST.PROD_ATTR.PROD_USER+'_'+prodId).val(cust.tmpChooseUserInfo.custId);
-					cust.tmpChooseUserInfo = {};
-					SoOrder.usedNum++;
-					if(SoOrder.usedNum >= 5){
-						$.alert("提示","证件「"+OrderInfo.cust.idCardNumber+"」超过五个号码，请重新选择使用人!");
+					if(!_checkCertNumber(prodId)){//一证五号校验
+						$("#userName_"+prodId).addClass('font-secondary').text("无");
 						return false;
+					} else {
+						$("#userName_"+prodId).addClass('font-secondary').text(cust.tmpChooseUserInfo.partyName);
+						OrderInfo.updateChooseUserInfos(prodId, cust.tmpChooseUserInfo);
+						$('#'+CONST.PROD_ATTR.PROD_USER+'_'+prodId+'_name').val(cust.tmpChooseUserInfo.partyName);
+						$('#'+CONST.PROD_ATTR.PROD_USER+'_'+prodId).val(cust.tmpChooseUserInfo.custId);
 					}
+					cust.tmpChooseUserInfo = {};
 				} else {
 					$(obj).next('.help-block').removeClass('hidden');
 					$(obj).next('.help-block').html("不能为空");
@@ -735,9 +748,27 @@ order.main = (function(){
 				}
 				*/
 			}
+		//企业云盘邮箱和手机号校验
+		var itemspecId=$(obj).attr("itemspecid");
+		if("10020123"==itemspecId){//企业邮箱
+			var val=$(obj).val();
+			 if(!val.match(/^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+((\.[a-zA-Z0-9_-]{2,3}){1,2})$/)){
+				$(obj).next('.help-block').removeClass('hidden');
+				$(obj).next('.help-block').html("管理员邮箱格式错误");
+				return false;
+			 }
 		}
-		return true ;
-	}
+		if("10020124"==itemspecId){//管理员手机号码
+			var val=$(obj).val();
+			if(!val.match(/^[1][0-9]\d{9}$/)){
+				$(obj).next('.help-block').removeClass('hidden');
+				$(obj).next('.help-block').html("管理员手机号码格式错误");
+				return false;
+			 }
+		}
+	 }
+	return true ;
+}
 	
 	//去除校验红字提示
 	function _clearCheckMsg(id){
@@ -856,7 +887,7 @@ order.main = (function(){
 					return;
 				}
 				if(!!cust.tmpChooseUserInfo && cust.tmpChooseUserInfo.custId){
-					if(!_checkCertNumber()){//一证五号校验
+					if(!_checkCertNumber(prodId)){//一证五号校验
 						cust.clearUserForm();
 						return;
 					}
@@ -883,7 +914,11 @@ order.main = (function(){
 	};
 	
 	//一证五号校验
-	var _checkCertNumber = function(){
+	var _checkCertNumber = function(id){
+		var key;
+		var usedNum;
+		var isCust=false;//使用人与客户同一人
+		var prodId = parseInt(id);
 		if(cust.tmpChooseUserInfo.custId < 0){//使用人为新客户
 			cust.readIdCardUser={
 					"custId":cust.tmpChooseUserInfo.custId,
@@ -894,6 +929,10 @@ order.main = (function(){
 					"partyName":cust.tmpChooseUserInfo.partyName
 					
 				};
+			if(cust.tmpChooseUserInfo.idCardNumber == OrderInfo.cust.identityNum){
+				isCust = true;
+			}
+			key = cust.readIdCardUser.idCardNumber;
 		} else {//使用人为老客户
 			cust.readIdCardUser={
 					"custId":cust.tmpChooseUserInfo.custId,
@@ -905,11 +944,54 @@ order.main = (function(){
 					"CN"      :cust.tmpChooseUserInfo.CN,
 					"certNum" :cust.tmpChooseUserInfo.certNum,
 					"address" :cust.tmpChooseUserInfo.address
-					
 			};
+			if(cust.tmpChooseUserInfo.custId == OrderInfo.cust.custId){
+				isCust = true;
+			}
+			key = cust.readIdCardUser.custId;
 		}
-		if(!cust.checkCertNumberForReturn()){
-			return false;
+		for (var i = 0; i < cust.custCernum.length; i++) {
+			if(cust.custCernum[i].id == key){
+				usedNum = cust.custCernum[i].usedNum;
+			}
+		}
+		var checkNum = cust.checkCertNumberForReturn();
+		if(isCust){
+			checkNum = cust.usedNum;
+		}
+		if(usedNum == undefined){
+			usedNum = checkNum;
+			 var idCardUser = {
+					 "id":key,
+					 "prodId":[prodId],
+					 "usedNum":usedNum
+			 };
+			 cust.custCernum.push(idCardUser);
+		}
+		for (var i = 0; i < cust.custCernum.length; i++) {
+			var p = $.inArray(prodId,cust.custCernum[i].prodId);
+			if(cust.custCernum[i].id == key && cust.custCernum[i].usedNum == checkNum){
+				if(isCust){
+					cust.custCernum[i].prodId.push(prodId);
+				}
+				cust.custCernum[i].usedNum++;
+			} else if($.inArray(prodId,cust.custCernum[i].prodId) == -1){
+				if(cust.custCernum[i].id == key){
+					cust.custCernum[i].prodId.push(prodId);
+					cust.custCernum[i].usedNum++;
+					if(cust.custCernum[i].usedNum > 5){
+						cust.custCernum[i].prodId.splice($.inArray(prodId,cust.custCernum[i].prodId), 1);
+						cust.custCernum[i].usedNum--;
+						$.alert("提示","使用人证件「"+cust.readIdCardUser.idCardNumber+"」已超过五个号码，请重新选择使用人!");
+						return false;
+					}
+				}
+			} else {
+				if(cust.custCernum[i].id != key){
+					cust.custCernum[i].usedNum--;
+					cust.custCernum[i].prodId.splice($.inArray(prodId,cust.custCernum[i].prodId), 1);
+				}
+			}
 		}
 		return true;
 	};

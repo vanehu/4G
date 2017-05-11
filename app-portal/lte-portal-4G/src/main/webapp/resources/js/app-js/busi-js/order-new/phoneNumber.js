@@ -512,8 +512,8 @@ order.phoneNumber = (function(){
 			var oldrelease=false;
 			var oldPhoneNumber="";
 			var oldAnTypeCd="";
-			oldPhoneNumber = _boProdAn.accessNumber;
-			oldAnTypeCd = _boProdAn.anTypeCd;
+			oldPhoneNumber = order.phoneNumber.boProdAn.accessNumber;
+			oldAnTypeCd = order.phoneNumber.boProdAn.anTypeCd;
 			if (oldPhoneNumber == phoneNumber) {
 				$.alert("提示", "号码已经被预占,请选择其它号码!");
 				return;
@@ -725,13 +725,14 @@ order.phoneNumber = (function(){
 			if(isFlag!="ON" && !cust.isCovCust(OrderInfo.cust.identityCd) && !cust.preCheckCertNumberRel()){//一五校验
 				return;
 			}
-		}
-		//使用人开关关闭 一五校验前置
-		//使用人开关打开 一五校验在选择使用人时进行校验
-		if(isFlag!="ON" && !cust.isCovCust(OrderInfo.cust.identityCd) && cust.usedNum!=undefined && (order.phoneNumber.secondaryCarNum+cust.usedNum)>=5){//一证五号
-			$.alert("提示","一个用户证件下不能有超过五个号码!");
-			return;
-		}
+		} 
+			//使用人开关关闭 一五校验前置
+			//使用人开关打开 一五校验在选择使用人时进行校验
+			if(isFlag!="ON" && !cust.isCovCust(OrderInfo.cust.identityCd) && cust.OneCertNumFlag=="ON" && (order.phoneNumber.secondaryCarNum+cust.usedNum)>=5){//一证五号
+				$.alert("提示","一个用户证件下不能有超过五个号码!");
+				return;
+			}
+		
 		if(order.phoneNumber.secondaryCarNum>=order.service.max){//副卡添加数已达最大
 			return;
 		}

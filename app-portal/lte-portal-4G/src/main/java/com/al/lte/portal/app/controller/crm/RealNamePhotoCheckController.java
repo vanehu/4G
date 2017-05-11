@@ -380,7 +380,8 @@ public class RealNamePhotoCheckController extends BaseController{
 				Map<String, Object> msgMap = new HashMap<String, Object>();
 				msgMap.put("phoneNumber", number);
 				msgMap.put("key", smsPwd);
-				msgMap.put("MsgNumber", "5871");
+				msgMap.put("MsgNumber", "5487");
+				msgMap.put("sendflag", "1");
 				
 				if(checkType.equals(SysConstant.CHECKTYPE_LOCAL)){//本地审核
 					msgMap.put("randomCode", randomCode);

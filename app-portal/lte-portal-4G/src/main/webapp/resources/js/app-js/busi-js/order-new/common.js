@@ -536,7 +536,7 @@ common = (function($) {
 						}
 					}	
 				}
-				 order.phoneNumber.btnQueryPhoneNumber(1,undefined,"true");
+				 setTimeout(function(){ order.phoneNumber.btnQueryPhoneNumber(1,undefined,"true");},500);
 				 //移除已选副卡节点
 				 $("#secondaryPhoneNumUl").children("li:gt(0)").remove();
 				 order.phoneNumber.secondaryCarNum=0;
@@ -579,6 +579,23 @@ common = (function($) {
 				    	$("#nav-tab-1").addClass("active in");
 				    	$("#tab4_li").removeClass("active");
 				    	$("#tab1_li").addClass("active");
+				    	var boProdAns = OrderInfo.boProdAns;
+						//释放预占的号码
+						if(boProdAns.length>0){
+							for(var n=0;n<boProdAns.length;n++){
+								if(boProdAns[n].idFlag){
+									continue;
+								}
+								var param = {
+										numType : 1,
+										numValue : boProdAns[n].accessNumber
+								};
+								$.callServiceAsJson(contextPath+"/app/mktRes/phonenumber/releaseErrorNum", param, {
+									"done" : function(){
+									}
+								});
+							}
+						}
 						order.phoneNumber.boProdAn={};//清空号码缓存
 						order.phoneNumber.initPhonenumber();
 					}				

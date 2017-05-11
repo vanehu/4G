@@ -264,9 +264,9 @@ var _addNewCard=function(){
 		$.alert("提示","不允许同时办理拆机和新增副卡！");
 		return;
 	}
-	if(!cust.preCheckCertNumberRel()){//一五校验
-		return;
-	}
+//	if(!cust.preCheckCertNumberRel()){//一五校验
+//		return;
+//	}
 	order.phoneNumber.queryApConfig();//查询号码段和号码类型 
 	order.phoneNumber.queryPhoneNbrPool();//查询号池		
 	order.phoneNumber.showSecondaryCardModalData();
