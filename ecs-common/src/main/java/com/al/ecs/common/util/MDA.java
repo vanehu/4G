@@ -576,6 +576,9 @@ public class MDA {
 	
 	/**省份特殊协议配置*/
 	public static final Map<String, List> SPECIAL_AGREEMENT  = new HashMap<String, List>();
+	
+	/** 省份菜单配置**/
+	public static final Map<String,Map<String,Object>> PROVENCE_MENU = new HashMap<String,Map<String,Object>>();
 
 	/**是否实名核验开关 */
     public static final Map<String, String> CHECK_CUST_CERT = new HashMap<String,String>();
