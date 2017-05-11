@@ -1,0 +1,126 @@
+<!--终端列表-->
+<#if (pageModel.pageNo)?? && (pageModel.pageNo > 1) >
+	<#list pageModel.list as mkt>
+		<#assign intf_pic = false>
+		<#assign p_pic = ''>
+		<#assign brand = ''>
+		<#assign phoneType = ''>
+		<#assign phoneColor = ''>
+		<#if (mkt.attrList)??>
+			<#list mkt.attrList as attrList>
+				<#if mktResPicUrl?? && (attrList.attrId)?? && (attrList.attrId) =='60019454'>
+					<#assign p_pic = mktResPicUrl+attrList.attrValue>
+					<#assign intf_pic = true>
+				</#if>
+				<#if (attrList.attrId)?? && (attrList.attrId) =='2100161'>
+					<#assign brand = attrList.attrValue>
+				</#if>
+				<#if (attrList.attrId)?? && (attrList.attrId) =='2100162'>
+					<#assign phoneType = attrList.attrValue>
+				</#if>
+				<#if (attrList.attrId)?? && (attrList.attrId) =='17'>
+					<#assign phoneColor = attrList.attrValue>
+				</#if>
+				<#if (attrList.attrId)?? && (attrList.attrId) =='60010005'>
+					<#assign mktSpecCode = attrList.attrValue>
+				</#if>
+			</#list>
+		</#if>
+	<li class="p-10" onclick="order.phone.selectTerminal(this)" mktResTypeCd="${mkt.mktResTypeCd}" mktResId="${mkt.mktResId}" mktResCd="${mkt.mktResCd}" brand="${brand}" phoneType="${phoneType}" phoneColor="${phoneColor}" mktName="${mkt.mktResName}" mktPrice="${(mkt.salePrice)}" mktPicA="${p_pic}" mktSpecCode="${mktSpecCode}">
+	<div class="list-img-box m-r-15">
+		<img src="${p_pic}" alt="${(mkt.mktResName)?default("--")}" />
+	</div>
+	<div class="list-message-box">
+		<p class="title">${(mkt.mktResName)?default("--")}</p>
+		<p class="message"><span><span class="orange"><#if (mkt.salePrice)?default(0) != 0>${mkt.salePrice / 100}<#else>--</#if></span>元</span>
+		</p>
+	</div>
+	<div class="arrow-right-box p-15">
+		<i class="iconfont">&#xe66e;</i>
+	</div>
+	</li>
+	</#list>
+<#else>
+<#if (pageModel.list)?? &&((pageModel.list)?size>0)>
+<@portal.scrollPagination "terminal_list" "both" pageModel.totalPages 60 0 "order.phone.scroll">
+<ul class="single-list-box" id="phone-list-all">
+			<#list pageModel.list as mkt>
+				<#assign intf_pic = false>
+				<#assign p_pic = ''>
+				<#assign brand = ''>
+				<#assign phoneType = ''>
+				<#assign phoneColor = ''>
+				<#if (mkt.attrList)??>
+					<#list mkt.attrList as attrList>
+						<#if mktResPicUrl?? && (attrList.attrId)?? && (attrList.attrId) =='60019454'>
+							<#assign p_pic = mktResPicUrl+attrList.attrValue>
+							<#assign intf_pic = true>
+						</#if>
+						<#if (attrList.attrId)?? && (attrList.attrId) =='2100161'>
+							<#assign brand = attrList.attrValue>
+						</#if>
+						<#if (attrList.attrId)?? && (attrList.attrId) =='2100162'>
+							<#assign phoneType = attrList.attrValue>
+						</#if>
+						<#if (attrList.attrId)?? && (attrList.attrId) =='17'>
+							<#assign phoneColor = attrList.attrValue>
+						</#if>
+						<#if (attrList.attrId)?? && (attrList.attrId) =='60010005'>
+							<#assign mktSpecCode = attrList.attrValue>
+						</#if>
+					</#list>
+				</#if>
+	<li class="p-10" onclick="order.phone.selectTerminal(this)" mktResTypeCd="${mkt.mktResTypeCd}" mktResId="${mkt.mktResId}" mktResCd="${mkt.mktResCd}" brand="${brand}" phoneType="${phoneType}" phoneColor="${phoneColor}" mktName="${mkt.mktResName}" mktPrice="${(mkt.salePrice)}" mktPicA="${p_pic}" mktSpecCode="${mktSpecCode}">
+	<#if mkt.orderId lte 4>
+         <i class="iconfont orange hot-icon">&#xe690;</i>
+    </#if>
+	<div class="list-img-box m-r-15">
+		<img src="${p_pic}" alt="${(mkt.mktResName)?default("--")}" />
+	</div>
+	<div class="list-message-box">
+		<p class="title">${(mkt.mktResName)?default("--")}</p>
+		<p class="message"><span><span class="orange"><#if (mkt.salePrice)?default(0) != 0>${mkt.salePrice / 100}<#else>--</#if></span>元</span>
+		</p>
+	</div>
+	<div class="arrow-right-box p-15">
+		<i class="iconfont">&#xe66e;</i>
+	</div>
+	</li>
+		</#list>
+</ul>
+		</@portal.scrollPagination>
+	<#else>
+	<ul class="single-list-box">
+	 <input type="hidden" id="resultlst" value="0"/>
+		<div class="media">
+			<img style="vertical-align:middle" src="${contextPath}/image/common/query_search.gif" />&nbsp;&nbsp;抱歉，没有找到相关的手机，请尝试其他筛选条件。
+		</div>
+		</ul>
+	</#if>
+</#if>
+<!--终端列表 end--> 
+<div class="modal fade modal-message modal-top" id="modal-phone">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" onclick="$('#phone_a').show()"
+					aria-hidden="true">×</button>
+				<h4 class="modal-title">购机方式</h4>
+			</div>
+			<div class="modal-body" id="phone-modal-body">
+				
+
+			</div>
+			<div class="modal-footer">
+				<div class="ordinary-btn-box p p-b-15">
+					<button class="double-btn" data-dismiss="modal" onclick="$('#phone_a').show()">取消</button>
+					<button class="double-btn" onclick="javascript:{common.setBtnTimer(this);order.phone.purchase();}">确定</button>
+
+				</div>
+
+			</div>
+<script type="text/javascript" charset="utf-8">
+$(function() {
+	common.setListTop("110px");
+	});
+</script>

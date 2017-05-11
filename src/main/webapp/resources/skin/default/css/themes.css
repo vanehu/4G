@@ -1,0 +1,425 @@
+@charset "utf-8";
+/* CSS Document */
+/* 主题样式 */
+body{
+	background:none;
+	color:#888
+}
+.topindex {
+	display:none
+}
+.main_warp{
+    border-radius: 4px;
+    box-shadow:0 2px 3px #E5E5E5;
+}
+.footer {
+	display:none
+}
+
+/*公用按钮*/
+.btn_h30, .btn_h30 span {
+	background: url(../image/common/btn_h_30.png) no-repeat;
+	color:#fff;
+}
+.btn_h30 span {
+	background-position: right -38px;
+}
+.btna_o, .btna_o span, .btna_ob, .btna_ob span, .btna_g, .btna_g span, .btna_sg, .btna_sg span, .btna_so, .btna_so span {
+    background: url(../image/common/btn.png) no-repeat scroll 0 0;
+	color:#fff;
+}
+.btna_o span {
+    background-position:right 0;
+}
+.btna_g {
+    background-position: left -44px;
+    padding-left: 33px;
+}
+.btna_g span {
+    background-position: right -44px;
+}
+/*公用按钮 end*/
+
+/*表单控件*/
+a.back3, a.noicon {
+	background-color:#FF9100;
+}
+a.back3:hover {
+	background-color:#e9700e;
+}
+.numberSearch {
+	background-color:#FF9100;
+}
+.numberSearch:hover {
+	background-color:#e9700e;
+}
+/*表单控件 end*/
+
+/*客户定位*/
+.main_div.location h2 {
+    color:#E9700E
+}
+li.tag{
+	background:#E9700E
+}
+.location .numberSearch, .purchase  {
+	background-color:#ff9100
+}
+.location .numberSearch:hover, .purchase:hover {
+	background-color:#E9700E
+}
+.s_title {
+	color:#E9700E;
+	border-bottom: 2px solid #E9700E;
+}
+#orderbutton i.arrow {
+	background: url(../image/common/btn_arrow.png) no-repeat 0 0;
+}
+#orderbutton i.arrowup {
+	background: url(../image/common/btn_arrow.png) no-repeat 0 -5px;
+}
+.contract_list thead {
+    background:#f5f5f5;
+}
+.contract_list thead td {
+	color:#555;
+}
+.contract_list tbody tr:hover {
+    background-color: #e5e5e5;
+}
+.contract_list tbody tr:hover td {
+    color: #888;
+}
+.purchasebtn {
+	background:#ffcc7b;
+	color:#E9700E;
+}
+.purchasebtn:hover {
+	background:#E9700E
+}
+.purchasetitle {
+    background: none repeat scroll 0 0 #E9700E;
+}
+/*客户定位 end*/
+
+/*翻页控件*/
+.paging a.pagingSelect {
+    background:#E9700E;
+	border:1px solid #E9700E;
+}
+.nextPageGrayOrange {
+    color:#555;
+}
+/*翻页控件 end*/
+
+/*步骤*/
+#step1 .fore1, #step2 .fore2, #step3 .fore3, #step4 .fore4, #step5 .fore5 {
+    background-color:#ff9100;
+}
+#step2 .fore1, #step3 .fore1, #step3 .fore2, #step4 .fore1, #step4 .fore2, #step4 .fore3, #step5 .fore1, #step5 .fore2, #step5 .fore3, #step5 .fore4 {
+    background:#FFCC7B;
+}
+.step ul li {
+    background-color:#e7e7e7;
+}.step ul li b {
+    background: url(../image/common/step.gif) no-repeat scroll 0 0 ;
+}
+#step1 .fore1 b, #step2 .fore2 b, #step3 .fore3 b, #step4 .fore4 b {
+    background: url(../image/common/step.gif) no-repeat scroll 0 -29px;
+}
+#step1 b, #step2 b, #step3 b, #step4 b, #step5 b {
+    background: url(../image/common/step.gif) no-repeat scroll 0 0;
+}
+#step2 .fore1 b, #step3 .fore2 b, #step4 .fore3 b, #step5 .fore4 b {
+    background: url(../image/common/step.gif) no-repeat scroll 0 -87px;
+}
+#step3 .fore1 b, #step4 .fore1 b, #step4 .fore2 b, #step5 .fore1 b, #step5 .fore2 b, #step5 .fore3 b {
+    background: url(../image/common/step.gif) no-repeat scroll 0 -58px;
+}
+/*步骤 end*/
+
+/*填单*/
+.h2_title {
+	margin:0px;
+	background:url(../image/common/icon_title.png) no-repeat scroll 10px center #f3f3f3;
+	border-bottom:1px solid #dcdcdc;
+	color:#333;
+	padding:0px 10px;
+}
+.h2_title span {
+	color:#E9700E;
+	margin-left:0px;
+}
+.ordernav {
+	top:48px;
+}
+.ordertab li {
+	background:#c7c7c7;
+}
+.ordertab li:hover, .ordertab li.setorder:hover {
+	background:#E9700E
+}
+.ordertab li.setorder {
+	background:#ffcc7b;
+}
+.pdcard li.setcon {
+	color:#E9700E
+}
+.fillin li.full h5 {
+    color:#E9700E;
+}
+.infoBox h4 {
+	color:#E9700E
+}
+/*附属销售品*/
+.fs_choosed li dd.delete, .fs_choosed li dd.canshu, .fs_choosed li dd.canshu2, .fs_choosed li dd.mustchoose, .fs_tab li dd.delete, .fs_tab li dd.canshu, .fs_tab li dd.canshu2, .fs_tab li dd.mustchoose, dd.border, .fs_tab li dd.canchoose {
+    background: url(../image/common/fsIcon.png) no-repeat scroll 0 0 ;
+}
+.fs_choosed li dd.mustchoose, .fs_tab li dd.mustchoose {
+    background-position: 0 -32px;
+}
+.fs_choosed li dd.canshu, .fs_tab li dd.canshu {
+    background-position: 0 -128px;
+}
+.fs_choosed li dd.canshu2, .fs_tab li dd.canshu2 {
+    background-position: 0 -48px;
+}
+.fs_tab li dd.canchoose {
+    background-position: 0 -144px;
+}
+.fs_choosed ul li span.del {
+    color:#E9700E;
+    text-decoration: line-through;
+}
+.fs_search input.width330 {
+    background: url(../image/common/inputIcon_search.png) no-repeat scroll right center;
+}
+#fs_choosed li dd.delete, #fs_choosed li dd.canshu, #fs_choosed li dd.canshu2, #fs_choosed li dd.mustchoose, #fs_tab li dd.delete, #fs_tab li dd.canshu, #fs_tab li dd.canshu2, #fs_tab li dd.mustchoose, dd.border, #fs_tab li dd.canchoose {
+    background: url(../image/common/fsIcon.png) no-repeat scroll 0 0 ;
+}
+#fs_choosed li dd.mustchoose, #fs_tab li dd.mustchoose {
+    background-position: 0 -32px;
+}
+#fs_choosed li dd.canshu, #fs_tab li dd.canshu {
+    background-position: 0 -128px;
+}
+#fs_choosed li dd.canshu2, #fs_tab li dd.canshu2 {
+    background-position: 0 -48px;
+}
+#fs_tab li dd.canchoose {
+    background-position: 0 -144px;
+}
+#fs_choosed ul li span.del {
+    color:#E9700E;
+    text-decoration: line-through;
+}
+#fs_search input.width330 {
+    background: url(../image/common/inputIcon_search.png) no-repeat scroll right center;
+}
+/*提示*/
+.order_check {
+	background: url(../image/common/order_check.png) no-repeat scroll left center;
+}
+.order_check_error {
+    background: url(../image/common/order_check_error.png) no-repeat scroll left center;
+}
+.correct {
+    background: url(../image/common/order_check.png) no-repeat scroll left center;
+}
+.error {
+    background: url(../image/common/order_check_error.png) no-repeat scroll left center;
+}
+/*其它*/
+.progress span {
+	background:#E9700E;
+}
+/*其它 end*/
+
+/*办套餐*/
+#plan_cart {
+	background:#FF9100
+}
+#plan_detail{
+	background:#FFCC7B
+}
+a.add, a.add2 {
+    background: url(../image/common/fsIcon.png) no-repeat scroll 0 -96px;
+}
+a.add:hover {
+    background: url(../image/common/fsIcon.png) no-repeat scroll 0 -64px;
+}
+a.add2:hover {
+    background: url(../image/common/fsIcon.png) no-repeat scroll 0 -80px;
+}
+/*公用表格*/
+.contract_list2 tbody tr:hover {
+    background-color: #e5e5e5;
+}
+/*办套餐 end*/
+
+/*套餐变更*/
+#changePlaninfo span {
+    background: none repeat scroll 0 0 #fff2dd;
+    border: 1px solid #E9700E;
+    color: #E9700E;
+}
+#changePlaninfo span.old {
+	background:#f8f8f8;
+}
+/*套餐变更 end*/
+
+/*弹窗相关*/
+.easyDialogdiv .contract_list thead td {
+	color:#E9700E
+}
+.numberList thead tr:hover {
+	background:#f8f8f8;
+}
+.numberList tr:hover {
+    background-color: #e5e5e5;
+}
+.easyDialogclose, .simplemodal-container div.modal-close  {
+    background: url(../image/common/close.png) repeat scroll 0 0;
+}
+.ec-dialog-form-container h1 {
+	color:#E9700E
+}
+.contract_nav li.current span {
+	color:#E9700E
+}
+/*弹窗相关 end*/
+
+/*订单详情*/
+table.orderdetail_fs thead td {
+    color:#E9700E;
+}
+table.orderdetail_fs tbody td i.see_canshu {
+    background: none repeat scroll 0 0 #FF9100;
+}
+table.orderdetail_fs tbody td#seemore{
+	color:#E9700E;
+}
+/*订单详情 end*/
+
+/*算费*/
+.cashier_table tr:hover {
+    background: none repeat scroll 0 0 #e5e5e5;
+}
+.cashier_td {
+    color: #E9700E;
+}
+.cashier_table td.moracon a {
+    color:#FF9100;
+}
+.cashier_table td.money {
+    color:#FFCC7B;
+}
+/*算费 end*/
+
+/*购手机*/
+.selectList dl dd a.selected {
+    background: none repeat scroll 0 0 #FF9100;
+}
+.hot_web_price label.cDarkRed {
+    color:#FF9100;
+}
+.phone_btn {
+    background: url(../image/common/phone_btn.png) no-repeat scroll 0 0 ;
+    color:#fff;
+}
+.goodsListInfor li:hover {
+    background-color: #FFFFFF;
+    border: 1px solid #FFCC7B;
+    box-shadow: 0 0 8px #FFCC7B;
+    padding: 14px 7px;
+}
+.phone_info_r .Info_txt dd.Pricestyle span {
+    color: #FF9100;
+}
+.selectBoxTwo:hover {
+	border:1px solid #E9700E
+}
+.selectBoxTwoOn {
+	color:#E9700E;
+	border:1px solid #E9700E
+}
+.selectBoxTwo u {
+    background: url(../image/common/proddetlIcon.gif) no-repeat scroll 0px 0px ;
+}
+.selectBoxTwoOn u {
+    background: url(../image/common/proddetlIcon.gif) no-repeat scroll -23px 0px ;
+}
+td i.open_close {
+    background: url(../image/common/fsIcon.png) no-repeat scroll center -81px;
+}
+.contract_list tbody tr.plan_select {
+    background: url(../image/common/cashier_tr.gif) repeat-x scroll left top #e5e5e5;
+}
+.contract_list tbody tr.plan_select td {
+    color:#797979;
+}
+div.cashier_tr {
+    background: url(../image/common/cashier_tr.gif) repeat-x scroll left bottom #f4f4f4;
+}
+div.plan_second_list table thead td {
+    color: #555;
+}
+div.plan_second_list table thead tr:hover {
+    background: none repeat scroll 0 0 #f4f4f4;
+}
+.contract_list tbody tr.plan_select2 {
+    background:none repeat scroll 0 0 #FFCC7B;
+}
+div.plan_second_list table tbody tr:hover {
+    background: none repeat scroll 0 0 #FFCC7B;
+}
+.contract_list tbody tr:hover div.plan_second_list table thead td {
+    color: #555;
+}
+/*购手机 end*/
+
+/*选号码*/
+table.numberlist td:hover {
+    background: url(../image/common/numberlist_select.png) no-repeat scroll center 0 #FFFFFF;
+}
+table.numberlist td.select {
+    background: url(../image/common/numberlist_select.png) no-repeat scroll 0 -74px #FFFFFF;
+}
+/*选号码 end*/
+
+/*三入口*/
+.order .order_nav_ul li a {
+	color:#555;
+}
+.order .order_nav_ul li a:hover {
+    background: url(../image/common/tab_normal_hover.png) repeat scroll 0 0 rgba(0, 0, 0, 0);
+    color: #fff;
+	text-shadow:none;
+	width:307px;
+}
+.order .order_nav_ul li a:active {
+    background: url(../image/common/tab_normal_pre.png) repeat scroll 0 0 rgba(0, 0, 0, 0);
+    color: #fff;
+}
+/*三入口 end*/
+
+/*转售计费*/
+p.tips {
+	margin-top:10px;
+}
+p.tips span.green {
+    color: #333;
+    font-size: 14px;
+}
+p.tips span.orange {
+    color:#FF9100;
+}
+ul.billSearch table td.green {
+    color:#E9700E;
+}
+ul.billSearch table thead td {
+    color:#E9700E;
+}
+ul.billSearch table td.orange {
+    color: #FF9100;
+}

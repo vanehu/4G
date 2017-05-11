@@ -1,0 +1,165 @@
+
+<input type="hidden" id="subnum" value="" />
+<input type="hidden" id="subPage" value="" />
+<div class="container-fluid">
+  <div class="row" id="number">
+        <div class="row divtab">
+          <div id="nbrPoolDiv2" class="col-xs-10">
+          </div>
+          <div class="col-xs-2">
+            <button type="button" class="btn btn-default navbar-btn nav-justified no-mp" data-toggle="modal" data-target="#numberModal"> <span class="glyphicon glyphicon-search" aria-hidden="true"></span><br>
+            高级查询 </button>
+          </div>
+        </div>
+        <div id="number-list">
+		</div>
+      </div>
+</div>
+<!--<nav class="navbar navbar-default navbar-fixed-bottom">
+  <div class="container-fluid">
+    <div class="btn-group btn-group-justified navbar-btn" role="group" aria-label="...">
+      <div class="btn-group" role="group">
+        <button type="button" class="btn btn-primary btn-lg" onclick="order.phoneNumber.btnBack(${prodId})"> <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>返回 </button>
+      </div>
+     </div>
+  </div>
+</nav>
+--><!-- 密码弹出框-->  
+<div class="modal fade modal_search" id="app_password_dialog"  tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal_top">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="panel panel-default">
+          <div class="panel-body">
+            <form>
+            <div class="form-group">
+              <label>预占密码</label>
+              <div class="row">
+              	<div class="col-xs-4">
+                	<input type="password" id="pree_password_text" class="form-control" placeholder=""/>
+                </div>
+               </div>
+               </div>
+          </form>
+          </div>
+          <div class="divfoot modal-footer">
+				<div class="btn-group btn-group-justified navbar-btn" role="group" aria-label="...">
+					<div class="btn-group" role="group">
+          				<button type="button" onclick="order.phoneNumber.preePassword()" class="btn btn-primary btn-lg" ><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> 确定</button>
+          			</div>
+          			<div class="btn-group" role="group">
+          				<button type="button"  style="height: 42px;font-size: 14px;" data-dismiss="modal" class="btn btn-default" data-toggle="modal" data-target="numberModal"> <span class="glyphicon" aria-hidden="true"></span>关闭</button> 
+           			</div>
+          		</div>
+          </div>
+        </div>
+    </div>
+  </div>
+</div>
+</div>
+<!-- 号码查询 -->
+<div class="modal fade modal_search" id="numberModal" tabindex="-2" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal_top">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="panel panel-default">
+          <div class="panel-body">
+            <form>
+            <div class="form-group">
+              <label>选择号段</label>
+              	<div id="pnHeadDiv" class="input-group">
+                </div>
+            </div>
+            <div class="form-group">
+              <label>最后四位</label>
+                <input type="text" id="pnEnd" class="form-control" maxlength="4" onblur="javascript:if($(this).val()==''){$(this).val('最后四位');}" onfocus="javascript:if($(this).val()=='最后四位'){$(this).val('')}" aria-describedby="inputSuccess2Status" placeholder="最后四位">
+            </div>
+            <div class="form-group">
+              <label>选择类型</label>
+                <div id="pnCharacterId_basicDiv" class="input-group">
+                	
+                </div>
+            </div>
+  <div class="form-group">
+    <label for="exampleInputEmail1">预存话费<small>（元）</small></label>
+    <input type="hidden" id="Greater">
+	<input type="hidden" id="Less">
+    <div class="input-group">
+		<select id="numPrice" onchange="setnumPrice();"; class="selectpicker show-tick form-control" >
+			<option id="-1" value="-1">不限</option>
+           	<option id="0" value="0">0-100</option>
+           	<option id="100" value="100">100-300</option>
+           	<option id="300" value="300">300-500</option>
+           	<option id="500" value="500">500-1200</option>
+           	<option id="1200" value="1200">1200-15000</option>
+           	<option id="15000" value="15000">15000-30000</option>
+           	<option id="30000" value="30000">30000以上</option>
+       	</select>
+     	<span class="input-group-addon select-span"></span>
+	</div>
+  </div>
+  <div class="form-group">
+  	<label>查预约号码</label>
+    <div class="row">
+    	<div class="col-xs-7">
+        	<div class="form-group has-feedback">
+              <input type="text"id="idCode" class="form-control" aria-describedby="inputSuccess2Status" placeholder="请输入身份证号">
+              <span class="glyphicon glyphicon-search form-control-feedback" aria-hidden="true"></span>
+            </div>
+        </div>
+        <div class="col-xs-5">
+	        <input type="checkbox" id="query_flag_01" name="query_flag_01" data-toggle="toggle" data-on="密码预占" data-off="密码预占" data-width="100%">
+	        <script> 
+	           $(function() { $('#query_flag_01').bootstrapToggle(); }) 
+	        </script>
+        </div>
+    </div>
+  </div>
+  
+  
+</form>
+          </div>
+          <div class=" divfoot modal-footer">
+				<div class="btn-group btn-group-justified navbar-btn" role="group" aria-label="...">
+					<div class="btn-group" role="group">
+          				<button type="button" id="btnNumSearch1" class="btn btn-primary btn-lg" ><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> 确定</button>
+          			</div>
+          			<div class="btn-group" role="group">
+          				<button type="button"  style="height: 42px;font-size: 14px;" data-dismiss="modal" class="btn btn-default" data-toggle="modal" data-target="numberModal"> <span class="glyphicon" aria-hidden="true"></span>关闭</button> 
+           			</div>
+          		</div>
+        </div>
+    </div>
+  </div>
+</div>
+</div>
+<script>
+function setnumPrice(){
+			var price = $("#numPrice").val();
+			if(price=="-1"){
+				$("#Less").val("");
+				$("#Greater").val("");
+			}else if(price=="0"){
+				$("#Less").val("100");
+				$("#Greater").val("0");
+			}else if(price=="100"){
+				$("#Less").val("300");
+				$("#Greater").val("100");
+			}else if(price=="300"){
+				$("#Less").val("500");
+				$("#Greater").val("300");
+			}else if(price=="500"){
+				$("#Less").val("1200");
+				$("#Greater").val("500");
+			}else if(price=="1200"){
+				$("#Less").val("15000");
+				$("#Greater").val("1200");
+			}else if(price=="15000"){
+				$("#Less").val("30000");
+				$("#Greater").val("15000");
+			}else if(price=="30000"){
+				$("#Less").val("");
+				$("#Greater").val("30000");
+			}
+		}
+</script>

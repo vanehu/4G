@@ -1,0 +1,158 @@
+<#if main.offerMembers?? &&(main.offerMembers?size>0)>	
+	<#assign i = 0 />		
+	<#list main.offerMembers as item>		
+		<#if item.objType==2>
+			<#assign prodId = item.objInstId/>
+			<#assign i = i+1 />
+			<#if i==1>
+				<div class="item active" id="attach_tab_${prodId}">
+					<div class="panel-heading" style="color: #ff8202;">${item.roleName}:${item.accessNumber}</div>
+					<div class="panel panel-default">
+						<div id="item_order_${prodId}">
+						<div id="attach_${prodId}">
+						</div>
+						<#include "/apptoken/order/order-uimsub.html" />
+						</div>
+					</div>
+				</div>
+			<#else>
+				<div class="item" id="attach_tab_${prodId}">
+					<div class="panel-heading" style="color: #ff8202;">${item.roleName}:${item.accessNumber}</div>
+					<div class="panel panel-default">
+						<div id="item_order_${prodId}">
+						<div id="attach_${prodId}">
+						</div>
+			               <#include "/apptoken/order/order-uimsub.html" />
+						</div>
+					</div>
+				</div>
+			</#if>
+		</#if>
+	</#list>
+</#if>	
+<#if (main.newnum?number>0)>
+	<#list offerSpec.offerRoles as offerRole>	
+		<#if offerRole.prodInsts?? && (offerRole.prodInsts?size>0)>
+			<#list offerRole.prodInsts as prod>
+			<#if prod.memberRoleCd==401 && prod.accessNumber==undefined>
+				<#assign prodId = prod.prodInstId /> 
+				<div class="item" id="target_${k}">
+				<div class="panel panel-default panelcon" id="prodinfo_${prodId}" style="padding-bottom: 100px;">
+				<div class="panel-heading" id=${offerRole.offerRoleId}>${prod.offerRoleName}</div>
+				<form>
+				<div class="panel-body" id="item_order_${prodId}">
+				<#if prodId==-1 >
+					<div class="form-group">
+						<label for="exampleInputEmail1">付费方式</label>
+						<#assign feeType_read = "0">
+						<#if main.actionFlag==6 || main.actionFlag==2>
+							<#assign feeType_read = "1">
+						<#else>
+							<#if offerSpec.feeType?? && offerSpec.feeType!="" >
+								<#if offerSpec.feeType=="2100" || offerSpec.feeType=="1200" || offerSpec.feeType=="1201"  >
+									<#assign feeType_read = "1">
+								</#if>
+							<#else>
+								<#assign feeType_read = "1">
+							</#if>
+						</#if>
+						<div class="input-group">
+					    <select ss="${offerSpec.feeTypeMain}"  id="idtype" class="selectpicker show-tick form-control" prodId="${prodId}" name="pay_type_${prodId}" onchange="order.main.feeTypeCascadeChange(this,'${prodId}')" <#if feeType_read=="1">disabled="disabled"</#if>>
+			              	<#if offerSpec.feeType?? && offerSpec.feeType!="" >
+							<#if offerSpec.feeType=="1200" || offerSpec.feeType=="3100" || offerSpec.feeType=="3102" || offerSpec.feeType=="3103" >
+								<option value="1200" <#if main.feeTypeMain==1200>selected="selected"</#if> >后付费</option>
+							</#if>
+							<#if offerSpec.feeType=="2100" || offerSpec.feeType=="3100" || offerSpec.feeType=="3101" || offerSpec.feeType=="3103" >
+								<option value="2100" <#if main.feeTypeMain==2100>selected="selected"</#if> >预付费</option>
+							</#if>
+							<#if offerSpec.feeType=="1201" || offerSpec.feeType=="3101" || offerSpec.feeType=="3102" || offerSpec.feeType=="3103" >
+								<option value="1201" <#if main.feeTypeMain==1201>selected="selected"</#if> >准实时预付费</option>
+							</#if>
+							<#else>
+								<option value="" >无</option>
+							</#if>
+			            </select>
+			            <span class="input-group-addon select-span"></span>
+		         		</div>
+					</div>
+					</#if>
+					<div class="form-group">
+						<label for="exampleInputPassword1">接入号码</label>
+						<div class="input-group">
+							<input type="text" id="nbr_btn_${prodId}" class="form-control" readonly="readonly"/> <span
+								class="input-group-btn">
+								<button class="btn btn-default" id="phonenum_btn_${prodId}" onclick="order.phoneNumber.initPage(${prodId},'offer')" type="button">选号</button>
+							</span>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="exampleInputFile">UIM卡号</label>
+						<div class="input-group">
+					      <input type="tel" class="form-control" id="uim_txt_${prodId}">
+					     
+					      <div class="input-group-btn">
+					        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false" onclick="changeUl();">操作 <span class="caret"></span></button>
+					     
+					     	 <ul class="dropdown-menu dropdown-menu-right" role="menu" id="check_uim_menu_1" style="">
+<!-- 					          <li><button class="btn btn-uim" type="button" onclick="common.callScanning('order.service.scaningCallBack',${prodId})"> <span style="float:left;">扫描 </span></button></li>
+ -->					          <li class="divider"></li>
+					          <li><button class="btn btn-uim" type="button" id= "uim_check_btn_${prodId}" onclick="prod.uim.checkUim(${prodId});"><span style="float:left;">校验</span></button></li>
+					          <li class="divider"></li>
+					          <li><button class="btn btn-uim" id="uim_release_btn_${prodId}" onclick="prod.uim.releaseUim(${prodId});"  type="button" disabled="disabled">
+									<span style="float:left;">释放</span></button></li>
+					        </ul>
+					      </div><!-- /btn-group -->
+					    </div><!-- /input-group -->
+					</div>
+				</div>
+				</form>
+				<button type="button" onClick="AttachOffer.show(${prodId})"
+					class="btn btn-default btn-block button-right">
+					可选包/功能 <span class="glyphicon glyphicon-chevron-right"
+						aria-hidden="true"></span>
+				</button>
+				</div>
+				</div>
+				<div id="attach_${prodId}" style="display:none"></div>
+			</#if>
+			</#list>
+		</#if>
+	</#list>
+</#if>
+<#if (main.oldnum?number>0)>
+	<#list main.oldprodInstInfos as prodinfos>
+		<#list main.oldoffer as offerinst>
+			<#if prodinfos.accNbr==offerinst.accNbr>
+				<#list offerinst.offerMemberInfos as item>
+					<#if item.objType==2>
+						<#assign prodId = item.objInstId/>
+						<div class="item" id="attach_tab_${prodId}">
+							<div class="panel-heading" style="color: #ff8202;">加装移动电话:${item.accessNumber}</div>
+							<div class="panel panel-default">
+								<div id="item_order_${prodId}">
+								<div id="attach_${prodId}">
+								</div>
+					               <#include "/apptoken/order/order-uimsub.html" />
+								</div>
+							</div>
+						</div>
+					</#if>
+				</#list>
+			</#if>
+		</#list>
+	</#list>
+</#if>
+<script type="text/javascript">
+	function changeUl(){
+		//获取按钮离页面地步的高度
+		var height=$(window).height();
+		if($("#check_uim_menu_1").is(":hidden")){
+			if(height<=500){
+				$("#check_uim_menu_1").css("top","auto");
+				$("#check_uim_menu_1").css("bottom","100%")
+			}
+		}else{
+			$("#check_uim_menu_1").removeAttr("style");
+		}
+	}
+</script>

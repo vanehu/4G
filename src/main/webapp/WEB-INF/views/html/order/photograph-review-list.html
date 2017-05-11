@@ -1,0 +1,26 @@
+<#if (pageModel.list)?? &&((pageModel.list)?size>0)>
+	<table class="numberList">
+		<thead>
+			<tr>
+				<td width="30%">经办人证件照片</td>
+				<td width="70%">经办人拍照照片</td>
+			</tr>
+		</thead>
+		<tbody id="handleCustCertificateTbody" style="display:none">
+			<tr>
+				<td>
+					<img id="handleCustCertificateImg" height="180px" width="320px"/>
+				</td>
+				<td>
+					<img id="handleCustPhotograph" height="360px" width="640px"/>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+<#else>
+    <div class="no_search"> 
+		<div class="h1">
+			<img style="vertical-align:middle" src="${contextPath}/image/common/query_search.gif" />&nbsp;&nbsp;抱歉，没有找到相关的记录，请尝试其他筛选条件。
+		</div>
+	</div>
+</#if>

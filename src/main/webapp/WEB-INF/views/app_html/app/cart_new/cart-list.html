@@ -1,0 +1,87 @@
+<#if code?? && (code>=0) >
+<#if (pageModel.pageNo)?? && (pageModel.pageNo > 1) >
+  <#if (pageModel.list)?? &&((pageModel.list)?size>0)>
+    <#list pageModel.list as orderLists>
+      <#if (orderLists.list)?? &&((orderLists.list)?size>0)>
+        <#list orderLists.list as cart>
+          <ul class="choice-list-box" onclick="cart.main.queryCartInfo('${orderLists.olId}')">
+            <li>
+              <i class="iconfont pull-left"></i>
+              <span class="list-title font-secondary">${cart.partyName}</span>
+              <i href="#ordercon2" class="iconfont absolute-right"></i>
+            </li>
+            <li>
+              <span class="list-title">
+            <span class="title-lg">${cart.soDate}</span>
+              <span class="subtitle font-secondary">受理时间</span>
+              </span>
+            </li>
+            <li>
+              <span class="list-title">
+            <span class="title-lg">${cart.staffName}</span>
+              <span class="subtitle font-secondary">受理人</span>
+              </span>
+            </li>
+            <li>
+              <span class="list-title">
+            <span class="title-lg">${orderLists.olStatusName}</span>
+              <span class="subtitle font-secondary">状态</span>
+              </span>
+            </li>
+          </ul>
+        </#list>
+      </#if>
+    </#list>
+    </#if>
+ <#else>
+    <#if (pageModel.list)?? &&((pageModel.list)?size>0)>
+		 <div id="order-list-all">
+	      <#list pageModel.list as orderLists>
+	      <#if (orderLists.list)?? &&((orderLists.list)?size>0)>
+	        <#list orderLists.list as cart>
+	        <ul class="choice-list-box" onclick="cart.main.queryCartInfo('${orderLists.olId}')">
+            <li>
+              <i class="iconfont pull-left"></i>
+              <span class="list-title font-secondary">${cart.partyName}</span>
+              <i href="#ordercon2" class="iconfont absolute-right"></i>
+            </li>
+            <li>
+              <span class="list-title">
+            <span class="title-lg">${cart.soDate}</span>
+              <span class="subtitle font-secondary">受理时间</span>
+              </span>
+            </li>
+            <li>
+              <span class="list-title">
+            <span class="title-lg">${cart.staffName}</span>
+              <span class="subtitle font-secondary">受理人</span>
+              </span>
+            </li>
+            <li>
+              <span class="list-title">
+            <span class="title-lg">${orderLists.olStatusName}</span>
+              <span class="subtitle font-secondary">状态</span>
+              </span>
+            </li>
+          </ul>
+	        </#list>
+      	</#if>
+    	</#list>
+    	  </div>
+	<#else>
+      <ul class="choice-list-box">
+        <li>
+          <i class="iconfont pull-left"></i>
+          <span class="list-title font-secondary">没有查询到结果</span>
+        </li>
+      </ul>
+  </#if>
+</#if>
+<#else>
+   ${mess}
+</#if>
+<script type="text/javascript" charset="utf-8">
+$(function() {
+	  common.setListTop("60px");
+	});
+</script>

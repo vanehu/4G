@@ -1,0 +1,308 @@
+
+<h1 class="easyDialogTitle">政企客户身份鉴权</h1>
+
+<div class="infoBox">
+    <ul class="pdcard">
+        
+        
+        
+         <#if rules.rule6=="Y">
+                   <li id="auth_tab6" onclick="order.cust.changeTab(6)" class="setcon">单位证件鉴权</li>
+         </#if>
+         
+          <#if rules.rule5=="Y">
+                <#if rules.rule6=="Y">
+                      <li id="auth_tab5" onclick="order.cust.changeTab(5)">单位证件+使用人证件鉴权</li>
+                <#else>
+                     <li id="auth_tab5" onclick="order.cust.changeTab(5)" class="setcon">单位证件+使用人证件鉴权</li>
+               </#if>
+         </#if>
+       
+          <!--使用人名与账户名一致  -->
+         <#if rules.rule7=="Y" || rules.rule8=="Y" >
+              <#if rules.rule5=="Y" || rules.rule6=="Y">
+                   <li id="auth_tab17" onclick="order.cust.changeTab(17)">使用人证件鉴权</li>
+                <#else>
+                   <li id="auth_tab17" onclick="order.cust.changeTab(17)" class="setcon">使用人证件鉴权</li>
+              </#if>
+         </#if>
+        
+        
+          
+      
+          <#if rules.rule2=="Y">
+              <#if rules.rule5=="Y" || rules.rule6=="Y" ||  rules.rule7=="Y" || rules.rule8=="Y">
+                   <li id="auth_tab2" onclick="order.cust.changeTab(2)">短信鉴权</li>
+                <#else>
+                   <li id="auth_tab2" onclick="order.cust.changeTab(2)" class="setcon">短信鉴权</li>
+              </#if>
+         </#if>
+         
+          <#if rules.rule3=="Y">
+              <#if rules.rule5=="Y" || rules.rule6=="Y" ||  rules.rule7=="Y" ||  rules.rule8=="Y" || rules.rule2=="Y">
+                   <li id="auth_tab3" onclick="order.cust.changeTab(3)">产品密码鉴权</li>
+                <#else>
+                   <li id="auth_tab3" onclick="order.cust.changeTab(3)" class="setcon">产品密码鉴权</li>
+              </#if>
+         </#if>
+    </ul>
+   
+    <div id="contents">
+         
+          <div id="content6"  >
+            <form id="custAuthForm6">
+                <table class="network">
+                    <tbody>
+                      <tr>
+                        <td width="130">
+                              <label class="f_red"></label><label >单位证件类型：</label>
+                        </td>
+                        <td width="300">
+                               <label class="f_red"></label><label id="AuthType3"></label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="130">
+                              <label class="f_red">*</label><label>单位证件号码：</label>
+                        </td>
+                        <td width="300">
+                            <input id="idCardNumber15" type="input" placeHolder="请输入证件号码"
+                                   data-validate="validate(required:证件号码, maxlength:长度最多为{arg1}(25)) on(blur)"
+                                   class="inputWidth150px">
+                             <a class="purchase"  onclick="order.cust.identityTypeAuth(15)" href="javascript:void(0)">校验</a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </form>
+        </div>
+        <div id="content5" style="display: none" >
+            <form id="custAuthForm5" >
+                <table class="network">
+                    <tbody>
+                     <tr>
+                        <td width="130">
+                              <label class="f_red"></label><label >单位证件类型：</label>
+                        </td>
+                        <td width="300">
+                               <label class="f_red"></label><label id="AuthType1"></label>
+                        </td>
+                    </tr>
+                    
+                     <tr>
+                        <td width="130">
+                              <label class="f_red">*</label><label>单位证件号码：</label>
+                        </td>
+                        <td width="300">
+                            <input id="idCardNumber2" type="input" placeHolder="请输入证件号码"
+                                   data-validate="validate(required:证件号码, maxlength:长度最多为{arg1}(25)) on(blur)"
+                                   class="inputWidth150px">
+                        </td>
+                    </tr>
+                    
+                      <tr>
+                        <td width="130">
+                              <label class="f_red"></label><label >使用人证件类型：</label>
+                        </td>
+                        <td width="300">
+                               <label class="f_red"></label><label id="AuthType2"></label>
+                        </td>
+                    </tr>
+                     
+                    <tr>
+                        <td width="100">
+                              <label class="f_red">*</label><label>使用人证件号码：</label>
+                        </td>
+                        <td width="300">
+                            <input id="idCardNumber10" type="password" placeHolder="请输入证件号码"
+                                   data-validate="validate(required:密码证件号码, maxlength:密码长度最多为{arg1}(20)) on(blur)"
+                                   class="inputWidth150px">
+                            <a class="purchase"  onclick="order.cust.identityTypeAuthSub(10)" href="javascript:void(0)">校验</a>
+                           
+                            <a class="purchase" id="readCertBtnID10" onclick="order.cust.readCertWhenAuth2(10)" style="display: none" >读卡</a>
+                            
+                        </td>
+                    </tr>
+                    
+                    </tbody>
+                </table>
+            </form>
+        </div>
+        
+
+        
+        <!-- 使用人名称与账户名称一致-->
+       
+         <div id="content17"  style="display: none">
+            <form id="custAuthForm7">
+                <table class="network">
+                    <tbody>
+                    <tr>
+                        <td width="130">
+                             <label class="f_red"></label><label></label>
+                        </td>
+                         <td width="300">
+                               <label  class="f_red"></label><label id="isSame"></label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="130">
+                              <label class="f_red"></label><label >使用人名称：</label>
+                        </td>
+                        <td width="300">
+                               <label class="f_red"></label><label id="useCustNamePwd"></label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="130">
+                              <label class="f_red"></label><label >账户名称：</label>
+                        </td>
+                        <td width="300">
+                               <label class="f_red"></label><label id="accountNamePwd"></label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="130">
+                              <label class="f_red"></label><label >使用人证件类型：</label>
+                        </td>
+                        <td width="300">
+                               <label class="f_red"></label><label id="AuthType6"></label>
+                        </td>
+                    </tr>
+                     
+                    <tr>
+                        <td width="100">
+                              <label class="f_red">*</label><label id="custAuthTypeName11">使用人证件号码：</label>
+                        </td>
+                        <td width="300">
+                            <input id="idCardNumber11" type="password" placeHolder="请输入证件号码"
+                                   data-validate="validate(required:密码证件号码, maxlength:密码长度最多为{arg1}(20)) on(blur)"
+                                   class="inputWidth150px">
+                            <a class="purchase"  onclick="order.cust.identityTypeAuth(11)" href="javascript:void(0)">校验</a>
+                           
+                            <a class="purchase" id="readCertBtnID11" onclick="order.cust.readCertWhenAuth2(11)" style="display: none" >读卡</a>
+                            
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </form>
+        </div>
+        
+       
+        
+          <div id="content2" style="display: none">
+            <form id="custAuthForm2">
+                <div class="easyDialogclose" id="svCloseDiv"></div>
+                <table class="contract_list">
+                    <thead>
+                    <tr>
+                        <td colspan="6" align="center">短信验证码</td>
+                    </tr>
+                    </thead>
+                </table>
+                <table width="100%" border="0" cellspacing="0" cellpadding="0" class="SMScode">
+                    <tr>
+                        <td><p>为确保您的个人信息安全，在办理该业务前，请输入随机短信验证码</p></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span style="float:left; margin-top:5px">短信验证码</span>
+
+                            <form id="loginSmsForm">
+                                <input type="text" class="txt2 inputWidth228px" style="float:left; margin:0px 5px;"
+                                       name="smspwd" id="smspwd2"
+                                       data-validate="validate(required:短信验证码不能为空) on(blur)"
+                                       placeholder="请输入您手机收到的验证码" maxlength="6"/>
+                                <a class="purchase" id="custAuthbtn3" onclick="order.cust.smsvalid(2)" href="javascript:void(0)">校验</a><a
+                                    class="purchase" id="smsSend" onclick="order.cust.smsResend()"
+                                    href="javascript:void(0)">短信发送</a>
+                            </form>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <p>- 验证码在5分钟内有效，3次错误输入后失效。</p>
+
+                            <p>- 如您在30秒内仍未收到验证码，请点击上面短信发送重新获取。</p>
+
+                            <p>- 如果您连续3次重试都没有成功收到短信验证码，建议您稍后再试。</p>
+                        </td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+        
+          <div id="content3" style="display: none">
+            <form id="custAuthForm3">
+                <table class="network">
+                    <tbody>
+                    <tr>
+                        <td width="100"><label class="f_red">*</label><label id="custAuthTypeName1">产品密码：</label>
+                        </td>
+                        <td width="300">
+                            <input id="authPassword2" type="password" placeHolder="请输入密码"
+                                   data-validate="validate(required:密码不能为空, maxlength:密码长度最多为{arg1}(12)) on(blur)"
+                                   class="inputWidth150px">
+                            <a class="purchase" id="custAuthbtn1" onclick="order.cust.productPwdAuth(2)" href="javascript:void(0)">校验</a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </form>
+        </div>
+    </div>
+    <div id="iseditOperation" style="display: none">
+     <a  onclick="order.cust.jumpAuth2();"  style="position:absolute; top:5px; right:20px;" class="btn_h30" id="usersearchbtn"><span   >跳过鉴权</span></a>
+   </div>
+    <div id="authTypeStr" style="display: none"></div>
+    <div id="authTypeStr2" style="display: none"></div>
+</div>
+
+
+<script type="text/javascript">	 
+var rulesJson='${rulesJson}';
+OrderInfo.rulesJson=eval("("+rulesJson+")");
+OrderInfo.authRecord.resultCode="0";
+$("#AuthType3").html(OrderInfo.cust.identityName);
+//判断使用人证件类型
+if(OrderInfo.actionFlag!=1 && OrderInfo.actionFlag!=""){
+   if(OrderInfo.rulesJson.isSame=="Y"){
+	   $("#isSame").html("使用人名称与账户名称一致");
+   }
+   else{
+	   $("#isSame").html("使用人名称与账户名称不一致");
+   }
+
+//使用人证件类型
+var identidyTypeCd=OrderInfo.rulesJson.identidyTypeCd;
+//使用人证件名称
+var identityName=OrderInfo.rulesJson.identityName;
+$("#AuthType2").html(identityName);
+$("#AuthType6").html(identityName);
+$("#AuthType5").html(OrderInfo.rulesJson.useCustNamePwd);
+$("#custAuthType1").html(identityName);
+
+//账户名称
+$("#accountName").html(OrderInfo.rulesJson.accountNamePwd);
+if(identidyTypeCd==1){
+	
+	  $("#readCertBtnID10").attr("style","");
+	  $("#idCardNumber10").attr("readonly","readonly");
+	  $("#readCertBtnID11").attr("style","");
+	  $("#idCardNumber11").attr("readonly","readonly");
+}
+
+//单位证件类型
+$("#AuthType1").html(OrderInfo.cust.identityName);
+
+
+$("#accountNamePwd").html(OrderInfo.rulesJson.useCustName);  //使用人名称
+$("#useCustNamePwd").html(OrderInfo.rulesJson.accountName);
+}
+
+
+</script>
+
+
+

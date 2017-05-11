@@ -1,0 +1,48 @@
+<#assign uims = instNfcAppInfoMap?keys>
+<div class="main_warp">
+    <div id="nfc_app_warp_id" class="phone_warp">
+        <!--卡应用信息-->
+    <#if uims?? >
+        <div class="contract_content">
+            <div class="contract_nav" id="contract_nav_nfc_app_tab">
+                <ul style="float:left;">
+                    <#list uims as item>
+                        <li itemIndex="${item_index}" id="tab_${item_index}" <#if item_index==0>class="current"</#if>>卡：${item}</li>
+                    </#list>
+                </ul>
+            </div>
+            <!-- 公用内容切换部分 -->
+            <#list uims as item>
+                <div class="contract_tab_content_nfc_app" id="tab_content_${item_index}" style="display:none;">
+                    <table class="contract_list">
+                        <thead>
+                        <tr>
+                            <td>应用名称</td>
+                            <td>应用标识</td>
+                            <td>是否为预置应用</td>
+                            <td>应用归属</td>
+                            <td>应用地域</td>
+                            <td>应用类型</td>
+                        </tr>
+                        </thead>
+                        <tbody>
+                            <#list instNfcAppInfoMap["${item}"] as subItem>
+                            <tr>
+                                <td>${subItem.appName}</td>
+                                <td>${subItem.appIdentity}</td>
+                                <td><#if subItem.isPresetApp==0>非预置应用<#elseif subItem.isPresetApp==1>预置应用<#else>未知</#if></td>
+                                <td><#if subItem.appSource==0>集团应用<#elseif subItem.appSource==1>地方应用<#else>未知</#if></td>
+                                <td>${subItem.appRegionName}</td>
+                                <td>${subItem.appTypeName}</td>
+                            </tr>
+                            </#list>
+                        </tbody>
+                    </table>
+                </div>
+            </#list>
+            <!-- 公用内容切换部分 end -->
+        </div>
+    </#if>
+    </div>
+</div>
+

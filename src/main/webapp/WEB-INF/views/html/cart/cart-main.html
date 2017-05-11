@@ -1,0 +1,298 @@
+<@override name="title"><#if pageType=="detail">受理订单查询<#elseif pageType=="voucher">重打回执<#elseif pageType=="reInvoice">重打发票<#elseif pageType=="addInvoice">补打发票<#elseif pageType=="link">受理流程查询</#if></@override>
+
+<@override name="header">
+<#include "/busi-js-tpl.html"/>
+
+
+<script src="${contextPath}/js/busi-js/cart/cart.js?${jsversion}" type="text/javascript"></script>
+
+<style>
+.cartLink_fail:hover {
+	text-decoration : underline;
+	cursor : pointer;
+}
+</style>
+</@override>
+
+<@override name="content">
+<input type="hidden" id="pageType" value="${pageType}">
+<#if pageType=="link">
+<input type="hidden" id="permissionsType" value="${permissionsType}"/>
+<input type="hidden" id="pageType4EC" value="${pageType4EC}">
+</#if>
+<div class="main_div" id="d_query" >
+
+    <div class="main_warp" >
+        <!--订单准备-->       
+        <h2 class="h2_title" id="pageType" name="${pageType}"><#if pageType=="detail">受理订单查询<#elseif pageType=="voucher">重打回执<#elseif pageType=="reInvoice">重打发票<#elseif pageType=="addInvoice">补打发票<#elseif pageType=="link">受理流程查询</#if><span></span>
+        	<!-- <a href="业务办理_客户定位完成.html" class="numberSearch back3"><span>返回</span></a> -->
+        </h2>
+        <div class="order">
+            <div class="order_content" style="border:none; padding:10px">
+                
+                <!--挑靓号-->
+                <div class="order_tab_panel" style="display:block;">
+                        <div class="selectList">
+                            <dl>
+                                  <dt>选择地区：</dt>
+                                  <dd>
+                                  	<#if pageType4EC=="link4EC">
+	                                  	<input type="text" class="numberTextBox width198" readonly="readonly" id="p_areaId_val" onclick="cart.main.chooseArea('report/preCartLink4EC')" value="${p_areaId_val}" placeholder="请选择地区" />
+                                  	<#else>
+                                  		<input type="text" class="numberTextBox width198" readonly="readonly" id="p_areaId_val" onclick="cart.main.chooseArea()" value="${p_areaId_val}" placeholder="请选择地区" />
+                                  	</#if>
+                                  	<input type="hidden" id="p_areaId" value="${p_areaId}">
+                                  	<label class="f_red">*</label>
+                                  </dd>
+                                  <dt style="width:100px">受理时间：</dt>
+                                  <dd>
+                                    <input type="text" class="numberTextBox" style="width:160px" id="p_startDt" readonly="readonly" value="${p_startDt}"  />
+                                    <label class="f_red">*</label>
+                                  </dd>
+                                  <!--
+                                  <dt>结束时间：</dt>
+                                  <dd>
+                                  -->    
+                                  <input type="hidden" class="numberTextBox" style="width:160px" id="p_endDt" readonly="readonly" value="${p_endDt}" />                           
+                                   <!--
+                                    <label class="f_red">*</label>
+                                  </dd>
+                                  -->
+                                <!-- 有权限的工号，才能查询到“地区”下面的所有渠道，且以弹出框形式进行渠道的查询；
+                                	否则，只能选择自己归属的渠道，并以下拉列表的形式展示渠道列表。 -->
+                                <dt>渠道：</dt>
+                                <#if pageType=="detail">
+                                	<#if QryChannelAuth == "0">
+	                                	<dd>
+		                                  	<input id="qureyChannelList" class="numberTextBox width100" type="text" readonly="readonly" value="" />
+		                                  	<input id="p_channelId" class="numberTextBox width100" type="hidden" readonly="readonly" value="" />
+		                                  	<input id="channelTypeCd" class="numberTextBox width100" type="hidden" readonly="readonly" value="" />								
+		                                  	<label class="f_red">&nbsp;</label>
+	                                 	</dd>
+                                	<#else>
+	                                	<select id="p_channelId" class="width202" >
+	                                 	<option value="" >--选择渠道--</option>
+	                               			<#if Session["_staff_channel"]?? && (Session["_staff_channel"]?size>0) >
+												<#list Session["_staff_channel"] as channel>
+			                                 		<option value="${channel.id}" areaid="${channel.areaId}" >${channel.name}</option>
+			                                	</#list>
+											</#if>
+	                               		</select>
+	                               		<label class="f_red">&nbsp;&nbsp;</label>
+                                	</#if>                                
+								<#else>
+								<select id="p_channelId" class="width202" >
+                                 	<option value="" >--选择渠道--</option>
+                               		<#if Session["_staff_channel"]?? && (Session["_staff_channel"]?size>0) >
+										<#list Session["_staff_channel"] as channel>
+		                                 	<option value="${channel.id}" areaid="${channel.areaId}" >${channel.name}</option>
+		                                </#list>
+									</#if>	
+                               	</select>
+                               	<label class="f_red">&nbsp;&nbsp;</label>
+                               	</#if>
+                            </dl>      
+                            <dl>
+                            	  <dt>接入号：</dt>
+                                  <dd>
+                                    <input type="text" class="numberTextBox width198" id="p_qryNumber" value=""/>
+                                    <label class="f_red">&nbsp;</label>
+                                  </dd>
+                             	  <dt style="width:100px"><input type="checkbox" id="if_p_olNbr" >购物车流水：</dt>
+                                  <dd>
+                                    <input type="text" class="numberTextBox width198" id="p_olNbr" value="" disabled="disabled" style="width:160px;background-color: #E8E8E8;" />
+                                  	<label class="f_red" >&nbsp;&nbsp;</label>
+                                  </dd>
+                                  <#if pageType4EC=="link4EC">
+                                  	  <dt>外部订单号：</dt>
+	                                  <dd>
+	                                    <input type="text" class="numberTextBox width198" id="p_extCustOrderId" value=""/>
+	                                    <label class="f_red">&nbsp;</label>
+	                                  </dd>
+                                  </#if>
+                                  <#if pageType=="detail">
+                          			<dt>受理工号：</dt>
+                          			<#if QryChannelAuth == "0">
+                          				<dd>
+		                          			<input id="qureyStaffCode" class="numberTextBox width100" type="text" readonly="readonly" value="" />
+		                          			<input id="bt_resetStaffCode" type="button" value="重 置" class="numberSearch" />
+		                          			<input id="p_staffId" class="numberTextBox width100" type="hidden" readonly="readonly" value="" />						
+		                                  	<input id="p_QryChannelAuth" type="hidden" readonly="readonly" value="${QryChannelAuth}" />
+		                                  	<label class="f_red">&nbsp;</label>
+	                          			</dd>
+                          			<#else>
+                          				<dd>
+		                          			<input id="qureyStaffCode" class="numberTextBox width100" type="text" readonly="readonly" value="${Session["_ecs_login_session_key"].staffCode}" />
+		                          			<input id="bt_resetStaffCode" type="button" value="重  置" class="numberSearch" />
+		                          			<input id="p_staffId" class="numberTextBox width100" type="hidden" readonly="readonly" value="${Session["_ecs_login_session_key"].staffId}" />						
+		                                  	<input id="p_QryChannelAuth" type="hidden" readonly="readonly" value="${QryChannelAuth}" />
+		                                  	<label class="f_red">&nbsp;</label>
+	                          			</dd>
+                          			</#if>
+                          		</#if>
+                          	</dl>
+                          	<dl>
+                          		<#if pageType=="detail">
+                                  <dt>终端串码： </dt>
+                          		  <dd>
+                          			<input type="text" class="numberTextBox width100" id="p_couponNumber" value=""/>
+                          		  </dd>
+                          		  </#if>
+                          		<dt>购物车状态：</dt>
+                                  <dd>
+                                  	<select id="p_olStatusCd" class="width202" style="width:160px" >
+                                  	  	<option value="" >--请选择--</option>
+                                  	</select>
+                                  	<label class="f_red">&nbsp;&nbsp;</label>
+                                  </dd>
+                                <dt style="width:100px">查询类型：</dt>
+                                <dd>
+                                  	<select id="p_qryBusiOrder" class="numberTextBox width198" style="width:160px" >
+                                  		<option value="1" >产品+销售品动作</option>
+                                  		<option value="2" >客户动作</option>
+                                  		<option value="3" >帐户动作</option>
+                                  		<option value="4" >营销资源</option>
+                                  	</select>
+                                  	<label class="f_red">&nbsp;&nbsp;</label>
+                                 </dd>
+                                 <dt>订单状态：</dt>
+                                  <dd>
+                                  	<select id="p_busiStatusCd" class="width202" style="width:160px" >
+                                  	  	<option value="" >--请选择--</option>
+                                  	</select>
+                                  	<label class="f_red">&nbsp;&nbsp;</label>
+                                  </dd>
+                                  <dd>
+									<label class="f_red">&nbsp;&nbsp;</label>
+                                    <input type="button" value="搜 索" class="numberSearch" id="bt_cartQry" />
+								</dd>
+                          	</dl>                             	     
+                  </div>
+                    <!--号码列表-->
+                    <div class="phone_warp" id="cart_list" >
+           <table class="numberList">
+              <thead>
+                <tr>
+                  <td width="80">受理地区</td>
+                  <td width="130">受理渠道</td>
+                  <td width="80">受理人</td>
+                  <td width="80">受理工号</td>
+                  <td width="120">受理时间</td>
+                  <td width="130">购物车流水号</td>
+                  <td width="70">客户名称</td>
+                  <!-- <td width="90">业务动作</td> -->
+                  <td width="70">购物车状态</td>
+                  <td width="70">订单操作</td>
+               	 </tr>
+              </thead>
+              <tbody>
+              	<!-- 
+ 				<tr>
+                  <td>南京</td>
+                  <td>南京电信营业厅</td>
+                  <td>苏宁测试工号3</td>
+                  <td>suningTest3</td>
+                  <td>2013-09-23 10:01:15</td>
+                  <td>10201312040000003631</td>
+                  <td>18981013125</td>
+                  <td>订购销售品</td>
+                  <td>开通中</td>
+                  <td><a class="purchase" href="javascript:void(0)" type="main" >详情</a></td>
+               	</tr>
+               	 -->
+              </tbody>
+            </table>
+                        <!--页码-->
+                        <div class="paging">
+                            <label><span class="pageUpGray">上一页</span></label>
+                            <label id="pageNum">
+                            	<a class="pagingSelect" href="#">1</a>
+                            </label> 
+                            <label><span class="pageUpGray">下一页</span></label>
+                            <label class="marginTop4">共0 页</label>
+                            <label class="marginTop4">跳转至</label>
+                            <input type="text" class="inputW20H20" />
+                            <label class="marginTop4">页</label>
+                            <a href="javascript:void(0)" class="determineBtn">跳转</a>
+                        </div>                            
+                        <!--页码 end-->
+                    
+                    </div>
+                                       
+                                       
+                </div>
+                                        
+            </div>
+        </div>
+        <!--订单准备 end-->
+    </div>
+
+	
+</div>
+<!--内容 end-->
+
+<!--弹出框的内容-->
+<#include "/print/invoice-prepare.html"/>
+<!--弹出层-->
+	
+	<div id="d_cartInfo" style="display: none" ></div>
+	<div id="cart_link" style="display:none"></div>
+	
+	
+	<div class="easyDialogdiv" style="width:650px;height:115px;display:none" id="d_area">
+    	<div class="easyDialogclose" id="d_area_close"></div>
+    	<table class="contract_list">
+            <thead>
+                <tr>
+                    <td>地区选择</td>
+                </tr>                                                    
+            </thead>
+        </table>
+                <div class="infoBox">
+                    <table class="network">
+                          <tbody>
+                          <tr>
+                                <td width="20"></td>
+                                <td width="480">
+                                 	<select id="q_area2" name="q_area2" style="width: 120px" >
+                                 		<option value="">--请选择--</option>
+						            </select>
+                                 	
+                                 	<select id="q_area3" name="q_area3" style="width: 150px" >
+						                <option value="">--请选择--</option>
+						            </select>
+						            
+			            			<select id="q_area4" name="q_area4" style="width: 180px" >
+			            				<option value="">--请选择--</option>
+						            </select>
+                                </td>
+                                <td width="40">
+                                	<input type="hidden" id="b_areaAll" value="N">
+                                	<input type="button" value="确 认" class="numberSearch" id="bt_area_config" />
+                                </td>
+                          </tr>
+                        </tbody>
+                    </table>                
+                </div> 
+    </div>
+
+	<div class="easyDialogdiv" style="width:780px;height:460px;display:none" id="d_offer">
+		<div class="easyDialogclose" id="d_offer_close"></div>
+		<div id="d_offer_info" ></div>
+	</div>
+	
+	<!-- 工号查询弹出框 --start-->	 
+	 <div id = "qureyByStaffCode_dialog" class="easyDialogdiv" style="width: 1080px; height: 460px; display: none; margin: 0px;"></div>	
+	<!-- 工号查询弹出框 --end-->
+	
+	<!-- 渠道查询弹出框 --start-->	 
+	<div id = "qureyByChannel_dialog" class="easyDialogdiv" style="width: 1080px; height: 460px; display: none; margin: 0px;"></div>	
+	<!-- 渠道查询弹出框 --end-->
+	
+</@override>
+
+<#if Session["_session_portal_type"]?? && Session["_session_portal_type"]=="MVNO" >
+<@extends name="/mvno-template.html"/>
+<#else>
+<@extends name="/content-template.html"/>
+</#if>

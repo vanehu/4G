@@ -1,0 +1,153 @@
+<div id="order-content">
+	<#assign offerSpec = main.offerSpec />
+	<ul class="choice-list-box">
+		<li name="card-list"><i class="iconfont pull-left">&#xe6cb;</i> 
+			<span class="list-title">
+				<span class="title-lg">新套餐:${offerSpec.offerSpecName}</span>
+			 	<span class="subtitle font-secondary">旧套餐:${main.oldOfferSpecName}
+					<#if offerSpec.offerSpecParams??
+					&&(offerSpec.offerSpecParams?size>0)>
+					<button type="button" class="list-can absolute-right" data-toggle="modal" data-target="#setting" onclick="AttachOffer.offer_showMainParam();">参</button> </#if>
+				</span> 
+				
+			</span> <!--<i class="iconfont absolute-right font-secondary open-noness">&#xe66e;</i>-->
+		</li>
+	</ul>
+	<div id="tab_flag" class="point-main-box" style="z-index: 100;">
+		 <#if main.offerMembers?? &&(main.offerMembers?size>0)>
+				<#assign i = 0 />
+				<#list main.offerMembers as item>
+				<#if item.objType==2>
+				<#assign i = i+1 />
+				<#if i==1>
+					<a id="tab_flag_'+i+'" href="#"  class="tab_flag active"></a>
+				<#else>
+					 <a id="tab_flag_'+i+'" href="#"  class="tab_flag"></a>
+				</#if>
+				</#if>
+				</#list>
+			</#if>
+		</div>
+						
+		<ul class="tab-change-list" id="tab-change-list" style="overflow: scroll" >	
+		<#if main.offerMembers?? &&(main.offerMembers?size>0)>
+				<#assign i = 0 />
+				<#list main.offerMembers as item>
+				<#if item.objType==2>
+				<#assign i = i+1 />
+				<#if i==1>
+					<#assign prodId = item.objInstId />
+					<li class="tab-list" name="tab-li" id="attach_tab_${prodId}" >
+						<ul class="choice-list-box m-b-10" name="card-list">
+						<li name="card">
+							<i class="iconfont pull-left"></i> 
+							<span class="list-title font-secondary">${item.roleName}</span>
+							<span class="pull-right font-orange p-r-40 list-text">${item.accessNumber}</span>
+							<i class="iconfont absolute-right font-secondary"></i>
+							</li>
+							
+							<li id="uimDiv_${prodId}" style="display: none;">
+							<div class="choice-box absolute-l-43 border-top-none border-none"  >
+												<input placeholder="UIM卡，请扫描或输入" class="choice-input border-bottom-1 p-l-0 " oninput="showCheckUim(${prodId})"; id="uim_input_${prodId}" />
+												<i id="uim_call_${prodId}" class="iconfont right-btn pull-right p-r-10 m-r-45"
+													onclick="common.callScanning('order.service.scaningCallBack',${prodId})">&#xe641;</i>
+												<!--扫描UIM卡按钮-->
+												<i id="uim_check_${prodId}"
+													class="iconfont right-btn pull-right p-r-10 m-r-45 dis-none"
+													onclick="product.uim.checkUim(${prodId});">&#xe672;</i>
+												<!--校验UIM卡按钮-->
+												<i id="uim_release_${prodId}"
+													class="iconfont right-btn pull-right p-r-10 m-r-45 dis-none"
+													onclick="product.uim.releaseUim(${prodId});">&#xe673;</i>
+												<!--释放UIM卡按钮-->
+								</div>
+							</li>
+							</ul>
+						<div id="item_order_${prodId}">
+							<div id="attach_${prodId}">
+								
+							</div>
+							
+						</div>
+					</li>
+				<#else>
+					<#assign prodId = item.objInstId />
+					 <li class="tab-list" name="tab-li" id="attach_tab_${prodId}" >
+						<ul class="choice-list-box m-b-10" name="card-list">
+						<li name="card">
+							<i class="iconfont pull-left"></i> 
+							<span class="list-title font-secondary">${item.roleName}</span>
+							<span class="pull-right font-orange p-r-40 list-text">${item.accessNumber}</span>
+							<i class="iconfont absolute-right font-secondary"></i>
+							</li>
+							<li id="uimDiv_${prodId}" style="display: none;">
+							<div class="choice-box absolute-l-43 border-top-none border-none"  >
+												<input placeholder="UIM卡，请扫描或输入" class="choice-input p-l-0 " oninput="showCheckUim(${prodId})"; id="uim_input_${prodId}" />
+												<i id="uim_call_${prodId}" class="iconfont right-btn pull-right p-r-10 m-r-45"
+													onclick="common.callScanning('order.service.scaningCallBack',${prodId})">&#xe641;</i>
+												<!--扫描UIM卡按钮-->
+												<i id="uim_check_${prodId}"
+													class="iconfont right-btn pull-right p-r-10 m-r-45 dis-none"
+													onclick="product.uim.checkUim(${prodId});">&#xe672;</i>
+												<!--校验UIM卡按钮-->
+												<i id="uim_release_${prodId}"
+													class="iconfont right-btn pull-right p-r-10 m-r-45 dis-none"
+													onclick="product.uim.releaseUim(${prodId});">&#xe673;</i>
+												<!--释放UIM卡按钮-->
+								</div>
+							</li>
+						</ul>
+						<div id="item_order_${prodId}">
+							<div id="attach_${prodId}">
+							</div>
+							
+						</div>
+					</li>
+				</#if>
+				</#if>
+				</#list>
+			</#if>
+			
+		</ul>
+	<div class="sub-btn-box p p-b-15">
+		<button class="sun-btn" id="fillNextStep">下一步</button>
+	</div>
+</div>
+<script type="text/javascript">
+$(function() {
+	//初始化Slider 实例
+	new Slider({
+			dom: document.getElementById('tab-change-list'),
+			list: document.getElementsByName('tab-li'),
+			run: document.getElementsByName('card-list'),
+			runList: document.getElementsByName('card'),
+			tab_flag: "tab_flag"
+		});
+	
+});
+function showCheckUim(prodId) {
+	var uimNumber = $("#uim_input_"+prodId).val().trim();
+	if (uimNumber != "") {
+		$("#uim_call_"+prodId).addClass("dis-none");
+		$("#uim_check_"+prodId).removeClass("dis-none");
+	} else {
+		$("#uim_call_"+prodId).removeClass("dis-none");
+		$("#uim_check_"+prodId).addClass("dis-none");
+	}
+
+}
+
+function showCheckTerminal(prodId) {
+	
+	var terminalNumber = $("#terminal_text").val().trim();
+	if (terminalNumber != "") {
+		$("#terminal_call").addClass("dis-none");
+		$("#terminal_check").removeClass("dis-none");
+	} else {
+		$("#terminal_call").removeClass("dis-none");
+		$("#terminal_check").addClass("dis-none");
+	}
+
+}
+var cur_channelCode = ${channelCode};
+</script>
