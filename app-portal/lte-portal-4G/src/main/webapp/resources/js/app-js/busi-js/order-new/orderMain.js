@@ -171,19 +171,21 @@ order.main = (function(){
 	
 	//加载其它tab页产品属性
 	var _loadOtherParm = function(param){
-		var key;
-		if(OrderInfo.cust.custId == "-1"){
-			key = OrderInfo.cust.identityNum;
-		} else {
-			key = OrderInfo.cust.custId;
+		if(!cust.isCovCust(OrderInfo.cust.identityCd)){//公众客户进行初始化
+			var key;
+			if(OrderInfo.cust.custId == "-1"){
+				key = OrderInfo.cust.identityNum;
+			} else {
+				key = OrderInfo.cust.custId;
+			}
+			cust.custCernum=[];
+			var idCardUser = {
+					 "id":key,
+					 "prodId":[-1],
+					 "usedNum":cust.usedNum
+			 };
+			 cust.custCernum.push(idCardUser);
 		}
-		cust.custCernum=[];
-		var idCardUser = {
-				 "id":key,
-				 "prodId":[-1],
-				 "usedNum":cust.usedNum
-		 };
-		 cust.custCernum.push(idCardUser);
 		var param = {
 				"boActionTypeCd" : "S1" ,
 				"boActionTypeName" : "订购",

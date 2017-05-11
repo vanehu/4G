@@ -20,6 +20,7 @@ cust = (function(){
 	var _readIdCardUser={};//客户返档读卡客户信息
 	var _checkResult=true;//一证五号校验失败标志
 	var _custCatsh = {};//读卡的客户缓存
+	var _custCernum = [];//客户证件使用数缓存
 	var _clearCustForm = function(){
 		$('#cmCustName').val("");
 		$('#cmAddressStr').val("");
@@ -461,7 +462,7 @@ cust = (function(){
 					return ;
 				}
 				//客户返档一证五号校验
-				if(!cust.checkCertNumberForReturn($("#div_cm_identidiesType  option:selected").val(),$.trim($("#cmCustIdCard").val()),$.trim($("#cmCustName").val()),$.trim($("#cmAddressStr").val()))){
+				if((cust.checkCertNumberForReturn()) >= 5){
 						return;
 				}
 				var data = {};
@@ -3034,7 +3035,7 @@ cust = (function(){
 	/**
 	 * 使用人与客户返档证号关系预校验接口
 	 */
-	var _checkCertNumberForReturn = function(identityCd,identityNum,partyName,address) {
+	var _checkCertNumberForReturn = function() {
 		var propertiesKey = "ONE_CERT_5_NUMBER_"
 				+ (OrderInfo.staff.soAreaId + "").substring(0, 3);
 		var isON = offerChange.queryPortalProperties(propertiesKey);
@@ -3064,14 +3065,14 @@ cust = (function(){
 				"custName" : cust.readIdCardUser.partyName,
 				"custNameEnc" : cust.readIdCardUser.CN,
 				"certNumEnc" : cust.readIdCardUser.certNum,
-				"certAddressEnc" : cust.readIdCardUser.address
-
+				"certAddressEnc" : cust.readIdCardUser.address,
+				"custId"	: cust.readIdCardUser.custId
 			};
 			inParam.certNumEnc = inParam.certNumEnc.replace(/=/g,"&#61");
 			inParam.custNameEnc = inParam.custNameEnc.replace(/=/g,"&#61");
 			inParam.certAddressEnc =inParam.certAddressEnc.replace(/=/g,"&#61");
 		}
-		var checkResult = false;
+		var usedNum = 0;
 		
 		var response = $.callServiceAsJson(contextPath
 				+ "/app/cust/preCheckCertNumberRel", inParam);
@@ -3092,12 +3093,12 @@ cust = (function(){
 				$("#modal-content").html("证件「"+cust.readIdCardUser.idCardNumber+"」全国范围已有"+parseInt(result.usedNum)+"张移动号卡，您当前业务在本证件下新增1张号卡「"+phoneNumber+"」，合计超过5卡，请对于新号卡登记其他使用人");
 				$("#alert-modal").modal();
 			} else {
-				checkResult = true;
+				
 			}
 		} else {
 			$.alertM(response.data);
 		}
-		return checkResult;
+		return parseInt(result.usedNum);
 	};
 
     
@@ -3177,6 +3178,7 @@ cust = (function(){
 		getUserGenerationInfosForSec	:_getUserGenerationInfosForSec,
 		accountQuery				:  _accountQuery,
 		OneCertNumFlag              :       _OneCertNumFlag,
-		custCatsh					:		_custCatsh
+		custCatsh					:		_custCatsh,
+		custCernum					:		_custCernum
 	};	
 })();
