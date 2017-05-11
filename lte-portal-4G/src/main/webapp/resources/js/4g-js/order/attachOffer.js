@@ -4186,6 +4186,9 @@ AttachOffer = (function() {
 				$("#div_"+prodId).append($ul);
 			}else{
 				var isAgree = "";
+				var memberBak = CacheData.getOfferMember(prodId);
+				var memberRoleCdBak = memberBak.roleCd;
+				
 				//测试 先注释掉
 				if(labelId == "10020"){
 					isAgree = "Y";

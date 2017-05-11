@@ -362,24 +362,28 @@ query.offer = (function() {
 		var url = contextPath+"/offer/queryCanBuyAttachSpec";
 		var inparam;
 		if(param.isAgree == "Y"){//促销标签下，子标签合约 调用合约查询接口
-			if(param.mainOfferSpecId  == null || param.mainOfferSpecId == ""){
-			    return;
+			if(param.memberRoleCdBak=="401" || param.memberRoleCdBak=="501"){
+				inparam = param;
+			}else{
+				if(param.mainOfferSpecId  == null || param.mainOfferSpecId == ""){
+				    return;
+				}
+				url = contextPath+"/offer/queryAgreeAttachOfferSpec";
+				inparam = {
+						areaId : param.areaId,
+						mktResCd : "",
+						agreementType : "",
+						offerSpecId : param.mainOfferSpecId,
+						agreementName : ""
+				};
+				if(OrderInfo.menuName == "ZXHYBL"){
+					inparam.agreementTypeList = [3];
+					inparam.subsidyAmount = OrderInfo.preliminaryInfo.money*100;
+					inparam.agreementPeriod = OrderInfo.preliminaryInfo.leaseMonth;
+					inparam.partnerCodeList = [OrderInfo.preliminaryInfo.partnerCode];
+					OrderInfo.preliminaryInfo.mainOfferSpecId = param.mainOfferSpecId;
+				};
 			}
-			url = contextPath+"/offer/queryAgreeAttachOfferSpec";
-			inparam = {
-					areaId : param.areaId,
-					mktResCd : "",
-					agreementType : "",
-					offerSpecId : param.mainOfferSpecId,
-					agreementName : ""
-			};
-			if(OrderInfo.menuName == "ZXHYBL"){
-				inparam.agreementTypeList = [3];
-				inparam.subsidyAmount = OrderInfo.preliminaryInfo.money*100;
-				inparam.agreementPeriod = OrderInfo.preliminaryInfo.leaseMonth;
-				inparam.partnerCodeList = [OrderInfo.preliminaryInfo.partnerCode];
-				OrderInfo.preliminaryInfo.mainOfferSpecId = param.mainOfferSpecId;
-			};
 		}else {
 			inparam = param;
 		}
