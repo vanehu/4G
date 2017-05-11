@@ -308,6 +308,11 @@ public class OrderQueryController extends BaseController {
 	public @ResponseBody JsonResponse areaTreeAllMain(HttpSession session,@RequestBody Map<String, Object> param,@LogOperatorAnn String flowNum) {
 		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
                 SysConstant.SESSION_KEY_LOGIN_STAFF);
+		if(sessionStaff == null){//设置一个默认值，供密码重置使用
+			sessionStaff = new SessionStaff();
+			sessionStaff.setAreaId("8320100");
+			sessionStaff.setCurrentAreaId("8320000");
+		}
 		String areaLimit = param.get("areaLimit")==null?"":param.get("areaLimit").toString();
 		//String areaLeve = param.get("areaLeve")==null?"":param.get("areaLeve").toString();
 		Map<String,Object> paramS = new HashMap<String,Object>();
@@ -327,6 +332,11 @@ public class OrderQueryController extends BaseController {
 	public @ResponseBody JsonResponse areaTreeAllChilden(@RequestBody Map<String, Object> param,HttpSession session,@LogOperatorAnn String flowNum) {
 		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
                 SysConstant.SESSION_KEY_LOGIN_STAFF);
+		if(sessionStaff == null){//设置一个默认值，供密码重置使用
+			sessionStaff = new SessionStaff();
+			sessionStaff.setAreaId("8320100");
+			sessionStaff.setCurrentAreaId("8320000");
+		}
 		try{
 			param.put("ifQueryChilden", "Y");
 			List<Map<String, Object>> list = staffBmo.areaTreeAllQuery(param,flowNum,sessionStaff);
