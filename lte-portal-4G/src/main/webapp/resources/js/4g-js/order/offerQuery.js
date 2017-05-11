@@ -362,6 +362,9 @@ query.offer = (function() {
 		var url = contextPath+"/offer/queryCanBuyAttachSpec";
 		var inparam;
 		if(param.isAgree == "Y"){//促销标签下，子标签合约 调用合约查询接口
+			if(param.mainOfferSpecId  == null || param.mainOfferSpecId == ""){
+			    return;
+			}
 			url = contextPath+"/offer/queryAgreeAttachOfferSpec";
 			inparam = {
 					areaId : param.areaId,
