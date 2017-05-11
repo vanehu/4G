@@ -1,0 +1,166 @@
+<#if flag==0>
+<h5 class="s_title">帐户详情</h5>
+<ul class="fillin acct">
+  <li>
+    <font>帐户名称：</font><span>${name}</span>
+  </li>
+  <li>
+    <font>合同号：</font><span>${acctCd}</span>
+  </li>
+  <li>
+  	<font>帐户ID：</font><span>${acctId}</span>
+  </li>
+  <li>
+    <font>帐户类型：</font><span>${acctType}</span>
+  </li>
+  <li>
+    <font>帐户状态：</font><span>${status}</span>
+  </li>
+  <li>
+    <font>生效日期：</font><span>${startDate}</span>
+  </li>
+  <li>
+    <font>所属地区：</font><span>${area}</span>
+  </li> 
+  <li style="width:67%">
+    <font>所属客户：</font><span>${owner}</span>
+  </li>
+<!--   <li>
+    <font>客户类型：</font><span>${ownerType}</span>
+  </li>
+  <li>
+    <font>联系电话：</font><span>${contact}</span>
+  </li>
+  <li>
+    <font>所在地：</font><span>${address}</span>
+  </li>
+  <li style="width:66%">
+    <font>通信地址：</font><span>${mailAddress}</span>
+  </li> -->
+</ul>
+<!-- 帐户支付信息 -->
+<#if paymentType=="1">
+<ul class="fillin acct">
+  <li style="width:99%;">
+    <font>支付类型：</font><span>现金支付</span>
+  </li>
+</ul>
+<#elseif paymentType=="2">
+<ul class="fillin acct">
+  <li style="width:99%">
+    <font>支付类型：</font><span>银行托收</span>
+  </li>
+  <li>
+    <font>银行名称：</font><span>${bankName}</span>
+  </li>
+  <li>
+    <font>银行帐号：</font><span>${bankAcct}</span>
+  </li>
+  <li>
+    <font>支付人：</font><span>${paymentMan}</span>
+  </li>
+</ul>
+<#else>
+<ul class="fillin acct">
+  <li style="width:99%;">
+    <font>支付类型：</font><span></span>
+  </li>
+</ul>
+</#if>
+<!-- 账单投递信息 -->
+<#if postType??>
+<ul class="fillin acct">
+  <li>
+    <font>账单投递方式：</font>
+    <#if postType=="11">
+    <span>邮寄</span>
+    <#elseif postType=="12">
+    <span>传真</span>
+    <#elseif postType=="13">
+    <span>Email</span>
+    <#elseif postType=="14">
+    <span>短信</span>
+    <#elseif postType=="15">
+    <span>快递</span>
+    <#else>
+    <span></span>
+    </#if>
+  </li>
+  <li>
+    <font>账单内容：</font>
+    <#if postContent=="11">
+    <span>账单</span>
+    <#elseif postType=="12">
+    <span>账单和详单</span>
+    <#elseif postType=="13">
+    <span>详单</span>
+    <#elseif postType=="14">
+    <span>发票</span>
+    <#else>
+    <span></span>
+    </#if>
+  </li>
+  <li>
+    <font>账单投递周期：</font>
+    <#if postCycle=="3">
+    <span>月</span>
+    <#elseif postCycle=="4">
+    <span>季度</span>
+    <#elseif postCycle=="5">
+    <span>半年</span>
+    <#elseif postCycle=="6">
+    <span>年</span>
+    <#else>
+    <span></span>
+    </#if>
+  </li>
+  <#if postType=="12">
+  <li style="width:99%";>
+    <font>传真号码：</font>
+    <span>${receiveInfo}</span>
+  </li>
+  <#elseif postType=="13">
+  <li style="width:99%";>
+    <font>Email地址：</font>
+    <span>${receiveInfo}</span>
+  </li>
+  <#elseif postType=="14">
+  <li style="width:99%";>
+    <font>收信手机号：</font>
+    <span>${receiveInfo}</span>
+  </li>
+  <#else>
+  <li>
+  	<font>邮寄地址：</font>
+  	<span>${mailAddress}</span>
+  </li>
+  <li>
+  	<font>邮编：</font>
+  	<span>${zipCode}</span>
+  </li>
+  <li>
+  	<font>收件人：</font>
+  	<span>${consignee}</span>
+  </li>
+  </#if>
+</ul>
+<#else>
+<ul class="fillin acct">
+  <li style="width:99%";>
+    <font>账单投递方式：</font><span>不投递账单</span>
+  </li>
+</ul>
+</#if>
+
+<div class="height18"></div>
+<div class="height18"></div>
+<div align="right" style="margin: 20px auto; padding: 0 20px;">
+  <a class="btna_o" href="javascript:account.query.back()">
+    <span>返 回</span>
+  </a>
+</div>  
+<#elseif flag==1>
+<#if failInfo??><i><img width="25" height="25" style="margin:5px;" src="${contextPath}/image/icon/tip.png"></i><p style="position:relative;left:40px;bottom:30px;margin-bottom:-20px;width:97%;word-break:break-all;color:red;">查询失败：${failInfo}</p><#else>fail</#if>
+<#else>
+error
+</#if>

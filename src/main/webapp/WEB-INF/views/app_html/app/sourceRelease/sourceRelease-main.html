@@ -1,0 +1,81 @@
+<script src="${contextPath}/js/app-js/new-js/function.min.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/app-js/new-js/mobiscroll.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/app-js/busi-js/sourceRelease/sourceRelease.js?${jsversion}" type="text/javascript"></script>
+<div id="res_release">
+  <!-- begin row -->
+  <div class="row">
+    <!-- begin col-12 -->
+    <div class="panel panel-inverse panel-with-tabs" data-sortable-id="ui-unlimited-tabs-1">
+      <div class="panel-heading p-0">
+        <div class="tab-overflow">
+          <ul class="nav nav-tabs nav-tabs-inverse nav-top p-t-5">
+            <li class="active" id="tab1_li">
+              <a ><i class="iconfont tab-icon">&#xe6d5;</i>资源查询<i class="iconfont tab-result-icon dis-none">&#xe611;</i></a>
+            </li>
+            <li class="" id="tab2_li">
+              <a ><i class="iconfont tab-icon">&#xe64d;</i>查询结果<i class="iconfont tab-result-icon dis-none">&#xe611;</i></a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="tab-content p-0 m-t-10">
+        <div class="tab-pane fade active in tab-top" id="nav-tab-1">
+          <div>
+            <div class="list-box m-t-10">
+              <ul class="choice-list-box bg-body border-none">
+              	<li class="m-t-10">
+                  <div class="choice-box">
+                    <i class="iconfont pull-left">&#xe66c;</i>
+                    <select name="" id="cardType" class="myselect select-option" onchange="sourceRelease.changeType(this.value)" data-role="none">
+                      	<option value="2">UIM卡</option>
+						<option value="1">手机号</option>
+                    </select>
+                  </div>
+                </li>
+                
+                <li class="m-t-10">
+                  <div class="choice-box">
+                    <i class="iconfont pull-left">&#xe66c;</i>
+                    <input class="mydate form-control" readonly="readonly" id="p_startDt" value="${p_startTime}" placeholder="起始时间">
+                  </div>
+                </li>
+                
+                <li class="m-t-10">
+                  <div class="choice-box">
+                    <i class="iconfont pull-left">&#xe66c;</i>
+                    <input class="mydate form-control" readonly="readonly" id="p_endDt" value="${p_endTime}" placeholder="结束时间">
+                  </div>
+                </li>
+
+                <li class="m-t-10">
+                  <div class="choice-box">
+                    <i class="iconfont pull-left">&#xe61d;</i>
+                    <input placeholder="请输入UIM卡号" class="choice-input" id="UIM_cardNumber" maxlength="50" oninput="this.value=this.value.replace(/[/W]/g,'')" />
+                    <input placeholder="请输入手机号码" class="choice-input" id="SJ_cardNumber" maxlength="11" oninput="this.value=this.value.replace(/\D/g,'')" style="display:none;"/>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="sub-btn-box p p-b-15">
+              <button class="sun-btn" id="" onclick="sourceRelease.queryList(1)">查询</button>
+            </div>
+          </div>
+        </div>
+        <div class="tab-pane fade tab-top" id="nav-tab-2">
+          <div class="list-box m-t-10" id="resList">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  //初始化
+  $(function() {
+	  order.broadband.init_select();
+	  OrderInfo.order.step = 1;
+	  OrderInfo.actionFlag = 114;
+	  mydate();
+  });
+</script>
+

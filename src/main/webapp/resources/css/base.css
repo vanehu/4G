@@ -1,0 +1,66 @@
+@charset "utf-8";
+/* CSS Document */
+/* css reset 及基础样式 */
+
+html, body, div, span, applet, object, iframe,h1, h2, h3, h4, h5, h6, p, blockquote, pre,a, abbr, acronym, address, big, cite, code,del, dfn, em, font, img, ins, kbd, q, s, samp,small, strike, strong, sub, sup, tt, var,dl, dt, dd, ol, ul, li,fieldset, form, label, legend,table, caption, tbody, tfoot, thead, tr, th, td {
+	margin: 0;
+	padding: 0;
+}
+ol, ul {
+	list-style: none;
+}
+li {
+	list-style-type:none
+}
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+caption, th {
+	text-align: left;
+	font-weight: normal;
+}
+blockquote:before, blockquote:after,q:before, q:after {
+	content: "";
+}
+blockquote, q {
+	quotes: "" "";
+}
+img{ border:none;}
+
+/*浮动相关*/
+.floatleft{float:left;}
+.floatright{float:right;}
+.clear {
+	clear:both;
+	display:block;
+	overflow:hidden;
+	visibility:hidden;
+	width:0;
+	height:0;
+}
+.fix{overflow:hidden;_zoom:1;}
+.clearfix:after{content:".";display:block;height:0;clear:both;visibility:hidden;}
+.clearfix{display:inline-block;}
+* html .clearfix{height:1%;}
+.clearfix{display:block;}
+
+/*高度*/
+.height18{ height:18px; clear:both; overflow:hidden;}
+.height24{ height:24px; clear:both; overflow:hidden;}
+.height36{ height:36px; clear:both; overflow:hidden;}
+
+/*外边距*/
+.m_top0{ margin-top:0;}
+.m_top10{ margin-top:10px;}
+.m_top15{ margin-top:15px;}
+.m_top20{ margin-top:20px;}
+
+/*边线*/
+.b_top2{ border-top:2px solid #f1983c;}
+.b_top4{ border-top:4px solid #f1983c;}
+
+/*左右距离*/
+.left5 {
+	margin-left:5px;
+}

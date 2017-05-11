@@ -1,0 +1,32 @@
+<!--导航菜单-->
+<!--更多菜单-->
+<div class="more_nav" id="">
+	<div class="more_nav_close" onClick="header.menu.moreMenu();" id="more_nav_btn"></div>
+	<div class="more_nav_content" id="more_nav_content" style="display:none;">
+		<ul>
+		<#list menuList as moreList>
+			<#if moreList_index gt 3>
+				<li>
+					<a href="${contextPath}${moreList.MENU_PATH}?current=${moreList.RESOURCE_CODE}&resid=${moreList.RESOURCE_ID}">${moreList.RESOURCE_NAME}</a>
+				</li>
+			</#if></#list>
+		</ul>
+	</div>
+</div>
+
+<ul class="nav_list" id="header_nav_list">
+	<li url="${contextPath}/main/home" <#if current=='home'>class="current"</#if> >
+		<span><a href="${contextPath}/main/home">首&nbsp;&nbsp;页222</a></span>
+	</li>
+<#if menuList ??>
+<#list menuList as item>
+<#if item_index lt 4>
+	<li <#if current==item.RESOURCE_CODE>class="current"</#if> >
+		<span><a href="${contextPath}${item.MENU_PATH}?current=${item.RESOURCE_CODE}&resid=${item.RESOURCE_ID}">${item.RESOURCE_NAME}</a></span>
+	</li>
+	</#if>
+</#list>
+</#if>
+</ul>
+<!--导航菜单 end-->
+<div class="clear"></div>

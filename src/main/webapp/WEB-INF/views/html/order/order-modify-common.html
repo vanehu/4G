@@ -1,0 +1,33 @@
+<!-- 只有订单属性的业务可以公用 -->
+<!-- 订单备注展示-->
+<div class="order_confirmation ordertabcon" style="display: none" id="ordertabcon">
+	<h2 class="h2_title">
+		<span> ${main.boActionTypeName} </span>
+		${main.accessNumber}
+		<span class="showhide"></span>
+	</h2>
+	<div class="main_body">
+		<div id="orderPassRemarkDiv" style="display: none" >
+			<@block name="passRemark">
+				<#include "/order/order-password-remark.html" />
+			</@block>
+		</div>
+		<div id="orderRemarkDiv" >
+			<@block name="remark">
+				<#include "/order/order-remark.html" />
+			</@block>
+		</div>
+		<!--购物车订单属性展示-->
+		<div id="orderAttrDiv">
+			<@block name="orderAttr">
+				<#include "/order/order-attr.html" />
+			</@block>
+		</div>
+	</div>
+</div>
+<div align="right" style="margin: 20px auto; padding:0 20px;">
+	<a id="fillLastStep" href="javascript:void(0)" class="btna_o"><span>
+		<#if main.actionFlag == 6>取消<#else>上一步</#if>
+	</span></a> <a id="fillNextStep"
+		href="javascript:void(0)" class="btna_o" style=" margin-left:20px;"><span>下一步</span></a>
+</div>

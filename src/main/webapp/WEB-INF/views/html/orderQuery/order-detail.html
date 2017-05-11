@@ -1,0 +1,312 @@
+<div class="main_div"> 
+  <div class=" main_warp">
+  <div class="ordercon">
+  <!--订单确认-->
+
+<#assign orderInfo = order.orderInfo >
+<div class="order_confirmation ordertabcon"  style="display: block">
+  <h2 class="h2_title">订单详情<span class="showhide"></span>
+  </h2>
+  <div class="main_body">
+  <h5 class="s_title">基本信息</h5>
+  <ul class="fillin">
+    <li>
+      <font>地区：</font><span>${orderInfo.areaName}</span>
+    </li>
+    <li>
+      <font>受理人：</font><span>${orderInfo.staffName}</span>
+    </li>
+    <li>
+      <font>渠道名称：</font><span>${orderInfo.channelName}</span>
+    </li>
+    <li>
+      <font>状态：</font><span>${orderInfo.olStatus}</span>
+    </li>
+    <li>
+      <font>业务名称：</font><span>${orderInfo.pName}??</span>
+    </li>
+    <li>
+      <font>流水号：</font><span>${orderInfo.olNbr}</span>
+    </li>
+    <li class="full">
+      <font>购物车ID：</font><span>${olId}</span>
+    </li>
+  </ul>
+  <div class="height18"></div>
+  <h5 class="s_title">客户信息</h5>
+  <ul class="fillin">
+    <li>
+      <font>证件信息：</font><span>身份证 / 3211989239890123</span>
+    </li>
+    <li>
+      <font>地区：</font><span>南京</span>
+    </li>
+    <li>
+      <font>姓名：</font><span>测试1</span>
+    </li>
+    <li>
+      <font>客户类型：</font><span>VIP</span>
+    </li>
+    <li>
+      <font>联系人/电话：</font><span>李东健 / 13392890931</span>
+    </li>
+    <li>
+      <font>客户战略分群：</font><span>普通客户</span>
+    </li>
+  </ul>
+  <div class="height18"></div>
+  <div class="cardtab">
+    <ul class="pdcard">
+      <li class="setcon">主卡</li>
+      <li>副卡</li>
+      <div class="clear"></div>
+    </ul>
+   <div class="clear"></div>
+  </div>
+  <div class="cardtabcon">
+  <div class="pdcardcon show">
+  <h5 class="s_title">物品信息</h5>
+  <ul class="fillin">
+    <li>
+      <font>物品名称：</font><span>iPhone 5</span>
+    </li>
+    <li>
+      <font>编码：</font><span>121312415551</span>
+    </li>
+    <li>
+      <font>出入库动作：</font><span>新装</span>
+    </li>
+    <li>
+      <font>销售实体：</font><span>门店</span>
+    </li>
+  </ul>
+  <div class="height18"></div>
+  <h5 class="s_title">主卡产品信息</h5>
+  <ul class="fillin show">
+    <li>
+      <font>产品号码：</font><span>13328798736</span>
+    </li>
+    <li>
+    	<font>产品规格：</font><span>Test</span>
+    </li>
+    <li class="full">
+    	<font>产品状态：</font><span>订购成功</span>
+    </li>
+  </ul>
+  
+<div class="height18"></div>
+<h5 class="s_title">主卡可选包/功能</h5>
+<div class="infoBox">
+	<table width="100%" border="0" cellspacing="0" cellpadding="0" class="orderdetail_fs">
+    <thead>
+      <tr>
+        <td>销售品名称</td>
+        <td>地区</td>
+        <td>动作</td>
+        <td>生效时间</td>
+        <td>状态</td>
+        <td>操作</td>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>天翼10M流量包</td>
+        <td>南京</td>
+        <td>新增</td>
+        <td>2013-09-31</td>
+        <td>已开通</td>
+        <td><i class="see_canshu">查看参数</i></td>
+      </tr>
+      <tr>
+        <td>天翼阅读</td>
+        <td>南京</td>
+        <td>新增</td>
+        <td>2013-09-31</td>
+        <td>已开通</td>
+        <td><i class="see_canshu">查看参数</i></td>
+      </tr>
+      <tr>
+        <td>来电显示</td>
+        <td>南京</td>
+        <td>新增</td>
+        <td>2013-09-31</td>
+        <td>已开通</td>
+        <td><i class="see_canshu">查看参数</i></td>
+      </tr>
+      <tr>
+        <td>天翼5M流量包</td>
+        <td>南京</td>
+        <td>新增</td>
+        <td>2013-09-31</td>
+        <td>已开通</td>
+        <td><i class="see_canshu">查看参数</i></td>
+      </tr>
+      <tr>
+        <td>天翼1X</td>
+        <td>南京</td>
+        <td>新增</td>
+        <td>2013-09-31</td>
+        <td>已开通</td>
+        <td><i class="see_canshu">查看参数</i></td>
+      </tr>
+      <tr>
+        <td colspan="6" id="seemore">更多附属销售品</td>
+      </tr>
+    <tbody>
+</table>
+</div>
+<div class="height18"></div>
+<h5 class="s_title">费用信息</h5>
+<div class="infoBox">
+	<table width="100%" border="0" cellspacing="0" cellpadding="0" class="orderdetail_fs">
+    <thead>
+      <tr>
+        <td>费用项类型</td>
+        <td>金额（元）</td>
+        <td>动作</td>
+        <td>支付类型</td>
+        <td>状态</td>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>天翼4G128元套餐</td>
+        <td><span style="color:#feb161">128.00</span></td>
+        <td>新增</td>
+        <td>网银</td>
+        <td>已开通</td>
+      </tr>
+      <tr>
+        <td>天翼4G128元套餐</td>
+        <td><span style="color:#feb161">128.00</span></td>
+        <td>新增</td>
+        <td>网银</td>
+        <td>已开通</td>
+      </tr>
+    <tbody>
+</table>
+</div>
+</div>
+<div class="pdcardcon">
+  <h5 class="s_title">副卡产品信息</h5>
+  <ul class="fillin show">
+    <li>
+      <label>接入号码：</label>
+      <input type="text" class="inputWidth183px"  value=""/>
+      <a href="#" class="purchase" id="" onclick="javascript:createDialog();">选号</a>
+      <label class="f_red">*</label>
+      <div class="order_check"></div>
+    </li>
+    <li>
+      <label>UIM卡号：</label>
+      <input type="text" class="inputWidth183px"  value="2345656877"/>
+      <a href="#" class="purchase" id="">校验</a> <a href="#" class="purchase" id="">写卡</a>
+      <label class="f_red">*</label>
+      
+    </li>
+    <li>
+      <label>付费类型：</label>
+      <input name="yuhou1" type="radio" value="" checked="checked" />
+      <label class="radioinput">预付费</label>
+      <input name="yuhou1" type="radio" value="" />
+      <label class="radioinput">后付费</label>
+      <label class="f_red">*</label>
+    </li>
+    <li>
+      <label>产品密码：</label>
+      <input type="text" class="inputWidth183px"  value=""/>
+      <label class="f_red">*</label>
+    </li>
+    <li>
+      <label>产品属性：</label>
+      <input type="text" class="inputWidth183px"  value=""/>
+    </li>
+    <li>
+      <label>产品属性配置：</label>
+      <input type="text" class="inputWidth183px"  value=""/>
+    </li>
+  </ul>
+  
+<div class="height18"></div>
+
+<h5 class="s_title">副卡可选包/功能</h5>
+<div class="infoBox">
+  <h4>已选附属业务</h4>
+  <div id="fs_choosed">
+    <ul>
+      <li>
+        <dd class="mustchoose"></dd>
+        <span>来电显示</span></li>
+      <li>
+        <dd class="mustchoose"></dd>
+        <span>来电显示</span></li>
+      <li>
+        <dd class="mustchoose"></dd>
+        <span>来电显示</span></li>
+      <br />
+      <br />
+      <li>
+        <dd class="delete"></dd>
+        <span>天翼1x</span></li>
+      <li>
+        <dd class="delete"></dd>
+        <span>天翼1x</span>
+        <dd class="canshu"></dd>
+      </li>
+      <li>
+        <dd class="delete"></dd>
+        <span>天翼1x</span></li>
+      <li>
+        <dd class="delete"></dd>
+        <span>天翼1x</span>
+        <dd class="canshu"></dd>
+      </li>
+      <li>
+        <dd class="delete"></dd>
+        <span>天翼1x</span></li>
+    </ul>
+    <div class="clear"></div>
+  </div>
+  <div id="fs_search">
+    <h4 class="floatleft">可选附属业务</h4>
+    <input type="text" value="请输入您想要办理的附属业务的名称或首字母简拼" class="numberTextBox width330">
+    <div class="clear"></div>
+  </div>
+  <h4>常用可选附属业务</h4>
+  <div id="fs_tab">
+    <ul>
+      <li><span>天翼1x</span></li>
+      <li><span>天翼1x</span></li>
+      <li><span>天翼1x</span></li>
+      <li><span>天翼1x</span></li>
+      <li><span>天翼1x</span></li>
+      <br/>
+      <br/>
+      <li><span>天翼1x</span></li>
+    </ul>
+    <div class="clear"></div>
+  </div>
+</div>
+</div>
+</div>
+<div class="height18"></div>
+</div>
+
+
+</div>
+</div>
+<!--订单填写 end-->
+
+<div align="right" style="margin: 20px auto; padding:0 20px;"> <a style=" margin-left:20px;" class="btna_o" href="javascript:order.query.showMain()"><span>返回</span></a> </div>
+
+</div>
+</div>
+
+<script type="text/javascript">
+$(".pdcard li").each(function(index){
+	 $(this).click(function(){
+		$(this).addClass("setcon").siblings().removeClass("setcon");
+		$(this).parent().parent().next(".cardtabcon").find(".pdcardcon").eq(index).show().siblings().hide();
+		})
+	})
+</script>

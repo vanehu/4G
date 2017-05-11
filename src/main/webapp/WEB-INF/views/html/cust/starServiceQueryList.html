@@ -1,0 +1,42 @@
+<#if code?? && (code>=0) ><table class="numberList" id="tab_starList" >
+              <thead>
+                <tr>
+					<td width="80">受理地区</td>
+					<td width="120">接入号码</td>
+					<td width="80">客户名称</td>
+					<td width="50">客户星级</td>
+					<td width="80">权益信息</td>
+					<td width="80">开始时间</td>
+					<td width="80">结束时间</td>
+					<td width="80">剩余次数</td>
+					<td width="130">客户各权益项使用的历史记录</td>
+				</tr>
+              </thead>
+              <tbody>
+              <#if (pageModel.list)?? &&((pageModel.list)?size>0)>
+              <#list pageModel.list as pointInfo >
+              <tr>
+              <td>${areaName}</td>
+              <td>${acctNbr}</td>
+              <td>${custInfoMap.custName}</td>
+              <td>${membershipLevelInfoMap.membershipLevel}</td>
+              <td>${pointInfo.pointItemName}</td>
+              <td>${pointInfo.serviceEffectTime}</td>
+              <td>${pointInfo.pointItemTime}</td>
+              <td>${pointInfo.pointItemValue}</td>
+              <td ><a  class="purchase" onclick="javascript:cust.starQuery.starQueryHisList('${acctNbr}');" href="javascript:void(0);">客户星级历史记录查询</a></td>
+              </tr>
+              </#list>
+              <#else>
+              <tr>
+                <td colspan="9">没有查询到结果</td> 
+              </tr>
+              </#if>
+              </tbody>
+    </table>
+      <!--页码
+		<@portal.simplifyModelPagination pageModel "cart.main.queryCartList"/>
+	页码 end-->
+
+<script src="${contextPath}/js/our-js/ec.pagination.js?${jsversion}" type="text/javascript"></script>
+<#else>没有定位到客户信息</#if>

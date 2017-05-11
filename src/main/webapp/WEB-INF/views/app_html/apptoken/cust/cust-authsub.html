@@ -1,0 +1,300 @@
+<!-- Modal aria-hidden="true"-->
+<#if rules??> 
+<div class=" modal_search" id="UserCheck" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" >
+<h1 style="text-align: center;font-size: 20px">政企客户鉴权</h1>
+<div class="modal_top">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="panel panel-default">
+          <div class="panel-body">
+            <ul class="nav nav-tabs" id="ul1" role="tablist">
+            
+          
+            
+          <#if rules.rule6=="Y">
+                   <li id="li6"   role="presentation" class="active"><a id="a2" href="#profile1" onclick="fun()" href="javascript:void(0);" aria-controls="profile1" role="tab" data-toggle="tab">单位证件证件鉴权</a></li>
+          </#if>   
+           <#if rules.rule5=="Y">
+                 <#if rules.rule6=="Y">
+                        <li id="li5" role="presentation"><a id="a1" onclick="fun()" href="javascript:void(0);" aria-controls="profile" role="tab" data-toggle="tab">单位证件+使用人证件鉴权</a></li>
+                        
+                    <#else>
+                     <li id="li5" role="presentation" class="active"><a id="a1" onclick="fun()" href="javascript:void(0);" aria-controls="profile" role="tab" data-toggle="tab">单位证件+使用人证件鉴权</a></li>
+                     
+                  </#if>            
+                         </#if>  
+           <#if rules.rule7=="Y" || rules.rule8=="Y">
+                <#if rules.rule5=="Y" || rules.rule6=="Y" >
+                  <li id="li7"   role="presentation" ><a id="a2" href="#profile2" onclick="fun()" href="javascript:void(0);" aria-controls="profile2" role="tab" data-toggle="tab">使用人证件证件鉴权</a></li>
+                <#else>
+                   <li id="li7"   role="presentation" class="active"><a href="#profile2" id="a2" onclick="fun()" href="javascript:void(0);" aria-controls="profile2" role="tab" data-toggle="tab">使用人证件证件鉴权</a></li>
+              </#if>
+               
+          </#if>   
+
+          <#if rules.rule3=="Y">
+                  <#if rules.rule5=="Y" || rules.rule6=="Y" || rules.rule7=="Y" ||  rules.rule8=="Y" >
+                     <li id="li3" role="presentation"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">产品密码</a></li> 
+                  <#else>
+                 <li id="li3" role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">产品密码</a></li> 
+                  </#if>
+           </#if>
+        
+         <#if rules.rule2=="Y">
+            <#if rules.rule5=="Y" || rules.rule6=="Y" || rules.rule7=="Y" ||  rules.rule8=="Y" || rules.rule3=="Y" >
+                <li id="li2" role="presentation" ><a href="#messages" aria-controls="messages" role="tab" data-toggle="tab">短信</a></li>
+              <#else>
+                <li id="li2"  role="presentation" class="active"><a href="#messages" aria-controls="messages" role="tab" data-toggle="tab">短信</a></li>
+            </#if>
+         </#if>    
+        
+         
+   
+   </ul>
+ 
+      
+
+  <!-- Tab panes -->
+  <div class="tab-content">
+  
+    <!-- 单位证件鉴权 -->
+     <div role="tabpanel" class="tab-pane " id="profile1">
+    		<form class="form-list">
+				<div class="form-group">
+				  <label id="idCardNumberSub2" class="show-tick form-control"></label>
+					
+				</div>
+				<div class="form-group">
+				<div class="input-group">
+					<input id="idCardNumberSub3" type="text" class="form-control" placeholder="输入证件号码">
+					<span class="input-group-btn">
+                      <button class="btn btn-default" type="button"></button>
+                      </span> </div>
+			</div>
+			</form>
+    </div>
+  
+  <!-- 单位证件+使用人证件鉴权 -->
+  <div role="tabpanel" class="tab-pane " id="profile">
+    		<form class="form-list">
+				<div class="form-group">
+				    <!-- 单位证件类型 -->
+				    <label id="custAuthTypeSub" class="show-tick form-control"></label>
+				</div>
+				<div class="form-group">
+				   <div class="input-group">
+					<input id="idCardNumberSub" type="text" class="form-control" placeholder="输入单位证件号码">
+					<span class="input-group-btn">
+                      <button class="btn btn-default" type="button"></button>
+                      </span> </div>
+			    </div>
+			    
+			    <div class="form-group">
+				    <!-- 使用人证件类型 -->
+				    <label id="custAuthTypeSub1" class="show-tick form-control"></label>
+				</div>
+				<div class="form-group">
+				   <div class="input-group">
+					<input id="idCardNumberSub1" type="text" class="form-control" placeholder="输入使用人证件号码">
+					<span class="input-group-btn">
+                      <button class="btn btn-default" type="button"></button>
+                      </span> </div>
+			    </div>
+			</form>
+    </div>
+    
+    
+    <!-- 使用人鉴权 --账户名称与客户名称一致 -->
+    <div role="tabpanel" class="tab-pane " id="profile2">
+    		<form class="form-list">
+    		    <div class="form-group">
+				  <label id="isSame" class="show-tick form-control"></label>	
+				</div>
+				<!-- 脱敏账户名称 -->
+    		    <div class="form-group">
+				  <label id="accountNamePwd" class="show-tick form-control"></label>	
+				</div>
+				<!-- 脱敏使用人名称 -->
+    		    <div class="form-group">
+				  <label id="useCustNamePwd" class="show-tick form-control"></label>	
+				</div>
+				<div class="form-group">
+				  <label id="idCardNumberSub4" class="show-tick form-control"></label>	
+				</div>
+				<div class="form-group">
+				<div class="input-group">
+					<input id="idCardNumberSub6" type="text" class="form-control" placeholder="输入证件号码">
+					<span class="input-group-btn">
+                      <button class="btn btn-default" type="button"></button>
+                      </span> </div>
+			</div>
+			</form>
+    </div>
+   
+    <div role="tabpanel" class="tab-pane " id="home">
+    		<form class="form-list">
+				<div class="form-group">
+					<input id="authPassword2" data-validate="validate(required:密码不能为空, maxlength:密码长度最多为{arg1}(12)) on(blur)" type="password" class="form-control" id="userid" placeholder="请输入产品密码">
+				</div>
+				
+			</form>
+    </div>
+    
+    
+    <div role="tabpanel" class="tab-pane" id="messages">
+    	<form class="form-list">
+    		<div class="form-group">
+				<div class="input-group">
+					<input type="text" data-validate="validate(required:短信验证码不能为空) on(blur)" id="smspwd2" class="form-control" placeholder="输入短信验证码">
+					<span class="input-group-btn">
+                      <button onclick="cust.smsResend();" class="btn btn-default" type="button"> 获取 </button>
+                      </span> </div>
+			</div>
+	</form>
+    </div>
+  </div>
+          </div>
+          <div class=" divfoot modal-footer">
+          	<div class="btn-group btn-group-justified navbar-btn" role="group" aria-label="...">
+									<div class="btn-group" role="group">
+										<button type="button" onclick="clecks();" class="btn btn-primary btn-lg" aria-hidden="true">
+											<span class="glyphicon glyphicon glyphicon-screenshot" aria-hidden="true"></span> 校验
+										</button>
+									</div>
+									<div id="iseditOperation"  class="btn-group" role="group">
+										<button onclick="cust.jumpAuth2();" type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#TipModal">
+											<span class="glyphicon glyphicon glyphicon glyphicon-arrow-right" aria-hidden="true"></span> 跳过
+										</button>
+									</div>
+
+								</div>
+          
+              </div>
+        </div>
+    </div>
+  </div>
+</div>
+</div>
+
+ <div id="authTypeStr" style="display: none">${rules.authTypeStr}</div>
+<#else>
+查询失败
+</#if>
+<script type="text/javascript">
+
+  var rulesJson='${rulesJson}';
+  OrderInfo.rulesJson=eval("("+rulesJson+")");
+</script>
+<script type="text/javascript">	 
+	  var rules=OrderInfo.rulesJson;
+	  //单位证件类型
+	  $("#custAuthTypeSub").html(OrderInfo.cust.identityName);
+	  $("#idCardNumberSub2").html(OrderInfo.cust.identityName);
+	     
+	   if(OrderInfo.rulesJson.rule6=="Y"){
+		  $("#profile1").addClass("active");
+	  }
+
+	   //产品密码
+	   else if(OrderInfo.rulesJson.rule3=="Y"){
+		  $("#home").addClass("active"); 
+	  }
+	  else if(OrderInfo.rulesJson.rule2=="Y"){
+		  $("#messages").addClass("active");
+
+	  }
+
+	  else if(OrderInfo.rulesJson.rule5=="Y"){
+		  $("#profile").addClass("active");
+	  }
+		  else if(OrderInfo.rulesJson.rule7=="Y" || OrderInfo.rulesJson.rule8=="Y"){
+		  $("#profile2").addClass("active");
+	  }
+	 
+	  if($("#li1").attr("class")=="active"){
+		  if(!cust.isSelfChannel()){
+				 $("#idCardNumber2").attr("readonly","readonly");
+				 $.alert("提示","请到电信自有营业厅办理业务");
+			}
+	  }
+	//判断使用人证件类型
+	  if(OrderInfo.actionFlag!=1 && OrderInfo.actionFlag!=""){
+		  //使用人证件类型
+		  $("#custAuthTypeSub1").html(OrderInfo.rulesJson.identityName);
+		  
+		  $("#idCardNumberSub4").html(OrderInfo.rulesJson.identityName);
+		  if(OrderInfo.rulesJson.isSame=="Y"){
+			   $("#isSame").html("使用人名称与账户名称一致");
+		   }
+		   else{
+			   $("#isSame").html("使用人名称与账户名称不一致");
+		   }
+
+		  $("#accountNamePwd").html("账户名称："+OrderInfo.rulesJson.accountName);  //使用人名称
+		  $("#useCustNamePwd").html("使用人名称："+OrderInfo.rulesJson.useCustName);
+	  }
+	  
+</script>
+<script >
+  function clecks(){
+	
+	  var lis=$("#ul1 li");
+	  $(lis).each(function(){
+		    var cl = $(this).attr("class");
+		    if(cl=="active"){
+		    	var id=$(this).attr("id");
+                
+		    	//单位证件鉴权
+		    	if(id=="li6"){
+
+		    		cust.identityTypeAuth('idCardNumberSub3');
+		    	}
+		    	//短信
+		    	else if(id=="li2"){
+		    		cust.smsvalid();
+		    	}
+		    	//产品密码
+		    	else if(id=="li3"){
+		    		cust.productPwdAuth();
+		    	}
+		    	//单位证件+使用人证件
+		    	else if(id=="li5"){
+					
+		    		cust.identityTypeAuthSub();
+		    	}
+		    	else if(id=="li7"){
+		    		cust.identityTypeAuth('idCardNumberSub6');
+		    	}
+		    	
+		    }
+		});
+  }
+  function fun(){
+	  var idType=OrderInfo.rulesJson.identidyTypeCd;
+	//判断是否是自营渠道
+//		if(!cust.isSelfChannel()){
+//			 $("#idCardNumber2").attr("readonly","readonly");
+//			 $.alert("提示","请到电信自有营业厅办理业务");
+//		}
+//	    document.getElementById("a1").href="#profile"; 
+//	  if(order.prodModify.isCustomers(idType)==1000){
+//			 $.alert("提示","使用人证件类型非个人证件类型，请选择其它鉴权方式");
+//			 return ;
+//		}
+//	  else{
+//		  document.getElementById("a1").href="#profile"; 
+//	  }
+		if(idType=="" || idType==undefined || idType==null || _isCustomers(idType)==1000){
+			 $.alert("提示","使用人证件类型非个人证件类型，请选择其它鉴权方式");
+			 return ;
+		}
+		else{
+			 document.getElementById("a1").href="#profile"; 
+		}
+	 
+  }
+  
+  
+  
+  
+</script>

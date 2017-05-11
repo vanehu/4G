@@ -1,0 +1,69 @@
+<#if code?? && (code>=0) >
+	<div class="container-fluid">
+		<div class="row">
+			<div class="panel panel-default paneltop">
+				<!-- Default panel contents -->
+				<div class="panel-heading">
+					<span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+					终端销售详情查询
+				</div>
+				<#if (pageModel.list)?? &&((pageModel.list)?size>0)>  
+				<@portal.scrollPagination "terminal_sales_list" "both" pageModel.totalPages 60 0 "mktRes.terminal.termSaleScroll">
+				<table class="table table-striped tablecenter" id="cart-list-table">
+					<thead>
+						<tr>
+							<th>购物车流水</th>
+							<th>受理时间</th>
+							<th>受理渠道</th>
+							<th>受理人</th>
+							<th>合约信息</th>
+							<th>物品名称</th>
+							<th>终端串码</th>	
+							<!-- <th></th> -->
+						</tr>
+					</thead>
+					<tbody class="panel-group" id="accordion">
+		              <#list pageModel.list as term >
+						<tr>
+							<td><button onclick="mktRes.terminal.showNbr('流水号','${term.soNbr}')">查看流水号</button></td>
+							<td>${term.orderTime}</td>
+							<td>${term.orderChannel}</td>
+							<td>${term.orderStaff}</td>
+							<td>${term.agreementInfo}</td>
+							<td>${term.termName}</td>
+							<td><button onclick="mktRes.terminal.showNbr('终端串码','${term.mktInstCode}')">查看终端串码</button></td>	
+							<!-- <td><span class="glyphicon glyphicon-chevron-right"
+								aria-hidden="true"></span>
+							</td> -->
+						</tr>
+					  </#list>
+	              	</tbody>
+				</table>
+				</@portal.scrollPagination>
+				<#else>
+				<table class="table table-striped tablecenter" id="cart-list-table">
+					<thead>
+						<tr>
+							<th>购物车流水</th>
+							<th>受理时间</th>
+							<th>受理渠道</th>
+							<th>受理人</th>
+							<th>合约信息</th>
+							<th>物品名称</th>
+							<th>终端串码</th>	
+							<!-- <th></th> -->
+						</tr>
+					</thead>
+	              	<tbody class="panel-group" id="accordion">
+	              		<tr>
+	                		<td colspan="4">没有查询到结果</td> 
+	              		</tr>
+				  </tbody>
+			  </table>
+			  </#if>
+			</div>
+		</div>
+	</div>
+<#else>
+	${mess}
+</#if>

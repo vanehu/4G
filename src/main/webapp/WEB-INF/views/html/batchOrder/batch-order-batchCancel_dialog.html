@@ -1,0 +1,111 @@
+<div class="easyDialogclose" id="batchCancel_dialog_close" onclick="easyDialog.close()"></div>
+<html>
+<table>
+	<head>
+		<style>
+		html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, font, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td {
+		    color: #797979;
+		    font-family: 微软雅黑,宋体,Arial,Tahoma;
+		    font-size: 12px;
+		    font-style: inherit;
+		    font-weight: inherit;
+		}
+		a:link {
+		    text-decoration: none;
+		}
+		li {
+		    list-style-type: none;
+		}
+		
+		.fillin li.full {
+		    width: 450px;
+		}
+		
+		.fillin label {
+		    height: 28px;
+		    text-align: left;
+		    width: 90px;
+		}
+		</style>
+	</head>
+<body>
+	<form method="post" id="batchCancel_dialog" enctype="multipart/form-data">
+		<ul class="fillin">
+			<#if errorStack??>
+				<li style="border-bottom: 0px;" class="full">
+					<table width="100%" border="0" cellspacing="0" cellpadding="0">
+		         		<tr>
+							<td align="left">
+								错误编码【${errorStack.data.errCode}】${errorStack.data.errMsg}
+								<a style=" color: #FF0000;font-weight: bold;" id="alertMoreOp" href="javascript:void(0);" onclick="order.batch.getMoreError();">&nbsp;【更多】&nbsp;</a> 
+								<br/>
+								<span id="alertMoreContent" style="display:none">
+									<span style="color: #0000FF;font-weight: bold;">【详细信息】</span><br/> 
+								    <span style="color: #0000FF;font-weight: bold;">入参：</span><br/>
+								    <span> ${errorStack.data.paramMap} </span><br/> 
+							    	<#if errorStack.data.resultMap??>
+							    	<span style="color: #0000FF;font-weight: bold;">回参：</span><br/>
+							    	<span> ${errorStack.data.resultMap}</span><br/> 
+							   		</#if>
+							    	<span style="color: #0000FF;font-weight: bold;">异常信息：</span><br/>
+							   		<span> ${errorStack.data.errData} </span><br/> 
+						    	</span>
+				 			</td>
+			 			</tr>
+			 		</table>
+			 	</li>
+			<#else>
+				<#if message??&&message!="">
+					<#if code??&&code=="0">
+						<li class="full">
+							<span style="color: #0000FF;font-weight:">取消批次操作：${message}&nbsp;&nbsp;如有异常号码将在下列展示：</span>
+						</li>
+						<li>
+							<table class="contract_list">
+								<#if invalidPhoneNumberList?? && (invalidPhoneNumberList?size >
+								0)>
+								<thead>
+									<tr class="dialog_tittle2">
+										<td width="100px">失败号码</td>
+										<td width="100px">失败号码</td>
+									</tr>
+								</thead>
+								<tbody>
+									<#list invalidPhoneNumberList?chunk(2) as numList>
+									<tr>
+										<#list numList as subNumList>
+										<td>${subNumList.phoneNum}</td> </#list>
+									</tr>
+									</#list>
+								</tbody>
+								</#if> <#if invalidMktResInstList?? && (invalidMktResInstList?size
+								> 0)>
+								<thead>
+									<tr class="dialog_tittle2">
+										<td width="100px">失败UIM</td>
+										<td width="100px">失败UIM</td>
+									</tr>
+								</thead>
+								<tbody>
+									<#list invalidMktResInstList?chunk(2) as UIMList>
+									<tr>
+										<#list UIMList as subUIMList>
+										<td>${subUIMList.mktResInstCode}</td> </#list>
+									</tr>
+									</#list>
+								</tbody>
+								</#if>
+							</table>
+						</li> 
+					<#else>
+						<li class="full">
+							<span style=" color: #FF0000;font-weight: bold;">${message}</span>
+		            	</li>
+					</#if>
+				</#if>
+			</#if>
+		</ul>
+	</form>
+	</body>
+</table>
+</html>

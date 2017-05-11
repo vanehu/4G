@@ -1,0 +1,115 @@
+<@override name="title">新建客户</@override>
+<@override name="header">
+<#include "/busi-js-tpl.html"/>
+
+<script src="${contextPath}/js/busi-js/cust/custCreate.js?${jsversion}" type="text/javascript"></script>
+</@override>
+<@override name="content">
+</div>
+<div class="main_div" id="d_query" >
+    <!-- 订单确认页面-->
+    <div class="main_warp" id="order_confirm" style="display:none"></div>
+
+    <div class="main_warp" id="order_fill_content">
+        <!--订单确认-->
+        <div class="order_confirmation">
+        	<h2 class="h2_title"><span>新建</span>客户</h2>
+            <div class="main_body">
+            	<form id="custCreateOnlyForm">
+            	<h5 class="s_title">基本信息</h5>
+                <div class="infoBox">
+                    <table class="network">
+                          <tbody>
+                          <tr>
+                                <td width="70"> 
+                                客户姓名：</td>
+                                <td width="780">
+                                  <input type="text" placeHolder="请准确填写客户姓名" data-validate="validate(required:请准确填写客户姓名) on(blur)"  maxlength="64" class="inputWidth228px" id="ccCustName"/>
+                                  <label class="f_red">*</label>
+                                </td>
+                          </tr>
+                          <tr>
+                                <td> 客户类型：</td>
+                                <td>
+                                      <select id="ccPartyTypeCd" onchange="cust.create.partyTypeCdChoose(this)">
+                                        <option value=1>个人</option>
+                                        <option value=2>政企客户</option>
+                                      </select>
+                                      <label class="f_red">*</label>
+                                </td>
+                          </tr>
+                          <tr>
+                                <td> 证件类型：</td>
+                                <td> 
+                                	<div id="div_cc_identidiesType">
+                                	<select id="cc_identidiesTypeCd" onchange="cust.create.identidiesTypeCdChoose(this)">
+                                	<label class="f_red">*</label>
+                                    </div>
+                                    
+                                </td>
+                          </tr>
+                          <tr>
+                                <td> 证件号码：</td>
+                                <td width="780">
+                                  <input type="text" placeHolder="请输入合法身份证号码" data-validate="validate(idCardCheck:请输入合法身份证号码) on(blur)"   class="inputWidth228px" id="ccCustIdCard"/>
+                                  <label class="f_red">*</label>
+                                  <a class="btn_h30" id="readCertBtnCreateCust" onclick="javascript:cust.create.readCertWhenCreate()"><span>读 卡</span></a>
+                                </td>
+                          </tr>
+                       <#if Session["_ecs_login_session_key"].currentChannelId ?? && (Session["_ecs_login_session_key"].currentChannelId!="") >
+		                   <tr>
+                                <td> 选择地区：</td>
+                                <td>
+                                  <input type="text"   class="inputWidth228px" id="p_cr_cust_areaId_val" onclick="cust.create.newCustChooseArea()" value="${Session["_ecs_login_session_key"].currentAreaAllName}" readonly />
+                                  <input type="hidden" id="p_cr_cust_areaId" value="${Session["_ecs_login_session_key"].currentAreaId}">
+                                  <label class="f_red">*</label>
+                                </td>
+                          </tr> 
+                         <#else>
+                           <tr>
+                                <td> 选择地区：</td>
+                                <td>
+                                  <input type="text"   class="inputWidth228px" id="p_cr_cust_areaId_val" onclick="order.cust.newCustChooseArea()" value="" readonly/>
+                                  <input type="hidden" id="p_cr_cust_areaId" value="">
+                                  <label class="f_red">*</label>
+                                </td>
+                          </tr> 
+                          </#if>
+                          <tr>
+                                <td> 客户地址：</td>
+                                <td width="780">
+                                  <input type="text" placeHolder="请输入客户地址"  data-validate="validate(required:请准确填写客户地址) on(blur)" class="inputWidth228px" maxlength="128" id="ccAddressStr"/>
+                                  <label class="f_red">*</label>
+                                </td>
+                          </tr>
+                          <tr>
+                                <td ><a onclick="cust.create.btnMoreProfile()" href="javascript:void(0)">更多属性>></a></td><td></td>
+                          </tr>
+                        </tbody>
+                    </table>                
+                </div>
+                <div id="partyProfile" style="display:none"></div>
+                </div>
+                <!--上下步按钮-->
+                <div align="right" style="margin: 20px auto;">
+                    <a id="fillLastStep" class="btna_o" href="javascript:void(0)" class="btna_o"><span>取消</span></a>
+                    <a id="custCreateOnlyBtn" class="btna_o" style=" margin-left:20px;"><span>下一步</span></a>
+                </div>                  
+                <!--上下步按钮 end-->  
+                
+            </form>
+        	</div>
+        </div>
+        <!--订单确认 end-->
+    </div>
+
+	
+</div>
+<!--内容 end-->
+<object id="CertCtl" type="application/cert-reader" width="0" height="0"></object>
+</@override>
+<#if Session["_session_portal_type"]?? && Session["_session_portal_type"]=="LTE" >
+<@extends name="/mvno-template.html"/>
+<#else>
+<@extends name="/content-template.html"/>
+</#if>

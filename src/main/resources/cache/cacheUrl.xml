@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlcache>
+	<cache pattern="/js/busi-js/**" cache="false"   contentType="text/javascript"   desc="busi-js所有JS不缓存"/>
+	<cache pattern="/js/4g-js/**" cache="false"   contentType="text/javascript"   desc="4g-js所有JS不缓存"/>
+	<cache pattern="/staff/login/page*" cache="false"   contentType="text/html"  excludedCodes="" desc="登录页"/>
+	<cache pattern="/order/terminal/undo/list*" cache="false"   contentType="text/html"  excludedCodes="" desc="终端退货查询"/>
+	<cache pattern="/order/phonenumber/list*" cache="false"   contentType="text/html"  excludedCodes="" desc="号码查询"/>
+	<cache pattern="/order/terminal/exchange/list*" cache="false"   contentType="text/html"  excludedCodes="" desc="终端换货查询"/>
+	<cache pattern="/order/undo/list*" cache="false"  contentType="text/html"  excludedCodes="" desc="撤单查询"/>
+	<cache pattern="/order/mgr/list*" cache="false"   contentType="text/html"  excludedCodes="" desc="订单综合查询"/>
+	<cache pattern="/merge/js/base*" cache="true" maxAge="60000"  contentType="text/javascript"   desc="baseJS启用缓存"/>
+	<cache pattern="/merge/js/busi*" cache="false"   contentType="text/javascript"   desc="busiJS不启用缓存"/>
+</urlcache>  

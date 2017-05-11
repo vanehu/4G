@@ -1,0 +1,155 @@
+<script>
+$(function() {
+	// 套餐价格区间
+	$(".noUiSlidera").noUiSlider({ 
+		range: [0, 300],
+		start: [0, 300],
+		step: 100,
+		slide: function() {
+			var values = $(this).val();
+			$("#select_price_min").val(values[0]);
+			if (values[0] == values[1]){
+				$("#select_price_max").val(values[1] + '以上');
+			} else {
+				$("#select_price_max").val(values[1]);
+			}
+		}
+	});
+	// 套餐语音时长
+	$(".noUiSliderb").noUiSlider({
+		range: [0, 800],
+		start: [0, 800],
+		step: 100,
+		slide: function() {
+			var values = $(this).val();
+			$("#select_invoice_min").val(values[0]);
+			if (values[0] == values[1]){
+				$("#select_invoice_max").val(values[1] + '以上');
+			} else {
+				$("#select_invoice_max").val(values[1]);
+			}
+		}
+	});
+	// 套餐流量范围
+	$(".noUiSliderc").noUiSlider({
+		range: [0, 4],
+		start: [0, 4],
+		step: 1,
+		slide: function() {
+			var values = $(this).val();
+			$("#select_influx_min").val(values[0]);
+			if (values[0] == values[1]){
+				$("#select_influx_max").val(values[1] + '以上');
+			} else {
+				$("#select_influx_max").val(values[1]);
+			}
+		}
+	});
+	// 清空条件
+	$("#clear_data").click(function () {
+		$("#qryStr").val("");
+		$("#select_price_min").val("");
+		$("#select_price_max").val("");
+		$(".noUiSlidera a:eq(0)").css("left", "0%");
+		$(".noUiSlidera a:eq(1)").css("left", "100%");
+		
+		$("#select_invoice_min").val("");
+		$("#select_invoice_max").val("");
+		$(".noUiSliderb a:eq(0)").css("left", "0%");
+		$(".noUiSliderb a:eq(1)").css("left", "100%");
+		
+		$("#select_influx_min").val("");
+		$("#select_influx_max").val("");
+		$(".noUiSliderc a:eq(0)").css("left", "0%");
+		$(".noUiSliderc a:eq(1)").css("left", "100%");
+	});
+});
+</script>
+<div id="order_prepare">
+	<div class="container-fluid">
+	  <div class="row" id="pakeage">
+	        <div class="row divtab">
+				<div class="col-xs-10">					
+          	            <select id="offer_tab" class="selectpicker show-tick form-control select-top" onchange="order.service.tabChange(this)">
+							<option value="我的收藏">我的收藏</option>
+							<option value="乐享">乐享套餐</option>
+							<option value="积木">积木套餐</option>
+							<option value="飞">飞Young套餐</option>
+							<option value="其他">其他</option>
+							<option value="">全部</option>
+						</select>
+				</div>
+	          <div class="col-xs-2">
+	            <button type="button" class="btn btn-default navbar-btn nav-justified no-mp" data-toggle="modal" data-target="#search-modal"> <span class="glyphicon glyphicon-search" aria-hidden="true"></span><br>
+	            高级查询 </button>
+	          </div>
+	        </div>
+			<div id="offer-list">
+			</div>
+	      </div>
+	</div>
+	<!-- 套餐查询 -->
+	<div class="modal fade modal_search" id="search-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal_top">
+		  <div class="modal-dialog">
+		    <div class="modal-content">
+		      <div class="panel panel-default">
+		          <div class="panel-body">
+		            <form>
+						<div class="form-group has-feedback">
+						  <input id="qryStr" type="text" class="form-control" aria-describedby="inputSuccess2Status" placeholder="请输入套餐名称" value="">
+						  <span class="glyphicon glyphicon-search form-control-feedback" aria-hidden="true"></span>
+						</div>
+					  <div class="form-group">
+						<label for="exampleInputEmail1">价格区间<small>（元）</small></label>
+						<div class="row">
+							<div class="col-xs-3"><input type="email" class="form-control" id="select_price_min" placeholder="" readonly></div>
+							<div class="col-xs-6"><div class="noUiSlider noUiSlidera"></div></div>
+							<div class="col-xs-3"><input type="email" class="form-control" id="select_price_max" placeholder="" readonly></div>
+						</div>
+					  </div>
+					  <div class="form-group">
+						<label for="exampleInputPassword1">语音时长<small>（分钟）</small></label>
+						<div class="row">
+							<div class="col-xs-3"><input type="email" class="form-control" id="select_invoice_min" placeholder="" readonly></div>
+							<div class="col-xs-6"><div class="noUiSlider noUiSliderb"></div></div>
+							<div class="col-xs-3"><input type="email" class="form-control" id="select_invoice_max" placeholder="" readonly></div>
+						</div>
+					  </div>
+					  <div class="form-group">
+						<label for="exampleInputFile">流量范围<small>（G）</small></label>
+						<div class="row">
+							<div class="col-xs-3"><input type="email" class="form-control" id="select_influx_min" placeholder="" readonly></div>
+							<div class="col-xs-6"><div class="noUiSlider noUiSliderc"></div></div>
+							<div class="col-xs-3"><input type="email" class="form-control" id="select_influx_max" placeholder="" readonly></div>
+						</div>
+					  </div>
+					  
+					</form>
+		          </div>
+		          <div class=" divfoot modal-footer">
+		          	<div class="btn-group btn-group-justified navbar-btn" role="group" aria-label="...">
+						<div class="btn-group" role="group">
+							<button type="button" class="btn btn-primary btn-lg" onclick="order.service.searchPack1(1);" aria-hidden="true">
+								<span class="glyphicon glyphicon-ok" aria-hidden="true"></span> 确认
+							</button>
+						</div>
+						<div class="btn-group" role="group">
+							<button id="clear_data" type="button" class="btn btn-danger btn-lg" data-toggle="modal" data-target="#search-modal">
+								<span class="glyphicon glyphicon glyphicon-trash" aria-hidden="true"></span>关闭
+							</button>
+						</div>
+					</div>         
+		          </div>
+		        </div>
+		    </div>
+		  </div>
+		</div>
+	</div>
+</div>
+<script>
+//初始化
+$(function(){
+	mktRes.terminal.init();
+});
+</script>

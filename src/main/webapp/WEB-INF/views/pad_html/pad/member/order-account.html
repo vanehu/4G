@@ -1,0 +1,206 @@
+<style>
+.ui-listview.accountlist li {
+	margin:0;
+	padding:0;
+}
+.ui-listview.accountlist {
+	width:100%;
+}
+.ui-listview.accountlist .ui-field-contain {
+	margin:0;
+}
+.ui-listview.accountlist .ui-select .ui-btn {
+	border:1px solid #5a9203;
+}
+.ui-listview.accountlist .ui-select {
+	width:95%;
+}
+.ui-listview.accountlist .ui-input-text {
+	border:1px solid #5a9203;
+	width:90%;
+	margin-top:6px;
+	padding:1px;
+}
+.ui-listview.accountlist .ui-grid .ui-btn {
+	margin-left:5px;
+	width:90%;
+	margin-top:6px;
+	border:1px solid #5a9203;
+	border-radius:1px;
+	background-image: -moz-linear-gradient(top, #ffffff, #ebebeb); /* Firefox */
+	background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #ffffff), color-stop(1, #ebebeb)); /* Saf4+, Chrome */
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#ebebeb', GradientType='0'); /* IE*/
+}
+.ui-listview.accountlist .ui-grid .ui-btn:hover {
+	background-image: -moz-linear-gradient(top, #ebebeb, #ffffff); /* Firefox */
+	background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #ebebeb), color-stop(1, #ffffff)); /* Saf4+, Chrome */
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ebebeb', endColorstr='#ffffff', GradientType='0'); /* IE*/
+}
+.ui-listview.accountlist .ui-grid .ui-btn:active {
+	background-image: -moz-linear-gradient(top, #ebebeb, #ffffff); /* Firefox */
+	background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #ebebeb), color-stop(1, #ffffff)); /* Saf4+, Chrome */
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ebebeb', endColorstr='#ffffff', GradientType='0'); /* IE*/
+}
+.ui-listview.accountlist .ui-grid .ui-btn:visited {
+	background-image: -moz-linear-gradient(top, #ffffff, #ebebeb); /* Firefox */
+	background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #ffffff), color-stop(1, #ebebeb)); /* Saf4+, Chrome */
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#ebebeb', GradientType='0'); /* IE*/
+}
+.accountlist li > dl {
+	width:100%;
+	margin:0;
+	padding:0;
+	
+}
+
+.accountlist label {
+    margin: 0px;
+    padding: 0px;
+    font-size: 14px;
+    text-indent: 36px;
+}
+
+.devetitle dt, .accountlist li > dl dd {
+	float:left;
+	margin:0;
+	padding:0;
+	text-align:left;
+	overflow:hidden;
+	text-shadow:none;
+}
+.accountlist li > dl dd {
+	height:48px;
+	line-height:48px;
+	font-size:16px;
+}
+.accountlist li > dl dd:first-child {
+	width:14%;
+	text-indent:15px;	
+}
+.devetitle dt:nth-child(2), .accountlist li > dl dd:nth-child(2) {
+	width:24%;
+	text-indent:6px;
+}
+.devetitle dt:nth-child(3), .accountlist li > dl dd:nth-child(3) {
+	width:15%;
+	padding-left:140px;
+}
+.devetitle dt:nth-child(4), .accountlist li > dl dd:nth-child(4) {
+	width:21%;
+}
+.devetitle dt:nth-child(5), .accountlist li > dl dd:nth-child(5) {
+	width:12%;
+}
+</style>
+<ul data-role="listview" class="accountlist">
+	<li id="account">
+		<dl>			
+			<dd><label>可选帐户：</label></dd>
+			<dd>
+				<div class="ui-select ui-mini">
+					<select id="acctSelect"></select>
+				</div>				
+			</dd>
+			<dd>
+				<button data-role="button" data-mini="ture" name="${n}" onclick="order.main.chooseAcct()">帐户查询</button>
+				<button data-role="button" data-mini="ture" name="${n}" onclick="order.main.acctDetail()">帐户信息</button>				
+			</dd>		
+		</dl>
+	</li>	
+</ul>
+<ul data-role="listview" class="accountlist" id="defineNewAcct" style="display:none;">
+	<li>
+		<dl>			
+			<dd><label>帐户名称：</label></dd>
+			<dd>
+				<input type="text" id="acctName"/>
+			</dd>
+			<dd><label>支付方式：</label></dd>
+			<dd>
+				<div class="ui-select ui-mini">
+					<select id="paymentType" onchange="acct.acctModify.paymentType()">
+						<option value="100000">现金</option>
+			<!--     <option value="110000">银行</option> -->
+					</select>
+				</div>
+			</dd>
+			<dd>		
+				<button data-role="button" data-mini="ture" id="bankName" onclick="acct.acctModify.queryBank(0)">请查询并选择银行</button>
+				<input type="hidden" id="bankId"/>
+			</dd>			
+		</dl>
+	</li>
+	<li>
+		<dl>			
+			<dd><label>银行帐号：</label></dd>
+			<dd>
+				<input type="text" id="bankAcct"/>
+			</dd>
+			<dd><label>支付人：</label></dd>
+			<dd>
+				<input type="text"  id="paymentMan"/>
+			</dd>			
+		</dl>
+	</li>
+	<li>
+		<dl>			
+			<dd><label>协议号：</label></dd>
+			<dd>
+				<input type="text" id="protocalNbr"/>
+			</dd>
+			<dd><label>账单投递方式：</label></dd>
+			<dd>
+				<div class="ui-select ui-mini">
+					<select id="postType" class="inputWidth250px" style="width:95px;" onchange="acct.acctModify.billPostType()">
+				 		<option value="-1">不投递账单</option>	
+				   <!-- <option value="11">邮寄</option>
+				   		<option value="12">传真</option>
+				 		<option value="13">Email</option>
+				 		<option value="14">短信</option>
+				 		<option value="15">快递</option> --> 
+				 	</select>
+			 	</div>
+			</dd>
+			<dd><input type="text" class="billPost" id="postAddress"/></dd>		
+		</dl>
+	</li>
+	<li>
+		<dl>			
+			<dd><label>邮编：</label></dd>
+			<dd>
+				<input type="text" id="zipCode"/>	
+			</dd>
+			<dd><label>收件人：</label></dd>
+			<dd>
+				<input type="text" id="consignee"/>		
+			</dd>			
+		</dl>
+	</li>
+	<li>
+		<dl>			
+			<dd><label>账单内容：</label></dd>
+			<dd>
+				<div class="ui-select ui-mini">
+					<select id="billContent" onchange="acct.acctModify.billContent()">
+				   <!-- <option value="11">账单</option>
+						<option value="12">账单和详单</option>
+						<option value="13">详单</option>
+						<option value="14">发票</option> -->  
+					</select>
+					<label id="receipt" style="width:115px;text-align:center;color:red;display:none;">不支持电子寄送方式</label>	
+				</div>	
+			</dd>
+			<dd><label>投递周期：</label></dd>
+			<dd>
+				<div class="ui-select ui-mini">
+					<select id="postCycle" style="height:20px;">
+				   <!-- <option value="3">月</option>
+						<option value="4">季度</option>
+						<option value="5">半年</option>
+						<option value="6">年</option> -->
+					</select>
+				</div>	
+			</dd>			
+		</dl>
+	</li>
+</ul>
