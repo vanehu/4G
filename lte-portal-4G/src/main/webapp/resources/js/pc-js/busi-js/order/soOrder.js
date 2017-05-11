@@ -2705,7 +2705,7 @@ SoOrder = (function() {
 							}
 							if(checkName == "管理员手机号码"){
 								var val=$.trim($("#"+id).val());
-								 if(!val.match(/^[1][0-9]\d{9}$/)){
+								 if(!val.match(/^((13[0-9])|(14[5|7])|(15([0-3]|[5-9]))|(18[0,5-9]))\\d{8}$/)){
 									 prodAttrErrorFlag = true;
 									 prodAttrErrorCheckName = "管理员手机号码格式输入错误，无法提交";
 								 }
