@@ -15,6 +15,7 @@ prod.transferModify = (function(){
 	var _BO_ACTION_TYPE="";
 	//选中的帐户信息
 	var _choosedAcctInfo = {};
+	var _realUserFlag = "";
 	//过户
 	var _showCustTransfer = function () {
 		OrderInfo.busitypeflag=15;
@@ -124,7 +125,11 @@ prod.transferModify = (function(){
 		if(acctId>0){
 			acctCd = $("#acctSelect").find("option:selected").attr("acctcd"); //要更换的帐户合同号
 		}
+		var subUserInfos = OrderInfo.subUserInfos;
+		var choosedUserInfos = OrderInfo.choosedUserInfos;
 		SoOrder.builder(CONST.returnCustSubmitFlag);//返档在订单提交时才初始化订单数据，特殊，增加标识
+		OrderInfo.subUserInfos = subUserInfos;
+		OrderInfo.choosedUserInfos = choosedUserInfos;
 		//返档要求partyId取返档后客户ID，做特殊处理redmine 794183
 		OrderInfo.orderData.orderList.orderListInfo.partyId = _toCustId;
 		//查询产品下帐户信息
@@ -233,42 +238,169 @@ prod.transferModify = (function(){
 			            busiOrderAttrs : [{			            				    				
 			            	itemSpecId : "111111118",	    				
 			            	value : $("#order_remark").val() //订单备注		    			
-			            }]
+			            }],
+			            boProdItems : []
 					}
 			};
+			var  boProdItems = [];
+			//使用人新模式
+			if($("#800000011_-1_name").val()!=null && $("#800000011_-1_name").val()!= ''){//选择了使用人
+				if(_realUserFlag == "ON"){
+			        var subUserInfo = subUserInfos[0];
+			        if(subUserInfo.isOldCust == "N"){
+				        var busiOrderUser = {
+					        areaId	: order.prodModify.choosedProdInfo.areaId,// 受理地区ID
+					        busiOrderInfo : {
+						        seq : OrderInfo.SEQ.seq--
+					        },
+					        busiObj : { // 业务对象节点
+						        instId		: subUserInfo.custId,
+						        accessNumber: order.prodModify.choosedProdInfo.accNbr
+					        },
+					        boActionType : {
+						        actionClassCd	: CONST.ACTION_CLASS_CD.CUST_ACTION,
+						        boActionTypeCd	: CONST.BO_ACTION_TYPE.CUST_CREATE
+					        },
+					        data : {
+						        boCustInfos 		: [],
+						        boCustIdentities	: [],
+						        boPartyContactInfo	: [],
+						        boCustCheckLogs     : [],
+						        boCustProfiles      : []
+					        }
+				        };
+				        // 信息节点
+				        busiOrderUser.data.boCustInfos.push({
+					        name			: subUserInfo.orderAttrName,		// 客户名称
+					        ignore			: "Y", 								// 临时方法,新建C1订单提交不校验
+					        custType		: subUserInfo.servType,  			// 新建客户类型1:使用人,2责任人
+					        ownerProd		: subUserInfo.prodId,				// 客户产品归属
+					        state			: "ADD",							// 状态
+					        areaId			: order.prodModify.choosedProdInfo.areaId,// 订单地区ID
+					        telNumber 		: subUserInfo.orderAttrPhoneNbr,	// 联系电话
+					        addressStr		: subUserInfo.orderAttrAddr,		// 客户地址
+					        partyTypeCd		: 1,								// 客户类型
+					        defaultIdType	: subUserInfo.orderIdentidiesTypeCd,// 证件类型
+					        mailAddressStr	: subUserInfo.orderAttrAddr,		// 通信地址
+					        businessPassword: ""								// 客户密码
+				        });
+				        // 证件节点
+				        busiOrderUser.data.boCustIdentities.push({
+					        state			: "ADD",	// 状态
+					        isDefault		: "Y",		// 是否首选
+					        identityNum		: subUserInfo.identityNum,			// 证件号码
+					        identidiesPic	: subUserInfo.identityPic,			// 二进制证件照片
+					        identidiesTypeCd: subUserInfo.orderIdentidiesTypeCd	// 证件类型
+				        });
+				        // 联系人节点
+				        if(ec.util.isObj(subUserInfo.orderAttrPhoneNbr)){
+					        var contactGender = "1";
+					        if(subUserInfo.orderIdentidiesTypeCd == "1"){
+						        if (parseInt(subUserInfo.identityNum.substr(16, 1)) % 2 == 1) {
+							        contactGender = "1";
+						        } else {
+							        contactGender = "2";
+						        }
+					        }
+					        busiOrderUser.data.boPartyContactInfo.push({
+						        state			: "ADD",						// 状态
+						        staffId 		: OrderInfo.staff.staffId,		// 员工ID
+						        statusCd		: "100001",						// 订单状态
+						        headFlag		: "1",							// 是否首选联系人
+						        contactName		: subUserInfo.orderAttrName,	// 参与人的联系人名称
+						        contactType		: "10",							// 联系人类型
+						        mobilePhone		: subUserInfo.orderAttrPhoneNbr,// 参与人的移动电话号码
+						        contactGender	: contactGender,				// 参与人联系人的性别
+						        contactAddress	: subUserInfo.orderAttrAddr		// 参与人的联系地址
+					        });
+				        }
+				        if(subUserInfo.checkCustCertSwitch == "ON"){
+					        var boCustCheckLog = {
+						        checkMethod			: subUserInfo.checkMethod,
+						        custId 		        : subUserInfo.custId,
+						        objId		        : "",	
+						        checkDate		    : subUserInfo.checkDate,		
+						        checker		        : subUserInfo.checker,
+						        checkChannel		: subUserInfo.checkChannel,						
+						        certCheckResult		: subUserInfo.certCheckResult,
+					        	errorMessage	    : subUserInfo.errorMessage,				
+					        	staffId	            : subUserInfo.staffId		
+					        };
+					        busiOrderUser.data.boCustCheckLogs.push(boCustCheckLog);
+					        var realNameChech = {
+							        partyProfileCatgCd: CONST.BUSI_ORDER_ATTR.REAL_NAME_CHECK,
+							        profileValue: "1",
+				                    state: "ADD"
+					        };
+					        busiOrderUser.data.boCustProfiles.push(realNameChech);
+				        }
+				        busiOrder.push(busiOrderUser);
+			        }
+			        if(CacheData.isGov(toIdentidiesTypeCd)){//政企
+				        boProdItems = [
+							{
+		    					itemSpecId:CONST.PROD_ATTR.PROD_USER,
+		    					prodSpecItemId:"",
+		    					state:"ADD",
+		    					value:subUserInfo.custId
+		    				}
+					    ]
+				    }else{//公众客户
+				        boProdItems = [
+							{
+		    					itemSpecId:CONST.PROD_ATTR.PROD_USER,
+		    					prodSpecItemId:"",
+		    					state:"DEL",
+		    					value:OrderInfo.cust.custId
+		    				},
+							{
+		    					itemSpecId:CONST.PROD_ATTR.PROD_USER,
+		    					prodSpecItemId:"",
+		    					state:"ADD",
+		    					value:subUserInfo.custId
+		    				}
+					    ]
+				    }
+		        }else{//使用人老模式
+				    boProdItems = [
+							{
+		    					itemSpecId:CONST.PROD_ATTR.PROD_USER,
+		    					prodSpecItemId:"",
+		    					state:"DEL",
+		    					value:OrderInfo.cust.custId
+		    				},
+							{
+		    					itemSpecId:CONST.PROD_ATTR.PROD_USER,
+		    					prodSpecItemId:"",
+		    					state:"ADD",
+		    					value:$("#800000011_-1").val()
+		    				}
+					]
+			    }
+			}else{//未选择使用人
+				if(!CacheData.isGov(toIdentidiesTypeCd)){//公众客户
+				    boProdItems = [
+						{
+		    				itemSpecId:CONST.PROD_ATTR.PROD_USER,
+		    				prodSpecItemId:"",
+		    				state:"DEL",
+		    				value:OrderInfo.cust.custId
+		    			},
+						{
+		    				itemSpecId:CONST.PROD_ATTR.PROD_USER,
+		    				prodSpecItemId:"",
+		    				state:"ADD",
+		    				value:_toCustId
+		    			}
+					]
+				}
+			}
+			transferCust.data.boProdItems = boProdItems;
 			busiOrder.push(transferCust);
 			//过户返档
 			if(_BO_ACTION_TYPE==CONST.BO_ACTION_TYPE.TRANSFERRETURN){
-//				var busiOrderAdd = {
-//						areaId : order.prodModify.choosedProdInfo.areaId,  //受理地区ID		
-//						busiOrderInfo : {
-//							seq : OrderInfo.SEQ.seq--
-//						}, 
-//						busiObj : { //业务对象节点
-//							accessNumber: order.prodModify.choosedProdInfo.accNbr,
-//							instId : order.prodModify.choosedProdInfo.prodInstId, //业务对象实例ID
-//							objId :order.prodModify.choosedProdInfo.productId
-//						},  
-//						boActionType : {
-//							actionClassCd: CONST.ACTION_CLASS_CD.PROD_ACTION,
-//		                    boActionTypeCd: CONST.BO_ACTION_TYPE.ACTIVERETURNTWO
-//						}, 
-//						data:{}
-//					};
-//				busiOrderAdd.data.boProdStatuses = [{
-//					prodStatusCd : CONST.PROD_STATUS_CD.READY_PROD,
-//					state : "DEL"
-//				},{
-//					prodStatusCd : CONST.PROD_STATUS_CD.DONE_PROD,
-//					state : "ADD"
-//				}
-//				];
-
                 //添加证号关系
                 _addCertiAccNbrRels(_transchoosedCustInfo, transferCust, toIdentidiesTypeCd, toIdCardNumber, toCustName, toAddressStr);
-
-				//busiOrder.push(transferCust);
-				
 			}
 			//新建帐户节点
 			if($("#acctSelect").val()==-1){
@@ -560,10 +692,18 @@ prod.transferModify = (function(){
 						$.alert("提示","查询失败,稍后重试");
 						return;
 					}
-					if(OrderInfo.actionFlag==43 && CacheData.isGov(identityCd)){
+					if(OrderInfo.actionFlag==43){
 				        $("#govUser").show();
 				        $('#choose_user_btn_-1').off('click').on('click',function(){
-							order.main.toChooseUser("-1");
+							if (query.common.queryPropertiesValue("REAL_USER_" + OrderInfo.staff.areaId.substr(0, 3)) == "ON"){
+							    //使用人新模式
+							    _realUserFlag = "ON";
+							    order.main.openChooseDialog(this, {"tipThead"	:"选择使用人"});
+						    } else{
+							    //使用人老模式
+						    	_realUserFlag = "OFF";
+							    order.main.toChooseUser2(-1);
+						    }
 						}).show();
 					}
 					_queryCallBack(response);
@@ -1172,7 +1312,7 @@ prod.transferModify = (function(){
 		var isGovEntCust = false;//判断是否政企客户，true：是；false：否
 		if (CacheData.isGov(toIdentidiesTypeCd)) {
 			isGovEntCust = true;
-			if(($("#800000011_-1").val()==null || $("#800000011_-1").val()=='')){
+			if(($("#800000011_-1_name").val()==null || $("#800000011_-1_name").val()=='')){
 				$.alert("提示","政企客户必须选择使用人！");
 				return;
 			}
@@ -1450,7 +1590,11 @@ prod.transferModify = (function(){
 		if(acctId>0){
 			acctCd = $("#acctSelect").find("option:selected").attr("acctcd"); //要更换的帐户合同号
 		}
+		var subUserInfos = OrderInfo.subUserInfos;
+		var choosedUserInfos = OrderInfo.choosedUserInfos;
 		SoOrder.builder(CONST.returnCustSubmitFlag);//返档在订单提交时才初始化订单数据，特殊，增加标识
+		OrderInfo.subUserInfos = subUserInfos;
+		OrderInfo.choosedUserInfos = choosedUserInfos;
 		//返档要求partyId取返档后客户ID，做特殊处理redmine 794183
 		OrderInfo.orderData.orderList.orderListInfo.partyId = _toCustId;
 		//查询产品下帐户信息
@@ -1547,9 +1691,164 @@ prod.transferModify = (function(){
 			                partyId : _toCustId,
 			                partyProductRelaRoleCd : 0,
 			                state : "ADD"
-			            }]
+			            }],
+			            boProdItems : []
 					}
 			};
+			var  boProdItems = [];
+			//使用人新模式
+			if($("#800000011_-1_name").val()!=null && $("#800000011_-1_name").val()!= ''){//选择了使用人
+				if(_realUserFlag == "ON"){
+			        var subUserInfo = subUserInfos[0];
+			        if(subUserInfo.isOldCust == "N"){
+				        var busiOrderUser = {
+					        areaId	: order.prodModify.choosedProdInfo.areaId,// 受理地区ID
+					        busiOrderInfo : {
+						        seq : OrderInfo.SEQ.seq--
+					        },
+					        busiObj : { // 业务对象节点
+						        instId		: subUserInfo.custId,
+						        accessNumber: order.prodModify.choosedProdInfo.accNbr
+					        },
+					        boActionType : {
+						        actionClassCd	: CONST.ACTION_CLASS_CD.CUST_ACTION,
+						        boActionTypeCd	: CONST.BO_ACTION_TYPE.CUST_CREATE
+					        },
+					        data : {
+						        boCustInfos 		: [],
+						        boCustIdentities	: [],
+						        boPartyContactInfo	: [],
+						        boCustCheckLogs     : [],
+						        boCustProfiles      : []
+					        }
+				        };
+				        // 信息节点
+				        busiOrderUser.data.boCustInfos.push({
+					        name			: subUserInfo.orderAttrName,		// 客户名称
+					        ignore			: "Y", 								// 临时方法,新建C1订单提交不校验
+					        custType		: subUserInfo.servType,  			// 新建客户类型1:使用人,2责任人
+					        ownerProd		: subUserInfo.prodId,				// 客户产品归属
+					        state			: "ADD",							// 状态
+					        areaId			: order.prodModify.choosedProdInfo.areaId,// 订单地区ID
+					        telNumber 		: subUserInfo.orderAttrPhoneNbr,	// 联系电话
+					        addressStr		: subUserInfo.orderAttrAddr,		// 客户地址
+					        partyTypeCd		: 1,								// 客户类型
+					        defaultIdType	: subUserInfo.orderIdentidiesTypeCd,// 证件类型
+					        mailAddressStr	: subUserInfo.orderAttrAddr,		// 通信地址
+					        businessPassword: ""								// 客户密码
+				        });
+				        // 证件节点
+				        busiOrderUser.data.boCustIdentities.push({
+					        state			: "ADD",	// 状态
+					        isDefault		: "Y",		// 是否首选
+					        identityNum		: subUserInfo.identityNum,			// 证件号码
+					        identidiesPic	: subUserInfo.identityPic,			// 二进制证件照片
+					        identidiesTypeCd: subUserInfo.orderIdentidiesTypeCd	// 证件类型
+				        });
+				        // 联系人节点
+				        if(ec.util.isObj(subUserInfo.orderAttrPhoneNbr)){
+					        var contactGender = "1";
+					        if(subUserInfo.orderIdentidiesTypeCd == "1"){
+						        if (parseInt(subUserInfo.identityNum.substr(16, 1)) % 2 == 1) {
+							        contactGender = "1";
+						        } else {
+							        contactGender = "2";
+						        }
+					        }
+					        busiOrderUser.data.boPartyContactInfo.push({
+						        state			: "ADD",						// 状态
+						        staffId 		: OrderInfo.staff.staffId,		// 员工ID
+						        statusCd		: "100001",						// 订单状态
+						        headFlag		: "1",							// 是否首选联系人
+						        contactName		: subUserInfo.orderAttrName,	// 参与人的联系人名称
+						        contactType		: "10",							// 联系人类型
+						        mobilePhone		: subUserInfo.orderAttrPhoneNbr,// 参与人的移动电话号码
+						        contactGender	: contactGender,				// 参与人联系人的性别
+						        contactAddress	: subUserInfo.orderAttrAddr		// 参与人的联系地址
+					        });
+				        }
+				        if(subUserInfo.checkCustCertSwitch == "ON"){
+					        var boCustCheckLog = {
+						        checkMethod			: subUserInfo.checkMethod,
+						        custId 		        : subUserInfo.custId,
+						        objId		        : "",	
+						        checkDate		    : subUserInfo.checkDate,		
+						        checker		        : subUserInfo.checker,
+						        checkChannel		: subUserInfo.checkChannel,						
+						        certCheckResult		: subUserInfo.certCheckResult,
+					        	errorMessage	    : subUserInfo.errorMessage,				
+					        	staffId	            : subUserInfo.staffId		
+					        };
+					        busiOrderUser.data.boCustCheckLogs.push(boCustCheckLog);
+					        var realNameChech = {
+							        partyProfileCatgCd: CONST.BUSI_ORDER_ATTR.REAL_NAME_CHECK,
+							        profileValue: "1",
+				                    state: "ADD"
+					        };
+					        busiOrderUser.data.boCustProfiles.push(realNameChech);
+				        }
+				        busiOrder.push(busiOrderUser);
+			        }
+			        if(CacheData.isGov(toIdentidiesTypeCd)){//政企
+				        boProdItems = [
+							{
+		    					itemSpecId:CONST.PROD_ATTR.PROD_USER,
+		    					prodSpecItemId:"",
+		    					state:"ADD",
+		    					value:subUserInfo.custId
+		    				}
+					    ]
+				    }else{//公众客户
+				        boProdItems = [
+							{
+		    					itemSpecId:CONST.PROD_ATTR.PROD_USER,
+		    					prodSpecItemId:"",
+		    					state:"DEL",
+		    					value:OrderInfo.cust.custId
+		    				},
+							{
+		    					itemSpecId:CONST.PROD_ATTR.PROD_USER,
+		    					prodSpecItemId:"",
+		    					state:"ADD",
+		    					value:subUserInfo.custId
+		    				}
+					    ]
+				    }
+		        }else{//使用人老模式
+				    boProdItems = [
+							{
+		    					itemSpecId:CONST.PROD_ATTR.PROD_USER,
+		    					prodSpecItemId:"",
+		    					state:"DEL",
+		    					value:OrderInfo.cust.custId
+		    				},
+							{
+		    					itemSpecId:CONST.PROD_ATTR.PROD_USER,
+		    					prodSpecItemId:"",
+		    					state:"ADD",
+		    					value:$("#800000011_-1").val()
+		    				}
+					]
+			    }
+			}else{//未选择使用人
+				if(!CacheData.isGov(toIdentidiesTypeCd)){//公众客户
+				    boProdItems = [
+						{
+		    				itemSpecId:CONST.PROD_ATTR.PROD_USER,
+		    				prodSpecItemId:"",
+		    				state:"DEL",
+		    				value:OrderInfo.cust.custId
+		    			},
+						{
+		    				itemSpecId:CONST.PROD_ATTR.PROD_USER,
+		    				prodSpecItemId:"",
+		    				state:"ADD",
+		    				value:_toCustId
+		    			}
+					]
+				}
+			}
+			transferCust.data.boProdItems = boProdItems;
 			busiOrder.push(transferCust);
 			//返档
 			var busiOrderAdd = {
