@@ -475,3 +475,15 @@ fieldset[disabled] .form-control:focus {
 .padding-15{padding: 15px;}
 .btn-green.btn-success{border: none;}
 .btn-green{background: #05a642!important;}
+
+.btn.btn-primary {
+  color: #fff;
+  background: #05a642;
+  border-color: #05a642;
+}
+
+.btn.btn-info {
+  color: #fff;
+  background: #05a642;
+  border-color: #05a642;
+}
