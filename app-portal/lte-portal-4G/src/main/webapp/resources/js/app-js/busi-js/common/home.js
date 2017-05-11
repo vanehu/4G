@@ -25,14 +25,20 @@ home = (function($) {
 		});
 	};
 	
-	var _initData = function(method,actionFlag,resourceName)
+	var _initData = function(method,actionFlag,resourceName,resourceId)
 	{
 		var params={};
 //		alert(method);
 //		params.method = method; 
 //		method = "/app/prodModify/prepare";
 //		method = "/app/order/prodoffer/offerchange/prepare";
+//		method = "/app/order/attachoffer/prepare";
 //		method = "/app/order/prodoffer/prepare";
+//		method = "/app/order/broadband/prepare";
+//		method = "/app/cust/create";
+//		method = "/app/prodModify/prepare";
+//		method = "/app/mktRes/phonenumber/preNumRelease";
+//		method = "/app/infocollect/realname/prepare";
 //		resourceName = "选号码";
 //		params.method = "/app/order/prodoffer/prepare";
 //		resourceName = "返档";
@@ -41,8 +47,9 @@ home = (function($) {
 //		OrderInfo.actionFlag = 1;
 //		home.homeEnter = "1";
 		
-		menuConst.setMenuData(method, resourceName);
-		
+		menuConst.setMenuData(method, resourceName, resourceId);
+//		home.menuData.isProvenceMenu = "Y";//是否省份菜单
+//		home.menuData.needCust	 = "Y";//是否需要客户定位
 //		home.setOrderInfoActionFlag(method);
 //		params.enter = home.setEnter(resourceName);
 		
@@ -58,7 +65,12 @@ home = (function($) {
 			params.method = home.menuData.method;
 			params.actionFlag = home.menuData.actionFlag;
 			params.enter = home.menuData.enter;
-			common.callOrderServer(OrderInfo.staff,null,null,params,1);
+			if(home.menuData.isProvenceMenu == "Y"){
+				provence.getRandom();
+				return;
+			}else{
+				common.callOrderServer(OrderInfo.staff,null,null,params,1);
+			}
 		}
 //		$("#header").show();
 //		$("#headText").text(resourceName);

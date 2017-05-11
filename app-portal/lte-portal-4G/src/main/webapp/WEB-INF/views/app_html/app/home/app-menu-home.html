@@ -32,12 +32,12 @@
 				<!-- ================== BEGIN 首页头部 ================== -->
 				<div class="g-top-box">
 					<div class="g-set-box m-b">
-						<div class="user-box pull-left p-l" style="width: 38%;height: auto;margin-top: 8px;">
-							<i class="iconfont" >&#xe663;</i>
-							<i style="line-height: 0.24rem;">${staff.staffName}</i>
+						<div class="user-box pull-left p-l" style="width: 28%;height: auto;margin-top: 8px;">
+							<i class="iconfont" style="line-height: 0.38rem;font-size: 0.28rem;">&#xe663;</i>
+							<i style="line-height: 0.24rem;font-size: 0.22rem;">${staff.staffName}</i>
 						</div>
-						<div class="set-box pull-right p-r" style="width: 60%; margin-top: 20px;">
-							<span style="float: right;text-align: right;line-height: 0.3rem;">${staff.currentChannelName}</span>
+						<div class="set-box pull-right p-r" style="width: 70%; margin-top: 10px;">
+							<span style="float: right;font-size: 0.22rem;text-align: right;line-height: 0.3rem;">${staff.currentChannelName}</span>
 							<!-- <i class="iconfont set-btn">&#xe656;</i> -->
 						</div>
 					</div>
@@ -81,7 +81,7 @@
 						</#if>
 						<#if pageFunctionMenuArray?? &&(pageFunctionMenuArray?size>0) >
 							<#list pageFunctionMenuArray as item>
-							<#if item_index<8  && item.resourceName!="办业务">
+							<#if item.resourceName!="办业务">
 							
 							<li onclick="home.initData('${item.menuPath}',0,'${item.resourceName}','${item.resourceId}')" style="border: 1px solid #dedede;">
 								<i class="iconfont">${item.iconPic}</i>
@@ -106,17 +106,13 @@
 
 				<!-- ================== BEGIN 首页菜单 功能菜单 ================== -->
 				<div class="g-menu-box m-t">
-					<ul class="menu-box">
-						
-						
-						<#if pageFunctionMenuArray?? &&(pageFunctionMenuArray?size>0) >
-							<#list pageFunctionMenuArray as item>
-							<#if (item_index gte 8) && item.resourceName!="办业务">
-							<li onclick="home.initData('${item.menuPath}',0,'${item.resourceName}','${item.resourceId}')" style="border: 1px solid #dedede;">
+					<ul class="menu-box" id="prov_menuList">
+						<#if prov_menulist?? &&(prov_menulist?size>0) >
+							<#list prov_menulist as item>
+							<li onclick="home.initData('prov_menu',0,'${item.menuName}','${item.menulId}')" style="border: 1px solid #dedede;">
 								<i class="iconfont">${item.iconPic}</i>
-								<p>${item.resourceName}</p>
+								<p>${item.menuName}</p>
 							</li>
-							</#if>
 							</#list> 
 						</#if>
 					</ul>
@@ -200,7 +196,10 @@
 		<div id="prodofferPrepare" style="margin-top: 60px;"></div>
 		<script>
 			$(document).ready(function() {
-				
+				var urlstr = '${urlstr}';
+				if(urlstr.length>0){
+					provence.getMenuList(urlstr);
+				}
 			});
 		</script>
 

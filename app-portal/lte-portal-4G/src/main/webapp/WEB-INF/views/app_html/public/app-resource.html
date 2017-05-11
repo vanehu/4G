@@ -12,6 +12,7 @@
 		<META name="description" content="电信集团">
 		<#include "/public/common-app-newcss-tpl.html"/>
 		<#include "/public/common-app-newjs.html"/>
+		<script src="${contextPath}/js/app-js/busi-js/common/provence.js?${jsversion}" type="text/javascript"></script>
 		<script src="${contextPath}/js/app-js/busi-js/common/home.js?${jsversion}" type="text/javascript"></script>
 		<script src="${contextPath}/js/app-js/busi-js/common/menuConst.js?${jsversion}" type="text/javascript"></script>
 		<script src="${contextPath}/js/app-js/busi-js/common/const.js?${jsversion}" type="text/javascript"></script>
@@ -128,6 +129,7 @@
 				case 52 :
 					params.method = "/app/order/prodoffer/prepare"; //购手机
 					params.enter=2;
+					params.actionFlag = 13;
 					break;
 				case 53 :
 					params.method = "/app/order/prodoffer/prepare"; //选号码
@@ -148,6 +150,10 @@
 					break;
 				case 113 :
 					params.method = "/app/cfq/prepare"; //芝麻信用
+					break;
+				case 114 :
+					params.method = "/app/mktRes/phonenumber/preNumRelease"; //资源释放
+					params.actionFlag = 114;
 					break;
 				case 12 :
 					params.method = "/app/saleorder/queryorderlist"; //销售单列表查询

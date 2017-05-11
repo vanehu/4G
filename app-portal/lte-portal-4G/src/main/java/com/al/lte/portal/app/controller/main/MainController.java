@@ -1,7 +1,5 @@
 package com.al.lte.portal.app.controller.main;
 
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 
 import org.apache.commons.net.ftp.FTPClient;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +29,7 @@ import com.al.ec.serviceplatform.client.ResultCode;
 import com.al.ecs.common.entity.JsonResponse;
 import com.al.ecs.common.entity.Switch;
 import com.al.ecs.common.util.FtpUtils;
+import com.al.ecs.common.util.JsonUtil;
 import com.al.ecs.common.util.MDA;
 import com.al.ecs.common.util.PropertiesUtils;
 import com.al.ecs.common.web.ServletUtils;
@@ -47,6 +47,8 @@ import com.al.lte.portal.bmo.portal.NoticeBmo;
 import com.al.lte.portal.common.AESUtils;
 import com.al.lte.portal.common.CommonMethods;
 import com.al.lte.portal.common.Const;
+import com.al.lte.portal.common.Des33;
+import com.al.lte.portal.common.HTTPUtil;
 import com.al.lte.portal.common.SysConstant;
 import com.al.lte.portal.core.DataRepository;
 import com.al.lte.portal.model.SessionStaff;
@@ -86,7 +88,7 @@ public class MainController extends BaseController {
 		if("112".equals(actionFlag) || "113".equals(actionFlag) || "201".equals(actionFlag) || "301".equals(actionFlag) || "150".equals(actionFlag) || "160".equals(actionFlag)){//直接进入新UI
 			return "/public/app-resource";
 		}
-		if(actionFlag!=null && "ON".equals(newUIFlag)){
+		if(actionFlag!=null && ("ON".equals(newUIFlag) || newUIFlag==null)){
 			return "/public/app-resource";
 		}
 		//全部跳转新
@@ -278,10 +280,63 @@ public class MainController extends BaseController {
 		pageFunctionMenuArray = setMenuPic(pageFunctionMenuArray);
     	model.addAttribute("pagePowerMenuArray", pagePowerMenuArray);
     	model.addAttribute("pageFunctionMenuArray", pageFunctionMenuArray);
-//    	if (channel != null){
-//    		model.addAttribute("channel", channel);
-//    	}
+    	
+    	//获取省份翼销售菜单
+    	Map<String, Object> menu_cfg = MDA.PROVENCE_MENU.get("PROVENCE_MENU_"+(sessionStaff.getAreaId() + "").substring(0, 3));
+    	String urlstr = "";
+    	if(menu_cfg != null && "ON".equals(menu_cfg.get("provinceisopen"))){
+    		List cfg_menuList = (List) menu_cfg.get("menuList");
+        	if("Y".equals(menu_cfg.get("needQueryMenu"))){
+        		Map<String, Object> param = new HashMap();
+        		param.put("areaId", sessionStaff.getAreaId());
+        		param.put("staffCode", sessionStaff.getStaffCode());
+        		param.put("sysCode", SysConstant.CSB_SRC_SYS_ID_APP);
+        		String url = (String) menu_cfg.get("serverAddress")+"getMenuList";
+        		JSONObject jo = null;
+        		String msg = "";
+    			try {
+    				jo = JSONObject.fromObject(param);
+    				msg = Des33.encode(JsonUtil.toString(jo),(String) menu_cfg.get("secretKey"));
+    				msg = msg.replaceAll("\\+", "plus");
+    				msg = msg.replaceAll(" ", "%20");
+//    				msg = msg.replaceAll("\n|\r", "");
+    			} catch (Exception e) {
+    				// TODO Auto-generated catch block
+    				e.printStackTrace();
+    			}
+    			urlstr = url+"?msg="+msg;
+//    			HTTPUtil httpClient = new HTTPUtil();
+//    			String result = "";
+//    			String result = httpClient.doPost("http://123.150.141.129:8905/yxs_service/service/random?msg="+msg, msg);
+//    			try {
+//    				result = HTTPUtil.doPost(url+"?msg="+msg,msg);
+//    				if(result.length()>0){
+//        				JSONObject jsonResult = null;
+//            			jsonResult = JSONObject.fromObject(result);
+//            			if("0".equals((String)jsonResult.get("resultCode"))){
+//            				List prov_menulist = (List) jsonResult.get("menuList");
+//            				//图标先写死
+//            				for(int i=0;i<prov_menulist.size();i++){
+//            					Map prov_menu = (Map) prov_menulist.get(i);
+//            					prov_menu.put("iconPic", "&#xe6d7");
+//            				}
+//            				model.addAttribute("prov_menulist", prov_menulist);
+//            			}
+//            			System.out.println(JsonUtil.toString(jsonResult));
+//        			}
+//    			   } catch (Exception e) {
+//    				   model.addAttribute("queryMenu_error", "省份菜单权限查询失败");
+//    			} 
+        	}else{
+        		for(int i=0;i<cfg_menuList.size();i++){
+					Map prov_menu = (Map) cfg_menuList.get(i);
+					prov_menu.put("iconPic", "&#xe6d7");
+				}
+				model.addAttribute("prov_menulist", cfg_menuList);
+        	}
+    	}
     	model.addAttribute("staff", sessionStaff);
+    	model.addAttribute("urlstr", urlstr);
 		return "/app/home/app-menu-home";
     }
 	/**

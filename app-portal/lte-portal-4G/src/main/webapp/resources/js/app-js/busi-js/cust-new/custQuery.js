@@ -292,13 +292,13 @@ custQuery = (function(){
 			
 		};
 		
-//		if(home.menuData.isProvenceMenu == "Y"){
-//			$("#custQuerycontent").hide();
-//			$("#cust-query-list").hide();
-//			OrderInfo.cust = _choosedCustInfo;
-//			provence.sendRandom();
-//			return;
-//		}
+		if(home.menuData.isProvenceMenu == "Y"){
+			$("#custQuerycontent").hide();
+			$("#cust-query-list").hide();
+			OrderInfo.cust = _choosedCustInfo;
+			provence.getRandom();
+			return;
+		}
 		
 		if("9" != OrderInfo.actionFlag){
 			_choosedCustInfo.CN=_choosedCustInfo.CN.replace(/=/g,"&#61");

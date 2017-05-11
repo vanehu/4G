@@ -395,6 +395,9 @@ common = (function($) {
 	
 	//客户端调用此方法返回到上一页 1 为prepare页面  2为order-content（填单）页面 3为order-confirm（订单确认和收银台）页面 4为order-print（打印）页面
 	var _callReturnBack=function(){
+		if($("#home").length == 0 ){
+			_goGroupHome();
+		}
 		if($("#order-error").is(":visible")){//错误页面不允许返回
 			return;
 		}
@@ -1753,6 +1756,17 @@ common = (function($) {
 		);
 	}
 	
+	var _goGroupHome=function(){//返回翼销售首页
+		var arr=new Array(1);
+		arr[0]="";
+		MyPlugin.goGroupHome(arr,
+            function(result) {
+            },
+            function(error) {
+            }
+		);
+	}
+	
 	var _setListTop=function(px){//设置top间距
 		if($("#home").length>0){
 			$(".wrapper").css("top",px);
@@ -1801,7 +1815,8 @@ common = (function($) {
 		setBtnTimer         :   _setBtnTimer,
 		CallNativeButtonClick:_CallNativeButtonClick,
 		goKuandai:_goKuandai,
-		setListTop :_setListTop
+		setListTop :_setListTop,
+		goGroupHome:_goGroupHome
 	};
 })(jQuery);
 

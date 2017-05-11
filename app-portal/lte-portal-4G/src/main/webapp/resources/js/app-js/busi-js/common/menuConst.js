@@ -115,6 +115,19 @@ menuConst = (function($) {
 				break;
 			}
 			
+			if (method == "prov_menu")
+			{
+				home.menuData.isProvenceMenu = "Y";//是否省份菜单
+				home.menuData.actionFlag = "1000000000";
+				home.menuData.enter		 = "1";
+				home.menuData.method	 = method;
+				home.menuData.needCust	 = "Y";
+				home.menuData.isSecond	 = "N";
+				home.menuData.menuName	 = menuName;
+				OrderInfo.actionFlag	 = "1000000000";
+				break;
+			}
+			
 		}
 		if(i == menuList.length){
 			home.menuData.method	 = method;
