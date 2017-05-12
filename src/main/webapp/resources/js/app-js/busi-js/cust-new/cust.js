@@ -2801,9 +2801,9 @@ cust = (function(){
 		if (isON!="ON") {
 			return true;
 		}
-//		if(_isCovCust(OrderInfo.cust.identityCd)){//政企客户不校验
-//			return true;
-//		}
+		if(_isCovCust(OrderInfo.cust.identityCd)){//政企客户不校验
+			return true;
+		}
 		if (OrderInfo.cust.custId == "-1") {// 新客户
 			var inParam = {
 				"certType" : OrderInfo.cust.identityCd,
