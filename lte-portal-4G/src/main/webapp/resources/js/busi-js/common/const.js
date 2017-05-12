@@ -459,11 +459,12 @@ CONST = (function(){
 		IS3G: "0"
 	};
 	
+	//批量受理查询，是否执行改造后的新代码的开关标识，用于记录是否执行新代码。Y执行改造后的新代码，N执行改造前的旧代码，默认为N
 	var _BATCHORDER_FLAG = {
-			BATCHORDER_QRY_FLAG : "N",
-			BATCHORDER_AUTH_FLAG : "N"
-			
+		BATCHORDER_QRY_FLAG : "N",
+		BATCHORDER_AUTH_FLAG : "N"
 	};
+	
 	var _MENU_CUSTFANDANG="GKHZLFD";//改客户资料返档
 	var _MENU_FANDANG="GHFD";//过户返档
 	var _MENU_RETURNFILE="FD";//返挡
@@ -602,9 +603,10 @@ CONST = (function(){
     };
     
     var _photographReviewFlag = "";//实名制拍照开关
+    var _RXSHGN = "RXSHGN";//人像审核功能，该权限判断工号是否需要进行人像审核，true：需要；false：不需要
 
 	return {
-		//批量受理查询，是否执行改造后的新代码的开关标识，用于暂时记录是否执行新代码。Y执行改造后的新代码，N执行改造前的旧代码，默认为N。 By ZhangYu 2015-10-20
+		RXSHGN:_RXSHGN,
 		BATCHORDER_FLAG : _BATCHORDER_FLAG,
 		APP_DESC			: _APP_DESC,
 		OFFER_FAST_FILL    :  _OFFER_FAST_FILL,
