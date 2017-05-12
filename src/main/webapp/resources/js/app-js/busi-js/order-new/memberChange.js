@@ -204,6 +204,10 @@ var closeAndAlert=function(msg){
 		$("#alert-modal").modal("hide");
 		common.callCloseWebview();
 	});
+	$(".close").off("click").on("click",function(){
+		$("#alert-modal").modal("hide");
+		common.callCloseWebview();
+	});
 	$("#modal-title").html(title);
 	$("#modal-content").html(msg);
 	$("#alert-modal").modal();
