@@ -16,10 +16,12 @@ cust = (function(){
 	var _isSameOne = false;
 	var _checkCustLog = {};//客户信息核验记录
 	var _newUIFalg = "ON";
+	var _userFlag = "OFF";
 	var _usedNum=0;//客户已使用指标数（一证五号需求一个客户最多只能五个号）
 	var _readIdCardUser={};//客户返档读卡客户信息
 	var _checkResult=true;//一证五号校验失败标志
 	var _custCatsh = {};//读卡的客户缓存
+	var _isRealCust=true;//定位客户是否实名
 	var _custCernum = [];//客户证件使用数缓存
 	var _clearCustForm = function(){
 		$('#cmCustName').val("");
@@ -261,7 +263,7 @@ cust = (function(){
 		OrderInfo.boJbrInfos.defaultIdType = 1 ;//证件类型
 		OrderInfo.boJbrInfos.addressStr= OrderInfo.jbr.addressStr;//客户地址
 		OrderInfo.boJbrInfos.telNumber = OrderInfo.jbr.telNumber;//联系电话
-		OrderInfo.boJbrInfos.mailAddressStr = OrderInfo.jbr.mailAddressStr;//通信地址
+		OrderInfo.boJbrInfos.mailAddressStr = OrderInfo.jbr.addressStr;//通信地址
 		OrderInfo.boJbrInfos.state = "ADD";
 		
 		OrderInfo.boJbrIdentities.identidiesTypeCd = OrderInfo.jbr.identityCd;//证件类型
@@ -3100,7 +3102,14 @@ cust = (function(){
 		}
 		return parseInt(result.usedNum);
 	};
-
+	//用户检测 Redmine#1476474营业厅翼支付开户IT流程优化
+	//订购【翼支付】功能产品时增加实名校验环节：仅允许居民身份证、临时居民身份证或户口簿登记的客户或使用人订购该功能产品
+	var _checkRealCust = function(identityCd){
+		if(identityCd == 1 || identityCd == 41 || identityCd == 12){
+			cust.isRealCust = true;
+		}
+		cust.isRealCust =  false;
+	};
     
 	return {
 		jbridentidiesTypeCdChoose 	: 		_jbridentidiesTypeCdChoose,
@@ -3179,6 +3188,9 @@ cust = (function(){
 		accountQuery				:  _accountQuery,
 		OneCertNumFlag              :       _OneCertNumFlag,
 		custCatsh					:		_custCatsh,
-		custCernum					:		_custCernum
+		custCernum					:		_custCernum,
+		checkRealCust				:		_checkRealCust,
+		isRealCust					:		_isRealCust,
+		userFlag					:		_userFlag
 	};	
 })();
