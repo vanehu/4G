@@ -14,6 +14,15 @@ order.memberChange = function(){
 	var _mainFeeType;
 	//点击主副卡成员变更跳出一个div
 	var _init=function(){
+		if(order.prodModify.choosedProdInfo.prodStateCd!=CONST.PROD_STATUS_CD.NORMAL_PROD){
+			closeAndAlert("当前产品状态不是【在用】,不允许受理该业务！");
+			return;
+		}
+		//4G系统判断，如果是3g套餐不能做该业务
+		if(CONST.getAppDesc()==0 && order.prodModify.choosedProdInfo.is3G=="Y"){
+			closeAndAlert("3G套餐不允许做主副卡成员变更业务！");
+			return;
+		}
 		OrderInfo.actionFlag=6;	//默认加装副卡
 		OrderInfo.order.step = 1;
 		var prod = order.prodModify.choosedProdInfo;
@@ -32,16 +41,16 @@ order.memberChange = function(){
 				//默认退副卡，相关tab页隐藏
 				$("#tab2_li").hide();
 				$("#tab3_li").hide();
-				if(order.prodModify.choosedProdInfo.prodStateCd!=CONST.PROD_STATUS_CD.NORMAL_PROD){
-					closeAndAlert("当前产品状态不是【在用】,不允许受理该业务！");
-					return;
-				}
+//				if(order.prodModify.choosedProdInfo.prodStateCd!=CONST.PROD_STATUS_CD.NORMAL_PROD){
+//					closeAndAlert("当前产品状态不是【在用】,不允许受理该业务！");
+//					return;
+//				}
 				OrderInfo.busitypeflag=3;
 				//4G系统判断，如果是3g套餐不能做该业务
-				if(CONST.getAppDesc()==0 && order.prodModify.choosedProdInfo.is3G=="Y"){
-					closeAndAlert("3G套餐不允许做主副卡成员变更业务！");
-					return;
-				}
+//				if(CONST.getAppDesc()==0 && order.prodModify.choosedProdInfo.is3G=="Y"){
+//					closeAndAlert("3G套餐不允许做主副卡成员变更业务！");
+//					return;
+//				}
 				//根据省份来限制纳入老用户入口,开关在portal.properties
 				//var areaidflag = _areaidJurisdiction(1);
 				//查询销售品规格并且保存
