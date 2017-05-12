@@ -1404,7 +1404,7 @@ SoOrder = (function() {
 					var propertiesKey = "FUKA_SHIYR_"+(OrderInfo.staff.soAreaId+"").substring(0,3);
 				    var userFlag = offerChange.queryPortalProperties(propertiesKey);//使用人开关
 				    var userInfo = OrderInfo.getChooseUserInfo(prodId);
-					if(userFlag=="ON" && userInfo != null){
+					if((cust.isCovCust(OrderInfo.cust.identityCd) || userFlag=="ON") && userInfo != null){
 						ca={};
 						if (userInfo.custId <= -1) {//新建客户
 		                    ca.certType = userInfo.identityCd;

@@ -261,7 +261,7 @@ cust = (function(){
 		OrderInfo.boJbrInfos.defaultIdType = 1 ;//证件类型
 		OrderInfo.boJbrInfos.addressStr= OrderInfo.jbr.addressStr;//客户地址
 		OrderInfo.boJbrInfos.telNumber = OrderInfo.jbr.telNumber;//联系电话
-		OrderInfo.boJbrInfos.mailAddressStr = OrderInfo.jbr.mailAddressStr;//通信地址
+		OrderInfo.boJbrInfos.mailAddressStr = OrderInfo.jbr.addressStr;//通信地址
 		OrderInfo.boJbrInfos.state = "ADD";
 		
 		OrderInfo.boJbrIdentities.identidiesTypeCd = OrderInfo.jbr.identityCd;//证件类型
