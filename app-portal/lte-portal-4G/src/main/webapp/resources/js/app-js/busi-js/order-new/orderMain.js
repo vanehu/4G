@@ -680,7 +680,7 @@ order.main = (function(){
 		});
 
 	};
-	
+	var _noUserFlag = false;
 	//产品属性-校验单个属性
 	function _check_parm_self(obj){
 		//alert("---"+$(obj).val());
@@ -688,17 +688,22 @@ order.main = (function(){
 			if($(obj).val()==null||$(obj).val()==""){
 				if(CONST.PROD_ATTR.PROD_USER == $(obj).attr("itemspecid")){
 					var prodId = $(obj).attr("prodId");
-					cust.tmpChooseUserInfo = OrderInfo.cust;
-					if(!_checkCertNumber(prodId)){//一证五号校验
-						$("#userName_"+prodId).addClass('font-secondary').text("无");
-						return false;
-					} else {
-						$("#userName_"+prodId).addClass('font-secondary').text(cust.tmpChooseUserInfo.partyName);
-						OrderInfo.updateChooseUserInfos(prodId, cust.tmpChooseUserInfo);
-						$('#'+CONST.PROD_ATTR.PROD_USER+'_'+prodId+'_name').val(cust.tmpChooseUserInfo.partyName);
-						$('#'+CONST.PROD_ATTR.PROD_USER+'_'+prodId).val(cust.tmpChooseUserInfo.custId);
+					if(cust.isCovCust(OrderInfo.cust.identityCd)){//政企客户不能默认本人
+						order.main.noUserFlag = true;
+						$("#userName_"+prodId).removeClass('font-secondary').text("请选择使用人");
+					} else {//公众客户默认本人
+						cust.tmpChooseUserInfo = OrderInfo.cust;
+						if(!_checkCertNumber(prodId)){//一证五号校验
+							order.main.noUserFlag = true;
+							$("#userName_"+prodId).removeClass('font-secondary').text("请选择使用人");
+						} else {
+							$("#userName_"+prodId).addClass('font-secondary').text(cust.tmpChooseUserInfo.partyName);
+							OrderInfo.updateChooseUserInfos(prodId, cust.tmpChooseUserInfo);
+							$('#'+CONST.PROD_ATTR.PROD_USER+'_'+prodId+'_name').val(cust.tmpChooseUserInfo.partyName);
+							$('#'+CONST.PROD_ATTR.PROD_USER+'_'+prodId).val(cust.tmpChooseUserInfo.custId);
+						}
+						cust.tmpChooseUserInfo = {};
 					}
-					cust.tmpChooseUserInfo = {};
 				} else {
 					$(obj).next('.help-block').removeClass('hidden');
 					$(obj).next('.help-block').html("不能为空");
@@ -1197,7 +1202,8 @@ order.main = (function(){
 		showUser			:_showUser,
 		showUserInfo		:_showUserInfo,
 		showChooseUserTable	:_showChooseUserTable,
-		showUserFlag		:_showUserFlag
+		showUserFlag		:_showUserFlag,
+		noUserFlag			:_noUserFlag
 	};
 })();
 

@@ -420,15 +420,19 @@ SoOrder = (function() {
 				return false ; 
 			}
 			var prodAttrFlag = true;
+			order.main.noUserFlag = false;
 			if(OrderInfo.prodAttrs.length>0){
 				for ( var i = 0; i < OrderInfo.prodAttrs.length; i++) {
 					var prodAttr=OrderInfo.prodAttrs[i];
 					if(prodAttr.isOptional=="N"){//必填需校验
 						prodAttrFlag=order.main.check_parm_self($("#"+prodAttr.id));
-						if(!prodAttrFlag){
-							return false;
-						}
 					}
+				}
+				if(order.main.noUserFlag){
+					return false;
+				}
+				if(!prodAttrFlag){
+					return false;
 				}
 			}
 			
