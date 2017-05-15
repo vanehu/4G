@@ -766,8 +766,8 @@ order.main = (function(){
 			 }
 		}
 		if("10020124"==itemspecId){//管理员手机号码
-			var val=$(obj).val();
-			if(!val.match(/^[1][0-9]\d{9}$/)){
+			var val=$(obj).val();			
+			if(!val.match(/^1[34578]\d{9}$/)){
 				$(obj).next('.help-block').removeClass('hidden');
 				$(obj).next('.help-block').html("管理员手机号码格式错误");
 				return false;
