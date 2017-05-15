@@ -348,7 +348,7 @@ order.cust = (function(){
 		}
 
 		// 反档处理
-		if(OrderInfo.actionFlag == 43){
+		if(OrderInfo.actionFlag == 43 && id != "p_cust_identityNum_choose"){
 			var isID = identidiesTypeCd==1;
 			var isIdTypeOff = OrderInfo.staff.idType=="OFF";
 			$("#"+id).attr("disabled",isID&&(!isIdTypeOff));
