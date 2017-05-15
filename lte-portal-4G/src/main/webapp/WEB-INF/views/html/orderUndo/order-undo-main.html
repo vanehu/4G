@@ -205,32 +205,35 @@
     </div>
 
 
-	<div class="easyDialogdiv" style="width:500px;height:200px;display:none" id="undo_d_main">
+<div class="easyDialogdiv"
+	style="width: 500px; height: 350px; display: none" id="undo_d_main">
 	<div class="easyDialogclose" id="undo_d_close"></div>
 	<form id="undo_d_form">
-	<h1 class="easyDialogTitle" id="undo_d_title" >撤单确认</h1>
-	<div class="infoBox">
-		<table class="network" style="margin: 0px 25px;">
-                          <tbody>
-	                          <tr style="" >
-	                                <td width="80" id="tremark">撤单备注：</td>
-	                                <td width="300" align="center">
-	                                    <textarea type ="textarea" id="undo_d_txt" maxlength="500" name="undo_d_txt" data-validate="validate(required:请准确填写撤单原因) on(blur)" cols="" rows="" style="width: 290px"></textarea>
-	                                </td>
-	                                <td width="80"> <label class="f_red" id="undor">*</label> </td>
-	                          </tr>   
-                        </tbody>
-         </table>
-         <div align="center" style="margin: 20px auto;">
-                    <a class="btna_o" id="undo_d_bt"  href="javascript:void(0)"><span>撤单</span></a>
-                    <a style=" margin-left:20px;" class="btna_o" href="javascript:void(0)" id="undo_d_no"><span>取消</span></a>
-          </div>
-    </div>
-    </form>
-	</div>
+		<h1 class="easyDialogTitle" id="undo_d_title">撤单确认</h1>
+		<div class="infoBox">
+			<table class="network" style="margin: 0px 25px;">
+				<tbody>
+					<tr style="">
+						<td width="80" id="tremark">撤单备注：</td>
+						<td align="center"><textarea type="textarea" id="undo_d_txt"
+								maxlength="500" name="undo_d_txt" cols="" rows=""
+								style="height: 160px; width: 350px; margin-top: 10px; border: 1px solid #d3d8d0;"></textarea>
+						</td>
+						<td width="80"><label class="f_red" id="undor">*</label></td>
+					</tr>
+				</tbody>
+			</table>
+			<div align="center" style="margin: 20px auto;">
+				<a class="btna_o" id="undo_d_bt" href="javascript:void(0)"><span>撤单</span></a>
+				<a style="margin-left: 20px;" class="btna_o"
+					href="javascript:void(0)" id="undo_d_no"><span>取消</span></a>
+			</div>
+		</div>
+	</form>
+</div>
 
-	
-	<div id="d_cartInfo" style="display: none" ></div>
+
+<div id="d_cartInfo" style="display: none" ></div>
 	
 	<div class="easyDialogdiv" style="width:780px;height:460px;display:none" id="d_offer">
 		<div class="easyDialogclose" id="d_offer_close"></div>

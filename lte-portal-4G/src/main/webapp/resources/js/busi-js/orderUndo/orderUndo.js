@@ -149,6 +149,8 @@ order.undo = (function(){
 			});
 			var olNbr= $("#"+id).attr("olNbr");
 			if($("#olType_"+olNbr).val()==CONST.OL_TYPE_CD.ESS){
+				$("#undo_d_txt").attr("placeHolder","请输入撤单原因");
+				$("#undo_d_txt").attr("data-validate","validate(required:请准确填写撤单原因) on(blur)");
 				$("#tremark").text("撤单原因：");
 				$("#undor").show();
 				$("#undo_d_form").off().bind("formIsValid", function(event, form){
@@ -159,6 +161,9 @@ order.undo = (function(){
 					_undoCheckSer();
 				}).ketchup({bindElement:"undo_d_bt"});
 			}else{
+				$("#undo_d_txt").removeClass("ketchup-input-error");
+				$("#undo_d_txt").removeAttr("placeHolder");
+				$("#undo_d_txt").removeAttr("data-validate");
 				$("#tremark").text("撤单备注：");
 				$("#undor").hide();
 				$("#undo_d_bt").off("click").on("click",function(event){
