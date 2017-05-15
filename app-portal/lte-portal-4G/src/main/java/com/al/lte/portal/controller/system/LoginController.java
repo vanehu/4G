@@ -128,6 +128,20 @@ public class LoginController extends BaseController {
 	public static final String SESSION_CHANGEUIM_SMS_AREAID = "_changeUim_sms_areaId";
 	/** 客户鉴权短信验证号码 */
 	public static final String SESSION_CUSTAUTH_SMS_MUNBER = "_custauth_sms_munber";
+	/** 人证相符审核短信验证号码 */
+	public static final String SESSION_CONFIRMAGREE_SMS_NUMBER = "_confirmAgree_sms_number";
+	/** 人证相符审核短信验证地区 */
+	public static final String SESSION_CONFIRMAGREE_SMS_AREAID = "_confirmAgree_sms_areaId";
+	/** 人证相符审核员工ID */
+	public static final String SESSION_CONFIRMAGREE_SMS_STAFFID = "_confirmAgree_sms_staffId";
+	/** 人证相符审核员工工号 */
+	public static final String SESSION_CONFIRMAGREE_SMS_STAFFCODE = "_confirmAgree_sms_staffCode";
+	/** 人证相符审核员工姓名*/
+	public static final String SESSION_CONFIRMAGREE_SMS_STAFFNAME = "_confirmAgree_sms_staffName";
+	/** 人证相符审核类型*/
+	public static final String SESSION_CONFIRMAGREE_SMS_CHECKTYPE = "_confirmAgree_sms_checkType";
+	/** 人证相符审核实名制传虚拟订单号 */
+	public static final String SESSION_CONFIRMAGREE_SMS_OLID = "_confirmAgree_sms_olId";
 	@Autowired
 	PropertiesUtils propertiesUtils;
 
@@ -166,7 +180,7 @@ public class LoginController extends BaseController {
 		session.setAttribute(SysConstant.SERVER_NAME,getSerName());
 		session.setAttribute(SysConstant.SERVER_IP,getSerAddrPart());
 		// 已经登录
-		if (sessionStaff != null) {
+		if (sessionStaff != null && !("tokenLogin".equals(sessionStaff.getLogintype()))) {
 			String lastUrl = ServletUtils.getCookieValue(request, "_last_url");
 			if (lastUrl != null) {
 				lastUrl = lastUrl.substring(lastUrl.indexOf("/", 2));
@@ -464,6 +478,11 @@ public class LoginController extends BaseController {
 			throws PortalCheckedException {
 		paramMap.put("platformCode", SysConstant.SM_APPPLATFORM_CODE);
 		Map<String, Object> map = null;
+		String isHand = "false";//手势密码跳过短信校验标识
+		if(paramMap.get("isHand")!=null){
+			isHand = (String) paramMap.get("isHand");
+		}
+		request.getSession().setAttribute("isHand", isHand);
 		try {
 			SessionStaff staffSession= new SessionStaff();
 			staffSession.setCurrentAreaId(MapUtils.getString(paramMap, "staffProvCode", ""));
@@ -493,7 +512,7 @@ public class LoginController extends BaseController {
 				resMap.put("staff", map);
 				
 				//如果全局开关设定为不发送，或者员工信息表明不发送，或者当前是重新登录不发送短信
-				if ("1".equals(msgCodeFlag) || "N".equals(smsPassFlag) || "N".equals(loginValid)) {
+				if ("1".equals(msgCodeFlag) || "N".equals(smsPassFlag) || "N".equals(loginValid) || "true".equals(isHand)) {
 					resMap.put("ifSend", "N");
 					return super.successed(resMap);
 				}else{
@@ -536,13 +555,15 @@ public class LoginController extends BaseController {
 			String loginValid) throws PortalCheckedException {
 		this.log.debug("java heap space size={}", Runtime.getRuntime().maxMemory()/(1024*1024)+"M");
 		this.log.debug("userMap={}", staff);
+		//update by yuansq 增加会话id
+		String sessionId=request.getSession().getId();
 		String staffCode = staff.getStaffCode();
 		String password = staff.getPassword();
 		String staffProvCode = staff.getStaffProvCode();
 		String loginAreaName = staff.getLoginAreaName();
 		//update by huangjj3 为了防止同一个浏览器登录了不同工号
 		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
-		if (staffCode !=null && sessionStaff !=null && sessionStaff.getStaffCode()!=null &&  !staffCode.toUpperCase().equals(sessionStaff.getStaffCode().toUpperCase())) {
+		if (staffCode !=null && sessionStaff !=null && !("tokenLogin".equals(sessionStaff.getLogintype())) && sessionStaff.getStaffCode()!=null &&  !staffCode.toUpperCase().equals(sessionStaff.getStaffCode().toUpperCase())) {
 			Map<String, Object> failData = new HashMap<String, Object>();
 			failData.put("message", "您好，您已登录了工号"+sessionStaff.getStaffCode()+"，请先登出工号"+sessionStaff.getStaffCode()+"再登录，谢谢！");
 			JsonResponse jsonResponse = super.failed(failData, ResultConstant.DATA_NOT_VALID_FAILTURE.getCode());
@@ -555,6 +576,7 @@ public class LoginController extends BaseController {
 		dataBusMap.put("staffProvCode", staffProvCode);
 		dataBusMap.put("loginAreaName", loginAreaName);
 		dataBusMap.put("platformCode", SysConstant.SM_PLATFORM_CODE);
+		dataBusMap.put("sessionId", sessionId);
 		String ip = "";
 		try {
 			ip = ServletUtils.getIpAddr(request);
@@ -587,9 +609,9 @@ public class LoginController extends BaseController {
 							break;
 						}
 					} 
-//					if (!staffRealNameFlag) {
-//						return super.failed("该工号未实名登记，不允许进行受理操作，请进行身份证实名登记！", Integer.parseInt(SysConstant.STAFF_AUTH_ATTR_VAL_FALSE));
-//					}
+					if (!staffRealNameFlag) {
+						return super.failed("该工号未实名登记，不允许进行受理操作，请进行身份证实名登记！", Integer.parseInt(SysConstant.STAFF_AUTH_ATTR_VAL_FALSE));
+					}
 				}
 				ServletUtils.removeSessionAttribute(request, SysConstant.SESSION_KEY_IMAGE_CODE);
 				if (StringUtils.isNotEmpty(ip)) {
@@ -776,10 +798,15 @@ public class LoginController extends BaseController {
 			String munber = (String) paramMap.get("munber");
 			String areaId = (String) paramMap.get("areaId");
 			String isSecond = (String) paramMap.get("isSecond");
+			String flag = (String) paramMap.get("flag");
 			request.getSession().setAttribute(SESSION_CHANGEUIM_SMS_MUNBER, munber);
 			request.getSession().setAttribute(SESSION_CHANGEUIM_SMS_AREAID, areaId);
 			SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);
-			String changeUimMsgValid  = staffBmo.checkOperatSpec(SysConstant.CHANGEUIMSMS_CODE, sessionStaff);
+			String operatSpecCd = SysConstant.CHANGEUIMSMS_CODE;
+			if(flag.equals("actionFlag")){
+				operatSpecCd = SysConstant.HKDDDXYZ_CODE;
+			}
+			String changeUimMsgValid  = staffBmo.checkOperatSpec(operatSpecCd, sessionStaff);
 			//当前工号无免补换卡短信验证权限!
 			if("0".equals(changeUimMsgValid)||SysConstant.STR_Y.equals(isSecond)){
 				//短信发送时间间隔,10秒内重复发送，会被拦截！
@@ -1028,6 +1055,11 @@ public class LoginController extends BaseController {
 	public JsonResponse smsValidate(@RequestParam("smspwd") String smsPwd,
 			HttpServletRequest request ,HttpServletResponse response) throws Exception {
 		this.log.debug("smsPwd={}", smsPwd);
+		//手势登录跳过短信校验标识
+		String isHand = "false";
+		if(ServletUtils.getSessionAttribute(request,"isHand")!=null){
+			isHand = (String) ServletUtils.getSessionAttribute(request,"isHand");
+		}
 		//手机版本使用
 		Object appFlag = ServletUtils.getSessionAttribute(request,SysConstant.SESSION_KEY_APP_FLAG);
 		// 系统参数表中的是否发送校验短信标识，1不发送不验证， 其他发送并验证
@@ -1043,7 +1075,7 @@ public class LoginController extends BaseController {
 			return super.failed("短信过期失效，请重新发送!", ResultConstant.FAILD.getCode());
 		}
 		ServletUtils.removeSessionAttribute(request, SysConstant.SESSION_KEY_LOGIN_SMS);
-		if ("1".equals(msgCodeFlag) || "N".equals(smsPassFlag) || smsPwdSession.equals(smsPwd)) {
+		if ("1".equals(msgCodeFlag) || "N".equals(smsPassFlag) || smsPwdSession.equals(smsPwd) || "true".equals(isHand)) {
 			SessionStaff sessionStaff = SessionStaff.setStaffInfoFromMap(mapSession);
 			
 			JsonResponse channelResp = queryChannel(sessionStaff, "", mapSession);
@@ -2597,6 +2629,200 @@ public class LoginController extends BaseController {
 			return super.failed(ie, dataBusMap, ErrorCode.STAFF_LOGIN);
 		} catch (Exception e) {
 			return super.failed(ErrorCode.STAFF_LOGIN, e, dataBusMap);
+		}
+	}
+    
+    //经办人拍照人证相符短信校验码验证
+    @RequestMapping(value = "/login/confirmAgreeCheck" ,method = RequestMethod.GET)
+	@LogOperatorAnn(desc = "经办人拍照人证相符短信校验码验证", code = "CHANGEUIM", level = LevelLog.DB)
+	@ResponseBody
+	public JsonResponse confirmAgreeCheck(@RequestParam Map<String, Object> paramMap,HttpServletRequest request, @LogOperatorAnn String flowNum) {
+		try {
+			SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
+			String number = (String) paramMap.get("number");
+			String areaId = (String) paramMap.get("areaId");
+			String virOlId = (String) paramMap.get("virOlId");
+			String checkType = (String) paramMap.get("checkType");
+			request.getSession().setAttribute(SESSION_CONFIRMAGREE_SMS_NUMBER, number);
+			request.getSession().setAttribute(SESSION_CONFIRMAGREE_SMS_AREAID, areaId);
+			request.getSession().setAttribute(SESSION_CONFIRMAGREE_SMS_OLID, virOlId);
+			request.getSession().setAttribute(SESSION_CONFIRMAGREE_SMS_CHECKTYPE, checkType);
+			//短信发送时间间隔,10秒内重复发送，会被拦截！
+			Long sessionTimeL = (Long) request.getSession().getAttribute(SysConstant.SESSION_KEY_TEMP_CONFIRMAGREE_SMS_TIME);
+			if (sessionTimeL != null) {
+				long sessionTime = sessionTimeL;
+				long nowTime = (new Date()).getTime();
+				long inteval = 10 * 1000;//间隔10秒
+				if (nowTime - sessionTime > inteval ) {		
+					Map<String, Object> msgMap = confirmAgreeSendMsg(request, flowNum); 
+					if (ResultCode.R_FAILURE.equals(msgMap.get("resultCode"))|msgMap.size()==0|msgMap==null) {
+						//如果发送短信异常
+						return super.failed(msgMap.get("resultMsg"), 3);
+					}
+				}else{
+					return super.successed("验证码发送中，请稍后再操作进行验证！", 1003);
+				}
+			}else{
+				Map<String, Object> msgMap = confirmAgreeSendMsg(request, flowNum); 
+				if (ResultCode.R_FAILURE.equals(msgMap.get("resultCode"))|msgMap.size()==0|msgMap==null) {
+					//如果发送短信异常
+					return super.failed(msgMap.get("resultMsg"), 3);
+				}
+			}
+			
+		} catch (BusinessException be) {
+			this.log.error("错误信息:{}", be);
+			return super.failed(be);
+		} catch (InterfaceException ie) {
+			return super.failed(ie, new HashMap<String, Object>(), ErrorCode.CONFIRMAGREE_MSG_SEND);
+		} catch (Exception e) {			
+			log.error("门户登录/staff//login/confirmAgreeSendMsg方法异常", e);
+			return super.failed(ErrorCode.CONFIRMAGREE_MSG_SEND, e, new HashMap<String, Object>());
+		}
+		Map<String, Object> successedData = new HashMap<String, Object>();
+		successedData.put("data", "短信验证码发送成功!");
+		successedData.put("randomCode", ServletUtils.getSessionAttribute(request, SysConstant.SESSION_KEY_CONFIRMAGREE_RANDONCODE));
+		return super.successed(successedData, ResultConstant.SUCCESS.getCode());
+	}
+    
+    // 经办人拍照人证相符审核短信发送短信
+	public Map<String, Object> confirmAgreeSendMsg(HttpServletRequest request, String flowNum) throws Exception {
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
+		Map<String, Object> retnMap = new HashMap<String, Object>();
+		
+		if (sessionStaff != null) {
+			String staffName = sessionStaff.getStaffName();
+			String staffCode = sessionStaff.getStaffCode();
+			String number = (String)request.getSession().getAttribute(SESSION_CONFIRMAGREE_SMS_NUMBER);
+			String areaId = (String)request.getSession().getAttribute(SESSION_CONFIRMAGREE_SMS_AREAID);
+			String virOlId = (String)request.getSession().getAttribute(SESSION_CONFIRMAGREE_SMS_OLID);
+			String checkType = (String)request.getSession().getAttribute(SESSION_CONFIRMAGREE_SMS_CHECKTYPE);
+			String isSecond=request.getParameter("isSecond");
+			String accNbr=request.getParameter("number");
+			
+			if(SysConstant.STR_Y.equals(isSecond)&&StringUtils.isNotBlank(accNbr)){
+				number = accNbr;
+				areaId = sessionStaff.getCurrentAreaId();
+			}else if(request.getSession().getAttribute(SESSION_CONFIRMAGREE_SMS_NUMBER) ==null){
+				retnMap.put("resultCode",ResultCode.R_FAILURE );
+				retnMap.put("resultMsg","短信验证号码获取失败，系统异常！请刷新重试!");
+				return retnMap;
+			}else if(request.getSession().getAttribute(SESSION_CONFIRMAGREE_SMS_AREAID) ==null){
+				retnMap.put("resultCode",ResultCode.R_FAILURE );
+				retnMap.put("resultMsg","短信验证号码所属地区获取失败，系统异常！请刷新重试!");
+				return retnMap;
+			}
+			if(StringUtils.isBlank(number)){
+				retnMap.put("resultCode",ResultCode.R_FAILURE );
+				retnMap.put("resultMsg","短信验证号码为空，系统异常！请刷新重试!");
+				return retnMap;
+			}
+			
+			String smsPwd = null;
+			String randomCode =null;
+			//发送4位验证码
+			smsPwd = UIDGenerator.generateDigitNonce(4);
+			randomCode = UIDGenerator.generateDigitNonce(2);
+			for(;randomCode == ServletUtils.getSessionAttribute(request, SysConstant.SESSION_KEY_CONFIRMAGREE_RANDONCODE);)
+			{
+				randomCode = UIDGenerator.generateDigitNonce(2);
+			}
+			this.log.debug("业务受理短信验证码：{}", smsPwd);
+			Map<String, Object> msgMap = new HashMap<String, Object>();
+			msgMap.put("phoneNumber", number);
+			msgMap.put("key", smsPwd);
+			msgMap.put("MsgNumber", "5487");
+			
+			if(checkType.equals(SysConstant.CHECKTYPE_LOCAL)){//本地审核
+				msgMap.put("randomCode", randomCode);
+				msgMap.put("message", propertiesUtils.getMessage(
+						"PHOTOGRAPH_REVIEW_SMS_CONTENT_LOCAL", new Object[] {staffName,staffCode,smsPwd}));
+			}else{//远程审核
+				msgMap.put("randomCode", randomCode);
+				msgMap.put("message", propertiesUtils.getMessage(
+						"PHOTOGRAPH_REVIEW_SMS_CONTENT_DIFF", new Object[] {staffName,staffCode,virOlId}));
+			}
+			if(!"00".equals(areaId.substring(5))){
+				areaId = areaId.substring(0, 5) + "00";
+			}
+			msgMap.put("areaId", areaId);
+			msgMap.put(InterfaceClient.DATABUS_DBKEYWORD,(String) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_DATASOURCE_KEY));
+			msgMap.put("sendflag", "handleCustPhotographReviewMessage");
+			retnMap = staffBmo.sendMsgInfo(msgMap, flowNum, sessionStaff);
+			request.getSession().removeAttribute(SysConstant.SESSION_KEY_CONFIRMAGREE_SMS);
+			request.getSession().setAttribute(SysConstant.SESSION_KEY_CONFIRMAGREE_SMS, smsPwd);
+			request.getSession().setAttribute(SESSION_CONFIRMAGREE_SMS_NUMBER, number);
+			request.getSession().setAttribute(SysConstant.SESSION_KEY_CONFIRMAGREE_RANDONCODE, randomCode);
+			//短信发送时间间隔
+			request.getSession().removeAttribute(SysConstant.SESSION_KEY_TEMP_CONFIRMAGREE_SMS_TIME);
+			request.getSession().setAttribute(SysConstant.SESSION_KEY_TEMP_CONFIRMAGREE_SMS_TIME, (new Date()).getTime());
+		} else {
+			this.log.error("错误信息:登录会话失效，请重新登录!");
+			retnMap.put("resultCode",ResultCode.R_FAILURE );
+			retnMap.put("resultMsg","错误信息:登录会话失效，请重新登录!");
+			return retnMap;
+		}
+		
+		return retnMap;
+	}
+	
+	@RequestMapping(value = "/login/confirmAgreeSmsResend", method = RequestMethod.GET)
+	@LogOperatorAnn(desc = "经办人拍照人证相符审核短信校验码重新发送", code = "CHANGEUIM", level = LevelLog.DB)
+	@ResponseBody
+	public JsonResponse confirmAgreeSmsResend(@RequestParam Map<String, Object> paramMap,HttpServletRequest request, @LogOperatorAnn String flowNum) {
+		try {
+			Long sessionTimeL = (Long) request.
+					getSession().getAttribute(SysConstant.SESSION_KEY_TEMP_CONFIRMAGREE_SMS_TIME);
+			if (sessionTimeL == null) {
+				request.getSession().setAttribute(SysConstant.SESSION_KEY_TEMP_CONFIRMAGREE_SMS_TIME, (new Date()).getTime());
+				sessionTimeL = 0L;
+			}
+			long sessionTime = sessionTimeL;
+			long nowTime = (new Date()).getTime();
+			long inteval = 28 * 1000;//比30秒提前2秒
+			int smsErrorCount = MapUtils.getIntValue(paramMap, "smsErrorCount", 0);
+			if (nowTime - sessionTime > inteval || smsErrorCount >= 3) {
+				confirmAgreeSendMsg(request, flowNum);
+			} else {
+				log.debug("time inteval:{}", nowTime - sessionTime);
+				return super.failed("短信验证码发送时间有误!请求太过频烦,请稍后再重发！",
+						ResultConstant.ACCESS_LIMIT_FAILTURE.getCode());
+			}
+		} catch (BusinessException be) {
+			this.log.error("错误信息:{}", be);
+			return super.failed(be);
+		} catch (Exception e) {			
+			log.error("门户补换卡短信验证/staff/login/confirmAgreeSmsResend方法异常", e);
+			return super.failed(ErrorCode.CONFIRMAGREE_MSG_SEND, e, new HashMap<String, Object>());
+		}
+		Map<String, Object> successedData = new HashMap<String, Object>();
+		successedData.put("data", "短信验证码发送成功!");
+		//successedData.put("randomCode", ServletUtils.getSessionAttribute(request, SysConstant.SESSION_KEY_LOGIN_SMS));
+		successedData.put("randomCode", ServletUtils.getSessionAttribute(request, SysConstant.SESSION_KEY_CONFIRMAGREE_RANDONCODE));
+		return super.successed(successedData, ResultConstant.SUCCESS.getCode());
+	}
+	
+	@RequestMapping(value = "/login/confirmAgreeSmsValid", method = RequestMethod.POST)
+	@ResponseBody
+	public JsonResponse confirmAgreeSmsValid(@RequestParam("smspwd") String smsPwd,@RequestParam("number") String number,
+			HttpServletRequest request ,HttpServletResponse response) throws Exception {
+		this.log.debug("confirmAgreeSmsValidsmsPwd={}，number={}", smsPwd, number);
+		// 验证码内容
+		String smsPwdSession = (String) ServletUtils.getSessionAttribute(
+				request, SysConstant.SESSION_KEY_CONFIRMAGREE_SMS);
+		// 对应的手机号
+		String numberSession = (String) ServletUtils.getSessionAttribute(
+				request, SESSION_CONFIRMAGREE_SMS_NUMBER);
+		//如果不需要发送短信，验证码就为空，不提示短信过期失效
+		if(StringUtil.isEmpty(smsPwdSession)){
+			return super.failed("短信过期失效，请重新发送!", ResultConstant.FAILD.getCode());
+		}
+		if (smsPwdSession.equals(smsPwd)&&numberSession.equals(number)) {
+			Map<String,Object> resData=new HashMap<String,Object>();
+			resData.put("msg", "短信验证成功.");
+			return super.successed(resData);
+		}else {
+			return super.failed("短信验证码错误!", ResultConstant.FAILD.getCode());
 		}
 	}
 }
