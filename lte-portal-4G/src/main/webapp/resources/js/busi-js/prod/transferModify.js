@@ -93,7 +93,7 @@ prod.transferModify = (function(){
 		var toCustName = $("#litransCustId").attr("transCustName");
 		var toAddressStr = $("#litransCustId").attr("transAddressStr");
 		var nameCN = $("#litransCustId").attr("CN");
-		var toIdentidiesTypeCd = $("#div_tra_identidiesTypeCd option:selected").val();
+		var toIdentidiesTypeCd = $("#p_cust_tra_identityCd").val();
 		var toIdCardNumber = $("#litransidCardNumber").attr("transidCardNumber");
 		
 		if(toCustId==OrderInfo.cust.custId){
@@ -1308,7 +1308,7 @@ prod.transferModify = (function(){
 	
 	var _returnFile_Submit = function(){
 		//政企必须传使用人
-		var toIdentidiesTypeCd = $("#div_tra_identidiesTypeCd option:selected").val();
+		var toIdentidiesTypeCd = $("#p_cust_tra_identityCd").val();
 		var isGovEntCust = false;//判断是否政企客户，true：是；false：否
 		if (CacheData.isGov(toIdentidiesTypeCd)) {
 			isGovEntCust = true;
@@ -1422,7 +1422,7 @@ prod.transferModify = (function(){
 		if(boAccountInfos.length>0){
 			busiOrderReturn.data.boAccountInfos = boAccountInfos;
 		}
-		var toIdentidiesTypeCd = $("#div_tra_identidiesTypeCd option:selected").val();
+		var toIdentidiesTypeCd = $("#p_cust_tra_identityCd").val();
 		var toIdCardNumber = $("#litransidCardNumber").attr("transidCardNumber");
 		var boCustIdentitie = [];
 		var boCustIdentitieAdd = {
@@ -1551,7 +1551,7 @@ prod.transferModify = (function(){
 		var toCustName = $("#litransCustId").attr("transCustName");
 		var toAddressStr = $("#litransCustId").attr("transAddressStr");
 		var nameCN = $("#litransCustId").attr("CN");
-		var toIdentidiesTypeCd = $("#div_tra_identidiesTypeCd option:selected").val();
+		var toIdentidiesTypeCd = $("#p_cust_tra_identityCd").val();
 		var toIdCardNumber = $("#litransidCardNumber").attr("transidCardNumber");
 		
 		if(toCustId==OrderInfo.cust.custId){
