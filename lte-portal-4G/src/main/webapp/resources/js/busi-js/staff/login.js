@@ -270,6 +270,7 @@ staff.login = (function($) {
 		var param = {
 				staffId: staffId,
 				oldPwd : password,
+                "is_pwd_reset" : "is_pwd_reset",
 				newPwd : newPassword,
 				actionType : "UPDATE",
 //				areaId : "0"//由于没有登录，不能取到地区Id，修改密码也不需要areaId，约定传0值
