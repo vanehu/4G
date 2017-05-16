@@ -3233,7 +3233,8 @@ SoOrder = (function() {
 							}
 							if(checkName == "管理员手机号码"){
 								var val=$.trim($("#"+id).val());
-								if(val.length!=11){
+								var rex = /^1\d{10}$/;
+								if(!val.match(rex)){
 									prodAttrErrorFlag = true;
 									 prodAttrErrorCheckName = "管理员手机号码格式输入错误，无法提交";
 								 }

@@ -117,7 +117,7 @@ OrderInfo = (function() {
 	}
 	
 	var _surplusNum = 0;//剩余可纳入副卡数量
-	
+	var _vice_card = 0;//用于标识是副卡保留动作
 	//成员变更传入
 	var _memberChangeInfo={
 		//主号码
@@ -1525,6 +1525,7 @@ OrderInfo = (function() {
 		recordId:_recordId,
 		preBefore:_preBefore,
 		oneCardFiveNum : _oneCardFiveNum,
+		vice_card : _vice_card,
 		oneCardFiveNO  : _oneCardFiveNO
 	};
 })();

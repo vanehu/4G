@@ -1451,7 +1451,7 @@ SoOrder = (function() {
 	    			
 	    			busiOrders.push(busiOrder2);
 	    			var isON = offerChange.queryPortalProperties("VICE_CARD_DEL_USER_"+OrderInfo.cust.areaId.substr(0,3));
-					if(OrderInfo.busitypeflag == 21 && !CacheData.isGov(OrderInfo.cust.identityCd) && isON){
+					if(OrderInfo.vice_card == 21 && !CacheData.isGov(OrderInfo.cust.identityCd) && isON){
 						  //查询副卡的产品属性并保存
 			            var param = {
 			                prodId: offerSpec.objInstId, // 产品实例id
