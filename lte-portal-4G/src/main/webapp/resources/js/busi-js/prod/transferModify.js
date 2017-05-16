@@ -453,33 +453,33 @@ prod.transferModify = (function(){
 						}
 				};
 				busiOrder.push(transferAcct);
-		        if(OrderInfo.actionFlag==43 && CacheData.isGov(toIdentidiesTypeCd)){
-		        	var govUser = {
-		        			areaId : order.prodModify.choosedProdInfo.areaId,  //受理地区ID
-		        			busiOrderInfo : {
-		        				seq : OrderInfo.SEQ.seq-- 
-		        			}, 
-		        			busiObj : { //业务对象节点
-		        				accessNumber: order.prodModify.choosedProdInfo.accNbr,
-		    					instId : order.prodModify.choosedProdInfo.prodInstId, //业务对象实例ID
-		    					objId :order.prodModify.choosedProdInfo.productId,
-		    					isComp:"N"
-		        			},  
-		        			boActionType : {
-		        				actionClassCd : CONST.ACTION_CLASS_CD.PROD_ACTION,
-		        				boActionTypeCd : CONST.BO_ACTION_TYPE.PRODUCT_PARMS
-		        			}, 
-		        			data:{
-		        				boProdItems:[{
-		    						itemSpecId:CONST.PROD_ATTR.PROD_USER,
-		    						prodSpecItemId:"",
-		    						state:"ADD",
-		    						value:$("#800000011_-1").val()
-		    					}]
-		        			}
-		        		};
-		        	busiOrder.push(govUser);
-		        }
+//		        if(OrderInfo.actionFlag==43 && CacheData.isGov(toIdentidiesTypeCd)){
+//		        	var govUser = {
+//		        			areaId : order.prodModify.choosedProdInfo.areaId,  //受理地区ID
+//		        			busiOrderInfo : {
+//		        				seq : OrderInfo.SEQ.seq-- 
+//		        			}, 
+//		        			busiObj : { //业务对象节点
+//		        				accessNumber: order.prodModify.choosedProdInfo.accNbr,
+//		    					instId : order.prodModify.choosedProdInfo.prodInstId, //业务对象实例ID
+//		    					objId :order.prodModify.choosedProdInfo.productId,
+//		    					isComp:"N"
+//		        			},  
+//		        			boActionType : {
+//		        				actionClassCd : CONST.ACTION_CLASS_CD.PROD_ACTION,
+//		        				boActionTypeCd : CONST.BO_ACTION_TYPE.PRODUCT_PARMS
+//		        			}, 
+//		        			data:{
+//		        				boProdItems:[{
+//		    						itemSpecId:CONST.PROD_ATTR.PROD_USER,
+//		    						prodSpecItemId:"",
+//		    						state:"ADD",
+//		    						value:$("#800000011_-1").val()
+//		    					}]
+//		        			}
+//		        		};
+//		        	busiOrder.push(govUser);
+//		        }
 				//订单提交
 				SoOrder.submitOrder(busiOrder);
 				
@@ -1692,6 +1692,14 @@ prod.transferModify = (function(){
 			                partyProductRelaRoleCd : 0,
 			                state : "ADD"
 			            }],
+			            boProdStatuses : [{
+							prodStatusCd : CONST.PROD_STATUS_CD.READY_PROD,
+							state : "DEL"
+						},{
+							prodStatusCd : CONST.PROD_STATUS_CD.DONE_PROD,
+							state : "ADD"
+						}
+						],
 			            boProdItems : []
 					}
 			};
@@ -1850,32 +1858,6 @@ prod.transferModify = (function(){
 			}
 			transferCust.data.boProdItems = boProdItems;
 			busiOrder.push(transferCust);
-			//返档
-			var busiOrderAdd = {
-						areaId : order.prodModify.choosedProdInfo.areaId,  //受理地区ID		
-						busiOrderInfo : {
-							seq : OrderInfo.SEQ.seq--
-						}, 
-						busiObj : { //业务对象节点
-							accessNumber: order.prodModify.choosedProdInfo.accNbr,
-							instId : order.prodModify.choosedProdInfo.prodInstId, //业务对象实例ID
-							objId :order.prodModify.choosedProdInfo.productId
-						},  
-						boActionType : {
-							actionClassCd: CONST.ACTION_CLASS_CD.PROD_ACTION,
-		                    boActionTypeCd: CONST.BO_ACTION_TYPE.ACTIVERETURNTWO
-						}, 
-						data:{}
-					};
-				busiOrderAdd.data.boProdStatuses = [{
-					prodStatusCd : CONST.PROD_STATUS_CD.READY_PROD,
-					state : "DEL"
-				},{
-					prodStatusCd : CONST.PROD_STATUS_CD.DONE_PROD,
-					state : "ADD"
-				}
-				];
-
         //添加证号关系
         _addCertiAccNbrRels(_transchoosedCustInfo, busiOrderAdd, toIdentidiesTypeCd, toIdCardNumber, toCustName, toAddressStr);
 
