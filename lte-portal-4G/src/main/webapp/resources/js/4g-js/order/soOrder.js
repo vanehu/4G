@@ -555,6 +555,8 @@ SoOrder = (function() {
 			_createUrgentBoot(busiOrders,data,"N");
 		}else if(OrderInfo.actionFlag == 28){//主副卡成员角色互换
 			_buildBusiOrders(data, busiOrders);
+		}else if(OrderInfo.actionFlag == 64){//靓号调级
+			_buildBusiOrdersPhoneLevelModify(data, busiOrders);
 		}else{  //默认单个业务动作
 			_fillBusiOrder(busiOrders,data,"N"); //填充业务对象节点
 		}
@@ -4582,6 +4584,42 @@ SoOrder = (function() {
 			}
 		}
 		return true;
+    };
+    
+    //靓号调级
+    var _buildBusiOrdersPhoneLevelModify = function(data, busiOrders){
+    	var choosedProdInfo = order.prodModify.choosedProdInfo;
+    	
+    	var busiOrder = {
+			areaId	: OrderInfo.getAreaId(),//受理地区ID
+			busiOrderInfo : {
+				seq : OrderInfo.SEQ.seq--
+			}, 
+			busiObj : { //业务对象节点
+				objId		: choosedProdInfo.productId,
+				instId		: choosedProdInfo.prodInstId,
+				accessNumber: OrderInfo.getAccessNumber(choosedProdInfo.productId)
+			},  
+			boActionType : {
+				actionClassCd	: CONST.ACTION_CLASS_CD.PROD_ACTION,
+				boActionTypeCd	: CONST.BO_ACTION_TYPE.PHONE_LEVEL_MODIFY
+			}, 
+			data : {
+				boProdAns:[{
+					anId		:$("#baseInfoPhoneNumId").val(),	//号码ID
+					state		:"ADD",
+					areaId		:OrderInfo.getAreaId(),
+					preStore	:$("#baseInfoPrePrice").val(),		//靓号预存
+					anTypeCd	:"4",
+					minCharge	:$("#baseInfoPnPrice").val(),		//靓号低消
+					pnLevelId	:$("#baseInfoPhoneLevelId").val(),	//号码等级ID
+					accessNumber:OrderInfo.getAccessNumber(choosedProdInfo.productId)
+//					memberRoleCd:400,暂未使用，不传
+				}]
+			}
+		};
+    	
+    	busiOrders.push(busiOrder);
     };
 
     return {

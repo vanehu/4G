@@ -3137,8 +3137,15 @@ order.prodModify = (function(){
 			$("#order_fill_content").empty();
 			OrderInfo.order.step=0;//订单初始页面
 			order.prepare.hideStep();
-			$("#orderedprod").show();
-			$("#order_prepare").show();
+			
+			var menuName = $("#menuName").attr("menuName");
+			if (ec.util.isObj(menuName) && CONST.PHONE_LEVEL_MODIFY==menuName) {
+				$("#order_prepare").hide();
+				$("#orderedprod").show();
+			} else{
+				$("#orderedprod").show();
+				$("#order_prepare").show();
+			}
 		},no:function(){
 			
 		}},"question");
@@ -4635,7 +4642,7 @@ order.prodModify = (function(){
 					return;
 				}
 				if(response && response.data){
-					_gotoOrderModify4RoleExchange(param, response);//针对主副卡互换加载填单页面
+					_gotoOrderModify4RoleExchange(response, param);//针对主副卡互换加载填单页面
 					order.dealer.initDealer();//加载填单页面后初始化发展人
 				}else{
 					$.alert("错误","加载填单页面请求发生未知异常，请稍后重新尝试！");
@@ -4647,10 +4654,17 @@ order.prodModify = (function(){
 	/**
 	 * 加载填单页面
 	 */
-	var _gotoOrderModify4RoleExchange = function (param, response){
+	var _gotoOrderModify4RoleExchange = function (response, orderData){
+		_gotoOrderContent(response, orderData);
+	};
+	
+	/**
+	 * 加载填单页面
+	 */
+	var _gotoOrderContent = function(response, orderData){
 		var content$ = $("#order_fill_content");
 		content$.html(response.data).show();
-		$(".main_div .h2_title").append(_choosedProdInfo.productName+"-"+_choosedProdInfo.accNbr);
+		$(".main_div .h2_title").append(order.prodModify.choosedProdInfo.productName + "-" + order.prodModify.choosedProdInfo.accNbr);
 		$("#ordercon").show();
 		$("#ordertabcon").show();
 		order.prepare.step(1);
@@ -4664,9 +4678,10 @@ order.prodModify = (function(){
 			order.prodModify.cancel();
 		});
 		$("#fillNextStep").unbind("click").bind("click",function(){
-			SoOrder.submitOrder(param);
+			SoOrder.submitOrder(orderData);
 		});
 	};
+	
 	/**
 	 * 撤销鉴权
 	 * @private
@@ -4855,7 +4870,45 @@ order.prodModify = (function(){
 					throw new Error("LogWriteException : "+err);
 				}
 		   };
+	
+	/** 靓号调级：入口 */
+	var _phoneLevelModify = function() {
+		OrderInfo.actionFlag = 64;
+		OrderInfo.busitypeflag = 64;		
+        var boActtionType = CONST.BO_ACTION_TYPE.PHONE_LEVEL_MODIFY;
+		var param = order.prodModify.getCallRuleParam(boActtionType, order.prodModify.choosedProdInfo.prodInstId);
+		var callBackParam = {
+			phoneNumber : order.prodModify.choosedProdInfo.accNbr
+		};
+		var checkRule = rule.rule.prepare(param,'order.prodModify.phoneLevelModifyPrepare',callBackParam);
+		if (checkRule) return;
+	};
+	
+	/** 靓号调级：填单页面 */
+	var _phoneLevelModifyPrepare = function(param) {
+		$.callServiceAsHtmlGet(contextPath + "/mktRes/phoneLevelModifyPrepare", param, {
+			"before":function(){
+				$.ecOverlay("<strong>正在查询中,请稍等会儿....</strong>");
+			},
+			"always":function(){
+				$.unecOverlay();
+			},
+			"done" : function(response){
+				if(response && response.code == -2){
+					$.alertM(response.data);
+					return;
+				} else if(response && response.data){
+					_gotoOrderContent(response, null);//加载填单页面
+				} else{
+					$.alert("错误","加载填单页面请求发生未知异常，请稍后重新尝试！");
+				}
+			}
+		});	
+	};
+	
 	return {
+        phoneLevelModify:_phoneLevelModify,
+        phoneLevelModifyPrepare:_phoneLevelModifyPrepare,
 		changeCard : _changeCard,
 		getChooseProdInfo : _getChooseProdInfo,
 		lossRepProd : _lossRepProd,

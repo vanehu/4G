@@ -3192,4 +3192,53 @@ public class MktResController extends BaseController {
 				e.printStackTrace();
 			}
 	}
+	
+    /**
+     * 靓号调级：入口
+     */
+    @RequestMapping(value = "/phoneLevelModify", method = RequestMethod.GET)
+    @AuthorityValid(isCheck = true)
+    public String phoneLevelModify(@RequestParam Map<String, Object> params, HttpServletRequest request, Model model, HttpSession session) {
+    	model.addAttribute("canOrder", EhcacheUtil.pathIsInSession(session, "mktRes/phoneLevelModify"));
+        model.addAttribute("menuName", SysConstant.PHONE_LEVEL_MODIFY);
+        model.addAttribute("DiffPlaceFlag", "local");
+        
+        return "/order/order-prepare";
+    }
+    
+    /**
+     * 靓号调级：填单页面
+     */
+    @SuppressWarnings("unchecked")
+    @RequestMapping(value = "/phoneLevelModifyPrepare", method = { RequestMethod.GET})
+    public String roleExchange(@RequestParam Map<String, Object> param, Model model, HttpServletResponse response) {
+    	SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
+    	
+    	model.addAttribute("param", param);
+    	model.addAttribute("boActionTypeName", SysConstant.PHONE_LEVEL_MODIFY_NAME);
+    	
+    	try {
+    		//调资源接口查靓号调级
+			Map<String, Object> resultData = this.mktResBmo.phoneNumInfoQry(param, null, sessionStaff);
+			if (resultData != null) {
+				if (ResultCode.R_SUCCESS.equals(MapUtils.getString(resultData, "code", ""))) {
+					Map<String, Object> baseInfo = MapUtils.getMap(resultData, "baseInfo", new HashMap<String, Object>());
+					model.addAttribute("baseInfo", baseInfo);
+				}else{
+					super.addHeadCode(response, ResultConstant.SERVICE_RESULT_FAILTURE);
+					return super.failedStr(model, ErrorCode.PHONENUM_LIST, resultData, param);
+				}
+			}
+		} catch (InterfaceException ie) {
+			return super.failedStr(model, ie, param, ErrorCode.PHONENUM_LIST);
+		} catch (BusinessException be) {
+			this.log.error("号码查询接口数据处理异常", be);
+			super.addHeadCode(response, ResultConstant.SERVICE_RESULT_FAILTURE);
+			return super.failedStr(model, ErrorCode.PHONENUM_LIST, be, param);
+		} catch (Exception e) {
+			return super.failedStr(model, ErrorCode.PHONENUM_LIST, e, param);
+		}
+
+        return "/mktRes/phone-level-modify-content";
+    }
 }

@@ -77,26 +77,29 @@ public class MktResBmoImpl implements MktResBmo {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public Map<String, Object> phoneNumInfoQry(Map<String, Object> dataBusMap,
-			String optFlowNum, SessionStaff sessionStaff)
-			throws Exception {
+	public Map<String, Object> phoneNumInfoQry(Map<String, Object> dataBusMap, String optFlowNum, SessionStaff sessionStaff) throws InterfaceException, BusinessException, Exception {
 		log.debug("dataBusMap={}",JsonUtil.toString(dataBusMap));
-		DataBus db = InterfaceClient
-				.callService(dataBusMap,
-						PortalServiceCode.PHONENUMINFOQRY_SERVICE,
-						optFlowNum, sessionStaff);
 		Map<String, Object> returnMap = new HashMap<String, Object>();
-		if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db
-				.getResultCode()))) {
-			Map<String, Object> resultMap = db.getReturnlmap();
-			Map<String, Object> datamap = (Map<String, Object>) resultMap
-					.get("result");
-			returnMap.put("code", ResultCode.R_SUCCESS);
-			returnMap.putAll(datamap);
-		} else {
-			returnMap.put("code", ResultCode.R_FAIL);
-			returnMap.put("msg", db.getResultMsg());
+		
+		DataBus db = InterfaceClient.callService(dataBusMap, PortalServiceCode.PHONENUMINFOQRY_SERVICE, optFlowNum, sessionStaff);
+		
+		try{
+			if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db
+					.getResultCode()))) {
+				Map<String, Object> resultMap = db.getReturnlmap();
+				Map<String, Object> datamap = (Map<String, Object>) resultMap
+						.get("result");
+				returnMap.put("code", ResultCode.R_SUCCESS);
+				returnMap.putAll(datamap);
+			} else {
+				returnMap.put("code", ResultCode.R_FAIL);
+				returnMap.put("msg", db.getResultMsg());
+			}
+		}catch(Exception e){
+			log.error("门户处理营销资源的PhoneNumInfoQryService/phoneNumInfoQry服务返回的数据异常", e);
+			throw new BusinessException(ErrorCode.PHONENUM_LIST, dataBusMap, db.getReturnlmap(), e);
 		}
+		
 		return returnMap;
 	}
 	/**

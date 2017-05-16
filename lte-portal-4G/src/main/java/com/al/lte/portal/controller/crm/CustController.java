@@ -1192,8 +1192,9 @@ public class CustController extends BaseController {
 				}else if(SysConstant.ZXHYBL.equals(menuName)){
 					businessLink = EhcacheUtil.getBusinessMenuByName(session,SysConstant.ZXHYBL_TCBG_NAME);
 					businessLink.addAll(EhcacheUtil.getBusinessMenuByName(session,SysConstant.ZXHYBL_KXB_NAME));
+				}else if(SysConstant.PHONE_LEVEL_MODIFY.equals(menuName)){
+					businessLink = EhcacheUtil.getBusinessMenuByName(session,SysConstant.PHONE_LEVEL_MODIFY_NAME);
 				}
-				
 			}
 			model.addAttribute("businessLink", businessLink);
 			model.addAttribute("DiffPlaceFlag", DiffPlaceFlag);

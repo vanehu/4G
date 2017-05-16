@@ -43,8 +43,18 @@ public interface MktResBmo {
 	 public Map<String, Object> queryPhoneNumber(Map<String, Object> dataBusMap, String optFlowNum,
 	            SessionStaff sessionStaff) throws Exception;
 	 
-	 public Map<String, Object> phoneNumInfoQry(Map<String, Object> dataBusMap, String optFlowNum,
-	            SessionStaff sessionStaff) throws Exception;
+	 /**
+	  * 号码查询
+	  * @param dataBusMap
+	  * @param optFlowNum
+	  * @param sessionStaff
+	  * @return
+	  * @throws InterfaceException
+	  * @throws BusinessException
+	  * @throws Exception
+	  */
+	public Map<String, Object> phoneNumInfoQry(Map<String, Object> dataBusMap, String optFlowNum, SessionStaff sessionStaff) throws InterfaceException, BusinessException, Exception;
+
 	 /**
 	  * 身份证查询预占号码信息
 	  * @param dataBusMap

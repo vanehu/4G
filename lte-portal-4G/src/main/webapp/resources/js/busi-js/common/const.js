@@ -182,7 +182,8 @@ CONST = (function(){
 	    RETURN_TERMINAL : "3030400000", //终端预约取消
 	    URGENT_BOOT : "4070500000", // 紧急开机
 	    TEMPORARY_CREDIT:"4110300000",//临时授信
-	    ACCT_INFO_MODIFY:"2020400000"	//账户修改(改客户资料返档、返档)
+	    ACCT_INFO_MODIFY:"2020400000",	//账户修改(改客户资料返档、返档)
+	    PHONE_LEVEL_MODIFY:"4040599999"
 	};
 	
 	//业务动作小类对应的名称
@@ -215,7 +216,8 @@ CONST = (function(){
 		"2":"改号",
 		"7040100001":"补换卡返销",
 		"3030200000":"订购合约返销",
-		"4070500000":"紧急开机"
+		"4070500000":"紧急开机",
+		"4040599999":"靓号调级"
 	};
 	
 	//客户交互事件
@@ -459,12 +461,11 @@ CONST = (function(){
 		IS3G: "0"
 	};
 	
-	//批量受理查询，是否执行改造后的新代码的开关标识，用于记录是否执行新代码。Y执行改造后的新代码，N执行改造前的旧代码，默认为N
 	var _BATCHORDER_FLAG = {
-		BATCHORDER_QRY_FLAG : "N",
-		BATCHORDER_AUTH_FLAG : "N"
+			BATCHORDER_QRY_FLAG : "N",
+			BATCHORDER_AUTH_FLAG : "N"
+			
 	};
-	
 	var _MENU_CUSTFANDANG="GKHZLFD";//改客户资料返档
 	var _MENU_FANDANG="GHFD";//过户返档
 	var _MENU_RETURNFILE="FD";//返挡
@@ -473,7 +474,7 @@ CONST = (function(){
 
 	var _BUSI_FLAG = {
 		TYPE_PREPAREBUY_BACK:"01" // 未实名返销标识
-	}
+	};
 	
 	// 双屏互动推送类型 1:身份证 2:UIM卡 3：终端串码
 	var _PUSH_TYPE = {
@@ -553,8 +554,8 @@ CONST = (function(){
     	"40":"紧急开机",
     	"41":"ESS远程写卡",
     	"42":"ESS二次写卡",
-    	"43":"返档"
-      
+    	"43":"返档",
+    	"64":"靓号调级"
     };
 	var _Busi_Type_Info={
 			"1":"",
@@ -603,10 +604,21 @@ CONST = (function(){
     };
     
     var _photographReviewFlag = "";//实名制拍照开关
-    var _RXSHGN = "RXSHGN";//人像审核功能，该权限判断工号是否需要进行人像审核，true：需要；false：不需要
 
+    //靓号调级
+	var _PHONE_LEVEL_MODIFY = "PHONE_LEVEL_MODIFY";
+	var _PHONE_LEVEL_MODIFY_NAME = "靓号调级";
+	
+	//根据权限判断是否需要人像审核
+	var _RXSHGN = "RXSHGN";//人像审核功能
+	var _isPhotographReviewNeeded = false;//false：不需要人像审核；true：需要人像审核
+	
+			
 	return {
 		RXSHGN:_RXSHGN,
+		isPhotographReviewNeeded:_isPhotographReviewNeeded,
+		PHONE_LEVEL_MODIFY:_PHONE_LEVEL_MODIFY,
+		PHONE_LEVEL_MODIFY_NAME:_PHONE_LEVEL_MODIFY_NAME,
 		BATCHORDER_FLAG : _BATCHORDER_FLAG,
 		APP_DESC			: _APP_DESC,
 		OFFER_FAST_FILL    :  _OFFER_FAST_FILL,

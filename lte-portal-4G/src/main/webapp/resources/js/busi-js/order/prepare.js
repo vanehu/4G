@@ -150,9 +150,19 @@ order.prepare = (function(){
 				$("#nothreelinks").show();
 			}
 			var menuName = $("#menuName").attr("menuName");
-			if ((ec.util.isObj(menuName) && (CONST.MENU_FANDANG == menuName || CONST.MENU_CUSTFANDANG == menuName || CONST.MENU_RETURNFILE==menuName||CONST.MENU_REMOVEPROD==menuName||CONST.MENU_BUYBACK==menuName))) {
+			if ((ec.util.isObj(menuName) 
+					&& (CONST.MENU_FANDANG == menuName 
+							|| CONST.MENU_CUSTFANDANG == menuName 
+							|| CONST.MENU_RETURNFILE==menuName
+							|| CONST.MENU_REMOVEPROD==menuName
+							|| CONST.MENU_BUYBACK==menuName))) {
 				$("#order_prepare").hide();
 				$("#nothreelinks").hide();
+			}
+			if(CONST.PHONE_LEVEL_MODIFY == menuName){
+				$("#order_prepare").hide();
+				$("#nothreelinks").hide();
+				$("#createUserbtn").remove();
 			}
 
 			//如果有资源ID，则跳转到终端详情
@@ -182,7 +192,8 @@ order.prepare = (function(){
 				order.service.initSpec();
 				order.prodOffer.init();
 			}
-		}
+		};
+		
 		var callback = function (event, url, forTab) { //异地业务隐藏三个入口
 			_commonTab(url, forTab);
 			event.stopPropagation();
