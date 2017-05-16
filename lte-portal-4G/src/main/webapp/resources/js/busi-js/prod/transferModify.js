@@ -1859,9 +1859,7 @@ prod.transferModify = (function(){
 			transferCust.data.boProdItems = boProdItems;
 			busiOrder.push(transferCust);
         //添加证号关系
-        _addCertiAccNbrRels(_transchoosedCustInfo, busiOrderAdd, toIdentidiesTypeCd, toIdCardNumber, toCustName, toAddressStr);
-
-        busiOrder.push(busiOrderAdd);
+        _addCertiAccNbrRels(_transchoosedCustInfo, transferCust, toIdentidiesTypeCd, toIdCardNumber, toCustName, toAddressStr);
 			//账户节点变更节点
 			var boAccountInfoAdd={
 					areaId : order.prodModify.choosedProdInfo.areaId,  //受理地区ID		
