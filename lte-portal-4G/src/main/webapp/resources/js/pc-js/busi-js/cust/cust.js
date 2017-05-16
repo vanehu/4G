@@ -2713,7 +2713,7 @@ order.cust = (function(){
 			auditOperateSpec = response.data;
 			OrderInfo.auditOperateSpec = response.data;
 		}
-    	if(auditSwitch == "ON" || !auditOperateSpec){
+    	if(auditSwitch == "ON" && !auditOperateSpec){
     	    _qryOperateSpecStaffList();
     	    $("#checkType").val("-1");
 		    $("#auditPersonnel").val("-1");
@@ -2823,7 +2823,7 @@ order.cust = (function(){
 		var number = "";
 		var staffName = "";
 		var staffCode = "";
-		if(OrderInfo.auditSwitch == "ON" || !OrderInfo.auditOperateSpec){
+		if(OrderInfo.auditSwitch == "ON" && !OrderInfo.auditOperateSpec){
 		    if(auditPersonnel == "" || auditPersonnel == "-1"){
 			    $.alert("提示","请选择审核人");
 			    return;
@@ -2939,7 +2939,7 @@ order.cust = (function(){
 				OrderInfo.subHandleInfo.staffId = OrderInfo.staff.staffId;
 			}
 			OrderInfo.subHandleInfo.virOlId = uploadCustCertificate.data.virOlId;
-    	    if(OrderInfo.auditSwitch == "ON" || !OrderInfo.auditOperateSpec){
+    	    if(OrderInfo.auditSwitch == "ON" && !OrderInfo.auditOperateSpec){
     	        //审核发送短信验证码
     		var param = {
     		   number: number,
