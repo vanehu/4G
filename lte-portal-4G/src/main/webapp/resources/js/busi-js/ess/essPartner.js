@@ -102,7 +102,7 @@ essPartner.main = (function() {
 				serviceOfferId : "4090000000",
 				serviceOfferName : "退货",
 				accNbr : accNbr,
-				lanId : lanId,
+				lanId : lanId
 			}
 		}; 
 		_orderRepeal(param);
@@ -115,7 +115,7 @@ essPartner.main = (function() {
 					channelId : channelId,
 					serviceOfferId : "5010100001",
 					serviceOfferName : "撤单",
-					lanId : lanId,
+					lanId : lanId
 				}
 			};
 		_orderRepeal(param);
@@ -136,7 +136,7 @@ essPartner.main = (function() {
 						serviceOfferId : "4040800002",
 						serviceOfferName : "换货",
 						accNbr : accNbr,
-						lanId : lanId,
+						lanId : lanId
 					}
 			};
 			OrderInfo.essOrderInfo.exchangeGoodsInfo = exchangeGoodsInfo;
@@ -159,7 +159,7 @@ essPartner.main = (function() {
 						serviceOfferId : "4040800002",
 						serviceOfferName : "换货",
 						accNbr : accNbr,
-						lanId : lanId,
+						lanId : lanId
 					}
 				};
 			_orderRepeal(param);
