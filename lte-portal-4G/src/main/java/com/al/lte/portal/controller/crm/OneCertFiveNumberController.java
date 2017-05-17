@@ -114,8 +114,29 @@ public class OneCertFiveNumberController extends BaseController {
         model.addAttribute("p_endDt", endTime);
         model.addAttribute("p_areaId", defaultAreaInfo.get("defaultAreaId"));
         model.addAttribute("p_areaId_val", defaultAreaInfo.get("defaultAreaName"));
-        model.addAttribute("pageType", "detail");
         return "/certNumber/certNumber-handle-main";
+    }
+
+    /**
+     * 跨省一证五卡查询入口
+     */
+    @RequestMapping(value = "/certNumberQuery", method = RequestMethod.GET)
+    public String certNumberQuery(Model model) {
+
+        SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+            SysConstant.SESSION_KEY_LOGIN_STAFF);
+
+        Calendar c = Calendar.getInstance();
+        SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd");
+        String endTime = f.format(c.getTime());
+        String startTime = f.format(c.getTime());
+        Map<String, Object> defaultAreaInfo = CommonMethods.getDefaultAreaInfo_MinimumC3(sessionStaff);
+
+        model.addAttribute("p_startDt", startTime);
+        model.addAttribute("p_endDt", endTime);
+        model.addAttribute("p_areaId", defaultAreaInfo.get("defaultAreaId"));
+        model.addAttribute("p_areaId_val", defaultAreaInfo.get("defaultAreaName"));
+        return "/certNumber/certNumber-query-main";
     }
 
     /**
@@ -129,7 +150,6 @@ public class OneCertFiveNumberController extends BaseController {
         Integer totalSize = 0;
         int nowPage = MapUtils.getIntValue(param, "nowPage", 1);
         try {
-            param.put("statusCd", SysConstant.ONE_FIVE_NUMBER_STATUS_INIT);
             Map<String, Object> resMap = cartBmo.queryCltCarts(param, null, sessionStaff);
             if (ResultCode.R_SUCC.equals(resMap.get("resultCode"))) {
                 Map<String, Object> map = (Map<String, Object>) resMap.get("result");
@@ -146,7 +166,11 @@ public class OneCertFiveNumberController extends BaseController {
                 model.addAttribute("code", resMap.get("resultCode"));
                 model.addAttribute("mess", resMap.get("resultMsg"));
             }
-            return "/certNumber/certNumber-handle-list";
+            if (SysConstant.ONE_FIVE_NUMBER_STATUS_INIT.equals(MapUtils.getString(param, "statusCd", ""))) {
+                return "/certNumber/certNumber-handle-list";
+            } else {
+                return "/certNumber/certNumber-query-list";
+            }
         } catch (BusinessException be) {
             return super.failedStr(model, be);
         } catch (InterfaceException ie) {
@@ -177,6 +201,35 @@ public class OneCertFiveNumberController extends BaseController {
                 model.addAttribute("mess", resMap.get("resultMsg"));
             }
             return "/certNumber/certNumber-handle-detail";
+        } catch (BusinessException be) {
+            return super.failedStr(model, be);
+        } catch (InterfaceException ie) {
+            return super.failedStr(model, ie, paramMap, ErrorCode.CLTORDER_DETAIL);
+        } catch (Exception e) {
+            log.error("购物车详情/order/queryCustCollectionInfo方法异常", e);
+            return super.failedStr(model, ErrorCode.CLTORDER_DETAIL, e, paramMap);
+        }
+    }
+
+    /**
+     * 跨省一证五卡订单列表详情
+     */
+    @RequestMapping(value = "/queryOneFiveOrderItemDetailAll", method = RequestMethod.GET)
+    public String queryOneFiveOrderItemDetailAll(Model model, @RequestParam Map<String, Object> paramMap) throws BusinessException {
+        SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
+        try {
+            Map<String, Object> resMap = cartBmo.queryCltCartOrder(paramMap, null, sessionStaff);
+            if (ResultCode.R_SUCC.equals(resMap.get("resultCode"))) {
+                Map<String, Object> cartInfo = (Map<String, Object>) resMap.get("result");
+
+                Map<String, Object> orderList = (Map<String, Object>) cartInfo.get("collectionOrderList");
+                model.addAttribute("orderList", orderList);
+                model.addAttribute("code", ResultCode.R_SUCC);
+            } else {
+                model.addAttribute("code", resMap.get("resultCode"));
+                model.addAttribute("mess", resMap.get("resultMsg"));
+            }
+            return "/certNumber/certNumber-query-detail";
         } catch (BusinessException be) {
             return super.failedStr(model, be);
         } catch (InterfaceException ie) {

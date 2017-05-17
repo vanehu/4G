@@ -1,9 +1,9 @@
-CommonUtils.regNamespace("oneFive", "certNumberHandle");
+CommonUtils.regNamespace("oneFive", "certNumberQuery");
 
 /**
- * 一证五号业务-归属省处理
+ * 一证五号业务-归属省查询
  */
-oneFive.certNumberHandle = (function () {
+oneFive.certNumberQuery = (function () {
 
     /**
      *  首页初始化
@@ -28,18 +28,16 @@ oneFive.certNumberHandle = (function () {
                 $("#p_olNbr").css("background-color", "white").attr("disabled", false);
                 $("#p_startDt").css("background-color", "#E8E8E8").attr("disabled", true);
                 $("#p_endDt").css("background-color", "#E8E8E8").attr("disabled", true);
-                $("#p_channelId").css("background-color", "#E8E8E8").attr("disabled", true);
             } else {
                 $("#p_olNbr").css("background-color", "#E8E8E8").attr("disabled", true);
                 $("#p_startDt").css("background-color", "white").attr("disabled", false);
                 $("#p_endDt").css("background-color", "white").attr("disabled", false);
-                $("#p_channelId").css("background-color", "white").attr("disabled", false);
             }
         });
 
         // 查询按钮事件绑定
         $("#bt_15handleQry").off("click").on("click", function () {
-            oneFive.certNumberHandle.queryOneFiveList(1);
+            oneFive.certNumberQuery.queryOneFiveList(1);
         });
     };
 
@@ -85,7 +83,6 @@ oneFive.certNumberHandle = (function () {
                 "pageSize": 10
             };
         } else {
-            var channelId = $("#p_channelId").val();
             var areaId = $("#p_areaId").val();
             if (!ec.util.isObj(areaId)) {
                 $.alert("提示", "请选择【地区】再查询");
@@ -104,16 +101,13 @@ oneFive.certNumberHandle = (function () {
                 "startDt": startDt,
                 "endDt": endDt,
                 "nowPage": curPage,
+                "staffId": OrderInfo.staff.staffId,
                 "pageSize": 10
             };
-            if (ec.util.isObj(channelId)) {
-                param.channelId = channelId;
-            }
         }
-        param.statusCd = CONST.CERT_NUMBER_ORDER_STATUS.INIT;
-        param.ifFilterAreaId = "N";
-        param.ifFilterItem = "Y";
-            $.callServiceAsHtmlGet(contextPath + "/certNumber/queryOneFiveOrderList", param, {
+        param.ifFilterAreaId = "Y";
+        param.ifFilterItem = "N";
+        $.callServiceAsHtmlGet(contextPath + "/certNumber/queryOneFiveOrderList", param, {
             "before": function () {
                 $.ecOverlay("一证五卡订单查询中，请稍等...");
             },
@@ -151,8 +145,8 @@ oneFive.certNumberHandle = (function () {
      * @private
      */
     var _queryDetail = function (orderId) {
-        var param = {"orderId": orderId, "areaId": $("#p_areaId").val(), "ifFilterAreaId": "Y"};
-        $.callServiceAsHtmlGet(contextPath + "/certNumber/queryOneFiveOrderItemDetail", param, {
+        var param = {"orderId": orderId, "areaId": $("#p_areaId").val(), "ifFilterAreaId": "N"};
+        $.callServiceAsHtmlGet(contextPath + "/certNumber/queryOneFiveOrderItemDetailAll", param, {
             "before": function () {
                 $.ecOverlay("详情查询中，请稍等...");
             },
@@ -225,111 +219,18 @@ oneFive.certNumberHandle = (function () {
 
     };
 
-    /**
-     * 订单确认
-     * @private
-     */
-    var _orderConfirm = function (orderId, areaId, number, certType, certNumber) {
-
-        var param = {
-            "csbParam": {
-                "ContractRoot": {
-                    "SvcCont": {
-                        "certType": certType,
-                        "certNum": certNumber
-                    },
-                    "TcpCont": {}
-                }
-            },
-            "telNumber": number
-        };
-        $.callServiceAsJson(contextPath + "/certNumber/oneFiveAfterOrderPreCheck", param, {
-            "before": function () {
-                $.ecOverlay("<strong>正在预校验中,请稍等...</strong>");
-            }, "done": function (response) {
-                if (response.code == 0) {
-                    if (ec.util.isObj(response.data) && response.data.isExist) {
-                        $.alert("提示", "证件【" + certNumber + "】" + "下的号码【" + number + "】还存在关系，不能确认。")
-                    } else {
-                        _orderSubmit(orderId, areaId, number, CONST.CERT_NUMBER_ORDER_STATUS.SUCCESS);
-                    }
-                } else {
-                    $.alertM(response.data);
-                }
-            }, "fail": function (response) {
-
-            }, "always": function () {
-                $.unecOverlay();
-            }
-        });
-    };
-
-    /**
-     * 订单取消
-     * @private
-     */
-    var _orderCancel = function (orderId, areaId, number) {
-        var remarks = $.trim($("#order_remark_" + number).val());
-        if (!ec.util.isObj(remarks)) {
-            $.alert("提示", "取消号码必须输入取消原因！");
-            return;
-        }
-        _orderSubmit(orderId, areaId, number, CONST.CERT_NUMBER_ORDER_STATUS.CANCEL, remarks);
-    };
-
-    /**
-     * 订单确认
-     * @private
-     */
-    var _orderSubmit = function (orderId, areaId, number, statusCd, remark) {
-        var param = {
-            "orderId": orderId,
-            "areaId": areaId,
-            "accNbr": number,
-            "statusCd": statusCd,
-            "remark": remark
-        };
-
-        $.callServiceAsJson(contextPath + "/certNumber/oneFiveAfterOrderSubmit", param, {
-            "before": function () {
-                $.ecOverlay("<strong>正在确认中,请稍等...</strong>");
-            }, "done": function (response) {
-                if (response.code == 0) {
-                    $.confirm("确认", "一证五卡业务单[" + param.orderId + "]已经受理成功，是否继续受理？", {
-                        names: ["是", "否"],
-                        yesdo: function () {
-                            _showMain();
-                        },
-                        no: function () {
-                        }
-                    });
-                } else {
-                    $.alertM(response.data);
-                }
-            }, "fail": function (response) {
-
-            }, "always": function () {
-                $.unecOverlay();
-            }
-        });
-
-    };
-
     return {
         init: _init,
         chooseArea: _chooseArea,
         queryOneFiveList: _queryOneFiveList,
         showMain: _showMain,
         queryDetail: _queryDetail,
-        queryAttachment: _queryAttachment,
-        orderSubmit: _orderSubmit,
-        orderConfirm: _orderConfirm,
-        orderCancel: _orderCancel
+        queryAttachment: _queryAttachment
     }
 })();
 
 
 //初始化
 $(function () {
-    oneFive.certNumberHandle.init();
+    oneFive.certNumberQuery.init();
 });
