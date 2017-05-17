@@ -14,7 +14,7 @@
 <body>
 	 <div  style="width:94%;layout-grid:15.6pt;margin: 0 auto;">
 		<p class="style9">中国电信股份有限公司${areaName}分公司移动电话入网服务协议</p>
-		<p class="style10">甲方（客户）：${idCardNbr}</p>
+		<p class="style10">甲方（客户）：${custName}</p>
 		<p class="style10">乙方：中国电信股份有限公司${areaName}分公司</p>
 
 		<p class="MsoNormal">为维护双方利益，根据相关法律、法规的规定，双方在平等、自愿、公平、诚实、信用的基础上，甲乙双方就移动电话网络服务有关事宜，达成协议如下：</p>
