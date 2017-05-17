@@ -36,7 +36,8 @@ custQuery = (function(){
 				}
 				$("#home").hide();
 				$("#header").show();
-				$("#headText").text("客户定位");
+//				$("#headText").text("客户定位");
+				$("#headText").text("");
 				var content$ = $("#queryCust");
 				content$.html(response.data).show();
 			},fail:function(response){
