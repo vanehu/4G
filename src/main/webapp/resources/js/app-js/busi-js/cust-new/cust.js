@@ -3107,8 +3107,9 @@ cust = (function(){
 	var _checkRealCust = function(identityCd){
 		if(identityCd == 1 || identityCd == 41 || identityCd == 12){
 			cust.isRealCust = true;
+		} else {
+			cust.isRealCust =  false;
 		}
-		cust.isRealCust =  false;
 	};
     
 	return {

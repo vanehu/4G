@@ -2251,6 +2251,35 @@ public class CustController extends BaseController {
 		}
 	}
     
+    @RequestMapping(value = "/queryCustExt", method = {RequestMethod.POST})
+    @ResponseBody
+    public JsonResponse queryCustExt(@RequestBody Map<String, Object> paramMap, @LogOperatorAnn String flowNum) {
+        SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+            SysConstant.SESSION_KEY_LOGIN_STAFF);
+        JsonResponse jsonResponse = null;
+        try {
+            Map<String, Object> retMap = custBmo.queryAccountAndUseCustInfo(paramMap, flowNum, sessionStaff);
+            if (null != retMap) {
+                jsonResponse = super.successed(retMap);
+            } else {
+                jsonResponse = super.failed(retMap, ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+            }
+        } catch (BusinessException be) {
+        	 be.printStackTrace();
+             jsonResponse = super.failed(be);
+        } catch (InterfaceException ie) {
+        	ie.printStackTrace();
+			return super.failed(ie, paramMap, ErrorCode.QUERY_ACCOUNT_USE_CUSTINFO);
+        } catch (Exception e) {
+            e.printStackTrace();
+            jsonResponse = super.failed(ErrorCode.QUERY_ACCOUNT_USE_CUSTINFO, e, paramMap);
+        }
+        //update by huangjj3  星级服务参数缓存客户选择定位的号码进行切换
+        sessionStaff.setCustType("11");
+        sessionStaff.setInPhoneNum(MapUtils.getString(paramMap, "accNbr", ""));
+        return jsonResponse;
+    }
+    
     /**
 	 * 添加账户信息和使用人信息
 	 * @param flowNum

@@ -122,6 +122,9 @@
 				<#if item.ifParams =="Y" && item.servSpecId?? &&item.servSpecId!="">
 				<button class="list-can absolute-right" id="can_${prodId}_${item.servSpecId}" onclick="AttachOffer.showServParam(${prodId},${item.servSpecId});">参</button>
 				</#if>
+				<#if item.servSpecId?? &&item.servSpecId==235010004>
+				<input id="yzfFlag_${prodId}_${item.servSpecId}" value="1" style="display:none;">
+				</#if>
 					<div class="list-checkbox absolute-right">
 							<div class="checkbox-box">
 								<input type="checkbox" value="1" name=""

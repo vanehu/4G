@@ -105,11 +105,16 @@
 			<li id="li_${prodId}_${item.servId}">
 				<i class="iconfont pull-left active">&#xe635;</i>
 			 	<span class="list-title">${item.servSpecName}</span>
+			 	<#if item.servSpecId?? &&item.servSpecId==235010004>
+				<input id="yzfFlag_${prodId}_${item.servSpecId}" value="1" style="display:none;" servId="${item.servId}">
+				</#if>
 			 	<div class="list-checkbox absolute-right">
 			 		<div class="checkbox-box">
-			 			<input type="checkbox" checked="checked" value="1" id="input_${prodId}_${item.servSpecId}" name="" onclick="AttachOffer.closeServ(${prodId},${item.servId});">
-			 				<label for="input_${prodId}_${item.servSpecId}"></label>
-			 			</input>
+			 			<input type="checkbox" value="1" name=""
+									id="input_${prodId}_${item.servId}"
+									servId="${item.servId}"
+									servSpecId="${item.servSpecId}" checked="checked" onclick="javascript:{common.setBtnTimer(this);AttachOffer.closeServ(${prodId},${item.servId});}"/> 
+									<label for="input_${prodId}_${item.servId}"></label>
 			 		</div>
 			 	</div>
 			 	<#if item.ifParams =="Y" && item.servSpecId?? && item.servSpecId!="">
