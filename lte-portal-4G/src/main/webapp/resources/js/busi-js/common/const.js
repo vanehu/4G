@@ -31,7 +31,8 @@ CONST = (function(){
 		CDMA : 235010000, // test-235010000 dev-379
 		DATA_CARD : 280000000,
 		PROD_FUN_4G : "280000020",
-		PROD_CLOUD_OFFER:13410447 // 天翼云盘企业版接入类产品
+		PROD_CLOUD_OFFER:13410447 ,// 天翼云盘企业版接入类产品
+		YIPAY_SERVSPECID : "235010004"//翼支付功能产品
 	};
 
 	//产品大类
@@ -613,7 +614,15 @@ CONST = (function(){
 	var _RXSHGN = "RXSHGN";//人像审核功能
 	var _isPhotographReviewNeeded = false;//false：不需要人像审核；true：需要人像审核
 	
+	
 			
+	//允许订购翼销售的证件类型（居民身份证、临时居民身份证或户口簿登记）
+	var _YIPAY_IDENTITYCD = [
+			{NAME:"居民身份证", CD:"1"},
+			{NAME:"临时居民身份证", CD:"41"},
+			{NAME:"户口簿", CD:"12"}
+		];
+	
 	return {
 		RXSHGN:_RXSHGN,
 		isPhotographReviewNeeded:_isPhotographReviewNeeded,
@@ -693,7 +702,8 @@ CONST = (function(){
         MAX_FILE_SIZE   : _MAX_FILE_SIZE,
         CERT_NUMBER_ORDER_STATUS   : _CERT_NUMBER_ORDER_STATUS,
 		ZXPTGDBMH : _ZXPTGDBMH,
-		photographReviewFlag:_photographReviewFlag
+		photographReviewFlag:_photographReviewFlag,
+		YIPAY_IDENTITYCD : _YIPAY_IDENTITYCD
 	};
 })();
 

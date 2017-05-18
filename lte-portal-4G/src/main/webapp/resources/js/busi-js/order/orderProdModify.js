@@ -1917,6 +1917,8 @@ order.prodModify = (function(){
 	
 	//产品实例属性:使用人-展示
 	var _spec_parm_user_show = function(){
+		//#1476472 若已经订购翼支付功能产品，不满足校验规不能更换使用人，查询已定购销售品成，只在产品属性二次菜单赋值
+		_choosedProdInfo.hasYiPayProdInst = query.prod.checkHasProdInst(_choosedProdInfo,CONST.PROD_SPEC.YIPAY_SERVSPECID); //设置是否拥有翼支付功能产品
 		var param={
 				prodInstId:order.prodModify.choosedProdInfo.prodInstId,
 				offerSpecId:order.prodModify.choosedProdInfo.prodOfferId,

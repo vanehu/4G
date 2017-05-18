@@ -107,6 +107,8 @@ OrderInfo = (function() {
 	
 	var _oldprodInstInfos = [];//老用户产品信息
 	
+	var _oldUserInfos = []; //老用户使用人信息
+	
 	var _oldofferSpec = [];//老用户主销售品构成
 	
 	var _oldoffer = []; 
@@ -1918,6 +1920,7 @@ OrderInfo = (function() {
         isCltNewOrder			:_isCltNewOrder,
         bojbrPartyContactInfo	:_bojbrPartyContactInfo,
         preliminaryInfo         :_preliminaryInfo,
-        operateSpecStaff		:_operateSpecStaff
+        operateSpecStaff		:_operateSpecStaff,
+        oldUserInfos			:_oldUserInfos
 	};
 })();

@@ -57,7 +57,11 @@ OrderInfo = (function() {
 	
 	var _custorderlonger = "";
 	
-	var _choosedUserInfos = []; //使用人信息
+	var _choosedUserInfos = []; //新装使用人信息（老模式使用人，开关REAL_USER_FLAG为OFF）
+	
+	var _subUserInfos = []; //新装使用人信息（新模式使用人，开关REAL_USER_FLAG为ON）
+	
+	var _oldUserInfos = []; //老用户使用人信息
 	
 	var _virOlId ="";//虚拟订单Id
 	
@@ -872,7 +876,7 @@ OrderInfo = (function() {
 		identidiesTypeCd : "1", //证件类型
 		identityNum : "", //证件号码
 		isDefault : "Y", //是否首选
-		state : "ADD",  //状态
+		state : "ADD"  //状态
 //		identidiesPic : "" //证件照片	
 	};
 	
@@ -896,17 +900,17 @@ OrderInfo = (function() {
 		identidiesTypeCd : "1", //证件类型
 		identityNum : "", //证件号码
 		isDefault : "Y", //是否首选
-		state : "ADD",  //状态
+		state : "ADD"  //状态
+//		identidiesPic : "" //证件照片	
+	};
+	
+		identidiesTypeCd : "1", //证件类型
+		identityNum : "", //证件号码
+		isDefault : "Y", //是否首选
+		state : "ADD"  //状态
 //		identidiesPic : "" //证件照片	
 	};
 
-	//客户联系人节点
-	var _boPartyContactInfo = {
-		contactAddress : "",//参与人的联系地址
-        contactDesc : "",//参与人联系详细信息
-        contactEmployer  : "",//参与人的联系单位
-        contactGender  : "",//参与人联系人的性别
-        contactId : "",//参与人联系信息的唯一标识
         contactName : "",//参与人的联系人名称
         contactType : "",//联系人类型
         eMail : "",//参与人的eMail地址
@@ -1450,6 +1454,7 @@ OrderInfo = (function() {
 		certTypedates			:_certTypedates,
 		user					:_user,
 		jbrPageFlag				:_jbrPageFlag,
-                 custBak                 :_custBak
+		custBak                 :_custBak,
+		oldUserInfos			:_oldUserInfos
 	};
 })();

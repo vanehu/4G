@@ -276,6 +276,27 @@ query.prod = (function() {
 		return false;
 	};
 	
+	//检查是否已开通某功能产品
+	var _checkHasProdInst = function(prodInfo,servSpecId){
+		var param = {
+			    prodId : prodInfo.prodInstId,
+			    prodSpecId : prodInfo.productId,
+			    offerSpecId : prodInfo.prodOfferId,
+			    acctNbr : prodInfo.accNbr
+		};
+		var data = query.offer.queryOpenedAttachAndServ(param);
+		if(data && data.result && data.result.servLists){
+			var hasProd = false;
+			$.each(data.result.servLists,function(){//遍历是否有开通功能产品
+				if(this.servSpecId == servSpecId){ 
+					hasProd = true;
+				}
+			});
+			return hasProd;
+		} 
+		return false;
+	};
+	
 	//补充查询基本条件
 	var addParam = function(param){
 		param.staffId = OrderInfo.staff.staffId;
@@ -304,6 +325,7 @@ query.prod = (function() {
 		getOldUim 				: _getOldUim,
 		queryAcct				: _queryAcct,
 		checkTerminal			: _checkTerminal,
-		checkIs4GProdInst		: _checkIs4GProdInst
+		checkIs4GProdInst		: _checkIs4GProdInst,
+		checkHasProdInst		: _checkHasProdInst
 	};
 })();

@@ -451,6 +451,16 @@ order.service = (function(){
 			param.oldofferSpec = OrderInfo.oldofferSpec;
 			param.oldoffer = OrderInfo.oldoffer;
 			param.oldnum = oldnum;
+			//#1476472初始化老用户使用人信息
+			$.each(OrderInfo.oldprodInstInfos,function(){
+				var param = {
+					prodInstId : this.prodInstId,
+					acctNbr : this.accNbr,
+					prodSpecId : this.productId,
+					areaId : this.areaId
+				};
+				order.cust.initUserInfos(param);
+			});
 		}else{
 			order.service.oldMemberFlag = false;
 		}

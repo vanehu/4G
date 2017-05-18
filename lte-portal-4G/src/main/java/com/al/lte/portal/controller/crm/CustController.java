@@ -2083,4 +2083,90 @@ public class CustController extends BaseController {
 		}
 		return jsonResponse;
     }
+    
+    /**
+     * 产品实例属性查询，查询使用人
+     * @param resquestMap : {
+     * prodId : "", //产品实例id
+     * acctNbr : "", //接入号
+     * prodSpecId : "", //产品规格id
+     * areaId : "" //地区id
+     * }
+     */
+    @RequestMapping(value = "/getUserInfo", method = RequestMethod.GET)
+    @ResponseBody
+    public JsonResponse getUserInfo(Model model, HttpServletRequest request) {
+        SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+                SysConstant.SESSION_KEY_LOGIN_STAFF);
+		JsonResponse jsonResponse = null;
+        Map<String, Object> resquestMap = new HashMap<String, Object>();
+        Map<String, Object> userInfo = new HashMap<String, Object>();
+        resquestMap.put("prodId", request.getParameter("prodInstId"));
+        resquestMap.put("acctNbr", request.getParameter("acctNbr"));
+        resquestMap.put("prodSpecId", request.getParameter("prodSpecId"));
+        resquestMap.put("areaId", request.getParameter("areaId"));
+        try {
+            Map responseMap = orderBmo.prodInstParam(resquestMap, null, sessionStaff);
+            if (responseMap != null && ResultCode.R_SUCC.equals(responseMap.get("resultCode"))) {
+                List<Map<String, Object>> prodInstParams = (List<Map<String, Object>>) responseMap
+                        .get("prodSpecParams");
+                if (prodInstParams != null) {
+                    String custId = null;
+                    String useCustId = null;
+                    if (prodInstParams != null && prodInstParams.size() > 0) {
+                        for (Map<String, Object> prodInstParam : prodInstParams) {
+                            if (prodInstParam != null
+                                    && SysConstant.PROD_ITEM_SPEC_ID_USER.equals(prodInstParam.get("itemSpecId") + "")) {
+                                custId = (String) prodInstParam.get("value");
+                                useCustId = (String) prodInstParam.get("useCustId");
+                                break;
+                            }
+                        }
+                    }
+                    if (StringUtils.isNotBlank(custId)) { //返回属性值为空字符串时不查询客户详情
+                        Map<String, Object> paramMap = new HashMap<String, Object>();
+                        paramMap.put("partyId", custId);
+                        paramMap.put("useCustId", useCustId); //客户详情查询，useCustId表示省内客户ID，后台取该字段后转为集团实例ID并查询
+                        paramMap.put("areaId", request.getParameter("areaId"));
+                        try {
+                            Map datamap = custBmo.queryCustDetail(paramMap, null, sessionStaff);
+                            if (ResultCode.R_SUCC.equals(datamap.get("resultCode"))) {
+                                Map<String, Object> userInfoDetail = MapUtils.getMap(datamap, "result");
+                                Map<String, Object> partyList = (Map<String, Object>) userInfoDetail.get("partyList");
+                                List<Map<String, Object>> identities = (List<Map<String, Object>>) partyList.get("identities");
+                                if(identities!=null&&!identities.isEmpty()){
+                                	userInfo.putAll(identities.get(0));//certNum,identidiesTypeCd,identityAddress,identityAddressEnc,identityNum
+                                	userInfo.put("partyName", partyList.get("partyName"));
+                                	userInfo.put("canRealName", partyList.get("canRealName"));
+                                	userInfo.put("partyId", partyList.get("partyId"));
+                                }
+                                jsonResponse = super.successed(userInfo, ResultConstant.SUCCESS.getCode());
+                            }else{
+                                jsonResponse = super.failed(responseMap.get("resultMsg"), ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+                            }
+                        } catch (BusinessException be) {
+                			return super.failed(be);
+                        } catch (InterfaceException ie) {
+                			return super.failed(ie, paramMap, ErrorCode.CHECK_CUST_CERT);
+                        } catch (Exception e) {
+                			return super.failed(ErrorCode.QUERY_CUST_EXINFO, e, paramMap);
+                        }
+                    }
+                }
+            }else{
+                jsonResponse = super.failed(responseMap.get("resultMsg"), ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+            }
+        } catch (BusinessException be) {
+			return super.failed(be);
+        } catch (InterfaceException ie) {
+			return super.failed(ie, resquestMap, ErrorCode.CHECK_CUST_CERT);
+        } catch (Exception e) {
+            log.error("查询产品实例属性", e);
+			return super.failed(ErrorCode.ORDER_PROD_INST, e, resquestMap);
+        }
+        if(jsonResponse == null){
+        	jsonResponse = super.successed(userInfo,ResultConstant.SUCCESS.getCode());
+        }
+		return jsonResponse;
+    }
 }

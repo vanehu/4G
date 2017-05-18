@@ -104,7 +104,7 @@ public class SecondBusinessController extends BaseController {
         } catch (BusinessException e) {
             return super.failedStr(model, e);
         } catch (InterfaceException ie) {
-            return super.failedStr(model, ie, paramMap, ErrorCode.ORDER_SUBMIT);
+            return super.failedStr(model, ie, paramMap, ErrorCode.QUERY_BIZ_SECONDBUSINESS_MENU_AUTH);
         } catch (Exception e) {
             return super.failedStr(model, ErrorCode.QUERY_BIZ_SECONDBUSINESS_MENU_AUTH, e, paramMap);
         }
@@ -166,7 +166,7 @@ public class SecondBusinessController extends BaseController {
         } catch (BusinessException e) {
         	return super.failed(e);
         } catch (InterfaceException ie) {
-        	return super.failed(ie, paramMap, ErrorCode.ORDER_SUBMIT);
+        	return super.failed(ie, paramMap, ErrorCode.QUERY_BIZ_SECONDBUSINESS_MENU_AUTH);
         } catch (Exception e) {
             return super.failed(ErrorCode.QUERY_BIZ_SECONDBUSINESS_MENU_AUTH, e, paramMap);
         }
@@ -214,7 +214,7 @@ public class SecondBusinessController extends BaseController {
         } catch (BusinessException e) {
             return super.failed(e);
         } catch (InterfaceException ie) {
-            return super.failed(ie, paramMap, ErrorCode.ORDER_SUBMIT);
+            return super.failed(ie, paramMap, ErrorCode.SAVE_BIZ_AUTH_RECORD);
         } catch (Exception e) {
             return super.failed(ErrorCode.SAVE_BIZ_AUTH_RECORD, e, paramMap);
         }

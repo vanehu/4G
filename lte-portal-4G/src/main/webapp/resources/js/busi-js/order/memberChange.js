@@ -1042,6 +1042,16 @@ order.memberChange = function(){
 			prodId : _offerProd.objInstId//纳入产品成员这些动作时出入宿主产品实例ID
 		}];
 		if(rule.rule.ruleCheck(boInfos)){  //业务规则校验
+			//#1476472初始化老用户使用人信息
+			$.each(OrderInfo.oldprodInstInfos,function(){
+				var param = {
+					prodInstId : this.prodInstId,
+					acctNbr : this.accNbr,
+					prodSpecId : this.productId,
+					areaId : this.areaId
+				};
+				order.cust.initUserInfos(param);
+			});
 			order.main.buildMainView(param);	
 		}
 		order.memberChange.closeDialog();

@@ -570,6 +570,39 @@ order.main = (function(){
 									}
 								});
 							}
+							//#1476472 营业厅翼支付开户IT流程优化 增加翼支付功能产品订购限制，不判断满足订购条件就退订
+							if(!order.cust.canOrderYiPay(param.prodId,1)){
+								var hasYiPayFlag = false;
+								var yiPayServSpec = {};
+								if(ec.util.isArray(AttachOffer.openList)){
+									for ( var j = 0; j < AttachOffer.openServList.length; j++) {
+										if(param.prodId == AttachOffer.openServList[j].prodId){
+											if(ec.util.isArray(AttachOffer.openServList[j].servSpecList)){
+												for ( var k = 0; k < AttachOffer.openServList[j].servSpecList.length; k++) {
+													if( AttachOffer.openServList[j].servSpecList[k].servSpecId == CONST.PROD_SPEC.YIPAY_SERVSPECID){
+														hasYiPayFlag = true;
+														yiPayServSpec = AttachOffer.openServList[j].servSpecList[k];
+														break;
+													}
+												}
+											}
+										}
+									}
+								}
+								if(hasYiPayFlag){
+									AttachOffer.closeServSpec(param.prodId,yiPayServSpec.servSpecId,yiPayServSpec.aliasName,yiPayServSpec.ifParams,"Y");
+									//给出拦截提示信息，在互斥依赖依赖退订提示取消
+									var tips = "当前产权人或使用人证件类型不在【";
+									for (var j = 0; j < CONST.YIPAY_IDENTITYCD.length; j ++) {
+										if(j==0)
+											tips += CONST.YIPAY_IDENTITYCD[j].NAME;
+										else
+											tips += ","+CONST.YIPAY_IDENTITYCD[j].NAME;
+									}
+									tips += "】中，不允许订购翼支付功能产品，系统会自动退订相关的依赖销售品！"
+									$.alert("提示",tips);
+								}
+							}
 							AttachOffer.changeLabel(prodId,prodInfo.productId,"");
 						}
 					});
@@ -809,6 +842,39 @@ order.main = (function(){
 					memberRoleCd : prodInst.memberRoleCd
 				};
 				AttachOffer.queryAttachOfferSpec(param);  //加载附属销售品
+				//#1476472 营业厅翼支付开户IT流程优化 增加翼支付功能产品订购限制，不判断满足订购条件就退订
+				if(!order.cust.canOrderYiPay(param.prodId,1)){
+					var hasYiPayFlag = false;
+					var yiPayServSpec = {};
+					if(ec.util.isArray(AttachOffer.openList)){
+						for ( var j = 0; j < AttachOffer.openServList.length; j++) {
+							if(param.prodId == AttachOffer.openServList[j].prodId){
+								if(ec.util.isArray(AttachOffer.openServList[j].servSpecList)){
+									for ( var k = 0; k < AttachOffer.openServList[j].servSpecList.length; k++) {
+										if( AttachOffer.openServList[j].servSpecList[k].servSpecId == CONST.PROD_SPEC.YIPAY_SERVSPECID){
+											hasYiPayFlag = true;
+											yiPayServSpec = AttachOffer.openServList[j].servSpecList[k];
+											break;
+										}
+									}
+								}
+							}
+						}
+					}
+					if(hasYiPayFlag){
+						AttachOffer.closeServSpec(param.prodId,yiPayServSpec.servSpecId,yiPayServSpec.aliasName,yiPayServSpec.ifParams,"Y");
+						//给出拦截提示信息，在互斥依赖依赖退订提示取消
+						var tips = "当前产权人或使用人证件类型不在【";
+						for (var j = 0; j < CONST.YIPAY_IDENTITYCD.length; j ++) {
+							if(j==0)
+								tips += CONST.YIPAY_IDENTITYCD[j].NAME;
+							else
+								tips += ","+CONST.YIPAY_IDENTITYCD[j].NAME;
+						}
+						tips += "】中，不允许订购翼支付功能产品，系统会自动退订相关的依赖销售品！"
+						$.alert("提示",tips);
+					}
+				}
 				var obj = {
 					ul_id : "item_order_"+prodInst.prodInstId,
 					prodId : prodInst.prodInstId,
@@ -1664,12 +1730,64 @@ order.main = (function(){
                 if(!order.cust.preCheckCertNumberRel(prodId, inParam)){
                     return ;
                 }
+                //#1476472 增加翼支付功能产品订购限制，判断是否满足订购条件，不满足条件退订翼支付功能产品
+                if(!order.cust.yiPayidentityCdCheck(order.cust.tmpChooseUserInfo.identityCd)){
+					var hasYiPayFlag = false;
+					var yiPayServSpec = {};
+					if(ec.util.isArray(AttachOffer.openList)){
+						for ( var j = 0; j < AttachOffer.openServList.length; j++) {
+							if(hasYiPayFlag) break;
+							if(prodId == AttachOffer.openServList[j].prodId){
+								if(ec.util.isArray(AttachOffer.openServList[j].servSpecList)){
+									for ( var k = 0; k < AttachOffer.openServList[j].servSpecList.length; k++) {
+										if(AttachOffer.openServList[j].servSpecList[k].servSpecId == CONST.PROD_SPEC.YIPAY_SERVSPECID){
+											yiPayServSpec = AttachOffer.openServList[j].servSpecList[k];
+											if(yiPayServSpec.isdel!="Y"){
+												hasYiPayFlag = true;
+												break;
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+					if(hasYiPayFlag){
+						AttachOffer.closeServSpec(prodId,yiPayServSpec.servSpecId,yiPayServSpec.aliasName,yiPayServSpec.ifParams,"Y");
+						//给出拦截提示信息，在互斥依赖依赖退订提示取消
+						var tips = "当前使用人证件类型不在【";
+						for (var j = 0; j < CONST.YIPAY_IDENTITYCD.length; j ++) {
+							if(j==0)
+								tips += CONST.YIPAY_IDENTITYCD[j].NAME;
+							else
+								tips += ","+CONST.YIPAY_IDENTITYCD[j].NAME;
+						}
+						tips += "】中，不允许订购翼支付功能产品，系统会自动退订相关的依赖销售品！"
+						$.alert("提示",tips);
+					}
+                }
+                //属性变更二次业务，如果订购翼支付，增加用户实名信息校验环节，校验 新的使用人证 件类型是否是居民身份证、临时居民身份证或户口簿
+                var hasYiPayProdInst = order.prodModify.choosedProdInfo.hasYiPayProdInst;
+                if(ec.util.isObj(hasYiPayProdInst)&&hasYiPayProdInst&&
+                		!order.cust.yiPayidentityCdCheck(order.cust.tmpChooseUserInfo.identityCd)){
+                	//给出拦截提示信息
+					var tips = "用户已订购【翼支付】功能产品，当前选择使用人证件类型不在【";
+					for (var j = 0; j < CONST.YIPAY_IDENTITYCD.length; j ++) {
+						if(j==0)
+							tips += CONST.YIPAY_IDENTITYCD[j].NAME;
+						else
+							tips += ","+CONST.YIPAY_IDENTITYCD[j].NAME;
+					}
+					tips += "】中，不允许修改为该用户使用人！请先退订【翼支付】功能产品或选择其他使用人。"
+					$.alert("提示",tips);
+                    return ;
+                }
+                
                 //保存并显示使用人信息，清空弹出框的客户信息、临时保存的客户信息，关闭弹出框
 				OrderInfo.updateChooseUserInfos(prodId, order.cust.tmpChooseUserInfo);
 				$('#'+CONST.PROD_ATTR.PROD_USER+'_'+prodId+'_name').val(order.cust.tmpChooseUserInfo.partyName);
 				$('#'+CONST.PROD_ATTR.PROD_USER+'_'+prodId).val(order.cust.tmpChooseUserInfo.custId);
 				order.cust.tmpChooseUserInfo = {};
-				
 				easyDialog.close();
 //				$('#p_cust_identityNum_choose').val('');
 //				$('#chooseUserInfo td').html('');
@@ -3409,6 +3527,60 @@ order.main = (function(){
             };
             if (!order.cust.preCheckCertNumberRel(userSubInfo.prodId, inParam)) {
                 return;
+            }
+        }
+        //#1476472 增加翼支付功能产品订购限制，判断是否满足订购条件，不满足条件退订翼支付功能产品
+        if ("2" != userSubInfo.servType) {//责任人选择时不调用一证五号校验
+            if(!order.cust.yiPayidentityCdCheck(userSubInfo.identityCd)){
+				var hasYiPayFlag = false;
+				var yiPayServSpec = {};
+				if(ec.util.isArray(AttachOffer.openList)){
+					for ( var j = 0; j < AttachOffer.openServList.length; j++) {
+						if(hasYiPayFlag) break;
+						if(userSubInfo.prodId == AttachOffer.openServList[j].prodId){
+							if(ec.util.isArray(AttachOffer.openServList[j].servSpecList)){
+								for ( var k = 0; k < AttachOffer.openServList[j].servSpecList.length; k++) {
+									if(AttachOffer.openServList[j].servSpecList[k].servSpecId == CONST.PROD_SPEC.YIPAY_SERVSPECID){
+										yiPayServSpec = AttachOffer.openServList[j].servSpecList[k];
+										if(yiPayServSpec.isdel!="Y"){
+											hasYiPayFlag = true;
+											break;
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+				if(hasYiPayFlag){
+					AttachOffer.closeServSpec(userSubInfo.prodId,yiPayServSpec.servSpecId,yiPayServSpec.aliasName,yiPayServSpec.ifParams,"Y");
+					//给出拦截提示信息，在互斥依赖依赖退订提示取消
+					var tips = "当前使用人证件类型不在【";
+					for (var j = 0; j < CONST.YIPAY_IDENTITYCD.length; j ++) {
+						if(j==0)
+							tips += CONST.YIPAY_IDENTITYCD[j].NAME;
+						else
+							tips += ","+CONST.YIPAY_IDENTITYCD[j].NAME;
+					}
+					tips += "】中，不允许订购翼支付功能产品，系统会自动退订相关的依赖销售品！"
+					$.alert("提示",tips);
+				}
+            }
+             //属性变更二次业务，如果订购翼支付，增加用户实名信息校验环节，校验 新的使用人证 件类型是否是居民身份证、临时居民身份证或户口簿
+            var hasYiPayProdInst = order.prodModify.choosedProdInfo.hasYiPayProdInst;
+            if(ec.util.isObj(hasYiPayProdInst)&&hasYiPayProdInst&&
+            		!order.cust.yiPayidentityCdCheck(order.cust.tmpChooseUserInfo.identityCd)){
+            	//给出拦截提示信息
+				var tips = "用户已订购【翼支付】功能产品，当前选择使用人证件类型不在【";
+				for (var j = 0; j < CONST.YIPAY_IDENTITYCD.length; j ++) {
+					if(j==0)
+						tips += CONST.YIPAY_IDENTITYCD[j].NAME;
+					else
+						tips += ","+CONST.YIPAY_IDENTITYCD[j].NAME;
+				}
+				tips += "】中，不允许修改为该使用人！请先退订【翼支付】功能产品或选择其他使用人。"
+				$.alert("提示",tips);
+                return ;
             }
         }
 		userSubInfo.orderAttrPhoneNbr = ec.util.defaultStr($("#orderUserPhoneNbr").val());
