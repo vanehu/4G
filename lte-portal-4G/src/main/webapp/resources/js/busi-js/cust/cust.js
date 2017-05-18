@@ -3889,7 +3889,6 @@ order.cust = (function(){
 				$.ecOverlay("<strong>短信发送中,请稍等会儿...</strong>");
 			},
 			"done" : function(response){
-				response.code = 0;
 				if (response.code == 0) {
 					_initAuditHtml(auditMode);
 				}else if(response.code == 3){
