@@ -399,6 +399,8 @@ CONST = (function(){
 	var _YZFitemSpecId3 = 10020036; //翼支付助手是否需要代扣确认属性编码
 	var _YZFitemSpecId4 = 10020087; //翼支付助手翼支付托收
 	
+	var _YZFservSpecId1 = 235010004; //翼支付产品ID
+	
 	//渠道大类
 	var _CHANNEL_TYPE_CD ={
 			ZQZXDL : 100100,		//政企直销经理
@@ -563,6 +565,7 @@ CONST = (function(){
 		MVNO_PHONE_HEAD : _MVNO_PHONE_HEAD,
 		RELATYPECD : _RELATYPECD,
 		YZFservSpecId : _YZFservSpecId,
+		YZFservSpecId1:_YZFservSpecId1,
 		YZFitemSpecId1 : _YZFitemSpecId1,
 		YZFitemSpecId2 : _YZFitemSpecId2,
 		YZFitemSpecId3 : _YZFitemSpecId3,
