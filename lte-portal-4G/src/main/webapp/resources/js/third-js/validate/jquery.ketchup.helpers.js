@@ -207,9 +207,14 @@ jQuery.ketchup
   });
 })
 .helper('terminalCodeCheck',function(val){
-	if(val.length>20 || val.length < 5)
+	if(val.length>15 || val.length < 14)
 		return false;
-	return (/^[a-z0-9A-Z]{5,20}$/).test(val);
+	if(val.length == 14){
+		return (/^[0-9a-fA-F]{0,14}$/).test(val);
+	}else {
+		return (/^[0-9]{0,15}$/).test(val);
+	}
+	
 })
 .helper('idCardCheck', function(num) {
 	num = num.toUpperCase();
