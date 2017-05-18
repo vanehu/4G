@@ -898,6 +898,18 @@ order.main = (function(){
 						cust.clearUserForm();
 						return;
 					}
+					var identityCd = cust.tmpChooseUserInfo.identityCd;
+					if(identityCd != 1 && identityCd != 41 && identityCd != 12){
+						var yzfFlag = $("#yzfFlag_" + prodId + "_"+CONST.YZFservSpecId1).val();
+						if(yzfFlag){
+							var $span = $("#li_"+prodId+"_"+CONST.YZFservSpecId1).find("span"); //定位删除的附属
+							if($span.attr("class")!="list-title delete"){  //已经退订，再订购
+								$("#yzfFlag_" + prodId + "_"+CONST.YZFservSpecId1).val("1");
+								$.alert("提示","当前使用人证件类型不符合实名规范，无开通翼支付及其相关功能产品权限，已自动退订！")
+								AttachOffer.closeServSpec(prodId,CONST.YZFservSpecId1,'翼支付','N');
+							}
+						}
+					}
 					if($("#userOrderAttrPhoneNbr").val() != ''){
 						cust.tmpChooseUserInfo.accNbr = $("#userOrderAttrPhoneNbr").val();
 					}

@@ -36,7 +36,8 @@ custQuery = (function(){
 				}
 				$("#home").hide();
 				$("#header").show();
-				$("#headText").text("客户定位");
+//				$("#headText").text("客户定位");
+				$("#headText").text("");
 				var content$ = $("#queryCust");
 				content$.html(response.data).show();
 			},fail:function(response){
@@ -288,7 +289,14 @@ custQuery = (function(){
 			certNum:$(scope).attr("certNum"),
 			address:$(scope).attr("address"),
 			isGov:$(scope).attr("isGov"),//是否政企客户 Y是
-			canRealName:$(scope).attr("canrealname")
+			canRealName:$(scope).attr("canrealname"),
+			userIdentityCd: $(scope).attr("userIdentityCd"),//使用人证件类型
+	        userIdentityName: $(scope).attr("userIdentityName"),//使用人证件名称
+	        userIdentityNum: $(scope).attr("userIdentityNum"),//使用人证件号码
+	        accountName: $(scope).attr("accountName"),//账户名
+	        userName: $(scope).attr("userName"),//使用人名
+	        userCustId: $(scope).attr("userCustId"),//使用人客户id
+	        isSame: $(scope).attr("isSame")//使用人名称与账户名称是否一致
 			
 		};
 		
@@ -311,7 +319,50 @@ custQuery = (function(){
 				$(this).removeAttr("selected");
 		});
 		
-		
+		if(_choosedCustInfo.isGov == "Y" && !_choosedCustInfo.userIdentityCd){
+			 var param = {
+			            "acctNbr": $(scope).attr("accNbr"),
+			            "identityCd": $(scope).attr("identityCd"),
+			            "areaId": $(scope).attr("areaId"),
+			            "custId": $(scope).attr("custId"),
+			            "type":"2",
+			            "soNbr": UUID.getDataId()
+			        };
+			 if(ec.util.isObj(param.acctNbr)){
+		        	$.callServiceAsJson(contextPath + "/app/cust/queryCustExt", param, {
+		                "before": function () {
+		                    $.ecOverlay("<strong>正在查询中,请稍等...</strong>");
+		                }, "done": function (response) {
+		                    if (response.code == 0) {
+		            			 if(ec.util.isObj(response.data.identity.identityTypeCd))_choosedCustInfo.userIdentityCd = response.data.identity.identityTypeCd;//使用人证件类型
+		            			 if(ec.util.isObj(response.data.identity.identityName))_choosedCustInfo.userIdentityName = response.data.identity.identityName;//使用人证件名称
+		            			 if(ec.util.isObj(response.data.identity.identityNum))_choosedCustInfo.userIdentityNum = response.data.identity.identityNum;//使用人证件号码
+		            			 if(ec.util.isObj(response.data.identity.certNumEnc))_choosedCustInfo.userCertNumEnc = response.data.identity.certNumEnc;//使用人证件号码加密字段
+		            			 if(ec.util.isObj(response.data.identity.certAddress))_choosedCustInfo.userCertAddress = response.data.identity.certAddress;//使用人证件地址
+		            			 if(ec.util.isObj(response.data.identity.certAddressEnc))_choosedCustInfo.userCertAddressEnc = response.data.identity.certAddressEnc;//使用人证件地址加密字段
+		            			 if(ec.util.isObj(response.data.account.accountName))_choosedCustInfo.accountName = response.data.account.accountName;//账户名
+		            			 if(ec.util.isObj(response.data.useCustName))_choosedCustInfo.userName = response.data.useCustName;//使用人名
+		            			 if(ec.util.isObj(response.data.useCustNameEnc))_choosedCustInfo.userNameEnc = response.data.useCustNameEnc;//使用人名加密字段
+		            			 if(ec.util.isObj(response.data.useCustId))_choosedCustInfo.userCustId = response.data.useCustId;//使用人客户id
+		            			 if(ec.util.isObj(response.data.isSame))_choosedCustInfo.isSame = response.data.isSame;//使用人名称与账户名称是否一致
+		            			 if(_choosedCustInfo.isGov == "Y"&&_choosedCustInfo.userIdentityCd){//政企客户
+		            				cust.checkRealCust(parseInt(_choosedCustInfo.userIdentityCd));
+		            			 }
+		                    } else {
+		                        $.alertM(response.data);
+		                    }
+		                }
+		            });
+		        }
+		}
+		//用户检测 Redmine#1476474营业厅翼支付开户IT流程优化
+		if(_choosedCustInfo.isGov == "Y"&&_choosedCustInfo.userIdentityCd){//政企客户
+			cust.checkRealCust(parseInt(_choosedCustInfo.userIdentityCd));
+		} else {//公众客户
+			cust.checkRealCust(parseInt(_choosedCustInfo.identityCd));
+		}
+		var propertiesKey = "FUKA_SHIYR_"+(OrderInfo.staff.soAreaId+"").substring(0,3);
+		cust.userFlag = offerChange.queryPortalProperties(propertiesKey);
 		
 //		 判断是否是政企客户
 //		if(_choosedCustInfo.isGov == "Y" && "19" != OrderInfo.actionFlag){

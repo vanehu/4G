@@ -165,6 +165,9 @@ offerChange = (function() {
 					if(AttachOffer.isChangeUim(prodId)){ //需要补换卡
 							$("#uimDiv_"+prodId).show();
 					}
+					setTimeout(function () { 
+						AttachOffer.checkYZFRight(prodId);
+					}, 300);
 				});
 			}
 		});
