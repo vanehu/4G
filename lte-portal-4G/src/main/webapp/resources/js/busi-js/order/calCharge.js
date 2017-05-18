@@ -166,7 +166,6 @@ order.calcharge = (function(){
 		}
 	};
 	var _submitParam=function(){
-		ranNum = 1 ;//随机数从新赋值
 		var remakrFlag = true ;
 		var posLenFlag = true ;
 		var posNvlFlag = true ;
