@@ -61,9 +61,13 @@ order.undo = (function(){
 		if(pageIndex>0){
 			curPage = pageIndex ;
 		}
+		var endTime = $("#p_endTime").val().replace(/-/g,'');
+		if($.trim($("#p_olNbr").val())!="" && $.trim($("#p_startTime").val())==""){
+			endTime = "";
+		}
 		var param = {"p_areaId":$("#p_areaId").val(),
 				"p_startTime":$("#p_startTime").val().replace(/-/g,''),
-				"p_endTime":$("#p_endTime").val().replace(/-/g,''),
+				"p_endTime":endTime,
 				"p_channelId":$("#p_channelId").val(),
 				"p_olNbr":$("#p_olNbr").val(),
 				"p_hm":$("#p_hm").val(),
