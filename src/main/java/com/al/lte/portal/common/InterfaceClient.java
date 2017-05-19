@@ -112,6 +112,7 @@ public class InterfaceClient {
 
 	private static final String PAY_PREFIX = "pay";//支付平台
 	private static final String TER_PREFIX = "ter";
+	private static final String PIC_PREFIX = "PIC";
 
 	
 	/** 数据路由关键字，根据此标识读取不同数据源的配置数据 */
@@ -419,6 +420,14 @@ public class InterfaceClient {
 					sys = "终端销售系统";
 					paramString = JsonUtil.toString(dataBusMap);
 					paramJson=paramString;
+				}else if (PIC_PREFIX.equals(prefix)) {
+					serviceCode = serviceCode.substring(4);
+//					intfUrl = getNeeded(dbKeyWord,URL_KEY, YIM_PREFIX);
+					intfUrl = MDA.CSB_PIC_VERIFY.toString();
+//					intfUrl += serviceCode;
+					sys = "人证比对";
+					paramString = JsonUtil.toString(dataBusMap);
+					paramJson=paramString;
 				}
 				
 				String csbFlag = propertiesUtils.getMessage(SysConstant.CSB_FLAG);
@@ -497,6 +506,19 @@ public class InterfaceClient {
 					Map<String,Object> Result = (Map<String, Object>) SvcCont.get("Result");
 					rootMap.put("resultCode", Result.get("ResultCode"));
 					rootMap.put("resultMsg", Result.get("ResultMsg"));
+//					Result.remove("ResultCode");
+//					Result.remove("ResultMsg");
+				}
+				if(serviceCode.equals("service/verify")){
+					if(rootMap!=null){
+						rootMap.put("resultCode", rootMap.get("result_code"));
+						rootMap.put("resultMsg", rootMap.get("error_msg"));
+					}
+//					Map<String,Object> ContractRoot = (Map<String, Object>) rootMap.get("ContractRoot");
+//					Map<String,Object> SvcCont = (Map<String, Object>) ContractRoot.get("SvcCont");
+//					Map<String,Object> Result = (Map<String, Object>) SvcCont.get("Result");
+//					rootMap.put("resultCode", Result.get("ResultCode"));
+//					rootMap.put("resultMsg", Result.get("ResultMsg"));
 //					Result.remove("ResultCode");
 //					Result.remove("ResultMsg");
 				}
