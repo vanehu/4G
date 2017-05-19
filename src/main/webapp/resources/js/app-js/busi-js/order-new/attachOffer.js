@@ -2980,9 +2980,8 @@ AttachOffer = (function() {
 					}
 				});
 			}
-			$("#terminalName_"+num).html("终端规格："+data.mktResName+",终端颜色："+mktColor+",合约价格："+mktPrice+"元");
-			$("#terminalDesc_"+num).css("display","block");
-			
+			$("#terminalInfo_li_"+prodId).show();
+			$("#terminalInfo_"+prodId).html("终端规格："+data.mktResName+",终端颜色："+mktColor+",合约价格："+mktPrice+"元");			
 			/*$("#terRes_"+objInstId).show();
 			$("#terName_"+objInstId).text(data.mktResName);
 			$("#terCode_"+objInstId).text(data.instCode);	
@@ -3353,6 +3352,184 @@ AttachOffer = (function() {
 			}
 		});
 	};
+	
+	//礼包订购构成功能产品查询
+	var _queryGiftServerSpec = function(param) {
+		query.offer.queryGiftServerSpec(param,function(data){
+			if (data) {
+				query.offer.loadInst(); //加载实例到缓存
+				//主套餐已选择和可订购可选包等展示
+				if(param.prodId=="-1"){//主卡促销滚动tab
+					$("#attachMain").html(data);
+					$("#cardNameSpan_"+param.prodId).html("主卡");
+				}else{
+					var id=-(param.prodId+1);
+					$("#attachSecondary"+id).html(data);
+					$("#cardNameSpan_"+param.prodId).html("副卡");
+				}			
+				_showMainRoleProd(param.prodId); //展示必须功能产品
+				//展示主套餐名称和是否有点参
+				var spec = OrderInfo.offerSpec;
+				$("#mainOfferName_"+param.prodId).html(spec.offerSpecName);
+				if(OrderInfo.actionFlag!=6){//非新增副卡
+					if(spec.ifParams&&spec.offerSpecParams!=null&&spec.offerSpecParams.length>0){  //销售参数节点					
+						$("#mainOfferLi_-1").append('<button class="list-can absolute-right" onclick="AttachOffer.showMainParam()">参</button>');					
+					}
+				}
+				if(OrderInfo.actionFlag==1){
+					//为主套餐属性自动设置服务参数
+					if(CacheData.setParam(-1,OrderInfo.offerSpec)){ 
+					}
+				}
+				_initServSpec(param.prodId,param.prodSpecId,"10000"); //初始化功能产品
+				var phoneNum=OrderInfo.getAccessNumber(param.prodId);
+				$("#phoneNumSpan_"+param.prodId).html(phoneNum);
+				 $("#nav-tab-2").removeClass("active in");
+				 $("#nav-tab-3").removeClass("active in");
+		    	 $("#nav-tab-4").addClass("active in");
+		    	 $("#tab2_li").removeClass("active");
+		    	 $("#tab3_li").removeClass("active");
+		    	 $("#tab4_li").addClass("active");
+			}
+		});
+	};
+
+	//将必选或默认功能产品加入已选列表
+	var _showMainRoleProd = function(prodId){
+		var prodInst = getProdInst(prodId);
+		for (var i = 0; i < OrderInfo.offerSpec.offerRoles.length; i++) {
+			var offerRole = OrderInfo.offerSpec.offerRoles[i];
+			if(offerRole.memberRoleCd==CONST.MEMBER_ROLE_CD.CONTENT){ //增值业务角色
+			}else{ 
+				if(offerRole.prodInsts==undefined){
+					continue;
+				}
+				$.each(offerRole.prodInsts,function(){  //遍历产品实例列表
+					if(this.prodInstId==prodId){
+						for (var k = 0; k < offerRole.roleObjs.length; k++) {
+							var roleObj = offerRole.roleObjs[k];
+							if(roleObj.objType==CONST.OBJ_TYPE.SERV){
+								var servSpecId = roleObj.objId;
+								var $oldLi = $('#li_'+prodId+'_'+servSpecId);
+								var spec = CacheData.getServSpec(prodId,servSpecId);//从已选择功能产品中找
+								if(spec != undefined){
+									continue;
+								}
+								var serv = CacheData.getServBySpecId(prodId,servSpecId);//从已订购功能产品中找
+								if(serv!=undefined){ //不在已经开跟已经选里面
+									continue;
+								}
+								if(roleObj.dfQty > 0){ //必选，或者默选
+									var servSpec=jQuery.extend(true, {}, roleObj);
+									CacheData.setServSpec(prodId,servSpec); //添加到已开通列表里
+									spec = servSpec;
+									if(ec.util.isArray(spec.prodSpecParams)){
+										spec.ifParams = "Y";
+									}
+									$('#_li_'+prodId+'_'+servSpecId).remove(); //删除可开通功能产品里面
+									var $li = $('<li id="li_'+prodId+'_'+servSpecId+'" ></li>');
+									html='<span class="list-title">'+ spec.servSpecName +'</span>';
+									if(spec.ifParams){
+										html+='<button type="button" id="can_'+prodId+'_'+spec.servSpecId+'" class="list-can absolute-right" onclick="AttachOffer.showServParam('+prodId+','+servSpecId+');">参</button>';
+									}
+									html+='<div class="list-checkbox absolute-right"><div class="checkbox-box">';
+									html+='<input type="checkbox" checked="checked" value="1"" name="" id="input_'+prodId+'_'+servSpecId+'" onclick="javascript:{common.setBtnTimer(this);AttachOffer.closeServSpec('+prodId+','+servSpecId+',\''+spec.servSpecName+'\',\''+spec.ifParams+'\');}"/><label for="input_'+prodId+'_'+servSpecId+'" ></label></div></div>';						
+									$li.append(html);
+									$("#open_serv_ul_"+prodId).append($li);
+									spec.isdel = "N";
+									_showHideUim(0,prodId,servSpecId);//显示或者隐藏补换卡
+								}
+							}
+						}
+					}
+				});
+			}
+		}
+	};
+
+//创建合约终端div，用于其他页初始化时展示合约终端
+ var _setTerminalDiv=function(prodId,newSpec){
+		if(ec.util.isArray(newSpec.agreementInfos)){ //合约销售品需要输入终端
+			if(OrderInfo.actionFlag!=14){//非购机入口的
+				totalNums=0;
+				_removeAttach2Coupons(prodId,newSpec.offerSpecId);//清除串码组
+				var objInstId = prodId+'_'+newSpec.offerSpecId;
+				//一个终端对应一个ul
+				var $div = $('<div id="terminalUl_'+objInstId+'"</div>');				
+				var minNum=newSpec.agreementInfos[0].minNum;
+				var maxNum=newSpec.agreementInfos[0].maxNum;
+				var isFastOffer = 0 ;
+				if(ec.util.isArray(newSpec.extAttrParams)){
+					$.each(newSpec.extAttrParams,function(){
+						if(this.attrId == CONST.OFFER_FAST_FILL){
+							isFastOffer = 1;
+							return false;
+						}
+					});
+				}
+				for(var i=0;i<newSpec.agreementInfos.length;i++){
+					var agreementInfo=newSpec.agreementInfos[i];
+						var $ulGroups=$('<ul id="ul_'+objInstId+'" class="choice-box m-t-10 border-none" style="display:none;""></ul>');
+						var $liGroups = $('<li class="form-group" style="list-style-type:none; "><label> 终端：</label></li>');
+						var $selTerms = $('<select class="myselect select-option" data-role="none" id="'+objInstId+'"></select>');
+						var $selTermGroups = $('<select class="myselect select-option" data-role="none" id="group_'+objInstId+'"></select>');
+						if(ec.util.isArray(agreementInfo.terminalGroups)){ //如果有配置终端组，则拼接终端组的规格ID和包含的终端规格ID
+							for(var j=0;j<agreementInfo.terminalGroups.length;j++){
+								var $optionTermGroups=$('<option value="'+agreementInfo.terminalGroups[j].terminalGroupId+'" terminalMaxNum="'+agreementInfo.terminalGroups[j].terminalMaxNum+'" terminalMinNum="'+agreementInfo.terminalGroups[j].terminalMinNum+'">'+agreementInfo.terminalGroups[j].terminalGroupId+'</option>');
+								$selTermGroups.append($optionTermGroups);
+								if(ec.util.isArray(agreementInfo.terminalGroups[j].terminalGroup)){
+									$.each(agreementInfo.terminalGroups[j].terminalGroup,function(){
+										var $optionTerms=$('<option value="'+this.terminalModels+'" price="'+this.terminalPrice+'">'+this.terminalName+'</option>');
+										$selTerms.append($optionTerms);
+									});
+								}
+							}
+						}
+						if(ec.util.isArray(agreementInfo.terminals)){ //如果是直接配置终端规格（旧数据），则拼接终端规格ID
+							$.each(agreementInfo.terminals,function(){
+								var $optionTerms=$('<option value="'+this.terminalModels+'" price="'+this.terminalPrice+'">'+this.terminalName+'</option>');
+								$selTerms.append($optionTerms);
+							});
+						}
+						
+						$liGroups.append($selTerms).append($selTermGroups);
+						if(maxNum>newSpec.agreementInfos[0].minNum){
+							var $strAdd=$('<button id="terminalAddBtn_'+objInstId+'" type="button" prodId="'+prodId+'" offerSpecId="'+newSpec.offerSpecId+'" fag="0" onclick="AttachOffer.addAndDelTerminal(this)" value="添加" class="btn btn-default">添加</button>');
+							var $strDel=$('<button id="terminalDelBtn_'+objInstId+'" type="button" prodId="'+prodId+'" offerSpecId="'+newSpec.offerSpecId+'" fag="1" onclick="AttachOffer.addAndDelTerminal(this)" value="删除" class="btn btn-default">删除</button>');
+							$liGroups.append($strAdd).append($strDel);
+						}
+						$ulGroups.append($liGroups);
+						for(var k=1;k<=minNum;k++){
+							var $liTerminal = $('<div class="choice-box absolute-l-43 border-top-none">'
+									+ '<input id="terminal_text" placeholder="终端校验，请先输入终端串号" maxlength="50"  oninput="showCheckTerminal('+ prodId +')" class="choice-input p-l-0 "'
+									 + ' />');
+							
+							var $li1 = $('<i id="terminal_call" class="iconfont right-btn pull-right p-r-10 m-r-45"'
+									+' onclick="common.callScanning(\'order.service.terminalScaningCallBack\','+prodId+')">&#xe641;</i>');
+							var $li4 = $('<i id="terminal_check" class="iconfont right-btn pull-right p-r-10 m-r-45 dis-none"'
+										+ ' num="'+k+'" flag="'+isFastOffer+'" prodId="'+prodId+'" offerSpecId="'+newSpec.offerSpecId+'" onclick="AttachOffer.checkTerminalCode(this)">&#xe672;</i>');
+							var $li2 = $('<i id="terminal_release" class="iconfont right-btn pull-right p-r-10 m-r-45 dis-none"'
+										+ ' onclick="product.uim.releaseUim('+prodId+')">&#xe673;</i>')
+//							var $liTerminal=$('<li class="form-group" style="list-style-type:none;"><label for="exampleInputPassword1">终端校验<span class="text-warning">*</span></label><div class="input-group"><input id="terminalText_'+objInstId+'_'+k+'" type="text" class="form-control" maxlength="50" placeholder="请先输入终端串号" />'
+//									+'<span class="input-group-btn"><button id="terminalBtn_'+objInstId+'_'+k+'" type="button" num="'+k+'" flag="'+isFastOffer+'" prodId="'+prodId+'" offerSpecId="'+newSpec.offerSpecId+'" onclick="AttachOffer.checkTerminalCode(this)" class="btn btn-info">校验</button></span></div></li>');
+//							var	$li4 = $('<li id="terminalDesc_'+k+'" style="display:none;list-style-type:none;" ><label></label><label id="terminalName_'+k+'"></label></li>');
+							
+							$liTerminal.append($li1).append($li4).append($li2);
+							
+						}
+						totalNums+=minNum;
+				}
+				var addTerminalId = {
+						prodId : prodId,
+				};
+				AttachOffer.addTerminalList.push(addTerminalId);
+				AttachOffer.terminalDiv = $liTerminal.append($ulGroups);
+				if(newSpec.agreementInfos[0].minNum>0){//合约里面至少要有一个终端
+					newSpec.isTerminal = 1;
+				}
+			}
+		}
+ }
 	return {
 		openList				: _openList,
 		openedList				: _openedList,
@@ -3401,6 +3578,9 @@ AttachOffer = (function() {
 		phone_checkOfferExcludeDepend       :_phone_checkOfferExcludeDepend,
 		offer_showMainParam :_offer_showMainParam,
 		showMainParam       :_showMainParam,
+		offerSpecIds		:_offerSpecIds,
+		queryGiftServerSpec :_queryGiftServerSpec,
+		setTerminalDiv      :_setTerminalDiv,
 		offerSpecIds		:_offerSpecIds,
 		checkYZFRight		:_checkYZFRight
 	};
