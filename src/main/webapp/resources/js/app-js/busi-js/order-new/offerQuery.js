@@ -817,6 +817,50 @@ query.offer = (function() {
 		}
 	};
 	
+	//礼包订购构成功能产品查询
+	var _queryGiftServerSpec = function(param,callBackFun) {
+		param.enter=3;//传给controller表示新版ui
+		addParam(param);  //添加基本参数
+		var url = contextPath+"/app/offer/queryOfferServerSpec";
+		if(typeof(callBackFun)=="function"){
+			$.callServiceAsHtmlGet(url,{strParam:JSON.stringify(param)},{
+				"before":function(){
+					$.ecOverlay("<strong>正在查询功能产品中,请稍后....</strong>");
+				},
+				"always":function(){
+					$.unecOverlay();
+				},
+				"done" : function(response){
+					if (response.code==0) {
+						if(response.data){
+							callBackFun(response.data);
+						}
+					}else if (response.code==-2){
+						$.alertM(response.data);
+						return;
+					}else {
+						$.alert("提示","功能产品查询失败,稍后重试");
+						return;
+					}
+				}
+			});	
+		}else {
+			$.ecOverlay("<strong>查询功能产品中，请稍等...</strong>");
+			var response = $.callServiceAsHtmlGet(url,{strParam:JSON.stringify(param)});	
+			$.unecOverlay();
+			if (response.code==0) {
+				if(response.data){
+					return response.data;
+				}
+			}else if (response.code==-2){
+				$.alertM(response.data);
+				return;
+			}else {
+				$.alert("提示","查询功能产品失败,稍后重试");
+				return;
+			}
+		}
+	};
 	return {
 		  queryOfferSpec        :_queryOfferSpec,
 		  queryAttachSpec       :_queryAttachSpec,
@@ -839,7 +883,8 @@ query.offer = (function() {
 		  queryDefMustOfferSpecAndServ	:_queryDefMustOfferSpecAndServ,
 		  queryMainOfferSpec			:_queryMainOfferSpec,
 		  queryAttachOfferHtml			:_queryAttachOfferHtml,
-		  updateCheckByChange			:_updateCheckByChange
+		  updateCheckByChange			:_updateCheckByChange,
+		  queryGiftServerSpec           :_queryGiftServerSpec
 		
 	};
 })();

@@ -590,12 +590,21 @@ order.phoneNumber = (function(){
 						    	 $("#tab1_li").removeClass("active");
 						    	 $("#tab3_li").addClass("active"); 
 							 } else{//无副卡展示促销
-								 OrderInfo.order.step = 4;
-								 order.main.buildMainView();
-								 $("#nav-tab-1").removeClass("active in");
-						    	 $("#nav-tab-4").addClass("active in");
-						    	 $("#tab1_li").removeClass("active");
-						    	 $("#tab4_li").addClass("active"); 
+								 if(order.service.isGiftPackage==true){//礼包订购跳转单独功能产品页
+									 OrderInfo.order.step = 4;
+									 order.main.buildGiftMainView();//展示礼包功能页
+									 $("#nav-tab-1").removeClass("active in");
+							    	 $("#nav-tab-4").addClass("active in");
+							    	 $("#tab1_li").removeClass("active");
+							    	 $("#tab4_li").addClass("active"); 
+								 }else{
+									 OrderInfo.order.step = 4;
+									 order.main.buildMainView();
+									 $("#nav-tab-1").removeClass("active in");
+							    	 $("#nav-tab-4").addClass("active in");
+							    	 $("#tab1_li").removeClass("active");
+							    	 $("#tab4_li").addClass("active");  
+								 }
 							 }
 							
 						  }

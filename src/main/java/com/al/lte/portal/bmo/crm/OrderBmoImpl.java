@@ -42,6 +42,7 @@ import com.al.lte.portal.common.PortalServiceCode;
 import com.al.lte.portal.common.ServiceClient;
 import com.al.lte.portal.common.SysConstant;
 import com.al.lte.portal.model.SessionStaff;
+
 import net.sf.json.JSONArray;
 
 /**
@@ -3582,6 +3583,59 @@ public class OrderBmoImpl implements OrderBmo {
 			throw new BusinessException(ErrorCode.SAVE_PHOTOGRAPH_REVIEW_RECORD, params, db.getReturnlmap(), e);
 		}
 		
+		return returnMap;
+	}
+
+	public Map<String, Object> queryGiftPackageList(
+			Map<String, Object> dataBusMap, String optFlowNum,
+			SessionStaff sessionStaff) throws Exception {
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		DataBus db = InterfaceClient.callService(dataBusMap,
+				PortalServiceCode.QUERY_GIFT_PACKAGE_OFFER, optFlowNum, sessionStaff);
+		try {
+			// 服务层调用与接口层调用都成功时，返回列表；否则返回空列表
+			if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db.getResultCode()))) {
+				Map<String, Object> resultMap = db.getReturnlmap();
+				Map<String, Object> result = (Map<String, Object>) resultMap
+						.get("result");
+				log.debug("result={}", result);
+				List<Map<String, Object>> tempList = (List<Map<String, Object>>) result
+						.get("offerSpceList");
+				returnMap.put("code", ResultCode.R_SUCCESS);
+				returnMap.put("giftPackageList", tempList);
+			} else {
+				returnMap.put("code", ResultCode.R_FAIL);
+				returnMap.put("msg", db.getResultMsg());
+			}
+			return returnMap;
+		} catch (Exception e) {
+			log.error("门户处理营业受理的service/intf.prodOfferService/queryGiftPackageList服务返回的数据异常", e);
+			throw new BusinessException(ErrorCode.QUERY_GIFT_PACKAGE,dataBusMap,db.getReturnlmap(), e);
+		}
+	}
+
+	public Map<String, Object> queryGiftPackageMemberList(
+			Map<String, Object> dataBusMap, String optFlowNum,
+			SessionStaff sessionStaff) throws Exception {
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		DataBus db = InterfaceClient.callService(dataBusMap,
+				PortalServiceCode.QUERY_GIFT_PACKAGE_MEMBER_OFFER, optFlowNum, sessionStaff);
+		try{
+			if (ResultCode.R_SUCC.equals(db.getResultCode())) {
+				Map<String, Object> resultMap = db.getReturnlmap();
+				Map<String, Object> result = (Map<String, Object>) resultMap
+						.get("result");
+				List<Map<String, Object>> tempList = (List<Map<String, Object>>) result.get("offerSpceList");
+				returnMap.put("code", ResultCode.R_SUCCESS);
+				returnMap.put("offerSpecList", tempList);
+			} else {
+				returnMap.put("code", ResultCode.R_FAIL);
+				returnMap.put("msg", "调用查询接口失败");
+			}
+		} catch (Exception e) {
+			log.error("门户处理营业后台的queryGiftPackage2ObjList服务返回的数据异常", e);
+			throw new BusinessException(ErrorCode.QUERY_GIFT_PACKAGE_MEMBER, dataBusMap, returnMap, e);
+		}
 		return returnMap;
 	}
 }

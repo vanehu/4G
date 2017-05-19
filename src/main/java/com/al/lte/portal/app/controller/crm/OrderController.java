@@ -3666,4 +3666,51 @@ public class OrderController extends BaseController {
 		}
 
 	}
+	
+	 @RequestMapping(value = "/getGiftPackageList", method = RequestMethod.GET, produces = "text/html;charset=UTF-8")
+	    public String getGiftPackageList(@RequestParam Map<String, Object> prams,Model model,HttpServletResponse response,HttpSession httpSession){
+			SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+	                SysConstant.SESSION_KEY_LOGIN_STAFF);	
+	        try {
+	        	String OfferIds = "";
+	        	prams.put("ifQS", "Y");
+	        	prams.put("channelId", sessionStaff.getCurrentChannelId());
+	        	prams.put("areaId", sessionStaff.getCurrentAreaId());
+	        	prams.put("staffId", sessionStaff.getStaffId());
+	        	prams.put("pageSize", SysConstant.PAGE_SIZE);
+	        	int totalPage=0;
+	        	Map<String, Object> map = null;
+	   //          prams.put("qryStr", "乐享");
+	        	Map<String, Object> map1 = new HashMap();
+	        	map1.put("channelId", sessionStaff.getCurrentChannelId());
+	        	map1.put("areaId", sessionStaff.getCurrentAreaId());
+	        	map1.put("staffId", sessionStaff.getStaffId());
+	        	map1.put("custId", prams.get("custId"));
+//	        	DataBus db = InterfaceClient.callService(map1,
+//	    				PortalServiceCode.QUERY_MAIN_OFFER_CATEGORY, null, sessionStaff);
+	        	prams.put("sysFlag", Const.APP_SEARCH_OFFER_SYSFLAG);//系统标识
+	        	map = orderBmo.queryGiftPackageList(prams,null, sessionStaff);
+	        	if(ResultCode.R_SUCCESS.equals(map.get("code"))){
+	        		//拼装前台显示的套餐详情
+	        		if(!map.isEmpty()){
+	        			List<Map<String,Object>> giftPackageList = (List<Map<String,Object>>) map.get("giftPackageList");
+	        			if(giftPackageList.size()%10>0){
+	        				totalPage=giftPackageList.size()/10+1;
+	        			}else{
+	        				totalPage=giftPackageList.size()/10;
+	        			}
+	        		}
+	        		model.addAttribute("resultlst", map.get("giftPackageList"));
+	        		model.addAttribute("totalPage",totalPage);
+	        	}
+	        } catch (BusinessException be) {
+				this.log.error("查询销售品礼包失败", be);
+				return super.failedStr(model, be);
+			} catch (InterfaceException ie) {
+				return super.failedStr(model, ie, prams, ErrorCode.QUERY_GIFT_PACKAGE);
+			} catch (Exception e) {
+				return super.failedStr(model, ErrorCode.QUERY_GIFT_PACKAGE, e, prams);
+			}
+	        return "/app/order_new/gift-package-list";
+	    }
 }

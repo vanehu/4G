@@ -7,10 +7,15 @@
  <#list offerSpec.offerRoles as offerRole>
 <#if offerRole.prodInsts?? && (offerRole.prodInsts?size>0)>
 <#list offerRole.prodInsts as prod> <#assign prodId = prod.prodInstId />
-<li class="tab-list" name="tab-li2" id="tab-li2">
-	<ul name="card-list2" class="choice-list-box ${prodId} h-scroll" >
-		<li name="card2"><i class="iconfont pull-left">&#xe6b9;</i> <span
-			class="list-title"> <span class="title-lg" id="phoneNumSpan2_${prodId}"></span>
+
+	<li class="tab-list" name="tab-li2" id="tab-li2">
+	<ul id="card-list2" name="card-list2" class="choice-list-box ${prodId} h-scroll" >
+	    <li id="gift-li" style="display: none"><i class="iconfont pull-left">&#xe635;</i> 
+	    <span class="list-title text-warning" id="giftName"></span> 
+	    <i href="#modal-sale" data-toggle="modal" class="iconfont absolute-right font-default" style="cursor: pointer;">&#xe66d;</i>
+		</li>
+		<li name="card2"><i class="iconfont pull-left">&#xe6b9;</i> 
+		<span class="list-title"> <span class="title-lg" id="phoneNumSpan2_${prodId}"></span>
 				<span class="subtitle font-secondary" id="cardNameSpan2_${prodId}"></span>
 		</span> <i class="iconfont absolute-right font-secondary open-noness">&#xe66e;</i>
 		</li>
@@ -18,6 +23,9 @@
 		<div id="specParmDiv_${prodId}">
 		</div>
 		<li id="terminalDiv_${prodId}" style="display: none;">
+		</li>
+		<li id="terminalInfo_li_${prodId}" style="display: none;">
+	    <span class="list-title text-warning" id="terminalInfo_${prodId}" style="font-size: 12px;"></span> 	   
 		</li>
 		<li id="uimDiv_${prodId}">
 			<div class="choice-box absolute-l-43 border-top-none border-none">
@@ -174,6 +182,44 @@
 		<!-- 经办人弹出层 -->
 		<div class="modal modal-message fade modal-top" id="jbr">
 			<#include "/app/order_new/jbr-create.html"/> 
+		</div>
+	   <!-- 礼包详情弹出 -->
+		<div class="modal modal-message fade modal-top" id="modal-sale">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+						<h4 class="modal-title">礼包详情</h4>
+					</div>
+					<div class="modal-body">
+						<ul class="choice-list-box">
+					<li>
+						<i class="iconfont pull-left">&#xe66c;</i>
+						<span class="list-title font-secondary">主套餐 </span>
+						<!--<i href="#ordercon2" data-toggle="modal" class="iconfont absolute-right font-default">&#xe670;</i>-->
+					</li>				
+					<li>
+						<span class="list-title">
+		                		<span class="title-lg" id="gift-mainOffer-name"></span>
+						<span class="subtitle font-secondary">套餐名称</span>
+						</span>
+					</li>					
+				</ul>
+				<ul class="choice-list-box" id="gift-attach-Offer-ul">
+					<li>
+						<i class="iconfont pull-left">&#xe66c;</i>
+						<span class="list-title font-secondary">附属销售品</span>
+						<!--<i href="#ordercon2" data-toggle="modal" class="iconfont absolute-right font-default">&#xe670;</i>-->
+					</li>
+				</ul>
+					</div>
+					<div class="modal-footer">
+						<div class="ordinary-btn-box p p-b-15">
+							<button class="sun-btn done" data-dismiss="modal">确定</button>
+						</div>
+					</div>
+				</div>
+			</div>
 		</div>
 <script type="text/javascript">
 	cust.jbrvalidatorForm();

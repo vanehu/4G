@@ -9,6 +9,13 @@ CommonUtils.regNamespace("CacheData");
 /** 缓存数据对象*/
 CacheData = (function() {
 	var recordId = "";
+	
+	var _giftMainOffer;//礼包主套餐构成
+	var _giftMainAttachOfferList=[];//主卡促销
+	var _giftSecondAttachOfferList=[];//副卡促销
+	var _giftAttach=[];//详情-主、副卡促销
+	var _giftMainAttach=[];//详情-主卡促销
+	var _giftSecondAttach=[];//详情-副卡促销
 	//设置鉴权日志id
 	var _setRecordId = function (id) {
 		recordId = id;
@@ -1093,6 +1100,12 @@ CacheData = (function() {
 		getOffer			:_getOffer,
 		getServ				:_getServ,
 		getServInstParam	:_getServInstParam,
-		getGovCertType      :_getGovCertType
+		getGovCertType      :_getGovCertType,
+		giftMainOffer       :_giftMainOffer,
+		giftMainAttachOfferList:_giftMainAttachOfferList,
+		giftSecondAttachOfferList:_giftSecondAttachOfferList,
+		giftAttach              :_giftAttach,
+		giftAttach              :_giftMainAttach,
+		giftSecondAttach        :_giftSecondAttach
 	};
 })();
