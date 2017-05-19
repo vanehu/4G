@@ -2496,6 +2496,50 @@ AttachOffer = (function() {
 		}
 	};
 	
+	//直接删除附属销售品规格，不提示删除
+	var _delOfferSpec2 = function(prodId,offerSpecId,reflag){
+		var $span = $("#li_"+prodId+"_"+offerSpecId).find("span"); //定位删除的附属
+		if($span.attr("class")=="list-title delete"){  //已经取消订购，再订购
+			AttachOffer.addOfferSpec(prodId,offerSpecId);
+		}else { //取消订购
+			var spec = CacheData.getOfferSpec(prodId,offerSpecId);
+			if(reflag!=undefined && reflag=="reload"){//暂存单二次加载
+				$span.addClass("delete");
+				$("#input_"+prodId+"_"+offerSpecId).removeAttr("checked");
+				spec.isdel = "Y";
+				_delServSpec(prodId,spec); //取消订购销售品时
+				order.dealer.removeAttDealer(prodId+"_"+offerSpecId); //删除协销人
+				$("#terminalUl_"+prodId+"_"+offerSpecId).remove();
+				spec.isTerminal = 0;
+			}else{
+				$span.addClass("delete");
+				spec.isdel = "Y";
+				$("#input_"+prodId+"_"+offerSpecId).removeAttr("checked");
+				_delServSpec(prodId,spec); //取消订购销售品时
+				order.dealer.removeAttDealer(prodId+"_"+offerSpecId); //删除协销人
+				$("#terminalUl_"+prodId+"_"+offerSpecId).remove();
+				spec.isTerminal = 0;
+			}
+		}
+	};
+	//删除附属销售品带出删除功能产品
+	var _delServSpec = function(prodId,offerSpec){
+		$.each(offerSpec.offerRoles,function(){
+			$.each(this.roleObjs,function(){
+				var servSpecId = this.objId;
+				if($("#input_"+prodId+"_"+servSpecId).attr("checked")=="checked"){
+					var spec = CacheData.getServSpec(prodId,servSpecId);
+					if(ec.util.isObj(spec)){
+						spec.isdel = "Y";
+						var $li = $("#li_"+prodId+"_"+servSpecId);
+						$li.removeClass("canshu").addClass("canshu2");
+						$li.find("span").addClass("delete"); //定位删除的附属
+						_showHideUim(1,prodId,servSpecId);   //显示或者隐藏
+					}
+				}
+			});
+		});
+	};
 	var _addOfferAndServDependOpen = function(reSrvSpec,reOfferSpec,OfferORServId,prodId){
 		if(reSrvSpec !=""){
 			var servSpec ={
