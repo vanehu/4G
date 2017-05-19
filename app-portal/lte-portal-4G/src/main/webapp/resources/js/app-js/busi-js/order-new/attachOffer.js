@@ -1024,6 +1024,14 @@ AttachOffer = (function() {
 						}
 					}
 				}
+				if(AttachOffer.openedServList.length>0){
+					for(var n=0;n<AttachOffer.openedServList[0].servList.length;n++){
+						var opendServ = AttachOffer.openedServList[0].servList[n];
+						if(opendServ.isdel ==undefined || "Y"!= opendServ.isdel){
+							_servSpecIds.push(opendServ.servSpecId);
+						}
+					}
+				}
 				respnose = AttachOffer.queryOfferAndServDependForCancel("",$("#input_"+prodId+"_"+servId).attr("servSpecId"));
 			}
 			
@@ -1221,8 +1229,8 @@ AttachOffer = (function() {
 									var opendServ = AttachOffer.openServList[m].servSpecList[n];
 									if(this.servSpecId == opendServ.servSpecId){
 										opendServ.isdel = "Y";
-								         	$("#li_"+prodId+"_"+opendServ.servId).find("span").addClass("delete");
-								         	$("#input_"+prodId+"_"+opendServ.servId).removeAttr("checked");
+								         	$("#li_"+prodId+"_"+opendServ.servSpecId).find("span").addClass("delete");
+								         	$("#input_"+prodId+"_"+opendServ.servSpecId).removeAttr("checked");
 									}
 						   }
 				    	}
@@ -1573,7 +1581,7 @@ AttachOffer = (function() {
 					CacheData.setServSpec(prodId,newSpec); //添加到已开通列表里
 					servSpec = newSpec;
 				}
-				_removeOfferAndServOpen(servSpecId,prodId);
+				
 				_checkServExcludeDepend(prodId,servSpec);
 			},
 			no:function(){
@@ -1649,8 +1657,11 @@ AttachOffer = (function() {
 		}else{
 			$.confirm("开通： " + serv.servSpecName,content,{ 
 				yesdo:function(){
-					var thisServSpecId =  $("#input_"+prodId+"_"+serv.servId).attr("servSpecId");
-					_removeOfferAndServ(thisServSpecId,prodId);
+					if(!$("#input_"+prodId+"_"+serv.servId)){
+						_removeOfferAndServOpen(serv.servSpecId,prodId);
+					} else {
+						_removeOfferAndServ(serv.servSpecId,prodId);
+					}
 					$("#input_"+prodId+"_"+serv.servId).attr("checked","checked");
 					AttachOffer.addOpenServList(prodId,servSpecId,serv.servSpecName,serv.ifParams); //添加开通功能
 					excludeAddServ(prodId,servSpecId,param);
@@ -2811,7 +2822,7 @@ AttachOffer = (function() {
 							if(offerSpe.offerId == opendServ.offerId){
 								opendServ.isdel = "N";
 								$("#li_"+prodId+"_"+opendServ.offerId).find("span").removeClass("delete");
-								$("#input_"+prodId+"_"+thisServSpecId).attr("checked","checked");
+								$("#input_"+prodId+"_"+opendServ.offerId).attr("checked","checked");
 								//AttachOffer.openedList[0].offerList.splice(n,1);//删除因为依赖加入的销售品
 							}
 					   }
