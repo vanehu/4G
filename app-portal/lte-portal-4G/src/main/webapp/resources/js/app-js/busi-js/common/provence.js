@@ -39,7 +39,7 @@ provence = (function(){
         		var menuList = msg.menuList;
         		for(var i=0;i<menuList.length;i++){
         			var item = menuList[i];
-        			var menustr = '<li onclick="home.initData('+"'prov_menu'"+",0,'"+item.menuName+"','"+item.menulId+"')"+'" style="border: 1px solid #dedede;">';
+        			var menustr = '<li id="'+item.menulId+'" name="'+item.menuName+'" onclick="home.initData('+"'prov_menu'"+",0,'"+item.menuName+"','"+item.menulId+"')"+'" style="border: 1px solid #dedede;">';
         			menustr = menustr + '<i class="iconfont">&#xe6d7</i>';
         			menustr = menustr + '<p>'+item.menuName+'</p>';
         			menustr = menustr + '</li>';
@@ -58,7 +58,8 @@ provence = (function(){
         error: function (msg) 
         { 
         	$.unecOverlay();
-        	$.alert("提示","发送随机码失败");
+        	$("#prov_menuList").append('<p>省份菜单权限查询失败</P>');
+//        	$.alert("提示","获取省份菜单失败失败");
         },
         complete: function(msg)
         {   

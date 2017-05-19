@@ -754,8 +754,8 @@ public class CustBmoImpl implements CustBmo {
 				}
 			}
 			
-			//5.证件上传
-			if(count == photographs.size()){
+			//5.证件上传，实名信息采集单中可以不需要拍照照片
+			if(count == photographs.size()&&!("true".equals(param.get("collection")))){
 				result.put("code", ResultCode.R_FAIL);
 				result.put("msg", "请求入参中未获取到有效的实名拍照信息，原因可能是请求入参中的数据已被篡改或丢失，请不要试图进行非法操作、重复操作或在多个浏览器窗口同时提交业务。");
 			} else{
@@ -888,6 +888,7 @@ public class CustBmoImpl implements CustBmo {
      * @return
      * @throws Exception
      */
+    @Override
     public Map<String, Object> custinfoSynchronize(Map<String, Object> dataBusMap, String optFlowNum, SessionStaff sessionStaff) throws Exception {
         Map<String, Object> retnMap = new HashMap<String, Object>();
         DataBus db = InterfaceClient.callService(dataBusMap,
@@ -914,6 +915,7 @@ public class CustBmoImpl implements CustBmo {
      * @return
      * @throws Exception
      */
+    @Override
     public Map<String, Object> preCheckCertNumberRel(Map<String, Object> dataBusMap, String optFlowNum, SessionStaff sessionStaff) throws Exception {
         Map<String, Object> retnMap = new HashMap<String, Object>();
         DataBus db = InterfaceClient.callService(dataBusMap,
@@ -943,6 +945,7 @@ public class CustBmoImpl implements CustBmo {
      * @return
      * @throws Exception
      */
+    @Override
     public Map<String, Object> getSeq(Map<String, Object> paramMap, String optFlowNum, SessionStaff sessionStaff) throws Exception {
         DataBus db = InterfaceClient.callService(paramMap,
 				PortalServiceCode.GET_SEQ, optFlowNum, sessionStaff);
@@ -980,4 +983,23 @@ public class CustBmoImpl implements CustBmo {
 		}
 		return resultMap;
 	}
+  //人证照片比对
+  	public Map<String, Object> verify(Map<String, Object> param,
+  			String optFlowNum, SessionStaff sessionStaff) throws Exception {
+  		Map<String, Object> resultMap = new HashMap<String, Object>();
+  		DataBus db = InterfaceClient.callService(param,PortalServiceCode.PIC_VERIFY,optFlowNum, sessionStaff);
+  		Map<String, Object> returnMap = new HashMap<String, Object>();
+  		if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db
+  				.getResultCode()))) {
+  			resultMap = db.getReturnlmap();
+  			Map<String, Object> datamap = resultMap;
+  			returnMap.put("code", ResultCode.R_SUCCESS);
+  			returnMap.put("result",datamap);
+  		} else {
+  			returnMap.put("code", ResultCode.R_FAIL);
+  			returnMap.put("msg", db.getResultMsg());
+  		}
+  		return returnMap;				
+  	}
+  	
 }
