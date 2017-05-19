@@ -229,37 +229,37 @@ public class AppCommonOutInterfinceController extends BaseController{
 	 * @return
 	 * @throws AuthorityException
 	 */
-//	@RequestMapping(value = "/pic/verify", method = RequestMethod.POST)
-//	public @ResponseBody JsonResponse verify(@RequestBody Map<String, Object> reqMap, String optFlowNum,
-//			HttpServletResponse response,HttpServletRequest request){
-//		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
-//                SysConstant.SESSION_KEY_LOGIN_STAFF);
-//		JsonResponse jsonResponse = null;
-//		Map<String, Object> rMap = null;
-//		String areaid = sessionStaff.getAreaId();//区
-//			try {
-////				System.out.println("++++++++++++reqMap="+JsonUtil.toString(reqMap));
-//				rMap = custBmo.verify(reqMap, optFlowNum, sessionStaff);
-////	 			log.debug("return={}", JsonUtil.toString(rMap));
-//	 			if (rMap != null&& ResultCode.R_SUCCESS.equals(rMap.get("code").toString())) {
-//	 				jsonResponse = super.successed(rMap,
-//	 						ResultConstant.SUCCESS.getCode());
-//	 			} else {
-//	 				jsonResponse = super.failed(rMap,
-//	 						ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
-//	 			}
-////				DataBus db = InterfaceClient.callService(reqMap, PortalServiceCode.BORAD_BAND_QUERYCHARGECONFIG,optFlowNum, sessionStaff);
-//	        }  catch (BusinessException be) {
-//				this.log.error("人证比对查询失败", be);
-//				return super.failed(be);
-//			} catch (InterfaceException ie) {
-//				return super.failed(ie, reqMap, ErrorCode.PIC_VERIFY);
-//			} catch (Exception e) {
-//				log.error("人证比对查询失败", e);
-//				return super.failed(ErrorCode.PIC_VERIFY, e, reqMap);
-//			}
-//			return jsonResponse;
-//	}
+	@RequestMapping(value = "/pic/verify", method = RequestMethod.POST)
+	public @ResponseBody JsonResponse verify(@RequestBody Map<String, Object> reqMap, String optFlowNum,
+			HttpServletResponse response,HttpServletRequest request){
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+                SysConstant.SESSION_KEY_LOGIN_STAFF);
+		JsonResponse jsonResponse = null;
+		Map<String, Object> rMap = null;
+		String areaid = sessionStaff.getAreaId();//区
+			try {
+//				System.out.println("++++++++++++reqMap="+JsonUtil.toString(reqMap));
+				rMap = custBmo.verify(reqMap, optFlowNum, sessionStaff);
+//	 			log.debug("return={}", JsonUtil.toString(rMap));
+	 			if (rMap != null&& ResultCode.R_SUCCESS.equals(rMap.get("code").toString())) {
+	 				jsonResponse = super.successed(rMap,
+	 						ResultConstant.SUCCESS.getCode());
+	 			} else {
+	 				jsonResponse = super.failed(rMap,
+	 						ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+	 			}
+//				DataBus db = InterfaceClient.callService(reqMap, PortalServiceCode.BORAD_BAND_QUERYCHARGECONFIG,optFlowNum, sessionStaff);
+	        }  catch (BusinessException be) {
+				this.log.error("人证比对查询失败", be);
+				return super.failed(be);
+			} catch (InterfaceException ie) {
+				return super.failed(ie, reqMap, ErrorCode.PIC_VERIFY);
+			} catch (Exception e) {
+				log.error("人证比对查询失败", e);
+				return super.failed(ErrorCode.PIC_VERIFY, e, reqMap);
+			}
+			return jsonResponse;
+	}
 	
 	/**
 	 * 工号菜单权限查询

@@ -983,4 +983,23 @@ public class CustBmoImpl implements CustBmo {
 		}
 		return resultMap;
 	}
+  //人证照片比对
+  	public Map<String, Object> verify(Map<String, Object> param,
+  			String optFlowNum, SessionStaff sessionStaff) throws Exception {
+  		Map<String, Object> resultMap = new HashMap<String, Object>();
+  		DataBus db = InterfaceClient.callService(param,PortalServiceCode.PIC_VERIFY,optFlowNum, sessionStaff);
+  		Map<String, Object> returnMap = new HashMap<String, Object>();
+  		if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db
+  				.getResultCode()))) {
+  			resultMap = db.getReturnlmap();
+  			Map<String, Object> datamap = resultMap;
+  			returnMap.put("code", ResultCode.R_SUCCESS);
+  			returnMap.put("result",datamap);
+  		} else {
+  			returnMap.put("code", ResultCode.R_FAIL);
+  			returnMap.put("msg", db.getResultMsg());
+  		}
+  		return returnMap;				
+  	}
+  	
 }

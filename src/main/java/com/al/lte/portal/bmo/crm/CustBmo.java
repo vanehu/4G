@@ -134,6 +134,16 @@ public interface CustBmo {
 	 * 实名制证件图片添加水印
 	 */
 	public Map<String, Object> preHandleCustCertificate(String base64ImageStr, String venderId) throws IOException;
+	
+	/**
+	 * 人证照片比对
+	 * @param dataBusMap
+	 * @param optFlowNum
+	 * @param sessionStaff
+	 * @return
+	 * @throws Exception
+	 */
+	public Map<String, Object> verify(Map<String, Object> dataBusMap, String optFlowNum,SessionStaff sessionStaff) throws Exception;
 
     /**
      * 客户资料同步接口
