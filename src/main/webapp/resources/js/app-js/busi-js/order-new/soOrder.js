@@ -519,8 +519,8 @@ SoOrder = (function() {
 					if(spec.isdel!="Y" && spec.isdel!="C"){
 						if(spec.ifParams){  //销售参数节点
 							if(spec.isset !="Y"){
-//								$.alert("提示",roleName+" "+spec.offerSpecName+"：参数未设置");
-//								return false ; 
+								$.alert("提示",roleName+" "+spec.offerSpecName+"：参数未设置");
+								return false ; 
 							}
 						}
 					}
