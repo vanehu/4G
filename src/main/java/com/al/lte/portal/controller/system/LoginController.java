@@ -476,6 +476,11 @@ public class LoginController extends BaseController {
 			throws PortalCheckedException {
 		paramMap.put("platformCode", SysConstant.SM_APPPLATFORM_CODE);
 		Map<String, Object> map = null;
+		String isHand = "false";//手势密码跳过短信校验标识
+		if(paramMap.get("isHand")!=null){
+			isHand = (String) paramMap.get("isHand");
+		}
+		request.getSession().setAttribute("isHand", isHand);
 		try {
 			SessionStaff staffSession= new SessionStaff();
 			staffSession.setCurrentAreaId(MapUtils.getString(paramMap, "staffProvCode", ""));
@@ -505,7 +510,7 @@ public class LoginController extends BaseController {
 				resMap.put("staff", map);
 				
 				//如果全局开关设定为不发送，或者员工信息表明不发送，或者当前是重新登录不发送短信
-				if ("1".equals(msgCodeFlag) || "N".equals(smsPassFlag) || "N".equals(loginValid)) {
+				if ("1".equals(msgCodeFlag) || "N".equals(smsPassFlag) || "N".equals(loginValid) || "true".equals(isHand)) {
 					resMap.put("ifSend", "N");
 					return super.successed(resMap);
 				}else{
@@ -1048,6 +1053,11 @@ public class LoginController extends BaseController {
 	public JsonResponse smsValidate(@RequestParam("smspwd") String smsPwd,
 			HttpServletRequest request ,HttpServletResponse response) throws Exception {
 		this.log.debug("smsPwd={}", smsPwd);
+		//手势登录跳过短信校验标识
+		String isHand = "false";
+		if(ServletUtils.getSessionAttribute(request,"isHand")!=null){
+			isHand = (String) ServletUtils.getSessionAttribute(request,"isHand");
+		}
 		//手机版本使用
 		Object appFlag = ServletUtils.getSessionAttribute(request,SysConstant.SESSION_KEY_APP_FLAG);
 		// 系统参数表中的是否发送校验短信标识，1不发送不验证， 其他发送并验证
@@ -1063,7 +1073,7 @@ public class LoginController extends BaseController {
 			return super.failed("短信过期失效，请重新发送!", ResultConstant.FAILD.getCode());
 		}
 		ServletUtils.removeSessionAttribute(request, SysConstant.SESSION_KEY_LOGIN_SMS);
-		if ("1".equals(msgCodeFlag) || "N".equals(smsPassFlag) || smsPwdSession.equals(smsPwd)) {
+		if ("1".equals(msgCodeFlag) || "N".equals(smsPassFlag) || smsPwdSession.equals(smsPwd) || "true".equals(isHand)) {
 			SessionStaff sessionStaff = SessionStaff.setStaffInfoFromMap(mapSession);
 			
 			JsonResponse channelResp = queryChannel(sessionStaff, "", mapSession);

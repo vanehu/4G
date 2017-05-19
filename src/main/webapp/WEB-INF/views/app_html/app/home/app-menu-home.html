@@ -60,7 +60,7 @@
 							<#assign icon = "&#xe6d7">
 							</#if>  -->
 							<#if item.resourceName!="办业务">
-							<li id="${item.menuPath}" onclick="home.initData('${item.menuPath}',0,'${item.resourceName}','${item.resourceId}')">
+							<li id="${item.resourceId}" name="${item.resourceName}" onclick="home.initData('${item.menuPath}',0,'${item.resourceName}','${item.resourceId}')">
 								<i class="iconfont">${item.iconPic}</i>
 								<p>${item.resourceName}</p>
 							</li>
@@ -83,7 +83,7 @@
 							<#list pageFunctionMenuArray as item>
 							<#if item.resourceName!="办业务">
 							
-							<li onclick="home.initData('${item.menuPath}',0,'${item.resourceName}','${item.resourceId}')" style="border: 1px solid #dedede;">
+							<li id="${item.resourceId}" name="${item.resourceName}" onclick="home.initData('${item.menuPath}',0,'${item.resourceName}','${item.resourceId}')" style="border: 1px solid #dedede;">
 								<i class="iconfont">${item.iconPic}</i>
 								<p>${item.resourceName}</p>
 							</li>
@@ -109,7 +109,7 @@
 					<ul class="menu-box" id="prov_menuList">
 						<#if prov_menulist?? &&(prov_menulist?size>0) >
 							<#list prov_menulist as item>
-							<li onclick="home.initData('prov_menu',0,'${item.menuName}','${item.menulId}')" style="border: 1px solid #dedede;">
+							<li id="${item.menulId}" name="${item.menuName}" onclick="home.initData('prov_menu',0,'${item.menuName}','${item.menulId}')" style="border: 1px solid #dedede;">
 								<i class="iconfont">${item.iconPic}</i>
 								<p>${item.menuName}</p>
 							</li>
