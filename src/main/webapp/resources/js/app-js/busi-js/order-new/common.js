@@ -457,6 +457,7 @@ common = (function($) {
 			    	$("#tab2_li").removeClass("active");
 			    	$("#tab1_li").addClass("active");				
 				}else if(order.service.enter==1){//选套餐入口
+					order.service.isGiftPackage=false;//还原礼包订购标志
 					$("#offer_a").show();
 					 $("#phoneNumber_a").hide();
 					$("#nav-tab-1").removeClass("active in");

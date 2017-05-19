@@ -18,12 +18,17 @@ order.service = (function(){
 	
 	var _isCloudOffer=false;//是否云盘套餐
 	
+	var _isGiftPackage=false;//是否礼包订购
+	
+	var _giftPackageName;//礼包名称
+	
 	var _init = function(){
 		order.service.searchPack(0,"init");
 	};
 	
 	//主套餐查询
 	var _searchPack = function(flag,initFlag,scroller){
+		
 		order.service.isCloudOffer=false;
 		$("#offer-rule").hide();
 		$("#offer-list").show();
@@ -34,6 +39,10 @@ order.service = (function(){
 		if($("#categoryNodeId").length>0){
 			var categoryNodeId=$("#categoryNodeId").val();
 			params.categoryNodeId = categoryNodeId;
+			if("101"==categoryNodeId){//礼包查询
+				order.service.searchGiftPackage(params,scroller);
+				return;
+			}
 		}
 		
 		var priceVal = $("#select_price").val();
@@ -557,6 +566,224 @@ var _scroll = function(scrollObj){
 	}
 };
 
+//销售品打包礼包查询
+var _searchGiftPackage = function(params,scroller){
+	var url = contextPath+"/app/order/getGiftPackageList";
+	$.callServiceAsHtmlGet(url,params, {
+		"before":function(){
+			$.ecOverlay("<strong>正在查询中,请稍等...</strong>");
+		},
+		"always":function(){
+			$.unecOverlay();
+		},
+		"done" : function(response){
+			if(response.code != 0) {
+				$.alert("提示","<br/>查询失败,稍后重试");
+				return;
+			}
+			var content$ = $("#offer-list");
+			content$.html(response.data);
+			var resultlst = $("#resultlst").val();
+			if(scroller && $.isFunction(scroller)) scroller.apply(this,[]);			
+            if(resultlst == 0){
+				var html = "<div class=\"list-group-item\"><div class=\"h4\"><img style=\"vertical-align:middle\"";
+				html += "src= \"/ltePortal/image/common/query_search.gif\" />&nbsp;&nbsp;抱歉，没有找到相关的礼包。</div></div> ";
+				content$.html(html);
+				$("#phoneNumber_a").hide();
+		    	$("#offer_a").show();
+		    	$("#offer_search_model").modal("hide");		
+			} else {
+				$("#phoneNumber_a").hide();
+		    	$("#offer_a").show();
+		    	$("#offer_search_model").modal("hide");		
+			}
+			
+		},
+		fail:function(response){
+			$.unecOverlay();
+			$.alert("提示","套餐加载失败，请稍后再试！");
+		}
+	});
+ };
+ 
+	//订购销售品
+	var _buyGiftPackage = function(giftName,giftId) {
+		order.service.showTab3=false;
+		var custId = OrderInfo.cust.custId;
+		if(OrderInfo.cust==undefined || custId==undefined || custId==""){
+			$.alert("提示","在订购套餐之前请先进行客户定位！");
+		}else{
+			var param = {
+					"specId" : giftId,
+					"custId" : OrderInfo.cust.custId,
+					"areaId" : OrderInfo.staff.soAreaId
+			};
+			if (OrderInfo.actionFlag == 2) { // 套餐变更不做校验
+				order.service.querySpec(param);
+			} else {
+				 // 新装
+				var boInfos = [{
+					boActionTypeCd: "S1",// 动作类型
+					instId : "",
+					specId : giftId // 产品（销售品）规格ID
+					}];
+				rule.rule.ruleCheck(boInfos,function(checkData){// 业务规则校验通过
+					if(ec.util.isObj(checkData)){
+						$("#offer-list").hide();
+						var content$ = $("#offer-rule").html(checkData).show();
+						$.refresh(content$);
+					}else{
+						param.giftName=giftName;
+						order.service.queryGiftPackageSpec(param);   
+					}
+				});
+			}
+         
+		}
+	};
+	
+	//获取礼包成员（销售品构成）
+	var _queryGiftPackageSpec = function(inParam){	
+		var param = {
+			giftPackageId : inParam.specId
+		};
+//		var offerSpec = query.offer.queryMainOfferSpec(param); //查询主销售品构成
+		
+
+		param.areaId = OrderInfo.cust.areaId;
+		var url= contextPath+"/app/offer/queryGiftPackageSpec";
+			$.callServiceAsJsonGet(url,param,{
+				"before":function(){
+					$.ecOverlay("<strong>正在查询礼包成员中,请稍后....</strong>");
+				},
+				"done" : function(response){
+					$.unecOverlay();
+					if (response.code==0) {
+						var offerSpecList=response.data.offerSpecList;
+						if(offerSpecList ==undefined || offerSpecList.length<1){
+							$.alert("错误提示","礼包成员查询: 没有找到销售品规格！");
+							return false;
+						}
+						var offerSpec;
+						var giftMainOffer;//礼包主套餐构成
+						var giftMainAttachOfferList=[];//主卡促销
+						var giftSecondAttachOfferList=[];//副卡促销
+						var giftAttach=[];//详情-主、副卡促销
+						var giftMainAttach=[];//详情-主卡促销
+						var giftSecondAttach=[];//详情-副卡促销
+						$.each(offerSpecList,function(){
+							var memberList=this;
+							var offerType=this.offerType;
+							if("11"==offerType){//主套餐
+								offerSpec=this.offerSpec;
+								giftMainOffer=memberList;
+							}else{
+								if(memberList.giftPackageObjRoleCd==CONST.MEMBER_ROLE_CD.MAIN_CARD){
+									giftMainAttachOfferList.push(memberList);
+									giftMainAttach.push(memberList);
+								}else if(memberList.giftPackageObjRoleCd==CONST.MEMBER_ROLE_CD.VICE_CARD){
+									giftSecondAttachOfferList.push(memberList);
+									giftSecondAttach.push(memberList);
+								}else if(memberList.giftPackageObjRoleCd=="-9999"){
+									giftMainAttachOfferList.push(memberList);
+									giftSecondAttachOfferList.push(memberList);
+									giftAttach.push(memberList);
+								}
+							}							
+						});
+						if(offerSpec ==undefined){
+							$.alert("错误提示","礼包成员查询: 没有找到销售品规格！");
+							return false;
+						}
+						if( offerSpec.offerRoles ==undefined){
+							$.alert("错误提示","礼包成员查询: 返回的销售品规格构成结构不对！");
+							return false;
+						}
+						if(offerSpec.offerSpecId==undefined || offerSpec.offerSpecId==""){
+							$.alert("错误提示","礼包成员查询: 销售品规格ID未返回，无法继续受理！");
+							return false;
+						}
+						if(offerSpec.offerRoles.length == 0){
+							$.alert("错误提示","礼包成员查询: 成员角色为空，无法继续受理！");
+							return false;
+						}
+						if(offerSpec.feeType ==undefined || offerSpec.feeType=="" || offerSpec.feeType=="null"){
+							$.alert("错误提示","无付费类型，无法新装！");
+							return false;
+						}
+						CacheData.giftMainOffer=giftMainOffer;
+						CacheData.giftMainAttachOfferList=giftMainAttachOfferList;
+						CacheData.giftSecondAttachOfferList=giftSecondAttachOfferList;
+						CacheData.giftAttach=giftAttach;
+						CacheData.giftMainAttach=giftMainAttach;
+						CacheData.giftSecondAttach=giftSecondAttach;
+						offerSpec = SoOrder.sortOfferSpec(offerSpec); //排序主副卡套餐
+						if((OrderInfo.actionFlag==6||OrderInfo.actionFlag==2||OrderInfo.actionFlag==1) && ec.util.isArray(OrderInfo.oldprodInstInfos)){//主副卡纳入老用户
+							OrderInfo.oldofferSpec.push({"offerSpec":offerSpec,"accNbr":param.accNbr});
+						}else{
+							OrderInfo.offerSpec = offerSpec;
+						}
+						
+						if(!offerSpec){
+							return;
+						}						
+						_max=0;
+						var iflag = 0; //判断是否弹出副卡选择框 false为不选择
+						var str="";
+						$.each(offerSpec.offerRoles,function(){
+							var offerRole = this;
+							if(offerRole.memberRoleCd==CONST.MEMBER_ROLE_CD.VICE_CARD){//副卡接入类产品
+								$.each(this.roleObjs,function(){
+									var objInstId = offerRole.offerRoleId+"_"+this.objId;//角色id+产品规格id
+									if(this.objType == CONST.OBJ_TYPE.PROD){
+										if(offerRole.minQty == 0){ //加装角色
+											this.minQty = 0;
+											this.dfQty = 0;
+										}
+										_max=this.maxQty;
+										order.service.max=this.maxQty;
+										iflag++;
+										return false;
+									}
+								});
+							}
+						});
+						order.service.isGiftPackage=true;//礼包订购
+						order.service.giftPackageName=inParam.giftName;//礼包名称
+						if(iflag >0){//显示副卡tab
+							 //号码入口展示副卡tab，否则展示选号
+							order.service.showTab3=true;
+							 order.phoneNumber.initPhonenumber();
+							 OrderInfo.order.step = 2;
+							 $("#offer_a").hide();
+							 $("#phoneNumber_a").show();
+							 $("#tab3_li").show();
+							 $("#tab2_li").removeClass("active");
+							 $("#tab1_li").addClass("active");
+							 $("#nav-tab-2").removeClass("active in");
+					    	 $("#nav-tab-1").addClass("active in");
+							 $("#maxSpan").html(_max+")");							
+						}else{//默认隐藏副卡tab
+                                //套餐入口跳往选号
+								 order.phoneNumber.initPhonenumber();
+								 OrderInfo.order.step = 2;
+								 $("#tab2_li").removeClass("active");
+								 $("#tab1_li").addClass("active");
+								 $("#nav-tab-2").removeClass("active in");
+						    	 $("#nav-tab-1").addClass("active in");
+						    	 $("#offer_a").hide();
+						    	 $("#phoneNumber_a").show();
+							}
+					}else if (response.code==-2){
+						$.alertM(response.data);
+					}else {
+						$.alert("提示","查询礼包成员失败,稍后重试");
+					}
+				}
+			});
+	
+	};
+
 	return {
 		enter:_enter,
 		max  :_max,
@@ -574,7 +801,12 @@ var _scroll = function(scrollObj){
 		init			:_init,
 		selectOffer		:_selectOffer,
 		scroll	: _scroll,
-		isCloudOffer  :_isCloudOffer
+		isCloudOffer  :_isCloudOffer,
+		searchGiftPackage:_searchGiftPackage,
+		buyGiftPackage   :_buyGiftPackage,
+		queryGiftPackageSpec:_queryGiftPackageSpec,
+		isGiftPackage      :_isGiftPackage,
+		giftPackageName    :_giftPackageName
 	};
 })();
 
