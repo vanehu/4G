@@ -99,7 +99,7 @@ bill.charge = (function() {
 							}
 							$('#queryResult').modal('show');
 							var totalBalance = "0";
-							if(response.data.arrears.result.SvcCont && response.data.arrears.result.SvcCont.Service_Information && response.data.arrears.result.SvcCont.Service_Information.Bill_Query_Information.Sum_Charge){
+							if(response.data.arrears.result.SvcCont && response.data.arrears.result.SvcCont.Service_Information && response.data.arrears.result.SvcCont.Service_Information.Bill_Query_Information && response.data.arrears.result.SvcCont.Service_Information.Bill_Query_Information.Sum_Charge){
 								totalBalance =response.data.arrears.result.SvcCont.Service_Information.Bill_Query_Information.Sum_Charge;
 							}
 							$('#totalBalance').text(totalBalance?totalBalance:"0");	
@@ -279,7 +279,7 @@ bill.charge = (function() {
 	};
 	
 	var _provinceSet = function() {
-		var provinceInfo = CONST.AREA_PROVINCE_MAPPING[OrderInfo.staff.areaId.substr(0, 3)];
+		var provinceInfo = CONST.AREA_PROVINCE_MAPPING[(OrderInfo.staff.areaId+"").substr(0, 3)];
 		$("#provinceId").html('<option value="' + provinceInfo.provId + '">' + provinceInfo.provName + '</option>');
 	};
 	var _amountChange = function() {
