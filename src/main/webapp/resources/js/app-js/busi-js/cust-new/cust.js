@@ -1238,10 +1238,6 @@ cust = (function(){
 	
 	//校验表单提交
 	var _validatorForm=function(){
-//		$(".new_user_box").Validform();
-		var propertiesKey = "NEWUIFLAG_"+(OrderInfo.staff.soAreaId+"").substring(0,3);
-		_newUIFalg = offerChange.queryPortalProperties(propertiesKey);
-		if(_newUIFalg == "ON" && (OrderInfo.actionFlag=="35" || OrderInfo.actionFlag=="34" || OrderInfo.actionFlag=="112" ||OrderInfo.actionFlag=="1" ||OrderInfo.actionFlag=="9")){
 			var new_user_box = $(".new_user_box").Validform({
 				btnSubmit:".sun-btn", 
 				ignoreHidden:true,
@@ -1249,7 +1245,7 @@ cust = (function(){
 					"zh6-50":/[\u4e00-\u9fa5]{6}|^.{12}/,
 					"sfz":/(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/,
 					"qtzj":/^[0-9a-zA-Z]{1,100}$/,
-					"phone":/^1[3456789]\d{9}$/
+					"phone":/^1[0-9]\d{9}$/
 				},
 				tiptype:function(msg,o,cssctl){
 					
@@ -1296,15 +1292,18 @@ cust = (function(){
 				    nullmsg:"证件地址不能为空",
 				    errormsg:"证件地址长度不得少于6个汉字"
 				},
+				{ 
+					ele:"#contactName",
+					datatype:"*",
+					nullmsg:"联系人姓名不能为空"
+				},
 				{
 				    ele:"#mobilePhone",
 				    datatype:"phone",
-				    errormsg:"请输入正确的手机号码",
-				    ignore:"ignore"
+				    nullmsg:"联系人号码不能为空",
+				    errormsg:"请输入正确的手机号码"
 				}                
 			]);
-		}
-		
 	};
 	
 	//获取证件类型以及初始化
