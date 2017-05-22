@@ -2767,6 +2767,18 @@ AttachOffer = (function() {
 		}
 	};
 	
+	var _checkTerminalVal = function(val){
+		return (/(^(?=.*[0-9])(?=.*[a-fA-F])([a-fA-F0-9]{14})$)|(^\d{15}$)/).test(val);
+		
+//		if(val.length>15 || val.length < 14)
+//			return false;
+//		if(val.length == 14){
+//			return (/^[0-9a-zA-Z]{14}$/).test(val);
+//		}else {
+//			return (/^\d{15}$/).test(val);
+//		}
+	}
+	
 	//终端校验
 	var _checkTerminalCode = function(obj){
 		var prodId=$(obj).attr("prodId");
@@ -2808,6 +2820,10 @@ AttachOffer = (function() {
 		var instCode = $("#terminal_text").val();
 		if(instCode==undefined || $.trim(instCode)==""){
 			$.alert("信息提示","终端串码不能为空！");
+			return;
+		}
+		if(!_checkTerminalVal($.trim(instCode))){
+			$.alert("提示信息","请输入合法的终端串码<br/>-必须14位字母与数字组合或15位数字组合,不限大小写");
 			return;
 		}
 		if(_checkData(objInstId,instCode)){
