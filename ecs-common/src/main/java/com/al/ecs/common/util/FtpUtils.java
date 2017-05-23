@@ -573,7 +573,26 @@ public class FtpUtils {
 				e.printStackTrace();
 			}
 		}
-
+		
+	}
+	
+	/**
+	 * 在FTP服务器上创建目录
+	 * @param ftpDirectory
+	 * @return
+	 */
+	public boolean makeDirectory(String ftpDirectory) {
+		boolean flag = false;
+		
+		try {
+			//返回true证明创建成功，即在执行创建命令前ftp上不存在此目录
+			//返回false证明创建失败，即ftp上已存在此目录
+			flag = ftpClient.makeDirectory(ftpDirectory);
+		} catch (IOException e) {
+			LOG.error("make directory falied, IOException : {}", e);
+		}
+		
+		return flag;
 	}
 
 }
