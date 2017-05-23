@@ -154,6 +154,8 @@ public class OrderUndoController extends BaseController {
         //add by liusd 20151103 防止SQL injection 
         if (StringUtils.isNotBlank(startDt) && startDt.length()<=8 && DateUtil.isRightDate(startDt, "yyyyMMdd")) {
             dataBusMap.put("startDt", startDt);
+        }else if(StringUtils.isNotBlank(olNbr)){
+        	  dataBusMap.remove("startDt");
         }else{
         	//获取当前日期以及当前日期前/后N天的日期 需要两种格式日期，一个为yyyy年MM月dd日 一个为yyyy-MM-dd
             String beginDate = DateUtil.nearDay("yyyyMMdd",-7);
@@ -162,7 +164,7 @@ public class OrderUndoController extends BaseController {
             Calendar c = Calendar.getInstance();
             String endTime = f.format(c.getTime());
             String startTime = f.format(c.getTime());
-        	dataBusMap.put("endDt", startTime);
+        	  dataBusMap.put("endDt", startTime);
         }
         if (StringUtils.isNotBlank(endDt) && startDt.length()<=8 && DateUtil.isRightDate(endDt, "yyyyMMdd")) {
             dataBusMap.put("endDt", endDt);
