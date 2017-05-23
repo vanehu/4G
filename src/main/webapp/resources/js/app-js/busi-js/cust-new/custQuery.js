@@ -299,7 +299,9 @@ custQuery = (function(){
 	        isSame: $(scope).attr("isSame")//使用人名称与账户名称是否一致
 			
 		};
-		
+		if(OrderInfo.cust.identityPic!=undefined){
+			_choosedCustInfo.identityPic=OrderInfo.cust.identityPic;//证件照片
+		}		
 		if(home.menuData.isProvenceMenu == "Y"){
 			$("#custQuerycontent").hide();
 			$("#cust-query-list").hide();
