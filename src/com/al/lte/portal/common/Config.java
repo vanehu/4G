@@ -21,17 +21,25 @@ public class Config {
 	 * @return
 	 */
 	public static String getIpconfig(HttpServletRequest req){
-		String IP = "crm.189.cn";
+		String IP = getProperties().getProperty("DEFAULTDOMAIN");
 		String ipconfig = getProperties().getProperty("ipconfig");
+		String areaId = req.getParameter("areaId");
+		String province = Config.getAreaName(areaId);
+		String domain = getProperties().getProperty(province+"Domain");
+		String newDomain = getProperties().getProperty("NEWDOMAIN");
+		String domainNameONOFF = getProperties().getProperty("domainNameONOFF");
 		if(ipconfig==null){ //获取文件失败
 			ipconfig = "0";
 		}
 		if(!"0".equals(ipconfig)){
 			String header =req.getHeader("x-ip-config");
-			if(header!=null){
+			if(header ==null){
 				IP = header;
+				return IP;
 			}
-			//System.out.println("IP:"+IP);
+			if(header.contains(newDomain) && "ON".equals(domainNameONOFF)){//走分省域名
+				return domain;
+			}
 		}
 		return IP;
 	}
@@ -43,7 +51,7 @@ public class Config {
 	 * @return 如果是公网，则以字符串形式返回分省域名；若分省域名获取失败，则返回crm.189.cn，不会返回null或者""。
 	 */
 	public static String getIpconfig(HttpServletRequest req, String province){
-		String IP = "crm.189.cn";
+		String IP = getProperties().getProperty("DEFAULTDOMAIN");
 		String ipconfig = getProperties().getProperty("ipconfig");//0表示启用公网， 1表示启用http请求头的ip，2表示测试环境10101
 		if(ipconfig==null){
 			ipconfig = "0";
@@ -57,7 +65,7 @@ public class Config {
 				IP = header;
 			}
 		} else if("0".equals(ipconfig)){//如果是公网环境，将ip改为分省域名
-			String domain = Config.getDomain(province);
+			String domain = Config.getDomain(province,req);
 			IP = (null == domain || "".equals(domain)) ? IP : domain;//若获取分省域名失败，则返回crm.189.cn
 		}
 		return IP;
@@ -250,5 +258,28 @@ public class Config {
 			System.out.println("**********************统一登录[域名] :"+domain);
 			return domain;
 		}
+	}
+	
+	/**
+	 * 获取分省域名字符串<br/>
+	 * 根据营业前台登录，根据选择省分不同，重定向至分省域名 如，选择江苏 重定向至js.crm.189.cn/xxxx
+	 * @param province省份拼音
+	 * @return 分省域名字符串<br/>
+	 * 域名为完整域名，从配置文件中获取。例如：北京域名应为"beijing.crm.189.cn"，山西域名应为"shxi.crm.189.cn"这样的格式，端口信息(如":83")以及HTTP请求头信息(如"http://")不应添加到域名里面。
+	 * <br/>如果无法从配置文件读取数据或读取失败，则返回字符串crm.189.cn
+	 */
+	public static String getDomain(String province,HttpServletRequest req){
+		String defaultDomain = getProperties().getProperty("DEFAULTDOMAIN");
+		String newDomain = getProperties().getProperty("NEWDOMAIN");
+		String domainNameONOFF = getProperties().getProperty("domainNameONOFF");
+		String domain = getProperties().getProperty(province+"Domain");
+		String headerHost = req.getRequestURI();
+		if (headerHost == null) {//走老域名
+			return defaultDomain;
+		}
+		if(headerHost.contains(newDomain) && "ON".equals(domainNameONOFF)){//走分省域名
+			return domain;
+		}
+		return defaultDomain;
 	}
 }

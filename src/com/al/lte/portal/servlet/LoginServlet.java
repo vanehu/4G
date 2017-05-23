@@ -44,7 +44,7 @@ public class LoginServlet extends HttpServlet {
 //	     System.out.println("**********************统一登录：入参[province] :"+province);
 	     Map<String, Object> respMap = new HashMap<String, Object>();
 	     respMap.put("provVersion", getProvVersion(province));
-	     respMap.put("provDomain", getProvDomain(province));
+	     respMap.put("provDomain", Config.getDomain(province,req));
 //	     System.out.println("**********************统一登录：返回端口 :"+getProvVersion(province));
 //	     System.out.println("**********************统一登录：返回域名 :"+getProvDomain(province));
 	     JSONObject jsonObj = JSONObject.fromObject(respMap);
