@@ -82,6 +82,9 @@
 			'provOrderAttrFlag-8540000':'1'		    
 		}
 		</const>
+		<const type="String" name="DEFAULTDOMAIN" value="crm.189.cn" description="默认域名"/>
+		<const type="String" name="NEWDOMAIN" value="yd.crm.189.cn" description="新域名"/>
+		<const type="String" name="DOMAINNAMEONOFF" value="ON" description="新域名开关"/>
 		<const type="String" name="CN2CSBHTTP_URL" value=" http://cn2csbt.crm.189.cn/LTE-CSB/HttpDEPService" description="通过CSB调外围接口使用此地址"/>
 		<const type="String" name="CN2CSBWS_URL" value="http://cn2csbt.crm.189.cn/LTE-CSB/services/DEPService?wsdl"  description="通过CSB调外围接口使用此地址"/>
 		<const type="String" name="BATCHORDER_QRY_FLAG" value="ON"  description="CRM系统批量预开通功能优化需求开关，ON：改造之后；OFF：改造之前"/>

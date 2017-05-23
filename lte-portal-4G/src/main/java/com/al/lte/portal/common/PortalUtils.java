@@ -9,8 +9,10 @@ import java.util.Properties;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.util.WebUtils;
 
+import com.al.ecs.common.util.PropertiesUtils;
 import com.al.ecs.log.Log;
 
 /**
@@ -34,6 +36,8 @@ public class PortalUtils {
     public static final List<String> THEME_LIST = new ArrayList<String>();
     /** 模板列表 */
     public static final Map<String,String> TPL_MAP = new HashMap<String,String>();
+    @Autowired
+    private static PropertiesUtils propertiesUtils;
     static {
     	THEME_LIST.add(THEME_DEFAULT);
     	THEME_LIST.add(THEME_PC);
@@ -138,5 +142,28 @@ public class PortalUtils {
 			}
 		}
 		return flag;
+	}
+	
+	/**
+	 * 获取分省域名字符串<br/>
+	 * 根据营业前台登录，根据选择省分不同，重定向至分省域名 如，选择江苏 重定向至js.crm.189.cn/xxxx
+	 * @param province省份拼音
+	 * @return 分省域名字符串<br/>
+	 * 域名为完整域名，从配置文件中获取。例如：北京域名应为"beijing.crm.189.cn"，山西域名应为"shxi.crm.189.cn"这样的格式，端口信息(如":83")以及HTTP请求头信息(如"http://")不应添加到域名里面。
+	 * <br/>如果无法从配置文件读取数据或读取失败，则返回字符串crm.189.cn
+	 */
+	public static String getDomain(String province,HttpServletRequest req){
+		String defaultDomain = propertiesUtils.getMessage("DEFAULTDOMAIN");
+		String newDomain = propertiesUtils.getMessage("NEWDOMAIN");
+		String domainNameONOFF = propertiesUtils.getMessage("domainNameONOFF");
+		String domain = propertiesUtils.getMessage(province+"Domain");
+		String headerHost = req.getRequestURI();
+		if (headerHost == null) {//走老域名
+			return defaultDomain;
+		}
+		if(headerHost.contains(newDomain) && "ON".equals(domainNameONOFF)){//走分省域名
+			return domain;
+		}
+		return defaultDomain;
 	}
 }

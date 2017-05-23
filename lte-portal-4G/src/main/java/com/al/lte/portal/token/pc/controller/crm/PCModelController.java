@@ -249,16 +249,17 @@ public class PCModelController extends BaseController {
 			log.warn("服务端口[LocalPort]："+port);
 			// Host:crm.189.cn:83 Host:mo.crm.189.cn:93 Host:10.128.86.10:8101
 			String headerHost = request.getHeader(SysConstant.HTTP_REQUEST_HEADER_HOST);
-
-			if(PortalUtils.isSecondLevelDomain(headerHost)){
+			String defaultDomain= propertiesUtils.getMessage("DEFAULTDOMAIN");
+			String domainNameONOFF = propertiesUtils.getMessage("DOMAINNAMEONOFF");
+			if(PortalUtils.isSecondLevelDomain(headerHost) && "ON".equals(domainNameONOFF)){
 				//#591478 若启用分省域名，应重定向到*.crm.189.cn:port
 				return super.redirect("https://" + headerHost + "/provPortal" + modelUrl);
 			} else{
 				//否则，走原来的老逻辑
 				if((port==10101 || port==10102 || port==10103) && "ON".equals(flag)){
-					return super.redirect("https://crm.189.cn:83/provPortal"+modelUrl);
+					return super.redirect("https://"+defaultDomain+":83/provPortal"+modelUrl);
 				}else if((port==10151 || port==10152 || port==10153) && "ON".equals(flag)){
-					return super.redirect("https://crm.189.cn:84/provPortal"+modelUrl);
+					return super.redirect("https://"+defaultDomain+":84/provPortal"+modelUrl);
 				}else{
 					return super.redirect(modelUrl);
 				}	

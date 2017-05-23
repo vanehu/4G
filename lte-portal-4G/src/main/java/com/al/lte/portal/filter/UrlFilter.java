@@ -10,14 +10,17 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.UrlPathHelper;
 
+import com.al.ecs.common.util.PropertiesUtils;
 import com.al.ecs.exception.InterfaceException;
 import com.al.ecs.log.Log;
 import com.al.lte.portal.common.EhcacheUtil;
 import com.al.lte.portal.common.FilterBaseData;
 import com.al.lte.portal.common.MySimulateData;
+import com.al.lte.portal.common.PortalUtils;
 import com.al.lte.portal.common.SysConstant;
 import com.al.lte.portal.model.SessionStaff;
 
@@ -39,6 +42,8 @@ public class UrlFilter extends OncePerRequestFilter {
 	public static final String SECURE_PROTOCOL = "https";
 
 
+	@Autowired
+	PropertiesUtils propertiesUtils;
 	static {
 		excludeUrls=new String[9];//不需要过滤的链接
 		excludeUrls[0]="/staff/";
@@ -72,12 +77,20 @@ public class UrlFilter extends OncePerRequestFilter {
 				e.printStackTrace();
 			}
 			int port = request.getLocalPort();
-			if((port==10101 || port==10102 || port==10103) && "ON".equals(flag)){
-				response.sendRedirect("https://crm.189.cn:83/provPortal/main/limit?current="+EhcacheUtil.getCurrentPath(request.getSession(),path));
-			}else if((port==10151 || port==10152 || port==10153) && "ON".equals(flag)){
-				response.sendRedirect("https://crm.189.cn:84/provPortal/main/limit?current="+EhcacheUtil.getCurrentPath(request.getSession(),path));
+			String headerHost = request.getHeader(SysConstant.HTTP_REQUEST_HEADER_HOST);
+			String defaultDomain= propertiesUtils.getMessage("DEFAULTDOMAIN");
+			String domainNameONOFF = propertiesUtils.getMessage("DOMAINNAMEONOFF");
+			if(PortalUtils.isSecondLevelDomain(headerHost) && "ON".equals(domainNameONOFF)){
+				//#591478 若启用分省域名，应重定向到*.crm.189.cn:port
+				response.sendRedirect("https://" + headerHost + "/provPortal/main/limit?current="+EhcacheUtil.getCurrentPath(request.getSession(),path));
 			}else{
-				response.sendRedirect(request.getContextPath()+"/main/limit?current="+EhcacheUtil.getCurrentPath(request.getSession(),path));
+				if((port==10101 || port==10102 || port==10103) && "ON".equals(flag)){
+					response.sendRedirect("https://"+defaultDomain+":83/provPortal/main/limit?current="+EhcacheUtil.getCurrentPath(request.getSession(),path));
+				}else if((port==10151 || port==10152 || port==10153) && "ON".equals(flag)){
+					response.sendRedirect("https://"+defaultDomain+":84/provPortal/main/limit?current="+EhcacheUtil.getCurrentPath(request.getSession(),path));
+				}else{
+					response.sendRedirect(request.getContextPath()+"/main/limit?current="+EhcacheUtil.getCurrentPath(request.getSession(),path));
+				}
 			}
 			return;
 		}
