@@ -75,6 +75,8 @@ order.query = (function(){
 		$("#handleCustCertificateImg").attr("src", "");
 		$("#handleCustCertificateTbody").hide();
 		$("#handleCustCertificateNoList").hide();
+		$("#photographReviewSuccess").hide();
+		$("#photographReviewFail").hide();
 		
 		var params = {
 			"olId"		:$.trim($("#virOlIdInput").val()),
@@ -99,6 +101,8 @@ order.query = (function(){
 						});
 						$("#handleCustCertificateTbody").addClass("phone_warp");
 						$("#handleCustCertificateTbody").show();
+						$("#photographReviewSuccess").show();
+						$("#photographReviewFail").show();
 					} else{
 						$("#handleCustCertificateNoList").addClass("phone_warp");
 						$("#handleCustCertificateNoList").show();
@@ -129,6 +133,15 @@ order.query = (function(){
 		}, "order.query.callBackFunc4Check()");
 	};
 	
+	//远程审核：审核不过
+	var _photographReviewCheckFail = function(){
+		_photographReviewPassed({
+			"checkType":"N2",
+			"olId":$.trim($("#virOlIdInput").val())
+		}, "order.query.callBackFunc4Check()");
+	};
+	
+	//审核前基本校验
 	var _callBackFunc4Check = function(){
 		var handleCustPhotograph = $("#handleCustPhotograph").attr("src");
 		var handleCustCertificateImg = $("#handleCustCertificateImg").attr("src");
@@ -141,15 +154,12 @@ order.query = (function(){
 		}
 	};
 
-	//远程审核：审核通过
+	//远程审核
 	var _photographReviewPassed = function(params, callBackFunc4Check){
 		if(ec.util.isObj(callBackFunc4Check)){
 			if(!eval(callBackFunc4Check)){
 				return;
 			}
-		} else{
-			$.alert("错误", "确认审核信息的入参不完整，没有获取到有效的回调函数。");
-			return;
 		}
 		
 		$.callServiceAsJson(contextPath + "/order/savePhotographReviewRecord", params, {
@@ -161,7 +171,7 @@ order.query = (function(){
 					if(ec.util.isObj(response.data)){
 						$.alert("信息", response.data);
 					} else{
-						$.alert("信息", "审核成功");
+						$.alert("信息", "审核完成！");
 					}
 				}else if(response.code == 1 && response.data){
 					$.alert("错误", "审核确认信息发送失败，错误原因：" + response.data);
@@ -239,16 +249,17 @@ order.query = (function(){
 	};
 	
 	return {
-		init					:_init,
-//		showMain				:_showMain,
-		chooseAree				:_chooseAree,
-		queryOrderList			:_queryOrderList,
-		callBackFunc4Check		:_callBackFunc4Check,
-		photographReviewPassed	:_photographReviewPassed,
-		qryOperateSpecStaffList	:_qryOperateSpecStaffList,
-		photographReviewCheckOK	:_photographReviewCheckOK,
-		downloadCustCertificate	:_downloadCustCertificate,
-		initPhotographReviewDom	:_initPhotographReviewDom
+		init						:_init,
+//		showMain					:_showMain,
+		chooseAree					:_chooseAree,
+		queryOrderList				:_queryOrderList,
+		callBackFunc4Check			:_callBackFunc4Check,
+		photographReviewPassed		:_photographReviewPassed,
+		qryOperateSpecStaffList		:_qryOperateSpecStaffList,
+		photographReviewCheckOK		:_photographReviewCheckOK,
+		downloadCustCertificate		:_downloadCustCertificate,
+		initPhotographReviewDom		:_initPhotographReviewDom,
+		photographReviewCheckFail	:_photographReviewCheckFail
 	};
 })();
 //初始化

@@ -4025,10 +4025,10 @@ order.cust = (function(){
 	var _close = function() {
 		try{
 			var closeResult = cert.closeVideo();
-			var closeResultJsonObj = JSON.parse(closeResult);
-			if (closeResultJsonObj && closeResultJsonObj.resultFlag != 0){
-				$.alert("错误", "关闭摄像头发生错误，请清空浏览器缓存，重新将拍照设备与电脑连接后再次尝试，错误信息：" + closeResultJsonObj.errorMsg);
-			}
+//			var closeResultJsonObj = JSON.parse(closeResult);
+//			if (closeResultJsonObj && closeResultJsonObj.resultFlag != 0){
+//				$.alert("错误", "关闭摄像头发生错误，请清空浏览器缓存，重新将拍照设备与电脑连接后再次尝试，错误信息：" + closeResultJsonObj.errorMsg);
+//			}
 		}catch(e) {
 			throw new Error("camera driver (DoccameraOcx.exe) is not installed correctly.");
 		}finally{
