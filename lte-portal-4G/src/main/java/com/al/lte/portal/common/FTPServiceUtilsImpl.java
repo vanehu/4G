@@ -9,6 +9,7 @@ import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
+import com.al.common.utils.DateUtil;
 import com.al.ec.serviceplatform.client.ResultCode;
 import com.al.ecs.common.util.FtpUtils;
 import com.al.ecs.common.util.PropertiesUtils;
@@ -274,7 +275,20 @@ public class FTPServiceUtilsImpl implements FTPServiceUtils {
 		boolean ftpConnectFlag = ftpUtils.connectFTPServer(remoteAddress, remotePort, userName, password);
 		if(ftpConnectFlag){
 			//3.切换FTP服务器路径
+			boolean essFtpUpload = false;
+			if (ftpRemotePath.contains("ess_yyyyMMdd")) {
+				essFtpUpload = true;
+				ftpRemotePath = ftpRemotePath.split("ess_yyyyMMdd")[0];
+			}
+			
 			boolean changePathFlag = ftpUtils.changeWorkingDirectory(ftpRemotePath);
+			if (essFtpUpload) {
+				//生成当天的目录
+				String yyyyMMdd = DateUtil.getNowII();
+				ftpUtils.makeDirectory(yyyyMMdd);
+				changePathFlag = ftpUtils.changeWorkingDirectory(ftpRemotePath + yyyyMMdd);
+			}
+			
 			if(changePathFlag){
 				//4.上传文件
 				boolean uploadFileFlag = ftpUtils.uploadFileToFtpServer(newUploadFileName, fileInputStream);

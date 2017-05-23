@@ -898,4 +898,7 @@ public final class SysConstant {
     
     /**跳过经办人人像审核权限*/
     public static final String RXSHGN = "RXSHGN";
+    
+    /** 融合ESS 的订单类型 */
+    public static final String OL_TYPE_LTE_ESS = "17"; 
 }
