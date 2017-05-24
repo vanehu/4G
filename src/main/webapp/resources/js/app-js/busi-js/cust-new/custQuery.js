@@ -18,6 +18,7 @@ custQuery = (function(){
 	var _choosedProdInfo = {};
 	var from_cust = "1";
 	var _govSwitch = "";//政企开关
+	var _custPic="";//客户读卡照片
 	//进入客户定位页面
 	var _goQueryCust = function(){
 		var param = {};
@@ -299,8 +300,9 @@ custQuery = (function(){
 	        isSame: $(scope).attr("isSame")//使用人名称与账户名称是否一致
 			
 		};
+		custQuery.custPic="";
 		if(OrderInfo.cust.identityPic!=undefined){
-			_choosedCustInfo.identityPic=OrderInfo.cust.identityPic;//证件照片
+			custQuery.custPic=OrderInfo.cust.identityPic;//证件照片
 		}		
 		if(home.menuData.isProvenceMenu == "Y"){
 			$("#custQuerycontent").hide();
@@ -1079,7 +1081,9 @@ custQuery = (function(){
 //				$("#query-cust-prod").hide();
 //			}
 //		}
-		
+		if(custQuery.custPic!=""){
+			OrderInfo.cust.identityPic=custQuery.custPic;//证件照片
+		}	
 		_queryCustNext();
 	};
 	
@@ -1398,7 +1402,8 @@ custQuery = (function(){
 		saveAuthRecord	:	_saveAuthRecord,
 		queryCustNext	:	_queryCustNext,
 		getChooseProdInfo	:	_getChooseProdInfo,
-		goOrder	:	_goOrder,
-		govSwitch	:	_govSwitch
+		goOrder	    : _goOrder,
+		govSwitch	: _govSwitch,
+		custPic     : _custPic
 	};	
 })();
