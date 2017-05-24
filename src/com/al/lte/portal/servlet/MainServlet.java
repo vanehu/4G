@@ -19,7 +19,7 @@ public class MainServlet extends HttpServlet {
 		 Cookie areack = Config.getCookie(req,"_UNIFY_LOGIN_AREA_SIGN");
 		 if(areack!=null){
 			 String province = areack.getValue();
-			 String Port = Config.getProvVersion(province);
+			 String Port = Config.getProvVersion(province,req);
 			 String domain = Config.getIpconfig(req, province);
 			 String httpconfig = "";
 			 if("81".equals(Port) || "82".equals(Port)){

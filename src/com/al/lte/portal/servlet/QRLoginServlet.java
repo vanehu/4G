@@ -34,7 +34,7 @@ public class QRLoginServlet extends HttpServlet {
 	     PrintWriter out;
 	     String province = req.getParameter("province");
 	     Map<String, Object> respMap = new HashMap<String, Object>();
-	     respMap.put("provVersion", Config.getProvVersion(province));
+	     respMap.put("provVersion", Config.getProvVersion(province,req));
 	     respMap.put("provDomain", Config.getIpconfig(req,province));
 	     JSONObject jsonObj = JSONObject.fromObject(respMap);
 	     try {

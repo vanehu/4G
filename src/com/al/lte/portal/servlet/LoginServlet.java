@@ -21,8 +21,8 @@ public class LoginServlet extends HttpServlet {
 	 * 省份获取版本
 	 * @return
 	 */
-	public String getProvVersion(String province){
-		return Config.getProvVersion(province);
+	public String getProvVersion(String province,HttpServletRequest req){
+		return Config.getProvVersion(province,req);
 	}
 	
 	/**
@@ -43,8 +43,10 @@ public class LoginServlet extends HttpServlet {
 	     String province = req.getParameter("province");
 //	     System.out.println("**********************统一登录：入参[province] :"+province);
 	     Map<String, Object> respMap = new HashMap<String, Object>();
-	     respMap.put("provVersion", getProvVersion(province));
-	     respMap.put("provDomain", Config.getDomain(province,req));
+	     String provVersion =  getProvVersion(province,req);
+	     String provDomain = Config.getDomain(province,req);
+	     respMap.put("provVersion", provVersion);
+	     respMap.put("provDomain", provDomain);
 //	     System.out.println("**********************统一登录：返回端口 :"+getProvVersion(province));
 //	     System.out.println("**********************统一登录：返回域名 :"+getProvDomain(province));
 	     JSONObject jsonObj = JSONObject.fromObject(respMap);

@@ -72,7 +72,7 @@ public class AccessTokenServlet extends HttpServlet {
 				
 			}
 			String province = Config.getAreaName(provinceCode);
-			String Port = Config.getProvVersion("NL-"+province);
+			String Port = Config.getProvVersion("NL-"+province,request);
 			String httpconfig = "";
 			if ("81".equals(Port) || "82".equals(Port) ) {
 				httpconfig = "http";

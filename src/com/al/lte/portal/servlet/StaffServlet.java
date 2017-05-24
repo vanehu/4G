@@ -36,7 +36,7 @@ public class StaffServlet extends HttpServlet {
 		Cookie areack = Config.getCookie(req,"_UNIFY_LOGIN_AREA_SIGN");
 		if(areack!=null){
 			String province = areack.getValue();
-			String Port = Config.getProvVersion(province);
+			String Port = Config.getProvVersion(province,req);
 			String httpconfig = "";
 			if("81".equals(Port) || "82".equals(Port)){
 				httpconfig = "http";
@@ -66,7 +66,7 @@ public class StaffServlet extends HttpServlet {
 		Config.addCookie(province,resp,req);
 		//update by huangjj3 清除客户端4层生成的cookie
 		DelCookie.delCookie(resp, "LTEA10", null, "/", req);
-		String Port = Config.getProvVersion(province);
+		String Port = Config.getProvVersion(province,req);
 		String domain = Config.getIpconfig(req, province);
 		String httpconfig = "";
 		if("81".equals(Port) || "82".equals(Port)){

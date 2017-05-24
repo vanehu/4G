@@ -22,7 +22,7 @@ public class OLPosServlet extends HttpServlet {
 		resp.setContentType("text/html;charset=utf-8"); // 设置响应页面字符编码
 		String areaId = req.getParameter("areaId");
 		String province = Config.getAreaName(areaId);
-		String Port = Config.getProvVersion(province);
+		String Port = Config.getProvVersion(province,req);
 		String httpconfig = "";
 		if("81".equals(Port) || "82".equals(Port)){
 			httpconfig = "http";

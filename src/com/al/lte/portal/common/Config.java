@@ -166,6 +166,33 @@ public class Config {
 		return version;
 	}
 	
+	/**
+	 * 获取省份版本
+	 * @return
+	 */
+	public static String getProvVersion(String province,HttpServletRequest request){
+		String version = getProperties().getProperty(province+"Version");
+		if(!"81".equals(version) && 
+				!"82".equals(version) && 
+				!"83".equals(version) && 
+				!"84".equals(version) && 
+				!"93".equals(version) && 
+				!"94".equals(version)){
+			version = "9";//获取文件失败
+		}
+		String defaultDomain = getProperties().getProperty("DEFAULTDOMAIN");
+		if(!defaultDomain.equals(Config.getIpconfig(request, province))){
+			if("83".equals(version)){
+				version = "93";
+			}
+			if("84".equals(version)){
+				version = "94";
+			}
+		}
+		System.out.println("**********************统一登录[端口版本号]:"+version);
+		return version;
+	}
+	
 //	public static String getMACAddr()throws SocketException, UnknownHostException {
 //	   // 获得ＩＰ
 //	   NetworkInterface netInterface = NetworkInterface.getByInetAddress(InetAddress.getLocalHost());
@@ -273,11 +300,12 @@ public class Config {
 		String newDomain = getProperties().getProperty("NEWDOMAIN");
 		String domainNameONOFF = getProperties().getProperty("domainNameONOFF");
 		String domain = getProperties().getProperty(province+"Domain");
-		String headerHost = req.getRequestURI();
+		StringBuffer headerHost = req.getRequestURL();
+		System.out.println("打印出headerHost=="+headerHost);
 		if (headerHost == null) {//走老域名
 			return defaultDomain;
 		}
-		if(headerHost.contains(newDomain) && "ON".equals(domainNameONOFF)){//走分省域名
+		if(headerHost.toString().contains(newDomain) && "ON".equals(domainNameONOFF)){//走分省域名
 			return domain;
 		}
 		return defaultDomain;

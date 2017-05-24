@@ -71,7 +71,7 @@ public class ModeAppServlet extends HttpServlet {
 			}
 			String[] accessTokenStr = jmAccessToken.split("#");
 			String province = Config.getAreaName(accessTokenStr[1]);
-			String Port = Config.getProvVersion("NL-"+province);
+			String Port = Config.getProvVersion("NL-"+province,request);
 			String httpconfig = "";
 			if("81".equals(Port) || "82".equals(Port)){
 				httpconfig = "http";
