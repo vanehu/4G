@@ -308,8 +308,10 @@ SoOrder = (function() {
 		}
 		
 		//老用户副卡纳入帐号修改结点
-		if(!_oldprodAcctChange(busiOrders)){
-			return false;
+		if("ON" == offerChange.queryPortalProperties("ADD_OLD_USER_MOD_ACCT_" + OrderInfo.staff.soAreaId.substring(0,3))){
+			if(!_oldprodAcctChange(busiOrders)){
+				return false;
+			}
 		}
 		OrderInfo.orderData.orderList.orderListInfo.custOrderAttrs = custOrderAttrs; //订单属性数组
 		OrderInfo.orderData.orderList.orderListInfo.extCustOrderId = OrderInfo.provinceInfo.provIsale; //省份流水
@@ -2241,7 +2243,19 @@ SoOrder = (function() {
 				$.alert("提示","客户信息不能为空！");
 				return false ; 
 			}
-			
+			if("ON" != offerChange.queryPortalProperties("ADD_OLD_USER_MOD_ACCT_" + OrderInfo.staff.soAreaId.substring(0,3))){
+				//纳入老用户判断主卡副卡账户一致
+				if(ec.util.isArray(OrderInfo.oldprodAcctInfos)){
+					for(var a=0;a<OrderInfo.oldprodAcctInfos.length;a++){
+						var oldacctId = OrderInfo.oldprodAcctInfos[a].prodAcctInfos[0].acctId;
+						var mainacctid = $("#acctSelect option:selected").val();
+						if(oldacctId!=mainacctid){
+							$.alert("提示","副卡和主卡的账户不一致！");
+							return false ; 
+						}
+					}
+				}
+			}
 			//校验号码跟UIM卡
 			//如果是套餐变更-->新装
 			if(!ec.util.isArray(OrderInfo.oldprodInstInfos)){

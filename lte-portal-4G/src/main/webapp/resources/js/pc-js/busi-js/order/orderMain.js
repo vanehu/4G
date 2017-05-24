@@ -142,8 +142,9 @@ order.main = (function(){
 			$("#fillLastStep").show();
 		}
 		$("#fillNextStep").off("click").on("click",function(){
-			//#1466473  纳入老用户判断主卡副卡账户是否一致，不一致提示修改副卡账户
-			if(ec.util.isArray(OrderInfo.oldprodInstInfos)){
+			//#1466473  纳入老用户判断主卡副卡账户是否一致，不一致提示修改副卡账户（分省开关控制）
+			var addOldUserModAcctFalg = query.common.queryPropertiesStatus("ADD_OLD_USER_MOD_ACCT_"+OrderInfo.getAreaId().substring(0,3));
+			if(ec.util.isArray(OrderInfo.oldprodInstInfos)&& addOldUserModAcctFalg){
 				var acctIdFlag = false;//主副卡是否一致标识
 				var acctNumberList = [];//副卡是否一致标识
 				for(var a=0;a<OrderInfo.oldprodAcctInfos.length;a++){
