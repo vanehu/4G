@@ -341,6 +341,7 @@ AttachOffer = (function() {
 			$.alert("提示","请输入查询条件！");
 			return;
 		}
+		OrderInfo.mainOfferSpecId = offerSpecId;
 		if(instCode!=null && instCode !=""){
 			var param = { 
 					agreementName : offerSepcName,

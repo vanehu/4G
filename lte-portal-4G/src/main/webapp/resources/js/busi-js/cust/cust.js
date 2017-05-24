@@ -1026,7 +1026,8 @@ order.cust = (function(){
 	var _showCustAuth = function(scope) {
 		if(OrderInfo.menuName == "ZXHYBL"){
 			var accNbr = $(scope).attr("accNbr");
-			var  qryResponse =  _qryPreliminaryInfo(accNbr);
+			var identityNum = $.trim($("#p_cust_identityNum").val());
+			var  qryResponse =  _qryPreliminaryInfo(identityNum,accNbr);
 			if(qryResponse.code == 0){
 				if(qryResponse.data.result == null || qryResponse.data.result.userInfo == null || qryResponse.data.result.userInfo.businessType==null){
 					$.alert("错误","查询后台 '客户信息核验接口' 未返回结果，查询接口流水号："+qryResponse.data.transactionID);
@@ -1038,7 +1039,6 @@ order.cust = (function(){
 						$.alert("提示","集约4G系统里用户的受理地区 "+areaId+" 和征信平台初审接口返回 cityCode "+userInfo.cityCode+" 办理业务的城市编码不一致,无法办理征信业务。");
 						return;
 					}
-					var identityNum = $.trim($("#p_cust_identityNum").val());
 					if(identityNum != userInfo.idcard){
 						$.alert("提示","集约4G系统里用户办理用户的证件号码和征信平台初审接口返回的idcard用户身份证号码不一致，无法办理征信业务。");
 						return;
@@ -2257,15 +2257,16 @@ order.cust = (function(){
 				$.alert("错误","办理征信分期合约业务，证件类型必须是身份证。");
 				return;
 			}
-			var  qryResponse =  _qryPreliminaryInfo("");
+			var idcard = _certInfo.custIdCard;
+			var  qryResponse =  _qryPreliminaryInfo(idcard,"");
 			if(qryResponse.code == 0){
 				if(qryResponse.data.result == null || qryResponse.data.result.userInfo == null || qryResponse.data.result.userInfo.businessType==null){
-					$.alert("错误","查询后台 '客户信息核验接口' 未返回结果，查询接口流水号："+qryResponse.data.transactionID);
+					$.alert("错误","查询后台 '征信平台初审接口' 未返回结果，查询接口流水号："+qryResponse.data.transactionID);
 					return;
 				}else{
 					var userInfo = qryResponse.data.result.userInfo;
 					if(userInfo.businessType != CONST.BUS_TYPE.ADD_SINGLE && userInfo.businessType != CONST.BUS_TYPE.ADD_FUSE && userInfo.businessType != CONST.BUS_TYPE.ADD_OTHER_FUSE){
-						$.alert("提示","新建客户只能做新增业务,'客户信息核验接口'返回可做业务类型为："+userInfo.businessType);
+						$.alert("提示","新建客户只能做新增业务,'征信平台初审接口'返回可做业务类型为："+userInfo.businessType);
 						return;
 					}
 					var areaId = $("#p_cust_areaId").val();
@@ -2273,8 +2274,7 @@ order.cust = (function(){
 						$.alert("提示","集约4G系统里用户的受理地区 "+areaId+" 和征信平台初审接口返回 cityCode "+userInfo.cityCode+" 办理业务的城市编码不一致,无法办理征信业务。");
 						return;
 					}
-					var identityNum = $.trim($("#p_cust_identityNum").val());
-					if(identityNum != userInfo.idcard){
+					if(idcard != userInfo.idcard){
 						$.alert("提示","集约4G系统里用户办理用户的证件号码和征信平台初审接口返回的idcard用户身份证号码不一致，无法办理征信业务。");
 						return;
 					}
@@ -4375,12 +4375,12 @@ order.cust = (function(){
 	};
 	
 	//征信 获取初审信息
-	var _qryPreliminaryInfo = function(phoneNumber) {
+	var _qryPreliminaryInfo = function(idCard,phoneNumber) {
 		OrderInfo.preliminaryInfo = {};
 		var partnerCode = $("#partnerCode").val();
 		var param = {
 			areaId : $("#p_cust_areaId").val(),
-			idCard : $.trim($("#p_cust_identityNum").val()),
+			idCard : idCard,
 			phoneNumber : phoneNumber,
 			partnerCode : partnerCode
 		};
