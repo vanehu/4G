@@ -4478,23 +4478,34 @@ SoOrder = (function() {
                     }
                 }
             });
-            order.cust.preCheckCertNumberRelQueryOnly(inParam);//查询证件下已经有的号码个数
-            var oldNum = OrderInfo.oneCardFiveNum.usedNum[order.cust.getCustInfo415Flag(inParam)];
-            $.each(OrderInfo.boProdAns, function () {//提取出所有没有选择使用人的号码
-                if ($.inArray(parseInt(this.prodId), OrderInfo.oneCardFiveNum.hasUserProdIds) == -1) {
-                    numbers += numbers == "" ? this.accessNumber : "，" + this.accessNumber;
-                    newNumbers++;
-                }
-            });
+            if (OrderInfo.oneCardFiveNum.hasUserProdIds.length != OrderInfo.boProdAns.length) {
+				order.cust.preCheckCertNumberRelQueryOnly(inParam);// 查询证件下已经有的号码个数
+				var oldNum = OrderInfo.oneCardFiveNum.usedNum[order.cust
+						.getCustInfo415Flag(inParam)];
+				$.each(OrderInfo.boProdAns, function() {// 提取出所有没有选择使用人的号码
+							if ($.inArray(parseInt(this.prodId),
+									OrderInfo.oneCardFiveNum.hasUserProdIds) == -1) {
+								numbers += numbers == ""
+										? this.accessNumber
+										: "，" + this.accessNumber;
+								newNumbers++;
+							}
+						});
 
-            if (oldNum + newNumbers > 5 && ec.util.isObj(numbers)) {
-                $.alert("提示", "证件「" + inParam.certNum + "」全国范围已有" + oldNum + "张移动号卡，您当前业务在本证件下新增" + newNumbers + "张号卡「" + numbers + "]，合计超过5卡，请对于新号卡登记其他使用人！");
-                oneCertFiveNum = false;
-            } else {
-                oneCertFiveNum = true;
-            }
+				if (oldNum + newNumbers > 5 && ec.util.isObj(numbers)) {
+					$.alert("提示", "证件「" + inParam.certNum + "」全国范围已有" + oldNum
+									+ "张移动号卡，您当前业务在本证件下新增" + newNumbers
+									+ "张号卡「" + numbers
+									+ "]，合计超过5卡，请对于新号卡登记其他使用人！");
+					oneCertFiveNum = false;
+				} else {
+					oneCertFiveNum = true;
+				}
+			} else {
+				oneCertFiveNum = true;// 不做一证五号校验的默认返回true
+			}
         } else {
-            oneCertFiveNum = true;//不做一证五号校验的默认返回true
+            oneCertFiveNum = true;// 不做一证五号校验的默认返回true
         }
         return oneCertFiveNum;
     };
