@@ -39,8 +39,12 @@ provence = (function(){
         		var menuList = msg.menuList;
         		for(var i=0;i<menuList.length;i++){
         			var item = menuList[i];
-        			var menustr = '<li id="'+item.menulId+'" name="'+item.menuName+'" onclick="home.initData('+"'prov_menu'"+",0,'"+item.menuName+"','"+item.menulId+"')"+'" style="border: 1px solid #dedede;">';
-        			menustr = menustr + '<i class="iconfont">&#xe6d7</i>';
+        			var iconPic = "&#xe6d7";
+        			if(item.iconPic!=undefined && item.iconPic.length>0){
+        				iconPic = item.iconPic;
+        			}
+        			var menustr = '<li id="'+item.menulId+'" name="'+item.menuName+'" onclick="home.initData('+"'prov_menu'"+",0,'"+item.menuName+"','"+item.menulId+"','"+item.needCust+"')"+'" style="border: 1px solid #dedede;">';
+        			menustr = menustr + '<i class="iconfont">'+iconPic+'</i>';
         			menustr = menustr + '<p>'+item.menuName+'</p>';
         			menustr = menustr + '</li>';
         			$("#prov_menuList").append(menustr);
@@ -146,6 +150,7 @@ provence = (function(){
 //		alert(OrderInfo.cust.partyName);
 		if(OrderInfo.cust.partyName!=null && OrderInfo.cust.partyName.length>0){
 			param = {
+					extCustId: OrderInfo.cust.extCustId,
 					custId: OrderInfo.cust.custId,
 					partyName: OrderInfo.cust.partyName,
 					addressStr: OrderInfo.cust.addressStr,

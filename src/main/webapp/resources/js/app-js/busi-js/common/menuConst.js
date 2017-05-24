@@ -74,7 +74,7 @@ menuConst = (function($) {
 		return resultMenu;
 	}
 	
-	var _setMenuData = function(method,menuName,menuId){
+	var _setMenuData = function(method,menuName,menuId,needCust){
 		home.menuData = {};
 		home.menuData.menuId = menuId;
 		var i = 0;
@@ -121,7 +121,11 @@ menuConst = (function($) {
 				home.menuData.actionFlag = "1000000000";
 				home.menuData.enter		 = "1";
 				home.menuData.method	 = method;
-				home.menuData.needCust	 = "Y";
+				if(needCust!=undefined && needCust.length>0){
+					home.menuData.needCust	 = needCust;
+				}else{
+					home.menuData.needCust	 = "Y";
+				}
 				home.menuData.isSecond	 = "N";
 				home.menuData.menuName	 = menuName;
 				OrderInfo.actionFlag	 = "1000000000";
