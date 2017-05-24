@@ -285,6 +285,11 @@ order.memberChange = function(){
 						}
 					});					
 					$("#oldnum_1").html(oldCardHtml);
+					var propertiesKey = "VICE_CARD_DEL_USER_"+OrderInfo.staff.soAreaId.substring(0,3);
+			        var isON = offerChange.queryPortalProperties(propertiesKey);
+			        if(isON == "ON"){
+						$("#oldnum_1").after("<div class=\"ui-grid-a\">注意：您纳入加装的移动电话纳入后将统一使用主卡账户！</div>");	
+			        }
 				}
 				var $tipTr = $("<tr><td colspan='2' style='text-align:right;line-height:25px;'>" +
 						"<font style='color:red;'>拆副卡：</font><br/><font font style='color:red;'>保留>>选择新套餐：</font></td>" +
