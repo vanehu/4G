@@ -1932,6 +1932,18 @@ order.cust = (function(){
 					OrderInfo.offer.offerSpecName = order.prodModify.choosedProdInfo.prodOfferName;
 				}
 			}
+			if(ec.util.isObj(response.data.offerMemberInfos)){
+				//初始化销售品成员实例构成使用人信息
+				$.each(response.data.offerMemberInfos,function(){
+					var param = {
+						prodInstId : this.objInstId,
+						acctNbr : this.accessNumber,
+						prodSpecId : this.objId,
+						areaId : OrderInfo.getAreaId()
+					};
+					order.cust.initUserInfos(param);
+				});
+			}
 		}else{
 			$.alertM(response.data);
 			return false;
@@ -3400,6 +3412,44 @@ order.cust = (function(){
 			}
             $.alert("提示","此用户下已经有"+(parseInt(userNO-1)+ec.util.mapGet(OrderInfo.oneCardFiveNO.usedNum,order.cust.getCustInfo415Flag(inParam)))+"个号码，请选择其他用户做为使用人！");
         }else{
+            //#1476472 增加翼支付功能产品订购限制，判断是否满足订购条件，不满足条件退订翼支付功能产品
+            if ("2" != userSubInfo.servType) {//责任人选择时不判断
+                if(!order.cust.yiPayidentityCdCheck(userSubInfo.identityCd)){
+    				var hasYiPayFlag = false;
+    				var yiPayServSpec = {};
+    				if(ec.util.isArray(AttachOffer.openServList)){
+    					for ( var j = 0; j < AttachOffer.openServList.length; j++) {
+    						if(hasYiPayFlag) break;
+    						if(userSubInfo.prodId == AttachOffer.openServList[j].prodId){
+    							if(ec.util.isArray(AttachOffer.openServList[j].servSpecList)){
+    								for ( var k = 0; k < AttachOffer.openServList[j].servSpecList.length; k++) {
+    									if(AttachOffer.openServList[j].servSpecList[k].servSpecId == CONST.PROD_SPEC.YIPAY_SERVSPECID){
+    										yiPayServSpec = AttachOffer.openServList[j].servSpecList[k];
+    										if(yiPayServSpec.isdel!="Y"){
+    											hasYiPayFlag = true;
+    											break;
+    										}
+    									}
+    								}
+    							}
+    						}
+    					}
+    				}
+    				if(hasYiPayFlag){
+    					AttachOffer.closeServSpec(userSubInfo.prodId,yiPayServSpec.servSpecId,yiPayServSpec.aliasName,yiPayServSpec.ifParams,"Y");
+    					//给出拦截提示信息，在互斥依赖依赖退订提示取消
+    					var tips = "当前使用人证件类型不在【";
+    					for (var j = 0; j < CONST.YIPAY_IDENTITYCD.length; j ++) {
+    						if(j==0)
+    							tips += CONST.YIPAY_IDENTITYCD[j].NAME;
+    						else
+    							tips += ","+CONST.YIPAY_IDENTITYCD[j].NAME;
+    					}
+    					tips += "】中，不允许订购翼支付功能产品，系统会自动退订相关的依赖销售品！"
+    					$.alert("提示",tips);
+    				}
+                }
+            }
         	$("#chooseUserBt").removeClass("btna_g").addClass("btna_o");
     		$('#chooseUserBt').off('click').on('click',function(){
     			_commitUser(userSubInfo,inParam,this.prodId);
@@ -3595,6 +3645,145 @@ order.cust = (function(){
             return inParam.certNum;
         }
     };
+    
+	/**
+	 * #1476473 增加翼支付功能产品订购限制，判断是否满足订购条件
+	 * 	返回true表示校验通过，为可订购；false为校验不通过，不允许订购，默认提示退订
+	 * 	prodId 产品实例ID，新装的为负数序列
+	 * 	type 校验场景,1：初始化套餐带出；2：选择使用人（直接调用证件校验方法）；3：选择订购翼支付）
+	 */
+	var _canOrderYiPay = function (prodId,type) {
+		var isNew = false;
+		//判断prodId是否存在并是否小于0来判断是否为新装产品
+		if(ec.util.isObj(prodId)&&prodId<0){
+			isNew = true;
+		}
+		//先取产权客户证件类型
+		var identityCd = OrderInfo.cust.identityCd;
+		//判断是否为政企客户
+		var isGov = _isCovCust(identityCd);
+		//使用人证件类型
+		var userIdentityCd = "";
+		if(isNew){
+			//初始化套餐带出
+			if(type == 1){
+				//新装初始化套餐带出政企用户不校验，选择使用人时校验，公众用户直接校验产权人
+				if(isGov){
+					return true;
+				}
+			//选择订购翼支付
+			}else if(type == 3){
+                var isON = query.common.queryPropertiesStatus("REAL_USER_"+OrderInfo.cust.areaId.substr(0,3));
+                if(isON){
+                	if(ec.util.isObj(OrderInfo.subUserInfos)){
+	    	    		 $.each(OrderInfo.subUserInfos, function () {
+	                         if (this.prodId == prodId) {
+	                         	userIdentityCd = this.orderIdentidiesTypeCd;
+	                         }
+	                     });
+	    	    	 }
+               }else{
+               	 if(ec.util.isObj(OrderInfo.choosedUserInfos)){
+	                    $.each(OrderInfo.choosedUserInfos, function () {
+		                    if (this.prodId == prodId) {
+		                    	userIdentityCd = this.custInfo.identityCd;
+		                    }
+		                });
+               	 }
+         		}
+          		//有使用人直接校验使用人
+          		if(ec.util.isObj(userIdentityCd)){
+          			identityCd = userIdentityCd;
+          		}else{
+          			//政企用户如果没选择使用人不校验，选择使用人时校验，公众用户无使用人直接校验产权人
+          			if(isGov){
+						return true;
+					}
+          		}
+			}
+		}else{
+		    //判断老用户对应使用人，政企必有使用人，无使用人直接拦截，公众有使用人校验使用人，无使用人校验产权用户
+			if(ec.util.isObj(OrderInfo.oldUserInfos)){
+				 $.each(OrderInfo.oldUserInfos, function () {
+		              if (this.prodId == prodId) {
+		            	 userIdentityCd = this.identidiesTypeCd;
+		              }
+		           });
+			}
+            if(ec.util.isObj(userIdentityCd)){
+	           //判断拆副卡变更套餐，公众用户，副卡变主卡，如果有使用人，会删除，需要校验产权人
+           	   //主副卡互换，公众用户，副卡边主卡，如果有使用人，会删除，需要校验产权人，主卡还是校验产权人
+	           if(!(OrderInfo.actionFlag == 21||OrderInfo.actionFlag == 28&&!isGov)){
+	           	  identityCd = userIdentityCd;
+	           }
+           }else{
+			  if(isGov){
+				return false;
+			  }
+           }
+		}
+		return _yiPayidentityCdCheck(identityCd);
+	};
+	
+	/**
+	 * 增加翼支付功能产品订购限制，根据证件类型判断是否满足订购条件
+	 * 返回true表示校验通过，为可订购；false为校验不通过，不允许订购
+	 * identityCd 证件类型
+	 */
+	var _yiPayidentityCdCheck = function (identityCd) {
+		if(ec.util.isObj(identityCd)){
+			//判断是否在能订购证件类型列表中
+			for (var i = 0; i < CONST.YIPAY_IDENTITYCD.length; i ++) {
+				if (identityCd == CONST.YIPAY_IDENTITYCD[i].CD) {
+					return true;
+				}
+			}
+		}
+		return false;
+	};
+	
+	/**
+	 * 查询使用人信息缓存至OrderInfo.oldUserInfos
+	 * 调用场景：套餐变更初始化；
+	 * param{
+	 * 		prodInstId : objInstId,
+	 * 		acctNbr : accessNumber,
+	 * 		prodSpecId : objId,
+	 * 		areaId : OrderInfo.getAreaId()
+	 * };
+	 */
+	var _initUserInfos = function(param){
+		if(!ec.util.isObj(OrderInfo.oldUserInfos)){
+			OrderInfo.oldUserInfos = [];
+		}
+		//先判断是否存在，存在就不再次调用获取
+		var userhasInitFlag = false;
+		$.each(OrderInfo.oldUserInfos, function () {
+              if (this.prodId == param.prodId) {
+            	 userhasInitFlag = true;
+            	 return;
+              }
+        });
+        if(userhasInitFlag)return;
+		var url= contextPath+"/cust/getUserInfo";
+		$.ecOverlay("<strong>正在使用人信息中,请稍后....</strong>");
+		var response = $.callServiceAsJsonGet(url,param);	
+		$.unecOverlay();
+		if (response.code==0) {
+			if(response.data&&!$.isEmptyObject(response.data)){
+				response.data.prodId = param.prodInstId;
+				OrderInfo.oldUserInfos.push(response.data);
+			}
+		}else if (response.code==-2){
+			$.alertM(response.data);
+		}else {
+			if(response.data){
+				$.alert("提示","["+param.acctNbr+"]获取使用人信息失败!"+response.data);
+			}else{
+				$.alert("提示","["+param.acctNbr+"]获取使用人信息失败!");
+			}
+		}
+	};
 	
 	return {
 		saveAuthRecordFail:_saveAuthRecordFail,
@@ -3673,7 +3862,10 @@ order.cust = (function(){
 		confirmAgreeSmsResend : _confirmAgreeSmsResend,
 		auditFailure : _auditFailure,
 		auditConfirm : _auditConfirm,
-		qryOperateSpecStaffList : _qryOperateSpecStaffList
+		qryOperateSpecStaffList : _qryOperateSpecStaffList,
+        canOrderYiPay:_canOrderYiPay,
+        yiPayidentityCdCheck:_yiPayidentityCdCheck,
+        initUserInfos:_initUserInfos
 	};
 })();
 $(function() {

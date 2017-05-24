@@ -575,7 +575,7 @@ order.main = (function(){
 							if(!order.cust.canOrderYiPay(param.prodId,1)){
 								var hasYiPayFlag = false;
 								var yiPayServSpec = {};
-								if(ec.util.isArray(AttachOffer.openList)){
+								if(ec.util.isArray(AttachOffer.openServList)){
 									for ( var j = 0; j < AttachOffer.openServList.length; j++) {
 										if(param.prodId == AttachOffer.openServList[j].prodId){
 											if(ec.util.isArray(AttachOffer.openServList[j].servSpecList)){
@@ -847,7 +847,7 @@ order.main = (function(){
 				if(!order.cust.canOrderYiPay(param.prodId,1)){
 					var hasYiPayFlag = false;
 					var yiPayServSpec = {};
-					if(ec.util.isArray(AttachOffer.openList)){
+					if(ec.util.isArray(AttachOffer.openServList)){
 						for ( var j = 0; j < AttachOffer.openServList.length; j++) {
 							if(param.prodId == AttachOffer.openServList[j].prodId){
 								if(ec.util.isArray(AttachOffer.openServList[j].servSpecList)){
@@ -1735,7 +1735,7 @@ order.main = (function(){
                 if(!order.cust.yiPayidentityCdCheck(order.cust.tmpChooseUserInfo.identityCd)){
 					var hasYiPayFlag = false;
 					var yiPayServSpec = {};
-					if(ec.util.isArray(AttachOffer.openList)){
+					if(ec.util.isArray(AttachOffer.openServList)){
 						for ( var j = 0; j < AttachOffer.openServList.length; j++) {
 							if(hasYiPayFlag) break;
 							if(prodId == AttachOffer.openServList[j].prodId){
@@ -3535,7 +3535,7 @@ order.main = (function(){
             if(!order.cust.yiPayidentityCdCheck(userSubInfo.identityCd)){
 				var hasYiPayFlag = false;
 				var yiPayServSpec = {};
-				if(ec.util.isArray(AttachOffer.openList)){
+				if(ec.util.isArray(AttachOffer.openServList)){
 					for ( var j = 0; j < AttachOffer.openServList.length; j++) {
 						if(hasYiPayFlag) break;
 						if(userSubInfo.prodId == AttachOffer.openServList[j].prodId){

@@ -4405,8 +4405,11 @@ order.cust = (function(){
 		if(ec.util.isObj(prodId)&&prodId<0){
 			isNew = true;
 		}
-		//先取产权客户证件类型
+		//先取产权客户证件类型,如果是新建客户，取新建节点的证件类型
 		var identityCd = OrderInfo.cust.identityCd;
+		if(OrderInfo.cust.custId < 0){
+			identityCd = OrderInfo.boCustInfos.defaultIdType;
+		}
 		//判断是否为政企客户
 		var isGov = _isCovCust(identityCd);
 		//使用人证件类型
@@ -4422,18 +4425,22 @@ order.cust = (function(){
 			}else if(type == 3){
                 var isON = query.common.queryPropertiesStatus("REAL_USER_"+OrderInfo.cust.areaId.substr(0,3));
                 if(isON){
-                    $.each(OrderInfo.subUserInfos, function () {
-                        if (this.prodId == prodId) {
-                        	userIdentityCd = this.orderIdentidiesTypeCd;
-                        }
-                    });
-                }else{
-                    $.each(OrderInfo.choosedUserInfos, function () {
-	                    if (this.prodId == prodId) {
-	                    	userIdentityCd = this.custInfo.identityCd;
-	                    }
-	                });
-          		}
+                	if(ec.util.isObj(OrderInfo.subUserInfos)){
+	    	    		 $.each(OrderInfo.subUserInfos, function () {
+	                         if (this.prodId == prodId) {
+	                         	userIdentityCd = this.orderIdentidiesTypeCd;
+	                         }
+	                     });
+	    	    	 }
+               }else{
+               	 	if(ec.util.isObj(OrderInfo.choosedUserInfos)){
+	                    $.each(OrderInfo.choosedUserInfos, function () {
+		                    if (this.prodId == prodId) {
+		                    	userIdentityCd = this.custInfo.identityCd;
+		                    }
+		                });
+               	 	}
+         		}
           		//有使用人直接校验使用人
           		if(ec.util.isObj(userIdentityCd)){
           			identityCd = userIdentityCd;

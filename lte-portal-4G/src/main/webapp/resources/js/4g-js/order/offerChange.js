@@ -414,7 +414,7 @@ offerChange = (function() {
 						if(!order.cust.canOrderYiPay(param.prodId,1)){
 							var hasYiPayFlag = false;
 							var yiPayServSpec = {};
-							if(ec.util.isArray(AttachOffer.openList)){
+							if(ec.util.isArray(AttachOffer.openServList)){
 								for ( var j = 0; j < AttachOffer.openServList.length; j++) {
 									if(param.prodId == AttachOffer.openServList[j].prodId){
 										if(ec.util.isArray(AttachOffer.openServList[j].servSpecList)){
@@ -469,7 +469,7 @@ offerChange = (function() {
 						if(!order.cust.canOrderYiPay(param.prodId,1)){
 							var hasYiPayFlag = false;
 							var yiPayServSpec = {};
-							if(ec.util.isArray(AttachOffer.openList)){
+							if(ec.util.isArray(AttachOffer.openServList)){
 								for ( var j = 0; j < AttachOffer.openServList.length; j++) {
 									if(param.prodId == AttachOffer.openServList[j].prodId){
 										if(ec.util.isArray(AttachOffer.openServList[j].servSpecList)){

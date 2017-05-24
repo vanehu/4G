@@ -1123,7 +1123,8 @@ CacheData = (function() {
 		parseServ				: _parseServ,
 		parseOffer				: _parseOffer,
 		getOldOfferMember		: _getOldOfferMember,
-		setRecordId:_setRecordId,
+		setRecordId				: _setRecordId,
+		getGovCertType			: _getGovCertType,
 		isGov                   : _isGov
 	};
 })();

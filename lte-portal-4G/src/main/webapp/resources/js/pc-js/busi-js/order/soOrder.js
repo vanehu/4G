@@ -3168,6 +3168,12 @@ SoOrder = (function() {
 	//显示模板名称
 	var _showTemplateOrderName = function(id){
 		if($("#isTemplateOrder").attr("checked")=="checked"){
+			//#1476473 营业厅翼支付开户IT流程优化
+			if(CacheData.hasServSpec(CONST.PROD_SPEC.YIPAY_SERVSPECID)){
+				$.alert("提示","当前订单已订购【翼支付】功能产品，不允许勾选为批量模版，如需勾选，请退订【翼支付】功能产品。");
+				$("#isTemplateOrder").removeAttr("checked");
+				return;
+			}
 			if(OrderInfo.actionFlag==1||OrderInfo.actionFlag==14){
 				$(".template_info_type").show();
 				$("#isActivation").removeAttr("checked");
