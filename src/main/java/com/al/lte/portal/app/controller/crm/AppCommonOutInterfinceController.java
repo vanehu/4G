@@ -330,6 +330,7 @@ public class AppCommonOutInterfinceController extends BaseController{
 			custInfo.put("certNumber", reqMap.get("idCardNumber"));
 			custInfo.put("certType", reqMap.get("identityCd"));
 			custInfo.put("custId", reqMap.get("custId"));
+			custInfo.put("extCustId", reqMap.get("extCustId"));
 			custInfo.put("custType", reqMap.get("custFlag"));
 			
 		}

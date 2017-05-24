@@ -25,7 +25,7 @@ home = (function($) {
 		});
 	};
 	
-	var _initData = function(method,actionFlag,resourceName,resourceId)
+	var _initData = function(method,actionFlag,resourceName,resourceId,needCust)
 	{
 		var params={};
 //		alert(method);
@@ -47,7 +47,7 @@ home = (function($) {
 //		OrderInfo.actionFlag = 1;
 //		home.homeEnter = "1";
 		
-		menuConst.setMenuData(method, resourceName, resourceId);
+		menuConst.setMenuData(method, resourceName, resourceId,needCust);
 //		home.menuData.isProvenceMenu = "Y";//是否省份菜单
 //		home.menuData.needCust	 = "Y";//是否需要客户定位
 //		home.setOrderInfoActionFlag(method);

@@ -99,7 +99,7 @@ custQuery = (function(){
 			$("#zjsm").show();
 			$("#cpdl").hide();
 //			$("#userid").next("span").find("button").prop("disabled", false);
-			$("#"+id).attr("placeHolder","请输入身份证号码");
+			$("#"+id).attr("placeHolder","身份证号码");
 			$("#"+id).attr("readonly","readonly");
 			$("#"+id).attr("data-validate","validate(idCardCheck:请准确填写身份证号码) on(keyup)");
 		}else if(identidiesTypeCd==2){
@@ -271,6 +271,7 @@ custQuery = (function(){
 	//客户列表点击
 	var _showCustAuth = function(scope) {
 		_choosedCustInfo = {
+			extCustId : $(scope).attr("extCustId"),
 			custId : $(scope).attr("custId"), //$(scope).find("td:eq(3)").text(),
 			partyName : $(scope).attr("partyName"), //$(scope).find("td:eq(0)").text(),
 			idCardNumber : $(scope).attr("idCardNumber"), //$(scope).find("td:eq(4)").text(),

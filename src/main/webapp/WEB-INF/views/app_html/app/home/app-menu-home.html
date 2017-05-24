@@ -109,7 +109,7 @@
 					<ul class="menu-box" id="prov_menuList">
 						<#if prov_menulist?? &&(prov_menulist?size>0) >
 							<#list prov_menulist as item>
-							<li id="${item.menulId}" name="${item.menuName}" onclick="home.initData('prov_menu',0,'${item.menuName}','${item.menulId}')" style="border: 1px solid #dedede;">
+							<li id="${item.menulId}" name="${item.menuName}" onclick="home.initData('prov_menu',0,'${item.menuName}','${item.menulId}','${item.needCust}')" style="border: 1px solid #dedede;">
 								<i class="iconfont">${item.iconPic}</i>
 								<p>${item.menuName}</p>
 							</li>
