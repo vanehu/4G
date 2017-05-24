@@ -181,6 +181,9 @@ public class Config {
 			version = "9";//获取文件失败
 		}
 		String defaultDomain = getProperties().getProperty("DEFAULTDOMAIN");
+		if(province.contains("NL-")){
+			province = province.split("NL-")[1];
+		}
 		if(!defaultDomain.equals(Config.getIpconfig(request, province))){
 			if("83".equals(version)){
 				version = "93";
