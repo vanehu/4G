@@ -499,7 +499,8 @@
                           <tr>
                                 <td> 联系人名称：</td>
                                 <td>
-                                  <input type="text" placeHolder="请填写联系人名称"  class="inputWidth228px" maxlength="32" id="discontactName" onchange="javascript:$('#contactName').val($(this).val())"/>
+                                  <input type="text" placeHolder="请填写联系人名称" data-validate="validate(required:请准确填写联系人姓名) on(blur)"  class="inputWidth228px" maxlength="32" id="discontactName" onchange="javascript:$('#contactName').val($(this).val());"/>
+                                  <label class="f_red">*</label>
                                 </td>
                           </tr><tr>
                                 <td> 家庭电话：</td>
@@ -514,7 +515,8 @@
                           </tr><tr>
                                 <td> 移动电话：</td>
                                 <td>
-                                  <input type="text" placeHolder="请填写移动电话"  class="inputWidth228px" maxlength="32" id="dismobilePhone" data-validate="validate(isTelPhone:请输入11位手机号码.) on(blur)" onchange="javascript:$('#mobilePhone').val($(this).val())"/>
+                                  <input type="text" placeHolder="请填写移动电话"  class="inputWidth228px" maxlength="32" id="dismobilePhone" data-validate="validate(required:请准确填写移动电话,isTelPhone:请输入11位手机号码.) on(blur)" onchange="javascript:$('#mobilePhone').val($(this).val())"/>
+                                  <label class="f_red">*</label>
                                 </td>
                           </tr>
                                 <td ><a onclick="order.cust.btnMoreProfile()" href="javascript:void(0)">更多属性>></a></td><td></td>
