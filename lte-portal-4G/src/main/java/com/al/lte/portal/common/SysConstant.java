@@ -892,7 +892,12 @@ public final class SysConstant {
      */
     public static final String ONE_FIVE_SRC_FLAG_REAL = "REAL";
     public static final String ONE_FIVE_SRC_FLAG_APPLE = "APPLE";
-    
+
+    /**
+     * 默认上传文件大小限制1M
+     */
+    public static final int DEFAULT_FILE_SIZE = 1024 * 1024;
+
     /** 实名制拍照人像审核分省开关，默认OFF(4GWEB+能力共用)*/
     public static final String PHOTOGRAPH_REVIEW_FLAG = "PHOTOGRAPH_REVIEW_FLAG";
     

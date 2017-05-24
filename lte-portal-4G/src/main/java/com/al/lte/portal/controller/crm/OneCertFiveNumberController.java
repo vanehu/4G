@@ -343,6 +343,7 @@ public class OneCertFiveNumberController extends BaseController {
                                          @RequestParam(value = "soNbr") String soNbr) {
         SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
         Map<String, Object> param = new HashMap<String, Object>();
+        List<Map<String, String>> errorList = new ArrayList<Map<String, String>>();
         Map<String, Object> retMap = new HashMap<String, Object>();
         List<Map<String, String>> fileInfos = new ArrayList<Map<String, String>>();
         JsonResponse jsonResponse = null;
@@ -352,22 +353,42 @@ public class OneCertFiveNumberController extends BaseController {
         param.put("srcFlag", SysConstant.ONE_FIVE_SRC_FLAG_REAL);
         for (CommonsMultipartFile file : files) {
             Map<String, String> fileInfo = new HashMap<String, String>();
-            String fileName = file.getFileItem().getName();
-            String fileType = file.getFileItem().getContentType();
-            String picFlag = "";
-            long fileSize = file.getSize();
-            String fileStr = Base64.encode(file.getBytes());
-            fileInfo.put("orderInfo", fileStr);
+            Map<String, String> errorMap = new HashMap<String, String>();
+            String fileName = file.getFileItem().getName();//文件名
+            String fileType = file.getFileItem().getContentType();//文件类型
 
+            long fileSize = file.getSize();//文件大小校验
+            if (fileSize > SysConstant.DEFAULT_FILE_SIZE) {
+                errorMap.put("fileSize", String.valueOf(fileSize));
+                errorMap.put("fileType", fileType);
+            }
+
+
+            String picFlag = "";//文件标识
             if (fileType.startsWith("image")) {
                 picFlag = SysConstant.ONE_FIVE_FILE_TYPE_JPG;
             } else if (fileType.endsWith("pdf")) {
                 picFlag = SysConstant.ONE_FIVE_FILE_TYPE_PDF;
             }
-            fileInfo.put("picFlag", picFlag);
-            fileInfos.add(fileInfo);
+            if (StringUtils.isBlank(picFlag)) {//文件类型校验
+                errorMap.put("fileType", fileType);
+                errorMap.put("fileSize", String.valueOf(fileSize));
+            }
+            if (errorMap.isEmpty()) {
+                String fileStr = Base64.encode(file.getBytes());
+                fileInfo.put("orderInfo", fileStr);
+                fileInfo.put("picFlag", picFlag);
+                fileInfos.add(fileInfo);
+            } else {
+                errorMap.put("fileName", fileName);
+                errorList.add(errorMap);
+            }
         }
         param.put("picturesInfo", fileInfos);
+        if (errorList.size() > 0) {
+            retMap.put("errorList", errorList);
+            return failed(retMap, -2);
+        }
         try {
             Map<String, Object> returnMap = oneFiveBmo.uploadFile(param, sessionStaff);
             if (null != returnMap) {

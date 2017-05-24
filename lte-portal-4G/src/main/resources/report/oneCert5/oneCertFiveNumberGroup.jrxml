@@ -11,6 +11,7 @@
 	<field name="year" class="java.lang.String"/>
 	<field name="month" class="java.lang.String"/>
 	<field name="day" class="java.lang.String"/>
+	<field name="olNbr" class="java.lang.String"/>
 	<field name="custName" class="java.lang.String"/>
 	<field name="phoneNumber" class="java.lang.String"/>
 	<field name="certType" class="java.lang.String"/>
@@ -124,6 +125,20 @@
 				</reportElement>
 				<textElement/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{year}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement style="styleBlackSong" x="0" y="1" width="57" height="15"/>
+				<textElement>
+					<font fontName="宋体"/>
+				</textElement>
+				<text><![CDATA[订单编号：]]></text>
+			</staticText>
+			<textField>
+				<reportElement style="styleBlackSong" x="57" y="1" width="171" height="15">
+					<printWhenExpression><![CDATA[$F{olNbr}!=null]]></printWhenExpression>
+				</reportElement>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{olNbr}]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>

@@ -1,7 +1,7 @@
 <table class="numberList" id="tab_orderList">
     <thead>
     <tr>
-        <td width="40"><input type="checkbox" onchange="oneFive.certNumber.selectAll(this)"/><span>全选</span></td>
+        <td width="40"><input type="checkbox" onclick="oneFive.certNumber.selectAll(this)"/><span>全选</span></td>
         <td width="80">省</td>
         <td width="200">地区</td>
         <td style="display: none;"></td>
@@ -15,7 +15,7 @@
         <#list pageModel.list as item >
         <tr>
             <td><#if (item.handleStatus)??&&("100002"!=item.handleStatus)><input type="checkbox"
-                                                                                 onchange="oneFive.certNumber.selectItem(this)"/></#if>
+                                                                                 onclick="oneFive.certNumber.selectItem(this)"/></#if>
             </td>
             <td>${item.proLanName}</td>
             <td style="display: none;">${item.lanId}</td>

@@ -5748,6 +5748,10 @@ public class PrintBmoImpl implements PrintBmo {
             Map<String, Object> printData = new HashMap();
             String printType = MapUtils.getString(paramMap, "printType");
 
+
+            //订单编号
+            printData.put("olNbr", MapUtils.getString(paramMap, "olNbr",""));
+
             //时间信息
             Calendar calendar = Calendar.getInstance();
             printData.put("year", calendar.get(Calendar.YEAR));
