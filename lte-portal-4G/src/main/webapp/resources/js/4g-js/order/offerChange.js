@@ -154,11 +154,15 @@ offerChange = (function() {
 									"</i>"+this.minQty+"-"+max+"（张） </td>");	
 							iflag++;
 							if(max>0 && areaidflag!="" && areaidflag.net_vice_card=="0"){
+								var oldTips = "注意：纳入老用户必须和主卡账户一致!";
+								if(query.common.queryPropertiesStatus("ADD_OLD_USER_MOD_ACCT_"+OrderInfo.getAreaId().substring(0,3))){
+									oldTips = "注意：您纳入加装的移动电话纳入后将统一使用主卡账户！";
+								}
 								var olro = "<tr style='background:#f8f8f8;' id='oldnum_1' name='oldnbr'>" +
 								"<td class='borderLTB' style='font-size:14px; padding:0px 0px 0px 12px'><span style='color:#518652; font-size:14px;'>已有移动电话</span></td>" +
 								"<td align='left' colspan='3'><input value='' style='margin-top:10px' class='numberTextBox' id='oldphonenum_1' type='text' >" +
 								"<a style='margin-top:15px' class='add2' href='javascript:order.memberChange.addNum("+max+",\"\");'> </a>"+this.minQty+"-"+max+"（张）</td></tr>"+	
-								"<tr style='background:#f8f8f8;' name='oldnum_tips'><td align='left' colspan='4' style ='color: red; padding-left: 30px;'>注意：您纳入加装的移动电话纳入后将统一使用主卡账户！</td></tr>";	
+								"<tr style='background:#f8f8f8;' name='oldnum_tips'><td align='left' colspan='4' style ='color: red; padding-left: 30px;'>"+oldTips+"</td></tr>";	
 								$tr.after(olro);
 							}
 						}
@@ -285,7 +289,9 @@ offerChange = (function() {
 		SoOrder.initFillPage(); //并且初始化订单数据
 		$("#order_fill_content").html(response.data);
 		$("#fillNextStep").off("click").on("click",function(){
-			if(ec.util.isArray(OrderInfo.oldprodInstInfos)){//纳入老用户判断主卡副卡账户是否一致，不一致提示修改副卡账户
+			//#1466473纳入老用户判断主卡副卡账户是否一致，不一致提示修改副卡账户（分省开关控制）
+			var addOldUserModAcctFalg = query.common.queryPropertiesStatus("ADD_OLD_USER_MOD_ACCT_"+OrderInfo.getAreaId().substring(0,3));
+			if(ec.util.isArray(OrderInfo.oldprodInstInfos)&& addOldUserModAcctFalg){
 				var acctIdFlag = false;//主副卡是否一致标识
 				var acctNumberList = [];//副卡是否一致标识
 				for(var a=0;a<OrderInfo.oldprodAcctInfos.length;a++){

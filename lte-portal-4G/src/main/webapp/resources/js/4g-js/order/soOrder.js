@@ -562,7 +562,9 @@ SoOrder = (function() {
 		}
 		
 		//老用户副卡纳入帐号修改结点
-		if(!_oldprodAcctChange(busiOrders)) return false;
+		if(query.common.queryPropertiesStatus("ADD_OLD_USER_MOD_ACCT_"+OrderInfo.getAreaId().substring(0,3)))
+			if(!_oldprodAcctChange(busiOrders)) 
+				return false;
 		
 		if(CONST.realNamePhotoFlag == "ON"){
 			//订单填充经办人信息
@@ -3089,6 +3091,20 @@ SoOrder = (function() {
 			if(OrderInfo.order.dealerTypeList==undefined ||OrderInfo.order.dealerTypeList.length == 0 ){
 				$.alert("提示","发展人类型不能为空！");
 				return false ; 
+			}
+			
+			if(!query.common.queryPropertiesStatus("ADD_OLD_USER_MOD_ACCT_"+OrderInfo.getAreaId().substring(0,3))){
+				//纳入老用户判断主卡副卡账户一致
+				if(ec.util.isArray(OrderInfo.oldprodAcctInfos)){
+					for(var a=0;a<OrderInfo.oldprodAcctInfos.length;a++){
+						var oldacctId = OrderInfo.oldprodAcctInfos[a].prodAcctInfos[0].acctId;
+						var mainacctid = $("#acctSelect option:selected").val();
+						if(oldacctId!=mainacctid){
+							$.alert("提示","副卡和主卡的账户不一致！");
+							return false ; 
+						}
+					}
+				}
 			}
 			if(order.service.oldMemberFlag){
 				var paytype=$('select[name="pay_type_-1"]').val();
