@@ -409,7 +409,7 @@ prod.telnum = (function(){
 				pnCharacterId = $("#change_pnCharacterId_all a.selected").attr("val");
 			}
 			pnCharacterId = ec.util.defaultStr(pnCharacterId);
-			return {"pnHead":pnHead,"pnEnd":pnEnd,"pnNotExitNum":pnNotExitNum,"pnCharacterId":pnCharacterId,"maxPrePrice":Less,
+			return {"pnHead":pnHead,"pnEnd":pnEnd,"pnNotExitNum":pnNotExitNum,"goodNumFlag":pnCharacterId,"maxPrePrice":Less,
 				"minPrePrice":Greater,"pnLevelId":'',"pageSize":"20","phoneNum":phoneNum,"areaId":areaId,"poolId":poolId
 			};
 		};
