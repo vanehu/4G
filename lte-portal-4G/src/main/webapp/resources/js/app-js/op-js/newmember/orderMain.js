@@ -858,8 +858,7 @@ order.main = (function(){
     		}
     		$("#fillNextStepSub").off("click").on("click",function(){
 				//#1466473  纳入老用户判断主卡副卡账户是否一致，不一致提示修改副卡账户
-				if("ON" == offerChange.queryPortalProperties("ADD_OLD_USER_MOD_ACCT_" + OrderInfo.staff.soAreaId.substring(0,3))
-						&&ec.util.isArray(OrderInfo.oldprodInstInfos)){
+				if(ec.util.isArray(OrderInfo.oldprodInstInfos)){
 					var acctIdFlag = false;//主副卡是否一致标识
 					var acctNumberList = [];//副卡是否一致标识
 					for(var a=0;a<OrderInfo.oldprodAcctInfos.length;a++){

@@ -45,9 +45,8 @@ SoOrder = (function() {
 	
 	//提交订单节点
 	var _submitOrder = function(data) {
-		//#1466473  纳入老用户判断主卡副卡账户是否一致，不一致提示修改副卡账户（分省开关控制）
-		var isON = offerChange.queryPortalProperties("ADD_OLD_USER_MOD_ACCT_"+OrderInfo.cust.areaId.substr(0,3));
-		if(ec.util.isArray(OrderInfo.oldprodInstInfos)&&isON=="ON"){
+		//#1466473  纳入老用户判断主卡副卡账户是否一致，不一致提示修改副卡账户
+		if(ec.util.isArray(OrderInfo.oldprodInstInfos)){
 			var acctIdFlag = false;//主副卡是否一致标识
 			var acctNumberList = [];//副卡是否一致标识
 			for(var a=0;a<OrderInfo.oldprodAcctInfos.length;a++){
@@ -374,11 +373,7 @@ SoOrder = (function() {
 		}
 		
 		//老用户副卡纳入帐号修改结点
-		var isON = offerChange.queryPortalProperties("VICE_CARD_DEL_USER_"+OrderInfo.cust.areaId.substr(0,3));
-		if(isON == "ON"){
-			if(!_oldprodAcctChange(busiOrders)) 
-				return false;
-		}
+		if(!_oldprodAcctChange(busiOrders)) return false;
 		OrderInfo.orderData.orderList.orderListInfo.custOrderAttrs = custOrderAttrs; //订单属性数组
 		OrderInfo.orderData.orderList.orderListInfo.extCustOrderId = OrderInfo.provinceInfo.provIsale; //省份流水
 		OrderInfo.orderData.orderList.custOrderList[0].busiOrder = busiOrders; //订单项数组
@@ -2487,22 +2482,8 @@ SoOrder = (function() {
 				return false ; 
 			}
 			
-			var isON = offerChange.queryPortalProperties("VICE_CARD_DEL_USER_"+OrderInfo.cust.areaId.substr(0,3));
-			if(isON!="ON"){
-				//纳入老用户判断主卡副卡账户一致
-				if(ec.util.isArray(OrderInfo.oldprodAcctInfos)){
-					for(var a=0;a<OrderInfo.oldprodAcctInfos.length;a++){
-						var oldacctId = OrderInfo.oldprodAcctInfos[a].prodAcctInfos[0].acctId;
-						var mainacctid = $("#acctSelect option:selected").val();
-						if(oldacctId!=mainacctid){
-							$.alert("提示","副卡和主卡的账户不一致！");
-							return false ; 
-						}
-					}
-				}
-			}
-			
 			//新装纳入老用户
+			
 			if(offerChange.oldMemberFlag){
 				var paytype=$('select[name="pay_type_-1"]').val();
 				$.each(OrderInfo.oldprodInstInfos,function(){

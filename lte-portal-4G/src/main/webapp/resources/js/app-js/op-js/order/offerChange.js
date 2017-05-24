@@ -121,9 +121,7 @@ offerChange = (function() {
 											+"<span class='input-group-btn'>"
 											+"<button class='btn btn-default' type='button' onclick='offerChange.addNum("+max+",\"\")';> + </button>"
 											+"</span> </div>"
-										if("ON" == offerChange.queryPortalProperties("ADD_OLD_USER_MOD_ACCT_" + OrderInfo.staff.soAreaId.substring(0,3))){
-											str += "<lable name = 'oldphone_tips'>注意：您纳入加装的移动电话纳入后将统一使用主卡账户！</lable>";
-										}
+											+"<lable name = 'oldphone_tips'>注意：您纳入加装的移动电话纳入后将统一使用主卡账户！</lable>";
 									}else{
 										for(var k=0;k<oldSubPhoneNumsize.length;k++){
 											if(k==0){
@@ -134,10 +132,8 @@ offerChange = (function() {
 													+"<input type='text' style='margin-top:10px;' class='form-control' name='oldphonenum' value='"+oldSubPhoneNumsize[k]+"'>"
 													+"<span class='input-group-btn'>"
 													+"<button class='btn btn-default' type='button' onclick='offerChange.addNum("+max+",\"\")';> + </button>"
-													+"</span> </div>";
-												if("ON" == offerChange.queryPortalProperties("ADD_OLD_USER_MOD_ACCT_" + OrderInfo.staff.soAreaId.substring(0,3))){
-													str += "<lable name = 'oldphone_tips'>注意：您纳入加装的移动电话纳入后将统一使用主卡账户！</lable>";
-												}
+													+"</span> </div>"
+													+"<lable name = 'oldphone_tips'>注意：您纳入加装的移动电话纳入后将统一使用主卡账户！</lable>";
 											}else{
 												offerChange.addNum(max,oldSubPhoneNumsize[k]);
 											}
