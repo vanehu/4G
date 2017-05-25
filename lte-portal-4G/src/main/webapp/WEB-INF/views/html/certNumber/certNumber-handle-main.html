@@ -32,18 +32,18 @@
                                        readonly="readonly" value="${p_endDt}"/>
                                 <label class="f_red" style="float: left;">*</label>
                             </dd>
-                            <dt>受理渠道：</dt>
-                            <dd>
-                                <select id="p_channelId" class="width202">
-                                    <option value="">--选择渠道--</option>
-                                    <#if Session["_staff_channel"]?? && (Session["_staff_channel"]?size>0) >
-                                        <#list Session["_staff_channel"] as channel>
-                                            <option value="${channel.id}"
-                                                    areaid="${channel.areaId}">${channel.name}</option>
-                                        </#list>
-                                    </#if>
-                                </select>
-                            </dd>
+                            <#--<dt>受理渠道：</dt>-->
+                            <#--<dd>-->
+                                <#--<select id="p_channelId" class="width202">-->
+                                    <#--<option value="">--选择渠道--</option>-->
+                                    <#--<#if Session["_staff_channel"]?? && (Session["_staff_channel"]?size>0) >-->
+                                        <#--<#list Session["_staff_channel"] as channel>-->
+                                            <#--<option value="${channel.id}"-->
+                                                    <#--areaid="${channel.areaId}">${channel.name}</option>-->
+                                        <#--</#list>-->
+                                    <#--</#if>-->
+                                <#--</select>-->
+                            <#--</dd>-->
                         </dl>
                         <dl>
                             <dt style="width:100px"><input type="checkbox" id="if_p_olNbr">流水号：</dt>
