@@ -865,4 +865,64 @@ public class OfferController extends BaseController {
         }
 		return "/app/offer/attach-offer-list";
 	}
+
+	/**
+	 * 获取礼包成员规格构成
+	 * @param reqMap
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value = "/queryGiftPackageSpec", method = RequestMethod.GET)
+	@ResponseBody
+    public JsonResponse queryGiftPackageSpec(@RequestParam Map<String, Object> paramMap,Model model){
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+				SysConstant.SESSION_KEY_LOGIN_STAFF);
+		paramMap.put("areaId", sessionStaff.getCurrentAreaId());
+		paramMap.put("channelId", sessionStaff.getCurrentChannelId());
+		paramMap.put("staffId", sessionStaff.getStaffId());
+        Map<String, Object> resMap = null;
+        JsonResponse jsonResponse = null;
+        try {
+        	resMap = orderBmo.queryGiftPackageMemberList(paramMap,null, sessionStaff);
+        	jsonResponse = super.successed(resMap,ResultConstant.SUCCESS.getCode());
+        } catch (BusinessException be) {
+        	return super.failed(be);
+        } catch (InterfaceException ie) {
+        	return super.failed(ie, paramMap, ErrorCode.QUERY_OFFER_SPEC);
+		} catch (Exception e) {
+			return super.failed(ErrorCode.QUERY_OFFER_SPEC, e, paramMap);
+		}
+		return jsonResponse;
+    }
+
+	/**
+	 * 获取礼包订购功能产品页面
+	 * @param param
+	 * @param model
+	 * @param response
+	 * @return
+	 */
+	@RequestMapping(value = "/queryOfferServerSpec", method = RequestMethod.GET)
+	public String queryOfferServerSpec(@RequestParam("strParam") String param,Model model,HttpServletResponse response){
+		Map<String, Object> paramMap = new HashMap();
+		try{
+			SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);	
+			
+			paramMap =  JsonUtil.toObject(param, Map.class);
+			paramMap.put("sysFlag", Const.APP_SEARCH_OFFER_SYSFLAG);//系统标识
+			//默认必开功能产品
+			Map<String, Object> openServMap = offerBmo.queryServSpec(paramMap,null,sessionStaff);
+			model.addAttribute("openServMap",openServMap);
+			model.addAttribute("openServMapJson", JsonUtil.buildNormal().objectToJson(openServMap));			
+			model.addAttribute("prodId",paramMap.get("prodId"));	
+			model.addAttribute("param",paramMap);
+		} catch (BusinessException be) {
+			return super.failedStr(model, be);
+		} catch (InterfaceException ie) {
+			return super.failedStr(model, ie, paramMap, ErrorCode.QUERY_MUST_OFFER);
+		} catch (Exception e) {
+			return super.failedStr(model, ErrorCode.QUERY_MUST_OFFER, e, paramMap);
+		}
+	 	return "/app/order_new/gift-server-new";
+	}
 }
