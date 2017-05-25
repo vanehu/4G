@@ -629,4 +629,9 @@ public class MDA {
 	 * 新域名开关
 	 */
 	public static final String DOMAINNAMEONOFF=new String("");
+
+    /**
+    * 加装老用户为副卡，修改副卡账户为主卡账户，默认OFF
+    */
+    public static final Map<String, String> ADD_OLD_USER_MOD_ACCT = new HashMap<String, String>();
 }
