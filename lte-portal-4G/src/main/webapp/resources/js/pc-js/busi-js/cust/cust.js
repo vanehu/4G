@@ -3414,7 +3414,7 @@ order.cust = (function(){
         }else{
             //#1476472 增加翼支付功能产品订购限制，判断是否满足订购条件，不满足条件退订翼支付功能产品
             if ("2" != userSubInfo.servType) {//责任人选择时不判断
-                if(!order.cust.yiPayidentityCdCheck(userSubInfo.identityCd)){
+                if(!order.cust.yiPayidentityCdCheck(userSubInfo.orderIdentidiesTypeCd)){
     				var hasYiPayFlag = false;
     				var yiPayServSpec = {};
     				if(ec.util.isArray(AttachOffer.openServList)){
