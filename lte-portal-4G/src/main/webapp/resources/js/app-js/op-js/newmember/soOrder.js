@@ -2857,7 +2857,7 @@ SoOrder = (function() {
 							percent : oldprodAcct.percent,
 							priority : ec.util.isObj(oldprodAcct.priority)?oldprodAcct.priority:"1",//没返回协商取1，不然后台报错
 							prodAcctId : oldprodAcct.prodAcctId,
-							extProdAcctId : ec.util.isObj(oldprodAcct.prodAcctId)?oldprodAcct.prodAcctId:"",
+							extProdAcctId : ec.util.isObj(oldprodAcct.extProdAcctId)?oldprodAcct.extProdAcctId:"",
 							state : "DEL"
 					};
 					var _boAccountRelasNew={
