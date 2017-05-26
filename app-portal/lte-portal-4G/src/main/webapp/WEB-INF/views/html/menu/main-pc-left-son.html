@@ -1,9 +1,0 @@
-<ul>
-	<#if bussinList ??> <#list bussinList as item>
-	<li class=""><a href="javascript:void(0)"
-		onclick="javascript:main.left.menu.openRightContent('<#if item.MENU_PATH ??>${contextPath}${item.MENU_PATH}</#if>',this)"><span>${item.RESOURCE_NAME}</span></a>
-	</li>
-	</#list> 
-	</#if> 
-
-</ul>
