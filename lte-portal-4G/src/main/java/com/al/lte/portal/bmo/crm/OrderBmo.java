@@ -901,4 +901,22 @@ public interface OrderBmo {
 	 * @throws Exception
 	 */
 	public Map<String, Object> savePhotographReviewRecord(Map<String, Object> params, SessionStaff sessionStaff) throws InterfaceException, IOException, BusinessException, Exception;
+	
+	/**
+	 * 销售品打包礼包查询
+	 * @param paramMap
+	 * @return
+	 * @throws Exception
+	 */
+    public Map<String, Object> queryGiftPackageList(Map<String, Object> dataBusMap,String optFlowNum, SessionStaff sessionStaff)
+    	throws Exception;
+    
+	/**
+	 * 销售品打包礼包成员查询
+	 * @param paramMap
+	 * @return
+	 * @throws Exception
+	 */
+    public Map<String, Object> queryGiftPackageMemberList(Map<String, Object> dataBusMap,String optFlowNum, SessionStaff sessionStaff)
+    	throws Exception;
 }

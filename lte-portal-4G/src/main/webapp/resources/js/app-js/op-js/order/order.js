@@ -405,10 +405,10 @@ order.service = (function(){
 										+"<span class='input-group-btn'>"
 											+"<button class='btn btn-default' type='button' onclick='order.memberChange.addNum("+max+");'> + </button>"
 										+"</span> " 
-									+"</div>"
-									+"<lable>注意：您纳入加装的移动电话纳入后将统一使用主卡账户！</lable>"
-								+"</div>";
-							
+									+"</div>";
+							if("ON" == offerChange.queryPortalProperties("ADD_OLD_USER_MOD_ACCT_" + OrderInfo.staff.soAreaId.substring(0,3)))
+									oldstr += "<lable>注意：您纳入加装的移动电话纳入后将统一使用主卡账户！</lable>";
+							oldstr += "</div>";
 							$("#div_content").append(oldstr);
 							
 							if(oldSubPhoneNums!=null && oldSubPhoneNums!=""){

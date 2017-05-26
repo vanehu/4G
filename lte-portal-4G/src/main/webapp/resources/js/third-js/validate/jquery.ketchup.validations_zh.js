@@ -218,7 +218,7 @@ jQuery.ketchup
 .validation('idCardCheck18', '请输入合法身份证号码', function(form, el, value) {
 	return this.idCardCheck18(value);
 })
-.validation('terminalCodeCheck', '请输入合法的终端串码<br/>&nbsp;&nbsp;&nbsp;必须14位字母(A-F)与数字组合或15位数字组合,不限大小写', function(form, el, value) {
+.validation('terminalCodeCheck', '请输入合法的终端串码<br/>&nbsp;&nbsp;&nbsp;必须为15位的纯数字组合或者14位的纯数字或字母（A-F)与数字的组合，不限大小写', function(form, el, value) {
 	return this.terminalCodeCheck(value);	
 })
 .validation('idCardCheck4Target', '请输入合法身份证号码', function(form, el, value,targetId,targetVal) {

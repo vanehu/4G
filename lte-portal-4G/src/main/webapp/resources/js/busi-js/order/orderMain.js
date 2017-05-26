@@ -157,8 +157,9 @@ order.main = (function(){
 		_addEvent();//添加页面事件
 		order.phoneNumber.initOffer('-1');//主卡自动填充号码入口已选过的号码
 		$("#fillNextStep").off("click").on("click",function(){
-			//#1466473纳入老用户判断主卡副卡账户是否一致，不一致提示修改副卡账户
-			if(ec.util.isArray(OrderInfo.oldprodInstInfos)){
+			//#1466473纳入老用户判断主卡副卡账户是否一致，不一致提示修改副卡账户（分省开关控制）
+			var addOldUserModAcctFalg = query.common.queryPropertiesStatus("ADD_OLD_USER_MOD_ACCT_"+OrderInfo.getAreaId().substring(0,3));
+			if(ec.util.isArray(OrderInfo.oldprodInstInfos)&& addOldUserModAcctFalg){
 				var acctIdFlag = false;//主副卡是否一致标识
 				var acctNumberList = [];//副卡是否一致标识
 				for(var a=0;a<OrderInfo.oldprodAcctInfos.length;a++){
@@ -574,7 +575,7 @@ order.main = (function(){
 							if(!order.cust.canOrderYiPay(param.prodId,1)){
 								var hasYiPayFlag = false;
 								var yiPayServSpec = {};
-								if(ec.util.isArray(AttachOffer.openList)){
+								if(ec.util.isArray(AttachOffer.openServList)){
 									for ( var j = 0; j < AttachOffer.openServList.length; j++) {
 										if(param.prodId == AttachOffer.openServList[j].prodId){
 											if(ec.util.isArray(AttachOffer.openServList[j].servSpecList)){
@@ -846,7 +847,7 @@ order.main = (function(){
 				if(!order.cust.canOrderYiPay(param.prodId,1)){
 					var hasYiPayFlag = false;
 					var yiPayServSpec = {};
-					if(ec.util.isArray(AttachOffer.openList)){
+					if(ec.util.isArray(AttachOffer.openServList)){
 						for ( var j = 0; j < AttachOffer.openServList.length; j++) {
 							if(param.prodId == AttachOffer.openServList[j].prodId){
 								if(ec.util.isArray(AttachOffer.openServList[j].servSpecList)){
@@ -1734,7 +1735,7 @@ order.main = (function(){
                 if(!order.cust.yiPayidentityCdCheck(order.cust.tmpChooseUserInfo.identityCd)){
 					var hasYiPayFlag = false;
 					var yiPayServSpec = {};
-					if(ec.util.isArray(AttachOffer.openList)){
+					if(ec.util.isArray(AttachOffer.openServList)){
 						for ( var j = 0; j < AttachOffer.openServList.length; j++) {
 							if(hasYiPayFlag) break;
 							if(prodId == AttachOffer.openServList[j].prodId){
@@ -3531,10 +3532,10 @@ order.main = (function(){
         }
         //#1476472 增加翼支付功能产品订购限制，判断是否满足订购条件，不满足条件退订翼支付功能产品
         if ("2" != userSubInfo.servType) {//责任人选择时不调用一证五号校验
-            if(!order.cust.yiPayidentityCdCheck(userSubInfo.identityCd)){
+            if(!order.cust.yiPayidentityCdCheck(userSubInfo.orderIdentidiesTypeCd)){
 				var hasYiPayFlag = false;
 				var yiPayServSpec = {};
-				if(ec.util.isArray(AttachOffer.openList)){
+				if(ec.util.isArray(AttachOffer.openServList)){
 					for ( var j = 0; j < AttachOffer.openServList.length; j++) {
 						if(hasYiPayFlag) break;
 						if(userSubInfo.prodId == AttachOffer.openServList[j].prodId){

@@ -358,12 +358,15 @@ order.service = (function(){
 						//如果最大个数为0，不展示老用户号码输入框
 						if(this.maxQty!=0){
 							var oldSubPhoneNum=OrderInfo.oldSubPhoneNum.oldSubPhoneNum;
-							
+							var oldTips = "注意：纳入老用户必须和主卡账户一致!";
+							if(query.common.queryPropertiesStatus("ADD_OLD_USER_MOD_ACCT_"+OrderInfo.getAreaId().substring(0,3))){
+								oldTips = "注意：您纳入加装的移动电话纳入后将统一使用主卡账户！";
+							}
 							var $trOldNbr = "<tr style='background:#f8f8f8;' id='oldnum_1' name='oldnbr'>" +
 							"<td class='borderLTB' style='font-size:14px; padding:0px 0px 0px 12px'><span style='color:#518652; font-size:14px;'>已有移动电话</span></td>" +
 							"<td align='left' colspan='3'><input value='' style='margin-top:10px' class='numberTextBox' id='oldphonenum_1' type='text' >" +
 							"<a style='margin-top:15px' class='add2' href='javascript:order.memberChange.addNum("+max+",\"\");'> </a>"+min+"-"+max+"（张）</td></tr>"+	
-							"<tr style='background:#f8f8f8;' name='oldnum_tips'><td align='left' colspan='4' style ='color: red; padding-left: 30px;'>注意：您纳入加装的移动电话纳入后将统一使用主卡账户！</td></tr>";	
+							"<tr style='background:#f8f8f8;' name='oldnum_tips'><td align='left' colspan='4' style ='color: red; padding-left: 30px;'>"+oldTips+"</td></tr>";	
 							$tbody.append($trOldNbr);
 							
 							if(oldSubPhoneNums!=null && oldSubPhoneNums!=""){

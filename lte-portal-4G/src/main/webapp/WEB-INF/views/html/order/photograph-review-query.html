@@ -49,7 +49,9 @@
 	                        </dd>
 	                        <dd>&nbsp;&nbsp;</dd>
 	                        <dd>
-	                        	<input type="button" value="审核通过" class="numberSearch" onclick="order.query.photographReviewCheckOK();" />
+	                        	<input type="button" id="photographReviewSuccess" value="审核通过" class="numberSearch" onclick="order.query.photographReviewCheckOK();" style="display:none"/>
+	                        	<label></label>
+	                        	<input type="button" id="photographReviewFail" value="审核不过" class="numberSearch" onclick="order.query.photographReviewCheckFail();" style="display:none"/>
 	                        </dd>
 						</dl>
 						</form>

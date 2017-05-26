@@ -1,29 +1,5 @@
 package com.al.lte.portal.controller.crm;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
-import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-
 import com.al.ec.serviceplatform.client.ResultCode;
 import com.al.ecs.common.entity.JsonResponse;
 import com.al.ecs.common.util.JsonUtil;
@@ -40,6 +16,28 @@ import com.al.lte.portal.bmo.staff.StaffBmo;
 import com.al.lte.portal.common.MySimulateData;
 import com.al.lte.portal.common.SysConstant;
 import com.al.lte.portal.model.SessionStaff;
+import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 销售品控制层
@@ -931,6 +929,7 @@ public class OfferController extends BaseController {
 		try {
 			
 			paramMap.put("agreementType","");
+            paramMap.put("staffId", sessionStaff.getStaffId());
 			Map<String, Object> offerByMtkResCdMap = mktResBmo.queryOfferByMtkResCd(paramMap, flowNum, sessionStaff);
 			offerByMtkResCdMap = offerBmo.removeAttachOfferExpired(paramMap, offerByMtkResCdMap);
 			if(paramMap.get("yslflag")!=null){
@@ -958,6 +957,7 @@ public class OfferController extends BaseController {
 		Map<String, Object> paramMap = null;
         try {
         	paramMap =  JsonUtil.toObject(param, Map.class);
+            paramMap.put("staffId", sessionStaff.getStaffId());
         	Map<String, Object> resMap = mktResBmo.queryOfferByMtkResCd(paramMap, null, sessionStaff);
         	jsonResponse = super.successed(resMap,ResultConstant.SUCCESS.getCode());
         } catch (BusinessException be) {

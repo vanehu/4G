@@ -366,8 +366,10 @@ SoOrder = (function() {
 		}
 		
 		//老用户副卡纳入帐号修改结点
-		if(!_oldprodAcctChange(busiOrders)) return false;
-		
+		if(query.common.queryPropertiesStatus("ADD_OLD_USER_MOD_ACCT_"+OrderInfo.getAreaId().substring(0,3)))
+			if(!_oldprodAcctChange(busiOrders)) 
+				return false;
+				
 		//订单填充经办人信息
 		_addHandleInfo(busiOrders, custOrderAttrs);
 		//使用人节点
@@ -2592,6 +2594,20 @@ SoOrder = (function() {
 				return false ; 
 			}
 			
+			if(!query.common.queryPropertiesStatus("ADD_OLD_USER_MOD_ACCT_"+OrderInfo.getAreaId().substring(0,3))){
+				//纳入老用户判断主卡副卡账户一致
+				if(ec.util.isArray(OrderInfo.oldprodAcctInfos)){
+					for(var a=0;a<OrderInfo.oldprodAcctInfos.length;a++){
+						var oldacctId = OrderInfo.oldprodAcctInfos[a].prodAcctInfos[0].acctId;
+						var mainacctid = $("#acctSelect option:selected").val();
+						if(oldacctId!=mainacctid){
+							$.alert("提示","副卡和主卡的账户不一致！");
+							return false ; 
+						}
+					}
+				}
+			}
+			
 			if(order.service.oldMemberFlag){
 				var paytype=$('select[name="pay_type_-1"]').val();
 				var isNumberRight=0;
@@ -3152,6 +3168,12 @@ SoOrder = (function() {
 	//显示模板名称
 	var _showTemplateOrderName = function(id){
 		if($("#isTemplateOrder").attr("checked")=="checked"){
+			//#1476473 营业厅翼支付开户IT流程优化
+			if(CacheData.hasServSpec(CONST.PROD_SPEC.YIPAY_SERVSPECID)){
+				$.alert("提示","当前订单已订购【翼支付】功能产品，不允许勾选为批量模版，如需勾选，请退订【翼支付】功能产品。");
+				$("#isTemplateOrder").removeAttr("checked");
+				return;
+			}
 			if(OrderInfo.actionFlag==1||OrderInfo.actionFlag==14){
 				$(".template_info_type").show();
 				$("#isActivation").removeAttr("checked");
@@ -3671,7 +3693,7 @@ SoOrder = (function() {
 							percent : oldprodAcct.percent,
 							priority : ec.util.isObj(oldprodAcct.priority)?oldprodAcct.priority:"1",//没返回协商取1，不然后台报错
 							prodAcctId : oldprodAcct.prodAcctId,
-							extProdAcctId : ec.util.isObj(oldprodAcct.prodAcctId)?oldprodAcct.prodAcctId:"",
+							extProdAcctId : ec.util.isObj(oldprodAcct.extProdAcctId)?oldprodAcct.extProdAcctId:"",
 							state : "DEL"
 					};
 					var _boAccountRelasNew={

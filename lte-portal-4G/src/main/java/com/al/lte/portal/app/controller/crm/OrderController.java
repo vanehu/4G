@@ -3422,4 +3422,99 @@ public class OrderController extends BaseController {
 			return result;
 		}else return "/app/order/order-attach-broad";
     }
+<<<<<<< HEAD:lte-portal-4G/src/main/java/com/al/lte/portal/app/controller/crm/OrderController.java
+=======
+	
+	/**
+	 * 翼销售融合甩单获取支付页面（url+tocken）
+	 * 
+	 * @param param
+	 * @param model
+	 * @param session
+	 * @param flowNum
+	 * @return
+	 */
+	@RequestMapping(value = "/getPayUrlForRh", method = RequestMethod.POST)
+	@ResponseBody
+	public JsonResponse getPayUrlForRh(@RequestBody Map<String, Object> param,
+			Model model, HttpSession session, @LogOperatorAnn String flowNum) {
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+						SysConstant.SESSION_KEY_LOGIN_STAFF);
+		Map<String, Object> rMap = null;
+		JsonResponse jsonResponse = null;
+		String dbKeyWord = sessionStaff == null ? null : sessionStaff.getDbKeyWord();
+		if(StringUtils.isBlank(dbKeyWord)){
+			dbKeyWord = "";
+		}
+		try {
+			String url=MySimulateData.getInstance().getNeeded(dbKeyWord, "url", "pay");//支付页面url
+			rMap = orderBmo.queryPayTockenForRh(param, flowNum, sessionStaff);
+			log.debug("return={}", JsonUtil.toString(rMap));
+			if (rMap != null && "POR-0000".equals(rMap.get("respCode").toString())) {
+				jsonResponse = super.successed(MDA.PAY_URL.toString()+"payToken="+rMap.get("payToken"),
+						ResultConstant.SUCCESS.getCode());
+			} else {
+				jsonResponse = super.failed(rMap.get("respMsg").toString(),
+						ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+			}
+			return jsonResponse;
+		} catch (BusinessException be) {
+			this.log.error("调用主数据接口失败", be);
+			return super.failed(be);
+		} catch (InterfaceException ie) {
+			return super.failed(ie, param, ErrorCode.PAY_TOCKEN);
+		} catch (Exception e) {
+			log.error("支付平台/tocken方法异常", e);
+			return super.failed(ErrorCode.PAY_TOCKEN, e, param);
+		}
+
+	}
+	
+	 @RequestMapping(value = "/getGiftPackageList", method = RequestMethod.GET, produces = "text/html;charset=UTF-8")
+	    public String getGiftPackageList(@RequestParam Map<String, Object> prams,Model model,HttpServletResponse response,HttpSession httpSession){
+			SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+	                SysConstant.SESSION_KEY_LOGIN_STAFF);	
+	        try {
+	        	String OfferIds = "";
+	        	prams.put("ifQS", "Y");
+	        	prams.put("channelId", sessionStaff.getCurrentChannelId());
+	        	prams.put("areaId", sessionStaff.getCurrentAreaId());
+	        	prams.put("staffId", sessionStaff.getStaffId());
+	        	prams.put("pageSize", SysConstant.PAGE_SIZE);
+	        	int totalPage=0;
+	        	Map<String, Object> map = null;
+	   //          prams.put("qryStr", "乐享");
+	        	Map<String, Object> map1 = new HashMap();
+	        	map1.put("channelId", sessionStaff.getCurrentChannelId());
+	        	map1.put("areaId", sessionStaff.getCurrentAreaId());
+	        	map1.put("staffId", sessionStaff.getStaffId());
+	        	map1.put("custId", prams.get("custId"));
+//	        	DataBus db = InterfaceClient.callService(map1,
+//	    				PortalServiceCode.QUERY_MAIN_OFFER_CATEGORY, null, sessionStaff);
+	        	prams.put("sysFlag", Const.APP_SEARCH_OFFER_SYSFLAG);//系统标识
+	        	map = orderBmo.queryGiftPackageList(prams,null, sessionStaff);
+	        	if(ResultCode.R_SUCCESS.equals(map.get("code"))){
+	        		//拼装前台显示的套餐详情
+	        		if(!map.isEmpty()){
+	        			List<Map<String,Object>> giftPackageList = (List<Map<String,Object>>) map.get("giftPackageList");
+	        			if(giftPackageList.size()%10>0){
+	        				totalPage=giftPackageList.size()/10+1;
+	        			}else{
+	        				totalPage=giftPackageList.size()/10;
+	        			}
+	        		}
+	        		model.addAttribute("resultlst", map.get("giftPackageList"));
+	        		model.addAttribute("totalPage",totalPage);
+	        	}
+	        } catch (BusinessException be) {
+				this.log.error("查询销售品礼包失败", be);
+				return super.failedStr(model, be);
+			} catch (InterfaceException ie) {
+				return super.failedStr(model, ie, prams, ErrorCode.QUERY_GIFT_PACKAGE);
+			} catch (Exception e) {
+				return super.failedStr(model, ErrorCode.QUERY_GIFT_PACKAGE, e, prams);
+			}
+	        return "/app/order_new/gift-package-list";
+	    }
+>>>>>>> #1326687: 关于广西和吉林提出的集团翼销售优化方案营业门户（APP）:app-portal/lte-portal-4G/src/main/java/com/al/lte/portal/app/controller/crm/OrderController.java
 }

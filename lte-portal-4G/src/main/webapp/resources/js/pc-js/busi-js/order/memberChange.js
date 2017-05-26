@@ -271,6 +271,10 @@ order.memberChange = function(){
 							if(max>0){
 								var addNumpic = "";
 								if(newSubPhoneNumsize.length==0 && oldSubPhoneNumsize.length==0){
+									var oldTips = "注意：纳入老用户必须和主卡账户一致!";
+									if(query.common.queryPropertiesStatus("ADD_OLD_USER_MOD_ACCT_"+OrderInfo.getAreaId().substring(0,3))){
+										oldTips = "注意：您纳入加装的移动电话纳入后将统一使用主卡账户！";
+									}
 									addNumpic = "<a style='margin-top:15px' class='add2' href='javascript:order.memberChange.addNum("+max+",\"\");'> </a>";
 									var olro = "<tr style='background:#f8f8f8;' id='oldnum_1' name='oldnbr'>" +
 									"<td class='borderLTB' style='font-size:14px; padding:0px 0px 0px 12px'><span style='color:#518652; font-size:14px;'>已有移动电话</span></td>" +
@@ -279,7 +283,7 @@ order.memberChange = function(){
 									this.minQty+"-"+max+"（张）"+
 //									"<a href='javascript:void(0)' class='purchase' onclick='order.memberChange.queryofferinfo()'>加装</a>"+
 									"</td></tr>"+
-									"<tr style='background:#f8f8f8;' name='oldnum_tips'><td align='left' colspan='4' style ='color: red; padding-left: 30px;'>注意：您纳入加装的移动电话纳入后将统一使用主卡账户！</td></tr>";	
+									"<tr style='background:#f8f8f8;' name='oldnum_tips'><td align='left' colspan='4' style ='color: red; padding-left: 30px;'>"+oldTips+"</td></tr>";	
 									$tr.after(olro);
 								}else if(oldSubPhoneNumsize.length>max){
 									$.alert("规则限制","oldSubPhoneNum的角色成员数量总和不能超过"+max);
@@ -288,6 +292,10 @@ order.memberChange = function(){
 								}else{
 									for(var k=0;k<oldSubPhoneNumsize.length;k++){
 										if(k==0){
+											var oldTips = "注意：纳入老用户必须和主卡账户一致!";
+											if(query.common.queryPropertiesStatus("ADD_OLD_USER_MOD_ACCT_"+OrderInfo.getAreaId().substring(0,3))){
+												oldTips = "注意：您纳入加装的移动电话纳入后将统一使用主卡账户！";
+											}
 											var olro = "<tr style='background:#f8f8f8;' id='oldnum_1' name='oldnbr'>" +
 											"<td class='borderLTB' style='font-size:14px; padding:0px 0px 0px 12px'><span style='color:#518652; font-size:14px;'>已有移动电话</span></td>" +
 											"<td align='left' colspan='3'><input value='"+oldSubPhoneNumsize[k]+"' style='margin-top:10px' class='numberTextBox' id='oldphonenum_1' type='text' readonly='readonly'>" +
@@ -295,7 +303,7 @@ order.memberChange = function(){
 											this.minQty+"-"+max+"（张）"+
 //											"<a href='javascript:void(0)' class='purchase' onclick='order.memberChange.queryofferinfo()'>加装</a>"+
 											"</td></tr>"+
-											"<tr style='background:#f8f8f8;' name='oldnum_tips'><td align='left' colspan='4' style ='color: red; padding-left: 30px;'>注意：您纳入加装的移动电话纳入后将统一使用主卡账户！</td></tr>";	
+											"<tr style='background:#f8f8f8;' name='oldnum_tips'><td align='left' colspan='4' style ='color: red; padding-left: 30px;'>"+oldTips+"</td></tr>";	
 											$tr.after(olro);
 										}else{
 											order.memberChange.addNum(max,oldSubPhoneNumsize[k]);

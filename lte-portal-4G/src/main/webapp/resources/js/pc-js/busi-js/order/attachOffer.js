@@ -341,6 +341,7 @@ AttachOffer = (function() {
 			$.alert("提示","请输入查询条件！");
 			return;
 		}
+		OrderInfo.mainOfferSpecId = offerSpecId;
 		if(instCode!=null && instCode !=""){
 			var param = { 
 					agreementName : offerSepcName,
@@ -703,7 +704,7 @@ AttachOffer = (function() {
 	};
 	
 	//关闭服务规格
-	var _closeServSpec = function(prodId,servSpecId,specName,ifParams){
+	var _closeServSpec = function(prodId,servSpecId,specName,ifParams,ifConfirm){
 		var $span = $("#li_"+prodId+"_"+servSpecId).find("span"); //定位删除的附属
 		if($span.attr("class")=="del"){  //已经退订，再订购
 			AttachOffer.openServSpec(prodId,servSpecId,specName,ifParams);
@@ -771,66 +772,84 @@ AttachOffer = (function() {
 					}
 					respnose = AttachOffer.queryOfferAndServDependForCancel("",servSpecId);
 				}	
-			var contentAppend = "";
-			if(respnose !="" &&  respnose.data.resultCode == "0" && respnose.data.result.servSpec!=undefined && respnose.data.result.servSpec !=null && respnose.data.result.servSpec !=""){
-				$.each(respnose.data.result.servSpec,function(){
-					if(AttachOffer.openServList.length>0){
-						for(var n=0;n<AttachOffer.openServList[0].servSpecList.length;n++){
-							var opendServ = AttachOffer.openServList[0].servSpecList[n];
-							if(this.servSpecId == opendServ.servSpecId){
-								contentAppend = contentAppend + this.servSpecName +"<br>"; 
-							}
-						}
-					}
-				});
-			}
-			if(respnose !="" &&  respnose.data.resultCode == "0" && respnose.data.result.servSpec!=undefined && respnose.data.result.offerSpec !=null && respnose.data.result.offerSpec !=""){
-				$.each(respnose.data.result.offerSpec,function(){
-					if(AttachOffer.openList.length>0){
-						for(var n=0;n<AttachOffer.openList[0].specList.length;n++){
-							var opendServ = AttachOffer.openList[0].specList[n];
-							if(this.offerSpecId == opendServ.offerSpecId){
-								contentAppend = contentAppend +this.offerSpecName+"<br>";  
-							}
-						}
-					}
-				});
-			}
-			var content= $span.text();
-			if(contentAppend !=""){
-				content = "【"+content  +"】功能产品，"+"与以下销售品或功能产品相依赖，系统会自动退订相关的依赖销售品。<br>"+contentAppend;
-			}
-				
-			$.confirm("信息确认","取消开通"+content,{ 
-				yesdo:function(){
-					if(toDelOfferSpecList.length>0){
-						var strInfo = "【"+$span.text()+"】功能产品为以下可选包的必选成员，取消开通将取消订购以下可选包，请确认是否取消订购？<br>";
-						$.each(toDelOfferSpecList,function(){
-							strInfo += "【"+this.offerSpecName+"】<br>";
-						});
-						$.confirm("信息确认",strInfo,{ 
-							yesdo:function(){
-								$.each(toDelOfferSpecList,function(){
-									_delOfferSpec2(prodId,this.offerSpecId);
-								});
-								if(respnose !="" && respnose.data.resultCode == "0" && respnose.data.result.servSpec!=undefined && respnose.data.result.offerSpec!=undefined ){
-									_addOfferAndServDependOpen(respnose.data.result.servSpec,respnose.data.result.offerSpec,servSpecId,prodId);
+				var contentAppend = "";
+				if(respnose !="" &&  respnose.data.resultCode == "0" && respnose.data.result.servSpec!=undefined && respnose.data.result.servSpec !=null && respnose.data.result.servSpec !=""){
+					$.each(respnose.data.result.servSpec,function(){
+						if(AttachOffer.openServList.length>0){
+							for(var n=0;n<AttachOffer.openServList[0].servSpecList.length;n++){
+								var opendServ = AttachOffer.openServList[0].servSpecList[n];
+								if(this.servSpecId == opendServ.servSpecId){
+									contentAppend = contentAppend + this.servSpecName +"<br>"; 
 								}
-								_closeServSpecCallBack(prodId,servSpecId,$span);
-							},
-							no:function(){
 							}
+						}
+					});
+				}
+				if(respnose !="" &&  respnose.data.resultCode == "0" && respnose.data.result.servSpec!=undefined && respnose.data.result.offerSpec !=null && respnose.data.result.offerSpec !=""){
+					$.each(respnose.data.result.offerSpec,function(){
+						if(AttachOffer.openList.length>0){
+							for(var n=0;n<AttachOffer.openList[0].specList.length;n++){
+								var opendServ = AttachOffer.openList[0].specList[n];
+								if(this.offerSpecId == opendServ.offerSpecId){
+									contentAppend = contentAppend +this.offerSpecName+"<br>";  
+								}
+							}
+						}
+					});
+				}
+				var content= $span.text();
+				if(contentAppend !=""){
+					content = "【"+content  +"】功能产品，"+"与以下销售品或功能产品相依赖，系统会自动退订相关的依赖销售品。<br>"+contentAppend;
+				}
+				if(ec.util.isObj(ifConfirm) && ifConfirm=="Y"){
+					if(toDelOfferSpecList.length>0){
+						//取消开通必选成员的可选包
+						$.each(toDelOfferSpecList,function(){
+							_delOfferSpec2(prodId,this.offerSpecId);
 						});
+						if(respnose !="" && respnose.data.resultCode == "0" && respnose.data.result.servSpec!=undefined && respnose.data.result.offerSpec!=undefined ){
+							_addOfferAndServDependOpen(respnose.data.result.servSpec,respnose.data.result.offerSpec,servSpecId,prodId);
+						}
+						_closeServSpecCallBack(prodId,servSpecId,$span);
 					}else{
+	//					$.alert("提示","取消开通"+content);
 						if(respnose !="" && respnose.data.resultCode == "0" && respnose.data.result.servSpec!=undefined && respnose.data.result.offerSpec!=undefined ){
 							_addOfferAndServDependOpen(respnose.data.result.servSpec,respnose.data.result.offerSpec,servSpecId,prodId);
 						}
 						_closeServSpecCallBack(prodId,servSpecId,$span);
 					}
-				},
-				no:function(){
+				}else{	
+					$.confirm("信息确认","取消开通"+content,{ 
+						yesdo:function(){
+							if(toDelOfferSpecList.length>0){
+								var strInfo = "【"+$span.text()+"】功能产品为以下可选包的必选成员，取消开通将取消订购以下可选包，请确认是否取消订购？<br>";
+								$.each(toDelOfferSpecList,function(){
+									strInfo += "【"+this.offerSpecName+"】<br>";
+								});
+								$.confirm("信息确认",strInfo,{ 
+									yesdo:function(){
+										$.each(toDelOfferSpecList,function(){
+											_delOfferSpec2(prodId,this.offerSpecId);
+										});
+										if(respnose !="" && respnose.data.resultCode == "0" && respnose.data.result.servSpec!=undefined && respnose.data.result.offerSpec!=undefined ){
+											_addOfferAndServDependOpen(respnose.data.result.servSpec,respnose.data.result.offerSpec,servSpecId,prodId);
+										}
+										_closeServSpecCallBack(prodId,servSpecId,$span);
+									},
+									no:function(){
+									}
+								});
+							}else{
+								if(respnose !="" && respnose.data.resultCode == "0" && respnose.data.result.servSpec!=undefined && respnose.data.result.offerSpec!=undefined ){
+									_addOfferAndServDependOpen(respnose.data.result.servSpec,respnose.data.result.offerSpec,servSpecId,prodId);
+								}
+								_closeServSpecCallBack(prodId,servSpecId,$span);
+							}
+						},
+						no:function(){
+						}
+					});
 				}
-			});
 			}else{				
 				var strInfo = "【"+$span.text()+"】功能产品为可选包:<br>";
 				$.each(toDelOfferSpecList,function(){
@@ -858,6 +877,11 @@ AttachOffer = (function() {
 			$span.addClass("del");
 			serv.isdel = "Y";
 			//_showHideUim(1,prodId,servSpecId);   //显示或者隐藏
+		}
+		//#1476473 退订翼支付功能产品，可以选择为批量模版
+		if(servSpecId == CONST.PROD_SPEC.YIPAY_SERVSPECID){
+			$("#isTemplateOrder").removeAttr("disabled");
+			$("#templateOrderTips").text("").hide();
 		}
 	};
 	
@@ -1807,7 +1831,7 @@ AttachOffer = (function() {
 				excludeAddServ(prodId,servSpecId,param);
 			}else{
 				$.confirm("开通： " + serv.servSpecName,content,{ 
-					yes:function(){
+					yesdo:function(){
 						AttachOffer.addOpenServList(prodId,servSpecId,serv.servSpecName,serv.ifParams); //添加开通功能
 						excludeAddServ(prodId,servSpecId,param);
 					},
@@ -2674,6 +2698,31 @@ AttachOffer = (function() {
 			serv.isdel = "N";
 			return;
 		}
+		
+		//#1476472 营业厅翼支付开户IT流程优化 增加翼支付功能产品订购限制，不判断满足订购条件就不让订购
+		if(servSpecId == CONST.PROD_SPEC.YIPAY_SERVSPECID ){
+			if(!order.cust.canOrderYiPay(prodId,3)){
+				var tips = "当前产权人或使用人证件类型不在【";
+				for (var j = 0; j < CONST.YIPAY_IDENTITYCD.length; j ++) {
+					if(j==0)
+						tips += CONST.YIPAY_IDENTITYCD[j].NAME;
+					else
+						tips += ","+CONST.YIPAY_IDENTITYCD[j].NAME;
+				}
+				tips += "】中，不允许订购翼支付功能产品！"
+				$.alert("提示",tips);
+				return ;
+			}
+			//勾选了批量模版不允许订购翼支付功能产品，订购了翼支付功能产品不能勾选了批量模版
+			if($("#isTemplateOrder").attr("checked")=="checked"){
+				$.alert("提示","当前订单已勾选为批量模版，不允许订购【翼支付】功能产品，如需订购，请取消批量模版选项。");
+				return ;
+			}else{
+				$("#isTemplateOrder").attr("disabled","disabled");
+				$("#templateOrderTips").text("提示：订购【翼支付】功能产品不允许作为批量模版！").show();
+			}
+		}
+		
 		//从已选择功能产品中找
 		var spec = CacheData.getServSpec(prodId,servSpecId);
 //		if(OrderInfo.actionFlag==22){

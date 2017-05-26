@@ -12,6 +12,12 @@ oneFive.certNumber = (function () {
     var selectList = [];
 
     /**
+     * 本次文件上传数量
+     * @type {number}
+     */
+    var fileNumbers = 0;
+
+    /**
      * 业务流水号
      * @type {string}
      */
@@ -53,6 +59,7 @@ oneFive.certNumber = (function () {
         var scope = $("#identidiesTypeCd");
         scope.val("1");
         _identidiesTypeCdChoose(scope, "certNumber");
+        fileNumbers = 0;
     };
 
     /**
@@ -147,6 +154,7 @@ oneFive.certNumber = (function () {
                 }
                 var content$ = $("#certNumberlist");
                 content$.html(response.data);
+                reviewData();
             },
             fail: function () {
                 $.unecOverlay();
@@ -156,22 +164,57 @@ oneFive.certNumber = (function () {
     };
 
     /**
+     * 选中数据重现
+     */
+    function reviewData() {
+        var tbody = $("#certNumberlist").find("table>tbody input");
+        var total = 0;
+        $.each(tbody, function () {
+            var parentTR = $(this).parent().parent();
+            var parent = this;
+            $.each(selectList, function () {
+                if ($(this).find("td:eq(4)").text() == $(parentTR).find("td:eq(4)").text()) {
+                    parent.checked = true;
+                    total++;
+                }
+            });
+        });
+        if(total==tbody.length) {
+            $("#tab_orderList").find("thead").find("tr").find("td").find("input").attr("checked", true);//总数与选中数相同，选择中全选
+        }
+    }
+
+    /**
+     * 复选框选中事件
+     * @private
+     */
+    function indexOfInput(selectList, selectInput) {
+        var index = selectList.length == 0 ? -1 : 0;
+        var selectTR = $(selectInput).parent().parent();
+        $.each(selectList, function () {
+            if ($(this).find("td:eq(4)").text() == $(selectTR).find("td:eq(4)").text()) {
+                return false;
+            }
+            index++;
+        });
+        return index;
+    }
+
+    /**
      * 复选框选中事件
      * @private
      */
     var _selectItem = function (selectInput) {
         var selectTR = $(selectInput).parent().parent();
+        var index = indexOfInput(selectList, selectInput);//查找输入框在选中数组中的位置
         if (selectInput.checked) {
-            selectList.push(selectTR);
+            if (index == -1 || index == selectList.length) {//如果不在数组中，执行添加操作
+                selectList.push(selectTR);
+            }
         } else {
-            var index = 0;
-            $.each(selectList, function () {
-                if ($(this).find("td:eq(4)").text() == $(selectTR).find("td:eq(4)").text()) {
-                    return false;
-                }
-                index++;
-            });
-            selectList.splice(index, 1);
+            if (index != -1 && index != selectList.length) {//如果在数组中，执行删除操作
+                selectList.splice(index, 1);
+            }
         }
     };
 
@@ -180,14 +223,10 @@ oneFive.certNumber = (function () {
      * @private
      */
     var _selectAll = function (allSelectInput) {
-        selectList = [];//全选时清空选中列表
-        var tbody = $("#certNumberlist").find("table>tbody input");
+        var tbody = $("#certNumberlist").find("table").find("tbody").find("input");
         $.each(tbody, function () {
-            var selectTR = $(this).parent().parent();
             this.checked = allSelectInput.checked;
-            if (this.checked) {
-                selectList.push(selectTR);
-            }
+            _selectItem(this);
         });
     };
 
@@ -198,6 +237,8 @@ oneFive.certNumber = (function () {
     var _selectConfirm = function () {
         resetCustInfo();//重置客户信息
         resetAttachment();//重置附件
+        resetFileNumbers();//重置已经上传文件数量
+
         if (selectList.length > 0) {
             var selectTbody = $("#tab_selectConfirmList").find("tbody");
             selectTbody.empty();
@@ -258,9 +299,15 @@ oneFive.certNumber = (function () {
             return;
         }
 
+        if (!ec.util.isObj(soNbr)) {
+            $.alert("提示", "订单编号不能为空！");
+            return;
+        }
+
         var param = {
             "custInfo": custInfo,
-            "numbers": numbers
+            "numbers": numbers,
+            "olNbr": soNbr
         };
         $("<form>", {
             id: "oneCertFiveNumberForm",
@@ -286,11 +333,29 @@ oneFive.certNumber = (function () {
     var _selectUploadFiles = function (uploadFiles) {
         var $tbody = $("#tab_oneFiveFileUpload").find("tbody");
         $tbody.empty();
-        $.each(uploadFiles.files, function () {
-            var tmpTR = $("<tr>").append($("<td>").append(this.name)).append($("<td>").append((this.size / 1024).toFixed(2) + "KB"));
+        if (isLowIE10()) {
+            var tmpTR = $("<tr>").append($("<td>").append(uploadFiles.value)).append($("<td>").append("未知"));
             $tbody.append(tmpTR);
-        });
+        } else {
+            $.each(uploadFiles.files, function () {
+                var tmpTR = $("<tr>").append($("<td>").append(this.name)).append($("<td>").append((this.size / 1024).toFixed(2) + "KB"));
+                $tbody.append(tmpTR);
+            });
+        }
     };
+
+    /**
+     * 将错误信息列表转成字符串
+     * @param errorList
+     */
+    function getErrorListStr(errorList) {
+        var head = "存在非法文件（请上传1M以内的jpg或pdf文件）：<br/>";
+        var body = "";
+        $.each(errorList, function () {
+            body += "文件名：" + this.fileName + "，文件类型：" + this.fileType + "，大小：" + (parseInt(this.fileSize) / 1024 / 1024).toFixed(2) + "MB<br/>";
+        });
+        return head + body;
+    }
 
     /**
      * 上传附件
@@ -300,7 +365,16 @@ oneFive.certNumber = (function () {
         var files = $("#mFileUpload").get(0).files;
         var isTooLarge = false;
         var isZero = false;
-        if (ec.util.isObj(files) && files.length > 0) {
+        if (isLowIE10()) {
+            if (!ec.util.isObj($("#mFileUpload").val())) {
+                $.alert("提示", "请先选择要上传的附件（IE10以下只能单选）！");
+                return;
+            }
+            if (fileNumbers > 4) {
+                $.alert("提示", "最多只能上传5个附件");
+                return;
+            }
+        } else if (ec.util.isObj(files) && files.length > 0) {
             if (files.length > 5) {
                 $.alert("提示", "最多同时上传5个附件");
                 return;
@@ -321,32 +395,38 @@ oneFive.certNumber = (function () {
                 $.alert("提示", "上传的附件无效，单个文件的大小为零！");
                 return;
             }
-            var options = {
-                type: 'post',
-                dataType: 'json',
-                url: 'uploadAttachment',
-                beforeSubmit: function () {
-                    $.ecOverlay("<strong>正在上传文件,请稍等...</strong>");
-                },
-                success: function (response) {
-                    $.unecOverlay();
-                    if (response.code == 0) {
-                        $.alert("提示", "附件上传完成！");
-                        isUploadAttachment = true;
-                        resetAttachment();
-                    } else {
-                        $.alertM(response.data);
-                    }
-                },
-                error: function () {
-                    $.unecOverlay();
-                    $.alert("提示", "请求可能发生异常，请稍后再试！");
-                }
-            };
-            $('#uploadAttachment').ajaxSubmit(options);
         } else {
             $.alert("提示", "请先选择要上传的附件（支持多选）！");
         }
+
+        var options = {
+            type: 'post',
+            dataType: 'json',
+            url: 'uploadAttachment',
+            beforeSubmit: function () {
+                $.ecOverlay("<strong>正在上传文件,请稍等...</strong>");
+            },
+            success: function (response) {
+                $.unecOverlay();
+                if (response.code == 0) {
+                    $.alert("提示", "附件上传完成！");
+                    isUploadAttachment = true;
+                    $("#tab_custInfoList").find("#fileNumbers").text(isLowIE10() ? ++fileNumbers : files.length);
+                    resetAttachment();
+                } else if (response.code == -2) {
+                    $.alert("提示", getErrorListStr(response.data.errorList));
+                    resetAttachment();
+                } else {
+                    $.alertM(response.data);
+                }
+            },
+            error: function () {
+                $.unecOverlay();
+                $.alert("提示", "请求可能发生异常，请稍后再试！");
+            }
+        };
+        $('#uploadAttachment').ajaxSubmit(options);
+
     };
 
     /**
@@ -450,10 +530,29 @@ oneFive.certNumber = (function () {
     }
 
     /**
+     * 重置已经上传文件数量
+     * @private
+     */
+    function resetFileNumbers() {
+        fileNumbers = 0;
+        $("#tab_custInfoList").find("#fileNumbers").text("");
+    }
+
+    /**
      * 打印后禁用客户信息输入
      */
     function disabledCustInfo() {
         $("#tab_custInfoList").find("#phoneNumber").attr("disabled", true);
+    }
+
+    /**
+     * 是否为低于10的IE版本
+     */
+    function isLowIE10() {
+        if (CommonUtils.isIE() && $.browser.version < 10.0)
+            return true;
+        else
+            return false;
     }
 
     /**

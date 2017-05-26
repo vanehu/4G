@@ -100,7 +100,7 @@
                             <thead>
                             <tr>
                                 <td width="40"><input type="checkbox"
-                                                      onchange="oneFive.certNumber.selectAll(this)"/><span>全选</span>
+                                                      onclick="oneFive.certNumber.selectAll(this)"/><span>全选</span>
                                 </td>
                                 <td width="80">省</td>
                                 <td width="200">地区</td>
@@ -150,14 +150,17 @@
             <tbody>
             <tr>
                 <td width="60" align="right" style="text-align: right;"> 联系方式：</td>
-                <td width="200" id="td_phoneNum">
+                <td width="160" id="td_phoneNum">
                     <input type="text" placeholder="请准确填写联系方式" class="inputWidth183px"
                            maxlength="12" id="phoneNumber"><label
                     class="f_red">*</label>
                 </td>
-                <td width="60" align="right" style="text-align: right;"> 流水号：</td>
-                <td width="200">
+                <td width="50" align="right" style="text-align: right;"> 流水号：</td>
+                <td width="170">
                     <label id="soNbr"></label>
+                </td>
+                <td width="60" align="right" style="text-align: right;"> 附件个数：</td>
+                <td width="20"><label id="fileNumbers"></label>
                 </td>
             </tr>
             </tbody>

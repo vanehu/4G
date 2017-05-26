@@ -1026,7 +1026,8 @@ order.cust = (function(){
 	var _showCustAuth = function(scope) {
 		if(OrderInfo.menuName == "ZXHYBL"){
 			var accNbr = $(scope).attr("accNbr");
-			var  qryResponse =  _qryPreliminaryInfo(accNbr);
+			var identityNum = $.trim($("#p_cust_identityNum").val());
+			var  qryResponse =  _qryPreliminaryInfo(identityNum,accNbr);
 			if(qryResponse.code == 0){
 				if(qryResponse.data.result == null || qryResponse.data.result.userInfo == null || qryResponse.data.result.userInfo.businessType==null){
 					$.alert("错误","查询后台 '客户信息核验接口' 未返回结果，查询接口流水号："+qryResponse.data.transactionID);
@@ -1038,7 +1039,6 @@ order.cust = (function(){
 						$.alert("提示","集约4G系统里用户的受理地区 "+areaId+" 和征信平台初审接口返回 cityCode "+userInfo.cityCode+" 办理业务的城市编码不一致,无法办理征信业务。");
 						return;
 					}
-					var identityNum = $.trim($("#p_cust_identityNum").val());
 					if(identityNum != userInfo.idcard){
 						$.alert("提示","集约4G系统里用户办理用户的证件号码和征信平台初审接口返回的idcard用户身份证号码不一致，无法办理征信业务。");
 						return;
@@ -2257,15 +2257,16 @@ order.cust = (function(){
 				$.alert("错误","办理征信分期合约业务，证件类型必须是身份证。");
 				return;
 			}
-			var  qryResponse =  _qryPreliminaryInfo("");
+			var idcard = _certInfo.custIdCard;
+			var  qryResponse =  _qryPreliminaryInfo(idcard,"");
 			if(qryResponse.code == 0){
 				if(qryResponse.data.result == null || qryResponse.data.result.userInfo == null || qryResponse.data.result.userInfo.businessType==null){
-					$.alert("错误","查询后台 '客户信息核验接口' 未返回结果，查询接口流水号："+qryResponse.data.transactionID);
+					$.alert("错误","查询后台 '征信平台初审接口' 未返回结果，查询接口流水号："+qryResponse.data.transactionID);
 					return;
 				}else{
 					var userInfo = qryResponse.data.result.userInfo;
 					if(userInfo.businessType != CONST.BUS_TYPE.ADD_SINGLE && userInfo.businessType != CONST.BUS_TYPE.ADD_FUSE && userInfo.businessType != CONST.BUS_TYPE.ADD_OTHER_FUSE){
-						$.alert("提示","新建客户只能做新增业务,'客户信息核验接口'返回可做业务类型为："+userInfo.businessType);
+						$.alert("提示","新建客户只能做新增业务,'征信平台初审接口'返回可做业务类型为："+userInfo.businessType);
 						return;
 					}
 					var areaId = $("#p_cust_areaId").val();
@@ -2273,8 +2274,7 @@ order.cust = (function(){
 						$.alert("提示","集约4G系统里用户的受理地区 "+areaId+" 和征信平台初审接口返回 cityCode "+userInfo.cityCode+" 办理业务的城市编码不一致,无法办理征信业务。");
 						return;
 					}
-					var identityNum = $.trim($("#p_cust_identityNum").val());
-					if(identityNum != userInfo.idcard){
+					if(idcard != userInfo.idcard){
 						$.alert("提示","集约4G系统里用户办理用户的证件号码和征信平台初审接口返回的idcard用户身份证号码不一致，无法办理征信业务。");
 						return;
 					}
@@ -4025,10 +4025,10 @@ order.cust = (function(){
 	var _close = function() {
 		try{
 			var closeResult = cert.closeVideo();
-			var closeResultJsonObj = JSON.parse(closeResult);
-			if (closeResultJsonObj && closeResultJsonObj.resultFlag != 0){
-				$.alert("错误", "关闭摄像头发生错误，请清空浏览器缓存，重新将拍照设备与电脑连接后再次尝试，错误信息：" + closeResultJsonObj.errorMsg);
-			}
+//			var closeResultJsonObj = JSON.parse(closeResult);
+//			if (closeResultJsonObj && closeResultJsonObj.resultFlag != 0){
+//				$.alert("错误", "关闭摄像头发生错误，请清空浏览器缓存，重新将拍照设备与电脑连接后再次尝试，错误信息：" + closeResultJsonObj.errorMsg);
+//			}
 		}catch(e) {
 			throw new Error("camera driver (DoccameraOcx.exe) is not installed correctly.");
 		}finally{
@@ -4375,12 +4375,12 @@ order.cust = (function(){
 	};
 	
 	//征信 获取初审信息
-	var _qryPreliminaryInfo = function(phoneNumber) {
+	var _qryPreliminaryInfo = function(idCard,phoneNumber) {
 		OrderInfo.preliminaryInfo = {};
 		var partnerCode = $("#partnerCode").val();
 		var param = {
 			areaId : $("#p_cust_areaId").val(),
-			idCard : $.trim($("#p_cust_identityNum").val()),
+			idCard : idCard,
 			phoneNumber : phoneNumber,
 			partnerCode : partnerCode
 		};
@@ -4405,8 +4405,11 @@ order.cust = (function(){
 		if(ec.util.isObj(prodId)&&prodId<0){
 			isNew = true;
 		}
-		//先取产权客户证件类型
+		//先取产权客户证件类型,如果是新建客户，取新建节点的证件类型
 		var identityCd = OrderInfo.cust.identityCd;
+		if(OrderInfo.cust.custId < 0){
+			identityCd = OrderInfo.boCustInfos.defaultIdType;
+		}
 		//判断是否为政企客户
 		var isGov = _isCovCust(identityCd);
 		//使用人证件类型
@@ -4422,18 +4425,22 @@ order.cust = (function(){
 			}else if(type == 3){
                 var isON = query.common.queryPropertiesStatus("REAL_USER_"+OrderInfo.cust.areaId.substr(0,3));
                 if(isON){
-                    $.each(OrderInfo.subUserInfos, function () {
-                        if (this.prodId == prodId) {
-                        	userIdentityCd = this.orderIdentidiesTypeCd;
-                        }
-                    });
-                }else{
-                    $.each(OrderInfo.choosedUserInfos, function () {
-	                    if (this.prodId == prodId) {
-	                    	userIdentityCd = this.custInfo.identityCd;
-	                    }
-	                });
-          		}
+                	if(ec.util.isObj(OrderInfo.subUserInfos)){
+	    	    		 $.each(OrderInfo.subUserInfos, function () {
+	                         if (this.prodId == prodId) {
+	                         	userIdentityCd = this.orderIdentidiesTypeCd;
+	                         }
+	                     });
+	    	    	 }
+               }else{
+               	 	if(ec.util.isObj(OrderInfo.choosedUserInfos)){
+	                    $.each(OrderInfo.choosedUserInfos, function () {
+		                    if (this.prodId == prodId) {
+		                    	userIdentityCd = this.custInfo.identityCd;
+		                    }
+		                });
+               	 	}
+         		}
           		//有使用人直接校验使用人
           		if(ec.util.isObj(userIdentityCd)){
           			identityCd = userIdentityCd;

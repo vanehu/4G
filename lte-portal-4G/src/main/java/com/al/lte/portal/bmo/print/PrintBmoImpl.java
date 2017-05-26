@@ -5438,7 +5438,10 @@ public class PrintBmoImpl implements PrintBmo {
             while(it.hasNext()) {
             	printData = (Map<String, Object>) it.next();
             }
-            if(printData.get("orderType")!=null && printData.get("orderType").equals("preInstall")){
+            
+            if(printData.get("orderType")!=null
+            		&& (printData.get("orderType").equals("preInstall") || printData.get("orderType").equals("offerChange"))){
+            	//预装和主套餐变更需要上传协议单
 				String extCustOrderId = (String) printData.get("extCustOrderId");
 				String extSystem = (String) printData.get("extSystem");
 				InputStream fileInputStream = new ByteArrayInputStream(bytes); 
@@ -5744,6 +5747,10 @@ public class PrintBmoImpl implements PrintBmo {
 
             Map<String, Object> printData = new HashMap();
             String printType = MapUtils.getString(paramMap, "printType");
+
+
+            //订单编号
+            printData.put("olNbr", MapUtils.getString(paramMap, "olNbr",""));
 
             //时间信息
             Calendar calendar = Calendar.getInstance();
@@ -8244,7 +8251,11 @@ public class PrintBmoImpl implements PrintBmo {
 		int speCustInfoLen = 0;
 		Map<String, Object> orderListInfo = MapUtils.getMap(dataMap, "orderListInfo");
 		if (MapUtils.isNotEmpty(orderListInfo)) {
-			olNbr = MapUtils.getString(orderListInfo, "olNbr");
+			if (MapUtils.getString(orderListInfo, "olType").equals(SysConstant.OL_TYPE_LTE_ESS)) {
+				olNbr = MapUtils.getString(orderListInfo, "extCustOrderId");
+			} else {
+				olNbr = MapUtils.getString(orderListInfo, "olNbr");
+			}
 			staffName = MapUtils.getString(orderListInfo, "staffName");
 			staffNumber = MapUtils.getString(orderListInfo, "staffNumber");
 			channelName = MapUtils.getString(orderListInfo, "channelName");

@@ -198,13 +198,21 @@ public class LoginController extends BaseController {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+				String headerHost = request.getHeader(SysConstant.HTTP_REQUEST_HEADER_HOST);
+				String defaultDomain= propertiesUtils.getMessage("DEFAULTDOMAIN");
 				int port = request.getLocalPort();
-				if((port==10101 || port==10102 || port==10103) && "ON".equals(flag)){
-					return super.redirect("https://crm.189.cn:83/provPortal/main/home");
-				}else if((port==10151 || port==10152 || port==10153) && "ON".equals(flag)){
-					return super.redirect("https://crm.189.cn:84/provPortal/main/home");
+				String domainNameONOFF = propertiesUtils.getMessage("DOMAINNAMEONOFF");
+				if(PortalUtils.isSecondLevelDomain(headerHost) && "ON".equals(domainNameONOFF)){
+					//#591478 若启用分省域名，应重定向到*.crm.189.cn:port
+					return super.redirect("https://" + headerHost + "/provPortal/main/home");
 				}else{
-					return super.redirect("/main/home");
+					if((port==10101 || port==10102 || port==10103) && "ON".equals(flag)){
+						return super.redirect("https://"+defaultDomain+":83/provPortal/main/home");
+					}else if((port==10151 || port==10152 || port==10153) && "ON".equals(flag)){
+						return super.redirect("https://"+defaultDomain+":84/provPortal/main/home");
+					}else{
+						return super.redirect("/main/home");
+					}
 				}
 			}
 		}
@@ -1389,9 +1397,14 @@ public class LoginController extends BaseController {
 		themeResolver.setThemeName(super.getRequest(), response, theme);
 		String url = "";
 		try {
+			String defaultDomain= propertiesUtils.getMessage("DEFAULTDOMAIN");
+			String newDomain = propertiesUtils.getMessage("NEWDOMAIN");
+			String domainNameONOFF = propertiesUtils.getMessage("DOMAINNAMEONOFF");
 			String flag = MySimulateData.getInstance().getParam(dbKeyWord,"UNIFYLOGIN");
-			if("ON".equals(flag)){
-				url = "http://crm.189.cn/ltePortal/";
+			if("ON".equals(domainNameONOFF) && "ON".equals(flag)){
+				url = "https://"+newDomain+"/ltePortal/";
+			}else if(!"ON".equals(domainNameONOFF) && "ON".equals(flag)){
+				url = "https://"+defaultDomain+"/ltePortal/";
 			}else{
 				url = "/staff/login/page";
 			}

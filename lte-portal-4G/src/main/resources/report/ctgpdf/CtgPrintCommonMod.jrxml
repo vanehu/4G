@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="CtgPrintCommonMod" language="groovy" pageWidth="595" pageHeight="842" columnWidth="509" leftMargin="43" rightMargin="43" topMargin="113" bottomMargin="96">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="195"/>
+	<property name="ireport.y" value="0"/>
 	<style name="styleNorm" mode="Transparent" fill="Solid" fontName="宋体" fontSize="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Identity-H"/>
 	<style name="styleBold" fill="Solid" fontName="宋体" fontSize="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
 	<style name="styleBlackBold16" fontName="宋体" fontSize="16" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
@@ -293,7 +293,7 @@
 	<pageHeader>
 		<band height="18" splitType="Stretch">
 			<textField>
-				<reportElement style="styleBlackBold10_5" x="68" y="0" width="120" height="15">
+				<reportElement style="styleBlackBold10_5" x="68" y="0" width="170" height="15">
 					<printWhenExpression><![CDATA[$F{olNbr}!=null]]></printWhenExpression>
 				</reportElement>
 				<textElement/>
@@ -305,37 +305,37 @@
 				<text><![CDATA[订单编号：]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="styleBlackBold10_5" x="199" y="0" width="15" height="15"/>
+				<reportElement style="styleBlackBold10_5" x="239" y="0" width="15" height="15"/>
 				<textElement/>
 				<text><![CDATA[第]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="styleBlackBold10_5" x="227" y="0" width="35" height="15"/>
+				<reportElement style="styleBlackBold10_5" x="267" y="0" width="35" height="15"/>
 				<textElement/>
 				<text><![CDATA[页 (共]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="styleBlackBold10_5" x="281" y="0" width="20" height="15"/>
+				<reportElement style="styleBlackBold10_5" x="321" y="0" width="20" height="15"/>
 				<textElement/>
 				<text><![CDATA[页)]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="styleBlackBold10_5" x="340" y="1" width="60" height="15"/>
+				<reportElement style="styleBlackBold10_5" x="360" y="1" width="58" height="15"/>
 				<textElement/>
 				<text><![CDATA[受理日期：]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="styleBlackBold10_5" x="432" y="0" width="12" height="15"/>
+				<reportElement style="styleBlackBold10_5" x="442" y="0" width="12" height="15"/>
 				<textElement/>
 				<text><![CDATA[年]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="styleBlackBold10_5" x="456" y="0" width="12" height="15"/>
+				<reportElement style="styleBlackBold10_5" x="466" y="0" width="12" height="15"/>
 				<textElement/>
 				<text><![CDATA[月]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="styleBlackBold10_5" x="480" y="0" width="12" height="15"/>
+				<reportElement style="styleBlackBold10_5" x="490" y="0" width="12" height="15"/>
 				<textElement/>
 				<text><![CDATA[日]]></text>
 			</staticText>
@@ -346,35 +346,35 @@
 				</graphicElement>
 			</line>
 			<textField>
-				<reportElement style="styleBlackBold10_5" x="214" y="0" width="10" height="15"/>
+				<reportElement style="styleBlackBold10_5" x="254" y="0" width="10" height="15"/>
 				<textElement textAlignment="Center" verticalAlignment="Top">
 					<font fontName="宋体" size="9" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Integer"><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report">
-				<reportElement style="styleBlackBold10_5" x="265" y="0" width="10" height="15"/>
+				<reportElement style="styleBlackBold10_5" x="305" y="0" width="10" height="15"/>
 				<textElement textAlignment="Center">
 					<font fontName="宋体" size="9" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Integer"><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="styleBlackBold10_5" x="408" y="0" width="24" height="15">
+				<reportElement style="styleBlackBold10_5" x="418" y="0" width="24" height="15">
 					<printWhenExpression><![CDATA[$F{acceYear}!=null]]></printWhenExpression>
 				</reportElement>
 				<textElement/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{acceYear}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="styleBlackBold10_5" x="444" y="0" width="12" height="15">
+				<reportElement style="styleBlackBold10_5" x="454" y="0" width="12" height="15">
 					<printWhenExpression><![CDATA[$F{acceMonth}!=null]]></printWhenExpression>
 				</reportElement>
 				<textElement/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{acceMonth}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="styleBlackBold10_5" x="468" y="0" width="12" height="15">
+				<reportElement style="styleBlackBold10_5" x="478" y="0" width="12" height="15">
 					<printWhenExpression><![CDATA[$F{acceDay}!=null]]></printWhenExpression>
 				</reportElement>
 				<textElement/>

@@ -132,6 +132,21 @@ query.prod = (function() {
 	 * 终端串号校验
 	 */
 	var _checkTerminal = function(param){
+		var instCode = param.instCode;
+		var reg;
+		if(instCode.length>15 || instCode.length < 14){
+			$.alert("信息提示","终端串码必须为15位的纯数字组合或者14位的纯数字或字母（A-F)与数字的组合，不限大小写");
+		    return;
+	    }
+		if(instCode.length == 14){
+			reg = new RegExp(/^[0-9a-fA-F]{0,14}$/);
+		}else {
+			reg = new RegExp(/^[0-9]{0,15}$/);
+		}
+        if(!reg.test(instCode)){
+        	$.alert("信息提示","终端串码必须为15位的纯数字组合或者14位的纯数字或字母（A-F)与数字的组合，不限大小写");
+	        return;
+	    }
 		var url = contextPath+"/token/pc/mktRes/terminal/checkTerminal";
 		$.ecOverlay("<strong>终端校验中,请稍后....</strong>");
 		var response = $.callServiceAsJson(url,param);

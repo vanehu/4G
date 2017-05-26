@@ -1238,6 +1238,23 @@ CacheData = (function() {
         return isExist;
     };
 	
+	//根据跟规格ID判断是否选择功能产品（且判断是否被删除）
+	var _hasServSpec = function(servSpecId){
+		var hasServFlag = false;
+		for ( var i = 0; i < AttachOffer.openServList.length; i++) {
+			var servSpecList = AttachOffer.openServList[i].servSpecList;
+			if(servSpecList != undefined){
+				for ( var j = 0; j < servSpecList.length; j++) {
+					if(servSpecList[j].servSpecId==servSpecId&&servSpecList[j].isdel!="Y"){
+						hasServFlag = true;
+						break;
+					}
+				}
+			}
+		}
+		return hasServFlag;
+	};
+	
 	return {
 		setParam				: _setParam,
 		setServParam			: _setServParam,
@@ -1282,6 +1299,7 @@ CacheData = (function() {
         getCheckRules			: _getCheckRules,
         getCheckRuleByKey		: _getCheckRuleByKey,
         isInCheckRuleByTypeCd   :_isInCheckRuleByTypeCd,
-        isGov                   :_isGov
+        isGov                   :_isGov,
+        hasServSpec				:_hasServSpec
 	};
 })();

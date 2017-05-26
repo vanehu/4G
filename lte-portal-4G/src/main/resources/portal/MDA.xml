@@ -82,6 +82,9 @@
 			'provOrderAttrFlag-8540000':'1'		    
 		}
 		</const>
+		<const type="String" name="DEFAULTDOMAIN" value="crm.189.cn" description="默认域名"/>
+		<const type="String" name="NEWDOMAIN" value="yd.crm.189.cn" description="新域名"/>
+		<const type="String" name="DOMAINNAMEONOFF" value="ON" description="新域名开关"/>
 		<const type="String" name="CN2CSBHTTP_URL" value=" http://cn2csbt.crm.189.cn/LTE-CSB/HttpDEPService" description="通过CSB调外围接口使用此地址"/>
 		<const type="String" name="CN2CSBWS_URL" value="http://cn2csbt.crm.189.cn/LTE-CSB/services/DEPService?wsdl"  description="通过CSB调外围接口使用此地址"/>
 		<const type="String" name="BATCHORDER_QRY_FLAG" value="ON"  description="CRM系统批量预开通功能优化需求开关，ON：改造之后；OFF：改造之前"/>
@@ -508,8 +511,8 @@
  	      <const type="String" name="FTPBLACKLISTPATH" value="/app/4G/batch/upload/blackListEvidenceFile/" description="访问FTP服务器路径"/>
  	      <const type="String" name="FTPSERVICECONFIG" value="10.128.90.194,21,potoalBatch,potoalBatch" description="测试环境FTP服务器配置信息(单台FTP服务器)'FTP服务器IP,端口,用户名,密码'"/>
  	      <const type="String" name="BATCHVERSIONFLAG" value="ON" description="批量改造开关，默认为ON打开，走FTP模式；OFF关闭，走报文模式"/>
- 	      <const type="String" name="ESSFTPREMOTEPATH" value="/app/data/ess/pdf_file/1000000083/download/" description="ess访问FTP服务器路径，快销卡打印回执pdf文件上传"/>
- 	      <const type="String" name="ESSFTPSERVICECONFIG" value="10.128.98.24,21,ess,ess" description="ess快销卡打印回执pdf文件上传FTP服务器配置信息(单台FTP服务器)'FTP服务器IP,端口,用户名,密码'"/>
+	      <const type="String" name="ESSFTPREMOTEPATH" value="/app/data/ess/pdf_file/1000000083/upload/ess_yyyyMMdd/" description="ess访问FTP服务器路径，快销卡打印回执pdf文件上传"/>
+ 	      <const type="String" name="ESSFTPSERVICECONFIG" value="10.128.98.46,21,ess,ess" description="ess快销卡打印回执pdf文件上传FTP服务器配置信息(单台FTP服务器)'FTP服务器IP,端口,用户名,密码'"/>
  	      <!-- 批量业务FTP服务器配置  end-->
  	    <const type="Map" name="POS_FLAG" description="业务办理收费时POS支付开关  ON OFF">
         {
@@ -2948,6 +2951,42 @@
             'VICE_CARD_DEL_USER_862':'OFF',<!-- 甘肃 -->
             'VICE_CARD_DEL_USER_865':'OFF',<!-- 新疆 -->
             'VICE_CARD_DEL_USER_899':'OFF'<!-- 虚拟省 -->
+            }
+        </const>
+        <const type="Map" name="ADD_OLD_USER_MOD_ACCT" description="加装老用户为副卡，修改副卡账户为主卡账户，默认OFF(4G能力开放公用)">
+            {
+            'ADD_OLD_USER_MOD_ACCT_854':'OFF',<!-- 西藏 -->
+            'ADD_OLD_USER_MOD_ACCT_863':'OFF',<!-- 青海 -->
+            'ADD_OLD_USER_MOD_ACCT_815':'OFF',<!-- 内蒙古 -->
+            'ADD_OLD_USER_MOD_ACCT_823':'OFF',<!-- 黑龙江 -->
+            'ADD_OLD_USER_MOD_ACCT_845':'OFF',<!-- 广西 -->
+            'ADD_OLD_USER_MOD_ACCT_850':'OFF',<!-- 重庆 -->
+            'ADD_OLD_USER_MOD_ACCT_861':'OFF',<!-- 陕西 -->
+            'ADD_OLD_USER_MOD_ACCT_842':'OFF',<!-- 湖北 -->
+            'ADD_OLD_USER_MOD_ACCT_835':'OFF',<!-- 福建 -->
+            'ADD_OLD_USER_MOD_ACCT_832':'OFF',<!-- 江苏 -->
+            'ADD_OLD_USER_MOD_ACCT_846':'OFF',<!-- 海南 -->
+            'ADD_OLD_USER_MOD_ACCT_864':'OFF',<!-- 宁夏 -->
+            'ADD_OLD_USER_MOD_ACCT_814':'OFF',<!-- 山西 -->
+            'ADD_OLD_USER_MOD_ACCT_853':'OFF',<!-- 云南 -->
+            'ADD_OLD_USER_MOD_ACCT_836':'OFF',<!-- 江西 -->
+            'ADD_OLD_USER_MOD_ACCT_837':'OFF',<!-- 山东 -->
+            'ADD_OLD_USER_MOD_ACCT_811':'OFF',<!-- 北京 -->
+            'ADD_OLD_USER_MOD_ACCT_843':'OFF',<!-- 湖南 -->
+            'ADD_OLD_USER_MOD_ACCT_851':'OFF',<!-- 四川 -->
+            'ADD_OLD_USER_MOD_ACCT_844':'OFF',<!-- 广东 -->
+            'ADD_OLD_USER_MOD_ACCT_831':'OFF',<!-- 上海 -->
+            'ADD_OLD_USER_MOD_ACCT_812':'OFF',<!-- 天津 -->
+            'ADD_OLD_USER_MOD_ACCT_813':'OFF',<!-- 河北 -->
+            'ADD_OLD_USER_MOD_ACCT_841':'OFF',<!-- 河南 -->
+            'ADD_OLD_USER_MOD_ACCT_821':'OFF',<!-- 辽宁 -->
+            'ADD_OLD_USER_MOD_ACCT_822':'OFF',<!-- 吉林 -->
+            'ADD_OLD_USER_MOD_ACCT_834':'OFF',<!-- 安徽 -->
+            'ADD_OLD_USER_MOD_ACCT_833':'OFF',<!-- 浙江 -->
+            'ADD_OLD_USER_MOD_ACCT_852':'OFF',<!-- 贵州 -->
+            'ADD_OLD_USER_MOD_ACCT_862':'OFF',<!-- 甘肃 -->
+            'ADD_OLD_USER_MOD_ACCT_865':'OFF',<!-- 新疆 -->
+            'ADD_OLD_USER_MOD_ACCT_899':'OFF'<!-- 虚拟省 -->
             }
         </const>
 	</mda>

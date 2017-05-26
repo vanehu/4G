@@ -275,8 +275,10 @@ order.memberChange = function(){
 									$div2.append($span).appendTo($div);
 									$label.appendTo($div);
 									$div2.appendTo($div);
-									var $label2 = $("<label style='font-weight: initial;'>注意：您纳入加装的移动电话纳入后将统一使用主卡账户！</label>");
-									$label2.appendTo($div);
+									if("ON" == offerChange.queryPortalProperties("ADD_OLD_USER_MOD_ACCT_" + OrderInfo.staff.soAreaId.substring(0,3))){
+										var $label2 = $("<label style='font-weight: initial;'>注意：您纳入加装的移动电话纳入后将统一使用主卡账户！</label>");
+										$label2.appendTo($div);
+									}
 									$("#form").append($div);
 								}
 								else if(oldSubPhoneNumsize.length>max){
@@ -2404,7 +2406,7 @@ order.memberChange = function(){
 		checkUim:_checkUim,
 		newMemberFlag:_newMemberFlag,
 		oldMemberFlag:_oldMemberFlag,
-		changeMemberFlag:_changeMemberFlag,
+		changeMemberFlag:_changeMemberFlag
 	};
 }();
 $(function(){
