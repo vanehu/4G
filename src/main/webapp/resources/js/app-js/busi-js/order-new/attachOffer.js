@@ -3475,6 +3475,7 @@ AttachOffer = (function() {
 		queryGiftServerSpec :_queryGiftServerSpec,
 		setTerminalDiv      :_setTerminalDiv,
 		offerSpecIds		:_offerSpecIds,
-		checkYZFRight		:_checkYZFRight
+		checkYZFRight		:_checkYZFRight,
+		checkTerminalVal	:_checkTerminalVal
 	};
 })();
