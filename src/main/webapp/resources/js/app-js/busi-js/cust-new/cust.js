@@ -1402,6 +1402,12 @@ cust = (function(){
 			if($("#idCardNumber2").length>0){
 				$("#idCardNumber2").val(idcard);
 			}
+			if($("#idCardNumber5").length>0){
+				$("#idCardNumber5").val(idcard);
+			}
+			if($("#idCardNumber6").length>0){
+				$("#idCardNumber6").val(idcard);
+			}
 		}
 		if(OrderInfo.actionFlag==9){//返档需查客户
 			OrderInfo.jbr.identityPic = identityPic;
