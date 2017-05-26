@@ -458,8 +458,8 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>2.3.2</version>
 				<configuration>
-					<source>1.5</source>
-					<target>1.5</target>
+					<source>1.7</source>
+					<target>1.7</target>
 					<encoding>UTF-8</encoding>
 				</configuration>
 			</plugin>
@@ -469,7 +469,7 @@
 				<artifactId>maven-idea-plugin</artifactId>
 				<version>2.2</version>
 				<configuration>
-					<jdkName>1.5</jdkName>
+					<jdkName>1.7</jdkName>
 					<linkModules>true</linkModules>
 				</configuration>
 			</plugin>
