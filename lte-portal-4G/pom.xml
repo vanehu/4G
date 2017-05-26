@@ -9,12 +9,12 @@
 		<relativePath>../lte-parent</relativePath>
 	</parent>
 	<groupId>com.al.ecs</groupId>
-	<artifactId>lte-portal</artifactId>
+	<artifactId>lte-portal-4G</artifactId>
 	<version>4.0.1-SNAPSHOT</version>
 	<packaging>war</packaging>
-	<name>lte-portal</name>
+	<name>lte-portal-4G</name>
 	<description>LTE门户WEB工程</description>
-	<url>http://127.0.0.1:8080/lte-portal</url>
+	<url>http://127.0.0.1:8101/provPortal</url>
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>
