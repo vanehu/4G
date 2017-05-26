@@ -1039,7 +1039,28 @@ cust = (function(){
 		$("#cm_identidiesTypeCd").change();
 		$("#cmCustIdCard").val(idcard);
 		$("#cmAddressStr").val(address);
-		OrderInfo.cust.identityPic = identityPic;//证件照片
+		//客户定位、客户鉴权 读取身份证时填写证件号码
+		if($("#custQuerycontent").css("display")!="none"){
+			if($("#userid").length>0){
+				$("#userid").val(idcard);
+			}
+		}else{
+			if($("#idCardNumber2").length>0){
+				$("#idCardNumber2").val(idcard);
+			}
+			if($("#idCardNumber5").length>0){
+				$("#idCardNumber5").val(idcard);
+			}
+			if($("#idCardNumber6").length>0){
+				$("#idCardNumber6").val(idcard);
+			}
+		}
+		if(OrderInfo.actionFlag==9){//返档需查客户
+			OrderInfo.jbr.identityPic = identityPic;
+			cust.searchUser("1",idcard,name,address);
+		} else {
+			OrderInfo.cust.identityPic = identityPic;//证件照片
+		}
 	};
 	
 	var _getUserGenerationInfos=function(name,idcard,address,identityPic){

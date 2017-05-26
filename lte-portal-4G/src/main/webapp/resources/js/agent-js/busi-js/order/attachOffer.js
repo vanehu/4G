@@ -3476,6 +3476,7 @@ AttachOffer = (function() {
 		}
 	};
 	
+<<<<<<< HEAD:lte-portal-4G/src/main/webapp/resources/js/agent-js/busi-js/order/attachOffer.js
 	//判断是否是重复订购的逻辑
 	var _ifOrderAgain=function(newSpec){
 		if(ec.util.isObj(newSpec.ifOrderAgain)&&newSpec.ifOrderAgain=="Y"){
@@ -3487,6 +3488,19 @@ AttachOffer = (function() {
 			}
 		}
 	};
+=======
+	var _checkTerminalVal = function(val){
+		return (/(^([a-fA-F0-9]{14})$)|(^\d{15}$)/).test(val);
+		
+//		if(val.length>15 || val.length < 14)
+//			return false;
+//		if(val.length == 14){
+//			return (/^[a-f0-9A-F]$/).test(val);
+//		}else {
+//			return (/^[0-9]$/).test(val);
+//		}
+	}
+>>>>>>> redmine#1474309——翼销售集成省份业务:app-portal/lte-portal-4G/src/main/webapp/resources/js/app-js/busi-js/order-new/attachOffer.js
 	
 	//1表示从已订购那边过来的
 	var _setParam=function(prodId,offerSpecId,flag){
@@ -4706,6 +4720,7 @@ AttachOffer = (function() {
 		queryGiftServerSpec :_queryGiftServerSpec,
 		setTerminalDiv      :_setTerminalDiv,
 		offerSpecIds		:_offerSpecIds,
-		checkYZFRight		:_checkYZFRight
+		checkYZFRight		:_checkYZFRight,
+		checkTerminalVal	:_checkTerminalVal
 	};
 })();
