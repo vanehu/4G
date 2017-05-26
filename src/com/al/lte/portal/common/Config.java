@@ -302,7 +302,7 @@ public class Config {
 		String defaultDomain = getProperties().getProperty("DEFAULTDOMAIN");
 		String newDomain = getProperties().getProperty("NEWDOMAIN");
 		String domainNameONOFF = getProperties().getProperty("domainNameONOFF");
-		String domain = getProperties().getProperty(province+"Domain");
+		String domain = getProperties().getProperty(province+"NewDomain");
 		StringBuffer headerHost = req.getRequestURL();
 		System.out.println("打印出headerHost=="+headerHost);
 		if (headerHost == null) {//走老域名
@@ -310,6 +310,14 @@ public class Config {
 		}
 		if(headerHost.toString().contains(newDomain) && "ON".equals(domainNameONOFF)){//走分省域名
 			return domain;
+		}else{
+			String fsdomain = getProperties().getProperty(province+"Domain");
+			if((fsdomain == null) ||  ("".equals(fsdomain))){
+				System.out.println("**********************统一登录[域名] :"+defaultDomain);
+			} else{
+				System.out.println("**********************统一登录[域名] :"+fsdomain);
+				return fsdomain;
+			}
 		}
 		return defaultDomain;
 	}
