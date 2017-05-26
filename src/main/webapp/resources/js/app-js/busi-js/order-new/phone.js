@@ -307,6 +307,10 @@ order.phone = (function(){
 		var tc = $(id).val();
 		if(tc == "")
 			return ;
+		if(!AttachOffer.checkTerminalVal($.trim(tc))){
+			$.alert("提示信息","请输入合法的终端串码<br/>-必须14位字母与数字组合或15位数字组合,不限大小写");
+			return;
+		}
 		var param = {
 			"instCode" 		: tc,
 			"mktResTypeCd" 	: $("#mktResType").val(),

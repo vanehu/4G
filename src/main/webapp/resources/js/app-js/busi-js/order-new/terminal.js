@@ -20,6 +20,7 @@ mktRes.terminal = (function() {
             $.alert("提示", "请选择橙分期合约包！");
             return;
         }
+        
         var param = {
             offerSpecId: order.orange.orangeOfferSpecId,
             offerTypeCd: "2",
@@ -34,11 +35,15 @@ mktRes.terminal = (function() {
      * 橙分期查询完销售品构成后回调
      */
     var _callBackTerminal = function() {
-            $.ecOverlay("<strong>终端校验中,请稍后....</strong>");
             var offerSpec = order.orange.orangeSpec;
             termInfo = {};
             var terminalNum = $("#terminalNum").val();
             if (terminalNum == "") return;
+            if(!AttachOffer.checkTerminalVal($.trim(terminalNum))){
+    			$.alert("提示信息","请输入合法的终端串码<br/>-必须14位字母与数字组合或15位数字组合,不限大小写");
+    			return;
+    		}
+            $.ecOverlay("<strong>终端校验中,请稍后....</strong>");
             var param = {
                 instCode: terminalNum,
                 flag: "0",
