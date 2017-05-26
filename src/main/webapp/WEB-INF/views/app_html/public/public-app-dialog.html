@@ -43,48 +43,62 @@
 				<!-- begin nav-tabs -->
 				<div class="tab-overflow">
 					<ul class="nav nav-tabs nav-tabs-inverse p-t-5" style="border-radius: 5px 5px 0 0;">
-						<li id="auth_tab1" style="display:none;" class="" onclick="custQuery.changeTab(1);">
+						<li id="auth_tab1" style="" class="gz_jq" onclick="custQuery.changeTab(1);">
 						<a data-toggle="tab">
 						<i class="iconfont tab-icon">&#xe667;</i>
 						产品密码
 						<i class="iconfont tab-result-icon">&#xe611;</i>
 						</a>
 						</li>
-						<li id="auth_tab2" style="display:none;" class="" onclick="custQuery.changeTab(2);">
+						<li id="auth_tab2" style="" class="gz_jq" onclick="custQuery.changeTab(2);">
 						<a data-toggle="tab">
 						<i class="iconfont tab-icon">&#xe671;</i>
 						证件
 						<i class="iconfont tab-result-icon">&#xe611;</i>
 						</a>
 						</li>
-						<li id="auth_tab3" style="display:none;" class="" onclick="custQuery.changeTab(3);">
+						<li id="auth_tab3" style="" class="gz_jq" onclick="custQuery.changeTab(3);">
 						<a data-toggle="tab">
 						<i class="iconfont tab-icon">&#xe671;</i>
 						短信
 						<i class="iconfont tab-result-icon">&#xe611;</i>
 						</a>
 						</li>
-						<!-- <li id="auth_tab4" class="" onclick="custQuery.changeTab(4);">
+						<li id="auth_tab10" style="" class="gz_jq" onclick="custQuery.changeTab(10);">
+						<a data-toggle="tab">
+						<i class="iconfont tab-icon">&#xe671;</i>
+						更多方式
+						<i class="iconfont tab-result-icon">&#xe611;</i>
+						</a>
+						</li>
+						<li id="auth_tab4" class="zq_jq" style="display:none;" onclick="custQuery.changeTab(4);">
 						<a data-toggle="tab">
 						<i class="iconfont tab-icon">&#xe671;</i>
 						单位证件
 						<i class="iconfont tab-result-icon">&#xe611;</i>
 						</a>
 						</li>
-						<li id="auth_tab5" class="" onclick="custQuery.changeTab(5);">
+						<li id="auth_tab5" class="zq_jq" style="display:none;" onclick="custQuery.changeTab(5);">
 						<a data-toggle="tab">
 						<i class="iconfont tab-icon">&#xe671;</i>
 						使用人
 						<i class="iconfont tab-result-icon">&#xe611;</i>
 						</a>
 						</li>
-						<li id="auth_tab6" class="" onclick="custQuery.changeTab(6);">
+						<li id="auth_tab6" class="zq_jq" style="display:none;" onclick="custQuery.changeTab(6);">
 						<a data-toggle="tab">
 						<i class="iconfont tab-icon">&#xe671;</i>
-						单位证件+使用人
+						证件+使用人
 						<i class="iconfont tab-result-icon">&#xe611;</i>
 						</a>
-						</li> -->
+						</li>
+						<li id="auth_tab11" style="display:none;" class="zq_jq" onclick="custQuery.changeTab(11);">
+						<a data-toggle="tab">
+						<i class="iconfont tab-icon">&#xe671;</i>
+						更多方式
+						<i class="iconfont tab-result-icon">&#xe611;</i>
+						</a>
+						</li>
 					</ul>
 				</div>
 			</div>
@@ -147,6 +161,77 @@
 				        <button id="jumpAuth3" style="display:none" onclick="custQuery.jumpAuth()" type="button" class="btn btn-primary">跳过校验</button>
 				    </div>
 				</div>
+				<div class="tab-pane fade " id="auth-nav-tab-4">
+					<div class="form-group" style="height: 0.86rem!important;">
+						<input type="text" class="form-control" id="danweiNum" placeholder="请输入组织机构代码" maxlength="50" oninput="this.value=this.value.replace(/[/W]/g,'')">
+					</div>
+					<div class="modal-footer">
+	        			<button id="custAuthbtn4" type="button" class="btn btn-primary"  onclick="custQuery.productPwdAuth('1')">校验</button>
+	        			<button id="jumpAuth4" style="display:none" onclick="custQuery.jumpAuth()" type="button" class="btn btn-primary">跳过校验</button>
+	    			</div>
+				</div>
+				<div class="tab-pane fade" id="auth-nav-tab-5">
+				<div class="list-box m-t-10">
+					<!-- <div class="form-group" style="height: 0.58rem!important;">
+						使用人名称:<input id="zq_userName" disabled='disabled'  style="float:right; margin:0px 5px;height:24px" />
+					 </div>
+					 <div class="form-group" style="height: 0.58rem!important;">
+						账户名称:<input id="zq_account" disabled='disabled'  style="float:right; margin:0px 5px;height:24px" />
+					 </div> -->
+					<ul class="choice-list-box bg-body border-none">
+						<li class="m-t-10">
+							<div class="choice-box">
+								<i class="iconfont pull-left">&#xe60b;</i>
+								<div class="choice-box-left">
+									<span class="select-title left-0">证件类型：</span>
+									<span id="idCardType5" class="select-title" placeholder="" readonly="readonly" style="margin-left: 80px;">身份证</span>
+								</div>
+							</div>
+						</li>
+						<li class="m-t-10" id="readCertBtnID5">
+							<div class="choice-box">
+								<i class="iconfont pull-left">&#xe609;</i>
+								<span class="list-title font-secondary border-none">证件扫描</span>
+								<i id="otg5" onclick="common.callGenerationRec('cust.getGenerationInfos','3')" class="iconfont pull-right font-orange">&#xe6dc;</i>
+								<i onclick="common.callGenerationRec('cust.getGenerationInfos','1')" class="iconfont pull-right font-orange">&#xe653;</i>
+								<i id="nfc5" onclick="common.callGenerationRec('cust.getGenerationInfos','2')" class="iconfont pull-right font-orange">&#xe654;</i>
+							</div>
+						</li>
+					</ul>
+				</div>
+					<div class="form-group" style="height: 1.38rem!important;">
+						<input type="text" id="idCardNumber5" class="form-control" readonly="readonly" placeholder="使用人证件号码" maxlength="30" oninput="this.value=this.value.replace(/[/W]/g,'')">
+                 	</div>
+					<div class="modal-footer">
+	        			<button id="custAuthbtn5" type="button" class="btn btn-primary" onclick="custQuery.identityTypeAuth('7')" >校验</button>
+	        			<button id="jumpAuth5" style="display:none" onclick="custQuery.jumpAuth()" type="button" class="btn btn-primary">跳过校验</button>
+	    			</div>
+				</div>
+				<div class="tab-pane fade " id="auth-nav-tab-6">
+					<div class="form-group" style="height: 0.86rem!important;">
+						<input type="text" class="form-control" id="danweiNum1" placeholder="请输入组织机构代码" maxlength="50" oninput="this.value=this.value.replace(/[/W]/g,'')">
+					</div>
+					<div class="list-box m-t-10">
+					<ul class="choice-list-box bg-body border-none">
+						<li class="m-t-10" id="readCertBtnID6">
+							<div class="choice-box">
+								<i class="iconfont pull-left">&#xe609;</i>
+								<span class="list-title font-secondary border-none">证件扫描</span>
+								<i id="otg6" onclick="common.callGenerationRec('cust.getGenerationInfos','3')" class="iconfont pull-right font-orange">&#xe6dc;</i>
+								<i onclick="common.callGenerationRec('cust.getGenerationInfos','1')" class="iconfont pull-right font-orange">&#xe653;</i>
+								<i id="nfc6" onclick="common.callGenerationRec('cust.getGenerationInfos','2')" class="iconfont pull-right font-orange">&#xe654;</i>
+							</div>
+						</li>
+					</ul>
+				</div>
+					<div class="form-group" style="height: 1.38rem!important;">
+						<input type="text" id="idCardNumber6" class="form-control" readonly="readonly" placeholder="使用人证件号码" maxlength="30" oninput="this.value=this.value.replace(/[/W]/g,'')">
+                 	</div>
+					<div class="modal-footer">
+	        			<button id="custAuthbtn6" type="button" class="btn btn-primary"  onclick="custQuery.identityTypeAuthSub('5')">校验</button>
+	        			<button id="jumpAuth6" style="display:none" onclick="custQuery.jumpAuth()" type="button" class="btn btn-primary">跳过校验</button>
+	    			</div>
+				</div>
 			</div>
           </div>
     </div>
@@ -157,6 +242,10 @@
 	if (/iphone|ipad|ipod/.test(ua)) {
 		$("#nfc").hide();
 		$("#otg").hide();
+		$("#nfc5").hide();
+		$("#otg5").hide();
+		$("#nfc6").hide();
+		$("#otg6").hide();
 		    //alert("iphone");		
 	} else if (/android/.test(ua)) {
 		    //alert("android");	
