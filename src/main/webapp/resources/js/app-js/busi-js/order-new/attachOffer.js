@@ -2768,15 +2768,15 @@ AttachOffer = (function() {
 	};
 	
 	var _checkTerminalVal = function(val){
-//		return (/(^(?=.*[0-9])(?=.*[a-fA-F])([a-fA-F0-9]{14})$)|(^\d{15}$)/).test(val);
+		return (/(^([a-fA-F0-9]{14})$)|(^\d{15}$)/).test(val);
 		
-		if(val.length>15 || val.length < 14)
-			return false;
-		if(val.length == 14){
-			return (/^[a-f0-9A-F]$/).test(val);
-		}else {
-			return (/^[0-9]$/).test(val);
-		}
+//		if(val.length>15 || val.length < 14)
+//			return false;
+//		if(val.length == 14){
+//			return (/^[a-f0-9A-F]$/).test(val);
+//		}else {
+//			return (/^[0-9]$/).test(val);
+//		}
 	}
 	
 	//终端校验
