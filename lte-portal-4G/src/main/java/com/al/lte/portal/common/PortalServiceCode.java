@@ -1211,9 +1211,5 @@ public final class PortalServiceCode {
     public static final String CHECKSTAFFMESSAGE = "sys-checkStaffMessage";
     /**员工密码修改*/
     public static final String UPDATTEPASSWORD = "sys-updatePassword";
-    /**销售品打包礼包查询*/
-    public static final String QUERY_GIFT_PACKAGE_OFFER = "biz-service/intf.prodOfferService/queryGiftPackageList";
-    /**销售品打包礼包成员查询*/
-    public static final String QUERY_GIFT_PACKAGE_MEMBER_OFFER = "biz-service/intf.prodOfferService/queryGiftPackage2ObjList";
 }
 
