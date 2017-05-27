@@ -130,6 +130,20 @@ common.print = (function($){
 					$("#print_ok").off("click").on("click",function(){
 //						$("#order-confirm").show();
 //						$("#order-print").hide();
+						if(OrderInfo.staff.soAreaId+"" == "8210200"){
+							if($("#read_llh").length>0 && $("#read_llh").attr("read")=="N"){
+								$.alert("提示","请先阅读流量壕协议！");
+								return;
+							}
+							if($("#read_thrw").length>0 && $("#read_thrw").attr("read")=="N"){
+								$.alert("提示","请先阅读特号入网壕协议！");
+								return;
+							}
+							if($("#read_ydrw").length>0 && $("#read_ydrw").attr("read")=="N"){
+								$.alert("提示","请先阅读移动入网协议！");
+								return;
+							}
+						}
 						if(!ec.util.isObj($("#signinput").val())){
 							$.alert("提示","请先进行签名，然后再保存！");
 						}else{
@@ -261,6 +275,15 @@ common.print = (function($){
 			$("#showFtlHtml").hide();
 			$("#fwhtml").hide();
 			$("#lhhtml").show();
+		}else if(flag=='4'){
+			$("#llhhtml").show();
+			$("#read_llh").attr("read","Y");
+		}else if(flag=='5'){
+			$("#rwhtml").show();
+			$("#read_rw").attr("read","Y");
+		}else if(flag=='6'){
+			$("#ydrwhtml").show();
+			$("#read_ydrw").attr("read","Y");
 		}
 	};
 	//回执打印（重打）
