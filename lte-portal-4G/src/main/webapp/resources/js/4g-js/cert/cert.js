@@ -294,7 +294,7 @@ cert = (function() {
 				url = contextPath + "/common/decodeCert";
 				params = {
 					data: man.resultContent.certificate,
-					createFlag:createFlag
+					createFlag:$('#createFlag').val()
 				};
 				response = $.callServiceAsJson(url, JSON.stringify(params));
 				if (0 == response.code) {
