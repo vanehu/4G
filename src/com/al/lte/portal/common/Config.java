@@ -223,8 +223,8 @@ public class Config {
 	public static void addCookie(String areaId,HttpServletResponse response,HttpServletRequest request){
 	    response.addHeader("P3P", "CP=CURa ADMa DEVa PSAo PSDo OUR BUS UNI PUR INT DEM STA PRE COM NAV OTC NOI DSP COR");
 		//向cookie中添加标记
-	    delCookie(response, "_UNIFY_LOGIN_AREA_SIGN", null, null, request);
-		addCookie(response, "/", 24*60*60, "_UNIFY_LOGIN_AREA_SIGN",areaId);
+	    delCookie(response, Const.UNIFY_LOGIN_AREA_SIGN, null, null, request);
+		addCookie(response, "/", 24*60*60, Const.UNIFY_LOGIN_AREA_SIGN,areaId);
 	}
 	
 	public static Cookie addCookie(HttpServletResponse response, String path, int expiry, String key, String value) {

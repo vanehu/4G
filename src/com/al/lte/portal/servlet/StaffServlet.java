@@ -33,7 +33,7 @@ public class StaffServlet extends HttpServlet {
 	 * @param resp
 	 */
 	private void logout(HttpServletRequest req, HttpServletResponse resp) {
-		Cookie areack = Config.getCookie(req,"_UNIFY_LOGIN_AREA_SIGN");
+		Cookie areack = Config.getCookie(req,Const.UNIFY_LOGIN_AREA_SIGN);
 		if(areack!=null){
 			String province = areack.getValue();
 			String Port = Config.getProvVersion(province,req);

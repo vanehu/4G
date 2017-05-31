@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.al.lte.portal.common.Config;
+import com.al.lte.portal.common.Const;
 
 public class MainServlet extends HttpServlet {
 	
@@ -16,7 +17,7 @@ public class MainServlet extends HttpServlet {
 	 protected void doGet(HttpServletRequest req, HttpServletResponse resp){
 		 resp.setContentType( "text/html;charset=utf-8" ) ;  //设置响应页面字符编码   
 		 String url = "";
-		 Cookie areack = Config.getCookie(req,"_UNIFY_LOGIN_AREA_SIGN");
+		 Cookie areack = Config.getCookie(req,Const.UNIFY_LOGIN_AREA_SIGN);
 		 if(areack!=null){
 			 String province = areack.getValue();
 			 String Port = Config.getProvVersion(province,req);

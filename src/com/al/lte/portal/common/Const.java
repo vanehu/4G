@@ -6,4 +6,6 @@ public class Const {
 	public static final String TOKEN_KEY="$token@KEY!2015";
 	//省份公共秘钥key   正式：#public@2015$KEY      测试：PUBLIC_TOKEN_KEY
 	public static final String TOKEN_PROVINCE_KEY="#public@2015$KEY";
+	
+	public static final String UNIFY_LOGIN_AREA_SIGN = "_UNIFY_LOGIN_AREA_SIGN";
 }
