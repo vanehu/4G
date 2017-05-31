@@ -615,7 +615,12 @@ public class MDA {
      * 主副卡，保留套餐拆副卡删除使用人
      */
     public static final Map<String, String> VICE_CARD_DEL_USER_ON_OFF = new HashMap<String, String>();
- 
+    
+    /**
+     * 加装老用户为副卡，修改副卡账户为主卡账户，默认OFF
+     */
+    public static final Map<String, String> ADD_OLD_USER_MOD_ACCT = new HashMap<String, String>();
+    
     /**
 	 * 默认域名地址
 	 */
@@ -629,9 +634,7 @@ public class MDA {
 	 * 新域名开关
 	 */
 	public static final String DOMAINNAMEONOFF=new String("");
-
-    /**
-    * 加装老用户为副卡，修改副卡账户为主卡账户，默认OFF
-    */
-    public static final Map<String, String> ADD_OLD_USER_MOD_ACCT = new HashMap<String, String>();
+	
+	/**USB二代证读卡统一分省配置*/
+	public static final Map<String, Object> CERT_SIGNATURE_UNIFY = new HashMap<String, Object>();
 }

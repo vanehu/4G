@@ -2989,5 +2989,95 @@
             'ADD_OLD_USER_MOD_ACCT_899':'OFF'<!-- 虚拟省 -->
             }
         </const>
+        
+                <const type="Map" name="ADD_OLD_USER_MOD_ACCT" description="加装老用户为副卡，修改副卡账户为主卡账户，默认OFF(4G能力开放公用)">
+            {
+            'ADD_OLD_USER_MOD_ACCT_854':'OFF',<!-- 西藏 -->
+            'ADD_OLD_USER_MOD_ACCT_863':'OFF',<!-- 青海 -->
+            'ADD_OLD_USER_MOD_ACCT_815':'OFF',<!-- 内蒙古 -->
+            'ADD_OLD_USER_MOD_ACCT_823':'OFF',<!-- 黑龙江 -->
+            'ADD_OLD_USER_MOD_ACCT_845':'OFF',<!-- 广西 -->
+            'ADD_OLD_USER_MOD_ACCT_850':'OFF',<!-- 重庆 -->
+            'ADD_OLD_USER_MOD_ACCT_861':'OFF',<!-- 陕西 -->
+            'ADD_OLD_USER_MOD_ACCT_842':'OFF',<!-- 湖北 -->
+            'ADD_OLD_USER_MOD_ACCT_835':'OFF',<!-- 福建 -->
+            'ADD_OLD_USER_MOD_ACCT_832':'OFF',<!-- 江苏 -->
+            'ADD_OLD_USER_MOD_ACCT_846':'OFF',<!-- 海南 -->
+            'ADD_OLD_USER_MOD_ACCT_864':'OFF',<!-- 宁夏 -->
+            'ADD_OLD_USER_MOD_ACCT_814':'OFF',<!-- 山西 -->
+            'ADD_OLD_USER_MOD_ACCT_853':'OFF',<!-- 云南 -->
+            'ADD_OLD_USER_MOD_ACCT_836':'OFF',<!-- 江西 -->
+            'ADD_OLD_USER_MOD_ACCT_837':'OFF',<!-- 山东 -->
+            'ADD_OLD_USER_MOD_ACCT_811':'OFF',<!-- 北京 -->
+            'ADD_OLD_USER_MOD_ACCT_843':'OFF',<!-- 湖南 -->
+            'ADD_OLD_USER_MOD_ACCT_851':'OFF',<!-- 四川 -->
+            'ADD_OLD_USER_MOD_ACCT_844':'OFF',<!-- 广东 -->
+            'ADD_OLD_USER_MOD_ACCT_831':'OFF',<!-- 上海 -->
+            'ADD_OLD_USER_MOD_ACCT_812':'OFF',<!-- 天津 -->
+            'ADD_OLD_USER_MOD_ACCT_813':'OFF',<!-- 河北 -->
+            'ADD_OLD_USER_MOD_ACCT_841':'OFF',<!-- 河南 -->
+            'ADD_OLD_USER_MOD_ACCT_821':'OFF',<!-- 辽宁 -->
+            'ADD_OLD_USER_MOD_ACCT_822':'OFF',<!-- 吉林 -->
+            'ADD_OLD_USER_MOD_ACCT_834':'OFF',<!-- 安徽 -->
+            'ADD_OLD_USER_MOD_ACCT_833':'OFF',<!-- 浙江 -->
+            'ADD_OLD_USER_MOD_ACCT_852':'OFF',<!-- 贵州 -->
+            'ADD_OLD_USER_MOD_ACCT_862':'OFF',<!-- 甘肃 -->
+            'ADD_OLD_USER_MOD_ACCT_865':'OFF',<!-- 新疆 -->
+            'ADD_OLD_USER_MOD_ACCT_899':'OFF'<!-- 虚拟省 -->
+            }
+        </const>
+        
+		<const type="Map" name="CERT_SIGNATURE_UNIFY" description="USB二代证读卡统一控件配置,增加分省开开，开关打开用统一控件读卡，关闭老模式">
+            {
+            	"appId":"wx8b39f1a66f31e6ed",
+            	"appSecret":"<![CDATA[8fc231fe8ccd7d0f58e0b26fdd97b45d]]>",
+            	"hashVal":[
+            		"sklfbsmvkmkmvkfdb",
+            		"cksjdkvldmskbvlvm"
+            	],
+            	"secretConfig":{
+            		"84D1319C-FBAF-644C-901A-8F091F25AF04":{
+		                "3desSecret":"<![CDATA[6091aab92a16a0808d5243221167ffee6091aab92a16a080]]>",
+		                "aesSecret":"<![CDATA[74#2iBN4&29eV@Ye]]>",
+	            		"defaultSecret":"Y",
+            			"effectTime":"2999-05-18 23:59:59",
+            			"lastVerFlag":"Y"
+	            	}
+	            },
+	            "requestFilter":"ON",
+	            '854':'OFF',<!-- 西藏 -->
+                '863':'OFF',<!-- 青海 -->
+                '815':'OFF',<!-- 内蒙古 -->
+                '823':'OFF',<!-- 黑龙江 -->
+                '845':'OFF',<!-- 广西 -->
+                '850':'OFF',<!-- 重庆 -->
+                '861':'OFF',<!-- 陕西 -->
+                '842':'OFF',<!-- 湖北 -->
+                '835':'OFF',<!-- 福建 -->
+                '832':'OFF',<!-- 江苏 -->
+                '846':'OFF',<!-- 海南 -->
+                '864':'OFF',<!-- 宁夏 -->
+                '814':'OFF',<!-- 山西 -->
+                '853':'OFF',<!-- 云南 -->
+                '836':'OFF',<!-- 江西 -->
+                '837':'OFF',<!-- 山东 -->
+                '811':'OFF',<!-- 北京 -->
+                '843':'OFF',<!-- 湖南 -->
+                '851':'OFF',<!-- 四川 -->
+                '844':'OFF',<!-- 广东 -->
+                '831':'OFF',<!-- 上海 -->
+                '812':'OFF',<!-- 天津 -->
+                '813':'OFF',<!-- 河北 -->
+                '841':'OFF',<!-- 河南 -->
+                '821':'OFF',<!-- 辽宁 -->
+                '822':'OFF',<!-- 吉林 -->
+                '834':'OFF',<!-- 安徽 -->
+                '833':'OFF',<!-- 浙江 -->
+                '852':'OFF',<!-- 贵州 -->
+                '862':'OFF',<!-- 甘肃 -->
+                '865':'OFF',<!-- 新疆 -->
+                '899':'OFF'<!-- 虚拟省 -->
+            }
+		</const>
 	</mda>
 </mdas>
