@@ -154,8 +154,8 @@ provence = (function(){
 					custId: OrderInfo.cust.custId,
 					partyName: OrderInfo.cust.partyName,
 					addressStr: OrderInfo.cust.addressStr,
-					certNumber: OrderInfo.cust.idCardNumber,
-					certType: OrderInfo.cust.identityCd,
+					idCardNumber: OrderInfo.cust.idCardNumber,
+					identityCd: OrderInfo.cust.identityCd,
 					custType: OrderInfo.cust.custFlag
 			};
 			if(param.custId == undefined || param.custId == "-1" || param.custId == ""){
