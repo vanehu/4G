@@ -1058,11 +1058,11 @@ CacheData = (function() {
 							}
 						}
 					}
-					else if(OrderInfo.actionFlag==22){
-						offerSpec.isdel = "C";
-						CacheData.setOfferSpec(prodId,offerSpec);
-						AttachOffer.addOpenList(prodId,offerSpec.offerSpecId);
-					}
+					else if ((OrderInfo.actionFlag == 2 || OrderInfo.actionFlag == 21 || OrderInfo.actionFlag == 22 ) && offerSpec.ifDault == 1) {//套餐变更需要展示默认的销售品
+                        offerSpec.isdel = "C";
+                        CacheData.setOfferSpec(prodId, offerSpec);
+                        AttachOffer.addOpenList(prodId, offerSpec.offerSpecId);
+                    }
 				}
 			}
 		}
