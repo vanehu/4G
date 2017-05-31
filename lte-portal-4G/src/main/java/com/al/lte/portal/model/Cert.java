@@ -367,11 +367,11 @@ public class Cert {
 	
 	public String encryptAes(String param, String versionId){
 		String aesSecret = MapUtils.getString(MapUtils.getMap(this.secretConfig, versionId), "aesSecret");
-		return AESUtils.encryptToString(param, aesSecret);
+		return AESUtils.encryptAesToString(param, aesSecret);
 	}
 	
 	public String decryptAes(String param, String aesSecret){
-		return AESUtils.decryptToString(param, aesSecret);
+		return AESUtils.decryptAesToString(param, aesSecret);
 	}
 	
 	public String encrypt3des(String param, String versionId){

@@ -140,13 +140,20 @@ public class PortalPropertiesController extends BaseController {
      * @param error 错误标识(unifyLogin)
      * @param response 加密报文
      */
-    @RequestMapping(value = "/getCtrlSecret", method = {RequestMethod.GET})
-    public void getCtrlSecret(@RequestParam(value="param", required=false) String secretParam,
-    		@RequestParam(value="versionId", required= false) String versionId,
-    		@RequestParam(value="error", required=false) String error,
-    		HttpServletResponse response) {
-
-    	if("1".equals(error) || StringUtils.isBlank(versionId) || StringUtils.isBlank(secretParam)){
+    @RequestMapping(value = "/getCtrlSecret", method = {RequestMethod.POST})
+    public void getCtrlSecret(@RequestBody Map<String, Object> param, HttpServletResponse response) {
+    	String versionId = null;
+    	String secretParam = null;
+    	
+    	if(MapUtils.isNotEmpty(param)){
+    		versionId = MapUtils.getString(param, "versionId");
+        	secretParam = MapUtils.getString(param, "param");
+        	
+    		if(StringUtils.isBlank(versionId) || StringUtils.isBlank(secretParam)){
+        		response.setStatus(403);
+        		return;
+        	}
+    	} else{
     		response.setStatus(403);
     		return;
     	}

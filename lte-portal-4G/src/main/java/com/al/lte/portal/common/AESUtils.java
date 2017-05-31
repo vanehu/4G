@@ -16,6 +16,7 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
+import com.al.ecs.log.Log;
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
 
@@ -37,6 +38,8 @@ public class AESUtils {
 	private static int keySize = 128;
 	
 	private final static String encoding = "UTF-8"; 
+	
+	private static Log log = Log.getLog(AESUtils.class);
 
 	/**
 	 * AES+BASE64加密
@@ -349,6 +352,57 @@ public class AESUtils {
 				md5StrBuff.append(Integer.toHexString(0xFF & byteArray[i]));
 		}
 		return md5StrBuff.toString();
+	}
+	
+	/**
+	 * 简化版AES加密
+	 */
+	public static String encryptAesToString(String content, String password) {
+		String result = null;
+				
+		if (password == null || content == null || "".equals(content) || "".equals(password)) {
+			return result;
+		}
+		
+		try {
+			SecretKeySpec secretKeySpec = new SecretKeySpec(password.getBytes(encoding), "AES");
+			Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+			cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec);
+			
+			byte[] resultBytes = cipher.doFinal(content.getBytes(encoding));
+			result = parseByte2HexStr(resultBytes);
+		} catch (Exception e) {
+			result = null;
+			log.error("加密发生异常，异常信息：", e);
+		}
+		
+		return result;
+	}
+	
+	/**
+	 * 简化版AES解密
+	 */
+	public static String decryptAesToString(String content, String password) {
+		String result = null;
+		
+		if (password == null || content == null || "".equals(content) || "".equals(password)) {
+			return result;
+		}
+		
+		try {
+			SecretKeySpec secretKeySpec = new SecretKeySpec(password.getBytes(encoding), "AES");
+			Cipher cipher = Cipher.getInstance("AES");
+			cipher.init(Cipher.DECRYPT_MODE, secretKeySpec);
+			
+			byte[] decryptFrom = parseHexStr2Byte(content);
+			byte[] resultBytes = cipher.doFinal(decryptFrom);
+			result = new String(resultBytes, encoding);
+		} catch (Exception e) {
+			result = null;
+			log.error("加密发生异常，异常信息：", e);
+		}
+		
+		return result;
 	}
 
 	public static void main(String[] args) {
