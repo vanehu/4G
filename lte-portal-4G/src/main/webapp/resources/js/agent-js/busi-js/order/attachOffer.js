@@ -1408,26 +1408,14 @@ AttachOffer = (function() {
 			});
 		}
 	};
-	
-	//服务互斥依赖时带出添加跟删除
-	var excludeAddServ = function(prodId,servSpecId,param){
-		if(ec.util.isArray(param.excludeServ)){ //有互斥
-			for (var i = 0; i < param.excludeServ.length; i++) { //删除已开通
-				var excludeServSpecId = param.excludeServ[i].servSpecId;
-				var spec = CacheData.getServSpec(prodId,excludeServSpecId);
-				if(spec!=undefined){
-//					$("#li_"+prodId+"_"+excludeServSpecId).remove();
-					var $span = $("#li_"+prodId+"_"+excludeServSpecId).find("span");
-					$span.addClass("del");
-					spec.isdel = "Y";
-				}else{
-					var serv = CacheData.getServBySpecId(prodId,excludeServSpecId);
-					if(serv!=undefined){
-//						$("#li_"+prodId+"_"+serv.servId).remove();
-						var $span = $("#li_"+prodId+"_"+serv.servId).find("span");
-						$span.addClass("del");
-						serv.isdel = "Y";
-					}
+	var _checkUser = function(prodId,servSpecId){
+		//开通翼支付功能产品时进行实名校验
+		if(servSpecId == CONST.YZFservSpecId1 || servSpecId == CONST.YZFservSpecId){
+			if((OrderInfo.actionFlag == 2 || OrderInfo.actionFlag == 3)//政企客户做套餐变更或主副卡成员变更
+					|| (!cust.isCovCust(OrderInfo.cust.identityCd) && (prodId != -1 && cust.userFlag !="ON"//公众客户副卡使用人开关关闭的情况
+					|| prodId == -1))){
+				if(!cust.isRealCust){
+					return false;
 				}
 			}
 		}
@@ -4531,6 +4519,18 @@ AttachOffer = (function() {
 		    	 $("#tab2_li").removeClass("active");
 		    	 $("#tab3_li").removeClass("active");
 		    	 $("#tab4_li").addClass("active");
+		    	 setTimeout(function () { 
+					 var yzfFlag = $("#yzfFlag_" + param.prodId + "_"+CONST.YZFservSpecId1).val();
+					 if(yzfFlag && yzfFlag == "1" && !cust.isRealCust){
+							if(parseInt(param.prodId) == -1){//主卡必做校验
+								$.alert("提示","当前用户证件类型不符合实名规范，无开通翼支付及其相关功能产品权限，已自动退订！")
+								AttachOffer.closeServSpec(param.prodId,CONST.YZFservSpecId1,'翼支付','N');
+							} else if(parseInt(param.prodId) != -1 && cust.userFlag!="ON"){//副卡在使用人开关关闭时进行校验
+								AttachOffer.closeServSpec(param.prodId,CONST.YZFservSpecId1,'翼支付','N');
+							}
+						} 
+					 $("#yzfFlag_" + param.prodId + "_"+CONST.YZFservSpecId1).val("2")
+				    },800);
 			}
 		});
 	};
