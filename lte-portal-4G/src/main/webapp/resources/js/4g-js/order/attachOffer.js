@@ -6067,6 +6067,9 @@ AttachOffer = (function() {
 		if(OrderInfo.order.soNbr==null || OrderInfo.order.soNbr==undefined || OrderInfo.order.soNbr==""){
 			OrderInfo.order.soNbr = UUID.getDataId();
 		}
+        //对数组参数去重
+        _orderedOfferSpecIds = ec.util.distinct(_orderedOfferSpecIds);
+        _servSpecIds = ec.util.distinct(_servSpecIds);
 		var param={
 				orderedOfferSpecIds : _orderedOfferSpecIds,
 				servSpecIds : _servSpecIds,
