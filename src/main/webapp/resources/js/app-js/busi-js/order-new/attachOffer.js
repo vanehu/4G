@@ -3235,17 +3235,57 @@ AttachOffer = (function() {
 	
 	//现在主销售品参数
 	var _showMainParam = function(){
-		var content = CacheData.getParamContent(-1,OrderInfo.offerSpec,0);
+		var tempProdId = -1;//prodID赋值为-1
+		var content = CacheData.getParamContent(tempProdId,OrderInfo.offerSpec,0);
 		$.confirm("参数设置： ",content,{ 
-			yes:function(){	
-				
+			yes:function(){
+				//参数输入校验
+				if(!paramInputCheck()){
+					return;
+				}
+				var spec = OrderInfo.offerSpec;
+				if(!!spec.offerSpecParams){
+					for (var i = 0; i < spec.offerSpecParams.length; i++) {
+						var itemSpec = spec.offerSpecParams[i];
+						var newSpecParam = $.trim($("#"+tempProdId+"_"+itemSpec.itemSpecId).val());
+						if(newSpecParam!=null){
+							if(itemSpec.rule.isOptional=="N"&&newSpecParam=="") { //必填
+								$.alert("提示","属性："+itemSpec.name+"  为必填属性，不能为空！");
+								return;
+							}
+							itemSpec.setValue = newSpecParam;
+							if (itemSpec.dateSourceTypeCd == "17") {//搜索框类型组件获取code属性中的值作为设置值
+								itemSpec.setValue = $.trim($("#" + tempProdId + "_" + itemSpec.itemSpecId).attr("code"));
+							}
+							itemSpec.isSet = true;
+						}else{
+							itemSpec.isSet = false;
+						}
+					}
+				}
+				spec.isset ="Y"
 			},
-			no:function(){
-				
+			no:function(){			
 			}
 		});
 	};
-	
+
+	//（销售品）参数输入校验（服务参数暂未使用）
+	var paramInputCheck = function(){
+		var pass = true;
+		$("#paramForm").find("input[type=text]").each(function(){
+			var mask = $(this).attr("mask");
+			var maskmsg = $(this).attr("maskmsg");
+			if(mask!=null && mask!="" && mask.substring(0,1)=="/" && mask.substring(mask.length-1,mask.length)=="/"){
+				if(!eval(mask).test($(this).val())){
+					$.alert("提示",maskmsg);
+					pass = false;
+					return false;
+				}
+			}
+		});
+		return pass;
+	};
 	//礼包订购构成功能产品查询
 	var _queryGiftServerSpec = function(param) {
 		query.offer.queryGiftServerSpec(param,function(data){
