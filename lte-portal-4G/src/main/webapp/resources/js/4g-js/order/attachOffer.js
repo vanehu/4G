@@ -784,10 +784,14 @@ AttachOffer = (function() {
 				});
 				
 				if(AttachOffer.openList.length>0){
-					for(var j=0;j<AttachOffer.openList[0].specList.length;j++){
-						var openedServ = AttachOffer.openList[0].specList[j];
-						if(openedServ.isdel ==undefined || "Y"!= openedServ.isdel){
-							_orderedOfferSpecIds.push(openedServ.offerSpecId);
+					for(var k=0;k<AttachOffer.openList.length;k++){
+						if(AttachOffer.openList[k].prodId == prodId){
+							for(var j=0;j<AttachOffer.openList[k].specList.length;j++){
+								var openedServ = AttachOffer.openList[k].specList[j];
+								if(openedServ.isdel ==undefined || "Y"!= openedServ.isdel){
+									_orderedOfferSpecIds.push(openedServ.offerSpecId);
+								}
+							}
 						}
 					}
 				}
@@ -798,10 +802,14 @@ AttachOffer = (function() {
 				});
 				
 				if(AttachOffer.openServList.length>0){
-					for(var n=0;n<AttachOffer.openServList[0].servSpecList.length;n++){
-						var opendServ = AttachOffer.openServList[0].servSpecList[n];
-						if(opendServ.isdel ==undefined || "Y"!= opendServ.isdel){
-							_servSpecIds.push(opendServ.servSpecId);
+					for(var k=0;k<AttachOffer.openServList.length;k++){
+						if(AttachOffer.openServList[k].prodId == prodId){
+							for(var n=0;n<AttachOffer.openServList[k].servSpecList.length;n++){
+								var opendServ = AttachOffer.openServList[k].servSpecList[n];
+								if(opendServ.isdel ==undefined || "Y"!= opendServ.isdel){
+									_servSpecIds.push(opendServ.servSpecId);
+								}
+							}
 						}
 					}
 				}
@@ -824,10 +832,14 @@ AttachOffer = (function() {
 				if(respnose !="" &&  respnose.data.resultCode == "0" && respnose.data.result.servSpec!=undefined && respnose.data.result.servSpec !=null && respnose.data.result.servSpec !=""){
 					$.each(respnose.data.result.servSpec,function(){
 						if(AttachOffer.openServList.length>0){
-							for(var n=0;n<AttachOffer.openServList[0].servSpecList.length;n++){
-								var opendServ = AttachOffer.openServList[0].servSpecList[n];
-								if(this.servSpecId == opendServ.servSpecId){
-									contentAppend = contentAppend + this.servSpecName +"<br>"; 
+							for(var k=0;k<AttachOffer.openServList.length;k++){
+								if(AttachOffer.openServList[k].prodId == prodId){
+									for(var n=0;n<AttachOffer.openServList[k].servSpecList.length;n++){
+										var opendServ = AttachOffer.openServList[k].servSpecList[n];
+										if(this.servSpecId == opendServ.servSpecId){
+											contentAppend = contentAppend + this.servSpecName +"<br>"; 
+										}
+									}
 								}
 							}
 						}
@@ -836,10 +848,14 @@ AttachOffer = (function() {
 				if(respnose !="" &&  respnose.data.resultCode == "0" && respnose.data.result.servSpec!=undefined && respnose.data.result.offerSpec !=null && respnose.data.result.offerSpec !=""){
 					$.each(respnose.data.result.offerSpec,function(){
 						if(AttachOffer.openList.length>0){
-							for(var n=0;n< AttachOffer.openList[0].specList.length;n++){
-								var opendServ =  AttachOffer.openList[0].specList[n];
-								if(this.offerSpecId == opendServ.offerSpecId){
-									contentAppend = contentAppend +this.offerSpecName+"<br>";  
+							for(var k=0;k<AttachOffer.openList.length;k++){
+								if(AttachOffer.openList[k].prodId == prodId){
+									for(var n=0;n< AttachOffer.openList[k].specList.length;n++){
+										var opendServ =  AttachOffer.openList[k].specList[n];
+										if(this.offerSpecId == opendServ.offerSpecId){
+											contentAppend = contentAppend +this.offerSpecName+"<br>";  
+										}
+									}
 								}
 							}
 						}
@@ -964,10 +980,14 @@ AttachOffer = (function() {
 					}
 				});
 				if(AttachOffer.openList.length>0){
-					for(var j=0;j<AttachOffer.openList[0].specList.length;j++){
-						var openedServ = AttachOffer.openList[0].specList[j];
-						if(openedServ.isdel ==undefined || "Y"!= openedServ.isdel){
-							_orderedOfferSpecIds.push(openedServ.offerSpecId);
+					for(var k=0;k<AttachOffer.openList.length;k++){
+						if(AttachOffer.openList[k].prodId == prodId){
+							for(var j=0;j<AttachOffer.openList[k].specList.length;j++){
+								var openedServ = AttachOffer.openList[k].specList[j];
+								if(openedServ.isdel ==undefined || "Y"!= openedServ.isdel){
+									_orderedOfferSpecIds.push(openedServ.offerSpecId);
+								}
+							}
 						}
 					}
 				}
@@ -978,10 +998,14 @@ AttachOffer = (function() {
 				});
 				
 				if(AttachOffer.openServList.length>0){
-					for(var n=0;n<AttachOffer.openServList[0].servSpecList.length;n++){
-						var opendServ = AttachOffer.openServList[0].servSpecList[n];
-						if(opendServ.isdel ==undefined || "Y"!= opendServ.isdel){
-							_servSpecIds.push(opendServ.servSpecId);
+					for(var k=0;k<AttachOffer.openServList.length;k++){
+						if(AttachOffer.openServList[k].prodId == prodId){
+							for(var n=0;n<AttachOffer.openServList[k].servSpecList.length;n++){
+								var opendServ = AttachOffer.openServList[k].servSpecList[n];
+								if(opendServ.isdel ==undefined || "Y"!= opendServ.isdel){
+									_servSpecIds.push(opendServ.servSpecId);
+								}
+							}
 						}
 					}
 				}
@@ -1006,10 +1030,14 @@ AttachOffer = (function() {
 				if(respnose !="" && respnose.data.resultCode == "0" && respnose.data.result.servSpec!=undefined && respnose.data.result.servSpec !=null && respnose.data.result.servSpec !=""){
 					$.each(respnose.data.result.servSpec,function(){
 						if(AttachOffer.openServList.length>0){
-							for(var n=0;n<AttachOffer.openServList[0].servSpecList.length;n++){
-								var opendServ = AttachOffer.openServList[0].servSpecList[n];
-								if(this.servSpecId == opendServ.servSpecId){
-									contentAppend = contentAppend + this.servSpecName +"<br>"; 
+							for(var k=0;k<AttachOffer.openServList.length;k++){
+								if(AttachOffer.openServList[k].prodId == prodId){
+									for(var n=0;n<AttachOffer.openServList[k].servSpecList.length;n++){
+										var opendServ = AttachOffer.openServList[k].servSpecList[n];
+										if(this.servSpecId == opendServ.servSpecId){
+											contentAppend = contentAppend + this.servSpecName +"<br>"; 
+										}
+									}
 								}
 							}
 						}
@@ -1018,10 +1046,14 @@ AttachOffer = (function() {
 				if(respnose !="" && respnose.data.resultCode == "0" && respnose.data.result.offerSpec!=undefined && respnose.data.result.offerSpec !=null && respnose.data.result.offerSpec !=""){
 					$.each(respnose.data.result.offerSpec,function(){
 						if(AttachOffer.openList.length>0){
-							for(var n=0;n<AttachOffer.openList[0].offerList.length;n++){
-								var opendServ = AttachOffer.openedServList[0].servList[n];
-								if(this.offerSpecId == opendServ.offerSpecId){
-									contentAppend = contentAppend + this.offerSpecName+"<br>";  
+							for(var k=0;k<AttachOffer.openList.length;k++){
+								if(AttachOffer.openList[k].prodId == prodId){
+									for(var n=0;n<AttachOffer.openList[k].offerList.length;n++){
+										var opendServ = AttachOffer.openedServList[k].servList[n];
+										if(this.offerSpecId == opendServ.offerSpecId){
+											contentAppend = contentAppend + this.offerSpecName+"<br>";  
+										}
+									}
 								}
 							}
 						}
@@ -1103,10 +1135,14 @@ AttachOffer = (function() {
 					});
 					
 					if(AttachOffer.openList.length>0){
-						for(var j=0;j<AttachOffer.openList[0].specList.length;j++){
-							var openedServ = AttachOffer.openList[0].specList[j];
-							if(openedServ.isdel ==undefined || "Y"!= openedServ.isdel){
-								_orderedOfferSpecIds.push(openedServ.offerSpecId);
+						for(var k=0;k<AttachOffer.openList.length;k++){
+							if(AttachOffer.openList[k].prodId == prodId){
+								for(var j=0;j<AttachOffer.openList[k].specList.length;j++){
+									var openedServ = AttachOffer.openList[k].specList[j];
+									if(openedServ.isdel ==undefined || "Y"!= openedServ.isdel){
+										_orderedOfferSpecIds.push(openedServ.offerSpecId);
+									}
+								}
 							}
 						}
 					}
@@ -1117,10 +1153,14 @@ AttachOffer = (function() {
 					});
 					
 					if(AttachOffer.openServList.length>0){
-						for(var n=0;n<AttachOffer.openServList[0].servSpecList.length;n++){
-							var opendServ = AttachOffer.openServList[0].servSpecList[n];
-							if(opendServ.isdel ==undefined || "Y"!= opendServ.isdel){
-								_servSpecIds.push(opendServ.servSpecId);
+						for(var k=0;k<AttachOffer.openServList.length;k++){
+							if(AttachOffer.openServList[k].prodId == prodId){
+								for(var n=0;n<AttachOffer.openServList[k].servSpecList.length;n++){
+									var opendServ = AttachOffer.openServList[k].servSpecList[n];
+									if(opendServ.isdel ==undefined || "Y"!= opendServ.isdel){
+										_servSpecIds.push(opendServ.servSpecId);
+									}
+								}
 							}
 						}
 					}
@@ -1130,10 +1170,14 @@ AttachOffer = (function() {
 				if(respnose !="" &&  respnose.data.resultCode == "0" && respnose.data.result.servSpec!=undefined && respnose.data.result.servSpec !=null && respnose.data.result.servSpec !=""){
 					$.each(respnose.data.result.servSpec,function(){
 						if(AttachOffer.openServList.length>0){
-							for(var n=0;n<AttachOffer.openServList[0].servSpecList.length;n++){
-								var opendServ = AttachOffer.openServList[0].servSpecList[n];
-								if(this.servSpecId == opendServ.servSpecId){
-									contentAppend = contentAppend + this.servSpecName +"<br>"; 
+							for(var k=0;k<AttachOffer.openServList.length;k++){
+								if(AttachOffer.openServList[k].prodId == prodId){
+									for(var n=0;n<AttachOffer.openServList[k].servSpecList.length;n++){
+										var opendServ = AttachOffer.openServList[k].servSpecList[n];
+										if(this.servSpecId == opendServ.servSpecId){
+											contentAppend = contentAppend + this.servSpecName +"<br>"; 
+										}
+									}
 								}
 							}
 						}
@@ -1142,10 +1186,14 @@ AttachOffer = (function() {
 				if(respnose !="" &&  respnose.data.resultCode == "0" && respnose.data.result.servSpec!=undefined && respnose.data.result.offerSpec !=null && respnose.data.result.offerSpec !=""){
 					$.each(respnose.data.result.offerSpec,function(){
 						if(AttachOffer.openList.length>0){
-							for(var n=0;n<AttachOffer.openList[0].specList.length;n++){
-								var opendServ = AttachOffer.openList[0].specList[n];
-								if(this.offerSpecId == opendServ.offerSpecId){
-									contentAppend = contentAppend +this.offerSpecName+"<br>";  
+							for(var k=0;k<AttachOffer.openList.length;k++){
+								if(AttachOffer.openList[k].prodId == prodId){
+									for(var n=0;n<AttachOffer.openList[k].specList.length;n++){
+										var opendServ = AttachOffer.openList[k].specList[n];
+										if(this.offerSpecId == opendServ.offerSpecId){
+											contentAppend = contentAppend +this.offerSpecName+"<br>";  
+										}
+									}
 								}
 							}
 						}
@@ -1266,10 +1314,14 @@ AttachOffer = (function() {
 				});
 				
 				if(AttachOffer.openList.length>0){
-					for(var j=0;j<AttachOffer.openList[0].specList.length;j++){
-						var openedServ = AttachOffer.openList[0].specList[j];
-						if(openedServ.isdel ==undefined || "Y"!= openedServ.isdel){
-							_orderedOfferSpecIds.push(openedServ.offerSpecId);
+					for(var k=0;k<AttachOffer.openList.length;k++){
+						if(AttachOffer.openList[k].prodId == prodId){
+							for(var j=0;j<AttachOffer.openList[k].specList.length;j++){
+								var openedServ = AttachOffer.openList[k].specList[j];
+								if(openedServ.isdel ==undefined || "Y"!= openedServ.isdel){
+									_orderedOfferSpecIds.push(openedServ.offerSpecId);
+								}
+							}
 						}
 					}
 				}
@@ -1280,10 +1332,14 @@ AttachOffer = (function() {
 				});
 				
 				if(AttachOffer.openServList.length>0){
-					for(var n=0;n<AttachOffer.openServList[0].servSpecList.length;n++){
-						var opendServ = AttachOffer.openServList[0].servSpecList[n];
-						if(opendServ.isdel ==undefined || "Y"!= opendServ.isdel){
-							_servSpecIds.push(opendServ.servSpecId);
+					for(var k=0;k<AttachOffer.openServList.length;k++){
+						if(AttachOffer.openServList[k].prodId == prodId){
+							for(var n=0;n<AttachOffer.openServList[k].servSpecList.length;n++){
+								var opendServ = AttachOffer.openServList[k].servSpecList[n];
+								if(opendServ.isdel ==undefined || "Y"!= opendServ.isdel){
+									_servSpecIds.push(opendServ.servSpecId);
+								}
+							}
 						}
 					}
 				}
@@ -1301,10 +1357,14 @@ AttachOffer = (function() {
 				if(respnose !="" &&  respnose.data.resultCode == "0" && respnose.data.result.servSpec!=undefined && respnose.data.result.servSpec !=null && respnose.data.result.servSpec !=""){
 					$.each(respnose.data.result.servSpec,function(){
 						if(AttachOffer.openedServList.length>0){
-							for(var n=0;n<AttachOffer.openedServList[0].servList.length;n++){
-								var opendServ = AttachOffer.openedServList[0].servList[n];
-								if(this.servSpecId == opendServ.servSpecId){
-									contentAppend = contentAppend + this.servSpecName +"<br>"; 
+							for(var k=0;k<AttachOffer.openedServList.length;k++){
+								if(AttachOffer.openedServList[k].prodId == prodId){
+									for(var n=0;n<AttachOffer.openedServList[k].servList.length;n++){
+										var opendServ = AttachOffer.openedServList[k].servList[n];
+										if(this.servSpecId == opendServ.servSpecId){
+											contentAppend = contentAppend + this.servSpecName +"<br>"; 
+										}
+									}
 								}
 							}
 						}
@@ -1313,10 +1373,14 @@ AttachOffer = (function() {
 				if(respnose !="" &&  respnose.data.resultCode == "0" && respnose.data.result.servSpec!=undefined && respnose.data.result.servSpec !=null && respnose.data.result.servSpec !=""){
 					$.each(respnose.data.result.servSpec,function(){
 						if(AttachOffer.openServList.length>0){
-							for(var n=0;n<AttachOffer.openServList[0].servSpecList.length;n++){
-								var opendServ = AttachOffer.openServList[0].servSpecList[n];
-								if(this.servSpecId == opendServ.servSpecId){
-									contentAppend = contentAppend + this.servSpecName +"<br>"; 
+							for(var k=0;k<AttachOffer.openServList.length;k++){
+								if(AttachOffer.openServList[k].prodId == prodId){
+									for(var n=0;n<AttachOffer.openServList[k].servSpecList.length;n++){
+										var opendServ = AttachOffer.openServList[k].servSpecList[n];
+										if(this.servSpecId == opendServ.servSpecId){
+											contentAppend = contentAppend + this.servSpecName +"<br>"; 
+										}
+									}
 								}
 							}
 						}
@@ -1325,10 +1389,14 @@ AttachOffer = (function() {
 				if(respnose !="" &&  respnose.data.resultCode == "0" && respnose.data.result.servSpec!=undefined && respnose.data.result.offerSpec !=null && respnose.data.result.offerSpec !=""){
 					$.each(respnose.data.result.offerSpec,function(){
 						if(AttachOffer.openedList.length>0){
-							for(var n=0;n<AttachOffer.openedList[0].offerList.length;n++){
-								var opendServ = AttachOffer.openedList[0].offerList[n];
-								if(this.offerSpecId == opendServ.offerSpecId){
-									contentAppend = contentAppend +this.offerSpecName+"<br>";  
+							for(var k=0;k<AttachOffer.openedList.length;k++){
+								if(AttachOffer.openedList[k].prodId == prodId){
+									for(var n=0;n<AttachOffer.openedList[k].offerList.length;n++){
+										var opendServ = AttachOffer.openedList[k].offerList[n];
+										if(this.offerSpecId == opendServ.offerSpecId){
+											contentAppend = contentAppend +this.offerSpecName+"<br>";  
+										}
+									}
 								}
 							}
 						}
@@ -1362,13 +1430,17 @@ AttachOffer = (function() {
 				for(var j=0;j<servSpecs.servSpe.length;j++){
 					var servSpe = servSpecs.servSpe[j];
 					if(AttachOffer.openServList.length>0){
-						for(var n=0;n<AttachOffer.openServList[0].servSpecList.length;n++){
-							var opendServ = AttachOffer.openServList[0].servSpecList[n];
-							if(servSpe.servSpecId == opendServ.servSpecId){
-								opendServ.isdel = "N";
-								$("#li"+prodId+"_"+opendServ.servId).find("span").removeClass("del");
+						for(var k=0;k<AttachOffer.openServList.length;k++){
+							if(AttachOffer.openServList[k].prodId == prodId){
+								for(var n=0;n<AttachOffer.openServList[k].servSpecList.length;n++){
+									var opendServ = AttachOffer.openServList[k].servSpecList[n];
+									if(servSpe.servSpecId == opendServ.servSpecId){
+										opendServ.isdel = "N";
+										$("#li"+prodId+"_"+opendServ.servId).find("span").removeClass("del");
+									}
+							    }
 							}
-					    }
+						}
 					}
 				}
 			}
@@ -1380,14 +1452,18 @@ AttachOffer = (function() {
 				for(var j=0;j<servSpecs.offerSpe.length;j++){
 					var offerSpe = servSpecs.offerSpe[j];
 					if(AttachOffer.openList.length>0){
-						for(var n=0;n<AttachOffer.openList[0].specList.length;n++){
-							var opendServ = AttachOffer.openList[0].specList[n];
-							if(offerSpe.offerId == opendServ.offerId){
-								opendServ.isdel = "N";
-								$("#li_"+prodId+"_"+opendServ.offerId).find("span").removeClass("del");
-								//AttachOffer.openedList[0].offerList.splice(n,1);//删除因为依赖加入的销售品
+						for(var k=0;k<AttachOffer.openServList.length;k++){
+							if(AttachOffer.openServList[k].prodId == prodId){
+								for(var n=0;n<AttachOffer.openList[k].specList.length;n++){
+									var opendServ = AttachOffer.openList[k].specList[n];
+									if(offerSpe.offerId == opendServ.offerId){
+										opendServ.isdel = "N";
+										$("#li_"+prodId+"_"+opendServ.offerId).find("span").removeClass("del");
+										//AttachOffer.openedList[0].offerList.splice(n,1);//删除因为依赖加入的销售品
+									}
+							   }
 							}
-					   }
+						}
 					}
 				}
 			}
@@ -1575,11 +1651,15 @@ AttachOffer = (function() {
 			
 			$.each(reOfferSpec,function(){
 					if(AttachOffer.openedList.length>0){
-						for(var j=0;j<AttachOffer.openedList[0].offerList.length;j++){
-							var openedServ = AttachOffer.openedList[0].offerList[j];
-							if(this.offerSpecId == openedServ.offerSpecId){
-								openedServ.isdel = "Y";
-								$("#li_"+prodId+"_"+openedServ.offerId).find("span").addClass("del");
+						for(var k=0;k<AttachOffer.openedList.length;k++){
+							if(AttachOffer.openedList[k].prodId == prodId){
+								for(var j=0;j<AttachOffer.openedList[k].offerList.length;j++){
+									var openedServ = AttachOffer.openedList[k].offerList[j];
+									if(this.offerSpecId == openedServ.offerSpecId){
+										openedServ.isdel = "Y";
+										$("#li_"+prodId+"_"+openedServ.offerId).find("span").addClass("del");
+									}
+								}
 							}
 						}
 					}
