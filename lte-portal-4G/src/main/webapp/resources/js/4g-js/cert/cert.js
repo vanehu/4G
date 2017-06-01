@@ -124,7 +124,7 @@ cert = (function() {
 	    		return man;
 	    	}else{
 	    		var certUnifyFlag = query.common.queryPropertiesMapValue("CERT_SIGNATURE_UNIFY",String(OrderInfo.staff.areaId).substr(0, 3));
-	    		if(certUnifyFlag){// 统一控件
+	    		if(certUnifyFlag == "ON"){// 统一控件
 	    		    man.createFlag = $('#createFlag').val();
 			        man.jbrFlag = "Y";// 添加经办人读卡标识
 	    		    var url = contextPath + "/order/certUnifyInfo";
