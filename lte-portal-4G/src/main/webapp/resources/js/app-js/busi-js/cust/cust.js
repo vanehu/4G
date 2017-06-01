@@ -881,72 +881,78 @@ cust = (function(){
 	
 	//校验表单提交
 	var _validatorForm=function(){
-			var new_user_box = $(".new_user_box").Validform({
-				btnSubmit:".sun-btn", 
-				ignoreHidden:true,
-				datatype:{
-					"zh6-50":/[\u4e00-\u9fa5]{6}|^.{12}/,
-					"sfz":/(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/,
-					"qtzj":/^[0-9a-zA-Z]{1,100}$/,
-					"phone":/^1[0-9]\d{9}$/
-				},
-				tiptype:function(msg,o,cssctl){
-					
-					//msg：提示信息;
-					//o:{obj:*,type:*,curform:*}, obj指向的是当前验证的表单元素（或表单对象），type指示提示的状态，值为1、2、3、4， 1：正在检测/提交数据，2：通过验证，3：验证失败，4：提示ignore状态, curform为当前form对象;
-					//cssctl:内置的提示信息样式控制函数，该函数需传入两个参数：显示提示信息的对象 和 当前提示的状态（既形参o中的type）;
-					if(!o.obj.is("form")){//验证表单元素时o.obj为该表单元素，全部验证通过提交表单时o.obj为该表单对象;
-						if(o.type == 3){
-							var objtip=o.obj.siblings(".Validform_checktip");
-							cssctl(objtip,o.type);
-							objtip.text(msg);
-						}
-						if(o.type == 2){
-							var objtip=o.obj.siblings(".Validform_checktip");
-							cssctl(objtip,o.type);
-							objtip.text("");
-						}
-					}
-				},
-				showAllError:true,
-			});
-			new_user_box.addRule([
-				{
-				    ele:"#cmCustName",
-				    datatype:"*",
-				    nullmsg:"客户姓名不能为空",
-				    errormsg:"客户姓名不能为空"
-				},
-				{
-				    ele:"#cmCustIdCardOther",
-				    datatype:"qtzj",
-				    nullmsg:"证件号码不能为空",
-				    errormsg:"证件号码只能为数字或字母"
-				},
-				{
-				    ele:"#cmCustIdCard",
-				    datatype:"sfz",
-				    nullmsg:"身份证号码不能为空",
-				    errormsg:"请输入合法身份证号码"
-				},
-				{
-				    ele:"#cmAddressStr",
-				    datatype:"zh6-50",
-				    nullmsg:"证件地址不能为空",
-				    errormsg:"证件地址长度不得少于6个汉字"
-				},
-				{ 
-					ele:"#contactName",
-					datatype:"*",
-					nullmsg:"联系人姓名不能为空"
-				},
-				{
-				    ele:"#mobilePhone",
-				    datatype:"phone",
-				    nullmsg:"联系人号码不能为空",
-				    errormsg:"请输入正确的手机号码"
-				}                
-			]);
+		$('#custFormdata').bootstrapValidator({
+	        message: '无效值',
+	        feedbackIcons: {
+	            valid: 'glyphicon glyphicon-ok',
+	            invalid: 'glyphicon glyphicon-remove',
+	            validating: 'glyphicon glyphicon-refresh'
+	        },
+	        fields: {
+	        	cmCustName: {
+	        		trigger: 'blur',
+	                validators: {
+	                    notEmpty: {
+	                        message: '客户姓名不能为空'
+	                    }
+	                }
+	            },
+	            cmCustIdCard: {
+	            	trigger: 'blur',
+	                validators: {
+	                    notEmpty: {
+	                        message: '身份证号码不能为空'
+	                    },
+	                    regexp: {
+	                        regexp: /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/,
+	                        message: '请输入合法身份证号码'
+	                    }
+	                }
+	            },
+	            cmCustIdCardOther: {
+	            	trigger: 'blur',
+	                validators: {
+	                    notEmpty: {
+	                        message: '证件号码不能为空'
+	                    },
+	                    regexp: {
+	                        regexp: /^[0-9a-zA-Z]*$/g,
+	                        message: '证件号码只能为数字或字母'
+	                    }
+	                }
+	            },
+	            cmAddressStr: {
+	            	trigger: 'blur',
+	                validators: {
+	                    notEmpty: {
+	                        message: '证件地址不能为空'
+	                    }
+//	            ,
+//	                    regexp: {
+//	                        regexp: /[\u4e00-\u9fa5]{6}|^.{12}/,
+//	                        message: '证件地址长度不得少于6个汉字'
+//	                    }
+	                }
+	            },
+	            mobilePhone: {
+	            	trigger: 'blur',
+	                validators: {
+	                    regexp: {
+	                        regexp: /(^\d{11}$)/,
+	                        message: '手机号码只能为11数字'
+	                    }
+	                }
+	            },
+	            phonenumber: {
+	            	trigger: 'blur',
+	                validators: {
+	                    notEmpty: {
+	                        message: '手机号码不能为空'
+	                    }
+	                }
+	            }
+	        }
+	    });
 	};
 	
 	//获取证件类型以及初始化
@@ -1039,28 +1045,7 @@ cust = (function(){
 		$("#cm_identidiesTypeCd").change();
 		$("#cmCustIdCard").val(idcard);
 		$("#cmAddressStr").val(address);
-		//客户定位、客户鉴权 读取身份证时填写证件号码
-		if($("#custQuerycontent").css("display")!="none"){
-			if($("#userid").length>0){
-				$("#userid").val(idcard);
-			}
-		}else{
-			if($("#idCardNumber2").length>0){
-				$("#idCardNumber2").val(idcard);
-			}
-			if($("#idCardNumber5").length>0){
-				$("#idCardNumber5").val(idcard);
-			}
-			if($("#idCardNumber6").length>0){
-				$("#idCardNumber6").val(idcard);
-			}
-		}
-		if(OrderInfo.actionFlag==9){//返档需查客户
-			OrderInfo.jbr.identityPic = identityPic;
-			cust.searchUser("1",idcard,name,address);
-		} else {
-			OrderInfo.cust.identityPic = identityPic;//证件照片
-		}
+		OrderInfo.cust.identityPic = identityPic;//证件照片
 	};
 	
 	var _getUserGenerationInfos=function(name,idcard,address,identityPic){
