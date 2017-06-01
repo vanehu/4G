@@ -168,13 +168,15 @@ public class PortalPropertiesController extends BaseController {
         try {
         	printWriter = response.getWriter();
 
-    		if(!cert.requestFilter(super.getRequest())){
-        		returnStr = cert.getResponseXml();
-        	} else if(cert.isParamInvalid(versionId, secretParam)){
-        		returnStr = cert.getResponseXml("参数验证失败", 1);
-        	} else{
-        		cert.setVersionId(versionId);
-        		cert.setSerectParam(secretParam);
+    		if(cert.requestFilter(super.getRequest())){
+    			if(cert.isParamInvalid(versionId, secretParam)){
+            		returnStr = cert.getResponseXml("参数验证失败", 1);
+            	} else{
+            		cert.setVersionId(versionId);
+            		cert.setSerectParam(secretParam);
+            		returnStr = cert.getResponseXml();
+            	}
+        	} else {
         		returnStr = cert.getResponseXml();
         	}
     	

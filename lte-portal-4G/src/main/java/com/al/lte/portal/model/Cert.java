@@ -23,6 +23,7 @@ import com.al.ec.serviceplatform.client.ResultCode;
 import com.al.ecs.common.util.JsonUtil;
 import com.al.ecs.common.util.MDA;
 import com.al.ecs.common.util.XmlUtil;
+import com.al.ecs.common.web.ServletUtils;
 import com.al.ecs.log.Log;
 import com.al.lte.portal.common.AESUtils;
 import com.al.lte.portal.common.InterfaceClient;
@@ -384,26 +385,29 @@ public class Cert {
 	
 	public boolean requestFilter(HttpServletRequest httpServletRequest){
 		this.errorMsg.setLength(0);
-		boolean result = true;
+		boolean result = false;
+		boolean isRequestFilterOn = "ON".equals(MapUtils.getString(MDA.CERT_SIGNATURE_UNIFY, "requestFilter", "ON")) ? true : false;
 		
-//		httpServletRequest.getHeader("");
-//		
-//		//1.判断是否登录
-//		if(httpServletRequest != null){
-//			SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(httpServletRequest, SysConstant.SESSION_KEY_LOGIN_STAFF);
-//			if(sessionStaff != null){
-//				result = true;
-//				//2.判断请求次数
-////				String clientIp = ServletUtils.getIpAddr(httpServletRequest);
-////				Calendar calendar = Calendar.getInstance();
-////				Map<String, Object> requestFilter = new HashMap<String, Object>();
-////				requestFilter.put(sessionId, calendar);
-//			} else{
-//				this.setErrorMsg("非法请求");
-//			}
-//		} else{
-//			this.setErrorMsg("非法请求");
-//		}
+		if(isRequestFilterOn){
+			//1.判断是否登录
+			if(httpServletRequest != null){
+				SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(httpServletRequest, SysConstant.SESSION_KEY_LOGIN_STAFF);
+				if(sessionStaff != null){
+					result = true;
+					//2.判断请求次数
+//					String clientIp = ServletUtils.getIpAddr(httpServletRequest);
+//					Calendar calendar = Calendar.getInstance();
+//					Map<String, Object> requestFilter = new HashMap<String, Object>();
+//					requestFilter.put(sessionId, calendar);
+				} else{
+					this.setErrorMsg("非法请求");
+				}
+			} else{
+				this.setErrorMsg("非法请求");
+			}
+		} else{
+			result = true;
+		}
 
 		return result;
 	}
