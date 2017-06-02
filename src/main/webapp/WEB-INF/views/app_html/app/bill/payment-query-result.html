@@ -14,12 +14,18 @@
 				<i class="iconfont pull-left">&#xe640;</i>
 				<span class="list-title clear-both-padding">
 					<span class="font-orange"><b>${list.PaymentRecordInfo.PaymentAmount?number/100}元</b></span>
-					<#if list.PaymentRecordInfo.Status == "充值成功">
-						<span class="label label-success">${list.PaymentRecordInfo.Status}</span>
-					<#elseif list.PaymentRecordInfo.Status == "">
-						<span class="label label-warning">未知状态</span>
+					<#if list.PaymentRecordInfo.Status == "cancel">
+						<span class="label label-warning">订单取消</span>
+					<#elseif list.PaymentRecordInfo.Status == "success">
+						<span class="label label-success">充值成功</span>
+					<#elseif list.PaymentRecordInfo.Status == "failed">
+						<span class="label label-warning">充值失败</span>
+					<#elseif list.PaymentRecordInfo.Status == "request_failed">
+						<span class="label label-warning">请求失败</span>
+					<#elseif list.PaymentRecordInfo.Status == "authfailed">
+						<span class="label label-warning">鉴权失败</span>
 					<#else>
-						<span class="label label-warning">${list.PaymentRecordInfo.Status}</span>
+						<span class="label label-warning">未知状态</span>
 					</#if>
 					&nbsp;&nbsp;&nbsp;&nbsp;
 					<span class="font-secondary">
