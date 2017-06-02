@@ -626,19 +626,6 @@ common = (function($) {
 				OrderInfo.order.step=4;
 				return;
 			}else if(OrderInfo.order.step==6){//订单确认页			
-				var boProd2Tds = OrderInfo.boProd2Tds;
-				//取消订单时，释放被预占的UIM卡
-				if(boProd2Tds.length>0){
-					for(var n=0;n<boProd2Tds.length;n++){
-						var param = {
-								numType : 2,
-								numValue : boProd2Tds[n].terminalCode
-						};
-						$.callServiceAsJson(contextPath+"/app/mktRes/phonenumber/releaseErrorNum", param, {
-							"done" : function(){}
-						});
-					}
-				}
 				SoOrder.orderBack();
 				SoOrder.getToken();
 				OrderInfo.order.step=5;
@@ -652,19 +639,6 @@ common = (function($) {
 				    	$("#tab7_li").addClass("active");
 						OrderInfo.order.step=6;
 						//防止重复算费
-						var boProd2Tds = OrderInfo.boProd2Tds;
-						//取消订单时，释放被预占的UIM卡
-						if(boProd2Tds.length>0){
-							for(var n=0;n<boProd2Tds.length;n++){
-								var param = {
-										numType : 2,
-										numValue : boProd2Tds[n].terminalCode
-								};
-								$.callServiceAsJson(contextPath+"/app/mktRes/phonenumber/releaseErrorNum", param, {
-									"done" : function(){}
-								});
-							}
-						}
 						SoOrder.orderBack();
 						SoOrder.getToken();
 						OrderInfo.order.step=5;
@@ -1133,19 +1107,6 @@ common = (function($) {
 				OrderInfo.order.step=5;
 				return;
 			}else if(OrderInfo.order.step==7){//订单确认
-				var boProd2Tds = OrderInfo.boProd2Tds;
-				//取消订单时，释放被预占的UIM卡
-				if(boProd2Tds.length>0){
-					for(var n=0;n<boProd2Tds.length;n++){
-						var param = {
-								numType : 2,
-								numValue : boProd2Tds[n].terminalCode
-						};
-						$.callServiceAsJson(contextPath+"/app/mktRes/phonenumber/releaseErrorNum", param, {
-							"done" : function(){}
-						});
-					}
-				}
 				SoOrder.orderBack();
 				SoOrder.getToken();
 				OrderInfo.order.step=6;
@@ -1159,19 +1120,6 @@ common = (function($) {
 				    	$("#tab7_li").addClass("active");
 						OrderInfo.order.step=7;
 						//防止重复算费
-						var boProd2Tds = OrderInfo.boProd2Tds;
-						//取消订单时，释放被预占的UIM卡
-						if(boProd2Tds.length>0){
-							for(var n=0;n<boProd2Tds.length;n++){
-								var param = {
-										numType : 2,
-										numValue : boProd2Tds[n].terminalCode
-								};
-								$.callServiceAsJson(contextPath+"/app/mktRes/phonenumber/releaseErrorNum", param, {
-									"done" : function(){}
-								});
-							}
-						}
 						SoOrder.orderBack();
 						SoOrder.getToken();
 						OrderInfo.order.step=6;
