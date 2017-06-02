@@ -22,6 +22,8 @@
 						<span class="label label-warning">充值失败</span>
 					<#elseif list.PaymentRecordInfo.Status == "request_failed">
 						<span class="label label-warning">请求失败</span>
+					<#elseif list.PaymentRecordInfo.Status == "underway">
+						<span class="label label-warning">充值中</span>
 					<#elseif list.PaymentRecordInfo.Status == "authfailed">
 						<span class="label label-warning">鉴权失败</span>
 					<#else>
