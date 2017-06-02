@@ -247,8 +247,8 @@
 			 $("select[name='payType']").removeClass("myselect").addClass("myselect2");//加装副卡付费类型不可编辑
 			 order.main.initReadOnlySelect();//刷新不可点开的下拉框
 			  for(var i=1;i<order.phoneNumber.secondaryCarNum;i++){
-				  if($("#cx_tab_flag_"+i).length==0){
-					  $("#cx_tab_flag").append('<a id="cx_tab_flag_'+i+'" href="#"  class="cx_tab_flag"></a>');
+				  if($("#tab_flag_"+i).length==0){
+					  $("#tab_flag").append('<a id="tab_flag_'+i+'" href="#"  class="tab_flag"></a>');
 				  }
 			  }
 		  }else{
