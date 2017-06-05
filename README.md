@@ -3,8 +3,8 @@
 Git global setup
 ----------------
 ```
-git config --global user.name "用户名"
-git config --global user.email "用户名@asiainfo.com"
+git config --global user.name "liuteng"
+git config --global user.email "liuteng@asiainfo.com"
 ```
 
 clone a new repository
