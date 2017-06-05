@@ -326,12 +326,35 @@ cert = (function() {
 		$.unecOverlay();
 		return man;
 	};
+	
+	var _setReaderAreaId = function(){
+		var areaId = OrderInfo.staff.areaId;
+		if(ec.util.isObj(areaId)){
+			try{
+				var result = CertCtl.setAreaId(String(areaId));
+				result = JSON.parse(result);
+				if(result.resultFlag != 0){
+					window.console && window.console.log && (console.log("%c读卡控件异常：" + result.errorMsg, "color:red"));
+				}
+			} catch(e){
+				throw new Error("cert reader driver is not installed correctly.");
+			}
+		} else{
+//			areaId = "8990000";//是否给默认值
+			throw new Error("cert reader driver is not installed correctly.");
+		}
+	};
+	
 	return {
-		readCert	: _readCert,
-		getBrowser 	: _getBrowser,
-		getDevices	: _getDevices,
-		createVideo	: _createVideo,
-		createImage	: _createImage,
-		closeVideo	: _closeVideo
+		readCert		: _readCert,
+		getBrowser 		: _getBrowser,
+		getDevices		: _getDevices,
+		createVideo		: _createVideo,
+		createImage		: _createImage,
+		closeVideo		: _closeVideo,
+		setReaderAreaId	:_setReaderAreaId
 	};
 })();
+$(function(){
+	cert.setReaderAreaId();
+});
