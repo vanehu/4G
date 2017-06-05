@@ -1,5 +1,6 @@
 package  com.al.lte.portal.common;
 
+import java.net.InetAddress;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,6 +21,7 @@ import com.al.ec.serviceplatform.client.ServiceCall;
 import com.al.ecs.common.util.JsonUtil;
 import com.al.ecs.common.util.PropertiesUtils;
 import com.al.ecs.common.util.UIDGenerator;
+import com.al.ecs.common.web.ServletUtils;
 import com.al.ecs.common.web.SpringContextUtil;
 import com.al.ecs.log.Log;
 import com.al.lte.portal.core.DataSourceManager;
@@ -185,23 +187,23 @@ public class ServiceClient {
 				logObj.put("USE_TIME", Long.toString(useTime));
 				logObj.put("RESULT_CODE", db.getResultCode());
 				logObj.put("TRANS_ID", MapUtils.getString(db.getParammap(), "transactionId", ""));
-				if(request!=null){
-					if(request.getRemoteAddr()!=null){
-						logObj.put("REMOTE_ADDR", request.getRemoteAddr());
+				if(request != null){
+					try{
+						logObj.put("REMOTE_ADDR", ServletUtils.getIpAddr(request));
 						logObj.put("REMOTE_PORT", String.valueOf(request.getRemotePort()));
-						logObj.put("LOCAL_ADDR", request.getLocalAddr());
+						logObj.put("LOCAL_ADDR", InetAddress.getLocalHost().getHostAddress());
 						logObj.put("LOCAL_PORT", String.valueOf(request.getLocalPort()));
-					}else{
-						logObj.put("REMOTE_ADDR", "");
-						logObj.put("REMOTE_PORT", "");
-						logObj.put("LOCAL_ADDR", "");
-						logObj.put("LOCAL_PORT", "");
+					} catch(Exception e){
+						logObj.put("REMOTE_ADDR", "Exception");
+						logObj.put("REMOTE_PORT", "Exception");
+						logObj.put("LOCAL_ADDR", "Exception");
+						logObj.put("LOCAL_PORT", "Exception");
 					}
 				}else{
-					logObj.put("REMOTE_ADDR", "");
-					logObj.put("REMOTE_PORT", "");
-					logObj.put("LOCAL_ADDR", "");
-					logObj.put("LOCAL_PORT", "");
+					logObj.put("REMOTE_ADDR", "request is null");
+					logObj.put("REMOTE_PORT", "request is null");
+					logObj.put("LOCAL_ADDR", "request is null");
+					logObj.put("LOCAL_PORT", "request is null");
 				}
 				logObj.put("INTF_URL", MapUtils.getString(dataBusMap, "intfUrl", ""));
 				logObj.put("INTF_METHOD", MapUtils.getString(dataBusMap, "intfMethod", ""));

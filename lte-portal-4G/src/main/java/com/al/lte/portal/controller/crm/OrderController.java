@@ -34,6 +34,7 @@ import com.al.lte.portal.bmo.staff.StaffBmo;
 import com.al.lte.portal.common.AESUtils;
 import com.al.lte.portal.common.CommonMethods;
 import com.al.lte.portal.common.Const;
+import com.al.lte.portal.common.Des33;
 import com.al.lte.portal.common.EhcacheUtil;
 import com.al.lte.portal.common.InterfaceClient;
 import com.al.lte.portal.common.MySimulateData;
@@ -41,7 +42,11 @@ import com.al.lte.portal.common.PortalServiceCode;
 import com.al.lte.portal.common.SysConstant;
 import com.al.lte.portal.core.DataRepository;
 import com.al.lte.portal.model.SessionStaff;
+
+import net.sf.json.JSON;
 import net.sf.json.JSONObject;
+import net.sf.json.xml.XMLSerializer;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections.map.HashedMap;
@@ -69,6 +74,7 @@ import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -5525,4 +5531,70 @@ public class OrderController extends BaseController {
 			return super.failed(ErrorCode.CUST_ORDER_DETAIL, e, param);
 		}
    }
+    
+	@ResponseBody
+    @AuthorityValid(isCheck = false)
+    @RequestMapping(value = "/certUnifyInfo", method = RequestMethod.POST)
+    public JsonResponse certUnifyInfo(@RequestBody Map<String, Object> param, HttpServletRequest request) {
+		HttpSession session =request.getSession();
+		String sessionId=session.getId();//会话ID
+		param.put("sessionId", sessionId);
+		String versionId= MapUtils.getString(param, "versionId");//控件版本号ID
+		String hashVal = MapUtils.getString(param, "hashVal");// 驱动主文件的md5值
+		String resultContentXml = MapUtils.getString(param, "resultContent");// 二代身份证内容密文返回
+		String createFlag = MapUtils.getString(param, "createFlag");
+        if (StringUtils.isBlank(versionId) || StringUtils.isBlank(hashVal)
+            || StringUtils.isBlank(resultContentXml)){
+            return super.failed("读卡失败,读卡统一控件返回信息有误。", ResultCode.INTERFACE_EXCEPTION);
+        }
+        try {
+        	//先验证versionId（版本号ID）是否和后台配置的最新版本号一致
+        	Map<String, Object> secretConfigs  = (Map<String, Object>) MDA.CERT_SIGNATURE_UNIFY.get("secretConfig");
+        	if(secretConfigs.get("versionId") == null){
+        		return super.failed("读卡失败,读卡统一控件返回'控件版本号ID'不在MDA配置中。",ResultCode.FAIL_TW);
+        	}
+        	//根据versionId获取密钥对hashVal进行解密，并将解密后的值与后台配置的值对比
+        	String hashValDec = Des33.decode1(hashVal,(String) secretConfigs.get("3desSecret"));
+        	String[] hashVals = (String[]) MDA.CERT_SIGNATURE_UNIFY.get("hashVal");
+        	List<String> hashValList = Arrays.asList(hashVals);
+        	if(!hashValList.contains(hashValDec)){
+        		return super.failed("读卡失败,读卡统一控件返回'驱动主文件的md5值'不在MDA配置中。",ResultCode.FAIL);
+        	}
+        	//校验都一致，则解密身份证信息（使用versionId对应的密钥），身份证信息明文缓存在服务端，并返回客户端展示
+            XMLSerializer xmlSerializer = new XMLSerializer();
+            String resultContentXmlDec = Des33.decode1(resultContentXml,(String) secretConfigs.get("3desSecret"));
+    		String ResqjsonStr = xmlSerializer.read(resultContentXmlDec).toString();
+            Map<String, Object> resultContentMap = JsonUtil.toObject(ResqjsonStr, Map.class);
+            Map<String, Object> certificateInfo = (Map<String, Object>) resultContentMap.get("certificate");
+            if(certificateInfo == null){
+            	return super.failed("读卡失败,读卡统一控件返回'二代身份证内容为空'不在MDA配置中。",ResultCode.FAIL);
+            }
+            //二代证校验读卡日志记录
+            SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
+            param.put("readCertFlag", "readCert");
+            param.putAll(certificateInfo);
+            orderBmo.insertCertInfo(param, null, sessionStaff);
+            //二代证读卡session缓存
+            String appSecret1 = propertiesUtils.getMessage("APP_SECRET"); //appId对应的加密密钥
+            String nonce = RandomStringUtils.randomAlphanumeric(Const.RANDOM_STRING_LENGTH); //随机字符串
+            String partyName = (String) certificateInfo.get("partyName");
+            String certNumber = (String) certificateInfo.get("certNumber");
+            String certAddress = (String) certificateInfo.get("certAddress");
+            String identityPic = (String) certificateInfo.get("identityPic");
+            String signature1 = commonBmo.signature(partyName, certNumber, certAddress, identityPic, nonce, appSecret1);
+            param.put("signature", signature1);
+            //增加
+            if("1".equals(createFlag)){
+                request.getSession().setAttribute(Const.SESSION_SIGNATURE, signature1);
+            }else if("Y".equals(MapUtils.getString(param, "jbrFlag"))){
+            	//经办人跟随主卡，即使加装副卡，一个单子只有一个经办人
+            	request.getSession().setAttribute(Const.SESSION_SIGNATURE_HANDLE_CUST, signature1);
+            }
+            request.getSession().setAttribute(Const.CACHE_CERTINFO, certNumber);
+            param.remove("resultContent");
+            return super.successed(param, ResultConstant.SUCCESS.getCode());//信息校验通过
+        } catch (Exception e) {
+            return super.failed("读卡失败信息异常",ResultCode.INTERFACE_EXCEPTION);
+        }
+    }
 }

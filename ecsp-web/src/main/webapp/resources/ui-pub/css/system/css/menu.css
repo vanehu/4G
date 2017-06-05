@@ -1,0 +1,200 @@
+@charset "utf-8";
+.clr{
+	clear:both;
+}
+
+a.menu_first {
+    background:url(../image/menu_fist_bg.gif) no-repeat top left;
+	letter-spacing:1px;
+}
+a.menu_first:hover {
+    background:url(../image/menu_fist_bg_hover.gif) no-repeat top left;
+}
+
+.st-accordion ul {
+	margin: 15px auto;
+	padding: 0px;
+	width: 189px;
+}
+.st-accordion ul li{
+	height:31px;
+	margin-bottom:6px;
+	letter-spacing:1px;
+}
+.st-accordion ul li > a{
+    font-size:16px;
+    display: block;
+	position: relative;
+    line-height:31px;
+	outline:none;
+	text-indent:15px;
+	font-weight:bold;
+	color:#fff;
+	text-shadow:0px 1px 0px #666;
+}
+.st-accordion ul li > a span{
+	background: transparent url(../image/down.png) no-repeat center center;
+	text-indent:-9000px;
+	width: 26px;
+	height: 14px;
+	position: absolute;
+	top: 50%;
+	right: -26px;
+	margin-top: -7px;
+	opacity:0;
+}
+.st-accordion ul li > a:hover{
+    color: #fff;
+}
+.st-accordion ul li > a:hover span{
+	opacity:1;
+	right: 10px;
+}
+.st-accordion ul li.st-open > a{
+    color: #fff;
+}
+.st-accordion ul li.st-open > a span{
+	-webkit-transform:rotate(180deg);
+	-moz-transform:rotate(180deg);
+    transform:rotate(180deg);
+	right:10px;
+	opacity:1;
+}
+.st-content{
+    padding: 5px 0px 0px 0px;
+}
+.st-content img{
+    width:125px;
+    border-right:1px solid #fff;
+    border-bottom:1px solid #fff;
+}
+.menu_second_center ul li.menu_second_li:hover{
+	color:#548b00;
+	cursor:pointer
+}
+.menu_second_top {
+	width:199px;
+	height:16px;
+	background:url(../image/menu_second_bg.png) no-repeat 0 0;
+}
+.menu_second_center {
+	width:187px;
+	background:#c2ea85;
+	border:1px solid #85c12b;
+	border-bottom:0px;
+	border-top:0px;
+}
+.menu_second_center ul {
+	color:#548b00;
+	margin:0px auto;
+	padding:0px;
+	width:90%;
+}
+.menu_second_center ul li {
+	height:20px;
+	line-height:20px;
+	text-indent:30px;
+	cursor:pointer;
+	margin-bottom:0px;
+	margin-top:0px;
+}
+.menu_second_center ul li:hover {
+	color:#fff;
+}
+.menu_second_center ul li.menu_second_li {
+	text-indent:20px;
+	border-bottom:1px solid #e8ffc6;
+	height:24px;
+	line-height:24px;
+	font-size:14px;
+	background:url(../image/menu_second_li.gif) no-repeat right;
+	margin:0px;
+}
+.menu_second_center ul li.menu_second_li_up {
+	text-indent:20px;
+	border-bottom:1px solid #e8ffc6;
+	height:24px;
+	line-height:24px;
+	font-size:14px;
+	background:url(../image/menu_second_li_up.gif) no-repeat right;
+	margin:0px;
+}
+.menu_second_center ul li.menu_second_li_up:hover{
+	color:#548b00;
+	cursor:pointer;
+}
+.menu_second_foot {
+	width:199px;
+	height:16px;
+	background:url(../image/menu_second_bg.png) no-repeat 0 -14px;
+}
+
+
+
+/*商品发布页面菜单样式*/
+#release_step div.st-content2 {
+	display:none;
+}
+#release_step div.st-accordion2 ul {
+	margin:0px auto;
+	padding:0px;
+	width:94%;
+}
+#release_step div.st-accordion2 ul li > a{
+    display: block;
+    line-height:29px;
+	outline:none;
+	text-indent:15px;
+	font-weight:bold;
+	color:#2763b1;
+	font-size:14px;
+	text-shadow:0px 0px;
+	text-align:left;
+	border-bottom:1px dotted #d1d1d1;
+	height:29px;
+}
+#release_step a.menu_first {
+    background:none;
+	letter-spacing:1px;
+}
+#release_step div.st-accordion ul li{
+	width:98%;
+	height:32px;
+	line-height:32px;
+	margin-bottom:0px;
+	letter-spacing:1px;
+	text-align:left;
+	color:#434343;
+}
+#release_step div.menu_second_center {
+	width:100%;
+	background:none;
+	border:0px;
+	border-bottom:0px;
+	border-top:0px;
+	margin:0 auto
+}
+#release_step .st-content2{
+    padding:0px;
+}
+#release_step div.menu_second_center ul li  {
+	border-bottom:1px dotted #d2d2d2;
+	height:24px;
+	line-height:24px;
+	background:url(../image/menu_second_center_list.png) no-repeat right center;
+	text-align:left;
+	color:#434343;
+}
+#release_step div.st-content3 div.menu_second_center ul li {
+	background:none;
+}
+#release_step div.st-content3 div.menu_second_center ul li:hover {
+	background:#f9f9f9;
+}
+#release_step div.menu_second_center ul li:hover  {
+	background:url(../image/menu_second_center_list.png) no-repeat right center #f9f9f9;
+	color:#2763b1;
+}
+.menu_second_top, .menu_second_foot {
+	width:189px;
+}

@@ -122,81 +122,98 @@ cert = (function() {
 	    	man = JSON.parse(CertCtl.readCert());
 	    	if(man.resultFlag != 0){
 	    		return man;
-	    	}else{	    		
-	    		var certInfo=man.resultContent;
-		    	var param={};
-		    	var url = contextPath + "/order/isOpenNewCert";
-				var response = $.callServiceAsJson(url,JSON.stringify(param));
-				if (response.code == 0&&response.data=='ON') {
-					if(man.venderId==undefined||man.signature==undefined){
-						man = {"resultFlag": -1, "errorMsg": "读取设备厂家标识/签名信息错误,请安装新的驱动及控件"};
-						return man;
-					}else{
-						try{
-						ver = JSON.parse(CertCtl.getVersion());
-						man.versionSerial=ver.versionSerial;
-						}catch(e){
-							man = {"resultFlag": -1, "errorMsg": "读取设备版本号错误,请安装新的驱动及控件"};
-							return man;
-						}
-			    		if(ver.resultFlag!=0){//版本读取错误
-			    			return ver;
-			    		}
-					}
-				}
-				//经办人新建
-				certInfo.createFlag = $('#createFlag').val();
-				certInfo.jbrFlag = "Y";//添加经办人读卡标识
-				certInfo.signature=man.signature!=undefined&&man.signature!=null?man.signature:"";// 数字签名
-	    		certInfo.versionSerial=man.versionSerial!=undefined&&man.versionSerial!=null?man.versionSerial:"";//版本号
-		    	certInfo.venderId=man.venderId!=undefined&&man.venderId!=null?man.venderId:"";// 厂商标识
-		    	certInfo.readCardReturnInfo=man!=null&&man!=undefined?JSON.stringify(man):"";//读卡返回信息
-		    	certInfo.servCode=servCode!=null&&servCode!=undefined?servCode:"";//业务场景编码
-		    	//如果已经生成了portalId也一并存入
-				if(OrderInfo.order.portalId!=null&&OrderInfo.order.portalId!=undefined&&OrderInfo.order.portalId!=""){
-					certInfo.portalId=OrderInfo.order.portalId;
-				}
-	    		url = contextPath + "/order/certInfo";
-				var response = $.callServiceAsJson(url,JSON.stringify(certInfo));
-				if (response.code == 0) {
-					man = {"resultFlag": 0, "errorMsg": "读卡成功", "resultContent": response.data};
-				}else if(response.code == -3){
-					man = {"resultFlag": -3, "errorMsg": "控件版本不一致,您当前为"+response.data.fileName+"读卡器,驱动版本号为:"+ver.versionSerial+"请更新升级到版本:"+response.data.mdaVersion+"请下载新的控件","resultContent": response.data};
-					var info="您当前为 "+response.data.fileName+"读卡器,驱动版本号为 : "+ver.versionSerial+
-					"，请更新升级到版本: "+response.data.mdaVersion+"。请下载新的控件。";
-					$.confirm("信息确认",info,{
-						yesdo:function(){
-							//如果二次点击不清除之前生成的，会导致后端入参字符串叠加异常
-							$("#downCardOcxForm").remove();
-							$("<form>", {
-						    	id: "downCardOcxForm",
-						    	style: "display:none;",
-								target: "_blank",
-								method: "POST",
-								action: contextPath + "/order/downloadOCX"
-						    }).appendTo("body");
-							$("#downCardOcxForm").text("");
-							$("#downCardOcxForm").append($("<input>", {
-						    	id : "fileUrl",
-						    	name : "fileUrl",
-						    	type: "hidden",
-						    	value: response.data.fileUrl
-						    }));
-							$("#downCardOcxForm").append($("<input>", {
-						    	id : "fileName",
-						    	name : "fileName",
-						    	type: "hidden",
-						    	value: response.data.fileName
-						    }));
-							$("#downCardOcxForm").submit();
-						},
-						no:function(){
-							return man;
-						}
-					});
-				}else{
-					man = {"resultFlag": -1, "errorMsg": response.data};
-				}
+	    	}else{
+	    		var certUnifyFlag = query.common.queryPropertiesMapValue("CERT_SIGNATURE_UNIFY",String(OrderInfo.staff.areaId).substr(0, 3));
+	    		if(certUnifyFlag == "ON"){// 统一控件
+	    		    man.createFlag = $('#createFlag').val();
+			        man.jbrFlag = "Y";// 添加经办人读卡标识
+	    		    var url = contextPath + "/order/certUnifyInfo";
+				    var response = $.callServiceAsJson(url,man);
+				    if (response.code == 0) {
+				    	man = {"resultFlag": 0, "errorMsg": "读卡成功", "resultContent": response.data};
+				    }else if(response.code == -2){// 控件版本号不一致，统一控件更新
+				        CertCtl.updateVersion();
+				        man = {"resultFlag": -2, "errorMsg": response.data};
+				    }else{
+				    	man = {"resultFlag": -1, "errorMsg": response.data};
+				    }
+	    		}else{
+	    			// USB读身份证老版本
+	    		    var certInfo=man.resultContent;
+		    	    var param={};
+		    	    var url = contextPath + "/order/isOpenNewCert";
+				    var response = $.callServiceAsJson(url,JSON.stringify(param));
+				    if (response.code == 0&&response.data=='ON') {
+					    if(man.venderId==undefined||man.signature==undefined){
+					    	man = {"resultFlag": -1, "errorMsg": "读取设备厂家标识/签名信息错误,请安装新的驱动及控件"};
+					    	return man;
+					    }else{
+						    try{
+						    ver = JSON.parse(CertCtl.getVersion());
+						    man.versionSerial=ver.versionSerial;
+						    }catch(e){
+							    man = {"resultFlag": -1, "errorMsg": "读取设备版本号错误,请安装新的驱动及控件"};
+							    return man;
+						    }
+			    		    if(ver.resultFlag!=0){// 版本读取错误
+			    			    return ver;
+			    		    }
+					    }
+				    }
+				    // 经办人新建
+				    certInfo.createFlag = $('#createFlag').val();
+				    certInfo.jbrFlag = "Y";// 添加经办人读卡标识
+				    certInfo.signature=man.signature!=undefined&&man.signature!=null?man.signature:"";// 数字签名
+	    		    certInfo.versionSerial=man.versionSerial!=undefined&&man.versionSerial!=null?man.versionSerial:"";// 版本号
+		    	    certInfo.venderId=man.venderId!=undefined&&man.venderId!=null?man.venderId:"";// 厂商标识
+		    	    certInfo.readCardReturnInfo=man!=null&&man!=undefined?JSON.stringify(man):"";// 读卡返回信息
+		    	    certInfo.servCode=servCode!=null&&servCode!=undefined?servCode:"";// 业务场景编码
+		    	    // 如果已经生成了portalId也一并存入
+				    if(OrderInfo.order.portalId!=null&&OrderInfo.order.portalId!=undefined&&OrderInfo.order.portalId!=""){
+				    	certInfo.portalId=OrderInfo.order.portalId;
+			    	}
+	    		    url = contextPath + "/order/certInfo";
+				    var response = $.callServiceAsJson(url,JSON.stringify(certInfo));
+				    if (response.code == 0) {
+				    	man = {"resultFlag": 0, "errorMsg": "读卡成功", "resultContent": response.data};
+				    }else if(response.code == -3){
+				    	man = {"resultFlag": -3, "errorMsg": "控件版本不一致,您当前为"+response.data.fileName+"读卡器,驱动版本号为:"+ver.versionSerial+"请更新升级到版本:"+response.data.mdaVersion+"请下载新的控件","resultContent": response.data};
+				        var info="您当前为 "+response.data.fileName+"读卡器,驱动版本号为 : "+ver.versionSerial+
+					    "，请更新升级到版本: "+response.data.mdaVersion+"。请下载新的控件。";
+					    $.confirm("信息确认",info,{
+						    yesdo:function(){
+							    // 如果二次点击不清除之前生成的，会导致后端入参字符串叠加异常
+							    $("#downCardOcxForm").remove();
+							    $("<form>", {
+						    	    id: "downCardOcxForm",
+						    	    style: "display:none;",
+								    target: "_blank",
+								    method: "POST",
+								    action: contextPath + "/order/downloadOCX"
+						        }).appendTo("body");
+							    $("#downCardOcxForm").text("");
+							    $("#downCardOcxForm").append($("<input>", {
+						        	id : "fileUrl",
+						        	name : "fileUrl",
+						        	type: "hidden",
+						        	value: response.data.fileUrl
+						        }));
+							    $("#downCardOcxForm").append($("<input>", {
+						        	id : "fileName",
+						    	    name : "fileName",
+						        	type: "hidden",
+						        	value: response.data.fileName
+						        }));
+							    $("#downCardOcxForm").submit();
+						    },
+						    no:function(){
+							    return man;
+						    }
+					    });
+				    }else{
+					    man = {"resultFlag": -1, "errorMsg": response.data};
+				    }
+	    	    }
 	    	}
 	    } else {
 	    	man = _cloudReadCert();
@@ -294,7 +311,7 @@ cert = (function() {
 				url = contextPath + "/common/decodeCert";
 				params = {
 					data: man.resultContent.certificate,
-					createFlag:createFlag
+					createFlag:$('#createFlag').val()
 				};
 				response = $.callServiceAsJson(url, JSON.stringify(params));
 				if (0 == response.code) {
@@ -309,12 +326,35 @@ cert = (function() {
 		$.unecOverlay();
 		return man;
 	};
+	
+	var _setReaderAreaId = function(){
+		var areaId = OrderInfo.staff.areaId;
+		if(ec.util.isObj(areaId)){
+			try{
+				var result = CertCtl.setAreaId(String(areaId));
+				result = JSON.parse(result);
+				if(result.resultFlag != 0){
+					window.console && window.console.log && (console.log("%c读卡控件异常：" + result.errorMsg, "color:red"));
+				}
+			} catch(e){
+				throw new Error("cert reader driver is not installed correctly.");
+			}
+		} else{
+//			areaId = "8990000";//是否给默认值
+			throw new Error("cert reader driver is not installed correctly.");
+		}
+	};
+	
 	return {
-		readCert	: _readCert,
-		getBrowser 	: _getBrowser,
-		getDevices	: _getDevices,
-		createVideo	: _createVideo,
-		createImage	: _createImage,
-		closeVideo	: _closeVideo
+		readCert		: _readCert,
+		getBrowser 		: _getBrowser,
+		getDevices		: _getDevices,
+		createVideo		: _createVideo,
+		createImage		: _createImage,
+		closeVideo		: _closeVideo,
+		setReaderAreaId	:_setReaderAreaId
 	};
 })();
+$(function(){
+	cert.setReaderAreaId();
+});

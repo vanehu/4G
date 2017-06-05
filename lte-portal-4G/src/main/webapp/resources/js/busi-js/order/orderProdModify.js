@@ -4875,6 +4875,10 @@ order.prodModify = (function(){
 	
 	/** 靓号调级：入口 */
 	var _phoneLevelModify = function() {
+		if(order.prodModify.choosedProdInfo.prodStateCd != CONST.PROD_STATUS_CD.NORMAL_PROD){
+			$.alert("提示","当前产品不是【在用】状态,不允许受理该业务！");
+			return;
+		}
 		OrderInfo.actionFlag = 64;
 		OrderInfo.busitypeflag = 64;		
         var boActtionType = CONST.BO_ACTION_TYPE.PHONE_LEVEL_MODIFY;
@@ -4901,6 +4905,7 @@ order.prodModify = (function(){
 					return;
 				} else if(response && response.data){
 					_gotoOrderContent(response, null);//加载填单页面
+					$("#templateOrderDiv").hide();//去掉批量模板相关内容
 				} else{
 					$.alert("错误","加载填单页面请求发生未知异常，请稍后重新尝试！");
 				}

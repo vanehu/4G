@@ -20,8 +20,9 @@ public class Testxx {
 
 	public static void main(String[] args) {
 		//test4();
-		String xxx = "����ͻ�";
-		toConvert(xxx);
+//		String xxx = "����ͻ�";
+//		toConvert(xxx);
+		regTest();
 	}
 
 	public static void test1() {
@@ -93,5 +94,13 @@ public class Testxx {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	private static void regTest(){
+		String reg = "^8\\d{6}?$";
+		System.err.println(Pattern.matches(reg, "1330000"));
+		System.err.println(Pattern.matches(reg, "833000a"));
+		System.err.println(Pattern.matches(reg, "833000"));
+		System.err.println(Pattern.matches(reg, ""));
 	}
 }

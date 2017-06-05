@@ -323,7 +323,7 @@ CacheData = (function() {
 		//不可编辑文本框 20030116 征信合约征信平台工单编号属性
 		if(itemSpecId == CONST.ZXPTGDBMH){
 			selectStr += '<tr><td>'+param.name + ': </td><td><input id="'+prodId+'_'+itemSpecId
-			+'" class="inputWidth183px" type="text" disabled="disabled" value="'+OrderInfo.preliminaryInfo.bzjOrderNo+'" >';
+			+'" class="inputWidth183px" type="text" disabled="disabled" value="'+OrderInfo.preliminaryInfo.orderNo+'" >';
 		    selectStr+='</td></tr>';
 		    return selectStr;
 		};
@@ -1058,11 +1058,11 @@ CacheData = (function() {
 							}
 						}
 					}
-					else if(OrderInfo.actionFlag==22){
-						offerSpec.isdel = "C";
-						CacheData.setOfferSpec(prodId,offerSpec);
-						AttachOffer.addOpenList(prodId,offerSpec.offerSpecId);
-					}
+					else if ((OrderInfo.actionFlag == 2 || OrderInfo.actionFlag == 21 || OrderInfo.actionFlag == 22 ) && offerSpec.ifDault == 1) {//套餐变更需要展示默认的销售品
+                        offerSpec.isdel = "C";
+                        CacheData.setOfferSpec(prodId, offerSpec);
+                        AttachOffer.addOpenList(prodId, offerSpec.offerSpecId);
+                    }
 				}
 			}
 		}

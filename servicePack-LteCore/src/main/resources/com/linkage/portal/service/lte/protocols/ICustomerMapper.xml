@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+	"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="com.al.crm.demo.cache.ibatis.ICustomerDAO">
+	<select id="queryCustomers" resultType="map" >
+		<![CDATA[
+		select * from PARTY where rownum<=20
+		]]>
+	</select>
+	
+	<select id="queryCustomersByName" resultType="map" >
+		<![CDATA[
+		select * from PARTY where PARTY_ABBRNAME = #{name}
+		]]>
+	</select>
+	
+	<select id="findPartyById" resultType="com.al.crm.demo.cache.ibatis.Party">
+		select * from party where party_id = #{partyId}
+	</select>
+	
+</mapper>

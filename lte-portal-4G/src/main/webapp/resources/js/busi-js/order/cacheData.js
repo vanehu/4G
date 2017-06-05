@@ -341,7 +341,7 @@ CacheData = (function() {
 		//不可编辑文本框 20030116 征信合约征信平台工单编号属性
 		if(itemSpecId == CONST.ZXPTGDBMH && OrderInfo.menuName == "ZXHYBL"){
 			selectStr += '<tr><td>'+param.name + ': </td><td><input id="'+prodId+'_'+itemSpecId
-			+'" class="inputWidth183px" type="text" disabled="disabled" value="'+OrderInfo.preliminaryInfo.bzjOrderNo+'" >';
+			+'" class="inputWidth183px" type="text" disabled="disabled" value="'+OrderInfo.preliminaryInfo.orderNo+'" >';
 		    selectStr+='</td></tr>';
 		    return selectStr;
 		};
