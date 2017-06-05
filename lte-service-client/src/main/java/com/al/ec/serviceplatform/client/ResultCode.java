@@ -78,6 +78,8 @@ public interface ResultCode {
 	final int SUCCESS = 0;
 	/**失败*/
 	final int FAIL = 1;
+	/**成功*/
+	final int SUCCESS_TW = 2;
 	/**接口异常*/
 	final int INTERFACE_EXCEPTION = -1;
 	/**业务异常*/
