@@ -337,11 +337,11 @@ cert = (function() {
 					window.console && window.console.log && (console.log("%c读卡控件异常：" + result.errorMsg, "color:red"));
 				}
 			} catch(e){
-				throw new Error("cert reader driver is not installed correctly.");
+				window.console && window.console.log && (console.log("%ccert reader driver is not installed correctly.", "color:red"));
 			}
 		} else{
+			window.console && window.console.log && (console.log("%ccert reader driver is not installed correctly.", "color:red"));
 //			areaId = "8990000";//是否给默认值
-			throw new Error("cert reader driver is not installed correctly.");
 		}
 	};
 	
