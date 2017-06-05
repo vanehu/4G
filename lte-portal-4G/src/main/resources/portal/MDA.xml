@@ -3079,5 +3079,41 @@
                 '899':'OFF'<!-- 虚拟省 -->
             }
 		</const>
+        <const type="Map" name="ONE_CERT_5_NUMBER_MANUAL_INPUT_ID" description="一证五号身份证手工输入，默认OFF">
+            {
+            'ONE_CERT_5_NUMBER_MANUAL_INPUT_ID_854':'OFF',<!-- 西藏 -->
+            'ONE_CERT_5_NUMBER_MANUAL_INPUT_ID_863':'OFF',<!-- 青海 -->
+            'ONE_CERT_5_NUMBER_MANUAL_INPUT_ID_815':'OFF',<!-- 内蒙古 -->
+            'ONE_CERT_5_NUMBER_MANUAL_INPUT_ID_823':'OFF',<!-- 黑龙江 -->
+            'ONE_CERT_5_NUMBER_MANUAL_INPUT_ID_845':'OFF',<!-- 广西 -->
+            'ONE_CERT_5_NUMBER_MANUAL_INPUT_ID_850':'OFF',<!-- 重庆 -->
+            'ONE_CERT_5_NUMBER_MANUAL_INPUT_ID_861':'OFF',<!-- 陕西 -->
+            'ONE_CERT_5_NUMBER_MANUAL_INPUT_ID_842':'OFF',<!-- 湖北 -->
+            'ONE_CERT_5_NUMBER_MANUAL_INPUT_ID_835':'OFF',<!-- 福建 -->
+            'ONE_CERT_5_NUMBER_MANUAL_INPUT_ID_832':'OFF',<!-- 江苏 -->
+            'ONE_CERT_5_NUMBER_MANUAL_INPUT_ID_846':'OFF',<!-- 海南 -->
+            'ONE_CERT_5_NUMBER_MANUAL_INPUT_ID_864':'OFF',<!-- 宁夏 -->
+            'ONE_CERT_5_NUMBER_MANUAL_INPUT_ID_814':'OFF',<!-- 山西 -->
+            'ONE_CERT_5_NUMBER_MANUAL_INPUT_ID_853':'OFF',<!-- 云南 -->
+            'ONE_CERT_5_NUMBER_MANUAL_INPUT_ID_836':'OFF',<!-- 江西 -->
+            'ONE_CERT_5_NUMBER_MANUAL_INPUT_ID_837':'OFF',<!-- 山东 -->
+            'ONE_CERT_5_NUMBER_MANUAL_INPUT_ID_811':'OFF',<!-- 北京 -->
+            'ONE_CERT_5_NUMBER_MANUAL_INPUT_ID_843':'OFF',<!-- 湖南 -->
+            'ONE_CERT_5_NUMBER_MANUAL_INPUT_ID_851':'OFF',<!-- 四川 -->
+            'ONE_CERT_5_NUMBER_MANUAL_INPUT_ID_844':'OFF',<!-- 广东 -->
+            'ONE_CERT_5_NUMBER_MANUAL_INPUT_ID_831':'OFF',<!-- 上海 -->
+            'ONE_CERT_5_NUMBER_MANUAL_INPUT_ID_812':'OFF',<!-- 天津 -->
+            'ONE_CERT_5_NUMBER_MANUAL_INPUT_ID_813':'OFF',<!-- 河北 -->
+            'ONE_CERT_5_NUMBER_MANUAL_INPUT_ID_841':'OFF',<!-- 河南 -->
+            'ONE_CERT_5_NUMBER_MANUAL_INPUT_ID_821':'OFF',<!-- 辽宁 -->
+            'ONE_CERT_5_NUMBER_MANUAL_INPUT_ID_822':'OFF',<!-- 吉林 -->
+            'ONE_CERT_5_NUMBER_MANUAL_INPUT_ID_834':'OFF',<!-- 安徽 -->
+            'ONE_CERT_5_NUMBER_MANUAL_INPUT_ID_833':'OFF',<!-- 浙江 -->
+            'ONE_CERT_5_NUMBER_MANUAL_INPUT_ID_852':'OFF',<!-- 贵州 -->
+            'ONE_CERT_5_NUMBER_MANUAL_INPUT_ID_862':'OFF',<!-- 甘肃 -->
+            'ONE_CERT_5_NUMBER_MANUAL_INPUT_ID_865':'OFF',<!-- 新疆 -->
+            'ONE_CERT_5_NUMBER_MANUAL_INPUT_ID_899':'OFF'<!-- 虚拟省 -->
+            }
+        </const>
 	</mda>
 </mdas>

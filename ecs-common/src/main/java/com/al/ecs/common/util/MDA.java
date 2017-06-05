@@ -637,4 +637,10 @@ public class MDA {
 	
 	/**USB二代证读卡统一分省配置*/
 	public static final Map<String, Object> CERT_SIGNATURE_UNIFY = new HashMap<String, Object>();
+
+    /**
+     * 一证五号手工输入身份证号
+     */
+    public static final Map<String, String> ONE_CERT_5_NUMBER_MANUAL_INPUT_ID = new HashMap<String, String>();
+
 }
