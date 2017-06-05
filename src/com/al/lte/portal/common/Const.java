@@ -8,4 +8,10 @@ public class Const {
 	public static final String TOKEN_PROVINCE_KEY="#public@2015$KEY";
 	
 	public static final String UNIFY_LOGIN_AREA_SIGN = "_UNIFY_LOGIN_AREA_SIGN";
+	
+	public static final String STAFF_LOGIN_AREA_SIGN = "_STAFF_LOGIN_AREA_SIGN";
+	
+	public static final String DEFALUT_ENCODE = "UTF-8";
+	
+	public static final String AREA_ID_REGEXP = "^8\\d{6}?$";
 }

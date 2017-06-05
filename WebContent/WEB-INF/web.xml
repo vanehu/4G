@@ -141,12 +141,11 @@
     <servlet-name>GetServerIpServlet</servlet-name>
     <url-pattern>/getServerIp</url-pattern>
   </servlet-mapping>
-  
   <servlet>
     <description></description>
     <display-name>getCtrlSecret</display-name>
     <servlet-name>getCtrlSecret</servlet-name>
-    <servlet-class>com.al.lte.portal.servlet.getCtrlSecret</servlet-class>
+    <servlet-class>com.al.lte.portal.servlet.CtrlSecretServlet</servlet-class>
   </servlet>
   <servlet-mapping>
     <servlet-name>getCtrlSecret</servlet-name>

@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.al.lte.portal.common.Config;
+import com.al.lte.portal.common.Const;
 import com.al.lte.portal.common.DelCookie;
 
 public class StaffServlet extends HttpServlet {
