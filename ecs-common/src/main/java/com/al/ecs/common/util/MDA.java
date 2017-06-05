@@ -615,7 +615,7 @@ public class MDA {
      * 主副卡，保留套餐拆副卡删除使用人
      */
     public static final Map<String, String> VICE_CARD_DEL_USER_ON_OFF = new HashMap<String, String>();
-    
+
     /**
      * 加装老用户为副卡，修改副卡账户为主卡账户，默认OFF
      */

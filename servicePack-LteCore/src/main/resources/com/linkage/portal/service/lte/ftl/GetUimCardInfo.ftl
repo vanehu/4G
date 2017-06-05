@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ContractRoot>
+	<TcpCont>
+		<TransactionID>${TcpCont.TransactionID}</TransactionID>
+		<ActionCode>${TcpCont.ActionCode}</ActionCode>
+		<BusCode>${TcpCont.BusCode}</BusCode>
+        <ServiceCode>${TcpCont.ServiceCode}</ServiceCode>
+        <ServiceContractVer>${TcpCont.ServiceContractVer}</ServiceContractVer>
+		<ServiceLevel>${TcpCont.ServiceLevel}</ServiceLevel>
+		<SrcOrgID>${TcpCont.SrcOrgID}</SrcOrgID>
+		<SrcSysID>${TcpCont.SrcSysID}</SrcSysID>
+		<SrcSysSign>${TcpCont.SrcSysSign}</SrcSysSign>
+		<DstOrgID>${TcpCont.DstOrgID}</DstOrgID>
+		<DstSysID>${TcpCont.DstSysID}</DstSysID>
+		<ReqTime>${TcpCont.ReqTime}</ReqTime>
+	</TcpCont>
+	<SvcCont>
+	<BusinessEvent>
+    	  <ReqInfo>
+            <MDN>${phoneNumber}</MDN>
+            <CardNO>${cardNo}</CardNO>
+            <ToAreanum>${areaCode}</ToAreanum>
+            <#if fromAreaCode?exists>
+            <FromAreaNum>${fromAreaCode}</FromAreaNum>
+            <#else>
+            <FromAreaNum>${areaCode}</FromAreaNum>
+            </#if>
+            <ToLanid>${areaId}</ToLanid>
+            <StaffID>${staffId}</StaffID>
+            <StaffName>${staffName}</StaffName>
+            <ChannelID>${channelId}</ChannelID>
+            <ChannelName>${channelName}</ChannelName>
+            <MVNO>${mvnoCode}</MVNO>
+          </ReqInfo>
+	</BusinessEvent>    
+	</SvcCont>	
+</ContractRoot>

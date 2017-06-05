@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ContractRoot>
+	<TcpCont>
+		<AppKey>1000000244</AppKey>
+		<Method>billing.billQueryOwe</Method>
+		<TransactionID>${TcpCont.TransactionID}</TransactionID>
+		<ReqTime>${TcpCont.ReqTime}</ReqTime>
+		<Sign>|sign|</Sign>
+		<Version>V1.0</Version>
+	</TcpCont>
+	<SvcCont>
+		<Service_Information>
+			<Bill_Query>
+				<BillQuery_Type>${billQueryType}</BillQuery_Type>
+				<Destination_Account>${destinationId}</Destination_Account>
+				<Destination_Attr>${destinationAttr}</Destination_Attr>
+				<Query_Flag>${queryFlag}</Query_Flag>
+				<Fee_Query_Flag>${feeQueryFlag}</Fee_Query_Flag>
+				<ProvinceID>${provinceId}</ProvinceID>
+			</Bill_Query>
+		</Service_Information>
+	</SvcCont>
+</ContractRoot>
