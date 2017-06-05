@@ -5,10 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-<<<<<<< HEAD
 import java.util.Date;
-=======
->>>>>>> deffc947... #1471834 身份证读卡器安全方案-----营业门户--徐旭张宇
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -27,10 +24,7 @@ import com.al.ec.serviceplatform.client.ResultCode;
 import com.al.ecs.common.util.JsonUtil;
 import com.al.ecs.common.util.MDA;
 import com.al.ecs.common.util.XmlUtil;
-<<<<<<< HEAD
 import com.al.ecs.common.web.ServletUtils;
-=======
->>>>>>> deffc947... #1471834 身份证读卡器安全方案-----营业门户--徐旭张宇
 import com.al.ecs.log.Log;
 import com.al.lte.portal.common.AESUtils;
 import com.al.lte.portal.common.InterfaceClient;
@@ -89,11 +83,8 @@ public class Cert {
 	private SessionStaff sessionStaff;
 	
 	private List<String> specialNodeList;
-<<<<<<< HEAD
 	
 	private String mac;
-=======
->>>>>>> deffc947... #1471834 身份证读卡器安全方案-----营业门户--徐旭张宇
 		
 	public static Cert getInstance(){
 		if(cert == null){
@@ -158,16 +149,10 @@ public class Cert {
 			String decryptedParamJsonStr = this.xmlSerializer.read(decryptedParamXml).toString();
 			Map<String, String> decryptedParam = JsonUtil.toObject(decryptedParamJsonStr, Map.class);
 			if(MapUtils.isNotEmpty(decryptedParam)){
-<<<<<<< HEAD
 				this.mac				= MapUtils.getString(decryptedParam, "macAddress", "未获取到macAddress");
 				this.currentAppId 		= MapUtils.getString(decryptedParam, "appId", "未获取到appId");
 				this.currentAppSecret	= MapUtils.getString(decryptedParam, "appSecret", "未获取到appSecret");
 				this.current3desSecret	= MapUtils.getString(decryptedParam, "now3desSecret", "未获取到now3desSecret");
-=======
-				this.currentAppId 		= MapUtils.getString(decryptedParam, "appId", "");
-				this.currentAppSecret	= MapUtils.getString(decryptedParam, "appSecret", "");
-				this.current3desSecret	= MapUtils.getString(decryptedParam, "now3desSecret", "");
->>>>>>> deffc947... #1471834 身份证读卡器安全方案-----营业门户--徐旭张宇
 				result = true;
 			} else{
 				log.error("入参serectParam格式化失败，versionId={}，serectParam={}", versionId, serectParam);
@@ -387,19 +372,11 @@ public class Cert {
 	
 	public String encryptAes(String param, String versionId){
 		String aesSecret = MapUtils.getString(MapUtils.getMap(this.secretConfig, versionId), "aesSecret");
-<<<<<<< HEAD
 		return AESUtils.encryptAesToString(param, aesSecret);
 	}
 	
 	public String decryptAes(String param, String aesSecret){
 		return AESUtils.decryptAesToString(param, aesSecret);
-=======
-		return AESUtils.encryptToString(param, aesSecret);
-	}
-	
-	public String decryptAes(String param, String aesSecret){
-		return AESUtils.decryptToString(param, aesSecret);
->>>>>>> deffc947... #1471834 身份证读卡器安全方案-----营业门户--徐旭张宇
 	}
 	
 	public String encrypt3des(String param, String versionId){
@@ -410,7 +387,6 @@ public class Cert {
 		return "";
 	}
 	
-<<<<<<< HEAD
 	/**
 	 * 暂未使用
 	 * @param httpServletRequest
@@ -433,52 +409,12 @@ public class Cert {
 		
 		param.put("logId", logId);
 		param.put("mac", this.mac);
-=======
-	public boolean requestFilter(HttpServletRequest httpServletRequest){
-		this.errorMsg.setLength(0);
-		boolean result = true;
-		
-//		httpServletRequest.getHeader("");
-//		
-//		//1.判断是否登录
-//		if(httpServletRequest != null){
-//			SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(httpServletRequest, SysConstant.SESSION_KEY_LOGIN_STAFF);
-//			if(sessionStaff != null){
-//				result = true;
-//				//2.判断请求次数
-////				String clientIp = ServletUtils.getIpAddr(httpServletRequest);
-////				Calendar calendar = Calendar.getInstance();
-////				Map<String, Object> requestFilter = new HashMap<String, Object>();
-////				requestFilter.put(sessionId, calendar);
-//			} else{
-//				this.setErrorMsg("非法请求");
-//			}
-//		} else{
-//			this.setErrorMsg("非法请求");
-//		}
-
-		return result;
-	}
-
-	/**
-	 * how can i save log asynchronously？
-	 * @param resultXmlStr
-	 * @param encryptedResultXmlStr
-	 * @param logId
-	 */
-	public void saveLogAsyn(String resultXmlStr, String encryptedResultXmlStr, String logId){
-		Map<String, Object> param = new HashMap<String, Object>();
-		Map<String, Object> returnMap = new HashMap<String, Object>();
-		
-		param.put("logId", logId);
->>>>>>> deffc947... #1471834 身份证读卡器安全方案-----营业门户--徐旭张宇
 		param.put("serectParam", this.serectParam);
 		param.put("decryptedParam", this.decryptedParam);
 		returnMap.put("logId", logId);
 		returnMap.put("resultXmlStr", resultXmlStr);
 		returnMap.put("encryptedResultXmlStr", encryptedResultXmlStr);
 		
-<<<<<<< HEAD
 		serviceLog.initDataBus(db, null);
 		db.setResultCode(ResultCode.R_SUCC);
 		db.setParammap(param);
@@ -501,26 +437,6 @@ public class Cert {
 		serviceLog.setRemark("密钥更新服务，mac：" + this.getMac());
 		
 		serviceLog.saveLogAsyn();
-=======
-		String paramString = JsonUtil.toString(param);
-		String rawRetn = JsonUtil.toString(returnMap);
-		
-		
-		log.debug("密钥更新服务，入参={}\n-密钥更新服务，回参={}", paramString, rawRetn);
-		
-		if(this.sessionStaff != null){
-			DataBus db = new DataBus();
-			db = ServiceClient.initDataBus(this.sessionStaff);
-			db.setResultCode("0");
-			db.setParammap(param);
-			db.setReturnlmap(returnMap);
-			long beginTime = System.currentTimeMillis();
-			
-			String dbKeyWord = this.sessionStaff.getDbKeyWord();
-			InterfaceClient.callServiceLog(logId, dbKeyWord, db, null,
-				"ctrlSecret", "ctrlSecret", this.sessionStaff, paramString, rawRetn, beginTime, beginTime, "", "", "portal");
-		}
->>>>>>> deffc947... #1471834 身份证读卡器安全方案-----营业门户--徐旭张宇
 	}
 
 	public String getNewAesSecret() {
@@ -624,11 +540,8 @@ public class Cert {
 	public String getDecryptedParam() {
 		return decryptedParam;
 	}
-<<<<<<< HEAD
 
 	public String getMac() {
 		return mac;
 	}
-=======
->>>>>>> deffc947... #1471834 身份证读卡器安全方案-----营业门户--徐旭张宇
 }
