@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ContractRoot>
+	<TcpCont>
+		<Response>
+			<RspCode>0000</RspCode>
+			<RspDesc>成功</RspDesc>		
+		</Response>
+	</TcpCont>
+	<SvcCont>
+		<Service_Information>
+			<Service_Result_Code>0</Service_Result_Code>
+			<Total_Balance_Available>5505</Total_Balance_Available>
+			<Balance_Information>
+				<Balance_Item_Detail>
+					<Balance_ItemType_Detail>春季营销预存账本</Balance_ItemType_Detail>
+					<UnitType_Id>0</UnitType_Id>
+					<Balance_Amount>0</Balance_Amount>
+					<Balance_Available>0</Balance_Available>
+					<Balance_Used>0</Balance_Used>
+					<Balance_Reserved>0</Balance_Reserved>
+					<Eff_Date>2013-1-1</Eff_Date>
+					<Exp_Date>2013-1-1</Exp_Date>
+				</Balance_Item_Detail>
+				<Balance_Item_Detail>
+					<Balance_ItemType_Detail>存款(通用余额账本)</Balance_ItemType_Detail>
+					<UnitType_Id>0</UnitType_Id>
+					<Balance_Amount>5505</Balance_Amount>
+					<Balance_Available>5505</Balance_Available>
+					<Balance_Used>0</Balance_Used>
+					<Balance_Reserved>0</Balance_Reserved>
+					<Eff_Date>2013-1-1</Eff_Date>
+					<Exp_Date>2013-1-1</Exp_Date>
+				</Balance_Item_Detail>
+			</Balance_Information>
+		</Service_Information>
+	</SvcCont>
+</ContractRoot>

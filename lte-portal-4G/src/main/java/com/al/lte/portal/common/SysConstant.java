@@ -851,6 +851,8 @@ public final class SysConstant {
 	public static final String RESULT 		= "result";
 	public static final String RESULT_MSG 	= "resultMsg";
 	public static final String RESULT_CODE 	= "resultCode";
+	public static final String RESULT_FLAG 	= "resultFlag";
+	public static final String ERROR_MSG 	= "errorMsg";
 	
 	public static final String AREA_ID 		= "areaId";
 	public static final String STAFF_ID 	= "staffId";

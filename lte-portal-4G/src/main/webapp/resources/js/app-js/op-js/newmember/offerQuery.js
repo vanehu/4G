@@ -378,6 +378,13 @@ query.offer = (function() {
 	//加载附属标签下的附属销售品
 	var _queryCanBuyAttachSpec = function(param,callBackFun) {
 		addParam(param);  //添加基本参数
+		//redmine1503673可订购附属查询接口中新增已订购附属id
+		var offerList = CacheData.getOfferList(param.prodId); //过滤已订购
+		$.each(offerList,function(){
+			if(this.offerSpecId !="" && this.offerSpecId !=null){
+				param.offerSpecIds.push(this.offerSpecId);
+			}
+		});
 		var url = contextPath+"/app/offer/queryCanBuyAttachSpec";
 		if(typeof(callBackFun)=="function"){
 			$.callServiceAsJsonGet(url,{strParam:JSON.stringify(param)},{

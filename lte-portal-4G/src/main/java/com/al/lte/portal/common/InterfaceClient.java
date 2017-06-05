@@ -737,18 +737,11 @@ public class InterfaceClient {
 				logObj.put("TRANS_ID", MapUtils.getString(db.getParammap(), "transactionId", ""));
 				logObj.put("AREA_ID", sessionStaff.getCurrentAreaId() == null ? "" : sessionStaff.getCurrentAreaId());
 				
-				if(request!=null&&!"portal".equals(prefix)){
-					if(request.getRemoteAddr()!=null){
-						logObj.put("REMOTE_ADDR", request.getRemoteAddr());
-						logObj.put("REMOTE_PORT", String.valueOf(request.getRemotePort()));
-						logObj.put("LOCAL_ADDR", request.getLocalAddr());
-						logObj.put("LOCAL_PORT", String.valueOf(request.getLocalPort()));
-					}else{
-						logObj.put("REMOTE_ADDR", "");
-						logObj.put("REMOTE_PORT", "");
-						logObj.put("LOCAL_ADDR", "");
-						logObj.put("LOCAL_PORT", "");
-					}
+				if(request != null){
+					logObj.put("REMOTE_ADDR", request.getRemoteAddr());
+					logObj.put("REMOTE_PORT", String.valueOf(request.getRemotePort()));
+					logObj.put("LOCAL_ADDR", ServletUtils.getIpAddr(request));
+					logObj.put("LOCAL_PORT", String.valueOf(request.getLocalPort()));
 				}else{
 					logObj.put("REMOTE_ADDR", "");
 					logObj.put("REMOTE_PORT", "");
@@ -788,12 +781,10 @@ public class InterfaceClient {
 					}
 				 //门户日志 记录业务场景 与订单id
 				 if("portal".equals(prefix)){
-						  Map<String,Object>	map = JsonUtil.toObject(paramString, Map.class);
-						  logObj.put("TRANS_ID", MapUtils.getString(map, "portalId", ""));  
-						  logObj.put("BUSI_TYPE", MapUtils.getString(map, "servCode", MapUtils.getString(map, "menuInfo","")));
-				 
+					  Map<String,Object>	map = JsonUtil.toObject(paramString, Map.class);
+					  logObj.put("TRANS_ID", MapUtils.getString(map, "portalId", ""));  
+					  logObj.put("BUSI_TYPE", MapUtils.getString(map, "servCode", MapUtils.getString(map, "menuInfo","")));
 				 }
-				
 				// 新增日志ID
 				logObj.put("LOG_SEQ_ID", logSeqId);
 				// 新增错误标识，0 成功  1  错误  2  异常

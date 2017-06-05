@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ContractRoot>
+	<TcpCont>
+		<TransactionID>${TcpCont.TransactionID}</TransactionID>
+		<ActionCode>${TcpCont.ActionCode}</ActionCode>
+		<BusCode>${TcpCont.BusCode}</BusCode>
+        <ServiceCode>${TcpCont.ServiceCode}</ServiceCode>
+        <ServiceContractVer>${TcpCont.ServiceContractVer}</ServiceContractVer>
+		<ServiceLevel>${TcpCont.ServiceLevel}</ServiceLevel>
+		<SrcOrgID>${TcpCont.SrcOrgID}</SrcOrgID>
+		<SrcSysID>${TcpCont.SrcSysID}</SrcSysID>
+		<SrcSysSign>${TcpCont.SrcSysSign}</SrcSysSign>
+		<DstOrgID>${TcpCont.DstOrgID}</DstOrgID>
+		<DstSysID>${TcpCont.DstSysID}</DstSysID>
+		<ReqTime>${TcpCont.ReqTime}</ReqTime>		
+	</TcpCont>
+	<SvcCont>
+		<InvoicePrintPaymentReq>
+			<InvoicePrint>
+				<Payment_Serial_Nbr>${paymentSerialNbr}</Payment_Serial_Nbr>
+				<Receipt_Class>0</Receipt_Class>
+				<Print_Flag>0</Print_Flag>
+				<Acc_Nbr>${accNbr}</Acc_Nbr>
+			</InvoicePrint>
+			<Mvno_Id>${ownerId}</Mvno_Id>
+		</InvoicePrintPaymentReq>
+	</SvcCont>
+</ContractRoot>

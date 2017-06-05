@@ -1,17 +1,17 @@
 /**
  * 销售品产品相关查询
- *
+ * 
  * @author wukf
  * date 2013-08-22
  */
 CommonUtils.regNamespace("query","offer");
 
 query.offer = (function() {
-
+	
 	/**
 	 * 销售品规格构成查询
 	 * @param  offerSpecId 销售品规格ID
-	 * @param  offerTypeCd 销售品类型,销售品主 1 ,附属2
+	 * @param  offerTypeCd 销售品类型,销售品主 1 ,附属2  
 	 * @param  mainOfferSpecId  主套餐id
 	 * @param  partyId  客户ID
 	 * @callBackFun 回调函数
@@ -39,7 +39,7 @@ query.offer = (function() {
 			});
 		}else{
 			$.ecOverlay("<strong>正在查询销售品规格构成中,请稍后....</strong>");
-			var response = $.callServiceAsJsonGet(url,param);
+			var response = $.callServiceAsJsonGet(url,param);	
 			$.unecOverlay();
 			if (response.code==0) {
 				if(response.data){
@@ -67,7 +67,7 @@ query.offer = (function() {
 				"before":function(){
 					$("#attach-modal").modal('show');
 					//$.ecOverlay("<strong>正在查询销售品实例中,请稍后....</strong>");
-				},
+				},	
 				"done" : function(response){
 					//$.unecOverlay();
 					$("#attach-modal").modal('hide');
@@ -84,7 +84,7 @@ query.offer = (function() {
 			});
 		}else {
 			$.ecOverlay("<strong>正在查询销售品实例中,请稍后....</strong>");
-			var response = $.callServiceAsJsonGet(url,param);
+			var response = $.callServiceAsJsonGet(url,param);	
 			$.unecOverlay();
 			if (response.code==0) {
 				if(response.data){
@@ -97,10 +97,10 @@ query.offer = (function() {
 			}
 		}
 	};
-
+	
 	//根据选择产品查询销售品实例，并保存到OrderInfo.offer
 	var _setOffer = function(callBack) {
-		var prod = order.prodModify.choosedProdInfo ;
+		var prod = order.prodModify.choosedProdInfo ; 
 		var param = {
 			offerId : prod.prodOfferInstId,
 			offerSpecId : prod.prodOfferId,
@@ -137,7 +137,7 @@ query.offer = (function() {
 							$.alert("提示","销售品实例构成中 没有包含选中接入号码【"+prod.accNbr+"】，无法继续受理，请业务后台核实");
 							return false;
 						}
-						OrderInfo.offer.offerMemberInfos = data.offerMemberInfos;
+						OrderInfo.offer.offerMemberInfos = data.offerMemberInfos; 
 						OrderInfo.offer.offerId = prod.prodOfferInstId;
 						OrderInfo.offer.offerSpecId = prod.prodOfferId;
 						OrderInfo.offer.offerSpecName = prod.prodOfferName;
@@ -177,7 +177,7 @@ query.offer = (function() {
 						$.alert("提示","销售品实例构成中 没有包含选中接入号码【"+prod.accNbr+"】，无法继续受理，请业务后台核实");
 						return false;
 					}
-					OrderInfo.offer.offerMemberInfos = data.offerMemberInfos;
+					OrderInfo.offer.offerMemberInfos = data.offerMemberInfos; 
 					OrderInfo.offer.offerId = prod.prodOfferInstId;
 					OrderInfo.offer.offerSpecId = prod.prodOfferId;
 					OrderInfo.offer.offerSpecName = prod.prodOfferName;
@@ -189,7 +189,7 @@ query.offer = (function() {
 			}
 		}
 	};
-
+	
 	//销售品参数查询
 	var _queryOfferParam = function(param,callBackFun) {
 		var url= contextPath+"/app/offer/queryOfferParam";
@@ -213,10 +213,10 @@ query.offer = (function() {
 						$.alert("提示","查询销售品实例参数失败,稍后重试");
 					}
 				}
-			});
+			});	
 		}else {
 			$.ecOverlay("<strong>查询销售品实例参数中，请稍等...</strong>");
-			var response = $.callServiceAsJsonGet(url,param);
+			var response = $.callServiceAsJsonGet(url,param);	
 			$.unecOverlay();
 			if (response.code==0) {
 				if(response.data){
@@ -228,10 +228,10 @@ query.offer = (function() {
 				$.alert("提示","查询销售品实例参数失败,稍后重试");
 			}
 		}
-	};
-
+	};	
+	
 	/**
-	 * 已订购附属查询
+	 * 已订购附属查询 
 	 */
 	var _queryAttachOfferHtml = function(param,callBackFun) {
 		addParam(param);  //添加基本参数
@@ -258,7 +258,7 @@ query.offer = (function() {
 			});
 		}else{
 			$.ecOverlay("<strong>查询附属销售品实例中，请稍等...</strong>");
-			var response = $.callServiceAsHtmlGet(url,{strParam:JSON.stringify(param)});
+			var response = $.callServiceAsHtmlGet(url,{strParam:JSON.stringify(param)});	
 			$.unecOverlay();
 			if (response.code==0) {
 				if(response.data){
@@ -268,9 +268,9 @@ query.offer = (function() {
 				$.alert("提示","查询附属销售品失败,稍后重试");
 				return;
 			}
-		}
+		}		
 	};
-
+	
 	/**
 	 * 已订购销售品和功能产品
 	 */
@@ -278,7 +278,7 @@ query.offer = (function() {
 		addParam(param);  //添加基本参数
 		var url = contextPath+"/agent/offer/queryOpenedAttachAndServ";
 		$.ecOverlay("<strong>查询附属销售品实例中，请稍等...</strong>");
-		var response = $.callServiceAsJsonGet(url,{strParam:JSON.stringify(param)});
+		var response = $.callServiceAsJsonGet(url,{strParam:JSON.stringify(param)});	
 		$.unecOverlay();
 		if (response.code==0) {
 			if(response.data){
@@ -289,7 +289,7 @@ query.offer = (function() {
 			return;
 		}
 	};
-
+	
 	//套餐变更，查询附属销售品页面
 	var _queryChangeAttachOffer = function(param,callBackFun) {
 		addParam(param);  //添加基本参数
@@ -316,7 +316,7 @@ query.offer = (function() {
 			});
 		}else{
 			$.ecOverlay("<strong>查询附属销售品实例中，请稍等...</strong>");
-			var response = $.callServiceAsHtmlGet(url,{strParam:JSON.stringify(param)});
+			var response = $.callServiceAsHtmlGet(url,{strParam:JSON.stringify(param)});	
 			$.unecOverlay();
 			if (response.code==0) {
 				if(response.data){
@@ -326,9 +326,9 @@ query.offer = (function() {
 				$.alert("提示","查询附属销售品实例失败,稍后重试");
 				return;
 			}
-		}
+		}		
 	};
-
+	
 	//附属销售品规格查询
 	var _queryAttachSpec = function(param,callBackFun) {
 		addParam(param);  //添加基本参数
@@ -354,10 +354,10 @@ query.offer = (function() {
 						return;
 					}
 				}
-			});
+			});	
 		}else {
 			$.ecOverlay("<strong>查询查询附属销售品中，请稍等...</strong>");
-			var response = $.callServiceAsHtmlGet(url,{strParam:JSON.stringify(param)});
+			var response = $.callServiceAsHtmlGet(url,{strParam:JSON.stringify(param)});	
 			$.unecOverlay();
 			if (response.code==0) {
 				if(response.data){
@@ -372,7 +372,7 @@ query.offer = (function() {
 			}
 		}
 	};
-
+	
 	//加载附属标签下的附属销售品
 	var _queryCanBuyAttachSpec = function(param,callBackFun) {
 		addParam(param);  //添加基本参数
@@ -398,10 +398,10 @@ query.offer = (function() {
 						return;
 					}
 				}
-			});
+			});	
 		}else {
 			$.ecOverlay("<strong>查询附属销售品中，请稍等...</strong>");
-			var response = $.callServiceAsJsonGet(url,{strParam:JSON.stringify(param)});
+			var response = $.callServiceAsJsonGet(url,{strParam:JSON.stringify(param)});	
 			$.unecOverlay();
 			if (response.code==0) {
 				if(response.data){
@@ -416,13 +416,13 @@ query.offer = (function() {
 			}
 		}
 	};
-
+	
 	// 查询默认必须可选包
 	var _queryDefMustOfferSpec = function(param) {
 		addParam(param);  //添加基本参数
 		var url = contextPath+"/app/offer/queryDefaultAndRequiredOfferSpec";
 		$.ecOverlay("<strong>查询默认必须可选包中，请稍等...</strong>");
-		var response = $.callServiceAsJsonGet(url,param);
+		var response = $.callServiceAsJsonGet(url,param);	
 		$.unecOverlay();
 		if (response.code==0) {
 			if(response.data){
@@ -443,7 +443,7 @@ query.offer = (function() {
 		addParam(param);  //添加基本参数
 		var url = contextPath+"/agent/offer/queryDefaultAndRequiredOfferSpecAndServ";
 		$.ecOverlay("<strong>查询默认必须可选包和功能产品中，请稍等...</strong>");
-		var response = $.callServiceAsJsonGet(url,param);
+		var response = $.callServiceAsJsonGet(url,param);	
 		$.unecOverlay();
 		if (response.code==0) {
 			OrderInfo.isSuccess = "Y";
@@ -458,13 +458,13 @@ query.offer = (function() {
 			return;
 		}
 	};
-
+	
 	// 查询功能产品规格,(默认1，必须2，可订购3)
 	var _queryServSpec = function(param) {
 		addParam(param);  //添加基本参数
 		var url = contextPath+"/agent/offer/queryServSpec";
 		$.ecOverlay("<strong>查询可订购功能产品中，请稍等...</strong>");
-		var response = $.callServiceAsJsonGet(url,param);
+		var response = $.callServiceAsJsonGet(url,param);	
 		$.unecOverlay();
 		if (response.code==0) {
 			if(response.data){
@@ -478,7 +478,7 @@ query.offer = (function() {
 			return;
 		}
 	};
-
+	
 	//销售品互斥依赖查询
 	var _queryExcludeDepend = function(param){
 		addParam(param);  //添加基本参数
@@ -494,7 +494,7 @@ query.offer = (function() {
 			$.alert("提示","数据查询异常，请稍后重试！");
 		}
 	};
-
+		
 	//功能产品互斥依赖查询
 	var _queryServExcludeDepend = function(param){
 		addParam(param);  //添加基本参数
@@ -510,10 +510,10 @@ query.offer = (function() {
 			$.alert("提示","数据查询异常，请稍后重试！");
 		}
 	};
-
+	
 	//查询附属销售品规格
 	var _searchAttachOfferSpec = function(param,callBackFunc) {
-
+		
 		addParam(param);  //添加基本参数
 		var url = contextPath+"/agent/offer/searchAttachOfferSpec";
 		if(typeof(callBackFunc)=="function"){
@@ -548,7 +548,7 @@ query.offer = (function() {
 			}
 		}
 	};
-
+	
 	//受理权限查询
 	var _checkOperate = function(param) {
 		var url = contextPath+"//app/order/checkOperate";
@@ -563,7 +563,7 @@ query.offer = (function() {
 			$.alert("提示","受理权限查询失败，请稍后重试！");
 		}
 	};
-
+	
 	//订单提交
 	var _orderSubmit = function(param) {
 		var url = contextPath+"/app/order/orderSubmit";
@@ -578,7 +578,7 @@ query.offer = (function() {
 		}
 		return response.data;
 	};
-
+	
 	//订单提交（一次性）
 	var _orderSubmitComplete = function(param) {
 		var url = contextPath+"/app/order/orderSubmitComplete";
@@ -592,8 +592,8 @@ query.offer = (function() {
 			 return;
 		}
 		return response.data;
-	};
-
+	};	
+	
 	/**
 	 * 查询主销售品规格构成
 	 * 并对结果进行数据校验
@@ -620,7 +620,7 @@ query.offer = (function() {
 			$.alert("错误提示","无付费类型，无法新装！");
 			return false;
 		}
-		offerSpec = SoOrder.sortOfferSpec(offerSpec); //排序主副卡套餐
+		offerSpec = SoOrder.sortOfferSpec(offerSpec); //排序主副卡套餐	
 		if((OrderInfo.actionFlag==6||OrderInfo.actionFlag==2||OrderInfo.actionFlag==1) && ec.util.isArray(OrderInfo.oldprodInstInfos)){//主副卡纳入老用户
 			OrderInfo.oldofferSpec.push({"offerSpec":offerSpec,"accNbr":param.accNbr});
 		}else{
@@ -628,7 +628,7 @@ query.offer = (function() {
 		}
 		return offerSpec;
 	};
-
+	
 	/**
 	 * 同步查询销售品规格构成
 	 * 并对结果进行数据校验
@@ -637,8 +637,8 @@ query.offer = (function() {
 		var param = {
 			offerSpecId:offerSpecId,
 			partyId : OrderInfo.cust.custId,
-			offerTypeCd:2
-		};
+			offerTypeCd:2	
+		};	
 		if(OrderInfo.actionFlag==1 || OrderInfo.actionFlag==2 || OrderInfo.actionFlag==6 || OrderInfo.actionFlag==14){//新装业务,添加主套餐id用于查询终端
 			param.mainOfferSpecId = OrderInfo.offerSpec.offerSpecId;
 		}
@@ -686,7 +686,7 @@ query.offer = (function() {
 		offerSpec.offerRoles = offerRoles;
 		return offerSpec;
 	};
-
+	
 	//预校验
 	var _updateCheckByChange = function(param,callBackFun){
 		var url = contextPath+"/order/prodModify/updateCheckByChange";
@@ -732,7 +732,7 @@ query.offer = (function() {
 			}
 		}
 	};
-
+	
 	/**
 	 * 加载实例
 	 * 如果传入了paramInfo，则使用它，否则拼入参
@@ -744,8 +744,8 @@ query.offer = (function() {
 		if(CONST.getAppDesc()!=0){ //不是4g不需要加载
 			return true;
 		}
-		if(OrderInfo.actionFlag == 1 || OrderInfo.actionFlag == 14
-				|| OrderInfo.actionFlag==13 || OrderInfo.actionFlag==17
+		if(OrderInfo.actionFlag == 1 || OrderInfo.actionFlag == 14 
+				|| OrderInfo.actionFlag==13 || OrderInfo.actionFlag==17 
 				|| OrderInfo.actionFlag==18){ //新装不要加载实例
 			return true;
 		}
@@ -754,7 +754,7 @@ query.offer = (function() {
 			return false;
 		}
 		var prod = order.prodModify.choosedProdInfo;
-
+		
 		if(prod==undefined || prod.prodInstId ==undefined){
 			$.alert("提示","未获取到产品相关信息，无法办理二次业务！");
 			return false;
@@ -795,14 +795,14 @@ query.offer = (function() {
 			return query.offer.invokeLoadInst(param);
 		}
 	};
-
+	
 	//补充查询基本条件
 	var addParam = function(param){
 		//param.staffId = '1762126';
 		param.staffId = OrderInfo.staff.staffId;
 		//param.channelId = '1388783';
 		param.channelId	= OrderInfo.staff.channelId;
-
+		
 		//param.areaId = '8320102';
 		param.areaId = OrderInfo.getProdAreaId(param.prodId);
 		if(OrderInfo.cust.custId == ""){
@@ -847,7 +847,7 @@ query.offer = (function() {
 			}
 		}
 	};
-
+	
 	var _invokeLoadInst = function(param) {
 //		order.prepare.createorderlonger();
 		var url = contextPath+"/app/offer/loadInst";
@@ -862,82 +862,165 @@ query.offer = (function() {
 		}else {
 			if (response.msg == undefined) {
 				$.alert("提示", "全量信息查询失败");
-			} else {
+			} else {				
 				$.alert("提示",response.msg);
 			}
 			return false;
 		}
 	};
-
-	//礼包订购构成功能产品查询
-	var _queryGiftServerSpec = function(param,callBackFun) {
-		param.enter=3;//传给controller表示新版ui
-		addParam(param);  //添加基本参数
-		var url = contextPath+"/app/offer/queryOfferServerSpec";
-		if(typeof(callBackFun)=="function"){
-			$.callServiceAsHtmlGet(url,{strParam:JSON.stringify(param)},{
-				"before":function(){
-					$.ecOverlay("<strong>正在查询功能产品中,请稍后....</strong>");
-				},
-				"always":function(){
-					$.unecOverlay();
-				},
-				"done" : function(response){
-					if (response.code==0) {
-						if(response.data){
-							callBackFun(response.data);
-						}
-					}else if (response.code==-2){
-						$.alertM(response.data);
-						return;
-					}else {
-						$.alert("提示","功能产品查询失败,稍后重试");
-						return;
-					}
-				}
-			});
-		}else {
-			$.ecOverlay("<strong>查询功能产品中，请稍等...</strong>");
-			var response = $.callServiceAsHtmlGet(url,{strParam:JSON.stringify(param)});
-			$.unecOverlay();
-			if (response.code==0) {
-				if(response.data){
-					return response.data;
-				}
-			}else if (response.code==-2){
-				$.alertM(response.data);
-				return;
-			}else {
-				$.alert("提示","查询功能产品失败,稍后重试");
-				return;
+	
+	/**
+	 * 产品信息查询
+	 */
+	var _queryProduct = function(param) {
+		var url = contextPath+"/app/cust/offerorderprod";
+		$.ecOverlay("<strong>查询产品信息中，请稍等...</strong>");
+		var response = $.callServiceAsJson(url,param);	
+		$.unecOverlay();
+		if (response.code==0) {
+			if(response.data){
+				return response.data;
 			}
+		}else {
+			$.alert("提示","查询附属销售品失败,稍后重试");
+			return;
 		}
 	};
+	
+	/**
+	 * 查询产品实例属性
+	 * param : {
+	 * prodId : "", //产品实例id
+	 * acctNbr : "", //接入号
+	 * prodSpecId : "", //产品规格id
+	 * areaId : "" //地区id
+	 * }
+	 */
+	var _queryProdInstParam = function(param) {
+		var url = contextPath+"/app/order/prodInstParam";
+		$.ecOverlay("<strong>查询产品实例属性中，请稍等...</strong>");
+		var response = $.callServiceAsJson(url,param);	
+		$.unecOverlay();
+		if (response.code==0) {
+			if(response.data){
+				return response.data;
+			}
+		}else {
+			$.alert("提示","查询附属销售品失败,稍后重试");
+			return;
+		}
+	};
+	
+	//补换卡专用
+	var _queryDefMustOfferSpecAndServAgent = function(param) {
+		addParam(param);  //添加基本参数
+		var url = contextPath+"/offer/queryDefaultAndRequiredOfferSpecAndServ";
+		$.ecOverlay("<strong>查询默认必须可选包和功能产品中，请稍等...</strong>");
+		var response = $.callServiceAsJsonGet(url,param);	
+		$.unecOverlay();
+		if (response.code==0) {
+			OrderInfo.isSuccess = "Y";
+			if(response.data){
+				return response.data;
+			}
+		}else if (response.code==-2){
+			$.alertM(response.data);
+			return;
+		}else {
+			$.alert("提示","可订购可选包和功能产品失败,稍后重试");
+			return;
+		}
+	};
+	//查询我的收藏
+	var _queryMyfavorite = function(param) {
+		addParam(param);  //添加基本参数
+		var url = contextPath+"/agent/offer/queryMyfavorite";
+		$.ecOverlay("<strong>查询收藏功能产品中，请稍等...</strong>");
+		var response = $.callServiceAsJsonGet(url,{strParam:JSON.stringify(param)});	
+		$.unecOverlay();
+		if (response.code==0) {
+			if(response.data){
+				return response.data;
+			}
+		}else if (response.code==-2){
+			$.alertM(response.data);
+			return;
+		}else {
+			$.alert("提示","查询我的收藏失败,稍后重试");
+			return;
+		}
+	};
+	//添加销售品
+	var _addMyfavorite = function (param){
+		addParam(param);  //添加基本参数
+		var url = contextPath+"/agent/offer/addMyfavorite";
+		$.ecOverlay("<strong>收藏功能产品中，请稍等...</strong>");
+		var response = $.callServiceAsJsonGet(url,param);	
+		$.unecOverlay();
+		if (response.code==0) {
+			if(response.data){
+				return response.data;
+			}
+		}else if (response.code==1){
+			$.alert("提示",response.data);
+			return;
+		}else {
+			$.alert("提示","收藏功能产品失败,稍后重试");
+			return;
+		}
+	};
+	//取消收藏销售品
+	var _delMyfavorite = function (param){
+		addParam(param);  //添加基本参数
+		var url = contextPath+"/agent/offer/delMyfavorite";
+		$.ecOverlay("<strong>取消收藏功能产品中，请稍等...</strong>");
+		var response = $.callServiceAsJsonGet(url,param);	
+		$.unecOverlay();
+		if (response.code==0) {
+			if(response.data){
+				return response.data;
+			}
+		}else if (response.code==-2){
+			$.alertM(response.data);
+			return;
+		}else {
+			$.alert("提示","取消收藏功能产品失败,稍后重试");
+			return;
+		}
+	};
+	
+	
 	return {
-		  queryOfferSpec        :_queryOfferSpec,
-		  queryAttachSpec       :_queryAttachSpec,
-		  queryMyfavorite       :_queryMyfavorite,
-		  queryExcludeDepend    :_queryExcludeDepend,
-		  queryServExcludeDepend:_queryServExcludeDepend,
-		  queryServSpec         :_queryServSpec,
-		  queryCanBuyAttachSpec :_queryCanBuyAttachSpec,
-		  addMyfavorite         :_addMyfavorite,
-		  delMyfavorite         :_delMyfavorite,
-		  queryAttachOfferSpec  :_queryAttachOfferSpec,
-		  searchAttachOfferSpec :_searchAttachOfferSpec,
-		  loadInst              :_loadInst,
-		  invokeLoadInst        :_invokeLoadInst,
-		  queryOpenedAttachAndServ	:_queryOpenedAttachAndServ,
-		  setOffer				:_setOffer,
-		  queryOfferInst		:_queryOfferInst,
-		  queryChangeAttachOffer	:_queryChangeAttachOffer,
-		  queryDefMustOfferSpec	:_queryDefMustOfferSpec,
-		  queryDefMustOfferSpecAndServ	:_queryDefMustOfferSpecAndServ,
-		  queryMainOfferSpec			:_queryMainOfferSpec,
-		  queryAttachOfferHtml			:_queryAttachOfferHtml,
-		  updateCheckByChange			:_updateCheckByChange,
-		  queryGiftServerSpec           :_queryGiftServerSpec
-
-
+		queryMyfavorite         : _queryMyfavorite,
+		addMyfavorite           : _addMyfavorite,
+		delMyfavorite           : _delMyfavorite,
+		checkOperate			: _checkOperate,
+		loadInst				: _loadInst,
+		invokeLoadInst			: _invokeLoadInst,
+		setOffer				: _setOffer,
+		searchAttachOfferSpec	: _searchAttachOfferSpec,
+		queryOfferSpec			: _queryOfferSpec,
+		queryServSpec			: _queryServSpec,
+		queryOfferInst 			: _queryOfferInst,
+		queryOfferParam 		: _queryOfferParam,
+		queryAttachOfferHtml	: _queryAttachOfferHtml,
+		queryChangeAttachOffer  : _queryChangeAttachOffer,
+		queryCanBuyAttachSpec 	: _queryCanBuyAttachSpec,
+		queryExcludeDepend		: _queryExcludeDepend,
+		queryServExcludeDepend	: _queryServExcludeDepend,
+		queryAttachSpec			: _queryAttachSpec,
+		queryMainOfferSpec		: _queryMainOfferSpec,
+		queryAttachOfferSpec	: _queryAttachOfferSpec,
+		queryDefMustOfferSpec	: _queryDefMustOfferSpec,
+		queryDefMustOfferSpecAndServ : _queryDefMustOfferSpecAndServ,
+		orderSubmit				: _orderSubmit,
+		orderSubmitComplete		: _orderSubmitComplete,
+		updateCheckByChange		: _updateCheckByChange,
+		queryProduct			: _queryProduct,
+		queryOpenedAttachAndServ: _queryOpenedAttachAndServ,
+		queryProdInstParam		: _queryProdInstParam,
+		queryDefMustOfferSpecAndServAgent		: _queryDefMustOfferSpecAndServAgent
+		
+		
 	};
 })();

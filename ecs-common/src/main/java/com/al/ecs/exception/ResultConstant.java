@@ -128,4 +128,6 @@ public final class ResultConstant {
 	public static final ServResult R_INTERFACE_BUSI_ERROR = new ServResult("INTF-3010", "返回业务相关错误");
 	/**接口服务返回参数异常*/
 	public static final ServResult R_INTERFACE_RESP_EXCEPTION = new ServResult("INTF-3007", "接口服务异常");
+	/** 靓号调级：靓号非在用状态（1004），无法受理 */
+	public static final Result PHONE_LEVEL_MODIFY_STATUS_ERROR = new Result(1002, "号码非在用状态，无法受理");
 }

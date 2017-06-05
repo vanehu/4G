@@ -3216,7 +3216,7 @@ public class MktResController extends BaseController {
     	
     	model.addAttribute("param", param);
     	model.addAttribute("boActionTypeName", SysConstant.PHONE_LEVEL_MODIFY_NAME);
-    	
+    			
     	try {
     		//调资源接口查靓号调级
 			Map<String, Object> resultData = this.mktResBmo.phoneNumInfoQry(param, null, sessionStaff);
@@ -3225,7 +3225,7 @@ public class MktResController extends BaseController {
 					Map<String, Object> baseInfo = MapUtils.getMap(resultData, "baseInfo", new HashMap<String, Object>());
 					model.addAttribute("baseInfo", baseInfo);
 				}else{
-					super.addHeadCode(response, ResultConstant.SERVICE_RESULT_FAILTURE);
+//					super.addHeadCode(response, ResultConstant.PHONE_LEVEL_MODIFY_STATUS_ERROR);
 					return super.failedStr(model, ErrorCode.PHONENUM_LIST, resultData, param);
 				}
 			}
@@ -3233,7 +3233,7 @@ public class MktResController extends BaseController {
 			return super.failedStr(model, ie, param, ErrorCode.PHONENUM_LIST);
 		} catch (BusinessException be) {
 			this.log.error("号码查询接口数据处理异常", be);
-			super.addHeadCode(response, ResultConstant.SERVICE_RESULT_FAILTURE);
+//			super.addHeadCode(response, ResultConstant.PHONE_LEVEL_MODIFY_STATUS_ERROR);
 			return super.failedStr(model, ErrorCode.PHONENUM_LIST, be, param);
 		} catch (Exception e) {
 			return super.failedStr(model, ErrorCode.PHONENUM_LIST, e, param);

@@ -558,8 +558,31 @@ ec.util=(function(){
         map[k] = v;
     };
 
+
+    /**
+     * @private 数组去重操作，返回没有重复元素的新数组
+     * @param array 要进行去重操作的数组(元素为字符串或数字)
+     */
+    var _distinct = function (array) {
+        var resultArray = [];
+        $.each(array, function () {
+            var isNotExist = true;
+            var parent = this;
+            $.each(resultArray, function () {
+                if (String(this) == String(parent)) {
+                    isNotExist = false;
+                }
+            });
+            if (isNotExist) {
+                resultArray.push(String(this));
+            }
+        });
+        return resultArray;
+    };
+
 	//要暴露出的公共方法
 	return {
+        distinct            :_distinct,
 		showErrors			:_showErrorsTip,
 		defaultStr			:_defaultStr,
 		back				:_back,

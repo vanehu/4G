@@ -8,13 +8,6 @@ CommonUtils.regNamespace("CacheData");
 
 /** 缓存数据对象*/
 CacheData = (function() {
-	
-	var _giftMainOffer;//礼包主套餐构成
-	var _giftMainAttachOfferList=[];//主卡促销
-	var _giftSecondAttachOfferList=[];//副卡促销
-	var _giftAttach=[];//详情-主、副卡促销
-	var _giftMainAttach=[];//详情-主卡促销
-	var _giftSecondAttach=[];//详情-副卡促销
 	//设置鉴权日志id
 	var _setRecordId = function (id) {
 		recordId = id;
@@ -1095,44 +1088,43 @@ CacheData = (function() {
 		return govCertTyteArr;
 	};
 	return {
-		setRecordId			:_setRecordId,
-		setOfferSpec        :_setOfferSpec,
-		getOfferSpec        :_getOfferSpec,
-		getOfferSpecList    :_getOfferSpecList,
-		getOfferBySpecId    :_getOfferBySpecId,
-		getOfferList        :_getOfferList,
-		getOfferProdStr     :_getOfferProdStr,
-		setServForOfferSpec :_setServForOfferSpec,
-		getServSpec         :_getServSpec,
-		getServList         :_getServList,
-		getServSpecList     :_getServSpecList,
-		getFavoriteSpec     :_getFavoriteSpec,
-		getMyfavoriteSpecList:_getMyfavoriteSpecList,
-		setMyfavoriteSpec    :_setMyfavoriteSpec,
-		setServSpec          :_setServSpec,
-		getExcDepOfferParam  :_getExcDepOfferParam,
-		getExcDepServParam   :_getExcDepServParam,
-		getServBySpecId      :_getServBySpecId,
-		getParamContent      :_getParamContent,
-		getServSpecParam     :_getServSpecParam,
-		getStrByParam        :_getStrByParam,
-		getOfferMember       :_getOfferMember,
-		setServ2OfferSpec	 :_setServ2OfferSpec,
-		setOffer2ExcludeOfferSpec		:_setOffer2ExcludeOfferSpec,
-		setParam			:_setParam,
-		getSpecParam		:_getSpecParam,
-		sortOffer			:_sortOffer,
-		parseServ			:_parseServ,
-		parseOffer			:_parseOffer,
-		getOffer			:_getOffer,
-		getServ				:_getServ,
-		getServInstParam	:_getServInstParam,
-		getGovCertType      :_getGovCertType,
-		giftMainOffer       :_giftMainOffer,
-		giftMainAttachOfferList:_giftMainAttachOfferList,
-		giftSecondAttachOfferList:_giftSecondAttachOfferList,
-		giftAttach              :_giftAttach,
-		giftAttach              :_giftMainAttach,
-		giftSecondAttach        :_giftSecondAttach
+		getServSpec:_getServSpec,
+		setParam				: _setParam,
+		setServParam			: _setServParam,
+		setOfferSpec			: _setOfferSpec,
+		setServSpec				: _setServSpec,
+		setServ2OfferSpec		: _setServ2OfferSpec,
+		setOffer2ExcludeOfferSpec:_setOffer2ExcludeOfferSpec,
+		sortOffer				: _sortOffer,
+		getParamContent			: _getParamContent,
+		getOfferSpecList		: _getOfferSpecList,
+		getOfferSpec			: _getOfferSpec,
+		getSpecParam			: _getSpecParam,
+		getOfferList			: _getOfferList,
+		getOffer				: _getOffer,
+		getOfferParam			: _getOfferParam,
+		getOfferBySpecId		: _getOfferBySpecId,
+		getServList				: _getServList,
+		getServ					: _getServ,
+		getServBySpecId			: _getServBySpecId,
+		getServSpec				: _getServSpec,
+		getServSpecList			: _getServSpecList,
+		getProdInstParam		: _getProdInstParam,
+		getProdSpecParam		: _getProdSpecParam,
+		getServInstParam		: _getServInstParam,
+		getServSpecParam		: _getServSpecParam,
+		getOfferProdStr			: _getOfferProdStr,
+		getOpenAppList			: _getOpenAppList,
+		getAppContent			: _getAppContent,
+		getOfferMember			: _getOfferMember,
+		getExcDepServParam		: _getExcDepServParam,
+		getExcDepOfferParam		: _getExcDepOfferParam,
+		getOfferRoleId 			: _getOfferRoleId,
+		parseServ				: _parseServ,
+		parseOffer				: _parseOffer,
+		getOldOfferMember		: _getOldOfferMember,
+		setRecordId				: _setRecordId,
+		getGovCertType			: _getGovCertType,
+		isGov                   : _isGov
 	};
 })();
