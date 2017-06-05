@@ -2436,6 +2436,43 @@ AttachOffer = (function() {
 				AttachOffer.addOpenServList(prodId,servSpecId,serv.servSpecName,serv.ifParams); //添加开通功能
 				excludeAddServ(prodId,servSpecId,param);
 			}else{
+				//#1476472 营业厅翼支付开户IT流程优化 增加翼支付功能产品订购限制，不判断满足订购条件就不让订购
+				//解析功能产品依赖
+				for(var i = 0;i<param.dependServ.length;i++){
+					var servSpec = param.dependServ[i];
+					if(servSpec.servSpecId == CONST.PROD_SPEC.YIPAY_SERVSPECID ){
+						if(!order.cust.canOrderYiPay(prodId,3)){
+							var tips = "开通： 【" + serv.servSpecName + "】需要开通【翼支付】功能产品，当前产权人或使用人证件类型不在【";
+							for (var j = 0; j < CONST.YIPAY_IDENTITYCD.length; j ++) {
+								if(j==0)
+									tips += CONST.YIPAY_IDENTITYCD[j].NAME;
+								else
+									tips += ","+CONST.YIPAY_IDENTITYCD[j].NAME;
+							}
+							tips += "】中，不允许订购翼支付功能产品！所以不允许订购【" + serv.servSpecName + "】";
+							$.alert("提示",tips);
+							return ;
+						}
+					}
+				}
+				//解析功能产品连带
+				for(var i = 0;i<param.relatedServ.length;i++){
+					var servSpec = param.relatedServ[i];
+					if(servSpec.servSpecId == CONST.PROD_SPEC.YIPAY_SERVSPECID ){
+						if(!order.cust.canOrderYiPay(prodId,3)){
+							var tips = "开通： " + serv.servSpecName + "需要开通【翼支付】功能产品，当前产权人或使用人证件类型不在【";
+							for (var j = 0; j < CONST.YIPAY_IDENTITYCD.length; j ++) {
+								if(j==0)
+									tips += CONST.YIPAY_IDENTITYCD[j].NAME;
+								else
+									tips += ","+CONST.YIPAY_IDENTITYCD[j].NAME;
+							}
+							tips += "】中，不允许订购【翼支付】功能产品！所以不允许订购【" + serv.servSpecName + "】";
+							$.alert("提示",tips);
+							return ;
+						}
+					}
+				}
 				$.confirm("开通： " + serv.servSpecName,content,{ 
 					yesdo:function(){
 						AttachOffer.addOpenServList(prodId,servSpecId,serv.servSpecName,serv.ifParams); //添加开通功能						

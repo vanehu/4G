@@ -20,10 +20,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.reflect.Field;
 import java.util.Map;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
@@ -140,11 +143,30 @@ public class PortalPropertiesController extends BaseController {
      * @param error 错误标识(unifyLogin)
      * @param response 加密报文
      */
-    @RequestMapping(value = "/getCtrlSecret", method = {RequestMethod.POST})
-    public void getCtrlSecret(@RequestBody Map<String, Object> param, HttpServletResponse response) {
+    @RequestMapping(value = "/getCtrlSecret")
+    public void getCtrlSecret(HttpServletRequest request, HttpServletResponse response) {
+    	try {
+    		if("GET".equalsIgnoreCase(request.getMethod())){
+        		//do Get
+        		request.getRequestDispatcher("/properties/getCtrlSecretGet").forward(request, response);
+        	} else{
+        		//do Post
+        		request.getRequestDispatcher("/properties/getCtrlSecretPost").forward(request, response);
+        	}
+		} catch (ServletException e) {
+			response.setStatus(500);
+    		return;
+		} catch (IOException e) {
+			response.setStatus(500);
+    		return;
+		}
+    }
+    
+    @RequestMapping(value = "/getCtrlSecretPost", method = {RequestMethod.POST})
+    public void getCtrlSecretPost(@RequestBody Map<String, Object> param, HttpServletResponse response) {
     	String versionId = null;
     	String secretParam = null;
-    	
+
     	if(MapUtils.isNotEmpty(param)){
     		versionId = MapUtils.getString(param, "versionId");
         	secretParam = MapUtils.getString(param, "param");
@@ -158,7 +180,28 @@ public class PortalPropertiesController extends BaseController {
     		return;
     	}
     	
-    	SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
+    	this.doCtrlSecretRequest(versionId, secretParam, super.getRequest(), response);
+    }
+    
+    @RequestMapping(value = "/getCtrlSecretGet", method = {RequestMethod.GET})
+    public void getCtrlSecretGet(@RequestParam(value="param", required=false) String secretParam,
+    		@RequestParam(value="versionId", required= false) String versionId,
+    		@RequestParam(value="error", required = false) String error,
+    		HttpServletResponse response) {
+
+    	if("1".equals(error) || StringUtils.isBlank(versionId) || StringUtils.isBlank(secretParam)){
+    		response.setStatus(403);
+    		return;
+    	}
+    	
+    	this.doCtrlSecretRequest(versionId, secretParam, super.getRequest(), response);
+    	
+    }
+    
+    private void doCtrlSecretRequest(String versionId, String secretParam, 
+    		HttpServletRequest request, HttpServletResponse response){
+    	
+    	SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(request, SysConstant.SESSION_KEY_LOGIN_STAFF);
     	PrintWriter printWriter = null;
     	String returnStr = null;
     	Cert cert = Cert.getInstance();
@@ -168,16 +211,18 @@ public class PortalPropertiesController extends BaseController {
         try {
         	printWriter = response.getWriter();
 
-    		if(cert.requestFilter(super.getRequest())){
+    		if(cert.requestFilter(request)){
     			if(cert.isParamInvalid(versionId, secretParam)){
-            		returnStr = cert.getResponseXml("参数验证失败", 1);
+    				response.setStatus(403);
+//            		returnStr = cert.getResponseXml("参数验证失败", 1);
             	} else{
             		cert.setVersionId(versionId);
             		cert.setSerectParam(secretParam);
             		returnStr = cert.getResponseXml();
             	}
         	} else {
-        		returnStr = cert.getResponseXml();
+        		response.setStatus(403);
+//        		returnStr = cert.getResponseXml();
         	}
     	
         	printWriter.print(returnStr);

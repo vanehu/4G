@@ -3,6 +3,7 @@ package com.al.lte.portal.common;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
+import java.net.InetAddress;
 import java.net.SocketTimeoutException;
 import java.util.Calendar;
 import java.util.Date;
@@ -55,6 +56,7 @@ import com.al.ecs.exception.InterfaceException.ErrType;
 import com.al.ecs.log.Log;
 import com.al.lte.portal.bmo.log.LogContainer;
 import com.al.lte.portal.core.DataRepository;
+import com.al.lte.portal.model.ServiceLog;
 import com.al.lte.portal.model.SessionStaff;
 
 
@@ -738,15 +740,22 @@ public class InterfaceClient {
 				logObj.put("AREA_ID", sessionStaff.getCurrentAreaId() == null ? "" : sessionStaff.getCurrentAreaId());
 				
 				if(request != null){
-					logObj.put("REMOTE_ADDR", request.getRemoteAddr());
-					logObj.put("REMOTE_PORT", String.valueOf(request.getRemotePort()));
-					logObj.put("LOCAL_ADDR", ServletUtils.getIpAddr(request));
-					logObj.put("LOCAL_PORT", String.valueOf(request.getLocalPort()));
+					try{
+						logObj.put("REMOTE_ADDR", ServletUtils.getIpAddr(request));
+						logObj.put("REMOTE_PORT", String.valueOf(request.getRemotePort()));
+						logObj.put("LOCAL_ADDR", InetAddress.getLocalHost().getHostAddress());
+						logObj.put("LOCAL_PORT", String.valueOf(request.getLocalPort()));
+					} catch(Exception e){
+						logObj.put("REMOTE_ADDR", "Exception");
+						logObj.put("REMOTE_PORT", "Exception");
+						logObj.put("LOCAL_ADDR", "Exception");
+						logObj.put("LOCAL_PORT", "Exception");
+					}
 				}else{
-					logObj.put("REMOTE_ADDR", "");
-					logObj.put("REMOTE_PORT", "");
-					logObj.put("LOCAL_ADDR", "");
-					logObj.put("LOCAL_PORT", "");
+					logObj.put("REMOTE_ADDR", "request is null");
+					logObj.put("REMOTE_PORT", "request is null");
+					logObj.put("LOCAL_ADDR", "request is null");
+					logObj.put("LOCAL_PORT", "request is null");
 				}
 				
 				logObj.put("INTF_URL", intfUrl);
@@ -1884,5 +1893,115 @@ public class InterfaceClient {
 //				.append(RandomStringUtils.randomNumeric(2));
 		Calendar.getInstance().getTimeInMillis();
 		return sb.toString();
+	}
+	
+	public static void saveLog(ServiceLog serviceLog) {
+		if(serviceLog == null){
+			log.error("门户日志记录错误，入参serviceLog为空");
+			return;
+		}
+		if(serviceLog.getRequest() == null){
+			serviceLog.setRequest(((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest());
+		}
+		
+		Map<String, Object> logObj = new HashMap<String, Object>();
+		Map<String, Object> logClobObj = new HashMap<String, Object>();
+		String logLevel = propertiesUtils.getMessage(serviceLog.getPrefix() + " - " + serviceLog.getServiceCode());
+		
+		if(!"1".equals(logLevel)){
+			if("2".equals(logLevel)){
+				if(ResultCode.R_SUCC.equals(serviceLog.getDataBus().getResultCode()) || 
+						ResultCode.R_SUCCESS.equals(serviceLog.getDataBus().getResultCode())|| 
+						ResultCode.RES_SUCCESS.equals(serviceLog.getDataBus().getResultCode())){
+					return;
+				}
+			}else{
+				return;
+			}
+		}
+		
+		try {
+			//0 成功  1  错误  2  异常
+			if(ResultCode.R_SUCC.equals(serviceLog.getDataBus().getResultCode()) || ResultCode.R_SUCCESS.equals(serviceLog.getDataBus().getResultCode()) || ResultCode.RES_SUCCESS.equals(serviceLog.getDataBus().getResultCode())){
+				serviceLog.setErrorCode(ResultCode.R_SUCC);
+			} else if (ResultCode.R_FAIL.equals(serviceLog.getDataBus().getResultCode()) || ResultCode.R_FAILURE.equals(serviceLog.getDataBus().getResultCode()) || ResultCode.R_QUERY_FAIL.equals(serviceLog.getDataBus().getResultCode())) {
+				serviceLog.setErrorCode(ResultCode.R_FAILURE);
+			} else {
+				serviceLog.setErrorCode("2");
+			}
+			//记录请求
+			if(serviceLog.getRequest() != null){
+				try{
+					logObj.put("LOCAL_ADDR", 	serviceLog.getLocalAddr());
+					logObj.put("LOCAL_PORT", 	serviceLog.getLocalPort());
+					logObj.put("REMOTE_ADDR", 	serviceLog.getRemoteAddr());
+					logObj.put("REMOTE_PORT",	serviceLog.getRemotePort());
+				} catch(Exception e){
+					logObj.put("LOCAL_ADDR", 	"Exception");
+					logObj.put("LOCAL_PORT", 	"Exception");
+					logObj.put("REMOTE_ADDR", 	"Exception");
+					logObj.put("REMOTE_PORT", 	"Exception");
+				}
+			}else{
+				logObj.put("LOCAL_ADDR", 	"request is null");
+				logObj.put("LOCAL_PORT", 	"request is null");
+				logObj.put("REMOTE_ADDR", 	"request is null");
+				logObj.put("REMOTE_PORT",	"request is null");
+			}
+			//记录基本信息
+			logObj.put("IP", 			serviceLog.getIp());//这IP什么鬼
+			logObj.put("OL_ID", 		serviceLog.getOlId());
+			logObj.put("REMARK", 		serviceLog.getRemark());
+			logObj.put("SO_NBR", 		serviceLog.getSoNbr());
+			logObj.put("AREA_ID", 		serviceLog.getAreaId());
+			logObj.put("INTF_URL", 		serviceLog.getIntfUrl());
+			logObj.put("END_TIME", 		serviceLog.getEndTime());
+			logObj.put("USE_TIME", 		serviceLog.getUseTime());
+			logObj.put("TRANS_ID", 		serviceLog.getTransId());
+			logObj.put("BUSI_TYPE", 	serviceLog.getBusiType());
+			logObj.put("ROLE_CODE", 	serviceLog.getDataBus().getRoleCode());
+			logObj.put("START_TIME", 	serviceLog.getBeginTime());
+			logObj.put("ERROR_CODE", 	serviceLog.getErrorCode());
+			logObj.put("LOG_SEQ_ID", 	serviceLog.getLogSeqId());
+			logObj.put("RESULT_CODE", 	serviceLog.getDataBus().getResultCode());
+			logObj.put("PORTAL_CODE", 	serviceLog.getDataBus().getPortalCode());
+			logObj.put("INTF_METHOD",	serviceLog.getServiceCode());
+			logObj.put("SERVICE_CODE", 	serviceLog.getServiceCode());
+			logObj.put("SERV_RUN_NBR", 	serviceLog.getServRunNbr());
+			logObj.put("BUSI_RUN_NBR", 	serviceLog.getBusiRunNbr());
+			//记录员工
+			logObj.put("STAFF_ID", 		serviceLog.getStaffId());
+			logObj.put("STAFF_NAME", 	serviceLog.getStaffName());
+			logObj.put("SESSION_ID", 	serviceLog.getSessionId());
+			logObj.put("CHANNEL_ID", 	serviceLog.getChannelId());
+			logObj.put("CHANNEL_NAME", 	serviceLog.getChannelName());
+			//记录门户标识
+			if("portal".equals(serviceLog.getPrefix())){
+				logObj.put("TRANS_ID", serviceLog.getPortalId());
+				logObj.put("BUSI_TYPE", StringUtils.isBlank(serviceLog.getServCode()) ? serviceLog.getMenuInfo() : serviceLog.getServCode());
+			}
+			//记录报文
+			logClobObj.put("IN_PARAM", serviceLog.getParamStr());						
+			logClobObj.put("OUT_PARAM", serviceLog.getReturnStr());
+			//记录日志
+			boolean isDefaultLog = true;
+			if (MDA.PORTAL_SERVICE_LOG_P.contains(serviceLog.getServiceCode())) {
+				isDefaultLog = false;
+				logSender.sendLog2DB(SysConstant.PORTAL_SERVICE_LOG_P, logObj, logClobObj);
+			}
+			if (MDA.PORTAL_SERVICE_LOG_Y.contains(serviceLog.getServiceCode())) {
+				isDefaultLog = false;
+				logSender.sendLog2DB(SysConstant.PORTAL_SERVICE_LOG_Y, logObj, logClobObj);
+			}
+			if (MDA.PORTAL_SERVICE_LOG_W.contains(serviceLog.getServiceCode())) {
+				isDefaultLog = false;
+				logSender.sendLog2DB(SysConstant.PORTAL_SERVICE_LOG_W, logObj, logClobObj);
+			}
+			if (isDefaultLog){
+				logSender.sendLog2DB(SysConstant.PORTAL_SERVICE_LOG, logObj, logClobObj);
+			}
+		} catch (Exception e) {
+			log.error("日志记录异常", e);
+		}
 	}
 }

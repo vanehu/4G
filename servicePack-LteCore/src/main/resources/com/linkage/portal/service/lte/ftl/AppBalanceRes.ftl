@@ -6,7 +6,7 @@
 	<#else>
 		<code>POR-2004</code>
 		<message>
-			RspCode[${TcpCont.Response.RspCode}]，TransactionID[${TcpCont.TransactionID}]
+			RspCode[${TcpCont.Response.RspCode}]，请求流水号为[${TcpCont.TransactionID}]
 			<#if TcpCont.Response.RspDesc?exists>
 				，RspDesc[${TcpCont.Response.RspDesc}]
 			</#if>

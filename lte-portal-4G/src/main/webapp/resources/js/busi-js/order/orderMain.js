@@ -1767,13 +1767,13 @@ order.main = (function(){
 						$.alert("提示",tips);
 					}
                 }
-                //属性变更二次业务，如果订购翼支付，增加用户实名信息校验环节，校验 新的使用人证 件类型是否是居民身份证、临时居民身份证或户口簿
-                var hasYiPayProdInst = order.prodModify.choosedProdInfo.hasYiPayProdInst;
-                if(ec.util.isObj(hasYiPayProdInst)&&hasYiPayProdInst&&
-                		!order.cust.yiPayidentityCdCheck(order.cust.tmpChooseUserInfo.identityCd)){
-                	//给出拦截提示信息
-					var tips = "用户已订购【翼支付】功能产品，当前选择使用人证件类型不在【";
-					for (var j = 0; j < CONST.YIPAY_IDENTITYCD.length; j ++) {
+             //属性变更二次业务，如果订购翼支付，增加用户实名信息校验环节，校验 新的使用人证 件类型是否是居民身份证、临时居民身份证或户口簿
+            var hasYiPayProdInst = order.prodModify.choosedProdInfo.hasYiPayProdInst;
+            if(ec.util.isObj(hasYiPayProdInst)&&hasYiPayProdInst&&
+            		!order.cust.yiPayidentityCdCheck(userSubInfo.orderIdentidiesTypeCd)){
+            	//给出拦截提示信息
+				var tips = "用户已订购【翼支付】功能产品，当前选择使用人证件类型不在【";
+				for (var j = 0; j < CONST.YIPAY_IDENTITYCD.length; j ++) {
 						if(j==0)
 							tips += CONST.YIPAY_IDENTITYCD[j].NAME;
 						else

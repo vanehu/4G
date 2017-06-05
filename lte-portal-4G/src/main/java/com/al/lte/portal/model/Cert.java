@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -82,6 +83,8 @@ public class Cert {
 	private SessionStaff sessionStaff;
 	
 	private List<String> specialNodeList;
+	
+	private String mac;
 		
 	public static Cert getInstance(){
 		if(cert == null){
@@ -146,9 +149,10 @@ public class Cert {
 			String decryptedParamJsonStr = this.xmlSerializer.read(decryptedParamXml).toString();
 			Map<String, String> decryptedParam = JsonUtil.toObject(decryptedParamJsonStr, Map.class);
 			if(MapUtils.isNotEmpty(decryptedParam)){
-				this.currentAppId 		= MapUtils.getString(decryptedParam, "appId", "");
-				this.currentAppSecret	= MapUtils.getString(decryptedParam, "appSecret", "");
-				this.current3desSecret	= MapUtils.getString(decryptedParam, "now3desSecret", "");
+				this.mac				= MapUtils.getString(decryptedParam, "macAddress", "未获取到macAddress");
+				this.currentAppId 		= MapUtils.getString(decryptedParam, "appId", "未获取到appId");
+				this.currentAppSecret	= MapUtils.getString(decryptedParam, "appSecret", "未获取到appSecret");
+				this.current3desSecret	= MapUtils.getString(decryptedParam, "now3desSecret", "未获取到now3desSecret");
 				result = true;
 			} else{
 				log.error("入参serectParam格式化失败，versionId={}，serectParam={}", versionId, serectParam);
@@ -383,70 +387,56 @@ public class Cert {
 		return "";
 	}
 	
+	/**
+	 * 暂未使用
+	 * @param httpServletRequest
+	 * @return
+	 */
 	public boolean requestFilter(HttpServletRequest httpServletRequest){
 		this.errorMsg.setLength(0);
-		boolean result = false;
-		boolean isRequestFilterOn = "ON".equals(MapUtils.getString(MDA.CERT_SIGNATURE_UNIFY, "requestFilter", "ON")) ? true : false;
+		boolean result = true;
+//		boolean isRequestFilterOn = "ON".equals(MapUtils.getString(MDA.CERT_SIGNATURE_UNIFY, "requestFilter", "ON")) ? true : false;
 		
-		if(isRequestFilterOn){
-			//1.判断是否登录
-			if(httpServletRequest != null){
-				SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(httpServletRequest, SysConstant.SESSION_KEY_LOGIN_STAFF);
-				if(sessionStaff != null){
-					result = true;
-					//2.判断请求次数
-//					String clientIp = ServletUtils.getIpAddr(httpServletRequest);
-//					Calendar calendar = Calendar.getInstance();
-//					Map<String, Object> requestFilter = new HashMap<String, Object>();
-//					requestFilter.put(sessionId, calendar);
-				} else{
-					this.setErrorMsg("非法请求");
-				}
-			} else{
-				this.setErrorMsg("非法请求");
-			}
-		} else{
-			result = true;
-		}
-
 		return result;
 	}
 
-	/**
-	 * how can i save log asynchronously？
-	 * @param resultXmlStr
-	 * @param encryptedResultXmlStr
-	 * @param logId
-	 */
 	public void saveLogAsyn(String resultXmlStr, String encryptedResultXmlStr, String logId){
 		Map<String, Object> param = new HashMap<String, Object>();
 		Map<String, Object> returnMap = new HashMap<String, Object>();
+		ServiceLog serviceLog = ServiceLog.getNewInstance();
+		DataBus db = new DataBus();
+		Date date = new Date();
 		
 		param.put("logId", logId);
+		param.put("mac", this.mac);
 		param.put("serectParam", this.serectParam);
 		param.put("decryptedParam", this.decryptedParam);
 		returnMap.put("logId", logId);
 		returnMap.put("resultXmlStr", resultXmlStr);
 		returnMap.put("encryptedResultXmlStr", encryptedResultXmlStr);
 		
+		serviceLog.initDataBus(db, null);
+		db.setResultCode(ResultCode.R_SUCC);
+		db.setParammap(param);
+		db.setReturnlmap(returnMap);
+				
 		String paramString = JsonUtil.toString(param);
 		String rawRetn = JsonUtil.toString(returnMap);
 		
-		
 		log.debug("密钥更新服务，入参={}\n-密钥更新服务，回参={}", paramString, rawRetn);
+
+		serviceLog.setDataBus(db);
+		serviceLog.setParamStr(paramString);
+		serviceLog.setReturnStr(rawRetn);
+		serviceLog.setPrefix("portal");
+		serviceLog.setServCode("ctrlSecret");
+		serviceLog.setServiceCode("ctrlSecret");
+		serviceLog.setLogSeqId(logId);
+		serviceLog.setBeginTime(date);
+		serviceLog.setEndTime(date);
+		serviceLog.setRemark("密钥更新服务，mac：" + this.getMac());
 		
-		if(this.sessionStaff != null){
-			DataBus db = new DataBus();
-			db = ServiceClient.initDataBus(this.sessionStaff);
-			db.setResultCode("0");
-			db.setParammap(param);
-			db.setReturnlmap(returnMap);
-			long beginTime = System.currentTimeMillis();
-			
-			String dbKeyWord = this.sessionStaff.getDbKeyWord();
-			InterfaceClient.callServiceLog(logId, dbKeyWord, db, null,
-				"ctrlSecret", "ctrlSecret", this.sessionStaff, paramString, rawRetn, beginTime, beginTime, "", "", "portal");
-		}
+		serviceLog.saveLogAsyn();
 	}
 
 	public String getNewAesSecret() {
@@ -549,5 +539,9 @@ public class Cert {
 
 	public String getDecryptedParam() {
 		return decryptedParam;
+	}
+
+	public String getMac() {
+		return mac;
 	}
 }

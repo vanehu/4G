@@ -92,7 +92,9 @@ oneFive.certNumber = (function () {
         if (identidiesTypeCd == 1) {
             $("#" + id).removeAttr("data-validate");
             $("#" + id).attr("placeHolder", "请点击右面读卡按钮，进行读卡操作！");
-            $("#certNumber").attr("disabled", "disabled");
+            if (!query.common.queryPropertiesStatus("ONE_CERT_5_NUMBER_MANUAL_INPUT_ID_" + String(OrderInfo.staff.areaId).substr(0, 3))) {
+                $("#certNumber").attr("disabled", "disabled");
+            }
             $("#certNumberReadCertBtn").show();
         } else if (identidiesTypeCd == 2) {
             $("#" + id).attr("onkeyup", "value=value.replace(/[^A-Za-z0-9\u4e00-\u9fa5]/ig,'')");
