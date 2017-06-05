@@ -1,10 +1,7 @@
 package com.al.lte.portal.bmo.crm;
 
-<<<<<<< HEAD
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;
-=======
->>>>>>> deffc947... #1471834 身份证读卡器安全方案-----营业门户--徐旭张宇
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -12,14 +9,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-<<<<<<< HEAD
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.spec.SecretKeySpec;
 
-=======
->>>>>>> deffc947... #1471834 身份证读卡器安全方案-----营业门户--徐旭张宇
 import net.sf.json.xml.XMLSerializer;
 
 import org.apache.commons.lang.StringUtils;
@@ -46,11 +40,7 @@ public class TestCert {
 	@SuppressWarnings("unchecked")
 	private static void XmlSerializerTest(){
 		String decryptedRespXml = "<response><resultFlag>1</resultFlag><errorMsg>失败</errorMsg></response>";
-<<<<<<< HEAD
 		String decryptedParamXml = "<request><appId>wx8b39f1a66f31e6ed</appId><appSecret>8fc231fe8ccd7d0f58e0b26fdd97b45d</appSecret><now3desSecret>6091aab92a16a0808d5243221167ffee6091aab92a16a080</now3desSecret></request>";
-=======
-		String decryptedParamXml = "<request><appId>wx8b39f1a66f31e6ed</appId><appSecret>8fc231fe8ccd7d0f58e0b26fdd97b45d</appSecret><now3desSecret>qwe</now3desSecret></request>";
->>>>>>> deffc947... #1471834 身份证读卡器安全方案-----营业门户--徐旭张宇
 		String jsonStr = "{'appId':'123','appSecret':'asd','3desSecret':'qwe'}";
 		jsonStr = StringUtils.replace(jsonStr, "3desSecret", "Secret3des");
 		
@@ -114,7 +104,6 @@ public class TestCert {
 	}
 	
 	private static void encryptedTest(){
-<<<<<<< HEAD
 		String decryptedParamXml = "<request><appId>wx8b39f1a66f31e6ed</appId><appSecret>8fc231fe8ccd7d0f58e0b26fdd97b45d</appSecret><now3desSecret>6091aab92a16a0808d5243221167ffee6091aab92a16a080</now3desSecret></request>";
 		String aesSecret = "74#2iBN4&29eV@Ye";
 //		String param = "C940BDED780716EF31373DA414FA1B7EA3CB8EA7B9060209B351F7D391713F4E13397908304BF0D9610375BCBE6DB5CA85215696D7D4B9D5DC17346C3D2C51C19C1A37081724D0E939287362E40F6D586C0737646A59269D4500CE4F349BE6767683D2125948B16072E30F12B537280D6AF42C82FA1A290CCCBD65F2C6C8666920C96BBEA114E42876D596C8EFEEAFD4D0C7FF6C609C6531AD0B11161ADFAB1A347AE29C86CA910D3AA5CA21D9CB8AD1C2D27AF392ED104957CBB77EE51AF4A6319BFC7EFCC4F97A035A3823B8898DD20C0F435B909BA635BB99ABDFEFE19ED7C48A4A335CA13BE85F7CAC9CAD920464CCCCE2CCF0DF2A27A666133A6C0C49ACF19C54EBE627A5621DDAD519A5E205BF52D1C52E5C1B382E8B1A7F7EEFAC62EAC170B4096A29B1522B0273B8C58CC4DB5442E96742F53C769CA99FA11C22417E1EFDCBB6E2ED5B234346C87C8D114D2F736C7D0569457B2A91AACF410C520AA4D05BE8F331FCDF2425DA8BF49C2886AC";
@@ -170,12 +159,4 @@ public class TestCert {
             return "Exception";
         }
     }
-=======
-		String aesSecret = "74#2iBN4&29eV@Ye";
-		String param = "C940BDED780716EF31373DA414FA1B7EA3CB8EA7B9060209B351F7D391713F4E13397908304BF0D9610375BCBE6DB5CA85215696D7D4B9D5DC17346C3D2C51C19C1A37081724D0E939287362E40F6D586C0737646A59269D4500CE4F349BE6767683D2125948B16072E30F12B537280D6AF42C82FA1A290CCCBD65F2C6C8666920C96BBEA114E42876D596C8EFEEAFD4D0C7FF6C609C6531AD0B11161ADFAB1A347AE29C86CA910D3AA5CA21D9CB8AD1C2D27AF392ED104957CBB77EE51AF4A6319BFC7EFCC4F97A035A3823B8898DD20C0F435B909BA635BB99ABDFEFE19ED7C48A4A335CA13BE85F7CAC9CAD920464CCCCE2CCF0DF2A27A666133A6C0C49ACF19C54EBE627A5621DDAD519A5E205BF52D1C52E5C1B382E8B1A7F7EEFAC62EAC170B4096A29B1522B0273B8C58CC4DB5442E96742F53C769CA99FA11C22417E1EFDCBB6E2ED5B234346C87C8D114D2F736C7D0569457B2A91AACF410C520AA4D05BE8F331FCDF2425DA8BF49C2886AC";
-		Cert cert = Cert.getInstance();
-		String result = cert.decryptAes(param, aesSecret);
-		System.out.println(result);
-	}
->>>>>>> deffc947... #1471834 身份证读卡器安全方案-----营业门户--徐旭张宇
 }
