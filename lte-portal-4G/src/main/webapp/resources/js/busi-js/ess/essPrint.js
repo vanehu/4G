@@ -58,10 +58,12 @@ ess.print = (function() {
 				soNbr : soNbr,
 				type : "2"
 		};
-		var loadInstFlag = query.offer.invokeLoadInst(param);
-		if (!loadInstFlag) {
-			$.alert("提示", "加载订单回执全量信息失败");
-			return;
+		if("newInstall" != orderType && "preInstall" != orderType){
+			var loadInstFlag = query.offer.invokeLoadInst(param);
+			if (!loadInstFlag) {
+				$.alert("提示", "加载订单回执全量信息失败");
+				return;
+			}
 		}
 		var voucherInfo = {
 			"olId":olId,
