@@ -185,7 +185,7 @@ AttachOffer = (function() {
 							if(parseInt(param.prodId) == -1){//主卡必做校验
 								$.alert("提示","当前用户证件类型不符合实名规范，无开通翼支付及其相关功能产品权限，已自动退订！")
 								AttachOffer.closeServSpec(param.prodId,CONST.YZFservSpecId1,'翼支付','N');
-							} else if(parseInt(param.prodId) != -1 && cust.userFlag!="ON"){//副卡在使用人开关关闭时进行校验
+							} else if(parseInt(param.prodId) != -1){//副卡在使用人开关关闭时进行校验
 								AttachOffer.closeServSpec(param.prodId,CONST.YZFservSpecId1,'翼支付','N');
 							}
 						} 
@@ -1559,8 +1559,7 @@ AttachOffer = (function() {
 			}else{
                 if(cust.isCovCust(OrderInfo.cust.identityCd)){//政企客户
 					return true;
-				}else if((!cust.isCovCust(OrderInfo.cust.identityCd) && (prodId != -1 && cust.userFlag !="ON"//公众客户副卡使用人开关关闭的情况
-					|| prodId == -1))){
+				}else if(!cust.isCovCust(OrderInfo.cust.identityCd)){
 					if(!cust.isRealCust){
 						return false; 
 					}
@@ -3336,7 +3335,7 @@ AttachOffer = (function() {
 							if(parseInt(param.prodId) == -1){//主卡必做校验
 								$.alert("提示","当前用户证件类型不符合实名规范，无开通翼支付及其相关功能产品权限，已自动退订！")
 								AttachOffer.closeServSpec(param.prodId,CONST.YZFservSpecId1,'翼支付','N');
-							} else if(parseInt(param.prodId) != -1 && cust.userFlag!="ON"){//副卡在使用人开关关闭时进行校验
+							} else if(parseInt(param.prodId) != -1){//副卡先进行校验，防止使用人为本人的情况，未进行关闭
 								AttachOffer.closeServSpec(param.prodId,CONST.YZFservSpecId1,'翼支付','N');
 							}
 						} 
