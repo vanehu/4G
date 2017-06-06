@@ -17,6 +17,7 @@ import com.al.lte.portal.bmo.crm.CmBmo;
 import com.al.lte.portal.bmo.crm.CustBmo;
 import com.al.lte.portal.bmo.crm.OneFiveBmo;
 import com.al.lte.portal.bmo.crm.OrderBmo;
+import com.al.lte.portal.bmo.staff.StaffBmo;
 import com.al.lte.portal.common.Base64;
 import com.al.lte.portal.common.CommonMethods;
 import com.al.lte.portal.common.SysConstant;
@@ -75,6 +76,10 @@ public class OneCertFiveNumberController extends BaseController {
     @Qualifier("com.al.lte.portal.bmo.crm.OrderBmo")
     private OrderBmo orderBmo;
 
+    @Autowired
+    @Qualifier("com.al.lte.portal.bmo.staff.StaffBmo")
+    private StaffBmo staffBmo;
+
     /**
      * 跨省一证五卡受理，受理省入口
      */
@@ -84,15 +89,18 @@ public class OneCertFiveNumberController extends BaseController {
         Map<String, Object> param = new HashMap();
         SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(request, SysConstant.SESSION_KEY_LOGIN_STAFF);
         param.put("partyTypeCd", "1");//查询个人证件类型
+        String isHand = "1";
         Map<String, Object> rMap;
         try {
             rMap = custBmo.queryCertType(param, "", sessionStaff);
             List<Map<String, Object>> list = (List<Map<String, Object>>) rMap.get("result");
             model.addAttribute("list", list);
+
+            isHand = staffBmo.checkOperatSpec(SysConstant.YWCLSSSFZ, sessionStaff);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        model.addAttribute("isHand", sessionStaff.isHasOperatSpecCd(SysConstant.YWCLSSSFZ) ? "0" : "-1");
+        model.addAttribute("isHand", isHand);
         return "/certNumber/certNumber-prepare";
     }
 
