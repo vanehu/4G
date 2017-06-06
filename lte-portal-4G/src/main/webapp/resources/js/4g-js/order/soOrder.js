@@ -3080,6 +3080,20 @@ SoOrder = (function() {
 				}
 			}
 		}
+		
+		if(!query.common.queryPropertiesStatus("ADD_OLD_USER_MOD_ACCT_"+OrderInfo.getAreaId().substring(0,3))){
+			//纳入老用户判断主卡副卡账户一致
+			if(ec.util.isArray(OrderInfo.oldprodAcctInfos)){
+				for(var a=0;a<OrderInfo.oldprodAcctInfos.length;a++){
+					var oldacctId = OrderInfo.oldprodAcctInfos[a].prodAcctInfos[0].acctId;
+					var mainacctid = $("#acctSelect option:selected").val();
+					if(oldacctId!=mainacctid){
+						$.alert("提示","副卡和主卡的账户不一致！");
+						return false ; 
+					}
+				}
+			}
+		}
 
 		if(OrderInfo.actionFlag == 1 || OrderInfo.actionFlag == 6 || OrderInfo.actionFlag == 14 || (OrderInfo.actionFlag==2&&offerChange.newMemberFlag)){ //新装
 			if(OrderInfo.cust.custId==""){
@@ -3093,19 +3107,6 @@ SoOrder = (function() {
 				return false ; 
 			}
 			
-			if(!query.common.queryPropertiesStatus("ADD_OLD_USER_MOD_ACCT_"+OrderInfo.getAreaId().substring(0,3))){
-				//纳入老用户判断主卡副卡账户一致
-				if(ec.util.isArray(OrderInfo.oldprodAcctInfos)){
-					for(var a=0;a<OrderInfo.oldprodAcctInfos.length;a++){
-						var oldacctId = OrderInfo.oldprodAcctInfos[a].prodAcctInfos[0].acctId;
-						var mainacctid = $("#acctSelect option:selected").val();
-						if(oldacctId!=mainacctid){
-							$.alert("提示","副卡和主卡的账户不一致！");
-							return false ; 
-						}
-					}
-				}
-			}
 			if(order.service.oldMemberFlag){
 				var paytype=$('select[name="pay_type_-1"]').val();
 				$.each(OrderInfo.oldprodInstInfos,function(){
