@@ -419,12 +419,14 @@ AttachOffer = (function() {
 		var yzfFlag = $("#yzfFlag_" + prodId + "_"+CONST.YZFservSpecId1).val();
 		if(yzfFlag && yzfFlag == "1"){
 			var servId = $("#yzfFlag_" + prodId + "_"+CONST.YZFservSpecId1).attr("servId");
-			if(!cust.isRealCust && !AttachOffer.hasYzfTd){
-				AttachOffer.hasYzfTd=true;
-				if(cust.isCovCust(OrderInfo.cust.identityCd) && OrderInfo.cust.userIdentityCd==undefined){
-					$.alert("提示","当前政企客户未获取到使用人证件信息，不符合实名规范，无开通翼支付及其相关功能产品权限，已自动退订！")
-				} else {
-					$.alert("提示","当前用户证件类型不符合实名规范，无开通翼支付及其相关功能产品权限，已自动退订！")
+			if(!cust.isRealCust){
+				if(!AttachOffer.hasYzfTd){//为提示过退订
+					if(cust.isCovCust(OrderInfo.cust.identityCd) && OrderInfo.cust.userIdentityCd==undefined){
+						$.alert("提示","当前政企客户未获取到使用人证件信息，不符合实名规范，无开通翼支付及其相关功能产品权限，已自动退订！")
+					} else {
+						$.alert("提示","当前用户证件类型不符合实名规范，无开通翼支付及其相关功能产品权限，已自动退订！")
+					}
+					AttachOffer.hasYzfTd=true;
 				}
 				AttachOffer.closeServ(prodId,servId);
 			}
