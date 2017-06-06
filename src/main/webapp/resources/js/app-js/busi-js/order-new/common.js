@@ -741,6 +741,7 @@ common = (function($) {
 				$("#tab1_li").addClass("active");
 				$("#offer_a").show();
 				OrderInfo.order.step=1;
+				AttachOffer.hasYzfTd=false;
 				return;
 			} else if(OrderInfo.order.step==3){//订单提交
 				$("#nav-tab-4").removeClass("active in");
