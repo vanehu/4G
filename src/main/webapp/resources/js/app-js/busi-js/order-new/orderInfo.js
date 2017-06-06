@@ -159,7 +159,7 @@ OrderInfo = (function() {
 		atomActionSeq : -1,  //序列号，用来实例化每个原子动作的每个值,每次减1
 		offerMemberSeq : -1, //序列号，用来实例化每个角色成员的每个值,每次减1
 		dealerSeq : 1,   //协销人序列号，
-		instSeq : -1
+		instSeq : -2
 	};
 	
 	var _boCusts = []; //客户信息节点
