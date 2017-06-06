@@ -49,6 +49,8 @@ AttachOffer = (function() {
 	var labelId = "";
 	var _broadFlag=false; //是否宽带续约标志
 	
+	var _hasYzfTd=false;//二次业务是否已提示翼支付退订
+	
 	
 	//初始化附属销售页面
 	var _init = function(){
@@ -417,7 +419,8 @@ AttachOffer = (function() {
 		var yzfFlag = $("#yzfFlag_" + prodId + "_"+CONST.YZFservSpecId1).val();
 		if(yzfFlag && yzfFlag == "1"){
 			var servId = $("#yzfFlag_" + prodId + "_"+CONST.YZFservSpecId1).attr("servId");
-			if(!cust.isRealCust){
+			if(!cust.isRealCust && !AttachOffer.hasYzfTd){
+				AttachOffer.hasYzfTd=true;
 				if(cust.isCovCust(OrderInfo.cust.identityCd) && OrderInfo.cust.userIdentityCd==undefined){
 					$.alert("提示","当前政企客户未获取到使用人证件信息，不符合实名规范，无开通翼支付及其相关功能产品权限，已自动退订！")
 				} else {
@@ -3534,6 +3537,7 @@ AttachOffer = (function() {
 		setTerminalDiv      :_setTerminalDiv,
 		offerSpecIds		:_offerSpecIds,
 		checkYZFRight		:_checkYZFRight,
-		checkTerminalVal	:_checkTerminalVal
+		checkTerminalVal	:_checkTerminalVal,
+		hasYzfTd            :_hasYzfTd
 	};
 })();
