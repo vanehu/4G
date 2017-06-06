@@ -84,7 +84,7 @@ ess.writeCard = (function() {
 		var pwdKey = "0CC13AE01AFF1868E053433210AC1DC1";
 		var reqTime = DateUtil.Format("yyyymmddhhmmssx",new Date());
 		var accessToken = extCustOrderId+""+reqTime+""+pwdKey;
-		accessToken = MD5(accessToken);
+		accessToken = MD5(accessToken).toLowerCase();
 		var param ={
 		    extCustOrderId : extCustOrderId,
 		    reqTime : reqTime,
@@ -92,7 +92,8 @@ ess.writeCard = (function() {
 		};
 		var response = $.callServiceAsJson(contextPath+"/ess/order/toRealNameAuth",param);
 		if (response.code == 0) {
-			window.parent.main.home.addTab("","实名制认证",response.data);	
+			//window.parent.main.home.addTab("","实名制认证",response.data);	
+			window.open(response.data);
 		} else if (response.code == -2) {
 			$.alertM(response.data);
 		} else if (response.code == 1002) {
