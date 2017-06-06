@@ -1211,5 +1211,8 @@ public final class PortalServiceCode {
     public static final String CHECKSTAFFMESSAGE = "sys-checkStaffMessage";
     /**员工密码修改*/
     public static final String UPDATTEPASSWORD = "sys-updatePassword";
+    
+    /**查询该员工拥有的权限集合*/
+    public static final String QRY_STAFF_ALL_PRIVILEGES = "sys-queryPrivilegeInfos";
 }
 

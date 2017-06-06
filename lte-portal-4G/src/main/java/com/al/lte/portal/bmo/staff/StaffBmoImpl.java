@@ -1065,4 +1065,55 @@ public class StaffBmoImpl implements StaffBmo {
 		}
 		return retnMap;
 	}
+	
+	/**
+	 * 查询该员工拥有的权限集合
+	 * @param sessionStaff
+	 * @return
+	 * @throws InterfaceException
+	 * @throws IOException
+	 * @throws BusinessException
+	 * @throws Exception
+	 */
+	@SuppressWarnings("unchecked")
+	public Map<String, Object> qryStaffAllPrivileges(SessionStaff sessionStaff) throws InterfaceException, IOException, BusinessException, Exception {
+		Map<String, Object> params = new HashMap<String, Object>();
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		ArrayList<String> privileges = new ArrayList<String>();
+		
+		params.put(SysConstant.STAFF_ID, sessionStaff.getStaffId());
+		params.put(SysConstant.AREA_ID, sessionStaff.getCurrentAreaId());
+		params.put(SysConstant.CHANNEL_ID, sessionStaff.getCurrentChannelId());
+				
+		DataBus db = InterfaceClient.callService(params, PortalServiceCode.QRY_STAFF_ALL_PRIVILEGES, null, sessionStaff);
+		try {
+			String resultCode = StringUtils.defaultString(db.getResultCode(), "1");
+			if (ResultCode.R_SUCC.equals(resultCode)) {
+				List<Map<String, Object>> resultList = (List<Map<String, Object>>) db.getReturnlmap().get("result");
+				if(resultList == null || resultList.isEmpty()){
+					returnMap.put(SysConstant.RESULT_CODE, ResultCode.R_FAILURE);
+					returnMap.put(SysConstant.RESULT_MSG, "系管queryPrivilegeInfos服务未返回非null的有效结果集：" + JsonUtil.toString(db.getReturnlmap()));
+					log.error("系管queryPrivilegeInfos服务未返回非null的有效结果集={}", JsonUtil.toString(db.getReturnlmap()));
+					throw new BusinessException(ErrorCode.QUERY_STAFF_INFO, params, returnMap, null);
+				} else{
+					for(Map<String, Object> staffPrivilege : resultList){
+						privileges.add(MapUtils.getString(staffPrivilege, "privilegeCode", ""));
+					}
+					sessionStaff.setPrivileges(privileges);
+					returnMap.put(SysConstant.RESULT_CODE, ResultCode.R_SUCC);
+					returnMap.put(SysConstant.RESULT, privileges);
+				}
+			} else {
+				returnMap.put(SysConstant.RESULT_CODE, ResultCode.R_FAILURE);
+				returnMap.put(SysConstant.RESULT_MSG, db.getResultMsg());
+			}
+		} catch (Exception e) {
+			log.error("门户处理系统管理的queryPrivilegeInfos服务返回的数据异常", e);
+			throw new BusinessException(ErrorCode.QUERY_STAFF_INFO, params, db.getReturnlmap(), e);
+		}
+		
+		log.debug("初始化员工权限集合结果={}", JsonUtil.toString(returnMap));
+		
+		return returnMap;
+	}
 }

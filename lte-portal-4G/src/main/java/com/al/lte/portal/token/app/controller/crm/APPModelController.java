@@ -37,6 +37,7 @@ import com.al.lte.portal.bmo.staff.StaffBmo;
 import com.al.lte.portal.bmo.staff.StaffChannelBmo;
 import com.al.lte.portal.bmo.system.MenuBmo;
 import com.al.lte.portal.common.AESUtils;
+import com.al.lte.portal.common.CommonMethods;
 import com.al.lte.portal.common.CommonUtils;
 import com.al.lte.portal.common.EhcacheUtil;
 import com.al.lte.portal.common.MySimulateData;
@@ -294,6 +295,13 @@ public class APPModelController extends BaseController {
 			session.setAttribute(SysConstant.SESSION_KEY_MENU_AUTH_URL_LIST, EhcacheUtil.getAuthUrlInMenuList(map.get("menuList")));
 		} catch (Exception e) {
 			log.error("加载菜单异常", e);
+		}
+		
+		//加载权限
+		try {
+			CommonMethods.getInstance().initStaffAllPrivileges(staffBmo, sessionStaff);
+		} catch (Exception e) {
+			log.error("系管权限查询接口queryPrivilegeInfos异常：", e);
 		}
 	}
 	

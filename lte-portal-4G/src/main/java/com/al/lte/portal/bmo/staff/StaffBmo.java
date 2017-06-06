@@ -103,4 +103,5 @@ public interface StaffBmo {
 
 	public  Map<String, Object> updatePassword(Map<String, Object> param,  String optFlowNum, SessionStaff sessionStaff)throws Exception;
 	
+	public Map<String, Object> qryStaffAllPrivileges(SessionStaff sessionStaff) throws InterfaceException, IOException, BusinessException, Exception;
 }

@@ -1,5 +1,6 @@
 package com.al.lte.portal.common;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -12,7 +13,6 @@ import net.sf.json.JSONObject;
 
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
-
 import com.al.common.utils.StringUtil;
 import com.al.ec.serviceplatform.client.DataBus;
 import com.al.ec.serviceplatform.client.ResultCode;
@@ -34,6 +34,23 @@ public class CommonMethods {
 	private static final Log log = Log.getLog(CommonMethods.class);
 	
 	private static AuthenticBmo authenticBmo;
+	
+	private static CommonMethods commonMethodsInstance;
+	
+	public static CommonMethods getInstance(){
+		if(commonMethodsInstance == null){
+			synchronized(CommonMethods.class){
+				if(commonMethodsInstance == null){
+					commonMethodsInstance = new CommonMethods();
+					return commonMethodsInstance;
+				} else{
+					return commonMethodsInstance;
+				}
+			}
+		} else{
+			return commonMethodsInstance;
+		}
+	}
 	
 	public static List<Map<String, Object>> getAreaRangeList(SessionStaff sessionStaff,Map<String,Object> param,String operateSpecInfo) throws Exception {
 		Map<String, Object> queryParm = new HashMap<String, Object>();
@@ -761,7 +778,6 @@ public class CommonMethods {
 		
 	}
 	
-	
 	/**
 	 * #896069对于省级工号只配置了一个省级渠道的情况，将页面登录地区加载到受理地区(三级地区)；<br/>
 	 * 若页面登录地区为直辖市，则将其地区ID降级为三级地区ID，再加载到受理地区；<br/>
@@ -781,7 +797,7 @@ public class CommonMethods {
 					sessionStaff.setCurrentAreaId(mapSession.get("staffProvCode").toString());
 					sessionStaff.setCurrentAreaAllName(mapSession.get("loginAreaName").toString());
 				} else{
-					log.error("页面登录currentAreaId正则匹配失败sessionStaff:={}, mapSession:={}", 
+					log.debug("页面登录currentAreaId正则匹配失败sessionStaff:={}, mapSession:={}", 
 							JSONObject.fromObject(sessionStaff).toString(), JSONObject.fromObject(mapSession).toString());
 				}
 			} else if(singleSignFlag){//单点登录
@@ -791,11 +807,28 @@ public class CommonMethods {
 					sessionStaff.setCurrentAreaId(areaInfo[0].toString());
 					sessionStaff.setCurrentAreaAllName(areaInfo[1].toString());
 				} else{
-					log.error("单点登录currentAreaId正则匹配失败sessionStaff: ={}", JSONObject.fromObject(sessionStaff).toString());
+					log.debug("单点登录currentAreaId正则匹配失败sessionStaff: ={}", JSONObject.fromObject(sessionStaff).toString());
 				}
 			} else{
-				log.error("非页面登录、单点登录sessionStaff:={}, mapSession:={}", 
+				log.debug("非页面登录、单点登录sessionStaff:={}, mapSession:={}", 
 							JSONObject.fromObject(sessionStaff).toString(), JSONObject.fromObject(mapSession).toString());
+			}
+		}
+	}
+	
+	/**
+	 * 初始化员工权限集合，该方法将查询当前登录工号的所有权限
+	 * @param sessionStaff
+	 * @throws Exception 
+	 * @throws BusinessException 
+	 * @throws IOException 
+	 * @throws InterfaceException 
+	 */
+	public void initStaffAllPrivileges(StaffBmo staffBmo, SessionStaff sessionStaff) throws InterfaceException, IOException, BusinessException, Exception{
+		if(sessionStaff != null && staffBmo != null){
+			ArrayList<String> privileges = sessionStaff.getPrivileges();
+			if(privileges == null || privileges.isEmpty()){
+				staffBmo.qryStaffAllPrivileges(sessionStaff);
 			}
 		}
 	}

@@ -20,6 +20,7 @@ import com.al.lte.portal.bmo.crm.OrderBmo;
 import com.al.lte.portal.bmo.portal.NoticeBmo;
 import com.al.lte.portal.bmo.staff.StaffBmo;
 import com.al.lte.portal.common.AESUtils;
+import com.al.lte.portal.common.CommonMethods;
 import com.al.lte.portal.common.CommonUtils;
 import com.al.lte.portal.common.EhcacheUtil;
 import com.al.lte.portal.common.SysConstant;
@@ -121,7 +122,6 @@ public class MainController extends BaseController {
     	}
 
         Map<String, Object> param = new HashMap<String, Object>();
-        Map<String, Object> rMap = new HashMap<String, Object>();
         param.put("areaId", sessionStaff.getCurrentAreaId());
         param.put("pageIndex", "1");
         param.put("pageSize", "10");
@@ -143,67 +143,24 @@ public class MainController extends BaseController {
 		String currentAreaId = sessionStaff.getCurrentAreaId();
 		model.addAttribute("XUA", propertiesUtils.getMessage("XUA_" + ((currentAreaId != null && currentAreaId.length() == 7) ? currentAreaId.substring(0, 3) : "")));
         
-		//查询工号是否具有跳过经办人必填的权限
-		Object sessionHandleCustFlag = ServletUtils.getSessionAttribute(request, SysConstant.TGJBRBTQX );
-    	if(sessionHandleCustFlag == null){
-			boolean isHandleCustNeeded = true;//默认无权限，需要必填经办人且拍照
-			try {
-				isHandleCustNeeded = !"0".equals(staffBmo.checkOperatBySpecCd(SysConstant.TGJBRBTQX , sessionStaff));
-			} catch (BusinessException be) {
-				log.error("系管权限查询接口sys-checkOperatSpec异常：", be);
-				return super.failedStr(model, be);
-			} catch (InterfaceException ie) {
-				log.error("系管权限查询接口sys-checkOperatSpec异常：", ie);
-				return super.failedStr(model, ie, null, ErrorCode.CHECKOPERATSPEC);
-			} catch (IOException ioe) {
-				log.error("系管权限查询接口sys-checkOperatSpec异常：", ioe);
-				return super.failedStr(model, ErrorCode.CHECKOPERATSPEC, ioe, null);
-			} catch (Exception e) {
-				log.error("系管权限查询接口sys-checkOperatSpec异常：", e);
-				return super.failedStr(model, ErrorCode.CHECKOPERATSPEC, e, null);
-			} finally{
-				ServletUtils.setSessionAttribute(request, SysConstant.TGJBRBTQX, isHandleCustNeeded);
-				sessionStaff.setHandleCustNeeded(isHandleCustNeeded);
-				ServletUtils.setSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF, sessionStaff);
-				ServletUtils.setSessionAttribute(super.getRequest(), 
-						SysConstant.PHOTOGRAPH_REVIEW_FLAG, 
-						MapUtils.getString(MDA.PHOTOGRAPH_REVIEW_FLAG, 
-								"PHOTOGRAPH_REVIEW_" + StringUtils.substring(new String(sessionStaff.getCurrentAreaId()), 0, 3), ""));
-			}
-    	}
-    	//是否需要人像审核
-		Object sessionPhotographReviewFlag = ServletUtils.getSessionAttribute(request, SysConstant.RXSHGN);
-    	if(sessionPhotographReviewFlag == null){
-			boolean isPhotographReviewNeeded = false;//默认无权限，需要必填经办人且拍照
-			try {
-				isPhotographReviewNeeded = "0".equals(staffBmo.checkOperatBySpecCd(SysConstant.RXSHGN , sessionStaff));
-			} catch (BusinessException be) {
-				log.error("系管权限查询接口sys-checkOperatSpec异常：", be);
-				return super.failedStr(model, be);
-			} catch (InterfaceException ie) {
-				log.error("系管权限查询接口sys-checkOperatSpec异常：", ie);
-				return super.failedStr(model, ie, null, ErrorCode.CHECKOPERATSPEC);
-			} catch (IOException ioe) {
-				log.error("系管权限查询接口sys-checkOperatSpec异常：", ioe);
-				return super.failedStr(model, ErrorCode.CHECKOPERATSPEC, ioe, null);
-			} catch (Exception e) {
-				log.error("系管权限查询接口sys-checkOperatSpec异常：", e);
-				return super.failedStr(model, ErrorCode.CHECKOPERATSPEC, e, null);
-			} finally{
-				ServletUtils.setSessionAttribute(request, SysConstant.RXSHGN, isPhotographReviewNeeded);
-			}
-    	}
-    	
-		/** 测试卡权限 **/
-		String specialtestauth = "-1";
-		//党政军备案卡权限
-		String dzjbakqx = "-1";
+		//加载权限
 		try {
-			specialtestauth = staffBmo.checkOperatBySpecCd(SysConstant.SPECIALTESTQX, sessionStaff);
-            dzjbakqx = staffBmo.checkOperatBySpecCd(SysConstant.DZJBAKQX, sessionStaff);
+			CommonMethods.getInstance().initStaffAllPrivileges(staffBmo, sessionStaff);
 		} catch (Exception e) {
-			specialtestauth = "-1";
+			log.error("系管权限查询接口queryPrivilegeInfos异常：", e);
+		} finally{
+			ServletUtils.setSessionAttribute(request, SysConstant.RXSHGN, sessionStaff.isHasOperatSpecCd(SysConstant.RXSHGN));
+			ServletUtils.setSessionAttribute(super.getRequest(), 
+					SysConstant.PHOTOGRAPH_REVIEW_FLAG, 
+					MapUtils.getString(MDA.PHOTOGRAPH_REVIEW_FLAG, 
+							"PHOTOGRAPH_REVIEW_" + StringUtils.substring(new String(sessionStaff.getCurrentAreaId()), 0, 3), ""));
 		}
+    	
+		//测试卡权限
+		String specialtestauth = sessionStaff.isHasOperatSpecCd(SysConstant.SPECIALTESTQX) ? "0" : "-1";
+		//党政军备案卡权限
+		String dzjbakqx = sessionStaff.isHasOperatSpecCd(SysConstant.DZJBAKQX) ? "0" : "-1";
+		
 		model.addAttribute("specialtestauth", specialtestauth);
 		model.addAttribute("dzjbakqx", dzjbakqx);
 		return "/main/main";

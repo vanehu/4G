@@ -1,5 +1,6 @@
 package com.al.lte.portal.token.pc.controller.crm;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -13,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,8 +29,11 @@ import com.al.ec.serviceplatform.client.ResultCode;
 import com.al.ec.toolkit.JacksonUtil;
 import com.al.ecs.common.entity.JsonResponse;
 import com.al.ecs.common.util.JsonUtil;
+import com.al.ecs.common.util.MDA;
 import com.al.ecs.common.util.PropertiesUtils;
 import com.al.ecs.common.web.ServletUtils;
+import com.al.ecs.exception.BusinessException;
+import com.al.ecs.exception.ErrorCode;
 import com.al.ecs.exception.InterfaceException;
 import com.al.ecs.spring.controller.BaseController;
 import com.al.lte.portal.bmo.crm.OfferBmo;
@@ -37,6 +42,7 @@ import com.al.lte.portal.bmo.staff.StaffBmo;
 import com.al.lte.portal.bmo.staff.StaffChannelBmo;
 import com.al.lte.portal.bmo.system.MenuBmo;
 import com.al.lte.portal.common.AESUtils;
+import com.al.lte.portal.common.CommonMethods;
 import com.al.lte.portal.common.CommonUtils;
 import com.al.lte.portal.common.EhcacheUtil;
 import com.al.lte.portal.common.MySimulateData;
@@ -312,6 +318,13 @@ public class PCModelController extends BaseController {
 			session.setAttribute(SysConstant.SESSION_KEY_MENU_AUTH_URL_LIST, EhcacheUtil.getAuthUrlInMenuList(map.get("menuList")));
 		} catch (Exception e) {
 			log.error("加载菜单异常", e);
+		}
+		
+		//加载权限
+		try {
+			CommonMethods.getInstance().initStaffAllPrivileges(staffBmo, sessionStaff);
+		} catch (Exception e) {
+			log.error("系管权限查询接口queryPrivilegeInfos异常：", e);
 		}
 	}
 	

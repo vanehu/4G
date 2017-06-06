@@ -2848,7 +2848,6 @@ public class OrderBmoImpl implements OrderBmo {
     	boolean resultFlag = false;
     	
     	Object sessionHandleCustFlag = ServletUtils.getSessionAttribute(request, SysConstant.TGJBRBTQX );
-    	boolean isHandleCustNeeded = sessionHandleCustFlag == null ? true : (Boolean) sessionHandleCustFlag;//是否具有跳过经办人权限
 		Object realNameFlag =  MDA.REAL_NAME_PHOTO_FLAG.get("REAL_NAME_PHOTO_"+sessionStaff.getCurrentAreaId().substring(0, 3));
     	boolean isRealNameFlagOn  = realNameFlag == null ? false : "ON".equals(realNameFlag.toString()) ? true : false;//实名制拍照开关是否打开
     	Object sessionActionFlagLimited = ServletUtils.getSessionAttribute(request, SysConstant.IS_ACTION_FLAG_LIMITED);

@@ -1,10 +1,14 @@
 package  com.al.lte.portal.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
 
 import com.al.ecs.common.util.PropertiesUtils;
 import com.al.ecs.common.web.SpringContextUtil;
@@ -156,8 +160,8 @@ public class SessionStaff implements Serializable {
 	 */
 	private String logintype ;
 	
-	/**工号是否具有跳过经办人权限*/
-	boolean isHandleCustNeeded;
+	/**该工号具有的所有权限*/
+	private ArrayList<String> privileges;
 	
 	public String getCustType() {
 		return custType;
@@ -874,14 +878,45 @@ public class SessionStaff implements Serializable {
 		this.logintype = logintype;
 	}
 
-
-	public boolean isHandleCustNeeded() {
-		return isHandleCustNeeded;
+	public ArrayList<String> getPrivileges() {
+		return privileges;
 	}
 
 
-	public void setHandleCustNeeded(boolean isHandleCustNeeded) {
-		this.isHandleCustNeeded = isHandleCustNeeded;
+	public void setPrivileges(ArrayList<String> privileges) {
+		this.privileges = privileges;
 	}	
 	
+	/**
+	 * 判断登录员工是否具有某特定权限
+	 * @param operatSpecCd 权限编码
+	 * @return <strong>true：</strong>具有operatSpecCd该权限，或者说系管返回了该权限<br>
+	 * <strong>false：</strong>operatSpecCd为空、工号没有operatSpecCd权限等其他情况
+	 */
+	public boolean isHasOperatSpecCd(String operatSpecCd) {
+		return this.isHasPrivilege(operatSpecCd);
+	}
+	
+	/**
+	 * 判断登录员工是否具有某特定权限
+	 * @param operatSpecCd 权限编码
+	 * @return 如果具有operatSpecCd权限则返回operatSpecCd，否则返回null
+	 */
+	public String checkOperatSpecCd(String operatSpecCd) {
+		if(this.isHasPrivilege(operatSpecCd)){
+			return operatSpecCd;
+		} else{
+			return null;
+		}
+	}
+	
+	private boolean isHasPrivilege(String operatSpecCd){
+		boolean result =  false;
+		if(StringUtils.isNotBlank(operatSpecCd)){
+			if(this.privileges != null && !this.privileges.isEmpty()){
+				result = this.privileges.contains(operatSpecCd) ? true : false;
+			}
+		}
+		return result;
+	}
 }
