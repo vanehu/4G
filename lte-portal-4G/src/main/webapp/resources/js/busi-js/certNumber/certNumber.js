@@ -42,10 +42,17 @@ oneFive.certNumber = (function () {
     var OneFiveFlag = "";
 
     /**
+     * 是否有手工输入权限
+     * @type {string}
+     */
+    var isHand = "-1";
+
+    /**
      * 初始化代码
      * @private
      */
     var _init = function () {
+        isHand = $("#isHand").val();
         $('#certNumRelForm').off().on('formIsValid', function () {
             selectList = [];//初始化选中号码列表
             if ($.trim($("#identidiesTypeCd" + " option:selected").val()) == "1" && !ec.util.isObj($('#certNumber').val())) {
@@ -92,7 +99,7 @@ oneFive.certNumber = (function () {
         if (identidiesTypeCd == 1) {
             $("#" + id).removeAttr("data-validate");
             $("#" + id).attr("placeHolder", "请点击右面读卡按钮，进行读卡操作！");
-            if (!query.common.queryPropertiesStatus("ONE_CERT_5_NUMBER_MANUAL_INPUT_ID_" + String(OrderInfo.staff.areaId).substr(0, 3))) {
+            if (isHand == "-1") {
                 $("#certNumber").attr("disabled", "disabled");
             }
             $("#certNumberReadCertBtn").show();
@@ -181,7 +188,7 @@ oneFive.certNumber = (function () {
                 }
             });
         });
-        if(total==tbody.length) {
+        if (total == tbody.length) {
             $("#tab_orderList").find("thead").find("tr").find("td").find("input").attr("checked", true);//总数与选中数相同，选择中全选
         }
     }

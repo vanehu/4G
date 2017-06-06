@@ -92,6 +92,7 @@ public class OneCertFiveNumberController extends BaseController {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        model.addAttribute("isHand", sessionStaff.isHasOperatSpecCd(SysConstant.YWCLSSSFZ) ? "0" : "-1");
         return "/certNumber/certNumber-prepare";
     }
 

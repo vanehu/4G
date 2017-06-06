@@ -131,6 +131,8 @@ public final class SysConstant {
     public static final String QRYCHANNELAUTH_CODE="REGION_CHANNEL_SELECT";
     //查看身份证权限(无脱敏)
     public static final String VIEWSENSI_CODE="TMXX";
+    //一五处理手输身份证
+    public static final String YWCLSSSFZ="YWCLSSSFZ";
     //欠费用户能否通过省内校验继续受理的员工权限
     public static final String OVERDUE_BUSI_CODE = "OVERDUEBUSI";
     //用户欠费的下省校验错误编码（两种均可能）
