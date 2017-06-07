@@ -331,7 +331,7 @@ cert = (function() {
 		var areaId = OrderInfo.staff.areaId;
 		if(ec.util.isObj(areaId)){
 			try{
-				var result = CertCtl.setAreaId(String(areaId));
+				var result = CertCtl.setAreaId(parseInt(areaId));
 				result = JSON.parse(result);
 				if(result.resultFlag != 0){
 					window.console && window.console.log && (console.log("%c读卡控件异常：" + result.errorMsg, "color:red"));
