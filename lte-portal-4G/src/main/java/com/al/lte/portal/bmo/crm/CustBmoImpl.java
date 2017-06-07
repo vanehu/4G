@@ -16,18 +16,20 @@ import net.sf.json.JSON;
 import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
 import net.sf.json.xml.XMLSerializer;
-import sun.misc.BASE64Decoder;
-import sun.misc.BASE64Encoder;
 
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.springframework.stereotype.Service;
 
+import sun.misc.BASE64Decoder;
+import sun.misc.BASE64Encoder;
+
 import com.al.ec.serviceplatform.client.DataBus;
 import com.al.ec.serviceplatform.client.ResultCode;
 import com.al.ecs.common.util.EncodeUtils;
 import com.al.ecs.common.util.JsonUtil;
+import com.al.ecs.common.util.MDA;
 import com.al.ecs.exception.BusinessException;
 import com.al.ecs.exception.ErrorCode;
 import com.al.ecs.exception.InterfaceException;
@@ -42,6 +44,7 @@ import com.al.lte.portal.common.RunShellUtil;
 import com.al.lte.portal.common.ServiceClient;
 import com.al.lte.portal.model.Photograph;
 import com.al.lte.portal.model.SessionStaff;
+
 
 @Service("com.al.lte.portal.bmo.crm.CustBmo")
 public class CustBmoImpl implements CustBmo {
@@ -983,4 +986,34 @@ public class CustBmoImpl implements CustBmo {
 		}
 		return resultMap;
 	}
+
+	// 人证照片比对
+	public Map<String, Object> verify(Map<String, Object> param,
+			String optFlowNum, SessionStaff sessionStaff) throws Exception {
+        Map<String, Object> resultMap = new HashMap<String, Object>();
+		DataBus db = InterfaceClient.callEopService(param,
+				PortalServiceCode.PIC_VERIFY, optFlowNum, sessionStaff, "人证平台",
+				MDA.CSB_PIC_VERIFY);
+		if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db
+				.getResultCode()))) {
+			resultMap = db.getReturnlmap();
+			resultMap.put("code", ResultCode.R_SUCCESS);
+			String msg = "";
+			if (resultMap != null
+					&& !ResultCode.R_SUCC.equals(resultMap.get("result_code"))) {
+				if(!"null".equals(resultMap.get("error_code") + "")){
+					msg += "【"+ resultMap.get("error_code") + "】";
+				}if(!"null".equals(resultMap.get("error_msg") + "")){
+					msg += resultMap.get("error_msg") + "";
+				}
+			}
+			resultMap.put("msg", msg); 
+		} else {
+			resultMap.put("code", ResultCode.R_FAIL);
+			String msg = db.getResultMsg(); 
+			resultMap.put("msg", msg); 
+		}
+		return resultMap;
+	}
+  	
 }

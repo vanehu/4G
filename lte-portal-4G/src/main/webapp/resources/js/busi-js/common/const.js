@@ -272,7 +272,10 @@ CONST = (function(){
 		PORTAL_ORDER_ID	:"8000066",//前台订单编号ID	
 		REAL_NAME_CHECK :"1000100", //客户实名认证标识
 		MAIN_OFFER_SPECID:"800000090",//主套餐id
-		CREDIT_LINE:"800000091"//征信信用额度
+		CREDIT_LINE:"800000091",//征信信用额度
+		CONFIDENCE : "40010049",//人证照片比对相似度
+		FACE_VERIFY_FLAG : "40010050",//人证比对是否成功 
+		VERIFY_STAFF : "40010051"//人工审核工号   
 	};
 	
 	//属性规格
@@ -505,10 +508,17 @@ CONST = (function(){
 		return statusFlag;
 	};
 	
-	var _TGJBRBTQX = "TGJBRBTQX";//是否具有跳过经办人必填的权限
+	var _TGJBRBTQX = "TGJBRBTQX";//是否具有跳过经办人必填的权限  
+	var _RZBDGN = "RZBDGN";//是否具有人证比对功能  
+	var _QZSHQX = "QZSHQX";//是否具有强制审核权限   
+	
 	var _ZYCSK = "ZYCSK";//专用测试权限
 	var _DZJBAKQX = "DZJBAKQX";//党政军备案卡权限
 	var _isHandleCustNeeded = true;//false：有权限；true：无权限
+	
+	var _isfaceVerify = false;
+    var _isForcePassfaceVerify = false;
+	   
 	
 	var _realNamePhotoFlag = "";//实名制拍照开关
    //业务动作类型详细信息
@@ -690,7 +700,11 @@ CONST = (function(){
 		SECURITY_OFFICE_PROD_ID: _SECURITY_OFFICE_PROD_ID,
 		GET_BIND_STATUS:_GET_BIND_STATUS,
 		TGJBRBTQX :_TGJBRBTQX,
-		ZYCSK : _ZYCSK,
+		RZBDGN :_RZBDGN,
+		QZSHQX : _QZSHQX,
+		isfaceVerify : _isfaceVerify,
+	    isForcePassfaceVerify : _isForcePassfaceVerify,
+	    ZYCSK : _ZYCSK,
         DZJBAKQX : _DZJBAKQX,
 		isHandleCustNeeded	:_isHandleCustNeeded,
 		realNamePhotoFlag	:_realNamePhotoFlag,

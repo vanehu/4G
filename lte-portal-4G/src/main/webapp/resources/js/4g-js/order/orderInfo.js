@@ -30,6 +30,10 @@ OrderInfo = (function() {
 	var _virOlId="";
 	
 	var _handleCustId="";
+	
+	var _verifyFlag =""  //人证平台比对结果 "Y" "N"
+	var _confidence = ""  //  人脸比对结果的相似程度
+	 
 
 	var _isExistCFQ = false;//是否是橙分期业务
 	
@@ -1921,6 +1925,9 @@ OrderInfo = (function() {
         bojbrPartyContactInfo	:_bojbrPartyContactInfo,
         preliminaryInfo         :_preliminaryInfo,
         operateSpecStaff		:_operateSpecStaff,
-        oldUserInfos			:_oldUserInfos
+        oldUserInfos			:_oldUserInfos,
+        verifyFlag  : _verifyFlag,
+        confidence : _confidence
+        		
 	};
 })();

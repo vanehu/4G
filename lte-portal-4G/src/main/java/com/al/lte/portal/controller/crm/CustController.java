@@ -2169,4 +2169,88 @@ public class CustController extends BaseController {
         }
 		return jsonResponse;
     }
+    /**
+	 * 人证照片比对
+	 * @param params
+	 * @param request
+	 * @param model
+	 * @param session
+	 * @return
+	 * @throws AuthorityException
+	 */
+	@RequestMapping(value = "/pic/verify", method = RequestMethod.POST)
+	public @ResponseBody
+	JsonResponse verify(@RequestBody Map<String, Object> reqMap,
+			String optFlowNum, HttpServletResponse response,
+			HttpServletRequest request) {
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils
+				.getSessionAttribute(super.getRequest(),
+						SysConstant.SESSION_KEY_LOGIN_STAFF);
+		JsonResponse jsonResponse = null;
+		Map<String, Object> rMap = null;
+		String areaid = sessionStaff.getAreaId();
+		Map<String, Object> contractRootMap = (Map<String, Object>) reqMap
+				.get("ContractRoot");
+		Map<String, Object> svcContMap = (Map<String, Object>) contractRootMap
+				.get("SvcCont");
+		Map<String, Object> paramsMap = (Map<String, Object>) svcContMap
+				.get("params");
+		String encryptAppIdStr = AESUtil.encryptToString(MDA.FACE_VERIFY_APP_ID,
+				 MDA.FACE_VERIFY_APP_ID_SECRET);
+		svcContMap.put("app_id", encryptAppIdStr);
+		paramsMap.put("area_id", areaid);
+		paramsMap.put("staff_code", sessionStaff.getStaffCode());
+		paramsMap.put("channel_nbr", sessionStaff.getCurrentChannelCode());
+		paramsMap.put("channel_type", sessionStaff.getCurrentChannelType());
+		paramsMap.put("image_idcard",EncodeUtils.urlDecode(paramsMap.get("image_idcard") + ""));
+		paramsMap.put("image_best",EncodeUtils.urlDecode(paramsMap.get("image_best") + ""));
+		log.debug("param={}", JsonUtil.toString(svcContMap.get("params")));
+		
+		svcContMap.put("params",
+				AESUtil.encryptToString(JsonUtil.toString(svcContMap.get("params")), MDA.FACE_VERIFY_PARAMS_SECRET));
+		try {
+			rMap = custBmo.verify(reqMap, optFlowNum, sessionStaff);
+			if (rMap != null
+					&& ResultCode.R_SUCCESS.equals(rMap.get("code").toString())) {
+				if (ResultCode.R_SUCC.equals(rMap.get("result_code"))) {
+					Map<String, Object> fzConfig = (HashMap<String, Object>) MDA.FACE_VERIFY_FLAG
+							.get("FACE_VERIFY_"
+									+ sessionStaff.getCurrentAreaId()
+											.substring(0, 3));
+					String fz = MapUtils.getString(fzConfig, "FZ", "0");
+					String  confidences = (String) rMap.get("confidence");
+					rMap.put("fz", fz);
+					rMap.put("faceVerifyFlag", "N");
+					if (Float.valueOf(confidences) >= Float.valueOf(fz)) {
+						rMap.put("faceVerifyFlag", "Y");
+						jsonResponse = super.successed(rMap,
+								ResultConstant.SUCCESS.getCode());
+					} else {
+						jsonResponse = super.failed("比对错误",
+								ResultConstant.FAILD.getCode());
+					}
+				} else {
+					jsonResponse = super.failed(rMap.get("msg"),
+							ResultConstant.FAILD.getCode());
+				}
+			} else {
+				if(rMap !=null){
+					jsonResponse = super.failed(rMap.get("msg"),
+							ResultConstant.FAILD.getCode());
+				}else{
+					jsonResponse = super.failed("人证平台无返回值，可能原因为 调用人平台出现错误 。",
+							ResultConstant.FAILD.getCode());
+				}
+			}
+		} catch (BusinessException be) {
+			this.log.error("人证比对查询失败", be);
+			return super.failed(be);
+		} catch (InterfaceException ie) {
+			return super.failed(ie, reqMap, ErrorCode.PIC_VERIFY);
+		} catch (Exception e) {
+			log.error("人证比对查询失败", e);
+			return super.failed(ErrorCode.PIC_VERIFY, e, reqMap);
+		}
+		return jsonResponse;
+	}
 }
