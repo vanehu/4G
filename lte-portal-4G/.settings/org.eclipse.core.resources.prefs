@@ -10,5 +10,4 @@ encoding//src/main/resources/properties/simulate.properties=UTF-8
 encoding//src/main/webapp/WEB-INF/views/decorators/loading-template.html=UTF-8
 encoding//src/main/webapp/WEB-INF/views/decorators/main-header-nav.html=UTF-8
 encoding//src/test/java=UTF-8
-encoding/<project>=UTF-8
 separateDerivedEncodings=true
