@@ -148,6 +148,7 @@ order.undo = (function(){
 				mess = "撤单确认【撤 受理单："+$("#"+id).attr("relaBoId")+"】" ;
 			}
 			$("#undo_d_title").html(mess);
+			$("#undospan").text("撤单");
 			easyDialog.open({
 				container : 'undo_d_main'
 			});
@@ -592,12 +593,63 @@ order.undo = (function(){
 		OrderInfo.orderResult.olNbr=olNbr;
 		order.calcharge.calchargeInit();
 	};
-	
+
 	var _undoCheckSer = function(){
-		
-		var param = null ;
 		var statusCd = $("#"+submit_id).attr("statusCd"); 
 		if(undo_type=="all" && (statusCd == '100002'|| statusCd == '100001')){ // 状态
+			var olNbr= $("#"+submit_id).attr("olNbr");
+			if($("#olType_"+olNbr).val()==CONST.OL_TYPE_CD.ESS){
+				var mess = "" ;
+				if(undo_type=="all"){
+					mess = "作废确认【作废 购物车："+$("#"+submit_id).attr("olNbr")+"】" ;
+				}
+				$("#undo_d_title").html(mess);
+				$("#undospan").text("作废");
+				easyDialog.open({
+					container : 'undo_d_main'
+				});
+				$("#undo_d_txt").attr("placeHolder","请输入备注");
+				$("#undo_d_txt").attr("data-validate","validate(required:请准确填写备注) on(blur)");
+				$("#tremark").text("备注：");
+				$("#undor").show();
+				$("#undo_d_form").off().bind("formIsValid", function(event, form){
+					var param;
+					param = {
+							olId : $("#"+submit_id).attr("olId"),
+							areaId : $("#p_areaId").val(),
+							staffId : OrderInfo.staff.staffId,
+							channelId : OrderInfo.staff.channelId,
+							remarks : $("#undo_d_txt").val()
+					};
+					$.callServiceAsJsonGet(contextPath+"/order/delOrder",param,{
+						"done" : function(response){
+							if (response.code==0) {
+								if(response.data.resultCode==0){
+									easyDialog.close();
+									$.alert("提示","购物车作废成功！");
+									$("#"+submit_id).text("作废");
+									$("#"+submit_id).attr("disabled",true);
+									$("#"+submit_id).removeClass("purchase").addClass("disablepurchase");
+								}
+							}else if (response.code==-2){
+								$.alertM(response.data);
+							}else {
+								$.alert("提示","购物车作废失败！");
+							}
+						},
+						fail:function(response){
+							$.alert("提示","信息","请求可能发生异常，请稍后再试");
+						}
+					});
+				}).ketchup({bindElement:"undo_d_bt"});
+				
+				$("#undo_d_no").off("click").on("click",function(event){
+					easyDialog.close();
+					$("#undo_d_txt").val("");
+				});
+			}
+		else{
+			var param;
 			param = {
 					olId : $("#"+submit_id).attr("olId"),
 					areaId : $("#p_areaId").val()
@@ -621,6 +673,7 @@ order.undo = (function(){
 					$.alert("提示","信息","请求可能发生异常，请稍后再试");
 				}
 			});
+		}	
 		}else{
 			if(undo_type=="all"||undo_type=="main"){
 				param = {custOrderId:$("#"+submit_id).attr("olId"),orderItemId:null,ifRepealAll:submit_type} ;
