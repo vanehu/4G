@@ -182,6 +182,57 @@
 				}
 			});	
 		}
+		
+		//读卡加密
+		function certEncrypt(){
+			$("#secretResult").val("");
+			var mode = $("#mode").val();
+			var secretContent = $("#secretContent").val();
+			var secretKey = $("#secretKey").val();
+			var secretResult = null;
+		
+			if(ec.util.isObj(secretContent) && ec.util.isObj(secretKey)){
+				var params = {
+					"mode"			:mode,			//AES算法或3DES
+					"encrypt"		:true,			//解密
+					"secretKey"		:secretKey,		//密钥
+					"secretContent"	:secretContent	//解密内容
+				};
+				var response = $.callServiceAsJson(contextPath+"/test/ctrlSecret",params,{});
+				if(ec.util.isObj(response)){
+					secretResult = response.data;
+				}
+			} else{
+				secretResult = "你有一处没有填写，认真点";
+			}
+		
+			$("#secretResult").val(secretResult);
+		}
+		//读卡解密
+		function certDecrypt(){
+			$("#secretResult").val("");
+			var mode = $("#mode").val();
+			var secretContent = $("#secretContent").val();
+			var secretKey = $("#secretKey").val();
+			var secretResult = null;
+		
+			if(ec.util.isObj(secretContent) && ec.util.isObj(secretKey)){
+				var params = {
+					"mode"			:mode,			//AES算法或3DES
+					"encrypt"		:false,			//解密
+					"secretKey"		:secretKey,		//密钥
+					"secretContent"	:secretContent	//解密内容
+				};
+				var response = $.callServiceAsJson(contextPath+"/test/ctrlSecret",params,{});
+				if(ec.util.isObj(response)){
+					secretResult = response.data;
+				}
+			} else{
+				secretResult = "你有一处没有填写，认真点";
+			}
+		
+			$("#secretResult").val(secretResult);
+		}
 	</script>
 </head>
 <body>
@@ -293,7 +344,29 @@
 			</div>
 		</div>
 	</div>
-
-
+	
+	<div style="float: right; width: 40%;">
+		<div class="divTest">
+			<span class="info_title" style="font-size: 20px; color: #71ab5a;">读卡加解密</span>
+			<div class="divTest">
+				<span>内容：</span>
+				<input id="secretContent" class="inputWidth250px inputTest" value="" /><br/>
+				<span>密钥：</span>
+				<input id="secretKey" class="inputWidth250px inputTest" value="" /><br/>
+				<span>结果：</span>
+				<input id="secretResult" class="inputWidth250px inputTest" value="" /><br/>
+				<span>
+					<select id="mode">
+						<option value ="AES">AES</option>
+						<option value ="3DES">3DES</option>
+					</select>
+				</span>
+				<span>
+					<a class="purchase" href="javascript:void(0)" onclick="certEncrypt();">加 密</a>
+					<a class="purchase" href="javascript:void(0)" onclick="certDecrypt();">解 密</a>
+				</span>
+			</div>
+		</div>
+	</div>
 </body>
 </html>

@@ -10,6 +10,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.collections.MapUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -322,5 +323,41 @@ public class TestController extends BaseController {
 			return jr;
 		}
 		return jr;		
+	}
+	
+	@RequestMapping(value = "/ctrlSecret", method = RequestMethod.POST)
+	@ResponseBody
+	public JsonResponse ctrlSecret(@RequestBody Map<String, Object> paramMap){
+		JsonResponse jsonResponse = super.successed("你丑o(╯□╰)o", 0);
+		
+		if(MapUtils.isNotEmpty(paramMap)){
+			String mode	 			= MapUtils.getString(paramMap, "mode", "");				//算法模式
+			boolean encrypt 		= MapUtils.getBooleanValue(paramMap, "encrypt", true);	//加密或解密标识
+			String secretKey 		= MapUtils.getString(paramMap, "secretKey", "");		//密钥
+			String secretContent 	= MapUtils.getString(paramMap, "secretContent", "");	//加密或解密内容
+
+			if(mode.toUpperCase().indexOf("AES") >= 0){//AES算法
+				String result = null;
+				
+				if(encrypt){//加密
+					result = AESUtils.encryptAesToString(secretContent, secretKey);
+				} else{//解密
+					result = AESUtils.decryptAesToString(secretContent, secretKey);
+				}
+				
+				result = result == null ? "你输入的有问题" : result;
+				jsonResponse = super.successed(result, 0);
+			} else if(mode.toUpperCase().indexOf("3DES") >= 0){//3DES算法
+				if(encrypt){//加密
+					
+				} else{//解密
+					
+				}
+			}
+		} else{
+			jsonResponse = super.failed("入参为空", 1);
+		}
+		
+		return jsonResponse;
 	}
 }
