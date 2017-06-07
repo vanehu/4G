@@ -1172,6 +1172,9 @@ public final class PortalServiceCode {
     /** 甩单终端串码预占校验接口（测试用，生产只走csb） */
     public static final String CHECK_DITCHORDER = "ter-terminal/ditchOrderCheck";
     
+    /** 人证合一图片比对**/
+    public static final String PIC_VERIFY = "auth.face.faceVerify";
+    
     /**客户信息核验接口*/
     public static final String CHECK_CUST_CERT = "biz-service/intf.custService/checkCustCert";
 

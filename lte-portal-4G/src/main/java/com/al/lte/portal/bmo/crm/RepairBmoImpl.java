@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.al.ec.serviceplatform.client.DataBus;
 import com.al.ec.serviceplatform.client.ResultCode;
+import com.al.ecs.common.util.MDA;
 import com.al.ecs.exception.BusinessException;
 import com.al.ecs.exception.ErrorCode;
 import com.al.ecs.log.Log;
@@ -22,13 +23,12 @@ import com.al.lte.portal.model.SessionStaff;
  */
 @Service("com.al.lte.portal.bmo.crm.RepairBmo")
 public class RepairBmoImpl implements RepairBmo{
-   private static Log log = Log.getLog(RepairBmoImpl.class);
+    private static Log log = Log.getLog(RepairBmoImpl.class);
 	//查询一证五号数据
 	public Map<String, Object> queryRepairList(Map<String, Object> param,
 			String optFlowNum, SessionStaff sessionStaff) throws Exception{
 		Map<String, Object> resultMap = new HashMap<String, Object>();
-		//http://IP:port/CmpWeb/cmpService/queryCmcCertNumRel
-		DataBus db = InterfaceClient.callServiceCardFiveSys(param, PortalServiceCode.QRY_CERTPHONENUM_REL, optFlowNum, sessionStaff);
+		DataBus db = InterfaceClient.callEopService(param, PortalServiceCode.QRY_CERTPHONENUM_REL, optFlowNum, sessionStaff,"一证五号",MDA.CSB_HTTP_CMP_URL);
 		Map<String, Object> returnMap = new HashMap<String, Object>();
 		try{
 			if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db
@@ -73,14 +73,12 @@ public class RepairBmoImpl implements RepairBmo{
 	public Map<String, Object> updateUserInfo(Map<String, Object> param,
 			String optFlowNum, SessionStaff sessionStaff) throws Exception{
 		Map<String, Object> resultMap = new HashMap<String, Object>();
-		//http://IP:port/CmpWeb/cmpService/changeCmcCertNumRel
 		Map<String, Object> returnMap = new HashMap<String, Object>();
-		DataBus db = InterfaceClient.callServiceCardFiveSys(param, PortalServiceCode.MOD_CERTPHONENUM_REL, optFlowNum, sessionStaff);
+		DataBus db = InterfaceClient.callEopService(param, PortalServiceCode.MOD_CERTPHONENUM_REL, optFlowNum, sessionStaff,"一证五号",MDA.CSB_HTTP_CMP_URL);
 		try{
 			if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db
 					.getResultCode()))) {
 				resultMap = db.getReturnlmap();
-				Map<String, Object> datamap = resultMap;
 				returnMap.put("code", ResultCode.R_SUCCESS);
 			} else {
 				returnMap.put("code", ResultCode.R_FAIL);

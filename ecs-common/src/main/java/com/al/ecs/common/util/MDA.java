@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
 @com.al.common.annotation.AppModule(moduleName = "Lte4GManager")
 public class MDA {
 	/**
@@ -642,5 +643,28 @@ public class MDA {
      * 一证五号手工输入身份证号
      */
     public static final Map<String, String> ONE_CERT_5_NUMBER_MANUAL_INPUT_ID = new HashMap<String, String>();
+    
+    /**
+     * 人证平台参数配置
+     */
+    public static final Map<String, Object> FACE_VERIFY_FLAG = new HashMap<String, Object>();
+    
+    
+    /**
+     * 人证平台配置：应用ID
+     */
+	public static final String FACE_VERIFY_APP_ID=new String("");
+	
+    
+    /**
+     * 人证平台配置：APP_ID对应的加密密钥
+     */
+    public static final String FACE_VERIFY_APP_ID_SECRET=new String("");
+    
+    /**
+     * 人证平台配置：params对应的加密密钥
+     */
+    public static final String FACE_VERIFY_PARAMS_SECRET =new String("");
+  
 
 }

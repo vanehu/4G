@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.al.ec.serviceplatform.client.DataBus;
 import com.al.ec.serviceplatform.client.ResultCode;
+import com.al.ecs.common.util.MDA;
 import com.al.ecs.exception.BusinessException;
 import com.al.ecs.exception.ErrorCode;
 import com.al.ecs.log.Log;
@@ -33,8 +34,7 @@ public class CmBmoImpl implements CmBmo{
 		svcContMap.put("staffCode", sessionStaff.getStaffCode());
 		svcContMap.put("channelNbr", sessionStaff.getCurrentChannelCode());
 		svcContMap.put("commonRegionId", sessionStaff.getAreaId());
-		
-		DataBus db = InterfaceClient.callServiceCardFiveSys(param, PortalServiceCode.QRY_CERTPHONENUM_REL, optFlowNum, sessionStaff);
+		DataBus db = InterfaceClient.callEopService(param, PortalServiceCode.QRY_CERTPHONENUM_REL, optFlowNum, sessionStaff,"一证五号",MDA.CSB_HTTP_CMP_URL);
 		Map<String, Object> returnMap = new HashMap<String, Object>();
 		try{
 			if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db
@@ -86,7 +86,7 @@ public class CmBmoImpl implements CmBmo{
 		svcContMap.put("channelNbr", sessionStaff.getCurrentChannelCode());
 		svcContMap.put("commonRegionId", sessionStaff.getAreaId());
 		Map<String, Object> returnMap = new HashMap<String, Object>();
-		DataBus db = InterfaceClient.callServiceCardFiveSys(param, PortalServiceCode.MOD_CERTPHONENUM_REL, optFlowNum, sessionStaff);
+		DataBus db = InterfaceClient.callEopService(param, PortalServiceCode.MOD_CERTPHONENUM_REL, optFlowNum, sessionStaff,"一证五号",MDA.CSB_HTTP_CMP_URL);
 		try{
 			if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db
 					.getResultCode()))) {
@@ -105,8 +105,7 @@ public class CmBmoImpl implements CmBmo{
 	//查询一证五号关系数据
 	public Map<String, Object> queryCertNumRelList(Map<String, Object> param,
 			String optFlowNum, SessionStaff sessionStaff) throws Exception {
-		Map<String, Object> resultMap = new HashMap<String, Object>();
-		DataBus db = InterfaceClient.callServiceCardFiveSys(param, PortalServiceCode.QRY_REL_INST_INFO, optFlowNum, sessionStaff);
+		DataBus db = InterfaceClient.callEopService(param, PortalServiceCode.QRY_REL_INST_INFO, optFlowNum, sessionStaff,"一证五号",MDA.CSB_HTTP_CMP_URL);
 		Map<String, Object> returnMap = new HashMap<String, Object>();
 		try{
 			if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db

@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.reflect.Field;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.ServletException;
@@ -79,7 +80,7 @@ public class PortalPropertiesController extends BaseController {
             }
         	String mapName = (String) param.get("mapName");
         	String key = (String) param.get("key");
-        	Map<String, Object> o = null;
+        	Map<String, Object> o = new HashMap<String, Object>();
             Field[] fields = MDA.class.getDeclaredFields();
             for (Field field : fields) {
                 if (mapName.equals(field.getName())) {
@@ -92,8 +93,7 @@ public class PortalPropertiesController extends BaseController {
                     }
                 }
             }
-        	String value = (String) o.get(key);
-            jsonResponse = super.successed(value, ResultConstant.SUCCESS.getCode());
+           jsonResponse = super.successed(o.get(key), ResultConstant.SUCCESS.getCode());
         } catch (Exception e) {
             return super.failed("", ResultConstant.FAILD.getCode());
         }

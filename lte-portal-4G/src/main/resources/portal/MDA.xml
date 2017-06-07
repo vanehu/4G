@@ -39,10 +39,18 @@
 		<const type="String" name="datasource.gangaotai" value="jdbc/oracle/lte/write/crmapp32" />
 	</mda>
 	<!-- 数据源配置end -->
-	<mda className="com.al.ecs.common.util" moduleName = "Lte4GManager">	   
+	<mda className="com.al.ecs.common.util" moduleName = "Lte4GManager">	
+	    <const type="String" name="SECRET_KEY" value="DJKF34ER35D58D" description="xml数字签名密钥"/>   
 		<const type="String" name="CSB_WS_URL" value="http://10.128.90.194:10901/LTE-CSB/services/DEPService?wsdl" />
 		<const type="String" name="CSB_HTTP_URL" value="http://10.128.90.194:10901/LTE-CSB/HttpDEPService" />
 		<const type="String" name="CSB_HTTP_FORCA_URL" value="http://10.128.90.194:10901/LTE-CSB/HttpDEPService" />
+		<const type="String" name="FACE_VERIFY_APP_ID" value="crm" description="人证平台配置：应用ID"/>
+        <const type="String" name="FACE_VERIFY_APP_ID_SECRET" value="FACEKEY_20170308" description="人证平台配置：APP_ID对应的加密密钥"/>
+        <const type="String" name="FACE_VERIFY_PARAMS_SECRET" value="FACEKEY_CRM_2017" description="人证平台配置：params对应的加密密钥"/>
+		<const type="String" name="CSB_PIC_VERIFY" value="http://10.128.90.194:8201/LTE-CSB/HttpAPIService" description="人证照片比对地址(测试)"/>
+		<!--
+		<const type="String" name="CSB_PIC_VERIFY" value="http://cn2csb.crm.189.cn/LTE-CSB/HttpAPIService" description="人证照片比对地址(生产)"/>
+		-->
 		<const type="String" name="CSB_FLAG" value="OFF" />
 		<const type="String" name="CSB_HTTP_CMP_URL" value="http://10.128.90.194:8201/LTE-CSB/HttpAPIService" description="一证五号地址"/>
 		<const type="String" name="ASYNC_FLAG" value="OFF" />
@@ -3115,5 +3123,133 @@
             'ONE_CERT_5_NUMBER_MANUAL_INPUT_ID_899':'OFF'<!-- 虚拟省 -->
             }
         </const>
+        <const type="Map" name="FACE_VERIFY_FLAG" description="人证照片比对接口对应开关('ON','OFF'),FZ代表阀值(一个数值，范围为[0, 100]，表示人脸比对结果的相似程度),数值配置越大表示要求人脸越相似，可根据实际配置该参数">
+		{
+			'FACE_VERIFY_811':<!-- 北京省 -->
+			{
+				'FACE_VERIFY_SWITCH':'OFF','FZ':'60'
+			},
+			'FACE_VERIFY_812':<!-- 天津 -->
+			{
+				'FACE_VERIFY_SWITCH':'OFF','FZ':'60'
+			},
+			'FACE_VERIFY_814':<!-- 山西 -->
+			{
+				'FACE_VERIFY_SWITCH':'OFF','FZ':'60'
+			},
+			'FACE_VERIFY_815':<!-- 内蒙古 -->
+			{
+				'FACE_VERIFY_SWITCH':'OFF','FZ':'60'
+			},
+			'FACE_VERIFY_821':<!-- 辽宁 -->
+			{
+				'FACE_VERIFY_SWITCH':'OFF','FZ':'60'
+			},
+			'FACE_VERIFY_822':<!-- 吉林 -->
+			{
+				'FACE_VERIFY_SWITCH':'OFF','FZ':'60'
+			},
+			'FACE_VERIFY_835':<!-- 福建 -->
+			{
+				'FACE_VERIFY_SWITCH':'OFF','FZ':'60'
+			},
+			'FACE_VERIFY_843':<!-- 湖南 -->
+			{
+				'FACE_VERIFY_SWITCH':'OFF','FZ':'60'
+			},
+			'FACE_VERIFY_850':<!-- 重庆 -->
+			{
+				'FACE_VERIFY_SWITCH':'OFF','FZ':'60'
+			},
+			'FACE_VERIFY_852':<!-- 贵州 -->
+			{
+				'FACE_VERIFY_SWITCH':'OFF','FZ':'60'
+			},
+			'FACE_VERIFY_853':<!-- 云南 -->
+			{
+				'FACE_VERIFY_SWITCH':'OFF','FZ':'60'
+			},
+			'FACE_VERIFY_854':<!-- 西藏 -->
+			{
+				'FACE_VERIFY_SWITCH':'OFF','FZ':'60'
+			},
+			'FACE_VERIFY_863':<!-- 青海 -->
+			{
+				'FACE_VERIFY_SWITCH':'OFF','FZ':'60'
+			},
+			'FACE_VERIFY_864':<!-- 宁夏 -->
+			{
+				'FACE_VERIFY_SWITCH':'OFF','FZ':'60'
+			},
+			'FACE_VERIFY_865':<!-- 新疆 -->
+			{
+				'FACE_VERIFY_SWITCH':'OFF','FZ':'60'
+			},
+			'FACE_VERIFY_844':<!-- 广东 -->
+			{
+				'FACE_VERIFY_SWITCH':'OFF','FZ':'60'
+			},
+			'FACE_VERIFY_832':<!-- 江苏 -->
+			{
+				'FACE_VERIFY_SWITCH':'OFF','FZ':'60'
+			},
+			'FACE_VERIFY_851':<!-- 四川 -->
+			{
+				'FACE_VERIFY_SWITCH':'OFF','FZ':'60'
+			},
+			'FACE_VERIFY_833':<!-- 浙江 -->
+			{
+				'FACE_VERIFY_SWITCH':'OFF','FZ':'60'
+			},
+			'FACE_VERIFY_834':<!-- 安徽 -->
+			{
+				'FACE_VERIFY_SWITCH':'OFF','FZ':'60'
+			},
+			'FACE_VERIFY_861':<!-- 陕西 -->
+			{
+				'FACE_VERIFY_SWITCH':'OFF','FZ':'60'
+			},
+			'FACE_VERIFY_842':<!-- 湖北 -->
+			{
+				'FACE_VERIFY_SWITCH':'OFF','FZ':'60'
+			},
+			'FACE_VERIFY_831':<!-- 上海 -->
+			{
+				'FACE_VERIFY_SWITCH':'OFF','FZ':'60'
+			},
+			'FACE_VERIFY_813':<!-- 河北 -->
+			{
+				'FACE_VERIFY_SWITCH':'OFF','FZ':'60'
+			},
+			'FACE_VERIFY_837':<!-- 山东 -->
+			{
+				'FACE_VERIFY_SWITCH':'OFF','FZ':'60'
+			},
+			'FACE_VERIFY_845':<!-- 广西 -->
+			{
+				'FACE_VERIFY_SWITCH':'OFF','FZ':'60'
+			},
+			'FACE_VERIFY_841':<!-- 河南 -->
+			{
+				'FACE_VERIFY_SWITCH':'OFF','FZ':'60'
+			},
+			'FACE_VERIFY_862':<!-- 甘肃 -->
+			{
+				'FACE_VERIFY_SWITCH':'OFF','FZ':'60'
+			},
+			'FACE_VERIFY_836':<!-- 江西 -->
+			{
+				'FACE_VERIFY_SWITCH':'OFF','FZ':'60'
+			},
+			'FACE_VERIFY_846':<!-- 海南 -->
+			{
+				'FACE_VERIFY_SWITCH':'OFF','FZ':'60'
+			},
+			'FACE_VERIFY_823':<!-- 黑龙江 -->
+			{
+				'FACE_VERIFY_SWITCH':'OFF','FZ':'60'
+			}
+		}
+		</const>
 	</mda>
 </mdas>

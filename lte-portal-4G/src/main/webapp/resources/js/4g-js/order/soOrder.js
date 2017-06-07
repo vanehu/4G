@@ -4231,6 +4231,21 @@ SoOrder = (function() {
 					itemSpecId : CONST.BUSI_ORDER_ATTR.VIROLID,
 					value : OrderInfo.virOlId//即照片上传时后台返回的18位的虚拟订单ID:virOlId
 				});
+				 var result =  query.common.queryPropertiesMapValue("FACE_VERIFY_FLAG", "FACE_VERIFY_"+String(OrderInfo.staff.areaId).substr(0, 3));
+				 if(result.FACE_VERIFY_SWITCH == "ON" && CONST.isfaceVerify){
+					 custOrderAttrs.push({
+							itemSpecId : CONST.BUSI_ORDER_ATTR.CONFIDENCE,
+							value : OrderInfo.confidence  //人证照片比对相似度
+						});
+						custOrderAttrs.push({
+							itemSpecId : CONST.BUSI_ORDER_ATTR.FACE_VERIFY_FLAG,
+							value : OrderInfo.faceVerifyFlag //人证比对是否成功 
+						});
+						custOrderAttrs.push({
+							itemSpecId : CONST.BUSI_ORDER_ATTR.VERIFY_STAFF,
+							value : OrderInfo.operateSpecStaff.staffId //人工审核工号   
+						});
+				 }
 			}
 		}
 
