@@ -1231,5 +1231,7 @@ public final class PortalServiceCode {
     public static final String QUERY_GIFT_PACKAGE_OFFER = "biz-service/intf.prodOfferService/queryGiftPackageList";
     /**销售品打包礼包成员查询*/
     public static final String QUERY_GIFT_PACKAGE_MEMBER_OFFER = "biz-service/intf.prodOfferService/queryGiftPackage2ObjList";
+    /**查询云平台身份证信息*/
+    public static final String QUERY_CLOUD_CERT = "/api/v1/queryCert?";
 }
 
