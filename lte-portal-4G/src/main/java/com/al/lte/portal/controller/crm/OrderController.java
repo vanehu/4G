@@ -5550,24 +5550,24 @@ public class OrderController extends BaseController {
         try {
         	//先验证versionId（版本号ID）是否和后台配置的最新版本号一致
         	Map<String, Object> secretConfigs  = (Map<String, Object>) MDA.CERT_SIGNATURE_UNIFY.get("secretConfig");
-        	if(secretConfigs.get("versionId") == null){
+        	if(secretConfigs.get(versionId) == null){
         		return super.failed("读卡失败,读卡统一控件返回'控件版本号ID'不在MDA配置中。",ResultCode.FAIL_TW);
         	}
         	//根据versionId获取密钥对hashVal进行解密，并将解密后的值与后台配置的值对比
-        	String hashValDec = Des33.decode1(hashVal,(String) secretConfigs.get("3desSecret"));
-        	String[] hashVals = (String[]) MDA.CERT_SIGNATURE_UNIFY.get("hashVal");
-        	List<String> hashValList = Arrays.asList(hashVals);
-        	if(!hashValList.contains(hashValDec)){
+        	Map<String, Object> versionInfo  = (Map<String, Object>) secretConfigs.get(versionId);
+        	String desSecret3 = (String) versionInfo.get("3desSecret");
+        	String hashValDec = Des33.decode1(hashVal,desSecret3);
+        	List hashVals = (List) MDA.CERT_SIGNATURE_UNIFY.get("hashVal");
+        	if(!hashVals.contains(hashValDec)){
         		return super.failed("读卡失败,读卡统一控件返回'驱动主文件的md5值'不在MDA配置中。",ResultCode.FAIL);
         	}
         	//校验都一致，则解密身份证信息（使用versionId对应的密钥），身份证信息明文缓存在服务端，并返回客户端展示
             XMLSerializer xmlSerializer = new XMLSerializer();
-            String resultContentXmlDec = Des33.decode1(resultContentXml,(String) secretConfigs.get("3desSecret"));
+            String resultContentXmlDec = Des33.decode1(resultContentXml,desSecret3);
     		String ResqjsonStr = xmlSerializer.read(resultContentXmlDec).toString();
-            Map<String, Object> resultContentMap = JsonUtil.toObject(ResqjsonStr, Map.class);
-            Map<String, Object> certificateInfo = (Map<String, Object>) resultContentMap.get("certificate");
+            Map<String, Object> certificateInfo = JsonUtil.toObject(ResqjsonStr, Map.class);
             if(certificateInfo == null){
-            	return super.failed("读卡失败,读卡统一控件返回'二代身份证内容为空'不在MDA配置中。",ResultCode.FAIL);
+            	return super.failed("读卡失败,读卡统一控件返回'二代身份证内容为空'。",ResultCode.FAIL);
             }
             //二代证校验读卡日志记录
             SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
