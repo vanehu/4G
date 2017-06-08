@@ -7,10 +7,10 @@
         <dependent-module archiveName="ecs-common-4.0.1-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/ecs-common/ecs-common">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module archiveName="portal-service-client-1.0.3.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/portal-service-client/portal-service-client">
+        <dependent-module archiveName="portal-service-client-1.0.3.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/lte-service-client/lte-service-client">
             <dependency-type>uses</dependency-type>
         </dependent-module>
         <property name="java-output-path" value="/lte-portal/target/classes"/>
-        <property name="context-root" value="ltePortal"/>
+        <property name="context-root" value="provPortal"/>
     </wb-module>
 </project-modules>
