@@ -901,4 +901,16 @@ public final class SysConstant {
     
     /**跳过经办人人像审核权限*/
     public static final String RXSHGN = "RXSHGN";
+    
+    /** Session Key　appId */
+    public static final String SESSION_KEY_APP_ID = "app_id_session_key";
+    
+    /** Session Key　timestamp */
+    public static final String SESSION_KEY_TIME_STAMP = "timestamp_session_key";
+    
+    /** Session Key　nonce */
+    public static final String SESSION_KEY_NONCE = "nonce_session_key";
+    
+    /** Session Key　signature */
+    public static final String SESSION_KEY_SIGN_ATURE = "signature_session_key";
 }

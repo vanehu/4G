@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.net.SocketTimeoutException;
+import java.net.URLEncoder;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -16,6 +17,7 @@ import javax.servlet.http.HttpSession;
 
 import net.sf.json.xml.XMLSerializer;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -25,6 +27,7 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.util.EntityUtils;
@@ -1406,7 +1409,6 @@ public class InterfaceClient {
 		return areas.get(areaIdStr);
 	}
 	public static void main(String[] args) throws Exception {
-
 		Map<String, Object> paramMap = new HashMap<String, Object>();
 		paramMap.put("acctNbr", "13301543143");
 		paramMap.put("identityCd", "");
@@ -2164,5 +2166,142 @@ public class InterfaceClient {
 //				.append(RandomStringUtils.randomNumeric(2));
 		Calendar.getInstance().getTimeInMillis();
 		return sb.toString();
+	}
+	
+	/**
+	 * 查询云平台身份证信息
+	 * 
+	 * @param serverIp
+	 *            云平台节点IP(上海或内蒙节点的电信内网IP)
+	 * @param decodeId
+	 *            云平台当次解码序列号,用来查询对应的身份证加密信息
+	 * @throws InterfaceException 
+	 */
+	public static DataBus callCloudService(Map<String, Object> param,String serviceCode,String optFlowNum, SessionStaff sessionStaff) throws InterfaceException {
+		DataBus db = new DataBus();
+		String serverIp = "http://"+MapUtils.getString(param, "serverIp");// 请求服务器ip
+		String decodeId = MapUtils.getString(param, "decodeId");// 获取加密身份信息唯一id
+		String query = "{\"decodeId\":\"" + decodeId + "\"}";
+		String appId = MapUtils.getString(param, "appId");
+		String nonce = MapUtils.getString(param, "nonce");
+		String timestamp = MapUtils.getString(param, "timestamp");
+		String appSecret = propertiesUtils.getMessage("APP_SECRET"); //appId对应的加密密钥
+		StringBuffer sbData = new StringBuffer();
+	    sbData.append(appId).append(appSecret).append(query).append(nonce).append(timestamp);
+	    String signature = DigestUtils.shaHex(sbData.toString());
+	    param.put("signature", signature);
+		param.put("query", query);
+		String strParams = getFormatParams(param);
+		// 拼接url要传递的参数.
+		String url = serverIp+serviceCode + strParams;
+		//开始调用httpclient
+		HttpEntity entity = null;
+		String retnJson = "";
+		HttpResponse response = null;
+		String logSeqId="";
+		HttpGet httpGet =null;
+		long startTime = System.currentTimeMillis();
+		try {
+			// 开始调用http服务
+			httpGet=new HttpGet(url);
+			log.debug("reqUrl:{}", url);
+			log.debug("serviceCode:{},paramString:{}", serviceCode, strParams);
+			
+			// 添加标识ID 
+			logSeqId = createLogSeqId(param, serviceCode,
+					sessionStaff, null, "api", logSeqId);
+			response = MyHttpclient.getInstance().getHttpclient().execute(httpGet);
+			entity = response.getEntity();
+			retnJson = EntityUtils.toString(entity, "UTF-8");
+			// 返回成功
+			if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+				db.setResultCode(ResultCode.R_SUCC);
+				db.setResultMsg(retnJson);
+				Map<String, Object> rootMap = JsonUtil.toObject(retnJson, Map.class);
+				db.setReturnlmap(rootMap);
+			} else {
+				String msg = "HTTP调用失败(http code:"
+						+ response.getStatusLine().getStatusCode() + ")";
+				log.error(msg + retnJson);
+				Map<String, Object> paramMap = new HashMap<String, Object>();
+				paramMap.put("paramString", strParams);
+				db.setParammap(paramMap);
+				msg = url + "\n" + msg + "\n" + retnJson;
+				throw new InterfaceException(ErrType.OPPOSITE, serviceCode, msg, strParams, logSeqId);
+			}
+		} catch (IOException ioe) {
+			log.error("HTTP调用异常", ioe);
+			Map<String, Object> paramMap = new HashMap<String, Object>();
+			paramMap.put("paramString", strParams);
+			db.setParammap(paramMap);
+			if (ioe instanceof SocketTimeoutException) {
+				String msg = ioe.getMessage();
+				if ("Read timed out".equals(msg)) {
+					msg = url + "\n" + msg;
+					throw new InterfaceException(ErrType.OPPOSITE, serviceCode, msg, strParams, logSeqId);
+				}
+			} else if (ioe.getCause() != null) {
+				String msg = ioe.getCause().getMessage();
+				if ("Connection timed out: connect".equals(msg)) {
+					msg = url + "\n" + msg + "\n" + ioe.getMessage();
+					throw new InterfaceException(ErrType.OPPOSITE, serviceCode, msg, strParams, logSeqId);
+				}
+			}
+			
+			throw new InterfaceException(ErrType.PORTAL, serviceCode, strParams, ioe, logSeqId);
+		} catch (InterfaceException ie) {
+			throw ie;
+		} finally {
+			if(httpGet!=null){
+				httpGet.abort();// 连接停止，释放资源
+			}
+			try {
+				if (null != entity) {
+					EntityUtils.consume(entity);
+				}
+			} catch (IOException e) {
+				log.error("HTTP调用释放资源异常", e);
+			}
+		}
+		long useTime = System.currentTimeMillis() - startTime;
+		log.debug("http call use time {} ms", useTime);
+		if (sessionStaff != null) {
+			callServiceLog(logSeqId, null, db, optFlowNum, serviceCode, url, sessionStaff, strParams, retnJson, startTime, System.currentTimeMillis(),retnJson,strParams,"api");
+		}
+		return db;
+	}
+
+	//将入参map转成&拼接
+	private static String getFormatParams(Map<String,Object> paramsMap){
+//		Iterator<String> iter = paramsMap.keySet().iterator(); 
+		StringBuffer paramsBuffer =new StringBuffer();
+//        while(iter.hasNext()){ 
+//            String key=iter.next(); 
+//            String value = paramsMap.get(key).toString();
+//            String encodeValue="";
+//			try {
+//				encodeValue = URLEncoder.encode(value,"UTF-8");
+//			} catch (UnsupportedEncodingException e) {
+//				e.printStackTrace();
+//			}
+//            paramsBuffer.append(key +"="+encodeValue+"&");
+//        } 
+		String appId=MapUtils.getString(paramsMap, "appId");
+		paramsBuffer.append("appId="+appId+"&");
+		String timestamp=MapUtils.getString(paramsMap, "timestamp");
+		paramsBuffer.append("timestamp="+timestamp+"&");
+		String nonce=MapUtils.getString(paramsMap, "nonce");
+		paramsBuffer.append("nonce="+nonce+"&");
+		String signature=MapUtils.getString(paramsMap, "signature");
+		paramsBuffer.append("signature="+signature+"&");
+		String query=MapUtils.getString(paramsMap, "query");
+		String queryParams="";
+		try {
+			queryParams=URLEncoder.encode(query,"UTF-8");
+			paramsBuffer.append("query="+queryParams);
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		return paramsBuffer.toString();
 	}
 }

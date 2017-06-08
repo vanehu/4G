@@ -888,7 +888,6 @@ public class CustBmoImpl implements CustBmo {
      * @return
      * @throws Exception
      */
-    @Override
     public Map<String, Object> custinfoSynchronize(Map<String, Object> dataBusMap, String optFlowNum, SessionStaff sessionStaff) throws Exception {
         Map<String, Object> retnMap = new HashMap<String, Object>();
         DataBus db = InterfaceClient.callService(dataBusMap,
@@ -915,7 +914,6 @@ public class CustBmoImpl implements CustBmo {
      * @return
      * @throws Exception
      */
-    @Override
     public Map<String, Object> preCheckCertNumberRel(Map<String, Object> dataBusMap, String optFlowNum, SessionStaff sessionStaff) throws Exception {
         Map<String, Object> retnMap = new HashMap<String, Object>();
         DataBus db = InterfaceClient.callService(dataBusMap,
@@ -945,7 +943,6 @@ public class CustBmoImpl implements CustBmo {
      * @return
      * @throws Exception
      */
-    @Override
     public Map<String, Object> getSeq(Map<String, Object> paramMap, String optFlowNum, SessionStaff sessionStaff) throws Exception {
         DataBus db = InterfaceClient.callService(paramMap,
 				PortalServiceCode.GET_SEQ, optFlowNum, sessionStaff);
@@ -1001,5 +998,34 @@ public class CustBmoImpl implements CustBmo {
   		}
   		return returnMap;				
   	}
+  	
+    /**
+     * 查询云平台加密身份信息
+     *
+     * @param dataBusMap
+     * @param optFlowNum
+     * @param sessionStaff
+     * @return
+     * @throws Exception
+     */
+    public Map<String, Object> queryCert(Map<String, Object> dataBusMap, String optFlowNum, SessionStaff sessionStaff) throws Exception {
+        Map<String, Object> retnMap = new HashMap<String, Object>();
+        DataBus db = InterfaceClient.callCloudService(dataBusMap,
+            PortalServiceCode.QUERY_CLOUD_CERT, optFlowNum, sessionStaff);
+        Map<String, Object> returnMap = db.getReturnlmap();
+        try {
+            String code = returnMap.get("resultFlag").toString();
+            if (ResultCode.R_SUCC.equals(code)) {
+                retnMap = (Map<String, Object>) returnMap.get("resultContent");
+                retnMap.put("code", code);
+            }else{
+            	return returnMap;
+            }
+            return retnMap;
+        } catch (Exception e) {
+            log.error("云平台api/v1/queryCert服务返回的数据异常", e);
+            throw new BusinessException(ErrorCode.QUERY_CLOUD_CERT, dataBusMap, db.getReturnlmap(), e);
+        }
+    }
   	
 }
