@@ -304,8 +304,8 @@ custQuery = (function(){
 		custQuery.custPic="";
 		if(OrderInfo.cust.identityPic!=undefined){
 			custQuery.custPic=OrderInfo.cust.identityPic;//证件照片
-		}		
-		if(home.menuData.isProvenceMenu == "Y"){
+		}
+		if(OrderInfo.actionFlag != "111" && home.menuData.isProvenceMenu == "Y"){
 			$("#custQuerycontent").hide();
 			$("#cust-query-list").hide();
 			OrderInfo.cust = _choosedCustInfo;
@@ -361,10 +361,12 @@ custQuery = (function(){
 		        }
 		}
 		//用户检测 Redmine#1476474营业厅翼支付开户IT流程优化
-		if(_choosedCustInfo.isGov == "Y"&&_choosedCustInfo.userIdentityCd){//政企客户
-			cust.checkRealCust(parseInt(_choosedCustInfo.userIdentityCd));
-		} else {//公众客户
-			cust.checkRealCust(parseInt(_choosedCustInfo.identityCd));
+		if(OrderInfo.actionFlag != "111"){
+			if(_choosedCustInfo.isGov == "Y"&&_choosedCustInfo.userIdentityCd){//政企客户
+				cust.checkRealCust(parseInt(_choosedCustInfo.userIdentityCd));
+			} else {//公众客户
+				cust.checkRealCust(parseInt(_choosedCustInfo.identityCd));
+			}
 		}
 		var propertiesKey = "FUKA_SHIYR_"+(OrderInfo.staff.soAreaId+"").substring(0,3);
 		cust.userFlag = offerChange.queryPortalProperties(propertiesKey);
