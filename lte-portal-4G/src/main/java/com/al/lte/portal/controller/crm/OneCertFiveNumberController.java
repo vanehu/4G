@@ -89,7 +89,7 @@ public class OneCertFiveNumberController extends BaseController {
         Map<String, Object> param = new HashMap();
         SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(request, SysConstant.SESSION_KEY_LOGIN_STAFF);
         param.put("partyTypeCd", "1");//查询个人证件类型
-        String isHand = "1";
+        String isHand = "-1";
         Map<String, Object> rMap;
         try {
             rMap = custBmo.queryCertType(param, "", sessionStaff);

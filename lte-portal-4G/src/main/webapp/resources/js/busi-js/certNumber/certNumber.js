@@ -83,6 +83,8 @@ oneFive.certNumber = (function () {
             return;
         }
         $("#certNumber").val(man.resultContent.certNumber);
+        $("#certCustName").val(man.resultContent.partyName);
+        $("#certAddress").val(man.resultContent.certAddress);
         idCardInfo = man.resultContent;
     };
 
@@ -244,6 +246,19 @@ oneFive.certNumber = (function () {
      * @private
      */
     var _selectConfirm = function () {
+        var custName = $("#certCustName").val();
+        var address = $("#certAddress").val();
+
+        if(!ec.util.isObj(custName)) {
+            $.alert("提示", "请输入证件姓名！");
+            return;
+        }
+
+        if(!ec.util.isObj(address)) {
+            $.alert("提示", "请输入证件地址信息！");
+            return;
+        }
+
         resetCustInfo();//重置客户信息
         resetAttachment();//重置附件
         resetFileNumbers();//重置已经上传文件数量
@@ -287,7 +302,7 @@ oneFive.certNumber = (function () {
         disabledCustInfo();
 
         var custInfo = {
-            "custName": idCardInfo.partyName,
+            "custName": isHand==-1?idCardInfo.partyName:$("#certCustName").val(),
             "phoneNumber": phoneNumber,
             "certType": certType,
             "certNumber": certNumber
@@ -468,12 +483,12 @@ oneFive.certNumber = (function () {
             var seq = 1;
             $.each(selectList, function () {
                 var number = {
-                    "addressStr": idCardInfo.certAddress,
-                    "certNumber": idCardInfo.certNumber,
+                    "addressStr": isHand==-1?idCardInfo.certAddress:$("#certAddress").val(),
+                    "certNumber": isHand==-1?idCardInfo.certNumber:$("#certNumber").val(),
                     "certType": "1",
                     "certTypeName": "身份证",
                     "contactAddress": "",
-                    "custName": idCardInfo.partyName,
+                    "custName": isHand==-1?idCardInfo.partyName:$("#certCustName").val(),
                     "lanId": $(this).find("td:eq(2)").text(),
                     "maxQuantity": 0,
                     "partyRoleCd": "0",//产权人

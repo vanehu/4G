@@ -92,6 +92,20 @@
                                     <input type="button" value="查询" class="numberSearch" id="bt_Qry"/>
                                 </dd>
                             </dl>
+                            <dl>
+                                <dt>证件姓名：</dt>
+                                <dd>
+                                    <input id="certCustName" placeHolder="请输入证件姓名" class="inputWidth150px"
+                                           maxlength="10" type="text" <#if isHand??&&isHand==-1> disabled="disabled"</#if>/>
+                                    <label class="f_red">*</label>
+                                </dd>
+                                <dt>证件地址：</dt>
+                                <dd>
+                                    <input id="certAddress" placeHolder="请输入证件地址" class="inputWidth315px"
+                                           maxlength="100" type="text" <#if isHand??&&isHand==-1> disabled="disabled"</#if>/>
+                                    <label class="f_red">*</label>
+                                </dd>
+                            </dl>
                         </div>
                     </form>
                     <!--关系列表-->
