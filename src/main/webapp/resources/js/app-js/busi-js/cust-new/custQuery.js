@@ -1138,7 +1138,19 @@ custQuery = (function(){
 	};
 	
 	var _queryCustNext = function () {
-		var params={};
+		// 办号卡
+		if ("111" == OrderInfo.actionFlag) {
+			for(var l=0;l<custQuery.q_custList.length;l++){
+				if(custQuery.q_custList[l].custId == OrderInfo.cust.custId){
+					OrderInfo.cust.contactInfos = custQuery.q_custList[l].contactInfos;
+//					_choosedCustInfo.contactInfos = custQuery.q_custList[l].contactInfos;
+				}
+			}
+			order.broadband.showCust();
+			$("#sd_tab-box").show();
+			$("#cust").show();
+		}else{
+			var params={};
 			params.method = home.menuData.method;
 			params.actionFlag = home.menuData.actionFlag;
 			params.enter = home.menuData.enter;
@@ -1149,6 +1161,7 @@ custQuery = (function(){
 				common.callOrderServer(OrderInfo.staff, OrderInfo.cust, order.prodModify.choosedProdInfo, params,from_cust);
 				return;
 			}
+		}
 		
 	};
 	
