@@ -645,6 +645,11 @@ public class MDA {
     public static final Map<String, String> ONE_CERT_5_NUMBER_MANUAL_INPUT_ID = new HashMap<String, String>();
     
     /**
+     * 电渠加装副卡业务支持预装+返档
+     */
+    public static final Map<String, String> ECS_RETURN_FILE = new HashMap<String, String>();
+    
+    /**
      * 人证平台参数配置
      */
     public static final Map<String, Object> FACE_VERIFY_FLAG = new HashMap<String, Object>();
