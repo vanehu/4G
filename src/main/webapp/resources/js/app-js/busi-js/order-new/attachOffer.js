@@ -407,9 +407,9 @@ AttachOffer = (function() {
 					}
 				});
 			}
-			setTimeout(function () { 
-				_checkYZFRight(prodId);
-			}, 300);
+//			setTimeout(function () { 
+//				_checkYZFRight(prodId);
+//			}, 300);
 //			AttachOffer.changeLabel(prodId, prodInfo.productId,""); //初始化第一个标签附属
 			order.dealer.initDealer();
 		});
