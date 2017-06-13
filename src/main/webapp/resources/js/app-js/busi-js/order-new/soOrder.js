@@ -91,6 +91,7 @@ SoOrder = (function() {
 					$.ecOverlay("<strong>订单提交中，请稍等...</strong>");
 				},"done" : function(response){
 					$.unecOverlay();
+					$('#newCustBtn').removeAttr("disabled")
 					if (response.code == 0) {
 						var data = response.data;
 						if(OrderInfo.actionFlag==8 || OrderInfo.actionFlag==4){

@@ -74,8 +74,10 @@ cust = (function(){
 	}
 	//客户新增提交
 	var _newCustSubmit = function(){
+		$('#newCustBtn').attr("disabled","disabled");  
 		var validate=$("#custFormdata").Validform();
 		if(!validate.check()){
+			$('#newCustBtn').removeAttr("disabled")
 			return;
 		}
 		var propertiesKey = "CMADDRESS_CHECK_FLAG";
@@ -116,6 +118,7 @@ cust = (function(){
 							_checkIdentity();
 						}else{
 							$.alertM(checkResponse.data);
+							$('#newCustBtn').removeAttr("disabled")
 							return;
 						}
 				}else{
@@ -432,7 +435,7 @@ cust = (function(){
 						_custSubmit();
 					},
 					no:function(){
-						
+						$('#newCustBtn').removeAttr("disabled")
 					}
 				});
 			}else{
