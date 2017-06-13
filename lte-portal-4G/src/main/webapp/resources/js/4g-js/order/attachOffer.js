@@ -2460,16 +2460,15 @@ AttachOffer = (function() {
 					var servSpec = param.relatedServ[i];
 					if(servSpec.servSpecId == CONST.PROD_SPEC.YIPAY_SERVSPECID ){
 						if(!order.cust.canOrderYiPay(prodId,3)){
-							var tips = "开通： " + serv.servSpecName + "需要开通【翼支付】功能产品，当前产权人或使用人证件类型不在【";
+							var tips = "开通： " + serv.servSpecName + "将会带出【翼支付】功能产品，但当前产权人或使用人证件类型不在【";
 							for (var j = 0; j < CONST.YIPAY_IDENTITYCD.length; j ++) {
 								if(j==0)
 									tips += CONST.YIPAY_IDENTITYCD[j].NAME;
 								else
 									tips += ","+CONST.YIPAY_IDENTITYCD[j].NAME;
 							}
-							tips += "】中，不允许订购【翼支付】功能产品！所以不允许订购【" + serv.servSpecName + "】";
+							tips += "】中，不允许订购【翼支付】功能产品！所以不允许订购【翼支付】功能产品。";
 							$.alert("提示",tips);
-							return ;
 						}
 					}
 				}
