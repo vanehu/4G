@@ -1794,6 +1794,9 @@ OrderInfo = (function() {
 		"operateSpecStaffList"	:[]		
 	};
 	
+	//ecs返档,主卡客户信息
+	var _reFileMainCustInfo = {};
+	
 	//读卡信息
 	var _certInfoKeys = [];
 	//读卡信息
@@ -1976,6 +1979,7 @@ OrderInfo = (function() {
         preliminaryInfo         :_preliminaryInfo,
         operateSpecStaff		:_operateSpecStaff,
         oldUserInfos			:_oldUserInfos,
+        reFileMainCustInfo      :_reFileMainCustInfo,
         verifyFlag  			: _verifyFlag,
         confidence 				: _confidence,
         certInfoKeys			:_certInfoKeys,

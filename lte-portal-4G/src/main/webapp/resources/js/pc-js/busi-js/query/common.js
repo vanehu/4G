@@ -161,13 +161,36 @@ query.common = (function() {
         }
     };
 
-
+    /**
+	 * 查询开关配置，返回开关具体配置的值，如果开关配置为ON，则返回"ON"；配置为OFF关闭则返回"OFF"，查询失败返回null
+	 */
+	var _queryPropertiesMapValue = function(mapName,key){
+		
+		var resultFlag = null;
+		
+		if(mapName == null || mapName == undefined || mapName == ""){
+			$.alert("提示","入参mapName为空");
+		} else if(key == null || key == undefined || key == ""){
+			$.alert("提示","入参key为空");
+		} else{
+			var response = $.callServiceAsJson(contextPath + "/properties/getMapValue", {"mapName": mapName,"key": key});
+			if (response.code == "0") {
+				resultFlag = response.data;
+			} else if (response.code == "1"){
+				$.alert("提示","Error: 配置查询失败");
+			}
+		}
+		
+		return resultFlag;
+	};
+	
 	return {
 		queryApConfig			: _queryApConfig,
 		queryPropertiesValue	: _queryPropertiesValue,
 		queryPropertiesStatus	: _queryPropertiesStatus,
 		checkOperateSpec		: _checkOperateSpec,
 		checkCameraDriverVersion: _checkCameraDriverVersion,
-		queryPropertiesObject   : _queryPropertiesObject
+		queryPropertiesObject   : _queryPropertiesObject,
+		queryPropertiesMapValue :_queryPropertiesMapValue
 	};
 })();
