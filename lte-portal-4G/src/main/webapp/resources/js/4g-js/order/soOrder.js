@@ -116,6 +116,7 @@ SoOrder = (function() {
 				if (OrderInfo.custCreateToken !== undefined || OrderInfo.custCreateToken !== "") {
 					OrderInfo.orderData.token = OrderInfo.custCreateToken;
 				}
+				cert.recordCertReaderCustInfos();//读卡记录失败继续受理
 				async = true;
 				$.callServiceAsJson(url,JSON.stringify(OrderInfo.orderData), {
 					"before":function(){
@@ -629,6 +630,12 @@ SoOrder = (function() {
 			};
 			OrderInfo.orderData.orderList.orderListInfo.custOrderAttrs.push(creditLineParam);
 		}
+		
+		//添加读卡信息
+//		if(ec.util.isArray(OrderInfo.certInfoKeys)){
+//			OrderInfo.orderData.orderList.orderListInfo.certInfoKeys = OrderInfo.certInfoKeys;
+//		}
+		
 		return true;
 	};
 	

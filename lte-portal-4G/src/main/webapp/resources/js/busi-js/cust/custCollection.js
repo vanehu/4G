@@ -59,7 +59,7 @@ cust.collection = (function(){
 	var _readUserCert = function() {
 		var servCode="实名信息采集单使用人";
 		$("#userTips").empty();
-		man = cert.readCert(servCode);
+		man = cert.readCert(CONST.CERT_READER_CUST_COLLECTION_USER);
 		if (man.resultFlag != 0){
 			if(man.resultFlag==-3){
 				//版本需要更新特殊处理 不需要提示errorMsg

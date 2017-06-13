@@ -5,6 +5,7 @@ import com.al.ecs.common.util.MDA;
 import com.al.ecs.common.util.PropertiesUtils;
 import com.al.ecs.common.web.ServletUtils;
 import com.al.ecs.exception.ResultConstant;
+import com.al.ecs.log.Log;
 import com.al.ecs.spring.controller.BaseController;
 import com.al.lte.portal.common.SysConstant;
 import com.al.lte.portal.model.Cert;
@@ -45,6 +46,8 @@ public class PortalPropertiesController extends BaseController {
     @Autowired
     PropertiesUtils propertiesUtils;
 
+    protected final Log log = Log.getLog(getClass());
+    
     /**
      * 用于获取配置文件中某一个配置项
      *
@@ -146,93 +149,16 @@ public class PortalPropertiesController extends BaseController {
     @RequestMapping(value = "/getCtrlSecret")
     public void getCtrlSecret(HttpServletRequest request, HttpServletResponse response) {
     	try {
-    		if("GET".equalsIgnoreCase(request.getMethod())){
-        		//do Get
-        		request.getRequestDispatcher("/properties/getCtrlSecretGet").forward(request, response);
-        	} else{
-        		//do Post
-        		request.getRequestDispatcher("/properties/getCtrlSecretPost").forward(request, response);
-        	}
+    		//读卡相关请求全部统一转移到CertController
+    		request.getRequestDispatcher("/cert/getCtrlSecret").forward(request, response);
 		} catch (ServletException e) {
+			log.error("转发cert/getCtrlSecret请求异常", e);
 			response.setStatus(500);
     		return;
 		} catch (IOException e) {
+			log.error("转发cert/getCtrlSecret请求异常", e);
 			response.setStatus(500);
     		return;
 		}
-    }
-    
-    @RequestMapping(value = "/getCtrlSecretPost", method = {RequestMethod.POST})
-    public void getCtrlSecretPost(@RequestBody Map<String, Object> param, HttpServletResponse response) {
-    	String versionId = null;
-    	String secretParam = null;
-
-    	if(MapUtils.isNotEmpty(param)){
-    		versionId = MapUtils.getString(param, "versionId");
-        	secretParam = MapUtils.getString(param, "param");
-        	
-    		if(StringUtils.isBlank(versionId) || StringUtils.isBlank(secretParam)){
-        		response.setStatus(403);
-        		return;
-        	}
-    	} else{
-    		response.setStatus(403);
-    		return;
-    	}
-    	
-    	this.doCtrlSecretRequest(versionId, secretParam, super.getRequest(), response);
-    }
-    
-    @RequestMapping(value = "/getCtrlSecretGet", method = {RequestMethod.GET})
-    public void getCtrlSecretGet(@RequestParam(value="param", required=false) String secretParam,
-    		@RequestParam(value="versionId", required= false) String versionId,
-    		@RequestParam(value="error", required = false) String error,
-    		HttpServletResponse response) {
-
-    	if("1".equals(error) || StringUtils.isBlank(versionId) || StringUtils.isBlank(secretParam)){
-    		response.setStatus(403);
-    		return;
-    	}
-    	
-    	this.doCtrlSecretRequest(versionId, secretParam, super.getRequest(), response);
-    	
-    }
-    
-    private void doCtrlSecretRequest(String versionId, String secretParam, 
-    		HttpServletRequest request, HttpServletResponse response){
-    	
-    	SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(request, SysConstant.SESSION_KEY_LOGIN_STAFF);
-    	PrintWriter printWriter = null;
-    	String returnStr = null;
-    	Cert cert = Cert.getInstance();
-    	cert.setSaveLog(true);
-    	cert.setSessionStaff(sessionStaff);
-
-        try {
-        	printWriter = response.getWriter();
-
-    		if(cert.requestFilter(request)){
-    			if(cert.isParamInvalid(versionId, secretParam)){
-    				response.setStatus(403);
-//            		returnStr = cert.getResponseXml("参数验证失败", 1);
-            	} else{
-            		cert.setVersionId(versionId);
-            		cert.setSerectParam(secretParam);
-            		returnStr = cert.getResponseXml();
-            	}
-        	} else {
-        		response.setStatus(403);
-//        		returnStr = cert.getResponseXml();
-        	}
-    	
-        	printWriter.print(returnStr);
-        } catch (Exception e) {
-        	log.error("getCtrlSecret服务异常，异常信息={}", e);
-        	returnStr = cert.getResponseXml("服务异常：" + e.getMessage(), -1);
-        	printWriter.print(returnStr);
-        } finally{
-        	printWriter.flush();
-        	printWriter.close();
-        }
     }
 }

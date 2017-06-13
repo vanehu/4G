@@ -2434,8 +2434,7 @@ order.cust = (function(){
 	};
 	//定位客户时读卡
 	var _readCert = function() {
-		var servCode="定位客户";
-		var man = cert.readCert(servCode);
+		var man = cert.readCert(CONST.CERT_READER_QUERY_CUST);
 		if (man.resultFlag != 0){
 			if(man.resultFlag==-3){
 				//版本需要更新特殊处理 不需要提示errorMsg
@@ -2465,8 +2464,7 @@ order.cust = (function(){
 		$('#td_custIdCard').data("flag", "1");
 		$inputFlag = $("<input type='hidden' id='createFlag' value='1'/>");
 		$("#createUserbtn").append($inputFlag);
-		var servCode="新建客户";
-		var man = cert.readCert(servCode);
+		var man = cert.readCert(CONST.CERT_READER_CREATE_CUST);
 		$("#createFlag").remove();
 		//var man=cert.test();
 		if (man.resultFlag != 0){
@@ -2503,8 +2501,7 @@ order.cust = (function(){
 
 	//用户鉴权时读卡
 	var _readCertWhenAuth = function() {
-		var servCode="用户鉴权";
-		var man = cert.readCert(servCode);
+		var man = cert.readCert(CONST.CERT_READER_AUTH_CUST);
 		if (man.resultFlag != 0){
 			if(man.resultFlag==-3){
 					//版本需要更新特殊处理 不需要提示errorMsg
@@ -2526,10 +2523,10 @@ order.cust = (function(){
 		var servCode="";
 		if (level == "1") {
 			parentId = "#auth3";//客户定位鉴权弹出窗口id
-			servCode="客户鉴权";
+			servCode=CONST.CERT_READER_AUTH_CUSTOMER;
 		} else if (level == "2") {
 			parentId = "#auth2";//二次业务鉴权弹出窗口id
-			servCode="二次业务鉴权";
+			servCode=CONST.CERT_READER_SECOND_BUSI_AUTH;
 		}
 		var man = cert.readCert(servCode);
 		if (man.resultFlag != 0){
@@ -3308,8 +3305,7 @@ order.cust = (function(){
 
 	// 填单页面经办人读卡
 	var _readCertWhenOrder = function() {
-		var servCode="经办人";
-		man = cert.readCert(servCode);
+		man = cert.readCert(CONST.CERT_READER_HANDLE_CUST);
 		if (man.resultFlag != 0){
 			if(man.resultFlag==-3){
 					//版本需要更新特殊处理 不需要提示errorMsg
@@ -3407,7 +3403,7 @@ order.cust = (function(){
 							};
 						};
 					};
-                    _getResponseResult(response);// 开始处理经办人信息
+                    _getResponseResult(response, identityNum);// 开始处理经办人信息
                     //采集单受理不拍照
         			if(!OrderInfo.isCltNewOrder()) {
                     	_showCameraView();// 加载拍照弹窗
@@ -3431,7 +3427,7 @@ order.cust = (function(){
 	};
 
 	//处理经办人查询结果
-	var _getResponseResult = function(response){
+	var _getResponseResult = function(response, identityNum){
 		//经办人信息填写模块信息保护优化
 		 _disableHandleCustInfos();
 		//判断新老用户封装用户信息
@@ -3454,6 +3450,10 @@ order.cust = (function(){
 					_fillupHandleCustInfos(custInfo);
 				}
 			}
+			//填充读卡信息
+			if (custInfo.identityCd == 1) {
+				OrderInfo.fillupPartyId2CertReaderCustInfos(identityNum, custInfo.custId);
+			};
 		} else{
 			//实名信息采集单受理自动新建
 			if(OrderInfo.isCltNewOrder()) {
