@@ -1010,6 +1010,11 @@ public class CustBmoImpl implements CustBmo {
      */
     public Map<String, Object> queryCert(Map<String, Object> dataBusMap, String optFlowNum, SessionStaff sessionStaff) throws Exception {
         Map<String, Object> retnMap = new HashMap<String, Object>();
+        String serverIp = "http://"+MapUtils.getString(dataBusMap, "serverIp");// 请求服务器ip
+		String decodeId = MapUtils.getString(dataBusMap, "decodeId");// 获取加密身份信息唯一id
+		String query = "{\"decodeId\":\"" + decodeId + "\"}";
+		dataBusMap.put("serverIp", serverIp);
+		dataBusMap.put("query", query);
         DataBus db = InterfaceClient.callCloudService(dataBusMap,
             PortalServiceCode.QUERY_CLOUD_CERT, optFlowNum, sessionStaff);
         Map<String, Object> returnMap = db.getReturnlmap();
