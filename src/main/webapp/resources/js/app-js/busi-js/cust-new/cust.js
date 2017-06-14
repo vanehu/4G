@@ -202,6 +202,15 @@ cust = (function(){
 			OrderInfo.jbr.mailAddressStr = OrderInfo.cust.mailAddressStr;
 			OrderInfo.jbr.identityPic = OrderInfo.cust.identityPic;
 			OrderInfo.jbr.identityNum = OrderInfo.cust.idCardNumber;
+			if(OrderInfo.actionFlag == 9){
+				OrderInfo.jbr.custId = cust.readIdCardUser.custId;
+				OrderInfo.jbr.partyName = cust.readIdCardUser.partyName;//经办人名称
+				OrderInfo.jbr.areaId = OrderInfo.staff.areaId;//经办人地区
+				OrderInfo.jbr.addressStr = cust.readIdCardUser.addressStr;//经办人地址
+				OrderInfo.jbr.identityCd = cust.readIdCardUser.identityCd;//证件类型
+				OrderInfo.jbr.identityNum = cust.readIdCardUser.idCardNumber;//证件号码
+				OrderInfo.jbr.identityPic = OrderInfo.cust.identityPic;
+			}
 			return;
 		}
 		OrderInfo.jbr.partyName = $('#orderAttrName').val();//经办人名称
@@ -603,10 +612,11 @@ cust = (function(){
 						state : "ADD",//状态
 						statusCd : "100001"//订单状态
 				};
-				if(ec.util.isObj(_boPartyContactInfoOld.contactId)){
-					data.boPartyContactInfo.push(_boPartyContactInfoOld);
-					data.boPartyContactInfo.push(_boPartyContactInfo);
-				}else if(ec.util.isObj($.trim($("#contactName").val()))){
+//				if(ec.util.isObj(_boPartyContactInfoOld.contactId)){
+//					data.boPartyContactInfo.push(_boPartyContactInfoOld);
+//					data.boPartyContactInfo.push(_boPartyContactInfo);
+//				}else 
+				if(ec.util.isObj($.trim($("#contactName").val()))){
 					data.boPartyContactInfo.push(_boPartyContactInfo);
 				}
 				SoOrder.submitOrder(data);
