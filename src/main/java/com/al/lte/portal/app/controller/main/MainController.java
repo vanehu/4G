@@ -305,32 +305,12 @@ public class MainController extends BaseController {
     				e.printStackTrace();
     			}
     			urlstr = url+"?msg="+msg;
-//    			HTTPUtil httpClient = new HTTPUtil();
-//    			String result = "";
-//    			String result = httpClient.doPost("http://123.150.141.129:8905/yxs_service/service/random?msg="+msg, msg);
-//    			try {
-//    				result = HTTPUtil.doPost(url+"?msg="+msg,msg);
-//    				if(result.length()>0){
-//        				JSONObject jsonResult = null;
-//            			jsonResult = JSONObject.fromObject(result);
-//            			if("0".equals((String)jsonResult.get("resultCode"))){
-//            				List prov_menulist = (List) jsonResult.get("menuList");
-//            				//图标先写死
-//            				for(int i=0;i<prov_menulist.size();i++){
-//            					Map prov_menu = (Map) prov_menulist.get(i);
-//            					prov_menu.put("iconPic", "&#xe6d7");
-//            				}
-//            				model.addAttribute("prov_menulist", prov_menulist);
-//            			}
-//            			System.out.println(JsonUtil.toString(jsonResult));
-//        			}
-//    			   } catch (Exception e) {
-//    				   model.addAttribute("queryMenu_error", "省份菜单权限查询失败");
-//    			} 
         	}else{
         		for(int i=0;i<cfg_menuList.size();i++){
 					Map prov_menu = (Map) cfg_menuList.get(i);
-					prov_menu.put("iconPic", "&#xe6d7");
+					if(prov_menu.get("iconPic")==null || prov_menu.get("iconPic").toString().length()<1){
+						prov_menu.put("iconPic", "&#xe6d7");
+					}
 				}
 				model.addAttribute("prov_menulist", cfg_menuList);
         	}
