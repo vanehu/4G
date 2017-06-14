@@ -775,9 +775,13 @@ SoOrder = (function() {
 			                mailAddressStr :toAddressStr,
 			                telNumber:$('#mobilePhone').val(),
 			                state : "ADD"
-			            }]
+			            }],
+			            boPartyContactInfo:[]
 					}
 			};
+			if(data.boPartyContactInfo != undefined || data.boPartyContactInfo != null){
+				createCust.boPartyContactInfo.push(data.boPartyContactInfo);
+			}
 			busiOrders.push(createCust);
 		}
 			OrderInfo.busitypeflag = 43;
