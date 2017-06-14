@@ -1916,7 +1916,7 @@ public class BillController extends BaseController {
 			// 用户属性（当号码类型为用户号码时填写） 0：固话 2：移动 3：宽带；（同上）
 			paramMap.put("destinationAttr", "2");
 			// 电话区号
-			paramMap.put("areaCode", "");
+			paramMap.put("areaCode", StringUtils.isEmpty(sessionStaff.getCurrentAreaCode())? sessionStaff.getAreaCode() : sessionStaff.getCurrentAreaCode());
 			// 查询业务类型 0：按帐户查询 1：按用户查询（同上）
 			paramMap.put("queryFlag", "0");
 			// 查询余额类型 0：表示查询对象拥有的余额帐本 1：表示查询对象可以使用的余额帐本 2：表示查询对象可以划拨到支付帐户的余额帐本 3：查询对象余额总视图：省通信余额+全国中心ABM支付余额
