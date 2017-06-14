@@ -1538,7 +1538,15 @@ order.cust = (function(){
 						_linkQueryOffer(this);
 					}
 					OrderInfo.roleCd = $(thisTr).find("td:eq(0)").attr('roleCd');
-					});
+					//#1476472初始化老用户使用人信息
+					var param = {
+						prodInstId : order.prodModify.choosedProdInfo.prodInstId,
+						acctNbr : order.prodModify.choosedProdInfo.accNbr,
+						prodSpecId : order.prodModify.choosedProdInfo.productId,
+						areaId : order.prodModify.choosedProdInfo.areaId
+					};
+					order.cust.initUserInfos(param);
+				});
 
 
 //				$("#plan2ndDiv tbody tr").each(function(){$(this).off("click").on("click",function(event){
@@ -4514,11 +4522,14 @@ order.cust = (function(){
 			}
 		}else{
 		  //判断老用户对应使用人，政企必有使用人，无使用人直接拦截，公众有使用人校验使用人，无使用人校验产权用户
-		  $.each(OrderInfo.oldUserInfos, function () {
-              if (this.prodId == prodId) {
-            	 userIdentityCd = this.identidiesTypeCd;
-              }
-           });
+			if(ec.util.isObj(OrderInfo.oldUserInfos)){
+				$.each(OrderInfo.oldUserInfos, function () {
+		              if (this.prodId == prodId) {
+		            	 userIdentityCd = this.identidiesTypeCd;
+		              }
+		         });
+			}
+		  
            if(ec.util.isObj(userIdentityCd)){
 	           //判断拆副卡变更套餐，公众用户，副卡变主卡，如果有使用人，会删除，需要校验产权人
            	   //主副卡互换，公众用户，副卡边主卡，如果有使用人，会删除，需要校验产权人，主卡还是校验产权人
