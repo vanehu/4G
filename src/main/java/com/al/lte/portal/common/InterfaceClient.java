@@ -957,10 +957,10 @@ public class InterfaceClient {
 		try {
 			// 调用http服务
 			log.debug("reqUrl:{}", reqUrl);
-			log.debug("serviceCode:{},paramString:{}", serviceCode, paramString);
+			log.debug("serviceCode:{},paramString:{}", serviceCode, paramString);			
 			post = new HttpPost(reqUrl);
 			if("pay".equals(sys)){//支付平台只支持xml
-			   post.addHeader("Content-Type", "application/xml;charset=gbk");
+			   post.addHeader("Content-Type", "application/xml;charset=UTF-8");
 			}else{
 			   post.addHeader("Content-Type", contentType);
 			}
@@ -2179,9 +2179,8 @@ public class InterfaceClient {
 	 */
 	public static DataBus callCloudService(Map<String, Object> param,String serviceCode,String optFlowNum, SessionStaff sessionStaff) throws InterfaceException {
 		DataBus db = new DataBus();
-		String serverIp = "http://"+MapUtils.getString(param, "serverIp");// 请求服务器ip
-		String decodeId = MapUtils.getString(param, "decodeId");// 获取加密身份信息唯一id
-		String query = "{\"decodeId\":\"" + decodeId + "\"}";
+		String serverIp = MapUtils.getString(param, "serverIp");// 请求服务器ip
+		String query =MapUtils.getString(param, "query");
 		String appId = MapUtils.getString(param, "appId");
 		String nonce = MapUtils.getString(param, "nonce");
 		String timestamp = MapUtils.getString(param, "timestamp");
