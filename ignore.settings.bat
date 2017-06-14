@@ -43,3 +43,11 @@ git update-index --assume-unchanged ./servicePack-LteCore/.settings/org.eclipse.
 git update-index --assume-unchanged ./servicePack-LteCore/.settings/org.eclipse.wst.common.component
 git update-index --assume-unchanged ./servicePack-LteCore/.settings/org.eclipse.wst.common.project.facet.core.xml
 git update-index --assume-unchanged ./servicePack-LteCore/.settings/org.eclipse.wst.validation.prefs
+git update-index --assume-unchanged ./ecs-common/.classpath
+git update-index --assume-unchanged ./ecsp-core/.classpath
+git update-index --assume-unchanged ./ecsp-parent/.classpath
+git update-index --assume-unchanged ./ecsp-web/.classpath
+git update-index --assume-unchanged ./lte-parent/.classpath
+git update-index --assume-unchanged ./lte-portal-4G/.classpath
+git update-index --assume-unchanged ./lte-service-client/.classpath
+git update-index --assume-unchanged ./servicePack-LteCore/.classpath

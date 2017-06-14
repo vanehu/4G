@@ -54,7 +54,8 @@ order.prodModify = (function(){
 			is3G :prodInfoChildTr.attr("is3G"),//3G/4G主销售品标识
 			areaCode :prodInfoTr.attr("zoneNumber"),//产品地区CODE
 			areaId : prodInfoTr.attr("areaId"),//产品地区id
-			prodBigClass : prodInfoTr.attr("prodBigClass")//产品大类
+			prodBigClass : prodInfoTr.attr("prodBigClass"),//产品大类
+			roleCd : prodInfoTr.attr("roleCd") //成员CD
 		};
 		order.prodModify.choosedProdInfo=_choosedProdInfo;
 		window.localStorage.setItem("order.prodModify.choosedProdInfo",JSON.stringify(order.prodModify.choosedProdInfo));

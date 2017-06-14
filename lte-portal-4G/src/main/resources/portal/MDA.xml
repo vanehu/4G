@@ -3251,5 +3251,41 @@
 			}
 		}
 		</const>
+        <const type="Map" name="ECS_RETURN_FILE" description="电渠加装副卡业务支持预装+返档，默认OFF">
+            {
+            'ECS_RETURN_FILE_854':'OFF',<!-- 西藏 -->
+            'ECS_RETURN_FILE_863':'OFF',<!-- 青海 -->
+            'ECS_RETURN_FILE_815':'OFF',<!-- 内蒙古 -->
+            'ECS_RETURN_FILE_823':'OFF',<!-- 黑龙江 -->
+            'ECS_RETURN_FILE_845':'OFF',<!-- 广西 -->
+            'ECS_RETURN_FILE_850':'OFF',<!-- 重庆 -->
+            'ECS_RETURN_FILE_861':'OFF',<!-- 陕西 -->
+            'ECS_RETURN_FILE_842':'OFF',<!-- 湖北 -->
+            'ECS_RETURN_FILE_835':'OFF',<!-- 福建 -->
+            'ECS_RETURN_FILE_832':'OFF',<!-- 江苏 -->
+            'ECS_RETURN_FILE_846':'OFF',<!-- 海南 -->
+            'ECS_RETURN_FILE_864':'OFF',<!-- 宁夏 -->
+            'ECS_RETURN_FILE_814':'OFF',<!-- 山西 -->
+            'ECS_RETURN_FILE_853':'OFF',<!-- 云南 -->
+            'ECS_RETURN_FILE_836':'OFF',<!-- 江西 -->
+            'ECS_RETURN_FILE_837':'OFF',<!-- 山东 -->
+            'ECS_RETURN_FILE_811':'OFF',<!-- 北京 -->
+            'ECS_RETURN_FILE_843':'OFF',<!-- 湖南 -->
+            'ECS_RETURN_FILE_851':'OFF',<!-- 四川 -->
+            'ECS_RETURN_FILE_844':'OFF',<!-- 广东 -->
+            'ECS_RETURN_FILE_831':'OFF',<!-- 上海 -->
+            'ECS_RETURN_FILE_812':'OFF',<!-- 天津 -->
+            'ECS_RETURN_FILE_813':'OFF',<!-- 河北 -->
+            'ECS_RETURN_FILE_841':'OFF',<!-- 河南 -->
+            'ECS_RETURN_FILE_821':'OFF',<!-- 辽宁 -->
+            'ECS_RETURN_FILE_822':'OFF',<!-- 吉林 -->
+            'ECS_RETURN_FILE_834':'OFF',<!-- 安徽 -->
+            'ECS_RETURN_FILE_833':'OFF',<!-- 浙江 -->
+            'ECS_RETURN_FILE_852':'OFF',<!-- 贵州 -->
+            'ECS_RETURN_FILE_862':'OFF',<!-- 甘肃 -->
+            'ECS_RETURN_FILE_865':'OFF',<!-- 新疆 -->
+            'ECS_RETURN_FILE_899':'OFF'<!-- 虚拟省 -->
+            }
+        </const>
 	</mda>
 </mdas>

@@ -1084,6 +1084,7 @@ order.cust = (function(){
             vipLevel: $(scope).attr("vipLevel"),
             vipLevelName: $(scope).attr("vipLevelName"),
             accNbr: $(scope).attr("accNbr"),
+            canrealname: $(scope).attr("canrealname"),
 			isCloud:isCloud,
             userIdentityCd: "",//使用人证件类型
             userIdentityName: "",//使用人证件名称
