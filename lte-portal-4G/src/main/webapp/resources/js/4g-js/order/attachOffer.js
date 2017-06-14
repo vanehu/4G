@@ -1048,8 +1048,8 @@ AttachOffer = (function() {
 						if(AttachOffer.openList.length>0){
 							for(var k=0;k<AttachOffer.openList.length;k++){
 								if(AttachOffer.openList[k].prodId == prodId){
-									for(var n=0;n<AttachOffer.openList[k].offerList.length;n++){
-										var opendServ = AttachOffer.openedServList[k].servList[n];
+									for(var n=0;n<AttachOffer.openList[k].specList.length;n++){
+										var opendServ = AttachOffer.openList[k].specList[n];
 										if(this.offerSpecId == opendServ.offerSpecId){
 											contentAppend = contentAppend + this.offerSpecName+"<br>";  
 										}
