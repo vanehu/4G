@@ -1639,7 +1639,7 @@ order.main = (function(){
 	var _readUserCertWhenOrder = function() {
 		var servCode="使用人";
 		$("#userTips").empty();
-		man = cert.readCert(servCode);
+		man = cert.readCert(CONST.CERT_READER_USER);
 		if (man.resultFlag != 0){
 			if(man.resultFlag==-3){
 				//版本需要更新特殊处理 不需要提示errorMsg
@@ -1993,6 +1993,10 @@ order.main = (function(){
 				$('#'+CONST.PROD_ATTR.PROD_USER+'_'+prodId).val($(scope).attr("custId")); 
 				$('#'+CONST.PROD_ATTR.PROD_USER+'_'+prodId+'_name').val($.trim($("#orderUserAttrName_"+prodId).val()));
 				isExists = true;
+				//填充读卡信息
+				if (identityCd == 1) {
+					OrderInfo.fillupPartyId2CertReaderCustInfos(identityNum, $(scope).attr("custId"));
+				};
 			}
 		}
 		 return isExists;

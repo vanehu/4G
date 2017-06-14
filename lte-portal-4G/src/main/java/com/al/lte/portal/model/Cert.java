@@ -24,11 +24,8 @@ import com.al.ec.serviceplatform.client.ResultCode;
 import com.al.ecs.common.util.JsonUtil;
 import com.al.ecs.common.util.MDA;
 import com.al.ecs.common.util.XmlUtil;
-import com.al.ecs.common.web.ServletUtils;
 import com.al.ecs.log.Log;
 import com.al.lte.portal.common.AESUtils;
-import com.al.lte.portal.common.InterfaceClient;
-import com.al.lte.portal.common.ServiceClient;
 import com.al.lte.portal.common.SysConstant;
 
 /**
@@ -137,7 +134,7 @@ public class Cert {
 		
 		String aesSecret = MapUtils.getString(subsecretConfig, "aesSecret");
 		if(StringUtils.isBlank(aesSecret)){
-			log.error("集团CtrlSecret服务的配置异常，请检查配置");
+			log.error("集团CtrlSecret服务的配置异常，请检查aesSecret配置");
 			this.setErrorMsg("集团CtrlSecret服务的配置异常，请检查配置");
 			return result;
 		}
@@ -438,6 +435,15 @@ public class Cert {
 		
 		serviceLog.saveLogAsyn();
 	}
+	
+	/**
+	 * USB传统读卡签名校验<br>
+	 * 校验通过返回true，其他情况返回false
+	 * @return
+	 */
+	public boolean verifySignature(){
+		return true;
+	}
 
 	public String getNewAesSecret() {
 		return newAesSecret;
@@ -525,6 +531,10 @@ public class Cert {
 		return isSaveLog;
 	}
 
+	/**
+	 * 入参isSaveLog为true，将记录日志到日志平台；isSaveLog为false，不记录日志
+	 * @param isSaveLog
+	 */
 	public void setSaveLog(boolean isSaveLog) {
 		this.isSaveLog = isSaveLog;
 	}

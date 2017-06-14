@@ -1217,5 +1217,8 @@ public final class PortalServiceCode {
     
     /**查询该员工拥有的权限集合*/
     public static final String QRY_STAFF_ALL_PRIVILEGES = "sys-queryPrivilegeInfos";
+    
+    /**读卡信息存库接口*/
+    public static final String RECORD_CERT_READER_CUST_INFOS = "biz-service/intf.soService/saveCertInfoFromIdentification";
 }
 

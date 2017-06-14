@@ -1739,8 +1739,10 @@ OrderInfo = (function() {
 			OrderInfo.virOlId				  = "";		//拍照上传虚拟购物车ID
 			OrderInfo.handleCust			  = {};		//针对经办人老客户缓存一些数据
 			OrderInfo.handleCustId 			  = "";		//经办人为老客户时的客户ID
+			OrderInfo.certInfoKeys			  = [];		//读卡客户信息列表
 			OrderInfo.boUserCustInfos 		  = [];		//使用人：客户信息节点
 			OrderInfo.ifCreateHandleCust	  = false;	//判断是否需要新建经办人
+			OrderInfo.certReaderCustInfos	  = [];		//读卡客户信息列表
 			OrderInfo.boUserCustIdentities	  = [];		//使用人：客户证件节点
 			OrderInfo.boUserPartyContactInfos = [];		//使用人：联系人节点
 			OrderInfo.bojbrCustInfos 		  = $.extend(true, {}, _bojbrCustInfos);		//经办人：客户信息节点
@@ -1790,6 +1792,54 @@ OrderInfo = (function() {
 		"phoneNumber"			:"",
 		"isAuditSucess"			:false,
 		"operateSpecStaffList"	:[]		
+	};
+	
+	//读卡信息
+	var _certInfoKeys = [];
+	//读卡信息
+	var _certReaderCustInfos = [];
+	//读卡信息
+	var _pushCertReaderCustInfos = function(certReaderCustInfo){
+		var ifReapted = false;
+		
+		if(ec.util.isArray(OrderInfo.certReaderCustInfos)){
+			$.each(OrderInfo.certReaderCustInfos, function(index, custInfo){
+				if(custInfo.certNumber == certReaderCustInfo.certNumber){
+					ifReapted = true;
+					return;
+				}
+			});
+		}
+		
+		if(!ifReapted){
+			OrderInfo.certReaderCustInfos.push(certReaderCustInfo);
+		}
+	};
+	//读卡信息
+	var _fillupPartyId2CertReaderCustInfos = function(identityNum, custId){
+		
+		if(!ec.util.isObj(identityNum)){
+			return;
+		}
+		
+		var custIdStr = new String(custId);
+		var identityNumStr = new String(identityNum);
+		
+		var length = identityNumStr.length;
+		var fromIndex = identityNumStr.indexOf("*");
+		var lastIndex = identityNumStr.lastIndexOf("*");
+		
+		var subIdentityNumStr = identityNumStr.substring(0, fromIndex) + identityNumStr.substring(lastIndex + 1, length);
+		
+		if(ec.util.isArray(OrderInfo.certReaderCustInfos)){
+			$.each(OrderInfo.certReaderCustInfos, function(){
+				var certNumberStr = new String(this.certNumber);
+				var subCertNumberStr = certNumberStr.substring(0, fromIndex) + certNumberStr.substring(lastIndex + 1, length);
+				if(subCertNumberStr == subIdentityNumStr){
+					this.partyId = custId;
+				}
+			});
+		}
 	};
 	
 	return {	
@@ -1926,8 +1976,11 @@ OrderInfo = (function() {
         preliminaryInfo         :_preliminaryInfo,
         operateSpecStaff		:_operateSpecStaff,
         oldUserInfos			:_oldUserInfos,
-        verifyFlag  : _verifyFlag,
-        confidence : _confidence
-        		
+        verifyFlag  			: _verifyFlag,
+        confidence 				: _confidence,
+        certInfoKeys			:_certInfoKeys,
+        certReaderCustInfos		:_certReaderCustInfos,
+        pushCertReaderCustInfos	:_pushCertReaderCustInfos,
+        fillupPartyId2CertReaderCustInfos:_fillupPartyId2CertReaderCustInfos
 	};
 })();
