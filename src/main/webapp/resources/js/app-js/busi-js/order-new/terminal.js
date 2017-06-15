@@ -40,7 +40,7 @@ mktRes.terminal = (function() {
             var terminalNum = $("#terminalNum").val();
             if (terminalNum == "") return;
             if(!AttachOffer.checkTerminalVal($.trim(terminalNum))){
-    			$.alert("提示信息","请输入合法的终端串码<br/>-必须14位十六进制或15位十进制数值,不限大小写");
+    			$.alert("提示信息","请输入合法的终端串码<br/>--必须为15位的纯数字组合或者14位的纯数字或字母（A-F）与数字的组合,不限大小写");
     			return;
     		}
             $.ecOverlay("<strong>终端校验中,请稍后....</strong>");
