@@ -780,7 +780,7 @@ SoOrder = (function() {
 					}
 			};
 			if(data.boPartyContactInfo != undefined || data.boPartyContactInfo != null){
-				createCust.boPartyContactInfo.push(data.boPartyContactInfo);
+				createCust.data.boPartyContactInfo.push(data.boPartyContactInfo[0]);
 			}
 			busiOrders.push(createCust);
 		}
