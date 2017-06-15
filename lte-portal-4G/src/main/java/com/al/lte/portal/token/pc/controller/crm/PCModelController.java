@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -248,13 +249,19 @@ public class PCModelController extends BaseController {
 			strb.append("?params="+ AESUtils.encryptToString(JsonUtil.toString(paramsMap), commonParamKey)).append("&accessToken="+accessToken);
 			modelUrl = (new StringBuilder(String.valueOf(modelUrl))).append(strb.toString()).toString();
 			log.error("回调地址："+modelUrl);
-			
 			String dbKeyWord = (String) request.getSession().getAttribute(SysConstant.SESSION_DATASOURCE_KEY);
 			String flag = MySimulateData.getInstance().getParam("UNIFYLOGIN",dbKeyWord,"UNIFYLOGIN");
 			int port = request.getLocalPort();
 			log.warn("服务端口[LocalPort]："+port);
 			// Host:crm.189.cn:83 Host:mo.crm.189.cn:93 Host:10.128.86.10:8101
-			String headerHost = request.getHeader(SysConstant.HTTP_REQUEST_HEADER_HOST);
+			String headerHost = "";
+			String headerHostPub = request.getHeader(SysConstant.HTTP_REQUEST_HEADER_HOST);
+			String headerHostServer = request.getHeader("X-Forwarded-Server");
+			if(headerHostServer !=null && headerHostPub !=null && "dmz".equals(headerHostServer)){
+				headerHost = headerHostPub;
+			}else{
+				headerHost = request.getHeader("Host");
+			}
 			String defaultDomain= propertiesUtils.getMessage("DEFAULTDOMAIN");
 			String domainNameONOFF = propertiesUtils.getMessage("DOMAINNAMEONOFF");
 			if(PortalUtils.isSecondLevelDomain(headerHost) && "ON".equals(domainNameONOFF)){

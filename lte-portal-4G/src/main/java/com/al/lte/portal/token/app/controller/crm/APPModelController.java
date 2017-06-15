@@ -192,7 +192,14 @@ public class APPModelController extends BaseController {
 			
 			//获取客户端编码redmine979958
 			HttpSession session = request.getSession();
-			session.setAttribute(SysConstant.SESSION_CLIENTCODE+"_APP", null);//清空session中该节点
+			session.removeAttribute(SysConstant.SESSION_CLIENTCODE+"_APP");//清空session中该节点
+			session.removeAttribute(SysConstant.SESSION_ISPHOTOGRAPH+"_APP");
+			session.removeAttribute(SysConstant.SESSION_HANDLECUSTNUMBER+"_APP");
+			session.removeAttribute(SysConstant.SESSION_HANDLEPROVCUSTAREAID+"_APP");
+
+			session.setAttribute(SysConstant.SESSION_ISPHOTOGRAPH+"_APP", null);//清空session中该节点
+			session.setAttribute(SysConstant.SESSION_HANDLECUSTNUMBER+"_APP", null);//清空session中该节点
+			session.setAttribute(SysConstant.SESSION_HANDLEPROVCUSTAREAID+"_APP", null);//清空session中该节点
 			List<Map<String, Object>> attrList = new ArrayList<Map<String, Object>>();
 			if(paramsMap.get("attrInfos")!=null || paramsMap.get("AttrInfos")!=null){
 				 Object obj = paramsMap.get("attrInfos");
@@ -209,9 +216,20 @@ public class APPModelController extends BaseController {
                 	 if(SysConstant.CLIENTCODE.equals(String.valueOf(mapAttr.get("attrSpecId"))) && !StringUtil.isEmptyStr(String.valueOf(mapAttr.get("attrValue")))){
                 		 session.setAttribute(SysConstant.SESSION_CLIENTCODE+"_APP", String.valueOf(mapAttr.get("attrValue")));
                 	 }else if(SysConstant.CLIENTCODE.equals(String.valueOf(mapAttr.get("AttrSpecId"))) && !StringUtil.isEmptyStr(String.valueOf(mapAttr.get("AttrValue")))){
-                		 session.setAttribute(SysConstant.SESSION_CLIENTCODE+"_APP", String.valueOf(mapAttr.get("AttrValue")));
+                		 session.setAttribute(SysConstant.SESSION_CLIENTCODE+"_APP", String.valueOf(mapAttr.get("AttrValue")));//兼顾省份传大写
+                	 }else if(SysConstant.ISPHOTOGRAPH.equals(String.valueOf(mapAttr.get("attrSpecId"))) && !StringUtil.isEmptyStr(String.valueOf(mapAttr.get("attrValue")))){
+                		 session.setAttribute(SysConstant.SESSION_ISPHOTOGRAPH+"_APP", String.valueOf(mapAttr.get("attrValue")));
+                	 }else if(SysConstant.ISPHOTOGRAPH.equals(String.valueOf(mapAttr.get("AttrSpecId"))) && !StringUtil.isEmptyStr(String.valueOf(mapAttr.get("AttrValue")))){
+                		 session.setAttribute(SysConstant.SESSION_ISPHOTOGRAPH+"_APP", String.valueOf(mapAttr.get("AttrValue")));
                 	 }
                  }
+			}
+			//获取经办人客户编码和地区
+			String handlecustNumber = String.valueOf(paramsMap.get("handlecustNumber"));
+			String handleprovCustAreaId = String.valueOf(paramsMap.get("handleprovCustAreaId"));
+			if(!StringUtil.isEmptyStr(handlecustNumber) && !StringUtil.isEmptyStr(handleprovCustAreaId)){
+				session.setAttribute(SysConstant.SESSION_HANDLECUSTNUMBER+"_APP", handlecustNumber);
+				session.setAttribute(SysConstant.SESSION_HANDLEPROVCUSTAREAID+"_APP", handleprovCustAreaId);
 			}
 			
 			String modelUrl = MySimulateData.getInstance().getParam("app."+actionFlag+".url",(String) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_DATASOURCE_KEY),"app."+actionFlag+".url");//业务跳转地址
@@ -232,7 +250,14 @@ public class APPModelController extends BaseController {
 			int port = request.getLocalPort();
 			log.warn("服务端口[LocalPort]："+port);
 			// Host:crm.189.cn:83 Host:mo.crm.189.cn:93 Host:10.128.86.10:8101
-			String headerHost = request.getHeader(SysConstant.HTTP_REQUEST_HEADER_HOST);
+			String headerHost = "";
+			String headerHostPub = request.getHeader(SysConstant.HTTP_REQUEST_HEADER_HOST);
+			String headerHostServer = request.getHeader("X-Forwarded-Server");
+			if(headerHostServer !=null && headerHostPub !=null && "dmz".equals(headerHostServer)){
+				headerHost = headerHostPub;
+			}else{
+				headerHost = request.getHeader("Host");
+			}
 			String defaultDomain= propertiesUtils.getMessage("DEFAULTDOMAIN");
 			String domainNameONOFF = propertiesUtils.getMessage("DOMAINNAMEONOFF");
 			if(PortalUtils.isSecondLevelDomain(headerHost) && "ON".equals(domainNameONOFF)){
