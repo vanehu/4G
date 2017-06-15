@@ -10,6 +10,6 @@ git config --global user.email "用户名@asiainfo.com"
 clone a new repository
 -----------------------
 ```
-git clone https://git.asiainfo.org/CRM-4G/4GPro-unifyLogin.git
+git clone https://git.asiainfo.org/CRM-4G/unifyLogin.git
 ```
 
