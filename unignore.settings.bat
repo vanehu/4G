@@ -1,4 +1,3 @@
-#!/bin/bash
 git update-index --no-assume-unchanged ./ecs-common/.settings/org.eclipse.core.resources.prefs
 git update-index --no-assume-unchanged ./ecs-common/.settings/org.eclipse.jdt.core.prefs
 git update-index --no-assume-unchanged ./ecs-common/.settings/org.eclipse.m2e.core.prefs
