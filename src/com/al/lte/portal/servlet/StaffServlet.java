@@ -47,7 +47,7 @@ public class StaffServlet extends HttpServlet {
 				httpconfig = "https";
 			}
 			String uri = req.getRequestURI().replaceAll("ltePortal", "provPortal");
-			String url = httpconfig + "://" + Config.getIpconfig(req) + ":"+ Port + uri;
+			String url = httpconfig + "://" + Config.getIpconfig(req,province) + ":"+ Port + uri;
 			try {
 				resp.sendRedirect(url);
 			} catch (IOException e) {
