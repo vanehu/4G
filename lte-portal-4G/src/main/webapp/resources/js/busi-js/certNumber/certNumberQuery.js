@@ -13,13 +13,20 @@ oneFive.certNumberQuery = (function () {
 
         //开始时间结束时间初始化
         $("#p_startDt").off("click").on("click", function () {
-            var nowDate = new Date();
-            var minDate = new Date(nowDate.getFullYear(), nowDate.getMonth() - 1, nowDate.getDate());
+            var maxDate = new Date(Date.parse($("#p_endDt").val()));
+            var minDate = new Date(maxDate.getFullYear(), maxDate.getMonth() - 1, maxDate.getDate());
             var strMinDate = DateUtil.Format('yyyy-MM-dd', minDate);
             $.calendar({minDate: strMinDate, maxDate: $("#p_endDt").val()});
         });
         $("#p_endDt").off("click").on("click", function () {
-            $.calendar({format: 'yyyy年MM月dd日 ', real: '#p_endDt', minDate: $("#p_startDt").val(), maxDate: '%y-%M-%d'});
+            var minDate = new Date(Date.parse($("#p_startDt").val()));
+            var nowDate = Date.now();
+            var maxDate = new Date(minDate.getFullYear(), minDate.getMonth() + 1, minDate.getDate());
+            var strMaxDate = DateUtil.Format('yyyy-MM-dd', maxDate);
+            if(maxDate>nowDate){
+                strMaxDate = DateUtil.Format('yyyy-MM-dd', nowDate);
+            }
+            $.calendar({minDate: $("#p_startDt").val(), maxDate: strMaxDate});
         });
 
         // 勾选流水号事件绑定
@@ -65,6 +72,12 @@ oneFive.certNumberQuery = (function () {
             curPage = pageIndex;
         }
         var param = {};
+
+        if(DateUtil.differDays(new Date(Date.parse($("#p_startDt").val())),new Date(Date.parse($("#p_endDt").val())))>31){
+            $.alert("提示","日期跨度太长，超过一个月，请重新选择");
+            return;
+        }
+
         if ($("#if_p_olNbr").attr("checked")) {
 
             var areaId = $("#p_areaId_val").val();

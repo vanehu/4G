@@ -13,18 +13,18 @@ oneFive.certNumberHandle = (function () {
 
         //开始时间结束时间初始化
         $("#p_startDt").off("click").on("click", function () {
-            var nowDate = new Date();
-            var minDate = new Date(nowDate.getFullYear(), nowDate.getMonth() - 1, nowDate.getDate());
+            var maxDate = new Date(Date.parse($("#p_endDt").val()));
+            var minDate = new Date(maxDate.getFullYear(), maxDate.getMonth() - 1, maxDate.getDate());
             var strMinDate = DateUtil.Format('yyyy-MM-dd', minDate);
             $.calendar({minDate: strMinDate, maxDate: $("#p_endDt").val()});
         });
         $("#p_endDt").off("click").on("click", function () {
-			var minDate = new Date(Date.parse($("#p_startDt").val()));
+            var minDate = new Date(Date.parse($("#p_startDt").val()));
             var nowDate = Date.now();
             var maxDate = new Date(minDate.getFullYear(), minDate.getMonth() + 1, minDate.getDate());
             var strMaxDate = DateUtil.Format('yyyy-MM-dd', maxDate);
-            if (maxDate > nowDate) {
-                strMaxDate = DateUtil.Format('yyyy-MM-dd', nowDate);
+            if(maxDate>nowDate){
+                 strMaxDate = DateUtil.Format('yyyy-MM-dd', nowDate);
             }
             $.calendar({format: 'yyyy年MM月dd日 ', real: '#p_endDt', minDate: $("#p_startDt").val(), maxDate: strMaxDate});
         });
