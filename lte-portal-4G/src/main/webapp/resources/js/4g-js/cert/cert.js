@@ -70,20 +70,21 @@ cert = (function() {
 	    }
 	};
 
-	var _createImage = function(deviceId) {
-	  try{
-			var deviceDomId = "device";
-		  	if(ec.util.isObj(deviceId)){
-		  		deviceDomId = deviceId;
-		  	}
-			var device = document.getElementById(deviceDomId);   
-			var dev=device.options[device.selectedIndex].value;
-			var image = capture.createImage(dev);
-			return JSON.parse(image);
-		}catch(e) {
-	    	return {"resultFlag": -1, "errorMsg": "拍照发生异常, 请下载安装新的驱动及控件，异常信息：" + e};
-	    }
-	};
+    var _createImage = function (deviceId, cp) {
+        try {
+            var deviceDomId = "device";
+            if (ec.util.isObj(deviceId)) {
+                deviceDomId = deviceId;
+            }
+            var device = document.getElementById(deviceDomId);
+            var dev = device.options[device.selectedIndex].value;
+            var cap = ec.util.isObj(cp) ? cp : capture;
+            var image = cap.createImage(dev);
+            return JSON.parse(image);
+        } catch (e) {
+            return {"resultFlag": -1, "errorMsg": "拍照发生异常, 请下载安装新的驱动及控件，异常信息：" + e};
+        }
+    };
 	
 	var _closeVideo = function() {
 		return capture.closeVideo();

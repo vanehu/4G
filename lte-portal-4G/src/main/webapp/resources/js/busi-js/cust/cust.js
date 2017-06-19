@@ -4877,6 +4877,7 @@ order.cust = (function(){
 
 	return {
 		form_valid_init : _form_valid_init,
+        showCameraView : _showCameraView,
 		showCustAuth : _showCustAuth,
 		showCustCreate : _showCustCreate,
 		custAuth : _custAuth,

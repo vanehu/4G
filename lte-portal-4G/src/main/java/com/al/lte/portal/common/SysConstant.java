@@ -874,11 +874,18 @@ public final class SysConstant {
     public static final String CHECKTYPE_LOCAL = "1";
 
     /**
-     * 一证五号号码处理状态，初始状态（100002）作废（100004）成功（301200）
+     * 一证五号号码处理状态，初始状态（100002）接单状态（201300）作废（100004）成功（301200）
      */
     public static final String ONE_FIVE_NUMBER_STATUS_INIT = "100002";
+    public static final String ONE_FIVE_NUMBER_STATUS_RECEIVE = "201300";
     public static final String ONE_FIVE_NUMBER_STATUS_VOID = "100004";
     public static final String ONE_FIVE_NUMBER_STATUS_SUCC = "301200";
+
+
+    /**
+     * 一证五卡默认图片文件类型
+     */
+    public static final String ONE_FIVE_FILE_TYPE_IMAGE = "image/jpeg";
 
     /**
      * 一证五卡文件类型标识
