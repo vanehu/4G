@@ -42,14 +42,14 @@
 
     .oneFiveBottomLeftDiv {
         width: 350px;
-        height: 120px;
+        height: 240px;
         float: left;
         border: 1px solid;
     }
 
     .oneFiveBottomRightDiv {
         width: 440px;
-        height: 120px;
+        height: 240px;
         float: left;
         border: 1px solid;
     }
@@ -57,7 +57,14 @@
     .oneFiveBottomRightDiv table thead tr th {
         font-size: 16px;
         font-weight: bold;
-        border-bottom: 2px solid #DDDDDD;
+        border-bottom: 2px solid black;
+        border-left: 1px solid black;
+        border-right: 1px solid black;
+        text-align: center;
+    }
+
+    .oneFiveBottomRightDiv table tbody tr td {
+        border: 1px solid black;
         text-align: center;
     }
 </style>
@@ -96,13 +103,15 @@
                                 <dt>证件姓名：</dt>
                                 <dd>
                                     <input id="certCustName" placeHolder="请输入证件姓名" class="inputWidth150px"
-                                           maxlength="10" type="text" <#if isHand??&&isHand==-1> disabled="disabled"</#if>/>
+                                           maxlength="10" type="text" <#if isHand??&&isHand==-1>
+                                           disabled="disabled"</#if>/>
                                     <label class="f_red">*</label>
                                 </dd>
                                 <dt>证件地址：</dt>
                                 <dd>
                                     <input id="certAddress" placeHolder="请输入证件地址" class="inputWidth315px"
-                                           maxlength="100" type="text" <#if isHand??&&isHand==-1> disabled="disabled"</#if>/>
+                                           maxlength="100" type="text" <#if isHand??&&isHand==-1>
+                                           disabled="disabled"</#if>/>
                                     <label class="f_red">*</label>
                                 </dd>
                             </dl>
@@ -143,7 +152,7 @@
 <div class="easyDialogdiv" style="display: none;width: 800px;height: 510px;" id="selectConfirmDivMain">
     <div class="easyDialogclose" id="selectConfirmDivClose" onclick="easyDialog.close()"></div>
     <div style="text-align: center;line-height: 34px;margin: 0;padding-left: 12px;"><h1
-        style="font-size: 16px;font-weight: bold;color: #71ab5a;">号码选择确认</h1></div>
+            style="font-size: 16px;font-weight: bold;color: #71ab5a;">号码选择确认</h1></div>
     <div class="phone_warp" style="height: 300px;overflow-y: auto;" id="selectCertNumberList">
         <table class="numberList" id="tab_selectConfirmList">
             <thead>
@@ -167,14 +176,14 @@
                 <td width="160" id="td_phoneNum">
                     <input type="text" placeholder="请准确填写联系方式" class="inputWidth183px"
                            maxlength="12" id="phoneNumber"><label
-                    class="f_red">*</label>
+                        class="f_red">*</label>
                 </td>
                 <td width="50" align="right" style="text-align: right;"> 流水号：</td>
                 <td width="170">
                     <label id="soNbr"></label>
                 </td>
                 <td width="60" align="right" style="text-align: right;"> 附件个数：</td>
-                <td width="20"><label id="fileNumbers"></label>
+                <td width="20"><label id="fileNumbers" style="color: red;"></label>
                 </td>
             </tr>
             </tbody>
@@ -182,17 +191,43 @@
         <div class="oneFiveBottomDiv">
             <div class="oneFiveBottomLeftDiv">
                 <div align="left" style="margin: 10px auto;">
-                    <form method="post" id="uploadAttachment" enctype="multipart/form-data">
+                    <form method="post" id="uploadAttachmentPdf" enctype="multipart/form-data">
                         <input type="file" style="width: 165px;height: 28px;font-size: 14px;" id="mFileUpload"
                                name="mFileUpload" accept="application/pdf,image/jpg"
-                               onchange="oneFive.certNumber.selectUploadFiles(this)" multiple/>
+                               onchange="oneFive.certNumber.selectUploadFiles(this,'回执')"/>
                         <input type="hidden" id="soNbr" name="soNbr"/>
-                        <a class="btna_o" onclick="oneFive.certNumber.uploadAttachment()"><span>上传附件</span></a>
+                        <input type="hidden" id="type" name="type"/>
+                        <a class="btna_o" onclick="oneFive.certNumber.uploadAttachment('Pdf')"><span>上传回执</span></a>
+                    </form>
+                    <form method="post" id="uploadAttachmentFront" enctype="multipart/form-data">
+                        <input type="file" style="width: 165px;height: 28px;font-size: 14px;" id="mFileUpload"
+                               name="mFileUpload" accept="image/jpg"
+                               onchange="oneFive.certNumber.selectUploadFiles(this,'正面')"/>
+                        <input type="hidden" id="soNbr" name="soNbr"/>
+                        <input type="hidden" id="type" name="type"/>
+                        <a class="btna_o" onclick="oneFive.certNumber.uploadAttachment('Front')"><span>上传正面照</span></a>
+                    </form>
+                    <form method="post" id="uploadAttachmentBack" enctype="multipart/form-data">
+                        <input type="file" style="width: 165px;height: 28px;font-size: 14px;" id="mFileUpload"
+                               name="mFileUpload" accept="image/jpg"
+                               onchange="oneFive.certNumber.selectUploadFiles(this,'反面')"/>
+                        <input type="hidden" id="soNbr" name="soNbr"/>
+                        <input type="hidden" id="type" name="type"/>
+                        <a class="btna_o" onclick="oneFive.certNumber.uploadAttachment('Back')"><span>上传反面照</span></a>
+                    </form>
+                    <form method="post" id="uploadAttachmentOther" enctype="multipart/form-data">
+                        <input type="file" style="width: 165px;height: 28px;font-size: 14px;" id="mFileUpload"
+                               name="mFileUpload" accept="image/jpg"
+                               onchange="oneFive.certNumber.selectUploadFiles(this,'其它')" multiple/>
+                        <input type="hidden" id="soNbr" name="soNbr"/>
+                        <input type="hidden" id="type" name="type"/>
+                        <a class="btna_o" onclick="oneFive.certNumber.uploadAttachment('Other')"><span>上传其它</span></a>
                     </form>
                 </div>
                 <!--操作工具条-->
                 <div align="left" style="margin: 10px auto;">
-                    <a style=" margin-left:30px;" class="btna_o" onclick="oneFive.certNumber.oneCertFiveNumberPrint()"><span>打印</span></a>
+                    <a style=" margin-left:30px;" class="btna_o"
+                       onclick="oneFive.certNumber.oneCertFiveNumberPrint()"><span>打印</span></a>
                     <a style=" margin-left:30px;" class="btna_o"
                        onclick="oneFive.certNumber.orderSubmit()"><span>订单提交</span></a>
                 </div>
@@ -201,8 +236,9 @@
                 <table id="tab_oneFiveFileUpload">
                     <thead>
                     <tr>
-                        <th width="400">文件名</th>
+                        <th width="345">文件名</th>
                         <th width="40">大小</th>
+                        <th width="40">类型</th>
                     </tr>
                     </thead>
                     <tbody>

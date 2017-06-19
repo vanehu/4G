@@ -28,10 +28,14 @@ oneFive.certNumberQuery = (function () {
                 $("#p_olNbr").css("background-color", "white").attr("disabled", false);
                 $("#p_startDt").css("background-color", "#E8E8E8").attr("disabled", true);
                 $("#p_endDt").css("background-color", "#E8E8E8").attr("disabled", true);
+                $("#p_telNumber").css("background-color", "#E8E8E8").attr("disabled", true);
+                $("#p_certNumber").css("background-color", "#E8E8E8").attr("disabled", true);
             } else {
                 $("#p_olNbr").css("background-color", "#E8E8E8").attr("disabled", true);
                 $("#p_startDt").css("background-color", "white").attr("disabled", false);
                 $("#p_endDt").css("background-color", "white").attr("disabled", false);
+                $("#p_telNumber").css("background-color", "white").attr("disabled", false);
+                $("#p_certNumber").css("background-color", "white").attr("disabled", false);
             }
         });
 
@@ -84,6 +88,8 @@ oneFive.certNumberQuery = (function () {
             };
         } else {
             var areaId = $("#p_areaId").val();
+            var telNumber = $("#p_telNumber").val();
+            var certNumber = $("#p_certNumber").val();
             if (!ec.util.isObj(areaId)) {
                 $.alert("提示", "请选择【地区】再查询");
                 return;
@@ -94,6 +100,17 @@ oneFive.certNumberQuery = (function () {
                 $.alert("提示", "请选择受理时间");
                 return;
             }
+
+            if (ec.util.isObj(telNumber) && (!/^1\d{10}$/.test(telNumber))) {
+                $.alert("提示", "请输入正确的手机号！");
+                return;
+            }
+
+            if (ec.util.isObj(certNumber) && certNumber != $.ketchup.helpers.isGB116431999.apply(this, [certNumber])) {
+                $.alert("提示", "请输入正确的身份证号！");
+                return;
+            }
+
 
             param = {
                 "collectType": "2",
