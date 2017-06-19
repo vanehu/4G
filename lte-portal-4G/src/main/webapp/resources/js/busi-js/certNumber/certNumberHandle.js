@@ -23,8 +23,8 @@ oneFive.certNumberHandle = (function () {
             var nowDate = Date.now();
             var maxDate = new Date(minDate.getFullYear(), minDate.getMonth() + 1, minDate.getDate());
             var strMaxDate = DateUtil.Format('yyyy-MM-dd', maxDate);
-            if(maxDate>nowDate){
-                 strMaxDate = DateUtil.Format('yyyy-MM-dd', nowDate);
+            if (maxDate > nowDate) {
+                strMaxDate = DateUtil.Format('yyyy-MM-dd', nowDate);
             }
             $.calendar({format: 'yyyy年MM月dd日 ', real: '#p_endDt', minDate: $("#p_startDt").val(), maxDate: strMaxDate});
         });
@@ -35,12 +35,14 @@ oneFive.certNumberHandle = (function () {
                 $("#p_olNbr").css("background-color", "white").attr("disabled", false);
                 $("#p_startDt").css("background-color", "#E8E8E8").attr("disabled", true);
                 $("#p_endDt").css("background-color", "#E8E8E8").attr("disabled", true);
-                $("#p_channelId").css("background-color", "#E8E8E8").attr("disabled", true);
+                $("#p_telNumber").css("background-color", "#E8E8E8").attr("disabled", true);
+                $("#p_certNumber").css("background-color", "#E8E8E8").attr("disabled", true);
             } else {
                 $("#p_olNbr").css("background-color", "#E8E8E8").attr("disabled", true);
                 $("#p_startDt").css("background-color", "white").attr("disabled", false);
                 $("#p_endDt").css("background-color", "white").attr("disabled", false);
-                $("#p_channelId").css("background-color", "white").attr("disabled", false);
+                $("#p_telNumber").css("background-color", "white").attr("disabled", false);
+                $("#p_certNumber").css("background-color", "white").attr("disabled", false);
             }
         });
 
@@ -71,8 +73,8 @@ oneFive.certNumberHandle = (function () {
         }
         var param = {};
 
-        if(DateUtil.differDays(new Date(Date.parse($("#p_startDt").val())),new Date(Date.parse($("#p_endDt").val())))>31){
-            $.alert("提示","日期跨度太长，超过一个月，请重新选择");
+        if (DateUtil.differDays(new Date(Date.parse($("#p_startDt").val())), new Date(Date.parse($("#p_endDt").val()))) > 31) {
+            $.alert("提示", "日期跨度太长，超过一个月，请重新选择");
             return;
         }
 
@@ -98,8 +100,9 @@ oneFive.certNumberHandle = (function () {
                 "pageSize": 10
             };
         } else {
-            var channelId = $("#p_channelId").val();
             var areaId = $("#p_areaId").val();
+            var telNumber = $("#p_telNumber").val();
+            var certNumber = $("#p_certNumber").val();
             if (!ec.util.isObj(areaId)) {
                 $.alert("提示", "请选择【地区】再查询");
                 return;
@@ -111,6 +114,16 @@ oneFive.certNumberHandle = (function () {
                 return;
             }
 
+            if (ec.util.isObj(telNumber) && (!/^1\d{10}$/.test(telNumber))) {
+                $.alert("提示", "请输入正确的手机号！");
+                return;
+            }
+
+            if (ec.util.isObj(certNumber) && certNumber != $.ketchup.helpers.isGB116431999.apply(this, [certNumber])) {
+                $.alert("提示", "请输入正确的身份证号！");
+                return;
+            }
+
             param = {
                 "collectType": "2",
                 "areaId": areaId,
@@ -119,14 +132,18 @@ oneFive.certNumberHandle = (function () {
                 "nowPage": curPage,
                 "pageSize": 10
             };
-            if (ec.util.isObj(channelId)) {
-                param.channelId = channelId;
-            }
         }
         param.statusCd = CONST.CERT_NUMBER_ORDER_STATUS.INIT;
         param.ifFilterAreaId = "N";
         param.ifFilterItem = "Y";
-            $.callServiceAsHtmlGet(contextPath + "/certNumber/queryOneFiveOrderList", param, {
+        param.ifFilterOwnAccNbr = "Y";//是否过滤其他人接单工单选项默认Y
+        if (ec.util.isObj(telNumber)) {
+            param.telNumber = telNumber;
+        }
+        if (ec.util.isObj(certNumber)) {
+            param.certNumber = certNumber;
+        }
+        $.callServiceAsHtmlGet(contextPath + "/certNumber/queryOneFiveOrderList", param, {
             "before": function () {
                 $.ecOverlay("一证五卡订单查询中，请稍等...");
             },
@@ -214,9 +231,27 @@ oneFive.certNumberHandle = (function () {
                         $.each(files, function () {
                             if (this.picFlag == "F") {
                                 src = "data:application/pdf;base64," + this.orderInfo;
+                                $("#attachmentInfos").append($("<div>").append($("<h5 class='s_title'>").append("回执内容")));
                                 $("#attachmentInfos").append($("<div>").append("<embed style='width: 800px;height: 600px;' src='" + src + "'/>"));
                             } else if (this.picFlag == "E") {
                                 src = "data:application/jpeg;base64," + this.orderInfo;
+                                $("#attachmentInfos").append($("<div>").append($("<h5 class='s_title'>").append("回执内容")));
+                                $("#attachmentInfos").append($("<div>").append("<img style='width: auto;height: auto;'src='" + src + "'/>"));
+                            }else if(this.picFlag=="E1") {
+                                src = "data:application/jpeg;base64," + this.orderInfo;
+                                $("#attachmentInfos").append($("<div>").append($("<h5 class='s_title'>").append("正面照")));
+                                $("#attachmentInfos").append($("<div>").append("<img style='width: auto;height: auto;'src='" + src + "'/>"));
+                            }else if(this.picFlag=="E2") {
+                                src = "data:application/jpeg;base64," + this.orderInfo;
+                                $("#attachmentInfos").append($("<div>").append($("<h5 class='s_title'>").append("反面照")));
+                                $("#attachmentInfos").append($("<div>").append("<img style='width: auto;height: auto;'src='" + src + "'/>"));
+                            }else if(this.picFlag=="E3") {
+                                src = "data:application/jpeg;base64," + this.orderInfo;
+                                $("#attachmentInfos").append($("<div>").append($("<h5 class='s_title'>").append("经办人")));
+                                $("#attachmentInfos").append($("<div>").append("<img style='width: auto;height: auto;'src='" + src + "'/>"));
+                            }else if(this.picFlag=="E4") {
+                                src = "data:application/jpeg;base64," + this.orderInfo;
+                                $("#attachmentInfos").append($("<div>").append($("<h5 class='s_title'>").append("其它")));
                                 $("#attachmentInfos").append($("<div>").append("<img style='width: auto;height: auto;'src='" + src + "'/>"));
                             }
                         });
@@ -282,12 +317,21 @@ oneFive.certNumberHandle = (function () {
      * @private
      */
     var _orderCancel = function (orderId, areaId, number) {
-        var remarks = $.trim($("#order_remark_" + number).val());
-        if (!ec.util.isObj(remarks)) {
-            $.alert("提示", "取消号码必须输入取消原因！");
-            return;
-        }
-        _orderSubmit(orderId, areaId, number, CONST.CERT_NUMBER_ORDER_STATUS.CANCEL, remarks);
+        easyDialog.open({
+            container: 'handle_cancel_main'
+        });
+        $("#handle_cancel_form").off().on("formIsValid", function () {
+            easyDialog.close();
+            _orderSubmit(orderId, areaId, number, CONST.CERT_NUMBER_ORDER_STATUS.CANCEL, $("#handle_cancel_txt").val());
+        }).ketchup({bindElement: "handle_cancel_bt"});
+        $("#handle_cancel_close").off("click").on("click", function () {
+            easyDialog.close();
+            $("#handle_cancel_txt").val("");
+        });
+        $("#handle_cancel_no").off("click").on("click", function () {
+            easyDialog.close();
+            $("#handle_cancel_txt").val("");
+        });
     };
 
     /**

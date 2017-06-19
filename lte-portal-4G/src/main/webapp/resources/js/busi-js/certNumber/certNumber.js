@@ -48,6 +48,33 @@ oneFive.certNumber = (function () {
     var isHand = "-1";
 
     /**
+     * 类型常量定义
+     * @type {{Pdf: string, Front: string, Back: string, Other: string}}
+     */
+    var TYPES = {
+        "Pdf": "回执",
+        "Front": "正面",
+        "Back": "反面",
+        "Jbr": "经办",
+        "Other": "其它"
+    };
+
+    /**
+     * 类型常量定义
+     * @type {number}
+     * 各标识位含义，从右往左，依次为：回执上传，正面照上传，反面照上传，经办人照，其它
+     * 默认回执上传，正面照上传，反面照上传三个必须上传，标识符如下
+     * 0B00000111（二进制表示）
+     */
+    var uploadFlagsBytes = 7;
+
+    /**
+     * 当前上传标识位
+     * @type {number}
+     */
+    var uploadFlag = 0;
+
+    /**
      * 初始化代码
      * @private
      */
@@ -249,12 +276,12 @@ oneFive.certNumber = (function () {
         var custName = $("#certCustName").val();
         var address = $("#certAddress").val();
 
-        if(!ec.util.isObj(custName)) {
+        if (!ec.util.isObj(custName)) {
             $.alert("提示", "请输入证件姓名！");
             return;
         }
 
-        if(!ec.util.isObj(address)) {
+        if (!ec.util.isObj(address)) {
             $.alert("提示", "请输入证件地址信息！");
             return;
         }
@@ -275,7 +302,14 @@ oneFive.certNumber = (function () {
             easyDialog.open({
                 container: "selectConfirmDivMain"
             });
-            $("#uploadAttachment").find("#soNbr").val(_getOneFiveSoNbr());
+            $("#uploadAttachmentPdf").find("#soNbr").val(_getOneFiveSoNbr());
+            $("#uploadAttachmentPdf").find("#type").val("Pdf");
+            $("#uploadAttachmentFront").find("#soNbr").val(_getOneFiveSoNbr());
+            $("#uploadAttachmentFront").find("#type").val("Front");
+            $("#uploadAttachmentBack").find("#soNbr").val(_getOneFiveSoNbr());
+            $("#uploadAttachmentBack").find("#type").val("Back");
+            $("#uploadAttachmentOther").find("#soNbr").val(_getOneFiveSoNbr());
+            $("#uploadAttachmentOther").find("#type").val("Other");
             $("#tab_custInfoList").find("#soNbr").text(soNbr);
         } else {
             $.alert("提示", "未选中任何号码！");
@@ -302,7 +336,7 @@ oneFive.certNumber = (function () {
         disabledCustInfo();
 
         var custInfo = {
-            "custName": isHand==-1?idCardInfo.partyName:$("#certCustName").val(),
+            "custName": isHand == -1 ? idCardInfo.partyName : $("#certCustName").val(),
             "phoneNumber": phoneNumber,
             "certType": certType,
             "certNumber": certNumber
@@ -354,15 +388,14 @@ oneFive.certNumber = (function () {
      * @param uploadFiles
      * @private
      */
-    var _selectUploadFiles = function (uploadFiles) {
+    var _selectUploadFiles = function (uploadFiles, type) {
         var $tbody = $("#tab_oneFiveFileUpload").find("tbody");
-        $tbody.empty();
         if (isLowIE10()) {
-            var tmpTR = $("<tr>").append($("<td>").append(uploadFiles.value)).append($("<td>").append("未知"));
+            var tmpTR = $("<tr>").append($("<td>").append(uploadFiles.value)).append($("<td>").append("未知")).append($("<td>").append(type));
             $tbody.append(tmpTR);
         } else {
             $.each(uploadFiles.files, function () {
-                var tmpTR = $("<tr>").append($("<td>").append(this.name)).append($("<td>").append((this.size / 1024).toFixed(2) + "KB"));
+                var tmpTR = $("<tr>").append($("<td>").append(this.name)).append($("<td>").append((this.size / 1024).toFixed(2) + "KB")).append($("<td>").append(type));
                 $tbody.append(tmpTR);
             });
         }
@@ -385,17 +418,13 @@ oneFive.certNumber = (function () {
      * 上传附件
      * @private
      */
-    var _uploadAttachment = function () {
-        var files = $("#mFileUpload").get(0).files;
+    var _uploadAttachment = function (id) {
+        var files = $("#uploadAttachment" + id).find("#mFileUpload").get(0).files;
         var isTooLarge = false;
         var isZero = false;
         if (isLowIE10()) {
-            if (!ec.util.isObj($("#mFileUpload").val())) {
+            if (!ec.util.isObj($("#uploadAttachment" + id).find("#mFileUpload").val())) {
                 $.alert("提示", "请先选择要上传的附件（IE10以下只能单选）！");
-                return;
-            }
-            if (fileNumbers > 4) {
-                $.alert("提示", "最多只能上传5个附件");
                 return;
             }
         } else if (ec.util.isObj(files) && files.length > 0) {
@@ -420,7 +449,8 @@ oneFive.certNumber = (function () {
                 return;
             }
         } else {
-            $.alert("提示", "请先选择要上传的附件（支持多选）！");
+            $.alert("提示", "请先选择要上传的附件（上传其它可支持多选[IE10+]）！");
+            return;
         }
 
         var options = {
@@ -434,12 +464,12 @@ oneFive.certNumber = (function () {
                 $.unecOverlay();
                 if (response.code == 0) {
                     $.alert("提示", "附件上传完成！");
-                    isUploadAttachment = true;
-                    $("#tab_custInfoList").find("#fileNumbers").text(isLowIE10() ? ++fileNumbers : files.length);
-                    resetAttachment();
+                    updateUploadFlags(id);
+                    $("#tab_custInfoList").find("#fileNumbers").text(isLowIE10() ? ++fileNumbers : (fileNumbers += files.length));
+                    resetAttachment(id);
                 } else if (response.code == -2) {
                     $.alert("提示", getErrorListStr(response.data.errorList));
-                    resetAttachment();
+                    resetAttachment(id);
                 } else {
                     $.alertM(response.data);
                 }
@@ -449,7 +479,7 @@ oneFive.certNumber = (function () {
                 $.alert("提示", "请求可能发生异常，请稍后再试！");
             }
         };
-        $('#uploadAttachment').ajaxSubmit(options);
+        $('#uploadAttachment' + id).ajaxSubmit(options);
 
     };
 
@@ -458,6 +488,16 @@ oneFive.certNumber = (function () {
      * @private
      */
     var _orderSubmit = function () {
+        var phoneNumber = $("#tab_custInfoList").find("#phoneNumber").val();
+
+        if (!ec.util.isObj(phoneNumber)) {
+            $.alert("提示", "请输入客户联系方式！");
+            return;
+        } else if (!/^1\d{10}$/.test(phoneNumber)) {
+            $.alert("提示", "请输入正确的手机号！");
+            return;
+        }
+
         if (isUploadAttachment) {
 
             var orderNum = _getOneFiveSoNbr();//本次流水号
@@ -474,6 +514,7 @@ oneFive.certNumber = (function () {
                 "channelId": OrderInfo.staff.channelId,
                 "staffId": OrderInfo.staff.staffId,
                 "orderNum": orderNum,
+                "telNbr": phoneNumber,
                 "transactionId": orderNum
             };
 
@@ -483,19 +524,21 @@ oneFive.certNumber = (function () {
             var seq = 1;
             $.each(selectList, function () {
                 var number = {
-                    "addressStr": isHand==-1?idCardInfo.certAddress:$("#certAddress").val(),
-                    "certNumber": isHand==-1?idCardInfo.certNumber:$("#certNumber").val(),
+                    "addressStr": isHand == -1 ? idCardInfo.certAddress : $("#certAddress").val(),
+                    "certNumber": isHand == -1 ? idCardInfo.certNumber : $("#certNumber").val(),
                     "certType": "1",
                     "certTypeName": "身份证",
                     "contactAddress": "",
-                    "custName": isHand==-1?idCardInfo.partyName:$("#certCustName").val(),
+                    "custName": isHand == -1 ? idCardInfo.partyName : $("#certCustName").val(),
                     "lanId": $(this).find("td:eq(2)").text(),
                     "maxQuantity": 0,
                     "partyRoleCd": "0",//产权人
                     "partyTypeCd": "1",//个人
                     "remarks": "",
                     "seq": seq++,
-                    "telNumber": $(this).find("td:eq(4)").text()
+                    "telNumber": $(this).find("td:eq(4)").text(),
+                    "channelId": OrderInfo.staff.channelId,
+                    "staffId": OrderInfo.staff.staffId
                 };
                 custInfos.push(number);
             });
@@ -548,9 +591,22 @@ oneFive.certNumber = (function () {
      * 重置附件
      * @private
      */
-    function resetAttachment() {
-        $("#uploadAttachment").get(0).reset();
-        $("#tab_oneFiveFileUpload").find("tbody").empty();
+    function resetAttachment(id) {
+        if (ec.util.isObj(id)) {
+            $("#uploadAttachment" + id).get(0).reset();
+            var $trs = $("#tab_oneFiveFileUpload").find("tbody").find("tr");
+            $.each($trs, function () {
+                if (TYPES[id] == $(this).find("td:eq(2)").text()) {
+                    this.remove();
+                }
+            })
+        } else {
+            $("#uploadAttachmentPdf").get(0).reset();
+            $("#uploadAttachmentFront").get(0).reset();
+            $("#uploadAttachmentBack").get(0).reset();
+            $("#uploadAttachmentOther").get(0).reset();
+            $("#tab_oneFiveFileUpload").find("tbody").empty();
+        }
     }
 
     /**
@@ -586,6 +642,28 @@ oneFive.certNumber = (function () {
         var phoneNumber = $("#tab_custInfoList").find("#phoneNumber");
         phoneNumber.val("");
         phoneNumber.removeAttr("disabled");
+    }
+
+    /**
+     * 更新上传标识位
+     */
+    function updateUploadFlags(id) {
+        var flagNum = 0;
+        if ("Pdf" == id) {
+            flagNum = 1;
+        } else if ("Front" == id) {
+            flagNum = 2;
+        } else if ("Back" == id) {
+            flagNum = 4;
+        } else if ("Jbr" == id) {
+            flagNum = 8;
+        } else {
+            flagNum = 16;
+        }
+        uploadFlag = uploadFlag | flagNum;
+        if (uploadFlagsBytes == (uploadFlag & uploadFlagsBytes)) {
+            isUploadAttachment = true;
+        }
     }
 
     return {

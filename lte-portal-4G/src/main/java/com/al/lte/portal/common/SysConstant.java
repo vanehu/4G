@@ -884,9 +884,32 @@ public final class SysConstant {
      * 一证五卡文件类型标识
      * 跨省一证五号图片：E
      * 跨省一证五号pdf：F
+     * 跨省一五身份证正面照：E1
+     * 跨省一五身份证背面照：E2
+     * 跨省一五经办人照片：E3
+     * 跨省一五其他：E4
      */
     public static final String ONE_FIVE_FILE_TYPE_JPG = "E";
     public static final String ONE_FIVE_FILE_TYPE_PDF = "F";
+    public static final String ONE_FIVE_FILE_TYPE_JPG_FRONT = "E1";
+    public static final String ONE_FIVE_FILE_TYPE_JPG_BACK = "E2";
+    public static final String ONE_FIVE_FILE_TYPE_JPG_JBR = "E3";
+    public static final String ONE_FIVE_FILE_TYPE_JPG_OTHER = "E4";
+
+
+    /**
+     * 跨省一证五号附件类型定义
+     * 跨省一证五号pdf：Pdf
+     * 跨省一五身份证正面照：Front
+     * 跨省一五身份证背面照：Back
+     * 跨省一五经办人照片：Jbr
+     * 跨省一五其他：Other
+     */
+    public static final String ONE_FIVE_FILE_TYPE_Pdf = "Pdf";
+    public static final String ONE_FIVE_FILE_TYPE_Front = "Front";
+    public static final String ONE_FIVE_FILE_TYPE_Back = "Back";
+    public static final String ONE_FIVE_FILE_TYPE_Jbr = "Jbr";
+    public static final String ONE_FIVE_FILE_TYPE_Other = "Other";
 
     /**
      * 图片批量上传,srcFlag（来源标识）取值定义

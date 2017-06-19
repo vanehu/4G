@@ -610,6 +610,7 @@ CONST = (function(){
      */
     var _CERT_NUMBER_ORDER_STATUS = {
         "INIT":"100002",
+        "HANDLE":"201300",
         "CANCEL":"100004",
         "SUCCESS":"301200"
     };
