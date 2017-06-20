@@ -913,4 +913,6 @@ public final class SysConstant {
     
     /** Session Key　signature */
     public static final String SESSION_KEY_SIGN_ATURE = "signature_session_key";
+    
+    public static final String SESSION_KEY_APP_VERSION="_session_app_version";
 }
