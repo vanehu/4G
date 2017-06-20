@@ -671,5 +671,8 @@ public class MDA {
      */
     public static final String FACE_VERIFY_PARAMS_SECRET =new String("");
   
-
+	/**
+	 * 营销推荐接触反馈结果
+	 */
+	public static final List<Map<String,String>> MKT_CONTACT_RESULT = new ArrayList<Map<String,String>>();
 }

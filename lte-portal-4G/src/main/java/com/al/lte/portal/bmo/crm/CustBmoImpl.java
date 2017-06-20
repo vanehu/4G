@@ -1015,5 +1015,86 @@ public class CustBmoImpl implements CustBmo {
 		}
 		return resultMap;
 	}
+	
+	public Map<String, Object> queryProdInstStats(Map<String, Object> dataBusMap,
+			String optFlowNum, SessionStaff sessionStaff) throws Exception {
+		DataBus db = InterfaceClient.callService(dataBusMap,
+				PortalServiceCode.QUERY_PRODINST_STATS, optFlowNum, sessionStaff);
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		try{
+			// 服务层调用与接口层调用都成功时，返回列表；否则返回空列表
+			if (ResultCode.R_SUCC.equals(db.getResultCode())) {
+				resultMap = db.getReturnlmap();
+			} else {
+				resultMap.put("resultCode", ResultCode.R_FAILURE);
+				resultMap.put("resultMsg", db.getResultMsg());
+			}
+		} catch (Exception e) {
+			log.error("营销标签查询服务queryProdInstStats服务返回的数据异常", e);
+			throw new BusinessException(ErrorCode.QUERY_PRODINST_STATS, dataBusMap, resultMap, e);
+		}
+		return resultMap;
+	}
+	
+	public Map<String, Object> queryMktActivityList(Map<String, Object> dataBusMap,
+			String optFlowNum, SessionStaff sessionStaff) throws Exception {
+		DataBus db = InterfaceClient.callService(dataBusMap,
+				PortalServiceCode.QUERY_MKT_ACTIVITYLIST, optFlowNum, sessionStaff);
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		try{
+			// 服务层调用与接口层调用都成功时，返回列表；否则返回空列表
+			if (ResultCode.R_SUCC.equals(db.getResultCode())) {
+				resultMap = db.getReturnlmap();
+			} else {
+				resultMap.put("resultCode", ResultCode.R_FAILURE);
+				resultMap.put("resultMsg", db.getResultMsg());
+			}
+		} catch (Exception e) {
+			log.error("营销标签查询服务queryMktActivityList服务返回的数据异常", e);
+			throw new BusinessException(ErrorCode.QUERY_MKT_ACTIVITYLIST, dataBusMap, resultMap, e);
+		}
+		return resultMap;
+	}
+	
+	public Map<String, Object> queryMktCustList(Map<String, Object> dataBusMap,
+			String optFlowNum, SessionStaff sessionStaff) throws Exception {
+		DataBus db = InterfaceClient.callService(dataBusMap,
+				PortalServiceCode.QUERY_MKT_CUSTLIST, optFlowNum, sessionStaff);
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		try{
+			// 服务层调用与接口层调用都成功时，返回列表；否则返回空列表
+			if (ResultCode.R_SUCC.equals(db.getResultCode())) {
+				resultMap = db.getReturnlmap();
+			} else {
+				resultMap.put("resultCode", ResultCode.R_FAILURE);
+				resultMap.put("resultMsg", db.getResultMsg());
+			}
+		} catch (Exception e) {
+			log.error("营销推荐清单查询服务queryMktCustList服务返回的数据异常", e);
+			throw new BusinessException(ErrorCode.QUERY_MKT_CUSTLIST, dataBusMap, resultMap, e);
+		}
+		return resultMap;
+	}
+	
+	public Map<String, Object> saveMktContactResult(Map<String, Object> dataBusMap,
+			String optFlowNum, SessionStaff sessionStaff) throws Exception {
+		DataBus db = InterfaceClient.callService(dataBusMap,
+				PortalServiceCode.SAVE_MTK_RESULT, optFlowNum, sessionStaff);
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		try{
+			// 服务层调用与接口层调用都成功时，返回列表；否则返回空列表
+			if (ResultCode.R_SUCC.equals(db.getResultCode())) {
+				resultMap = db.getReturnlmap();
+			} else {
+				resultMap.put("resultCode", ResultCode.R_FAILURE);
+				resultMap.put("resultMsg", db.getResultMsg());
+			}
+		} catch (Exception e) {
+			log.error("营销任务（接触）反馈结果记录服务saveMktContactResult服务返回的数据异常", e);
+			throw new BusinessException(ErrorCode.SAVE_MTK_RESULT, dataBusMap, resultMap, e);
+		}
+		return resultMap;
+	}
+	
   	
 }

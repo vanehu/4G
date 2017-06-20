@@ -2253,4 +2253,131 @@ public class CustController extends BaseController {
 		}
 		return jsonResponse;
 	}
+
+    @RequestMapping(value = "/queryProdInstStats", method = RequestMethod.POST)
+    @ResponseBody
+    public JsonResponse queryProdInstStats(@RequestBody Map<String, Object> paramMap,
+			@LogOperatorAnn String flowNum,HttpServletResponse response){
+		Map<String, Object> resMap = null;
+		JsonResponse jsonResponse = null;
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+                SysConstant.SESSION_KEY_LOGIN_STAFF);
+		String areaId=(String) paramMap.get("areaId");
+		if(("").equals(areaId)||areaId==null){
+			paramMap.put("areaId", sessionStaff.getCurrentAreaId());
+		}
+		try {
+			resMap = custBmo.queryProdInstStats(paramMap,flowNum, sessionStaff);
+			if (ResultCode.R_SUCC.equals(resMap.get("resultCode"))) {
+                jsonResponse = super.successed(resMap, ResultConstant.SUCCESS.getCode());
+            } else {
+                jsonResponse = super.failed(resMap.get("resultMsg"), ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+            }
+		} catch (BusinessException be) {
+			return super.failed(be);
+		} catch (InterfaceException ie) {
+			return super.failed(ie, paramMap, ErrorCode.QUERY_PRODINST_STATS);
+		} catch (Exception e) {
+			log.error("营销标签查询服务queryProdInstStats服务返回的数据异常", e);
+			return super.failed(ErrorCode.QUERY_PRODINST_STATS, e, paramMap);
+		}
+		return jsonResponse;
+    }
+    
+    @RequestMapping(value = "/queryMktActivityList", method = RequestMethod.POST)
+    @ResponseBody
+    public JsonResponse queryMktActivityList(@RequestBody Map<String, Object> paramMap,
+			@LogOperatorAnn String flowNum,HttpServletResponse response){
+		Map<String, Object> resMap = null;
+		JsonResponse jsonResponse = null;
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+                SysConstant.SESSION_KEY_LOGIN_STAFF);
+		String areaId=(String) paramMap.get("areaId");
+		if(("").equals(areaId)||areaId==null){
+			paramMap.put("areaId", sessionStaff.getCurrentAreaId());
+		}
+		try {
+			resMap = custBmo.queryMktActivityList(paramMap,flowNum, sessionStaff);
+			if (ResultCode.R_SUCC.equals(resMap.get("resultCode"))) {
+                jsonResponse = super.successed(resMap, ResultConstant.SUCCESS.getCode());
+            } else {
+                jsonResponse = super.failed(resMap.get("resultMsg"), ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+            }
+		} catch (BusinessException be) {
+			return super.failed(be);
+		} catch (InterfaceException ie) {
+			return super.failed(ie, paramMap, ErrorCode.QUERY_MKT_ACTIVITYLIST);
+		} catch (Exception e) {
+			log.error("营销标签查询服务queryMktActivityList服务返回的数据异常", e);
+			return super.failed(ErrorCode.QUERY_MKT_ACTIVITYLIST, e, paramMap);
+		}
+		return jsonResponse;
+    }
+    
+	@SuppressWarnings("unchecked")
+	@RequestMapping(value = "/queryMktCustList", method = { RequestMethod.POST })
+	public String queryMktCustList(@RequestBody Map<String, Object> param, Model model, HttpServletResponse response) {
+		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+				SysConstant.SESSION_KEY_LOGIN_STAFF);
+		Integer totalSize = 0;
+		Integer pageIndex = Integer.parseInt(param.get("pageIndex").toString());
+		Integer pageSize = Integer.parseInt(param.get("pageSize").toString());
+		try {
+			Map<String, Object> resMap = custBmo.queryMktCustList(param, null, sessionStaff);
+			if (ResultCode.R_SUCC.equals(resMap.get("resultCode")) && resMap.get("result") != null) {
+				Map<String, Object> result = (Map<String, Object>) resMap.get("result");
+				list = (List<Map<String, Object>>) result.get("mktCustList");
+				Map<String, Object> page = (Map<String, Object>) result.get("page");
+				totalSize = MapUtils.getInteger(page, "totalCount", 1);
+			}
+			PageModel<Map<String, Object>> pm = PageUtil.buildPageModel(pageIndex, pageSize,
+					totalSize < 1 ? 1 : totalSize, list);
+			model.addAttribute("pageModelMkt", pm);
+			model.addAttribute("code", resMap.get("resultCode"));
+			model.addAttribute("mess", resMap.get("resultMsg"));
+			model.addAttribute("resMap", resMap);
+			model.addAttribute("param", param);
+			List<Map<String,String>> resultList = MDA.MKT_CONTACT_RESULT;
+			model.addAttribute("resultList", resultList);
+			return "/cust/mkt-cust-list";
+		} catch (BusinessException be) {
+			return super.failedStr(model, be);
+		} catch (InterfaceException ie) {
+			return super.failedStr(model, ie, param, ErrorCode.QUERY_MKT_CUSTLIST);
+		} catch (Exception e) {
+			log.error("营销推荐清单查询服务接口方法异常", e);
+			return super.failedStr(model, ErrorCode.QUERY_MKT_CUSTLIST, e, param);
+		}
+	}
+    
+    @RequestMapping(value = "/saveMktContactResult", method = RequestMethod.POST)
+    @ResponseBody
+    public JsonResponse saveMktContactResult(@RequestBody Map<String, Object> paramMap,
+			@LogOperatorAnn String flowNum,HttpServletResponse response){
+		Map<String, Object> resMap = null;
+		JsonResponse jsonResponse = null;
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+                SysConstant.SESSION_KEY_LOGIN_STAFF);
+		String areaId=(String) paramMap.get("areaId");
+		if(("").equals(areaId)||areaId==null){
+			paramMap.put("areaId", sessionStaff.getCurrentAreaId());
+		}
+		try {
+			resMap = custBmo.saveMktContactResult(paramMap,flowNum, sessionStaff);
+			if (ResultCode.R_SUCC.equals(resMap.get("resultCode"))) {
+                jsonResponse = super.successed(resMap, ResultConstant.SUCCESS.getCode());
+            } else {
+                jsonResponse = super.failed(resMap.get("resultMsg"), ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+            }
+		} catch (BusinessException be) {
+			return super.failed(be);
+		} catch (InterfaceException ie) {
+			return super.failed(ie, paramMap, ErrorCode.SAVE_MTK_RESULT);
+		} catch (Exception e) {
+			log.error("营销任务（接触）反馈结果记录服务saveMktContactResult服务返回的数据异常", e);
+			return super.failed(ErrorCode.SAVE_MTK_RESULT, e, paramMap);
+		}
+		return jsonResponse;
+    }
 }
