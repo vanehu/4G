@@ -3288,5 +3288,15 @@
             'ECS_RETURN_FILE_899':'OFF'<!-- 虚拟省 -->
             }
         </const>
+        <const type="List" name="MKT_CONTACT_RESULT" description="营销推荐接触反馈结果">
+            [
+			    {'id':'1000','name':'已接触','desc':'接触到客户'},
+			    {'id':'2000','name':'已办理','desc':'接触到客户，但客户已办理'},
+			    {'id':'3000','name':'有意向','desc':'接触到客户，但客户有意向'},
+			    {'id':'4000','name':'犹豫中','desc':'接触到客户，但客户犹豫中'},
+			    {'id':'5000','name':'拒绝','desc':'接触到客户，但客户拒绝'},
+			    {'id':'6000','name':'接触失败','desc':'未接触成功到客户'}
+		    ]
+        </const>
 	</mda>
 </mdas>

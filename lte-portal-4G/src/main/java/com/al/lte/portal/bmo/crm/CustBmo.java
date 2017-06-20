@@ -173,4 +173,34 @@ public interface CustBmo {
 	 */
 	public Map<String, Object> checkCustCert(Map<String, Object> dataBusMap, String optFlowNum,
             SessionStaff sessionStaff) throws Exception;
+	
+	/**
+	 * 营销标签查询服务
+	 * @param queryParam
+	 * @return
+	 */
+	public Map<String, Object> queryProdInstStats(Map<String, Object> dataBusMap, String optFlowNum,
+            SessionStaff sessionStaff) throws Exception;
+	
+	/**
+	 * 营销活动列表查询服务
+	 * @param queryParam
+	 * @return
+	 */
+	public Map<String, Object> queryMktActivityList(Map<String, Object> dataBusMap, String optFlowNum,
+            SessionStaff sessionStaff) throws Exception;
+	/**
+	 * 营销推荐清单查询服务
+	 * @param queryParam
+	 * @return
+	 */
+	public Map<String, Object> queryMktCustList(Map<String, Object> dataBusMap, String optFlowNum,
+            SessionStaff sessionStaff) throws Exception;
+	/**
+	 * 营销任务（接触）反馈结果记录服务
+	 * @param queryParam
+	 * @return
+	 */
+	public Map<String, Object> saveMktContactResult(Map<String, Object> dataBusMap, String optFlowNum,
+            SessionStaff sessionStaff) throws Exception;
 }

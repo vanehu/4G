@@ -1220,5 +1220,19 @@ public final class PortalServiceCode {
     
     /**读卡信息存库接口*/
     public static final String RECORD_CERT_READER_CUST_INFOS = "biz-service/intf.soService/saveCertInfoFromIdentification";
+    
+    /**营销标签查询服务*/
+    public static final String QUERY_PRODINST_STATS= "biz-service/intf.couponService/queryProdInstStats";
+    
+    /**营销活动列表查询服务*/
+    public static final String QUERY_MKT_ACTIVITYLIST= "biz-service/intf.couponService/queryMktActivityList";
+    
+    /**营销推荐清单查询服务*/
+    public static final String QUERY_MKT_CUSTLIST= "biz-service/intf.couponService/queryMktCustList";
+    
+    /**营销任务（接触）反馈结果记录服务*/
+    public static final String SAVE_MTK_RESULT= "biz-service/intf.couponService/saveMktContactResult";
+    
+    
 }
 
