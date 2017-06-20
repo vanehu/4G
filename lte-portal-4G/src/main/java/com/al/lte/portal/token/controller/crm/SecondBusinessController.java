@@ -567,7 +567,7 @@ public class SecondBusinessController extends BaseController {
 		Map<String, Object>  map=null;
 		//参数拼接
 		paramMap.put("channelId", sessionStaff.getCurrentChannelId());
-		paramMap.put("channelNbr", sessionStaff.getchannelCode());
+		paramMap.put("channelNbr", sessionStaff.getCurrentChannelCode());
 		paramMap.put("salesCode", sessionStaff.getSalesCode());
 		paramMap.put("staffCode", sessionStaff.getStaffCode());
 		 HttpSession session = request.getSession();
