@@ -44,8 +44,7 @@ public class Const {
 	
 	public static final String CACHE_CERTINFO="CACHE_CERTINFO";
 
-	public static final String CACHE_CERTINFO_PARAM="CACHE_CERTINFO_PARAM";
-	
+	public static final String CACHE_CERTINFO="CACHE_CERTINFO";	public static final String CACHE_CERTINFO_PARAM="CACHE_CERTINFO_PARAM";
 	public static final String SESSION_SIGNATURE="SESSION_SIGNATURE";
 	/**经办人身份证读卡session校验*/
 	public static final String SESSION_SIGNATURE_HANDLE_CUST = "SESSION_SIGNATURE_HANDLE_CUST";
