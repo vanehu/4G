@@ -31,8 +31,8 @@ OrderInfo = (function() {
 	
 	var _handleCustId="";
 	
-	var _verifyFlag ="N";  //人证平台比对结果 "Y" "N"
-	var _confidence = "0";  //  人脸比对结果的相似程度
+	var _verifyFlag =""  //人证平台比对结果 "Y" "N"
+	var _confidence = ""  //  人脸比对结果的相似程度
 	 
 
 	var _isExistCFQ = false;//是否是橙分期业务
@@ -1980,7 +1980,7 @@ OrderInfo = (function() {
         operateSpecStaff		:_operateSpecStaff,
         oldUserInfos			:_oldUserInfos,
         reFileMainCustInfo      :_reFileMainCustInfo,
-        faceVerifyFlag  : _verifyFlag,
+        verifyFlag  			: _verifyFlag,
         confidence 				: _confidence,
         certInfoKeys			:_certInfoKeys,
         certReaderCustInfos		:_certReaderCustInfos,

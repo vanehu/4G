@@ -5591,7 +5591,6 @@ public class OrderController extends BaseController {
             	request.getSession().setAttribute(Const.SESSION_SIGNATURE_HANDLE_CUST, signature1);
             }
             request.getSession().setAttribute(Const.CACHE_CERTINFO, certNumber);
-            request.getSession().setAttribute(Const.CACHE_CERTINFO_PARAM, param); 
             param.remove("resultContent");
             return super.successed(param, ResultConstant.SUCCESS.getCode());//信息校验通过
         } catch (Exception e) {
